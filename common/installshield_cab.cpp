@@ -90,8 +90,9 @@ InstallShieldCabinet::InstallShieldCabinet(SeekableReadStream *stream, DisposeAf
 	// cabinets.
 
 	// Check for the magic uint32
-	if (_stream->readUint32LE() != 0x28635349) {
-		warning("InstallShieldCabinet::InstallShieldCabinet(): Magic ID doesn't match");
+	uint32 magic = _stream->readUint32LE();
+	if (magic != 0x28635349) {
+		warning("InstallShieldCabinet::InstallShieldCabinet(): Magic ID doesn't match: expecting %x but got %x", 0x28635349, magic);
 		return;
 	}
 

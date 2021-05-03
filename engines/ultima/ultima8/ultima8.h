@@ -334,7 +334,7 @@ public:
 
 	//! start a new game
 	//! \return true if succesful.
-	bool newGame(int saveSlot = -1);
+	bool newGame(int saveSlot = -1, int difficulty = -1);
 
 	//! Enter gump text mode (aka Unicode keyhandling)
 	void enterTextMode(Gump *);

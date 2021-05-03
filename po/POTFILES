@@ -9,8 +9,6 @@ gui/editrecorddialog.cpp
 gui/filebrowser-dialog.cpp
 gui/fluidsynth-dialog.cpp
 gui/gui-manager.cpp
-gui/KeysDialog.cpp
-gui/KeysDialog.h
 gui/launcher.cpp
 gui/massadd.cpp
 gui/message.cpp
@@ -32,6 +30,8 @@ common/achievements.cpp
 common/error.cpp
 common/rendermode.cpp
 common/updates.cpp
+
+dists/scummvm.appdata.xml.cpp
 
 engines/advancedDetector.cpp
 engines/dialogs.cpp
@@ -65,12 +65,10 @@ backends/events/default/default-events.cpp
 backends/events/gph/gph-events.cpp
 backends/events/maemosdl/maemosdl-events.cpp
 backends/events/openpandora/op-events.cpp
-backends/events/symbiansdl/symbiansdl-events.cpp
 backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
-backends/graphics3d/sdl/sdl-graphics3d.cpp
 backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
 backends/keymapper/virtual-mouse.cpp
@@ -97,7 +95,6 @@ backends/platform/sdl/macosx/appmenu_osx.mm
 backends/platform/sdl/ps3/ps3.cpp
 backends/platform/sdl/psp2/psp2.cpp
 backends/platform/sdl/switch/switch.cpp
-backends/platform/symbian/src/SymbianActions.cpp
 backends/platform/wii/options.cpp
 backends/presence/discord/discord.cpp
 backends/updates/macosx/macosx-updates.mm

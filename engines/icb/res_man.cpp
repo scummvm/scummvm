@@ -323,8 +323,8 @@ uint32 res_man::Fetch_old_memory(int32 number_of_cycles) {
 // If hash or cluster_hash == NULL_HASH then the hash of url/cluster_url
 // is computed and stored in hash/cluster_hash
 uint8 *res_man::Res_open(const char *url, uint32 &url_hash, const char *cluster, uint32 &cluster_hash,
-                         int32 compressed, // non zero if the resource is compressed
-                         int32 *ret_len) {
+						 int32 compressed, // non zero if the resource is compressed
+						 int32 *ret_len) {
 	// make the hash names if we need to
 	MakeHash(url, url_hash);
 	MakeHash(cluster, cluster_hash);

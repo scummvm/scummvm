@@ -43,103 +43,103 @@ namespace AGT {
 
 
 rbool PURE_ANSWER = 0; /* For ME questions, requires that AND-separated
-              answers be in the same order in the player's
-             answer as they are in the game file. According
-             to the AGT documentation, AND should ignore
-             the order, but the original AGT interpreters
-             (at least the one I've tested) don't conform
-             to this. */
+			  answers be in the same order in the player's
+			 answer as they are in the game file. According
+			 to the AGT documentation, AND should ignore
+			 the order, but the original AGT interpreters
+			 (at least the one I've tested) don't conform
+			 to this. */
 
 rbool PURE_TIME = 1; /* Set to 0 causes time to always be increased
-                by delta_time rather than by a random amount
-            between 0 and delta_time. Only really of any use
-            to a game author who wanted to write a game
-            explicitly for AGiliTy. */
+				by delta_time rather than by a random amount
+			between 0 and delta_time. Only really of any use
+			to a game author who wanted to write a game
+			explicitly for AGiliTy. */
 
 /* rbool PURE_BOLD=1; Set to 0 causes the backslash to toggle bold on and
-            off for all versions of AGT, not just 1.8x.
-            I can think of no reason to do this unless
-            you are an AGT author who wants to use the 1.8x
-            bold feature with the Master's Edition compiler. */
+			off for all versions of AGT, not just 1.8x.
+			I can think of no reason to do this unless
+			you are an AGT author who wants to use the 1.8x
+			bold feature with the Master's Edition compiler. */
 
 rbool PURE_AND = 1; /* increment the turn counter for each noun in a
-                chain of <noun> AND <noun> AND ... If 0, the turn
-             counter will only be incremented by one in such a case.
-             (need to do something about metacommands, as well...) */
+				chain of <noun> AND <noun> AND ... If 0, the turn
+			 counter will only be incremented by one in such a case.
+			 (need to do something about metacommands, as well...) */
 
 rbool PURE_METAVERB = 1; /* If set, ANY and AFTER commands are run even
-               if you type in a metaverb (SAVE, RESTORE,...
-               that is, any verb that doesn't cause time to
-               pass). Verb specific metacommands are _always_
-               run. */
+			   if you type in a metaverb (SAVE, RESTORE,...
+			   that is, any verb that doesn't cause time to
+			   pass). Verb specific metacommands are _always_
+			   run. */
 
 rbool PURE_ROOMTITLE = 1;  /* If 0, the interpreter will print out room
-               names before room descriptions even for
-               pre-ME games */
+			   names before room descriptions even for
+			   pre-ME games */
 
 rbool PURE_SYN = 0; /* Treats synonyms as nouns when parsing: that is, they
-               must show up only as the last word and they have the
-               same priority as noun matches during disambiguation.
-              If this is 0, then synonyms can appear anywhere in
-               the name the player types in but are still
-               disambiguated as nouns. */
+			   must show up only as the last word and they have the
+			   same priority as noun matches during disambiguation.
+			  If this is 0, then synonyms can appear anywhere in
+			   the name the player types in but are still
+			   disambiguated as nouns. */
 
 rbool PURE_NOUN = 0; /* _Requires_ a noun to end a word. This is only
-             imperfectly supported: if there are no other
-             possible matches the parser will take the adjective-
-             only one anyhow. Frankly, I can't think of any reason
-             to set this to 1, but it's included for completeness
-             sake (and for any AGT Purists out there :-) ) */
+			 imperfectly supported: if there are no other
+			 possible matches the parser will take the adjective-
+			 only one anyhow. Frankly, I can't think of any reason
+			 to set this to 1, but it's included for completeness
+			 sake (and for any AGT Purists out there :-) ) */
 
 rbool PURE_ADJ = 1; /* Picks noun/syn-matches over pure adj matches
-               when disambiguating. This is redundant if PURE_NOUN=1
-               since in that case pure adjective matches will
-               be rejected anyhow. */
+			   when disambiguating. This is redundant if PURE_NOUN=1
+			   since in that case pure adjective matches will
+			   be rejected anyhow. */
 
 rbool PURE_DUMMY = 0;  /* If set, the player can running dummy verbs
-             in the game by typing 'dummy_verb3'; otherwise,
-             this will produce an error message */
+			 in the game by typing 'dummy_verb3'; otherwise,
+			 this will produce an error message */
 
 rbool PURE_SUBNAME = 0; /* If set, the player can run subroutines from
-              the parse line by typing (e.g.) 'subroutine4'
-              (yes, the original AGT interpreters actually
-              allow this). If cleared, this cheat isn't
-              available */
+			  the parse line by typing (e.g.) 'subroutine4'
+			  (yes, the original AGT interpreters actually
+			  allow this). If cleared, this cheat isn't
+			  available */
 rbool PURE_PROSUB = 0;  /* If clear, then $you$ substitutions are done
-            everywhere $$ substitutions are, even in
-            messages written by the game author.
-            If set, these substitutions are only made
-            in internal game messages */
+			everywhere $$ substitutions are, even in
+			messages written by the game author.
+			If set, these substitutions are only made
+			in internal game messages */
 
 rbool PURE_HOSTILE = 1;  /* =0 Will allow you to leave a room with a hostile
-               creature if you go back the way you came */
+			   creature if you go back the way you came */
 rbool PURE_ALL = 1;      /* =0 will cause the parser to expand ALL */
 rbool PURE_DISAMBIG = 1; /* =0 will cause intelligent disambiguation */
 rbool PURE_GETHOSTILE = 1;  /* =0 will prevent the player from picking things
-                up in a room with a hostile creature */
+				up in a room with a hostile creature */
 
 rbool PURE_OBJ_DESC = 1;    /* =0 prevents [providing light] messages
-              from being shown */
+			  from being shown */
 
 rbool PURE_ERROR = 0;    /* =1 means no GAME ERROR messages will be printed
-             out */
+			 out */
 
 rbool PURE_SIZE = 1;  /* =0 eliminates size/weight limits on how many
-              things the player can wear or carry. (But it's
-              still impossible to pick things up that are
-              in themselves larger than the player's capacity) */
+			  things the player can wear or carry. (But it's
+			  still impossible to pick things up that are
+			  in themselves larger than the player's capacity) */
 
 rbool PURE_GRAMMAR = 1; /* =0 prints error messages if the player uses a
-            built in verb with an extra object.
-            (e.g. YELL CHAIR). Otherwise, the extra object
-            will just be ignored. */
+			built in verb with an extra object.
+			(e.g. YELL CHAIR). Otherwise, the extra object
+			will just be ignored. */
 
 rbool PURE_SYSMSG = 1; /* =0 causes AGiliTy to always use the default
-               messages even if the game file has its own
-               standard error messages. */
+			   messages even if the game file has its own
+			   standard error messages. */
 
 rbool PURE_AFTER = 1; /* =0 causes LOOK and other end-of-turn events
-               to happen *before* AFTER commands run.  */
+			   to happen *before* AFTER commands run.  */
 
 rbool PURE_PROPER = 1; /* Don't automatically treat creatures as proper nouns */
 
@@ -154,14 +154,14 @@ rbool FORCE_VERSION = 0; /* Load even if the version is wrong. */
 /* The main interpreter handles configuration in this order:
    1) Global configuration file
    2) First pass through game specific CFG to get the settings for
-       SLASH_BOLD and IBM_CHAR which we need to know _before_ reading
-       in the game.
+	   SLASH_BOLD and IBM_CHAR which we need to know _before_ reading
+	   in the game.
    3) Read in the game.
    4) Main pass through game specific CFG. Doing it here ensures that
-      its settings will override those in the gamefile.
+	  its settings will override those in the gamefile.
   Secondary programs (such as agt2agx) usually only call this once, for
   the game specific configuration file.
-      */
+	  */
 
 #define opt(s) (strcasecmp(optstr[0],s)==0)
 
@@ -284,8 +284,8 @@ void read_config(genfile cfgfile, rbool lastpass) {
    8  Height of menus (3, 4, 5, 6, 7, or 8)
    9  Unknown, always seems to be 0
    10-13  Color scheme: output/status/input/menu, specified in DOS attribute
-      format (Bbbbffff,  B=blink, b=backround, f=foreground,
-      MSB of foreground specifies intensity ("bold") ). */
+	  format (Bbbbffff,  B=blink, b=backround, f=foreground,
+	  MSB of foreground specifies intensity ("bold") ). */
 /* The interpreter ignores almost all of this. */
 
 void read_opt(fc_type fc) {
@@ -456,7 +456,7 @@ void init_verbrec(void)
 	vm_size = 0;
 	newindex = 0;
 	if (freeze_mode) newindex = 1;  /* Don't include MENU option if we can't
-                   use it. */
+				   use it. */
 }
 
 void finish_verbrec(void) {

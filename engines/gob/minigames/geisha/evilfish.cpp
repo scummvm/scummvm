@@ -27,8 +27,8 @@ namespace Gob {
 namespace Geisha {
 
 EvilFish::EvilFish(const ANIFile &ani, uint16 screenWidth,
-                   uint16 animSwimLeft, uint16 animSwimRight,
-                   uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) :
+				   uint16 animSwimLeft, uint16 animSwimRight,
+				   uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) :
 	ANIObject(ani), _screenWidth(screenWidth),
 	_animSwimLeft(animSwimLeft), _animSwimRight(animSwimRight),
 	_animTurnLeft(animTurnLeft), _animTurnRight(animTurnRight), _animDie(animDie),
@@ -150,7 +150,7 @@ void EvilFish::advance() {
 }
 
 void EvilFish::mutate(uint16 animSwimLeft, uint16 animSwimRight,
-                      uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) {
+					  uint16 animTurnLeft, uint16 animTurnRight, uint16 animDie) {
 
 	_animSwimLeft  = animSwimLeft;
 	_animSwimRight = animSwimRight;

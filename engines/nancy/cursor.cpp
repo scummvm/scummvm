@@ -27,23 +27,27 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/resource.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/constants.h"
 
 namespace Nancy {
 
 void CursorManager::init() {
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("INV");
-	chunk->seek(0x1D2); // TODO
+	chunk->seek(0xD6 + g_nancy->getConstants().numCurtainAnimationFrames * 0x20 + 0x1C);
 	Common::String inventoryCursorsImageName = chunk->readString();
 
 	chunk = g_nancy->getBootChunkStream("CURS");
-	_cursors.reserve(56);
-	for (uint i = 0; i < 56; ++i) {
+	chunk->seek(0);
+	uint numCursors = g_nancy->getConstants().numNonItemCursors + g_nancy->getConstants().numItems * 4;
+	_cursors.reserve(numCursors);
+	for (uint i = 0; i < numCursors; ++i) {
 		_cursors.push_back(Cursor());
 		chunk->seek(i * 16, SEEK_SET);
-		readRect(*chunk, _cursors[i].bounds);
-		chunk->seek(0x380 + i * 8, SEEK_SET);
-		_cursors[i].hotspot.x = chunk->readUint32LE();
-		_cursors[i].hotspot.y = chunk->readUint32LE();
+		Cursor &cur = _cursors.back();
+		readRect(*chunk, cur.bounds);
+		chunk->seek(numCursors * 16 + i * 8, SEEK_SET);
+		cur.hotspot.x = chunk->readUint32LE();
+		cur.hotspot.y = chunk->readUint32LE();
 	}
 
 	readRect(*chunk, _primaryVideoInactiveZone);
@@ -70,36 +74,33 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		_curItemID = itemID;
 	}
 
-	uint16 newID = 0;
 	bool hasItem = false;
 
 	switch (type) {
 	case kNormalArrow:
-		newID = 4;
+		_curCursorID = 4;
 		break;
 	case kHotspotArrow:
-		newID = 6;
-		break;
-	case kExitArrow:
-		newID = 3;
+		_curCursorID = 5;
 		break;
 	default: {
+		uint itemsOffset = 0;
 		if (itemID == -1) {
 			// No item held, set to eyeglass
 			itemID = 0;
 		} else {
 			// Item held
-			itemID += 3;
+			itemsOffset = g_nancy->getConstants().numNonItemCursors;
 			hasItem = true;
 		}
 
-		newID = itemID * 4 + type;
+		_curCursorID = itemID * 4 + itemsOffset + type;
 	}
 	}
 
 	Graphics::ManagedSurface *surf;
-	Common::Rect bounds = _cursors[newID].bounds;
-	Common::Point hotspot = _cursors[newID].hotspot;
+	Common::Rect bounds = _cursors[_curCursorID].bounds;
+	Common::Point hotspot = _cursors[_curCursorID].hotspot;
 
 	if (hasItem) {
 		surf = &_invCursorsSurface;
@@ -108,17 +109,29 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 		surf = &g_nancy->_graphicsManager->_object0;
 	}
 
-	// TODO this is ridiculous, figure out why just calling
-	// GetBasePtr() results in garbage
-	Graphics::Surface s;
-	s.create(bounds.width(), bounds.height(), surf->format);
-	s.copyRectToSurface(*surf, 0, 0, bounds);
+	// Create a temporary surface to hold the cursor since giving replaceCursor() a pointer
+	// to the original surface results in garbage. This also makes it so we don't have to deal
+	// with TVD's palettes 
+	Graphics::ManagedSurface temp;
+	temp.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	temp.blitFrom(*surf, bounds, Common::Point());
 
-	// TODO hotspots are terrible for arrow cursors, fix that??
-	CursorMan.replaceCursor(s.getPixels(), s.w, s.h, hotspot.x, hotspot.y, g_nancy->_graphicsManager->getTransColor(), false, &g_nancy->_graphicsManager->getInputPixelFormat());
+	// Convert the trans color from the original format to the screen format
+	uint transColor;
+	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+		uint8 r, g, b;
+		uint32 input = surf->getPalette()[1];
+		r = input & 0xFF;
+		g = (input & 0xFF00) >> 8;
+		b = (input & 0xFF0000) >> 16;
+		transColor = temp.format.RGBToColor(r, g, b);
+	} else {
+		uint8 r, g, b;
+		surf->format.colorToRGB(g_nancy->_graphicsManager->getTransColor(), r, g, b);
+		transColor = temp.format.RGBToColor(r, g, b);
+	}
 
-	s.free();
-
+	CursorMan.replaceCursor(temp.getPixels(), temp.w, temp.h, hotspot.x, hotspot.y, transColor, false, &temp.format);
 }
 
 void CursorManager::setCursorType(CursorType type) {

@@ -85,7 +85,8 @@ enum {
 	kWMModeFullscreen       = (1 << 6),
 	kWMModeButtonDialogStyle= (1 << 7),
 	kWMMode32bpp			= (1 << 8),
-	kWMNoScummVMWallpaper   = (1 << 9)
+	kWMNoScummVMWallpaper   = (1 << 9),
+	kWMModeWin95            = (1 << 10)
 };
 
 }
@@ -170,6 +171,7 @@ public:
 	 */
 	MacWindow *addWindow(bool scrollable, bool resizable, bool editable);
 	MacTextWindow *addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
+	MacTextWindow *addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 
 	/**
 	 * Adds a window that has already been initialized to the registry.
@@ -299,14 +301,18 @@ public:
 	uint findBestColor(byte cr, byte cg, byte cb);
 	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
 
+	const byte *getPalette() { return _palette; }
+	uint getPaletteSize() { return _paletteSize; }
+
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
 
 	void removeMarked();
 
 	void loadDataBundle();
+	void cleanupDataBundle();
 	BorderOffsets getBorderOffsets(byte windowType);
-	Common::SeekableReadStream *getBorderFile(byte windowType, bool isActive);
+	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
 
 public:

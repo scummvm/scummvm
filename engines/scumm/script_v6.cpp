@@ -1409,7 +1409,28 @@ void ScummEngine_v6::o6_getActorAnimCounter() {
 void ScummEngine_v6::o6_getAnimateVariable() {
 	int var = pop();
 	Actor *a = derefActor(pop(), "o6_getAnimateVariable");
-	push(a->getAnimVar(var));
+
+	// WORKAROUND: In Backyard Baseball 2001 and 2003,
+	// bunting a foul ball as Pete Wheeler may softlock the game
+	// with an animation loop if the ball goes way into
+	// the left or right field line.
+	//
+	// This is a script bug because Pete's actor variable never
+	// sets to 1 in this condition and script room-4-2105
+	// (or room-3-2105 in 2003) will always break.
+	// We fix that by forcing Pete to play the return animation
+	// regardless if the ball's foul or not.
+	if ((_game.id == GID_BASEBALL2001 || _game.id == GID_BASEBALL2003) && \
+	 		_currentRoom == ((_game.id == GID_BASEBALL2001) ? 4 : 3) && \
+			vm.slot[_currentScript].number == 2105 && \
+			a->_costume == ((_game.id == GID_BASEBALL2001) ? 107 : 99) && \
+			// Room variable 5 to ensure this workaround executes only once at
+			// the beginning of the script and room variable 22 to check if we
+			// are bunting.
+			readVar(0x8000 + 5) != 0 && readVar(0x8000 + 22) == 4)
+		push(1);
+	else
+		push(a->getAnimVar(var));
 }
 
 void ScummEngine_v6::o6_isActorInBox() {
@@ -1928,7 +1949,7 @@ void ScummEngine_v6::o6_verbOps() {
 		break;
 	case 128:		// SO_VERB_AT
 		vs->curRect.top = pop();
-		vs->curRect.left = pop();
+		vs->curRect.left = vs->origLeft = pop();
 		break;
 	case 129:		// SO_VERB_ON
 		vs->curmode = 1;

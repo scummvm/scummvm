@@ -130,8 +130,8 @@ void RemapWidget::reflowActionWidgets() {
 				int descriptionWidth = getWidth() - x - spacing - resetButtonWidth - spacing;
 				descriptionWidth = MAX(0, descriptionWidth);
 
-				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight);
-				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight);
+				keymapTitle.descriptionText->resize(x, y + textYOff, descriptionWidth, kLineHeight, false);
+				keymapTitle.resetButton->resize(x + descriptionWidth, y, resetButtonWidth, buttonHeight, false);
 			}
 
 			y += buttonHeight + spacing;
@@ -139,10 +139,10 @@ void RemapWidget::reflowActionWidgets() {
 
 		x = spacing;
 
-		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight);
+		row.keyButton->resize(x, y, keyButtonWidth, buttonHeight, false);
 
 		x += keyButtonWidth + spacing;
-		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight);
+		row.actionText->resize(x, y + textYOff, labelWidth, kLineHeight, false);
 
 		y += buttonHeight + spacing;
 	}

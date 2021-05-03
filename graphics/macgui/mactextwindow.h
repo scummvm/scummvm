@@ -31,6 +31,7 @@ namespace Graphics {
 class MacTextWindow : public MacWindow {
 public:
 	MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
+	MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler = true);
 	virtual ~MacTextWindow();
 
 	virtual void resize(int w, int h, bool inner = false);
@@ -44,8 +45,8 @@ public:
 	void setTextWindowFont(const MacFont *macFont);
 	const MacFont *getTextWindowFont();
 
-	void appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd = false);
-	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
+	void appendText(const Common::U32String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
+	void appendText(const Common::String &str, const MacFont *macFont = nullptr, bool skipAdd = false);
 	void clearText();
 
 	void setEditable(bool editable) { _editable = editable; }
@@ -62,8 +63,16 @@ public:
 	void clearSelection();
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
+	int getTextHeight() { return _mactext->getTextHeight(); }
+
+	/**
+	 * if we want to draw the text which color is not black, then we need to set _textColorRGB
+	 * @param rgb text color you want to draw
+	 */
+	void setTextColorRGB (uint32 rgb) { _textColorRGB = rgb; }
 
 private:
+	void init(bool cursorHandler);
 	bool isCutAllowed();
 
 	void scroll(int delta);
@@ -105,6 +114,9 @@ private:
 	bool _inputIsDirty;
 
 	MacMenu *_menu;
+
+	int _bgcolor;
+	int _textColorRGB;
 };
 
 } // End of namespace Graphics

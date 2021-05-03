@@ -51,12 +51,32 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new HotMultiframeMultisceneChange();
 	case 0x04:
 		return new Hot1FrExitSceneChange();
+	case 0x0A:
+		return new PaletteThisScene();
+	case 0x0B:
+		return new PaletteNextScene();
 	case 0x0C:
 		return new StartFrameNextScene();
 	case 0x14:
 		return new StartStopPlayerScrolling(); // TODO
 	case 0x15:
 		return new StartStopPlayerScrolling(); // TODO
+	case 0x1E:
+		return new LightningOn();
+	case 0x1F:
+		return new LightningOff();
+	case 0x20:
+		return new AmbientLightUp();
+	case 0x21:
+		return new AmbientLightDown();
+	case 0x22:
+		return new AmbientLightToTod();
+	case 0x23:
+		return new AmbientLightToTodOff();
+	case 0x24:
+		return new FlickerOn();
+	case 0x25:
+		return new FlickerOff();
 	case 0x28:
 		return new PlayPrimaryVideoChan0(NancySceneState.getViewport());
 	case 0x29:
@@ -77,6 +97,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type) {
 		return new MapCallHotMultiframe();
 	case 0x35:
 		return new MapLocationAccess();
+	case 0x36:
+		return new MapLightning();
+	case 0x37:
+		return new MapLightningOff();
 	case 0x38:
 		return new MapSound();
 	case 0x39:

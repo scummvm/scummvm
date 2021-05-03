@@ -73,7 +73,21 @@
 	{
 		"ween",
 		"",
-		AD_ENTRY1("intro.stk", "4b10525a3782aa7ecd9d833b5c1d308b"),
+		AD_ENTRY1s("intro.stk", "4b10525a3782aa7ecd9d833b5c1d308b", 7029591),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeWeen,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{ // Bugreport #11524
+	{
+		"ween",
+		"",
+		AD_ENTRY1s("intro.stk", "cae57980940b919305e33a65d0f1dcc3", 7017982),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -178,6 +192,21 @@
 		AD_ENTRY2s("intro.stk", "dffd1ab98fe76150d6933329ca6f4cc4", 459458,
 				   "ween.ins",  "d2cb24292c9ddafcad07e23382027218", 87800),
 		IT_ITA,
+		kPlatformAmiga,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeWeen,
+	kFeaturesNone,
+	0, 0, 0
+},
+
+{ // Supplied by CaptainHIT in bug report #11591
+	{
+		"ween",
+		"",
+		AD_ENTRY1s("intro.stk", "53c57051c69c641fcc5270a41d35e7d5", 458536),
+		ES_ESP,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)

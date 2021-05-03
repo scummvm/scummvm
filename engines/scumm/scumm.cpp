@@ -542,6 +542,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_renderMode = Common::kRenderDefault;
 	}
 
+	if (_game.platform == Common::kPlatformFMTowns && _game.id != GID_LOOM && _game.version == 3)
+		if (ConfMan.getBool("aspect_ratio") && !ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
+			GUI::MessageDialog dialog(
+				_("You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural resolution is 320x240, which doesn't allow aspect ratio correction.\n"
+				  "Aspect ratio correction can be acheived by trimming the resolution to 320x200, under 'engine' tab."));
+			dialog.runModal();
+		}
+
 	// Check some render mode restrictions
 	if (_game.version <= 1)
 		_renderMode = Common::kRenderDefault;
@@ -569,9 +577,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_hexdumpScripts = false;
 	_showStack = false;
 
-	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games use 320x240
+	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games originally use 320x240, and we have an option to trim to 200
 		_screenWidth = 320;
-		_screenHeight = 240;
+		if (ConfMan.getBool("trim_fmtowns_to_200_pixels"))
+			_screenHeight = 200;
+		else
+			_screenHeight = 240;
 	} else if (_game.version == 8 || _game.heversion >= 71) {
 		// COMI uses 640x480. Likewise starting from version 7.1, HE games use
 		// 640x480, too.
@@ -2036,7 +2047,7 @@ void ScummEngine::setupMusic(int midi) {
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
-			_native_mt32 = false;
+			_native_mt32 = _enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);
@@ -2302,14 +2313,6 @@ void ScummEngine::scummLoop(int delta) {
 			// The music engine generates the timer data for us.
 			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
 		}
-	}
-
-	// Trigger autosave if necessary.
-	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently()) {
-		_saveLoadSlot = 0;
-		_saveLoadDescription = Common::String::format("Autosave %d", _saveLoadSlot);
-		_saveLoadFlag = 1;
-		_saveTemporaryState = false;
 	}
 
 	if (VAR_GAME_LOADED != 0xFF)

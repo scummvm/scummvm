@@ -21,6 +21,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/file.h"
 
 #include "agos/intern.h"
@@ -493,8 +494,8 @@ void AGOSEngine_Elvira2::handleMouseWheelUp() {
 				_saveLoadRowCurPos -= 3;
 
 			listSaveGames();
-	} else {
-		AGOSEngine::handleMouseWheelUp();
+	} else if ((ha = findBox(0x7FFB)) && ha->window && ha->window->iconPtr) {
+		_lastHitArea3 = _lastHitArea = ha;
 	}
 }
 
@@ -507,8 +508,8 @@ void AGOSEngine_Elvira2::handleMouseWheelDown() {
 				_saveLoadRowCurPos = 1;
 
 			listSaveGames();
-	} else {
-		AGOSEngine::handleMouseWheelDown();
+	} else if ((ha = findBox(0x7FFC)) && ha->window && ha->window->iconPtr) {
+		_lastHitArea3 = _lastHitArea = ha;
 	}
 }
 

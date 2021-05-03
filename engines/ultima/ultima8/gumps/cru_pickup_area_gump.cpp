@@ -50,7 +50,7 @@ void CruPickupAreaGump::InitGump(Gump *newparent, bool take_focus) {
 	_instance = this;
 }
 
-void CruPickupAreaGump::addPickup(const Item *item) {
+void CruPickupAreaGump::addPickup(const Item *item, bool showCount) {
 	if (!item)
 		return;
 
@@ -67,7 +67,7 @@ void CruPickupAreaGump::addPickup(const Item *item) {
 			continue;
 		if (pug->getShapeNo() == shapeno) {
 			// Already a notification for this object, update it
-			pug->updateForNewItem(item);
+			pug->updateForNewItem(item, showCount);
 			return;
 		}
 		int32 x, y;
@@ -76,7 +76,7 @@ void CruPickupAreaGump::addPickup(const Item *item) {
 	}
 
 	// didn't find one, create a new one at the bottom.
-	Gump *newgump = new CruPickupGump(item, maxy);
+	Gump *newgump = new CruPickupGump(item, maxy, showCount);
 	newgump->InitGump(this, false);
 }
 

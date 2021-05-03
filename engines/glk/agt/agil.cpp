@@ -38,7 +38,7 @@ descr_ptr *err_ptr; /* [NUM_ERR];*/
 descr_ptr *msg_ptr; /* [MAX_MSG];*/
 descr_ptr *help_ptr, *room_ptr, *special_ptr; /*[ROOM] */
 descr_ptr *noun_ptr, *text_ptr, *turn_ptr, /* [NOUN] */
-          *push_ptr, *pull_ptr, *play_ptr;
+		  *push_ptr, *pull_ptr, *play_ptr;
 descr_ptr *talk_ptr, *ask_ptr, *creat_ptr; /* [CREAT] */
 
 descr_ptr *quest_ptr, *ans_ptr; /* [MAX_QUEST] */
@@ -54,12 +54,12 @@ long dp;  /* Dictionary pointer: number of words in dict */
 
 #define DICT_INIT 12*1024 /* Starting size of dictstr */
 #define DICT_GRAN 1024  /* Granularity of dictstr size requests 
-               must be at least 4. */
+			   must be at least 4. */
 char *dictstr;  /* Pointer to memory block containing dict words */
 long dictstrptr, dictstrsize;
 /* dictstrptr points to the first unused byte in dictstr.
    dictstrsize points to the end of the space currently allocated for
-      dictstr.
+	  dictstr.
 */
 
 char *static_str; /*Static string space */
@@ -297,7 +297,7 @@ static void build_verbmenu(void) {
 void agil_option(int optnum, char *optstr[], rbool setflag, rbool lastpass) {
 	if (opt("ibm_char")) fix_ascii_flag = !setflag;
 	else if (!lastpass) return; /* On the first pass through the game specific
-                 file, we ignore all but the above options */
+				 file, we ignore all but the above options */
 	else if (opt("tone")) PURE_TONE = setflag;
 	else if (opt("input_bold")) PURE_INPUT = setflag;
 	else if (opt("force_load")) FORCE_VERSION = setflag;
@@ -329,7 +329,7 @@ static rbool check_dot(char *prevtext, int prevcnt, char *lookahead)
 	int i, endword, restcnt;
 
 	if (!PURE_DOT) return 1;  /* No words with periods in them, so it must
-                   be punctuation. */
+				   be punctuation. */
 	/*  We just start scanning the dictionary to see if any of them
 	    are possible matches, looking ahead as neccessary. */
 
@@ -355,7 +355,7 @@ static rbool check_dot(char *prevtext, int prevcnt, char *lookahead)
 		 the fact that the trailing text could itself contain ambiguous '.'s */
 		restcnt -= prevcnt + 1; /* Number of characters in dict entry after '.' */
 		if (restcnt > endword) continue; /* Dictionary entry is longer than
-                       following text */
+					   following text */
 
 		/* Check to see if the dictionary entry can be found in the lookahead
 		   buffer */
@@ -520,7 +520,7 @@ static void parse_loop(void)
 		if (doing_restore) break;
 		if (ip >= 0 && ip < MAXINPUT && input[ip] != -1)
 			writeln(""); /* Insert blank lines between commands when dealing
-              with THEN lists */
+			  with THEN lists */
 	}
 }
 
@@ -630,7 +630,7 @@ static int init(void) {
 	pictable = (integer *)rmalloc(sizeof(int) * maxpict);
 	for (i = 0; i < maxpict; i++) pictable[i] = i;
 	init_state_sys(); /* Initialize the system for saving and restoring
-               game states */
+			   game states */
 	tmp1 = (uchar *)rmalloc(MEM_MARGIN); /* Preserve some work space */
 
 	tmp2 = getstate(NULL); /* Make sure we have space to save */
@@ -693,7 +693,7 @@ static void fix_dummy(void) {
 		for (i = 0; i < dp && !PURE_DOT; i++)
 			if (strchr(dict[i], '.') != NULL && /* i.e. dict[i] contains period */
 			        i != ext_code[wp])   /* The period itself _is_ a dictionary word:
-                avoid this false match */
+				avoid this false match */
 				PURE_DOT = 1;
 	}
 }
@@ -714,7 +714,7 @@ static void fix_prompt(void) {
 
 
 void close_game(void); /* Called by setup_game, and so needs
-                 to be defined here. */
+				 to be defined here. */
 
 static fc_type setup_game(fc_type fc)
 /* game_name is the common filename of the AGT game files */
@@ -766,7 +766,7 @@ static fc_type setup_game(fc_type fc)
 #endif
 	if (have_opt)
 		menu_mode = opt_data[5];   /* See agtread.c for discussion of OPT file
-                format */
+				format */
 	text_file = 1;
 	read_config(openfile(fc, fCFG, NULL, 0), 1); /*Game specific config file*/
 	text_file = 0;
@@ -780,7 +780,7 @@ static fc_type setup_game(fc_type fc)
 	ext_dict();
 	build_verbmenu();
 	fix_dummy(); /* Prevent player from calling dummy verbs or subroutines by
-            typing 'Subroutine n' on the command line */
+			typing 'Subroutine n' on the command line */
 	can_save = init();
 	if (!agx_file) open_descr(fc);
 	fix_prompt(); /* Kill off 'What Now?' prompt. */
@@ -872,7 +872,7 @@ void run_game(fc_type fc) {
 	rm_trap = 1;
 	rm_size = ralloc_cnt = rfree_cnt = 0;
 	read_config(agt_globalfile(0), 1);   /* Global configuration file:
-                         get PATH information*/
+						 get PATH information*/
 	fix_file_context(fc, fDA1);
 	do {
 		if (doing_restore == 3) {

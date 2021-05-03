@@ -28,7 +28,7 @@
 #include "common/str.h"
 #include "common/keyboard.h"
 #include "graphics/font.h"
-#include "graphics/surface.h"
+#include "graphics/managed_surface.h"
 #include "gui/object.h"
 #include "gui/ThemeEngine.h"
 #include "common/text-to-speech.h"
@@ -120,7 +120,6 @@ public:
 	~Widget() override;
 
 	void init();
-	void resize(int x, int y, int w, int h);
 
 	void setNext(Widget *w) { _next = w; }
 	Widget *next() { return _next; }
@@ -290,7 +289,9 @@ public:
 	PicButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
 	~PicButtonWidget() override;
 
-	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled);
+	void setGfx(const Graphics::ManagedSurface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfx(const Graphics::Surface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
 	void setGfx(int w, int h, int r, int g, int b, int statenum = kPicButtonStateEnabled);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
@@ -300,7 +301,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::Surface _gfx[kPicButtonStateMax + 1];
+	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
 	bool _showButton;
@@ -420,8 +421,10 @@ public:
 	GraphicsWidget(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String());
 	~GraphicsWidget() override;
 
-	void setGfx(const Graphics::Surface *gfx);
+	void setGfx(const Graphics::ManagedSurface *gfx, bool scale = false);
+	void setGfx(const Graphics::Surface *gfx, bool scale = false);
 	void setGfx(int w, int h, int r, int g, int b);
+	void setGfxFromTheme(const char *name);
 
 	void useAlpha(int alpha) { _alpha = alpha; }
 	void useThemeTransparency(bool enable) { _transparency = enable; }
@@ -429,7 +432,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::Surface _gfx;
+	Graphics::ManagedSurface _gfx;
 	int _alpha;
 	bool _transparency;
 };

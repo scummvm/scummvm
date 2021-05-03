@@ -30,8 +30,11 @@
 #include "engines/nancy/graphics.h"
 #include "engines/nancy/cursor.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/state/scene.h"
+
+#include "engines/nancy/ui/button.h"
 
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Scene);
@@ -66,7 +69,9 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	sound.read(stream, SoundDescription::kScene);
 
-	ser.skip(0x10);
+	ser.skip(6);
+	ser.syncAsByte(dontWrap);
+	ser.skip(9);
 	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
@@ -79,6 +84,25 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	}
 
 	delete[] buf;
+}
+
+Scene::Scene() :
+		_state (kInit),
+		_lastHint(-1),
+		_gameStateRequested(NancyState::kNone),
+		_frame(),
+		_viewport(),
+		_textbox(_frame),
+		_inventoryBox(_frame),
+		_menuButton(nullptr),
+		_helpButton(nullptr),
+		_actionManager(),
+		_difficulty(0),
+		_activePrimaryVideo(nullptr) {}
+
+Scene::~Scene()  {
+	delete _helpButton;
+	delete _menuButton;
 }
 
 void Scene::process() {
@@ -115,22 +139,25 @@ void Scene::onStateEnter() {
 
 		g_nancy->_graphicsManager->redrawAll();
 
+		if (getHeldItem() != -1) {
+			g_nancy->_cursorManager->setCursorItemID(getHeldItem());
+		}
+
 		// Run once to clear out the previous scene when coming from Map
 		process();
 
 		g_nancy->setTotalPlayTime((uint32)_timers.pushedPlayTime);
 
 		unpauseSceneSpecificSounds();
+		g_nancy->_sound->stopSound("MSND");
 	}
 }
 
-bool Scene::onStateExit() {
+void Scene::onStateExit() {
 	_timers.pushedPlayTime = g_nancy->getTotalPlayTime();
 	_actionManager.onPause(true);
 	pauseSceneSpecificSounds();
 	_gameStateRequested = NancyState::kNone;
-
-	return false;
 }
 
 void Scene::changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound) {
@@ -197,7 +224,7 @@ void Scene::setHeldItem(int16 id)  {
 }
 
 void Scene::setEventFlag(int16 label, NancyFlag flag) {
-	if (label > -1) {
+	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
 		_flags.eventFlags[label] = flag;
 	}
 }
@@ -207,7 +234,7 @@ void Scene::setEventFlag(EventFlagDescription eventFlag) {
 }
 
 bool Scene::getEventFlag(int16 label, NancyFlag flag) const {
-	if (label > -1) {
+	if (label > -1 && (uint)label < g_nancy->getConstants().numEventFlags) {
 		return _flags.eventFlags[label] == flag;
 	} else {
 		return false;
@@ -252,12 +279,12 @@ void Scene::registerGraphics() {
 	_viewport.registerGraphics();
 	_textbox.registerGraphics();
 	_inventoryBox.registerGraphics();
-	_menuButton.registerGraphics();
-	_helpButton.registerGraphics();
+	_menuButton->registerGraphics();
+	_helpButton->registerGraphics();
 
 	_textbox.setVisible(!_shouldClearTextbox);
-	_menuButton.setVisible(false);
-	_helpButton.setVisible(false);
+	_menuButton->setVisible(false);
+	_helpButton->setVisible(false);
 }
 
 void Scene::synchronize(Common::Serializer &ser) {
@@ -291,7 +318,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	// TODO hardcoded inventory size
 	auto &order = getInventoryBox()._order;
 	uint prevSize = getInventoryBox()._order.size();
-	getInventoryBox()._order.resize(11);
+	getInventoryBox()._order.resize(g_nancy->getConstants().numItems);
 
 	if (ser.isSaving()) {
 		for (uint i = prevSize; i < order.size(); ++i) {
@@ -299,7 +326,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 		}
 	}
 
-	ser.syncArray(order.data(), 11, Common::Serializer::Sint16LE);
+	ser.syncArray(order.data(), g_nancy->getConstants().numItems, Common::Serializer::Sint16LE);
 
 	while (order.size() && order.back() == -1) {
 		order.pop_back();
@@ -311,7 +338,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	}
 
 	// TODO hardcoded inventory size
-	ser.syncArray(_flags.items, 11, Common::Serializer::Byte);
+	ser.syncArray(_flags.items.data(), g_nancy->getConstants().numItems, Common::Serializer::Byte);
 	ser.syncAsSint16LE(_flags.heldItem);
 	g_nancy->_cursorManager->setCursorItemID(_flags.heldItem);
 
@@ -326,7 +353,7 @@ void Scene::synchronize(Common::Serializer &ser) {
 	g_nancy->setTotalPlayTime((uint32)_timers.lastTotalTime);
 
 	// TODO hardcoded number of event flags
-	ser.syncArray(_flags.eventFlags, 168, Common::Serializer::Byte);
+	ser.syncArray(_flags.eventFlags.data(), g_nancy->getConstants().numEventFlags, Common::Serializer::Byte);
 
 	ser.syncArray<uint16>(_flags.sceneHitCount, (uint16)2001, Common::Serializer::Uint16LE);
 
@@ -360,18 +387,14 @@ void Scene::synchronize(Common::Serializer &ser) {
 }
 
 void Scene::init() {
-	for (uint i = 0; i < 168; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
+	_flags.eventFlags = Common::Array<NancyFlag>(g_nancy->getConstants().numEventFlags, kFalse);
 
 	// Does this ever get used?
 	for (uint i = 0; i < 2001; ++i) {
 		_flags.sceneHitCount[i] = 0;
 	}
 
-	for (uint i = 0; i < 11; ++i) {
-		_flags.items[i] = kFalse;
-	}
+	_flags.items = Common::Array<NancyFlag>(g_nancy->getConstants().numItems, kFalse);
 
 	_timers.lastTotalTime = 0;
 	_timers.playerTime = g_nancy->_startTimeHours * 3600000;
@@ -419,6 +442,14 @@ void Scene::init() {
 	g_nancy->_graphicsManager->redrawAll();
 }
 
+void Scene::setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo) {
+	_activePrimaryVideo = activeVideo;
+}
+
+Action::PlayPrimaryVideoChan0 *Scene::getActivePrimaryVideo() {
+	return _activePrimaryVideo;
+}
+
 void Scene::load() {
 	clearSceneData();
 
@@ -459,11 +490,9 @@ void Scene::load() {
 	_viewport.loadVideo(_sceneState.summary.videoFile,
 						_sceneState.nextScene.frameID,
 						_sceneState.nextScene.verticalOffset,
+						_sceneState.summary.dontWrap,
 						_sceneState.summary.videoFormat,
 						_sceneState.summary.videoPaletteFile);
-
-	// TODO TEMPORARY
-	_viewport.setEdgesSize(25, 25, 25, 25);
 
 	if (_viewport.getFrameCount() <= 1) {
 		_viewport.disableEdges(kLeft | kRight);
@@ -538,18 +567,34 @@ void Scene::run() {
 	// Update the UI elements and handle input
 	NancyInput input = g_nancy->_input->getInput();
 	_viewport.handleInput(input);
-	_menuButton.handleInput(input);
-	_helpButton.handleInput(input);
+	_actionManager.handleInput(input);
+	_menuButton->handleInput(input);
+	_helpButton->handleInput(input);
 	_textbox.handleInput(input);
 	_inventoryBox.handleInput(input);
-	_actionManager.handleInput(input);
+
+	if (_menuButton->_isClicked) {
+		_menuButton->_isClicked = false;
+		g_nancy->_sound->playSound("GLOB");
+		requestStateChange(NancyState::kMainMenu);
+	}
+
+	if (_helpButton->_isClicked) {
+		_helpButton->_isClicked = false;
+		g_nancy->_sound->playSound("GLOB");
+		requestStateChange(NancyState::kHelp);
+	}
 
 	_sceneState.currentScene.frameID = _viewport.getCurFrame();
 	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
 
 	// Handle invisible map button
-	for (uint i = 0; i < _mapAccessSceneIDs.size(); ++i) {
-		if (_sceneState.currentScene.sceneID == _mapAccessSceneIDs[i]) {
+	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().mapAccessSceneIDs); ++i) {
+		if (g_nancy->getConstants().mapAccessSceneIDs[i] == -1) {
+			break;
+		}
+
+		if ((int)_sceneState.currentScene.sceneID == g_nancy->getConstants().mapAccessSceneIDs[i]) {
 			if (_mapHotspot.contains(input.mousePos)) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 
@@ -568,27 +613,26 @@ void Scene::initStaticData() {
 	chunk->seek(0x8A);
 	readRect(*chunk, _mapHotspot);
 
-	// Hardcoded by original engine
-	_mapAccessSceneIDs.clear();
-	_mapAccessSceneIDs.reserve(8);
-	_mapAccessSceneIDs.push_back(9);
-	_mapAccessSceneIDs.push_back(10);
-	_mapAccessSceneIDs.push_back(11);
-	_mapAccessSceneIDs.push_back(0x4B0);
-	_mapAccessSceneIDs.push_back(0x378);
-	_mapAccessSceneIDs.push_back(0x29A);
-	_mapAccessSceneIDs.push_back(0x4E2);
-	_mapAccessSceneIDs.push_back(0x682);
+	chunk = g_nancy->getBootChunkStream("FR0");
+	chunk->seek(0);
 
-	Common::SeekableReadStream *fr = g_nancy->getBootChunkStream("FR0");
-	fr->seek(0);
-
-	_frame.init(fr->readString());
+	_frame.init(chunk->readString());
 	_viewport.init();
 	_textbox.init();
 	_inventoryBox.init();
-	_menuButton.init();
-	_helpButton.init();
+
+	// Init menu and help buttons
+	chunk = g_nancy->getBootChunkStream("BSUM");
+	chunk->seek(0x184);
+	Common::Rect menuSrc, helpSrc, menuDest, helpDest;
+	readRect(*chunk, menuSrc);
+	readRect(*chunk, helpSrc);
+	readRect(*chunk, menuDest);
+	readRect(*chunk, helpDest);
+	_menuButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, menuSrc, menuDest);
+	_helpButton = new UI::Button(_frame, 5, g_nancy->_graphicsManager->_object0, helpSrc, helpDest);
+	_menuButton->init();
+	_helpButton->init();
 	g_nancy->_cursorManager->showCursor(true);
 
 	_state = kLoad;
@@ -596,16 +640,12 @@ void Scene::initStaticData() {
 
 void Scene::clearSceneData() {
 	// only clear select flags
-	for (uint i = 44; i < 54; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
+	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().eventFlagsToClearOnSceneChange); ++i) {
+		if (g_nancy->getConstants().eventFlagsToClearOnSceneChange[i] == -1) {
+			break;
+		}
 
-	for (uint i = 63; i < 74; ++i) {
-		_flags.eventFlags[i] = kFalse;
-	}
-
-	for (uint i = 75; i < 85; ++i) {
-		_flags.eventFlags[i] = kFalse;
+		_flags.eventFlags[g_nancy->getConstants().eventFlagsToClearOnSceneChange[i]] = kFalse;
 	}
 
 	clearLogicConditions();

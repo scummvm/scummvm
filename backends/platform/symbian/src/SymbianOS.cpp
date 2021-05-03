@@ -51,11 +51,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/keymapper-defaults.h"
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-#include "backends/platform/symbian/src/SymbianActions.h"
-#include "backends/events/symbiansdl/symbiansdl-events.h"
-#endif
-
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 #define DEFAULT_SAVE_PATH "Savegames"
 
@@ -123,14 +118,6 @@ void OSystem_SDL_Symbian::initBackend() {
 	ConfMan.setBool("fullscreen", true);
 	ConfMan.flushToDisk();
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-	GUI::Actions::init();
-
-	// Creates the backend managers
-	if (_eventSource == 0)
-		_eventSource = new SymbianSdlEventSource();
-#endif
-
 	if (_mixerManager == 0) {
 		_mixerManager = new SymbianSdlMixerManager();
 
@@ -140,14 +127,6 @@ void OSystem_SDL_Symbian::initBackend() {
 
 	// Call parent implementation of this method
 	OSystem_SDL::initBackend();
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	// Initialize global key mapping for Smartphones
-	GUI::Actions* actions = GUI::Actions::Instance();
-
-	actions->initInstanceMain(this);
-	actions->loadMapping();
-#endif
 }
 
 void OSystem_SDL_Symbian::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -164,32 +143,6 @@ void OSystem_SDL_Symbian::quitWithErrorMsg(const char * /*aMsg*/) {
 		g_system->quit();
 }
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-void OSystem_SDL_Symbian::quit() {
-	delete GUI_Actions::Instance();
-
-	// Call parent implementation of this method
-	OSystem_SDL::quit();
-}
-
-void OSystem_SDL_Symbian::engineInit() {
-	// Check mappings for the engine just started
-	checkMappings();
-}
-
-void OSystem_SDL_Symbian::engineDone() {
-	// Need to reset engine to basic state after an engine has been running
-	GUI::Actions::Instance()->initInstanceMain(this);
-}
-
-void OSystem_SDL_Symbian::checkMappings() {
-	if (ConfMan.get("gameid").empty() || GUI::Actions::Instance()->initialized())
-		return;
-
-	GUI::Actions::Instance()->initInstanceGame();
-}
-#endif
-
 Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 	strcpy(configFile, Symbian::GetExecutablePath());
@@ -198,10 +151,6 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 }
 
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	if (f == kFeatureJoystickDeadzone)
-		return false;
-#endif
 	if (f == kFeatureFullscreenMode)
 		return false;
 
@@ -211,6 +160,12 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 
 RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
+}
+
+Common::KeymapperDefaultBindings *OSystem_SDL_Symbian::getKeymapperDefaultBindings(){
+	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
+	keymapperDefaultBindings->setDefaultBinding(Common::kGlobalKeymapName, "MENU", "ASTERISK");
+	return keymapperDefaultBindings;
 }
 
 

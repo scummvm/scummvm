@@ -40,11 +40,11 @@ namespace Ultima {
 namespace Nuvie {
 
 static const int obj_egg_table[5] = {0,   // NUVIE_GAME_NONE
-                                     335, // NUVIE_GAME_U6
-                                     466,   // NUVIE_GAME_MD
-                                     0,
-                                     230
-                                    };  // NUVIE_GAME_SE
+									 335, // NUVIE_GAME_U6
+									 466,   // NUVIE_GAME_MD
+									 0,
+									 230
+									};  // NUVIE_GAME_SE
 
 static iAVLKey get_iAVLKey(const void *item) {
 	return ((const ObjTreeNode *)item)->key;
@@ -439,8 +439,8 @@ U6LList *ObjManager::get_obj_superchunk(uint16 x, uint16 y, uint8 level)
 
  if(level == 0)
    {
-    i = y * 8 + x;
-    return surface[i];
+	i = y * 8 + x;
+	return surface[i];
    }
 
  return dungeon[level-1];
@@ -1820,9 +1820,9 @@ inline U6LList *ObjManager::get_schunk_list(uint16 x, uint16 y, uint8 level)
 
  if(level == 0)
    {
-    sx = x / 128;
-    sy = y / 128;
-    return surface[sy * 8 + sx];
+	sx = x / 128;
+	sy = y / 128;
+	return surface[sy * 8 + sx];
    }
 
  return dungeon[level-1];
@@ -2172,9 +2172,9 @@ bool ObjManager::unlink_from_engine(Obj *obj, bool run_usecode) {
 		break;
 // inventory_remove_obj unreadies
 	case OBJ_LOC_READIED :/* a = (Actor *)obj->parent;
-                           a->remove_readied_object(obj, run_usecode);
-                           a->inventory_remove_obj(obj, run_usecode);
-                           break;
+						   a->remove_readied_object(obj, run_usecode);
+						   a->inventory_remove_obj(obj, run_usecode);
+						   break;
 */
 	case OBJ_LOC_INV :
 		a = (Actor *)obj->parent;

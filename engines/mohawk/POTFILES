@@ -1,3 +1,4 @@
+engines/mohawk/detection_tables.h
 engines/mohawk/detection.cpp
 engines/mohawk/dialogs.cpp
 engines/mohawk/metaengine.cpp

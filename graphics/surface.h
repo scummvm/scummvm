@@ -45,6 +45,8 @@ namespace Graphics {
  * @{
  */
 
+struct TransformStruct;
+
 /**
  * An arbitrary graphics surface that can be the target (or source) of blit
  * operations, font rendering, etc.
@@ -402,6 +404,34 @@ public:
 	 */
 	Graphics::Surface *scale(uint16 newWidth, uint16 newHeight, bool filtering = false) const;
 
+	/**
+	 * @brief Rotoscale function; this returns a transformed version of this surface after rotation and
+	 * scaling. Please do not use this if angle == 0, use plain old scaling function.
+	 *
+	 * The client code must call @ref free on the returned surface and then delete
+	 * it.
+	 *
+	 * @param transform a TransformStruct wrapping the required info. @see TransformStruct
+	 * @param filtering Whether or not to use bilinear filtering.
+	 *
+	 */
+	Graphics::Surface *rotoscale(const TransformStruct &transform, bool filtering = false) const;
+
+	/**
+	 * Print surface content on console in pseudographics
+	 *
+	 * @param debuglevel debug level to print at, default is 0.
+	 * @param width width of the printed area in pixels. Default is 0 which is whole surface.
+	 * @param height height of the printed area in pixels. Default is 0 which is whole surface.
+	 * @param x horizontal offset to the print area. Default is 0.
+	 * @param y vertical offset to the print area. Default is 0.
+	 * @param scale number of pixels per single character. Default is -1, fit whole surface to maxwidth
+	 * @param maxwidth horizontal size of the print out in characters. Default is 160. Note that 2 characters
+	 *                 are taken by the frame
+	 * @param palette ˚palette to use for 1bpp pixels. If omitted, we assume grayscale palette
+	 *
+	 */
+	void debugPrint(int debuglevel = 0, int width = 0, int height = 0, int x = 0, int y = 0, int scale = -1, int maxwidth = 160, const byte *palette = NULL) const;
 };
 
 /**

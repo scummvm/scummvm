@@ -60,7 +60,7 @@ SpeechFlex::~SpeechFlex(void) {
 }
 
 int SpeechFlex::getIndexForPhrase(const Std::string &phrase,
-                                  uint32 start, uint32 &end) const {
+								  uint32 start, uint32 &end) const {
 	Std::vector<istring>::const_iterator it;
 	int i = 1;
 

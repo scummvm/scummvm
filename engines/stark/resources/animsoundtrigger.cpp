@@ -37,8 +37,8 @@ AnimSoundTrigger::~AnimSoundTrigger() {
 
 AnimSoundTrigger::AnimSoundTrigger(Object *parent, byte subType, uint16 index, const Common::String &name) :
 		Object(parent, subType, index, name),
-        _soundStockType(0),
-        _soundTriggerTime(0),
+		_soundStockType(0),
+		_soundTriggerTime(0),
 		_anim(nullptr),
 		_alreadyPlayed(false),
 		_timeRemainingBeforeLoop(34) {

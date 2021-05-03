@@ -528,7 +528,7 @@ void Parser::cursorOff() {
  * Asks the parsekey proc in Dropdown if it knows it.
  */
 void Parser::tryDropdown() {
-    // TODO: Implement at the same time with Dropdown's keyboard handling.
+	// TODO: Implement at the same time with Dropdown's keyboard handling.
 	warning("STUB: Parser::tryDropdown()");
 }
 

@@ -44,7 +44,7 @@ class Codec;
  * @return   a new Codec, or NULL, if an error occurred
  */
 Codec *makeQDM2Decoder(Common::SeekableReadStream *extraData,
-                       DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
+					   DisposeAfterUse::Flag disposeExtraData = DisposeAfterUse::NO);
 
 } // End of namespace Audio
 

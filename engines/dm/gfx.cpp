@@ -558,7 +558,7 @@ void DisplayMan::initConstants() {
 			for(int c = 0; c < 6; ++c)
 				_wallOrnamentCoordSets[a][b][c] = wallOrnamentCoordSets[a][b][c];
 
-    for(int a = 0; a < 4; ++a)
+	for(int a = 0; a < 4; ++a)
 		for(int b = 0; b < 3; ++b)
 			for(int c = 0; c < 6; ++c)
 				_doorOrnCoordSets[a][b][c] = doorOrnCoordSets[a][b][c];
@@ -703,8 +703,8 @@ void DisplayMan::initializeGraphicData() {
 	_bitmapViewport = new byte[224 * 136]();
 
 	if (!_derivedBitmapByteCount) {
-        _derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
-    }
+		_derivedBitmapByteCount = new uint16[k730_DerivedBitmapMaximumCount];
+	}
 	if (!_derivedBitmaps) {
 		_derivedBitmaps = new byte *[k730_DerivedBitmapMaximumCount];
 		for (uint16 i = 0; i < k730_DerivedBitmapMaximumCount; ++i)

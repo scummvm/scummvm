@@ -24,8 +24,7 @@
 #include "common/system.h"
 #include "common/frac.h"
 
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/nine_patch.h"
 
 #include "gui/ThemeEngine.h"
@@ -739,7 +738,7 @@ copyFrame(OSystem *sys, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
+blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) {
 	assert(source->w == _activeSurface->w && source->h == _activeSurface->h);
 
 	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(r.left, r.top);
@@ -760,102 +759,19 @@ blitSurface(const Graphics::Surface *source, const Common::Rect &r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-blitSubSurface(const Graphics::Surface *source, const Common::Point &p) {
+blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
 	drawRect.clip(_clippingArea);
+	drawRect.moveTo(0, 0);
 
 	if (drawRect.isEmpty()) {
 		return;
 	}
 
-	int sourceOffsetX = drawRect.left - p.x;
-	int sourceOffsetY = drawRect.top - p.y;
-
-	byte *dst_ptr = (byte *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
-	const byte *src_ptr = (const byte *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
-
-	const int dst_pitch = _activeSurface->pitch;
-	const int src_pitch = source->pitch;
-
-	int lines = drawRect.height();
-	const int sz = drawRect.width() * sizeof(PixelType);
-
-	while (lines--) {
-		memcpy(dst_ptr, src_ptr, sz);
-		dst_ptr += dst_pitch;
-		src_ptr += src_pitch;
-	}
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) {
-	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
-	drawRect.clip(_clippingArea);
-
-	if (drawRect.isEmpty()) {
-		return;
-	}
-
-	int sourceOffsetX = drawRect.left - p.x;
-	int sourceOffsetY = drawRect.top - p.y;
-
-	PixelType *dst_ptr = (PixelType *)_activeSurface->getBasePtr(drawRect.left, drawRect.top);
-	const PixelType *src_ptr = (const PixelType *)source->getBasePtr(sourceOffsetX, sourceOffsetY);
-
-	int dst_pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int src_pitch = source->pitch / source->format.bytesPerPixel;
-
-	int w, h = drawRect.height();
-
-	while (h--) {
-		w = drawRect.width();
-
-		while (w--) {
-			if (*src_ptr != _bitmapAlphaColor)
-				*dst_ptr = *src_ptr;
-
-			dst_ptr++;
-			src_ptr++;
-		}
-
-		dst_ptr = dst_ptr - drawRect.width() + dst_pitch;
-		src_ptr = src_ptr - drawRect.width() + src_pitch;
-	}
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
-blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r, GUI::ThemeEngine::AutoScaleMode autoscale,
-			Graphics::DrawStep::VectorAlignment xAlign, Graphics::DrawStep::VectorAlignment yAlign, int alpha) {
-	if (autoscale == GUI::ThemeEngine::kAutoScaleStretch) {
-		source->blit(*_activeSurface, r.left, r.top, Graphics::FLIP_NONE,
-			nullptr, TS_ARGB(alpha, 255, 255, 255),
-			  r.width(), r.height());
-	} else if (autoscale == GUI::ThemeEngine::kAutoScaleFit) {
-		double ratio = (double)r.width() / source->w;
-		double ratio2 = (double)r.height() / source->h;
-
-		if (ratio2 < ratio)
-			ratio = ratio2;
-
-		int offx = 0, offy = 0;
-		if (xAlign == Graphics::DrawStep::kVectorAlignCenter)
-			offx = (r.width() - (int)(source->w * ratio)) >> 1;
-
-		if (yAlign == Graphics::DrawStep::kVectorAlignCenter)
-			offy = (r.height() - (int)(source->h * ratio)) >> 1;
-
-		source->blit(*_activeSurface, r.left + offx, r.top + offy, Graphics::FLIP_NONE,
-			nullptr, TS_ARGB(alpha, 255, 255, 255),
-	                  (int)(source->w * ratio), (int)(source->h * ratio));
-
-	} else if (autoscale == GUI::ThemeEngine::kAutoScaleNinePatch) {
-		Graphics::NinePatchBitmap nine(source, false);
-		nine.blit(*_activeSurface, r.left, r.top, r.width(), r.height());
-	} else {
-		source->blit(*_activeSurface, r.left, r.top);
-	}
+	if (themeTrans)
+		_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
+	else
+		_activeSurface->blitFrom(*source, drawRect, p);
 }
 
 template<typename PixelType>
@@ -1321,7 +1237,7 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTab(int x, int y, int r, int w, int h) {
+drawTab(int x, int y, int r, int w, int h, int s) {
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r > w || r > h)
 		return;
@@ -1351,12 +1267,12 @@ drawTab(int x, int y, int r, int w, int h) {
 		// See the rounded rect alg for how to fix it. (The border should
 		// be drawn before the interior, both inside drawTabAlg.)
 		if (useClippingVersions) {
-			drawTabShadowClip(x, y, w - 2, h, r);
+			drawTabShadowClip(x, y, w - 2, h, r, s);
 			drawTabAlgClip(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlgClip(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
 		} else {
-			drawTabShadow(x, y, w - 2, h, r);
+			drawTabShadow(x, y, w - 2, h, r, s);
 			drawTabAlg(x, y, w - 2, h, r, _bgColor, Base::_fillMode);
 			if (Base::_strokeWidth)
 				drawTabAlg(x, y, w, h, r, _fgColor, kFillDisabled, (Base::_dynamicData >> 16), (Base::_dynamicData & 0xFFFF));
@@ -1682,8 +1598,8 @@ drawTabAlgClip(int x1, int y1, int w, int h, int r, PixelType color, VectorRende
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadow(int x1, int y1, int w, int h, int r) {
-	int offset = 3;
+drawTabShadow(int x1, int y1, int w, int h, int r, int s) {
+	int offset = s;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -1743,8 +1659,8 @@ drawTabShadow(int x1, int y1, int w, int h, int r) {
 
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawTabShadowClip(int x1, int y1, int w, int h, int r) {
-	int offset = 3;
+drawTabShadowClip(int x1, int y1, int w, int h, int r, int s) {
+	int offset = s;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
 
 	// "Harder" shadows when having lower BPP, since we will have artifacts (greenish tint on the modern theme)
@@ -2702,7 +2618,7 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	int f, ddF_x, ddF_y;
 	int x, y, px, py;
 	int pitch = _activeSurface->pitch / _activeSurface->format.bytesPerPixel;
-	int sw = 0, sp = 0, hp = h * pitch;
+	int sw = 0;
 
 	PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(x1 + r, y1 + r);
 	PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + r);
@@ -2717,9 +2633,11 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType color2 = color;
 
 	while (sw++ < Base::_strokeWidth) {
-		blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color1, alpha_t); // top
-		blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color2, alpha_b); // bottom
-		sp += pitch;
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw - 1);
+		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color1, alpha_t); // top
+
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw + 1);
+		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color2, alpha_b); // bottom
 
 		BE_RESET();
 		r--;
@@ -2752,8 +2670,8 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 
 	ptr_fill += pitch * real_radius;
 	while (short_h--) {
-		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color1, alpha_l); // left
-		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color2, alpha_r); // right
+		blendFill(ptr_fill, ptr_fill + Base::_strokeWidth, color, alpha_l); // left
+		blendFill(ptr_fill + w - Base::_strokeWidth + 1, ptr_fill + w + 1, color, alpha_r); // right
 		ptr_fill += pitch;
 	}
 }
@@ -3612,17 +3530,17 @@ drawBorderRoundedSquareAlg(int x1, int y1, int r, int w, int h, PixelType color,
 	PixelType *ptr_br = (PixelType *)Base::_activeSurface->getBasePtr(x1 + w - r, y1 + h - r);
 	PixelType *ptr_fill = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1);
 
-	int sw = 0, sp = 0;
+	int sw = 0;
 	int short_h = h - 2 * r;
-	int hp = h * pitch;
 
 	int strokeWidth = Base::_strokeWidth;
 
 	while (sw++ < strokeWidth) {
-		this->blendFill(ptr_fill + hp - sp + r, ptr_fill + w + hp + 1 - sp - r, color, alpha_b); // bottom
-		this->blendFill(ptr_fill + sp + r, ptr_fill + w + 1 + sp - r, color, alpha_t); // top
+		PixelType *ptr_fill3 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + sw - 1);
+		this->blendFill(ptr_fill3 + r, ptr_fill3 + w + 1 - r, color, alpha_t); // top
 
-		sp += pitch;
+		PixelType *ptr_fill2 = (PixelType *)Base::_activeSurface->getBasePtr(x1, y1 + h - sw + 1);
+		this->blendFill(ptr_fill2 + r, ptr_fill2 + w + 1 - r, color, alpha_b); // bottom
 
 		x = r - (sw - 1);
 		y = 0;

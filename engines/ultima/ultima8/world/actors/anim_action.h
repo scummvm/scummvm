@@ -139,6 +139,10 @@ public:
 		return (_flags & mask) != 0;
 	}
 
+	uint32 getFlags() const {
+		return _flags;
+	}
+
 	const AnimFrame &getFrame(Direction dir, unsigned int frameno) const;
 
 	/**

@@ -23,7 +23,9 @@
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/mactext.h"
 #include "graphics/palette.h"
+#include "graphics/fonts/ttf.h"
 
+#include "pink/pink.h"
 #include "pink/cel_decoder.h"
 #include "pink/director.h"
 #include "pink/objects/actions/action_sound.h"
@@ -88,20 +90,42 @@ static void redrawCallback(void *ref) {
 	}
 }
 
-Director::Director()
+Director::Director(PinkEngine *vm)
 	: _surface(640, 480), _textRendered(false) {
-	_wm = new Graphics::MacWindowManager(Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
+	uint32 wmMode = Graphics::kWMModeNoDesktop | Graphics::kWMModeAutohideMenu
 		| Graphics::kWMModalMenuMode | Graphics::kWMModeForceBuiltinFonts
-		| Graphics::kWMModeUnicode);
+		| Graphics::kWMModeUnicode;
+
+	if (vm->getLanguage() != Common::HE_ISR) // We do not have Hebrew font in MS fonts :(
+		wmMode |= Graphics::kWMModeWin95;
+
+	_wm = new Graphics::MacWindowManager(wmMode);
 
 	_wm->setScreen(&_surface);
 	_wm->setMenuHotzone(Common::Rect(0, 0, 640, 23));
 	_wm->setMenuDelay(250000);
 	_wm->setEngineRedrawCallback(this, redrawCallback);
+
+	_textFont = NULL;
+
+#ifdef USE_FREETYPE2
+	_textFont = Graphics::loadTTFFontFromArchive("system.ttf", 16);
+#endif
+	_textFontCleanup = true;
+
+	if (!_textFont) {
+		_textFont = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		warning("Director: falling back to built-in font");
+
+		_textFontCleanup = false;
+	}
 }
 
 Director::~Director() {
 	delete _wm;
+
+	if (_textFontCleanup)
+		delete _textFont;
 }
 
 void Director::update() {
@@ -120,9 +144,9 @@ void Director::update() {
 			_sprites[i]->update();
 	}
 
-	_wm->draw();
-
 	draw();
+
+	_wm->draw();
 }
 
 bool Director::processEvent(Common::Event &event) {
@@ -144,6 +168,19 @@ void Director::removeTextAction(ActionText *action) {
 	for (uint i = 0; i < _textActions.size(); ++i) {
 		if (_textActions[i] == action) {
 			_textActions.remove_at(i);
+			break;
+		}
+	}
+}
+
+void Director::addTextWindow(Graphics::MacTextWindow *window) {
+	_textWindows.push_back(window);
+}
+
+void Director::removeTextWindow(Graphics::MacTextWindow *window) {
+	for (uint i = 0; i < _textWindows.size(); i++) {
+		if (_textWindows[i] == window) {
+			_textWindows.remove_at(i);
 			break;
 		}
 	}
@@ -291,6 +328,24 @@ void Director::drawRect(const Common::Rect &rect) {
 		Common::Rect srcRect(interRect);
 		srcRect.translate(-spriteRect.left, -spriteRect.top);
 		_surface.transBlitFrom(*_sprites[i]->getDecoder()->getCurrentFrame(), srcRect, interRect, _sprites[i]->getDecoder()->getTransparentColourIndex());
+	}
+
+	// check the intersection with action text
+	for (uint i = 0; i < _textActions.size(); i++) {
+		const Common::Rect &textActionRect = _textActions[i]->getBound();
+		Common::Rect interRect = rect.findIntersectingRect(textActionRect);
+		if (interRect.isEmpty())
+			continue;
+		_textActions[i]->draw(&_surface);
+	}
+
+	// check the intersection with mactextwindow
+	for (uint i = 0; i < _textWindows.size(); i++) {
+		const Common::Rect &textWindowRect = _textWindows[i]->getDimensions();
+		Common::Rect interRect = rect.findIntersectingRect(textWindowRect);
+		if (interRect.isEmpty())
+			continue;
+		_textWindows[i]->draw(_wm->_screen, true);
 	}
 }
 

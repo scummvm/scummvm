@@ -35,10 +35,12 @@ private:
 	Common::Queue<Common::Event> _pendingEvents;
 	Common::Queue<Common::KeyState> _pendingKeys;
 	Common::Array<bool> _keys;
-	uint _keyFlags;
+	Common::Point _mousePos;
+	int16 _joystickAxis[32];
+	bool _joystickButton[32];
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
-
+	bool isExtendedKey(const Common::KeyCode &keycode) const;
 	int getScancode(Common::KeyCode keycode) const;
 
 	void updateKeys(const Common::KeyState &keyState, bool isDown);
@@ -79,8 +81,39 @@ public:
 	/**
 	 * Returns the bitset of currently pressed modifier keys
 	 */
-	uint getModifierFlags() const {
-		return _keyFlags;
+	uint getModifierFlags() const;
+
+	/**
+	 * Get the current mouse position
+	 */
+	Common::Point getMousePos() const {
+		return _mousePos;
+	}
+
+	/**
+	 * Gets a joystick axis position
+	 */
+	int16 getJoystickAxis(byte axis) const {
+		assert(axis < 32);
+		return _joystickAxis[axis];
+	}
+
+	/**
+	 * Gets whether a given joystick button is down
+	 */
+	bool getJoystickButton(byte button) const {
+		assert(button < 32);
+		return _joystickButton[button];
+	}
+
+	/**
+	 * Gets whether a given joystick button is down once
+	 */
+	bool getJoystickButtonOnce(byte button) {
+		assert(button < 32);
+		bool result = _joystickButton[button];
+		_joystickButton[button] = false;
+		return result;
 	}
 };
 

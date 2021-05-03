@@ -73,6 +73,7 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const U32String
 	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
 	_entriesPerPage = 0;
+	_scrollBarWidth = 0;
 
 	_scrollBar = new ScrollBarWidget(this, _w - _scrollBarWidth, 0, _scrollBarWidth, _h);
 	_scrollBar->setTarget(this);
@@ -723,7 +724,7 @@ void ListWidget::reflowLayout() {
 	assert(_entriesPerPage > 0);
 
 	if (_scrollBar) {
-		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h);
+		_scrollBar->resize(_w - _scrollBarWidth, 0, _scrollBarWidth, _h, false);
 		scrollBarRecalc();
 		scrollToCurrent();
 	}

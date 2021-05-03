@@ -1405,7 +1405,7 @@ MidiDriver_ADLIB::MidiDriver_ADLIB() {
 	_timerThreshold = 0x411B;
 	_opl = 0;
 	_adlibTimerProc = 0;
-        _adlibTimerParam = 0;
+	_adlibTimerParam = 0;
 	_isOpen = false;
 }
 

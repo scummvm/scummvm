@@ -315,8 +315,8 @@ void HelpDialog::reflowLayout() {
 	int xoff = (_w >> 1) - (w >> 1);
 
 	for (int i = 0; i < _numLines; i++) {
-		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight);
-		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight);
+		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight, false);
+		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight, false);
 	}
 
 	displayKeyBindings();
@@ -663,7 +663,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 }
 
 LoomTownsDifficultyDialog::LoomTownsDifficultyDialog()
-    : Dialog("LoomTownsDifficultyDialog"), _difficulty(-1) {
+	: Dialog("LoomTownsDifficultyDialog"), _difficulty(-1) {
 	GUI::StaticTextWidget *text1 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description1", _("Select a Proficiency Level."));
 	text1->setAlign(Graphics::kTextAlignCenter);
 	GUI::StaticTextWidget *text2 = new GUI::StaticTextWidget(this, "LoomTownsDifficultyDialog.Description2", _("Refer to your Loom(TM) manual for help."));

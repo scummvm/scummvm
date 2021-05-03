@@ -151,6 +151,9 @@ protected:
 		kActionPreviousScaleFilter
 	};
 
+	/** Obtain the user configured fullscreen resolution, or default to the desktop resolution */
+	Common::Rect getPreferredFullscreenResolution();
+
 	virtual int getGraphicsModeScale(int mode) const = 0;
 
 	bool defaultGraphicsModeConfig() const;
@@ -163,7 +166,7 @@ protected:
 	void getWindowSizeFromSdl(int *width, int *height) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		assert(_window);
-		SDL_GetWindowSize(_window->getSDLWindow(), width, height);
+		SDL_GL_GetDrawableSize(_window->getSDLWindow(), width, height);
 #else
 		assert(_hwScreen);
 
@@ -177,9 +180,48 @@ protected:
 #endif
 	}
 
+	void getDisplayDpiFromSdl(float *dpi, float *defaultDpi) const {
+		const float systemDpi =
+#ifdef __APPLE__
+		72.0f;
+#elif defined(_WIN32)
+		96.0f;
+#else
+		90.0f; // ScummVM default
+#endif
+		if (defaultDpi)
+			*defaultDpi = systemDpi;
+
+		if (dpi) {
+#if SDL_VERSION_ATLEAST(2, 0, 4)
+			if (SDL_GetDisplayDPI(_window->getDisplayIndex(), NULL, dpi, NULL) != 0) {
+				*dpi = systemDpi;
+			}
+#else
+			*dpi = systemDpi;
+#endif
+		}
+	}
+
+	/**
+	 * Returns the scaling mode based on the display DPI
+	 */
+	void getDpiScalingFactor(uint *scale) const {
+		float dpi, defaultDpi, ratio;
+
+		getDisplayDpiFromSdl(&dpi, &defaultDpi);
+		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
+		ratio = dpi / defaultDpi;
+		if (ratio >= 1.5f) {
+			*scale = 2;
+		} else {
+			*scale = 1;
+		}
+	}
+
 	virtual void setSystemMousePosition(const int x, const int y) override;
 
-	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
+	virtual void handleResizeImpl(const int width, const int height) override;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:

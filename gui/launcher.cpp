@@ -127,7 +127,7 @@ void LauncherDialog::build() {
 	if (g_gui.xmlEval()->getVar("Globals.ShowLauncherLogo") == 1 && g_gui.theme()->supportsImages()) {
 		_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
+		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 
 		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
 	} else
@@ -179,7 +179,7 @@ void LauncherDialog::build() {
 	_searchPic = nullptr;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
-		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 	} else
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
@@ -283,6 +283,10 @@ void LauncherDialog::updateListing() {
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
 	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
+		// Do not list temporary targets added when starting a game from the command line
+		if (iter->_value.contains("id_came_from_command_line"))
+			continue;
+
 		String description;
 
 		if (!iter->_value.tryGetVal("description", description)) {
@@ -747,7 +751,7 @@ void LauncherDialog::reflowLayout() {
 		if (!_logo)
 			_logo = new GraphicsWidget(this, "Launcher.Logo");
 		_logo->useThemeTransparency(true);
-		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
+		_logo->setGfxFromTheme(ThemeEngine::kImageLogo);
 	} else {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
@@ -766,7 +770,7 @@ void LauncherDialog::reflowLayout() {
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
 		if (!_searchPic)
 			_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
-		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
+		_searchPic->setGfxFromTheme(ThemeEngine::kImageSearch);
 
 		if (_searchDesc) {
 			removeWidget(_searchDesc);

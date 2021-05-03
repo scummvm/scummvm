@@ -33,33 +33,12 @@ namespace UI {
 
 class Button : public RenderObject {
 public:
-	Button(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	Button(RenderObject &redrawFrom, uint16 zOrder, Graphics::ManagedSurface &surface, const Common::Rect &srcBounds, const Common::Rect &destBounds);
 	virtual ~Button() = default;
-
-	virtual void onClick() = 0;
 
 	void handleInput(NancyInput &input);
 
-protected:
-	virtual uint16 getZOrder() const override { return 5; }
-};
-
-class MenuButton : public Button {
-public:
-	MenuButton(RenderObject &redrawFrom) : Button(redrawFrom) {}
-	virtual ~MenuButton() = default;
-
-	virtual void init() override;
-	virtual void onClick() override;
-};
-
-class HelpButton : public Button {
-public:
-	HelpButton(RenderObject &redrawFrom) : Button(redrawFrom) {}
-	virtual ~HelpButton() = default;
-
-	virtual void init() override;
-	virtual void onClick() override;
+	bool _isClicked;
 };
 
 } // End of namespace UI

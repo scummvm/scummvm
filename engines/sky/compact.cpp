@@ -129,9 +129,9 @@ SkyCompact::SkyCompact() {
 	Common::String filename = "sky.cpt";
 	if (!_cptFile->open(filename.c_str())) {
 		const char *msg = _s("Unable to locate the '%s' engine data file.");
-        Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str());
-        GUIErrorMessage(errorMessage);
-        error(msg, filename.c_str());
+		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		error(msg, filename.c_str());
 	}
 
 	uint16 fileVersion = _cptFile->readUint16LE();

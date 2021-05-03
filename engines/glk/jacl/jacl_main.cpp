@@ -35,8 +35,8 @@ int convert_to_utf32(unsigned char *text);
 uint                status_width, status_height;
 
 schanid_t           sound_channel[8] = { NULL, NULL, NULL, NULL,
-                                         NULL, NULL, NULL, NULL
-                                       };
+										 NULL, NULL, NULL, NULL
+									   };
 
 event_t             *cancelled_event;
 
@@ -124,7 +124,7 @@ int             player_backup = 0;
 int             variable_contents;
 int             oec;
 int            *object_element_address,
-               *object_backup_address;
+			   *object_backup_address;
 
 short int       spaced = TRUE;
 
@@ -262,6 +262,8 @@ void glk_main() {
 		return;
 	}
 
+	if (g_vm->shouldQuit()) // terminate() could be called by now when game data is bad
+		return;
 
 	/* DUMMY RETRIEVE OF 'HERE' FOR TESTING OF GAME STATE */
 	get_here();

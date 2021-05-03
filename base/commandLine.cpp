@@ -69,8 +69,10 @@ static const char HELP_STRING[] =
 	"  -v, --version            Display ScummVM version information and exit\n"
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
+	"  --list-all-games         Display list of all detected games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
 	"  --list-engines           Display list of suppported engines and exit\n"
+	"  --list-all-engines       Display list of all detection engines and exit\n"
 	"  --list-saves             Display a list of saved games for the target specified\n"
 	"                           with --game=TARGET, or all targets if none is specified\n"
 	"  -a, --add                Add all games from current or specified directory.\n"
@@ -102,6 +104,10 @@ static const char HELP_STRING[] =
 	"  --stretch-mode=MODE      Select stretch mode (center, integral, fit, stretch)\n"
 	"  --filtering              Force filtered graphics mode\n"
 	"  --no-filtering           Force unfiltered graphics mode\n"
+#ifdef USE_OPENGL
+	"  --window-size=W,H        Set the ScummVM window size to the specified dimensions\n"
+	"                           (OpenGL only)\n"
+#endif
 	"  --gui-theme=THEME        Select GUI theme\n"
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
@@ -142,12 +148,12 @@ static const char HELP_STRING[] =
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
 	"  --opl-driver=DRIVER      Select AdLib (OPL) emulator (db, mame"
 #ifndef DISABLE_NUKED_OPL
-                                                                     ", nuked"
+																	 ", nuked"
 #endif
 #ifdef ENABLE_OPL2LPT
-                                                                     ", opl2lpt"
+																	 ", opl2lpt"
 #endif
-                                                                              ")\n"
+																			  ")\n"
 	"  --show-fps               Set the turn on display FPS info in 3D games\n"
 	"  --no-show-fps            Set the turn off display FPS info in 3D games\n"
 	"  --renderer=RENDERER      Select 3D renderer (software, opengl, opengl_shaders)\n"
@@ -537,7 +543,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_COMMAND
 
+			DO_LONG_COMMAND("list-all-games")
+			END_COMMAND
+
 			DO_LONG_COMMAND("list-engines")
+			END_COMMAND
+
+			DO_LONG_COMMAND("list-all-engines")
 			END_COMMAND
 
 			DO_COMMAND('a', "add")
@@ -598,6 +610,25 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 			DO_LONG_OPTION_BOOL("filtering")
 			END_OPTION
+
+#ifdef USE_OPENGL
+			DO_LONG_OPTION("window-size")
+				Common::StringTokenizer tokenizer(option, ",");
+				if (tokenizer.empty())
+					usage("Invalid window format specified: %s", option);
+				Common::String w = tokenizer.nextToken();
+				if (tokenizer.empty())
+					usage("Invalid window format specified: %s", option);
+				Common::String h = tokenizer.nextToken();
+
+				if (atoi(w.c_str()) == 0 || atoi(h.c_str()) == 0)
+					usage("Invalid window format specified: %s", option);
+
+				settings["last_window_width"] = w;
+				settings["last_window_height"] = h;
+				settings.erase("window_size");
+			END_OPTION
+#endif
 
 #ifdef ENABLE_EVENTRECORDER
 			DO_LONG_OPTION_INT("disable-display")
@@ -819,6 +850,22 @@ static void listGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+
+		PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
+			printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+		}
+	}
+}
+
+/** List all detected game IDs, i.e. all games which any loaded plugin supports. */
+static void listAllGames() {
+	printf("Game ID                        Full Title                                                 \n"
+	       "------------------------------ -----------------------------------------------------------\n");
+
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaengine = (*iter)->get<MetaEngineDetection>();
@@ -832,6 +879,19 @@ static void listGames() {
 
 /** List all supported engines, i.e. all loaded plugins. */
 static void listEngines() {
+	printf("Engine ID       Engine Name                                           \n"
+	       "--------------- ------------------------------------------------------\n");
+
+	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
+	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+
+		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
+	}
+}
+
+/** List all detection engines, i.e. all loaded plugins. */
+static void listAllEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
 
@@ -855,7 +915,7 @@ static void listTargets() {
 
 	for (iter = domains.begin(); iter != domains.end(); ++iter) {
 		Common::String name(iter->_key);
-		Common::String description(iter->_value.getVal("description"));
+		Common::String description(iter->_value.getValOrDefault("description"));
 
 		// If there's no description, fallback on the default description.
 		if (description.empty()) {
@@ -1362,8 +1422,14 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "list-games") {
 		listGames();
 		return true;
+	} else if (command == "list-all-games") {
+		listAllGames();
+		return true;
 	} else if (command == "list-engines") {
 		listEngines();
+		return true;
+	} else if (command == "list-all-engines") {
+		listAllEngines();
 		return true;
 	} else if (command == "list-saves") {
 		err = listSaves(settings["game"]);
@@ -1406,19 +1472,17 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 	} else if (command == "add") {
 		addGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
 		return true;
-	}
 #ifdef DETECTOR_TESTING_HACK
-	else if (command == "test-detector") {
+	} else if (command == "test-detector") {
 		runDetectorTest();
 		return true;
-	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
-	else if (command == "upgrade-targets") {
+	} else if (command == "upgrade-targets") {
 		upgradeTargets();
 		return true;
-	}
 #endif
+	}
 
 #endif // DISABLE_COMMAND_LINE
 

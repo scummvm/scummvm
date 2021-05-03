@@ -224,7 +224,7 @@ public:
 	void handleMouseDrag() override;
 	void setStep(uint16 step);
 	void setPosition(uint16 pos);
-    void restoreBackground();
+	void restoreBackground();
 
 protected:
 	Common::Rect boundingBox();

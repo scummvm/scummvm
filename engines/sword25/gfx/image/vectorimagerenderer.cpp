@@ -96,7 +96,7 @@ struct _ArtRgbSVPAlphaData {
 };
 
 static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
-                                        int start, ArtSVPRenderAAStep *steps, int n_steps) {
+										int start, ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	byte *linebuf;
 	int run_x0, run_x1;
@@ -150,8 +150,8 @@ static void art_rgb_svp_alpha_callback1(void *callback_data, int y,
 }
 
 static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
-        int start,
-        ArtSVPRenderAAStep *steps, int n_steps) {
+		int start,
+		ArtSVPRenderAAStep *steps, int n_steps) {
 	ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
 	byte *linebuf;
 	int run_x0, run_x1;
@@ -221,9 +221,9 @@ static void art_rgb_svp_alpha_opaque_callback1(void *callback_data, int y,
 }
 
 void art_rgb_svp_alpha1(const ArtSVP *svp,
-                        int x0, int y0, int x1, int y1,
-                        uint32 color,
-                        byte *buf, int rowstride) {
+						int x0, int y0, int x1, int y1,
+						uint32 color,
+						byte *buf, int rowstride) {
 	ArtRgbSVPAlphaData data;
 	byte r, g, b, alpha;
 	int i;

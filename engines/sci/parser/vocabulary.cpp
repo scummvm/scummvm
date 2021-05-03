@@ -885,7 +885,7 @@ static int node_major(ParseTreeNode* node) {
 }
 static bool node_is_terminal(ParseTreeNode* node) {
 	return (node->right->right &&
-            node->right->right->type != kParseTreeBranchNode);
+			node->right->right->type != kParseTreeBranchNode);
 }
 static int node_terminal_value(ParseTreeNode* node) {
 	assert(node_is_terminal(node));

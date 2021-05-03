@@ -32,6 +32,7 @@
 #include "scumm/verbs.h"
 
 #include "common/savefile.h"
+#include "common/config-manager.h"
 
 namespace Scumm {
 
@@ -2303,7 +2304,7 @@ void ScummEngine_v5::o5_verbOps() {
 			vs->hicolor = getVarOrDirectByte(PARAM_1);
 			break;
 		case 5:		// SO_VERB_AT
-			vs->curRect.left = getVarOrDirectWord(PARAM_1);
+			vs->curRect.left = vs->origLeft = getVarOrDirectWord(PARAM_1);
 			vs->curRect.top = getVarOrDirectWord(PARAM_2);
 			// Macintosh version of indy3ega used different interface, so adjust values.
 			if ((_game.platform == Common::kPlatformMacintosh) && (_game.id == GID_INDY3)) {
@@ -2367,6 +2368,11 @@ void ScummEngine_v5::o5_verbOps() {
 						break;
 					}
 				}
+			} else if (_game.platform == Common::kPlatformFMTowns && ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
+				if (_game.id == GID_ZAK && verb == 116)
+					// WORKAROUND: FM-TOWNS Zak used the extra 40 pixels at the bottom to increase the inventory to 10 items
+					// if we trim to 200 pixels, we need to move the 'down arrow' (verb 116) to higher location
+					vs->curRect.top -= 18;
 			}
 			break;
 		case 6:		// SO_VERB_ON

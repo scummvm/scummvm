@@ -177,7 +177,7 @@ bool Actor::giveTreasure() {
 
 		// check chance
 		if (ti._chance < 0.999 &&
-		        (static_cast<double>(getRandom()) / RAND_MAX) > ti._chance) {
+		        (static_cast<double>(getRandom()) / U8_RAND_MAX) > ti._chance) {
 			continue;
 		}
 
@@ -484,7 +484,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 		if (anim == Animation::readyWeapon || anim == Animation::stopRunningAndDrawSmallWeapon ||
 				anim == Animation::combatStand || anim == Animation::attack || anim == Animation::kneel ||
-				anim == Animation::kneelAndFire)
+				anim == Animation::kneelAndFire || anim == Animation::reloadSmallWeapon)
 			setActorFlag(ACT_WEAPONREADY);
 		else
 			clearActorFlag(ACT_WEAPONREADY);
@@ -541,13 +541,13 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 	}
 
-#if 1
+#if 0
 	if (_objId == 1) {
 		int32 x, y, z;
 		getLocation(x, y, z);
 		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
-		debug(6, "Actir::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
+		debug(6, "Actor::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action ? action->getFrameRepeat() : -1);
 	}
 #endif
 
@@ -583,7 +583,7 @@ void Actor::setToStartOfAnim(Animation::Sequence anim) {
 }
 
 Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
-                                 unsigned int steps, PathfindingState *state) {
+								 unsigned int steps, PathfindingState *state) {
 	if (dir < 0 || dir > 16) return Animation::FAILURE;
 
 	if (dir == dir_current)
@@ -666,7 +666,7 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 		}
 	}
 
-	if (targetdir == curdir)
+	if (targetdir == curdir || targetdir == dir_current)
 		return 0; // nothing to do.
 
 	if (combat) {
@@ -897,6 +897,8 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		doAnim(Animation::teleportOutReplacement, dir_current);
 		doAnim(Animation::teleportInReplacement, dir_current);
 		_hitPoints -= damage;
+		//if (_hitPoints < 0)
+		//	_hitPoints = 0;
 		return;
 	}
 
@@ -997,8 +999,8 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 void Actor::tookHitCru() {
 	Animation::Sequence lastanim = getLastAnim();
 	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) {
-		//uint16 controllednpc = World::get_instance()->getControlledNPCNum();
-		bool canseecontrolled = true; //this->canSee(controllednpc);
+		Actor *controlled = getActor(World::get_instance()->getControlledNPCNum());
+		bool canseecontrolled = controlled && (getRangeIfVisible(*controlled) > 0);
 		if (canseecontrolled) {
 			if (getRandom() % 4)
 				setActivity(5);
@@ -1813,7 +1815,7 @@ uint32 Actor::I_getLastAnimSet(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
 
-	return actor->getLastAnim();
+	return AnimDat::getActionNumberForSequence(actor->getLastAnim(), actor);
 }
 
 uint32 Actor::I_getStr(const uint8 *args, unsigned int /*argsize*/) {

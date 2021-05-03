@@ -388,10 +388,9 @@ void LC::c_symbolpush() {
 }
 
 void LC::c_namepush() {
-	Datum d;
 	int i = g_lingo->readInt();
+	Datum d(Common::String(g_lingo->_currentArchive->getName(i)));
 	d.type = SYMBOL;
-	d.u.s = new Common::String(g_lingo->_currentArchive->getName(i));
 	g_lingo->push(d);
 }
 
@@ -468,8 +467,8 @@ void LC::c_varpush() {
 		}
 	}
 
+	d = Datum(Common::String(name));
 	d.type = VAR;
-	d.u.s = new Common::String(name);
 	g_lingo->push(d);
 }
 
@@ -985,7 +984,7 @@ void LC::c_charOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-    if ((index.type != INT && index.type != FLOAT)
+	if ((index.type != INT && index.type != FLOAT)
 			|| (src.type != STRING && src.type != VAR && src.type != FIELDREF && src.type != CHUNKREF && src.type != CASTREF)) {
 		g_lingo->lingoError("LC::c_charOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));

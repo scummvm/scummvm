@@ -45,7 +45,7 @@ AStarPath::AStarPath() : final_node(0) {
 	set_path_size(step_count);
 }/* Get a new neighbor to nnode and score it, returning true if it's usable. */
 bool AStarPath::score_to_neighbor(sint8 dir, astar_node *nnode, astar_node *neighbor,
-                                  sint32 &nnode_to_neighbor) {
+								  sint32 &nnode_to_neighbor) {
 	sint8 sx = -1, sy = -1;
 	DirFinder::get_adjacent_dir(sx, sy, dir); // sx,sy = neighbor -1,-1 + dir
 	// get neighbor of nnode towards sx,sy, and cost to that neighbor
@@ -58,8 +58,8 @@ bool AStarPath::score_to_neighbor(sint8 dir, astar_node *nnode, astar_node *neig
 	return true;
 }/* Compare a node's score to the start node to already scored neighbors. */
 bool AStarPath::compare_neighbors(astar_node *nnode, astar_node *neighbor,
-                                  sint32 nnode_to_neighbor, astar_node *in_open,
-                                  astar_node *in_closed) {
+								  sint32 nnode_to_neighbor, astar_node *in_open,
+								  astar_node *in_closed) {
 	neighbor->to_start = nnode->to_start + nnode_to_neighbor;
 	// ignore this neighbor if already checked and closer to start
 	if ((in_open && in_open->to_start <= neighbor->to_start)
@@ -70,7 +70,7 @@ bool AStarPath::compare_neighbors(astar_node *nnode, astar_node *neighbor,
 	return true;
 }/* Check all neighbors of a node (location) and save them to the "seen" list. */
 bool AStarPath::search_node_neighbors(astar_node *nnode, MapCoord &goal,
-                                      const uint32 max_score) {
+									  const uint32 max_score) {
 	for (uint32 dir = 1; dir < 8; dir += 2) {
 		astar_node *neighbor = new astar_node;
 		sint32 nnode_to_neighbor = -1;

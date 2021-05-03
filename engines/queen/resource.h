@@ -117,8 +117,9 @@ public:
 		VER_AMI_ENG_FLOPPY = 13,
 		VER_AMI_DEMO       = 14,
 		VER_AMI_INTERVIEW  = 15,
+		VER_AMI_GER_FLOPPY = 16,
 
-		VER_COUNT          = 16
+		VER_COUNT          = 17
 	};
 
 	enum {

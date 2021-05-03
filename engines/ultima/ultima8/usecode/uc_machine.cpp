@@ -98,7 +98,7 @@ UCMachine::UCMachine(Intrinsic *iset, unsigned int icount) {
 		_convUse = new ConvertUsecodeCrusader();
 	} else {
 		_globals = new ByteSet(0x1000);
-		// slight hack: set global 003C to start as avatar number.
+		// slight hack: set global 001E to start as avatar number.
 		_globals->setEntries(0x1E, 2, 1);
 		_convUse = new ConvertUsecodeRegret();
 	}
@@ -162,7 +162,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 	if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-		pout << ConsoleStream::hex << "running process " << p->_pid
+		pout << "tick " << Kernel::get_instance()->getTickNum()
+			 << ConsoleStream::hex << " running process " << p->_pid
 		     << ", item " << p->_itemNum << ", type " << p->_type
 		     << ", class " << p->_classId << ", offset " << p->_ip
 		     << ConsoleStream::dec << Std::endl;
@@ -171,6 +172,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 	bool cede = false;
 	bool error = false;
+	bool go_until_cede = false;
 
 	while (!cede && !error && !p->is_terminated()) {
 		//! guard against reading past end of class
@@ -1308,6 +1310,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 53
 			// suspend
 			LOGPF(("suspend\n"));
+			go_until_cede = false;
 			cede = true;
 			break;
 
@@ -1342,6 +1345,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			Process *proc2 = Kernel::get_instance()->getProcess(ui16a);
 			if (proc && proc2) {
 				proc->waitFor(ui16a);
+				// The proc is now marked suspended, but finish this execution
+				// until we hit a suspend or return.
+				go_until_cede = true;
 			} else {
 				perr << "Non-existent process PID (";
 				if (!proc && !proc2) {
@@ -1400,7 +1406,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << ConsoleStream::hex << "(still) running process " << p->_pid
+				pout << "tick " << Kernel::get_instance()->getTickNum()
+				     << " (still) running process " << ConsoleStream::hex << p->_pid
 				     << ", item " << p->_itemNum << ", type " << p->_type
 				     << ", class " << p->_classId << ", offset " << p->_ip
 				     << ConsoleStream::dec << Std::endl;
@@ -1434,7 +1441,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 #ifdef DEBUG
 			if (trace_show(p->_pid, p->_itemNum, p->_classId)) {
-				pout << ConsoleStream::hex << "(still) running process " << p->_pid
+				pout << "tick " << Kernel::get_instance()->getTickNum()
+					 << ConsoleStream::hex << " (still) running process " << p->_pid
 				     << ", item " << p->_itemNum << ", class " << p->_classId
 				     << ", offset " << p->_ip << ConsoleStream::dec << Std::endl;
 			}
@@ -1740,12 +1748,13 @@ void UCMachine::execProcess(UCProcess *p) {
 				if (searchtype == 3) recurse = true;
 
 				// ui16a = item, ui16b = range
-				Item *item = getItem(ui16a);
+				const Item *item = getItem(ui16a);
+				const uint16 range = GAME_IS_CRUSADER ? ui16b * 2 : ui16b;
 
 				if (item) {
 					world->getCurrentMap()->areaSearch(itemlist, script,
 					                                   scriptsize, item,
-					                                   ui16b, recurse);
+					                                   range, recurse);
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid item " << ui16a << " passed to area search"
@@ -2044,7 +2053,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_ip = static_cast<uint16>(cs->pos());   // TRUNCATES!
 
 		// check if we suspended ourselves
-		if ((p->_flags & Process::PROC_SUSPENDED) != 0)
+		if ((p->_flags & Process::PROC_SUSPENDED) != 0 && !go_until_cede)
 			cede = true;
 	} // while(!cede && !error && !p->terminated && !p->terminate_deferred)
 
@@ -2062,7 +2071,7 @@ const Std::string &UCMachine::getString(uint16 str) const {
 	static Std::string emptystring("");
 
 	Std::map<uint16, Std::string>::const_iterator iter =
-            _stringHeap.find(str);
+			_stringHeap.find(str);
 
 	if (iter != _stringHeap.end())
 		return iter->_value;

@@ -22,6 +22,7 @@
 
 #include "common/config-manager.h"
 #include "common/language.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 #include "twine/detection.h"
@@ -207,11 +208,19 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// 11 August 1995 at 23:28
 	{
 		"lba",
+#ifdef USE_GIF
 		"Floppy Disk Version",
 		AD_ENTRY1s("FLA_GIF.HQR", "3f7383f65afa212e3eec430627828b64", 1784466),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_TESTING | TwinE::TF_USE_GIF,
+#else
+		_s("This version requires Giflib which was not compiled into ScummVM"),
+		AD_ENTRY1s("FLA_GIF.HQR", "3f7383f65afa212e3eec430627828b64", 1784466),
+		Common::EN_ANY,
+		Common::kPlatformDOS,
+		ADGF_UNSUPPORTED,
+#endif
 		GUIO1(GUIO_NONE)
 	},
 

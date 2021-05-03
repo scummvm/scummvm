@@ -5789,12 +5789,12 @@ void DoSomeMagicStuff() {
 
 // Magic input sequences
 uint8 magic_unlockmovies[13] = {Common::KEYCODE_t, Common::KEYCODE_e, Common::KEYCODE_s, Common::KEYCODE_t, Common::KEYCODE_b, Common::KEYCODE_r, Common::KEYCODE_e,
-                                Common::KEYCODE_a, Common::KEYCODE_k, Common::KEYCODE_d, Common::KEYCODE_o, Common::KEYCODE_w, Common::KEYCODE_n};
+								Common::KEYCODE_a, Common::KEYCODE_k, Common::KEYCODE_d, Common::KEYCODE_o, Common::KEYCODE_w, Common::KEYCODE_n};
 
 uint8 magic_fastmovies[6] = {Common::KEYCODE_s, Common::KEYCODE_p, Common::KEYCODE_e, Common::KEYCODE_e, Common::KEYCODE_d, Common::KEYCODE_y};
 
 uint8 magic_slideshowextras[12] = {Common::KEYCODE_h, Common::KEYCODE_o, Common::KEYCODE_l, Common::KEYCODE_i, Common::KEYCODE_d, Common::KEYCODE_a,
-                                   Common::KEYCODE_y, Common::KEYCODE_s, Common::KEYCODE_n, Common::KEYCODE_a, Common::KEYCODE_p, Common::KEYCODE_s};
+								   Common::KEYCODE_y, Common::KEYCODE_s, Common::KEYCODE_n, Common::KEYCODE_a, Common::KEYCODE_p, Common::KEYCODE_s};
 
 uint8 magic_avcontrol[7] = {Common::KEYCODE_r, Common::KEYCODE_a, Common::KEYCODE_b, Common::KEYCODE_v, Common::KEYCODE_i, Common::KEYCODE_e, Common::KEYCODE_w};
 
@@ -6317,8 +6317,8 @@ uint32 GetFileSz(const char *path) {
 }
 
 Crediter::Crediter()
-    : m_creditsFile(NULL), m_numberOfBytes(0), m_endOfCredits(0), m_currentHeight(0), m_cursor(0), m_scrollOffset(0), m_logoSurfaceID(0), m_logoDraw(0), m_logoAttached(0),
-      m_movieSurfaceID(0), m_movieBackdrop(FALSE8), m_loopingMovie(FALSE8), m_frameStart(0), m_totalMovieFrames(0) {
+	: m_creditsFile(NULL), m_numberOfBytes(0), m_endOfCredits(0), m_currentHeight(0), m_cursor(0), m_scrollOffset(0), m_logoSurfaceID(0), m_logoDraw(0), m_logoAttached(0),
+	  m_movieSurfaceID(0), m_movieBackdrop(FALSE8), m_loopingMovie(FALSE8), m_frameStart(0), m_totalMovieFrames(0) {
 	memset(m_theData, 0, MAX_BYTESIZE_OF_CREDITS_FILE);
 	m_movieRect.left = m_movieRect.right = m_movieRect.bottom = m_movieRect.top = 0;
 }

@@ -36,7 +36,7 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame),
-                                                 _receiveShadows(false), _type(GEOM_GENERIC), _namePattern(nullptr) {
+												 _receiveShadows(false), _type(GEOM_GENERIC), _namePattern(nullptr) {
 }
 
 //////////////////////////////////////////////////////////////////////////

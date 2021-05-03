@@ -84,7 +84,7 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 	 return;	
 	}
 
-	BPTR pLock = Lock((STRPTR)_sPath.c_str(), SHARED_LOCK);
+	BPTR pLock = Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
 	if (pLock) {
 		if (Examine(pLock, fib) != DOSFALSE) {
 			if (fib->fib_EntryType > 0) {
@@ -145,11 +145,11 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	   		if (fib->fib_EntryType != ST_ROOT)
 	   			_sPath += '/';
 	   		_pFileLock = DupLock(pLock);
-			_bIsValid = (_pFileLock != NULL);
+			if (_pFileLock) _bIsValid = true;
 		} else {
 			_bIsValid = true;
 	    }
-    }
+	}
 	FreeDosObject(DOS_FIB, fib);
 }
 
@@ -358,7 +358,7 @@ Common::WriteStream *MorphOSFilesystemNode::createWriteStream() {
 }
 
 bool MorphOSFilesystemNode::createDirectory() {
-	warning("AmigaOSFilesystemNode::createDirectory(): Not supported");
+	warning("MorphOSFilesystemNode::createDirectory(): Not supported");
 	return _bIsValid && _bIsDirectory;
 }
 

@@ -255,7 +255,7 @@ extern const RoomTextOffsets feather1TextOffsets[] = {
 };
 
 extern const RoomText feather1Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::feather1Tick1() {

@@ -72,9 +72,9 @@ An in-game object
 @int qty quantity
 @string[readonly] name The object name from the 'look' table.
 @string[readonly] look_string A printable look description
-     a book
-     an elephant
-     5 torches
+	 a book
+	 an elephant
+	 5 torches
 @bool[readonly] on_map Is the object on the map?
 @bool[readonly] in_container Is the object in a container?
 @field parent (Obj|Actor) The parent of this object. Either an object if this object is in a container. Or an Actor if this object is in an inventory.
@@ -1787,10 +1787,10 @@ static int nscript_obj_gc(lua_State *L) {
    {
    if(s_obj)
    {
-    if(s_obj->obj_ptr)
-      return s_obj->obj_ptr;
-    else
-      return &s_obj->script_obj;
+	if(s_obj->obj_ptr)
+	  return s_obj->obj_ptr;
+	else
+	  return &s_obj->script_obj;
    }
 
    return NULL;
@@ -2342,8 +2342,8 @@ static int nscript_display_prompt(lua_State *L) {
    @function nuvie_load
    @param path lua file relative to data/scripts directory
    @return contents of the lua file as a function block on success.
-           A string is returned on compilation failure.
-           nil is returned if the file cannot be opened
+		   A string is returned on compilation failure.
+		   nil is returned if the file cannot be opened
  */
 static int nscript_load(lua_State *L) {
 	const char *file = luaL_checkstring(L, 1);
@@ -3398,13 +3398,13 @@ to iterate through a list of Actors and Objects that were hit by the explosion.
 @int y
 @treturn table A table containing the hit Actor and Obj objects.
 @usage
-    local hit_items = explosion_start(0x17e, actor.x, actor.y)
+	local hit_items = explosion_start(0x17e, actor.x, actor.y)
 
-    for k,v in pairs(hit_items) do
-      if v.luatype == "actor" then
-        actor_hit(v, random(1, 0x14))
-      end
-    end
+	for k,v in pairs(hit_items) do
+	  if v.luatype == "actor" then
+		actor_hit(v, random(1, 0x14))
+	  end
+	end
 @within effects
  */
 static int nscript_explosion_start(lua_State *L) {
@@ -3848,7 +3848,7 @@ Iterate through party members.
 @usage
   local actor
   for actor in party_members() do
-    actor.poisoned = false
+	actor.poisoned = false
   end
 @within party
  */
@@ -3966,9 +3966,9 @@ Iterate through all objects of a specific type on a given map level.
 @usage
   local loc = player_get_location()
   for obj in find_obj(loc.z, 223, 1) do
-    if obj ~= nil then
-      explode_obj(obj)
-    end
+	if obj ~= nil then
+	  explode_obj(obj)
+	end
   end
 @within Object
  */
@@ -4355,11 +4355,11 @@ Iterate through objects in a container.
 @usage
   local child
   for child in container_objs(obj) do  -- look through container for effect object.
-    if child.obj_n == 337 then --effect
-      found = true
-      print("\nIt's trapped.\n");
-      break
-    end
+	if child.obj_n == 337 then --effect
+	  found = true
+	  print("\nIt's trapped.\n");
+	  break
+	end
   end
 @within Object
  */

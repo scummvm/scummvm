@@ -23,6 +23,8 @@
 #ifndef NANCY_SOUND_H
 #define NANCY_SOUND_H
 
+#include "engines/nancy/commontypes.h"
+
 #include "audio/mixer.h"
 
 namespace Common {
@@ -36,27 +38,32 @@ class SeekableAudioStream;
 namespace Nancy {
 
 class NancyEngine;
-struct SoundDescription;
 
 class SoundManager {
 public:
 	SoundManager();
 	~SoundManager();
 
+	void loadCommonSounds();
+
 	// Load a sound into a channel without starting it
 	void loadSound(const SoundDescription &description);
 
 	void playSound(uint16 channelID);
 	void playSound(const SoundDescription &description);
+	void playSound(const Common::String &chunkName);
 
 	void pauseSound(uint16 channelID, bool pause);
 	void pauseSound(const SoundDescription &description, bool pause);
+	void pauseSound(const Common::String &chunkName, bool pause);
 
 	bool isSoundPlaying(uint16 channelID) const;
 	bool isSoundPlaying(const SoundDescription &description) const;
+	bool isSoundPlaying(const Common::String &chunkName) const;
 
 	void stopSound(uint16 channelID);
 	void stopSound(const SoundDescription &description);
+	void stopSound(const Common::String &chunkName);
 	void stopAllSounds();
 
 	// Used when changing scenes
@@ -78,6 +85,7 @@ protected:
 	Audio::Mixer *_mixer;
 
 	Channel _channels[32];
+	Common::HashMap<Common::String, SoundDescription> _commonSounds;
 };
 
 } // End of namespace Nancy

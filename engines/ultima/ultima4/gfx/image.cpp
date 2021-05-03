@@ -281,8 +281,8 @@ void Image::makeBackgroundColorTransparent(int haloSize, int shadowOpacity) {
 }
 
 void Image::performTransparencyHack(uint colorValue, uint numFrames,
-                                    uint currentFrameIndex, uint haloWidth,
-                                    uint haloOpacityIncrementByPixelDistance) {
+									uint currentFrameIndex, uint haloWidth,
+									uint haloOpacityIncrementByPixelDistance) {
 	Common::List<Std::pair<uint, uint> > opaqueXYs;
 	uint x, y;
 	byte t_r, t_g, t_b;

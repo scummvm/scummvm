@@ -230,7 +230,7 @@ int32 GetAssignedSounds();
 // these functions have both sfxHash and volume_offset which most calls will not use.... they will use the inlines below...
 
 void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int32 isNico, int32 time,
-                         int8 volume_offset);
+						 int8 volume_offset);
 void RegisterSound(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int8 volume_offset);
 void RegisterSoundAbsolute(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal x, PXreal y, PXreal z, int8 volume_offset);
 void RegisterSoundTime(uint32 obj, const char *sfxName, uint32 sfxHash, const char *sndID, int32 time, int8 volume_offset);

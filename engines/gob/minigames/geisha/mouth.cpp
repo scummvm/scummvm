@@ -29,7 +29,7 @@ namespace Gob {
 namespace Geisha {
 
 Mouth::Mouth(const ANIFile &ani, const CMPFile &cmp,
-             uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite) : ANIObject(ani) {
+			 uint16 mouthAnim, uint16 mouthSprite, uint16 floorSprite) : ANIObject(ani) {
 
 	_sprite = new ANIObject(cmp);
 	_sprite->setAnimation(mouthSprite);

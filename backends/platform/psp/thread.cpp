@@ -193,38 +193,38 @@ bool PspMutex::unlock() {
 
 // Release all threads waiting on the condition
 void PspCondition::releaseAll() {
-        _mutex.lock();
-        if (_waitingThreads > _signaledThreads) {	// we have signals to issue
-                int numWaiting = _waitingThreads - _signaledThreads;	// threads we haven't signaled
-                _signaledThreads = _waitingThreads;
+	_mutex.lock();
+	if (_waitingThreads > _signaledThreads) {	// we have signals to issue
+		int numWaiting = _waitingThreads - _signaledThreads;	// threads we haven't signaled
+		_signaledThreads = _waitingThreads;
 
-				_waitSem.give(numWaiting);
-                _mutex.unlock();
-                for (int i=0; i<numWaiting; i++)	// wait for threads to tell us they're awake
-					_doneSem.take();
-        } else {
-                _mutex.unlock();
-        }
+		_waitSem.give(numWaiting);
+		_mutex.unlock();
+		for (int i=0; i<numWaiting; i++)	// wait for threads to tell us they're awake
+			_doneSem.take();
+	} else {
+		_mutex.unlock();
+	}
 }
 
 // Mutex must be taken before entering wait
 void PspCondition::wait(PspMutex &externalMutex) {
-        _mutex.lock();
-        _waitingThreads++;
-        _mutex.unlock();
+	_mutex.lock();
+	_waitingThreads++;
+	_mutex.unlock();
 
-        externalMutex.unlock();	// must unlock external mutex
+	externalMutex.unlock();	// must unlock external mutex
 
-		_waitSem.take();	// sleep on the wait semaphore
+	_waitSem.take();	// sleep on the wait semaphore
 
-		// let the signaling thread know we're done
-		_mutex.lock();
-        if (_signaledThreads > 0 ) {
-                _doneSem.give();	// let the thread know
-                _signaledThreads--;
-        }
-        _waitingThreads--;
-        _mutex.unlock();
+	// let the signaling thread know we're done
+	_mutex.lock();
+	if (_signaledThreads > 0 ) {
+		_doneSem.give();	// let the thread know
+		_signaledThreads--;
+	}
+	_waitingThreads--;
+	_mutex.unlock();
 
-        externalMutex.lock();		// must lock external mutex here for continuation
+	externalMutex.lock();		// must lock external mutex here for continuation
 }

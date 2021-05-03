@@ -68,7 +68,7 @@ struct PSXDataCache { // Cache for PSX screen, to avoid decompressing background
 class ResMan;
 class ObjectMan;
 class Text; // Text objects use sprites that are created internally at run-time
-            // the buffer belongs to Text, so we need a reference here.
+			// the buffer belongs to Text, so we need a reference here.
 
 class Screen {
 public:

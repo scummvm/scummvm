@@ -24,13 +24,15 @@ MODULE_OBJS = \
   state/credits.o \
   state/logo.o \
   state/help.o \
+  state/mainmenu.o \
   state/map.o \
   state/scene.o \
-  cheat.o \
   commontypes.o \
   console.o \
+  constants.o \
   cursor.o \
   decompress.o \
+  dialogs.o \
   font.o \
   graphics.o \
   iff.o \
@@ -40,6 +42,7 @@ MODULE_OBJS = \
   renderobject.o \
   resource.o \
   sound.o \
+  util.o \
   video.o
 
 # This module can be built as a plugin

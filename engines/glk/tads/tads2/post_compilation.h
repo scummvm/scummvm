@@ -36,13 +36,13 @@ namespace TADS2 {
 
 /* setup context */
 struct supcxdef {
-    errcxdef *supcxerr;
-    mcmcxdef *supcxmem;                    /* memory manager client context */
-    voccxdef *supcxvoc;                   /* player command parsing context */
-    tokthdef *supcxtab;                           /* top-level symbol table */
-    runcxdef *supcxrun;                                /* execution context */
-    uchar    *supcxbuf;                        /* space for building a list */
-    ushort    supcxlen;                                   /* size of buffer */
+	errcxdef *supcxerr;
+	mcmcxdef *supcxmem;                    /* memory manager client context */
+	voccxdef *supcxvoc;                   /* player command parsing context */
+	tokthdef *supcxtab;                           /* top-level symbol table */
+	runcxdef *supcxrun;                                /* execution context */
+	uchar    *supcxbuf;                        /* space for building a list */
+	ushort    supcxlen;                                   /* size of buffer */
 };
 
 /* set up contents list for one object for demand-on-load */
@@ -53,32 +53,32 @@ extern void supivoc(supcxdef *ctx);
 
 /* find required objects/functions */
 extern void supfind(errcxdef *ctx, tokthdef *tab, voccxdef *voc,
-             objnum *preinit, int warnlevel, int casefold);
+			 objnum *preinit, int warnlevel, int casefold);
 
 /* set up reserved words */
 extern void suprsrv(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
-             toktdef *tab, int fncntmax, int v1compat, char *new_do,
-             int casefold);
+			 toktdef *tab, int fncntmax, int v1compat, char *new_do,
+			 int casefold);
 
 /* set up built-in functions without symbol table (for run-time) */
 extern void supbif(supcxdef *sup, void (*bif[])(struct bifcxdef *, int),
-            int bifsiz);
+			int bifsiz);
 
 /* log an undefined-object error */
 extern void sup_log_undefobj(mcmcxdef *mctx, errcxdef *ec, int err,
-                      char *sym_name, int sym_name_len, objnum objn);
+					  char *sym_name, int sym_name_len, objnum objn);
 
 /* set up inherited vocabulary for a particular object */
 extern void supivoc1(supcxdef *sup, voccxdef *ctx, vocidef *v, objnum target,
-              int inh_from_obj, int flags);
+			  int inh_from_obj, int flags);
 
 /* get name of an object out of symbol table */
 extern void supgnam(char *buf, tokthdef *tab, objnum objn);
 
 /* table of built-in functions */
 struct supbidef {
-    char  *supbinam;                                    /* name of function */
-    void (*supbifn)(struct bifcxdef *, int);           /* C routine to call */
+	char  *supbinam;                                    /* name of function */
+	void (*supbifn)(struct bifcxdef *, int);           /* C routine to call */
 };
 
 /* external definition for special token table */

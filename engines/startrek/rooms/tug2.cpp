@@ -239,8 +239,8 @@ extern const RoomTextOffsets tug2TextOffsets[] = {
 };
 
 extern const RoomText tug2Texts[] = {
-    { TX_TUG2C001, Common::EN_ANY, "Snip...snip...snip." },
-    { -1, Common::UNK_LANG, "" }
+	{ TX_TUG2C001, Common::EN_ANY, "Snip...snip...snip." },
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::tug2Tick1() {

@@ -163,7 +163,7 @@ extern const RoomTextOffsets trial3TextOffsets[] = {
 };
 
 extern const RoomText trial3Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::trial3Tick1() {

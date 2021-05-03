@@ -60,6 +60,8 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 
 	if (includeRoom && _G(roominst)) {
 		toret = RunScriptFunctionIfExists(_G(roominst), tsname, numParams, params);
+		if (_G(abort_engine))
+			return -1;
 
 		if (_G(eventClaimed) == EVENT_CLAIMED) {
 			_G(eventClaimed) = eventClaimedOldValue;
@@ -177,6 +179,9 @@ void process_event(EventHappened *evp) {
 			run_interaction_event(evpt, evp->data3);
 		} else
 			quit("process_event: RunEvBlock: unknown evb type");
+
+		if (_G(abort_engine))
+			return;
 
 		_G(evblockbasename) = oldbasename;
 		_G(evblocknum) = oldblocknum;
@@ -355,10 +360,9 @@ void processallevents(int numev, EventHappened *evlist) {
 	_G(inside_processevent)++;
 
 	for (dd = 0; dd < numev; dd++) {
-
 		process_event(&copyOfList[dd]);
 
-		if (room_was != _GP(play).room_changes)
+		if (room_was != _GP(play).room_changes || _G(abort_engine))
 			break;  // changed room, so discard other events
 	}
 

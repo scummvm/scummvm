@@ -23,14 +23,17 @@
 #include "ags/events.h"
 #include "common/system.h"
 #include "ags/globals.h"
+#include "ags/engine/ac/keycode.h"
 
 namespace AGS {
 
 EventsManager *g_events;
 
-EventsManager::EventsManager() : _keyFlags(0) {
+EventsManager::EventsManager() {
 	g_events = this;
 	_keys.resize(AGS3::__allegro_KEY_MAX);
+	Common::fill(&_joystickAxis[0], &_joystickAxis[32], 0);
+	Common::fill(&_joystickButton[0], &_joystickButton[32], 0);
 }
 
 EventsManager::~EventsManager() {
@@ -41,22 +44,46 @@ void EventsManager::pollEvents() {
 	Common::Event e;
 
 	while (g_system->getEventManager()->pollEvent(e)) {
-		if (e.type == Common::EVENT_QUIT || e.type == Common::EVENT_RETURN_TO_LAUNCHER) {
+		switch (e.type) {
+		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_G(want_exit) = true;
 			_G(abort_engine) = true;
 			_G(check_dynamic_sprites_at_exit) = false;
+			break;
 
-		} else if (e.type == Common::EVENT_KEYDOWN) {
-			updateKeys(e.kbd.keycode, true);
+		case Common::EVENT_JOYAXIS_MOTION:
+			assert(e.joystick.axis < 32);
+			_joystickAxis[e.joystick.axis] = e.joystick.position;
+			break;
+
+		case Common::EVENT_JOYBUTTON_DOWN:
+			assert(e.joystick.button < 32);
+			_joystickButton[e.joystick.button] = true;
+			break;
+
+		case Common::EVENT_JOYBUTTON_UP:
+			assert(e.joystick.button < 32);
+			_joystickButton[e.joystick.button] = false;
+			break;
+
+		case Common::EVENT_KEYDOWN:
+			updateKeys(e.kbd, true);
 
 			if (!isModifierKey(e.kbd.keycode)) {
 				// Add keypresses to the pending key list
 				_pendingKeys.push(e.kbd);
 			}
-		} else if (e.type == Common::EVENT_KEYUP) {
-			updateKeys(e.kbd.keycode, false);
+			break;
 
-		} else {
+		case Common::EVENT_KEYUP:
+			updateKeys(e.kbd, false);
+			break;
+
+		default:
+			if (e.type == Common::EVENT_MOUSEMOVE)
+				_mousePos = Common::Point(e.mouse.x, e.mouse.y);
+
 			// Add other event types to the pending events queue. If the event is a
 			// mouse move and the prior one was also, then discard the prior one.
 			// This'll help prevent too many mouse move events accumulating
@@ -65,6 +92,7 @@ void EventsManager::pollEvents() {
 				_pendingEvents.back() = e;
 			else
 				_pendingEvents.push(e);
+			break;
 		}
 	}
 }
@@ -81,9 +109,15 @@ int EventsManager::readKey() {
 
 	Common::KeyState keyState = _pendingKeys.pop();
 
-	int code = getScancode(keyState.keycode) << 8;
-	if (keyState.ascii <= 127)
-		code = keyState.ascii;
+	int scancode = getScancode(keyState.keycode);
+	int code = scancode << 8;
+
+	if (isExtendedKey(keyState.keycode))
+		code |= EXTENDED_KEY_CODE;
+	else if ((keyState.flags & (Common::KBD_CTRL | Common::KBD_ALT))  == 0)
+		code |= keyState.ascii;
+	else
+		code |= scancode;
 
 	return code;
 }
@@ -104,6 +138,33 @@ bool EventsManager::isModifierKey(const Common::KeyCode &keycode) const {
 		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
 		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
 		|| keycode == Common::KEYCODE_SCROLLOCK;
+}
+
+bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
+	const Common::KeyCode EXTENDED_KEYS[] = {
+		Common::KEYCODE_F1, Common::KEYCODE_F2, Common::KEYCODE_F3,
+		Common::KEYCODE_F4, Common::KEYCODE_F5, Common::KEYCODE_F6,
+		Common::KEYCODE_F7, Common::KEYCODE_F8, Common::KEYCODE_F9,
+		Common::KEYCODE_F10, Common::KEYCODE_F11, Common::KEYCODE_F12,
+		Common::KEYCODE_KP0, Common::KEYCODE_KP1, Common::KEYCODE_KP2,
+		Common::KEYCODE_KP3, Common::KEYCODE_KP4, Common::KEYCODE_KP5,
+		Common::KEYCODE_KP6, Common::KEYCODE_KP7, Common::KEYCODE_KP8,
+		Common::KEYCODE_KP9, Common::KEYCODE_KP_PERIOD,
+		Common::KEYCODE_INSERT, Common::KEYCODE_DELETE,
+		Common::KEYCODE_HOME, Common::KEYCODE_END,
+		Common::KEYCODE_PAGEUP, Common::KEYCODE_PAGEDOWN,
+		Common::KEYCODE_LEFT, Common::KEYCODE_RIGHT,
+		Common::KEYCODE_UP, Common::KEYCODE_DOWN,
+		Common::KEYCODE_INVALID
+	};
+
+	for (const Common::KeyCode *kc = EXTENDED_KEYS;
+			*kc != Common::KEYCODE_INVALID; ++kc) {
+		if (keycode == *kc)
+			return true;
+	}
+
+	return false;
 }
 
 int EventsManager::getScancode(Common::KeyCode keycode) const {
@@ -170,23 +231,30 @@ void EventsManager::updateKeys(const Common::KeyState &keyState, bool isDown) {
 	int scancode = getScancode(keyState.keycode);
 	if (scancode != 0)
 		_keys[scancode] = isDown;
+}
 
-	// Update shift flags
-	_keyFlags = 0;
-	if (keyState.flags & Common::KBD_SHIFT)
-		_keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
-	if (keyState.flags & Common::KBD_CTRL)
-		_keyFlags |= AGS3::__allegro_KB_CTRL_FLAG;
-	if (keyState.flags & Common::KBD_ALT)
-		_keyFlags |= AGS3::__allegro_KB_ALT_FLAG;
-	if (keyState.flags & Common::KBD_META)
-		_keyFlags |= AGS3::__allegro_KB_COMMAND_FLAG;
-	if (keyState.flags & Common::KBD_SCRL)
-		_keyFlags |= AGS3::__allegro_KB_SCROLOCK_FLAG;
-	if (keyState.flags & Common::KBD_NUM)
-		_keyFlags |= AGS3::__allegro_KB_NUMLOCK_FLAG;
-	if (keyState.flags & Common::KBD_CAPS)
-		_keyFlags |= AGS3::__allegro_KB_CAPSLOCK_FLAG;
+uint EventsManager::getModifierFlags() const {
+	if (_pendingKeys.empty())
+		return 0;
+
+	byte flags = _pendingKeys.front().flags;
+	uint keyFlags = 0;
+	if (flags & Common::KBD_SHIFT)
+		keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
+	if (flags & Common::KBD_CTRL)
+		keyFlags |= AGS3::__allegro_KB_CTRL_FLAG;
+	if (flags & Common::KBD_ALT)
+		keyFlags |= AGS3::__allegro_KB_ALT_FLAG;
+	if (flags & Common::KBD_META)
+		keyFlags |= AGS3::__allegro_KB_COMMAND_FLAG;
+	if (flags & Common::KBD_SCRL)
+		keyFlags |= AGS3::__allegro_KB_SCROLOCK_FLAG;
+	if (flags & Common::KBD_NUM)
+		keyFlags |= AGS3::__allegro_KB_NUMLOCK_FLAG;
+	if (flags & Common::KBD_CAPS)
+		keyFlags |= AGS3::__allegro_KB_CAPSLOCK_FLAG;
+
+	return keyFlags;
 }
 
 bool EventsManager::isKeyPressed(AGS3::AllegroKbdKeycode keycode) const {

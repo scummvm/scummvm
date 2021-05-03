@@ -67,7 +67,8 @@ public:
 	 */
 	enum Type {
 		kASCII = 0,
-		kSJIS
+		kSJIS,
+		kBIG5
 	};
 
 public:
@@ -123,11 +124,12 @@ public:
 	enum FontStyle {
 		kStyleNone			=	0,
 		kStyleLeftShadow	=	1	<<	0,
-		kStyleFat			=	1	<<	1,
-		kStyleNarrow1		=	1	<<	2,
-		kStyleNarrow2		=	1	<<	3,
-		kStyleFullWidth		=	1	<<	4,
-		kStyleForceOneByte	=	1	<<	5
+		kStyleBorder		=	1	<<	1,
+		kStyleFat			=	1	<<	2,
+		kStyleNarrow1		=	1	<<	3,
+		kStyleNarrow2		=	1	<<	4,
+		kStyleFullWidth		=	1	<<	5,
+		kStyleForceOneByte	=	1	<<	6
 	};
 
 	/**
@@ -251,6 +253,31 @@ private:
 	// depend on whether an outline is used or not (neither LOL/PC-9801 nor LOL/FM-TOWNS use an outline, but the first
 	// version uses a font width of 8 where the latter uses a font width of 9).
 	const int _sjisWidthOffset;
+};
+
+class Big5Font : public Font {
+public:
+	Big5Font(const uint8 *oneByteData, int pitch);
+	~Big5Font() override;
+
+	Type getType() const override { return kBIG5; }
+
+	bool load(Common::SeekableReadStream &data) override;
+	int getHeight() const override { return _border ? 16 : 14; }
+	int getWidth() const override { return 18; }
+	int getCharWidth(uint16 c) const override;
+	void setColorMap(const uint8 *src) override;
+	void setStyles(int styles) override { _border = (styles & kStyleBorder); }
+	void drawChar(uint16 c, byte *dst, int pitch, int) const override;
+
+private:
+	const uint8 *_oneByteData;
+	const uint8 *_twoByteData;
+	uint32 _twoByteDataSize;
+	const uint8 *_colorMap;
+	uint16 _textColor[2];
+	const uint16 _pitch;
+	bool _border;
 };
 
 /**
@@ -421,6 +448,7 @@ public:
 		FID_SJIS_TEXTMODE_FNT,
 		FID_SJIS_LARGE_FNT,
 		FID_SJIS_SMALL_FNT,
+		FID_CHINESE_FNT,
 		FID_NUM
 	};
 

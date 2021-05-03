@@ -118,6 +118,7 @@ const PlainGameDescriptor ADRIFT_GAME_LIST[] = {
 	{ "seymoursstoopidquest", "Seymour's Stoopid Quest" },
 	{ "skybreak", "Skybreak!" },
 	{ "sommeril", "Sommeril" },
+	{ "sophia", "Sophia" },
 	{ "stowaway", "Stowaway" },
 	{ "superheroday", "A Day In The Life Of A Super Hero" },
 	{ "takeone", "Take One" },
@@ -277,6 +278,7 @@ const PlainGameDescriptor ADRIFT5_GAME_LIST[] = {
 	{ "jaft", "Just Another Fairy Tale" },
 	{ "magneticmoon", "Magnetic Moon" },
 	{ "mystman", "Mystman" },
+	{ "rtc", "Return to Camelot" },
 	{ "rtcc", "Return to Castle Coris" },
 	{ "sixsilverbullets", "Six Silver Bullets" },
 	{ "spacedetective1", "Space Detective, episode 1" },
@@ -437,6 +439,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("sonofcamelot", "7b3e9e45edc75202b3f586d0ca8dddde", 474380),
 
 #ifndef RELEASE_BUILD
+	// Unsupported English ADRIFT 4 games
+	DT_ENTRY0("sophia", "85e8f7306ca02dabe0a083828981c31a", 531015),
+
 	// Unsupported English ADRIFT 5 games
 	DT_ENTRY0("1hgamonkeytoomany", "c9d719261d0f760f95685899aa80bbf5", 5016),
 	DT_ENTRY0("axeofkolt", "353a29250cc5e463876350e3d232fd22", 931390),
@@ -447,7 +452,9 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("jaft", "0c754a07c00d9701b36f68703f1a58bd", 2018252),
 	DT_ENTRY0("magneticmoon", "26a11345dd49413dea2c1b4f7fd2b3fd", 488582),
 	DT_ENTRY0("mystman", "c3ca694117fbf7b655f3b7d729d94048", 74498),
+	DT_ENTRY0("rtc", "58729d1f54ca2311d7ff584f223c6396", 149000),
 	DT_ENTRY0("rtcc", "c79ed07084f08890c2ec4912c353ed34", 300308),
+	DT_ENTRY0("sophia", "53ff34729255845adad73eb8d133ef7c", 1242046),
 	DT_ENTRY0("spacedetective1", "170517dae3a195f37d876f5645637953", 34044),
 	DT_ENTRY0("spacedetective2", "1e12b19d8777173cbf9866b3dd2fc2f0", 32632),
 	DT_ENTRY0("spacedetective3", "fc9fb75830d7f59bf932896152b1e759", 30560),

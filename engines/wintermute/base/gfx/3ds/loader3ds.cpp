@@ -32,7 +32,7 @@
 namespace Wintermute {
 
 bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
+				   BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
 	uint32 wholeChunkSize = fileStream.readUint32LE();
 	int32 end = fileStream.pos() + wholeChunkSize - 6;
 
@@ -88,7 +88,7 @@ bool load3DSObject(Common::MemoryReadStream &fileStream, BaseArray<Wintermute::M
 }
 
 bool load3DSFile(const char *filename, BaseArray<Wintermute::Mesh3DS *> &meshes, BaseArray<Common::String> &meshNames,
-                 BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
+				 BaseArray<Wintermute::Light3D *> &lights, BaseArray<Wintermute::Camera3D *> &cameras, BaseGame *gameRef) {
 	uint32 fileSize = 0;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &fileSize);
 

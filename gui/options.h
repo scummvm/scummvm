@@ -29,10 +29,6 @@
 #include "common/str.h"
 #include "audio/mididrv.h"
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-#include "gui/KeysDialog.h"
-#endif
-
 #ifdef USE_FLUIDSYNTH
 #include "gui/fluidsynth-dialog.h"
 #endif
@@ -273,9 +269,6 @@ protected:
 
 	Common::String _newTheme;
 	LauncherDialog *_launcher;
-#ifdef GUI_ENABLE_KEYSDIALOG
-	KeysDialog *_keysDialog;
-#endif
 #ifdef USE_FLUIDSYNTH
 	FluidSynthSettingsDialog *_fluidSynthSettingsDialog;
 #endif
@@ -299,6 +292,8 @@ protected:
 	// Misc controls
 	//
 	StaticTextWidget *_curTheme;
+	StaticTextWidget *_guiBasePopUpDesc;
+	PopUpWidget *_guiBasePopUp;
 	StaticTextWidget *_rendererPopUpDesc;
 	PopUpWidget *_rendererPopUp;
 	StaticTextWidget *_autosavePeriodPopUpDesc;

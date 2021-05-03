@@ -134,7 +134,7 @@ void OSystem_Dreamcast::addCustomDirectories(Common::FSList &dirs) const
 {
   FilePluginProvider::addCustomDirectories(dirs);
   if (pluginCustomDirectory != NULL)
-    dirs.push_back(Common::FSNode(pluginCustomDirectory));
+	dirs.push_back(Common::FSNode(pluginCustomDirectory));
 }
 
 PluginList OSystem_Dreamcast::getPlugins()
@@ -142,12 +142,12 @@ PluginList OSystem_Dreamcast::getPlugins()
   pluginCustomDirectory = NULL;
   PluginList list = FilePluginProvider::getPlugins();
   if (list.empty()) {
-    Common::String selection;
-    if (selectPluginDir(selection, Common::FSNode("plugins"))) {
-      pluginCustomDirectory = selection.c_str();
-      list = FilePluginProvider::getPlugins();
-      pluginCustomDirectory = NULL;
-    }
+	Common::String selection;
+	if (selectPluginDir(selection, Common::FSNode("plugins"))) {
+	  pluginCustomDirectory = selection.c_str();
+	  list = FilePluginProvider::getPlugins();
+	  pluginCustomDirectory = NULL;
+	}
   }
   return list;
 }

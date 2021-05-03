@@ -57,12 +57,12 @@ private:
 
 	bool playIntro();
 protected:
-    bool initialize() override;
+	bool initialize() override;
 
-    /**
-     * Returns the data archive folder and version that's required
-     */
-    bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
+	/**
+	 * Returns the data archive folder and version that's required
+	 */
+	bool isDataRequired(Common::String &folder, int &majorVersion, int &minorVersion) override;
 public:
 	const Std::string c_empty_string;
 public:

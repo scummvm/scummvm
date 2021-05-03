@@ -143,7 +143,7 @@ ThemeEval &ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, Theme
 	ThemeLayout *layout = nullptr;
 
 	if (spacing == -1)
-		spacing = getVar("Globals.Layout.Spacing", 4);
+		spacing = getVar("Globals.Layout.Spacing");
 
 	layout = new ThemeLayoutStacked(_curLayout.top(), type, spacing, itemAlign);
 
@@ -165,6 +165,14 @@ ThemeEval &ThemeEval::addLayout(ThemeLayout::LayoutType type, int spacing, Theme
 ThemeEval &ThemeEval::addSpace(int size) {
 	ThemeLayout *space = new ThemeLayoutSpacing(_curLayout.top(), size);
 	_curLayout.top()->addChild(space);
+
+	return *this;
+}
+
+#define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
+
+ThemeEval &ThemeEval::addPadding(int16 l, int16 r, int16 t, int16 b) {
+	_curLayout.top()->setPadding(SCALEVALUE(l), SCALEVALUE(r), SCALEVALUE(t), SCALEVALUE(b));
 
 	return *this;
 }

@@ -159,6 +159,19 @@ static const QueenGameDescription gameDescriptions[] = {
 		},
 	},
 
+	// Amiga Floppy - German. Bugreport #12313
+	{
+		{
+			"queen",
+			"Floppy",
+			AD_ENTRY1s("queen.1", "b545c73010236dc022bad51c59120a75", 344575),
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+	},
+
 	// DOS Floppy - English
 	{
 		{

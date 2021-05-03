@@ -7245,7 +7245,7 @@ static sc_bool lib_put_on_filter(sc_gameref_t game, sc_int object, sc_int unused
 
 static sc_bool
 lib_put_on_not_supporter_filter(sc_gameref_t game,
-                                sc_int object, sc_int supporter) {
+								sc_int object, sc_int supporter) {
 	return lib_put_on_filter(game, object, -1) && object != supporter;
 }
 
@@ -9339,7 +9339,7 @@ sc_bool lib_cmd_wash_other(sc_gameref_t game) {
  * uninteresting responses.
  */
 static sc_bool lib_dont_think_common(sc_gameref_t game,
-                      const sc_char *verb, sc_bool is_object) {
+					  const sc_char *verb, sc_bool is_object) {
 	const sc_filterref_t filter = gs_get_filter(game);
 	sc_int object;
 	sc_bool is_ambiguous;

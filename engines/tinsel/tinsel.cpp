@@ -763,8 +763,7 @@ GameChunk createGameChunkV2() {
 	chunk.numObjects = (cptr != NULL) ? READ_32(cptr) : 0;
 
 	cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_TOTAL_POLY);
-	if (cptr != NULL)
-		chunk.numPolygons = *cptr;
+	chunk.numPolygons = (cptr != NULL) ? READ_32(cptr) : 0;
 
 	if (TinselV2) {
 		cptr = FindChunk(MASTER_SCNHANDLE, CHUNK_NUM_PROCESSES);
@@ -815,7 +814,7 @@ void LoadBasicChunks() {
 
 	_vm->_dialogs->RegisterIcons(cptr, game.numObjects);
 
-	// Max polygons are 0 in DW1 Mac (both in the demo and the full version)
+	// Max polygons are 0 in the original DW1 V0 demo and in DW1 Mac (both in the demo and the full version)
 	if (game.numPolygons != 0)
 		MaxPolygons(game.numPolygons);
 

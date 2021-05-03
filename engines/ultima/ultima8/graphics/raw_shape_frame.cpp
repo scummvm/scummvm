@@ -35,7 +35,7 @@ namespace Ultima8 {
   parse data and fill class
  */
 RawShapeFrame::RawShapeFrame(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
-                       const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0),
+					   const uint8 special[256], ConvertShapeFrame *prev) : _line_offsets(0),
 					   _rle_data(nullptr) {
 	// Load it as u8
 	if (!format || format == &U8ShapeFormat || format == &U82DShapeFormat)

@@ -45,7 +45,7 @@ int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, ui
 }
 
 void Decompressor::init(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                        uint32 nUnpacked) {
+						uint32 nUnpacked) {
 	_src = src;
 	_dest = dest;
 	_szPacked = nPacked;
@@ -179,7 +179,7 @@ int DecompressorLZW::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
 }
 
 int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                                uint32 nUnpacked) {
+								uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	uint16 token; // The last received value
@@ -255,7 +255,7 @@ int DecompressorLZW::unpackLZW(Common::ReadStream *src, byte *dest, uint32 nPack
 }
 
 int DecompressorLZW::unpackLZW1(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                                uint32 nUnpacked) {
+								uint32 nUnpacked) {
 	init(src, dest, nPacked, nUnpacked);
 
 	byte *stak = (byte *)malloc(0x1014);
@@ -631,7 +631,7 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 //----------------------------------------------
 
 int DecompressorDCL::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked,
-                            uint32 nUnpacked) {
+							uint32 nUnpacked) {
 	return Common::decompressDCL(src, dest, nPacked, nUnpacked) ? 0 : SCI_ERROR_DECOMPRESSION_ERROR;
 }
 

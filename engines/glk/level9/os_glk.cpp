@@ -87,7 +87,7 @@ extern gln_uint32 FileSize;
 /* Forward declarations of event wait and other miscellaneous functions. */
 static void gln_event_wait(glui32 wait_type, event_t *event);
 static void gln_event_wait_2(glui32 wait_type_1,
-                             glui32 wait_type_2, event_t *event);
+							 glui32 wait_type_2, event_t *event);
 
 static void gln_watchdog_tick();
 static void gln_standout_string(const char *message);
@@ -342,7 +342,7 @@ static const glui32 GLN_GRAPHICS_PROPORTION = 50;
  * timeouts to wait on after fully rendering the title picture (~2 seconds).
  */
 static const int GLN_GRAPHICS_TITLE_PICTURE = 0,
-                 GLN_GRAPHICS_TITLE_WAIT = 40;
+				 GLN_GRAPHICS_TITLE_WAIT = 40;
 
 /*
  * Border and shading control.  For cases where we can't detect the back-
@@ -351,10 +351,10 @@ static const int GLN_GRAPHICS_TITLE_PICTURE = 0,
  * of shading fade.
  */
 static const glui32 GLN_GRAPHICS_DEFAULT_BACKGROUND = 0x00ffffff,
-                    GLN_GRAPHICS_BORDER_COLOR = 0x00000000;
+					GLN_GRAPHICS_BORDER_COLOR = 0x00000000;
 static const int GLN_GRAPHICS_BORDER = 1,
-                 GLN_GRAPHICS_SHADING = 2,
-                 GLN_GRAPHICS_SHADE_STEPS = 8;
+				 GLN_GRAPHICS_SHADING = 2,
+				 GLN_GRAPHICS_SHADE_STEPS = 8;
 
 /*
  * Guaranteed unused pixel value.  This value is used to fill the on-screen
@@ -669,7 +669,7 @@ static void gln_graphics_convert_palette(Colour ln_palette[], glui32 glk_palette
  * this picture in the current graphics window.
  */
 static void gln_graphics_position_picture(winid_t glk_window, int pixel_size,
-        gln_uint16 width, gln_uint16 height, int *x_offset, int *y_offset) {
+		gln_uint16 width, gln_uint16 height, int *x_offset, int *y_offset) {
 	uint window_width, window_height;
 	assert(glk_window && x_offset && y_offset);
 
@@ -765,7 +765,7 @@ static int gln_graphics_is_vertex(gln_byte off_screen[], gln_uint16 width, gln_u
 }
 
 static int gln_graphics_compare_layering_inverted(const void *void_first,
-        const void *void_second) {
+		const void *void_second) {
 	const gln_layering_t *first = (const gln_layering_t *)void_first;
 	const gln_layering_t *second = (const gln_layering_t *)void_second;
 
@@ -1632,7 +1632,7 @@ struct gln_linegraphics_segment_t {
 
 static gln_linegraphics_segment_t *gln_linegraphics_fill_segments = nullptr;
 static int gln_linegraphics_fill_segments_allocation = 0,
-           gln_linegraphics_fill_segments_length = 0;
+		   gln_linegraphics_fill_segments_length = 0;
 
 
 /*
@@ -2178,7 +2178,7 @@ static double gln_watchdog_timeout_secs = 0.0;
  * than we're polled.  Here's the control for that.
  */
 static int gln_watchdog_check_period = 0,
-           gln_watchdog_check_counter = 0;
+		   gln_watchdog_check_counter = 0;
 
 
 /*
@@ -2422,7 +2422,7 @@ static void gln_status_redraw() {
  * been silenced as a result of already using a Glk command.
  */
 static int gln_help_requested = FALSE,
-           gln_help_hints_silenced = FALSE;
+		   gln_help_hints_silenced = FALSE;
 
 /*
  * Output buffer.  We receive characters one at a time, and it's a bit
@@ -2431,7 +2431,7 @@ static int gln_help_requested = FALSE,
  */
 static char *gln_output_buffer = nullptr;
 static int gln_output_allocation = 0,
-           gln_output_length = 0;
+		   gln_output_length = 0;
 
 /*
  * Output activity flag.  Set when os_printchar() is called, and queried
@@ -3684,7 +3684,7 @@ static int gln_command_intercept(char *string) {
 
 /* Ctrl-C and Ctrl-U character constants. */
 static const char GLN_CONTROL_C = '\003',
-                  GLN_CONTROL_U = '\025';
+				  GLN_CONTROL_U = '\025';
 
 /*
  * os_readchar() call count limit, after which we really read a character.
@@ -3692,7 +3692,7 @@ static const char GLN_CONTROL_C = '\003',
  * character press to stop the listing, and a stoplist poll timeout.
  */
 static const int GLN_READCHAR_LIMIT = 1024,
-                 GLN_STOPLIST_LIMIT = 10;
+				 GLN_STOPLIST_LIMIT = 10;
 static const glui32 GLN_STOPLIST_TIMEOUT = 50;
 
 /* Quote used to suppress abbreviation expansion and local commands. */
@@ -4478,7 +4478,7 @@ int __wrap_tolower(int ch) {
  * it every 10,240 opcodes.
  */
 static const int GLN_WATCHDOG_TIMEOUT = 5,
-                 GLN_WATCHDOG_PERIOD = 10240;
+				 GLN_WATCHDOG_PERIOD = 10240;
 
 /*
  * gln_establish_picture_filename()

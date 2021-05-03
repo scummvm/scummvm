@@ -70,7 +70,7 @@ private:
 	void putTargetReticleOnItem(Item *, bool last_frame);
 	void clearSprite();
 
-    bool _reticleEnabled;
+	bool _reticleEnabled;
 	int32 _lastUpdate;
 	uint16 _reticleSpriteProcess;
 	Direction _lastTargetDir;

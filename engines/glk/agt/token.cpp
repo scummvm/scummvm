@@ -249,13 +249,13 @@ void print_tos(void) {
 #define cretn(i,f) cret(tnoun(i) && noun[i-first_noun].f)
 #define cretc(i,f) cret(tcreat(i) && creature[i-first_creat].f)
 #define icretc(f) cret(do_disambig==1 || \
-                       (tcreat(iobj) && creature[iobj-first_creat].f))
+					   (tcreat(iobj) && creature[iobj-first_creat].f))
 
 static int obj_cond(int op_, int obj, int arg) {
 	switch (op_) {
 	case 0:
 		cret(in_scope(obj));  /* Present--
-                      Do we want to use visible here?? */
+					  Do we want to use visible here?? */
 	case 1:
 		cret(is_within(obj, 1000, 1)); /* IsWearing */
 	case 2:

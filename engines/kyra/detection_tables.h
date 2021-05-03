@@ -22,49 +22,52 @@
 
 namespace {
 
-#define FLAGS(x, y, z, a, b, c, d, e, f, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, id }
-#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, e, f, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, id }
+#define FLAGS(x, y, z, a, b, c, d, e, f, g, id) { Common::UNK_LANG, Common::UNK_LANG, Common::UNK_LANG, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, g, id }
+#define FLAGS_FAN(fanLang, repLang, x, y, z, a, b, c, d, e, f, g, id) { Common::UNK_LANG, fanLang, repLang, Common::kPlatformUnknown, x, y, z, a, b, c, d, e, f, g, id }
 
-#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, Kyra::GI_KYRA1)
-#define KYRA1_OLDFLOPPY_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, false, true, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
-#define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, false, Kyra::GI_KYRA1)
+#define KYRA1_OLDFLOPPY_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_AMIGA_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_FLAGS FLAGS(false, true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, false, true, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, true, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, false, false, false, Kyra::GI_KYRA1)
 
-#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, Kyra::GI_KYRA2)
-#define KYRA2_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
-#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, false, Kyra::GI_KYRA2)
+#define KYRA2_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define KYRA2_TOWNS_SJIS_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, false, Kyra::GI_KYRA2)
 
-#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, Kyra::GI_KYRA3)
-#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, Kyra::GI_KYRA3)
-#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, false, Kyra::GI_KYRA3)
+#define KYRA3_CD_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, true, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_INS_4LANG_FLAGS FLAGS(false, false, true, false, false, false, false, true, false, true, Kyra::GI_KYRA3)
+#define KYRA3_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, true, false, false, Kyra::GI_KYRA3)
 
-#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, Kyra::GI_LOL)
-#define LOL_PC9801_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_LOL)
-#define LOL_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, Kyra::GI_LOL)
-#define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
-#define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
+#define LOL_CD_FLAGS FLAGS(false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_CD_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_FAN_FLAGS(x, y) FLAGS_FAN(x, y, false, false, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, false, false, true, false, Kyra::GI_LOL)
+#define LOL_PC9801_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, false, Kyra::GI_LOL)
+#define LOL_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_CD_DEMO_FLAGS FLAGS(true, false, true, false, false, false, false, false, false, false, Kyra::GI_LOL)
+#define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
-#define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
-#define EOB_SPANISH_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, Kyra::GI_EOB1)
-#define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, Kyra::GI_EOB1)
-#define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
-#define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
+#define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_SPANISH_FLAGS FLAGS(false, false, false, true, false, false, false, false, false, false, Kyra::GI_EOB1)
+#define EOB_PC98_FLAGS FLAGS(false, false, false, false, true, true, false, false, false, false, Kyra::GI_EOB1)
+#define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
+#define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, false, Kyra::GI_EOB2)
 
 #define GAMEOPTION_KYRA3_AUDIENCE GUIO_GAMEOPTIONS1
 #define GAMEOPTION_KYRA3_SKIP     GUIO_GAMEOPTIONS2
@@ -77,7 +80,9 @@ namespace {
 #define GAMEOPTION_EOB_HPGRAPHS   GUIO_GAMEOPTIONS6
 #define GAMEOPTION_EOB_MOUSESWAP  GUIO_GAMEOPTIONS7
 
-static const char msgUnsupportedFanTranslation[] = _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
+static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
+static const char msg_fanTrans_missingLangResources[]	= _s("Missing language specific game code and/or resources for this fan translation.");
+static const char msg_fanTrans_unsupportiveTranslator[]	= _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
 
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
@@ -133,6 +138,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -145,6 +151,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -157,6 +164,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{ // from Arne.F
 		{
 			"kyra1",
@@ -169,6 +177,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{ // russian fan translation
 		{
 			"kyra1",
@@ -181,6 +190,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_OLDFLOPPY_FLAGS
 	},
+
 	{ // from VooD
 		{
 			"kyra1",
@@ -193,6 +203,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{ // floppy 1.8 from clemmy
 		{
 			"kyra1",
@@ -205,6 +216,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_FLOPPY_FLAGS
 	},
+
 	{ // from gourry
 		{
 			"kyra1",
@@ -218,12 +230,12 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
-	{ // from trembyle
+	{ // Bugreport #7773
 		{
 			"kyra1",
-			_s("Missing game code"), // Reason for being unsupported
-			AD_ENTRY1("GEMCUT.EMC", "3f319d6908830a46ff42229a39a2c7ec"),
-			Common::ZH_ANY,
+			msg_fanTrans_missingLangResources, // Reason for being unsupported
+			AD_ENTRY1s("GEMCUT.EMC", "20f876423f4caa20f5de6b4fc5dfafeb", 6686),
+			Common::CZ_CZE,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,
 			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
@@ -234,7 +246,20 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // from trembyle
 		{
 			"kyra1",
-			_s("Missing game code"), // Reason for being unsupported
+			msg_missingLangResources, // Reason for being unsupported
+			AD_ENTRY1("GEMCUT.EMC", "3f319d6908830a46ff42229a39a2c7ec"),
+			Common::ZH_TWN,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+
+	{ // from trembyle
+		{
+			"kyra1",
+			msg_missingLangResources, // Reason for being unsupported
 			AD_ENTRY1("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4"),
 			Common::KO_KOR,
 			Common::kPlatformDOS,
@@ -272,6 +297,19 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_AMIGA_FLAGS
 	},
 
+	{ // Supplied by CaptainHIT in bug report #11596
+		{
+			"kyra1",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("GEMCUT.EMC", "d0d1f35c5e2b6dee64b048bb77d1fc00", 6998),
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA)
+		},
+		KYRA1_AMIGA_FLAGS
+	},
+
 	{
 		{
 			"kyra1",
@@ -299,6 +337,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_TOWNS_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -313,8 +352,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_TOWNS_SJIS_FLAGS
 	},
 
-	// PC-9801 floppy + CD / PC-9821 floppy version are all using the same data files,
-	// thus we will mark it as non CD game.
+	// PC-9801 floppy + CD / PC-9821 floppy version all use the same data files, thus we mark it as non-CD game.
 	{
 		{
 			"kyra1",
@@ -367,6 +405,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -419,6 +458,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{ // Polish fan translation of Macintosh CD version
 		{
 			"kyra1",
@@ -432,6 +472,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -445,6 +486,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
@@ -471,10 +513,11 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_DEMO_FLAGS
 	},
+
 	{ // Modern fan-made Russian translation by Siberian GRemlin
 		{
 			"kyra1",
-			msgUnsupportedFanTranslation,
+			msg_fanTrans_unsupportiveTranslator,
 			AD_ENTRY1("MAIN_ENG.CPS", "535765395e3594bfd9b727834028e288"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -483,6 +526,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
 	},
+
 	{	// Special Kyrandia 1 CD demo
 		{
 			"kyra1",
@@ -590,9 +634,22 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // Floppy version extracted
 		{
 			"kyra2",
-			_s("Missing game code"), // Reason for being unsupported
+			msg_missingLangResources, // Reason for being unsupported
 			AD_ENTRY1("FATE.PAK", "5bfc4dd48778ca1f3a9e001e345a9774"),
-			Common::ZH_ANY,
+			Common::ZH_TWN,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted. Bugreport #7666
+		{
+			"kyra2",
+			msg_fanTrans_missingLangResources, // Reason for being unsupported
+			AD_ENTRY1s("FATE.PAK", "ac81bcd4aa6e0921a87eb099827a8b06", 107309),
+			Common::PL_POL,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
@@ -638,6 +695,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra2",
@@ -650,6 +708,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra2",
@@ -676,6 +735,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
+
 	{
 		{
 			"kyra2",
@@ -688,6 +748,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_CD_FAN_FLAGS(Common::IT_ITA, Common::EN_ANY)
 	},
+
 	{
 		{
 			"kyra2",
@@ -744,7 +805,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // CD version
 		{
 			"kyra2",
-			msgUnsupportedFanTranslation,
+			msg_fanTrans_unsupportiveTranslator,
 			AD_ENTRY1("FERRY.CPS", "763e2103858347d4ffffc329910d323f"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -832,6 +893,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_TOWNS_FLAGS
 	},
+
 	{
 		{
 			"kyra2",
@@ -844,6 +906,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_TOWNS_SJIS_FLAGS
 	},
+
 	{ // PC-9821
 		{
 			"kyra2",
@@ -856,6 +919,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA2_TOWNS_FLAGS
 	},
+
 	{
 		{
 			"kyra2",
@@ -871,8 +935,7 @@ const KYRAGameDescription adGameDescs[] = {
 
 	// Kyra3
 
-	// non installed version
-	{
+	{ // non installed version
 		{
 			"kyra3",
 			0,
@@ -885,6 +948,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -898,6 +962,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -907,6 +972,20 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FLAGS
+	},
+
+	{ // Provided by AquariumTroop. Bugreport #11935
+		{
+			"kyra3",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY2s("ONETIME.PAK", "4fe8ff05002f3a4d645f11cd326fcef2", 485328,
+					   "WESTWOOD.001", "99d4b13576ced18a072a7590eac3cc37", 10419012),
+			Common::ZH_TWN,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_UNSUPPORTED,
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
 		KYRA3_CD_FLAGS
@@ -926,6 +1005,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_INS_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -939,6 +1019,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_INS_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -967,6 +1048,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_INS_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -980,6 +1062,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_INS_FLAGS
 	},
+
 	{
 		{
 			"kyra3",
@@ -1000,7 +1083,7 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra3",
 			0,
 			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
-					"AUD.PAK", 0, -1),
+					   "AUD.PAK", 0, -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1008,12 +1091,13 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
+
 	{
 		{
 			"kyra3",
 			0,
 			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
-					"AUD.PAK", 0, -1),
+					   "AUD.PAK", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1021,6 +1105,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::ES_ESP, Common::EN_ANY)
 	},
+
 	{
 		{
 			"kyra3",
@@ -1049,6 +1134,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
+
 	{
 		{
 			"kyra3",
@@ -1062,6 +1148,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
+
 	{
 		{
 			"kyra3",
@@ -1075,6 +1162,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
+
 	{
 		{
 			"kyra3",
@@ -1091,6 +1179,134 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
 		},
 		KYRA3_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
+
+	{ // non installed version
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
+					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
+					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
+					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			AD_ENTRY2s("ONETIME.PAK", "93b4ca2847ab7cfe52188cbde2ffe561", -1,
+					   "WESTWOOD.001", "c782e09a3b80510962af1426acf5a130", -1),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_4LANG_FLAGS
+	},
+
+	{ // installed version
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
+				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
+			},
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
+				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
+				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_4LANG_FLAGS
+	},
+
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "93b4ca2847ab7cfe52188cbde2ffe561", -1 },
+				{ "MALCOLM.PAK", 0, "a31bd451f50f38b2bac9bebbca1d14cb", -1 },
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_INS_4LANG_FLAGS
 	},
 
 	// Lands of Lore CD
@@ -1174,6 +1390,38 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
 			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_CD_FLAGS
+	},
+
+	// Incorrectly added multilanguage CD version
+	// Based on Bugreport #6284
+	{
+		{
+			"lol",
+			_s("You added the game incorrectly. Please add the root folder of the game."),
+			AD_ENTRY1s("GENERAL.PAK", "2dd5305434b11b40cbda565c0f729913", 1225285),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_WARNING | ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		LOL_CD_FLAGS
+	},
+
+	// Incorrectly added GOG CD version
+	// Based on Bugreport #11769
+	{
+		{
+			"lol",
+			// I18N: The file in the game directory needs to be extracted
+			_s("You added the game incorrectly. The GAME.DAT file is an ISO image and you need to extract the game data files from it."), // Reason for being unsupported
+			AD_ENTRY2s("VOC.PAK", "eb398f09ba3321d872b6174a68a987d9", 2276340,
+					   "GAME.DAT", "f6ec0ee628b6b2ea4a1b551e3071d84b", 306751488),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED | ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		LOL_CD_FLAGS
 	},
@@ -1542,8 +1790,7 @@ const KYRAGameDescription adGameDescs[] = {
 		LOL_PC9801_FLAGS
 	},
 
-	// Russian fan translation
-	{
+	{ // Russian fan translation
 		{
 			"lol",
 			"Extracted",
@@ -1610,6 +1857,48 @@ const KYRAGameDescription adGameDescs[] = {
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		LOL_DEMO_FLAGS
+	},
+
+	{ // Interactive CD demo, Bugreport #6777
+		{
+			"lol",
+			"CD/Demo",
+			AD_ENTRY2s("GENERAL.PAK",	"17e442d3b6109d4ae8354fa55d6c8121", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_CD_DEMO_FLAGS
+	},
+
+	{ // Interactive CD demo, Bugreport #6777
+		{
+			"lol",
+			"CD/Demo",
+			AD_ENTRY2s("GENERAL.PAK",	"17e442d3b6109d4ae8354fa55d6c8121", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_CD_DEMO_FLAGS
+	},
+
+	{ // Interactive CD demo, Bugreport #6777
+		{
+			"lol",
+			"CD/Demo",
+			AD_ENTRY2s("GENERAL.PAK",	"17e442d3b6109d4ae8354fa55d6c8121", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE | ADGF_CD,
+			GUIO8(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GAMEOPTION_LOL_SCROLLING, GAMEOPTION_LOL_CURSORS, GAMEOPTION_LOL_SAVENAMES)
+		},
+		LOL_CD_DEMO_FLAGS
 	},
 
 	{
@@ -1774,7 +2063,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{
 		{
 			"eob2",
-			_s("Missing game code"), // Reason for being unsupported
+			msg_missingLangResources, // Reason for being unsupported
 			AD_ENTRY1s("LEVEL15.INF", "f972f628d21bae404a7d52bb287c0012", -1),
 			Common::ZH_ANY,
 			Common::kPlatformDOS,
@@ -1823,7 +2112,7 @@ const KYRAGameDescription adGameDescs[] = {
 		EOB2_FLAGS
 	},
 
-	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
+	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
 };
 
 const PlainGameDescriptor gameList[] = {

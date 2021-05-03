@@ -47,7 +47,7 @@ int LoLEngine::processPrologue() {
 			showIntro();
 	}
 
-	if (_flags.isDemo) {
+	if (_flags.isDemo && !_flags.isTalkie) {
 		_screen->fadePalette(_screen->getPalette(1), 30, 0);
 		_screen->loadBitmap("FINAL.CPS", 2, 2, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -78,11 +78,11 @@ int LoLEngine::processPrologue() {
 		_screen->updateScreen();
 
 		_eventList.clear();
-		int selection = mainMenu();
 
-		if (selection != 3) {
+		int selection = _flags.isDemo ? 0 : mainMenu();
+
+		if (!_flags.isDemo && selection != 3) {
 			_screen->hideMouse();
-
 			// Unlike the original, we add a nice fade to black
 			_screen->getPalette(0).clear();
 			_screen->fadeToBlack(0x54);
@@ -122,9 +122,18 @@ int LoLEngine::processPrologue() {
 	}
 
 	if (processSelection == 0) {
-		_sound->loadSoundFile(0);
-		_sound->playTrack(6);
-		chooseCharacter();
+		if (_flags.isDemo) {
+			_charSelection = 0;
+			_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
+			_screen->setMouseCursor(0, 0, _screen->getPtrToShape(_screen->getCPagePtr(3), 0));
+			while (!_screen->isMouseVisible())
+				_screen->showMouse();
+			delay(500);
+		} else {
+			_sound->loadSoundFile(0);
+			_sound->playTrack(6);
+			chooseCharacter();
+		}
 		_sound->playTrack(1);
 		_screen->fadeToBlack();
 	}
@@ -142,6 +151,13 @@ void LoLEngine::setupPrologueData(bool load) {
 		"HISTORY.PAK", 0
 	};
 
+	static const char *const fileListCDDemo[] = {
+		"GENERAL.PAK", "INTROVOC.PAK", "ISTARTUP.PAK", "INTRO1.PAK",
+		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
+		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK",
+		0
+	};
+
 	static const char *const fileListFloppy[] = {
 		"INTRO.PAK", "INTROVOC.PAK", 0
 	};
@@ -150,13 +166,13 @@ void LoLEngine::setupPrologueData(bool load) {
 		"INTRO.PAK", "TINTROVO.PAK", 0
 	};
 
-	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
+	const char *const *fileList = _flags.isTalkie ? (_flags.isDemo ? fileListCDDemo : fileListCD) : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
 	char filename[32];
 	for (uint i = 0; fileList[i]; ++i) {
 		filename[0] = '\0';
 
-		if (_flags.isTalkie) {
+		if (_flags.isTalkie && !_flags.isDemo) {
 			strcpy(filename, _languageExt[_lang]);
 			strcat(filename, "/");
 		}
@@ -196,7 +212,7 @@ void LoLEngine::setupPrologueData(bool load) {
 		if (_flags.platform == Common::kPlatformPC98)
 			_sound->loadSoundFile("SOUND.DAT");
 
-		if (_flags.isDemo)
+		if (_flags.isDemo && !_flags.isTalkie)
 			_sound->loadSoundFile("LOREINTR");
 	} else {
 		delete _chargenWSA; _chargenWSA = 0;
@@ -241,7 +257,7 @@ void LoLEngine::showIntro() {
 	while (!_tim->finished() && !shouldQuit() && !skipFlag()) {
 		updateInput();
 		_tim->exec(intro, false);
-		if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
+		if (!(_flags.isDemo && !_flags.isTalkie) && _flags.platform != Common::kPlatformPC98)
 			_screen->checkedPageUpdate(8, 4);
 
 		if (_tim->_palDiff) {

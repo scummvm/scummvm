@@ -179,9 +179,8 @@ protected:
 		uint16 rx = 10;
 		uint16 ry = 4 + _lines * _font->height();	// y
 
-		byte *dst = (byte *)_surf->getBasePtr(rx, ry);
 		_font->setColor(_color);
-		_font->drawString(dst, _surf->w, _line.c_str());
+		_font->drawString(_surf, rx, ry, _line.c_str());
 	}
 
 	void end() override {
@@ -496,9 +495,8 @@ protected:
 		uint16 rx = _x + (_surf->w - _lineWidth) / 2;
 		uint16 ry = _y + _lines * _font->height();	// y
 
-		byte *dst = (byte *)_surf->getBasePtr(rx, ry);
 		_font->setColor(_color);
-		_font->drawString(dst, _surf->w, _line.c_str());
+		_font->drawString(_surf, rx, ry, _line.c_str());
 	}
 
 	void end() override {

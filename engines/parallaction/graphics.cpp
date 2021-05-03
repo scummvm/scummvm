@@ -516,9 +516,6 @@ void Gfx::invertBackground(const Common::Rect& r) {
 }
 
 
-
-
-
 void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
@@ -536,12 +533,12 @@ GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 		setupLabelSurface(*cnv, w, h);
 
 		font->setColor((_gameType == GType_BRA) ? 0 : 7);
-		font->drawString((byte *)cnv->getBasePtr(1, 0), cnv->w, text);
-		font->drawString((byte *)cnv->getBasePtr(1, 2), cnv->w, text);
-		font->drawString((byte *)cnv->getBasePtr(0, 1), cnv->w, text);
-		font->drawString((byte *)cnv->getBasePtr(2, 1), cnv->w, text);
+		font->drawString(cnv, 1, 0, text);
+		font->drawString(cnv, 1, 2, text);
+		font->drawString(cnv, 0, 1, text);
+		font->drawString(cnv, 2, 1, text);
 		font->setColor((_gameType == GType_BRA) ? 11 : 1);
-		font->drawString((byte *)cnv->getBasePtr(1, 1), cnv->w, text);
+		font->drawString(cnv, 1, 1, text);
 	} else {
 		w = font->getStringWidth(text);
 		h = font->height();

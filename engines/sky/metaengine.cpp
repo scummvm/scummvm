@@ -36,19 +36,19 @@
 #include "sky/sky.h"
 
 class SkyMetaEngine : public MetaEngine {
-    const char *getName() const override {
-        return "sky";
-    }
+	const char *getName() const override {
+		return "sky";
+	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 
-    Common::Error createInstance(OSystem *syst, Engine **engine) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 
-    Common::KeymapArray initKeymaps(const char *target) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool SkyMetaEngine::hasFeature(MetaEngineFeature f) const {

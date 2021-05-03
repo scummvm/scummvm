@@ -71,7 +71,7 @@ static const TranscribedSound seClickTranscript[] = {
 
 enum {
 	kAnimationCompleted = 26007,
-      	// 26008 is the end of statue animation that we handle as functor instead
+		// 26008 is the end of statue animation that we handle as functor instead
 	kStrawTaken = 26020,
 	kStrawTakenCleanup = 26021,
 

@@ -251,37 +251,35 @@ static int get_active_shifts() {
 // and no more processing required, otherwise returns true and provides current keycode and key shifts.
 bool run_service_key_controls(int &kgn) {
 	// check keypresses
-	static int old_key_shifts = 0; // for saving shift modes
-
 	bool handled = false;
 	int kbhit_res = ags_kbhit();
 	// First, check shifts
 	const int act_shifts = get_active_shifts();
 	// If shifts combination have already triggered an action, then do nothing
 	// until new shifts are empty, in which case reset saved shifts
-	if (old_key_shifts & KEY_SHIFTS_FIRED) {
+	if (_G(old_key_shifts) & KEY_SHIFTS_FIRED) {
 		if (act_shifts == 0)
-			old_key_shifts = 0;
+			_G(old_key_shifts) = 0;
 	} else {
 		// If any non-shift key is pressed, add fired flag to indicate that
 		// this is no longer a pure shifts key combination
 		if (kbhit_res) {
-			old_key_shifts = act_shifts | KEY_SHIFTS_FIRED;
+			_G(old_key_shifts) = act_shifts | KEY_SHIFTS_FIRED;
 		}
 		// If all the previously registered shifts are still pressed,
 		// then simply resave new shift state.
-		else if ((old_key_shifts & act_shifts) == old_key_shifts) {
-			old_key_shifts = act_shifts;
+		else if ((_G(old_key_shifts) & act_shifts) == _G(old_key_shifts)) {
+			_G(old_key_shifts) = act_shifts;
 		}
 		// Otherwise some of the shifts were released, then run key combo action
 		// and set KEY_COMBO_FIRED flag to prevent multiple execution
-		else if (old_key_shifts) {
+		else if (_G(old_key_shifts)) {
 			// Toggle mouse lock on Ctrl + Alt
-			if (old_key_shifts == (KB_ALT_FLAG | KB_CTRL_FLAG)) {
+			if (_G(old_key_shifts) == (KB_ALT_FLAG | KB_CTRL_FLAG)) {
 				toggle_mouse_lock();
 				handled = true;
 			}
-			old_key_shifts |= KEY_SHIFTS_FIRED;
+			_G(old_key_shifts) |= KEY_SHIFTS_FIRED;
 		}
 	}
 
@@ -555,6 +553,10 @@ static void game_loop_check_controls(bool checkControls) {
 		int numevents_was = _G(numevents);
 		check_controls();
 		check_room_edges(numevents_was);
+
+		if (_G(abort_engine))
+			return;
+
 		// If an inventory interaction changed the room
 		if (inRoom != _G(displayed_room))
 			check_new_room();
@@ -622,7 +624,7 @@ static void game_loop_update_events() {
 		setevent(EV_FADEIN, 0, 0, 0);
 	_G(in_new_room) = 0;
 	update_events();
-	if ((_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
+	if (!_G(abort_engine) && (_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
 		// if in a new room, and the room wasn't just changed again in update_events,
 		// then queue the Enters Screen scripts
 		// run these next time round, when it's faded in
@@ -728,6 +730,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_check_controls(checkControls);
 
+	if (_G(abort_engine))
+		return;
+
 	_G(our_eip) = 2;
 
 	game_loop_do_update();
@@ -743,6 +748,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	_G(our_eip) = 6;
 
 	game_loop_update_events();
+
+	if (_G(abort_engine))
+		return;
 
 	_G(our_eip) = 7;
 
@@ -862,6 +870,10 @@ static int GameTick() {
 		quit("!A blocking function was called before the first room has been loaded");
 
 	UpdateGameOnce(true);
+
+	if (_G(abort_engine))
+		return -1;
+
 	UpdateMouseOverLocation();
 
 	_G(our_eip) = 76;

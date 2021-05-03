@@ -45,32 +45,32 @@ static InputMode savedInputMode = MODE_DRAG;
 static aptHookCookie cookie;
 
 static const Common::HardwareInputTableEntry ctrJoystickButtons[] = {
-    { "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("A")           },
-    { "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("B")           },
-    { "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("X")           },
-    { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Y")           },
-    { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
-    { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
-    { "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("ZL")          },
-    { "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("ZR")          },
-    { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
-    { "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
-    { "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
-    { "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
-    { "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
-    { "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
-    { nullptr,              0,                                      nullptr           }
+	{ "JOY_A",              Common::JOYSTICK_BUTTON_A,              _s("A")           },
+	{ "JOY_B",              Common::JOYSTICK_BUTTON_B,              _s("B")           },
+	{ "JOY_X",              Common::JOYSTICK_BUTTON_X,              _s("X")           },
+	{ "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("Y")           },
+	{ "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Select")      },
+	{ "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Start")       },
+	{ "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("ZL")          },
+	{ "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("ZR")          },
+	{ "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
+	{ "JOY_RIGHT_SHOULDER", Common::JOYSTICK_BUTTON_RIGHT_SHOULDER, _s("R")           },
+	{ "JOY_UP",             Common::JOYSTICK_BUTTON_DPAD_UP,        _s("D-pad Up")    },
+	{ "JOY_DOWN",           Common::JOYSTICK_BUTTON_DPAD_DOWN,      _s("D-pad Down")  },
+	{ "JOY_LEFT",           Common::JOYSTICK_BUTTON_DPAD_LEFT,      _s("D-pad Left")  },
+	{ "JOY_RIGHT",          Common::JOYSTICK_BUTTON_DPAD_RIGHT,     _s("D-pad Right") },
+	{ nullptr,              0,                                      nullptr           }
 };
 
 static const Common::AxisTableEntry ctrJoystickAxes[] = {
-    { "JOY_LEFT_STICK_X", Common::JOYSTICK_AXIS_LEFT_STICK_X, Common::kAxisTypeFull, _s("C-Pad X") },
-    { "JOY_LEFT_STICK_Y", Common::JOYSTICK_AXIS_LEFT_STICK_Y, Common::kAxisTypeFull, _s("C-Pad Y") },
-    { nullptr,            0,                                  Common::kAxisTypeFull, nullptr       }
+	{ "JOY_LEFT_STICK_X", Common::JOYSTICK_AXIS_LEFT_STICK_X, Common::kAxisTypeFull, _s("C-Pad X") },
+	{ "JOY_LEFT_STICK_Y", Common::JOYSTICK_AXIS_LEFT_STICK_Y, Common::kAxisTypeFull, _s("C-Pad Y") },
+	{ nullptr,            0,                                  Common::kAxisTypeFull, nullptr       }
 };
 
 const Common::HardwareInputTableEntry ctrMouseButtons[] = {
-    { "MOUSE_LEFT",   Common::MOUSE_BUTTON_LEFT,   _s("Touch") },
-    { nullptr,        0,                           nullptr     }
+	{ "MOUSE_LEFT",   Common::MOUSE_BUTTON_LEFT,   _s("Touch") },
+	{ nullptr,        0,                           nullptr     }
 };
 
 static const int16 CIRCLE_MAX = 160;

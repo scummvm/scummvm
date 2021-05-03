@@ -68,13 +68,13 @@ extern void *sx_malloc(size_t size);
 extern void *sx_realloc(void *pointer, size_t size);
 extern void sx_free(void *pointer);
 extern Common::SeekableReadStream *sx_fopen(const sc_char *name,
-        const sc_char *extension, const sc_char *mode);
+		const sc_char *extension, const sc_char *mode);
 extern sc_char *sx_trim_string(sc_char *string);
 extern sc_char *sx_normalize_string(sc_char *string);
 
 /* Test controller function. */
 extern sc_int test_run_game_tests(const sx_test_descriptor_t tests[],
-                                  sc_int count, sc_bool is_verbose);
+								  sc_int count, sc_bool is_verbose);
 
 /* Globbing function. */
 extern sc_bool glob_match(const sc_char *pattern, const sc_char *string);
@@ -86,9 +86,9 @@ extern sc_bool glob_match(const sc_char *pattern, const sc_char *string);
 /* Serialization helper for script running and checking. */
 extern void *file_open_file_callback(sc_bool is_save);
 extern sc_int file_read_file_callback(void *opaque,
-                                      sc_byte *buffer, sc_int length);
+									  sc_byte *buffer, sc_int length);
 extern void file_write_file_callback(void *opaque,
-                                     const sc_byte *buffer, sc_int length);
+									 const sc_byte *buffer, sc_int length);
 extern void file_close_file_callback(void *opaque);
 extern void file_cleanup(void);
 

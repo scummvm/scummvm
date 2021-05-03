@@ -125,15 +125,15 @@ void set_statline() {
   It advances *pstr to point after the number and after the
   terminating character, if relevant.
   <term_char> is the terminating character; if this is 0, then
-     the calling routine will worry about the terminating character.
+	 the calling routine will worry about the terminating character.
   <maxval> of 0 indicates no upper bound
 */
 
 static int extract_number(const char **pstr, int maxval,
-                          char term_char) {
+						  char term_char) {
 	const char *s;
 	long n;  /* n holds the value to be returned; i holds
-          the number of characters parsed. */
+		  the number of characters parsed. */
 	n = 0;
 	s = *pstr;
 	while (*s == ' ' || *s == '\t') s++;
@@ -155,8 +155,8 @@ static int extract_number(const char **pstr, int maxval,
 /* This is used by #PROP[obj].[prop]# and $ATTR[obj].[attr]$, etc. */
 /* isprop: Are we looking for a property (as opposed to an attribute)? */
 static void extract_prop_val(const char **pstr,
-                             int *id, int *val,
-                             rbool isprop, const char term_char) {
+							 int *id, int *val,
+							 rbool isprop, const char term_char) {
 	const char *s;
 	int v; /* object number / final value */
 	int i; /* Attribute id */
@@ -256,7 +256,7 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 	}
 
 	if (w == prev_adj) /* ... and prev_adj!=0 but we don't need to explicity
-              test that since w!=0 */
+			  test that since w!=0 */
 		fill_buff[0] = 0; /* i.e. an empty string */
 	else {
 		rstrncpy(fill_buff, dict[w], FILL_SIZE);
@@ -288,20 +288,20 @@ static word get_adj(parse_rec *obj_rec, char *buff) {
 		return 1;}
 
 word just_seen_adj;  /* This determines if we just saw $adjective$; if so,
-              this is set to it, otherwise it is zero. See
-              num_name_func above. */
+			  this is set to it, otherwise it is zero. See
+			  num_name_func above. */
 
 static int wordcode_match(const char **pvarname, char *fill_buff,
-                          int context, const char *pword)
+						  int context, const char *pword)
 /* Check <*p*pvarname> for a match; put subs text in fill_buf
    <context> indicates who called us; this determines
-      what substitutions are valid. See interp.h for possible
-      values.  Move *p*pvarname after whatever is matched.
+	  what substitutions are valid. See interp.h for possible
+	  values.  Move *p*pvarname after whatever is matched.
    <pword> contains the parse word when context is MSG_PARSE. */
 /* $ forms:
    $verb$, $noun$, $adjective$, $prep$, $object$, $name$,
    $n_pro$, $o_pro$, $n_indir$, $o_indir$,
-      $name_pro$, $name_indir$
+	  $name_pro$, $name_indir$
    $n_is$, $o_is$, $name_is$
    $c_name$
    $n_was$, $o_was$, $name_was$
@@ -471,7 +471,7 @@ static int capstate(const char *varname) {
 static char fill_buff[FILL_SIZE]; /* Buffer to hold returned string */
 
 static char *wordvar_match(const char **pvarname, char match_type,
-                           int context, const char *pword)
+						   int context, const char *pword)
 /* Match_type=='#' for variables, '$' for parsed words */
 /* Possible # forms: #VARn#, #CNTn# */
 /* See above for $ forms */
@@ -528,7 +528,7 @@ static char  *format_line(const char *s, int context, const char *pword)
 	const char *p, *oldp;  /* Pointer to the original string */
 	int i;
 	char *fill_word, *q; /* Word used to fill in the blanks, and a pointer
-            used to iterate through it*/
+			used to iterate through it*/
 	char fill_type; /* '#'=#variable#, '$'=$word$ */
 
 	/* Need to do subsitutions and also correct for tabs */
@@ -550,7 +550,7 @@ static char  *format_line(const char *s, int context, const char *pword)
 			/* Read in $word$ or #var# and do substitution */
 			fill_type = *p;
 			oldp = p++;  /* Save old value in case we are wrong and then
-          increment p */
+		  increment p */
 			fill_word = wordvar_match(&p, fill_type, context, pword);
 			if (fill_word == NULL) {
 				/*i.e. no match-- so just copy it verbatim */
@@ -603,7 +603,7 @@ static void lineout(const char *s, rbool nl, int context, const char *pword) {
 }
 
 static void gen_print_descr(descr_ptr dp_, rbool nl,
-                            int context, const char *pword) {
+							int context, const char *pword) {
 	int j;
 	descr_line *txt;
 
@@ -788,7 +788,7 @@ static rbool check_answer(char *ans, long start, long size)
 	descr_line *astr; /* Holds the answer string */
 	int i; /* Index to line of astr we're on. */
 	char *p, *q, *r;  /* Used to break astr up into pieces and
-        loop over them */
+		loop over them */
 
 	astr = read_descr(start, size);
 	if (astr == NULL) {
@@ -900,7 +900,7 @@ long read_number(void) {
 
 
 void runptr(int i, descr_ptr dp_[], const char *msg, int msgid,
-            parse_rec *nounrec, parse_rec *objrec)
+			parse_rec *nounrec, parse_rec *objrec)
 /* Prints out description unless it doesn't exist, in which
    case it prints out either system message #msgid or the message
    contained in msg. */
@@ -912,17 +912,17 @@ void runptr(int i, descr_ptr dp_[], const char *msg, int msgid,
 
 
 /* Score modes:
-      S:Score, R:Room  +=list '(out of..'), -=don't list at all.
-    0-- S+ R+
-    1-- S+ R
-    2-- S  R+
-    3-- S  R
-    4-- S+ R-
-    5-- S  R-
-    6-- S- R+
-    7-- S- R
-    8-- S- R- and disable SCORE.
-    */
+	  S:Score, R:Room  +=list '(out of..'), -=don't list at all.
+	0-- S+ R+
+	1-- S+ R
+	2-- S  R+
+	3-- S  R
+	4-- S+ R-
+	5-- S  R-
+	6-- S- R+
+	7-- S- R
+	8-- S- R- and disable SCORE.
+	*/
 
 
 void print_score(void) {
@@ -1239,7 +1239,7 @@ static void set_pronoun(int item) {
 		if (it_plur(item))
 			last_they = item;
 		last_it = item;  /* Change: last_it will be set even if the
-               noun is plural */
+			   noun is plural */
 		break;
 	case 1:
 		last_she = item;
@@ -1265,7 +1265,7 @@ static rbool lastnoun(parse_rec *list) {
 
 
 static void runverbs(parse_rec *actor0, int vnum,
-                     parse_rec *lnoun, word prep0, parse_rec *iobj0)
+					 parse_rec *lnoun, word prep0, parse_rec *iobj0)
 /* The zeros are postpended simply to avoid a name conflict */
 {
 	parse_rec *currnoun;
@@ -1336,7 +1336,7 @@ parse_rec *save_lnoun = NULL;
 
 
 void exec(parse_rec *actor_, int vnum,
-          parse_rec *lnoun, word prep_, parse_rec *iobj_) {
+		  parse_rec *lnoun, word prep_, parse_rec *iobj_) {
 
 	cmd_saveable = 0;
 	pronoun_mode = !PURE_PROSUB;

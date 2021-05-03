@@ -64,6 +64,8 @@
 #define GUIO_LINKMUSICTOSFX  "\x25"
 #define GUIO_NOSPEECHVOLUME  "\x26"
 
+#define GUIO_NOLANG          "\x27"
+
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
 #define GUIO_GAMEOPTIONS1    "\x30"

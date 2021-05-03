@@ -50,8 +50,6 @@ public:
 		_cursorVisible(false),
 		_cursorX(0),
 		_cursorY(0),
-		_xdpi(90),
-		_ydpi(90),
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
 
@@ -102,7 +100,7 @@ protected:
 	 * Backend-specific implementation for updating internal surfaces that need
 	 * to reflect the new window size.
 	 */
-	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) = 0;
+	virtual void handleResizeImpl(const int width, const int height) = 0;
 
 	/**
 	 * Converts the given point from the active virtual screen's coordinate
@@ -181,12 +179,10 @@ protected:
 	 * @param width The new width of the window, excluding window decoration.
 	 * @param height The new height of the window, excluding window decoration.
 	 */
-	void handleResize(const int width, const int height, const int xdpi, const int ydpi) {
+	void handleResize(const int width, const int height) {
 		_windowWidth = width;
 		_windowHeight = height;
-		_xdpi = xdpi;
-		_ydpi = ydpi;
-		handleResizeImpl(width, height, xdpi, ydpi);
+		handleResizeImpl(width, height);
 	}
 
 	/**
@@ -285,11 +281,6 @@ protected:
 	 * The height of the window, excluding window decoration.
 	 */
 	int _windowHeight;
-
-	/**
-	 * The DPI of the window.
-	 */
-	int _xdpi, _ydpi;
 
 	/**
 	 * Whether the overlay (i.e. launcher, including the out-of-game launcher)

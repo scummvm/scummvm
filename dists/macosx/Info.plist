@@ -78,5 +78,7 @@
 	<string>ScummVM saves and loads savegames in the Documents folder by default.</string>
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
 </dict>
 </plist>

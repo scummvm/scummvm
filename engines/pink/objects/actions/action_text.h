@@ -46,14 +46,18 @@ public:
 
 	void draw(Graphics::ManagedSurface *surface); // only for non-scrollable text
 
+	Common::Rect getBound();
+
 private:
 
 	void findColorsInPalette();
+	void loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags);
 
 private:
 	Common::String _fileName;
 	Common::U32String _text;
 	Graphics::MacTextWindow *_txtWnd;
+	Graphics::MacText *_macText;
 
 	uint32 _xLeft;
 	uint32 _yTop;

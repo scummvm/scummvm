@@ -185,9 +185,6 @@ private:
 	const char *const *_mainMenuStrings;
 	int _mainMenuStringsSize;
 
-	static const char *const _mainMenuSpanishFan[];
-	static const char *const _mainMenuItalianFan[];
-
 	// animator
 	uint8 *_gamePlayBuffer;
 	void restorePage3() override;
@@ -225,7 +222,13 @@ private:
 
 	// interface
 	uint8 *_interface;
+	uint32 _interfaceSize;
+	uint16 _interfaceH;
 	uint8 *_interfaceCommandLine;
+	uint32 _interfaceCommandLineSize;
+	uint16 _interfaceCommandLineY1;
+	uint16 _interfaceCommandLineY2;
+	uint16 _interfaceCommandLineH;
 
 	void loadInterfaceShapes();
 	void loadInterface();

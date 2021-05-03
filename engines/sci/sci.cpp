@@ -830,7 +830,7 @@ bool SciEngine::hasMacIconBar() const {
 }
 
 bool SciEngine::hasMacSaveRestoreDialogs() const {
-    return _gameDescription->platform == Common::kPlatformMacintosh &&
+	return _gameDescription->platform == Common::kPlatformMacintosh &&
 			(getSciVersion() <= SCI_VERSION_2_1_EARLY ||
 			 getGameId() == GID_GK2 ||
 			 getGameId() == GID_SQ6 ||

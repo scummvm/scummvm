@@ -147,7 +147,7 @@ const uint8 volMakerFunction[MAX_VOLUME + 1] = VOL_FUNCTION;
 
 class VolMaker {
 
-      public:
+	  public:
 	int32 GetVol(int32 i) {
 		if (i < 0)
 			return 0;
@@ -1006,7 +1006,7 @@ int32 FindSound(uint32 obj, uint32 sndHash, int32 start = 0) {
 // fn_play_sfx_offset(sfxName,sndID,x,y,z,isNico)
 // this is the generic function
 void RegisterSoundOffset(uint32 obj, const char *offsetName, const char *sfxName, uint32 sfxHash, const char *sndID, PXreal xo, PXreal yo, PXreal zo, int32 isNico, int32 time,
-                         int8 volume_offset) {
+						 int8 volume_offset) {
 	// check we have the hash before we register any sounds...!
 	if (menuSoundIDHash == NULL_HASH)
 		menuSoundIDHash = HashString(menuSoundID);

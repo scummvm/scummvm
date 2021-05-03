@@ -38,7 +38,7 @@ namespace Action {
 class SliderPuzzle: public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kWaitForSound };
-	SliderPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	SliderPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
 	virtual ~SliderPuzzle() {}
 
 	virtual void init() override;
@@ -67,8 +67,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "SliderPuzzle"; }
-
-	virtual uint16 getZOrder() const override { return 7; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	void drawTile(int tileID, uint posX, uint posY);

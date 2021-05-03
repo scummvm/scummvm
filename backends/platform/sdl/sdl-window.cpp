@@ -232,9 +232,8 @@ bool SdlWindow::getSDLWMInformation(SDL_SysWMinfo *info) const {
 
 Common::Rect SdlWindow::getDesktopResolution() {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	int displayIndex = _window ? SDL_GetWindowDisplayIndex(_window) : 0;
 	SDL_DisplayMode displayMode;
-	if (!SDL_GetDesktopDisplayMode(displayIndex, &displayMode)) {
+	if (!SDL_GetDesktopDisplayMode(getDisplayIndex(), &displayMode)) {
 		_desktopRes = Common::Rect(displayMode.w, displayMode.h);
 	}
 #endif
@@ -263,6 +262,16 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 	}
 
 	return res;
+}
+
+int SdlWindow::getDisplayIndex() const {
+	if (_window) {
+		int displayIndex = SDL_GetWindowDisplayIndex(_window);
+		if (displayIndex >= 0)
+			return displayIndex;
+	}
+	// Default to primary display
+	return 0;
 }
 
 bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
@@ -296,19 +305,26 @@ bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
 	// the documentation says it only works on X11 anyway, which means it is
 	// basically worthless. So we'll just try to keep things closeish to the
 	// maximum for now.
-	SDL_DisplayMode displayMode;
-	SDL_GetDesktopDisplayMode(0, &displayMode);
+	Common::Rect desktopRes = getDesktopResolution();
 	if (!fullscreenFlags) {
-		displayMode.w -= 20;
-		displayMode.h -= 30;
+		int top, left, bottom, right;
+#if SDL_VERSION_ATLEAST(2, 0, 5)
+		if (!_window || SDL_GetWindowBordersSize(_window, &top, &left, &bottom, &right) < 0)
+#endif
+		{
+			left = right = 10;
+			top = bottom = 15;
+		}
+		desktopRes.right -= (left + right);
+		desktopRes.bottom -= (top + bottom);
 	}
 
-	if (width > displayMode.w) {
-		width = displayMode.w;
+	if (width > desktopRes.right) {
+		width = desktopRes.right;
 	}
 
-	if (height > displayMode.h) {
-		height = displayMode.h;
+	if (height > desktopRes.bottom) {
+		height = desktopRes.bottom;
 	}
 
 	if (!_window || oldNonUpdateableFlags != newNonUpdateableFlags) {

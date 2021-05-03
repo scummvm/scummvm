@@ -132,11 +132,11 @@ enum {
  *   and final state ID's.  
  */
 struct re_machine {
-    /* the machine's initial state */
-    re_state_id init;
+	/* the machine's initial state */
+	re_state_id init;
 
-    /* the machine's final state */
-    re_state_id final_state;
+	/* the machine's final state */
+	re_state_id final_state;
 };
 
 /* ------------------------------------------------------------------------ */
@@ -146,21 +146,21 @@ struct re_machine {
  */
 void re_init(re_context *ctx, errcxdef *errctx)
 {
-    /* save the error context */
-    ctx->errctx = errctx;
-    
-    /* no tuple array yet */
-    ctx->tuple_arr = 0;
-    ctx->tuples_alloc = 0;
+	/* save the error context */
+	ctx->errctx = errctx;
+	
+	/* no tuple array yet */
+	ctx->tuple_arr = 0;
+	ctx->tuples_alloc = 0;
 
-    /* clear states */
-    ctx->next_state = RE_STATE_FIRST_VALID;
+	/* clear states */
+	ctx->next_state = RE_STATE_FIRST_VALID;
 
-    /* clear groups */
-    ctx->cur_group = 0;
+	/* clear groups */
+	ctx->cur_group = 0;
 
-    /* no string buffer yet */
-    ctx->strbuf = 0;
+	/* no string buffer yet */
+	ctx->strbuf = 0;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -169,23 +169,23 @@ void re_init(re_context *ctx, errcxdef *errctx)
  */
 static void re_reset(re_context *ctx)
 {
-    int i;
-    
-    /* delete any range tables we've allocated */
-    for (i = 0 ; i < ctx->next_state ; ++i)
-    {
-        if (ctx->tuple_arr[i].char_range != 0)
-        {
-            mchfre(ctx->tuple_arr[i].char_range);
-            ctx->tuple_arr[i].char_range = 0;
-        }
-    }
+	int i;
+	
+	/* delete any range tables we've allocated */
+	for (i = 0 ; i < ctx->next_state ; ++i)
+	{
+		if (ctx->tuple_arr[i].char_range != 0)
+		{
+			mchfre(ctx->tuple_arr[i].char_range);
+			ctx->tuple_arr[i].char_range = 0;
+		}
+	}
 
-    /* clear states */
-    ctx->next_state = RE_STATE_FIRST_VALID;
+	/* clear states */
+	ctx->next_state = RE_STATE_FIRST_VALID;
 
-    /* clear groups */
-    ctx->cur_group = 0;
+	/* clear groups */
+	ctx->cur_group = 0;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -195,22 +195,22 @@ static void re_reset(re_context *ctx)
  */
 void re_delete(re_context *ctx)
 {
-    /* reset state */
-    re_reset(ctx);
-    
-    /* if we've allocated an array, delete it */
-    if (ctx->tuple_arr != 0)
-    {
-        mchfre(ctx->tuple_arr);
-        ctx->tuple_arr = 0;
-    }
+	/* reset state */
+	re_reset(ctx);
+	
+	/* if we've allocated an array, delete it */
+	if (ctx->tuple_arr != 0)
+	{
+		mchfre(ctx->tuple_arr);
+		ctx->tuple_arr = 0;
+	}
 
-    /* if we allocated a string buffer, delete it */
-    if (ctx->strbuf != 0)
-    {
-        mchfre(ctx->strbuf);
-        ctx->strbuf = 0;
-    }
+	/* if we allocated a string buffer, delete it */
+	if (ctx->strbuf != 0)
+	{
+		mchfre(ctx->strbuf);
+		ctx->strbuf = 0;
+	}
 }
 
 /* ------------------------------------------------------------------------ */
@@ -219,57 +219,57 @@ void re_delete(re_context *ctx)
  */
 static re_state_id re_alloc_state(re_context *ctx)
 {
-    /*
-     *   If we don't have enough room for another state, expand the array 
-     */
-    if (ctx->next_state >= ctx->tuples_alloc)
-    {
-        uint new_alloc;
-        
-        /* bump the size by a bit */
-        new_alloc = ctx->tuples_alloc + 100;
-        
-        /* allocate or expand the array */
-        if (ctx->tuples_alloc == 0)
-        {
-            /* allocate the initial memory block */
-            ctx->tuple_arr =
-                (re_tuple *)mchalo(ctx->errctx,
-                                   (new_alloc * sizeof(re_tuple)),
-                                   "regex");
-        }
-        else
-        {
-            re_tuple *ptr;
-            
-            /* allocate a new memory block */
-            ptr = (re_tuple *)mchalo(ctx->errctx,
-                                     (new_alloc * sizeof(re_tuple)),
-                                     "regex");
-            
-            /* copy the old memory to the new memory */
-            memcpy(ptr, ctx->tuple_arr, ctx->tuples_alloc * sizeof(re_tuple));
+	/*
+	 *   If we don't have enough room for another state, expand the array 
+	 */
+	if (ctx->next_state >= ctx->tuples_alloc)
+	{
+		uint new_alloc;
+		
+		/* bump the size by a bit */
+		new_alloc = ctx->tuples_alloc + 100;
+		
+		/* allocate or expand the array */
+		if (ctx->tuples_alloc == 0)
+		{
+			/* allocate the initial memory block */
+			ctx->tuple_arr =
+				(re_tuple *)mchalo(ctx->errctx,
+								   (new_alloc * sizeof(re_tuple)),
+								   "regex");
+		}
+		else
+		{
+			re_tuple *ptr;
+			
+			/* allocate a new memory block */
+			ptr = (re_tuple *)mchalo(ctx->errctx,
+									 (new_alloc * sizeof(re_tuple)),
+									 "regex");
+			
+			/* copy the old memory to the new memory */
+			memcpy(ptr, ctx->tuple_arr, ctx->tuples_alloc * sizeof(re_tuple));
 
-            /* free the old block */
-            mchfre(ctx->tuple_arr);
+			/* free the old block */
+			mchfre(ctx->tuple_arr);
 
-            /* use the new block */
-            ctx->tuple_arr = ptr;
-        }
+			/* use the new block */
+			ctx->tuple_arr = ptr;
+		}
 
-        /* remember the new allocation size */
-        ctx->tuples_alloc = new_alloc;
-    }
+		/* remember the new allocation size */
+		ctx->tuples_alloc = new_alloc;
+	}
 
-    /* initialize the next state */
-    ctx->tuple_arr[ctx->next_state].next_state_1 = RE_STATE_INVALID;
-    ctx->tuple_arr[ctx->next_state].next_state_2 = RE_STATE_INVALID;
-    ctx->tuple_arr[ctx->next_state].ch = RE_EPSILON;
-    ctx->tuple_arr[ctx->next_state].flags = 0;
-    ctx->tuple_arr[ctx->next_state].char_range = 0;
+	/* initialize the next state */
+	ctx->tuple_arr[ctx->next_state].next_state_1 = RE_STATE_INVALID;
+	ctx->tuple_arr[ctx->next_state].next_state_2 = RE_STATE_INVALID;
+	ctx->tuple_arr[ctx->next_state].ch = RE_EPSILON;
+	ctx->tuple_arr[ctx->next_state].flags = 0;
+	ctx->tuple_arr[ctx->next_state].char_range = 0;
 
-    /* return the new state's ID */
-    return ctx->next_state++;
+	/* return the new state's ID */
+	return ctx->next_state++;
 }
 
 
@@ -278,44 +278,44 @@ static re_state_id re_alloc_state(re_context *ctx)
  *   Set a transition from a state to a given destination state.  
  */
 static void re_set_trans(re_context *ctx,
-                         re_state_id id, re_state_id dest_id, char ch)
+						 re_state_id id, re_state_id dest_id, char ch)
 {
-    re_tuple *tuple;
-    
-    /* 
-     *   get the tuple containing the transitions for this state ID - the
-     *   state ID is the index of the state's transition tuple in the
-     *   array 
-     */
-    tuple = &ctx->tuple_arr[id];
+	re_tuple *tuple;
+	
+	/* 
+	 *   get the tuple containing the transitions for this state ID - the
+	 *   state ID is the index of the state's transition tuple in the
+	 *   array 
+	 */
+	tuple = &ctx->tuple_arr[id];
 
-    /*
-     *   If the first state pointer hasn't been set yet, set it to the new
-     *   destination.  Otherwise, set the second state pointer.
-     *   
-     *   Only set the character on setting the first state.  When setting
-     *   the second state, we must assume that the character for the state
-     *   has already been set, since any given state can have only one
-     *   character setting.  
-     */
-    if (tuple->next_state_1 == RE_STATE_INVALID)
-    {
-        /* 
-         *   set the character ID, unless the state has been marked with a
-         *   special flag which indicates that the character value has
-         *   another meaning (in particular, a group marker) 
-         */
-        if (!(tuple->flags & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END)))
-            tuple->ch = ch;
+	/*
+	 *   If the first state pointer hasn't been set yet, set it to the new
+	 *   destination.  Otherwise, set the second state pointer.
+	 *   
+	 *   Only set the character on setting the first state.  When setting
+	 *   the second state, we must assume that the character for the state
+	 *   has already been set, since any given state can have only one
+	 *   character setting.  
+	 */
+	if (tuple->next_state_1 == RE_STATE_INVALID)
+	{
+		/* 
+		 *   set the character ID, unless the state has been marked with a
+		 *   special flag which indicates that the character value has
+		 *   another meaning (in particular, a group marker) 
+		 */
+		if (!(tuple->flags & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END)))
+			tuple->ch = ch;
 
-        /* set the first transition */
-        tuple->next_state_1 = dest_id;
-    }
-    else
-    {
-        /* set only the second transition state - don't set the character */
-        tuple->next_state_2 = dest_id;
-    }
+		/* set the first transition */
+		tuple->next_state_1 = dest_id;
+	}
+	else
+	{
+		/* set only the second transition state - don't set the character */
+		tuple->next_state_2 = dest_id;
+	}
 }
 
 /* ------------------------------------------------------------------------ */
@@ -324,8 +324,8 @@ static void re_set_trans(re_context *ctx,
  */
 static void re_init_machine(re_context *ctx, re_machine *machine)
 {
-    machine->init = re_alloc_state(ctx);
-    machine->final_state = re_alloc_state(ctx);
+	machine->init = re_alloc_state(ctx);
+	machine->final_state = re_alloc_state(ctx);
 }
 
 /*
@@ -333,11 +333,11 @@ static void re_init_machine(re_context *ctx, re_machine *machine)
  */
 static void re_build_char(re_context *ctx, re_machine *machine, char ch)
 {
-    /* initialize our new machine */
-    re_init_machine(ctx, machine);
+	/* initialize our new machine */
+	re_init_machine(ctx, machine);
 
-    /* allocate a transition tuple for the new state */
-    re_set_trans(ctx, machine->init, machine->final_state, ch);
+	/* allocate a transition tuple for the new state */
+	re_set_trans(ctx, machine->init, machine->final_state, ch);
 }
 
 /*
@@ -345,27 +345,27 @@ static void re_build_char(re_context *ctx, re_machine *machine, char ch)
  *   bit vector.  
  */
 static void re_build_char_range(re_context *ctx, re_machine *machine,
-                                unsigned char *range, int exclusion)
+								unsigned char *range, int exclusion)
 {
-    unsigned char *range_copy;
-    
-    /* initialize our new machine */
-    re_init_machine(ctx, machine);
+	unsigned char *range_copy;
+	
+	/* initialize our new machine */
+	re_init_machine(ctx, machine);
 
-    /* allocate a transition table for the new state */
-    re_set_trans(ctx, machine->init, machine->final_state,
-                 (char)(exclusion ? RE_RANGE_EXCL : RE_RANGE));
+	/* allocate a transition table for the new state */
+	re_set_trans(ctx, machine->init, machine->final_state,
+				 (char)(exclusion ? RE_RANGE_EXCL : RE_RANGE));
 
-    /* allocate a copy of the range bit vector */
-    range_copy = (unsigned char *)mchalo(ctx->errctx, 32, "regex range");
+	/* allocate a copy of the range bit vector */
+	range_copy = (unsigned char *)mchalo(ctx->errctx, 32, "regex range");
 
-    /* copy the caller's range */
-    memcpy(range_copy, range, 32);
+	/* copy the caller's range */
+	memcpy(range_copy, range, 32);
 
-    /* store it in the tuple */
-    ctx->tuple_arr[machine->init].char_range = range_copy;
+	/* store it in the tuple */
+	ctx->tuple_arr[machine->init].char_range = range_copy;
 }
-                                
+								
 
 /*
  *   Build a group recognizer.  This is almost the same as a character
@@ -373,18 +373,18 @@ static void re_build_char_range(re_context *ctx, re_machine *machine,
  *   character. 
  */
 static void re_build_group_matcher(re_context *ctx,
-                                   re_machine *machine, int group_num)
+								   re_machine *machine, int group_num)
 {
-    /* initialize our new machine */
-    re_init_machine(ctx, machine);
+	/* initialize our new machine */
+	re_init_machine(ctx, machine);
 
-    /* 
-     *   Allocate a transition tuple for the new state, using the group ID
-     *   as the character code.  Store the special code for a group
-     *   recognizer rather than the normal literal character code.  
-     */
-    re_set_trans(ctx, machine->init, machine->final_state,
-                 (char)(group_num + RE_GROUP_MATCH_0));
+	/* 
+	 *   Allocate a transition tuple for the new state, using the group ID
+	 *   as the character code.  Store the special code for a group
+	 *   recognizer rather than the normal literal character code.  
+	 */
+	re_set_trans(ctx, machine->init, machine->final_state,
+				 (char)(group_num + RE_GROUP_MATCH_0));
 }
 
 
@@ -392,28 +392,28 @@ static void re_build_group_matcher(re_context *ctx,
  *   Build a concatenation recognizer 
  */
 static void re_build_concat(re_context *ctx, re_machine *new_machine,
-                            re_machine *lhs, re_machine *rhs)
+							re_machine *lhs, re_machine *rhs)
 {
-    /* initialize the new machine */
-    re_init_machine(ctx, new_machine);
+	/* initialize the new machine */
+	re_init_machine(ctx, new_machine);
 
-    /* 
-     *   set up an epsilon transition from the new machine's initial state
-     *   to the first submachine's initial state 
-     */
-    re_set_trans(ctx, new_machine->init, lhs->init, RE_EPSILON);
+	/* 
+	 *   set up an epsilon transition from the new machine's initial state
+	 *   to the first submachine's initial state 
+	 */
+	re_set_trans(ctx, new_machine->init, lhs->init, RE_EPSILON);
 
-    /*
-     *   Set up an epsilon transition from the first submachine's final
-     *   state to the second submachine's initial state 
-     */
-    re_set_trans(ctx, lhs->final_state, rhs->init, RE_EPSILON);
+	/*
+	 *   Set up an epsilon transition from the first submachine's final
+	 *   state to the second submachine's initial state 
+	 */
+	re_set_trans(ctx, lhs->final_state, rhs->init, RE_EPSILON);
 
-    /*
-     *   Set up an epsilon transition from the second submachine's final
-     *   state to our new machine's final state 
-     */
-    re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
+	/*
+	 *   Set up an epsilon transition from the second submachine's final
+	 *   state to our new machine's final state 
+	 */
+	re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
 }
 
 /*
@@ -422,92 +422,92 @@ static void re_build_concat(re_context *ctx, re_machine *new_machine,
  *   newly-created machine that encloses and marks the group.  
  */
 static void re_build_group(re_context *ctx, re_machine *new_machine,
-                           re_machine *sub_machine, int group_id)
+						   re_machine *sub_machine, int group_id)
 {
-    /* initialize the container machine */
-    re_init_machine(ctx, new_machine);
+	/* initialize the container machine */
+	re_init_machine(ctx, new_machine);
 
-    /* 
-     *   set up an epsilon transition from the new machine's initial state
-     *   into the initial state of the group, and another transition from
-     *   the group's final state into the container's final state 
-     */
-    re_set_trans(ctx, new_machine->init, sub_machine->init, RE_EPSILON);
-    re_set_trans(ctx, sub_machine->final_state, new_machine->final_state, RE_EPSILON);
+	/* 
+	 *   set up an epsilon transition from the new machine's initial state
+	 *   into the initial state of the group, and another transition from
+	 *   the group's final state into the container's final state 
+	 */
+	re_set_trans(ctx, new_machine->init, sub_machine->init, RE_EPSILON);
+	re_set_trans(ctx, sub_machine->final_state, new_machine->final_state, RE_EPSILON);
 
-    /*
-     *   Mark the initial and final states of the group machine as being
-     *   group markers.  
-     */
-    ctx->tuple_arr[new_machine->init].flags |= RE_STATE_GROUP_BEGIN;
-    ctx->tuple_arr[new_machine->final_state].flags |= RE_STATE_GROUP_END;
+	/*
+	 *   Mark the initial and final states of the group machine as being
+	 *   group markers.  
+	 */
+	ctx->tuple_arr[new_machine->init].flags |= RE_STATE_GROUP_BEGIN;
+	ctx->tuple_arr[new_machine->final_state].flags |= RE_STATE_GROUP_END;
 
-    /* store the group ID in the 'ch' member of the start and end states */
-    ctx->tuple_arr[new_machine->init].ch = group_id;
-    ctx->tuple_arr[new_machine->final_state].ch = group_id;
+	/* store the group ID in the 'ch' member of the start and end states */
+	ctx->tuple_arr[new_machine->init].ch = group_id;
+	ctx->tuple_arr[new_machine->final_state].ch = group_id;
 }
 
 /*
  *   Build an alternation recognizer 
  */
 static void re_build_alter(re_context *ctx, re_machine *new_machine,
-                           re_machine *lhs, re_machine *rhs)
+						   re_machine *lhs, re_machine *rhs)
 {
-    /* initialize the new machine */
-    re_init_machine(ctx, new_machine);
+	/* initialize the new machine */
+	re_init_machine(ctx, new_machine);
 
-    /*
-     *   Set up an epsilon transition from our new machine's initial state
-     *   to the initial state of each submachine 
-     */
-    re_set_trans(ctx, new_machine->init, lhs->init, RE_EPSILON);
-    re_set_trans(ctx, new_machine->init, rhs->init, RE_EPSILON);
+	/*
+	 *   Set up an epsilon transition from our new machine's initial state
+	 *   to the initial state of each submachine 
+	 */
+	re_set_trans(ctx, new_machine->init, lhs->init, RE_EPSILON);
+	re_set_trans(ctx, new_machine->init, rhs->init, RE_EPSILON);
 
-    /*
-     *   Set up an epsilon transition from the final state of each
-     *   submachine to our final state 
-     */
-    re_set_trans(ctx, lhs->final_state, new_machine->final_state, RE_EPSILON);
-    re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
+	/*
+	 *   Set up an epsilon transition from the final state of each
+	 *   submachine to our final state 
+	 */
+	re_set_trans(ctx, lhs->final_state, new_machine->final_state, RE_EPSILON);
+	re_set_trans(ctx, rhs->final_state, new_machine->final_state, RE_EPSILON);
 }
 
 /*
  *   Build a closure recognizer
  */
 static void re_build_closure(re_context *ctx,
-                             re_machine *new_machine, re_machine *sub,
-                             char specifier)
+							 re_machine *new_machine, re_machine *sub,
+							 char specifier)
 {
-    /* initialize the new machine */
-    re_init_machine(ctx, new_machine);
+	/* initialize the new machine */
+	re_init_machine(ctx, new_machine);
 
-    /* 
-     *   set up an epsilon transition from our initial state to the
-     *   submachine's initial state, and from the submachine's final state
-     *   to our final state 
-     */
-    re_set_trans(ctx, new_machine->init, sub->init, RE_EPSILON);
-    re_set_trans(ctx, sub->final_state, new_machine->final_state, RE_EPSILON);
+	/* 
+	 *   set up an epsilon transition from our initial state to the
+	 *   submachine's initial state, and from the submachine's final state
+	 *   to our final state 
+	 */
+	re_set_trans(ctx, new_machine->init, sub->init, RE_EPSILON);
+	re_set_trans(ctx, sub->final_state, new_machine->final_state, RE_EPSILON);
 
-    /*
-     *   If this is an unbounded closure ('*' or '+', but not '?'), set up
-     *   the loop transition that takes us from the new machine's final
-     *   state back to its initial state.  We don't do this on the
-     *   zero-or-one closure, because we can only match the expression
-     *   once.  
-     */
-    if (specifier != '?')
-        re_set_trans(ctx, sub->final_state, sub->init, RE_EPSILON);
+	/*
+	 *   If this is an unbounded closure ('*' or '+', but not '?'), set up
+	 *   the loop transition that takes us from the new machine's final
+	 *   state back to its initial state.  We don't do this on the
+	 *   zero-or-one closure, because we can only match the expression
+	 *   once.  
+	 */
+	if (specifier != '?')
+		re_set_trans(ctx, sub->final_state, sub->init, RE_EPSILON);
 
-    /*
-     *   If this is a zero-or-one closure or a zero-or-more closure, set
-     *   up an epsilon transition from our initial state to our final
-     *   state, since we can skip the entire subexpression.  We don't do
-     *   this on the one-or-more closure, because we can't skip the
-     *   subexpression in this case.  
-     */
-    if (specifier != '+')
-        re_set_trans(ctx, new_machine->init, new_machine->final_state, RE_EPSILON);
+	/*
+	 *   If this is a zero-or-one closure or a zero-or-more closure, set
+	 *   up an epsilon transition from our initial state to our final
+	 *   state, since we can skip the entire subexpression.  We don't do
+	 *   this on the one-or-more closure, because we can't skip the
+	 *   subexpression in this case.  
+	 */
+	if (specifier != '+')
+		re_set_trans(ctx, new_machine->init, new_machine->final_state, RE_EPSILON);
 }
 
 /*
@@ -515,7 +515,7 @@ static void re_build_closure(re_context *ctx,
  */
 static void re_build_null_machine(re_context *ctx, re_machine *machine)
 {
-    machine->init = machine->final_state = RE_STATE_INVALID;
+	machine->init = machine->final_state = RE_STATE_INVALID;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -524,7 +524,7 @@ static void re_build_null_machine(re_context *ctx, re_machine *machine)
  */
 static int re_is_machine_null(re_context *ctx, re_machine *machine)
 {
-    return (machine->init == RE_STATE_INVALID);
+	return (machine->init == RE_STATE_INVALID);
 }
 
 
@@ -536,27 +536,27 @@ static int re_is_machine_null(re_context *ctx, re_machine *machine)
  *   the second machine into the first. 
  */
 static void re_concat_onto(re_context *ctx,
-                           re_machine *dest, re_machine *rhs)
+						   re_machine *dest, re_machine *rhs)
 {
-    /* check for a null destination machine */
-    if (re_is_machine_null(ctx, dest))
-    {
-        /* 
-         *   the first machine is null - simply copy the second machine
-         *   onto the first unchanged 
-         */
-        *dest = *rhs;
-    }
-    else
-    {
-        re_machine new_machine;
-        
-        /* build the concatenated machine */
-        re_build_concat(ctx, &new_machine, dest, rhs);
+	/* check for a null destination machine */
+	if (re_is_machine_null(ctx, dest))
+	{
+		/* 
+		 *   the first machine is null - simply copy the second machine
+		 *   onto the first unchanged 
+		 */
+		*dest = *rhs;
+	}
+	else
+	{
+		re_machine new_machine;
+		
+		/* build the concatenated machine */
+		re_build_concat(ctx, &new_machine, dest, rhs);
 
-        /* copy the concatenated machine onto the first machine */
-        *dest = new_machine;
-    }
+		/* copy the concatenated machine onto the first machine */
+		*dest = new_machine;
+	}
 }
 
 /*
@@ -567,34 +567,34 @@ static void re_concat_onto(re_context *ctx,
  *   machine unchanged. 
  */
 static void re_alternate_onto(re_context *ctx,
-                              re_machine *dest, re_machine *rhs)
+							  re_machine *dest, re_machine *rhs)
 {
-    /* check to see if the first machine is null */
-    if (re_is_machine_null(ctx, dest))
-    {
-        /* 
-         *   the first machine is null - simply copy the second machine
-         *   onto the first 
-         */
-        *dest = *rhs;
-    }
-    else
-    {
-        /* 
-         *   if the second machine is null, don't do anything; otherwise,
-         *   build the alternation 
-         */
-        if (!re_is_machine_null(ctx, rhs))
-        {
-            re_machine new_machine;
-            
-            /* build the alternation */
-            re_build_alter(ctx, &new_machine, dest, rhs);
+	/* check to see if the first machine is null */
+	if (re_is_machine_null(ctx, dest))
+	{
+		/* 
+		 *   the first machine is null - simply copy the second machine
+		 *   onto the first 
+		 */
+		*dest = *rhs;
+	}
+	else
+	{
+		/* 
+		 *   if the second machine is null, don't do anything; otherwise,
+		 *   build the alternation 
+		 */
+		if (!re_is_machine_null(ctx, rhs))
+		{
+			re_machine new_machine;
+			
+			/* build the alternation */
+			re_build_alter(ctx, &new_machine, dest, rhs);
 
-            /* replace the first machine with the alternation */
-            *dest = new_machine;
-        }
-    }
+			/* replace the first machine with the alternation */
+			*dest = new_machine;
+		}
+	}
 }
 
 /* ------------------------------------------------------------------------ */
@@ -602,465 +602,465 @@ static void re_alternate_onto(re_context *ctx,
  *   Set a bit in a bit vector.
  */
 #define re_set_bit(set, bit) \
-    (((unsigned char *)(set))[(bit) >> 3] |= (1 << ((bit) & 7)))
+	(((unsigned char *)(set))[(bit) >> 3] |= (1 << ((bit) & 7)))
 
 /*
  *   Test a bit in a bit vector 
  */
 #define re_is_bit_set(set, bit) \
-    ((((unsigned char *)(set))[(bit) >> 3] & (1 << ((bit) & 7))) != 0)
+	((((unsigned char *)(set))[(bit) >> 3] & (1 << ((bit) & 7))) != 0)
 
 /* ------------------------------------------------------------------------ */
 /*
  *   Compile an expression 
  */
 static re_status_t re_compile(re_context *ctx,
-                              const char *expr, size_t exprlen,
-                              re_machine *result_machine)
+							  const char *expr, size_t exprlen,
+							  re_machine *result_machine)
 {
-    re_machine cur_machine;
-    re_machine alter_machine;
-    re_machine new_machine;
-    size_t group_stack_level;
-    struct
-    {
-        re_machine old_cur;
-        re_machine old_alter;
-        int group_id;
-    } group_stack[50];
+	re_machine cur_machine;
+	re_machine alter_machine;
+	re_machine new_machine;
+	size_t group_stack_level;
+	struct
+	{
+		re_machine old_cur;
+		re_machine old_alter;
+		int group_id;
+	} group_stack[50];
 
-    /* reset everything */
-    re_reset(ctx);
+	/* reset everything */
+	re_reset(ctx);
 
-    /* start out with no current machine and no alternate machine */
-    re_build_null_machine(ctx, &cur_machine);
-    re_build_null_machine(ctx, &alter_machine);
+	/* start out with no current machine and no alternate machine */
+	re_build_null_machine(ctx, &cur_machine);
+	re_build_null_machine(ctx, &alter_machine);
 
-    /* nothing on the stack yet */
-    group_stack_level = 0;
+	/* nothing on the stack yet */
+	group_stack_level = 0;
 
-    /* loop until we run out of expression to parse */
-    for ( ; exprlen != 0 ; ++expr, --exprlen)
-    {
-        switch(*expr)
-        {
-        case '^':
-            /*
-             *   beginning of line - if we're not at the beginning of the
-             *   current expression (i.e., we already have some
-             *   concatentations accumulated), treat it as an ordinary
-             *   character 
-             */
-            if (!re_is_machine_null(ctx, &cur_machine))
-                goto normal_char;
+	/* loop until we run out of expression to parse */
+	for ( ; exprlen != 0 ; ++expr, --exprlen)
+	{
+		switch(*expr)
+		{
+		case '^':
+			/*
+			 *   beginning of line - if we're not at the beginning of the
+			 *   current expression (i.e., we already have some
+			 *   concatentations accumulated), treat it as an ordinary
+			 *   character 
+			 */
+			if (!re_is_machine_null(ctx, &cur_machine))
+				goto normal_char;
 
-            /* build a new start-of-text recognizer */
-            re_build_char(ctx, &new_machine, RE_TEXT_BEGIN);
+			/* build a new start-of-text recognizer */
+			re_build_char(ctx, &new_machine, RE_TEXT_BEGIN);
 
-            /* 
-             *   concatenate it onto the string - note that this can't
-             *   have any postfix operators 
-             */
-            re_concat_onto(ctx, &cur_machine, &new_machine);
-            break;
+			/* 
+			 *   concatenate it onto the string - note that this can't
+			 *   have any postfix operators 
+			 */
+			re_concat_onto(ctx, &cur_machine, &new_machine);
+			break;
 
-        case '$':
-            /*
-             *   End of line specifier - if there's anything left after
-             *   the '$' other than a close parens or alternation
-             *   specifier, great it as a normal character 
-             */
-            if (exprlen > 1
-                && (*(expr+1) != ')' && *(expr+1) != '|'))
-                goto normal_char;
+		case '$':
+			/*
+			 *   End of line specifier - if there's anything left after
+			 *   the '$' other than a close parens or alternation
+			 *   specifier, great it as a normal character 
+			 */
+			if (exprlen > 1
+				&& (*(expr+1) != ')' && *(expr+1) != '|'))
+				goto normal_char;
 
-            /* build a new end-of-text recognizer */
-            re_build_char(ctx, &new_machine, RE_TEXT_END);
+			/* build a new end-of-text recognizer */
+			re_build_char(ctx, &new_machine, RE_TEXT_END);
 
-            /* 
-             *   concatenate it onto the string - note that this can't
-             *   have any postfix operators 
-             */
-            re_concat_onto(ctx, &cur_machine, &new_machine);
-            break;
-            
-        case '(':
-            /* 
-             *   Add a nesting level.  Push the current machine and
-             *   alternate machines onto the group stack, and clear
-             *   everything out for the new group. 
-             */
-            if (group_stack_level
-                > sizeof(group_stack)/sizeof(group_stack[0]))
-            {
-                /* we cannot proceed - return an error */
-                return RE_STATUS_GROUP_NESTING_TOO_DEEP;
-            }
+			/* 
+			 *   concatenate it onto the string - note that this can't
+			 *   have any postfix operators 
+			 */
+			re_concat_onto(ctx, &cur_machine, &new_machine);
+			break;
+			
+		case '(':
+			/* 
+			 *   Add a nesting level.  Push the current machine and
+			 *   alternate machines onto the group stack, and clear
+			 *   everything out for the new group. 
+			 */
+			if (group_stack_level
+				> sizeof(group_stack)/sizeof(group_stack[0]))
+			{
+				/* we cannot proceed - return an error */
+				return RE_STATUS_GROUP_NESTING_TOO_DEEP;
+			}
 
-            /* save the current state on the stack */
-            group_stack[group_stack_level].old_cur = cur_machine;
-            group_stack[group_stack_level].old_alter = alter_machine;
+			/* save the current state on the stack */
+			group_stack[group_stack_level].old_cur = cur_machine;
+			group_stack[group_stack_level].old_alter = alter_machine;
 
-            /* 
-             *   Assign the group a group ID - groups are numbered in
-             *   order of their opening (left) parentheses, so we want to
-             *   assign a group number now.  We won't actually need to
-             *   know the group number until we get to the matching close
-             *   paren, but we need to assign it now, so store it in the
-             *   group stack. 
-             */
-            group_stack[group_stack_level].group_id = ctx->cur_group;
+			/* 
+			 *   Assign the group a group ID - groups are numbered in
+			 *   order of their opening (left) parentheses, so we want to
+			 *   assign a group number now.  We won't actually need to
+			 *   know the group number until we get to the matching close
+			 *   paren, but we need to assign it now, so store it in the
+			 *   group stack. 
+			 */
+			group_stack[group_stack_level].group_id = ctx->cur_group;
 
-            /* consume the group number */
-            ctx->cur_group++;
+			/* consume the group number */
+			ctx->cur_group++;
 
-            /* push the level */
-            ++group_stack_level;
+			/* push the level */
+			++group_stack_level;
 
-            /* start the new group with empty machines */
-            re_build_null_machine(ctx, &cur_machine);
-            re_build_null_machine(ctx, &alter_machine);
-            break;
+			/* start the new group with empty machines */
+			re_build_null_machine(ctx, &cur_machine);
+			re_build_null_machine(ctx, &alter_machine);
+			break;
 
-        case ')':
-            /* if there's nothing on the stack, ignore this */
-            if (group_stack_level == 0)
-                break;
+		case ')':
+			/* if there's nothing on the stack, ignore this */
+			if (group_stack_level == 0)
+				break;
 
-            /* take a level off the stack */
-            --group_stack_level;
+			/* take a level off the stack */
+			--group_stack_level;
 
-            /* 
-             *   Remove a nesting level.  If we have a pending alternate
-             *   expression, build the alternation expression.  This will
-             *   leave the entire group expression in alter_machine,
-             *   regardless of whether an alternation was in progress or
-             *   not.  
-             */
-            re_alternate_onto(ctx, &alter_machine, &cur_machine);
+			/* 
+			 *   Remove a nesting level.  If we have a pending alternate
+			 *   expression, build the alternation expression.  This will
+			 *   leave the entire group expression in alter_machine,
+			 *   regardless of whether an alternation was in progress or
+			 *   not.  
+			 */
+			re_alternate_onto(ctx, &alter_machine, &cur_machine);
 
-            /*
-             *   Create a group machine that encloses the group and marks
-             *   it with a group number.  We assigned the group number
-             *   when we parsed the open paren, so read that group number
-             *   from the stack.
-             *   
-             *   Note that this will leave 'new_machine' with the entire
-             *   group machine.  
-             */
-            re_build_group(ctx, &new_machine, &alter_machine,
-                           group_stack[group_stack_level].group_id);
+			/*
+			 *   Create a group machine that encloses the group and marks
+			 *   it with a group number.  We assigned the group number
+			 *   when we parsed the open paren, so read that group number
+			 *   from the stack.
+			 *   
+			 *   Note that this will leave 'new_machine' with the entire
+			 *   group machine.  
+			 */
+			re_build_group(ctx, &new_machine, &alter_machine,
+						   group_stack[group_stack_level].group_id);
 
-            /*
-             *   Pop the stack - restore the alternation and current
-             *   machines that were in progress before the group started. 
-             */
-            cur_machine = group_stack[group_stack_level].old_cur;
-            alter_machine = group_stack[group_stack_level].old_alter;
+			/*
+			 *   Pop the stack - restore the alternation and current
+			 *   machines that were in progress before the group started. 
+			 */
+			cur_machine = group_stack[group_stack_level].old_cur;
+			alter_machine = group_stack[group_stack_level].old_alter;
 
-            /*
-             *   Check the group expression (in new_machine) for postfix
-             *   expressions 
-             */
-            goto apply_postfix;
+			/*
+			 *   Check the group expression (in new_machine) for postfix
+			 *   expressions 
+			 */
+			goto apply_postfix;
 
-        case '|':
-            /* 
-             *   Start a new alternation.  This ends the current
-             *   alternation; if we have a previous pending alternate,
-             *   build an alternation machine out of the previous
-             *   alternate and the current machine and move that to the
-             *   alternate; otherwise, simply move the current machine to
-             *   the pending alternate. 
-             */
-            re_alternate_onto(ctx, &alter_machine, &cur_machine);
+		case '|':
+			/* 
+			 *   Start a new alternation.  This ends the current
+			 *   alternation; if we have a previous pending alternate,
+			 *   build an alternation machine out of the previous
+			 *   alternate and the current machine and move that to the
+			 *   alternate; otherwise, simply move the current machine to
+			 *   the pending alternate. 
+			 */
+			re_alternate_onto(ctx, &alter_machine, &cur_machine);
 
-            /* 
-             *   the alternation starts out with a blank slate, so null
-             *   out the current machine 
-             */
-            re_build_null_machine(ctx, &cur_machine);
-            break;
+			/* 
+			 *   the alternation starts out with a blank slate, so null
+			 *   out the current machine 
+			 */
+			re_build_null_machine(ctx, &cur_machine);
+			break;
 
-        case '%':
-            /* 
-             *   quoted character - skip the quote mark and see what we
-             *   have 
-             */
-            ++expr;
-            --exprlen;
+		case '%':
+			/* 
+			 *   quoted character - skip the quote mark and see what we
+			 *   have 
+			 */
+			++expr;
+			--exprlen;
 
-            /* check to see if we're at the end of the expression */
-            if (exprlen == 0)
-            {
-                /* 
-                 *   end of the string - ignore it, but undo the extra
-                 *   increment of the expression index so that we exit the
-                 *   enclosing loop properly 
-                 */
-                --expr;
-                ++exprlen;
-                break;
-            }
+			/* check to see if we're at the end of the expression */
+			if (exprlen == 0)
+			{
+				/* 
+				 *   end of the string - ignore it, but undo the extra
+				 *   increment of the expression index so that we exit the
+				 *   enclosing loop properly 
+				 */
+				--expr;
+				++exprlen;
+				break;
+			}
 
-            /* see what we have */
-            switch(*expr)
-            {
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-            case '9':
-                /* group match - build a new literal group recognizer */
-                re_build_group_matcher(ctx, &new_machine, (int)(*expr - '1'));
+			/* see what we have */
+			switch(*expr)
+			{
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+				/* group match - build a new literal group recognizer */
+				re_build_group_matcher(ctx, &new_machine, (int)(*expr - '1'));
 
-                /* apply any postfix expression to the group recognizer */
-                goto apply_postfix;
+				/* apply any postfix expression to the group recognizer */
+				goto apply_postfix;
 
-            case '<':
-                /* build a beginning-of-word recognizer */
-                re_build_char(ctx, &new_machine, RE_WORD_BEGIN);
+			case '<':
+				/* build a beginning-of-word recognizer */
+				re_build_char(ctx, &new_machine, RE_WORD_BEGIN);
 
-                /* it can't be postfixed - just concatenate it */
-                re_concat_onto(ctx, &cur_machine, &new_machine);
-                break;
+				/* it can't be postfixed - just concatenate it */
+				re_concat_onto(ctx, &cur_machine, &new_machine);
+				break;
 
-            case '>':
-                /* build an end-of-word recognizer */
-                re_build_char(ctx, &new_machine, RE_WORD_END);
+			case '>':
+				/* build an end-of-word recognizer */
+				re_build_char(ctx, &new_machine, RE_WORD_END);
 
-                /* it can't be postfixed - just concatenate it */
-                re_concat_onto(ctx, &cur_machine, &new_machine);
-                break;
+				/* it can't be postfixed - just concatenate it */
+				re_concat_onto(ctx, &cur_machine, &new_machine);
+				break;
 
-            case 'w':
-                /* word character */
-                re_build_char(ctx, &new_machine, RE_WORD_CHAR);
-                goto apply_postfix;
+			case 'w':
+				/* word character */
+				re_build_char(ctx, &new_machine, RE_WORD_CHAR);
+				goto apply_postfix;
 
-            case 'W':
-                /* non-word character */
-                re_build_char(ctx, &new_machine, RE_NON_WORD_CHAR);
-                goto apply_postfix;
+			case 'W':
+				/* non-word character */
+				re_build_char(ctx, &new_machine, RE_NON_WORD_CHAR);
+				goto apply_postfix;
 
-            case 'b':
-                /* word boundary */
-                re_build_char(ctx, &new_machine, RE_WORD_BOUNDARY);
+			case 'b':
+				/* word boundary */
+				re_build_char(ctx, &new_machine, RE_WORD_BOUNDARY);
 
-                /* it can't be postfixed */
-                re_concat_onto(ctx, &cur_machine, &new_machine);
-                break;
+				/* it can't be postfixed */
+				re_concat_onto(ctx, &cur_machine, &new_machine);
+				break;
 
-            case 'B':
-                /* not a word boundary */
-                re_build_char(ctx, &new_machine, RE_NON_WORD_BOUNDARY);
+			case 'B':
+				/* not a word boundary */
+				re_build_char(ctx, &new_machine, RE_NON_WORD_BOUNDARY);
 
-                /* it can't be postfixed */
-                re_concat_onto(ctx, &cur_machine, &new_machine);
-                break;
+				/* it can't be postfixed */
+				re_concat_onto(ctx, &cur_machine, &new_machine);
+				break;
 
-            default:
-                /* build a new literal character recognizer */
-                re_build_char(ctx, &new_machine, *expr);
+			default:
+				/* build a new literal character recognizer */
+				re_build_char(ctx, &new_machine, *expr);
 
-                /* apply any postfix expression to the character */
-                goto apply_postfix;
-            }
-            break;
+				/* apply any postfix expression to the character */
+				goto apply_postfix;
+			}
+			break;
 
-        case '.':
-            /* 
-             *   wildcard character - build a single character recognizer
-             *   for the special wildcard symbol, then go check it for a
-             *   postfix operator 
-             */
-            re_build_char(ctx, &new_machine, RE_WILDCARD);
-            goto apply_postfix;
-            break;
+		case '.':
+			/* 
+			 *   wildcard character - build a single character recognizer
+			 *   for the special wildcard symbol, then go check it for a
+			 *   postfix operator 
+			 */
+			re_build_char(ctx, &new_machine, RE_WILDCARD);
+			goto apply_postfix;
+			break;
 
-        case '[':
-            /* range expression */
-            {
-                int is_exclusive = FALSE;
-                unsigned char set[32];
+		case '[':
+			/* range expression */
+			{
+				int is_exclusive = FALSE;
+				unsigned char set[32];
 
-                /* clear out the set of characters in the range */
-                memset(set, 0, sizeof(set));
+				/* clear out the set of characters in the range */
+				memset(set, 0, sizeof(set));
 
-                /* first, skip the open bracket */
-                ++expr;
-                --exprlen;
+				/* first, skip the open bracket */
+				++expr;
+				--exprlen;
 
-                /* check to see if starts with the exclusion character */
-                if (exprlen != 0 && *expr == '^')
-                {
-                    /* skip the exclusion specifier */
-                    ++expr;
-                    --exprlen;
+				/* check to see if starts with the exclusion character */
+				if (exprlen != 0 && *expr == '^')
+				{
+					/* skip the exclusion specifier */
+					++expr;
+					--exprlen;
 
-                    /* note it */
-                    is_exclusive = TRUE;
-                }
+					/* note it */
+					is_exclusive = TRUE;
+				}
 
-                /* 
-                 *   if the first character is a ']', include it in the
-                 *   range 
-                 */
-                if (exprlen != 0 && *expr == ']')
-                {
-                    re_set_bit(set, (int)']');
-                    ++expr;
-                    --exprlen;
-                }
+				/* 
+				 *   if the first character is a ']', include it in the
+				 *   range 
+				 */
+				if (exprlen != 0 && *expr == ']')
+				{
+					re_set_bit(set, (int)']');
+					++expr;
+					--exprlen;
+				}
 
-                /*
-                 *   if the next character is a '-', include it in the
-                 *   range 
-                 */
-                if (exprlen != 0 && *expr == '-')
-                {
-                    re_set_bit(set, (int)'-');
-                    ++expr;
-                    --exprlen;
-                }
+				/*
+				 *   if the next character is a '-', include it in the
+				 *   range 
+				 */
+				if (exprlen != 0 && *expr == '-')
+				{
+					re_set_bit(set, (int)'-');
+					++expr;
+					--exprlen;
+				}
 
-                /* scan the character set */
-                while (exprlen != 0 && *expr != ']')
-                {
-                    int ch;
-                    
-                    /* note this character */
-                    ch = (int)(unsigned char)*expr;
+				/* scan the character set */
+				while (exprlen != 0 && *expr != ']')
+				{
+					int ch;
+					
+					/* note this character */
+					ch = (int)(unsigned char)*expr;
 
-                    /* set it */
-                    re_set_bit(set, ch);
+					/* set it */
+					re_set_bit(set, ch);
 
-                    /* skip this character of the expression */
-                    ++expr;
-                    --exprlen;
+					/* skip this character of the expression */
+					++expr;
+					--exprlen;
 
-                    /* check for a range */
-                    if (exprlen != 0 && *expr == '-')
-                    {
-                        int ch2;
-                        
-                        /* skip the '-' */
-                        ++expr;
-                        --exprlen;
-                        if (exprlen != 0)
-                        {
-                            /* get the other end of the range */
-                            ch2 = (int)(unsigned char)*expr;
+					/* check for a range */
+					if (exprlen != 0 && *expr == '-')
+					{
+						int ch2;
+						
+						/* skip the '-' */
+						++expr;
+						--exprlen;
+						if (exprlen != 0)
+						{
+							/* get the other end of the range */
+							ch2 = (int)(unsigned char)*expr;
 
-                            /* skip the second character */
-                            ++expr;
-                            --exprlen;
+							/* skip the second character */
+							++expr;
+							--exprlen;
 
-                            /* if the range is reversed, swap it */
-                            if (ch > ch2)
-                            {
-                                int tmp = ch;
-                                ch = ch2;
-                                ch2 = tmp;
-                            }
+							/* if the range is reversed, swap it */
+							if (ch > ch2)
+							{
+								int tmp = ch;
+								ch = ch2;
+								ch2 = tmp;
+							}
 
-                            /* fill in the range */
-                            for ( ; ch <= ch2 ; ++ch)
-                                re_set_bit(set, ch);
-                        }
-                    }
-                }
+							/* fill in the range */
+							for ( ; ch <= ch2 ; ++ch)
+								re_set_bit(set, ch);
+						}
+					}
+				}
 
-                /* create a character range machine */
-                re_build_char_range(ctx, &new_machine, set, is_exclusive);
+				/* create a character range machine */
+				re_build_char_range(ctx, &new_machine, set, is_exclusive);
 
-                /* apply any postfix operator */
-                goto apply_postfix;
-            }            
-            break;
+				/* apply any postfix operator */
+				goto apply_postfix;
+			}            
+			break;
 
-        default:
-        normal_char:
-            /* 
-             *   it's an ordinary character - build a single character
-             *   recognizer machine, and then concatenate it onto any
-             *   existing machine 
-             */
-            re_build_char(ctx, &new_machine, *expr);
+		default:
+		normal_char:
+			/* 
+			 *   it's an ordinary character - build a single character
+			 *   recognizer machine, and then concatenate it onto any
+			 *   existing machine 
+			 */
+			re_build_char(ctx, &new_machine, *expr);
 
-        apply_postfix:
-            /*
-             *   Check for a postfix operator, and apply it to the machine
-             *   in 'new_machine' if present.  In any case, concatenate
-             *   the 'new_machine' (modified by a postix operator or not)
-             *   to the current machien.  
-             */
-            if (exprlen > 1)
-            {
-                switch(*(expr+1))
-                {
-                case '*':
-                case '+':
-                case '?':
-                    /*
-                     *   We have a postfix closure operator.  Build a new
-                     *   closure machine out of 'new_machine'.  
-                     */
-                    {
-                        re_machine closure_machine;
-                        
-                        /* move onto the closure operator */
-                        ++expr;
-                        --exprlen;
-                        
-                        /* build the closure machine */
-                        re_build_closure(ctx, &closure_machine,
-                                         &new_machine, *expr);
-                        
-                        /* replace the original machine with the closure */
-                        new_machine = closure_machine;
-                        
-                        /* 
-                         *   skip any redundant closure symbols, keeping
-                         *   only the first one we saw 
-                         */
-                        while (exprlen > 1 && (*(expr+1) == '?'
-                                               || *(expr+1) == '+'
-                                               || *(expr+1) == '*'))
-                        {
-                            ++expr;
-                            --exprlen;
-                        }
-                    }
-                    break;
-                    
-                default:
-                    /* no postfix operator */
-                    break;
-                }
-            }
+		apply_postfix:
+			/*
+			 *   Check for a postfix operator, and apply it to the machine
+			 *   in 'new_machine' if present.  In any case, concatenate
+			 *   the 'new_machine' (modified by a postix operator or not)
+			 *   to the current machien.  
+			 */
+			if (exprlen > 1)
+			{
+				switch(*(expr+1))
+				{
+				case '*':
+				case '+':
+				case '?':
+					/*
+					 *   We have a postfix closure operator.  Build a new
+					 *   closure machine out of 'new_machine'.  
+					 */
+					{
+						re_machine closure_machine;
+						
+						/* move onto the closure operator */
+						++expr;
+						--exprlen;
+						
+						/* build the closure machine */
+						re_build_closure(ctx, &closure_machine,
+										 &new_machine, *expr);
+						
+						/* replace the original machine with the closure */
+						new_machine = closure_machine;
+						
+						/* 
+						 *   skip any redundant closure symbols, keeping
+						 *   only the first one we saw 
+						 */
+						while (exprlen > 1 && (*(expr+1) == '?'
+											   || *(expr+1) == '+'
+											   || *(expr+1) == '*'))
+						{
+							++expr;
+							--exprlen;
+						}
+					}
+					break;
+					
+				default:
+					/* no postfix operator */
+					break;
+				}
+			}
 
-            /*
-             *   Concatenate the new machine onto the current machine
-             *   under construction.  
-             */
-            re_concat_onto(ctx, &cur_machine, &new_machine);
-            break;
-        }
-    }
+			/*
+			 *   Concatenate the new machine onto the current machine
+			 *   under construction.  
+			 */
+			re_concat_onto(ctx, &cur_machine, &new_machine);
+			break;
+		}
+	}
 
-    /* complete any pending alternation */
-    re_alternate_onto(ctx, &alter_machine, &cur_machine);
+	/* complete any pending alternation */
+	re_alternate_onto(ctx, &alter_machine, &cur_machine);
 
-    /* store the resulting machine in the caller's machine descriptor */
-    *result_machine = alter_machine;
+	/* store the resulting machine in the caller's machine descriptor */
+	*result_machine = alter_machine;
 
-    /* no errors encountered */
-    return RE_STATUS_SUCCESS;
+	/* no errors encountered */
+	return RE_STATUS_SUCCESS;
 }
 
 
@@ -1073,27 +1073,27 @@ static re_status_t re_compile(re_context *ctx,
  *   Note a group position if appropriate 
  */
 static void re_note_group(re_context *ctx, re_group_register *regs,
-                          re_state_id id, const char *p)
+						  re_state_id id, const char *p)
 {
-    int group_index;
+	int group_index;
 
-    /*
-     *   Check to see if this is a valid state and it's a group marker -
-     *   if not, there's nothing to do 
-     */
-    if (id == RE_STATE_INVALID
-        || !(ctx->tuple_arr[id].flags
-             & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END))
-        || (group_index = (int)ctx->tuple_arr[id].ch) >= RE_GROUP_REG_CNT)
-        return;
+	/*
+	 *   Check to see if this is a valid state and it's a group marker -
+	 *   if not, there's nothing to do 
+	 */
+	if (id == RE_STATE_INVALID
+		|| !(ctx->tuple_arr[id].flags
+			 & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END))
+		|| (group_index = (int)ctx->tuple_arr[id].ch) >= RE_GROUP_REG_CNT)
+		return;
 
-    /*
-     *   It's a valid group marker - note the appropriate register value 
-     */
-    if ((ctx->tuple_arr[id].flags & RE_STATE_GROUP_BEGIN) != 0)
-        regs[group_index].start_ofs = p;
-    else
-        regs[group_index].end_ofs = p;
+	/*
+	 *   It's a valid group marker - note the appropriate register value 
+	 */
+	if ((ctx->tuple_arr[id].flags & RE_STATE_GROUP_BEGIN) != 0)
+		regs[group_index].start_ofs = p;
+	else
+		regs[group_index].end_ofs = p;
 }
 
 /*
@@ -1109,335 +1109,335 @@ static int re_is_word_char(char c) {
  *   match if successful, or -1 if no match was found.  
  */
 static int re_match(re_context *ctx, const char *entire_str,
-                    const char *str, size_t origlen,
-                    const re_machine *machine, re_group_register *regs)
+					const char *str, size_t origlen,
+					const re_machine *machine, re_group_register *regs)
 {
-    re_state_id cur_state;
-    const char *p;
-    size_t curlen;
+	re_state_id cur_state;
+	const char *p;
+	size_t curlen;
 
-    /* start at the machine's initial state */
-    cur_state = machine->init;
+	/* start at the machine's initial state */
+	cur_state = machine->init;
 
-    /* start at the beginning of the string */
-    p = str;
-    curlen = origlen;
+	/* start at the beginning of the string */
+	p = str;
+	curlen = origlen;
 
-    /* note any group involved in the initial state */
-    re_note_group(ctx, regs, cur_state, p);
+	/* note any group involved in the initial state */
+	re_note_group(ctx, regs, cur_state, p);
 
-    /* 
-     *   if we're starting in the final state, immediately return success
-     *   with a zero-length match 
-     */
-    if (cur_state == machine->final_state)
-    {
-        /* return success with a zero-length match */
-        return 0;
-    }
+	/* 
+	 *   if we're starting in the final state, immediately return success
+	 *   with a zero-length match 
+	 */
+	if (cur_state == machine->final_state)
+	{
+		/* return success with a zero-length match */
+		return 0;
+	}
 
-    /* run the machine */
-    for (;;)
-    {
-        re_tuple *tuple;
+	/* run the machine */
+	for (;;)
+	{
+		re_tuple *tuple;
 
-        /* get the tuple for this state */
-        tuple = &ctx->tuple_arr[cur_state];
+		/* get the tuple for this state */
+		tuple = &ctx->tuple_arr[cur_state];
 
-        /* if this is a group state, adjust the group registers */
-        re_note_group(ctx, regs, cur_state, p);
-        
-        /* see what kind of state we're in */
-        if (!(tuple->flags & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END))
-            && tuple->ch != RE_EPSILON)
-        {
-            /*
-             *   This is a character or group recognizer state.  If we
-             *   match the character or group, continue on to the next
-             *   state; otherwise, return failure.
-             */
-            switch(tuple->ch)
-            {
-            case RE_GROUP_MATCH_0:
-            case RE_GROUP_MATCH_0 + 1:
-            case RE_GROUP_MATCH_0 + 2:
-            case RE_GROUP_MATCH_0 + 3:
-            case RE_GROUP_MATCH_0 + 4:
-            case RE_GROUP_MATCH_0 + 5:
-            case RE_GROUP_MATCH_0 + 6:
-            case RE_GROUP_MATCH_0 + 7:
-            case RE_GROUP_MATCH_0 + 8:
-            case RE_GROUP_MATCH_0 + 9:
-                {
-                    int group_num;
-                    re_group_register *group_reg;
-                    size_t reg_len;
-                    
-                    /* it's a group - get the group number */
-                    group_num = tuple->ch - RE_GROUP_MATCH_0;
-                    group_reg = &regs[group_num];
-                    
-                    /* 
-                     *   if this register isn't defined, there's nothing
-                     *   to match, so fail 
-                     */
-                    if (group_reg->start_ofs == 0 || group_reg->end_ofs == 0)
-                        return -1;
-                    
-                    /* calculate the length of the register value */
-                    reg_len = group_reg->end_ofs - group_reg->start_ofs;
-                    
-                    /* if we don't have enough left to match, it fails */
-                    if (curlen < reg_len)
-                        return -1;
-                    
-                    /* if the string doesn't match exactly, we fail */
-                    if (memcmp(p, group_reg->start_ofs, reg_len) != 0)
-                        return -1;
-                    
-                    /*
-                     *   It matches exactly - skip the entire length of
-                     *   the register in the source string 
-                     */
-                    p += reg_len;
-                    curlen -= reg_len;
-                }
-                break;
+		/* if this is a group state, adjust the group registers */
+		re_note_group(ctx, regs, cur_state, p);
+		
+		/* see what kind of state we're in */
+		if (!(tuple->flags & (RE_STATE_GROUP_BEGIN | RE_STATE_GROUP_END))
+			&& tuple->ch != RE_EPSILON)
+		{
+			/*
+			 *   This is a character or group recognizer state.  If we
+			 *   match the character or group, continue on to the next
+			 *   state; otherwise, return failure.
+			 */
+			switch(tuple->ch)
+			{
+			case RE_GROUP_MATCH_0:
+			case RE_GROUP_MATCH_0 + 1:
+			case RE_GROUP_MATCH_0 + 2:
+			case RE_GROUP_MATCH_0 + 3:
+			case RE_GROUP_MATCH_0 + 4:
+			case RE_GROUP_MATCH_0 + 5:
+			case RE_GROUP_MATCH_0 + 6:
+			case RE_GROUP_MATCH_0 + 7:
+			case RE_GROUP_MATCH_0 + 8:
+			case RE_GROUP_MATCH_0 + 9:
+				{
+					int group_num;
+					re_group_register *group_reg;
+					size_t reg_len;
+					
+					/* it's a group - get the group number */
+					group_num = tuple->ch - RE_GROUP_MATCH_0;
+					group_reg = &regs[group_num];
+					
+					/* 
+					 *   if this register isn't defined, there's nothing
+					 *   to match, so fail 
+					 */
+					if (group_reg->start_ofs == 0 || group_reg->end_ofs == 0)
+						return -1;
+					
+					/* calculate the length of the register value */
+					reg_len = group_reg->end_ofs - group_reg->start_ofs;
+					
+					/* if we don't have enough left to match, it fails */
+					if (curlen < reg_len)
+						return -1;
+					
+					/* if the string doesn't match exactly, we fail */
+					if (memcmp(p, group_reg->start_ofs, reg_len) != 0)
+						return -1;
+					
+					/*
+					 *   It matches exactly - skip the entire length of
+					 *   the register in the source string 
+					 */
+					p += reg_len;
+					curlen -= reg_len;
+				}
+				break;
 
-            case RE_TEXT_BEGIN:
-                /* 
-                 *   Match only the exact beginning of the string - if
-                 *   we're anywhere else, this isn't a match.  If this
-                 *   succeeds, we don't skip any characters.  
-                 */
-                if (p != entire_str)
-                    return -1;
-                break;
+			case RE_TEXT_BEGIN:
+				/* 
+				 *   Match only the exact beginning of the string - if
+				 *   we're anywhere else, this isn't a match.  If this
+				 *   succeeds, we don't skip any characters.  
+				 */
+				if (p != entire_str)
+					return -1;
+				break;
 
-            case RE_TEXT_END:
-                /*
-                 *   Match only the exact end of the string - if we're
-                 *   anywhere else, this isn't a match.  Don't skip any
-                 *   characters on success.  
-                 */
-                if (curlen != 0)
-                    return -1;
-                break;
+			case RE_TEXT_END:
+				/*
+				 *   Match only the exact end of the string - if we're
+				 *   anywhere else, this isn't a match.  Don't skip any
+				 *   characters on success.  
+				 */
+				if (curlen != 0)
+					return -1;
+				break;
 
-            case RE_WORD_BEGIN:
-                /* 
-                 *   if the previous character is a word character, we're
-                 *   not at the beginning of a word 
-                 */
-                if (p != entire_str && re_is_word_char(*(p-1)))
-                    return -1;
+			case RE_WORD_BEGIN:
+				/* 
+				 *   if the previous character is a word character, we're
+				 *   not at the beginning of a word 
+				 */
+				if (p != entire_str && re_is_word_char(*(p-1)))
+					return -1;
 
-                /* 
-                 *   if we're at the end of the string, or the current
-                 *   character isn't the start of a word, we're not at the
-                 *   beginning of a word 
-                 */
-                if (curlen == 0 || !re_is_word_char(*p))
-                    return -1;
-                break;
+				/* 
+				 *   if we're at the end of the string, or the current
+				 *   character isn't the start of a word, we're not at the
+				 *   beginning of a word 
+				 */
+				if (curlen == 0 || !re_is_word_char(*p))
+					return -1;
+				break;
 
-            case RE_WORD_END:
-                /*
-                 *   if the current character is a word character, we're not
-                 *   at the end of a word 
-                 */
-                if (curlen != 0 && re_is_word_char(*p))
-                    return -1;
+			case RE_WORD_END:
+				/*
+				 *   if the current character is a word character, we're not
+				 *   at the end of a word 
+				 */
+				if (curlen != 0 && re_is_word_char(*p))
+					return -1;
 
-                /*
-                 *   if we're at the beginning of the string, or the
-                 *   previous character is not a word character, we're not
-                 *   at the end of a word 
-                 */
-                if (p == entire_str || !re_is_word_char(*(p-1)))
-                    return -1;
-                break;
+				/*
+				 *   if we're at the beginning of the string, or the
+				 *   previous character is not a word character, we're not
+				 *   at the end of a word 
+				 */
+				if (p == entire_str || !re_is_word_char(*(p-1)))
+					return -1;
+				break;
 
-            case RE_WORD_CHAR:
-                /* if it's not a word character, it's a failure */
-                if (curlen == 0 || !re_is_word_char(*p))
-                    return -1;
+			case RE_WORD_CHAR:
+				/* if it's not a word character, it's a failure */
+				if (curlen == 0 || !re_is_word_char(*p))
+					return -1;
 
-                /* skip this character of input */
-                ++p;
-                --curlen;
-                break;
+				/* skip this character of input */
+				++p;
+				--curlen;
+				break;
 
-            case RE_NON_WORD_CHAR:
-                /* if it's a word character, it's a failure */
-                if (curlen == 0 || re_is_word_char(*p))
-                    return -1;
+			case RE_NON_WORD_CHAR:
+				/* if it's a word character, it's a failure */
+				if (curlen == 0 || re_is_word_char(*p))
+					return -1;
 
-                /* skip the input */
-                ++p;
-                --curlen;
-                break;
+				/* skip the input */
+				++p;
+				--curlen;
+				break;
 
-            case RE_WORD_BOUNDARY:
-            case RE_NON_WORD_BOUNDARY:
-                {
-                    int prev_is_word;
-                    int next_is_word;
-                    int boundary;
+			case RE_WORD_BOUNDARY:
+			case RE_NON_WORD_BOUNDARY:
+				{
+					int prev_is_word;
+					int next_is_word;
+					int boundary;
 
-                    /*
-                     *   Determine if the previous character is a word
-                     *   character -- if we're at the beginning of the
-                     *   string, it's obviously not, otherwise check its
-                     *   classification 
-                     */
-                    prev_is_word = (p != entire_str
-                                    && re_is_word_char(*(p-1)));
+					/*
+					 *   Determine if the previous character is a word
+					 *   character -- if we're at the beginning of the
+					 *   string, it's obviously not, otherwise check its
+					 *   classification 
+					 */
+					prev_is_word = (p != entire_str
+									&& re_is_word_char(*(p-1)));
 
-                    /* make the same check for the current character */
-                    next_is_word = (curlen != 0
-                                    && re_is_word_char(*p));
+					/* make the same check for the current character */
+					next_is_word = (curlen != 0
+									&& re_is_word_char(*p));
 
-                    /*
-                     *   Determine if this is a boundary - it is if the
-                     *   two states are different 
-                     */
-                    boundary = ((prev_is_word != 0) ^ (next_is_word != 0));
+					/*
+					 *   Determine if this is a boundary - it is if the
+					 *   two states are different 
+					 */
+					boundary = ((prev_is_word != 0) ^ (next_is_word != 0));
 
-                    /* 
-                     *   make sure it matches what was desired, and return
-                     *   failure if not 
-                     */
-                    if ((tuple->ch == RE_WORD_BOUNDARY && !boundary)
-                        || (tuple->ch == RE_NON_WORD_BOUNDARY && boundary))
-                        return -1;
-                }
-                break;
+					/* 
+					 *   make sure it matches what was desired, and return
+					 *   failure if not 
+					 */
+					if ((tuple->ch == RE_WORD_BOUNDARY && !boundary)
+						|| (tuple->ch == RE_NON_WORD_BOUNDARY && boundary))
+						return -1;
+				}
+				break;
 
-            case RE_WILDCARD:
-                /* make sure we have a character to match */
-                if (curlen == 0)
-                    return -1;
+			case RE_WILDCARD:
+				/* make sure we have a character to match */
+				if (curlen == 0)
+					return -1;
 
-                /* skip this character */
-                ++p;
-                --curlen;
-                break;
+				/* skip this character */
+				++p;
+				--curlen;
+				break;
 
-            case RE_RANGE:
-            case RE_RANGE_EXCL:
-                {
-                    int match;
-                    
-                    /* make sure we have a character to match */
-                    if (curlen == 0)
-                        return -1;
-                    
-                    /* see if we match */
-                    match = re_is_bit_set(tuple->char_range,
-                                          (int)(unsigned char)*p);
-                    
-                    /* make sure we got what we wanted */
-                    if ((tuple->ch == RE_RANGE && !match)
-                        || (tuple->ch == RE_RANGE_EXCL && match))
-                        return -1;
+			case RE_RANGE:
+			case RE_RANGE_EXCL:
+				{
+					int match;
+					
+					/* make sure we have a character to match */
+					if (curlen == 0)
+						return -1;
+					
+					/* see if we match */
+					match = re_is_bit_set(tuple->char_range,
+										  (int)(unsigned char)*p);
+					
+					/* make sure we got what we wanted */
+					if ((tuple->ch == RE_RANGE && !match)
+						|| (tuple->ch == RE_RANGE_EXCL && match))
+						return -1;
 
-                    /* skip this character of the input */
-                    ++p;
-                    --curlen;
-                }
-                break;
+					/* skip this character of the input */
+					++p;
+					--curlen;
+				}
+				break;
 
-            default:
-                /* make sure we have an exact match */
-                if (curlen == 0 || tuple->ch != *p)
-                    return -1;
+			default:
+				/* make sure we have an exact match */
+				if (curlen == 0 || tuple->ch != *p)
+					return -1;
 
-                /* skip this character of the input */
-                ++p;
-                --curlen;
-                break;
-            }
+				/* skip this character of the input */
+				++p;
+				--curlen;
+				break;
+			}
 
-            /* 
-             *   if we got this far, we were successful - move on to the
-             *   next state 
-             */
-            cur_state = tuple->next_state_1;
-        }
-        else if (tuple->next_state_2 == RE_STATE_INVALID)
-        {
-            /*
-             *   We have only one transition, so this state is entirely
-             *   deterministic.  Simply move on to the next state. 
-             */
-            cur_state = tuple->next_state_1;
-        }
-        else
-        {
-            re_machine sub_machine;
-            re_group_register regs1[RE_GROUP_REG_CNT];
-            re_group_register regs2[RE_GROUP_REG_CNT];
-            int ret1;
-            int ret2;
-            
-            /*
-             *   This state has two possible transitions, and we don't
-             *   know which one to take.  So, try both, see which one
-             *   works better, and return the result.  Try the first
-             *   transition first.  Note that each separate attempt must
-             *   use a separate copy of the registers.  
-             */
-            memcpy(regs1, regs, sizeof(regs1));
-            sub_machine.init = tuple->next_state_1;
-            sub_machine.final_state = machine->final_state;
-            ret1 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs1);
+			/* 
+			 *   if we got this far, we were successful - move on to the
+			 *   next state 
+			 */
+			cur_state = tuple->next_state_1;
+		}
+		else if (tuple->next_state_2 == RE_STATE_INVALID)
+		{
+			/*
+			 *   We have only one transition, so this state is entirely
+			 *   deterministic.  Simply move on to the next state. 
+			 */
+			cur_state = tuple->next_state_1;
+		}
+		else
+		{
+			re_machine sub_machine;
+			re_group_register regs1[RE_GROUP_REG_CNT];
+			re_group_register regs2[RE_GROUP_REG_CNT];
+			int ret1;
+			int ret2;
+			
+			/*
+			 *   This state has two possible transitions, and we don't
+			 *   know which one to take.  So, try both, see which one
+			 *   works better, and return the result.  Try the first
+			 *   transition first.  Note that each separate attempt must
+			 *   use a separate copy of the registers.  
+			 */
+			memcpy(regs1, regs, sizeof(regs1));
+			sub_machine.init = tuple->next_state_1;
+			sub_machine.final_state = machine->final_state;
+			ret1 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs1);
 
-            /*
-             *   Now try the second transition 
-             */
-            memcpy(regs2, regs, sizeof(regs2));
-            sub_machine.init = tuple->next_state_2;
-            sub_machine.final_state = machine->final_state;
-            ret2 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs2);
+			/*
+			 *   Now try the second transition 
+			 */
+			memcpy(regs2, regs, sizeof(regs2));
+			sub_machine.init = tuple->next_state_2;
+			sub_machine.final_state = machine->final_state;
+			ret2 = re_match(ctx, entire_str, p, curlen, &sub_machine, regs2);
 
-            /*
-             *   If they both failed, the whole thing failed.  Otherwise,
-             *   return the longer of the two, plus the length we
-             *   ourselves matched previously.  Note that we return the
-             *   register set from the winning match.  
-             */
-            if (ret1 < 0 && ret2 < 0)
-            {
-                /* they both failed */
-                return -1;
-            }
-            else if (ret1 > ret2)
-            {
-                /* use the first register set and result length */
-                memcpy(regs, regs1, sizeof(regs1));
-                return ret1 + (p - str);
-            }
-            else
-            {
-                /* use the second register set and result length */
-                memcpy(regs, regs2, sizeof(regs2));
-                return ret2 + (p - str);
-            }
-        }
+			/*
+			 *   If they both failed, the whole thing failed.  Otherwise,
+			 *   return the longer of the two, plus the length we
+			 *   ourselves matched previously.  Note that we return the
+			 *   register set from the winning match.  
+			 */
+			if (ret1 < 0 && ret2 < 0)
+			{
+				/* they both failed */
+				return -1;
+			}
+			else if (ret1 > ret2)
+			{
+				/* use the first register set and result length */
+				memcpy(regs, regs1, sizeof(regs1));
+				return ret1 + (p - str);
+			}
+			else
+			{
+				/* use the second register set and result length */
+				memcpy(regs, regs2, sizeof(regs2));
+				return ret2 + (p - str);
+			}
+		}
 
-        /*
-         *   If we're in the final state, return success 
-         */
-        if (cur_state == machine->final_state)
-        {
-            /* finish off any group involved in the final state */
-            re_note_group(ctx, regs, cur_state, p);
-            
-            /* return the length we matched */
-            return p - str;
-        }
-    }
+		/*
+		 *   If we're in the final state, return success 
+		 */
+		if (cur_state == machine->final_state)
+		{
+			/* finish off any group involved in the final state */
+			re_note_group(ctx, regs, cur_state, p);
+			
+			/* return the length we matched */
+			return p - str;
+		}
+	}
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1448,33 +1448,33 @@ static int re_match(re_context *ctx, const char *entire_str,
  *   pattern.  
  */
 static int re_search(re_context *ctx, const char *str, size_t len,
-                     const re_machine *machine, re_group_register *regs,
-                     int *result_len)
+					 const re_machine *machine, re_group_register *regs,
+					 int *result_len)
 {
-    int ofs;
-    
-    /*
-     *   Starting at the first character in the string, search for the
-     *   pattern at each subsequent character until we either find the
-     *   pattern or run out of string to test. 
-     */
-    for (ofs = 0 ; ofs < (int)len ; ++ofs)
-    {
-        int matchlen;
-        
-        /* check for a match */
-        matchlen = re_match(ctx, str, str + ofs, len - ofs,
-                            machine, regs);
-        if (matchlen >= 0)
-        {
-            /* we found a match here - return the length and offset */
-            *result_len = matchlen;
-            return ofs;
-        }
-    }
+	int ofs;
+	
+	/*
+	 *   Starting at the first character in the string, search for the
+	 *   pattern at each subsequent character until we either find the
+	 *   pattern or run out of string to test. 
+	 */
+	for (ofs = 0 ; ofs < (int)len ; ++ofs)
+	{
+		int matchlen;
+		
+		/* check for a match */
+		matchlen = re_match(ctx, str, str + ofs, len - ofs,
+							machine, regs);
+		if (matchlen >= 0)
+		{
+			/* we found a match here - return the length and offset */
+			*result_len = matchlen;
+			return ofs;
+		}
+	}
 
-    /* we didn't find a match */
-    return -1;
+	/* we didn't find a match */
+	return -1;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1483,42 +1483,42 @@ static int re_search(re_context *ctx, const char *str, size_t len,
  */
 static void re_save_search_str(re_context *ctx, const char *str, size_t len)
 {
-    /* if the string is empty, this is easy */
-    if (len == 0)
-    {
-        /* nothing to store - just save the length and return */
-        ctx->curlen = 0;
-        return;
-    }
-    
-    /* if the current buffer isn't big enough, allocate a new one */
-    if (ctx->strbuf == 0 || ctx->strbufsiz < len)
-    {
-        /* 
-         *   free any previous buffer - its contents are no longer
-         *   important, since we're about to overwrite it with a new
-         *   string 
-         */
-        if (ctx->strbuf != 0)
-            mchfre(ctx->strbuf);
+	/* if the string is empty, this is easy */
+	if (len == 0)
+	{
+		/* nothing to store - just save the length and return */
+		ctx->curlen = 0;
+		return;
+	}
+	
+	/* if the current buffer isn't big enough, allocate a new one */
+	if (ctx->strbuf == 0 || ctx->strbufsiz < len)
+	{
+		/* 
+		 *   free any previous buffer - its contents are no longer
+		 *   important, since we're about to overwrite it with a new
+		 *   string 
+		 */
+		if (ctx->strbuf != 0)
+			mchfre(ctx->strbuf);
 
-        /* 
-         *   allocate a new buffer; round up to the next 256-byte
-         *   increment to make sure we're not constantly reallocating to
-         *   random sizes 
-         */
-        ctx->strbufsiz = ((len + 255) & ~255);
+		/* 
+		 *   allocate a new buffer; round up to the next 256-byte
+		 *   increment to make sure we're not constantly reallocating to
+		 *   random sizes 
+		 */
+		ctx->strbufsiz = ((len + 255) & ~255);
 
-        /* allocate it */
-        ctx->strbuf = (char *)mchalo(ctx->errctx, ctx->strbufsiz,
-                                     "regex str");
-    }
+		/* allocate it */
+		ctx->strbuf = (char *)mchalo(ctx->errctx, ctx->strbufsiz,
+									 "regex str");
+	}
 
-    /* copy the string */
-    memcpy(ctx->strbuf, str, len);
+	/* copy the string */
+	memcpy(ctx->strbuf, str, len);
 
-    /* save the length */
-    ctx->curlen = len;
+	/* save the length */
+	ctx->curlen = len;
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1527,31 +1527,31 @@ static void re_save_search_str(re_context *ctx, const char *str, size_t len)
  *   Returns the offset of the match, or -1 if no match was found.  
  */
 int re_compile_and_search(re_context *ctx,
-                          const char *pattern, size_t patlen,
-                          const char *searchstr, size_t searchlen,
-                          int *result_len)
+						  const char *pattern, size_t patlen,
+						  const char *searchstr, size_t searchlen,
+						  int *result_len)
 {
-    re_machine machine;
-    
-    /* compile the expression - return failure if we get an error */
-    if (re_compile(ctx, pattern, patlen, &machine) != RE_STATUS_SUCCESS)
-        return -1;
+	re_machine machine;
+	
+	/* compile the expression - return failure if we get an error */
+	if (re_compile(ctx, pattern, patlen, &machine) != RE_STATUS_SUCCESS)
+		return -1;
 
-    /* save the search string in our internal buffer */
-    re_save_search_str(ctx, searchstr, searchlen);
+	/* save the search string in our internal buffer */
+	re_save_search_str(ctx, searchstr, searchlen);
 
-    /* clear the group registers */
-    for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
-        ctx->regs[i].clear();
-    }
+	/* clear the group registers */
+	for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
+		ctx->regs[i].clear();
+	}
 
-    /* 
-     *   search for the pattern in our copy of the string - use the copy
-     *   so that the group registers stay valid even if the caller
-     *   deallocates the original string after we return
-     */
-    return re_search(ctx, ctx->strbuf, ctx->curlen, &machine,
-                     ctx->regs, result_len);
+	/* 
+	 *   search for the pattern in our copy of the string - use the copy
+	 *   so that the group registers stay valid even if the caller
+	 *   deallocates the original string after we return
+	 */
+	return re_search(ctx, ctx->strbuf, ctx->curlen, &machine,
+					 ctx->regs, result_len);
 }
 
 /* ------------------------------------------------------------------------ */
@@ -1562,26 +1562,26 @@ int re_compile_and_search(re_context *ctx,
  *   string to the given pattern.  
  */
 int re_compile_and_match(re_context *ctx,
-                         const char *pattern, size_t patlen,
-                         const char *searchstr, size_t searchlen)
+						 const char *pattern, size_t patlen,
+						 const char *searchstr, size_t searchlen)
 {
-    re_machine machine;
+	re_machine machine;
 
-    /* compile the expression - return failure if we get an error */
-    if (re_compile(ctx, pattern, patlen, &machine) != RE_STATUS_SUCCESS)
-        return FALSE;
+	/* compile the expression - return failure if we get an error */
+	if (re_compile(ctx, pattern, patlen, &machine) != RE_STATUS_SUCCESS)
+		return FALSE;
 
-    /* save the search string in our internal buffer */
-    re_save_search_str(ctx, searchstr, searchlen);
+	/* save the search string in our internal buffer */
+	re_save_search_str(ctx, searchstr, searchlen);
 
-    /* clear the group registers */
-    for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
-        ctx->regs[i].clear();
-    }
+	/* clear the group registers */
+	for (uint i = 0; i < ARRAYSIZE(ctx->regs); i++) {
+		ctx->regs[i].clear();
+	}
 
-    /* match the string */
-    return re_match(ctx, ctx->strbuf, ctx->strbuf, ctx->curlen,
-                    &machine, ctx->regs);
+	/* match the string */
+	return re_match(ctx, ctx->strbuf, ctx->strbuf, ctx->curlen,
+					&machine, ctx->regs);
 }
 
 

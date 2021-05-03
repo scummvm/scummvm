@@ -75,6 +75,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 		GType_ComposerV1
 	},
 
+	// Magic Tales: Baba Yaga and the Magic Geese French- from bug #12122
+	{
+		{
+			"babayaga",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "966a4ee9226d96085c953bb4f9426c06", 3940},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
 	// Magic Tales: Imo and the King - from bug #5964
 	{
 		{
@@ -102,6 +119,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: Imo and the King French Windows. Bugreport #12123
+	{
+		{
+			"imoking",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "753d3be27f54d564d8d1bff2b9f0d14f", 3375},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
@@ -239,6 +273,23 @@ static const ComposerGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
+		},
+		GType_ComposerV1
+	},
+
+	// Magic Tales: The Little Samurai - French from bug #12124
+	{
+		{
+			"littlesamurai",
+			0,
+			{
+				{"book.ini", GAME_CONFIGFILE, "1e9199e31b4f93c5e5caeedd3c2e7c0b", 3833},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)

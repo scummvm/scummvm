@@ -29,7 +29,11 @@
 // Fluidsynth v2.1+ uses printf in one of it's headers,
 // include/fluidsynth/log.h around line 82 so need to include this
 // prior scummsys.h inclusion and thus forbidden.h
+#ifdef USE_FLUIDLITE
+#include <fluidlite.h>
+#else
 #include <fluidsynth.h>
+#endif
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -46,7 +50,15 @@
 #include "backends/platform/ios7/ios7_common.h"
 #endif
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+// We assume here Fluidsynth minor will never be above 255 and
+// that micro versions won't break API compatibility
+#if defined(FLUIDSYNTH_VERSION_MAJOR) && defined(FLUIDSYNTH_VERSION_MINOR)
+#define FS_API_VERSION ((FLUIDSYNTH_VERSION_MAJOR << 8) | FLUIDSYNTH_VERSION_MINOR)
+#else
+#define FS_API_VERSION 0
+#endif
+
+#if FS_API_VERSION >= 0x0200
 static void logHandler(int level, const char *message, void *data)
 #else
 static void logHandler(int level, char *message, void *data)
@@ -103,7 +115,7 @@ public:
 
 	void setEngineSoundFont(Common::SeekableReadStream *soundFontData) override;
 	bool acceptsSoundFontData() override {
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 		return true;
 #else
 		return false;
@@ -162,7 +174,7 @@ void MidiDriver_FluidSynth::setStr(const char *name, const char *val) {
 
 // Soundfont memory loader callback functions.
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 static void *SoundFontMemLoader_open(const char *filename) {
 	void *p;
 	if (filename[0] != '&') {
@@ -172,11 +184,19 @@ static void *SoundFontMemLoader_open(const char *filename) {
 	return p;
 }
 
+#if FS_API_VERSION >= 0x0202
+static int SoundFontMemLoader_read(void *buf, fluid_long_long_t count, void *handle) {
+#else
 static int SoundFontMemLoader_read(void *buf, int count, void *handle) {
+#endif
 	return ((Common::SeekableReadStream *) handle)->read(buf, count) == (uint32)count ? FLUID_OK : FLUID_FAILED;
 }
 
+#if FS_API_VERSION >= 0x0202
+static int SoundFontMemLoader_seek(void *handle, fluid_long_long_t offset, int origin) {
+#else
 static int SoundFontMemLoader_seek(void *handle, long offset, int origin) {
+#endif
 	return ((Common::SeekableReadStream *) handle)->seek(offset, origin) ? FLUID_OK : FLUID_FAILED;
 }
 
@@ -185,7 +205,11 @@ static int SoundFontMemLoader_close(void *handle) {
 	return FLUID_OK;
 }
 
+#if FS_API_VERSION >= 0x0202
+static fluid_long_long_t SoundFontMemLoader_tell(void *handle) {
+#else
 static long SoundFontMemLoader_tell(void *handle) {
+#endif
 	return ((Common::SeekableReadStream *) handle)->pos();
 }
 #endif
@@ -200,7 +224,7 @@ int MidiDriver_FluidSynth::open() {
 	fluid_set_log_function(FLUID_INFO, logHandler, NULL);
 	fluid_set_log_function(FLUID_DBG, logHandler, NULL);
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 	// When provided with in-memory SoundFont data, only use the configured
 	// SoundFont instead if it's explicitly configured on the current game.
 	bool isUsingInMemorySoundFontData = _engineSoundFontData && !ConfMan.getActiveDomain()->contains("soundfont");
@@ -229,7 +253,11 @@ int MidiDriver_FluidSynth::open() {
 	_synth = new_fluid_synth(_settings);
 
 	if (ConfMan.getBool("fluidsynth_chorus_activate")) {
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_chorus_on(_synth, -1, 1);
+#else
 		fluid_synth_set_chorus_on(_synth, 1);
+#endif
 
 		int chorusNr = ConfMan.getInt("fluidsynth_chorus_nr");
 		double chorusLevel = (double)ConfMan.getInt("fluidsynth_chorus_level") / 100.0;
@@ -244,22 +272,49 @@ int MidiDriver_FluidSynth::open() {
 			chorusType = FLUID_CHORUS_MOD_TRIANGLE;
 		}
 
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_set_chorus_group_nr(_synth, -1, chorusNr);
+		fluid_synth_set_chorus_group_level(_synth, -1, chorusLevel);
+		fluid_synth_set_chorus_group_speed(_synth, -1, chorusSpeed);
+		fluid_synth_set_chorus_group_depth(_synth, -1, chorusDepthMs);
+		fluid_synth_set_chorus_group_type(_synth, -1, chorusType);
+#else
 		fluid_synth_set_chorus(_synth, chorusNr, chorusLevel, chorusSpeed, chorusDepthMs, chorusType);
+#endif
 	} else {
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_chorus_on(_synth, -1, 0);
+#else
 		fluid_synth_set_chorus_on(_synth, 0);
+#endif
 	}
 
 	if (ConfMan.getBool("fluidsynth_reverb_activate")) {
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_reverb_on(_synth, -1, 1);
+#else
 		fluid_synth_set_reverb_on(_synth, 1);
+#endif
 
 		double reverbRoomSize = (double)ConfMan.getInt("fluidsynth_reverb_roomsize") / 100.0;
 		double reverbDamping = (double)ConfMan.getInt("fluidsynth_reverb_damping") / 100.0;
 		int reverbWidth = ConfMan.getInt("fluidsynth_reverb_width");
 		double reverbLevel = (double)ConfMan.getInt("fluidsynth_reverb_level") / 100.0;
 
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_set_reverb_group_roomsize(_synth, -1, reverbRoomSize);
+		fluid_synth_set_reverb_group_damp(_synth, -1, reverbDamping);
+		fluid_synth_set_reverb_group_width(_synth, -1, reverbWidth);
+		fluid_synth_set_reverb_group_level(_synth, -1, reverbLevel);
+#else
 		fluid_synth_set_reverb(_synth, reverbRoomSize, reverbDamping, reverbWidth, reverbLevel);
+#endif
 	} else {
+#if FS_API_VERSION >= 0x0202
+		fluid_synth_reverb_on(_synth, -1, 0);
+#else
 		fluid_synth_set_reverb_on(_synth, 0);
+#endif
 	}
 
 	Common::String interpolation = ConfMan.get("fluidsynth_misc_interpolation");
@@ -280,7 +335,7 @@ int MidiDriver_FluidSynth::open() {
 	const char *soundfont = !isUsingInMemorySoundFontData ?
 			ConfMan.get("soundfont").c_str() : Common::String::format("&%p", (void *)_engineSoundFontData).c_str();
 
-#if defined(FLUIDSYNTH_VERSION_MAJOR) && FLUIDSYNTH_VERSION_MAJOR > 1
+#if FS_API_VERSION >= 0x0200
 	if (isUsingInMemorySoundFontData) {
 		fluid_sfloader_t *soundFontMemoryLoader = new_fluid_defsfloader(_settings);
 		fluid_sfloader_set_callbacks(soundFontMemoryLoader,

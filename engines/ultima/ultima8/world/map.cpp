@@ -204,7 +204,7 @@ void Map::unloadFixed() {
 
 void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 								 Common::SeekableReadStream *rs,
-                                 uint32 extendedflags) {
+								 uint32 extendedflags) {
 	if (!rs) return;
 	uint32 size = rs->size();
 	if (size == 0) return;

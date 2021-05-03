@@ -60,7 +60,7 @@ void PathfindingState::load(const Actor *_actor) {
 }
 
 bool PathfindingState::checkPoint(int32 x, int32 y, int32 z,
-                                  int sqr_range) const {
+								  int sqr_range) const {
 	int distance = (_x - x) * (_x - x) + (_y - y) * (_y - y) + (_z - z) * (_z - z);
 	return distance < sqr_range;
 }
@@ -362,7 +362,7 @@ static void drawpath(PathNode *to, uint32 rgb, bool done) {
 #endif
 
 void Pathfinder::newNode(PathNode *oldnode, PathfindingState &state,
-                         unsigned int steps) {
+						 unsigned int steps) {
 	PathNode *newnode = new PathNode();
 	newnode->state = state;
 	newnode->parent = oldnode;

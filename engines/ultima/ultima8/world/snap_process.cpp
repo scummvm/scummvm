@@ -77,7 +77,7 @@ void SnapProcess::updateCurrentEgg() {
 		Rect r;
 		egg->getLocation(x, y, z);
 		getSnapEggRange(egg, r);
-		if (r.intersects(arect) && (az < z + 0x30 && az > z - 0x30)) {
+		if (r.intersects(arect) && (az <= z + 0x30 && az >= z - 0x30)) {
 			_currentSnapEgg = *iter;
 			_currentSnapEggRange = r;
 			CameraProcess::SetCameraProcess(new CameraProcess(_currentSnapEgg));

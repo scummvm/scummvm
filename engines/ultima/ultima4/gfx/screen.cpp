@@ -56,10 +56,10 @@ namespace Ultima4 {
 Screen *g_screen;
 
 Screen::Screen() : _filterScaler(nullptr), _currentMouseCursor(-1),
-                   _gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
-                   _gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
-                   _cursorStatus(0), _cursorEnabled(1), _priorFrameTime(0)
-                   /* , _continueScreenRefresh(true) */ {
+				   _gemLayout(nullptr), _tileAnims(nullptr), _charSetInfo(nullptr),
+				   _gemTilesInfo(nullptr), _needPrompt(1), _currentCycle(0),
+				   _cursorStatus(0), _cursorEnabled(1), _priorFrameTime(0)
+				   /* , _continueScreenRefresh(true) */ {
 	g_screen = this;
 	Common::fill(&_mouseCursors[0], &_mouseCursors[5], (MouseCursorSurface *)nullptr);
 	Common::fill(&_los[0][0], &_los[0][0] + (VIEWPORT_W * VIEWPORT_H), 0);

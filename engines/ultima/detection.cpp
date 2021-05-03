@@ -58,7 +58,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-    AD_EXTRA_GUI_OPTIONS_TERMINATOR
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
 } // End of namespace Ultima

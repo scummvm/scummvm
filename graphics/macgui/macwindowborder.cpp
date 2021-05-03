@@ -24,14 +24,26 @@
 
 #include "graphics/macgui/macwindowborder.h"
 #include "graphics/macgui/macwindowmanager.h"
+#include "graphics/macgui/macfontmanager.h"
 
 namespace Graphics {
 
 using namespace Graphics::MacGUIConstants;
 
-MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitialized(false) {
-	_activeBorder = nullptr;
-	_inactiveBorder = nullptr;
+static const byte noborderData[3][3] = {
+	{ 0, 1, 0 },
+	{ 1, 0, 1 },
+	{ 0, 1, 0 },
+};
+
+MacWindowBorder::MacWindowBorder() {
+
+	_border = Common::Array<NinePatchBitmap *>(kWindowBorderMaxFlag);
+	_window = nullptr;
+	_useInternalBorder = false;
+
+	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++)
+		_border[i] = nullptr;
 
 	_borderOffsets.left = -1;
 	_borderOffsets.right = -1;
@@ -40,39 +52,62 @@ MacWindowBorder::MacWindowBorder() : _activeInitialized(false), _inactiveInitial
 	_borderOffsets.titleTop = -1;
 	_borderOffsets.titleBottom = -1;
 	_borderOffsets.dark = false;
+	_borderOffsets.titlePos = 0;
+	_borderOffsets.upperScrollHeight = 0;
+	_borderOffsets.lowerScrollHeight = 0;
+
+	_borderType = 0;
+
+	_scrollSize = -1;
+	_scrollPos = 0;
 }
 
 MacWindowBorder::~MacWindowBorder() {
-	if (_activeBorder)
-		delete _activeBorder;
-	if (_inactiveBorder)
-		delete _inactiveBorder;
+	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++) {
+		if (_border[i])
+			delete _border[i];
+	}
 }
 
-bool MacWindowBorder::hasBorder(bool active) {
-	return active ? _activeInitialized : _inactiveInitialized;
+bool MacWindowBorder::hasBorder(uint32 flags) {
+	if (flags >= kWindowBorderMaxFlag) {
+		warning("Accessing non-existed border type, %d", flags);
+		return false;
+	}
+	if (_useInternalBorder && !_border[flags]) {
+		loadInternalBorder(flags);
+	}
+	return _border[flags] != nullptr;
 }
 
-void MacWindowBorder::addActiveBorder(TransparentSurface *source) {
-	if (_activeBorder)
-		delete _activeBorder;
+void MacWindowBorder::disableBorder() {
+	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
+	noborder->create(3, 3, noborder->getSupportedPixelFormat());
+	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
+	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
 
-	_activeBorder = new NinePatchBitmap(source, true);
-	_activeInitialized = true;
+	for (int y = 0; y < 3; y++)
+		for (int x = 0; x < 3; x++)
+			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
 
-	if (_activeBorder->getPadding().isValidRect())
-		setOffsets(_activeBorder->getPadding());
+	setBorder(noborder, kWindowBorderActive);
+
+	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
+	setBorder(noborder2, 0);
 }
 
-void MacWindowBorder::addInactiveBorder(TransparentSurface *source) {
-	if (_inactiveBorder)
-		delete _inactiveBorder;
+void MacWindowBorder::addBorder(TransparentSurface *source, uint32 flags, int titlePos) {
+	if (flags >= kWindowBorderMaxFlag) {
+		warning("Accessing non-existed border type");
+		return;
+	}
+	if (_border[flags])
+		delete _border[flags];
 
-	_inactiveBorder = new NinePatchBitmap(source, true);
-	_inactiveInitialized = true;
+	_border[flags] = new NinePatchBitmap(source, true, titlePos);
 
-	if (!_inactiveBorder->getPadding().isValidRect())
-		setOffsets(_inactiveBorder->getPadding());
+	if (_border[flags]->getPadding().isValidRect() && _border[flags]->getPadding().left > -1 && _border[flags]->getPadding().top > -1)
+		setOffsets(_border[flags]->getPadding());
 }
 
 bool MacWindowBorder::hasOffsets() {
@@ -102,18 +137,158 @@ BorderOffsets &MacWindowBorder::getOffset() {
 	return _borderOffsets;
 }
 
-void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm) {
+void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindowManager *wm) {
+	_title = title;
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	int sidesWidth = getOffset().left + getOffset().right;
+	int titleWidth = font->getStringWidth(_title) + 10;
+	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
+	if (titleWidth > maxWidth)
+		titleWidth = maxWidth;
+
+	// if titleWidth is changed, then we modify it
+	// here, we change all the border that has title
+	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++) {
+		if ((_border[i] != nullptr) && (i & kWindowBorderTitle))
+			_border[i]->modifyTitleWidth(titleWidth);
+	}
+}
+
+void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
+	// here, we first check the _scrollSize, and if it is negative, then we don't draw the scrollBar
+	if (_scrollSize < 0)
+		return;
+	int width = _borderOffsets.right;
+	int height = _borderOffsets.upperScrollHeight;
+	int rx1 = g->w - width + 2;
+	int ry1 = height + _scrollPos;
+	int rx2 = rx1 + width - 5;
+	int ry2 = ry1 + _scrollSize ;
+	Common::Rect rr(rx1, ry1, rx2, ry2);
+
+	MacPlotData pd(g, nullptr,  &wm->getPatterns(), 1, 0, 0, 1, wm->_colorWhite, true);
+	Graphics::drawFilledRect(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
+
+	// after drawing, we set the _scrollSize negative, to indicate no more drawing is needed
+	// if win95 mode is enabled, then we keep on drawing the scrollbar
+	if (!(wm->_mode & kWMModeWin95))
+		_scrollSize = -1;
+}
+
+void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset) {
+	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
+	int width = g->w;
+	int titleColor = getOffset().dark ? wm->_colorWhite: wm->_colorBlack;
+	int titleY = getOffset().titleTop;
+	int sidesWidth = getOffset().left + getOffset().right;
+	int titleWidth = font->getStringWidth(_title) + 10;
+	int yOff = wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
+	int maxWidth = width - sidesWidth - 7;
+	if (titleWidth > maxWidth)
+		titleWidth = maxWidth;
+
+	font->drawString(g, _title, titleOffset + 5, titleY + yOff, titleWidth, titleColor);
+}
+
+void MacWindowBorder::setBorderType(int type) {
+	_useInternalBorder = true;
+	_borderType = type;
+}
+
+void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo, int ro, int to, int bo) {
+	BorderOffsets offsets;
+	offsets.left = lo;
+	offsets.right = ro;
+	offsets.top = to;
+	offsets.bottom = bo;
+	offsets.titleTop = -1;
+	offsets.titleBottom = -1;
+	offsets.titlePos = 0;
+	offsets.dark = false;
+	offsets.upperScrollHeight = 0;
+	offsets.lowerScrollHeight = 0;
+
+	loadBorder(file, flags, offsets);
+}
+
+void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
+	Image::BitmapDecoder bmpDecoder;
+	Graphics::Surface *source;
+	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
+
+	bmpDecoder.loadStream(file);
+	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
+
+	surface->create(source->w, source->h, _window->_wm->_pixelformat);
+	surface->copyFrom(*source);
+
+	source->free();
+	delete source;
+
+	setBorder(surface, flags, offsets);
+}
+
+void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo, int ro, int to, int bo) {
+	BorderOffsets offsets;
+	offsets.left = lo;
+	offsets.right = ro;
+	offsets.top = to;
+	offsets.bottom = bo;
+	offsets.titleTop = -1;
+	offsets.titleBottom = -1;
+	offsets.titlePos = 0;
+	offsets.dark = false;
+	setBorder(surface, flags, offsets);
+}
+
+void MacWindowBorder::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets) {
+	surface->applyColorKey(255, 0, 255, false);
+	addBorder(surface, flags, offsets.titlePos);
+
+	if ((flags & kWindowBorderActive) && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
+		setOffsets(offsets);
+		_window->resizeBorderSurface();
+	}
+
+	_window->setBorderDirty(true);
+	_window->_wm->setFullRefresh(true);
+}
+
+void MacWindowBorder::loadInternalBorder(uint32 flags) {
+	if (_borderType < 0) {
+		warning("trying to load non-existing internal border type");
+		return;
+	}
+	BorderOffsets offsets = _window->_wm->getBorderOffsets(_borderType);
+	Common::SeekableReadStream *file = _window->_wm->getBorderFile(_borderType, flags);
+	if (file) {
+		loadBorder(*file, flags, offsets);
+		delete file;
+	}
+}
+
+void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm) {
+	if (flags >= kWindowBorderMaxFlag) {
+		warning("Accessing non-existed border type");
+		return;
+	}
 
 	TransparentSurface srf;
-	NinePatchBitmap *src = active ? _activeBorder : _inactiveBorder;
+	NinePatchBitmap *src = _border[flags];
 
-	if ((active && !_activeInitialized) || (!active && !_inactiveInitialized)) {
-		warning("Attempt to blit unitialised border");
+	if (!src) {
+		warning("Attempt to blit uninitialized border");
+		return;
 	}
 
 	if (destination.w == 0 || destination.h == 0) {
 		warning("Attempt to draw %d x %d window", destination.w, destination.h);
 		return;
+	}
+
+	// we add a special check here, if we have title but the titleWidth is zero, then we try to recalc it
+	if ((flags & kWindowBorderTitle) && _border[flags]->getTitleWidth() == 0) {
+		setTitle(_title, destination.w, wm);
 	}
 
 	srf.create(destination.w, destination.h, destination.format);
@@ -122,6 +297,12 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, bool active, M
 	src->blit(srf, 0, 0, srf.w, srf.h, NULL, 0, wm);
 	destination.transBlitFrom(srf, wm->_colorGreen2);
 	srf.free();
+
+	if (flags & kWindowBorderTitle)
+		drawTitle(&destination, wm, src->getTitleOffset());
+
+	if (flags & kWindowBorderScrollbar)
+		drawScrollBar(&destination, wm);
 }
 
 } // End of namespace Graphics

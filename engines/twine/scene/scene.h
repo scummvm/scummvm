@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "twine/scene/actor.h"
-#include "twine/text.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -75,7 +75,7 @@ struct ZoneStruct {
 
 		/** show a text (e.g. when reading a sign) */
 		struct {
-			int32 textIdx;   /*!< text index in the current active text bank */
+			TextId textIdx;   /*!< text index in the current active text bank */
 			int32 textColor; /*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
@@ -178,7 +178,7 @@ public:
 
 	int32 holomapTrajectory = -1;
 
-	int32 sceneTextBank = TextBankId::None;
+	TextBankId sceneTextBank = TextBankId::None;
 	int32 alphaLight = ANGLE_0;
 	int32 betaLight = ANGLE_0;
 

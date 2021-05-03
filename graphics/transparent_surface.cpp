@@ -18,11 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- *
- * The bottom part of this is file is adapted from SDL_rotozoom.c. The
- * relevant copyright notice for those specific functions can be found at the
- * top of that section.
- *
  */
 
 
@@ -744,171 +739,6 @@ void TransparentSurface::setAlphaMode(AlphaType mode) {
 	_alphaMode = mode;
 }
 
-
-
-
-
-
-/*
-
-The function below is adapted from SDL_rotozoom.c,
-taken from SDL_gfx-2.0.18.
-
-Its copyright notice:
-
-=============================================================================
-SDL_rotozoom.c: rotozoomer, zoomer and shrinker for 32bit or 8bit surfaces
-
-Copyright (C) 2001-2012  Andreas Schiffler
-
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any damages
-arising from the use of this software.
-
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
-
-1. The origin of this software must not be misrepresented; you must not
-claim that you wrote the original software. If you use this software
-in a product, an acknowledgment in the product documentation would be
-appreciated but is not required.
-
-2. Altered source versions must be plainly marked as such, and must not be
-misrepresented as being the original software.
-
-3. This notice may not be removed or altered from any source
-distribution.
-
-Andreas Schiffler -- aschiffler at ferzkopp dot net
-=============================================================================
-
-
-The functions have been adapted for different structures and coordinate
-systems.
-
-*/
-
-
-
-
-struct tColorRGBA { byte r; byte g; byte b; byte a; };
-
-template <TFilteringMode filteringMode>
-TransparentSurface *TransparentSurface::rotoscaleT(const TransformStruct &transform) const {
-
-	assert(transform._angle != 0); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
-
-	Common::Point newHotspot;
-	Common::Rect srcRect(0, 0, (int16)w, (int16)h);
-	Common::Rect rect = TransformTools::newRect(Common::Rect(srcRect), transform, &newHotspot);
-	Common::Rect dstRect(0, 0, (int16)(rect.right - rect.left), (int16)(rect.bottom - rect.top));
-
-	TransparentSurface *target = new TransparentSurface();
-	assert(format.bytesPerPixel == 4);
-
-	int srcW = w;
-	int srcH = h;
-	int dstW = dstRect.width();
-	int dstH = dstRect.height();
-
-	target->create((uint16)dstW, (uint16)dstH, this->format);
-
-	if (transform._zoom.x == 0 || transform._zoom.y == 0) {
-		return target;
-	}
-
-	uint32 invAngle = 360 - (transform._angle % 360);
-	float invAngleRad = Common::deg2rad<uint32,float>(invAngle);
-	float invCos = cos(invAngleRad);
-	float invSin = sin(invAngleRad);
-
-	int icosx = (int)(invCos * (65536.0f * kDefaultZoomX / transform._zoom.x));
-	int isinx = (int)(invSin * (65536.0f * kDefaultZoomX / transform._zoom.x));
-	int icosy = (int)(invCos * (65536.0f * kDefaultZoomY / transform._zoom.y));
-	int isiny = (int)(invSin * (65536.0f * kDefaultZoomY / transform._zoom.y));
-
-
-	bool flipx = false, flipy = false; // TODO: See mirroring comment in RenderTicket ctor
-
-	int xd = (srcRect.left + transform._hotspot.x) << 16;
-	int yd = (srcRect.top + transform._hotspot.y) << 16;
-	int cx = newHotspot.x;
-	int cy = newHotspot.y;
-
-	int ax = -icosx * cx;
-	int ay = -isiny * cx;
-	int sw = srcW - 1;
-	int sh = srcH - 1;
-
-	tColorRGBA *pc = (tColorRGBA*)target->getBasePtr(0, 0);
-
-	for (int y = 0; y < dstH; y++) {
-		int t = cy - y;
-		int sdx = ax + (isinx * t) + xd;
-		int sdy = ay - (icosy * t) + yd;
-		for (int x = 0; x < dstW; x++) {
-			int dx = (sdx >> 16);
-			int dy = (sdy >> 16);
-			if (flipx) {
-				dx = sw - dx;
-			}
-			if (flipy) {
-				dy = sh - dy;
-			}
-
-			if (filteringMode == FILTER_BILINEAR) {
-				if ((dx > -1) && (dy > -1) && (dx < sw) && (dy < sh)) {
-					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-					tColorRGBA c00, c01, c10, c11, cswap;
-					c00 = *sp;
-					sp += 1;
-					c01 = *sp;
-					sp += (this->pitch / 4);
-					c11 = *sp;
-					sp -= 1;
-					c10 = *sp;
-					if (flipx) {
-						cswap = c00; c00=c01; c01=cswap;
-						cswap = c10; c10=c11; c11=cswap;
-					}
-					if (flipy) {
-						cswap = c00; c00=c10; c10=cswap;
-						cswap = c01; c01=c11; c11=cswap;
-					}
-					/*
-					* Interpolate colors
-					*/
-					int ex = (sdx & 0xffff);
-					int ey = (sdy & 0xffff);
-					int t1, t2;
-					t1 = ((((c01.r - c00.r) * ex) >> 16) + c00.r) & 0xff;
-					t2 = ((((c11.r - c10.r) * ex) >> 16) + c10.r) & 0xff;
-					pc->r = (((t2 - t1) * ey) >> 16) + t1;
-					t1 = ((((c01.g - c00.g) * ex) >> 16) + c00.g) & 0xff;
-					t2 = ((((c11.g - c10.g) * ex) >> 16) + c10.g) & 0xff;
-					pc->g = (((t2 - t1) * ey) >> 16) + t1;
-					t1 = ((((c01.b - c00.b) * ex) >> 16) + c00.b) & 0xff;
-					t2 = ((((c11.b - c10.b) * ex) >> 16) + c10.b) & 0xff;
-					pc->b = (((t2 - t1) * ey) >> 16) + t1;
-					t1 = ((((c01.a - c00.a) * ex) >> 16) + c00.a) & 0xff;
-					t2 = ((((c11.a - c10.a) * ex) >> 16) + c10.a) & 0xff;
-					pc->a = (((t2 - t1) * ey) >> 16) + t1;
-				}
-			} else {
-				if ((dx >= 0) && (dy >= 0) && (dx < srcW) && (dy < srcH)) {
-					const tColorRGBA *sp = (const tColorRGBA *)getBasePtr(dx, dy);
-					*pc = *sp;
-				}
-			}
-			sdx += icosx;
-			sdy += isiny;
-			pc++;
-		}
-	}
-	return target;
-}
-
 TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight, bool filtering) const {
 
 	TransparentSurface *target = new TransparentSurface();
@@ -919,6 +749,24 @@ TransparentSurface *TransparentSurface::scale(uint16 newWidth, uint16 newHeight,
 		scaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
 	} else {
 		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
+	}
+
+	return target;
+}
+
+TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform, bool filtering) const {
+
+	Common::Point newHotspot;
+	Common::Rect rect = TransformTools::newRect(Common::Rect((int16)w, (int16)h), transform, &newHotspot);
+
+	TransparentSurface *target = new TransparentSurface();
+
+	target->create((uint16)rect.right - rect.left, (uint16)rect.bottom - rect.top, this->format);
+
+	if (filtering) {
+		rotoscaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
+	} else {
+		rotoscaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
 	}
 
 	return target;
@@ -1000,13 +848,6 @@ TransparentSurface *TransparentSurface::convertTo(const PixelFormat &dstFormat, 
 	}
 
 	return surface;
-}
-
-template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_NEAREST>(const TransformStruct &transform) const;
-template TransparentSurface *TransparentSurface::rotoscaleT<FILTER_BILINEAR>(const TransformStruct &transform) const;
-
-TransparentSurface *TransparentSurface::rotoscale(const TransformStruct &transform) const {
-	return rotoscaleT<FILTER_BILINEAR>(transform);
 }
 
 } // End of namespace Graphics

@@ -73,7 +73,7 @@ void FontManager::resetGameFonts() {
 	_ttfFonts.clear();}
 
 Font *FontManager::getGameFont(unsigned int fontnum,
-        bool allowOverride) {
+		bool allowOverride) {
 	if (allowOverride && fontnum < _overrides.size() && _overrides[fontnum])
 		return _overrides[fontnum];
 
@@ -140,8 +140,8 @@ void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
 
 
 bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filename,
-                                 int pointsize, uint32 rgb, int bordersize,
-                                 bool SJIS) {
+								 int pointsize, uint32 rgb, int bordersize,
+								 bool SJIS) {
 	bool antialiasing = ConfMan.getBool("font_antialiasing");
 	Graphics::Font *f = getTTF_Font(filename, pointsize, antialiasing);
 	if (!f)
@@ -161,7 +161,7 @@ bool FontManager::addTTFOverride(unsigned int fontnum, const Std::string &filena
 }
 
 bool FontManager::addJPOverride(unsigned int fontnum,
-                                unsigned int jpfont, uint32 rgb) {
+								unsigned int jpfont, uint32 rgb) {
 	ShapeFont *jf = dynamic_cast<ShapeFont *>(GameData::get_instance()->getFonts()->getFont(jpfont));
 	if (!jf)
 		return false;
@@ -194,7 +194,7 @@ bool FontManager::addJPOverride(unsigned int fontnum,
 
 
 bool FontManager::loadTTFont(unsigned int fontnum, const Std::string &filename,
-                             int pointsize, uint32 rgb, int bordersize) {
+							 int pointsize, uint32 rgb, int bordersize) {
 	bool antialiasing = ConfMan.getBool("font_antialiasing");
 	Graphics::Font *f = getTTF_Font(filename, pointsize, antialiasing);
 	if (!f)

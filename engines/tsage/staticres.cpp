@@ -78,6 +78,7 @@ char const *const QUIT_CONFIRM_MSG = "Do you want to quit playing this game?";
 char const *const RESTART_MSG = "Do you want to restart this game?";
 char const *const GAME_PAUSED_MSG = "Game is paused.";
 char const *const OK_BTN_STRING = " Ok ";
+char const *const CONTINUE_BTN_STRING = " Continue ";
 char const *const CANCEL_BTN_STRING = "Cancel";
 char const *const QUIT_BTN_STRING = " Quit ";
 char const *const RESTART_BTN_STRING = "Restart";
@@ -88,6 +89,24 @@ char const *const RESUME_BTN_STRING = " Resume \rplay";
 char const *const LOOK_BTN_STRING = "Look";
 char const *const PICK_BTN_STRING = "Pick";
 
+// Spanish version
+char const *const ESP_LOOK_SCENE_HOTSPOT = "No ves nada especial.";
+char const *const ESP_USE_SCENE_HOTSPOT = "Con eso no conseguir\240s nada.";
+char const *const ESP_TALK_SCENE_HOTSPOT = "Yak, yak.";
+char const *const ESP_SPECIAL_SCENE_HOTSPOT = "Es una forma original de usar eso.";
+char const *const ESP_DEFAULT_SCENE_HOTSPOT = "No ves nada especial.";
+char const *const ESP_SAVE_ERROR_MSG = "Error salvando el juego. \255Por favor, no intentes recuperarlo!";
+char const *const ESP_SAVING_NOT_ALLOWED_MSG = "No es posible salvar en este momento.";
+char const *const ESP_RESTORING_NOT_ALLOWED_MSG = "No es posible recuperar una partida en este momento.";
+char const *const ESP_INV_EMPTY_MSG = "No llevas nada contigo.";
+
+char const *const ESP_OK_BTN_STRING = " Ok ";
+char const *const ESP_CONTINUE_BTN_STRING = " Continuar ";
+char const *const ESP_CANCEL_BTN_STRING = "Cancelar";
+char const *const ESP_RESTORE_BTN_STRING = "Recuperar";
+char const *const ESP_SOUND_BTN_STRING = "Sonido";
+char const *const ESP_LOOK_BTN_STRING = "Mirar";
+char const *const ESP_PICK_BTN_STRING = "Escoger";
 
 namespace Ringworld {
 
@@ -122,6 +141,46 @@ char const *const DEMO_EXIT_MSG = "Press ENTER to resume the Ringworld\x14 demo.
 char const *const EXIT_BTN_STRING = "Exit";
 char const *const DEMO_BTN_STRING = "Demo";
 char const *const DEMO_RESUME_BTN_STRING = "Resume";
+
+// Spanish version
+char const *const ESP_QUIT_CONFIRM_1_MSG = "\250Quieres abandonar el juego?";
+char const *const ESP_QUIT_CONFIRM_2_MSG = "\250Quieres abandonar esta partida?";
+char const *const ESP_RESTART_MSG = "   \250Quieres empezar de nuevo?    ";
+char const *const ESP_GAME_PAUSED_MSG = "Juego pausado";
+char const *const ESP_QUIT_BTN_STRING = " Abandonar ";
+char const *const ESP_RESTART_BTN_1_STRING = "Empezar \rde nuevo";
+char const *const ESP_RESTART_BTN_2_STRING = "Empezar de nuevo";
+char const *const ESP_SAVE_BTN_STRING = "Salvar";
+char const *const ESP_RESUME_BTN_STRING = " Continuar \rjuego";
+
+// Dialog resources
+char const *const ESP_HELP_MSG = "Mundo Anillo\x14\rLa Venganza del Patriarca\rVersi\242n ScummVM\r\r\
+\x01 Teclas de aceso r\240pido...\rF2 - Opciones de Sonido\rF3 - Abandonar\r\
+F4 - Empezar de nuevo\rF5 - Salvar\rF7 - Recuperar\rF10 - Pausa";
+char const *const ESP_WATCH_INTRO_MSG = "        \250Quieres ver la introducci\242n?         ";
+char const *const ESP_START_PLAY_BTN_STRING = " Comenzar el Juego ";
+char const *const ESP_INTRODUCTION_BTN_STRING = "Introducci\242n";
+char const *const ESP_OPTIONS_MSG = "\x01Opciones...";
+
+// Scene specific resources
+char const *const ESP_EXIT_MSG = "   SALIR   ";
+char const *const ESP_SCENE6100_CAREFUL = "\255Cuidado! La sonda no puede manipular mucho de eso.";
+char const *const ESP_SCENE6100_TOUGHER = "\255Hey! Esto es m\240s duro de lo que parece!";
+char const *const ESP_SCENE6100_ONE_MORE_HIT = "Deber\241as tener m\240s cuidado. Un impacto m\240s como \
+ese y la sonda podr\241a ser destruida";
+char const *const ESP_SCENE6100_DOING_BEST = "Lo hago lo mejor que puedo. \255Espero que se mantenga de \
+una pieza!";
+char const *const ESP_SCENE6100_REPAIR = "\r\rQuinn y Seeker reparan la sonda....";
+char const *const ESP_SCENE6100_ROCKY_AREA = "La zona rocosa deber\241a estar justo en frente de t\241. \
+\250La ves?";
+char const *const ESP_SCENE6100_REPLY = "S\241. Ahora a ver si soy capaz de esquivar esos rayos de luz \
+solar.";
+char const *const ESP_SCENE6100_TAKE_CONTROLS = "Toma t\243 los controles Seeker. Me sudan las manos.";
+char const *const ESP_SCENE6100_SURPRISE = "Me sorprendes Quinn. Pens\202 que aguantar\241as m\240s";
+char const *const ESP_SCENE6100_SWEAT = "Los humanos sudan, los Kzinti mueven convulsivamente su cola. \
+\250D\242nde est\240 la diferencia?";
+char const *const ESP_SCENE6100_VERY_WELL = "Muy bien. Recoger\202 la caja est\240sica y traer\202 la \
+sonda. Espera en la bodega de carga.";
 
 } // End of namespace Ringworld
 
@@ -178,6 +237,43 @@ char const *const SCENE570_WACKYDATA = "WACKYDATA";
 
 // Scene 180 messages
 char const *const THE_NEXT_DAY = "The Next Day";
+
+// Spanish version
+char const *const ESP_QUIT_CONFIRM_MSG = "\250Quieres dejar de jugar?";
+char const *const ESP_RESTART_MSG = "\250Quieres volver a comenzar el juego?";
+char const *const ESP_GAME_PAUSED_MSG = "Juego en pausa.";
+char const *const ESP_QUIT_BTN_STRING = " Salir ";
+char const *const ESP_RESTART_BTN_1_STRING = "Reiniciar";
+char const *const ESP_RESTART_BTN_2_STRING = "Volver a empezar";
+char const *const ESP_SAVE_BTN_STRING = "Guardar";
+char const *const ESP_RESUME_BTN_STRING = " Seguir \rjugando";
+
+// Dialog resources
+char const *const ESP_HELP_MSG = "Blue Force\x14\rVersi\242n ScummVM\r\r\
+Funciones del Teclado...\rF2 - Sonido\rF3 - Salir del Juego\r\
+F4 - Recomenzar\rF5 - Guardar\rF7 - Recuperar\rF10 - Pausa";
+char const *const ESP_WATCH_INTRO_MSG = "\250Quieres ver la introducci\242n?";
+char const *const ESP_START_PLAY_BTN_STRING = " Jugar ";
+char const *const ESP_INTRODUCTION_BTN_STRING = " Ver ";
+char const *const ESP_OPTIONS_MSG = "Opciones...";
+
+// Blue Force general messages
+char const *const ESP_BF_ALL_RIGHTS_RESERVED = "Todos los derechos reservados";
+char const *const ESP_BF_19840518 = "18 de Mayo de 1984";
+char const *const ESP_BF_19840515 = "15 de Mayo de 1984";
+char const *const ESP_BF_3_DAYS = "Tres d\241as despu\202s";
+char const *const ESP_BF_11_YEARS = "Once a\244os despu\202s.";
+
+// Scene 50 hotspots
+char const *const ESP_GRANDMA_FRANNIE = "La abuela Frannie";
+char const *const ESP_POLICE_DEPARTMENT = "Departamento de Polic\241a";
+char const *const ESP_TONYS_BAR = "El Bar de Tony";
+char const *const ESP_CHILD_PROTECTIVE_SERVICES = "Servicio de Protecci\242n de Menores";
+char const *const ESP_CITY_HALL_JAIL = "Ayuntamiento & C\240rcel";
+
+// Scene 180 messages
+char const *const ESP_THE_NEXT_DAY = "Al d\241a siguiente";
+
 
 } // End of namespace BlueForce
 

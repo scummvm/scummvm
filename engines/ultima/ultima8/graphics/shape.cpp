@@ -35,7 +35,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 Shape::Shape(const uint8 *data, uint32 size, const ConvertShapeFormat *format,
-             const uint16 id, const uint32 shape)
+			 const uint16 id, const uint32 shape)
 		: _flexId(id), _shapeNum(shape), _palette(nullptr) {
 	// NB: U8 style!
 	loadFrames(data, size, format);

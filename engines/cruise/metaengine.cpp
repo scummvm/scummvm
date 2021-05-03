@@ -50,7 +50,7 @@ public:
 		return "cruise";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	int getMaximumSaveSlot() const override { return 99; }
 
 	SaveStateList listSaves(const char *target) const override;

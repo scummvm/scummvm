@@ -64,16 +64,16 @@ enum { INT32_MAX_VAL = 0x7fffffff };
 
 /* Switch:  SAVEMEM
    Purpose: Magnetic loads a complete graphics file into memory by default.
-            Setting this switch you tell Magnetic to load images on request
-            (saving memory, wasting load time)
+			Setting this switch you tell Magnetic to load images on request
+			(saving memory, wasting load time)
 
 #define SAVEMEM
 */
 
 /* Switch:  NO_ANIMATION
    Purpose: By default Magnetic plays animated graphics.
-            Setting this switch to ignore animations, Magnetic shows the
-            static parts of the images anyway!
+			Setting this switch to ignore animations, Magnetic shows the
+			static parts of the images anyway!
 
 #define NO_ANIMATION
 */

@@ -56,16 +56,17 @@ namespace TwinE {
 static const uint32 kPlasmaEffectFilesize = 262176;
 
 namespace MenuButtonTypes {
-enum _MenuButtonTypes {
+enum MenuButtonTypesEnum {
 	kMusicVolume = 1,
 	kSoundVolume = 2,
 	kCDVolume = 3,
-	kLineVolume = 4,
-	kMasterVolume = 5,
-	kAggressiveMode = 6,
-	kPolygonDetails = 7,
-	kShadowSettings = 8,
-	kSceneryZoom = 9
+	kSpeechVolume = 4,
+	kAggressiveMode = 5,
+	kPolygonDetails = 6,
+	kShadowSettings = 7,
+	kSceneryZoom = 8,
+	kHighResolution = 9,
+	kWallCollision = 10
 };
 }
 
@@ -120,6 +121,8 @@ static MenuSettings createAdvancedOptionsMenu() {
 	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
 	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
 	settings.addButton(TextId::kSceneryZoomOn, MenuButtonTypes::kSceneryZoom);
+	settings.addButton(TextId::kCustomHighResOptionOn, MenuButtonTypes::kHighResolution);
+	settings.addButton(TextId::kCustomWallCollisionOff, MenuButtonTypes::kWallCollision);
 	return settings;
 }
 
@@ -137,9 +140,7 @@ static MenuSettings createVolumeMenu() {
 	settings.addButton(TextId::kMusicVolume, MenuButtonTypes::kMusicVolume);
 	settings.addButton(TextId::kSoundVolume, MenuButtonTypes::kSoundVolume);
 	settings.addButton(TextId::kCDVolume, MenuButtonTypes::kCDVolume);
-	settings.addButton(TextId::kLineInVolume, MenuButtonTypes::kLineVolume);
-	settings.addButton(TextId::kMasterVolume, MenuButtonTypes::kMasterVolume);
-	settings.addButton(TextId::kSaveSettings);
+	settings.addButton(TextId::kSpeechVolume, MenuButtonTypes::kSpeechVolume);
 	return settings;
 }
 
@@ -147,7 +148,7 @@ static MenuSettings createVolumeMenu() {
 
 const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
 	if (_buttonTexts[buttonIndex].empty()) {
-		const int32 textId = getButtonTextId(buttonIndex);
+		const TextId textId = getButtonTextId(buttonIndex);
 		char dialText[256] = "";
 		text->getMenuText(textId, dialText, sizeof(dialText));
 		_buttonTexts[buttonIndex] = dialText;
@@ -250,7 +251,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom, int32 color
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
-		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
+		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kSpeechVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -268,25 +269,20 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, status.volume);
 				break;
 			}
-			case MenuButtonTypes::kLineVolume: {
+			case MenuButtonTypes::kSpeechVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
-				break;
-			}
-			case MenuButtonTypes::kMasterVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			}
 
-			processPlasmaEffect(rect, 80);
+			processPlasmaEffect(rect, COLOR_80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_RED);
+			_engine->_interface->drawFilledRect(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), COLOR_68);
 		} else {
-			processPlasmaEffect(rect, 64);
+			processPlasmaEffect(rect, COLOR_64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 			}
@@ -359,6 +355,22 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 					menuSettings->setButtonTextId(i, TextId::kNoSceneryZoom);
 				}
 				break;
+			case MenuButtonTypes::kHighResolution: {
+				if (ConfMan.getBool("usehighres")) {
+					menuSettings->setButtonTextId(i, TextId::kCustomHighResOptionOn);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kCustomHighResOptionOff);
+				}
+				break;
+			}
+			case MenuButtonTypes::kWallCollision: {
+				if (ConfMan.getBool("wallcollision")) {
+					menuSettings->setButtonTextId(i, TextId::kCustomWallCollisionOn);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kCustomWallCollisionOff);
+				}
+				break;
+			}
 			default:
 				break;
 			}
@@ -440,31 +452,51 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		if (menuSettings == &advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAggressiveMode:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->_actor->autoAggressive = !_engine->_actor->autoAggressive;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.PolygonDetails--;
 					_engine->cfgfile.PolygonDetails %= 3;
-				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					startMillis = loopMillis;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.PolygonDetails++;
 					_engine->cfgfile.PolygonDetails %= 3;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.ShadowMode--;
 					_engine->cfgfile.ShadowMode %= 3;
-				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					startMillis = loopMillis;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.ShadowMode++;
 					_engine->cfgfile.ShadowMode %= 3;
+					startMillis = loopMillis;
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
-				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+					startMillis = loopMillis;
+				}
+				break;
+			case MenuButtonTypes::kHighResolution:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
+					const bool highRes = ConfMan.getBool("usehighres");
+					ConfMan.setBool("usehighres", !highRes);
+					startMillis = loopMillis;
+				}
+				break;
+			case MenuButtonTypes::kWallCollision:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight) || _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
+					const bool highRes = ConfMan.getBool("wallcollision");
+					ConfMan.setBool("wallcollision", !highRes);
+					startMillis = loopMillis;
 				}
 				break;
 			default:
@@ -477,51 +509,53 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
 				_engine->_music->musicVolume(volume);
+				ConfMan.setInt("music_volume", mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType));
 				break;
 			}
 			case MenuButtonTypes::kSoundVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
+
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+				ConfMan.setInt("sfx_volume", mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType));
 				break;
 			}
 			case MenuButtonTypes::kCDVolume: {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					status.volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					status.volume += 4;
+					startMillis = loopMillis;
 				}
 				status.volume = CLIP(status.volume, 0, 255);
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
 				break;
 			}
-			case MenuButtonTypes::kLineVolume: {
+			case MenuButtonTypes::kSpeechVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
+					startMillis = loopMillis;
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
+					startMillis = loopMillis;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
-				break;
-			}
-			case MenuButtonTypes::kMasterVolume: {
-				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
-					volume -= 4;
-				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
-					volume += 4;
-				}
-				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+				ConfMan.setInt("speech_volume", mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType));
 				break;
 			}
 			default:
@@ -552,9 +586,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIAbort)) {
 			for (int i = 0; i < menuSettings->getButtonCount(); ++i) {
-				const int16 textId = menuSettings->getButtonTextId(i);
+				const TextId textId = menuSettings->getButtonTextId(i);
 				if (textId == TextId::kReturnMenu || textId == TextId::kReturnGame || textId == TextId::kContinue) {
-					return textId;
+					return (int32)textId;
 				}
 			}
 			startMillis = loopMillis;
@@ -575,7 +609,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 		}
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
-	return menuSettings->getActiveButtonTextId();
+	return (int32)menuSettings->getActiveButtonTextId();
 }
 
 int32 Menu::advoptionsMenu() {
@@ -585,15 +619,15 @@ int32 Menu::advoptionsMenu() {
 	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&advOptionsMenuState)) {
-		case TextId::kReturnMenu: {
+		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
 		case kQuitEngine:
 			return kQuitEngine;
-		case TextId::kBehaviourAggressiveManual:
-		case TextId::kDetailsPolygonsHigh:
-		case TextId::kDetailsShadowHigh:
-		case TextId::kSceneryZoomOn:
+		case (int32)TextId::kBehaviourAggressiveManual:
+		case (int32)TextId::kDetailsPolygonsHigh:
+		case (int32)TextId::kDetailsShadowHigh:
+		case (int32)TextId::kSceneryZoomOn:
 		default:
 			warning("Unknown menu button handled");
 			break;
@@ -610,12 +644,12 @@ int32 Menu::savemanageMenu() {
 	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&saveManageMenuState)) {
-		case TextId::kReturnMenu:
+		case (int32)TextId::kReturnMenu:
 			return 0;
-		case TextId::kCreateSaveGame:
+		case (int32)TextId::kCreateSaveGame:
 			_engine->_menuOptions->saveGameMenu();
 			break;
-		case TextId::kDeleteSaveGame:
+		case (int32)TextId::kDeleteSaveGame:
 			_engine->_menuOptions->deleteSaveMenu();
 			break;
 		case kQuitEngine:
@@ -636,18 +670,14 @@ int32 Menu::volumeMenu() {
 	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&volumeMenuState)) {
-		case TextId::kReturnMenu:
+		case (int32)TextId::kReturnMenu:
 			return 0;
-		case TextId::kSaveSettings:
-			ConfMan.flushToDisk();
-			break;
 		case kQuitEngine:
 			return kQuitEngine;
-		case TextId::kMusicVolume:
-		case TextId::kSoundVolume:
-		case TextId::kCDVolume:
-		case TextId::kLineInVolume:
-		case TextId::kMasterVolume:
+		case (int32)TextId::kMusicVolume:
+		case (int32)TextId::kSoundVolume:
+		case (int32)TextId::kCDVolume:
+		case (int32)TextId::kSpeechVolume:
 		default:
 			warning("Unknown menu button handled");
 			break;
@@ -676,17 +706,17 @@ int32 Menu::optionsMenu() {
 	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&optionsMenuState)) {
-		case TextId::kReturnGame:
-		case TextId::kReturnMenu: {
+		case (int32)TextId::kReturnGame:
+		case (int32)TextId::kReturnMenu: {
 			return 0;
 		}
-		case TextId::kVolumeSettings: {
+		case (int32)TextId::kVolumeSettings: {
 			checkMenuQuit(volumeMenu()) break;
 		}
-		case TextId::kSaveManage: {
+		case (int32)TextId::kSaveManage: {
 			checkMenuQuit(savemanageMenu()) break;
 		}
-		case TextId::kAdvanced: {
+		case (int32)TextId::kAdvanced: {
 			checkMenuQuit(advoptionsMenu()) break;
 		}
 		case kQuitEngine:
@@ -700,26 +730,26 @@ int32 Menu::optionsMenu() {
 }
 
 static const byte cursorArrow[] = {
-    1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-    1, 0, 1, 3, 3, 3, 3, 3, 3, 3, 3,
-    1, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3,
-    1, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3,
-    1, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3,
-    1, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3,
-    1, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3,
-    1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3,
-    1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3,
-    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    1, 0, 0, 1, 0, 0, 1, 3, 3, 3, 3,
-    1, 0, 1, 3, 1, 0, 0, 1, 3, 3, 3,
-    1, 1, 3, 3, 1, 0, 0, 1, 3, 3, 3,
-    1, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
-    3, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
-    3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 3};
+	1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 1, 3, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3,
+	1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+	1, 0, 0, 1, 0, 0, 1, 3, 3, 3, 3,
+	1, 0, 1, 3, 1, 0, 0, 1, 3, 3, 3,
+	1, 1, 3, 3, 1, 0, 0, 1, 3, 3, 3,
+	1, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 3};
 
 static const byte cursorPalette[] = {
-    0, 0, 0,
-    0xff, 0xff, 0xff};
+	0, 0, 0,
+	0xff, 0xff, 0xff};
 
 bool Menu::init() {
 	// load menu effect file only once
@@ -741,19 +771,19 @@ EngineState Menu::run() {
 
 	ScopedCursor scoped(_engine);
 	switch (processMenu(&mainMenuState)) {
-	case TextId::kNewGame: {
+	case (int32)TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
 		}
 		break;
 	}
-	case TextId::kContinueGame: {
+	case (int32)TextId::kContinueGame: {
 		if (_engine->_menuOptions->continueGameMenu()) {
 			return EngineState::LoadedGame;
 		}
 		break;
 	}
-	case TextId::kOptions: {
+	case (int32)TextId::kOptions: {
 		optionsMenu();
 		break;
 	}
@@ -761,7 +791,7 @@ EngineState Menu::run() {
 		_engine->_screens->loadMenuImage();
 		break;
 	}
-	case TextId::kQuit:
+	case (int32)TextId::kQuit:
 	case kQuitEngine:
 		debug("quit the game");
 		return EngineState::QuitGame;
@@ -789,13 +819,13 @@ int32 Menu::giveupMenu() {
 		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
-		case TextId::kContinue:
+		case (int32)TextId::kContinue:
 			_engine->_sound->resumeSamples();
 			break;
-		case TextId::kGiveUp:
+		case (int32)TextId::kGiveUp:
 			_engine->_gameState->giveUp();
 			return 1;
-		case TextId::kCreateSaveGame:
+		case (int32)TextId::kCreateSaveGame:
 			_engine->_menuOptions->saveGameMenu();
 			break;
 		case kQuitEngine:
@@ -804,7 +834,7 @@ int32 Menu::giveupMenu() {
 			warning("Unknown menu button handled: %i", menuId);
 		}
 		_engine->_text->initSceneTextBank();
-	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue && menuId != TextId::kCreateSaveGame);
+	} while (menuId != (int32)TextId::kGiveUp && menuId != (int32)TextId::kContinue && menuId != (int32)TextId::kCreateSaveGame);
 
 	return 0;
 }
@@ -1022,7 +1052,7 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	int32 tmpTextBank = _engine->_scene->sceneTextBank;
+	TextBankId tmpTextBank = _engine->_scene->sceneTextBank;
 	_engine->_scene->sceneTextBank = TextBankId::None;
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
@@ -1157,7 +1187,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_renderer->setLightVector(ANGLE_315, ANGLE_334, ANGLE_0);
 
-	inventorySelectedColor = COLOR_RED;
+	inventorySelectedColor = COLOR_68;
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
 		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
@@ -1228,9 +1258,9 @@ void Menu::processInventoryMenu() {
 		if (updateItemText) {
 			_engine->_text->initInventoryDialogueBox();
 			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-				_engine->_text->initInventoryText(inventorySelectedItem);
+				_engine->_text->initInventoryText((InventoryItems)inventorySelectedItem);
 			} else {
-				_engine->_text->initInventoryText(NUM_INVENTORY_ITEMS);
+				_engine->_text->initInventoryText(InventoryItems::MaxInventoryItems);
 			}
 			textState = ProgressiveTextState::ContinueRunning;
 			updateItemText = false;

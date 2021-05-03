@@ -204,7 +204,7 @@ public:
 
 	const Trajectory *getTrajectory(int index) const;
 
-	const TextEntry *getText(int textBankId, int index) const;
+	const TextEntry *getText(TextBankId textBankId, TextId index) const;
 
 	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";

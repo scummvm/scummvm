@@ -49,17 +49,10 @@ macbinarydump() {
 hfsdump() {
 	mypath=`realpath $0`
 
-	if [[ jap == "jap" ]] ; then
-		flist=`hls -F1a|recode SJIS..utf-8`
-	else
-		flist=`hls -F1a`
-	fi
-
-	echo "$flist" | while read i ; do
-		if [[ jap == "jap" ]] ; then
-			macname=`echo "$i"|recode utf-8..SJIS`
-		else
-			macname="$i"
+	hls -F1a | while read i ; do
+		macname=$i
+		if  [ -n $jap ] ; then
+			i=`echo -n $i|recode $jap..utf-8`
 		fi
 
 		# Guard empty directories
@@ -132,14 +125,22 @@ if  [ "$#" -lt 1 ] ; then
 	exit 1
 fi
 
-if [[ $1 == "jap" ]] ; then
+case $1 in
+	jap|SJIS)
+		jap=SJIS
+		shift
+		;;
+	es|macintosh)
+		jap=macintosh
+		shift
+		;;
+esac
+
+if [ -n $jap ] ; then
 	if ! `command -v recode >/dev/null 2>/dev/null` ; then
 		echo "recode not found. Exiting"
 		exit 1
 	fi
-
-	jap=jap
-	shift
 fi
 
 if [[ $1 == "hfsutils-phase2" ]] ; then

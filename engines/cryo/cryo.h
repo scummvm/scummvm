@@ -35,7 +35,6 @@
 #include "graphics/screen.h"
 
 #include "cryo/eden.h"
-#include "cryo/video.h"
 #include "cryo/debugger.h"
 
 struct ADGameDescription;
@@ -70,7 +69,6 @@ public:
 
 	Graphics::Surface _screen;
 	EdenGame *_game;
-	HnmPlayer *_video;
 
 	View *_screenView;
 	volatile int32 _timerTicks;

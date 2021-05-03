@@ -24,7 +24,9 @@
 #include "c_types.h"
 
 #undef MT32EMU_EXPORT
+#undef MT32EMU_EXPORT_V
 #define MT32EMU_EXPORT MT32EMU_EXPORT_ATTRIBUTE
+#define MT32EMU_EXPORT_V(symbol_version_tag) MT32EMU_EXPORT
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,7 +41,9 @@ MT32EMU_EXPORT mt32emu_service_i mt32emu_get_service_i(void);
 
 #if MT32EMU_EXPORTS_TYPE == 2
 #undef MT32EMU_EXPORT
+#undef MT32EMU_EXPORT_V
 #define MT32EMU_EXPORT
+#define MT32EMU_EXPORT_V(symbol_version_tag) MT32EMU_EXPORT
 #endif
 
 /**
@@ -53,6 +57,8 @@ MT32EMU_EXPORT mt32emu_report_handler_version mt32emu_get_supported_report_handl
  * This allows a client to fall-back gracefully instead of silently not receiving expected MIDI messages.
  */
 MT32EMU_EXPORT mt32emu_midi_receiver_version mt32emu_get_supported_midi_receiver_version(void);
+
+/* === Utility === */
 
 /**
  * Returns library version as an integer in format: 0x00MMmmpp, where:
@@ -80,6 +86,45 @@ MT32EMU_EXPORT mt32emu_bit32u mt32emu_get_stereo_output_samplerate(const mt32emu
  */
 MT32EMU_EXPORT mt32emu_analog_output_mode mt32emu_get_best_analog_output_mode(const double target_samplerate);
 
+/* === ROM handling === */
+
+/**
+ * Retrieves a list of identifiers (as C-strings) of supported machines. Argument machine_ids points to the array of size
+ * machine_ids_size to be filled.
+ * Returns the number of identifiers available for retrieval. The size of the target array to be allocated can be found
+ * by passing NULL in argument machine_ids; argument machine_ids_size is ignored in this case.
+ */
+MT32EMU_EXPORT_V(2.5) size_t mt32emu_get_machine_ids(const char **machine_ids, size_t machine_ids_size);
+/**
+ * Retrieves a list of identifiers (as C-strings) of supported ROM images. Argument rom_ids points to the array of size
+ * rom_ids_size to be filled. Optional argument machine_id can be used to indicate a specific machine to retrieve ROM identifiers
+ * for; if NULL, identifiers of all the ROM images supported by the emulation engine are retrieved.
+ * Returns the number of ROM identifiers available for retrieval. The size of the target array to be allocated can be found
+ * by passing NULL in argument rom_ids; argument rom_ids_size is ignored in this case. If argument machine_id contains
+ * an unrecognised value, 0 is returned.
+ */
+MT32EMU_EXPORT_V(2.5) size_t mt32emu_get_rom_ids(const char **rom_ids, size_t rom_ids_size, const char *machine_id);
+
+/**
+ * Identifies a ROM image the provided data array contains by its SHA1 digest. Optional argument machine_id can be used to indicate
+ * a specific machine to identify the ROM image for; if NULL, the ROM image is identified for any supported machine.
+ * A mt32emu_rom_info structure supplied in argument rom_info is filled in accordance with the provided ROM image; unused fields
+ * are filled with NULLs. If the content of the ROM image is not identified successfully (e.g. when the ROM image is incompatible
+ * with the specified machine), all fields of rom_info are filled with NULLs.
+ * Returns MT32EMU_RC_OK upon success or a negative error code otherwise.
+ */
+MT32EMU_EXPORT_V(2.5) mt32emu_return_code mt32emu_identify_rom_data(mt32emu_rom_info *rom_info, const mt32emu_bit8u *data, size_t data_size, const char *machine_id);
+/**
+ * Loads the content of the file specified by argument filename and identifies a ROM image the file contains by its SHA1 digest.
+ * Optional argument machine_id can be used to indicate a specific machine to identify the ROM image for; if NULL, the ROM image
+ * is identified for any supported machine.
+ * A mt32emu_rom_info structure supplied in argument rom_info is filled in accordance with the provided ROM image; unused fields
+ * are filled with NULLs. If the content of the file is not identified successfully (e.g. when the ROM image is incompatible
+ * with the specified machine), all fields of rom_info are filled with NULLs.
+ * Returns MT32EMU_RC_OK upon success or a negative error code otherwise.
+ */
+MT32EMU_EXPORT_V(2.5) mt32emu_return_code mt32emu_identify_rom_file(mt32emu_rom_info *rom_info, const char *filename, const char *machine_id);
+
 /* == Context-dependent functions == */
 
 /** Initialises a new emulation context and installs custom report handler if non-NULL. */
@@ -89,20 +134,63 @@ MT32EMU_EXPORT mt32emu_context mt32emu_create_context(mt32emu_report_handler_i r
 MT32EMU_EXPORT void mt32emu_free_context(mt32emu_context context);
 
 /**
- * Adds new ROM identified by its SHA1 digest to the emulation context replacing previously added ROM of the same type if any.
- * Argument sha1_digest can be NULL, in this case the digest will be computed using the actual ROM data.
+ * Adds a new full ROM data image identified by its SHA1 digest to the emulation context replacing previously added ROM of the same
+ * type if any. Argument sha1_digest can be NULL, in this case the digest will be computed using the actual ROM data.
  * If sha1_digest is set to non-NULL, it is assumed being correct and will not be recomputed.
- * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of mt32emu_open_synth().
+ * The provided data array is NOT copied and used directly for efficiency. The caller should not deallocate it while the emulation
+ * context is referring to the ROM data.
+ * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of
+ * mt32emu_open_synth().
  * Returns positive value upon success.
  */
 MT32EMU_EXPORT mt32emu_return_code mt32emu_add_rom_data(mt32emu_context context, const mt32emu_bit8u *data, size_t data_size, const mt32emu_sha1_digest *sha1_digest);
 
 /**
- * Loads a ROM file, identify it by SHA1 digest, and adds it to the emulation context replacing previously added ROM of the same type if any.
- * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of mt32emu_open_synth().
+ * Loads a ROM file that contains a full ROM data image, identifies it by the SHA1 digest, and adds it to the emulation context
+ * replacing previously added ROM of the same type if any.
+ * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of
+ * mt32emu_open_synth().
  * Returns positive value upon success.
  */
 MT32EMU_EXPORT mt32emu_return_code mt32emu_add_rom_file(mt32emu_context context, const char *filename);
+
+/**
+ * Merges a pair of compatible ROM data image parts into a full image and adds it to the emulation context replacing previously
+ * added ROM of the same type if any. Each partial image is identified by its SHA1 digest. Arguments partN_sha1_digest can be NULL,
+ * in this case the digest will be computed using the actual ROM data. If a non-NULL SHA1 value is provided, it is assumed being
+ * correct and will not be recomputed. The provided data arrays may be deallocated as soon as the function completes.
+ * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of
+ * mt32emu_open_synth().
+ * Returns positive value upon success.
+ */
+MT32EMU_EXPORT_V(2.5) mt32emu_return_code mt32emu_merge_and_add_rom_data(mt32emu_context context, const mt32emu_bit8u *part1_data, size_t part1_data_size, const mt32emu_sha1_digest *part1_sha1_digest, const mt32emu_bit8u *part2_data, size_t part2_data_size, const mt32emu_sha1_digest *part2_sha1_digest);
+
+/**
+ * Loads a pair of files that contains compatible parts of a full ROM image, identifies them by the SHA1 digest, merges these
+ * parts into a full ROM image and adds it to the emulation context replacing previously added ROM of the same type if any.
+ * This function doesn't immediately change the state of already opened synth. Newly added ROM will take effect upon next call of
+ * mt32emu_open_synth().
+ * Returns positive value upon success.
+ */
+MT32EMU_EXPORT_V(2.5) mt32emu_return_code mt32emu_merge_and_add_rom_files(mt32emu_context context, const char *part1_filename, const char *part2_filename);
+
+/**
+ * Loads a file that contains a ROM image of a specific machine, identifies it by the SHA1 digest, and adds it to the emulation
+ * context. The ROM image can only be identified successfully if it is compatible with the specified machine.
+ * Full and partial ROM images are supported and handled according to the following rules:
+ * - a file with any compatible ROM image is added if none (of the same type) exists in the emulation context;
+ * - a file with any compatible ROM image replaces any image of the same type that is incompatible with the specified machine;
+ * - a file with a full ROM image replaces the previously added partial ROM of the same type;
+ * - a file with a partial ROM image is merged with the previously added ROM image if pairable;
+ * - otherwise, the file is ignored.
+ * The described behaviour allows the caller application to traverse a directory with ROM files attempting to add each one in turn.
+ * As soon as both the full control and the full PCM ROM images are added and / or merged, the iteration can be stopped.
+ * This function doesn't immediately change the state of already opened synth. Newly added ROMs will take effect upon next call of
+ * mt32emu_open_synth().
+ * Returns a positive value in case changes have been made, MT32EMU_RC_OK if the file has been ignored or a negative error code
+ * upon failure.
+ */
+MT32EMU_EXPORT_V(2.5) mt32emu_return_code mt32emu_add_machine_rom_file(mt32emu_context context, const char *machine_id, const char *filename);
 
 /**
  * Fills in mt32emu_rom_info structure with identifiers and descriptions of control and PCM ROM files identified and added to the synth context.
@@ -172,7 +260,7 @@ MT32EMU_EXPORT mt32emu_boolean mt32emu_is_open(mt32emu_const_context context);
  * Returns actual sample rate of the fully processed output stereo signal.
  * If samplerate conversion is used (i.e. when mt32emu_set_stereo_output_samplerate() has been invoked with a non-zero value),
  * the returned value is the desired output samplerate rounded down to the closest integer.
- * Otherwise, the output samplerate is choosen depending on the emulation mode of stereo analog circuitry of hardware units.
+ * Otherwise, the output samplerate is chosen depending on the emulation mode of stereo analog circuitry of hardware units.
  * See comment for mt32emu_analog_output_mode for more info.
  */
 MT32EMU_EXPORT mt32emu_bit32u mt32emu_get_actual_stereo_output_samplerate(mt32emu_const_context context);
@@ -330,7 +418,7 @@ MT32EMU_EXPORT mt32emu_boolean mt32emu_is_mt32_reverb_compatibility_mode(mt32emu
 MT32EMU_EXPORT mt32emu_boolean mt32emu_is_default_reverb_mt32_compatible(mt32emu_const_context context);
 
 /**
- * If enabled, reverb buffers for all modes are keept around allocated all the time to avoid memory
+ * If enabled, reverb buffers for all modes are kept around allocated all the time to avoid memory
  * allocating/freeing in the rendering thread, which may be required for realtime operation.
  * Otherwise, reverb buffers that are not in use are deleted to save memory (the default behaviour).
  */

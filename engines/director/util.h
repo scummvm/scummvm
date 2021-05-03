@@ -58,22 +58,22 @@ bool processQuitEvent(bool click = false); // events.cpp
 
 class RandomState {
 public:
-    uint32 _seed;
-    uint32 _mask;
-    uint32 _len;
+	uint32 _seed;
+	uint32 _mask;
+	uint32 _len;
 
-    RandomState() {
-        _seed = _mask = _len = 0;
-    }
+	RandomState() {
+		_seed = _mask = _len = 0;
+	}
 
-    void setSeed(int seed);
-    uint32 getSeed() { return _seed; }
-    int32 getRandom(int32 range);
+	void setSeed(int seed);
+	uint32 getSeed() { return _seed; }
+	int32 getRandom(int32 range);
 
 private:
-    void init(int len);
-    int32 genNextRandom();
-    int32 perlin(int32 val);
+	void init(int len);
+	int32 genNextRandom();
+	int32 perlin(int32 val);
 };
 
 uint32 readVarInt(Common::SeekableReadStream &stream);

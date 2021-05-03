@@ -268,7 +268,7 @@ void it_reposition(int item, int newloc, rbool save_pos) {
 				winflag = 1;
 		}
 		if (it_loc(item) == 1) /* only things you are carrying directly count vs.
-              size limit. */
+			  size limit. */
 			totsize += noun[item - first_noun].size;
 	} else if (tcreat(item)) {
 		if (newloc == 0) {
@@ -832,7 +832,7 @@ static int print_obj(int obj, int ind_lev)
 /* Return 1 if we actually printed something, 0 if obj is invisible */
 {
 	int sdesc_flag; /* True if should print out as sdesc rather than
-        as adjective-noun */
+		as adjective-noun */
 	int i, retval, parent;
 	const char *s;
 	char *t, *s0,  *posstr;
@@ -843,8 +843,8 @@ static int print_obj(int obj, int ind_lev)
 	s0 = NULL;
 	sdesc_flag = !player_has(obj); /* This should be tested. */
 	sdesc_flag = sdesc_flag || (ind_lev > 1);  /* It seems that AGT uses the
-                        sdesc for describing items
-                        contained in other items */
+						sdesc for describing items
+						contained in other items */
 	/* Some code below relies on this, as well */
 
 	if (sdesc_flag)

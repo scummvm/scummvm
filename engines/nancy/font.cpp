@@ -75,6 +75,11 @@ void Font::read(Common::SeekableReadStream &stream) {
 		Common::Rect &cur = _symbolRects[i];
 		readRect(stream, cur);
 
+		if (g_nancy->getGameType() == kGameTypeVampire) {
+			++cur.bottom;
+			++cur.right;
+		}
+
 		_maxCharWidth = MAX<int>(cur.width(), _maxCharWidth);
 		_fontHeight = MAX<int>(cur.height(), _maxCharWidth);
 	}
@@ -90,16 +95,29 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 		srcRect.translate(_colorCoordsOffset.x, _colorCoordsOffset.y);
 	}
 
-	uint width = srcRect.width();
+	uint vampireAdjust = g_nancy->getGameType() == kGameTypeVampire ? 1 : 0;
+	uint width = MAX<int>(srcRect.width() - vampireAdjust, 0);
 	uint height = srcRect.height();
 	uint yOffset = getFontHeight() - height;
+	height = MAX<int>(height - vampireAdjust, 0);
 
 	for (uint curY = 0; curY < height; ++curY) {
 		for (uint curX = 0; curX < width; ++curX) {
 			switch (g_nancy->_graphicsManager->getInputPixelFormat().bytesPerPixel) {
-			case 1:
-				// TODO
+			case 1: {
+				byte colorID = *(const byte *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
+
+				if (colorID != _transColor) {
+					uint8 r, g, b;
+					uint curColor = _image.getPalette()[colorID];
+					r = curColor & 0xFF;
+					g = (curColor & 0xFF00) >> 8;
+					b = (curColor & 0xFF0000) >> 16;
+					*(uint16 *)dst->getBasePtr(x + curX, y + yOffset + curY) = dst->format.RGBToColor(r, g, b);
+				}
+
 				break;
+			}
 			case 2: {
 				uint16 curColor = *(const uint16 *)_image.getBasePtr(srcRect.left + curX, srcRect.top +  curY);
 
@@ -115,6 +133,33 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 				break;
 			}
 		}
+	}
+}
+
+void Font::wordWrap(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth) const {
+	Common::String temp;
+	for (const char *c = str.begin(); c != str.end(); ++c) {
+		if (*c == '\n') {
+			lines.push_back(temp);
+			temp.clear();
+			continue;
+		}
+
+		temp += *c;
+		int size = getStringWidth(temp) + (lines.size() == 0 ? initWidth : 0);
+		if (size >= maxWidth) {
+			do {
+				temp.deleteLastChar();
+				--c;
+			} while (temp.size() && temp.lastChar() != ' ');
+
+			lines.push_back(temp);
+			temp.clear();
+		}
+	}
+
+	if (temp.size()) {
+		lines.push_back(temp);
 	}
 }
 
@@ -187,8 +232,6 @@ Common::Rect Font::getCharacterSourceRect(char chr) const {
 		}
 	}
 	ret = _symbolRects[offset];
-	ret.right += 1;
-	ret.bottom += 1;
 	return ret;
 }
 

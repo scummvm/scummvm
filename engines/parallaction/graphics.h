@@ -67,9 +67,7 @@ public:
 	virtual uint32 getStringWidth(const char *s) = 0;
 	virtual uint16 height() = 0;
 
-	virtual void drawString(byte* buffer, uint32 pitch, const char *s) = 0;
-
-
+	virtual void drawString(Graphics::Surface *dst, int x, int y, const char *s) = 0;
 };
 
 
@@ -131,21 +129,35 @@ struct Cnv : public Frames {
 	byte**	field_8;	// unused
 	byte*	_data;
 	bool	_freeData;
+	Graphics::Surface *_surf;
 
 public:
 	Cnv() {
 		_width = _height = _count = 0;
 		_data = NULL;
+		_surf = NULL;
+		_freeData = false;
+		field_8 = 0;
 	}
 
-	Cnv(uint16 numFrames, uint16 width, uint16 height, byte* data, bool freeData = false)
-		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData), field_8(0) {
+	Cnv(uint16 numFrames, uint16 width, uint16 height, byte *data, bool freeData = false)
+		: _count(numFrames), _width(width), _height(height), _data(data), _freeData(freeData), field_8(0), _surf(NULL) {
+	}
 
+	Cnv(uint16 numFrames, uint16 width, uint16 height, Graphics::Surface *surf)
+		: _count(numFrames), _width(width), _height(height), _data(NULL), _freeData(true), field_8(0), _surf(surf) {
+		_data = (byte *)_surf->getBasePtr(0, 0);
 	}
 
 	~Cnv() override {
-		if (_freeData)
-			delete[] _data;
+		if (_freeData) {
+			if (_surf) {
+				_surf->free();
+				delete _surf;
+			} else {
+				delete[] _data;
+			}
+		}
 	}
 
 	byte* getFramePtr(uint16 index) {

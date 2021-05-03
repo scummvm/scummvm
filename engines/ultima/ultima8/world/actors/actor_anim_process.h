@@ -84,6 +84,9 @@ protected:
 	bool _animAborted;
 
 	bool _attackedSomething; // attacked and hit something with this animation
+
+	//! Interpolate position on repeated frames
+	bool _interpolate;
 };
 
 } // End of namespace Ultima8

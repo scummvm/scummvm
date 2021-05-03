@@ -33,7 +33,7 @@ namespace CreateProjectTool {
 // MSVC Provider (Base class)
 //////////////////////////////////////////////////////////////////////////
 MSVCProvider::MSVCProvider(StringList &global_warnings, std::map<std::string, StringList> &project_warnings, const int version, const MSVCVersion &msvc)
-    : ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
+	: ProjectProvider(global_warnings, project_warnings, version), _msvcVersion(msvc) {
 
 	_enableLanguageExtensions = tokenize(ENABLE_LANGUAGE_EXTENSIONS, ',');
 	_disableEditAndContinue = tokenize(DISABLE_EDIT_AND_CONTINUE, ',');
@@ -64,12 +64,14 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{    "vorbis", "vorbis.lib vorbisfile.lib", 0,               0,                                                 "libvorbisfile_static.lib libvorbis_static.lib" },
 		{      "flac", "FLAC.lib",                  0,               0,                                                 "libFLAC_static.lib win_utf8_io_static.lib" },
 		{       "png", "libpng16.lib",              "libpng16d.lib", 0,                                                 0 },
+		{       "gif", "gif.lib",                   0,               0,                                                 0 },
 		{      "faad", "faad.lib",                  0,               0,                                                 "libfaad.lib" },
 		{     "mpeg2", "mpeg2.lib",                 0,               0,                                                 "libmpeg2.lib" },
 		{    "theora", "theora.lib",                0,               0,                                                 "libtheora_static.lib" },
 		{  "freetype", "freetype.lib",              "freetyped.lib", 0,                                                 0 },
 		{      "jpeg", "jpeg.lib",                  "jpegd.lib",     0,                                                 "jpeg-static.lib" },
 		{"fluidsynth", "fluidsynth.lib",            0,               0,                                                 "libfluidsynth.lib" },
+		{ "fluidlite", "fluidlite.lib",             0,               0,                                                 0 },
 		{   "libcurl", "libcurl.lib",               "libcurl-d.lib", "ws2_32.lib wldap32.lib crypt32.lib normaliz.lib", 0 },
 		{    "sdlnet", "SDL_net.lib",               0,               "iphlpapi.lib",                                    0 },
 		{   "sdl2net", "SDL2_net.lib",              0,               "iphlpapi.lib",                                    "SDL_net.lib" },

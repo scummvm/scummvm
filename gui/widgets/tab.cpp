@@ -33,7 +33,23 @@ enum {
 	kCmdRight = 'RGHT'
 };
 
-static const int kTabTitleSpacing = 2 * 5;
+void TabWidget::recalc() {
+	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
+	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
+	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
+
+	_bodyTP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Top");
+	_bodyBP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Bottom");
+	_bodyLP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Left");
+	_bodyRP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Right");
+
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Right", 0);
+	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
+	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
+	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
+
+	_titleSpacing = g_gui.xmlEval()->getVar("Globals.TabWidget.TitleSpacing");
+}
 
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
 	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
@@ -53,19 +69,7 @@ void TabWidget::init() {
 	_lastVisibleTab = 0;
 	_navButtonsVisible = false;
 
-	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
-	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
-	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
-
-	_bodyTP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Top");
-	_bodyBP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Bottom");
-	_bodyLP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Left");
-	_bodyRP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Right");
-
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Right", 0);
-	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
-	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
-	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
+	recalc();
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
@@ -120,7 +124,7 @@ int TabWidget::addTab(const U32String &title, const String &dialogName) {
 	newTab.firstWidget = nullptr;
 
 	// Determine the new tab width
-	int newWidth = g_gui.getStringWidth(title) + kTabTitleSpacing;
+	int newWidth = g_gui.getStringWidth(title) + _titleSpacing;
 	if (newWidth < _minTabWidth)
 		newWidth = _minTabWidth;
 	newTab._tabWidth = newWidth;
@@ -320,14 +324,7 @@ void TabWidget::reflowLayout() {
 
 	// NOTE: if you change that, make sure to do the same
 	// changes in the ThemeLayoutTabWidget (gui/ThemeLayout.cpp)
-	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
-	_minTabWidth = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width");
-	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
-
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Right", 0);
-	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
-	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
-	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
+	recalc();
 
 	// If widgets were added or removed in the current tab, without tabs
 	// having been switched using setActiveTab() afterward, then the
@@ -350,7 +347,7 @@ void TabWidget::reflowLayout() {
 
 	for (uint i = 0; i < _tabs.size(); ++i) {
 		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + kTabTitleSpacing;
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + _titleSpacing;
 		if (newWidth < _minTabWidth)
 			newWidth = _minTabWidth;
 		_tabs[i]._tabWidth = newWidth;
@@ -379,8 +376,8 @@ void TabWidget::reflowLayout() {
 
 	int x = _w - _butRP - _butW * 2 - 2;
 	int y = _butTP - _tabHeight;
-	_navLeft->resize(x, y, _butW, _butH);
-	_navRight->resize(x + _butW + 2, y, _butW, _butH);
+	_navLeft->resize(x, y, _butW, _butH, false);
+	_navRight->resize(x + _butW + 2, y, _butW, _butH, false);
 }
 
 void TabWidget::drawWidget() {

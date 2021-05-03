@@ -45,6 +45,10 @@ uint32 TSageEngine::getFeatures() const {
 	return _gameDescription->features;
 }
 
+Common::Language TSageEngine::getLanguage() const {
+	return _gameDescription->desc.language;
+}
+
 Common::String TSageEngine::getPrimaryFilename() const {
 	return Common::String(_gameDescription->desc.filesDescriptions[0].fileName);
 }
@@ -61,7 +65,7 @@ public:
 		return "tsage";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:

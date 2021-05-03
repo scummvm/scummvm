@@ -265,7 +265,7 @@ void if_update_sound(const sc_char *filename, sc_int sound_offset, sc_int sound_
 }
 
 void if_update_graphic(const sc_char *filename,
-                  sc_int graphic_offset, sc_int graphic_length) {
+				  sc_int graphic_offset, sc_int graphic_length) {
 	os_show_graphic(filename, graphic_offset, graphic_length);
 }
 

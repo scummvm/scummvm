@@ -60,7 +60,7 @@ public:
 	void readData(Formats::XRCReadStream *stream) override;
 	void onAllLoaded() override;
 	void onEnterLocation() override;
-    void saveLoad(ResourceSerializer *serializer) override;
+	void saveLoad(ResourceSerializer *serializer) override;
 
 	ActionArray listPossibleActions() const;
 

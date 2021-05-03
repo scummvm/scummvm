@@ -88,14 +88,14 @@ KIASectionCrimes::~KIASectionCrimes() {
 
 void KIASectionCrimes::reset() {
 	_acquiredClueCount = 0;
-    _crimesFoundCount = 0;
-    _suspectsFoundCount = 0;
-    _mouseX = 0;
-    _mouseY = 0;
-    _suspectSelected = -1;
-    _crimeSelected = -1;
-    _suspectPhotoShapeId = -1;
-    _suspectPhotoNotUsed = -1;
+	_crimesFoundCount = 0;
+	_suspectsFoundCount = 0;
+	_mouseX = 0;
+	_mouseY = 0;
+	_suspectSelected = -1;
+	_crimeSelected = -1;
+	_suspectPhotoShapeId = -1;
+	_suspectPhotoNotUsed = -1;
 }
 
 void KIASectionCrimes::open() {

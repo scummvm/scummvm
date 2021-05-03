@@ -106,7 +106,7 @@ uint16 BMPFont::getCharWidth(uint8 c) {
 }
 
 uint16 BMPFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-                         uint8 color) {
+						 uint8 color) {
 	Common::Rect src;
 	Common::Rect dst;
 

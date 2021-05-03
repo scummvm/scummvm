@@ -123,7 +123,8 @@ void CruPathfinderProcess::terminate() {
 					destdir = Direction_GetWorldDir(ty - iy, tx - ix, dirmode_8dirs);
 				}
 			}
-			turnproc = actor->turnTowardDir(destdir);
+			if (destdir != dir_current)
+				turnproc = actor->turnTowardDir(destdir);
 		}
 		if (!turnproc && _noShotAvailable) {
 			Animation::Sequence standanim = (actor->isInCombat() ? Animation::combatStandSmallWeapon : Animation::stand);

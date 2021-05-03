@@ -27,10 +27,7 @@
 #include "mads/msurface.h"
 #include "mads/nebular/dialogs_nebular.h"
 #include "common/config-manager.h"
-
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace MADS {
 
@@ -199,13 +196,11 @@ int TextDialog::estimatePieces(int maxLen) {
 }
 
 TextDialog::~TextDialog() {
-#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
 		Common::TextToSpeechManager* ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr)
 			ttsMan->stop();
 	}
-#endif
 
 	delete _edgeSeries;
 }
@@ -351,9 +346,7 @@ void TextDialog::draw() {
 
 	// Draw the text lines
 	int lineYp = _position.y + 5;
-#ifdef USE_TTS
 	Common::String text;
-#endif
 	for (int lineNum = 0; lineNum <= _numLines; ++lineNum) {
 		if (_lineXp[lineNum] == -1) {
 			// Draw a line across the entire dialog
@@ -377,18 +370,14 @@ void TextDialog::draw() {
 				int lineWidth = _font->getWidth(_lines[lineNum], 1);
 				_vm->_screen->hLine(xp, yp + _font->getHeight(), xp + lineWidth,
 					TEXTDIALOG_BLACK);
-			}
-#ifdef USE_TTS
-			else {
+			} else {
 				text += _lines[lineNum];
 			}
-#endif
 		}
 
 		lineYp += _font->getHeight() + 1;
 	}
 
-#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
@@ -396,7 +385,6 @@ void TextDialog::draw() {
 			ttsMan->say(text.c_str());
 		}
 	}
-#endif
 }
 
 void TextDialog::calculateBounds() {

@@ -28,7 +28,6 @@
 namespace AGS3 {
 
 #define EXTENDED_KEY_CODE ('\0')
-#define EXTENDED_KEY_CODE_MACOS ('?')
 
 #define AGS_EXT_KEY_SHIFT  300
 

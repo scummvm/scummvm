@@ -125,7 +125,7 @@ bool TransylvaniaGame2::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) 
 }
 
 int TransylvaniaGame2::roomIsSpecial(unsigned room_index,
-                                    unsigned *roomDescString) {
+									unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	if (room_index == 0x28) {

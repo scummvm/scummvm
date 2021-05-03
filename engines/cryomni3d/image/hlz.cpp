@@ -29,7 +29,7 @@
 #include "graphics/surface.h"
 #include "image/codecs/codec.h"
 
-#include "cryomni3d/image/codecs/hlz.h"
+#include "image/codecs/hlz.h"
 
 namespace Image {
 

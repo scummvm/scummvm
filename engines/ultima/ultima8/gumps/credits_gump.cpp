@@ -47,7 +47,7 @@ CreditsGump::CreditsGump()
 }
 
 CreditsGump::CreditsGump(const Std::string &text, int parskip,
-                         uint32 flags, int32 layer)
+						 uint32 flags, int32 layer)
 		: ModalGump(0, 0, 320, 200, 0, flags, layer), _text(text), _parSkip(parskip),
 		_timer(0), _title(nullptr), _nextTitle(nullptr), _state(CS_PLAYING),
 		_nextTitleSurf(0), _currentSurface(0), _currentY(0) {
@@ -102,7 +102,7 @@ void CreditsGump::Close(bool no_del) {
 }
 
 void CreditsGump::extractLine(Std::string &text,
-                              char &modifier, Std::string &line) {
+							  char &modifier, Std::string &line) {
 	if (!text.empty() && (text[0] == '+' || text[0] == '&' || text[0] == '}' ||
 							text[0] == '~' || text[0] == '@')) {
 		modifier = text[0];

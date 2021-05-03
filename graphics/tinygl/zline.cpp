@@ -105,7 +105,7 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	int color = RGB_TO_PIXEL(r, g, b);
 	int sr, sg, sb;
 
-        if (kInterpZ) {
+		if (kInterpZ) {
 		sz = (p2->z - p1->z) / n;
 		z = p1->z;
 	}

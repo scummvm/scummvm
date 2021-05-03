@@ -32,7 +32,7 @@ namespace GUI {
 
 
 Tooltip::Tooltip() :
-	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(nullptr), _xdelta(0), _ydelta(0) {
+	Dialog(-1, -1, -1, -1), _maxWidth(-1), _parent(nullptr), _xdelta(0), _ydelta(0), _xpadding(0), _ypadding(0) {
 
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundTooltip;
 }
@@ -45,20 +45,21 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
 	_xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
 	_ydelta = g_gui.xmlEval()->getVar("Globals.Tooltip.YDelta", 0);
+	_xpadding = g_gui.xmlEval()->getVar("Globals.Tooltip.XPadding", 2);
+	_ypadding = g_gui.xmlEval()->getVar("Globals.Tooltip.YPadding", 2);
 
 	const Graphics::Font *tooltipFont = g_gui.theme()->getFont(ThemeEngine::kFontStyleTooltip);
 
 	_wrappedLines.clear();
-	_w = tooltipFont->wordWrapText(widget->getTooltip(), _maxWidth - 4, _wrappedLines) + 4;
-	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size() + 4;
+	_w = tooltipFont->wordWrapText(widget->getTooltip(), _maxWidth - _xpadding * 2, _wrappedLines) + _xpadding * 2;
+	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size() + _ypadding * 2;
 
-	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
-	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
+	_x = MIN<int16>(parent->_x + x + _xdelta + _xpadding, g_system->getOverlayWidth() - _w - _xpadding * 2);
+	_y = MIN<int16>(parent->_y + y + _ydelta + _ypadding, g_system->getOverlayHeight() - _h - _ypadding * 2);
 
 	if (g_gui.useRTL())
 		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
 
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -66,7 +67,6 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 			return;
 		ttsMan->say(widget->getTooltip(), Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	}
-#endif
 }
 
 void Tooltip::drawDialog(DrawLayer layerToDraw) {
@@ -75,8 +75,8 @@ void Tooltip::drawDialog(DrawLayer layerToDraw) {
 
 	Dialog::drawDialog(layerToDraw);
 
-	int16 textX = g_gui.useRTL() ? _x - 3 : _x + 3; // including 2px padding and 1px original code shift
-	int16 textY = _y + 3;
+	int16 textX = g_gui.useRTL() ? _x - 1 - _xpadding : _x + 1 + _xpadding;
+	int16 textY = _y + 1 + _ypadding;
 
 	Graphics::TextAlign textAlignment = g_gui.useRTL() ? Graphics::kTextAlignRight : Graphics::kTextAlignLeft;
 

@@ -351,39 +351,40 @@ void SceneArea::synchronize(Serializer &s) {
 /*--------------------------------------------------------------------------*/
 
 RingworldInvObjectList::RingworldInvObjectList() :
-		_stunner(2280, 1, 2, OBJECT_STUNNER, "This is your stunner."),
-		_scanner(1, 1, 3, OBJECT_SCANNER, "A combination scanner comm unit."),
-		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, "A stasis box."),
-		_infoDisk(40, 1, 1, OBJECT_INFODISK, "The infodisk you took from the assassin."),
-		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, "The stasis field negator."),
-		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, "A magnetic key device."),
-		_medkit(2280, 1, 7, OBJECT_MEDKIT,  "Your medkit."),
-		_ladder(4100, 1, 8, OBJECT_LADDER, "The chief's ladder."),
-		_rope(4150, 1, 9, OBJECT_ROPE, "The chief's rope."),
-		_key(7700, 1, 11, OBJECT_KEY, "A key."),
-		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  "The dolphin translator box."),
-		_ale(2150, 1, 10, OBJECT_ALE, "A bottle of ale."),
-		_paper(7700, 1, 12, OBJECT_PAPER, "A slip of paper with the numbers 2,4, and 3 written on it."),
-		_waldos(0, 1, 14, OBJECT_WALDOS, "A pair of waldos from the ruined probe."),
-		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, "A stasis box."),
-		_ring(8100, 2, 5, OBJECT_RING, "This is a signet ring sent to you by Louis Wu."),
-		_cloak(9850, 2, 6, OBJECT_CLOAK, "A fine silk cloak."),
-		_tunic(9450, 2, 7, OBJECT_TUNIC, "The patriarch's soiled tunic."),
-		_candle(9500, 2, 8, OBJECT_CANDLE, "A tallow candle."),
-		_straw(9400, 2, 9, OBJECT_STRAW, "Clean, dry straw."),
-		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, "A scimitar from the Patriarch's closet."),
-		_sword(9850, 1, 17, OBJECT_SWORD, "A short sword from the Patriarch's closet."),
-		_helmet(9500, 2, 4, OBJECT_HELMET, "Some type of helmet."),
-		_items(4300, 2, 10, OBJECT_ITEMS, "Two interesting items from the Tnuctipun vessel."),
-		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, "The Tnuctipun anti-matter concentrator contained in a stasis field."),
-		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, "A purported neural wave nullifier."),
-		_peg(4045, 2, 16, OBJECT_PEG, "A peg with a symbol."),
-		_vial(5100, 2, 17, OBJECT_VIAL, "A vial of the bat creatures anti-pheromone drug."),
-		_jacket(9850, 3, 1, OBJECT_JACKET, "A natty padded jacket."),
-		_tunic2(9850, 3, 2, OBJECT_TUNIC2, "A very hairy tunic."),
-		_bone(5300, 3, 5, OBJECT_BONE, "A very sharp bone."),
-		_jar(7700, 3, 4, OBJECT_JAR, "An jar filled with a green substance."),
-		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, "An empty jar.") {
+		_ESP(g_vm->getLanguage() == Common::ES_ESP),
+		_stunner(2280, 1, 2, OBJECT_STUNNER, _ESP ? "Tu paralizador." : "This is your stunner."),
+		_scanner(1, 1, 3, OBJECT_SCANNER, _ESP ? "Una unidad combinada de esc\240ner y comunicaciones." : "A combination scanner comm unit."),
+		_stasisBox(5200, 1, 4, OBJECT_STASIS_BOX, _ESP ? "Una caja est\240sica." : "A stasis box."),
+		_infoDisk(40, 1, 1, OBJECT_INFODISK, _ESP ? "El infodisk que le cogiste al asesino." : "The infodisk you took from the assassin."),
+		_stasisNegator(0, 2, 2, OBJECT_STASIS_NEGATOR, _ESP ? "El negador de campos est\240sicos." : "The stasis field negator."),
+		_keyDevice(4250, 1, 6, OBJECT_KEY_DEVICE, _ESP ? "Una llave magn\202tica." : "A magnetic key device."),
+		_medkit(2280, 1, 7, OBJECT_MEDKIT, _ESP ? "Tu botiqu\241n." : "Your medkit."),
+		_ladder(4100, 1, 8, OBJECT_LADDER, _ESP ? "La escalera del jefe." : "The chief's ladder."),
+		_rope(4150, 1, 9, OBJECT_ROPE, _ESP ? "La cuerda del jefe." : "The chief's rope."),
+		_key(7700, 1, 11, OBJECT_KEY, _ESP ? "Una llave." : "A key."),
+		_translator(7700, 1, 13, OBJECT_TRANSLATOR,  _ESP ? "La caja traductora delfiniana." : "The dolphin translator box."),
+		_ale(2150, 1, 10, OBJECT_ALE, _ESP ? "Una botella de cerveza." : "A bottle of ale."),
+		_paper(7700, 1, 12, OBJECT_PAPER, _ESP ? "Un trozo de papel con los n\243meros 2,4, y 3 escritos en \202l." : "A slip of paper with the numbers 2,4, and 3 written on it."),
+		_waldos(0, 1, 14, OBJECT_WALDOS, _ESP ? "Un par de brazos de la sonda averiada." : "A pair of waldos from the ruined probe."),
+		_stasisBox2(8100, 1, 4, OBJECT_STASIS_BOX2, _ESP ? "Una caja est\240sica." : "A stasis box."),
+		_ring(8100, 2, 5, OBJECT_RING, _ESP ? "El anillo que te envi\242 Louis Wu." : "This is a signet ring sent to you by Louis Wu."),
+		_cloak(9850, 2, 6, OBJECT_CLOAK, _ESP ? "Una t\243nica de seda fina." : "A fine silk cloak."),
+		_tunic(9450, 2, 7, OBJECT_TUNIC, _ESP ? "La t\243nica manchada del patriarca." : "The patriarch's soiled tunic."),
+		_candle(9500, 2, 8, OBJECT_CANDLE, _ESP ? "Una vela de sebo." : "A tallow candle."),
+		_straw(9400, 2, 9, OBJECT_STRAW, _ESP ? "Paja limpia y seca." : "Clean, dry straw."),
+		_scimitar(9850, 1, 18, OBJECT_SCIMITAR, _ESP ? "La cimitarra del armario del Patriarca." : "A scimitar from the Patriarch's closet."),
+		_sword(9850, 1, 17, OBJECT_SWORD, _ESP ? "La espada corta del armario del Patriarca." : "A short sword from the Patriarch's closet."),
+		_helmet(9500, 2, 4, OBJECT_HELMET, _ESP ? "Un extra\244o yelmo." : "Some type of helmet."),
+		_items(4300, 2, 10, OBJECT_ITEMS, _ESP ? "Dos interesantes objetos de la nave Tnuctipun." : "Two interesting items from the Tnuctipun vessel."),
+		_concentrator(4300, 2, 11, OBJECT_CONCENTRATOR, _ESP ? "El concentrador antimateria Tnuctipun contenido en un campo est\240sico." : "The Tnuctipun anti-matter concentrator contained in a stasis field."),
+		_nullifier(5200, 2, 12, OBJECT_NULLIFIER, _ESP ? "Un anulador de ondas neuronales." : "A purported neural wave nullifier."),
+		_peg(4045, 2, 16, OBJECT_PEG, _ESP ? "Una clavija con un s\241mbolo." : "A peg with a symbol."),
+		_vial(5100, 2, 17, OBJECT_VIAL, _ESP ? "Un frasco con la droga antiferomonas de los murci\202lagos." : "A vial of the bat creatures anti-pheromone drug."),
+		_jacket(9850, 3, 1, OBJECT_JACKET, _ESP ? "Una elegante chaqueta." : "A natty padded jacket."),
+		_tunic2(9850, 3, 2, OBJECT_TUNIC2, _ESP ? "Una t\243nica muy ligera." : "A very hairy tunic."),
+		_bone(5300, 3, 5, OBJECT_BONE, _ESP ? "Un hueso muy afilado." : "A very sharp bone."),
+		_jar(7700, 3, 4, OBJECT_JAR, _ESP ? "Un frasco lleno de una sustancia verde." : "An jar filled with a green substance."),
+		_emptyJar(7700, 3, 3, OBJECT_EMPTY_JAR, _ESP ? "Un frasco vac\241o." : "An empty jar.") {
 
 	// Add the items to the list
 	_itemList.push_back(&_stunner);
@@ -520,7 +521,13 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 
 	if (!savesExist) {
 		// No savegames exist, so prompt the user to restart or quit
-		if (MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING) == 0)
+		int rc;
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			rc = MessageDialog::show(msg, ESP_QUIT_BTN_STRING, ESP_RESTART_BTN_2_STRING);
+		} else {
+			rc = MessageDialog::show(msg, QUIT_BTN_STRING, RESTART_BTN_STRING);
+		}
+		if (rc == 0)
 			g_vm->quitGame();
 		else
 			restart();
@@ -530,12 +537,20 @@ void RingworldGame::endGame(int resNum, int lineNum) {
 		do {
 			if (g_vm->shouldQuit()) {
 				breakFlag = true;
-			} else if (MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING) == 0) {
-				restart();
-				breakFlag = true;
 			} else {
-				handleSaveLoad(false, g_globals->_sceneHandler->_loadGameSlot, g_globals->_sceneHandler->_saveName);
-				breakFlag = g_globals->_sceneHandler->_loadGameSlot >= 0;
+				int rc;
+				if (g_vm->getLanguage() == Common::ES_ESP) {
+					rc = MessageDialog::show(msg, ESP_RESTART_BTN_2_STRING, ESP_RESTORE_BTN_STRING);
+				} else {
+					rc = MessageDialog::show(msg, RESTART_BTN_STRING, RESTORE_BTN_STRING);
+				}
+				if (rc== 0) {
+					restart();
+					breakFlag = true;
+				} else {
+					handleSaveLoad(false, g_globals->_sceneHandler->_loadGameSlot, g_globals->_sceneHandler->_saveName);
+					breakFlag = g_globals->_sceneHandler->_loadGameSlot >= 0;
+				}
 			}
 		} while (!breakFlag);
 	}
@@ -548,7 +563,11 @@ void RingworldGame::processEvent(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
-			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
+			} else {
+				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			}
 			break;
 
 		case Common::KEYCODE_F2:
@@ -577,7 +596,11 @@ void RingworldGame::processEvent(Event &event) {
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
-			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_CONTINUE_BTN_STRING);
+			} else {
+				MessageDialog::show(GAME_PAUSED_MSG, CONTINUE_BTN_STRING);
+			}
 			g_globals->_events.setCursorFromFlag();
 			break;
 

@@ -202,6 +202,10 @@ void Actor::changeAnimationMode(int animationMode, bool force) {
 	}
 }
 
+int Actor::getFPS() const {
+	return _fps;
+}
+
 void Actor::setFPS(int fps) {
 	_fps = fps;
 
@@ -398,6 +402,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 			}
 		} else {
 			setSetId(waypointSetId);
+
 			setAtXYZ(waypointPosition, angle, true, false, false);
 
 			if (!delay) {
@@ -682,6 +687,13 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	int32 timeLeft = 0;
 	bool needsUpdate = false;
 	if (_fps > 0) {
+		// Note that when (some?) actors are retired (eg. Zuben)
+		// their _fps is still > 0 so they will periodically set needsUpdate to true in their tick() (here)
+		// Also, the moment an actor is retired does not necessarily means their death animation finished playing
+		// Their death animation may finish a while later.
+		// Thus, until it finished, their screen rectangle will be likely changing at the draw() operation.
+		// Typically at the end of a death animation, the actor keeps updating for the same frame
+		// (ie the last of the death animation). At that point their screen rectangle won't change at the draw() operation.
 		timerUpdate(kActorTimerAnimationFrame);
 		timeLeft = timerLeft(kActorTimerAnimationFrame);
 		needsUpdate = (timeLeft <= 0);
@@ -803,6 +815,9 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 
 	bool isVisible = false;
 	if (!_isInvisible) {
+		// draw() will set the new screenRect for the actor
+		// based on the current animation frame
+		// the new screenRect may be empty, in which case draw returns false (thus isVisible will be false then).
 		isVisible = draw(screenRect);
 		if (isVisible) {
 			_screenRectangle = *screenRect;
@@ -813,19 +828,28 @@ bool Actor::tick(bool forceDraw, Common::Rect *screenRect) {
 	// For consistency we need to init the screen rectangle and bbox for the actor's *scene object*
 	// in a new scene (since we also reset the screen rectangle at Scene::open())
 	// for the case of the actor not moving
+
 	if (_vm->_scene->getSetId() == _setId
 	    && !_isInvisible
-	    && _vm->_sceneObjects->findById(_id + kSceneObjectOffsetActors) != -1
-	    && (_vm->_sceneObjects->isEmptyScreenRectangle(_id + kSceneObjectOffsetActors)
-	        || _vm->_sceneObjects->compareScreenRectangle(_id + kSceneObjectOffsetActors, _screenRectangle) != 0)
-	) {
-		if (isVisible) {
-			Vector3 pos = getPosition();
-			int facing = getFacing();
-			setAtXYZ(pos, facing, false, _isMoving, false);
-		} else {
-			resetScreenRectangleAndBbox();
-			_vm->_sceneObjects->resetScreenRectangleAndBbox(_id + kSceneObjectOffsetActors);
+	    && _vm->_sceneObjects->findById(_id + kSceneObjectOffsetActors) != -1) {
+		if (_vm->_sceneObjects->isEmptyScreenRectangle(_id + kSceneObjectOffsetActors)) {
+			if (isVisible) {
+				Vector3 pos = getPosition();
+				int facing = getFacing();
+				setAtXYZ(pos, facing, true, _isMoving, _isRetired);
+			} else {
+				resetScreenRectangleAndBbox();
+				_vm->_sceneObjects->resetScreenRectangleAndBbox(_id + kSceneObjectOffsetActors);
+			}
+		} else if (_vm->_sceneObjects->compareScreenRectangle(_id + kSceneObjectOffsetActors, _screenRectangle) != 0) {
+			if (isVisible) {
+				// keep actor's _screenRectangle synched with sceneObject's actor's screen rectange
+				// don't do a setAtXYZ here though
+				_vm->_sceneObjects->synchScreenRectangle(_id + kSceneObjectOffsetActors, _screenRectangle);
+			} else {
+				resetScreenRectangleAndBbox();
+				_vm->_sceneObjects->resetScreenRectangleAndBbox(_id + kSceneObjectOffsetActors);
+			}
 		}
 	}
 
@@ -965,7 +989,7 @@ void Actor::setFacing(int facing, bool halfOrSet) {
 }
 
 void Actor::setBoundingBox(const Vector3 &position, bool retired) {
-	if (retired) {
+	if (retired || _isRetired) {
 		_bbox.setXYZ(position.x - (_retiredWidth / 2.0f),
 		             position.y,
 		             position.z - (_retiredWidth / 2.0f),

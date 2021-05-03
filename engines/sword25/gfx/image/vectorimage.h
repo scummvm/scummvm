@@ -47,10 +47,10 @@ namespace Sword25 {
 class VectorImage;
 
 /**
-    @brief Pfadinformationen zu BS_VectorImageElement Objekten
+	@brief Pfadinformationen zu BS_VectorImageElement Objekten
 
-    Jedes BS_VectorImageElement besteht aus Kantenzügen, oder auch Pfaden. Jeder dieser Pfad hat Eigenschaften, die in Objekten diesen Typs
-    gespeichert werden.
+	Jedes BS_VectorImageElement besteht aus Kantenzügen, oder auch Pfaden. Jeder dieser Pfad hat Eigenschaften, die in Objekten diesen Typs
+	gespeichert werden.
 */
 
 class VectorPathInfo {
@@ -88,8 +88,8 @@ private:
 };
 
 /**
-    @brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.
-           Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
+	@brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.
+		   Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
 */
 class VectorImageElement {
 	friend class VectorImage;
@@ -148,9 +148,9 @@ private:
 
 
 /**
-    @brief Eine Vektorgraphik
+	@brief Eine Vektorgraphik
 
-    Objekte dieser Klasse enthalten die Informationen eines SWF-Shapes.
+	Objekte dieser Klasse enthalten die Informationen eines SWF-Shapes.
 */
 
 class VectorImage : public Image {

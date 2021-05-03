@@ -436,15 +436,15 @@ mcodeFunctionReturnCodes speak_simple_look(int32 &result, int32 *params) { retur
 #define LOOK_DOWN (int16)(-LOOK_UP)
 
 const short looks[9][3] = {
-    {0, 0, 0},                  // ahead
-    {0, 0, LOOK_UP},            // up
-    {LOOK_RIGHT, 0, LOOK_UP},   // up/right
-    {LOOK_RIGHT, 0, 0},         // right
-    {LOOK_RIGHT, 0, LOOK_DOWN}, // down/right
-    {0, 0, LOOK_DOWN},          // down
-    {LOOK_LEFT, 0, LOOK_DOWN},  // down/left
-    {LOOK_LEFT, 0, 0},          // left
-    {LOOK_LEFT, 0, LOOK_UP}     // up/left
+	{0, 0, 0},                  // ahead
+	{0, 0, LOOK_UP},            // up
+	{LOOK_RIGHT, 0, LOOK_UP},   // up/right
+	{LOOK_RIGHT, 0, 0},         // right
+	{LOOK_RIGHT, 0, LOOK_DOWN}, // down/right
+	{0, 0, LOOK_DOWN},          // down
+	{LOOK_LEFT, 0, LOOK_DOWN},  // down/left
+	{LOOK_LEFT, 0, 0},          // left
+	{LOOK_LEFT, 0, LOOK_UP}     // up/left
 };
 
 // look

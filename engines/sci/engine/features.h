@@ -258,6 +258,8 @@ public:
 	 */
 	void forceDOSTracks() { _forceDOSTracks = true; }
 
+	bool useWindowsCursors() { return _useWindowsCursors; }
+
 	/**
 	 * Autodetects, if Pseudo Mouse ability is enabled (different behavior in keyboard driver)
 	 * @return kPseudoMouseAbilityTrue or kPseudoMouseAbilityFalse
@@ -285,6 +287,7 @@ private:
 	MoveCountType _moveCountType;
 	bool _usesCdTrack;
 	bool _forceDOSTracks;
+	bool _useWindowsCursors;
 
 	PseudoMouseAbilityType _pseudoMouseAbility;
 

@@ -110,9 +110,9 @@ private:
 	int _numTrails;
 	int _nextTrail;
 
-    // Auxillary cursor image's animation offsets
+	// Auxillary cursor image's animation offsets
 	short _auxCursorOffsetX;
-    short _auxCursorOffsetY;
+	short _auxCursorOffsetY;
 
 	struct {
 		ANIM trailAnim;   // Animation structure

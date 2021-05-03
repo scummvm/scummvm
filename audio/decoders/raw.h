@@ -54,11 +54,14 @@ enum RawFlags {
 	/** sound is 16 bits wide (default: 8bit) */
 	FLAG_16BITS = 1 << 1,
 
+	/** sound is 24 bits wide (default: 8bit) */
+	FLAG_24BITS = 1 << 2,
+
 	/** samples are little endian (default: big endian) */
-	FLAG_LITTLE_ENDIAN = 1 << 2,
+	FLAG_LITTLE_ENDIAN = 1 << 3,
 
 	/** sound is in stereo (default: mono) */
-	FLAG_STEREO = 1 << 3
+	FLAG_STEREO = 1 << 4
 };
 
 /**
@@ -73,8 +76,8 @@ enum RawFlags {
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -87,8 +90,8 @@ SeekableAudioStream *makeRawStream(const byte *buffer, uint32 size,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, byte flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, byte flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates a PacketizedAudioStream that will automatically queue

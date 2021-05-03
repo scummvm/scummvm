@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/resource.h"
@@ -32,6 +34,11 @@
 
 namespace Nancy {
 namespace Action {
+
+void Unimplemented::execute() {
+	debugC(Nancy::kDebugActionRecord, "Unimplemented Action Record type %s", getRecordTypeName().c_str());
+	_isDone = true;
+}
 
 void SceneChange::readData(Common::SeekableReadStream &stream) {
 	_sceneChange.readData(stream);
@@ -105,11 +112,51 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 	stream.skip(size);
 }
 
+void PaletteThisScene::readData(Common::SeekableReadStream &stream) {
+	stream.skip(6);
+}
+
+void PaletteNextScene::readData(Common::SeekableReadStream &stream) {
+	stream.skip(6);
+}
+
 void StartFrameNextScene::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 }
 
 void StartStopPlayerScrolling::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void LightningOn::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void LightningOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void AmbientLightUp::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x12);
+}
+
+void AmbientLightDown::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x12);
+}
+
+void AmbientLightToTod::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0x1C);
+}
+
+void AmbientLightToTodOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
+void FlickerOn::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void FlickerOff::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
 }
 
@@ -124,7 +171,7 @@ void MapCall::execute() {
 }
 
 void MapCallHot1Fr::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x12);
+	_hotspotDesc.readData(stream);
 }
 
 void MapCallHot1Fr::execute() {
@@ -177,6 +224,14 @@ void MapLocationAccess::readData(Common::SeekableReadStream &stream) {
 	stream.skip(4);
 }
 
+void MapLightning::readData(Common::SeekableReadStream &stream) {
+	stream.skip(0xA);
+}
+
+void MapLightningOff::readData(Common::SeekableReadStream &stream) {
+	stream.skip(1);
+}
+
 void MapSound::readData(Common::SeekableReadStream &stream) {
 	stream.skip(0x10);
 }
@@ -208,6 +263,19 @@ void BumpPlayerClock::readData(Common::SeekableReadStream &stream) {
 
 void SaveContinueGame::readData(Common::SeekableReadStream &stream) {
 	stream.skip(1);
+}
+
+void SaveContinueGame::execute() {
+	if (ConfMan.getBool("second_chance")) {
+		if (_state == kBegin) {
+			// Slight hack, skip first call to let the graphics render once and provide the correct thumbnail
+			_state = kRun;
+			return;
+		}
+
+		g_nancy->saveGameState(g_nancy->getAutosaveSlot(), "Second Chance", true);
+	}
+	_isDone = true;
 }
 
 void TurnOffMainRendering::readData(Common::SeekableReadStream &stream) {
@@ -398,7 +466,7 @@ void ShowInventoryItem::execute() {
 		break;
 	}
 	case kActionTrigger:
-		g_nancy->_sound->playSound(24); // Hardcoded by original engine
+		g_nancy->_sound->playSound("BUOK");
 		NancySceneState.addItemToInventory(_objectID);
 		setVisible(false);
 		_hasHotspot = false;
@@ -408,7 +476,7 @@ void ShowInventoryItem::execute() {
 }
 
 void ShowInventoryItem::onPause(bool pause) {
-	if (pause) {
+	if (!pause) {
 		registerGraphics();
 	}
 }
@@ -453,10 +521,17 @@ void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream)
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {
 	_sound.read(stream, SoundDescription::kNormal);
-	_sceneChange.readData(stream);
-	_flag.label = stream.readSint16LE();
-	_flag.flag = (NancyFlag)stream.readByte();
-	stream.skip(2);
+
+	if (g_nancy->getGameType() != kGameTypeVampire) {
+		_sceneChange.readData(stream);
+		_flag.label = stream.readSint16LE();
+		_flag.flag = (NancyFlag)stream.readByte();
+		stream.skip(2);
+	} else {
+		_flag.label = -1;
+		_sceneChange.sceneID = 9999;
+	}
+
 	uint16 numHotspots = stream.readUint16LE();
 
 	_hotspots.reserve(numHotspots);

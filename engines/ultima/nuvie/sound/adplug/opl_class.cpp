@@ -289,12 +289,12 @@ static const uint8 mul_tab[16] = {
 
    Length: 210 elements.
 
-    Each of the elements has to be repeated
-    exactly 64 times (on 64 consecutive samples).
-    The whole table takes: 64 * 210 = 13440 samples.
+	Each of the elements has to be repeated
+	exactly 64 times (on 64 consecutive samples).
+	The whole table takes: 64 * 210 = 13440 samples.
 
-    When AM = 1 data is used directly
-    When AM = 0 data is divided by 4 before being used (loosing precision is important)
+	When AM = 1 data is used directly
+	When AM = 0 data is divided by 4 before being used (loosing precision is important)
 */
 
 #define LFO_AM_TAB_ELEMENTS 210
@@ -707,9 +707,9 @@ INLINE void OplClass::OPL_CALC_CH(OPL_CH *CH) {
 }
 
 /*
-    operators used in the rhythm sounds generation process:
+	operators used in the rhythm sounds generation process:
 
-    Envelope Generator:
+	Envelope Generator:
 
 channel  operator  register number   Bass  High  Snare Tom  Top
 / slot   number    TL ARDR SLRR Wave Drum  Hat   Drum  Tom  Cymbal
@@ -720,7 +720,7 @@ channel  operator  register number   Bass  High  Snare Tom  Top
  8 / 0   14        52  72   92   f2                    +
  8 / 1   17        55  75   95   f5                          +
 
-    Phase Generator:
+	Phase Generator:
 
 channel  operator  register number   Bass  High  Snare Tom  Top
 / slot   number    MULTIPLE          Drum  Hat   Drum  Tom  Cymbal

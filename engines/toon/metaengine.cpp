@@ -30,7 +30,7 @@
 
 class ToonMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "toon";
 	}
 

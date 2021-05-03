@@ -761,7 +761,7 @@ bool Map::testIntersection(int x, int y, uint8 level, uint8 flags, LineTestResul
 //	returns true if a line hits something travelling from (start_x, start_y) to
 //	(end_x, end_y).  If a hit occurs Result is filled in with the relevant info.
 bool Map::lineTest(int start_x, int start_y, int end_x, int end_y, uint8 level,
-                   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj) {
+				   uint8 flags, LineTestResult &Result, uint32 skip, Obj *excluded_obj) {
 	//  standard Bresenham's algorithm.
 	int deltax = abs(end_x - start_x);
 	int deltay = abs(end_y - start_y);

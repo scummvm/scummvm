@@ -58,7 +58,8 @@ struct MacFontRun {
 	MacFontRun() {
 		wm = nullptr;
 		fontId = textSlant = fontSize = 0;
-		palinfo1 = palinfo2  = palinfo3 = 0;
+		palinfo1 = palinfo2 = palinfo3 = 0;
+		fgcolor = 0;
 		font = nullptr;
 		wordContinuation = false;
 	}
@@ -66,6 +67,13 @@ struct MacFontRun {
 	MacFontRun(MacWindowManager *wm_, uint16 fontId_, byte textSlant_, uint16 fontSize_,
 			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
 		setValues(wm_, fontId_, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		wordContinuation = false;
+	}
+
+	MacFontRun(MacWindowManager *wm_, const Font *font_, byte textSlant_, uint16 fontSize_,
+			uint16 palinfo1_, uint16 palinfo2_, uint16 palinfo3_) {
+		setValues(wm_, 0, textSlant_, fontSize_, palinfo1_, palinfo2_, palinfo3_);
+		font = font_;
 		wordContinuation = false;
 	}
 
@@ -144,6 +152,8 @@ public:
 	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
 	MacText(const Common::String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
 
+	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0);
+
 	virtual ~MacText();
 
 	virtual void resize(int w, int h);
@@ -175,6 +185,13 @@ public:
 
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
+	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
+	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
+
+private:
+	void appendText_(const Common::U32String &strWithFont, uint oldLen);
+
+public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
 	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
@@ -184,6 +201,7 @@ public:
 	int getLastLineWidth();
 	int getTextHeight() { return _textMaxHeight; }
 	int getLineHeight(int line);
+	int getTextMaxWidth() { return _textMaxWidth; }
 
 	void deletePreviousChar(int *row, int *col);
 	void addNewLine(int *row, int *col);
@@ -201,6 +219,7 @@ public:
 	void setSelection(int pos, bool start);
 
 	Common::U32String getEditedString();
+	Common::U32String getText() { return _str; }
 
 private:
 	void init();
@@ -273,6 +292,8 @@ protected:
 	Common::Array<MacTextLine> _textLines;
 	MacFontRun _defaultFormatting;
 	MacFontRun _currentFormatting;
+
+	bool _macFontMode;
 
 private:
 	ManagedSurface *_cursorSurface;

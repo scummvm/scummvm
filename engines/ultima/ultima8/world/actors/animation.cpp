@@ -51,6 +51,19 @@ bool isCombatAnimU8(const Sequence anim) {
 	}
 }
 
+bool isCastAnimU8(const Sequence anim) {
+	switch (anim) {
+	case cast1:
+	case cast2:
+	case cast3:
+	case cast4:
+	case cast5:
+		return true;
+	default:
+		return false;
+	}
+}
+
 bool isCombatAnimCru(const Sequence anim) {
 	switch (anim) {
 	case combatStand:
@@ -59,6 +72,7 @@ bool isCombatAnimCru(const Sequence anim) {
 	case advance:
 	case retreat:
 	case attack:
+	case reloadSmallWeapon:
 	case kick:
 	case kneel:
 	case kneelStartCru:
@@ -81,7 +95,7 @@ bool isCombatAnimCru(const Sequence anim) {
 
 /** determines if we need to ready or unready our weapon */
 Sequence checkWeapon(const Sequence nextanim,
-                     const Sequence lastanim) {
+					 const Sequence lastanim) {
 	Sequence anim = nextanim;
 	if (isCombatAnim(nextanim) && !isCombatAnim(lastanim)) {
 		anim = readyWeapon;

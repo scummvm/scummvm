@@ -305,6 +305,12 @@ void SceneScriptNR05::talkToEarlyQ() {
 			DM_Add_To_List_Never_Repeat_Once_Selected(900, 5, 6, 5); // LUCY
 		}
 		if (Actor_Clue_Query(kActorMcCoy, kClueDektorasDressingRoom)) {
+			// TODO A bug? kClueDektorasDressingRoom is acquired from EarlyQ
+			// at his office (nr04) while being threatened by McCoy.
+			// At which point EarlyQ already tells McCoy who the people on the photograph are.
+			// It makes no sense that McCoy will next find EarlyQ at the VIP area (this area, nr05)
+			// and casually ask him about who the woman is in this photo.
+			// (McCoy won't be able to even find EarlyQ there again).
 			DM_Add_To_List_Never_Repeat_Once_Selected(910, 5, 5, 5); // BLOND WOMAN
 		}
 	}
@@ -356,6 +362,8 @@ void SceneScriptNR05::talkToEarlyQ() {
 		Actor_Says(kActorMcCoy, 3515, 14);
 		Actor_Modify_Friendliness_To_Other(kActorEarlyQ, kActorMcCoy, -1);
 		if (Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) { // cut content? this clue is unobtanium
+			// TODO why is Grigorian's Note needed here, for EarlyQ to reveal who Hecuba is?
+			//      maybe another clue should be required in its place or some additional ones?
 			Actor_Says(kActorEarlyQ, 580, 12);
 			Actor_Says(kActorMcCoy, 3560, 13);
 			Actor_Says(kActorEarlyQ, 590, 16);

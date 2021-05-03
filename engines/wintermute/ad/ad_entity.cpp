@@ -1265,7 +1265,7 @@ bool AdEntity::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_theora));
 
 #ifdef ENABLE_FOXTAIL
-    if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
+	if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
 	    persistMgr->transferSint32(TMEMBER(_hintX));
 	    persistMgr->transferSint32(TMEMBER(_hintY));
 	}

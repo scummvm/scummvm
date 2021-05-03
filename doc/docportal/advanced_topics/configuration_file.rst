@@ -10,7 +10,7 @@ Settings are also accessible directly from the Launcher. See :doc:`../use_scummv
 Location
 ==========
 
-The configuration file saves to different default locations, depending on the platform.
+The configuration file saves to different default locations, depending on the platform. The configuration file path is also displayed on the :doc:`../settings/paths` tab.
 
 
 .. tabbed:: Windows
@@ -131,13 +131,14 @@ Configuration keys
 There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column.
 
 .. csv-table::
-	:widths: 37 13 25 25
   	:header-rows: 1
+	:class: config
 
 		Key,Type,Default,Description/Options
 		alsa_port,integer,,Specifies which ALSA port ScummVM uses when using the ALSA music driver (Linux).
 		":ref:`alt_intro <altintro>`",boolean,false,
 		":ref:`altamigapalette <altamiga>`",boolean,false,
+		":ref:`antialiasing <antialiasing>`", integer,0,"0, 2, 4, 8"
 		":ref:`apple2gs_speedmenu <2gs>`",boolean,false,
 		":ref:`aspect_ratio <ratio>`",boolean,false,
 		":ref:`audio_buffer_size <buffer>`",integer,"Calculated based on output sampling frequency to keep audio latency below 45ms.","Overrides the size of the audio buffer. Allowed values:
@@ -158,7 +159,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		cdrom,integer,0, "Sets which CD drive to play CD audio from (as a numeric index). If a negative number is set, ScummVM does not access the CD drive."
 		":ref:`color <color>`",boolean,,
 		":ref:`commandpromptwindow <cmd>`",boolean,false,
-		confirm_exit,boolean,false, ScummVM requests confirmation before quitting (SDL backend only)
+		":ref:`confirm_exit <guiconfirm>`",boolean,false, 
 		console,boolean,true, Enables the console window for Win32/Symbian32.
 		controller_map_db,string,"``gamecontrollerdb.txt`` is loaded from the specified extrapath", "Specifies the custom controller mapping file to load to complete the default database (SDL backend only)."
 		copy_protection,boolean,false, Enables copy protection
@@ -208,7 +209,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
 		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
-		":ref:`gameid <gameid>`",string,,
+		gameid,string,,"Short name of the game. For internal use only, do not edit." 
 		gamepath,string,,Specifies the path to the game
 		":ref:`gfx_mode <gfxmode>`",string,normal (1x),"
 	- 1x
@@ -235,6 +236,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`gui_browser_native <guibrowser>`", boolean, true
 		gui_browser_show_hidden,boolean,false, Shows hidden files/folders in the ScummVM file browser.
 		gui_list_max_scan_entries,integer,-1, "Specifies the threshold for scanning directories in the Launcher. If the number of game entires exceeds the specified number, then scanning is skipped."
+		":ref:`gui_return_to_launcher_at_exit <guireturn>`",boolean,false,
 		gui_saveload_chooser,string,grid,"- list
 	- grid"
 		gui_saveload_last_pos,string,0,
@@ -244,7 +246,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		iconpath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the :ref:`gameid <gameid>`, and be an ICO file on Windows, or a PNG file on macOS."
+		":ref:`iconspath <iconspath>`",string,, 
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
@@ -366,6 +368,10 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`platform <platform>`",string,,
 		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
+		":ref:`renderer <renderer>`",string,default," 
+	- opengl
+	- opengl_shaders
+	- software"
 		":ref:`render_mode <render>`",string,default,"
 	- hercGreen
 	- hercAmber
@@ -417,6 +423,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
 		use_cdaudio,boolean,true, "If true, ScummVM uses audio from the game CD."
 		versioninfo,string,,Shows the ScummVM version that created the configuration file.
+		":ref:`vsync <vsync>`",boolean,true,
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,
 

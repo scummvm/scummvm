@@ -32,7 +32,7 @@ namespace Backends {
 namespace Log {
 
 Log::Log(OSystem *system)
-    : _system(system), _stream(0), _startOfLine(true) {
+	: _system(system), _stream(0), _startOfLine(true) {
 	assert(system);
 }
 

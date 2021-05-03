@@ -81,7 +81,11 @@ bool AIScriptFreeSlotB::Update() {
 
 		case kGoalFreeSlotBGone:
 			if (Actor_Query_Which_Set_In(kActorFreeSlotB) != Player_Query_Current_Set()) {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4Default);
+#else
+				Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBGoneIntermediate);
+#endif
 			}
 			break;
 
@@ -104,7 +108,11 @@ bool AIScriptFreeSlotB::Update() {
 			if (Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBGone) {
 				if (Actor_Query_Which_Set_In(kActorFreeSlotB) != Player_Query_Current_Set()) {
 					Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
+#if BLADERUNNER_ORIGINAL_BUGS
 					Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
+#else
+					Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBGoneIntermediate);
+#endif
 					return true;
 				}
 			}
@@ -184,12 +192,10 @@ void AIScriptFreeSlotB::OtherAgentEnteredThisSet(int otherActorId) {
 void AIScriptFreeSlotB::OtherAgentExitedThisSet(int otherActorId) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 	if (otherActorId == kActorMcCoy && Actor_Query_Goal_Number(kActorFreeSlotB) == kGoalFreeSlotBGone) {
-		if (Global_Variable_Query(kVariableChapter) == 4) {
-			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4Default);
-		} else if (Global_Variable_Query(kVariableChapter) == 5) {
+		if (Global_Variable_Query(kVariableChapter) == 5) {
 			Non_Player_Actor_Combat_Mode_Off(kActorFreeSlotB);
-			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
 		}
+		Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBGoneIntermediate);
 	}
 
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -250,8 +256,22 @@ bool AIScriptFreeSlotB::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Repeat(kActorFreeSlotB);
 		break;
 
-	case kGoalFreeSlotBGone:
+#if BLADERUNNER_ORIGINAL_BUGS
+#else
+	case kGoalFreeSlotBGoneIntermediate:
 		Actor_Set_Health(kActorFreeSlotB, 20, 20);
+		if (Global_Variable_Query(kVariableChapter) == 4) {
+			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct4Default);
+		} else if (Global_Variable_Query(kVariableChapter) == 5) {
+			Actor_Set_Goal_Number(kActorFreeSlotB, kGoalFreeSlotBAct5Default);
+		}
+		break;
+#endif
+
+	case kGoalFreeSlotBGone:
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Set_Health(kActorFreeSlotB, 20, 20);
+#endif
 		break;
 
 	default:

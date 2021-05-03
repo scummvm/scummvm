@@ -50,7 +50,7 @@ ContainerGump::ContainerGump()
 }
 
 ContainerGump::ContainerGump(const Shape *shape, uint32 frameNum, uint16 owner,
-                             uint32 flags, int32 layer)
+							 uint32 flags, int32 layer)
 	: ItemRelativeGump(0, 0, 5, 5, owner, flags, layer),
 	  _displayDragging(false), _draggingShape(0), _draggingFrame(0),
 	  _draggingFlags(0), _draggingX(0), _draggingY(0) {
@@ -189,7 +189,7 @@ uint16 ContainerGump::TraceObjId(int32 mx, int32 my) {
 
 // get item coords relative to self
 bool ContainerGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-                                      int32 lerp_factor) {
+									  int32 lerp_factor) {
 	Item *item = getItem(itemid);
 	if (!item) return false;
 	Item *parent = item->getParentAsContainer();
@@ -498,7 +498,7 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 				// maybe this isn't needed? original doesn't do it here..
 				targetitem->callUsecodeEvent_combine();
 			} else {
-				item->setQuality(newquant);
+				targetitem->setQuality(newquant);
 				targetitem->callUsecodeEvent_combine();
 				// combined, so delete other
 				item->destroy();

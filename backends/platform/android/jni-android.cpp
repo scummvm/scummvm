@@ -228,7 +228,7 @@ void JNI::getDPI(float *values) {
 			env->ReleaseFloatArrayElements(array, res, 0);
 		}
 	}
-
+	LOGD("JNI::getDPI() xdpi: %f, ydpi: %f", values[0], values[1]);
 	env->DeleteLocalRef(array);
 }
 

@@ -71,7 +71,6 @@ private:
 	void            Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode);
 
 	Common::Stream *_file;
-	const FileOpenMode  _openMode;
 	const FileWorkMode  _workMode;
 	Common::MemoryWriteStreamDynamic _writeBuffer;
 	Common::OutSaveFile *_outSave;

@@ -45,6 +45,7 @@ extern char const *const QUIT_CONFIRM_MSG;
 extern char const *const RESTART_MSG;
 extern char const *const GAME_PAUSED_MSG;
 extern char const *const OK_BTN_STRING;
+extern char const *const CONTINUE_BTN_STRING;
 extern char const *const CANCEL_BTN_STRING;
 extern char const *const QUIT_BTN_STRING;
 extern char const *const RESTART_BTN_STRING;
@@ -55,6 +56,26 @@ extern char const *const RESUME_BTN_STRING;
 extern char const *const LOOK_BTN_STRING;
 extern char const *const PICK_BTN_STRING;
 extern char const *const INV_EMPTY_MSG;
+
+// Spanish version
+extern char const *const ESP_LOOK_SCENE_HOTSPOT;
+extern char const *const ESP_USE_SCENE_HOTSPOT;
+extern char const *const ESP_TALK_SCENE_HOTSPOT;
+extern char const *const ESP_SPECIAL_SCENE_HOTSPOT;
+extern char const *const ESP_DEFAULT_SCENE_HOTSPOT;
+extern char const *const ESP_SAVE_ERROR_MSG;
+extern char const *const ESP_SAVING_NOT_ALLOWED_MSG;
+extern char const *const ESP_RESTORING_NOT_ALLOWED_MSG;
+extern char const *const ESP_INV_EMPTY_MSG;
+
+// Dialogs
+extern char const *const ESP_OK_BTN_STRING;
+extern char const *const ESP_CONTINUE_BTN_STRING;
+extern char const *const ESP_CANCEL_BTN_STRING;
+extern char const *const ESP_RESTORE_BTN_STRING;
+extern char const *const ESP_SOUND_BTN_STRING;
+extern char const *const ESP_LOOK_BTN_STRING;
+extern char const *const ESP_PICK_BTN_STRING;
 
 namespace Ringworld {
 
@@ -88,6 +109,38 @@ extern char const *const DEMO_EXIT_MSG;
 extern char const *const EXIT_BTN_STRING;
 extern char const *const DEMO_BTN_STRING;
 extern char const *const DEMO_RESUME_BTN_STRING;
+
+// Spanish version
+extern char const *const ESP_QUIT_CONFIRM_1_MSG;
+extern char const *const ESP_QUIT_CONFIRM_2_MSG;
+extern char const *const ESP_RESTART_MSG;
+extern char const *const ESP_GAME_PAUSED_MSG;
+extern char const *const ESP_QUIT_BTN_STRING;
+extern char const *const ESP_RESTART_BTN_1_STRING;
+extern char const *const ESP_RESTART_BTN_2_STRING;
+extern char const *const ESP_SAVE_BTN_STRING;
+extern char const *const ESP_RESUME_BTN_STRING;
+
+// Dialog resources
+extern char const *const ESP_HELP_MSG;
+extern char const *const ESP_WATCH_INTRO_MSG;
+extern char const *const ESP_START_PLAY_BTN_STRING;
+extern char const *const ESP_INTRODUCTION_BTN_STRING;
+extern char const *const ESP_OPTIONS_MSG;
+
+// Scene specific resources
+extern char const *const ESP_EXIT_MSG;
+extern char const *const ESP_SCENE6100_CAREFUL;
+extern char const *const ESP_SCENE6100_TOUGHER;
+extern char const *const ESP_SCENE6100_ONE_MORE_HIT;
+extern char const *const ESP_SCENE6100_DOING_BEST;
+extern char const *const ESP_SCENE6100_REPAIR;
+extern char const *const ESP_SCENE6100_ROCKY_AREA;
+extern char const *const ESP_SCENE6100_REPLY;
+extern char const *const ESP_SCENE6100_TAKE_CONTROLS;
+extern char const *const ESP_SCENE6100_SURPRISE;
+extern char const *const ESP_SCENE6100_SWEAT;
+extern char const *const ESP_SCENE6100_VERY_WELL;
 
 } // End of namespace Ringworld
 
@@ -141,6 +194,40 @@ extern char const *const RADIO_BTN_LIST[8];
 
 // Scene 180 message
 extern char const *const THE_NEXT_DAY;
+
+// Spanish version
+extern char const *const ESP_QUIT_CONFIRM_MSG;
+extern char const *const ESP_RESTART_MSG;
+extern char const *const ESP_GAME_PAUSED_MSG;
+extern char const *const ESP_QUIT_BTN_STRING;
+extern char const *const ESP_RESTART_BTN_1_STRING;
+extern char const *const ESP_RESTART_BTN_2_STRING;
+extern char const *const ESP_SAVE_BTN_STRING;
+extern char const *const ESP_RESUME_BTN_STRING;
+
+// Dialog resources
+extern char const *const ESP_HELP_MSG;
+extern char const *const ESP_WATCH_INTRO_MSG;
+extern char const *const ESP_START_PLAY_BTN_STRING;
+extern char const *const ESP_INTRODUCTION_BTN_STRING;
+extern char const *const ESP_OPTIONS_MSG;
+
+// Blue Force messages
+extern char const *const ESP_BF_ALL_RIGHTS_RESERVED;
+extern char const *const ESP_BF_19840518;
+extern char const *const ESP_BF_19840515;
+extern char const *const ESP_BF_3_DAYS;
+extern char const *const ESP_BF_11_YEARS;
+
+// Scene 50 tooltips
+extern char const *const ESP_GRANDMA_FRANNIE;
+extern char const *const ESP_POLICE_DEPARTMENT;
+extern char const *const ESP_TONYS_BAR;
+extern char const *const ESP_CHILD_PROTECTIVE_SERVICES;
+extern char const *const ESP_CITY_HALL_JAIL;
+
+// Scene 180 message
+extern char const *const ESP_THE_NEXT_DAY;
 
 } // End of namespace BlueForce
 

@@ -33,7 +33,7 @@ static void fixcmd(integer *, int);
 /* This parses the block of integers of a command to standardize
    the command numbers */
 static short *cmd_table;  /* Holds the command translation table used
-                 by fixcmd */
+				 by fixcmd */
 int topcmd;    /* The highest legal opcode in the current AGT version. */
 
 
@@ -169,7 +169,7 @@ void open_descr(fc_type fc) {
 				break;
 			}
 			if (buff[0] > 0 && buff[1] != ' ' && buff[1] > 0) /* To avoid "banner"
-                               lines */
+							   lines */
 			{
 				for (i = 1; i <= buff[0]; i++) {
 					if (buff[i] >= 'A' && buff[i] <= 'z') alpha++;
@@ -249,7 +249,7 @@ descr_line *agt_read_descr(long start, long len) {
 
 #define seti(a) (room[i].a=buff[bp] | (buff[bp+1]<<8),bp+=2)
 #define set32(a) (room[i].a=buff[bp] | (buff[bp+1]<<8) | (buff[bp+2]<<16)|\
-                            (buff[bp+3]<<24), bp+=4)
+							(buff[bp+3]<<24), bp+=4)
 #define setb(a) (room[i].a=buff[bp],bp++)
 
 #define setstr(leng) (bp+=(leng),new_str((char*)buff+bp-(leng),(leng),1))
@@ -510,14 +510,14 @@ static int translate_vnum(int vnum)
    AGT version.
  ii)If this command is directed at an actor, then the creature number
    will be in this field instead of the verb number.
-     Commands directed to ANYBODY have one plus the maximum verb number
+	 Commands directed to ANYBODY have one plus the maximum verb number
    in this field (a hassle since the maximum verb number depends on
    AGT version: Classic:106, Master's:123); EVERYONE is the next
    code after ANYBODY.
  What this routine does is rationalize the differences between AGT versions.
   --Verb values (ie. not referring to creatures) are converted to 1.
   --Redirections are marked by multiplying by negative one and setting
-          cmdsize to 0.
+		  cmdsize to 0.
   --ANYBODY is set to 2
   --EVERYBODY is set to 3
 */
@@ -600,9 +600,9 @@ static void read_da5(fc_type fc) {
 	/* Now to read in DA6 for versions that have it */
 	if (aver >= AGT15F) read_da6(fc);
 	check_cmd_version();  /* This uses the opcodes to check gamefile
-               version information and change it if neccesary. */
+			   version information and change it if neccesary. */
 	build_cmd_table();   /* Create the command translation table for
-             this version of AGT. */
+			 this version of AGT. */
 
 	badtokcnt = 0;
 	if (!RAW_CMD_OUT)
@@ -631,8 +631,8 @@ static void read_da6(fc_type fc)
 	long ip;  /* Points to instruction in cmd.data[] that we are writing to */
 	long bp;  /* Pointer into buffer */
 	long endp;  /* Used to indicate end of current read loop
-           (with an infinite buffer, this would always be an adjusted
-           cmdend) */
+		   (with an infinite buffer, this would always be an adjusted
+		   cmdend) */
 	long adj_cbuf_size;  /* Stores number of bytes actually read in to cbuf */
 
 	fda6 = openbin(fc, fDA6, "Could not open code file '%s'.", 1);
@@ -1181,8 +1181,8 @@ noun inside information; this is used by agtout */
 
 
 	reinit_dict(); /* The dictionary grows dynamically so we want to
-            allocate it AFTER we have allocated all the permenent
-            things */
+			allocate it AFTER we have allocated all the permenent
+			things */
 }
 
 
@@ -1197,16 +1197,16 @@ static int try_read_da1(fc_type fc, genfile fda1, rbool diag)
 /* Returns new aver value to try, or 0 on success. */
 /* diag determines if noun inside info will be read */
 /* VER values: 1=Small
-               2=Large
-           3=Master's Edition
-           4="Soggy Large", with a larger last_room
+			   2=Large
+		   3=Master's Edition
+		   4="Soggy Large", with a larger last_room
 */
 /* AVER values: see agility.h for the current values */
 /* NOTE:  This routine is allowed to set *ver*, but is not allowed to
    change *aver*; should it be neccessary to change *aver*, then the routine
    should return the new *aver* value.
   (The only exception to this is in the very beginning-- and that may get
-     changed)
+	 changed)
   [This is done to allow the user to force a version number]
 */
 {
@@ -1342,7 +1342,7 @@ static int try_read_da1(fc_type fc, genfile fda1, rbool diag)
 		for (i = 52; i > 42; i--) /* i:=Remove to Brief (above List Exits) */
 			synlist[i] = synlist[i - 1];
 		synlist[41] = synptr;  /* LIST_EXITS, which doesn't exist in 1.83 and so
-               can't have synonyms */
+			   can't have synonyms */
 		addsyn(-1);
 	}
 
@@ -1437,7 +1437,7 @@ static int try_read_da1(fc_type fc, genfile fda1, rbool diag)
 
 		for (i = 0; i < MAX_USTR; i++)
 			readtext(fda1, userstr[i]); /* This is just a guess-- should be
-                 tested. */
+				 tested. */
 	} else {
 		for (i = 0; i < maxpix; i++) pix_name[i] = 0;
 		maxpict = maxpix = maxsong = maxfont = 0;
@@ -1573,7 +1573,7 @@ static rbool read_da1(fc_type fc, rbool diag)
 		ver = 0;
 	}
 	if (aver == 0) aver = AGTSTD; /* i.e. if we didn't notice any differences from
-              standard format, it must be a standard file. */
+			  standard format, it must be a standard file. */
 	readclose(fda1);
 	return 1; /* Success */
 }
@@ -1587,7 +1587,7 @@ static rbool read_da1(fc_type fc, rbool diag)
 static void finish_read(rbool cleanup)
 /* cleanup=0 means it will leave cmd_ptr, 1=it cleans up cmd_ptr */
 /*  The only reason to set cleanup==0 is if we are writing a diagnostic
-    program of some sort */
+	program of some sort */
 {
 	int i;
 
@@ -1603,7 +1603,7 @@ static void finish_read(rbool cleanup)
 	}
 
 	min_ver = 0;  /* All original AGT games will run with any version of
-         AGiliTy. */
+		 AGiliTy. */
 
 	if (aver >= AGTME10)
 		PURE_ROOMTITLE = 0;

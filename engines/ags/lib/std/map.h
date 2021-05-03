@@ -193,7 +193,7 @@ public:
 };
 
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
+		 class EqualFunc = Common::EqualTo<Key> >
 class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
 	pair<Key, Val> insert(pair<Key, Val> elem) {

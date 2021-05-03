@@ -338,6 +338,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst Masterpiece Edition
+	// Spanish Fan Translation 3.02c
+	// Bugreport #11927
+	{
+		{
+			"myst",
+			"Masterpiece Edition",
+			AD_ENTRY1s("myst.dat", "7552dd490861dc7e6307e1ede80220fd", 76640997),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_MYST_ME
+		},
+		GType_MYST,
+		GF_ME,
+		0,
+	},
+
 	// Myst Masterpiece Edition - 25th Anniversary
 	// Repacked by the ScummVM team
 	{
@@ -1006,6 +1024,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{ // Version 1.0, built on unsupported LivingBooks version
+		{
+			"seussps",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("SEUSS_PS.CFG", "627afcfa170460f0e2b7ed4fa734361c", 1439),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2, // Most probably it is incorrect
+		0,
+		0
+	},
+
+	{ // Bugreport #11184, version 2.0
+		{
+			"seussps",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1("SEUSS_PS.CFG", "a2fc5596e6f1511d17acbc687e27a4ac"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV2, // Most probably it is incorrect
+		0,
+		0
+	},
+
 	{
 		{
 			"tortoise",
@@ -1578,6 +1626,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"GRANDMA.EXE"
 	},
 
+	// From ajshell1 in bug #11576
+	{
+		{
+			"grandma",
+			"Demo",
+			AD_ENTRY1s("GRANDMA.512", "1f2cb06795dddc20bedbd711fb57338e", 869),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"GRANDMA.EXE"
+	},
+
 	// From the Mac CD "La Tartaruga e la Lepre" (The Turtle and the Hare) [Italian, English]
 	{
 		{
@@ -1736,6 +1800,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"NEWKID.EXE"
 	},
 
+	// Bugreport #11003
+	{
+		{
+			"newkid",
+			"",
+			AD_ENTRY1s("NEWKID.512", "5b643345af12a9ecee7b47768634d844", 3245),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		"NEWKID.EXE"
+	},
+
 	// From aluff in bug#5731
 	{
 		{
@@ -1798,6 +1878,22 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"NEWKID.EXE"
 	},
 
+	// From ajshell1 in bug #11577
+	{
+		{
+			"newkid",
+			"Demo",
+			AD_ENTRY1s("NEWKID.512", "876a9f31527f4b3bb38d79a2e1206d21", 563),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		"NEWKID.EXE"
+	},
+
 	{
 		{
 			"newkid",
@@ -1813,7 +1909,7 @@ static const MohawkGameDescription gameDescriptions[] = {
 		"Living Books Player"
 	},
 
-	{
+	{ // November release
 		{
 			"arthurrace",
 			"",
@@ -1832,8 +1928,39 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthurrace",
-			"",
+			"32-bit",
 			AD_ENTRY1("RACE32.LB", "292a05bc48c1dd9583821a4181a02ef2"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{ // December release, marked as 1.0. Bugreport #11458
+		{
+			"arthurrace",
+			"",
+			AD_ENTRY1s("RACE.LB", "4d4347a010802c1e34e30a3d899546a7", 3155),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// 32-bit version of the previous entry
+	{
+		{
+			"arthurrace",
+			"32-bit",
+			AD_ENTRY1s("RACE32.LB", "badea47f88f0ee96dfc55c9120db5751", 3153),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -2295,6 +2422,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("outline", "36225e0b4986a80135cfdd9643cc7030"),
 			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
+	// Rugrats Adventure Game
+	// Spanish Windows
+	// Reported in #12389
+	{
+		{
+			"rugrats",
+			"",
+			AD_ENTRY1s("outline", "a8f4ec8e88b028c2452c1aa84b1a9c51", 6546),
+			Common::ES_ESP,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)

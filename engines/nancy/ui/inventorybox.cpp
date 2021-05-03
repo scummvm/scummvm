@@ -27,13 +27,28 @@
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
 #include "engines/nancy/util.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/ui/inventorybox.h"
 
 #include "engines/nancy/state/scene.h"
 
+#include "engines/nancy/ui/scrollbar.h"
+
 namespace Nancy {
 namespace UI {
+
+InventoryBox::InventoryBox(RenderObject &redrawFrom) :
+		RenderObject(redrawFrom, 6),
+		_scrollbar(nullptr),
+		_curtains(*this, this),
+		_scrollbarPos(0),
+		_curtainsFrameTime(0) {}
+
+InventoryBox::~InventoryBox() {
+	_fullInventorySurface.free();
+	_iconsSurface.free(); delete _scrollbar;
+}
 
 void InventoryBox::init() {
 	Common::SeekableReadStream &stream = *g_nancy->getBootChunkStream("INV");
@@ -41,18 +56,23 @@ void InventoryBox::init() {
 
 	_order.clear();
 
-	readRect(stream, _sliderSource);
-	_sliderDefaultDest.x = stream.readUint16LE();
-	_sliderDefaultDest.y = stream.readUint16LE();
+	Common::Rect scrollbarSrcBounds;
+	readRect(stream, scrollbarSrcBounds);
+	Common::Point scrollbarDefaultPos;
+	scrollbarDefaultPos.x = stream.readUint16LE();
+	scrollbarDefaultPos.y = stream.readUint16LE();
+	uint16 scrollbarMaxScroll = stream.readUint16LE();
 
 	stream.seek(0xD6, SEEK_SET);
 
-	for (uint i = 0; i < 14; ++i) {
-		readRect(stream, _shadesSrc[i]);
+	uint numFrames = g_nancy->getConstants().numCurtainAnimationFrames;
+	_curtainsSrc.resize(numFrames * 2);
+	for (uint i = 0; i < numFrames * 2; ++i) {
+		readRect(stream, _curtainsSrc[i]);
 	}
 
 	readRect(stream, _screenPosition);
-	_shadesFrameTime = stream.readUint16LE();
+	_curtainsFrameTime = stream.readUint16LE();
 
 	Common::String inventoryBoxIconsImageName;
 	readFilename(stream, inventoryBoxIconsImageName);
@@ -61,20 +81,23 @@ void InventoryBox::init() {
 	stream.skip(8);
 	readRect(stream, _emptySpace);
 
-	char itemName[0x14];
+	char itemName[20];
+	uint itemNameLength = g_nancy->getGameType() == kGameTypeVampire ? 15 : 20;
 
-	for (uint i = 0; i < 11; ++i) {
-		stream.read(itemName, 0x14);
-		itemName[0x13] = '\0';
-		_itemDescriptions[i].name = Common::String(itemName);
-		_itemDescriptions[i].oneTimeUse = stream.readUint16LE();
-		readRect(stream, _itemDescriptions[i].sourceRect);
+	_itemDescriptions.reserve(g_nancy->getConstants().numItems);
+	for (uint i = 0; i < g_nancy->getConstants().numItems; ++i) {
+		stream.read(itemName, itemNameLength);
+		itemName[itemNameLength - 1] = '\0';
+		_itemDescriptions.push_back(ItemDescription());
+		ItemDescription &desc = _itemDescriptions.back();
+		desc.name = Common::String(itemName);
+		desc.oneTimeUse = stream.readUint16LE();
+		readRect(stream, desc.sourceRect);
 	}
 
 	g_nancy->_resource->loadImage(inventoryBoxIconsImageName, _iconsSurface);
 
-	uint numItems = 11; // TODO
-	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_fullInventorySurface.create(_screenPosition.width(), _screenPosition.height() * ((g_nancy->getConstants().numItems / 4) + 1), g_nancy->_graphicsManager->getScreenPixelFormat());
 	Common::Rect sourceRect = _screenPosition;
 	sourceRect.moveTo(0, 0);
 	_drawSurface.create(_fullInventorySurface, sourceRect);
@@ -89,13 +112,14 @@ void InventoryBox::init() {
 
 	RenderObject::init();
 
-	_scrollbar.init();
-	_shades.init();
+	_scrollbar = new Scrollbar(NancySceneState.getFrame(), 9, scrollbarSrcBounds, scrollbarDefaultPos, scrollbarMaxScroll - scrollbarDefaultPos.y);
+	_scrollbar->init();
+	_curtains.init();
 }
 
 void InventoryBox::updateGraphics() {
-	if (_scrollbarPos != _scrollbar.getPos()) {
-		_scrollbarPos = _scrollbar.getPos();
+	if (_scrollbarPos != _scrollbar->getPos()) {
+		_scrollbarPos = _scrollbar->getPos();
 
 		onScrollbarMove();
 	}
@@ -103,13 +127,13 @@ void InventoryBox::updateGraphics() {
 
 void InventoryBox::registerGraphics() {
 	RenderObject::registerGraphics();
-	_scrollbar.registerGraphics();
-	_shades.registerGraphics();
+	_scrollbar->registerGraphics();
+	_curtains.registerGraphics();
 }
 
 void InventoryBox::handleInput(NancyInput &input) {
 	if (_order.size()) {
-		_scrollbar.handleInput(input);
+		_scrollbar->handleInput(input);
 	}
 
 	for (uint i = 0; i < 4; ++i) {
@@ -118,13 +142,13 @@ void InventoryBox::handleInput(NancyInput &input) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					NancySceneState.addItemToInventory(NancySceneState.getHeldItem());
-					g_nancy->_sound->playSound(0x16);
+					g_nancy->_sound->playSound("BULS");
 				}
 			} else if (_itemHotspots[i].itemID != -1) {
 				g_nancy->_cursorManager->setCursorType(CursorManager::kHotspotArrow);
 				if (input.input & NancyInput::kLeftMouseButtonUp) {
 					NancySceneState.removeItemFromInventory(_itemHotspots[i].itemID);
-					g_nancy->_sound->playSound(0x18);
+					g_nancy->_sound->playSound("GLOB");
 				}
 			}
 			break;
@@ -134,8 +158,8 @@ void InventoryBox::handleInput(NancyInput &input) {
 
 void InventoryBox::addItem(int16 itemID) {
 	if (_order.size() == 0) {
-		// Adds first item, start shades animation
-		_shades.setOpen(true);
+		// Adds first item, start curtains animation
+		_curtains.setOpen(true);
 	}
 	Common::Array<int16> back = _order;
 	_order.clear();
@@ -170,9 +194,9 @@ void InventoryBox::onReorder() {
 	}
 
 	if (_order.size() > 0) {
-		_shades.setOpen(true);
+		_curtains.setOpen(true);
 	} else {
-		_shades.setOpen(false);
+		_curtains.setOpen(false);
 	}
 
 	_needsRedraw = true;
@@ -189,7 +213,7 @@ void InventoryBox::setHotspots(uint pageNr) {
 }
 
 void InventoryBox::onScrollbarMove() {
-	float scrollPos = _scrollbar.getPos();
+	float scrollPos = _scrollbar->getPos();
 
 	float numPages = (_order.size() - 1) / 4 + 1;
 	float pageFrac = 1 / numPages;
@@ -204,26 +228,14 @@ void InventoryBox::onScrollbarMove() {
 	_needsRedraw = true;
 }
 
-void InventoryBox::InventoryScrollbar::init() {
-	Common::Rect &srcBounds = _parent->_sliderSource;
-	Common::Point &topPosition = _parent->_sliderDefaultDest;
-
-	_drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
-
-	_startPosition = topPosition;
-	_startPosition.x -= srcBounds.width() / 2;
-
-	_screenPosition = srcBounds;
-	_screenPosition.moveTo(_startPosition);
-
-	_maxDist = _parent->getBounds().height() - _drawSurface.h;
-
-	Scrollbar::init();
-}
-
-void InventoryBox::Shades::init() {
+void InventoryBox::Curtains::init() {
 	Common::Rect bounds = _parent->getBounds();
-	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
+	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
+
+	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+		_drawSurface.setPalette(g_nancy->_graphicsManager->_object0.getPalette(), 0, 256);
+	}
+
 	_screenPosition = _parent->getScreenPosition();
 	_nextFrameTime = 0;
 	setAnimationFrame(_curFrame);
@@ -233,41 +245,41 @@ void InventoryBox::Shades::init() {
 	RenderObject::init();
 }
 
-void InventoryBox::Shades::updateGraphics() {
+void InventoryBox::Curtains::updateGraphics() {
 	Time time = g_nancy->getTotalPlayTime();
 	if (_areOpen) {
-		if (_curFrame < 7 && time > _nextFrameTime) {
+		if (_curFrame < g_nancy->getConstants().numCurtainAnimationFrames && time > _nextFrameTime) {
 			setAnimationFrame(++_curFrame);
-			_nextFrameTime = time + _parent->_shadesFrameTime;
+			_nextFrameTime = time + _parent->_curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
-				g_nancy->_sound->playSound(0x12);
+				g_nancy->_sound->playSound("CURT");
 			}
 		}
 	} else {
 		if (_curFrame > 0 && time > _nextFrameTime) {
 			setAnimationFrame(--_curFrame);
-			_nextFrameTime = time + _parent->_shadesFrameTime;
+			_nextFrameTime = time + _parent->_curtainsFrameTime;
 
 			if (!_soundTriggered) {
 				_soundTriggered = true;
-				g_nancy->_sound->playSound(0x12);
+				g_nancy->_sound->playSound("CURT");
 			}
 		}
 	}
 
-	if (_curFrame == 0 || _curFrame == 7) {
+	if (_curFrame == 0 || _curFrame == g_nancy->getConstants().numCurtainAnimationFrames) {
 		_soundTriggered = false;
 	}
 }
 
-void InventoryBox::Shades::setAnimationFrame(uint frame) {
+void InventoryBox::Curtains::setAnimationFrame(uint frame) {
 	Graphics::ManagedSurface &_object0 = g_nancy->_graphicsManager->_object0;
 	Common::Rect srcRect;
 	Common::Point destPoint;
 
-	if (frame > 6) {
+	if (frame > g_nancy->getConstants().numCurtainAnimationFrames - 1) {
 		setVisible(false);
 		return;
 	} else {
@@ -277,11 +289,11 @@ void InventoryBox::Shades::setAnimationFrame(uint frame) {
 	_drawSurface.clear(g_nancy->_graphicsManager->getTransColor());
 
 	// Draw left shade
-	srcRect = _parent->_shadesSrc[frame * 2];
+	srcRect = _parent->_curtainsSrc[frame * 2];
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 
 	// Draw right shade
-	srcRect = _parent->_shadesSrc[frame * 2 + 1];
+	srcRect = _parent->_curtainsSrc[frame * 2 + 1];
 	destPoint.x = getBounds().width() - srcRect.width();
 	_drawSurface.blitFrom(_object0, srcRect, destPoint);
 

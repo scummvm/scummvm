@@ -57,7 +57,7 @@ void TreasureLoader::loadDefaults() {
 }
 
 bool TreasureLoader::parse(const Std::string &desc,
-                           Std::vector<TreasureInfo> &treasure) {
+						   Std::vector<TreasureInfo> &treasure) {
 	treasure.clear();
 
 	Std::vector<Std::string> tr;
@@ -77,7 +77,7 @@ bool TreasureLoader::parse(const Std::string &desc,
 }
 
 bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
-                                   bool loadingDefault) {
+								   bool loadingDefault) {
 	ti._special = "";
 	ti._chance = 1;
 	ti._map = 0;
@@ -148,7 +148,7 @@ bool TreasureLoader::internalParse(const Std::string &desc, TreasureInfo &ti,
 }
 
 bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
-                                       Std::vector<uint32> &vec) {
+									   Std::vector<uint32> &vec) {
 	Std::string val = val_;
 	vec.clear();
 
@@ -179,7 +179,7 @@ bool TreasureLoader::parseUInt32Vector(const Std::string &val_,
 }
 
 bool TreasureLoader::parseUIntRange(const Std::string &val,
-                                    unsigned int &min, unsigned int &max) {
+									unsigned int &min, unsigned int &max) {
 	Std::string::size_type pos = val.find('-');
 	if (pos == 0 || pos == Std::string::npos || pos + 1 >= val.size())
 		return false;

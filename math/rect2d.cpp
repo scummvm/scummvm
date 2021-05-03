@@ -43,7 +43,7 @@ Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &bottomRight) {
 }
 
 Rect2d::Rect2d(const Vector2d &topLeft, const Vector2d &topRight,
-               const Vector2d &bottomLeft, const Vector2d &bottomRight) :
+			   const Vector2d &bottomLeft, const Vector2d &bottomRight) :
 	_topLeft(topLeft), _topRight(topRight),
 	_bottomLeft(bottomLeft), _bottomRight(bottomRight) {
 

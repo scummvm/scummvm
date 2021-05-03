@@ -614,9 +614,9 @@ struct SpriteVertex {
 #include "common/pack-end.h"
 
 bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute::Rect32 &rect,
-                                      const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
-                                      float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
-                                      bool mirrorX, bool mirrorY) {
+									  const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot, const Wintermute::Vector2 &scale,
+									  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
+									  bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
 
 	if (_forceAlphaColor != 0) {
@@ -737,7 +737,7 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 }
 
 void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
-                                             const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
+											 const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	_gameRef->_renderer3D->setup3D(camera, true);

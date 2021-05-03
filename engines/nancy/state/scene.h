@@ -35,7 +35,6 @@
 #include "engines/nancy/ui/viewport.h"
 #include "engines/nancy/ui/textbox.h"
 #include "engines/nancy/ui/inventorybox.h"
-#include "engines/nancy/ui/button.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -51,6 +50,11 @@ struct SceneChangeDescription;
 
 namespace Action {
 class SliderPuzzle;
+class PlayPrimaryVideoChan0;
+}
+
+namespace UI {
+class Button;
 }
 
 namespace State {
@@ -90,6 +94,8 @@ public:
 		Common::String audioFile;
 		SoundDescription sound;
 		//
+		NancyFlag dontWrap;
+		//
 		uint16 verticalScrollDelta;
 		uint16 horizontalEdgeSize;
 		uint16 verticalEdgeSize;
@@ -100,23 +106,13 @@ public:
 		void read(Common::SeekableReadStream &stream);
 	};
 
-	Scene() :
-		_state (kInit),
-		_lastHint(-1),
-		_gameStateRequested(NancyState::kNone),
-		_frame(),
-		_viewport(),
-		_textbox(_frame),
-		_inventoryBox(_frame),
-		_menuButton(_frame),
-		_helpButton(_frame),
-		_actionManager(),
-		_difficulty(0) {}
+	Scene();
+	virtual ~Scene();
 
 	// State API
 	virtual void process() override;
 	virtual void onStateEnter() override;
-	virtual bool onStateExit() override;
+	virtual void onStateExit() override;
 
 	void changeScene(uint16 id, uint16 frame, uint16 verticalOffset, bool noSound);
 	void changeScene(const SceneChangeDescription &sceneDescription);
@@ -171,6 +167,9 @@ public:
 	SceneInfo &getSceneInfo() { return _sceneState.currentScene; }
 	const SceneSummary &getSceneSummary() const { return _sceneState.summary; }
 
+	void setActivePrimaryVideo(Action::PlayPrimaryVideoChan0 *activeVideo);
+	Action::PlayPrimaryVideoChan0 *getActivePrimaryVideo();
+
 private:
 	void init();
 	void load();
@@ -216,9 +215,9 @@ private:
 		};
 
 		LogicCondition logicConditions[30];
-		NancyFlag eventFlags[168];
+		Common::Array<NancyFlag> eventFlags;
 		uint16 sceneHitCount[2001];
-		NancyFlag items[11];
+		Common::Array<NancyFlag> items;
 		int16 heldItem = -1;
 		int16 primaryVideoResponsePicked = -1;
 	};
@@ -233,8 +232,9 @@ private:
 	UI::Viewport _viewport;
 	UI::Textbox _textbox;
 	UI::InventoryBox _inventoryBox;
-	UI::MenuButton _menuButton;
-	UI::HelpButton _helpButton;
+
+	UI::Button *_menuButton;
+	UI::Button *_helpButton;
 
 	// Data
 	SceneState _sceneState;
@@ -247,9 +247,9 @@ private:
 	NancyState::NancyState _gameStateRequested;
 
 	Common::Rect _mapHotspot;
-	Common::Array<uint16> _mapAccessSceneIDs;
 
 	Action::ActionManager _actionManager;
+	Action::PlayPrimaryVideoChan0 *_activePrimaryVideo;
 
 	State _state;
 

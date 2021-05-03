@@ -228,49 +228,6 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	},
 
 	{
-		"atotkdeluxe",
-		Common::STEAM_ACHIEVEMENTS,
-		"603870",
-		{
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_0", "Chapter One", "A Mixed Welcome"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_1", "Chapter Two", "Flight of the Dove"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_2", "Chapter Three", "Lay of the Land"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_3", "Chapter Four", "The Other Kingdom"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_4", "Chapter Five", "First Strike"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_5", "Chapter Six", "The Light of Truth"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_6", "Chapter Seven", "Point of View"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_7", "Chapter Eight", "End of the Line"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_8", "Paradur's Approval", "Complete the game"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_9", "Take Him Away, Boys", "Capture the assassin"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_10", "Happily Ever After"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_11", "Summer Unending", "You have found solace"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_12", "By Hook or By Crook"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_13", "Not Our Problem", "Theylinn can sort itself out"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_14", "Meticulous Adventurer", "See all 20 cutscenes in one playthrough"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_15", "Karma is a Witch"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_16", "Earned Her Name"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_17", "Midir's Manumission"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_18", "Kindred Spirits"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_19", "Rhiannon's Restoration", "Rescued the princess"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_20", "Penultimate Problem Ponderer", "Pass the Pooka's test without shortcuts"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_21", "Survival of the Fittest", "Counterattack on the goblins"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_22", "Scarecrow Support"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_23", "Second Chance"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_24", "Not Bad for a Mortal"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_25", "Seven at One Blow"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_26", "It Belongs in a Museum"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_27", "Rogue's Escape"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_28", "Take the High Road"),
-			ACHIEVEMENT_HIDDEN_ENTRY("NEW_ACHIEVEMENT_1_29", "Cailte's Carelessness"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_30", "Spun from Straw", "Find the faerie gold"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_1_31", "Goblin Getaway", "Free yourself from captivity"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_2_0", "Wisdom of the Bards", "Obtain 100% wisdom rating"),
-			ACHIEVEMENT_SIMPLE_ENTRY("NEW_ACHIEVEMENT_2_1", "Fierce Warrior", "Obtain 100% honor rating"),
-			ACHIEVEMENTS_LISTEND
-		}
-	},
-
-	{
 		"beer",
 		Common::STEAM_ACHIEVEMENTS,
 		"782280",
@@ -1913,21 +1870,6 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 			ACHIEVEMENT_HIDDEN_ENTRY("CaffeineAddict", "Whispers of a Coffee Machine"),
 			ACHIEVEMENT_HIDDEN_ENTRY("Whodunnit", "Whodunnit"),
 			ACHIEVEMENT_HIDDEN_ENTRY("CloseCall", "Close Call"),
-			ACHIEVEMENTS_LISTEND
-		}
-	},
-
-	{
-		"theterribleoldman",
-		Common::STEAM_ACHIEVEMENTS,
-		"1147030",
-		{
-			ACHIEVEMENT_SIMPLE_ENTRY("Beer", "Three for Two", "That's quite a deal!"),
-			ACHIEVEMENT_SIMPLE_ENTRY("Jackson", "Jackson", "We all have our dreams."),
-			ACHIEVEMENT_SIMPLE_ENTRY("Address", "Location uncovered!", "The old man won't know what hit him."),
-			ACHIEVEMENT_SIMPLE_ENTRY("Unlocked", "Unlocked", "What's in the trunk?"),
-			ACHIEVEMENT_SIMPLE_ENTRY("OpenSesame", "Open Sesame", "The riches are within grasp."),
-			ACHIEVEMENT_HIDDEN_ENTRY("TheEnd", "The End."),
 			ACHIEVEMENTS_LISTEND
 		}
 	},

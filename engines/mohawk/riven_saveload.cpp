@@ -410,7 +410,7 @@ Common::MemoryWriteStreamDynamic *RivenSaveLoad::genMETASection(const Common::St
 }
 
 Common::Error RivenSaveLoad::saveGame(const int slot, const Common::String &description,
-                                      const Graphics::Surface *thumbnail, bool autoSave) {
+									  const Graphics::Surface *thumbnail, bool autoSave) {
 	// NOTE: This code is designed to only output a Mohawk archive
 	// for a Riven saved game. It's hardcoded to do this because
 	// (as of right now) this is the only place in the engine

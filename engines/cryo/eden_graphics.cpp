@@ -26,11 +26,14 @@
 #include "cryo/eden.h"
 #include "cryo/sound.h"
 #include "cryo/eden_graphics.h"
-#include "cryo/video.h"
+
+#include "graphics/conversion.h"
+#include "graphics/palette.h"
+#include "video/hnm_decoder.h"
 
 namespace Cryo {
 
-EdenGraphics::EdenGraphics(EdenGame *game, HnmPlayer *video) : _game(game), _video(video) {
+EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_glowH = _glowW = _glowY = _glowX = 0;
 	_showVideoSubtitle = false;
 	_showBlackBars = false;	
@@ -1167,21 +1170,40 @@ void EdenGraphics::effetpix() {
 
 ////// film.c
 // Original name: showfilm
-void EdenGraphics::showMovie(char arg1) {
-	_video->readHeader();
-	if (_game->_globals->_curVideoNum == 92) {
-		// _hnmContext->_header._unusedFlag2 = 0; CHECKME: Useless?
-		_game->setVolume(0);
+void EdenGraphics::showMovie(int16 num, char arg1) {
+	Common::SeekableReadStream *stream = _game->loadSubStream(num - 1 + 485);
+	if (!stream) {
+		warning("Could not load movie %d", num);
+		return;
 	}
 
-	if (_video->getVersion() != 4)
-		return;
+	int16 j;
+	color_t palette16[256];
+	byte *palette = new byte[256 * 3];
+	CLPalette_GetLastPalette(palette16);
+	for (int16 i = 0; i < 256; i++) {
+		palette[j++] = palette16[i].r >> 8;
+		palette[j++] = palette16[i].g >> 8;
+		palette[j++] = palette16[i].b >> 8;
+	}
 
-	bool playing = true;
-	_video->allocMemory();
-	_hnmView = new View(_video->_header._width, _video->_header._height);
+	Video::VideoDecoder *decoder = new Video::HNMDecoder(false, palette);
+	if (!decoder->loadStream(stream)) {
+		warning("Could not load movie %d", num);
+		delete decoder;
+		delete stream;
+		return;
+	}
+
+	if (_game->_globals->_curVideoNum == 92) {
+		decoder->setVolume(0);
+	}
+
+	decoder->start();
+
+	_hnmView = new View(decoder->getWidth(), decoder->getHeight());
 	_hnmView->setSrcZoomValues(0, 0);
-	_hnmView->setDisplayZoomValues(_video->_header._width * 2, _video->_header._height * 2);
+	_hnmView->setDisplayZoomValues(decoder->getWidth() * 2, decoder->getHeight() * 2);
 	_hnmView->centerIn(_game->_vm->_screenView);
 	_hnmViewBuf = _hnmView->_bufferPtr;
 	if (arg1) {
@@ -1190,15 +1212,30 @@ void EdenGraphics::showMovie(char arg1) {
 		_hnmView->_normal._dstTop = _mainView->_normal._dstTop + 16;
 		_hnmView->_zoom._dstTop = _mainView->_zoom._dstTop + 32;
 	}
-	_video->setFinalBuffer(_hnmView->_bufferPtr);
+
 	do {
-		_hnmFrameNum = _video->getFrameNum();
-		_video->waitLoop();
-		playing = _video->nextElement();
+		if (decoder->needsUpdate()) {
+			const Graphics::Surface *frame = decoder->decodeNextFrame();
+			if (frame) {
+				Graphics::copyBlit(_hnmView->_bufferPtr, (const byte *)frame->getPixels(), _hnmView->_pitch, frame->pitch, frame->w, frame->h, 1);
+			}
+			if (decoder->hasDirtyPalette()) {
+				const byte *framePalette = decoder->getPalette();
+				for (int i = 0; i < 256; i++) {
+					palette16[i].r = framePalette[(i * 3) + 0] << 8;
+					palette16[i].g = framePalette[(i * 3) + 1] << 8;
+					palette16[i].b = framePalette[(i * 3) + 2] << 8;
+				}
+				CLBlitter_Send2ScreenNextCopy(palette16, 0, 256);
+			}
+		}
+		_hnmFrameNum = decoder->getCurFrame();
+
 		if (_game->getSpecialTextMode())
 			handleHNMSubtitles();
 		else
 			_game->musicspy();
+
 		CLBlitter_CopyView2Screen(_hnmView);
 		assert(_game->_vm->_screenView->_pitch == 320);
 		_game->_vm->pollEvents();
@@ -1213,9 +1250,12 @@ void EdenGraphics::showMovie(char arg1) {
 			else
 				_game->setMouseNotHeld();
 		}
-	} while (playing && !_videoCanceledFlag);
+
+		g_system->delayMillis(10);
+	} while (!_game->_vm->shouldQuit() && !decoder->endOfVideo() && !_videoCanceledFlag);
+
 	delete _hnmView;
-	_video->deallocMemory();
+	delete decoder;
 }
 
 bool EdenGraphics::getShowBlackBars() {
@@ -1247,17 +1287,17 @@ void EdenGraphics::playHNM(int16 num) {
 	}
 	_showVideoSubtitle = false;
 	_videoCanceledFlag = false;
-	_game->loadHnm(num);
-	_video->reset();
+
 	if (_needToFade) {
 		fadeToBlack(4);
 		clearScreen();
 		_needToFade = false;
 	}
 	if (num == 2012 || num == 98 || num == 171)
-		showMovie(0);
+		showMovie(num, 0);
 	else
-		showMovie(1);
+		showMovie(num, 1);
+
 	_cursKeepPos = Common::Point(-1, -1);
 	if (_game->getSpecialTextMode()) {
 		_game->setMusicFade(3);

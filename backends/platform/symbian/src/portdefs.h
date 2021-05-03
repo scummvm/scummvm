@@ -175,9 +175,9 @@ namespace std
 
 #ifndef signbit
 #define signbit(x)     \
-    ((sizeof (x) == sizeof (float)) ? __signbitf(x) \
-    : (sizeof (x) == sizeof (double)) ? __signbit(x) \
-    : __signbitl(x))
+	((sizeof (x) == sizeof (float)) ? __signbitf(x) \
+	: (sizeof (x) == sizeof (double)) ? __signbit(x) \
+	: __signbitl(x))
 #endif 
 
 // Functions from openlibm not declared in Symbian math.h

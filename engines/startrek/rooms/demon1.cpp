@@ -143,7 +143,7 @@ extern const RoomTextOffsets demon1TextOffsets[] = {
 	{ TX_DEM1_007, 3142, 0 },
 	{ TX_DEM1_008, 3285, 0 },
 	{ TX_DEM1_009, 4222, 0 },
-    { TX_DEM1_011, 1492, 0 },
+	{ TX_DEM1_011, 1492, 0 },
 	{ TX_DEM1_012, 6779, 0 },
 	{ TX_DEM1_013, 7645, 0 },
 	{ TX_DEM1_014, 7779, 0 },
@@ -189,7 +189,7 @@ extern const RoomTextOffsets demon1TextOffsets[] = {
 };
 
 extern const RoomText demon1Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 // BUG: under certain circumstances, the klingons just stop firing?

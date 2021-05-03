@@ -44,24 +44,24 @@ struct BorderName {
 };
 
 static const BorderName borders[] = {
-	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}},
-	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false}},
-	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}},
-	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false}},
-	{0x04, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false}},
-	{0x05, "Thick",				 { 5,  5, 20,  5,		 2,  3,		false}},
-	{0x06, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}},
-	{0x07, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1, 	false}},
-	{0x08, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}},
-	{0x09, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}},
-	{0x0A, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}},
-	{0x0B, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}},
-	{0x0C, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false}},
-	{0x0D, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false}},
-	{0x0E, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false}},
-	{0x0F, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false}},
-	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true}},
-	{0xFF, "No type",			 {-1, -1, -1, -1,		-1, -1,		false}}
+	{0x00, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false, 25, 0, 0}},
+	{0x01, "ThickNoTitle",		 { 5,  5,  5,  5,		-1, -1,		false, 0,  0, 0}},
+	{0x02, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false, 0,  0, 0}},
+	{0x03, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1,		false, 0,  0, 0}},
+	{0x04, "StandardClose",		 { 1,  2, 19,  2,		 2,  2,		false, 25, 0, 0}},
+	{0x05, "Thick",				 { 5,  5, 20,  5,		 2,  3,		false, 13, 0, 0}},
+	{0x06, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false, 0,  0, 0}},
+	{0x07, "ThinNoTitleShadow",	 { 1,  3,  1,  3,		-1, -1, 	false, 0,  0, 0}},
+	{0x08, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false, 25, 0, 0}},
+	{0x09, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false, 13, 0, 0}},
+	{0x0A, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false, 0,  0, 0}},
+	{0x0B, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false, 0,  0, 0}},
+	{0x0C, "StandardCloseZoom",	 { 1,  2, 19,  2,		 2,  2,		false, 25, 0, 0}},
+	{0x0D, "ThickZoom",			 { 5,  5, 20,  5,		 2,  3,		false, 13, 0, 0}},
+	{0x0E, "ThinNoTitle",		 { 1,  1,  1,  1,		-1, -1,		false, 0,  0, 0}},
+	{0x0F, "ThinNoTitleShadow",  { 1,  3,  1,  3,		-1, -1,		false, 0,  0, 0}},
+	{0x10, "RoundClose",		 { 1,  1, 19,  6,		 1,  1,		true,  25, 0, 0}},
+	{0xFF, "No type",			 {-1, -1, -1, -1,		-1, -1,		false, 0,  0, 0}}
 };
 
 Common::String windowTypeName(byte windowType) {
@@ -82,6 +82,10 @@ void MacWindowManager::loadDataBundle() {
 	}
 }
 
+void MacWindowManager::cleanupDataBundle() {
+	delete _dataBundle;
+}
+
 BorderOffsets MacWindowManager::getBorderOffsets(byte windowType) {
 	int i = 0;
 	while (borders[i].type != 0xFF) {
@@ -92,12 +96,14 @@ BorderOffsets MacWindowManager::getBorderOffsets(byte windowType) {
 	return borders[i].offsets;
 }
 
-Common::SeekableReadStream *MacWindowManager::getBorderFile(byte windowType, bool isActive) {
+Common::SeekableReadStream *MacWindowManager::getBorderFile(byte windowType, uint32 flags) {
 	if (!_dataBundle)
 		return NULL;
 
 	Common::String filename = windowTypeName(windowType);
-	filename += (isActive ? "_act.bmp" : "_inac.bmp");
+	filename += (flags & kWindowBorderActive) ? "_act" : "_inac";
+	filename += (flags & kWindowBorderTitle) ? "_title" : "";
+	filename += ".bmp";
 	if (!_dataBundle->hasFile(filename)) {
 		warning("Missing border file '%s' in data bundle", filename.c_str());
 		return NULL;

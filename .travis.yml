@@ -32,6 +32,7 @@ addons:
     - libsndio-dev
     - libreadline-dev
     - libglew-dev
+    - libgif-dev
 
 branches:
  only:

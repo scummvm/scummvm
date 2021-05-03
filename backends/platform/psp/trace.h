@@ -60,13 +60,13 @@ extern int psp_debug_indent;
 //
 
 class PSPStackDebugFuncs {
-    Common::String _name;
+	Common::String _name;
 
 public:
 	PSPStackDebugFuncs(const char *name) : _name(name) {
 		PSP_INFO_PRINT_INDENT("++ %s\n", _name.c_str());
 		psp_debug_indent++;
-    }
+	}
 
 	~PSPStackDebugFuncs() {
 		psp_debug_indent--;

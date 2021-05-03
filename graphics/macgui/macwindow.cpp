@@ -56,8 +56,6 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_highlightedPart = kBorderNone;
 
-	_scrollPos = _scrollSize = 0.0;
-
 	_beingDragged = false;
 	_beingResized = false;
 
@@ -69,28 +67,16 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 
 	_borderType = -1;
 	_borderWidth = kBorderWidth;
+
+	_macBorder.setWindow(this);
+
+	_hasScrollBar = false;
+
+	_mode = 0;
 }
 
-static const byte noborderData[3][3] = {
-	{ 0, 1, 0 },
-	{ 1, 0, 1 },
-	{ 0, 1, 0 },
-};
-
 void MacWindow::disableBorder() {
-	Graphics::TransparentSurface *noborder = new Graphics::TransparentSurface();
-	noborder->create(3, 3, noborder->getSupportedPixelFormat());
-	uint32 colorBlack = noborder->getSupportedPixelFormat().RGBToColor(0, 0, 0);
-	uint32 colorPink = noborder->getSupportedPixelFormat().RGBToColor(255, 0, 255);
-
-	for (int y = 0; y < 3; y++)
-		for (int x = 0; x < 3; x++)
-			*((uint32 *)noborder->getBasePtr(x, y)) = noborderData[y][x] ? colorBlack : colorPink;
-
-	setBorder(noborder, true);
-
-	Graphics::TransparentSurface *noborder2 = new Graphics::TransparentSurface(*noborder, true);
-	setBorder(noborder2, false);
+	_macBorder.disableBorder();
 }
 
 const Font *MacWindow::getTitleFont() {
@@ -192,36 +178,40 @@ void MacWindow::blit(ManagedSurface *g, Common::Rect &dest) {
 	g->transBlitFrom(*_composeSurface, _composeSurface->getBounds(), dest, transcolor);
 }
 
+uint32 MacWindow::getBorderFlags() {
+	uint32 flags = 0;
+	if (_active)
+		flags |= kWindowBorderActive;
+	if (!_title.empty())
+		flags |= kWindowBorderTitle;
+	if (_hasScrollBar)
+		flags |= kWindowBorderScrollbar;
+	return flags;
+}
+
 void MacWindow::center(bool toCenter) {
 	if (!_wm)
 		return;
 
 	Common::Rect screen = _wm->getScreenBounds();
 
+	uint32 flags = getBorderFlags();
 	if (toCenter) {
 		move((screen.width() - _dims.width()) / 2, (screen.height() - _dims.height()) / 2);
-	} else if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	} else if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		move(_macBorder.getOffset().left, _macBorder.getOffset().top);
 	} else {
 		move(0, 0);
 	}
 }
 
-#define ARROW_W 12
-#define ARROW_H 6
-const int arrowPixels[ARROW_H][ARROW_W] = {
-		{0,0,0,0,0,1,1,0,0,0,0,0},
-		{0,0,0,0,1,1,1,1,0,0,0,0},
-		{0,0,0,1,1,1,1,1,1,0,0,0},
-		{0,0,1,1,1,1,1,1,1,1,0,0},
-		{0,1,1,1,1,1,1,1,1,1,1,0},
-		{1,1,1,1,1,1,1,1,1,1,1,1}};
-
 void MacWindow::updateInnerDims() {
 	if (_dims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	uint32 flags = getBorderFlags();
+
+	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_innerDims = Common::Rect(
 			_dims.left + _macBorder.getOffset().left,
 			_dims.top + _macBorder.getOffset().top,
@@ -237,7 +227,9 @@ void MacWindow::updateOuterDims() {
 	if (_innerDims.isEmpty())
 		return;
 
-	if (_macBorder.hasBorder(_active) && _macBorder.hasOffsets()) {
+	uint32 flags = getBorderFlags();
+
+	if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
 		_dims = Common::Rect(
 			_innerDims.left - _macBorder.getOffset().left,
 			_innerDims.top - _macBorder.getOffset().top,
@@ -253,68 +245,34 @@ void MacWindow::drawBorder() {
 	_borderIsDirty = false;
 
 	ManagedSurface *g = &_borderSurface;
-	int width = _borderSurface.w;
-	int titleColor;
-	int titleY;
-	int titleHeight;
-	int sidesWidth;
 
-	if (_macBorder.hasBorder(_active)) {
-		drawBorderFromSurface(g);
+	uint32 flags = getBorderFlags();
 
-		titleColor = _wm->_colorGray88;
-		if (_active)
-			titleColor = _macBorder.getOffset().dark ? _wm->_colorWhite : _wm->_colorBlack;
-
-		titleY = _macBorder.getOffset().titleTop;
-		titleHeight = _macBorder.getOffset().top - titleY - _macBorder.getOffset().titleBottom;
-		sidesWidth = _macBorder.getOffset().left + _macBorder.getOffset().right;
+	if (_macBorder.hasBorder(flags)) {
+		drawBorderFromSurface(g, flags);
 	} else {
 		warning("MacWindow: No Border Loaded");
 		setBorderType(0xff);
+		return;
 	}
 
-	// draw highlight scroll bar
-	if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown) {
-		int size = _borderWidth;
-		int rx1 = 0 + width - size + 2;
-		int ry1 = 0 + size + _scrollPos + 1;
-		int rx2 = rx1 + size - 6;
-		int ry2 = ry1 + _scrollSize ;
-		Common::Rect rr(rx1, ry1, rx2, ry2);
-
-		MacPlotData pd(g, nullptr,  &_wm->getPatterns(), 1, 0, 0, 1, _wm->_colorWhite, true);
-		Graphics::drawFilledRect(rr, _wm->_colorWhite, _wm->getDrawInvertPixel(), &pd);
+	if (_highlightedPart == kBorderScrollUp || _highlightedPart == kBorderScrollDown)
 		setHighlight(kBorderNone);
-	}
-
-	if (!_title.empty()) {
-		const Graphics::Font *font = getTitleFont();
-		int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
-
-		int w = font->getStringWidth(_title) + 10;
-		int maxWidth = width - sidesWidth * 2 - 7;
-		if (w > maxWidth)
-			w = maxWidth;
-
-		if (_macBorder.hasBorder(_active)) {
-			if (_active && !_macBorder.getOffset().dark)
-				fillRect(g, (width - w) / 2, titleY, w, titleHeight, _wm->_colorGrayEE);
-		} else {
-			drawBox(g, (width - w) / 2, titleY, w, titleHeight);
-		}
-		font->drawString(g, _title, (width - w) / 2 + 5, titleY + yOff, w, titleColor);
-	}
 }
 
-void MacWindow::drawBorderFromSurface(ManagedSurface *g) {
+void MacWindow::drawBorderFromSurface(ManagedSurface *g, uint32 flags) {
 	if (_wm->_pixelformat.bytesPerPixel == 1) {
 		g->clear(_wm->_colorGreen);
 	}
 
-	_macBorder.blitBorderInto(*g, _active, _wm);
+	_macBorder.blitBorderInto(*g, flags, _wm);
 }
 
+void MacWindow::setTitle(const Common::String &title) {
+	_title = title;
+	_borderIsDirty = true;
+	_macBorder.setTitle(title, _borderSurface.w, _wm);
+}
 
 void MacWindow::drawPattern() {
 	byte *pat = _wm->getPatterns()[_pattern - 1];
@@ -346,72 +304,22 @@ void MacWindow::setHighlight(WindowClick highlightedPart) {
 }
 
 void MacWindow::setScroll(float scrollPos, float scrollSize) {
-	if (_scrollPos == scrollPos && _scrollSize == scrollSize)
-		return;
-
-	_scrollPos = scrollPos;
-	_scrollSize = scrollSize;
+	_macBorder.setScroll(scrollPos, scrollSize);
 	_borderIsDirty = true;
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, int lo, int ro, int to, int bo) {
-	BorderOffsets offsets;
-	offsets.left = lo;
-	offsets.right = ro;
-	offsets.top = to;
-	offsets.bottom = bo;
-	offsets.titleTop = -1;
-	offsets.titleBottom = -1;
-	offsets.dark = false;
-	loadBorder(file, active, offsets);
+void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo, int ro, int to, int bo) {
+	_macBorder.loadBorder(file, flags, lo, ro, to, bo);
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, bool active, BorderOffsets offsets) {
-	Image::BitmapDecoder bmpDecoder;
-	Graphics::Surface *source;
-	Graphics::TransparentSurface *surface = new Graphics::TransparentSurface();
-
-	bmpDecoder.loadStream(file);
-	source = bmpDecoder.getSurface()->convertTo(surface->getSupportedPixelFormat(), bmpDecoder.getPalette());
-
-	surface->create(source->w, source->h, _wm->_pixelformat);
-	surface->copyFrom(*source);
-
-	source->free();
-	delete source;
-
-	setBorder(surface, active, offsets);
+void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
+	_macBorder.loadBorder(file, flags, offsets);
 }
 
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, int lo, int ro, int to, int bo) {
-	BorderOffsets offsets;
-	offsets.left = lo;
-	offsets.right = ro;
-	offsets.top = to;
-	offsets.bottom = bo;
-	offsets.titleTop = -1;
-	offsets.titleBottom = -1;
-	offsets.dark = false;
-	setBorder(surface, active, offsets);
-}
-
-void MacWindow::setBorder(Graphics::TransparentSurface *surface, bool active, BorderOffsets offsets) {
-	surface->applyColorKey(255, 0, 255, false);
-
-	if (active)
-		_macBorder.addActiveBorder(surface);
-	else
-		_macBorder.addInactiveBorder(surface);
-
-	if (active && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
-		_macBorder.setOffsets(offsets);
-		updateOuterDims();
-		_borderSurface.free();
-		_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
-	}
-
-	_borderIsDirty = true;
-	_wm->setFullRefresh(true);
+void MacWindow::resizeBorderSurface() {
+	updateOuterDims();
+	_borderSurface.free();
+	_borderSurface.create(_dims.width(), _dims.height(), _wm->_pixelformat);
 }
 
 void MacWindow::setCloseable(bool closeable) {
@@ -602,21 +510,26 @@ bool MacWindow::processEvent(Common::Event &event) {
 void MacWindow::setBorderType(int borderType) {
 	_borderType = borderType;
 	if (borderType < 0) {
-		disableBorder();
+		_macBorder.disableBorder();
 	} else {
-		BorderOffsets offsets = _wm->getBorderOffsets(borderType);
+		_macBorder.setBorderType(borderType);
+	}
+}
 
-		Common::SeekableReadStream *activeFile = _wm->getBorderFile(borderType, true);
-		if (activeFile) {
-			loadBorder(*activeFile, true, offsets);
-			delete activeFile;
-		}
-
-		Common::SeekableReadStream *inactiveFile = _wm->getBorderFile(borderType, false);
-		if (inactiveFile) {
-			loadBorder(*inactiveFile, false, offsets);
-			delete inactiveFile;
-		}
+void MacWindow::loadWin95Border(const Common::String &filename, uint32 flags) {
+	Common::SeekableReadStream *stream = _wm->getFile(filename);
+	if (stream) {
+		Graphics::BorderOffsets offsets;
+		offsets.top = 1;
+		offsets.bottom = 1;
+		offsets.left = 1;
+		offsets.right = 17;
+		offsets.lowerScrollHeight = 15;
+		offsets.upperScrollHeight = 17;
+		offsets.titlePos = 0;
+		offsets.titleTop = 0;
+		loadBorder(*stream, flags, offsets);
+		delete stream;
 	}
 }
 

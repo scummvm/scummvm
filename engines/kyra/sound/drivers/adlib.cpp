@@ -433,7 +433,8 @@ void AdLibDriver::setSoundData(uint8 *data, uint32 size) {
 	// Drop all tracks that are still queued. These would point to the old
 	// sound data.
 	_programQueueStart = _programQueueEnd = 0;
-	_programQueue[0] = QueueEntry();
+	for (int i = 0; i < ARRAYSIZE(_programQueue); ++i)
+		_programQueue[i] = QueueEntry();
 
 	_sfxPointer = nullptr;
 
@@ -448,12 +449,11 @@ void AdLibDriver::startSound(int track, int volume) {
 	if (!trackData)
 		return;
 
-	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0) {
-		// Don't warn when dropping tracks in EoB. The queue is always full there if a couple of monsters are around.
-		if (_version >= 3)
-			warning("AdLibDriver: Program queue full, dropping track %d", track);
-		return;
-	}
+	// We used to drop the new sound here, but that isn't the behavior of the original code.
+	// It would cause more issues than do any good. Now, we just have a debug message and
+	// then drop the oldest sound, like the original driver...
+	if (_programQueueEnd == _programQueueStart && _programQueue[_programQueueEnd].data != 0)
+		debugC(3, kDebugLevelSound, "AdLibDriver: Program queue full, dropping track %d", _programQueue[_programQueueEnd].id);
 
 	_programQueue[_programQueueEnd] = QueueEntry(trackData, track, volume);
 	++_programQueueEnd &= 15;
@@ -935,12 +935,9 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 		}
 	}
 
-	// Shift octave to correct bit position and limit to valid range.
-	octave = CLIP<int8>(octave, 0, 7) << 2;
-
 	// Update octave & frequency, but keep on/off state.
 	channel.regAx = freq & 0xFF;
-	channel.regBx = (channel.regBx & 0x20) | octave | ((freq >> 8) & 0x03);
+	channel.regBx = (channel.regBx & 0x20) | (octave << 2) | ((freq >> 8) & 0x03);
 
 	writeOPL(0xA0 + _curChannel, channel.regAx);
 	writeOPL(0xB0 + _curChannel, channel.regBx);

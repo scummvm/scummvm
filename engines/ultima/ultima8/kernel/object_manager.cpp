@@ -310,7 +310,7 @@ Object *ObjectManager::loadObject(Common::ReadStream *rs, uint32 version) {
 }
 
 Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
-                                  uint32 version) {
+								  uint32 version) {
 	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
 

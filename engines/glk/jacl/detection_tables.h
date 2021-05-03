@@ -28,15 +28,18 @@ namespace Glk {
 namespace JACL {
 
 const PlainGameDescriptor JACL_GAME_LIST[] = {
+	{ "eldor", "The Curse of Eldor" },		// Competition 96
 	{ "prisonbreak", "Prisoner Break" },
-	{ "unholygrail", "The Unholy Grail" },
+	{ "unholygrail", "The Unholy Grail" },	// Competition 97
 
 	{ nullptr, nullptr }
 };
 
 const GlkDetectionEntry JACL_GAMES[] = {
+	DT_ENTRY1("eldor", "r3/crashing", "c1435d28e7eb577fa58c7456d4fa7009", 168119),
 	DT_ENTRY0("prisonbreak", "e2e85c5e60a63575bf0cd0481f0f3958", 199403),
-	DT_ENTRY0("unholygrail", "7d40e485c8cf8c9d5c4958a79337d6c7", 447833),
+	DT_ENTRY1("unholygrail", "original/crashing", "2cf04cb897ba799c17cbeb407be67acb", 456730),
+	DT_ENTRY1("unholygrail", "002", "7d40e485c8cf8c9d5c4958a79337d6c7", 447833),
 
 	DT_END_MARKER
 };

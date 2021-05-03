@@ -59,6 +59,7 @@ Default control map
 .. csv-table::
     :widths: 50 50
     :header-rows: 2
+    :class: controls
 
         Touchscreen:,
         Buttons/Control,Action

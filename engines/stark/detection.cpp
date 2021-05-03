@@ -81,6 +81,19 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Czech 4CD
+	// Bugreport #11914
+	{
+		"tlj", "4 CD build 142",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"547f0b9c04c00d330b60eed6e8d24732", 484),
+		Common::CZ_CZE,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// French Demo
 	{
 		"tlj", "Demo",
@@ -269,6 +282,20 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
+	// Polish Demo.
+	// Provided by Faalargon, Bugreport #11883 (#1440 in Residualvm)
+	// Folder structure is completely different. Unsupported for now
+	{
+		"tlj", _s("Missing game code"), // Reason for being unsupported
+		AD_ENTRY2s("x.xarc",		"6c6c388f757adcc49e7f33b0b2cccf96", 2904,
+				   "chapters.ini",	"6ee43a176a5eb94153c2d813261c3226", 252),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_DEMO | ADGF_UNSUPPORTED,
 		GUIO_NONE
 	},
 

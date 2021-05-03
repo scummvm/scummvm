@@ -175,7 +175,7 @@ void ScummEngine_v0::resetVerbs() {
 		vs->center = 0;
 		vs->imgindex = 0;
 		vs->prep = verbPrepIdType(vtable[i - 1].id);
-		vs->curRect.left = vtable[i - 1].x_pos * 8;
+		vs->curRect.left = vs->origLeft = vtable[i - 1].x_pos * 8;
 		vs->curRect.top = vtable[i - 1].y_pos * 8 + virt->topline + 8;
 		loadPtrToResource(rtVerb, i, (const byte*)vtable[i - 1].name);
 	}
@@ -1044,7 +1044,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			}
 			int16 leftPos = vs->curRect.left;
 			if (_language == Common::HE_ISR)
-				vs->curRect.left = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
+				vs->curRect.left = vs->origLeft = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
 			else
 				vs->curRect.right = vs->curRect.left + _charset->getStringWidth(0, tmpBuf);
 			enqueueText(tmpBuf, leftPos, vs->curRect.top, color, vs->charset_nr, vs->center);
@@ -1056,7 +1056,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			}
 		} else {
 			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->curRect.right - textWidth;
+				vs->curRect.left = vs->origLeft = vs->curRect.right - textWidth;
 			else
 				vs->curRect.right = vs->curRect.left + textWidth;
 			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
@@ -1084,7 +1084,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
-		_string[4].xpos = vs->curRect.left;
+		_string[4].xpos = vs->origLeft;
 		_string[4].ypos = vs->curRect.top;
 		_string[4].right = _screenWidth - 1;
 		_string[4].center = vs->center;
@@ -1110,6 +1110,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		drawString(4, msg);
 		_charset->_center = tmp;
 
+		vs->curRect.left = _charset->_str.left;
 		vs->curRect.right = _charset->_str.right;
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;

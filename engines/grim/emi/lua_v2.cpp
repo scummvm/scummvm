@@ -691,7 +691,7 @@ void Lua_V2::SetLayerSortOrder() {
 
 // Stub function for builtin functions not yet implemented
 /*static void stubWarning(const char *funcName) {
-    warning("Stub function: %s", funcName);
+	warning("Stub function: %s", funcName);
 }*/
 
 static void stubError(const char *funcName) {

@@ -32,7 +32,7 @@ typedef int *IntegerPtr;
 
 int classify_as(progfile &f, int id_number, ClassifyType interpretation, void *ptr_to_data) {
 	IdRecPtr the_id_ptr;
-    String error_string;
+	String error_string;
 	int result = 0;
 
 	if (!index_ident(id_number, the_id_ptr)) {

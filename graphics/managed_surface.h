@@ -134,6 +134,19 @@ public:
 	ManagedSurface(ManagedSurface &surf, const Common::Rect &bounds);
 
 	/**
+	 * Create a managed surface from plain Surface.
+	 *
+	 * If disiposeAgter use flag is set (default), the surface will reuse all structures
+	 * from the surface and destroy it, otherwise it will make a copy.
+	 */
+	ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+
+	/**
+	 * Create a managed surface from plain Surface.
+	 */
+	ManagedSurface(const Surface *surf);
+
+	/**
 	 * Destroy the managed surface.
 	 */
 	virtual ~ManagedSurface();
@@ -523,6 +536,12 @@ public:
 	 * surface to match the dimensions of the passed surface.
 	 */
 	void copyFrom(const ManagedSurface &surf);
+
+	/**
+	 * Copy the data from another surface, reinitializing the
+	 * surface to match the dimensions of the passed surface.
+	 */
+	void copyFrom(const Surface &surf);
 
 	/**
 	 * Draw a line.

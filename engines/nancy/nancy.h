@@ -71,14 +71,10 @@ class GraphicsManager;
 class CursorManager;
 class CheatDialog;
 class NancyConsole;
+struct GameConstants;
 
 namespace State {
 class State;
-class Logo;
-class Scene;
-class Map;
-class Help;
-class Credits;
 }
 
 class NancyEngine : public Engine {
@@ -96,6 +92,7 @@ public:
 	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	virtual bool canLoadGameStateCurrently() override;
 	virtual bool canSaveGameStateCurrently() override;
+	virtual bool canSaveAutosaveCurrently() override;
 
 	const char *getCopyrightString() const;
 	uint32 getGameFlags() const;
@@ -103,9 +100,11 @@ public:
 	GameType getGameType() const;
 	Common::Platform getPlatform() const;
 
+	const GameConstants &getConstants() const;
+
 	void setState(NancyState::NancyState state, NancyState::NancyState overridePrevious = NancyState::kNone);
-	State::State *getState() { return _gameFlow.currentState; }
-	void setPreviousState();
+	NancyState::NancyState getState() { return _gameFlow.curState; }
+	void setToPreviousState();
 
 	// Chunks found in BOOT get extracted and cached at startup, this function lets other classes access them
 	Common::SeekableReadStream *getBootChunkStream(const Common::String &name) const;
@@ -123,6 +122,7 @@ public:
 
 	Common::RandomSource *_randomSource;
 
+	// BSUM data
 	uint16 _firstSceneID;
 	uint16 _startTimeHours;
 
@@ -131,10 +131,15 @@ public:
 	Time _fastMovementTimeDelta;
 	Time _playerTimeMinuteLength;
 
+	uint _horizontalEdgesSize;
+	uint _verticalEdgesSize;
+
+	Common::Rect _textboxScreenPosition;
+
 private:
 	struct GameFlow {
-		State::State *currentState = nullptr;
-		State::State *previousState = nullptr;
+		NancyState::NancyState curState = NancyState::kNone;
+		NancyState::NancyState prevState = NancyState::kNone;
 	};
 
 	virtual Common::Error run() override;

@@ -42,35 +42,35 @@ void OSystem_Dreamcast::checkSound()
   int curr_ring_buffer_samples;
 
   if (!_mixer)
-    return;
+	return;
 
   if (read_sound_int(&SOUNDSTATUS->mode) != MODE_PLAY)
-    start_sound();
+	start_sound();
 
   curr_ring_buffer_samples = read_sound_int(&SOUNDSTATUS->ring_length);
 
   n = read_sound_int(&SOUNDSTATUS->samplepos);
 
   if ((n-=fillpos)<0)
-    n += curr_ring_buffer_samples;
+	n += curr_ring_buffer_samples;
 
   n = ADJUST_BUFFER_SIZE(n-10);
 
   if (n<100)
-    return;
+	return;
 
   _mixer->mixCallback((byte *)temp_sound_buffer,
 		      2*SAMPLES_TO_BYTES(n));
 
   if (fillpos+n > curr_ring_buffer_samples) {
-    int r = curr_ring_buffer_samples - fillpos;
-    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
-    fillpos = 0;
-    n -= r;
-    memcpy4s(RING_BUF, temp_sound_buffer+r, SAMPLES_TO_BYTES(n));
+	int r = curr_ring_buffer_samples - fillpos;
+	memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(r));
+	fillpos = 0;
+	n -= r;
+	memcpy4s(RING_BUF, temp_sound_buffer+r, SAMPLES_TO_BYTES(n));
   } else {
-    memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
+	memcpy4s(RING_BUF+fillpos, temp_sound_buffer, SAMPLES_TO_BYTES(n));
   }
   if ((fillpos += n) >= curr_ring_buffer_samples)
-    fillpos = 0;
+	fillpos = 0;
 }

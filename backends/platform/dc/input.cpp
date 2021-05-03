@@ -38,49 +38,49 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
   static int8 mouse_wheel = 0, lastwheel = 0;
   shiftFlags = 0;
   for (int i=0; i<4; i++, pad++)
-    if (pad->func & MAPLE_FUNC_CONTROLLER) {
-      int buttons = pad->cond.controller.buttons;
+	if (pad->func & MAPLE_FUNC_CONTROLLER) {
+	  int buttons = pad->cond.controller.buttons;
 
-      if (!(buttons & 0x060e)) exit(0);
+	  if (!(buttons & 0x060e)) exit(0);
 
-      if (!(buttons & 4)) lmb++;
-      if (!(buttons & 2)) rmb++;
+	  if (!(buttons & 4)) lmb++;
+	  if (!(buttons & 2)) rmb++;
 
-      if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
-      else if (!(buttons & 512)) newkey = ' ';
-      else if (!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
+	  if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
+	  else if (!(buttons & 512)) newkey = ' ';
+	  else if (!(buttons & 1024)) newkey = numpadmap[(buttons>>4)&15];
 
-      if (!(buttons & 128)) { if (inter) newkey = 1001; else mouse_x++; }
-      if (!(buttons & 64)) { if (inter) newkey = 1002; else mouse_x--; }
-      if (!(buttons & 32)) { if (inter) newkey = 1003; else mouse_y++; }
-      if (!(buttons & 16)) { if (inter) newkey = 1004; else mouse_y--; }
+	  if (!(buttons & 128)) { if (inter) newkey = 1001; else mouse_x++; }
+	  if (!(buttons & 64)) { if (inter) newkey = 1002; else mouse_x--; }
+	  if (!(buttons & 32)) { if (inter) newkey = 1003; else mouse_y++; }
+	  if (!(buttons & 16)) { if (inter) newkey = 1004; else mouse_y--; }
 
-      mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
-      mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
+	  mouse_x += ((int)pad->cond.controller.joyx-128)>>4;
+	  mouse_y += ((int)pad->cond.controller.joyy-128)>>4;
 
-      if (pad->cond.controller.ltrigger > 200) newkey = 1005;
-      else if (pad->cond.controller.rtrigger > 200) newkey = 1006;
+	  if (pad->cond.controller.ltrigger > 200) newkey = 1005;
+	  else if (pad->cond.controller.rtrigger > 200) newkey = 1006;
 
-    } else if (pad->func & MAPLE_FUNC_MOUSE) {
-      int buttons = pad->cond.mouse.buttons;
+	} else if (pad->func & MAPLE_FUNC_MOUSE) {
+	  int buttons = pad->cond.mouse.buttons;
 
-      if (!(buttons & 4)) lmb++;
-      if (!(buttons & 2)) rmb++;
+	  if (!(buttons & 4)) lmb++;
+	  if (!(buttons & 2)) rmb++;
 
-      if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
+	  if (!(buttons & 8)) newkey = Common::KEYCODE_F5;
 
-      mouse_x += pad->cond.mouse.axis1;
-      mouse_y += pad->cond.mouse.axis2;
-      mouse_wheel += pad->cond.mouse.axis3;
+	  mouse_x += pad->cond.mouse.axis1;
+	  mouse_y += pad->cond.mouse.axis2;
+	  mouse_wheel += pad->cond.mouse.axis3;
 
-      if (inter)
+	  if (inter)
 	inter->mouse(mouse_x, mouse_y);
 
-      pad->cond.mouse.axis1 = 0;
-      pad->cond.mouse.axis2 = 0;
-      pad->cond.mouse.axis3 = 0;
-    } else if (pad->func & MAPLE_FUNC_KEYBOARD) {
-      for (int p=0; p<6; p++) {
+	  pad->cond.mouse.axis1 = 0;
+	  pad->cond.mouse.axis2 = 0;
+	  pad->cond.mouse.axis3 = 0;
+	} else if (pad->func & MAPLE_FUNC_KEYBOARD) {
+	  for (int p=0; p<6; p++) {
 	int shift = pad->cond.kbd.shift;
 	int key = pad->cond.kbd.key[p];
 	if (shift & 0x08) lmb++;
@@ -134,56 +134,56 @@ int handleInput(struct mapledev *pad, int &mouse_x, int &mouse_y,
 	case 0x89:
 	  newkey = ((shift & 0x22)? '|' : '?'); break;
 	}
-      }
-    }
+	  }
+	}
 
   if (lmb && inter && !lastlmb) {
-    newkey = 1000;
-    lmb = 0;
+	newkey = 1000;
+	lmb = 0;
   }
 
   if (lmb && !lastlmb) {
-    lastlmb = 1;
-    return -Common::EVENT_LBUTTONDOWN;
+	lastlmb = 1;
+	return -Common::EVENT_LBUTTONDOWN;
   } else if (lastlmb && !lmb) {
-    lastlmb = 0;
-    return -Common::EVENT_LBUTTONUP;
+	lastlmb = 0;
+	return -Common::EVENT_LBUTTONUP;
   }
   if (rmb && !lastrmb) {
-    lastrmb = 1;
-    return -Common::EVENT_RBUTTONDOWN;
+	lastrmb = 1;
+	return -Common::EVENT_RBUTTONDOWN;
   } else if (lastrmb && !rmb) {
-    lastrmb = 0;
-    return -Common::EVENT_RBUTTONUP;
+	lastrmb = 0;
+	return -Common::EVENT_RBUTTONUP;
   }
 
   if (mouse_wheel != lastwheel) {
-    if (((int8)(mouse_wheel - lastwheel)) > 0) {
-      lastwheel++;
-      return -Common::EVENT_WHEELDOWN;
-    } else {
-      --lastwheel;
-      return -Common::EVENT_WHEELUP;
-    }
+	if (((int8)(mouse_wheel - lastwheel)) > 0) {
+	  lastwheel++;
+	  return -Common::EVENT_WHEELDOWN;
+	} else {
+	  --lastwheel;
+	  return -Common::EVENT_WHEELUP;
+	}
   }
 
   if (newkey && inter && newkey != lastkey) {
-    int transkey = inter->key(newkey, shiftFlags);
-    if (transkey) {
-      newkey = transkey;
-      inter = NULL;
-    }
+	int transkey = inter->key(newkey, shiftFlags);
+	if (transkey) {
+	  newkey = transkey;
+	  inter = NULL;
+	}
   }
 
   if (!newkey || (lastkey && newkey != lastkey)) {
-    int upkey = lastkey;
-    lastkey = 0;
-    if (upkey)
-      return upkey | (1<<30);
+	int upkey = lastkey;
+	lastkey = 0;
+	if (upkey)
+	  return upkey | (1<<30);
   } else if (!lastkey) {
-    lastkey = newkey;
-    if (newkey >= 1000 || !inter)
-      return newkey;
+	lastkey = newkey;
+	if (newkey >= 1000 || !inter)
+	  return newkey;
   }
 
   return 0;
@@ -194,13 +194,13 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
   unsigned int t = Timer();
 
   if (_timerManager != NULL)
-    ((DefaultTimerManager *)_timerManager)->handler();
+	((DefaultTimerManager *)_timerManager)->handler();
 
   if (((int)(t-_devpoll))<0)
-    return false;
+	return false;
   _devpoll += USEC_TO_TIMER(17000);
   if (((int)(t-_devpoll))>=0)
-    _devpoll = t + USEC_TO_TIMER(17000);
+	_devpoll = t + USEC_TO_TIMER(17000);
 
   maybeRefreshScreen();
 
@@ -217,36 +217,36 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
   event.mouse.x = _ms_cur_x;
   event.mouse.y = _ms_cur_y;
   if (_overlay_visible) {
-    event.mouse.x -= _overlay_x;
-    event.mouse.y -= _overlay_y;
+	event.mouse.x -= _overlay_x;
+	event.mouse.y -= _overlay_y;
   }
   event.kbd.ascii = 0;
   event.kbd.keycode = Common::KEYCODE_INVALID;
   if (e<0) {
-    event.type = (Common::EventType)-e;
-    return true;
+	event.type = (Common::EventType)-e;
+	return true;
   } else if (e>0) {
-    bool processed = false, down = !(e&(1<<30));
-    e &= ~(1<<30);
-    if (e < 1000) {
-      event.type = (down? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP);
-      event.kbd.keycode = (Common::KeyCode)e;
-      event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & Common::KBD_SHIFT)?
+	bool processed = false, down = !(e&(1<<30));
+	e &= ~(1<<30);
+	if (e < 1000) {
+	  event.type = (down? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP);
+	  event.kbd.keycode = (Common::KeyCode)e;
+	  event.kbd.ascii = (e>='a' && e<='z' && (event.kbd.flags & Common::KBD_SHIFT)?
 			  e &~ 0x20 : e);
-      processed = true;
-    } else if (down) {
-      if (e == 1005)
+	  processed = true;
+	} else if (down) {
+	  if (e == 1005)
 	setFeatureState(kFeatureVirtualKeyboard,
 			!getFeatureState(kFeatureVirtualKeyboard));
-    }
-    return processed;
+	}
+	return processed;
   } else if (_ms_cur_x != _ms_old_x || _ms_cur_y != _ms_old_y) {
-    event.type = Common::EVENT_MOUSEMOVE;
-    _ms_old_x = _ms_cur_x;
-    _ms_old_y = _ms_cur_y;
-    return true;
+	event.type = Common::EVENT_MOUSEMOVE;
+	_ms_old_x = _ms_cur_x;
+	_ms_old_y = _ms_cur_y;
+	return true;
   } else {
-    event.type = (Common::EventType)0;
-    return false;
+	event.type = (Common::EventType)0;
+	return false;
   }
 }

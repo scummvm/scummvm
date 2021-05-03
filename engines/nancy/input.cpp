@@ -50,7 +50,7 @@ void InputManager::processEvents() {
 			}
 			break;
 		case EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (_inputBeginState == nullptr) {
+			if (_inputBeginState == NancyState::kNone) {
 				_inputBeginState = g_nancy->getState();
 			}
 
@@ -125,7 +125,7 @@ void InputManager::processEvents() {
 	}
 
 	if (_inputs == 0 && _otherKbdInput.size() == 0) {
-		_inputBeginState = nullptr;
+		_inputBeginState = NancyState::kNone;
 	}
 }
 

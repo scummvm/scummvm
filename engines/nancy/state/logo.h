@@ -41,7 +41,7 @@ public:
 
 	// State API
 	virtual void process() override;
-	virtual bool onStateExit() override;
+	virtual void onStateExit() override;
 
 private:
 	void init();

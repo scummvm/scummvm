@@ -24,58 +24,37 @@ namespace Tony {
 
 static const TonyGameDescription gameDescriptions[] = {
 	{
-		// Tony Tough English not installed
+		// Tony Tough English
 		{
 			"tony",
 			0,
-			// TODO: AdvancedDetector seems to have a problem where it thinks data1.cab is unrecognized.
-			// Is it perhaps because the Agos engine also has detection entries for data1.cab?
-			AD_ENTRY1s("data1.cab", "ce82907242166bfb594d97bdb68f96d2", 4350),
+			{
+				{ "roasted.mpc", 0, "57c4a3860cf899443c357e0078ea6f49", 366773 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "aebc6eb607ee19cc94bfe9c11898bb8c", 243003502 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
 	{
-		// Tony Tough Czech not installed
+		// Tony Tough Czech
 		{
 			"tony",
 			0,
-			// TODO: AdvancedDetector seems to have a problem where it thinks data1.cab is unrecognized.
-			// Is it perhaps because the Agos engine also has detection entries for data1.cab?
-			AD_ENTRY1s("data1.cab", "c6d5dd8f0c1241a6e3f7861b7f27bf7b", 4350),
+			{
+				{ "roasted.mpc", 0, "a8283a101878f3ca105f1f83f07e2c40", 386491 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "3384bdcb70d1e1ecedbde26e79683ede", 299019523 },
+				AD_LISTEND
+			},
 			Common::CZ_CZE,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough English Demo
-		{
-			"tony",
-			"Extracted Demo",
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 14972409,
-					   "roasted.mpc", "1e247922ec869712bfd96625bc4d3c7c", 39211),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough English Demo (Compressed)
-		{
-			"tony",
-			"Demo",
-			AD_ENTRY1s("data1.cab", "7d8b6d308f96aee3968ad7910fb11e6d", 58660608),
-			Common::EN_ANY,
-			Common::kPlatformWindows,
-			ADGF_DEMO | GF_COMPRESSED,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -85,11 +64,15 @@ static const TonyGameDescription gameDescriptions[] = {
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "e890c6a41238827bdfa9874a65618b69", 374135),
+			{
+				{ "roasted.mpc", 0, "e890c6a41238827bdfa9874a65618b69", 374135 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "aebc6eb607ee19cc94bfe9c11898bb8c", 243003502 },
+				AD_LISTEND
+			},
 			Common::FR_FRA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -99,67 +82,15 @@ static const TonyGameDescription gameDescriptions[] = {
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "ccf7ab939a34de1b13df538596431684", 389554),
+			{
+				{ "roasted.mpc", 0, "ccf7ab939a34de1b13df538596431684", 389554 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "6a3c2f5426ab762bf4dc9826796aa320", 279745055 },
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough Italian provided by Fabio Barzagli
-		{
-			"tony",
-			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "1dc896cdb945170d7408598f803411c1", 380001),
-			Common::IT_ITA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough Italian provided by Giovanni Bajo
-		{
-			"tony",
-			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "6202816f991b15af82aab84e3e4be011", 380183),
-			Common::IT_ITA,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough Polish provided by Fabio Barzagli
-		{
-			"tony",
-			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "89733ea710669acc8e7900b115f4afef", 389625),
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOMIDI)
-		},
-	},
-
-	{
-		// Tony Tough Polish provided by iGom bug #11546
-		{
-			"tony",
-			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "c212a81e34edf92bc177a80f24780bd2", 380200),
-			Common::PL_POL,
-			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -169,53 +100,87 @@ static const TonyGameDescription gameDescriptions[] = {
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "187de6f88f4083808cb66342ab55a7fd", 389904),
+			{
+				{ "roasted.mpc", 0, "187de6f88f4083808cb66342ab55a7fd", 389904 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, 0, -1 },	// FIXME
+				AD_LISTEND
+			},
 			Common::DE_DEU,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
 	{
-		// Tony Tough Czech provided in bug #6137
+		// Tony Tough Italian provided by Fabio Barzagli
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "a8283a101878f3ca105f1f83f07e2c40", 386491),
-			Common::CZ_CZE,
+			{
+				{ "roasted.mpc", 0, "1dc896cdb945170d7408598f803411c1", 380001 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "f9f1ac8f63a909bb3ed972490dae65c4", 286130226 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
 	{
-		// Tony Tough English Unpacked
+		// Tony Tough Italian provided by Giovanni Bajo
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "57c4a3860cf899443c357e0078ea6f49", 366773),
-			Common::EN_ANY,
+			{
+				{ "roasted.mpc", 0, "6202816f991b15af82aab84e3e4be011", 380183 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "f9f1ac8f63a909bb3ed972490dae65c4", 286130226 },
+				AD_LISTEND
+			},
+			Common::IT_ITA,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
 
 	{
-		// Tony Tough German "Shoe Box", reported in bug #6174
+		// Tony Tough Polish provided by iGom bug #11546
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "bc3471f098e591dc509dcad401a8d8a5", 389554),
-			Common::EN_ANY,
+			{
+				{ "roasted.mpc", 0, "c212a81e34edf92bc177a80f24780bd2", 380200 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "544b1db3a41b0f89567267d0664183bb", 321349288 },
+				AD_LISTEND
+			},
+			Common::PL_POL,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+	{
+		// Tony Tough Polish provided by Fabio Barzagli
+		{
+			"tony",
+			0,
+			{
+				{ "roasted.mpc", 0, "89733ea710669acc8e7900b115f4afef", 389625 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "544b1db3a41b0f89567267d0664183bb", 310906270 },
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
@@ -225,14 +190,71 @@ static const TonyGameDescription gameDescriptions[] = {
 		{
 			"tony",
 			0,
-			AD_ENTRY2s("roasted.mpr", "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071,
-					   "roasted.mpc", "377d6e24adeedc6c5c09c31b92231218", 391536),
+			{
+				{ "roasted.mpc", 0, "377d6e24adeedc6c5c09c31b92231218", 391536 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 135911071 },
+				{ "voices.vdb",  0, "af4061f49b934086710f0d41e6250a15", 325225827 },
+				AD_LISTEND
+			},
 			Common::RU_RUS,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			ADGF_DROPPLATFORM,
 			GUIO1(GUIO_NOMIDI)
 		},
 	},
+
+	{
+		// Tony Tough English Demo
+		{
+			"tony",
+			"Extracted Demo",
+			{
+				{ "roasted.mpc", 0, "1e247922ec869712bfd96625bc4d3c7c", 39211 },
+				{ "roasted.mpr", 0, "06203dbbc85fdd1e6dc8fc211c1a6207", 14972409 },
+				{ "voices.vdb",  0, "f9f1ac8f63a909bb3ed972490dae65c4", 20189260 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+
+#if 0
+	// Disabling this detection entry. The package contains _only_ standard list
+	// of InnoSetup files:
+	//
+	// DATA.TAG     SETUP.INI    _ISDEL.EXE   _sys1.cab    data1.cab    layout.bin
+	// setup.bmp    setup.lid    SETUP.EXE    _INST32I.EX_ _setup.dll   _user1.cab
+	// lang.dat     os.dat       setup.ins
+	//
+	// As a result, adding this entry will lead to a false "unknown variant for tony-demo"
+	// For practically all games which use InnoSetup.
+	//
+	// The current AdvancedDetector code always will show the end user the detected
+	// game AND this entry, which is very annoying
+	//
+	// The only potential solution is to make AD work with the InnoSetup archives,
+	// that is, make it look inside of the archive and if it contains the matching
+	// file names, only then report it as an unknown variant.
+	{
+		// Tony Tough English Demo (Compressed)
+		{
+			"tony",
+			"Demo",
+			{
+				{ "data1.cab", 0, "7d8b6d308f96aee3968ad7910fb11e6d", 58660608 },
+				{ "data.tag", 0, "e9af151040745e83081e691356abeed7", 137 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO | GF_COMPRESSED | ADGF_DROPPLATFORM,
+			GUIO1(GUIO_NOMIDI)
+		},
+	},
+#endif
 
 	{ AD_TABLE_END_MARKER }
 };

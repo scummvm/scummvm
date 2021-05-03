@@ -33,7 +33,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/svg.h"
 #include "graphics/VectorRenderer.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/ttf.h"
@@ -190,11 +190,15 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system(nullptr), _vectorRenderer(nullptr),
 	_layerToDraw(kDrawLayerBackground), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
 	_font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
-	_cursor(nullptr) {
+	_cursor(nullptr), _scaleFactor(1.0f) {
+
+	_baseWidth = 640;	// Default sane values
+	_baseHeight = 480;
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
 	_themeEval = new GUI::ThemeEval();
+	_themeEval->setScaleFactor(_scaleFactor);
 
 	_useCursor = false;
 
@@ -226,9 +230,9 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 
 	_cursorHotspotX = _cursorHotspotY = 0;
 	_cursorWidth = _cursorHeight = 0;
+	_cursorTransparent = 255;
 #ifndef USE_RGB_COLOR
 	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	_cursorTransparent = 255;
 	_cursorPalSize = 0;
 #endif
 
@@ -247,22 +251,13 @@ ThemeEngine::~ThemeEngine() {
 
 	// Release all graphics surfaces
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-		Graphics::Surface *surf = i->_value;
+		Graphics::ManagedSurface *surf = i->_value;
 		if (surf) {
 			surf->free();
 			delete surf;
 		}
 	}
 	_bitmaps.clear();
-
-	for (AImagesMap::iterator i = _abitmaps.begin(); i != _abitmaps.end(); ++i) {
-		Graphics::TransparentSurface *surf = i->_value;
-		if (surf) {
-			surf->free();
-			delete surf;
-		}
-	}
-	_abitmaps.clear();
 
 	delete _parser;
 	delete _themeEval;
@@ -310,8 +305,14 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 }
 
 
+void ThemeEngine::setBaseResolution(int w, int h, float s) {
+	_baseWidth = w;
+	_baseHeight = h;
+	_scaleFactor = s;
 
-
+	_parser->setBaseResolution(w, h, s);
+	_themeEval->setScaleFactor(s);
+}
 
 /**********************************************************
  * Theme setup/initialization
@@ -381,22 +382,13 @@ void ThemeEngine::refresh() {
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat()) {
 		for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
-			Graphics::Surface *surf = i->_value;
+			Graphics::ManagedSurface *surf = i->_value;
 			if (surf) {
 				surf->free();
 				delete surf;
 			}
 		}
 		_bitmaps.clear();
-
-		for (AImagesMap::iterator i = _abitmaps.begin(); i != _abitmaps.end(); ++i) {
-			Graphics::TransparentSurface *surf = i->_value;
-			if (surf) {
-				surf->free();
-				delete surf;
-			}
-		}
-		_abitmaps.clear();
 	}
 
 	init();
@@ -571,11 +563,9 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 				error("Couldn't load font '%s'/'%s'", file.c_str(), scalableFile.c_str());
 #ifdef USE_TRANSLATION
 				TransMan.setLanguage("C");
-#ifdef USE_TTS
 				Common::TextToSpeechManager *ttsMan;
 				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
 					ttsMan->setLanguage("en");
-#endif // USE_TTS
 #endif // USE_TRANSLATION
 
 				// No font, cleanup TextDrawData
@@ -589,11 +579,9 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 			// FIXME If we return false anyway why would we attempt the fall-back in the first place?
 #ifdef USE_TRANSLATION
 			TransMan.setLanguage("C");
-#ifdef USE_TTS
-				Common::TextToSpeechManager *ttsMan;
-				if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
-					ttsMan->setLanguage("en");
-#endif // USE_TTS
+			Common::TextToSpeechManager *ttsMan;
+			if ((ttsMan = g_system->getTextToSpeechManager()) != nullptr)
+				ttsMan->setLanguage("en");
 #endif // USE_TRANSLATION
 			// Returning true here, would allow falling back to standard fonts for the missing ones,
 			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
@@ -682,11 +670,40 @@ bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
 	return true;
 }
 
-bool ThemeEngine::addBitmap(const Common::String &filename) {
+bool ThemeEngine::addBitmap(const Common::String &filename, const Common::String &scalablefile, int width, int height) {
 	// Nothing has to be done if the bitmap already has been loaded.
-	Graphics::Surface *surf = _bitmaps[filename];
-	if (surf)
+	Graphics::ManagedSurface *surf = _bitmaps[filename];
+	if (surf) {
+		surf->free();
+		delete surf;
+		surf = nullptr;
+
+		_bitmaps.erase(filename);
+	}
+
+	if (!scalablefile.empty()) {
+		Graphics::SVGBitmap *image = nullptr;
+		Common::ArchiveMemberList members;
+		_themeFiles.listMatchingMembers(members, scalablefile);
+		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
+			Common::SeekableReadStream *stream = (*i)->createReadStream();
+			if (stream) {
+				image = new Graphics::SVGBitmap(stream);
+				break;
+			}
+		}
+
+		if (image) {
+			_bitmaps[filename] = new Graphics::ManagedSurface(width * _scaleFactor, height * _scaleFactor, *image->getPixelFormat());
+			image->render(*_bitmaps[filename], width * _scaleFactor, height * _scaleFactor);
+
+			delete image;
+		} else {
+			return false;
+		}
+
 		return true;
+	}
 
 	const Graphics::Surface *srcSurface = nullptr;
 
@@ -710,7 +727,7 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = srcSurface->convertTo(_overlayFormat);
+			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
 #else
 		error("No PNG support compiled in");
 #endif
@@ -731,55 +748,19 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 		}
 
 		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = srcSurface->convertTo(_overlayFormat);
+			surf = new Graphics::ManagedSurface(srcSurface->convertTo(_overlayFormat));
 	}
 
+	if (_scaleFactor != 1.0 && surf) {
+		Graphics::Surface *tmp2 = surf->rawSurface().scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
+
+		surf->free();
+		delete surf;
+
+		surf = new Graphics::ManagedSurface(tmp2);
+	}
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
-
-	return surf != nullptr;
-}
-
-bool ThemeEngine::addAlphaBitmap(const Common::String &filename) {
-	// Nothing has to be done if the bitmap already has been loaded.
-	Graphics::TransparentSurface *surf = _abitmaps[filename];
-	if (surf)
-		return true;
-
-#ifdef USE_PNG
-	const Graphics::TransparentSurface *srcSurface = nullptr;
-#endif
-
-	if (filename.hasSuffix(".png")) {
-		// Maybe it is PNG?
-#ifdef USE_PNG
-		Image::PNGDecoder decoder;
-		Common::ArchiveMemberList members;
-		_themeFiles.listMatchingMembers(members, filename);
-		for (Common::ArchiveMemberList::const_iterator i = members.begin(), end = members.end(); i != end; ++i) {
-			Common::SeekableReadStream *stream = (*i)->createReadStream();
-			if (stream) {
-				if (!decoder.loadStream(*stream))
-					error("Error decoding PNG");
-
-				srcSurface = new Graphics::TransparentSurface(*decoder.getSurface(), true);
-				delete stream;
-				if (srcSurface)
-					break;
-			}
-		}
-
-		if (srcSurface && srcSurface->format.bytesPerPixel != 1)
-			surf = srcSurface->convertTo(_overlayFormat);
-#else
-		error("No PNG support compiled in");
-#endif
-	} else {
-		error("Only PNG is supported as alphabitmap");
-	}
-
-	// Store the surface into our hashmap (attention, may store NULL entries!)
-	_abitmaps[filename] = surf;
 
 	return surf != nullptr;
 }
@@ -1060,7 +1041,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::U32String &str
 }
 
 void ThemeEngine::drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
-                                     ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
+									 ThemeEngine::WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1279,7 +1260,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::U32String
 	}
 }
 
-void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans) {
+void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans) {
 	if (!ready())
 		return;
 
@@ -1287,10 +1268,7 @@ void ThemeEngine::drawSurface(const Common::Point &p, const Graphics::Surface &s
 		return;
 
 	_vectorRenderer->setClippingRect(_clip);
-	if (themeTrans)
-		_vectorRenderer->blitKeyBitmap(&surface, p);
-	else
-		_vectorRenderer->blitSubSurface(&surface, p);
+	_vectorRenderer->blitKeyBitmap(&surface, p, themeTrans);
 
 	Common::Rect dirtyRect = Common::Rect(p.x, p.y, p.x + surface.w, p.y + surface.h);
 	dirtyRect.clip(_clip);
@@ -1324,7 +1302,7 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 }
 
 void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Array<int> &tabWidths,
-                          const Common::Array<Common::U32String> &tabs, int active, bool rtl) {
+						  const Common::Array<Common::U32String> &tabs, int active, bool rtl) {
 	if (!ready())
 		return;
 
@@ -1376,8 +1354,8 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, const Common::Ar
 }
 
 void ThemeEngine::drawText(const Common::Rect &r, const Common::U32String &str, WidgetStateInfo state,
-                           Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis,
-                           FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
+						   Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis,
+						   FontStyle font, FontColor color, bool restore, const Common::Rect &drawableTextArea) {
 	if (!ready())
 		return;
 
@@ -1544,7 +1522,7 @@ void ThemeEngine::applyScreenShading(ShadingStyle style) {
 
 bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int hotspotY) {
 	// Try to locate the specified file among all loaded bitmaps
-	const Graphics::Surface *cursor = _bitmaps[filename];
+	const Graphics::ManagedSurface *cursor = _bitmaps[filename];
 	if (!cursor)
 		return false;
 

@@ -116,7 +116,7 @@ void PreGob::setCursor(Surface &sprite, int16 hotspotX, int16 hotspotY) {
 }
 
 void PreGob::setCursor(Surface &sprite, int16 left, int16 top, int16 right, int16 bottom,
-                       int16 hotspotX, int16 hotspotY) {
+					   int16 hotspotX, int16 hotspotY) {
 
 	const int width  = right  - left + 1;
 	const int height = bottom - top  + 1;

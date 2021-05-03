@@ -165,11 +165,13 @@ protected:
 		return _videoMode.scaleFactor;
 	}
 
-	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
+	virtual void handleResizeImpl(const int width, const int height) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
 
 	virtual void setupHardwareSize();
+
+	void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	/* SDL2 features a different API for 2D graphics. We create a wrapper

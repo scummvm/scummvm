@@ -43,6 +43,24 @@ BaseScriptable *makeSXSteamAPI(BaseGame *inGame, ScStack *stack) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+Common::AchievementsInfo getAchievementsInfo() {
+	const MetaEngine *meta = g_engine->getMetaEngine();
+	const Common::String target = BaseEngine::instance().getGameTargetName();
+	return meta->getAchievementsInfo(target);
+}
+
+//////////////////////////////////////////////////////////////////////////
+Common::String getAchievementMessage(const Common::AchievementsInfo &info, const char *id) {
+	for (uint32 i = 0; i < info.descriptions.size(); i++) {
+		if (strcmp(info.descriptions[i].id, id) == 0) {
+			return info.descriptions[i].title;
+		}
+	}
+	return id;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 SXSteamAPI::SXSteamAPI(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
 	init();
@@ -50,9 +68,7 @@ SXSteamAPI::SXSteamAPI(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame
 
 //////////////////////////////////////////////////////////////////////////
 void SXSteamAPI::init() {
-	const MetaEngine *meta = g_engine->getMetaEngine();
-	const Common::String target = BaseEngine::instance().getGameTargetName();
-	_achievementsInfo = meta->getAchievementsInfo(target);
+	_achievementsInfo = getAchievementsInfo();
 
 	if (!_achievementsInfo.appId.empty()) {
 		AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, _achievementsInfo.appId);
@@ -92,15 +108,7 @@ bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "SetAchievement") == 0) {
 		stack->correctParams(1);
 		const char *id = stack->pop()->getString();
-
-		Common::String msg = id;
-		for (uint32 i = 0; i < _achievementsInfo.descriptions.size(); i++) {
-			if (strcmp(_achievementsInfo.descriptions[i].id, id) == 0) {
-				msg = _achievementsInfo.descriptions[i].title;
-				break;
-			}
-		}
-
+		Common::String msg = getAchievementMessage(_achievementsInfo, id);
 		stack->pushBool(AchMan.setAchievement(id, msg));
 		return STATUS_OK;
 	}

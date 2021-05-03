@@ -42,18 +42,20 @@ namespace UI {
 class Viewport : public Nancy::RenderObject {
 public:
 	Viewport() :
-		RenderObject(),
+		RenderObject(6),
 		_movementLastFrame(0),
 		_edgesMask(0),
 		_currentFrame(0),
-		_videoFormat(0) {}
+		_videoFormat(0),
+		_stickyCursorPos(-1, -1),
+		_dontWrap(kFalse) {}
 		
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	virtual void init() override;
 	void handleInput(NancyInput &input);
 
-	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, uint16 format = 2, const Common::String &palette = Common::String());
+	void loadVideo(const Common::String &filename, uint frameNr = 0, uint verticalScroll = 0, NancyFlag dontWrap = kFalse, uint16 format = 2, const Common::String &palette = Common::String());
 
 	void setFrame(uint frameNr);
 	void setNextFrame();
@@ -65,31 +67,27 @@ public:
 
 	uint16 getFrameCount() const { return _decoder.isVideoLoaded() ? _decoder.getFrameCount() : 0; }
 	uint16 getCurFrame() const { return _currentFrame; }
-	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y - 1; }
-	uint16 getMaxScroll() const { return _fullFrame.h - _drawSurface.h - 1; }
+	uint16 getCurVerticalScroll() const { return _drawSurface.getOffsetFromOwner().y; }
+	uint16 getMaxScroll() const;
 
 	Common::Rect getBoundsByFormat(uint format) const; // used by video
 
 	Common::Rect convertViewportToScreen(const Common::Rect &viewportRect) const;
 	Common::Rect convertScreenToViewport(const Common::Rect &viewportRect) const;
 
-	// 0 is inactive, -1 is keep unchanged
-	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 	void disableEdges(byte edges);
 	void enableEdges(byte edges);
 
 protected:
-	virtual uint16 getZOrder() const override { return 6; }
+	void setEdgesSize(uint16 upSize, uint16 downSize, uint16 leftSize, uint16 rightSize);
 
-	Common::Rect _upHotspot;
-	Common::Rect _downHotspot;
-	Common::Rect _leftHotspot;
-	Common::Rect _rightHotspot;
-
+	Common::Rect _nonScrollZone;
 	byte _edgesMask;
 
 	byte _movementLastFrame;
 	Time _nextMovementTime;
+
+	NancyFlag _dontWrap;
 
 	AVFDecoder _decoder;
 	uint16 _currentFrame;
@@ -97,6 +95,7 @@ protected:
 	Graphics::ManagedSurface _fullFrame;
 	Common::Rect _format1Bounds;
 	Common::Rect _format2Bounds;
+	Common::Point _stickyCursorPos;
 };
 
 } // End of namespace UI

@@ -243,8 +243,8 @@ void runhcmp(runcxdef *ctx, uint siz, uint below,
 
 		/* check the explicitly referenced value pointers as well */
 #define CHECK_VAL(val) \
-        if (val && val->runsv.runsvstr == hp) \
-            ref = TRUE, val->runsv.runsvstr = dst;
+		if (val && val->runsv.runsvstr == hp) \
+			ref = TRUE, val->runsv.runsvstr = dst;
 		CHECK_VAL(val1);
 		CHECK_VAL(val2);
 		CHECK_VAL(val3);

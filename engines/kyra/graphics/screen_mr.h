@@ -46,6 +46,7 @@ public:
 private:
 	static const ScreenDim _screenDimTable[];
 	static const int _screenDimTableCount;
+	const int _interfaceCommandLineY1;
 };
 
 } // End of namespace Kyra

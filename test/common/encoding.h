@@ -173,14 +173,14 @@ public:
 		uint16 *result16 = Common::U32String((uint32 *) utf32, 3).encodeUTF16Native(NULL);
 		TS_ASSERT(result16 != NULL);
 		TS_ASSERT_EQUALS(memcmp(result16, utf16, 8), 0);
-		free(result16);
+		delete[] result16;
 
 		// UTF8 to UTF16
 
 		result16 = Common::U32String((char *) utf8, 6, Common::kUtf8).encodeUTF16Native(NULL);
 		TS_ASSERT(result16 != NULL);
 		TS_ASSERT_EQUALS(memcmp(result16, utf16, 8), 0);
-		free(result16);
+		delete[] result16;
 
 		// UTF8 to UTF32
 		Common::U32String resultustr = Common::String((const char *) utf8, 6).decode(Common::kUtf8);
@@ -207,7 +207,7 @@ public:
 		uint16 *result16 = Common::U32String((char *) utf8, 6, Common::kUtf8).encodeUTF16BE(NULL);
 		TS_ASSERT(result16 != NULL);
 		TS_ASSERT_EQUALS(memcmp(result16, utf16be, 8), 0);
-		free(result16);
+		delete[] result16;
 
 	}
 
@@ -226,7 +226,7 @@ public:
 		uint16 *result16 = Common::U32String((char *) utf8, 6, Common::kUtf8).encodeUTF16LE(NULL);
 		TS_ASSERT(result16 != NULL);
 		TS_ASSERT_EQUALS(memcmp(result16, utf16le, 8), 0);
-		free(result16);
+		delete[] result16;
 	
 	}
 

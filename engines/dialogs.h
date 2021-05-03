@@ -91,14 +91,6 @@ public:
 
 private:
 	OptionsContainerWidget *_engineOptions;
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-public:
-	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
-
-private:
-	Dialog *_keysDialog;
-#endif
 };
 
 class ExtraGuiOptionsWidget : public OptionsContainerWidget {

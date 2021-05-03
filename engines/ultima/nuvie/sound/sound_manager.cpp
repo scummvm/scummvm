@@ -337,49 +337,49 @@ bool SoundManager::LoadObjectSamples (string sound_dir)
   build_path(sound_dir, "obj_samples.cfg", scriptname);
 
   if(niof.open (scriptname) == false)
-    return false;
+	return false;
 
   sz = (char *) niof.readAll ();
 
   token1 = strtok (sz, seps);
 
   while ((token1 != NULL) && ((token2 = strtok (NULL, seps)) != NULL))
-    {
-      int id = atoi (token1);
-      DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
-      Sound *ps;
-      ps = SampleExists (token2);
-      if (ps == NULL)
-        {
-          Sample *s;
-          s = new Sample;
-          build_path(sound_dir, token2, samplename);
-          if (!s->Init (samplename.c_str ()))
-            {
-              DEBUG(0,LEVEL_ERROR,"could not load %s\n", samplename.c_str ());
-            }
-          ps = s;
-          m_Samples.push_back (ps);     //add it to our global list
-        }
-      if (ps != NULL)
-        {                       //we have a valid sound
-          SoundCollection *psc;
-          Std::map < int, SoundCollection * >::iterator it;
-          it = m_ObjectSampleMap.find (id);
-          if (it == m_ObjectSampleMap.end ())
-            {                   //is there already a collection for this entry?
-              psc = new SoundCollection;        //no, create a new sound collection
-              psc->m_Sounds.push_back (ps);     //add this sound to the collection
-              m_ObjectSampleMap.insert (Std::make_pair (id, psc));      //insert this pair into the map
-            }
-          else
-            {
-              psc = (*it).second;       //yes, get the existing
-              psc->m_Sounds.push_back (ps);     //add this sound to the collection
-            }
-        }
-      token1 = strtok (NULL, seps);
-    }
+	{
+	  int id = atoi (token1);
+	  DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
+	  Sound *ps;
+	  ps = SampleExists (token2);
+	  if (ps == NULL)
+		{
+		  Sample *s;
+		  s = new Sample;
+		  build_path(sound_dir, token2, samplename);
+		  if (!s->Init (samplename.c_str ()))
+			{
+			  DEBUG(0,LEVEL_ERROR,"could not load %s\n", samplename.c_str ());
+			}
+		  ps = s;
+		  m_Samples.push_back (ps);     //add it to our global list
+		}
+	  if (ps != NULL)
+		{                       //we have a valid sound
+		  SoundCollection *psc;
+		  Std::map < int, SoundCollection * >::iterator it;
+		  it = m_ObjectSampleMap.find (id);
+		  if (it == m_ObjectSampleMap.end ())
+			{                   //is there already a collection for this entry?
+			  psc = new SoundCollection;        //no, create a new sound collection
+			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
+			  m_ObjectSampleMap.insert (Std::make_pair (id, psc));      //insert this pair into the map
+			}
+		  else
+			{
+			  psc = (*it).second;       //yes, get the existing
+			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
+			}
+		}
+	  token1 = strtok (NULL, seps);
+	}
   return true;
 };
 
@@ -396,52 +396,52 @@ bool SoundManager::LoadTileSamples (string sound_dir)
   build_path(sound_dir, "tile_samples.cfg", scriptname);
 
   if(niof.open (scriptname) == false)
-    {
-     DEBUG(0,LEVEL_ERROR,"opening %s\n",scriptname.c_str());
-     return false;
-    }
+	{
+	 DEBUG(0,LEVEL_ERROR,"opening %s\n",scriptname.c_str());
+	 return false;
+	}
 
   sz = (char *) niof.readAll ();
 
   token1 = strtok (sz, seps);
 
   while ((token1 != NULL) && ((token2 = strtok (NULL, seps)) != NULL))
-    {
-      int id = atoi (token1);
-      DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
-      Sound *ps;
-      ps = SampleExists (token2);
-      if (ps == NULL)
-        {
-          Sample *s;
-          s = new Sample;
-          build_path(sound_dir, token2, samplename);
-          if (!s->Init (samplename.c_str ()))
-            {
-              DEBUG(0,LEVEL_ERROR,"could not load %s\n", samplename.c_str ());
-            }
-          ps = s;
-          m_Samples.push_back (ps);     //add it to our global list
-        }
-      if (ps != NULL)
-        {                       //we have a valid sound
-          SoundCollection *psc;
-          Std::map < int, SoundCollection * >::iterator it;
-          it = m_TileSampleMap.find (id);
-          if (it == m_TileSampleMap.end ())
-            {                   //is there already a collection for this entry?
-              psc = new SoundCollection;        //no, create a new sound collection
-              psc->m_Sounds.push_back (ps);     //add this sound to the collection
-              m_TileSampleMap.insert (Std::make_pair (id, psc));        //insert this pair into the map
-            }
-          else
-            {
-              psc = (*it).second;       //yes, get the existing
-              psc->m_Sounds.push_back (ps);     //add this sound to the collection
-            }
-        }
-      token1 = strtok (NULL, seps);
-    }
+	{
+	  int id = atoi (token1);
+	  DEBUG(0,LEVEL_DEBUGGING,"%d : %s\n", id, token2);
+	  Sound *ps;
+	  ps = SampleExists (token2);
+	  if (ps == NULL)
+		{
+		  Sample *s;
+		  s = new Sample;
+		  build_path(sound_dir, token2, samplename);
+		  if (!s->Init (samplename.c_str ()))
+			{
+			  DEBUG(0,LEVEL_ERROR,"could not load %s\n", samplename.c_str ());
+			}
+		  ps = s;
+		  m_Samples.push_back (ps);     //add it to our global list
+		}
+	  if (ps != NULL)
+		{                       //we have a valid sound
+		  SoundCollection *psc;
+		  Std::map < int, SoundCollection * >::iterator it;
+		  it = m_TileSampleMap.find (id);
+		  if (it == m_TileSampleMap.end ())
+			{                   //is there already a collection for this entry?
+			  psc = new SoundCollection;        //no, create a new sound collection
+			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
+			  m_TileSampleMap.insert (Std::make_pair (id, psc));        //insert this pair into the map
+			}
+		  else
+			{
+			  psc = (*it).second;       //yes, get the existing
+			  psc->m_Sounds.push_back (ps);     //add this sound to the collection
+			}
+		}
+	  token1 = strtok (NULL, seps);
+	}
   return true;
 };
 */

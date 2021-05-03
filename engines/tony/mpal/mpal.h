@@ -188,7 +188,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns	Version number (0x1232 = 1.2.3b)
  */
 #define mpalQueryVersion()                              \
-        (uint16)mpalQueryDWORD(MPQ_VERSION)
+		(uint16)mpalQueryDWORD(MPQ_VERSION)
 
 /**
  * Gets the numerical value of a global variable
@@ -200,7 +200,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *				within the library.
  */
 #define mpalQueryGlobalVar(lpszVarName)                 \
-        mpalQueryDWORD(MPQ_GLOBAL_VAR, (const char *)(lpszVarName))
+		mpalQueryDWORD(MPQ_GLOBAL_VAR, (const char *)(lpszVarName))
 
 /**
  * Provides access to a resource inside the .MPC file
@@ -209,7 +209,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Handle to a memory area containing the resource,  ready for use.
  */
 #define mpalQueryResource(dwResId)                      \
-        mpalQueryHANDLE(MPQ_RESOURCE, (uint32)(dwResId))
+		mpalQueryHANDLE(MPQ_RESOURCE, (uint32)(dwResId))
 
 /**
  * Returns a message.
@@ -220,14 +220,14 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
 *				after use. The message will be in ASCIIZ format.
 */
 #define mpalQueryMessage(nMsg)                          \
-        (char *)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
+		(char *)mpalQueryHANDLE(MPQ_MESSAGE, (uint32)(nMsg))
 
 /**
  * Provides a location image
  * @return		Returns a picture handle
  */
 #define mpalQueryLocationImage(nLoc)                    \
-        mpalQueryHANDLE(MPQ_LOCATION_IMAGE, (uint32)(nLoc))
+		mpalQueryHANDLE(MPQ_LOCATION_IMAGE, (uint32)(nLoc))
 
 /**
  * Request the x or y size of a location in pixels
@@ -237,7 +237,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Size
  */
 #define mpalQueryLocationSize(nLoc, dwCoord)             \
-        mpalQueryDWORD(MPQ_LOCATION_SIZE, (uint32)(nLoc), (uint32)(dwCoord))
+		mpalQueryDWORD(MPQ_LOCATION_SIZE, (uint32)(nLoc), (uint32)(dwCoord))
 
 /**
  * Provides the list of objects in a location.
@@ -247,7 +247,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  */
 // TODO: Determine if this is endian safe
 #define mpalQueryItemList(nLoc)                         \
-        (uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST, (uint32)(nLoc))
+		(uint32 *)mpalQueryHANDLE(MPQ_ITEM_LIST, (uint32)(nLoc))
 
 /**
  * Provides information on an item
@@ -256,7 +256,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		Structure filled with requested information
  */
 #define mpalQueryItemData(nItem)                          \
-        (LpItem)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
+		(LpItem)mpalQueryHANDLE(MPQ_ITEM_DATA, (uint32)(nItem))
 
 /**
  * Provides the current pattern of an item
@@ -266,7 +266,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @remarks		By default, the pattern of 0 indicates that we should do nothing.
  */
 #define mpalQueryItemPattern(nItem)                  \
-        mpalQueryDWORD(MPQ_ITEM_PATTERN, (uint32)(nItem))
+		mpalQueryDWORD(MPQ_ITEM_PATTERN, (uint32)(nItem))
 
 /**
  * Returns true if an item is active
@@ -275,7 +275,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		TRUE if the item is active, FALSE otherwise
  */
 #define mpalQueryItemIsActive(nItem)                  \
-        (bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE, (uint32)(nItem))
+		(bool)mpalQueryDWORD(MPQ_ITEM_IS_ACTIVE, (uint32)(nItem))
 
 /**
  * Returns the name of an item
@@ -287,7 +287,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  *				is less than or equal to 0), the string will be empty.
  */
 #define mpalQueryItemName(nItem, lpszName)             \
-        mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (char *)(lpszName))
+		mpalQueryHANDLE(MPQ_ITEM_NAME, (uint32)(nItem), (char *)(lpszName))
 
 /**
  * Returns a sentence of dialog.
@@ -300,14 +300,14 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * string terminated with 0.
  */
 #define mpalQueryDialogPeriod(nPeriod)                  \
-        (char *)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
+		(char *)mpalQueryHANDLE(MPQ_DIALOG_PERIOD, (uint32)(nPeriod))
 
 /**
  * Wait until the moment in which the need is signaled to make a choice by the user.
  * @returns		Number of choice to be made, or -1 if the dialogue is finished.
  */
 #define mpalQueryDialogWaitForChoice(dwRet)                  \
-        CORO_INVOKE_2(mpalQueryCORO, MPQ_DIALOG_WAITFORCHOICE, dwRet)
+		CORO_INVOKE_2(mpalQueryCORO, MPQ_DIALOG_WAITFORCHOICE, dwRet)
 
 /**
  * Requires a list of various options for some choice within the current dialog.
@@ -319,7 +319,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * The pointer msut be freed after use using the memory memory.
  */
 #define mpalQueryDialogSelectList(nChoice)              \
-        (uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST, (uint32)(nChoice))
+		(uint32 *)mpalQueryHANDLE(MPQ_DIALOG_SELECTLIST, (uint32)(nChoice))
 
 /**
  * Warns the library that the user has selected, in a certain choice of the current dialog,
@@ -333,10 +333,10 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * remains on hold again for another chosen by mpalQueryDialogWaitForChoice ().
  */
 #define mpalQueryDialogSelection(nChoice, dwData)        \
-        (bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
+		(bool)mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
 #define mpalQueryDialogSelectionDWORD(nChoice, dwData)        \
-        mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
+		mpalQueryDWORD(MPQ_DIALOG_SELECTION, (uint32)(nChoice), (uint32)(dwData))
 
 /**
  * Warns the library an action was performed on a Object.
@@ -352,7 +352,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * if the item is active, ie if its status is a positive number greater than 0.
  */
 #define mpalQueryDoAction(nAction, nItem, dwParam)      \
-        mpalQueryDWORD(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
+		mpalQueryDWORD(MPQ_DO_ACTION, (uint32)(nAction), (uint32)(nItem), (uint32)(dwParam))
 
 /**
  * Warns the library a dialogue was required.
@@ -363,7 +363,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * CORO_INVALID_PID_VALUE if the dialogue does not exist.
  */
 #define mpalQueryDoDialog(nDialog, nGroup)               \
-        mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog), (uint32)(nGroup))
+		mpalQueryDWORD(MPQ_DO_DIALOG, (uint32)(nDialog), (uint32)(nGroup))
 
 /**
  * @defgroup Functions exported to the main game
@@ -378,7 +378,7 @@ typedef LPITEMIRQFUNCTION* LPLPITEMIRQFUNCTION;
  * @returns		TRUE if all OK, FALSE on failure
  */
 bool mpalInit(const char *lpszFileName, const char *lpszMprFileName,
-              LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
+			  LPLPCUSTOMFUNCTION lplpcfArray, Common::String *lpcfStrings);
 
 /**
  * Frees resources allocated by the MPAL subsystem

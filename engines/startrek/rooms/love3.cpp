@@ -329,12 +329,12 @@ extern const RoomTextOffsets love3TextOffsets[] = {
 	{ TX_LOV3NA22, 10002, 0 },
 	{ TX_LOV3NA23, 1089, 0 },
 	{ TX_LOV3NJ32, 5767, 0 },
-    { TX_DIALOG_ERROR, 14528, 0 },
+	{ TX_DIALOG_ERROR, 14528, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText love3Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::love3Tick1() {

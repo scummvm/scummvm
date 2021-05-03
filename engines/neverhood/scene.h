@@ -222,7 +222,7 @@ protected:
 	void loadDataResource(uint32 fileHash);
 	uint16 convertMessageNum(uint32 messageNum);
 
-    void setHitRects(HitRectList *hitRects);
+	void setHitRects(HitRectList *hitRects);
 	void clearHitRects();
 	void clearCollisionSprites();
 

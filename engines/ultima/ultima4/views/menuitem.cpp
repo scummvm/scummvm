@@ -130,7 +130,7 @@ void BoolMenuItem::activate(MenuEvent &event) {
 }
 
 StringMenuItem::StringMenuItem(Common::String text, short xp, short yp, int shortcutKey,
-                               Common::String *val, const Std::vector<Common::String> &validSettings) :
+							   Common::String *val, const Std::vector<Common::String> &validSettings) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),
 	_validSettings(validSettings) {
@@ -166,7 +166,7 @@ void StringMenuItem::activate(MenuEvent &event) {
 }
 
 IntMenuItem::IntMenuItem(Common::String text, short xp, short yp, int shortcutKey, int *val,
-                         int min, int max, int increment, menuOutputType output) :
+						 int min, int max, int increment, menuOutputType output) :
 	MenuItem(text, xp, yp, shortcutKey),
 	_val(val),
 	_min(min),

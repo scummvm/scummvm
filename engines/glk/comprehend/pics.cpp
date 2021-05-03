@@ -333,8 +333,8 @@ void Pics::clear() {
 }
 
 void Pics::load(const Common::StringArray &roomFiles,
-                const Common::StringArray &itemFiles,
-                const Common::String &titleFile) {
+				const Common::StringArray &itemFiles,
+				const Common::String &titleFile) {
 	clear();
 
 	for (uint idx = 0; idx < roomFiles.size(); ++idx)

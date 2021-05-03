@@ -86,7 +86,7 @@ void JPRenderedText::draw(RenderSurface *surface, int x, int y, bool /*destmaske
 }
 
 void JPRenderedText::drawBlended(RenderSurface *surface, int x, int y,
-                                 uint32 col, bool /*destmasked*/) {
+								 uint32 col, bool /*destmasked*/) {
 	// TODO Support masking here??
 
 	PaletteManager *palman = PaletteManager::get_instance();

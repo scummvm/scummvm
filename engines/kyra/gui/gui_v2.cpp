@@ -520,6 +520,7 @@ int GUI_v2::scrollDownButton(Button *button) {
 int GUI_v2::resumeGame(Button *caller) {
 	updateMenuButton(caller);
 	_displayMenu = false;
+	_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
 	return 0;
 }
 
@@ -625,6 +626,7 @@ int GUI_v2::saveMenu(Button *caller) {
 	thumb.free();
 
 	_displayMenu = false;
+	_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
 	_madeSave = true;
 
 	return 0;
@@ -644,7 +646,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 			return 0;
 		} else {
 			_saveSlot = item.saveSlot;
-			strcpy(_saveDescription, getTableString(item.itemId).c_str());
+			Common::strlcpy(_saveDescription, item.itemString.c_str(), sizeof(_saveDescription));
 		}
 	} else if (item.saveSlot == -2) {
 		_saveSlot = getNextSavegameSlot();

@@ -41,6 +41,8 @@ SdlGraphicsManager::SdlGraphicsManager(SdlEventSource *source, SdlWindow *window
 	, _allowWindowSizeReset(false), _hintedWidth(0), _hintedHeight(0), _lastFlags(0)
 #endif
 {
+	ConfMan.registerDefault("fullscreen_res", "desktop");
+
 	SDL_GetMouseState(&_cursorX, &_cursorY);
 }
 
@@ -98,6 +100,23 @@ bool SdlGraphicsManager::setState(const State &state) {
 	} else {
 		return true;
 	}
+}
+
+Common::Rect SdlGraphicsManager::getPreferredFullscreenResolution() {
+	// Default to the desktop resolution, unless the user has set a
+	// resolution in the configuration file
+	const Common::String &fsres = ConfMan.get("fullscreen_res");
+	if (fsres != "desktop") {
+		uint newW, newH;
+		int converted = sscanf(fsres.c_str(), "%ux%u", &newW, &newH);
+		if (converted == 2) {
+			return Common::Rect(newW, newH);
+		} else {
+			warning("Could not parse 'fullscreen_res' option: expected WWWxHHH, got %s", fsres.c_str());
+		}
+	}
+
+	return _window->getDesktopResolution();
 }
 
 bool SdlGraphicsManager::defaultGraphicsModeConfig() const {
@@ -208,6 +227,10 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
 
 	int showCursor = SDL_DISABLE;
+	// DPI aware scaling to mouse position
+	uint scale = getFeatureState(BaseBackend::kFeatureHiDPI) ? 2 : 1;
+	mouse.x *= scale;
+	mouse.y *= scale;
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
 		_cursorLastInActiveArea = true;
@@ -257,7 +280,7 @@ void SdlGraphicsManager::setSystemMousePosition(const int x, const int y) {
 	}
 }
 
-void SdlGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
+void SdlGraphicsManager::handleResizeImpl(const int width, const int height) {
 	_forceRedraw = true;
 }
 
@@ -266,6 +289,9 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	if (!_window) {
 		return false;
 	}
+
+	// width *=3;
+	// height *=3;
 
 	// We only update the actual window when flags change (which usually means
 	// fullscreen mode is entered/exited), when updates are forced so that we

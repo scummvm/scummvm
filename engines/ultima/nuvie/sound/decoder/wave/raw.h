@@ -92,8 +92,8 @@ typedef Common::List<RawStreamBlock> RawStreamBlockList;
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(const uint8 *buffer, uint32 size,
-                                   int rate, uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -106,8 +106,8 @@ SeekableAudioStream *makeRawStream(const uint8 *buffer, uint32 size,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   int rate, uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   int rate, uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 /**
  * Creates an audio stream, which plays from the given stream.
@@ -124,10 +124,10 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  */
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
-                                   const RawStreamBlockList &blockList,
-                                   int rate,
-                                   uint8 flags,
-                                   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+								   const RawStreamBlockList &blockList,
+								   int rate,
+								   uint8 flags,
+								   DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 
 
 /**
@@ -147,9 +147,9 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
  * @return The new SeekableAudioStream (or 0 on failure).
  */
 SeekableAudioStream *makeRawDiskStream_OLD(Common::SeekableReadStream *stream,
-        RawStreamBlock *block, int numBlocks,
-        int rate, uint8 flags,
-        DisposeAfterUse::Flag disposeStream);
+		RawStreamBlock *block, int numBlocks,
+		int rate, uint8 flags,
+		DisposeAfterUse::Flag disposeStream);
 
 
 } // End of namespace Audio

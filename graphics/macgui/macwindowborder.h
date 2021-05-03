@@ -26,11 +26,25 @@
 #include "common/str.h"
 #include "common/list.h"
 
-#include "graphics/nine_patch.h"
 #include "graphics/managed_surface.h"
 #include "graphics/transparent_surface.h"
+#include "graphics/primitives.h"
+
+#include "image/bmp.h"
 
 namespace Graphics {
+
+class MacWindow;
+class MacWindowManager;
+class NinePatchBitmap;
+
+enum {
+	kWindowBorderActive    = 1 << 0,
+	kWindowBorderTitle     = 1 << 1,
+	kWindowBorderScrollbar = 1 << 2,
+
+	kWindowBorderMaxFlag   = 1 << 3
+};
 
 struct BorderOffsets {
 	int left;
@@ -40,6 +54,9 @@ struct BorderOffsets {
 	int titleTop;
 	int titleBottom;
 	bool dark;
+	int titlePos;
+	int upperScrollHeight;
+	int lowerScrollHeight;
 };
 
 /**
@@ -54,24 +71,19 @@ public:
 
 	/**
 	 * Accessor to check whether or not a border is loaded.
-	 * @param active State that we want to check. If true it checks for active border, if false it checks for inactive.
+	 * @param check whether the border type we want has been initialized.
 	 * @return True if the checked state has a border loaded, false otherwise.
 	 */
-	bool hasBorder(bool active);
+	bool hasBorder(uint32 flags);
 
 	/**
-	 * Add the given surface as the display of the border in the active state.
-	 * Will fail if there is already an active border.
+	 * Add the given surface as the display of the border in the state that is instructed by flag.
+	 * Will fail if there is already an border.
 	 * @param The surface that will be displayed.
+	 * @param The border type indicated by flag
+	 * @param The title position of bmp image
 	 */
-	void addActiveBorder(TransparentSurface *source);
-
-	/**
-	 * Add the given surface as the display of the border in the inactive state.
-	 * Will fail if there is already an inactive border.
-	 * @param The surface that will be displayed.
-	 */
-	void addInactiveBorder(TransparentSurface *source);
+	void addBorder(TransparentSurface *source, uint32 flags, int titlePos = 0);
 
 	/**
 	 * Accessor function for the custom offsets.
@@ -108,21 +120,45 @@ public:
 	 * Blit the desired border (active or inactive) into a destination surface.
 	 * It automatically resizes the border to fit the given surface.
 	 * @param destination The surface we want to blit into.
-	 * @param active True if we want to blit the active border, false otherwise.
+	 * @param border type that you want to draw
 	 * @param wm The window manager.
 	 */
-	void blitBorderInto(ManagedSurface &destination, bool active, MacWindowManager *wm);
+	void blitBorderInto(ManagedSurface &destination, uint32 flags, MacWindowManager *wm);
 
+	void setTitle(const Common::String& title, int width, MacWindowManager *wm);
+
+	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
+
+	void drawTitle(ManagedSurface *g, MacWindowManager *wm, int titleOffset);
+
+	void drawScrollBar(ManagedSurface *g, MacWindowManager *wm);
+
+	// we should call this method as soon as the macwindowborder is constructed
+	void setWindow(MacWindow *window) { _window = window; }
+
+	void setBorderType(int type);
+
+	void disableBorder();
+
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
+	void loadInternalBorder(uint32 flags);
+
+	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
+	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets);
 private:
+	int _scrollPos, _scrollSize;
+	Common::String _title;
 
-	NinePatchBitmap *_activeBorder;
-	NinePatchBitmap *_inactiveBorder;
+	Common::Array<NinePatchBitmap *> _border;
 
-	bool _activeInitialized;
-	bool _inactiveInitialized;
+	MacWindow *_window;
 
 	BorderOffsets _borderOffsets;
 
+	bool _useInternalBorder;
+
+	int _borderType;
 };
 
 } // End of namespace Graphics

@@ -29,6 +29,7 @@
 #include "director/cursor.h"
 #include "director/channel.h"
 #include "director/movie.h"
+#include "director/sound.h"
 #include "director/window.h"
 #include "director/stxt.h"
 
@@ -296,22 +297,37 @@ DigitalVideoCastMember::DigitalVideoCastMember(Cast *cast, uint16 castId, Common
 }
 
 DigitalVideoCastMember::~DigitalVideoCastMember() {
-	delete _video;
-
-	if (g_director->_pixelformat.bytesPerPixel != 1)
+	if (_lastFrame) {
+		_lastFrame->free();
 		delete _lastFrame;
+	}
+
+	if (_video)
+		delete _video;
 }
 
 bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 	// insert the right video decoder
 
+	if (_video)
+		delete _video;
+
 	_filename = path;
 	_video = new Video::QuickTimeDecoder();
 
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s", path.c_str());
+	bool result = _video->loadFile(path);
 
-	return _video->loadFile(path);
+	if (result && g_director->_pixelformat.bytesPerPixel == 1) {
+		// Director supports playing back RGB and paletted video in 256 colour mode.
+		// In both cases they are dithered to match the Director palette.
+		byte palette[256 * 3];
+		g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+		_video->setDitheringPalette(palette);
+	}
+
+	return result;
 }
 
 bool DigitalVideoCastMember::isModified() {
@@ -363,7 +379,7 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	}
 
 	// Do not render stopped videos
-	if (_channel->_movieRate == 0.0 && !_getFirstFrame) {
+	if (_channel->_movieRate == 0.0 && !_getFirstFrame && _lastFrame) {
 		widget->getSurface()->blitFrom(*_lastFrame);
 
 		return widget;
@@ -375,21 +391,15 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	_channel->_movieTime = getMovieCurrentTime();
 
 	if (frame) {
-		if (g_director->_pixelformat.bytesPerPixel == 1) {
-			if (frame->format.bytesPerPixel != 1) {
-				warning("STUB: video >8bpp");
-			} else {
-				_lastFrame = frame;
-				widget->getSurface()->blitFrom(*frame);
-			}
-		} else {
+		if (_lastFrame) {
+			_lastFrame->free();
 			delete _lastFrame;
-			_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
-			widget->getSurface()->blitFrom(*_lastFrame);
 		}
-	} else {
-		widget->getSurface()->blitFrom(*_lastFrame);
+
+		_lastFrame = frame->convertTo(g_director->_pixelformat, g_director->getPalette());
 	}
+	if (_lastFrame)
+		widget->getSurface()->blitFrom(*_lastFrame);
 
 	if (_getFirstFrame) {
 		_video->stop();
@@ -479,6 +489,11 @@ SoundCastMember::SoundCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_type = kCastSound;
 	_audio = nullptr;
 	_looping = 0;
+}
+
+SoundCastMember::~SoundCastMember() {
+	if (_audio)
+		delete _audio;
 }
 
 

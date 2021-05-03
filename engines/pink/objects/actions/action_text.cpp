@@ -36,6 +36,7 @@ namespace Pink {
 
 ActionText::ActionText() {
 	_txtWnd = nullptr;
+	_macText = nullptr;
 
 	_xLeft = _xRight = 0;
 	_yTop = _yBottom = 0;
@@ -86,8 +87,16 @@ void ActionText::start() {
 	delete stream;
 
 	switch(_actor->getPage()->getGame()->getLanguage()) {
-	case Common::RU_RUS:
-		_text = Common::String(str).decode(Common::kWindows1251);
+	case Common::DA_DAN:
+	case Common::ES_ESP:
+	case Common::FR_FRA:
+	case Common::PT_BRA:
+		_text = Common::String(str).decode(Common::kWindows1252);
+		break;
+
+	case Common::FI_FIN:
+	case Common::SE_SWE:
+		_text = Common::String(str).decode(Common::kWindows1257);
 		break;
 
 	case Common::HE_ISR:
@@ -95,6 +104,14 @@ void ActionText::start() {
 		if (!_centered) {
 			align = Graphics::kTextAlignRight;
 		}
+		break;
+
+	case Common::PL_POL:
+		_text = Common::String(str).decode(Common::kWindows1250);
+		break;
+
+	case Common::RU_RUS:
+		_text = Common::String(str).decode(Common::kWindows1251);
 		break;
 
 	case Common::EN_ANY:
@@ -109,42 +126,58 @@ void ActionText::start() {
 		_text.deleteLastChar();
 
 	if (_scrollBar) {
-		Graphics::MacFont *font = new Graphics::MacFont;
-		_txtWnd = director->getWndManager().addTextWindow(font, _textColorIndex, _backgroundColorIndex,
+		_txtWnd = director->getWndManager().addTextWindow(director->getTextFont(), _textColorIndex, _backgroundColorIndex,
 														  _xRight - _xLeft, align, nullptr, false);
-		_txtWnd->disableBorder();
+		_txtWnd->setTextColorRGB(_textRGB);
+		_txtWnd->enableScrollbar(true);
+		// it will hide the scrollbar when the text height is smaller than the window height
+		_txtWnd->setMode(Graphics::kWindowModeDynamicScrollbar);
 		_txtWnd->move(_xLeft, _yTop);
 		_txtWnd->resize(_xRight - _xLeft, _yBottom - _yTop);
 		_txtWnd->setEditable(false);
 		_txtWnd->setSelectable(false);
 
-		_txtWnd->appendText(_text, font);
+		_txtWnd->appendText(_text);
+		director->addTextWindow(_txtWnd);
 
 	} else {
 		director->addTextAction(this);
+
+		// alignment not working, thus we implement alignment for center manually
+		Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
+		if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
+			alignment = Graphics::kTextAlignRight;
+		}
+		_macText = new Graphics::MacText(_text, &director->getWndManager(), director->getTextFont(), _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
 	}
+}
+
+Common::Rect ActionText::getBound() {
+	return Common::Rect(_xLeft, _yTop, _xRight, _yBottom);
 }
 
 void ActionText::end() {
 	Director *director = _actor->getPage()->getGame()->getDirector();
 	if (_scrollBar && _txtWnd) {
 		director->getWndManager().removeWindow(_txtWnd);
+		director->removeTextWindow(_txtWnd);
 		_txtWnd = nullptr;
 	} else {
 		director->removeTextAction(this);
+		delete _macText;
 	}
 }
 
 void ActionText::draw(Graphics::ManagedSurface *surface) {
-	// not working
-	Graphics::TextAlign alignment = _centered ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
-	if (!_centered && _actor->getPage()->getGame()->getLanguage() == Common::HE_ISR) {
-		alignment = Graphics::kTextAlignRight;
+	int xOffset = 0, yOffset = 0;
+	// we need to first fill this area with backgroundColor, in order to wash away the previous text
+	surface->fillRect(Common::Rect(_xLeft, _yTop, _xRight, _yBottom), _backgroundColorIndex);
+
+	if (_centered) {
+		xOffset = (_xRight - _xLeft) / 2 - _macText->getTextMaxWidth() / 2;
+		yOffset = (_yBottom - _yTop) / 2 - _macText->getTextHeight() / 2;
 	}
-	Graphics::MacFont *font = new Graphics::MacFont();
-	Director *director = _actor->getPage()->getGame()->getDirector();
-	Graphics::MacText text(_text, &director->getWndManager(), font, _textColorIndex, _backgroundColorIndex, _xRight - _xLeft, alignment);
-	text.drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft, _yTop));
+	_macText->drawToPoint(surface, Common::Rect(0, 0, _xRight - _xLeft, _yBottom - _yTop), Common::Point(_xLeft + xOffset, _yTop + yOffset));
 }
 
 #define BLUE(rgb) ((rgb) & 0xFF)

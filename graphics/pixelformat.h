@@ -52,15 +52,7 @@ struct ColorComponent<0> {
 template<>
 struct ColorComponent<1> {
 	static inline uint expand(uint value) {
-		value &= 1;
-		return value |
-		       (value << 1) |
-		       (value << 2) |
-		       (value << 3) |
-		       (value << 4) |
-		       (value << 5) |
-		       (value << 6) |
-		       (value << 7);
+		return value ? 0xff : 0;
 	}
 };
 /** Template to expand a 2-bit component into an 8-bit component. */
@@ -156,9 +148,9 @@ struct PixelFormat {
 	}
 
 	/** Construct a pixel format based on the provided arguments.
-	 *  
+	 *
 	 *  Examples:
-	 *  
+	 *
 	 *  - RGBA8888:
 	 *  @code
 	 *  BytesPerPixel = 4, RBits = GBits = BBits = ABits = 8, RShift = 24, GShift = 16, BShift = 8, AShift = 0
@@ -284,10 +276,10 @@ struct PixelFormat {
 		return rBits() + gBits() + bBits() + aBits();
 	}
 	/** @} */
-	 
+
 	/**
 	 * @name Convenience functions for getting color components' maximum values
-	 * @{ 
+	 * @{
 	 */
 
 	/**

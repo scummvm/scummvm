@@ -199,7 +199,7 @@ void GoogleDriveUploadRequest::uploadNextPart() {
 	uint32 oldPos = _contentsStream->pos();
 	if (oldPos != _serverReceivedBytes) {
 		if (!_contentsStream->seek(_serverReceivedBytes)) {
-			warning("GoogleDriveUploadRequest: cannot upload because stream couldn't seek(%llu)", _serverReceivedBytes);
+			warning("GoogleDriveUploadRequest: cannot upload because stream couldn't seek(%llu)", (unsigned long long)_serverReceivedBytes);
 			finishError(Networking::ErrorResponse(this, false, true, "GoogleDriveUploadRequest::uploadNextPart: seek() didn't work", -1));
 			return;
 		}

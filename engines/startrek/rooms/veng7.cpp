@@ -89,7 +89,7 @@ extern const RoomTextOffsets veng7TextOffsets[] = {
 };
 
 extern const RoomText veng7Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::veng7Tick1() {

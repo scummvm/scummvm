@@ -204,9 +204,10 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
 
 	_paletteSize = ARRAYSIZE(palette) / 3;
-	_palette = (byte *)malloc(_paletteSize * 3);
-	if (_palette)
+	if (_paletteSize) {
+		_palette = (byte *)malloc(_paletteSize * 3);
 		memcpy(_palette, palette, _paletteSize * 3);
+	}
 
 	_fontMan = new MacFontManager(mode);
 
@@ -234,6 +235,8 @@ MacWindowManager::~MacWindowManager() {
 
 	delete _desktopBmp;
 	delete _desktop;
+
+	cleanupDataBundle();
 
 	g_system->getTimerManager()->removeTimerProc(&menuTimerHandler);
 }
@@ -302,6 +305,16 @@ MacWindow *MacWindowManager::addWindow(bool scrollable, bool resizable, bool edi
 }
 
 MacTextWindow *MacWindowManager::addTextWindow(const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) {
+	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, cursorHandler);
+
+	addWindowInitialized(w);
+
+	setActiveWindow(getNextId());
+
+	return w;
+}
+
+MacTextWindow *MacWindowManager::addTextWindow(const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) {
 	MacTextWindow *w = new MacTextWindow(this, font, fgcolor, bgcolor, maxWidth, textAlignment, menu, cursorHandler);
 
 	addWindowInitialized(w);
@@ -545,21 +558,22 @@ void MacWindowManager::draw() {
 	Common::Rect bounds = getScreenBounds();
 
 	if (_fullRefresh) {
-		Common::Rect screen = getScreenBounds();
-		if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
-			_desktop->free();
-			_desktop->create(screen.width(), screen.height(), _pixelformat);
-			drawDesktop();
-		}
+		if (!(_mode & kWMModeNoDesktop)) {
+			Common::Rect screen = getScreenBounds();
+			if (_desktop->w != screen.width() || _desktop->h != screen.height()) {
+				_desktop->free();
+				_desktop->create(screen.width(), screen.height(), _pixelformat);
+				drawDesktop();
+			}
 
-		if (_screen) {
-			_screen->blitFrom(*_desktop, Common::Point(0, 0));
-			g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
-		} else {
-			_screenCopyPauseToken = new PauseToken(pauseEngine());
-			g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
+			if (_screen) {
+				_screen->blitFrom(*_desktop, Common::Point(0, 0));
+				g_system->copyRectToScreen(_screen->getPixels(), _screen->pitch, 0, 0, _screen->w, _screen->h);
+			} else {
+				_screenCopyPauseToken = new PauseToken(pauseEngine());
+				g_system->copyRectToScreen(_desktop->getPixels(), _desktop->pitch, 0, 0, _desktop->w, _desktop->h);
+			}
 		}
-
 		if (_redrawEngineCallback != nullptr)
 			_redrawEngineCallback(_engineR);
 	}
@@ -986,9 +1000,10 @@ void MacWindowManager::passPalette(const byte *pal, uint size) {
 	if (_palette)
 		free(_palette);
 
-	_palette = (byte *)malloc(size * 3);
-	if (_palette)
+	if (size) {
+		_palette = (byte *)malloc(size * 3);
 		memcpy(_palette, pal, size * 3);
+	}
 	_paletteSize = size;
 
 	_colorHash.clear();

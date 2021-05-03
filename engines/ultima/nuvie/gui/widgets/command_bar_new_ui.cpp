@@ -274,10 +274,10 @@ const char *CommandBarNewUI::get_command_name(sint8 command_num) {
 /*
 void CommandBarNewUI::display_information()
 {
-    string infostring(game->get_clock()->get_date_string());
-    infostring += " Wind:";
-    infostring += wind;
-    text->drawString(screen, infostring.c_str(), area.left + 8, area.top, 0);
+	string infostring(game->get_clock()->get_date_string());
+	infostring += " Wind:";
+	infostring += wind;
+	text->drawString(screen, infostring.c_str(), area.left + 8, area.top, 0);
 }
 */
 

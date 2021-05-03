@@ -217,7 +217,7 @@ bool ScummEngine::isMacM68kIMuse() const {
 using namespace Scumm;
 
 const char *ScummMetaEngine::getName() const {
-    return "Scumm";
+	return "scumm";
 }
 
 bool ScummMetaEngine::hasFeature(MetaEngineFeature f) const {

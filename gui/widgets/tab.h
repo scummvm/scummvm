@@ -53,6 +53,7 @@ protected:
 	TabList _tabs;
 	int _tabHeight;
 	int _minTabWidth;
+	int _titleSpacing;
 
 	int _bodyRP, _bodyTP, _bodyLP, _bodyBP;
 	ThemeEngine::DialogBackground _bodyBackgroundType;
@@ -64,6 +65,8 @@ protected:
 	ButtonWidget *_navLeft, *_navRight;
 	bool _navButtonsVisible;
 	int _lastRead;
+
+	void recalc();
 
 public:
 	TabWidget(GuiObject *boss, int x, int y, int w, int h);

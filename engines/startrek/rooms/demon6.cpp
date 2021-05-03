@@ -212,12 +212,12 @@ extern const RoomTextOffsets demon6TextOffsets[] = {
 	{ TX_DEM6N022, 3812, 0 },
 	{ TX_DEM6N023, 1687, 0 },
 	{ TX_DEM6N024, 1036, 0 },
-    {TX_DIALOG_ERROR, 8214, 0 },
+	{TX_DIALOG_ERROR, 8214, 0 },
 	{          -1, 0,    0 }
 };
 
 extern const RoomText demon6Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::demon6Tick1() {

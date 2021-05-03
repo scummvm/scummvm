@@ -1296,6 +1296,13 @@ static const SciMessageWorkaroundEntry messageWorkarounds[] = {
 	{ GID_GK2,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  120,  18,  64,   0,  1, { MSG_WORKAROUND_REMAP,    120,  18,  44,   0,  1,  0,   0,   0, NULL } },
 	// Clicking any item other than the dagger on theater vent in room 11853
 	{ GID_GK2,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1, 1185,   4,   0,   0,  1, { MSG_WORKAROUND_REMAP,   1185,   4,  62,   0,  1,  0,   0,   0, NULL } },
+	// During the common Game Over cutscene, the "Ticket, please!" message has the incorrect audio
+	//  "Tickets only!", which is the response the skeleton gives when talking to him in the land
+	//  of the dead. Normally people wouldn't have noticed, but ScummVM supports audio + subtitles
+	//  in this game at the same time. We could fix this either way because there are non-buggy
+	//  versions of each message. "Ticket, please!" is the correct message but "Tickets only!"
+	//  is the audio that everyone is used to, so we make the text match "Tickets only!" on CD.
+	{ GID_KQ6,           SCI_MEDIA_CD,     K_LANG_NONE,     -1,  640,   1,   0,   1,  1, { MSG_WORKAROUND_REMAP,    640,   5,   0,   0,  2, 83,   0,   0, NULL } },
 	// Clicking the drink-me potion on ego in the castle basement hallways while guards are around
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  840,   3,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, NULL } },
 	{ GID_KQ6,           SCI_MEDIA_ALL,    K_LANG_NONE,     -1,  899,   1,  14,   1,  1, { MSG_WORKAROUND_REMAP,    899,   0,   0, 198,  1, 99,   0,   0, NULL } },

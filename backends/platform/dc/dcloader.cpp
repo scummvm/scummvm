@@ -115,17 +115,17 @@ static void purge_copyback()
 {
   int i;
   for (i=0; i!=(1<<14); i+=(1<<5))
-    *(volatile unsigned int *)(0xf4000000+i) &= ~3;
+	*(volatile unsigned int *)(0xf4000000+i) &= ~3;
 }
 
 
 void DLObject::seterror(const char *fmt, ...)
 {
   if (errbuf) {
-    va_list va;
-    va_start(va, fmt);
-    vsnprintf(errbuf, MAXDLERRLEN, fmt, va);
-    va_end(va);
+	va_list va;
+	va_start(va, fmt);
+	vsnprintf(errbuf, MAXDLERRLEN, fmt, va);
+	va_end(va);
   }
 }
 
@@ -150,34 +150,34 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size)
   Elf32_Rela *rela;
 
   if (!(rela = (Elf32_Rela *)malloc(size))) {
-    seterror("Out of memory.");
-    return false;
+	seterror("Out of memory.");
+	return false;
   }
 
   if (lseek(fd, offset, SEEK_SET)<0 ||
-      read(fd, rela, size) != (ssize_t)size) {
-    seterror("Relocation table load failed.");
-    free(rela);
-    return false;
+	  read(fd, rela, size) != (ssize_t)size) {
+	seterror("Relocation table load failed.");
+	free(rela);
+	return false;
   }
 
   int cnt = size / sizeof(*rela);
   for (int i=0; i<cnt; i++) {
 
-    Elf32_Sym *sym = (Elf32_Sym *)(void *)(((char *)symtab)+(rela[i].r_info>>4));
+	Elf32_Sym *sym = (Elf32_Sym *)(void *)(((char *)symtab)+(rela[i].r_info>>4));
 
-    void *target = ((char *)segment)+rela[i].r_offset;
+	void *target = ((char *)segment)+rela[i].r_offset;
 
-    switch(rela[i].r_info & 0xf) {
-    case 1: /* DIR32 */
-      if (sym->st_shndx < 0xff00)
+	switch(rela[i].r_info & 0xf) {
+	case 1: /* DIR32 */
+	  if (sym->st_shndx < 0xff00)
 	*(unsigned long *)target += (unsigned long)segment;
-      break;
-    default:
-      seterror("Unknown relocation type %d.", rela[i].r_info & 0xf);
-      free(rela);
-      return false;
-    }
+	  break;
+	default:
+	  seterror("Unknown relocation type %d.", rela[i].r_info & 0xf);
+	  free(rela);
+	  return false;
+	}
 
   }
 
@@ -194,105 +194,105 @@ bool DLObject::load(int fd)
   int symtab_sect = -1;
 
   if (read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr) ||
-     memcmp(ehdr.e_ident, ELFMAG, SELFMAG) ||
-     ehdr.e_type != 2 ||  ehdr.e_machine != 42 ||
-     ehdr.e_phentsize < sizeof(phdr) || ehdr.e_shentsize != sizeof(*shdr) ||
-     ehdr.e_phnum != 1) {
-    seterror("Invalid file type.");
-    return false;
+	 memcmp(ehdr.e_ident, ELFMAG, SELFMAG) ||
+	 ehdr.e_type != 2 ||  ehdr.e_machine != 42 ||
+	 ehdr.e_phentsize < sizeof(phdr) || ehdr.e_shentsize != sizeof(*shdr) ||
+	 ehdr.e_phnum != 1) {
+	seterror("Invalid file type.");
+	return false;
   }
 
   DBG(("phoff = %d, phentsz = %d, phnum = %d\n",
-       ehdr.e_phoff, ehdr.e_phentsize, ehdr.e_phnum));
+	   ehdr.e_phoff, ehdr.e_phentsize, ehdr.e_phnum));
 
   if (lseek(fd, ehdr.e_phoff, SEEK_SET)<0 ||
-     read(fd, &phdr, sizeof(phdr)) != sizeof(phdr)) {
-    seterror("Program header load failed.");
-    return false;
+	 read(fd, &phdr, sizeof(phdr)) != sizeof(phdr)) {
+	seterror("Program header load failed.");
+	return false;
   }
 
   if (phdr.p_type != 1 || phdr.p_vaddr != 0 || phdr.p_paddr != 0 ||
-     phdr.p_filesz > phdr.p_memsz) {
-    seterror("Invalid program header.");
-    return false;
+	 phdr.p_filesz > phdr.p_memsz) {
+	seterror("Invalid program header.");
+	return false;
   }
 
   DBG(("offs = %d, filesz = %d, memsz = %d, align = %d\n",
-       phdr.p_offset, phdr.p_filesz, phdr.p_memsz, phdr.p_align));
+	   phdr.p_offset, phdr.p_filesz, phdr.p_memsz, phdr.p_align));
 
   if (!(segment = memalign(phdr.p_align, phdr.p_memsz))) {
-    seterror("Out of memory.");
-    return false;
+	seterror("Out of memory.");
+	return false;
   }
 
   DBG(("segment @ %p\n", segment));
 
   if (phdr.p_memsz > phdr.p_filesz)
-    memset(((char *)segment) + phdr.p_filesz, 0, phdr.p_memsz - phdr.p_filesz);
+	memset(((char *)segment) + phdr.p_filesz, 0, phdr.p_memsz - phdr.p_filesz);
 
   if (lseek(fd, phdr.p_offset, SEEK_SET)<0 ||
-      read(fd, segment, phdr.p_filesz) != (ssize_t)phdr.p_filesz) {
-    seterror("Segment load failed.");
-    return false;
+	  read(fd, segment, phdr.p_filesz) != (ssize_t)phdr.p_filesz) {
+	seterror("Segment load failed.");
+	return false;
   }
 
   DBG(("shoff = %d, shentsz = %d, shnum = %d\n",
-       ehdr.e_shoff, ehdr.e_shentsize, ehdr.e_shnum));
+	   ehdr.e_shoff, ehdr.e_shentsize, ehdr.e_shnum));
 
   if (!(shdr = (Elf32_Shdr *)malloc(ehdr.e_shnum * sizeof(*shdr)))) {
-    seterror("Out of memory.");
-    return false;
+	seterror("Out of memory.");
+	return false;
   }
 
   if (lseek(fd, ehdr.e_shoff, SEEK_SET)<0 ||
-      read(fd, shdr, ehdr.e_shnum * sizeof(*shdr)) !=
-      (ssize_t)(ehdr.e_shnum * sizeof(*shdr))) {
-    seterror("Section headers load failed.");
-    free(shdr);
-    return false;
+	  read(fd, shdr, ehdr.e_shnum * sizeof(*shdr)) !=
+	  (ssize_t)(ehdr.e_shnum * sizeof(*shdr))) {
+	seterror("Section headers load failed.");
+	free(shdr);
+	return false;
   }
 
   for (int i=0; i<ehdr.e_shnum; i++) {
-    DBG(("Section %d: type = %d, size = %d, entsize = %d, link = %d\n",
+	DBG(("Section %d: type = %d, size = %d, entsize = %d, link = %d\n",
 	 i, shdr[i].sh_type, shdr[i].sh_size, shdr[i].sh_entsize, shdr[i].sh_link));
-    if (shdr[i].sh_type == 2 && shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
-       shdr[i].sh_link < ehdr.e_shnum && shdr[shdr[i].sh_link].sh_type == 3 &&
-       symtab_sect < 0)
-      symtab_sect = i;
+	if (shdr[i].sh_type == 2 && shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
+	   shdr[i].sh_link < ehdr.e_shnum && shdr[shdr[i].sh_link].sh_type == 3 &&
+	   symtab_sect < 0)
+	  symtab_sect = i;
   }
 
   if (symtab_sect < 0) {
-    seterror("No symbol table.");
-    free(shdr);
-    return false;
+	seterror("No symbol table.");
+	free(shdr);
+	return false;
   }
 
   if (!(symtab = malloc(shdr[symtab_sect].sh_size))) {
-    seterror("Out of memory.");
-    free(shdr);
-    return false;
+	seterror("Out of memory.");
+	free(shdr);
+	return false;
   }
 
   if (lseek(fd, shdr[symtab_sect].sh_offset, SEEK_SET)<0 ||
-      read(fd, symtab, shdr[symtab_sect].sh_size) !=
-      (ssize_t)shdr[symtab_sect].sh_size){
-    seterror("Symbol table load failed.");
-    free(shdr);
-    return false;
+	  read(fd, symtab, shdr[symtab_sect].sh_size) !=
+	  (ssize_t)shdr[symtab_sect].sh_size){
+	seterror("Symbol table load failed.");
+	free(shdr);
+	return false;
   }
 
   if (!(strtab = (char *)malloc(shdr[shdr[symtab_sect].sh_link].sh_size))) {
-    seterror("Out of memory.");
-    free(shdr);
-    return false;
+	seterror("Out of memory.");
+	free(shdr);
+	return false;
   }
 
   if (lseek(fd, shdr[shdr[symtab_sect].sh_link].sh_offset, SEEK_SET)<0 ||
-      read(fd, strtab, shdr[shdr[symtab_sect].sh_link].sh_size) !=
-      (ssize_t)shdr[shdr[symtab_sect].sh_link].sh_size){
-    seterror("Symbol table strings load failed.");
-    free(shdr);
-    return false;
+	  read(fd, strtab, shdr[shdr[symtab_sect].sh_link].sh_size) !=
+	  (ssize_t)shdr[shdr[symtab_sect].sh_link].sh_size){
+	seterror("Symbol table strings load failed.");
+	free(shdr);
+	return false;
   }
 
   symbol_cnt = shdr[symtab_sect].sh_size / sizeof(Elf32_Sym);
@@ -300,17 +300,17 @@ bool DLObject::load(int fd)
 
   Elf32_Sym *s = (Elf32_Sym *)symtab;
   for (int c = symbol_cnt; c--; s++)
-    if (s->st_shndx < 0xff00)
-      s->st_value += (Elf32_Addr)segment;
+	if (s->st_shndx < 0xff00)
+	  s->st_value += (Elf32_Addr)segment;
 
   for (int i=0; i<ehdr.e_shnum; i++)
-    if (shdr[i].sh_type == 4 && shdr[i].sh_entsize == sizeof(Elf32_Rela) &&
+	if (shdr[i].sh_type == 4 && shdr[i].sh_entsize == sizeof(Elf32_Rela) &&
 	(int)shdr[i].sh_link == symtab_sect && shdr[i].sh_info < ehdr.e_shnum &&
 	(shdr[shdr[i].sh_info].sh_flags & 2))
-      if (!relocate(fd, shdr[i].sh_offset, shdr[i].sh_size)) {
+	  if (!relocate(fd, shdr[i].sh_offset, shdr[i].sh_size)) {
 	free(shdr);
 	return false;
-      }
+	  }
 
   free(shdr);
 
@@ -325,14 +325,14 @@ bool DLObject::open(const char *path)
   DBG(("open(\"%s\")\n", path));
 
   if ((fd = ::open(path, O_RDONLY))<0) {
-    seterror("%s not found.", path);
-    return false;
+	seterror("%s not found.", path);
+	return false;
   }
 
   if (!load(fd)) {
-    ::close(fd);
-    unload();
-    return false;
+	::close(fd);
+	unload();
+	return false;
   }
 
   ::close(fd);
@@ -350,16 +350,16 @@ bool DLObject::open(const char *path)
   dso_handle = symbol("__dso_handle");
 
   if (ctors_start == NULL || ctors_end == NULL || dtors_start == NULL ||
-     dtors_end == NULL) {
-    seterror("Missing ctors/dtors.");
-    dtors_start = dtors_end = NULL;
-    unload();
-    return false;
+	 dtors_end == NULL) {
+	seterror("Missing ctors/dtors.");
+	dtors_start = dtors_end = NULL;
+	unload();
+	return false;
   }
 
   DBG(("Calling constructors.\n"));
   for (void (**f)(void) = (void (**)(void))ctors_start; f != ctors_end; f++)
-    (**f)();
+	(**f)();
 
   DBG(("%s opened ok.\n", path));
   return true;
@@ -368,12 +368,12 @@ bool DLObject::open(const char *path)
 bool DLObject::close()
 {
   if (dso_handle != NULL) {
-    __cxxabiv1::__cxa_finalize(dso_handle);
-    dso_handle = NULL;
+	__cxxabiv1::__cxa_finalize(dso_handle);
+	dso_handle = NULL;
   }
   if (dtors_start != NULL && dtors_end != NULL)
-    for (void (**f)(void) = (void (**)(void))dtors_start; f != dtors_end; f++)
-      (**f)();
+	for (void (**f)(void) = (void (**)(void))dtors_start; f != dtors_end; f++)
+	  (**f)();
   dtors_start = dtors_end = NULL;
   unload();
   return true;
@@ -384,17 +384,17 @@ void *DLObject::symbol(const char *name)
   DBG(("symbol(\"%s\")\n", name));
 
   if (symtab == NULL || strtab == NULL || symbol_cnt < 1) {
-    seterror("No symbol table loaded.");
-    return NULL;
+	seterror("No symbol table loaded.");
+	return NULL;
   }
 
   Elf32_Sym *s = (Elf32_Sym *)symtab;
   for (int c = symbol_cnt; c--; s++)
-    if ((s->st_info>>4 == 1 || s->st_info>>4 == 2) &&
-       strtab[s->st_name] == '_' && !strcmp(name, strtab+s->st_name+1)) {
-      DBG(("=> %p\n", (void *)s->st_value));
-      return (void *)s->st_value;
-    }
+	if ((s->st_info>>4 == 1 || s->st_info>>4 == 2) &&
+	   strtab[s->st_name] == '_' && !strcmp(name, strtab+s->st_name+1)) {
+	  DBG(("=> %p\n", (void *)s->st_value));
+	  return (void *)s->st_value;
+	}
 
   seterror("Symbol \"%s\" not found.", name);
   return NULL;
@@ -407,7 +407,7 @@ void *dlopen(const char *filename, int flags)
 {
   DLObject *obj = new DLObject(dlerr);
   if (obj->open(filename))
-    return (void *)obj;
+	return (void *)obj;
   delete obj;
   return NULL;
 }
@@ -416,12 +416,12 @@ int dlclose(void *handle)
 {
   DLObject *obj = (DLObject *)handle;
   if (obj == NULL) {
-    strcpy(dlerr, "Handle is NULL.");
-    return -1;
+	strcpy(dlerr, "Handle is NULL.");
+	return -1;
   }
   if (obj->close()) {
-    delete obj;
-    return 0;
+	delete obj;
+	return 0;
   }
   return -1;
 }
@@ -429,8 +429,8 @@ int dlclose(void *handle)
 void *dlsym(void *handle, const char *symbol)
 {
   if (handle == NULL) {
-    strcpy(dlerr, "Handle is NULL.");
-    return NULL;
+	strcpy(dlerr, "Handle is NULL.");
+	return NULL;
   }
   return ((DLObject *)handle)->symbol(symbol);
 }
@@ -443,5 +443,5 @@ const char *dlerror()
 void dlforgetsyms(void *handle)
 {
   if (handle != NULL)
-    ((DLObject *)handle)->discard_symtab();
+	((DLObject *)handle)->discard_symtab();
 }

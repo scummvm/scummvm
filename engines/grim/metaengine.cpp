@@ -35,7 +35,7 @@ namespace Grim {
 class GrimMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
-		return "Grim";
+		return "grim";
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) const override {

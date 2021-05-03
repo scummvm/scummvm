@@ -54,7 +54,7 @@ extern const RoomTextOffsets feather7TextOffsets[] = {
 	{ TX_SPEAKER_MCCOY, 1075, 0 },
 	{ TX_SPEAKER_SPOCK, 1085, 0 },
 	{ TX_SPEAKER_STRAGEY, 1095, 0 },
-    { TX_SPEAKER_QUETZECOATL, 1107, 0 },
+	{ TX_SPEAKER_QUETZECOATL, 1107, 0 },
 	{ TX_FEA7_001, 4842, 0 },
 	{ TX_FEA7_002, 4802, 0 },
 	{ TX_FEA7_003, 4674, 0 },
@@ -89,7 +89,7 @@ extern const RoomTextOffsets feather7TextOffsets[] = {
 };
 
 extern const RoomText feather7Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 void Room::feather7Tick1() {

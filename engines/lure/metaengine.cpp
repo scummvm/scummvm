@@ -41,7 +41,8 @@ LureLanguage LureEngine::getLureLanguage() const {
 	case Common::DE_DEU: return LANG_DE_DEU;
 	case Common::ES_ESP: return LANG_ES_ESP;
 	case Common::RU_RUS: return LANG_RU_RUS;
-	case Common::EN_ANY: return LANG_EN_ANY;
+	case Common::EN_ANY:
+		return isKonami() ? LANG_EN_KONAMI : LANG_EN_ANY;
 	case Common::UNK_LANG: return LANG_UNKNOWN;
 	default:
 		error("Unknown game language");
@@ -52,7 +53,7 @@ LureLanguage LureEngine::getLureLanguage() const {
 
 class LureMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "lure";
 	}
 

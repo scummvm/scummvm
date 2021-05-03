@@ -170,8 +170,8 @@ int KyraEngine_MR::o3_addItemToCurScene(EMCState *script) {
 
 	if (y < 18)
 		y = 18;
-	else if (y > 187)
-		y = 187;
+	else if (y >= _interfaceCommandLineY1)
+		y = _interfaceCommandLineY1 - 1;
 
 	if (itemSlot >= 0) {
 		_itemList[itemSlot].x = x;
@@ -731,24 +731,49 @@ int KyraEngine_MR::o3_daggerWarning(EMCState *script) {
 	int curPageBackUp = _screen->_curPage;
 	_screen->_curPage = 2;
 
+
+	int y1 = 0xAA;
+	int y2 = 0xBA;
+	if (_lang == 3) {
+		y1 -= 2;
+		y2 += 4;
+	}
+
 	_screen->drawFilledBox(0, 0, 0x13F, 0xC7, 0xB4, 0xB3, 0xB6);
-	_screen->drawFilledBox(0xF, 0xAA, 0x68, 0xBA, 0xB4, 0xB3, 0xB6);
-	_screen->drawFilledBox(0x73, 0xAA, 0xCC, 0xBA, 0xB4, 0xB3, 0xB6);
-	_screen->drawFilledBox(0xD6, 0xAA, 0x12F, 0xBA, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0xF, y1, 0x68, y2, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0x73, y1, 0xCC, y2, 0xB4, 0xB3, 0xB6);
+	_screen->drawFilledBox(0xD6, y1, 0x12F, y2, 0xB4, 0xB3, 0xB6);
 
 	int y = 15;
-	for (int i = 100; i <= 107; ++i) {
-		const char *str = (const char *)getTableEntry(_cCodeFile, i);
-		int x = _text->getCenterStringX(str, 0, 0x13F);
-		_text->printText(str, x, y, 0xFF, 0xF0, 0x00);
-		y += 10;
+	int last = 107;
+	int yInc = 10;
+
+	if (_lang == 3) {
+		y = 6;
+		last = 105;
+		yInc = 16;
 	}
-	y += 15;
-	for (int i = 110; i <= 113; ++i) {
+
+	for (int i = 100; i <= last; ++i) {
 		const char *str = (const char *)getTableEntry(_cCodeFile, i);
 		int x = _text->getCenterStringX(str, 0, 0x13F);
 		_text->printText(str, x, y, 0xFF, 0xF0, 0x00);
-		y += 10;
+		y += yInc;
+	}
+
+	if (_lang == 3) {
+		y += 6;
+		last = 112;
+	} else {
+		y += 15;
+		last = 113;
+	}
+
+	for (int i = 110; i <= last; ++i) {
+		const char *str = (const char *)getTableEntry(_cCodeFile, i);
+		int x = _text->getCenterStringX(str, 0, 0x13F);
+		_text->printText(str, x, y, 0xFF, 0xF0, 0x00);
+		y += yInc;
 	}
 
 	const char *str = 0;

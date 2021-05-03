@@ -66,7 +66,7 @@ Common::WriteStream &operator<< (Common::WriteStream &o, const match_rv &rv);
   //o << rv.bindings.size();
   //o << rv.bindings;
   for (uint i = 0; i < rv.bindings.size(); i ++)
-    o << rv.bindings[i] << ", ";
+	o << rv.bindings[i] << ", ";
   o << "]}";
   return o;
 }

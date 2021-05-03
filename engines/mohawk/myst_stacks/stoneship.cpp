@@ -489,11 +489,11 @@ void Stoneship::o_telescopeMove(uint16 var, const ArgumentsArray &args) {
 	_telescopeOldMouse = mouse.x;
 
 	// Copy image to screen
-    Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
-    _vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
+	Common::Rect src = Common::Rect(_telescopePosition, 0, _telescopePosition + 112, 112);
+	_vm->_gfx->copyImageSectionToScreen(_telescopePanorama, src, display->getRect());
 
-    // Draw lighthouse
-    telescopeLighthouseDraw();
+	// Draw lighthouse
+	telescopeLighthouseDraw();
 }
 
 void Stoneship::o_telescopeStop(uint16 var, const ArgumentsArray &args) {

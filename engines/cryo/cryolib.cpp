@@ -196,7 +196,7 @@ void CLBlitter_OneBlackFlash() {
 }
 
 void CLBlitter_CopyView2ViewSimpleSize(byte *src, int16 srcw, int16 srcp, int16 srch,
-                                       byte *dst, int16 dstw, int16 dstp, int16 dsth) {
+									   byte *dst, int16 dstw, int16 dstp, int16 dsth) {
 	for (int16 y = 0; y < srch; y++) {
 		for (int16 x = 0; x < srcw; x++)
 			*dst++ = *src++;

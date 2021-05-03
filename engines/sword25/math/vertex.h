@@ -30,10 +30,10 @@
  */
 
 /*
-    BS_Vertex
-    ---------
+	BS_Vertex
+	---------
 
-    Autor: Malte Thiesen
+	Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_VERTEX_H

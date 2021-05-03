@@ -133,11 +133,10 @@ void SJISFont12x12::unload() {
 }
 
 void SJISFont12x12::drawChar(uint16 c, byte *dst, int pitch, int) const {
-	int offs = _searchTable[c];
-	if (!offs)
+	if (!_searchTable.contains(c))
 		return;
 
-	const uint8 *src = _data + (offs - 1) * 24;
+	const uint8 *src = _data + (_searchTable[c] - 1) * 24;
 	uint8 color1 = _colorMap[1];
 
 	int bt = 0;

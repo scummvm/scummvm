@@ -141,6 +141,9 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 	// Right, so there were some commands defined in response to the event.
 	retval = run_interaction_commandlist(nint->Events[evnt].Response.get(), &nint->Events[evnt].TimesRun, &cmdsrun);
 
+	if (_G(abort_engine))
+		return -1;
+
 	// An inventory interaction, but the wrong item was used
 	if ((isInv) && (cmdsrun == 0))
 		run_unhandled_event(evnt);
@@ -307,6 +310,8 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		_G(ccErrorString) = "script is already in execution";
 		return -3;
 	}
+
+	assert(_G(num_scripts) < MAX_SCRIPT_AT_ONCE);
 	_G(scripts)[_G(num_scripts)].init();
 	_G(scripts)[_G(num_scripts)].inst = sci;
 	// CHECKME: this conditional block will never run, because
@@ -355,6 +360,9 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 		toret = _G(curscript)->inst->CallScriptFunction(tsname, numParam, params);
 	} else
 		quit("Too many parameters to RunScriptFunctionIfExists");
+
+	if (_G(abort_engine))
+		return -1;
 
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
 	if ((toret != 0) && (toret != -2) && (toret != 100)) {
@@ -427,7 +435,7 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 		bool eventWasClaimed;
 		int toret = run_claimable_event(tsname, true, 2, params, &eventWasClaimed);
 
-		if (eventWasClaimed)
+		if (eventWasClaimed || _G(abort_engine))
 			return toret;
 	}
 
@@ -826,6 +834,9 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			quit("unknown new interaction command");
 			break;
 		}
+
+		if (_G(abort_engine))
+			return -1;
 
 		// if the room changed within the action, nicl is no longer valid
 		if (room_was != _GP(play).room_changes)

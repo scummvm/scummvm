@@ -262,7 +262,7 @@ bool GCTFile::finished() const {
 }
 
 bool GCTFile::draw(Surface &dest, uint16 item, const Font &font, uint8 color,
-                   int16 &left, int16 &top, int16 &right, int16 &bottom) {
+				   int16 &left, int16 &top, int16 &right, int16 &bottom) {
 
 	if ((item >= _items.size()) || !_hasArea)
 		return false;

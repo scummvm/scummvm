@@ -102,18 +102,18 @@ void EditTextWidget::drawWidget() {
 
 	// Draw the text
 	adjustOffset();
-
-	const Common::Rect &r = Common::Rect(_x + 2 + _leftPadding, _y + 2, _x + _leftPadding + getEditRect().width() + 8, _y + _h);
-	setTextDrawableArea(r);
+	Common::Rect drawRect = getEditRect();
+	drawRect.translate(_x, _y);
+	setTextDrawableArea(drawRect);
 
 	g_gui.theme()->drawText(
-			Common::Rect(_x + 2 + _leftPadding, _y + 1, _x + _leftPadding + getEditRect().width() + 2, _y + _h),
+			drawRect,
 			_editString, _state, _drawAlign, ThemeEngine::kTextInversionNone,
 			-_editScrollOffset, false, _font, ThemeEngine::kFontColorNormal, true, _textDrawableArea);
 }
 
 Common::Rect EditTextWidget::getEditRect() const {
-	Common::Rect r(2 + _leftPadding, 2, _w - 2 - _leftPadding - _rightPadding, _h);
+	Common::Rect r(2 + _leftPadding, 1, _w - 1 - _rightPadding, _h);
 
 	return r;
 }

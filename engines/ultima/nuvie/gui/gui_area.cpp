@@ -39,7 +39,7 @@ GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b, int a
 }
 
 GUI_Area:: GUI_Area(int x, int y, int w, int h, uint8 r, uint8 g, uint8 b,
-                    uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
+					uint8 fr, uint8 fg, uint8 fb, int fthick, int aShape)
 	: GUI_Widget(NULL, x, y, w, h) {
 	R = r;
 	G = g;

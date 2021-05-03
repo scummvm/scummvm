@@ -460,6 +460,7 @@ MODULE_OBJS := \
 	ultima8/gumps/cru_status_gump.o \
 	ultima8/gumps/cru_weapon_gump.o \
 	ultima8/gumps/desktop_gump.o \
+	ultima8/gumps/difficulty_gump.o \
 	ultima8/gumps/fast_area_vis_gump.o \
 	ultima8/gumps/game_map_gump.o \
 	ultima8/gumps/gump.o \

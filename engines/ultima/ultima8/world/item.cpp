@@ -471,7 +471,7 @@ Box Item::getWorldBox() const {
 void Item::setShape(uint32 shape) {
 	_cachedShape = nullptr;
 
-	if (GAME_IS_CRUSADER) {
+	if (GAME_IS_CRUSADER && _shape && shape != _shape) {
 		// In Crusader, here we need to check if the shape
 		// changed from targetable to not-targetable, or vice-versa
 		const ShapeInfo *oldinfo = getShapeInfo();
@@ -479,7 +479,7 @@ void Item::setShape(uint32 shape) {
 		_cachedShapeInfo = nullptr;
 		const ShapeInfo *newinfo = getShapeInfo();
 
-		if (!hasFlags(FLG_BROKEN)) {
+		if (!hasFlags(FLG_BROKEN) && oldinfo && newinfo) {
 			if (oldinfo->is_targetable() && !newinfo->is_targetable()) {
 				World::get_instance()->getCurrentMap()->removeTargetItem(this);
 			}
@@ -1694,7 +1694,17 @@ void Item::setupLerp(int32 gametick) {
 	// Clear the flag
 	_extendedFlags &= ~EXT_LERP_NOPREV;
 
-	// Animate it, if needed
+	// Animate it, if needed.
+	//
+	// We use (tick % speed == 0) here. To be completely faithful to the original
+	// game it should be (tick % speed == tick % _objId).  That is how the game
+	// does it, but it also causes animation frame mismatches on multi-shape
+	// objects.  This is easily noticable on the waterfall West of Tenebrae,
+	// which appears to tear slightly even on the original.
+	//
+	// In the original it was likely done to spread CPU time over different frames,
+	// but it's a little bit nicer to do it correctly now that we can afford to..
+	//
 	const ShapeInfo *info = getShapeInfo();
 	if (info->_animType &&
 			((gametick % info->_animSpeed) == 0))
@@ -2228,7 +2238,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	if (damageInfo) {
 		bool wasbroken = damageInfo->applyToItem(this, damage);
 		if (wasbroken) {
-			Kernel::get_instance()->killProcesses(_objId, 0xc, true);
+			Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
 		}
 	}
 
@@ -2238,9 +2248,14 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 		return;
 	}
 
+	assert((int)dir >= 0 && (int)dir < 16);
+
+	static const int hurl_x_factor[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
+	static const int hurl_y_factor[] = { -2, -2, -2, -1,  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2 };
+
 	int xhurl = 10 + getRandom() % 15;
 	int yhurl = 10 + getRandom() % 15;
-	hurl(-xhurl * Direction_XFactor(dir), -yhurl * Direction_YFactor(dir), 0, 2); //!! constants
+	hurl(-xhurl * hurl_x_factor[(int)dir], -yhurl * hurl_y_factor[(int)dir], 0, 2); //!! constants
 }
 
 
@@ -2273,8 +2288,8 @@ int Item::getThrowRange() {
 }
 
 static bool checkLineOfSightCollisions(
-    const Std::list<CurrentMap::SweepItem> &collisions,
-    bool usingAlternatePos, ObjId item, ObjId other) {
+	const Std::list<CurrentMap::SweepItem> &collisions,
+	bool usingAlternatePos, ObjId item, ObjId other) {
 	Std::list<CurrentMap::SweepItem>::const_iterator it;
 	int32 other_hit_time = 0x4000;
 	int32 blocked_time = 0x4000;
@@ -2300,7 +2315,7 @@ static bool checkLineOfSightCollisions(
 }
 
 bool Item::canReach(Item *other, int range,
-                    int32 otherX, int32 otherY, int32 otherZ) {
+					int32 otherX, int32 otherY, int32 otherZ) {
 	// get location and dimensions of self and other (or their root containers)
 	int32 thisX, thisY, thisZ;
 	int32 thisXd, thisYd, thisZd;
@@ -2931,7 +2946,7 @@ uint32 Item::I_getWeight(const uint8 *args, unsigned int /*argsize*/) {
 }
 
 uint32 Item::I_getWeightIncludingContents(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 

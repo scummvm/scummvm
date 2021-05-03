@@ -1115,6 +1115,8 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 	if (numElements > 150)
 		numElements = 150;
 
+	uint32 incPerElement = (18 << 8) / numElements;
+
 	for (int i = 0; i < numElements; i++) {
 		ptr2[i] = ptr3[i] = 0;
 		ptr4[i] = _vm->_rnd.getRandomNumberRng(0, radius) - (radius >> 1);
@@ -1140,9 +1142,10 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 		}
 
 		l = 0;
+		uint32 timer = 0;
+		uint32 start = _system->getMillis();
 
 		for (int i = 0; i < numElements; i++) {
-			uint32 end = _system->getMillis() + 1;
 			if (ptr4[i] <= 0)
 				ptr4[i]++;
 			else
@@ -1168,17 +1171,20 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				ptr6[i] = getPagePixel(0, px, py);
 			}
 
+			timer += incPerElement ;
+
 			assert((ptr8[i] >> 8) < colorTableSize);
 			int pxVal2 = colorTable[ptr8[i] >> 8];
 			if (pxVal2) {
 				l = 1;
 				if (pxVal1 == _gfxCol && posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
 					setPagePixel(0, px, py, pxVal2);
-					if (i % 5 == 0)  {
+					uint32 cur = _system->getMillis();
+					if (cur < start + (timer >> 8))  {
 						updateScreen();
-						uint32 cur = _system->getMillis();
-						if (end > cur)
-							_system->delayMillis(end - cur);
+						cur = _system->getMillis();
+						if (cur < start + (timer >> 8))
+							_system->delayMillis(start + (timer >> 8) - cur);
 					}
 				}
 			} else {
@@ -1187,6 +1193,7 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 		}
 	}
 
+	updateScreen();
 	showMouse();
 }
 
@@ -1209,6 +1216,10 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	int cx = 88;
 	int cy = 48;
 	radius <<= 6;
+
+	uint32 incPerElement = (12 << 8) / numElements;
+	uint32 timer = 0;
+	uint32 start = _system->getMillis();
 
 	for (int i = 0; i < numElements; i++) {
 		int16 v38 = _vm->_rnd.getRandomNumberRng(radius >> 2, radius);
@@ -1274,7 +1285,6 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 
 		i = 0;
 		int r = (stepSize >> 1) + (stepSize >> 2) + (stepSize >> 3);
-		uint32 nextDelay = _system->getMillis() + 1;
 
 		for (int ii = 0; ii < numElements; ii++) {
 			if (pixDelay[ii] == 0) {
@@ -1306,16 +1316,18 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 			uint8 tblIndex = CLIP(colTableIndex[ii] >> 8, 0, colorTableSize - 1);
 			uint8 tc2 = colorTable[tblIndex];
 
+			timer += incPerElement;
+
 			if (tc2) {
 				i = 1;
 				if (tc1 == _gfxCol && !pixDelay[ii]) {
 					setPagePixel(0, px, py, tc2);
-					if (ii % 15 == 0)  {
+					uint32 cur = _system->getMillis();
+					if (cur < start + (timer >> 8)) {
 						updateScreen();
-						uint32 cur = _system->getMillis();
-						if (nextDelay > cur)
-							_system->delayMillis(nextDelay - cur);
-						nextDelay += 1;
+						cur = _system->getMillis();
+						if (cur < start + (timer >> 8))
+							_system->delayMillis(start + (timer >> 8) - cur);
 					}
 				}
 			} else {
@@ -1326,6 +1338,7 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	}
 
 	_curPage = cp;
+	updateScreen();
 	showMouse();
 }
 
@@ -1836,7 +1849,7 @@ void OldDOSFont::drawChar(uint16 c, byte *dst, int pitch, int bpp) const {
 	uint16 color1 = _colorMap8bit[1];
 	uint16 color2 = _colorMap8bit[0];
 
-    if (_style == kStyleLeftShadow) {
+	if (_style == kStyleLeftShadow) {
 		drawCharIntern(c, dst + pitch, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1, pitch, 1, _shadowColor, 0);
 		drawCharIntern(c, dst - 1 + pitch, pitch, 1, _shadowColor, 0);

@@ -563,10 +563,10 @@ byte GfxScreen::vectorIsFillMatch(int16 x, int16 y, byte screenMask, byte checkF
  * with flood fill, due to small difference in the Bresenham logic.
  */
 void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
-    int16 maxWidth = _width - 1;
-    int16 maxHeight = _height - 1;
-    // we need to clip values here, lsl3 room 620 background picture draws a line from 0, 199 t 320, 199
-    //  otherwise we would get heap corruption.
+	int16 maxWidth = _width - 1;
+	int16 maxHeight = _height - 1;
+	// we need to clip values here, lsl3 room 620 background picture draws a line from 0, 199 t 320, 199
+	//  otherwise we would get heap corruption.
 	int16 left = CLIP<int16>(startPoint.x, 0, maxWidth);
 	int16 top = CLIP<int16>(startPoint.y, 0, maxHeight);
 	int16 right = CLIP<int16>(endPoint.x, 0, maxWidth);

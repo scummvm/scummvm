@@ -1316,7 +1316,7 @@ uint IOStream::getLineUni(uint32 *ubuf, uint len) {
 FileStream::FileStream(Streams *streams, frefid_t fref, uint fmode, uint rock, bool unicode) :
 		IOStream(streams, fmode == filemode_Read, fmode != filemode_Read, rock, unicode),
 		_inSave(nullptr), _outSave(nullptr) {
-	
+
 	_textFile = fref->_textMode;
 	Common::String fname = fref->_slotNumber == -1 ? fref->_filename : fref->getSaveName();
 
@@ -1415,7 +1415,7 @@ void Streams::removeStream(Stream *stream) {
 	}
 
 	if (_currentStream == stream)
-		_currentStream = nullptr; 
+		_currentStream = nullptr;
 }
 
 Stream *Streams::getFirst(uint *rock) {

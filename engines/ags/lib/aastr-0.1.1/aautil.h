@@ -70,15 +70,15 @@ namespace AGS3 {
   int yw = (_yw);						\
 								\
   if ((xw == 0) || ((yw < xw) && (yw > -xw))) {			\
-    (inc) = 0;							\
+	(inc) = 0;							\
   }								\
   else {							\
-    (inc) = yw / xw;						\
-    yw %= xw;							\
+	(inc) = yw / xw;						\
+	yw %= xw;							\
   }								\
   if (yw < 0) {							\
-    (inc) -= 1;							\
-    yw += xw;							\
+	(inc) -= 1;							\
+	yw += xw;							\
   }								\
   (i2) = ((dd) = ((i1) = 2 * yw) - xw) - xw;			\
 }
@@ -87,9 +87,9 @@ namespace AGS3 {
 #define aa_ADVANCE(y,inc,dd,i1,i2)				\
 {								\
   if ((dd) >= 0)						\
-    (y) += (inc) + 1, (dd) += (i2);				\
+	(y) += (inc) + 1, (dd) += (i2);				\
   else								\
-    (y) += (inc), (dd) += (i1);					\
+	(y) += (inc), (dd) += (i1);					\
 }
 
 

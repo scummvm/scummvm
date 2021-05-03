@@ -1693,6 +1693,17 @@ void Script::whichObject(const Point& mousePoint) {
 		if (_vm->_scene->getHeight() >= mousePoint.y) {
 			newObjectId = _vm->_actor->hitTest(mousePoint, true);
 
+			// WORKAROUND for #10369
+			// For some reason at Alamma's cottage hitTest returns the cottage door objectId when using it with an item.
+			// This makes it hard to use the letter item with the actual door and progress the story,
+			// so we reset it to ID_NOTHING here.
+			if (_vm->getGameId() == GID_ITE) {
+				if (_vm->_scene->currentChapterNumber() == 0 && _vm->_scene->currentSceneNumber() == 15) {
+					if (newObjectId == 8295 && _currentVerb == getVerbType(kVerbUse))
+						newObjectId = ID_NOTHING;
+				}
+			}
+
 			if (newObjectId != ID_NOTHING) {
 				if (objectTypeId(newObjectId) == kGameObjectObject) {
 					objectId = newObjectId;

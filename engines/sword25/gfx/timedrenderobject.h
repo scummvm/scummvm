@@ -35,7 +35,7 @@
 namespace Sword25 {
 
 /**
-    @brief
+	@brief
 */
 
 class TimedRenderObject : public RenderObject {

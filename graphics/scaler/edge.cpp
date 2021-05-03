@@ -452,8 +452,8 @@ int32 EdgePlugin::calcPixelDiffNosqrt(typename ColorMask::PixelType pixel1, type
 
 
 int EdgePlugin::findPrincipleAxis(int16 *diffs, int16 *bplane,
-                                  int8 *sim,
-                                  int32 *return_angle) {
+								  int8 *sim,
+								  int32 *return_angle) {
 	struct xy_point {
 		int16 x, y;
 	};
@@ -784,7 +784,7 @@ int EdgePlugin::checkArrows(int best_dir, Pixel *pixels, int8 *sim, int half_fla
 
 template<typename Pixel>
 int EdgePlugin::refineDirection(char edge_type, Pixel *pixels, int16 *bptr,
-                                int8 *sim, double angle) {
+								int8 *sim, double angle) {
 	int32 sums_dir[9] = { 0 };
 	int32 sum;
 	int32 best_sum;
@@ -1772,7 +1772,7 @@ int EdgePlugin::fixKnights(int sub_type, Pixel *pixels, int8 *sim) {
 
 template<typename ColorMask>
 void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
-        typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr) {
+		typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	Pixel *dptr2;
@@ -2373,9 +2373,9 @@ void EdgePlugin::antiAliasGridClean3x(uint8 *dptr, int dstPitch,
 
 template<typename ColorMask>
 void EdgePlugin::antiAliasGrid2x(uint8 *dptr, int dstPitch,
-                                    typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr,
-                                    int8 *sim,
-                                    int interpolate_2x) {
+									typename ColorMask::PixelType *pixels, int sub_type, int16 *bptr,
+									int8 *sim,
+									int interpolate_2x) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	Pixel *dptr2;
@@ -3263,7 +3263,7 @@ int checkUnchangedPixels(const Pixel *old_src_ptr, const Pixel *pixels, int w) {
 /* old_dptr starts in top left of grid, dptr in center */
 template<typename Pixel>
 void drawUnchangedGrid3x(byte *dptr, int dstPitch,
-                         const byte *old_dptr, int old_dst_inc) {
+						 const byte *old_dptr, int old_dst_inc) {
 	const Pixel *sp;
 	Pixel *dp;
 
@@ -3291,7 +3291,7 @@ void drawUnchangedGrid3x(byte *dptr, int dstPitch,
 /* Draw unchanged pixel grid, 2x */
 template<typename Pixel>
 void drawUnchangedGrid2x(byte *dptr, int dstPitch,
-                         const byte *old_dptr, int old_dst_inc) {
+						 const byte *old_dptr, int old_dst_inc) {
 	const Pixel *sp;
 	Pixel *dp;
 
@@ -3309,11 +3309,11 @@ void drawUnchangedGrid2x(byte *dptr, int dstPitch,
 
 template<typename ColorMask>
 void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
-                                 int w, int h,
-                                 int srcPitch, int dstPitch,
-                                 bool haveOldSrc,
-                                 const uint8* oldSrc, int oldPitch,
-                                 const uint8 *buffer, int bufferPitch) {
+								 int w, int h,
+								 int srcPitch, int dstPitch,
+								 bool haveOldSrc,
+								 const uint8* oldSrc, int oldPitch,
+								 const uint8 *buffer, int bufferPitch) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	int x, y;
@@ -3393,12 +3393,12 @@ void EdgePlugin::antiAliasPass3x(const uint8 *src, uint8 *dst,
 
 template<typename ColorMask>
 void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
-                                 int w, int h,
-                                 int srcPitch, int dstPitch,
-                                 int interpolate_2x,
-                                 bool haveOldSrc,
-                                 const uint8 *oldSrc, int oldSrcPitch,
-                                 const uint8 *buffer, int bufferPitch) {
+								 int w, int h,
+								 int srcPitch, int dstPitch,
+								 int interpolate_2x,
+								 bool haveOldSrc,
+								 const uint8 *oldSrc, int oldSrcPitch,
+								 const uint8 *buffer, int bufferPitch) {
 	typedef typename ColorMask::PixelType Pixel;
 
 	int x, y;
@@ -3478,7 +3478,7 @@ void EdgePlugin::antiAliasPass2x(const uint8 *src, uint8 *dst,
 
 
 void EdgePlugin::initTables(const uint8 *srcPtr, uint32 srcPitch,
-                            int width, int height) {
+							int width, int height) {
 	double r_float, g_float, b_float;
 	int r, g, b;
 	uint16 i;
@@ -3543,7 +3543,7 @@ void EdgePlugin::initialize(const Graphics::PixelFormat &format) {
 
 #if 0
 void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
-                       uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
+					   uint8 *dstPtr, uint32 dstPitch, int width, int height, int x, int y) {
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {
 			if (_format.gLoss == 2)
@@ -3573,7 +3573,7 @@ void EdgePlugin::scale(const uint8 *srcPtr, uint32 srcPitch,
 #endif
 
 void EdgePlugin::internScale(const uint8 *srcPtr, uint32 srcPitch,
-                       uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height, const uint8 *buffer, uint32 bufferPitch) {
+					   uint8 *dstPtr, uint32 dstPitch, const uint8 *oldSrcPtr, uint32 oldSrcPitch, int width, int height, const uint8 *buffer, uint32 bufferPitch) {
 	bool enable = oldSrcPtr != NULL;
 	if (_format.bytesPerPixel == 2) {
 		if (_factor == 2) {

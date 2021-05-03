@@ -1848,11 +1848,20 @@ void LB::b_puppetPalette(int nargs) {
 }
 
 void LB::b_puppetSound(int nargs) {
-	ARGNUMCHECK(1);
 
+	if (nargs < 1 || nargs >= 3) {
+		warning("b_puppetSound(): needs 1 or 2 args");
+		return;
+	}
+	
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum castMember = g_lingo->pop();
 	Score *score = g_director->getCurrentMovie()->getScore();
+
+	int channel = 1;
+	if (nargs == 2) {
+		channel = g_lingo->pop().asInt();
+	}
 
 	if (!score) {
 		warning("b_puppetSound(): no score");
@@ -1860,7 +1869,7 @@ void LB::b_puppetSound(int nargs) {
 	}
 
 	int castId = castMember.asCastId();
-	sound->playCastMember(castId, 1);
+	sound->playCastMember(castId, channel);
 }
 
 void LB::b_puppetSprite(int nargs) {

@@ -135,9 +135,10 @@ bool GraphicsManager::setZBuffer(int num) {
 		_zBuffer->sprites[i].create(picWidth, picHeight, *g_sludge->getScreenPixelFormat());
 	}
 
+	int n = 0;
+
 	for (uint y = 0; y < _sceneHeight; y++) {
 		for (uint x = 0; x < _sceneWidth; x++) {
-			int n = 0;
 			if (stillToGo == 0) {
 				n = readStream->readByte();
 				stillToGo = n >> 4;
@@ -147,6 +148,7 @@ bool GraphicsManager::setZBuffer(int num) {
 					stillToGo++;
 				n &= 15;
 			}
+
 			for (int i = 0; i < _zBuffer->numPanels; ++i) {
 				byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
 				if (n && (sorted[i] == n || i == 0)) {
@@ -165,6 +167,7 @@ bool GraphicsManager::setZBuffer(int num) {
 			stillToGo--;
 		}
 	}
+
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 	return true;

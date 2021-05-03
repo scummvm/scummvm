@@ -269,13 +269,13 @@ Resources::Object *XRCReader::createResource(XRCReadStream *stream, Resources::O
 		break;
 	case Resources::Type::kLipSync:
 		resource = new Resources::LipSync(parent, subType, index, name);
-        break;
+		break;
 	case Resources::Type::kAnimSoundTrigger:
 		resource = new Resources::AnimSoundTrigger(parent, subType, index, name);
 		break;
 	case Resources::Type::kString:
 		resource = new Resources::String(parent, subType, index, name);
-        break;
+		break;
 	case Resources::Type::kTextureSet:
 		resource = new Resources::TextureSet(parent, subType, index, name);
 		break;

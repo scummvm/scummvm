@@ -430,6 +430,11 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
+	/**
+	 * Finds the addresses of all objects with the superclass of the given name.
+	 */
+	Common::Array<reg_t> findObjectsBySuperClass(const Common::String &superClassName);
+
 	uint32 classTableSize() const { return _classTable.size(); }
 	Class getClass(int index) const { return _classTable[index]; }
 	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}

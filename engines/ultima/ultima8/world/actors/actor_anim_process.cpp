@@ -55,24 +55,33 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ActorAnimProcess)
 ActorAnimProcess::ActorAnimProcess() : Process(), _tracker(nullptr),
 	_dir(dir_north), _action(Animation::walk), _steps(0), _firstFrame(true),
 	_currentStep(0), _repeatCounter(0), _animAborted(false),
-	_attackedSomething(false) {
+	_attackedSomething(false), _interpolate(false) {
 }
 
 ActorAnimProcess::ActorAnimProcess(Actor *actor, Animation::Sequence action,
-                                   Direction dir, uint32 steps) :
+								   Direction dir, uint32 steps) :
 		_dir(dir), _action(action), _steps(steps), _tracker(nullptr),
 		_firstFrame(true), _currentStep(0), _repeatCounter(0),
-		_animAborted(false), _attackedSomething(false)  {
+		_animAborted(false), _attackedSomething(false), _interpolate(false)  {
 	assert(actor);
 	_itemNum = actor->getObjId();
 
 	_type = ACTOR_ANIM_PROC_TYPE;
+#ifdef WATCHACTOR
+	if (_itemNum == watchactor)
+		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
+			 << "] ActorAnimProcess created (" << _itemNum << ","
+			 << _action << "," << _dir << ") steps " << _steps
+			 << Std::endl;
+#endif
 }
 
 bool ActorAnimProcess::init() {
 	_repeatCounter = 0;
 	_animAborted = false;
 	_attackedSomething = false;
+
+	_interpolate = ConfMan.getBool("interpolate");
 
 	Actor *actor = getActor(_itemNum);
 	assert(actor);
@@ -115,7 +124,7 @@ bool ActorAnimProcess::init() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor)
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-		     << "] ActorAnimProcess " << getPid() << " created ("
+		     << "] ActorAnimProcess " << getPid() << " initalized ("
 			 << _itemNum << "," << _action << "," << _dir << ") steps "
 			 << _steps << Std::endl;
 #endif
@@ -281,18 +290,29 @@ void ActorAnimProcess::run() {
 
 	int32 x, y, z, x2, y2, z2;
 	a->getLocation(x, y, z);
-	_tracker->getInterpolatedPosition(x2, y2, z2, _repeatCounter);
-	if (x == x2 && y == y2 && z == z2) {
-		_tracker->getInterpolatedPosition(x, y, z, _repeatCounter + 1);
-		a->collideMove(x, y, z, false, true); // forced move
-		a->setFrame(_tracker->getFrame());
-	} else {
+
+	if (_interpolate) {
+		// Apply interpolated position on repeated frames
+		_tracker->getInterpolatedPosition(x2, y2, z2, _repeatCounter);
+		if (x == x2 && y == y2 && z == z2) {
+			_tracker->getInterpolatedPosition(x, y, z, _repeatCounter + 1);
+			a->collideMove(x, y, z, false, true); // forced move
+			a->setFrame(_tracker->getFrame());
 #ifdef WATCHACTOR
-		if (_itemNum == watchactor) {
-			pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-			     << "] moved, so aborting this frame." << Std::endl;
+		} else {
+			if (_itemNum == watchactor) {
+				pout << "Animation [" << Kernel::get_instance()->getFrameNum()
+					 << "] moved, so aborting this frame." << Std::endl;
+			}
+#endif // WATCHACTOR
 		}
-#endif
+	} else {
+		// Just move the whole distance on frame 0 of the repeat.
+		if (_repeatCounter == 0) {
+			_tracker->getPosition(x2, y2, z2);
+			a->collideMove(x2, y2, z2, false, true); // forced move
+			a->setFrame(_tracker->getFrame());
+		}
 	}
 
 	// Did we just leave the fast area?
@@ -314,7 +334,9 @@ void ActorAnimProcess::run() {
 		     << "] showing frame (" << x << "," << y << "," << z << ")"
 		     << " shape (" << a->getShape() << "," << _tracker->getFrame()
 		     << ") sfx " << _tracker->getAnimFrame()->_sfx
-		     << " rep " << _repeatCounter << " ";
+		     << " rep " << _repeatCounter << ConsoleStream::hex
+			 << " flags " << _tracker->getAnimFrame()->_flags << " "
+			 << ConsoleStream::dec;
 
 		if (_tracker->isDone()) pout << "D";
 		if (_tracker->isBlocked()) pout << "B";

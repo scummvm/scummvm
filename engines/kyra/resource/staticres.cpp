@@ -39,7 +39,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 108
+#define RESFILE_VERSION 109
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -95,6 +95,7 @@ const IndexTable iLanguageTable[] = {
 	{ Common::JA_JPN, 6 },
 	{ Common::RU_RUS, 7 },
 	{ Common::HE_ISR, 8 },
+	{ Common::ZH_CNA, 9 },
 	{ -1, -1 }
 };
 
@@ -1078,7 +1079,8 @@ const ScreenDim Screen_MR::_screenDimTable[] = {
 	{ 0x00, 0x00, 0x28, 0xC8, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x08, 0x48, 0x18, 0x38, 0xFF, 0xF0, 0x00, 0x00 },
 	{ 0x00, 0x00, 0x28, 0xBC, 0xFF, 0xF0, 0x00, 0x00 },
-	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 }
+	{ 0x0A, 0x96, 0x14, 0x30, 0x19, 0xF0, 0x00, 0x00 },
+	{ 0x0A, 0x8E, 0x14, 0x3A, 0x19, 0xF0, 0x00, 0x00 }
 };
 
 const int Screen_MR::_screenDimTableCount = ARRAYSIZE(Screen_MR::_screenDimTable);
@@ -1822,26 +1824,13 @@ const uint8 KyraEngine_HoF::_rainbowRoomData[] = {
 const char *const KyraEngine_MR::_languageExtension[] = {
 	"TRE",
 	"TRF",
-	"TRG"/*,
-	"TRI",      Italian and Spanish were never included, the supported fan translations are using
-	"TRS"       English/French extensions thus overwriting these languages */
+	"TRG",
+	"TRC"
+	// Italian, Spanish and Russian don't have dedicated language files. The supported fan translations
+	// use one of the existing extensions (English, French or German) thus overwriting that language.
 };
 
 const int KyraEngine_MR::_languageExtensionSize = ARRAYSIZE(KyraEngine_MR::_languageExtension);
-
-const char *const KyraEngine_MR::_mainMenuSpanishFan[] = {
-	"Nueva Partida",
-	"Ver Intro",
-	"Restaurar",
-	"Finalizar"
-};
-
-const char *const KyraEngine_MR::_mainMenuItalianFan[] = {
-	"Nuova Partita",
-	"Introduzione",
-	"Carica una partita",
-	"Esci dal gioco"
-};
 
 const KyraEngine_MR::ShapeDesc KyraEngine_MR::_shapeDescs[] = {
 	{ 57, 91, -31, -82 },

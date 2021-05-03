@@ -224,11 +224,11 @@ void Floor::printData() {
 }
 
 FloorEdge::FloorEdge(uint16 vertexIndex1, uint16 vertexIndex2, uint32 faceIndex1) :
-        _vertexIndex1(vertexIndex1),
-        _vertexIndex2(vertexIndex2),
-        _faceIndex1(faceIndex1),
-        _faceIndex2(-1),
-        _enabled(true) {
+		_vertexIndex1(vertexIndex1),
+		_vertexIndex2(vertexIndex2),
+		_faceIndex1(faceIndex1),
+		_faceIndex2(-1),
+		_enabled(true) {
 }
 
 bool FloorEdge::hasVertices(uint16 vertexIndex1, uint16 vertexIndex2) const {

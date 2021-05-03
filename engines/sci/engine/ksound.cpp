@@ -164,10 +164,24 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
  * This is the SCI16 version; SCI32 is handled separately.
  */
 reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
-	// JonesCD uses different functions based on the cdaudio.map file
-	// to use red book tracks.
-	if (g_sci->_features->usesCdTrack())
-		return kDoCdAudio(s, argc, argv);
+	// JonesCD and Mothergoose256 CD use different functions
+	// based on the cdaudio.map file to use red book tracks.
+	if (g_sci->_features->usesCdTrack()) {
+		if (g_sci->getGameId() == GID_MOTHERGOOSE256) {
+			// The CD audio version of Mothergoose256 CD is unique with a
+			// custom interpreter for its audio. English is only in the CD
+			// audio track while the other four languages are only in audio
+			// resource files. This is transparent to the scripts which are
+			// the same in all versions. The interpreter detected when
+			// English was selected and used CD audio in that case.
+			if (g_sci->getSciLanguage() == K_LANG_ENGLISH &&
+				argv[0].toUint16() != kSciAudioLanguage) {
+				return kDoCdAudio(s, argc, argv);
+			}
+		} else {
+			return kDoCdAudio(s, argc, argv);
+		}
+	}
 
 	Audio::Mixer *mixer = g_system->getMixer();
 
@@ -264,6 +278,13 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 				g_sci->getResMan()->setAudioLanguage(language);
 
 			kLanguage kLang = g_sci->getSciLanguage();
+			if (g_sci->_features->usesCdTrack() && language == K_LANG_ENGLISH) {
+				// Mothergoose 256 CD has a multi-lingual version with English only on CD audio,
+				// so setAudioLanguage() will fail because there are no English resource files.
+				// The scripts cycle through languages to test which are available for the main
+				// menu, so setting English must succeed. This was handled by a custom interpreter.
+				kLang = K_LANG_ENGLISH;
+			}
 			g_sci->setSciLanguage(kLang);
 
 			return make_reg(0, kLang);

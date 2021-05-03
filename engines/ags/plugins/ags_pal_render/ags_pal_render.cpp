@@ -182,9 +182,9 @@ void Make_Sin_Lut() {
 /*
 void PreMultiply_Alphas () //Ha ha, this isn't the kind of premultiplcation you're thinking of.
 {
-    for (int y=0;y<64;y++)
-        for (int x=0;x<64;x++)
-            alphamultiply [y*64+x] = y*x;
+	for (int y=0;y<64;y++)
+		for (int x=0;x<64;x++)
+			alphamultiply [y*64+x] = y*x;
 }
 */
 
@@ -593,60 +593,60 @@ void DoFire(ScriptMethodParams &params) {
 /*
 unsigned char MixColorAlpha (unsigned char fg,unsigned char bg,unsigned char alpha)
 {
-    //unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
-    //unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
-    //BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
-    //if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-    //uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
-    AGSColor *palette = engine->GetPalette ();
-    int i=0;
-    int out_r = (palette[fg].r>>1) * alpha + (palette[bg].r>>1) * (255 - alpha);
-    int out_g = palette[fg].g * alpha + palette[bg].g * (255 - alpha);
-    int out_b = (palette[fg].b>>1) * alpha + (palette[bg].b>>1) * (255 - alpha);
-    //unsigned char ralpha = alpha>>2;
-    //unsigned char invralpha = 64-ralpha;
-    //if (ralpha > alpha) engine->AbortGame ("wtf");
-    //int out_r = alphamultiply[(palette[fg].r>>1)][ralpha] + alphamultiply[(palette[bg].r>>1)][(invralpha)];
-    //int out_g = alphamultiply[(palette[fg].g)][ralpha] + alphamultiply[(palette[bg].g)][(invralpha)];
-    //int out_b = alphamultiply[(palette[fg].b>>1)][ralpha] + alphamultiply[(palette[bg].b>>1)][(invralpha)];
-    out_r = (out_r + 1 + (out_r >> 8)) >> 8;
-    out_g = (out_g + 1 + (out_g >> 8)) >> 8;
-    out_b = (out_b + 1 + (out_b >> 8)) >> 8;
-    i = ((out_r << 11) | (out_g << 5) | out_b);
-    unsigned char (*clutp) = clut;
-    //unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
-    unsigned char result = cycle_remap [*(clutp+i)]; //Once again, to make sure that the palette slot used is the right one.
-    //engine->ReleaseBitmapSurface (clutspr);
-    return result;
+	//unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
+	//unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
+	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
+	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
+	//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
+	AGSColor *palette = engine->GetPalette ();
+	int i=0;
+	int out_r = (palette[fg].r>>1) * alpha + (palette[bg].r>>1) * (255 - alpha);
+	int out_g = palette[fg].g * alpha + palette[bg].g * (255 - alpha);
+	int out_b = (palette[fg].b>>1) * alpha + (palette[bg].b>>1) * (255 - alpha);
+	//unsigned char ralpha = alpha>>2;
+	//unsigned char invralpha = 64-ralpha;
+	//if (ralpha > alpha) engine->AbortGame ("wtf");
+	//int out_r = alphamultiply[(palette[fg].r>>1)][ralpha] + alphamultiply[(palette[bg].r>>1)][(invralpha)];
+	//int out_g = alphamultiply[(palette[fg].g)][ralpha] + alphamultiply[(palette[bg].g)][(invralpha)];
+	//int out_b = alphamultiply[(palette[fg].b>>1)][ralpha] + alphamultiply[(palette[bg].b>>1)][(invralpha)];
+	out_r = (out_r + 1 + (out_r >> 8)) >> 8;
+	out_g = (out_g + 1 + (out_g >> 8)) >> 8;
+	out_b = (out_b + 1 + (out_b >> 8)) >> 8;
+	i = ((out_r << 11) | (out_g << 5) | out_b);
+	unsigned char (*clutp) = clut;
+	//unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
+	unsigned char result = cycle_remap [*(clutp+i)]; //Once again, to make sure that the palette slot used is the right one.
+	//engine->ReleaseBitmapSurface (clutspr);
+	return result;
 }
 
 unsigned char MixColorAdditive (unsigned char fg,unsigned char bg,unsigned char alpha)
 {
-    //unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
-    //unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
-    //BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
-    //if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
-    //uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
-    AGSColor *palette = engine->GetPalette ();
-    int i=0;
-    int add_r,add_b,add_g = 0;
-    char ralpha = alpha>>2;
-    //if (ralpha > alpha) engine->AbortGame ("wtf");
-    //add_r = (((palette[fg].r>>1) * (alpha))>>8);
-    //add_b = (((palette[fg].b>>1) * (alpha))>>8);
-    //add_g = (((palette[fg].g)    * (alpha))>>8);
-    add_r = ((alphamultiply[(palette[fg].r>>1)*64+ralpha])>>6);
-    add_b = ((alphamultiply[(palette[fg].b>>1)*64+ralpha])>>6);
-    add_g = ((alphamultiply[(palette[fg].g   )*64+ralpha])>>6);
-    int out_r = min(31,(palette[bg].r>>1) + add_r);
-    int out_g = min(63, palette[bg].g     + add_g);
-    int out_b = min(31,(palette[bg].b>>1) + add_b);
-    i = ((out_r << 11) | (out_g << 5) | out_b);
-    unsigned char (*clutp) = clut;
-    unsigned char result = cycle_remap [*(clutp+i)]; //Once again, to make sure that the palette slot used is the right one.
-    //unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
-    //engine->ReleaseBitmapSurface (clutspr);
-    return result;
+	//unsigned char rfg = cycle_remap [fg]; //Automatic remapping of palette slots.
+	//unsigned char rbg = cycle_remap [bg]; //Saves on typing elsewhere.
+	//BITMAP *clutspr = engine->GetSpriteGraphic (clutslot);
+	//if (!clutspr) engine->AbortGame ("MixColorAlpha: Can't load CLUT sprite into memory.");
+	//uint8 *clutarray = engine->GetRawBitmapSurface (clutspr);
+	AGSColor *palette = engine->GetPalette ();
+	int i=0;
+	int add_r,add_b,add_g = 0;
+	char ralpha = alpha>>2;
+	//if (ralpha > alpha) engine->AbortGame ("wtf");
+	//add_r = (((palette[fg].r>>1) * (alpha))>>8);
+	//add_b = (((palette[fg].b>>1) * (alpha))>>8);
+	//add_g = (((palette[fg].g)    * (alpha))>>8);
+	add_r = ((alphamultiply[(palette[fg].r>>1)*64+ralpha])>>6);
+	add_b = ((alphamultiply[(palette[fg].b>>1)*64+ralpha])>>6);
+	add_g = ((alphamultiply[(palette[fg].g   )*64+ralpha])>>6);
+	int out_r = min(31,(palette[bg].r>>1) + add_r);
+	int out_g = min(63, palette[bg].g     + add_g);
+	int out_b = min(31,(palette[bg].b>>1) + add_b);
+	i = ((out_r << 11) | (out_g << 5) | out_b);
+	unsigned char (*clutp) = clut;
+	unsigned char result = cycle_remap [*(clutp+i)]; //Once again, to make sure that the palette slot used is the right one.
+	//unsigned char result = cycle_remap [clut[i>>8][i%256]]; //Once again, to make sure that the palette slot used is the right one.
+	//engine->ReleaseBitmapSurface (clutspr);
+	return result;
 }
 */
 void GetColor565(ScriptMethodParams &params) {

@@ -46,9 +46,9 @@ text_sprite::text_sprite() {
 text_sprite::~text_sprite() { Zdebug("**destructing text sprite**"); }
 
 _TSrtn text_sprite::GetRenderCoords(const int32 pinX,           // screen x-coord where we want to position the pin
-                                    const int32 pinY,           // y-coord -"-
-                                    const _pin_position pinPos, // position of pin on text sprite
-                                    const int32 margin)         // margin to keep sprite within edge of screen, or -1 if allowed anywhere
+									const int32 pinY,           // y-coord -"-
+									const _pin_position pinPos, // position of pin on text sprite
+									const int32 margin)         // margin to keep sprite within edge of screen, or -1 if allowed anywhere
 
 {
 	// first, calculate the render coords based on the pin position & desired pin coords:

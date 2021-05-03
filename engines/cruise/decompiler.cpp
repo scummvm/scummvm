@@ -297,7 +297,7 @@ void addDecomp(char *string, ...) {
 }
 
 void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
-                    char *outputName) {
+					char *outputName) {
 	int varIdx = atoi(varIdxString);
 
 	strcpy(outputName, "");

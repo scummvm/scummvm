@@ -168,7 +168,7 @@ void FireballProcess::explode() {
 }
 
 uint32 FireballProcess::I_TonysBalls(const uint8 *args,
-                                     unsigned int /*argsize*/) {
+									 unsigned int /*argsize*/) {
 	ARG_NULL16(); // unknown
 	ARG_NULL16(); // unknown
 	ARG_SINT16(x);

@@ -48,15 +48,15 @@ typedef int re_state_id;
  */
 typedef struct _re_group_register
 {
-    const char *start_ofs;
-    const char *end_ofs;
+	const char *start_ofs;
+	const char *end_ofs;
 
-    _re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
+	_re_group_register() : start_ofs(nullptr), end_ofs(nullptr) {}
 
-    void clear() {
-        start_ofs = nullptr;
-        end_ofs = nullptr;
-    }
+	void clear() {
+		start_ofs = nullptr;
+		end_ofs = nullptr;
+	}
 } re_group_register;
 
 /* number of group registers we keep */
@@ -73,18 +73,18 @@ typedef struct _re_group_register
  */
 typedef struct
 {
-    /* the character we must match to transition to the target state */
-    char ch;
+	/* the character we must match to transition to the target state */
+	char ch;
 
-    /* the target states */
-    re_state_id next_state_1;
-    re_state_id next_state_2;
+	/* the target states */
+	re_state_id next_state_1;
+	re_state_id next_state_2;
 
-    /* character range match table, if used */
-    unsigned char *char_range;
+	/* character range match table, if used */
+	unsigned char *char_range;
 
-    /* flags */
-    unsigned char flags;
+	/* flags */
+	unsigned char flags;
 } re_tuple;
 
 
@@ -107,43 +107,43 @@ typedef struct
  */
 typedef struct _re_context
 {
-    /* error context */
-    errcxdef *errctx;
+	/* error context */
+	errcxdef *errctx;
 
-    /* next available state ID */
-    re_state_id next_state;
+	/* next available state ID */
+	re_state_id next_state;
 
-    /*
-     *   The array of transition tuples.  We'll allocate this array and
-     *   expand it as necessary.  
-     */
-    re_tuple *tuple_arr;
+	/*
+	 *   The array of transition tuples.  We'll allocate this array and
+	 *   expand it as necessary.  
+	 */
+	re_tuple *tuple_arr;
 
-    /* number of transition tuples allocated in the array */
-    int tuples_alloc;
+	/* number of transition tuples allocated in the array */
+	int tuples_alloc;
 
-    /* current group ID */
-    int cur_group;
+	/* current group ID */
+	int cur_group;
 
-    /* group registers */
-    re_group_register regs[RE_GROUP_REG_CNT];
+	/* group registers */
+	re_group_register regs[RE_GROUP_REG_CNT];
 
-    /* 
-     *   Buffer for retaining a copy of the last string we scanned.  We
-     *   retain our own copy of each string, and point the group registers
-     *   into this copy rather than the caller's original string -- this
-     *   ensures that the group registers remain valid even after the
-     *   caller has deallocated the original string.  
-     */
-    char *strbuf;
+	/* 
+	 *   Buffer for retaining a copy of the last string we scanned.  We
+	 *   retain our own copy of each string, and point the group registers
+	 *   into this copy rather than the caller's original string -- this
+	 *   ensures that the group registers remain valid even after the
+	 *   caller has deallocated the original string.  
+	 */
+	char *strbuf;
 
-    /* length of the string currently in the buffer */
-    size_t curlen;
+	/* length of the string currently in the buffer */
+	size_t curlen;
 
-    /* size of the buffer allocated to strbuf */
-    size_t strbufsiz;
+	/* size of the buffer allocated to strbuf */
+	size_t strbufsiz;
 
-    _re_context() : errctx(nullptr), next_state(0), tuple_arr(nullptr), tuples_alloc(0), cur_group(0), strbuf(nullptr), curlen(0), strbufsiz(0) {}
+	_re_context() : errctx(nullptr), next_state(0), tuple_arr(nullptr), tuples_alloc(0), cur_group(0), strbuf(nullptr), curlen(0), strbufsiz(0) {}
 } re_context;
 
 
@@ -153,11 +153,11 @@ typedef struct _re_context
  */
 typedef enum
 {
-    /* success */
-    RE_STATUS_SUCCESS = 0,
+	/* success */
+	RE_STATUS_SUCCESS = 0,
 
-    /* compilation error - group nesting too deep */
-    RE_STATUS_GROUP_NESTING_TOO_DEEP
+	/* compilation error - group nesting too deep */
+	RE_STATUS_GROUP_NESTING_TOO_DEEP
 } re_status_t;
 
 
@@ -179,9 +179,9 @@ void re_delete(re_context *ctx);
  *   Returns the offset of the match, or -1 if no match was found.  
  */
 int re_compile_and_search(re_context *ctx,
-                          const char *pattern, size_t patlen,
-                          const char *searchstr, size_t searchlen,
-                          int *result_len);
+						  const char *pattern, size_t patlen,
+						  const char *searchstr, size_t searchlen,
+						  int *result_len);
 
 /*
  *   Compile an expression and check for a match.  Returns the length of
@@ -190,8 +190,8 @@ int re_compile_and_search(re_context *ctx,
  *   string to the given pattern.  
  */
 int re_compile_and_match(re_context *ctx,
-                         const char *pattern, size_t patlen,
-                         const char *searchstr, size_t searchlen);
+						 const char *pattern, size_t patlen,
+						 const char *searchstr, size_t searchlen);
 
 } // End of namespace TADS2
 } // End of namespace TADS

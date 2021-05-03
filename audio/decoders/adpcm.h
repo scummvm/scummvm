@@ -77,12 +77,12 @@ enum ADPCMType {
  * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeADPCMStream(
-    Common::SeekableReadStream *stream,
-    DisposeAfterUse::Flag disposeAfterUse,
-    uint32 size, ADPCMType type,
-    int rate,
-    int channels,
-    uint32 blockAlign = 0);
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse,
+	uint32 size, ADPCMType type,
+	int rate,
+	int channels,
+	uint32 blockAlign = 0);
 
 /**
  * Creates a PacketizedAudioStream that will automatically queue

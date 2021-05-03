@@ -82,7 +82,7 @@ int32 DrawLineG3(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uin
 
 // three connected lines gouraud coloured : 4 points, 4 colours
 int32 DrawLineG4(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 r3,
-               uint8 g3, uint8 b3, uint8 alpha, uint16 z);
+			   uint8 g3, uint8 b3, uint8 alpha, uint16 z);
 
 // Simple flat coloured triangle : 3 points, 1 colour
 int32 DrawFlatTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 alpha, uint16 z);
@@ -92,27 +92,27 @@ int32 DrawFlatQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, i
 
 // Simple gouraud coloured triangle : 3 points, 3 colours
 int32 DrawGouraudTriangle(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2, uint8 alpha,
-                        uint16 z);
+						uint16 z);
 
 // Simple gouraud coloured quad : 4 points, 4 colours
 int32 DrawGouraudQuad(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                    uint8 r3, uint8 g3, uint8 b3, uint8 alpha, uint16 z);
+					uint8 r3, uint8 g3, uint8 b3, uint8 alpha, uint16 z);
 
 // Simple flat coloured triangle : 3 points, 1 colour, 3 UV's
 int32 DrawFlatTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2,
-                             uint8 alpha, uint16 z, void *tex);
+							 uint8 alpha, uint16 z, void *tex);
 
 // Simple flat coloured quad : 4 points, 1 colour, 4 UV's
 int32 DrawFlatQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2,
-                         uint16 v2, uint16 u3, uint16 v3, uint8 alpha, uint16 z, void *tex);
+						 uint16 v2, uint16 u3, uint16 v3, uint8 alpha, uint16 z, void *tex);
 
 // Simple gouraud coloured triangle : 3 points, 3 colours
 int32 DrawGouraudTriangleTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2, uint8 b2,
-                                uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint8 alpha, uint16 z, void *tex);
+								uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint8 alpha, uint16 z, void *tex);
 
 // Simple gouraud coloured quad : 4 points, 4 colours
 int32 DrawGouraudQuadTextured(int32 x0, int32 y0, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r0, uint8 g0, uint8 b0, uint8 r1, uint8 g1, uint8 b1, uint8 r2, uint8 g2,
-                            uint8 b2, uint8 r3, uint8 g3, uint8 b3, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint16 u3, uint16 v3, uint8 alpha,
-                            uint16 z, void *tex);
+							uint8 b2, uint8 r3, uint8 g3, uint8 b3, uint16 u0, uint16 v0, uint16 u1, uint16 v1, uint16 u2, uint16 v2, uint16 u3, uint16 v3, uint8 alpha,
+							uint16 z, void *tex);
 
 } // End of namespace ICB

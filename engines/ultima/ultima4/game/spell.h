@@ -38,7 +38,7 @@ enum SpellCastError {
 	CASTERR_MPTOOLOW,           /* caster doesn't have enough mp */
 	CASTERR_FAILED,             /* the spell failed */
 	CASTERR_WRONGCONTEXT,       /* generic 'wrong-context' error (generrally finds the correct
-                                   context error message on its own) */
+								   context error message on its own) */
 	CASTERR_COMBATONLY,         /* e.g. spell must be cast in combat */
 	CASTERR_DUNGEONONLY,        /* e.g. spell must be cast in dungeons */
 	CASTERR_WORLDMAPONLY       /* e.g. spell must be cast on the world map */

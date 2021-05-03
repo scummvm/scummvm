@@ -289,14 +289,14 @@ GUI_status CommandBar::hit(uint8 num) {
 }
 
 static const EventMode U6_mode_tbl[] = { ATTACK_MODE, CAST_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
-                                         DROP_MODE, PUSH_MODE, USE_MODE, REST_MODE, COMBAT_MODE
-                                       };
+										 DROP_MODE, PUSH_MODE, USE_MODE, REST_MODE, COMBAT_MODE
+									   };
 static const EventMode MD_mode_tbl[] = { ATTACK_MODE, TALK_MODE, LOOK_MODE, GET_MODE,
-                                         DROP_MODE, PUSH_MODE, USE_MODE, COMBAT_MODE
-                                       };
+										 DROP_MODE, PUSH_MODE, USE_MODE, COMBAT_MODE
+									   };
 static const EventMode SE_mode_tbl[] = { PUSH_MODE, GET_MODE, DROP_MODE, USE_MODE, TALK_MODE,
-                                         LOOK_MODE, ATTACK_MODE, REST_MODE, COMBAT_MODE
-                                       };
+										 LOOK_MODE, ATTACK_MODE, REST_MODE, COMBAT_MODE
+									   };
 
 /*
  * return true if target is needed (only used for original CommandBar commands)

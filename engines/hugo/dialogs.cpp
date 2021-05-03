@@ -74,6 +74,8 @@ void TopMenu::reflowLayout() {
 
 	_h = kMenuHeight * scale;
 
+	resize(_x, _y, _w, _h);
+
 	int x = kMenuX * scale;
 	int y = kMenuY * scale;
 

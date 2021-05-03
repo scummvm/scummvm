@@ -26,8 +26,6 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
-#if defined(USE_TTS)
-
 #include "common/array.h"
 namespace Common {
 
@@ -349,7 +347,5 @@ protected:
 /** @} */
 
 } // End of namespace Common
-
-#endif	// USE_TTS
 
 #endif // BACKENDS_TEXT_TO_SPEECH_ABSTRACT_H

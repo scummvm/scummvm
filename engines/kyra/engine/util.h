@@ -34,7 +34,7 @@ public:
 	static void decodeString2(const char *src, char *dst);
 	static Common::String decodeString1(const Common::String &src);
 	static Common::String decodeString2(const Common::String &src);
-	
+
 
 	// Since our current GUI font uses ISO-8859-1, this
 	// conversion functionallty uses that as a base.

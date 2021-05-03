@@ -42,8 +42,8 @@ WpnOvlayDat::~WpnOvlayDat() {
 }
 
 const WeaponOverlayFrame *WpnOvlayDat::getOverlayFrame(uint32 action, int type,
-        Direction direction,
-        int frame) const {
+		Direction direction,
+		int frame) const {
 	if (action >= _overlay.size())
 		return nullptr;
 	if (!_overlay[action])

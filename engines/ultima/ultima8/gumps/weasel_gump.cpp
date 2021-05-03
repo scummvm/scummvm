@@ -190,9 +190,6 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 	if (item)
 		_credits = item->getQuality();
 
-	// TODO: remove me (for testing)
-	_credits += 10000;
-
 	_weaselDat = GameData::get_instance()->getWeaselDat(_level);
 	if (!_weaselDat || _weaselDat->getNumItems() == 0)
 		Close();
@@ -224,7 +221,7 @@ void WeaselGump::run() {
 			_state = kWeaselShowIntro;
 			break;
 		case kWeaselShowIntro: {
-			if (_level == 1 && !_playedIntroMovie) {
+			if (_level == 2 && !_playedIntroMovie) {
 				_movie = playMovie(FIRST_INTRO_MOVIE);
 				_playedIntroMovie = true;
 			} else {

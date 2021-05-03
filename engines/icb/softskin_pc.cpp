@@ -34,7 +34,7 @@
 namespace ICB {
 
 int32 softskinPC(rap_API *rap, int32 poseBone, MATRIXPC *lw, SVECTORPC *local, int16 *xminLocal, int16 *xmaxLocal, int16 *yminLocal, int16 *ymaxLocal, int16 *zminLocal,
-               int16 *zmaxLocal, int32 screenShift) {
+			   int16 *zmaxLocal, int32 screenShift) {
 	// step 1 : make all the local-world and local-screen matrices
 	//    This is done prior to this function
 	// step 2 : take all the offsets from the mesh file

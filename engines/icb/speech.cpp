@@ -724,10 +724,10 @@ void _game_session::Format_remora_text(const char *pcText, int32 nLineSpacing, i
 }
 
 void _game_session::Create_remora_text(uint32 x, uint32 y, const char *ascii,
-                                       int32 margin, _pin_position pin_pos, int32 lineSpacing, int32 charSpacing,
-                                       uint32 maxWidth,
-                                       bool8 analysisAlreadyDone,
-                                       int32 stopAtLine) {
+									   int32 margin, _pin_position pin_pos, int32 lineSpacing, int32 charSpacing,
+									   uint32 maxWidth,
+									   bool8 analysisAlreadyDone,
+									   int32 stopAtLine) {
 	bool8 bRemoraLeftFormatting;
 
 	Zdebug("Create_remora_text %d,%d [%s]", x, y, ascii);

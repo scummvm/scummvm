@@ -28,7 +28,7 @@
 #include "common/util.h"
 
 #define VERSION_MAJOR 1
-#define VERSION_MINOR 30
+#define VERSION_MINOR 31
 
 #define DIALOG_SIZE 0x150
 
@@ -421,6 +421,7 @@ enum LureLanguage {
 	LANG_DE_DEU = 7,
 	LANG_ES_ESP = 17,
 	LANG_EN_ANY = 3,
+	LANG_EN_USA = 4,
 	LANG_UNKOWN = -1
 };
 

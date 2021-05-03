@@ -30,8 +30,8 @@ static iAVLNode *iAVLCloseSearchNode(iAVLTree const *avltree, iAVLKey key);
 static void iAVLRebalanceNode(iAVLTree *avltree, iAVLNode *avlnode);
 static void iAVLFreeBranch(iAVLNode *avlnode, void (freeitem)(void *item));
 static void iAVLFillVacancy(iAVLTree *avltree,
-                            iAVLNode *origparent, iAVLNode **superparent,
-                            iAVLNode *left, iAVLNode *right);
+							iAVLNode *origparent, iAVLNode **superparent,
+							iAVLNode *left, iAVLNode *right);
 
 #define MAX(x, y)      ((x) > (y) ? (x) : (y))
 #define MIN(x, y)      ((x) < (y) ? (x) : (y))
@@ -415,8 +415,8 @@ void iAVLFreeBranch(iAVLNode *avlnode, void (freeitem)(void *item)) {
  * component pointer, fill that vacancy.
  */
 void iAVLFillVacancy(iAVLTree *avltree,
-                     iAVLNode *origparent, iAVLNode **superparent,
-                     iAVLNode *left, iAVLNode *right) {
+					 iAVLNode *origparent, iAVLNode **superparent,
+					 iAVLNode *left, iAVLNode *right) {
 	iAVLNode *avlnode;
 	iAVLNode *balnode;
 	iAVLNode *nextbalnode;

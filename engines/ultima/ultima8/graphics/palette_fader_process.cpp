@@ -37,7 +37,7 @@ PaletteFaderProcess::PaletteFaderProcess() : Process(), _priority(0),
 }
 
 PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
-        int priority, int frames) : _priority(priority),
+		int priority, int frames) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
@@ -47,7 +47,7 @@ PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
 }
 
 PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
-        int priority, int frames, bool current) : _priority(priority),
+		int priority, int frames, bool current) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
@@ -67,7 +67,7 @@ PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
 }
 
 PaletteFaderProcess::PaletteFaderProcess(const int16 from[12], const int16 to[12],
-        int priority, int frames) : _priority(priority),
+		int priority, int frames) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
 	int i;
 	for (i = 0; i < 12; i++) _oldMatrix[i] = from[i];
@@ -126,7 +126,7 @@ bool PaletteFaderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 }
 
 uint32 PaletteFaderProcess::I_fadeToPaletteTransform(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	ARG_UINT16(transform);
 	ARG_UINT16(priority);
 
@@ -143,7 +143,7 @@ uint32 PaletteFaderProcess::I_fadeToPaletteTransform(const uint8 *args,
 }
 
 uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 *args,
-        unsigned int argsize) {
+		unsigned int argsize) {
 	if (_fader && _fader->_priority > 0x7FFF)
 		return 0;
 	else if (_fader && !_fader->is_terminated())
@@ -164,7 +164,7 @@ uint32 PaletteFaderProcess::I_fadeToBlack(const uint8 *args,
 }
 
 uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 *args,
-        unsigned int argsize) {
+		unsigned int argsize) {
 	if (_fader && _fader->_priority > 0x7FFF)
 		return 0;
 	else if (_fader && !_fader->is_terminated())
@@ -185,7 +185,7 @@ uint32 PaletteFaderProcess::I_fadeFromBlack(const uint8 *args,
 }
 
 uint32 PaletteFaderProcess::I_fadeToWhite(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF)
 		return 0;
 	else if (_fader && !_fader->is_terminated())
@@ -196,7 +196,7 @@ uint32 PaletteFaderProcess::I_fadeToWhite(const uint8 * /*args*/,
 }
 
 uint32 PaletteFaderProcess::I_fadeFromWhite(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF)
 		return 0;
 	else if (_fader && !_fader->is_terminated())
@@ -207,7 +207,7 @@ uint32 PaletteFaderProcess::I_fadeFromWhite(const uint8 * /*args*/,
 }
 
 uint32 PaletteFaderProcess::I_lightningBolt(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > -1)
 		return 0;
 	else if (_fader && !_fader->is_terminated())
@@ -268,7 +268,7 @@ uint32 PaletteFaderProcess::I_fadeToGivenColor(const uint8 *args,
 
 
 uint32 PaletteFaderProcess::I_jumpToGreyScale(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
@@ -278,7 +278,7 @@ uint32 PaletteFaderProcess::I_jumpToGreyScale(const uint8 * /*args*/,
 }
 
 uint32 PaletteFaderProcess::I_jumpToAllBlack(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 
@@ -288,7 +288,7 @@ uint32 PaletteFaderProcess::I_jumpToAllBlack(const uint8 * /*args*/,
 }
 
 uint32 PaletteFaderProcess::I_jumpToAllGrey(const uint8 * /*args*/,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	if (_fader && _fader->_priority > 0x7FFF) return 0;
 	else if (_fader) _fader->terminate();
 

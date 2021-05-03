@@ -30,8 +30,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 ShapeFont::ShapeFont(const uint8 *data, uint32 size,
-                     const ConvertShapeFormat *format,
-                     const uint16 flexId, const uint32 shapeNum)
+					 const ConvertShapeFormat *format,
+					 const uint16 flexId, const uint32 shapeNum)
 	: Font(), Shape(data, size, format, flexId, shapeNum),
 	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
 	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum == 1;
@@ -120,10 +120,10 @@ int ShapeFont::charToFrameNum(char c) const {
 }
 
 RenderedText *ShapeFont::renderText(const Std::string &text,
-                                    unsigned int &remaining,
-                                    int32 width, int32 height, TextAlign align,
-                                    bool u8specials,
-                                    Std::string::size_type cursor) {
+									unsigned int &remaining,
+									int32 width, int32 height, TextAlign align,
+									bool u8specials,
+									Std::string::size_type cursor) {
 	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,

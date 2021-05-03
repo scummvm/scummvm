@@ -1,20 +1,3 @@
-static const char *const k3MainMenuStringsDOSCD[12] = {
-	"Start a new game",
-	"Introduction",
-	"Load a game",
-	"Exit the game",
-	"Nouvelle Partie",
-	"Introduction",
-	"Charger une partie",
-	"Quitter le jeu",
-	"Neues Spiel starten",
-	"Intro",
-	"Spielstand laden",
-	"Spiel beenden"
-};
-
-static const StringListProvider k3MainMenuStringsDOSCDProvider = { ARRAYSIZE(k3MainMenuStringsDOSCD), k3MainMenuStringsDOSCD };
-
 static const char *const k3MusicFilesDOSCD[43] = {
 	"ARREST1",
 	"BATH1",
@@ -554,3 +537,8 @@ static const byte k3ItemStringMapDOSCD[72] = {
 
 static const ByteProvider k3ItemStringMapDOSCDProvider = { ARRAYSIZE(k3ItemStringMapDOSCD), k3ItemStringMapDOSCD };
 
+static const byte k3DummyDataDOSCD[1] = {
+	0
+};
+
+static const ByteProvider k3DummyDataDOSCDProvider = { ARRAYSIZE(k3DummyDataDOSCD), k3DummyDataDOSCD };

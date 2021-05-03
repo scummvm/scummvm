@@ -25,6 +25,10 @@
 
 #include "common/util.h"
 
+namespace Common {
+struct Point;
+}
+
 namespace Graphics {
 
 /**
@@ -37,6 +41,7 @@ namespace Graphics {
  */
 
 struct PixelFormat;
+struct TransformStruct;
 
 /** Converting a color from YUV to RGB colorspace. */
 inline static void YUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
@@ -66,10 +71,26 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
  * @param bytesPerPixel	the number of bytes per pixel
  */
 void copyBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const uint bytesPerPixel);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel);
 
+/**
+ * Blits a rectangle with a transparent color key.
+ *
+ * @param dst			the buffer which will recieve the converted graphics data
+ * @param src			the buffer containing the original graphics data
+ * @param dstPitch		width in bytes of one full line of the dest buffer
+ * @param srcPitch		width in bytes of one full line of the source buffer
+ * @param w				the width of the graphics data
+ * @param h				the height of the graphics data
+ * @param bytesPerPixel	the number of bytes per pixel
+ * @param key			the transparent color key
+ */
+bool keyBlit(byte *dst, const byte *src,
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const uint bytesPerPixel, const uint32 key);
 /**
  * Blits a rectangle from one graphical format to another.
  *
@@ -93,21 +114,37 @@ void copyBlit(byte *dst, const byte *src,
  *       dstPitch < srcPitch though.
  */
 bool crossBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint w, const uint h,
-               const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint w, const uint h,
+			   const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
 
 bool scaleBlit(byte *dst, const byte *src,
-               const uint dstPitch, const uint srcPitch,
-               const uint dstW, const uint dstH,
-               const uint srcW, const uint srcH,
-               const Graphics::PixelFormat &fmt);
+			   const uint dstPitch, const uint srcPitch,
+			   const uint dstW, const uint dstH,
+			   const uint srcW, const uint srcH,
+			   const Graphics::PixelFormat &fmt);
 
 bool scaleBlitBilinear(byte *dst, const byte *src,
-                       const uint dstPitch, const uint srcPitch,
-                       const uint dstW, const uint dstH,
-                       const uint srcW, const uint srcH,
-                       const Graphics::PixelFormat &fmt);
+					   const uint dstPitch, const uint srcPitch,
+					   const uint dstW, const uint dstH,
+					   const uint srcW, const uint srcH,
+					   const Graphics::PixelFormat &fmt);
+
+bool rotoscaleBlit(byte *dst, const byte *src,
+                   const uint dstPitch, const uint srcPitch,
+                   const uint dstW, const uint dstH,
+                   const uint srcW, const uint srcH,
+                   const Graphics::PixelFormat &fmt,
+                   const TransformStruct &transform,
+                   const Common::Point &newHotspot);
+
+bool rotoscaleBlitBilinear(byte *dst, const byte *src,
+                           const uint dstPitch, const uint srcPitch,
+                           const uint dstW, const uint dstH,
+                           const uint srcW, const uint srcH,
+                           const Graphics::PixelFormat &fmt,
+                           const TransformStruct &transform,
+                           const Common::Point &newHotspot);
 /** @} */
 } // End of namespace Graphics
 

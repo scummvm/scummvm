@@ -272,6 +272,14 @@ void preparesavegamelist(int ctrllist) {
 	// Get a list of savegames
 	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
+	// The original AGS sorts the list from most recent to oldest.
+	// We don't have the modification date in ScummVM though. We could try to
+	// parse the date string, but for now, sort by decreasing slot number, which
+	// should work better than the default sort by increasing slot.
+	Common::sort(saveList.begin(), saveList.end(),
+		[](const SaveStateDescriptor &x, const SaveStateDescriptor &y) {return x.getSaveSlot() > y.getSaveSlot(); });
+
+
 	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
 		Common::String desc = it->getDescription();
 
@@ -279,33 +287,17 @@ void preparesavegamelist(int ctrllist) {
 		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0,
 			const_cast<char *>(desc.c_str()));
 
-		// Select the first item
-		CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
 		_G(filenumbers)[_G(numsaves)] = it->getSaveSlot();
 		_G(filedates)[_G(numsaves)] = 0;		// TODO: How to handle file dates in ScummVM
 
-		++_G(numsaves);
-	}
-
-	if (_G(numsaves) >= MAXSAVEGAMES)
-		_G(toomanygames) = 1;
-
-	for (int nn = 0; nn < _G(numsaves) - 1; nn++) {
-		for (int kk = 0; kk < _G(numsaves) - 1; kk++) { // Date order the games
-			if (_G(filedates)[kk] < _G(filedates)[kk + 1]) {  // swap them round
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk, &_G(buff)[0]);
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, kk + 1, &_G(buffer2)[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk + 1, &_G(buff)[0]);
-				CSCISendControlMessage(ctrllist, CLB_SETTEXT, kk, &_G(buffer2)[0]);
-				int numtem = _G(filenumbers)[kk];
-				_G(filenumbers)[kk] = _G(filenumbers)[kk + 1];
-				_G(filenumbers)[kk + 1] = numtem;
-				long numted = _G(filedates)[kk];
-				_G(filedates)[kk] = _G(filedates)[kk + 1];
-				_G(filedates)[kk + 1] = numted;
-			}
+		if (++_G(numsaves) == MAXSAVEGAMES_20) {
+			_G(toomanygames) = 1;
+			break;
 		}
 	}
+
+	// Select the first item
+	CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
 }
 
 void enterstringwindow(const char *prompttext, char *stouse) {

@@ -60,79 +60,79 @@ Win32UpdateManager::Win32UpdateManager(SdlWindow_Win32 *window) {
 	win_sparkle_set_appcast_url(appcastUrl);
 	win_sparkle_set_can_shutdown_callback(canShutdownCallback);
 	win_sparkle_set_shutdown_request_callback(shutdownRequestCallback);
-    win_sparkle_init();
+	win_sparkle_init();
 
-    if (!ConfMan.hasKey("updates_check")
-      || ConfMan.getInt("updates_check") == Common::UpdateManager::kUpdateIntervalNotSupported) {
-        setAutomaticallyChecksForUpdates(kUpdateStateDisabled);
-    } else {
-        setAutomaticallyChecksForUpdates(kUpdateStateEnabled);
-        setUpdateCheckInterval(normalizeInterval(ConfMan.getInt("updates_check")));
-    }
+	if (!ConfMan.hasKey("updates_check")
+	  || ConfMan.getInt("updates_check") == Common::UpdateManager::kUpdateIntervalNotSupported) {
+		setAutomaticallyChecksForUpdates(kUpdateStateDisabled);
+	} else {
+		setAutomaticallyChecksForUpdates(kUpdateStateEnabled);
+		setUpdateCheckInterval(normalizeInterval(ConfMan.getInt("updates_check")));
+	}
 }
 
 Win32UpdateManager::~Win32UpdateManager() {
-    win_sparkle_cleanup();
+	win_sparkle_cleanup();
 }
 
 void Win32UpdateManager::checkForUpdates() {
-    win_sparkle_check_update_with_ui();
+	win_sparkle_check_update_with_ui();
 }
 
 void Win32UpdateManager::setAutomaticallyChecksForUpdates(UpdateManager::UpdateState state) {
-    if (state == kUpdateStateNotSupported)
-        return;
+	if (state == kUpdateStateNotSupported)
+		return;
 
-    win_sparkle_set_automatic_check_for_updates(state == kUpdateStateEnabled ? 1 : 0);
+	win_sparkle_set_automatic_check_for_updates(state == kUpdateStateEnabled ? 1 : 0);
 }
 
 Common::UpdateManager::UpdateState Win32UpdateManager::getAutomaticallyChecksForUpdates() {
-    if (win_sparkle_get_automatic_check_for_updates() == 1)
-        return kUpdateStateEnabled;
-    else
-        return kUpdateStateDisabled;
+	if (win_sparkle_get_automatic_check_for_updates() == 1)
+		return kUpdateStateEnabled;
+	else
+		return kUpdateStateDisabled;
 }
 
 void Win32UpdateManager::setUpdateCheckInterval(int interval) {
-    if (interval == kUpdateIntervalNotSupported)
-        return;
+	if (interval == kUpdateIntervalNotSupported)
+		return;
 
-    interval = normalizeInterval(interval);
+	interval = normalizeInterval(interval);
 
-    win_sparkle_set_update_check_interval(interval);
+	win_sparkle_set_update_check_interval(interval);
 }
 
 int Win32UpdateManager::getUpdateCheckInterval() {
-    // This is kind of a hack but necessary, as the value stored by Sparkle
-    // might have been changed outside of ScummVM (in which case we return the
-    // default interval of one day)
+	// This is kind of a hack but necessary, as the value stored by Sparkle
+	// might have been changed outside of ScummVM (in which case we return the
+	// default interval of one day)
 
-    int updateInterval = win_sparkle_get_update_check_interval();
-    switch (updateInterval) {
-    case kUpdateIntervalOneDay:
-    case kUpdateIntervalOneWeek:
-    case kUpdateIntervalOneMonth:
-        return updateInterval;
+	int updateInterval = win_sparkle_get_update_check_interval();
+	switch (updateInterval) {
+	case kUpdateIntervalOneDay:
+	case kUpdateIntervalOneWeek:
+	case kUpdateIntervalOneMonth:
+		return updateInterval;
 
-    default:
-        // Return the default value (one day)
-        return kUpdateIntervalOneDay;
-    }
+	default:
+		// Return the default value (one day)
+		return kUpdateIntervalOneDay;
+	}
 }
 
 bool Win32UpdateManager::getLastUpdateCheckTimeAndDate(TimeDate &t) {
-    time_t updateTime = win_sparkle_get_last_check_time();
-    tm *ut = localtime(&updateTime);
+	time_t updateTime = win_sparkle_get_last_check_time();
+	tm *ut = localtime(&updateTime);
 
-    t.tm_wday = ut->tm_wday;
-    t.tm_year = ut->tm_year;
-    t.tm_mon  = ut->tm_mon;
-    t.tm_mday = ut->tm_mday;
-    t.tm_hour = ut->tm_hour;
-    t.tm_min  = ut->tm_min;
-    t.tm_sec  = ut->tm_sec;
+	t.tm_wday = ut->tm_wday;
+	t.tm_year = ut->tm_year;
+	t.tm_mon  = ut->tm_mon;
+	t.tm_mday = ut->tm_mday;
+	t.tm_hour = ut->tm_hour;
+	t.tm_min  = ut->tm_min;
+	t.tm_sec  = ut->tm_sec;
 
-    return true;
+	return true;
 }
 
 // WinSparkle calls this to ask if we can shut down.

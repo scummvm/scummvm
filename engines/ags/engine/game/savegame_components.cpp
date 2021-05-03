@@ -139,7 +139,7 @@ inline bool AssertGameContent(HSaveError &err, int new_val, int original_val, co
 }
 
 inline bool AssertGameObjectContent(HSaveError &err, int new_val, int original_val, const char *content_name,
-                                    const char *obj_type, int obj_id) {
+									const char *obj_type, int obj_id) {
 	if (new_val != original_val) {
 		err = new SavegameError(kSvgErr_GameContentAssertion,
 		                        String::FromFormat("Mismatching number of %s, %s #%d (game: %d, save: %d).",
@@ -150,7 +150,7 @@ inline bool AssertGameObjectContent(HSaveError &err, int new_val, int original_v
 }
 
 inline bool AssertGameObjectContent2(HSaveError &err, int new_val, int original_val, const char *content_name,
-                                     const char *obj1_type, int obj1_id, const char *obj2_type, int obj2_id) {
+									 const char *obj1_type, int obj1_id, const char *obj2_type, int obj2_id) {
 	if (new_val != original_val) {
 		err = new SavegameError(kSvgErr_GameContentAssertion,
 		                        String::FromFormat("Mismatching number of %s, %s #%d, %s #%d (game: %d, save: %d).",

@@ -53,7 +53,7 @@ int32 getLineHeight(int16 charCount, const FontEntry *fontPtr) {
  * This function determines how many lines the text will have
  */
 int32 getTextLineCount(int32 rightBorder_X, int16 wordSpacingWidth,
-                       const FontEntry *fontData, const char *textString) {
+					   const FontEntry *fontData, const char *textString) {
 	const char *localString = textString;
 	const char *tempPtr = textString;
 	uint8 ch;
@@ -188,7 +188,7 @@ void flipGen(void *var, int32 length) {
 }
 
 void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int yOffset,
-                int32 height, int32 param4, int32 stringRenderBufferSize, int32 width, int32 charWidth) {
+				int32 height, int32 param4, int32 stringRenderBufferSize, int32 width, int32 charWidth) {
 	const uint8 *fontPtr_Data2 = fontPtr_Data + height * 2;
 	outBufferPtr += yOffset * width + xOffset;
 
@@ -214,7 +214,7 @@ void renderWord(const uint8 *fontPtr_Data, uint8 *outBufferPtr, int xOffset, int
 
 // returns character count and pixel size (via pointer) per line of the string (old: prepareWordRender(int32 param, int32 var1, int16* out2, uint8* ptr3, uint8* string))
 int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
-                        int16 *strPixelLength, const FontEntry *fontData, const char *textString) {
+						int16 *strPixelLength, const FontEntry *fontData, const char *textString) {
 	const char *localString = textString;
 
 	int32 counter = 0;

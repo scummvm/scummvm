@@ -35,7 +35,7 @@
 namespace Gob {
 
 CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
-                 uint16 width, uint16 height, uint8 bpp) :
+				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
 	_surface(0), _coordinates(0) {
 
@@ -55,7 +55,7 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &baseName,
 }
 
 CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::String &rxyFile,
-                 uint16 width, uint16 height, uint8 bpp) :
+				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
 	_surface(0), _coordinates(0) {
 
@@ -69,7 +69,7 @@ CMPFile::CMPFile(GobEngine *vm, const Common::String &cmpFile, const Common::Str
 }
 
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::SeekableReadStream &rxy,
-                 uint16 width, uint16 height, uint8 bpp) :
+				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
 	_surface(0), _coordinates(0) {
 
@@ -80,7 +80,7 @@ CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp, Common::Seekabl
 }
 
 CMPFile::CMPFile(GobEngine *vm, Common::SeekableReadStream &cmp,
-                 uint16 width, uint16 height, uint8 bpp) :
+				 uint16 width, uint16 height, uint8 bpp) :
 	_vm(vm), _width(width), _height(height), _bpp(bpp), _maxWidth(0), _maxHeight(0),
 	_surface(0), _coordinates(0) {
 
@@ -229,7 +229,7 @@ void CMPFile::draw(Surface &dest, uint16 sprite, uint16 x, uint16 y, int32 trans
 }
 
 void CMPFile::draw(Surface &dest, uint16 left, uint16 top, uint16 right, uint16 bottom,
-                   uint16 x, uint16 y, int32 transp) const {
+				   uint16 x, uint16 y, int32 transp) const {
 
 	if (!_surface)
 		return;

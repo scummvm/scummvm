@@ -2386,7 +2386,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if ((speakingChar->view < 0) ||
 		        (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
 		        (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1)) {
+#if AGS_PLATFORM_SCUMMVM
+			// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
+			return;
+#else
 			quitprintf("Unable to display speech because the character %s has an invalid view frame (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
+#endif
 		}
 
 		_G(our_eip) = 1504;
@@ -2627,7 +2632,12 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (speakingChar->on && // don't bother checking if character is not visible (also fixes 'Trilby's Notes' legacy game)
 			        ((speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
 			         (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1))) {
+#if AGS_PLATFORM_SCUMMVM
+				// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
+				return;
+#else
 				quitprintf("!Unable to display speech because the character %s has an invalid speech view (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
+#endif
 			}
 
 			// set up the speed of the first frame

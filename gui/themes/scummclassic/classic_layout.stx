@@ -22,12 +22,15 @@
  -->
 <layout_info resolution = 'y>399'>
 	<globals>
-		<def var = 'Line.Height' value = '16' />
-		<def var = 'Font.Height' value = '16' />
+		<def var = 'Line.Height' value = '16' scalable = 'yes'/>
+		<def var = 'Font.Height' value = '16' scalable = 'yes'/>
 
-		<def var = 'About.OuterBorder' value = '80'/>
+		<def var = 'About.OuterBorder' value = '80' scalable = 'yes'/>
 
-		<def var = 'Layout.Spacing' value = '8' />
+		<def var = 'TabWidget.TitleSpacing' value = '10' scalable = 'yes'/>
+
+		<def var = 'Layout.Spacing' value = '8' scalable = 'yes'/>
+
 		<def var = 'ShowLauncherLogo' value = '0'/>
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
@@ -40,18 +43,18 @@
 
 		<def var = 'OnScreenDialog.ShowPics' value = '0'/>
 
-		<def var = 'KeyMapper.Spacing' value = '10'/>
-		<def var = 'KeyMapper.ButtonWidth' value = '140'/>
-		<def var = 'KeyMapper.ResetWidth' value = '80'/>
+		<def var = 'KeyMapper.Spacing' value = '10' scalable = 'yes'/>
+		<def var = 'KeyMapper.ButtonWidth' value = '140' scalable = 'yes'/>
+		<def var = 'KeyMapper.ResetWidth' value = '80' scalable = 'yes'/>
 
-		<def var = 'Tooltip.MaxWidth' value = '200'/>
-		<def var = 'Tooltip.XDelta' value = '16'/> <!-- basically cursor size -->
-		<def var = 'Tooltip.YDelta' value = '16'/>
+		<def var = 'Tooltip.MaxWidth' value = '200' scalable = 'yes'/>
+		<def var = 'Tooltip.XDelta' value = '16' scalable = 'yes'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '16' scalable = 'yes'/>
 
-		<def var = 'Predictive.Button.Width' value = '60' />
+		<def var = 'Predictive.Button.Width' value = '60' scalable = 'yes'/>
 		<def var = 'Predictive.ShowDeletePic' value = '0'/>
 
-		<def var = 'DropdownButton.Width' value = '17'/>
+		<def var = 'DropdownButton.Width' value = '17' scalable = 'yes'/>
 
 		<widget name = 'OptionsLabel'
 				size = '120, Globals.Line.Height'
@@ -77,10 +80,10 @@
 		<widget name = 'WideButton'
 				size = '216, 24'
 		/>
+
 		<widget name = 'Slider'
 				size = '128, 18'
 		/>
-
 		<widget name = 'PopUp'
 				size = '-1, 19'
 		/>
@@ -604,6 +607,14 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'GUIBasePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GUIBasePopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
 				<widget name = 'RendererPopupDesc'
 						type = 'OptionsLabel'
 				/>
@@ -658,9 +669,6 @@
 						type = 'Button'
 				/>
 			</layout>
-			<widget name='KeysButton'
- 				     type='Button'
-			/>
 		</layout>
 	</dialog>
 
@@ -988,31 +996,6 @@
 			</layout>
 		</dialog>
 
-	<dialog name='KeysDialog' overlays='Dialog.GlobalOptions' shading='dim'>
-		<layout type='vertical' padding='8,8,8,8' align = 'center'>
-			<widget name='Action'
-					height='Globals.Line.Height'
-			/>
-			<widget name='List'/>
-			<widget name='Mapping'
-					height='Globals.Line.Height'
-			/>
-			<space size='Globals.Line.Height'/>
-			<layout type='horizontal'>
-				<widget name='Map'
-						type='Button'
-				/>
-				<space/>
-				<widget name='Cancel'
-						type='Button'
-				/>
-				<widget name='Ok'
-						type='Button'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
 	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
@@ -1241,10 +1224,6 @@
 			<widget name = 'TabWidget' type = 'TabWidget'
 			/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
-				<space />
-				<widget name='Keys'
-						type='Button'
-				/>
 				<space />
 				<widget name = 'Cancel'
 						type = 'Button'

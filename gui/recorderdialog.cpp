@@ -85,7 +85,7 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));
 	}
 	if (_gfxWidget)
-		_gfxWidget->setGfx(nullptr);
+		_gfxWidget->setGfx((Graphics::Surface *)nullptr);
 }
 
 

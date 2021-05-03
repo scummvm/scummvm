@@ -52,7 +52,7 @@ Configuration::~Configuration() {
 }
 
 bool Configuration::readConfigFile(Std::string fname, Std::string root,
-                                   bool readonly) {
+								   bool readonly) {
 	_configFilename = fname;
 	Shared::XMLTree *tree = new Shared::XMLTree();
 
@@ -82,7 +82,7 @@ void Configuration::clear() {
 }
 
 void Configuration::value(const Std::string &key, Std::string &ret,
-                          const char *defaultvalue) {
+						  const char *defaultvalue) {
 	// Check for a .cfg file value in the trees
 	for (Std::vector<Shared::XMLTree *>::reverse_iterator i = _trees.rbegin();
 	        i != _trees.rend(); ++i) {

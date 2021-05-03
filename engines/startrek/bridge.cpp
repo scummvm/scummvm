@@ -592,19 +592,19 @@ struct CrewTextsForChapter {
 };
 
 CrewTextsForChapter crewTexts[] = {
-    // -- Chapter 1 ----
+	// -- Chapter 1 ----
 	{ kPlanetPollux,       kBridgeTalkerSpock, 10, 20, 21, 22 },
 	{ kPlanetPollux,       kBridgeTalkerUhura,  9, 16, 19, 19 },
-    // -- Chapter 2 ----
+	// -- Chapter 2 ----
 	{ kPlanetBetaMyamid,   kBridgeTalkerSpock, 13,  5, 17, 27 },
 	{ kPlanetBetaMyamid,   kBridgeTalkerUhura, 12,  4, 16, -1 },
-    // -- Chapter 3 ----
+	// -- Chapter 3 ----
 	{ kPlanetArk7,         kBridgeTalkerSpock,  8,  4, -1, 13 },
 	{ kPlanetArk7,         kBridgeTalkerUhura,  7,  5, -1, -1 },
-    // -- Chapter 4 ----
+	// -- Chapter 4 ----
 	{ kPlanetHarlequin,    kBridgeTalkerSpock, 21,  4, 22, -1 },
 	{ kPlanetHarlequin,    kBridgeTalkerUhura, 19,  3, 20, -1 },
-    // -- Chapter 6 ----
+	// -- Chapter 6 ----
 	{ kPlanetAlphaProxima, kBridgeTalkerSpock, -1, 11, -1, -1 },
 	{ kPlanetAlphaProxima, kBridgeTalkerUhura, -1, 10, -1, -1 },
 	// TODO: The rest

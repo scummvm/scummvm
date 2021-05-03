@@ -65,7 +65,7 @@ GameMapGump::~GameMapGump() {
 }
 
 void GameMapGump::GetCameraLocation(int32 &lx, int32 &ly, int32 &lz,
-                                    int lerp_factor) {
+									int lerp_factor) {
 	CameraProcess *camera = CameraProcess::GetCameraProcess();
 	if (!camera) {
 		CameraProcess::GetCameraLocation(lx, ly, lz);
@@ -179,7 +179,7 @@ uint16 GameMapGump::TraceObjId(int32 mx, int32 my) {
 }
 
 uint16 GameMapGump::TraceCoordinates(int mx, int my, int32 coords[3],
-                                     int offsetx, int offsety, Item *item) {
+									 int offsetx, int offsety, Item *item) {
 	int32 dxd = 0, dyd = 0, dzd = 0;
 	if (item)
 		item->getFootpadWorld(dxd, dyd, dzd);
@@ -231,7 +231,7 @@ uint16 GameMapGump::TraceCoordinates(int mx, int my, int32 coords[3],
 }
 
 bool GameMapGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
-                                    int32 lerp_factor) {
+									int32 lerp_factor) {
 	Item *item = getItem(itemid);
 
 	if (!item) return false;

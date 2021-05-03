@@ -45,7 +45,7 @@ public:
 	enum CallState { kWaiting, kButtonPress, kRinging, kBadNumber, kCall, kHangUp };
 
 	Telephone(RenderObject &redrawFrom) :
-		RenderObject(redrawFrom),
+		RenderObject(redrawFrom, 7),
 		_callState(kWaiting),
 		_selected(0) {}
 	virtual ~Telephone() {}
@@ -83,8 +83,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "Telephone"; }
-
-	virtual uint16 getZOrder() const override { return 7; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	void drawButton(uint id);

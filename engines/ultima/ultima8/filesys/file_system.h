@@ -40,15 +40,13 @@ public:
 
 	//! Open a file as readable. Streamed.
 	//! \param vfn the (virtual) filename
-	//! \param is_text open in text mode?
 	//! \return nullptr on failure
-	Common::SeekableReadStream *ReadFile(const Std::string &vfn, bool is_text = false);
+	Common::SeekableReadStream *ReadFile(const Std::string &vfn);
 
 	//! Open a file as writable. Streamed.
 	//! \param vfn the (virtual) filename
-	//! \param is_text open in text mode?
 	//! \return a new writestream, or nullptr on failure
-	Common::WriteStream *WriteFile(const Std::string &vfn, bool is_text = false);
+	Common::WriteStream *WriteFile(const Std::string &vfn);
 
 private:
 	static bool base_to_uppercase(Std::string &str, int count);

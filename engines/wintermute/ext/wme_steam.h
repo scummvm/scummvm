@@ -50,6 +50,9 @@ private:
 	Common::AchievementsInfo _achievementsInfo;
 };
 
+Common::AchievementsInfo getAchievementsInfo();
+Common::String getAchievementMessage(const Common::AchievementsInfo &info, const char *id);
+
 } // End of namespace Wintermute
 
 #endif

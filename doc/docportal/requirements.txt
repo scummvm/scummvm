@@ -1,2 +1,3 @@
 sphinx-tabs
 sphinx-panels
+m2r2

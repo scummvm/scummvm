@@ -98,6 +98,7 @@ const Game kyra3Games[] = {
 	{ kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, ZH_CNA },
 
 	GAME_DUMMY_ENTRY
 };
@@ -149,6 +150,10 @@ const Game lolGames[] = {
 	{ kLoL, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kLoL, kPlatformDOS, kTalkieVersion, RU_RUS },
 	{ kLoL, kPlatformDOS, kTalkieVersion, ES_ESP },
+
+	{ kLoL, kPlatformDOS, kTalkieDemoVersion, EN_ANY },
+	{ kLoL, kPlatformDOS, kTalkieDemoVersion, FR_FRA },
+	{ kLoL, kPlatformDOS, kTalkieDemoVersion, DE_DEU },
 
 	{ kLoL, kPlatformPC98, kNoSpecial, JA_JPN },
 
@@ -801,6 +806,9 @@ const int kyra3Need[] = {
 	k3ItemAnimData,
 	k3ItemMagicTable,
 	k3ItemStringMap,
+	k3FontData,
+	k3VqaSubtitlesIntro,
+	k3VqaSubtitlesBoat,
 	-1
 };
 
@@ -1143,6 +1151,90 @@ const int lolCDNeed[] = {
 	kLoLHealShapeFrames,
 	kLoLLightningDefs,
 	kLoLFireballCoords,
+	-1
+};
+
+const int lolCDDemoNeed[] = {
+	kLoLCharacterDefs,
+	kLoLIngameSfxFiles,
+	kLoLIngameSfxIndex,
+	kLoLMusicTrackMap,
+	kLoLIngameGMSfxIndex,
+	kLoLIngameMT32SfxIndex,
+	kLoLIngamePcSpkSfxIndex,
+	kLoLSpellProperties,
+	kLoLGameShapeMap,
+	kLoLSceneItemOffs,
+	kLoLCharInvIndex,
+	kLoLCharInvDefs,
+	kLoLCharDefsMan,
+	kLoLCharDefsAkshel,
+	kLoLExpRequirements,
+	kLoLMonsterModifiers1,
+	kLoLMonsterModifiers2,
+	kLoLMonsterModifiers3,
+	kLoLMonsterModifiers4,
+	kLoLMonsterShiftOffsets,
+	kLoLMonsterDirFlags,
+	kLoLMonsterScaleY,
+	kLoLMonsterScaleX,
+	kLoLMonsterScaleWH,
+	kLoLFlyingObjectShp,
+	kLoLInventoryDesc,
+
+	kLoLLevelShpList,
+	kLoLLevelDatList,
+	kLoLCompassDefs,
+	kLoLItemPrices,
+	kLoLStashSetup,
+	kLoLDscWalls,
+	kRpgCommonDscShapeIndex,
+	kLoLDscOvlMap,
+	kLoLDscScaleWidthData,
+	kLoLDscScaleHeightData,
+	kRpgCommonDscX,
+	kLoLBaseDscY,
+	kRpgCommonDscTileIndex,
+	kRpgCommonDscDoorShapeIndex,
+	kRpgCommonDscDimData1,
+	kRpgCommonDscDimData2,
+	kRpgCommonDscBlockMap,
+	kRpgCommonDscDimMap,
+	kLoLDscOvlIndex,
+	kRpgCommonDscBlockIndex,
+	kRpgCommonDscDoorY2,
+	kRpgCommonDscDoorFrameY1,
+	kRpgCommonDscDoorFrameY2,
+	kRpgCommonDscDoorScaleOffs,
+	kLoLDscDoorScale,
+	kLoLDscDoor4,
+	kLoLDscDoorX,
+	kLoLDscDoorY,
+
+	kLoLScrollXTop,
+	kLoLScrollYTop,
+	kLoLScrollXBottom,
+	kLoLScrollYBottom,
+
+	kLoLButtonDefs,
+	kLoLButtonList1,
+	kLoLButtonList2,
+	kLoLButtonList3,
+	kLoLButtonList4,
+	kLoLButtonList5,
+	kLoLButtonList6,
+	kLoLButtonList7,
+	kLoLButtonList8,
+
+	kLoLLegendData,
+	kLoLMapCursorOvl,
+	kLoLMapStringId,
+
+	kLoLSpellbookAnim,
+	kLoLSpellbookCoords,
+	kLoLHealShapeFrames,
+	kLoLLightningDefs,
+
 	-1
 };
 
@@ -4328,6 +4420,7 @@ const GameNeed gameNeedTable[] = {
 	{ kLoL, kPlatformFMTowns, kNoSpecial, lolFMTownsNeed },
 
 	{ kLoL, kPlatformDOS, kTalkieVersion, lolCDNeed },
+	{ kLoL, kPlatformDOS, kTalkieDemoVersion, lolCDDemoNeed },
 
 	{ kEoB1, kPlatformDOS, kNoSpecial, eob1FloppyNeed },
 	{ kEoB1, kPlatformDOS, kOldFloppy, eob1FloppyOldNeed },

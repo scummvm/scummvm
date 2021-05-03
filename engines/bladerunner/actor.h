@@ -140,6 +140,7 @@ public:
 	Vector3 getPosition() const { return _position; }
 
 	void changeAnimationMode(int animationMode, bool force = false);
+	int  getFPS() const;
 	void setFPS(int fps);
 	void increaseFPS();
 

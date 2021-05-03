@@ -215,7 +215,7 @@ void AnimManager::drawText(Font *font, const char *text, uint16 x, uint16 y) {
 /* Draw tile on viewsurf at map location wx,wy (offset by add_x,add_y).
  */
 void AnimManager::drawTileAtWorldCoords(Tile *tile, uint16 wx, uint16 wy,
-                                        uint16 add_x, uint16 add_y) {
+										uint16 add_x, uint16 add_y) {
 	sint16 cur_x = map_window->cur_x;
 	sint16 cur_y = map_window->cur_y;
 	drawTile(tile, ((wx - cur_x) * tile_pitch) + add_x,
@@ -328,7 +328,7 @@ void TileAnim::display() {
 /* Add tile to list for this Anim, relative to the Anim coordinates.
  */
 PositionedTile *TileAnim::add_tile(Tile *tile, sint16 x, sint16 y,
-                                   uint16 add_x, uint16 add_y) {
+								   uint16 add_x, uint16 add_y) {
 	PositionedTile *new_tile = new PositionedTile;
 	new_tile->tile = tile;
 	new_tile->pos_x = x;

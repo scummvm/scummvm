@@ -136,9 +136,9 @@ extern Common::Array<String> split_lines(String data);
 reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) NULL);
 
 void GeasFile::read_into(const Common::Array<String> &in_data,
-                         String in_parent, uint cur_line, bool recurse,
-                         const reserved_words &props,
-                         const reserved_words &actions) {
+						 String in_parent, uint cur_line, bool recurse,
+						 const reserved_words &props,
+						 const reserved_words &actions) {
 	//cerr << "r_i: Reading in from" << cur_line << ": " << in_data[cur_line] << endl;
 	//output.push_back (GeasBlock());
 	//GeasBlock &out_block = output[output.size() - 1];
@@ -692,7 +692,7 @@ void handle_includes(const Common::Array<String> &in_data, String filename, Comm
 }
 
 bool preprocess(Common::Array<String> v, String fname, Common::Array<String> &rv,
-                GeasInterface *gi) {
+				GeasInterface *gi) {
 	//cerr << "Before preprocessing:\n" << v << "\n\n" << endl;
 	/*
 	  cerr << "Before preprocessing:\n";

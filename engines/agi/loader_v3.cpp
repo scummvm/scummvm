@@ -67,7 +67,7 @@ int AgiLoader_v3::detectGame() {
 }
 
 int AgiLoader_v3::loadDir(struct AgiDir *agid, Common::File *fp,
-                          uint32 offs, uint32 len) {
+						  uint32 offs, uint32 len) {
 	int ec = errOK;
 	uint8 *mem;
 	unsigned int i;

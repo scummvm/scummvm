@@ -168,6 +168,53 @@ AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(A
 	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
 }
 
+DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) const {
+	FileMap allFiles;
+
+	if (fslist.empty())
+		return DetectedGames();
+
+	// Compose a hashmap of all files in fslist.
+	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
+
+	// Run the detector on this
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
+
+	cleanupPirated(matches);
+
+	bool foundKnownGames = false;
+	DetectedGames detectedGames;
+	for (uint i = 0; i < matches.size(); i++) {
+		DetectedGame game = toDetectedGame(matches[i]);
+		if (game.hasUnknownFiles) {
+			// Check the game is an AGS game
+			for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
+				Common::File f;
+				if (f.open(allFiles[it->_key]) && AGS3::isAGSFile(f)) {
+					detectedGames.push_back(game);
+					break;
+				}
+			}
+		} else {
+			detectedGames.push_back(game);
+			foundKnownGames = true;
+		}
+	}
+
+	// If we didn't find a known game, also add a fallback detection
+	if (!foundKnownGames) {
+		// Use fallback detector if there were no matches by other means
+		ADDetectedGame fallbackDetectionResult = fallbackDetect(allFiles, fslist);
+		if (fallbackDetectionResult.desc) {
+			DetectedGame fallbackDetectedGame = toDetectedGame(fallbackDetectionResult);
+			fallbackDetectedGame.preferredTarget += "-fallback";
+
+			detectedGames.push_back(fallbackDetectedGame);
+		}
+	}
+	return detectedGames;
+}
+
 ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	AGS::g_fallbackDesc.desc.language = Common::UNK_LANG;

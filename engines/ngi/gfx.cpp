@@ -815,19 +815,19 @@ bool Bitmap::putDibRB(byte *pixels, const Palette &palette) {
 	for (y = endy; y >= starty && !breakup; y--) {
 		x = startx;
 
-		while ((pixel = *srcPtr++) != 0) {
+		while ((pixel = FROM_LE_16(*srcPtr++)) != 0) {
 			if (pixel == 0x100) {
 				breakup = true;
 				break;
 			}
 
 			while (pixel == 0x200 && y >= starty) {
-				uint16 value = *srcPtr++;
+				uint16 value = FROM_LE_16(*srcPtr++);
 
 				x += (byte)(value & 0xff);
 				y -= (byte)((value >> 8) & 0xff);
 
-				pixel = *srcPtr++;
+				pixel = FROM_LE_16(*srcPtr++);
 			}
 
 			if (y < starty || pixel == 0)

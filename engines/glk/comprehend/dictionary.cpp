@@ -37,7 +37,7 @@ static bool word_match(Word *word, const char *string) {
 }
 
 Word *dict_find_word_by_string(ComprehendGame *game,
-                               const char *string) {
+							   const char *string) {
 	uint i;
 
 	if (!string)
@@ -51,7 +51,7 @@ Word *dict_find_word_by_string(ComprehendGame *game,
 }
 
 Word *dict_find_word_by_index_type(ComprehendGame *game,
-                                   uint8 index, uint8 type) {
+								   uint8 index, uint8 type) {
 	uint i;
 
 	for (i = 0; i < game->_words.size(); i++) {
@@ -64,7 +64,7 @@ Word *dict_find_word_by_index_type(ComprehendGame *game,
 }
 
 Word *find_dict_word_by_index(ComprehendGame *game,
-                              uint8 index, uint8 type_mask) {
+							  uint8 index, uint8 type_mask) {
 	uint i;
 
 	for (i = 0; i < game->_words.size(); i++) {
@@ -77,7 +77,7 @@ Word *find_dict_word_by_index(ComprehendGame *game,
 }
 
 bool dict_match_index_type(ComprehendGame *game, const char *word,
-                           uint8 index, uint8 type_mask) {
+						   uint8 index, uint8 type_mask) {
 	uint i;
 
 	for (i = 0; i < game->_words.size(); i++)

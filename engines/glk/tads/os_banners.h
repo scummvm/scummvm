@@ -178,8 +178,8 @@ namespace TADS {
  *   be prepared for this routine to return null.  
  */
 void *os_banner_create(void *parent, int where, void *other, int wintype,
-                       int align, int siz, int siz_units,
-                       unsigned long style);
+					   int align, int siz, int siz_units,
+					   unsigned long style);
 
 
 /*
@@ -418,45 +418,45 @@ void os_banner_orphan(void *banner_handle);
  */
 struct os_banner_info_t
 {
-    /* alignment */
-    int align;
+	/* alignment */
+	int align;
 
-    /* style flags - these indicate the style flags actually in use */
-    unsigned long style;
+	/* style flags - these indicate the style flags actually in use */
+	unsigned long style;
 
-    /* 
-     *   Actual on-screen size of the banner, in rows and columns.  If the
-     *   banner is displayed in a proportional font or can display multiple
-     *   fonts of different sizes, this is approximated by the number of "0"
-     *   characters in the window's default font that will fit in the
-     *   window's display area.  
-     */
-    int rows;
-    int columns;
+	/* 
+	 *   Actual on-screen size of the banner, in rows and columns.  If the
+	 *   banner is displayed in a proportional font or can display multiple
+	 *   fonts of different sizes, this is approximated by the number of "0"
+	 *   characters in the window's default font that will fit in the
+	 *   window's display area.  
+	 */
+	int rows;
+	int columns;
 
-    /*
-     *   Actual on-screen size of the banner in pixels.  This is meaningful
-     *   only for full HTML interpreter; for text-only interpreters, these
-     *   are always set to zero.
-     *   
-     *   Note that even if we're running on a GUI operating system, these
-     *   aren't meaningful unless this is a full HTML interpreter.  Text-only
-     *   interpreters should always set these to zero, even on GUI OS's.  
-     */
-    int pix_width;
-    int pix_height;
+	/*
+	 *   Actual on-screen size of the banner in pixels.  This is meaningful
+	 *   only for full HTML interpreter; for text-only interpreters, these
+	 *   are always set to zero.
+	 *   
+	 *   Note that even if we're running on a GUI operating system, these
+	 *   aren't meaningful unless this is a full HTML interpreter.  Text-only
+	 *   interpreters should always set these to zero, even on GUI OS's.  
+	 */
+	int pix_width;
+	int pix_height;
 
-    /* 
-     *   OS line wrapping flag.  If this is set, the window uses OS-level
-     *   line wrapping because the window uses a proportional font, so the
-     *   caller does not need to (and should not) perform line breaking in
-     *   text displayed in the window.
-     *   
-     *   Note that OS line wrapping is a PERMANENT feature of the window.
-     *   Callers can note this information once and expect it to remain
-     *   fixed through the window's lifetime.  
-     */
-    int os_line_wrap;
+	/* 
+	 *   OS line wrapping flag.  If this is set, the window uses OS-level
+	 *   line wrapping because the window uses a proportional font, so the
+	 *   caller does not need to (and should not) perform line breaking in
+	 *   text displayed in the window.
+	 *   
+	 *   Note that OS line wrapping is a PERMANENT feature of the window.
+	 *   Callers can note this information once and expect it to remain
+	 *   fixed through the window's lifetime.  
+	 */
+	int os_line_wrap;
 };
 typedef struct os_banner_info_t os_banner_info_t;
 
@@ -590,7 +590,7 @@ void os_banner_flush(void *banner_handle);
  *   is true.  
  */
 void os_banner_set_size(void *banner_handle, int siz, int siz_units,
-                        int is_advisory);
+						int is_advisory);
 
 /* 
  *   Set the banner to the size of its current contents.  This can be used

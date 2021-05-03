@@ -42,7 +42,7 @@ namespace Sword25 {
 class Vertex;
 
 /**
-    @brief Eine Polygonklasse.
+	@brief Eine Polygonklasse.
 */
 class Polygon : public Persistable {
 public:

@@ -40,19 +40,19 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_CD | GF_ALT_REGIONS
 	},
-	// Ringworld Spanish CD
+	// Ringworld Spanish Floppy and CD use the same files
 	{
 		{
 			"ringworld",
-			"CD",
+			"",
 			AD_ENTRY1s("ring.rlb", "cb8bba91b30cd172712371d7123bd763", 7427980),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_CD,
+			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_Ringworld,
-		GF_CD | GF_ALT_REGIONS
+		GF_FLOPPY | GF_ALT_REGIONS
 	},
 	// Ringworld English Floppy version
 	{
@@ -142,20 +142,19 @@ static const tSageGameDescription gameDescriptions[] = {
 		GF_CD | GF_ALT_REGIONS
 	},
 
-	// Blue Force Spanish doesn't yet work
-	// Blue Force Spanish CD
+	// Blue Force Spanish Floppy and CD use the same files
 	{
 		{
 			"blueforce",
-			_s("Spanish CD version is not yet supported"),
+			"",
 			AD_ENTRY1s("blue.rlb", "5b2b35c51b62e82d82b0791540bfae2d", 10082565),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_UNSUPPORTED,
+			ADGF_NO_FLAGS,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
-		GF_CD | GF_ALT_REGIONS
+		GF_FLOPPY | GF_ALT_REGIONS
 	},
 
 	// Return to Ringworld

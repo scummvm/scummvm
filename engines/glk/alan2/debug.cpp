@@ -302,16 +302,16 @@ void debug() {
 		case '?':
 			output(alan.longHeader);
 			output("$nABUG Commands:\
-      $iO [n] -- show object[s]\
-      $iA [n] -- show actor[s]\
-      $iL [n] -- show location[s]\
-      $iC [n] -- show container[s]\
-      $iE -- show events\
-      $iG -- go on\
-      $iT -- toggle trace mode\
-      $iS -- toggle step mode\
-      $iX -- exit debug mode\
-      $iQ -- quit game");
+	  $iO [n] -- show object[s]\
+	  $iA [n] -- show actor[s]\
+	  $iL [n] -- show location[s]\
+	  $iC [n] -- show container[s]\
+	  $iE -- show events\
+	  $iG -- go on\
+	  $iT -- toggle trace mode\
+	  $iS -- toggle step mode\
+	  $iX -- exit debug mode\
+	  $iQ -- quit game");
 			break;
 		case 'Q': {
 			Context ctx;

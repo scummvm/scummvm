@@ -53,7 +53,7 @@ SoundPC_v1::SoundPC_v1(KyraEngine_v1 *vm, Audio::Mixer *mixer, kType type)
 
 	switch (vm->game()) {
 	case GI_LOL:
-		_version = _vm->gameFlags().isDemo ? 3 : 4;
+		_version = (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) ? 3 : 4;
 		break;
 	case GI_KYRA2:
 		_version = 4;

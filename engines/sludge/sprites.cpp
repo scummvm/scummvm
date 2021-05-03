@@ -473,8 +473,8 @@ bool GraphicsManager::scaleSprite(Sprite &single, const SpritePalette &fontPal, 
 	}
 
 	// Are we pointing at the sprite?
-	if (_vm->_evtMan->mouseX() >= x1 && _vm->_evtMan->mouseX() <= x2
-			&& _vm->_evtMan->mouseY() >= y1 && _vm->_evtMan->mouseY() <= y2) {
+	if (_vm->_evtMan->mouseX() >= x1 && _vm->_evtMan->mouseX() < x2
+			&& _vm->_evtMan->mouseY() >= y1 && _vm->_evtMan->mouseY() < y2) {
 		if (thisPerson->extra & EXTRA_RECTANGULAR)
 			return true;
 

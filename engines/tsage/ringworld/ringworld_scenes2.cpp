@@ -128,7 +128,13 @@ void Scene1000::Action3::signal() {
 			// Prompt user for whether to start play or watch introduction
 			g_globals->_player.enableControl();
 
-			if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
+			int rc;
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+			} else {
+				rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
+			}
+			if (rc == 0) {
 				_actionIndex = 20;
 				g_globals->_soundHandler.fadeOut(this);
 			} else {

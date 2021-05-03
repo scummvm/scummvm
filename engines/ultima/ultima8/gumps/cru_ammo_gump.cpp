@@ -45,14 +45,9 @@ CruAmmoGump::~CruAmmoGump() {
 
 void CruAmmoGump::InitGump(Gump *newparent, bool take_focus) {
 	CruStatGump::InitGump(newparent, take_focus);
-
-	_bulletsText = new TextWidget();
-	_clipsText = new TextWidget();
 }
 
 void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
-	CruStatGump::PaintThis(surf, lerp_factor, scaled);
-
 	MainActor *a = getMainActor();
 	if (!a) {
 		// avatar gone??
@@ -61,51 +56,64 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 
 	uint16 active = a->getActiveWeapon();
 	uint16 ammoitem = 0;
-	uint16 bullets = 0;
+	int bullets = -1;
 	uint16 clips = 0;
-	if (!active) {
-		bullets = 0;
-	} else {
+	if (active) {
 		Item *item = getItem(active);
-		if (!item) {
-			bullets = 0;
-		} else {
+		if (item) {
 			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
 			//uint16 frameno = 0;
-			if (weaponinfo) {
+			if (weaponinfo && weaponinfo->_ammoType) {
 				//frameno = weaponinfo->_ammoType;
 				ammoitem = weaponinfo->_ammoShape;
+				bullets = item->getQuality();
 			}
-
-			bullets = item->getQuality();
 		}
 	}
 
-	const Std::string bulletstr = Std::string::format("%d", bullets);
-	if (!bulletstr.equals(_bulletsText->getText())) {
-		RemoveChild(_bulletsText);
-		_bulletsText->Close();
-		_bulletsText = new TextWidget(22, _dims.height() / 2 - 3, bulletstr, true, 15);
-		_bulletsText->InitGump(this, false);
-	}
+	// Only paint if this weapon has bullets that get used up.
+	if (bullets >= 0 && a == getControlledActor()) {
+		const Std::string bulletstr = Std::string::format("%d", bullets);
+		if (!_bulletsText || !bulletstr.equals(_bulletsText->getText())) {
+			if (_bulletsText) {
+				RemoveChild(_bulletsText);
+				_bulletsText->Close();
+			}
+			_bulletsText = new TextWidget(22, _dims.height() / 2 - 3, bulletstr, true, 15);
+			_bulletsText->InitGump(this, false);
+		}
 
-	if (ammoitem) {
-		Item *item = a->getFirstItemWithShape(ammoitem, true);
-		if (item) {
-			clips = item->getQuality();
-		} else {
-			clips = 0;
+		if (ammoitem) {
+			Item *item = a->getFirstItemWithShape(ammoitem, true);
+			if (item) {
+				clips = item->getQuality();
+			} else {
+				clips = 0;
+			}
+		}
+
+		const Std::string clipstr = Std::string::format("%d", clips);
+		if (!_clipsText || !clipstr.equals(_clipsText->getText())) {
+			if (_clipsText) {
+				RemoveChild(_clipsText);
+				_clipsText->Close();
+			}
+			_clipsText = new TextWidget(_dims.width() / 2 + 22, _dims.height() / 2 - 3, clipstr, true, 15);
+			_clipsText->InitGump(this, false);
+		}
+		CruStatGump::PaintThis(surf, lerp_factor, scaled);
+	} else {
+		if (_bulletsText) {
+			RemoveChild(_bulletsText);
+			_bulletsText->Close();
+			_bulletsText = nullptr;
+		}
+		if (_clipsText) {
+			RemoveChild(_clipsText);
+			_clipsText->Close();
+			_clipsText = nullptr;
 		}
 	}
-
-	const Std::string clipstr = Std::string::format("%d", clips);
-	if (!clipstr.equals(_clipsText->getText())) {
-		RemoveChild(_clipsText);
-		_clipsText->Close();
-		_clipsText = new TextWidget(_dims.width() / 2 + 22, _dims.height() / 2 - 3, clipstr, true, 15);
-		_clipsText->InitGump(this, false);
-	}
-
 }
 
 void CruAmmoGump::saveData(Common::WriteStream *ws) {

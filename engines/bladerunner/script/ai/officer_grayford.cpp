@@ -914,10 +914,22 @@ bool AIScriptOfficerGrayford::GoalChanged(int currentGoalNumber, int newGoalNumb
 		return true;
 
 	case kGoalOfficerGrayfordDead:
+#if BLADERUNNER_ORIGINAL_BUGS
 		_animationState = 32;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordShotDead) - 1;
-		return true;
-
+#else
+		// The original code sets Grayford flat "dead" immediately when he is "retired"
+		// His full death animation will not play, only the last frame.
+		// This is useful for Act5, where he should lie dying down (underground railway UG05),
+		// but looks bad in Act4 if McCoy shoots a Grayford cop hunting him
+		if (Game_Flag_Query(kFlagHF07Hole)
+		    && Actor_Query_In_Set(kActorOfficerGrayford, kSetUG05)) {
+			_animationState = 32;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationOfficerGrayfordShotDead) - 1;
+			return true;
+		}
+		return false;
+#endif
 	}
 	return false;
 }
@@ -1549,6 +1561,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeDie:
+#if BLADERUNNER_ORIGINAL_BUGS
 		switch (_animationState) {
 		case 0:
 			// fall through
@@ -1575,6 +1588,44 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			break;
 		}
+#else
+		switch (_animationState) {
+		case 5:
+			// fall through
+		case 6:
+			// fall through
+		case 18:
+			// fall through
+		case 19:
+			// fall through
+		case 20:
+			// fall through
+		case 21:
+			// fall through
+		case 22:
+			// fall through
+		case 23:
+			// fall through
+		case 24:
+			// fall through
+		case 27:
+			// fall through
+		case 28:
+			// fall through
+		case 29:
+			// fall through
+		case 30:
+			// For all the states using combat animation (incl. holster/unholster gun)
+			_animationState = 31; // combat shot dead
+			_animationFrame = 0;
+			break;
+
+		default:
+			_animationState = 32; // shot dead
+			_animationFrame = 0;
+			break;
+		}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 58:

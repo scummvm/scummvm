@@ -49,7 +49,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("c00.ap", "aeb429ff015596144c0df06886c84825", 303753),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_UNSTABLE,
+			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
 		GType_Amazon,

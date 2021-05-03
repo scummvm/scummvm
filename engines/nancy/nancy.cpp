@@ -34,8 +34,10 @@
 #include "engines/nancy/input.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/graphics.h"
-#include "engines/nancy/cheat.h"
+#include "engines/nancy/dialogs.h"
 #include "engines/nancy/console.h"
+#include "engines/nancy/constants.h"
+#include "engines/nancy/util.h"
 
 #include "engines/nancy/action/primaryvideo.h"
 
@@ -44,6 +46,7 @@
 #include "engines/nancy/state/help.h"
 #include "engines/nancy/state/map.h"
 #include "engines/nancy/state/credits.h"
+#include "engines/nancy/state/mainmenu.h"
 
 namespace Nancy {
 
@@ -69,6 +72,8 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	_startTimeHours = 0;
 	_overrideMovementTimeDeltas = false;
 	_cheatTypeIsEventFlag = false;
+	_horizontalEdgesSize = 0;
+	_verticalEdgesSize = 0;
 }
 
 NancyEngine::~NancyEngine() {
@@ -114,11 +119,23 @@ bool NancyEngine::canLoadGameStateCurrently()  {
 
 bool NancyEngine::canSaveGameStateCurrently() {
 	// TODO also disable during secondary movie
-	return Action::PlayPrimaryVideoChan0::_activePrimaryVideo == nullptr;
+	return State::Scene::hasInstance() && NancySceneState.getActivePrimaryVideo() == nullptr;
+}
+
+bool NancyEngine::canSaveAutosaveCurrently() {
+	if (ConfMan.getBool("second_chance")) {
+		return false;
+	} else {
+		return Engine::canSaveAutosaveCurrently();
+	}
 }
 
 bool NancyEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher) || (f == kSupportsLoadingDuringRuntime) || (f == kSupportsSavingDuringRuntime);
+	return  (f == kSupportsReturnToLauncher) ||
+			(f == kSupportsLoadingDuringRuntime) ||
+			(f == kSupportsSavingDuringRuntime) ||
+			(f == kSupportsChangingOptionsDuringRuntime) ||
+			(f == kSupportsSubtitleOptions);
 }
 
 const char *NancyEngine::getCopyrightString() const {
@@ -141,6 +158,10 @@ Common::Platform NancyEngine::getPlatform() const {
 	return _gameDescription->desc.platform;
 }
 
+const GameConstants &NancyEngine::getConstants() const {
+	return gameConstants[getGameType() - 1];
+}
+
 void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState overridePrevious) {
 	// Handle special cases first
 	switch (state) {
@@ -148,11 +169,15 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 		bootGameEngine();
 		setState(NancyState::kLogo);
 		return;
-	case NancyState::kMainMenu:
-		if (_gameFlow.currentState) {
-			if (_gameFlow.currentState->onStateExit()) {
-				_gameFlow.currentState = nullptr;
-			}
+	case NancyState::kMainMenu: {
+		if (ConfMan.getBool("original_menus")) {
+			break;
+		}
+
+		// Do not use the original engine's menus, call the GMM instead
+		State::State *s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->onStateExit();
 		}
 
 		// TODO until the game's own menus are implemented we simply open the GMM
@@ -162,11 +187,13 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 			return;
 		}
 
-		if (_gameFlow.currentState) {
-			_gameFlow.currentState->onStateEnter();
+		s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->onStateEnter();
 		}
 
 		return;
+	}
 	case NancyState::kCheat:
 		if (_cheatTypeIsEventFlag) {
 			EventFlagDialog *dialog = new EventFlagDialog();
@@ -185,32 +212,37 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 
 	_graphicsManager->clearObjects();
 
-	_gameFlow.previousState = _gameFlow.currentState;
-	_gameFlow.currentState = getStateObject(state);
-
-	if (_gameFlow.previousState) {
-		_gameFlow.previousState->onStateExit();
-	}
-
-	if (_gameFlow.currentState) {
-		_gameFlow.currentState->onStateEnter();
-	}
-
 	if (overridePrevious != NancyState::kNone) {
-		_gameFlow.previousState = getStateObject(state);
+		_gameFlow.prevState = overridePrevious;
+	} else {
+		_gameFlow.prevState = _gameFlow.curState;
+	}
+
+	_gameFlow.curState = state;
+
+	State::State *s = getStateObject(_gameFlow.prevState);
+	if (s) {
+		s->onStateExit();
+	}
+	
+	s = getStateObject(_gameFlow.curState);
+	if (s) {
+		s->onStateEnter();
 	}
 }
 
-void NancyEngine::setPreviousState() {
-	if (_gameFlow.currentState) {
-		_gameFlow.currentState->onStateExit();
+void NancyEngine::setToPreviousState() {
+	State::State *s = getStateObject(_gameFlow.curState);
+	if (s) {
+		s->onStateExit();
 	}
 
-	if (_gameFlow.previousState) {
-		_gameFlow.previousState->onStateEnter();
+	s = getStateObject(_gameFlow.prevState);
+	if (s) {
+		s->onStateEnter();
 	}
 
-	SWAP<Nancy::State::State *>(_gameFlow.currentState, _gameFlow.previousState);
+	SWAP<NancyState::NancyState>(_gameFlow.curState, _gameFlow.prevState);
 }
 
 void NancyEngine::setMouseEnabled(bool enabled) {
@@ -241,9 +273,10 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
-
-		if (_gameFlow.currentState) {
-			_gameFlow.currentState->process();
+		
+		State::State *s = getStateObject(_gameFlow.curState);
+		if (s) {
+			s->process();
 		}
 
 		_graphicsManager->draw();
@@ -252,7 +285,9 @@ Common::Error NancyEngine::run() {
 		_system->delayMillis(16);
 	}
 
-	NancySceneState.destroy();
+	if (State::Scene::hasInstance()) {
+		NancySceneState.destroy();
+	}
 
 	return Common::kNoError;
 }
@@ -269,6 +304,12 @@ void NancyEngine::bootGameEngine() {
 	SearchMan.addSubDirectoryMatching(gameDataDir, "iff");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "art");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "font");
+
+	// Register default settings
+	ConfMan.registerDefault("player_speech", true);
+	ConfMan.registerDefault("character_speech", true);
+	ConfMan.registerDefault("original_menus", false);
+	ConfMan.registerDefault("second_chance", false);
 
 	// Load archive
 	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
@@ -308,25 +349,11 @@ void NancyEngine::bootGameEngine() {
 		"CLOK", "SPEC"
 	};
 
-	Common::String persistentSounds[] = {
-		"BUOK", "BUDE", "BULS", "GLOB", "CURT",
-		"CANT"
-	};
-	
-	SoundDescription desc;
-
 	for (auto const &n : names) {
 		addBootChunk(n, boot->getChunkStream(n));
 	}
 
-	// Persistent sounds that are used across the engine. These originally get loaded inside Logo
-	for (auto const &s : persistentSounds) {
-		Common::SeekableReadStream *str = g_nancy->getBootChunkStream(s);
-		if (str) {
-			desc.read(*str, SoundDescription::kNormal);
-			g_nancy->_sound->loadSound(desc);
-		}
-	}
+	_sound->loadCommonSounds();
 
 	delete boot;
 
@@ -346,6 +373,8 @@ State::State *NancyEngine::getStateObject(NancyState::NancyState state) const {
 		return &State::Help::instance();
 	case NancyState::kScene:
 		return &State::Scene::instance();
+	case NancyState::kMainMenu:
+		return &State::MainMenu::instance();
 	default:
 		return nullptr;
 	}
@@ -439,17 +468,25 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 		readChunkList(boot, ser, "OB");
 	}
 
-	ser.skip(0x99, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0x10, kGameTypeNancy1, kGameTypeNancy1);
+	readRect(*bsum, _textboxScreenPosition);
+
+	ser.skip(0x5E, kGameTypeVampire, kGameTypeVampire);
+	ser.skip(0x59, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
+	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
+	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy1);
 	int16 time = 0;
-	ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 	_playerTimeMinuteLength = time;
 	ser.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeNancy1, kGameTypeNancy1);
+	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeVampire, kGameTypeNancy1);
 
 	if (_overrideMovementTimeDeltas) {
-		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 		_slowMovementTimeDelta = time;
-		ser.syncAsSint16LE(time, kGameTypeNancy1, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
 		_fastMovementTimeDelta = time;
 	}
 }

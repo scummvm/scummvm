@@ -127,17 +127,17 @@ Seq Sprite::_stdSeq8[] =
 
 SprExt::SprExt(CGE2Engine *vm)
 	: _p0(vm, 0, 0), _p1(vm, 0, 0),
-     _b0(nullptr), _b1(nullptr), _shpList(nullptr),
-     _location(0), _seq(nullptr), _name(nullptr) {
+	 _b0(nullptr), _b1(nullptr), _shpList(nullptr),
+	 _location(0), _seq(nullptr), _name(nullptr) {
 	for (int i = 0; i < kActions; i++)
 		_actions[i] = nullptr;
 }
 
 Sprite::Sprite(CGE2Engine *vm)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
-      _next(nullptr), _prev(nullptr), _time(0),
-      _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
-      _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	  _next(nullptr), _prev(nullptr), _time(0),
+	  _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
+	  _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));
@@ -146,9 +146,9 @@ Sprite::Sprite(CGE2Engine *vm)
 
 Sprite::Sprite(CGE2Engine *vm, BitmapPtr shpP, int cnt)
 	: _siz(_vm, 0, 0), _seqPtr(kNoSeq), _seqCnt(0), _shpCnt(0),
-     _next(nullptr), _prev(nullptr), _time(0),
-     _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
-     _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
+	 _next(nullptr), _prev(nullptr), _time(0),
+	 _ext(nullptr), _ref(-1), _scene(0), _vm(vm),
+	 _pos2D(_vm, kScrWidth >> 1, 0), _pos3D(kScrWidth >> 1, 0, 0) {
 	memset(_actionCtrl, 0, sizeof(_actionCtrl));
 	memset(_file, 0, sizeof(_file));
 	memset(&_flags, 0, sizeof(_flags));

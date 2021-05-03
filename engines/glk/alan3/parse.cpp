@@ -273,7 +273,7 @@ static int getPronounInstances(int word, Parameter instanceParameters[]) {
 		if (pronouns[p].instance != 0 && dictionary[word].code == (Aword)pronouns[p].pronoun) {
 			instanceParameters[instanceCount].instance = pronouns[p].instance;
 			instanceParameters[instanceCount].useWords = FALSE; /* Can't use words since they are gone, pronouns
-                                                                   refer to parameters in previous command */
+																   refer to parameters in previous command */
 			setEndOfArray(&instanceParameters[++instanceCount]);
 		}
 	return instanceCount;

@@ -27,8 +27,8 @@
 namespace OpenGL {
 
 Framebuffer::Framebuffer()
-    : _viewport(), _projectionMatrix(), _isActive(false), _clearColor(),
-      _blendState(kBlendModeDisabled), _scissorTestState(false), _scissorBox() {
+	: _viewport(), _projectionMatrix(), _isActive(false), _clearColor(),
+	  _blendState(kBlendModeDisabled), _scissorTestState(false), _scissorBox() {
 }
 
 void Framebuffer::activate() {
@@ -187,7 +187,7 @@ void Backbuffer::setDimensions(uint width, uint height) {
 
 #if !USE_FORCED_GLES
 TextureTarget::TextureTarget()
-    : _texture(new GLTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)), _glFBO(0), _needUpdate(true) {
+	: _texture(new GLTexture(GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)), _glFBO(0), _needUpdate(true) {
 }
 
 TextureTarget::~TextureTarget() {

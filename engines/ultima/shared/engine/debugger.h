@@ -54,7 +54,7 @@ protected:
 	void splitString(const Common::String &str, Common::StringArray &argv);
 public:
 	Debugger();
-    ~Debugger() override {}
+	~Debugger() override {}
 
 	/**
 	 * Executes the given command

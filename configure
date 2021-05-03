@@ -154,9 +154,11 @@ _sparkle=auto
 _osxdockplugin=auto
 _jpeg=auto
 _png=auto
+_gif=auto
 _theoradec=auto
 _faad=auto
 _fluidsynth=auto
+_fluidlite=auto
 _glew=auto
 _opengl_mode=auto
 _opengl_game=auto
@@ -198,6 +200,7 @@ _bink=yes
 _cloud=auto
 _pandoc=no
 _lld=no
+_gold=yes
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
@@ -227,7 +230,7 @@ _dwp=dwp
 _windres=windres
 _stagingpath="staging"
 _win32path="c:/scummvm"
-_amigaospath="Games:ScummVM"
+_amigaospath="install"
 _morphospath="PROGDIR:"
 _staticlibpath=
 _xcodetoolspath=
@@ -272,6 +275,7 @@ add_feature jpeg "JPEG" "_jpeg"
 add_feature mpeg2 "mpeg2" "_mpeg2"
 add_feature opengl_game_shaders "OpenGL with shaders" "_opengl_game_shaders"
 add_feature png "PNG" "_png"
+add_feature gif "GIF" "_gif"
 add_feature theoradec "libtheoradec" "_theoradec"
 add_feature tinygl "TinyGL" "_tinygl"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
@@ -280,7 +284,6 @@ add_feature lua "lua" "_lua"
 add_feature fribidi "FriBidi" "_fribidi"
 add_feature cxx11 "c++11" "_use_cxx11"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
-add_feature lld "Use LLD linker" "_lld"
 
 # Directories for installing ScummVM.
 # This list is closely based on what GNU autoconf does,
@@ -745,11 +748,15 @@ show_subengine_help() {
 }
 
 # Copy first argument to second one if they are different. Otherwise, delete the first one.
+# Touch the optional third argument on change
 copy_if_changed() {
 	if cmp -s $1 $2; then
 		rm -f $1
 	else
 		mv -f $1 $2
+		if test -n "$3" ; then
+			touch "$3"
+		fi
 	fi
 }
 
@@ -946,6 +953,9 @@ Optional Libraries:
   --with-png-prefix=DIR    prefix where libpng is installed (optional)
   --disable-png            disable PNG decoder [autodetect]
 
+  --with-gif-prefix=DIR    prefix where giflib is installed (optional)
+  --disable-gif            disable GIF decoder [autodetect]
+
   --with-theoradec-prefix=DIR  prefix where libtheoradec is installed (optional)
   --disable-theoradec      disable Theora decoder [autodetect]
 
@@ -955,6 +965,10 @@ Optional Libraries:
   --with-fluidsynth-prefix=DIR prefix where libfluidsynth is
                            installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
+
+  --with-fluidlite-prefix=DIR prefix where libfluidlite is
+                           installed (optional)
+  --disable-fluidlite      disable fluidlite MIDI driver [autodetect]
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
@@ -1111,11 +1125,16 @@ for ac_option in $@; do
 	--enable-jpeg)                _jpeg=yes              ;;
 	--disable-png)                _png=no                ;;
 	--enable-png)                 _png=yes               ;;
+	--disable-gif)                _gif=no                ;;
+	--enable-gif)                 _gif=yes               ;;
 	--disable-theoradec)          _theoradec=no          ;;
 	--enable-theoradec)           _theoradec=yes         ;;
 	--disable-faad)               _faad=no               ;;
 	--enable-faad)                _faad=yes              ;;
 	--disable-fluidsynth)         _fluidsynth=no         ;;
+	--enable-fluidsynth)          _fluidsynth=yes        ;;
+	--disable-fluidlite)          _fluidlite=no          ;;
+	--enable-fluidlite)           _fluidlite=yes         ;;
 	--enable-readline)            _readline=yes          ;;
 	--disable-readline)           _readline=no           ;;
 	--enable-freetype2)           _freetype2=yes         ;;
@@ -1131,6 +1150,9 @@ for ac_option in $@; do
 	--enable-cloud)               _cloud=yes             ;;
 	--disable-cloud)              _cloud=no              ;;
 	--enable-lld)                 _lld=yes               ;;
+	--disable-lld)                _lld=no                ;;
+	--enable-gold)                _gold=yes              ;;
+	--disable-gold)               _gold=no               ;;
 	--enable-updates)             _updates=yes           ;;
 	--disable-updates)            _updates=no            ;;
 	--enable-libunity)            _libunity=yes          ;;
@@ -1174,6 +1196,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
 		FLUIDSYNTH_LIBS="-L$arg/lib"
+		;;
+	--with-fluidlite-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		FLUIDLITE_CFLAGS="-I$arg/include"
+		FLUIDLITE_LIBS="-L$arg/lib"
 		;;
 	--with-mpeg2-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -1239,6 +1266,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		PNG_CFLAGS="-I$arg/include"
 		PNG_LIBS="-L$arg/lib"
+		;;
+	--with-gif-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		GIF_CFLAGS="-I$arg/include"
+		GIF_LIBS="-L$arg/lib"
 		;;
 	--with-theoradec-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2221,7 +2253,7 @@ if test "$_debug_build" != no; then
 			append_var LDFLAGS "-fuse-ld=lld"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + LLD"
-		elif cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
+		elif test "$_gold" = yes && cc_check_no_clean $debug_mode -gsplit-dwarf -fuse-ld=gold -Wl,--gdb-index; then
 			append_var LDFLAGS "-fuse-ld=gold"
 			append_var LDFLAGS "-Wl,--gdb-index"
 			echo_n -- " + Gold"
@@ -2335,10 +2367,10 @@ unsigned short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0
 const char * _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; return s; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp
-if $_strings $TMPO$HOSTEXEEXT | grep BIGenDianSyS >/dev/null; then
+$CXX $LDFLAGS $CXXFLAGS -o $TMPO$HOSTEXEEXT tmp_endianness_check.cpp >> "$TMPLOG" 2>&1
+if $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG"| grep BIGenDianSyS >/dev/null; then
 	_endian=big
-elif $_strings $TMPO$HOSTEXEEXT | grep LiTTleEnDian >/dev/null; then
+elif $_strings $TMPO$HOSTEXEEXT 2>> "$TMPLOG" | grep LiTTleEnDian >/dev/null; then
 	_endian=little
 fi
 echo $_endian;
@@ -2371,7 +2403,7 @@ int main() {
 	return 0;
 }
 EOF
-		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp 2>/dev/null ; then
+		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp >> "$TMPLOG" 2>&1 ; then
 			break
 		else
 			if test "$datatype" = "unknown"; then
@@ -2396,7 +2428,7 @@ int main() {
 	return 0;
 }
 EOF
-	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp 2>/dev/null
+	$CXX $CXXFLAGS -c -o $TMPO.o tmp_pointer_is_32bit.cpp >> "$TMPLOG" 2>&1
 	status=$?
 	cc_check_clean tmp_pointer_is_32bit.cpp
 	return $status
@@ -3440,19 +3472,11 @@ if test -n "$_host"; then
 			# PPC Linker requires this to fix relocation errors
 			append_var CXXFLAGS "-mlongcall"
 
-			# Only static builds link successfully on buildbot
-			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
-			append_var LDFLAGS "-static"
-
 			_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
 			;;
 		ppc-morphos)
 			# PPC Linker requires this to fix relocation errors
 			append_var CXXFLAGS "-mlongcall"
-
-			# Only static builds link successfully on buildbot
-			LDFLAGS=`echo $LDFLAGS | sed 's/-use-dynld//'`
-			append_var LDFLAGS "-static"
 
 			_port_mk="backends/platform/sdl/morphos/morphos.mk"
 			;;
@@ -3637,7 +3661,7 @@ case $_backend in
 		_nuked_opl=no
 		;;
 	psp2)
-		append_var LIBS "-lvitashaders -lSDL2 -lvita2d_fbo -lSceCommonDialog_stub"
+		append_var LIBS "-lSDL2 -lSceCommonDialog_stub"
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
 		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub"
@@ -4478,6 +4502,37 @@ define_in_config_if_yes "$_png" 'USE_PNG'
 echo "$_png"
 
 #
+# Check for GIF
+#
+echocheck "GIF >= 5.0.0"
+if test "$_pkg_config" = "yes" && $_pkgconfig --exists libgif; then
+	append_var GIF_LIBS "`$_pkgconfig --libs libgif`"
+	append_var GIF_CFLAGS "`$_pkgconfig --cflags libgif`"
+else
+	append_var GIF_LIBS "-lgif"
+fi
+if test "$_gif" = auto ; then
+	_gif=no
+	cat > $TMPC << EOF
+#include <gif_lib.h>
+int main(void) {
+#if GIFLIB_MAJOR >= 5
+#else
+  syntax error
+#endif
+  return 0;
+}
+EOF
+	cc_check $GIF_CFLAGS $GIF_LIBS && _gif=yes
+fi
+if test "$_gif" = yes ; then
+	append_var LIBS "$GIF_LIBS"
+	append_var INCLUDES "$GIF_CFLAGS"
+fi
+define_in_config_if_yes "$_gif" 'USE_GIF'
+echo "$_gif"
+
+#
 # Check for Theora Decoder
 #
 echocheck "libtheoradec >= 1.0"
@@ -4922,6 +4977,38 @@ if test "$_fluidsynth" = yes; then
 fi
 define_in_config_if_yes "$_fluidsynth" 'USE_FLUIDSYNTH'
 echo "$_fluidsynth"
+
+#
+# Check for FluidLite
+#
+echocheck "FluidLite"
+
+append_var FLUIDLITE_LIBS "-lfluidlite"
+if test "$_fluidlite" = auto; then
+	_fluidlite=no
+	cat > $TMPC << EOF
+#include <fluidlite.h>
+int main(void) { delete_fluid_settings(new_fluid_settings()); return 0; }
+EOF
+	cc_check_no_clean $FLUIDLITE_CFLAGS $FLUIDLITE_LIBS && _fluidlite=yes
+	if test "$_fluidlite" != yes && test "$_pkg_config" = "yes" && $_pkgconfig --exists fluidlite; then
+		FLUIDLITE_LIBS="`$_pkgconfig --static --libs fluidlite`"
+		cc_check_no_clean $FLUIDLITE_CFLAGS $FLUIDLITE_LIBS && _fluidlite=yes
+	fi
+	cc_check_clean
+fi
+if test "$_fluidlite" = yes && test "$_fluidsynth" = no; then
+	define_in_config_if_yes "$_fluidlite" 'USE_FLUIDLITE'
+	define_in_config_if_yes "$_fluidlite" 'USE_FLUIDSYNTH'
+	append_var LIBS "$FLUIDLITE_LIBS"
+	append_var INCLUDES "$FLUIDLITE_CFLAGS"
+else
+	if test "$_fluidsynth" = yes; then
+		_fluidlite="no (FluidSynth/FluidLite support is mutually exclusive)"
+	fi
+	add_line_to_config_h '#undef USE_FLUIDLITE'
+fi
+echo "$_fluidlite"
 
 #
 # Check for readline if text_console is enabled
@@ -5636,8 +5723,8 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	amigaos*)
-		echo "amigaos (asl)"
+	amigaos* | morphos*)
+		echo "asl"
 		_dialogs=yes
 		;;
 	darwin*)
@@ -5647,10 +5734,6 @@ else
 	mingw*)
 		append_var LIBS "-lole32 -luuid"
 		echo "win32"
-		_dialogs=yes
-		;;
-	morphos*)
-		echo "morphos"
 		_dialogs=yes
 		;;
 	*)
@@ -6076,7 +6159,7 @@ $_mak_plugins
 port_mk = $_port_mk
 EOF
 rm -f config.mk.engines
-copy_if_changed config.mk.new config.mk
+copy_if_changed config.mk.new config.mk config.h
 
 #
 # Create a custom Makefile when building outside the source tree

@@ -1131,7 +1131,7 @@ inline void MapWindow::drawObj(Obj *obj, bool draw_lowertiles, bool toptile) {
  * used with animated tiles. It only applies to the base tile in multi-tiles.
  */
 inline void MapWindow::drawTile(Tile *tile, uint16 x, uint16 y, bool toptile,
-                                bool use_tile_data) {
+								bool use_tile_data) {
 	bool dbl_width, dbl_height;
 	uint16 tile_num;
 

@@ -40,8 +40,8 @@ SpriteProcess::SpriteProcess()
 }
 
 SpriteProcess::SpriteProcess(int shape, int frame, int lastFrame,
-                             int repeats, int delay, int x, int y, int z,
-                             bool delayed_init) :
+							 int repeats, int delay, int x, int y, int z,
+							 bool delayed_init) :
 	_shape(shape), _frame(frame), _firstFrame(frame), _lastFrame(lastFrame),
 	_repeats(repeats), _delay(delay * 2), _x(x), _y(y), _z(z), _delayCounter(0),
 	_initialized(false) {

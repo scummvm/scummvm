@@ -611,10 +611,10 @@ bool VectorImage::setContent(const byte *pixeldata, uint size, uint offset, uint
 }
 
 bool VectorImage::blit(int posX, int posY,
-                       int flipping,
-                       Common::Rect *pPartRect,
-                       uint color,
-                       int width, int height,
+					   int flipping,
+					   Common::Rect *pPartRect,
+					   uint color,
+					   int width, int height,
 					   RectangleList *updateRects) {
 	static VectorImage *oldThis = 0;
 	static int              oldWidth = -2;

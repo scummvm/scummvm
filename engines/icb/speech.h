@@ -71,7 +71,7 @@ public:
 #define MAX_coms 3
 
 class __conversation {
-      public:
+public:
 	__conversation() {
 		for (int32 i = 0; i < MAX_people_talking; i++)
 			subscribers_requested[i] = 0;

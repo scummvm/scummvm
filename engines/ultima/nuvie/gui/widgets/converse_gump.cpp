@@ -321,9 +321,9 @@ void ConverseGump::clear_permitted_input() {
 /*
 void ConverseGump::add_token(MsgText *token)
 {
-    DEBUG(0,LEVEL_ALERT, "TOKEN: %s\n", token->s.c_str());
+	DEBUG(0,LEVEL_ALERT, "TOKEN: %s\n", token->s.c_str());
 
-    display_text.push_back(*token);
+	display_text.push_back(*token);
 }
 */
 

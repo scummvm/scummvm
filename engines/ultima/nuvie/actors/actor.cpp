@@ -1311,15 +1311,15 @@ uint16 Actor::getSchedulePos(uint8 hour, uint8 day_of_week)
  for(j=i;sched[j] != NULL && sched[j]->hour == sched[i]->hour;j++)
   {
    if(sched[j]->day_of_week > day_of_week)
-     {
-      if(j != i)
-        return j-1;
-      else // hour is in the last schedule entry.
-        {
-         for(;sched[j+1] != NULL && sched[j+1]->hour == sched[i]->hour;) // move to the last schedule entry.
-          j++;
-        }
-     }
+	 {
+	  if(j != i)
+		return j-1;
+	  else // hour is in the last schedule entry.
+		{
+		 for(;sched[j+1] != NULL && sched[j+1]->hour == sched[i]->hour;) // move to the last schedule entry.
+		  j++;
+		}
+	 }
   }
 
  if(j==i)
@@ -1336,32 +1336,32 @@ inline uint16 Actor::getSchedulePos(uint8 hour)
  for(i=0;sched[i] != NULL;i++)
   {
    if(sched[i]->hour > hour)
-     {
-      if(i != 0)
-        return i-1;
-      else // hour is in the last schedule entry.
-        {
-         for(;sched[i+1] != NULL;) // move to the last schedule entry.
-          i++;
+	 {
+	  if(i != 0)
+		return i-1;
+	  else // hour is in the last schedule entry.
+		{
+		 for(;sched[i+1] != NULL;) // move to the last schedule entry.
+		  i++;
 
-         if(sched[i]->day_of_week > 0) //rewind to the start of the hour set.
-           {
-            cur_hour = sched[i]->hour;
-            for(;i >= 1 && sched[i-1]->hour == cur_hour;)
-              i--;
-           }
-        }
-     }
+		 if(sched[i]->day_of_week > 0) //rewind to the start of the hour set.
+		   {
+			cur_hour = sched[i]->hour;
+			for(;i >= 1 && sched[i-1]->hour == cur_hour;)
+			  i--;
+		   }
+		}
+	 }
    else
-      for(;sched[i+1] != NULL && sched[i+1]->hour == sched[i]->hour;) //skip to next hour set.
-        i++;
+	  for(;sched[i+1] != NULL && sched[i+1]->hour == sched[i]->hour;) //skip to next hour set.
+		i++;
   }
 
  if(sched[i] != NULL && sched[i]->day_of_week > 0) //rewind to the start of the hour set.
    {
-    cur_hour = sched[i]->hour;
-    for(;i >= 1 && sched[i-1]->hour == cur_hour;)
-      i--;
+	cur_hour = sched[i]->hour;
+	for(;i >= 1 && sched[i-1]->hour == cur_hour;)
+	  i--;
    }
 
  if(i==0)

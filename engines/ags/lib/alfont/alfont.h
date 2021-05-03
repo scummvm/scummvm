@@ -56,7 +56,6 @@ extern void alfont_destroy_font(ALFONT_FONT *font);
 extern size_t alfont_text_length(ALFONT_FONT *font, const char *text);
 extern size_t alfont_text_height(ALFONT_FONT *font);
 extern void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color);
-extern void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color);
 extern const char *alfont_get_name(ALFONT_FONT *font);
 extern void alfont_set_font_size(ALFONT_FONT *font, int size);
 

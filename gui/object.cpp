@@ -29,6 +29,15 @@
 
 namespace GUI {
 
+#define SCALEVALUE(val) (val > 0 ? val * g_gui.getScaleFactor() : val)
+
+GuiObject::GuiObject(int x, int y, int w, int h) : _useRTL(true), _firstWidget(nullptr) {
+	_x = x;
+	_y = y;
+	_w = w;
+	_h = h;
+}
+
 GuiObject::GuiObject(const Common::String &name)
 	: _x(-1000), _y(-1000), _w(0), _h(0), _useRTL(true), _name(name), _firstWidget(nullptr) {
 }
@@ -38,20 +47,27 @@ GuiObject::~GuiObject() {
 	_firstWidget = nullptr;
 }
 
+void GuiObject::resize(int x, int y, int w, int h, bool scale) {
+	if (scale) {
+		_x = SCALEVALUE(x);
+		_y = SCALEVALUE(y);
+		_w = SCALEVALUE(w);
+		_h = SCALEVALUE(h);
+	} else {
+		_x = x; _y = y;
+		_w = w; _h = h;
+	}
+}
+
 void GuiObject::reflowLayout() {
 	if (!_name.empty()) {
 		int16 w, h;
 		bool useRTL = true;
-//		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h, useRTL) || w == -1 || h == -1) {
-//			warning("widget h: %d	w: %d", h, w);
-//			error("Unable to load widget position for '%s'. Please check your theme files", _name.c_str());
-//		}
-	
-		//symbian fix!!!
-	g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h, useRTL);
-	if (w == -1 || h == -1) {
-		error("Unable to load widget position for '%s'. Please check your theme files", _name.c_str());
-	}
+		if (!g_gui.xmlEval()->getWidgetData(_name, _x, _y, w, h, useRTL) || w == -1 || h == -1) {
+			warning("widget h: %d	w: %d", h, w);
+			error("Unable to load widget position for '%s'. Please check your theme files", _name.c_str());
+		}
+
 		_w = w;
 		_h = h;
 		_useRTL = useRTL;

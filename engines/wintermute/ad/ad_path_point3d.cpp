@@ -35,8 +35,8 @@ IMPLEMENT_PERSISTENT(AdPathPoint3D, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdPathPoint3D::AdPathPoint3D() : BaseClass(),
-                                 _origin(nullptr), _marked(false),
-                                 _distance(0.0f), _pos(0.0f, 0.0f, 0.0f) {
+								 _origin(nullptr), _marked(false),
+								 _distance(0.0f), _pos(0.0f, 0.0f, 0.0f) {
 }
 
 //////////////////////////////////////////////////////////////////////////

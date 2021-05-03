@@ -25,6 +25,7 @@
 #include "ags/shared/util/filestream.h"
 #include "ags/shared/util/bufferedstream.h"
 #include "ags/shared/util/file.h"
+#include "ags/shared/util/directory.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -34,28 +35,40 @@ namespace AGS {
 namespace Shared {
 
 soff_t File::GetFileSize(const String &filename) {
+	if (filename.IsEmpty())
+		return 0;
 	return ags_file_size(filename.GetCStr());
 }
 
 bool File::TestReadFile(const String &filename) {
-	return Common::File::exists(filename.GetNullableCStr());
+	if (filename.IsEmpty())
+		return false;
+	return ags_file_exists(filename.GetNullableCStr());
 }
 
 bool File::TestWriteFile(const String &filename) {
+	if (filename.IsEmpty())
+		return false;
 	return TestCreateFile(filename);
 }
 
 bool File::TestCreateFile(const String &filename) {
+	if (filename.IsEmpty())
+		return false;
 	Common::DumpFile df;
-
-	bool result = df.open(filename.GetNullableCStr());
+	bool result = df.open(getFSNode(filename.GetNullableCStr()));
 	df.close();
-
 	return result;
 }
 
 bool File::DeleteFile(const String &filename) {
-	return g_system->getSavefileManager()->removeSavefile(filename.GetNullableCStr());
+	// Only allow deleting files in the savegame folder
+	if (filename.CompareLeftNoCase(SAVE_FOLDER_PREFIX) != 0) {
+		warning("Cannot delete file %s. Only files in the savegame directory can be deleted", filename.GetCStr());
+		return false;
+	}
+	Common::String file(filename.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
+	return g_system->getSavefileManager()->removeSavefile(file);
 }
 
 bool File::GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, FileWorkMode &work_mode) {

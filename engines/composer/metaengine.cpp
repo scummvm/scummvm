@@ -67,7 +67,7 @@ bool ComposerEngine::loadDetectedConfigFile(Common::INIFile &configFile) const {
 
 class ComposerMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "composer";
 	}
 

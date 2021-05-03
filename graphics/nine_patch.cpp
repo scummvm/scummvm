@@ -61,11 +61,13 @@ NinePatchSide::~NinePatchSide() {
 }
 
 
-bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
+bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical, int titlePos, int *titleIndex) {
 	const uint len = vertical ? bmp->h : bmp->w;
 	uint i;
 	int s, t, z;
 
+	int titleWidth = 0;
+	int index = 0;
 	_m.clear();
 
 	for (i = 1, s = -1, t = 0, z = -1; i < len; ++i) {
@@ -97,7 +99,15 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 				} else {
 					mrk->ratio = 0;
 				}
+				// if there is title, then we try to recalc the t, because we want to fix the title width
+				if (titlePos > 0 && (int)i == titlePos) {
+					t -= mrk->length;
+					titleWidth = mrk->length;
+					if (titleIndex)
+						*titleIndex = index;
+				}
 				_m.push_back(mrk);
+				index++;
 			}
 			s = i;
 			z = zz;
@@ -105,6 +115,10 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 	}
 
 	_fix = len - 2 - t;
+	// here, titleWidth represent the width in 9-patch image, and we delete it from fix size
+	// so, currently, we will have 3 part, fix size, stretchable size and title size
+	if (titleWidth)
+		_fix -= titleWidth;
 	for (i = 0; i < _m.size(); ++i) {
 		if (_m[i]->ratio)
 			_m[i]->ratio = _m[i]->length / (float)t;
@@ -113,21 +127,31 @@ bool NinePatchSide::init(Graphics::TransparentSurface *bmp, bool vertical) {
 	return true;
 }
 
-void NinePatchSide::calcOffsets(int len) {
+void NinePatchSide::calcOffsets(int len, int titleIndex, int titleWidth) {
 	uint i, j;
 	int dest_offset = 0;
-	int remaining_stretch = len - _fix;
+	// if we don't got titleIndex, then we better set titleWidth to 0
+	if (titleIndex == 0)
+		titleWidth = 0;
+	int remaining_stretch = len - _fix - titleWidth;
+	// if titleWidth is too big, which may cause the remaining_stretch be 0, so we check it here
+	if (remaining_stretch < 0)
+		remaining_stretch = 0;
 
 	for (i = 0, j = 0; i < _m.size(); ++i) {
 		_m[i]->dest_offset = dest_offset;
-		if (_m[i]->ratio == 0) {
-			_m[i]->dest_length = _m[i]->length;
-		} else {
-			_m[i]->dest_length = (len - _fix) * _m[i]->ratio;
-			remaining_stretch -= _m[i]->dest_length;
-			j = i;
-		}
 
+		if (titleIndex > 0 && i == (uint)titleIndex) {
+			_m[i]->dest_length = titleWidth;
+		} else {
+			if (_m[i]->ratio == 0) {
+				_m[i]->dest_length = _m[i]->length;
+			} else {
+				_m[i]->dest_length = (len - _fix - titleWidth) * _m[i]->ratio;
+				remaining_stretch -= _m[i]->dest_length;
+				j = i;
+			}
+		}
 		dest_offset += _m[i]->dest_length;
 	}
 
@@ -138,7 +162,13 @@ void NinePatchSide::calcOffsets(int len) {
 	}
 }
 
-NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap) {
+int NinePatchBitmap::getTitleOffset() {
+	if (_titleIndex == 0)
+		return 0;
+	return _h._m[_titleIndex]->dest_offset;
+}
+
+NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bitmap, int titlePos) {
 	int i;
 	uint8 r, g, b, a;
 
@@ -150,6 +180,9 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 	_cached_dh = 0;
 	_width = bmp->w - 2;
 	_height = bmp->h - 2;
+	_titleIndex = 0;
+	_titleWidth = 0;
+	_titlePos = titlePos;
 
 	if (_width <= 0 || _height <= 0)
 		goto bad_bitmap;
@@ -199,7 +232,7 @@ NinePatchBitmap::NinePatchBitmap(Graphics::TransparentSurface *bmp, bool owns_bi
 		++i;
 	}
 
-	if (!_h.init(bmp, false) || !_v.init(bmp, true)) {
+	if (!_h.init(bmp, false, titlePos, &_titleIndex) || !_v.init(bmp, true)) {
 bad_bitmap:
 		warning("NinePatchBitmap::NinePatchBitmap(): Bad bitmap");
 
@@ -208,11 +241,19 @@ bad_bitmap:
 	}
 }
 
+void NinePatchBitmap::modifyTitleWidth(int titleWidth) {
+	if (_titlePos == 0) return;
+	_titleWidth = titleWidth;
+	_h.calcOffsets(_cached_dw, _titleIndex, _titleWidth);
+}
+
 void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, int dh, byte *palette, int numColors, MacWindowManager *wm, uint32 transColor) {
 	/* don't draw bitmaps that are smaller than the fixed area */
 	if (dw < _h._fix || dh < _v._fix)
 		return;
 
+	if (dw < _h._fix + _titleWidth)
+		dw = _h._fix + _titleWidth;
 	/* if the bitmap is the same size as the origin, then draw it as-is */
 	if (dw == _width && dh == _height) {
 		Common::Rect r(1, 1, dw, dh);
@@ -223,7 +264,7 @@ void NinePatchBitmap::blit(Graphics::Surface &target, int dx, int dy, int dw, in
 
 	/* only recalculate the offsets if they have changed since the last draw */
 	if (_cached_dw != dw || _cached_dh != dh) {
-		_h.calcOffsets(dw);
+		_h.calcOffsets(dw, _titleIndex, _titleWidth);
 		_v.calcOffsets(dh);
 
 		_cached_dw = dw;

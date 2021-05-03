@@ -30,6 +30,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/games/start_u8_process.h"
+#include "ultima/ultima8/games/start_crusader_process.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/render_surface.h"
 #include "ultima/ultima8/games/game_data.h"
@@ -354,7 +355,7 @@ bool Ultima8Engine::startupGame() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		_ucMachine = new UCMachine(U8Intrinsics, 256);
 	} else if (_gameInfo->_type == GameInfo::GAME_REMORSE) {
-		_ucMachine = new UCMachine(RemorseIntrinsics, 308);
+		_ucMachine = new UCMachine(RemorseIntrinsics, 311);
 	} else if (_gameInfo->_type == GameInfo::GAME_REGRET) {
 		_ucMachine = new UCMachine(RegretIntrinsics, 350);
 	} else {
@@ -374,7 +375,8 @@ bool Ultima8Engine::startupGame() {
 	ConfMan.registerDefault("font_antialiasing", true);
 	ConfMan.registerDefault("frameSkip", false);
 	ConfMan.registerDefault("frameLimit", true);
-	ConfMan.registerDefault("interpolate", true);
+	// Position interpolation looks nice on U8, but causes Crusader to look janky.
+	ConfMan.registerDefault("interpolate", _gameInfo->_type == GameInfo::GAME_U8);
 	ConfMan.registerDefault("cheat", false);
 
 	bool loaded = _game->loadFiles();
@@ -869,7 +871,8 @@ bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	}
 
 
-	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess()))
+	if (dynamic_cast<StartU8Process *>(_kernel->getRunningProcess())
+		|| dynamic_cast<StartCrusaderProcess *>(_kernel->getRunningProcess()))
 		// Don't save while starting up.
 		return false;
 
@@ -1074,8 +1077,8 @@ void Ultima8Engine::setupCoreGumps() {
 		_objectManager->reserveObjId(i);
 }
 
-bool Ultima8Engine::newGame(int saveSlot) {
-	debugN(MM_INFO, "Starting New Game...\n");
+bool Ultima8Engine::newGame(int saveSlot, int difficulty) {
+	debugN(MM_INFO, "Starting New Game (slot %d difficulty %d)... \n", saveSlot, difficulty);
 
 	// First validate we still have a save file for the slot
 	if (saveSlot != -1) {
@@ -1117,6 +1120,10 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	//	av->teleport(5, 5104,22464,48); // East road (tenebrae end)
 
 	_game->startInitialUsecode(saveSlot);
+
+	if (difficulty > 0) {
+		_world->get_instance()->setGameDifficulty(difficulty);
+	}
 
 	if (GAME_IS_CRUSADER) {
 		_kernel->addProcess(new TargetReticleProcess());

@@ -126,7 +126,7 @@ typedef Common::FSNode *osdirhdl_t;
 
 /* Get a file's stat() type. */
 int osfmode( const char* fname, int follow_links, unsigned long* mode,
-             unsigned long* attr );
+			 unsigned long* attr );
 
 #if 0
 /* The maximum width of a line of text.
@@ -492,7 +492,7 @@ int os_rename_file(const char *oldname, const char *newname);
  *   if the file could not be found in any of the standard locations.  
  */
 bool os_locate(const char *fname, int flen, const char *arg0,
-              char *buf, size_t bufsiz);
+			  char *buf, size_t bufsiz);
 
 
 /* ------------------------------------------------------------------------ */
@@ -1094,7 +1094,7 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   quote or otherwise modify characters outside the 0-127 range.  
  */
 void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
-                    const char *src_path);
+					const char *src_path);
 
 /*
  *   Convert a URL-style path into a filename path expressed in the local
@@ -1192,7 +1192,7 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   Character sets: use the same rules as for os_cvt_dir_url().  
  */
 void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
-                    const char *src_url);
+					const char *src_url);
 
 
 } // End of namespace TADS

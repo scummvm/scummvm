@@ -35,8 +35,8 @@ struct RivenLanguage {
 
 class MohawkMetaEngine_Riven {
 public:
-    static void registerDefaultSettings();
-    static const RivenLanguage *listLanguages();
+	static void registerDefaultSettings();
+	static const RivenLanguage *listLanguages();
 };
 
 } // End of namespace Mohawk

@@ -1218,7 +1218,6 @@ private:
 	int8 _availableSpells[8];
 	int _selectedSpell;
 	const SpellProperty *_spellProperties;
-	//int _spellPropertiesSize;
 	int _subMenuIndex;
 
 	LightningProperty *_lightningProps;

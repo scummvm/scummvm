@@ -33,12 +33,13 @@ class NancyEngine;
 
 class CursorManager {
 public:
-	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kNormalArrow, kHotspotArrow, kExitArrow };
+	enum CursorType { kNormal = 0, kHotspot = 1, kMove = 2, kExit = 3, kNormalArrow, kHotspotArrow };
 
 	CursorManager() :
 		_isInitialized(false),
 		_curItemID(-1),
-		_curCursorType(kNormal) {}
+		_curCursorType(kNormal),
+		_curCursorID(0) {}
 
 	void init();
 
@@ -46,6 +47,10 @@ public:
 	void setCursorType(CursorType type);
 	void setCursorItemID(int16 itemID);
 	void showCursor(bool shouldShow);
+
+	const Common::Point &getCurrentCursorHotspot() { return _cursors[_curCursorID].hotspot;}
+	const Common::Rect &getPrimaryVideoInactiveZone() { return _primaryVideoInactiveZone; }
+	const Common::Point &getPrimaryVideoInitialPos() { return _primaryVideoInitialPos; }
 
 private:
 	struct Cursor {
@@ -63,6 +68,7 @@ private:
 
 	CursorType _curCursorType;
 	int16 _curItemID;
+	uint _curCursorID;
 	bool _isInitialized;
 };
 

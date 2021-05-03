@@ -253,7 +253,7 @@ bool geas_implementation::has_obj_action(String obj, String prop) const {
 
 
 bool geas_implementation::get_obj_action(String objname, String actname,
-        String &rv) const {
+		String &rv) const {
 	//String backup_object = this_object;
 	//this_object = objname;
 
@@ -285,7 +285,7 @@ bool geas_implementation::has_obj_property(String obj, String prop) const {
 }
 
 bool geas_implementation::get_obj_property(String obj, String prop,
-        String &string_rv) const {
+		String &string_rv) const {
 	String is_prop = "properties " + prop;
 	String not_prop = "properties not " + prop;
 	for (uint i = state.props.size() - 1; i + 1 > 0; i --)

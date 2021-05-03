@@ -37,7 +37,7 @@ namespace Action {
 // action record types, whose functionality is nearly identical
 class PlayStaticBitmapAnimation : public ActionRecord, public RenderObject {
 public:
-	PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom), _isInterruptible(interruptible) {}
+	PlayStaticBitmapAnimation(bool interruptible, RenderObject &redrawFrom) : RenderObject(redrawFrom, 7), _isInterruptible(interruptible) {}
 	virtual ~PlayStaticBitmapAnimation() { _fullSurface.free(); }
 
 	virtual void init() override;
@@ -56,7 +56,6 @@ public:
 	uint16 _loopFirstFrame = 0; // 0x16
 	uint16 _loopLastFrame = 0; // 0x18
 	Time _frameTime;
-	uint16 _zOrder = 0; // 0x1C
 	EventFlagDescription _interruptCondition; // 0x1E
 	SceneChangeDescription _sceneChange;
 	MultiEventFlagDescription _triggerFlags; // 0x2A
@@ -76,8 +75,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return _isInterruptible ? "PlayIntStaticBitmapAnimation" : "PlayStaticBitmapAnimation"; }
-
-	virtual uint16 getZOrder() const override { return _zOrder; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	void setFrame(uint frame);

@@ -91,7 +91,7 @@ extern sc_bool sc_strempty(const sc_char *string);
 extern sc_char *sc_trim_string(sc_char *string);
 extern sc_char *sc_normalize_string(sc_char *string);
 extern sc_bool sc_compare_word(const sc_char *string,
-                               const sc_char *Word, sc_int length);
+							   const sc_char *Word, sc_int length);
 extern sc_uint sc_hash(const sc_char *string);
 
 /* TAF file reader/decompressor enumerations, opaque typedef and functions. */
@@ -108,7 +108,7 @@ typedef struct sc_taf_s *sc_tafref_t;
 extern void taf_destroy(sc_tafref_t taf);
 extern sc_tafref_t taf_create(sc_read_callbackref_t callback, void *opaque);
 extern sc_tafref_t taf_create_tas(sc_read_callbackref_t callback,
-                                  void *opaque);
+								  void *opaque);
 extern void taf_first_line(sc_tafref_t taf);
 extern const sc_char *taf_next_line(sc_tafref_t taf);
 extern sc_bool taf_more_lines(sc_tafref_t taf);
@@ -132,24 +132,24 @@ typedef struct sc_prop_set_s *sc_prop_setref_t;
 extern sc_prop_setref_t prop_create(const sc_tafref_t taf);
 extern void prop_destroy(sc_prop_setref_t bundle);
 extern void prop_put(sc_prop_setref_t bundle,
-                     const sc_char *format, sc_vartype_t vt_value,
-                     const sc_vartype_t vt_key[]);
+					 const sc_char *format, sc_vartype_t vt_value,
+					 const sc_vartype_t vt_key[]);
 extern sc_bool prop_get(sc_prop_setref_t bundle,
-                        const sc_char *format, sc_vartype_t *vt_value,
-                        const sc_vartype_t vt_key[]);
+						const sc_char *format, sc_vartype_t *vt_value,
+						const sc_vartype_t vt_key[]);
 extern void prop_solidify(sc_prop_setref_t bundle);
 extern sc_int prop_get_integer(sc_prop_setref_t bundle,
-                               const sc_char *format,
-                               const sc_vartype_t vt_key[]);
+							   const sc_char *format,
+							   const sc_vartype_t vt_key[]);
 extern sc_bool prop_get_boolean(sc_prop_setref_t bundle,
-                                const sc_char *format,
-                                const sc_vartype_t vt_key[]);
+								const sc_char *format,
+								const sc_vartype_t vt_key[]);
 extern const sc_char *prop_get_string(sc_prop_setref_t bundle,
-                                      const sc_char *format,
-                                      const sc_vartype_t vt_key[]);
+									  const sc_char *format,
+									  const sc_vartype_t vt_key[]);
 extern sc_int prop_get_child_count(sc_prop_setref_t bundle,
-                                   const sc_char *format,
-                                   const sc_vartype_t vt_key[]);
+								   const sc_char *format,
+								   const sc_vartype_t vt_key[]);
 extern void prop_adopt(sc_prop_setref_t bundle, void *addr);
 extern void prop_debug_trace(sc_bool flag);
 extern void prop_debug_dump(sc_prop_setref_t bundle);
@@ -184,17 +184,17 @@ enum {
 
 typedef struct sc_var_set_s *sc_var_setref_t;
 extern void var_put(sc_var_setref_t vars,
-                    const sc_char *name, sc_int _type, sc_vartype_t vt_value);
+					const sc_char *name, sc_int _type, sc_vartype_t vt_value);
 extern sc_bool var_get(sc_var_setref_t vars,
-                       const sc_char *name, sc_int *_type,
-                       sc_vartype_t *vt_rvalue);
+					   const sc_char *name, sc_int *_type,
+					   sc_vartype_t *vt_rvalue);
 extern void var_put_integer(sc_var_setref_t vars,
-                            const sc_char *name, sc_int value);
+							const sc_char *name, sc_int value);
 extern sc_int var_get_integer(sc_var_setref_t vars, const sc_char *name);
 extern void var_put_string(sc_var_setref_t vars,
-                           const sc_char *name, const sc_char *string);
+						   const sc_char *name, const sc_char *string);
 extern const sc_char *var_get_string(sc_var_setref_t vars,
-                                     const sc_char *name);
+									 const sc_char *name);
 extern sc_var_setref_t var_create(sc_prop_setref_t bundle);
 extern void var_destroy(sc_var_setref_t vars);
 extern void var_register_game(sc_var_setref_t vars, sc_gameref_t game);
@@ -213,22 +213,22 @@ extern void var_debug_dump(sc_var_setref_t vars);
 
 /* Expression evaluation functions. */
 extern sc_bool expr_eval_numeric_expression(const sc_char *expression,
-        sc_var_setref_t vars,
-        sc_int *rvalue);
+		sc_var_setref_t vars,
+		sc_int *rvalue);
 extern sc_bool expr_eval_string_expression(const sc_char *expression,
-        sc_var_setref_t vars,
-        sc_char **rvalue);
+		sc_var_setref_t vars,
+		sc_char **rvalue);
 
 /* Print filtering opaque typedef and functions. */
 typedef struct sc_filter_s *sc_filterref_t;
 extern sc_filterref_t pf_create(void);
 extern void pf_destroy(sc_filterref_t filter);
 extern void pf_buffer_string(sc_filterref_t filter,
-                             const sc_char *string);
+							 const sc_char *string);
 extern void pf_buffer_character(sc_filterref_t filter,
-                                sc_char character);
+								sc_char character);
 extern void pf_prepend_string(sc_filterref_t filter,
-                              const sc_char *string);
+							  const sc_char *string);
 extern void pf_new_sentence(sc_filterref_t filter);
 extern void pf_mute(sc_filterref_t filter);
 extern void pf_clear_mute(sc_filterref_t filter);
@@ -236,19 +236,19 @@ extern void pf_buffer_tag(sc_filterref_t filter, sc_int tag);
 extern void pf_strip_tags(sc_char *string);
 extern void pf_strip_tags_for_hints(sc_char *string);
 extern sc_char *pf_filter(const sc_char *string,
-                          sc_var_setref_t vars, sc_prop_setref_t bundle);
+						  sc_var_setref_t vars, sc_prop_setref_t bundle);
 extern sc_char *pf_filter_for_info(const sc_char *string,
-                                   sc_var_setref_t vars);
+								   sc_var_setref_t vars);
 extern void pf_flush(sc_filterref_t filter,
-                     sc_var_setref_t vars, sc_prop_setref_t bundle);
+					 sc_var_setref_t vars, sc_prop_setref_t bundle);
 extern void pf_checkpoint(sc_filterref_t filter,
-                          sc_var_setref_t vars, sc_prop_setref_t bundle);
+						  sc_var_setref_t vars, sc_prop_setref_t bundle);
 extern const sc_char *pf_get_buffer(sc_filterref_t filter);
 extern sc_char *pf_transfer_buffer(sc_filterref_t filter);
 extern void pf_empty(sc_filterref_t filter);
 extern sc_char *pf_escape(const sc_char *string);
 extern sc_char *pf_filter_input(const sc_char *string,
-                                sc_prop_setref_t bundle);
+								sc_prop_setref_t bundle);
 extern void pf_debug_trace(sc_bool flag);
 
 /* Game memo opaque typedef and functions. */
@@ -260,22 +260,22 @@ extern sc_bool memo_load_game(sc_memo_setref_t memento, sc_gameref_t game);
 extern sc_bool memo_is_load_available(sc_memo_setref_t memento);
 extern void memo_clear_games(sc_memo_setref_t memento);
 extern void memo_save_command(sc_memo_setref_t memento,
-                              const sc_char *command, sc_int timestamp,
-                              sc_int turns);
+							  const sc_char *command, sc_int timestamp,
+							  sc_int turns);
 extern void memo_unsave_command(sc_memo_setref_t memento);
 extern sc_int memo_get_command_count(sc_memo_setref_t memento);
 extern void memo_first_command(sc_memo_setref_t memento);
 extern void memo_next_command(sc_memo_setref_t memento,
-                              const sc_char **command, sc_int *sequence,
-                              sc_int *timestamp, sc_int *turns);
+							  const sc_char **command, sc_int *sequence,
+							  sc_int *timestamp, sc_int *turns);
 extern sc_bool memo_more_commands(sc_memo_setref_t memento);
 extern const sc_char *memo_find_command(sc_memo_setref_t memento,
-                                        sc_int sequence);
+										sc_int sequence);
 extern void memo_clear_commands(sc_memo_setref_t memento);
 
 /* Game state functions. */
 extern sc_gameref_t gs_create(sc_var_setref_t vars, sc_prop_setref_t bundle,
-                              sc_filterref_t filter);
+							  sc_filterref_t filter);
 extern sc_bool gs_is_game_valid(sc_gameref_t game);
 extern void gs_copy(sc_gameref_t to, sc_gameref_t from);
 extern void gs_destroy(sc_gameref_t game);
@@ -309,13 +309,13 @@ extern sc_bool gs_task_done(sc_gameref_t gs, sc_int task);
 extern sc_bool gs_task_scored(sc_gameref_t gs, sc_int task);
 extern sc_int gs_object_count(sc_gameref_t gs);
 extern void gs_set_object_openness(sc_gameref_t gs,
-                                   sc_int object, sc_int openness);
+								   sc_int object, sc_int openness);
 extern void gs_set_object_state(sc_gameref_t gs, sc_int object, sc_int state);
 extern void gs_set_object_seen(sc_gameref_t gs, sc_int object, sc_bool seen);
 extern void gs_set_object_unmoved(sc_gameref_t gs,
-                                  sc_int object, sc_bool unmoved);
+								  sc_int object, sc_bool unmoved);
 extern void gs_set_object_static_unmoved(sc_gameref_t gs,
-        sc_int _object, sc_bool unmoved);
+		sc_int _object, sc_bool unmoved);
 extern sc_int gs_object_openness(sc_gameref_t gs, sc_int object);
 extern sc_int gs_object_state(sc_gameref_t gs, sc_int _object);
 extern sc_bool gs_object_seen(sc_gameref_t gs, sc_int _object);
@@ -342,10 +342,10 @@ extern void gs_set_npc_seen(sc_gameref_t gs, sc_int npc, sc_bool seen);
 extern sc_bool gs_npc_seen(sc_gameref_t gs, sc_int npc);
 extern sc_int gs_npc_walkstep_count(sc_gameref_t gs, sc_int npc);
 extern void gs_set_npc_walkstep(sc_gameref_t gs, sc_int npc,
-                                sc_int walk, sc_int walkstep);
+								sc_int walk, sc_int walkstep);
 extern sc_int gs_npc_walkstep(sc_gameref_t gs, sc_int npc, sc_int walk);
 extern void gs_decrement_npc_walkstep(sc_gameref_t gs,
-                                      sc_int npc, sc_int walkstep);
+									  sc_int npc, sc_int walkstep);
 extern void gs_clear_npc_references(sc_gameref_t gs);
 extern void gs_clear_object_references(sc_gameref_t gs);
 extern void gs_set_multiple_references(sc_gameref_t gs);
@@ -353,7 +353,7 @@ extern void gs_clear_multiple_references(sc_gameref_t gs);
 
 /* Pattern matching functions. */
 extern sc_bool uip_match(const sc_char *pattern,
-                         const sc_char *string, sc_gameref_t game);
+						 const sc_char *string, sc_gameref_t game);
 extern sc_char *uip_replace_pronouns(sc_gameref_t game, const sc_char *string);
 extern void uip_assign_pronouns(sc_gameref_t game, const sc_char *string);
 extern void uip_debug_trace(sc_bool flag);
@@ -615,10 +615,10 @@ extern sc_bool res_has_sound(sc_gameref_t game);
 extern sc_bool res_has_graphics(sc_gameref_t game);
 extern void res_clear_resource(sc_resourceref_t resource);
 extern sc_bool res_compare_resource(sc_resourceref_t from,
-                                    sc_resourceref_t with);
+									sc_resourceref_t with);
 extern void res_handle_resource(sc_gameref_t game,
-                                const sc_char *partial_format,
-                                const sc_vartype_t vt_partial[]);
+								const sc_char *partial_format,
+								const sc_vartype_t vt_partial[]);
 extern void res_sync_resources(sc_gameref_t game);
 extern void res_cancel_resources(sc_gameref_t game);
 
@@ -638,26 +638,26 @@ extern sc_bool run_is_running(sc_gameref_t game);
 extern sc_bool run_has_completed(sc_gameref_t game);
 extern sc_bool run_is_undo_available(sc_gameref_t game);
 extern void run_get_attributes(sc_gameref_t game,
-                               const sc_char **game_name,
-                               const sc_char **game_author,
-                               const sc_char **game_compile_date,
-                               sc_int *turns, sc_int *score,
-                               sc_int *max_score,
-                               const sc_char **current_room_name,
-                               const sc_char **status_line,
-                               const sc_char **preferred_font,
-                               sc_bool *bold_room_names, sc_bool *verbose,
-                               sc_bool *notify_score_change);
+							   const sc_char **game_name,
+							   const sc_char **game_author,
+							   const sc_char **game_compile_date,
+							   sc_int *turns, sc_int *score,
+							   sc_int *max_score,
+							   const sc_char **current_room_name,
+							   const sc_char **status_line,
+							   const sc_char **preferred_font,
+							   sc_bool *bold_room_names, sc_bool *verbose,
+							   sc_bool *notify_score_change);
 extern void run_set_attributes(sc_gameref_t game,
-                               sc_bool bold_room_names, sc_bool verbose,
-                               sc_bool notify_score_change);
+							   sc_bool bold_room_names, sc_bool verbose,
+							   sc_bool notify_score_change);
 extern sc_hintref_t run_hint_iterate(sc_gameref_t game, sc_hintref_t hint);
 extern const sc_char *run_get_hint_question(sc_gameref_t game,
-        sc_hintref_t hint);
+		sc_hintref_t hint);
 extern const sc_char *run_get_subtle_hint(sc_gameref_t game,
-        sc_hintref_t hint);
+		sc_hintref_t hint);
 extern const sc_char *run_get_unsubtle_hint(sc_gameref_t game,
-        sc_hintref_t hint);
+		sc_hintref_t hint);
 
 /* Event functions. */
 extern sc_bool evt_can_see_event(sc_gameref_t game, sc_int event);
@@ -670,17 +670,17 @@ extern const sc_char *task_get_hint_question(sc_gameref_t game, sc_int task);
 extern const sc_char *task_get_hint_subtle(sc_gameref_t game, sc_int task);
 extern const sc_char *task_get_hint_unsubtle(sc_gameref_t game, sc_int task);
 extern sc_bool task_can_run_task_directional(sc_gameref_t game,
-        sc_int task, sc_bool forwards);
+		sc_int task, sc_bool forwards);
 extern sc_bool task_can_run_task(sc_gameref_t game, sc_int task);
 extern sc_bool task_run_task(sc_gameref_t game, sc_int task, sc_bool forwards);
 extern void task_debug_trace(sc_bool flag);
 
 /* Task restriction functions. */
 extern sc_bool restr_pass_task_object_state(sc_gameref_t game,
-        sc_int var1, sc_int var2);
+		sc_int var1, sc_int var2);
 extern sc_bool restr_eval_task_restrictions(sc_gameref_t game,
-        sc_int task, sc_bool *pass,
-        const sc_char **fail_message);
+		sc_int task, sc_bool *pass,
+		const sc_char **fail_message);
 extern void restr_debug_trace(sc_bool flag);
 
 /* NPC gender enumeration and functions. */
@@ -712,10 +712,10 @@ extern sc_bool obj_is_surface(sc_gameref_t game, sc_int object);
 extern sc_int obj_container_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_surface_object(sc_gameref_t game, sc_int n);
 extern sc_bool obj_indirectly_in_room(sc_gameref_t game,
-                                      sc_int _object, sc_int Room);
+									  sc_int _object, sc_int Room);
 extern sc_bool obj_indirectly_held_by_player(sc_gameref_t game, sc_int object);
 extern sc_bool obj_directly_in_room(sc_gameref_t game,
-                                    sc_int _object, sc_int Room);
+									sc_int _object, sc_int Room);
 extern sc_int obj_stateful_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_dynamic_object(sc_gameref_t game, sc_int n);
 extern sc_int obj_wearable_object(sc_gameref_t game, sc_int n);
@@ -751,7 +751,7 @@ extern void loc_debug_dump(void);
 /* Debugger interface. */
 typedef struct sc_debugger_s *sc_debuggerref_t;
 extern sc_bool debug_run_command(sc_gameref_t game,
-                                 const sc_char *debug_command);
+								 const sc_char *debug_command);
 extern sc_bool debug_cmd_debugger(sc_gameref_t game);
 extern void debug_set_enabled(sc_gameref_t game, sc_bool enable);
 extern sc_bool debug_get_enabled(sc_gameref_t game);

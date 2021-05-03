@@ -133,9 +133,9 @@ extern const RoomTextOffsets veng0TextOffsets[] = {
 	{ TX_SPEAKER_MCCOY, 6601, 0 },
 	{ TX_SPEAKER_SPOCK, 6611, 0 },
 	{ TX_SPEAKER_SCOTT, 6633, 0 },
-    { TX_SPEAKER_CHEKOV, 6661, 0 },
-    { TX_SPEAKER_PATTERSON, 6643, 0 },
-    { TX_SPEAKER_KIJE, 6621, 0 },
+	{ TX_SPEAKER_CHEKOV, 6661, 0 },
+	{ TX_SPEAKER_PATTERSON, 6643, 0 },
+	{ TX_SPEAKER_KIJE, 6621, 0 },
 	{ TX_VEN0_001, 7593, 0 },
 	{ TX_VEN0_001, 7593, 0 },
 	{ TX_VEN0_002, 7952, 0 },
@@ -231,7 +231,7 @@ extern const RoomTextOffsets veng0TextOffsets[] = {
 };
 
 extern const RoomText veng0Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::veng0Tick1() {

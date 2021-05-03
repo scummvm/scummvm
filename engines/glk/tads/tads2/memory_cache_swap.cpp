@@ -31,7 +31,7 @@ namespace TADS2 {
 
 /* initialize swapper:  allocate memory for swap page table */
 void mcsini(mcscxdef *ctx, mcmcx1def *gmemctx, ulong maxsiz,
-            osfildef *fp, char *swapfilename, errcxdef *errctx) {
+			osfildef *fp, char *swapfilename, errcxdef *errctx) {
 	uchar *p;
 
 	ctx->mcscxtab = (mcsdsdef **)0; /* anticipate failure */
@@ -54,15 +54,15 @@ void mcsini(mcscxdef *ctx, mcmcx1def *gmemctx, ulong maxsiz,
 	ctx->mcscxmem = gmemctx;
 
 	/*
-     *   store the swap filename - make a copy so that the caller doesn't
-     *   have to retain the original copy (in case it's on the stack)
-     */
+	 *   store the swap filename - make a copy so that the caller doesn't
+	 *   have to retain the original copy (in case it's on the stack)
+	 */
 	if (swapfilename != 0) {
 		ctx->mcscxfname = (char *)mchalo(errctx, (strlen(swapfilename) + 1), "mcsini");
 		strcpy(ctx->mcscxfname, swapfilename);
 	} else {
 		ctx->mcscxfname = 0;
-    }
+	}
 }
 
 /* close the swapper */
@@ -95,11 +95,11 @@ static void mcscompact(mcscxdef *ctx) {
 		desc_in = mcsdsc(ctx, cur_in);
 
 		/*
-         *   If the present descriptor's address is wrong, and the swap
-         *   segment is in use, move the swap segment.  If it's not in
-         *   use, we don't need to move it, because we're going to throw
-         *   away the segment entirely.
-         */
+		 *   If the present descriptor's address is wrong, and the swap
+		 *   segment is in use, move the swap segment.  If it's not in
+		 *   use, we don't need to move it, because we're going to throw
+		 *   away the segment entirely.
+		 */
 		if (desc_in->mcsdsptr != max && (desc_in->mcsdsflg & MCSDSFINUSE)) {
 			/* ptr_in is the old location, ptr_out is the new location */
 			ptr_in = desc_in->mcsdsptr;
@@ -128,9 +128,9 @@ static void mcscompact(mcscxdef *ctx) {
 		desc_in->mcsdsptr = max;
 
 		/*
-         *   Make current object's size exact if it's in use.  If it's
-         *   not in use, delete the segment altogether.
-         */
+		 *   Make current object's size exact if it's in use.  If it's
+		 *   not in use, delete the segment altogether.
+		 */
 		if (desc_in->mcsdsflg & MCSDSFINUSE) {
 			desc_in->mcsdssiz = desc_in->mcsdsosz;
 			max += desc_in->mcsdssiz;
@@ -149,19 +149,19 @@ static void mcscompact(mcscxdef *ctx) {
 			++cur_out;
 		} else {
 			/*
-             *   We need to renumber the corresponding object so that it
-             *   knows there is no swap segment for it any more.
-             */
+			 *   We need to renumber the corresponding object so that it
+			 *   knows there is no swap segment for it any more.
+			 */
 			mcmcsw(ctx->mcscxmem, (mcmon)desc_in->mcsdsobj,
 			       MCSSEGINV, cur_in);
 		}
 	}
 
 	/*
-     *   Adjust the top of the file for our new size, and add the savings
-     *   into the available space counter.  Also, adjust the total handle
-     *   count to reflect any descriptors that we've deleted.
-     */
+	 *   Adjust the top of the file for our new size, and add the savings
+	 *   into the available space counter.  Also, adjust the total handle
+	 *   count to reflect any descriptors that we've deleted.
+	 */
 	ctx->mcscxmax += (ctx->mcscxtop - max);
 	ctx->mcscxtop = max;
 	ctx->mcscxmsg = cur_out;
@@ -169,7 +169,7 @@ static void mcscompact(mcscxdef *ctx) {
 
 /* swap an object out to the swap file */
 mcsseg mcsout(mcscxdef *ctx, uint objid, uchar *ptr, ushort siz,
-              mcsseg oldseg, int dirty) {
+			  mcsseg oldseg, int dirty) {
 	mcsdsdef *desc;
 	mcsdsdef **pagep;
 	uint i;

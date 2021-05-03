@@ -332,8 +332,8 @@ public:
 	void playerGainsControl(bool force = false);
 	void playerDied();
 
-	bool saveGame(Common::WriteStream &stream, Graphics::Surface &thumbnail);
-	bool loadGame(Common::SeekableReadStream &stream);
+	bool saveGame(Common::WriteStream &stream, Graphics::Surface *thumb = NULL, bool origformat = false);
+	bool loadGame(Common::SeekableReadStream &stream, int version);
 	void newGame(int difficulty);
 	void autoSaveGame(int textId, bool endgame);
 

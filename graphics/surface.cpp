@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 #include "graphics/conversion.h"
+#include "graphics/transform_tools.h"
 
 namespace Graphics {
 
@@ -383,6 +384,24 @@ Graphics::Surface *Surface::scale(uint16 newWidth, uint16 newHeight, bool filter
 	return target;
 }
 
+Graphics::Surface *Surface::rotoscale(const TransformStruct &transform, bool filtering) const {
+
+	Common::Point newHotspot;
+	Common::Rect rect = TransformTools::newRect(Common::Rect((int16)w, (int16)h), transform, &newHotspot);
+
+	Graphics::Surface *target = new Graphics::Surface();
+
+	target->create((uint16)rect.right - rect.left, (uint16)rect.bottom - rect.top, this->format);
+
+	if (filtering) {
+		rotoscaleBlitBilinear((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
+	} else {
+		rotoscaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
+	}
+
+	return target;
+}
+
 void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette) {
 	// Do not convert to the same format and ignore empty surfaces.
 	if (format == dstFormat || pixels == 0) {
@@ -529,6 +548,96 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 	}
 
 	return surface;
+}
+
+void Surface::debugPrint(int debuglevel, int width, int height, int x, int y, int scale, int maxwidth, const byte *palette) const {
+	//                      012 3456789abcdef
+	const char *gradient = " .:\';+*<?F7RQ&%#";
+
+	if (width <= 0) width = w;
+	if (height <= 0) height = h;
+	if (x < 0) x = 0;
+	if (y < 0) 	y = 0;
+
+	maxwidth -= 2; // Compensate for the frame
+	if (maxwidth < 0) maxwidth = 80;
+
+	if (scale < 1) {
+		scale = MAX(1, (width + maxwidth - 1) / maxwidth);
+	}
+
+	x = MIN<int>(x, w);
+	y = MIN<int>(y, h);
+
+	int tox = MIN<int>(x + width, w);
+	int toy = MIN<int>(y + height, h);
+
+	debug(debuglevel, "Surface: %d x %d, bpp: %d, format: %s, address: %p", w, h, format.bytesPerPixel, format.toString().c_str(), (void *)this);
+	debug(debuglevel, "displaying: %d x %d @ %d,%d, scale: %d", width, height, x, y, scale);
+	debugN(debuglevel, "+");
+	for (int xx = x; xx < tox; xx += scale)
+		debugN(debuglevel, "-");
+	debug(debuglevel, "+");
+
+	for (int yy = y; yy < toy; yy += scale) {
+		debugN(debuglevel, "|");
+		for (int xx = x; xx < tox; xx += scale) {
+			double grayscale = 0.0;
+			int pixelcount = 0;
+
+			for (int ys = 0; ys < scale && yy + ys < h; ys++) {
+				const byte *srcRow = (const byte *)getBasePtr(xx, yy + ys);
+
+				for (int xs = 0; xs < scale && xx + xs < w; xs++) {
+					byte r, g, b, a;
+					uint32 color;
+
+					switch (format.bytesPerPixel) {
+					case 1: {
+						byte index = *srcRow;
+
+						if (palette) {
+							r = palette[index * 3];
+							g = palette[index * 3 + 1];
+							b = palette[index * 3 + 2];
+						} else {
+							r = g = b = index;
+						}
+
+						a = 0xff;
+					    }
+						break;
+					case 2:
+						color = READ_UINT16(srcRow);
+						break;
+					case 3:
+						color = READ_UINT24(srcRow);
+						break;
+					case 4:
+						color = READ_UINT32(srcRow);
+						break;
+					default:
+						error("Surface::debugPrint: Unsupported bpp: %d", format.bytesPerPixel);
+					}
+
+					if (format.bytesPerPixel > 1)
+						format.colorToARGB(color, a, r, g, b);
+
+					grayscale += (0.29 * r + 0.58 * g + 0.11 * b) / 3.0;
+					pixelcount++;
+
+					srcRow += format.bytesPerPixel;
+				}
+			}
+
+			debugN(debuglevel, "%c", gradient[(int)(grayscale / pixelcount / 16)]);
+		}
+		debug(debuglevel, "|");
+	}
+	debugN(debuglevel, "+");
+	for (int xx = x; xx < tox; xx += scale)
+		debugN(debuglevel, "-");
+	debug(debuglevel, "+");
 }
 
 FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor, bool maskMode) {

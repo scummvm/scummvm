@@ -100,10 +100,10 @@ void OSystem_Android::scaleMouse(Common::Point &p, int x, int y, bool touchpadMo
 }
 
 void OSystem_Android::updateEventScale(const GLESBaseTexture *tex) {
-    if (tex && (tex->height() != 0) && (tex->width() != 0)) {
+	if (tex && (tex->height() != 0) && (tex->width() != 0)) {
 	    _eventScaleY = 100 * 480 / tex->height();
 	    _eventScaleX = 100 * 640 / tex->width();
-    }
+	}
 }
 
 void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,

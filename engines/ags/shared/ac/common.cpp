@@ -35,7 +35,10 @@ void quitprintf(const char *fmt, ...) {
 	String text = String::FromFormatV(fmt, ap);
 	va_end(ap);
 
-	quit(text);
+	// WORKAROUND: In ScummVM we have to make this an error, because
+	// too many places calling it presume it doesn't return,
+	// and will throw a wobbly if does
+	error(text);
 }
 
 } // namespace AGS3

@@ -29,14 +29,14 @@
 namespace Prince {
 
 void PrinceEngine::playVideo(Common::String videoFilename) {
-        // Set the correct video mode
-        initGraphics(640, 480, nullptr);
-        if (_system->getScreenFormat().bytesPerPixel == 1) {
-                warning("Couldn't switch to a RGB color video mode to play a video.");
-                return;
-        }
+		// Set the correct video mode
+		initGraphics(640, 480, nullptr);
+		if (_system->getScreenFormat().bytesPerPixel == 1) {
+				warning("Couldn't switch to a RGB color video mode to play a video.");
+				return;
+		}
 
-        debug(2, "Screen format: %s", _system->getScreenFormat().toString().c_str());
+		debug(2, "Screen format: %s", _system->getScreenFormat().toString().c_str());
 
 	Video::VideoDecoder *videoDecoder = new Video::AVIDecoder();
 	if (!videoDecoder->loadFile(videoFilename)) {

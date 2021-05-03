@@ -158,7 +158,7 @@ void Background::init(Background *surface, int layer, bool isSub, int mapBase, b
 }
 
 static void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
-                    const uint w, const uint h, const uint bytesPerPixel) {
+					const uint w, const uint h, const uint bytesPerPixel) {
 	if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
 		dmaCopy(src, dst, dstPitch * h);
 		return;

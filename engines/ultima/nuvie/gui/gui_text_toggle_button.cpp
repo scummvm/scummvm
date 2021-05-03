@@ -27,9 +27,9 @@ namespace Ultima {
 namespace Nuvie {
 
 GUI_TextToggleButton::GUI_TextToggleButton(void *data, int x, int y, int w, int h,
-        const char *const *texts_, int count_, int selection_,
-        GUI_Font *font, int alignment_,
-        GUI_CallBack *callback, int flat)
+		const char *const *texts_, int count_, int selection_,
+		GUI_Font *font, int alignment_,
+		GUI_CallBack *callback, int flat)
 	: GUI_Button(data, x, y, w, h, "", font, alignment_, 0, callback, flat) {
 	count = count_;
 	assert(count > 0);

@@ -8,8 +8,7 @@ MODULE_OBJS = \
 	eden_graphics.o \
 	metaengine.o \
 	resource.o \
-	sound.o \
-	video.o
+	sound.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_CRYO), DYNAMIC_PLUGIN)

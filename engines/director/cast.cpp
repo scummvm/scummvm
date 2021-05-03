@@ -97,6 +97,9 @@ Cast::~Cast() {
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
 			delete it->_value;
 
+	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
+		delete it->_value;
+
 	delete _loadedStxts;
 	delete _loadedCast;
 	delete _lingoArchive;
@@ -1193,6 +1196,11 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 			_lingoArchive->addCode(ci->script.c_str(), scriptType, id, ci->name.c_str());
 		}
+	}
+
+	// For SoundCastMember, read the flags in the CastInfo
+	if ((_vm->getVersion() < 500) && (member->_type == kCastSound)) {
+		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
 	}
 
 	ci->scriptId = castInfo.scriptId;

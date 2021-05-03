@@ -26,7 +26,7 @@
 namespace Kyra {
 
 Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system)
-    : Screen_v2(vm, system, _screenDimTable, _screenDimTableCount) {
+	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _interfaceCommandLineY1(vm->gameFlags().hasExtraLanguage ? 185 : 188) {
 }
 
 Screen_MR::~Screen_MR() {
@@ -40,8 +40,8 @@ int Screen_MR::getLayer(int x, int y) {
 
 	if (y < 0) {
 		y = 0;
-	} else if (y >= 188) {
-		y = 187;
+	} else if (y >= _interfaceCommandLineY1) {
+		y = _interfaceCommandLineY1 - 1;
 		// The original actually limits the _maskMin/MaxY check to cases where y has already been clipped to 187.
 		// Whether this was intentional or not: Scenes actually require that we do it that way or animations may
 		// be drawn on the wrong layer (bug #11312).
@@ -129,6 +129,87 @@ void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2
 	drawClippedLine(x1+1, y1+1, x1+1, y2-2, c3);
 	drawClippedLine(x1, y2, x2, y2, c3);
 	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
+}
+
+Big5Font::Big5Font(const uint8 *oneByteData, int pitch) : Font(), _oneByteData(oneByteData), _twoByteData(0), _twoByteDataSize(0), _pitch(pitch), _border(false) {
+	assert(_oneByteData);
+	_textColor[0] = _textColor[1] = 0;
+}
+
+Big5Font::~Big5Font() {
+	delete[] _twoByteData;
+}
+
+bool Big5Font::load(Common::SeekableReadStream &data) {
+	delete[] _twoByteData;
+	_twoByteData = 0;
+
+	if (!data.size())
+		return false;
+
+	_twoByteDataSize = data.size();
+	uint8 *dst = new uint8[_twoByteDataSize];
+	if (!dst)
+		return false;
+
+	data.read(dst, _twoByteDataSize);
+	_twoByteData = dst;
+
+	return true;
+}
+
+int Big5Font::getCharWidth(uint16 c) const {
+	return (c & 0x80) ? 18 : 9;
+}
+
+void Big5Font::setColorMap(const uint8 *src) {
+	_colorMap = src;
+	_textColor[0] = _colorMap[1] | (_colorMap[1] << 8);
+	if (_textColor[0]) {
+		_textColor[0] -= 0x100;
+		if (_colorMap[1] == 0xFF)
+			_textColor[0] -= 0x100;
+	}
+	_textColor[0] = TO_LE_16(_textColor[0]);
+	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+}
+
+void Big5Font::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	static const int8 drawSeqNormal[4] = { 0, 0, 0, -1 };
+	static const int8 drawSeqOutline[19] = { 1, 0, 1, 0, 1, 1, 2, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 0, -1 };
+	const uint8 *glyphData = &_oneByteData[(c & 0x7F) * 14];
+	int w = 7;
+
+	if (c == 0x6187) {
+		glyphData = &_oneByteData[128];
+	} else if (c & 0x80) {
+		c = ((c & 0x7F00) >> 2) | (c & 0x3F);
+		assert(c * 28 < _twoByteDataSize);
+		glyphData = &_twoByteData[c * 28];
+		w = 15;
+	}
+
+	for (const int8 *i = _border ? drawSeqOutline : drawSeqNormal; *i != -1; i += 3) {
+		const uint8 *data = glyphData;
+		uint8 *dst3 = dst;
+		dst = &dst3[i[0] + i[1] * _pitch];
+		for (int h = 0; h < 14; ++h) {
+			uint8 in = 0;
+			int bt = -1;
+			uint8 *dst2 = dst;
+			for (int x = 0; x < w; ++x) {
+				if (bt == -1) {
+					in = *data++;
+					bt = 7;
+				}
+				if (in & (1 << (bt--)))
+					*(uint16*)dst = _textColor[i[2]];
+				dst++;
+			}
+			dst = dst2 + _pitch;
+		}
+		dst = dst3;
+	}
 }
 
 } // End of namespace Kyra

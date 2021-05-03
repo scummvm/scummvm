@@ -176,41 +176,41 @@ void GfxBase::createSpecialtyTexture(uint id, const uint8 *data, int width, int 
 }
 
 Bitmap *GfxBase::createScreenshotBitmap(const Graphics::PixelBuffer src, int w, int h, bool flipOrientation) {
-        Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
+		Graphics::PixelBuffer buffer = Graphics::PixelBuffer::createBuffer<565>(w * h, DisposeAfterUse::YES);
 
-        int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
-        int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
+		int i1 = (_screenWidth * w - 1) / _screenWidth + 1;
+		int j1 = (_screenHeight * h - 1) / _screenHeight + 1;
 
-        for (int j = 0; j < j1; j++) {
-                for (int i = 0; i < i1; i++) {
-                        int x0 = i * _screenWidth / w;
-                        int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
-                        int y0 = j * _screenHeight / h;
-                        int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
-                        uint16 sr = 0, sg = 0, sb = 0;
-                        for (int y = y0; y < y1; y++) {
-                                for (int x = x0; x < x1; x++) {
-                                        uint8 r, g, b;
-                                        src.getRGBAt(y * _screenWidth + x, r, g, b);
-                                        sr += r;
-                                        sg += g;
-                                        sb += b;
-                                }
-                        }
-                        sr /= (x1 - x0) * (y1 - y0);
-                        sg /= (x1 - x0) * (y1 - y0);
-                        sb /= (x1 - x0) * (y1 - y0);
-                        if (g_grim->getGameType() == GType_MONKEY4) {
-                                buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, sr, sg, sb);
-                        } else {
-                                uint32 color = (sr + sg + sb) / 3;
-                                buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, color, color, color);
-                        }
-                }
-        }
+		for (int j = 0; j < j1; j++) {
+				for (int i = 0; i < i1; i++) {
+						int x0 = i * _screenWidth / w;
+						int x1 = ((i + 1) * _screenWidth - 1) / w + 1;
+						int y0 = j * _screenHeight / h;
+						int y1 = ((j + 1) * _screenHeight - 1) / h + 1;
+						uint16 sr = 0, sg = 0, sb = 0;
+						for (int y = y0; y < y1; y++) {
+								for (int x = x0; x < x1; x++) {
+										uint8 r, g, b;
+										src.getRGBAt(y * _screenWidth + x, r, g, b);
+										sr += r;
+										sg += g;
+										sb += b;
+								}
+						}
+						sr /= (x1 - x0) * (y1 - y0);
+						sg /= (x1 - x0) * (y1 - y0);
+						sb /= (x1 - x0) * (y1 - y0);
+						if (g_grim->getGameType() == GType_MONKEY4) {
+								buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, sr, sg, sb);
+						} else {
+								uint32 color = (sr + sg + sb) / 3;
+								buffer.setPixelAt( (flipOrientation ? j : (h - j - 1) ) * w + i, color, color, color);
+						}
+				}
+		}
 
-        Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
-        return screenshot;
+		Bitmap *screenshot = new Bitmap(buffer, w, h, "screenshot");
+		return screenshot;
 }
 
 void GfxBase::makeScreenTextures() {

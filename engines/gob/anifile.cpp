@@ -34,7 +34,7 @@
 namespace Gob {
 
 ANIFile::ANIFile(GobEngine *vm, const Common::String &fileName,
-                 uint16 width, uint8 bpp) : _vm(vm),
+				 uint16 width, uint8 bpp) : _vm(vm),
 	_width(width), _bpp(bpp), _hasPadding(false) {
 
 	bool bigEndian = false;
@@ -113,7 +113,7 @@ void ANIFile::load(Common::SeekableSubReadStreamEndian &ani, const Common::Strin
 }
 
 void ANIFile::loadAnimation(Animation &animation, FrameArray &frames,
-                            Common::SeekableSubReadStreamEndian &ani) {
+							Common::SeekableSubReadStreamEndian &ani) {
 
 	// Animation properties
 
@@ -258,7 +258,7 @@ const ANIFile::Animation &ANIFile::getAnimationInfo(uint16 animation) const {
 }
 
 bool ANIFile::getCoordinates(uint16 layer, uint16 part,
-                             uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const {
+							 uint16 &left, uint16 &top, uint16 &right, uint16 &bottom) const {
 
 	if (layer >= _layers.size())
 		return false;
@@ -281,7 +281,7 @@ void ANIFile::draw(Surface &dest, uint16 animation, uint16 frame, int16 x, int16
 }
 
 void ANIFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
-                        int16 x, int16 y, int32 transp) const {
+						int16 x, int16 y, int32 transp) const {
 
 	if (layer >= _layers.size())
 		return;

@@ -243,7 +243,7 @@ public:
 	inline const ShapeInfo *getShapeInfo() const;
 
 	//! Get the ShapeInfo object for this Item from the game instance.
-	const ShapeInfo *getShapeInfoFromGameInstance() const;
+	virtual const ShapeInfo *getShapeInfoFromGameInstance() const;
 
 	//! Get the Shape object for this Item. (The pointer will be cached.)
 	const Shape *getShapeObject() const;

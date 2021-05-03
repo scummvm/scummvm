@@ -1603,7 +1603,7 @@ void modifySeqListElement(uint16 objIdx, int16 var4Test, int16 param1, int16 par
 }
 
 void computeMove1(SeqListElement &element, int16 x, int16 y, int16 param1,
-                  int16 param2, int16 x2, int16 y2) {
+				  int16 param2, int16 x2, int16 y2) {
 	element.var16 = 0;
 	element.var14 = 0;
 

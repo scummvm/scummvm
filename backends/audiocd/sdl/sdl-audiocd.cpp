@@ -77,10 +77,10 @@ void SdlAudioCDManager::close() {
 	DefaultAudioCDManager::close();
 
 	if (_cdrom) {
-                SDL_CDStop(_cdrom);
-                SDL_CDClose(_cdrom);
+		SDL_CDStop(_cdrom);
+		SDL_CDClose(_cdrom);
 		_cdrom = 0;
-        }
+	}
 }
 
 void SdlAudioCDManager::stop() {

@@ -28,11 +28,14 @@
 #include "engines/nancy/state/state.h"
 
 #include "engines/nancy/ui/viewport.h"
-#include "engines/nancy/ui/button.h"
 
 namespace Nancy {
 
 class NancyEngine;
+
+namespace UI {
+class Button;
+}
 
 namespace State {
 
@@ -42,10 +45,11 @@ class Map : public State, public Common::Singleton<Map> {
 public:
 	enum State { kInit, kRun };
 	Map();
+	virtual ~Map();
 
 	// State API
 	virtual void process() override;
-	virtual bool onStateExit() override;
+	virtual void onStateExit() override;
 
 private:
 	struct Location {
@@ -55,6 +59,8 @@ private:
 			uint16 verticalOffset = 0;
 		};
 
+		Common::String description;
+
 		bool isActive = false;
 		Common::Rect hotspot;
 		Common::Array<SceneChange> scenes;
@@ -63,43 +69,18 @@ private:
 		Common::Rect labelDest;
 	};
 
-	class MapLabel : public Nancy::RenderObject {
-	public:
-		MapLabel(RenderObject &redrawFrom, Map *parent) : Nancy::RenderObject(redrawFrom), _parent(parent) {}
-		virtual ~MapLabel() = default;
-
-		virtual void init() override;
-
-		void setLabel(int labelID);
-
-	protected:
-		virtual uint16 getZOrder() const override { return 7; }
-
-		Map *_parent;
-	};
-
-	class MapButton : public UI::Button {
-	public:
-		MapButton(RenderObject &redrawFrom, Map *parent) : Button(redrawFrom), _parent(parent) {}
-		virtual ~MapButton() = default;
-
-		virtual void init() override;
-		virtual void onClick() override;
-
-	protected:
-		virtual uint16 getZOrder() const override { return 9; }
-
-		Map *_parent;
-	};
-
 	void init();
 	void run();
 
 	void registerGraphics();
 
+	void setLabel(int labelID);
+
 	Nancy::UI::Viewport _viewport;
-	MapLabel _label;
-	MapButton _button;
+	RenderObject _label;
+	RenderObject _closedLabel;
+	UI::Button *_button;
+	SoundDescription _sound;
 
 	State _state;
 	uint16 _mapID;

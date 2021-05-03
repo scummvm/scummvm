@@ -852,6 +852,34 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
 	},
 
+	// Waxworks - French Amiga Floppy
+	// Supplied by CaptainHIT in bug report #11597
+	{
+		{
+			"waxworks",
+			"Floppy",
+
+			{
+				{ "gameamiga",		GAME_BASEFILE,	"06531f4677496b73184dfc58f641c19f", 44204},
+				{ "icon.pkd",		GAME_ICONFILE,	"4822a91c18b1b2005ac17fc617f7dcbe", 18940},
+				{ "menus.dat",		GAME_MENUFILE,	"3409eeb8ca8b46fc04da99de67573f5e", 320},
+				{ "start",			GAME_RESTFILE,	"b575b336e741dde1725edd4079d5ab67", 20902},
+				{ "stripped.txt",	GAME_STRFILE,	"6faaebff2786216900061eeb978f10af", 225},
+				{ "tbllist",		GAME_TBLFILE,	"95c44bfc380770a6b6dd0dfcc69e80a0", 309},
+				{ "xtbllist",		GAME_XTBLFILE,	"6c7b3db345d46349a5226f695c03e20f", 88},
+				AD_LISTEND
+			},
+			Common::FR_FRA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_WW,
+		GID_WAXWORKS,
+		GF_OLD_BUNDLE | GF_CRUNCHED | GF_CRUNCHED_GAMEPC | GF_PLANAR
+	},
+
 	// Waxworks - English DOS Floppy Demo
 	{
 		{
@@ -1233,6 +1261,31 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
 	},
 
+	// Simon the Sorcerer 1 - Italian Amiga 9-Floppy version
+	// Bugreport #10963
+	{
+		{
+			"simon1",
+			"Floppy",
+
+			{
+				{ "gameamiga",		GAME_BASEFILE,	"bd5c70845f2506e8d44b9c39b82db699", 38875},
+				{ "icon.pkd",		GAME_ICONFILE,	"565ef7a98dcc21ef526a2bb10b6f42ed", 18979},
+				{ "stripped.txt",	GAME_STRFILE,	"f5fc67db3b8c5283cda51c43b98a74f8", 243},
+				{ "tbllist",		GAME_TBLFILE,	"f9d5bf2ce09f82289c791c3ca26e1e4b", 696},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_CRUNCHED | GF_OLD_BUNDLE | GF_PLANAR
+	},
+
 	// Simon the Sorcerer 1 - English Amiga CD32
 	{
 		{
@@ -1579,6 +1632,32 @@ static const AGOSGameDescription gameDescriptions[] = {
 
 			{
 				{ "simon.gme",		GAME_GMEFILE,	"b4a7526ced425ba8ad0d548d0ec69900", 1237886},
+				{ "gamepc"	,		GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", 30879},
+				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", 252},
+				{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOSUBTITLES)
+		},
+
+		GType_SIMON1,
+		GID_SIMON1,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 1 - English DOS CD Demo from Zork Anthology CD
+	// Bugreport #11200
+	{
+		{
+			"simon1",
+			"CD Demo",
+
+			{
+				{ "simon.gme",		GAME_GMEFILE,	"a8c91fe4f316b3e047d6782811eb1b70", 1236298},
 				{ "gamepc"	,		GAME_BASEFILE,	"425c7d1957699d35abca7e12a08c7422", 30879},
 				{ "icon.dat",		GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
 				{ "stripped.txt",	GAME_STRFILE,	"d9de7542612d9f4e0819ad0df5eac56b", 252},
@@ -2423,6 +2502,58 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+	// Simon the Sorcerer 2 - Polish Windows CD
+	// Supplied by paboum Bugreport #11770
+	{
+		{
+			"simon2",
+			"CD",
+
+			{
+				{ "gsptr30",		GAME_BASEFILE,	"63b68bdd395baa108b865cfbc0f9afff", 58652},
+				{ "icon.dat",		GAME_ICONFILE,	"72096a62d36e6034ea9fecc13b2dbdab", 18089},
+				{ "simon2.gme",		GAME_GMEFILE,	"e749c4c103d7e7d51b34620ed76c5a04", 20046789},
+				{ "stripped.txt",	GAME_STRFILE,	"e229f84d46fa83f99b4a7115679f3fb6", 171},
+				{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
+	// Simon the Sorcerer 2 - English with MT-32 hack (25th Anniversary Edition)
+	// Bugreport #11394
+	{
+		{
+			"simon2",
+			"25th Anniversary Edition",
+
+			{
+				{ "gsptr30",        GAME_BASEFILE, "608e277904d87dd28725fa08eacc2c0d", 58652 },
+				{ "icon.dat",       GAME_ICONFILE, "72096a62d36e6034ea9fecc13b2dbdab", 18089 },
+				{ "simon2.gme",     GAME_GMEFILE, "d5e4e2e539565471774ecd22ebf15623", 20054555 },
+				{ "stripped.txt",   GAME_STRFILE, "e229f84d46fa83f99b4a7115679f3fb6", 171 },
+				{ "tbllist",        GAME_TBLFILE, "2082f8d02075e590300478853a91ffd9", 513 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+
+		GType_SIMON2,
+		GID_SIMON2,
+		GF_TALKIE
+	},
+
 	// Simon the Sorcerer 2 - Russian Fan with MT-32 hack (25th Anniversary Edition)
 	{
 		{
@@ -2763,10 +2894,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"feeble",
-			"2CD",
+			"2CD/unextracted",
 
 			{
-				{ "data1.cab",		0,	"600db08891e7a21badc8215e604cd88f", 28845430},
+				{ "data1.cab",	GAME_CABFILE,	"600db08891e7a21badc8215e604cd88f", 28845430},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -2830,10 +2962,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"feeble",
-			"4CD",
+			"4CD/unextracted",
 
 			{
-				{ "data1.cab",		0,	"65804cbc9036ac4b1275d97e0de3be2f", 28943062},
+				{ "data1.cab",	GAME_CABFILE,	"65804cbc9036ac4b1275d97e0de3be2f", 28943062},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -2916,6 +3049,28 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
+	// The Feeble Files - German Windows 4CD (with InstallShield cab)
+	{
+		{
+			"feeble",
+			"4CD/unextracted",
+
+			{
+				{ "data1.cab",	GAME_CABFILE,	"600ece2bc02cfffd17afce721bc5ab21", 23201553},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
+				AD_LISTEND
+			},
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+	},
+
 	// The Feeble Files - Italian Windows 4CD
 	{
 		{
@@ -2939,6 +3094,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
 
+	// The Feeble Files - German Windows 4CD (with InstallShield cab)
+	// Provided by goodoldgeorge Bugreport #12495
+	{
+		{
+			"feeble",
+			"4CD/unextracted",
+
+			{
+				{ "data1.cab",	GAME_CABFILE,	"fa49e1f9910e519ebdcae365da10697e", 26296986},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
+				AD_LISTEND
+			},
+			Common::IT_ITA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
+	},
+
 	// The Feeble Files - Polish Windows 4CD
 	{
 		{
@@ -2960,6 +3138,29 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GType_FF,
 		GID_FEEBLEFILES,
 		GF_OLD_BUNDLE | GF_TALKIE
+	},
+
+	// The Feeble Files - German Windows 4CD (with InstallShield cab)
+	// Provided by goodoldgeorge Bugreport #12496
+	{
+		{
+			"feeble",
+			"4CD/unextracted",
+
+			{
+				{ "data1.cab",	GAME_CABFILE,	"7722489a6609e8bba40272f64502494e", 28938871},
+				{ "0882.vga",				0,	"6655780ef361ed92d0a99d50217502f3", 713180},
+				AD_LISTEND
+			},
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOASPECT)
+		},
+
+		GType_FF,
+		GID_FEEBLEFILES,
+		GF_OLD_BUNDLE | GF_TALKIE | GF_PACKED
 	},
 
 	// The Feeble Files - Spanish Windows 4CD
@@ -2989,10 +3190,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"dimp",
-			"CD",
+			"CD/unextracted",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3031,10 +3233,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"jumble",
-			"CD",
+			"CD/unextracted",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3073,10 +3276,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"puzzle",
-			"CD",
+			"CD/unextracted",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,
@@ -3115,10 +3319,11 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{
 		{
 			"swampy",
-			"CD",
+			"CD/unextracted",
 
 			{
-				{ "data1.cab", 0, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "data1.cab", GAME_CABFILE, "36dd86c1d872cea81ac1de7753dd684a", 40394693},
+				{ "0841.vga",			0,	 "b3048a73648d43ff921370da8590e5b3", 40828},
 				AD_LISTEND
 			},
 			Common::EN_ANY,

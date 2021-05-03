@@ -88,7 +88,7 @@ Version 0: Color count was not saved, was assumed to be 256. BGIncrust.bgIdx doe
 Version 1: Saving of real color count was added but still 256 colors were always saved.
 Version 2: BGIncrust.bgIdx was added.
 Version 3: Saving real values for current music name, music playing status, current background index,
-           scroll background index and background scrolling was added.
+		   scroll background index and background scrolling was added.
 */
 static const uint32 LAST_TEMP_OS_SAVE_VER = 3;
 

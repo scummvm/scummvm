@@ -69,7 +69,7 @@ static uint32 computeCapacity(uint32 len) {
 
 TEMPLATE
 BASESTRING::BaseString(const BASESTRING &str)
-    : _size(str._size) {
+	: _size(str._size) {
 	if (str.isStorageIntern()) {
 		// String in internal storage: just copy it
 		memcpy(_storage, str._storage, _builtinCapacity * sizeof(value_type));

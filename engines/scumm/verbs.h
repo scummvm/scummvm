@@ -56,6 +56,7 @@ struct VerbSlot {
 	bool center;
 	uint8 prep;
 	uint16 imgindex;
+	int16 origLeft;
 };
 
 enum VerbsV0 {

@@ -139,7 +139,7 @@ public:
 	virtual int16 getHeight() override;
 	virtual int16 getWidth() override;
 
-    bool touchpadModeEnabled() const;
+	bool touchpadModeEnabled() const;
 
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override { return _framebuffer.format; }

@@ -67,6 +67,8 @@ private:
 
 	int gameOptions(Button *button);
 	void setupOptionsButtons() override;
+	void resizeMenu(Menu &menu, int menuHeight, int menuTitleY, int menuItemYstart, int menuItemYinc, int menuItemHeight, int menuItemYend, int labelYstart, int labelYend);
+	void fontBasedMenuResize();
 
 	int audioOptions(Button *button);
 

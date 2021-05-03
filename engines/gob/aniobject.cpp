@@ -189,7 +189,7 @@ bool ANIObject::isIn(const ANIObject &obj) const {
 }
 
 bool ANIObject::draw(Surface &dest, int16 &left, int16 &top,
-                                    int16 &right, int16 &bottom) {
+									int16 &right, int16 &bottom) {
 
 	if (!_visible)
 		return false;
@@ -203,7 +203,7 @@ bool ANIObject::draw(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
-                                       int16 &right, int16 &bottom) {
+									   int16 &right, int16 &bottom) {
 
 	if (!hasBuffer()) {
 		uint16 width, height;
@@ -227,7 +227,7 @@ bool ANIObject::drawCMP(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
-                                       int16 &right, int16 &bottom) {
+									   int16 &right, int16 &bottom) {
 
 	if (!hasBuffer()) {
 		uint16 width, height;
@@ -257,7 +257,7 @@ bool ANIObject::drawANI(Surface &dest, int16 &left, int16 &top,
 }
 
 bool ANIObject::clear(Surface &dest, int16 &left, int16 &top,
-                                     int16 &right, int16 &bottom) {
+									 int16 &right, int16 &bottom) {
 
 	return restoreScreen(dest, left, top, right, bottom);
 }

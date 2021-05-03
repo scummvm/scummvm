@@ -114,7 +114,7 @@ extern const RoomTextOffsets veng4TextOffsets[] = {
 };
 
 extern const RoomText veng4Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 #define DOOR_X 0x13f

@@ -219,8 +219,8 @@ int compareStrings(char *str1, char *str2) {
 
   */
 void toIso(char copy[], /* OUT - Mapped  string */
-           char original[], /* IN - string to convert */
-           int charset) {   /* IN - the current character set */
+		   char original[], /* IN - string to convert */
+		   int charset) {   /* IN - the current character set */
 	static const unsigned char macMap[256]
 	= {
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0A, 0x0E, 0x0F,

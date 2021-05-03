@@ -32,7 +32,7 @@ Graphics::ManagedSurface *checkmarks = NULL;
 
 
 GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *image,
-                        Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
+						Graphics::ManagedSurface *image2, GUI_CallBack *callback, bool free_surfaces)
 	: GUI_Widget(data, x, y, image->w, image->h) {
 	callback_object = callback;
 
@@ -52,7 +52,7 @@ GUI_Button:: GUI_Button(void *data, int x, int y, Graphics::ManagedSurface *imag
 }
 
 GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
-                        GUI_CallBack *callback)
+						GUI_CallBack *callback)
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 
@@ -72,8 +72,8 @@ GUI_Button:: GUI_Button(void *data, int x, int y, int w, int h,
 }
 
 GUI_Button::GUI_Button(void *data, int x, int y, int w, int h, const char *text,
-                       GUI_Font *font, int alignment, int is_checkbutton,
-                       GUI_CallBack *callback, int flat)
+					   GUI_Font *font, int alignment, int is_checkbutton,
+					   GUI_CallBack *callback, int flat)
 	: GUI_Widget(data, x, y, w, h) {
 	callback_object = callback;
 

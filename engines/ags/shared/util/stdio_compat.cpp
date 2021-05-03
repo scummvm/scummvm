@@ -22,9 +22,12 @@
 
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/core/platform.h"
+#include "ags/shared/util/directory.h"
 #include "common/config-manager.h"
+#include "common/system.h"
 #include "common/file.h"
 #include "common/fs.h"
+#include "common/savefile.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {
@@ -49,19 +52,22 @@ file_off_t ags_ftell(Common::Stream *stream) {
 }
 
 Common::FSNode getFSNode(const char *path) {
-	Common::FSNode node(path);
-	if (node.isReadable())
-		return node;
-
-	node = Common::FSNode(ConfMan.get("path"));
+	Common::FSNode node;
 	Common::String filePath(path);
-
-	// If it's the root game folder, return the node for it
 	if (filePath.empty() || filePath == "." || filePath == "./")
-		return node;
-
-	if (filePath.hasPrefix("./"))
-		filePath = Common::String(filePath.c_str() + 2);
+		return Common::FSNode(ConfMan.get("path"));
+	else if (filePath.hasPrefix("./")) {
+		filePath = filePath.substr(2);
+		node = Common::FSNode(ConfMan.get("path"));
+	} else if (filePath.hasPrefixIgnoreCase(AGS::Shared::SAVE_FOLDER_PREFIX)) {
+		filePath = filePath.substr(strlen(AGS::Shared::SAVE_FOLDER_PREFIX));
+		node = Common::FSNode(ConfMan.get("savepath"));
+	} else {
+		node =  Common::FSNode(filePath);
+		if (node.isReadable())
+			return node;
+		node = Common::FSNode(ConfMan.get("path"));
+	}
 
 	// Use FSDirectory for case-insensitive search
 	Common::SharedPtr<Common::FSDirectory> dir(new Common::FSDirectory(node));

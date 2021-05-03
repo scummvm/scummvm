@@ -340,10 +340,6 @@ public:
 	bool canLoadGameStateCurrently() override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently() override;
-	bool canSaveAutosaveCurrently() override {
-		// Keep base engine autosave code disabled in favour of engine's autosave code
-		return false;
-	}
 
 	void pauseEngineIntern(bool pause) override;
 
@@ -698,6 +694,7 @@ protected:
 public:
 	const byte *findResourceData(uint32 tag, const byte *ptr);
 	const byte *findResource(uint32 tag, const byte *ptr);
+	void applyWorkaroundIfNeeded(ResType type, int idx);
 	int getResourceDataSize(const byte *ptr) const;
 	void dumpResource(const char *tag, int index, const byte *ptr, int length = -1);
 

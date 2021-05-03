@@ -60,6 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// English Great Britain
+	// Supplied by jp438-2 Bugreport #10956
 	{
 		"peril",
 		0,

@@ -92,7 +92,7 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 #pragma mark -
 
 LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse, bool rewind)
-    : _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
+	: _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0) {
 	assert(stream);
 
 	if (rewind && !stream->rewind()) {
@@ -171,15 +171,15 @@ AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start
 #pragma mark -
 
 SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
-                                             uint loops,
-                                             const Timestamp loopStart,
-                                             const Timestamp loopEnd,
-                                             DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(stream, disposeAfterUse), _loops(loops),
-      _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
-      _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
-      _done(false) {
+											 uint loops,
+											 const Timestamp loopStart,
+											 const Timestamp loopEnd,
+											 DisposeAfterUse::Flag disposeAfterUse)
+	: _parent(stream, disposeAfterUse), _loops(loops),
+	  _pos(0, getRate() * (isStereo() ? 2 : 1)),
+	  _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
+	  _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
+	  _done(false) {
 	assert(loopStart < loopEnd);
 
 	if (!_parent->rewind())
@@ -238,10 +238,10 @@ bool SubLoopingAudioStream::endOfStream() const {
 #pragma mark -
 
 SubSeekableAudioStream::SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse)
-    : _parent(parent, disposeAfterUse),
-      _start(convertTimeToStreamPos(start, getRate(), isStereo())),
-      _pos(0, getRate() * (isStereo() ? 2 : 1)),
-      _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
+	: _parent(parent, disposeAfterUse),
+	  _start(convertTimeToStreamPos(start, getRate(), isStereo())),
+	  _pos(0, getRate() * (isStereo() ? 2 : 1)),
+	  _length(convertTimeToStreamPos(end, getRate(), isStereo()) - _start) {
 
 	assert(_length.totalNumberOfFrames() % (isStereo() ? 2 : 1) == 0);
 	_parent->seek(_start);
@@ -472,10 +472,10 @@ AudioStream *makeLimitingAudioStream(AudioStream *parentStream, const Timestamp 
  */
 class NullAudioStream : public AudioStream {
 public:
-        bool isStereo() const { return false; }
-        int getRate() const;
-        int readBuffer(int16 *data, const int numSamples) { return 0; }
-        bool endOfData() const { return true; }
+	bool isStereo() const { return false; }
+	int getRate() const;
+	int readBuffer(int16 *data, const int numSamples) { return 0; }
+	bool endOfData() const { return true; }
 };
 
 int NullAudioStream::getRate() const {

@@ -4894,12 +4894,12 @@ static const uint16 kq5PatchMultilingualEndingGlitch[] = {
 // We replace the global[400] checks with a fixed true. This is toggled with
 // enablePatch() below when alternative Windows GM MIDI tracks are used.
 //
-// Instead, we could have set global[400], but this has the possibly unwanted
-// side effects of switching to black&white cursors (which also needs complex
-// changes to GameFeatures::detectsetCursorType()) and breaking savegame
-// compatibilty between the DOS and Windows CD versions of KQ5.
+// Global[400] is also used to determine which cursor type to use: color view
+// resources for DOS or old black and white cursor resources for Windows.
+// We set this depending on if the user has used the "windows_cursors" option
+// in the Windows version. That doesn't affect this patch since it removes
+// global[400] from the code.
 //
-// TODO: Investigate those side effects more closely.
 // Applies to at least: Win CD
 // Responsible method: mordOneScript::changeState(1), dragonScript::changeState(1),
 //                     fireScript::changeState() in script 124
@@ -5151,61 +5151,6 @@ static const uint16 kq6PatchMacDrinkMePic[] = {
 	PATCH_END
 };
 
-// During the common Game Over cutscene, one of the guys says "Tickets, only",
-//  but the subtitle says "Tickets, please". Normally people wouldn't have
-//  noticed, but ScummVM supports audio + subtitles in this game at the same
-//  time. This is caused by a buggy message, which really has this text + audio
-//  attached.
-// We assume that "Tickets, only" (the audio) is the correct one. There is
-//  another message with "Tickets, only" in both text and audio. We change
-//  message 1, 0, 1, 1 to message 5, 0, 0, 2 to fix this issue.
-// This mismatch also occurs in Sierra SCI.
-//
-// Applies to at least: PC-CD
-// Responsible method: modeLessScript::changeState(0) in script 640
-static const uint16 kq6SignatureTicketsOnly[] = {
-	0x3c,                               // dup
-	0x35, 0x00,                         // ldi 0
-	0x1a,                               // eq?
-	SIG_MAGICDWORD,
-	0x31, 0x2b,                         // bnt [skip over state 0]
-	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
-	0x78,                               // push1
-	0x89, 0x16,                         // lsg global[16h]
-	0x38, SIG_UINT16(0x009a),           // pushi posn
-	0x7a,                               // push2
-	0x38, SIG_UINT16(0x00c8),           // pushi 00c8h (200d)
-	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, SIG_UINT16(0x00ab),           // pushi say
-	0x39, 0x05,                         // pushi 05 (parameter count for say)
-	0x76,                               // push0
-	0x78,                               // push1
-	0x76,                               // push0
-	0x78,                               // push1
-	0x78,                               // push1
-	SIG_END
-};
-
-static const uint16 kq6PatchTicketsOnly[] = {
-	0x32, PATCH_UINT16(0x0000),         // jmp (waste 3 bytes)
-	0x2f, 0x2c,                         // bt [skip over state 0] (saves 1 byte)
-	0x39, 0x1e,                         // pushi font (we keep the hardcoded selectors in here simply because this is only for KQ6-CD)
-	0x78,                               // push1
-	0x89, 0x16,                         // lsg global[16h]
-	0x38, PATCH_UINT16(0x009a),         // pushi posn
-	0x7a,                               // push2
-	0x38, PATCH_UINT16(0x00c8),         // pushi 00c8h (200d)
-	0x39, 0x64,                         // pushi 64h (100d)
-	0x38, PATCH_UINT16(0x00ab),         // pushi say
-	0x39, 0x05,                         // pushi 05 (parameter count for say)
-	0x76,                               // push0
-	0x39, 0x05,                         // pushi 05
-	0x76,                               // push0
-	0x76,                               // push0
-	0x7a,                               // push2
-	PATCH_END
-};
-
 // Looking at the ribbon in inventory says that there's a hair even after it's
 //  been removed. This occurs after the hair has been put in the skull or is on
 //  a different inventory page than the ribbon.
@@ -5249,6 +5194,61 @@ static const uint16 kq6PatchLookRibbonFix[] = {
 	0x38, PATCH_UINT16(0x008f),         // pushi 008f
 	0x46, PATCH_UINT16(0x0391),         // calle [export 0 of script 13], 02 [ is flag 8f set? ]
 	      PATCH_UINT16(0x0000), 0x02,
+	PATCH_END
+};
+
+// During the common Game Over cutscene, the CD audio for "Tickets, only" gets
+//  cut off. This only worked in the original interpreter at slow CPU speeds.
+//  modeLessScript sets a 4 second timer for the message to complete. This is
+//  enough time, but actor animations also cue modeLessScript, and they complete
+//  in 2 seconds unless the interpreter can't keep up due to a slow CPU.
+//
+// We fix this by ignoring the cue from deathCartoonScr if CD audio is enabled
+//  and the audio timeout hasn't completed. This does not change scene duration
+//  or actor delays or when messages start. Text-only mode is unaffected.
+//
+// Applies to: PC CD
+// Responsible method: modeLessScript:changeState
+static const uint16 kq6CDSignatureTicketsOnlyAudioTiming[] = {
+	0x31, 0x2b,                         // bnt 2b [ state 1 ]
+	SIG_ADDTOOFFSET(+38),
+	SIG_MAGICDWORD,
+	0x65, 0x1c,                         // aTop seconds
+	0x32, SIG_UINT16(0x0051),           // jmp 0051 [ end of method ]
+	0x3c,                               // dup
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x31, 0x0c,                         // bnt 0c [ state 2 ]
+	0x81, 0x19,                         // lag 19 [ dialog ]
+	0x30, SIG_UINT16(0x0046),           // bnt 0046
+	0x39, SIG_SELECTOR8(dispose),       // pushi dispose
+	0x76,                               // push0
+	0x4a, 0x04,                         // send 04 [ dialog dispose: ]
+	0x33, 0x3f,                         // jmp 3f
+	SIG_ADDTOOFFSET(+44),
+	0x65, 0x1c,                         // aTop seconds
+	SIG_ADDTOOFFSET(+8),
+	0x81, 0x19,                         // lag 19 [ dialog ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchTicketsOnlyAudioTiming[] = {
+	0x31, 0x28,                         // bnt 28 [ state 1 ]
+	PATCH_ADDTOOFFSET(+38),
+	0x33, 0x41,                         // jmp 41 [ aTop seconds, end of method ]
+	0x3c,                               // dup
+	0x18,                               // not [ acc = 1 ]
+	0x1a,                               // eq?
+	0x31, 0x10,                         // bnt 10 [ state 2 ]
+	0x81, 0x5a,                         // lag 5a [ mode ]
+	0x7a,                               // push2  [ audio ]
+	0x12,                               // and    [ is audio enabled? ]
+	0x31, 0x40,                         // bnt 40 [ if no audio then dispose dialog normally ]
+	0x63, 0x1c,                         // pToa seconds
+	0x2f, 0x04,                         // bt 04  [ ignore cue from deathCartoonScr if audio is playing ]
+	0x6b, 0x1a,                         // ipToa cycles [ cycles = 1 ]
+	0x33, 0x38,                         // jmp 38 [ dispose dialog normally ]
+	0x6d, 0x14,                         // dpToa state [ state = 0 so that state 1 can repeat ]
 	PATCH_END
 };
 
@@ -6340,7 +6340,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
 	{  true,   481, "fix duplicate baby cry",                         1, kq6SignatureDuplicateBabyCry,             kq6PatchDuplicateBabyCry },
 	{  true,   481, "fix duplicate baby tears point",                 1, kq6SignatureDuplicateBabyTearsPoint,      kq6PatchDuplicateBabyTearsPoint },
-	{  true,   640, "fix 'Tickets, only' message",                    1, kq6SignatureTicketsOnly,                  kq6PatchTicketsOnly },
+	{  true,   640, "fix 'Tickets Only' audio timing",                1, kq6CDSignatureTicketsOnlyAudioTiming,     kq6CDPatchTicketsOnlyAudioTiming },
 	{  true,   745, "fix wedding genie lamp message",                 1, kq6SignatureWeddingGenieLampMessage,      kq6PatchWeddingGenieLampMessage },
 	{  true,   800, "fix Cassima secret passage peephole",            1, kq6SignatureCassimaSecretPassage,         kq6PatchCassimaSecretPassage },
 	{  true,   907, "fix inventory stack leak",                       1, kq6SignatureInventoryStackFix,            kq6PatchInventoryStackFix },
@@ -6757,15 +6757,15 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 // Fixes bug: #5264
 static const uint16 longbowSignatureShowHandCode[] = {
 	0x78,                            // push1 (1 call arg)
-                                     //
+									 //
 	0x78,                            // push1 (1 call arg)
 	0x72, SIG_ADDTOOFFSET(+2),       // lofsa (letter that was typed)
 	0x36,                            // push
 	0x40, SIG_ADDTOOFFSET(+2), 0x02, // call [localproc], 02
-                                     //
+									 //
 	0x36,                            // push (the result is an arg for the next call)
 	0x40, SIG_ADDTOOFFSET(+2), SIG_MAGICDWORD, 0x02, // call [localproc], 02
-                                     //
+									 //
 	0x38, SIG_SELECTOR16(setMotion), // pushi setMotion (0x11c in Longbow German)
 	0x39, SIG_SELECTOR8(x),          // pushi x (0x04 in Longbow German)
 	0x51, 0x1e,                      // class MoveTo
@@ -7691,31 +7691,56 @@ static const uint16 larry6HiresSetScalePatch[] = {
 
 // The init code that runs when LSL6hires starts up unconditionally resets the
 // master music volume to 12 (and the volume dial to 11), but the game should
-// always use the volume stored in ScummVM.
-// Applies to at least: English CD
+// always use the volume stored in ScummVM. Mac version initializes to 5.
+//
+// Applies to at least: English CD, Mac CD
+// Responsible method: initCode:init
 // Fixes bug: #9700
 static const uint16 larry6HiresVolumeResetSignature[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x0b,                         // ldi $0b
-	0xa1, 0xc2,                         // sag global[$c2]
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ LSL6 masterVolume: ... ]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 0b on PC, 05 on Mac
+	0xa1, 0xc2,                         // sag c2
 	SIG_END
 };
 
 static const uint16 larry6HiresVolumeResetPatch[] = {
-	0x32, PATCH_UINT16(0x0001),         // jmp 1 [past volume change]
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x02,                         // jmp 02 [ skip volume change ]
 	PATCH_END
 };
 
-//          script, description,                                      signature                         patch
+// Mac version stores the master music volume in an additional global which it
+//  sets the volume to on every restore. We disable this code so that the
+//  current ScummVM volume is used.
+//
+// Applies to: Mac CD only
+// Responsible method: LSL6:replay
+static const uint16 larry6HiresMacVolumeRestoreSignature[] = {
+	0x7a,                               // push2
+	SIG_MAGICDWORD,
+	0x76,                               // push0
+	0x88, SIG_UINT16(0x0103),           // lsg 0103
+	0x43, 0x40, SIG_UINT16(0x0004),     // callk DoSound 04 [ kDoSound MasterVolume global259 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresMacVolumeRestorePatch[] = {
+	0x33, 0x07,                         // jmp 07 [ skip volume change ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
-	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,         sci2VolumeResetPatch },
-	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,  larry6HiresVolumeResetPatch },
-	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,           sci2BenchmarkPatch },
-	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,     larry6HiresSetScalePatch },
-	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
-	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
+	{  true,    71, "disable volume reset on startup (1/2)",       1, sci2VolumeResetSignature,             sci2VolumeResetPatch },
+	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
+	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
+	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
+	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
+	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,               sci2NumSavesPatch1 },
+	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,               sci2NumSavesPatch2 },
+	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,               sci2ChangeDirPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -13032,12 +13057,12 @@ static const uint16 qfg3PatchCombatSpeedThrottling1[] = {
 	0x8b, 0x01,                         // lsl local[1] (stack up the local instead, freed +1 byte)
 	0x1c,                               // ne?
 	0x31, 0x0c,                         // bnt 12d [after sal]
-                                        //
+										//
 	0x81, 0xd2,                         // lag global[210] (load into acc instead of stack)
 	0x76,                               // push0 (push0 instead of ldi 0, freed +1 byte)
 	0x22,                               // lt? (flip the comparison)
 	0x31, 0x06,                         // bnt 6d [after sal]
-                                        //
+										//
 	0xe1, 0xd2,                         // -ag global[210]
 	0x81, 0x58,                         // lag global[88]
 	0xa3, 0x01,                         // sal local[1]
@@ -13444,7 +13469,7 @@ static const uint16 qfg4InnPathfindingPatch[] = {
 static const uint16 qfg4AutosaveSignature[] = {
 	0x30, SIG_ADDTOOFFSET(+2),          // bnt ?? [end the loop]
 	0x78,                               // push1 (1 call arg)
-                                        //
+										//
 	0x39, SIG_SELECTOR8(data),          // pushi data
 	0x76,                               // push0
 	SIG_ADDTOOFFSET(+2),                // (CD="lag global[29]", floppy="lat temp[6]")
@@ -13599,18 +13624,18 @@ static const uint16 qfg4AbsentInnkeeperSignature[] = {
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x03,                         // ldi 3d
 	0x24,                               // le?
-                                        // (~~ junk begins ~~)
+										// (~~ junk begins ~~)
 	0x2f, 0x0f,                         // bt 15d [after the calle]
 	0x39, 0x03,                         // pushi 3d (3 call args)
 	0x89, 0x7b,                         // lsg global[123] (needle value)
 	0x39, 0x04,                         // pushi 4d (haystack values...)
 	0x39, 0x05,                         // pushi 5d
 	0x46, SIG_UINT16(0xfde7), SIG_UINT16(0x0005), SIG_UINT16(0x0006), // calle [export 5 of script 64999], 6d (is needle in haystack?))
-                                        // (~~ junk ends ~~)
+										// (~~ junk ends ~~)
 	0x31, 0x04,                         // bnt 4d [block 11]
 	0x35, 0x0a,                         // ldi 10d
 	0x33, 0x29,                         // jmp 41d [done, local[2]=acc]
-                                        //
+										//
 	SIG_ADDTOOFFSET(+25),               // (...block 11...) (patch ends after this)
 	SIG_ADDTOOFFSET(+14),               // (...block 12...)
 	SIG_ADDTOOFFSET(+2),                // (...else 0...)
@@ -13623,23 +13648,23 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d (make it t <= 5)
 	0x24,                               // le?
-                                        // (*snip*)
+										// (*snip*)
 	0x31, 0x07,                         // bnt 7d [block 11]
 	0x35, 0x0a,                         // ldi 10d
 	0x33, 0x3a,                         // jmp 58d [done, local[2]=acc]
-                                        //
+										//
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 3 bytes)
-                                        // (14 freed bytes remain.)
-                                        // (use 7 freed bytes to prepend block 11)
-                                        // (and shift all of block 11 up by 7 bytes)
-                                        // (use that new gap below to prepend block 12)
-                                        //
-                                        // (block 11, prepend a time check)
+										// (14 freed bytes remain.)
+										// (use 7 freed bytes to prepend block 11)
+										// (and shift all of block 11 up by 7 bytes)
+										// (use that new gap below to prepend block 12)
+										//
+										// (block 11, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x19,                         // bnt 25d [block 12]
-                                        // (block 11, original ops shift up)
+										// (block 11, original ops shift up)
 	0x78,                               // push1 (1 call arg)
 	0x38, PATCH_UINT16(0x0084),         // pushi 132d
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 132)
@@ -13651,13 +13676,13 @@ static const uint16 qfg4AbsentInnkeeperPatch[] = {
 	0x31, 0x04,                         // bnt 4d [block 12]
 	0x35, 0x0b,                         // ldi 11d
 	0x33, 0x17,                         // jmp 23d [done, local[2]=acc]
-                                        //
-                                        // (block 12, prepend a time check)
+										//
+										// (block 12, prepend a time check)
 	0x89, 0x7b,                         // lsg global[123]
 	0x35, 0x05,                         // ldi 5d
 	0x24,                               // le?
 	0x31, 0x0e,                         // bnt 14d [else block]
-                                        // (block 12, original ops continue here)
+										// (block 12, original ops continue here)
   	PATCH_END
 };
 
@@ -14199,7 +14224,7 @@ static const uint16 qfg4SafeDoorEastSignature[] = {
 	0x45, 0x04, SIG_UINT16(0x0002),     // callb [export 4 of script 0], 2d (test flag 215)
 	0x18,                               // not
 	0x31, SIG_ADDTOOFFSET(+1),          // bnt ?? [end the else block]
-                                        //
+										//
 	0x35, 0x00,                         // ldi 0
 	0xa3, 0x02,                         // sal local[2]
 	SIG_END
@@ -14208,7 +14233,7 @@ static const uint16 qfg4SafeDoorEastSignature[] = {
 static const uint16 qfg4SafeDoorEastPatch[] = {
 	0x35, 0x00,                         // ldi 0
 	0xa3, 0x02,                         // sal local[2]
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x38, PATCH_UINT16(0x00d7),         // pushi 215d (right door oiled flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 215)
@@ -14277,7 +14302,7 @@ static const uint16 qfg4DreamGateSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
 	0x4a, SIG_UINT16(0x0004),           // send 4d
 	0x31, 0x1a,                         // bnt 26d [skip disposing/nulling] (no heading)
-                                        //
+										//
 	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
 	0x76,                               // push0
 	0x39, SIG_SELECTOR8(heading),       // pushi heading
@@ -14285,7 +14310,7 @@ static const uint16 qfg4DreamGateSignature[] = {
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa fSouth
 	0x4a, SIG_UINT16(0x0004),           // send 4d (accumulate heading)
 	0x4a, SIG_UINT16(0x0004),           // send 4d (dispose heading)
-                                        //
+										//
 	0x39, SIG_SELECTOR8(heading),       // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
@@ -14302,18 +14327,18 @@ static const uint16 qfg4DreamGatePatch[] = {
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
 	0xa5, 0x00,                         // sat temp[0]
 	0x31, 0x13,                         // bnt 19d [skip disposing/nulling] (no heading)
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x76,                               // push0
 	0x85, 0x00,                         // lat temp[0]
 	0x4a, PATCH_UINT16(0x0004),         // send 4d (dispose: heading:)
-                                        //
+										//
 	0x39, PATCH_SELECTOR8(heading),     // pushi heading
 	0x78,                               // push1
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(4),   // lofsa fSouth
 	0x4a, PATCH_UINT16(0x0006),         // send 6d (set fSouth's heading to null)
-                                        //
+										//
 	0x76,                               // push0
 	0xab, 0x02,                         // ssl local[2] (let doit() watch for nightfall)
 	PATCH_END
@@ -14390,10 +14415,10 @@ static const uint16 qfg4RestartSignature[] = {
 };
 
 static const uint16 qfg4RestartPatch[] = {
-                                        // (loop to assign multiples of 45)
+										// (loop to assign multiples of 45)
 	0x76,                               // push0
 	0xad, 0x00,                         // sst temp[0]
-                                        //
+										//
 	0x8d, 0x00,                         // lst temp[0] (global[144 + n+1] = n*45)
 	0x35, 0x08,                         // ldi 8d
 	0x22,                               // lt?
@@ -14405,12 +14430,12 @@ static const uint16 qfg4RestartPatch[] = {
 	0xc5, 0x00,                         // +at temp[0]
 	0xb1, 0x90,                         // sagi (global[144 + temp[0]])
 	0x33, 0xed,                         // jmp -19d (loop)
-                                        // (that loop freed +30 bytes)
+										// (that loop freed +30 bytes)
 
 	0x35, 0x14,                         // ldi 20d (leave this assignment as-is)
 	0xa1, 0xc6,                         // sag global[198]
 
-                                        // (stack up arbitrary values; then loop to assign them)
+										// (stack up arbitrary values; then loop to assign them)
 	0x7a,                               // push2     (global[367] = 2)
 	0x3c,                               // dup       (global[368] = 2)
 	0x39, 0x03,                         // pushi 3d  (global[369] = 3)
@@ -14432,10 +14457,10 @@ static const uint16 qfg4RestartPatch[] = {
 	0x39, 0x07,                         // pushi 7d  (global[385] = 7)
 	0x39, 0x0a,                         // pushi 10d (global[386] = 10)
 	0x3c,                               // dup       (global[387] = 10)
-                                        //
+										//
 	0x39, 0x15,                         // pushi 21d (pop() and set, backward from 20 to 0)
 	0xad, 0x00,                         // sst temp[0]
-                                        //
+										//
 	0xed, 0x00,                         // -st temp[0]
 	0x35, 0x00,                         // ldi 0
 	0x20,                               // ge?
@@ -14443,9 +14468,9 @@ static const uint16 qfg4RestartPatch[] = {
 	0x85, 0x00,                         // lat temp[0]
 	0xb8, PATCH_UINT16(0x016f),         // ssgi (global[367 + n] = pop())
 	0x33, 0xf2,                         // jmp -14d (loop)
-                                        // (that loop freed +52 bytes)
+										// (that loop freed +52 bytes)
 
-                                        // (reset properties for a few items)
+										// (reset properties for a few items)
 	0x33, 0x1f,                         // jmp 31d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(loop),       // pushi loop
 	0x78,                               // push1
@@ -14456,13 +14481,13 @@ static const uint16 qfg4RestartPatch[] = {
 	0x38, PATCH_SELECTOR16(value),      // pushi value (weight)
 	0x78,                               // push1
 	0x7a,                               // push2 (these items all weigh 2)
-                                        //
+										//
 	0x39, PATCH_SELECTOR8(at),          // pushi at
 	0x78,                               // push1
 	0x8f, 0x01,                         // lsp param[1]
 	0x81, 0x09,                         // global[9] (gloryInv)
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x4a, PATCH_UINT16(0x0012),         // send 18d
 	0x48,                               // ret
 
@@ -14652,7 +14677,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x39, 0x03,                         // pushi 3d (call has 3 args)
 	0x39, 0x6e,                         // pushi 110d (setScalar, arg 5)
 	0x38, PATCH_UINT16(0x00d2),         // pushi 210d (setMotion, x arg)
-                                        //
+										//
 	0x8b, 0x00,                         // lsl local[0] (test the card's View number)
 	0x34, PATCH_UINT16(0x03ff),         // ldi 1023d ("Two of Cups" is special)
 	0x1a,                               // eq?
@@ -14660,7 +14685,7 @@ static const uint16 qfg4Tarot3TwoOfCupsPatch[] = {
 	0x39, 0x66,                         // pushi 102d  (setMotion, special y arg)
 	0x33, 0x02,                         // jmp 2d [to the call]
 	0x39, 0x6e,                         // pushi 110d (setMotion, regular y arg)
-                                        //
+										//
 	0x41, 0xb0, PATCH_UINT16(0x0006),   // call [-80], 6d
 	0x33, 0x13,                         // jmp 19d [end the local[2] switch]
 
@@ -14841,7 +14866,7 @@ static const uint16 qfg4PitRopeFighterPatch[] = {
 	PATCH_ADDTOOFFSET(+21),             // ... (8 + 13)
 	0x76,                               // push0 (null caller, so say won't cue crossByHand)
 	PATCH_ADDTOOFFSET(+5),              // ...
-                                        // (no jmp, self-cue becomes cycles)
+										// (no jmp, self-cue becomes cycles)
 	0x35, 0x20,                         // ldi 32d
 	0x65, PATCH_GETORIGINALBYTEADJUST(1, +6), // aTop cycles (property offset = @state + 6d)
 	0x33, 0x04,                         // jmp 4d [skip waste bytes, end the switch]
@@ -15060,11 +15085,11 @@ static const uint16 qfg4TriggerStaffPatch1[] = {
 	0x76,                               // push0
 	0x81, 0x00,                         // lag global[0] (hero)
 	0x4a, PATCH_UINT16(0x0004),         // send 4d
-                                        //
+										//
 	0x39, 0x11,                         // pushi 17d (push the literal, leave view in acc)
 	0x22,                               // lt? (view > 17 becomes 17 < view, set prev = acc)
 	0x31, PATCH_GETORIGINALBYTEADJUST(15, -8), // bnt ?? [to the not]
-                                        //
+										//
 	0x60,                               // pprev (push the view from prev, ldi 21 comparison is next)
 	PATCH_END
 };
@@ -15295,7 +15320,7 @@ static const uint16 qfg4GuildWalkSignature2[] = {
 	SIG_MAGICDWORD,
 	0x32, SIG_UINT16(0x00f7),           // jmp 247d [end the cond] (2nd condition done)
 
-                                        // (else condition)
+										// (else condition)
 	0x38, SIG_SELECTOR16(init),         // pushi init
 	0x76,                               // push0
 	0x72, SIG_ADDTOOFFSET(+2),          // lofsa secritExit
@@ -15317,10 +15342,10 @@ static const uint16 qfg4GuildWalkPatch2[] = {
 	0x74, PATCH_GETORIGINALUINT16(75),  // lofss crack1
 	0x74, PATCH_GETORIGINALUINT16(91),  // lofss crack2
 	0x74, PATCH_GETORIGINALUINT16(107), // lofss pillar
-                                        //
+										//
 	0x35, 0x08,                         // ldi 8d (decrement and send 7 times, while != 0)
 	0xa5, 0x00,                         // sat temp[0]
-                                        //
+										//
 	0xe5, 0x00,                         // -at temp[0]
 	0x31, 0x13,                         // bnt 19d [on 0, end the loop]
 	0xad, 0x01,                            // sst temp[1] (pop the next object into a temp var)
@@ -15342,20 +15367,20 @@ static const uint16 qfg4GuildWalkPatch2[] = {
 	0x38, PATCH_SELECTOR16(dispose),    // pushi dispose
 	0x76,                               // push0
 	0x4a, PATCH_UINT16(0x0004),         // send 4d ((global[2] obstacles?) dispose:)
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(obstacles),  // pushi obstacles (null the "obstacles" property)
 	0x78,                               // push1
 	0x76,                               // push0
 	0x81, 0x02,                         // lag global[2]
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(addObstacle), // pushi addObstacle
 	0x78,                               // push1
 	0x32, PATCH_UINT16(0x020f),         // jmp 527d [3rd polygon type, init, and push]
-                                        // (That will jmp back here)
+										// (That will jmp back here)
 	0x81, 0x02,                         // lag global[2]
 	0x4a, PATCH_UINT16(0x0006),         // send 6d
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(init),       // pushi init
 	0x76,                               // push0
 	0x72, PATCH_GETORIGINALUINT16(605), // lofsa secritExit
@@ -15477,7 +15502,7 @@ static const uint16 qfg4LeftoversPatch[] = {
 	PATCH_ADDTOOFFSET(+15),             // (cond 1, preemptively eaten meals)
 	0x32, PATCH_UINT16(0x00bb),         // jmp 187d [end the cond]
 
-                                        // (cond 2)
+										// (cond 2)
 	0x39, PATCH_SELECTOR8(at),          // pushi at
 	0x78,                               // push1
 	0x39, 0x04,                         // pushi 4d (itemId 4, theRations)
@@ -15528,38 +15553,38 @@ static const uint16 qfg4LeftoversPatch[] = {
 
 	0x38, PATCH_SELECTOR16(hide),       // pushi hide
 	0x76,                               // push0
-                                        //
+										//
 	0x7a,                               // push2 (2 call args)
 	0x39, 0x24,                         // pushi 36d
 	0x78,                               // push1
 	0x43, 0x02, PATCH_UINT16(0x0004),   // callk ScriptID, 4d (ScriptID 36 1, invItem)
-                                        //
+										//
 	0x4a, PATCH_UINT16(0x0004),         // send 4d (invItem hide:)
-                                        // (exhausted item removal end)
+										// (exhausted item removal end)
 
 	0x35, 0x01,                         // ldi 1d
 	0xa5, 0x00,                         // sat temp[0] (eaten)
 
 	0x33, 0x54,                         // jmp 84d [end the cond]
 
-                                        // (cond 3)
+										// (cond 3)
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x03,                         // pushi 3d ("hungry" flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 3)
 	0x31, 0x26,                         // bnt 38d [next condition]
-                                        //
+										//
 	0x38, PATCH_SELECTOR16(useStamina), // pushi useStamina
 	0x7a,                               // push2
 	0x39, 0x08,                         // pushi 8d
 	0x76,                               // push0
 	0x54, PATCH_UINT16(0x0008),         // self 8d (hero useStamina: 8 0)
-                                        //
+										//
 	0x31, 0x09,                         // bnt 9d [hero dies]
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x05,                         // pushi 5d (say cond:5, "You're starving.")
 	0x41, 0x3a, PATCH_UINT16(0x0002),   // call [58], 2d (gloryMessager say: 1 6 5 1 0 28)
 	0x33, 0x36,                         // jmp 54d [end the cond]
-                                        //
+										//
 	0x39, 0x04,                         // pushi 4d (4 call args)
 	0x39, 0x08,                         // pushi 8d
 	0x39, 0x1c,                         // pushi 28d
@@ -15568,31 +15593,31 @@ static const uint16 qfg4LeftoversPatch[] = {
 	0x47, 0x1a, 0x00, PATCH_UINT16(0x0008), // calle [export 0 of script 26], 8d (hero dies)
 	0x33, 0x25,                         // jmp 37d [end the cond]
 
-                                        // (cond 4)
+										// (cond 4)
 	0x78,                               // push1 (1 call arg)
 	0x7a,                               // push2 ("missed meal" flag)
 	0x45, 0x04, PATCH_UINT16(0x0002),   // callb [export 4 of script 0], 2d (test flag 2)
 	0x31, 0x10,                         // bnt 16d [next condition]
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x03,                         // pushi 3d ("hungry" flag)
 	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 3)
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x06,                         // pushi 6d (say cond:6, "Really getting hungry.")
 	0x41, 0x11, PATCH_UINT16(0x0002),   // call [17], 2d (gloryMessager say: 1 6 6 1 0 28)
 	0x33, 0x0d,                         // jmp 13d [end the cond]
 
-                                        // (cond else)
+										// (cond else)
 	0x78,                               // push1 (1 call arg)
 	0x7a,                               // push2 ("missed meal" flag)
 	0x45, 0x02, PATCH_UINT16(0x0002),   // callb [export 2 of script 0], 2d (set flag 2)
-                                        //
+										//
 	0x78,                               // push1 (1 call arg)
 	0x39, 0x04,                         // pushi 4d (say cond:4, "Get food soon.")
 	0x41, 0x02, PATCH_UINT16(0x0002),   // call [2], 2d (gloryMessager say: 1 6 4 1 0 28)
 
-                                        // (cond end)
+										// (cond end)
 
 	0x33, 0x14,                         // jmp 20d [skip subroutine declaration]
 	0x38, PATCH_SELECTOR16(say),        // pushi say

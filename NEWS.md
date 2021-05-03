@@ -11,11 +11,15 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Little Big Adventure.
    - Added support for Red Comrades 1: Save the Galaxy.
    - Added support for Red Comrades 2: For the Great Justice.
-   - Added support for Transylvania
-   - Added support for Crimson Crown
-   - Added support for OO-Topos
+   - Added support for Transylvania.
+   - Added support for Crimson Crown.
+   - Added support for OO-Topos.
    - Added support for Glulx interactive fiction games
-   - Added support for Private Eye (US release)
+   - Added support for Lure of the Temptress Konami release.
+   - Added support for Private Eye (US release).
+   - Added support for Spanish Blue Force.
+   - Added support for Spanish Ringworld.
+   - Added support for Spanish Amazon: Guardians of Eden.
    - Added support for AGS Games versions 2.5+
 
  New ports:
@@ -23,10 +27,14 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Switched ScummVM GUI output to UTF-32.
-   - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.4.2.
+   - Updated the Roland MT-32 emulation code to the Munt project's mt32emu 2.5.0.
    - Updated Dropbox Cloud Storage to use the new Dropbox OAuth workflow.
    - Major extension to the number of supported graphics scalers.
-   - Display path to scummvm configuration file in GUI -> Options -> Paths
+   - Display path to scummvm configuration file in GUI -> Options -> Paths.
+   - Added new optional dependency, giflib >= 5.0.0. Used by some version of LBA.
+   - Added HiDPI support to the ScummVM GUI.
+   - Added command line option --window-size for specifying ScummVM window size,
+     applicable only to the OpenGL renderer.
 
  AGOS:
    - Added support for the Japanese PC-98 version of Elvira 1.
@@ -53,6 +61,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  Kyra:
    - Added support for the Japanese Sega-CD version of Eye of the Beholder.
    - Added support for the Hebrew fan translation of Legend of Kyrandia.
+   - Added support for the Simplified Chinese version of Legend of Kyrandia 3.
+   - Added support for the playable demo of Lands of Lore.
 
  Lure:
    - Fixed fire animation in first room when loading saves.
@@ -60,6 +70,9 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Pegasus:
    - Added support for DVD/GOG.com release.
+
+ Queen:
+   - Added support for German Amiga floppy release.
 
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
@@ -84,7 +97,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russobit-M versions of Pajama2 and SpyOzone.
    - Fixed speech playback in Akella version of COMI.
    - Added support for Discord and Humble Bundle versions of Indiana Jones and the Fate of Atlantis.
-   - Added smooth scrolling for FM-Towns versions of games.
+   - Added smooth scrolling for FM-TOWNS versions of games.
+   - Added optional trimming to 200 pixels for some FM-TOWNS games, so aspect-ratio correction is possible.
 
  Tinsel:
    - Enabled the Return to Launcher feature.

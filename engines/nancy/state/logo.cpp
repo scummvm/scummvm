@@ -20,9 +20,12 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 #include "engines/nancy/input.h"
+#include "engines/nancy/constants.h"
 
 #include "engines/nancy/state/logo.h"
 
@@ -49,10 +52,8 @@ void Logo::process() {
 	}
 }
 
-bool Logo::onStateExit() {
-	g_nancy->_sound->stopSound(_msnd);
+void Logo::onStateExit() {
 	destroy();
-	return true;
 }
 
 void Logo::init() {
@@ -66,16 +67,15 @@ void Logo::init() {
 }
 
 void Logo::startSound() {
-	_msnd.read(*g_nancy->getBootChunkStream("MSND"), SoundDescription::kMenu);
-	g_nancy->_sound->loadSound(_msnd);
-	g_nancy->_sound->playSound(_msnd);
+	g_nancy->_sound->playSound("MSND");
 
 	_startTicks = g_nancy->getTotalPlayTime();
 	_state = kRun;
 }
 
 void Logo::run() {
-	if (g_nancy->getTotalPlayTime() - _startTicks >= 7000 || (g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
+	if ((g_nancy->getTotalPlayTime() - _startTicks >= g_nancy->getConstants().logoEndAfter) ||
+		(g_nancy->_input->getInput().input & NancyInput::kLeftMouseButtonDown)) {
 		_state = kStop;
 	}
 }
@@ -84,10 +84,12 @@ void Logo::stop() {
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
-
-	g_nancy->_sound->stopSound(_msnd);
-
-	g_nancy->setState(NancyState::kScene);
+	
+	if (ConfMan.getBool("original_menus")) {
+		g_nancy->setState(NancyState::kMainMenu);
+	} else {
+		g_nancy->setState(NancyState::kScene);
+	}
 }
 
 } // End of namespace State

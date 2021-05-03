@@ -21,8 +21,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #include "common/scummsys.h"
 
@@ -36,42 +34,15 @@
 #include <proto/dos.h>
 #define __NOLIBBASE__
 #include <proto/asl.h>
-#include <proto/charsets.h>
-
-char *MorphosDialogManager::utf8ToLocal(char *in) {
-
-	if (!in) {
-		return strdup("");
-	}
-
-	struct Library *CharsetsBase = OpenLibrary("charsets.library", 0);
-	if (CharsetsBase) {
-
-		LONG dstmib = GetSystemCharset(NULL, 0);
-		if (dstmib != MIBENUM_INVALID) {
-			LONG dstlen = GetByteSize((APTR)in, -1, MIBENUM_UTF_8, dstmib);
-			char *out = (char *)malloc(dstlen + 1);
-			if (out) {
-				if (ConvertTagList((APTR)in, -1, (APTR)out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1) {
-					return out;
-				}
-				free(out);
-			}
-		}
-		CloseLibrary(CharsetsBase);
-	}
-
-	return strdup(in);
-}
 
 Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 
 	DialogResult result = kDialogCancel;
 	char pathBuffer[PATH_MAX];
-	Common::String utf8Title = title.encode();
+	Common::String newTitle = title.encode(Common::kISO8859_1);
 	struct Library *AslBase = OpenLibrary(AslName, 39);
 
-    if (AslBase) {
+	if (AslBase) {
 
 		struct FileRequester *fr = NULL;
 
@@ -83,24 +54,21 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 
 		if (!fr)
 			return result;
-
-		char *newTitle = utf8ToLocal((char *)utf8Title.c_str());
-
-		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle, ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
+		
+		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle.c_str(), ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
 
 			if (strlen(fr->fr_Drawer) < sizeof(pathBuffer)) {
 				strncpy(pathBuffer, fr->fr_Drawer, sizeof(pathBuffer));
+				ConfMan.set("browser_lastpath", pathBuffer); // only path
 				if (!isDirBrowser) {
 					AddPart(pathBuffer, fr->fr_File, sizeof(pathBuffer));
 				}
-				choice = Common::FSNode(pathBuffer);
-				ConfMan.set("browser_lastpath", pathBuffer);
+				choice = Common::FSNode(pathBuffer);			
 				result = kDialogOk;
 			}
+			FreeAslRequest((APTR)fr);
 		}
 
-		free(newTitle);
-		FreeAslRequest((APTR)fr);
 		CloseLibrary(AslBase);
 	}
 

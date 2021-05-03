@@ -67,9 +67,9 @@ void CryOmni3DEngine_Versailles::setupObjects() {
 	_objects.reserve(51);
 #define SET_OBJECT(cursorId, nameId) _objects.push_back(Object(_sprites, cursorId, nameId))
 #define SET_OBJECT_AND_CB(cursorId, nameId, cb) do { \
-        _objects.push_back(Object(_sprites, cursorId, nameId)); \
-        _objects.back().setViewCallback(new Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this, &CryOmni3DEngine_Versailles::cb)); \
-    } while (false)
+		_objects.push_back(Object(_sprites, cursorId, nameId)); \
+		_objects.back().setViewCallback(new Common::Functor0Mem<void, CryOmni3DEngine_Versailles>(this, &CryOmni3DEngine_Versailles::cb)); \
+	} while (false)
 #define SET_OBJECT_GENERIC_CB(cursorId, nameId, imageId) SET_OBJECT_AND_CB(cursorId, nameId, genericDisplayObject<imageId>)
 #define SET_OBJECT_CB(cursorId, nameId) SET_OBJECT_AND_CB(cursorId, nameId, obj_ ## nameId)
 	SET_OBJECT(161, 93); // 0
@@ -478,12 +478,12 @@ void CryOmni3DEngine_Versailles::genericDumbImage(ZonFixedImage *fimg) {
 
 // Generic handler for interrogation mark action: display the painting title
 #define HANDLE_QUESTION(ID) \
-    do { \
-        if (fimg->_zoneQuestion) { \
-            displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), _paintingsTitles[ID], Common::Point(600, 400), \
-                    Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage)); \
-        } \
-    } while (false)
+	do { \
+		if (fimg->_zoneQuestion) { \
+			displayMessageBox(kFixedimageMsgBoxParameters, fimg->surface(), _paintingsTitles[ID], Common::Point(600, 400), \
+					Common::Functor0Mem<void, ZonFixedImage>(fimg, &ZonFixedImage::manage)); \
+		} \
+	} while (false)
 
 // Generic handler for paintings fixed images
 template<uint ID>
@@ -1286,7 +1286,7 @@ const uint16 CryOmni3DEngine_Versailles::kSafeDigitsX[] = { 267, 318, 370, 421 }
 const uint16 CryOmni3DEngine_Versailles::kSafeDigitsY[] = { 148, 230, 311 };
 
 void CryOmni3DEngine_Versailles::drawSafeDigits(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
+		const Graphics::Surface(&bmpDigits)[10], const unsigned char (&safeDigits)[kSafeDigitsCount]) {
 	for (uint i = 0; i < ARRAYSIZE(safeDigits); i++) {
 		const Graphics::Surface &digit = bmpDigits[safeDigits[i]];
 		Common::Point dst(kSafeDigitsX[i % 4], kSafeDigitsY[i / 4]);
@@ -2444,7 +2444,7 @@ bool CryOmni3DEngine_Versailles::handleEpigraph(ZonFixedImage *fimg) {
 }
 
 void CryOmni3DEngine_Versailles::drawEpigraphLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[28], const Common::String &letters) {
+		const Graphics::Surface(&bmpLetters)[28], const Common::String &letters) {
 	for (uint i = 0; i < letters.size() && i < kEpigraphMaxLetters; i++) {
 		uint letterId = 0;
 		if (letters[i] >= 'A' && letters[i] <= 'Z') {
@@ -3206,9 +3206,9 @@ const uint16 CryOmni3DEngine_Versailles::kBombLettersPos[2][kBombPasswordMaxLeng
 };
 
 void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surface,
-        const Graphics::Surface(&bmpLetters)[28], const uint bombPasswordLength,
-        const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
-        const byte(&bombCurrentLetters)[kBombPasswordMaxLength]) {
+		const Graphics::Surface(&bmpLetters)[28], const uint bombPasswordLength,
+		const uint32(&bombPossibilites)[kBombPasswordMaxLength][5],
+		const byte(&bombCurrentLetters)[kBombPasswordMaxLength]) {
 	uint table = bombPasswordLength <= kBombPasswordSmallLength ? 0 : 1;
 	if (getLanguage() == Common::JA_JPN) {
 		_fontManager.setCurrentFont(1);
@@ -3369,13 +3369,13 @@ FILTER_EVENT(1, 3) {
 // Event 19 is not in this room: must be a leftover
 /*
 FILTER_EVENT(1, 7) {
-    if (*event == 19) {
-        // Too dark
-        displayMessageBoxWarp(7);
-        return false;
-    }
+	if (*event == 19) {
+		// Too dark
+		displayMessageBoxWarp(7);
+		return false;
+	}
 
-    return true;
+	return true;
 }
 */
 

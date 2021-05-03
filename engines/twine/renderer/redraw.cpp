@@ -633,7 +633,7 @@ void Redraw::renderOverlays() {
 			}
 			case OverlayType::koText: {
 				char text[256];
-				_engine->_text->getMenuText(overlay->info0, text, sizeof(text));
+				_engine->_text->getMenuText((TextId)overlay->info0, text, sizeof(text));
 
 				const int32 textLength = _engine->_text->getTextSize(text);
 				const int32 textHeight = 48;

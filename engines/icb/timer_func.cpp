@@ -62,28 +62,28 @@ int32 timerDanger;
 #define BOT_BIT 64
 
 const uint8 digitBits[10] = {
-    //	TOP_BIT  |   TOP_RIGHT_BIT   |   TOP_LEFT_BIT    |   MID_BIT |   BOT_RIGHT_BIT   |   BOT_LEFT_BIT    |   BOT_BIT
-    TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | 0 | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT,       // 0
-    0 | 0 | TOP_LEFT_BIT | 0 | 0 | BOT_LEFT_BIT | 0,                                           // 1
-    TOP_BIT | TOP_RIGHT_BIT | 0 | MID_BIT | 0 | BOT_LEFT_BIT | BOT_BIT,                        // 2
-    TOP_BIT | TOP_RIGHT_BIT | 0 | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,                       // 3
-    0 | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | 0,                        // 4
-    TOP_BIT | 0 | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,                        // 5
-    TOP_BIT | 0 | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT,             // 6
-    TOP_BIT | TOP_RIGHT_BIT | 0 | 0 | BOT_RIGHT_BIT | 0 | 0,                                   // 7
-    TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT, // 8
-    TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,            // 9
+	//	TOP_BIT  |   TOP_RIGHT_BIT   |   TOP_LEFT_BIT    |   MID_BIT |   BOT_RIGHT_BIT   |   BOT_LEFT_BIT    |   BOT_BIT
+	TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | 0 | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT,       // 0
+	0 | 0 | TOP_LEFT_BIT | 0 | 0 | BOT_LEFT_BIT | 0,                                           // 1
+	TOP_BIT | TOP_RIGHT_BIT | 0 | MID_BIT | 0 | BOT_LEFT_BIT | BOT_BIT,                        // 2
+	TOP_BIT | TOP_RIGHT_BIT | 0 | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,                       // 3
+	0 | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | 0,                        // 4
+	TOP_BIT | 0 | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,                        // 5
+	TOP_BIT | 0 | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT,             // 6
+	TOP_BIT | TOP_RIGHT_BIT | 0 | 0 | BOT_RIGHT_BIT | 0 | 0,                                   // 7
+	TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | BOT_LEFT_BIT | BOT_BIT, // 8
+	TOP_BIT | TOP_RIGHT_BIT | TOP_LEFT_BIT | MID_BIT | BOT_RIGHT_BIT | 0 | BOT_BIT,            // 9
 
 };
 
 const short barXY[7][2] = {
-    {1, 0},                          // top
-    {BAR_WIDTH + 1, 1},              // top/right
-    {0, 1},                          // top/left
-    {1, BAR_HEIGHT + 1},             // mid
-    {BAR_WIDTH + 1, BAR_HEIGHT + 2}, // bot/right
-    {0, BAR_HEIGHT + 2},             // bot/left
-    {1, 2 * BAR_HEIGHT + 2}          // bot
+	{1, 0},                          // top
+	{BAR_WIDTH + 1, 1},              // top/right
+	{0, 1},                          // top/left
+	{1, BAR_HEIGHT + 1},             // mid
+	{BAR_WIDTH + 1, BAR_HEIGHT + 2}, // bot/right
+	{0, BAR_HEIGHT + 2},             // bot/left
+	{1, 2 * BAR_HEIGHT + 2}          // bot
 };
 
 // DRAW THE SEGMENT - different for psx and pc at the moment -----------------

@@ -143,7 +143,6 @@ MODULE_OBJS += \
 	events/sdl/sdl-events.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/surfacesdl/surfacesdl-graphics.o \
-	graphics3d/sdl/sdl-graphics3d.o \
 	graphics3d/openglsdl/openglsdl-graphics3d.o \
 	mixer/sdl/sdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
@@ -351,8 +350,7 @@ MODULE_OBJS += \
 	fs/posix/posix-iostream.o \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
-	events/psp2sdl/psp2sdl-events.o \
-	graphics/psp2sdl/psp2sdl-graphics.o
+	events/psp2sdl/psp2sdl-events.o
 endif
 
 ifeq ($(BACKEND),samsungtv)

@@ -111,7 +111,7 @@ void ShaderUniformMatrix44::set(GLint location) const {
 #pragma mark - Shader Implementation -
 
 Shader::Shader(const Common::String &vertex, const Common::String &fragment)
-    : _vertex(vertex), _fragment(fragment), _isActive(false), _program(0), _uniforms() {
+	: _vertex(vertex), _fragment(fragment), _isActive(false), _program(0), _uniforms() {
 	recreate();
 }
 

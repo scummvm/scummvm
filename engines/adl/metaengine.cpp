@@ -69,11 +69,11 @@ Common::Platform getPlatform(const AdlGameDescription &adlDesc) {
 
 class AdlMetaEngine : public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "adl";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override;
+	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getMaximumSaveSlot() const override { return 'O' - 'A'; }
 	SaveStateList listSaves(const char *target) const override;

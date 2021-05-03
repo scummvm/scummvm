@@ -45,7 +45,7 @@
 #endif
 
 OpenGLSdlGraphics3dManager::OpenGLSdlGraphics3dManager(SdlEventSource *eventSource, SdlWindow *window, bool supportsFrameBuffer)
-	: SdlGraphics3dManager(eventSource, window),
+	: SdlGraphicsManager(eventSource, window),
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	_glContext(nullptr),
 #endif
@@ -283,6 +283,8 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	int obtainedHeight = effectiveHeight;
 #endif
 
+	handleResize(obtainedWidth, obtainedHeight);
+
 	// Compute the rectangle where to draw the game inside the effective screen
 	_gameRect = computeGameRect(renderToFrameBuffer, _engineRequestedWidth, _engineRequestedHeight,
 	                            obtainedWidth, obtainedHeight);
@@ -305,7 +307,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 }
 
 Math::Rect2d OpenGLSdlGraphics3dManager::computeGameRect(bool renderToFrameBuffer, uint gameWidth, uint gameHeight,
-                                                      uint screenWidth, uint screenHeight) {
+													  uint screenWidth, uint screenHeight) {
 	if (renderToFrameBuffer) {
 		if (_lockAspectRatio) {
 			// The game is scaled to fit the screen, keeping the same aspect ratio
@@ -382,9 +384,9 @@ OpenGLSdlGraphics3dManager::OpenGLPixelFormat::OpenGLPixelFormat(uint screenByte
 }
 
 bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint gameHeight,
-                                                       uint effectiveWidth, uint effectiveHeight,
-                                                       bool renderToFramebuffer,
-                                                       bool engineSupportsArbitraryResolutions) {
+													   uint effectiveWidth, uint effectiveHeight,
+													   bool renderToFramebuffer,
+													   bool engineSupportsArbitraryResolutions) {
 	// Build a list of OpenGL pixel formats usable by ScummVM
 	Common::Array<OpenGLPixelFormat> pixelFormats;
 	if (_antialiasing > 0 && !renderToFramebuffer) {
@@ -437,6 +439,12 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		uint32 sdlflags = SDL_WINDOW_OPENGL;
+
+#ifdef NINTENDO_SWITCH
+		// Switch quirk: Switch seems to need this flag, otherwise the screen
+		// is zoomed when switching from Normal graphics mode to OpenGL
+		sdlflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+#endif
 
 		if (renderToFramebuffer || engineSupportsArbitraryResolutions) {
 			sdlflags |= SDL_WINDOW_RESIZABLE;
@@ -669,6 +677,11 @@ int16 OpenGLSdlGraphics3dManager::getOverlayHeight() const {
 
 int16 OpenGLSdlGraphics3dManager::getOverlayWidth() const {
 	return _overlayScreen->getWidth();
+}
+
+bool OpenGLSdlGraphics3dManager::showMouse(bool visible) {
+	SDL_ShowCursor(visible);
+	return true;
 }
 
 void OpenGLSdlGraphics3dManager::warpMouse(int x, int y) {

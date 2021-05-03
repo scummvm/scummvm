@@ -449,7 +449,7 @@ sc_int gs_npc_walkstep_count(sc_gameref_t gs, sc_int npc) {
 }
 
 void gs_set_npc_walkstep(sc_gameref_t gs,
-                    sc_int npc, sc_int walk, sc_int walkstep) {
+					sc_int npc, sc_int walk, sc_int walkstep) {
 	assert(gs_is_game_valid(gs) && gs_in_range(npc, gs->npc_count)
 	       && gs_in_range(walk, gs->npcs[npc].walkstep_count));
 	gs->npcs[npc].walksteps[walk] = walkstep;

@@ -667,7 +667,7 @@ static const IIgsMidiProgramMapping progToInstMappingV1 = {
 };
 
 /** Newer Apple IIGS AGI MIDI program change to instrument number mapping.
-    FIXME: Some instrument choices sound wrong. */
+	FIXME: Some instrument choices sound wrong. */
 static const IIgsMidiProgramMapping progToInstMappingV2 = {
 	{
 		21, 22, 24, 25, 23, 26, 6, 6, 6, 6,

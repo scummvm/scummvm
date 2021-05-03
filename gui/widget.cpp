@@ -26,6 +26,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "graphics/pixelformat.h"
+#include "graphics/svg.h"
 #include "gui/widget.h"
 #include "gui/gui-manager.h"
 
@@ -59,13 +60,6 @@ void Widget::init() {
 Widget::~Widget() {
 	delete _next;
 	_next = nullptr;
-}
-
-void Widget::resize(int x, int y, int w, int h) {
-	_x = x;
-	_y = y;
-	_w = w;
-	_h = h;
 }
 
 void Widget::setFlags(int flags) {
@@ -280,7 +274,6 @@ Common::U32String Widget::cleanupHotkey(const Common::U32String &label) {
 }
 
 void Widget::read(const Common::U32String &str) {
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -288,7 +281,6 @@ void Widget::read(const Common::U32String &str) {
 			return;
 		ttsMan->say(str);
 	}
-#endif
 }
 
 #pragma mark -
@@ -414,7 +406,7 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 		else
 			button = new PicButtonWidget(boss, x, y, w, h, _("Clear value"), cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageEraser));
+		((PicButtonWidget *)button)->setGfxFromTheme(ThemeEngine::kImageEraser, kPicButtonStateEnabled, false);
 	} else
 #endif
 		if (!name.empty())
@@ -549,6 +541,32 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
+const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
+	int nw = w, nh = h;
+
+	// Maintain aspect ratio
+	float xRatio = 1.0f * w / gfx->w;
+	float yRatio = 1.0f * h / gfx->h;
+
+	if (xRatio < yRatio)
+		nh = gfx->h * xRatio;
+	else
+		nw = gfx->w * yRatio;
+
+	if ((nw == w && nh == h) || (nw == gfx->w && nh == gfx->h))
+		return gfx;
+
+	w = nw;
+	h = nh;
+
+	Graphics::ManagedSurface tmp(*gfx);
+
+	const Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, false));
+	tmp.free();
+
+	return tmp2;
+}
+
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, Common::U32String(), tooltip, cmd, hotkey),
 	  _alpha(255), _transparency(false), _showButton(true) {
@@ -569,7 +587,7 @@ PicButtonWidget::~PicButtonWidget() {
 		_gfx[i].free();
 }
 
-void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
+void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, bool scale) {
 	_gfx[statenum].free();
 
 	if (!gfx || !gfx->getPixels())
@@ -580,7 +598,27 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		return;
 	}
 
-	_gfx[statenum].copyFrom(*gfx);
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
+		_gfx[statenum].copyFrom(*tmp2);
+		tmp2->free();
+		delete tmp2;
+	} else {
+		_gfx[statenum].copyFrom(*gfx);
+	}
+}
+
+void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
+	setGfx(new Graphics::ManagedSurface(gfx), statenum, scale);
+}
+
+void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
+	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+
+	setGfx(gfx, statenum, scale);
+
+	return;
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
@@ -600,7 +638,7 @@ void PicButtonWidget::drawWidget() {
 	if (_showButton)
 		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(), _state, getFlags());
 
-	Graphics::Surface *gfx;
+	Graphics::ManagedSurface *gfx;
 
 	if (_state == ThemeEngine::kStateHighlight)
 		gfx = &_gfx[kPicButtonHighlight];
@@ -615,13 +653,6 @@ void PicButtonWidget::drawWidget() {
 		gfx = &_gfx[kPicButtonStateEnabled];
 
 	if (gfx->getPixels()) {
-		// Check whether the set up surface needs to be converted to the GUI
-		// color format.
-		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-		if (gfx->format != requiredFormat) {
-			gfx->convertToInPlace(requiredFormat);
-		}
-
 		const int x = _x + (_w - gfx->w) / 2;
 		const int y = _y + (_h - gfx->h) / 2;
 
@@ -836,7 +867,7 @@ GraphicsWidget::~GraphicsWidget() {
 	_gfx.free();
 }
 
-void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
+void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 	_gfx.free();
 
 	if (!gfx || !gfx->getPixels())
@@ -847,7 +878,27 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	_gfx.copyFrom(*gfx);
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		_w = gfx->w * sf;
+		_h = gfx->h * sf;
+	} else {
+		_w = gfx->w;
+		_h = gfx->h;
+	}
+
+	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, _h, false);
+		_gfx.copyFrom(*tmp2);
+		tmp2->free();
+		delete tmp2;
+	} else {
+		_gfx.copyFrom(*gfx);
+	}
+}
+
+void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
+	setGfx(new Graphics::ManagedSurface(gfx), scale);
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
@@ -863,15 +914,14 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
 }
 
+void GraphicsWidget::setGfxFromTheme(const char *name) {
+	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+
+	setGfx(gfx, false);
+}
+
 void GraphicsWidget::drawWidget() {
 	if (_gfx.getPixels()) {
-		// Check whether the set up surface needs to be converted to the GUI
-		// color format.
-		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-		if (_gfx.format != requiredFormat) {
-			_gfx.convertToInPlace(requiredFormat);
-		}
-
 		const int x = _x + (_w - _gfx.w) / 2;
 		const int y = _y + (_h - _gfx.h) / 2;
 
@@ -933,7 +983,7 @@ void ContainerWidget::drawWidget() {
 #pragma mark -
 
 OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,
-                                               bool scrollable, const Common::String &domain) :
+											   bool scrollable, const Common::String &domain) :
 		Widget(boss, name),
 		_domain(domain),
 		_dialogLayout(dialogLayout),
@@ -954,9 +1004,9 @@ void OptionsContainerWidget::reflowLayout() {
 	Widget::reflowLayout();
 
 	if (!_dialogLayout.empty()) {
-		if (!g_gui.xmlEval()->hasDialog(_dialogLayout)) {
-			defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
-		}
+		// Since different engines have different number of options,
+		// we have to create it every time.
+		defineLayout(*g_gui.xmlEval(), _dialogLayout, _name);
 
 		if (!_scrollContainer) {
 			g_gui.xmlEval()->reflowDialogLayout(_dialogLayout, _firstWidget);
@@ -964,7 +1014,7 @@ void OptionsContainerWidget::reflowLayout() {
 	}
 
 	if (_scrollContainer) {
-		_scrollContainer->resize(_x, _y, _w, _h);
+		_scrollContainer->resize(_x, _y, _w, _h, false);
 	}
 
 	Widget *w = _firstWidget;

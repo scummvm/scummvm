@@ -99,12 +99,6 @@ enum {
 	kSubtitlesBoth
 };
 
-#ifdef GUI_ENABLE_KEYSDIALOG
-enum {
-	kChooseKeyMappingCmd    = 'chma'
-};
-#endif
-
 #ifdef USE_FLUIDSYNTH
 enum {
 	kFluidSynthSettingsCmd  = 'flst'
@@ -135,6 +129,20 @@ enum {
 
 static const char *savePeriodLabels[] = { _s("Never"), _s("Every 5 mins"), _s("Every 10 mins"), _s("Every 15 mins"), _s("Every 30 mins"), nullptr };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
+
+static const char *guiBaseLabels[] = {
+	// I18N: Automatic GUI scaling
+	_s("Auto"),
+	// I18N: Large GUI scale
+	_s("Large"),
+	// I18N: Medium GUI scale
+	_s("Medium"),
+	// I18N: Small GUI scale
+	_s("Small"),
+	nullptr
+};
+static const int guiBaseValues[] = { 0, 240, 480, 720, -1 };
+
 // The keyboard mouse speed values range from 0 to 7 and correspond to speeds shown in the label
 // "10" (value 3) is the default speed corresponding to the speed before introduction of this control
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
@@ -1392,7 +1400,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 				// marked as General MIDI device.
 				|| (deviceGuiOption.contains(GUIO_MIDIGM) && (_guioptions.contains(GUIO_MIDIMT32)))
 				|| d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
-				_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
+				_midiPopUp->appendEntry(_(d->getCompleteName()), d->getHandle());
 		}
 	}
 
@@ -1696,9 +1704,6 @@ void OptionsDialog::setupGraphicsTab() {
 
 GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	: OptionsDialog(Common::ConfigManager::kApplicationDomain, "GlobalOptions"), CommandSender(nullptr), _launcher(launcher) {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	_keysDialog = nullptr;
-#endif
 #ifdef USE_FLUIDSYNTH
 	_fluidSynthSettingsDialog = nullptr;
 #endif
@@ -1713,6 +1718,8 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_pluginsPathClearButton = nullptr;
 #endif
 	_curTheme = nullptr;
+	_guiBasePopUpDesc = nullptr;
+	_guiBasePopUp = nullptr;
 	_rendererPopUpDesc = nullptr;
 	_rendererPopUp = nullptr;
 	_autosavePeriodPopUpDesc = nullptr;
@@ -1780,10 +1787,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 }
 
 GlobalOptionsDialog::~GlobalOptionsDialog() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-#endif
-
 #ifdef USE_FLUIDSYNTH
 	delete _fluidSynthSettingsDialog;
 #endif
@@ -1950,13 +1953,9 @@ void GlobalOptionsDialog::build() {
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
-	new ButtonWidget(this, "GlobalOptions.Apply", _("Apply"), Common::U32String(), kApplyCmd);
-	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), Common::U32String(), kOKCmd);
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	_keysDialog = new KeysDialog();
-#endif
+	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), _("Discard changes and close the dialog"), kCloseCmd);
+	new ButtonWidget(this, "GlobalOptions.Apply", _("Apply"), _("Apply changes without closing the dialog"), kApplyCmd);
+	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), _("Apply changes and close the dialog"), kOKCmd);
 
 #ifdef USE_FLUIDSYNTH
 	_fluidSynthSettingsDialog = new FluidSynthSettingsDialog();
@@ -1999,8 +1998,15 @@ void GlobalOptionsDialog::build() {
 #endif
 
 	// Misc Tab
+	_guiBasePopUp->setSelected(1);
+	int value = ConfMan.getInt("gui_base");
+	for (int i = 0; guiBaseLabels[i]; i++) {
+		if (value == guiBaseValues[i])
+			_guiBasePopUp->setSelected(i);
+	}
+
 	_autosavePeriodPopUp->setSelected(1);
-	int value = ConfMan.getInt("autosave_period");
+	value = ConfMan.getInt("autosave_period");
 	for (int i = 0; savePeriodLabels[i]; i++) {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
@@ -2024,11 +2030,6 @@ void GlobalOptionsDialog::build() {
 }
 
 void GlobalOptionsDialog::clean() {
-#ifdef GUI_ENABLE_KEYSDIALOG
-	delete _keysDialog;
-	_keysDialog = nullptr;
-#endif
-
 #ifdef USE_FLUIDSYNTH
 	delete _fluidSynthSettingsDialog;
 	_fluidSynthSettingsDialog = nullptr;
@@ -2097,6 +2098,13 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
 
 
+	_guiBasePopUpDesc = new StaticTextWidget(boss, prefix + "GUIBasePopupDesc", _("GUI scale:"));
+	_guiBasePopUp = new PopUpWidget(boss, prefix + "GUIBasePopup");
+
+	for (int i = 0; guiBaseLabels[i]; i++) {
+		_guiBasePopUp->appendEntry(_(guiBaseLabels[i]), guiBaseValues[i]);
+	}
+
 	_rendererPopUpDesc = new StaticTextWidget(boss, prefix + "RendererPopupDesc", _("GUI renderer:"));
 	_rendererPopUp = new PopUpWidget(boss, prefix + "RendererPopup");
 
@@ -2133,10 +2141,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	);
 
 	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
-
-#ifdef GUI_ENABLE_KEYSDIALOG
-	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), Common::U32String(), kChooseKeyMappingCmd);
-#endif
 
 	// TODO: joystick setting
 
@@ -2369,6 +2373,11 @@ void GlobalOptionsDialog::apply() {
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
 
+	int oldGuiBase = ConfMan.getInt("gui_base");
+	ConfMan.setInt("gui_base", _guiBasePopUp->getSelectedTag(), _domain);
+	if (oldGuiBase != (int)_guiBasePopUp->getSelectedTag())
+		g_gui.computeScaleFactor();
+
 	ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
 
 #ifdef USE_UPDATES
@@ -2485,6 +2494,7 @@ void GlobalOptionsDialog::apply() {
 		MessageDialog error(errorMessage);
 		error.runModal();
 	}
+
 #ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan) {
@@ -2821,11 +2831,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif // USE_SDL_NET
 #endif // USE_CLOUD
-#ifdef GUI_ENABLE_KEYSDIALOG
-	case kChooseKeyMappingCmd:
-		_keysDialog->runModal();
-		break;
-#endif
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();

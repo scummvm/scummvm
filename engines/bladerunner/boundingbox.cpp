@@ -26,6 +26,11 @@
 
 namespace BladeRunner {
 
+// TO VERIFY
+// First vertex is typically the bottom left point (x0, y0, z0)
+// and second vertex is the top right (x1, y1, z1)
+// Hence, we also assume that x0 < x1, y0 < y1 and z0 < z1 (ie. see how the inside() method makes its calculation)
+// TODO Maybe add a check here to catch any exceptions?
 BoundingBox::BoundingBox(float x0, float y0, float z0, float x1, float y1, float z1) {
 	_vertices[0].x = x0;
 	_vertices[0].y = y0;

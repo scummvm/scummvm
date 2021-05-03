@@ -66,9 +66,7 @@
 #include "graphics/pixelformat.h"
 #include "image/bmp.h"
 
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 // FIXME: HACK for error()
 Engine *g_engine = 0;
@@ -457,22 +455,14 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
 }
 
 void Engine::checkCD() {
-#if defined(WIN32) && !defined(__SYMBIAN32__)
-	// It is a known bug under Windows that games that play CD audio cause
-	// ScummVM to crash if the data files are read from the same CD. Check
-	// if this appears to be the case and issue a warning.
-
-	// If we can find a compressed audio track, then it should be ok even
-	// if it's running from CD.
-
 #ifdef USE_VORBIS
 	if (Common::File::exists("track1.ogg") ||
 	    Common::File::exists("track01.ogg"))
 		return;
 #endif
 #ifdef USE_FLAC
-	if (Common::File::exists("track1.fla") ||
-            Common::File::exists("track1.flac") ||
+	if (Common::File::exists("track1.fla")  ||
+	    Common::File::exists("track1.flac") ||
 	    Common::File::exists("track01.fla") ||
 	    Common::File::exists("track01.flac"))
 		return;
@@ -483,6 +473,13 @@ void Engine::checkCD() {
 		return;
 #endif
 
+#if defined(WIN32) && !defined(__SYMBIAN32__)
+	// It is a known bug under Windows that games that play CD audio cause
+	// ScummVM to crash if the data files are read from the same CD. Check
+	// if this appears to be the case and issue a warning.
+
+	// If we can find a compressed audio track, then it should be ok even
+	// if it's running from CD.
 	char buffer[MAXPATHLEN];
 	int i;
 
@@ -508,9 +505,10 @@ void Engine::checkCD() {
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the README file for details."), _("OK"));
+			"See the Documentation (CD audio) for details."), _("OK"));
 		dialog.runModal();
 	} else {
+#endif // defined(WIN32) && !defined(__SYMBIAN32__)
 		// If we reached here, the game has audio tracks,
 		// it's not ran from the CD and the tracks have not
 		// been ripped.
@@ -519,10 +517,11 @@ void Engine::checkCD() {
 			"tracks need to be ripped from the disk using\n"
 			"an appropriate CD audio extracting tool in\n"
 			"order to listen to the game's music.\n"
-			"See the README file for details."), _("OK"));
+			"See the Documentation (CD audio) for details."), _("OK"));
 		dialog.runModal();
+#if defined(WIN32) && !defined(__SYMBIAN32__)
 	}
-#endif
+#endif // defined(WIN32) && !defined(__SYMBIAN32__)
 }
 
 void Engine::handleAutoSave() {
@@ -600,13 +599,11 @@ void Engine::pauseEngineIntern(bool pause) {
 void Engine::openMainMenuDialog() {
 	if (!_mainMenuDialog)
 		_mainMenuDialog = new MainMenuDialog(this);
-#ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
 		ttsMan->pushState();
 		g_gui.initTextToSpeech();
 	}
-#endif
 
 	setGameToLoadSlot(-1);
 
@@ -634,19 +631,18 @@ void Engine::openMainMenuDialog() {
 		}
 	}
 
-#ifdef USE_TTS
 	if (ttsMan != nullptr)
 		ttsMan->popState();
-#endif
 
 	g_system->applyBackendSettings();
 	applyGameSettings();
 	syncSoundSettings();
 }
 
-bool Engine::warnUserAboutUnsupportedGame() {
+bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
-		GUI::MessageDialog alert(_("WARNING: The game you are about to start is"
+		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :
+				 _("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
 			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));

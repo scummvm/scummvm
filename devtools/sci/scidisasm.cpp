@@ -405,7 +405,7 @@ get_class_name(disasm_state_t *d, int class_no) {
 
 static void
 script_dump_object(disasm_state_t *d, script_state_t *s,
-                   unsigned char *data, int seeker, int objsize, int pass_no) {
+				   unsigned char *data, int seeker, int objsize, int pass_no) {
 	int selectors, overloads, selectorsize;
 	int species = getInt16(data + 8 + seeker);
 	int superclass = getInt16(data + 10 + seeker);
@@ -479,7 +479,7 @@ script_dump_object(disasm_state_t *d, script_state_t *s,
 
 static void
 script_dump_class(disasm_state_t *d, script_state_t *s,
-                  unsigned char *data, int seeker, int objsize, int pass_no) {
+				  unsigned char *data, int seeker, int objsize, int pass_no) {
 	word selectors, overloads, selectorsize;
 	int species = getInt16(data + 8 + seeker);
 	int superclass = getInt16(data + 10 + seeker);
@@ -606,7 +606,7 @@ script_dump_said_string(disasm_state_t *d, unsigned char *data, int seeker) {
 
 static void
 script_dump_said(disasm_state_t *d, script_state_t *s,
-                 unsigned char *data, int seeker, int objsize, int pass_no) {
+				 unsigned char *data, int seeker, int objsize, int pass_no) {
 	int _seeker = seeker + objsize - 4;
 
 	if (pass_no == 1) {
@@ -625,7 +625,7 @@ script_dump_said(disasm_state_t *d, script_state_t *s,
 
 static void
 script_dump_synonyms(disasm_state_t *d, script_state_t *s,
-                     unsigned char *data, int seeker, int objsize, int pass_no) {
+					 unsigned char *data, int seeker, int objsize, int pass_no) {
 	int _seeker = seeker + objsize - 4;
 
 	sciprintf("Synonyms:\n");
@@ -642,7 +642,7 @@ script_dump_synonyms(disasm_state_t *d, script_state_t *s,
 
 static void
 script_dump_strings(disasm_state_t *d, script_state_t *s,
-                    unsigned char *data, int seeker, int objsize, int pass_no) {
+					unsigned char *data, int seeker, int objsize, int pass_no) {
 	int endptr = seeker + objsize - 4;
 
 	if (pass_no == 1) {
@@ -659,7 +659,7 @@ script_dump_strings(disasm_state_t *d, script_state_t *s,
 
 static void
 script_dump_exports(disasm_state_t *d, script_state_t *s,
-                    unsigned char *data, int seeker, int objsize, int pass_no) {
+					unsigned char *data, int seeker, int objsize, int pass_no) {
 	byte *pexport = (byte *)(data + seeker);
 	word export_count = getUInt16(pexport);
 	int i;
@@ -684,7 +684,7 @@ script_dump_exports(disasm_state_t *d, script_state_t *s,
 
 static void
 script_disassemble_code(disasm_state_t *d, script_state_t *s,
-                        unsigned char *data, int seeker, int objsize, int pass_no) {
+						unsigned char *data, int seeker, int objsize, int pass_no) {
 	int endptr = seeker + objsize - 4;
 	int i = 0;
 	int cur_class = -1;
@@ -882,7 +882,7 @@ script_disassemble_code(disasm_state_t *d, script_state_t *s,
 
 void
 disassemble_script_pass(disasm_state_t *d, script_state_t *s,
-                        resource_t *script, int pass_no) {
+						resource_t *script, int pass_no) {
 	int _seeker = 0;
 	word id = getInt16(script->data);
 

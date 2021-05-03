@@ -52,7 +52,7 @@ bool JACLMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &ga
 			continue;
 
 		Common::String filename = file->getName();
-		if (!filename.hasSuffixIgnoreCase(".j2"))
+		if (!filename.hasSuffixIgnoreCase(".j2") && !filename.hasSuffixIgnoreCase(".jac"))
 			continue;
 
 		Common::File gameFile;

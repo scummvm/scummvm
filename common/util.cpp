@@ -92,7 +92,8 @@ bool parseBool(const String &val, bool &valAsBool) {
 	}
 	if (val.equalsIgnoreCase("false") ||
 		val.equalsIgnoreCase("no") ||
-		val.equals("0")) {
+		val.equals("0") ||
+		val.empty()) {
 		valAsBool = false;
 		return true;
 	}

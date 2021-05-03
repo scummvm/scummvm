@@ -69,13 +69,13 @@ union mcmodefloc {
  *   objects that are unloaded). 
  */
 struct mcmodef {
-    uchar  *mcmoptr;               /* memory pointer (if object is present) */
+	uchar  *mcmoptr;               /* memory pointer (if object is present) */
 	mcmodefloc mcmoloc;                       /* object's external location */
 #define  mcmoswh  mcmoloc.mcmolocs
 #define  mcmoldh  mcmoloc.mcmolocl
-    mcmon   mcmonxt;                            /* next object in this list */
-    mcmon   mcmoprv;                        /* previous object in this list */
-    ushort  mcmoflg;                         /* flags for this cache object */
+	mcmon   mcmonxt;                            /* next object in this list */
+	mcmon   mcmoprv;                        /* previous object in this list */
+	ushort  mcmoflg;                         /* flags for this cache object */
 #define  MCMOFDIRTY  0x01                     /* object has been written */
 #define  MCMOFNODISC 0x02       /* not in load file (can't be discarded) */
 #define  MCMOFLOCK   0x04                            /* object is locked */
@@ -85,44 +85,44 @@ struct mcmodef {
 #define  MCMOFNOSWAP 0x40                /* object cannot be swapped out */
 #define  MCMOFFREE   0x80      /* entry refers to a free block of memory */
 #define  MCMOFREVRT 0x100           /* call revert callback upon loading */
-    uchar   mcmolcnt;                                         /* lock count */
-    ushort  mcmosiz;                                  /* size of the object */
+	uchar   mcmolcnt;                                         /* lock count */
+	ushort  mcmosiz;                                  /* size of the object */
 };
 
 /* heap header - allocate one of these in each heap */
 struct mcmhdef {
-    mcmhdef *mcmhnxt;                            /* next heap in this chain */
+	mcmhdef *mcmhnxt;                            /* next heap in this chain */
 };
 
 /* GLOBAL cache manager context:  tracks cache manager state */
 struct mcmcx1def {
-    mcmodef  **mcmcxtab;                        /* page table for the cache */
-    errcxdef  *mcmcxerr;                          /* error handling context */
-    mcmhdef   *mcmcxhpch;                             /* heap chain pointer */
-    mcscxdef   mcmcxswc;                            /* swap manager context */
-    mclcxdef   mcmcxldc;                                  /* loader context */
-    ulong      mcmcxmax; /* maximum amount of actual heap we can ever alloc */
-    mcmon      mcmcxlru;      /* least recently used object still in memory */
-    mcmon      mcmcxmru;                       /* most recently used object */
-    mcmon      mcmcxfre;                               /* head of free list */
-    mcmon      mcmcxunu;                             /* head of unused list */
-    ushort     mcmcxpage;                      /* last page table slot used */
-    ushort     mcmcxpgmx;        /* maximum number of pages we can allocate */
-    void     (*mcmcxcsw)(mcmcx1def *, mcmon, mcsseg, mcsseg);
-                         /* change swap handle in object to new swap handle */
+	mcmodef  **mcmcxtab;                        /* page table for the cache */
+	errcxdef  *mcmcxerr;                          /* error handling context */
+	mcmhdef   *mcmcxhpch;                             /* heap chain pointer */
+	mcscxdef   mcmcxswc;                            /* swap manager context */
+	mclcxdef   mcmcxldc;                                  /* loader context */
+	ulong      mcmcxmax; /* maximum amount of actual heap we can ever alloc */
+	mcmon      mcmcxlru;      /* least recently used object still in memory */
+	mcmon      mcmcxmru;                       /* most recently used object */
+	mcmon      mcmcxfre;                               /* head of free list */
+	mcmon      mcmcxunu;                             /* head of unused list */
+	ushort     mcmcxpage;                      /* last page table slot used */
+	ushort     mcmcxpgmx;        /* maximum number of pages we can allocate */
+	void     (*mcmcxcsw)(mcmcx1def *, mcmon, mcsseg, mcsseg);
+						 /* change swap handle in object to new swap handle */
 };
 
 /* CLIENT cache manager context: used by client to request mcm services */
 struct mcmcxdef {
-    mcmcx1def *mcmcxgl;                     /* global cache manager context */
-    uint       mcmcxflg;                                           /* flags */
-    uint       mcmcxmsz;                   /* maximum size of mapping table */
-    void     (*mcmcxldf)(void *ctx, mclhd handle, uchar *ptr,
-                         ushort siz);           /* callback to load objects */
-    void      *mcmcxldc;                       /* context for load callback */
-    void     (*mcmcxrvf)(void *ctx, mcmon objn);           /* revert object */
-    void      *mcmcxrvc;                     /* context for revert callback */
-    mcmon     *mcmcxmtb[1];                                /* mapping table */
+	mcmcx1def *mcmcxgl;                     /* global cache manager context */
+	uint       mcmcxflg;                                           /* flags */
+	uint       mcmcxmsz;                   /* maximum size of mapping table */
+	void     (*mcmcxldf)(void *ctx, mclhd handle, uchar *ptr,
+						 ushort siz);           /* callback to load objects */
+	void      *mcmcxldc;                       /* context for load callback */
+	void     (*mcmcxrvf)(void *ctx, mcmon objn);           /* revert object */
+	void      *mcmcxrvc;                     /* context for revert callback */
+	mcmon     *mcmcxmtb[1];                                /* mapping table */
 };
 
 /* context flags */
@@ -169,16 +169,16 @@ struct mcmcxdef {
  *   minimum.  
  */
 mcmcx1def *mcmini(ulong max, uint pages, ulong swapsize,
-                  osfildef *swapfp, char *swapfilename, errcxdef *errctx);
+				  osfildef *swapfp, char *swapfilename, errcxdef *errctx);
 
 /* terminate the cache manager - frees the structure and all cache memory */
 void mcmterm(mcmcx1def *ctx);
 
 /* allocate a client context */
 mcmcxdef *mcmcini(mcmcx1def *globalctx, uint pages,
-                  void (*loadfn)(void *, mclhd, uchar *, ushort),
-                  void *loadctx,
-                  void (*revertfn)(void *, mcmon), void *revertctx);
+				  void (*loadfn)(void *, mclhd, uchar *, ushort),
+				  void *loadctx,
+				  void (*revertfn)(void *, mcmon), void *revertctx);
 
 /* terminate a client context - frees the structure memory */
 void mcmcterm(mcmcxdef *ctx);
@@ -227,7 +227,7 @@ void mcmunlck(mcmcxdef *ctx, mcmon objnum);
  ((mcmobje(ctx,obj)->mcmoflg & MCMOFLOCK) ? \
   (--(mcmobje(ctx,obj)->mcmolcnt) ? (void)0 : \
   ((mcmobje(ctx,obj)->mcmoflg&=(~MCMOFLOCK)), \
-    mcmuse((ctx)->mcmcxgl,mcmc2g(ctx,obj)))) : (void)0)
+	mcmuse((ctx)->mcmcxgl,mcmc2g(ctx,obj)))) : (void)0)
 
 #endif /* MCM_NO_MACRO */
 
@@ -330,14 +330,14 @@ void mcmgunlck(mcmcx1def *ctx, mcmon objnum);
 #define mcmgunlck(ctx,obj) \
  ((mcmgobje(ctx,obj)->mcmoflg & MCMOFLOCK) ? \
   (--(mcmgobje(ctx,obj)->mcmolcnt) ? (void)0 : \
-    ((mcmgobje(ctx,obj)->mcmoflg&=(~MCMOFLOCK)), mcmuse(ctx,obj))) : \
+	((mcmgobje(ctx,obj)->mcmoflg&=(~MCMOFLOCK)), mcmuse(ctx,obj))) : \
   (void)0)
 
 #endif /* MCM_NO_MACRO */
 
 /* real memory allocator; clients use cover macros */
 uchar *mcmalo0(mcmcxdef *ctx, ushort siz, mcmon *nump, mcmon clinum,
-               int noclitrans);
+			   int noclitrans);
 
 /* free an object by global object number */
 void mcmgfre(mcmcx1def *ctx, mcmon obj);

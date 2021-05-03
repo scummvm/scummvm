@@ -40,10 +40,11 @@ class Actor;
 class ActionCEL;
 class ActionSound;
 class ActionText;
+class PinkEngine;
 
 class Director {
 public:
-	Director();
+	Director(PinkEngine *vm);
 	~Director();
 
 	void update();
@@ -63,6 +64,9 @@ public:
 	void addSound(ActionSound *sound) { _sounds.push_back(sound); };
 	void removeSound(ActionSound *sound);
 
+	void addTextWindow(Graphics::MacTextWindow *window);
+	void removeTextWindow(Graphics::MacTextWindow *window);
+
 	void clear();
 
 	void pause(bool pause);
@@ -76,6 +80,8 @@ public:
 
 	void draw(bool blit = true);
 
+	const Graphics::Font *getTextFont() { return _textFont; }
+
 private:
 	void mergeDirtyRects();
 	void drawRect(const Common::Rect &rect);
@@ -88,7 +94,11 @@ private:
 	Common::Array<ActionCEL *> _savedSprites;
 	Common::Array<ActionSound *> _sounds;
 	Common::Array<ActionText *> _textActions;
+	Common::Array<Graphics::MacTextWindow *> _textWindows;
 	bool _textRendered;
+
+	const Graphics::Font *_textFont;
+	bool _textFontCleanup;
 };
 
 } // End of namespace Pink

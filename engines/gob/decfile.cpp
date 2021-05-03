@@ -35,7 +35,7 @@
 namespace Gob {
 
 DECFile::DECFile(GobEngine *vm, const Common::String &fileName,
-                 uint16 width, uint16 height, uint8 bpp) : _vm(vm),
+				 uint16 width, uint16 height, uint8 bpp) : _vm(vm),
 	_width(width), _height(height), _bpp(bpp), _hasPadding(false), _backdrop(0) {
 
 	bool bigEndian = false;
@@ -171,7 +171,7 @@ void DECFile::drawBackdrop(Surface &dest) const {
 }
 
 void DECFile::drawLayer(Surface &dest, uint16 layer, uint16 part,
-                        uint16 x, uint16 y, int32 transp) const {
+						uint16 x, uint16 y, int32 transp) const {
 
 	if (layer >= _layers.size())
 		return;

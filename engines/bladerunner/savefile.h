@@ -60,7 +60,9 @@ struct SaveFileHeader {
 class SaveFileManager {
 private:
 	static const uint32 kTag = MKTAG('B', 'R', 'S', 'V');
-	static const uint32 kVersion = 3; // kVersion: 3 as of Feb 5th 2020 (UTC) - ScummVM development version 2.2.0git
+	// kVersion: 3 as of Feb 5th 2020 (UTC) - ScummVM development version 2.2.0git
+	// kVersion: 4 as of Apr 17th 2021 - Added full-size thumbnails
+	static const uint32 kVersion = 4;
 
 public:
 	// kVersion

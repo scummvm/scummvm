@@ -105,8 +105,8 @@ static ParseTreeNode* said_word_node(ParseTreeNode* pos, int value) {
 }
 
 static ParseTreeNode* said_branch_node(ParseTreeNode* pos,
-                                       ParseTreeNode* left,
-                                       ParseTreeNode* right) {
+									   ParseTreeNode* left,
+									   ParseTreeNode* right) {
 	pos->type = kParseTreeBranchNode;
 	pos->left = left;
 	pos->right = right;
@@ -115,7 +115,7 @@ static ParseTreeNode* said_branch_node(ParseTreeNode* pos,
 }
 
 static ParseTreeNode* said_branch_attach_left(ParseTreeNode* pos,
-                                              ParseTreeNode* left) {
+											  ParseTreeNode* left) {
 	pos->type = kParseTreeBranchNode;
 	pos->left = left;
 
@@ -124,7 +124,7 @@ static ParseTreeNode* said_branch_attach_left(ParseTreeNode* pos,
 }
 
 static ParseTreeNode* said_branch_attach_right(ParseTreeNode* pos,
-                                               ParseTreeNode* right) {
+											   ParseTreeNode* right) {
 	pos->type = kParseTreeBranchNode;
 	pos->right = right;
 
@@ -133,19 +133,19 @@ static ParseTreeNode* said_branch_attach_right(ParseTreeNode* pos,
 
 
 /*
-        pos
-        / \
-       .   \
-            *
-           / \
-          /   0
-         *
-        / \
-       /   \
-      /   subtree
+		pos
+		/ \
+	   .   \
+			*
+		   / \
+		  /   0
+		 *
+		/ \
+	   /   \
+	  /   subtree
    major  /   \
-         /     .
-      minor
+		 /     .
+	  minor
 
  . = unchanged child node
  * = new branch node
@@ -154,7 +154,7 @@ static ParseTreeNode* said_branch_attach_right(ParseTreeNode* pos,
 */
 
 static bool said_attach_subtree(ParseTreeNode* pos, int major, int minor,
-                                ParseTreeNode* subtree) {
+								ParseTreeNode* subtree) {
 	bool retval = true;
 
 	said_branch_attach_right(pos,
@@ -689,7 +689,7 @@ enum ScanSaidType {
 
 static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT);
 static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
-                            ScanSaidType type);
+							ScanSaidType type);
 static int scanParseChildren(ParseTreeNode* parseT, ParseTreeNode* saidT);
 
 
@@ -706,7 +706,7 @@ static int node_minor(ParseTreeNode* node) {
 }
 static bool node_is_terminal(ParseTreeNode* node) {
 	return (node->right->right &&
-            node->right->right->type != kParseTreeBranchNode);
+			node->right->right->type != kParseTreeBranchNode);
 }
 static int node_terminal_value(ParseTreeNode* node) {
 	assert(node_is_terminal(node));
@@ -853,7 +853,7 @@ static int matchTrees(ParseTreeNode* parseT, ParseTreeNode* saidT) {
 
 
 static int scanSaidChildren(ParseTreeNode* parseT, ParseTreeNode* saidT,
-                            ScanSaidType type) {
+							ScanSaidType type) {
 	outputDepth++;
 	scidprintf("%*sscanSaid(%s) on ", outputDepth, "",
 	                                  type == SCAN_SAID_OR ? "OR" : "AND");

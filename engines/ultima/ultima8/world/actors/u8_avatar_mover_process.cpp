@@ -581,7 +581,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// doing another animation?
-	if (Kernel::get_instance()->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE))
+	if (avatar->isBusy())
 		return;
 
 	// if we were running, slow to a walk before stopping
@@ -591,7 +591,9 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	}
 
 	// not doing anything in particular? stand
-	if (lastanim != Animation::stand && currentIdleTime == 0) {
+	// don't interrupt spells though.
+	if (lastanim != Animation::stand && !Animation::isCastAnimU8(lastanim)
+		&& currentIdleTime == 0) {
 		waitFor(avatar->doAnim(Animation::stand, direction));
 		return;
 	}
@@ -623,7 +625,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 }
 
 void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
-                              bool adjusted) {
+							  bool adjusted) {
 	assert(action == Animation::step || action == Animation::walk ||
 	       action == Animation::run);
 

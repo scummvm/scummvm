@@ -72,9 +72,7 @@ void AndroidGraphicsManager::initSurface() {
 	// mode we setup.
 	notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 
-	float dpi[2];
-	JNI::getDPI(dpi);
-	handleResize(JNI::egl_surface_width, JNI::egl_surface_height, dpi[0], dpi[1]);
+	handleResize(JNI::egl_surface_width, JNI::egl_surface_height);
 }
 
 void AndroidGraphicsManager::deinitSurface() {

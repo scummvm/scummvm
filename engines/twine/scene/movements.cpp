@@ -77,15 +77,15 @@ void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle,
 int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) {
 	/*
 	//Pythagoras
-    targetActorDistance = (int32)sqrt((float)(((z2 - z1)*(z2 - z1) + (x2 - x1)*(x2 - x1))));
+	targetActorDistance = (int32)sqrt((float)(((z2 - z1)*(z2 - z1) + (x2 - x1)*(x2 - x1))));
 
 	if (targetActorDistance == 0)
-        return 0;
+		return 0;
 
-    //given two points, we calculate its arc-tangent in radians
-    //Then we convert from radians (360 degrees == 2*M_PI) to a 10bit value (360 degrees == 1024) and invert the rotation direction
-    //Then we add an offset of 90 degrees (256) and limit it to the 10bit value range.
-    return (256 + ((int32)floor((-1024 * atan2((float)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
+	//given two points, we calculate its arc-tangent in radians
+	//Then we convert from radians (360 degrees == 2*M_PI) to a 10bit value (360 degrees == 1024) and invert the rotation direction
+	//Then we add an offset of 90 degrees (256) and limit it to the 10bit value range.
+	return (256 + ((int32)floor((-1024 * atan2((float)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
 	*/
 
 	int32 difZ = z2 - z1;

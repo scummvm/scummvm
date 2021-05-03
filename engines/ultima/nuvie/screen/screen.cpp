@@ -1401,7 +1401,7 @@ byte *Screen::copy_area(Common::Rect *area, byte *buf) {
 // byte * -> target (src area still means location on screen, not relative to target)
 // (NULL area = entire screen)
 void Screen::restore_area(byte *pixels, Common::Rect *area,
-                          byte *target, Common::Rect *target_area, bool free_src) {
+						  byte *target, Common::Rect *target_area, bool free_src) {
 	Common::Rect screen_area(0, 0, _renderSurface->w, _renderSurface->h);
 	if (!area)
 		area = &screen_area;
@@ -1458,7 +1458,7 @@ byte *Screen::copy_area32(Common::Rect *area, byte *buf) {
 
 
 void Screen::restore_area32(byte *pixels, Common::Rect *area,
-                            byte *target, Common::Rect *target_area, bool free_src) {
+							byte *target, Common::Rect *target_area, bool free_src) {
 	uint32 *src = (uint32 *)pixels;
 	uint32 *dest = (uint32 *)_renderSurface->pixels;
 	dest += area->top * _renderSurface->w + area->left;
@@ -1523,7 +1523,7 @@ byte *Screen::copy_area16(Common::Rect *area, byte *buf) {
 
 
 void Screen::restore_area16(byte *pixels, Common::Rect *area,
-                            byte *target, Common::Rect *target_area, bool free_src) {
+							byte *target, Common::Rect *target_area, bool free_src) {
 	uint16 *src = (uint16 *)pixels;
 	uint16 *dest = (uint16 *)_renderSurface->pixels;
 	dest += area->top * _renderSurface->w + area->left;

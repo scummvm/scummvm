@@ -34,10 +34,10 @@ enum PrinceGameType {
 };
 
 enum {
-    GF_TRANSLATED      = 1 << 0,
-    GF_EXTRACTED       = 1 << 1,
-    GF_NOVOICES        = 1 << 2,
-    GF_RUSPROJEDITION  = 1 << 3
+	GF_TRANSLATED      = 1 << 0,
+	GF_EXTRACTED       = 1 << 1,
+	GF_NOVOICES        = 1 << 2,
+	GF_RUSPROJEDITION  = 1 << 3
 };
 
 struct PrinceGameDescription {

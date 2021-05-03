@@ -44,9 +44,9 @@ enum scriptInterpreterReturnCodes {
 };
 
 scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to the script data that can be modified
-                                       c_game_object *object,   // A pointer to the object that owns this object
-                                       int32 *engineReturnValue = NULL,
-                                       const char *scriptSourceName = NULL); // A value to return to the game engine
+									   c_game_object *object,   // A pointer to the object that owns this object
+									   int32 *engineReturnValue = NULL,
+									   const char *scriptSourceName = NULL); // A value to return to the game engine
 
 void SetScriptDebugging(bool8 f); // Set script debugging flag
 

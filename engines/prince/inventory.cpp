@@ -531,12 +531,12 @@ void PrinceEngine::checkOptions() {
 				optText = optionsTextEN[i];
 				break;
 			case Common::RU_RUS:
-                if (getFeatures() & GF_RUSPROJEDITION) {
-                    optText = optionsTextRU2[i];
-                } else {
-                    optText = optionsTextRU[i];
-                }
-                break;
+				if (getFeatures() & GF_RUSPROJEDITION) {
+					optText = optionsTextRU2[i];
+				} else {
+					optText = optionsTextRU[i];
+				}
+				break;
 			default:
 				break;
 			};
@@ -587,12 +587,12 @@ void PrinceEngine::checkInvOptions() {
 				invText = invOptionsTextEN[i];
 				break;
 			case Common::RU_RUS:
-                if (getFeatures() & GF_RUSPROJEDITION) {
-                    invText = invOptionsTextRU2[i];
-                } else {
-                    invText = invOptionsTextRU[i];
-                }
-                break;
+				if (getFeatures() & GF_RUSPROJEDITION) {
+					invText = invOptionsTextRU2[i];
+				} else {
+					invText = invOptionsTextRU[i];
+				}
+				break;
 			default:
 				error("Unknown game language %d", getLanguage());
 				break;

@@ -92,6 +92,7 @@
 #include "ags/engine/script/systemimports.h"
 #include "ags/lib/std/limits.h"
 #include "ags/plugins/pluginobjectreader.h"
+#include "common/file.h"
 
 namespace AGS3 {
 
@@ -351,6 +352,7 @@ Globals::~Globals() {
 
 	// cc_instance.cpp globals
 	delete _GlobalReturnValue;
+	delete _scriptDumpFile;
 
 	// cc_serializer.cpp globals
 	delete _ccUnserializer;

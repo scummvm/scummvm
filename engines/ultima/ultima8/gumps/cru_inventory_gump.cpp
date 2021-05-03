@@ -59,9 +59,18 @@ void CruInventoryGump::InitGump(Gump *newparent, bool take_focus) {
 	_inventoryItemGump->InitGump(this, false);
 	// we'll set the shape for this gump later.
 
+	resetText();
+}
+
+void CruInventoryGump::resetText() {
+	if (_inventoryText) {
+		RemoveChild(_inventoryText);
+		_inventoryText->Close();
+	}
 	_inventoryText = new TextWidget();
 	_inventoryText->InitGump(this, false);
 }
+
 
 void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	const MainActor *a = getMainActor();
@@ -71,7 +80,8 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 	}
 
 	uint16 activeitem = a->getActiveInvItem();
-	if (!activeitem) {
+	if (!activeitem || a != getControlledActor()) {
+		resetText();
 		_inventoryItemGump->SetShape(0, 0);
 	} else {
 		Item *item = getItem(activeitem);
@@ -108,17 +118,13 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 				}
 			} else {
 				if (_inventoryText->getText().length() > 0) {
-					RemoveChild(_inventoryText);
-					_inventoryText->Close();
-					_inventoryText = new TextWidget();
-					_inventoryText->InitGump(this, false);
+					resetText();
 				}
 			}
 		}
+		// Now that the shape is configured, we can paint.
+		CruStatGump::PaintThis(surf, lerp_factor, scaled);
 	}
-
-	// Now that the shape is configured, we can paint.
-	CruStatGump::PaintThis(surf, lerp_factor, scaled);
 }
 
 void CruInventoryGump::saveData(Common::WriteStream *ws) {

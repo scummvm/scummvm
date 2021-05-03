@@ -73,7 +73,7 @@ public:
 		return _bounds;
 	}
 
-    void paint(Graphics::ManagedSurface *canvas, Graphics::MacPatterns &patterns, int x, int y);
+	void paint(Graphics::ManagedSurface *canvas, Graphics::MacPatterns &patterns, int x, int y);
 	bool isPointOpaque(int x, int y);
 	static void drawRect(Graphics::ManagedSurface *surface, Common::Rect &rect, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType);
 	static void drawRect(Graphics::ManagedSurface *surface, int x1, int y1, int x2, int y2, int thickness, int color, Graphics::MacPatterns &patterns, byte fillType);

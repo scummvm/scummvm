@@ -199,10 +199,10 @@ bool UIImagePicker::resetActiveImage(int i) {
 }
 
 void UIImagePicker::activate(UIImagePickerCallback *mouseInCallback,
-                             UIImagePickerCallback *mouseOutCallback,
-                             UIImagePickerCallback *mouseDownCallback,
-                             UIImagePickerCallback *mouseUpCallback,
-                             void *callbackData) {
+							 UIImagePickerCallback *mouseOutCallback,
+							 UIImagePickerCallback *mouseDownCallback,
+							 UIImagePickerCallback *mouseUpCallback,
+							 void *callbackData) {
 	_isButtonDown        = false;
 	_mouseInCallback     = mouseInCallback;
 	_mouseOutCallback    = mouseOutCallback;

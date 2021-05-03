@@ -20,7 +20,11 @@
 
 #include "config.h"
 
-/* Support for compiling shared library. */
+/* Support for compiling shared library.
+ * MT32EMU_SHARED and mt32emu_EXPORTS are defined when building a shared library.
+ * MT32EMU_SHARED should also be defined for Windows platforms that provides for a small performance benefit,
+ * and it _must_ be defined along with MT32EMU_RUNTIME_VERSION_CHECK when using MSVC.
+ */
 #ifdef MT32EMU_SHARED
 #  if defined _WIN32 || defined __CYGWIN__ || defined __OS2__
 #    ifdef _MSC_VER
@@ -37,7 +41,11 @@
 #      endif /* #ifdef mt32emu_EXPORTS */
 #    endif /* #ifdef _MSC_VER */
 #  else /* #if defined _WIN32 || defined __CYGWIN__ || defined __OS2__ */
-#    define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
+#    ifdef mt32emu_EXPORTS
+#      define MT32EMU_EXPORT_ATTRIBUTE __attribute__ ((visibility("default")))
+#    else /* #ifdef mt32emu_EXPORTS */
+#      define MT32EMU_EXPORT_ATTRIBUTE
+#    endif /* #ifdef mt32emu_EXPORTS */
 #  endif /* #if defined _WIN32 || defined __CYGWIN__ || defined __OS2__ */
 #else /* #ifdef MT32EMU_SHARED */
 #  define MT32EMU_EXPORT_ATTRIBUTE
@@ -48,6 +56,12 @@
 #else
 #define MT32EMU_EXPORT MT32EMU_EXPORT_ATTRIBUTE
 #endif
+
+/* Facilitates easier tracking of the library version when an external symbol was introduced.
+ * Particularly useful for shared library builds on POSIX systems that support symbol versioning,
+ * so that the version map file can be generated automatically.
+ */
+#define MT32EMU_EXPORT_V(symbol_version_tag) MT32EMU_EXPORT
 
 /* Useful constants */
 

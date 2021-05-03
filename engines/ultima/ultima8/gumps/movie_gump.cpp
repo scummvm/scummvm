@@ -47,7 +47,7 @@ MovieGump::MovieGump() : ModalGump(), _player(nullptr) {
 }
 
 MovieGump::MovieGump(int width, int height, Common::SeekableReadStream *rs,
-                     bool introMusicHack, bool noScale, const byte *overridePal,
+					 bool introMusicHack, bool noScale, const byte *overridePal,
 					 uint32 flags, int32 layer)
 		: ModalGump(50, 50, width, height, 0, flags, layer), _subtitleWidget(0) {
 	uint32 stream_id = rs->readUint32BE();
@@ -157,6 +157,9 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 }
 
 void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
+	if (!rs)
+		return;
+
 	const uint32 id = rs->readUint32BE();
 	rs->seek(0);
 
@@ -248,7 +251,7 @@ static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filena
 }
 
 uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
-        unsigned int /*argsize*/) {
+		unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_STRING(name);
 	ARG_UINT16(x);
@@ -300,6 +303,11 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	ARG_STRING(name);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
+
+	if (!x)
+		x = 640;
+	if (!y)
+		y = 480;
 
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
 

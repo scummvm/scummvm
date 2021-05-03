@@ -35,7 +35,7 @@ namespace Shared {
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
 	DataEndianess stream_endianess)
 		: DataStream(stream_endianess), _writeBuffer(DisposeAfterUse::YES),
-		_openMode(open_mode), _workMode(work_mode), _file(nullptr), _outSave(nullptr) {
+		_workMode(work_mode), _file(nullptr), _outSave(nullptr) {
 	Open(file_name, open_mode, work_mode);
 }
 
@@ -194,22 +194,24 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
 			_outSave = g_system->getSavefileManager()->openForSaving(
 				file_name + strlen(SAVE_FOLDER_PREFIX), false);
-		} else if (!file_name.CompareRightNoCase(".log")) {
+		} else {
 			Common::String fname = file_name;
 			if (fname.hasPrefix("./"))
 				fname = fname.substr(2);
 			else if (fname.hasPrefix("/"))
 				fname.deleteChar(0);
+			else if (fname.findFirstOf('/') != Common::String::npos)
+				error("Invalid attempt to create file - %s", fname.c_str());
 
 			_outSave = g_system->getSavefileManager()->openForSaving(fname, false);
-		} else {
-			error("Creating files is only supported for savegames");
 		}
 
-		if (_outSave)
-			// Any data written has to first go through the memory stream buffer,
-			// since the savegame code uses Seeks, which OutSaveFile doesn't support
-			_file = &_writeBuffer;
+		if (!_outSave)
+			error("Invalid attempt to create file - %s", file_name.GetCStr());
+
+		// Any data written has to first go through the memory stream buffer,
+		// since the savegame code uses Seeks, which OutSaveFile doesn't support
+		_file = &_writeBuffer;
 	}
 }
 

@@ -44,16 +44,29 @@ enum {
 static void cursorTimerHandler(void *refCon);
 
 MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
-		MacWindow(wm->getLastId(), true, true, true, wm) {
+		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
 
 	_font = font;
-	_menu = menu;
 	_mactext = new MacText("", _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
 
 	_fontRef = wm->_fontMan->getFont(*font);
 
+	init(cursorHandler);
+}
+
+MacTextWindow::MacTextWindow(MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, MacMenu *menu, bool cursorHandler) :
+		MacWindow(wm->getLastId(), true, true, true, wm), _bgcolor(bgcolor), _maxWidth(maxWidth), _menu(menu) {
+
+	_font = nullptr;
+	_mactext = new MacText(Common::U32String(""), _wm, font, fgcolor, bgcolor, maxWidth, textAlignment);
+
+	_fontRef = font;
+
+	init(cursorHandler);
+}
+
+void MacTextWindow::init(bool cursorHandler) {
 	_inputTextHeight = 0;
-	_maxWidth = maxWidth;
 
 	_inputIsDirty = true;
 	_inTextSelection = false;
@@ -74,8 +87,17 @@ MacTextWindow::MacTextWindow(MacWindowManager *wm, const MacFont *font, int fgco
 	_cursorSurface = new ManagedSurface(1, kCursorHeight);
 	_cursorSurface->fillRect(*_cursorRect, _wm->_colorBlack);
 
+	_textColorRGB = 0;
+
 	if (cursorHandler)
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "textWindowCursor");
+
+	if (_wm->_mode & kWMModeWin95) {
+		// in win95 mode, we set scrollbar as default
+		_hasScrollBar = true;
+		loadWin95Border("Win95BorderScrollbar.bmp", kWindowBorderScrollbar | kWindowBorderActive);
+		loadWin95Border("Win95BorderScrollbar.bmp",kWindowBorderScrollbar);
+	}
 }
 
 void MacTextWindow::resize(int w, int h, bool inner) {
@@ -94,7 +116,16 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	// the reason we put undrawInput here before appendText, is we don't want the appended text affect our input
 	// thus, we first delete all of out input, and we append new text, and we redraw the input
 	undrawInput();
-	_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), skipAdd);
+	// we calc the rgb though fgcolor
+	uint16 red = (_textColorRGB >> 16) & 0xFF;
+	uint16 green = (_textColorRGB >> 8) & 0xFF;
+	uint16 blue = (_textColorRGB) & 0xFF;
+
+	if (macFont)
+		_mactext->appendText(str, macFont->getId(), macFont->getSize(), macFont->getSlant(), red, green, blue, skipAdd);
+	else {
+		_mactext->appendText(str, _fontRef, red, green, blue, skipAdd);
+	}
 
 	_contentIsDirty = true;
 	_inputIsDirty = true;	//force it to redraw input
@@ -103,6 +134,28 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 		_scrollPos = MAX(0, _mactext->getTextHeight() - getInnerDimensions().height());
 
 		updateCursorPos();
+	}
+
+	if (_wm->_mode & kWMModeWin95)
+		calcScrollBar();
+	// if we enable the dynamic scrollbar, and the text height is smaller than window height, then we disable the border
+	// if the window is editable, then we don't disable the border, because in editable window, the area you scroll is always bigger
+	// than the window
+	if (!_editable && (_mode & kWindowModeDynamicScrollbar) && _mactext->getTextHeight() < getInnerDimensions().height()) {
+		int w = getDimensions().width();
+		int h = getDimensions().height();
+		enableScrollbar(false);
+		disableBorder();
+		resize(w, h);
+		_mactext->_fullRefresh = true;
+	}
+	// if the text height is bigger than the window, then we enable the scrollbar again
+	if (!_editable && (_mode & kWindowModeDynamicScrollbar) && _mactext->getTextHeight() > getInnerDimensions().height()) {
+		enableScrollbar(true);
+		int w = getDimensions().width();
+		int h = getDimensions().height();
+		resize(w, h);
+		_mactext->_fullRefresh = true;
 	}
 }
 
@@ -146,7 +199,11 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	if (_borderIsDirty || forceRedraw) {
 		drawBorder();
 
-		_composeSurface->clear(_wm->_colorWhite);
+		if (_wm->_mode & kWMModeWin95) {
+			_composeSurface->clear(_bgcolor);
+		} else {
+			_composeSurface->clear(_wm->_colorWhite);
+		}
 	}
 
 	if (_inputIsDirty || forceRedraw) {
@@ -158,7 +215,7 @@ bool MacTextWindow::draw(bool forceRedraw) {
 	_cursorDirty = false;
 
 	// Compose
-	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w - 2, _scrollPos + _composeSurface->h - 2, 1, 1);
+	_mactext->draw(_composeSurface, 0, _scrollPos, _composeSurface->w, _scrollPos + _composeSurface->h, 1, 1);
 
 	if (_cursorState)
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + 1, _cursorY + 1));
@@ -300,10 +357,28 @@ Common::U32String MacTextWindow::cutSelection() {
 }
 
 void MacTextWindow::calcScrollBar() {
-	int maxText = _mactext->getTextHeight() + getInnerDimensions().height();
-	int drawableHeight = getInnerDimensions().height();
-	float scrollSize = (float)drawableHeight * drawableHeight / (float)maxText;
-	float scrollPos = (float)_scrollPos * drawableHeight / (float)maxText;
+	// since this function only able for the window which has scroll bar
+	// thus, if it doesn't has scrollbar, then we don't have to calc it
+	if (!_hasScrollBar)
+		return;
+
+	int maxText = 0, maxScrollbar = 0, displayHeight = 0;
+
+	displayHeight = getInnerDimensions().height();
+
+	maxScrollbar = getDimensions().height() - getBorderOffsets().upperScrollHeight - getBorderOffsets().lowerScrollHeight;
+
+	// if we enable the win95 mode but the text height is smaller than window height, then we don't draw the scrollbar
+	if (_wm->_mode & kWMModeWin95 && displayHeight > _mactext->getTextHeight() && !_editable)
+		return;
+
+	if (_editable)
+		maxText = _mactext->getTextHeight() + getInnerDimensions().height();
+	else
+		maxText = MAX<int>(_mactext->getTextHeight(), displayHeight);
+
+	float scrollSize = (float)maxScrollbar * (float)displayHeight / (float)maxText;
+	float scrollPos = (float)_scrollPos * (float)maxScrollbar / (float)maxText;
 	setScroll(scrollPos, scrollSize);
 }
 
@@ -353,15 +428,15 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 
 	if (event.type == Common::EVENT_WHEELUP) {
 		setHighlight(kBorderScrollUp);
-		calcScrollBar();
 		scroll(-2);
+		calcScrollBar();
 		return true;
 	}
 
 	if (event.type == Common::EVENT_WHEELDOWN) {
 		setHighlight(kBorderScrollDown);
-		calcScrollBar();
 		scroll(2);
+		calcScrollBar();
 		return true;
 	}
 
@@ -481,6 +556,9 @@ void MacTextWindow::undrawInput() {
 }
 
 void MacTextWindow::drawInput() {
+	if (!_editable)
+		return;
+
 	int oldLen = _mactext->getLineCount() - _inputTextHeight;
 
 	// add new input line to the text

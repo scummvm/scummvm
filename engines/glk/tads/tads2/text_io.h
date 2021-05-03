@@ -44,7 +44,7 @@ struct runcxdef;
  * Text i/o context
  */
 struct tiocxdef {
-    errcxdef *tiocxerr;                           /* error handling context */
+	errcxdef *tiocxerr;                           /* error handling context */
 };
 
 /**
@@ -71,7 +71,7 @@ void out_init();
 
 /* set up format strings in output subsystem */
 void tiosetfmt(tiocxdef *ctx, runcxdef *rctx, uchar *fmtbase,
-               uint fmtlen);
+			   uint fmtlen);
 
 /* tell tio subsystem the current actor */
 void tiosetactor(tiocxdef *ctx, objnum actor);
@@ -195,7 +195,7 @@ char *qasgets(char *buf, int bufl);
  *   local character set. 
  */
 void tio_set_html_expansion(unsigned int html_char_val,
-                            const char *expansion, size_t expansion_len);
+							const char *expansion, size_t expansion_len);
 
 /* check for HTML mode - returns true if an "\H+" sequence is active */
 int tio_is_html_mode();
@@ -221,8 +221,8 @@ int tio_askfile(const char *prompt, char *reply, int replen, int prompt_type, os
  *   formatted text for text-only implementations.  
  */
 int tio_input_dialog(int icon_id, const char *prompt, int standard_button_set,
-                     const char **buttons, int button_count,
-                     int default_index, int cancel_index);
+					 const char **buttons, int button_count,
+					 int default_index, int cancel_index);
 
 
 } // End of namespace TADS2

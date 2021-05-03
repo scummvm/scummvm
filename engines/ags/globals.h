@@ -42,6 +42,10 @@
 #include "ags/lib/allegro/aintern.h"
 #include "common/events.h"
 
+namespace Common {
+class DumpFile;
+}
+
 namespace AGS3 {
 
 #define MAXCURSORS 20
@@ -321,6 +325,7 @@ public:
 	// exported functions return value as a RuntimeScriptValue object;
 	// Of 2012-12-20: now used only for plugin exports
 	RuntimeScriptValue *_GlobalReturnValue;
+	Common::DumpFile *_scriptDumpFile = nullptr;
 
 	/**@}*/
 
@@ -728,6 +733,7 @@ public:
 	unsigned int _lastcounter = 0;
 	int _numEventsAtStartOfFunction = 0;
 	uint32 _t1 = 0; // timer for FPS
+	int _old_key_shifts = 0; // for saving shift modes
 
 	 /**@}*/
 

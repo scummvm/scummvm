@@ -95,23 +95,17 @@ uint MacTextLine::getChunkNum(int *col) {
 
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
 	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = textShadow;
-	_maxWidth = maxWidth;
+	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -124,23 +118,16 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 }
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
-	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
+	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s);
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
 	_textShadow = textShadow;
-	_maxWidth = maxWidth;
+	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -154,23 +141,16 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = s;
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
-	_maxWidth = maxWidth;
 	_textShadow = 0;
+	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -183,23 +163,16 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 }
 
 MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
-	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
+	_macFont(macFont), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
 
 	_str = Common::U32String(s);
-	_fullRefresh = true;
 
 	_wm = wm;
-	_macFont = macFont;
 	_fgcolor = fgcolor;
 	_bgcolor = bgcolor;
-	_maxWidth = maxWidth;
-	_textMaxWidth = 0;
-	_textMaxHeight = 0;
-	_surface = nullptr;
-	_textAlignment = textAlignment;
-	_interLinear = interlinear;
-	_maxWidth = maxWidth;
 	_textShadow = 0;
+	_macFontMode = true;
 
 	if (macFont) {
 		_defaultFormatting = MacFontRun(_wm, macFont->getId(), macFont->getSlant(), macFont->getSize(), 0, 0, 0);
@@ -211,8 +184,41 @@ MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *m
 	init();
 }
 
+// Working with plain Font
+MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
+	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
+	_macFont(nullptr), _maxWidth(maxWidth), _textAlignment(textAlignment), _interLinear(interlinear) {
+
+	_str = s;
+
+	_wm = wm;
+	_fgcolor = fgcolor;
+	_bgcolor = bgcolor;
+	_textShadow = 0;
+	_macFontMode = false;
+
+	if (font) {
+		_defaultFormatting = MacFontRun(_wm, font, 0, font->getFontHeight(), 0, 0, 0);
+		_defaultFormatting.font = font;
+	} else {
+		_defaultFormatting.font = NULL;
+	}
+
+	init();
+}
+
 void MacText::init() {
+	_fullRefresh = true;
+
+	_textMaxWidth = 0;
+	_textMaxHeight = 0;
+	_surface = nullptr;
+
 	_defaultFormatting.wm = _wm;
+	// try to set fgcolor as default color in chunks
+	if (_wm->_mode & kWMModeWin95) {
+		_defaultFormatting.fgcolor = _fgcolor;
+	}
 	_currentFormatting = _defaultFormatting;
 	_composeSurface->clear(_bgcolor);
 
@@ -261,6 +267,15 @@ MacText::~MacText() {
 }
 
 void MacText::setMaxWidth(int maxWidth) {
+	if (maxWidth == _maxWidth)
+		return;
+
+	if (!_str.empty())
+		warning("TODO: MacText::setMaxWidth() is incorrect.");
+
+	// It does not take into account the edited string
+	// Actually, it should reshuffle all paragraphs
+
 	_maxWidth = maxWidth;
 
 	_textLines.clear();
@@ -444,6 +459,9 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				if (!_macFontMode)
+					current_format.font = _defaultFormatting.font;
 			} else if (*s == '\016') {	// human-readable format
 				s++;
 
@@ -460,6 +478,10 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 						fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
 
 				current_format.setValues(_wm, fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3);
+
+				// So far, we enforce single font here, though in the future, font size could be altered
+				if (!_macFontMode)
+					current_format.font = _defaultFormatting.font;
 			}
 
 			while (*s && *s != ' ' && *s != '\001') {
@@ -540,7 +562,7 @@ void MacText::splitString(const Common::U32String &str, int curLine) {
 							_textLines[curLine].lastChunk().text = Common::U32String();
 							tmp_width = 0;
 							cur_width = 0;
-                        }
+						}
 						tmp_width += char_width;
 						_textLines[curLine].lastChunk().text += c;
 					}
@@ -651,9 +673,10 @@ void MacText::render(int from, int to) {
 
 		// TODO: _textMaxWidth, when -1, was not rendering ANY text.
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
-			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, color: %d",
-				i, j, xOffset, _textLines[i].y, _textLines[i].height, _textLines[i].chunks[j].text.encode().c_str(),
-				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor);
+			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
+				i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
+				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
+				(void *)_textLines[i].chunks[j].getFont());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;
@@ -694,7 +717,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 	bool hastext = false;
 
 	for (uint i = 0; i < _textLines[line].chunks.size(); i++) {
-		if (enforce)
+		if (enforce && _macFontMode)
 			_textLines[line].chunks[i].font = nullptr;
 
 		if (col >= 0) {
@@ -858,18 +881,60 @@ void MacText::resize(int w, int h) {
 }
 
 void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
+	appendText(str, fontId, fontSize, fontSlant, 0, 0, 0, skipAdd);
+}
+
+void MacText::appendText(const Common::U32String &str, int fontId, int fontSize, int fontSlant, uint16 r, uint16 g, uint16 b, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
-	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, 0, 0, 0);
+	MacFontRun fontRun = MacFontRun(_wm, fontId, fontSlant, fontSize, r, g, b);
 
 	_currentFormatting = fontRun;
 
+	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
+	// then we remove those empty lines
+	// too many special check may cause some strange problem in the future
+	if (_str.empty()) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+			removeLastLine();
+		}
+	}
+
+	// we need to split the string with the font, in order to get the correct font
+	Common::U32String strWithFont = Common::U32String(fontRun.toString()) + str;
+
 	if (!skipAdd) {
-		_str += fontRun.toString();
+		_str += strWithFont;
+	}
+
+	appendText_(strWithFont, oldLen);
+}
+
+void MacText::appendText(const Common::U32String &str, const Font *font, uint16 r, uint16 g, uint16 b, bool skipAdd) {
+	uint oldLen = _textLines.size();
+
+	MacFontRun fontRun = MacFontRun(_wm, font, 0, font->getFontHeight(), r, g, b);
+
+	_currentFormatting = fontRun;
+
+	// we check _str here, if _str is empty but _textLines is not empty, and they are not the end of paragraph
+	// then we remove those empty lines
+	// too many special check may cause some strange problem in the future
+	if (_str.empty()) {
+		while (!_textLines.empty() && !_textLines.back().paragraphEnd) {
+			removeLastLine();
+		}
+	}
+
+	if (!skipAdd) {
 		_str += str;
 	}
 
-	splitString(str);
+	appendText_(str, oldLen);
+}
+
+void MacText::appendText_(const Common::U32String &strWithFont, uint oldLen) {
+	splitString(strWithFont);
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());
@@ -894,12 +959,12 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
+	Common::U32String strWithFont = Common::U32String(_defaultFormatting.toString()) + str;
 
 	if (!skipAdd) {
-		_str += _defaultFormatting.toString();
-		_str += str;
+		_str += strWithFont;
 	}
-	splitString(str);
+	splitString(strWithFont);
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());
@@ -938,10 +1003,11 @@ void MacText::removeLastLine() {
 void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int yoff) {
 	if (_textLines.empty())
 		return;
+
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h)
-		g->fillRect(Common::Rect(x, y, x + w, y + w), _bgcolor);
+		g->fillRect(Common::Rect(x, y, x + w, y + h), _bgcolor);
 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff));
 

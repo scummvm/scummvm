@@ -56,12 +56,12 @@ static const struct TwinELanguage {
 	const char *name;
 	const char *id;
 } LanguageTypes[] = {
-    {"English", "EN_"},
-    {"French", "FR_"},
-    {"German", "DE_"},
-    {"Spanish", "SP_"},
-    {"Italian", "IT_"},
-    {"Portuguese", ""}};
+	{"English", "EN_"},
+	{"French", "FR_"},
+	{"German", "DE_"},
+	{"Spanish", "SP_"},
+	{"Italian", "IT_"},
+	{"Portuguese", ""}};
 
 enum MidiFileType {
 	MIDIFILE_NONE,
@@ -191,6 +191,12 @@ private:
 	EngineState _state = EngineState::Menu;
 	Common::String _queuedFlaMovie;
 
+	ScriptLife *_scriptLife;
+	ScriptMove *_scriptMove;
+
+	Common::RandomSource _rnd;
+	Common::Language _gameLang;
+
 	void processBookOfBu();
 	void processBonusList();
 	void processInventoryAction();
@@ -203,6 +209,12 @@ private:
 	void processActorSamplePosition(int32 actorIdx);
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory(int32 w, int32 h);
+
+	/**
+	 * Game engine main loop
+	 * @return true if we want to show credit sequence
+	 */
+	int32 runGameEngine();
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;
@@ -247,8 +259,6 @@ public:
 	Resources *_resources;
 	Scene *_scene;
 	Screens *_screens;
-	ScriptLife *_scriptLife;
-	ScriptMove *_scriptMove;
 	Holomap *_holomap;
 	Sound *_sound;
 	Text *_text;
@@ -271,11 +281,6 @@ public:
 
 	void queueMovie(const char *filename);
 
-	/**
-	 * Game engine main loop
-	 * @return true if we want to show credit sequence
-	 */
-	int32 runGameEngine();
 	/**
 	 * @return A random value between [0-max)
 	 */
@@ -304,8 +309,6 @@ public:
 	 */
 	bool gameEngineLoop();
 
-	Common::RandomSource _rnd;
-	Common::Language _gameLang;
 	uint32 _gameFlags;
 
 	/**

@@ -118,7 +118,6 @@ bool Sound::playVoxSample(const TextEntry *text) {
 	uint8 *sampPtr = nullptr;
 	int32 sampSize = HQR::getAllocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), text->index, _engine->_text->voxHiddenIndex);
 	if (sampSize == 0) {
-#ifdef USE_TTS
 		if (ConfMan.hasKey("tts_narrator") && ConfMan.getBool("tts_narrator")) {
 			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 			if (ttsMan != nullptr) {
@@ -128,7 +127,6 @@ bool Sound::playVoxSample(const TextEntry *text) {
 		} else {
 			debug(4, "TTS disabled");
 		}
-#endif
 		warning("Failed to get vox sample for index: %i", text->index);
 		return false;
 	}

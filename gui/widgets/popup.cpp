@@ -200,14 +200,12 @@ void PopUpDialog::handleMouseLeft(int button) {
 }
 
 void PopUpDialog::read(const Common::U32String &str) {
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr)
 			ttsMan->say(str);
 	}
-#endif
 }
 
 void PopUpDialog::handleKeyDown(Common::KeyState state) {

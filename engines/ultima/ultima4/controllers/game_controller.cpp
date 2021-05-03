@@ -500,9 +500,9 @@ void GameController::avatarMoved(MoveEvent &event) {
 					g_debugger->jimmyAt(new_coords);
 					event._result = (MoveResult)(MOVE_SUCCEEDED | MOVE_END_TURN);
 				} /*else if (mapPersonAt(c->location->map, new_coords) != nullptr) {
-                    talkAtCoord(newx, newy, 1, nullptr);
-                    event.result = MOVE_SUCCEEDED | MOVE_END_TURN;
-                    }*/
+					talkAtCoord(newx, newy, 1, nullptr);
+					event.result = MOVE_SUCCEEDED | MOVE_END_TURN;
+					}*/
 			}
 
 			/* if we're still blocked */

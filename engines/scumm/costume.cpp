@@ -423,16 +423,16 @@ void ClassicCostumeRenderer::procC64(Codec1 &v1, int actor) {
 #endif
 
 extern "C" int ClassicProc3RendererShadowARM(int _scaleY,
-                                        ClassicCostumeRenderer::Codec1 *v1,
-                                        int pitch,
-                                        const byte *src,
-                                        int   height,
-                                        int _scaleX,
-                                        int _scaleIndexX,
-                                        byte *_shadow_table,
-                                        uint16 _palette[32],
-                                        int32 _numStrips,
-                                        int _scaleIndexY);
+										ClassicCostumeRenderer::Codec1 *v1,
+										int pitch,
+										const byte *src,
+										int   height,
+										int _scaleX,
+										int _scaleIndexX,
+										byte *_shadow_table,
+										uint16 _palette[32],
+										int32 _numStrips,
+										int _scaleIndexY);
 #endif
 
 void ClassicCostumeRenderer::proc3(Codec1 &v1) {

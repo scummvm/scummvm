@@ -5,6 +5,11 @@ $VER: Ext_Inst_so.rexx 0.5 (05.12.2020) Extract and install compiled-in shared l
 PARSE ARG executable install_path
 
 /*
+Determine REXX interpreter
+*/
+PARSE UPPER VERSION language .
+
+/*
 Check if arguments are available, otherwise quit.
 */
 IF ~ARG() THEN DO
@@ -39,7 +44,7 @@ ELSE DO
 	Check for destination path and create it, if needed.
 	*/
 	IF ~EXISTS(install_path'/sobjs/') THEN
-		ADDRESS COMMAND 'makedir 'install_path'/sobjs'
+		ADDRESS COMMAND 'makedir all 'install_path'/sobjs'
 END
 
 /*
@@ -74,7 +79,33 @@ working_line=CALL READLN(SO_read)
 working_line=CALL READLN(SO_read)
 
 i=1
+libpaths.i = 'SDK:local/newlib/lib/'
+i=i+1
+libpaths.i = 'SDK:gcc/lib/'
+i=i+1
+libpaths.i = 'SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'
+i=i+1
 
+/*
+VALUE(arg,, 'ENVIRONMENT') is a Regina REXX extension
+*/
+IF POS('REGINA', language) ~= 0 THEN DO
+	prefix = VALUE('PREFIX',, 'ENVIRONMENT')
+	IF prefix <> '' THEN DO
+		libpaths.i = prefix'/lib/'
+		i=i+1
+	END
+	prefix = VALUE('CROSS_PREFIX',, 'ENVIRONMENT')
+	IF prefix ~= '' THEN DO
+		libpaths.i = prefix'/lib/gcc/ppc-amigaos/'gcc_version'/'
+		i=i+1
+		libpaths.i = prefix'/ppc-amigaos/lib/'
+		i=i+1
+	END
+END
+libpaths.0 = i - 1
+
+i=1
 DO WHILE i>0
 	working_line=READLN(SO_read)
 	IF POS('Shared library:', working_line)>0 THEN DO
@@ -90,22 +121,18 @@ DO WHILE i>0
 		  by default. Since people can use different gcc versions we have
 		  determine which to use the correct path.
 		*/
-		IF EXISTS('SDK:local/newlib/lib/'lib.so) THEN
-			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
-		ELSE DO
-			IF EXISTS('SDK:gcc/lib/'lib.so) THEN
-				ADDRESS COMMAND 'copy clone SDK:gcc/lib/'lib.so install_path'/sobjs/'
-			ELSE DO
-				IF EXISTS('SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so) THEN
-					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
-				ELSE DO
-					/*
-					If a shared library is not found, abort.
-					*/
-					SAY lib.so' not found! Aborting!'
-					EXIT
-				END
+		DO j = 1 TO libpaths.0
+			IF EXISTS(libpaths.j''lib.so) THEN DO
+				ADDRESS COMMAND 'copy clone quiet' libpaths.j''lib.so install_path'/sobjs/'
+				LEAVE
 			END
+		END
+		IF j > libpaths.0 THEN DO
+			/*
+			If a shared library is not found, abort.
+			*/
+			SAY lib.so' not found! Aborting!'
+			EXIT
 		END
 	END
 	ELSE
@@ -121,6 +148,6 @@ IF ~CLOSE(SO_Read) THEN DO
 	EXIT
 END
 
-ADDRESS COMMAND 'delete so_dump'
+ADDRESS COMMAND 'delete force quiet so_dump'
 
 EXIT

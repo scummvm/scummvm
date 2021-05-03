@@ -28,12 +28,23 @@
 
 #include "engines/nancy/state/help.h"
 
+#include "engines/nancy/ui/button.h"
+
 namespace Common {
 DECLARE_SINGLETON(Nancy::State::Help);
 }
 
 namespace Nancy {
 namespace State {
+
+Help::Help() :
+		_state(kInit),
+		_image(),
+		_button(nullptr) {}
+
+Help::~Help() {
+	delete _button;
+}
 
 void Help::process() {
 	switch (_state) {
@@ -61,23 +72,29 @@ void Help::init() {
 	_image.init(imageName);
 
 	chunk->skip(20);
-	_hotspot.left = chunk->readUint16LE();
-	_hotspot.top = chunk->readUint16LE();
-	_hotspot.right = chunk->readUint16LE();
-	_hotspot.bottom = chunk->readUint16LE();
+	Common::Rect buttonSrc, buttonDest;
+	buttonDest.left = chunk->readUint16LE();
+	buttonDest.top = chunk->readUint16LE();
+	buttonDest.right = chunk->readUint16LE();
+	buttonDest.bottom = chunk->readUint16LE();
+	buttonSrc.left = chunk->readUint16LE();
+	buttonSrc.top = chunk->readUint16LE();
+	buttonSrc.right = chunk->readUint16LE();
+	buttonSrc.bottom = chunk->readUint16LE();
 
-	chunk = g_nancy->getBootChunkStream("MSND");
-	chunk->seek(0);
-	_sound.read(*chunk, SoundDescription::kMenu);
+	_button = new UI::Button(_image, 5, _image._drawSurface, buttonSrc, buttonDest);
+	_button->init();
 
 	_state = kBegin;
 }
 
 void Help::begin() {
-	g_nancy->_sound->loadSound(_sound);
-	g_nancy->_sound->playSound(_sound);
+	if (!g_nancy->_sound->isSoundPlaying("MSND")) {
+		g_nancy->_sound->playSound("MSND");
+	}
 
 	_image.registerGraphics();
+	_button->registerGraphics();
 	_image.setVisible(true);
 
 	g_nancy->_cursorManager->setCursorType(CursorManager::kNormalArrow);
@@ -87,17 +104,19 @@ void Help::begin() {
 
 void Help::run() {
 	NancyInput input = g_nancy->_input->getInput();
+	_button->handleInput(input);
 
-	if (_hotspot.contains(input.mousePos) && input.input & NancyInput::kLeftMouseButtonUp) {
-		g_nancy->_sound->playSound(0x18); // Hardcoded by original engine
+	if (_button->_isClicked) {
+		_button->_isClicked = false;
+		g_nancy->_sound->playSound("BUOK");
 		_state = kWaitForSound;
 	}
 }
 
 void Help::waitForSound() {
-	if (!g_nancy->_sound->isSoundPlaying(18)) {
-		g_nancy->_sound->stopSound(_sound);
-		g_nancy->setPreviousState();
+	if (!g_nancy->_sound->isSoundPlaying("BUOK")) {
+		g_nancy->_sound->stopSound("BUOK");
+		g_nancy->setToPreviousState();
 	}
 }
 

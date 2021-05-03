@@ -150,7 +150,8 @@ void GameData::loadTranslation() {
 	if (_gameInfo->_type == GameInfo::GAME_U8) {
 		switch (_gameInfo->_language) {
 		case GameInfo::GAMELANG_ENGLISH:
-			// default. Don't need to do anything
+			// using "translation" to enable bug fixes
+			translationfile = "u8english.ini";
 			break;
 		case GameInfo::GAMELANG_FRENCH:
 			translationfile = "u8french.ini";

@@ -664,7 +664,7 @@ void read_gamefile() {
 		if (word[0] == NULL);
 		else if (text_buffer[0] == '{') {
 			word[wp]++;         /* MOVE THE START OF THE FIRST WORD ONLY
-                                 * TO PAST THE '{'. */
+								 * TO PAST THE '{'. */
 			if (word[wp][0] == 0) {
 				nofnamerr(line);
 				errors++;

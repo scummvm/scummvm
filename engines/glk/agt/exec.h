@@ -51,15 +51,15 @@ struct op_rec {
 /* The following determines if we are doing disambiguation
    or actually executing a verb */
 global uchar do_disambig;  /* 0= execution
-                      1= disambiguating noun
-                      2= disambiguating object */
+					  1= disambiguating noun
+					  2= disambiguating object */
 
 
 /* Flags used during turn execution */
 global rbool beforecmd;     /* Only used by 1.8x games */
 global rbool supress_debug; /* Causes debugging info to _not_ be printed
-                  even if debugging is on; used by disambiguator
-                  and to supress ANY commands */
+				  even if debugging is on; used by disambiguator
+				  and to supress ANY commands */
 global rbool was_metaverb; /* Was the verb that just executed a metaverb? */
 /* Metaverbs are commands that should not take game time
 to execute: SAVE, RESTORE, RESTART, QUIT, SCRIPT, UNSCRIPT,
@@ -80,7 +80,7 @@ global integer *creat_fix;
 /* Defined in EXEC.C                            */
 /* -------------------------------------------------------------------- */
 extern void raw_lineout(const char *s, rbool do_repl,
-                        int context, const char *pword);
+						int context, const char *pword);
 extern void msgout(int msgnum, rbool add_nl);
 extern void sysmsg(int msgid, const char *s);
 extern void alt_sysmsg(int msgid, const char *s, parse_rec *new_dobjrec,
@@ -95,7 +95,7 @@ extern rbool match_answer(char *ans, int anum);
 
 extern void look_room(void);
 extern void runptr(int i, descr_ptr dp[], const char *msg, int msgid,
-                   parse_rec *nounrec, parse_rec *objrec);
+				   parse_rec *nounrec, parse_rec *objrec);
 
 extern int normalize_time(int tnum); /* Convert hhmm so mm<60 */
 extern void add_time(int dt);
@@ -172,8 +172,8 @@ extern void exec_verb(void);
 /* The main routine to search the metacommand list and run the appropriate
    meta-commands */
 extern int scan_metacommand(integer m_actor, int vcode,
-                            integer m_dobj, word m_prep, integer m_iobj,
-                            int *redir_flag);
+							integer m_dobj, word m_prep, integer m_iobj,
+							int *redir_flag);
 
 /* The type checking routine */
 rbool argvalid(int argtype, int arg);
@@ -196,20 +196,20 @@ extern void get_debugcmd(void);  /* Get and execute debugging commands */
 /* -------------------------------------------------------------------- */
 
 /* A note on object codes:
-       <0                 obj is a 'virtual' object, existing only as the word
-                           dict[-obj], e.g. DOOR, flag nouns, global nouns
-       0                  No object (or any object)
-       1                  Self(i.e. the player)
+	   <0                 obj is a 'virtual' object, existing only as the word
+						   dict[-obj], e.g. DOOR, flag nouns, global nouns
+	   0                  No object (or any object)
+	   1                  Self(i.e. the player)
    first_room..last_room  Rooms
    first_noun..last_noun  Nouns
    first_creat..last_creat Creatures
-      1000                Being worn by the player          */
+	  1000                Being worn by the player          */
 
 
 /* The following macro loops over the contents of an object */
 #define contloop(i,obj)   for(i=it_contents(obj);i!=0;i=it_next(i))
 #define safecontloop(i,j,obj) for(i=it_contents(obj),j=it_next(i); \
-                                  i!=0;i=j,j=it_next(i))
+								  i!=0;i=j,j=it_next(i))
 
 #define cnt_val(c) ((c)==-1 ? 0 : (c))
 
@@ -240,7 +240,7 @@ extern void get_debugcmd(void);  /* Get and execute debugging commands */
 
 #define it_name(item) objattr2(item,name,(item<0) ? -item : 0)
 #define it_open(item) nounattr2(item,open, tcreat(item) || \
-                                (tdoor(item) && !room[loc].locked_door))
+								(tdoor(item) && !room[loc].locked_door))
 
 /* This checks to make sure the object isn't unmovable. */
 /* (As such, all non-nouns automatically pass) */
@@ -249,13 +249,13 @@ extern void get_debugcmd(void);  /* Get and execute debugging commands */
 
 #ifdef IT_MACRO
 #define it_contents(item) objattr2(item,contents,\
-                                   roomattr2(item,contents,\
-                                           (item==1) ? player_contents : \
-                                           (item==1000) ? player_worn : 0))
+								   roomattr2(item,contents,\
+										   (item==1) ? player_contents : \
+										   (item==1000) ? player_worn : 0))
 #define it_lockable(item)  nounattr2(item,lockable, (tdoor(item) ? 1 : 0) )
 #define it_locked(item,name) nounattr2(item,locked,\
-                                       (tdoor(item) && room[loc].locked_door ? \
-                                        1 : 0))
+									   (tdoor(item) && room[loc].locked_door ? \
+										1 : 0))
 #else
 extern int it_contents(integer obj);
 extern rbool it_lockable(integer obj, word noun);

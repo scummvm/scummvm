@@ -52,11 +52,11 @@ uint32 ByteSet::getEntries(unsigned int pos, unsigned int n) const {
 	assert(pos + n <= _size);
 	if (n == 0) return 0;
 
-    if (n == 1) {
-        return _data[pos];
-    } else if (n == 2) {
-        return (_data[pos] << 8) | _data[pos + 1];
-    }
+	if (n == 1) {
+		return _data[pos];
+	} else if (n == 2) {
+		return (_data[pos] << 8) | _data[pos + 1];
+	}
 	return 0;
 }
 
@@ -65,12 +65,12 @@ void ByteSet::setEntries(unsigned int pos, unsigned int n, uint32 val) {
 	assert(pos + n <= _size);
 	if (n == 0) return;
 
-    if (n == 1) {
-        _data[pos] = static_cast<uint8>(val);
-    } else if (n == 2) {
-        _data[pos] = static_cast<uint8>((val & 0xFF00) >> 8);
-        _data[pos + 1] = static_cast<uint8>(val & 0xFF);
-    }
+	if (n == 1) {
+		_data[pos] = static_cast<uint8>(val);
+	} else if (n == 2) {
+		_data[pos] = static_cast<uint8>((val & 0xFF00) >> 8);
+		_data[pos + 1] = static_cast<uint8>(val & 0xFF);
+	}
 }
 
 void ByteSet::save(Common::WriteStream *ws) {

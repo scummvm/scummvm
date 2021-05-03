@@ -70,26 +70,27 @@ Controls can also be manually configured in the :doc:`Keymaps tab <../settings/k
 
 .. csv-table::
     :header-rows: 1
+    :class: controls
 
         Touch screen control, Action
-        One finger tap, Left mouse click
+        One finger tap, Left mouse button click
         One finger tap + movement, Mouse movement
-        One finger tap held for >0.5s, Right mouse click
-        One finger tap held for >1s, Middle mouse click
-        Double Tap + movement, "Drag-and-drop, or (for some games): emulates left mouse button hold and drag, eg. for selection from action wheel in Curse of Monkey Island"
-        Two finger tap, Right mouse click
-        Two finger tap + movement of second finger, "Right mouse hold and drag, eg. for selection from action wheel in Tony Tough"
-        Three finger tap, Middle mouse click
-        Three finger tap + movement of third finger, Middle mouse hold and drag
+        One finger tap and hold for >0.5s, Right mouse button click
+        One finger tap and hold for >1s, Middle mouse button click
+        Double tap + movement, "Left mouse button hold and drag, such as for selection from action wheel in Curse of Monkey Island"
+        Two finger tap, Right mouse button click
+        Two finger tap + movement of second finger, "Right mouse button hold and drag, such as for selection from action wheel in Tony Tough"
+        Three finger tap, Middle mouse button click
+        Three finger tap + movement of third finger, Middle mouse button hold and drag
         Long press system Back button, Opens Global Main Menu
         Short press system Back button, "Skip, or Cancel/Quit in the Launcher"
         Long press system Menu button, Opens/closes Virtual keyboard
         Short press system Menu button, Opens Global Main Menu
         Small keyboard icon (top right), Opens/closes Virtual keyboard
         D-pad up/down/left/right, Mouse movement
-        D-pad center, Left mouse click
+        D-pad center, Left mouse button click
         Trackball movement, Mouse movement
-        Trackball click, Left mouse click
+        Trackball click, Left mouse button click
 
 Touch controls
 ****************
@@ -104,6 +105,10 @@ Two finger tap
 
 To do a two finger tap, hold one finger down and then tap with a second finger.
 
+Three finger tap
+^^^^^^^^^^^^^^^^^^
+
+To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.  
 
 Immersive Sticky fullscreen mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

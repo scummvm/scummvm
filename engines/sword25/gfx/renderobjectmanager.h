@@ -30,13 +30,13 @@
  */
 
 /*
-    BS_RenderObjectManager
-    ----------------------
-    Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
+	BS_RenderObjectManager
+	----------------------
+	Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
 
-    Sie sorgt z.B. dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden.
+	Sie sorgt z.B. dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden.
 
-    Autor: Malte Thiesen
+	Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_RENDEROBJECTMANAGER_H
@@ -71,10 +71,10 @@ public:
 };
 
 /**
-    @brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
+	@brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
 
-    Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die
-    BS_RenderObjects über einen String.
+	Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die
+	BS_RenderObjects über einen String.
 */
 class RenderObjectManager : public Persistable {
 public:

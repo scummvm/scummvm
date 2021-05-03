@@ -54,7 +54,7 @@ bool Resources::load(Common::U32String &errorMessage) {
 	}
 
 	// Validate the version number
-	uint expectedVersion = 1;
+	uint expectedVersion = 2;
 	uint version = f.readUint16LE();
 	if (version != expectedVersion) {
 		errorMessage = Common::U32String::format(
@@ -78,6 +78,9 @@ bool Resources::load(Common::U32String &errorMessage) {
 			break;
 		case 5:
 			_datIndex[idx]._language = Common::EN_ANY;
+			break;
+		case 23:
+			_datIndex[idx]._language = Common::ES_ESP;
 			break;
 		default:
 			error("Unknown language");
@@ -203,6 +206,19 @@ const char *const GENERAL_MESSAGES[] = {
 	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
 	"THIS OBJECT REQUIRES NO HINTS",    // HELP_MESSAGE
 	"THAT DOESN'T SEEM TO WORK."        // USE_MESSAGE
+};
+
+const char *const ESP_GENERAL_MESSAGES[] = {
+	"MIRANDO AHI NO ENCONTRARAS NADA DE INTERES.", // LOOK_MESSAGE
+	"NO ESTA ABIERTO.",                 // OPEN_MESSAGE
+	"NO PUEDES MOVERLO.",               // MOVE_MESSAGE
+	"NO PUEDES COGER ESO.",             // GET_MESSAGE
+	"NO PARECE QUE FUNCIONE.",          // USE_MESSAGE
+	"NO PUEDES SUBIRTE A ESO.",         // GO_MESSAGE
+	"PARECE QUE NO TE RESPONDE.",       // TALK_MESSAGE
+	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
+	"NO HAY AYUDA PARA ESE OBJETO.",    // HELP_MESSAGE
+	"NO PARECE QUE FUNCIONE."           // USE_MESSAGE
 };
 
 const int INVCOORDS[][4] = {

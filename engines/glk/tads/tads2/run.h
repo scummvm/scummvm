@@ -51,12 +51,12 @@ struct bifcxdef;
 
 /* stack element - the stack is an array of these structures */
 struct runsdef {
-    uchar  runstyp;                                      /* type of element */
-    union {
-        long    runsvnum;                                  /* numeric value */
-        objnum  runsvobj;                                   /* object value */
-        prpnum  runsvprp;                          /* property number value */
-        uchar  *runsvstr;                              /* string/list value */
+	uchar  runstyp;                                      /* type of element */
+	union {
+		long    runsvnum;                                  /* numeric value */
+		objnum  runsvobj;                                   /* object value */
+		prpnum  runsvprp;                          /* property number value */
+		uchar  *runsvstr;                              /* string/list value */
 	} runsv;
 
 	runsdef() : runstyp(0) {
@@ -66,56 +66,56 @@ struct runsdef {
 
 /* external function control structure */
 struct runxdef {
-    char    runxnam[TOKNAMMAX + 1];            /* name of external function */
-    int   (*runxptr)(void *);          /* pointer to memory containing code */
+	char    runxnam[TOKNAMMAX + 1];            /* name of external function */
+	int   (*runxptr)(void *);          /* pointer to memory containing code */
 };
 
 /* external function context structure - passed to user exits */
 struct runuxdef {
-    struct runcxdef osfar_t *runuxctx;                  /* run-time context */
-    struct runufdef osfar_t *runuxvec;               /* vector of functions */
-    int                      runuxargc;   /* count of arguments to function */
+	struct runcxdef osfar_t *runuxctx;                  /* run-time context */
+	struct runufdef osfar_t *runuxvec;               /* vector of functions */
+	int                      runuxargc;   /* count of arguments to function */
 };
 
 /* external function callback vector */
 struct runufdef {
-    int    (osfar_t *runuftyp)(runuxdef *);         /* type of top of stack */
-    long   (osfar_t *runufnpo)(runuxdef *);                 /* pop a number */
-    uchar *(osfar_t *runufspo)(runuxdef *);                 /* pop a string */
-    void   (osfar_t *runufdsc)(runuxdef *); /* discard item at top of stack */
-    void   (osfar_t *runufnpu)(runuxdef *, long);          /* push a number */
-    void   (osfar_t *runufspu)(runuxdef *, uchar *); /* push alloc'd string */
-    void   (osfar_t *runufcspu)(runuxdef *, char *);     /* push a C-string */
-    uchar *(osfar_t *runufsal)(runuxdef *, int);   /* allocate a new string */
-    void   (osfar_t *runuflpu)(runuxdef *, int);/* push DAT_TRUE or DAT_NIL */
+	int    (osfar_t *runuftyp)(runuxdef *);         /* type of top of stack */
+	long   (osfar_t *runufnpo)(runuxdef *);                 /* pop a number */
+	uchar *(osfar_t *runufspo)(runuxdef *);                 /* pop a string */
+	void   (osfar_t *runufdsc)(runuxdef *); /* discard item at top of stack */
+	void   (osfar_t *runufnpu)(runuxdef *, long);          /* push a number */
+	void   (osfar_t *runufspu)(runuxdef *, uchar *); /* push alloc'd string */
+	void   (osfar_t *runufcspu)(runuxdef *, char *);     /* push a C-string */
+	uchar *(osfar_t *runufsal)(runuxdef *, int);   /* allocate a new string */
+	void   (osfar_t *runuflpu)(runuxdef *, int);/* push DAT_TRUE or DAT_NIL */
 };
 
 /* execution context */
 struct runcxdef {
-    errcxdef   *runcxerr;                       /* error management context */
-    mcmcxdef   *runcxmem;    /* cache manager context for object references */
-    runsdef    *runcxstk;                      /* base of interpreter stack */
-    runsdef    *runcxstop;                                  /* top of stack */
-    runsdef    *runcxsp;     /* current stack pointer (stack grows upwards) */
-    runsdef    *runcxbp;                                    /* base pointer */
-    uchar      *runcxheap;          /* run-time variable-length object heap */
-    uchar      *runcxhp;                            /* current heap pointer */
-    uchar      *runcxhtop;                                   /* top of heap */
-    objucxdef  *runcxundo;                                  /* undo context */
-    tiocxdef   *runcxtio;                               /* text I/O context */
-    void       *runcxbcx;        /* context for built-in callback functions */
-    void     (**runcxbi)(struct bifcxdef *ctx, int argc);
-                                                      /* built-in functions */
-    struct dbgcxdef *runcxdbg;                          /* debugger context */
-    struct voccxdef *runcxvoc;             /* player command parser context */
-    void      (*runcxdmd)(void *ctx, objnum obj, prpnum prp);
-                                         /* demand-loader callback function */
-    void       *runcxdmc;                 /* demand-loader callback context */
-    runxdef    *runcxext;                        /* external function array */
-    int         runcxexc;                    /* count of external functions */
-    uint        runcxlofs;        /* offset of last line record encountered */
-    char       *runcxgamename;                     /* name of the .GAM file */
-    char       *runcxgamepath;      /* absolute directory path of .GAM file */
+	errcxdef   *runcxerr;                       /* error management context */
+	mcmcxdef   *runcxmem;    /* cache manager context for object references */
+	runsdef    *runcxstk;                      /* base of interpreter stack */
+	runsdef    *runcxstop;                                  /* top of stack */
+	runsdef    *runcxsp;     /* current stack pointer (stack grows upwards) */
+	runsdef    *runcxbp;                                    /* base pointer */
+	uchar      *runcxheap;          /* run-time variable-length object heap */
+	uchar      *runcxhp;                            /* current heap pointer */
+	uchar      *runcxhtop;                                   /* top of heap */
+	objucxdef  *runcxundo;                                  /* undo context */
+	tiocxdef   *runcxtio;                               /* text I/O context */
+	void       *runcxbcx;        /* context for built-in callback functions */
+	void     (**runcxbi)(struct bifcxdef *ctx, int argc);
+													  /* built-in functions */
+	struct dbgcxdef *runcxdbg;                          /* debugger context */
+	struct voccxdef *runcxvoc;             /* player command parser context */
+	void      (*runcxdmd)(void *ctx, objnum obj, prpnum prp);
+										 /* demand-loader callback function */
+	void       *runcxdmc;                 /* demand-loader callback context */
+	runxdef    *runcxext;                        /* external function array */
+	int         runcxexc;                    /* count of external functions */
+	uint        runcxlofs;        /* offset of last line record encountered */
+	char       *runcxgamename;                     /* name of the .GAM file */
+	char       *runcxgamepath;      /* absolute directory path of .GAM file */
 };
 
 /* execute a function, given the function object number */
@@ -129,7 +129,7 @@ void runfn(runcxdef *ctx, noreg objnum objn, int argc);
  *   executed; 0 is used for functions. 
  */
 void runexe(runcxdef *ctx, uchar *p, objnum self, objnum target,
-            prpnum targprop, int argc);
+			prpnum targprop, int argc);
 
 /* push a value onto the stack */
 void runpush(runcxdef *ctx, dattyp typ, runsdef *val);
@@ -171,8 +171,8 @@ void runpushcstr(runcxdef *ctx, const char *str, size_t len, int sav);
  *   operations, with the current target object given as 'obj'.
  */
 void runpprop(runcxdef *ctx, uchar *noreg *codepp, objnum callobj,
-              prpnum callprop, noreg objnum obj, prpnum prop, int inh,
-              int argc, objnum self);
+			  prpnum callprop, noreg objnum obj, prpnum prop, int inh,
+			  int argc, objnum self);
 
 /* top level runpprop, when caller is not executing in an object */
 /* void runppr(runcxdef *ctx, objnum obj, prpnum prp, int argc); */
@@ -207,7 +207,7 @@ void runpprop(runcxdef *ctx, uchar *noreg *codepp, objnum callobj,
   (runstkund(ctx), ((--(ctx)->runcxsp))->runstyp==DAT_OBJECT ? \
    ((ctx)->runcxsp->runsv.runsvobj) : \
    ((ctx)->runcxsp->runstyp==DAT_NIL ? MCMONINV : \
-    (runsig(ctx,ERR_REQVOB), (objnum)0)))
+	(runsig(ctx,ERR_REQVOB), (objnum)0)))
 
 /* pop a list, signalling an error if not a list */
 /* uchar *runpoplst(runcxdef *ctx); */
@@ -228,8 +228,8 @@ void runpprop(runcxdef *ctx, uchar *noreg *codepp, objnum callobj,
 /* objnum runpopfn(runcxdef *ctx); */
 #define runpopfn(ctx) \
   ((objnum)(runstkund(ctx), ((--(ctx)->runcxsp))->runstyp!=DAT_FNADDR ? \
-                      (runsig(ctx,ERR_REQVFN), (objnum)0) : \
-                      ((ctx)->runcxsp->runsv.runsvobj)))
+					  (runsig(ctx,ERR_REQVFN), (objnum)0) : \
+					  ((ctx)->runcxsp->runsv.runsvobj)))
 
 /* pop a string value */
 /* char *runpopstr(runcxdef *ctx); */
@@ -279,8 +279,8 @@ int runeq(runcxdef *ctx);
  *   values to meet the need.  
  */
 #define runcheckargc(ctx, nargc) \
-    while ((ctx)->runcxsp - (ctx)->runcxbp < *(nargc)) \
-        runpnil(ctx)
+	while ((ctx)->runcxsp - (ctx)->runcxbp < *(nargc)) \
+		runpnil(ctx)
 
 #ifdef RUNFAST
 # define runstkovf(ctx) (DISCARD 0)
@@ -316,7 +316,7 @@ int runeq(runcxdef *ctx);
 
 /* garbage collect heap, making sure 'siz' bytes are available afterwards */
 void runhcmp(runcxdef *ctx, uint siz, uint below,
-             runsdef *val1, runsdef *val2, runsdef *val3);
+			 runsdef *val1, runsdef *val2, runsdef *val3);
 
 /* determine size of a data item */
 int runsiz(runsdef *item);
@@ -347,12 +347,12 @@ uchar *runcprst(runcxdef *ctx, uint ofs, objnum obj, prpnum prop);
 /* reset run-time: throw away entire stack and heap */
 /* void runrst(runcxdef *ctx); */
 #define runrst(ctx) (((ctx)->runcxsp = (ctx)->runcxstk), \
-                     ((ctx)->runcxhp = (ctx)->runcxheap), \
-                     dbgrst(ctx->runcxdbg))
+					 ((ctx)->runcxhp = (ctx)->runcxheap), \
+					 dbgrst(ctx->runcxdbg))
 
 /* set up runtime status line display */
 void runistat(struct voccxdef *vctx, struct runcxdef *rctx,
-                  struct tiocxdef *tctx);
+				  struct tiocxdef *tctx);
 
 /* signal a run-time error - allows debugger trapping */
 void runsign(runcxdef *ctx, int err);
@@ -370,7 +370,7 @@ void runstat();
 
 /* initialize output status */
 void runistat(struct voccxdef *vctx, struct runcxdef *rctx,
-              struct tiocxdef *tctx);
+			  struct tiocxdef *tctx);
 
 } // End of namespace TADS2
 } // End of namespace TADS

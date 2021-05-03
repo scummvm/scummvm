@@ -43,13 +43,16 @@ struct WeaponInfo {
 
 	// Crusader-specific fields:
 	uint16 _sound;		//!< The sound this weapon makes when fired
+	uint16 _reloadSound; //!< The sound made when reloaded
 	uint16 _ammoType;	//!< The inventory frame for the ammo used
 	uint16 _ammoShape;	//!< The shape number for the ammo used
 	uint16 _displayGumpShape; //! The gump shape to use for inventory display (3,4,5)
 	uint16 _displayGumpFrame; //!< The frame to use in the inventory gump
 	uint8 _small;	//! A flag whether or not the weapon is "small" (changes the animations used)
-	uint16 _defaultAmmo; //! Count of ammo the weapon starts with
+	uint16 _clipSize; //! Count of ammo the weapon starts with and gets from a reload
+	uint16 _energyUse; //! Energy used by each shot
 	uint8 _field8;	//! Not totally sure, used like "cycle time" in Attack Process
+	uint16 _shotDelay; //! Delay between shots
 
 	enum DmgType {
 		DMG_NORMAL = 0x0001,

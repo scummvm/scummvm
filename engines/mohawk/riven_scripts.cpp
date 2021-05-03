@@ -919,7 +919,7 @@ void RivenSwitchCommand::applyCardPatches(uint32 globalId, int scriptType, uint1
 }
 
 RivenStackChangeCommand::RivenStackChangeCommand(MohawkEngine_Riven *vm, uint16 stackId, uint32 globalCardId,
-                                                 bool byStackId, bool byStackCardId) :
+												 bool byStackId, bool byStackCardId) :
 		RivenCommand(vm),
 		_stackId(stackId),
 		_cardId(globalCardId),

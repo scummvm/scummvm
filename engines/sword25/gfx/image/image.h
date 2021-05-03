@@ -30,10 +30,10 @@
  */
 
 /*
-    BS_Image
-    --------
+	BS_Image
+	--------
 
-    Autor: Malte Thiesen
+	Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_IMAGE_H

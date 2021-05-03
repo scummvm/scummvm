@@ -67,7 +67,7 @@ bool Holomap::loadLocations() {
 		_locations[i].angle.x = ClampAngle(stream.readSint16LE());
 		_locations[i].angle.y = ClampAngle(stream.readSint16LE());
 		_locations[i].angle.z = ClampAngle(stream.readSint16LE());
-		_locations[i].textIndex = stream.readUint16LE();
+		_locations[i].textIndex = (TextId)stream.readUint16LE();
 
 		if (_engine->_text->getMenuText(_locations[i].textIndex, _locations[i].name, sizeof(_locations[i].name))) {
 			debug(2, "Scene %i: %s", i, _locations[i].name);

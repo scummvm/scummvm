@@ -48,16 +48,16 @@ void makeRectStretchable(int &x, int &y, int &w, int &h, bool interpolate);
 /**
  * TODO: explain
  */
-                    
+					
 int stretch200To240(uint8 *buf,
-                    uint32 pitch,
-                    int width,
-                    int height,
-                    int srcX,
-                    int srcY,
-                    int origSrcY,
-                    bool interpolate,
-                    const Graphics::PixelFormat &format);
+					uint32 pitch,
+					int width,
+					int height,
+					int srcX,
+					int srcY,
+					int origSrcY,
+					bool interpolate,
+					const Graphics::PixelFormat &format);
 
 int stretch200To240Nearest(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY, const Graphics::PixelFormat &format);
 

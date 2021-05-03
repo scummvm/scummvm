@@ -210,11 +210,6 @@ SOURCE widgets\popup.cpp
 SOURCE widgets\scrollbar.cpp
 SOURCE widgets\tab.cpp
 //STOP_AUTO_OBJECTS_GUI_//
-// these next three will go into gui\modules.mk and will end up in START_AUTO_OBJECTS_GUI
-// for now they are in the phone platform specific MMP files because of library dependency probs during linking
-//SOURCE Key.cpp
-//SOURCE KeysDialog.cpp
-//SOURCE Actions.cpp
 
 SOURCEPATH ..\..\..\..\audio
 //START_AUTO_OBJECTS_AUDIO_// Updated @ Thu Dec 10 22:42:12 2015
@@ -333,7 +328,6 @@ SOURCE	   backends\modular-backend.cpp
 SOURCE     backends\audiocd\default\default-audiocd.cpp
 SOURCE     backends\audiocd\sdl\sdl-audiocd.cpp
 SOURCE     backends\events\sdl\sdl-events.cpp
-SOURCE     backends\events\symbiansdl\symbiansdl-events.cpp
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
 SOURCE     backends\graphics\sdl\sdl-graphics.cpp

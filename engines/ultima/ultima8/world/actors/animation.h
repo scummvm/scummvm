@@ -103,10 +103,12 @@ enum Sequence {
 	combatStandSmallWeapon = 4,
 	readySmallWeapon = 7,
 	fireSmallWeapon = 8,
+	reloadSmallWeapon = 10,
 	unreadySmallWeapon = 11,
 	readyLargeWeapon = 12,
 	fireLargeWeapon = 13,
 	reload = 14,
+	reloadLargeWeapon = 15,
 	unreadyLargeWeapon = 16,
 	fallBackwardsCru = 18,
 	fallForwardsCru = 20,
@@ -165,6 +167,7 @@ enum Result {
 bool isCombatAnim(const Sequence anim);
 bool isCombatAnimU8(const Sequence anim);
 bool isCombatAnimCru(const Sequence anim);
+bool isCastAnimU8(const Sequence anim);
 Sequence checkWeapon(const Sequence nextanim, const Sequence lastanim);
 
 } // End of namespace Animation

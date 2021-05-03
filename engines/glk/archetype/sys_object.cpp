@@ -70,7 +70,7 @@ void send_to_system(int transport, String &strmsg, ResultType &result, ContextTy
 	int the_caller;
 	int obj_index;
 	String nomatch;
-    NodePtr np;
+	NodePtr np;
 	void *p;
 
 	if (g_vm->shouldQuit())

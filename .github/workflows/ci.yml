@@ -15,21 +15,21 @@ jobs:
             arch: x86
             # fribidi is disabled due to timeouts when installing the package
             configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
             useNasm: 'true'
           - platform: x64
             arch: x64
             triplet: x64-windows
             # fribidi is disabled due to timeouts when installing the package
             configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
           - platform: arm64
             arch: arm64
             triplet: arm64-windows
             # fribidi is disabled due to https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
             # Note that fribidi is also disabled on arm64 in devtools/create_project/msvc.cpp
             configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi --disable-opengl
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib'
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
     env:
       CONFIGURATION: Release
       PLATFORM: ${{ matrix.platform }}
@@ -103,7 +103,7 @@ jobs:
           - platform: macosx
             buildFlags: -scheme ScummVM-macOS
             configFlags: --disable-nasm --enable-faad --enable-mpeg2
-            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi glew mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora
+            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi glew mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theora --disable-taskbar --disable-tts --disable-fribidi

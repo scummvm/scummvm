@@ -23,6 +23,7 @@
 
 #include "sci/sci.h"	// for INCLUDE_OLDGFX
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
+#include "sci/engine/features.h"
 #include "sci/engine/file.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/kernel.h"
@@ -107,6 +108,7 @@ void EngineState::reset(bool isRestoring) {
 #ifdef ENABLE_SCI32
 	_eventCounter = 0;
 #endif
+	_paletteSetIntensityCounter = 0;
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 	_gameIsBenchmarking = false;
@@ -168,6 +170,13 @@ void EngineState::initGlobals() {
 	variablesSegment[VAR_GLOBAL] = script_000->getLocalsSegment();
 	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->getLocalsBegin();
 	variablesMax[VAR_GLOBAL] = script_000->getLocalsCount();
+
+	// The KQ5 CD Windows interpreter set global 400 to tell the scripts that the
+	//  platform was Windows. The global determines which cursors the scripts use,
+	//  so we only set this if the user has chosen to use Windows cursors.
+	if (g_sci->getGameId() == GID_KQ5 && g_sci->isCD()) {
+		variables[VAR_GLOBAL][400].setOffset(g_sci->_features->useWindowsCursors());
+	}
 }
 
 uint16 EngineState::currentRoomNumber() const {
@@ -325,6 +334,13 @@ kLanguage SciEngine::getSciLanguage() {
 			switch (getLanguage()) {
 			case Common::FR_FRA:
 				lang = K_LANG_FRENCH;
+				// WORKAROUND: The French version of LSL1VGA is a fan patch that's based
+				// on the official Spanish version, with the Spanish content replaced
+				// with French content. The game scripts require printLang to be Spanish
+				// in order to use the French text and load the correct views.
+				if (g_sci->getGameId() == GID_LSL1) {
+					lang = K_LANG_SPANISH;
+				}
 				break;
 			case Common::ES_ESP:
 				lang = K_LANG_SPANISH;

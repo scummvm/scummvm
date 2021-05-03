@@ -984,7 +984,7 @@ int GUI_HoF::gameOptionsTalkie(Button *caller) {
 int GUI_HoF::changeLanguage(Button *caller) {
 	updateMenuButton(caller);
 	++_vm->_lang;
-	_vm->_lang %= 3;
+	_vm->_lang %= _vm->_numLang;
 	setupOptionsButtons();
 	renewHighlight(_gameOptions);
 	return 0;

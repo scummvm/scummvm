@@ -64,7 +64,7 @@ public:
 	 * All the parameters MUST be normalized.
 	 */
 	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
-                                const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
+								const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
 	
 	/**
 	* Inverts a matrix in place.

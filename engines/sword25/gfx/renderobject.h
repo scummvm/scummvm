@@ -30,13 +30,13 @@
  */
 
 /*
-    BS_RenderObject
-    ---------------
-    Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt. Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
-    Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
-    Alle BS_RenderObject Instanzen werden von einem BS_RenderObjectManager in einem Baum verwaltet.
+	BS_RenderObject
+	---------------
+	Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt. Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
+	Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
+	Alle BS_RenderObject Instanzen werden von einem BS_RenderObjectManager in einem Baum verwaltet.
 
-    Autor: Malte Thiesen
+	Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_RENDEROBJECT_H
@@ -63,11 +63,11 @@ class Text;
 
 // Klassendefinition
 /**
-    @brief  Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt.
+	@brief  Dieses ist die Klasse die sämtliche sichtbaren Objekte beschreibt.
 
-    Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
-    Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
-    Alle BS_RenderObject Instanzen werden von einem BS_RenderObjektManager in einem Baum verwaltet.
+	Alle anderen sichtbaren Objekte müssen von ihr abgeleitet werden.
+	Diese Klasse erledigt Aufgaben wie: minimales Neuzeichnen, Renderreihenfolge, Objekthierachie.
+	Alle BS_RenderObject Instanzen werden von einem BS_RenderObjektManager in einem Baum verwaltet.
  */
 class RenderObject {
 public:

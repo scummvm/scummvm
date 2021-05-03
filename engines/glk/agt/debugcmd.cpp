@@ -86,7 +86,7 @@ static void d_listroom() {
 }
 
 #define SEPLENG 27  /* Width between beginning of object column and
-               location column */
+			   location column */
 
 static void d_listnoun() {
 	int i;

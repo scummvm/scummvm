@@ -49,7 +49,7 @@ const FixedImageConfiguration CryOmni3DEngine_Versailles::kFixedImageConfigurati
 };
 
 CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
-        const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc),
+		const CryOmni3DGameDescription *gamedesc) : CryOmni3DEngine(syst, gamedesc),
 	_mainPalette(nullptr), _cursorPalette(nullptr), _transparentPaletteMap(nullptr),
 	_transparentSrcStart(uint(-1)), _transparentSrcStop(uint(-1)), _transparentDstStart(uint(-1)),
 	_transparentDstStop(uint(-1)), _transparentNewStart(uint(-1)), _transparentNewStop(uint(-1)),
@@ -257,7 +257,7 @@ bool CryOmni3DEngine_Versailles::shouldAbort() {
 }
 
 Common::String CryOmni3DEngine_Versailles::prepareFileName(const Common::String &baseName,
-        const char *const *extensions) const {
+		const char *const *extensions) const {
 	Common::String baseName_(baseName);
 	if (getPlatform() != Common::kPlatformMacintosh) {
 		// Replace dashes by underscores for PC versions
@@ -440,7 +440,7 @@ void CryOmni3DEngine_Versailles::loadCursorsPalette() {
 }
 
 void CryOmni3DEngine_Versailles::setupPalette(const byte *palette, uint start, uint num,
-        bool commit) {
+		bool commit) {
 	memcpy(_mainPalette + 3 * start, palette, 3 * num);
 	copySubPalette(_mainPalette, _cursorPalette, 240, 8);
 
@@ -536,7 +536,7 @@ void CryOmni3DEngine_Versailles::calculateTransparentMapping() {
 }
 
 void CryOmni3DEngine_Versailles::makeTranslucent(Graphics::Surface &dst,
-        const Graphics::Surface &src) const {
+		const Graphics::Surface &src) const {
 	assert(dst.w == src.w && dst.h == src.h);
 
 	const byte *srcP = (const byte *) src.getPixels();
@@ -1120,7 +1120,7 @@ void CryOmni3DEngine_Versailles::fakeTransition(uint dstPlaceId) {
 }
 
 uint CryOmni3DEngine_Versailles::determineTransitionAnimation(uint srcPlaceId,
-        uint dstPlaceId, const Transition **transition_) {
+		uint dstPlaceId, const Transition **transition_) {
 	const Place *srcPlace = _wam.findPlaceById(srcPlaceId);
 	const Place *dstPlace = _wam.findPlaceById(dstPlaceId);
 	const Transition *transition = srcPlace->findTransition(dstPlaceId);
@@ -1270,7 +1270,7 @@ int CryOmni3DEngine_Versailles::handleWarp() {
 }
 
 bool CryOmni3DEngine_Versailles::handleWarpMouse(uint *actionId,
-        uint movingCursor) {
+		uint movingCursor) {
 	fixActionId(actionId);
 
 	if (getCurrentMouseButton() == 2 ||
@@ -1485,7 +1485,7 @@ void CryOmni3DEngine_Versailles::animateCursor(const Object *obj) {
 }
 
 void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage *fimg,
-        bool showObject) {
+		bool showObject) {
 	_inventory.add(obj);
 	Object::ViewCallback cb = obj->viewCallback();
 	if (showObject && cb) {
@@ -1501,7 +1501,7 @@ void CryOmni3DEngine_Versailles::collectObject(Object *obj, const ZonFixedImage 
 }
 
 void CryOmni3DEngine_Versailles::displayObject(const Common::String &imgName,
-        DisplayObjectHook hook) {
+		DisplayObjectHook hook) {
 	Image::ImageDecoder *imageDecoder = loadHLZ(imgName);
 	if (!imageDecoder) {
 		error("Can't display object");
@@ -1624,7 +1624,7 @@ uint CryOmni3DEngine_Versailles::getFakeTransition(uint actionId) const {
 }
 
 void CryOmni3DEngine_Versailles::playInGameVideo(const Common::String &filename,
-        bool restoreCursorPalette) {
+		bool restoreCursorPalette) {
 	if (!_isPlaying) {
 		return;
 	}
@@ -1723,7 +1723,7 @@ void CryOmni3DEngine_Versailles::drawVideoSubtitles(uint frameNum) {
 }
 
 void CryOmni3DEngine_Versailles::loadBMPs(const char *pattern, Graphics::Surface *bmps,
-        uint count) {
+		uint count) {
 	Image::BitmapDecoder bmpDecoder;
 	Common::File file;
 

@@ -722,7 +722,7 @@ void scaleLine8Bit(unsigned char *Target, unsigned char *Source, int SrcWidth, i
 
 //Coarse 2D scaling from http://www.compuphase.com/graphic/scale.htm
 void scale_rect_8bit(unsigned char *Source, unsigned char *Target, int SrcWidth, int SrcHeight,
-                     int TgtWidth, int TgtHeight) {
+					 int TgtWidth, int TgtHeight) {
 	int NumPixels = TgtHeight;
 	int IntPart = (SrcHeight / TgtHeight) * SrcWidth;
 	int FractPart = SrcHeight % TgtHeight;

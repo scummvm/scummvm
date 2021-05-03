@@ -57,7 +57,7 @@ AnimationTracker::~AnimationTracker() {
 
 
 bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
-                            Direction dir, const PathfindingState *state) {
+							Direction dir, const PathfindingState *state) {
 	assert(actor);
 	_actor = actor->getObjId();
 	uint32 shape = actor->getShape();
@@ -89,10 +89,8 @@ bool AnimationTracker::init(const Actor *actor, Animation::Sequence action,
 
 #ifdef WATCHACTOR
 	if (actor && actor->getObjId() == watchactor) {
-		pout << "AnimationTracker: playing action " << actionnum << " " << _startFrame << "-" << _endFrame
-		     << " (_animAction flags: " << Std::hex << _animAction->_flags
-		     << Std::dec << ")" << Std::endl;
-
+		debug(6, "AnimationTracker: playing action %d %d-%d (animAction flags: 0x04%x)",
+			  actionnum, _startFrame, _endFrame, _animAction->getFlags());
 	}
 #endif
 
@@ -569,7 +567,7 @@ void AnimationTracker::updateActorFlags() {
 }
 
 void AnimationTracker::getInterpolatedPosition(int32 &x, int32 &y,
-                                               int32 &z, int fc) const {
+											   int32 &z, int fc) const {
 	int32 dx = _x - _prevX;
 	int32 dy = _y - _prevY;
 	int32 dz = _z - _prevZ;

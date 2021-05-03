@@ -67,15 +67,13 @@ public:
 
 	void stopMusic();
 
-	void setVolume(uint16 vol);
-
 	uint16 getMouseCenterX();
 	uint16 getMouseCenterY();
 
 	bool dialoscansvmas(Dialog *dial);
 	void musique();
 	void preloadDialogs(int16 vid);
-	void loadHnm(uint16 num);
+	Common::SeekableReadStream *loadSubStream(uint16 num);
 	bool personIsTalking();
 	bool animationIsActive();
 	byte *getImageDesc();
@@ -648,7 +646,6 @@ private:
 
 	CSoundChannel  *_musicChannel;
 	CSoundChannel  *_voiceChannel;
-	CSoundChannel *_hnmSoundChannel;
 
 	int   _demoCurrentTicks;
 	int   _demoStartTicks;

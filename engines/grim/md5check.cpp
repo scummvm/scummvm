@@ -330,10 +330,10 @@ const char *emiPS2_local[] = {
 };
 /*
 const char *emiPS2_music1[] = {
-    "a44753d9aaed016e6c7b398b55c97d3d", // english
+	"a44753d9aaed016e6c7b398b55c97d3d", // english
 };
 const char *emiPS2_music2[] = {
-    "204cb3d451e4bf71ae5432ab33ca3a49", // english
+	"204cb3d451e4bf71ae5432ab33ca3a49", // english
 };
 */
 const char *emiPS2_sfx[] = {

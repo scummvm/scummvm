@@ -30,9 +30,9 @@
 namespace CryOmni3D {
 
 ZonFixedImage::ZonFixedImage(CryOmni3DEngine &engine,
-                             Inventory &inventory,
-                             const Sprites &sprites,
-                             const FixedImageConfiguration *configuration) :
+							 Inventory &inventory,
+							 const Sprites &sprites,
+							 const FixedImageConfiguration *configuration) :
 	_engine(engine), _inventory(inventory), _sprites(sprites),
 	_configuration(configuration),
 	_callback(nullptr), _imageDecoder(nullptr), _imageSurface(nullptr),

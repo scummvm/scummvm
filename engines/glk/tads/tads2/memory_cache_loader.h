@@ -42,7 +42,7 @@ namespace TADS2 {
  * Loader context
  */
 struct mclcxdef {
-    errcxdef *mclcxerr;			/* error handling context */
+	errcxdef *mclcxerr;			/* error handling context */
 };
 
 /**

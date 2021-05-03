@@ -325,6 +325,24 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Return to Zork - Demo from Zork Anthology CD
+		// Bugreport #11202
+		{
+			"rtz",
+			"Demo",
+			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 130683),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_DEMO,
+			GUIO0()
+		},
+		GID_RTZ,
+		0,
+		GF_DEMO,
+		3,
+	},
+
+	{
 		// Return to Zork - Japanese DOS
 		// This is the RTZCD.DAT in the base directory of the FM-Towns CD
 		{
@@ -386,6 +404,23 @@ static const MadeGameDescription gameDescriptions[] = {
 			"manhole",
 			_s("The game is using unsupported engine"),
 			AD_ENTRY1("manhole.dat", "e8cec9bf21e4c50a7ebc193a4e0b48f5"),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		0,
+		GF_CD,
+		2,
+	},
+
+	// Bugreport #5855
+	{
+		{
+			"manhole",
+			_s("The game is using unsupported engine"),
+			AD_ENTRY1s("manhole.dat", "df77ad5232757d7149342fb6471de4ed", 99317),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSUPPORTED,

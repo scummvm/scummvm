@@ -68,8 +68,8 @@ void cmap_override(void);
  *   as the TADS executables.  
  */
 void cmap_set_game_charset(struct errcxdef *errctx,
-                           char *internal_id, char *internal_ldesc,
-                           char *argv0);
+						   char *internal_id, char *internal_ldesc,
+						   char *argv0);
 
 
 /* ------------------------------------------------------------------------ */

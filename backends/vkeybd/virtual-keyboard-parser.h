@@ -32,9 +32,9 @@
 
 /**
 
-                   ***************************************
-                   ** Virtual Keyboard Pack File Format **
-                   ***************************************
+				   ***************************************
+				   ** Virtual Keyboard Pack File Format **
+				   ***************************************
 
 The new virtual keyboard for ScummVM is implemented in the same way as a HTML
 ImageMap. It uses a single bitmap of the entire keyboard layout and then a
@@ -45,42 +45,42 @@ keyboard. The HTML image map description is contained in a larger XML file that
 can describe all the different modes of the keyboard, and also different
 keyboard layouts for different screen resolutions.
 
-                ********************************************
-                ** Example keyboard pack description file **
-                ********************************************
+				********************************************
+				** Example keyboard pack description file **
+				********************************************
 
 <keyboard modes="normal,caps" initial_mode="normal" v_align="bottom" h_align="center">
   <mode name="normal" resolutions="640x400,320x200">
-    <layout resolution="640x400" bitmap="normal_640x400.bmp" transparent_color="255,0,255">
-      <map>
-        <area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="q" />
-        <area shape="poly" coords="105,50,107,48,134,48,136,50,136,77,134,79,107,79,105,77" target="w" />
-        <area shape="poly" coords="146,50,148,48,174,48,176,50,176,77,174,79,148,79,146,77" target="e" />
-        ...
-        <area shape="poly" coords="11,89,12,88,69,88,70,89,70,116,69,117,12,117,11,116" target="caps" />
-      </map>
-    </layout>
-    <layout resolution="320x200" bitmap="normal_320x200.bmp" transparent_color="255,0,255">
-      ...
-    </layout>
-    <event name="a" type="key" code="97" ascii="97" modifiers="" />
-    <event name="b" type="key" code="98" ascii="98" modifiers="" />
-    <event name="c" type="key" code="99" ascii="99" modifiers="" />
-    ...
-    <event name="caps" type="switch_mode" mode="caps" />
+	<layout resolution="640x400" bitmap="normal_640x400.bmp" transparent_color="255,0,255">
+	  <map>
+		<area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="q" />
+		<area shape="poly" coords="105,50,107,48,134,48,136,50,136,77,134,79,107,79,105,77" target="w" />
+		<area shape="poly" coords="146,50,148,48,174,48,176,50,176,77,174,79,148,79,146,77" target="e" />
+		...
+		<area shape="poly" coords="11,89,12,88,69,88,70,89,70,116,69,117,12,117,11,116" target="caps" />
+	  </map>
+	</layout>
+	<layout resolution="320x200" bitmap="normal_320x200.bmp" transparent_color="255,0,255">
+	  ...
+	</layout>
+	<event name="a" type="key" code="97" ascii="97" modifiers="" />
+	<event name="b" type="key" code="98" ascii="98" modifiers="" />
+	<event name="c" type="key" code="99" ascii="99" modifiers="" />
+	...
+	<event name="caps" type="switch_mode" mode="caps" />
   </mode>
 
   <mode name="caps" resolutions="640x400">
-    <layout resolution="640x400" bitmap="caps_640x480.bmp" transparent_color="255,0,255">
-      <map>
-        <area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="Q" />
-        ...
-      </map>
-    </layout>
-    <event name="A" type="key" code="97" ascii="65" modifiers="shift" />
-    <event name="B" type="key" code="98" ascii="66" modifiers="shift" />
-    <event name="C" type="key" code="99" ascii="67" modifiers="shift" />
-    ...
+	<layout resolution="640x400" bitmap="caps_640x480.bmp" transparent_color="255,0,255">
+	  <map>
+		<area shape="poly" coords="65,50,67,48,94,48,96,50,96,77,94,79,67,79,65,77" target="Q" />
+		...
+	  </map>
+	</layout>
+	<event name="A" type="key" code="97" ascii="65" modifiers="shift" />
+	<event name="B" type="key" code="98" ascii="66" modifiers="shift" />
+	<event name="C" type="key" code="99" ascii="67" modifiers="shift" />
+	...
   </mode>
 </keyboard>
 

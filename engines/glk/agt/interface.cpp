@@ -218,7 +218,7 @@ static char *get_log(void)
 			writeln("");
 			writeln("ERROR: Unexpected end of log file.");
 			agt_quit(); /* This doesn't actually quit; it just sets things
-             up so we *will* quit. */
+			 up so we *will* quit. */
 			dead_log = 0;
 		} else {
 			logflag &= ~2;
@@ -506,7 +506,7 @@ void print_statline(void)
 		s[j++] = ' ';
 		i -= 2;
 	}  /* If statline is wide enough, put a
-                       space on each side */
+					   space on each side */
 
 	if ((int)strlen(l_stat) < status_width)  /* Copy left side of status line into s*/
 		for (t = l_stat; *t != 0; t++) s[j++] = fixstatchar(*t);
@@ -563,7 +563,7 @@ void textbox(char *(txt[]), int len, unsigned long flags)
 
 	agt_makebox(width, len, flags & ~(TB_BOLD | TB_CENTER));
 	quotemode = 1;  /* So newlines will cause truncation rather than a
-           real newline */
+		   real newline */
 	for (i = 0; i < len; i++) {
 		padwidth = width - linewidth[i]; /* Amount of padding we need */
 		if (flags & TB_CENTER) {

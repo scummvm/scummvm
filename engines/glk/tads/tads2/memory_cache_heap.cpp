@@ -31,19 +31,19 @@ namespace TADS2 {
 IF_DEBUG(ulong mchtotmem;)
 
 uchar *mchalo(errcxdef *ctx, size_t siz, const char *comment) {
-    uchar *ret;
+	uchar *ret;
 
-    VARUSED(comment);
-    IF_DEBUG(mchtotmem += siz;)
+	VARUSED(comment);
+	IF_DEBUG(mchtotmem += siz;)
 
-    ret = (uchar *)osmalloc(siz);
-    if (ret)
-        return(ret);
-    else {
-        errsig(ctx, ERR_NOMEM);
-        NOTREACHEDV(uchar *);
-        return 0;
-    }
+	ret = (uchar *)osmalloc(siz);
+	if (ret)
+		return(ret);
+	else {
+		errsig(ctx, ERR_NOMEM);
+		NOTREACHEDV(uchar *);
+		return 0;
+	}
 }
 
 } // End of namespace TADS2

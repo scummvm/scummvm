@@ -184,7 +184,7 @@ extern const RoomTextOffsets demon4TextOffsets[] = {
 };
 
 extern const RoomText demon4Texts[] = {
-    { -1, Common::UNK_LANG, "" }
+	{ -1, Common::UNK_LANG, "" }
 };
 
 // TODO: this room should have animations on computer terminals, but this isn't where

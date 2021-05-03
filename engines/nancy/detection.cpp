@@ -20,11 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "engines/nancy/detection.h"
+//#include "engines/nancy/dialogs.h"
 
 const char *const directoryGlobs[] = {
 	"game",
-	"datafiles",
+	"iff",
 	0
 };
 
@@ -45,7 +48,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 	{ // MD5 by fracturehill
 		{
 			"vampirediaries", 0,
-			AD_ENTRY1s("vampire.exe", "c6207f4bb7418b8a067ad75ed9f57bdf", 114688),
+			AD_ENTRY1s("boot.iff", "66d3b6fe9a90d35de7a28950870719ec", 20340),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			Nancy::NGF_8BITCOLOR,
@@ -193,18 +196,33 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	virtual const char *getEngineId() const override {
 		return "nancy";
 	}
 
-	const char *getName() const override {
+	virtual const char *getName() const override {
 		return "Nancy Drew";
 	}
 
-	const char *getOriginalCopyright() const override {
+	virtual const char *getOriginalCopyright() const override {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
 	}
 
+	virtual void registerDefaultSettings(const Common::String &target) const override;
+	//virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
+
+void NancyMetaEngineDetection::registerDefaultSettings(const Common::String &target) const {
+	ConfMan.setInt("music_volume", 54 * 255 / 100, target);
+	ConfMan.setInt("speech_volume", 54 * 255 / 100, target);
+	ConfMan.setInt("sfx_volume", 51 * 255 / 100, target);
+	ConfMan.setBool("subtitles", true, target);
+}
+
+/*
+GUI::OptionsContainerWidget *NancyMetaEngineDetection::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	return new Nancy::NancyOptionsWidget(boss, name, target);
+}
+*/
 
 REGISTER_PLUGIN_STATIC(NANCY_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, NancyMetaEngineDetection);

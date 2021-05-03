@@ -42,7 +42,7 @@ void MouseBoxes::reset() {
 }
 
 void MouseBoxes::setupBox(int box_id, int left, int top, int right, int bottom,
-                          const Common::String *text) {
+						  const Common::String *text) {
 	MouseBox &box = _boxes[box_id];
 	box.left = left;
 	box.top = top;

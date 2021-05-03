@@ -296,7 +296,15 @@ void BlueForceGame::processEvent(Event &event) {
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_F1:
 			// F1 - Help
-			MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			int tmp;
+			tmp = BF_GLOBALS._dialogCenter.y;
+			BF_GLOBALS._dialogCenter.y = 100;
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				MessageDialog::show(ESP_HELP_MSG, ESP_OK_BTN_STRING);
+			} else {
+				MessageDialog::show(HELP_MSG, OK_BTN_STRING);
+			}
+			BF_GLOBALS._dialogCenter.y = tmp;
 			break;
 
 		case Common::KEYCODE_F2:
@@ -325,7 +333,11 @@ void BlueForceGame::processEvent(Event &event) {
 		case Common::KEYCODE_F10:
 			// F10 - Pause
 			GfxDialog::setPalette();
-			MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				MessageDialog::show(ESP_GAME_PAUSED_MSG, ESP_OK_BTN_STRING);
+			} else {
+				MessageDialog::show(GAME_PAUSED_MSG, OK_BTN_STRING);
+			}
 			g_globals->_events.setCursorFromFlag();
 			break;
 
@@ -968,7 +980,13 @@ void SceneHandlerExt::process(Event &event) {
 		BF_GLOBALS._player.enableControl();
 		BF_GLOBALS._events.setCursor(CURSOR_WALK);
 
-		if (MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING) == 0) {
+		int rc;
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			rc = MessageDialog::show2(ESP_WATCH_INTRO_MSG, ESP_START_PLAY_BTN_STRING, ESP_INTRODUCTION_BTN_STRING);
+		} else {
+			rc = MessageDialog::show2(WATCH_INTRO_MSG, START_PLAY_BTN_STRING, INTRODUCTION_BTN_STRING);
+		}
+		if (rc == 0) {
 			// Start the game
 			BF_GLOBALS._dayNumber = 1;
 			BF_GLOBALS._sceneManager.changeScene(190);

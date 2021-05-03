@@ -567,7 +567,7 @@ Port *GfxPorts::getPort() {
 }
 
 void GfxPorts::setOrigin(int16 left, int16 top) {
-	_curPort->left = left;
+	_curPort->left = left & 0xfffe; // SSCI clears the last bit
 	_curPort->top = top;
 }
 

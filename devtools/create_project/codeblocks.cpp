@@ -96,7 +96,7 @@ StringList getFeatureLibraries(const BuildSetup &setup) {
 }
 
 void CodeBlocksProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-                                           const StringList &includeList, const StringList &excludeList) {
+										   const StringList &includeList, const StringList &excludeList) {
 
 	const std::string projectFile = setup.outputDir + '/' + name + getProjectExtension();
 	std::ofstream project(projectFile.c_str());
@@ -242,7 +242,7 @@ void CodeBlocksProvider::writeDefines(const StringList &defines, std::ofstream &
 }
 
 void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                const std::string &objPrefix, const std::string &filePrefix) {
+												const std::string &objPrefix, const std::string &filePrefix) {
 
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;

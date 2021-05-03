@@ -25,7 +25,7 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _gfxmode:
 
 Graphics mode
-	Changes the resolution of the game. For example, a 2x graphics mode will take a 320x200 resolution game and scale it up to 640x400.
+	Changes the resolution of the game, while also selecting which filter is used to scale up the resolution. For example, a 2x graphics mode will take a 320x200 resolution game and scale it up to 640x400.
 
 	*gfx_mode*
 
@@ -65,4 +65,27 @@ Filter graphics
 
 	*filtering*
 
+.. _vsync:
 
+V-Sync in 3D games
+	If ticked, synchronizes the frame rate of a game with the monitor's refresh rate to prevent screen tearing.
+
+	*vsync*
+
+.. _renderer:
+
+Game 3D renderer
+	Changes how a 3D game is rendered. This setting has no effect on 2D games. 
+
+	- OpenGL: renders on hardware (uses the GPU)
+	- OpenGL with shaders: renders on hardware with shader support
+	- Software: renders on software (uses the CPU). 
+
+	*renderer*
+
+.. _antialiasing:
+
+3D Anti-aliasing
+	Changes the anti-aliasing method. The number refers to how many samples are taken per pixel; 8x takes 8 samples per pixel and is the most accurate, but is also the most processor-intensive option. 
+
+	*antialiasing*

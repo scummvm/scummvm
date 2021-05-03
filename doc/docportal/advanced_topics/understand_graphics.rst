@@ -26,51 +26,73 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/1x.png
 
-    **1x**: No filtering, no scaling. Fastest.
+    **Normal1x**: No filtering, no scaling (original resolution). Fastest.
 
 .. figure:: /images/graphics/graphics_mode/2x.png
 
-   **2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
+   **Normal2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
 
 .. figure:: ../images/graphics/graphics_mode/3x.png
 
-   **3x**: No filtering, scales the image by a factor of 3.
+   **Normal3x**: No filtering, scales the image by a factor of 3.
 
-.. figure:: ../images/graphics/graphics_mode/2xsai.png
+.. figure:: ../images/graphics/graphics_mode/4x.png
 
-    **2xSaI**: SaI filter, factor 2x.
-
-.. figure:: ../images/graphics/graphics_mode/super2xsai.png
-
-    **Super2xSaI**: Enhanced 2xSAI filtering, factor 2x.
-
-.. figure:: ../images/graphics/graphics_mode/supereagle.png
-
-    **SuperEagle**: Less blurry than 2xSAI, but slower. Factor 2x.
-
-.. figure:: ../images/graphics/graphics_mode/advmame2x.png
-
-    **AdvMAME2x**: Doesn't rely on blurring like 2xSAI, fast. Factor 2x.
-
-.. figure:: ../images/graphics/graphics_mode/advmame3x.png
-
-    **AdvMAME3x**: Doesn't rely on blurring like 2xSAI, fast. Factor 3x.
+    **Normal4x**: No filtering, scales the image by a factor of 4.
 
 .. figure:: ../images/graphics/graphics_mode/hq2x.png
 
-    **HQ2x**: Very nice high quality filter, but slow. Uses lookup tables to create anti-aliased output. Factor 2x.
+    **HQ2x**:  Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
 
 .. figure:: ../images/graphics/graphics_mode/hq3x.png
 
-    **HQ3x**: Very nice high quality filter, but slow. Uses lookup tables to create anti-aliased output. Factor 3x.
+    **HQ3x**: Uses lookup tables to create anti-aliased output. Very nice high quality filter, but slow.
+
+.. figure:: ../images/graphics/graphics_mode/edge2x.png
+
+    **Edge2x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
+
+.. figure:: ../images/graphics/graphics_mode/edge3x.png
+
+    **Edge3x**: Uses edge-directed interpolation. Sharp, clean, anti-aliased image with very few artifacts.
+
+.. figure:: ../images/graphics/graphics_mode/advmame2x.png
+
+    **AdvMAME2x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast. 
+
+.. figure:: ../images/graphics/graphics_mode/advmame3x.png
+
+    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
+
+.. figure:: ../images/graphics/graphics_mode/advmame4x.png
+
+    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast. 
+
+.. figure:: ../images/graphics/graphics_mode/sai2x.png
+
+    **SaI2x**: Uses bilinear filtering to interpolate pixels. 
+
+.. figure:: ../images/graphics/graphics_mode/supersai2x.png
+
+    **SuperSaI2x**: An enhanced version of the SAI2x filter.
+
+.. figure:: ../images/graphics/graphics_mode/supereagle2x.png
+
+    **SuperEagle2x**: A variation of the SAI2x filter. Less blurry than SAI2x, but slower.
+
+.. figure:: ../images/graphics/graphics_mode/pm2x.png
+
+    **PM2x**: Analyzes the eight neighboring pixels to create smoother diagonal lines and rounded edges. 
+
+.. figure:: ../images/graphics/graphics_mode/dotmatrix2x.png
+
+    **DotMatrix2x**: Dot matrix effect.
 
 .. figure:: ../images/graphics/graphics_mode/tv2x.png
 
-    **TV2x**: Interlace filter. Introduces scan lines to emulate a TV. Factor 2x.
+    **TV2x**: Interlace filter. Introduces scan lines to emulate a TV.
 
-.. figure:: ../images/graphics/graphics_mode/dotmatrix.png
 
-    **DotMatrix**: Dot matrix effect. Factor 2x.
 
 
 .. note::
@@ -165,3 +187,30 @@ When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor fo
 Nearest neighbor is a simple way to scale an image; each pixel becomes multiple pixels of the same color. While this preserves the sharper details in a pixel art image, it also creates "jagged" edges as the image is scaled up. Bilinear interpolation finds the average color between pixel color values and fills in missing pixel, which results in a "smoothed" image.
 
 To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+Alt+f`.
+
+3D Graphics settings
+---------------------
+
+Vsync
+*******
+V-sync, or vertical sync, synchronizes the frame rate of the game with the monitor's refresh rate, or the video capture refresh rate. This helps to prevent screen "tearing", where the screen displays parts of multiple frames at once, which looks like a horizontal line where the image appears to split. 
+
+This setting is enabled by default. 
+
+Renderers
+*********
+There are three options for rendering 3D games: OpenGL, OpenGL with shaders, or software.
+
+- OpenGL uses the graphics card (GPU) to render the game. 
+- OpenGL with shaders also uses the GPU, but also uses shaders, if available, to render the game. Shaders are small programs running on the GPU which transform certain graphics inputs to outputs. They control things such as how the pixels are drawn on the 3D shapes. 
+- The software option uses the computer's CPU, instead of a graphics card, to render the game.  
+
+Not all render options are available for all games. If in doubt, leave the setting at **<default>**. 
+
+Anti-aliasing
+***************
+Without anti-aliasing, the computer takes the color it finds at the center of the pixel, and applies that color to the entire pixel. This results in jagged, pixelated lines at the edges of objects. Anti-aliasing, in a nutshell, is how we get nice, smooth lines on a 3D game. 
+
+Historically, anti-aliasing was done using a method called Supersampling. With this method, each frame is rendered behind-the-scenes to a higher resolution, and then downscaled to produce a much smoother, better looking image. Unfortunately, this method is very GPU-intensive, and too slow. 
+
+Multisampling Anti-Aliasing, or MSAA for short, was developed as a much faster alternative; the computer renders as much of the image as possible without anti-aliasing, and then only applies anti-aliasing to the edges. It samples each pixel to find out where the edge is, and how to blend the colors to create a smooth edge. The numbered options in the ScummVM :doc:`../settings/graphics` tab (2x, 4x and 8x), refer to how many samples are taken. 8x MSAA produces a better image than 2x MSAA, but is also more GPU-intensive. 

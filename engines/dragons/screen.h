@@ -38,8 +38,10 @@ namespace Dragons {
 
 #ifdef SCUMM_BIG_ENDIAN
 	#define WRITE_SCREEN WRITE_BE_UINT16
+	#define READ_SCREEN READ_BE_INT16
 #else
 	#define WRITE_SCREEN WRITE_LE_UINT16
+	#define READ_SCREEN READ_LE_INT16
 #endif
 
 enum AlphaBlendMode {

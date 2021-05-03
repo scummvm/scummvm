@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	cursorman.o \
 	font.o \
 	fontman.o \
+	fonts/amigafont.o \
 	fonts/bdf.o \
 	fonts/consolefont.o \
 	fonts/macfont.o \
@@ -36,6 +37,7 @@ MODULE_OBJS := \
 	scaler/normal.o \
 	sjis.o \
 	surface.o \
+	svg.o \
 	transform_struct.o \
 	transform_tools.o \
 	transparent_surface.o \

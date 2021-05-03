@@ -57,9 +57,7 @@ class TaskbarManager;
 #if defined(USE_UPDATES)
 class UpdateManager;
 #endif
-#if defined(USE_TTS)
 class TextToSpeechManager;
-#endif
 #if defined(USE_SYSDIALOGS)
 class DialogManager;
 #endif
@@ -217,14 +215,12 @@ protected:
 	Common::UpdateManager *_updateManager;
 #endif
 
-#if defined(USE_TTS)
 	/**
 	 * No default value is provided for _textToSpeechManager by OSystem.
 	 *
 	 * @note _textToSpeechManager is deleted by the OSystem destructor.
 	 */
 	Common::TextToSpeechManager *_textToSpeechManager;
-#endif
 
 #if defined(USE_SYSDIALOGS)
 	/**
@@ -367,6 +363,11 @@ public:
 		 * filtered graphics modes.
 		 */
 		kFeatureFilteringMode,
+
+		/**
+		 * Indicates that GUI runs in HiDPI mode
+		 */
+		kFeatureHiDPI,
 
 		/**
 		 * Indicate if stretch modes are supported by the backend.
@@ -630,7 +631,7 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const {
 		static const GraphicsMode noGraphicsModes[] = {{"NONE", "Normal", 0}, {nullptr, nullptr, 0 }};
 		return noGraphicsModes;
-    }
+	}
 
 	/**
 	 * Return the ID of the 'default' graphics mode. What exactly this means
@@ -1512,7 +1513,7 @@ public:
 	 * @param icon The icon to display on the screen.
 	 */
 	virtual void displayActivityIconOnOSD(const Graphics::Surface *icon) = 0;
-    /** @} */
+	/** @} */
 
 	/**
 	 * @addtogroup common_system_module
@@ -1551,7 +1552,6 @@ public:
 	}
 #endif
 
-#if defined(USE_TTS)
 	/**
 	 * Return the TextToSpeechManager, used to handle text-to-speech features.
 	 *
@@ -1560,7 +1560,6 @@ public:
 	virtual Common::TextToSpeechManager *getTextToSpeechManager() {
 		return _textToSpeechManager;
 	}
-#endif
 
 #if defined(USE_SYSDIALOGS)
 	/**
@@ -1579,7 +1578,7 @@ public:
 	 * @return The FSNode factory for the current architecture.
 	 */
 	virtual FilesystemFactory *getFilesystemFactory();
-    /** @} */
+	/** @} */
 
 	/**
 	 * @addtogroup common_system_misc

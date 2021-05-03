@@ -33,7 +33,7 @@ namespace Action {
 class PasswordPuzzle : public ActionRecord, public RenderObject {
 public:
 	enum SolveState { kNotSolved, kFailed, kSolved };
-	PasswordPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	PasswordPuzzle(RenderObject &redrawFrom) : RenderObject(redrawFrom, 7) {}
 	virtual ~PasswordPuzzle() {}
 
 	virtual void init() override;
@@ -69,8 +69,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PasswordPuzzle"; }
-
-	virtual uint16 getZOrder() const override { return 7; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	void drawText();

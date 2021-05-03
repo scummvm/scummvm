@@ -465,7 +465,13 @@ void OptionsDialog::show() {
 		g_globals->_game->restartGame();
 	} else if (btnIndex == 3) {
 		// Quit game
-		if (MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING) == 1) {
+		int rc;
+		if (g_vm->getLanguage() == Common::ES_ESP) {
+			rc = MessageDialog::show(ESP_QUIT_CONFIRM_MSG, ESP_CANCEL_BTN_STRING, ESP_QUIT_BTN_STRING);
+		} else {
+			rc = MessageDialog::show(QUIT_CONFIRM_MSG, CANCEL_BTN_STRING, QUIT_BTN_STRING);
+		}
+		if(rc == 1) {
 			g_vm->quitGame();
 		}
 	} else if (btnIndex == 4) {
@@ -476,13 +482,23 @@ void OptionsDialog::show() {
 
 OptionsDialog::OptionsDialog() {
 	// Set the element text
-	_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
-	_btnRestore.setText(RESTORE_BTN_STRING);
-	_btnSave.setText(SAVE_BTN_STRING);
-	_btnRestart.setText(RESTART_BTN_STRING);
-	_btnQuit.setText(QUIT_BTN_STRING);
-	_btnSound.setText(SOUND_BTN_STRING);
-	_btnResume.setText(RESUME_BTN_STRING);
+	if (g_vm->getLanguage() == Common::ES_ESP) {
+		_gfxMessage.set(ESP_OPTIONS_MSG, 140, ALIGN_LEFT);
+		_btnRestore.setText(ESP_RESTORE_BTN_STRING);
+		_btnSave.setText(ESP_SAVE_BTN_STRING);
+		_btnRestart.setText(ESP_RESTART_BTN_1_STRING);
+		_btnQuit.setText(ESP_QUIT_BTN_STRING);
+		_btnSound.setText(ESP_SOUND_BTN_STRING);
+		_btnResume.setText(ESP_RESUME_BTN_STRING);
+	} else {
+		_gfxMessage.set(OPTIONS_MSG, 140, ALIGN_LEFT);
+		_btnRestore.setText(RESTORE_BTN_STRING);
+		_btnSave.setText(SAVE_BTN_STRING);
+		_btnRestart.setText(RESTART_BTN_STRING);
+		_btnQuit.setText(QUIT_BTN_STRING);
+		_btnSound.setText(SOUND_BTN_STRING);
+		_btnResume.setText(RESUME_BTN_STRING);
+	}
 
 	// Set position of the elements
 	_gfxMessage._bounds.moveTo(0, 1);

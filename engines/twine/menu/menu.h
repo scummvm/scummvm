@@ -54,8 +54,8 @@ private:
 	int8 _activeButtonIdx = 0;
 
 public:
-	int16 getButtonTextId(int buttonIndex) const {
-		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
+	TextId getButtonTextId(int buttonIndex) const {
+		return (TextId)_settings[MenuSettings_FirstButton + buttonIndex * 2];
 	}
 
 	void reset() {
@@ -77,16 +77,16 @@ public:
 		_settings[MenuSettings_CurrentLoadedButton] = buttonIdx;
 	}
 
-	void setActiveButtonTextId(int16 textIndex) {
+	void setActiveButtonTextId(TextId textIndex) {
 		setButtonTextId(getActiveButton(), textIndex);
 	}
 
-	void setButtonTextId(int16 buttonIdx, int16 textIndex) {
-		_settings[MenuSettings_FirstButton + buttonIdx * 2] = textIndex;
+	void setButtonTextId(int16 buttonIdx, TextId textIndex) {
+		_settings[MenuSettings_FirstButton + buttonIdx * 2] = (int16)textIndex;
 		_buttonTexts[buttonIdx].clear();
 	}
 
-	int16 getActiveButtonTextId() const {
+	TextId getActiveButtonTextId() const {
 		return getButtonTextId(getActiveButton());
 	}
 
@@ -112,14 +112,14 @@ public:
 		return _settings[MenuSettings_NumberOfButtons];
 	}
 
-	void setTextBankId(int16 textBankIndex) {
-		_settings[MenuSettings_HeaderEnd] = textBankIndex;
+	void setTextBankId(TextBankId textBankIndex) {
+		_settings[MenuSettings_HeaderEnd] = (int16)textBankIndex;
 	}
 
-	void addButton(int16 textId, int16 state = 0) {
+	void addButton(TextId textId, int16 state = 0) {
 		const int16 i = _settings[MenuSettings_NumberOfButtons];
 		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
-		_settings[i * 2 + MenuSettings_FirstButton] = textId;
+		_settings[i * 2 + MenuSettings_FirstButton] = (int16)textId;
 		++_settings[MenuSettings_NumberOfButtons];
 	}
 

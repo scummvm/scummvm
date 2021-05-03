@@ -32,13 +32,12 @@
 #include "common/str.h"
 #include "common/rect.h"
 
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/managed_surface.h"
 #include "graphics/font.h"
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.44"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8.46"
 
 class OSystem;
 
@@ -201,8 +200,7 @@ private:
 
 class ThemeEngine {
 protected:
-	typedef Common::HashMap<Common::String, Graphics::Surface *> ImagesMap;
-	typedef Common::HashMap<Common::String, Graphics::TransparentSurface *> AImagesMap;
+	typedef Common::HashMap<Common::String, Graphics::ManagedSurface *> ImagesMap;
 
 	friend class GUI::Dialog;
 	friend class GUI::GuiObject;
@@ -349,6 +347,7 @@ public:
 	/** Default destructor */
 	~ThemeEngine();
 
+	void setBaseResolution(int w, int h, float s);
 	bool init();
 	void clearAll();
 
@@ -455,7 +454,7 @@ public:
 	void drawDropDownButton(const Common::Rect &r, uint32 dropdownWidth, const Common::U32String &str,
 	                        WidgetStateInfo buttonState, bool inButton, bool inDropdown, bool rtl = false);
 
-	void drawSurface(const Common::Point &p, const Graphics::Surface &surface, bool themeTrans = false);
+	void drawSurface(const Common::Point &p, const Graphics::ManagedSurface &surface, bool themeTrans = false);
 
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
@@ -581,16 +580,10 @@ public:
 	 * The filename is also used as its identifier.
 	 *
 	 * @param filename Name of the bitmap file.
+	 * @param filename Name of the scalable (SVG) file, could be empty
+	 * @param width, height Default image dimensions
 	 */
-	bool addBitmap(const Common::String &filename);
-
-	/**
-	 * Interface for the ThemeParser class: Loads a bitmap with transparency file to use on the GUI.
-	 * The filename is also used as its identifier.
-	 *
-	 * @param filename Name of the bitmap file.
-	 */
-	bool addAlphaBitmap(const Common::String &filename);
+	bool addBitmap(const Common::String &filename, const Common::String &scalablefile, int widht, int height);
 
 	/**
 	 * Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
@@ -625,20 +618,8 @@ public:
 	inline bool supportsImages() const { return true; }
 	inline bool ownCursor() const { return _useCursor; }
 
-	Graphics::Surface *getBitmap(const Common::String &name) {
+	Graphics::ManagedSurface *getImageSurface(const Common::String &name) const {
 		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
-	}
-
-	Graphics::TransparentSurface *getAlphaBitmap(const Common::String &name) {
-		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
-	}
-
-	const Graphics::Surface *getImageSurface(const Common::String &name) const {
-		return _bitmaps.contains(name) ? _bitmaps[name] : 0;
-	}
-
-	const Graphics::TransparentSurface *getAImageSurface(const Common::String &name) const {
-		return _abitmaps.contains(name) ? _abitmaps[name] : 0;
 	}
 
 	/**
@@ -755,10 +736,10 @@ protected:
 	GUI::ThemeEval *_themeEval;
 
 	/** Main screen surface. This is blitted straight into the overlay. */
-	Graphics::TransparentSurface _screen;
+	Graphics::ManagedSurface _screen;
 
 	/** Backbuffer surface. Stores previous states of the screen to blit back */
-	Graphics::TransparentSurface _backBuffer;
+	Graphics::ManagedSurface _backBuffer;
 
 	/**
 	 * Filter the submitted DrawData descriptors according to their layer attribute
@@ -773,6 +754,9 @@ protected:
 
 	/** Current graphics mode */
 	GraphicsMode _graphicsMode;
+
+	int16 _baseWidth, _baseHeight;
+	float _scaleFactor;
 
 	/** Font info. */
 	const Graphics::Font *_font;
@@ -795,7 +779,6 @@ protected:
 	Common::Array<LangExtraFont> _langExtraFonts;
 
 	ImagesMap _bitmaps;
-	AImagesMap _abitmaps;
 	Graphics::PixelFormat _overlayFormat;
 	Graphics::PixelFormat _cursorFormat;
 

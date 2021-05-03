@@ -32,10 +32,7 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/sherlock.h"
 #include "common/config-manager.h"
-
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace Sherlock {
 
@@ -2064,7 +2061,6 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 			SHERLOCK_SCREEN_HEIGHT));
 	}
 
-#ifdef USE_TTS
 	if (ConfMan.getBool("tts_narrator")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan != nullptr) {
@@ -2072,7 +2068,6 @@ void ScalpelUserInterface::printObjectDesc(const Common::String &str, bool first
 			ttsMan->say(str.c_str());
 		}
 	}
-#endif
 }
 
 void ScalpelUserInterface::printObjectDesc() {

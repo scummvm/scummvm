@@ -64,7 +64,7 @@ public:
 	void drawSquare(int x, int y, int w, int h) override;
 	void drawRoundedSquare(int x, int y, int r, int w, int h) override;
 	void drawTriangle(int x, int y, int base, int height, TriangleOrientation orient) override;
-	void drawTab(int x, int y, int r, int w, int h) override;
+	void drawTab(int x, int y, int r, int w, int h, int s) override;
 
 	void drawBeveledSquare(int x, int y, int w, int h) override {
 		bool useClippingVersions = !_clippingArea.contains(Common::Rect(x, y, x + w, y + h));
@@ -88,14 +88,8 @@ public:
 	void copyWholeFrame(OSystem *sys) override { copyFrame(sys, Common::Rect(0, 0, _activeSurface->w, _activeSurface->h)); }
 
 	void fillSurface() override;
-	void blitSurface(const Graphics::Surface *source, const Common::Rect &r) override;
-	void blitSubSurface(const Graphics::Surface *source, const Common::Point &p) override;
-	void blitKeyBitmap(const Graphics::Surface *source, const Common::Point &p) override;
-	void blitAlphaBitmap(Graphics::TransparentSurface *source, const Common::Rect &r,
-			GUI::ThemeEngine::AutoScaleMode autoscale = GUI::ThemeEngine::kAutoScaleNone,
-			Graphics::DrawStep::VectorAlignment xAlign = Graphics::DrawStep::kVectorAlignManual,
-			Graphics::DrawStep::VectorAlignment yAlign = Graphics::DrawStep::kVectorAlignManual,
-			int alpha = 255) override;
+	void blitSurface(const Graphics::ManagedSurface *source, const Common::Rect &r) override;
+	void blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) override;
 
 	void applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) override;
 
@@ -232,9 +226,9 @@ protected:
 		PixelType color, VectorRenderer::FillMode fill_m,
 		int baseLeft = 0, int baseRight = 0);
 
-	virtual void drawTabShadow(int x, int y, int w, int h, int r);
+	virtual void drawTabShadow(int x, int y, int w, int h, int r, int s);
 
-	virtual void drawTabShadowClip(int x, int y, int w, int h, int r);
+	virtual void drawTabShadowClip(int x, int y, int w, int h, int r, int s);
 
 	virtual void drawBevelTabAlg(int x, int y, int w, int h,
 	    int bevel, PixelType topColor, PixelType bottomColor,

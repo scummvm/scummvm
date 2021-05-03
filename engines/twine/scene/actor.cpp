@@ -140,12 +140,12 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	}
 }
 
-int32 Actor::getTextIdForBehaviour() const {
+TextId Actor::getTextIdForBehaviour() const {
 	if (heroBehaviour == HeroBehaviourType::kAggressive && autoAggressive) {
 		return TextId::kBehaviourAggressiveAuto;
 	}
 	// the other values are matching the text ids
-	return (int32)heroBehaviour;
+	return (TextId)(int32)heroBehaviour;
 }
 
 int32 Actor::initBody(BodyType bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {

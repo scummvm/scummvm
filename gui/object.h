@@ -71,11 +71,13 @@ protected:
 	Widget		*_firstWidget;
 
 public:
-	GuiObject(int x, int y, int w, int h) : _x(x), _y(y), _w(w), _h(h), _useRTL(true), _firstWidget(nullptr) { }
+	GuiObject(int x, int y, int w, int h);
 	GuiObject(const Common::String &name);
 	~GuiObject() override;
 
 	virtual void setTextDrawableArea(const Common::Rect &r) { _textDrawableArea = r; }
+
+	virtual void resize(int x, int y, int w, int h, bool scale = true);
 
 	virtual int16	getRelX() const		{ return _x; }
 	virtual int16	getRelY() const		{ return _y; }

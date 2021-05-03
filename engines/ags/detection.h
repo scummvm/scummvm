@@ -69,7 +69,13 @@ public:
 		return "AGS Engine (C) Chris Jones";
 	}
 
+	DetectedGames detectGames(const Common::FSList &fslist) const override;
+
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+
+	bool canPlayUnknownVariants() const override {
+		return true;
+	}
 	
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };

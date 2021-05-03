@@ -1019,11 +1019,22 @@ bool Debugger::cmdUseBackpack(int argc, const char **argv) {
 	return false;
 }
 
+static bool _isAvatarControlled() {
+	World *world = World::get_instance();
+	return (world && world->getControlledNPCNum() == 1);
+}
+
 bool Debugger::cmdNextInventory(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't use inventory: avatarInStasis\n");
 		return false;
 	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	MainActor *av = getMainActor();
 	av->nextInvItem();
 	return false;
@@ -1034,6 +1045,12 @@ bool Debugger::cmdNextWeapon(int argc, const char **argv) {
 		debugPrintf("Can't change weapon: avatarInStasis\n");
 		return false;
 	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	MainActor *av = getMainActor();
 	av->nextWeapon();
 	return false;
@@ -1044,6 +1061,12 @@ bool Debugger::cmdUseInventoryItem(int argc, const char **argv) {
 		debugPrintf("Can't use active inventory item: avatarInStasis\n");
 		return false;
 	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	MainActor *av = getMainActor();
 	ObjId activeitemid = av->getActiveInvItem();
 	if (activeitemid) {
@@ -1060,6 +1083,12 @@ bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 		debugPrintf("Can't use medikit: avatarInStasis\n");
 		return false;
 	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	MainActor *av = getMainActor();
 	av->useInventoryItem(0x351);
 	return false;
@@ -1070,6 +1099,12 @@ bool Debugger::cmdDetonateBomb(int argc, const char **argv) {
 		debugPrintf("Can't detonate bomb: avatarInStasis\n");
 		return false;
 	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	MainActor *av = getMainActor();
 	av->detonateBomb();
 	return false;
@@ -1437,6 +1472,11 @@ bool Debugger::cmdStartSelection(int argc, const char **argv) {
 		return false;
 	}
 
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
 	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
 	if (proc)
 		proc->selectNextItem();
@@ -1446,6 +1486,11 @@ bool Debugger::cmdStartSelection(int argc, const char **argv) {
 bool Debugger::cmdUseSelection(int argc, const char **argv) {
 	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
 		debugPrintf("Can't use items: avatarInStasis\n");
+		return false;
+	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
 		return false;
 	}
 

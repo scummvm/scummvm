@@ -100,7 +100,7 @@ static rbool compat_ext(filetype ft, filetype ft_base) {
 /*----------------------------------------------------------------------*/
 
 char *assemble_filename(const char *path, const char *root,
-                        const char *ext) {
+						const char *ext) {
 	int len1, len2, len3;
 	char *name;
 
@@ -157,7 +157,7 @@ static int find_path_sep(const char *name) {
    has an extension. Returns the length of the extensions
    and writes the extension type in pft */
 static int search_for_ext(const char *name, filetype base_ft,
-                          filetype *pft) {
+						  filetype *pft) {
 	filetype t;
 	int xlen, len;
 
@@ -191,7 +191,7 @@ static char *extract_piece(const char *name, int extlen, rbool isext) {
 	char *root;
 	int len, xlen;
 	rbool first;  /* If true, extract from beginning; if false, extract
-           from end */
+		   from end */
 
 	len = strlen(name) - extlen;
 	xlen = extlen;
@@ -275,13 +275,13 @@ static void fix_path(file_context_rec *fc) {
 
 /* This creates a new file context based on gamename. */
 /* ft indicates the rough use it will be put towards:
-     ft=fNONE indicates it's the first pass read, before PATH has been
-         read in, and so the fc shouldn't be filled out until
-     fix_file_context() is called.
-     ft=pDA1 indicates that name refers to the game files.
-     ft=pAGX indicates the name of the AGX file to be written to.
-     ft=pSAV,pLOG,pSCR all indicate that name corresponds to the
-         related type of file. */
+	 ft=fNONE indicates it's the first pass read, before PATH has been
+		 read in, and so the fc shouldn't be filled out until
+	 fix_file_context() is called.
+	 ft=pDA1 indicates that name refers to the game files.
+	 ft=pAGX indicates the name of the AGX file to be written to.
+	 ft=pSAV,pLOG,pSCR all indicate that name corresponds to the
+		 related type of file. */
 fc_type init_file_context(const char *name, filetype ft) {
 	file_context_rec *fc;
 	int p, x;  /* Path and extension markers */
@@ -325,7 +325,7 @@ void fix_file_context(fc_type fc, filetype ft) {
 fc_type convert_file_context(fc_type fc, filetype ft, const char *name) {
 	file_context_rec *nfc;
 	rbool local_ftype; /* Indicates file should be in working directory,
-            not game directory. */
+			not game directory. */
 
 	local_ftype = (ft == fSAV || ft == fSCR || ft == fLOG);
 	if (BATCH_MODE || make_test) local_ftype = 0;
@@ -374,8 +374,8 @@ void release_file_context(fc_type *pfc) {
 /*----------------------------------------------------------------------*/
 
 static genfile try_open_file(const char *path, const char *root,
-                             const char *ext, const char *how,
-                             rbool nofix) {
+							 const char *ext, const char *how,
+							 rbool nofix) {
 	char *name = assemble_filename(path, root, ext);
 	genfile f = fopen(name, how);
 	rfree(name);
@@ -430,7 +430,7 @@ rbool fileexist(fc_type fc, filetype ft) {
 
 
 genfile writeopen(fc_type fc, filetype ft,
-                  file_id_type *pfileid, const char **errstr) {
+				  file_id_type *pfileid, const char **errstr) {
 	char *name;
 	genfile f;
 

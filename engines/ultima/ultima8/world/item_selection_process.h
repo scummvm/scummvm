@@ -61,9 +61,9 @@ public:
 		return _instance;
 	}
 
-    uint16 getSelectedItem() const {
-        return _selectedItem;
-    }
+	uint16 getSelectedItem() const {
+		return _selectedItem;
+	}
 
 private:
 	void putItemSelectionOnItem(Item *item);

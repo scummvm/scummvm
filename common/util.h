@@ -40,7 +40,7 @@
  * Note that 'alignment' must be a power of two!
  */
 #define IS_ALIGNED(value, alignment) \
-          ((((size_t)value) & ((alignment) - 1)) == 0)
+		  ((((size_t)value) & ((alignment) - 1)) == 0)
 
 #ifdef ABS
 #undef ABS

@@ -167,6 +167,7 @@ protected:
 		Common::String targetIcon = target + extension;
 		Common::String qualifiedIcon = ConfMan.get("engineid") + "-" + ConfMan.get("gameid") + extension;
 		Common::String gameIcon = ConfMan.get("gameid") + extension;
+		Common::String engineIcon = ConfMan.get("engineid") + extension;
 
 #define TRY_ICON_PATH(path) { \
 Common::FSNode node((path)); \
@@ -177,18 +178,22 @@ return (path); \
 			TRY_ICON_PATH(iconsPath + "/" + targetIcon);
 			TRY_ICON_PATH(iconsPath + "/" + qualifiedIcon);
 			TRY_ICON_PATH(iconsPath + "/" + gameIcon);
+			TRY_ICON_PATH(iconsPath + "/" + engineIcon);
 			TRY_ICON_PATH(iconsPath + "/icons/" + targetIcon);
 			TRY_ICON_PATH(iconsPath + "/icons/" + qualifiedIcon);
 			TRY_ICON_PATH(iconsPath + "/icons/" + gameIcon);
+			TRY_ICON_PATH(iconsPath + "/icons/" + engineIcon);
 		}
 
 		if (!extraPath.empty()) {
 			TRY_ICON_PATH(extraPath + "/" + targetIcon);
 			TRY_ICON_PATH(extraPath + "/" + qualifiedIcon);
 			TRY_ICON_PATH(extraPath + "/" + gameIcon);
+			TRY_ICON_PATH(extraPath + "/" + engineIcon);
 			TRY_ICON_PATH(extraPath + "/icons/" + targetIcon);
 			TRY_ICON_PATH(extraPath + "/icons/" + qualifiedIcon);
 			TRY_ICON_PATH(extraPath + "/icons/" + gameIcon);
+			TRY_ICON_PATH(extraPath + "/icons/" + engineIcon);
 		}
 #undef TRY_ICON_PATH
 

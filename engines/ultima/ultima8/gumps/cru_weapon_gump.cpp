@@ -75,6 +75,15 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 	}
 
 	Gump *weaponGump = _children.front();
+
+	if (a != getControlledActor()) {
+		// Only paint when controlling avatar
+		weaponGump->HideGump();
+		return;
+	} else {
+		weaponGump->UnhideGump();
+	}
+
 	assert(weaponGump);
 	uint16 active = a->getActiveWeapon();
 	if (!active) {

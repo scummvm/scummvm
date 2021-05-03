@@ -227,16 +227,16 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 // If no GUI opened before the virtual keyboard, kKeymapTypeGui is not yet initialized
 // Check and do it if needed
 void VirtualKeyboard::initKeymap() {
-        using namespace Common;
+	using namespace Common;
 
-        Keymapper *mapper = _system->getEventManager()->getKeymapper();
+	Keymapper *mapper = _system->getEventManager()->getKeymapper();
 
-        // Do not try to recreate same keymap over again
-        if (mapper->getKeymap(kGuiKeymapName) != 0)
-                return;
+	// Do not try to recreate same keymap over again
+	if (mapper->getKeymap(kGuiKeymapName) != 0)
+			return;
 
-        Keymap *guiMap = g_gui.getKeymap();
-        mapper->addGlobalKeymap(guiMap);
+	Keymap *guiMap = g_gui.getKeymap();
+	mapper->addGlobalKeymap(guiMap);
 }
 
 void VirtualKeyboard::show() {

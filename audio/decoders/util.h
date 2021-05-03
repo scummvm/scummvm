@@ -35,7 +35,7 @@ static inline int16 floatToInt16(float src) {
 
 // Convert planar float samples into interleaved int16 samples
 static inline void floatToInt16Interleave(int16 *dst, const float **src,
-                                          uint32 length, uint8 channels) {
+										  uint32 length, uint8 channels) {
 	if (channels == 2) {
 		for (uint32 i = 0; i < length; i++) {
 			dst[2 * i    ] = floatToInt16(src[0][i]);

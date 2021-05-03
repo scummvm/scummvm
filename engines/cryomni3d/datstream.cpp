@@ -26,7 +26,7 @@
 namespace CryOmni3D {
 
 DATSeekableStream *DATSeekableStream::getGame(Common::SeekableReadStream *stream,
-        uint32 gameId, uint16 version, Common::Language lang, Common::Platform platform) {
+		uint32 gameId, uint16 version, Common::Language lang, Common::Platform platform) {
 	if (stream == nullptr) {
 		return nullptr;
 	}

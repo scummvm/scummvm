@@ -106,7 +106,7 @@ uint16 WOUFont::getCharWidth(uint8 c) {
 
 
 uint16 WOUFont::drawChar(Screen *screen, uint8 char_num, uint16 x, uint16 y,
-                         uint8 color) {
+						 uint8 color) {
 	unsigned char *pixels;
 	uint16 width;
 
@@ -143,7 +143,7 @@ uint16 WOUFont::drawStringToShape(U6Shape *shp, const char *str, uint16 x, uint1
 }
 
 uint8 WOUFont::drawCharToShape(U6Shape *shp, uint8 char_num, uint16 x, uint16 y,
-                               uint8 color) {
+							   uint8 color) {
 	unsigned char *pixels;
 	uint16 i, j;
 	unsigned char *font;

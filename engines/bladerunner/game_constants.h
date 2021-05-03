@@ -216,11 +216,11 @@ enum Clues {
 	kClueHoldensBadge                      = 110,
 	kClueCar                               = 111,
 	kClueCarIdentified                     = 112,
-	kClueCarRegistration1                  = 113,
-	kClueCarRegistration2                  = 114,
-	kClueCarRegistration3                  = 115,
-	kClueCrazylegsInterview1               = 116,
-	kClueCrazylegsInterview2               = 117,
+	kClueCarRegistration1                  = 113, // Dektora bought the car
+	kClueCarRegistration2                  = 114, // Gavin Kelly bought the car
+	kClueCarRegistration3                  = 115, // Blake Williams bought the car
+	kClueCrazylegsInterview1               = 116, // new: acquired after bug fix. Original: Never acquired
+	kClueCrazylegsInterview2               = 117, // original: Never acquired
 	kClueLichenDogWrapper                  = 118,
 	kClueRequisitionForm                   = 119, // original: Never acquired
 	kClueScaryChair                        = 120,
@@ -3496,17 +3496,19 @@ enum GoalFreeSlotA { // Rat A
 	kGoalFreeSlotAAct5Default        = 400,
 	kGoalFreeSlotAAct5Prepare        = 405,
 	kGoalFreeSlotAAct5KP02Attack     = 406,
+	kGoalFreeSlotAGoneIntermediate   = 411,
 	kGoalFreeSlotAGone               = 599
 };
 
 enum GoalFreeSlotB { // Rat B
-	kGoalFreeSlotBAct4Default     = 300,
-	kGoalFreeSlotBAct4WalkAround  = 301,
-	kGoalFreeSlotBAct4AttackMcCoy = 302,
-	kGoalFreeSlotBAct5Default     = 400,
-	kGoalFreeSlotBAct5Prepare     = 405,
-	kGoalFreeSlotBAct5KP02Attack  = 406,
-	kGoalFreeSlotBGone            = 599
+	kGoalFreeSlotBAct4Default      = 300,
+	kGoalFreeSlotBAct4WalkAround   = 301,
+	kGoalFreeSlotBAct4AttackMcCoy  = 302,
+	kGoalFreeSlotBAct5Default      = 400,
+	kGoalFreeSlotBAct5Prepare      = 405,
+	kGoalFreeSlotBAct5KP02Attack   = 406,
+	kGoalFreeSlotBGoneIntermediate = 411,
+	kGoalFreeSlotBGone             = 599
 };
 
 enum GoalMaggie {

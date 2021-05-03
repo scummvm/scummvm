@@ -445,7 +445,7 @@ bool TimedPartyMove::fall_in() {
 /* Party movement to vehicle. Second target is unused.
  */
 TimedPartyMoveToVehicle::TimedPartyMoveToVehicle(MapCoord *d, Obj *obj,
-        uint32 step_delay)
+		uint32 step_delay)
 	: TimedPartyMove(d, NULL, step_delay) {
 	ship_obj = obj;
 }

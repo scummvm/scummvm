@@ -98,21 +98,6 @@ int ags_getch() {
 	const int ascii = (gott & 0x00ff);
 
 	bool is_extended = (ascii == EXTENDED_KEY_CODE);
-	// On macos, the extended keycode is the ascii character '?' or '\0' if alt-key
-	// so check it's not actually the character '?'
-#if AGS_PLATFORM_OS_MACOS && ! AGS_PLATFORM_OS_IOS
-	is_extended = is_extended || ((ascii == EXTENDED_KEY_CODE_MACOS) && (scancode != __allegro_KEY_SLASH));
-#endif
-
-	/*  char message[200];
-	sprintf(message, "Scancode: %04X", gott);
-	Debug::Printf(message);*/
-
-	/*if ((scancode >= KEY_0_PAD) && (scancode <= KEY_9_PAD)) {
-	// fix numeric pad keys if numlock is off (allegro 4.2 changed this behaviour)
-	if ((_G(key_shifts) & KB_NUMLOCK_FLAG) == 0)
-	gott = (gott & 0xff00) | EXTENDED_KEY_CODE;
-	}*/
 
 	if (gott == READKEY_CODE_ALT_TAB) {
 		// Alt+Tab, it gets stuck down unless we do this

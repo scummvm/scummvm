@@ -609,8 +609,13 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	ResourceType type = resMan->convertResType(fileStream->readByte());
 	ResVersion volVersion = resMan->getVolVersion();
 
-	// FIXME: if resource.msg has different version from SCIII, this has to be modified.
-	if (((type == kResourceTypeMessage && res->getType() == kResourceTypeMessage) || (type == kResourceTypeText && res->getType() == kResourceTypeText)) && g_sci->getLanguage() == Common::KO_KOR)
+	// FIXME: if resource.msg has different version from SCI, this has to be modified.
+	if (
+		(
+			(type == kResourceTypeMessage && res->getType() == kResourceTypeMessage) ||
+			(type == kResourceTypeText && res->getType() == kResourceTypeText)
+		) &&
+		g_sci && g_sci->getLanguage() == Common::KO_KOR)
 		volVersion = kResVersionSci11;
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 	
@@ -698,6 +703,7 @@ int ResourceManager::addAppropriateSources() {
 			}
 
 			if (!foundVolume &&
+				g_sci &&
 				// GK2 on Steam comes with an extra bogus resource map file;
 				// ignore it instead of treating it as a bad resource
 				(g_sci->getGameId() != GID_GK2 || mapFiles.size() != 2 || mapNumber != 1)) {
@@ -1527,6 +1533,9 @@ bool ResourceManager::detectSci2Mac() {
 #endif
 
 bool ResourceManager::isBlacklistedPatch(const ResourceId &resId) const {
+	if (!g_sci)
+		return false;
+
 	switch (g_sci->getGameId()) {
 	case GID_SHIVERS:
 		// The SFX resource map patch in the Shivers interactive demo has
@@ -2036,7 +2045,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				} else if (resId.getNumber() == 65535) {
 					volumeName = Common::String::format("RESSFX.%03d", mapVolumeNr);
 
-					if (g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
+					if (g_sci && g_sci->getGameId() == GID_RAMA && !Common::File::exists(volumeName)) {
 						if (Common::File::exists("RESOURCE.SFX")) {
 							volumeName = "RESOURCE.SFX";
 						} else if (Common::File::exists("RESSFX.001")) {
@@ -2243,7 +2252,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 }
 
 int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream *file,
-                                      uint32 &szPacked, ResourceCompression &compression) {
+									  uint32 &szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
@@ -2817,7 +2826,7 @@ bool ResourceManager::detectPaletteMergingSci11() {
 		}
 
 		// Hardcoded: Laura Bow 2 floppy uses new palette resource, but still palette merging + 16 bit color matching
-		if (g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && !g_sci->isDemo()) {
+		if (g_sci && g_sci->getGameId() == GID_LAURABOW2 && !g_sci->isCD() && !g_sci->isDemo()) {
 			return true;
 		}
 	}
@@ -3091,7 +3100,7 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 }
 
 bool ResourceManager::isKoreanMessageMap(ResourceSource *source) {
-	return source->getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR;
+	return source->getLocationName() == "message.map" && g_sci && g_sci->getLanguage() == Common::KO_KOR;
 }
 
 const Common::String &Resource::getResourceLocation() const {

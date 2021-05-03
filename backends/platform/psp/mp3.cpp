@@ -97,20 +97,20 @@ bool Mp3PspStream::initDecoder() {
 	// Based on PSP firmware version, we need to do different things to do Media Engine processing
 	uint32 firmware = sceKernelDevkitVersion();
 	PSP_DEBUG_PRINT("Firmware version 0x%x\n", firmware);
-    if (firmware == 0x01050001){
+	if (firmware == 0x01050001){
 		if (!loadStartAudioModule("flash0:/kd/me_for_vsh.prx",
 			PSP_MEMORY_PARTITION_KERNEL)) {
 			PSP_ERROR("failed to load me_for_vsh.prx. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
 		}
-        if (!loadStartAudioModule("flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL)) {
+		if (!loadStartAudioModule("flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL)) {
 			PSP_ERROR("failed to load audiocodec.prx. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
 		}
-    } else {
-        if (sceUtilityLoadAvModule(PSP_AV_MODULE_AVCODEC) < 0) {
+	} else {
+		if (sceUtilityLoadAvModule(PSP_AV_MODULE_AVCODEC) < 0) {
 			PSP_ERROR("failed to load AVCODEC module. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
@@ -130,15 +130,15 @@ bool Mp3PspStream::stopDecoder() {
 		return true;
 
 	// Based on PSP firmware version, we need to do different things to do Media Engine processing
-    if (sceKernelDevkitVersion() == 0x01050001){  // TODO: how do we unload?
+	if (sceKernelDevkitVersion() == 0x01050001){  // TODO: how do we unload?
 /*      if (!unloadAudioModule("flash0:/kd/me_for_vsh.prx", PSP_MEMORY_PARTITION_KERNEL) ||
 			!unloadAudioModule("flash0:/kd/audiocodec.prx", PSP_MEMORY_PARTITION_KERNEL) {
 			PSP_ERROR("failed to unload audio module\n");
 			return false;
 		}
 */
-    }else{
-        if (sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC) < 0) {
+	}else{
+		if (sceUtilityUnloadModule(PSP_MODULE_AV_AVCODEC) < 0) {
 			PSP_ERROR("failed to unload avcodec module\n");
 			return false;
 		}
@@ -152,26 +152,26 @@ bool Mp3PspStream::stopDecoder() {
 bool Mp3PspStream::loadStartAudioModule(const char *modname, int partition){
 	DEBUG_ENTER_FUNC();
 
-    SceKernelLMOption option;
-    SceUID modid;
+	SceKernelLMOption option;
+	SceUID modid;
 
-    memset(&option, 0, sizeof(option));
-    option.size = sizeof(option);
-    option.mpidtext = partition;
-    option.mpiddata = partition;
-    option.position = 0;
-    option.access = 1;
+	memset(&option, 0, sizeof(option));
+	option.size = sizeof(option);
+	option.mpidtext = partition;
+	option.mpiddata = partition;
+	option.position = 0;
+	option.access = 1;
 
-    modid = sceKernelLoadModule(modname, 0, &option);
-    if (modid < 0) {
+	modid = sceKernelLoadModule(modname, 0, &option);
+	if (modid < 0) {
 		PSP_ERROR("Failed to load module %s. Got error 0x%x\n", modname, modid);
-        return false;
+		return false;
 	}
 
-    int ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
+	int ret = sceKernelStartModule(modid, 0, NULL, NULL, NULL);
 	if (ret < 0) {
 		PSP_ERROR("Failed to start module %s. Got error 0x%x\n", modname, ret);
-        return false;
+		return false;
 	}
 	return true;
 }

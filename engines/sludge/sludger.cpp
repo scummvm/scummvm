@@ -155,10 +155,10 @@ void initSludge() {
 
 void killSludge() {
 	killAllFunctions();
+	g_sludge->_speechMan->kill();
 	g_sludge->_peopleMan->kill();
 	g_sludge->_regionMan->kill();
 	g_sludge->_floorMan->kill();
-	g_sludge->_speechMan->kill();
 	g_sludge->_languageMan->kill();
 	g_sludge->_gfxMan->kill();
 	g_sludge->_resMan->kill();

@@ -28,8 +28,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 void AnimAction::getAnimRange(unsigned int lastanim, Direction lastdir,
-                              bool firststep, Direction dir,
-                              unsigned int &startframe, unsigned int &endframe) const {
+							  bool firststep, Direction dir,
+							  unsigned int &startframe, unsigned int &endframe) const {
 	startframe = 0;
 	endframe = _size;
 
@@ -62,8 +62,8 @@ void AnimAction::getAnimRange(unsigned int lastanim, Direction lastdir,
 }
 
 void AnimAction::getAnimRange(const Actor *actor, Direction dir,
-                              unsigned int &startframe,
-                              unsigned int &endframe) const {
+							  unsigned int &startframe,
+							  unsigned int &endframe) const {
 	getAnimRange(actor->getLastAnim(), actor->getDir(),
 	             actor->hasActorFlags(Actor::ACT_FIRSTSTEP),
 	             dir, startframe, endframe);

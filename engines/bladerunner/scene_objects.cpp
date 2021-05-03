@@ -373,6 +373,17 @@ void SceneObjects::resetScreenRectangleAndBbox(int sceneObjectId) {
 	}
 }
 
+void SceneObjects::synchScreenRectangle(int sceneObjectId, const Common::Rect &targetScreenRect) {
+	int index = findById(sceneObjectId);
+	if (index != -1) {
+		SceneObject *sceneObject = &_sceneObjects[index];
+		sceneObject->screenRectangle.left   = targetScreenRect.left;
+		sceneObject->screenRectangle.top    = targetScreenRect.top;
+		sceneObject->screenRectangle.right  = targetScreenRect.right;
+		sceneObject->screenRectangle.bottom = targetScreenRect.bottom;
+	}
+}
+
 void SceneObjects::save(SaveFileWriteStream &f) {
 	f.writeInt(_count);
 	for (int i = 0; i < kSceneObjectCount; ++i) {

@@ -305,8 +305,8 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 }
 
 int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, int numdisp, int mouseison, int areawid,
-                         int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
-                         int linespacing, int utextcol, int padding) {
+						 int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
+						 int linespacing, int utextcol, int padding) {
 	int ww;
 
 	color_t text_color;
@@ -562,16 +562,15 @@ void DialogOptions::Show() {
 		}
 	} else {
 		//dlgyp=(_GP(play).viewport.GetHeight()-numdisp*txthit)-1;
-		const Rect &uiView = _GP(play).GetUIViewport();
-		areawid = uiView.GetWidth() - 5;
+		areawid = ui_view.GetWidth() - 5;
 		padding = TEXTWINDOW_PADDING_DEFAULT;
 		GET_OPTIONS_HEIGHT
-		dlgyp = uiView.GetHeight() - needheight;
+		dlgyp = ui_view.GetHeight() - needheight;
 
 		dirtyx = 0;
 		dirtyy = dlgyp - 1;
-		dirtywidth = uiView.GetWidth();
-		dirtyheight = uiView.GetHeight() - dirtyy;
+		dirtywidth = ui_view.GetWidth();
+		dirtyheight = ui_view.GetHeight() - dirtyy;
 		dialog_abs_x = 0;
 	}
 	if (!is_textwindow)

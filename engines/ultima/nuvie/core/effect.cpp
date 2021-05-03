@@ -722,8 +722,8 @@ void DropEffect::hit_target() {
 
 /*** MissileEffect ***/
 MissileEffect::MissileEffect(uint16 tile_num, uint16 obj_n, const MapCoord &source,
-                             const MapCoord &target, uint8 dmg,
-                             uint8 intercept, uint16 speed) {
+							 const MapCoord &target, uint8 dmg,
+							 uint8 intercept, uint16 speed) {
 	actor_manager = game->get_actor_manager();
 	hit_actor = 0;
 	hit_obj = 0;
@@ -733,8 +733,8 @@ MissileEffect::MissileEffect(uint16 tile_num, uint16 obj_n, const MapCoord &sour
 
 /* Start effect. If target is unset then the actor is the target. */
 void MissileEffect::init(uint16 tile_num, uint16 obj_n,
-                         const MapCoord &source, const MapCoord &target,
-                         uint32 dmg, uint8 intercept, uint32 speed) {
+						 const MapCoord &source, const MapCoord &target,
+						 uint32 dmg, uint8 intercept, uint32 speed) {
 	assert(tile_num || obj_n); // at least obj_n must be set
 	// (although it might work if throw_obj is already set)
 	assert(speed != 0);

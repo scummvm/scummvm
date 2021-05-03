@@ -234,7 +234,7 @@ void CMakeProvider::writeSubEngines(const BuildSetup &setup, std::ofstream &work
 }
 
 void CMakeProvider::createProjectFile(const std::string &name, const std::string &, const BuildSetup &setup, const std::string &moduleDir,
-                                           const StringList &includeList, const StringList &excludeList) {
+										   const StringList &includeList, const StringList &excludeList) {
 
 	const std::string projectFile = setup.outputDir + "/CMakeLists.txt";
 	std::ofstream project(projectFile.c_str(), std::ofstream::out | std::ofstream::app);
@@ -320,7 +320,7 @@ void CMakeProvider::writeDefines(const BuildSetup &setup, std::ofstream &output)
 }
 
 void CMakeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                const std::string &objPrefix, const std::string &filePrefix) {
+												const std::string &objPrefix, const std::string &filePrefix) {
 
 	std::string lastName;
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {

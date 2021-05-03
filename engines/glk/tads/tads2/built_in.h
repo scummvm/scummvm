@@ -49,8 +49,8 @@ struct voccxdef;
 
 /* file contexts for the built-in file handling functions */
 struct biffildef {
-    osfildef *fp;                          /* underyling system file handle */
-    uint      flags;                                               /* flags */
+	osfildef *fp;                          /* underyling system file handle */
+	uint      flags;                                               /* flags */
 #define BIFFIL_F_BINARY    0x01                           /* file is binary */
 
 	biffildef() : fp(nullptr), flags(0) {}
@@ -58,20 +58,20 @@ struct biffildef {
 
 /* built-in execution context */
 struct bifcxdef {
-    errcxdef *bifcxerr;                           /* error-handling context */
-    runcxdef *bifcxrun;                           /* code execution context */
-    tiocxdef *bifcxtio;                                 /* text I/O context */
-    long      bifcxrnd;                               /* random number seed */
-    int       bifcxseed1;                   /* first seed for new generator */
-    int       bifcxseed2;                  /* second seed for new generator */
-    int       bifcxseed3;                   /* third seed for new generator */
-    int       bifcxrndset;                   /* randomize() has been called */
-    biffildef bifcxfile[BIFFILMAX];          /* file handles for fopen, etc */
-    int       bifcxsafetyr;                 /* file I/O safety level - read */
-    int       bifcxsafetyw;                /* file I/O safety level - write */
-    const char *bifcxsavext;      /* saved game extension (null by default) */
-    appctxdef *bifcxappctx;                     /* host application context */
-    re_context bifcxregex;          /* regular expression searching context */
+	errcxdef *bifcxerr;                           /* error-handling context */
+	runcxdef *bifcxrun;                           /* code execution context */
+	tiocxdef *bifcxtio;                                 /* text I/O context */
+	long      bifcxrnd;                               /* random number seed */
+	int       bifcxseed1;                   /* first seed for new generator */
+	int       bifcxseed2;                  /* second seed for new generator */
+	int       bifcxseed3;                   /* third seed for new generator */
+	int       bifcxrndset;                   /* randomize() has been called */
+	biffildef bifcxfile[BIFFILMAX];          /* file handles for fopen, etc */
+	int       bifcxsafetyr;                 /* file I/O safety level - read */
+	int       bifcxsafetyw;                /* file I/O safety level - write */
+	const char *bifcxsavext;      /* saved game extension (null by default) */
+	appctxdef *bifcxappctx;                     /* host application context */
+	re_context bifcxregex;          /* regular expression searching context */
 
 	bifcxdef() : bifcxerr(nullptr), bifcxrun(nullptr), bifcxtio(nullptr),
 		bifcxrnd(0), bifcxseed1(0), bifcxseed2(0), bifcxseed3(0), bifcxrndset(0),

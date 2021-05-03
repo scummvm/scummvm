@@ -38,22 +38,22 @@ extern bool8 g_av_userControlled;
 #define ANIMATION_END 0x01
 
 void InitActorView(const char *name,   // Character to draw    (ie "cord")
-                   const char *outfit, // Characters outfit    (ie "casual_wear")
-                   const char *weapon, // Character pose       (ie "unarmed")
-                   const char *anim,   // Character anim       (ie "walk")
-                   int16 ix,           // Initial render x coord
-                   int16 iy,           // Initial render y coord
-                   int16 iz);          // Initial render z coord
+				   const char *outfit, // Characters outfit    (ie "casual_wear")
+				   const char *weapon, // Character pose       (ie "unarmed")
+				   const char *anim,   // Character anim       (ie "walk")
+				   int16 ix,           // Initial render x coord
+				   int16 iy,           // Initial render y coord
+				   int16 iz);          // Initial render z coord
 
 int32 ActorViewDraw(); // Call each cycle to draw
 
 void ChangeAnimPlaying(const char *pose, // Pose to swap to NULL if keep the same
-                       const char *anim, // Anim to change to
-                       bool8 forwards,   // Play anim forwards or backwards
-                       int32 repeats,    // Number of times to play this anim before ActorViewDraw() returns ANIMATION_END
-                       int16 ix,         // New render x coordinate
-                       int16 iy,         // New render y coordinate
-                       int16 iz);        // New render z coordinate
+					   const char *anim, // Anim to change to
+					   bool8 forwards,   // Play anim forwards or backwards
+					   int32 repeats,    // Number of times to play this anim before ActorViewDraw() returns ANIMATION_END
+					   int16 ix,         // New render x coordinate
+					   int16 iy,         // New render y coordinate
+					   int16 iz);        // New render z coordinate
 
 } // End of namespace ICB
 

@@ -58,6 +58,8 @@
 #include "common/keyboard.h"
 #include "common/debug.h"
 
+#include "graphics/scaler.h"
+
 namespace BladeRunner {
 
 const char *KIA::kPogo = "POGO";
@@ -586,7 +588,14 @@ void KIA::playPhotograph(int photographId) {
 }
 
 void KIA::playImage(const Graphics::Surface &image) {
-	_playerImage.copyFrom(image);
+	if (image.w != 80) {
+		Graphics::Surface *tmp = image.scale(80, 60);
+		_playerImage.copyFrom(*tmp);
+		tmp->free();
+		delete tmp;
+	} else {
+		_playerImage.copyFrom(image);
+	}
 	_playerImage.convertToInPlace(screenPixelFormat());
 }
 
@@ -719,7 +728,7 @@ void KIA::loopEnded(void *callbackData, int frame, int loopId) {
 }
 
 void KIA::init() {
-	_thumbnail = _vm->generateThumbnail();
+	createThumbnailFromScreen(&_thumbnail);
 
 	if (!_vm->openArchive("MODE.MIX")) {
 		return;

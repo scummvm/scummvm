@@ -30,15 +30,15 @@
  */
 
 /*
-    BS_Line
-    -------
-    This class contains only static methods, which have to do with straight line
-    segments. There is no real straight line segment class. Calculations will be
-    used with polygons, and it is important the process of starting and selecting
-    endpoints of lines is dynamic. This would prhobit a polygon from a set
-    being formed by fixed line segments
+	BS_Line
+	-------
+	This class contains only static methods, which have to do with straight line
+	segments. There is no real straight line segment class. Calculations will be
+	used with polygons, and it is important the process of starting and selecting
+	endpoints of lines is dynamic. This would prhobit a polygon from a set
+	being formed by fixed line segments
 
-    Autor: Malte Thiesen
+	Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_LINE_H

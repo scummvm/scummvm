@@ -258,6 +258,10 @@ enum KyraResources {
 	k3ItemAnimData,
 	k3ItemMagicTable,
 	k3ItemStringMap,
+	k3FontData,
+
+	k3VqaSubtitlesIntro,
+	k3VqaSubtitlesBoat,
 
 #if defined(ENABLE_EOB) || defined(ENABLE_LOL)
 	kRpgCommonMoreStrings,

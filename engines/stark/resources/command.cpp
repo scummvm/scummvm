@@ -1023,7 +1023,7 @@ Command *Command::opLightSetColor(const ResourceReference &lightRef, int32 red, 
 }
 
 Command *Command::opLightFollowPath(Script *script, const ResourceReference &itemRef, const ResourceReference &lightRef,
-                                    const ResourceReference &pathRef, int32 speed, bool suspend) {
+									const ResourceReference &pathRef, int32 speed, bool suspend) {
 	ItemVisual *item = itemRef.resolve<ItemVisual>();
 	Light *light = lightRef.resolve<Light>();
 	Path *path = pathRef.resolve<Path>();

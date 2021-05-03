@@ -168,37 +168,37 @@ namespace TADS2 {
 
 /* symbol table entry */
 struct toksdef {
-    uchar    tokstyp;                                 /* type of the symbol */
-    uchar    tokshsh;                               /* hash value of symbol */
-    ushort   toksval;              /* value of the symbol (depends on type) */
-    ushort   toksfr;               /* frame offset of symbol (for debugger) */
-    uchar    tokslen;                        /* length of the symbol's name */
-    char     toksnam[TOKNAMMAX];                          /* name of symbol */
+	uchar    tokstyp;                                 /* type of the symbol */
+	uchar    tokshsh;                               /* hash value of symbol */
+	ushort   toksval;              /* value of the symbol (depends on type) */
+	ushort   toksfr;               /* frame offset of symbol (for debugger) */
+	uchar    tokslen;                        /* length of the symbol's name */
+	char     toksnam[TOKNAMMAX];                          /* name of symbol */
 };
 
 /* symbol table entry without 'name' portion - for allocation purposes */
 struct toks1def {
-    uchar    tokstyp;
-    uchar    tokshsh;
-    ushort   toksval;
-    ushort   toksfr;
-    uchar    tokslen;
-    char     toksnam[1];
+	uchar    tokstyp;
+	uchar    tokshsh;
+	ushort   toksval;
+	ushort   toksfr;
+	uchar    tokslen;
+	char     toksnam[1];
 };
 
 /* generic symbol table object - other symbol tables are subclasses */
 struct toktdef {
-    void     (*toktfadd)(toktdef *tab, char *name, int namel, int typ,
-                         int val, int hash);                  /* add symbol */
-    int      (*toktfsea)(toktdef *tab, char *name, int namel, int hash,
-                         toksdef *ret);              /* search symbol table */
-    void     (*toktfset)(toktdef *tab, toksdef *sym);
-                             /* update val & typ of symbol to those in *sym */
-    void     (*toktfeach)(toktdef *tab,
-                          void (*fn)(void *ctx, toksdef *sym),
-                          void *fnctx);            /* call fn for each sym */
-    toktdef   *toktnxt;                 /* next symbol table to be searched */
-    errcxdef  *tokterr;                           /* error handling context */
+	void     (*toktfadd)(toktdef *tab, char *name, int namel, int typ,
+						 int val, int hash);                  /* add symbol */
+	int      (*toktfsea)(toktdef *tab, char *name, int namel, int hash,
+						 toksdef *ret);              /* search symbol table */
+	void     (*toktfset)(toktdef *tab, toksdef *sym);
+							 /* update val & typ of symbol to those in *sym */
+	void     (*toktfeach)(toktdef *tab,
+						  void (*fn)(void *ctx, toksdef *sym),
+						  void *fnctx);            /* call fn for each sym */
+	toktdef   *toktnxt;                 /* next symbol table to be searched */
+	errcxdef  *tokterr;                           /* error handling context */
 };
 
 /* maximum number of pools (TOKTSIZE bytes each) for symbols */
@@ -206,27 +206,27 @@ struct toktdef {
 
 /* pointer to a symbol in a hashed symbol table */
 struct tokthpdef {
-    mcmon  tokthpobj;                /* cache manager object number of page */
-    uint   tokthpofs;                  /* offset within page of this symbol */
+	mcmon  tokthpobj;                /* cache manager object number of page */
+	uint   tokthpofs;                  /* offset within page of this symbol */
 };
 
 /* extended symbol entry in a hashed symbol table */
 struct tokshdef {
-    tokthpdef tokshnxt;              /* pointer to next symbol in the table */
-    toksdef   tokshsc;                  /* superclass - normal symbol entry */
+	tokthpdef tokshnxt;              /* pointer to next symbol in the table */
+	toksdef   tokshsc;                  /* superclass - normal symbol entry */
 };
 
 /* hashing symbol table (subclass of generic symbol table) */
 struct tokthdef {
-    toktdef   tokthsc;              /* generic symbol table superclass data */
-    mcmcxdef *tokthmem;                           /* memory manager context */
-    tokthpdef tokthhsh[TOKHASHSIZE];                          /* hash table */
-    uint      tokthpcnt;            /* number of memory pools for toksdef's */
-    mcmon     tokthpool[TOKPOOLMAX];          /* memory pools for toksdef's */
-    uint      tokthfinal[TOKPOOLMAX];        /* actual sizes of these pools */
-    uchar    *tokthcpool;                           /* current pool pointer */
-    ushort    tokthsize;               /* remaining size of top memory pool */
-    ushort    tokthofs;             /* allocation offset in top memory pool */
+	toktdef   tokthsc;              /* generic symbol table superclass data */
+	mcmcxdef *tokthmem;                           /* memory manager context */
+	tokthpdef tokthhsh[TOKHASHSIZE];                          /* hash table */
+	uint      tokthpcnt;            /* number of memory pools for toksdef's */
+	mcmon     tokthpool[TOKPOOLMAX];          /* memory pools for toksdef's */
+	uint      tokthfinal[TOKPOOLMAX];        /* actual sizes of these pools */
+	uchar    *tokthcpool;                           /* current pool pointer */
+	ushort    tokthsize;               /* remaining size of top memory pool */
+	ushort    tokthofs;             /* allocation offset in top memory pool */
 };
 
 /* size of toksdef pools to allocate for hashed symbol tables */
@@ -240,30 +240,30 @@ struct tokthdef {
  *   in code.
  */
 struct toktldef {
-    toktdef   toktlsc;              /* generic symbol table superclass data */
-    uchar    *toktlptr;                      /* base of linear symbol table */
-    uchar    *toktlnxt;                          /* next free byte in table */
-    uint      toktlcnt;                   /* number of objects in the table */
-    uint      toktlsiz;                     /* bytes remaining in the table */
+	toktdef   toktlsc;              /* generic symbol table superclass data */
+	uchar    *toktlptr;                      /* base of linear symbol table */
+	uchar    *toktlnxt;                          /* next free byte in table */
+	uint      toktlcnt;                   /* number of objects in the table */
+	uint      toktlsiz;                     /* bytes remaining in the table */
 };
 
 struct tokdef {
-    int      toktyp;                                   /* type of the token */
-    int      toklen;           /* length of token text, if a symbolic token */
-    long     tokval;                        /* numeric value, if applicable */
-    ushort   tokofs;
-    uint     tokhash;              /* token hash value, if a symbolic token */
-    char     toknam[TOKNAMMAX+1];     /* text of token, if a symbolic token */
-    toksdef  toksym;                    /* symbol from table matching token */
+	int      toktyp;                                   /* type of the token */
+	int      toklen;           /* length of token text, if a symbolic token */
+	long     tokval;                        /* numeric value, if applicable */
+	ushort   tokofs;
+	uint     tokhash;              /* token hash value, if a symbolic token */
+	char     toknam[TOKNAMMAX+1];     /* text of token, if a symbolic token */
+	toksdef  toksym;                    /* symbol from table matching token */
 };
 
 /* special character sequence */
 #define TOKSCMAX  3            /* maximum length of a special char sequence */
 struct tokscdef {
-    tokscdef *tokscnxt;          /* next sequence with same first character */
-    int       toksctyp;             /* token type corresponding to sequence */
-    int       toksclen;                           /* length of the sequence */
-    char      tokscstr[TOKSCMAX+1];                  /* the sequence itself */
+	tokscdef *tokscnxt;          /* next sequence with same first character */
+	int       toksctyp;             /* token type corresponding to sequence */
+	int       toksclen;                           /* length of the sequence */
+	char      tokscstr[TOKSCMAX+1];                  /* the sequence itself */
 };
 
 /*
@@ -275,11 +275,11 @@ struct tokscdef {
  */
 #if TOKSCMAX == 3
 # define toksceq(str1, str2, len1, len2) \
-    ((len2) >= (len1) \
-     && ((len1) == 1 \
-         || ((str1)[1] == (str2)[1] \
-             && ((len1) == 2 \
-                 || (str1)[2] == (str2)[2]))))
+	((len2) >= (len1) \
+	 && ((len1) == 1 \
+		 || ((str1)[1] == (str2)[1] \
+			 && ((len1) == 2 \
+				 || (str1)[2] == (str2)[2]))))
 #endif /* TOKSCMAX == 3 */
 #ifndef toksceq
 # define toksceq(str1, str2, len) (!memcmp(str1, str2, (size_t)(len)))
@@ -287,24 +287,24 @@ struct tokscdef {
 
 /* special character sequence list table entry */
 struct tokldef {
-    int  tokltyp;                   /* token type corresponding to sequence */
-    char toklstr[TOKSCMAX+1];                   /* the text of the sequence */
+	int  tokltyp;                   /* token type corresponding to sequence */
+	char toklstr[TOKSCMAX+1];                   /* the text of the sequence */
 };
 
 /* include path structure */
 struct tokpdef {
-    tokpdef *tokpnxt;                                  /* next path in list */
-    int      tokplen;                           /* length of directory name */
-    char     tokpdir[1];                             /* directory to search */
+	tokpdef *tokpnxt;                                  /* next path in list */
+	int      tokplen;                           /* length of directory name */
+	char     tokpdir[1];                             /* directory to search */
 };
 
 /* #define symbol structure */
 struct tokdfdef {
-    tokdfdef *nxt;                    /* next symbol in the same hash chain */
-    char     *nm;                                     /* name of the symbol */
-    int       len;                                  /* length of the symbol */
-    int       explen;                            /* length of the expansion */
-    char      expan[1];                                 /* expansion buffer */
+	tokdfdef *nxt;                    /* next symbol in the same hash chain */
+	char     *nm;                                     /* name of the symbol */
+	int       len;                                  /* length of the symbol */
+	int       explen;                            /* length of the expansion */
+	char      expan[1];                                 /* expansion buffer */
 };
 
 /* #define hash table information */
@@ -325,40 +325,40 @@ struct tokdfdef {
 
 /* lexical analysis context */
 struct tokcxdef {
-    errcxdef *tokcxerr;                           /* error handling context */
-    mcmcxdef *tokcxmem;                            /* cache manager context */
-    struct    dbgcxdef *tokcxdbg;                       /* debugger context */
-    lindef   *tokcxlin;                                      /* line source */
-    tokpdef  *tokcxinc;                        /* head of include path list */
-    toktdef  *tokcxstab;              /* current head of symbol table chain */
-    void     *tokcxscx;    /* context for string storage callback functions */
-    ushort  (*tokcxsst)(void *ctx);
-               /* start storing a string; return offset of string's storage */
-    void    (*tokcxsad)(void *ctx, const char *str, ushort len);
-                                              /* add characters to a string */
-    void    (*tokcxsend)(void *ctx);               /* finish storing string */
-    const char *tokcxmsav[TOKMACNEST]; /* saved positions for macro expansion */
-    ushort    tokcxmsvl[TOKMACNEST];   /* saved lengths for macro expansion */
-    int       tokcxmlvl;                             /* macro nesting level */
-    int       tokcxflg;                                            /* flags */
+	errcxdef *tokcxerr;                           /* error handling context */
+	mcmcxdef *tokcxmem;                            /* cache manager context */
+	struct    dbgcxdef *tokcxdbg;                       /* debugger context */
+	lindef   *tokcxlin;                                      /* line source */
+	tokpdef  *tokcxinc;                        /* head of include path list */
+	toktdef  *tokcxstab;              /* current head of symbol table chain */
+	void     *tokcxscx;    /* context for string storage callback functions */
+	ushort  (*tokcxsst)(void *ctx);
+			   /* start storing a string; return offset of string's storage */
+	void    (*tokcxsad)(void *ctx, const char *str, ushort len);
+											  /* add characters to a string */
+	void    (*tokcxsend)(void *ctx);               /* finish storing string */
+	const char *tokcxmsav[TOKMACNEST]; /* saved positions for macro expansion */
+	ushort    tokcxmsvl[TOKMACNEST];   /* saved lengths for macro expansion */
+	int       tokcxmlvl;                             /* macro nesting level */
+	int       tokcxflg;                                            /* flags */
 #   define    TOKCXFINMAC    0x01         /* doing <<expr>> macro expansion */
 #   define    TOKCXCASEFOLD  0x02              /* fold upper and lower case */
 #   define    TOKCXFCMODE    0x04                /* parse using C operators */
 #   define    TOKCXF_EMBED_PAREN_PRE 0x08        /* embedded expr - did '(' */
 #   define    TOKCXF_EMBED_PAREN_AFT 0x10    /* embedded expr - must do ')' */
 #   define    TOKCXFLIN2     0x20                 /* new-style line records */
-    tokdef    tokcxcur;                                    /* current token */
-    char     *tokcxbuf;                            /* buffer for long lines */
-    ushort    tokcxbsz;                         /* size of long line buffer */
-    const char *tokcxptr;                       /* pointer into line source */
-    ushort    tokcxlen;                         /* length of text in buffer */
-    uchar     tokcxinx[256];                   /* special character indices */
-    tokdfdef *tokcxdf[TOKDFHSHSIZ];       /* hash table for #define symbols */
-    int       tokcxifcnt;           /* number of #endif's we expect to find */
-    char      tokcxif[TOKIFNEST];       /* #if state for each nesting level */
-    int       tokcxifcur;             /* current #if state, obeying nesting */
-    linfdef  *tokcxhdr;              /* list of previously included headers */
-    tokscdef *tokcxsc[1];                        /* special character table */
+	tokdef    tokcxcur;                                    /* current token */
+	char     *tokcxbuf;                            /* buffer for long lines */
+	ushort    tokcxbsz;                         /* size of long line buffer */
+	const char *tokcxptr;                       /* pointer into line source */
+	ushort    tokcxlen;                         /* length of text in buffer */
+	uchar     tokcxinx[256];                   /* special character indices */
+	tokdfdef *tokcxdf[TOKDFHSHSIZ];       /* hash table for #define symbols */
+	int       tokcxifcnt;           /* number of #endif's we expect to find */
+	char      tokcxif[TOKIFNEST];       /* #if state for each nesting level */
+	int       tokcxifcur;             /* current #if state, obeying nesting */
+	linfdef  *tokcxhdr;              /* list of previously included headers */
+	tokscdef *tokcxsc[1];                        /* special character table */
 };
 
 
@@ -384,40 +384,40 @@ void tokthini(errcxdef *errctx, mcmcxdef *memctx, toktdef *toktab1);
 
 /* add a symbol to a hashed symbol table */
 void tokthadd(toktdef *toktab, char *name, int namel,
-              int typ, int val, int hash);
+			  int typ, int val, int hash);
 
 /* update a symbol in a hashed symbol table */
 void tokthset(toktdef *toktab, toksdef *sym);
 
 /* search a hashed symbol table for a symbol */
 int tokthsea(toktdef *tab, char *name, int namel, int hash,
-             toksdef *ret);
+			 toksdef *ret);
 
 /* call a function for each symbol in a hashed symbol table */
 void toktheach(toktdef *tab, void (*cb)(void *ctx, toksdef *sym),
-               void *ctx);
+			   void *ctx);
 
 /* find a symbol given type and value */
 int tokthfind(toktdef *tab, int typ, uint val, toksdef *sym);
 
 /* initialize a linear symbol table */
 void toktlini(errcxdef *errctx, toktldef *toktab,
-              uchar *mem, uint siz);
+			  uchar *mem, uint siz);
 
 /* add a symbol to a linear symbol table */
 void toktladd(toktdef *toktab, char *name, int namel,
-              int typ, int val, int hash);
-                
+			  int typ, int val, int hash);
+				
 /* search a linear symbol table */
 int toktlsea(toktdef *tab, char *name, int namel, int hash,
-             toksdef *ret);
+			 toksdef *ret);
 
 /* update a symbol in a linear symbol table */
 void toktlset(toktdef *toktab, toksdef *sym);
 
 /* call a function for each symbol in a local symbol table */
 void toktleach(toktdef *tab, void (*cb)(void *ctx, toksdef *sym),
-               void *ctx);
+			   void *ctx);
 
 /* delete all symbols from a linear table */
 void toktldel(toktldef *tab);
@@ -430,14 +430,14 @@ int tokget1(tokcxdef *ctx, tokdef *tok, int consume);
 
 /* add a symbol to the #define symbol table */
 void tok_add_define(tokcxdef *ctx, const char *sym, int len,
-                    const char *expan, int explen);
+					const char *expan, int explen);
 
 /* 
  *   add a symbol to the #define symbol table, folding case if we're
  *   operating in case-insensitive mode 
  */
 void tok_add_define_cvtcase(tokcxdef *ctx, const char *sym, int len,
-                            const char *expan, int explen);
+							const char *expan, int explen);
 
 /* add a symbol to the #define symbol table as a number */
 void tok_add_define_num_cvtcase(tokcxdef *ctx, const char *sym, int len, int num);
@@ -454,16 +454,16 @@ void tok_write_defines(tokcxdef *ctx, osfildef *fp, errcxdef *ec);
 
 /* determine if a char is a valid non-initial character in a symbol name */
 #define TOKISSYM(c) \
-    (Common::isAlpha((uchar)(c)) || Common::isDigit((uchar)(c)) || (c)=='_' || (c)=='$')
+	(Common::isAlpha((uchar)(c)) || Common::isDigit((uchar)(c)) || (c)=='_' || (c)=='$')
 
 /* numeric conversion and checking macros */
 #define TOKISHEX(c) \
-    (Common::isDigit((uchar)(c))||((c)>='a'&&(c)<='f')||((c)>='A'&&(c)<='F'))
+	(Common::isDigit((uchar)(c))||((c)>='a'&&(c)<='f')||((c)>='A'&&(c)<='F'))
 #define TOKISOCT(c) \
-    (Common::isDigit((uchar)(c))&&!((c)=='8'||(c)=='9'))
+	(Common::isDigit((uchar)(c))&&!((c)=='8'||(c)=='9'))
 
 #define TOKHEX2INT(c) \
-    (Common::isDigit((uchar)c)?(c)-'0':((c)>='a'?(c)-'a'+10:(c)-'A'+10))
+	(Common::isDigit((uchar)c)?(c)-'0':((c)>='a'?(c)-'a'+10:(c)-'A'+10))
 #define TOKOCT2INT(c) ((c)-'0')
 #define TOKDEC2INT(c) ((c)-'0')
 

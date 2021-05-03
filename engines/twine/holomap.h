@@ -46,7 +46,7 @@ private:
 
 	struct Location {
 		IVec3 angle;
-		uint16 textIndex = 0;
+		TextId textIndex = TextId::kNone;
 		char name[30] = "";
 	};
 

@@ -34,7 +34,7 @@ namespace Nuvie {
 class Debugger : public Shared::Debugger {
 public:
 	Debugger();
-    ~Debugger() override {}
+	~Debugger() override {}
 };
 
 } // End of namespace Nuvie

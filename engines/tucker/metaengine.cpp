@@ -35,7 +35,7 @@ public:
 		return "tucker";
 	}
 
-    bool hasFeature(MetaEngineFeature f) const override {
+	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSupportsListSaves:
 		case kSupportsLoadingDuringStartup:
@@ -55,7 +55,7 @@ public:
 		return Common::kNoError;
 	}
 
-    SaveStateList listSaves(const char *target) const override {
+	SaveStateList listSaves(const char *target) const override {
 		Common::String pattern = Tucker::generateGameStateFileName(target, 0, true);
 		Common::StringArray filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		Tucker::TuckerEngine::SavegameHeader header;

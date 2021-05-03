@@ -45,7 +45,7 @@
 
 
 enum {
-	kKyraDatVersion = 108
+	kKyraDatVersion = 109
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -205,7 +205,7 @@ const ExtractFilename extractFilenames[] = {
 
 
 	// MALCOLM'S REVENGE
-	{ k3MainMenuStrings, kStringList, false },
+	{ k3MainMenuStrings, kStringList, true },
 	{ k3MusicFiles, kStringList, false },
 	{ k3ScoreTable, kRawData, false },
 	{ k3SfxFiles, kStringList, false },
@@ -213,6 +213,9 @@ const ExtractFilename extractFilenames[] = {
 	{ k3ItemAnimData, k2ItemAnimDefinition, false },
 	{ k3ItemMagicTable, kRawData, false },
 	{ k3ItemStringMap, kRawData, false },
+	{ k3FontData, kRawData, true },
+	{ k3VqaSubtitlesIntro, kStringList, true },
+	{ k3VqaSubtitlesBoat, kStringList, true },
 
 	// EYE OF THE BEHOLDER COMMON
 	{ kEoBBaseChargenStrings1, kStringList, true },
@@ -1202,6 +1205,7 @@ const TypeTable languageTable[] = {
 	{ JA_JPN, 6 },
 	{ RU_RUS, 7 },
 	{ HE_ISR, 8 },
+	{ ZH_CNA, 9 },
 	{ -1, -1 }
 };
 

@@ -404,6 +404,9 @@ ifdef USE_OGG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libogg.a
 endif
 
+ifdef USE_FLUIDLITE
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libfluidlite.a
+else
 ifdef USE_FLUIDSYNTH
 OSX_STATIC_LIBS += -liconv \
                 -framework CoreMIDI -framework CoreAudio\
@@ -417,6 +420,7 @@ OSX_STATIC_LIBS += -lreadline -framework AudioUnit
 endif
 endif
 endif
+endif
 
 ifdef USE_MAD
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmad.a
@@ -424,6 +428,10 @@ endif
 
 ifdef USE_PNG
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libpng.a
+endif
+
+ifdef USE_GIF
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libgif.a
 endif
 
 ifdef USE_THEORADEC
@@ -560,14 +568,6 @@ endif
 	@echo All is done.
 	@echo Now run
 	@echo "\tgit commit -m 'DISTS: Generated Code::Blocks and MSVC project files'"
-
-# Target to create Raspberry Pi zip containig binary and specific README
-raspberrypi_dist:
-	mkdir -p $(srcdir)/scummvm-rpi
-	cp $(srcdir)/backends/platform/sdl/raspberrypi/README.RASPBERRYPI $(srcdir)/scummvm-rpi/README
-	cp $(srcdir)/scummvm $(srcdir)/scummvm-rpi
-	zip -r scummvm-rpi.zip scummvm-rpi
-	rm -f -R scummvm-rpi
 
 # Mark special targets as phony
 .PHONY: deb bundle osxsnap install uninstall

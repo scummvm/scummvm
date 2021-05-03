@@ -59,6 +59,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/ext/scene_hooks.h"
 #include "engines/wintermute/ui/ui_entity.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
@@ -371,10 +372,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		stack->pushNULL();
 
-
-		//bool ret = ChangeScene(stack->pop()->getString());
-		//if (DID_FAIL(ret)) stack->pushBool(false);
-		//else stack->pushBool(true);
+		// HACK: Emulate things that present in some game versions only based on scene name
+		// Currect usecase is adding Steam Achievements to non-steam game editions
+		EmulateSceneHook(filename);
 
 		return STATUS_OK;
 	}

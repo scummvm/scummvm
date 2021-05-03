@@ -165,7 +165,7 @@ void VideoRoom::setPannable(bool val) {
 }
 
 void VideoRoom::setHotzoneEnabled(const Common::String &name, bool enabled) {
-       _hotZones.setHotzoneEnabled(name, enabled);
+	   _hotZones.setHotzoneEnabled(name, enabled);
 }
 
 void VideoRoom::enableHotzone(const Common::String &name) {

@@ -35,8 +35,8 @@ struct MystLanguage {
 
 class MohawkMetaEngine_Myst {
 public:
-    static void registerDefaultSettings();
-    static const MystLanguage *listLanguages();
+	static void registerDefaultSettings();
+	static const MystLanguage *listLanguages();
 };
 
 } // End of namespace Mohawk

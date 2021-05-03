@@ -76,10 +76,7 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 		return;
 
 	// Y - 1 because it seems to get drawn down a bit
-	if ((ShouldAntiAliasText()) && (bitmap_color_depth(destination) > 8))
-		alfont_textout_aa(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
-	else
-		alfont_textout(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
+	alfont_textout(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {

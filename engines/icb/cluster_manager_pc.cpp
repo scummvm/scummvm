@@ -58,13 +58,13 @@ MovieManager *g_while_u_wait_SequenceManager;
 
 // Colours used by progress display
 uint32 g_progressColourMap[7] = {
-    0x3C3C3C, // OFF  60  60  60
-    0xFEFEFE, //  |   254 254 254
-    0xCAD5E4, //  |   202 213 228
-    0xA6B8D4, //  |   166 184 212
-    0x89A1C7, //  |   137 161 199
-    0x587AB0, //  V   88  122 176
-    0x2E579C  // ON   46  87  156
+	0x3C3C3C, // OFF  60  60  60
+	0xFEFEFE, //  |   254 254 254
+	0xCAD5E4, //  |   202 213 228
+	0xA6B8D4, //  |   166 184 212
+	0x89A1C7, //  |   137 161 199
+	0x587AB0, //  V   88  122 176
+	0x2E579C  // ON   46  87  156
 };
 
 // Controls the decay on the progress bit colouring

@@ -93,12 +93,17 @@ public:
 
 	void printMenu(int level = 0, MacMenuSubMenu *submenu = nullptr);
 
+	void closeMenu();
+
 	Common::Rect _bbox;
 
 private:
 	ManagedSurface _screen;
 	ManagedSurface _tempSurface;
 	TextAlign _align;
+	int _menuDropdownItemHeight;
+	int _menuLeftDropdownPadding;
+	int _menuRightDropdownPadding;
 
 private:
 	bool checkCallback(bool unicode = false);
@@ -119,12 +124,14 @@ private:
 	bool processMenuShortCut(byte flags, uint16 ascii);
 
 	void drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color);
+	bool contains(int x, int y);
 
 	void eventLoop();
 
 	ItemArray _items;
 
 	const Font *_font;
+	Font *_loadedFont;
 
 	bool _isVisible;
 

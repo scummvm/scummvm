@@ -41,6 +41,7 @@
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/scene.h"
+#include "twine/shared.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -347,7 +348,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	}
 	case kcCHOICE:
 		conditionValueSize = 2;
-		engine->_scene->currentScriptValue = engine->_gameState->choiceAnswer;
+		engine->_scene->currentScriptValue = (int16)engine->_gameState->choiceAnswer;
 		break;
 	case kcFUEL:
 		engine->_scene->currentScriptValue = engine->_gameState->inventoryNumGas;
@@ -646,7 +647,7 @@ static int32 lSET_TRACK_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x19
  */
 static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 textIdx = ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -902,7 +903,7 @@ static int32 lRESTORE_L_TRACK(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	const int32 textIdx = ctx.stream.readSint16LE();
+	const TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -931,7 +932,7 @@ static int32 lINC_CHAPTER(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x2E
  */
 static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 item = ctx.stream.readByte();
+	const InventoryItems item = (InventoryItems)ctx.stream.readByte();
 
 	engine->_gameState->processFoundItem(item);
 	engine->_redraw->redrawEngineActions(true);
@@ -1249,7 +1250,7 @@ static int32 lSET_USED_INVENTORY(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x44
  */
 static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 choiceIdx = ctx.stream.readSint16LE();
+	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 	engine->_gameState->gameChoices[engine->_gameState->numChoices++] = choiceIdx;
 	return 0;
 }
@@ -1259,7 +1260,7 @@ static int32 lADD_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x45
  */
 static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 choiceIdx = ctx.stream.readSint16LE();
+	TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -1279,7 +1280,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x46
  */
 static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 textIdx = ctx.stream.readSint16LE();
+	TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	engine->_text->textClipFull();
@@ -1363,9 +1364,9 @@ static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x4D
  */
 static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int16 textEntry = ctx.stream.readSint16LE();
+	TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlayTextId(textEntry);
@@ -1379,9 +1380,9 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
-	int16 textEntry = ctx.stream.readSint16LE();
+	TextId textEntry = (TextId)ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, (int16)textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlayTextId(textEntry);
@@ -1536,7 +1537,7 @@ static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 otherActorIdx = ctx.stream.readByte();
-	const int32 choiceIdx = ctx.stream.readSint16LE();
+	const TextId choiceIdx = (TextId)ctx.stream.readSint16LE();
 
 	engine->freezeTime();
 	if (engine->_text->showDialogueBubble) {
@@ -1708,12 +1709,13 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x67
  */
 static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
-	int32 textIdx = ctx.stream.readSint16LE();
+	TextId textIdx = (TextId)ctx.stream.readSint16LE();
 
 	const int32 textHeight = 40;
 	if (lTextYPos < engine->height() - textHeight) {
 		if (engine->cfgfile.Version == USA_VERSION) {
-			if (!textIdx) {
+			// TODO: these are most likely not the menu text ids - but from a different text bank
+			if (textIdx == TextId::kBehaviourNormal) {
 				textIdx = TextId::kSaveSettings;
 			}
 		}
@@ -1758,112 +1760,112 @@ static int32 lBRUTAL_EXIT(TwinEEngine *engine, LifeScriptContext &ctx) {
 }
 
 static const ScriptLifeFunction function_map[] = {
-    /*0x00*/ MAPFUNC("END", lEND),
-    /*0x01*/ MAPFUNC("NOP", lNOP),
-    /*0x02*/ MAPFUNC("SNIF", lSNIF),
-    /*0x03*/ MAPFUNC("OFFSET", lOFFSET),
-    /*0x04*/ MAPFUNC("NEVERIF", lNEVERIF),
-    /*0x05*/ MAPFUNC("", lEMPTY), // unused
-    /*0x06*/ MAPFUNC("NO_IF", lNO_IF),
-    /*0x07*/ MAPFUNC("", lEMPTY), // unused
-    /*0x08*/ MAPFUNC("", lEMPTY), // unused
-    /*0x09*/ MAPFUNC("", lEMPTY), // unused
-    /*0x0A*/ MAPFUNC("LABEL", lLABEL),
-    /*0x0B*/ MAPFUNC("RETURN", lRETURN),
-    /*0x0C*/ MAPFUNC("IF", lIF),
-    /*0x0D*/ MAPFUNC("SWIF", lSWIF),
-    /*0x0E*/ MAPFUNC("ONEIF", lONEIF),
-    /*0x0F*/ MAPFUNC("ELSE", lELSE),
-    /*0x10*/ MAPFUNC("ENDIF", lEMPTY), // End of a conditional statement (e.g. IF)
-    /*0x11*/ MAPFUNC("BODY", lBODY),
-    /*0x12*/ MAPFUNC("BODY_OBJ", lBODY_OBJ),
-    /*0x13*/ MAPFUNC("ANIM", lANIM),
-    /*0x14*/ MAPFUNC("ANIM_OBJ", lANIM_OBJ),
-    /*0x15*/ MAPFUNC("SET_LIFE", lSET_LIFE),
-    /*0x16*/ MAPFUNC("SET_LIFE_OBJ", lSET_LIFE_OBJ),
-    /*0x17*/ MAPFUNC("SET_TRACK", lSET_TRACK),
-    /*0x18*/ MAPFUNC("SET_TRACK_OBJ", lSET_TRACK_OBJ),
-    /*0x19*/ MAPFUNC("MESSAGE", lMESSAGE),
-    /*0x1A*/ MAPFUNC("FALLABLE", lFALLABLE),
-    /*0x1B*/ MAPFUNC("SET_DIRMODE", lSET_DIRMODE),
-    /*0x1C*/ MAPFUNC("SET_DIRMODE_OBJ", lSET_DIRMODE_OBJ),
-    /*0x1D*/ MAPFUNC("CAM_FOLLOW", lCAM_FOLLOW),
-    /*0x1E*/ MAPFUNC("SET_BEHAVIOUR", lSET_BEHAVIOUR),
-    /*0x1F*/ MAPFUNC("SET_FLAG_CUBE", lSET_FLAG_CUBE),
-    /*0x20*/ MAPFUNC("COMPORTEMENT", lCOMPORTEMENT),
-    /*0x21*/ MAPFUNC("SET_COMPORTEMENT", lSET_COMPORTEMENT),
-    /*0x22*/ MAPFUNC("SET_COMPORTEMENT_OBJ", lSET_COMPORTEMENT_OBJ),
-    /*0x23*/ MAPFUNC("END_COMPORTEMENT", lEND_COMPORTEMENT),
-    /*0x24*/ MAPFUNC("SET_FLAG_GAME", lSET_FLAG_GAME),
-    /*0x25*/ MAPFUNC("KILL_OBJ", lKILL_OBJ),
-    /*0x26*/ MAPFUNC("SUICIDE", lSUICIDE),
-    /*0x27*/ MAPFUNC("USE_ONE_LITTLE_KEY", lUSE_ONE_LITTLE_KEY),
-    /*0x28*/ MAPFUNC("GIVE_GOLD_PIECES", lGIVE_GOLD_PIECES),
-    /*0x29*/ MAPFUNC("END_LIFE", lEND_LIFE),
-    /*0x2A*/ MAPFUNC("STOP_L_TRACK", lSTOP_L_TRACK),
-    /*0x2B*/ MAPFUNC("RESTORE_L_TRACK", lRESTORE_L_TRACK),
-    /*0x2C*/ MAPFUNC("MESSAGE_OBJ", lMESSAGE_OBJ),
-    /*0x2D*/ MAPFUNC("INC_CHAPTER", lINC_CHAPTER),
-    /*0x2E*/ MAPFUNC("FOUND_OBJECT", lFOUND_OBJECT),
-    /*0x2F*/ MAPFUNC("SET_DOOR_LEFT", lSET_DOOR_LEFT),
-    /*0x30*/ MAPFUNC("SET_DOOR_RIGHT", lSET_DOOR_RIGHT),
-    /*0x31*/ MAPFUNC("SET_DOOR_UP", lSET_DOOR_UP),
-    /*0x32*/ MAPFUNC("SET_DOOR_DOWN", lSET_DOOR_DOWN),
-    /*0x33*/ MAPFUNC("GIVE_BONUS", lGIVE_BONUS),
-    /*0x34*/ MAPFUNC("CHANGE_CUBE", lCHANGE_CUBE),
-    /*0x35*/ MAPFUNC("OBJ_COL", lOBJ_COL),
-    /*0x36*/ MAPFUNC("BRICK_COL", lBRICK_COL),
-    /*0x37*/ MAPFUNC("OR_IF", lOR_IF),
-    /*0x38*/ MAPFUNC("INVISIBLE", lINVISIBLE),
-    /*0x39*/ MAPFUNC("ZOOM", lZOOM),
-    /*0x3A*/ MAPFUNC("POS_POINT", lPOS_POINT),
-    /*0x3B*/ MAPFUNC("SET_MAGIC_LEVEL", lSET_MAGIC_LEVEL),
-    /*0x3C*/ MAPFUNC("SUB_MAGIC_POINT", lSUB_MAGIC_POINT),
-    /*0x3D*/ MAPFUNC("SET_LIFE_POINT_OBJ", lSET_LIFE_POINT_OBJ),
-    /*0x3E*/ MAPFUNC("SUB_LIFE_POINT_OBJ", lSUB_LIFE_POINT_OBJ),
-    /*0x3F*/ MAPFUNC("HIT_OBJ", lHIT_OBJ),
-    /*0x40*/ MAPFUNC("PLAY_FLA", lPLAY_FLA),
-    /*0x41*/ MAPFUNC("PLAY_MIDI", lPLAY_MIDI),
-    /*0x42*/ MAPFUNC("INC_CLOVER_BOX", lINC_CLOVER_BOX),
-    /*0x43*/ MAPFUNC("SET_USED_INVENTORY", lSET_USED_INVENTORY),
-    /*0x44*/ MAPFUNC("ADD_CHOICE", lADD_CHOICE),
-    /*0x45*/ MAPFUNC("ASK_CHOICE", lASK_CHOICE),
-    /*0x46*/ MAPFUNC("BIG_MESSAGE", lBIG_MESSAGE),
-    /*0x47*/ MAPFUNC("INIT_PINGOUIN", lINIT_PINGOUIN),
-    /*0x48*/ MAPFUNC("SET_HOLO_POS", lSET_HOLO_POS),
-    /*0x49*/ MAPFUNC("CLR_HOLO_POS", lCLR_HOLO_POS),
-    /*0x4A*/ MAPFUNC("ADD_FUEL", lADD_FUEL),
-    /*0x4B*/ MAPFUNC("SUB_FUEL", lSUB_FUEL),
-    /*0x4C*/ MAPFUNC("SET_GRM", lSET_GRM),
-    /*0x4D*/ MAPFUNC("SAY_MESSAGE", lSAY_MESSAGE),
-    /*0x4E*/ MAPFUNC("SAY_MESSAGE_OBJ", lSAY_MESSAGE_OBJ),
-    /*0x4F*/ MAPFUNC("FULL_POINT", lFULL_POINT),
-    /*0x50*/ MAPFUNC("BETA", lBETA),
-    /*0x51*/ MAPFUNC("GRM_OFF", lGRM_OFF),
-    /*0x52*/ MAPFUNC("FADE_PAL_RED", lFADE_PAL_RED),
-    /*0x53*/ MAPFUNC("FADE_ALARM_RED", lFADE_ALARM_RED),
-    /*0x54*/ MAPFUNC("FADE_ALARM_PAL", lFADE_ALARM_PAL),
-    /*0x55*/ MAPFUNC("FADE_RED_PAL", lFADE_RED_PAL),
-    /*0x56*/ MAPFUNC("FADE_RED_ALARM", lFADE_RED_ALARM),
-    /*0x57*/ MAPFUNC("FADE_PAL_ALARM", lFADE_PAL_ALARM),
-    /*0x58*/ MAPFUNC("EXPLODE_OBJ", lEXPLODE_OBJ),
-    /*0x59*/ MAPFUNC("BUBBLE_ON", lBUBBLE_ON),
-    /*0x5A*/ MAPFUNC("BUBBLE_OFF", lBUBBLE_OFF),
-    /*0x5B*/ MAPFUNC("ASK_CHOICE_OBJ", lASK_CHOICE_OBJ),
-    /*0x5C*/ MAPFUNC("SET_DARK_PAL", lSET_DARK_PAL),
-    /*0x5D*/ MAPFUNC("SET_NORMAL_PAL", lSET_NORMAL_PAL),
-    /*0x5E*/ MAPFUNC("MESSAGE_SENDELL", lMESSAGE_SENDELL),
-    /*0x5F*/ MAPFUNC("ANIM_SET", lANIM_SET),
-    /*0x60*/ MAPFUNC("HOLOMAP_TRAJ", lHOLOMAP_TRAJ),
-    /*0x61*/ MAPFUNC("GAME_OVER", lGAME_OVER),
-    /*0x62*/ MAPFUNC("THE_END", lTHE_END),
-    /*0x63*/ MAPFUNC("MIDI_OFF", lMIDI_OFF),
-    /*0x64*/ MAPFUNC("PLAY_CD_TRACK", lPLAY_CD_TRACK),
-    /*0x65*/ MAPFUNC("PROJ_ISO", lPROJ_ISO),
-    /*0x66*/ MAPFUNC("PROJ_3D", lPROJ_3D),
-    /*0x67*/ MAPFUNC("TEXT", lTEXT),
-    /*0x68*/ MAPFUNC("CLEAR_TEXT", lCLEAR_TEXT),
-    /*0x69*/ MAPFUNC("BRUTAL_EXIT", lBRUTAL_EXIT)};
+	/*0x00*/ MAPFUNC("END", lEND),
+	/*0x01*/ MAPFUNC("NOP", lNOP),
+	/*0x02*/ MAPFUNC("SNIF", lSNIF),
+	/*0x03*/ MAPFUNC("OFFSET", lOFFSET),
+	/*0x04*/ MAPFUNC("NEVERIF", lNEVERIF),
+	/*0x05*/ MAPFUNC("", lEMPTY), // unused
+	/*0x06*/ MAPFUNC("NO_IF", lNO_IF),
+	/*0x07*/ MAPFUNC("", lEMPTY), // unused
+	/*0x08*/ MAPFUNC("", lEMPTY), // unused
+	/*0x09*/ MAPFUNC("", lEMPTY), // unused
+	/*0x0A*/ MAPFUNC("LABEL", lLABEL),
+	/*0x0B*/ MAPFUNC("RETURN", lRETURN),
+	/*0x0C*/ MAPFUNC("IF", lIF),
+	/*0x0D*/ MAPFUNC("SWIF", lSWIF),
+	/*0x0E*/ MAPFUNC("ONEIF", lONEIF),
+	/*0x0F*/ MAPFUNC("ELSE", lELSE),
+	/*0x10*/ MAPFUNC("ENDIF", lEMPTY), // End of a conditional statement (e.g. IF)
+	/*0x11*/ MAPFUNC("BODY", lBODY),
+	/*0x12*/ MAPFUNC("BODY_OBJ", lBODY_OBJ),
+	/*0x13*/ MAPFUNC("ANIM", lANIM),
+	/*0x14*/ MAPFUNC("ANIM_OBJ", lANIM_OBJ),
+	/*0x15*/ MAPFUNC("SET_LIFE", lSET_LIFE),
+	/*0x16*/ MAPFUNC("SET_LIFE_OBJ", lSET_LIFE_OBJ),
+	/*0x17*/ MAPFUNC("SET_TRACK", lSET_TRACK),
+	/*0x18*/ MAPFUNC("SET_TRACK_OBJ", lSET_TRACK_OBJ),
+	/*0x19*/ MAPFUNC("MESSAGE", lMESSAGE),
+	/*0x1A*/ MAPFUNC("FALLABLE", lFALLABLE),
+	/*0x1B*/ MAPFUNC("SET_DIRMODE", lSET_DIRMODE),
+	/*0x1C*/ MAPFUNC("SET_DIRMODE_OBJ", lSET_DIRMODE_OBJ),
+	/*0x1D*/ MAPFUNC("CAM_FOLLOW", lCAM_FOLLOW),
+	/*0x1E*/ MAPFUNC("SET_BEHAVIOUR", lSET_BEHAVIOUR),
+	/*0x1F*/ MAPFUNC("SET_FLAG_CUBE", lSET_FLAG_CUBE),
+	/*0x20*/ MAPFUNC("COMPORTEMENT", lCOMPORTEMENT),
+	/*0x21*/ MAPFUNC("SET_COMPORTEMENT", lSET_COMPORTEMENT),
+	/*0x22*/ MAPFUNC("SET_COMPORTEMENT_OBJ", lSET_COMPORTEMENT_OBJ),
+	/*0x23*/ MAPFUNC("END_COMPORTEMENT", lEND_COMPORTEMENT),
+	/*0x24*/ MAPFUNC("SET_FLAG_GAME", lSET_FLAG_GAME),
+	/*0x25*/ MAPFUNC("KILL_OBJ", lKILL_OBJ),
+	/*0x26*/ MAPFUNC("SUICIDE", lSUICIDE),
+	/*0x27*/ MAPFUNC("USE_ONE_LITTLE_KEY", lUSE_ONE_LITTLE_KEY),
+	/*0x28*/ MAPFUNC("GIVE_GOLD_PIECES", lGIVE_GOLD_PIECES),
+	/*0x29*/ MAPFUNC("END_LIFE", lEND_LIFE),
+	/*0x2A*/ MAPFUNC("STOP_L_TRACK", lSTOP_L_TRACK),
+	/*0x2B*/ MAPFUNC("RESTORE_L_TRACK", lRESTORE_L_TRACK),
+	/*0x2C*/ MAPFUNC("MESSAGE_OBJ", lMESSAGE_OBJ),
+	/*0x2D*/ MAPFUNC("INC_CHAPTER", lINC_CHAPTER),
+	/*0x2E*/ MAPFUNC("FOUND_OBJECT", lFOUND_OBJECT),
+	/*0x2F*/ MAPFUNC("SET_DOOR_LEFT", lSET_DOOR_LEFT),
+	/*0x30*/ MAPFUNC("SET_DOOR_RIGHT", lSET_DOOR_RIGHT),
+	/*0x31*/ MAPFUNC("SET_DOOR_UP", lSET_DOOR_UP),
+	/*0x32*/ MAPFUNC("SET_DOOR_DOWN", lSET_DOOR_DOWN),
+	/*0x33*/ MAPFUNC("GIVE_BONUS", lGIVE_BONUS),
+	/*0x34*/ MAPFUNC("CHANGE_CUBE", lCHANGE_CUBE),
+	/*0x35*/ MAPFUNC("OBJ_COL", lOBJ_COL),
+	/*0x36*/ MAPFUNC("BRICK_COL", lBRICK_COL),
+	/*0x37*/ MAPFUNC("OR_IF", lOR_IF),
+	/*0x38*/ MAPFUNC("INVISIBLE", lINVISIBLE),
+	/*0x39*/ MAPFUNC("ZOOM", lZOOM),
+	/*0x3A*/ MAPFUNC("POS_POINT", lPOS_POINT),
+	/*0x3B*/ MAPFUNC("SET_MAGIC_LEVEL", lSET_MAGIC_LEVEL),
+	/*0x3C*/ MAPFUNC("SUB_MAGIC_POINT", lSUB_MAGIC_POINT),
+	/*0x3D*/ MAPFUNC("SET_LIFE_POINT_OBJ", lSET_LIFE_POINT_OBJ),
+	/*0x3E*/ MAPFUNC("SUB_LIFE_POINT_OBJ", lSUB_LIFE_POINT_OBJ),
+	/*0x3F*/ MAPFUNC("HIT_OBJ", lHIT_OBJ),
+	/*0x40*/ MAPFUNC("PLAY_FLA", lPLAY_FLA),
+	/*0x41*/ MAPFUNC("PLAY_MIDI", lPLAY_MIDI),
+	/*0x42*/ MAPFUNC("INC_CLOVER_BOX", lINC_CLOVER_BOX),
+	/*0x43*/ MAPFUNC("SET_USED_INVENTORY", lSET_USED_INVENTORY),
+	/*0x44*/ MAPFUNC("ADD_CHOICE", lADD_CHOICE),
+	/*0x45*/ MAPFUNC("ASK_CHOICE", lASK_CHOICE),
+	/*0x46*/ MAPFUNC("BIG_MESSAGE", lBIG_MESSAGE),
+	/*0x47*/ MAPFUNC("INIT_PINGOUIN", lINIT_PINGOUIN),
+	/*0x48*/ MAPFUNC("SET_HOLO_POS", lSET_HOLO_POS),
+	/*0x49*/ MAPFUNC("CLR_HOLO_POS", lCLR_HOLO_POS),
+	/*0x4A*/ MAPFUNC("ADD_FUEL", lADD_FUEL),
+	/*0x4B*/ MAPFUNC("SUB_FUEL", lSUB_FUEL),
+	/*0x4C*/ MAPFUNC("SET_GRM", lSET_GRM),
+	/*0x4D*/ MAPFUNC("SAY_MESSAGE", lSAY_MESSAGE),
+	/*0x4E*/ MAPFUNC("SAY_MESSAGE_OBJ", lSAY_MESSAGE_OBJ),
+	/*0x4F*/ MAPFUNC("FULL_POINT", lFULL_POINT),
+	/*0x50*/ MAPFUNC("BETA", lBETA),
+	/*0x51*/ MAPFUNC("GRM_OFF", lGRM_OFF),
+	/*0x52*/ MAPFUNC("FADE_PAL_RED", lFADE_PAL_RED),
+	/*0x53*/ MAPFUNC("FADE_ALARM_RED", lFADE_ALARM_RED),
+	/*0x54*/ MAPFUNC("FADE_ALARM_PAL", lFADE_ALARM_PAL),
+	/*0x55*/ MAPFUNC("FADE_RED_PAL", lFADE_RED_PAL),
+	/*0x56*/ MAPFUNC("FADE_RED_ALARM", lFADE_RED_ALARM),
+	/*0x57*/ MAPFUNC("FADE_PAL_ALARM", lFADE_PAL_ALARM),
+	/*0x58*/ MAPFUNC("EXPLODE_OBJ", lEXPLODE_OBJ),
+	/*0x59*/ MAPFUNC("BUBBLE_ON", lBUBBLE_ON),
+	/*0x5A*/ MAPFUNC("BUBBLE_OFF", lBUBBLE_OFF),
+	/*0x5B*/ MAPFUNC("ASK_CHOICE_OBJ", lASK_CHOICE_OBJ),
+	/*0x5C*/ MAPFUNC("SET_DARK_PAL", lSET_DARK_PAL),
+	/*0x5D*/ MAPFUNC("SET_NORMAL_PAL", lSET_NORMAL_PAL),
+	/*0x5E*/ MAPFUNC("MESSAGE_SENDELL", lMESSAGE_SENDELL),
+	/*0x5F*/ MAPFUNC("ANIM_SET", lANIM_SET),
+	/*0x60*/ MAPFUNC("HOLOMAP_TRAJ", lHOLOMAP_TRAJ),
+	/*0x61*/ MAPFUNC("GAME_OVER", lGAME_OVER),
+	/*0x62*/ MAPFUNC("THE_END", lTHE_END),
+	/*0x63*/ MAPFUNC("MIDI_OFF", lMIDI_OFF),
+	/*0x64*/ MAPFUNC("PLAY_CD_TRACK", lPLAY_CD_TRACK),
+	/*0x65*/ MAPFUNC("PROJ_ISO", lPROJ_ISO),
+	/*0x66*/ MAPFUNC("PROJ_3D", lPROJ_3D),
+	/*0x67*/ MAPFUNC("TEXT", lTEXT),
+	/*0x68*/ MAPFUNC("CLEAR_TEXT", lCLEAR_TEXT),
+	/*0x69*/ MAPFUNC("BRUTAL_EXIT", lBRUTAL_EXIT)};
 
 ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
 	lTextYPos = 0;

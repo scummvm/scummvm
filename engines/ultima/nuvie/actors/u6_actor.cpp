@@ -923,21 +923,21 @@ void U6Actor::setup_walk_to_location() {
 
  if(NUVIE_RAND()%8 == 1)
    {
-    new_direction = NUVIE_RAND()%4;
+	new_direction = NUVIE_RAND()%4;
 
-    switch(new_direction)
-      {
-       case NUVIE_DIR_N : rel_y = -1; break;
-       case NUVIE_DIR_E : rel_x = 1; break;
-       case NUVIE_DIR_S : rel_y = 1; break;
-       case NUVIE_DIR_W : rel_x = -1; break;
-      }
+	switch(new_direction)
+	  {
+	   case NUVIE_DIR_N : rel_y = -1; break;
+	   case NUVIE_DIR_E : rel_x = 1; break;
+	   case NUVIE_DIR_S : rel_y = 1; break;
+	   case NUVIE_DIR_W : rel_x = -1; break;
+	  }
 
-    if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == NULL)
-        {
-         if(moveRelative(rel_x,rel_y))
-            set_direction(new_direction);
-        }
+	if(obj_manager->get_obj_of_type_from_location(OBJ_U6_FENCE,x + rel_x, y + rel_y, z) == NULL)
+		{
+		 if(moveRelative(rel_x,rel_y))
+			set_direction(new_direction);
+		}
 
    }
  else set_moves_left(moves - 5);

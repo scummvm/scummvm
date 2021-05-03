@@ -39,7 +39,7 @@ public:
 		EventFlagDescription flagDesc;
 	};
 
-	PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom) {}
+	PlaySecondaryMovie(RenderObject &redrawFrom) : RenderObject(redrawFrom, 8) {}
 	virtual ~PlaySecondaryMovie();
 
 	virtual void init() override;
@@ -66,8 +66,6 @@ public:
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PlaySecondaryMovie"; }
-
-	virtual uint16 getZOrder() const override { return 8; }
 	virtual bool isViewportRelative() const override { return true; }
 
 	AVFDecoder _decoder;

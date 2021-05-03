@@ -48,7 +48,7 @@ class DLObject {
   void discard_symtab();
 
   DLObject(char *_errbuf = NULL) : errbuf(_errbuf), segment(NULL),symtab(NULL),
-    strtab(NULL), symbol_cnt(0), dtors_start(NULL), dtors_end(NULL) {}
+	strtab(NULL), symbol_cnt(0), dtors_start(NULL), dtors_end(NULL) {}
 };
 
 #define RTLD_LAZY 0

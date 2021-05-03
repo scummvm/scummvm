@@ -53,7 +53,7 @@ public:
 		return "sherlock";
 	}
 
-    /**
+	/**
 	 * Creates an instance of the game engine
 	 */
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;

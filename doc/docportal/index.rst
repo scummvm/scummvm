@@ -13,6 +13,7 @@
       use_scummvm/how_to_settings
       use_scummvm/connect_cloud
       use_scummvm/LAN
+      use_scummvm/taskbar_integration
 
 .. toctree::
       :caption: Platform guides
@@ -60,23 +61,14 @@
       help/contact
       help/faq
       help/credits
-
-
-
-.. toctree::
-      :caption: Release Notes
-      :glob:
-      :hidden:
-
-      release_notes/*
-
-
+      help/release
 
 
 
 ====================
 Welcome to ScummVM!
 ====================
+
 
 ScummVM allows you to play classic graphic point-and-click adventure games, text adventure games, and RPGs, as long as you already have the game data files. ScummVM replaces the executable files shipped with the games, which means you can now play your favorite games on all your favorite devices.
 
@@ -141,6 +133,8 @@ We also have guides on how to get ScummVM running on a wide range of other platf
       Handheld consoles
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
       :doc:`other_platforms/nintendo_3ds`
+
+      :doc:`other_platforms/nintendo_ds`
 
       :doc:`other_platforms/nintendo_switch`
 
@@ -229,13 +223,13 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
 What's changed since I was last here?
 ======================================
 
-We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases.
+Check out the :doc:`Release notes <help/release>` for both current and past releases. 
 
 
 The ScummVM Project
 ===================
 
-ScummVM is an open-source project created, maintained and constantly improved by a team of passionate volunteers from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below.
+ScummVM is an open-source project created, maintained and constantly improved by a team of :doc:`passionate volunteers <help/credits>` from all around the world.  If you enjoy using ScummVM and would like to support the team, you can use the PayPal Donate button below.
 
 .. raw:: html
 

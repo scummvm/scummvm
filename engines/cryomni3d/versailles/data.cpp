@@ -72,7 +72,7 @@ const FakeTransitionActionPlace CryOmni3DEngine_Versailles::kFakeTransitions[] =
 };
 
 static void readSubtitles(Common::HashMap<Common::String, Common::Array<SubtitleEntry> > &subtitles,
-                          DATSeekableStream *data) {
+						  DATSeekableStream *data) {
 	uint16 vidsCount = data->readUint16LE();
 	for (uint16 i = 0; i < vidsCount; i++) {
 		Common::String vidName = data->readString16();

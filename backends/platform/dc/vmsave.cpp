@@ -52,20 +52,20 @@ static void displaySaveResult(vmsaveResult res)
 
   switch(res) {
   case VMSAVE_OK:
-    sprintf(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
-    break;
+	sprintf(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
+	break;
   case VMSAVE_NOVM:
-    strcpy(buf, "No memory card present!");
-    break;
+	strcpy(buf, "No memory card present!");
+	break;
   case VMSAVE_NOSPACE:
-    strcpy(buf, "Not enough space available!");
-    break;
+	strcpy(buf, "Not enough space available!");
+	break;
   case VMSAVE_WRITEERROR:
-    strcpy(buf, "Write error!!!");
-    break;
+	strcpy(buf, "Write error!!!");
+	break;
   default:
-    strcpy(buf, "Unknown error!!!");
-    break;
+	strcpy(buf, "Unknown error!!!");
+	break;
   }
 
   GUI::MessageDialog dialog(buf);
@@ -85,14 +85,14 @@ static vmsaveResult trySave(const char *gamename, const char *data, int size,
   unsigned char iconbuffer[512+32];
 
   if (!vmsfs_check_unit(vm, 0, &info))
-    return VMSAVE_NOVM;
+	return VMSAVE_NOVM;
   if (!vmsfs_get_superblock(&info, &super))
-    return VMSAVE_NOVM;
+	return VMSAVE_NOVM;
   int free_cnt = vmsfs_count_free(&super);
   if (vmsfs_open_file(&super, filename, &file))
-    free_cnt += file.blks;
+	free_cnt += file.blks;
   if (((128+512+size+511)>>9) > free_cnt)
-    return VMSAVE_NOSPACE;
+	return VMSAVE_NOSPACE;
 
   memset(&header, 0, sizeof(header));
   strncpy(header.shortdesc, "ScummVM savegame", 16);
@@ -117,9 +117,9 @@ static vmsaveResult trySave(const char *gamename, const char *data, int size,
   if (!vmsfs_create_file(&super, filename, &header,
 			iconbuffer+sizeof(header.palette), NULL,
 			data, size, &tstamp)) {
-    fprintf(stderr, "%s\n", vmsfs_describe_error());
-    vmsfs_beep(&info, 0);
-    return VMSAVE_WRITEERROR;
+	fprintf(stderr, "%s\n", vmsfs_describe_error());
+	vmsfs_beep(&info, 0);
+	return VMSAVE_WRITEERROR;
   }
 
   vmsfs_beep(&info, 0);
@@ -133,16 +133,16 @@ static bool tryLoad(char *&buffer, int &size, const char *filename, int vm)
   struct vms_file file;
 
   if (!vmsfs_check_unit(vm, 0, &info))
-    return false;
+	return false;
   if (!vmsfs_get_superblock(&info, &super))
-    return false;
+	return false;
   if (!vmsfs_open_file(&super, filename, &file))
-    return false;
+	return false;
 
   buffer = new char[size = file.size];
 
   if (vmsfs_read_file(&file, (unsigned char *)buffer, size))
-    return true;
+	return true;
 
   delete[] buffer;
   buffer = NULL;
@@ -155,12 +155,12 @@ static bool tryDelete(const char *filename, int vm)
   struct superblock super;
 
   if (!vmsfs_check_unit(vm, 0, &info))
-    return false;
+	return false;
   if (!vmsfs_get_superblock(&info, &super))
-    return false;
+	return false;
 
   if (!vmsfs_delete_file(&super, filename))
-    return false;
+	return false;
 
   return true;
 }
@@ -173,18 +173,18 @@ static void tryList(const Common::String &glob, int vm, Common::StringArray &lis
   struct dir_entry de;
 
   if (!vmsfs_check_unit(vm, 0, &info))
-    return;
+	return;
   if (!vmsfs_get_superblock(&info, &super))
-    return;
+	return;
   vmsfs_open_dir(&super, &iter);
   while (vmsfs_next_dir_entry(&iter, &de))
-    if (de.entry[0]) {
-      char buf[16];
-      strncpy(buf, (char *)de.entry+4, 12);
-      buf[12] = 0;
-      if (Common::matchString(buf, glob.c_str()))
+	if (de.entry[0]) {
+	  char buf[16];
+	  strncpy(buf, (char *)de.entry+4, 12);
+	  buf[12] = 0;
+	  if (Common::matchString(buf, glob.c_str()))
 	list.push_back(buf);
-    }
+	}
 }
 
 vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
@@ -193,15 +193,15 @@ vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
   vmsaveResult r, res = VMSAVE_NOVM;
 
   if (lastvm >= 0 &&
-     (res = trySave(gamename, data, size, filename, icon, lastvm)) == VMSAVE_OK)
-    return res;
+	 (res = trySave(gamename, data, size, filename, icon, lastvm)) == VMSAVE_OK)
+	return res;
 
   for (int i=0; i<24; i++)
-    if ((r = trySave(gamename, data, size, filename, icon, i)) == VMSAVE_OK) {
-      lastvm = i;
-      return r;
-    } else if (r > res)
-      res = r;
+	if ((r = trySave(gamename, data, size, filename, icon, i)) == VMSAVE_OK) {
+	  lastvm = i;
+	  return r;
+	} else if (r > res)
+	  res = r;
 
   return res;
 }
@@ -209,14 +209,14 @@ vmsaveResult writeSaveGame(const char *gamename, const char *data, int size,
 bool readSaveGame(char *&buffer, int &size, const char *filename)
 {
   if (lastvm >= 0 &&
-     tryLoad(buffer, size, filename, lastvm))
-    return true;
+	 tryLoad(buffer, size, filename, lastvm))
+	return true;
 
   for (int i=0; i<24; i++)
-    if (tryLoad(buffer, size, filename, i)) {
-      lastvm = i;
-      return true;
-    }
+	if (tryLoad(buffer, size, filename, i)) {
+	  lastvm = i;
+	  return true;
+	}
 
   return false;
 }
@@ -224,14 +224,14 @@ bool readSaveGame(char *&buffer, int &size, const char *filename)
 bool deleteSaveGame(const char *filename)
 {
   if (lastvm >= 0 &&
-     tryDelete(filename, lastvm))
-    return true;
+	 tryDelete(filename, lastvm))
+	return true;
 
   for (int i=0; i<24; i++)
-    if (tryDelete(filename, i)) {
-      lastvm = i;
-      return true;
-    }
+	if (tryDelete(filename, i)) {
+	  lastvm = i;
+	  return true;
+	}
 
   return false;
 }
@@ -249,12 +249,12 @@ private:
 
 public:
   InVMSave()
-    : _pos(0), buffer(NULL), _eos(false)
+	: _pos(0), buffer(NULL), _eos(false)
   { }
 
   ~InVMSave()
   {
-    delete[] buffer;
+	delete[] buffer;
   }
 
   bool eos() const override { return _eos; }
@@ -278,10 +278,10 @@ public:
   virtual int32 pos() const { return _pos; }
 
   OutVMSave(const char *_filename)
-    : _pos(0), committed(-1), iofailed(false)
+	: _pos(0), committed(-1), iofailed(false)
   {
-    strncpy(filename, _filename, 16);
-    buffer = new char[size = MAX_SAVE_SIZE];
+	strncpy(filename, _filename, 16);
+	buffer = new char[size = MAX_SAVE_SIZE];
   }
 
   ~OutVMSave();
@@ -344,7 +344,7 @@ void OutVMSave::finalize()
   extern Icon icon;
 
   if (committed >= _pos)
-    return;
+	return;
 
   char *data = buffer;
   int len = _pos;
@@ -352,7 +352,7 @@ void OutVMSave::finalize()
   vmsaveResult r = writeSaveGame(gGameName, data, len, filename, icon);
   committed = _pos;
   if (r != VMSAVE_OK)
-    iofailed = true;
+	iofailed = true;
   displaySaveResult(r);
 }
 
@@ -366,12 +366,12 @@ uint32 InVMSave::read(void *buf, uint32 cnt)
 {
   int nbyt = cnt;
   if (_pos + nbyt > _size) {
-    cnt = (_size - _pos);
-    _eos = true;
-    nbyt = cnt;
+	cnt = (_size - _pos);
+	_eos = true;
+	nbyt = cnt;
   }
   if (nbyt)
-    memcpy(buf, buffer + _pos, nbyt);
+	memcpy(buf, buffer + _pos, nbyt);
   _pos += nbyt;
   return cnt;
 }
@@ -380,7 +380,7 @@ bool InVMSave::skip(uint32 offset)
 {
   int nbyt = offset;
   if (_pos + nbyt > _size)
-    nbyt = (_size - _pos);
+	nbyt = (_size - _pos);
   _pos += nbyt;
   return true;
 }
@@ -389,19 +389,19 @@ bool InVMSave::seek(int32 offs, int whence)
 {
   switch(whence) {
   case SEEK_SET:
-    _pos = offs;
-    break;
+	_pos = offs;
+	break;
   case SEEK_CUR:
-    _pos += offs;
-    break;
+	_pos += offs;
+	break;
   case SEEK_END:
-    _pos = _size + offs;
-    break;
+	_pos = _size + offs;
+	break;
   }
   if (_pos < 0)
-    _pos = 0;
+	_pos = 0;
   else if (_pos > _size)
-    _pos = _size;
+	_pos = _size;
   _eos = false;
   return true;
 }
@@ -410,11 +410,11 @@ uint32 OutVMSave::write(const void *buf, uint32 cnt)
 {
   int nbyt = cnt;
   if (_pos + nbyt > size) {
-    cnt = (size - _pos);
-    nbyt = cnt;
+	cnt = (size - _pos);
+	nbyt = cnt;
   }
   if (nbyt)
-    memcpy(buffer + _pos, buf, nbyt);
+	memcpy(buffer + _pos, buf, nbyt);
   _pos += nbyt;
   return cnt;
 }
@@ -425,7 +425,7 @@ Common::StringArray VMSaveManager::listSavefiles(const Common::String &pattern)
   Common::StringArray list;
 
   for (int i=0; i<24; i++)
-    tryList(pattern, i, list);
+	tryList(pattern, i, list);
 
   return list;
 }

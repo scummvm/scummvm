@@ -45,6 +45,7 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	if (!ConfMan.getBool("use_cdaudio"))
 		_usesCdTrack = false;
 	_forceDOSTracks = false;
+	_useWindowsCursors = ConfMan.getBool("windows_cursors");
 	_pseudoMouseAbility = kPseudoMouseAbilityUninitialized;
 }
 
@@ -215,7 +216,14 @@ SciVersion GameFeatures::detectSetCursorType() {
 			// kSetCursor semantics, otherwise it uses the SCI0 early kSetCursor
 			// semantics.
 			if (number == 0)
-				_setCursorType = SCI_VERSION_1_1;
+				// KQ5 CD's DOS interpreter contained the new kSetCusor API while
+				// the Windows interpreter contained the old. The scripts tested
+				// the platform to see which version to call.
+				if (g_sci->getGameId() == GID_KQ5 && _useWindowsCursors) {
+					_setCursorType = SCI_VERSION_0_EARLY;
+				} else {
+					_setCursorType = SCI_VERSION_1_1;
+				}
 			else
 				_setCursorType = SCI_VERSION_0_EARLY;
 		}

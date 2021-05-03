@@ -1431,6 +1431,7 @@ void PegasusEngine::showTempScreen(const Common::String &fileName) {
 			case Common::EVENT_RBUTTONUP:
 			case Common::EVENT_KEYDOWN:
 			case Common::EVENT_JOYBUTTON_DOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				done = true;
 				break;
 			default:
@@ -2713,6 +2714,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("UP");
 	act->addDefaultInputMapping("KP8");
 	act->addDefaultInputMapping("JOY_UP");
+	act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveDown, _("Down/Zoom Out"));
@@ -2720,6 +2722,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	act->addDefaultInputMapping("DOWN");
 	act->addDefaultInputMapping("KP5");
 	act->addDefaultInputMapping("JOY_DOWN");
+	act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 	engineKeyMap->addAction(act);
 
 	act = new Action(kStandardActionMoveLeft, _("Turn Left"));
@@ -2801,7 +2804,7 @@ Common::KeymapArray PegasusEngine::initKeymaps() {
 	// WORKAROUND: I'm also accepting 'e' here since an
 	// alt+click is often intercepted by the OS. 'e' is used as the
 	// easter egg key in Buried in Time and Legacy of Time.
-	act = new Action("WTF", _("???"));
+	act = new Action(kStandardActionEE, _("???"));
 	act->setCustomEngineActionEvent(kPegasusActionEnableEasterEgg);
 	act->addDefaultInputMapping("e");
 	engineKeyMap->addAction(act);

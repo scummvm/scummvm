@@ -91,7 +91,7 @@ public:
 	InputManager() :
 		_inputs(0),
 		_mouseEnabled(true),
-		_inputBeginState(nullptr) {}
+		_inputBeginState(NancyState::kNone) {}
 
 	void processEvents();
 
@@ -105,7 +105,7 @@ private:
 	uint16 _inputs;
 	Common::Array<Common::KeyState> _otherKbdInput;
 	bool _mouseEnabled;
-	State::State *_inputBeginState;
+	NancyState::NancyState _inputBeginState;
 };
 
 } // End of namespace Nancy

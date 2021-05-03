@@ -41,6 +41,8 @@
 
 namespace GUI {
 
+#define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
+
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 
 enum {
@@ -113,7 +115,7 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine *metaEngine) {
 	// possible to use it.
 	g_gui.checkScreenChange();
 
-	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
+	if (g_gui.getGUIWidth() >= 640 && g_gui.getGUIHeight() >= 400
 		&& metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo)
 		&& metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail)
 		&& userConfig.equalsIgnoreCase("grid")) {
@@ -342,7 +344,7 @@ void SaveLoadChooserDialog::addChooserButtons() {
 
 	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
-	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400)) {
+	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getGUIWidth() >= 640 && g_gui.getGUIHeight() >= 400)) {
 		_gridButton->setEnabled(false);
 		_listButton->setEnabled(false);
 	}
@@ -355,7 +357,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 	if (g_gui.xmlEval()->getVar("Globals.ShowChooserPics") == 1 && g_gui.theme()->supportsImages()) {
 		button = new PicButtonWidget(this, name, tooltip, cmd);
 		((PicButtonWidget *)button)->useThemeTransparency(true);
-		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image));
+		((PicButtonWidget *)button)->setGfx(g_gui.theme()->getImageSurface(image), kPicButtonStateEnabled, false);
 	} else
 #endif
 		button = new ButtonWidget(this, name, desc, tooltip, cmd);
@@ -384,6 +386,7 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32St
 	_list->setEditable(saveMode);
 
 	_gfxWidget = new GraphicsWidget(this, 0, 0, 10, 10);
+	_gfxWidget->useThemeTransparency(false);
 
 	_date = new StaticTextWidget(this, 0, 0, 10, 10, _("No date saved"), Graphics::kTextAlignCenter);
 	_time = new StaticTextWidget(this, 0, 0, 10, 10, _("No time saved"), Graphics::kTextAlignCenter);
@@ -415,7 +418,7 @@ void SaveLoadChooserSimple::addThumbnailContainer() {
 
 int SaveLoadChooserSimple::runIntern() {
 	if (_gfxWidget)
-		_gfxWidget->setGfx(nullptr);
+		_gfxWidget->setGfx((Graphics::ManagedSurface *)nullptr);
 
 	_resultString.clear();
 	reflowLayout();
@@ -497,8 +500,8 @@ void SaveLoadChooserSimple::reflowLayout() {
 			error("Error when loading position data for Save/Load Thumbnails");
 
 		// Even if there is no thumbnail support, getWidgetData() will provide default thumbnail values
-		int thumbW = kThumbnailWidth;
-		int thumbH = kThumbnailHeight2;
+		int thumbW = SCALEVALUE(kThumbnailWidth);
+		int thumbH = SCALEVALUE(kThumbnailHeight2);
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
 
@@ -511,7 +514,7 @@ void SaveLoadChooserSimple::reflowLayout() {
 			textLines++; // add a line of padding at the bottom
 
 		if (_thumbnailSupport) {
-			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
+			_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH, false);
 			_gfxWidget->setVisible(true);
 		} else {
 			// choose sensible values for displaying playtime and date/time when a thumbnail is not being used
@@ -524,9 +527,9 @@ void SaveLoadChooserSimple::reflowLayout() {
 		int height = thumbY + thumbH + kLineHeight;
 
 		if (_saveDateSupport) {
-			_date->resize(thumbX, height, thumbW, kLineHeight);
+			_date->resize(thumbX, height, thumbW, kLineHeight, false);
 			height += kLineHeight;
-			_time->resize(thumbX, height, thumbW, kLineHeight);
+			_time->resize(thumbX, height, thumbW, kLineHeight, false);
 			height += kLineHeight;
 			_date->setVisible(_saveDateSupport);
 			_time->setVisible(_saveDateSupport);
@@ -536,13 +539,13 @@ void SaveLoadChooserSimple::reflowLayout() {
 		}
 
 		if (_playTimeSupport) {
-			_playtime->resize(thumbX, height, thumbW, kLineHeight);
+			_playtime->resize(thumbX, height, thumbW, kLineHeight, false);
 			_playtime->setVisible(_playTimeSupport);
 		} else {
 			_playtime->setVisible(false);
 		}
 
-		_container->resize(x, y, w, h + (kLineHeight * textLines));
+		_container->resize(x, y, w, h + (kLineHeight * textLines), false);
 		_container->setVisible(true);
 
 		updateSelection(false);
@@ -584,10 +587,8 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 		if (_thumbnailSupport) {
 			const Graphics::Surface *thumb = desc.getThumbnail();
-			if (thumb) {
-				_gfxWidget->setGfx(thumb);
-				_gfxWidget->useAlpha(256);
-			}
+			if (thumb)
+				_gfxWidget->setGfx(thumb, true);
 		}
 
 		if (_saveDateSupport) {
@@ -931,16 +932,16 @@ void SaveLoadChooserGrid::reflowLayout() {
 	if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.List", x, y, w, availableHeight))
 		error("Could not load widget position for 'SaveLoadChooser.List'");
 
-	const int16 buttonWidth = kThumbnailWidth + 6;
-	const int16 buttonHeight = kThumbnailHeight2 + 6;
+	const int16 buttonWidth = SCALEVALUE(kThumbnailWidth + 6);
+	const int16 buttonHeight = SCALEVALUE(kThumbnailHeight2 + 6);
 
-	const int16 containerFrameWidthAdd = 10;
+	const int16 containerFrameWidthAdd = SCALEVALUE(10);
 	const int16 containerFrameHeightAdd = 0;
 	const int16 containerWidth = buttonWidth + containerFrameWidthAdd;
 	const int16 containerHeight = buttonHeight + kLineHeight + containerFrameHeightAdd;
 
-	const int16 defaultSpacingHorizontal = 4;
-	const int16 defaultSpacingVertical = 8;
+	const int16 defaultSpacingHorizontal = SCALEVALUE(4);
+	const int16 defaultSpacingVertical = SCALEVALUE(8);
 	const int16 slotAreaWidth = containerWidth + defaultSpacingHorizontal;
 	const int16 slotAreaHeight = containerHeight + defaultSpacingVertical;
 
@@ -997,6 +998,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 			}
 
 			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, Common::U32String(), buttonCmd);
+			button->useThemeTransparency(false);
 			dstY += buttonHeight;
 
 			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignStart);
@@ -1084,7 +1086,7 @@ void SaveLoadChooserGrid::destroyButtons() {
 
 void SaveLoadChooserGrid::hideButtons() {
 	for (ButtonArray::iterator i = _buttons.begin(), end = _buttons.end(); i != end; ++i) {
-		i->button->setGfx(nullptr);
+		i->button->setGfx((Graphics::ManagedSurface *)nullptr);
 		i->setVisible(false);
 	}
 }

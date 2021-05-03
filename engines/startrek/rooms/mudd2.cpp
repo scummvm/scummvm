@@ -196,7 +196,7 @@ extern const RoomTextOffsets mudd2TextOffsets[] = {
 };
 
 extern const RoomText mudd2Texts[] = {
-      { -1, Common::UNK_LANG, "" }
+	  { -1, Common::UNK_LANG, "" }
 };
 
 void Room::mudd2WalkToNorthDoor() {

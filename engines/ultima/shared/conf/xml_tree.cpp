@@ -129,7 +129,7 @@ bool XMLTree::checkRoot(const Common::String &key) const {
 }
 
 void XMLTree::value(const Common::String &key, Common::String &ret,
-                    const char *defaultvalue) const {
+					const char *defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = sub->text();
@@ -138,7 +138,7 @@ void XMLTree::value(const Common::String &key, Common::String &ret,
 }
 
 void XMLTree::value(const Common::String &key, int &ret,
-                    int defaultvalue) const {
+					int defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = strtol(sub->text().c_str(), 0, 0);
@@ -147,7 +147,7 @@ void XMLTree::value(const Common::String &key, int &ret,
 }
 
 void XMLTree::value(const Common::String &key, bool &ret,
-                    bool defaultvalue) const {
+					bool defaultvalue) const {
 	const XMLNode *sub = _tree->subtree(key);
 	if (sub)
 		ret = sub->text().equalsIgnoreCase("YES");

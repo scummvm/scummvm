@@ -314,13 +314,14 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 }
 
 void Gui::loadBorders() {
-	loadBorder(_sceneWindow, "wage_border_inact.bmp", false);
-	loadBorder(_sceneWindow, "wage_border_act-noscrollbar.bmp", true);
-	loadBorder(_consoleWindow, "wage_border_inact.bmp", false);
-	loadBorder(_consoleWindow, "wage_border_act.bmp", true);
+	_consoleWindow->enableScrollbar(true);
+	loadBorder(_sceneWindow, "wage_border_inact-title.bmp", Graphics::kWindowBorderTitle, 22);
+	loadBorder(_sceneWindow, "wage_border_act-noscrollbar-title.bmp", Graphics::kWindowBorderActive|Graphics::kWindowBorderTitle, 22);
+	loadBorder(_consoleWindow, "wage_border_inact.bmp", Graphics::kWindowBorderScrollbar, 0);
+	loadBorder(_consoleWindow, "wage_border_act.bmp", Graphics::kWindowBorderScrollbar|Graphics::kWindowBorderActive, 0);
 }
 
-void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool active) {
+void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags, int titlePos) {
 	Common::File borderfile;
 
 	if (!borderfile.open(filename)) {
@@ -328,11 +329,21 @@ void Gui::loadBorder(Graphics::MacWindow *target, Common::String filename, bool 
 		return;
 	}
 
-	Image::BitmapDecoder bmpDecoder;
 	Common::SeekableReadStream *stream = borderfile.readStream(borderfile.size());
 	if (stream) {
 
-		target->loadBorder(*stream, active);
+		Graphics::BorderOffsets offsets;
+		offsets.left = 16;
+		offsets.right = 16;
+		offsets.top = 16;
+		offsets.bottom = 16;
+		offsets.titleTop = 0;
+		offsets.titleBottom = 0;
+		offsets.dark = false;
+		offsets.upperScrollHeight = 16;
+		offsets.lowerScrollHeight = 16;
+		offsets.titlePos = titlePos;
+		target->loadBorder(*stream, flags, offsets);
 
 		borderfile.close();
 

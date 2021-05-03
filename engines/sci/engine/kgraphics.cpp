@@ -403,6 +403,7 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
+	s->_paletteSetIntensityCounter = 0;
 	return make_reg(0, delta);
 }
 
@@ -645,6 +646,22 @@ reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
 	// Palette intensity in non-VGA SCI1 games has been removed
 	if (g_sci->_gfxPalette16->getTotalColorCount() < 256)
 		return s->r_acc;
+
+	if (setPalette) {
+		// Detect if we're being called from an unthrottled script loop.
+		// Throttled loops that call kWait on each iteration are okay.
+		if (s->_paletteSetIntensityCounter > 0) {
+			// Call speed throttler, otherwise the palette fade from this
+			// unthrottled script loop won't have any visible effect.
+			// Examples: KQ6 intro text/credits and SQ4CD intro credits
+			s->speedThrottler(30);
+		}
+		s->_paletteSetIntensityCounter++;
+
+		// Enable normal throttling in case this is being called from a script that
+		// doesn't animate anything with kAnimate, such as the LB2 title screen.
+		s->_throttleTrigger = true;
+	}
 
 	g_sci->_gfxPalette16->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 	return s->r_acc;

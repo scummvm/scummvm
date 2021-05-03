@@ -31,11 +31,11 @@
 namespace CryOmni3D {
 
 #define MAP_ID(id) \
-    do { \
-        if (_map) { \
-            id = (*_map)[id]; \
-        } \
-    } while(false)
+	do { \
+		if (_map) { \
+			id = (*_map)[id]; \
+		} \
+	} while(false)
 
 Sprites::Sprites() : _map(nullptr) {
 	_surface = new Graphics::Surface();

@@ -36,7 +36,7 @@ typedef struct { int32 nX, nY; } Span;
 
 // This function is used only inside this file.
 static void RawSpriteDraw(uint8 *pSurfaceBitmap, uint32 nPitch, uint32 nSurfaceWidth, uint32 nSurfaceHeight, _pxSprite *pSprite, uint8 *pPalette, int32 nX, int32 nY,
-                          uint32 *nTransparencyRef, uint8 nOpacity);
+						  uint32 *nTransparencyRef, uint8 nOpacity);
 
 void Draw_horizontal_line(int32 xx, int32 yy, uint32 len, _rgb *pen, uint8 *ad, uint32 pitch) {
 	// viewport coordinates
@@ -843,14 +843,14 @@ void BlendedLine(int32 x0, int32 y0, int32 x1, int32 y1, _rgb c, int32 surface_w
 }
 
 void SpriteFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface's drawing area.
-                     uint32 nPitch,             // IN:  Pitch for the surface.
-                     uint32 nSurfaceWidth,      // IN:  Width of the surface.
-                     uint32 nSurfaceHeight,     // IN:  Height of the surface.
-                     _pxBitmap *pBitmap,        // IN:  Pointer to the bitmap to render.
-                     uint32 nFrameNumber,       // IN:  Frame to draw.
-                     uint32 *pnTransparencyRef, // IN:  Colour to use for transparency.
-                     uint8 nOpacity             // IN:  Opacity 0-255 to draw sprite into surface.
-                     ) {
+					 uint32 nPitch,             // IN:  Pitch for the surface.
+					 uint32 nSurfaceWidth,      // IN:  Width of the surface.
+					 uint32 nSurfaceHeight,     // IN:  Height of the surface.
+					 _pxBitmap *pBitmap,        // IN:  Pointer to the bitmap to render.
+					 uint32 nFrameNumber,       // IN:  Frame to draw.
+					 uint32 *pnTransparencyRef, // IN:  Colour to use for transparency.
+					 uint8 nOpacity             // IN:  Opacity 0-255 to draw sprite into surface.
+					 ) {
 	uint8 *pPalette;
 	_pxSprite *pSprite;
 
@@ -865,17 +865,17 @@ void SpriteFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface's
 }
 
 void SpriteXYFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface's drawing area.
-                       uint32 nPitch,             // IN:  Pitch for the surface.
-                       uint32 nSurfaceWidth,      // IN:  Width of the surface.
-                       uint32 nSurfaceHeight,     // IN:  Height of the surface.
-                       _pxBitmap *pBitmap,        // IN:  Pointer to the bitmap to render.
-                       int32 nX,                  // IN:  X-position to draw sprite at (relative to the surface).
-                       int32 nY,                  // IN:  Y-position to draw sprite at (relative to the surface).
-                       uint32 nFrameNumber,       // IN:  Frame to draw.
-                       bool8 bCenter,             // IN:  If true, centre the sprite.
-                       uint32 *pnTransparencyRef, // IN:  Colour to use for transparency.
-                       uint8 nOpacity             // IN:  Opacity 0-255 to draw sprite into surface.
-                       ) {
+					   uint32 nPitch,             // IN:  Pitch for the surface.
+					   uint32 nSurfaceWidth,      // IN:  Width of the surface.
+					   uint32 nSurfaceHeight,     // IN:  Height of the surface.
+					   _pxBitmap *pBitmap,        // IN:  Pointer to the bitmap to render.
+					   int32 nX,                  // IN:  X-position to draw sprite at (relative to the surface).
+					   int32 nY,                  // IN:  Y-position to draw sprite at (relative to the surface).
+					   uint32 nFrameNumber,       // IN:  Frame to draw.
+					   bool8 bCenter,             // IN:  If true, centre the sprite.
+					   uint32 *pnTransparencyRef, // IN:  Colour to use for transparency.
+					   uint8 nOpacity             // IN:  Opacity 0-255 to draw sprite into surface.
+					   ) {
 	uint8 *pPalette;
 	_pxSprite *pSprite;
 
@@ -896,16 +896,16 @@ void SpriteXYFrameDraw(uint8 *pSurfaceBitmap,     // IN:  Pointer to the surface
 }
 
 void RawSpriteDraw(uint8 *pSurfaceBitmap,    // IN:  Pointer to the surface's drawing area.
-                   uint32 nPitch,            // IN:  Pitch for the surface.
-                   uint32 nSurfaceWidth,     // IN:  Width of surface in pixels.
-                   uint32 nSurfaceHeight,    // IN:  Height of surface in pixels.
-                   _pxSprite *pSprite,       // IN:  Pointer to one frame of a sprite.
-                   uint8 *pPalette,          // IN:  Pointer to the palette.
-                   int32 nX,                 // IN:  X-position to draw sprite at (relative to the surface).
-                   int32 nY,                 // IN:  Y-position to draw sprite at (relative to the surface).
-                   uint32 *pnTransparentRef, // IN:  Colour to use for transparency.
-                   uint8 nOpacity            // IN:  If true, pixels are blended into the surface.
-                   ) {
+				   uint32 nPitch,            // IN:  Pitch for the surface.
+				   uint32 nSurfaceWidth,     // IN:  Width of surface in pixels.
+				   uint32 nSurfaceHeight,    // IN:  Height of surface in pixels.
+				   _pxSprite *pSprite,       // IN:  Pointer to one frame of a sprite.
+				   uint8 *pPalette,          // IN:  Pointer to the palette.
+				   int32 nX,                 // IN:  X-position to draw sprite at (relative to the surface).
+				   int32 nY,                 // IN:  Y-position to draw sprite at (relative to the surface).
+				   uint32 *pnTransparentRef, // IN:  Colour to use for transparency.
+				   uint8 nOpacity            // IN:  If true, pixels are blended into the surface.
+				   ) {
 	uint32 x, y;
 	uint32 *pSurfaceRowStart32;
 	uint8 *pSurfaceRowStart8;

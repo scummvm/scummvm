@@ -51,11 +51,11 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	void addPickup(const Item *item);
+	void addPickup(const Item *item, bool showCount);
 
 	static CruPickupAreaGump *get_instance();
 private:
-    static CruPickupAreaGump *_instance;
+	static CruPickupAreaGump *_instance;
 };
 
 } // End of namespace Ultima8

@@ -103,7 +103,8 @@ Option parameters are shown below in capitals, and need to be replaced with real
 Short options are listed where they are available.
 
 .. csv-table::
-    :widths: 35 10 55
+    :widths: 35 15 50
+    :class: command
     :header-rows: 1
 
 		Option,Short,Description
@@ -130,7 +131,7 @@ Short options are listed where they are available.
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`"
         ``--filtering``,,":ref:`Forces filtered graphics mode <filtering>`"
         ``--fullscreen``,``-f``,":ref:`Forces full-screen mode <fullscreen>`"
-        ``--game=NAME``,,"In combination with ``--add`` or ``--detect`` only adds or attempts to detect the :ref:`game with id NAME <gameid>`."
+        ``--game=NAME``,,"In combination with ``--add`` or ``--detect`` only adds or attempts to detect the game with id NAME."
         ``--gfx-mode``,``-g``,":ref:`Selects graphics mode <gfxmode>`"
         ``--gui-theme=THEME``,,":ref:`Selects GUI theme <theme>`"
         ``--help``,``-h``,"Displays a brief help text and exit"

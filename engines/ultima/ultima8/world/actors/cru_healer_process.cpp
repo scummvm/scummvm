@@ -72,7 +72,7 @@ void CruHealerProcess::run() {
 		return;
 	}
 
-    if (audio && !audio->isSFXPlayingForObject(HEAL_GOING_SFX, _itemNum))
+	if (audio && !audio->isSFXPlayingForObject(HEAL_GOING_SFX, _itemNum))
 		audio->playSFX(HEAL_GOING_SFX, 0x80, _itemNum, 1);
 
 	uint16 newHP = avatar->getHP() + 1;

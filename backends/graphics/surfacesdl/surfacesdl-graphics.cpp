@@ -48,9 +48,7 @@
 #else
 #include "image/bmp.h"
 #endif
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 // SDL surface flags which got removed in SDL2.
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -275,7 +273,7 @@ static void initGraphicsModes() {
 	// 0 should be the normal1x mode
 	s_defaultGraphicsMode = 0;
 	for (uint i = 0; i < plugins.size(); ++i) {
-        ScalerPluginObject &plugin = plugins[i]->get<ScalerPluginObject>();
+		ScalerPluginObject &plugin = plugins[i]->get<ScalerPluginObject>();
 		const Common::Array<uint> &factors = plugin.getFactors();
 		const char *name = plugin.getName();
 		const char *prettyName = plugin.getPrettyName();
@@ -521,18 +519,8 @@ void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	{
-		SDL_Window *window = _window->getSDLWindow();
-		if (window == nullptr) {
-			error("Could not find ScummVM window for retrieving default display mode");
-		}
-
-		const int displayIndex = SDL_GetWindowDisplayIndex(window);
-		if (displayIndex < 0) {
-			error("Could not find ScummVM window display index");
-		}
-
 		SDL_DisplayMode defaultMode;
-		if (SDL_GetDesktopDisplayMode(displayIndex, &defaultMode) != 0) {
+		if (SDL_GetDesktopDisplayMode(_window->getDisplayIndex(), &defaultMode) != 0) {
 			error("Could not get default system display mode");
 		}
 
@@ -805,7 +793,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	_transactionDetails.sizeChanged = true;
 }
 
-static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
+void SurfaceSdlGraphicsManager::fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) const {
 	assert(&width != &height);
 
 	if (desiredAspectRatio.isAuto())
@@ -821,10 +809,11 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 	uint bestMetric = (uint)-1; // Metric is wasted space
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	const int numModes = SDL_GetNumDisplayModes(0);
+	const int display = _window->getDisplayIndex();
+	const int numModes = SDL_GetNumDisplayModes(display);
 	SDL_DisplayMode modeData, *mode = &modeData;
 	for (int i = 0; i < numModes; ++i) {
-		if (SDL_GetDisplayMode(0, i, &modeData)) {
+		if (SDL_GetDisplayMode(display, i, &modeData)) {
 			continue;
 		}
 #else
@@ -958,7 +947,7 @@ bool SurfaceSdlGraphicsManager::loadGFXMode() {
 	}
 
 #if !SDL_VERSION_ATLEAST(2, 0, 0)
-	handleResize(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 90, 90);
+	handleResize(_videoMode.hardwareWidth, _videoMode.hardwareHeight);
 #endif
 
 	//
@@ -1891,7 +1880,7 @@ void SurfaceSdlGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, 
 		} else {
 			assert(!_mouseOrigSurface);
 
-            // Allocate bigger surface because scalers will read past the boudaries.
+			// Allocate bigger surface because scalers will read past the boudaries.
 			_mouseOrigSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
 							_mouseCurState.w + _maxExtraPixels * 2,
 							_mouseCurState.h + _maxExtraPixels * 2,
@@ -2108,10 +2097,10 @@ void SurfaceSdlGraphicsManager::blitCursor() {
 		// HACK: AdvMame4x requires a height of at least 4 pixels, so we
 		// fall back on the Normal scaler when a smaller cursor is supplied.
 		if (_scalerPlugin->canDrawCursor() && (uint)_mouseCurState.h >= _extraPixels) {
-            _scalerPlugin->scale(
-                    (byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
-                    _mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
-                    _mouseCurState.w, _mouseCurState.h, 0, 0);
+			_scalerPlugin->scale(
+					(byte *)_mouseOrigSurface->pixels + _mouseOrigSurface->pitch * _maxExtraPixels + _maxExtraPixels * _mouseOrigSurface->format->BytesPerPixel,
+					_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
+					_mouseCurState.w, _mouseCurState.h, 0, 0);
 		} else
 #endif
 		{
@@ -2220,9 +2209,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	assert(_transactionMode == kTransactionNone);
 	assert(!msg.empty());
-#ifdef USE_TTS
 	Common::U32String textToSay = msg;
-#endif // USE_TTS
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
@@ -2298,14 +2285,12 @@ void SurfaceSdlGraphicsManager::displayMessageOnOSD(const Common::U32String &msg
 
 	// Ensure a full redraw takes place next time the screen is updated
 	_forceRedraw = true;
-#ifdef USE_TTS
 	if (ConfMan.hasKey("tts_enabled", "scummvm") &&
 			ConfMan.getBool("tts_enabled", "scummvm")) {
 		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 		if (ttsMan)
 			ttsMan->say(textToSay);
 	}
-#endif // USE_TTS
 }
 
 SDL_Rect SurfaceSdlGraphicsManager::getOSDMessageRect() const {
@@ -2423,8 +2408,8 @@ void SurfaceSdlGraphicsManager::drawOSD() {
 
 #endif
 
-void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) {
-	SdlGraphicsManager::handleResizeImpl(width, height, xdpi, ydpi);
+void SurfaceSdlGraphicsManager::handleResizeImpl(const int width, const int height) {
+	SdlGraphicsManager::handleResizeImpl(width, height);
 	recalculateDisplayAreas();
 }
 
@@ -2594,7 +2579,7 @@ void SurfaceSdlGraphicsManager::notifyVideoExpose() {
 
 void SurfaceSdlGraphicsManager::notifyResize(const int width, const int height) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	handleResize(width, height, _xdpi, _ydpi);
+	handleResize(width, height);
 #endif
 }
 
@@ -2649,9 +2634,8 @@ SDL_Surface *SurfaceSdlGraphicsManager::SDL_SetVideoMode(int width, int height, 
 		return nullptr;
 	}
 
-	// TODO: Implement high DPI support
 	getWindowSizeFromSdl(&_windowWidth, &_windowHeight);
-	handleResize(_windowWidth, _windowHeight, 90, 90);
+	handleResize(_windowWidth, _windowHeight);
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, _videoMode.filtering ? "linear" : "nearest");
 

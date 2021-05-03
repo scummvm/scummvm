@@ -78,7 +78,7 @@ typedef Array<TLanguage> TLangArray;
 struct PoMessageEntry {
 	int msgid;         /*!< ID of the message. */
 	String msgctxt;    /*!< Context of the message. It can be empty.
-                            Can be used to solve ambiguities. */
+							Can be used to solve ambiguities. */
 	U32String msgstr;  /*!< Message string. */
 };
 

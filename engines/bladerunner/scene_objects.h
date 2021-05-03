@@ -93,6 +93,7 @@ public:
 	bool isEmptyScreenRectangle(int sceneObjectId);
 	int compareScreenRectangle(int sceneObjectId, const Common::Rect &rectangle);
 	void resetScreenRectangleAndBbox(int sceneObjectId);
+	void synchScreenRectangle(int sceneObjectId, const Common::Rect &targetScreenRect);
 
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);

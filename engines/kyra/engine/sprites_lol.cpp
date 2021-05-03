@@ -482,7 +482,7 @@ int LoLEngine::calcMonsterSkillLevel(int id, int a) {
 	int r = (a << 8) / c[4];
 
 	if (id & 0x8000) {
-		r = (r * _monsterModifiers2[3 + _monsterDifficulty]) >> 8;
+		r = (r * _monsterModifiers2[_monsterDifficulty]) >> 8;
 	} else {
 		if (_characters[id].skillLevels[1] > 7)
 			r = (r - (r >> 1));

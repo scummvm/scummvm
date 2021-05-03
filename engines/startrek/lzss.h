@@ -32,24 +32,24 @@ Common::SeekableReadStream *decodeLZSS(Common::SeekableReadStream *indata, uint3
 /*
 class LzssReadStream : public Common::SeekableReadStream {
 private:
-    uint8 *_outLzssBufData;
-    uint32 _size;
-    uint32 _pos;
+	uint8 *_outLzssBufData;
+	uint32 _size;
+	uint32 _pos;
 
-    uint32 decodeLZSS(Common::ReadStream *in, uint8 lengthmask, uint8 lengthbits);
+	uint32 decodeLZSS(Common::ReadStream *in, uint8 lengthmask, uint8 lengthbits);
 
 public:
-    LzssReadStream(Common::ReadStream *indata, uint8 lengthmask, uint8 lengthbits);
-    ~LzssReadStream();
+	LzssReadStream(Common::ReadStream *indata, uint8 lengthmask, uint8 lengthbits);
+	~LzssReadStream();
 
-    bool eos() const;
-    uint32 read(void *buf, uint32 length);
-    int32 pos() const { return _pos; }
-    int32 size() const { return _size; }
-    bool seek(int32 offset, int whence) {
-        // TODO
-        return false;
-    }
+	bool eos() const;
+	uint32 read(void *buf, uint32 length);
+	int32 pos() const { return _pos; }
+	int32 size() const { return _size; }
+	bool seek(int32 offset, int whence) {
+		// TODO
+		return false;
+	}
 
 };
 */

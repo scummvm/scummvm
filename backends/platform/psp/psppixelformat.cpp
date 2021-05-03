@@ -67,9 +67,9 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 // Convert from ScummVM general PixelFormat to our pixel format
 // For buffer and palette.
 void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
-        PSPPixelFormat::Type &bufferType,
-        PSPPixelFormat::Type &paletteType,
-        bool &swapRedBlue) {
+		PSPPixelFormat::Type &bufferType,
+		PSPPixelFormat::Type &paletteType,
+		bool &swapRedBlue) {
 	swapRedBlue = false;	 // no red-blue swap by default
 	PSPPixelFormat::Type *target = 0;	// which one we'll be filling
 
@@ -80,7 +80,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 		if (pf->bytesPerPixel == 1) {
 			bufferType = Type_Palette_8bit;
 			target = &paletteType;	// The type describes the palette
-		} else if (pf->bytesPerPixel == 2) {
+		} else if (pf->bytesPerPixel == 2 || pf->bytesPerPixel == 4) {
 			paletteType = Type_None;
 			target = &bufferType;	// The type describes the buffer
 		} else {

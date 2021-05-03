@@ -66,12 +66,12 @@ struct SaveStruct {
 enum L9MsgTypes { MSGT_V1, MSGT_V2 };
 
 /*
-    Graphics type    Resolution     Scale stack reset
-    -------------------------------------------------
-    GFX_V2           160 x 128            yes
-    GFX_V3A          160 x 96             yes
-    GFX_V3B          160 x 96             no
-    GFX_V3C          320 x 96             no
+	Graphics type    Resolution     Scale stack reset
+	-------------------------------------------------
+	GFX_V2           160 x 128            yes
+	GFX_V3A          160 x 96             yes
+	GFX_V3B          160 x 96             no
+	GFX_V3C          320 x 96             no
 */
 enum L9GfxTypes { GFX_V2, GFX_V3A, GFX_V3B, GFX_V3C };
 
@@ -2220,11 +2220,11 @@ void newxy(int x, int y) {
 }
 
 /* sdraw instruction plus arguments are stored in an 8 bit word.
-       76543210
-       iixxxyyy
+	   76543210
+	   iixxxyyy
    where i is instruction code
-         x is x argument, high bit is sign
-         y is y argument, high bit is sign
+		 x is x argument, high bit is sign
+		 y is y argument, high bit is sign
 */
 void sdraw(int d7) {
 	int x, y, x1, y1;
@@ -2257,11 +2257,11 @@ void sdraw(int d7) {
 }
 
 /* smove instruction plus arguments are stored in an 8 bit word.
-       76543210
-       iixxxyyy
+	   76543210
+	   iixxxyyy
    where i is instruction code
-         x is x argument, high bit is sign
-         y is y argument, high bit is sign
+		 x is x argument, high bit is sign
+		 y is y argument, high bit is sign
 */
 void smove(int d7) {
 	int x, y;
@@ -2290,11 +2290,11 @@ void sgosub(int d7, L9BYTE **a5) {
 }
 
 /* draw instruction plus arguments are stored in a 16 bit word.
-       FEDCBA9876543210
-       iiiiixxxxxxyyyyy
+	   FEDCBA9876543210
+	   iiiiixxxxxxyyyyy
    where i is instruction code
-         x is x argument, high bit is sign
-         y is y argument, high bit is sign
+		 x is x argument, high bit is sign
+		 y is y argument, high bit is sign
 */
 void draw(int d7, L9BYTE **a5) {
 	int xy, x, y, x1, y1;
@@ -2328,11 +2328,11 @@ void draw(int d7, L9BYTE **a5) {
 }
 
 /* move instruction plus arguments are stored in a 16 bit word.
-       FEDCBA9876543210
-       iiiiixxxxxxyyyyy
+	   FEDCBA9876543210
+	   iiiiixxxxxxyyyyy
    where i is instruction code
-         x is x argument, high bit is sign
-         y is y argument, high bit is sign
+		 x is x argument, high bit is sign
+		 y is y argument, high bit is sign
 */
 void _move(int d7, L9BYTE **a5) {
 	int xy, x, y;

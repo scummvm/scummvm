@@ -273,7 +273,7 @@ static const struct {
 	{ "V9220tB0", {"V9220nB0", _s("He must not sit next to or across from pierced beings") } },
 	{ "V9220tC0", {"V9220nC0", _s("He must not sit next to or across from monsters") } }, // 80
 	{ "V9220tD0", {"V9220nD0", _s("He must not sit next to or across from animals") } },
-        { "V9245tA0", {"V9300nE0", _s("Ha-ha-ha") } }
+		{ "V9245tA0", {"V9300nE0", _s("Ha-ha-ha") } }
 };
 
 static const struct {

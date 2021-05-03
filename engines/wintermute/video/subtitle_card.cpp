@@ -32,9 +32,9 @@
 namespace Wintermute {
 
 SubtitleCard::SubtitleCard(BaseGame *inGame,
-                           const Common::String &text,
-                           const uint &startFrame,
-                           const uint &endFrame) : _gameRef(inGame),
+						   const Common::String &text,
+						   const uint &startFrame,
+						   const uint &endFrame) : _gameRef(inGame),
 	_startFrame(startFrame),
 	_endFrame(endFrame) {
 	_text = text;

@@ -2138,7 +2138,11 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object14.fixPriority(250);
 			scene->_object14.setPosition(Common::Point(139, 151));
 
-			scene->_gfxButton.setText(EXIT_MSG);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				scene->_gfxButton.setText(ESP_EXIT_MSG);
+			} else {
+				scene->_gfxButton.setText(EXIT_MSG);
+			}
 			scene->_gfxButton._bounds.center(140, 189);
 			scene->_gfxButton.draw();
 
@@ -2151,7 +2155,11 @@ void Scene7700::Object8::doAction(int action) {
 			scene->_object15.setPosition(Common::Point(140, 165));
 			scene->_object15.fixPriority(200);
 
-			scene->_gfxButton.setText(EXIT_MSG);
+			if (g_vm->getLanguage() == Common::ES_ESP) {
+				scene->_gfxButton.setText(ESP_EXIT_MSG);
+			} else {
+				scene->_gfxButton.setText(EXIT_MSG);
+			}
 			scene->_gfxButton._bounds.center(140, 186);
 			scene->_gfxButton.draw();
 			scene->_gfxButton._bounds.expandPanes();

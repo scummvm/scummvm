@@ -117,62 +117,62 @@ namespace AGS3 {
 #define COLORCONV_KEEP_TRANS        0x4000000
 
 #define COLORCONV_DITHER            (COLORCONV_DITHER_PAL |          \
-                                     COLORCONV_DITHER_HI)
+									 COLORCONV_DITHER_HI)
 
 #define COLORCONV_EXPAND_256        (COLORCONV_8_TO_15 |             \
-                                     COLORCONV_8_TO_16 |             \
-                                     COLORCONV_8_TO_24 |             \
-                                     COLORCONV_8_TO_32)
+									 COLORCONV_8_TO_16 |             \
+									 COLORCONV_8_TO_24 |             \
+									 COLORCONV_8_TO_32)
 
 #define COLORCONV_REDUCE_TO_256     (COLORCONV_15_TO_8 |             \
-                                     COLORCONV_16_TO_8 |             \
-                                     COLORCONV_24_TO_8 |             \
-                                     COLORCONV_32_TO_8 |             \
-                                     COLORCONV_32A_TO_8)
+									 COLORCONV_16_TO_8 |             \
+									 COLORCONV_24_TO_8 |             \
+									 COLORCONV_32_TO_8 |             \
+									 COLORCONV_32A_TO_8)
 
 #define COLORCONV_EXPAND_15_TO_16    COLORCONV_15_TO_16
 
 #define COLORCONV_REDUCE_16_TO_15    COLORCONV_16_TO_15
 
 #define COLORCONV_EXPAND_HI_TO_TRUE (COLORCONV_15_TO_24 |            \
-                                     COLORCONV_15_TO_32 |            \
-                                     COLORCONV_16_TO_24 |            \
-                                     COLORCONV_16_TO_32)
+									 COLORCONV_15_TO_32 |            \
+									 COLORCONV_16_TO_24 |            \
+									 COLORCONV_16_TO_32)
 
 #define COLORCONV_REDUCE_TRUE_TO_HI (COLORCONV_24_TO_15 |            \
-                                     COLORCONV_24_TO_16 |            \
-                                     COLORCONV_32_TO_15 |            \
-                                     COLORCONV_32_TO_16)
+									 COLORCONV_24_TO_16 |            \
+									 COLORCONV_32_TO_15 |            \
+									 COLORCONV_32_TO_16)
 
 #define COLORCONV_24_EQUALS_32      (COLORCONV_24_TO_32 |            \
-                                     COLORCONV_32_TO_24)
+									 COLORCONV_32_TO_24)
 
 #define COLORCONV_TOTAL             (COLORCONV_EXPAND_256 |          \
-                                     COLORCONV_REDUCE_TO_256 |       \
-                                     COLORCONV_EXPAND_15_TO_16 |     \
-                                     COLORCONV_REDUCE_16_TO_15 |     \
-                                     COLORCONV_EXPAND_HI_TO_TRUE |   \
-                                     COLORCONV_REDUCE_TRUE_TO_HI |   \
-                                     COLORCONV_24_EQUALS_32 |        \
-                                     COLORCONV_32A_TO_15 |           \
-                                     COLORCONV_32A_TO_16 |           \
-                                     COLORCONV_32A_TO_24)
+									 COLORCONV_REDUCE_TO_256 |       \
+									 COLORCONV_EXPAND_15_TO_16 |     \
+									 COLORCONV_REDUCE_16_TO_15 |     \
+									 COLORCONV_EXPAND_HI_TO_TRUE |   \
+									 COLORCONV_REDUCE_TRUE_TO_HI |   \
+									 COLORCONV_24_EQUALS_32 |        \
+									 COLORCONV_32A_TO_15 |           \
+									 COLORCONV_32A_TO_16 |           \
+									 COLORCONV_32A_TO_24)
 
 #define COLORCONV_PARTIAL           (COLORCONV_EXPAND_15_TO_16 |     \
-                                     COLORCONV_REDUCE_16_TO_15 |     \
-                                     COLORCONV_24_EQUALS_32)
+									 COLORCONV_REDUCE_16_TO_15 |     \
+									 COLORCONV_24_EQUALS_32)
 
 #define COLORCONV_MOST              (COLORCONV_EXPAND_15_TO_16 |     \
-                                     COLORCONV_REDUCE_16_TO_15 |     \
-                                     COLORCONV_EXPAND_HI_TO_TRUE |   \
-                                     COLORCONV_REDUCE_TRUE_TO_HI |   \
-                                     COLORCONV_24_EQUALS_32)
+									 COLORCONV_REDUCE_16_TO_15 |     \
+									 COLORCONV_EXPAND_HI_TO_TRUE |   \
+									 COLORCONV_REDUCE_TRUE_TO_HI |   \
+									 COLORCONV_24_EQUALS_32)
 
 #define COLORCONV_KEEP_ALPHA        (COLORCONV_TOTAL                 \
-                                     & ~(COLORCONV_32A_TO_8 |        \
-                                             COLORCONV_32A_TO_15 |       \
-                                             COLORCONV_32A_TO_16 |       \
-                                             COLORCONV_32A_TO_24))
+									 & ~(COLORCONV_32A_TO_8 |        \
+											 COLORCONV_32A_TO_15 |       \
+											 COLORCONV_32A_TO_16 |       \
+											 COLORCONV_32A_TO_24))
 
 AL_FUNC(void, set_color_conversion, (int mode));
 AL_FUNC(int, get_color_conversion, ());

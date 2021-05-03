@@ -30,8 +30,8 @@ namespace CryOmni3D {
 namespace Versailles {
 
 void Toolbar::init(const Sprites *sprites, FontManager *fontManager,
-                   const Common::Array<Common::String> *messages, Inventory *inventory,
-                   CryOmni3DEngine *engine) {
+				   const Common::Array<Common::String> *messages, Inventory *inventory,
+				   CryOmni3DEngine *engine) {
 	_sprites = sprites;
 	_fontManager = fontManager;
 	_messages = messages;
@@ -82,7 +82,7 @@ void Toolbar::inventoryChanged(uint newPosition) {
 }
 
 void Toolbar::addZone(uint16 cursorMainId, uint16 cursorSecondaryId, Common::Point position,
-                      ZoneCallback callback) {
+					  ZoneCallback callback) {
 	const Graphics::Cursor &cursorMain = _sprites->getCursor(cursorMainId);
 	Common::Rect rct(cursorMain.getWidth(), cursorMain.getHeight());
 	rct.moveTo(position);

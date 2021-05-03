@@ -90,6 +90,8 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "framed" ||
 		gameId == "hamlet" ||
 		gameId == "hor" ||
+		gameId == "idiotstale" ||
+		gameId == "imustkill" ||
 		gameId == "juliauntold" ||
 		gameId == "lifein3minutes" ||
 		gameId == "lonelyrobot" ||
@@ -225,6 +227,10 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed10" ||
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
+		gameId == "carolreed13" ||
+		gameId == "carolreed14" ||
+		gameId == "carolreed15" ||
+		gameId == "carolreed16" ||
 		gameId == "kulivocko" ||
 		gameId == "sunrise" ||
 		gameId == "rebeccacarlson1"
@@ -295,7 +301,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_MIDDLE"); // original mouse
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_HOME);
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -322,7 +328,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_RIGHT"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_HOME);
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -426,7 +432,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("HASH"); // original keyboard
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_HOME);
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -554,7 +560,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("JOY_Y"); // extra joy
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KeyState(KEYCODE_n, 'n'));
 		act->addDefaultInputMapping("n"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -594,7 +600,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 		gameKeyMap->addAction(act);
 	} else if (gameId == "escapemansion") {
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_F1);
 		act->addDefaultInputMapping("F1"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -732,7 +738,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		}
 
 		if (extra.hasPrefix("1.2.362.")) {
-			act = new Action("WTF", _("???"));
+			act = new Action(kStandardActionEE, _("???"));
 			act->setKeyEvent(KeyState(KEYCODE_z, 'z'));
 			act->addDefaultInputMapping("z"); // original keyboard
 			//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -940,7 +946,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("HASH"); // original keyboard
 		gameKeyMap->addAction(act);
 	} else if (gameId == "knossos") {
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KeyState(KEYCODE_a, 'a', KBD_SHIFT));
 		act->addDefaultInputMapping("S+a"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -987,7 +993,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_F10);
 		act->addDefaultInputMapping("F10"); // original keyboard
 		act->addDefaultInputMapping("PAGEDOWN"); // original keyboard
@@ -1219,7 +1225,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 		Common::String extra = ConfMan.get("extra", target);
 		if (extra.hasSuffix("2015")) {
-			act = new Action("WTF", _("???"));
+			act = new Action(kStandardActionEE, _("???"));
 			act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
 			act->addDefaultInputMapping("q"); // original keyboard
 			//TODO: extra joy control, e.g. "JOY_R+JOY_A"
@@ -1441,7 +1447,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("F7"); // original keyboard
 		gameKeyMap->addAction(act);
 	} else if (gameId == "thelostcrowngha") {
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_F1);
 		act->addDefaultInputMapping("F1"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -1495,7 +1501,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_HOME);
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
@@ -1553,7 +1559,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // extra mouse
 		gameKeyMap->addAction(act);
 
-		act = new Action("WTF", _("???"));
+		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KEYCODE_HOME);
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		gameKeyMap->addAction(act);
@@ -1755,6 +1761,10 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		gameId == "carolreed10" ||
 		gameId == "carolreed11" ||
 		gameId == "carolreed12" ||
+		gameId == "carolreed13" ||
+		gameId == "carolreed14" ||
+		gameId == "carolreed15" ||
+		gameId == "carolreed16" ||
 		gameId == "corrosion" ||
 		gameId == "rebeccacarlson1"
 	) {

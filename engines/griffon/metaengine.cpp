@@ -33,11 +33,11 @@
 
 class GriffonMetaEngine: public AdvancedMetaEngine {
 public:
-    const char *getName() const override {
+	const char *getName() const override {
 		return "griffon";
 	}
 
-    int getMaximumSaveSlot() const override {
+	int getMaximumSaveSlot() const override {
 		return ConfMan.getInt("autosave_period") ? 4 : 3;
 	}
 

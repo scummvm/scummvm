@@ -300,7 +300,7 @@ public:
 	}
 
 	// TODO: insert() method?
-    /** Return true if hashmap is empty. */
+	/** Return true if hashmap is empty. */
 	bool empty() const {
 		return (_size == 0);
 	}

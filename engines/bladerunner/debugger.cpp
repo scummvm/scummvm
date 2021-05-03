@@ -603,27 +603,27 @@ bool isAllZeroes(Common::String valStr) {
 // which is played at the NightClub Row (NR01), is "kSfxMUSBLEED" (looping).
 // TODO maybe support those too?
 const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicArabLoop
-                                 "Battle Theme",                    // kMusicBatl226M
-                                 "Blade Runner Blues",              // kMusicBRBlues
-                                 "Etsuko Theme",                    // kMusicKyoto
-                                 "One More Time, Love (G)",         // kMusicOneTime
-                                 "Gothic Club 2",                   // kMusicGothic3
-                                 "Arcane Dragon Fly (G)",           // kMusicArkdFly1
-                                 "Arcane Dance (G)",                // kMusicArkDnce1
-                                 "Taffy's Club 2",                  // kMusicTaffy2
-                                 "Enigma Drift",                    // kMusicTaffy3
-                                 "Late Call",                       // kMusicTaffy4
-                                 "Nexus (aka Beating 1)",           // kMusicBeating1
-                                 "Awakenings (aka Crystal Dies 1)", // kMusicCrysDie1
-                                 "Gothic Club",                     // kMusicGothic1
-                                 "Transition",                      // kMusicGothic2
-                                 "The Eyes Follow",                 // kMusicStrip1
-                                 "Dektora's Dance (G)",             // kMusicDkoDnce1
-                                 "End Credits",                     // kMusicCredits
-                                 "Ending (aka Moraji)",             // kMusicMoraji
-                                 "Remorse (aka Clovis Dies 1)",     // kMusicClovDie1
-                                 "Solitude (aka Clovis Dies)",      // kMusicClovDies
-                                 "Love Theme"};                     // kMusicLoveSong
+								 "Battle Theme",                    // kMusicBatl226M
+								 "Blade Runner Blues",              // kMusicBRBlues
+								 "Etsuko Theme",                    // kMusicKyoto
+								 "One More Time, Love (G)",         // kMusicOneTime
+								 "Gothic Club 2",                   // kMusicGothic3
+								 "Arcane Dragon Fly (G)",           // kMusicArkdFly1
+								 "Arcane Dance (G)",                // kMusicArkDnce1
+								 "Taffy's Club 2",                  // kMusicTaffy2
+								 "Enigma Drift",                    // kMusicTaffy3
+								 "Late Call",                       // kMusicTaffy4
+								 "Nexus (aka Beating 1)",           // kMusicBeating1
+								 "Awakenings (aka Crystal Dies 1)", // kMusicCrysDie1
+								 "Gothic Club",                     // kMusicGothic1
+								 "Transition",                      // kMusicGothic2
+								 "The Eyes Follow",                 // kMusicStrip1
+								 "Dektora's Dance (G)",             // kMusicDkoDnce1
+								 "End Credits",                     // kMusicCredits
+								 "Ending (aka Moraji)",             // kMusicMoraji
+								 "Remorse (aka Clovis Dies 1)",     // kMusicClovDie1
+								 "Solitude (aka Clovis Dies)",      // kMusicClovDies
+								 "Love Theme"};                     // kMusicLoveSong
 
 bool Debugger::cmdMusic(int argc, const char** argv) {
 	if (argc != 2) {
@@ -1024,7 +1024,7 @@ bool Debugger::cmdLoad(int argc, const char **argv) {
 
 	Common::SeekableReadStream *saveFile = fs.createReadStream();
 
-	_vm->loadGame(*saveFile);
+	_vm->loadGame(*saveFile, 3);
 
 	delete saveFile;
 
@@ -1055,7 +1055,7 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 	Graphics::Surface thumbnail = _vm->generateThumbnail();
 
 	_vm->_time->pause();
-	_vm->saveGame(*saveFile, thumbnail);
+	_vm->saveGame(*saveFile, &thumbnail, true);
 	_vm->_time->resume();
 
 	saveFile->finalize();
@@ -2056,11 +2056,12 @@ bool Debugger::cmdList(int argc, const char **argv) {
 						             sceneObject->isPresent?   "T" : "F",
 						             sceneObject->isObstacle?  "T" : "F",
 						             sceneObject->isMoving?    "T" : "F");
-						debugPrintf("    Goal: %d, Set: %d, Anim mode: %d id:%d showDmg: %s inCombat: %s\n",
+						debugPrintf("    Goal: %d, Set: %d, Anim mode: %d id:%d fps: %d showDmg: %s inCombat: %s\n",
 						             actor->getGoal(),
 						             actor->getSetId(),
 						             actor->getAnimationMode(),
 						             actor->getAnimationId(),
+						             actor->getFPS(),
 						             actor->getFlagDamageAnimIfMoving()? "T" : "F",
 						             actor->inCombat()? "T" : "F");
 						debugPrintf("    Pos(%02.2f,%02.2f,%02.2f)\n",

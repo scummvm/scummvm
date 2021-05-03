@@ -40,11 +40,11 @@ _tracer *g_oTracer;
 #define MAX_BARRIERS (256)
 
 bool8 _tracer::Trace(const px3DRealPoint &oFrom,      // IN:  Point to plot from.
-                     const px3DRealPoint &oTo,        // IN:  Point to plot to.
-                     _barrier_ray_type eRayType,      // IN:  The type of the ray being plotted.
-                     px3DRealPoint &oPointOfImpact,   // OUT: The first point of impact.
-                     _barrier_logic_value /*eImpactType*/ // OUT: For interpretation by high-level logic.
-                     ) {
+					 const px3DRealPoint &oTo,        // IN:  Point to plot to.
+					 _barrier_ray_type eRayType,      // IN:  The type of the ray being plotted.
+					 px3DRealPoint &oPointOfImpact,   // OUT: The first point of impact.
+					 _barrier_logic_value /*eImpactType*/ // OUT: For interpretation by high-level logic.
+					 ) {
 	uint32 i;
 	uint32 nLoopCount;
 	px2DRealPoint o2DImpactPoint;
@@ -246,10 +246,10 @@ void _tracer::GetBarriersForCube(const _XYZ_index &oCubeIndices, uint32 *oThisCu
 }
 
 px3DRealPoint _tracer::CalculateEntryToNextCube(const px3DRealPoint &oCurrentPoint, // IN:  Ray start point.
-                                                const px3DRealPoint &oTo,           // IN:  Ray is aimed here.
-                                                const _bullet_cube &oThisCube,      // IN:  The current cube boundaries.
-                                                FaceID &eCubeLeavingFace            // OUT: The face the ray leaves the current cube through.
-                                                ) const {
+												const px3DRealPoint &oTo,           // IN:  Ray is aimed here.
+												const _bullet_cube &oThisCube,      // IN:  The current cube boundaries.
+												FaceID &eCubeLeavingFace            // OUT: The face the ray leaves the current cube through.
+												) const {
 	px3DRealPoint oEntryPoint;
 	PXreal fXNormalDistance, fYNormalDistance, fZNormalDistance;
 	PXreal fCurrentClosest;
@@ -312,10 +312,10 @@ px3DRealPoint _tracer::CalculateEntryToNextCube(const px3DRealPoint &oCurrentPoi
 }
 
 px3DRealPoint _tracer::CalculateRayIntersectionWithCubeWall(const px3DRealPoint &oCurrentPoint, // IN:  Ray start point.
-                                                            const px3DRealPoint &oTo,           // IN:  Ray is aimed here.
-                                                            const _bullet_cube &oThisCube,      // IN:  The current cube boundaries.
-                                                            FaceID eLeavingFace                 // IN:  Face we're leaving through.
-                                                            ) const {
+															const px3DRealPoint &oTo,           // IN:  Ray is aimed here.
+															const _bullet_cube &oThisCube,      // IN:  The current cube boundaries.
+															FaceID eLeavingFace                 // IN:  Face we're leaving through.
+															) const {
 	px3DRealPoint oNewPoint(FLOAT_MAX / REAL_TWO, FLOAT_MAX / REAL_TWO, FLOAT_MAX / REAL_TWO); // Point outside the game world.
 	PXreal fWallDistance, fFraction;
 	PXreal fXDistance, fYDistance, fZDistance;

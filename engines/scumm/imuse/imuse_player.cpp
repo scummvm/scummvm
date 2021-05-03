@@ -408,7 +408,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 
 	if (!_scanning) {
 		for (a = 0; a < len + 1 && a < 19; ++a) {
-			snprintf((char *)&buf[a * 3], 3 * sizeof(char), " %02X", p[a]);
+			snprintf((char *)&buf[a * 3], 3 * sizeof(char) + 1, " %02X", (int)p[a]);
 		}
 		if (a < len + 1) {
 			buf[a * 3] = buf[a * 3 + 1] = buf[a * 3 + 2] = '.';

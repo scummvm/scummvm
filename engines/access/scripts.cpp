@@ -252,7 +252,10 @@ void Scripts::cmdObject() {
 }
 
 void Scripts::cmdEndObject() {
-	printString(GENERAL_MESSAGES[_vm->_room->_selectCommand]);
+	if (_vm->getLanguage() == Common::ES_ESP)
+		printString(ESP_GENERAL_MESSAGES[_vm->_room->_selectCommand]);
+	else
+		printString(GENERAL_MESSAGES[_vm->_room->_selectCommand]);
 }
 
 void Scripts::cmdJumpLook() {
