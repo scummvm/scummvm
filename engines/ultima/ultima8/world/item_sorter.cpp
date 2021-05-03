@@ -235,7 +235,7 @@ struct SortItem {
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
-		return _z < other->_z || (_z == other->_z && _flat);
+			return _z < other->_z || (_z == other->_z && _flat && !other->_flat);
 	}
 
 };
