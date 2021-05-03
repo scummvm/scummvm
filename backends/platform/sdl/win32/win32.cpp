@@ -340,7 +340,8 @@ BOOL CALLBACK EnumResNameProc(HMODULE hModule, LPCTSTR lpszType, LPTSTR lpszName
 		return TRUE;
 
 	Win32ResourceArchive *arch = (Win32ResourceArchive *)lParam;
-	arch->_files.push_back(lpszName);
+	Common::String filename = Win32::tcharToString(lpszName);
+	arch->_files.push_back(filename);
 	return TRUE;
 }
 
@@ -371,7 +372,9 @@ const Common::ArchiveMemberPtr Win32ResourceArchive::getMember(const Common::Str
 }
 
 Common::SeekableReadStream *Win32ResourceArchive::createReadStreamForMember(const Common::String &name) const {
-	HRSRC resource = FindResource(NULL, name.c_str(), MAKEINTRESOURCE(256));
+	TCHAR *tName = Win32::stringToTchar(name);
+	HRSRC resource = FindResource(NULL, tName, MAKEINTRESOURCE(256));
+	free(tName);
 
 	if (resource == NULL)
 		return 0;
