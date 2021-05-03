@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	nl/regen.o \
 	nl/schedule.o \
 	nl/string.o \
-	nl/3d/3dact.o \
 	nl/3d/3dvar.o \
 	nl/3d/3dwalk.o \
 	nl/ll/llmouse.o \
