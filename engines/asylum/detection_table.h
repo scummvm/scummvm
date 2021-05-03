@@ -32,21 +32,17 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-
 static const ADGameDescription gameDescriptions[] = {
 	{
 		// Sanitarium - English Demo
 		"asylum",
 		"Demo",
-		{
-			{"SNTRM.DAT", 0, "6a8079e0b49affc99d148624fbb584a1", 326},
-			{"RES.000", 0, "57446ce089c6f9decb7f3faf41d09edf", 9022},
-			{0,0,0,0}
-		},
+		AD_ENTRY2s("SNTRM.DAT", "6a8079e0b49affc99d148624fbb584a1", 326,
+				   "RES.000",   "57446ce089c6f9decb7f3faf41d09edf", 9022),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO|ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_DEMO | ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	{
 		"asylum",
@@ -55,12 +51,12 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
 			{"SCN.006",   0, "71a5f49cbda597a11e877589075e27b5", 2918330},
-			{0,0,0,0}
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	{
 		"asylum",
@@ -69,12 +65,12 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	{
 		"asylum",
@@ -83,12 +79,12 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "f58f8dc3e63663f174977d359e11132c", 272057},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
+			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	{
 		"asylum",
@@ -97,12 +93,12 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "e09a12543c6ede1727c8ecffb74e7fd2", 8930},
 			{"RES.000",   0, "2a4677ee3fd7bfa3161e16cd59371238", 277931},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
+			AD_LISTEND
 		},
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	{
 		"asylum",
@@ -111,12 +107,12 @@ static const ADGameDescription gameDescriptions[] = {
 			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
 			{"RES.000",   0, "1f8a262bf8b3035bd3cfda24068c4651", 263624},
 			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
-			{0,0,0,0}
+			AD_LISTEND
 		},
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM,
+		GUIO0()
 	},
 	AD_TABLE_END_MARKER
 };
