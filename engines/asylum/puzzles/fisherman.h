@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_FISHERMAN_H
-#define ASYLUM_FISHERMAN_H
+#ifndef ASYLUM_PUZZLES_FISHERMAN_H
+#define ASYLUM_PUZZLES_FISHERMAN_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -63,4 +63,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_FISHERMAN_H
+#endif // ASYLUM_PUZZLES_FISHERMAN_H

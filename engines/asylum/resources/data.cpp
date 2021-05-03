@@ -20,9 +20,9 @@
  *
  */
 
-#include "engines/asylum/resources/data.h"
-
 #include "common/textconsole.h"
+
+#include "engines/asylum/resources/data.h"
 
 namespace Asylum {
 

@@ -22,6 +22,7 @@
 
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
+
 #include "asylum/detection_table.h"
 
 class AsylumMetaEngineDetection : public AdvancedMetaEngineDetection {

@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_WORLDSTATS_H
-#define ASYLUM_WORLDSTATS_H
-
-#include "asylum/system/sound.h"
+#ifndef ASYLUM_RESOURCES_WORLDSTATS_H
+#define ASYLUM_RESOURCES_WORLDSTATS_H
 
 #include "common/array.h"
 #include "common/rect.h"
 #include "common/serializer.h"
+
+#include "asylum/system/sound.h"
 
 namespace Asylum {
 
@@ -162,4 +162,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_RESOURCES_WORLDSTATS_H

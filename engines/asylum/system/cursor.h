@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ASYLUM_CURSOR_H
-#define ASYLUM_CURSOR_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_SYSTEM_CURSOR_H
+#define ASYLUM_SYSTEM_CURSOR_H
 
 #include "common/events.h"
 #include "common/rect.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -163,4 +163,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_SYSTEM_CURSOR_H

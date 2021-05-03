@@ -20,14 +20,14 @@
  *
  */
 
-#ifndef ASYLUM_SAVEGAME_H
-#define ASYLUM_SAVEGAME_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_SYSTEM_SAVEGAME_H
+#define ASYLUM_SYSTEM_SAVEGAME_H
 
 #include "common/savefile.h"
 #include "common/serializer.h"
 #include "common/util.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -258,4 +258,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_SAVEGAME_H
+#endif // ASYLUM_SYSTEM_SAVEGAME_H

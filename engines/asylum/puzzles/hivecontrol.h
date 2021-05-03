@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef ASYLUM_HIVECONTROL_H
-#define ASYLUM_HIVECONTROL_H
-
-#include "asylum/puzzles/puzzle.h"
+#ifndef ASYLUM_PUZZLES_HIVECONTROL_H
+#define ASYLUM_PUZZLES_HIVECONTROL_H
 
 #include "common/hashmap.h"
+
+#include "asylum/puzzles/puzzle.h"
 
 namespace Asylum {
 
@@ -120,4 +120,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_HIVECONTROL_H
+#endif // ASYLUM_PUZZLES_HIVECONTROL_H

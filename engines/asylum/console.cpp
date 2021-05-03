@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/debug-channels.h"
+
 #include "asylum/console.h"
 
 #include "asylum/puzzles/puzzles.h"
@@ -40,8 +42,6 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
-
-#include "common/debug-channels.h"
 
 namespace Asylum {
 

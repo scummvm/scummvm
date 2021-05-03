@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef ASYLUM_PIPES_H
-#define ASYLUM_PIPES_H
-
-#include "asylum/puzzles/puzzle.h"
+#ifndef ASYLUM_PUZZLES_PIPES_H
+#define ASYLUM_PUZZLES_PIPES_H
 
 #include "common/list.h"
 #include "common/hashmap.h"
 #include "common/array.h"
 #include "common/random.h"
 #include "common/str.h"
+
+#include "asylum/puzzles/puzzle.h"
 
 namespace Asylum {
 
@@ -204,4 +204,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_PIPES_H
+#endif // ASYLUM_PUZZLES_PIPES_H

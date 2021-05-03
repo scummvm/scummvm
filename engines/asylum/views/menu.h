@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_MENU_H
-#define ASYLUM_MENU_H
+#ifndef ASYLUM_VIEWS_MENU_H
+#define ASYLUM_VIEWS_MENU_H
 
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
@@ -239,4 +239,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_VIEWS_MENU_H

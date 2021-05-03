@@ -20,17 +20,17 @@
  *
  */
 
-#ifndef ASYLUM_SOUND_H
-#define ASYLUM_SOUND_H
-
-#include "asylum/system/config.h"
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_SYSTEM_SOUND_H
+#define ASYLUM_SYSTEM_SOUND_H
 
 #include "common/array.h"
 #include "common/rect.h"
 
 #include "audio/mixer.h"
+
+#include "asylum/system/config.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -337,4 +337,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_SYSTEM_SOUND_H

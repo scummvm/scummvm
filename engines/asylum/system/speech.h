@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef ASYLUM_SPEECH_H
-#define ASYLUM_SPEECH_H
-
-#include "asylum/shared.h"
+#ifndef ASYLUM_SYSTEM_SPEECH_H
+#define ASYLUM_SYSTEM_SPEECH_H
 
 #include "common/scummsys.h"
+
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -177,4 +177,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_SYSTEM_SPEECH_H

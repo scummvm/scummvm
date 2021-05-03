@@ -20,16 +20,17 @@
  *
  */
 
-#ifndef ASYLUM_SCENE_H
-#define ASYLUM_SCENE_H
-
-#include "asylum/eventhandler.h"
-#include "asylum/shared.h"
+#ifndef ASYLUM_VIEWS_SCENE_H
+#define ASYLUM_VIEWS_SCENE_H
 
 #include "common/array.h"
 #include "common/events.h"
 #include "common/rational.h"
+
 #include "graphics/surface.h"
+
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 #define SCENE_FILE_MASK "scn.%03d"
 #define MUSIC_FILE_MASK "mus.%03d"
@@ -470,4 +471,4 @@ private:
 
 } // end of namespace Asylum
 
-#endif
+#endif // ASYLUM_VIEWS_SCENE_H

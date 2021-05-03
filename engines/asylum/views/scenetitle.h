@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_SCENETITLE_H
-#define ASYLUM_SCENETITLE_H
+#ifndef ASYLUM_VIEWS_SCENETITLE_H
+#define ASYLUM_VIEWS_SCENETITLE_H
 
 #include "common/scummsys.h"
 
@@ -52,4 +52,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_SCENETITLE_H
+#endif // ASYLUM_VIEWS_SCENETITLE_H

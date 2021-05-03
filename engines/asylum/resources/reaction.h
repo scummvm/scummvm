@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_REACTION_H
-#define ASYLUM_REACTION_H
+#ifndef ASYLUM_RESOURCES_REACTION_H
+#define ASYLUM_RESOURCES_REACTION_H
 
 #include "common/scummsys.h"
 
@@ -63,4 +63,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_REACTION_H
+#endif // ASYLUM_RESOURCES_REACTION_H

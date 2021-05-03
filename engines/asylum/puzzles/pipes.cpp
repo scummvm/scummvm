@@ -20,6 +20,8 @@
  *
  */
 
+#include <common/math.h>
+
 #include "asylum/puzzles/pipes.h"
 
 #include "asylum/resources/worldstats.h"
@@ -31,8 +33,6 @@
 #include "asylum/views/scene.h"
 
 #include "asylum/asylum.h"
-
-#include <common/math.h>
 
 namespace Asylum {
 

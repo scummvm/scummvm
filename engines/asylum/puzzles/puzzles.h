@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ASYLUM_PUZZLES_H
-#define ASYLUM_PUZZLES_H
+#ifndef ASYLUM_PUZZLES_PUZZLES_H
+#define ASYLUM_PUZZLES_PUZZLES_H
+
+#include "common/serializer.h"
 
 #include "asylum/console.h"
 #include "asylum/shared.h"
-
-#include "common/serializer.h"
 
 namespace Asylum {
 
@@ -70,4 +70,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_PUZZLES_H
+#endif // ASYLUM_PUZZLES_PUZZLES_H

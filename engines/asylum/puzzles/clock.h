@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_CLOCK_H
-#define ASYLUM_CLOCK_H
+#ifndef ASYLUM_PUZZLES_CLOCK_H
+#define ASYLUM_PUZZLES_CLOCK_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -62,4 +62,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_CLOCK_H
+#endif // ASYLUM_PUZZLES_CLOCK_H

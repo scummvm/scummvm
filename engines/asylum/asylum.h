@@ -20,22 +20,21 @@
  *
  */
 
-#ifndef ASYLUM_ENGINE_H
-#define ASYLUM_ENGINE_H
-
-#include "asylum/resources/data.h"
-
-#include "asylum/console.h"
-#include "asylum/eventhandler.h"
-#include "asylum/shared.h"
+#ifndef ASYLUM_ASYLUM_H
+#define ASYLUM_ASYLUM_H
 
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/system.h"
 
-#include "engines/advancedDetector.h"
 #include "engines/engine.h"
+
+#include "asylum/resources/data.h"
+
+#include "asylum/console.h"
+#include "asylum/eventhandler.h"
+#include "asylum/shared.h"
 
 /**
  * This is the namespace of the Asylum engine.
@@ -54,6 +53,9 @@
  * Supported games:
  *  - Sanitarium
  */
+
+struct ADGameDescription;
+
 namespace Asylum {
 
 class Cursor;
@@ -264,4 +266,4 @@ private:
 
 } // namespace Asylum
 
-#endif
+#endif // ASYLUM_ASYLUM_H

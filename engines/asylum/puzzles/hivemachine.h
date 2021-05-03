@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef ASYLUM_HIVEMACHINE_H
-#define ASYLUM_HIVEMACHINE_H
-
-#include "asylum/puzzles/puzzle.h"
+#ifndef ASYLUM_PUZZLES_HIVEMACHINE_H
+#define ASYLUM_PUZZLES_HIVEMACHINE_H
 
 #include "common/array.h"
+
+#include "asylum/puzzles/puzzle.h"
 #include "asylum/resources/polygons.h"
 
 namespace Asylum {
@@ -75,4 +75,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_HIVEMACHINE_H
+#endif // ASYLUM_PUZZLES_HIVEMACHINE_H

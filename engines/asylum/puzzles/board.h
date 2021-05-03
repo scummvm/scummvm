@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_BOARD_H
-#define ASYLUM_BOARD_H
+#ifndef ASYLUM_PUZZLES_BOARD_H
+#define ASYLUM_PUZZLES_BOARD_H
 
 #include "asylum/puzzles/puzzle.h"
 
@@ -99,4 +99,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_BOARD_H
+#endif // ASYLUM_PUZZLES_BOARD_H

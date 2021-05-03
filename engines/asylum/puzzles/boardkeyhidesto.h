@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef ASYLUM_BOARDKEYHIDESTO_H
-#define ASYLUM_BOARDKEYHIDESTO_H
+#ifndef ASYLUM_PUZZLES_BOARDKEYHIDESTO_H
+#define ASYLUM_PUZZLES_BOARDKEYHIDESTO_H
 
 #include "asylum/puzzles/board.h"
 
@@ -45,4 +45,4 @@ private:
 
 } // End of namespace Asylum
 
-#endif // ASYLUM_BOARDKEYHIDESTO_H
+#endif // ASYLUM_PUZZLES_BOARDKEYHIDESTO_H

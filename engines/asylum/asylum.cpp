@@ -20,6 +20,10 @@
  *
  */
 
+#include "common/debug-channels.h"
+
+#include "engines/util.h"
+
 #include "asylum/asylum.h"
 
 #include "asylum/resources/actor.h"
@@ -42,10 +46,6 @@
 #include "asylum/views/video.h"
 
 #include "asylum/respack.h"
-
-#include "common/debug-channels.h"
-
-#include "engines/util.h"
 
 namespace Asylum {
 
