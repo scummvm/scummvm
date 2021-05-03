@@ -81,6 +81,7 @@
 #include "ultima/ultima8/world/actors/combat_process.h"
 #include "ultima/ultima8/world/actors/guard_process.h"
 #include "ultima/ultima8/world/actors/attack_process.h"
+#include "ultima/ultima8/world/actors/auto_firer_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
@@ -300,6 +301,8 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<SuperSpriteProcess>::load);
 	_kernel->addProcessLoader("AttackProcess",
 		ProcessLoader<AttackProcess>::load);
+	_kernel->addProcessLoader("AutoFirerProcess",
+		ProcessLoader<AutoFirerProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();

@@ -34,6 +34,7 @@
 #include "ultima/ultima8/world/actors/animation_tracker.h"
 #include "ultima/ultima8/audio/audio_process.h"
 #include "ultima/ultima8/world/actors/combat_process.h"
+#include "ultima/ultima8/world/actors/auto_firer_process.h"
 #include "ultima/ultima8/world/sprite_process.h"
 #include "ultima/ultima8/graphics/palette_fader_process.h"
 #include "ultima/ultima8/world/create_item_process.h"
@@ -526,7 +527,8 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 		return;
 
 	if (a->getObjId() == 1 && wpninfo->_weaponInfo->_damageType == 6) {
-		warning("TODO: implement AutoFirerProcess for Crusader");
+		Process *auto_firer = new AutoFirerProcess();
+		Kernel::get_instance()->addProcess(auto_firer);
 	}
 
 	a->fireWeapon(f->cru_attackx(), f->cru_attacky(), f->cru_attackz(),
@@ -535,7 +537,6 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc)
 		audioproc->playSFX(wpninfo->_weaponInfo->_sound, 0x80, a->getObjId(), 0, false);
-
 }
 
 

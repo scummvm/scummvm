@@ -549,6 +549,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/animation_tracker.o \
 	ultima8/world/actors/anim_action.o \
 	ultima8/world/actors/attack_process.o \
+	ultima8/world/actors/auto_firer_process.o \
 	ultima8/world/actors/avatar_death_process.o \
 	ultima8/world/actors/avatar_gravity_process.o \
 	ultima8/world/actors/avatar_mover_process.o \
