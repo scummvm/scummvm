@@ -434,4 +434,24 @@ void TrecisionEngine::ProcessMouse() {
 	}
 }
 
+/*------------------------------------------------
+		Fake distance between two 2D points
+--------------------------------------------------*/
+float TrecisionEngine::dist2D(float x1, float y1, float x2, float y2) {
+	double d1 = fabs((double)(x1 - x2));
+	double d2 = fabs((double)(y1 - y2));
+
+	return (float)sqrt(d1 * d1 + d2 * d2);
+}
+
+/*------------------------------------------------
+			Distance between two 3D points
+--------------------------------------------------*/
+float TrecisionEngine::dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
+	double d1 = fabs((double)(x1 - x2));
+	double d2 = fabs((double)(y1 - y2));
+	double d3 = fabs((double)(z1 - z2));
+	return (float)sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+}
+
 } // End of namespace Trecision

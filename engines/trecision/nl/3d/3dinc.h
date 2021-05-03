@@ -146,8 +146,6 @@ extern uint8  _defActionLen[];
 int actionInRoom(int curA);
 void read3D(Common::String c);
 
-float distF(float x1, float y1, float x2, float y2);
-float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 void whereIs(int px, int py);
 void pointOut();
 void viewPanel(SPan *p);

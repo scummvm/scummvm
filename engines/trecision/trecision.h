@@ -194,6 +194,8 @@ public:
 	float sinCosAngle(float sinus, float cosinus);
 	void ProcessTime();
 	void ProcessMouse();
+	float dist2D(float x1, float y1, float x2, float y2);
+	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);

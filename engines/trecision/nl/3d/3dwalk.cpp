@@ -111,23 +111,6 @@ void read3D(Common::String filename) {
 #define POINTOUT2		64
 
 /*------------------------------------------------
-		Fake distance between two 2D points
---------------------------------------------------*/
-float distF(float x1, float y1, float x2, float y2) {
-	float d1 = fabs(x1 - x2);
-	float d2 = fabs(y1 - y2);
-
-	return sqrt(d1 * d1 + d2 * d2);
-}
-
-/*------------------------------------------------
-			Distance between two 3D points
---------------------------------------------------*/
-float dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
-	return (sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2)));
-}
-
-/*------------------------------------------------
   Find the 3D point corresponding to the 2D point
 --------------------------------------------------*/
 void whereIs(int px, int py) {
@@ -154,7 +137,7 @@ void whereIs(int px, int py) {
 	// try all the panels and choose the closest one
 	for (int b = 0; b < _panelNum; b++) {
 		if (intersectLinePanel(&g_vm->_pathFind->_panel[b], x, y, z)) {
-			float temp = dist3D(g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ey, g_vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
+			float temp = g_vm->dist3D(g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ey, g_vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
 
 			if (temp < inters) {
 				inters = temp;
@@ -200,7 +183,7 @@ void pointOut() {
 		// Only check the external panels with the same flag
 		if ((g_vm->_pathFind->_panel[b]._flags & 0x80000000) && (g_vm->_pathFind->_panel[b]._flags & (g_vm->_pathFind->_panel[_curPanel]._flags & 0x7FFFFFFF))) {
 			// check point 1
-			temp = distF(_curX, _curZ, g_vm->_pathFind->_panel[b]._x1, g_vm->_pathFind->_panel[b]._z1);
+			temp = g_vm->dist2D(_curX, _curZ, g_vm->_pathFind->_panel[b]._x1, g_vm->_pathFind->_panel[b]._z1);
 
 			if (temp < inters) {
 				inters = temp;
@@ -210,7 +193,7 @@ void pointOut() {
 			}
 
 			// check point 2
-			temp = distF(_curX, _curZ, g_vm->_pathFind->_panel[b]._x2, g_vm->_pathFind->_panel[b]._z2);
+			temp = g_vm->dist2D(_curX, _curZ, g_vm->_pathFind->_panel[b]._x2, g_vm->_pathFind->_panel[b]._z2);
 
 			if (temp < inters) {
 				inters = temp;
@@ -220,7 +203,7 @@ void pointOut() {
 			}
 
 			// check point a 1/3
-			temp = distF(_curX, _curZ, (g_vm->_pathFind->_panel[b]._x1 * 2.0 + g_vm->_pathFind->_panel[b]._x2) / 3.0, (g_vm->_pathFind->_panel[b]._z1 * 2.0 + g_vm->_pathFind->_panel[b]._z2) / 3.0);
+			temp = g_vm->dist2D(_curX, _curZ, (g_vm->_pathFind->_panel[b]._x1 * 2.0 + g_vm->_pathFind->_panel[b]._x2) / 3.0, (g_vm->_pathFind->_panel[b]._z1 * 2.0 + g_vm->_pathFind->_panel[b]._z2) / 3.0);
 
 			if (temp < inters) {
 				inters = temp;
@@ -230,7 +213,7 @@ void pointOut() {
 			}
 
 			// check point a 2/3
-			temp = distF(_curX, _curZ, (g_vm->_pathFind->_panel[b]._x1 + g_vm->_pathFind->_panel[b]._x2 * 2.0) / 3.0, (g_vm->_pathFind->_panel[b]._z1 + g_vm->_pathFind->_panel[b]._z2 * 2.0) / 3.0);
+			temp = g_vm->dist2D(_curX, _curZ, (g_vm->_pathFind->_panel[b]._x1 + g_vm->_pathFind->_panel[b]._x2 * 2.0) / 3.0, (g_vm->_pathFind->_panel[b]._z1 + g_vm->_pathFind->_panel[b]._z2 * 2.0) / 3.0);
 
 			if (temp < inters) {
 				inters = temp;
@@ -241,7 +224,7 @@ void pointOut() {
 
 			// check intersection with camera
 			if (intersectLineLine(g_vm->_pathFind->_panel[b]._x1, g_vm->_pathFind->_panel[b]._z1, g_vm->_pathFind->_panel[b]._x2, g_vm->_pathFind->_panel[b]._z2, g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ez, _curX, _curZ)) {
-				temp = distF(_curX, _curZ, _x3d, _z3d);
+				temp = g_vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
 				if (temp < inters) {
 					inters = temp;
@@ -255,7 +238,7 @@ void pointOut() {
 			if (intersectLineLine(g_vm->_pathFind->_panel[b]._x1, g_vm->_pathFind->_panel[b]._z1,
 								  g_vm->_pathFind->_panel[b]._x2, g_vm->_pathFind->_panel[b]._z2,
 								  g_vm->_actor->_px, g_vm->_actor->_pz, _curX, _curZ)) {
-				temp = distF(_curX, _curZ, _x3d, _z3d);
+				temp = g_vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
 				if (temp < inters) {
 					inters = temp;
@@ -268,7 +251,7 @@ void pointOut() {
 			// check intersection with normal panel
 			if (intersectLineLine(g_vm->_pathFind->_panel[b]._x1, g_vm->_pathFind->_panel[b]._z1, g_vm->_pathFind->_panel[b]._x2, g_vm->_pathFind->_panel[b]._z2,
 								  _curX + nx * LARGEVAL, _curZ + nz * LARGEVAL, _curX - nx * LARGEVAL, _curZ - nz * LARGEVAL)) {
-				temp = distF(_curX, _curZ, _x3d, _z3d);
+				temp = g_vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
 				if (temp < inters) {
 					inters = temp;
