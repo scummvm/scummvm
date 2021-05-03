@@ -62,7 +62,7 @@
 
 	@ r0 = _scaleY
 	@ r1 = v1
-	@ r2 = _out
+	@ r2 = pitch
 	@ r3 = src
 	@ <> = _height
 	@ <> = _scaleX
@@ -77,21 +77,20 @@ _ClassicProc3RendererShadowARM:
 	@ shadowed = true
 	@ unscaled = false
 	STMFD	r13!,{r3-r11,r14}
-	LDRH	r6,[r2,#2]
-	LDRH	r7,[r2]			@ r7 = _out.w
-	LDRH	r8,[r2,#4]		@ r8 = _out.pitch
-	ADD	r6,r6,#1		@ r6 = _out.h+1
 	SUB	r13,r13,#space
 	STR	r3,[r13,#src]
-	STR	r8,[r13,#pitch]
-	LDMIA	r1,{r3,r4,r5,r8,r9,r10,r11}
+	STR	r2,[r13,#pitch]
+	LDMIA	r1,{r3,r4,r5,r6,r7,r8,r9,r10,r11}
 	@ r3 = v1.x
 	@ r4 = v1.y
 	@ r5 = scaletable
+	@ r6 = height
+	@ r7 = width
 	@ r8 = skip_width
 	@ r9 = destptr
 	@ r10= mask_ptr
 	@ r11= scaleXstep
+	ADD	r6,r6,#1		@ r6 = _out.h+1
 	LDR	r2, [r13,#_scaleIndexY]
 	LDR	r12,[r13,#_scaleIndexX]
 	STR	r4, [r13,#v1_y]
@@ -102,9 +101,9 @@ _ClassicProc3RendererShadowARM:
 	STR	r2, [r13,#scaleIdxYPtr]
 	STR	r8, [r13,#v1_skip_width]
 
-	LDRB	r8, [r1,#29]		@ r8 = shr
-	LDRB	r14,[r1,#31]		@ r14= replen
-	LDRB	r1, [r1,#30]		@ r1 = repcolor
+	LDRB	r8, [r1,#37]		@ r8 = shr
+	LDRB	r14,[r1,#39]		@ r14= replen
+	LDRB	r1, [r1,#38]		@ r1 = repcolor
 	STR	r8, [r13,#v1_shr]
 	STR	r9, [r13,#v1_destptr]
 	STR	r10,[r13,#v1_mask_ptr]
