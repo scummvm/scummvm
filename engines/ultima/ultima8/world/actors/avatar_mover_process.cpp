@@ -122,18 +122,14 @@ void AvatarMoverProcess::turnToDirection(Direction direction) {
 void AvatarMoverProcess::slowFromRun(Direction direction) {
 	Actor *avatar = getControlledActor();
 	ProcId walkpid = avatar->doAnim(Animation::walk, direction);
-	ProcId standpid = avatar->doAnim(Animation::stand, direction);
-	Process *standproc = Kernel::get_instance()->getProcess(standpid);
-	standproc->waitFor(walkpid);
+	ProcId standpid = avatar->doAnimAfter(Animation::stand, direction, walkpid);
 	waitFor(standpid);
 }
 
 void AvatarMoverProcess::putAwayWeapon(Direction direction) {
 	Actor *avatar = getControlledActor();
 	ProcId anim1 = avatar->doAnim(Animation::unreadyWeapon, direction);
-	ProcId anim2 = avatar->doAnim(Animation::stand, direction);
-	Process *anim2p = Kernel::get_instance()->getProcess(anim2);
-	anim2p->waitFor(anim1);
+	ProcId anim2 = avatar->doAnimAfter(Animation::stand, direction, anim1);
 	waitFor(anim2);
 }
 
