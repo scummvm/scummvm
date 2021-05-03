@@ -96,20 +96,26 @@ private:
 	static void addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data);
 
 	/**
-	 * Converts a Unicode string to Ascii format.
+	 * Converts a string of TCHARs returned from a Windows API function to
+	 * a character string. If UNICODE is defined then the incoming string
+	 * is wide characters and is converted to UTF8, otherwise the incoming
+	 * string is returned with no conversion.
 	 *
-	 * @param str Common::String to convert from Unicode to Ascii.
-	 * @return str in Ascii format.
+	 * @param str String to convert if UNICODE is defined
+	 * @return str in UTF8 format if UNICODE is defined, otherwise just str
 	 */
-	static char *toAscii(TCHAR *str);
+	static const char *tcharToChar(const TCHAR *str);
 
 	/**
-	 * Converts an Ascii string to Unicode format.
+	 * Converts a character string to a string of TCHARs for passing
+	 * to a Windows API function. If UNICODE is defined then the incoming
+	 * string is converted from UTF8 to wide characters, otherwise the incoming
+	 * string is returned with no conversion.
 	 *
-	 * @param str Common::String to convert from Ascii to Unicode.
-	 * @return str in Unicode format.
+	 * @param str String to convert if UNICODE is defined
+	 * @return str in wide character format if UNICODE is defined, otherwise just str
 	 */
-	static const TCHAR* toUnicode(const char *str);
+	static const TCHAR* charToTchar(const char *str);
 
 	/**
 	 * Tests and sets the _isValid and _isDirectory flags, using the GetFileAttributes() function.
