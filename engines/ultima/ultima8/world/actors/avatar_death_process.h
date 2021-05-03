@@ -28,8 +28,6 @@
 namespace Ultima {
 namespace Ultima8 {
 
-class MainActor;
-
 class AvatarDeathProcess : public Process {
 public:
 	AvatarDeathProcess();
