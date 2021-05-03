@@ -65,12 +65,7 @@ public:
 	// If face is non-NULL, also return the face of the 3d bbox (x,y) is on
 	uint16 Trace(int32 x, int32 y, HitFace *face = 0, bool item_highlight = false);
 
-	void IncSortLimit() {
-		_sortLimit++;
-	}
-	void DecSortLimit() {
-		if (_sortLimit > 0) _sortLimit--;
-	}
+	void IncSortLimit(int count);
 
 private:
 	bool PaintSortItem(SortItem *);

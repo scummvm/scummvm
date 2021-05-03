@@ -397,8 +397,7 @@ void GameMapGump::onMouseDouble(int button, int32 mx, int32 my) {
 }
 
 void GameMapGump::IncSortOrder(int count) {
-	if (count > 0) _displayList->IncSortLimit();
-	else _displayList->DecSortLimit();
+	_displayList->IncSortLimit(count);
 }
 
 bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {

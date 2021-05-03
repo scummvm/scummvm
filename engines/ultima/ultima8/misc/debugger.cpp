@@ -804,16 +804,18 @@ bool Debugger::cmdDumpMap(int argc, const char **argv) {
 }
 
 bool Debugger::cmdIncrementSortOrder(int argc, const char **argv) {
+	int32 count = argc > 1 ? strtol(argv[1], 0, 0) : 1;
 	GameMapGump *gump = Ultima8Engine::get_instance()->getGameMapGump();
 	if (gump)
-		gump->IncSortOrder(1);
+		gump->IncSortOrder(count);
 	return false;
 }
 
 bool Debugger::cmdDecrementSortOrder(int argc, const char **argv) {
+	int32 count = argc > 1 ? strtol(argv[1], 0, 0) : 1;
 	GameMapGump *gump = Ultima8Engine::get_instance()->getGameMapGump();
 	if (gump)
-		gump->IncSortOrder(-1);
+		gump->IncSortOrder(-count);
 	return false;
 }
 

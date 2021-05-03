@@ -235,7 +235,7 @@ struct SortItem {
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
-			return _z < other->_z || (_z == other->_z && _flat && !other->_flat);
+		return _z < other->_z || (_z == other->_z && _flat && !other->_flat);
 	}
 
 };
@@ -1032,6 +1032,12 @@ uint16 ItemSorter::Trace(int32 x, int32 y, HitFace *face, bool item_highlight) {
 	}
 
 	return 0;
+}
+
+void ItemSorter::IncSortLimit(int count) {
+	_sortLimit += count;
+	if (_sortLimit < 0)
+		_sortLimit = 0;
 }
 
 } // End of namespace Ultima8
