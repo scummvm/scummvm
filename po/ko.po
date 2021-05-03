@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-02 19:04+0000\n"
+"POT-Creation-Date: 2021-05-03 11:13+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "위로"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:654
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:648
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -125,7 +125,7 @@ msgstr "인터넷 연결에 제한이 있는 것 같습니다. 다운로드를 �
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2738 gui/options.cpp:2776
+#: gui/options.cpp:2737 gui/options.cpp:2775
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -137,7 +137,7 @@ msgstr "예"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2738 gui/options.cpp:2776 engines/buried/buried.cpp:533
+#: gui/options.cpp:2737 gui/options.cpp:2775 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -160,7 +160,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:381
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:1958 gui/saveload-dialog.cpp:1168
-#: engines/engine.cpp:510 engines/engine.cpp:522
+#: engines/engine.cpp:508 engines/engine.cpp:520
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -430,19 +430,19 @@ msgstr "업적"
 #: gui/options.cpp:1985 gui/options.cpp:1993 gui/options.cpp:2024
 #: gui/options.cpp:2067 gui/options.cpp:2075 gui/options.cpp:2084
 #: gui/options.cpp:2347 gui/options.cpp:2353 gui/options.cpp:2360
-#: gui/options.cpp:2369 gui/options.cpp:2616 gui/options.cpp:2619
-#: gui/options.cpp:2626 gui/options.cpp:2632 gui/options.cpp:2643
+#: gui/options.cpp:2369 gui/options.cpp:2615 gui/options.cpp:2618
+#: gui/options.cpp:2625 gui/options.cpp:2631 gui/options.cpp:2642
 msgctxt "path"
 msgid "None"
 msgstr "없음"
 
 #: gui/editgamedialog.cpp:399 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:629 gui/options.cpp:1973 gui/options.cpp:2341
-#: gui/options.cpp:2622 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2621 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "기본값"
 
-#: gui/editgamedialog.cpp:557 gui/options.cpp:2637
+#: gui/editgamedialog.cpp:557 gui/options.cpp:2636
 msgid "Select SoundFont"
 msgstr "SoundFont 선택"
 
@@ -450,7 +450,7 @@ msgstr "SoundFont 선택"
 msgid "Select additional game directory"
 msgstr "추가 게임 디렉토리를 선택"
 
-#: gui/editgamedialog.cpp:609 gui/options.cpp:2551
+#: gui/editgamedialog.cpp:609 gui/options.cpp:2550
 msgid "Select directory for saved games"
 msgstr "세이브 파일 저장 경로를 선택"
 
@@ -582,23 +582,23 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth의 모든 설정을 기본값으로 되돌리겠습니까?"
 
-#: gui/gui-manager.cpp:151
+#: gui/gui-manager.cpp:149
 msgid "GUI"
 msgstr "GUI"
 
-#: gui/gui-manager.cpp:155 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:153 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
 msgstr "상호작용"
 
-#: gui/gui-manager.cpp:160 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:158 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "닫기"
 
-#: gui/gui-manager.cpp:166 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:164 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
 #: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
@@ -609,7 +609,7 @@ msgstr "닫기"
 msgid "Up"
 msgstr "위"
 
-#: gui/gui-manager.cpp:171 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:169 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
 #: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
@@ -620,7 +620,7 @@ msgstr "위"
 msgid "Down"
 msgstr "아래"
 
-#: gui/gui-manager.cpp:176 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
@@ -631,7 +631,7 @@ msgstr "아래"
 msgid "Left"
 msgstr "왼쪽"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:179 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
 #: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
@@ -642,7 +642,7 @@ msgstr "왼쪽"
 msgid "Right"
 msgstr "오른쪽"
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:184 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -758,14 +758,14 @@ msgstr "게임 리스트에서 검색"
 msgid "Search:"
 msgstr "검색:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "게임 불러오기:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -1482,7 +1482,7 @@ msgstr "최근 동기화:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "세이브 파일이 이 스토리지와 마지막으로 동기화된 시점"
 
-#: gui/options.cpp:2234 gui/options.cpp:2971
+#: gui/options.cpp:2234 gui/options.cpp:2970
 msgid "<never>"
 msgstr "<없음>"
 
@@ -1583,7 +1583,7 @@ msgstr "서버 실행"
 msgid "Run local webserver"
 msgstr "로컬 웹 서버를 실행"
 
-#: gui/options.cpp:2275 gui/options.cpp:3086
+#: gui/options.cpp:2275 gui/options.cpp:3085
 msgid "Not running"
 msgstr "실행되지 않음"
 
@@ -1664,27 +1664,27 @@ msgstr ""
 "\n"
 "기타 설정을 복원합니다."
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "선택한 디렉토리에는 기록할 수 없습니다. 다른 디렉토리를 선택해 주세요."
 
-#: gui/options.cpp:2567
+#: gui/options.cpp:2566
 msgid "Select directory for GUI themes"
 msgstr "GUI 테마 폴더를 선택"
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2576
 msgid "Select directory for extra files"
 msgstr "추가 파일 디렉토리를 선택"
 
-#: gui/options.cpp:2588
+#: gui/options.cpp:2587
 msgid "Select directory for plugins"
 msgstr "플러그인 디렉토리를 선택"
 
-#: gui/options.cpp:2601
+#: gui/options.cpp:2600
 msgid "Select directory for Files Manager /root/"
 msgstr "파일 매니저 /root/ 디렉토리를 선택"
 
-#: gui/options.cpp:2713
+#: gui/options.cpp:2712
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1692,47 +1692,47 @@ msgstr ""
 "URL을 여는데 실패했습니다!\n"
 "해당 페이지로 직접 이동해 주세요."
 
-#: gui/options.cpp:2738
+#: gui/options.cpp:2737
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "다른 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:2747 gui/options.cpp:2785
+#: gui/options.cpp:2746 gui/options.cpp:2784
 msgid "Wait until current Storage finishes up and try again."
 msgstr "현재 스토리지 작업이 완료될 때까지 기다린 후 다시 시도해 주세요."
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2759
 msgid "Connecting..."
 msgstr "연결 중..."
 
-#: gui/options.cpp:2776
+#: gui/options.cpp:2775
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "이 스토리지가 현재 동작 중입니다. 중단할까요?"
 
-#: gui/options.cpp:2969 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2968 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<지금>"
 
-#: gui/options.cpp:3078
+#: gui/options.cpp:3077
 msgid "Stop server"
 msgstr "서버 정지"
 
-#: gui/options.cpp:3079
+#: gui/options.cpp:3078
 msgid "Stop local webserver"
 msgstr "내부 웹서버를 정지합니다"
 
-#: gui/options.cpp:3131
+#: gui/options.cpp:3130
 msgid "Storage connected."
 msgstr "스토리지가 연결되었습니다."
 
-#: gui/options.cpp:3133
+#: gui/options.cpp:3132
 msgid "Failed to connect storage."
 msgstr "스토리지 연결에 실패했습니다."
 
-#: gui/options.cpp:3135
+#: gui/options.cpp:3134
 msgid "Failed to connect storage: "
 msgstr "스토리지 연결에 실패했습니다: "
 
-#: gui/options.cpp:3155
+#: gui/options.cpp:3154
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1970,15 +1970,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "진행"
 
-#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
+#: gui/widget.cpp:405 gui/widget.cpp:407 gui/widget.cpp:413 gui/widget.cpp:415
 msgid "Clear value"
 msgstr "값 제거"
 
-#: base/main.cpp:625
+#: base/main.cpp:616
 msgid "Error running game:"
 msgstr "게임 실행 에러:"
 
-#: base/main.cpp:672
+#: base/main.cpp:663
 msgid "Could not find any engine capable of running the selected game"
 msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다"
 
@@ -2167,7 +2167,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "런처로 돌아가기(~R~)"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:827 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2185,7 +2185,7 @@ msgstr "런처로 돌아가기(~R~)"
 msgid "Save game:"
 msgstr "게임 저장:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:827 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2232,42 +2232,42 @@ msgstr "확인(~O~)"
 msgid "~C~ancel"
 msgstr "취소(~C~)"
 
-#: engines/engine.cpp:319
+#: engines/engine.cpp:317
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "해상도를 '%dx%d'로 변경할 수 없습니다."
 
-#: engines/engine.cpp:328
+#: engines/engine.cpp:326
 msgid "Could not initialize color format."
 msgstr "컬러 포맷을 초기화할 수 없습니다."
 
-#: engines/engine.cpp:337
+#: engines/engine.cpp:335
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "비디오 모드 '%s'로 전환할 수 없습니다."
 
-#: engines/engine.cpp:345
+#: engines/engine.cpp:343
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "확대 모드 '%s'로 전환할 수 없습니다."
 
-#: engines/engine.cpp:352
+#: engines/engine.cpp:350
 msgid "Could not apply aspect ratio setting."
 msgstr "종횡비 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:357
+#: engines/engine.cpp:355
 msgid "Could not apply fullscreen setting."
 msgstr "전체 화면 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:362
+#: engines/engine.cpp:360
 msgid "Could not apply filtering setting."
 msgstr "필터링 설정을 적용할 수 없습니다."
 
-#: engines/engine.cpp:420
+#: engines/engine.cpp:418
 msgid "Error"
 msgstr "오류"
 
-#: engines/engine.cpp:506
+#: engines/engine.cpp:504
 #, fuzzy
 #| msgid ""
 #| "You appear to be playing this game directly\n"
@@ -2288,7 +2288,7 @@ msgstr ""
 "것을 권장합니다.\n"
 "추가 정보는 README 파일을 참조하세요."
 
-#: engines/engine.cpp:518
+#: engines/engine.cpp:516
 #, fuzzy
 #| msgid ""
 #| "This game has audio tracks in its disk. These\n"
@@ -2309,17 +2309,17 @@ msgstr ""
 "트랙을 추출해야합니다.\n"
 "README 파일에서 추가정보를 확인해 주세요."
 
-#: engines/engine.cpp:549 engines/metaengine.cpp:325 engines/savestate.cpp:81
+#: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "자동 저장"
 
-#: engines/engine.cpp:551
+#: engines/engine.cpp:549
 msgid "Error occurred making autosave"
 msgstr "자동 저장시 에러가 발생함"
 
-#: engines/engine.cpp:630
+#: engines/engine.cpp:626
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2328,17 +2328,17 @@ msgstr ""
 "세이브 파일 (%s)을 불러오는데 실패했습니다! 기본적인 정보와 추가 지원을 얻기 "
 "위한 방법은 README 파일에서 참조해 주세요."
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:644
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:644
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "게임의 전체 이름"
 
-#: engines/engine.cpp:651
+#: engines/engine.cpp:645
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2348,15 +2348,15 @@ msgstr ""
 "이 불안정할 가능성이 높으며 세이브 파일이 앞으로 나올 ScummVM 버전에서 지원되"
 "지 않을 수도 있습니다."
 
-#: engines/engine.cpp:654 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:648 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "확인"
 
-#: engines/engine.cpp:661
+#: engines/engine.cpp:655
 msgid "This game is not supported."
 msgstr "이 게임은 지원되지 않습니다."
 
-#: engines/engine.cpp:661
+#: engines/engine.cpp:655
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2364,11 +2364,11 @@ msgstr ""
 "이 게임은 다음 이유로 지원되지 않습니다:\n"
 "\n"
 
-#: engines/engine.cpp:800
+#: engines/engine.cpp:794
 msgid "Loading game is currently unavailable"
 msgstr "현재는 게임을 불러올 수 없습니다"
 
-#: engines/engine.cpp:829
+#: engines/engine.cpp:823
 msgid "Saving game is currently unavailable"
 msgstr "현재는 게임을 저장할 수 없습니다"
 
@@ -2448,7 +2448,7 @@ msgstr "예측 입력 창"
 msgid "Confirm"
 msgstr "확인"
 
-#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:165
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:163
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -2721,29 +2721,29 @@ msgstr "클릭 비활성됨"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "터치스크린 '탭 모드' - 호버 (D패드 클릭)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:71
 #: engines/twine/metaengine.cpp:351
 msgid "Center"
 msgstr "중앙"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 msgid "Pixel-perfect scaling"
 msgstr "픽셀 맞춤 크기조절"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/opengl/opengl-graphics.cpp:244
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Fit to window"
 msgstr "창 크기에 맞춤"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Stretch to window"
 msgstr "창에 맞게 늘림"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
+#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window (4:3)"
 msgstr "창 크기에 맞춤 (4:3)"
 
@@ -2753,36 +2753,36 @@ msgid "Resolution: %dx%d"
 msgstr "해상도: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
 msgid "Enabled aspect ratio correction"
 msgstr "화면 종횡비 보정 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2495
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
 msgid "Disabled aspect ratio correction"
 msgstr "화면 종횡비 보정 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2505
 msgid "Filtering enabled"
 msgstr "필터링 활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2513
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
 msgid "Filtering disabled"
 msgstr "필터링 비활성화"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
 msgid "Stretch mode"
 msgstr "확대 모드"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "일반 (확대 없음)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
 msgid "Active graphics filter:"
 msgstr "활성 그래픽 필터:"
 

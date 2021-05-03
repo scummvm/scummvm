@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-02 19:04+0000\n"
+"POT-Creation-Date: 2021-05-03 11:13+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -63,7 +63,7 @@ msgstr "Gå op"
 #: gui/saveload-dialog.cpp:62 gui/saveload-dialog.cpp:396
 #: gui/saveload-dialog.cpp:468 gui/saveload-dialog.cpp:770
 #: gui/saveload-dialog.cpp:1167 gui/themebrowser.cpp:55
-#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:654
+#: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:648
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
 #: backends/events/default/default-events.cpp:185
 #: backends/events/default/default-events.cpp:209
@@ -127,7 +127,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2738 gui/options.cpp:2776
+#: gui/options.cpp:2737 gui/options.cpp:2775
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -139,7 +139,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2738 gui/options.cpp:2776 engines/buried/buried.cpp:533
+#: gui/options.cpp:2737 gui/options.cpp:2775 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -162,7 +162,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:381
 #: gui/fluidsynth-dialog.cpp:154 gui/launcher.cpp:514 gui/launcher.cpp:518
 #: gui/massadd.cpp:89 gui/options.cpp:1958 gui/saveload-dialog.cpp:1168
-#: engines/engine.cpp:510 engines/engine.cpp:522
+#: engines/engine.cpp:508 engines/engine.cpp:520
 #: backends/platform/wii/options.cpp:47 engines/agos/animation.cpp:559
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
@@ -438,19 +438,19 @@ msgstr ""
 #: gui/options.cpp:1985 gui/options.cpp:1993 gui/options.cpp:2024
 #: gui/options.cpp:2067 gui/options.cpp:2075 gui/options.cpp:2084
 #: gui/options.cpp:2347 gui/options.cpp:2353 gui/options.cpp:2360
-#: gui/options.cpp:2369 gui/options.cpp:2616 gui/options.cpp:2619
-#: gui/options.cpp:2626 gui/options.cpp:2632 gui/options.cpp:2643
+#: gui/options.cpp:2369 gui/options.cpp:2615 gui/options.cpp:2618
+#: gui/options.cpp:2625 gui/options.cpp:2631 gui/options.cpp:2642
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/editgamedialog.cpp:399 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:629 gui/options.cpp:1973 gui/options.cpp:2341
-#: gui/options.cpp:2622 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2621 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:557 gui/options.cpp:2637
+#: gui/editgamedialog.cpp:557 gui/options.cpp:2636
 msgid "Select SoundFont"
 msgstr "Vælg SoundFont"
 
@@ -458,7 +458,7 @@ msgstr "Vælg SoundFont"
 msgid "Select additional game directory"
 msgstr "Vælg ekstra spilmappe"
 
-#: gui/editgamedialog.cpp:609 gui/options.cpp:2551
+#: gui/editgamedialog.cpp:609 gui/options.cpp:2550
 msgid "Select directory for saved games"
 msgstr "Vælg mappe til gemte spil"
 
@@ -592,24 +592,24 @@ msgstr ""
 "Vil du virkelig nulstille alle FluidSynth-indstillinger til deres standard "
 "værdier?"
 
-#: gui/gui-manager.cpp:151
+#: gui/gui-manager.cpp:149
 msgid "GUI"
 msgstr ""
 
-#: gui/gui-manager.cpp:155 engines/mohawk/myst.cpp:570
+#: gui/gui-manager.cpp:153 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 #, fuzzy
 msgid "Interact"
 msgstr "Interpolation:"
 
-#: gui/gui-manager.cpp:160 gui/unknown-game-dialog.cpp:54
+#: gui/gui-manager.cpp:158 gui/unknown-game-dialog.cpp:54
 #: engines/nancy/dialogs.cpp:314 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:191 engines/scumm/help.cpp:209
 msgid "Close"
 msgstr "Luk"
 
-#: gui/gui-manager.cpp:166 engines/metaengine.cpp:108
+#: gui/gui-manager.cpp:164 engines/metaengine.cpp:108
 #: engines/dragons/metaengine.cpp:163 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:96 engines/grim/grim.cpp:451
 #: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:452
@@ -620,7 +620,7 @@ msgstr "Luk"
 msgid "Up"
 msgstr "Op"
 
-#: gui/gui-manager.cpp:171 engines/metaengine.cpp:113
+#: gui/gui-manager.cpp:169 engines/metaengine.cpp:113
 #: engines/dragons/metaengine.cpp:169 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:102 engines/grim/grim.cpp:456
 #: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:459
@@ -631,7 +631,7 @@ msgstr "Op"
 msgid "Down"
 msgstr "Ned"
 
-#: gui/gui-manager.cpp:176 engines/metaengine.cpp:118
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:118
 #: engines/dragons/metaengine.cpp:175 engines/griffon/metaengine.cpp:108
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
 #: engines/twine/metaengine.cpp:474 engines/twine/metaengine.cpp:542
@@ -642,7 +642,7 @@ msgstr "Ned"
 msgid "Left"
 msgstr "Venstre"
 
-#: gui/gui-manager.cpp:181 engines/metaengine.cpp:123
+#: gui/gui-manager.cpp:179 engines/metaengine.cpp:123
 #: engines/dragons/metaengine.cpp:181 engines/griffon/metaengine.cpp:114
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
 #: engines/twine/metaengine.cpp:466 engines/twine/metaengine.cpp:535
@@ -653,7 +653,7 @@ msgstr "Venstre"
 msgid "Right"
 msgstr "Højre"
 
-#: gui/gui-manager.cpp:186 engines/pegasus/pegasus.cpp:2807
+#: gui/gui-manager.cpp:184 engines/pegasus/pegasus.cpp:2807
 #: engines/wintermute/keymapper_tables.h:304
 #: engines/wintermute/keymapper_tables.h:331
 #: engines/wintermute/keymapper_tables.h:435
@@ -769,14 +769,14 @@ msgstr "Søg i spilliste"
 msgid "Search:"
 msgstr "Søg:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Indlæs spil:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:804
+#: gui/launcher.cpp:210 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
 #: engines/scumm/dialogs.cpp:178 engines/tsage/scenes.cpp:631
@@ -1496,7 +1496,7 @@ msgstr "Sidste synkronisering:"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Sidste gang gemte spil blev synkroniseret med dette lager"
 
-#: gui/options.cpp:2234 gui/options.cpp:2971
+#: gui/options.cpp:2234 gui/options.cpp:2970
 msgid "<never>"
 msgstr "<aldrig>"
 
@@ -1603,7 +1603,7 @@ msgstr "Kør server"
 msgid "Run local webserver"
 msgstr "Kør lokal webserver"
 
-#: gui/options.cpp:2275 gui/options.cpp:3086
+#: gui/options.cpp:2275 gui/options.cpp:3085
 msgid "Not running"
 msgstr "Kører ikke"
 
@@ -1683,27 +1683,27 @@ msgstr ""
 "\n"
 "Diverse indstillinger vil blive genskabt."
 
-#: gui/options.cpp:2558
+#: gui/options.cpp:2557
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Der kan ikke skrives til den valgte mappe. Vælg venligst et andet."
 
-#: gui/options.cpp:2567
+#: gui/options.cpp:2566
 msgid "Select directory for GUI themes"
 msgstr "Vælg mappe for GUI-temaer"
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2576
 msgid "Select directory for extra files"
 msgstr "Vælg mappe for ekstra filer"
 
-#: gui/options.cpp:2588
+#: gui/options.cpp:2587
 msgid "Select directory for plugins"
 msgstr "Vælg mappe for plugins"
 
-#: gui/options.cpp:2601
+#: gui/options.cpp:2600
 msgid "Select directory for Files Manager /root/"
 msgstr "Vælg mappe for filhåndteringen /root/"
 
-#: gui/options.cpp:2713
+#: gui/options.cpp:2712
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1711,47 +1711,47 @@ msgstr ""
 "Kunne ikke åbne URL!\n"
 "Navigér venligst til siden manuelt."
 
-#: gui/options.cpp:2738
+#: gui/options.cpp:2737
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Et andet lager er aktivt nu. Vil du afbryde det?"
 
-#: gui/options.cpp:2747 gui/options.cpp:2785
+#: gui/options.cpp:2746 gui/options.cpp:2784
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Vent indtil aktuel lagring er færdig og prøv igen."
 
-#: gui/options.cpp:2760
+#: gui/options.cpp:2759
 msgid "Connecting..."
 msgstr "Tilslutter ..."
 
-#: gui/options.cpp:2776
+#: gui/options.cpp:2775
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Lageret arbejder nu. Vil du afbryde det?"
 
-#: gui/options.cpp:2969 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2968 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<lige nu>"
 
-#: gui/options.cpp:3078
+#: gui/options.cpp:3077
 msgid "Stop server"
 msgstr "Stop server"
 
-#: gui/options.cpp:3079
+#: gui/options.cpp:3078
 msgid "Stop local webserver"
 msgstr "Stop lokal webserver"
 
-#: gui/options.cpp:3131
+#: gui/options.cpp:3130
 msgid "Storage connected."
 msgstr "Lageret er tilsluttet."
 
-#: gui/options.cpp:3133
+#: gui/options.cpp:3132
 msgid "Failed to connect storage."
 msgstr "Kunne ikke tilslutte lageret."
 
-#: gui/options.cpp:3135
+#: gui/options.cpp:3134
 msgid "Failed to connect storage: "
 msgstr "Kunne ikke tilslutte lageret: "
 
-#: gui/options.cpp:3155
+#: gui/options.cpp:3154
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -1994,15 +1994,15 @@ msgstr ""
 msgid "Proceed"
 msgstr "Fortsæt"
 
-#: gui/widget.cpp:407 gui/widget.cpp:409 gui/widget.cpp:415 gui/widget.cpp:417
+#: gui/widget.cpp:405 gui/widget.cpp:407 gui/widget.cpp:413 gui/widget.cpp:415
 msgid "Clear value"
 msgstr "Slet værdi"
 
-#: base/main.cpp:625
+#: base/main.cpp:616
 msgid "Error running game:"
 msgstr "Fejl ved kørsel af spil:"
 
-#: base/main.cpp:672
+#: base/main.cpp:663
 msgid "Could not find any engine capable of running the selected game"
 msgstr "Kunne ikke finde nogen motor istand til at afvikle det valgte spil"
 
@@ -2190,7 +2190,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~R~etur til oversigt"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:827 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2208,7 +2208,7 @@ msgstr "~R~etur til oversigt"
 msgid "Save game:"
 msgstr "Gemt spil:"
 
-#: engines/dialogs.cpp:99 engines/engine.cpp:833 engines/agi/saveload.cpp:768
+#: engines/dialogs.cpp:99 engines/engine.cpp:827 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
 #: engines/drascula/saveload.cpp:383 engines/dreamweb/saveload.cpp:262
@@ -2256,43 +2256,43 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "~F~ortryd"
 
-#: engines/engine.cpp:319
+#: engines/engine.cpp:317
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Kunne ikke skifte til opløsningen '%dx%d'."
 
-#: engines/engine.cpp:328
+#: engines/engine.cpp:326
 msgid "Could not initialize color format."
 msgstr "Kunne ikke initialisere farveformat."
 
-#: engines/engine.cpp:337
+#: engines/engine.cpp:335
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Kunne ikke skifte til videotilstanden '%s'."
 
-#: engines/engine.cpp:345
+#: engines/engine.cpp:343
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Kunne ikke skifte til stræktilstanden '%s'."
 
-#: engines/engine.cpp:352
+#: engines/engine.cpp:350
 msgid "Could not apply aspect ratio setting."
 msgstr "Kunne ikke anvende rettelse af højde-/breddeforhold-indstilling."
 
-#: engines/engine.cpp:357
+#: engines/engine.cpp:355
 msgid "Could not apply fullscreen setting."
 msgstr "Kunne ikke anvende fuldskærm indstilling."
 
-#: engines/engine.cpp:362
+#: engines/engine.cpp:360
 msgid "Could not apply filtering setting."
 msgstr "Kunne ikke anvende filtrerings indstilling."
 
-#: engines/engine.cpp:420
+#: engines/engine.cpp:418
 #, fuzzy
 msgid "Error"
 msgstr "Ingen fejl"
 
-#: engines/engine.cpp:506
+#: engines/engine.cpp:504
 #, fuzzy
 #| msgid ""
 #| "You appear to be playing this game directly\n"
@@ -2313,7 +2313,7 @@ msgstr ""
 "datafiler til din harddisk i stedet.\n"
 "Se README fil for detaljer."
 
-#: engines/engine.cpp:518
+#: engines/engine.cpp:516
 #, fuzzy
 #| msgid ""
 #| "This game has audio tracks in its disk. These\n"
@@ -2334,19 +2334,19 @@ msgstr ""
 "for at lytte til spillets musik.\n"
 "Se README fil for detaljer."
 
-#: engines/engine.cpp:549 engines/metaengine.cpp:325 engines/savestate.cpp:81
+#: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 #, fuzzy
 msgid "Autosave"
 msgstr "Autogem:"
 
-#: engines/engine.cpp:551
+#: engines/engine.cpp:549
 #, fuzzy
 msgid "Error occurred making autosave"
 msgstr "Fejl ved læsning af gemt fil"
 
-#: engines/engine.cpp:630
+#: engines/engine.cpp:626
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -2355,17 +2355,17 @@ msgstr ""
 "Kunne ikke indlæse gemte spil (%s)! Se venligst README for grundlæggende "
 "oplysninger, og for at få instruktioner om, hvordan man får yderligere hjælp."
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:644
 msgid "WARNING: "
 msgstr ""
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:644
 #, fuzzy
 #| msgid "Full title of the game"
 msgid " Shall we still run the game?"
 msgstr "Fuld titel på spillet"
 
-#: engines/engine.cpp:651
+#: engines/engine.cpp:645
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -2375,16 +2375,16 @@ msgstr ""
 "ScummVM. Således, er det sandsynligt, at det er ustabilt, og alle gemte spil "
 "du foretager fungerer muligvis ikke i fremtidige versioner af ScummVM."
 
-#: engines/engine.cpp:654 engines/wintermute/wintermute.cpp:210
+#: engines/engine.cpp:648 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Start alligevel"
 
-#: engines/engine.cpp:661
+#: engines/engine.cpp:655
 #, fuzzy
 msgid "This game is not supported."
 msgstr "Spil-id ikke understøttet"
 
-#: engines/engine.cpp:661
+#: engines/engine.cpp:655
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -2392,11 +2392,11 @@ msgstr ""
 "Det spil er ikke understøttet af følgende årsag:\n"
 "\n"
 
-#: engines/engine.cpp:800
+#: engines/engine.cpp:794
 msgid "Loading game is currently unavailable"
 msgstr ""
 
-#: engines/engine.cpp:829
+#: engines/engine.cpp:823
 msgid "Saving game is currently unavailable"
 msgstr ""
 
@@ -2477,7 +2477,7 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:165
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:163
 msgid "OpenGL"
 msgstr "OpenGL"
 
@@ -2748,29 +2748,29 @@ msgstr "Klik deaktiveret"
 msgid "Touchscreen 'Tap Mode' - Hover (DPad Clicks)"
 msgstr "Touchscreen 'Tryktilstand' - Henover (DPad-klik)"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:244
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
+#: backends/graphics/opengl/opengl-graphics.cpp:242
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:71
 #: engines/twine/metaengine.cpp:351
 msgid "Center"
 msgstr "Centrér"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
+#: backends/graphics/opengl/opengl-graphics.cpp:243
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 msgid "Pixel-perfect scaling"
 msgstr "Pixelperfekt skalering"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
+#: backends/graphics/opengl/opengl-graphics.cpp:244
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Fit to window"
 msgstr "Tilpas til vindue"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:247
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:76
+#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Stretch to window"
 msgstr "Stræk til vindue"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:248
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:77
+#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window (4:3)"
 msgstr "Tilpas til vindue (4:3)"
 
@@ -2780,36 +2780,36 @@ msgid "Resolution: %dx%d"
 msgstr "Opløsning: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
 msgid "Enabled aspect ratio correction"
 msgstr "Aktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2495
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
 msgid "Disabled aspect ratio correction"
 msgstr "Deaktivér rettelse af højde-/breddeforhold"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2511
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2505
 msgid "Filtering enabled"
 msgstr "Filtering aktiveret"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2513
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
 msgid "Filtering disabled"
 msgstr "Filtrering deaktiveret"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2540
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
 msgid "Stretch mode"
 msgstr "Stræktilstand"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:84
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:82
 msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (ingen skalering)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2454
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
 msgid "Active graphics filter:"
 msgstr "Aktive grafik filtre:"
 
