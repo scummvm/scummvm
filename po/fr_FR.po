@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-03 11:13+0000\n"
+"POT-Creation-Date: 2021-05-03 14:48+0000\n"
 "PO-Revision-Date: 2021-04-30 11:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -127,7 +127,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2737 gui/options.cpp:2775
+#: gui/options.cpp:2739 gui/options.cpp:2777
 #: backends/events/default/default-events.cpp:185 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -139,7 +139,7 @@ msgstr "Oui"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:394 gui/launcher.cpp:415 gui/launcher.cpp:458
-#: gui/options.cpp:2737 gui/options.cpp:2775 engines/buried/buried.cpp:533
+#: gui/options.cpp:2739 gui/options.cpp:2777 engines/buried/buried.cpp:533
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/parallaction/metaengine.cpp:142
@@ -433,19 +433,19 @@ msgstr "Trophées"
 #: gui/options.cpp:1985 gui/options.cpp:1993 gui/options.cpp:2024
 #: gui/options.cpp:2067 gui/options.cpp:2075 gui/options.cpp:2084
 #: gui/options.cpp:2347 gui/options.cpp:2353 gui/options.cpp:2360
-#: gui/options.cpp:2369 gui/options.cpp:2615 gui/options.cpp:2618
-#: gui/options.cpp:2625 gui/options.cpp:2631 gui/options.cpp:2642
+#: gui/options.cpp:2369 gui/options.cpp:2617 gui/options.cpp:2620
+#: gui/options.cpp:2627 gui/options.cpp:2633 gui/options.cpp:2644
 msgctxt "path"
 msgid "None"
 msgstr "Aucun"
 
 #: gui/editgamedialog.cpp:399 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:629 gui/options.cpp:1973 gui/options.cpp:2341
-#: gui/options.cpp:2621 backends/platform/wii/options.cpp:56
+#: gui/options.cpp:2623 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Défaut"
 
-#: gui/editgamedialog.cpp:557 gui/options.cpp:2636
+#: gui/editgamedialog.cpp:557 gui/options.cpp:2638
 msgid "Select SoundFont"
 msgstr "Choisir une banque de sons"
 
@@ -453,7 +453,7 @@ msgstr "Choisir une banque de sons"
 msgid "Select additional game directory"
 msgstr "Sélectionner un répertoire supplémentaire"
 
-#: gui/editgamedialog.cpp:609 gui/options.cpp:2550
+#: gui/editgamedialog.cpp:609 gui/options.cpp:2552
 msgid "Select directory for saved games"
 msgstr "Sélectionner le répertoire pour les sauvegardes"
 
@@ -1502,7 +1502,7 @@ msgstr "Synchronisé :"
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Quand la dernière synchronisation des sauvegardes a eu lieu"
 
-#: gui/options.cpp:2234 gui/options.cpp:2970
+#: gui/options.cpp:2234 gui/options.cpp:2972
 msgid "<never>"
 msgstr "<jamais>"
 
@@ -1607,7 +1607,7 @@ msgstr "Démarrer serveur"
 msgid "Run local webserver"
 msgstr "Démarre le serveur web local"
 
-#: gui/options.cpp:2275 gui/options.cpp:3085
+#: gui/options.cpp:2275 gui/options.cpp:3087
 msgid "Not running"
 msgstr "Arrêté"
 
@@ -1690,29 +1690,29 @@ msgstr ""
 "\n"
 "Les réglages Divers vont être restaurés à leurs valeurs précédentes."
 
-#: gui/options.cpp:2557
+#: gui/options.cpp:2559
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Le répertoire sélectionné est verrouillé en écriture. Sélectionnez un autre "
 "répertoire."
 
-#: gui/options.cpp:2566
+#: gui/options.cpp:2568
 msgid "Select directory for GUI themes"
 msgstr "Sélectionner le répertoire des thèmes d'interface"
 
-#: gui/options.cpp:2576
+#: gui/options.cpp:2578
 msgid "Select directory for extra files"
 msgstr "Sélectionner le répertoire pour les fichiers supplémentaires"
 
-#: gui/options.cpp:2587
+#: gui/options.cpp:2589
 msgid "Select directory for plugins"
 msgstr "Sélectionner le répertoire des plugins"
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2602
 msgid "Select directory for Files Manager /root/"
 msgstr "Indique le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 
-#: gui/options.cpp:2712
+#: gui/options.cpp:2714
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1720,48 +1720,48 @@ msgstr ""
 "Erreur à l'ouverture de l'URL !\n"
 "Veuillez naviguer vers cette page manuellement."
 
-#: gui/options.cpp:2737
+#: gui/options.cpp:2739
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Un autre service de stockage est actif. Voulez-vous l'interrompre ?"
 
-#: gui/options.cpp:2746 gui/options.cpp:2784
+#: gui/options.cpp:2748 gui/options.cpp:2786
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Patientez jusqu'à ce que le Stockage actuel soit fermé et essayez de nouveau."
 
-#: gui/options.cpp:2759
+#: gui/options.cpp:2761
 msgid "Connecting..."
 msgstr "Connexion en cours..."
 
-#: gui/options.cpp:2775
+#: gui/options.cpp:2777
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ce service de stockage est actif. Voulez-vous l'interrompre ?"
 
-#: gui/options.cpp:2968 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2970 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<maintenant>"
 
-#: gui/options.cpp:3077
+#: gui/options.cpp:3079
 msgid "Stop server"
 msgstr "Arrêter serveur"
 
-#: gui/options.cpp:3078
+#: gui/options.cpp:3080
 msgid "Stop local webserver"
 msgstr "Arrêter le serveur"
 
-#: gui/options.cpp:3130
+#: gui/options.cpp:3132
 msgid "Storage connected."
 msgstr "Stockage connecté."
 
-#: gui/options.cpp:3132
+#: gui/options.cpp:3134
 msgid "Failed to connect storage."
 msgstr "Échec de la connexion au service de stockage."
 
-#: gui/options.cpp:3134
+#: gui/options.cpp:3136
 msgid "Failed to connect storage: "
 msgstr "Échec de la connexion au service de stockage : "
 
-#: gui/options.cpp:3154
+#: gui/options.cpp:3156
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
