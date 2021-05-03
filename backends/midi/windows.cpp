@@ -32,6 +32,7 @@
 
 #include "audio/musicplugin.h"
 #include "audio/mpu401.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/textconsole.h"
@@ -151,10 +152,11 @@ void MidiDriver_WIN::sysEx(const byte *msg, uint16 length) {
 }
 
 void MidiDriver_WIN::check_error(MMRESULT result) {
-	char buf[200];
+	TCHAR buf[MAXERRORLENGTH];
 	if (result != MMSYSERR_NOERROR) {
-		midiOutGetErrorText(result, buf, 200);
-		warning("MM System Error '%s'", buf);
+		midiOutGetErrorText(result, buf, MAXERRORLENGTH);
+		Common::String errorMessage = Win32::tcharToString(buf);
+		warning("MM System Error '%s'", errorMessage.c_str());
 	}
 }
 
@@ -184,7 +186,8 @@ MusicDevices WindowsMusicPlugin::getDevices() const {
 	for (int i = 0; i < numDevs; i++) {
 		if (midiOutGetDevCaps(i, &tmp, sizeof(MIDIOUTCAPS)) != MMSYSERR_NOERROR)
 			break;
-		deviceNames.push_back(tmp.szPname);
+		Common::String deviceName = Win32::tcharToString(tmp.szPname);
+		deviceNames.push_back(deviceName);
 	}
 
 	// Limit us to the number of actually retrieved devices.
