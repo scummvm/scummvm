@@ -149,8 +149,6 @@ bool GraphicsManager::setZBuffer(int num) {
 				n &= 15;
 			}
 
-			byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
-			*target = n;
 			for (int i = 0; i < _zBuffer->numPanels; ++i) {
 				byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
 				if (n && (sorted[i] == n || i == 0)) {
