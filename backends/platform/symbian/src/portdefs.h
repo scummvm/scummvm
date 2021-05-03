@@ -211,7 +211,6 @@ extern "C"{
 #define USE_ARM_GFX_ASM
 #define USE_ARM_SMUSH_ASM
 #define USE_ARM_COSTUME_ASM
-//#define USE_ARM_SOUND_ASM //it broken now
 #endif
 
 // Symbian bsearch implementation is flawed

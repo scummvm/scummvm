@@ -228,6 +228,7 @@ SOURCE mixer.cpp
 SOURCE mpu401.cpp
 SOURCE musicplugin.cpp
 SOURCE null.cpp
+SOURCE rate.cpp
 SOURCE timestamp.cpp
 SOURCE decoders\3do.cpp
 SOURCE decoders\aac.cpp
@@ -284,14 +285,6 @@ SOURCE softsynth\wave6581.cpp
 //SOURCE TVP.cpp (excluded, @exclusions[TVP.cpp])
 //STOP_AUTO_OBJECTS_AUDIO_//
 SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its excluded by filter
-
-//#if defined (WINS)
-SOURCE rate.cpp			// WINS emulator version: add regular .cpp
-//#else
-//ARM version is broken. Do not use.
-//SOURCE rate_arm.cpp		// ARM version: add ASM .cpp wrapper
-//SOURCE rate_arm_asm.s	// ARM version: add ASM routines
-//#endif
 
 SOURCEPATH ..\..\..\..\video
 //START_AUTO_OBJECTS_VIDEO_// Updated @ Thu Dec 10 22:42:12 2015

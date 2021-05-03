@@ -45,14 +45,6 @@ TARGETTYPE      lib
 // compiler must use png.h from libpng.lib instead ScummVM's
 OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png'
 
-//SOURCEPATH ..\..\..\..\audio
-//#if defined (WINS)
-////SOURCE rate.cpp			// WINS emulator version: add regular .cpp
-//#else
-//ARM version is broken. Do not use.
-//SOURCE rate_arm.cpp		// ARM version: add ASM .cpp wrapper
-//SOURCE rate_arm_asm.s	// ARM version: add ASM routines
-//#endif
 """
 
 def processModule_mk(dir, mmp_file):
@@ -86,10 +78,7 @@ def processModule_mk(dir, mmp_file):
       elif "USE_" in i:
          t = i.split()[-1]
          print "%s %s" %(dir, t)
-         if "USE_ARM_SOUND_ASM" in i: # Special case, broken implementation.
-            addsrc = False
-            src += ["SOURCE   rate.cpp"]
-         elif t in active_config:
+         if t in active_config:
             print "active_config %s %s" %(dir, t)
             addsrc = True
          else:
