@@ -1781,7 +1781,6 @@ void PathFinding3D::buildFramelist() {
 
 	len = 0.0;
 	startpos = 0.0;
-	float oldtheta = -1.0;
 	for (a = 0; a < _numPathNodes - 1; a++) {
 		curlen = 0.0;
 		len += g_vm->dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z,
@@ -1818,7 +1817,6 @@ void PathFinding3D::buildFramelist() {
 
 			b++;
 		}
-		oldtheta = theta;
 		startpos = len;
 	}
 
@@ -1835,7 +1833,7 @@ void PathFinding3D::buildFramelist() {
 	_curStep = 0;  // current step
 
 	// starting angle
-	oldtheta = _vm->_actor->_theta;
+	float oldtheta = _vm->_actor->_theta;
 	// first angle walk
 	theta = _step[0]._theta;
 
