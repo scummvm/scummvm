@@ -664,7 +664,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 		// Calculate the distance of the character from the room
 		tx = _curCamera->_ex - actor->_px;
-		ty = _curCamera->_ey - actor->_py;
+		ty = _curCamera->_ey;
 		tz = _curCamera->_ez - actor->_pz;
 
 		dist = tx * e30 + ty * e31 + tz * e32;

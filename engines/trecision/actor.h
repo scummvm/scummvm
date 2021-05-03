@@ -52,7 +52,7 @@ public:
 	uint32 _lightNum;
 	int _matNum;
 
-	float _px, _py, _pz;
+	float _px, _pz;
 	float _dx, _dz;
 	float _theta;
 	int   _lim[6];
