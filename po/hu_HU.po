@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-03 14:48+0000\n"
-"PO-Revision-Date: 2021-05-03 13:51+0000\n"
+"PO-Revision-Date: 2021-05-04 11:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -2299,13 +2299,6 @@ msgstr ""
 "A részletek a Dokumentáció (CD hang) részében."
 
 #: engines/engine.cpp:516
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the README file for details."
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2317,7 +2310,7 @@ msgstr ""
 "ezeket a sávokat másold ki egy megfelelõ\n"
 "CD audió kitömörítõ programmal\n"
 "hogy a játék zenéje hallható legyen.\n"
-"Nézd meg a README fájlt a részletekért."
+"A részletek a Dokumentáció (CD audio) részében."
 
 #: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
