@@ -44,40 +44,40 @@
 #endif
 
 bool WindowsFilesystemNode::exists() const {
-	return _access(_path.c_str(), F_OK) == 0;
+	return _taccess(charToTchar(_path.c_str()), F_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isReadable() const {
-	return _access(_path.c_str(), R_OK) == 0;
+	return _taccess(charToTchar(_path.c_str()), R_OK) == 0;
 }
 
 bool WindowsFilesystemNode::isWritable() const {
-	return _access(_path.c_str(), W_OK) == 0;
+	return _taccess(charToTchar(_path.c_str()), W_OK) == 0;
 }
 
 void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const char *base, bool hidden, WIN32_FIND_DATA* find_data) {
-	WindowsFilesystemNode entry;
-	char *asciiName = toAscii(find_data->cFileName);
-	bool isDirectory;
-
 	// Skip local directory (.) and parent (..)
-	if (!strcmp(asciiName, ".") || !strcmp(asciiName, ".."))
+	if (!_tcscmp(find_data->cFileName, TEXT(".")) ||
+		!_tcscmp(find_data->cFileName, TEXT("..")))
 		return;
 
 	// Skip hidden files if asked
 	if ((find_data->dwFileAttributes & FILE_ATTRIBUTE_HIDDEN) && !hidden)
 		return;
 
-	isDirectory = (find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ? true : false);
+	bool isDirectory = ((find_data->dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ? true : false);
 
 	if ((!isDirectory && mode == Common::FSNode::kListDirectoriesOnly) ||
 		(isDirectory && mode == Common::FSNode::kListFilesOnly))
 		return;
 
+	const char *fileName = tcharToChar(find_data->cFileName);
+
+	WindowsFilesystemNode entry;
 	entry._isDirectory = isDirectory;
-	entry._displayName = asciiName;
+	entry._displayName = fileName;
 	entry._path = base;
-	entry._path += asciiName;
+	entry._path += fileName;
 	if (entry._isDirectory)
 		entry._path += "\\";
 	entry._isValid = true;
@@ -86,23 +86,23 @@ void WindowsFilesystemNode::addFile(AbstractFSList &list, ListMode mode, const c
 	list.push_back(new WindowsFilesystemNode(entry));
 }
 
-char* WindowsFilesystemNode::toAscii(TCHAR *str) {
+const char* WindowsFilesystemNode::tcharToChar(const TCHAR *str) {
 #ifndef UNICODE
-	return (char *)str;
+	return str;
 #else
-	static char asciiString[MAX_PATH];
-	WideCharToMultiByte(CP_ACP, 0, str, _tcslen(str) + 1, asciiString, sizeof(asciiString), NULL, NULL);
-	return asciiString;
+	static char multiByteString[MAX_PATH];
+	WideCharToMultiByte(CP_UTF8, 0, str, _tcslen(str) + 1, multiByteString, MAX_PATH, NULL, NULL);
+	return multiByteString;
 #endif
 }
 
-const TCHAR* WindowsFilesystemNode::toUnicode(const char *str) {
+const TCHAR* WindowsFilesystemNode::charToTchar(const char *str) {
 #ifndef UNICODE
-	return (const TCHAR *)str;
+	return str;
 #else
-	static TCHAR unicodeString[MAX_PATH];
-	MultiByteToWideChar(CP_ACP, 0, str, strlen(str) + 1, unicodeString, sizeof(unicodeString) / sizeof(TCHAR));
-	return unicodeString;
+	static wchar_t wideCharString[MAX_PATH];
+	MultiByteToWideChar(CP_UTF8, 0, str, strlen(str) + 1, wideCharString, MAX_PATH);
+	return wideCharString;
 #endif
 }
 
@@ -116,9 +116,9 @@ WindowsFilesystemNode::WindowsFilesystemNode() {
 
 WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool currentDir) {
 	if (currentDir) {
-		char path[MAX_PATH];
+		TCHAR path[MAX_PATH];
 		GetCurrentDirectory(MAX_PATH, path);
-		_path = path;
+		_path = tcharToChar(path);
 	} else {
 		assert(p.size() > 0);
 		_path = p;
@@ -133,7 +133,7 @@ WindowsFilesystemNode::WindowsFilesystemNode(const Common::String &p, const bool
 
 void WindowsFilesystemNode::setFlags() {
 	// Check whether it is a directory, and whether the file actually exists
-	DWORD fileAttribs = GetFileAttributes(toUnicode(_path.c_str()));
+	DWORD fileAttribs = GetFileAttributes(charToTchar(_path.c_str()));
 
 	if (fileAttribs == INVALID_FILE_ATTRIBUTES) {
 		_isDirectory = false;
@@ -175,13 +175,13 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				WindowsFilesystemNode entry;
 				char drive_name[2];
 
-				drive_name[0] = toAscii(current_drive)[0];
+				drive_name[0] = tcharToChar(current_drive)[0];
 				drive_name[1] = '\0';
 				entry._displayName = drive_name;
 				entry._isDirectory = true;
 				entry._isValid = true;
 				entry._isPseudoRoot = false;
-				entry._path = toAscii(current_drive);
+				entry._path = tcharToChar(current_drive);
 				myList.push_back(new WindowsFilesystemNode(entry));
 		}
 	} else {
@@ -192,7 +192,7 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 
 		sprintf(searchPath, "%s*", _path.c_str());
 
-		handle = FindFirstFile(toUnicode(searchPath), &desc);
+		handle = FindFirstFile(charToTchar(searchPath), &desc);
 
 		if (handle == INVALID_HANDLE_VALUE)
 			return false;
@@ -239,7 +239,7 @@ Common::WriteStream *WindowsFilesystemNode::createWriteStream() {
 }
 
 bool WindowsFilesystemNode::createDirectory() {
-	if (CreateDirectory(toUnicode(_path.c_str()), NULL) != 0)
+	if (CreateDirectory(charToTchar(_path.c_str()), NULL) != 0)
 		setFlags();
 
 	return _isValid && _isDirectory;
