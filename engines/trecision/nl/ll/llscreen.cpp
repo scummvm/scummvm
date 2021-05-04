@@ -204,10 +204,9 @@ void InitRegenRoom() {
 			break;
 
 		SSortTable entry;
-		entry._index = objectId;
+		entry._objectId = objectId;
 		entry._roomIndex = index;
 		entry._remove = g_vm->isObjectVisible(objectId);
-		entry._curFrame = 0;
 		g_vm->_sortTable.push_back(entry);
 	}
 }
