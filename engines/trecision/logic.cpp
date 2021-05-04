@@ -4133,7 +4133,6 @@ void LogicManager::doSystemChangeRoom() {
 		initControlPanel();
 
 	ReadLoc();
-	InitRegenRoom();
 	_vm->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {
