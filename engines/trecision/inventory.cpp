@@ -223,24 +223,10 @@ int8 TrecisionEngine::iconPos(uint8 icon) {
 	return -1;
 }
 
-bool TrecisionEngine::isCloseupOrControlRoom() {
-	return _curRoom == kRoom2BL ||
-		   _curRoom == kRoom36F ||
-		   _curRoom == kRoom41D ||
-		   _curRoom == kRoom49M ||
-		   _curRoom == kRoom4CT ||
-		   _curRoom == kRoom58T ||
-		   _curRoom == kRoom58M ||
-		   _curRoom == kRoom59L ||
-		   _curRoom == kRoomControlPanel ||
-		   _curRoom == kRoom12CU ||
-		   _curRoom == kRoom13CU;
-}
-
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 	static const char *dunno = "?";
 
-	if (isCloseupOrControlRoom() || _flagSomeoneSpeaks)
+	if (_logicMgr->isCloseupOrControlRoom() || _flagSomeoneSpeaks)
 		return;
 
 	if (_lastObj) {
