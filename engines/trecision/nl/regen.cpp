@@ -103,24 +103,24 @@ void PaintScreen(bool flag) {
 	}
 
 	// CANCELLA TUTTI GLI OGGETTI TOGLI
-	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
-		if (SortTable[a]._remove) {
+	uint16 index = 0;
+	for (Common::Array<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
+		if (i->_remove) {
 			DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 
-			if (SortTable[a]._isBitmap) {
-				DObj.l = g_vm->_obj[SortTable[a]._index]._rect;
-			}
-
+			DObj.l = g_vm->_obj[i->_index]._rect;
 			DObj.objIndex = -1;
 			DObj.drawMask = false;
 			g_vm->_graphicsMgr->DrawObj(DObj);
 
-			if ((SortTable[a + 1]._isBitmap == SortTable[a]._isBitmap) &&
-				(SortTable[a + 1]._roomIndex == SortTable[a]._roomIndex))
-				VisualRef[a + 1] = &g_vm->_dirtyRects.back();
+			if (index + 1 < g_vm->_sortTable.size() &&
+				g_vm->_sortTable[index + 1]._roomIndex == i->_roomIndex)
+				VisualRef[index + 1] = &g_vm->_dirtyRects.back();
 
 			g_vm->addDirtyRect(DObj.l);
 		}
+
+		index++;
 	}
 
 	// trova la posizione dell'omino
@@ -149,14 +149,7 @@ void PaintScreen(bool flag) {
 		g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 	}
 
-	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
-		SortTable[a]._index = 0;
-		SortTable[a]._roomIndex = 0;
-		SortTable[a]._isBitmap = false;
-		SortTable[a]._curFrame = 0;
-	}
-
-	g_vm->_curSortTableNum = 0;
+	g_vm->_sortTable.clear();
 
 	g_vm->_flagPaintCharacter = false;
 	g_vm->_flagWaitRegen = false;
@@ -179,27 +172,28 @@ void PaintObjAnm(uint16 CurBox) {
 	g_vm->_animMgr->refreshAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
-	for (int a = 0; a < g_vm->_curSortTableNum; a++) {
-		if (!SortTable[a]._remove) {
-			if (SortTable[a]._isBitmap) {
-				if (g_vm->_obj[SortTable[a]._index]._nbox == CurBox) {
-					// l'oggetto bitmap al livello desiderato
-					SObject o = g_vm->_obj[SortTable[a]._index];
-					DObj.rect = o._rect;
-					DObj.rect.translate(0, TOP);
-					DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
-					DObj.objIndex = SortTable[a]._roomIndex;
-					DObj.drawMask = o._mode & OBJMODE_MASK;
-					g_vm->_graphicsMgr->DrawObj(DObj);
+	uint16 index = 0;
+	for (Common::Array<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
+		if (!i->_remove) {
+			if (g_vm->_obj[i->_index]._nbox == CurBox) {
+				// l'oggetto bitmap al livello desiderato
+				SObject o = g_vm->_obj[i->_index];
+				DObj.rect = o._rect;
+				DObj.rect.translate(0, TOP);
+				DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
+				DObj.objIndex = i->_roomIndex;
+				DObj.drawMask = o._mode & OBJMODE_MASK;
+				g_vm->_graphicsMgr->DrawObj(DObj);
 
-					if (VisualRef[a] == nullptr) {
-						g_vm->_dirtyRects.push_back(DObj.rect);
-					} else {
-						VisualRef[a]->extend(DObj.rect);
-					}
+				if (VisualRef[index] == nullptr) {
+					g_vm->_dirtyRects.push_back(DObj.rect);
+				} else {
+					VisualRef[index]->extend(DObj.rect);
 				}
 			}
 		}
+
+		index++;
 	}
 
 	for (DirtyRectsIterator d = g_vm->_dirtyRects.begin(); d != g_vm->_dirtyRects.end(); ++d) {

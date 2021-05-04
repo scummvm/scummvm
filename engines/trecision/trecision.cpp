@@ -73,7 +73,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_oldRoom = 0;
 
 	_curInventory = 0;
-	_curSortTableNum = 0;
 
 	for (int i = 0; i < 10; ++i)
 		_curScriptFrame[i] = 0;
@@ -1126,12 +1125,12 @@ void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 				break;
 		}
 
-		SortTable[_curSortTableNum]._index = objectId;
-		SortTable[_curSortTableNum]._roomIndex = index;
-		SortTable[_curSortTableNum]._remove = !isObjectVisible(objectId);
-		SortTable[_curSortTableNum]._curFrame = 0;
-		SortTable[_curSortTableNum]._isBitmap = true;
-		_curSortTableNum++;	
+		SSortTable entry;
+		entry._index = objectId;
+		entry._roomIndex = index;
+		entry._remove = !g_vm->isObjectVisible(objectId);
+		entry._curFrame = 0;
+		g_vm->_sortTable.push_back(entry);
 	}
 }
 
