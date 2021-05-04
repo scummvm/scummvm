@@ -1324,6 +1324,10 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 
 	ProcId lastanim = 0;
 	Kernel::get_instance()->killProcesses(_objId, Kernel::PROC_TYPE_ALL, true);
+
+	destroyContents();
+	giveTreasure();
+
 	if (damageType == 3 || damageType == 4 || damageType == 10 || damageType == 12) {
 		if (!is_robot /* && violence enabled */) {
 			const FireType *ft = GameData::get_instance()->getFireType(damageType);
@@ -1448,9 +1452,6 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 		}
 	}
-
-	destroyContents();
-	giveTreasure();
 
 	return lastanim;
 }
