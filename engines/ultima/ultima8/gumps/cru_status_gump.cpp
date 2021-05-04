@@ -133,7 +133,7 @@ uint32 CruStatusGump::I_showStatusGump(const uint8 * /*args*/,
 	unsigned int /*argsize*/) {
 	CruStatusGump *instance = get_instance();
 	if (!instance) {
-		instance = new CruStatusGump();
+		instance = new CruStatusGump(true);
 		instance->InitGump(nullptr, false);
 		assert(_instance);
 	}
