@@ -1118,16 +1118,8 @@ void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 		_obj[objectId]._mode &= ~OBJMODE_OBJSTATUS;
 
 	if (_obj[objectId]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
-		// Find the object in the room, and update its status
-		uint16 index;
-		for (index = 0; index < MAXOBJINROOM; index++) {
-			if (_room[_curRoom]._object[index] == objectId || _room[_curRoom]._object[index] == 0)
-				break;
-		}
-
 		SSortTable entry;
 		entry._objectId = objectId;
-		entry._roomIndex = index;
 		entry._remove = !g_vm->isObjectVisible(objectId);
 		g_vm->_sortTable.push_back(entry);
 	}

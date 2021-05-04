@@ -38,17 +38,12 @@
 
 namespace Trecision {
 
-Common::Rect *VisualRef[50];
-
 SDObj DObj;
 
 void PaintScreen(bool flag) {
 	AtFrameNext();
 
 	g_vm->_actorRect = nullptr;
-	for (int a = 0; a < 20; a++)
-		VisualRef[a] = nullptr;
-
 	g_vm->_dirtyRects.clear();
 	g_vm->_flagPaintCharacter = true; // always redraws the character
 
@@ -103,8 +98,7 @@ void PaintScreen(bool flag) {
 	}
 
 	// CANCELLA TUTTI GLI OGGETTI TOGLI
-	uint16 index = 0;
-	for (Common::Array<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
+	for (Common::List<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
 		if (i->_remove) {
 			DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 
@@ -112,15 +106,8 @@ void PaintScreen(bool flag) {
 			DObj.objIndex = -1;
 			DObj.drawMask = false;
 			g_vm->_graphicsMgr->DrawObj(DObj);
-
-			if (index + 1 < g_vm->_sortTable.size() &&
-				g_vm->_sortTable[index + 1]._roomIndex == i->_roomIndex)
-				VisualRef[index + 1] = &g_vm->_dirtyRects.back();
-
 			g_vm->addDirtyRect(DObj.l);
 		}
-
-		index++;
 	}
 
 	// trova la posizione dell'omino
@@ -164,6 +151,18 @@ void PaintScreen(bool flag) {
 	//
 }
 
+int getRoomObjectIndex(uint16 objectId) {
+	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
+		const uint16 curObjId = g_vm->_room[g_vm->_curRoom]._object[index];
+		if (curObjId == 0)
+			return -1;
+		if (curObjId == objectId)
+			return index;
+	}
+
+	return -1;
+}
+
 /* -----------------12/06/97 21.35-------------------
  Disegna tutti gli oggetti e le animazioni che intersecano i limiti
  appartenenti a curbox
@@ -172,8 +171,7 @@ void PaintObjAnm(uint16 CurBox) {
 	g_vm->_animMgr->refreshAnim(CurBox);
 
 	// disegna nuove schede appartenenti al box corrente
-	uint16 index = 0;
-	for (Common::Array<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
+	for (Common::List<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
 		if (!i->_remove) {
 			if (g_vm->_obj[i->_objectId]._nbox == CurBox) {
 				// l'oggetto bitmap al livello desiderato
@@ -181,19 +179,12 @@ void PaintObjAnm(uint16 CurBox) {
 				DObj.rect = o._rect;
 				DObj.rect.translate(0, TOP);
 				DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
-				DObj.objIndex = i->_roomIndex;
+				DObj.objIndex = getRoomObjectIndex(i->_objectId);
 				DObj.drawMask = o._mode & OBJMODE_MASK;
 				g_vm->_graphicsMgr->DrawObj(DObj);
-
-				if (VisualRef[index] == nullptr) {
-					g_vm->_dirtyRects.push_back(DObj.rect);
-				} else {
-					VisualRef[index]->extend(DObj.rect);
-				}
+				g_vm->_dirtyRects.push_back(DObj.rect);
 			}
 		}
-
-		index++;
 	}
 
 	for (DirtyRectsIterator d = g_vm->_dirtyRects.begin(); d != g_vm->_dirtyRects.end(); ++d) {
