@@ -64,17 +64,17 @@ void StartCrusaderProcess::run() {
 		}
 	}
 
-	Gump *statusGump = new CruStatusGump(true);
-	statusGump->InitGump(nullptr, false);
-
-	Gump *cruPickupAreaGump = new CruPickupAreaGump(true);
-	cruPickupAreaGump->InitGump(nullptr, false);
-
 	// Try to load the save game, if succeeded this pointer will no longer be valid
 	if (_saveSlot >= 0 && Ultima8Engine::get_instance()->loadGameState(_saveSlot).getCode() == Common::kNoError) {
 		//PaletteFaderProcess::I_fadeFromBlack(0, 0);
 		return;
 	}
+
+	Gump *statusGump = new CruStatusGump(true);
+	statusGump->InitGump(nullptr, false);
+
+	Gump *cruPickupAreaGump = new CruPickupAreaGump(true);
+	cruPickupAreaGump->InitGump(nullptr, false);
 
 	Ultima8Engine::get_instance()->setCheatMode(true);
 
