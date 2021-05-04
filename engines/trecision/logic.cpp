@@ -4028,6 +4028,38 @@ void LogicManager::doMouseLeftRight() {
 	}
 }
 
+void LogicManager::initControlPanel() {
+	const bool speechON = !ConfMan.getBool("speech_mute");
+	const bool textON = ConfMan.getBool("subtitles");
+	const int speechVol = ConfMan.getInt("speech_volume");
+	const int musicVol = ConfMan.getInt("music_volume");
+	const int sfxVol = ConfMan.getInt("sfx_volume");
+	const uint16 speechObjId = o00SPEECH1D + (speechVol / 51) * 2;
+	const uint16 musicObjId = o00MUSIC1D + (musicVol / 51) * 2;
+	const uint16 sfxObjId = o00SOUND1D + (sfxVol / 51) * 2;
+
+	if (speechON)
+		_vm->setObjectVisible(o00SPEECHON, true);
+	else
+		_vm->setObjectVisible(o00SPEECHOFF, true);
+
+	if (textON)
+		_vm->setObjectVisible(o00TEXTON, true);
+	else
+		_vm->setObjectVisible(o00TEXTOFF, true);
+
+	_vm->setObjectVisible(speechObjId, true);
+	_vm->setObjectVisible(musicObjId, true);
+	_vm->setObjectVisible(sfxObjId, true);
+
+	if (speechVol < 256)
+		_vm->setObjectVisible(speechObjId + 1, true);
+	if (musicVol < 256)
+		_vm->setObjectVisible(musicObjId + 1, true);
+	if (sfxVol < 256)
+		_vm->setObjectVisible(sfxObjId + 1, true);
+}
+
 void LogicManager::doSystemChangeRoom() {
 	if (_vm->_curRoom == kRoom41D && (_vm->_oldRoom != _vm->_curMessage->_u16Param1))
 		_vm->_graphicsMgr->NlDissolve(30);
@@ -4097,37 +4129,8 @@ void LogicManager::doSystemChangeRoom() {
 		_vm->_animMgr->_animTab[aBKG11]._flag |= SMKANIM_OFF1;
 	else if (_vm->_oldRoom == kRoom2BL || _vm->_oldRoom == kRoom36F)
 		_vm->_oldRoom = _vm->_curRoom;
-	else if (_vm->_curRoom == kRoomControlPanel) {
-		const bool speechON = !ConfMan.getBool("speech_mute");
-		const bool textON = ConfMan.getBool("subtitles");
-		const int speechVol = ConfMan.getInt("speech_volume");
-		const int musicVol = ConfMan.getInt("music_volume");
-		const int sfxVol = ConfMan.getInt("sfx_volume");
-		const uint16 speechObjId = o00SPEECH1D + (speechVol / 51) * 2;
-		const uint16 musicObjId = o00MUSIC1D + (musicVol / 51) * 2;
-		const uint16 sfxObjId = o00SOUND1D + (sfxVol / 51) * 2;
-		
-		if (speechON)
-			_vm->setObjectVisible(o00SPEECHON, true);
-		else
-			_vm->setObjectVisible(o00SPEECHOFF, true);
-
-		if (textON)
-			_vm->setObjectVisible(o00TEXTON, true);
-		else
-			_vm->setObjectVisible(o00TEXTOFF, true);
-
-		_vm->setObjectVisible(speechObjId, true);
-		_vm->setObjectVisible(musicObjId, true);
-		_vm->setObjectVisible(sfxObjId, true);
-
-		if (speechVol < 256)
-			_vm->setObjectVisible(speechObjId + 1, true);
-		if (musicVol < 256)
-			_vm->setObjectVisible(musicObjId + 1, true);
-		if (sfxVol < 256)
-			_vm->setObjectVisible(sfxObjId + 1, true);
-	}
+	else if (_vm->_curRoom == kRoomControlPanel)
+		initControlPanel();
 
 	ReadLoc();
 	InitRegenRoom();

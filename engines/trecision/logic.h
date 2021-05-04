@@ -87,6 +87,7 @@ public:
 private:
 	void startCharacterAnimations();
 	bool startPlayDialog();
+	void initControlPanel();
 };
 ; // end of class
 
