@@ -332,6 +332,8 @@ void SuperSpriteProcess::hitAndFinish() {
 		CurrentMap *map = World::get_instance()->getCurrentMap();
 		collision = map->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
 								   _source, true, &hits);
+		if (collision)
+			break;
 		start[0] += xstep;
 		start[1] += ystep;
 		start[2] += zstep;
