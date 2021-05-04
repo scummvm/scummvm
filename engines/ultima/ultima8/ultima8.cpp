@@ -1247,6 +1247,8 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	setupCoreGumps();
 
 	// and load everything back (order matters)
+	// for each entry, check that we read exactly the number of bytes
+	// expected - anything else suggests a corrupt save (or a bug)
 	bool totalok = true;
 
 	Std::string message;
@@ -1255,6 +1257,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	// so load these first
 	ds = sg->getDataSource("UCSTRINGS");
 	ok = _ucMachine->loadStrings(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "UCSTRINGS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCSTRINGS: failed\n";
@@ -1262,6 +1265,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("UCGLOBALS");
 	ok = _ucMachine->loadGlobals(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "UCGLOBALS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCGLOBALS: failed\n";
@@ -1269,6 +1273,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("UCLISTS");
 	ok = _ucMachine->loadLists(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "UCLISTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "UCLISTS: failed\n";
@@ -1278,6 +1283,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	// KERNEL must be before APP, for the _avatarMoverProcess
 	ds = sg->getDataSource("KERNEL");
 	ok = _kernel->load(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "KERNEL: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "KERNEL: failed\n";
@@ -1285,6 +1291,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("APP");
 	ok = load(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "APP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "APP: failed\n";
@@ -1293,6 +1300,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	// WORLD must be before OBJECTS, for the egghatcher
 	ds = sg->getDataSource("WORLD");
 	ok = _world->load(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "WORLD: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "WORLD: failed\n";
@@ -1300,6 +1308,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("CURRENTMAP");
 	ok = _world->getCurrentMap()->load(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "CURRENTMAP: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "CURRENTMAP: failed\n";
@@ -1307,6 +1316,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("OBJECTS");
 	ok = _objectManager->load(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "OBJECTS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "OBJECTS: failed\n";
@@ -1314,6 +1324,7 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 
 	ds = sg->getDataSource("MAPS");
 	ok = _world->loadMaps(ds, version);
+	ok &= (ds->pos() == ds->size() && !ds->eos());
 	totalok &= ok;
 	pout << "MAPS: " << (ok ? "ok" : "failed") << Std::endl;
 	if (!ok) message += "MAPS: failed\n";
