@@ -2,10 +2,11 @@
 # Windows specific
 #
 
+WIN32PATH ?= $(DESTDIR)
+
 # Special target to create a win32 snapshot binary (for Inno Setup)
-win32dist: all
+win32-data: all
 	mkdir -p $(WIN32PATH)
-	mkdir -p $(WIN32PATH)/graphics
 	mkdir -p $(WIN32PATH)/doc
 	mkdir -p $(WIN32PATH)/doc/cz
 	mkdir -p $(WIN32PATH)/doc/da
@@ -45,24 +46,8 @@ else
 	cp $(srcdir)/README.md $(WIN32PATH)/README.txt
 	cp $(srcdir)/doc/de/NEUES.md $(WIN32PATH)/doc/de/NEUES.txt
 endif
-	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
 	cp $(srcdir)/doc/de/LIESMICH $(WIN32PATH)/doc/de/LIESMICH.txt
 	cp $(srcdir)/doc/se/LasMig $(WIN32PATH)/doc/se/LasMig.txt
-	cp $(WIN32SDLPATH)/SDL2.dll $(WIN32PATH)
-	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
-	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
-	cp $(srcdir)/dists/win32/graphics/scummvm-install.bmp $(WIN32PATH)/graphics
-	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
-	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
-	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
-ifdef USE_SDL_NET
-	cp $(WIN32SDLPATH)/SDL2_net.dll $(WIN32PATH)
-	sed -e '/SDL2_net\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
-endif
-ifdef USE_SPARKLE
-	cp $(WIN32SPARKLEPATH)/WinSparkle.dll $(WIN32PATH)
-	sed -e '/WinSparkle\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
-endif
 	unix2dos $(WIN32PATH)/*.txt
 	unix2dos $(WIN32PATH)/doc/*.txt
 	unix2dos $(WIN32PATH)/doc/cz/*.txt
@@ -74,6 +59,34 @@ endif
 	unix2dos $(WIN32PATH)/doc/no-nb/*.txt
 	unix2dos $(WIN32PATH)/doc/se/*.txt
 
-.PHONY: win32dist
+win32dist: win32-data
+	mkdir -p $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/graphics/left.bmp $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/graphics/scummvm-install.ico $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/graphics/scummvm-install.bmp $(WIN32PATH)/graphics
+	cp $(srcdir)/dists/win32/migration.bat $(WIN32PATH)
+	cp $(srcdir)/dists/win32/migration.txt $(WIN32PATH)
+	cp $(srcdir)/dists/win32/ScummVM.iss $(WIN32PATH)
+ifdef WIN32SDLDOCPATH
+	cp $(WIN32SDLDOCPATH)/README-SDL.txt $(WIN32PATH)/README-SDL.txt
+endif
+ifdef WIN32SDLPATH
+	cp $(WIN32SDLPATH)/SDL2.dll $(WIN32PATH)
+ifdef USE_SDL_NET
+	cp $(WIN32SDLPATH)/SDL2_net.dll $(WIN32PATH)
+	sed -e '/SDL2_net\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
+endif
+endif
+ifdef WIN32SPARKLEPATH
+ifdef USE_SPARKLE
+	cp $(WIN32SPARKLEPATH)/WinSparkle.dll $(WIN32PATH)
+	sed -e '/WinSparkle\.dll/ s/^;//' -i $(WIN32PATH)/ScummVM.iss
+endif
+endif
+
+win32dist-mingw: win32-data
+	ldd $(WIN32PATH)/$(EXECUTABLE) | grep -i mingw | cut -d">" -f2 | cut -d" " -f2 | sort -u | xargs -I files cp -vu files $(WIN32PATH)
+
+.PHONY: win32-data win32dist win32dist-mingw
 
 include $(srcdir)/ports.mk
