@@ -899,20 +899,20 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	AudioProcess *audio = AudioProcess::get_instance();
 	Kernel *kernel = Kernel::get_instance();
 	uint32 shape = getShape();
+	World *world = World::get_instance();
 
-	if (GAME_IS_REMORSE && shape == 0x3ac && _hitPoints > 0) {
+	// Special case for Vargas, who has a shield.
+	if (GAME_IS_REMORSE && shape == 0x3ac && world->getVargasShield() > 0) {
 		if (isBusy()) {
 			ActorAnimProcess *proc = dynamic_cast<ActorAnimProcess *>(Kernel::get_instance()->findProcess(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE));
 			if (proc->getAction() == Animation::teleportIn || proc->getAction() == Animation::teleportOut || proc->getAction() == Animation::teleportInReplacement || proc->getAction() == Animation::teleportOutReplacement)
 				return;
 		}
 
-		// TODO: Finish special case for Vargas in No Remorse.
 		ProcId teleout = doAnim(Animation::teleportOutReplacement, dir_current);
 		doAnimAfter(Animation::teleportInReplacement, dir_current, teleout);
-		_hitPoints -= damage;
-		//if (_bossHealth < 0)
-		//	_bossHealth = 0;
+		int newval = MAX(0, static_cast<int>(world->getVargasShield()) - damage);
+		world->setVargasShield(static_cast<uint32>(newval));
 		return;
 	} else if (GAME_IS_REGRET && shape == 0x5b1) {
 		/* TODO: Finish special case for No Regret */

@@ -202,7 +202,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"byte Kernel::I_getCurrentKeyDown(void)", // get global - something about keyboard (by disasm)
 	"int16 MainActor::I_teleportToEgg(int, int)", // a bit different to the U8 one - uses main actor map by default.
 	"void PaletteFaderProcess:I_jumpToGreyScale(void)",
-	"void I_resetVargasHealthTo500(void)", // TODO: look how this is used in disasm and usecode .. seems weird.
+	"void I_resetVargasShieldTo500(void)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void PaletteFaderProcess::I_jumpToNormalPalette(void)",
 	"int16 PaletteFaderProcess::I_fadeFromBlack(nsteps)",

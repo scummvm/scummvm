@@ -196,7 +196,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Ultima8Engine::I_moveKeyDownRecently,
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)
 	PaletteFaderProcess::I_jumpToGreyScale,
-	0, // void Intrinsic098(void) // TODO: reset vargas health to 500.. weird.
+	World::I_resetVargasShield, // void Intrinsic098(void)
 	Item::I_andStatus, // void Intrinsic099(6 bytes)
 	PaletteFaderProcess::I_jumpToNormalPalette, // TODO: should also stop cycle process?
 	PaletteFaderProcess::I_fadeFromBlack, // fade to game pal with number of steps

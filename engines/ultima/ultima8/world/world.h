@@ -157,12 +157,20 @@ public:
 	}
 	void setControlledNPCNum(uint16 num);
 
+	uint32 getVargasShield() const {
+		return _vargasShield;
+	}
+	void setVargasShield(uint32 val) {
+		_vargasShield = val;
+	}
+
 	INTRINSIC(I_getAlertActive); // for Crusader
 	INTRINSIC(I_setAlertActive); // for Crusader
 	INTRINSIC(I_clrAlertActive); // for Crusader
 	INTRINSIC(I_gameDifficulty); // for Crusader
 	INTRINSIC(I_getControlledNPCNum); // for Crusader
 	INTRINSIC(I_setControlledNPCNum); // for Crusader
+	INTRINSIC(I_resetVargasShield); // for Crusader: No Remorse
 
 private:
 	static World *_world;
@@ -175,6 +183,12 @@ private:
 	bool _alertActive; //!< is intruder alert active (Crusader)
 	uint8 _difficulty; //!< game difficulty level (Crusader)
 	uint16 _controlledNPCNum; //!< Current controlled NPC (normally 1, the avatar)
+	/**
+	 * Special varaible for Vargas' shield in No Remorse, which is remembered separately.
+	 *
+	 * Starts at 5000 and can be reset to 500 by an intrinsic function.
+	 */
+	uint32 _vargasShield;
 
 };
 

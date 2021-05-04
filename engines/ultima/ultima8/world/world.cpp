@@ -48,7 +48,7 @@ namespace Ultima8 {
 World *World::_world = nullptr;
 
 World::World() : _currentMap(nullptr), _alertActive(false), _difficulty(3),
-				 _controlledNPCNum(1) {
+				 _controlledNPCNum(1), _vargasShield(5000) {
 	debugN(MM_INFO, "Creating World...\n");
 
 	_world = this;
@@ -340,6 +340,8 @@ void World::save(Common::WriteStream *ws) {
 	if (GAME_IS_CRUSADER) {
 		ws->writeByte(_alertActive ? 1 : 0);
 		ws->writeByte(_difficulty);
+		ws->writeUint16LE(_controlledNPCNum);
+		ws->writeUint32LE(_vargasShield);
 	}
 
 	uint16 es = static_cast<uint16>(_ethereal.size());
@@ -370,6 +372,8 @@ bool World::load(Common::ReadStream *rs, uint32 version) {
 	if (GAME_IS_CRUSADER) {
 		_alertActive = (rs->readByte() != 0);
 		_difficulty = rs->readByte();
+		_controlledNPCNum = rs->readUint16LE();
+		_vargasShield = rs->readUint32LE();
 	}
 
 	uint32 etherealcount = rs->readUint32LE();
@@ -494,6 +498,12 @@ uint32 World::I_setControlledNPCNum(const uint8 *args,
 	unsigned int /*argsize*/) {
 	ARG_UINT16(num);
 	get_instance()->_world->setControlledNPCNum(num);
+	return 0;
+}
+
+uint32 World::I_resetVargasShield(const uint8 * /*args*/,
+	unsigned int /*argsize*/) {
+	get_instance()->setVargasShield(500);
 	return 0;
 }
 
