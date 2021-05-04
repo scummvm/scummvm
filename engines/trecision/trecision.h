@@ -228,7 +228,7 @@ public:
 	uint16 _oldRoom;
 	SRoom _room[MAXROOMS];
 
-	Common::Array<SSortTable> _sortTable;
+	Common::List<SSortTable> _sortTable;
 	uint16 _curScriptFrame[10];
 
 	uint16 _curObj;

@@ -175,7 +175,6 @@ private:
 struct SSortTable {
 	uint16 _objectId;                        // Object ID
 	bool  _remove;                           // Whether to copy or remove
-	uint16 _roomIndex;                       // Room object list index
 };
 
 struct SScriptFrame {
