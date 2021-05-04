@@ -87,8 +87,7 @@ void ReadLoc() {
 	read3D(fname);
 
 	g_vm->_graphicsMgr->resetScreenBuffer();
-
-	g_vm->_curSortTableNum = 0;
+	g_vm->_sortTable.clear();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
@@ -204,12 +203,12 @@ void InitRegenRoom() {
 		if (objectId == 0)
 			break;
 
-		SortTable[g_vm->_curSortTableNum]._index = objectId;
-		SortTable[g_vm->_curSortTableNum]._roomIndex = index;
-		SortTable[g_vm->_curSortTableNum]._remove = g_vm->isObjectVisible(objectId);
-		SortTable[g_vm->_curSortTableNum]._curFrame = 0;
-		SortTable[g_vm->_curSortTableNum]._isBitmap = true;
-		g_vm->_curSortTableNum++;
+		SSortTable entry;
+		entry._index = objectId;
+		entry._roomIndex = index;
+		entry._remove = g_vm->isObjectVisible(objectId);
+		entry._curFrame = 0;
+		g_vm->_sortTable.push_back(entry);
 	}
 }
 
@@ -242,8 +241,7 @@ void RedrawRoom() {
 		}
 	}
 
-	g_vm->_curSortTableNum = 0;
-
+	g_vm->_sortTable.clear();
 	g_vm->_graphicsMgr->resetScreenBuffer();
 
 	if (bgAnim)
