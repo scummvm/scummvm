@@ -216,6 +216,12 @@ bool idMan::load(Common::ReadStream *rs, uint32 version) {
 
 	_usedCount = realusedcount;
 
+	// Integrity check
+	if (_begin > _end || _begin > _maxEnd) {
+		warning("begin > end loading ids, corrupt save?");
+		return false;
+	}
+
 	return true;
 }
 

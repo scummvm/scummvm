@@ -280,6 +280,28 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 	}
 	pout << "Reclaimed " << count << " _objIDs on load." << Std::endl;
 
+	// Integrity check items - their ids should match, and if they have
+	// parents, those should be valid.
+	for (unsigned int i = 0; i < _objects.size(); i++) {
+		if (!_objects[i])
+			continue;
+		const Object *obj = _objects[i];
+		ObjId oid = obj->getObjId();
+		if (oid != i) {
+			warning("Corrupt save? Object %d thinks its id is %d", i, oid);
+			return false;
+		}
+
+		const Item *it = dynamic_cast<const Item *>(obj);
+		if (it) {
+			ObjId parent = it->getParent();
+			if (parent && !_objects[parent]) {
+				warning("Corrupt save? Object %d has parent %d which no longer exists", i, parent);
+				return false;
+			}
+		}
+	}
+
 	return true;
 }
 

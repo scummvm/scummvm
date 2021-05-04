@@ -394,6 +394,12 @@ void World::saveMaps(Common::WriteStream *ws) {
 bool World::loadMaps(Common::ReadStream *rs, uint32 version) {
 	uint32 mapcount = rs->readUint32LE();
 
+	// Integrity check
+	if (mapcount > _maps.size()) {
+		warning("Invalid mapcount in save: %d.  Corrupt save?", mapcount);
+		return false;
+	}
+
 	// Map objects have already been created by reset()
 	for (unsigned int i = 0; i < mapcount; ++i) {
 		bool res = _maps[i]->load(rs, version);

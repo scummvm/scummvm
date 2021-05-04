@@ -847,6 +847,10 @@ bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
 	uint32 shapenum = rs->readUint32LE();
 	if (flex) {
 		_shape = flex->getShape(shapenum);
+		if (shapenum > 0 && !_shape) {
+			warning("Gump shape %d is not valid. Corrupt save?", shapenum);
+			return false;
+		}
 	}
 
 	_frameNum = rs->readUint32LE();
@@ -857,6 +861,11 @@ bool Gump::loadData(Common::ReadStream *rs, uint32 version) {
 
 	// read children
 	uint32 childcount = rs->readUint32LE();
+
+	if (childcount > 65535) {
+		warning("Improbable gump child count %d.  Corrupt save?", childcount);
+		return false;
+	}
 	for (unsigned int i = 0; i < childcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Gump *child = dynamic_cast<Gump *>(obj);

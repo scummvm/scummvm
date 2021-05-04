@@ -2411,6 +2411,12 @@ bool UCMachine::loadLists(Common::ReadStream *rs, uint32 version) {
 	if (!_listIDs->load(rs, version)) return false;
 
 	uint32 listcount = rs->readUint32LE();
+
+	if (listcount > 65536) {
+		warning("Improbable number of UC lists %d in save, corrupt save?", listcount);
+		return false;
+	}
+
 	for (unsigned int i = 0; i < listcount; ++i) {
 		uint16 lid = rs->readUint16LE();
 		UCList *l = new UCList(2); // the "2" will be ignored by load()

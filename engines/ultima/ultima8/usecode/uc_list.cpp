@@ -124,6 +124,10 @@ void UCList::save(Common::WriteStream *ws) const {
 bool UCList::load(Common::ReadStream *rs, uint32 version) {
 	_elementSize = rs->readUint32LE();
 	_size = rs->readUint32LE();
+	if (_elementSize * _size > 1024 * 1024) {
+		warning("Improbable UCList size %d x %d, corrupt save?", _elementSize, _size);
+		return false;
+	}
 	_elements.resize(_size * _elementSize);
 	rs->read(&(_elements[0]), _size * _elementSize);
 

@@ -302,6 +302,12 @@ void Map::save(Common::WriteStream *ws) {
 bool Map::load(Common::ReadStream *rs, uint32 version) {
 	uint32 itemcount = rs->readUint32LE();
 
+	// Integrity check
+	if (itemcount > 65536) {
+		warning("improbable item count in map data: %d", itemcount);
+		return false;
+	}
+
 	for (unsigned int i = 0; i < itemcount; ++i) {
 		Object *obj = ObjectManager::get_instance()->loadObject(rs, version);
 		Item *item = dynamic_cast<Item *>(obj);

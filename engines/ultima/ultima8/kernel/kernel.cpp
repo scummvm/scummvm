@@ -345,6 +345,24 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 		_processes.push_back(p);
 	}
 
+	// Integrity check for processes
+	Std::set<ProcId> procs;
+	for (Std::list<Process *>::const_iterator iter = _processes.begin(); iter != _processes.end(); iter++) {
+		const Process *p = *iter;
+		if (procs.find(p->getPid()) != procs.end()) {
+			warning("Duplicate process id %d in processes.  Corrupt save?", p->getPid());
+			return false;
+		}
+		if (p->getTicksPerRun() > 100) {
+			warning("Improbable value for ticks per run %d in process id %d .  Corrupt save?", p->getTicksPerRun(), p->getPid());
+			return false;
+		}
+		if (p->getType() > 0x1000) {
+			warning("Improbable value for proctype %x in process id %d .  Corrupt save?", p->getType(), p->getPid());
+			return false;
+		}
+	}
+
 	return true;
 }
 

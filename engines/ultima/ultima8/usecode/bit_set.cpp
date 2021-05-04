@@ -119,6 +119,12 @@ void BitSet::save(Common::WriteStream *ws) {
 
 bool BitSet::load(Common::ReadStream *rs, uint32 version) {
 	uint32 s = rs->readUint32LE();
+
+	if (s > 1024 * 1024) {
+		warning("Improbable globals size %d, corrupt save?", s);
+		return false;
+	}
+
 	setSize(s);
 	rs->read(_data, _bytes);
 
