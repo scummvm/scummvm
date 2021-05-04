@@ -82,6 +82,8 @@ public:
 	void doSystemChangeRoom();
 	void DoSys(uint16 curObj);
 
+	bool isCloseupOrControlRoom() const;
+
 private:
 	void startCharacterAnimations();
 	bool startPlayDialog();

@@ -628,7 +628,7 @@ void LogicManager::endChangeRoom() {
 	// Actions
 	startCharacterAnimations();
 
-	if (_vm->isCloseupOrControlRoom()) { // Screens without inventory
+	if (isCloseupOrControlRoom()) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
 		_vm->_flagInventoryLocked = true;
@@ -4328,6 +4328,21 @@ void LogicManager::DoSys(uint16 curObj) {
 
 	g_engine->syncSoundSettings();
 	ConfMan.flushToDisk();
+}
+
+bool LogicManager::isCloseupOrControlRoom() const {
+	const uint16 curRoom = _vm->_curRoom;
+	return curRoom == kRoom2BL ||
+		   curRoom == kRoom36F ||
+		   curRoom == kRoom41D ||
+		   curRoom == kRoom49M ||
+		   curRoom == kRoom4CT ||
+		   curRoom == kRoom58T ||
+		   curRoom == kRoom58M ||
+		   curRoom == kRoom59L ||
+		   curRoom == kRoomControlPanel ||
+		   curRoom == kRoom12CU ||
+		   curRoom == kRoom13CU;
 }
 
 } // End of namespace Trecision
