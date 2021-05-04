@@ -1307,6 +1307,11 @@ void CurrentMap::save(Common::WriteStream *ws) {
 			ws->writeUint32LE(_fast[i][j]);
 		}
 	}
+
+	if (GAME_IS_CRUSADER) {
+		for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++)
+			ws->writeUint16LE(_targets[i]);
+	}
 }
 
 bool CurrentMap::load(Common::ReadStream *rs, uint32 version) {
@@ -1320,6 +1325,11 @@ bool CurrentMap::load(Common::ReadStream *rs, uint32 version) {
 	_fastYMin = -1;
 	_fastXMax = -1;
 	_fastYMax = -1;
+
+	if (GAME_IS_CRUSADER) {
+		for (int i = 0; i < MAP_NUM_TARGET_ITEMS; i++)
+			_targets[i] = rs->readUint16LE();
+	}
 
 	return true;
 }

@@ -196,16 +196,20 @@ void TargetReticleProcess::toggle() {
 void TargetReticleProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
 
+	ws->writeByte(_reticleEnabled ? 1 : 0);
 	ws->writeUint32LE(_lastUpdate);
 	ws->writeUint16LE(_reticleSpriteProcess);
+	ws->writeByte(_lastTargetDir);
 	ws->writeUint16LE(_lastTargetItem);
 }
 
 bool TargetReticleProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
+	_reticleEnabled = (rs->readByte() != 0);
 	_lastUpdate = rs->readUint32LE();
 	_reticleSpriteProcess = rs->readUint16LE();
+	_lastTargetDir = static_cast<Direction>(rs->readByte());
 	_lastTargetItem = rs->readUint16LE();
 
 	return true;
