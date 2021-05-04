@@ -41,17 +41,17 @@ CruStatGump::~CruStatGump() {
 }
 
 void CruStatGump::InitGump(Gump *newparent, bool take_focus) {
-	Gump::InitGump(newparent, take_focus);
+	TranslucentGump::InitGump(newparent, take_focus);
 
 	UpdateDimsFromShape();
 }
 
 void CruStatGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
+	TranslucentGump::saveData(ws);
 }
 
 bool CruStatGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	return TranslucentGump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8
