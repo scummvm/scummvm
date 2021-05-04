@@ -104,7 +104,6 @@ void TendIn();
 void ReadObj(Common::SeekableReadStream *stream);
 void ReadExtraObj2C();
 void ReadExtraObj41D();
-void InitRegenRoom();
 void SoundFadIn(int num);
 
 } // End of namespace Trecision

@@ -75,6 +75,7 @@ void ReadLoc() {
 	bgInfo.readRect(picFile);
 
 	g_vm->_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
+	g_vm->_sortTable.clear();
 	ReadObj(picFile);
 
 	g_vm->_soundMgr->stopAll();
@@ -86,7 +87,6 @@ void ReadLoc() {
 	read3D(fname);
 
 	g_vm->_graphicsMgr->resetScreenBuffer();
-	g_vm->_sortTable.clear();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
@@ -111,8 +111,8 @@ void TendIn() {
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }
 
-void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 roomObjIndex) {
-	SObject *obj = &g_vm->_obj[roomObjIndex];
+void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
+	SObject *obj = &g_vm->_obj[objectId];
 
 	if (obj->_mode & OBJMODE_FULL) {
 		obj->readRect(stream);
@@ -143,6 +143,13 @@ void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 room
 		for (uint32 i = 0; i < size; ++i)
 			g_vm->_maskPointers[objIndex][i] = (uint8)stream->readByte();
 	}
+
+	if (obj->_mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+		SSortTable entry;
+		entry._objectId = objectId;
+		entry._remove = !g_vm->isObjectVisible(objectId);
+		g_vm->_sortTable.push_back(entry);		
+	}
 }
 
 void ReadObj(Common::SeekableReadStream *stream) {
@@ -150,8 +157,8 @@ void ReadObj(Common::SeekableReadStream *stream) {
 		return;
 
 	for (uint16 objIndex = 0; objIndex < MAXOBJINROOM; objIndex++) {
-		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
-		if (!roomObjIndex)
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
 			break;
 
 		if (g_vm->_curRoom == kRoom41D && objIndex == PATCHOBJ_ROOM41D)
@@ -160,7 +167,7 @@ void ReadObj(Common::SeekableReadStream *stream) {
 		if (g_vm->_curRoom == kRoom2C && objIndex == PATCHOBJ_ROOM2C)
 			break;
 
-		readObject(stream, objIndex, roomObjIndex);
+		readObject(stream, objIndex, objectId);
 	}
 }
 
@@ -171,11 +178,11 @@ void ReadExtraObj2C() {
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
 
 	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
-		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
-		if (!roomObjIndex)
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
 			break;
 
-		readObject(ff, objIndex, roomObjIndex);
+		readObject(ff, objIndex, objectId);
 	}
 
 	delete ff;
@@ -187,26 +194,13 @@ void ReadExtraObj41D() {
 
 	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
 	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
-		uint16 roomObjIndex = g_vm->_room[g_vm->_curRoom]._object[objIndex];
-		if (!roomObjIndex)
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
 			break;
 
-		readObject(ff, objIndex, roomObjIndex);
+		readObject(ff, objIndex, objectId);
 	}
 	delete ff;
-}
-
-void InitRegenRoom() {
-	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
-		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[index];
-		if (objectId == 0)
-			break;
-
-		SSortTable entry;
-		entry._objectId = objectId;
-		entry._remove = g_vm->isObjectVisible(objectId);
-		g_vm->_sortTable.push_back(entry);
-	}
 }
 
 struct ElevatorAction {
