@@ -50,13 +50,13 @@ void blendVideo8To8(byte *targetPixels, int targetPitch, int targetW, int target
 
 void GfxContext8Bit::blitPodImage(byte *sourcePixels, int sourcePitch, int sourceW, int sourceH,
 				  byte *sourcePalette, size_t ncolours, Common::Point offset) {
-	
+
 	blendVideo8To8((byte *) surf.getPixels(), surf.pitch,
 		       surf.w, surf.h, sourcePixels, sourceW, sourceH,
 		       offset);
 	for (unsigned i = 0; i < ncolours; i++) {
 		int col = sourcePalette[4 * i] & 0xff;
-		
+
 		_palette[3 * col    ] = sourcePalette[4 * i + 1];
 		_palette[3 * col + 1] = sourcePalette[4 * i + 2];
 		_palette[3 * col + 2] = sourcePalette[4 * i + 3];

@@ -41,7 +41,7 @@ public:
 	FontShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
 	                 const ConvertShapeFormat *format = 0)
 		: ShapeArchive(rs, id, pal, format) { }
- 
+
 	~FontShapeArchive() override { }
 
 	//! load HVLeads from u8.ini

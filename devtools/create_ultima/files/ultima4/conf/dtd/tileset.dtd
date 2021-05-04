@@ -16,9 +16,9 @@
                 index              NMTOKEN  #IMPLIED
                 frames             NMTOKEN  #IMPLIED
                 directions         CDATA    #IMPLIED
-                animation          %anim;   #IMPLIED 
+                animation          %anim;   #IMPLIED
                 rowtoswap          NMTOKEN  #IMPLIED
-                opaque             %bool;   #IMPLIED                
+                opaque             %bool;   #IMPLIED
                 frame              NMTOKEN  #IMPLIED
                 tiledInDungeon     %bool;   #IMPLIED
                 usesReplacementTileAsBackground %bool; #IMPLIED

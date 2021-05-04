@@ -52,7 +52,7 @@ public:
 	 * \param low The lower bound of the range, in degrees.
 	 */
 	Angle &normalize(float low);
-	
+
 	/**
 	 * Clamp the angle to range [-mag, mag]
 	 *

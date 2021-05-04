@@ -105,15 +105,15 @@ private:
 		kAttack		= 2,
 		kDecay		= 3,
 		kSustain	= 4,
-		kRelease	= 5		
+		kRelease	= 5
 	};
-	
+
 	EnvelopeState _envState;
 	uint8 _envAR;
 	uint8 _envTL;
 	uint8 _envDR;
 	uint8 _envSL;
-	uint8 _envRR;	
+	uint8 _envRR;
 	uint8 _envSLI;
 	uint8 _envPAC;
 	uint8 _envPA;
@@ -263,7 +263,7 @@ void CMSVoice::sendFrequency() {
 	uint8 frequency = 0;
 	uint8 octave = 0;
 
-	recalculateFrequency(frequency, octave);	
+	recalculateFrequency(frequency, octave);
 
 	uint8 octaveData = _octaveRegs[_id >> 1];
 	octaveData = (_id & 1) ? (octaveData & 0x0F) | (octave << 4) : (octaveData & 0xF0) | octave;
@@ -350,7 +350,7 @@ void CMSVoice_V0::programChange(int program) {
 		// I encountered this with PQ2 at the airport (program 204 sent on part 13). The original driver does not really handle that.
 		// In fact, it even interprets this value as signed so it will not point into the instrument data buffer, but into a random
 		// invalid memory location (in the case of 204 it will read a value of 8 from the device init data array). Since there seems
-		// to be no effect on the sound I don't emulate this (mis)behaviour. 
+		// to be no effect on the sound I don't emulate this (mis)behaviour.
 		warning("CMSVoice_V0::programChange:: Invalid program '%d' requested on midi channel '%d'", program, _assign);
 		program = 0;
 	} else if (program == 127) {
@@ -512,7 +512,7 @@ void CMSVoice_V0::recalculateFrequency(uint8 &freq, uint8 &octave) {
 			frequency = 47;
 		}
 	}
-	
+
 	octave = CLIP<int8>(octave + _transOct, 0, 7);
 	frequency = _frequencyTable[frequency & 0xFF] + _transFreq + _vbrPhase;
 
@@ -538,7 +538,7 @@ void CMSVoice_V0::recalculateEnvelopeLevels() {
 	} else if (_envTL) {
 		_envTL = chanVol;
 	}
-	
+
 	int volIndexSL = (_envSLI << 4) + (_envTL >> 4);
 	assert(volIndexSL < ARRAYSIZE(_volumeTable));
 	_envSL = _volumeTable[volIndexSL];
@@ -768,8 +768,8 @@ int MidiDriver_CMS::open() {
 
 	_rate = _mixer->getOutputRate();
 	_cms = new CMSEmulator(_rate);
-	assert(_cms);	
-	
+	assert(_cms);
+
 	for (uint i = 0; i < ARRAYSIZE(_channel); ++i)
 		_channel[i] = Channel();
 
@@ -779,7 +779,7 @@ int MidiDriver_CMS::open() {
 		else
 			_voice[i] = new CMSVoice_V1(i, this, _cms, *_patchData);
 	}
-	
+
 	_playSwitch = true;
 	_masterVolume = 0;
 
@@ -1104,7 +1104,7 @@ void MidiDriver_CMS::unbindVoices(int channelNr, int voices, bool bindSecondary)
 		for (int i = 0; i < _numVoicesPrimary; ++i) {
 			if (_voice[i]->_assign == channelNr && _voice[i]->_note == 0xFF) {
 				_voice[i]->_assign = 0xFF;
-				
+
 				CMSVoice *sec = _voice[i]->_secondaryVoice;
 				if (sec) {
 					sec->stop();
@@ -1266,7 +1266,7 @@ int MidiDriver_CMS::findVoice(int channelNr, int note) {
 
 		return voiceNr;
 	}
-	
+
 	return -1;
 }
 

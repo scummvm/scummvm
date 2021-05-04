@@ -189,7 +189,7 @@ void AVIFrames::addFrameToCache(int frameIndex, Graphics::Surface *frame) {
 			cachedFrame.frame->free();
 			delete cachedFrame.frame;
 		}
-		
+
 		_cachedFrames.pop_front();
 	}
 

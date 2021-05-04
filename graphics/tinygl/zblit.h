@@ -169,7 +169,7 @@ namespace Internal {
 	@brief Performs a cleanup of disposed blit images.
 	*/
 	void tglCleanupImages(); // This function checks if any blit image is to be cleaned up and deletes it.
-	
+
 	// Documentation for those is the same as the one before, only those function are the one that actually execute the correct code path.
 	void tglBlit(BlitImage *blitImage, const BlitTransform &transform);
 

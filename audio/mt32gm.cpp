@@ -51,12 +51,12 @@ const byte MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS[8] = {
 // here; the driver is expected to flip these values based on the _midiDeviceReversePanning
 // variable.
 const byte MidiDriver_MT32GM::MT32_DEFAULT_PANNING[8] = {
-	// 7,    8,    7,    8,    4,    A,    0,    E 
+	// 7,    8,    7,    8,    4,    A,    0,    E
 	0x40, 0x49,	0x40, 0x49, 0x25, 0x5B, 0x00, 0x7F
 };
 
-// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism 
-// to correct invalid drumkit selections. Some games rely on this mechanism to select the 
+// This is the drum map for the Roland Sound Canvas SC-55 v1.xx. It had a fallback mechanism
+// to correct invalid drumkit selections. Some games rely on this mechanism to select the
 // correct Roland GS drumkit. Use this map to emulate this mechanism.
 // E.g. correct invalid drumkit 50: GS_DRUMKIT_FALLBACK_MAP[50] == 48
 const uint8 MidiDriver_MT32GM::GS_DRUMKIT_FALLBACK_MAP[128] = {
@@ -697,7 +697,7 @@ byte MidiDriver_MT32GM::correctInstrumentBank(byte instrumentBank, byte patchId)
 
 	switch (patchId) {
 	case 25:  // Steel-String Guitar / 12-string Guitar / Mandolin
-		// This instrument has 2 sub-capital tones. Bank selects 17-63 
+		// This instrument has 2 sub-capital tones. Bank selects 17-63
 		// are corrected to the second sub-capital tone at 16.
 		if (instrumentBank >= 16) {
 			correctedBank = 16;

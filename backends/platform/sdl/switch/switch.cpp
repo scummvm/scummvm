@@ -64,7 +64,7 @@ static const Common::AxisTableEntry switchJoystickAxes[] = {
 };
 
 void OSystem_Switch::init() {
-	
+
 	DrivesPOSIXFilesystemFactory *fsFactory = new DrivesPOSIXFilesystemFactory();
 	fsFactory->addDrive("sdmc:");
 	fsFactory->configureBuffering(DrivePOSIXFilesystemNode::kBufferingModeScummVM, 2048);

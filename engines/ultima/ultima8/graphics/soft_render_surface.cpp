@@ -240,7 +240,7 @@ template<class uintX> void SoftRenderSurface<uintX>::Blit(const Graphics::Manage
 	Common::Point dpoint = Common::Point(_ox + dx, _oy + dy);
 	if (alpha_blend) {
 		_surface->transBlitFrom(*tex, srect, dpoint);
-	} 
+	}
 	else {
 		_surface->blitFrom(*tex, srect, dpoint);
 	}

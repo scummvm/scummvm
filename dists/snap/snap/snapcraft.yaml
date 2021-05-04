@@ -12,7 +12,7 @@ description: |
 
     Currently, ScummVM supports a huge library of adventures with over
     250 games in total.
-    
+
     It supports many classics published by legendary studios like LucasArts,
     Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood Studios.
     Next to ground-breaking titles like the Monkey Island series,
@@ -115,7 +115,7 @@ parts:
       #fi
       snapcraftctl build
       strip --strip-all $SNAPCRAFT_PART_INSTALL/bin/scummvm
-      
+
     plugin: autotools
     configflags:
       - --enable-release

@@ -52,7 +52,7 @@ cecho ()	# Color-echo. Argument $1 = message, Argument $2 = color
 		echo "$message"
 	fi
 	return
-} 
+}
 
 
 print_help()

@@ -239,7 +239,7 @@ public:
 			}
 		}
 	}
-	
+
 	void handleMouseOut(const Common::String &name) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		for (unsigned i = 0; i < nislands; i++)
@@ -337,7 +337,7 @@ public:
 		room->selectFrame("cloudmiddle", kCloudsZ, 1, Common::Point(220, 0) + Common::Point(220, -50) * div);
 		room->selectFrame("cloudleft", kCloudsZ, 2, Common::Point(0, 0) + Common::Point(-200, -50) * div);
 	}
-	
+
 private:
 	void playMastSound(const TranscribedSound &sound, int event = kMastSoundFinished) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();

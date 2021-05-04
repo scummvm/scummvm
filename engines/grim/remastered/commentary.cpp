@@ -149,7 +149,7 @@ void Commentary::playCurrentCommentary() {
 		warning("Commentary::playCurrentCommentary, no current commentary");
 	}
 }
- 
+
 void Commentary::setCurrentCommentary(const Common::String &name) {
 	warning("Commentary::setCurrentCommentary(%s)", name.c_str());
 	_currentCommentary = findCommentary(name);

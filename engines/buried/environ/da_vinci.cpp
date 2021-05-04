@@ -1166,7 +1166,7 @@ public:
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int locateAttempted(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);
-	
+
 private:
 	Common::Rect _leftCodex;
 	Common::Rect _middleCodex;

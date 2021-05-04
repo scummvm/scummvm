@@ -10,21 +10,21 @@
 
 
 
-;ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
-;³			              ³
-;³	DREAMWEB	              ³
-;³			              ³
-;³			              ³
-;³			              ³
-;³			              ³
-;³	Written by Neil Dodwell. Graphics by Dave Dew.    ³
-;³			              ³
-;³	Started on Friday 28 December 1990 at 1:20 pm     ³
-;³			              ³
-;³	Copyright 1990/1991 Creative Reality              ³	³
-;³			              ³
-;³			              ³
-;ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿
+;ï¿½			              ï¿½
+;ï¿½	DREAMWEB	              ï¿½
+;ï¿½			              ï¿½
+;ï¿½			              ï¿½
+;ï¿½			              ï¿½
+;ï¿½			              ï¿½
+;ï¿½	Written by Neil Dodwell. Graphics by Dave Dew.    ï¿½
+;ï¿½			              ï¿½
+;ï¿½	Started on Friday 28 December 1990 at 1:20 pm     ï¿½
+;ï¿½			              ï¿½
+;ï¿½	Copyright 1990/1991 Creative Reality              ï¿½	ï¿½
+;ï¿½			              ï¿½
+;ï¿½			              ï¿½
+;ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
@@ -124,7 +124,7 @@ Dreamweb	proc	near
            	cmp	al,0
 	jnz	dodecisions
 	endif
-	
+
 	call	setmode
 	call	loadpalfromiff
 
@@ -265,7 +265,7 @@ exitgame:
 	if	demo
 
 Changeroomnums	proc	near
-	
+
 	mov	di,offset cs:roomdata+10
 	mov	cx,50
 changenumloop:	mov	al,[cs:di]
@@ -437,7 +437,7 @@ makedoorsopen:	mov	al,4
 	call	placesetobject
 	ret
 nottopchurch:	cmp	location,47
-	jnz	notdreamcentre	
+	jnz	notdreamcentre
 	mov	al,4
 	call	placesetobject
 	mov	al,5
@@ -503,7 +503,7 @@ Initialinv	proc	near
 	mov	al,16
 	mov	ah,2
 	call	pickupob
-	
+
 	mov	al,2
 	mov	ah,4
 	call	pickupob
@@ -564,7 +564,7 @@ isedens:	mov	al,11
 
 	endp
 
-	endif 
+	endif
 
 
 
@@ -608,13 +608,13 @@ Pickupob	proc	near
 
 
 Setupemm	proc	near
-	
+
 	cmp	soundint,255
 	jz	noneedforemm
 	call	checkforemm
-	
+
 	mov	ah,43h	;allocate handle and 160 pages
-	mov	bx,176 	;was 176	                      
+	mov	bx,176 	;was 176
 	int	67h
 	cmp	ah,0
 	jnz	emmerror1	;if there's an error drop to DOS
@@ -642,7 +642,7 @@ emmerror1:	mov	gameerror,1
 
 
 Removeemm	proc	near
-             
+
 	cmp	soundint,255
 	jz	noneedtoremove
 	mov	ah,45h
@@ -679,7 +679,7 @@ enoughmem:	ret
 
 
 Allocatebuffers	proc	near
-	
+
 	mov	bx,lengthofextra/16
 	call	allocatemem
 	mov	extras,ax
@@ -722,7 +722,7 @@ Allocatebuffers	proc	near
 	endif
 
 	call	allocatework
-	
+
 	mov	bx,2048/16
 	call	allocatemem
 	mov	sounddata,ax
@@ -764,7 +764,7 @@ Clearbuffers	proc	near
 	mov	si,offset cs:reelroutines
 	mov	cx,lenofreelrouts
 	rep	movsb
-	
+
 	mov	es,buffers
 	mov	di,initialvars
 	push	cs
@@ -804,7 +804,7 @@ Clearchanges	proc	near
 	mov	di,offset cs:startvars
 	mov	cx,lengthofvars
 	rep	movsb
-	
+
 	mov	expos,0
 	mov	exframepos,0
 	mov	extextpos,0
@@ -955,17 +955,17 @@ Seecommandtail	proc	near
 	mov	soundint,5
 	mov	sounddmachannel,1
 	mov	brightness,0
-	
+
 	mov	bx,2
 	mov	ax,[es:bx]
 	mov	dx,es
 	sub	ax,dx
 	mov	howmuchalloc,ax
-	
+
 	mov	bx,02ch
 	mov	ax,[es:bx]
 	push	es bx
-	
+
 	mov	es,ax
 	mov	bx,0
 findblaster:	mov	ax,[es:bx]
@@ -990,7 +990,7 @@ findblaster:	mov	ax,[es:bx]
 	jmp	endofenvironment
 notblast:	inc	bx
 	jmp	findblaster
-	
+
 endofenvironment:	pop	bx es
 	mov	bx,81h
 	call	parseblaster
@@ -1001,7 +1001,7 @@ endofenvironment:	pop	bx es
 
 
 Parseblaster	proc	near
-	
+
 lookattail:	mov	al,[es:bx]
 	cmp	al,0
 	jz	endtail
@@ -1330,7 +1330,7 @@ Showtime	proc	near
 	jz	nowatch
 
 	mov	al,secondcount
-	mov	cl,0 
+	mov	cl,0
 	call	twodigitnum
 	push	ax
 	mov	al,ah
@@ -1372,7 +1372,7 @@ Showtime	proc	near
 	call	twodigitnum
 	push	ax
 	mov	al,ah
-	mov	ah,0   
+	mov	ah,0
 	add	ax,91*3
 	mov	ds,charset1
 	mov	di,256+5
@@ -1393,7 +1393,7 @@ Showtime	proc	near
 	call	showframe
 nowatch:	ret
 
-	
+
 	endp
 
 
@@ -1648,7 +1648,7 @@ Identifyob	proc	near
 
 	cmp	watchingtime,0
 	jnz	blank
-	
+
 	mov	ax,mousex
 	sub	ax,mapadx
 	cmp	ax,22*8
@@ -2015,7 +2015,7 @@ Turnpathon	proc	near		;turns path on permanently
 
 	push	ax ax
 	mov	cl,255
-	mov	ch,roomnum	
+	mov	ch,roomnum
 	add	ch,100
 	call	findormake
 	pop	ax
@@ -2289,23 +2289,23 @@ atmospherelist:	db	0,33,10,15,255
 
 	db	10,33,30,6,255
 	db	10,22,30,6,255
-	
+
 	db	9,22,10,6,255
 	db	9,22,20,16,255
 	db	9,22,30,16,255
 	db	9,22,40,16,255
 	db	9,22,50,16,255
-	
+
 	db	6,11,30,6,255
 	db	6,0,10,15,255
 	db	6,0,20,15,255
 	db	6,11,20,15,255
 	db	6,22,20,15,255
-	
+
 	db	7,11,20,6,255
 	db	7,0,20,6,255
 	db	7,0,30,6,255
-	
+
 	db	55,44,0,5,255
 	db	55,44,10,5,255
 
@@ -2332,12 +2332,12 @@ atmospherelist:	db	0,33,10,15,255
 	db	8,33,40,6,255
 	db	8,22,40,6,255
 	db	8,11,40,6,255
-    
+
 	db	11,11,20,12,255
 	db	11,11,30,12,255
 	db	11,22,20,12,255
 	db	11,22,30,12,255
-	
+
 	db	12,22,20,12,255
 	db	13,22,20,12,255
 	db	13,33,20,12,255
@@ -2349,7 +2349,7 @@ atmospherelist:	db	0,33,10,15,255
 	db	14,33,30,12,255
 	db	14,33,40,12,255
 	db	14,22,0,16,255
-	
+
 	db	19,0,0,12,255
 
 	db	20,0,20,16,255
@@ -2438,7 +2438,7 @@ atmospherelist:	db	0,33,10,15,255
 
 
 Walkintoroom	proc	near
-	
+
 	cmp	location,14
 	jnz	notlair
 	cmp	mapx,22
@@ -2630,7 +2630,7 @@ Commandwithob	proc	near
 	push	ax bx cx dx es ds si di
 	call	deltextline
 	pop	di si ds es dx cx bx ax
-	
+
 	push	bx
 	mov	ah,0
 	add	ax,ax
@@ -2639,7 +2639,7 @@ Commandwithob	proc	near
 	mov	ax,[es:bx]
 	add	ax,textstart
 	mov	si,ax
-	
+
 	mov	di,textaddressx
 	mov	bx,textaddressy
 	mov	dl,textlen
@@ -2665,10 +2665,10 @@ noadd:	mov	bx,textaddressy
 	mov	ah,0
 	call	printdirect
 	mov	newtextline,1
-	ret	             
+	ret
 
 commandline:	db	"OBJECT NAME ONE                         ",0
-	
+
 	endp
 
 
@@ -2679,7 +2679,7 @@ Commandonly	proc	near
 	push	ax bx cx dx es ds si di
 	call	deltextline
 	pop	di si ds es dx cx bx ax
-	
+
 	mov	ah,0
 	add	ax,ax
 	mov	bx,ax
@@ -2687,7 +2687,7 @@ Commandonly	proc	near
 	mov	ax,[es:bx]
 	add	ax,textstart
 	mov	si,ax
-	
+
 	mov	di,textaddressx
 	mov	bx,textaddressy
 	mov	dl,textlen
@@ -3241,7 +3241,7 @@ Getroomspaths	proc	near
 
 
 
-	
+
 
 
 
@@ -3332,7 +3332,7 @@ notfreename:	cmp	ah,1
 	add	ax,settext
 	mov	si,ax
 	ret
-	
+
 notsetname:	mov	ds,blockdesc
 	add	bx,blocktextdat
 	mov	ax,[bx]
@@ -3682,7 +3682,7 @@ nowristwatch:	ret
 
 
 Gettime	proc	near
-	
+
 	mov	ah,2ch
 	int	21h
 	mov	secondcount,dh
@@ -3925,7 +3925,7 @@ hangloop:	push	cx
 	cmp	ax,oldbutton
 	jnz	getoutofit
 notpressed:	loop	hangloop
-	
+
 getoutofit:	call	delpointer
 	pop	ax
 	mov	pointerframe,al
@@ -4153,7 +4153,7 @@ notsmally2:	mov	pointerxs,cl
 	mov	ah,128
 	call	showframe
 	ret
-	
+
 	endp
 
 
@@ -4728,72 +4728,72 @@ Randomnum2	proc	near
 
 Randomnumber	proc	near
 
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1	
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	mov	al,seed 	
-	and	al,48h	
-	add	al,38h		
-	sal	al,1			
-	sal	al,1				
-	rcl	seed+2,1			
-	rcl	seed+1,1			
-	rcl	seed+0,1			
-	
-	mov	al,seed	
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+	mov	al,seed
+	and	al,48h
+	add	al,38h
+	sal	al,1
+	sal	al,1
+	rcl	seed+2,1
+	rcl	seed+1,1
+	rcl	seed+0,1
+
+	mov	al,seed
 	ret
 
 	endp
@@ -4879,7 +4879,7 @@ Loadtempcharset	proc	near
 	call	standardload
 	mov	tempcharset,ax
 	ret
-	
+
 	endp
 
 
@@ -5069,7 +5069,7 @@ dontrestore:	ret
 
 
 Restoreall	proc	near
-	
+
 	mov	al,location
 	call	getroomdata
 	mov	dx,bx
@@ -5171,7 +5171,7 @@ Restoreall	proc	near
 	call	loadseg
 
 	call	closefile
-	
+
 	call	setallchanges
 	ret
 
@@ -5180,7 +5180,7 @@ Restoreall	proc	near
 
 
 Sortoutmap	proc	near
-	
+
 	push	es di
 	mov	ds,workspace
 	mov	si,0
@@ -5469,7 +5469,7 @@ Getroomdata	proc	near
 
 
 
-	
+
 
 
 Readheader	proc	near
@@ -5485,8 +5485,8 @@ Readheader	proc	near
 	ret
 
 	endp
-	
-	
+
+
 
 
 
@@ -5629,7 +5629,7 @@ Getridoftempsp	proc	near
 
 
 
-	
+
 Readsetdata	proc	near
 
 	mov	dx,offset cs:characterset1
@@ -5731,7 +5731,7 @@ Openfilefromc	proc	near
 	pop	dx
 	mov	handle,ax
 	ret
-	
+
 	endp
 	endif
 
@@ -5839,7 +5839,7 @@ Setkeyboardint	proc	near
 Resetkeyboard	proc	near
 
 	cmp	oldint9add,-1
-	jz	noreset   
+	jz	noreset
 	mov	dx,oldint9add		;Restore old interupt vector
 	mov	ax,oldint9seg		;for keys
 	mov	ds,ax
@@ -5890,7 +5890,7 @@ Keyboardread	proc	near
 	mov	di,offset cs:keybuffer
 	mov	dx,bufferin
 	add	di,dx
-	mov	[cs:di],al	
+	mov	[cs:di],al
 same:	in	al,61h
 	mov	ah,al
 	or	al,80h		; Mask for Akn
@@ -6002,7 +6002,7 @@ Roomdata	db	"DREAMWEB.R00",0	;Ryan's apartment
 	db	32 dup (0)
 	db	32 dup (0)
 	db	32 dup (0)
-	
+
 	db	"DREAMWEB.R19",0
 	db	19,255,0,0
 	db	255,255,255,0
@@ -6206,7 +6206,7 @@ Roomdata	db	"DREAMWEB.R00",0	;Ryan's apartment
 	db	255,255,255,0
 	db	0,0,255,255,255,255,255,255,255,255,55
 
-	
+
 Madeuproomdat	db	32 dup (0)
 
 Roomscango	db	1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0

@@ -133,7 +133,7 @@ Common::Error IllusionsEngine::loadGameState(int slot) {
 	_savegameSlotNum = slot;
 	return Common::kNoError;
 }
- 
+
 Common::Error IllusionsEngine::saveGameState(int slot, const Common::String &description, bool isAutosave) {
 	const char *fileName = getSavegameFilename(slot);
 	if (!savegame(fileName, description.c_str()))

@@ -50,7 +50,7 @@ float BaseUtils::normalizeAngle(float angle) {
 	// error, as when normalizing an angle, we expect the number to be between 0
 	// and 359 (since 360 is 0). This check has been fixed in ScummVM to 359. If
 	// the resulting angle is negative, it will be corrected in the while loop
-	// below. 
+	// below.
 	while (angle > 359) {
 		angle -= 360;
 	}

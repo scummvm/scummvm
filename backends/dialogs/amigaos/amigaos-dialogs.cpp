@@ -78,7 +78,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 		}
 		AslBase = nullptr;
 		IAsl = nullptr;
-		IExec->CloseLibrary(AslBase); 
+		IExec->CloseLibrary(AslBase);
 		IExec->DropInterface((struct Interface*)IAsl);
 	}
 

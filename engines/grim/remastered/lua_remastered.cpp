@@ -416,7 +416,7 @@ void Lua_Remastered::AddHotspot() {
 	} else if (!lua_isnil(param10)) {
 		assert(lua_isnil(param10));
 	}
-	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));  
+	warning("Stub function: AddHotspot(%s, %f, %f, %f, %f, %f, %f, %f, %s, %s, %f)", lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5), lua_getnumber(param6), lua_getnumber(param7), lua_getnumber(param8), p9str, p10str, lua_getnumber(param11));
 
 	Hotspot *hotspot = new Hotspot(lua_getstring(param1), lua_getnumber(param2), lua_getnumber(param3), lua_getnumber(param4), lua_getnumber(param5));
 
@@ -437,7 +437,7 @@ void Lua_Remastered::GlobalSaveResolved() {
 
 void Lua_Remastered::FindSaveGames() {
 	warning("Stub function: FindSaveGames()");
-	
+
 	Common::SaveFileManager *saveMan = g_grim->getSaveFileManager();
 	Common::StringArray saveFiles = saveMan->listSavefiles("grim_r???.sav");
 
@@ -447,13 +447,13 @@ void Lua_Remastered::FindSaveGames() {
 	}
 
 	lua_Object result = lua_createtable();
-	
+
 	Common::StringArray::iterator it = saveFiles.begin();
 	for (int i = 0; it != saveFiles.end(); ++it) {
 		const char *filename  = (*it).c_str();
 		warning("Savefile: %s", filename);
 		SaveGame *savedState = SaveGame::openForLoading(filename);
-		
+
 		if (!savedState || !savedState->isCompatible()) {
 			if (!savedState) {
 				error("Savegame %s is invalid", filename);
@@ -472,7 +472,7 @@ void Lua_Remastered::FindSaveGames() {
 		/*int32 dataSize = */savedState->beginSection('META');
 		char str[200] = {};
 		int32 strSize = 0;
-		
+
 		strSize = savedState->readLESint32();
 		savedState->read(str, strSize);
 		str1 = str;
@@ -482,7 +482,7 @@ void Lua_Remastered::FindSaveGames() {
 		str2 = str;
 		savedState->endSection();
 		delete savedState;
-		
+
 		lua_pushobject(result);
 		lua_pushnumber(i++);
 
@@ -491,7 +491,7 @@ void Lua_Remastered::FindSaveGames() {
 		lua_Object keyVal = lua_createtable();
 		// The key-value-mapping:
 		{
-			
+
 			lua_pushobject(keyVal);
 			lua_pushstring("slot");
 			lua_pushnumber(slot);
@@ -501,17 +501,17 @@ void Lua_Remastered::FindSaveGames() {
 			lua_pushstring("title");
 			lua_pushstring(str2.c_str());
 			lua_settable();
-			
+
 			lua_pushobject(keyVal);
 			lua_pushstring("timeDateString");
 			lua_pushstring("Unknown");
 			lua_settable();
-			
+
 			lua_pushobject(keyVal);
 			lua_pushstring("mural_info");
 			lua_pushstring(str1.c_str());
 			lua_settable();
-			
+
 			lua_pushobject(keyVal);
 			lua_pushstring("setIndex");
 			lua_pushnumber(x);
@@ -529,7 +529,7 @@ void Lua_Remastered::FindSaveGames() {
 void Lua_Remastered::Load() {
 	lua_Object fileName = lua_getparam(1);
 //	lua_Object param2 = lua_getparam(2);
-	
+
 	if (lua_isnil(fileName)) {
 		g_grim->loadGame("");
 	} else if (lua_isnumber(fileName)) {
@@ -553,12 +553,12 @@ void Lua_Remastered::Save() {
 	assert(lua_isstring(param2));
 	assert(lua_isnumber(param3));
 	assert(lua_isstring(param4));
-	
+
 	int slot = lua_getnumber(param1);
 	const char *p2Str = lua_getstring(param2);
 	int p3Num = lua_getnumber(param3);
 	const char *p4Str = lua_getstring(param4);
-	
+
 	warning("REMASTERED save: %d, %s, %d, %s", slot, p2Str, p3Num, p4Str);
 	Common::String saveGameFilename = Common::String::format("grim_r%03d.sav", slot);
 	g_grim->setSaveMetaData(p2Str, p3Num, p4Str);
@@ -675,7 +675,7 @@ struct luaL_reg remasteredMainOpcodes[] = {
 	{ "SetKeyMappingMode", LUA_OPCODE(Lua_Remastered, SetKeyMappingMode) },
 	{ "ResetKeyMappingToDefault", LUA_OPCODE(Lua_Remastered, ResetKeyMappingToDefault) },
 	{ "SaveRemappedKeys", LUA_OPCODE(Lua_Remastered, SaveRemappedKeys) },
-	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_Remastered, SaveRegistryToDisk) },	
+	{ "SaveRegistryToDisk", LUA_OPCODE(Lua_Remastered, SaveRegistryToDisk) },
 	{ "InitiateFindSaveGames", LUA_OPCODE(Lua_Remastered, InitiateFindSaveGames) },
 	{ "GetFindSaveGameStatus", LUA_OPCODE(Lua_Remastered, GetFindSaveGameStatus) },
 	{ "FindSaveGames", LUA_OPCODE(Lua_Remastered, FindSaveGames) },

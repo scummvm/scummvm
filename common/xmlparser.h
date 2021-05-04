@@ -41,7 +41,7 @@ namespace Common {
  * @ingroup common
  *
  * @brief The XML parser allows for parsing XML-like files.
- * 
+ *
  * @{
  */
 

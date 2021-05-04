@@ -101,12 +101,12 @@ Clearendpal	proc	near
 
 
 Clearpalette	proc	near
-	
+
 	mov	fadedirection,0
 	call	clearstartpal
 	call	dumpcurrent
 	ret
-         	
+
 	endp
 
 
@@ -309,11 +309,11 @@ Showgun	proc	near
 
 	mov	addtored,0 ;12
 	mov	addtogreen,0
-	mov	addtoblue,0	
+	mov	addtoblue,0
 	call	paltostartpal
 	call	paltoendpal
 	call	greyscalesum
-	
+
 ;	mov	es,buffers
 ;	mov	di,endpal+3
 ;	mov	cx,255
@@ -322,7 +322,7 @@ Showgun	proc	near
 ;	inc	di
 ;	stosw
 ;	loop	reds
-     	
+
 	mov	fadedirection,1
 	mov	fadecount,63
 	mov	colourpos,0
@@ -419,7 +419,7 @@ endcredits22:	push	cx si di es bx
 	call	vsync
 	pop	bx es di si
 	push	si di es bx
-	
+
 	mov	cx,18
 onelot2:	push	cx
 	mov	di,25 ;75
@@ -453,7 +453,7 @@ looknext2:	mov	al,[es:si]
 gotnext2:	cmp	lasthardkey,1
 	jz	endearly
 	loop	endcredits21
-	
+
 	mov	cx,120
 	call	hangone
 	ret
@@ -686,7 +686,7 @@ Paltoendpal	proc	near
 
 
 
-	
+
 
 
 
@@ -834,7 +834,7 @@ Fadeupyellows	proc	near
 	mov	fadedirection,1
 	mov	fadecount,63
 	mov	colourpos,0
-	mov	numtofade,128	
+	mov	numtofade,128
 	mov	cx,128
 	call	hangon
 	ret

@@ -510,7 +510,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 			ACHIEVEMENTS_LISTEND
 		}
 	},
-	
+
 	{0, Common::UNK_ACHIEVEMENTS, 0, {ACHIEVEMENTS_LISTEND}}
 };
 

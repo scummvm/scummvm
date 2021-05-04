@@ -223,7 +223,7 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
 What's changed since I was last here?
 ======================================
 
-Check out the :doc:`Release notes <help/release>` for both current and past releases. 
+Check out the :doc:`Release notes <help/release>` for both current and past releases.
 
 
 The ScummVM Project

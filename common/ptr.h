@@ -255,7 +255,7 @@ class WeakPtr;
  * as for a normal pointer. If you need to access the plain pointer value
  * itself later on use the get method. The class also supplies a operator
  * ->, which does the same as the -> operator on a normal pointer.
- * 
+ *
  * Be sure you are using new to initialize the pointer you want to manage.
  * If you do not use new for allocating, you have to supply a deleter as
  * second parameter when creating a SharedPtr object. The deleter has to

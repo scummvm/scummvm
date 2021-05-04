@@ -55,7 +55,7 @@ bool decompressDCL(ReadStream *sourceStream, byte *dest, uint32 packedSize, uint
  * @overload
  *
  * Decompress a PKWARE DCL compressed stream.
- *  
+ *
  * @return Returns a valid pointer if successful or 0 otherwise.
  */
 SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packedSize, uint32 unpackedSize);
@@ -64,10 +64,10 @@ SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream, uint32 packe
  * @overload
  *
  * Decompress a PKWARE DCL compressed stream.
- * 
+ *
  * This method is meant for cases, where the unpacked size is not known.
  *
- * @return Returns a valid pointer if successful or 0 otherwise. 
+ * @return Returns a valid pointer if successful or 0 otherwise.
  */
 SeekableReadStream *decompressDCL(SeekableReadStream *sourceStream);
 

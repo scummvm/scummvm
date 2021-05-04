@@ -163,10 +163,10 @@ public:
 	int getLanguage() const { return _language; }
 	void setLanguage(int langId) { _language = langId; }
 	Common::String getLanguagePrefix() const;
-	
+
 	bool isConceptEnabled(uint32 number) const;
 	void enableConcept(uint32 number);
-	
+
 	bool isCutsceneEnabled(uint32 number) const;
 	void enableCutscene(uint32 number);
 
@@ -276,11 +276,11 @@ protected:
 	static const uint32 kNumCutscenes = 40;
 	bool _cutsceneEnabled[kNumCutscenes]; // TODO, could probably use a different data structure
 	bool _conceptEnabled[kNumConcepts];
-	
+
 	Common::String _saveMeta1;
 	int _saveMeta2;
 	Common::String _saveMeta3;
-	
+
 	Commentary *_commentary;
 
 public:

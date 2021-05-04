@@ -150,7 +150,7 @@ private:
 	const byte *_ptr;
 public:
 	MemoryReadStream(const byte *ptr) : _ptr(ptr) {}
-	
+
 	byte readByte() {
 		return *_ptr++;
 	}

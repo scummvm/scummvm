@@ -84,7 +84,7 @@ Header::Header() : h_version(0), h_config(0), h_release(0), h_resident_size(0), 
 	Common::fill(&h_user_name[0], &h_user_name[8], '\0');
 
 	h_interpreter_number = getConfigInt("interpreter_number", INTERP_AMIGA, INTERP_TANDY);
-	
+
 
 	if (ConfMan.hasKey("username")) {
 		Common::String username = ConfMan.get("username");
@@ -112,7 +112,7 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	h_dynamic_size = f.readUint16BE();
 	h_flags = f.readUint16BE();
 	f.read(h_serial, 6);
-	
+
 	/* Auto-detect buggy story files that need special fixes */
 	_storyId = UNKNOWN;
 
@@ -128,7 +128,7 @@ void Header::loadHeader(Common::SeekableReadStream &f) {
 	h_abbreviations = f.readUint16BE();
 	h_file_size = f.readUint16BE();
 	h_checksum = f.readUint16BE();
-	
+
 	f.seek(H_FUNCTIONS_OFFSET);
 	h_functions_offset = f.readUint16BE();
 	h_strings_offset = f.readUint16BE();

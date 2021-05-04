@@ -186,7 +186,7 @@ void CViewport::randomizeOrientation() {
 }
 
 void CViewport::changeStarColorPixel(StarMode mode, double pixelOffSet) {
-	// pixelOffset is usually 0.0, 30.0, or 28000.0 
+	// pixelOffset is usually 0.0, 30.0, or 28000.0
 	if (mode == MODE_PHOTO) {
 		_valArray[0] = pixelOffSet;
 		_valArray[1] = -pixelOffSet;
@@ -226,7 +226,7 @@ FPose CViewport::getRawPose() {
 }
 
 
-// TODO: should index be used here like 
+// TODO: should index be used here like
 // getRelativePosCentering/getRelativePosCentering2?
 // CCamera::getRelativePosCentering is calling this with an index of
 // 2 which corresponds to _isZero which has value 0.

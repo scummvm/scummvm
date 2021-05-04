@@ -261,7 +261,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 						dG = static_cast<uint8>((sG * sAlpha + dG * dAlpha) / (sAlpha + dAlpha));
 						dB = static_cast<uint8>((sB * sAlpha + dB * dAlpha) / (sAlpha + dAlpha));
 						dA = static_cast<uint8>(255. * (sAlpha + dAlpha));
-							
+
 						texBuf[ty * resultWidth + tx] = PF_RGBA.ARGBToColor(dA, dR, dG, dB);
 					}
 				}

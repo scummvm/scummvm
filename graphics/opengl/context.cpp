@@ -100,7 +100,7 @@ void ContextGL::initialize(ContextOGLType contextType) {
 		} else if (token == "GL_OES_depth24") {
 			OESDepth24 = true;
 		}
-		
+
 	}
 
 	int glslVersion = getGLSLVersion();

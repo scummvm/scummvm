@@ -110,7 +110,7 @@ CheatDialog::CheatDialog() : GUI::Dialog(20, 20, 600, 440) {
 	_frame = new GUI::EditTextWidget(_tabs, 35, 100, 45, 20, Common::U32String::format("%u", scene.frameID), Common::U32String(), kInputFrameNr, kInputFrameNr);
 	new GUI::StaticTextWidget(_tabs, 85, 100, 150, 20, _("Frame Number"), Graphics::kTextAlignLeft);
 	_offset = new GUI::EditTextWidget(_tabs, 35, 125, 45, 20, Common::U32String::format("%u", scene.verticalOffset), Common::U32String(), kInputScroll, kInputScroll);
-	
+
 	// I18N: The Y position (a.k.a vertical scroll) of the background
 	new GUI::StaticTextWidget(_tabs, 85, 125, 150, 20, _("Background Top (Y)"), Graphics::kTextAlignLeft);
 

@@ -329,7 +329,7 @@ void SoundManager::playSound(const SoundDescription &description) {
 
 void SoundManager::playSound(const Common::String &chunkName) {
 	const SoundDescription &desc = _commonSounds[chunkName];
-	
+
 	if (!isSoundPlaying(desc)) {
 		loadSound(desc);
 	}

@@ -99,7 +99,7 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4
  * @param level         Debug level that must be active for the message to be printed.
  * @param debugChannels Bitfield of channels to check against.
  * @param s             Message to print.
- * 
+ *
  */
 void debugCN(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4);
 

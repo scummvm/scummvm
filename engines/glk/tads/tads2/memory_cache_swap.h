@@ -56,7 +56,7 @@ struct mcsdsdef {
 
 /**
  * mcsseg - swap segment handle.  All swap-file segments are addressed
- * through this handle type.  
+ * through this handle type.
  */
 typedef ushort mcsseg;
 
@@ -98,7 +98,7 @@ void mcsclose(struct mcscxdef *ctx);
  */
 mcsseg mcsout(struct mcscxdef *ctx, uint objid, uchar *objptr,
 			  ushort objsize, mcsseg oldswapseg, int dirty);
-			
+
 /* Swap an object in */
 void mcsin(struct mcscxdef *ctx, mcsseg swapseg, uchar *objptr, ushort size);
 

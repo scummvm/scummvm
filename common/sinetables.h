@@ -68,7 +68,7 @@ public:
 	 * Returns sin(2*pi * index / nPoints )
 	 * Index must be in range [0, nPoints - 1]
 	 */
-	float atLegacy(int index) const;	
+	float atLegacy(int index) const;
 
 private:
 	float *_tableEOS;

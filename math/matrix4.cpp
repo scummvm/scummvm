@@ -81,7 +81,7 @@ Matrix3 Matrix<4, 4>::getRotation() const{
 	m2.setValue(2, 0, getValue(2, 0));
 	m2.setValue(2, 1, getValue(2, 1));
 	m2.setValue(2, 2, getValue(2, 2));
-	
+
 	return m2;
 }
 

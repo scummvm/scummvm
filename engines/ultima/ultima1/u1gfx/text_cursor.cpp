@@ -64,7 +64,7 @@ void U1TextCursor::draw() {
 
 	// Get the surface area to draw the cursor on
 	Graphics::ManagedSurface s(8, 8);
-		
+
 	// Loop to draw the cursor
 	for (int y = 0; y < CURSOR_H; ++y) {
 		byte *lineP = (byte *)s.getBasePtr(0, y);

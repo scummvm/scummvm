@@ -1006,7 +1006,7 @@ void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
 #ifdef USE_MAD
 	MusicSegmentNoir *musicSegments = (MusicSegmentNoir *)_vm->_handle->LockMem(_hSegment);
 
-	Common::SeekableReadStream *sampleStream = readSampleData(_filename, musicSegments[segmentNum].sampleOffset, 
+	Common::SeekableReadStream *sampleStream = readSampleData(_filename, musicSegments[segmentNum].sampleOffset,
 			musicSegments[segmentNum].sampleLength);
 
 	delete _curChunk;

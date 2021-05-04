@@ -45,7 +45,7 @@ static int voctype[] =
 /* ------------------------------------------------------------------------ */
 /*
  *   Allocate and push a list, given the number of bytes needed for the
- *   elements of the list.  
+ *   elements of the list.
  */
 uchar *voc_push_list_siz(voccxdef *ctx, uint lstsiz)
 {
@@ -79,16 +79,16 @@ uchar *voc_push_list_siz(voccxdef *ctx, uint lstsiz)
 
 /*
  *   Allocate and push a list.  Returns a pointer to the space for the
- *   list's first element in the heap.  
+ *   list's first element in the heap.
  */
 static uchar *voc_push_list(voccxdef *ctx, int ele_count, int ele_size)
 {
 	uint lstsiz;
 
-	/* 
+	/*
 	 *   Figure the list size - we need space for the given number of
 	 *   elements of the given size; in addition, each element requires
-	 *   one byte of overhead for its type prefix.  
+	 *   one byte of overhead for its type prefix.
 	 */
 	lstsiz = (uint)(ele_count * (1 + ele_size));
 
@@ -97,7 +97,7 @@ static uchar *voc_push_list(voccxdef *ctx, int ele_count, int ele_size)
 }
 
 /*
- *   Push a list of numbers 
+ *   Push a list of numbers
  */
 static void voc_push_numlist(voccxdef *ctx, uint numlist[], int cnt)
 {
@@ -120,7 +120,7 @@ static void voc_push_numlist(voccxdef *ctx, uint numlist[], int cnt)
 }
 
 /*
- *   Push a list of object ID's obtained from a vocoldef array 
+ *   Push a list of object ID's obtained from a vocoldef array
  */
 void voc_push_vocoldef_list(voccxdef *ctx, vocoldef *objlist, int cnt)
 {
@@ -128,9 +128,9 @@ void voc_push_vocoldef_list(voccxdef *ctx, vocoldef *objlist, int cnt)
 	uchar *lstp;
 	uint lstsiz;
 
-	/* 
+	/*
 	 *   count the size - we need 3 bytes per object (1 for type plus 2
-	 *   for the value), and 1 byte per nil 
+	 *   for the value), and 1 byte per nil
 	 */
 	for (lstsiz = 0, i = 0 ; i < cnt ; ++i)
 		lstsiz += (objlist[i].vocolobj == MCMONINV ? 1 : 3);
@@ -159,7 +159,7 @@ void voc_push_vocoldef_list(voccxdef *ctx, vocoldef *objlist, int cnt)
 }
 
 /*
- *   Push a list of object ID's 
+ *   Push a list of object ID's
  */
 void voc_push_objlist(voccxdef *ctx, objnum objlist[], int cnt)
 {
@@ -167,9 +167,9 @@ void voc_push_objlist(voccxdef *ctx, objnum objlist[], int cnt)
 	uchar *lstp;
 	uint lstsiz;
 
-	/* 
+	/*
 	 *   count the size - we need 3 bytes per object (1 for type plus 2
-	 *   for the value), and 1 byte per nil 
+	 *   for the value), and 1 byte per nil
 	 */
 	for (lstsiz = 0, i = 0 ; i < cnt ; ++i)
 		lstsiz += (objlist[i] == MCMONINV ? 1 : 3);
@@ -189,7 +189,7 @@ void voc_push_objlist(voccxdef *ctx, objnum objlist[], int cnt)
 		{
 			/* add the type prefix */
 			*lstp++ = DAT_OBJECT;
-			
+
 			/* add the value */
 			oswp2(lstp, objlist[i]);
 			lstp += 2;
@@ -201,7 +201,7 @@ void voc_push_objlist(voccxdef *ctx, objnum objlist[], int cnt)
  *   Push a list of strings, where the strings are stored in memory, one
  *   after the other, each string separated from the next with a null
  *   byte.  The list is bounded by firstwrd and lastwrd, inclusive of
- *   both.  
+ *   both.
  */
 static void voc_push_strlist(voccxdef *ctx, const char *firstwrd, const char *lastwrd)
 {
@@ -213,7 +213,7 @@ static void voc_push_strlist(voccxdef *ctx, const char *firstwrd, const char *la
 	/*
 	 *   Determine how much space we need for the word list.  For each
 	 *   entry, we need one byte for the type prefix, two bytes for the
-	 *   length prefix, and the bytes of the string itself.  
+	 *   length prefix, and the bytes of the string itself.
 	 */
 	for (lstsiz = 0, p = firstwrd ; p != 0 && p <= lastwrd ; p += curlen + 1)
 	{
@@ -242,7 +242,7 @@ static void voc_push_strlist(voccxdef *ctx, const char *firstwrd, const char *la
 }
 
 /*
- *   Push a list of strings, taking the strings from an array.  
+ *   Push a list of strings, taking the strings from an array.
  */
 static void voc_push_strlist_arr(voccxdef *ctx, char *wordlist[], int cnt)
 {
@@ -251,10 +251,10 @@ static void voc_push_strlist_arr(voccxdef *ctx, char *wordlist[], int cnt)
 	uint lstsiz;
 	uchar *lstp;
 
-	/* 
+	/*
 	 *   Add up the lengths of the strings in the array.  For each
 	 *   element, we need space for the string's bytes, plus two bytes for
-	 *   the length prefix, plus one byte for the type prefix.  
+	 *   the length prefix, plus one byte for the type prefix.
 	 */
 	for (lstsiz = 0, p = wordlist, i = 0 ; i < cnt ; ++i, ++p)
 		lstsiz += strlen(*p) + 3;
@@ -285,7 +285,7 @@ static void voc_push_strlist_arr(voccxdef *ctx, char *wordlist[], int cnt)
  *   Push a list of strings, taking the strings from an array that was
  *   prepared by the parser tokenizer.  This is almost the same as pushing
  *   a regular string array, with the difference that we must recognize
- *   the special format that the tokenizer uses to store string tokens.  
+ *   the special format that the tokenizer uses to store string tokens.
  */
 static void voc_push_toklist(voccxdef *ctx, char *wordlist[], int cnt)
 {
@@ -295,21 +295,21 @@ static void voc_push_toklist(voccxdef *ctx, char *wordlist[], int cnt)
 	uchar *lstp;
 	size_t cur_len;
 
-	/* 
+	/*
 	 *   Add up the lengths of the strings in the array.  For each
 	 *   element, we need space for the string's bytes, plus two bytes for
-	 *   the length prefix, plus one byte for the type prefix.  
+	 *   the length prefix, plus one byte for the type prefix.
 	 */
 	for (lstsiz = 0, p = wordlist, i = 0 ; i < cnt ; ++i, ++p)
 	{
-		/* 
+		/*
 		 *   get the length of the current token - check what kind of
 		 *   token we have, since we must sense the length of different
-		 *   token types in different ways 
+		 *   token types in different ways
 		 */
 		if (**p == '"')
 		{
-			/* 
+			/*
 			 *   It's a string token - the string follows with a two-byte
 			 *   length prefix; add two bytes for the open and close quote
 			 *   characters that we'll add to the output string.  Note
@@ -338,16 +338,16 @@ static void voc_push_toklist(voccxdef *ctx, char *wordlist[], int cnt)
 	{
 		char *cur_ptr;
 		size_t copy_len;
-		
+
 		/* add the type prefix */
 		*lstp++ = DAT_SSTRING;
 
 		/* get the information for the string based on the type */
 		if (**p == '"')
 		{
-			/* 
+			/*
 			 *   it's a string - use the length prefix (deducting two
-			 *   bytes for the prefix itself, which we're not copying) 
+			 *   bytes for the prefix itself, which we're not copying)
 			 */
 			copy_len = osrp2(*p + 1) - 2;
 
@@ -400,14 +400,14 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
 	tiocapture(ctx->voccxtio, (mcmcxdef *)0, FALSE);
 	tioclrcapture(ctx->voccxtio);
 
-	/* 
+	/*
 	 *   Clear out the command buffer.  This is important for the
 	 *   timeout-based command reader, since it will take what's in the
 	 *   buffer as the initial contents of the command line; this lets us
 	 *   remember any partial line that the player entered before a
 	 *   timeout interrupted their typing and redisplay the original
 	 *   partial line on the next command line.  Initially, there's no
-	 *   partial line, so clear it out.  
+	 *   partial line, so clear it out.
 	 */
 	buf[0] = '\0';
 
@@ -425,24 +425,24 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
 		tioblank(tio);
 		prompt = ">";
 	}
-	
+
 	/* get a line of input */
 	if (tiogets(ctx->voccxtio, prompt, buf, bufl))
 		errsig(ctx->voccxerr, ERR_RUNQUIT);
-	
+
 	/* abort immediately if we see the special panic command */
 	if (!strcmp(buf, "$$ABEND"))
 	{
 		/* make sure any script file is closed */
 		qasclose();
-		
+
 		/* use the OS-level termination */
 		os_term(OSEXFAIL);
 
 		/* if that returned, signal a quit */
 		errsig(ctx->voccxerr, ERR_RUNQUIT);
 	}
-	
+
 	/* call the post-prompt function if defined */
 	if (ctx->voccxpostprom != MCMONINV)
 	{
@@ -450,10 +450,10 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
 		runfn(ctx->voccxrun, ctx->voccxpostprom, 1);
 	}
 
-	/* 
+	/*
 	 *   If this isn't a type "0" input, and preparseExt() is defined, call
 	 *   it.  Don't call preparseExt() for type "0" inputs, since these will
-	 *   be handled via the conventional preparse().  
+	 *   be handled via the conventional preparse().
 	 */
 	if (ctx->voccxpre2 != MCMONINV && type != 0)
 	{
@@ -473,18 +473,18 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
 		switch(runtostyp(ctx->voccxrun))
 		{
 		case DAT_SSTRING:
-			/* 
+			/*
 			 *   They returned a string.  Replace the input buffer we read
 			 *   with the new string.  Pop the new string and scan its length
-			 *   prefix.  
+			 *   prefix.
 			 */
 			s = runpopstr(ctx->voccxrun);
 			len = osrp2(s) - 2;
 			s += 2;
 
-			/* 
+			/*
 			 *   limit the size we copy to our buffer length (leaving space
-			 *   for null termination) 
+			 *   for null termination)
 			 */
 			if (len > (size_t)bufl - 1)
 				len = bufl - 1;
@@ -499,19 +499,19 @@ int vocread(voccxdef *ctx, objnum actor, objnum verb,
 			break;
 
 		case DAT_TRUE:
-			/* 
+			/*
 			 *   they simply want to keep the current string as it is -
-			 *   proceed as normal 
+			 *   proceed as normal
 			 */
 			break;
 
 		case DAT_NIL:
-			/* 
+			/*
 			 *   They want to skip the special interpretation of the input
 			 *   and proceed directly to treating the input as a brand new
 			 *   command.  The caller will have to take care of the details;
 			 *   we need only indicate this to the caller through our "redo"
-			 *   result code.  
+			 *   result code.
 			 */
 			ret = VOCREAD_REDO;
 			break;
@@ -567,7 +567,7 @@ vocwdef *vocfnw(voccxdef *voccx, vocseadef *search_ctx)
 			 *   on the first time through, vw has already been set up
 			 *   with the next vocwdef in the current list; on subsequent
 			 *   times through the loop, start at the head of the current
-			 *   word's list 
+			 *   word's list
 			 */
 			if (!first)
 				vw = vocwget(voccx, v->vocwlst);
@@ -582,7 +582,7 @@ vocwdef *vocfnw(voccxdef *voccx, vocseadef *search_ctx)
 					/*
 					 *   remember the first vocdef that we found, and
 					 *   remember this, the first matching vocwdef, then
-					 *   stop scanning 
+					 *   stop scanning
 					 */
 					vf = v;
 					vwf = vw;
@@ -627,7 +627,7 @@ vocwdef *vocffw(voccxdef *ctx, const char *wrd, int len, const char *wrd2, int l
 					/*
 					 *   remember the first vocdef that we found, and
 					 *   remember this, the first matching vocwdef; then
-					 *   stop scanning, since we have a match 
+					 *   stop scanning, since we have a match
 					 */
 					vf = v;
 					vwf = vw;
@@ -657,9 +657,9 @@ vocwdef *vocffw(voccxdef *ctx, const char *wrd, int len, const char *wrd2, int l
 }
 
 /* ------------------------------------------------------------------------ */
-/* 
+/*
  *   vocerr_va information structure.  This is initialized in the call to
- *   vocerr_va_prep(), and must then be passed to vocerr_va().  
+ *   vocerr_va_prep(), and must then be passed to vocerr_va().
  */
 struct vocerr_va_info
 {
@@ -669,10 +669,10 @@ struct vocerr_va_info
 	/* the sprintf-style format string to display */
 	const char *fmt;
 
-	/* 
+	/*
 	 *   Pointer to the output buffer to use to format the string 'fmt' with
 	 *   its arguments, using vsprintf.  The prep function will set this up
-	 *   to point to user_msg[].  
+	 *   to point to user_msg[].
 	 */
 	char *outp;
 
@@ -683,14 +683,14 @@ struct vocerr_va_info
 /*
  *   General parser error formatter - preparation.  This must be called to
  *   initialize the context before the message can be displayed with
- *   vocerr_va().  
+ *   vocerr_va().
  */
 static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 						   int err, const char *f, va_list argptr)
 {
-	/* 
+	/*
 	 *   presume that we'll use the given format string, instead of one
-	 *   provided by the program 
+	 *   provided by the program
 	 */
 	info->fmt = f;
 
@@ -698,9 +698,9 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 	info->outp = info->user_msg;
 	info->outsiz = sizeof(info->user_msg);
 
-	/* 
+	/*
 	 *   if the user has a parseError or parseErrorParam function, see if it
-	 *   provides a msg 
+	 *   provides a msg
 	 */
 	if (ctx->voccxper != MCMONINV || ctx->voccxperp != MCMONINV)
 	{
@@ -712,9 +712,9 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 		/* start off with the two arguments that are always present */
 		argc = 2;
 
-		/* 
+		/*
 		 *   if we're calling parseErrorParam, and we have additional
-		 *   arguments, push them as well 
+		 *   arguments, push them as well
 		 */
 		if (ctx->voccxperp != MCMONINV)
 		{
@@ -736,11 +736,11 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 			struct argbuf_t *argp;
 			const char  *p;
 
-			/* 
+			/*
 			 *   Retrieve the arguments by examining the format string.  We
 			 *   must buffer up the arguments before pushing them, because
 			 *   we need to push them in reverse order (last to first); so,
-			 *   we must scan all arguments before we push the first one.  
+			 *   we must scan all arguments before we push the first one.
 			 */
 			for (p = f, argp = args ; *p != '\0' ; ++p)
 			{
@@ -778,9 +778,9 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 						break;
 
 					default:
-						/* 
+						/*
 						 *   ignore other types (there shouldn't be any
-						 *   other types anyway) 
+						 *   other types anyway)
 						 */
 						break;
 					}
@@ -789,7 +789,7 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 
 			/*
 			 *   Push the arguments - keep looping until we get back to the
-			 *   first argument slot 
+			 *   first argument slot
 			 */
 			while (argp != args)
 			{
@@ -834,10 +834,10 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 		if (typ == DAT_SSTRING)
 		{
 			char *p;
-			
-			/* 
+
+			/*
 			 *   they returned a string - use it as the error message
-			 *   instead of the default message 
+			 *   instead of the default message
 			 */
 			p = (char *)runpopstr(rcx);
 			len = osrp2(p) - 2;
@@ -863,21 +863,21 @@ static void vocerr_va_prep(voccxdef *ctx, struct vocerr_va_info *info,
 
 }
 
-/* 
+/*
  *   General parser error formatter.
- *   
+ *
  *   Before calling this routine, callers MUST invoke vocerr_va_prep() to
  *   prepare the information structure.  Because both this routine and the
  *   prep routine need to look at the varargs list ('argptr'), the caller
  *   must call va_start/va_end around the prep call, and then AGAIN on this
  *   call.  va_start/va_end must be used twice to ensure that the argptr is
- *   property re-initialized for the call to this routine.  
+ *   property re-initialized for the call to this routine.
  */
 static void vocerr_va(voccxdef *ctx, struct vocerr_va_info *info,
 					  int err, const char *f, va_list argptr)
 {
 	char *buf;
-	
+
 	/* turn on output */
 	(void)tioshow(ctx->voccxtio);
 
@@ -893,8 +893,8 @@ static void vocerr_va(voccxdef *ctx, struct vocerr_va_info *info,
 }
 
 /* ------------------------------------------------------------------------ */
-/* 
- *   display a parser informational message 
+/*
+ *   display a parser informational message
  */
 void vocerr_info(voccxdef *ctx, int err, const char *f, ...)
 {
@@ -912,8 +912,8 @@ void vocerr_info(voccxdef *ctx, int err, const char *f, ...)
 	va_end(argptr);
 }
 
-/* 
- *   display a parser error 
+/*
+ *   display a parser error
  */
 void vocerr(voccxdef *ctx, int err, const char *f, ...)
 {
@@ -923,7 +923,7 @@ void vocerr(voccxdef *ctx, int err, const char *f, ...)
 	/*
 	 *   If the unknown word flag is set, suppress this error, because
 	 *   we're going to be trying the whole parsing from the beginning
-	 *   again anyway.  
+	 *   again anyway.
 	 */
 	if (ctx->voccxunknown > 0)
 		return;
@@ -946,22 +946,22 @@ void vocerr(voccxdef *ctx, int err, const char *f, ...)
  *   recognize the sentence structure (for example, an indirect object is
  *   present, but we don't have a template defined using an indirect
  *   object for the verb).
- *   
+ *
  *   This function calls the game-defined function parseUnknownVerb, if it
  *   exists.  If the function doesn't exist, we'll simply display the
  *   given error message, using the normal parseError mechanism.  The
  *   function should use "abort" or "exit" if it wants to cancel further
  *   processing of the command.
- *   
+ *
  *   We'll return true if the function exists, in which case normal
  *   processing should continue with any remaining command on the command
  *   line.  We'll return false if the function doesn't exist, in which
- *   case the remainder of the command should be aborted.  
- *   
+ *   case the remainder of the command should be aborted.
+ *
  *   'wrdcnt' is the number of words in the cmd[] array.  If wrdcnt is
  *   zero, we'll automatically count the array entries, with the end of
  *   the array indicated by a null pointer entry.
- *   
+ *
  *   'next_start' is a variable that we may fill in with the index of the
  *   next word in the command to be parsed.  If the user function
  *   indicates the number of words it consumes, we'll use 'next_start' to
@@ -1030,21 +1030,21 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 				/* consume the entire command */
 				*next_start = wrdcnt;
 
-				/* 
+				/*
 				 *   since the command has now been handled, forget about
-				 *   any unknown words 
+				 *   any unknown words
 				 */
 				ctx->voccxunknown = 0;
 				break;
 
 			case DAT_NUMBER:
-				/* 
+				/*
 				 *   The command was handled, and the function indicated
 				 *   the number of words it wants to skip.  Communicate
 				 *   this information back to the caller in *next_start.
 				 *   Since the routine returns the 1-based index of the
 				 *   next entry, we must subtract one to get the number of
-				 *   words actually consumed.  
+				 *   words actually consumed.
 				 */
 				*next_start = runpopnum(ctx->voccxrun);
 				if (*next_start > 0)
@@ -1056,9 +1056,9 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 				else if (*next_start > wrdcnt)
 					*next_start = wrdcnt;
 
-				/* 
+				/*
 				 *   forget about any unknown words in the list up to the
-				 *   next word 
+				 *   next word
 				 */
 				for (i = 0 ; i < *next_start ; ++i)
 				{
@@ -1086,19 +1086,19 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 			{
 			case ERR_RUNEXIT:
 			case ERR_RUNEXITOBJ:
-				/* 
+				/*
 				 *   Exit or exitobj was executed - skip to the fuses.
 				 *   Forget about any unknown words, since we've finished
 				 *   processing this command and we don't want to allow
-				 *   "oops" processing.  
+				 *   "oops" processing.
 				 */
 				ctx->voccxunknown = 0;
 				break;
 
 			case ERR_RUNABRT:
-				/* 
+				/*
 				 *   abort was executed - skip to the end of the command,
-				 *   but do not execute the fuses 
+				 *   but do not execute the fuses
 				 */
 				do_fuses = FALSE;
 
@@ -1106,7 +1106,7 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 				 *   Since we're aborting the command, ignore any
 				 *   remaining unknown words - we're skipping out of the
 				 *   command entirely, so we don't care that there were
-				 *   unknown words in the command.  
+				 *   unknown words in the command.
 				 */
 				ctx->voccxunknown = 0;
 				break;
@@ -1126,10 +1126,10 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 									  actor, MCMONINV, 0, 0,
 									  MCMONINV, MCMONINV) != 0)
 			{
-				/* 
+				/*
 				 *   aborted from fuses and daemons - return false to tell
 				 *   the caller not to execute anything left on the
-				 *   command line 
+				 *   command line
 				 */
 				return FALSE;
 			}
@@ -1139,7 +1139,7 @@ int try_unknown_verb(voccxdef *ctx, objnum actor,
 		}
 	}
 
-	/* 
+	/*
 	 *   If we made it here, it means we're showing the default message.
 	 *   If we have unknown words, suppress the message so that we show
 	 *   the unknown word error instead after returning.
@@ -1201,7 +1201,7 @@ static int voc_check_special(voccxdef *ctx, const char *wrd, int checktyp)
 		char   typ;
 		int    len;
 		int    wrdlen = strlen(wrd);
-		
+
 		for (p = ctx->voccxspp, endp = p + ctx->voccxspl ;
 			 p < endp ; )
 		{
@@ -1220,7 +1220,7 @@ static int voc_check_special(voccxdef *ctx, const char *wrd, int checktyp)
 	else
 	{
 		const vocspdef *x;
-		
+
 		for (x = vocsptab ; x->vocspin ; ++x)
 		{
 			/* if it matches in type and text, we have a match */
@@ -1265,7 +1265,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 				*outbuf++ = (vocisupper(*cmd) && lower) ? tolower(*cmd) : *cmd;
 				++cmd;
 			}
-			
+
 			/*
 			 *   Check for a special case:  abbreviations that end in a
 			 *   period.  For example, "Mr. Patrick J. Wayne."  We wish
@@ -1304,7 +1304,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 				uint   l2 = osrp2(p2);
 				char  *p3 = p2 + l2;                   /* get compound word */
 				uint   l3 = osrp2(p3);
-				
+
 				if (i > 1 && len == (l2 - 2)
 					&& !memcmp(w, p2 + 2, (size_t)len)
 					&& strlen((char *)wrd[i-2]) == (l1 - 2)
@@ -1325,7 +1325,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 			 *   Find any special keywords, and set to appropriate flag
 			 *   char.  Note that we no longer convert "of" in this
 			 *   fashion; "of" is now handled separately in order to
-			 *   facilitate its use as an ordinary preposition. 
+			 *   facilitate its use as an ordinary preposition.
 			 */
 			if (ctx->voccxspp)
 			{
@@ -1334,7 +1334,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 				char   typ;
 				//int    len;
 				uint    wrdlen = strlen((char *)wrd[i-1]);
-				
+
 				for (p = ctx->voccxspp, endp = p + ctx->voccxspl ;
 					 p < endp ; )
 				{
@@ -1400,7 +1400,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 				char  *lenptr;
 				char   quote = *cmd++;
 
-				/* 
+				/*
 				 *   remember that this is a quoted string (it doesn't
 				 *   matter whether they're actually using single or
 				 *   double quotes - in either case, we use '"' as the
@@ -1419,7 +1419,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 
 					/* get this character */
 					c = *cmd++;
-					
+
 					/* escape the character if necessary */
 					switch(c)
 					{
@@ -1431,7 +1431,7 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 					/* copy this character */
 					*outbuf++ = c;
 				}
-				
+
 				oswp2(lenptr, ((int)(outbuf - lenptr)));
 				if (*cmd == quote) cmd++;
 				break;
@@ -1443,14 +1443,14 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 			{
 				int hmode = tio_is_html_mode();
 
-				/* 
+				/*
 				 *   if we're in HTML mode, switch out momentarily, so that
 				 *   we show the character literally, even if it's a
-				 *   markup-significant character (such as '<' or '&') 
+				 *   markup-significant character (such as '<' or '&')
 				 */
 				if (hmode)
 					tioputs(ctx->voccxtio, "\\H-");
-				
+
 				/* show the message */
 				vocerr(ctx, VOCERR(1),
 					   "I don't understand the punctuation \"%c\".", *cmd);
@@ -1473,12 +1473,12 @@ int voctok(voccxdef *ctx, char *cmd, char *outbuf, char **wrd,
 /* ------------------------------------------------------------------------ */
 /*
  *   Look up a word's type.  If 'of_is_spec' is true, we'll treat OF as
- *   being of type special if it's not otherwise defined.  
+ *   being of type special if it's not otherwise defined.
  */
 static int voc_lookup_type(voccxdef *ctx, char *p, int len, int of_is_spec)
 {
 	int t;
-	
+
 	/* check for a special word */
 	if (vocisspec(p))
 	{
@@ -1498,7 +1498,7 @@ static int voc_lookup_type(voccxdef *ctx, char *p, int len, int of_is_spec)
 		 *   flag can only be set if the plural word matches exactly.
 		 *   Note that this pass only matches the first word in two-word
 		 *   verbs; the second word is considered later during the
-		 *   semantic analysis.  
+		 *   semantic analysis.
 		 */
 		for (t = 0, v = ctx->voccxhsh[vochsh((uchar *)p, len)] ; v != 0 ;
 			 v = v->vocnxt)
@@ -1549,13 +1549,13 @@ static int voc_lookup_type(voccxdef *ctx, char *p, int len, int of_is_spec)
  *   user to respond with the special OOPS command to correct the unknown
  *   word.  Returns a pointer to the start of the replacement text if the
  *   player entered a correction via OOPS, or a null pointer if the player
- *   simply entered a new command.  
+ *   simply entered a new command.
  */
 static char *voc_read_oops(voccxdef *ctx, char *oopsbuf, size_t oopsbuflen,
 						   const char *unknown_word)
 {
 	char *p;
-	
+
 	/* display the error */
 	vocerr(ctx, VOCERR(2), "I don't know the word \"%s\".", unknown_word);
 
@@ -1563,9 +1563,9 @@ static char *voc_read_oops(voccxdef *ctx, char *oopsbuf, size_t oopsbuflen,
 	if (vocread(ctx, MCMONINV, MCMONINV,
 				oopsbuf, (int)oopsbuflen, 1) == VOCREAD_REDO)
 	{
-		/* 
+		/*
 		 *   we've already decided it's not an OOPS input - return null to
-		 *   indicate to the caller that we have a new command 
+		 *   indicate to the caller that we have a new command
 		 */
 		return 0;
 	}
@@ -1577,9 +1577,9 @@ static char *voc_read_oops(voccxdef *ctx, char *oopsbuf, size_t oopsbuflen,
 	/* skip leading spaces */
 	for (p = oopsbuf ; vocisspace(*p) ; ++p) ;
 
-	/* 
+	/*
 	 *   See if they are saying "oops".  Allow "oops" or simply "o",
-	 *   followed by either a space or a comma.  
+	 *   followed by either a space or a comma.
 	 */
 	if ((strlen(p) > 5 && memcmp(p, "oops ", 5) == 0)
 		|| (strlen(p) > 5 && memcmp(p, "oops,", 5) == 0))
@@ -1595,9 +1595,9 @@ static char *voc_read_oops(voccxdef *ctx, char *oopsbuf, size_t oopsbuflen,
 	}
 	else
 	{
-		/* 
+		/*
 		 *   we didn't find any form of "OOPS" response - return null to
-		 *   indicate to the caller that the player entered a new command 
+		 *   indicate to the caller that the player entered a new command
 		 */
 		return 0;
 	}
@@ -1621,7 +1621,7 @@ int vocgtyp(voccxdef *ctx, char *cmd[], int types[], char *orgbuf)
 	char    *p;
 	int      len;
 	int      unknown_count = 0;
-	
+
 startover:
 	if (ctx->voccxflg & VOCCXFDBG)
 		tioputs(ctx->vocxtio, ". Checking words:\\n");
@@ -1634,11 +1634,11 @@ startover:
 
 		/* look it up */
 		t = voc_lookup_type(ctx, p, len, FALSE);
-		
+
 		/* see if the word was found */
 		if (t == 0 && !voc_check_special(ctx, p, VOCW_OF))
 		{
-			/* 
+			/*
 			 *   We didn't find the word.  For now, set its type to
 			 *   "unknown".
 			 */
@@ -1650,7 +1650,7 @@ startover:
 			 *   the parseUnknownDobj/Iobj mechanism, but it wasn't able
 			 *   to do so, thus we've come back here to use the normal
 			 *   "oops" processing instead.
-			 *   
+			 *
 			 *   Don't generate a message until we get to the first
 			 *   unknown word from the original list that we weren't able
 			 *   to resolve.  We may have been able to handle one or more
@@ -1658,15 +1658,15 @@ startover:
 			 *   parseNounPhrase or other means), so we don't want to
 			 *   generate a message for any words we ended up handling.
 			 *   The number we resolved is the last full unknown count
-			 *   minus the remaining unknown count.  
+			 *   minus the remaining unknown count.
 			 */
 			if (ctx->voccxunknown != 0
 				&& unknown_count >= ctx->voccxlastunk - ctx->voccxunknown)
 			{
 				char  oopsbuf[VOCBUFSIZ];
 				char *p1;
-				
-				/* 
+
+				/*
 				 *   we can try using the parseUnknownDobj/Iobj again
 				 *   after this, so clear the unknown word count for now
 				 */
@@ -1684,23 +1684,23 @@ startover:
 					int    wc;
 					char **w;
 					char  *outp;
-					
-					/* 
+
+					/*
 					 *   copy words from the original string, replacing
 					 *   the unknown word with what follows the "oops" in
-					 *   the new command 
+					 *   the new command
 					 */
 					for (outp = redobuf, i = 0, w = cmd ; *w != 0 ; ++i, ++w)
 					{
-						
+
 						/* see what we have */
 						if (i == cur)
 						{
-							/* 
+							/*
 							 *   We've reached the word to be replaced.
 							 *   Ignore the original token, and replace it
 							 *   with the word or words from the OOPS
-							 *   command 
+							 *   command
 							 */
 							for (q = p1, len = 0 ;
 								 *q != '\0' && *q != '.' && *q != ','
@@ -1715,7 +1715,7 @@ startover:
 							char qu;
 							int rem;
 
-							/* 
+							/*
 							 *   It's a string - add a quote mark, then
 							 *   copy the string as indicated by the
 							 *   length prefix, then add another quote
@@ -1723,7 +1723,7 @@ startover:
 							 *   length prefix following the quote mark,
 							 *   and get a pointer to the text of the
 							 *   string, which immediately follows the
-							 *   length prefix.  
+							 *   length prefix.
 							 */
 							len = osrp2(*w + 1) - 2;
 							strp = *w + 3;
@@ -1735,15 +1735,15 @@ startover:
 							 *   to delimit the string; otherwise, use
 							 *   double quotes.  Presume we'll use double
 							 *   quotes as the delimiter, then scan the
-							 *   string for embedded double quotes.  
+							 *   string for embedded double quotes.
 							 */
 							for (qu = '"', p2 = strp, rem = len ; rem != 0 ;
 								 --rem, ++p2)
 							{
-								/* 
+								/*
 								 *   if this is an embedded double quote,
 								 *   use single quotes to delimite the
-								 *   string 
+								 *   string
 								 */
 								if (*p2 == '"')
 								{
@@ -1767,10 +1767,10 @@ startover:
 						}
 						else
 						{
-							/* 
+							/*
 							 *   it's an ordinary token - copy the
 							 *   null-terminated string for the token from
-							 *   the original command list 
+							 *   the original command list
 							 */
 							len = strlen(*w);
 							memcpy(outp, *w, (size_t)len);
@@ -1780,10 +1780,10 @@ startover:
 						/* add a space between words */
 						*outp++ = ' ';
 					}
-					
+
 					/* terminate the new string */
 					*outp = '\0';
-					
+
 					/* try tokenizing the string */
 					*(cmd[0]) = '\0';
 					if ((wc = voctok(ctx, redobuf, cmd[0],
@@ -1796,28 +1796,28 @@ startover:
 				}
 				else
 				{
-					/* 
+					/*
 					 *   They didn't start the command with "oops", so
 					 *   this must be a brand new command.  Replace the
-					 *   original command with the new command.  
+					 *   original command with the new command.
 					 */
 					strcpy(orgbuf, oopsbuf);
 
-					/* 
+					/*
 					 *   forget we had an unknown word so that we're sure
-					 *   to start over with a new command 
+					 *   to start over with a new command
 					 */
 					ctx->voccxunknown = 0;
-					
-					/* 
+
+					/*
 					 *   set the "redo" flag to start over with the new
-					 *   command 
+					 *   command
 					 */
 					ctx->voccxredo = 1;
-					
-					/* 
+
+					/*
 					 *   return an error to indicate the current command
-					 *   has been aborted 
+					 *   has been aborted
 					 */
 					return 1;
 				}
@@ -1830,7 +1830,7 @@ startover:
 				 *   count the unknown word in the context when we return
 				 *   (do so only locally for now, since we may encounter
 				 *   more unknown words before we return, in which case we
-				 *   want to know that this is still the first pass).  
+				 *   want to know that this is still the first pass).
 				 */
 				++unknown_count;
 			}
@@ -1843,7 +1843,7 @@ startover:
 			size_t  i;
 			//char   *p;
 			int     cnt;
-			
+
 			(void)tioshow(ctx->voccxtio);
 			sprintf(buf, "... %s (", cmd[cur]);
 			p = buf + strlen(buf);
@@ -1864,14 +1864,14 @@ startover:
 			*p = '\0';
 			tioputs(ctx->voccxtio, buf);
 		}
-		
+
 		types[cur] = t;                         /* record type of this word */
 	}
 
 	/* if we found any unknown words, note this in our context */
 	ctx->voccxunknown = unknown_count;
 	ctx->voccxlastunk = unknown_count;
-	
+
 	/* successful acquisition of types */
 	return 0;
 }
@@ -1901,7 +1901,7 @@ static int vocisect(objnum *list1, objnum *list2)
 
 /*
  *   Intersect lists, including parallel flags lists.  The flags from the
- *   two lists for any matching object are OR'd together. 
+ *   two lists for any matching object are OR'd together.
  */
 static int vocisect_flags(objnum *list1, uint *flags1,
 						  objnum *list2, uint *flags2)
@@ -1958,10 +1958,10 @@ static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
 	 *   as either a noun/plural or an adjective, we will treat it as a
 	 *   noun/plural if it is the last word in the name or the last word
 	 *   before "of", otherwise as an adjective.
-	 *   
+	 *
 	 *   If the word is unknown, treat it as a noun or adjective - treat
 	 *   it as part of the current noun phrase.  One unknown word renders
-	 *   the whole noun phrase unknown.  
+	 *   the whole noun phrase unknown.
 	 */
 	try_plural = (typ & VOCT_PLURAL);
 
@@ -1980,25 +1980,25 @@ static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
 		/*
 		 *   This can be either an adjective or a plural/noun.  If this is
 		 *   the last word in the noun phrase, treat it as a noun/plural if
-		 *   possible.  Otherwise, treat it as an adjective.  
+		 *   possible.  Otherwise, treat it as an adjective.
 		 */
 		if (cur + 1 == last || cur == ofword - 1)
 		{
-			/* 
+			/*
 			 *   This is the last word in the entire phrase, or the last word
 			 *   before an 'of' (which makes it the last word of its
 			 *   subphrase).  Treat it as a noun if possible, otherwise as a
-			 *   plural 
+			 *   plural
 			 */
 			wrdtyp = ((typ & VOCT_NOUN) ? PRP_NOUN : PRP_PLURAL);
 
-			/* 
+			/*
 			 *   If this can be an adjective, too, make a note to come back
 			 *   and try it again as an adjective.  We prefer not to end a
 			 *   noun phrase with an adjective, but we allow it, since it's
 			 *   often convenient to abbreviate a noun phrase to just the
 			 *   adjectives (as in TAKE RED, where there's only one object
-			 *   nearby to which RED applies).  
+			 *   nearby to which RED applies).
 			 */
 			if ((typ & VOCT_ADJ) != 0)
 				try_endadj = TRUE;
@@ -2010,16 +2010,16 @@ static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
 			 *   This is the second-to-last word, and the last word is
 			 *   numeric.  In this case, try this word as BOTH a noun and an
 			 *   adjective.  Try it as an adjective first, but make a note to
-			 *   go back and try it again as a noun. 
+			 *   go back and try it again as a noun.
 			 */
 			wrdtyp = PRP_ADJ;
 			try_noun_before_num = TRUE;
 		}
 		else
 		{
-			/* 
+			/*
 			 *   This isn't the last word, so it can only be an adjective.
-			 *   Look at it only as an adjective.  
+			 *   Look at it only as an adjective.
 			 */
 			wrdtyp = PRP_ADJ;
 		}
@@ -2033,9 +2033,9 @@ static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
 		/* it's just an adjective */
 		wrdtyp = PRP_ADJ;
 
-		/* 
+		/*
 		 *   if this is the last word in the phrase, flag it as an ending
-		 *   adjective 
+		 *   adjective
 		 */
 		if (cur + 1 == last || cur == ofword - 1)
 			trying_endadj = TRUE;
@@ -2084,9 +2084,9 @@ add_words:
 		if (wrdtyp == PRP_ADJ && trying_endadj)
 			flags[cnt] |= VOCS_ENDADJ;
 
-		/* 
+		/*
 		 *   if this is not an exact match for the word, but is merely a
-		 *   long-enough leading substring, flag it as truncated 
+		 *   long-enough leading substring, flag it as truncated
 		 */
 		if (len < search_ctx.v->voclen)
 			flags[cnt] |= VOCS_TRUNC;
@@ -2094,9 +2094,9 @@ add_words:
 		/* count the additional word in the list */
 		++cnt;
 
-		/* 
+		/*
 		 *   if this object is already in the list with the same flags,
-		 *   don't add it again 
+		 *   don't add it again
 		 */
 		for (i = 0 ; i < cnt - 1 ; ++i)
 		{
@@ -2123,7 +2123,7 @@ add_words:
 
 	/*
 	 *   if we want to go back and try the word again as a noun before a
-	 *   number (as in "button 5"), do so now 
+	 *   number (as in "button 5"), do so now
 	 */
 	if (try_noun_before_num && wrdtyp == PRP_ADJ)
 	{
@@ -2139,7 +2139,7 @@ add_words:
 
 	/*
 	 *   if we're interpreting the word as a noun, and the word can be a
-	 *   plural, add in the plural interpretation as well 
+	 *   plural, add in the plural interpretation as well
 	 */
 	if (try_plural && wrdtyp != PRP_PLURAL)
 	{
@@ -2153,9 +2153,9 @@ add_words:
 		goto add_words;
 	}
 
-	/* 
+	/*
 	 *   if this was the last word in the phrase, and it could have been
-	 *   an adjective, try it again as an adjective 
+	 *   an adjective, try it again as an adjective
 	 */
 	if (try_endadj && wrdtyp != PRP_ADJ)
 	{
@@ -2176,7 +2176,7 @@ add_words:
 	 *   If we're interpreting the word as an adjective, and it's
 	 *   numeric, include objects with "#" in their adjective list --
 	 *   these objects allow arbitrary numbers as adjectives.  Don't do
-	 *   this if there's only the one word.  
+	 *   this if there's only the one word.
 	 */
 	if (vocisdigit(wrd[0]) && wrdtyp == PRP_ADJ && first + 1 != last)
 	{
@@ -2191,7 +2191,7 @@ add_words:
 
 /*
  *   Add the user-defined word for "of" to a buffer.  If no such word is
- *   defined by the user (with the specialWords construct), add "of".  
+ *   defined by the user (with the specialWords construct), add "of".
  */
 static void vocaddof(voccxdef *ctx, char *buf)
 {
@@ -2210,11 +2210,11 @@ static void vocaddof(voccxdef *ctx, char *buf)
 /*
  *   Call the parseNounPhrase user function, if defined, to attempt to
  *   parse a noun phrase.
- *   
+ *
  *   Returns VOC_PNP_ERROR if the hook function indicates that an error
  *   occurred; PNP_DEFAULT if the hook function told us to use the default
  *   list; or PNP_SUCCESS to indicate that the hook function provided a
- *   list to use.  
+ *   list to use.
  */
 static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 						int cur, int *next, int complain,
@@ -2267,7 +2267,7 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 	{
 		uchar *lstp;
 		uint lstsiz;
-		
+
 		/* pop the list */
 		lstp = runpoplst(rcx);
 
@@ -2282,11 +2282,11 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 			/* set the 'next' pointer, adjusting to 0-based indexing */
 			*next = osrp4(lstp+1) - 1;
 
-			/* 
+			/*
 			 *   If 'next' is out of range, force it into range.  We can't
 			 *   go backwards (so 'next' must always be at least 'cur'),
 			 *   and we can't go past the null element at the end of the
-			 *   list. 
+			 *   list.
 			 */
 			if (*next < cur)
 				*next = cur;
@@ -2308,7 +2308,7 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 			/* make sure we have room for another entry */
 			if (outcnt >= VOCMAXAMBIG - 1)
 				break;
-			
+
 			/* get the next list entry, and store it in the output array */
 			if (*lstp == DAT_NIL)
 			{
@@ -2338,7 +2338,7 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 			{
 				/* set the flags */
 				outp->vocolflg = (int)osrp4(lstp+1);
-				
+
 				/* skip the number */
 				lstadv(&lstp, &lstsiz);
 			}
@@ -2364,9 +2364,9 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 		/* set the output count */
 		*out_nouncount = outcnt;
 
-		/* 
+		/*
 		 *   set "no_match" appropriately -- set "no_match" true if we're
-		 *   returning an empty list and we parsed one or more words 
+		 *   returning an empty list and we parsed one or more words
 		 */
 		if (no_match != 0)
 			*no_match = (outcnt == 0 && *next > cur);
@@ -2378,7 +2378,7 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 		 *   these have now been dealt with.  If the return list contains
 		 *   any objects flagged as having unknown words, add the count of
 		 *   such objects back into the context, since we must still
-		 *   resolve these at disambiguation time. 
+		 *   resolve these at disambiguation time.
 		 */
 		for (i = cur ; i < *next ; ++i)
 		{
@@ -2398,9 +2398,9 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 	}
 	else
 	{
-		/* 
+		/*
 		 *   ignore any other return value - consider others equivalent to
-		 *   DEFAULT 
+		 *   DEFAULT
 		 */
 		rundisc(rcx);
 		return VOC_PNP_DEFAULT;
@@ -2409,13 +2409,13 @@ static int voc_pnp_hook(voccxdef *ctx, char *cmd[], int typelist[],
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Build an object name from the words in a command 
+ *   Build an object name from the words in a command
  */
 void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
 					   int firstwrd, int lastwrd)
 {
 	int i;
-	
+
 	/* run through the range of words, and add them to the buffer */
 	for (i = firstwrd, namebuf[0] = '\0' ; i < lastwrd ; ++i)
 	{
@@ -2423,7 +2423,7 @@ void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
 			vocaddof(ctx, namebuf);
 		else
 			strcat(namebuf, cmd[i]);
-		
+
 		if (cmd[i][strlen(cmd[i])-1] == '.' && i + 1 < lastwrd)
 			strcat(namebuf, "\\");
 
@@ -2433,13 +2433,13 @@ void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
 }
 
 /*
- *   Make an object name from a list entry 
+ *   Make an object name from a list entry
  */
 void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
 								 char *cmd[], const char *firstwrd, const char *lastwrd)
 {
 	int i, i1, i2;
-	
+
 	/* find the cmd indices */
 	for (i = i1 = i2 = 0 ; cmd[i] != 0 && *cmd[i] != 0 ; ++i)
 	{
@@ -2466,13 +2466,13 @@ void voc_make_obj_name_from_list(voccxdef *ctx, char *namebuf,
  *   Note that plurals are treated basically like nouns, except that we
  *   will flag them so that the disambiguator knows to include all objects
  *   that work with the plural.
- *   
+ *
  *   Note that we also allow the special constructs "all [of]
  *   <noun-phrase>" and "both [of] <noun-phrase>"; these are treated
  *   identically to normal plurals.
- *   
+ *
  *   If no_match is not null, we'll set it to true if we found valid
- *   syntax but no matching objects, false otherwise.  
+ *   syntax but no matching objects, false otherwise.
  */
 static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 				  int cur, int *next, int complain, vocoldef *nounlist,
@@ -2542,7 +2542,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 	{
 		/* can't use a quoted string as an actor */
 		if (chkact) { VOC_RETVAL(ctx, save_sp, 0); }
-		
+
 		if (ctx->voccxflg & VOCCXFDBG)
 			tioputs(ctx->vocxtio, "... found quoted string\\n");
 
@@ -2582,7 +2582,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 			{
 				const char *p;
 				int   ver;
-				
+
 				if (vocspec(cmd[cur], VOCW_ALL))
 				{
 					ver = VOCERR(4);
@@ -2633,7 +2633,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 		 *   if either we don't have an OF (ANY NOUN is okay even without
 		 *   a plural), or if we have OF and a plural.  (More simply put,
 		 *   accept the ALL or ANY if the last word is a plural, or if we
-		 *   have ANY but not OF).  
+		 *   have ANY but not OF).
 		 */
 		if (n > cur && ((typelist[n-1] & VOCT_PLURAL)
 						|| (has_any && !has_of)))
@@ -2645,7 +2645,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 			cur = nxt;
 		}
 	}
-	
+
 	if (vocspec(cmd[cur], VOCW_ALL) && !has_any)
 	{
 		/* can't use ALL as an actor */
@@ -2653,7 +2653,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 		{
 			VOC_RETVAL(ctx, save_sp, 0);
 		}
-		
+
 		if (ctx->voccxflg & VOCCXFDBG)
 			tioputs(ctx->vocxtio, "... found ALL\\n");
 
@@ -2677,17 +2677,17 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 			VOC_MAX_ARRAY(ctx, vocoldef, xlist);
 
 			cur++;
-			cnt = vocgobj(ctx, cmd, typelist, cur, next, complain, xlist, 1, 
+			cnt = vocgobj(ctx, cmd, typelist, cur, next, complain, xlist, 1,
 						  chkact, 0);
 			if (cnt < 0)
 			{
-				/* 
+				/*
 				 *   An error occurred - return it.  Note that, since
 				 *   we're returning from the entire function, we're
 				 *   popping the save_sp frame, NOT the inner_save_sp
 				 *   frame -- the inner frame is nested within the save_sp
 				 *   frame, and we want to pop the entire way out since
-				 *   we're exiting the entire function. 
+				 *   we're exiting the entire function.
 				 */
 				VOC_RETVAL(ctx, save_sp, cnt);
 			}
@@ -2706,7 +2706,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 		nounlist[outcnt].vocolflg = 0;
 		VOC_RETVAL(ctx, save_sp, outcnt);
 	}
-	
+
 	switch(*cmd[cur])
 	{
 	case VOCW_IT:
@@ -2767,7 +2767,7 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 			++cur;
 		else if (typelist[cur] & VOCT_UNKNOWN)
 		{
-			/* 
+			/*
 			 *   Remember that we found an unknown word, but include it in
 			 *   the noun phrase - this will render the entire noun phrase
 			 *   unknown, but we'll resolve that later.
@@ -2807,9 +2807,9 @@ static int vocg1o(voccxdef *ctx, char *cmd[], int typelist[],
 	}
 
 try_again:
-	/* 
+	/*
 	 *   build a printable string consisting of the words in the noun
-	 *   phrase, for displaying error messages 
+	 *   phrase, for displaying error messages
 	 */
 	voc_make_obj_name(ctx, namebuf, cmd, firstwrd, cur);
 
@@ -2820,7 +2820,7 @@ try_again:
 	 *   If we have any unknown words, we won't be able to match any
 	 *   objects for the noun phrase.  Return with one entry in the list,
 	 *   but use an invalid object and mark the object as containing
-	 *   unknown words.  
+	 *   unknown words.
 	 */
 	if (unknown_count > 0)
 	{
@@ -2829,7 +2829,7 @@ try_again:
 		 *   communicate the number of unknown words that we found to the
 		 *   disambiguator, which will later attempt to resolve the
 		 *   reference.  Each object we add is the same; they're here only
-		 *   for the word count.  
+		 *   for the word count.
 		 */
 		for ( ; unknown_count > 0 ; --unknown_count)
 		{
@@ -2851,7 +2851,7 @@ try_again:
 	/*
 	 *   Allow retrying with a count plus a plural if the first word is a
 	 *   number, and we have something plural in the list.  Only treat "1"
-	 *   this way if more words follow in the noun phrase.  
+	 *   this way if more words follow in the noun phrase.
 	 */
 	retry_with_count = ((vocisdigit(*cmd[firstwrd]) && found_plural)
 						|| (vocisdigit(*cmd[firstwrd])
@@ -2889,10 +2889,10 @@ try_again:
 		}
 		else
 		{
-			/* 
+			/*
 			 *   display a message if we didn't already (if vocgol
 			 *   returned less than zero, it already displayed its own
-			 *   error message) 
+			 *   error message)
 			 */
 			if (l1 == 0)
 				vocerr(ctx, VOCERR(9), "I don't see any %s here.", namebuf);
@@ -2906,7 +2906,7 @@ retry_exclude_first:
 	for (i = firstwrd + 1 ; i < cur ; ++i)
 	{
 		int l2;
-		
+
 		if (voc_check_special(ctx, cmd[i], VOCW_OF)
 			|| (typelist[i] & VOCT_ARTICLE))
 			continue;
@@ -2927,7 +2927,7 @@ retry_exclude_first:
 		 *   list didn't have anything in it, it must mean that the word
 		 *   list started with a number, in which case we're trying to
 		 *   interpret this as a count plus a plural.  So, don't intersect
-		 *   the list if there was nothing in the first list. 
+		 *   the list if there was nothing in the first list.
 		 */
 		if (l1 == 0)
 		{
@@ -2935,7 +2935,7 @@ retry_exclude_first:
 			l1 = l2;
 			memcpy(list1, list2, (size_t)((l1+1) * sizeof(list1[0])));
 			memcpy(flags1, flags2, (size_t)(l1 * sizeof(flags1[0])));
-		}       
+		}
 		else
 		{
 			/* intersect the two lists */
@@ -2944,7 +2944,7 @@ retry_exclude_first:
 
 		/*
 		 *   If there's nothing in the list, it means that there's no
-		 *   object that defines all of these words.  
+		 *   object that defines all of these words.
 		 */
 		if (l1 == 0)
 		{
@@ -2963,9 +2963,9 @@ retry_exclude_first:
 					tioputs(ctx->vocxtio,
 							"... dropping the part after OF and retrying\\n");
 
-				/* 
+				/*
 				 *   drop the part from 'of' on - scan only from firstwrd
-				 *   to the word before 'of' 
+				 *   to the word before 'of'
 				 */
 				hypothetical_last = cur;
 				trim_flags |= VOCS_TRIMPREP;
@@ -2980,7 +2980,7 @@ retry_exclude_first:
 
 			/*
 			 *   Try again with the count + plural interpretation, if
-			 *   possible 
+			 *   possible
 			 */
 			if (retry_with_count)
 			{
@@ -2999,7 +2999,7 @@ retry_exclude_first:
 			/*
 			 *   If one of the words will work as a preposition, and we
 			 *   took it as an adjective, go back and try the word again
-			 *   as a preposition.  
+			 *   as a preposition.
 			 */
 			for (i = cur - 1; i > firstwrd ; --i)
 			{
@@ -3019,9 +3019,9 @@ retry_exclude_first:
 			/* if just checking actor, don't display an error */
 			if (chkact) { VOC_RETVAL(ctx, save_sp, 0); }
 
-			/* 
+			/*
 			 *   tell the player about it unless supressing complaints,
-			 *   and return an error 
+			 *   and return an error
 			 */
 			if (complain)
 				vocerr(ctx, VOCERR(9), "I don't see any %s here.", namebuf);
@@ -3097,9 +3097,9 @@ retry_exclude_first:
  *   we should allow multiple lists).  We use vocg1o() to read noun lists
  *   one at a time, and keep going (if "multi" is true) as long as there
  *   are more "and <noun-phrase>" clauses.
- *   
+ *
  *   If no_match is not null, we'll set it to true if the syntax was okay
- *   but we didn't find any match for the list of words, false otherwise.  
+ *   but we didn't find any match for the list of words, false otherwise.
  */
 int vocgobj(voccxdef *ctx, char *cmd[], int typelist[],
 			int cur, int *next, int complain, vocoldef *nounlist,
@@ -3151,10 +3151,10 @@ int vocgobj(voccxdef *ctx, char *cmd[], int typelist[],
 			break;
 		}
 
-		/* 
+		/*
 		 *   if the caller only wanted a single object (or is getting an
 		 *   actor, in which case they implicitly want only a single
-		 *   object), stop looking for additional noun phrases 
+		 *   object), stop looking for additional noun phrases
 		 */
 		if (!multi || chkact)
 			break;
@@ -3162,9 +3162,9 @@ int vocgobj(voccxdef *ctx, char *cmd[], int typelist[],
 		/* skip past the previous noun phrase */
 		cur = *next;
 
-		/* 
+		/*
 		 *   if we're looking at a noun phrase separator ("and" or a
-		 *   comma), get the next noun phrase; otherwise, we're done 
+		 *   comma), get the next noun phrase; otherwise, we're done
 		 */
 		if (cur != -1 && cmd[cur] != 0 && vocspec(cmd[cur], VOCW_AND))
 		{
@@ -3190,7 +3190,7 @@ int vocgobj(voccxdef *ctx, char *cmd[], int typelist[],
 /* ------------------------------------------------------------------------ */
 /*
  *   TADS program code interface - tokenize a string.  Returns a list of
- *   strings, with each string giving a token in the command. 
+ *   strings, with each string giving a token in the command.
  */
 void voc_parse_tok(voccxdef *ctx)
 {
@@ -3213,12 +3213,12 @@ void voc_parse_tok(voccxdef *ctx)
 	len = osrp2(p) - 2;
 	p += 2;
 
-	/* 
+	/*
 	 *   Allocate space for the original string, and space for the token
 	 *   pointers and the tokenized string buffer.  We could potentially
 	 *   have one token per character in the original string, and we could
 	 *   potentially need one extra null terminator for each character in
-	 *   the original string; allocate accordingly.  
+	 *   the original string; allocate accordingly.
 	 */
 	VOC_STK_ARRAY(ctx, char,   inbuf,  len + 1);
 	VOC_STK_ARRAY(ctx, char,   outbuf, len*2);
@@ -3252,7 +3252,7 @@ void voc_parse_tok(voccxdef *ctx)
  *   TADS program code interface - get the list of types for a list words.
  *   The words are simply strings of the type returned from the tokenizer.
  *   The return value is a list of types, with each entry in the return
- *   list giving the types of the corresponding entry in the word list. 
+ *   list giving the types of the corresponding entry in the word list.
  */
 void voc_parse_types(voccxdef *ctx)
 {
@@ -3332,7 +3332,7 @@ void voc_parse_types(voccxdef *ctx)
  *   parser, and returns a list of matching objects.  The object list is
  *   not disambiguated, but merely reflects all matching objects.  The
  *   entire standard parsing algorithm applies, including parseNounPhrase
- *   invocation if appropriate.  
+ *   invocation if appropriate.
  */
 void voc_parse_np(voccxdef *ctx)
 {
@@ -3365,10 +3365,10 @@ void voc_parse_np(voccxdef *ctx)
 	voc_enter(ctx, &save_sp);
 	VOC_MAX_ARRAY(ctx, vocoldef, objlist);
 
-	/* 
+	/*
 	 *   Save the original context unknown values, since we don't want to
 	 *   affect the context information in this game-initiated call, then
-	 *   clear the unknown word count for the duration of the call.  
+	 *   clear the unknown word count for the duration of the call.
 	 */
 	old_unknown = ctx->voccxunknown;
 	old_lastunk = ctx->voccxlastunk;
@@ -3400,9 +3400,9 @@ void voc_parse_np(voccxdef *ctx)
 		/* count the word */
 		++wordcnt;
 
-		/* 
+		/*
 		 *   count the space needed for the word - count the bytes of the
-		 *   string plus a null terminator 
+		 *   string plus a null terminator
 		 */
 		if (*lstp == DAT_SSTRING)
 			wordcharsiz += osrp2(lstp+1) + 1;
@@ -3421,7 +3421,7 @@ void voc_parse_np(voccxdef *ctx)
 		if (*lstp == DAT_SSTRING)
 		{
 			uint len;
-			
+
 			/* add this entry to the word array */
 			wordarr[i] = p;
 
@@ -3472,17 +3472,17 @@ void voc_parse_np(voccxdef *ctx)
 	}
 	else if (cnt == 0)
 	{
-		/* 
+		/*
 		 *   No objects found.  Return a list consisting only of the next
 		 *   index.  If the next index is equal to the starting index,
 		 *   this will tell the caller that no noun phrase is
 		 *   syntactically present; otherwise, it will tell the caller
 		 *   that a noun phrase is present but there are no matching
 		 *   objects.
-		 *   
+		 *
 		 *   Note that we must increment the returned element index to
 		 *   conform with the 1-based index values that the game function
-		 *   uses.  
+		 *   uses.
 		 */
 		++next;
 		voc_push_numlist(ctx, (uint *)&next, 1);
@@ -3499,25 +3499,25 @@ void voc_parse_np(voccxdef *ctx)
 		 *   last word of its noun phrase, and then the objects.  For each
 		 *   object, there is a pair of entries: the object itself, and
 		 *   the flags for the object.
-		 *   
+		 *
 		 *   First, figure out how much space we need by scanning the
-		 *   return list.  
+		 *   return list.
 		 */
 		for (lstsiz = 0, i = 0 ; i < cnt ; )
 		{
 			int j;
 
-			/* 
+			/*
 			 *   count the entries in this sublist by looking for the next
-			 *   entry whose starting word is different 
+			 *   entry whose starting word is different
 			 */
 			for (j = i ;
 				 j < cnt && objlist[j].vocolfst == objlist[i].vocolfst ;
 				 ++j)
 			{
-				/* 
+				/*
 				 *   for this entry, we need space for the object (1 + 2
-				 *   for an object, or just 1 for nil) and flags (1 + 4) 
+				 *   for an object, or just 1 for nil) and flags (1 + 4)
 				 */
 				if (objlist[j].vocolobj == MCMONINV)
 					lstsiz += 1;
@@ -3526,12 +3526,12 @@ void voc_parse_np(voccxdef *ctx)
 				lstsiz += 5;
 			}
 
-			/* 
+			/*
 			 *   For this sublist, we need space for the first index (type
 			 *   prefix + number = 1 + 4 = 5) and the last index (5).
 			 *   We've already counted space for the objects in the list.
 			 *   Finally, we need space for the list type and length
-			 *   prefixes (1 + 2) for the sublist itself.  
+			 *   prefixes (1 + 2) for the sublist itself.
 			 */
 			lstsiz += (5 + 5) + 3;
 
@@ -3539,7 +3539,7 @@ void voc_parse_np(voccxdef *ctx)
 			i = j;
 		}
 
-		/* 
+		/*
 		 *   finally, we need space for the first element of the list,
 		 *   which is the index of the next word to be parsed (1+4)
 		 */
@@ -3548,9 +3548,9 @@ void voc_parse_np(voccxdef *ctx)
 		/* allocate space for the list */
 		lstp = voc_push_list_siz(ctx, lstsiz);
 
-		/* 
+		/*
 		 *   store the first element - the index of the next word to parse
-		 *   (adjusting to 1-based indexing) 
+		 *   (adjusting to 1-based indexing)
 		 */
 		*lstp++ = DAT_NUMBER;
 		oswp4s(lstp, next + 1);
@@ -3567,9 +3567,9 @@ void voc_parse_np(voccxdef *ctx)
 			/* store the list type prefix */
 			*lstp++ = DAT_LIST;
 
-			/* 
+			/*
 			 *   remember where the length prefix is, then skip it - we'll
-			 *   come back and fill it in when we're done with the sublist 
+			 *   come back and fill it in when we're done with the sublist
 			 */
 			sublstp = lstp;
 			lstp += 2;
@@ -3587,10 +3587,10 @@ void voc_parse_np(voccxdef *ctx)
 					/* remember the index */
 					lastidx = j;
 
-					/* 
+					/*
 					 *   we can stop looking now, since the words are
 					 *   always in order (so the first index will never be
-					 *   after the last index) 
+					 *   after the last index)
 					 */
 					break;
 				}
@@ -3605,7 +3605,7 @@ void voc_parse_np(voccxdef *ctx)
 			lstp += 4;
 
 			/* add the objects */
-			for (j = i ; 
+			for (j = i ;
 				 j < cnt && objlist[j].vocolfst == objlist[i].vocolfst ;
 				 ++j)
 			{
@@ -3645,7 +3645,7 @@ void voc_parse_np(voccxdef *ctx)
 /* ------------------------------------------------------------------------ */
 /*
  *   TADS program code interface - given a list of words and a list of
- *   their types, produce a list of objects that match all of the words.  
+ *   their types, produce a list of objects that match all of the words.
  */
 void voc_parse_dict_lookup(voccxdef *ctx)
 {
@@ -3664,7 +3664,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 	voc_enter(ctx, &save_sp);
 	VOC_MAX_ARRAY(ctx, objnum, list1);
 	VOC_MAX_ARRAY(ctx, objnum, list2);
-	
+
 	/* get the word list, and read and skip its size prefix */
 	wrdp = runpoplst(rcx);
 	wrdsiz = osrp2(wrdp) - 2;
@@ -3691,7 +3691,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 		char *p;
 		uint len;
 		vocseadef  search_ctx;
-		
+
 		/* if this entry is a string, consider it */
 		if (*wrdp == DAT_SSTRING)
 		{
@@ -3721,9 +3721,9 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 			/* presume we won't find a valid type property */
 			type_prop = PRP_INVALID;
 
-			/* 
+			/*
 			 *   get this type entry, if there's another entry in the
-			 *   list, and it's of the appropriate type 
+			 *   list, and it's of the appropriate type
 			 */
 			if (typsiz > 0 && *typp == DAT_NUMBER)
 			{
@@ -3732,7 +3732,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 				 *   consider only one meaning for each word, and we'll
 				 *   arbitrarily pick one if the type code has more than
 				 *   one type, because we expect the caller to provide
-				 *   exactly one type per word.  
+				 *   exactly one type per word.
 				 */
 				int i;
 				struct typemap_t
@@ -3778,7 +3778,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 				 v = vocfnw(ctx, &search_ctx))
 			{
 				int i;
-				
+
 				/* make sure we have room in our list */
 				if (cnt2 >= VOCMAXAMBIG - 1)
 					break;
@@ -3802,9 +3802,9 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 			/* terminate the list */
 			list2[cnt2] = MCMONINV;
 
-			/* 
+			/*
 			 *   if there's nothing in the first list, simply copy this
-			 *   into the first list; otherwise, intersect the two lists 
+			 *   into the first list; otherwise, intersect the two lists
 			 */
 			if (cnt1 == 0)
 			{
@@ -3818,15 +3818,15 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 				cnt1 = vocisect(list1, list2);
 			}
 
-			/* 
+			/*
 			 *   if there's nothing in the result list now, there's no
 			 *   need to look any further, because further intersection
-			 *   will yield nothing 
+			 *   will yield nothing
 			 */
 			if (cnt1 == 0)
 				break;
 		}
-		
+
 		/* advance the word list */
 		lstadv(&wrdp, &wrdsiz);
 
@@ -3846,7 +3846,7 @@ void voc_parse_dict_lookup(voccxdef *ctx)
 /*
  *   TADS program code interface - disambiguate a noun list.  We take the
  *   kind of complex object list returned by voc_parse_np(), and produce a
- *   fully-resolved list of objects.  
+ *   fully-resolved list of objects.
  */
 void voc_parse_disambig(voccxdef *ctx)
 {
@@ -3891,9 +3891,9 @@ void voc_parse_disambig(voccxdef *ctx)
 	prep = runpopobjnil(rcx);
 	otherobj = runpopobjnil(rcx);
 
-	/* 
+	/*
 	 *   get the usage parameter, and use it to select the appropriate
-	 *   defprop and accprop 
+	 *   defprop and accprop
 	 */
 	switch(runpopnum(rcx))
 	{
@@ -3913,7 +3913,7 @@ void voc_parse_disambig(voccxdef *ctx)
 		accprop = PRP_VALIDACTOR;
 		break;
 	}
-	
+
 	/* get the verprop argument */
 	verprop = runpopprp(rcx);
 
@@ -3950,7 +3950,7 @@ void voc_parse_disambig(voccxdef *ctx)
 		if (*lstp == DAT_SSTRING)
 		{
 			uint len;
-			
+
 			/* store a pointer to the word in the command buffer */
 			cmd[i++] = p;
 
@@ -3972,14 +3972,14 @@ void voc_parse_disambig(voccxdef *ctx)
 	 *   returned by voc_parse_np(), but the leading index number is
 	 *   optional.  We don't need the leading index for anything, so if
 	 *   it's there, simply skip it so that we can start with the first
-	 *   sublist.  
+	 *   sublist.
 	 */
 	if (objsiz > 0 && *objp == DAT_NUMBER)
 		lstadv(&objp, &objsiz);
 
 	/*
 	 *   Count the objects in the object list, so that we can figure out
-	 *   how much we need to allocate for the input object list.  
+	 *   how much we need to allocate for the input object list.
 	 */
 	for (lstp = objp, lstsiz = objsiz, objcnt = 0 ; lstsiz != 0 ;
 		 lstadv(&lstp, &lstsiz))
@@ -4034,9 +4034,9 @@ void voc_parse_disambig(voccxdef *ctx)
 			firstwrd = 0;
 			lastwrd = 0;
 
-			/* 
+			/*
 			 *   the first two elements of the list are the token indices
-			 *   of the first and last words of this object's noun phrase 
+			 *   of the first and last words of this object's noun phrase
 			 */
 			if (subsiz > 0 && *subp == DAT_NUMBER)
 			{
@@ -4121,9 +4121,9 @@ void voc_parse_disambig(voccxdef *ctx)
 	inlist[i].vocolobj = MCMONINV;
 	inlist[i].vocolflg = 0;
 
-	/* 
+	/*
 	 *   make a copy of our context, so the disambiguation can't make any
-	 *   global changes 
+	 *   global changes
 	 */
 	memcpy(&ctx_copy, ctx, sizeof(ctx_copy));
 
@@ -4131,7 +4131,7 @@ void voc_parse_disambig(voccxdef *ctx)
 	 *   Count the unknown words and set the count in the context.  This
 	 *   will allow us to determine after we call the resolver whether the
 	 *   resolution process cleared up the unknown words (via
-	 *   parseUnknownDobj/Iobj). 
+	 *   parseUnknownDobj/Iobj).
 	 */
 	ctx_copy.voccxunknown = ctx_copy.voccxlastunk = unknown_count;
 
@@ -4147,7 +4147,7 @@ void voc_parse_disambig(voccxdef *ctx)
 	 *   chance to use "oops" to correct the problem.  If we're in silent
 	 *   mode, don't display an error and don't allow interactive
 	 *   correction via "oops."
-	 *   
+	 *
 	 *   It is possible that the unknown word is not in the input list,
 	 *   but in the user's response to an interactive disambiguation
 	 *   query.  This is why we must check to see if the unknown word is
@@ -4159,23 +4159,23 @@ void voc_parse_disambig(voccxdef *ctx)
 		int unk_idx = 0;
 		char *rpl_text;
 
-		/* 
+		/*
 		 *   forget we have unknown words, since we're going to handle
 		 *   them now
 		 */
 		ctx_copy.voccxunknown = 0;
 
-		/* 
+		/*
 		 *   find the unknown word - look up each word until we find one
-		 *   that's not in the dictionary 
+		 *   that's not in the dictionary
 		 */
 		for (i = 0, unk = 0 ; cmd[i] != 0 ; ++i)
 		{
 			int t;
-			
-			/* 
+
+			/*
 			 *   get this word's type - if the word has no type, it's an
-			 *   unknown word 
+			 *   unknown word
 			 */
 			t = voc_lookup_type(ctx, cmd[i], strlen(cmd[i]), TRUE);
 			if (t == 0)
@@ -4187,9 +4187,9 @@ void voc_parse_disambig(voccxdef *ctx)
 			}
 		}
 
-		/* 
+		/*
 		 *   if we didn't find any unknown words, assume the first word
-		 *   was unknown 
+		 *   was unknown
 		 */
 		if (unk == 0)
 		{
@@ -4200,15 +4200,15 @@ void voc_parse_disambig(voccxdef *ctx)
 		/* display an error, and read a new command */
 		rpl_text = voc_read_oops(&ctx_copy, oopsbuf, VOCBUFSIZ, unk);
 
-		/* 
+		/*
 		 *   if they didn't respond with "oops," treat the response as a
-		 *   brand new command to replace the current command 
+		 *   brand new command to replace the current command
 		 */
 		if (rpl_text == 0)
 		{
-			/* 
+			/*
 			 *   it's a replacement command - set the redo flag to
-			 *   indicate that we should process the replacement command 
+			 *   indicate that we should process the replacement command
 			 */
 			ctx_copy.voccxredo = TRUE;
 
@@ -4220,16 +4220,16 @@ void voc_parse_disambig(voccxdef *ctx)
 			/* indicate the correction via the result code */
 			err = VOCERR(45);
 
-			/* 
+			/*
 			 *   Build the new command string.  The new command string
 			 *   consists of all of the tokens up to the unknown token,
 			 *   then the replacement text, then all of the remaining
-			 *   tokens. 
+			 *   tokens.
 			 */
 			for (p = cmdbuf, i = 0 ; cmd[i] != 0 ; ++i)
 			{
 				size_t needed;
-				
+
 				/* figure the size needs for this token */
 				if (i == unk_idx)
 				{
@@ -4241,10 +4241,10 @@ void voc_parse_disambig(voccxdef *ctx)
 					/* we need to insert this token string */
 					needed = strlen(cmd[i]);
 				}
-				
-				/* 
+
+				/*
 				 *   if more tokens follow, we need a space after the
-				 *   replacement text to separate it from what follows 
+				 *   replacement text to separate it from what follows
 				 */
 				if (cmd[i+1] != 0 && needed != 0)
 					needed += 1;
@@ -4256,7 +4256,7 @@ void voc_parse_disambig(voccxdef *ctx)
 				if (needed > (size_t)(VOCBUFSIZ - (p - cmdbuf)))
 					break;
 
-				/* 
+				/*
 				 *   if we've reached the unknown token, insert the
 				 *   replacement text; otherwise, insert this token
 				 */
@@ -4269,15 +4269,15 @@ void voc_parse_disambig(voccxdef *ctx)
 				{
 					char *p1;
 					char qu;
-					
-					/* 
+
+					/*
 					 *   Scan the quoted string for embedded double quotes
 					 *   - if it has any, use single quotes as the
 					 *   delimiter; otherwise, use double quotes as the
 					 *   delimiter.  Note that we ignore the first and
 					 *   last characters in the string, since these are
 					 *   always the delimiting double quotes in the
-					 *   original token text.  
+					 *   original token text.
 					 */
 					for (qu = '"', p1 = cmd[i] + 1 ;
 						 *p1 != '\0' && *(p1 + 1) != '\0' ; ++p1)
@@ -4296,9 +4296,9 @@ void voc_parse_disambig(voccxdef *ctx)
 					/* add the open quote */
 					*p++ = qu;
 
-					/* 
+					/*
 					 *   add the text, leaving out the first and last
-					 *   characters (which are the original quotes) 
+					 *   characters (which are the original quotes)
 					 */
 					if (strlen(cmd[i]) > 2)
 					{
@@ -4331,9 +4331,9 @@ void voc_parse_disambig(voccxdef *ctx)
 		}
 	}
 
-	/* 
+	/*
 	 *   Count the objects.  An object list is returned only on success or
-	 *   VOCERR(44), which indicates that the list is still ambiguous. 
+	 *   VOCERR(44), which indicates that the list is still ambiguous.
 	 */
 	if (err == 0 || err == VOCERR(44))
 	{
@@ -4349,23 +4349,23 @@ void voc_parse_disambig(voccxdef *ctx)
 
 	/* figure out how much space we need for the objects */
 	lstsiz = (1+2) * objcnt;
-		
+
 	/* add space for the first element, which contains the status code */
 	lstsiz += (1 + 4);
 
 	/* if there's a new command string, we'll store it, so make room */
 	if (ctx_copy.voccxredo || err == VOCERR(45))
 	{
-		/* 
+		/*
 		 *   add space for the type prefix (1), length prefix (2), and the
-		 *   string bytes (with no null terminator, of course) 
+		 *   string bytes (with no null terminator, of course)
 		 */
 		lstsiz += (1 + 2 + strlen(cmdbuf));
 
-		/* 
+		/*
 		 *   if we're retrying due to the redo flag, always return the
 		 *   RETRY error code, regardless of what caused us to retry the
-		 *   command 
+		 *   command
 		 */
 		if (ctx_copy.voccxredo)
 			err = VOCERR(43);
@@ -4394,7 +4394,7 @@ void voc_parse_disambig(voccxdef *ctx)
 	else if (ctx_copy.voccxredo || err == VOCERR(45))
 	{
 		uint len;
-		
+
 		/* there's a new command - return it as the second element */
 		*lstp++ = DAT_SSTRING;
 
@@ -4415,7 +4415,7 @@ void voc_parse_disambig(voccxdef *ctx)
 /* ------------------------------------------------------------------------ */
 /*
  *   TADS program code interface - replace the current command line with a
- *   new string, aborting the current command. 
+ *   new string, aborting the current command.
  */
 void voc_parse_replace_cmd(voccxdef *ctx)
 {
@@ -4469,7 +4469,7 @@ static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
 	voc_enter(ctx, &save_sp);
 	VOC_MAX_ARRAY(ctx, vocoldef, nounlist);
 	VOC_MAX_ARRAY(ctx, vocoldef, actlist);
-	
+
 	*next = cur;                              /* assume no error will occur */
 	cnt = vocchknoun(ctx, cmd, typelist, cur, next, nounlist, TRUE);
 	if (cnt > 0 && *next != -1 && cmd[*next] && vocspec(cmd[*next], VOCW_AND))
@@ -4478,18 +4478,18 @@ static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
 
 		/* make a note as to whether the list contains an unknown word */
 		have_unknown = ((nounlist[0].vocolflg & VOCS_UNKNOWN) != 0);
-		
+
 		/*
 		 *   If validActor is defined for any of the actors, use it;
 		 *   otherwise, for compatibility with past versions, use the
 		 *   takeVerb disambiguation mechanism.  If we have a pronoun, we
 		 *   can't decide yet how to do this, so presume that we'll use
 		 *   the new mechanism and switch later if necessary.
-		 *   
+		 *
 		 *   If we have don't have a valid object (which will be the case
 		 *   for a pronoun), we can't decide until we get into the
 		 *   disambiguation process, so presume we'll use validActor for
-		 *   now.  
+		 *   now.
 		 */
 		verprop = PRP_VERACTOR;
 		if (nounlist[0].vocolobj == MCMONINV
@@ -4498,16 +4498,16 @@ static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
 			valprop = PRP_VALIDACTOR;
 		else
 			valprop = PRP_VALIDDO;
-		
+
 		/* disambiguate it using the selected properties */
 		if (vocdisambig(ctx, actlist, nounlist, PRP_DODEFAULT, valprop,
 						verprop, cmd, MCMONINV, ctx->voccxme,
 						ctx->voccxvtk, MCMONINV, cmdbuf, FALSE))
 		{
-			/* 
+			/*
 			 *   if we have an unknown word in the list, assume for the
 			 *   moment that this isn't an actor phrase after all, but a
-			 *   verb 
+			 *   verb
 			 */
 			if (have_unknown)
 			{
@@ -4550,7 +4550,7 @@ static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
 int voclistlen(vocoldef *lst)
 {
 	int i;
-	
+
 	for (i = 0 ; lst->vocolobj != MCMONINV || lst->vocolflg != 0 ;
 		 ++lst, ++i) ;
 	return(i);
@@ -4572,9 +4572,9 @@ int voclistlen(vocoldef *lst)
 int vocchkaccess(voccxdef *ctx, objnum obj, prpnum verprop,
 				 int seqno, objnum cmdActor, objnum cmdVerb)
 {
-	/* 
+	/*
 	 *   special case: the special "string" and "number" objects are
-	 *   always accessible 
+	 *   always accessible
 	 */
 	if (obj == ctx->voccxstr || obj == ctx->voccxnum)
 		return TRUE;
@@ -4583,7 +4583,7 @@ int vocchkaccess(voccxdef *ctx, objnum obj, prpnum verprop,
 	 *   If the access method is validActor, make sure the object in fact
 	 *   has a validActor method defined; if it doesn't, we must be
 	 *   running a game from before validActor's invention, so use the old
-	 *   ValidXo mechanism instead. 
+	 *   ValidXo mechanism instead.
 	 */
 	if (verprop == PRP_VALIDACTOR)
 	{
@@ -4647,7 +4647,7 @@ static void vocout(vocoldef *outobj, objnum obj, int flg,
  *   Generate an appropriate error message saying that the objects in the
  *   command are visible, but can't be used with the command for some
  *   reason.  Use the cantReach method of the verb (the new way), or if
- *   there is no cantReach in the verb, of each object in the list. 
+ *   there is no cantReach in the verb, of each object in the list.
  */
 void vocnoreach(voccxdef *ctx, objnum *list1, int cnt,
 				objnum actor, objnum verb, objnum prep, prpnum defprop,
@@ -4681,10 +4681,10 @@ void vocnoreach(voccxdef *ctx, objnum *list1, int cnt,
 		/* use the old way - call obj.cantReach() for each object */
 		for (i = 0 ; i < cnt ; ++i)
 		{
-			/* 
+			/*
 			 *   display this object's name if there's more than one, so
 			 *   that the player can tell to which object this message
-			 *   applies 
+			 *   applies
 			 */
 			voc_multi_prefix(ctx, list1[i], show_multi_prefix, multi_flags,
 							 multi_base_index + i, multi_total_count);
@@ -4700,7 +4700,7 @@ void vocnoreach(voccxdef *ctx, objnum *list1, int cnt,
 
 /*
  *   Get the specialWords string for a given special word entry.  Returns
- *   the first string if multiple strings are defined for the entry.  
+ *   the first string if multiple strings are defined for the entry.
  */
 static void voc_get_spec_str(voccxdef *ctx, char vocw_id,
 							 char *buf, size_t buflen,
@@ -4727,9 +4727,9 @@ static void voc_get_spec_str(voccxdef *ctx, char vocw_id,
 				/* note that we found it */
 				found = TRUE;
 
-				/* 
+				/*
 				 *   get the length, and limit it to the buffer size,
-				 *   leaving room for null termination 
+				 *   leaving room for null termination
 				 */
 				len = *p++;
 				if (len + 1 > buflen)
@@ -4743,9 +4743,9 @@ static void voc_get_spec_str(voccxdef *ctx, char vocw_id,
 				break;
 			}
 
-			/* 
+			/*
 			 *   move on to the next one - skip the length prefix plus the
-			 *   length 
+			 *   length
 			 */
 			p += *p + 1;
 		}
@@ -4772,7 +4772,7 @@ static int vocsetit(voccxdef *ctx, objnum obj, int accprop,
 
 		/* get the display name for this specialWords entry */
 		voc_get_spec_str(ctx, vocw_id, nambuf, sizeof(nambuf), default_name);
-		
+
 		/* show the error if appropriate */
 		if (!silent)
 		{
@@ -4799,7 +4799,7 @@ static int vocsetit(voccxdef *ctx, objnum obj, int accprop,
  *   Get a new numbered object, given a number.  This is used for objects
  *   that define '#' as one of their adjectives; we call the object,
  *   asking it to create an object with a particular number.  The object
- *   can return nil, in which case we'll reject the command.  
+ *   can return nil, in which case we'll reject the command.
  */
 static objnum voc_new_num_obj(voccxdef *ctx, objnum objn,
 							  objnum actor, objnum verb,
@@ -4849,7 +4849,7 @@ static int has_gen_num_adj(voccxdef *ctx, objnum objn)
 /* ------------------------------------------------------------------------ */
 /*
  *   Call the deepverb's disambigDobj or disambigIobj method to perform
- *   game-controlled disambiguation.  
+ *   game-controlled disambiguation.
  */
 static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
 							 objnum prep, objnum otherobj,
@@ -4866,7 +4866,7 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
 	uint lstsiz;
 	int ret;
 	int i;
-	
+
 	/* check for actor disambiguation */
 	if (verprop == PRP_VERACTOR)
 	{
@@ -4949,7 +4949,7 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
 			if (*lstp == DAT_SSTRING)
 			{
 				uint len;
-				
+
 				/* get the length, and limit it to our buffer size */
 				len = osrp2(lstp+1) - 2;
 				if (len > VOCBUFSIZ - 1)
@@ -4975,16 +4975,16 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
 					objlist[i] = osrp2(lstp+1);
 				else
 					objlist[i] = MCMONINV;
-				
+
 				/* skip the list entry */
 				lstadv(&lstp, &lstsiz);
-				
+
 				/* check for flags */
 				if (lstsiz > 0 && *lstp == DAT_NUMBER)
 				{
 					/* store the flags */
 					flags[i] = (int)osrp4(lstp+1);
-					
+
 					/* skip the flags elements */
 					lstadv(&lstp, &lstsiz);
 				}
@@ -4998,7 +4998,7 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
 			/* store a terminator at the end of the list */
 			objlist[i] = MCMONINV;
 			flags[i] = 0;
-			
+
 			/* store the output count for the caller */
 			*objcount = i;
 		}
@@ -5030,10 +5030,10 @@ static int voc_disambig_hook(voccxdef *ctx, objnum verb, objnum actor,
  *   Prune a list of matches by keeping only the matches without the given
  *   flag value, if we have a mix of entries with and without the flag.
  *   This is a service routine for voc_prune_matches.
- *   
+ *
  *   The flag indicates a lower quality of matching, so this routine can
  *   be used to reduce ambiguity by keeping only the best-quality matches
- *   when matches of mixed quality are present.  
+ *   when matches of mixed quality are present.
  */
 static int voc_remove_objs_with_flag(voccxdef *ctx,
 									 objnum *list, uint *flags, int cnt,
@@ -5055,26 +5055,26 @@ static int voc_remove_objs_with_flag(voccxdef *ctx,
 			++special_cnt;
 	}
 
-	/* 
+	/*
 	 *   If all of the objects didn't have the flag, omit the ones that
 	 *   did, so that we reduce the ambiguity to those without the flag.
 	 *   Don't include the special objects (numObj and strObj) in the
-	 *   count, since they will never have any of these flags set.  
+	 *   count, since they will never have any of these flags set.
 	 */
 	if (flag_cnt != 0 && flag_cnt < cnt - special_cnt)
 	{
 		int dst;
 
-		/* 
+		/*
 		 *   Remove the flagged objects.  Note that we can make this
 		 *   adjustment to the arrays in place, because they can only
-		 *   shrink - there's no need to make an extra temporary copy.  
+		 *   shrink - there's no need to make an extra temporary copy.
 		 */
 		for (i = 0, dst = 0 ; i < cnt ; ++i)
 		{
-			/* 
+			/*
 			 *   If this one doesn't have the flag, keep it.  Always keep
-			 *   the special objects (numObj and strObj). 
+			 *   the special objects (numObj and strObj).
 			 */
 			if ((flags[i] & flag_to_remove) == 0
 				|| list[i] == ctx->voccxnum
@@ -5101,17 +5101,17 @@ static int voc_remove_objs_with_flag(voccxdef *ctx,
 /*
  *   Prune a list of matches by keeping only the best matches when matches
  *   of different qualities are present.
- *   
+ *
  *   If we have a mix of objects matching noun phrases that end in
  *   adjectives and phrases ending in nouns with the same words, remove
  *   those elements that end in adjectives, keeping only the better
  *   matches that end in nouns.
- *   
+ *
  *   If we have a mix of objects where the words match exactly, and others
  *   where the words are only leading substrings of longer dictionary
  *   words, keep only the exact matches.
- *   
- *   Returns the number of elements in the result list.  
+ *
+ *   Returns the number of elements in the result list.
  */
 static int voc_prune_matches(voccxdef *ctx,
 							 objnum *list, uint *flags, int cnt)
@@ -5129,43 +5129,43 @@ static int voc_prune_matches(voccxdef *ctx,
 /* ------------------------------------------------------------------------ */
 /*
  *   Count indistinguishable items.
- *   
+ *
  *   If 'keep_all' is true, we'll keep all of the items, whether or not
  *   some are indistinguishable from one another.  If 'keep_all' is false,
- *   we'll keep only one item from each set of indistinguishable items. 
+ *   we'll keep only one item from each set of indistinguishable items.
  */
 static int voc_count_diff(voccxdef *ctx, objnum *list, uint *flags, int *cnt,
 						  int keep_all)
 {
 	int i;
 	int diff_cnt;
-	
-	/* 
+
+	/*
 	 *   Presume all items will be distinguishable from one another.  As
 	 *   we scan the list for indistinguishable items, we'll decrement
 	 *   this count each time we find an item that can't be distinguished
-	 *   from another item.  
+	 *   from another item.
 	 */
 	diff_cnt = *cnt;
 
-	/* 
+	/*
 	 *   Look for indistinguishable items.
-	 *   
+	 *
 	 *   An object is distinguishable if it doesn't have the special
 	 *   property marking it as one of a group of equivalent objects
 	 *   (PRP_ISEQUIV), or if it has the property but there is no object
 	 *   following it in the list which has the same immediate superclass.
-	 *   
+	 *
 	 *   Note that we want to keep the duplicates if we're looking for
 	 *   plurals, because the player is explicitly referring to all
-	 *   matching objects.  
+	 *   matching objects.
 	 */
 	for (i = 0 ; i < *cnt ; ++i)
 	{
-		/* 
+		/*
 		 *   check to see if this object might have indistinguishable
 		 *   duplicates - it must be marked with isEquiv for this to be
-		 *   possible 
+		 *   possible
 		 */
 		runppr(ctx->voccxrun, list[i], PRP_ISEQUIV, 0);
 		if (runpoplog(ctx->voccxrun))
@@ -5173,21 +5173,21 @@ static int voc_count_diff(voccxdef *ctx, objnum *list, uint *flags, int *cnt,
 			int     j;
 			int     dst;
 			objnum  sc;
-			
+
 			/* get the superclass, if possible */
 			sc = objget1sc(ctx->voccxmem, list[i]);
 			if (sc == MCMONINV)
 				continue;
-			
-			/* 
+
+			/*
 			 *   run through the remainder of the list, and remove any
-			 *   duplicates of this item 
+			 *   duplicates of this item
 			 */
 			for (j = i + 1, dst = i + 1 ; j < *cnt ; ++j)
 			{
-				/* 
+				/*
 				 *   see if it matches our object - if not, keep it in the
-				 *   list by copying it to our destination position 
+				 *   list by copying it to our destination position
 				 */
 				if (objget1sc(ctx->voccxmem, list[j]) != sc)
 				{
@@ -5199,13 +5199,13 @@ static int voc_count_diff(voccxdef *ctx, objnum *list, uint *flags, int *cnt,
 				{
 					/*
 					 *   This item is indistinguishable from the list[i].
-					 *   First, reduce the count of different items.  
+					 *   First, reduce the count of different items.
 					 */
 					--diff_cnt;
-					
+
 					/*
 					 *   Keep this object only if we're keeping all
-					 *   redundant indistinguishable items. 
+					 *   redundant indistinguishable items.
 					 */
 					if (keep_all)
 					{
@@ -5215,7 +5215,7 @@ static int voc_count_diff(voccxdef *ctx, objnum *list, uint *flags, int *cnt,
 					}
 				}
 			}
-			
+
 			/* adjust the count to reflect the updated list */
 			*cnt = dst;
 
@@ -5270,9 +5270,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 	/* loop through all of the objects in the input list */
 	for (inpos = outpos = 0 ; inpos < listlen ; ++inpos)
 	{
-		/* 
+		/*
 		 *   reset the stack to our entrypoint value, since our stack
-		 *   variables are all temporary for a single iteration 
+		 *   variables are all temporary for a single iteration
 		 */
 		voc_leave(ctx, save_sp);
 		voc_enter(ctx, &save_sp);
@@ -5288,7 +5288,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 		{
 			long v1;
 			char vbuf[4];
-			
+
 			v1 = atol(inlist[inpos].vocolfst);
 			oswp4s(vbuf, v1);
 			vocsetobj(ctx, ctx->voccxnum, DAT_NUMBER, vbuf,
@@ -5341,7 +5341,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					err = VOCERR(11);
 					goto done;
 				}
-				
+
 				/* add object only if it's still accessible */
 				if (vocchkaccess(ctx, ctx->voccxthm[i], accprop, 0,
 								 cmdActor, cmdVerb))
@@ -5359,7 +5359,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					tioflush(ctx->voccxtio);
 				}
 			}
-			
+
 			/* make sure we found at least one acceptable object  */
 			if (outpos == thempos)
 			{
@@ -5390,13 +5390,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			runpobj(ctx->voccxrun, cmdActor);
 			runppr(ctx->voccxrun, cmdVerb, defprop,
 				   defprop == PRP_DODEFAULT ? 3 : 2);
-			
+
 			if (runtostyp(ctx->voccxrun) == DAT_LIST)
 			{
 				l = runpoplst(ctx->voccxrun);
 				len = osrp2(l) - 2;
 				l += 2;
-				
+
 				while (len)
 				{
 					/* add list element to output if it's an object */
@@ -5407,7 +5407,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					/* move on to next list element */
 					lstadv(&l, &len);
 				}
-				
+
 				vocout(&outlist[outpos], MCMONINV, 0, (char *)0, (char *)0);
 			}
 			else
@@ -5519,13 +5519,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   single, unambiguous match for a given singular noun
 			 *   phrase.  Under certain circumstances, we'll want to keep
 			 *   all of the words that match the noun phrase, in which
-			 *   case we'll set this flag accordingly. 
+			 *   case we'll set this flag accordingly.
 			 */
 			use_all_objs = FALSE;
 
-			/* 
+			/*
 			 *   go through the objects matching the current noun phrase
-			 *   and add them into our list 
+			 *   and add them into our list
 			 */
 			while (inlist[lpos].vocolfst == inlist[inpos].vocolfst
 				   && lpos < listlen)
@@ -5533,10 +5533,10 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				/* add this object to the list of nouns */
 				list1[i] = inlist[lpos].vocolobj;
 
-				/* 
+				/*
 				 *   note whether this object matched a plural, whether it
 				 *   matched adjective-at-end usage, and whether it
-				 *   matched a truncated dictionary word 
+				 *   matched a truncated dictionary word
 				 */
 				flags1[i] = inlist[lpos].vocolflg
 					& (VOCS_PLURAL | VOCS_ANY | VOCS_COUNT
@@ -5565,16 +5565,16 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			/*
 			 *   If this noun phrase contained an unknown word, check to
 			 *   see if the verb defines the parseUnknownXobj() method.
-			 *   If so, call the method and check the result. 
+			 *   If so, call the method and check the result.
 			 */
 			if (unknown_count > 0)
 			{
 				prpnum prp;
 
-				/* 
+				/*
 				 *   figure out which method to call - use
 				 *   parseUnknownDobj if we're disambiguating the direct
-				 *   object, parseUnknownIobj for the indirect object 
+				 *   object, parseUnknownIobj for the indirect object
 				 */
 				prp = (defprop == PRP_DODEFAULT
 					   ? PRP_PARSEUNKNOWNDOBJ : PRP_PARSEUNKNOWNIOBJ);
@@ -5607,9 +5607,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					switch(runtostyp(ctx->voccxrun))
 					{
 					case DAT_OBJECT:
-						/* 
+						/*
 						 *   use the object they returned as the match for
-						 *   the noun phrase 
+						 *   the noun phrase
 						 */
 						list1[cnt++] = runpopobj(ctx->voccxrun);
 
@@ -5620,7 +5620,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					case DAT_LIST:
 						/*
 						 *   use the list of objects they returned as the
-						 *   match for the noun phrase 
+						 *   match for the noun phrase
 						 */
 						lstp = runpoplst(ctx->voccxrun);
 
@@ -5635,19 +5635,19 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							if (*lstp == DAT_OBJECT
 								&& i < VOCMAXAMBIG)
 								list1[cnt++] = osrp2(lstp+1);
-							
+
 							/* move on to the next element */
 							lstadv(&lstp, &lstlen);
 						}
 
-						/* 
+						/*
 						 *   Note that we want to use all of these objects
 						 *   without disambiguation, since the game code
 						 *   has explicitly said that this is the list
-						 *   that matches the given noun phrase. 
+						 *   that matches the given noun phrase.
 						 */
 						use_all_objs = TRUE;
-						
+
 						/* terminate the new list */
 						list1[cnt] = MCMONINV;
 						break;
@@ -5659,7 +5659,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						 *   the command.  They don't want anything more
 						 *   to be done with these words.  Simply remove
 						 *   the unknown words and continue with any other
-						 *   words in the list.  
+						 *   words in the list.
 						 */
 						rundisc(ctx->voccxrun);
 
@@ -5673,9 +5673,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						 *   word" flag is set, we'll reparse the
 						 *   sentence, this time rejecting unknown words
 						 *   from the outset.
-						 *   
+						 *
 						 *   Return error 2, since that's the generic "I
-						 *   don't know the word..." error code.  
+						 *   don't know the word..." error code.
 						 */
 						rundisc(ctx->voccxrun);
 						err = VOCERR(2);
@@ -5685,7 +5685,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					/*
 					 *   If we made it this far, it means that they've
 					 *   resolved the object for us, so we can consider
-					 *   the previously unknown words to be known now. 
+					 *   the previously unknown words to be known now.
 					 */
 					ctx->voccxunknown -= unknown_count;
 				}
@@ -5703,13 +5703,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					 *   failure, and we'll reparse the sentence to reject
 					 *   the unknown word in the usual fashion.  Return
 					 *   error 2, since that's the generic "I don't know
-					 *   the word..." error code.  
+					 *   the word..." error code.
 					 */
 					err = VOCERR(2);
 					goto done;
 				}
 			}
-			
+
 			/*
 			 *   Use a new method to cut down on the time it will take to
 			 *   iterate through the verprop's on all of those words.
@@ -5719,11 +5719,11 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   We'll intersect that list with the list we're about to
 			 *   disambiguate, which should provide a list of objects that
 			 *   are already qualified, in that validDo should return true
-			 *   for every one of them.  
-			 * 
+			 *   for every one of them.
+			 *
 			 *   The calling sequence is:
 			 *       verb.validXoList(actor, prep, otherobj)
-			 * 
+			 *
 			 *   For reverse compatibility, if the return value is nil,
 			 *   we use the old algorithm and consider all objects
 			 *   that match the vocabulary.  The return value must be
@@ -5738,7 +5738,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					listprop = PRP_VALDOLIST;
 				else
 					listprop = PRP_VALIOLIST;
-				
+
 				/* push the arguments:  the actor, prep, and other object */
 				runpobj(ctx->voccxrun, otherobj);
 				runpobj(ctx->voccxrun, cmdPrep);
@@ -5752,33 +5752,33 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 
 					/* presume we won't keep numObj */
 					kept_numobj = FALSE;
-					
+
 					/* read the list length prefix, and skip it */
 					l = runpoplst(ctx->voccxrun);
 					len = osrp2(l) - 2;
 					l += 2;
-					
+
 					/*
 					 *   For each element of the return value, see if
 					 *   it's in list1.  If so, copy the object into
-					 *   list2, unless it's already in list2.  
+					 *   list2, unless it's already in list2.
 					 */
 					for (cnt2 = 0 ; len != 0 ; )
 					{
 						if (*l == DAT_OBJECT)
 						{
 							objnum o = osrp2(l+1);
-							
+
 							for (i = 0 ; i < cnt ; ++i)
 							{
 								if (list1[i] == o)
 								{
 									int j;
-									
+
 									/* check to see if o is already in list2 */
 									for (j = 0 ; j < cnt2 ; ++j)
 										if (list2[j] == o) break;
-									
+
 									/* if o is not in list2 yet, add it */
 									if (j == cnt2)
 									{
@@ -5787,11 +5787,11 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 										flags2[cnt2] = flags1[i];
 										++cnt2;
 
-										/* 
+										/*
 										 *   if it's numObj, note that
 										 *   we've already included it in
 										 *   the output list, so that we
-										 *   don't add it again later 
+										 *   don't add it again later
 										 */
 										if (o == ctx->voccxnum)
 											kept_numobj = TRUE;
@@ -5800,7 +5800,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 								}
 							}
 						}
-						
+
 						/* move on to next element */
 						lstadv(&l, &len);
 					}
@@ -5813,7 +5813,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					 *   single number as a noun phrase, even when the
 					 *   number matches an object.  Note that we can skip
 					 *   this special step if we already kept numObj in
-					 *   the valid list.  
+					 *   the valid list.
 					 */
 					if (!kept_numobj)
 					{
@@ -5825,13 +5825,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							{
 								/* keep it in the accessible list */
 								list2[cnt2++] = ctx->voccxnum;
-								
+
 								/* no need to look any further */
 								break;
 							}
 						}
 					}
-					
+
 					/* copy list2 into list1 */
 					memcpy(list1, list2, (size_t)(cnt2 * sizeof(list1[0])));
 					memcpy(flags1, flags2, (size_t)cnt2 * sizeof(flags1[0]));
@@ -5845,7 +5845,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			/*
 			 *   Determine accessibility and visibility.  First, limit
 			 *   list1 to those objects that are visible OR accessible,
-			 *   and limit list3 to those objects that are visible.  
+			 *   and limit list3 to those objects that are visible.
 			 */
 			for (cnt = cnt3 = i = 0 ; list1[i] != MCMONINV ; ++i)
 			{
@@ -5866,8 +5866,8 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					flags1[cnt] = flags1[i];
 					++cnt;
 				}
-				
-				/* 
+
+				/*
 				 *   put items that are visible (regardless of whether or
 				 *   not they're accessible) in list3
 				 */
@@ -5891,7 +5891,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   discard the short-hand version so that we don't treat it
 			 *   as ambiguous with the long-name version.  Likewise, if we
 			 *   have some exact matches and some truncations, keep only
-			 *   the exact matches.  
+			 *   the exact matches.
 			 */
 			cnt = voc_prune_matches(ctx, list1, flags1, cnt);
 			cnt3 = voc_prune_matches(ctx, list3, flags3, cnt3);
@@ -5907,7 +5907,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   as far as the player is concerned, the visible objects
 			 *   are part of the current location, so the player should be
 			 *   able to refer to them regardless of whether they're
-			 *   accessible.  
+			 *   accessible.
 			 */
 			for (dst = 0, i = 0 ; i < cnt ; ++i)
 			{
@@ -5918,7 +5918,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					/* keep it in the final list */
 					list1[dst] = list1[i];
 					flags1[dst] = flags1[i];
-					
+
 					/* count the new list entry */
 					++dst;
 				}
@@ -5931,7 +5931,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			/*
 			 *   Go through the list of accessible objects, and perform
 			 *   the sensible-object (verXoVerb) check on each.  Copy each
-			 *   sensible object to list2.  
+			 *   sensible object to list2.
 			 */
 			for (i = 0, cnt2 = 0 ; i < cnt ; ++i)
 			{
@@ -5956,11 +5956,11 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					runpobj(ctx->voccxrun, cmdActor);
 					runppr(ctx->voccxrun, list1[i], verprop,
 						   (otherobj != MCMONINV ? 2 : 1));
-					
+
 					/*
 					 *   If that didn't result in a message, this object
 					 *   passed the tougher test of ver?oX, so include it
-					 *   in list2.  
+					 *   in list2.
 					 */
 					if (!tioshow(ctx->voccxtio))
 					{
@@ -6006,12 +6006,12 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   about the number itself, rather than one of the objects
 			 *   that happened to use the number -- none of those objects
 			 *   make any sense, it seems, so fall back on the number.
-			 *   
+			 *
 			 *   Note that we may also have only numObj in the YES list,
 			 *   because the noun phrase parser normally adds numObj when
 			 *   the player types a noun phrase consisting only of a
 			 *   number.  Do the same thing in this case -- just return
-			 *   the number object.  
+			 *   the number object.
 			 */
 			if ((cnt2 == 0
 				 || (cnt2 == 1 && list2[0] == ctx->voccxnum))
@@ -6039,14 +6039,14 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			/*
 			 *   Check if we found anything in either the YES (list2) or
 			 *   MAYBE (list1) lists.  If there's nothing in either list,
-			 *   complain and return.  
+			 *   complain and return.
 			 */
 			if (cnt2 == 0 && cnt == 0)
 			{
 				/*
 				 *   We have nothing sensible, and nothing even
 				 *   accessible.  If there's anything merely visible,
-				 *   complain about those items. 
+				 *   complain about those items.
 				 */
 				if (cnt3 != 0)
 				{
@@ -6060,10 +6060,10 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				}
 				else
 				{
-					/* 
+					/*
 					 *   explain that there's nothing visible or
 					 *   accessible matching the noun phrase, and abort
-					 *   the command with an error 
+					 *   the command with an error
 					 */
 					if (!silent)
 						vocerr(ctx, VOCERR(9),
@@ -6078,13 +6078,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   in list2), use this as our proposed resolution for the
 			 *   noun phrase.  If nothing passed the stronger test (i.e.,
 			 *   list2 is empty), simply keep the list of accessible
-			 *   objects in list1. 
+			 *   objects in list1.
 			 */
 			if (cnt2 != 0)
 			{
-				/* 
+				/*
 				 *   we have items passing the stronger test -- copy the
-				 *   stronger list (list2) to list1 
+				 *   stronger list (list2) to list1
 				 */
 				cnt = cnt2;
 				memcpy(list1, list2, (size_t)(cnt2 * sizeof(list1[0])));
@@ -6099,19 +6099,19 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   same object, because of the parser's leniency with
 			 *   matching leading substrings of 6 characters or longer.
 			 *   To avoid unnecessary "which x do you mean..." errors,
-			 *   simply discard any duplicates in the list.  
+			 *   simply discard any duplicates in the list.
 			 */
 			for (dst = 0, i = 0 ; i < cnt ; ++i)
 			{
 				int dup;
 				int j;
-				
+
 				/* presume we won't find a duplicate of this object */
 				dup = FALSE;
-				
-				/* 
+
+				/*
 				 *   look for duplicates of this object in the remainder
-				 *   of the list 
+				 *   of the list
 				 */
 				for (j = i + 1 ; j < cnt ; ++j)
 				{
@@ -6120,32 +6120,32 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					{
 						/* note that this object has a duplicate */
 						dup = TRUE;
-						
+
 						/* we don't need to look any further */
 						break;
 					}
 				}
 
-				/* 
+				/*
 				 *   if this object has no duplicate, retain it in the
-				 *   output list 
+				 *   output list
 				 */
 				if (!dup)
 				{
 					/* copy the element to the output */
 					list1[dst] = list1[i];
 					flags1[dst] = flags1[i];
-					
+
 					/* count the output */
 					++dst;
 				}
 			}
-			
+
 			/* update the count to the new list's size */
 			cnt = dst;
 			list1[cnt] = MCMONINV;
 
-			/* 
+			/*
 			 *   If we have more than one object in the list, and numObj
 			 *   is still in the list, remove numObj - we don't want to
 			 *   consider numObj to be considered ambiguous with another
@@ -6171,7 +6171,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			 *   Check for a generic numeric adjective ('#' in the
 			 *   adjective list for the object) in each object.  If we
 			 *   find it, we need to make sure there's a number in the
-			 *   name of the object.  
+			 *   name of the object.
 			 */
 			for (i = 0 ; i < cnt ; ++i)
 			{
@@ -6185,20 +6185,20 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					 *   numeric adjective property in the object to nil
 					 *   to so indicate.  Otherwise, look for the number,
 					 *   and set the numeric adjective property
-					 *   accordingly.  
+					 *   accordingly.
 					 */
 					if ((flags1[i] & (VOCS_ANY | VOCS_COUNT)) != 0)
 					{
 						int     n = (user_count ? user_count : 1);
 						int     j;
 						objnum  objn = list1[i];
-						
-						/* 
+
+						/*
 						 *   They specified a count, so we want to create
 						 *   n-1 copies of the numbered object.  Make room
 						 *   for the n-1 new copies of this object by
 						 *   shifting any elements that follow up n-1
-						 *   slots.  
+						 *   slots.
 						 */
 						if (i + 1 != cnt && n > 1)
 						{
@@ -6207,21 +6207,21 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							memmove(&flags1[i + n - 1], &flags1[i],
 									(cnt - i) * sizeof(flags1[i]));
 						}
-						
+
 						/* create n copies of this object */
 						for (j = 0 ; j < n ; ++j)
 						{
 							long l;
-							
-							/* 
+
+							/*
 							 *   Generate a number for the new object,
 							 *   asking the object to tell us what value
-							 *   to use for an "any".  
+							 *   to use for an "any".
 							 */
 							runpnum(ctx->voccxrun, (long)(j + 1));
 							runppr(ctx->voccxrun, objn, PRP_ANYVALUE, 1);
 							l = runpopnum(ctx->voccxrun);
-							
+
 							/* try creating the new object */
 							list1[i+j] =
 								voc_new_num_obj(ctx, objn,
@@ -6238,7 +6238,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					{
 						/*
 						 *   get the plural object by asking for the
-						 *   numbered object with a nil number parameter 
+						 *   numbered object with a nil number parameter
 						 */
 						list1[i] =
 							voc_new_num_obj(ctx, list1[i], cmdActor, cmdVerb,
@@ -6253,12 +6253,12 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					{
 						//char *p;
 						int   found;
-						
-						/* 
+
+						/*
 						 *   No plural, no "any" - we just want to create
 						 *   one numbered object, using the number that
 						 *   the player must have specified.  Make sure
-						 *   the player did, in fact, specify a number. 
+						 *   the player did, in fact, specify a number.
 						 */
 						for (found = FALSE, p = inlist[inpos].vocolfst ;
 							 p != 0 && p <= inlist[inpos].vocollst ;
@@ -6271,7 +6271,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 
 								/* get the number */
 								l = atol(p);
-								
+
 								/* create the object with this number */
 								list1[i] = voc_new_num_obj(ctx, list1[i],
 									cmdActor, cmdVerb,
@@ -6281,13 +6281,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 									err = VOCERR(40);
 									goto done;
 								}
-								
+
 								/* the command looks to be valid */
 								found = TRUE;
 								break;
 							}
 						}
-						
+
 						/* if we didn't find it, stop now */
 						if (!found)
 						{
@@ -6304,7 +6304,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 
 			/*
 			 *   We still have an ambiguous word - ask the user which of
-			 *   the possible objects they meant to use 
+			 *   the possible objects they meant to use
 			 */
 			trying_again = FALSE;
 			for (;;)
@@ -6318,32 +6318,32 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				int    num_wanted;
 				int    is_ambig;
 				int    all_plural;
-					
-				/* 
+
+				/*
 				 *   check for usage - determine if we have singular
 				 *   definite, singular indefinite, counted, or plural
-				 *   usage 
+				 *   usage
 				 */
 				if ((flags1[0] & (VOCS_PLURAL | VOCS_ANY | VOCS_COUNT)) != 0)
 				{
 					//int i;
 
-					/* 
+					/*
 					 *   loop through the objects to AND together the
 					 *   flags from all of the objects; we only care about
 					 *   the plural flags (PLURAL, ANY, and COUNT), so
 					 *   start out with only those, then AND off any that
-					 *   aren't in all of the objects 
+					 *   aren't in all of the objects
 					 */
 					for (all_plural = VOCS_PLURAL | VOCS_ANY | VOCS_COUNT,
 						 i = 0 ; i < cnt ; ++i)
 					{
 						/* AND out this object's flags */
 						all_plural &= flags1[i];
-						
-						/* 
+
+						/*
 						 *   if we've ANDed down to zero, there's no need
-						 *   to look any further 
+						 *   to look any further
 						 */
 						if (!all_plural)
 							break;
@@ -6351,23 +6351,23 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				}
 				else
 				{
-					/* 
+					/*
 					 *   it looks like we want just a single object -
-					 *   clear the various plural flags 
+					 *   clear the various plural flags
 					 */
 					all_plural = 0;
 				}
 
 				/*
 				 *   Count the distinguishable items.
-				 *   
+				 *
 				 *   If we're looking for a single object, don't keep
 				 *   duplicate indistinguishable items (i.e., keep only
 				 *   one item from each set of mutually indistinguishable
 				 *   items), since we could equally well use any single
 				 *   one of those items.  If we're looking for multiple
 				 *   objects, keep all of the items, since the user is
-				 *   referring to all of them. 
+				 *   referring to all of them.
 				 */
 				diff_cnt = voc_count_diff(ctx, list1, flags1, &cnt,
 										  all_plural != 0 || use_all_objs);
@@ -6379,7 +6379,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				 *   just want to pick one object arbitrarily.  If we have
 				 *   all plurals, we can keep all of the objects.  If the
 				 *   'use_all_objs' flag is true, it means that we can use
-				 *   everything in the list.  
+				 *   everything in the list.
 				 */
 				if (use_all_objs)
 				{
@@ -6389,40 +6389,40 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				}
 				else if ((all_plural & VOCS_COUNT) != 0)
 				{
-					/* 
+					/*
 					 *   we have a count - we want exactly the given
 					 *   number of objects, but we can pick an arbitrary
 					 *   subset, so it's not ambiguous even if we have too
-					 *   many at the moment 
+					 *   many at the moment
 					 */
 					num_wanted = user_count;
 					is_ambig = FALSE;
 				}
 				else if ((all_plural & VOCS_ANY) != 0)
 				{
-					/* 
+					/*
 					 *   they specified "any", so we want exactly one, but
 					 *   we can pick one arbitrarily, so there's no
-					 *   ambiguity 
+					 *   ambiguity
 					 */
 					num_wanted = 1;
 					is_ambig = FALSE;
 				}
 				else if (all_plural != 0)
 				{
-					/* 
+					/*
 					 *   we have a simple plural, so we can use all of the
-					 *   provided objects without ambiguity 
+					 *   provided objects without ambiguity
 					 */
 					num_wanted = cnt;
 					is_ambig = FALSE;
 				}
 				else
 				{
-					/* 
+					/*
 					 *   it's a singular, definite usage, so we want
 					 *   exactly one item; if we have more than one in our
-					 *   list, it's ambiguous 
+					 *   list, it's ambiguous
 					 */
 					num_wanted = 1;
 					is_ambig = (cnt != 1);
@@ -6445,44 +6445,44 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						vocout(&outlist[outpos++], list1[i], flags1[i],
 							   inlist[inpos].vocolfst,
 							   inlist[inpos].vocollst);
-					
+
 					/* we're done */
 					break;
 				}
 				else if (stat == VOC_DISAMBIG_CONT)
 				{
-					/* 
+					/*
 					 *   Continue with the new list (which is the same as
 					 *   the old list, if it wasn't actually updated by
 					 *   the hook routine) - proceed with remaining
 					 *   processing, but using the new list.
-					 *   
+					 *
 					 *   Because the list has been updated, we must once
 					 *   again count the number of distinguishable items,
-					 *   since that may have changed.  
+					 *   since that may have changed.
 					 */
 					diff_cnt = voc_count_diff(ctx, list1, flags1, &cnt, TRUE);
 				}
 				else if (stat == VOC_DISAMBIG_PARSE_RESP
 						 || stat == VOC_DISAMBIG_PROMPTED)
 				{
-					/* 
+					/*
 					 *   The status indicates one of the following:
-					 *   
+					 *
 					 *   - the hook prompted for more information and read
 					 *   a response from the player, but decided not to
 					 *   parse it; we will continue with the current list,
 					 *   and parse the player's response as provided by
 					 *   the hook.
-					 *   
+					 *
 					 *   - the hook prompted for more information, but
 					 *   left the reading to us.  We'll proceed with the
 					 *   current list and read a response as normal, but
 					 *   without displaying another prompt.
-					 *   
+					 *
 					 *   In any case, just continue processing; we'll take
 					 *   appropriate action on the prompting and reading
-					 *   when we reach those steps.  
+					 *   when we reach those steps.
 					 */
 				}
 				else
@@ -6495,7 +6495,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				/*
 				 *   If we found only one word, or a plural/ANY, we are
 				 *   finished.  If we found a count, use that count if
-				 *   possible.  
+				 *   possible.
 				 */
 				if (cnt == 1 || all_plural || use_all_objs)
 				{
@@ -6537,18 +6537,18 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				tiocapture(ctx->voccxtio, (mcmcxdef *)0, FALSE);
 				tioclrcapture(ctx->voccxtio);
 
-				/* 
+				/*
 				 *   if we're in "silent" mode, we can't ask the player
-				 *   for help, so return an error 
+				 *   for help, so return an error
 				 */
 				if (silent)
 				{
-					/* 
+					/*
 					 *   We can't disambiguate the list.  Fill in the
 					 *   return list with what's left, which is still
 					 *   ambiguous, and note that we need to return an
 					 *   error code indicating that the list remains
-					 *   ambiguous.  
+					 *   ambiguous.
 					 */
 					for (i = 0 ; i < cnt && outpos < VOCMAXAMBIG ; ++i)
 						vocout(&outlist[outpos++], list1[i], 0,
@@ -6565,33 +6565,33 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				/*
 				 *   We need to prompt for more information interactively.
 				 *   Figure out how we're going to display the prompt.
-				 *   
+				 *
 				 *   - If the disambigXobj hook status (stat) indicates
 				 *   that the hook already displayed a prompt of its own,
 				 *   we don't need to add anything here.
-				 *   
+				 *
 				 *   - Otherwise, if there's a parseDisambig function
 				 *   defined in the game, call it to display the prompt.
-				 *   
-				 *   - Otherwise, display our default prompt.  
+				 *
+				 *   - Otherwise, display our default prompt.
 				 */
 				if (stat == VOC_DISAMBIG_PARSE_RESP
 					|| stat == VOC_DISAMBIG_PROMPTED)
 				{
-					/* 
+					/*
 					 *   the disambigXobj hook already asked for a
-					 *   response, so don't display any prompt of our own 
+					 *   response, so don't display any prompt of our own
 					 */
 				}
 				else if (ctx->voccxpdis != MCMONINV)
 				{
 					uint l;
-					
-					/* 
+
+					/*
 					 *   There's a parseDisambig function defined in the
 					 *   game - call it to display the prompt, passing the
 					 *   list of possible objects and the player's
-					 *   original noun phrase text as parameters.  
+					 *   original noun phrase text as parameters.
 					 */
 					for (i = 0, pu = lstbuf+2 ; i < cnt ; ++i, pu += 2)
 					{
@@ -6618,13 +6618,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						int    eqcnt;
 						int    j;
 						objnum sc;
-						
+
 						/*
 						 *   See if we have multiple instances of an
 						 *   identical object.  All such instances should
 						 *   be grouped together (this was done above), so
 						 *   we can just count the number of consecutive
-						 *   equivalent objects. 
+						 *   equivalent objects.
 						 */
 						eqcnt = 1;
 						runppr(ctx->voccxrun, list1[i], PRP_ISEQUIV, 0);
@@ -6649,7 +6649,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						/*
 						 *   Display this object's name.  If we have only
 						 *   one such object, display its thedesc,
-						 *   otherwise display its adesc. 
+						 *   otherwise display its adesc.
 						 */
 						runppr(ctx->voccxrun, list1[i],
 							   (prpnum)(eqcnt == 1 ?
@@ -6667,10 +6667,10 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					vocerr_info(ctx, VOCERR(104), "?");
 				}
 
-				/* 
+				/*
 				 *   Read the response.  If the disambigXobj hook already
 				 *   read the response, we don't need to read anything
-				 *   more. 
+				 *   more.
 				 */
 				if (stat != VOC_DISAMBIG_PARSE_RESP
 					&& vocread(ctx, cmdActor, cmdVerb, disnewbuf,
@@ -6685,7 +6685,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				}
 
 				/*
-				 *   parse the response 
+				 *   parse the response
 				 */
 
 				/* tokenize the list */
@@ -6712,7 +6712,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				 *   unknown words; if there are any unknown words, the
 				 *   tokenizer will parse them and set the unknown count.
 				 *   If we find any unknown words in the input, we'll
-				 *   simply treat the input as an entirely new command.  
+				 *   simply treat the input as an entirely new command.
 				 */
 				old_unknown = ctx->voccxunknown;
 				old_lastunk = ctx->voccxlastunk;
@@ -6726,9 +6726,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				if (vocgtyp(ctx, diswordlist, distypelist, cmdbuf)
 					|| ctx->voccxunknown != 0)
 				{
-					/* 
+					/*
 					 *   there's an unknown word or other problem - retry
-					 *   the input as an entirely new command 
+					 *   the input as an entirely new command
 					 */
 					strcpy(cmdbuf, disnewbuf);
 					ctx->voccxunknown = 0;
@@ -6756,7 +6756,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						  (VOCT_ADJ | VOCT_NOUN | VOCT_ARTICLE)))
 						break;
 				}
-				
+
 				if (i && (distypelist[i-1] & VOCT_ADJ)
 					&& (distypelist[i-1] & VOCT_NOUN))
 				{
@@ -6766,7 +6766,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					 *   noun flag cleared, we'll put the noun flag back
 					 *   in and give it another try (by adding VOCT_NOUN
 					 *   back into distypelist[cleared_noun], and coming
-					 *   back to the label below). 
+					 *   back to the label below).
 					 */
 					cleared_noun = i-1;
 					distypelist[i-1] &= ~VOCT_NOUN;
@@ -6787,7 +6787,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						nam = all_name;
 					else
 						nam = both_name;
-					
+
 					for (i = 0 ; i < cnt ; ++i)
 						vocout(&outlist[outpos++], list1[i], 0, nam, nam);
 					if (noreach)
@@ -6810,11 +6810,11 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 									  0, &next, disnounlist, FALSE);
 					if (cnt2 > 0)
 					{
-						/* 
+						/*
 						 *   if that didn't consume the entire phrase, or
 						 *   at least up to "one" or "ones" or a period,
 						 *   disallow it, since they must be entering
-						 *   something more complicated 
+						 *   something more complicated
 						 */
 						if (diswordlist[next] != 0
 							&& !vocspec(diswordlist[next], VOCW_ONE)
@@ -6826,10 +6826,10 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					}
 					else if (cnt2 < 0)
 					{
-						/* 
+						/*
 						 *   There was a syntax error in the phrase.
 						 *   vocchknoun() will have displayed a message in
-						 *   this case, so we're done parsing this command. 
+						 *   this case, so we're done parsing this command.
 						 */
 						err = VOCERR(45);
 						goto done;
@@ -6847,9 +6847,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							int j;
 							int found;
 
-							/* 
+							/*
 							 *   make sure this object isn't already in
-							 *   our list - we want each object only once 
+							 *   our list - we want each object only once
 							 */
 							for (j = 0, found = FALSE ; j < newcnt ; ++j)
 							{
@@ -6861,9 +6861,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 								}
 							}
 
-							/* 
+							/*
 							 *   add it to our list only if it wasn't
-							 *   already there 
+							 *   already there
 							 */
 							if (!found)
 							{
@@ -6903,7 +6903,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 								i = j - 1;
 							}
 						}
-						
+
 						/*
 						 *   If the count of items in the intersection of
 						 *   the original list and the typed-in list is no
@@ -6911,18 +6911,18 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						 *   the typed-in list, we've successfully
 						 *   disambiguated the object, because the user's
 						 *   new list matches only one object for each set
-						 *   of words the user typed.  
+						 *   of words the user typed.
 						 */
 						if (newcnt
 							&& (newcnt <= cnt3
 								|| (diswordlist[next]
 									&& vocspec(diswordlist[next],
 											   VOCW_ONES))))
-						{                            
+						{
 							for (i = 0 ; i < cnt ; ++i)
 								vocout(&outlist[outpos++], list2[i], 0,
 									   one_name, one_name);
-							
+
 							if (noreach)
 							{
 								cnt = newcnt;
@@ -6954,7 +6954,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							 *   the noun flag back in and give it another
 							 *   go.  If we didn't clear the noun, there's
 							 *   nothing left to try, so explain that we
-							 *   don't see any such object and give up.  
+							 *   don't see any such object and give up.
 							 */
 							if (cleared_noun != -1)
 							{
@@ -6971,23 +6971,23 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 									break;
 							}
 
-							/* 
+							/*
 							 *   if we found a noun phrase, build a string
 							 *   out of the words used; otherwise, just
-							 *   use "such" 
+							 *   use "such"
 							 */
 							if (i != cnt2) {
 								const char *last;
 
 								/* clear the word buffer */
 								newobj[0] = '\0';
-								
+
 								/* build a string out of the words */
 								p = disnounlist[i].vocolfst;
 								last = disnounlist[i].vocollst;
 								for ( ; p <= last ; p += strlen(p) + 1)
 								{
-									/* 
+									/*
 									 *   If this is a special word, we
 									 *   probably can't construct a
 									 *   sensible sentence - special words
@@ -6998,24 +6998,24 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 									 *   thing into "I don't see any
 									 *   *such* object" rather than trying
 									 *   to make do with pronouns or other
-									 *   special words.  
+									 *   special words.
 									 */
 									if (vocisspec(p))
 									{
-										/* 
+										/*
 										 *   replace the entire adjective
-										 *   phrase with "such" 
+										 *   phrase with "such"
 										 */
 										strcpy(newobj, "such");
 
-										/* 
+										/*
 										 *   stop here - don't add any
 										 *   more, since "such" is the
-										 *   whole thing 
+										 *   whole thing
 										 */
 										break;
 									}
-									
+
 									/* add a space if we have a prior word */
 									if (newobj[0] != '\0')
 										strcat(newobj, " ");
@@ -7037,13 +7037,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							err = VOCERR(16);
 							goto done;
 						}
-						
+
 						/*
 						 *   If we get here, it means that we have still
 						 *   more than one object per noun phrase typed in
 						 *   the latest sentence.  Limit the list to the
 						 *   intersection (by copying list2 to list1), and
-						 *   try again.  
+						 *   try again.
 						 */
 						memcpy(list1, list2,
 							   (size_t)((newcnt + 1) * sizeof(list1[0])));
@@ -7052,13 +7052,13 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					}
 					else
 					{
-						/* 
+						/*
 						 *   We didn't find a noun phrase, so it's probably a
 						 *   new command.  However, check first to see if we
 						 *   were making a trial run with the noun flag
 						 *   cleared: if so, go back and make another pass
 						 *   with the noun flag added back in to see if that
-						 *   works any better.  
+						 *   works any better.
 						 */
 						if (cleared_noun != -1)
 						{
@@ -7066,7 +7066,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							cleared_noun = -1;
 							goto try_current_flags;
 						}
-						
+
 						/* retry as an entire new command */
 						strcpy(cmdbuf, disnewbuf);
 						ctx->voccxunknown = 0;
@@ -7083,10 +7083,10 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 	/* terminate the output list */
 	vocout(&outlist[outpos], MCMONINV, 0, (char *)0, (char *)0);
 
-	/* 
+	/*
 	 *   If we still have ambiguous objects, so indicate.  This can only
 	 *   happen when we operate in "silent" mode, because only then can we
-	 *   give up without fully resolving a list. 
+	 *   give up without fully resolving a list.
 	 */
 	if (still_ambig)
 		err = VOCERR(44);
@@ -7097,9 +7097,9 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 done:
 	ERRCLEAN(ctx->voccxerr)
 	{
-		/* 
+		/*
 		 *   reset the stack before we return, in case the caller handles
-		 *   the error without aborting the command 
+		 *   the error without aborting the command
 		 */
 		voc_leave(ctx, save_sp);
 	}
@@ -7123,7 +7123,7 @@ static int vocready(voccxdef *ctx, char *cmd[], int *typelist, int cur,
 		if (ctx->voccxflg & VOCCXFDBG)
 		{
 			char buf[128];
-			
+
 			sprintf(buf, ". executing verb:  %s %s\\n",
 					vverb, vprep ? vprep : "");
 			tioputs(ctx->vocxtio, buf);
@@ -7202,12 +7202,12 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 	/* start off at the first word */
 	cur = next = first_word = 0;
 
-	/* 
+	/*
 	 *   Presume we will be in control of the next word - when execmd() or
 	 *   another routine we call decides where the command ends, it will
 	 *   fill in a new value here.  When this value is non-zero, it will
 	 *   tell us where the next sentence start is relative to the previous
-	 *   sentence start.  
+	 *   sentence start.
 	 */
 	next_start = 0;
 
@@ -7219,7 +7219,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 	{
 		/*
 		 *   if preparseCmd sent us back a list, parse that list as a new
-		 *   command 
+		 *   command
 		 */
 		if (err == ERR_PREPRSCMDREDO)
 		{
@@ -7237,7 +7237,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				retval = 1;
 				goto done;
 			}
-			
+
 			/* save our status prior to processing the preparseCmd list */
 			preparseCmd_stat.active = TRUE;
 			preparseCmd_stat.cur = cur;
@@ -7301,7 +7301,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 
 			/*
 			 *   this is not a new command - it's just further processing
-			 *   of the current command 
+			 *   of the current command
 			 */
 			again = FALSE;
 
@@ -7324,16 +7324,16 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 		}
 
 	skip_leading_stuff:
-		/* 
+		/*
 		 *   If someone updated the sentence start point, jump there.  The
-		 *   sentence start is relative to the previous sentence start. 
+		 *   sentence start is relative to the previous sentence start.
 		 */
 		if (next_start != 0)
 			cur = first_word + next_start;
 
 		/* clear next_start, so we can tell if someone updates it */
 		next_start = 0;
-		
+
 		/* skip any leading THEN's and AND's */
 		while (cmd[cur] && (vocspec(cmd[cur], VOCW_THEN)
 							|| vocspec(cmd[cur], VOCW_AND)))
@@ -7344,7 +7344,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 		{
 			/*
 			 *   if we've been off doing preparseCmd work, return to the
-			 *   original command list 
+			 *   original command list
 			 */
 			if (preparseCmd_stat.active)
 			{
@@ -7353,7 +7353,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				cmd = preparseCmd_stat.cmd;
 				cmdbuf = preparseCmd_stat.cmdbuf;
 				preparseCmd_stat.active = FALSE;
-				
+
 				/* get the type list for the original list again */
 				if (vocgtyp(ctx, cmd, typelist, cmdbuf))
 				{
@@ -7373,10 +7373,10 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			}
 		}
 
-		/* 
+		/*
 		 *   display a blank line if this is not the first command on this
 		 *   command line, so that we visually separate the results of the
-		 *   new command from the results of the previous command 
+		 *   new command from the results of the previous command
 		 */
 		if (again)
 			outformat("\\b");                   /* tioblank(ctx->voccxtio); */
@@ -7459,7 +7459,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				 *   iobj dobj".  Note that we do *not* do this if the
 				 *   word is also a noun, or it's an adjective and a noun
 				 *   (possibly separated by one or more adjectives)
-				 *   follows.  
+				 *   follows.
 				 */
 				if ((v = vocffw(ctx, cmd[cur], (int)strlen(cmd[cur]),
 								(char *)0, 0, PRP_PREP, (vocseadef *)0)) != 0)
@@ -7508,10 +7508,10 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 		}
 		else if (no_match)
 		{
-			/* 
+			/*
 			 *   we found a valid noun phrase, but we didn't find any
 			 *   objects that matched the words -- get the noun again,
-			 *   this time showing the error 
+			 *   this time showing the error
 			 */
 			vocgetnoun(ctx, cmd, typelist, cur, &next, dolist);
 
@@ -7531,7 +7531,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			 *   If we thought we were going to get a two-object
 			 *   sentence, and we got a zero-object sentence, and it looks
 			 *   like the word we took as a preposition is also an
-			 *   adjective or noun, go back and treat it as such. 
+			 *   adjective or noun, go back and treat it as such.
 			 */
 			if (swapObj &&
 				((typelist[cur-1] & VOCT_NOUN)
@@ -7546,7 +7546,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 		bad_sentence:
 			/* find the last word */
 			while (cmd[cur]) ++cur;
-			
+
 			/* try running the sentence through preparseCmd */
 			err = try_preparse_cmd(ctx, &cmd[first_word], cur - first_word,
 								   &preparse_list);
@@ -7588,7 +7588,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					 &err, cmdbuf, first_word, &preparse_list,
 					 &next_start))
 			continue;
-		
+
 		/*
 		 *   Check for an indirect object, which may or may not be preceded
 		 *   by a preposition.  (Note that the lack of a preposition implies
@@ -7627,7 +7627,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 						continue;
 					}
 				}
-				
+
 				if ((err = execmd(ctx, cmdActor, cmdPrep, vverb, vprep,
 								  dolist, iolist,
 								  &cmd[first_word], &typelist[first_word],
@@ -7647,19 +7647,19 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			 *   it as a sentence of the form "pry box open with crowbar"
 			 *   (where the current word is "with").  We also must have at
 			 *   least one more word after that, since there will have to
-			 *   be an indirect object.  
+			 *   be an indirect object.
 			 */
 			if (cmd[cur] && (typelist[cur] & VOCT_PREP) && cmd[cur+1]
 				&& vprep == 0
 				&& vocffw(ctx, vverb, vvlen, p1, (int)strlen(p1), PRP_VERB,
 						  (vocseadef *)0))
 			{
-				/* 
+				/*
 				 *   check to make sure that the next word, which we're
 				 *   about to take for a prep (the "with" in "pry box open
 				 *   with crowbar") is actually not part of an object name
 				 *   - if it is, use it as the object name rather than as
-				 *   the prep 
+				 *   the prep
 				 */
 				if (vocgobj(ctx, cmd, typelist, cur, &next,
 							FALSE, iolist, FALSE, FALSE, 0) <= 0)
@@ -7744,9 +7744,9 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					 *   this assumption now: add the preposition back to the
 					 *   noun phrase and explain that there's no such thing
 					 *   present.
-					 *   
+					 *
 					 *   Otherwise, we simply have an unknown verb phrasing,
-					 *   so let parseUnknownVerb handle it.  
+					 *   so let parseUnknownVerb handle it.
 					 */
 					vocoldef *np1 =
 						(dolist[0].vocolflg & VOCS_TRIMPREP) != 0
@@ -7757,7 +7757,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					if (np1 != 0)
 					{
 						char namebuf[VOCBUFSIZ];
-						
+
 						/* show the name, adding the prep back in */
 						voc_make_obj_name_from_list(
 							ctx, namebuf, cmd, np1->vocolfst, np1->vocolhlst);
@@ -7787,19 +7787,19 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			}
 			else if (cnt < 0)
 			{
-				/* 
+				/*
 				 *   the noun phrase syntax was invalid - we've already
-				 *   displayed an error about it, so simply return failure 
+				 *   displayed an error about it, so simply return failure
 				 */
 				retval = 1;
 				goto done;
 			}
 			else if (no_match)
 			{
-				/* 
+				/*
 				 *   we found a valid noun phrase, but we didn't find any
 				 *   matching objects - we've already generated an error,
-				 *   so simply return failure 
+				 *   so simply return failure
 				 */
 				retval = 1;
 				goto done;
@@ -7844,12 +7844,12 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					continue;
 				}
 			}
-				
+
 			/*
 			 *   If we don't have a preposition yet, we need to find the
 			 *   verb's default.  If the verb object has a nilPrep
 			 *   property defined, use that prep object; otherwise, look
-			 *   up the word "to" and use that.  
+			 *   up the word "to" and use that.
 			 */
 			if (cmdPrep == MCMONINV &&
 				(v = vocffw(ctx, vverb, vvlen,
@@ -7893,7 +7893,7 @@ done:
 	/* copy back the command if we need to redo */
 	if (ctx->voccxredo && cmdbuf != origcmdbuf)
 		strcpy(origcmdbuf, cmdbuf);
-					
+
 	/* return the status */
 	VOC_RETVAL(ctx, save_sp, retval);
 }
@@ -7909,17 +7909,17 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 	objnum   cmdActor;
 	int      first;
 
-	/* 
+	/*
 	 *   Make sure the stack is set up, resetting the stack on entry. Note
 	 *   that this makes this routine non-reentrant - recursively calling
-	 *   this routine will wipe out the enclosing caller's stack. 
+	 *   this routine will wipe out the enclosing caller's stack.
 	 */
 	voc_stk_ini(ctx, (uint)VOC_STACK_SIZE);
 
 	/* allocate our stack arrays */
 	VOC_STK_ARRAY(ctx, char,   buffer,   2*VOCBUFSIZ);
 	VOC_STK_ARRAY(ctx, char *, wordlist, VOCBUFSIZ);
-	
+
 	/* until further notice, the actor for formatStrings is Me */
 	tiosetactor(ctx->voccxtio, ctx->voccxme);
 
@@ -7954,10 +7954,10 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 			case ERR_RUNEXIT:
 			case ERR_RUNEXITOBJ:
 			case ERR_RUNABRT:
-				/* 
+				/*
 				 *   if we encountered abort, exit, or exitobj, treat it
 				 *   the same as a nil result code - simply cancel the
-				 *   entire current command 
+				 *   entire current command
 				 */
 				break;
 
@@ -7976,15 +7976,15 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 		typ = runtostyp(ctx->voccxrun);
 		if (typ == DAT_SSTRING)
 		{
-			/* 
+			/*
 			 *   It's a string - replace the command with the new string.
-			 *   Pop the new string and scan its length prefix. 
+			 *   Pop the new string and scan its length prefix.
 			 */
 			s = runpopstr(ctx->voccxrun);
 			len = osrp2(s) - 2;
 			s += 2;
 
-			/* 
+			/*
 			 *   limit the size of the command to our buffer length,
 			 *   leaving space for null termination
 			 */
@@ -8021,10 +8021,10 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 		}
 	}
 
-	/* 
+	/*
 	 *   if we found no words, or we found only useless leading "and" and
 	 *   "then" separators, run the "pardon" function to tell the player
-	 *   that we didn't find any command on the line 
+	 *   that we didn't find any command on the line
 	 */
 	if (wrdcnt == 0 || (wrdcnt > 0 && cur >= wrdcnt))
 	{
@@ -8032,10 +8032,10 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 		return 0;
 	}
 
-	/* 
+	/*
 	 *   if we got an error tokenizing the word list, return - we've
 	 *   already displayed an error message, so there's nothing more for
-	 *   us to do here 
+	 *   us to do here
 	 */
 	if (wrdcnt < 0)
 		return 0;
@@ -8058,16 +8058,16 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 			/* try processing the command */
 			if (voc1cmd(ctx, &wordlist[next], cmd, &cmdActor, first))
 			{
-				/* 
+				/*
 				 *   If the unknown word flag is set, try the command
 				 *   again from the beginning.  This flag means that we
 				 *   tried using parseUnknownDobj/Iobj to resolve the
 				 *   unknown word, but that failed and we need to try
-				 *   again with the normal "oops" processing.  
+				 *   again with the normal "oops" processing.
 				 */
 				if (ctx->voccxunknown > 0)
 					continue;
-			
+
 				/* return an error */
 				return 1;
 			}
@@ -8086,10 +8086,10 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 				   || vocspec(wordlist[cur+1], VOCW_AND)))
 			++cur;
 
-		/* 
+		/*
 		 *   if another command follows, add a blank line to separate the
 		 *   results from the previous command and those from the next
-		 *   command 
+		 *   command
 		 */
 		if (cur + 1 < wrdcnt)
 			outformat("\\b");
@@ -8101,7 +8101,7 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 
 
 /*
- *   Off-stack stack management 
+ *   Off-stack stack management
  */
 
 /* allocate/reset the stack */
@@ -8113,7 +8113,7 @@ void voc_stk_ini(voccxdef *ctx, uint siz)
 		ctx->voc_stk_ptr = mchalo(ctx->voccxerr, siz, "voc_stk_ini");
 		ctx->voc_stk_end = ctx->voc_stk_ptr + siz;
 	}
-	
+
 	/* reset the stack */
 	ctx->voc_stk_cur = ctx->voc_stk_ptr;
 }
@@ -8122,7 +8122,7 @@ void voc_stk_ini(voccxdef *ctx, uint siz)
 void *voc_stk_alo(voccxdef *ctx, uint siz)
 {
 	void *ret;
-	
+
 	/* round size up to allocation units */
 	siz = osrndsz(siz);
 
@@ -8143,7 +8143,7 @@ void *voc_stk_alo(voccxdef *ctx, uint siz)
 	if (ctx->voc_stk_cur - ctx->voc_stk_ptr > maxsiz)
 	{
 		char buf[20];
-		
+
 		maxsiz = ctx->voc_stk_cur - ctx->voc_stk_ptr;
 		sprintf(buf, "%u\n", maxsiz);
 		os_printz(buf);

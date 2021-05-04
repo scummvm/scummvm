@@ -322,7 +322,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 				}
 				if (currlen < (uint)tmpw * 2)
 					return fatal;
-				
+
 				for (i = 0; i < tmpw; ++i)
 					*--p._sp = s->readUint16BE();
 				currlen -= tmpw * 2;
@@ -335,7 +335,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 		case ID_CMem:
 			if (!(progress & GOT_MEMORY)) {
 				_storyFile->seek(0);
-				
+
 				i = 0;	// Bytes written to data area
 				for (; currlen > 0; --currlen) {
 					x = s->readByte();
@@ -393,7 +393,7 @@ int Quetzal::restore(Common::SeekableReadStream *sv, Processor *proc) {
 				} else {
 					p.print_string("`UMem' chunk wrong size!\n");
 				}
-				
+
 				// Fall into default action (skip chunk) on errors
 			}
 			break;

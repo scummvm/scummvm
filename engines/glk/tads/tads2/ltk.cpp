@@ -119,7 +119,7 @@ void *ltk_sigalloc(errcxdef *errcx, size_t siz) {
 /*
  * ltk_free - free a block of memory allocated by ltk_alloc.  This
  * takes the memory handle stashed just behind the allocation, and frees
- * the block of memory.  
+ * the block of memory.
  */
 void ltk_free(void *mem) {
 	free(mem);

@@ -164,7 +164,7 @@ void ScummEngine::resetPalette() {
 	static const byte tableHercGPalette[] = {
 		0x00, 0x00, 0x00, 	0x00, 0xFF, 0x00
 	};
-	
+
 	// Palette based on Apple IIgs Technical Notes: IIgs 2523063 Master Color Values
 	// Rearranged to match C64 color positions
 	static const byte tableApple2gsPalette[] = {

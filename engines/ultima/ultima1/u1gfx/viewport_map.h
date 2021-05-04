@@ -44,7 +44,7 @@ public:
 	 * Constructor
 	 */
 	ViewportMap(Shared::TreeItem *parent);
-	
+
 	/**
 	 * Destructor
 	 */

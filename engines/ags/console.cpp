@@ -117,7 +117,7 @@ bool AGSConsole::Cmd_setDebugGroupLevel(int argc, const char **argv) {
 		debugPrintf("\n");
 		return true;
 	}
-	
+
 	_agsDebuggerOutput->SetGroupFilter(group, level);
 	return true;
 }

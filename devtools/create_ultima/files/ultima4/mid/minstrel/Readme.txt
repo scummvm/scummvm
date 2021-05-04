@@ -1,7 +1,7 @@
                  ULTIMA IV - Quest of the Avatar
-	      
+
                   (C) 1985 Origin Systems, Inc.
-	     
+
                    Music by Kenneth W. Arnold
 
 

@@ -50,7 +50,7 @@ private:
 	void animateWater();
 public:
 	CLASSDEF;
-	
+
 	/**
 	 * Constructor
 	 */

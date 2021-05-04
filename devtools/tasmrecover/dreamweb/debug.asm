@@ -71,7 +71,7 @@ Debuggreen	proc	near
 	out	dx,al
 	pop	dx ax
 	ret
-	
+
 	endp
 
 
@@ -96,7 +96,7 @@ Debugred	proc	near
 	out	dx,al
 	pop	dx ax
 	ret
-	
+
 	endp
 
 
@@ -117,7 +117,7 @@ Debugblue	proc	near
 	out	dx,al
 	pop	dx ax
 	ret
-	
+
 	endp
 
 
@@ -137,9 +137,9 @@ Debugblack	proc	near
 	out	dx,al
 	mov	al,0
 	out	dx,al
-	pop	ax dx 
+	pop	ax dx
 	ret
-	
+
 	endp
 
 
@@ -299,7 +299,7 @@ debugtextex:	db	"00000b",0
 
 debugtextex2:	db	"00000b",0
 
-	
+
 
 
 
@@ -351,7 +351,7 @@ debugtextr:	db	"00000",0
 ;	pop	ax
 ;	mov	di,offset cs:debugaxtext
 ;	call	showword
-;	
+;
 ;	mov	di,204
 ;	mov	bx,14
 ;	mov	al,0
@@ -369,7 +369,7 @@ debugtextr:	db	"00000",0
 ;	ret
 ;
 ;debugaxtext	db	"00000  ",0
-;	
+;
 ;	endp
 
 

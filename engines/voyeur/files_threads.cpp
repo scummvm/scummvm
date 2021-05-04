@@ -601,7 +601,7 @@ void ThreadResource::parsePlayCommands() {
 				// Victim selected from command line
 				_vm->_controlPtr->_state->_victimIndex = _vm->_iForceDeath;
 			}
-			
+
 			ConfMan.setInt("lastVictim", _vm->_controlPtr->_state->_victimIndex);
 			ConfMan.flushToDisk();
 			break;

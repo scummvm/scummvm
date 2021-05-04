@@ -38,8 +38,8 @@ protected:
 	StringList _disableEditAndContinue;
 
 	std::list<MSVC_Architecture> _archs;
-	std::map<MSVC_Architecture, StringList> _arch_disabled_features;	
-	
+	std::map<MSVC_Architecture, StringList> _arch_disabled_features;
+
 	/**
 	 * MSVC properties for a library required by a feature
 	*/

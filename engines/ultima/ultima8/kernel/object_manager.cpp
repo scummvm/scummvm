@@ -223,7 +223,7 @@ void ObjectManager::save(Common::WriteStream *ws) {
 
 		saveObject(ws, object);
 	}
- 
+
 	ws->writeUint16LE(0);
 }
 

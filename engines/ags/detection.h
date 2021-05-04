@@ -76,7 +76,7 @@ public:
 	bool canPlayUnknownVariants() const override {
 		return true;
 	}
-	
+
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 

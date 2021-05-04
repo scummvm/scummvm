@@ -53,7 +53,7 @@ char **dict;  /* dict[n] points to the nth dictionary word */
 long dp;  /* Dictionary pointer: number of words in dict */
 
 #define DICT_INIT 12*1024 /* Starting size of dictstr */
-#define DICT_GRAN 1024  /* Granularity of dictstr size requests 
+#define DICT_GRAN 1024  /* Granularity of dictstr size requests
 			   must be at least 4. */
 char *dictstr;  /* Pointer to memory block containing dict words */
 long dictstrptr, dictstrsize;

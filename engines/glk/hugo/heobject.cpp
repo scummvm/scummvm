@@ -382,10 +382,10 @@ GetNextProp:
 							/* Prevent premature stopping */
 							if (debugger_step_over && !debugger_finish)
 								debugger_run = true;
-							
+
 							if (IsBreakpoint(orig_inprop))
 								complex_prop_breakpoint = true;
-							
+
 							sprintf(debug_line, "Calling:  %s.%s", objectname[obj], propertyname[p]);
 							trace_complex_prop_routine = true;
 

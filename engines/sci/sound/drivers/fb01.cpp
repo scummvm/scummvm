@@ -680,7 +680,7 @@ void MidiPlayer_Fb01::initTrack(SciSpan<const byte>& header) {
 		setVoiceParam(i, 1, _voices[i].channel);
 
 	initVoices();
-	
+
 	setVolume(_masterVolume);
 }
 

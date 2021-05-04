@@ -30,7 +30,7 @@
 #include "sword2/detection.h"
 
 /**
- * The contents of this file are helpful in detecting games, 
+ * The contents of this file are helpful in detecting games,
  * as well as helping to create an instance of the game.
  */
 namespace Sword2 {

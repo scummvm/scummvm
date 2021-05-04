@@ -95,7 +95,7 @@ private:
 	void stopProjectiles();
 
 	Common::Array <Common::SharedPtr<Projectile> > _projectiles;
-	int _projectileId;	
+	int _projectileId;
 };
 
 struct Typhoon {
@@ -180,7 +180,7 @@ public:
 	Common::Point _attractor2;
 
 	int _birdType;
-	
+
 	int _field84; // ?
 };
 

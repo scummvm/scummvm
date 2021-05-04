@@ -1355,7 +1355,7 @@ bool Debugger::cmdStopMoveBack(int argc, const char **argv) {
 
 	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
-		// Clear both back and forward as avatar turns then moves forward when not in combat 
+		// Clear both back and forward as avatar turns then moves forward when not in combat
 		proc->clearMovementFlag(AvatarMoverProcess::MOVE_BACK | AvatarMoverProcess::MOVE_FORWARD);
 	}
 	return false;

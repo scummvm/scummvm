@@ -1,5 +1,5 @@
 MODULE := engines/sludge
- 
+
 MODULE_OBJS := \
 	backdrop.o \
 	bg_effects.o \
@@ -38,16 +38,16 @@ MODULE_OBJS := \
 	transition.o \
 	variable.o \
 	zbuffer.o \
- 
+
 MODULE_DIRS += \
 	engines/sludge
- 
+
 # This module can be built as a plugin
 ifeq ($(ENABLE_SLUDGE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
- 
-# Include common rules 
+
+# Include common rules
 include $(srcdir)/rules.mk
 
 # Detection objects

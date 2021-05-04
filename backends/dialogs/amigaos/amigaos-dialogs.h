@@ -23,7 +23,7 @@
 #ifndef BACKEND_AMIGAOS_DIALOGS_H
 #define BACKEND_AMIGAOS_DIALOGS_H
 
-#if defined(__amigaos4__) && defined(USE_SYSDIALOGS) 
+#if defined(__amigaos4__) && defined(USE_SYSDIALOGS)
 
 #include "common/dialogs.h"
 #include "common/fs.h"

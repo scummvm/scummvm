@@ -44,7 +44,7 @@ DiaryPagesScreen::~DiaryPagesScreen() {
 
 void DiaryPagesScreen::open() {
 	StaticLocationScreen::open();
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"BGImage",
 			nullptr,

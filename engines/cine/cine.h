@@ -146,7 +146,7 @@ private:
 	void showSplashScreen();
 	void resetEngine();
 	bool checkSaveHeaderData(const ChunkHeader& hdr);
-	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat, uint32 version);	
+	bool loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat, uint32 version);
 	bool loadVersionedSaveFW(Common::SeekableReadStream &in);
 	bool loadVersionedSaveOS(Common::SeekableReadStream &in);
 	bool makeLoad(const Common::String &saveName);

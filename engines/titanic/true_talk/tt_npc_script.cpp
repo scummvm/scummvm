@@ -289,7 +289,7 @@ int TTnpcScript::handleQuote(const TTroomScript *roomScript, const TTsentence *s
 	for (uint idx = 3; idx < _quotes.size(); ++idx) {
 		const TThandleQuoteEntry *qe = &_quotes[idx];
 
-		if (qe->_tag1 == tag1 && 
+		if (qe->_tag1 == tag1 &&
 				(qe->_tag2 == tag2 || qe->_tag2 < MKTAG('A', 'A', 'A', 'A'))) {
 			uint threshold = qe->_tag2;
 			if (threshold > 0 && threshold < 100) {

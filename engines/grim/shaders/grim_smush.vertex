@@ -10,7 +10,7 @@ out vec2 Texcoord;
 void main()
 {
 	Texcoord = texcoord * texcrop;
-	
+
 	vec2 pos = scale * position + offset;
 	// Coordinates are [0.0;1.0], transform [-1.0; 1.0] and flip Y
 	pos.x = (pos.x * 2.0 - 1.0);

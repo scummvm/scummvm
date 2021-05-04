@@ -1238,7 +1238,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 			}
 		}
 		return true;
-	}	
+	}
 	case 25:
 		subPartyTime(giveVal);
 		intf.spellFX(&ps);

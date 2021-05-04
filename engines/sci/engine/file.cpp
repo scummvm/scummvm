@@ -269,7 +269,7 @@ FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 
 int fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	// always initialize because some scripts don't test for errors and
-	//  just use the results, even from invalid file handles. bug #12060 
+	//  just use the results, even from invalid file handles. bug #12060
 	memset(dest, 0, maxsize);
 
 	FileHandle *f = getFileFromHandle(s, handle);
@@ -342,7 +342,7 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
 		nameString = nameU32String.encode(Common::kWindows1255);
 	}
-	
+
 	// At least Phant2 requires use of strncpy, since it creates save game
 	// names of exactly kMaxSaveNameLength
 	strncpy(desc.name, nameString.c_str(), kMaxSaveNameLength);
@@ -360,7 +360,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 
 		// exclude new game and autosave slots, except for QFG3/4,
 		//  whose autosave should appear as a normal saved game
-		if (g_sci->getGameId() != GID_QFG3 && 
+		if (g_sci->getGameId() != GID_QFG3 &&
 			g_sci->getGameId() != GID_QFG4) {
 			const int id = strtol(filename.end() - 3, NULL, 10);
 			if (id == kNewGameId || id == kAutoSaveId) {

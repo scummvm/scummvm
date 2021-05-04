@@ -15,8 +15,8 @@ The changes made from the original version of TinyGL 0.4 are:
 * Added TGL_BGR/TGL_RGB definitions to gl.h, verifying against SDL_opengl.h that the values are ok.
 * Added additional functions missing, like glColor4ub. (To make the code similar with the GL-code we use)
 * Added simplistic glColorMask implementation, on/off.
-* Applied some C++-isms: 
-	* "for(int i = 0;" instead of "int i; for (i = 0;", 
+* Applied some C++-isms:
+	* "for(int i = 0;" instead of "int i; for (i = 0;",
 	* struct structName instead of typedef struct {} structName;
 	* pass-by-const-reference instead of by-value when possible
 * Changed the math-functions to use const-pointers if possible.

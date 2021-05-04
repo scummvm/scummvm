@@ -163,7 +163,7 @@ public:
 			width -= (c->_scissorRect.left - dstX);
 			dstX = c->_scissorRect.left;
 		}
-		
+
 		if (dstY < c->_scissorRect.top) {
 			srcY += (c->_scissorRect.top - dstY);
 			height -= (c->_scissorRect.top - dstY);
@@ -233,12 +233,12 @@ public:
 		if (kDisableTransform) {
 			if ((kDisableBlending || kEnableAlphaBlending) && kFlipVertical == false && kFlipHorizontal == false) {
 				tglBlitRLE<kDisableColoring, kDisableBlending, kEnableAlphaBlending>(transform._destinationRectangle.left,
-					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top, 
+					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top,
 					transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint,
 					transform._rTint, transform._gTint, transform._bTint);
 			} else {
-				tglBlitSimple<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left, 
-					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top, 
+				tglBlitSimple<kDisableBlending, kDisableColoring, kFlipVertical, kFlipHorizontal>(transform._destinationRectangle.left,
+					transform._destinationRectangle.top, transform._sourceRectangle.left, transform._sourceRectangle.top,
 					transform._sourceRectangle.width() , transform._sourceRectangle.height(),
 					transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 			}
@@ -334,7 +334,7 @@ FORCEINLINE void BlitImage::tglBlitRLE(int dstX, int dstY, int srcX, int srcY, i
 		lineIndex++;
 	}
 
-	if (_binaryTransparent || (kDisableBlending || !kEnableAlphaBlending)) { // If bitmap is binary transparent or if  we need complex forms of blending (not just alpha) we need to use writePixel, which is slower 
+	if (_binaryTransparent || (kDisableBlending || !kEnableAlphaBlending)) { // If bitmap is binary transparent or if  we need complex forms of blending (not just alpha) we need to use writePixel, which is slower
 		while (lineIndex < _lines.size() && _lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = _lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
@@ -426,7 +426,7 @@ FORCEINLINE void BlitImage::tglBlitSimple(int dstX, int dstY, int srcX, int srcY
 			}
 
 			// Those branches are needed to favor speed: avoiding writePixel always yield a huge performance boost when blitting images.
-			if (kDisableColoring) { 
+			if (kDisableColoring) {
 				if (kDisableBlending && aDst != 0) {
 					dstBuf.setPixelAt((dstX + x) + (dstY + y) * c->fb->xsize, aDst, rDst, gDst, bDst);
 				} else {
@@ -543,19 +543,19 @@ template <bool kDisableBlending, bool kDisableColoring, bool kFlipVertical, bool
 FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
 							 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
-	
+
 	int clampWidth, clampHeight;
 	if (clipBlitImage(c, srcX, srcY, srcWidth, srcHeight, width, height, dstX, dstY, clampWidth, clampHeight) == false)
 		return;
-	
+
 	Graphics::PixelBuffer srcBuf(_surface.format, (byte *)_surface.getPixels());
 	srcBuf.shiftBy(srcX + (srcY * _surface.w));
-	
+
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
-	
+
 	// Transform destination rectangle accordingly.
 	Common::Rect destinationRectangle = rotateRectangle(dstX, dstY, width, height, rotation, originX, originY);
-	
+
 	if (dstX + destinationRectangle.width() > c->fb->xsize)
 		clampWidth = c->fb->xsize - dstX;
 	else
@@ -564,36 +564,36 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 		clampHeight = c->fb->ysize - dstY;
 	else
 		clampHeight = destinationRectangle.height();
-	
+
 	uint32 invAngle = 360 - (rotation % 360);
 	float invCos = cos(invAngle * (float)M_PI / 180.0f);
 	float invSin = sin(invAngle * (float)M_PI / 180.0f);
-	
+
 	int icosx = (int)(invCos * (65536.0f * srcWidth / width));
 	int isinx = (int)(invSin * (65536.0f * srcWidth / width));
 	int icosy = (int)(invCos * (65536.0f * srcHeight / height));
 	int isiny = (int)(invSin * (65536.0f * srcHeight / height));
-	
+
 	int xd = (srcX + originX) << 16;
 	int yd = (srcY + originY) << 16;
 	int cx = originX * ((float)width / srcWidth);
 	int cy = originY * ((float)height / srcHeight);
-	
+
 	int ax = -icosx * cx;
 	int ay = -isiny * cx;
 	int sw = width - 1;
 	int sh = height - 1;
-	
+
 	for (int y = 0; y < clampHeight; y++) {
 		int t = cy - y;
 		int sdx = ax + (isinx * t) + xd;
 		int sdy = ay - (icosy * t) + yd;
 		for (int x = 0; x < clampWidth; ++x) {
 			byte aDst, rDst, gDst, bDst;
-			
+
 			int dx = (sdx >> 16);
 			int dy = (sdy >> 16);
-			
+
 			if (kFlipHorizontal) {
 				dx = sw - dx;
 			}
@@ -601,7 +601,7 @@ FORCEINLINE void BlitImage::tglBlitRotoScale(int dstX, int dstY, int width, int 
 			if (kFlipVertical) {
 				dy = sh - dy;
 			}
-			
+
 			if ((dx >= 0) && (dy >= 0) && (dx < srcWidth) && (dy < srcHeight)) {
 				srcBuf.getARGBAt(dy * _surface.w + dx, aDst, rDst, gDst, bDst);
 				if (kDisableColoring) {

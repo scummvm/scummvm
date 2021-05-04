@@ -1,7 +1,7 @@
 <!-- $Id: maps.dtd 2572 2005-10-03 06:17:52Z andrewtaylor $ -->
 
 <!ENTITY % bool '( true | false )'>
-<!ENTITY % role '( armorvendor | companion | foodvendor | guildvendor | hawkwind | healer | 
+<!ENTITY % role '( armorvendor | companion | foodvendor | guildvendor | hawkwind | healer |
                    horsevendor | innkeeper | lordbritish | reagentsvendor | tavernkeeper |
                    weaponsvendor )'>
 

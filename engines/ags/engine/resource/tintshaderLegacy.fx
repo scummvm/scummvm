@@ -3,7 +3,7 @@ float GetValue(float4 color)
 {
 	float colorMax = max (color[0], color[1]);
 	colorMax = max (colorMax, color[2]);
-	
+
 	return colorMax;
 }
 
@@ -60,12 +60,12 @@ PS_OUTPUT main( in PS_INPUT In )
   PS_OUTPUT Out;                             //create an output pixel
 
 	float amount = tintHSV[3];
-	float4 pixel = tex2D(Tex0, In.Texture); 
+	float4 pixel = tex2D(Tex0, In.Texture);
 	float lum = GetValue(pixel);
 	lum = max(lum - (1.0 - transparency[1]), 0.0);
-	
+
 	// scale the colour by the luma, alpha blend it with the tint
-	Out.Color = (hsv_to_rgb(float3(tintHSV[0],tintHSV[1],lum)) * amount + pixel*(1-amount)); 
+	Out.Color = (hsv_to_rgb(float3(tintHSV[0],tintHSV[1],lum)) * amount + pixel*(1-amount));
 	Out.Color[3] = pixel[3] * transparency[0];
 
     return Out;                                //return output pixel

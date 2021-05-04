@@ -394,7 +394,7 @@ static Common::SeekableReadStream *readTrack_WOZ(Common::File &f, uint track, bo
 		return nullptr;
 	}
 
-	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES); 
+	Common::BitStreamMemory8MSB bitStream(new Common::BitStreamMemoryStream(inBuf, byteSize, DisposeAfterUse::YES), DisposeAfterUse::YES);
 
 	byte nibble = 0;
 	bool stop = false;

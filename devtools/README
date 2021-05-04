@@ -98,9 +98,9 @@ create_supernova (criezy)
 
 create_toon (Strangerke)
 -----------
-    This tool creates toon.dat, which contains all the game's texts 
+    This tool creates toon.dat, which contains all the game's texts
     hardcoded in original game executable. This includes English, French,
-    German, Russian and Spanish texts. 
+    German, Russian and Spanish texts.
 
 
 create_translations (criezy)

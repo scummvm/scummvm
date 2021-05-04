@@ -327,7 +327,7 @@ struct StringFile {
 	uint32 _endOffset;
 
 	StringFile() : _baseOffset(0), _endOffset(0) {
-	} 
+	}
 	StringFile(const char *fname, uint32 baseOfs = 0, uint32 endO = 0) :
 		_filename(fname), _baseOffset(baseOfs), _endOffset(endO) {
 	}

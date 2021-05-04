@@ -29,7 +29,7 @@
 // Enable the following #define if you want to check how many collisions the
 // code produces (many collisions indicate either a bad hash function, or a
 // hash table that is too small).
- 
+
 //#define DEBUG_HASH_COLLISIONS
 
 /**

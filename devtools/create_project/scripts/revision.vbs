@@ -99,9 +99,9 @@ Sub DetermineRevision()
 			End If
 		End If
 	End If
-	
+
 	Dim outputInfo : outputInfo = "Found revision " & revision & " on branch " & branch
-	
+
 	' Setup our revision string
 	Dim revisionString : revisionString = revision
 
@@ -120,7 +120,7 @@ Sub DetermineRevision()
 		revisionString = revisionString & "-" & tool
 		outputInfo = outputInfo & " using " & tool
 	End If
-	
+
 	Wscript.StdErr.WriteLine outputInfo & vbCrLf
 
 	OutputRevisionHeader revisionString

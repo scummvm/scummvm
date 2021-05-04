@@ -66,9 +66,9 @@
    Extract the zip file you downloaded into the "~/Android" folder.
    This should create a "android-ndk-r15c" subfolder.
 
-4) Set the environment variables for Android SDK and NDK tools. 
+4) Set the environment variables for Android SDK and NDK tools.
    For this purpose you can create and use a simple "setenv-android.sh" script.
-   In this script define variables for the paths to your SDK tools and NDK. 
+   In this script define variables for the paths to your SDK tools and NDK.
 
    Sample (suggested) script:
           #!/bin/sh
@@ -94,7 +94,7 @@
 5) Create and put a keystore (you can use the debug version) in "~/.android/debug.keystore".
    To create a debug key store run from the shell terminal:
           keytool -genkey -v -keystore ~/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
-          keytool -importkeystore -srckeystore ~/.android/debug.keystore -destkeystore ~/.android/debug.keystore -deststoretype pkcs12   
+          keytool -importkeystore -srckeystore ~/.android/debug.keystore -destkeystore ~/.android/debug.keystore -deststoretype pkcs12
    Enter "android" without the quotes when asked for the keystore password.
 
 6) Clone the ScummVM repository. This guide assumes that you run the clone command from your home directory:

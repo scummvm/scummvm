@@ -78,7 +78,7 @@ bool PodImage::loadImage(const PodFile &col, int index) {
 
 	for (int i = 0; i < _ncolors; i++) {
 		int color = _palette.get()[4 * i] & 0xff;
-		
+
 		_paletteCursor.get()[3 * color    ] = _palette.get()[4 * i + 1];
 		_paletteCursor.get()[3 * color + 1] = _palette.get()[4 * i + 2];
 		_paletteCursor.get()[3 * color + 2] = _palette.get()[4 * i + 3];
@@ -166,7 +166,7 @@ bool PodImage::loadImage(const PodFile &col, int index) {
 		linerem = _w;
 		pos = line * _w;
 	}
-	
+
 	return true;
 }
 
@@ -194,7 +194,7 @@ void PodImage::makeScale(int scale) const {
 	}
 	_scales[scale] = sv;
 }
-	
+
 void PodImage::render(Common::SharedPtr<GfxContext> context,
 		      Common::Point offset,
 		      int colourScale,
@@ -218,7 +218,7 @@ void PodImage::render(Common::SharedPtr<GfxContext> context,
 		if (!_scales.contains(scale))
 			makeScale(scale);
 		context->blitPodImage(_scales[scale]._pixels.get(), _scales[scale]._w, _scales[scale]._w, _scales[scale]._h,
-				      scaledPalette ? scaledPalette : originalPalette, _ncolors, _pos * (scale / 100.0) + offset);		
+				      scaledPalette ? scaledPalette : originalPalette, _ncolors, _pos * (scale / 100.0) + offset);
 	}
 	if (scaledPalette)
 		delete [] scaledPalette;

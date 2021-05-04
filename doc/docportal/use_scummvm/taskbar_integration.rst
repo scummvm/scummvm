@@ -9,12 +9,12 @@ The taskbar integration has several features:
 - Shows a progress bar when doing a mass add of games, and shows the number of games found at the end (Windows, macOS and Linux).
 - Shows an error state in the taskbar if an error occurs when running a game (Windows only).
 
-.. _iconspath: 
+.. _iconspath:
 
 Setting up the icon overlay
 ================================
 
-Icons for many games can be found on our `Github repository <https://github.com/scummvm/scummvm-icons>`__. 
+Icons for many games can be found on our `Github repository <https://github.com/scummvm/scummvm-icons>`__.
 
 Place the icons in a folder, and either change the *iconspath* in the :doc:`configuration file <../advanced_topics/configuration_file>` to point to this folder, or add the folder to the :ref:`Extra Path <extra>` on the Paths settings tab.
 
@@ -27,7 +27,7 @@ The icon files must be ICO files for Windows, or PNG files for macOS. They must 
 
 To find the gameid and the engineid, open the :doc:`configuration file <../advanced_topics/configuration_file>`. The game entry will be similar to this:
 
-.. code:: 
+.. code::
 
     [lure]
     description=Lure of the Temptress (VGA/DOS/English)
@@ -38,11 +38,11 @@ To find the gameid and the engineid, open the :doc:`configuration file <../advan
 
 .. figure:: ../images/taskbar/game_icon.png
 
-    macOS dock with a custom icon overlay for Beneath a Steel Sky. 
-    
+    macOS dock with a custom icon overlay for Beneath a Steel Sky.
+
 Launching recently played games
 =======================================
 
-To start a recently played game, right click on the ScummVM icon in the taskbar or dock, and select the game you want to play. 
+To start a recently played game, right click on the ScummVM icon in the taskbar or dock, and select the game you want to play.
 
 

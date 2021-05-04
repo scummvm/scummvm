@@ -113,7 +113,7 @@ bool diskFileExists(const Common::String &filename) {
 int listMatchingDiskFileMembers(Common::ArchiveMemberList &list, const Common::String &pattern) {
 	return Common::FSDirectory(ConfMan.get("path")).listMatchingMembers(list, pattern);
 }
-			
+
 Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 	uint32 prefixSize = 0;
 	Common::SeekableReadStream *file = nullptr;

@@ -1228,7 +1228,7 @@ void GlkAPI::gidispatch_call(uint32 funcnum, uint32 numargs, gluniversal_t *argl
 			glktimeval_t timeval;
 			glktimeval_t *timeptr = nullptr;
 			timeval.high_sec = timeval.low_sec = timeval.microsec = 0;
-			
+
 			int ix = 0;
 			if (arglist[ix++]._ptrflag) {
 				dateptr = &date;

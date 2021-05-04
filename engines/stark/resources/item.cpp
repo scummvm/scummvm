@@ -404,7 +404,7 @@ Common::String ItemVisual::getHotspotTitle(uint32 hotspotIndex) {
 
 Common::Array<Common::Point> ItemVisual::listExitPositionsImpl() {
 	Common::Array<PATTable *> pattables = listChildrenRecursive<PATTable>();
-	
+
 	Common::Array<Common::Point> positions;
 	Common::Point invalidPosition(-1, -1);
 

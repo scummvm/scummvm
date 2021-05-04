@@ -160,7 +160,7 @@ public:
 	 * @param useEllipsis  Try to fit the string in the area by inserting an
 	 *                     ellipsis. Note that the default value is false for this
 	 *                     argument, unlike for drawString.
-	 *  
+	 *
 	 * @return The actual area where the string is drawn.
 	 */
 	Common::Rect getBoundingBox(const Common::String &str, int x = 0, int y = 0, const int w = 0, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = false) const;

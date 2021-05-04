@@ -286,7 +286,7 @@ Common::String Resource::getLoadedText(int textIndex) {
 		curIndex++;
 		str = "";
 	}
-	
+
 	delete txtFile;
 	return "";
 }

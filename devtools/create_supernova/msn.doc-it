@@ -24,13 +24,13 @@ Puoi selezionare un oggetto in due modi:
 -Cliccandoci sopra nella schermata grafica. Gli oggetti
  importanti vengono indicati nella riga-registro quando
  passi sopra il puntatore.
--Cliccando su un oggetto nell'inventario. L'inventario si 
+-Cliccando su un oggetto nell'inventario. L'inventario si
  trova in basso sullo schermo e mostra tutti gli oggetti
  che stai portando con te. Puoi raccogliere tutti gli
  oggetti che desideri. Se possiedi piu` di otto oggetti,
  verranno visualizzate delle freccette sulla destra, che
  puoi usare per scorrere la lista completa.
- 
+
  Dopo avere selezionato un verbo ed un oggetto, l'azione
  prescelta verra` subito eseguita (solitamente).
  Esempi:
@@ -39,7 +39,7 @@ Puoi selezionare un oggetto in due modi:
          Prendi Scacchiera
          Guarda Tesserino
  Puoi provare questi esempi nella stanza dove inizia il
- gioco.   
+ gioco.
 
 Il verbo "Usa" talvolta richiede due oggetti. Il verbo "Dai"
 richiede sempre due "oggetti".
@@ -49,7 +49,7 @@ Esempio:
           dal tuo inventario. La riga del testo indichera`
           "Usa Tesserino con". Ora clicca sullo slot
           dell'armadietto centrale per aprirlo.
-		   
+
 Informazioni aggiuntive per i comandi:
 -Dopo avere eseguito un comando, il gioco passa sempre al
  verbo "Vai verso".
@@ -59,7 +59,7 @@ Informazioni aggiuntive per i comandi:
   -Premere pulsanti
   -Parlare con persone
   -Guardare oggetti
-   Esempio: 
+   Esempio:
             Desideri aprire un portello chiuso.
             Sposta il puntatore del mouse sopra al portello
             e premi il tasto destro. Il portello si aprira`.
@@ -80,9 +80,9 @@ Puoi spostarti in due modi.
  dove ti trovi.
 -Puoi anche cliccare su di un'uscita direttamente nella
  schermata grafica (per es. un portello aperto).
- 
- Importante: La schermata grafica non mostra sempre tutte 
-             le uscite di una stanza. Alcune uscite 
+
+ Importante: La schermata grafica non mostra sempre tutte
+             le uscite di una stanza. Alcune uscite
              potrebbero essere accessibili solo tramite la
              "mappa" in basso a destra.
 

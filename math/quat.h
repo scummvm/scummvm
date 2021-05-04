@@ -66,7 +66,7 @@ public:
 	 * @param q		The existing quaternion
 	 * @return		The new Quaternion
 	 */
-	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {} 
+	Quaternion(const Quaternion &q) : Vector4d(q.x(), q.y(), q.z(), q.w()) {}
 
 	/**
 	 * Constructor from a vector of four floats in the order X,Y,Z,W

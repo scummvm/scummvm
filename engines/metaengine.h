@@ -156,7 +156,7 @@ public:
 	 *
 	 * @param target  Name of a config manager target.
 	 *
-	 * @return A list of extra GUI options for an engine plugin and target.          
+	 * @return A list of extra GUI options for an engine plugin and target.
 	 */
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
@@ -415,7 +415,7 @@ public:
 		/**
 		 * Feature a thumbnail in savegames.
 		 *
-		 * This means that the engine includes a thumbnail in save states 
+		 * This means that the engine includes a thumbnail in save states
 		 * returned via querySaveMetaInfo.
 		 * This flag can only be set when kSavesSupportMetaInfo is set.
 		 */
@@ -474,7 +474,7 @@ public:
 	 *
 	 * @param target  Name of a config manager target.
 	 *
-	 * @return A list of achievement descriptions for an engine plugin and target.                
+	 * @return A list of achievement descriptions for an engine plugin and target.
 	 */
 	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
 		return Common::AchievementsInfo();

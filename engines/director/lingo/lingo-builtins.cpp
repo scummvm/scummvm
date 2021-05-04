@@ -1853,7 +1853,7 @@ void LB::b_puppetSound(int nargs) {
 		warning("b_puppetSound(): needs 1 or 2 args");
 		return;
 	}
-	
+
 	DirectorSound *sound = g_director->getSoundManager();
 	Datum castMember = g_lingo->pop();
 	Score *score = g_director->getCurrentMovie()->getScore();

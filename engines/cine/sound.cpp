@@ -110,7 +110,7 @@ public:
 	MusicType musicType() const override { return MT_ADLIB; }
 	// PCSoundDriver interface
 	void setUpdateCallback(UpdateCallback upCb, void *ref) override;
-	void setupChannel(int channel, const byte *data, int instrument, int volume) override;	
+	void setupChannel(int channel, const byte *data, int instrument, int volume) override;
 	void stopAll() override;
 
 	void initCard();

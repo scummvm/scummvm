@@ -71,7 +71,7 @@ void Viewport::handleInput(NancyInput &input) {
 	} else {
 		viewportActiveZone = _screenPosition;
 	}
-	
+
 	if (viewportActiveZone.contains(input.mousePos)) {
 		g_nancy->_cursorManager->setCursorType(CursorManager::kNormal);
 
@@ -183,7 +183,7 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 	if (_decoder.isVideoLoaded()) {
 		_decoder.close();
 	}
-	
+
 	if (!_decoder.loadFile(filename + ".avf")) {
 		error("Couldn't load video file %s", filename.c_str());
 	}
@@ -274,7 +274,7 @@ void Viewport::scrollDown(uint delta) {
 }
 
 uint16 Viewport::getMaxScroll() const {
-	return _fullFrame.h - _drawSurface.h - (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0); 
+	return _fullFrame.h - _drawSurface.h - (g_nancy->getGameType() == kGameTypeVampire ? 1 : 0);
 }
 
 Common::Rect Viewport::getBoundsByFormat(uint format) const {

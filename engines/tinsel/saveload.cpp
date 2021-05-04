@@ -80,7 +80,7 @@ struct SaveGameHeader {
 	uint32 ver;
 	char desc[SG_DESC_LEN];
 	TimeDate dateTime;
-	uint32 playTime;	
+	uint32 playTime;
 	bool scnFlag;
 	byte language;
 	uint16 numInterpreters;			// Savegame version 2 or later only

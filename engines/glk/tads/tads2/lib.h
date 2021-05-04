@@ -80,9 +80,9 @@ typedef int            eword;
 # define noreg
 # define NOREG(arglist)
 
-/* 
+/*
  *   Linting directives.  You can define these before including this file
- *   if you have a fussy compiler.  
+ *   if you have a fussy compiler.
  */
 #ifdef LINT
 # ifndef NOTREACHED
@@ -120,7 +120,7 @@ void varused();
 
 /*
  *   Define our own version of isspace(), so that we don't try to interpret
- *   anything outside of the normal ASCII set as spaces. 
+ *   anything outside of the normal ASCII set as spaces.
  */
 #define t_isspace(c) \
 	(((unsigned char)(c)) <= 127 && Common::isSpace((unsigned char)(c)))

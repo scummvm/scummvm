@@ -41,7 +41,7 @@ BBDOUMenuSystem::~BBDOUMenuSystem() {
 
 void BBDOUMenuSystem::runMenu(MenuChoiceOffsets menuChoiceOffsets, int16 *menuChoiceOffset,
 	uint32 menuId, uint32 duration, uint timeOutMenuChoiceIndex, uint32 menuCallerThreadId) {
-	
+
 	debug(0, "BBDOUMenuSystem::runMenu(%08X)", menuId);
 
 	setTimeOutDuration(duration, timeOutMenuChoiceIndex);

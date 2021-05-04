@@ -321,7 +321,7 @@ def check_cashed():
       macros = os.path.join(local, "macros.mmh")
       engines = os.path.join(local, "engines.mmh")
       engines_new = os.path.join(local, "engines.mmh.new")
-      
+
       macros_dump = data_dump(macros)
       macros_dump_new = data_dump(macros_new)
       macros_diff = set(macros_dump).symmetric_difference(set(macros_dump_new))
@@ -330,12 +330,12 @@ def check_cashed():
       SafeWriteFile(build_log, 'a', "new macro found: ")
       SafeWriteFile(build_log, 'a', list(macros_diff))
       SafeWriteFile(macros, 'a', list(macros_diff))
-      
+
       engines_dump = data_dump(engines)
       engines_dump_new = data_dump(engines_new)
       engines_diff = set(engines_dump).symmetric_difference(set(engines_dump_new))
       SafeWriteFile(engines, 'a', list(engines_diff))
-      
+
       os.chmod(macros, stat.S_IREAD)
       os.chmod(engines, stat.S_IREAD)
 
@@ -365,7 +365,7 @@ def create_engine_mmps(arg = 'full'):
          except:
             macros = os.path.join(local, "macros.mmh")
             engines = os.path.join(local, "engines.mmh")
-            
+
             macros_new = os.path.join(local, "macros.mmh.new")
             engines_new = os.path.join(local, "engines.mmh.new")
             SafeWriteFile(macros_new, 'w', ro_warning)

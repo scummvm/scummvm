@@ -797,7 +797,7 @@ void U32String::decodeOneByte(const char *src, uint32 len, CodePage page) {
 }
 
 void String::encodeOneByte(const U32String &src, CodePage page, bool transliterate) {
-	const ReverseTablePrefixTreeLevel1 *conversionTable = 
+	const ReverseTablePrefixTreeLevel1 *conversionTable =
 		getReverseConversionTable(page);
 
 	ensureCapacity(src.size(), false);
@@ -848,7 +848,7 @@ void String::encodeInternal(const U32String &src, CodePage page) {
 		break;
 	case kWindows932:
 		encodeWindows932(src);
-		break;		
+		break;
 	case kWindows949:
 		encodeWindows949(src);
 		break;

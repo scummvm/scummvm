@@ -62,10 +62,10 @@ MainMenuWindow::MainMenuWindow(BuriedEngine *vm, Window *parent) : Window(vm, pa
 	_buttons[2] = Common::Rect(335, 309, 610, 369);
 	_buttons[3] = Common::Rect(344, 375, 471, 407);
 	_buttons[4] = Common::Rect(471, 375, 598, 407);
-	
+
 	_playMode[0] = Common::Rect(345, 235, 465, 263);
 	_playMode[1] = Common::Rect(478, 235, 598, 263);
-	
+
 	_intro[0] = Common::Rect(345, 268, 465, 296);
 	_intro[1] = Common::Rect(478, 268, 598, 296);
 

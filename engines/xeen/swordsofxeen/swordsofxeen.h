@@ -43,7 +43,7 @@ protected:
 	/**
 	 * Show the starting sequence/intro
 	 */
-	void showStartup() override { 
+	void showStartup() override {
 		// Swords of Xeen doesn't have a starting title or intro
 		_gameMode = GMODE_MENU;
 	}

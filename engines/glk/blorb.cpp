@@ -75,7 +75,7 @@ Common::SeekableReadStream *Blorb::createReadStreamForMember(const Common::Strin
 
 			f.seek(ce._offset);
 			Common::SeekableReadStream *result;
-			
+
 			if (ce._id == ID_FORM) {
 				// AIFF chunks need to be wrapped in a FORM chunk for ScummVM decoder
 				byte *sound = (byte *)malloc(ce._size + 8);
@@ -134,7 +134,7 @@ Common::ErrorCode Blorb::load() {
 			else if (ce._id == ID_AIFF || ce._id == ID_FORM)
 				ce._filename += ".aiff";
 			else if (ce._id == ID_OGG)
-				ce._filename += ".ogg"; 
+				ce._filename += ".ogg";
 			else if (ce._id == ID_MOD)
 				ce._filename += ".mod";
 

@@ -60,7 +60,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 				break;
 			}
 			break;
-			
+
 		case '%':
 			++fmt;
 			fmtchar = *fmt;
@@ -70,23 +70,23 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 			case '\0':
 				--fmt;
 				break;
-				
+
 			case '%':
 				p = "%";
 				len = 1;
 				break;
-				
+
 			case 'd':
 				sprintf(buf, "%d", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;
-				
+
 			case 's':
 				p = argv[argi].errastr;
 				len = strlen(p);
 				break;
-				
+
 			case 't':
 				{
 					int i;
@@ -108,7 +108,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 						{ TOKTEQ, "'='" },
 						{ 0, (const char *)nullptr }
 					};
-					
+
 					for (i = 0 ; toklist[i].toknam ; ++i)
 					{
 						if (toklist[i].tokid == argv[argi].erraint)
@@ -122,7 +122,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 					len = strlen(p);
 					break;
 				}
-				
+
 			default:
 				p = "";
 				len = 0;
@@ -131,7 +131,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 			}
 			++argi;
 			break;
-			
+
 		default:
 			p = fmt;
 			len = 1;
@@ -156,7 +156,7 @@ int errfmt(char *outbuf, int outbufl, const char *fmt, int argc, const erradef *
 		}
 		++fmt;
 	}
-	
+
 	if (outbufl) *outbuf++ = '\0';
 	return(outlen);
 }

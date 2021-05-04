@@ -63,7 +63,7 @@ bool Archetype::initialize() {
 	saveload_init();
 	sys_object_init();
 	timestamp_init();
-	
+
 	// keywords
 	new_xarray(Literals);
 	new_xarray(Vocabulary);
@@ -166,11 +166,11 @@ String Archetype::readLine() {
 	if (text.contains("save") || text.contains("load")) {
 		writeln();
 		return "";
-	
+
 	} else if (loadingSavegame()) {
 		// Automatically trigger a load action if a savegame needs loading from the launcher
 		return String("load");
-	
+
 	} else if (_saveSlot == -2) {
 		_saveSlot = -1;
 		return String("look");
@@ -315,7 +315,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 	bool done, find_other;
 	ObjectPtr op, original;
 	ResultType r;
-	NodePtr np;  
+	NodePtr np;
 	StatementPtr st;
 	void *p;
 	ContextType c;
@@ -332,7 +332,7 @@ bool Archetype::send_message(int transport, int message_sent, int recipient,
 		r._kind = IDENT;
 		r._data._ident.ident_kind = OBJECT_ID;
 		r._data._ident.ident_int = context.self;
-		
+
 		debugN(" : ");
 		display_result(r);
 

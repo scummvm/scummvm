@@ -42,7 +42,7 @@ voccxdef *main_voc_ctx = 0;
 vocwdef *vocwget(voccxdef *ctx, uint idx)
 {
 	uint pg;
-	
+
 	if (idx == VOCCXW_NONE)
 		return 0;
 
@@ -71,7 +71,7 @@ vocwdef *vocwget(voccxdef *ctx, uint idx)
 uint vochsh(const uchar *t, int len)
 {
 	uint ret = 0;
-	
+
 	if (len > 6) len = 6;
 	for ( ; len ; --len, ++t)
 		ret = (ret + (uint)(vocisupper(*t) ? tolower(*t) : *t))
@@ -96,7 +96,7 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 
 	/*
 	 *   look through the vocdef list to see if there's an existing entry
-	 *   with the DELETED marker -- if so, simply undelete it 
+	 *   with the DELETED marker -- if so, simply undelete it
 	 */
 	for (inx = v->vocwlst, vw = vocwget(ctx, inx) ; vw ;
 		 inx = vw->vocwnxt, vw = vocwget(ctx, inx))
@@ -109,7 +109,7 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 			 *   Remove the deleted flag.  We will otherwise leave the
 			 *   flags unchanged, since the VOCFDEL flag applies only to
 			 *   statically allocated objects, and hence the original
-			 *   flags should take precedence over any run-time flags. 
+			 *   flags should take precedence over any run-time flags.
 			 */
 			vw->vocwflg &= ~VOCFDEL;
 
@@ -129,7 +129,7 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 			return;
 		}
 	}
-	
+
 	/* look in the free list for an available vocwdef */
 	if (ctx->voccxwfre != VOCCXW_NONE)
 	{
@@ -143,10 +143,10 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 		if ((ctx->voccxwalocnt % VOCWPGSIZ) == 0)
 		{
 			int pg = ctx->voccxwalocnt / VOCWPGSIZ;
-			
+
 			/* make sure we haven't exceeded the available page count */
 			if (pg >= VOCWPGMAX) errsig(ctx->voccxerr, ERR_VOCMNPG);
-			
+
 			/* allocate on the new page */
 #ifdef VOCW_IN_CACHE
 			mcmalo(ctx->voccxmem, (ushort)(VOCWPGSIZ * sizeof(vocwdef)),
@@ -174,9 +174,9 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 	vw->vocwobj = objn;
 	vw->vocwflg = classflg;
 
-	/* 
+	/*
 	 *   Scan the list and make sure we're not adding a redundant verb.
-	 *   Don't bother with the warning if this is a class. 
+	 *   Don't bother with the warning if this is a class.
 	 */
 	if (p == PRP_VERB && (ctx->voccxflg & VOCCXFVWARN)
 		&& (vw->vocwflg & VOCFCLASS) == 0)
@@ -184,9 +184,9 @@ static void vocwset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 		for (vw2 = vocwget(ctx, v->vocwlst) ; vw2 ;
 			 vw2 = vocwget(ctx, vw2->vocwnxt))
 		{
-			/* 
+			/*
 			 *   if this is a different object, and it's not a class, and
-			 *   it's defined as a verb, warn about it 
+			 *   it's defined as a verb, warn about it
 			 */
 			if (vw2 != vw
 				&& (vw2->vocwflg & VOCFCLASS) == 0
@@ -217,10 +217,10 @@ static void vocset(voccxdef *ctx, vocdef *v, prpnum p, objnum objn,
 				   uchar *wrd2, int len2)
 {
 	uint hshval = vochsh(wrdtxt, len);
-	
+
 	v->vocnxt = ctx->voccxhsh[hshval];
 	ctx->voccxhsh[hshval] = v;
-	
+
 	v->voclen = len;
 	v->vocln2 = len2;
 	voccpy(v->voctxt, wrdtxt, len);
@@ -261,19 +261,19 @@ void vocadd2(voccxdef *ctx, prpnum p, objnum objn, int classflg,
 	/* look for a free vocdef entry of the same size */
 	for (prv = (vocdef *)0, v = ctx->voccxfre ; v ; prv = v, v = v->vocnxt)
 		if (v->voclen == len + len2) break;
-	
+
 	if (v)
 	{
 		/* we found something - unlink from free list */
 		if (prv) prv->vocnxt = v->vocnxt;
 		else ctx->voccxfre = v->vocnxt;
-		
+
 		/* reuse the entry */
 		v->vocwlst = VOCCXW_NONE;
 		vocset(ctx, v, p, objn, classflg, wrdtxt, len, wrd2, len2);
 		return;
 	}
-	
+
 	/* didn't find an existing vocdef; allocate a new one */
 	need = sizeof(vocdef) + len + len2 - 1;
 	if (ctx->voccxrem < need)
@@ -282,14 +282,14 @@ void vocadd2(voccxdef *ctx, prpnum p, objnum objn, int classflg,
 		ctx->voccxpool = mchalo(ctx->voccxerr, VOCPGSIZ, "vocadd2");
 		ctx->voccxrem = VOCPGSIZ;
 	}
-	
+
 	/* use top of current pool, and update pool pointer and size */
 	v = (vocdef *)ctx->voccxpool;
 	need = osrndsz(need);
 	ctx->voccxpool += need;
 	if (ctx->voccxrem > need) ctx->voccxrem -= need;
 	else ctx->voccxrem = 0;
-	
+
 	/* set up new vocdef */
 	v->vocwlst = VOCCXW_NONE;
 	vocset(ctx, v, p, objn, classflg, wrdtxt, len, wrd2, len2);
@@ -300,7 +300,7 @@ static void voc_parse_words(char **wrdtxt, int *len, char **wrd2, int *len2)
 	/* get length and pointer to actual text */
 	*len = osrp2(*wrdtxt) - 2;
 	*wrdtxt += 2;
-	
+
 	/* see if there's a second word - look for a space */
 	for (*wrd2 = *wrdtxt, *len2 = *len ; *len2 && !vocisspace(**wrd2) ;
 		 ++*wrd2, --*len2) ;
@@ -369,11 +369,11 @@ void vociadd(voccxdef *ctx, objnum obj, objnum loc,
 			}
 		}
 	}
-	
+
 	if (!min)
 	{
 		uint need;
-		
+
 		/* nothing in free list; allocate a new entry */
 		need = osrndsz(sizeof(vocidef) + (numsc - 1)*sizeof(objnum));
 		if (ctx->voccxilst + need >= VOCISIZ)
@@ -409,7 +409,7 @@ void vociadd(voccxdef *ctx, objnum obj, objnum loc,
 		if (flags & VOCIFXLAT)
 		{
 			int i;
-			
+
 			for (i = 0 ; i < numsc ; ++i)
 				v->vocisc[i] = osrp2(&sc[i]);
 		}
@@ -431,7 +431,7 @@ void vocrevert(voccxdef *vctx)
 	/*
 	 *   Go through the inheritance records.  Delete each dynamically
 	 *   allocated object, and revert each static object to its original
-	 *   load state. 
+	 *   load state.
 	 */
 	for (vpg = vctx->voccxinh, i = 0 ; i < VOCINHMAX ; ++vpg, ++i)
 	{
@@ -461,7 +461,7 @@ void vocrevert(voccxdef *vctx)
 
 	/*
 	 *   Revert the vocabulary list: delete all newly added words, and
-	 *   undelete all original words marked as deleted.  
+	 *   undelete all original words marked as deleted.
 	 */
 	vocdel1(vctx, MCMONINV, (char *)0, 0, TRUE, TRUE, FALSE);
 }
@@ -480,7 +480,7 @@ void vocini(voccxdef *vocctx, errcxdef *errctx, mcmcxdef *memctx,
 	vocctx->voccxundo = undoctx;
 
 	vocctx->voccxme  =
-	vocctx->voccxme_init = 
+	vocctx->voccxme_init =
 	vocctx->voccxvtk =
 	vocctx->voccxstr =
 	vocctx->voccxnum =
@@ -559,7 +559,7 @@ void voctermfree(vocddef *what)
 /*
  *   Iterate through all words for a particular object, calling a
  *   function with each vocwdef found.  If objn == MCMONINV, we'll call
- *   the callback for every word.  
+ *   the callback for every word.
  */
 void voc_iterate(voccxdef *ctx, objnum objn,
 				 void (*fn)(void *, vocdef *, vocwdef *), void *fnctx)
@@ -602,19 +602,19 @@ struct voc_count_ctx
 static void voc_count_cb(void *ctx0, vocdef *voc, vocwdef *vocw)
 {
 	struct voc_count_ctx *ctx = (struct voc_count_ctx *)ctx0;
-	
+
 	VARUSED(vocw);
 
 	/*
 	 *   If it matches the property (or we want all properties), count
-	 *   it.  Don't count deleted objects. 
+	 *   it.  Don't count deleted objects.
 	 */
 	if ((ctx->prp == 0 || ctx->prp == vocw->vocwtyp)
 		&& !(vocw->vocwflg & VOCFDEL))
 	{
 		/* count the word */
 		ctx->cnt++;
-		
+
 		/* count the size */
 		ctx->siz += voc->voclen + voc->vocln2;
 	}
@@ -623,7 +623,7 @@ static void voc_count_cb(void *ctx0, vocdef *voc, vocwdef *vocw)
 /*
  *   Get the number and size of words defined for an object.  The size
  *   returns the total byte count from all the words involved.  Do not
- *   include deleted words in the count.  
+ *   include deleted words in the count.
  */
 void voc_count(voccxdef *ctx, objnum objn, prpnum prp, int *cnt, int *siz)
 {
@@ -651,7 +651,7 @@ void voc_count(voccxdef *ctx, objnum objn, prpnum prp, int *cnt, int *siz)
  *   However, if the 'really_delete' flag is set, the word is actually
  *   deleted.  If the 'revert' flag is true, this routine deletes _every_
  *   dynamically created word, and undeletes all dynamically deleted words
- *   that were in the original vocabulary.  
+ *   that were in the original vocabulary.
  */
 void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 			 int really_delete, int revert, int keep_undo)
@@ -676,7 +676,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 	orgwrd = wrd1;
 	if (wrd1)
 		voc_parse_words(&wrd1, &len1, &wrd2, &len2);
-	
+
 	/* go through each hash value looking for matching words */
 	for (i = VOCHASHSIZ, vp = ctx->voccxhsh ; i ; ++vp, --i)
 	{
@@ -709,7 +709,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 
 			/* presume we're not going to delete this vocdef */
 			deleted_vocdef = FALSE;
-			
+
 			/* go through all object relations for this word */
 			for (prvw = 0, idx = v->vocwlst, vw = vocwget(ctx, idx) ; vw ;
 				 vw = nxtw, idx = nxtidx)
@@ -720,7 +720,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 
 				/*
 				 *   figure out whether to delete this word, based on the
-				 *   caller's specified operating mode 
+				 *   caller's specified operating mode
 				 */
 				if (revert)
 				{
@@ -738,7 +738,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 					 *   vocabulary word (in which case wrd1 will be null)
 					 *   or the word matches the vocabulary word we're
 					 *   seeking (in which case the part of speech must
-					 *   match) 
+					 *   match)
 					 */
 					do_del = (vw->vocwobj == objn
 							  && (wrd1 == 0 || vw->vocwtyp == prp));
@@ -748,7 +748,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 					 *   matches and it wasn't dynamically added at
 					 *   run-time, simply mark it as deleted -- this will
 					 *   allow it to be undeleted if the game is reverted
-					 *   to RESTART conditions 
+					 *   to RESTART conditions
 					 */
 					if (do_del && !really_delete && !(vw->vocwflg & VOCFNEW))
 					{
@@ -756,7 +756,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 						if (keep_undo && orgwrd)
 							vocdusave_delwrd(ctx, objn, prp,
 											 vw->vocwflg, orgwrd);
-						
+
 						/* just mark the word for deletion, but keep vw */
 						vw->vocwflg |= VOCFDEL;
 						do_del = FALSE;
@@ -769,7 +769,7 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 					/* geneate undo for the operation */
 					if (keep_undo && orgwrd)
 						vocdusave_delwrd(ctx, objn, prp, vw->vocwflg, orgwrd);
-										 
+
 					/* unlink this vocwdef from the vocdef's list */
 					if (prvw)
 						prvw->vocwnxt = vw->vocwnxt;
@@ -782,13 +782,13 @@ void vocdel1(voccxdef *ctx, objnum objn, char *wrd1, prpnum prp,
 
 					/*
 					 *   if there's nothing left in the vocdef's list,
-					 *   delete the entire vocdef as well 
+					 *   delete the entire vocdef as well
 					 */
 					if (v->vocwlst == VOCCXW_NONE)
 					{
 						if (prv) prv->vocnxt = v->vocnxt;
 						else *vp = v->vocnxt;
-					
+
 						/* link into free chain */
 						v->vocnxt = ctx->voccxfre;
 						ctx->voccxfre = v;
@@ -821,11 +821,11 @@ void vocdel(voccxdef *ctx, objnum objn)
 void vocidel(voccxdef *ctx, objnum obj)
 {
 	vocidef *v;
-	
+
 	/* get entry out of page table, and clear page table slot */
 	v = vocinh(ctx, obj);
 	vocinh(ctx, obj) = (vocidef *)0;
-	
+
 	/* link into free list */
 	if (v)
 	{
@@ -872,14 +872,14 @@ int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
 
 			/* figure the size of this template style */
 			siz = (*newstyle ? VOCTPL2SIZ : VOCTPLSIZ);
-			
+
 			/* lock the verb object, and get the property value pointer */
 			tplptr  = mcmlck(ctx->voccxmem, verb);
 			thistpl = prpvalp(tplptr + tplofs);
-			
+
 			/* first byte is number of templates in array */
 			tplcnt = *thistpl++;
-			
+
 			/* look for a template that matches the preposition object */
 			for (found = FALSE ; tplcnt ; thistpl += siz, --tplcnt)
 			{
@@ -889,7 +889,7 @@ int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
 					break;
 				}
 			}
-			
+
 			/* unlock the object and return the value if we found one */
 			mcmunlck(ctx->voccxmem, verb);
 			if (found)
@@ -919,7 +919,7 @@ int voctplfnd(voccxdef *ctx, objnum verb_in, objnum prep,
 }
 
 /*
- *   Set the "Me" object 
+ *   Set the "Me" object
  */
 void voc_set_me(voccxdef *ctx, objnum new_me)
 {

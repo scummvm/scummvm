@@ -115,7 +115,7 @@ Point Map::MapBase::getDirectionDelta() const {
 
 Point Map::MapBase::getDeltaPosition(const Point &delta) {
 	return _playerWidget->_position + delta;
-} 
+}
 
 void Map::MapBase::resetViewport() {
 	// Reset the viewport, so it's position will get recalculated

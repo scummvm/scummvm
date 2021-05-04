@@ -42,7 +42,7 @@ public:
 	static Common::String getFileName(const Common::String &path);
 	static Common::String getFileNameWithoutExtension(const Common::String &path);
 	static Common::String getExtension(const Common::String &path);
-	static bool hasTrailingSlash(const Common::String &path);	
+	static bool hasTrailingSlash(const Common::String &path);
 };
 
 } // End of namespace Wintermute

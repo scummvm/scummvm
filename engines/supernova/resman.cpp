@@ -125,11 +125,11 @@ ResourceManager::ResourceManager(SupernovaEngine *vm)
 }
 
 ResourceManager::~ResourceManager() {
-	if (_vm->_MSPart == 1) {	
+	if (_vm->_MSPart == 1) {
 		for (int i = 0; i < 44; i++)
 			delete _images[i];
 	}
-	if (_vm->_MSPart == 2) {	
+	if (_vm->_MSPart == 2) {
 		for (int i = 0; i < 47; i++)
 			delete _images[i];
 	}
@@ -344,7 +344,7 @@ void ResourceManager::initSiren() {
 	int length = audioRate / 90; // minimal length of each tone
 
 	// * 60 for the minimal length, another 20 * length as a spare, for longer tones
-	byte *buffer = new byte[length * 80]; 
+	byte *buffer = new byte[length * 80];
 	byte *pBuffer = buffer;
 	Common::SineTable table(audioRate);
 

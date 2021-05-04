@@ -18,7 +18,7 @@
     <creature id="7" name="Paladin" tile="paladin" basehp="128" exp="4" good="true" wontattack="true"/>
     <creature id="8" name="Ranger" tile="ranger" basehp="144" exp="3" good="true" wontattack="true"/>
     <creature id="9" name="Shepherd" tile="shepherd" basehp="48" exp="9" good="true" wontattack="true"/>
-    
+
     <!-- Misc town creatures -->
     <creature id="10" name="Guard" tile="guard" basehp="128" exp="13" good="true" wontattack="true"/>
     <creature id="11" name="Merchant" tile="villager" basehp="48" exp="9" good="true" wontattack="true"/>

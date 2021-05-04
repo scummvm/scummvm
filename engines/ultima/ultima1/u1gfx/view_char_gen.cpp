@@ -170,7 +170,7 @@ void ViewCharacterGeneration::drawRace(Shared::Gfx::VisualSurface &s) {
 	s.fillRect(TextRect(2, 16, 37, 21), game->_bgColor);
 
 	s.writeString(game->_res->CHAR_GEN_TEXT[6], TextPoint(3, 17));
-	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4], 
+	s.writeString(Common::String::format(game->_res->CHAR_GEN_TEXT[4],
 		game->_res->RACE_NAMES[0], game->_res->RACE_NAMES[1],
 		game->_res->RACE_NAMES[2], game->_res->RACE_NAMES[3]),
 		TextPoint(12, 19));
@@ -370,7 +370,7 @@ bool ViewCharacterGeneration::TextInputMsg(CTextInputMsg *msg) {
 	if (!msg->_escaped && !msg->_text.empty()) {
 		// Name provided
 		_character->_name = msg->_text;
-		
+
 		_textInput->hide();
 		setMode(FLAG_SAVE);
 	}

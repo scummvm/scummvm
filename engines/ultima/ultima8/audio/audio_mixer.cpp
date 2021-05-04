@@ -41,7 +41,7 @@ static const int TOTAL_CHANNEL_COUNT = BASE_CHANNEL_COUNT + AMBIENT_CHANNEL_COUN
 
 AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(nullptr) {
 	_audioMixer = this;
-	
+
 	_channels.resize(TOTAL_CHANNEL_COUNT);
 	for (int idx = 0; idx < TOTAL_CHANNEL_COUNT; ++idx)
 		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);

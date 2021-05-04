@@ -40,7 +40,7 @@ protected:
 	virtual void getAccessToken(Common::String code, Networking::ErrorCallback callback);
 
 	/**
-	 * Handles JSON response which should contain access token requested 
+	 * Handles JSON response which should contain access token requested
 	 * with getAccessToken().
 	 */
 	virtual void codeFlowComplete(Networking::ErrorCallback callback, Networking::JsonResponse response);

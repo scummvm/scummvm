@@ -258,10 +258,10 @@ bool NuvieEngine::canLoadGameStateCurrently(bool isAutosave) {
 	// the save dialog will result in active gumps being closed
 	Events *events = static_cast<Events *>(_events);
 	MapWindow *mapWindow = _game->get_map_window();
-	
+
 	if (isAutosave) {
 		return events->get_mode() == MOVE_MODE;
-	
+
 	} else {
 		events->close_gumps();
 

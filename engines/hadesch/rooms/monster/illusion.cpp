@@ -37,7 +37,7 @@ struct BirdInfo {
 	const char *_interceptAnim;
 	const char *_shootAnim;
 	int _birdShootWidth;
-	int _birdShootHeight;	
+	int _birdShootHeight;
 
 	Common::Point getBirdSize() const {
 		return Common::Point(_birdWidth, _birdHeight);
@@ -57,7 +57,7 @@ static const TranscribedSound fakePhilReplics[] = {
 };
 
 static const BirdInfo birdInfo[] = {
-	{		
+	{
 		10,
 		"v7220bh2",
 		151, 111,
@@ -194,7 +194,7 @@ void Bird::makeFlightParams() {
 	}
 
 	_flightLengthMs = _flightLengthFrames * 100;
-		
+
 	_attractor1 = Common::Point(
 		rnd.getRandomNumberRngSigned(-600, 600),
 		rnd.getRandomNumberRngSigned(-600, 600));

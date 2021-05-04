@@ -330,7 +330,7 @@ void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, in
 
 	for (uint i = 0; i < model->_numFaces; i++) {
 		uint16 *indices = (uint16 *)model->_faces[i]._indexes;
-		
+
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
 			uint16 index = indices[j];
 
@@ -1184,10 +1184,10 @@ void GfxTinyGL::createTexture(Texture *texture, const uint8 *data, const CMap *c
 void GfxTinyGL::selectTexture(const Texture *texture) {
 	TGLuint *textures = (TGLuint *)texture->_texture;
 	tglBindTexture(TGL_TEXTURE_2D, textures[0]);
-	
+
 	if (texture->_hasAlpha && g_grim->getGameType() == GType_MONKEY4) {
 		tglEnable(TGL_BLEND);
-	}	
+	}
 
 	// Grim has inverted tex-coords, EMI doesn't
 	if (g_grim->getGameType() != GType_MONKEY4) {

@@ -37,7 +37,7 @@ Scrollbar::Scrollbar(RenderObject &redrawFrom, uint16 zOrder, const Common::Rect
 		_currentPosition(0),
 		_maxDist(scrollDistance) {
 	_drawSurface.create(g_nancy->_graphicsManager->_object0, srcBounds);
-	
+
 	_startPosition = topPosition;
 	_startPosition.x -= srcBounds.width() / 2;
 

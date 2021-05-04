@@ -53,7 +53,7 @@ enum StarControlAction {
 	STAR_VIEW_CONSTELLATIONS,	///< Turn on the constellation lines
 	STAR_VIEW_RANDOM_STAR,		///< Look at a random star
 	STAR_FULL_SPEED,			///< Accellerate to full speed
-	STAR_TOGGLE_STEREO_PAIR,	///< Enable stero pair vision	
+	STAR_TOGGLE_STEREO_PAIR,	///< Enable stero pair vision
 	STAR_TOGGLE_HOME_PHOTO,		///< Turn on/off the home photo
 	STAR_TOGGLE_SOLAR_RENDERING,///< Turn on/off the solar object rendering
 	STAR_TOGGLE_POS_FRAME,		///< Turn on/off the pilot's position frame

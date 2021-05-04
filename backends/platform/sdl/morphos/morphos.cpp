@@ -35,7 +35,7 @@ void OSystem_MorphOS::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
-	
+
 #if defined(USE_SYSDIALOGS)
 	_dialogManager = new MorphosDialogManager();
 #endif
@@ -44,12 +44,12 @@ void OSystem_MorphOS::init() {
 bool OSystem_MorphOS::hasFeature(Feature f) {
 	if (f == kFeatureOpenUrl)
 		return true;
-	
+
 #if defined(USE_SYSDIALOGS)
 	if (f == kFeatureSystemBrowserDialog)
 		return true;
 #endif
-	
+
 	return OSystem_SDL::hasFeature(f);
 }
 

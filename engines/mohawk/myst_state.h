@@ -94,7 +94,7 @@ enum DniEnding {
 	kAtrusWantsPage   = 1, // Player is in Dni with the white page
 	kAtrusLeaves      = 2, // Atrus leaves Dni after receiving the white page
 	kForgotPage       = 3, // Player has entered Dni without bringing the white page
-	kBooksDestroyed   = 4  // Atrus returns to Dni after previously leaving 
+	kBooksDestroyed   = 4  // Atrus returns to Dni after previously leaving
 						   // and destroying the books of his sons
 };
 

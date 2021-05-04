@@ -30,7 +30,7 @@ namespace Stark {
 
 /**
  * Game message service
- * 
+ *
  * Provide message texts and dialogs used in various points
  */
 class GameMessage {

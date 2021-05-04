@@ -132,8 +132,8 @@ bool SXArray::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 
 		return STATUS_OK;
-	} 
-	
+	}
+
 #ifdef ENABLE_FOXTAIL
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] Delete

@@ -120,7 +120,7 @@ void Hugo::playGame() {
 	char jw = 0;                    /* just wrote undo info */
 	char wasxverb = 0, newinput;
 	int i, flag, mc, lastspeaking = 0, startlocation;
-	
+
 #ifdef USE_TEXTBUFFER
 	TB_Init();
 #endif
@@ -159,7 +159,7 @@ void Hugo::playGame() {
 RestartDebugger:
 
 	dictcount = original_dictcount;		/* see hd.c */
-	
+
 	/* If no gamefile is loaded, jump immediately to the debugger
 	   interrupt function.
 	*/
@@ -463,7 +463,7 @@ Skipmc:;
 					ParseError(2, 0);
 					xverb = true;
 				}
-				
+
 				/* reset actor */
 				var[actor] = var[player];
 			}
@@ -534,7 +534,7 @@ NextPerform:
 						goto NextPerform;
 			    	}
 
-	/* v2.4 or earlier had to call the verb loop via the engine 
+	/* v2.4 or earlier had to call the verb loop via the engine
 	   (as does v2.5 with no Perform routine */
 
 				/* One or more objects specified */
@@ -696,7 +696,7 @@ EndofCommand:
 	/* Stop all audio after running EndGame */
 	hugo_stopmusic();
 	hugo_stopsample();
-	
+
 	/* The debugger will reset endflag anyway, but we need it to signal ports
 	   (like Palm) that the game loop has exited.
 	*/
@@ -1241,7 +1241,7 @@ void Hugo::RunRoutine(long addr) {
 
 	/* If routine doesn't exist */
 	if (addr==0L) return;
-	
+
 	initial_stack_depth = stack_depth;
 	inexpr = 0;
 
@@ -1381,7 +1381,7 @@ ContinueRunning:
 			if (++null_count > address_scale)
 				FatalError(UNKNOWN_OP_E);
 		}
-		
+
 #if !defined (DEBUGGER)
 #if defined (DEBUG_CODE)
 		if (!inwindow)
@@ -1548,7 +1548,7 @@ ProcessToken:
 						*/
 						for (i=0; i<current_locals; i++)
 							if (!strcmp(line, localname[i])) break;
-						
+
 						/* If it doesn't exist, add it */
 						if (i==current_locals)
 						{
@@ -1672,7 +1672,7 @@ Printcharloop:
 
 				if (ypos >= physical_windowheight/lineheight)
 					full = 0;
-					
+
 				if (ypos > physical_windowheight/lineheight)
 				{
 					ypos = physical_windowheight/lineheight;
@@ -1743,16 +1743,16 @@ LeaveBreak:
 				codeptr++;
 				i = inexpr;	/* don't reuse tempinexpr */
 				inexpr = 1;
-				
+
 				/* Let 'return Routine()' or 'return obj.prop'
 				   set tail_recursion
 				*/
 				tail_recursion = 0;
 				tail_recursion_addr = 0;
-				
+
 				SetupExpr();
 				inexpr = (char)i;
-				
+
 				/* If either a routine or property routine call has
 				   determined it's valid, we can use tail-recursion
 				   (with tail_recursion_addr having been set up)
@@ -1882,7 +1882,7 @@ LeaveBreak:
 					hugo_settextcolor(fcolor);
 					hugo_setbackcolor(bgcolor);
 				}
-				
+
 				if (inwindow)
 					default_bgcolor = bgcolor;
 
@@ -2274,7 +2274,7 @@ int Hugo::RunString() {
 int Hugo::RunSystem() {
 	codeptr++;
 
-	/* Since the obsolete form of the system command is unimplemented, 
+	/* Since the obsolete form of the system command is unimplemented,
 	   simply get the parameter (in order to skip it), and exit the
 	   function.
 	*/
@@ -2283,15 +2283,15 @@ int Hugo::RunSystem() {
 		GetValue();
 		return 0;
 	}
-	
+
 	/* Otherwise, process the following system calls: */
-	
+
 	codeptr++;			/* skip opening bracket */
-	
+
 	var[system_status] = 0;
 
 	Flushpbuffer();
-	
+
 	switch (GetValue())
 	{
 		case 11:		/* READ_KEY */
@@ -2319,12 +2319,12 @@ int Hugo::RunSystem() {
 			SRANDOM((unsigned int)time((time_t *)&seed));
 #endif
 			break;
-		}			
+		}
 		case 31:		/* PAUSE_SECOND */
 			if (!hugo_timewait(1))
 				var[system_status] = STAT_UNAVAILABLE;
 			break;
-			
+
 		case 32:		/* PAUSE_100TH_SECOND */
 			if (!hugo_timewait(100))
 				var[system_status] = STAT_UNAVAILABLE;
@@ -2363,7 +2363,7 @@ int Hugo::RunSystem() {
 		default:
 			var[system_status] = STAT_UNAVAILABLE;
 	}
-	
+
 	return 0;
 }
 

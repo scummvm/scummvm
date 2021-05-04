@@ -143,7 +143,7 @@ TARGET          ScummVM%s.exe
 TARGETPATH      sys\\bin
 TARGETTYPE      exe
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char \
- -fno-asynchronous-unwind-tables -std=c++11 // -ffreestanding -fno-sized-deallocation //--verbose //-flto -fuse-linker-plugin //-Wl, -v  -fbuiltin 
+ -fno-asynchronous-unwind-tables -std=c++11 // -ffreestanding -fno-sized-deallocation //--verbose //-flto -fuse-linker-plugin //-Wl, -v  -fbuiltin
 // fixes error "section .data loaded at [...] overlaps section .text loaded at [...]"
 LINKEROPTION 	GCCE -Tdata 0xAA00000 // -v -flto -fuse-linker-plugin
 //--print-gc-sections --stats --gc-sections --strip-all// removes unused code
@@ -198,7 +198,7 @@ def SafeWriteFile(path, data, mode = 'w'):
             f.write(s + '\n')
       else:
          f.write(data)
- 
+
 def create_mmps(build, path = ''):
    uids = get_UIDs(build)
    bld_inf = os.path.join(path, "bld.inf")

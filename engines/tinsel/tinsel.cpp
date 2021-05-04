@@ -956,7 +956,7 @@ TinselEngine::~TinselEngine() {
 	FreeGlobalProcesses();
 	FreeGlobals();
 
-	delete _dialogs; 
+	delete _dialogs;
 	delete _scroll;
 	delete _handle;
 	delete _actor;

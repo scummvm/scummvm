@@ -78,10 +78,10 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(const Common::String &p) {
 	_bIsValid = false;
 
 	struct FileInfoBlock *fib = (struct FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
-	
+
 	if (fib == NULL) {
 	 debug(6,"Failed...");
-	 return;	
+	 return;
 	}
 
 	BPTR pLock = Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
@@ -133,10 +133,10 @@ MorphOSFilesystemNode::MorphOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 	_bIsDirectory = false;
 
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
-	
+
 	if (fib == NULL) {
 		debug(6,"Failed...");
-		return;	
+		return;
 	}
 
 	if (Examine(pLock, fib) != DOSFALSE) {
@@ -223,14 +223,14 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	}
 
 	FileInfoBlock *fib = (FileInfoBlock*) AllocDosObject(DOS_FIB, NULL);
-	
+
 	if (fib == NULL) {
 		debug(6, "Failed to allocate memory for FileInfoBLock");
 		return false;
 	}
-	
+
 	if (Examine(_pFileLock, fib) != DOSFALSE) {
-	
+
 		MorphOSFilesystemNode *entry;
 
 		while (ExNext(_pFileLock, fib) != DOSFALSE) {
@@ -246,7 +246,7 @@ bool MorphOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 						myList.push_back(entry);
 					}
 					UnLock(pLock);
-				}	  
+				}
 			}
 		}
 	  	if (ERROR_NO_MORE_ENTRIES != IoErr() ) {
@@ -299,18 +299,18 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 	char buffer[MAXPATHLEN];
 
 	dosList = LockDosList(kLockFlags);
-	
+
 	if (dosList == NULL) {
 		debug(6, "Cannot lock the DOS list");
 		return myList;
 	}
 
 	dosList = NextDosEntry(dosList, LDF_VOLUMES);
-	
+
 	MorphOSFilesystemNode *entry;
-	
+
 	while (dosList) {
-	
+
 		if (dosList->dol_Type == DLT_VOLUME &&
 			dosList->dol_Name &&
 			dosList->dol_Task) {

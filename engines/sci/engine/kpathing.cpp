@@ -319,7 +319,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 	// Red : Barred access
 	// Yellow: Contained access
 	int poly_colors[4] = { 0, 0, 0, 0 };
-	
+
 	if (getSciVersion() <= SCI_VERSION_1_1) {
 		poly_colors[0] = g_sci->_gfxPalette16->kernelFindColor(0, 255, 0);		// green
 		poly_colors[1] = g_sci->_gfxPalette16->kernelFindColor(0, 0, 255);		// blue
@@ -330,7 +330,7 @@ static void draw_line(EngineState *s, Common::Point p1, Common::Point p2, int ty
 		poly_colors[0] = g_sci->_gfxPalette32->matchColor(0, 255, 0);			// green
 		poly_colors[1] = g_sci->_gfxPalette32->matchColor(0, 0, 255);			// blue
 		poly_colors[2] = g_sci->_gfxPalette32->matchColor(255, 0, 0);			// red
-		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0);			// yellow	
+		poly_colors[3] = g_sci->_gfxPalette32->matchColor(255, 255, 0);			// yellow
 #endif
 	}
 

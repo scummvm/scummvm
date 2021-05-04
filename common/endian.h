@@ -32,7 +32,7 @@
  *
  * @brief  Functions and macros for endian conversions and byteswap conversions.
  *
- * @details 
+ * @details
  *  - SWAP_BYTES_??(a) - Reverse byte order
  *  - SWAP_CONSTANT_??(a) - Reverse byte order, implemented as a macro.
  *                          Use with compile-time constants only, the result will be a compile-time constant as well.
@@ -393,7 +393,7 @@
 /** @name  Map functions for reading/writing BE/LE integers depending on native endianess
  * @{
  */
-	 
+
 #if defined(SCUMM_LITTLE_ENDIAN)
 
 	#define READ_LE_UINT16(a) READ_UINT16(a)

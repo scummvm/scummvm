@@ -61,7 +61,7 @@ Character::Character(Ultima1Game *game) : Shared::Character(),
 		_armourPlateMail(game, this, ARMOR_PLATE_MAIL),
 		_armourVacuumSuit(game, this, ARMOR_VACUUM_SUIT),
 		_armourReflectSuit(game, this, ARMOR_REFLECT_SUIT),
-		
+
 		_spellBlink(game, this),
 		_spellCreate(game, this),
 		_spellDestroy(game, this),

@@ -3,7 +3,7 @@ float GetLuminance(float4 color)
 {
 	float colorMax = max (color[0], color[1]);
 	colorMax = max (colorMax, color[2]);
-	
+
 	return colorMax;
 }
 
@@ -44,9 +44,9 @@ PS_OUTPUT main( in PS_INPUT In )
 	float amount = tintRGB[3];
 	float4 pixel = tex2D(Tex0, In.Texture);  // tint should be the RGB conversion of the HSL value, with 100% L
 	float lum = GetLuminance(pixel);
-	
+
 	// scale the colour by the luma, alpha blend it with the tint
-	Out.Color = (tintRGB * lum * amount + pixel*(1-amount)) * transparency[1]; 
+	Out.Color = (tintRGB * lum * amount + pixel*(1-amount)) * transparency[1];
 	Out.Color[3] = pixel[3] * transparency[0];
 
     return Out;                                //return output pixel

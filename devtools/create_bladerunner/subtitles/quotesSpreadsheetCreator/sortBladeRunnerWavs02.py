@@ -14,19 +14,19 @@ xlwtLibFound = False
 csvLibFound = False
 
 try:
-	import os 
+	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!" 
+	print "[Error] os python library is required to be installed!"
 else:
 	osLibFound = True
-	
+
 try:
-	import sys 
+	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!" 
+	print "[Error] sys python library is required to be installed!"
 else:
 	sysLibFound = True
-	
+
 try:
 	import shutil
 except ImportError:
@@ -409,7 +409,7 @@ def inputTLKsExport(inputTLKpath, outputWAVpath, pExportWavFilesMode, pExtractDe
 							if not fileIsMIX: # TLK file
 								(actorID, actorSName, localQuoteId) = getActorShortNameAndLocalQuoteIdByAUDHashID(idOfAUDEntry)
 								targetSimpleWavFileName = actorSName + '_' + str(localQuoteId).zfill(4) + '_' + ''.join('{:08X}'.format(idOfAUDEntry)).upper()+'.WAV'
-							
+
 							audFileBuffer = inTLKorMIXFile.read(sizeOfAUDEntry)
 							if (len(audFileBuffer) == sizeOfAUDEntry):
 							# load audio file (AUD) file
@@ -469,7 +469,7 @@ def appendVQAPlaceHolderSheets(excelOutBook = None):
 				# Fill in with placeholder content
 				n+=1
 				vqaTRInstance = vqasTextResource(gTraceModeEnabled)
-				
+
 				objUTF8Unicode = None
 				for m, e1 in enumerate(vqaTRInstance.getVqaEntriesList(currVQAFileNameDesc[0]), n):
 					sh.write(m, 0, e1[0]) # start frame
@@ -502,7 +502,7 @@ def appendPOGOTextSheet(excelOutBook = None):
 		sh.write(n, 1, col2_name)
 		n+=1
 		pogoTRInstance = pogoTextResource(gTraceModeEnabled)
-		
+
 		objUTF8Unicode = None
 		for m, e1 in enumerate(pogoTRInstance.getPogoEntriesList(), n):
 			sh.write(m, 0, e1[0])
@@ -522,7 +522,7 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 		or pListOfExtraWavsForDevSheet is None \
 		or len(pListOfExtraWavsForDevSheet) == 0:
 		return False
-		
+
 	foundMatch = False
 	for dcAUDFilename, dcArchiveMIXFile in SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES:
 		if dcAUDFilename == pFilenameStr:
@@ -542,7 +542,7 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 				if smArchiveMIXFile == dcArchiveMIXFile:
 					sh.write(n, 5, smArchiveMIXShort)	# Resource - proper
 					break
-			
+
 			for extraWavFDS in pListOfExtraWavsForDevSheet:
 				twoTokensOfRelDirnameAndFilenameXLS = extraWavFDS.split('&', 2)
 				if len(twoTokensOfRelDirnameAndFilenameXLS) == 3:
@@ -565,16 +565,16 @@ def auxPopulateExtraSpeechAudioRow(sh = None, n = 0, pFilenameStr = '', pTextStr
 			foundMatch = True
 			break
 	return foundMatch
-	
+
 def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = None ):
-		
+
 	if excelOutBook != None \
 		and listOfExtraWavsForDevSheet != None \
 		and len(listOfExtraWavsForDevSheet) > 0:
-		
+
 		objUTF8Unicode = None
 		print "[Info] Appending Developer Commentary sheet..."
-		
+
 		sh = excelOutBook.add_sheet("DEV AUDIO")
 		devCommentaryTextInstance = devCommentaryText(gTraceModeEnabled)
 		#
@@ -587,7 +587,7 @@ def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = N
 			sh.write(n, colIdx, colNameIt)
 			colIdx+=1
 		n+= 1
-		
+
 		col_names = ['Filename', 'Quote', 'By Actor', 'Notes', 'To Actor', 'Resource', 'ShortHandFileName']
 		colIdx = 0
 		for colNameIt in col_names:
@@ -609,14 +609,14 @@ def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = N
 			sh.write(n, colIdx, colNameIt)
 			colIdx+=1
 		n+= 1
-		
+
 		col_names = ['Filename', 'Quote', 'By Actor', 'Notes', 'To Actor', 'Resource', 'ShortHandFileName']
 		colIdx = 0
 		for colNameIt in col_names:
 			sh.write(n, colIdx, colNameIt)
 			colIdx+=1
 		n+= 1
-		
+
 		# populate extra speech audio rows
 		for pFilenameStr, pTextStr in devCommentaryTextInstance.getExtraSpeechAudioEntriesList():
 			if auxPopulateExtraSpeechAudioRow(sh, n, pFilenameStr, pTextStr, listOfExtraWavsForDevSheet) == True:
@@ -638,8 +638,8 @@ def appendDevCommentarySheet(excelOutBook = None, listOfExtraWavsForDevSheet = N
 		for colNameIt in col_names:
 			sh.write(n, colIdx, colNameIt)
 			colIdx+=1
-		n+= 1	
-		
+		n+= 1
+
 		for idStr, textStr in devCommentaryTextInstance.getISEZTextEntriesList():
 			sh.write(n, 0, idStr)
 			# We assume utf-8 charset for I_SEZ Commentary (since we get the text from a python script)
@@ -763,20 +763,20 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 										sh.write(n, 0, col1_name)
 										sh.write(n, 1, col2_name)
 										n+=1
-										
+
 										for m, e1 in enumerate(thisTreFile.stringEntriesLst, n):
 											sh.write(m, 0, e1[0])
 											objStr = e1[1]
 											if ( currTreFileName[:-1] == 'ERRORMSG.TR'):
-												# ERRORMSG.TRx uses different font than the others 
+												# ERRORMSG.TRx uses different font than the others
 												# and there are conflicts (with the other in-game fonts)
 												# Supposedly these messages would be printed by an OS font
-												# They seem to mostly use the Latin-1 codepage, although there are a few 
+												# They seem to mostly use the Latin-1 codepage, although there are a few
 												# characters that don't encode right (but they do with a IBM437 like the rest of the TRx
 												# Probably, these are forgotten (buggy) characters from a previous plan (print error messages with in-game font?)
-												# So we treat them as bugs and fix them. 
+												# So we treat them as bugs and fix them.
 												# Further proof that they are buggy, there are language versions that have two codes for the same character
-												# in ERRORMSG TRx. 
+												# in ERRORMSG TRx.
 												# Eg. in Spanish version they use \xa2 (correct with IBM437) and \xf3 (correct with Latin-1) for the 'ó' character
 												#  or in French version 'è' uses both \x8a and \xe8
 												objEncodeSafeStr = ""
@@ -834,7 +834,7 @@ def inputMIXExtractTREs(inputMIXpath, excelOutBook = None):
 
 
 #
-# Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the 
+# Creating the OUTPUT XLS file with one sheet named as the @param sheet with entries based on the
 #	listTlkWavs (wav files from TLK files, without duplicates)
 #	and /or
 #	listDevsWavs (extra (supported) wav files practicaclly from the SFX.MIX file), without duplicates)
@@ -888,7 +888,7 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 	#z_desc = 'Test'
 	#desc = [x_desc, y_desc, z_desc]
 	#
-	#	
+	#
 	# You may need to group the variables together
 	#for n, (v_desc, v) in enumerate(zip(desc, variables)):
 		#sh.write(n, 0, v_desc)
@@ -989,13 +989,13 @@ def outputXLS(filename, sheet, listTlkWavs, listDevsWavs, parseTREResourcesAlso 
 		print "[Error] Could not save the output Excel file:: " + str(e)
 
 #
-# Aux function to weed out duplicates from wav file lists 
+# Aux function to weed out duplicates from wav file lists
 # valid listTypes: 'TLKWAVS', 'EXTRAMIXWAVS'
 def wavDupsRemove(listOfWavFiles, listType):
 	if listType != 'TLKWAVS' and listType != 'EXTRAMIXWAVS':
 		print '[Error] Invalid listtype %s specified to remove duplicate wav files' % (listType)
 		sys.exit(1)
-	
+
 	listOfWavFilesNoDups = []
 	for filenameSrcTmp in listOfWavFiles:
 		duplicateFound = False
@@ -1005,20 +1005,20 @@ def wavDupsRemove(listOfWavFiles, listType):
 		tmpRelDirNameSrc = twoTokensOfRelDirnameAndFilenameSrc[1] # eg. TLK1
 		keyForDuplicateSearchSrc = None
 		keyForDuplicateSearchTarg = None
-		
+
 		if (listType == 'EXTRAMIXWAVS'):
-			keyForDuplicateSearchSrc = twoTokensOfRelDirnameAndFilenameSrc[0]		
+			keyForDuplicateSearchSrc = twoTokensOfRelDirnameAndFilenameSrc[0]
 		else:
 			threeTokensOfQuoteFilenameSrc = twoTokensOfRelDirnameAndFilenameSrc[0].split('#', 2)
 			#concatenate actorID and quoteID for search key
 			keyForDuplicateSearchSrc = threeTokensOfQuoteFilenameSrc[0] + threeTokensOfQuoteFilenameSrc[1]
-		
+
 		for fileTargIdx, filenameTargTmp in enumerate(listOfWavFilesNoDups):
 			twoTokensOfRelDirnameAndFilenameTarg = filenameTargTmp.split('&', 2)
 			tmpRelDirNameTarg = twoTokensOfRelDirnameAndFilenameTarg[1]
 
 			if (listType == 'EXTRAMIXWAVS'):
-				keyForDuplicateSearchTarg = twoTokensOfRelDirnameAndFilenameTarg[0]			
+				keyForDuplicateSearchTarg = twoTokensOfRelDirnameAndFilenameTarg[0]
 			else:
 				threeTokensOfQuoteFilenameTarg = twoTokensOfRelDirnameAndFilenameTarg[0].split('#', 2)
 				#concatenate actorID and quoteID for search key
@@ -1068,7 +1068,7 @@ def main(argsCL):
 	global gMIXWavFilesNoDups
 	global gTLKWavFiles
 	global gTLKWavFilesNoDups
-	
+
 	gTraceModeEnabled = False
 	gActiveLanguageDescriptionCodeTuple = DEFAULT_LANG_DESC_CODE
 
@@ -1221,8 +1221,8 @@ def main(argsCL):
 					if (len(nameTmp) > 4) \
 						and nameTmp.upper()[-4:] == '.WAV' \
 						and len(nameTmp.split('.', 1)) == 2: # radical heal (but practical) - don't allow cases like .AUD.WAV or any intermediate dots in the filename!
-						relDirName = ''				
-						# os.path.split would Split the pathname path into a pair, 
+						relDirName = ''
+						# os.path.split would Split the pathname path into a pair,
 						# (head, tail) where tail is the last pathname component and head is everything leading up to that. The tail part will never contain a slash
 						pathTokens = dirpath.split(os.path.sep)
 						idxOfLastTLKToken = -1
@@ -1230,12 +1230,12 @@ def main(argsCL):
 						for tokenIdx, pTokenTmp in enumerate(pathTokens):
 							posOfTLKWithinRightmostToken = pTokenTmp.find("TLK")
 							posOfSFXWithinRightmostToken = pTokenTmp.find("SFX")
-							
+
 							if posOfTLKWithinRightmostToken != -1:
 								idxOfLastTLKToken = tokenIdx
 							if posOfSFXWithinRightmostToken != -1:
 								idxOfLastSFXToken = tokenIdx
-								
+
 							if (posOfTLKWithinRightmostToken != -1 \
 								or posOfSFXWithinRightmostToken != -1):
 								relDirName = pTokenTmp	# don't break, we are interested in right-most matching token in the path
@@ -1246,7 +1246,7 @@ def main(argsCL):
 						if (idxOfLastSFXToken > idxOfLastTLKToken \
 							and (nameTmp.upper()[:-4] + '.AUD') in zip(*SUPPORTED_EXPORTED_AUD_FROM_MIX_FILES)[0]):
 							gMIXWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
-						else:	
+						else:
 							gTLKWavFiles.append(filenames[nameIdx] +'&' + relDirName + '&' + os.path.join(dirpath, nameTmp))
 				#break
 			for fileIdx, filenameTmp in enumerate(gTLKWavFiles):
@@ -1294,10 +1294,10 @@ def main(argsCL):
 				else:
 					print "[Error] in splitting tokens on _: %s" % (filenameTmp)
 					sys.exit(0)
-			# 
+			#
 			# Now handle the extra speech files (-xdevs mode)
-			for fileIdx, filenameTmp in enumerate(gMIXWavFiles): # 
-				# if it's a AUD file from a MIX archive, we treat it differently here 
+			for fileIdx, filenameTmp in enumerate(gMIXWavFiles): #
+				# if it's a AUD file from a MIX archive, we treat it differently here
 				# (we will put it in another sheet)
 				twoTokensOfFilenameAndRelDirname = filenameTmp.split('&', 1)
 				if len(twoTokensOfFilenameAndRelDirname) != 2:
@@ -1314,7 +1314,7 @@ def main(argsCL):
 			gMIXWavFiles.sort()
 			#
 			#
-			# Remove duplicates from TLK AUD speech files (-xwav mode) 
+			# Remove duplicates from TLK AUD speech files (-xwav mode)
 			#
 			gTLKWavFilesNoDups = wavDupsRemove(gTLKWavFiles, 'TLKWAVS')
 			if len(gTLKWavFilesNoDups) == 0:
@@ -1327,7 +1327,7 @@ def main(argsCL):
 			if extractDevCommAndExtraSFXMode and len(gMIXWavFilesNoDups) == 0:
 				print "[Error] No supported extra speech audio files (WAV) were found in the output folder path (-op switch)."
 				sys.exit(1)
-				
+
 			constructedOutputFilename = "%s-%s%s" % (OUTPUT_XLS_FILENAME, gActiveLanguageDescriptionCodeTuple[2], OUTPUT_XLS_FILENAME_EXT)
 			print "[Info] Creating output excel %s file..." % (constructedOutputFilename)
 			outputXLS(constructedOutputFilename, OUTPUT_XLS_QUOTES_SHEET + gActiveLanguageDescriptionCodeTuple[1] + '.TR' + gActiveLanguageDescriptionCodeTuple[1], gTLKWavFilesNoDups, gMIXWavFilesNoDups, extractTreFilesMode, extractDevCommAndExtraSFXMode, extractPOGOTextMode, TMProotFolderWithInputTLKFiles)

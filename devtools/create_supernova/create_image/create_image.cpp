@@ -182,7 +182,7 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < numImages; i++) {
 		totalLength += writePixelData(output, i, bytesSkip);
 		if (oldLength == totalLength) {
-			std::cerr << "Error while reading the image number: " << i << std::endl; 
+			std::cerr << "Error while reading the image number: " << i << std::endl;
 			return 1;
 		}
 		oldLength = totalLength;

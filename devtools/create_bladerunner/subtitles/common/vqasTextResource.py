@@ -468,7 +468,7 @@ class vqasTextResource(object):
 	def __init__(self, traceModeEnabled = True):
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-	
+
 	def printAllVqasTextResource(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] printing all VQAs Text"
@@ -477,7 +477,7 @@ class vqasTextResource(object):
 			for (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre) in vqaTreList:
 				print "%s\t%s\t%s\t%s\t%s\t%s" % (startFrameTre, endFrameTre, textTre, timeStartTre, timeEndTre, byActorTre)
 		return
-		
+
 	def getVqaEntriesList(self, sVQASheetPrefix):
 		if self.m_traceModeEnabled:
 			print "[Trace] getVqaEntriesList()"
@@ -498,4 +498,3 @@ else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
 	pass
-	

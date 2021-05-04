@@ -478,7 +478,7 @@ int Hugo::GetVal() {
 
 			/* The array element we're after: */
 			element = arrayaddr+a + j*2;
-			
+
 			defseg = arraytable;
 #if defined (DEBUGGER)
 			CheckinRange(element, debug_workspace, "array data");
@@ -519,7 +519,7 @@ int Hugo::GetVal() {
 		{
 			codeptr += 2;           /* skip the "(" */
 			val = GetValue();
-			if (val!=0) 
+			if (val!=0)
 #if !defined (RANDOM)
 				val = (hugo_rand() % val)+1;
 #else
@@ -538,7 +538,7 @@ int Hugo::GetVal() {
 				val = words;
 				break;
 			}
-			
+
 			val = wd[GetValue()];
 			if (MEM(codeptr)==CLOSE_SQUARE_T) codeptr++;
 			break;
@@ -672,14 +672,14 @@ int Hugo::GetVal() {
 			codeptr++;
 			break;
 		}
-		
+
 		case SYSTEM_T:
 		{
 			val = RunSystem();
 			codeptr++;
 			break;
 		}
-		
+
 		default:
 		{
 #if defined (DEBUGGER)

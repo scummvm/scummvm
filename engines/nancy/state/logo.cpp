@@ -84,7 +84,7 @@ void Logo::stop() {
 	// The original engine checks for N+D and N+C key combos here.
 	// For the N+C key combo it looks for some kind of cheat file
 	// to initialize the game state with.
-	
+
 	if (ConfMan.getBool("original_menus")) {
 		g_nancy->setState(NancyState::kMainMenu);
 	} else {

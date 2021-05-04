@@ -144,7 +144,7 @@ bool CStarView::MouseMoveMsg(int unused, const Point &pt) {
 			if (distance >= threshold) {
 				distance -= threshold;
 
-				FPoint angle(tempPt._x * -2.0 * distance / threshold, 
+				FPoint angle(tempPt._x * -2.0 * distance / threshold,
 					tempPt._y * -2.0 * distance / threshold);
 				_camera.setViewportAngle(angle);
 				return true;

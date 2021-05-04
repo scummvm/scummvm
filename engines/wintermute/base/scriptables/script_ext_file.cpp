@@ -213,7 +213,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		/* const char *dest = */ stack->pop()->getString();
 		/* bool overwrite = */ stack->pop()->getBool(true);
 
-		// Known game that need this: 
+		// Known game that need this:
 		// * Space Madness (to copy bonus wallpapers from data.dcp to /saves/ folder)
 		// * games by Rootfix intertainment (to save temporary screenshot as savegame screenshot)
 		warning("SXFile-Method: Copy not supported");

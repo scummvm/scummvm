@@ -37,7 +37,7 @@ GameChapter::GameChapter() : _errorText("Unknown Chapter") {
 	}
 
 	Common::String section = file.getSections().front().name;
-	
+
 	int index = 0;
 	Common::String key = Common::String::format("%02d", index);
 	Common::String value;

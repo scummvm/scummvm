@@ -54,14 +54,14 @@ float SineTable::at(int index) const {
 	return _table[index];
 }
 
-float SineTable::atLegacy(int index) const { 
+float SineTable::atLegacy(int index) const {
 	assert((index >= 0) && (index < _nPoints));
 	if (index < _refSize)
 		// [0,pi/2)
 		return _tableEOS[index];
 	if (index == _refSize)
 		// pi/2
-		return 1.0f; // sin(pi/2) = 1.0	
+		return 1.0f; // sin(pi/2) = 1.0
 	if ((index > _refSize) && (index < 2 * _refSize))
 		// (pi/2,pi)
 		return _tableEOS[2 * _refSize - index];

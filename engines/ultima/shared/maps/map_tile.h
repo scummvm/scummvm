@@ -42,7 +42,7 @@ public:
 	Common::Array<MapWidget *> _widgets;	// Widgets on the tile, if any
 	int _widgetNum;							// Widget number of first widget, if any
 	MapWidget *_widget;						// Pointer tofirst widget on tile, if any
-	// Dungeon tile flags 
+	// Dungeon tile flags
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
 	bool _isWall, _isHallway, _isBeams;

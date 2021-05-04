@@ -51,9 +51,9 @@ p {
 
    .touch td:nth-of-type(1):before { content: "Touch"}
    .touch td:nth-of-type(2):before { content: "Action"}
-   
+
 }
-  
+
 
 /* override table width */
 @media (min-width: 385px) {

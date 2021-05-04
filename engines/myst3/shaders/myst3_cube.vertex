@@ -9,6 +9,6 @@ out vec2 Texcoord;
 void main()
 {
 	Texcoord = texcoord * texScale;
-	
+
 	gl_Position = mvpMatrix * vec4(position, 1.0);
 }

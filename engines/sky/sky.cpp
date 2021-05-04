@@ -201,7 +201,7 @@ Common::Error SkyEngine::go() {
 		bool introSkipped = false;
 		// Clear pastIntro here (set to false) explicilty
 		// It should be false already, but better to ensure it
-		_systemVars->pastIntro = false; 
+		_systemVars->pastIntro = false;
 		if (_systemVars->gameVersion > 272) { // don't do intro for floppydemos
 			Intro *skyIntro = new Intro(_skyDisk, _skyScreen, _skyMusic, _skySound, _skyText, _mixer, _system);
 			bool floppyIntro = ConfMan.getBool("alt_intro");
@@ -216,7 +216,7 @@ Common::Error SkyEngine::go() {
 			// shows the first scene together with that animation. We can't
 			// call both, as they both load the same scene.
 			if (introSkipped) {
-				// restart game sets the _systemVars->pastIntro = true; 
+				// restart game sets the _systemVars->pastIntro = true;
 				_skyControl->restartGame();
 			} else {
 

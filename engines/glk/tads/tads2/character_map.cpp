@@ -35,7 +35,7 @@ namespace TADS2 {
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Global variables for character mapping tables 
+ *   Global variables for character mapping tables
  */
 
 unsigned char G_cmap_input[256];
@@ -44,20 +44,20 @@ char G_cmap_id[5];
 char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
 
 
-/* 
- *   static variables 
+/*
+ *   static variables
  */
 
-/* 
+/*
  *   flag: true -> a character set has been explicitly loaded, so we
- *   should ignore any game character set setting 
+ *   should ignore any game character set setting
  */
 static int S_cmap_loaded;
 
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Initialize the default character mappings 
+ *   Initialize the default character mappings
  */
 void cmap_init_default(void)
 {
@@ -83,7 +83,7 @@ void cmap_init_default(void)
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Internal routine to load a character map from a file 
+ *   Internal routine to load a character map from a file
  */
 static int cmap_load_internal(char *filename)
 {
@@ -103,7 +103,7 @@ static int cmap_load_internal(char *filename)
 		/* return success */
 		return 0;
 	}
-	
+
 	/* open the file */
 	fp = osfoprb(filename, OSFTCMAP);
 	if (fp == 0)
@@ -170,9 +170,9 @@ static int cmap_load_internal(char *filename)
 		sysblk = FALSE;
 	}
 
-	/* 
+	/*
 	 *   call the OS code, so that it can do any system-dependent
-	 *   initialization for the new character mapping 
+	 *   initialization for the new character mapping
 	 */
 	os_advise_load_charmap(G_cmap_id, G_cmap_ldesc, sysblk ? buf : "");
 
@@ -192,12 +192,12 @@ static int cmap_load_internal(char *filename)
 			size_t blen;
 			unsigned int cval;
 			char expansion[CMAP_MAX_ENTITY_EXPANSION];
-			
+
 			/* read the next item's length and character value */
 			if (osfrb(fp, buf, 4))
 			{
 				osfcls(fp);
-				return 9; 
+				return 9;
 			}
 
 			/* decode the values */
@@ -221,7 +221,7 @@ static int cmap_load_internal(char *filename)
 		}
 	}
 
-	/* 
+	/*
 	 *   ignore anything else we find - if the file format is updated to
 	 *   include extra information in the future, and this old code tries
 	 *   to load an updated file, we'll just ignore the new information,
@@ -240,20 +240,20 @@ static int cmap_load_internal(char *filename)
  *   Explicitly load a character set from a file.  This character set
  *   mapping will override any implicit character set mapping that we read
  *   from a game file.  This should be called when the player explicitly
- *   loads a character set (via a command line option or similar action).  
+ *   loads a character set (via a command line option or similar action).
  */
 int cmap_load(char *filename)
 {
 	int err;
-	
+
 	/* try loading the file */
 	if ((err = cmap_load_internal(filename)) != 0)
 		return err;
 
-	/* 
+	/*
 	 *   note that we've explicitly loaded a character set, if they named
 	 *   a character set (if not, this simply establishes the default
-	 *   setting, so we haven't explicitly loaded anything) 
+	 *   setting, so we haven't explicitly loaded anything)
 	 */
 	if (filename != 0)
 		S_cmap_loaded = TRUE;
@@ -266,14 +266,14 @@ int cmap_load(char *filename)
 /* ------------------------------------------------------------------------ */
 /*
  *   Explicitly override any game character set and use no character set
- *   instead. 
+ *   instead.
  */
 void cmap_override(void)
 {
 	/* apply the default mapping */
 	cmap_init_default();
 
-	/* 
+	/*
 	 *   pretend we have a character map loaded, so that we don't try to
 	 *   load another one if the game specifies a character set
 	 */
@@ -284,15 +284,15 @@ void cmap_override(void)
 /* ------------------------------------------------------------------------ */
 /*
  *   Set the game's internal character set.  This is called when a game is
- *   loaded, and the game specifies a character set. 
+ *   loaded, and the game specifies a character set.
  */
 void cmap_set_game_charset(errcxdef *ec,
 						   char *internal_id, char *internal_ldesc,
 						   char *argv0)
 {
 	char filename[OSFNMAX];
-	
-	/* 
+
+	/*
 	 *   If a character set is already explicitly loaded, ignore the
 	 *   game's character set - the player asked us to use a particular
 	 *   mapping, so ignore what the game wants.  (This will probably
@@ -300,16 +300,16 @@ void cmap_set_game_charset(errcxdef *ec,
 	 *   the player is most likely to use this to avoid errors when an
 	 *   appropriate mapping file for the game is not available.  In this
 	 *   case, the player informs us by setting the option that he or she
-	 *   knows and accepts that the game will not look exactly right.)  
+	 *   knows and accepts that the game will not look exactly right.)
 	 */
 	if (S_cmap_loaded)
 		return;
 
-	/* 
+	/*
 	 *   ask the operating system to name the mapping file -- this routine
 	 *   will determine, if possible, the current native character set,
 	 *   and apply a system-specific naming convention to tell us what
-	 *   mapping file we should open 
+	 *   mapping file we should open
 	 */
 	os_gen_charmap_filename(filename, internal_id, argv0);
 
@@ -330,7 +330,7 @@ void cmap_set_game_charset(errcxdef *ec,
 	 *   mapping file for the new character set isn't available.  So, we
 	 *   may need to provide the same explanation later that we needed to
 	 *   provide here.  Save the game's character set ldesc for that
-	 *   eventuality, since it describes exactly what the *game* wanted.  
+	 *   eventuality, since it describes exactly what the *game* wanted.
 	 */
 	strcpy(G_cmap_ldesc, internal_ldesc);
 }

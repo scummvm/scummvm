@@ -112,7 +112,7 @@ void MainMenu::run() {
 					g_nancy->_sound->playSound("BUOK");
 					_playedOKSound = true;
 				}
-				
+
 				_selected = i;
 				_state = kStop;
 
@@ -138,7 +138,7 @@ void MainMenu::stop() {
 			if (Scene::hasInstance()) {
 				NancySceneState.destroy(); // Simply destroy the existing Scene and create a new one
 			}
-				
+
 			g_nancy->setState(NancyState::kScene);
 			break;
 		case 2:
@@ -166,7 +166,7 @@ void MainMenu::stop() {
 			// Game Setup, TODO
 			_state = kRun;
 			break;
-		case 6: 
+		case 6:
 			// Exit Game
 			g_nancy->quitGame();
 			break;

@@ -732,7 +732,7 @@ static const char *const SRC_KING_TEXT[12] = {
 /*-------------------------------------------------------------------*/
 
 GameResources::GameResources() : LocalResourceFile("ULTIMA1/DATA") {
-} 
+}
 
 GameResources::GameResources(Shared::Resources *resManager) : LocalResourceFile(resManager, "ULTIMA1/DATA") {
 	Common::copy(SRC_TITLE_MESSAGES, SRC_TITLE_MESSAGES + 13, TITLE_MESSAGES);

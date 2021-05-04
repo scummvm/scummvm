@@ -440,7 +440,7 @@ public:
 			if (room->isMouseEnabled()) {
 				room->stopAnim(kOdysseusWithMessage);
 				room->playVideo("t2140bc0", kOdysseusZ, 10048, Common::Point(650, 17));
-			} 
+			}
 			break;
 		case 10048:
 			room->playAnimLoop(kOdysseusWithMessage, kOdysseusZ, Common::Point(800, 0));

@@ -47,13 +47,13 @@ uint objgetp(mcmcxdef *mctx, objnum objn, prpnum prop, dattyp *typptr)
 	int     last;
 	int     first;
 	int     cur = 0;
-	
+
 	oswp2(pbuf, prop);            /* get property number in portable foramt */
 	objptr = (objdef *)mcmlck(mctx, objn);      /* get a lock on the object */
 	ignprop = 0;                   /* assume we won't find ignored property */
 	cnt = objnprop(objptr);             /* get number of properties defined */
 	retval = 0;                                          /* presume failure */
-	
+
 	if (objflg(objptr) & OBJFINDEX)
 	{
 		/* there's an index -> do a binary search through the index */
@@ -114,7 +114,7 @@ uint objgetp(mcmcxdef *mctx, objnum objn, prpnum prop, dattyp *typptr)
 
 	if (!retval) retval = ignprop;     /* use ignored value if nothing else */
 	if (retval && typptr) *typptr = prptype(objofsp(objptr, retval));
-	
+
 	mcmunlck(mctx, objn);                 /* done with object, so unlock it */
 	return(retval);
 }
@@ -126,7 +126,7 @@ uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop)
 	prpdef *propptr;
 	uint    ofs;
 	uint    valsiz;
-	
+
 	/* get the start of the object */
 	ofs = objgetp(ctx, objn, prop, 0);
 	if (ofs == 0)
@@ -144,9 +144,9 @@ uint objgetp_end(mcmcxdef *ctx, objnum objn, prpnum prop)
 	/* done with the object */
 	mcmunlck(ctx, (mcmon)objn);
 
-	/* 
+	/*
 	 *   return the ending offset - it's the starting offset plus the
-	 *   property header size plus the size of the property data 
+	 *   property header size plus the size of the property data
 	 */
 	return ofs + PRPHDRSIZ + valsiz;
 }
@@ -156,16 +156,16 @@ static int objisd(mcmcxdef *ctx, objdef *objptr, objnum parentnum)
 {
 	uchar *sc;
 	int    cnt;
-	
+
 	for (sc = objsc(objptr), cnt = objnsc(objptr) ; cnt ;
 		 sc += 2, --cnt)
 	{
 		int     cursc = osrp2(sc);
 		int     ret;
 		objdef *curptr;
-		
+
 		if (cursc == parentnum) return(TRUE);
-		
+
 		curptr = (objdef *)mcmlck(ctx, (mcmon)cursc);
 		ret = objisd(ctx, curptr, parentnum);
 		mcmunlck(ctx, (mcmon)cursc);
@@ -183,9 +183,9 @@ static int objisd(mcmcxdef *ctx, objdef *objptr, objnum parentnum)
  *   NOT locked upon return, but we will NOT unlock the object passed in
  *   (in other words, all object locking status is the same as it was on
  *   entry).  If the offset is zero, the property was not found.
- *   
+ *
  *   This is an internal helper routine - it's not meant to be called
- *   except by objgetap().  
+ *   except by objgetap().
  */
 static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 					  objnum *orn, int inh, dattyp *ortyp)
@@ -203,15 +203,15 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 	dattyp  typ;
 	uchar   sclist[100];                           /* up to 50 superclasses */
 	objdef *objptr;
-	
+
 	NOREG((&obj))
-	
+
 	/* see if the property is in the current object first */
 	if (!inh && (retval = objgetp(ctx, obj, prop, &typ)) != 0)
 	{
-		/* 
+		/*
 		 *   tell the caller which object this came from, if the caller
-		 *   wants to know 
+		 *   wants to know
 		 */
 		if (orn != 0)
 			*orn = obj;
@@ -223,14 +223,14 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 		/* return the property offset */
 		return retval;
 	}
-	
+
 	/* lock the object, cache its superclass list, and unlock it */
 	objptr = (objdef *)mcmlck(ctx, (mcmon)obj);
 	sccnt = objnsc(objptr);
 	memcpy(sclist, objsc(objptr), (size_t)(sccnt << 1));
 	sc = sclist;
 	mcmunlck(ctx, (mcmon)obj);
-	
+
 	/* try to inherit the property */
 	for (found = FALSE ; sccnt != 0 ; sc += 2, --sccnt)
 	{
@@ -241,7 +241,7 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 		if (poff != 0)
 		{
 			int isdesc = 0;
-			
+
 			/* if we have a previous object, determine lineage */
 			if (found)
 			{
@@ -249,13 +249,13 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 				isdesc = objisd(ctx, o1, osavn);
 				mcmunlck(ctx, o1n);
 			}
-			
+
 			/*
 			 *   if we don't already have a property, or the new object
 			 *   is a descendant of the previously found object (meaning
 			 *   that the new object's property should override the
 			 *   previously found object's property), use this new
-			 *   property 
+			 *   property
 			 */
 			if (!found || isdesc)
 			{
@@ -287,7 +287,7 @@ static uint objgetap0(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
  *   object in which the prpdef is found; the superclass object itself is
  *   NOT locked upon return, but we will NOT unlock the object passed in
  *   (in other words, all object locking status is the same as it was on
- *   entry).  If the offset is zero, the property was not found.  
+ *   entry).  If the offset is zero, the property was not found.
  */
 uint objgetap(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 			  objnum *ornp, int inh)
@@ -296,9 +296,9 @@ uint objgetap(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 	dattyp  typ;
 	objnum  orn;
 
-	/* 
+	/*
 	 *   even if the caller doesn't care about the original object number,
-	 *   we do, so provide our own location to store it if necessary 
+	 *   we do, so provide our own location to store it if necessary
 	 */
 	if (ornp == 0)
 		ornp = &orn;
@@ -308,10 +308,10 @@ uint objgetap(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 	{
 		/* look up the property */
 		retval = objgetap0(ctx, obj, prop, ornp, inh, &typ);
-		
-		/* 
+
+		/*
 		 *   If we found something (i.e., retval != 0), check to see if we
-		 *   have a synonym; if so, synonym translation is required 
+		 *   have a synonym; if so, synonym translation is required
 		 */
 		if (retval != 0 && typ == DAT_SYN)
 		{
@@ -319,11 +319,11 @@ uint objgetap(mcmcxdef *ctx, noreg objnum obj, prpnum prop,
 			objdef *objptr;
 			prpdef *p;
 
-			/* 
+			/*
 			 *   Translation is required - get new property and try again.
 			 *   First, remember the original property, so we can make
 			 *   sure we're not going to loop (at least, not in this one
-			 *   synonym definition).  
+			 *   synonym definition).
 			 */
 			prvprop = prop;
 
@@ -355,7 +355,7 @@ objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz)
 {
 	ushort  oldsiz;
 	uchar  *p;
-	
+
 	oldsiz = mcmobjsiz(ctx, (mcmon)obj);
 	p = mcmrealo(ctx, (mcmon)obj, (ushort)(oldsiz + *siz));
 	*siz = mcmobjsiz(ctx, (mcmon)obj) - oldsiz;
@@ -371,7 +371,7 @@ objdef *objexp(mcmcxdef *ctx, objnum obj, ushort *siz)
  *   'mark_only' is true, we'll only mark the property as deleted without
  *   actually reclaiming the space; this is necessary when deleting a
  *   method when other methods may follow, since p-code is not entirely
- *   self-relative and thus can't always be relocated within an object.  
+ *   self-relative and thus can't always be relocated within an object.
  */
 void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
 {
@@ -380,14 +380,14 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
 	prpdef *p;
 	prpdef *nxt;
 	size_t  movsiz;
-	
+
 	pofs = objgetp(mctx, objn, prop, (dattyp *)0);  /* try to find property */
 	if (!pofs) return;                   /* not defined - nothing to delete */
-	
+
 	objptr = (objdef *)mcmlck(mctx, objn);            /* get lock on object */
 	p = objofsp(objptr, pofs);                 /* get actual prpdef pointer */
 	nxt = objpnxt(p);                    /* find next prpdef after this one */
-	
+
 	/* if this is original, just mark 'ignore' */
 	if (prpflg(p) & PRPFORG)
 	{
@@ -406,7 +406,7 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
 		objsnp(objptr, objnprop(objptr)-1);
 		objsfree(objptr, objfree(objptr) - (((uchar *)nxt) - ((uchar *)p)));
 	}
-	
+
 	/* tell cache manager this object has been changed, and unlock it */
 	mcmtch(mctx, objn);
 	mcmunlck(mctx, objn);
@@ -416,7 +416,7 @@ void objdelp(mcmcxdef *mctx, objnum objn, prpnum prop, int mark_only)
  *   Set a property of an object to a new value, overwriting the original
  *   value (if any); the object must be unlocked coming in.  If an undo
  *   context is provided, an undo record is written; if the undo context
- *   pointer is null, no undo information is kept.  
+ *   pointer is null, no undo information is kept.
  */
 void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 			 const void *val, objucxdef *undoctx)
@@ -428,7 +428,7 @@ void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 	ushort  newsiz;
 	int     indexed;
 	int     prop_was_set;
-	
+
 	/* get a lock on the object */
 	objptr = (objdef *)mcmlck(ctx, objn);
 	indexed = objflg(objptr) & OBJFINDEX;
@@ -497,7 +497,7 @@ void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 				objdelp(ctx, objn, prop, FALSE);
 
 			/* get the top of the property area */
-			p = objpfre(objptr);        
+			p = objpfre(objptr);
 
 			/* make sure there's room at the top */
 			avail = mcmobjsiz(ctx, (mcmon)objn) - objfree(objptr);
@@ -526,7 +526,7 @@ void objsetp(mcmcxdef *ctx, objnum objn, prpnum prop, dattyp typ,
 		mcmunlck(ctx, objn);                           /* unlock the object */
 	}
 	ERRENDCLN(ctx->mcmcxgl->mcmcxerr)
-		
+
 	/* dirty the object, and release lock on object before return */
 	mcmtch(ctx, objn);                        /* mark the object as changed */
 	mcmunlck(ctx, objn);                                       /* unlock it */
@@ -547,13 +547,13 @@ uchar *objures(objucxdef *undoctx, uchar cmd, ushort siz)
 {
 	ushort  prv;
 	uchar  *p;
-	
+
 	/* adjust size to include header information */
 	siz += 1 + sizeof(ushort);
-	
+
 	/* make sure there's enough room overall for the record */
 	if (siz > undoctx->objucxsiz) errsig(undoctx->objucxerr, ERR_UNDOVF);
-	
+
 	/* if there's no information, reset buffers */
 	if (undoctx->objucxhead == undoctx->objucxprv)
 	{
@@ -561,50 +561,50 @@ uchar *objures(objucxdef *undoctx, uchar cmd, ushort siz)
 		undoctx->objucxtop = 0;
 		goto done;
 	}
-	
+
 	/* if tail is below head, we can use to top of entire buffer */
 	if (undoctx->objucxtail < undoctx->objucxhead)
 	{
 		/* if there's enough space left after head, we're done */
 		if (undoctx->objucxsiz - undoctx->objucxhead >= siz)
 			goto done;
-		
+
 		/* insufficient space:  wrap head down to bottom of buffer */
 		undoctx->objucxtop = undoctx->objucxprv;            /* last was top */
 		undoctx->objucxhead = 0;
 	}
-	
+
 	/* head is below tail:  delete records until we have enough room */
 	while (undoctx->objucxtail - undoctx->objucxhead < siz)
 	{
 		objutadv(undoctx);
-		
+
 		/* if the tail wrapped, advancing won't do any more good */
 		if (undoctx->objucxtail <= undoctx->objucxhead)
 		{
 			/* if there's enough room at the top, we're done */
 			if (undoctx->objucxsiz - undoctx->objucxhead >= siz)
 				goto done;
-			
+
 			/* still not enough room; wrap the head this time */
 			undoctx->objucxtop = undoctx->objucxprv;        /* last was top */
 			undoctx->objucxhead = 0;
 		}
 	}
-	
+
 done:
 	/* save back-link, and set objucxprv pointer to the new record */
 	prv = undoctx->objucxprv;
 	undoctx->objucxprv = undoctx->objucxhead;
-	
+
 	/* write the header:  command byte, back-link to previous record */
 	p = &undoctx->objucxbuf[undoctx->objucxhead];
 	*p++ = cmd;
 	memcpy(p, &prv, sizeof(prv));
-	
+
 	/* advance the head pointer past the header */
 	undoctx->objucxhead += 1 + sizeof(prv);
-	
+
 	/* set the high-water mark if we've exceeded the old one */
 	if (undoctx->objucxprv > undoctx->objucxtop)
 		undoctx->objucxtop = undoctx->objucxprv;
@@ -620,7 +620,7 @@ void objutadv(objucxdef *undoctx)
 	ushort  siz;
 	uchar   pr[PRPHDRSIZ];                   /* space for a property header */
 	uchar   cmd;
-	
+
 	/* if we're at the most recently written record, flush buffer */
 	if (undoctx->objucxtail == undoctx->objucxprv)
 	{
@@ -636,14 +636,14 @@ void objutadv(objucxdef *undoctx)
 		undoctx->objucxtail = 0;
 		return;
 	}
-	
+
 	/* determine size by inspecting current record */
 	p = undoctx->objucxbuf + undoctx->objucxtail;
 	siz = 1 + sizeof(ushort);                          /* basic header size */
-	
+
 	cmd = *p++;
 	p += sizeof(ushort);                       /* skip the previous pointer */
-	
+
 	switch(cmd)
 	{
 	case OBJUCHG:
@@ -657,7 +657,7 @@ void objutadv(objucxdef *undoctx)
 		/* add/override:  property header only */
 		siz += sizeof(mcmon) + sizeof(prpnum);
 		break;
-		
+
 	case OBJUCLI:
 		siz += (*undoctx->objucxcsz)(undoctx->objucxccx, p);
 		break;
@@ -665,7 +665,7 @@ void objutadv(objucxdef *undoctx)
 	case OBJUSAV:
 		break;
 	}
-	
+
 	undoctx->objucxtail += siz;
 }
 
@@ -685,24 +685,24 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 	/* if there's no more undo, signal an error */
 	if (undoctx->objucxprv == undoctx->objucxhead)
 		errsig(undoctx->objucxerr, ERR_NOUNDO);
-	
+
 	/* move back to previous record */
 	undoctx->objucxhead = undoctx->objucxprv;
 	p = &undoctx->objucxbuf[undoctx->objucxprv];
-	
+
 	/* get command, and set undocxprv to previous record */
 	cmd = *p++;
 	memcpy(&prv, p, sizeof(prv));
 	p += sizeof(prv);
-	
+
 	/* if we're at the tail, no more undo; otherwise, use back link */
 	if (undoctx->objucxprv == undoctx->objucxtail)
 		undoctx->objucxprv = undoctx->objucxhead;
 	else
 		undoctx->objucxprv = prv;
-	
+
 	if (cmd == OBJUSAV) return;       /* savepointer marker - nothing to do */
-	
+
 	/* get object/property information for property-changing undo */
 	if (cmd != OBJUCLI)
 	{
@@ -714,14 +714,14 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 		indexed = (objflg(objptr) & OBJFINDEX);
 		mcmunlck(mctx, objn);
 	}
-	
+
 	switch(cmd)
 	{
 	case OBJUADD:
 		objdelp(mctx, objn, prop, FALSE);
 		if (indexed) objindx(mctx, objn);
 		break;
-		
+
 	case OBJUOVR:
 		objdelp(mctx, objn, prop, FALSE);  /* delete the non-original value */
 		pofs = objgetp(mctx, objn, prop, (dattyp *)0);  /* get ignored prop */
@@ -729,13 +729,13 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 		prpflg(objofsp(objptr, pofs)) &= ~PRPFIGN;     /* no longer ignored */
 		mcmunlck(mctx, objn);                          /* unlock the object */
 		break;
-		
+
 	case OBJUCHG:
 		memcpy(pr, p, (size_t)PRPHDRSIZ);
 		p += PRPHDRSIZ;
 		objsetp(mctx, objn, prop, prptype(pr), (void *)p, (objucxdef *)0);
 		break;
-		
+
 	case OBJUCLI:
 		(*undoctx->objucxcun)(undoctx->objucxccx, p);
 		break;
@@ -744,7 +744,7 @@ void obj1undo(mcmcxdef *mctx, objucxdef *undoctx)
 
 /*
  *   Determine if it's ok to add undo records - returns TRUE if a
- *   savepoint has been stored in the undo log, FALSE if not. 
+ *   savepoint has been stored in the undo log, FALSE if not.
  */
 int objuok(objucxdef *undoctx)
 {
@@ -774,7 +774,7 @@ int objuok(objucxdef *undoctx)
  *   the undo list, NOTHING will be undone.  This prevents reaching an
  *   inconsistent state in which some, but not all, of the operations
  *   between two savepoints are undone: either all operations between two
- *   savepoints will be undone, or none will. 
+ *   savepoints will be undone, or none will.
  */
 void objundo(mcmcxdef *mctx, objucxdef *undoctx)
 {
@@ -793,7 +793,7 @@ void objundo(mcmcxdef *mctx, objucxdef *undoctx)
 			sav = prv;
 			break;
 		}
-		
+
 		/* if we've reached the tail, there are no more undo records */
 		if (prv == undoctx->objucxtail)
 			errsig(undoctx->objucxerr, ERR_ICUNDO);
@@ -801,14 +801,14 @@ void objundo(mcmcxdef *mctx, objucxdef *undoctx)
 		/* get previous record */
 		memcpy(&prv, &undoctx->objucxbuf[prv+1], sizeof(prv));
 	}
-	
+
 	/* now undo everything until we get to the savepoint */
 	do { obj1undo(mctx, undoctx); } while (undoctx->objucxhead != sav);
 }
 
 /* initialize undo context */
 objucxdef *objuini(mcmcxdef *ctx, ushort siz,
-				   void (*undocb)(void *, uchar *), 
+				   void (*undocb)(void *, uchar *),
 				   ushort (*sizecb)(void *, uchar *),
 				   void *callctx)
 {
@@ -823,17 +823,17 @@ objucxdef *objuini(mcmcxdef *ctx, ushort siz,
 	ret = (objucxdef *)mchalo(ctx->mcmcxgl->mcmcxerr,
 							  (sizeof(objucxdef) + siz - 1),
 							  "objuini");
-	
+
 	ret->objucxmem  = ctx;
 	ret->objucxerr  = ctx->mcmcxgl->mcmcxerr;
 	ret->objucxsiz  = siz;
 	ret->objucxhead = ret->objucxprv = ret->objucxtail = ret->objucxtop = 0;
-	
+
 	/* set client callback functions */
 	ret->objucxcun = undocb;               /* callback to apply client undo */
 	ret->objucxcsz = sizecb;         /* callback to get size of client undo */
 	ret->objucxccx = callctx;      /* context for client callback functions */
-	
+
 	return(ret);
 }
 
@@ -862,11 +862,11 @@ void objrevert(void *ctx0, mcmon objn)
 	prpdef   *pr;
 	int       cnt;
 	int       indexed;
-	
+
 	p = mcmlck(mctx, objn);
 	pr = objprp(p);
 	indexed = objflg(p) & OBJFINDEX;
-	
+
 	/* restore original settings */
 	objsfree(p, objrst(p));
 	objsnp(p, objstat(p));
@@ -874,11 +874,11 @@ void objrevert(void *ctx0, mcmon objn)
 	/* go through original properties and remove 'ignore' flag if set */
 	for (cnt = objnprop(p) ; cnt ; pr = objpnxt(pr), --cnt)
 		prpflg(pr) &= ~PRPFIGN;
-	
+
 	/* touch object and unlock it */
 	mcmtch(mctx, objn);
 	mcmunlck(mctx, objn);
-	
+
 	/* if it's indexed, rebuild the index */
 	if (indexed) objindx(mctx, objn);
 }
@@ -893,7 +893,7 @@ void objsetign(mcmcxdef *mctx, objnum objn)
 	int     cnt;
 	int     indexed;
 	prpdef *p1;
-	
+
 	objptr = (objdef *)mcmlck(mctx, (mcmon)objn);
 	p1 = objprp(objptr);
 	indexed = objflg(objptr) & OBJFINDEX;
@@ -914,14 +914,14 @@ void objsetign(mcmcxdef *mctx, objnum objn)
 			}
 		}
 	}
-	
+
 	mcmtch(mctx, (mcmon)objn);
 	mcmunlck(mctx, (mcmon)objn);
 	if (indexed) objindx(mctx, objn);
 }
 
 /*
- *   Build or rebuild a property index for an object.  
+ *   Build or rebuild a property index for an object.
  */
 void objindx(mcmcxdef *mctx, objnum objn)
 {
@@ -936,31 +936,31 @@ void objindx(mcmcxdef *mctx, objnum objn)
 	uint    first;
 	uint    last;
 	uint    cur = 0;
-	
+
 	objptr = (objdef *)mcmlck(mctx, objn);            /* get object pointer */
 	cnt = objnprop(objptr);                     /* get number of properties */
 	p = objprp(objptr);         /* get pointer to properties (or old index) */
 	newsiz = 2 + 4*cnt;                 /* figure size needed for the index */
-	
+
 	avail = mcmobjsiz(mctx, objn) - objfree(objptr);
-	
+
 	/* insert space for the index; expand the object if necessary */
 	if (avail < newsiz)
 	{
 		ushort  need;
-		
+
 		newsiz += 10*4;                   /* add some extra space for later */
 		need = newsiz - avail;            /* compute amount of space needed */
 		objptr = objexp(mctx, objn, &need);
 		p = objprp(objptr);
 	}
-	
+
 	/* now build the index */
 	indbase = objpfre(objptr);
 	for (icnt = 0 ; cnt ; p = objpnxt(p), --cnt, ++icnt)
 	{
 		uint ofs = (uchar *)p - (uchar *)objptr;
-		
+
 		if (icnt)
 		{
 			/* figure out where to insert this property */
@@ -979,7 +979,7 @@ void objindx(mcmcxdef *mctx, objnum objn)
 				else
 					last = (cur == last ? last - 1 : cur);
 			}
-			
+
 			/* make sure we're positioned just before insertion point */
 			while (cur < icnt
 				   && (indp[0] <= p[0]
@@ -988,20 +988,20 @@ void objindx(mcmcxdef *mctx, objnum objn)
 				indp += 4;
 				++cur;
 			}
-				
+
 			/* move elements above if any */
 			if (cur < icnt)
 				memmove(indp + 4, indp, (size_t)((icnt - cur) * 4));
 		}
 		else
 			indp = indbase;
-		
+
 		/* insert property into index */
 		indp[0] = p[0];
 		indp[1] = p[1];
 		oswp2(indp+2, ofs);
 	}
-	
+
 	/* set the index flag, and dirty and free the object */
 	objsflg(objptr, objflg(objptr) | OBJFINDEX);
 	mcmtch(mctx, (mcmon)objn);
@@ -1018,7 +1018,7 @@ objdef *objnew(mcmcxdef *mctx, int sccnt, ushort propspace,
 	/* allocate cache object */
 	o = (objdef *)mcmalo(mctx, (ushort)(OBJDEFSIZ + sccnt * 2 + propspace),
 						 &objn);
-	
+
 	/* set up object descriptor for the new object */
 	objini(mctx, sccnt, (objnum)objn, classflg);
 
@@ -1034,11 +1034,11 @@ void objini(mcmcxdef *mctx, int sccnt, objnum objn, int classflg)
 
 	/* get a lock on the object */
 	o = (objdef *)mcmlck(mctx, objn);
-	
+
 	memset(o, 0, (size_t)10);
 	objsnsc(o, sccnt);
 	objsfree(o, ((uchar *)objsc(o) + 2*sccnt) - (uchar *)o);
-	
+
 	/* set up flags */
 	if (classflg) flags |= OBJFCLASS;
 	objsflg(o, flags);

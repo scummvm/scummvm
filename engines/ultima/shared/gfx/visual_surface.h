@@ -32,7 +32,7 @@ namespace Ultima {
 namespace Shared {
 
 class GameBase;
-	
+
 namespace Gfx {
 
 class Font;

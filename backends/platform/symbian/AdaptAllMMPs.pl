@@ -128,7 +128,7 @@ my @excludes_snd = (
 	"TVP.cpp"
 );
 
-my @excludes_graphics = (	
+my @excludes_graphics = (
 );
 
 my @excludes_gui = (

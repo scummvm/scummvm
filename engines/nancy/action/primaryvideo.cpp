@@ -179,7 +179,7 @@ void PlayPrimaryVideoChan0::readData(Common::SeekableReadStream &stream) {
 	if (ser.getVersion() == kGameTypeVampire) {
 		readFilename(stream, _paletteName);
 	}
-	
+
 	ser.skip(2);
 	ser.syncAsUint16LE(_videoFormat);
 	ser.skip(0x13, kGameTypeVampire, kGameTypeVampire);
@@ -332,7 +332,7 @@ void PlayPrimaryVideoChan0::execute() {
 					if (!ConfMan.getBool("speech_mute") && ConfMan.getBool("player_speech")) {
 						g_nancy->_sound->playSound(_responseGenericSound);
 					}
-					
+
 					_state = kActionTrigger;
 				}
 			}

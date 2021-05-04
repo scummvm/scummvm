@@ -135,7 +135,7 @@ public:
 
 		if (hotname == "cancel") {
 			switch (_currentMenu) {
-			case kLoadSlotMenu: 
+			case kLoadSlotMenu:
 				g_vm->resetOptionsRoom();
 				loadMenuUser();
 				break;
@@ -302,7 +302,7 @@ public:
 			g_vm->exitOptions();
 			return;
 		}
-			
+
 
 		if (hotname == "quitgame") {
 			g_vm->resetOptionsRoom();
@@ -413,7 +413,7 @@ public:
 	}
 
 private:
-	void performSave() {		
+	void performSave() {
 		int slot = g_vm->firstAvailableSlot();
 		Persistent *persistent = g_vm->getPersistent();
 		Common::String heroNameUTF8 = persistent->_heroName.encode(Common::kUtf8);
@@ -559,7 +559,7 @@ private:
 			room->disableHotzone("arrowup");
 			room->disableHotzone("arrowdown");
 		}
-			
+
 		room->selectFrame("cancel", kButtonZ, 0);
 		room->selectFrame("restore", kButtonZ, 0);
 		room->selectFrame("delete", kButtonZ, 0);
@@ -617,7 +617,7 @@ private:
 			room->disableHotzone("arrowup");
 			room->disableHotzone("arrowdown");
 		}
-			
+
 		room->selectFrame("cancel", kButtonZ, 0);
 		room->selectFrame("save", kButtonZ, 0);
 		room->selectFrame("delete", kButtonZ, 0);

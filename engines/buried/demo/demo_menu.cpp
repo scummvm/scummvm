@@ -57,7 +57,7 @@ DemoMainMenuWindow::DemoMainMenuWindow(BuriedEngine *vm, Window *parent) : Windo
 	_interactive = Common::Rect(324, 155, 463, 325);
 	_gallery = Common::Rect(471, 155, 610, 325);
 	_quit = Common::Rect(552, 439, 640, 480);
-	
+
 	if (_vm->isTrueColor())
 		_background = _vm->_gfx->getBitmap("MISC/24BPP/MAINMENU.BMP");
 	else

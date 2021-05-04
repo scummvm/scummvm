@@ -42,10 +42,10 @@ public:
 	void transform(Vector3d *v, bool translate) const;
 	void inverseTranslate(Vector3d *v) const;
 	void inverseRotate(Vector3d *v) const;
-	
+
 	Vector3d getPosition() const;
 	void setPosition(const Vector3d &v);
-	
+
 	Matrix3 getRotation() const;
 	void setRotation(const Matrix3 &m);
 
@@ -65,7 +65,7 @@ public:
 	 */
 	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
 								const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
-	
+
 	/**
 	* Inverts a matrix in place.
 	*	This function avoid having to do generic Gaussian elimination on the matrix

@@ -30,7 +30,7 @@
 #define HADESCH_PERSISTENT_H
 
 namespace Hadesch {
-  
+
 struct HadeschSaveDescriptor {
 	HadeschSaveDescriptor(Common::Serializer &s, int slot);
 
@@ -176,7 +176,7 @@ struct Persistent {
 	Persistent();
 
 	bool isInInventory(InventoryItem item);
-	
+
 	bool isRoomVisited(RoomId id) const {
 		return _roomVisited[id];
 	}

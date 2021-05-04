@@ -34,7 +34,7 @@ namespace Ultima {
 namespace Shared {
 
 class Game;
-	
+
 namespace Maps {
 
 enum Direction {

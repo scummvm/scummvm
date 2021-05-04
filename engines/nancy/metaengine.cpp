@@ -38,7 +38,7 @@ public:
 	virtual int getMaximumSaveSlot() const override;
 
 	virtual Common::KeymapArray initKeymaps(const char *target) const override;
-	
+
 	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
@@ -64,7 +64,7 @@ Common::Error NancyMetaEngine::createInstance(OSystem *syst, Engine **engine, co
 	if (gd) {
 		*engine = Nancy::NancyEngine::create(((const Nancy::NancyGameDescription *)gd)->gameType, syst, (const Nancy::NancyGameDescription *)gd);
 	}
-	
+
 	if (gd) {
 		return Common::kNoError;
 	} else {

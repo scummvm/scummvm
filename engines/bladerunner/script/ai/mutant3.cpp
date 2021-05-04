@@ -375,7 +375,7 @@ bool AIScriptMutant3::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 
 		// code repeated also in case 599 which precedes this one
-		// redundant? 
+		// redundant?
 		// results in additional reduction in friendliness and increase of aggressiveness for the other two mutants
 		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, 20);
 		Actor_Modify_Friendliness_To_Other(kActorMutant2, kActorMcCoy, 15);

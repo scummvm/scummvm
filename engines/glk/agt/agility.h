@@ -157,7 +157,7 @@ typedef enum {fNONE,
 
 
 
-#define OLD_VERB 59    /* Number of built in verbs in original interpreters-- 
+#define OLD_VERB 59    /* Number of built in verbs in original interpreters--
 			  this number includes ANY, which is verb 0. */
 #define DIR_ADDR_CODE (OLD_VERB+17)  /* Verb ID used for direct address */
 #define AUX_VERB 18    /* Additional verbs supported by the interpreter */
@@ -654,7 +654,7 @@ global char **dict;  /* dict[n] points to the nth dictionary word */
 global long dp;  /* Dictionary pointer: number of words in dict */
 
 #define DICT_INIT 12*1024 /* Starting size of dictstr */
-#define DICT_GRAN 1024  /* Granularity of dictstr size requests 
+#define DICT_GRAN 1024  /* Granularity of dictstr size requests
 			   must be at least 4. */
 global char *dictstr;  /* Pointer to memory block containing dict words */
 global long dictstrptr, dictstrsize;
@@ -823,7 +823,7 @@ global rbool open_as_binary;  /* Open text files as binary, anyhow. */
 #define FT_DICTPTR 13  /* Pointer into dictionary text */
 #define FT_TLINE 14    /* TextLine */
 #define FT_CHAR 15     /* Characters. */
-#define FT_CFG 16      /* Configuration byte; 0=false, 1=true, 
+#define FT_CFG 16      /* Configuration byte; 0=false, 1=true,
 			  2=none (don't change) */
 
 #define DT_DEFAULT 0  /* Default internal type for <ftype> */

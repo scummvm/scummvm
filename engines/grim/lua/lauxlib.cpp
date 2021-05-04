@@ -45,7 +45,7 @@ float luaL_check_number(int32 numArg) {
 
 float luaL_opt_number(int32 numArg, float def) {
 	return (lua_getparam(numArg) == LUA_NOOBJECT) ? def : luaL_check_number(numArg);
-}  
+}
 
 lua_Object luaL_tablearg(int32 arg) {
 	lua_Object o = lua_getparam(arg);

@@ -34,7 +34,7 @@ struct HardwareInput;
 
 /**
  * Watches events for inputs that can be bound to actions
- * 
+ *
  * When the watch mode is enabled, the watcher disables the Keymapper
  * and sets itself as an event observer. Once an event corresponding
  * to an hardware input is received, it is saved for later retrieval.

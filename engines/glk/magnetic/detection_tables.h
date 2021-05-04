@@ -52,7 +52,7 @@ const GlkDetectionEntry MAGNETIC_GAMES[] = {
 	DT_ENTRY0("myth", "9c2a5272a9c0b1e173401ba4df32567a", 99370),
 	DT_ENTRY0("pawn", "4a7847980f9e942acd7aa51ea12a6586", 103466),
 	DT_ENTRY0("wonderland", "2cea8fccf42d570be8836416c2802613", 183916),
-	
+
 	DT_END_MARKER
 };
 

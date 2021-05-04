@@ -168,7 +168,7 @@ Common::Point Image::getHotspotPosition(uint index) const {
 	}
 
 	right /= polygon.size();
-	
+
 	if (top < 0) {
 		top = 0;
 	}

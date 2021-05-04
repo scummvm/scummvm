@@ -51,7 +51,7 @@ void OS_LOADDS fioldobj(void *ctx0, mclhd handle, uchar *ptr, ushort siz)
 	char        buf[7];
 	errcxdef   *ec = ctx->fiolcxerr;
 	uint        rdsiz = 0;
-	
+
 	/* figure out what type of object is to be loaded */
 	osfseek(fp, seekpos + ctx->fiolcxst, OSFSK_SET);
 	if (osfrb(fp, buf, 7)) errsig(ec, ERR_LDGAM);
@@ -64,13 +64,13 @@ void OS_LOADDS fioldobj(void *ctx0, mclhd handle, uchar *ptr, ushort siz)
 	case TOKSTOBJ:
 		rdsiz = osrp2(buf + 5);
 		break;
-		
+
 	case TOKSTFWDOBJ:
 	case TOKSTFWDFN:
 	default:
 		errsig(ec, ERR_UNKOTYP);
 	}
-	
+
 	if (siz < rdsiz) errsig(ec, ERR_LDBIG);
 	if (osfrb(fp, ptr, rdsiz)) errsig(ec, ERR_LDGAM);
 	if (ctx->fiolcxflg & FIOFCRYPT)
@@ -91,21 +91,21 @@ void fiorcls(fiolcxdef *ctx)
 }
 
 /*
- *   Read an HTMLRES resource map 
+ *   Read an HTMLRES resource map
  */
 static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 					  int resfileno, const char *resfilename)
 {
 	uchar buf[256];
 
-	/* 
-	 *   resource map - if the host system is interested, tell it about it 
+	/*
+	 *   resource map - if the host system is interested, tell it about it
 	 */
 	if (appctx != 0)
 	{
 		ulong entry_cnt;
 		ulong i;
-		
+
 		/* read the index table header */
 		if (osfrb(fp, buf, 8))
 			errsig1(ec, ERR_RDRSC, ERRTSTR,
@@ -113,14 +113,14 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 
 		/* get the number of entries in the table */
 		entry_cnt = osrp4(buf);
-		
+
 		/* read the index entries */
 		for (i = 0 ; i < entry_cnt ; ++i)
 		{
 			ulong res_ofs;
 			ulong res_siz;
 			ushort res_namsiz;
-			
+
 			/* read this entry */
 			if (osfrb(fp, buf, 10))
 				errsig1(ec, ERR_RDRSC, ERRTSTR,
@@ -130,12 +130,12 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 			res_ofs = osrp4(buf);
 			res_siz = osrp4(buf + 4);
 			res_namsiz = osrp2(buf + 8);
-			
+
 			/* read this entry's name */
 			if (osfrb(fp, buf, res_namsiz))
 				errsig1(ec, ERR_RDRSC, ERRTSTR,
 						errstr(ec, resfilename, strlen(resfilename)));
-			
+
 			/* tell the host system about this entry */
 			if (appctx->add_resource)
 				(*appctx->add_resource)(appctx->add_resource_ctx,
@@ -144,7 +144,7 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 										(size_t)res_namsiz,
 										resfileno);
 		}
-		
+
 		/* tell the host system where the resources start */
 		if (appctx->set_resmap_seek != 0)
 		{
@@ -158,7 +158,7 @@ static void fiordhtml(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 /*
  *   Read an external resource file.  This is a limited version of the
  *   general file reader that can only read resource files, not full game
- *   files.  
+ *   files.
  */
 static void fiordrscext(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 						int resfileno, char *resfilename)
@@ -169,7 +169,7 @@ static void fiordrscext(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 
 	/* note the starting offset */
 	startofs = osfpos(fp);
-	
+
 	/* check file and version headers, and get flags and timestamp */
 	if (osfrb(fp, buf, (int)(sizeof(FIOFILHDR) + sizeof(FIOVSNHDR) + 2)))
 		errsig1(ec, ERR_RDRSC, ERRTSTR,
@@ -204,9 +204,9 @@ static void fiordrscext(errcxdef *ec, osfildef *fp, appctxdef *appctx,
 			/* read the HTML resource map */
 			fiordhtml(ec, fp, appctx, resfileno, resfilename);
 
-			/* 
+			/*
 			 *   skip the resources - they're entirely for the host
-			 *   application's use 
+			 *   application's use
 			 */
 			osfseek(fp, endpos + startofs, OSFSK_SET);
 		}
@@ -271,10 +271,10 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		errsig(ec, ERR_BADVSN);
 	if (osfrb(fp, vctx->voccxtim, (size_t)26)) errsig(ec, ERR_RDGAM);
 
-	/* 
+	/*
 	 *   if the game wasn't compiled with 2.2 or later, make a note,
 	 *   because we need to ignore certain property flags (due to a bug in
-	 *   the old compiler) 
+	 *   the old compiler)
 	 */
 	if (memcmp(buf + sizeof(FIOFILHDR), FIOVSNHDR2,
 			   (size_t)sizeof(FIOVSNHDR2)) == 0
@@ -284,7 +284,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 
 	setupctx->fiolcxflg =
 		*flagp = osrp2(buf + sizeof(FIOFILHDR) + sizeof(FIOVSNHDR));
-	
+
 	/* now read resources from the file */
 	for (;;)
 	{
@@ -293,7 +293,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			|| osfrb(fp, buf + 1, (int)(buf[0] + 4)))
 			errsig(ec, ERR_RDGAM);
 		endpos = osrp4(buf + 1 + buf[0]);
-		
+
 		if (fioisrsc(buf, "OBJ"))
 		{
 			/* skip regular objects if fast-load records are included */
@@ -318,7 +318,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					mcmrsrv(mctx, (ushort)osrp2(buf + 3), (mcmon)obj,
 							(mclhd)curpos);
 					curpos += osrp2(buf + 5) + 7;
-					
+
 					/* load object if preloading */
 					if (flags & 2)
 					{
@@ -329,13 +329,13 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					/* seek past this object */
 					osfseek(fp, curpos + startofs, OSFSK_SET);
 					break;
-					
+
 				case TOKSTFWDOBJ:
 				case TOKSTFWDFN:
 				{
 					ushort  bsiz;
 					uchar  *p;
-					
+
 					if (osfrb(fp, buf+3, 2)) errsig(ec, ERR_RDGAM);
 					bsiz = osrp2(buf+3);
 					p = mcmalonum(mctx, bsiz, (mcmon)obj);
@@ -344,7 +344,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					curpos += 5 + bsiz;
 					break;
 				}
-					
+
 				case TOKSTEXTERN:
 					if (!vctx->voccxrun->runcxext)
 						errsig(ec, ERR_UNXEXT);
@@ -356,7 +356,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					ex->runxnam[buf[3]] = '\0';
 					curpos += buf[3] + 4;
 					break;
-					
+
 				default:
 					errsig(ec, ERR_UNKOTYP);
 				}
@@ -367,13 +367,13 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			uchar *p;
 			uchar *bufp;
 			ulong  bsiz;
-			
+
 			if (!(*flagp & FIOFFAST))
 			{
 				osfseek(fp, endpos + startofs, OSFSK_SET);
 				continue;
 			}
-			
+
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
 			if (bsiz && bsiz < OSMALMAX
@@ -400,7 +400,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 								(mclhd)osrp4(p + 7));
 						p += 11;
 						bsiz -= 11;
-						
+
 						/* preload object if desired */
 						if (flags & 2)
 						{
@@ -408,23 +408,23 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 							mcmunlck(mctx, (mcmon)obj);
 						}
 						break;
-						
+
 					case TOKSTEXTERN:
 						if (!vctx->voccxrun->runcxext)
 							errsig(ec, ERR_UNXEXT);
 						ex = &vctx->voccxrun->runcxext[obj];
-						
+
 						memcpy(ex->runxnam, p + 4, (size_t)p[3]);
 						ex->runxnam[p[3]] = '\0';
 						bsiz -= p[3] + 4;
 						p += p[3] + 4;
 						break;
-						
+
 					default:
 						errsig(ec, ERR_UNKOTYP);
 					}
 				}
-				
+
 				/* done with temporary block; free it */
 				osfree(bufp);
 				osfseek(fp, endpos + startofs, OSFSK_SET);
@@ -443,7 +443,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 						mcmrsrv(mctx, (ushort)osrp2(buf + 3), (mcmon)obj,
 								(mclhd)osrp4(buf + 7));
 						curpos += 11;
-						
+
 						/* preload object if desired */
 						if (flags & 2)
 						{
@@ -452,19 +452,19 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 							osfseek(fp, curpos + startofs, OSFSK_SET);
 						}
 						break;
-						
+
 					case TOKSTEXTERN:
 						if (!vctx->voccxrun->runcxext)
 							errsig(ec, ERR_UNXEXT);
 						ex = &vctx->voccxrun->runcxext[obj];
-						
+
 						if (osfrb(fp, buf + 3, 1)
 							|| osfrb(fp, ex->runxnam, (int)buf[3]))
 							errsig(ec, ERR_RDGAM);
 						ex->runxnam[buf[3]] = '\0';
 						curpos += buf[3] + 4;
 						break;
-						
+
 					default:
 						errsig(ec, ERR_UNKOTYP);
 					}
@@ -488,9 +488,9 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			siz = osrp2(buf);
 
 #if 0
-/* 
+/*
  *   external functions are now obsolete - do not load
- */            
+ */
 
 			/* look for an external function with the same name */
 			for (i = vctx->voccxrun->runcxexc,  ex = vctx->voccxrun->runcxext
@@ -522,9 +522,9 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			/* read the resources */
 			fiordhtml(ec, fp, appctx, 0, fname);
 
-			/* 
+			/*
 			 *   skip the resources - they're entirely for the host
-			 *   application's use 
+			 *   application's use
 			 */
 			osfseek(fp, endpos + startofs, OSFSK_SET);
 		}
@@ -533,7 +533,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			uchar *p;
 			uchar *bufp;
 			ulong  bsiz;
-			
+
 			/* do it in a single file read, if we can, for speed */
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
@@ -554,15 +554,15 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 				{
 					i = osrp2(p + 7);
 					obj = osrp2(p + 1);
-					
+
 					vociadd(vctx, (objnum)obj, (objnum)osrp2(p+3), i,
 							(objnum *)(p + 9), p[0] | VOCIFXLAT);
 					vocinh(vctx, obj)->vociilc = osrp2(p + 5);
-					
+
 					p += 9 + (2 * i);
 					bsiz -= 9 + (2 * i);
 				}
-				
+
 				/* done with temporary block; free it */
 				osfree(bufp);
 			}
@@ -574,11 +574,11 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					i = osrp2(buf + 7);       /* get number of superclasses */
 					obj = osrp2(buf + 1);              /* get object number */
 					if (i && osfrb(fp, buf + 9, 2 * i)) errsig(ec, ERR_RDGAM);
-					
+
 					vociadd(vctx, (objnum)obj, (objnum)osrp2(buf+3),
 							i, (objnum *)(buf + 9), buf[0] | VOCIFXLAT);
 					vocinh(vctx, obj)->vociilc = osrp2(buf + 5);
-				
+
 					curpos += 9 + (2 * i);
 				}
 			}
@@ -598,7 +598,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			vctx->voccxini = osrp2(buf+12);
 			vctx->voccxpre = osrp2(buf+14);
 			vctx->voccxper = osrp2(buf+16);
-			
+
 			/* if we have a cmdPrompt function, read it */
 			if (siz >= 20)
 				vctx->voccxprom = osrp2(buf + 18);
@@ -649,9 +649,9 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 				vctx->voccxperp = MCMONINV;
 			}
 
-			/* 
+			/*
 			 *   if we have commandAfterRead and initRestore, read them as
-			 *   well 
+			 *   well
 			 */
 			if (siz >= 38)
 			{
@@ -716,7 +716,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 			ulong  bsiz;
 			int    len1 = 0;
 			int    len2 = 0;
-			
+
 			/* do it in a single file read, if we can, for speed */
 			curpos = osfpos(fp) - startofs;
 			bsiz = endpos - curpos;
@@ -732,7 +732,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					sizcur = (siz2 > (uint)0xffff ? (uint)0xffff : siz2);
 					if (osfrb(fp, p1, sizcur)) errsig(ec, ERR_RDGAM);
 				}
-				
+
 				while (bsiz)
 				{
 					len1 = osrp2(p);
@@ -743,11 +743,11 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 					vocadd2(vctx, (prpnum)osrp2(p+4), (objnum)osrp2(p+6),
 							osrp2(p+8), p + 10, len1,
 							(len2 ? p + 10 + len1 : (uchar*)0), len2);
-					
+
 					p += 10 + len1 + len2;
 					bsiz -= 10 + len1 + len2;
 				}
-				
+
 				/* done with the temporary block; free it up */
 				osfree(bufp);
 			}
@@ -760,7 +760,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 						|| osfrb(fp, buf + 10,
 							   (len1 = osrp2(buf)) + (len2 = osrp2(buf + 2))))
 						errsig(ec, ERR_RDGAM);
-				
+
 					if (*flagp & FIOFCRYPT)
 						fioxor(buf + 10, (uint)(len1 + len2),
 							   xor_seed, xor_inc);
@@ -775,14 +775,14 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		{
 			uchar *fmts;
 			uint   fmtl;
-			
+
 			if (osfrb(fp, buf, 2)) errsig(ec, ERR_RDGAM);
 			fmtl = osrp2(buf);
 			fmts = mchalo(vctx->voccxerr, fmtl, "fiord1");
 			if (osfrb(fp, fmts, fmtl)) errsig(ec, ERR_RDGAM);
 			if (*flagp & FIOFCRYPT) fioxor(fmts, fmtl, xor_seed, xor_inc);
 			tiosetfmt(vctx->voccxtio, vctx->voccxrun, fmts, fmtl);
-			
+
 			if (fmtsp) *fmtsp = fmts;
 			if (fmtlp) *fmtlp = fmtl;
 		}
@@ -813,14 +813,14 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		else if (fioisrsc(buf, "SYMTAB"))
 		{
 			tokthdef *symtab;
-			
+
 			/* if there's no debugger context, don't bother with this */
 			if (!vctx->voccxrun->runcxdbg)
 			{
 				osfseek(fp, endpos + startofs, OSFSK_SET);
 				continue;
 			}
-			
+
 			if (!(symtab = vctx->voccxrun->runcxdbg->dbgcxtab))
 			{
 				symtab = (tokthdef *)mchalo(ec, sizeof(tokthdef),
@@ -828,18 +828,18 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 				tokthini(ec, mctx, (toktdef *)symtab);
 				vctx->voccxrun->runcxdbg->dbgcxtab = symtab;
 			}
-			
+
 			/* read symbols until we find a zero-length symbol */
 			for (;;)
 			{
 				int hash;
-				
+
 				if (osfrb(fp, buf, 4)) errsig(ec, ERR_RDGAM);
 				if (buf[0] == 0) break;
 				if (osfrb(fp, buf + 4, (int)buf[0])) errsig(ec, ERR_RDGAM);
 				buf[4 + buf[0]] = '\0';
 				hash = tokhsh((char *)buf + 4);
-				
+
 				(*symtab->tokthsc.toktfadd)((toktdef *)symtab,
 											(char *)buf + 4,
 											(int)buf[0], (int)buf[1],
@@ -854,7 +854,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 				osfseek(fp, endpos + startofs, OSFSK_SET);
 				continue;
 			}
-			
+
 			while ((osfpos(fp) - startofs) != endpos)
 			{
 				/* the only thing we know how to read is linfdef's */
@@ -864,10 +864,10 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		}
 		else if (fioisrsc(buf, "SRC2"))
 		{
-			/* 
+			/*
 			 *   this is simply a marker indicating that we have new-style
 			 *   (line-number-based) source debugging information in the
-			 *   file -- set the new-style debug info flag 
+			 *   file -- set the new-style debug info flag
 			 */
 			if (vctx->voccxrun->runcxdbg != 0)
 				vctx->voccxrun->runcxdbg->dbgcxflg |= DBGCXFLIN2;
@@ -933,7 +933,7 @@ static void fiord1(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx,
 		else if (fioisrsc(buf, "CHRSET"))
 		{
 			size_t len;
-			
+
 			/* read the character set ID and LDESC */
 			if (osfrb(fp, buf, 6)
 				|| (len = osrp2(buf+4)) > CMAP_LDESC_MAX_LEN
@@ -971,13 +971,13 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 	osfildef *fp;
 	ulong     startofs;
 	const char     *display_fname;
-	
+
 	/* presume there will be no need to run preinit */
 	*preinit = MCMONINV;
 
-	/* 
+	/*
 	 *   get the display filename - use the real filename if one is
-	 *   provided, otherwise use the name of the executable file itself 
+	 *   provided, otherwise use the name of the executable file itself
 	 */
 	display_fname = (fname != 0 ? fname : exename);
 
@@ -996,16 +996,16 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 	}
 	else
 		G_os_gamename[0] = '\0';
-	
+
 	/* open the file and read and check file header */
 	fp = (fname != 0 ? osfoprb(fname, OSFTGAME)
 					 : os_exeseek(exename, "TGAM"));
 	if (fp == 0)
 		errsig(vctx->voccxerr, ERR_OPRGAM);
 
-	/* 
+	/*
 	 *   we've identified the .GAM file source - tell the host system
-	 *   about it, if it's interested 
+	 *   about it, if it's interested
 	 */
 	if (appctx != 0 && appctx->set_game_name != 0)
 		(*appctx->set_game_name)(appctx->set_game_name_ctx, display_fname);
@@ -1015,9 +1015,9 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 
 	ERRBEGIN(vctx->voccxerr)
 
-	/* 
+	/*
 	 *   Read the game file.  Note that the .GAM file always has resource
-	 *   file number zero. 
+	 *   file number zero.
 	 */
 	fiord1(mctx, vctx, tctx, fp, display_fname,
 		   setupctx, startofs, preinit, flagp, path,
@@ -1027,7 +1027,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 	 *   If the host system accepts additional resource files, look for
 	 *   additional resource files.  These are files in the same directory
 	 *   as the .GAM file, with the .GAM suffix replaced by suffixes from
-	 *.  RS0 to .RS9.  
+	 *.  RS0 to .RS9.
 	 */
 	if (appctx != 0 && appctx->add_resfile != 0)
 	{
@@ -1054,17 +1054,17 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 			osfildef *fpres;
 			int resfileno;
 
-			/* 
+			/*
 			 *   Build the next resource filename.  If there's an explicit
 			 *   resource path, use it, otherwise use the same directory
-			 *   that contains the .GAM file. 
+			 *   that contains the .GAM file.
 			 */
 			if (appctx->ext_res_path != 0)
 			{
 				/*
 				 *   There's an explicit resource path - append the root
 				 *   (filename-only, minus path) portion of the .GAM file
-				 *   name to the resource path. 
+				 *   name to the resource path.
 				 */
 				os_build_full_path(resname, sizeof(resname),
 								   appctx->ext_res_path,
@@ -1072,10 +1072,10 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 			}
 			else
 			{
-				/* 
+				/*
 				 *   there's no resource path - use the entire .GAM
 				 *   filename, including directory, so that we look in the
-				 *   same directory that contains the .GAM file 
+				 *   same directory that contains the .GAM file
 				 */
 				if (base_name != 0)
 					strcpy(resname, base_name);
@@ -1131,12 +1131,12 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 /* save game header prefix - .GAM file information */
 #define FIOSAVHDR_PREFIX "TADS2 save/g\012\015\032"
 
-/* 
+/*
  *   Saved game format version string - note that the length of the
  *   version string must be fixed, so when this is updated, it must be
  *   updated to another string of the same length.  This should be updated
  *   whenever a change is made to the format that can't be otherwise
- *   detected from the data stream in the saved game file.  
+ *   detected from the data stream in the saved game file.
  */
 #define FIOSAVVSN "v2.2.1"
 
@@ -1149,18 +1149,18 @@ static int fiorfda(osfildef *fp, vocddef *p, uint cnt)
 	vocddef *q;
 	uint     i;
 	uchar    buf[14];
-	
+
 	/* start by clearing out entire record */
 	for (i = 0, q = p ; i < cnt ; ++q, ++i)
 		q->vocdfn = MCMONINV;
-	
+
 	/* now restore all the records from the file */
 	for (;;)
 	{
 		/* read a record, and quit if it's the last one */
 		if (osfrb(fp, buf, 13)) return(TRUE);
 		if ((i = osrp2(buf)) == 0xffff) return(FALSE);
-		
+
 		/* restore this record */
 		q = p + i;
 		q->vocdfn = osrp2(buf+2);
@@ -1187,7 +1187,7 @@ static int fiorfda(osfildef *fp, vocddef *p, uint cnt)
  *   Look in a saved game file to determine if it has information on which
  *   GAM file created it.  If the GAM file information is available, this
  *   routine returns true and stores the game file name in the given
- *   buffer; if the information isn't available, we'll return false.  
+ *   buffer; if the information isn't available, we'll return false.
  */
 int fiorso_getgame(char *saved_file, char *fnamebuf, size_t buflen)
 {
@@ -1203,9 +1203,9 @@ int fiorso_getgame(char *saved_file, char *fnamebuf, size_t buflen)
 	if (osfrb(fp, buf, (int)(sizeof(FIOSAVHDR_PREFIX) + 2))
 		|| memcmp(buf, FIOSAVHDR_PREFIX, sizeof(FIOSAVHDR_PREFIX)) != 0)
 	{
-		/* 
+		/*
 		 *   there's no game file information - close the file and
-		 *   indicate that we have no information 
+		 *   indicate that we have no information
 		 */
 		osfcls(fp);
 		return FALSE;
@@ -1263,26 +1263,26 @@ int fiorso(voccxdef *vctx, char *fname)
 		&& memcmp(buf, FIOSAVHDR_PREFIX, sizeof(FIOSAVHDR_PREFIX)) == 0)
 	{
 		ulong skip_len;
-		
+
 		/*
 		 *   The prefix header is present - skip it.  The 2-byte value
 		 *   following the header is the length of the prefix data block
 		 *   (not including the header), so simply skip the additional
-		 *   number of bytes specified.  
+		 *   number of bytes specified.
 		 */
 		skip_len = (ulong)osrp2(buf + sizeof(FIOSAVHDR_PREFIX));
 		osfseek(fp, skip_len, OSFSK_CUR);
 	}
 	else
 	{
-		/* 
+		/*
 		 *   there's no prefix header - seek back to the start of the file
 		 *   and read the standard header information
 		 */
 		osfseek(fp, 0, OSFSK_SET);
 	}
 
-	
+
 	/* read headers and check */
 	if (osfrb(fp, buf, (int)(sizeof(FIOSAVHDR) + sizeof(FIOSAVVSN)))
 		|| memcmp(buf, FIOSAVHDR, (size_t)sizeof(FIOSAVHDR)))
@@ -1307,20 +1307,20 @@ int fiorso(voccxdef *vctx, char *fname)
 	}
 	else
 	{
-		/* 
+		/*
 		 *   this isn't a recognized version - the file must have been
 		 *   saved by a newer version of the system, so we can't assume we
-		 *   will be able to parse the format 
+		 *   will be able to parse the format
 		 */
 		result = FIORSO_BAD_FMT_VSN;
 		goto ret_error;
 	}
-	
-	/* 
+
+	/*
 	 *   Read timestamp and check - the game must have been saved by the
 	 *   same .GAM file that we are now running, because the .SAV file is
 	 *   written entirely in terms of the contents of the .GAM file; any
-	 *   change in the .GAM file invalidates the .SAV file. 
+	 *   change in the .GAM file invalidates the .SAV file.
 	 */
 	if (osfrb(fp, timestamp, 26)
 		|| memcmp(timestamp, vctx->voccxtim, (size_t)26))
@@ -1328,15 +1328,15 @@ int fiorso(voccxdef *vctx, char *fname)
 		result = FIORSO_BAD_GAME_VSN;
 		goto ret_error;
 	}
-	
+
 	/* first revert every object to original (post-compilation) state */
 	vocrevert(vctx);
 
-	/* 
+	/*
 	 *   the most common error from here on is simply a file read error,
 	 *   so presume that this is what will happen; if we are successful or
 	 *   encounter a different error, we'll change the status at that
-	 *   point 
+	 *   point
 	 */
 	result = FIORSO_READ_ERROR;
 
@@ -1357,7 +1357,7 @@ int fiorso(voccxdef *vctx, char *fname)
 		{
 			int     sccnt;
 			objnum  sc;
-			
+
 			/* create the object */
 			mutsiz = osrp2(buf + 3);
 			p = mcmalonum(mctx, (ushort)mutsiz, (mcmon)obj);
@@ -1386,17 +1386,17 @@ int fiorso(voccxdef *vctx, char *fname)
 					int   len1;
 					int   len2;
 					char  wrd[80];
-					
+
 					/* read the header */
 					if (osfrb(fp, buf, 6))
 						goto ret_error;
 					len1 = osrp2(buf+2);
 					len2 = osrp2(buf+4);
-					
+
 					/* read the word text */
 					if (osfrb(fp, wrd, len1 + len2))
 						goto ret_error;
-					
+
 					/* add the word */
 					vocadd2(vctx, buf[0], obj, buf[1], wrd, len1,
 							wrd + len1, len2);
@@ -1410,7 +1410,7 @@ int fiorso(voccxdef *vctx, char *fname)
 			/* get the remaining data from the header */
 			propcnt = osrp2(buf + 3);
 			mutsiz = osrp2(buf + 5);
-		
+
 			/* expand object if it's not big enough for mutsiz */
 			p = mcmlck(mctx, (mcmon)obj);
 			oldmutsiz = mcmobjsiz(mctx, (mcmon)obj) - objrst(p);
@@ -1419,14 +1419,14 @@ int fiorso(voccxdef *vctx, char *fname)
 				newsiz = mutsiz - oldmutsiz;
 				p = (uchar *)objexp(mctx, obj, &newsiz);
 			}
-			
+
 			/* reset statistics, and read mutable part from file */
 			mut = p + objrst(p);
 			objsnp(p, propcnt);
 			objsfree(p, mutsiz + objrst(p));
 			if (osfrb(fp, mut, mutsiz))
 				err = TRUE;
-		
+
 			/* reset ignore flags as needed */
 			objsetign(mctx, obj);
 		}
@@ -1437,7 +1437,7 @@ int fiorso(voccxdef *vctx, char *fname)
 		if (err)
 			goto ret_error;
 	}
-	
+
 	/* read fuses/daemons/alarms */
 	if (fiorfda(fp, vctx->voccxdmn, vctx->voccxdmc)
 		|| fiorfda(fp, vctx->voccxfus, vctx->voccxfuc)
@@ -1452,7 +1452,7 @@ int fiorso(voccxdef *vctx, char *fname)
 		char    wrd[80];
 		int     flags;
 		int     typ;
-		
+
 		/* read the header */
 		if (osfrb(fp, buf, 8))
 			goto ret_error;
@@ -1465,7 +1465,7 @@ int fiorso(voccxdef *vctx, char *fname)
 
 		/* check to see if this is the end marker */
 		if (obj == MCMONINV) break;
-		
+
 		/* read the word text */
 		if (osfrb(fp, wrd+2, len1))
 			goto ret_error;
@@ -1478,7 +1478,7 @@ int fiorso(voccxdef *vctx, char *fname)
 		}
 		else
 			oswp2(wrd, len1 + 2);
-		
+
 		/* add or delete the word as appropriate */
 		if (flags & VOCFDEL)
 			vocdel1(vctx, obj, (char *)wrd, (prpnum)typ, FALSE, FALSE, FALSE);
@@ -1487,9 +1487,9 @@ int fiorso(voccxdef *vctx, char *fname)
 					(uchar *)wrd+len1, len2);
 	}
 
-	/* 
+	/*
 	 *   the following was added in save format version "v2.2.1", so skip
-	 *   it if the save version is older than that 
+	 *   it if the save version is older than that
 	 */
 	if (version != 1)
 	{
@@ -1514,11 +1514,11 @@ static int fiowfda(osfildef *fp, vocddef *p, uint cnt)
 {
 	uchar buf[14];
 	uint  i;
-	
+
 	for (i = 0 ; i < cnt ; ++i, ++p)
 	{
 		if (p->vocdfn == MCMONINV) continue;            /* not set - ignore */
-		
+
 		oswp2(buf, i);                        /* element in array to be set */
 		oswp2(buf+2, p->vocdfn);       /* object number for function/target */
 		buf[4] = p->vocdarg.runstyp;                    /* type of argument */
@@ -1537,11 +1537,11 @@ static int fiowfda(osfildef *fp, vocddef *p, uint cnt)
 		}
 		oswp2(buf+9, p->vocdprp);
 		oswp2(buf+11, p->vocdtim);
-		
+
 		/* write this record to file */
 		if (osfwb(fp, buf, 13)) return(TRUE);
 	}
-	
+
 	/* write end record - -1 for array element number */
 	oswp2(buf, 0xffff);
 	return(osfwb(fp, buf, 13));
@@ -1558,13 +1558,13 @@ struct fiosav_cb_ctx
 /*
  *   callback for vocabulary saver - called by voc_iterate for each word
  *   defined for a particular object, allowing us to write all the words
- *   attached to a dynamically allocated object to the save file 
+ *   attached to a dynamically allocated object to the save file
  */
 static void fiosav_cb(struct fiosav_cb_ctx *ctx,
 					  vocdef *voc, vocwdef *vocw)
 {
 	char buf[10];
-	
+
 	/* write the part of speech, flags, and word lengths */
 	buf[0] = vocw->vocwtyp;
 	buf[1] = vocw->vocwflg;
@@ -1581,13 +1581,13 @@ static void fiosav_cb(struct fiosav_cb_ctx *ctx,
 /*
  *   Callback for vocabulary saver - called by voc_iterate for every
  *   word.  We'll write the word if it was dynamically added or deleted,
- *   so that we can restore that status when the game is restored.  
+ *   so that we can restore that status when the game is restored.
  */
 static void fiosav_voc_cb(void *ctx0, vocdef *voc, vocwdef *vocw)
 {
 	struct fiosav_cb_ctx *ctx = (struct fiosav_cb_ctx *)ctx0;
 	char buf[10];
-	
+
 	/* if the word was dynamically allocated or deleted, save it */
 	if ((vocw->vocwflg & VOCFNEW) || (vocw->vocwflg & VOCFDEL))
 	{
@@ -1632,12 +1632,12 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 	 *   If we have game file information, save the game file information
 	 *   with the saved game file.  This lets the player start the
 	 *   run-time and restore the game by specifying only the saved game
-	 *   file.  
+	 *   file.
 	 */
 	if (game_fname != 0)
 	{
 		size_t len;
-		
+
 		/* write the prefix header */
 		len = strlen(game_fname);
 		oswp2(buf, len);
@@ -1646,7 +1646,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 			|| osfwb(fp, game_fname, (int)len))
 			goto ret_error;
 	}
-	
+
 	/* write save game header and timestamp */
 	if (osfwb(fp, FIOSAVHDR, (int)sizeof(FIOSAVHDR))
 		|| osfwb(fp, FIOSAVVSN, (int)sizeof(FIOSAVVSN))
@@ -1674,7 +1674,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 					/*
 					 *   If the object was dynamically allocated, write
 					 *   the whole object.  Otherwise, write just the
-					 *   mutable part. 
+					 *   mutable part.
 					 */
 					if ((*v)->vociflg & VOCIFNEW)
 					{
@@ -1692,13 +1692,13 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 #ifdef NEVER
 						{
 							int         wrdcnt;
-							
+
 							/* count the words, and write the count */
 							voc_count(vctx, obj, 0, &wrdcnt, (int *)0);
 							oswp2(buf, wrdcnt);
 							if (osfwb(fp, buf, 2))
 								err = TRUE;
-							
+
 							/* write the words */
 							fnctx.err = 0;
 							fnctx.fp = fp;
@@ -1719,7 +1719,7 @@ int fiosav(voccxdef *vctx, char *fname, char *game_fname)
 							|| osfwb(fp, mut, mutsiz))
 							err = TRUE;
 					}
-					
+
 					mcmunlck(mctx, (mcmon)obj);
 					if (err != 0)
 						goto ret_error;

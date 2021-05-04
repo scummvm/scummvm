@@ -202,7 +202,7 @@ Uselist:	db	"NETW"
 
 	db	"HOLY"
 	dw	usechurchhole
-	
+
 	db	"WALL"
 	dw	usewall
 	db	"BOOK"
@@ -230,12 +230,12 @@ Uselist:	db	"NETW"
 	dw	usewindow
 	db	"PAPR"
 	dw	viewfolder
-	
+
 	db	"UWTA"
 	dw	usetrainer
 	db	"UWTB"
 	dw	usetrainer
-	
+
 	db	"STAT"
 	dw	entersymbol
 	db	"TLID"
@@ -270,7 +270,7 @@ Uselist:	db	"NETW"
 
 	db	"GUMA"
 	dw	chewy
-	
+
 	db	"SQEE"
 	dw	wheelsound
 	db	"TAPP"
@@ -463,7 +463,7 @@ Nothelderror	proc	near
 
 
 Usepipe	proc	near
-	
+
 	cmp	withobject,255
 	jnz	pipewith
 	call	withwhat
@@ -669,7 +669,7 @@ Slabdoorb	proc	near
 	call	isryanholding
 	jnz	gotcrystal
 	mov	al,44
-	mov	cx,200	
+	mov	cx,200
 	call	showpuztext
 	call	putbackobstuff
 	ret
@@ -798,7 +798,7 @@ slabfwrong:	mov	watchingtime,40
 
 
 Useslab	proc	near
-	
+
 	cmp	withobject,255
 	jnz	slabwith
 	call	withwhat
@@ -848,7 +848,7 @@ notlastslab:	inc	progresspoints
 
 
 Usecart	proc	near
-	
+
 	cmp	withobject,255
 	jnz	cartwith
 	call	withwhat
@@ -920,7 +920,7 @@ openbox:	inc	progresspoints
 	mov	speedcount,1
 	mov	getback,1
 	ret
-	
+
 	endp
 
 
@@ -1056,7 +1056,7 @@ Wearshades	proc	near
 wearingshades:	call	showseconduse
 	call	putbackobstuff
 	ret
-	
+
 	endp
 
 
@@ -1283,7 +1283,7 @@ Usewindow	proc	near
 	jnz	notonbalc
 	inc	progresspoints
 	call	showfirstuse
-	mov	newlocation,29	
+	mov	newlocation,29
 	mov	getback,1
 	ret
 notonbalc:	call	showseconduse
@@ -1908,7 +1908,7 @@ $1:
 	push	cs
 	pop	es
 	mov	si,offset cs:money1poke
-	mov	charshift,91*2+75 
+	mov	charshift,91*2+75
 	mov	al,0
 	mov	ah,0
 	mov	dl,240
@@ -1934,7 +1934,7 @@ $1:
 
 money1poke:	db	"0000",0
 money2poke:	db	"00",0
-		
+
 	endp
 
 
@@ -2001,7 +2001,7 @@ Lookatcard	proc	near
 
 
 Moneypoke	proc	near
-	
+
 	mov	bx,offset cs:money1poke
 	mov	cl,48-1
 numberpoke0:	inc	cl
@@ -2867,7 +2867,7 @@ Putbackobstuff	proc	near
 Showpuztext	proc	near
 
 	push	cx
-	call	findpuztext	
+	call	findpuztext
 	push	es si
 	call	createpanel
 	call	showpanel
@@ -3153,7 +3153,7 @@ edenspart2:	cmp	sartaindead,1
 	mov	al,55
 	call	placesetobject
 	inc	sartaindead
-notedens2:	ret	
+notedens2:	ret
 notinedens:	cmp	reallocation,25
 	jnz	notonsartroof
 	mov	newsitem,3
@@ -3491,8 +3491,8 @@ gatewith:	mov	al,withobject
 	mov	al,14
 	call	showpuztext
 	call	putbackobstuff
-	ret	
-	
+	ret
+
 cutgate:	call	showfirstuse
 	mov	watchingtime,64*2
 	mov	reeltowatch,4

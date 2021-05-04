@@ -43,7 +43,7 @@ namespace TADS2 {
  *   including the '-') in this option flag; most options will have ofs==1
  *   since they are of the form '-x'.  usagefn is a function to call if
  *   the parsing fails; it is not expected to return, but should signal an
- *   error instead.  
+ *   error instead.
  */
 char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
 			 int ofs, void (*usagefn)(errcxdef*));
@@ -58,7 +58,7 @@ char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc,
  *   TRUE; if it's followed by '-', the value is FALSE; if followed by
  *   nothing, the option is the logical inverse of the previous value.  If
  *   it's followed by any other character, we call the usage callback,
- *   which is not expected to return, but should signal an error. 
+ *   which is not expected to return, but should signal an error.
  */
 int cmdtog(struct errcxdef *ec, int prv, char *argp, int ofs,
 		   void (*usagefn)(errcxdef*));

@@ -122,7 +122,7 @@ zword Mem::get_header_extension(int entry) {
 	addr = h_extension_table + 2 * entry;
 	LOW_WORD(addr, val);
 
-	return val;   
+	return val;
 }
 
 void Mem::set_header_extension(int entry, zword val) {

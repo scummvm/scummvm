@@ -40,7 +40,7 @@ public:
 	 * Constructor
 	 */
 	ViewportMap(TreeItem *parent) : Gfx::VisualItem("ViewportMap", Rect(8, 8, 312, 152), parent), _sprites(nullptr) {}
-	
+
 	/**
 	 * Destructor
 	 */

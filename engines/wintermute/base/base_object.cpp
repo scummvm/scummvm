@@ -562,7 +562,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] GetSoundFilename
 	// Used to save/restore ambient sounds
-	// Should contain '\\' character, because Split("\\") is called on result 
+	// Should contain '\\' character, because Split("\\") is called on result
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetSoundFilename") == 0) {
 		stack->correctParams(0);

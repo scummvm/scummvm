@@ -95,7 +95,7 @@ void ViewportDungeon::draw() {
 		for (int index = distance; index; --index) {
 			currDelta -= delta;
 			Point pt = currentPos + currDelta;
-			
+
 			if (!isDoor || index > 1) {
 				map->getTileAt(pt + leftDelta, &leftTile);
 				map->getTileAt(pt + rightDelta, &rightTile);
@@ -162,7 +162,7 @@ uint ViewportDungeon::distanceToOccupiedCell(const Point &delta) {
 bool ViewportDungeon::isCellOccupied(const Point &delta) {
 	Maps::Map *map = getGame()->getMap();
 	Point pt = map->getPosition() + delta;
-	
+
 	Maps::MapTile tile;
 	map->getTileAt(pt, &tile);
 	if (tile.isWallOrDoorway())

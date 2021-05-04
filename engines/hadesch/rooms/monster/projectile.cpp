@@ -45,7 +45,7 @@ Projectile::Projectile(int id, int level, Monster monster, int startScale, Commo
 		_flyAnim = "V7140BC0";
 		_interceptAnim = "V7130BD2";
 		_hitAnim = "V7140BF0";
-		break;			
+		break;
 	}
 	_isMiss = g_vm->getRnd().getRandomNumberRng(0, getProjectileHitChance()) == 0;
 	_isFlightFinished = false;
@@ -82,7 +82,7 @@ void Projectile::stop() {
 void Projectile::makeFlightParams(int xmomentum) {
 	Common::RandomSource &rnd = g_vm->getRnd();
 	_flightLengthMs = getProjectileFlightLength(_level) * 100;
-		
+
 	if (_isMiss) {
 		switch (rnd.getRandomNumberRng(0, 2)) {
 		case 0:
@@ -103,7 +103,7 @@ void Projectile::makeFlightParams(int xmomentum) {
 			rnd.getRandomNumberRng(100, 500),
 			rnd.getRandomNumberRng(100, 300));
 	}
-		
+
 	switch (xmomentum) {
 	case 1:
 		_attractor1 = Common::Point(
@@ -283,7 +283,7 @@ bool Projectile::tick(Common::SharedPtr <Projectile> backRef) {
 
 	return true;
 }
-	
+
 void Projectile::handleAbsoluteClick(Common::SharedPtr <Projectile> backRef, Common::Point p) {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	if (_isFlightFinished || _flightCounterMs >= _flightLengthMs)

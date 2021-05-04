@@ -97,7 +97,7 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 				}
 			}
 		}
-		// If the current music state corresponds to the same soundId 
+		// If the current music state corresponds to the same soundId
 		// we're trying to play, we just adjust its volume to the new one.
 		// Otherwise... just flush the old track and start the new one
 		if (alreadyPlayingTrackId != -1) {
@@ -319,7 +319,7 @@ void IMuseDigital::setPan(int soundId, int pan) {
 	debug(5, "IMuseDigital::setPan(%d, %d)", soundId, pan);
 
 	// Sometimes, COMI scumm scripts try to set pan values in the range 0-255
-	// instead of 0-128. I sincerely have no idea why and what exactly is the 
+	// instead of 0-128. I sincerely have no idea why and what exactly is the
 	// correct way of handling these cases (does it happen on a sound by sound basis?).
 	// Until someone properly reverse engineers the engine, this fix works fine for
 	// those sounds (e.g. the cannon fire SFX in Part 1 minigame, the bell sound
@@ -378,7 +378,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			debug(5, "IMuseDigital::fadeOutMusicAndStartNew(sound:%d) - starting", soundId);
 
-			// Store the fadeDelay in the track: startMusicWithOtherPos will use it to 
+			// Store the fadeDelay in the track: startMusicWithOtherPos will use it to
 			// fade in the new track; this will match fade in and fade out speeds.
 			if (_vm->_game.id == GID_CMI) {
 				track->volFadeDelay = fadeDelay;

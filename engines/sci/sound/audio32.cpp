@@ -1214,7 +1214,7 @@ reg_t Audio32::kernelPlay(const bool autoPlay, EngineState *s, const int argc, c
 		resourceId = ResourceId(kResourceTypeAudio, audioNumber);
 		loop = false;
 		volume = Audio32::kMaxVolume;
-		
+
 		// SSCI only plays one AIFF file at a time using this method. The game scripts
 		//  rely on this and don't stop the previous AIFF before playing another.
 		//  This entire scheme is only used in two rooms, so rather than track the

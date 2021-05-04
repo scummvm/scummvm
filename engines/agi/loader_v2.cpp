@@ -276,7 +276,7 @@ int AgiLoader_v2::loadObjects(const char *fname) {
 }
 
 int AgiLoader_v2::loadWords(const char *fname) {
-	if (_vm->getLanguage() != Common::HE_ISR) 
+	if (_vm->getLanguage() != Common::HE_ISR)
 		return _vm->_words->loadDictionary(fname);
 	else
 		return _vm->_words->loadExtendedDictionary(fname);

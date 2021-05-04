@@ -363,7 +363,7 @@ reg_t hoyle5PokerEngine(SciArray *data) {
 		error("Unknown Poker logic operation: %d", operation);
 		break;
 	}
-	
+
 	return TRUE_REG;
 }
 

@@ -186,12 +186,12 @@ void AmbientAnim::play(bool reschedule) {
 	room->playAnim(_internal->_descs[variant]._animName, _internal->_zValue,
 		       params,
 		       Common::SharedPtr<EventHandler>(new AmbientAnimPlayEnded(*this, reschedule)),
-		       _internal->_offset);		
-	
+		       _internal->_offset);
+
 	if (_internal->_descs[variant]._soundName != "")
 		room->playSFX(_internal->_descs[variant]._soundName, -1);
 }
-	
+
 void AmbientAnim::schedule() {
 	if (_internal->_minInterval >= 0 && _internal->_maxInterval >= 0)
 		g_vm->addTimer(

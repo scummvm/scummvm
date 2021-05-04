@@ -344,7 +344,7 @@ void EMIModel::updateLighting(const Math::Matrix4 &modelToWorld) {
 		for (uint j = 0; j < activeLights.size(); ++j) {
 			Light *l = activeLights[j];
 			float shade = l->_intensity;
-		
+
 			if (l->_type != Light::Ambient) {
 				// Direction of incident light
 				Math::Vector3d dir = l->_dir;

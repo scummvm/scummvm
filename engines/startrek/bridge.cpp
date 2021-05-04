@@ -735,7 +735,7 @@ void StarTrekEngine::contactTargetAction() {
 			initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
 		} else {
 			hailTheMasada();
-		}	
+		}
 		break;
 	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
 		_sound->playSoundEffectIndex(kSfxHailing);

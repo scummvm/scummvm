@@ -36,7 +36,7 @@ END_MESSAGE_MAP()
 
 bool Move::MoveMsg(CMoveMsg *msg) {
 	Maps::Ultima1Map *map = getMap();
-	
+
 	if (map->_mapType == Maps::MAP_DUNGEON) {
 		switch (msg->_direction) {
 		case Shared::Maps::DIR_LEFT:

@@ -1699,7 +1699,7 @@ stateFlag = false;
 		break;
 
 	case 88:
-		if (sentence->_category == 6 || 
+		if (sentence->_category == 6 ||
 				(g_language != Common::DE_DEU && sentence->contains("upside down"))) {
 			addResponse(getDialogueId(202142));
 			applyFlag = true;

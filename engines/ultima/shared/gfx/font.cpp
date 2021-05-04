@@ -45,7 +45,7 @@ int Font::writeString(Graphics::ManagedSurface &surface, const Common::String &m
 			writeChar(surface, (unsigned char)*msgP, pt, color, bgColor);
 		}
 	}
-	
+
 	return total;
 }
 

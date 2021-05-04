@@ -44,7 +44,7 @@ typedef int re_state_id;
 /* ------------------------------------------------------------------------ */
 /*
  *   Group register structure.  Each register keeps track of the starting
- *   and ending offset of the group's text.  
+ *   and ending offset of the group's text.
  */
 typedef struct _re_group_register
 {
@@ -64,12 +64,12 @@ typedef struct _re_group_register
 
 
 /* ------------------------------------------------------------------------ */
-/* 
+/*
  *   Denormalized state transition tuple.  Each tuple represents the
  *   complete set of transitions out of a particular state.  A particular
  *   state can have one character transition, or two epsilon transitions.
  *   Note that we don't need to store the state ID in the tuple, because
- *   the state ID is the index of the tuple in an array of state tuples.  
+ *   the state ID is the index of the tuple in an array of state tuples.
  */
 typedef struct
 {
@@ -89,7 +89,7 @@ typedef struct
 
 
 /*
- *   Tuple flags 
+ *   Tuple flags
  */
 
 /* this state is the start of a group - the 'ch' value is the group ID */
@@ -103,7 +103,7 @@ typedef struct
 /*
  *   Regular expression compilation context structure.  This tracks the
  *   state of the compilation and stores the resources associated with the
- *   compiled expression.  
+ *   compiled expression.
  */
 typedef struct _re_context
 {
@@ -115,7 +115,7 @@ typedef struct _re_context
 
 	/*
 	 *   The array of transition tuples.  We'll allocate this array and
-	 *   expand it as necessary.  
+	 *   expand it as necessary.
 	 */
 	re_tuple *tuple_arr;
 
@@ -128,12 +128,12 @@ typedef struct _re_context
 	/* group registers */
 	re_group_register regs[RE_GROUP_REG_CNT];
 
-	/* 
+	/*
 	 *   Buffer for retaining a copy of the last string we scanned.  We
 	 *   retain our own copy of each string, and point the group registers
 	 *   into this copy rather than the caller's original string -- this
 	 *   ensures that the group registers remain valid even after the
-	 *   caller has deallocated the original string.  
+	 *   caller has deallocated the original string.
 	 */
 	char *strbuf;
 
@@ -149,7 +149,7 @@ typedef struct _re_context
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Status codes 
+ *   Status codes
  */
 typedef enum
 {
@@ -164,19 +164,19 @@ typedef enum
 /* ------------------------------------------------------------------------ */
 /*
  *   Initialize the context.  The memory for the context structure itself
- *   must be allocated and maintained by the caller. 
+ *   must be allocated and maintained by the caller.
  */
 void re_init(re_context *ctx, errcxdef *errctx);
 
 /*
  *   Delete the context - frees structures associated with the context.
- *   Does NOT free the memory used by the context structure itself.  
+ *   Does NOT free the memory used by the context structure itself.
  */
 void re_delete(re_context *ctx);
 
 /*
  *   Compile an expression and search for a match within the given string.
- *   Returns the offset of the match, or -1 if no match was found.  
+ *   Returns the offset of the match, or -1 if no match was found.
  */
 int re_compile_and_search(re_context *ctx,
 						  const char *pattern, size_t patlen,
@@ -187,7 +187,7 @@ int re_compile_and_search(re_context *ctx,
  *   Compile an expression and check for a match.  Returns the length of
  *   the match if we found a match, -1 if we found no match.  This is not
  *   a search function; we merely match the leading substring of the given
- *   string to the given pattern.  
+ *   string to the given pattern.
  */
 int re_compile_and_match(re_context *ctx,
 						 const char *pattern, size_t patlen,

@@ -151,7 +151,7 @@ void JumpBiochipViewWindow::onPaint() {
 		const Graphics::Surface *frame = _stillFrames.getFrame(0);
 		_vm->_gfx->blit(frame, absoluteRect.left, absoluteRect.top);
 
-		if (_curSelection >= 0) {	
+		if (_curSelection >= 0) {
 			frame = _stillFrames.getFrame(1);
 
 			Common::Rect highlightRect(11, _curSelection * 30 + 50, 11 + 23, _curSelection * 30 + 50 + 23);
@@ -246,7 +246,7 @@ void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) 
 					_currentMissionReviewed = false;
 					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_A));
 				}
-	
+
 				_curSelection = 0;
 				invalidateWindow(false);
 			}
@@ -260,7 +260,7 @@ void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) 
 					_currentMissionReviewed = false;
 					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_B));
 				}
-	
+
 				_curSelection = 1;
 				invalidateWindow(false);
 			}
@@ -274,7 +274,7 @@ void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) 
 					_currentMissionReviewed = false;
 					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_C));
 				}
-	
+
 				_curSelection = 2;
 				invalidateWindow(false);
 			}
@@ -288,7 +288,7 @@ void JumpBiochipViewWindow::onLButtonUp(const Common::Point &point, uint flags) 
 					_currentMissionReviewed = false;
 					((GameUIWindow *)getParent()->getParent()->getParent())->_liveTextWindow->updateLiveText(_vm->getString(IDS_JUMP_BC_REVIEW_MISSION_TEXT_D));
 				}
-	
+
 				_curSelection = 3;
 				invalidateWindow(false);
 			}
@@ -673,7 +673,7 @@ void InterfaceBioChipViewWindow::onMouseMove(const Common::Point &point, uint fl
 class FilesBioChipViewWindow : public Window {
 public:
 	FilesBioChipViewWindow(BuriedEngine *vm, Window *parent);
-	
+
 	void onPaint();
 	void onLButtonUp(const Common::Point &point, uint flags);
 

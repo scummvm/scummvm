@@ -126,7 +126,7 @@ struct dbgcxdef
 	uint      dbgcxhstl;                           /* history buffer length */
 	uint      dbgcxhstf;             /* offset of next free byte of history */
 
-	/* 
+	/*
 	 *   This member is for the use of the user interface code.  If the
 	 *   user interface implementation needs to store additional context,
 	 *   it can allocate a structure of its own (it should probably do
@@ -136,7 +136,7 @@ struct dbgcxdef
 	 *   recover its extra context information by following this pointer
 	 *   and casting it to its private structure type.  The TADS code
 	 *   won't do anything with this pointer except initialize it to null
-	 *   when initializing the debugger context.  
+	 *   when initializing the debugger context.
 	 */
 	void     *dbgcxui;
 };
@@ -147,14 +147,14 @@ typedef struct dbgcxdef dbgcxdef;
 /*
  *   Compiler interface.  These routines are called by the compiler to
  *   inform the debug record generator about important events as
- *   compilation proceeds. 
+ *   compilation proceeds.
  */
 
 
 /*
  *   Tell the current line source that we're compiling an executable
  *   line, and tell it the object number and offset of the code within the
- *   object. 
+ *   object.
  */
 void dbgclin(struct tokcxdef *tokctx, objnum objn, uint ofs);
 
@@ -176,7 +176,7 @@ void dbgclin(struct tokcxdef *tokctx, objnum objn, uint ofs);
  *   executable that isn't linked with the debugger.  If this returns
  *   true, dbgucmd() must not have a trivial implementation -- dbgucmd()
  *   must at least let the user quit out of the game.
- *   
+ *
  *   This can be switched at either link time or compile time.  If DBG_OFF
  *   is defined, we'll force this to return false; otherwise, we'll let
  *   the program define the appropriate implementation through the linker.
@@ -190,12 +190,12 @@ int dbgpresent();
 
 /* add a debug tracing record */
 /* void dbgenter(dbgcxdef *ctx, runsdef *bp, objnum self, objnum target,
-				 prpnum prop, int binum, int argc); */ 
+				 prpnum prop, int binum, int argc); */
 
 /* tell debugger where the current line's local frame table is located */
 /* void dbgframe(dbgcxdef *ctx, uint ofsfr, ofslin); */
 
-/* 
+/*
  *   Single-step interrupt: the run-time has reached a new source line.
  *   ofs is the offset from the start of the object of the line record,
  *   and p is the current execution pointer.  *p can be changed upon
@@ -227,7 +227,7 @@ void dbgaddhist(dbgcxdef *ctx, char *buf, int bufl);
 /*
  *   Find a base pointer, given the object+offset of the frame.  If the
  *   frame is not active, this routine signals ERR_INACTFR; otherwise, the
- *   bp value for the frame is returned. 
+ *   bp value for the frame is returned.
  */
 struct runsdef *dbgfrfind(dbgcxdef *ctx, objnum frobj, uint frofs);
 
@@ -236,7 +236,7 @@ struct runsdef *dbgfrfind(dbgcxdef *ctx, objnum frobj, uint frofs);
 /*
  *   User Interface Support routines.  These routines are called by the
  *   user interface layer to get information from the debugger and perform
- *   debugging operations. 
+ *   debugging operations.
  */
 
 
@@ -252,7 +252,7 @@ void dbglget(dbgcxdef *ctx, uchar *buf);
 /*
  *   Get information about a line in an enclosing stack frame.  Level 0 is
  *   the current line, level 1 is the first enclosing frame, and so on.
- *   Returns 0 on success, non-zero if the frame level is invalid.  
+ *   Returns 0 on success, non-zero if the frame level is invalid.
  */
 int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level);
 
@@ -263,26 +263,26 @@ int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level);
  *   the error number is returned.  bpnum returns with the breakpoint
  *   number if err == 0.  If the condition string is given (and is not an
  *   empty string), the condition is compiled in the scope of the
- *   breakpoint and attached as the breakpoint condition.  
+ *   breakpoint and attached as the breakpoint condition.
  */
 int dbgbpset(dbgcxdef *ctx, char *addr, int *bpnum);
 
-/* 
+/*
  *   Set a breakpoint at an object + offset location.  If 'toggle' is
  *   true, and there's already a breakpoint at the given location, we'll
  *   clear the breakpoint; in this case, *did_set will return false to
  *   indicate that an existing breakpoint was cleared rather than a new
  *   breakpoint created.  *did_set will return true if a new breakpoint
- *   was set.  
+ *   was set.
  */
 int dbgbpat(dbgcxdef *ctx, objnum objn, objnum self,
 			uint ofs, int *bpnum, char *bpname, int toggle,
 			char *condition, int *did_set);
 
-/* 
+/*
  *   Set a breakpoint at an object + offset location, optionally with a
  *   condition, using an existing breakpoint slot.  If the slot is already
- *   in use, we'll return an error.  
+ *   in use, we'll return an error.
  */
 int dbgbpatid(dbgcxdef *ctx, int bpnum, objnum target, objnum self,
 			  uint ofs, char *bpname, int toggle, char *cond,
@@ -292,18 +292,18 @@ int dbgbpatid(dbgcxdef *ctx, int bpnum, objnum target, objnum self,
  *   Determine if there's a breakpoint at a given code location.  Fills in
  *   *bpnum with the breakpoint identifier and returns true if a
  *   breakpoint is found at the given location; returns false if there are
- *   no breakpoints matching the description.  
+ *   no breakpoints matching the description.
  */
 int dbgisbp(dbgcxdef *ctx, objnum target, objnum self, uint ofs, int *bpnum);
 
 /*
- *   Determine if the given breakpoint is enabled 
+ *   Determine if the given breakpoint is enabled
  */
 int dbgisbpena(dbgcxdef *ctx, int bpnum);
 
 /*
  *   Delete a breakpoint by breakpoint number (as returned from
- *   dbgbpset).  Returns error number, or 0 for success. 
+ *   dbgbpset).  Returns error number, or 0 for success.
  */
 int dbgbpdel(dbgcxdef *ctx, int bpnum);
 
@@ -314,7 +314,7 @@ int dbgbpdis(dbgcxdef *ctx, int bpnum, int disable);
  *   Set a new condition for the given breakpoint.  Replaces any existing
  *   condition.  If an error occurs, we'll leave the old condition as it
  *   was and return a non-zero error code; on success, we'll update the
- *   condition and return zero. 
+ *   condition and return zero.
  */
 int dbgbpsetcond(dbgcxdef *ctx, int bpnum, char *cond);
 
@@ -333,19 +333,19 @@ void dbgbpeach(dbgcxdef *ctx,
 			   void (*fn)(void *, int, uchar *, uint),
 			   void *fnctx);
 
-/* 
+/*
  *   Get information on a specific breakpoint.  Returns zero on success,
- *   non-zero on failure. 
+ *   non-zero on failure.
  */
 int dbgbpgetinfo(dbgcxdef *ctx, int bpnum, char *descbuf, size_t descbuflen,
 				 char *condbuf, size_t condbuflen);
 
-/* 
+/*
  *   Evaluate an expression (a text string to be parsed) at a particular
  *   stack context level; returns error number.  Invokes the callback
  *   function repeatedly to display the value string, and ends the display
  *   with a newline.  If showtype is true, we'll include a type name
- *   prefix, otherwise we'll simply display the value.  
+ *   prefix, otherwise we'll simply display the value.
  */
 int dbgeval(dbgcxdef *ctx, char *expr,
 			void (*dispfn)(void *dispctx, const char *str, int strl),
@@ -360,7 +360,7 @@ int dbgeval(dbgcxdef *ctx, char *expr,
  *   name to form the full subitem expression; for objects, it's ".", and
  *   for lists it's null (because for lists the subitem names will include
  *   brackets).  'speculative' is passed to dbgcompile; see the comments
- *   there for information on the purpose of this flag.  
+ *   there for information on the purpose of this flag.
  */
 int dbgevalext(dbgcxdef *ctx, char *expr,
 			   void (*dispfn)(void *dispctx, const char *str, int strl),
@@ -369,20 +369,20 @@ int dbgevalext(dbgcxdef *ctx, char *expr,
 							 int subnamelen, const char *relationship),
 			   void *aggctx, int speculative);
 
-/* 
+/*
  *   enumerate local variables at a given stack context level by calling
- *   the given function once for each local variable 
+ *   the given function once for each local variable
  */
 void dbgenumlcl(dbgcxdef *ctx, int level,
 				void (*func)(void *ctx, const char *lclnam, size_t lclnamlen),
 				void *cbctx);
 
-/* 
+/*
  *   Compile an expression in a given frame context.  Returns an error
  *   number.  Allocates a new object to contain the compiled code, and
  *   returns the object number in *objn; the caller is responsible for
  *   freeing the object when done with it.
- *   
+ *
  *   If 'speculative' is set to true, we'll prohibit the expression from
  *   making any assignments or calling any methods or functions.  This
  *   mode can be used to try compiling an expression that the user could
@@ -393,7 +393,7 @@ void dbgenumlcl(dbgcxdef *ctx, int level,
  *   hovering over some text for a few moments.  In such cases, since the
  *   user hasn't explicitly requested evaluation, it would be bad to make
  *   any changes to game state, hence the prohibition of assignments or
- *   calls.  
+ *   calls.
  */
 int dbgcompile(dbgcxdef *ctx, char *expr, dbgfdef *fr, objnum *objn,
 			   int speculative);
@@ -428,11 +428,11 @@ void dbgswitch(struct lindef **linp, struct lindef *newlin);
  *   to perform user interaction.
  */
 
-/* 
+/*
  *   Debugger user interface initialization, phase one.  TADS calls this
  *   routine during startup, before reading the .GAM file, to let the user
  *   interface perform any initialization it requires before the .GAM file
- *   is loaded.  
+ *   is loaded.
  */
 void dbguini(dbgcxdef *ctx, const char *game_filename);
 
@@ -440,7 +440,7 @@ void dbguini(dbgcxdef *ctx, const char *game_filename);
  *   Debugger user interface initialization, phase two.  TADS calls this
  *   routine during startup, after read the .GAM file.  The debugger user
  *   interface code can perform any required initialization that depends
- *   on the .GAM file having been read.  
+ *   on the .GAM file having been read.
  */
 void dbguini2(dbgcxdef *ctx);
 
@@ -459,7 +459,7 @@ void dbguini2(dbgcxdef *ctx);
  *   instruction pointer set back to the start of the line containing the
  *   error, and will thus re-try the same line of code when the debugger
  *   returns, unless the debugger explicitly moves the instruction pointer
- *   before returning.  
+ *   before returning.
  */
 int dbgu_err_resume(dbgcxdef *ctx);
 
@@ -470,7 +470,7 @@ int dbgu_err_resume(dbgcxdef *ctx);
  *   path to the file in fullname.  The debugger calls this after it
  *   exhausts all of its other methods of finding a source file (such as
  *   searching the include path).
- *   
+ *
  *   Return true if the source file should be considered valid, false if
  *   not.  Most implementations will simply return true if the file was
  *   found, false if not; however, this approach will cause the debugger
@@ -479,23 +479,23 @@ int dbgu_err_resume(dbgcxdef *ctx);
  *   implementations, in particular GUI implementations, may wish to wait
  *   to find a file until the file is actually needed, rather than pester
  *   the user with file search dialogs repeatedly at start-up.
- *   
+ *
  *   must_find_file specifies how to respond if we can't find the file.
  *   If must_find_file is true, we should always return false if we can't
  *   find the file.  If must_find_file is false, however, we can
  *   optionally return true even if we can't find the file.  Doing so
  *   indicates that the debugger UI will defer locating the file until it
  *   is actually needed.
- *   
+ *
  *   If this routine returns true without actually finding the file, it
  *   should set fullname[0] to '\0' to indicate that fullname doesn't
- *   contain a valid filename.  
+ *   contain a valid filename.
  */
 int dbgu_find_src(const char *origname, int origlen,
 				  char *fullname, size_t full_len, int must_find_file);
 
 
-/* 
+/*
  *   Debugger user interface main command loop.  If err is non-zero, the
  *   debugger was entered because a run-time error occurred; otherwise, if
  *   bphit is non-zero, it's the number of the breakpoint that was
@@ -504,7 +504,7 @@ int dbgu_find_src(const char *origname, int origlen,
  *   target object of the next instruction to be executed.  This can be
  *   changed upon return, in which case execution will continue from the
  *   new offset, but the offset must be within the same method of the same
- *   object (or within the same function) as it was upon entry. 
+ *   object (or within the same function) as it was upon entry.
  */
 void dbgucmd(dbgcxdef *ctx, int bphit, int err, unsigned int *exec_ofs);
 
@@ -516,21 +516,21 @@ void dbgucmd(dbgcxdef *ctx, int bphit, int err, unsigned int *exec_ofs);
  *   If the debugger wants to restart the game, it should call bifrst().
  *   If this routine returns without signalling a RUN_RESTART error, TADS
  *   will terminate.  If a RUN_RESTART error is signalled, TADS will
- *   resume the play loop.  
+ *   resume the play loop.
  */
 void dbguquitting(dbgcxdef *ctx);
 
-/* 
+/*
  *   debugger user interface termination - this routine is called when the
  *   debugger is about to terminate, so that the user interface can close
- *   itself down (close windows, release memory, etc) 
+ *   itself down (close windows, release memory, etc)
  */
 void dbguterm(dbgcxdef *ctx);
 
 /*
  *   Debugger user interface: display an error.  This is called mainly so
  *   that the debugger can display an error using special output
- *   formatting if the error occurs while debugging. 
+ *   formatting if the error occurs while debugging.
  */
 void dbguerr(dbgcxdef *ctx, int errnum, char *msg);
 
@@ -542,7 +542,7 @@ void trcsho(void);
 /* ======================================================================== */
 /*
  *   optional debugger macros - these compile to nothing when compiling a
- *   version for use without the debugger 
+ *   version for use without the debugger
  */
 
 #ifdef DBG_OFF

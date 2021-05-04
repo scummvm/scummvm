@@ -26,9 +26,9 @@ For the impatient among you, here is how to get ScummVM running in five simple s
 
 5. Select the game you want to play in the list, and press Start. To play a game next time, skip to step 5, unless you want to add more games.
 
-> 
-> Hint: 
-> 
+>
+> Hint:
+>
 > To add multiple games in one go, press and hold the shift key, then click 'Add game' -- the label will change to 'Mass Add' and if you press it, you are again asked to select a directory, only this time ScummVM will search through all subdirectories for supported games.
 
 
@@ -59,7 +59,7 @@ For everything you need to know about how to use ScummVM, see our [user document
 
 ### The ScummVM Wiki
 
-[The wiki](https://wiki.scummvm.org/) is the place to go for information about every game supported by ScummVM. If you're a developer, there's also some very handy information in the Developer section. 
+[The wiki](https://wiki.scummvm.org/) is the place to go for information about every game supported by ScummVM. If you're a developer, there's also some very handy information in the Developer section.
 
 ### Changelog
 

@@ -57,7 +57,7 @@ bool CSweetBowl::ActMsg(CActMsg *msg) {
 	if (msg->_action == "Jiggle") {
 		setVisible(true);
 		playMovie(MOVIE_WAIT_FOR_FINISH | MOVIE_NOTIFY_OBJECT);
-		playSound(getRandomNumber(1) == 1 ? 
+		playSound(getRandomNumber(1) == 1 ?
 			TRANSLATE("b#42.wav", "b#25.wav") :
 			TRANSLATE("b#43.wav", "b#26.wav"));
 	}

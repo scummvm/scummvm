@@ -185,7 +185,7 @@ void ViewTitle::drawTrademarksView() {
 		s.writeString(game->_res->TITLE_MESSAGES[10], TextPoint(2, 18));
 		s.writeString(game->_res->TITLE_MESSAGES[11], TextPoint(11, 19));
 		s.writeString(game->_res->TITLE_MESSAGES[12], TextPoint(6, 23));
-	}	
+	}
 }
 
 void ViewTitle::drawMainMenu() {
@@ -219,7 +219,7 @@ bool ViewTitle::FrameMsg(CFrameMsg *msg) {
 	if (time < _expiryTime)
 		return true;
 	setDirty();
-	
+
 	switch (_mode) {
 	case TITLEMODE_COPYRIGHT:
 		setMode(TITLEMODE_PRESENTS);

@@ -2,7 +2,7 @@
 ;Released with permission from Neil Dodwell under GPLv2
 ;See LICENSE file for full license text
 Talk	proc	near
-	
+
 	mov	talkpos,0
 	mov	inmaparea,0
 	mov	al,command
@@ -245,7 +245,7 @@ dospeech:	mov	al,talkpos
 	mov	si,ax
 	cmp	byte ptr [es:si],0
 	jz	endheartalk
-       
+
 	push	es si
 	call	createpanel
 	call	showpanel
@@ -287,7 +287,7 @@ noplay1:	mov	pointermode,3
 
 $1:
 	inc	talkpos
-          
+
 	mov	al,talkpos
           	mov	al,character
 	and	al,127
@@ -314,7 +314,7 @@ $1:
 	jz	skiptalk2
 	cmp	byte ptr [es:si],32
 	jz	skiptalk2
-	
+
 	push	es si
 	call	createpanel
 	call	showpanel
@@ -359,7 +359,7 @@ skiptalk2:	inc	talkpos
 
 endheartalk:	mov	pointermode,0
 	ret
-	
+
 	else
 
 watchtalk:	mov	al,talkpos
@@ -384,7 +384,7 @@ watchtalk:	mov	al,talkpos
 	mov	si,ax
 	cmp	byte ptr [es:si],0
 	jz	endwatchtalk
-	
+
 	push	es si
 	call	createpanel
 	call	showpanel
@@ -409,7 +409,7 @@ watchtalk:	mov	al,talkpos
 $1:
 
 	inc	talkpos
-          
+
 	mov	al,talkpos
           	mov	al,character
 	and	al,127
@@ -436,7 +436,7 @@ $1:
 	jz	skiptalk
 	cmp	byte ptr [es:si],32
 	jz	skiptalk
-	
+
 	push	es si
 	call	createpanel
 	call	showpanel
@@ -509,7 +509,7 @@ finishconv:	call	delpointer
 	mov	pointermode,0
 	clc
 	ret
-	
+
 quitconv:	call	delpointer
 	mov	pointermode,0
 	call	cancelch1

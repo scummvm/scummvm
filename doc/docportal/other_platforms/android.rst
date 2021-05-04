@@ -108,7 +108,7 @@ To do a two finger tap, hold one finger down and then tap with a second finger.
 Three finger tap
 ^^^^^^^^^^^^^^^^^^
 
-To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.  
+To do a three finger tap, start with holding down one finger and progressively touch down the other two fingers, one at a time, while still holding down the previous fingers. Imagine you are impatiently tapping your fingers on a surface, but then slow down that movement so it is rhythmic, but not too slow.
 
 Immersive Sticky fullscreen mode
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -84,7 +84,7 @@ public:
 			++_index;
 			return *this;
 		}
-		
+
 		/**
 		 * Decrementer
 		 */

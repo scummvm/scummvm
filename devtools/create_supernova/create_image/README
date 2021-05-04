@@ -75,7 +75,7 @@ for storing the color of each pixel (Image -> Mode -> Indexed... in gimp).
 Running the tool
 The tool needs 3 comand line arguments when running it:
 -- Prefix of the file to be created (use "ms2_data" to create "ms2_data.###")
--- Number of the file to be created and also the number of a folder to read all the 
+-- Number of the file to be created and also the number of a folder to read all the
 files from (use "15" to create prefix.015)
 -- Number of bytes to skip in each .bmp file. At the begining of each .bmp file is
 a header with information about the file and after that is stored the palette. This

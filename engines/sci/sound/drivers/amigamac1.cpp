@@ -76,7 +76,7 @@ protected:
 		uint16 phase1Start, phase1End;
 		uint16 phase2Start, phase2End;
 		uint16 nativeNote;
-	
+
 		// This table contains frequency data for about one octave with 3 pitch bend positions between semitones
 		// On Mac, this table contains a fixed-point source-samples-per-output-sample value
 		// On Amiga, this table contains how many clock cycles each source sample should be output
@@ -96,7 +96,7 @@ protected:
 		const Wave *wave;
 
 		int16 transpose;
-	
+
 		byte attackSpeed;
 		byte attackTarget;
 		byte decaySpeed;

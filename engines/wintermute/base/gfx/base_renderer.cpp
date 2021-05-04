@@ -403,7 +403,7 @@ bool BaseRenderer::displayIndicator() {
 		return STATUS_OK;
 	}
 #endif
-	
+
 	displaySaveloadImage();
 	displaySaveloadLines();
 	indicatorFlip();

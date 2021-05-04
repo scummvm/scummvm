@@ -27,15 +27,15 @@
  *   Executes a user command after it has been parsed
  * Notes
  *   TADS 2.0 version
- * 
+ *
  *   This module contains the implementation of the entire "turn" sequence,
  *   which is:
- * 
+ *
  *     preCommand(actor, verb, dobj-list, prep, iobj)
  *     verb.verbAction(actor, do, prep, io)
  *     actor.actorAction( verb, do, prep, io )
  *     actor.location.roomAction( actor, verb, do, prep, io )
- *     if ( io ) 
+ *     if ( io )
  *     {
  *       io.iobjCheck(actor, verb, dobj, prep)
  *       if (io does not define verIo<Verb> directly)
@@ -66,12 +66,12 @@
  *     daemons
  *     fuses
  *     endCommand(actor, verb, dobj-list, prep, iobj, error_code)
- * 
+ *
  *   If an 'exit' or 'exitobj' is encountered, we skip straight to the
  *   daemons.  If an abort is encountered, we skip to endCommand.  If
  *   askio, or askdo is encountered, we skip everything remaining.  Under
  *   any of these exit scenarios, we return success to our caller.
- *   
+ *
  *   This module also contains code to set and remove fuses and daemons,
  *   since they are part of the player turn sequence.
  * Returns
@@ -92,7 +92,7 @@ namespace TADS2 {
 /* allocate and initialize a fuse/daemon/notifier array */
 void vocinialo(voccxdef *ctx, vocddef **what, int cnt) {
 	vocddef *p;
-	
+
 	*what = (vocddef *)mchalo(ctx->voccxerr,
 							  (cnt * sizeof(vocddef)), "vocinialo");
 
@@ -121,19 +121,19 @@ static void vocdusav(voccxdef *ctx, vocddef *what)
 	uchar     *p;
 	objucxdef *uc = ctx->voccxundo;
 	ushort     siz = sizeof(what) + sizeof(*what) + 1;
-	
+
 	/* if we don't need to save undo, quit now */
 	if (uc == 0 || !objuok(uc))
 		return;
 
 	/* reserve space for our record */
 	p = objures(uc, OBJUCLI, siz);
-	
+
 	/* set up our undo record */
 	*p = VOC_UNDO_DAEMON;
 	memcpy(p + 1, &what, (size_t)sizeof(what));
 	memcpy(p + 1 + sizeof(what), what, (size_t)sizeof(*what));
-	
+
 	uc->objucxhead += siz;
 }
 
@@ -203,7 +203,7 @@ void vocdundo(void *ctx0, uchar *data)
 			/* add the word */
 			vocadd2(ctx, data[0], objn, data[1], data+6, len1,
 					data+6+len1, len2);
-			
+
 			/* remove this object from the word size */
 			wrdsiz -= 6 + len1 + len2;
 			data += 6 + len1 + len2;
@@ -301,13 +301,13 @@ struct delobj_cb_ctx
 /*
  *   Iteration callback to write vocabulary words for an object being
  *   deleted to an undo stream, so that they can be restored if the
- *   deletion is undone. 
+ *   deletion is undone.
  */
 static void delobj_cb(void *ctx0, vocdef *voc, vocwdef *vocw)
 {
 	struct delobj_cb_ctx *ctx = (struct delobj_cb_ctx *)ctx0;
 	uchar *p = ctx->p;
-	
+
 	/* write this object's header to the stream */
 	p[0] = vocw->vocwtyp;
 	p[1] = vocw->vocwflg;
@@ -341,7 +341,7 @@ void vocdusave_delobj(voccxdef *ctx, objnum objn)
 
 	/*
 	 *   we need to store an additional 6 bytes (2-length1, 2-length2,
-	 *   1-type, 1-flags) for each word 
+	 *   1-type, 1-flags) for each word
 	 */
 	wrdsiz += wrdcnt*6;
 
@@ -405,7 +405,7 @@ void vocdusave_delwrd(voccxdef *ctx, objnum objn, prpnum typ, int flags,
 
 	uc->objucxhead += 5 + wrdsiz;
 }
-					  
+
 
 
 /* set a fuse/daemon/notifier */
@@ -413,7 +413,7 @@ void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 			  uint tm, runsdef *val, int err)
 {
 	int      slots = 0;
-	
+
 	if (what == ctx->voccxdmn)
 		slots = ctx->voccxdmc;
 	else if (what == ctx->voccxalm)
@@ -422,7 +422,7 @@ void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 		slots = ctx->voccxfuc;
 	else
 		errsig(ctx->voccxerr, ERR_BADSETF);
-	
+
 	/* find a free slot, and set up our fuse/daemon */
 	for ( ; slots ; ++what, --slots)
 	{
@@ -430,7 +430,7 @@ void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 		{
 			/* save an undo record for this slot before changing */
 			vocdusav(ctx, what);
-			
+
 			/* record the information */
 			what->vocdfn = func;
 			if (val != 0)
@@ -438,9 +438,9 @@ void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 			what->vocdprp = prop;
 			what->vocdtim = tm;
 
-			/* 
+			/*
 			 *   the fuse/notifier/daemon is set - no need to look further
-			 *   for an open slot 
+			 *   for an open slot
 			 */
 			return;
 		}
@@ -455,12 +455,12 @@ void vocremfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
 			  runsdef *val, int err)
 {
 	int      slots = 0;
-	
+
 	if (what == ctx->voccxdmn) slots = ctx->voccxdmc;
 	else if (what == ctx->voccxalm) slots = ctx->voccxalc;
 	else if (what == ctx->voccxfus) slots = ctx->voccxfuc;
 	else errsig(ctx->voccxerr, ERR_BADREMF);
-	
+
 	/* find the slot with this same fuse/daemon/notifier, and remove it */
 	for ( ; slots ; ++what, --slots)
 	{
@@ -488,7 +488,7 @@ void vocremfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
  *   not any that expire at the end of the last turn counted here.  (If
  *   incrementing by one turn only, no fuses will be executed.)  If the
  *   do_fuses flag is false, fuses are simply deleted if they burn down
- *   within the interval.  
+ *   within the interval.
  */
 void vocturn(voccxdef *ctx, int turncnt, int do_fuses)
 {
@@ -500,7 +500,7 @@ void vocturn(voccxdef *ctx, int turncnt, int do_fuses)
 	{
 		/* presume we won't find anything to execute */
 		do_exe = FALSE;
-		
+
 		/* go through notifiers, looking for fuse-type notifiers */
 		for (i = ctx->voccxalc, p = ctx->voccxalm ; i ; ++p, --i)
 		{
@@ -510,12 +510,12 @@ void vocturn(voccxdef *ctx, int turncnt, int do_fuses)
 			{
 				/* save an undo record for this slot before changing */
 				vocdusav(ctx, p);
-				
+
 				if (--(p->vocdtim) == 0)
 					do_exe = TRUE;
 			}
 		}
-		
+
 		/* now go through the fuses */
 		for (i = ctx->voccxfuc, p = ctx->voccxfus ; i ; ++p, --i)
 		{
@@ -531,7 +531,7 @@ void vocturn(voccxdef *ctx, int turncnt, int do_fuses)
 
 		/*
 		 *   if we'll be doing more, and anything burned down, run
-		 *   current fuses before going on to the next turn 
+		 *   current fuses before going on to the next turn
 		 */
 		if ((!do_fuses || turncnt) && do_exe)
 			exefuse(ctx, do_fuses);
@@ -559,10 +559,10 @@ static void exeperr(voccxdef *ctx, objnum verb, objnum dobj,
 		runfn(ctx->voccxrun, ctx->voccxper2, 4);
 		return;
 	}
-	
+
 	vocerr(ctx, VOCERR(110), "I don't know how to ");
 	runppr(ctx->voccxrun, verb, PRP_SDESC, 0);
-	
+
 	if (dobj != MCMONINV)
 	{
 		vocerr(ctx, VOCERR(111), " ");
@@ -583,7 +583,7 @@ static void exeperr(voccxdef *ctx, objnum verb, objnum dobj,
 
 
 /*
- *   Execute daemons 
+ *   Execute daemons
  */
 void exedaem(voccxdef *ctx)
 {
@@ -598,13 +598,13 @@ void exedaem(voccxdef *ctx)
 		if (daemon->vocdfn != MCMONINV)
 		{
 			objnum thisd = daemon->vocdfn;
-			
+
 			ERRBEGIN(ctx->voccxerr)
 
 			OSCPYSTRUCT(val, daemon->vocdarg);
 			runpush(rcx, val.runstyp, &val);
 			runfn(rcx, thisd, 1);
-			
+
 			ERRCATCH(ctx->voccxerr, err)
 				if (err != ERR_RUNEXIT && err != ERR_RUNEXITOBJ)
 					errrse(ctx->voccxerr);
@@ -619,7 +619,7 @@ void exedaem(voccxdef *ctx)
 			ERRBEGIN(ctx->voccxerr)
 
 			runppr(rcx, daemon->vocdfn, daemon->vocdprp, 0);
-			
+
 			ERRCATCH(ctx->voccxerr, err)
 				if (err != ERR_RUNEXIT && err != ERR_RUNEXITOBJ)
 					errrse(ctx->voccxerr);
@@ -630,7 +630,7 @@ void exedaem(voccxdef *ctx)
 
 /*
  *   Execute any pending fuses.  Return TRUE if any fuses were executed,
- *   FALSE otherwise.  
+ *   FALSE otherwise.
  */
 int exefuse(voccxdef *ctx, int do_run)
 {
@@ -647,7 +647,7 @@ int exefuse(voccxdef *ctx, int do_run)
 		if (daemon->vocdfn != MCMONINV && daemon->vocdtim == 0)
 		{
 			objnum thisf = daemon->vocdfn;
-		 
+
 			found = TRUE;
 			ERRBEGIN(ctx->voccxerr)
 
@@ -663,7 +663,7 @@ int exefuse(voccxdef *ctx, int do_run)
 				runpush(rcx, val.runstyp, &val);
 				runfn(rcx, thisf, 1);
 			}
-			
+
 			ERRCATCH(ctx->voccxerr, err)
 				if (err != ERR_RUNEXIT && err != ERR_RUNEXITOBJ)
 					errrse(ctx->voccxerr);
@@ -689,7 +689,7 @@ int exefuse(voccxdef *ctx, int do_run)
 
 			if (do_run)
 				runppr(rcx, thisa, daemon->vocdprp, 0);
-			
+
 			ERRCATCH(ctx->voccxerr, err)
 				if (err != ERR_RUNEXIT && err != ERR_RUNEXITOBJ)
 					errrse(ctx->voccxerr);
@@ -727,7 +727,7 @@ static void exe_get_tpl(voccxdef *ctx, objnum verb,
 /* ------------------------------------------------------------------------ */
 /*
  *   Execute fuses and daemons.  Returns zero on success, or ERR_ABORT if
- *   'abort' was thrown during execution.  
+ *   'abort' was thrown during execution.
  */
 int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 						  objnum actor, objnum verb,
@@ -738,7 +738,7 @@ int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 
 	/* presume no error */
 	err2 = 0;
-	
+
 	/* execute fuses and daemons if desired - trap any errors that occur */
 	if (do_fuses)
 	{
@@ -746,20 +746,20 @@ int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 		{
 			/* execute daemons */
 			exedaem(ctx);
-			
+
 			/* execute fuses */
 			(void)exefuse(ctx, TRUE);
 		}
 		ERRCATCH(ctx->voccxerr, err2)
 		{
-			/* 
+			/*
 			 *   if 'abort' was invoked, ignore it, since it's now had the
 			 *   desired effect of skipping any remaining fuses and
-			 *   daemons; resignal any other error 
+			 *   daemons; resignal any other error
 			 */
 			if (err2 != ERR_RUNABRT)
 				errrse(ctx->voccxerr);
-			
+
 			/* replace any previous error with the new error code */
 			err = err2;
 		}
@@ -786,8 +786,8 @@ int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 }
 
 /* ------------------------------------------------------------------------ */
-/* 
- *   execute iobjGen/dobjGen methods, if appropriate 
+/*
+ *   execute iobjGen/dobjGen methods, if appropriate
  */
 static int exegen(voccxdef *ctx, objnum obj, prpnum genprop,
 				  prpnum verprop, prpnum actprop)
@@ -798,7 +798,7 @@ static int exegen(voccxdef *ctx, objnum obj, prpnum genprop,
 	objnum  verobj;                       /* object with verXoVerb property */
 	int     hasact;                                  /* has xoVerb property */
 	objnum  actobj;                          /* object with xoVerb property */
-	
+
 	/* ignore it if there's no object here */
 	if (obj == MCMONINV) return(FALSE);
 
@@ -814,14 +814,14 @@ static int exegen(voccxdef *ctx, objnum obj, prpnum genprop,
 	if ((hasver && !bifinh(ctx, vocinh(ctx, genobj), verobj))
 		|| (hasact && !bifinh(ctx, vocinh(ctx, genobj), actobj)))
 		return FALSE;
-	
+
 	/* all conditions are met - execute dobjGen */
 	return TRUE;
 }
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Save "again" information for a direct or indirect object 
+ *   Save "again" information for a direct or indirect object
  */
 static void exe_save_again_obj(vocoldef *againv, const vocoldef *objv,
 							   char **bufp)
@@ -836,13 +836,13 @@ static void exe_save_again_obj(vocoldef *againv, const vocoldef *objv,
 		if (objv->vocolfst != 0 && objv->vocollst != 0)
 		{
 			size_t copylen;
-			
-			/* 
+
+			/*
 			 *   Compute the length of the entire list.  The words are
 			 *   arranged consecutively in the buffer, separated by null
 			 *   bytes, so we must copy everything from the first word to
 			 *   the start of the last word, plus the length of the last
-			 *   word, plus the last word's trailing null byte.  
+			 *   word, plus the last word's trailing null byte.
 			 */
 			copylen = objv->vocollst - objv->vocolfst
 					  + strlen(objv->vocollst) + 1;
@@ -850,9 +850,9 @@ static void exe_save_again_obj(vocoldef *againv, const vocoldef *objv,
 			/* copy the text */
 			memcpy(*bufp, objv->vocolfst, copylen);
 
-			/* 
+			/*
 			 *   set the new structure to point into the copy, not the
-			 *   original 
+			 *   original
 			 */
 			againv->vocolfst = *bufp;
 			againv->vocollst = *bufp + (objv->vocollst - objv->vocolfst);
@@ -874,7 +874,7 @@ static void exe_save_again_obj(vocoldef *againv, const vocoldef *objv,
  *   terminating element after each restored element - other code
  *   occasionally expects these structures to be stored in the standard
  *   object list array format.  Returns a pointer to the restored object
- *   list, which is the same as the first argument.  
+ *   list, which is the same as the first argument.
  */
 static vocoldef *exe_restore_again_obj(vocoldef again_array[2],
 									   const vocoldef *saved_obj)
@@ -891,14 +891,14 @@ static vocoldef *exe_restore_again_obj(vocoldef again_array[2],
 }
 
 /* ------------------------------------------------------------------------ */
-/* 
+/*
  *   Execute a single command.  'recursive' indicates whether the routine
  *   is being called for normal command processing or as a recursive call
  *   from within the game; if this flag is true, we'll bypass certain
  *   operations that are only appropriate for normal direct player
  *   commands: we won't remember the command for "again" processing, we
  *   won't do end-of-turn processing, and we won't reset the system stack
- *   before each function invocation.  
+ *   before each function invocation.
  */
 static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 				   objnum *prepptr, vocoldef *iobjv, int endturn, uchar *tpl,
@@ -929,11 +929,11 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	/* presume no error will occur */
 	err = 0;
 
-	/* 
+	/*
 	 *   Presume we'll run fuses and daemons if this is the end of the
 	 *   turn.  We only do fuses and daemons once per command, even if the
 	 *   command contains multiple objects; 'endturn' will be true only
-	 *   when this is the last object of the command.  
+	 *   when this is the last object of the command.
 	 */
 	do_fuses = endturn;
 
@@ -966,7 +966,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		tpl   = ctx->voccxlst;
 		newstyle = ctx->voccxlssty;
 
-		/* 
+		/*
 		 *   If we have a direct or indirect object, restore the full
 		 *   object information structure pointers (in particular, this
 		 *   restores the word lists).
@@ -978,15 +978,15 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 
 		/*
 		 *   make sure the command is repeatable: there must have been a
-		 *   verb, and the objects specified must still be accessible 
+		 *   verb, and the objects specified must still be accessible
 		 */
 		if (verb == MCMONINV)
 		{
-			/* 
+			/*
 			 *   if the last command was lost due to an object deletion,
 			 *   show the message "you can't repeat that command";
 			 *   otherwise, show the message "there's no command to
-			 *   repeat" 
+			 *   repeat"
 			 */
 			if ((ctx->voccxflg & VOCCXAGAINDEL) != 0)
 				vocerr(ctx, VOCERR(27), "You can't repeat that command.");
@@ -1031,11 +1031,11 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 					vocerr(ctx, VOCERR(38),
 						   "You don't see that here any more.");
 			}
-			
+
 			/* indicate the error */
 			return ERR_PRS_VAL_DO_FAIL;
 		}
-		
+
 		/* verify the indirect object if present */
 		if (validate_iobj
 			&& iobj != MCMONINV
@@ -1057,20 +1057,20 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 					vocerr(ctx, VOCERR(38),
 						   "You don't see that here any more.");
 			}
-			
+
 			/* indicate the error */
 			return ERR_PRS_VAL_IO_FAIL;
 		}
 
-		/* 
+		/*
 		 *   save the command, unless this is a recursive call from the
 		 *   game, so that we can repeat this command if the next is
-		 *   "again" 
+		 *   "again"
 		 */
 		if (!recursive)
 		{
 			char *dst;
-			
+
 			/* save the command parameters */
 			ctx->voccxlsa = actor;
 			ctx->voccxlsv = verb;
@@ -1089,15 +1089,15 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 			/* save the indirect object information */
 			exe_save_again_obj(&ctx->voccxlsi, iobjv, &dst);
 
-			/* 
+			/*
 			 *   clear the flag indicating that "again" was lost due to
 			 *   object deletion, because we obviously have a valid
-			 *   "again" at this point 
+			 *   "again" at this point
 			 */
 			ctx->voccxflg &= ~VOCCXAGAINDEL;
 		}
 	}
-	
+
 	/* remember the flags */
 	tplflags = (tpl != 0 && newstyle ? voctplflg(tpl) : 0);
 	dobj_first = (tplflags & VOCTPLFLG_DOBJ_FIRST);
@@ -1113,16 +1113,16 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	ctx->voccxactor = actor;
 	ctx->voccxverb = verb;
 	ctx->voccxprep = prep;
-	
+
 	ERRBEGIN(ctx->voccxerr)
 
 	/* reset the run-time context if this is a top-level call */
 	if (!recursive)
 		runrst(rcx);
 
-	/* 
+	/*
 	 *   if this is the first object, invoke the game's preCommand
-	 *   function, passing the list of all of the direct objects 
+	 *   function, passing the list of all of the direct objects
 	 */
 	if (cur_dobj_idx == 0 && ctx->voccxprecmd != MCMONINV)
 	{
@@ -1141,11 +1141,11 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 //        }
 //        ERRCATCH(ctx->voccxerr, err)
 //        {
-			/* 
+			/*
 			 *   if the error was 'exit', translate it to EXITPRECMD so
 			 *   that we handle the outer loop correctly (exiting from
 			 *   preCommand skips execution for all subsequent objects,
-			 *   but doesn't skip fuses and daemons) 
+			 *   but doesn't skip fuses and daemons)
 			 */
 			if (err == ERR_RUNEXIT)
 				errsig(ctx->voccxerr, ERR_RUNEXITPRECMD);
@@ -1160,7 +1160,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	voc_multi_prefix(ctx, dobj, show_multi_prefix, multi_flags,
 					 cur_dobj_idx, dobj_cnt);
 
-	/* 
+	/*
 	 *   check to see if the verb has verbAction defined - if so, invoke
 	 *   the method
 	 */
@@ -1208,7 +1208,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		/* the location isn't an object, so discard it */
 		rundisc(rcx);
 	}
-	
+
 	/* if there's an indirect object, execute iobjCheck */
 	if (iobj != MCMONINV)
 	{
@@ -1227,7 +1227,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	/*
 	 *   If there's an indirect object, and the indirect object doesn't
 	 *   directly define io<Verb>, call iobj.iobjGen(actor, verb, dobj,
-	 *   prep) 
+	 *   prep)
 	 */
 	if (iobj != MCMONINV
 		&& exegen(ctx, iobj, PRP_IOBJGEN, voctplvi(tpl), voctplio(tpl)))
@@ -1259,10 +1259,10 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		runppr(rcx, dobj, PRP_DOBJCHECK, 4);
 	}
 
-	/* 
+	/*
 	 *   If there's a direct object, and the direct object doesn't
 	 *   directly define do<Verb>, call dobj.dobjGen(actor, verb, iobj,
-	 *   prep) 
+	 *   prep)
 	 */
 	if (dobj != MCMONINV
 		&& exegen(ctx, dobj, PRP_DOBJGEN, voctplvd(tpl), voctpldo(tpl)))
@@ -1285,15 +1285,15 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 
 	/*
 	 *   Now do what needs to be done, depending on the sentence structure:
-	 *   
+	 *
 	 *      No objects ==> cmdVerb.action( cmdActor )
-	 *   
+	 *
 	 *      Direct object only ==> cmdDobj.verDo<Verb>( actor )
 	 *.                            cmdDobj.do<Verb>( actor )
-	 *   
+	 *
 	 *      Indirect + direct ==> cmdDobj.verDo<Verb>( actor, cmdIobj )
 	 *.                           cmdIobj.verIo<Verb>( actor, cmdDobj )
-	 *.                           cmdIobj.io<Verb>( actor, cmdDobj ) 
+	 *.                           cmdIobj.io<Verb>( actor, cmdDobj )
 	 */
 	if (dobj == MCMONINV)
 	{
@@ -1318,7 +1318,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 			/* we're done with this command */
 			goto skipToFuses;
 		}
-		
+
 		/* reset the stack for top-level calls */
 		if (!recursive)
 			runrst(rcx);
@@ -1400,7 +1400,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 				/* reset the stack for top-level calls */
 				if (!recursive)
 					runrst(rcx);
-				
+
 				/* no error from verDoVerb or verIoVerb - call ioVerb */
 				runpobj(rcx, dobj);
 				runpobj(rcx, actor);
@@ -1418,7 +1418,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 			err = ERR_PRS_VERDO_FAIL;
 		}
 	}
-	
+
   skipToFuses:
 	ERRCATCH(ctx->voccxerr, err)
 	{
@@ -1428,30 +1428,30 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 
 		/*
 		 *   If we executed 'abort', we'll skip straight to endCommand.
-		 *   
+		 *
 		 *   If we executed askDo or askIo, we won't execute anything
 		 *   more, because the command is being interrupted.
-		 *   
+		 *
 		 *   If 'exit' or 'exitobj' was executed, proceed through
 		 *   postAction and subsequent steps.
-		 *   
+		 *
 		 *   If any error occurred other than 'exit' or 'exitobj' being
 		 *   invoked, resignal the error.
-		 *   
+		 *
 		 *   We don't need to do anything more at this point if 'exit' was
 		 *   invoked, because 'exit' merely skips to the end-of-turn
 		 *   phase, which is where we'll go next from here.
-		 *   
+		 *
 		 *   If 'exitobj' was invoked, we don't want to return an error at
 		 *   all, since we just want to skip the remainder of the normal
 		 *   processing for the current object and proceed to the next
-		 *   object (in a command with multiple direct objects).  
+		 *   object (in a command with multiple direct objects).
 		 */
 		if (err == ERR_RUNABRT)
 		{
-			/* 
+			/*
 			 *   aborting - we're going to call postAction, but we're not
-			 *   going to execute fuses and daemons 
+			 *   going to execute fuses and daemons
 			 */
 			do_fuses = FALSE;
 			endturn = TRUE;
@@ -1465,24 +1465,24 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		}
 		else if (err == ERR_RUNEXIT)
 		{
-			/* 
+			/*
 			 *   Proceed with the remainder of the processing for this
 			 *   turn, but retain the error code to return to our caller,
 			 *   so they know that the rest of the turn is to be skipped.
-			 *   
+			 *
 			 *   In addition, set 'do_fuses' to true, since we want to go
 			 *   directly to the fuse and daemon processing for this turn,
 			 *   regardless of whether any other objects are present
-			 *   (because we'll skip any remaining objects).  
+			 *   (because we'll skip any remaining objects).
 			 */
 			endturn = TRUE;
 			do_fuses = TRUE;
 		}
 		else if (err == ERR_RUNEXITPRECMD)
 		{
-			/* 
+			/*
 			 *   exited from preCommand - end the turn, but do not run the
-			 *   postAction routine 
+			 *   postAction routine
 			 */
 			do_fuses = TRUE;
 			do_postact = FALSE;
@@ -1490,19 +1490,19 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		}
 		else if (err == ERR_RUNEXITOBJ)
 		{
-			/* 
+			/*
 			 *   Proceed with the remainder of processing for this turn -
 			 *   we want to proceed to the next object, if any, and
 			 *   process it as normal.  We don't need to update 'endturn'
 			 *   or 'do_fuses', since we want to do all of those in the
-			 *   normal fashion.  
+			 *   normal fashion.
 			 */
 		}
 		else
 		{
 			/*
 			 *   We can't handle any other errors.  Restore the enclosing
-			 *   command context, and resignal the error.  
+			 *   command context, and resignal the error.
 			 */
 
 			/* restore the previous tio actor setting */
@@ -1525,12 +1525,12 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 
 	/*
 	 *   If desired, call postAction(actor, verb, dobj, prep, iobj,
-	 *   error_status).  
+	 *   error_status).
 	 */
 	if (do_postact && ctx->voccxpostact != MCMONINV)
 	{
 		int err2;
-		
+
 		ERRBEGIN(ctx->voccxerr)
 		{
 			/* push the arguments */
@@ -1558,7 +1558,7 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 		}
 		ERREND(ctx->voccxerr);
 	}
-	
+
 	/* restore the original context iobj and dobj settings */
 	ctx->voccxdobj = old_ctx_dobj;
 	ctx->voccxiobj = old_ctx_iobj;
@@ -1571,10 +1571,10 @@ static int exe1cmd(voccxdef *ctx, objnum actor, objnum verb, vocoldef *dobjv,
 	if (!recursive)
 		runrst(rcx);
 
-	/* 
+	/*
 	 *   If this is the end of the turn, execute fuses and daemons.  Skip
 	 *   fuses on recursive calls, since we want to count them as part of
-	 *   the enclosing turn.  
+	 *   the enclosing turn.
 	 */
 	if (endturn && !recursive)
 	{
@@ -1618,19 +1618,19 @@ static void exesaveit(voccxdef *ctx, vocoldef *dolist)
 	{
 		/*
 		 *   check to make sure they're not referring to a number or a
-		 *   string; if so, it doesn't make any sense to save it 
+		 *   string; if so, it doesn't make any sense to save it
 		 */
 		if (dolist[0].vocolflg == VOCS_STR
 			|| dolist[0].vocolflg == VOCS_NUM)
 		{
-			/* 
+			/*
 			 *   As of 2.5.11, don't clear 'it' on a number or string;
 			 *   rather, just leave it as it was from the prior command.
 			 *   Players will almost never expect a number or string to have
 			 *   anything to do with pronoun antecedents, and in fact some
 			 *   players reported finding it confusing to have the antecedant
 			 *   implied by the second-most-recent command disappear when the
-			 *   most recent command used a number of string.  
+			 *   most recent command used a number of string.
 			 */
 #if 0
 			/* save a nil 'it' */
@@ -1705,9 +1705,9 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 	if (objn == MCMONINV)
 		return;
 
-	/* 
+	/*
 	 *   if there's a prefixdesc method defined, call it rather than the
-	 *   older multisdesc (or even older sdesc) approach 
+	 *   older multisdesc (or even older sdesc) approach
 	 */
 	if (objgetap(ctx->voccxmem, objn, PRP_PREFIXDESC,
 				 (objnum *)0, FALSE) != 0)
@@ -1717,13 +1717,13 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 		/* push the word flags */
 		runpnum(rcx, multi_flags);
 
-		/* 
+		/*
 		 *   push the object count and the current index (adjusted to a
-		 *   1-based value) 
+		 *   1-based value)
 		 */
 		runpnum(rcx, count);
 		runpnum(rcx, cur_index + 1);
-		
+
 		/* push the 'show' flag */
 		val.runstyp = runclog(show_prefix);
 		runpush(rcx, val.runstyp, &val);
@@ -1735,16 +1735,16 @@ void voc_multi_prefix(voccxdef *ctx, objnum objn,
 		return;
 	}
 
-	/* 
+	/*
 	 *   if we're not showing the prefix, don't use the multisdesc/sdesc
-	 *   display 
+	 *   display
 	 */
 	if (!show_prefix)
 		return;
-	
+
 	/*
 	 *   use multisdesc if defined (for compatibility with older games,
-	 *   use sdesc if multisdesc doesn't exist for this object) 
+	 *   use sdesc if multisdesc doesn't exist for this object)
 	 */
 	if (objgetap(ctx->voccxmem, objn, PRP_MULTISDESC,
 				 (objnum *)0, FALSE) == 0)
@@ -1774,15 +1774,15 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 	int       exec_cnt;
 	vocoldef *dobj;
 
-	/* 
+	/*
 	 *   count the direct objects; we'll iterate over the direct objects,
-	 *   so we execute the command once per direct object 
+	 *   so we execute the command once per direct object
 	 */
 	exec_cnt = dobj_cnt = (dolist != 0 ? voclistlen(dolist) : 0);
 
-	/* 
+	/*
 	 *   if there are no direct objects, we still must execute the command
-	 *   once 
+	 *   once
 	 */
 	if (exec_cnt < 1)
 		exec_cnt = 1;
@@ -1793,7 +1793,7 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 	 *   words are acceptable: call verb.rejectMultiDobj, and see what it
 	 *   returns; if it returns true, don't allow multiple words, and
 	 *   expect that rejectMultiDobj displayed an error message.
-	 *   Otherwise, proceed.  
+	 *   Otherwise, proceed.
 	 */
 	if (((multi_flags & VOCS_ALL) != 0 || dobj_cnt > 1)
 		&& dolist && dolist[0].vocolobj != MCMONINV)
@@ -1822,8 +1822,8 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 			return 0;
 	}
 
-	/* 
-	 *   execute the command the required number of times 
+	/*
+	 *   execute the command the required number of times
 	 */
 	for (i = 0 ; i < exec_cnt ; ++i)
 	{
@@ -1834,7 +1834,7 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 
 		/*
 		 *   If we have a number or string, set the current one in
-		 *   numObj/strObj 
+		 *   numObj/strObj
 		 */
 		if (dolist != 0)
 		{
@@ -1860,16 +1860,16 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 		 *   For cases where we have a bunch of direct objects (or even
 		 *   one when "all" was used), we want to preface the output from
 		 *   each iteration with the name of the object we're acting on
-		 *   currently.  In other cases, there is no prefix.  
+		 *   currently.  In other cases, there is no prefix.
 		 */
 		show_multi_prefix = ((multi_flags != 0 || dobj_cnt > 1) && dobj != 0);
 
-		/* 
+		/*
 		 *   Execute the command for this object.  For every object except
 		 *   the first, re-validate the direct and indirect objects.
 		 *   There's no need to re-validate the objects on the first
 		 *   object in a command, because that will already have been done
-		 *   during object resolution. 
+		 *   during object resolution.
 		 */
 		err = exe1cmd(ctx, actor, verb, dobj, prep, iobj,
 					  (i + 1 == exec_cnt), tpl, newstyle, FALSE,
@@ -1890,9 +1890,9 @@ static int exeloop(voccxdef *ctx, objnum actor, objnum verb,
 			break;
 
 		case ERR_RUNEXITPRECMD:
-			/* 
+			/*
 			 *   exited from preCommand - skip execution of subsequent
-			 *   objects, but return success 
+			 *   objects, but return success
 			 */
 			return 0;
 
@@ -1940,7 +1940,7 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 	 *   'exit' or 'abort' in the course of executing the command.  To make
 	 *   sure we don't leave any aborted frames on the stack before
 	 *   returning to our caller, we simply need to restore the stack and
-	 *   frame pointers on the way out as they were on the way in.  
+	 *   frame pointers on the way out as they were on the way in.
 	 */
 	orig_sp = ctx->voccxrun->runcxsp;
 	orig_bp = ctx->voccxrun->runcxbp;
@@ -1949,9 +1949,9 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 	ctx_copy = *ctx;
 	ctx = &ctx_copy;
 
-	/* 
+	/*
 	 *   there are no unknown words in the recursive command, since the
-	 *   command was prepared directly from resolved objects 
+	 *   command was prepared directly from resolved objects
 	 */
 	ctx->voccxunknown = 0;
 
@@ -1970,16 +1970,16 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 		iobjv.vocolfst = iobjv.vocollst = "";
 		iobjv.vocolflg = 0;
 	}
-	
+
 	/* figure out which template we need, based on the objects provided */
 	if (dobj == MCMONINV)
 	{
 		uint actofs;
 		uint tplofs;
-		
-		/* 
+
+		/*
 		 *   No objects were provided - use the verb's "action" method.
-		 *   Make sure that there is in fact an "action" method. 
+		 *   Make sure that there is in fact an "action" method.
 		 */
 		exe_get_tpl(ctx, verb, &tplofs, &actofs);
 		if (actofs != 0)
@@ -1997,10 +1997,10 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 	}
 	else if (iobj == MCMONINV)
 	{
-		/* 
+		/*
 		 *   No indirect object was provided, but a direct object is
 		 *   present - use the one-object template.  First, look up the
-		 *   template.  
+		 *   template.
 		 */
 		if (voctplfnd(ctx, verb, MCMONINV, tpl, &newstyle))
 		{
@@ -2017,7 +2017,7 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 	}
 	else
 	{
-		/* 
+		/*
 		 *   Both a direct and indirect object were provided - find the
 		 *   two-object template for the given preposition.
 		 */
@@ -2035,18 +2035,18 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 		}
 	}
 
-	/* 
+	/*
 	 *   if the error was EXITPRECMD, change it to EXIT - EXITPRECMD is a
 	 *   special flag indicating that we exited from a preCommand
 	 *   function, which is different than normal exiting internally but
-	 *   not to the game 
+	 *   not to the game
 	 */
 	if (err == ERR_RUNEXITPRECMD)
 		err = ERR_RUNEXIT;
 
 	/*
 	 *   restore the original stack and base pointers, to ensure that we
-	 *   don't leave any aborted frames on the stack 
+	 *   don't leave any aborted frames on the stack
 	 */
 	ctx->voccxrun->runcxsp = orig_sp;
 	ctx->voccxrun->runcxbp = orig_bp;
@@ -2059,7 +2059,7 @@ int execmd_recurs(voccxdef *ctx, objnum actor, objnum verb,
 /*
  *   Check for ALL, ANY, or THEM in the list - use multi-mode if found,
  *   even if we have only one object.  Returns a combination of any of the
- *   VOCS_ALL, VOCS_ANY, or VOCS_THEM flags that we find.  
+ *   VOCS_ALL, VOCS_ANY, or VOCS_THEM flags that we find.
  */
 static int check_for_multi(vocoldef *dolist)
 {
@@ -2070,9 +2070,9 @@ static int check_for_multi(vocoldef *dolist)
 	/* presume we won't find any flags */
 	result = 0;
 
-	/* 
+	/*
 	 *   scan the list for ALL, ANY, or THEM flags, combining any such
-	 *   flags we find into the result 
+	 *   flags we find into the result
 	 */
 	dolen = voclistlen(dolist);
 	for (i = 0 ; i < dolen ; ++i)
@@ -2088,7 +2088,7 @@ static int check_for_multi(vocoldef *dolist)
  *   function doesn't exist or returns 'true', ERR_PREPRSCMDCAN if it
  *   returns 'nil' (and thus wants to cancel the command), and
  *   ERR_PREPRSCMDREDO if it returns a list (and thus wants to redo the
- *   command). 
+ *   command).
  */
 int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 					 uchar **preparse_list)
@@ -2104,19 +2104,19 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 	/* if there's no preparseCmd, keep processing */
 	if (ctx->voccxppc == MCMONINV)
 		return 0;
-	
+
 	/* build a list of the words */
 	for (p = listbuf + 2, i = 0 ; i < wrdcnt ; ++i)
 	{
 		char *src;
 		int add_quote;
-		
+
 		/* check for strings - they require special handling */
 		if (cmd[i][0] == '"')
 		{
-			/* 
+			/*
 			 *   it's a string - what follows is a run-time style string,
-			 *   with a length prefix followed by the text of the string 
+			 *   with a length prefix followed by the text of the string
 			 */
 			len = osrp2(cmd[i] + 1) - 2;
 			src = cmd[i] + 3;
@@ -2155,11 +2155,11 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 		if (add_quote)
 			*p++ = '"';
 	}
-	
+
 	/* set the length of the whole list */
 	len = p - listbuf;
 	oswp2(listbuf, len);
-	
+
 	/* push the list as the argument, and call the user's preparseCmd */
 	val.runstyp = DAT_LIST;
 	val.runsv.runsvstr = listbuf;
@@ -2176,9 +2176,9 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 	}
 	ERRCATCH(ctx->voccxerr, err)
 	{
-		/* 
+		/*
 		 *   if it's abort/exit/exitobj, just return it; for any other
-		 *   errors, just re-throw the same error 
+		 *   errors, just re-throw the same error
 		 */
 		switch(err)
 		{
@@ -2201,16 +2201,16 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 
 	/* get the result */
 	typ = runtostyp(ctx->voccxrun);
-	
+
 	/* if they returned a list, it's a new command to execute */
 	if (typ == DAT_LIST)
 	{
 		/* get the list and give it to the caller */
 		*preparse_list = runpoplst(ctx->voccxrun);
-		
-		/* 
+
+		/*
 		 *   indicate that the command is to be reparsed with the new word
-		 *   list 
+		 *   list
 		 */
 		return ERR_PREPRSCMDREDO;
 	}
@@ -2228,7 +2228,7 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Call parseAskobjIndirect 
+ *   Call parseAskobjIndirect
  */
 static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 								objnum actor, objnum verb, objnum prep)
@@ -2237,7 +2237,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 	int i;
 	size_t len;
 	uchar *lstp;
-	
+
 	/*
 	 *   Generate the direct object list argument.  This argument is a
 	 *   list of lists.  For each noun phrase, we generate one sublist in
@@ -2245,12 +2245,12 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 	 *   sub-sublists: first, a list of strings giving the words in the
 	 *   noun phrase; second, a list of the objects matching the noun
 	 *   phrase; third, a list of the flags for the matching objects.
-	 *   
+	 *
 	 *   So, if the player typed "put red box and blue ball", we might
 	 *   generate a list something like this:
-	 *   
+	 *
 	 *   [ [ ['red', 'box'], [redBox1, redBox2], [0, 0] ], [ ['blue',
-	 *   'ball'], [blueBall], [0, 0] ] ] 
+	 *   'ball'], [blueBall], [0, 0] ] ]
 	 */
 
 	/*
@@ -2264,53 +2264,53 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 		const char *p;
 		size_t curlen;
 		int j;
-			
-		/* 
+
+		/*
 		 *   we need the sublist type prefix (one byte) plus the sublist
 		 *   length prefix (two bytes), plus the type and length prefixes
-		 *   (one plus two bytes) for each of the three sub-sublist 
+		 *   (one plus two bytes) for each of the three sub-sublist
 		 */
 		len += (1+2) + 3*(1+2);
 
-		/* 
+		/*
 		 *   we need space to store the strings for the words in this noun
-		 *   phrase 
+		 *   phrase
 		 */
 		for (p = dolist[i].vocolfst ; p != 0 && p <= dolist[i].vocollst ;
 			 p += curlen + 1)
 		{
-			/* 
+			/*
 			 *   add in the space needed for this string element in the
 			 *   sub-sublist - we need one byte for the type prefix, two
 			 *   bytes for the length prefix, and the bytes for the string
-			 *   itself 
+			 *   itself
 			 */
 			curlen = strlen(p);
 			len += (1+2) + curlen;
 		}
 
-		/* 
+		/*
 		 *   scan each object for this same noun phrase (i.e., for which
-		 *   the vocabulary words are the same) 
+		 *   the vocabulary words are the same)
 		 */
 		for (j = i ; j < cnt && dolist[j].vocolfst == dolist[i].vocolfst ;
 			 ++j)
 		{
-			/* 
+			/*
 			 *   Add in space for this object in the sub-sublist for the
 			 *   current noun phrase.  If this object is nil, we need only
 			 *   one byte for the type; otherwise, we need one byte for
-			 *   the type prefix plus two bytes for the object ID.  
+			 *   the type prefix plus two bytes for the object ID.
 			 */
 			if (dolist[i].vocolobj == MCMONINV)
 				len += 1;
 			else
 				len += (1 + 2);
-			
+
 			/*
 			 *   Add in space for the flags sub-sublist for the current
 			 *   object.  We need one byte for the type and four for the
-			 *   integer value.  
+			 *   integer value.
 			 */
 			len += (1 + 4);
 		}
@@ -2322,9 +2322,9 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 	/* allocate the list */
 	lstp = voc_push_list_siz(ctx, len);
 
-	/* 
+	/*
 	 *   Go through our object array again, and this time actually build
-	 *   the list.  
+	 *   the list.
 	 */
 	for (i = 0 ; i < cnt ; )
 	{
@@ -2375,9 +2375,9 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
 		for (j = i ; j < cnt && dolist[j].vocolfst == dolist[i].vocolfst ;
 			 ++j)
 		{
-			/* 
+			/*
 			 *   if this object isn't nil, write it to the sub-sublist;
-			 *   otherwise, just put nil in the sub-sublist 
+			 *   otherwise, just put nil in the sub-sublist
 			 */
 			if (dolist[j].vocolobj != MCMONINV)
 			{
@@ -2441,7 +2441,7 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
  *   matches, we try (using default objects and, if that fails, requests
  *   to the player for objects) to fill in any missing information in the
  *   player's command.  If that still fails, we will say we don't
- *   understand the sentence and leave it at that.  
+ *   understand the sentence and leave it at that.
  */
 int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		   char *vverb, char *vprep, vocoldef *dolist, vocoldef *iolist,
@@ -2520,9 +2520,9 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		}
 		else
 		{
-			/* 
+			/*
 			 *   parseUnknownVerb failed or aborted - end the command with
-			 *   an error 
+			 *   an error
 			 */
 			return 1;
 		}
@@ -2534,7 +2534,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 	/* default actor is "Me" */
 	if (actor == MCMONINV)
 		actor = ctx->voccxme;
-	
+
 	/* set a savepoint, if we're keeping undo information */
 	if (ctx->voccxundo)
 		objusav(ctx->voccxundo);
@@ -2542,7 +2542,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 	/*
 	 *   Check that the room will allow this command -- it may not
 	 *   due to darkness or other ailment.  We can find out with the
-	 *   roomCheck(verb) message, sent to the meobj.  
+	 *   roomCheck(verb) message, sent to the meobj.
 	 */
 	{
 		int t;
@@ -2560,7 +2560,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 	/* look for a new-style template first, then the old-style template */
 	exe_get_tpl(ctx, verb, &tplofs, &actofs);
-	
+
 	/* make sure we found a verb */
 	if (tplofs == 0 && actofs == 0 && verb != ctx->voccxvag)
 	{
@@ -2576,11 +2576,11 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 	/*
 	 *   Check to see if we have an "all" - if we do, we'll need to
 	 *   display the direct object's name even if only one direct object
-	 *   comes of it.  
+	 *   comes of it.
 	 */
 	multi_flags = check_for_multi(dolist);
 
-	/* 
+	/*
 	 *   set up dobj word list in case objwords is used in doDefault (the
 	 *   game may want to check for "all" and disallow it, for example)
 	 */
@@ -2603,9 +2603,9 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 	for ( ;; )
 	{
 		askflags = err = 0;
-		
+
 		ERRBEGIN(ctx->voccxerr)
-		
+
 		/*
 		 *   Now see what kind of sentence we have.  If we have no
 		 *   objects and an action, use the action.  If we have a direct
@@ -2614,7 +2614,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		 *   use the ioAction.  If we have an indirect object and no
 		 *   matching ioAction, complain.  If we have a direct object and
 		 *   no doAction or ioAction, complain.  If we have fewer objects
-		 *   than we really want, ask the user for more of them.  
+		 *   than we really want, ask the user for more of them.
 		 */
 		if (voclistlen(dolist) == 0 && voclistlen(iolist) == 0)
 		{
@@ -2630,14 +2630,14 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/*
 				 *   The player has not specified any objects, but the
 				 *   verb seems to require one.  See if there's a unique
-				 *   default.  
+				 *   default.
 				 */
 				runrst(rcx);
 				runpnil(rcx);
 				runpobj(rcx, prep);
 				runpobj(rcx, actor);
 				runppr(rcx, verb, PRP_DODEFAULT, 3);
-				
+
 				if (runtostyp(rcx) == DAT_LIST)
 				{
 					uchar   *l = runpoplst(rcx);
@@ -2647,12 +2647,12 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					objnum   newprep;
 					runsdef  val;
 					objnum   o;
-					
+
 					/* push list back on stack, to keep in heap */
 					val.runsv.runsvstr = l;
 					val.runstyp = DAT_LIST;
 					runrepush(rcx, &val);
-					
+
 					/* get list size out of list */
 					lstsiz = osrp2(l) - 2;
 					l += 2;
@@ -2666,7 +2666,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						newprep = MCMONINV;
 						rundisc(rcx);
 					}
-					
+
 					if (!voctplfnd(ctx, verb, newprep, tpl, &newstyle))
 					{
 						for (objcnt = 0 ; lstsiz && objcnt < 2
@@ -2682,11 +2682,11 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					else
 					{
 						int dobj_first;
-						
+
 						/*
 						 *   Get the template flags.  If we must
 						 *   disambiguate the direct object first for this
-						 *   verb, do so now. 
+						 *   verb, do so now.
 						 */
 						tplflags = (newstyle ? voctplflg(tpl) : 0);
 						dobj_first = (tplflags & VOCTPLFLG_DOBJ_FIRST);
@@ -2700,7 +2700,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 								if (!objgetap(ctx->voccxmem, o, voctplvd(tpl),
 											  (objnum *)0, FALSE))
 									continue;
-								
+
 								tiohide(ctx->voccxtio);
 								if (newprep != MCMONINV && !dobj_first)
 									runpnil(rcx);
@@ -2708,7 +2708,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 								runppr(rcx, o, voctplvd(tpl),
 									   ((newprep != MCMONINV && !dobj_first)
 										? 2 : 1));
-								
+
 								if (!tioshow(ctx->voccxtio))
 								{
 									++objcnt;
@@ -2716,10 +2716,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 								}
 							}
 						}
-						
+
 						/* no longer need list in heap, so discard it */
 						rundisc(rcx);
-				
+
 						/* use default object if there's exactly one */
 						if (objcnt == 1)
 						{
@@ -2760,11 +2760,11 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				}
 				else
 					rundisc(rcx);
-			
+
 				/*
 				 *   No unique default; ask the player for a direct
 				 *   object, and try the command again if he is kind
-				 *   enough to provide one.  
+				 *   enough to provide one.
 				 */
 				askflags = ERR_RUNASKD;
 			}
@@ -2786,7 +2786,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 				/*
 				 *   save the disambiguated direct object list, in case
-				 *   we hit an askio in the course of processing it 
+				 *   we hit an askio in the course of processing it
 				 */
 				memcpy(dolist, dolist1,
 					   (size_t)(voclistlen(dolist1) + 1)*sizeof(dolist[0]));
@@ -2794,7 +2794,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/* re-check for multi-mode */
 				if (multi_flags == 0)
 					multi_flags = check_for_multi(dolist1);
-				
+
 				/* save it/them/him/her, and execute the command */
 				exesaveit(ctx, dolist1);
 				if ((err = exeloop(ctx, actor, verb, dolist1, &prep,
@@ -2828,12 +2828,12 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					goto exit_error;
 				}
 				prep = runpopobj(rcx);
-			
+
 				runrst(rcx);
 				runpobj(rcx, prep);
 				runpobj(rcx, actor);
 				runppr(rcx, verb, PRP_IODEFAULT, 2);
-				
+
 				if (runtostyp(rcx) == DAT_LIST)
 				{
 					uchar   *l = runpoplst(rcx);
@@ -2842,16 +2842,16 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					int      objcnt;
 					runsdef  val;
 					objnum   o;
-					
+
 					/* push list back on stack, to keep in heap */
 					val.runsv.runsvstr = l;
 					val.runstyp = DAT_LIST;
 					runrepush(rcx, &val);
-					
+
 					/* get list size out of list */
 					lstsiz = osrp2(l) - 2;
 					l += 2;
-					
+
 					if (!voctplfnd(ctx, verb, prep, tpl, &newstyle))
 					{
 						for (objcnt = 0 ; lstsiz && objcnt < 2
@@ -2867,11 +2867,11 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					else
 					{
 						int dobj_first;
-						
+
 						/*
 						 *   Get the template flags.  If we must
 						 *   disambiguate the direct object first for this
-						 *   verb, do so now. 
+						 *   verb, do so now.
 						 */
 						tplflags = (newstyle ? voctplflg(tpl) : 0);
 						dobj_first = (tplflags & VOCTPLFLG_DOBJ_FIRST);
@@ -2900,7 +2900,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 							memcpy(dolist, dolist1,
 								   (size_t)(2 * sizeof(dolist[0])));
 						}
-						
+
 						for (objcnt = 0 ; lstsiz && objcnt < 2
 							 ; lstadv(&l, &lstsiz))
 						{
@@ -2910,7 +2910,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 								if (!objgetap(ctx->voccxmem, o, voctplvi(tpl),
 											  (objnum *)0, FALSE))
 									continue;
-								
+
 								tiohide(ctx->voccxtio);
 								if (dobj_first)
 									runpobj(rcx, dolist[0].vocolobj);
@@ -2925,7 +2925,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 							}
 						}
 					}
-					
+
 					/* no longer need list in heap, so discard it */
 					rundisc(rcx);
 
@@ -2938,7 +2938,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						iolist[1].vocolobj = MCMONINV;
 						iolist[1].vocolflg = 0;
 						iolist[1].vocolfst = iolist[1].vocollst = 0;
-					
+
 						/* tell the user what we're assuming */
 						runrst(rcx);
 						if (ctx->voccxpdef2 != MCMONINV)
@@ -2970,11 +2970,11 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				}
 				else
 					rundisc(rcx);
-			
+
 				/*
 				 *   We didn't get a unique default indirect object, so
 				 *   we should ask the player for an indirct object, and
-				 *   repeat the command should he provide one.  
+				 *   repeat the command should he provide one.
 				 */
 				askflags = ERR_RUNASKI;
 			}
@@ -2982,31 +2982,31 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		else
 		{
 			objnum otherobj;
-			
+
 			/* find the template for this verb/prep combination */
 			if (!voctplfnd(ctx, verb, prep, tpl, &newstyle))
 			{
 				vocoldef *np1;
-				
-				/* 
+
+				/*
 				 *   If we could have used the preposition in the first noun
 				 *   phrase rather than in the verb, and this would have
 				 *   yielded a valid verb phrase, the error is "I don't see
 				 *   any <noun phrase> here".
-				 *   
+				 *
 				 *   Otherwise, it's a verb phrasing error.  In this case,
 				 *   call parseUnknownVerb to handle the error; the default
-				 *   error is "I don't recognize that sentence".  
+				 *   error is "I don't recognize that sentence".
 				 */
 				np1 = dolist[0].vocolfst < iolist[0].vocolfst
 					  ? dolist : iolist;
 				if ((np1->vocolflg & VOCS_TRIMPREP) != 0)
 				{
 					char namebuf[VOCBUFSIZ];
-					
-					/* 
+
+					/*
 					 *   it's a trimmed prep phrase, so we actually have an
-					 *   unmatched object - report the error 
+					 *   unmatched object - report the error
 					 */
 					voc_make_obj_name_from_list(
 						ctx, namebuf, cmd, np1->vocolfst, np1->vocolhlst);
@@ -3036,7 +3036,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 			/*
 			 *   We have both direct and indirect objects.  If we don't
-			 *   yet have the direct object, go ask for it 
+			 *   yet have the direct object, go ask for it
 			 */
 			if (voclistlen(dolist) == 0)
 			{
@@ -3067,7 +3067,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 				/*
 				 *   only one direct object is allowed if it's
-				 *   disambiguated first 
+				 *   disambiguated first
 				 */
 				if (voclistlen(dolist1) > 1)
 				{
@@ -3113,20 +3113,20 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				err = -1;
 				goto exit_error;
 			}
-				
+
 			/* re-check for multi-mode */
 			if (multi_flags == 0)
 				multi_flags = check_for_multi(dolist1);
-			
+
 			/* save it/them/him/her, and execute the command */
 			exesaveit(ctx, dolist1);
 			if ((err = exeloop(ctx, actor, verb, dolist1, &prep, iolist1,
 							   multi_flags, tpl, newstyle)) != 0)
 				goto exit_error;
 		}
-		
+
 	exit_error: ;
-		
+
 		ERRCATCH(ctx->voccxerr, err)
 			if (err == ERR_RUNASKI) prep = errargint(0);
 			if (err != ERR_RUNASKD && err != ERR_RUNASKI)
@@ -3137,23 +3137,23 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		{
 		case 0:
 			break;
-			
+
 		case ERR_RUNABRT:
 			/* "abort" executed - return the ABORT code */
 			VOC_RETVAL(ctx, save_sp, err);
-			
+
 		case ERR_RUNEXIT:
-			/* 
+			/*
 			 *   "exit" executed - terminate the command, but return
-			 *   success, since we want to process any additional commands 
+			 *   success, since we want to process any additional commands
 			 */
 			VOC_RETVAL(ctx, save_sp, 0);
 
 		case ERR_RUNEXITOBJ:
-			/* 
+			/*
 			 *   "exitobj" executed - indicate success, since this merely
 			 *   indicates that the game decided it was done processing an
-			 *   object early 
+			 *   object early
 			 */
 			VOC_RETVAL(ctx, save_sp, 0);
 
@@ -3161,7 +3161,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		case ERR_RUNASKD:
 			askflags = err;
 			break;
-			
+
 		case -2:                   /* special code: continue with main loop */
 			continue;
 
@@ -3169,29 +3169,29 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		default:
 			VOC_RETVAL(ctx, save_sp, 1);
 		}
-	
+
 		/*
 		 *   If we got this far, we probably want more information.  The
-		 *   askflags can tell us what to do from here.  
+		 *   askflags can tell us what to do from here.
 		 */
 		if (askflags)
 		{
 			int old_unknown;
 			int exenewpos;
-			
-			/* 
+
+			/*
 			 *   if we had unknown words, don't ask for more information
-			 *   at this point; simply give up and report the unknown word 
+			 *   at this point; simply give up and report the unknown word
 			 */
 			if (ctx->voccxunknown != 0)
 			{
 				VOC_RETVAL(ctx, save_sp, 1);
 			}
-			
+
 			/* find new template indicated by the additional object */
 			foundtpl = voctplfnd(ctx, verb, prep, tpl, &newstyle);
 			tplflags = (newstyle ? voctplflg(tpl) : 0);
-		
+
 			/* find a default object of the type requested */
 			runrst(rcx);
 			if (askflags == ERR_RUNASKD) runpnil(rcx);
@@ -3201,14 +3201,14 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				   (prpnum)(askflags == ERR_RUNASKD
 							? PRP_DODEFAULT : PRP_IODEFAULT),
 				   (askflags == ERR_RUNASKD ? 3 : 2));
-			
+
 			/*
 			 *   If we got a list back from ?oDefault, and we have a new
 			 *   template for the command, process the list normally with
 			 *   the object verification routine for this template.  If we
 			 *   end up with exactly one object, we will assume it is the
 			 *   object to be used; otherwise, make no assumption and ask
-			 *   the user for guidance.  
+			 *   the user for guidance.
 			 */
 			if (runtostyp(rcx) == DAT_LIST && foundtpl)
 			{
@@ -3218,27 +3218,27 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				objnum   defobj = 0;
 				objnum   o;
 				runsdef  val;
-				
+
 				/* push list back on stack, to keep it in the heap */
 				val.runsv.runsvstr = l;
 				val.runstyp = DAT_LIST;
 				runrepush(rcx, &val);
-				
+
 				/* get list size out of list */
 				lstsiz = osrp2(l) - 2;
 				l += 2;
-				
+
 				for (objcnt = 0 ; lstsiz && objcnt < 2 ; lstadv(&l, &lstsiz))
 				{
 					if (*l == DAT_OBJECT)
 					{
 						prpnum verprop;
 						int argc = 1;
-					
+
 						o = osrp2(l + 1);
 						verprop = (askflags == ERR_RUNASKD ? voctplvd(tpl)
 														: voctplvi(tpl));
-				
+
 						if (!objgetap(ctx->voccxmem, o, verprop,
 									  (objnum *)0, FALSE))
 							continue;
@@ -3249,7 +3249,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						 *   In the unlikely event that we have an
 						 *   indirect object but no direct object, push
 						 *   the iobj.  This can happen when the player
-						 *   types a sentence such as "verb prep iobj".  
+						 *   types a sentence such as "verb prep iobj".
 						 */
 						if (voclistlen(iolist) != 0
 							&& askflags == ERR_RUNASKD
@@ -3266,7 +3266,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						 *   If this is a disambigDobjFirst verb, and
 						 *   we're validating an indirect object list,
 						 *   then we must push the direct object argument
-						 *   to the indirect object validation routine.  
+						 *   to the indirect object validation routine.
 						 */
 						if (askflags == ERR_RUNASKI
 							&& (tplflags & VOCTPLFLG_DOBJ_FIRST) != 0)
@@ -3289,10 +3289,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 					}
 				}
-				
+
 				/* no longer need list in heap, so discard it */
 				rundisc(rcx);
-				
+
 				/* if we found exactly one object, it's the default */
 				if (objcnt == 1)
 				{
@@ -3314,7 +3314,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						iolist[1].vocolflg = 0;
 						iolist[1].vocolfst = iolist[1].vocollst = 0;
 					}
-					
+
 					/* tell the user what we're assuming */
 					if (ctx->voccxpdef2 != MCMONINV)
 					{
@@ -3357,14 +3357,14 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			/* make sure output capturing is off for the prompt */
 			tiocapture(ctx->voccxtio, (mcmcxdef *)0, FALSE);
 			tioclrcapture(ctx->voccxtio);
-			
+
 			/*
 			 *   If we're asking for an indirect object, and we have a
 			 *   list of direct objects, and parseAskobjIndirect is
 			 *   defined, call it.  Otherwise, if there's a
 			 *   parseAskobjActor routine, call it.  Otherwise, if there's
 			 *   a parseAskobj routine, use that.  Finally, if none of
-			 *   those are defined, generate the default phrasing.  
+			 *   those are defined, generate the default phrasing.
 			 */
 			if (ctx->voccxpask3 != MCMONINV
 				&& askflags == ERR_RUNASKI
@@ -3397,7 +3397,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				 *   Phrase the question: askDo: "What do you want
 				 *   <actor> to <verb>?"  askIo: "What do you want <actor>
 				 *   to <verb> it <prep>?"  If the actor is Me, leave the
-				 *   actor out of it.  
+				 *   actor out of it.
 				 */
 				if (actor != MCMONINV && actor != ctx->voccxme)
 				{
@@ -3417,7 +3417,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/*
 				 *   add an appropriate pronoun for the direct object,
 				 *   and the preposition, if we're asking for an indirect
-				 *   object 
+				 *   object
 				 */
 				if (askflags == ERR_RUNASKI)
 				{
@@ -3433,7 +3433,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					 *   with the possible single objects about "him" or
 					 *   "her", use that.  Otherwise, use "it".  If "all"
 					 *   was specified for any word, automatically assume
-					 *   multiple distinct objects were specified.  
+					 *   multiple distinct objects were specified.
 					 */
 					vcnt = voclistlen(dolist);
 					for (distinct = 0, i = 0, lastfst = 0 ; i < vcnt ; ++i)
@@ -3457,7 +3457,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 					/*
 					 *   If we have multiple words, use "them";
 					 *   otherwise, see if we can find agreement about
-					 *   using "him" or "her". 
+					 *   using "him" or "her".
 					 */
 					if (distinct > 1)
 					{
@@ -3488,7 +3488,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 								runppr(rcx, dolist[i].vocolobj, PRP_ISHIM, 0);
 								him1 = (runtostyp(rcx) == DAT_TRUE);
 								rundisc(rcx);
-								
+
 								/* check for "her" */
 								runppr(rcx, dolist[i].vocolobj, PRP_ISHER, 0);
 								her1 = (runtostyp(rcx) == DAT_TRUE);
@@ -3505,7 +3505,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 							 *   if this is the first object, it
 							 *   definitely agrees; otherwise, keep going
 							 *   only if it agrees with what we found on
-							 *   the last pass 
+							 *   the last pass
 							 */
 							if (i == 0)
 							{
@@ -3530,7 +3530,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 						 *   If we could agree on "him", "her", or "them",
 						 *   use that pronoun; otherwise, use "it".  If we
 						 *   found both "him" and "her" are acceptable for
-						 *   all objects, use "them".  
+						 *   all objects, use "them".
 						 */
 						if ((is_him && is_her) || is_them)
 							vocerr_info(ctx, VOCERR(147), " them ");
@@ -3551,13 +3551,13 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				vocerr_info(ctx, VOCERR(143), "?");
 			}
 			tioflush(ctx->voccxtio);
-				
+
 			/*
 			 *   Get a new command line.  If the player gives us
 			 *   something that looks like a noun list, and nothing more,
 			 *   he anwered our question; otherwise, he's typing a new
 			 *   command, so we must return to the caller with the reparse
-			 *   flag set.  
+			 *   flag set.
 			 */
 			if (askflags == ERR_RUNASKD)
 			{
@@ -3578,16 +3578,16 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			if (vocread(ctx, actor, verb, exenewcmd, VOCBUFSIZ,
 						askflags == ERR_RUNASKD ? 3 : 4) == VOCREAD_REDO)
 			{
-				/* 
+				/*
 				 *   we got an input line, but we want to treat it as a brand
 				 *   new command line - copy the new text to the command
-				 *   buffer, set the 'redo' flag, and give up 
+				 *   buffer, set the 'redo' flag, and give up
 				 */
 				strcpy(cmdbuf, exenewcmd);
 				ctx->voccxredo = TRUE;
 				VOC_RETVAL(ctx, save_sp, 1);
 			}
-			
+
 			if (!(cnt = voctok(ctx, exenewcmd, exenewbuf, exenewlist,
 							   TRUE, FALSE, TRUE)))
 			{
@@ -3601,13 +3601,13 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				VOC_RETVAL(ctx, save_sp, 1);
 			}
 
-			/* 
+			/*
 			 *   Save the unknown word count while getting types, and set
 			 *   the count to a non-zero value - this will force the type
 			 *   checker to generate an error on an unknown word.  This
 			 *   removes a little control from the game (since
 			 *   parseUnknownXobj won't be called), but there's not much
-			 *   else we can do here. 
+			 *   else we can do here.
 			 */
 			old_unknown = ctx->voccxunknown;
 			ctx->voccxunknown = 1;
@@ -3616,10 +3616,10 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			exenewlist[cnt] = 0;
 			if (vocgtyp(ctx, exenewlist, exenewtype, cmdbuf))
 			{
-				/* 
+				/*
 				 *   clear the unknown word count so that we fail with
 				 *   this error rather than trying to deal with unknown
-				 *   words 
+				 *   words
 				 */
 				ctx->voccxunknown = 0;
 
@@ -3633,18 +3633,18 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			/* start at the first word */
 			exenewpos = 0;
 
-			/* 
+			/*
 			 *   if we're asking for an indirect object, and the first
 			 *   word is a preposition, and matches the preposition that
 			 *   we supplied to precede the indirect object, skip the
-			 *   preposition 
+			 *   preposition
 			 */
 			if (askflags == ERR_RUNASKI
 				&& prep != MCMONINV
 				&& (exenewtype[0] & VOCT_PREP) != 0)
 			{
 				vocwdef *vp;
-				
+
 				/* get the preposition */
 				vp = vocffw(ctx, exenewlist[0], (int)strlen(exenewlist[0]),
 							(char *)0, 0, PRP_PREP, (vocseadef *)0);
@@ -3656,7 +3656,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			newnoun = (askflags == ERR_RUNASKD ? dolist : iolist);
 			cnt = vocchknoun(ctx, exenewlist, exenewtype, exenewpos, &next,
 							 newnoun, FALSE);
-			
+
 			if (cnt < 0) { VOC_RETVAL(ctx, save_sp, 1); } /* invalid syntax */
 			if (cnt == 0
 				|| (exenewlist[next] && !vocspec(exenewlist[next], VOCW_THEN)
@@ -3669,7 +3669,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 			/* re-check the 'multi' flags */
 			multi_flags = check_for_multi(newnoun);
-			
+
 			/* give it another go by going back to the top of the loop */
 		}
 		else

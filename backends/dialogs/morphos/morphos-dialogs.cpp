@@ -54,7 +54,7 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 
 		if (!fr)
 			return result;
-		
+
 		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle.c_str(), ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
 
 			if (strlen(fr->fr_Drawer) < sizeof(pathBuffer)) {
@@ -63,7 +63,7 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 				if (!isDirBrowser) {
 					AddPart(pathBuffer, fr->fr_File, sizeof(pathBuffer));
 				}
-				choice = Common::FSNode(pathBuffer);			
+				choice = Common::FSNode(pathBuffer);
 				result = kDialogOk;
 			}
 			FreeAslRequest((APTR)fr);

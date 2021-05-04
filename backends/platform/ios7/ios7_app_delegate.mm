@@ -78,7 +78,7 @@
 	dispatch_async(dispatch_get_global_queue(0, 0), ^{
 		iOS7_main(iOS7_argc, iOS7_argv);
 	});
-	
+
 	if (_restoreState)
 		[_view restoreApplicationState];
 	else

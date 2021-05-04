@@ -199,7 +199,7 @@ public:
 		case kMinosToss4:
 			room->setLayerEnabled(kStatues, false);
 			playMinosMovie("MovMinosToss4", kMinosStatueTossed, Common::Point(0, 191));
-			break;			
+			break;
 		case kMinosStatueTossed:
 			playMinosMovie("MovMinosBeGone", kMinosBackToIdleEvent, Common::Point(202, 229));
 			scheduleNagging();

@@ -38,7 +38,7 @@ class Game;
 
 namespace Maps {
 
-#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, this) 
+#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, this)
 #define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
 
 /**

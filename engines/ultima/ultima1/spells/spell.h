@@ -34,7 +34,7 @@ class Ultima1Game;
 class Character;
 
 namespace Spells {
-	
+
 enum SpellId {
 	SPELL_PRAYER = 0, SPELL_OPEN = 1, SPELL_UNLOCK = 2, SPELL_MAGIC_MISSILE = 3, SPELL_STEAL = 4,
 	SPELL_LADDER_DOWN = 5, SPELL_LADDER_UP = 6, SPELL_BLINK = 7, SPELL_CREATE = 8,

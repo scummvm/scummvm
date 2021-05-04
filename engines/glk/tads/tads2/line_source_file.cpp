@@ -75,11 +75,11 @@ void linfini2(mcmcxdef *mctx, linfdef *linf,
 	linf->linfcrec = 0;                  /* no debugger records written yet */
 }
 
-/* 
+/*
  *   Initialize a file line source object.  If must_find_file is true,
  *   we'll fail if we can't find the file.  Otherwise, we'll create the
  *   linfdef even if we can't find the file, reserving the maximum space
- *   for its path name to be filled in later. 
+ *   for its path name to be filled in later.
  */
 linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 				 int flen, tokpdef *path, int must_find_file,
@@ -92,7 +92,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 	char      fbuf[OSFNMAX + 1];
 	tokpdef   fakepath;
 	int       len;
-	
+
 	if (!path)
 	{
 		path = &fakepath;
@@ -123,16 +123,16 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 		/* add the filename and null-terminate */
 		memcpy(fbuf + len, filename, (size_t)flen);
 		fbuf[len + flen] = '\0';
-		
+
 		/* attempt to open this file */
 		if ((fp = osfoprs(fbuf, OSFTTEXT)) != 0)
 			break;
 	}
 
-	/* 
+	/*
 	 *   If no file opened yet, search tads path; if that doesn't work,
 	 *   let the debugger UI try to find the file.  If nothing works, give
-	 *   up and return failure.  
+	 *   up and return failure.
 	 */
 	if (fp == 0
 		&& (!os_locate(filename, flen, (char *)0, fbuf, sizeof(fbuf))
@@ -140,7 +140,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 	{
 		/*
 		 *   Ask the debugger UI for advice.  If the debugger isn't
-		 *   present, we'll get a failure code from this routine. 
+		 *   present, we'll get a failure code from this routine.
 		 */
 		if (!dbgu_find_src(filename, flen, fbuf, sizeof(fbuf),
 						   must_find_file))
@@ -149,9 +149,9 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 		/* try opening the file */
 		if (fbuf[0] == '\0')
 		{
-			/* 
+			/*
 			 *   we didn't get a filename - the UI wants to defer finding
-			 *   the file until later 
+			 *   the file until later
 			 */
 			fp = 0;
 		}
@@ -161,31 +161,31 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 			fp = osfoprs(fbuf, OSFTTEXT);
 		}
 
-		/* 
+		/*
 		 *   if the file isn't present, and we're required to find it,
-		 *   return failure 
+		 *   return failure
 		 */
 		if (fp == 0 && must_find_file)
 			return 0;
 	}
-	
+
 	/* figure out how much space we need for the file's full name */
 	if (fp == 0)
 	{
-		/* 
+		/*
 		 *   we didn't find the file, so we don't yet know its name - use
 		 *   the maximum possible filename length for the buffer size, so
 		 *   that we can store the final filename if we should figure out
-		 *   where the file is later on 
+		 *   where the file is later on
 		 */
 		fbuf[0] = '\0';
 		len = sizeof(fbuf);
 	}
 	else
 	{
-		/* 
+		/*
 		 *   we found the file, so we have its final name - allocate space
-		 *   for the known name 
+		 *   for the known name
 		 */
 		len = (int)strlen(fbuf);
 	}
@@ -199,7 +199,7 @@ linfdef *linfini(mcmcxdef *mctx, errcxdef *ec, const char *filename,
 
 	memcpy(linf->linfnam + flen + 1, fbuf, (size_t)len);
 	linf->linfnam[flen + 1 + len] = '\0';
-	
+
 	/* set all debugger pages to not-yet-allocated */
 	for (i = LINFPGMAX, objp = linf->linfpg ; i ; ++objp, --i)
 		*objp = MCMONINV;
@@ -228,47 +228,47 @@ int linfget(lindef *lin)
 		memmove(linf->linfbuf, linf->linfbuf + linf->linfbufnxt,
 				linf->linfnxtlen);
 
-		/* 
+		/*
 		 *   adjust the seek position to account for the fact that we've
-		 *   read ahead in the file 
+		 *   read ahead in the file
 		 */
 		linf->linfseek -= linf->linfnxtlen;
 
-		/* 
+		/*
 		 *   Fill up the rest of the buffer.  Leave one byte for a null
 		 *   terminator and one byte for a possible extra newline pair
-		 *   character (see below), hence fill to sizeof(buf)-2.  
+		 *   character (see below), hence fill to sizeof(buf)-2.
 		 */
 		rdlen = osfrbc(linf->linffp, linf->linfbuf + linf->linfnxtlen,
 					   sizeof(linf->linfbuf) - linf->linfnxtlen - 2);
 
-		/* 
+		/*
 		 *   the total space is the amount we had left over plus the
-		 *   amount we just read 
+		 *   amount we just read
 		 */
 		rdlen += linf->linfnxtlen;
 	}
 	else
 	{
-		/* 
+		/*
 		 *   We have nothing in the buffer - fill it up.  Fill to
 		 *   sizeof(buf)-2 to leave room for a null terminator plus a
-		 *   possible extra newline pair character (see below). 
+		 *   possible extra newline pair character (see below).
 		 */
 		rdlen = osfrbc(linf->linffp, linf->linfbuf,
 					   sizeof(linf->linfbuf) - 2);
 	}
 
-	/* 
+	/*
 	 *   if there's nothing in the buffer at this point, we've reached the
-	 *   end of the file 
+	 *   end of the file
 	 */
 	if (rdlen == 0)
 		return TRUE;
 
-	/* 
+	/*
 	 *   if the last line was not a continuation line, increment the line
-	 *   counter for the start of a new line 
+	 *   counter for the start of a new line
 	 */
 	if (!(lin->linflg & LINFMORE))
 		++(linf->linfnum);
@@ -280,9 +280,9 @@ int linfget(lindef *lin)
 	for (p = linf->linfbuf + linf->linfnxtlen ; *p != '\0' ; ++p)
 		*p = cmap_n2i(*p);
 
-	/* 
+	/*
 	 *   scan the for the first newline in the buffer, allowing newline
-	 *   conventions that involve either CR or LF 
+	 *   conventions that involve either CR or LF
 	 */
 	for (p = linf->linfbuf ; *p != '\n' && *p != '\r' && *p != '\0' ; ++p) ;
 
@@ -290,18 +290,18 @@ int linfget(lindef *lin)
 	 *   Check to see if this character is followed by its newline pair
 	 *   complement, to allow for either CR-LF or LF-CR sequences, as well
 	 *   as plain single-byte newline (CR or LF) sequences.
-	 *   
+	 *
 	 *   First, though, one weird special case: if this character is at
 	 *   the read limit in the buffer, the complementary character might
 	 *   be lurking in the next byte that we haven't read.  In this case,
 	 *   use that one-byte reserve we have left (we filled the buffer only
-	 *   to length-2 so far) and read the next byte.  
+	 *   to length-2 so far) and read the next byte.
 	 */
 	if (*p != '\0' && p + 1 == linf->linfbuf + sizeof(linf->linfbuf) - 2)
 	{
-		/* 
+		/*
 		 *   we've filled the buffer to but not including the reserve for
-		 *   just this case - fetch the extra character 
+		 *   just this case - fetch the extra character
 		 */
 		if (osfrbc(linf->linffp, p + 1, 1) == 1)
 		{
@@ -311,9 +311,9 @@ int linfget(lindef *lin)
 		}
 	}
 
-	/* 
+	/*
 	 *   now we can check for the newline type, since we have definitely
-	 *   read the full paired sequence 
+	 *   read the full paired sequence
 	 */
 	if (*p == '\0')
 	{
@@ -346,18 +346,18 @@ int linfget(lindef *lin)
 		/* this is the end of a line */
 		lin->linflg &= ~LINFMORE;
 
-		/* 
+		/*
 		 *   return only the part of the buffer up to, but not including,
-		 *   the newline 
+		 *   the newline
 		 */
 		lin->linlen = (p - linf->linfbuf);
 
 		/* null-terminate the buffer at the newline */
 		*p = '\0';
 
-		/* 
+		/*
 		 *   anything remaining after the newline sequence is available
-		 *   for reading the next time through 
+		 *   for reading the next time through
 		 */
 		linf->linfbufnxt = ((p + nl_len) - linf->linfbuf);
 		linf->linfnxtlen = rdlen - linf->linfbufnxt;
@@ -378,7 +378,7 @@ int linfget(lindef *lin)
 void linfppos(lindef *lin, char *buf, uint buflen)
 {
 	VARUSED(buflen);
-	
+
 	sprintf(buf, "%s(%lu): ", ((linfdef *)lin)->linfnam,
 			((linfdef *)lin)->linfnum);
 }
@@ -419,18 +419,18 @@ int linfwrt(lindef *lin, osfildef *fp)
 	oswp4(buf + 2, linf->linfcrec);
 	memcpy(buf + 6, linf->linfnam, (size_t)buf[1]);
 	if (osfwb(fp, buf, (int)(buf[1] + 6))) return(TRUE);
-	
+
 	/* write the debug source pages */
 	if (!linf->linfcrec) return(FALSE);          /* no debug records at all */
 	pgcnt = 1 + ((linf->linfcrec - 1) >> 10);     /* figure number of pages */
-	
+
 	for (objn = linf->linfpg ; pgcnt ; ++objn, --pgcnt)
 	{
 		objp = mcmlck(linf->linfmem, *objn);
 		if (osfwb(fp, objp, (1024 * DBGLINFSIZ))) return(TRUE);
 		mcmunlck(linf->linfmem, *objn);
 	}
-	
+
 	return(FALSE);
 
 #   undef  linf
@@ -444,12 +444,12 @@ int linfload(osfildef *fp, dbgcxdef *dbgctx, errcxdef *ec, tokpdef *path)
 	uint     pgcnt;
 	uchar   *objp;
 	mcmon   *objn;
-	
+
 	/* read the source's description from the file */
 	if (osfrb(fp, buf, 6)
 		|| osfrb(fp, buf + 6, (int)buf[1]))
 		return TRUE;
-	
+
 	/* initialize the linfdef */
 	if (!(linf = linfini(dbgctx->dbgcxmem, ec, (char *)buf + 6,
 						 (int)buf[1], path, FALSE, FALSE)))
@@ -458,31 +458,31 @@ int linfload(osfildef *fp, dbgcxdef *dbgctx, errcxdef *ec, tokpdef *path)
 				errstr(ec, (char *)buf+6, (int)buf[1]));
 		return TRUE;
 	}
-	
+
 	/* if we opened the file, close it - don't hold all files open */
 	if (linf->linffp != 0)
 	{
 		osfcls(linf->linffp);
 		linf->linffp = 0;
 	}
-	
+
 	/* link into debug line source chain */
 	linf->linflin.linnxt = dbgctx->dbgcxlin;
 	dbgctx->dbgcxlin = &linf->linflin;
 	linf->linflin.linid = buf[0];
 	linf->linfcrec = osrp4(buf + 2);
-	
+
 	/* make sure the max line id is set above current line */
 	if (buf[0] >= dbgctx->dbgcxfid)
 		dbgctx->dbgcxfid = buf[0] + 1;
-	
+
 	/* make sure we have some debug records */
 	if (!linf->linfcrec)
 		return FALSE;
 
 	/* figure number of pages */
 	pgcnt = 1 + ((linf->linfcrec - 1) >> 10);
-	
+
 	/* allocate and read the debug source pages */
 	for (objn = linf->linfpg ; pgcnt ; ++objn, --pgcnt)
 	{
@@ -511,25 +511,25 @@ void linfcmp(lindef *lin, uchar *buf)
 						&linf->linfpg[pg]);
 	else
 		objptr = mcmlck(linf->linfmem, linf->linfpg[pg]);
-	
+
 	/* write the record to the appropriate offset within the page */
 	memcpy(objptr + (linf->linfcrec & 1023) * DBGLINFSIZ, buf,
 		   (size_t)DBGLINFSIZ);
-	
+
 	/* increment counter of line records so far */
 	++(linf->linfcrec);
-	
+
 	/* done with page - touch it and unlock it */
 	mcmtch(linf->linfmem, linf->linfpg[pg]);
 	mcmunlck(linf->linfmem, linf->linfpg[pg]);
-	
+
 #   undef linf
 }
 
 /*
  *   Renumber an existing object.  Searches through all line records for
  *   any with the given object number, and changes the number to the new
- *   number if found.  
+ *   number if found.
  */
 void linfren(lindef *lin, objnum oldnum, objnum newnum)
 {
@@ -580,7 +580,7 @@ void linfren(lindef *lin, objnum oldnum, objnum newnum)
 /*
  *   Delete an existing object.  Searches through all line records for any
  *   with the given object number, and removes line records for the object
- *   number if found.  
+ *   number if found.
  */
 void linfdelnum(lindef *lin, objnum objn)
 {
@@ -614,7 +614,7 @@ void linfdelnum(lindef *lin, objnum objn)
 		for (i = 0 ; i < pgtot ; ++i, objp += DBGLINFSIZ)
 		{
 			int j;
-			
+
 			/* check this one */
 			if (osrp2(objp) == objn)
 			{
@@ -622,16 +622,16 @@ void linfdelnum(lindef *lin, objnum objn)
 				uint pg;
 				int delcnt;
 				int totrem;
-				
-				/* 
+
+				/*
 				 *   it matches - delete it, along with any subsequent
-				 *   contiguous entries that also match it 
+				 *   contiguous entries that also match it
 				 */
 				for (delcnt = 1, j = i + 1 ; j < pgtot ; ++j, ++delcnt)
 				{
-					/* 
+					/*
 					 *   if this one doesn't match, we've found the end of
-					 *   the contiguous records for this object 
+					 *   the contiguous records for this object
 					 */
 					if (osrp2(objp + (j - i)*DBGLINFSIZ) != objn)
 						break;
@@ -642,18 +642,18 @@ void linfdelnum(lindef *lin, objnum objn)
 					memmove(objp, objp + delcnt*DBGLINFSIZ,
 							(pgtot - j)*DBGLINFSIZ);
 
-				/* 
+				/*
 				 *   if this isn't the last page, copy the bottom of the
-				 *   next page to the gap at the top of this page 
+				 *   next page to the gap at the top of this page
 				 */
 				if (pgcnt > 1)
 				{
 					/* lock the next page */
 					nxtp = mcmlck(linf->linfmem, *(pgobjn + 1));
 
-					/* 
+					/*
 					 *   copy from the beginning of the next page to the
-					 *   end of this page 
+					 *   end of this page
 					 */
 					memcpy(objp_orig + (pgtot - delcnt)*DBGLINFSIZ,
 						   nxtp, delcnt*DBGLINFSIZ);
@@ -663,17 +663,17 @@ void linfdelnum(lindef *lin, objnum objn)
 				}
 				else
 				{
-					/* 
+					/*
 					 *   this is the last page, so there's no next page to
 					 *   copy items from - reduce the count of items on
-					 *   this page accordingly 
+					 *   this page accordingly
 					 */
 					pgtot -= delcnt;
 				}
 
 				/*
 				 *   Now rearrange all subsequent pages to accommodate the
-				 *   gap we just created 
+				 *   gap we just created
 				 */
 				for (totrem = tot, pg = 1 ; pg < pgcnt ;
 					 totrem -= 1024, ++pg)
@@ -683,7 +683,7 @@ void linfdelnum(lindef *lin, objnum objn)
 
 					/* figure how many we have on this page */
 					curtot = (totrem > 1024 ? 1024 : totrem);
-					
+
 					/* lock this page */
 					curp = mcmlck(linf->linfmem, *(pgobjn + pg));
 
@@ -697,9 +697,9 @@ void linfdelnum(lindef *lin, objnum objn)
 						/* lock the next page */
 						nxtp = mcmlck(linf->linfmem, *(pgobjn + pg + 1));
 
-						/* 
+						/*
 						 *   copy from the start of the next page to the
-						 *   end of this page 
+						 *   end of this page
 						 */
 						memcpy(curp + (curtot - delcnt)*DBGLINFSIZ,
 							   nxtp, delcnt*DBGLINFSIZ);
@@ -748,7 +748,7 @@ void linffind(lindef *lin, char *buf, objnum *objp, uint *ofsp)
 	/* we haven't traversed any records yet */
 	objn = MCMONINV;
 	ofs = 0;
-	
+
 	/* run a binary search for the indicated line record */
 	first = 0;
 	last = linf->linfcrec - 1;
@@ -771,7 +771,7 @@ void linffind(lindef *lin, char *buf, objnum *objp, uint *ofsp)
 
 		/* calculate the page containing this item */
 		pg = cur >> 10;
-		
+
 		/* get object + offset corresponding to current source line */
 		objptr = mcmlck(linf->linfmem, linf->linfpg[pg]);
 		bufptr = objptr + ((cur & 1023) * DBGLINFSIZ);
@@ -797,12 +797,12 @@ void linffind(lindef *lin, char *buf, objnum *objp, uint *ofsp)
 		else
 			last = (cur == last ? last - 1 : cur);
 	}
-	
+
 #   undef linf
 }
 
-/* 
- *   copy line records to an array of linfinfo structures 
+/*
+ *   copy line records to an array of linfinfo structures
  */
 void linf_copy_linerecs(linfdef *linf, struct linfinfo *info)
 {
@@ -829,7 +829,7 @@ void linf_copy_linerecs(linfdef *linf, struct linfinfo *info)
 	for (cur = 0 ; cur < last ; ++cur, ++info)
 	{
 		uchar *codeptr;
-		
+
 		/* calculate the page containing this item */
 		pg = cur >> 10;
 
@@ -845,7 +845,7 @@ void linf_copy_linerecs(linfdef *linf, struct linfinfo *info)
 			/* this is now the previous page */
 			prvpg = pg;
 		}
-			
+
 		/* get object + offset corresponding to current source line */
 		bufptr = objptr + ((cur & 1023) * DBGLINFSIZ);
 		info->objn = osrp2(bufptr);
@@ -872,7 +872,7 @@ void linfdis(lindef *lin)
 		osfcls(linf->linffp);
 		linf->linffp = (osfildef *)0;
 	}
-	
+
 #   undef linf
 }
 
@@ -890,7 +890,7 @@ void linfact(lindef *lin)
 	 *   If the full path name is empty, it means that the UI told us to
 	 *   defer searching for the file until we actually need the file.  At
 	 *   this point, we actually need the file.  Ask the UI again to find
-	 *   the file. 
+	 *   the file.
 	 */
 	if (fname[0] != '\0'
 		|| dbgu_find_src(linf->linfnam, strlen(linf->linfnam),
@@ -925,7 +925,7 @@ void linfseek(lindef *lin, uchar *pos)
 {
 #   define  linf ((linfdef *)lin)
 	long    seekpos;
-	
+
 	seekpos = osrp4(pos);
 	osfseek(linf->linffp, seekpos, OSFSK_SET);
 
@@ -987,21 +987,21 @@ int linfgets(lindef *lin, uchar *buf, uint siz)
 	if (*p != '\0')
 	{
 		uchar *nxt;
-		
-		/* 
+
+		/*
 		 *   Scan for non-line-ending characters after this line-ending
 		 *   character.  If we find any, we must have non-standard newline
 		 *   conventions in this file.  To be tolerant of these, seek back
 		 *   to the start of the next line in these cases and read the
-		 *   next line from the new location. 
+		 *   next line from the new location.
 		 */
 		for (nxt = p + 1 ; *nxt == '\r' || *nxt == '\n' ; ++nxt) ;
 		if (*nxt == '\0')
 		{
-			/* 
+			/*
 			 *   we had only line-ending characters after the first
 			 *   line-ending character -- simply end the line after the
-			 *   first line-ending character 
+			 *   first line-ending character
 			 */
 			*(p+1) = '\0';
 		}
@@ -1013,7 +1013,7 @@ int linfgets(lindef *lin, uchar *buf, uint siz)
 			 *   local newline conventions.  Seek back to the next
 			 *   character following the last line-ending character so
 			 *   that we start the next line here, and end the current
-			 *   line after the first line-ending character. 
+			 *   line after the first line-ending character.
 			 */
 			*(p+1) = '\0';
 			osfseek(linf->linffp, startpos + (nxt - buf), OSFSK_SET);
@@ -1062,7 +1062,7 @@ long linfofs(lindef *lin)
 #   define linf ((linfdef *)lin)
 
 	return(osfpos(linf->linffp));
-	
+
 #   undef  linf
 }
 

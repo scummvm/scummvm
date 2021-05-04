@@ -167,7 +167,7 @@ void CViewItem::enterView(CViewItem *newView) {
 			}
 		}
 
-		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor 
+		// WORKAROUND: Do a dummy mouse movement, to allow for the correct cursor
 		// to be set for the current position in the new view
 		CMouseMoveMsg moveMsg(g_vm->_events->getMousePos(), 0);
 		newView->MouseMoveMsg(&moveMsg);

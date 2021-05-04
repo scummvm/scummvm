@@ -414,7 +414,7 @@ void UserInterface::toggleScreen(Screen::Name screenName) {
 			|| (currentName == Screen::kScreenSaveMenu && screenName == Screen::kScreenLoadMenu)
 			|| (currentName == Screen::kScreenLoadMenu && screenName == Screen::kScreenSaveMenu)) {
 		backPrevScreen();
-	} else if (currentName == Screen::kScreenGame 
+	} else if (currentName == Screen::kScreenGame
 			|| currentName == Screen::kScreenDiaryIndex
 			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenLoadMenu)
 			|| (currentName == Screen::kScreenMainMenu && screenName == Screen::kScreenSettingsMenu)) {

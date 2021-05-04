@@ -170,7 +170,7 @@ bool MP3Track::openSound(const Common::String &filename, const Common::String &s
 	return true;
 #else
 	parseRIFFHeader(file);
-	
+
 	MP3Track::JMMCuePoints cuePoints;
 	if (soundName.size() > 4) {
 		cuePoints = parseJMMFile(Common::String(filename.c_str(), filename.size() - 4) + ".jmm");

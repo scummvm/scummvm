@@ -307,7 +307,7 @@ bool isBlank(int c);
 /**
  * Represent the size of a file in bytes as a number with floating point and
  * largest suitable units. For example, 1474560 bytes as 1.4 MB.
- * 
+ *
  * @param[in]  bytes     Size in bytes to be represented.
  * @param[out] unitsOut  String with units.
  *

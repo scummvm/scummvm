@@ -33,7 +33,7 @@
 <config name="Ultima 4">
   <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="armors.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="creatures.xml"/>
-  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="maps.xml"/>  
+  <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="maps.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="tileRules.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="tilesets.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2003/XInclude" href="egaPalette.xml"/>

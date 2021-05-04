@@ -285,7 +285,7 @@ protected:
 	Command *opIsAnimAtTime(const ResourceReference &animRef, int32 time);
 	Command *opIsLocation2D();
 	Command *opIsInventoryOpen();
-	
+
 	Common::Array<Argument> _arguments;
 };
 

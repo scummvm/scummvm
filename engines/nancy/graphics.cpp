@@ -34,7 +34,7 @@ namespace Nancy {
 GraphicsManager::GraphicsManager() :
 	_objects(objectComparator),
 	_inputPixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
-	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), 
+	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()) {}
 
 void GraphicsManager::init() {

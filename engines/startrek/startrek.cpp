@@ -181,7 +181,7 @@ Common::Error StarTrekEngine::run() {
 		_bridgeSequenceToLoad = -1;
 		runGameMode(_gameMode, true);
 	}
-	
+
 	return Common::kNoError;
 }
 

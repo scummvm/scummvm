@@ -50,7 +50,7 @@ private:
 
 	/**
 	 * Start a singular (non-repeating) animation for the item,
-	 * such as an item's transformation into a piece of Titania 
+	 * such as an item's transformation into a piece of Titania
 	 */
 	void startSingularMovie();
 

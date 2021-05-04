@@ -507,7 +507,7 @@ void Lua_V2::UpdateSoundPosition() {
 
 	if (!lua_isnumber(param2) || !lua_isnumber(param3) || !lua_isnumber(param4))
 		return;
-	
+
 	float x = lua_getnumber(param2);
 	float y = lua_getnumber(param3);
 	float z = lua_getnumber(param4);

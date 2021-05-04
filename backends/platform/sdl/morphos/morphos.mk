@@ -21,5 +21,5 @@ ifdef DIST_FILES_THEMES
 	mkdir -p $(MORPHOSPATH)themes
 	cp $(DIST_FILES_THEMES) $(MORPHOSPATH)themes/
 endif
-# Strip 
+# Strip
 	$(STRIP) $(EXECUTABLE) -o $(MORPHOSPATH)$(EXECUTABLE)

@@ -81,7 +81,7 @@ public:
 		case 526:
 			g_vm->getHeroBelt()->setThunderboltFrame(kLightning3);
 			break;
-			
+
 		case 15351:
 			room->playAnimWithMusic(kZeusLight, "G0260MA0", kZeusLightZ,
 						PlayAnimParams::keepLastFrame().partial(0, 4),

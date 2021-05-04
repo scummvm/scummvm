@@ -31,7 +31,7 @@
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 '================================================================
-' TODO: Reduce duplication with revision.vbs script 
+' TODO: Reduce duplication with revision.vbs script
 '       (ReadRegistryKey and ParseCommandLine are identical)
 '================================================================
 

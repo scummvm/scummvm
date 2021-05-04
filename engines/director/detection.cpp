@@ -72,7 +72,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "hamsterland1",		"Busy People of Hamsterland" },
 	{ "hamsterland2",		"Hamsterland: The Time Machine" },
-	{ "hhouse",				"Gahan Wilson's The Ultimate Haunted House" },	
+	{ "hhouse",				"Gahan Wilson's The Ultimate Haunted House" },
 	{ "horrortour1",		"Zeddas: Servant of Sheol"},
 	{ "horrortour2",		"Zeddas: Horror Tour 2"},
 	{ "horrortour3",		"Labyrinthe"},

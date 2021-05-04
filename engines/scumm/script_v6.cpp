@@ -740,11 +740,11 @@ void ScummEngine_v6::o6_startScript() {
 	// the cannonballs in the Plunder Town Theater, during the juggling show, the game
 	// cuts from room 18 (backstage) to room 19 (stage).
 	//
-	// Usually, when loading a room script 29 handles the change of background music, 
+	// Usually, when loading a room script 29 handles the change of background music,
 	// based on which room we've just loaded.
 	// Unfortunately, during this particular cutscene, script 29 is not executing,
-	// therefore the music is unchanged from room 18 to 19 (the muffled backstage 
-	// version is played), and is not coherent with the drums fill played afterwards 
+	// therefore the music is unchanged from room 18 to 19 (the muffled backstage
+	// version is played), and is not coherent with the drums fill played afterwards
 	// (sequence 2225), which is unmuffled.
 	//
 	// This fix checks for this situation happening (and only this one), and makes a call

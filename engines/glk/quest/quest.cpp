@@ -109,7 +109,7 @@ void Quest::playGame() {
 			case evtype_Redraw:
 				draw_banner();
 				break;
-			
+
 			default:
 				break;
 			}

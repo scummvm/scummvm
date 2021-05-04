@@ -21,12 +21,12 @@ class sbtlVersTextResource:
 	def __init__(self, traceModeEnabled = True):
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-	
+
 	def printSbtlVersTemplate(self):
 		for (idTre, textTre) in SBTLVERS_TEXT_RESOURCE_TUPLE_LIST:
 			print "%s\t%s" % (idTre, textTre)
 		return
-		
+
 	def getSbtlVersEntriesList(self):
 		return SBTLVERS_TEXT_RESOURCE_TUPLE_LIST
 
@@ -36,9 +36,8 @@ if __name__ == '__main__':
 	traceModeEnabled = False
 	sbtlVersTRInstance = sbtlVersTextResource(traceModeEnabled)
 	sbtlVersTRInstance.printSbtlVersTemplate()
-	
+
 else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
 	pass
-	

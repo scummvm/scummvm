@@ -87,7 +87,7 @@ public:
 	 * Constructor
 	 */
 	Game();
-	
+
 	/**
 	 * Destructor
 	 */

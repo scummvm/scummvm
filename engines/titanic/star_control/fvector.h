@@ -103,7 +103,7 @@ public:
 	FVector matProdRowVect(const FPose &pose) const;
 
 	/**
-	 * Returns a matrix that contains the frame rotation based on this vector and 
+	 * Returns a matrix that contains the frame rotation based on this vector and
 	 * a vector rotation based on input vector v
 	 */
 	FPose getFrameTransform(const FVector &v);
@@ -142,7 +142,7 @@ public:
 
 	const FVector operator*(const FVector &right) const {
 		return FVector(_x * right._x, _y * right._y, _z * right._z);
-	}	
+	}
 
 	void operator+=(const FVector &delta) {
 		_x += delta._x;

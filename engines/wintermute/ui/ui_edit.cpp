@@ -770,7 +770,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		} else {
 			_selEnd++;
 		}
-			
+
 		if (!BaseKeyboardState::isShiftDown()) {
 			_selStart = _selEnd;
 		}

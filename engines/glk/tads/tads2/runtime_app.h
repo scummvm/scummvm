@@ -34,7 +34,7 @@ namespace TADS2 {
 struct runcxdef;
 
 /*
- *   Run-time version number 
+ *   Run-time version number
  */
 #define  TADS_RUNTIME_VERSION   "2.5.17"
 
@@ -49,18 +49,18 @@ extern int G_tads_oem_copyright_prefix;
  *   Main run-time subsystem entrypoint.  Runs the game specified in the
  *   argument vector; does not return until the game terminates.  The
  *   application container context is optional; pass null if no context is
- *   required.  
+ *   required.
  */
 int trdmain(int argc, char **argv, appctxdef *appctx, const char *save_ext);
 
 /*
  *   Main debugger subsystem entrypoint.  Works like trdmain(), but starts
- *   the game under the debugger.  
+ *   the game under the debugger.
  */
 int tddmain(int argc, char **argv, appctxdef *appctx, const char *save_ext);
 
 /*
- *   close and delete the swap file 
+ *   close and delete the swap file
  */
 void trd_close_swapfile(struct runcxdef *runctx);
 
@@ -99,7 +99,7 @@ void trd_close_swapfile(struct runcxdef *runctx);
  *   messages, set up a dummy list.  The usage display routine will show
  *   messages starting from the lower number up to and including the higher
  *   number; by default we'll make the ending number lower than the starting
- *   number so that we don't display any messages at all.  
+ *   number so that we don't display any messages at all.
  */
 #ifndef ERR_TRUS_OS_FIRST
 # define ERR_TRUS_OS_FIRST    100

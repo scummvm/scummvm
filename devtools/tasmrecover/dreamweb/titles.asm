@@ -3,7 +3,7 @@
 ;See LICENSE file for full license text
 
 Titles	proc	near
-	
+
 	if	demo
 	ret
 	else
@@ -67,7 +67,7 @@ loadspeech2:	push	ax
 	call	loadspeech
 	mov	al,50+12
 	call	playchannel1
-notloadspeech2:	
+notloadspeech2:
 	call vsync
 	cmp	ch1playing,255
 	jnz	notloadspeech2
@@ -85,7 +85,7 @@ notloadspeech2:
 	ret
 
 	endp
-	
+
 	else
 
 Monkspeaking	proc	near
@@ -169,7 +169,7 @@ Gettingshot	proc	near
           	call	loadintroroom
          	call	fadescreenups
 	mov	volumeto,0
-	mov	volumedirection,-1	
+	mov	volumedirection,-1
         	call	runendseq
 	call	clearbeforeload
 	ret
@@ -177,16 +177,16 @@ Gettingshot	proc	near
 	endp
 
 
-	
-	
-	
-	
+
+
+
+
 Credits	proc	near
 
 	call	clearpalette
 	call	realcredits
-	ret	
-	
+	ret
+
 	endp
 
 
@@ -210,7 +210,7 @@ Biblequote	proc	near
 	call	hangone
 	cmp	lasthardkey,1
 	jz	biblequotearly
-	call	cancelch0	
+	call	cancelch0
 biblequotearly:
 	mov lasthardkey,0
 	ret
@@ -267,21 +267,21 @@ Intro	proc	near
 ;waitsound:	cmp	ch1blockstoplay,0
 ;	jnz	waitsound
 	call	clearbeforeload
-	
+
 	mov	newlocation,52
 	call	loadintroroom
 	call	runintroseq
 	cmp	lasthardkey,1
 	jz	introearly
 	call	clearbeforeload
-	
+
 	mov	newlocation,53
 	call	loadintroroom
 	call	runintroseq
 	cmp	lasthardkey,1
 	jz	introearly
 	call	clearbeforeload
-	
+
 	call	allpalette
 	mov	newlocation,54
 	call	loadintroroom
@@ -346,7 +346,7 @@ earlyendrun:
 
 
 Runendseq	proc	near
-	
+
 	call	atmospheres
 	mov	getback,0
 moreendseq:	call	vsync
@@ -422,7 +422,7 @@ set16palloop2:	push	ax bx cx
 	inc	bl
 	inc	bh
 	loop	set16palloop2
-	
+
 	mov	bl,31h
 	mov	al,1
 	mov	ah,12h

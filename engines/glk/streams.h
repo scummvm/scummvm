@@ -468,7 +468,7 @@ public:
 		Stream(streams, true, false, rock, false), _inStream(inStream), _outStream(nullptr), _lastOp(0), _textFile(false) {}
 	IOStream(Streams *streams, Common::WriteStream *outStream, uint rock = 0) :
 		Stream(streams, false, true, rock, false), _inStream(nullptr), _outStream(outStream), _lastOp(0), _textFile(false) {}
-	 
+
 	/**
 	 * Sets the stream to use
 	 */

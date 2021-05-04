@@ -166,7 +166,7 @@ bool SX3fStatistics::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferString(TMEMBER(_language));
 	persistMgr->transferString(TMEMBER(_buildNum));
 	persistMgr->transferSint32(TMEMBER(_repeat));
-	
+
 	return STATUS_OK;
 }
 

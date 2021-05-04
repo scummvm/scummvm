@@ -205,7 +205,7 @@ uint MapOverworld::getEnemyVesselCount() const {
 }
 
 void MapOverworld::attack(int direction, int effectId, uint maxDistance, uint amount, uint agility, const Common::String &hitWidget) {
-	
+
 }
 
 

@@ -39,9 +39,9 @@ def main():
 		if not os.path.isdir(args.path):
 			print ("Directory '" + args.path + "' does not exist!")
 			return
-		else:	
+		else:
 			os.chdir(args.path)
-	
+
 	buildArchive("wwwroot")
 
 if __name__ == "__main__":

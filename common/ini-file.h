@@ -35,7 +35,7 @@ namespace Common {
  *
  * @brief API for operations on INI configuration files.
  *
- *		
+ *
  * @{
  */
 

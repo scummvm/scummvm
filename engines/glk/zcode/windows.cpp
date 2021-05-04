@@ -131,7 +131,7 @@ void Window::update() {
 	_properties[RIGHT_MARGIN] = (win ? win->_radjw : 0) / cellW;
 	_properties[FONT_SIZE] = (g_conf->_monoInfo._cellH << 8) | g_conf->_monoInfo._cellW;
 }
- 
+
 Window &Window::operator=(winid_t win) {
 	_win = win;
 
@@ -380,7 +380,7 @@ void Window::createGlkWindow() {
 	if (g_vm->h_version == V6)
 		_windows->showTextWindows();
 
-	// Create a new window	
+	// Create a new window
 	if (_index != 0 || (_currStyle & FIXED_WIDTH_STYLE)) {
 		// Text grid window
 		_win = g_vm->glk_window_open(g_vm->glk_window_get_root(),

@@ -4,10 +4,10 @@ window.addEventListener("load", function(){
     var start = url.indexOf("/", 27);
     var end = url.indexOf("/", start+1);
     var endMinus = url.indexOf("-", start+1);
-    var versionNumber = url.substring(start+1, endMinus);  
+    var versionNumber = url.substring(start+1, endMinus);
     var found = url.substring(start+1, end);
     var version = null;
-    
+
     switch(found) {
       case 'latest':
         version = "development build"

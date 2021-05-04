@@ -3,7 +3,7 @@
 #  Part of  : ScummVM
 #
 #  Description: This is file for creating .hlp file
-# 
+#
 # ============================================================================
 
 

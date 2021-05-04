@@ -142,7 +142,7 @@ for F in sys.argv[1:]:
       l = l[3:]
     else:
       assert(False)
-  
+
     ids = []
     loops = [-1]
     cels = [-1]

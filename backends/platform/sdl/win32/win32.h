@@ -52,7 +52,7 @@ protected:
 	// Override createAudioCDManager() to get our Windows-specific
 	// version.
 	virtual AudioCDManager *createAudioCDManager() override;
-	
+
 	HWND getHwnd() { return ((SdlWindow_Win32*)_window)->getHwnd(); }
 };
 

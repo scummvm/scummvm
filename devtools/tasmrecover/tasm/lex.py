@@ -35,7 +35,7 @@ def parse_args(text):
 		if escape:
 			if not string:
 				raise SyntaxError("escape found in no string: %s" %text);
-	
+
 			#print "escaping[%s]" %c
 			escape = False
 			token += c
@@ -47,7 +47,7 @@ def parse_args(text):
 
 			token += c
 			continue
-		
+
 		if c == '\'' or c == '"':
 			string = True
 			token += c
@@ -60,7 +60,7 @@ def parse_args(text):
 
 		if c == ';': #comment, bailing out
 			break
-		
+
 		token += c
 	#token = token.strip()
 	if len(token):

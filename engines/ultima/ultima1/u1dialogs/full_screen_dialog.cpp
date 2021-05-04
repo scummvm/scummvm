@@ -31,7 +31,7 @@ namespace U1Dialogs {
 FullScreenDialog::FullScreenDialog(Ultima1Game *game) : Dialog(game) {
 	_bounds = Common::Rect(0, 0, 320, 200);
 }
-	
+
 void FullScreenDialog::drawFrame(const Common::String &title) {
 	Shared::Gfx::VisualSurface s = getSurface();
 	U1Gfx::DrawingSupport ds(s);

@@ -67,7 +67,7 @@ protected:
 	void setLightArrayUniform(const LightEntryArray &lights);
 
 	void setShadowUniform(const LightEntryArray &lights, const Math::Vector3d &actorPosition, Math::Matrix3 worldToModelRot);
-	
+
 	bool getPointLightContribution(LightEntry *light, const Math::Vector3d &actorPosition,
 			Math::Vector3d &direction, float weight = 1.0f);
 	bool getDirectionalLightContribution(LightEntry *light, Math::Vector3d &direction);

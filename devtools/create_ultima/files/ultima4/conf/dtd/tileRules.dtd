@@ -20,7 +20,7 @@
                effect             %effect; #IMPLIED
                horse              %bool;   #IMPLIED
                lockeddoor         %bool;   #IMPLIED
-               creatureunwalkable %bool;   #IMPLIED               
+               creatureunwalkable %bool;   #IMPLIED
                replacement        %bool;   #IMPLIED
                onWaterOnlyReplacement %bool; #IMPLIED
                sailable           %bool;   #IMPLIED

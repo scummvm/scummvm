@@ -24,12 +24,12 @@
  * All of the functions and macros in here are named ERRxxx because
  * this file was based on the TADS err.h, which used the ERRxxx naming
  * convention, and it would be a lot of trouble to change.
- * 
+ *
  * This package defines a set of macros that allows code to raise and
  * handle exceptions.  A macro is provided which signals an error, which
  * does a non-local goto to the innermost enclosing exception handler.
  * A set of macros sets up exception handling code.
- * 
+ *
  * To catch exceptions that occur inside a block of code (i.e., in the
  * code or in any subroutines called by the code), begin the block with
  * ERRBEGIN.  At the end of the protected code, place the exception
@@ -37,7 +37,7 @@
  * handler, place ERREND.  If no exception occurs, execution goes
  * through the protected code, then resumes at the code following
  * the ERREND.
- * 
+ *
  * The exception handler can signal another error, which will cause
  * the next enclosing frame to catch the error.  Alternatively, if
  * the exception handler doesn't signal an error or return, execution
@@ -45,14 +45,14 @@
  * signalled during exception handling will be caught by the next
  * enclosing frame, unless the exception handler code is itself
  * protected by another ERRBEGIN-ERREND block.
- * 
+ *
  * To signal an error, use errsig().
- * 
+ *
  * To use a string argument in a signalled error, cover the string
  * with errstr(ctx, str, len); for example:
- * 
+ *
  * errsig1(ctx, ERR_XYZ, ERRTSTR, errstr(ctx, buf, strlen(buf)));
- * 
+ *
  * This copies the string into a buffer that is unaffected by
  * stack resetting during error signalling.
  */
@@ -133,12 +133,12 @@ struct errcxdef {
 	  assert(2==2 && (ctx)->errcxptr != fr_.errprv); \
 	  (e) = fr_.errcode; \
 	  (ctx)->errcxptr = fr_.errprv;
-		
+
 /* retrieve argument (int, string) in current error frame */
 #define errargint(argnum) (fr_.erraav[argnum].erraint)
 #define errargstr(argnum) (fr_.erraav[argnum].errastr)
 
-	
+
 #define ERREND(ctx) \
 	} \
   }
@@ -171,7 +171,7 @@ struct errcxdef {
 #ifdef ERR_NO_MACRO
 char *errstr(errcxdef *ctx, const char *str, int len);
 #else /* ERR_NO_MACRO */
-  
+
 #define errstr(ctx,str,len) \
   ((memcpy(&(ctx)->errcxbuf[(ctx)->errcxofs],str,(size_t)len), \
    (ctx)->errcxofs += (len), \
@@ -209,7 +209,7 @@ void errsigf(errcxdef *ctx, const char *facility, int err);
 #else /* ERR_NO_MACRO */
 #define errsigf(ctx, fac, e) (errargc(ctx,0),errsign(ctx,e,fac))
 #endif /* ERR_NO_MACRO */
-  
+
 /* signal an error with one argument */
 #define errsigf1(ctx, fac, e, typ1, arg1) \
   (errargv(ctx,0,typ1,arg1),errargc(ctx,1),errsign(ctx,e,fac))
@@ -239,16 +239,16 @@ void errrse1(errcxdef *ctx, errdef *fr);
  *   parameters from the error currently being handled to the enclosing
  *   frame.  This is useful when "keeping" an error being handled - i.e.,
  *   the arguments will continue to be used outside of the
- *   ERRCATCH..ERREND code. 
+ *   ERRCATCH..ERREND code.
  */
 /* void errkeepargs(errcxdef *ctx); */
 #define errkeepargs(ctx) errcopyargs(ctx, &fr_)
 
-/* 
+/*
  *   copy the parameters for an error from another frame into the current
  *   frame - this can be used when we want to be able to display an error
  *   that occurred in an inner frame within code that is protected by a
- *   new enclosing error frame 
+ *   new enclosing error frame
  */
 /* void errcopyargs(errcxdef *ctx, errdef *fr); */
 #define errcopyargs(ctx, fr) \
@@ -292,7 +292,7 @@ void errlogf(errcxdef *ctx, const char *facility, int err);
 /* log an error with one argument */
 #define errlogf1(ctx, fac, e, typ1, arg1) \
  (errargv(ctx,0,typ1,arg1),errargc(ctx,1),errlogn(ctx,e,fac))
-  
+
 /* log an error with two arguments */
 #define errlogf2(ctx, fac, e, typ1, arg1, typ2, arg2) \
  (errargv(ctx,0,typ1,arg1),errargv(ctx,1,typ2,arg2),\
@@ -310,10 +310,10 @@ void errlogf(errcxdef *ctx, const char *facility, int err);
  */
 int errfmt(char *outbuf, int outbufl, char *fmt, int argc,
 		   erradef *argv);
-  
+
 /* get the text of an error */
 void errmsg(errcxdef *ctx, char *outbuf, uint outbufl, uint err);
-  
+
 /* initialize error subsystem, opening error message file if necessary */
 void errini(errcxdef *ctx, osfildef *fp);
 

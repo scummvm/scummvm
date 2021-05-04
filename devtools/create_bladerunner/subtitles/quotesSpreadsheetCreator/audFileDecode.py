@@ -14,7 +14,7 @@ else:
 if 	(not ctypesLibFound):
 	sys.stdout.write("[Error] Errors were found when trying to import required python libraries\n")
 	sys.exit(1)
-	
+
 from struct import *
 
 MY_MODULE_VERSION = "0.60"
@@ -49,12 +49,12 @@ def aud_decode_ima_chunk(audioBufferIn, index, sample, cs_chunk):
 	code = -1
 	delta = -1
 	step = -1
-	
+
 	audioBufferOut = []
 	#for i in range(0, len(audioBufferIn)):
 	#if self.m_traceModeEnabled:
 	#	print '[Debug] %d: %d'%(i, int(audioBufferIn[i]))
-	
+
 	for sample_index in range (0, cs_chunk):
 		try:
 			code = audioBufferIn[sample_index >> 1]
@@ -117,7 +117,7 @@ def aud_decode_ws_chunk(inputChunkBuffer, cb_s, cb_d):
 		#binDataOut = struct.pack('b'*len(outputChunkBuffer), *outputChunkBuffer)
 		#return binDataOut
 		return outputChunkBuffer
-		
+
 #	const xccTHA::byte* s_end = inputChunkBuffer + cb_s; # FIX
 
 	s_end = inpChBuffIter + cb_s
@@ -197,17 +197,17 @@ class audFileDecode(object):
 	m_index = -1
 	m_sample = -1
 	m_traceModeEnabled = False
-	
+
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True, index = 0, sample = 0):
 		self.m_traceModeEnabled = traceModeEnabled
 		self.m_index = index;
 		self.m_sample = sample;
 		return
-	
+
 	def index(self):
 		return self.m_index
-		
+
 	# (const xccTHA::byte* audio_in, short* audio_out, int cs_chunk)
 	def decode_chunk(self, audio_in, cs_chunk):
 		(audio_Out, outIndex, outSample) = aud_decode_ima_chunk(audio_in, self.m_index, self.m_sample, cs_chunk)
@@ -220,7 +220,7 @@ if __name__ == '__main__':
 	decodeInstance = audFileDecode()
 	if decodeInstance.m_traceModeEnabled:
 		print "[Debug] Running %s (%s) as main module" % (MY_MODULE_NAME, MY_MODULE_VERSION)
-		
+
 else:
 	#debug
 	#print "[Debug] Running %s (%s) imported from another module" % (MY_MODULE_NAME, MY_MODULE_VERSION)

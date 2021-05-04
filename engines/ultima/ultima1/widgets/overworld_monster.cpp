@@ -36,7 +36,7 @@ OverworldMonster::OverworldMonster(Shared::Game *game, Shared::Maps::MapBase *ma
 		const Point &pt, Shared::Maps::Direction dir) : OverworldWidget(game, map, tileNum, pt, dir),
 		Shared::Maps::Creature(game, map, hitPoints) {
 	_monsterId = (OverworldMonsterId)((tileNum - 19) / 2);
-	
+
 	Ultima1Game *g = static_cast<Ultima1Game *>(game);
 	_name = g->_res->OVERWORLD_MONSTER_NAMES[_monsterId];
 	_attackStrength = g->_res->OVERWORLD_MONSTER_DAMAGE[_monsterId];
@@ -75,7 +75,7 @@ void OverworldMonster::attackParty() {
 	//uint threshold, damage;
 
 	// Print out the monster attacking
-	
+
 	addInfoMsg(Common::String::format("%s %s %s", _name.c_str(), game->_res->ATTACKS, _name.c_str()), false);
 
 	/* TODO: Refactor to use attack effects

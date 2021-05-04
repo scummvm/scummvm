@@ -140,7 +140,7 @@ struct Surface {
 		_pixels = new byte[w * h];
 		memset(_pixels, 0xff, w * h);
 
-		// Set a default palette		
+		// Set a default palette
 		for (int idx = 0; idx < 256; ++idx) {
 			memset(_palette + idx * 3, idx, 3);
 		}

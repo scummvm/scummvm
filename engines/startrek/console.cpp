@@ -98,7 +98,7 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 	Common::String screenName = _vm->getScreenName();
 	byte *rdfData = _vm->_room->loadRoomRDF(screenName);
 	int index = 0;
-	
+
 	do {
 		uint16 offset = textList[index].offsetEnglishCD;
 		debugPrintf("%i - %i: %s\n", textList[index].id, offset, rdfData+offset);
@@ -234,7 +234,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 		rdfFile->seek(32, SEEK_SET);
 		uint16 messageOffset = rdfFile->readUint16LE();
 		rdfFile->seek(messageOffset, SEEK_SET);
-		
+
 		while (!rdfFile->eos() && !rdfFile->err()) {
 			Common::String message;
 			uint16 pos = rdfFile->pos();
@@ -246,7 +246,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 				message += c;
 				c = rdfFile->readByte();
 			}
-			
+
 			if (!message.empty()) {
 				if (!tableFormat) {
 					debug("%s, %d", message.c_str(), pos);
@@ -278,7 +278,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 				int pos = rdfFile->pos();
 				byte c = rdfFile->readByte();
 				bool found = false;
-				
+
 				if (c == '#') {
 					rdfFile->skip(4);
 					c = rdfFile->readByte();
@@ -294,7 +294,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 						}
 
 						Common::String prefix = message.substr(1, 3);
-						
+
 						for (uint i = 0; i < ARRAYSIZE(validPrefixes); i++) {
 							if (prefix == validPrefixes[i]) {
 								MessageInfo m;
@@ -302,7 +302,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 								m.value = message;
 								m.pos = pos;
 								keys.push_back(m);
-								
+
 								break;
 							}
 						}
@@ -321,7 +321,7 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 			Common::String line;
 
 			Common::sort(keys.begin(), keys.end(), MessageInfoComparator());
-			
+
 			for (Common::List<MessageInfo>::const_iterator i = keys.begin(), end = keys.end(); i != end; ++i) {
 				line += "TX_" + (*i).key + ", ";
 				index++;
@@ -332,12 +332,12 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 			}
 
 			debug(line.c_str());
-			
+
 			for (Common::List<MessageInfo>::const_iterator i = keys.begin(), end = keys.end(); i != end; ++i) {
 				debug("{ TX_%s, %d, 0 },", (*i).key.c_str(), (*i).pos);
 			}
 		}
-		
+
 		delete rdfFile;
 	}
 

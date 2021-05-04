@@ -170,7 +170,7 @@ void Lua_V1::DrawPolygon() {
 	}
 
 	// This code only supports 4 point polygons because the game doesn't
-	// use other than that. However, the original engine can support 
+	// use other than that. However, the original engine can support
 	// many points per polygon
 	lua_Object pointObj;
 	Common::Point p[4];

@@ -364,7 +364,7 @@ bool AIScriptMutant2::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 
 		// code repeated also in case 599 which precedes this one
-		// redundant? 
+		// redundant?
 		// results in additional reduction in friendliness and increase of aggressiveness for the other two mutants
 		Actor_Modify_Friendliness_To_Other(kActorMutant1, kActorMcCoy, -15);
 		Actor_Modify_Friendliness_To_Other(kActorMutant3, kActorMcCoy, -20);
@@ -488,7 +488,7 @@ bool AIScriptMutant2::UpdateAnimation(int *animation, int *frame) {
 
 	case 7:
 		*animation = kModelAnimationMutant2ShotDead;
-		// TODO why "- 2" here? 
+		// TODO why "- 2" here?
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMutant2ShotDead) - 2;
 		break;
 

@@ -110,7 +110,7 @@ bool SavegameWriter::finish() {
 		_file->writeUint32LE(fe.size());
 		_file->write(&fe[0], fe.size());
 	}
-	
+
 	return true;
 }
 

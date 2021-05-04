@@ -100,7 +100,7 @@ public:
 
 	/**
 	 * Converts a string to a value
-	 * @param code		Optional returns non-value of character index 		
+	 * @param code		Optional returns non-value of character index
 	 */
 	int val(int *code);
 

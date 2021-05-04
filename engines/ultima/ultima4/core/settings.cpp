@@ -99,7 +99,7 @@ Settings::Settings() {
 	bool isEnhanced = _videoType != "EGA";
 	_scale = isEnhanced ? 2 : 1;
 	_filter = isEnhanced ? "Scale2x" : "point";
-  
+
 	_battleDiffs.push_back("Normal");
 	_battleDiffs.push_back("Hard");
 	_battleDiffs.push_back("Expert");

@@ -117,7 +117,7 @@ kernit:	dec	cl
 ;	call	getnumber
 ;	pop	es
 ;	mov	ch,0
-;printloop1:	mov	ax,[cs:si]  
+;printloop1:	mov	ax,[cs:si]
 ;	inc	si
 ;	cmp	al,0
 ;	jz	finishprint
@@ -248,7 +248,7 @@ Printdirect	proc	near
 
 	mov	lastxpos,di
 	mov	ds,currentset
-printloop6:	push	bx di dx 
+printloop6:	push	bx di dx
 	call	getnumber
 	mov	ch,0
 printloop5:	mov	ax,[es:si]
@@ -585,7 +585,7 @@ not173:	cmp	al,129
 not129:	ret
 
 nomod:	ret
-	
+
 	endp
 
 	endif

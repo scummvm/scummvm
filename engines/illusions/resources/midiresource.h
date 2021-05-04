@@ -62,7 +62,7 @@ public:
 	void load(Resource *resource) override;
 	void unload() override;
 public:
-	IllusionsEngine *_vm;	
+	IllusionsEngine *_vm;
 	MidiGroupResource *_midiGroupResource;
 	uint32 _resId;
 };

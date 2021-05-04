@@ -29,7 +29,7 @@ namespace Ultima {
 namespace Ultima0 {
 
 class Resources : public Shared::LocalResourceFile {
-	
+
 };
 
 } // End of namespace Ultima0

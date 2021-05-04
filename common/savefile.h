@@ -66,12 +66,12 @@ public:
 	 * you must call clearErr() explicitly.
 	 */
 	virtual bool err() const;
-	
+
 	/**
 	 * Reset the I/O error status as returned by err().
 	 */
 	virtual void clearErr();
-	
+
 	/**
 	 * Finalize and close this stream. To be called right before this
 	 * stream instance is deleted. The goal here is to enable calling
@@ -185,7 +185,7 @@ public:
 	 *
 	 * @param name      Name of the save file.
 	 * @param compress  Whether to compress the resulting save file (default) or not.
-	 * 
+	 *
 	 * @return Pointer to an OutSaveFile, or NULL if an error occurred.
 	 */
 	virtual OutSaveFile *openForSaving(const String &name, bool compress = true) = 0;
@@ -221,7 +221,7 @@ public:
 	 * @param oldName   Old name.
 	 * @param newName   New name.
 	 * @param compress  Whether to compress the resulting save file (default) or not.
-	 * 
+	 *
 	 * @return True if no error occurred, false otherwise.
 	 */
 	virtual bool renameSavefile(const String &oldName, const String &newName, bool compress = true);
@@ -232,7 +232,7 @@ public:
 	 * @param oldName   Old name.
 	 * @param newName   New name.
 	 * @param compress  Whether to compress the resulting save file (default) or not.
-	 * 
+	 *
 	 * @return true if no error occurred. false otherwise.
 	 */
 	virtual bool copySavefile(const String &oldName, const String &newName, bool compress = true);

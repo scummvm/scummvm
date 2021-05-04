@@ -60,11 +60,11 @@ void CCamera::deinit() {
 	_newOrientation = nullptr;
 }
 
-bool CCamera::isLocked() { 
+bool CCamera::isLocked() {
 	return _motion->isLocked();
 }
 
-bool CCamera::isNotInLockingProcess() { 
+bool CCamera::isNotInLockingProcess() {
 	return !_isInLockingProcess;
 }
 
@@ -592,7 +592,7 @@ bool CCamera::lockMarker2(CViewport *viewport, const FVector &secondStarPosition
 	FVector newPos = m13._row1;
 	FMatrix oldOr = _viewport.getOrientation();
 
-	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// WORKAROUND: set old position to new position (1st argument), this prevents
 	// locking issues when locking the 2nd star. Fixes #9961.
 	_motion->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 	CCallbackHandler *callback = new CCallbackHandler(this, secondStarPosition);
@@ -611,7 +611,7 @@ bool CCamera::lockMarker3(CViewport *viewport, const FVector &thirdStarPosition)
 	FVector newPos = viewport->_position;
 	//FVector oldPos = _viewport._position;
 
-	// WORKAROUND: set old position to new position (1st argument), this prevents 
+	// WORKAROUND: set old position to new position (1st argument), this prevents
 	// locking issues when locking the 3rd star. Fixes #9961.
 	_motion->transitionBetweenPosOrients(newPos, newPos, oldOr, newOr);
 

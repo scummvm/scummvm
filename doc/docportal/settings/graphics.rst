@@ -75,17 +75,17 @@ V-Sync in 3D games
 .. _renderer:
 
 Game 3D renderer
-	Changes how a 3D game is rendered. This setting has no effect on 2D games. 
+	Changes how a 3D game is rendered. This setting has no effect on 2D games.
 
 	- OpenGL: renders on hardware (uses the GPU)
 	- OpenGL with shaders: renders on hardware with shader support
-	- Software: renders on software (uses the CPU). 
+	- Software: renders on software (uses the CPU).
 
 	*renderer*
 
 .. _antialiasing:
 
 3D Anti-aliasing
-	Changes the anti-aliasing method. The number refers to how many samples are taken per pixel; 8x takes 8 samples per pixel and is the most accurate, but is also the most processor-intensive option. 
+	Changes the anti-aliasing method. The number refers to how many samples are taken per pixel; 8x takes 8 samples per pixel and is the most accurate, but is also the most processor-intensive option.
 
 	*antialiasing*

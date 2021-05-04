@@ -40,7 +40,7 @@ namespace Stark {
 
 /**
  * Settings services.
- * 
+ *
  * Maintains the settings of the game.
  */
 class Settings {
@@ -78,7 +78,7 @@ public:
 	int getIntSetting(IntSettingIndex index) { return ConfMan.getInt(_intKey[index]); }
 
 	/** Flip the boolean settings */
-	void flipSetting(BoolSettingIndex index) { 
+	void flipSetting(BoolSettingIndex index) {
 		ConfMan.setBool(_boolKey[index], !getBoolSetting(index));
 	}
 
@@ -89,7 +89,7 @@ public:
 	bool hasLowResFMV() { return _hasLowRes; }
 
 	/** Enable the book of secrets */
-	void enableBookOfSecrets() { 
+	void enableBookOfSecrets() {
 		ConfMan.setBool("xoBfOsterceS", true);
 		ConfMan.flushToDisk();
 	}

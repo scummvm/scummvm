@@ -108,7 +108,7 @@ void RenderSurface::set_format(const Graphics::PixelFormat *fmt) {
 	Gloss16 = Gloss + 8;
 	Bloss16 = Bloss + 8;
 	Rshift = fmt->rShift;
-	Gshift = fmt->gShift; 
+	Gshift = fmt->gShift;
 	Bshift = fmt->bShift;
 	Rmask = fmt->rMax() << fmt->rShift;
 	Gmask = fmt->gMax() << fmt->gShift;

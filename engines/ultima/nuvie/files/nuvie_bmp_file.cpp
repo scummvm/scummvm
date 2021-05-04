@@ -282,7 +282,7 @@ Graphics::ManagedSurface *NuvieBmpFile::getSdlSurface32() {
 	}
 
 	Graphics::ManagedSurface *surface = new Graphics::ManagedSurface(
-		infoHeader.width, infoHeader.height, 
+		infoHeader.width, infoHeader.height,
 		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
 	);
 

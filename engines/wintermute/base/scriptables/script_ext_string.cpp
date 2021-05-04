@@ -275,7 +275,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			result = _string[index];
 		}
 		stack->pushInt(result);
-		
+
 		return STATUS_OK;
 	}
 #endif

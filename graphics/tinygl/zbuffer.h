@@ -89,12 +89,12 @@ struct ZBufferPoint {
 
 	bool operator==(const ZBufferPoint &other) const {
 		return	x == other.x &&
-				y == other.y && 
+				y == other.y &&
 				z == other.z &&
 				s == other.s &&
-				t == other.t && 
-				r == other.r && 
-				g == other.g && 
+				t == other.t &&
+				r == other.r &&
+				g == other.g &&
 				b == other.b &&
 				a == other.a;
 	}
@@ -272,7 +272,7 @@ struct FrameBuffer {
 		if (kDepthWrite) {
 			_zbuf[pixel] = z;
 		}
-		
+
 		if (kBlendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
@@ -382,7 +382,7 @@ struct FrameBuffer {
 	void copyFromBuffer(Graphics::PixelBuffer buf) {
 		pbuf.copyBuffer(0, xsize * ysize, buf);
 	}
-	
+
 	void enableBlending(bool enable) {
 		_blendingEnabled = enable;
 	}

@@ -39,13 +39,13 @@ void plygo(runcxdef *run, voccxdef *voc, tiocxdef *tio, objnum preinit, char *re
 
 	first_time = TRUE;
 
-	/* 
+	/*
 	 *   Write out the special <?T2> HTML sequence, in case we're on an HTML
 	 *   system.  This tells the HTML parser to use the parsing rules for
-	 *   TADS 2 callers. 
+	 *   TADS 2 callers.
 	 */
 	outformat("\\H+<?T2>\\H-");
-	
+
 startover:
 	if (!inited)
 	{
@@ -90,11 +90,11 @@ startover:
 			}
 			ERREND(ec);
 		}
-		
-		/* 
+
+		/*
 		 *   Run the "init" function.  Do NOT run init if we're restoring
 		 *   a game directly from the command line AND there's an
-		 *   initRestore function defined. 
+		 *   initRestore function defined.
 		 */
 		if (restore_fname == 0 || voc->voccxinitrestore == MCMONINV)
 		{
@@ -114,21 +114,21 @@ startover:
 				/* if they restarted, go back and start over */
 				if (err == ERR_RUNRESTART)
 					goto startover;
-				
+
 				/* resignal the error */
 				errrse(ec);
 			}
 			ERREND(ec);
 		}
 	}
-	
+
 	/* next time through, we'll need to run init again */
 	inited = FALSE;
 
-	/* 
+	/*
 	 *   check for startup parameter file to restore - if there's a
 	 *   system-specific parameter file specified, pretend that it was
-	 *   specified as the restore file 
+	 *   specified as the restore file
 	 */
 	if (os_paramfile(filbuf))
 		restore_fname = filbuf;
@@ -139,14 +139,14 @@ startover:
 		/*
 		 *   Check to see if the game file supports the initRestore
 		 *   function.  If so, call it to restore the game.  If not,
-		 *   restore the game directly. 
+		 *   restore the game directly.
 		 */
 		if (voc->voccxinitrestore != MCMONINV)
 		{
 			char restore_buf[OSFNMAX*2];
 			char *src;
 			char *dst;
-			
+
 			/* convert any backslashes to double backslashes */
 			for (src = restore_fname, dst = restore_buf ;
 				 *src != '\0' && dst + 2 < restore_buf + sizeof(restore_buf) ;
@@ -165,10 +165,10 @@ startover:
 					*dst++ = *src;
 				}
 			}
-			
-			/* 
+
+			/*
 			 *   all the game's initRestore function with the name of
-			 *   saved game file to restore as the argument 
+			 *   saved game file to restore as the argument
 			 */
 
 			/* reset the interpreter */
@@ -202,15 +202,15 @@ startover:
 
 	/* clear out the redo command buffer */
 	voc->voccxredobuf[0] = '\0';
-	
+
 	/* read and execute commands */
 	for (;;)
 	{
 		char buf[128];
-		
+
 		err = 0;
 		ERRBEGIN(ec)
-			
+
 		/* read a new command if there's nothing to redo */
 		if (!voc->voccxredo)
 		{
@@ -229,7 +229,7 @@ startover:
 			{
 				int   quiet = FALSE;
 				char *p;
-				
+
 				p = buf + 1;
 				if (*p == '@')
 				{
@@ -266,7 +266,7 @@ startover:
 			}
 		}
 
-		/* 
+		/*
 		 *   If there's redo in the redo buffer, use it now.  If the
 		 *   buffer is empty and the redo flag is set, we'll just
 		 *   re-execute whatever's in our internal buffer.
@@ -288,7 +288,7 @@ startover:
 
 		/* execute the command */
 		(void)voccmd(voc, buf, (uint)sizeof(buf));
-		
+
 	end_loop:
 		ERRCATCH(ec, err)
 		{
@@ -309,7 +309,7 @@ startover:
 					errrse(ec);
 			ERREND(ec)
 		}
-			
+
 		/* if they want to quit, we're done */
 		if (err == ERR_RUNQUIT)
 			break;
@@ -321,7 +321,7 @@ startover:
 	 *   If we're quitting, give the debugger one last chance at taking
 	 *   control.  If it just returns, we can go ahead and terminate, but
 	 *   if it wants it can restart the game by calling bifrst() as
-	 *   normal.  
+	 *   normal.
 	 */
 	ERRBEGIN(ec)
 	{

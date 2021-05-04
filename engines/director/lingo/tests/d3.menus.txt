@@ -9,9 +9,9 @@ machineType;marker;memorySize;mouseCast;mouseChar;mouseItem;mouseLine;mouseDown;
 menu: Keywords
 exit;factory;global;if;instance;macro;menu:;method;on;on idle;on startMovie;on stepMovie;on stopMovie;repeat while;repeat with;return
 menu: Operators
-() ;sprite s within ;sprite s intersects ; - ;not ;and ;or ;* ;/ ;mod ;+ ; - ;& ;&& ;< ;<= ;> ;>= ;<> ;contains ;starts ;= 
+() ;sprite s within ;sprite s intersects ; - ;not ;and ;or ;* ;/ ;mod ;+ ; - ;& ;&& ;< ;<= ;> ;>= ;<> ;contains ;starts ;=
 menu: Constants
-BACKSPACE ;EMPTY ;ENTER ;FALSE ;QUOTE ;RETURN ;TAB ;TRUE 
+BACKSPACE ;EMPTY ;ENTER ;FALSE ;QUOTE ;RETURN ;TAB ;TRUE
 menu: Properties
 beepOn;buttonStyle;centerStage;checkBoxAccess;checkBoxType;colorDepth;exitLock;fixStageSize;floatPrecision;fullColorPermit;imageDirect;keyDownScript;maxInteger;mouseDownScript;mouseUpScript;perFrameHook;romanLingo;soundEnabled;soundLevel;stageColor;switchColorDepth;timeoutKeydown;timeoutLapsed;timeoutLength;timeoutMouse;timeoutPlay;timeoutScript;timer
 menu: Sprite Properties

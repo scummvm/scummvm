@@ -79,7 +79,7 @@ MODULE_OBJS = \
 	rooms/veng7.o \
 	rooms/veng8.o \
 	rooms/venga.o
-	
+
 
 
 # This module can be built as a plugin

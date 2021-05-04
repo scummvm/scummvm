@@ -567,7 +567,7 @@ static void parseExceptions(CONTEXT, ParameterPosition *parameterPosition, Param
 	currentWordIndex++;
 	parameterPosition->exceptions = ensureParameterArrayAllocated(parameterPosition->exceptions);
 	CALL1(simpleParameterParser, parameterPosition->exceptions)
-	
+
 	if (lengthOfParameterArray(parameterPosition->exceptions) == 0)
 		errorAfterExcept(context, exceptWordIndex);
 }
@@ -1086,7 +1086,7 @@ static void handleMultiplePosition(CONTEXT, ParameterPosition parameterPositions
 		/* If the player used ALL, try to find out what was applicable */
 		CALL3(disambiguateCandidatesForPosition, parameterPositions, multiplePosition,
 			parameterPositions[multiplePosition].parameters)
-		
+
 		if (lengthOfParameterArray(parameterPositions[multiplePosition].parameters) == 0)
 			CALL1(errorWhat, parameterPositions[multiplePosition].parameters[0].firstWord)
 
@@ -1322,7 +1322,7 @@ static void disambiguate(CONTEXT, ParameterPosition parameterPositions[], Elemen
 				Parameter *parameter = &parameters[p];
 				Parameter *candidates = parameter->candidates;
 				CALL4(disambiguateCandidates, candidates, omni, reachable, disambiguationHandlerTable)
-				
+
 				parameter->instance = candidates[0].instance;
 			}
 		}

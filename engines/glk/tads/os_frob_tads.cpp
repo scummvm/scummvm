@@ -31,7 +31,7 @@ static osfildef *openForReading(const char *fname) {
 	Common::File f;
 	if (f.open(fname))
 		return f.readStream(f.size());
-	
+
 	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(fname);
 	return save;
 }

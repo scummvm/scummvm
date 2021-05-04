@@ -32,7 +32,7 @@
 namespace Ultima {
 namespace Shared {
 
-#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map) 
+#define REGISTER_WIDGET(NAME) if (name == #NAME) return new Widgets::NAME(_game, (Ultima1Map::MapBase *)map)
 #define DECLARE_WIDGET(NAME) virtual const char *getClassName() const override { return #NAME; }
 
 enum Direction {
@@ -59,7 +59,7 @@ public:
 	int _widgetNum;							// Widget number, if any
 	MapWidget *_widget;						// Widget pointer
 	int _itemNum;							// Item number, if any
-	// Dungeon tile flags 
+	// Dungeon tile flags
 	bool _isDoor, _isSecretDoor;
 	bool _isLadderUp, _isLadderDown;
 	bool _isWall, _isHallway, _isBeams;

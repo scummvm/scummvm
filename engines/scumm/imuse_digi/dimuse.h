@@ -121,7 +121,7 @@ private:
 	Track *handleFadeOut(Track *track, int fadeDelay);
 	int transformVolumeLinearToEqualPow(int volume, int mode);
 	int transformVolumeEqualPowToLinear(int volume, int mode);
-	
+
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);

@@ -224,7 +224,7 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 	if (s) {
 		s->onStateExit();
 	}
-	
+
 	s = getStateObject(_gameFlow.curState);
 	if (s) {
 		s->onStateEnter();
@@ -273,7 +273,7 @@ Common::Error NancyEngine::run() {
 	while (!shouldQuit()) {
 		_cursorManager->setCursorType(CursorManager::kNormalArrow);
 		_input->processEvents();
-		
+
 		State::State *s = getStateObject(_gameFlow.curState);
 		if (s) {
 			s->process();

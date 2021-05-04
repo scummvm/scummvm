@@ -432,7 +432,7 @@ bool CDoorbot::TrueTalkNotifySpeechEndedMsg(CTrueTalkNotifySpeechEndedMsg *msg) 
 	CTrueTalkNPC::TrueTalkNotifySpeechEndedMsg(msg);
 
 	if (_npcFlags & NPCFLAG_DOORBOT_INTRO) {
-		// Initial speech by Doorbot in 
+		// Initial speech by Doorbot in
 		switch (msg->_dialogueId - TRANSLATE(10552, 10563)) {
 		case 0:
 			playClip("SE Try Buttons", MOVIE_NOTIFY_OBJECT);

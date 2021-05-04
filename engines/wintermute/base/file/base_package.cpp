@@ -91,7 +91,7 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	_gameVersion = stream->readUint32LE();
 
 	_priority = stream->readByte();
-	
+
 	// HACK: reversion1 and reversion2 for Linux & Mac use some hacked Wintermute
 	// They provide "xlanguage_*.dcp" packages with 0x00 priority and change priority for a single package in runtime
 	// We already filter unwanted "xlanguage_*.dcp" packages at BaseFileManager::registerPackages()
@@ -99,7 +99,7 @@ void TPackageHeader::readFromStream(Common::ReadStream *stream) {
 	if (_priority == 0 && BaseEngine::instance().getGameId().hasPrefix("reversion")) {
 		_priority = 0x02;
 	}
-	
+
 	_cd = stream->readByte();
 	_masterIndex = stream->readByte();
 	stream->readByte(); // To align the next byte...

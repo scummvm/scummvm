@@ -75,7 +75,7 @@ ViewGame::ViewGame(TreeItem *parent) : Shared::Gfx::VisualContainer("Game", Rect
 
 	Ultima1Game *game = static_cast<Ultima1Game *>(getGame());
 	_viewportMap = new ViewportMap(this);
-	
+
 	_actions.resize(22);
 	_actions[0] = new Actions::Move(this);
 	_actions[1] = new Shared::Actions::Huh(this, game->_res->HUH);

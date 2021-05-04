@@ -254,7 +254,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 		case kEventEnterFrame:
 			queueFrameEvent(event, eventId);
 			break;
-		
+
 		case kEventIdle:
 		case kEventStartUp:
 		case kEventStartMovie:
@@ -264,7 +264,7 @@ void Movie::registerEvent(LEvent event, int targetId) {
 			break;
 
 		default:
-			warning("registerEvent: Unhandled event %s", _lingo->_eventHandlerTypes[event]);	
+			warning("registerEvent: Unhandled event %s", _lingo->_eventHandlerTypes[event]);
 		}
 	} else {
 		/* In D4+, queue any objects that responds to this event, in order of precedence.

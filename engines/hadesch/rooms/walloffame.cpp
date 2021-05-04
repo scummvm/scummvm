@@ -104,7 +104,7 @@ static const char *kPanicAndPainSting = "pain and panic sting";
 #define kHeroineStatue "heroine statue"
 static const char *kScroll = "scroll";
 static const char *kScrollSound = "scroll sound";
-	
+
 static const char *kHeroBelt = "hero belt";
 static const char *kHeroBeltUpSound = "hero belt up sound";
 static const char *kHeroBeltDownSound = "hero belt down sound";
@@ -591,7 +591,7 @@ public:
 					      Common::Point(14, 320));
 				break;
 			}
-				
+
 			int rnd = g_vm->getRnd().getRandomNumberRng(1, 10);
 			debug("rnd = %d", rnd);
 			switch(rnd) {
@@ -813,7 +813,7 @@ public:
 		room->addStaticLayer(kBackground, kBackgroundZ);
 		room->addStaticLayer(kHerculesLintel, 900);
 		room->addStaticLayer(kRope, 900);
-		Quest quest = persistent->_quest; 
+		Quest quest = persistent->_quest;
 		if (quest != kEndGame) {
 			room->addStaticLayer(kArgo, 950, kOffsetRightRoom);
 			room->enableHotzone("argo");
@@ -867,7 +867,7 @@ public:
 				room->setHotZoneOffset(hz, kOffsetRightRoom);
 			}
 		}
-		
+
 		room->selectFrame(kScroll, kScrollZ, 0, kOffsetRightRoom);
 		room->setPannable(true);
 		if (newGame) {

@@ -30,7 +30,7 @@ namespace Stark {
 
 /**
  * Game chapter services
- * 
+ *
  * Provide the game chapter's title and subtitle
  */
 class GameChapter {

@@ -36,10 +36,10 @@ namespace Common {
  * @ingroup common
  *
  * @brief API for operations related to Huffman bit stream decoding.
- * 
+ *
  * @details Used in engines:
  *          - SCUMM
- *		
+ *
  * @{
  */
 

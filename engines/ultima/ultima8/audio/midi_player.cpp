@@ -93,7 +93,7 @@ void MidiPlayer::play(int trackNo, int branchIndex) {
 		warning("play() invalid track number %i", trackNo);
 		return;
 	}
-		
+
 	if (branchIndex >= 0) {
 		if (!_parser->jumpToIndex(branchIndex, false)) {
 			warning("play() invalid branch index %i", branchIndex);

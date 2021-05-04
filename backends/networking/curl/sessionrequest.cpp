@@ -125,7 +125,7 @@ void SessionRequest::handle() {
 			if (_contentsStream.write(_buffer, readBytes) != readBytes)
 				warning("SessionRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
-		if (_stream->eos()) {			
+		if (_stream->eos()) {
 			finishSuccess();
 		}
 	}

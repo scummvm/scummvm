@@ -54,7 +54,7 @@ private:
 private:
 	/**
 	 * Creates a motion controller for the camera. This needs to be recreated
-	 * when the number of locked stars changes. 
+	 * when the number of locked stars changes.
 	 * @param src	Contains characteristics to set for the motion
 	 */
 	bool createMotionControl(const CNavigationInfo *src);
@@ -88,7 +88,7 @@ public:
 
 	/**
 	 * The mover/view is not currently homing in on a new star
-	 * This can mean it is unmarked, or that it is fully locked 
+	 * This can mean it is unmarked, or that it is fully locked
 	 * onto one star or more (but not in the process of doing so)
 	 */
 	bool isNotInLockingProcess();
@@ -221,7 +221,7 @@ public:
 	 * Second is the x center coordinate relative to z
 	 * Third is the first x center pixel offset
 	 * Fourth is the second x center pixel offset
-	 */	
+	 */
 	virtual void getRelativeXCenterPixels(double *v1, double *v2, double *v3, double *v4);
 
 	/**
@@ -236,7 +236,7 @@ public:
 
 	/**
 	 * Calculates the angle of rotation of y that achieves
-	 * the minimum distance to x. 
+	 * the minimum distance to x.
 	 * The angle is in degrees.
 	 * Also returns the minimum distance calculated
 	 */

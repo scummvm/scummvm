@@ -19,7 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
- 
+
 #include "pink/archive.h"
 #include "pink/cel_decoder.h"
 #include "pink/pink.h"

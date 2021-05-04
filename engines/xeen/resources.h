@@ -42,7 +42,7 @@ class Resources {
 	 * Derived file class with sync method aliases so that the same
 	 * code from create_xeen can be re-used for both reading and
 	 * writing the resource data
-	 */	
+	 */
 	class ResFile : public File {
 	private:
 		char *_buffer;

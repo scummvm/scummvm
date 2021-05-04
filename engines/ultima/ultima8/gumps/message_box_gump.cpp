@@ -43,7 +43,7 @@ MessageBoxGump::MessageBoxGump(const Std::string &title, const Std::string &mess
 		ModalGump(0, 0, 100, 100), _title(title), _message(message), _titleColour(titleColour) {
 	if (buttons)
 		buttons->swap(_buttons);
-	
+
 	if (_buttons.empty())
 		_buttons.push_back(Std::string("Ok"));
 }

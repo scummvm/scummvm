@@ -11,7 +11,7 @@
     <mapping frames="16" tile="ceiling_hole"/>
     <mapping frames="16" tile="floor_hole"/>
     <mapping frames="16" tile="magic_orb"/>
-    
+
     <mapping frames="16" tile="ceiling_hole"/>
     <!--
     <mapping tile="wind_trap"/>

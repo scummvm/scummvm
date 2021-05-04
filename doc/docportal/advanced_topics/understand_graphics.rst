@@ -58,7 +58,7 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/advmame2x.png
 
-    **AdvMAME2x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast. 
+    **AdvMAME2x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/advmame3x.png
 
@@ -66,11 +66,11 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/advmame4x.png
 
-    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast. 
+    **AdvMAME3x**: Expands each pixel into 4 new pixels based on the surrounding pixels. Doesn't rely on blurring like 2xSAI, fast.
 
 .. figure:: ../images/graphics/graphics_mode/sai2x.png
 
-    **SaI2x**: Uses bilinear filtering to interpolate pixels. 
+    **SaI2x**: Uses bilinear filtering to interpolate pixels.
 
 .. figure:: ../images/graphics/graphics_mode/supersai2x.png
 
@@ -82,7 +82,7 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/pm2x.png
 
-    **PM2x**: Analyzes the eight neighboring pixels to create smoother diagonal lines and rounded edges. 
+    **PM2x**: Analyzes the eight neighboring pixels to create smoother diagonal lines and rounded edges.
 
 .. figure:: ../images/graphics/graphics_mode/dotmatrix2x.png
 
@@ -193,24 +193,24 @@ To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+
 
 Vsync
 *******
-V-sync, or vertical sync, synchronizes the frame rate of the game with the monitor's refresh rate, or the video capture refresh rate. This helps to prevent screen "tearing", where the screen displays parts of multiple frames at once, which looks like a horizontal line where the image appears to split. 
+V-sync, or vertical sync, synchronizes the frame rate of the game with the monitor's refresh rate, or the video capture refresh rate. This helps to prevent screen "tearing", where the screen displays parts of multiple frames at once, which looks like a horizontal line where the image appears to split.
 
-This setting is enabled by default. 
+This setting is enabled by default.
 
 Renderers
 *********
 There are three options for rendering 3D games: OpenGL, OpenGL with shaders, or software.
 
-- OpenGL uses the graphics card (GPU) to render the game. 
-- OpenGL with shaders also uses the GPU, but also uses shaders, if available, to render the game. Shaders are small programs running on the GPU which transform certain graphics inputs to outputs. They control things such as how the pixels are drawn on the 3D shapes. 
-- The software option uses the computer's CPU, instead of a graphics card, to render the game.  
+- OpenGL uses the graphics card (GPU) to render the game.
+- OpenGL with shaders also uses the GPU, but also uses shaders, if available, to render the game. Shaders are small programs running on the GPU which transform certain graphics inputs to outputs. They control things such as how the pixels are drawn on the 3D shapes.
+- The software option uses the computer's CPU, instead of a graphics card, to render the game.
 
-Not all render options are available for all games. If in doubt, leave the setting at **<default>**. 
+Not all render options are available for all games. If in doubt, leave the setting at **<default>**.
 
 Anti-aliasing
 ***************
-Without anti-aliasing, the computer takes the color it finds at the center of the pixel, and applies that color to the entire pixel. This results in jagged, pixelated lines at the edges of objects. Anti-aliasing, in a nutshell, is how we get nice, smooth lines on a 3D game. 
+Without anti-aliasing, the computer takes the color it finds at the center of the pixel, and applies that color to the entire pixel. This results in jagged, pixelated lines at the edges of objects. Anti-aliasing, in a nutshell, is how we get nice, smooth lines on a 3D game.
 
-Historically, anti-aliasing was done using a method called Supersampling. With this method, each frame is rendered behind-the-scenes to a higher resolution, and then downscaled to produce a much smoother, better looking image. Unfortunately, this method is very GPU-intensive, and too slow. 
+Historically, anti-aliasing was done using a method called Supersampling. With this method, each frame is rendered behind-the-scenes to a higher resolution, and then downscaled to produce a much smoother, better looking image. Unfortunately, this method is very GPU-intensive, and too slow.
 
-Multisampling Anti-Aliasing, or MSAA for short, was developed as a much faster alternative; the computer renders as much of the image as possible without anti-aliasing, and then only applies anti-aliasing to the edges. It samples each pixel to find out where the edge is, and how to blend the colors to create a smooth edge. The numbered options in the ScummVM :doc:`../settings/graphics` tab (2x, 4x and 8x), refer to how many samples are taken. 8x MSAA produces a better image than 2x MSAA, but is also more GPU-intensive. 
+Multisampling Anti-Aliasing, or MSAA for short, was developed as a much faster alternative; the computer renders as much of the image as possible without anti-aliasing, and then only applies anti-aliasing to the edges. It samples each pixel to find out where the edge is, and how to blend the colors to create a smooth edge. The numbered options in the ScummVM :doc:`../settings/graphics` tab (2x, 4x and 8x), refer to how many samples are taken. 8x MSAA produces a better image than 2x MSAA, but is also more GPU-intensive.

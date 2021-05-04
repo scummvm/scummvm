@@ -164,7 +164,7 @@ public:
 	 * method below.
 	 */
 	void send(byte status, byte firstOp, byte secondOp);
-	
+
 	/**
 	 * Send a MIDI command from a specific source. If the MIDI driver
 	 * does not support multiple sources, the source parameter is
@@ -191,7 +191,7 @@ public:
 	 * This can be used to implement an alternate delay method than the
 	 * OSystem::delayMillis function used by most sysEx implementations.
 	 * Note that not every driver needs a delay, or supports this method.
-	 * In this case, 0 is returned and the driver itself will do a delay 
+	 * In this case, 0 is returned and the driver itself will do a delay
 	 * if necessary.
 	 *
 	 * For information on the SysEx data requirements, see the sysEx method.

@@ -37,13 +37,13 @@
 
 /**
  * MIDI driver for MT-32 and GM compatible emulators and devices.
- * 
+ *
  * This class contains some commonly needed functionality for these devices and
- * the MIDI data that targets them. It wraps the MidiDriver instance that does 
+ * the MIDI data that targets them. It wraps the MidiDriver instance that does
  * the actual communication with the MT-32 or GM device.
- * 
+ *
  * This driver has the following features:
- * 
+ *
  * - MIDI device initialization
  *	 Construct the driver with the type of MIDI data that will be sent to it.
  *   When the driver is opened, it will create an output MIDI driver appropriate
@@ -51,7 +51,7 @@
  *   create the output MIDI driver yourself and pass it to the open function.
  *   The driver will take care of initializing the MIDI device and setting up
  *   for playback of MT-32 data on a GM/GS device or the other way around.
- * 
+ *
  * - MT-32 <> GM conversion
  *   If the incoming MIDI data has been set to MT-32 and the output device is
  *   GM, the driver will map MT-32 instruments to GM equivalents. GM playback
@@ -59,25 +59,25 @@
  *   _gmToMT32InstrumentMap variables to override the standard instrument maps,
  *   or override the mapMT32InstrumentToGM and mapGMInstrumentToMT32 functions
  *   for more advanced mapping algorithms.
- * 
+ *
  * - User volume settings
  *   The driver will scale the MIDI channel volume using the user specified
  *   volume settings. Just call syncSoundSettings when the user has changed the
  *   volume settings. Set the USER_VOLUME_SCALING property to false to disable
  *   this functionality.
- * 
+ *
  * - Reverse stereo
  *   If the game has MIDI data with reversed stereo compared to the targeted
  *   output device, set the MIDI_DATA_REVERSE_PANNING property to reverse
  *   stereo. The driver wil automatically reverse stereo when MT-32 data is
  *   sent to a GM/GS device or the other way around.
-  * 
+  *
  * - Correct Roland GS bank and drumkit selects
  *   Some games' MIDI data relies on a feature of the Roland SC-55 MIDI module
  *	 which automatically corrects invalid bank selects and drumkit program
  *	 changes. The driver replicates this feature to ensure correct instrument
  *	 banks and drumkits on other hardware or softsynths.
- * 
+ *
  * - SysEx queue
  *   The sysExQueue function will queue a SysEx message and return immediately.
  *   You can send more messages to the queue while the driver sends the
@@ -88,7 +88,7 @@
  *   necessary amount of time for the MIDI device to process the message.
  *   Use clearSysExQueue to remove all messages from the queue, in case device
  *   initialization has to be aborted.
-* 
+*
  * - Multiple MIDI sources
  *   If the game plays multiple streams of MIDI data at the same time, each
  *   stream can be marked with a source number. This enables the following
@@ -317,7 +317,7 @@ public:
 	/**
 	 * Write data to an MT-32 memory location using a SysEx message.
 	 * This function will add the necessary header and checksum bytes.
-	 * 
+	 *
 	 * @param msg Pointer to the data to write to a memory location
 	 * @param length The data length
 	 * @param targetAddress The start memory address in 8 bit format.
@@ -362,7 +362,7 @@ public:
 	 * volume will remain at the current value or be set to the start or end
 	 * volume. If there is no active fade for the specified source, this
 	 * function does nothing.
-	 * 
+	 *
 	 * @param source The source that should have its fade aborted
 	 * @param abortType How to set the volume when aborting the fade (default:
 	 * set to the target fade volume).
@@ -395,7 +395,7 @@ public:
 	 * Note that sources are not required to allocate channels, so if sources
 	 * use conflicting MIDI channels, make sure to use this function
 	 * consistently.
-	 * 
+	 *
 	 * @param source The source for which to allocate channels
 	 * @param numChannels The number of channels to allocate
 	 * @return True if allocation was successful, false otherwise (usually
@@ -420,7 +420,7 @@ public:
 	 */
 	void setSourceVolume(uint16 volume);
 	/**
-	 * Sets the volume for this source. The volume values in the MIDI data sent 
+	 * Sets the volume for this source. The volume values in the MIDI data sent
 	 * by this source will be scaled by the source volume.
 	 */
 	virtual void setSourceVolume(uint8 source, uint16 volume);
@@ -463,7 +463,7 @@ protected:
 	/**
 	 * Initializes the MT-32 MIDI device. The device will be reset and,
 	 * if the parameter is specified, set up for General MIDI data.
-	 * 
+	 *
 	 * @param initForGM True if the MT-32 should be initialized for GM mapping
 	 */
 	virtual void initMT32(bool initForGM);
@@ -472,7 +472,7 @@ protected:
 	 * If the initForMT32 parameter is specified, the device will be set up for
 	 * MT-32 MIDI data. If the device supports Roland GS, the enableGS
 	 * parameter can be specified for enhanced GS MT-32 compatiblity.
-	 * 
+	 *
 	 * @param initForMT32 True if the device should be initialized for MT-32 mapping
 	 * @param enableGS True if the device should be initialized for GS MT-32 mapping
 	 */
@@ -483,7 +483,7 @@ protected:
 	 * This function is called after mapping the MIDI data channel to an output
 	 * channel, so the specified output channel is used and not the channel in
 	 * the event bytes.
-	 * 
+	 *
 	 * @param source The source of the event
 	 * @param b The event MIDI bytes
 	 * @param outputChannel The output channel for the event
@@ -498,7 +498,7 @@ protected:
 	 * Processes a note on or off MIDI event.
 	 * This will apply source volume if necessary, update the active note
 	 * registration and send the event to the MIDI device.
-	 * 
+	 *
 	 * @param outputChannel The MIDI output channel for the event
 	 * @param command The MIDI command byte
 	 * @param controlData The control data set that will be used for applying
@@ -510,7 +510,7 @@ protected:
 	 * Process a control change MIDI event.
 	 * This will update the specified control data set and apply other
 	 * processing if necessary, and then send the event to the MIDI device.
-	 * 
+	 *
 	 * @param outputChannel The MIDI output channel for the event
 	 * @param controlData The control data set that the new controller value
 	 * should be stored on
@@ -524,9 +524,9 @@ protected:
 	 * This will update the specified control data set, apply MT-32 <> GM
 	 * instrument mapping and other processing, and send the event to the MIDI
 	 * device.
-	 * 
+	 *
 	 * @param outputChannel The MIDI output channel for the event
-	 * @param controlData The control data set that the new program value 
+	 * @param controlData The control data set that the new program value
 	 * should be stored on
 	 * @param channelLockedByOtherSource True if the output channel is locked
 	 * by another source. Default is false.
@@ -582,7 +582,7 @@ protected:
 	 * Returns the MIDI output channel mapped to the specified data channel.
 	 * If the data channel has not been mapped yet, a new mapping to one of the
 	 * output channels available to the source will be created.
-	 * 
+	 *
 	 * @param source The source using the data channel
 	 * @param dataChannel The data channel to map
 	 * @return The mapped output channel, or -1 if no mapping is possible
@@ -649,7 +649,7 @@ protected:
 	// The current number of microseconds that have to elapse before the next
 	// SysEx message can be sent.
 	uint32 _sysExDelay;
-	// Queue of SysEx messages to be sent to the MIDI device. 
+	// Queue of SysEx messages to be sent to the MIDI device.
 	Common::Queue<SysExData> _sysExQueue;
 	// Mutex for write access to the SysEx queue.
 	Common::Mutex _sysExQueueMutex;

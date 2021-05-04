@@ -121,7 +121,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 			libs += basename;
 		}
 	}
-	
+
 	return libs;
 }
 

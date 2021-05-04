@@ -2050,7 +2050,7 @@ enum GameModelAnimations {
 	kModelAnimationTwinsSitIdle                          = 346,
 	kModelAnimationTwinsSitTyping                        = 347, // UNUSED
 	kModelAnimationTwinsSitLancePutsSomethingToTheLeft   = 348,
-	kModelAnimationTwinsSitLanceShortCalmTalk            = 349, // Mostly looks like Lance is talking. Probably could be used for both. 
+	kModelAnimationTwinsSitLanceShortCalmTalk            = 349, // Mostly looks like Lance is talking. Probably could be used for both.
 	kModelAnimationTwinsSitLanceLongerCalmTalk           = 350, // Mostly looks like Lance is talking. Probably could be used for both.
 	kModelAnimationTwinsSitLutherCalmTalk                = 351, // Mostly looks like Luther is talking. Probably could be used for both.
 	kModelAnimationTwinsSitLutherMoreCalmTalk            = 352, // Mostly looks like Luther is talking. Probably could be used for both.
@@ -2140,7 +2140,7 @@ enum GameModelAnimations {
 	kModelGenWalkerPunkPersonWithGlassesStandsStill         = 433, // Standing - Same model as 432
 	kModelGenWalkerHattedChild                              = 434, // Walking  - Frame 11 used for standing still
 	kModelGenWalkerChild                                    = 435, // Walking  - Frame 0 (or 5) used for standing still
-	kModelGenWalkerHattedPersonWithWoodenUmbrella           = 436, // Walking  - Frame 4 used for standing still 
+	kModelGenWalkerHattedPersonWithWoodenUmbrella           = 436, // Walking  - Frame 4 used for standing still
 	kModelGenWalkerHattedLadyWithWoodenUmbrellaStandsStill  = 437, // Standing - *Not the same model with 436* - Just single frame
 	// 438 - 439: Dancer model animations (UNUSED - RESTORED)
 	kModelAnimationHysteriaPatron3DanceHandsDownLeanBackForth = 438, // UNUSED - 27 frames - RESTORED

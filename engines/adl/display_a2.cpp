@@ -288,7 +288,7 @@ public:
 					g = 255;
 					b = 255;
 				}
-	#endif			
+	#endif
 
 	#ifdef NTSC_REMOVE_BLACK_GHOSTING
 				if ((s & 0xf) == 0) {

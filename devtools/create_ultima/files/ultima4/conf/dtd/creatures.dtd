@@ -6,7 +6,7 @@
 <!ATTLIST creature id                   NMTOKEN  #REQUIRED
                   encounterSize        NMTOKEN  #IMPLIED
                   name                 CDATA    #REQUIRED
-                  tile                 NMTOKEN  #REQUIRED                  
+                  tile                 NMTOKEN  #REQUIRED
                   basehp               NMTOKEN  #IMPLIED
                   exp                  NMTOKEN  #REQUIRED
                   leader               NMTOKEN  #IMPLIED
@@ -37,5 +37,5 @@
                   teleports            %bool;   #IMPLIED
                   undead               %bool;   #IMPLIED
                   wontattack           %bool;   #IMPLIED
-                  worldrangedtile      NMTOKEN  #IMPLIED 
+                  worldrangedtile      NMTOKEN  #IMPLIED
                   forceOfNature		   %bool;   #IMPLIED>

@@ -229,7 +229,7 @@ bool CPetSound::MouseButtonDownMsg(const Point &pt) {
 
 bool CPetSound::MouseDragStartMsg(CMouseDragStartMsg *msg) {
 	if (_masterVolume.resetThumbFocus()) {
-		_draggingSlider = &_masterVolume; 
+		_draggingSlider = &_masterVolume;
 		getOwner()->startDragging(this, msg);
 		_draggingSliderNum = MASTER_SLIDER;
 		return true;

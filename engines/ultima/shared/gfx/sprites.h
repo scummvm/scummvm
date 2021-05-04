@@ -66,7 +66,7 @@ public:
 	void draw(Graphics::ManagedSurface &dest, const Common::Point &pt);
 
 	/**
-	 * Return the width of the sprite 
+	 * Return the width of the sprite
 	 */
 	uint16 w() const { return _surface.w; }
 

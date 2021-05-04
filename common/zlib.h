@@ -32,7 +32,7 @@ namespace Common {
  * @ingroup common
  *
  * @brief API for zlib operations.
- * 
+ *
  * @{
  */
 

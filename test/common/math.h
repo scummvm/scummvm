@@ -17,7 +17,7 @@ class MathTestSuite : public CxxTest::TestSuite
 		// Some simple test for 2^10
 		TS_ASSERT_EQUALS(Common::intLog2(1024), 10);
 	}
-	
+
 	void test_rad2deg() {
 		//float verion
 		TS_ASSERT_DELTA(Common::rad2deg(0), 0, MAX_ERROR_FLT);

@@ -688,7 +688,7 @@ public:
 	Common::Platform getPlatform() const;
 	uint8 getGameType() const;
 	Common::Language getLanguage() const;
-	
+
 	// _screenName = _missionName + _roomIndex
 	Common::String getScreenName() const {
 		return _missionName + (char)(_roomIndex + '0');

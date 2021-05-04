@@ -79,18 +79,18 @@ void fiorcls(fiolcxdef *ctx);
 /* loader callback - load an object on demand */
 void OS_LOADDS fioldobj(void *ctx, mclhd handle, uchar *ptr, ushort siz);
 
-/* 
+/*
  *   Save a game - returns TRUE on failure.  We'll save the file to
  *   'fname'.  'game_fname' is the name of the game file; if this is not
  *   null, we'll save it to the saved game file so that the player can
  *   later start the game by specifying only the saved game file to the
  *   run-time.  'game_fname' can be null, in which case we'll omit the
- *   game file information.  
+ *   game file information.
  */
 int fiosav(voccxdef *vctx, char *fname, char *game_fname);
 
 /*
- *   fiorso() result codes 
+ *   fiorso() result codes
  */
 #define FIORSO_SUCCESS          0                                /* success */
 #define FIORSO_FILE_NOT_FOUND   1                         /* file not found */
@@ -107,7 +107,7 @@ int fiorso(voccxdef *vctx, char *fname);
  *   Look in a saved game file to determine if it has information on which
  *   GAM file created it.  If the GAM file information is available, this
  *   routine returns true and stores the game file name in the given
- *   buffer; if the information isn't available, we'll return false.  
+ *   buffer; if the information isn't available, we'll return false.
  */
 int fiorso_getgame(char *saved_file, char *buf, size_t buflen);
 

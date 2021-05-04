@@ -290,7 +290,7 @@ void TextMgr::displayText(const char *textPtr, bool disabledLook) {
 		if (_vm->getLanguage() == Common::HE_ISR)
 			textString = Common::convertBiDiStringByLines(textString, Common::kWindows1255);
 
-		if (textString.contains('\n')) 
+		if (textString.contains('\n'))
 			textString = textString.forEachLine(rightAlign, (uint)_messageState.textSize_Width);
 
 		textPtr = textString.c_str();
@@ -935,7 +935,7 @@ void TextMgr::stringEdit(int16 stringMaxLen) {
 			_inputStringCursorPos++;
 		}
 	} else {
-		while (_inputStringCursorPos < inputStringLen) 
+		while (_inputStringCursorPos < inputStringLen)
 			_inputStringCursorPos++;
 		if (stringMaxLen == 30)
 			// called from askForSaveGameDescription

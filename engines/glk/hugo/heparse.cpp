@@ -89,7 +89,7 @@ void Hugo::AddPossibleObject(int obj, char type, unsigned int w) {
 	   also a noun for that same object
 	*/
 	if (ObjWordType(obj, w, noun)) type = (char)noun;
-	
+
 	pobjlist[pobjcount].obj = obj;
 	pobjlist[pobjcount].type = type;
 
@@ -145,7 +145,7 @@ void Hugo::AdvanceGrammar() {
 
 int Hugo::AnyObjWord(int wn) {
 	int i;
-	
+
 	if (objword_cache[wn])
 		return objword_cache[wn];
 
@@ -308,7 +308,7 @@ unsigned int Hugo::FindWord(const char *a) {
 
 		ptr += (p + 1);
 	}
-	
+
 	/* As a last resort, see if the first 6 characters of the word (if it
 	   has at least six characters) match a dictionary word:
 	*/
@@ -318,14 +318,14 @@ unsigned int Hugo::FindWord(const char *a) {
 		int posscount = 0;
 
 		ptr = 0;
-	
+
 		for (i=1; i<=dictcount; i++)
 		{
 			if (alen<=(p = Peek(ptr+2)) && (unsigned char)MEM(dicttable*16L+ptr+3)-CHAR_TRANSLATION==a[0])
 			{
 				if (!strncmp(GetString(ptr + 2), a, alen))
 				{
-					/* As long as the dictionary word 
+					/* As long as the dictionary word
 					   doesn't contain a space */
 					if (!strrchr(GetString(ptr+2), ' '))
 					{
@@ -336,7 +336,7 @@ unsigned int Hugo::FindWord(const char *a) {
 			}
 			ptr += (p + 1);
 		}
-		
+
 		if (posscount==1)
 			return possible;
 	}
@@ -384,7 +384,7 @@ int Hugo::MatchCommand() {
 #endif
 
 	odomain = 0;
-	
+
 	/* Reset these for command-matching */
 	if (!speaking)
 	{
@@ -494,7 +494,7 @@ MatchVerb:
 			verbptr = ptr + 2;
 			for (i=1; i<=numverbs; i++)
 			{
-				/* 0xffff signals something other than a 
+				/* 0xffff signals something other than a
 				   dictionary word--see BuildVerb() in hcbuild.c.
 				   This will be the case, like, 1% of the time.
 				*/
@@ -614,10 +614,10 @@ MatchVerb:
 		obj_match_state = 5;
 		i = 1;
 		recursive_call = 0;
-		
+
 		if (MatchObject(&i) != true)
 			return 0;  /* unsuccessful */
-		
+
 		speaking = pobj;                        /* successful */
 		gotspeaker = true;
 
@@ -625,7 +625,7 @@ MatchVerb:
 		for (i=1; i<=objfinish; i++)
 			KillWord(1);
 		if (word[1][0]=='~') KillWord(1);
-		
+
 		/* If it's a name and that's all...*/
 		if (words==0)
 			return true;
@@ -985,7 +985,7 @@ Clarify:
 	if (!strcmp(word[*wordnum], "~all"))    /* if "~all" is specified */
 	{
 		parse_allflag = true;
-		
+
 		/* If one or more words were already matched, however... */
 
 		if (mobjs > 0)
@@ -1057,7 +1057,7 @@ Clarify:
 					pobj = i;
 			}
 
-			else if ((Peek(grammaraddr)==NOTHELD_T || Peek(grammaraddr)==MULTINOTHELD_T) 
+			else if ((Peek(grammaraddr)==NOTHELD_T || Peek(grammaraddr)==MULTINOTHELD_T)
 				&& Parent(i)==var[actor])
 			{
 				SubtractPossibleObject(i);
@@ -1349,7 +1349,7 @@ Clarify:
 			if (!strcmp(word[1], "~all"))
 				flag = 1;
 
-			/* If not, tell MatchCommand() that there's a 
+			/* If not, tell MatchCommand() that there's a
 			   new command coming down the hopper.
 			*/
 			if (flag==0)
@@ -1686,7 +1686,7 @@ CheckWord:
 
 		default:
 		{
-		
+
 		/* Some manifestation of an object (or objects) before domain is
 		   found, since <obj_match_state> is initially set to 0:
 		*/
@@ -1733,7 +1733,7 @@ CheckWordorString:
 							AdvanceGrammar();
 							nextsyntax = grammaraddr;
 							grammaraddr = thissyntax;
-							
+
 							goto CheckWordorString;
 						}
 					}
@@ -1763,7 +1763,7 @@ CheckWordorString:
 					if (word[*wordnum][0]=='~')
 					{
 						int multicheck = Peek(grammaraddr);
-						
+
 						(*wordnum)++;
 						flag = 1;
 
@@ -1809,7 +1809,7 @@ CheckWordorString:
 				}
 
 				p = Peek(grammaraddr);
-				
+
 				/* If the xobject is specifically a parent of the
 				   object(s) to be matched later:
 				*/
@@ -1849,7 +1849,7 @@ CheckXobjectFinish:
 							AdvanceGrammar();
 							nextsyntax = grammaraddr;
 							grammaraddr = thissyntax;
-						
+
 							goto CheckXobjectFinish;
 						}
 						else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
@@ -1904,20 +1904,20 @@ CheckXobjectFinish:
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
 int Hugo::ObjWordType(int obj, unsigned int w, int type) {
 	int j, num;
 	unsigned int pa;
-	
+
 	pa = PropAddr(obj, type, 0);
 	if (pa)
 	{
 		defseg = proptable;
 		num = Peek(pa + 1);
-		
+
 		if (num==PROP_ROUTINE)
 		{
 			if ((unsigned int)GetProp(obj, type, 1, false)==w)
@@ -1950,10 +1950,10 @@ int Hugo::ObjWord(int obj, unsigned int w) {
 
 	if (ObjWordType(obj, w, adjective))
 		return adjective;
-	
+
 	if (ObjWordType(obj, w, noun))
 		return noun;
-		
+
 	return 0;
 }
 
@@ -2128,7 +2128,7 @@ NextSyn:
 		ParseError(0,0);        /* What? */
 		return false;
 	}
-		
+
 	return true;
 }
 
@@ -2329,7 +2329,7 @@ void Hugo::SeparateWords() {
 
 
 	/* Begin the word-splitting proper: */
-	
+
 	words = 1;                      /* Setup a blank string */
 
 	for (i=0; i<MAXWORDS+1; i++)
@@ -2341,7 +2341,7 @@ void Hugo::SeparateWords() {
 
 	strcpy(a, buffer);
 	strcpy(buffer, "");
-	
+
 	for (i=1; i<=(int)strlen(a); i++)
 	{
 		if (inquote!=1 && isascii(a[i-1]))

@@ -197,7 +197,7 @@ void Conf::synchronize() {
 		_monoInfo._caretShape = _propInfo._caretShape;
 		_monoInfo._linkStyle = _propInfo._linkStyle;
 	}
-	 
+
 	syncAsInt("scrollwidth", _scrollWidth);
 	syncAsColor("scrollbg", _scrollBg);
 	syncAsColor("scrollfg", _scrollFg);

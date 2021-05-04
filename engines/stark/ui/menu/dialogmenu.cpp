@@ -65,7 +65,7 @@ void DialogScreen::open() {
 			"BGImage",
 			nullptr,
 			nullptr));
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Return",
 			CLICK_HANDLER(DialogScreen, backHandler),
@@ -75,35 +75,35 @@ void DialogScreen::open() {
 			"Back",
 			CLICK_HANDLER(DialogScreen, backHandler),
 			nullptr));
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"IndexBack",
 			CLICK_HANDLER(DialogScreen, indexBackHandler),
 			nullptr));
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"IndexNext",
 			CLICK_HANDLER(DialogScreen, indexNextHandler),
 			nullptr));
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"LogBack",
 			CLICK_HANDLER(DialogScreen, logBackHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Index",
 			CLICK_HANDLER(DialogScreen, backIndexHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
-			
+
 	_widgets.push_back(new StaticLocationWidget(
 			"LogNext",
 			CLICK_HANDLER(DialogScreen, logNextHandler),
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	for (uint i = 1; i < _widgets.size(); ++i) {
 		_widgets[i]->setupSounds(0, 1);
 	}

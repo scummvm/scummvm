@@ -53,7 +53,7 @@ bool CStarlings::EnterViewMsg(CEnterViewMsg *msg) {
 		// Tis but a flesh wound
 		setVisible(false);
 	else
-		// Repeatedly play the starlings flying 
+		// Repeatedly play the starlings flying
 		playMovie(MOVIE_REPEAT);
 	return true;
 }

@@ -37,19 +37,19 @@ struct tokpdef;
 /* maximum number of pages of debugging records we can keep */
 #define LINFPGMAX 128
 
-/* 
+/*
  *   executable line information structure: this record relates one
  *   executable line to the object containing the p-code, and the offset
- *   in the object of the p-code for the start of the line 
+ *   in the object of the p-code for the start of the line
  */
 struct linfinfo {
-	/* 
+	/*
 	 *   OPCLINE data (file seek position or line number, depending on how
 	 *   the game was compiled: -ds -> file seek offset, -ds2 -> line
-	 *   number) 
+	 *   number)
 	 */
 	ulong fpos;
-	
+
 	/* object number */
 	objnum objn;
 
@@ -57,8 +57,8 @@ struct linfinfo {
 	uint ofs;
 };
 
-/* 
- *   file line source 
+/*
+ *   file line source
  */
 struct linfdef {
 	lindef    linflin;                                   /* superclass data */

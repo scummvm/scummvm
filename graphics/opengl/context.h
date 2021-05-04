@@ -85,7 +85,7 @@ public:
 
 	/** Whether specifying a pitch when uploading to textures is available or not */
 	bool unpackSubImageSupported;
-	
+
 	/** Whether depth component 24 is supported or not */
 	bool OESDepth24;
 

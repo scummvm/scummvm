@@ -88,7 +88,7 @@ void HotZoneArray::readHotzones(Common::SharedPtr<Common::SeekableReadStream> hz
 	tf.openStoreHot(hzFile);
 	Common::ScopedPtr<Common::SeekableReadStream> tcshStream(tf.getFileStream(MKTAG('T', 'C', 'S', 'H')));
 	int hzCnt = tcshStream->readUint32LE();
-	
+
 	for (int idx = 0; idx < hzCnt; idx++) {
 		Common::SharedPtr<Common::SeekableReadStream> tdshFile(tf.getFileStream(MKTAG('T', 'D', 'S', 'H'), idx));
 		TagFile tdsh;
@@ -114,10 +114,10 @@ void HotZoneArray::readHotzones(Common::SharedPtr<Common::SeekableReadStream> hz
 		Common::SharedPtr<Common::SeekableReadStream> icshFile(tdsh.getFileStream(MKTAG('I', 'C', 'S', 'H')));
 
 		int icsh = icshFile->readUint32LE();
-		
+
 		_hotZones.push_back(HotZone(polygon, name, enable, icsh));
 
-		delete[] name;		
+		delete[] name;
 	}
 }
 

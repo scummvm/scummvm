@@ -41,11 +41,11 @@ namespace Common {
 /**
  * @name Copy templates
  * @{
- */ 
+ */
 
 /**
  * Copy data from the range [first, last) to [dst, dst + (last - first)).
- * 
+ *
  * The function requires the range [dst, dst + (last - first)) to be valid.
  * It also requires dst not to be in the range [first, last).
  */
@@ -58,7 +58,7 @@ Out copy(In first, In last, Out dst) {
 
 /**
  * Copy data from the range [first, last) to [dst - (last - first), dst).
- * 
+ *
  * The function requires the range [dst - (last - first), dst) to be valid.
  * It also requires dst not to be in the range [first, last).
  *
@@ -93,21 +93,21 @@ Out copy_if(In first, In last, Out dst, Op op) {
 
 /**
  * @}
- */ 
+ */
 
 /**
  * @name Fill templates
  * @{
- */ 
+ */
 
 /**
  * A 'fill' template for signed char arrays.
  *
- * Since C++ does not currently support partial specialized template functions, 
+ * Since C++ does not currently support partial specialized template functions,
  * this solution is implemented.
  * With this template, the usage of memset is assured, which is
  * faster than a simple loop like for the generic 'fill'.
- */ 
+ */
 template<class Value>
 signed char *fill(signed char *first, signed char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
@@ -117,11 +117,11 @@ signed char *fill(signed char *first, signed char *last, Value val) {
 /**
  * A 'fill' template for unsigned char arrays.
  *
- * Since C++ does not currently support partial specialized template functions, 
+ * Since C++ does not currently support partial specialized template functions,
  * this solution is implemented.
  * With this template, the usage of memset is assured, which is
  * faster than a simple loop like for the generic 'fill'.
- */ 
+ */
 template<class Value>
 unsigned char *fill(unsigned char *first, unsigned char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
@@ -131,11 +131,11 @@ unsigned char *fill(unsigned char *first, unsigned char *last, Value val) {
 /**
  * A 'fill' template for char arrays.
  *
- * Since C++ does not currently support partial specialized template functions, 
+ * Since C++ does not currently support partial specialized template functions,
  * this solution is implemented.
  * With this template, the usage of memset is assured, which is
  * faster than a simple loop like for the generic 'fill'.
- */ 
+ */
 template<class Value>
 char *fill(char *first, char *last, Value val) {
 	memset(first, (val & 0xFF), last - first);
@@ -149,7 +149,7 @@ char *fill(char *first, char *last, Value val) {
 /**
  * @name Range templates
  * @{
- */ 
+ */
 
 /**
  * Set all elements in the range [first, last) to val.
@@ -202,7 +202,7 @@ Op for_each(In first, In last, Op f) {
 
 /**
  * @}
- */ 
+ */
 
 template<typename T>
 unsigned int distance(T *first, T *last) {
@@ -256,7 +256,7 @@ T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 /**
  * @name Sorting templates
  * @{
- */ 
+ */
 
 /**
  * Simple sorting function, modeled after std::sort.

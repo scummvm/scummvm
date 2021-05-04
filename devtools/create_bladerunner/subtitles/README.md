@@ -59,7 +59,7 @@ You need to follow these instructions:
 
 3.  Create an overrideEncodingSUBLTS.txt file in the sampleInput folder. This is a configuration file for the font file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "override encoding text file" in fontCreator).
 
-4.  Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).  
+4.  Create a configureFontsTranslation.txt in the sampleInput folder. A configuration file for the MIX file creation. A sample is provided in the sampleInput folder and documentation about this is below in this document (see "text configuration file" in mixResourceCreator).
 
 5.  From the ScummVM root folder run:
     ```bash
@@ -93,7 +93,7 @@ Syntax Notes:
 3.  The "-ian" optional switch is followed by the path to the actornames.txt file -- if this is omitted then the file is assumed to reside in the current working directory.
 
 4.  The "-ld" optional switch is followed by a language description for the language of the game you are exporting Text Resources from. This switch is meaningful when you also use the "-xtre" switch to export Text Resource files.
-    *   Valid language values are: EN\_ANY, DE\_DEU, FR\_FRA, IT\_ITA, ES\_ESP, RU\_RUS 
+    *   Valid language values are: EN\_ANY, DE\_DEU, FR\_FRA, IT\_ITA, ES\_ESP, RU\_RUS
 
     *   Default language value is: EN\_ANY (English)
 
@@ -107,7 +107,7 @@ Syntax Notes:
 
 9.  You may use all, a subset or none of the "-xwav", "-xtre", "-xpogo", "-xdevs" switches, depending on what you need to do.
 
-10. The "--trace" optional switch enables extra debug messages to be printed. 
+10. The "--trace" optional switch enables extra debug messages to be printed.
 
 Usage:
 ```bash
@@ -128,7 +128,7 @@ python2.7 mixResourceCreator.py -x excelWithTranscriptSheets.xlsx [-ian pathToAc
 
 The tool __requires__ a valid path to the actornames.txt file, which is included in the samples folder.
 
-Syntax Notes: 
+Syntax Notes:
 
 1.  The "-x" switch is followed by the path to the input Excel file (xls or xlsx) which should contain the transcript sheet(s).
 
@@ -141,7 +141,7 @@ Syntax Notes:
 
     *   Default language value is: EN\_ANY (English)
 
-5.  The "--trace" optional switch enables extra debug messages to be printed. 
+5.  The "--trace" optional switch enables extra debug messages to be printed.
 
 The __text configuration file "configureFontsTranslation.txt"__ is a __text file that should be saved in a UTF-8 encoding (no BOM)__, that contains the following:
 
@@ -157,7 +157,7 @@ The __text configuration file "configureFontsTranslation.txt"__ is a __text file
 
     *   a list of comma separated tuples that specify the mapping of special (out of order) character to placeholder characters from the selected codepage. See fontCreator section for more details on this.
 
-    *   For example: 
+    *   For example:
         ```text
         fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1253#í:Ά,ñ:¥,â:¦,é:§,Ά:£
         fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
@@ -165,9 +165,9 @@ The __text configuration file "configureFontsTranslation.txt"__ is a __text file
         fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#
         ```
 
-Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the "SUBTLS\_E.FON" file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font in the configureFontsTranslation.txt fields__. 
+Note: for font files (FON) that you have created or edited with the fontCreator tool (e.g for the "SUBTLS\_E.FON" file for subtitles, or another in-game font file eg. KIA6PT, TAHOMA) you __should copy the 8-bit encoding and the comma separated out of order character tuples from the respective "override encoding" text file that you used with the fontCreator tool for each new/ edited font in the configureFontsTranslation.txt fields__.
 
-Additionally, __all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory__ in order to include them in the SUBTITLES.MIX. 
+Additionally, __all the new and edited fonts (FON files that were output by the fontCreator script) should be in your working directory__ in order to include them in the SUBTITLES.MIX.
 
 It's important to keep the naming of those files unchanged. __Supported name values for imported FON files__ are: SUBTLS\_E.FON, KIA6PT.FON, TAHOMA18.FON, TAHOMA24.FON and SYSTEM.FON (practically you won't be using the last one).
 
@@ -205,7 +205,7 @@ The override encoding file is a __text file that should be saved in a UTF-8 enco
 
     *   You don't need to use all the characters of the specified codepage in your "all-characters" string.
 
-    *   For any special characters that don't appear in the target codepage (eg ñ, é, í, â don't appear in the Greek codepage), you'll have to decide on an ASCII value for them (one not used by another character appearing in-game). 
+    *   For any special characters that don't appear in the target codepage (eg ñ, é, í, â don't appear in the Greek codepage), you'll have to decide on an ASCII value for them (one not used by another character appearing in-game).
 
     *   In the "all-characters" string you should put as placeholders the actual characters from the specified codepage that correspond to the ASCII values you have decided above; The placeholder characters should also be in the proper order (by their ASCII value) inside the string.
 
@@ -220,7 +220,7 @@ The override encoding file is a __text file that should be saved in a UTF-8 enco
     *   Don't use space(s) between the tuples!
 
 5.  A key "originalFontName" with the FON file's original name in the game (the one that it should replace). Use SUBLTS for the subtitles FON.
-    *   Example: originalFontName=SUBLTS	
+    *   Example: originalFontName=SUBLTS
 
 6.  A key "specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding" with value a list of comma separated tuples that indicates which character glyphs should replace the placeholder glyphs in your all-character string above.
     *   Example: specialOutOfOrderGlyphsUTF8ToAsciiTargetEncoding=í:Ά,ñ:¥,â:¦,é:§,Ά:£
@@ -258,12 +258,12 @@ __For the creation of subtitles' font mode__, there are six (6) mandatory launch
 
 6.  whiteSpaceWidthInPixels: This is a positive integer value that sets the width in pixels for the single white space between words for the subtitles in-game.
 
-The "--trace" optional switch enables extra debug messages to be printed. 
+The "--trace" optional switch enables extra debug messages to be printed.
 
 A suggested method of creating decent looking PNG with the row of glyphs for your subtitles' font is the following:
 
 1.  Create the font row in __GIMP__
-    *   Start with a __new__ empty image, with transparent background. Choose a large enough canvas width (you can adjust it later)     
+    *   Start with a __new__ empty image, with transparent background. Choose a large enough canvas width (you can adjust it later)
 
     *   Paste as a new layer a tab separated alphanumeric sequence with all your glyphs (as specified above). Choose white as the font's color.
 
@@ -281,9 +281,9 @@ A suggested method of creating decent looking PNG with the row of glyphs for you
 
 6.  Finally, place this completely black colored layer underneath the other one and __merge the visible__ layers.
 
-7.  Export your image to a PNG file. 
+7.  Export your image to a PNG file.
 
-This should get rid of semi-transparent pixels while maintaining the "aliasing" effect. 
+This should get rid of semi-transparent pixels while maintaining the "aliasing" effect.
 There could be a better way but this should work ok.
 
 ## Credits and Special Thanks

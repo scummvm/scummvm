@@ -252,7 +252,7 @@ void glopVertex(GLContext *c, GLParam *p) {
 
 void glopEnd(GLContext *c, GLParam *) {
 	assert(c->in_begin == 1);
-	
+
 	if (c->vertex_cnt > 0) {
 		tglIssueDrawCall(new Graphics::RasterizationDrawCall());
 	}

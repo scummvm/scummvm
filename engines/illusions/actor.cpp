@@ -228,7 +228,7 @@ void Control::unpause() {
 		if (_objectId == Illusions::CURSOR_OBJECT_ID)
 			_vm->setCursorControl(this);
 	}
-  
+
 	if (_actor && !(_actor->_flags & Illusions::ACTOR_FLAG_200)) {
 		SurfInfo surfInfo;
 		ActorType *actorType = _vm->_dict->findActorType(_actorTypeId);

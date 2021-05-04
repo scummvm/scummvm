@@ -56,7 +56,7 @@ uint datsiz(dattyp typ, const void *val)
 	case DAT_FNADDR:
 	case DAT_REDIR:
 		return(2);
-		
+
 	case DAT_TPL:
 		/* template is counted array of 10-byte entries, plus length byte */
 		return(1 + ((*(const uchar *)val) * VOCTPLSIZ));

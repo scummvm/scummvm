@@ -198,7 +198,7 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 					for (int ll = 0; _comiSeqMusicTable[ll].soundId != -1; ll++) {
 						if ((_comiSeqMusicTable[ll].soundId == track->soundId)) {
 							track->loopShiftType = _comiSeqMusicTable[ll].shiftLoop;
-							break; 
+							break;
 						}
 					}
 				}
@@ -258,7 +258,7 @@ void IMuseDigital::runScheduledCrossfades() {
 			Track *newTrack = _track[newTrackId];
 			newTrack->curRegion = _scheduledCrossfades[l].destRegion;
 
-			// WORKAROUND for some files having a little bit earlier 
+			// WORKAROUND for some files having a little bit earlier
 			// loop point set in their iMUSE map; keep in mind we're considering
 			// regionOffset -= (oldTrack->feedSize / _callbackFps) as NO SHIFT.
 			// In COMI we're currently using 4 shift types.
@@ -546,7 +546,7 @@ void IMuseDigital::callback() {
 						effVol = int(round(effVol * 1.5));
 					} else {
 						effVol = int(round(effVol * 1.1));
-					}					
+					}
 				}
 				_mixer->setChannelVolume(track->mixChanHandle, effVol);
 				_mixer->setChannelBalance(track->mixChanHandle, effPan);

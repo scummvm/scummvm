@@ -115,7 +115,7 @@ public:
 			labItem = -1;
 			break;
 		}
-		
+
 		if ((name == "daedalus" || name == "chute") && labItem < 0) {
 			playDaedalusVideo("daedalus what to do with that", 13005, Common::Point(10, 40));
 			return true;
@@ -142,7 +142,7 @@ public:
 
 			room->playAnimWithSFX("dust cloud", "dust cloud sound", 850, PlayAnimParams::disappear());
 
-			if (hasAll) 
+			if (hasAll)
 				playDaedalusVideo("daedalus exclaims", 13008, Common::Point(0, 2));
 			else {
 				// Original goes to event 4009

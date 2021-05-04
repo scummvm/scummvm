@@ -1774,14 +1774,14 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("KP5"); // extra keyboard
 		act->addDefaultInputMapping("JOY_UP"); // extra joy
 		extraKeyMap->addAction(act);
-	
+
 		act = new Action(kStandardActionMoveDown, _("Walk backward"));
 		act->setCustomEngineActionEvent(kClickAtBottom);
 		act->addDefaultInputMapping("DOWN"); // extra keyboard
 		act->addDefaultInputMapping("KP2"); // extra keyboard
 		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
 		extraKeyMap->addAction(act);
-	
+
 		act = new Action(kStandardActionMoveLeft, _("Turn left"));
 		act->setCustomEngineActionEvent(kClickAtLeft);
 		act->addDefaultInputMapping("LEFT"); // extra keyboard
@@ -1797,7 +1797,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		extraKeyMap->addAction(act);
 	}
 	result.push_back(extraKeyMap);
-	
+
 	return result;
 
 }

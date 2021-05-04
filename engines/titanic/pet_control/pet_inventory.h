@@ -166,7 +166,7 @@ public:
 	void highlightItem(CGameObject *item);
 
 	/**
-	 * Gets the object, if any, containing the transformation animation played 
+	 * Gets the object, if any, containing the transformation animation played
 	 * when pieces of Titania are added to the inventory for the first time.
 	 */
 	CGameObject *getTransformAnimation(int index);

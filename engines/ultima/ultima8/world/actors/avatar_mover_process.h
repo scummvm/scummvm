@@ -69,7 +69,7 @@ public:
 		MOVE_STEP = 0x0004, // also side-steps in crusader
 		MOVE_JUMP = 0x0008, // used for roll in crusader (when combined with left/right), and crouch (when combined with back)
 
-		// Tank controls 
+		// Tank controls
 		MOVE_TURN_LEFT = 0x0010,
 		MOVE_TURN_RIGHT = 0x0020,
 		MOVE_FORWARD = 0x0040,

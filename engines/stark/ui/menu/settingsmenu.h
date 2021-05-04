@@ -143,7 +143,7 @@ private:
 class VolumeWidget : public StaticLocationWidget {
 public:
 	VolumeWidget(const char *renderEntryName, Cursor *cursor,
-				 TestSoundManager &soundManager, int soundIndex, 
+				 TestSoundManager &soundManager, int soundIndex,
 				 Settings::IntSettingIndex settingIndex,
 				 WidgetOnMouseMoveCallback *onMouseMoveCallback);
 	virtual ~VolumeWidget() {};
@@ -169,7 +169,7 @@ private:
 
 	Common::Point _sliderPosition, _bgPosition;
 	int _bgWidth, _bgHeight, _sliderWidth, _minX, _maxX;
-	
+
 	bool _isDragged;
 	const Settings::IntSettingIndex _settingIndex;
 
@@ -180,7 +180,7 @@ private:
 	}
 
 	int xToVolume(int x) {
-		return (x - _minX) * _maxVolume / (_maxX - _minX);	
+		return (x - _minX) * _maxVolume / (_maxX - _minX);
 	}
 };
 

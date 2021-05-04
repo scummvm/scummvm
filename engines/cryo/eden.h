@@ -44,7 +44,7 @@ class EdenGraphics;
 
 class EdenGame {
 private:
-	
+
 	EdenGraphics *_graphics;
 
 public:
@@ -81,7 +81,7 @@ public:
 	byte getActionCursor(byte value);
 	int16 getNumTextLines();
 	int16 getScrollPos();
-	/* 
+	/*
 	 * Identify person based on current video number
 	 */
 	perso_t *personSubtitles();
@@ -238,7 +238,7 @@ private:
 	void my_bulle();
 	void my_pr_bulle();
 	void drawSubtitleChar(byte c, byte color, int16 width);
-	
+
 	void patchSentence();
 	void vavapers();
 	void citadelle();
@@ -718,7 +718,7 @@ private:
 
 	uint8 tab_2CB1E[8][4];
 
-	const unsigned int kMaxMusicSize;  // largest .mus file size 
+	const unsigned int kMaxMusicSize;  // largest .mus file size
 
 	// Loaded from cryo.dat
 	Follower _followerList[15];

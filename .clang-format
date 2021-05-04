@@ -14,7 +14,7 @@
     SpaceAfterTemplateKeyword: false,
     SpaceBeforeAssignmentOperators: true,
     SpaceBeforeCtorInitializerColon: true,
-    SpaceBeforeInheritanceColon: true, 
+    SpaceBeforeInheritanceColon: true,
     SpaceInEmptyParentheses: false,
     SpacesInAngles: false,
     SpacesInParentheses: false,

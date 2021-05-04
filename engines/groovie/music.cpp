@@ -215,7 +215,7 @@ void MusicPlayer::applyFading() {
 			// the old track would be heard before the new track would start.
 			// To prevent this, playback is actually stopped after fading out,
 			// but _isPlaying remains true. This keeps the original
-			// interpreter behavior of not starting the background music, but 
+			// interpreter behavior of not starting the background music, but
 			// it prevents the issue when starting playback of a new track.
 			unload(false);
 		}

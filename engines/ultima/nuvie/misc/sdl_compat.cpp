@@ -86,12 +86,12 @@ void SDL_UpdateRects(Graphics::ManagedSurface *surf, int count, Common::Rect *re
 Graphics::ManagedSurface *SDL_LoadBMP(const char *filename) {
 	Common::File f;
 	Image::BitmapDecoder decoder;
-	
+
 	if (!f.open(filename))
 		error("Could not open file - %s", filename);
 	if (!decoder.loadStream(f))
 		error("Could not load bitmap - %s", filename);
-	
+
 	const Graphics::Surface *src = decoder.getSurface();
 	Graphics::ManagedSurface *dest = new Graphics::ManagedSurface(src->w, src->h, src->format);
 	dest->blitFrom(*src);

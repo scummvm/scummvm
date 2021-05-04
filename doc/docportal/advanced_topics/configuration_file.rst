@@ -159,7 +159,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		cdrom,integer,0, "Sets which CD drive to play CD audio from (as a numeric index). If a negative number is set, ScummVM does not access the CD drive."
 		":ref:`color <color>`",boolean,,
 		":ref:`commandpromptwindow <cmd>`",boolean,false,
-		":ref:`confirm_exit <guiconfirm>`",boolean,false, 
+		":ref:`confirm_exit <guiconfirm>`",boolean,false,
 		console,boolean,true, Enables the console window for Win32/Symbian32.
 		controller_map_db,string,"``gamecontrollerdb.txt`` is loaded from the specified extrapath", "Specifies the custom controller mapping file to load to complete the default database (SDL backend only)."
 		copy_protection,boolean,false, Enables copy protection
@@ -209,7 +209,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
 		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
-		gameid,string,,"Short name of the game. For internal use only, do not edit." 
+		gameid,string,,"Short name of the game. For internal use only, do not edit."
 		gamepath,string,,Specifies the path to the game
 		":ref:`gfx_mode <gfxmode>`",string,normal (1x),"
 	- 1x
@@ -246,7 +246,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		":ref:`iconspath <iconspath>`",string,, 
+		":ref:`iconspath <iconspath>`",string,,
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
@@ -368,7 +368,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`platform <platform>`",string,,
 		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
-		":ref:`renderer <renderer>`",string,default," 
+		":ref:`renderer <renderer>`",string,default,"
 	- opengl
 	- opengl_shaders
 	- software"

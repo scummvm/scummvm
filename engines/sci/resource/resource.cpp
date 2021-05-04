@@ -618,7 +618,7 @@ void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 		g_sci && g_sci->getLanguage() == Common::KO_KOR)
 		volVersion = kResVersionSci11;
 	fileStream->seek(res->_fileOffset, SEEK_SET);
-	
+
 	int error = res->decompress(volVersion, fileStream);
 	if (error) {
 		warning("Error %d occurred while reading %s from resource file %s: %s",
@@ -2146,8 +2146,8 @@ void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 				Common::String resourceName = _macResMan->getResName(tagArray[i], idArray[j]);
 
 				// Same as with audio36 above
-				if (!resourceName.empty() && 
-					(resourceName[0] == '#' || 
+				if (!resourceName.empty() &&
+					(resourceName[0] == '#' ||
 					 resourceName[0] == 'S' || // Most SCI32 games
 					 resourceName[0] == 'T'))  // Torin syncs start with T or S
 					resId = convertPatchNameBase36(kResourceTypeSync36, resourceName);

@@ -208,9 +208,9 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		if (_varChooseIdleAnimation == 1) {
 #if BLADERUNNER_ORIGINAL_BUGS
-			// TODO a bug? Why use kModelAnimationBulletBobSittingHeadMoveDownThink (516) here 
+			// TODO a bug? Why use kModelAnimationBulletBobSittingHeadMoveDownThink (516) here
 			//             and leave kModelAnimationBulletBobSittingHeadMoveAround (515) unused?
-			//             Also below kModelAnimationBulletBobSittingHeadMoveAround (515) is used 
+			//             Also below kModelAnimationBulletBobSittingHeadMoveAround (515) is used
 			//             in Slice_Animation_Query_Number_Of_Frames(),
 			//             even though the count of frames is identical in both 515 and 516 framesets
 			*animation = kModelAnimationBulletBobSittingHeadMoveDownThink;

@@ -125,7 +125,7 @@ private:
 	void loadBitmap(Common::SeekableReadStream &stream);
 	void packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch, const uint16 outPitch);
 };
-/** @} */	
+/** @} */
 } // End of namespace Image
 
 #endif

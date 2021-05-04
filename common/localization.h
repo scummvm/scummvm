@@ -34,7 +34,7 @@ namespace Common {
  *
  * @brief Functions for managing localized elements of the GUI.
  *
- *		
+ *
  * @{
  */
 

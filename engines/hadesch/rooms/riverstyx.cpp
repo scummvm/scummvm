@@ -46,7 +46,7 @@ struct StyxShadeInternal {
 		_ambient.unpause();
 		room->enableMouse();
 	}
-	
+
 	Common::String _name;
 	int _counter;
 	AmbientAnim _ambient;
@@ -135,7 +135,7 @@ public:
 			if (persistent->_styxCharonUsedPotion) {
 				room->playVideo("charon assumes you have gold sound", 0, 28004);
 			} else {
-				
+
 				room->playVideo(_charonSound ? "charon says away 2 sound" : "charon says away 1 sound", 0, 28004);
 			}
 			return;

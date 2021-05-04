@@ -48,7 +48,7 @@ struct Point {
 	int16 y;	/*!< The vertical position of the point. */
 
 	Point() : x(0), y(0) {}
-	
+
 	/**
 	 * Create a point with position defined by @p x1 and @p y1.
 	 */
@@ -154,7 +154,7 @@ struct Rect {
 	/**
 	 * Create a rectangle with the top-left corner at the given position (x1, y1)
 	 * and the bottom-right corner at the position (x2, y2).
-	 * 
+	 *
 	 * The @p x2 value must be greater or equal @p x1 and @p y2 must be greater or equal @p y1.
 	 */
 	Rect(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
@@ -324,7 +324,7 @@ struct Rect {
 	}
 
 	/**
-	 * Move this rectangle to the position defined by @p x, @p y. 
+	 * Move this rectangle to the position defined by @p x, @p y.
 	 */
 	void moveTo(int16 x, int16 y) {
 		bottom += y - top;
@@ -342,14 +342,14 @@ struct Rect {
 	}
 
 	/**
-	 * Move this rectangle to the position of the point @p p. 
+	 * Move this rectangle to the position of the point @p p.
 	 */
 	void moveTo(const Point &p) {
 		moveTo(p.x, p.y);
 	}
 
 	 /**
-	 * Print debug messages related to this class. 
+	 * Print debug messages related to this class.
 	 */
 	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {
 		debug(debuglevel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);

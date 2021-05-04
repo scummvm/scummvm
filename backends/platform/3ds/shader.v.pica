@@ -39,7 +39,7 @@
 	; Force the w component of inpos to be 1.0
 	mov r0.xyz, inpos
 	mov r0.w,   ones
-	
+
 	; r1 = modelView * inpos
 	dp4 r1.x, modelView[0], r0
 	dp4 r1.y, modelView[1], r0

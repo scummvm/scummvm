@@ -42,10 +42,10 @@ public:
 	void setLayer(int layer) { _layer = layer; }
 	int getWidth() const;
 	int getHeight() const;
-	
+
 	static int32 getStaticTag() { return MKTAG('O','V','E','R'); }
 
-	
+
 
 //private:
 	Material *_material;

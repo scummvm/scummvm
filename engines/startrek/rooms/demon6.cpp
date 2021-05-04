@@ -776,7 +776,7 @@ int Room::demon6ShowCaseProcessSelection(Sprite *sprites, Sprite *clickedSprite,
 	delete clickedSprite->bitmap;
 	clickedSprite->bitmap = nullptr;
 	visible ^= (0x10 >> (clickedSprite - sprites));
-	
+
 	return visible;
 }
 

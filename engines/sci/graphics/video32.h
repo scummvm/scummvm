@@ -181,7 +181,7 @@ protected:
 	bool _needsUpdate;
 
 	/**
-	 * Current frame rendered by playUntilEvent() 
+	 * Current frame rendered by playUntilEvent()
 	 */
 	const Graphics::Surface* _currentFrame;
 
@@ -285,7 +285,7 @@ private:
 class QuickTimePlayer : public VideoPlayer {
 public:
 	QuickTimePlayer(EventManager *eventMan);
-	
+
 	/**
 	 * Plays a QuickTime animation with the given file name
 	 */
@@ -543,7 +543,7 @@ private:
 	}
 
 	bool isNormallyComposited() const {
-		return (getSciVersion() == SCI_VERSION_3) || 
+		return (getSciVersion() == SCI_VERSION_3) ||
 				(g_sci->getPlatform() == Common::kPlatformMacintosh &&
 				 getSciVersion() >= SCI_VERSION_2_1_LATE);
 	}

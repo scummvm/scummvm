@@ -422,7 +422,7 @@ static const uint16 sci21IntArrayPatch[] = {
 static const uint16 sci2BenchmarkSignature[] = {
 	SIG_MAGICDWORD,
 	0x76,                       // push0
-	0x46, SIG_UINT16(0xfd8c),   // calle proc64908_0 [ speed test function ] 
+	0x46, SIG_UINT16(0xfd8c),   // calle proc64908_0 [ speed test function ]
 	      SIG_UINT16(0x0000),
 	      SIG_UINT16(0x0000),
 	SIG_END
@@ -1972,7 +1972,7 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 //  only plays once and macThing proceeds.
 //
 // This buggy script didn't break in the original because the Mac interpreter
-//  didn't support looping sounds. It always played sounds just once and then 
+//  didn't support looping sounds. It always played sounds just once and then
 //  signaled when they were complete and ignored the value of the loop property.
 //  This was most apparent in the KQ6 Mac port. All the room music, which was
 //  designed to loop, stopped abruptly after a minute in a room and then
@@ -3817,7 +3817,7 @@ static const uint16 gk1MacTalismanInsetSignature[] = {
 	0x78,                                   // push1
 	0x78,                                   // push1
 	0x81, 0x09,                             // lag 09
-	0x4a, SIG_UINT16(0x0006),               // send 06 [ GKInventory hide: 1 ] 
+	0x4a, SIG_UINT16(0x0006),               // send 06 [ GKInventory hide: 1 ]
 	0x39, SIG_SELECTOR8(doit),              // pushi doit
 	0x38, SIG_MAGICDWORD,                   // pushi 0008
 	      SIG_UINT16(0x0008),
@@ -3997,7 +3997,7 @@ static const uint16 gk2VolumeResetPatch[] = {
 // Responsible method: GK2:init
 static const uint16 gk2BenchmarkSignature[] = {
 	0x76,                       // push0
-	0x40, SIG_ADDTOOFFSET(+2),  // call speed test proc 
+	0x40, SIG_ADDTOOFFSET(+2),  // call speed test proc
 	      SIG_MAGICDWORD,
 		  SIG_UINT16(0x0000),
 	0x65, 0x28,                 // aTop speedRating
@@ -4012,7 +4012,7 @@ static const uint16 gk2BenchmarkPatch[] = {
 };
 
 // GK2 has a complex sound bug which causes seemingly random lockups when
-//  changing rooms in many areas including the Herrenchiemse Museum, the Hunt 
+//  changing rooms in many areas including the Herrenchiemse Museum, the Hunt
 //  Club, and St. Georg Church. This also occurs in the original.
 //
 // SoundManager continuously plays an array of sounds provided to its play
@@ -4157,7 +4157,7 @@ static const uint16 gk2XaverBlackWolfkPatch[] = {
 //  Asking Georg about "Ludwig's letter to the Conductor" is required to finish
 //  the chapter. This topic becomes available after looking at the "Ludwig and
 //  Wagner" plaque in Herrenchiemsee and then clicking again to read it aloud.
-//  The problem is that the rest of the game only cares about looking at the 
+//  The problem is that the rest of the game only cares about looking at the
 //  plaque. If Herrenchiemsee is completed without reading the plaque then the
 //  Hint feature claims everything is done and the player appears to be stuck.
 //
@@ -5605,7 +5605,7 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 // Responsible method: chink:doVerb
 static const uint16 kq6SignatureCassimaSecretPassage[] = {
 	SIG_MAGICDWORD,
-	0x67, 0x1a,                         // pTos noun         
+	0x67, 0x1a,                         // pTos noun
 	0x3c,                               // dup
 	0x35, 0x04,                         // ldi 04
 	0x1a,                               // eq?
@@ -5614,14 +5614,14 @@ static const uint16 kq6SignatureCassimaSecretPassage[] = {
 	0x78,                               // push1
 	0x78,                               // push1
 	0x38, SIG_UINT16(0x0321),           // pushi 0321
-	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 801 ] 
+	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 801 ]
 	0x36,                               // push
 	0x81, 0x02,                         // lag 02
 	0x4a, 0x06,                         // send 06 [ rm800 setScript: cassimaScript ]
 	0x33, 0x10,                         // jmp 10
 	0x38, SIG_SELECTOR16(setScript),    // pushi setScript
 	SIG_ADDTOOFFSET(+5),
-	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 802 ] 
+	0x43, 0x02, 0x02,                   // callk ScriptID 02 [ ScriptID 802 ]
 	SIG_END
 };
 
@@ -5632,7 +5632,7 @@ static const uint16 kq6PatchCassimaSecretPassage[] = {
 	0x4a, 0x04,                         // send 04 [ rm800 script? ]
 	0x31, 0x01,                         // bnt 01
 	0x48,                               // ret [ do nothing if script is running ]
-	0x67, 0x1a,                         // pTos noun         
+	0x67, 0x1a,                         // pTos noun
 	0x3c,                               // dup
 	0x35, 0x04,                         // ldi 04
 	0x1a,                               // eq?
@@ -6610,7 +6610,7 @@ static const uint16 kq7SnakeOilSalesmanPatch[] = {
 	0x76,                               // push0
 	0x72, PATCH_UINT16(0x15b4),         // lofsa snakeSalesman
 	0x4a, PATCH_UINT16(0x0004),         // send 04  [ snakeSalesman: dispose ]
-	0x32, PATCH_UINT16(0xfd26),         // jmp fd26 [ KQEgo setHeading and end of method ] 
+	0x32, PATCH_UINT16(0xfd26),         // jmp fd26 [ KQEgo setHeading and end of method ]
 	PATCH_END
 };
 
@@ -9799,7 +9799,7 @@ static const uint16 phant1WineCaskHotspotSignature[] = {
 	0x45, 0x03, SIG_UINT16(0x0002),       // callb proc0_3 [ seen barrel video? ]
 	0x18,                                 // not
 	0x2f, 0x0f,                           // bt 0f
-	0x89, 0x6a,                           // lsg 6a 
+	0x89, 0x6a,                           // lsg 6a
 	0x35, 0x06,                           // ldi 06
 	0x1c,                                 // ne? [ is not chapter 6? ]
 	0x31, 0x21,                           // bnt 21 [ skip hotspot ]
@@ -10604,7 +10604,7 @@ static const uint16 phant2ComputerScrollbarCrashPatch[] = {
 //  member of its mouser collection, but User:doit only passes these events on
 //  if User:hogs is empty. Loading the control panel adds its button to the hogs
 //  stack which prevents DItem:track from being called and updating the flag.
-//  
+//
 // We fix this by setting the global mouse-moved flag whenever a scrollbar arrow
 //  is pressed. ScrollbarArrow:handleEvent already calls DItem:track, so setting
 //  this flag before then causes it to always evaluate the incoming event and
@@ -20254,7 +20254,7 @@ static const uint16 sq6SaveDialogMessageSignature[] = {
 	0x78,                               // push1
 	0x8b, 0x04,                         // lsl 04
 	0x35, 0x01,                         // ldi 01
-	0x1a,                               // eq? 
+	0x1a,                               // eq?
 	0x31, 0x04,                         // bnt 04 [ skip if not saving ]
 	0x35, 0x00,                         // ldi 00 [ message priority: 0 ]
 	SIG_END

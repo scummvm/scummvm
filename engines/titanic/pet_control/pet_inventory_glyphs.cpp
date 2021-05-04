@@ -222,7 +222,7 @@ int CPetInventoryGlyph::populateItem(CGameObject *item, bool isLoading) {
 	if (itemIndex == -1)
 		return -1;
 
-	// Some objects can be in multiple different states. These are handled 
+	// Some objects can be in multiple different states. These are handled
 	// below to give each the correct inventory glyph and description
 	switch (ITEM_MODES[itemIndex]) {
 	case 0:

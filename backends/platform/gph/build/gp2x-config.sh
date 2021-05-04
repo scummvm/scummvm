@@ -26,6 +26,6 @@ cd ../../../..
   --enable-vkeybd
 
 # --enable-plugins --default-dynamic
-# --disable-release --enable-debug  
+# --disable-release --enable-debug
 
 echo Generating config for GP2X complete. Check for errors.

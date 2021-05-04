@@ -103,7 +103,7 @@ void BbdouBubble::addBubbleStyle(uint32 showSequenceId, uint32 hideSequenceId, u
 }
 
 void BbdouBubble::show() {
-	
+
 	if (_showingBubbleStyle) {
 		hide();
 	}

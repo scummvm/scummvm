@@ -117,7 +117,7 @@ public:
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		*engine = new StarkEngine(syst, desc);
 		return Common::kNoError;
-	}    
+	}
 };
 
 } // End of namespace Stark

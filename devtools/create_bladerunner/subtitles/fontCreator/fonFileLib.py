@@ -13,7 +13,7 @@ except ImportError:
 	print "[Error] os python library is required to be installed!"
 else:
 	osLibFound = True
-	
+
 try:
 	import sys
 except ImportError:
@@ -27,7 +27,7 @@ except ImportError:
 	print "[Error] struct python library is required to be installed!"
 else:
 	structLibFound = True
-	
+
 try:
 	from PIL import Image
 except ImportError:
@@ -52,23 +52,23 @@ class FonHeader(object):
 	maxGlyphWidth = -1              # in pixels
 	maxGlyphHeight = -1             # in pixels
 	graphicSegmentByteSize = -1     # Graphic segment byte size
-	
+
 	def __init__(self):
 		return
 
 
 class fonFile(object):
 	m_header = FonHeader()
-	
+
 	simpleFontFileName = 'GENERIC.FON'
 	realNumOfCharactersInImageSegment = 0 # this is used for the workaround for the corrupted TAHOME18.FON
 	nonEmptyCharacters = 0
-	
+
 	glyphDetailEntriesLst = [] # list of 5-value tuples. Tuple values are (X-offset, Y-offset, Width, Height, Offset in Graphics segment)
 	glyphPixelData = None      # buffer of pixel data for glyphs
-	
+
 	m_traceModeEnabled = False
-	
+
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
 		del self.glyphDetailEntriesLst[:]
@@ -77,12 +77,12 @@ class fonFile(object):
 		self.realNumOfCharactersInImageSegment = 0 # this is used for the workaround for the corrupted TAHOME18.FON
 		self.nonEmptyCharacters = 0
 		self.m_traceModeEnabled = traceModeEnabled
-		
+
 		return
-		
+
 	def loadFonFile(self, fonBytesBuff, maxLength, fonFileName):
 		self.simpleFontFileName =  fonFileName
-		
+
 		offsInFonFile = 0
 		localLstOfDataOffsets = []
 		del localLstOfDataOffsets[:]
@@ -93,26 +93,26 @@ class fonFile(object):
 			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile) # unsigned integer 4 bytes
 			self.header().maxEntriesInTableOfDetails = tmpTuple[0]
 			offsInFonFile += 4
-			
+
 			if self.simpleFontFileName == 'TAHOMA18.FON': # deal with corrupted original 'TAHOMA18.FON' file
 				self.realNumOfCharactersInImageSegment = 176
 				if self.m_traceModeEnabled:
 					print "[Debug] SPECIAL CASE. WORKAROUND FOR CORRUPTED %s FILE. Only %d characters supported!" % (self.simpleFontFileName, self.realNumOfCharactersInImageSegment)
 			else:
 				self.realNumOfCharactersInImageSegment = self.header().maxEntriesInTableOfDetails
-				
+
 			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().maxGlyphWidth = tmpTuple[0]
 			offsInFonFile += 4
-			
+
 			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().maxGlyphHeight = tmpTuple[0]
 			offsInFonFile += 4
-			
+
 			tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 			self.header().graphicSegmentByteSize = tmpTuple[0]
 			offsInFonFile += 4
-			
+
 			if self.m_traceModeEnabled:
 				print "[Debug] Font file (FON) Header Info: "
 				print "[Debug] Number of entries: %d, Glyph max-Width: %d, Glyph max-Height: %d, Graphic Segment size: %d" % (self.header().maxEntriesInTableOfDetails, self.header().maxGlyphWidth, self.header().maxGlyphHeight, self.header().graphicSegmentByteSize)
@@ -127,23 +127,23 @@ class fonFile(object):
 				tmpTuple = struct.unpack_from('i', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpXOffset = tmpTuple[0]
 				offsInFonFile += 4
-				
+
 				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpYOffset = tmpTuple[0]
 				offsInFonFile += 4
-				
+
 				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpWidth = tmpTuple[0]
 				offsInFonFile += 4
-				
+
 				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpHeight = tmpTuple[0]
 				offsInFonFile += 4
-				
+
 				tmpTuple = struct.unpack_from('I', fonBytesBuff, offsInFonFile)  # unsigned integer 4 bytes
 				tmpDataOffset = tmpTuple[0]
 				offsInFonFile += 4
-				
+
 				if tmpWidth == 0 or tmpHeight == 0:
 					if self.m_traceModeEnabled:
 						print "Index: %d\t UNUSED *****************************************************************" % (idx)
@@ -157,9 +157,9 @@ class fonFile(object):
 						# This never happens in the original files. Offsets are "re-used" but not really because it happens only for empty (height = 0) characters which all seem to point to the next non-empty character
 						if self.m_traceModeEnabled:
 							print "Index: %d\t RE-USING ANOTHER GLYPH *****************************************************************" % (idx)
-							
+
 				self.glyphDetailEntriesLst.append( ( tmpXOffset, tmpYOffset, tmpWidth, tmpHeight, tmpDataOffset) )
-				
+
 			offsInFonFile = (4 * 4) + (self.header().maxEntriesInTableOfDetails * 5 * 4) # we need the total self.header().maxEntriesInTableOfDetails here and not self.realNumOfCharactersInImageSegment
 			self.glyphPixelData = fonBytesBuff[offsInFonFile:]
 			return True
@@ -167,31 +167,31 @@ class fonFile(object):
 			print "[Error] Loading Font file (FON) %s failed!" % (self.simpleFontFileName)
 			raise
 		return False
-		
+
 	def outputFonToPNG(self):
 		print "[Info] Exporting font file (FON) to PNG: %s" % (self.simpleFontFileName + ".PNG")
-		
+
 		targWidth = 0
 		targHeight = 0
 		paddingFromTopY = 2
 		paddingBetweenGlyphsX = 10
-		
+
 		if len(self.glyphDetailEntriesLst) == 0 or (len(self.glyphDetailEntriesLst) != self.realNumOfCharactersInImageSegment and len(self.glyphDetailEntriesLst) != self.header().maxEntriesInTableOfDetails) :
 			print "[Error] Font file (FON) loading process did not complete correctly. Missing important data in structures. Cannot output image!"
 			return
-			
+
 		# TODO asdf refine this code here. the dimensions calculation is very crude for now
 		if self.header().maxGlyphWidth > 0 :
 			targWidth = (self.header().maxGlyphWidth + paddingBetweenGlyphsX) * (self.realNumOfCharactersInImageSegment + 1)
 		else:
 			targWidth = 1080
-			
+
 		# TODO asdf refine this code here. the dimensions calculation is very crude for now
 		if self.header().maxGlyphHeight > 0 :
 			targHeight = self.header().maxGlyphHeight * 2
 		else:
 			targHeight = 480
-			
+
 		imTargetGameFont = Image.new("RGBA",(targWidth, targHeight), (0,0,0,0))
 		#print imTargetGameFont.getbands()
 		#
@@ -213,12 +213,12 @@ class fonFile(object):
 			if (glyphWidth == 0 or glyphHeight == 0):
 				drawIdxDeductAmount += 1
 			drawIdx = idx - drawIdxDeductAmount
-			
+
 			for colorIdx in range(0, glyphWidth*glyphHeight):
 				tmpTuple = struct.unpack_from('H', self.glyphPixelData, glyphDataOffs)	# unsigned short 2 bytes
 				pixelColor = tmpTuple[0]
 				glyphDataOffs += 2
-				
+
 #				 if pixelColor > 0x8000:
 #					 print "[Debug] WEIRD CASE" # NEVER HAPPENS - TRANSPARENCY IS ON/OFF. There's no grades of transparency
 				rgbacolour = (0,0,0,0)
@@ -230,18 +230,18 @@ class fonFile(object):
 					tmp8bitB1 =	 ( (pixelColor & 0x1f) ) << 3
 					rgbacolour = (tmp8bitR1,tmp8bitG1,tmp8bitB1, 255) # alpha: 1.0 fully opaque
 					#rgbacolour = (255,255,255, 255)   # alpha: 1.0 fully opaque
-					
+
 				if currX == glyphWidth:
 					currX = 0
 					currY += 1
-					
+
 				imTargetGameFont.putpixel(( (drawIdx + 1) * (self.header().maxGlyphWidth + paddingBetweenGlyphsX ) + currX, paddingFromTopY + glyphYoffs + currY), rgbacolour)
 				currX += 1
 		try:
 			imTargetGameFont.save(os.path.join('.', self.simpleFontFileName + ".PNG"), "PNG")
 		except Exception as e:
 			print '[Error] Unable to write to output PNG file. ' + str(e)
-			
+
 	def header(self):
 		return self.m_header
 #
@@ -259,7 +259,7 @@ if __name__ == '__main__':
 	# 'SUBTLS_E.FON'   # OUR EXTRA FONT USED FOR SUBTITLES
 	inFONFile = None
 	inFONFileName =  'SUBTLS_E.FON'    # Subtitles font custom
-	
+
 	if len(sys.argv[1:])  > 0 \
 		and os.path.isfile(os.path.join('.', sys.argv[1])) \
 		and len(sys.argv[1]) >= 5 \
@@ -271,7 +271,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inFONFileName)
 		errorFound = True
-	
+
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inFONFileName)

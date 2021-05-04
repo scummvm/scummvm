@@ -466,7 +466,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		Actor_Says(kActorCrazylegs, 550, 16);
 		Actor_Says(kActorMcCoy, 1940, 15);
 		Actor_Says(kActorMcCoy, 1945, -1);
-		// CrazyLegs cuts his sentence short here. He is not interrupted. 
+		// CrazyLegs cuts his sentence short here. He is not interrupted.
 		Actor_Says(kActorCrazylegs, 560, 15);
 		Actor_Says(kActorCrazylegs, 570, 16);
 		Actor_Says(kActorMcCoy, 1950, 17);
@@ -691,7 +691,7 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		Actor_Says(kActorMcCoy, 1725, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 40, 16);
 		Actor_Says(kActorCrazylegs, 50, kAnimationModeTalk);
-		// CrazyLegs cuts his sentence short here. He is not interrupted. 
+		// CrazyLegs cuts his sentence short here. He is not interrupted.
 		Actor_Says(kActorCrazylegs, 60, 12);
 		Actor_Says(kActorCrazylegs, 70, 13);
 		Actor_Says(kActorMcCoy, 1730, kAnimationModeTalk);
@@ -732,7 +732,7 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 		ADQ_Flush();
 		ADQ_Add(kActorCrazylegs, 130, 18);
 		ADQ_Add(kActorCrazylegs, 140, 18);
-		// CrazyLegs cuts his sentence short here. He is not interrupted. 
+		// CrazyLegs cuts his sentence short here. He is not interrupted.
 		ADQ_Add(kActorCrazylegs, 150, 18);
 		ADQ_Add(kActorCrazylegs, 160, 17);
 	}

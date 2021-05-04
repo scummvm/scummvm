@@ -418,7 +418,7 @@ NotinResourceFile:
 
 int Hugo::GetResourceParameters(char *filename, char *resname, int restype) {
 	int f;
-	
+
 	var[system_status] = 0;
 
 	extra_param = -1;

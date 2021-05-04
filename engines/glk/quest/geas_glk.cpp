@@ -125,7 +125,7 @@ String GeasGlkInterface::get_file(const String &fname) const {
 	// Read entirety of the file
 	char *buf = new char[f.size()];
 	f.read(buf, f.size());
-	
+
 	String result(buf, buf + f.size());
 	delete[] buf;
 

@@ -170,7 +170,7 @@ void CStarCrosshairs::incMatches() {
 }
 
 FPoint CStarCrosshairs::getPosition() const {
-	return (_entryIndex >= 0 && _entryIndex <= 2) ? 
+	return (_entryIndex >= 0 && _entryIndex <= 2) ?
 		FPoint(_entries[_entryIndex]) : FPoint();
 }
 

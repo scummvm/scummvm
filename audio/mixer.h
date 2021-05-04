@@ -110,8 +110,8 @@ public:
 	 * @param volume    Volume with which to play the sound, ranging from 0 to 255.
 	 * @param balance	Balance with which to play the sound, ranging from -127 to 127 (full left to full right).
 	 *                  0 is balanced, -128 is invalid.
-	 * @param autofreeStream  If set, the stream will be freed after the playback is finished.                  
-	 * @param permanent       If set, a plain stopAll call will not stop this particular stream.          
+	 * @param autofreeStream  If set, the stream will be freed after the playback is finished.
+	 * @param permanent       If set, a plain stopAll call will not stop this particular stream.
 	 * @param reverseStereo   If set, left and right channels will be swapped.
 	 */
 	virtual void playStream(

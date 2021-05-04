@@ -21,13 +21,13 @@
     <mapping tile="lcb_east"/>
     <mapping frames="4" tile="ship"/>
     <mapping frames="2" tile="horse"/>
-    <mapping tile="dungeon_floor"/>    
+    <mapping tile="dungeon_floor"/>
     <mapping tile="bridge"/>
     <mapping tile="balloon"/>
     <mapping frames="2" tile="bridge_pieces"/>
     <mapping tile="up_ladder"/>
     <mapping tile="down_ladder"/>
-    <mapping tile="ruins"/>    
+    <mapping tile="ruins"/>
     <mapping tile="shrine"/>
     <mapping tile="avatar"/>
     <mapping frames="2" tile="mage"/>
@@ -112,8 +112,8 @@
     <mapping frames="2" tile="sea_horse"/>
     <mapping frames="2" tile="whirlpool"/>
     <mapping frames="2" tile="twister"/>
-    
-    <!-- Land monsters -->    
+
+    <!-- Land monsters -->
     <mapping frames="4" tile="rat"/>
     <mapping frames="4" tile="bat"/>
     <mapping frames="4" tile="spider"/>

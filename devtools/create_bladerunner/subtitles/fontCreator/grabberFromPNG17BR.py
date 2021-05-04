@@ -74,46 +74,46 @@ imagePilLibFound = False
 reLibFound = False
 
 try:
-	import os 
+	import os
 except ImportError:
-	print "[Error] os python library is required to be installed!" 
+	print "[Error] os python library is required to be installed!"
 else:
 	osLibFound = True
-	
+
 try:
-	import sys 
+	import sys
 except ImportError:
-	print "[Error] sys python library is required to be installed!" 
+	print "[Error] sys python library is required to be installed!"
 else:
 	sysLibFound = True
 
 try:
-	import shutil 
+	import shutil
 except ImportError:
-	print "[Error] Shutil python library is required to be installed!" 
+	print "[Error] Shutil python library is required to be installed!"
 else:
 	shutilLibFound = True
 
 try:
-	import struct 
+	import struct
 except ImportError:
-	print "[Error] struct python library is required to be installed!" 
+	print "[Error] struct python library is required to be installed!"
 else:
 	structLibFound = True
-	
+
 try:
 	from PIL import Image
 except ImportError:
-	print "[Error] Image python library (PIL) is required to be installed!" 
+	print "[Error] Image python library (PIL) is required to be installed!"
 else:
 	imagePilLibFound = True
 
 try:
-	import re 
+	import re
 except ImportError:
-	print "[Error] re (Regular expression operations) python library is required to be installed!" 
+	print "[Error] re (Regular expression operations) python library is required to be installed!"
 else:
-	reLibFound = True	
+	reLibFound = True
 
 if 	(not osLibFound) \
 	or (not sysLibFound) \
@@ -244,7 +244,7 @@ class grabberFromPNG:
 			if linesLst is None or len(linesLst) == 0:
 				overrideFailed = True
 			else:
-				if gTraceModeEnabled: 
+				if gTraceModeEnabled:
 					print "[Debug] Parsing Override Encoding file info..."
 				involvedTokensLst =[]
 				del involvedTokensLst[:] # unneeded
@@ -578,20 +578,20 @@ class grabberFromPNG:
 						#	print "[Debug] xOffSet: ", startCol - (self.startOfAllLettersIncludingTheExtraDoubleAndWithKern + (self.lettersFound + 1) * self.tabSpaceWidth)
 				else:
 					self.listOfXOffsets.append(0)
-				
-				
+
+
 				self.listOfBaselines.append(endRow)
 				self.listOfWidths.append(endCol-startCol + 1) # includes the last col (TODO this was without the +1 for MI:SE translator -- possible bug? did we compensate?)
 				self.listOfHeights.append(endRow - startRow + 1) # +1 includes the last row
 				self.listOfLetterBoxes.append((startCol, startRow, endCol, endRow))
-			
+
 			self.startColOfPrevFontLetter = startCol	  #update for next pass
 			#delete the letter - even in the case of ignoring the first double letter
 			for x in range(startCol, endCol+1):
 				for y in range(startRow - trimTopPixels, endRow+1 + trimBottomPixels):
 				   loadedImag[x, y] = 0, 0, 0, 0
 			return 0
-		else: 
+		else:
 			return -1
 #
 #
@@ -743,7 +743,7 @@ class grabberFromPNG:
 						print '[Error] Failed to create target font (FON) file: ' + self.targetFONFilename + '::' + str(e)
 						errorFound = True
 					if not errorFound:
-						print '[Info] Creating target font (FON) file: ' + self.targetFONFilename 
+						print '[Info] Creating target font (FON) file: ' + self.targetFONFilename
 					# reopen the image with our Fonts because we deleted the letters in the in-mem copy
 						im = None
 						if os.access(self.imageRowFilePNG, os.F_OK) :
@@ -1019,11 +1019,11 @@ class grabberFromPNG:
 					if filename.upper() == mixFileName:
 						inputMIXFilesFound.append(mixFileName)
 			break
-		
+
 		if len(inputMIXFilesFound) == 0:
 			print "[Error] No supported game archive resource files (MIX) were found in the specified input path (-ip switch)"
 			sys.exit(1)
-			
+
 		for tmpMIXfileName in inputMIXFilesFound:
 			print "[Info] Found MIX file: %s" % ('"' + tmpMIXfileName + '"')
 			errorFound = False
@@ -1063,7 +1063,7 @@ class grabberFromPNG:
 					#
 					if gTraceModeEnabled:
 						print "[Debug] Checking for supported font file (FON) entries in MIX file..."
-												
+
 					for i in range(0, numOfEntriesToExport):
 						foundFONFile = False
 						currFonFileName = 'UNKNOWN.FON'
@@ -1213,7 +1213,7 @@ def main(argsCL):
 			elif argsCL[i][:1] == '-':
 				invalidSyntax = True
 				break
-				
+
 		if (exportFonMode == False) and (not TMPTargetFONfilename or not TMPimageRowFilePNG or TMPminSpaceBetweenLettersInRowLeftToLeft <= 0 or TMPminSpaceBetweenLettersInColumnTopToTop <= 0 or TMPkerningForFirstDummyFontLetter <= 0 or TMPSpaceWidthInPixels <= 0)  : # this argument is mandatory
 			invalidSyntax = True
 
@@ -1260,7 +1260,7 @@ def main(argsCL):
 				continue
 			print "Argument: %s" % (tmpArg)
 			tmpi+=1
-	
+
 
 #
 # #########################

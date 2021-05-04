@@ -33,7 +33,7 @@ namespace Common {
  *
  * @brief API for managing game language.
  *
- *		
+ *
  * @{
  */
 

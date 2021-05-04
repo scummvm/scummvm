@@ -280,7 +280,7 @@ public:
 				  Common::Point centerPos, int zVal, int fontDelta = 0, const Common::String &extraId = "letter");
 	void hideString(const Common::String &font, size_t maxLen, const Common::String &extraId = "letter");
 	int computeStringWidth(const Common::String &font, const Common::U32String &str, int fontDelta = 0);
-	
+
 	// Misc
 	void playSFX(const Common::String &soundName,
 		     EventHandlerWrapper callbackEvent = EventHandlerWrapper());

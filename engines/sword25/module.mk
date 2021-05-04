@@ -53,7 +53,7 @@ MODULE_OBJS := \
 	script/luascript.o \
 	script/lua_extensions.o \
 	sfx/soundengine.o \
-	sfx/soundengine_script.o 
+	sfx/soundengine_script.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)

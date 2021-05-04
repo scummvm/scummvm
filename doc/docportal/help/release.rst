@@ -2,5 +2,5 @@
 Release notes
 ---------------
 
-.. mdinclude:: ../../../NEWS.md 
+.. mdinclude:: ../../../NEWS.md
 

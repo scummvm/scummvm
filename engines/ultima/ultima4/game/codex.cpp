@@ -64,7 +64,7 @@ void Codex::deinit() {
 void Codex::start() {
 	init();
 
-	// Disable the whirlpool cursor and black out the screen	
+	// Disable the whirlpool cursor and black out the screen
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSHideGameControllerHelper hideControllsHelper;
 #endif
@@ -72,19 +72,19 @@ void Codex::start() {
 	g_screen->screenUpdate(&g_game->_mapArea, false, true);
 
 	// Make the avatar alone
-	
+
 	g_context->_stats->setView(STATS_PARTY_OVERVIEW);
 	g_context->_stats->update(true);     // show just the avatar
 	g_screen->update();
 
 	// Change the view mode so the dungeon doesn't get shown
-	
+
 	gameSetViewMode(VIEW_CODEX);
 
 	g_screen->screenMessage("\n\n\n\nThere is a sudden darkness, and you find yourself alone in an empty chamber.\n");
 	EventHandler::sleep(4000);
 
-	// Check to see if you have the 3-part key	
+	// Check to see if you have the 3-part key
 	if ((g_ultima->_saveGame->_items & (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) != (ITEM_KEY_C | ITEM_KEY_L | ITEM_KEY_T)) {
 		eject(CODEX_EJECT_NO_3_PART_KEY);
 		return;
@@ -98,7 +98,7 @@ void Codex::start() {
 
 	g_screen->screenMessage("\nA voice rings out:\n\"What is the Word of Passage?\"\n\n");
 
-	// Get the Word of Passage	
+	// Get the Word of Passage
 #ifdef IOS_ULTIMA4
 	U4IOS::IOSConversationHelper::setIntroString("What is the Word of Passage?");
 #endif

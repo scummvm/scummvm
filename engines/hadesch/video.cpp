@@ -57,7 +57,7 @@ PlayAnimParams PlayAnimParams::loop() {
 PlayAnimParams PlayAnimParams::keepLastFrame() {
 	return PlayAnimParams(false, true);
 }
-	
+
 PlayAnimParams PlayAnimParams::disappear() {
 	return PlayAnimParams(false, false);
 }
@@ -77,11 +77,11 @@ int PlayAnimParams::getSpeed() {
 int PlayAnimParams::getFirstFrame() {
 	return _firstFrame;
 }
-	
+
 int PlayAnimParams::getLastFrame() {
 	return _lastFrame;
 }
-		
+
 PlayAnimParams PlayAnimParams::partial(int first, int last) const {
 	PlayAnimParams ret(*this);
 	ret._firstFrame = first;
@@ -242,7 +242,7 @@ void VideoRoom::startAnimationInternal(const LayerId &name, int zValue, int mspe
 	if (!modifiedZ.empty()) {
 		for (Common::Array<Layer>::iterator it = modifiedZ.begin(); it != modifiedZ.end(); it++) {
 			_layers.insert(*it);
-		}		
+		}
 	}
 }
 
@@ -363,7 +363,7 @@ void VideoRoom::computeHotZone(int time, Common::Point mousePos) {
 	_rightEdge = false;
 
 	Common::SharedPtr<HeroBelt> belt = g_vm->getHeroBelt();
-	
+
 	if (_heroBeltEnabled)
 		belt->computeHotZone(time, mousePos, _mouseEnabled);
 	if (_heroBeltEnabled && belt->isOverHeroBelt()) {
@@ -465,7 +465,7 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 			_panCallback = -1;
 			_pan = 640;
 			_panSpeed = 0;
-		}		
+		}
 	}
 
 	if (_finalFadeSpeed != 0) {
@@ -576,7 +576,7 @@ void VideoRoom::nextFrame(Common::SharedPtr<GfxContext> context, int time, bool 
 	context->fade(_finalFade);
 	if (!_subtitles.empty())
 		context->renderSubtitle(_subtitles.front().line, viewPoint);
-	
+
 	context->renderToScreen(viewPoint);
 }
 
@@ -622,7 +622,7 @@ void VideoRoom::addAnimLayerInternal(const LayerId &name, int zValue, Common::Po
 	pf2.openStore(rs);
 
 	addLayer(new Renderable(pf2.loadImageArray()), name, zValue, false,
-		 offset);	
+		 offset);
 }
 
 Renderable::Renderable(Common::Array<PodImage> images) {
@@ -1109,6 +1109,6 @@ void VideoRoom::playSubtitles(const char *text, int subID) {
 		l.maxTime = countTime;
 		_subtitles.push(l);
 		_countQueuedSubtitles[subID]++;
-	} 
+	}
 }
 }

@@ -32,32 +32,32 @@ namespace ZCode {
  * Configuration flags
  */
 enum ConfigFlag {
-	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3 
-	CONFIG_TIME         = 0x02, ///< Status line displays time          - V3 
-	CONFIG_TWODISKS     = 0x04, ///< Story file occupied two disks      - V3 
-	CONFIG_TANDY        = 0x08, ///< Tandy licensed game                - V3 
-	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3 
-	CONFIG_SPLITSCREEN  = 0x20, ///< Interpr supports split screen mode - V3 
-	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3 
-	
+	CONFIG_BYTE_SWAPPED = 0x01, ///< Story file is byte swapped         - V3
+	CONFIG_TIME         = 0x02, ///< Status line displays time          - V3
+	CONFIG_TWODISKS     = 0x04, ///< Story file occupied two disks      - V3
+	CONFIG_TANDY        = 0x08, ///< Tandy licensed game                - V3
+	CONFIG_NOSTATUSLINE = 0x10, ///< Interpr can't support status lines - V3
+	CONFIG_SPLITSCREEN  = 0x20, ///< Interpr supports split screen mode - V3
+	CONFIG_PROPORTIONAL = 0x40, ///< Interpr uses proportional font     - V3
+
 	CONFIG_COLOUR       = 0x01, ///< Interpr supports colour            - V5+
-	CONFIG_PICTURES	    = 0x02, ///< Interpr supports pictures	        - V6 
+	CONFIG_PICTURES	    = 0x02, ///< Interpr supports pictures	        - V6
 	CONFIG_BOLDFACE     = 0x04, ///< Interpr supports boldface style    - V4+
 	CONFIG_EMPHASIS     = 0x08, ///< Interpr supports emphasis style    - V4+
 	CONFIG_FIXED        = 0x10, ///< Interpr supports fixed width style - V4+
-	CONFIG_SOUND	    = 0x20, ///< Interpr supports sound             - V6 
+	CONFIG_SOUND	    = 0x20, ///< Interpr supports sound             - V6
 	CONFIG_TIMEDINPUT   = 0x80, ///< Interpr supports timed input       - V4+
-	
+
 	SCRIPTING_FLAG	  = 0x0001, ///< Outputting to transscription file  - V1+
 	FIXED_FONT_FLAG   = 0x0002, ///< Use fixed width font               - V3+
-	REFRESH_FLAG 	  = 0x0004, ///< Refresh the screen                 - V6 
+	REFRESH_FLAG 	  = 0x0004, ///< Refresh the screen                 - V6
 	GRAPHICS_FLAG	  = 0x0008, ///< Game wants to use graphics         - V5+
-	OLD_SOUND_FLAG	  = 0x0010, ///< Game wants to use sound effects    - V3 
+	OLD_SOUND_FLAG	  = 0x0010, ///< Game wants to use sound effects    - V3
 	UNDO_FLAG	  = 0x0010, ///< Game wants to use UNDO feature     - V5+
 	MOUSE_FLAG	  = 0x0020, ///< Game wants to use a mouse          - V5+
 	COLOUR_FLAG	  = 0x0040, ///< Game wants to use colours          - V5+
 	SOUND_FLAG	  = 0x0080, ///< Game wants to use sound effects    - V5+
-	MENU_FLAG	  = 0x0100  ///< Game wants to use menus            - V6 
+	MENU_FLAG	  = 0x0100  ///< Game wants to use menus            - V6
 };
 
 /**

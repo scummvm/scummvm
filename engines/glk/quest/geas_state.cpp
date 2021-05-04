@@ -42,7 +42,7 @@ void Serializer::sync(String &s) {
 	if (isLoading())
 		s = String(str.c_str());
 }
-	
+
 void Serializer::sync(PropertyRecord &pr) {
 	sync(pr.name);
 	sync(pr.data);
@@ -89,7 +89,7 @@ void Serializer::sync(GeasState &gs) {
 
 void SVarRecord::sync(Serializer &s) {
 	s.sync(name);
-	
+
 	uint count = data.size();
 	s.syncAsUint32LE(count);
 	if (s.isLoading())

@@ -364,7 +364,7 @@ void DisplayManager::calculateScaleParams() {
 			_displayParams.screenOutput.width = (uint32)(PSP_SCREEN_HEIGHT * aspectRatio);
 
 			if (_displayParams.screenOutput.width > PSP_SCREEN_WIDTH) { // shrink if wider than screen
-				_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width); 
+				_displayParams.screenOutput.height = (uint32)(((float)PSP_SCREEN_HEIGHT * (float)PSP_SCREEN_WIDTH) / (float)_displayParams.screenOutput.width);
 				_displayParams.screenOutput.width = PSP_SCREEN_WIDTH;
 			}
 		}

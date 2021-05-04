@@ -237,7 +237,7 @@ static const struct {
 	{ "V9170tI0", {"V9170nI0", _s("He must sit next to a smoking being") } },
 	{ "V9170tJ0", {"V9170nJ0", _s("He must sit next to a hot being") } },
 	{ "V9170tK0", {"V9170nK0", _s("He simply must sit next to a horned being") } }, // 45
-	{ "V9170tL0", {"V9170nL0", _s("He must sit next to a flat animal") } }, 
+	{ "V9170tL0", {"V9170nL0", _s("He must sit next to a flat animal") } },
 	{ "V9170tM0", {"V9170nM0", _s("He must sit next to a flat being") } },
 	{ "V9170tN0", {"V9170nN0", _s("He must sit next to an animal") } },
 	{ "V9170tO0", {"V9170nO0", _s("He must sit next to a headless being") } },
@@ -872,7 +872,7 @@ private:
 			yuck();
 			return false;
 		}
-		
+
 		// "Must sit in front of"
 		if (!isAttribMatch(pAfrontOf, cur->tabA)
 		    && pAfrontOf != nullptr) {

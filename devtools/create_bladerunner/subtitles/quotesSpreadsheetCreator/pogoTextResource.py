@@ -175,19 +175,19 @@ class pogoTextResource(object):
 	def __init__(self, traceModeEnabled = True):
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-	
+
 	def printPogo(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] printing Pogo..."
 		for (idTre, textTre) in POGO_TEXT_RESOURCE_TUPLE_LIST:
 			print "%s\t%s" % (idTre, textTre)
 		return
-		
+
 	def getPogoEntriesList(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] getPogoEntriesList()"
 		return POGO_TEXT_RESOURCE_TUPLE_LIST
-		
+
 #
 #
 #
@@ -201,4 +201,3 @@ else:
 	#debug
 	#print "[Debug] Running	 %s imported from another module" % (my_module_name)
 	pass
-	

@@ -199,7 +199,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
 		// Note: Orginal game allowed a move animation on a single right click.
-		// This implementation needs right mouse to be held. 
+		// This implementation needs right mouse to be held.
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 
 		if (checkTurn(mousedir, true))
@@ -251,7 +251,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 			// want to run while in combat mode?
 			// first sheath weapon
 			nextanim = Animation::readyWeapon;
-		} 
+		}
 
 		if (hasMovementFlags(MOVE_RUN)) {
 			// Take a step before running
@@ -369,7 +369,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 
 	if (_mouseButton[1].isState(MBS_DOWN) && _mouseButton[1].isState(MBS_HANDLED)) {
 		// Note: Orginal game allowed a move animation on a single right click.
-		// This implementation needs right mouse to be held. 
+		// This implementation needs right mouse to be held.
 		setMovementFlag(MOVE_MOUSE_DIRECTION);
 	}
 

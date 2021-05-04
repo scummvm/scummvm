@@ -14,7 +14,7 @@ except ImportError:
 	print "[Error] os python library is required to be installed!"
 else:
 	osLibFound = True
-	
+
 try:
 	import sys
 except ImportError:
@@ -61,21 +61,21 @@ class AudHeader(object):
 	m_flags = 0         # bit 0=stereo, bit 1=16bit     // int8_t
 	m_compression = 0   # 1=WW compressed, 99=IMA ADPCM (0x63) // int8_t
 	m_populated = False
-	
+
 	def __init__(self):
 		return
-	
-	
+
+
 # The rest of the AUD files is divided in chunks.
 # These are usually 512 bytes long, except for the last one.
 class AudChunkHeader(object):
 	m_ch_size_in = 0     # Size of compressed data // int16_t // TODO should be unsigned (?)
 	m_ch_size_out = 0    # Size of output data     // int16_t // TODO should be unsigned (?)
 	m_ch_id = 0x0000FFFF # Always 0x0000DEAF       // int32_t
-	
+
 	def __init__(self):
 		return
-	
+
 #
 #
 #
@@ -83,21 +83,21 @@ class audFile(object):
 	m_header = AudHeader()
 	m_traceModeEnabled = False
 	m_simpleAudioFileName = 'GENERIC.AUD'
-	
+
 	# traceModeEnabled is bool to enable more printed debug messages
 	def __init__(self, traceModeEnabled = True):
 		self.m_simpleAudioFileName = 'GENERIC.AUD'
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-	
+
 	# std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos, const std::string& filename
 	def export_as_wav(self, audBytesBuff, filename):
 		if (not self.header().m_populated):
 			print "[Error] file was not loaded properly (header info missing): " + filename
 			return 1
-			
+
 		print "[Info] Exporting to wav: " + filename
-		
+
 		cvirtualBinaryD = None
 		if self.header().m_compression > 0:
 			cvirtualBinaryD = self.decode(self.header().m_compression, audBytesBuff)
@@ -114,16 +114,16 @@ class audFile(object):
 				cbinaryDataOutLst.append(tmpTupleL[0])
 				cbinaryDataOutLst.append(tmpTupleH[0])
 			cvirtualBinaryD = struct.pack('B'*len(cbinaryDataOutLst), *cbinaryDataOutLst)
-		
+
 		if (not cvirtualBinaryD and (len(audBytesBuff) - SIZE_OF_AUD_HEADER_IN_BYTES) > 0):
 			print "[Error] audio file could not be exported properly (0 data read): %s" % (filename)
 			return 1
 		elif (len(audBytesBuff) - SIZE_OF_AUD_HEADER_IN_BYTES) == 0:
 			print "[Warning] Creating empty wav file: %s" % (filename)
-		
+
 		cb_sample = self.get_cb_sample()
 		cs_remaining = self.get_c_samples()
-		
+
 		waveWritFile = wave.open(filename, 'wb')
 		waveWritFile.setnchannels(self.get_c_channels())
 		waveWritFile.setsampwidth(cb_sample)
@@ -132,7 +132,7 @@ class audFile(object):
 		#waveWritFile.setcomptype(None, '')
 		waveWritFile.writeframesraw(cvirtualBinaryD)
 		waveWritFile.close()
-		
+
 #		t_wav_header header;
 #		memset(&header, 0, sizeof(t_wav_header));
 #		header.file_header.id = wav_file_id; // # "RIFF"
@@ -151,8 +151,8 @@ class audFile(object):
 #		error = f.write(&header, sizeof(t_wav_header));
 #		return error ? error : f.write(d);
 		return 0	# TODO fix
-		
-		
+
+
 	def loadAudFile(self, audBytesBuff, maxLength, audFileName):
 		self.m_simpleAudioFileName = audFileName
 		offsInAudFile = 0
@@ -171,10 +171,10 @@ class audFile(object):
 		tmpTuple = struct.unpack_from('B', audBytesBuff, offsInAudFile)
 		self.header().m_compression = tmpTuple[0]
 		offsInAudFile += 1
-					
+
 		if self.m_traceModeEnabled:
 			print "[Debug] Sample rate: %d\tsizeIn: %d\tsizeOut: %d\tflags: %d\tcompression: %d" % (self.get_samplerate(), self.header().m_size_in, self.header().m_size_out, self.header().m_flags, self.header().m_compression)
-		
+
 		if self.get_samplerate() < 8000 or self.get_samplerate() > 48000 or self.header().m_size_in > (maxLength - SIZE_OF_AUD_HEADER_IN_BYTES ):
 			print "[Warning] Bad AUD Header info in file %s, size_in: %d, maxLen: %d" % (self.m_simpleAudioFileName, self.header().m_size_in, (maxLength - SIZE_OF_AUD_HEADER_IN_BYTES))
 			if self.header().m_size_in == 0:
@@ -200,7 +200,7 @@ class audFile(object):
 					return False
 		self.header().m_populated = True
 		return True
-		
+
 	# int AudFile::get_chunk_header(int i, std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos, AudChunkHeader& outAudChunkHeader)
 	def get_chunk_header(self, chunkIdx, inAudFileBytesBuffer, inAudFileSize):
 		#fs.seekg(int(startAudFilepos) + int(SIZE_OF_AUD_HEADER_IN_BYTES), fs.beg);
@@ -208,7 +208,7 @@ class audFile(object):
 		#rAudPos = fs.tellg();
 		outAudChunkHeader =  AudChunkHeader()
 		rAudPos = SIZE_OF_AUD_HEADER_IN_BYTES
-		
+
 		if (self.m_traceModeEnabled):
 			print "[Trace] Getting chunk header at %d" % (rAudPos)
 		#AudChunkHeader  tmpInremediateChunkheader;
@@ -218,7 +218,7 @@ class audFile(object):
 			chunkIdx -= 1
 			if (rAudPos + SIZE_OF_AUD_CHUNK_HEADER_IN_BYTES > inAudFileSize):
 				return (-1, rAudPos, None)
-				
+
 			tmpAudFileOffset = rAudPos
 			tmpTuple = struct.unpack_from('H', inAudFileBytesBuffer, tmpAudFileOffset)
 			tmpInremediateChunkheader.m_ch_size_in = tmpTuple[0]
@@ -232,7 +232,7 @@ class audFile(object):
 			#fs.read((char*)&tmpInremediateChunkheader, SIZE_OF_AUD_CHUNK_HEADER_IN_BYTES);
 			rAudPos += SIZE_OF_AUD_CHUNK_HEADER_IN_BYTES + tmpInremediateChunkheader.m_ch_size_in
 			#fs.seekg(int(rAudPos), fs.beg);
-			
+
 		if (rAudPos + SIZE_OF_AUD_CHUNK_HEADER_IN_BYTES > inAudFileSize ):
 			return (-1, rAudPos, None)
 		# write to FINAL output chunk header
@@ -251,7 +251,7 @@ class audFile(object):
 			return (-1, rAudPos, None)
 		rAudPos += SIZE_OF_AUD_CHUNK_HEADER_IN_BYTES
 		return (0, rAudPos, outAudChunkHeader) # //reinterpret_cast<const AudChunkHeader*>(r);
-		
+
 	# int AudFile::get_chunk_data(int i, std::fstream& fs, int sizeToRead, AudFileNS::byte* byteChunkDataPtr)
 	def get_chunk_data(self, inAudFileBytesBuffer, startOffs, sizeToRead):
 		#fs.read((char*)byteChunkDataPtr, sizeToRead)
@@ -267,8 +267,8 @@ class audFile(object):
 		#byteChunkDataOut = struct.pack('b'*len(outChunkDataLst), *outChunkDataLst)
 		#return (0, byteChunkDataOut)
 		return (0, outChunkDataLst)
-		
-		
+
+
 	# std::fstream& fs, AudFileNS::pos_type startAudFilepos, AudFileNS::pos_type endAudFilepos
 	# returned Cvirtual_binary
 	def decode(self, speccompression, audBytesBuff):
@@ -295,7 +295,7 @@ class audFile(object):
 					if self.m_traceModeEnabled:
 						print "[Trace] Error OR End file case while getting uncompressed chunk header!"
 					break
-				
+
 				if self.m_traceModeEnabled:
 					print "[Trace] Get uncompressed chunk header returned: %d " % (out_chunk_header.m_ch_id)
 				#Cvirtual_binary out_chunk_data;
@@ -347,20 +347,20 @@ class audFile(object):
 			else: #if binaryDataOutBuff is None:
 				print "[Error] Decoding yielded errors (data out buffer is null)."
 		return binaryDataOutBuff
-		
+
 	def header(self):
 		return self.m_header
-		
+
 	def get_c_samples(self):
 		return self.m_header.m_size_out / self.get_cb_sample()
-		
+
 	def get_samplerate(self):
 		return self.m_header.m_samplerate;
-		
+
 	# flag bit 0 is stereo(set) mono(clear)
 	def get_c_channels(self):
 		return 2 if (self.m_header.m_flags & 0x01) else 1;
-		
+
 	# flag bit 1 is 16bit(set) 8bit (clear)
 	def get_cb_sample(self):
 		return 2 if (self.m_header.m_flags & 0x02) else 1
@@ -374,7 +374,7 @@ if __name__ == '__main__':
 	# otherwise tries to use the first command line argument as input file
 	inAUDFile = None
 	inAUDFileName = '00000000.AUD'
-	
+
 	if len(sys.argv[1:])  > 0 \
 		and os.path.isfile(os.path.join('.', sys.argv[1])) \
 		and len(sys.argv[1]) >= 5 \
@@ -386,7 +386,7 @@ if __name__ == '__main__':
 	else:
 		print "[Error] No valid input file argument was specified and default input file %s is missing." % (inAUDFileName)
 		errorFound = True
-	
+
 	if not errorFound:
 		try:
 			print "[Info] Opening %s" % (inAUDFileName)

@@ -109,7 +109,7 @@ restartops:	call	showopbox
 	call	showmainops
 	call	worktoscreenm
 donefirstops:	mov	getback,0
-waitops:	
+waitops:
 	cmp quitrequested, 0
 	jnz justret
 
@@ -264,7 +264,7 @@ doload: 	mov	loadingorsave,1
 	call	namestoold
 	mov	getback,0
 
-loadops:	
+loadops:
 	cmp quitrequested, 0
 	jnz quitloaded
 
@@ -655,7 +655,7 @@ Showopbox	proc	near
 	mov	al,0
 	mov	ah,0
 	call	showframe
-	
+
 	mov	ds,tempgraphics
 	mov	di,opsx
 	mov	bx,opsy+55
@@ -935,13 +935,13 @@ quickquit:	if	recording
 	mov	ax,4c00h
 	int	21h
 	ret
-      	
+
 	endp
 
 
 
 Error	proc	near
-	
+
 	cmp	gameerror,1
 	jz	error1
 	cmp	gameerror,2
@@ -959,7 +959,7 @@ Error	proc	near
 	cmp	gameerror,8
 	jz	error8
 	ret
-	
+
 error1:	mov	dx,offset cs:gameerror1
 	jmp	generalerror
 
@@ -980,10 +980,10 @@ error3:	mov	dx,offset cs:gameerror3
 
 error4:	mov	dx,offset cs:gameerror4
 	jmp	generalerror
-	
+
 error5:	mov	dx,offset cs:gameerror5
 	jmp	generalerror
-	
+
 error6:	mov	al,soundint
 	add	al,"0"
 	mov	bx,offset cs:error6patch
@@ -1006,7 +1006,7 @@ generalerror:	mov	ah,9h
 	ret
 
 nodos:	ret
-	
+
 gameerror1:	db	13,10,13,10
 	db	"Dreamweb has an Error:",13,10
 	db	"Unable to allocate Expanded Memory."
@@ -1160,7 +1160,7 @@ Saveposition	proc	near
 	mov	ds,dx
 	mov	dx,offset startvars
 	call	saveseg
-	
+
 	mov	ds,extras
 	mov	dx,exframedata
 	call	saveseg
@@ -1217,7 +1217,7 @@ Loadposition	proc	near
 	push	cs
 	pop	es
 	mov	di,offset cs:filedata
-	
+
 	pop	ax
 	mov	cx,17
 	mul	cx
@@ -1226,7 +1226,7 @@ Loadposition	proc	near
 	mov	dx,offset savenames
 	add	dx,ax
 	call	loadseg
-	
+
 	mov	dx,seg startvars
 	mov	ds,dx
 	mov	dx,offset startvars
@@ -1325,7 +1325,7 @@ Saveseg 	proc	near
 	mov	bx,handle
 	mov	ah,40h
 	int	21h
-	pop	es di 
+	pop	es di
 	ret
 
 	endp
@@ -1402,7 +1402,7 @@ Decide	proc	near
 
 	call	setmode
 	call	loadpalfromiff
-	call	clearpalette	
+	call	clearpalette
 	mov	pointermode,0
 	mov	watchingtime,0
 	mov	pointerframe,0
@@ -1416,7 +1416,7 @@ Decide	proc	near
 	call	fadescreenup
 	mov	getback,0
 
-waitdecide:	
+waitdecide:
 	cmp quitrequested, 0
 	jz $1
 	ret
@@ -1491,7 +1491,7 @@ nonewgame:	ret
 
 
 
-	
+
 Loadold	proc	near
 
 	cmp	commandtype,252

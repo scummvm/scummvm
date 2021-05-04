@@ -23,13 +23,13 @@
             <subimage name="tile_lcb_east"      width="16" height="16"/>
             <subimage name="tile_ship"          width="16" height="64"/>
             <subimage name="tile_horse"         width="16" height="32"/>
-            <subimage name="tile_dungeon_floor" width="16" height="16"/>    
+            <subimage name="tile_dungeon_floor" width="16" height="16"/>
             <subimage name="tile_bridge"        width="16" height="16"/>
             <subimage name="tile_balloon"       width="16" height="16"/>
             <subimage name="tile_bridge_pieces" width="16" height="32"/>
             <subimage name="tile_up_ladder"     width="16" height="16"/>
             <subimage name="tile_down_ladder"   width="16" height="16"/>
-            <subimage name="tile_ruins"         width="16" height="16"/>    
+            <subimage name="tile_ruins"         width="16" height="16"/>
             <subimage name="tile_shrine"        width="16" height="16"/>
             <subimage name="tile_avatar"        width="16" height="16"/>
             <subimage name="tile_mage"          width="16" height="32"/>
@@ -114,7 +114,7 @@
             <subimage name="tile_sea_horse"     width="16" height="32"/>
             <subimage name="tile_whirlpool"     width="16" height="32"/>
             <subimage name="tile_twister"       width="16" height="32"/>
-    
+
             <!-- Land monsters -->
             <subimage name="tile_rat"           width="16" height="64"/>
             <subimage name="tile_bat"           width="16" height="64"/>
@@ -424,13 +424,13 @@
             <subimage name="tile_lcb_east"      width="16" height="16"/>
             <subimage name="tile_ship"          width="16" height="64"/>
             <subimage name="tile_horse"         width="16" height="32"/>
-            <subimage name="tile_dungeon_floor" width="16" height="16"/>    
+            <subimage name="tile_dungeon_floor" width="16" height="16"/>
             <subimage name="tile_bridge"        width="16" height="16"/>
             <subimage name="tile_balloon"       width="16" height="16"/>
             <subimage name="tile_bridge_pieces" width="16" height="32"/>
             <subimage name="tile_up_ladder"     width="16" height="16"/>
             <subimage name="tile_down_ladder"   width="16" height="16"/>
-            <subimage name="tile_ruins"         width="16" height="16"/>    
+            <subimage name="tile_ruins"         width="16" height="16"/>
             <subimage name="tile_shrine"        width="16" height="16"/>
             <subimage name="tile_avatar"        width="16" height="16"/>
             <subimage name="tile_mage"          width="16" height="32"/>
@@ -515,7 +515,7 @@
             <subimage name="tile_sea_horse"     width="16" height="32"/>
             <subimage name="tile_whirlpool"     width="16" height="32"/>
             <subimage name="tile_twister"         width="16" height="32"/>
-    
+
             <!-- Land monsters -->
             <subimage name="tile_rat"           width="16" height="64"/>
             <subimage name="tile_bat"           width="16" height="64"/>
@@ -756,13 +756,13 @@
             <subimage name="tile_lcb_east"      width="16" height="16"/>
             <subimage name="tile_ship"          width="16" height="64"/>
             <subimage name="tile_horse"         width="16" height="32"/>
-            <subimage name="tile_dungeon_floor" width="16" height="16"/>    
+            <subimage name="tile_dungeon_floor" width="16" height="16"/>
             <subimage name="tile_bridge"        width="16" height="16"/>
             <subimage name="tile_balloon"       width="16" height="16"/>
             <subimage name="tile_bridge_pieces" width="16" height="32"/>
             <subimage name="tile_up_ladder"     width="16" height="16"/>
             <subimage name="tile_down_ladder"   width="16" height="16"/>
-            <subimage name="tile_ruins"         width="16" height="16"/>    
+            <subimage name="tile_ruins"         width="16" height="16"/>
             <subimage name="tile_shrine"        width="16" height="16"/>
             <subimage name="tile_avatar"        width="16" height="16"/>
             <subimage name="tile_mage"          width="16" height="32"/>
@@ -847,7 +847,7 @@
             <subimage name="tile_sea_horse"     width="16" height="32"/>
             <subimage name="tile_whirlpool"     width="16" height="32"/>
             <subimage name="tile_twister"         width="16" height="32"/>
-    
+
             <!-- Land monsters -->
             <subimage name="tile_rat"           width="16" height="64"/>
             <subimage name="tile_bat"           width="16" height="64"/>
@@ -927,12 +927,12 @@
             <subimage name="beast1frame16" x="544" y="256" width="96"  height="62"/>
             <subimage name="beast1frame17" x="544" y="320" width="96"  height="62"/>
         </image>
-        
+
         <image name="abacus"   filename="hires/abacus.vga"   width="640" height="400" depth="32" filetype="image/x-u4lzw" introOnly="true" fixup="abacus" prescale="2" transparentIndex="0" xu4Graphic="true">
             <subimage name="whitebead"      x="16"   y="374" width="16" height="24"/>
             <subimage name="blackbead"      x="48"  y="374" width="16" height="24"/>
         </image>
-        
+
        <image name="honcom"   filename="hires/honcom.vga"   width="640" height="400" depth="32" filetype="image/x-u4lzw" introOnly="true" prescale="2" transparentIndex="0" xu4Graphic="true">
             <subimage name="honestycard"    x="26"  y="26" width="178" height="244"/>
             <subimage name="compassioncard" x="438" y="26" width="178" height="244"/>
@@ -980,7 +980,7 @@
         <image name="rune7" filename="vga2/rune_7.png" prescale="2" xu4Graphic="true"/>
         <image name="rune8" filename="vga2/rune_8.png" prescale="2" xu4Graphic="true"/>
         <image name="key" filename="vga2/key7.png" prescale="2" xu4Graphic="true"/>
-        
+
     </imageset>
 
     <imageset name="VGA-ALLPNG" extends="VGA2">
@@ -1003,13 +1003,13 @@
         <image name="tile_lcb_east" filename="png/tile_lcb_east.png" xu4Graphic="true"/>
         <image name="tile_ship" filename="png/tile_ship.png" xu4Graphic="true"/>
         <image name="tile_horse" filename="png/tile_horse.png" xu4Graphic="true"/>
-        <image name="tile_dungeon_floor" filename="png/tile_dungeon_floor.png" xu4Graphic="true"/>    
+        <image name="tile_dungeon_floor" filename="png/tile_dungeon_floor.png" xu4Graphic="true"/>
         <image name="tile_bridge" filename="png/tile_bridge.png" xu4Graphic="true"/>
         <image name="tile_balloon" filename="png/tile_balloon.png" xu4Graphic="true"/>
         <image name="tile_bridge_pieces" filename="png/tile_bridge_pieces.png" xu4Graphic="true"/>
         <image name="tile_up_ladder" filename="png/tile_up_ladder.png" xu4Graphic="true"/>
         <image name="tile_down_ladder" filename="png/tile_down_ladder.png" xu4Graphic="true"/>
-        <image name="tile_ruins" filename="png/tile_ruins.png" xu4Graphic="true"/>    
+        <image name="tile_ruins" filename="png/tile_ruins.png" xu4Graphic="true"/>
         <image name="tile_shrine" filename="png/tile_shrine.png" xu4Graphic="true"/>
         <image name="tile_avatar" filename="png/tile_avatar.png" xu4Graphic="true"/>
         <image name="tile_mage" filename="png/tile_mage.png" xu4Graphic="true"/>
@@ -1122,7 +1122,7 @@
         <image name="tile_hydra"         filename="png/tile_hydra.png" xu4Graphic="true"/>
         <image name="tile_dragon"        filename="png/tile_dragon.png" xu4Graphic="true"/>
         <image name="tile_balron"        filename="png/tile_balron.png" xu4Graphic="true"/>
-        
+
         <image name="tile_guard" filename="png/tile_guard.png" tiles="4" xu4Graphic="true"/>
         <image name="charset" filename="vga2/charset.png" tiles="128" prescale="2" xu4Graphic="true"/>
         <image name="borders" filename="vga2/start.png" prescale="2" xu4Graphic="true"/>
@@ -1183,7 +1183,7 @@
                 <subimage name="beast1frame15" x="272" y="96"  width="48" height="31"/>
                 <subimage name="beast1frame16" x="272" y="128" width="48" height="31"/>
                 <subimage name="beast1frame17" x="272" y="160" width="48" height="31"/>
-            </image>        
+            </image>
 
         <!-- abyss vision images -->
         <image name="key"      filename="png/key.png" xu4Graphic="true"/>
@@ -1198,17 +1198,17 @@
         <image name="truth"    filename="png/truth.png" fixup="abyss" xu4Graphic="true"/>
         <image name="love"     filename="png/love.png" fixup="abyss" xu4Graphic="true"/>
         <image name="courage"  filename="png/courage.png" fixup="abyss" xu4Graphic="true"/>
-        <image name="stoncrcl" filename="png/stoncrcl.png" xu4Graphic="true"/>        
+        <image name="stoncrcl" filename="png/stoncrcl.png" xu4Graphic="true"/>
 
 
     </imageset>
 
 	<imageset extends="HiresVGA" name="FMTOWNS-Test">
 		<!-- The sizes of some images are not correct yet, and will require some tweaking. It does give people a preview of the updated game graphics. -->
-        
+
         <!-- Not a 16 bit image :( <image name="borders"  filename="fmtowns/ULT4_MEN.TIF" width="320" height="200" depth="16" filetype="image/fmtowns-tif" xu4Graphic="true"/> -->
-        
-        <!-- intro screen images Don't look good yet.  Wrong palette, and incompatible positioning 
+
+        <!-- intro screen images Don't look good yet.  Wrong palette, and incompatible positioning
         <image name="title"   filename="fmtowns/ULT4_MEN.TIF"  width="640" height="480" depth="4" prescale="2" filetype="image/fmtowns-tif" xu4Graphic="true" introOnly="true" fixup="fmtownsscreen" >
             <subimage name="options_top"  x="0"  y="64"   width="640"  height="400"/>
             <subimage name="options_btm"  x="0"  y="300"  width="640"  height="180"/>
@@ -1239,7 +1239,7 @@
         <image filename="fmtowns/U4_19.TIF" name="honorcard"   width="74" height="116" depth="16" filetype="image/fmtowns-tif" introOnly="true" xu4Graphic="true"/>
         <image filename="fmtowns/U4_17.TIF" name="spiritualitycard" width="74" height="116" depth="16" filetype="image/fmtowns-tif" introOnly="true" xu4Graphic="true"/>
         <image filename="fmtowns/U4_15.TIF" name="humilitycard"   width="74" height="116" depth="16" filetype="image/fmtowns-tif" introOnly="true" xu4Graphic="true"/>
-       
+
         <!-- abyss vision images: codex symbol images are overlaid on top of each other, so color 0 (black) is set to be transparent PICS don't work yet.
         <image name="key"      filename="fmtowns/key7.pic"     width="320" height="200" depth="16" filetype="image/fmtowns-pic"  xu4Graphic="true"/>
         <image name="honesty"  filename="fmtowns/honesty.pic"  width="320" height="200" depth="16" filetype="image/fmtowns-pic" transparentIndex="0"  xu4Graphic="true"/>
@@ -1255,7 +1255,7 @@
         <image name="courage"  filename="fmtowns/courage.pic"  width="320" height="200" depth="16" filetype="image/fmtowns-pic" transparentIndex="0"  xu4Graphic="true"/>
         <image name="stoncrcl" filename="fmtowns/stoncrcl.pic" width="320" height="200" depth="16" filetype="image/fmtowns-pic"/>
 		-->
-        <!-- shrine vision images  for EGA PICS don't work yet 
+        <!-- shrine vision images  for EGA PICS don't work yet
         <image name="rune0"    filename="fmtowns/rune_i.pic"   width="320" height="200" depth="16" filetype="image/fmtowns-pic"  xu4Graphic="true"/>
         <image name="rune1"    filename="fmtowns/rune_n.pic"   width="320" height="200" depth="16" filetype="image/fmtowns-pic" xu4Graphic="true"/>
         <image name="rune2"    filename="fmtowns/rune_f.pic"   width="320" height="200" depth="16" filetype="image/fmtowns-pic" xu4Graphic="true"/>
@@ -1266,10 +1266,10 @@
         <image name="rune7"    filename="fmtowns/rune_y.pic"   width="320" height="200" depth="16" filetype="image/fmtowns-pic" xu4Graphic="true"/>
         <image name="rune8"    filename="fmtowns/u4_20.pic"   width="320" height="200" depth="16" filetype="image/fmtowns-pic" xu4Graphic="true"/>
         -->
-        
+
 	</imageset>
-    <imageset name="new"> 
-        <!-- tiles, charset, and game border 
+    <imageset name="new">
+        <!-- tiles, charset, and game border
         -->
         <image prescale="2" name="tile_grass" filename="new/tile_grass.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_water" filename="new/tile_water.png" xu4Graphic="true"/>
@@ -1279,7 +1279,7 @@
         <image prescale="2" name="tile_moongate_opening" filename="new/tile_moongate_rising.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_moongate" filename="new/tile_moongate.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_brush" filename="new/tile_bush.png" xu4Graphic="true"/>
-        <image prescale="2" name="tile_forest" filename="new/tile_forest.png" xu4Graphic="true"/> 
+        <image prescale="2" name="tile_forest" filename="new/tile_forest.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_poison_field" filename="new/tile_poison_field.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_energy_field" filename="new/tile_electric_field.png" xu4Graphic="true"/>
         <image prescale="2" name="tile_fire_field" filename="new/tile_fire_field.png" xu4Graphic="true"/>
@@ -1309,13 +1309,13 @@
             <subimage name="tile_lcb_east"      width="16" height="16"/>
             <subimage name="tile_ship"          width="16" height="64"/>
             <subimage name="tile_horse"         width="16" height="32"/>
-            <subimage name="tile_dungeon_floor" width="16" height="16"/>    
+            <subimage name="tile_dungeon_floor" width="16" height="16"/>
             <subimage name="tile_bridge"        width="16" height="16"/>
             <subimage name="tile_balloon"       width="16" height="16"/>
             <subimage name="tile_bridge_pieces" width="16" height="32"/>
             <subimage name="tile_up_ladder"     width="16" height="16"/>
             <subimage name="tile_down_ladder"   width="16" height="16"/>
-            <subimage name="tile_ruins"         width="16" height="16"/>    
+            <subimage name="tile_ruins"         width="16" height="16"/>
             <subimage name="tile_shrine"        width="16" height="16"/>
             <subimage name="tile_avatar"        width="16" height="16"/>
             <subimage name="tile_mage"          width="16" height="32"/>
@@ -1400,7 +1400,7 @@
             <subimage name="tile_sea_horse"     width="16" height="32"/>
             <subimage name="tile_whirlpool"     width="16" height="32"/>
             <subimage name="tile_twister"         width="16" height="32"/>
-    
+
             <!-- Land monsters -->
             <subimage name="tile_rat"           width="16" height="64"/>
             <subimage name="tile_bat"           width="16" height="64"/>
@@ -1452,7 +1452,7 @@
         <image name="truth"    filename="png/truth.png" fixup="abyss" xu4Graphic="true"/>
         <image name="love"     filename="png/love.png" fixup="abyss" xu4Graphic="true"/>
         <image name="courage"  filename="png/courage.png" fixup="abyss" xu4Graphic="true"/>
-        <image name="stoncrcl" filename="png/stoncrcl.png" xu4Graphic="true"/>        
+        <image name="stoncrcl" filename="png/stoncrcl.png" xu4Graphic="true"/>
 
         <!-- no intro screen images in VGA upgrade - borrowed from ALLPNG -->
 
@@ -1511,7 +1511,7 @@
                <subimage name="beast1frame15" x="272" y="96"  width="48" height="31"/>
                <subimage name="beast1frame16" x="272" y="128" width="48" height="31"/>
                <subimage name="beast1frame17" x="272" y="160" width="48" height="31"/>
-           </image>        
+           </image>
 
 		<!--  dungeon mess borrowed from VGA -->
 
@@ -1706,7 +1706,7 @@
         <tileshape width="4" height="4"/>
         <viewport x="32" y="32" width="32" height="32"/>
     </layout>
-    
+
     <layout type="gem" name="Full Viewport">
         <tileshape width="4" height="4"/>
         <viewport x="8" y="8" width="44" height="44"/>
@@ -1744,15 +1744,15 @@
                 <transform type="invert" x="0" y="0" width="0" height="0"/>
             </context>
             <context type="frame" frame="2">
-                <transform type="invert" x="7" y="1" width="3" height="4"/>                
+                <transform type="invert" x="7" y="1" width="3" height="4"/>
             </context>
             <context type="frame" frame="3">
                 <transform type="invert" x="0" y="0" width="0" height="0"/>
             </context>
-        </tileanim>        
+        </tileanim>
         <tileanim name="pirateflag" random="50">
             <transform type="invert" x="0" y="1" width="16" height="2"/>
-        </tileanim>  
+        </tileanim>
         <tileanim name="campfire">
             <transform type="pixel_color" x="3" y="5" width="7" height="11">
                 <color red="0" green="0" blue="0"/>
@@ -1760,7 +1760,7 @@
             </transform>
             <transform type="pixel_color" x="4" y="8" width="5" height="6">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
@@ -1815,15 +1815,15 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
-    
+
     <tileanimset name="VGA-ALLPNG">
         <tileanim name="scroll">
             <transform type="scroll" increment="1"/>
@@ -1874,11 +1874,11 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
@@ -1933,11 +1933,11 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
@@ -1992,11 +1992,11 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
@@ -2052,16 +2052,16 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
-    
-    
+
+
     <tileanimset name="new">
         <tileanim name="scroll">
             <transform type="scroll" increment="1"/>
@@ -2112,15 +2112,15 @@
         <tileanim name="campfire">
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="97" green="0" blue="0"/>
-                <color red="256" green="200" blue="0"/>                
+                <color red="256" green="200" blue="0"/>
             </transform>
             <transform type="pixel_color" x="4" y="7" width="5" height="7">
                 <color red="0" green="0" blue="0"/>
-                <color red="156" green="0" blue="0"/>                
+                <color red="156" green="0" blue="0"/>
             </transform>
         </tileanim>
     </tileanimset>
 
 
 </graphics>
-   
+

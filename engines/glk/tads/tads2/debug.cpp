@@ -62,7 +62,7 @@ void dbgent(dbgcxdef *ctx, runsdef *bp, objnum self, objnum target,
 			prpnum prop, int binum, int argc)
 {
 	dbgfdef *p;
-	
+
 	++(ctx->dbgcxdep);                            /* increment actual depth */
 	if (ctx->dbgcxfcn == DBGMAXFRAME)
 	{
@@ -102,21 +102,21 @@ void dbglv(dbgcxdef *ctx, int exittype)
 	--(ctx->dbgcxdep);                            /* decrement actual depth */
 	if (ctx->dbgcxfcn) --(ctx->dbgcxfcn);        /* decrement frame pointer */
 
-	/* 
+	/*
 	 *   if we're in STEP OUT/OVER mode, and the target context is level
 	 *   0, and we're now at level 0, it means that we are stepping out of
 	 *   a routine called directly by the system and the debugger is
 	 *   supposed to break when that happens -- return to single-stepping
 	 *   mode so that we break into the debugger the next time the system
-	 *   calls a method 
+	 *   calls a method
 	 */
 	if ((ctx->dbgcxflg & DBGCXFSS) != 0
 		&& (ctx->dbgcxflg & DBGCXFSO) != 0
 		&& ctx->dbgcxsof == 0 && ctx->dbgcxdep == 0)
 	{
-		/* 
+		/*
 		 *   stepping out/over at level 0 - go to normal single-step mode
-		 *   (clear the out/over flag) 
+		 *   (clear the out/over flag)
 		 */
 		ctx->dbgcxflg &= ~DBGCXFSO;
 	}
@@ -161,7 +161,7 @@ int dbgnam(dbgcxdef *ctx, char *outbuf, int typ, int val)
 		memcpy(outbuf, "<NO SYMBOL TABLE>", (size_t)17);
 		return(17);
 	}
-	
+
 	if (tokthfind((toktdef *)ctx->dbgcxtab, typ, val, &sym))
 	{
 		memcpy(outbuf, sym.toksnam, (size_t)sym.tokslen);
@@ -202,16 +202,16 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, const uchar *val,
 		sprintf(buf, "%ld", (long)osrp4s(val));
 		len = strlen(buf);
 		break;
-		
+
 	case DAT_OBJECT:
 		len = dbgnam(ctx, buf, TOKSTOBJ, osrp2(val));
 		break;
-		
+
 	case DAT_SSTRING:
 		len = osrp2(val) - 2;
 		p = (const char *)val + 2;
 		break;
-		
+
 	case DAT_NIL:
 		p = "nil";
 		len = 3;
@@ -230,22 +230,22 @@ static void dbgpbval(dbgcxdef *ctx, dattyp typ, const uchar *val,
 		(*dispfn)(dispctx, "]", 1);
 		len = 0;
 		break;
-		
+
 	case DAT_TRUE:
 		p = "true";
 		len = 4;
 		break;
-		
+
 	case DAT_FNADDR:
 		(*dispfn)(dispctx, "&", 1);
 		len = dbgnam(ctx, buf, TOKSTFUNC, osrp2(val));
 		break;
-		
+
 	case DAT_PROPNUM:
 		(*dispfn)(dispctx, "&", 1);
 		len = dbgnam(ctx, buf, TOKSTPROP, osrp2(val));
 		break;
-		
+
 	default:
 		p = "[unknown type]";
 		len = 14;
@@ -267,7 +267,7 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 	uint    len;
 	const uchar  *p = buf;
 	const char *typ = 0;
-	
+
 	switch(val->runstyp)
 	{
 	case DAT_NUMBER:
@@ -275,18 +275,18 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 		len = strlen((char *)buf);
 		typ = "number";
 		break;
-		
+
 	case DAT_OBJECT:
 		len = dbgnam(ctx, (char *)buf, TOKSTOBJ, val->runsv.runsvobj);
 		typ = "object";
 		break;
-		
+
 	case DAT_SSTRING:
 		len = osrp2(val->runsv.runsvstr) - 2;
 		p = val->runsv.runsvstr + 2;
 		typ = "string";
 		break;
-		
+
 	case DAT_NIL:
 		p = (const uchar *)"nil";
 		len = 3;
@@ -307,22 +307,22 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 		len = 0;
 	p = up;
 		break;
-	} 
+	}
 	case DAT_TRUE:
 		p = (const uchar *)"true";
 		len = 4;
 		break;
-		
+
 	case DAT_FNADDR:
 		len = dbgnam(ctx, (char *)buf, TOKSTFUNC, val->runsv.runsvobj);
 		typ = "function pointer";
 		break;
-		
+
 	case DAT_PROPNUM:
 		len = dbgnam(ctx, (char *)buf, TOKSTPROP, val->runsv.runsvprp);
 		typ = "property pointer";
 		break;
-		
+
 	default:
 		p = (const uchar *)"[unknown type]";
 		len = 14;
@@ -342,11 +342,11 @@ void dbgpval(dbgcxdef *ctx, runsdef *val,
 		(*dispfn)(dispctx, "'", 1);
 	}
 
-	/* 
+	/*
 	 *   if possible, null-terminate the buffer - do this only if the
 	 *   length is actually within the buffer, which won't be the case if
 	 *   the text comes from someplace outside the buffer (which is the
-	 *   case if it's a string, for example) 
+	 *   case if it's a string, for example)
 	 */
 	if (len < sizeof(buf))
 		buf[len] = '\0';
@@ -417,7 +417,7 @@ void dbgstktr(dbgcxdef *ctx,
 			*p++ = '.';
 			p += dbgnam(ctx, p, TOKSTPROP, (int)f->dbgfprop);
 		}
-		
+
 		/* display what we have so far */
 		*p++ = '\0';
 		(*dispfn)(dispctx, buf, (int)strlen(buf));
@@ -433,7 +433,7 @@ void dbgstktr(dbgcxdef *ctx,
 			}
 			(*dispfn)(dispctx, ")", 1);
 		}
-		
+
 		/* send out a newline, then move on to next frame */
 		(*dispfn)(dispctx, "\n", 1);
 
@@ -469,10 +469,10 @@ void dbglget(dbgcxdef *ctx, uchar *buf)
 	dbglgetlvl(ctx, buf, 0);
 }
 
-/* 
+/*
  *   Get information about a source line at a particular stack level into
  *   the buffer; leaves out frame info.  level 0 is the currently
- *   executing line, 1 is the first enclosing level, and so on.  
+ *   executing line, 1 is the first enclosing level, and so on.
  */
 int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level)
 {
@@ -489,7 +489,7 @@ int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level)
 
 	/* if we're in an intrinsic, go to enclosing frame */
 	if (fr->dbgftarg == MCMONINV) --fr;
-	
+
 	/* make sure we've encountered an OPCLINE in this frame */
 	if (fr->dbgflin == 0)
 		return 1;
@@ -499,7 +499,7 @@ int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level)
 
 	linrec = obj + fr->dbgflin;
 	memcpy(buf, linrec + 3, (size_t)(*linrec - 3));
-	
+
 	/* no longer need the target object locked */
 	mcmunlck(ctx->dbgcxmem, (mcmon)fr->dbgftarg);
 
@@ -511,7 +511,7 @@ int dbglgetlvl(dbgcxdef *ctx, uchar *buf, int level)
 void dbgclin(tokcxdef *tokctx, objnum objn, uint ofs)
 {
 	uchar buf[4];
-	
+
 	/* package the information and send it to the line source */
 	oswp2(buf, objn);
 	oswp2(buf + 2, ofs);

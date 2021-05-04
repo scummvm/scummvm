@@ -1186,7 +1186,7 @@ int ClickZoomToyShelf::specifyCursor(Window *viewWindow, const Common::Point &po
 class ToyClick : public SceneBase {
 public:
 	ToyClick(BuriedEngine *vm, Window *viewWindow, const LocationStaticData &sceneStaticData, const Location &priorLocation,
-			int left = -1, int top = -1, int right = -1, int bottom = -1, int returnDepth = -1, int clickAnimation = -1, int returnAnimation = -1); 
+			int left = -1, int top = -1, int right = -1, int bottom = -1, int returnDepth = -1, int clickAnimation = -1, int returnAnimation = -1);
 
 	int mouseUp(Window *viewWindow, const Common::Point &pointLocation);
 	int specifyCursor(Window *viewWindow, const Common::Point &pointLocation);

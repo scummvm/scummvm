@@ -4052,7 +4052,7 @@ bool Console::cmdBreakpointAction(int argc, const char **argv) {
 		for (; bp != end; ++bp)
 			bp->_action = bpaction;
 		_debugState.updateActiveBreakpointTypes();
-		return true;	
+		return true;
 	}
 
 	const int idx = atoi(argv[1]);

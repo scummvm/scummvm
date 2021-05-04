@@ -19,7 +19,7 @@ const float offsetY = 32.0;
 
 OUTPUT
 
-void checkZBuffer() 
+void checkZBuffer()
 {
 #ifndef SGSPLUS_FIX
 	vec2 zCoord = vec2((gl_FragCoord.x-0.5)/screenSize.x, 1.0-(gl_FragCoord.y-offsetY-0.5)/screenSize.y);
@@ -27,8 +27,8 @@ void checkZBuffer()
 	vec2 zCoord = vec2((gl_FragCoord.x-0.5)/screenSize.x, (gl_FragCoord.y-offsetY-0.5)/screenSize.y);
 #endif
 	vec2 sampled = texture(texZBuf, zCoord * texcropZBuf).ra;
-	float sceneZ = sampled.y + sampled.x / 256.0; 		
-	
+	float sceneZ = sampled.y + sampled.x / 256.0;
+
 	if (gl_FragCoord.z * 1.0039 > sceneZ)
 		discard;
 }

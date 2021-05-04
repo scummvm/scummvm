@@ -98,7 +98,7 @@ GUI_Font::~GUI_Font() {
 /* determine drawing style */
 void GUI_Font::setTransparency(bool on) {
 	_transparent = on;
-	
+
 	if (_transparent)
 		_fontStore->setTransparentColor(0);
 	else
@@ -107,7 +107,7 @@ void GUI_Font::setTransparency(bool on) {
 
 /* determine foreground and background color values RGB*/
 void GUI_Font::setColoring(uint8 fr, uint8 fg, uint8 fb, uint8 br, uint8 bg, uint8 bb) {
-	const SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb) };	
+	const SDL_Color colors[2] = { MAKE_COLOR(br, bg, bb), MAKE_COLOR(fr, fg, fb) };
 	SDL_SetColors(_fontStore, colors, 0, 2);
 }
 

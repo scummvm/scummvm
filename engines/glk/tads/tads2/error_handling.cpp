@@ -60,7 +60,7 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
 				break;
 			}
 			break;
-			
+
 		case '%':
 			++fmt;
 			fmtchar = *fmt;
@@ -71,29 +71,29 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
 				--fmt;
 				len = 0;
 				break;
-				
+
 			case '%':
 				p = "%";
 				len = 1;
 				break;
-				
+
 			case 'd':
 				sprintf(buf, "%d", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;
-				
+
 			case 'u':
 				sprintf(buf, "%u", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;
-				
+
 			case 's':
 				p = argv[argi].errastr;
 				len = strlen(p);
 				break;
-				
+
 			default:
 				p = "";
 				len = 0;
@@ -102,7 +102,7 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
 			}
 			++argi;
 			break;
-			
+
 		default:
 			p = fmt;
 			len = 1;
@@ -168,7 +168,7 @@ void errsigf(errcxdef *ctx, const char *facility, int e)
 char *errstr(errcxdef *ctx, const char *str, int len)
 {
 	char *ret = &ctx->errcxbuf[ctx->errcxofs];
-	
+
 	memcpy(ret, str, (size_t)len);
 	ret[len] = '\0';
 	ctx->errcxofs += len + 1;

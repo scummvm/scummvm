@@ -53,12 +53,12 @@ void SliderPuzzle::readData(Common::SeekableReadStream &stream) {
 	for (uint y = 0; y < _height; ++y) {
 		_srcRects.push_back(Common::Array<Common::Rect>());
 		_srcRects.back().reserve(_width);
-		
+
 		for (uint x = 0; x < _width; ++x) {
 			_srcRects.back().push_back(Common::Rect());
 			readRect(stream, _srcRects.back().back());
 		}
-		
+
 		stream.skip((6 - _width) * 16);
 	}
 

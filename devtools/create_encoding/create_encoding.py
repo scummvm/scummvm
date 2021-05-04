@@ -12,7 +12,7 @@ def merge_ranges(*ranges):
 
 def processtable(inputfilename, outfile, highrange, lowrange):
     with open(inputfilename) as f:
-        res = dict(((x << 8) | y, 0) for x in highrange for y in lowrange) 
+        res = dict(((x << 8) | y, 0) for x in highrange for y in lowrange)
 
         for line in f:
             if line.startswith('#'):

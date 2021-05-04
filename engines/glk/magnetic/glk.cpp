@@ -3643,7 +3643,7 @@ type8 Magnetic::ms_getchar(type8 trans) {
 
 		if (shouldQuit())
 			return '\0';
-		
+
 		if (gms_undo_notification) {
 			/*
 			 * Clear the undo notification, and discard buffered input (usually

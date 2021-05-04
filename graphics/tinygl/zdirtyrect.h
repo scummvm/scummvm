@@ -107,7 +107,7 @@ private:
 	typedef void (*gl_draw_triangle_func_ptr)(TinyGL::GLContext *c, TinyGL::GLVertex *p0, TinyGL::GLVertex *p1, TinyGL::GLVertex *p2);
 	int _vertexCount;
 	TinyGL::GLVertex *_vertex;
-	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack; 
+	gl_draw_triangle_func_ptr _drawTriangleFront, _drawTriangleBack;
 
 	struct RasterizationState {
 		int beginType;
@@ -161,7 +161,7 @@ public:
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
 
 	BlittingMode getBlittingMode() const { return _mode; }
-	
+
 	void *operator new(size_t size) {
 		return ::Internal::allocateFrame(size);
 	}
@@ -186,7 +186,7 @@ private:
 					sfactor == other.sfactor &&
 					dfactor == other.dfactor &&
 					alphaTest == other.alphaTest &&
-					alphaFunc == other.alphaFunc && 
+					alphaFunc == other.alphaFunc &&
 					alphaRefValue == other.alphaRefValue &&
 					depthTestEnabled == other.depthTestEnabled;
 		}

@@ -4,7 +4,7 @@
 ; Creative Reality Sound Blaster Drivers . (C) 1994 Creative Reality
 
 ; Very sparsly commented.
- 
+
 
 
 ;These drivers are not stand alone. We had them as an integral part of the
@@ -32,7 +32,7 @@
 ;------------------------------------------- Initial sound set up and end ---
 
 Loadspeech	proc	near
-	
+
 	cmp	soundint,255
 	jz	dontbother8
 
@@ -40,7 +40,7 @@ Loadspeech	proc	near
 
 	mov	speechloaded,0
 	call	createname
-	
+
 	mov	speechlength,0
 	mov	dx,offset cs:speechfilename
 	call	openfilenocheck
@@ -49,7 +49,7 @@ Loadspeech	proc	near
 	mov	bx,speechemmpage
 
 moreloadspeech:	push	dx bx
-	
+
 	push	es di bx
 	mov	al,2
 	mov	dx,emmhandle
@@ -73,7 +73,7 @@ moreloadspeech:	push	dx bx
 	mov	cx,4000h
 	mov	ax,0
 	rep	stosw
-	pop	di es 
+	pop	di es
 
 	mov	cx,8000h
 	mov	dx,8000h
@@ -83,7 +83,7 @@ moreloadspeech:	push	dx bx
 	add	speechlength,ax
 	pop	bx dx
 	add	bx,2
-	cmp	ax,0 	
+	cmp	ax,0
 	jnz	moreloadspeech
 	call	closefile
 
@@ -111,7 +111,7 @@ Createname	proc	near
 	mov	di,offset cs:speechfile
 	mov	byte ptr [cs:di+0],dl ;"R"
 	mov	[cs:di+3],cl
-	
+
 	mov	al,dh ;reallocation
 	mov	ah,"0"-1
 findten:	inc	ah
@@ -121,7 +121,7 @@ findten:	inc	ah
 	add	al,10+"0"
 	mov	[cs:di+2],al
 	pop	ax
-	
+
 	mov	cl,"0"-1
 thousandsc:	inc	cl
 	sub	ax,1000
@@ -155,7 +155,7 @@ Loadsample	proc	near
 
 	cmp	soundint,255
 	jz	dontbother
-      
+
 	call	openfile
 	call	readheader
 	mov	bx,[es:di]
@@ -171,11 +171,11 @@ Loadsample	proc	near
 	mov	dx,[es:di]
 	add	dx,1
 	shr	dx,1
-	
+
 	mov	soundemmpage,0
 
 moreload:	push	dx bx
-	
+
 	push	es di bx
 	mov	al,2
 	mov	dx,emmhandle
@@ -194,7 +194,7 @@ moreload:	push	dx bx
 	cmp	ah,0
 	jnz	emmerror
 	mov	ds,emmpageframe
-	pop	di es 
+	pop	di es
 
 	mov	cx,8000h
 	mov	dx,8000h
@@ -202,7 +202,7 @@ moreload:	push	dx bx
 	pop	bx dx
 	add	bx,2
 	add	soundemmpage,2
-	dec	dx	
+	dec	dx
 	jnz	moreload
 	;inc	soundemmpage
 	call	closefile
@@ -265,7 +265,7 @@ adjustemmpage:	mov	al,[es:di]
 	shr	dx,1
 
 moreload2:	push	dx bx
-	
+
 	push	es di bx
 	mov	al,2
 	mov	dx,emmhandle
@@ -284,7 +284,7 @@ moreload2:	push	dx bx
 	cmp	ah,0
 	jnz	emmerror2
 	mov	ds,emmpageframe
-	pop	di es 
+	pop	di es
 
 	mov	cx,8000h
 	mov	dx,8000h
@@ -292,7 +292,7 @@ moreload2:	push	dx bx
 	pop	bx dx
 	add	bx,2
 	add	speechemmpage,2
-	dec	dx	
+	dec	dx
 	jnz	moreload2
 	call	closefile
 dontbother9:	ret
@@ -318,7 +318,7 @@ Soundstartup	proc	near
 	mov	dx,soundbaseadd
 	add	dx,0ch
 	mov	DSP_write,dx
-	
+
 	mov	al,1
 	mov	dx,soundbaseadd
 	add	dx,0006h
@@ -368,7 +368,7 @@ dspready:	call	trysoundalloc
 	int	21h	; Set to new
 
 	call	enablesoundint
-	
+
 	mov	al,sounddmachannel
 	xor	ah,ah
 	mov	bx,offset cs:dmaaddresses
@@ -440,7 +440,7 @@ Setsoundoff	proc	near
 	mov	soundbufferwrite,4096
 	call	startdmablock
 	sti
-dontbother28:	ret	        
+dontbother28:	ret
 
 	endp
 
@@ -450,7 +450,7 @@ dontbother28:	ret
 
 
 Checksoundint	proc	near
-	
+
 	mov	ah,0d3h	;speaker off
 	call	out22c
 
@@ -470,7 +470,7 @@ Checksoundint	proc	near
 	int	21h
 
 	call	enablesoundint
-	
+
 	mov	ah,0f2h
 	call	out22c
 
@@ -479,7 +479,7 @@ Checksoundint	proc	near
 
 	call	disablesoundint
 
-	mov	dx,oldsoundintseg	
+	mov	dx,oldsoundintseg
 	mov	ds,dx
 	mov	dx,oldsoundintadd	;Restore old interupt vector
 	mov	ah,25h
@@ -542,7 +542,7 @@ Interupttest	proc	near
 	out	20h,al
 	pop	dx ax
 	iret
-	
+
 	endp
 
 
@@ -558,7 +558,7 @@ Soundend	proc	near
 
 	mov	ah,0d0h
 	call	out22c
-	
+
 	call	disablesoundint
 
 	mov	ds,oldsoundintseg		;for keys
@@ -601,7 +601,7 @@ Playchannel0	proc	near	;al=sound no
 			;ah=times to repeat
 	cmp	soundint,255
 	jz	dontbother4
-	
+
 	push	es ds bx cx di si
 
 	mov	ch0playing,al
@@ -624,7 +624,7 @@ notsecondbank:	mov	ch0repeat,ah
 	mov	ch0offset,ax
 	mov	ax,[es:bx+3]
 	mov	ch0blockstocopy,ax
-	
+
 	cmp	ch0repeat,0
 	jz	nosetloop
 	mov	ax,ch0emmpage
@@ -673,7 +673,7 @@ notsecondbank1:	mov	ah,0
 	mov	ch1offset,ax
 	mov	ax,[es:bx+3]
 	mov	ch1blockstocopy,ax
-	
+
 	pop	si di cx bx ds es
 
 dontbother5:	ret
@@ -688,7 +688,7 @@ dontbother5:	ret
 
 
 Makenextblock	proc	near
-		              
+
 	call	volumeadjust
 
 	call	loopchannel0
@@ -723,7 +723,7 @@ notch0only:	mov	es,soundbuffer
 	and	di,16384-1
 	mov	soundbufferwrite,di
 	ret
-		
+
 	endp
 
 
@@ -737,7 +737,7 @@ Volumeadjust	proc	near
 	mov	al,volume
 	cmp	al,volumeto
 	jz	volfinish
-	add	volumecount,64 
+	add	volumecount,64
 	jnz	volok
 	mov	al,volume
 	add	al,volumedirection
@@ -766,7 +766,7 @@ endlessloop:	mov	ax,ch0oldemmpage
 	mov	ax,ch0blockstocopy
 	add	ax,ch0oldblockstocopy
 	mov	ch0blockstocopy,ax
-	ret		
+	ret
 notloop:	ret
 
 	endp
@@ -807,12 +807,12 @@ Channel0only	proc	near
 	mov	dx,emmhandle
 	mov	ah,44h
 	int	67h
-	
+
 	mov	es,soundbuffer
 	mov	ds,emmpageframe
 	mov	di,soundbufferwrite
 	mov	si,ch0offset
-	
+
 	call	channel0tran
 	call	restoreems
 
@@ -838,7 +838,7 @@ Channel1only	proc	near
 	mov	dx,emmhandle
 	mov	ah,44h
 	int	67h
-	
+
 	mov	es,soundbuffer
 	mov	ds,emmpageframe
 	mov	di,soundbufferwrite
@@ -884,7 +884,7 @@ volloop:	lodsw
 	stosw
 	loop	volloop
 	ret
-	
+
 
 	endp
 
@@ -922,7 +922,7 @@ Bothchannels	proc	near 	;rather slow routine
 
 	call	domix
 	call	restoreems
-	
+
 	and	di,16384-1
 	mov	soundbufferwrite,di
 
@@ -980,7 +980,7 @@ Domix	proc	near
 
 slow:	lodsb
 	mov	ah,[bx]
-	inc	bx       
+	inc	bx
 	cmp	al,dh
 	jnc	toplot
 
@@ -990,11 +990,11 @@ botlot:	cmp	ah,dh
 	js	botok
 	xor	al,al
 	stosb
-    	loop	slow	
+    	loop	slow
      	jmp	doneit
 botok:	xor	al,dh
    	stosb
-    	loop	slow	
+    	loop	slow
      	jmp	doneit
 
 toplot:	cmp	ah,dh
@@ -1003,13 +1003,13 @@ toplot:	cmp	ah,dh
 	jns	topok
 	mov	al,dl
 	stosb
-    	loop	slow	
+    	loop	slow
      	jmp	doneit
 topok:	xor	al,dh
    	stosb
-    	loop	slow	
+    	loop	slow
      	jmp	doneit
-	
+
 nodistort:	add	al,ah
 	xor	al,dh
 	stosb
@@ -1026,7 +1026,7 @@ lowvolumemix:	lodsb
 	pop	bx
 
 	mov	ah,[bx]
-	inc	bx       
+	inc	bx
 	cmp	al,dh
 	jnc	toplotv
 
@@ -1036,11 +1036,11 @@ botlotv:	cmp	ah,dh
 	js	botokv
 	xor	al,al
 	stosb
-    	loop	lowvolumemix	
+    	loop	lowvolumemix
      	jmp	doneit
 botokv:	xor	al,dh
    	stosb
-    	loop	lowvolumemix	
+    	loop	lowvolumemix
      	jmp	doneit
 
 toplotv:	cmp	ah,dh
@@ -1049,13 +1049,13 @@ toplotv:	cmp	ah,dh
 	jns	topokv
 	mov	al,dl
 	stosb
-    	loop	lowvolumemix	
+    	loop	lowvolumemix
      	jmp	doneit
 topokv:	xor	al,dh
    	stosb
-    	loop	lowvolumemix	
+    	loop	lowvolumemix
      	jmp	doneit
-	
+
 nodistortv:	add	al,ah
 	xor	al,dh
 	stosb
@@ -1072,7 +1072,7 @@ doneit:	ret
 
 
 Dmaend	proc	near
-	
+
 	cli
 	push	ax cx dx
 	call	startdmablock
@@ -1107,7 +1107,7 @@ Startdmablock	proc	near
 	out	0ah,al
 	xor	al,al
 	out	0ch,al
-	
+
 	mov	al,48h
 	or	al,sounddmachannel
 	out	0bh,al
@@ -1136,7 +1136,7 @@ Startdmablock	proc	near
 
 	mov	al,sounddmachannel
 	out	0ah,al	;dmac programmed
-	
+
     	mov	dx,DSP_write
 notclear1:	in	al,dx
 	or	al,al
@@ -1186,7 +1186,7 @@ SetupPIT	proc	near
 	mov	ah,25h
 	mov	al,8
 	int	21h		; Set to new
-	
+
 	mov	al,34h
 	out	43h,al
 	mov	al,0h
@@ -1207,8 +1207,8 @@ Getridofpit	proc	near
 	cmp	oldint8seg,-1
 	jz   	noresetPIT
 	mov	dx,oldint8add
-	mov	ax,oldint8seg		
-	mov	ds,ax			
+	mov	ax,oldint8seg
+	mov	ds,ax
 	mov	ah,25h
 	mov	al,8
 	int	21h
@@ -1231,7 +1231,7 @@ PITinterupt	proc	near
 
 	cli
 	push	ax dx cx
-	
+
 	xor	dh,dh
 	mov	dl,sounddmachannel
 	shl	dl,1
@@ -1248,7 +1248,7 @@ PITinterupt	proc	near
 	jnc	mustgo
 	cmp	ax,2048
 	jnc	nopitflip
-	
+
 mustgo:	push	bx si di es ds
 	call	makenextblock
 	pop	ds es di si bx

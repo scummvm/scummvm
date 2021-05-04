@@ -89,7 +89,7 @@ AGSOptionsWidget::AGSOptionsWidget(GuiObject *boss, const Common::String &name, 
 	// Language
 	GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + ".translation_desc", _("Game language:"), _("Language to use for multilingual games"));
 	textWidget->setAlign(Graphics::kTextAlignRight);
-			
+
 	_langPopUp = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + ".translation");
 	_langPopUp->appendEntry(_("<default>"), (uint32)-1);
 

@@ -266,7 +266,7 @@ extern const RoomTextOffsets trial5TextOffsets[] = {
 	{ TX_TRI5N018, 6984, 0 },
 	{ TX_TRI5N019, 6389, 0 },
 	{ TX_TRI5N020, 6508, 0 },
-	{ TX_TRI5N021, 6627, 0 },	
+	{ TX_TRI5N021, 6627, 0 },
 	{          -1, 0,    0 }
 };
 

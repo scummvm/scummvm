@@ -102,11 +102,11 @@ public:
 	virtual bool flush() { return true; }
 
 	/**
-	 * Finalize and close this stream. 
+	 * Finalize and close this stream.
 	 *
 	 * Call this method right before this stream instance is deleted.
 	 * The goal is to enable the client code to detect
-	 * and handle I/O errors that might occur when closing 
+	 * and handle I/O errors that might occur when closing
 	 * (and flushing, if buffered) the stream.
 	 *
 	 * After this method has been called, no further writes can be
@@ -132,7 +132,7 @@ public:
 	 * Subclasses need not (and should not) overload them.
 	 * @{
 	 */
- 
+
 	/**
 	 * Write the given byte to the current position in the stream.
 	 */
@@ -240,7 +240,7 @@ public:
 
 	/**
 	 * Write a 32-bit floating point value
-	 * stored in big endian order into the stream. 
+	 * stored in big endian order into the stream.
 	 */
 	FORCEINLINE void writeFloatBE(float value) {
 		uint32 n;
@@ -264,7 +264,7 @@ public:
 
 
 	/**
-	 * Write the given 64-bit floating point value (with decimals) 
+	 * Write the given 64-bit floating point value (with decimals)
 	 * stored in big endian order into the stream.
 	 */
 	FORCEINLINE void writeDoubleBE(double value) {
@@ -304,7 +304,7 @@ public:
 class SeekableWriteStream : public WriteStream {
 public:
 	/**
-	 * Set the stream position indicator for the stream. 
+	 * Set the stream position indicator for the stream.
 	 *
 	 * The new position, measured in bytes, is obtained by adding offset bytes
 	 * to the position specified by whence. If whence is set to SEEK_SET, SEEK_CUR,
@@ -700,7 +700,7 @@ public:
 
 	/**
 	 * Skip the given number of bytes in the stream.
-	 * 
+	 *
 	 * This is equivalent to calling:
 	 * @code
 	 * seek(offset, SEEK_CUR)

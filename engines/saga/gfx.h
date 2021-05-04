@@ -120,7 +120,7 @@ struct Surface : Graphics::Surface {
 	// This clears a 2x scaled rect (used for Japanese font removal).
 	// The pixels buffer only gets allocated for game versions that actually require it.
 		if (!pixels)
-			return;	
+			return;
 		fillRect(Common::Rect(r.left << 1, r.top << 1, r.right << 1, r.bottom << 1), 0);
 	}
 };

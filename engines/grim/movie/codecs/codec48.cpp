@@ -283,7 +283,7 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 	for (int i = 0; i < _blockY; i++) {
 		for (int j = 0; j < _blockX; j++) {
 			byte opcode = *src++;
-			
+
 
 			switch (opcode) {
 			case 0xFF: {
@@ -340,7 +340,7 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 				scaleBuffer[10] = _interTable[(scaleBuffer[11] << 8) | scaleBuffer[9]];
 				scaleBuffer[12] = _interTable[(dst[_pitch * 4 - 1] << 8) | scaleBuffer[13]];
 				scaleBuffer[14] = _interTable[(scaleBuffer[15] << 8) | scaleBuffer[13]];
-				
+
 				scaleBlock(dst, scaleBuffer);
 
 				src += 4;
@@ -453,7 +453,7 @@ void Codec48Decoder::decode3(byte *dst, const byte *src, int bufOffset) {
 				// Copy 16 2x2 blocks using absolute offsets
 				*((uint16 *)dst) = *((uint16 *)(dst + bufOffset + (int16)READ_LE_UINT16(src)));
 				*((uint16 *)(dst + _pitch)) = *((uint16 *)(dst + bufOffset + (int16)READ_LE_UINT16(src) + _pitch));
-		
+
 				*((uint16 *)(dst + 2)) = *((uint16 *)(dst + bufOffset + (int16)READ_LE_UINT16(src + 2) + 2));
 				*((uint16 *)(dst + _pitch + 2)) = *((uint16 *)(dst + bufOffset + (int16)READ_LE_UINT16(src + 2) + _pitch + 2));
 

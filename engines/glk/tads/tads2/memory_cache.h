@@ -66,7 +66,7 @@ union mcmodefloc {
  *   set of flag bits is provided, as is the size of the object and its
  *   location (which is a memory pointer for objects in memory, a swap
  *   file handle for swapped-out objects, or a load-file handle for
- *   objects that are unloaded). 
+ *   objects that are unloaded).
  */
 struct mcmodef {
 	uchar  *mcmoptr;               /* memory pointer (if object is present) */
@@ -136,7 +136,7 @@ struct mcmcxdef {
  *   FREE LIST: this is a list, headed by context->mcmcxfre and chained
  *   forward and back by mcmonxt and mcmoprv, consisting of free memory
  *   blocks.  These refer to blocks in the heap that are not used by any
- *   client objects. 
+ *   client objects.
  */
 /*
  *   UNUSED LIST: this is a list, headed by context->mcmcxunu and chained
@@ -145,7 +145,7 @@ struct mcmcxdef {
  *   backwards), of unused cache object entries.  These entries are not
  *   associated with any client object or with any heap memory.  This list
  *   is used to get a new cache object header, and deleted cache objects
- *   are placed onto this list.  
+ *   are placed onto this list.
  */
 /*
  *   LRU LIST: this is a list of in-memory blocks in ascending order of
@@ -155,7 +155,7 @@ struct mcmcxdef {
  *   to the end of the list as well as to the beginning.  The start of the
  *   list is at context->mcmcxlru, and is the least recently unlocked
  *   block still in memory.  The end of the list is at context->mcmcxmru,
- *   and is the most recently unlocked block.  
+ *   and is the most recently unlocked block.
  */
 
 /*
@@ -166,7 +166,7 @@ struct mcmcxdef {
  *   can ever allocate on behalf of this context (of course, it can
  *   overcommit the heap through swapping).  If 'max' is less than the
  *   size of a single heap allocation, it is adjusted upwards to that
- *   minimum.  
+ *   minimum.
  */
 mcmcx1def *mcmini(ulong max, uint pages, ulong swapsize,
 				  osfildef *swapfp, char *swapfilename, errcxdef *errctx);
@@ -244,7 +244,7 @@ void mcmunlck(mcmcxdef *ctx, mcmon objnum);
  *   Reserve space for an object, giving it a particular client object
  *   number.  This doesn't actually allocate any space for the object, but
  *   just sets it up so that it can be loaded by the client when it's
- *   needed.  
+ *   needed.
  */
 void mcmrsrv(mcmcxdef *ctx, ushort siz, mcmon clinum, mclhd loadhd);
 
@@ -272,7 +272,7 @@ uchar *mcmrealo(mcmcxdef *ctx, mcmon objnum, ushort newsize);
  *   activity by not writing objects that can be reconstructed from the
  *   load or swap file.  Touching the object informs the cache manager
  *   that the object is different from any version it has in a swap or
- *   load file.  
+ *   load file.
  */
 /* void mcmtch(mcmcxdef *ctx, mcmon objnum); */
 #define mcmtch(ctx,obj) \
@@ -294,7 +294,7 @@ uchar *mcmrealo(mcmcxdef *ctx, mcmon objnum, ushort newsize);
 
 /*
  *   Free an object.  The memory occupied by the object is discarded, and
- *   the object may no longer be referenced.  
+ *   the object may no longer be referenced.
  */
 void mcmfre(mcmcxdef *ctx, mcmon obj);
 
@@ -303,7 +303,7 @@ void mcmfre(mcmcxdef *ctx, mcmon obj);
  *   routine just invokes a client callback to do the actual reversion
  *   work.  The callback is called immediately if the object is already
  *   present in memory, but is deferred until the object is loaded/swapped
- *   in if the object is not in memory. 
+ *   in if the object is not in memory.
  */
 /* void mcmrevert(mcmcxdef *ctx, mcmon objn); */
 #define mcmrevert(ctx, objn) \
@@ -357,13 +357,13 @@ uchar *mcmload(mcmcxdef *ctx, mcmon objnum);
  *   Size of each chunk of memory we'll request from the heap manager.
  *   To cut down on wasted memory from the heap manager, we'll always make
  *   our requests in this large size, then sub-allocate out of these
- *   chunks. 
+ *   chunks.
  */
 #define MCMCHUNK  32768
 
 /*
  *   number of cache entries in a page - make this a power of 2 to keep
- *   the arithmetic to find a cache object entry simple 
+ *   the arithmetic to find a cache object entry simple
  */
 #define MCMPAGECNT 256
 

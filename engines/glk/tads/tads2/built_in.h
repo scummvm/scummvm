@@ -81,7 +81,7 @@ struct bifcxdef {
 
 /*
  *   argument list checking routines - can be disabled for faster
- *   run-time 
+ *   run-time
  */
 
 /* check for proper number of arguments */

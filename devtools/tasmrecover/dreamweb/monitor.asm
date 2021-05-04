@@ -53,7 +53,7 @@ keyloop:	mov	byte ptr [es:di],0
 	mov	monadx,76
 	mov	monady,141
 	mov	al,1
-	call	monmessage	
+	call	monmessage
 	mov	cx,120
 	call	hangoncurs
 	mov	al,2
@@ -728,7 +728,7 @@ dirroot:	mov	logonum,0
 	rep	movsb
 	call	monitorlogo
 	call	scrollmonitor
-	
+
 	mov	al,9
 	call	monmessage
 

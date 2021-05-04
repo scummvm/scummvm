@@ -3,7 +3,7 @@
 <!-- $Id: tileset-base.xml 2946 2011-07-10 19:32:28Z darren_janeczek $ -->
 
 <tileset name="base" imageName="tiles">
-    
+
     <!--
         By default, the tile uses the image that matches its name,
         precluded with "tile_" (e.g. "tile_sea", "tile_mage", etc.)
@@ -26,7 +26,7 @@
     <tile name="town" usesReplacementTileAsBackground="true"/>
     <tile name="lcb_west" rule="lcb" usesReplacementTileAsBackground="true"/>
     <tile name="lcb_entrance" rule="lcb_entrance" animation="lcbflag" usesReplacementTileAsBackground="true"/>
-    <tile name="lcb_east" rule="lcb" usesReplacementTileAsBackground="true"/>    
+    <tile name="lcb_east" rule="lcb" usesReplacementTileAsBackground="true"/>
     <tile name="ship" rule="ship" frames="4" directions="wnes" animation="shipflag"/>
     <tile name="horse" rule="horse" frames="2" directions="we"/>
     <tile name="dungeon_floor" rule="floors"/>
@@ -46,7 +46,7 @@
     <tile name="paladin" rule="person" frames="2" animation="frame"/>
     <tile name="ranger" rule="person" frames="2" animation="frame"/>
     <tile name="shepherd" rule="person" frames="2" animation="frame"/>
-    <tile name="column" rule="solid" usesReplacementTileAsBackground="true" /> 
+    <tile name="column" rule="solid" usesReplacementTileAsBackground="true" />
     <tile name="solids" rule="solid_attackover" frames="4" usesReplacementTileAsBackground="true" usesWaterReplacementTileAsBackground="true"/>
     <tile name="shipmast" rule="solid"/>
     <tile name="shipwheel" rule="solid"/>
@@ -75,7 +75,7 @@
     <tile name="hit_flash" usesReplacementTileAsBackground="true"/>
     <tile name="guard" rule="person" frames="4" animation="slow_frame"/>
     <tile name="villager" rule="person" frames="2" animation="frame"/>
-    <tile name="bard_singing" rule="person" frames="2" animation="frame"/>    
+    <tile name="bard_singing" rule="person" frames="2" animation="frame"/>
     <tile name="jester" rule="person" frames="2" animation="frame"/>
     <tile name="beggar" rule="person" frames="2" animation="frame"/>
     <tile name="child" rule="person" frames="2" animation="frame"/>
@@ -120,8 +120,8 @@
     <tile name="sea_horse" rule="monster" frames="2" animation="frame"/>
     <tile name="whirlpool" rule="water" frames="2" animation="frame"/>
     <tile name="twister" frames="2" animation="frame"/>
-    
-    <!-- Land monsters -->    
+
+    <!-- Land monsters -->
     <tile name="rat" rule="monster" frames="4" animation="frame"/>
     <tile name="bat" rule="monster" frames="4" animation="frame"/>
     <tile name="spider" rule="monster" frames="4" animation="frame"/>

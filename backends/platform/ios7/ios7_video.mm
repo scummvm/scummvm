@@ -685,7 +685,7 @@ uint getSizeNextPOT(uint size) {
 		GLfloat ratio = adjustedHeight / adjustedWidth;
 		int height = (int)(screenWidth * ratio);
 		//printf("Making rect (%u, %u)\n", screenWidth, height);
-        
+
 		_gameScreenRect = CGRectMake(0, 0, screenWidth, height);
 
 		overlayPortraitRatio = (_videoContext.overlayHeight * ratio) / _videoContext.overlayWidth;

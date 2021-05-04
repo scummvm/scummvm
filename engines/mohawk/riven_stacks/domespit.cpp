@@ -138,7 +138,7 @@ int16 DomeSpit::getSliderSlotClosestToPos(uint16 startHotspot, const Common::Poi
 		Common::Rect srcRect = hotspot->getRect();
 		// Only the x value of mouse position being in the hotspot matters
 		// the y value of srcRect.top is chosen because it is in the rect.
-		Common::Point posBounded(pos.x, srcRect.top); 
+		Common::Point posBounded(pos.x, srcRect.top);
 		// Now clip the x value so it lies in the x extremes of the slider hotspots.
 		// If this is not done then the user can move the x position past the
 		// slider area and the slider won't go all the way to that end.

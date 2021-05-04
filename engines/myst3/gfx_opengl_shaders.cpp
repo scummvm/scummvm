@@ -289,8 +289,8 @@ void ShaderRenderer::draw2DText(const Common::String &text, const Common::Point 
 			float cy = textureRect.top / (float)glFont->internalHeight;
 
 			const float charData[] = {
-				cx,      cy + ch, x,     y,    
-				cx + cw, cy + ch, x + w, y,    
+				cx,      cy + ch, x,     y,
+				cx + cw, cy + ch, x + w, y,
 				cx + cw, cy,      x + w, y + h,
 				cx,      cy,      x,     y + h,
 			};

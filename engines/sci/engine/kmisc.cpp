@@ -630,7 +630,7 @@ reg_t kMacKq7RestoreGame(EngineState *s) {
 		return NULL_REG;
 	}
 
-	// gamestate_restore() resets s->_kq7MacSaveGameId and 
+	// gamestate_restore() resets s->_kq7MacSaveGameId and
 	//  s->_kq7MacSaveGameDescription so save and restore them.
 	int kq7MacSaveGameId = s->_kq7MacSaveGameId;
 	Common::String kq7MacSaveGameDescription = s->_kq7MacSaveGameDescription;
@@ -690,7 +690,7 @@ reg_t kMacPlatform32(EngineState *s, int argc, reg_t *argv) {
 			return kMacKq7InitializeSave(s);
 		} else if (argc == 3) {
 			return kMacInitializeSave(s, argc - 1, argv + 1);
-		} 
+		}
 		break;
 	case 4:
 		if (argc == 1) {

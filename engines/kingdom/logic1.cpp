@@ -918,7 +918,7 @@ void Logic::GPL1_161() {
 		_vm->fadeToBlack1();
 		_vm->drawRect(4, 17, 228, 161, 0);
 		_vm->restoreAS();
-		break;	
+		break;
 	default:
 		if (_vm->_userInput)
 			warning("Skipped UserInput %d(0x%04X) for _StatPlay %d", _vm->_userInput, _vm->_userInput, _statPlay);
@@ -1457,7 +1457,7 @@ void Logic::GPLogic1_SubSP121() {
 	_vm->playSound(30);
 	_vm->_bTimer = 190;
 	_vm->readMouse();
-	
+
 	while (_vm->_bTimer != 0 && _vm->_mouseButton == 0) {
 		_vm->checkTimers();
 		_vm->refreshSound();

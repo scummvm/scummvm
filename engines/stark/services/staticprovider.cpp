@@ -94,7 +94,7 @@ VisualImageXMG *StaticProvider::getUIElement(UIElement element, uint32 index) co
 	anim->selectFrame(index);
 	VisualImageXMG *visualImage = anim->getVisual()->get<VisualImageXMG>();
 	anim->selectFrame(prevIndex);
-	
+
 	return visualImage;
 }
 

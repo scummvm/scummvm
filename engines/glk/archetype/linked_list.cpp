@@ -84,7 +84,7 @@ void insert_item(ListType &the_list, NodePtr the_item) {
 NodePtr find_item(ListType &the_list, int the_key) {
 	NodePtr p;
 	for (p = the_list->next; p != the_list && the_key < p->key; p = p->next) {}
-	
+
 	return (p == the_list || the_key != p->key) ? nullptr : p;
 }
 

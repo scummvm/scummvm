@@ -38,13 +38,13 @@ namespace TADS2 {
 /*
  * ltkini - allocate and INItialize ltk context.  'heapsiz' is the
  * requested size for the local heap. Returns 0 if the request cannot be
- * satisfied.  
+ * satisfied.
  */
 extern void ltkini(unsigned short heapsiz);
 
 
 /*
- * ltkfre - FREe ltk context.  
+ * ltkfre - FREe ltk context.
  */
 extern void ltkfre();
 
@@ -54,7 +54,7 @@ extern void ltkfre();
  * 'title' specifies the title to use in the dialog box, 'msg' is the
  * text message, which may contain printf-style formatting.
  * printf-style arguments must be passed in also, if the message
- * requires them.  
+ * requires them.
  */
 extern void ltk_dlg(const char *title, const char *msg, ...);
 
@@ -67,7 +67,7 @@ extern void ltk_errlog(void *ctx, const char *fac, int errCode, int agrc, errade
 
 /*
  * ltk_alloc - ALLOCate permanent global memory.  Returns 0 if the
- * request cannot be satisfied.  
+ * request cannot be satisfied.
  */
 extern void *ltk_alloc(size_t siz);
 
@@ -77,7 +77,7 @@ extern void *ltk_realloc(void *ptr, size_t siz);
 
 /*
  * ltk_sigalloc - ALLOCate permanent global memory, signals error on
- * failure.  
+ * failure.
  */
 extern void *ltk_sigalloc(struct errcxdef *errcx, size_t siz);
 
@@ -90,33 +90,33 @@ extern void ltk_free(void *ptr);
 
 /*
  * ltk_suballoc - SUB-ALLOCate memory from user heap.  Returns 0 if the
- * request cannot be satisfied.  
+ * request cannot be satisfied.
  */
 extern void *ltk_suballoc(size_t siz);
 
 
 /*
  * ltk_sigsuballoc - SUB-ALLOCate memory from user heap, signals error
- * on failure. 
+ * on failure.
  */
 extern void *ltk_sigsuballoc(struct errcxdef *errcx, size_t siz);
 
 
 /*
  * ltk_subfree - SUBsegment FREE.  Frees memory allocated by
- * ltk_suballoc.  
+ * ltk_suballoc.
  */
 extern void ltk_subfree(void *ptr);
 
 
 /*
- * ltk_beep - BEEP the user. 
+ * ltk_beep - BEEP the user.
  */
 extern void ltk_beep(void);
 
 
 /*
- * ltk_beg_wait - signal that the user needs to wait.  
+ * ltk_beg_wait - signal that the user needs to wait.
  */
 extern void ltk_beg_wait(void);
 

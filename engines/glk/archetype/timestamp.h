@@ -37,7 +37,7 @@ extern void timestamp_init();
 /**
  * Creates a compressed long integer that contains all the necessary time information.
  * There are enough bits in a 32-bit word to do this :
- * 
+ *
  * Variable      Range                             Bits
  * --------      -----                             ----
  * Year          0-63                                6
@@ -46,11 +46,11 @@ extern void timestamp_init();
  * Hour          0-23                                5
  * Minute        0-59                                6
  * Second        0-59                                6
- * 
+ *
  * Note that Year does not quite fit comfortably into this scheme.The actual returned value
  * is 1980-2099, a span of 119 years; but we are using only 63.  Year 0 is considered 1992
  * and the upper limit is 2055 before it goes back to year 0 (1992) again.
- * 
+ *
  * The DayOfWeek information is thrown away because it is redundant, and the Sec100 information
  * is thrown away because it is unnecessarily precise
  */

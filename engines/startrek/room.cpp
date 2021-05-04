@@ -342,7 +342,7 @@ const char *Room::getText(uint16 textId) {
 				return _roomStaticTextList[index].text;
 			}
 			index++;
-		} while (_roomStaticTextList[index].id != -1);		
+		} while (_roomStaticTextList[index].id != -1);
 	}
 
 	if (offsets == nullptr)

@@ -517,7 +517,7 @@ void Mouse::handleDelayedEvents() {
 				Gump *parent = gump->GetParent();
 				if (parent)
 					parent->ScreenSpaceToGump(mx, my);
-				
+
 				gump->onMouseClick(button, mx, my);
 			}
 

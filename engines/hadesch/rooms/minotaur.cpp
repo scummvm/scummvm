@@ -49,7 +49,7 @@ static const char *minotaurStates[] = {
 enum DaedalusDialogState {
 	kMinotaur0 = 0,
 	kMinotaur1 = 1,
-	kMinotaur2 = 2,	
+	kMinotaur2 = 2,
 	kMinotaurInactive = 3,
 	kMinotaurEncourage = 4,
 	kMinotaurTrapped = 5,
@@ -355,7 +355,7 @@ private:
 			// Hence if we have any movable walls then we can make immovable walls outer
 			// and they will not conflict with existing labyrinths.
 			// If we have no movable walls we can easily put all immovable walls as inner
-			
+
 			bool immovableAreOuter = !_current._cells[cell]._movableWalls.empty();
 
 			for (int j = 0; j < (int) _current._cells[cell]._immovableWalls.size(); j++) {

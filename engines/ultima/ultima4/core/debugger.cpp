@@ -961,7 +961,7 @@ bool Debugger::cmdReadyWeapon(int argc, const char **argv) {
 
 	PartyMember *p = g_context->_party->member(player);
 	const Weapon *w = g_weapons->get((WeaponType)weapon);
- 
+
 	if (!w) {
 		print("");
 		return isDebuggerActive();

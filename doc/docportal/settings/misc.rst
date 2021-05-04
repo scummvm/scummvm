@@ -56,13 +56,13 @@ Use native system file browser
 .. _guireturn:
 
 Always return to the launcher when leaving a game
-	If ticked, removes the **Quit** option from the Global Main Menu. Only the **Return to Launcher** option remains.  
+	If ticked, removes the **Quit** option from the Global Main Menu. Only the **Return to Launcher** option remains.
 
 	*gui_return_to_launcher_at_exit*
 
 .. _guiconfirm:
 
 Ask for confirmation on exit
-	If ticked, a confirmation dialog appears when you choose **Quit** or **Return to Launcher** from the Global Main Menu. 
+	If ticked, a confirmation dialog appears when you choose **Quit** or **Return to Launcher** from the Global Main Menu.
 
 	*confirm_exit*

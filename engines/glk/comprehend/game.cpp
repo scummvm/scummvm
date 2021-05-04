@@ -848,7 +848,7 @@ turn:
 	beforePrompt();
 
 	for (;;) {
-		_redoLine = REDO_NONE; 
+		_redoLine = REDO_NONE;
 		g_comprehend->print("> ");
 		g_comprehend->readLine(_inputLine, INPUT_LINE_SIZE);
 		if (g_comprehend->shouldQuit())

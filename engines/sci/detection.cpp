@@ -262,7 +262,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			true
 		}
 	},
-	
+
 	// SCI16 games: use RGB renderer instead of indexed
 	{
 		GAMEOPTION_RGB_RENDERING,
@@ -273,7 +273,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			false
 		}
 	},
-	
+
 	// SCI16 games: use custom per-resource palettes to improve visuals
 	{
 		GAMEOPTION_PALETTE_MODS,

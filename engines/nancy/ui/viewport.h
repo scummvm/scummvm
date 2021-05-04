@@ -49,7 +49,7 @@ public:
 		_videoFormat(0),
 		_stickyCursorPos(-1, -1),
 		_dontWrap(kFalse) {}
-		
+
 	virtual ~Viewport() { _decoder.close(); _fullFrame.free(); }
 
 	virtual void init() override;

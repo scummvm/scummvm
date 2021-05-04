@@ -97,7 +97,7 @@ except ImportError:
 	print "[Error] struct python library is required to be installed!"
 else:
 	structLibFound = True
-	
+
 
 
 if 	(not osLibFound) \
@@ -793,7 +793,7 @@ def inputXLS(pathtoInputExcelFilename):
 		if gTraceModeEnabled:
 			print '[Debug] Sheet: %s was not found. Creating a temporary sheet for version info...' % (SUPPORTED_DIALOGUE_VERSION_SHEET)
 		sbtlVersTRInstance = sbtlVersTextResource(gTraceModeEnabled)
-		bookCopy = copy(xl_workbook) 
+		bookCopy = copy(xl_workbook)
 		xl_sheet = bookCopy.add_sheet(SUPPORTED_DIALOGUE_VERSION_SHEET)
 		n = 0
 		col1_name = 'Subtitles Version Info'

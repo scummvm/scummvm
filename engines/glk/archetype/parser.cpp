@@ -73,7 +73,7 @@ void normalize_string(const String &first, String &second) {
 
 			if (i > lfirst)
 				done = true;
-		
+
 		} else if (in_word) {
 			if (j < g_vm->Abbreviate) {
 				second = second + locase(first[i]);

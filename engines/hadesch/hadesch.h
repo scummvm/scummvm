@@ -161,7 +161,7 @@ public:
 	Common::SharedPtr<HeroBelt> getHeroBelt() {
 		return _heroBelt;
 	}
-	
+
 	int firstAvailableSlot();
 
 	void newGame();
@@ -202,7 +202,7 @@ private:
 	Common::RandomSource _rnd;
 
 	Common::String _cdScenesPath;
-	
+
 	Common::SharedPtr<VideoRoom> _sceneVideoRoom;
 	Common::SharedPtr<Handler> _sceneHandler;
 	Common::SharedPtr<VideoRoom> _optionsRoom;

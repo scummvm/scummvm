@@ -194,7 +194,7 @@ void HQ2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, 
 #define PIXEL11_100	*(q+1+nextlineDst) = interpolate_14_1_1(w5, w6, w8);
 
 extern "C" uint32   *RGBtoYUV;
-#define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x)) 
+#define YUV(x)	(sizeof(Pixel) == 2 ? RGBtoYUV[w ## x] : ConvertYUV<ColorMask>(w ## x))
 
 /**
  * Convert 32 bit RGB values to Yuv

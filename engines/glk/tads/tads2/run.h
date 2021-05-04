@@ -126,7 +126,7 @@ void runfn(runcxdef *ctx, noreg objnum objn, int argc);
  *   to the first byte of code to be executed. self is the object to be
  *   used for the special 'self' pseudo-object, and target is the object
  *   whose data are actually being executed.  targprop is the property being
- *   executed; 0 is used for functions. 
+ *   executed; 0 is used for functions.
  */
 void runexe(runcxdef *ctx, uchar *p, objnum self, objnum target,
 			prpnum targprop, int argc);
@@ -271,12 +271,12 @@ int runeq(runcxdef *ctx);
 /* check for stack overflow */
 /* void runstkovf(runcxdef *ctx); */
 
-/* 
+/*
  *   Check to ensure we have enough arguments to pass to a function or method
  *   call - this simply ensures we have enough data in the current frame.
  *   This is important because the called function will be able to write to
  *   our frame.  If we don't have enough arguments, we'll push enough 'nil'
- *   values to meet the need.  
+ *   values to meet the need.
  */
 #define runcheckargc(ctx, nargc) \
 	while ((ctx)->runcxsp - (ctx)->runcxbp < *(nargc)) \
@@ -330,7 +330,7 @@ void runadd(runcxdef *ctx, runsdef *val, runsdef *val2, uint below);
 /*
  *   subtract val2 from val, returning result in *val; return TRUE if
  *   value changed, FALSE otherwise (this is returned when subtracting
- *   something from a list that isn't in the list) 
+ *   something from a list that isn't in the list)
  */
 int runsub(runcxdef *ctx, runsdef *val, runsdef *val2, uint below);
 

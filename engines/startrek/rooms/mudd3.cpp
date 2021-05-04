@@ -127,7 +127,7 @@ extern const RoomTextOffsets mudd3TextOffsets[] = {
 	{ TX_MUD3_011, 11631, 0 },
 	{ TX_MUD3_012, 9147, 0 },
 	{ TX_MUD3_013, 12946, 0 },
-	{ TX_MUD3_014, 11167, 0 },	
+	{ TX_MUD3_014, 11167, 0 },
 	{ TX_MUD3_015, 5526, 0 },
 	{ TX_MUD3_016, 11915, 0 },
 	{ TX_MUD3_017, 4507, 0 },

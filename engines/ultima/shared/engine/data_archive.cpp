@@ -138,7 +138,7 @@ int UltimaDataArchive::listMatchingMembers(Common::ArchiveMemberList &list, cons
 			it != innerList.end(); ++it) {
 		Common::ArchiveMemberPtr member = Common::ArchiveMemberPtr(
 			new UltimaDataArchiveMember(*it, _innerfolder));
-		list.push_back(member);		
+		list.push_back(member);
 	}
 
 	return result;
@@ -197,7 +197,7 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const
 	Common::String remainingName = name.substr(_publicFolder.size());
 	Common::FSNode node = _folder;
 	size_t pos;
-	
+
 	while ((pos = remainingName.findFirstOf('/')) != Common::String::npos) {
 		node = node.getChild(remainingName.substr(0, pos));
 		if (!node.exists())
@@ -209,7 +209,7 @@ Common::FSNode UltimaDataArchiveProxy::getNode(const Common::String &name) const
 	if (!remainingName.empty())
 		node = node.getChild(remainingName);
 
-	return node;	
+	return node;
 }
 
 #endif

@@ -1235,7 +1235,7 @@ void Screen::set_screen_mode() {
 	if (scale_factor == 0) scale_factor = 1;
 	scaler = 0;
 	scale_factor = 1;
-		
+
 	Graphics::PixelFormat SCREEN_FORMAT(2, 5, 6, 5, 0, 11, 5, 0, 0);
 	initGraphics(width, height, &SCREEN_FORMAT);
 	_rawSurface = new Graphics::Screen(width, height, SCREEN_FORMAT);

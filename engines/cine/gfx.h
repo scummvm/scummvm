@@ -206,7 +206,7 @@ public:
 
 	virtual void popSavedBackBuffer(BackBufferSource source);
 
-	/** Restores back buffer content without palette. */ 
+	/** Restores back buffer content without palette. */
 	virtual void restoreSavedBackBuffer(BackBufferSource source);
 
 	virtual void removeSavedBackBuffer(BackBufferSource source);
@@ -222,7 +222,7 @@ public:
 	virtual uint getScroll() const;
 	virtual void removeBg(unsigned int idx);
 	virtual void saveBgNames(Common::OutSaveFile &fHandle);
-	virtual const char *getBgName(uint idx = 0) const;	
+	virtual const char *getBgName(uint idx = 0) const;
 
 	virtual void setBlackPalette(bool updateChangePal);
 	virtual void setPalette();

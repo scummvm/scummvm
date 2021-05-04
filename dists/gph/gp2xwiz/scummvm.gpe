@@ -5,7 +5,7 @@
 export LD_LIBRARY_PATH=`pwd`/lib:$LD_LIBRARY_PATH
 
 # Run ScummVM, important this bit.
-./scummvm.gph --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc 
+./scummvm.gph --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc
 
 # Sync the SD card to check that everything is written.
 sync

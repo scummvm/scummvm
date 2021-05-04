@@ -66,7 +66,7 @@ public:
 	 *
 	 * @note You *must* check whether the returned value is less than what you requested.
 	 *       This indicates that the stream is fully used up.
-	 * 
+	 *
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
@@ -81,7 +81,7 @@ public:
 	 *
 	 * If this returns true, it indicates that at this time there is no data
 	 * available in the stream. However, there might be more data in the future.
-	 * 
+	 *
 	 * This is used by e.g. a rate converter to decide whether to keep on
 	 * converting data or to stop.
 	 */
@@ -92,7 +92,7 @@ public:
 	 *
 	 * If this returns true, it indicates that all data in this stream is used up
 	 * and no additional data will appear in it in the future.
-	 * 
+	 *
 	 * This is used by the mixer to decide whether a given stream shall be
 	 * removed from the list of active streams (and thus be destroyed).
 	 * By default, this maps to endOfData().
@@ -129,7 +129,7 @@ public:
 	 * Create a looping audio stream object.
 	 *
 	 * On creation of the LoopingAudioStream object, the underlying stream will be rewound.
-	 * 
+	 *
 	 * @see makeLoopingAudioStream
 	 *
 	 * @param stream  The stream to loop.

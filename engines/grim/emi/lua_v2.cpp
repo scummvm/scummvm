@@ -481,7 +481,7 @@ void Lua_V2::ThumbnailFromFile() {
 	}
 	int index = (int)lua_getnumber(texIdObj);
 	Common::String filename(lua_getstring(filenameObj));
-	
+
 	if (g_grim->getGameType() == GType_MONKEY4 &&
 		g_grim->getGamePlatform() == Common::kPlatformPS2) {
 		filename += ".ps2";

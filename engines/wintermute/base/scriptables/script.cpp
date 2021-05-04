@@ -106,7 +106,7 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 	_tracingMode = false;
 
 #ifdef ENABLE_FOXTAIL
-	initOpcodesType();	
+	initOpcodesType();
 #endif
 }
 
@@ -1365,7 +1365,7 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 	if (!persistMgr->getIsSaving()) {
 		_tracingMode = false;
 #ifdef ENABLE_FOXTAIL
-		initOpcodesType();	
+		initOpcodesType();
 #endif
 	}
 
@@ -1473,7 +1473,7 @@ ScScript::TExternalFunction *ScScript::getExternal(char *name) {
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function) {
 	//////////////////////////////////////////////////////////////////////////
-	// Externals: emulate external functions used in known games 
+	// Externals: emulate external functions used in known games
 	//////////////////////////////////////////////////////////////////////////
 	if (!DID_FAIL(EmulateExternalCall(_gameRef, stack, thisStack, function))) {
 		return STATUS_OK;

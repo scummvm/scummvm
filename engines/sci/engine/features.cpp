@@ -644,7 +644,7 @@ int GameFeatures::detectPlaneIdBase() {
 	else
 		return 20000;
 }
-	
+
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
@@ -731,7 +731,7 @@ bool GameFeatures::generalMidiOnly() {
 		return (sound.exists() && sound.getTrackByType(/* AdLib */ 0) == nullptr);
 	}
 	default:
-		 if (g_sci->getPlatform() == Common::kPlatformMacintosh && 
+		 if (g_sci->getPlatform() == Common::kPlatformMacintosh &&
 			 getSciVersion() >= SCI_VERSION_2_1_MIDDLE) {
 			 return true;
 		 }

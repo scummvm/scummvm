@@ -73,7 +73,7 @@ void DrawingSupport::roundFrameCorners(bool skipBottom) {
 	for (int idx = 1; idx <= 4; ++idx) {
 		_surface.drawLine(0, idx, idx, 0, 0);
 		_surface.drawLine(319 - idx, 0, 319, idx, 0);
-		
+
 		if (!skipBottom) {
 			_surface.drawLine(0, 199 - idx, idx, 199, 0);
 			_surface.drawLine(319, 199 - idx, 319 - idx, 199, 0);

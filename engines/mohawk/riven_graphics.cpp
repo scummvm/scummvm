@@ -704,8 +704,8 @@ void RivenGraphics::updateCredits() {
 		runScheduledTransition();
 	} else {
 		// Otherwise, we're scrolling
-		// This is done by 1) moving the screen up one row and 
-		// 2) adding a new row at the bottom that is the current row of the current image or 
+		// This is done by 1) moving the screen up one row and
+		// 2) adding a new row at the bottom that is the current row of the current image or
 		// not and it defaults to being empty (a black row).
 
 		// Move the screen up one row

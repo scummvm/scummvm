@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xs:schema targetNamespace="http://openpandora.org/namespaces/PXML" xmlns="http://openpandora.org/namespaces/PXML" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
-	
-	
+
+
 	<!-- declare some simpleTypes for later usage -->
-	
+
 	<!-- Specify params allows with the 'x11' entry in exec -->
 	<xs:simpleType name="x11Param">
 		<xs:restriction base="xs:string">
@@ -12,7 +12,7 @@
 			<xs:enumeration value="ignore" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Specify the valid documentation formats in the <info> block -->
 	<xs:simpleType name="docType">
 		<xs:restriction base="xs:string">
@@ -20,7 +20,7 @@
 			<xs:enumeration value="text/plain" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Make sure that version numbers only consist of letters, numbers and + as well as - -->
 	<xs:simpleType name="versionNumber">
 		<xs:restriction base="xs:string">
@@ -28,7 +28,7 @@
 			<xs:pattern value="[a-zA-Z0-9+-]*" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Specify what is valid as release type -->
 	<xs:simpleType name="releaseType">
 		<xs:restriction base="xs:string">
@@ -37,14 +37,14 @@
 			<xs:enumeration value="release" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Specify what makes an email address "valid" -->
 	<xs:simpleType name="emailAddress">
 		<xs:restriction base="xs:string">
 			<xs:pattern value="[^@]+@[^\.]+\..+"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- some restrictions regarding file names that are eg not allowed/possible when using sd cards formated as fat32 -->
 	<xs:simpleType name="dumbPath">
 		<xs:restriction base="xs:normalizedString">
@@ -56,7 +56,7 @@
 			<xs:pattern value="[^?>:/]+" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Specify lang codes -->
 	<xs:simpleType name="isoLangcode">
 		<xs:restriction base="xs:string">
@@ -69,7 +69,7 @@
 			<xs:enumeration value="en_US" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Definition of all allowed categories following the FDO specs -->
 	<xs:simpleType name="fdoCategory">
 		<xs:restriction base="xs:string">
@@ -82,7 +82,7 @@
 			<xs:pattern value="Building|Debugger|IDE|GUIDesigner|Profiling|RevisionControl|Translation|Calendar|ContactManagement|Database|Dictionary|Chart|Email|Finance|FlowChart|PDA|ProjectManagement|Presentation|Spreadsheet|WordProcessor|2DGraphics|VectorGraphics|RasterGraphics|3DGraphics|Scanning|OCR|Photography|Publishing|Viewer|TextTools|DesktopSettings|HardwareSettings|Printing|PackageManager|Dialup|InstantMessaging|Chat|IRCClient|FileTransfer|HamRadio|News|P2P|RemoteAccess|Telephony|TelephonyTools|VideoConference|WebBrowser|WebDevelopment|Midi|Mixer|Sequencer|Tuner|TV|AudioVideoEditing|Player|Recorder|DiscBurning|ActionGame|AdventureGame|ArcadeGame|BoardGame|BlocksGame|CardGame|KidsGame|LogicGame|RolePlaying|Simulation|SportsGame|StrategyGame|Art|Construction|Music|Languages|Science|ArtificialIntelligence|Astronomy|Biology|Chemistry|ComputerScience|DataVisualization|Economy|Electricity|Geography|Geology|Geoscience|History|ImageProcessing|Literature|Math|NumericalAnalysis|MedicalSoftware|Physics|Robotics|Sports|ParallelComputing|Amusement|Archiving|Compression|Electronics|Emulator|Engineering|FileTools|FileManager|TerminalEmulator|Filesystem|Monitor|Security|Accessibility|Calculator|Clock|TextEditor|Documentation|Core|KDE|GNOME|GTK|Qt|Motif|Java|ConsoleOnly"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<!-- Create some way to enforce entries to be nonempty -->
 	<xs:simpleType name="nonempty_token">
 		<xs:restriction base="xs:token">
@@ -99,25 +99,25 @@
 			<xs:minLength value="1"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
-	
-	
+
+
+
 	<!-- declare some complexTypes for later usage -->
-	
+
 	<!-- type used for file associations -->
 	<xs:complexType name="association_data">
 		<xs:attribute name="name" use="required" type="nonempty_normalizedString" />
 		<xs:attribute name="filetype" use="required" type="nonempty_token" />
 		<xs:attribute name="exec" use="required" type="nonempty_token" />
 	</xs:complexType>
-	
+
 	<!-- type used for author info -->
 	<xs:complexType name="author_data">
 		<xs:attribute name="name" use="required" type="nonempty_normalizedString" />
 		<xs:attribute name="website" use="optional" type="xs:anyURI" />
 		<xs:attribute name="email" use="optional" type="emailAddress" />
 	</xs:complexType>
-	
+
 	<!-- type used for version informations (full entry as well as os version) -->
 	<xs:complexType name="app_version_info">
 		<xs:attribute name="major" use="required" type="versionNumber" />
@@ -132,7 +132,7 @@
 		<xs:attribute name="release" use="required" type="versionNumber" />
 		<xs:attribute name="build" use="required" type="versionNumber" />
 	</xs:complexType>
-	
+
 	<!-- type used for exec entries -->
 	<xs:complexType name="exec_params">
 		<xs:attribute name="command" use="required" type="nonempty_token" />
@@ -142,7 +142,7 @@
 		<xs:attribute name="standalone" use="optional" type="xs:boolean" />
 		<xs:attribute name="x11" use="optional" type="x11Param" />
 	</xs:complexType>
-	
+
 	<!-- type used for tiles or descriptions, once in 'normal' version, once enforcing usage of en_US -->
 	<xs:complexType name="title_or_description">
 		<xs:simpleContent>
@@ -158,30 +158,30 @@
 			</xs:extension>
 		</xs:simpleContent>
 	</xs:complexType>
-	
+
 	<!-- type used for referencing images -->
 	<xs:complexType name="image_entry">
 		<xs:attribute name="src" use="required" type="dumbPath" />
 	</xs:complexType>
-	
+
 	<!-- type for referencing manuals/readme docs -->
 	<xs:complexType name="information_entry">
 		<xs:attribute name="name" use="required" type="nonempty_normalizedString" />
 		<xs:attribute name="type" use="required" type="docType" />
 		<xs:attribute name="src" use="required" type="dumbPath" />
 	</xs:complexType>
-	
+
 	<!-- type used for the license information -->
 	<xs:complexType name="license_info">
 		<xs:attribute name="name" use="required" type="nonempty_normalizedString" />
 		<xs:attribute name="url" use="optional" type="xs:anyURI" />
 		<xs:attribute name="sourcecodeurl" use="optional" type="xs:anyURI" />
 	</xs:complexType>
-	
-	
-	
+
+
+
 	<!-- Combine the symple and complex types into the "real" PXML specification -->
-	
+
 	<xs:element name="PXML">
 		<xs:complexType>
 			<xs:sequence>

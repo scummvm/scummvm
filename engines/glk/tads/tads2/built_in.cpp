@@ -56,7 +56,7 @@ void bifyon(bifcxdef *ctx, int argc)
 		strcpy(yesbuf, "[Yy].*");
 	if (os_get_str_rsc(RESID_YORN_NO, nobuf, sizeof(nobuf)))
 		strcpy(nobuf, "[Nn].*");
-	
+
 	/* if we're in HTML mode, switch to input font */
 	if (tio_is_html_mode())
 		tioputs(ctx->bifcxtio, "<font face='TADS-Input'>");
@@ -111,16 +111,16 @@ void bifsfs(bifcxdef *ctx, int argc)
 	uint      tm;
 	runsdef   val;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 3, argc);            /* check for proper argument count */
 	func = runpopfn(ctx->bifcxrun);
 	tm = runpopnum(ctx->bifcxrun);
 	runpop(ctx->bifcxrun, &val);
-	
+
 	/* limitation:  don't allow string or list for value */
 	if (val.runstyp == DAT_LIST || val.runstyp == DAT_SSTRING)
 		runsig(ctx->bifcxrun, ERR_FUSEVAL);
-	
+
 	vocsetfd(voc, voc->voccxfus, func, (prpnum)0,
 			 tm, &val, ERR_MANYFUS);
 }
@@ -131,7 +131,7 @@ void bifrfs(bifcxdef *ctx, int argc)
 	objnum    func;
 	runsdef   val;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 2, argc);
 	func = runpopfn(ctx->bifcxrun);
 	runpop(ctx->bifcxrun, &val);
@@ -145,15 +145,15 @@ void bifsdm(bifcxdef *ctx, int argc)
 	objnum    func;
 	runsdef   val;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 2, argc);            /* check for proper argument count */
 	func = runpopfn(ctx->bifcxrun);
 	runpop(ctx->bifcxrun, &val);
-	
+
 	/* limitation:  don't allow string or list for value */
 	if (val.runstyp == DAT_LIST || val.runstyp == DAT_SSTRING)
 		runsig(ctx->bifcxrun, ERR_FUSEVAL);
-	
+
 	vocsetfd(voc, voc->voccxdmn, func, (prpnum)0, 0,
 			 &val, ERR_MANYDMN);
 }
@@ -164,7 +164,7 @@ void bifrdm(bifcxdef *ctx, int argc)
 	objnum    func;
 	runsdef   val;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 2, argc);
 	func = runpopfn(ctx->bifcxrun);
 	runpop(ctx->bifcxrun, &val);
@@ -176,7 +176,7 @@ void bifrdm(bifcxdef *ctx, int argc)
 void bifinc(bifcxdef *ctx, int argc)
 {
 	int turncnt;
-	
+
 	if (argc == 1)
 	{
 		/* get the number of turns to skip */
@@ -302,7 +302,7 @@ void bifsav(bifcxdef *ctx, int argc)
 	char     buf[OSFNMAX];
 	int      err;
 	runsdef  val;
-	
+
 	bifcntargs(ctx, 1, argc);
 	fn = runpopstr(ctx->bifcxrun);
 	bifcstr(ctx, buf, (size_t)sizeof(buf), fn);
@@ -318,9 +318,9 @@ void bifrso(bifcxdef *ctx, int argc)
 	char      buf[OSFNMAX];
 	int       err;
 	voccxdef *vctx = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 1, argc);
-	
+
 	/* check for special restore(nil) - restore game given as parameter */
 	if (runtostyp(ctx->bifcxrun) == DAT_NIL)
 	{
@@ -358,7 +358,7 @@ void biflog(bifcxdef *ctx, int argc)
 {
 	char   buf[OSFNMAX];
 	uchar *str;
-	
+
 	bifcntargs(ctx, 1, argc);
 	if (runtostyp(ctx->bifcxrun) == DAT_NIL)
 	{
@@ -401,7 +401,7 @@ void bifres(bifcxdef *ctx, int argc)
 	/*
 	 *   If a restart function was provided, call it.  Note that we left
 	 *   the argument for the function on the stack, so there's no need to
-	 *   re-push it!  
+	 *   re-push it!
 	 */
 	if (fn != MCMONINV) runfn(ctx->bifcxrun, fn, 1);
 
@@ -438,7 +438,7 @@ void bifnfy(bifcxdef *ctx, int argc)
 	prpnum    prp;
 	uint      tm;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 3, argc);            /* check for proper argument count */
 	objn = runpopobj(ctx->bifcxrun);
 	prp = runpopprp(ctx->bifcxrun);
@@ -447,7 +447,7 @@ void bifnfy(bifcxdef *ctx, int argc)
 	/* a time of zero means every turn */
 	if (tm == 0)
 		tm = VOCDTIM_EACH_TURN;
-	
+
 	vocsetfd(voc, voc->voccxalm, objn, prp, tm,
 			 (runsdef *)0, ERR_MANYNFY);
 }
@@ -459,7 +459,7 @@ void bifunn(bifcxdef *ctx, int argc)
 	objnum    objn;
 	prpnum    prop;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 2, argc);
 	objn = runpopobj(ctx->bifcxrun);
 	prop = runpopprp(ctx->bifcxrun);
@@ -513,7 +513,7 @@ void bifsay(bifcxdef *ctx, int argc)
 	char   numbuf[30];
 
 	if (argc != 2) bifcntargs(ctx, 1, argc);
-	
+
 	switch(runtostyp(ctx->bifcxrun))
 	{
 	case DAT_NUMBER:
@@ -521,16 +521,16 @@ void bifsay(bifcxdef *ctx, int argc)
 		sprintf(numbuf, "%ld", num);
 		tioputs(ctx->bifcxtio, numbuf);
 		break;
-		
+
 	case DAT_SSTRING:
 		str = runpopstr(ctx->bifcxrun);
 		outfmt(ctx->bifcxtio, str);
 		break;
-		
+
 	case DAT_NIL:
 		(void)runpoplog(ctx->bifcxrun);
 		break;
-		
+
 	default:
 		runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "say");
 	}
@@ -542,16 +542,16 @@ void bifcar(bifcxdef *ctx, int argc)
 	uchar   *lstp;
 	uint     lstsiz;
 	runsdef  val;
-	
+
 	bifcntargs(ctx, 1, argc);
 	bifchkarg(ctx, DAT_LIST);
-	
+
 	lstp = runpoplst(ctx->bifcxrun);
-	
+
 	/* get list's size, and point to its data string */
 	lstsiz = osrp2(lstp) - 2;
 	lstp += 2;
-	
+
 	/* push first element if one is present, otherwise push nil */
 	if (lstsiz)
 		runpbuf(ctx->bifcxrun, *lstp, lstp+1);
@@ -567,18 +567,18 @@ void bifcdr(bifcxdef *ctx, int argc)
 	uint     lstsiz;
 	runsdef  val;
 	runsdef  stkval;
-	
+
 	bifcntargs(ctx, 1, argc);
 	bifchkarg(ctx, DAT_LIST);
-	
+
 	lstp = runpoplst(ctx->bifcxrun);
 	stkval.runstyp = DAT_LIST;
 	stkval.runsv.runsvstr = lstp;
-	
+
 	/* get list's size, and point to its data string */
 	lstsiz = osrp2(lstp) - 2;
 	lstp += 2;
-	
+
 	if (lstsiz != 0)
 	{
 		/* deduct size of first element from size of list */
@@ -595,7 +595,7 @@ void bifcdr(bifcxdef *ctx, int argc)
 		/* write out size followed by list value string */
 		oswp2(ctx->bifcxrun->runcxhp, lstsiz);
 		memcpy(ctx->bifcxrun->runcxhp+2, lstp, (size_t)(lstsiz-2));
-		
+
 		val.runsv.runsvstr = ctx->bifcxrun->runcxhp;
 		val.runstyp = DAT_LIST;
 		ctx->bifcxrun->runcxhp += lstsiz;
@@ -626,7 +626,7 @@ void biflen(bifcxdef *ctx, int argc)
 	runsdef  val;
 	long     len = 0;
 	int      l;
-	
+
 	bifcntargs(ctx, 1, argc);
 	switch(runtostyp(ctx->bifcxrun))
 	{
@@ -639,12 +639,12 @@ void biflen(bifcxdef *ctx, int argc)
 		p = runpoplst(ctx->bifcxrun);
 		l = osrp2(p) - 2;
 		p += 2;
-		
+
 		/* count all elements in list */
 		for (len = 0 ; l ; ++len)
 		{
 			int cursiz;
-			
+
 			/* get size of this element, and move past it */
 			cursiz = datsiz(*p, p+1) + 1;
 			l -= cursiz;
@@ -655,7 +655,7 @@ void biflen(bifcxdef *ctx, int argc)
 	default:
 		runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "length");
 	}
-	
+
 	val.runsv.runsvnum = len;
 	runpush(ctx->bifcxrun, DAT_NUMBER, &val);
 }
@@ -669,7 +669,7 @@ void biffnd(bifcxdef *ctx, int argc)
 	runsdef  val;
 	int      typ = 0;
 	int      siz;
-	
+
 	bifcntargs(ctx, 2, argc);
 	switch(runtostyp(ctx->bifcxrun))
 	{
@@ -677,7 +677,7 @@ void biffnd(bifcxdef *ctx, int argc)
 		p1 = runpopstr(ctx->bifcxrun);
 		len1 = osrp2(p1) - 2;
 		p1 += 2;
-		
+
 		p2 = runpopstr(ctx->bifcxrun);
 		len2 = osrp2(p2) - 2;
 		p2 += 2;
@@ -692,7 +692,7 @@ void biffnd(bifcxdef *ctx, int argc)
 			}
 		}
 		break;
-		
+
 	case DAT_LIST:
 		p1 = runpoplst(ctx->bifcxrun);
 		len1 = osrp2(p1) - 2;
@@ -700,18 +700,18 @@ void biffnd(bifcxdef *ctx, int argc)
 
 		/* get second item:  any old datatype */
 		runpop(ctx->bifcxrun, &val);
-		
+
 		for (typ = DAT_NIL, outv = 1 ; len1 ; ++outv, p1 += siz, len1 -= siz)
 		{
 			siz = datsiz(*p1, p1 + 1) + 1;      /* get size of this element */
 			if (val.runstyp != *p1) continue;          /* types don't match */
-			
+
 			switch(val.runstyp)
 			{
 			case DAT_NUMBER:
 				if (val.runsv.runsvnum != osrp4s(p1 + 1)) continue;
 				break;
-				
+
 			case DAT_SSTRING:
 			case DAT_LIST:
 				if (osrp2(p1 + 1) != osrp2(val.runsv.runsvstr) ||
@@ -719,30 +719,30 @@ void biffnd(bifcxdef *ctx, int argc)
 						   (size_t)(osrp2(p1 + 1) - 2)))
 					continue;
 				break;
-				
+
 			case DAT_PROPNUM:
 				if (osrp2(p1 + 1) != val.runsv.runsvprp) continue;
 				break;
-				
+
 			case DAT_OBJECT:
 			case DAT_FNADDR:
 				if (osrp2(p1 + 1) != val.runsv.runsvobj) continue;
 				break;
-				
+
 			default:
 				break;
 			}
-			
+
 			/* if we got here, it means we found a match */
 			typ = DAT_NUMBER;                      /* use the value in outv */
 			break;                            /* that's it - we've found it */
 		}
 		break;
-		
+
 	default:
 		runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "find");
 	}
-	
+
 	/* push the value given by typ and outv */
 	val.runsv.runsvnum = outv;
 	runpush(ctx->bifcxrun, typ, &val);
@@ -754,7 +754,7 @@ void bifsit(bifcxdef *ctx, int argc)
 	objnum    obj;
 	int       typ;
 	voccxdef *vcx = ctx->bifcxrun->runcxvoc;
-	
+
 	/* check for extended version that allows setting him/her */
 	if (argc == 2)
 	{
@@ -858,7 +858,7 @@ void bifrnd(bifcxdef *ctx, int argc)
 	 *   randomize(), use the new, improved random number generator.  If
 	 *   not, use the old random number generator to ensure that the same
 	 *   sequence of numbers is generated as always (to prevent breaking
-	 *   existing test scripts based on the old sequence). 
+	 *   existing test scripts based on the old sequence).
 	 */
 	if (!ctx->bifcxrndset)
 	{
@@ -872,7 +872,7 @@ void bifrnd(bifcxdef *ctx, int argc)
 
 		/* adjust the result to be in the requested range */
 		result = ( randseed % max ) + 1;
-		
+
 		/* save the new seed value, and return the value */
 		ctx->bifcxrnd = randseed;
 		val.runsv.runsvnum = result;
@@ -899,8 +899,8 @@ void bifrnd(bifcxdef *ctx, int argc)
 	}
 }
 
-/* 
- *   case-insensitive substring matching 
+/*
+ *   case-insensitive substring matching
  */
 static const char *bif_stristr(const char *s1, const char *s2)
 {
@@ -920,12 +920,12 @@ static const char *bif_stristr(const char *s1, const char *s2)
 }
 
 /*
- *   askfile flags 
+ *   askfile flags
  */
 #define BIF_ASKF_EXT_RET  1                        /* extended return codes */
 
-/* 
- *   askfile 
+/*
+ *   askfile
  */
 void bifask(bifcxdef *ctx, int argc)
 {
@@ -975,7 +975,7 @@ void bifask(bifcxdef *ctx, int argc)
 		};
 		const char **sp;
 
-		/* 
+		/*
 		 *   No prompt type or file type were specified.  Try to infer the
 		 *   dialog type and file type from the text of the prompt.  (This
 		 *   is mostly to support older games, in particular those based
@@ -983,14 +983,14 @@ void bifask(bifcxdef *ctx, int argc)
 		 *   provide explicit values for the file type and dialog type.
 		 *   We are thus inferring the types based on the prompt strings
 		 *   that older adv.t's used when calling askfile.)
-		 *   
+		 *
 		 *   If the prompt contains any substring such as "save" or
 		 *   "write", specify that we're saving; otherwise, assume that
 		 *   we're opening an existing file for reading.
-		 *   
+		 *
 		 *   If the prompt contains the substrings "restore" AND "game",
 		 *   assume that we're opening a game file; otherwise, don't make
-		 *   any assumptions, and use the "unknown" file type.  
+		 *   any assumptions, and use the "unknown" file type.
 		 */
 
 		/* presume we're going to open a saved-game file */
@@ -1011,18 +1011,18 @@ void bifask(bifcxdef *ctx, int argc)
 			}
 		}
 
-		/* 
+		/*
 		 *   look for *all* of the "restore game" strings - if we fail to
 		 *   find any of them, be conservative and make no assumptions
-		 *   about the file type 
+		 *   about the file type
 		 */
 		for (sp = game_strs ; *sp != 0 ; ++sp)
 		{
 			if (bif_stristr(pbuf, *sp) == 0)
 			{
-				/* 
+				/*
 				 *   this one doesn't match - don't make assumptions about
-				 *   the file type 
+				 *   the file type
 				 */
 				file_type = OSFTUNK;
 
@@ -1044,18 +1044,18 @@ void bifask(bifcxdef *ctx, int argc)
 	/* ask for a file */
 	err = tio_askfile(pbuf, buf, (int)sizeof(buf), prompt_type, (os_filetype_t)file_type);
 
-	/* 
+	/*
 	 *   if the caller requested extended return codes, return a list
 	 *   containing the return code as the first element and, if
-	 *   successful, the string as the second element 
+	 *   successful, the string as the second element
 	 */
 	if ((flags & BIF_ASKF_EXT_RET) != 0)
 	{
 		ushort len;
 		runsdef val;
 		uchar *p;
-		
-		/* 
+
+		/*
 		 *   Allocate space for the starter list - if we have a string to
 		 *   return, just allocate space for the number element for now;
 		 *   otherwise, allocate space for the number plus a nil second
@@ -1095,7 +1095,7 @@ void bifask(bifcxdef *ctx, int argc)
 		if (err == OS_AFE_SUCCESS)
 		{
 			runsdef val2;
-			
+
 			/* push the string value, converting to our string format */
 			runpushcstr(ctx->bifcxrun, buf, strlen(buf), 1);
 
@@ -1110,9 +1110,9 @@ void bifask(bifcxdef *ctx, int argc)
 	}
 	else
 	{
-		/* 
+		/*
 		 *   use the traditional return codes - if askfile failed, return
-		 *   nil; otherwise, return the filename 
+		 *   nil; otherwise, return the filename
 		 */
 		if (err)
 			runpnil(ctx->bifcxrun);
@@ -1131,7 +1131,7 @@ void bifssc(bifcxdef *ctx, int argc)
 	{
 		char   buf[80];
 		uchar *p;
-		
+
 		p = runpopstr(ctx->bifcxrun);
 		bifcstr(ctx, buf, (size_t)sizeof(buf), p);
 		tiostrsc(ctx->bifcxtio, buf);
@@ -1162,12 +1162,12 @@ void bifsub(bifcxdef *ctx, int argc)
 	p = runpopstr(ctx->bifcxrun);
 	len = osrp2(p) - 2;
 	p += 2;
-	
+
 	/* get the offset argument */
 	bifchkarg(ctx, DAT_NUMBER);
 	ofs = runpopnum(ctx->bifcxrun);
 	if (ofs < 1) runsig1(ctx->bifcxrun, ERR_INVVBIF, ERRTSTR, "substr");
-	
+
 	/* get the length argument */
 	bifchkarg(ctx, DAT_NUMBER);
 	asklen = runpopnum(ctx->bifcxrun);
@@ -1182,7 +1182,7 @@ void bifsub(bifcxdef *ctx, int argc)
 		outlen = len - ofs;                      /* just use rest of string */
 	else
 		outlen = asklen;                /* requested length can be provided */
-	
+
 	runpstr(ctx->bifcxrun, (char *)p, outlen, 3);
 }
 
@@ -1192,7 +1192,7 @@ void bifcvs(bifcxdef *ctx, int argc)
 	const char *p = nullptr;
 	int   len = 0;
 	char  buf[30];
-	
+
 	bifcntargs(ctx, 1, argc);
 	switch(runtostyp(ctx->bifcxrun))
 	{
@@ -1201,13 +1201,13 @@ void bifcvs(bifcxdef *ctx, int argc)
 		len = 3;
 		(void)runpoplog(ctx->bifcxrun);
 		break;
-		
+
 	case DAT_TRUE:
 		p = "true";
 		len = 4;
 		(void)runpoplog(ctx->bifcxrun);
 		break;
-		
+
 	case DAT_NUMBER:
 		sprintf(buf, "%ld", runpopnum(ctx->bifcxrun));
 		p = buf;
@@ -1222,7 +1222,7 @@ void bifcvs(bifcxdef *ctx, int argc)
 		/* throw the RUNEXITOBJ error */
 		runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "cvtstr");
 	}
-	
+
 	runpstr(ctx->bifcxrun, p, len, 0);
 }
 
@@ -1235,12 +1235,12 @@ void bifcvn(bifcxdef *ctx, int argc)
 	int      typ;
 	long     acc;
 	int      neg;
-	
+
 	bifcntargs(ctx, 1, argc);
 	p = runpopstr(ctx->bifcxrun);
 	len = osrp2(p) - 2;
 	p += 2;
-	
+
 	if (len == 3 && !memcmp(p, "nil", (size_t)3))
 		typ = DAT_NIL;
 	else if (len == 4 && !memcmp(p, "true", (size_t)4))
@@ -1263,7 +1263,7 @@ void bifcvn(bifcxdef *ctx, int argc)
 		if (neg) acc = -acc;
 		val.runsv.runsvnum = acc;
 	}
-	
+
 	runpush(ctx->bifcxrun, typ, &val);
 }
 
@@ -1274,21 +1274,21 @@ static void bifcvtstr(bifcxdef *ctx, void (*cvtfn)(uchar *, int), int argc)
 	int      len;
 	runsdef  val;
 	runsdef  stkval;
-	
+
 	bifcntargs(ctx, 1, argc);
 	bifchkarg(ctx, DAT_SSTRING);
-	
+
 	p = runpopstr(ctx->bifcxrun);
 	stkval.runstyp = DAT_SSTRING;
 	stkval.runsv.runsvstr = p;
 	len = osrp2(p);
-	
+
 	/* allocate space in heap for the string and convert */
 	runhres1(ctx->bifcxrun, len, 1, &stkval);
 	p = stkval.runsv.runsvstr;
 	memcpy(ctx->bifcxrun->runcxhp, p, (size_t)len);
 	(*cvtfn)(ctx->bifcxrun->runcxhp + 2, len - 2);
-	
+
 	val.runsv.runsvstr = ctx->bifcxrun->runcxhp;
 	val.runstyp = DAT_SSTRING;
 	ctx->bifcxrun->runcxhp += len;
@@ -1354,7 +1354,7 @@ void bifisc(bifcxdef *ctx, int argc)
 	objnum    cls;
 	runsdef   val;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	bifcntargs(ctx, 2, argc);
 
 	/* if checking for nil, return nil */
@@ -1404,7 +1404,7 @@ void biffob(bifcxdef *ctx, int argc)
 		cls = runpopobj(ctx->bifcxrun);
 	else
 		runsig(ctx->bifcxrun, ERR_BIFARGC);
-	
+
 	for (vpg = voc->voccxinh, i = 0 ; i < VOCINHMAX ; ++vpg, ++i)
 	{
 		if (!*vpg) continue;
@@ -1413,13 +1413,13 @@ void biffob(bifcxdef *ctx, int argc)
 			if (!*v || ((*v)->vociflg & VOCIFCLASS)
 				|| (cls != MCMONINV && !bifinh(voc, *v, cls)))
 				continue;
-			
+
 			/* this is an object we can use - push it */
 			runpobj(ctx->bifcxrun, obj);
 			return;
 		}
 	}
-	
+
 	/* no objects found at all - return nil */
 	runpnil(ctx->bifcxrun);
 }
@@ -1438,7 +1438,7 @@ void bifnob(bifcxdef *ctx, int argc)
 
 	/* get last position in search */
 	prv = runpopobj(ctx->bifcxrun);
-	
+
 	/* get class to search for, if one is specified */
 	if (argc == 1)
 		cls = MCMONINV;
@@ -1446,14 +1446,14 @@ void bifnob(bifcxdef *ctx, int argc)
 		cls = runpopobj(ctx->bifcxrun);
 	else
 		runsig(ctx->bifcxrun, ERR_BIFARGC);
-	
+
 	/* start at previous object plus 1 */
 	i = (prv >> 8);
 	vpg = voc->voccxinh + i;
 	j = (prv & 255);
 	obj = prv;
 	v = (*vpg) + j;
-	
+
 	for (;;)
 	{
 		++j;
@@ -1477,11 +1477,11 @@ void bifnob(bifcxdef *ctx, int argc)
 			runpnil(ctx->bifcxrun);
 			return;
 		}
-		
+
 		if (!*v || ((*v)->vociflg & VOCIFCLASS)
 			|| (cls != MCMONINV && !bifinh(voc, *v, cls)))
 			continue;
-			
+
 		/* this is an object we can use - push it */
 		runpobj(ctx->bifcxrun, obj);
 		return;
@@ -1500,10 +1500,10 @@ void bifsvn(bifcxdef *ctx, int argc)
 void bifarg(bifcxdef *ctx, int argc)
 {
 	int argnum;
-	
+
 	bifcntargs(ctx, 1, argc);
 	bifchkarg(ctx, DAT_NUMBER);
-	
+
 	/* get and verify argument number */
 	argnum = runpopnum(ctx->bifcxrun);
 	if (argnum < 1) runsig1(ctx->bifcxrun, ERR_INVVBIF, ERRTSTR, "getarg");
@@ -1515,9 +1515,9 @@ void bifarg(bifcxdef *ctx, int argc)
 void biftyp(bifcxdef *ctx, int argc)
 {
 	runsdef val;
-	
+
 	bifcntargs(ctx, 1, argc);
-	
+
 	/* get whatever it is, and push the type */
 	runpop(ctx->bifcxrun, &val);
 	val.runsv.runsvnum = val.runstyp;          /* new value is the datatype */
@@ -1608,7 +1608,7 @@ void bifdef(bifcxdef *ctx, int argc)
 		/* if the property is defined directly by the object, return true */
 		runpush(ctx->bifcxrun, runclog(ofs != 0 && def_objn == objn), &val);
 		break;
-		
+
 	case BIFDEF_DEFINED_INHERITS:
 		/* if the property is inherited, return true */
 		runpush(ctx->bifcxrun, runclog(ofs != 0 && def_objn != objn), &val);
@@ -1640,12 +1640,12 @@ void bifpty(bifcxdef *ctx, int argc)
 	prpdef  *propptr;
 
 	bifcntargs(ctx, 2, argc);
-	
+
 	/* get offset of obj.prop */
 	objn = runpopobj(ctx->bifcxrun);
 	prpn = runpopprp(ctx->bifcxrun);
 	ofs = objgetap(ctx->bifcxrun->runcxmem, objn, prpn, &orn, FALSE);
-	
+
 	if (ofs)
 	{
 		/* lock the object, read the prpdef, and unlock it */
@@ -1659,7 +1659,7 @@ void bifpty(bifcxdef *ctx, int argc)
 		/* property is not defined by object - indicate that type is nil */
 		val.runsv.runsvnum = DAT_NIL;
 	}
-	
+
 	/* special case:  DAT_DEMAND -> DAT_LIST (for contents properties) */
 	if (val.runsv.runsvnum == DAT_DEMAND)
 		val.runsv.runsvnum = DAT_LIST;
@@ -1680,7 +1680,7 @@ void bifoph(bifcxdef *ctx, int argc)
 	{
 		/* throw away the flag */
 		rundisc(ctx->bifcxrun);
-		
+
 		/* figure out appropriate return value */
 		if (!hidden)
 			val.runsv.runsvnum = 0;
@@ -1725,7 +1725,7 @@ void bifoph(bifcxdef *ctx, int argc)
 			 *   Output was hidden, and output had already occurred.  If
 			 *   more output has occurred, return true, else return nil.
 			 *   In either case, set the output_occurred flag back to
-			 *   true, since it was true before the outhide(true).  
+			 *   true, since it was true before the outhide(true).
 			 */
 			runpush(ctx->bifcxrun, runclog(output_occurred), &val);
 			outsethidden();
@@ -1773,17 +1773,17 @@ void biftim(bifcxdef *ctx, int argc) {
 	switch(typ)
 	{
 	case 1:
-		/* 
+		/*
 		 *   default information format - list format with current system
-		 *   time and date 
+		 *   time and date
 		 */
 
 		/* make sure the time zone is set up properly */
 		os_tzset();
-		
+
 		/* get the local time information */
 		g_system->getTimeAndDate(tm);
-		
+
 		/* adjust values for return format */
 		tm.tm_wday++;
 
@@ -1799,7 +1799,7 @@ void biftim(bifcxdef *ctx, int argc) {
 
 		// TODO: Convert dae/tme to Unix style local time
 		timer = 0;
-		
+
 		/* build return list value */
 		oswp2(ret, 47);
 		p = ret + 2;
@@ -1813,7 +1813,7 @@ void biftim(bifcxdef *ctx, int argc) {
 		p = bifputnum(p, tm.tm_sec);
 		*p++ = DAT_NUMBER;
 		oswp4s(p, (long)timer);
-		
+
 		val.runstyp = DAT_LIST;
 		val.runsv.runsvstr = ret;
 		runpush(ctx->bifcxrun, DAT_LIST, &val);
@@ -1822,7 +1822,7 @@ void biftim(bifcxdef *ctx, int argc) {
 	case 2:
 		/*
 		 *   High-precision system timer value - returns the system time
-		 *   in milliseconds, relative to an arbitrary zero point 
+		 *   in milliseconds, relative to an arbitrary zero point
 		 */
 		runpnum(ctx->bifcxrun, os_get_sys_clock_ms());
 		break;
@@ -1846,7 +1846,7 @@ void bifgfu(bifcxdef *ctx, int argc)
 	voccxdef *vcx = ctx->bifcxrun->runcxvoc;
 
 	bifcntargs(ctx, 2, argc);
- 
+
 	if (runtostyp(rcx) == DAT_FNADDR)
 	{
 		/* check on a setfuse()-style fuse: get fnaddr, parm */
@@ -1876,11 +1876,11 @@ void bifgfu(bifcxdef *ctx, int argc)
 				goto ret_num;
 		}
 	}
-	
+
 	/* didn't find anything - return nil */
 	runpush(rcx, DAT_NIL, &val);
 	return;
-	
+
 ret_num:
 	/* return current daem->vocdtim */
 	runpnum(rcx, (long)daem->vocdtim);
@@ -1921,7 +1921,7 @@ void bifsct(bifcxdef *bifctx, int argc)
 	uint      dsz2;
 	runsdef   val;
 	runsdef   stk1, stk2;
-	
+
 	bifcntargs(bifctx, 2, argc);
 	l1 = runpoplst(ctx);
 	siz1 = osrp2(l1);
@@ -1931,7 +1931,7 @@ void bifsct(bifcxdef *bifctx, int argc)
 	/* make sure the first list is smaller - if not, switch them */
 	if (siz1 > siz2)
 		l3 = l1, l1 = l2, l2 = l3, siz3 = siz1, siz1 = siz2, siz2 = siz3;
-	
+
 	/* size of result is at most size of smaller list (which is now siz1) */
 	stk1.runstyp = stk2.runstyp = DAT_LIST;
 	stk1.runsv.runsvstr = l1;
@@ -1960,7 +1960,7 @@ void bifsct(bifcxdef *bifctx, int argc)
 			}
 		}
 	}
-	
+
 	/* set up return value, take it out of the heap, and push value */
 	val.runsv.runsvstr = ctx->runcxhp;
 	val.runstyp = DAT_LIST;
@@ -1971,7 +1971,7 @@ void bifsct(bifcxdef *bifctx, int argc)
 
 /*
  *   Portable keystroke mappings.  We map the extended key codes to these
- *   strings, so that the TADS code can access arrow keys and the like.  
+ *   strings, so that the TADS code can access arrow keys and the like.
  */
 static const char *ext_key_names[] =
 {
@@ -2018,25 +2018,25 @@ static const char *ext_key_names[] =
  *   the keystroke; if 'c' is zero, then 'extc' is the character returned
  *   by the second call to os_getc() to get the CMD_xxx code for the
  *   keystroke.
- *   
+ *
  *   The name buffer should be 20 characters long - this will ensure that
- *   any name will fit.  
- *   
+ *   any name will fit.
+ *
  *   For ordinary, printable characters, we'll simply return the
  *   character; the letter 'a', for example, is returned as the string "a".
- *   
+ *
  *   For extended keys, we'll look up the CMD_xxx code and return the name
  *   of the command, enclosed in square brackets; see the ext_key_names
  *   table for the mappings.  The left-arrow cursor key, for example,
  *   returns "[left]".
- *   
+ *
  *   For control characters, we'll generate a name like "[ctrl-a]", except
  *   for the following characters:
- *   
+ *
  *.  ascii 10 returns "\n"
  *.  ascii 13 returns "\n"
  *.  ascii 9 returns "\t"
- *.  ascii 8 returns "[bksp]" 
+ *.  ascii 8 returns "[bksp]"
  */
 static int get_ext_key_name(char *namebuf, int c, int extc)
 {
@@ -2081,7 +2081,7 @@ static int get_ext_key_name(char *namebuf, int c, int extc)
 		namebuf[1] = '\0';
 		return TRUE;
 	}
-	
+
 	/* if it's in the key name array, use the array entry */
 	if (extc >= 1
 		&& extc <= (int)(sizeof(ext_key_names)/sizeof(ext_key_names[0])))
@@ -2113,7 +2113,7 @@ void bifink(bifcxdef *ctx, int argc)
 	int    extc;
 	char   str[20];
 	size_t len;
-	
+
 	bifcntargs(ctx, 0, argc);
 	tioflushn(ctx->bifcxtio, 0);
 
@@ -2146,7 +2146,7 @@ void bifwrd(bifcxdef *ctx, int argc)
 	const uchar *src;
 	uint      len;
 	runsdef   val;
-	
+
 	bifcntargs(ctx, 1, argc);
 
 	/* figure out what word list to get */
@@ -2266,7 +2266,7 @@ static void bifgtw_cb(void *ctx0, vocdef *voc, vocwdef *vocw)
 	/* ignore objects of the inappropriate type */
 	if (vocw->vocwtyp != ctx->typ)
 		return;
-	
+
 	/* the datatype is string */
 	*ctx->p = DAT_SSTRING;
 
@@ -2305,7 +2305,7 @@ void bifgtw(bifcxdef *ctx, int argc)
 	/* get the arguments */
 	objn = runpopobj(ctx->bifcxrun);
 	prpn = runpopprp(ctx->bifcxrun);
-	
+
 	/* make sure the property is a valid part of speech property */
 	if (!prpisvoc(prpn))
 		runsig1(ctx->bifcxrun, ERR_INVVBIF, ERRTSTR, "delword");
@@ -2318,7 +2318,7 @@ void bifgtw(bifcxdef *ctx, int argc)
 	 *   these words: 2 bytes for the list length header; plus, for each
 	 *   entry, 1 byte for the type header, 2 bytes for the string size
 	 *   header, and possibly one extra byte for the two-word separator --
-	 *   a total of 4 bytes extra per word.  
+	 *   a total of 4 bytes extra per word.
 	 */
 	siz += 2 + 4*cnt;
 
@@ -2360,7 +2360,7 @@ void bifvin(bifcxdef *ctx, int argc)
 
 	/* get the verb */
 	verb = runpopobj(ctx->bifcxrun);
-	
+
 	/* check for the presence of a preposition */
 	if (argc == 1)
 	{
@@ -2393,7 +2393,7 @@ void bifvin(bifcxdef *ctx, int argc)
 		/*
 		 *   figure space for the return value: if there's a prep, three
 		 *   property pointers plus a boolean, otherwise just two property
-		 *   pointers 
+		 *   pointers
 		 */
 		siz = 2 + 2*(2+1);
 		if (prep != MCMONINV)
@@ -2445,34 +2445,34 @@ void bifcls(bifcxdef *ctx, int argc)
 
 	/* flush any pending output */
 	tioflushn(ctx->bifcxtio, 0);
-	
+
 	/* clear the screen */
 	oscls();
 }
 
 /*
- *   File operations 
+ *   File operations
  */
 
 /*
  *   fopen(file, mode).
- *   
+ *
  *   Operations are allowed only if they conform to the current I/O safety
  *   level.  The safety level can be set by the user on the command line
  *   when running the game, and some implementations may allow the setting
  *   to be saved as a preference.  The possible levels are:
- *   
+ *
  *.  0 - minimum safety - read and write in any directory
  *.  1 - read in any directory, write in current directory
  *.  2 - read/write access in current directory only
  *.  3 - read-only access in current directory only
  *.  4 - maximum safety - no file I/O allowed
- *   
+ *
  *   When operations are allowed only in the current directory, the
  *   operations will fail if the filename contains any sort of path
  *   specifier (for example, on Unix, any file that contains a '/' is
  *   considered to have a path specifier, and will always fail if
- *   operations are only allowed in the current directory).  
+ *   operations are only allowed in the current directory).
  */
 void biffopen(bifcxdef *ctx, int argc)
 {
@@ -2487,18 +2487,18 @@ void biffopen(bifcxdef *ctx, int argc)
 	char      main_mode;                     /* 'r' for read, 'w' for write */
 	int       in_same_dir;            /* flag: file is in current directory */
 	appctxdef *appctx;
-	
+
 	bifcntargs(ctx, 2, argc);
 
 	/* get the filename */
 	p = runpopstr(ctx->bifcxrun);
 	bifcstr(ctx, fname, (size_t)sizeof(fname), p);
 
-	/* 
+	/*
 	 *   If it's a relative path, combine it with the game file path to form
 	 *   the absolute path.  This ensures that relative paths are always
 	 *   relative to the original working directory if the OS-level working
-	 *   directory has changed. 
+	 *   directory has changed.
 	 */
 	if (!os_is_file_absolute(fname))
 	{
@@ -2592,21 +2592,21 @@ void biffopen(bifcxdef *ctx, int argc)
 	/*
 	 *   If we have a host application context, and it provides a file
 	 *   safety level callback function, ask the host system for its
-	 *   current file safety level, which overrides our current setting.  
+	 *   current file safety level, which overrides our current setting.
 	 */
 	appctx = ctx->bifcxappctx;
 	if (appctx != 0 && appctx->get_io_safety_level != 0)
 	{
-		/* 
+		/*
 		 *   ask the host system for the current level, and override any
-		 *   setting we previously had 
+		 *   setting we previously had
 		 */
 		(*appctx->get_io_safety_level)(
 			appctx->io_safety_level_ctx,
 			&ctx->bifcxsafetyr, &ctx->bifcxsafetyw);
 	}
 
-	/* 
+	/*
 	 *   Check to see if the file is in the current working directory - if
 	 *   not, we may have to disallow the operation based on safety level
 	 *   settings.
@@ -2618,10 +2618,10 @@ void biffopen(bifcxdef *ctx, int argc)
 	switch(main_mode)
 	{
 	case 'w':
-		/* 
+		/*
 		 *   writing - we must be at a safety level no higher than 2
 		 *   (read/write current directory) to write at all, and we must be
-		 *   level 0 to write a file that's not in the current directory 
+		 *   level 0 to write a file that's not in the current directory
 		 */
 		if (ctx->bifcxsafetyw > 2
 			|| (!in_same_dir && ctx->bifcxsafetyw > 0))
@@ -2637,7 +2637,7 @@ void biffopen(bifcxdef *ctx, int argc)
 		 *   reading - we must be at a safety level no higher than 3 (read
 		 *   current directory) to read at all, and we must be at safety
 		 *   level 1 (read any directory) or lower to read a file that's not
-		 *   in the current directory 
+		 *   in the current directory
 		 */
 		if (ctx->bifcxsafetyr > 3
 			|| (!in_same_dir && ctx->bifcxsafetyr > 1))
@@ -2649,11 +2649,11 @@ void biffopen(bifcxdef *ctx, int argc)
 		break;
 
 	default:
-		/* 
+		/*
 		 *   fail the operation, as a code maintenance measure to make
 		 *   sure that we add appropriate cases to this switch (even if
 		 *   merely to allow the operation unconditionally) in the event
-		 *   that more modes are added in the future 
+		 *   that more modes are added in the future
 		 */
 		goto bad_mode;
 	}
@@ -2665,10 +2665,10 @@ void biffopen(bifcxdef *ctx, int argc)
 		/* check for binary vs text mode */
 		if (bin_mode)
 		{
-			/* 
+			/*
 			 *   binary mode -- allow read/write or just writing, but in
 			 *   either case truncate the file if it already exists, and
-			 *   create a new file if it doesn't exist 
+			 *   create a new file if it doesn't exist
 			 */
 			if (rw_mode)
 				fp = osfoprwtb(fname, OSFTDATA);
@@ -2744,7 +2744,7 @@ void biffopen(bifcxdef *ctx, int argc)
 bad_mode:
 	runsig1(ctx->bifcxrun, ERR_INVVBIF, ERRTSTR, "fopen");
 }
-			  
+
 /* service routine for file routines - get and validate a file number */
 static osfildef *bif_get_file(bifcxdef *ctx, int *fnump, int *bin_modep)
 {
@@ -2780,7 +2780,7 @@ void biffclose(bifcxdef *ctx, int argc)
 	osfcls(fp);
 	ctx->bifcxfile[fnum].fp = 0;
 }
-			  
+
 void bifftell(bifcxdef *ctx, int argc)
 {
 	osfildef *fp;
@@ -2792,7 +2792,7 @@ void bifftell(bifcxdef *ctx, int argc)
 	/* return the seek position */
 	runpnum(ctx->bifcxrun, osfpos(fp));
 }
-			  
+
 void biffseek(bifcxdef *ctx, int argc)
 {
 	osfildef *fp;
@@ -2806,7 +2806,7 @@ void biffseek(bifcxdef *ctx, int argc)
 	pos = runpopnum(ctx->bifcxrun);
 	osfseek(fp, pos, OSFSK_SET);
 }
-			  
+
 void biffseekeof(bifcxdef *ctx, int argc)
 {
 	osfildef *fp;
@@ -2818,7 +2818,7 @@ void biffseekeof(bifcxdef *ctx, int argc)
 	/* seek to the end */
 	osfseek(fp, 0L, OSFSK_END);
 }
-			  
+
 void biffwrite(bifcxdef *ctx, int argc)
 {
 	osfildef *fp;
@@ -2826,7 +2826,7 @@ void biffwrite(bifcxdef *ctx, int argc)
 	char      buf[32];
 	runsdef   val;
 	int       bin_mode;
-	
+
 	/* get the file */
 	bifcntargs(ctx, 2, argc);
 	fp = bif_get_file(ctx, (int *)0, &bin_mode);
@@ -2840,7 +2840,7 @@ void biffwrite(bifcxdef *ctx, int argc)
 		/* put a byte indicating the type */
 		if (osfwb(fp, &typ, 1))
 			goto ret_error;
-		
+
 		/* see what type of data we want to put */
 		switch(typ)
 		{
@@ -2849,17 +2849,17 @@ void biffwrite(bifcxdef *ctx, int argc)
 			if (osfwb(fp, buf, 4))
 				goto ret_error;
 			break;
-			
+
 		case DAT_SSTRING:
 			/* write the string, including the length prefix */
 			if (osfwb(fp, val.runsv.runsvstr, osrp2(val.runsv.runsvstr)))
 				goto ret_error;
 			break;
-			
+
 		case DAT_TRUE:
 			/* all we need for this is the type prefix */
 			break;
-			
+
 		default:
 			/* other types are not acceptable */
 			runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "fwrite");
@@ -2869,14 +2869,14 @@ void biffwrite(bifcxdef *ctx, int argc)
 	{
 		uint rem;
 		uchar *p;
-		
+
 		switch(typ)
 		{
 		case DAT_SSTRING:
 			/*
 			 *   Copy and translate the string to our buffer, in pieces if
 			 *   the size of the string exceeds that of our buffer.  If we
-			 *   encounter any escape codes, translate them.  
+			 *   encounter any escape codes, translate them.
 			 */
 			rem = osrp2(val.runsv.runsvstr) - 2;
 			p = val.runsv.runsvstr + 2;
@@ -2945,7 +2945,7 @@ ret_error:
 	val.runstyp = DAT_TRUE;
 	runpush(ctx->bifcxrun, DAT_TRUE, &val);
 }
-			  
+
 void biffread(bifcxdef *ctx, int argc)
 {
 	osfildef *fp;
@@ -2964,7 +2964,7 @@ void biffread(bifcxdef *ctx, int argc)
 		/* binary file - read the type byte */
 		if (osfrb(fp, &typ, 1))
 			goto ret_error;
-		
+
 		/* read the data according to the type */
 		switch(typ)
 		{
@@ -2973,37 +2973,37 @@ void biffread(bifcxdef *ctx, int argc)
 				goto ret_error;
 			runpnum(ctx->bifcxrun, osrp4s(buf));
 			break;
-			
+
 		case DAT_SSTRING:
 			/* get the size */
 			if (osfrb(fp, buf, 2))
 				goto ret_error;
 			len = osrp2(buf);
-			
+
 			/* reserve space */
 			runhres(ctx->bifcxrun, len, 0);
-			
+
 			/* read the string into the reserved space */
 			if (osfrb(fp, ctx->bifcxrun->runcxhp + 2, len - 2))
 				goto ret_error;
-			
+
 			/* set up the string */
 			oswp2(ctx->bifcxrun->runcxhp, len);
 			val.runstyp = DAT_SSTRING;
 			val.runsv.runsvstr = ctx->bifcxrun->runcxhp;
-			
+
 			/* consume the space */
 			ctx->bifcxrun->runcxhp += len;
-			
+
 			/* push the value */
 			runrepush(ctx->bifcxrun, &val);
 			break;
-			
+
 		case DAT_TRUE:
 			val.runstyp = DAT_TRUE;
 			runpush(ctx->bifcxrun, DAT_TRUE, &val);
 			break;
-			
+
 		default:
 			goto ret_error;
 		}
@@ -3017,7 +3017,7 @@ void biffread(bifcxdef *ctx, int argc)
 		uint   res_total;
 		int    found_nl;
 
-		/* 
+		/*
 		 *   reserve some space in the heap - we'll initially reserve
 		 *   space for twice our buffer, in case every single character
 		 *   needs to be expanded into an escape sequence
@@ -3036,22 +3036,22 @@ void biffread(bifcxdef *ctx, int argc)
 			/* text-mode - read the result into our buffer */
 			if (!osfgets((char *)dbuf, sizeof(dbuf) - 1, fp))
 			{
-				/* 
+				/*
 				 *   if we found a newline, return what we have;
-				 *   otherwise, return an error 
+				 *   otherwise, return an error
 				 */
 				if (found_nl)
 					break;
 				else
 					goto ret_error;
 			}
-			
-			/* 
+
+			/*
 			 *   make sure it's null-terminated, in case the buffer was
-			 *   full 
+			 *   full
 			 */
 			dbuf[256] = '\0';
-			
+
 			/* translate into the heap area we've reserved */
 			for (src = dbuf ; *src != '\0' ; ++src, ++dst)
 			{
@@ -3063,17 +3063,17 @@ void biffread(bifcxdef *ctx, int argc)
 					/* translate to a newline sequence */
 					*dst++ = '\\';
 					*dst = 'n';
-					
+
 					/* note that we've found our newline */
 					found_nl = TRUE;
 					break;
-					
+
 				case '\t':
 					/* translate to a tab sequence */
 					*dst++ = '\\';
 					*dst = 't';
 					break;
-					
+
 				case '\\':
 					/* expand to a double-backslash sequence */
 					*dst++ = '\\';
@@ -3093,7 +3093,7 @@ void biffread(bifcxdef *ctx, int argc)
 			 *   up may move if we compact the heap while asking for more
 			 *   space.  So, remember our current length, reserve another
 			 *   buffer-full of space, and set everything up at the new
-			 *   output location if necessary.  
+			 *   output location if necessary.
 			 */
 			if (!found_nl)
 			{
@@ -3107,11 +3107,11 @@ void biffread(bifcxdef *ctx, int argc)
 				/* ask for the space */
 				runhres(ctx->bifcxrun, res_total, 0);
 
-				/* 
+				/*
 				 *   Since we were at the top of the heap before, we
 				 *   should still be at the top of the heap.  If not,
 				 *   we'll have to copy from our old location to the new
-				 *   top of the heap.  
+				 *   top of the heap.
 				 */
 				if (val.runsv.runsvstr != ctx->bifcxrun->runcxhp)
 				{
@@ -3164,7 +3164,7 @@ void bifcapture(bifcxdef *ctx, int argc)
 		/*
 		 *   The return value is a status code used to restore the
 		 *   original status on the bracketing call to turn off output.
-		 *   The only status necessary is the current output size. 
+		 *   The only status necessary is the current output size.
 		 */
 		siz = tiocapturesize(ctx->bifcxtio);
 		runpnum(ctx->bifcxrun, (long)siz);
@@ -3201,7 +3201,7 @@ void bifcapture(bifcxdef *ctx, int argc)
 
 		/* push the string onto the stack */
 		runpstr(ctx->bifcxrun, (char *)p, siz, 0);
-		
+
 		ERRCLEAN(ctx->bifcxerr)
 			/* done with the object - unlock it */
 			mcmunlck(mcx, obj);
@@ -3217,7 +3217,7 @@ void bifcapture(bifcxdef *ctx, int argc)
 }
 
 /*
- *   systemInfo 
+ *   systemInfo
  */
 void bifsysinfo(bifcxdef *ctx, int argc)
 {
@@ -3247,7 +3247,7 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 		bifcntargs(ctx, 1, argc);
 		runpushcstr(ctx->bifcxrun, OS_SYSTEM_NAME, strlen(OS_SYSTEM_NAME), 0);
 		break;
-		
+
 	case SYSINFO_HTML:
 	case SYSINFO_JPEG:
 	case SYSINFO_PNG:
@@ -3276,9 +3276,9 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 	case SYSINFO_MNG_ALPHA:
 	case SYSINFO_TEXT_HILITE:
 	case SYSINFO_INTERP_CLASS:
-		/* 
+		/*
 		 *   these information types are all handled by the OS layer, and
-		 *   take no additional arguments 
+		 *   take no additional arguments
 		 */
 		bifcntargs(ctx, 1, argc);
 		if (os_get_sysinfo(id, 0, &result))
@@ -3301,23 +3301,23 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 		break;
 
 	case SYSINFO_TEXT_COLORS:
-		/* 
+		/*
 		 *   Text colors are only supported in full HTML interpreters.  If
 		 *   this is an HTML interpreter, ask the underlying OS layer about
 		 *   color support; otherwise, colors are not available, since we
 		 *   don't handle colors in our text-only HTML subset.
-		 *   
+		 *
 		 *   Colors are NOT supported in the HTML mini-parser in text-only
 		 *   interpreters in TADS 2.  So, even if we're running in HTML
 		 *   mode, if this is a text-only interpreter, we can't display text
-		 *   colors.  
+		 *   colors.
 		 */
 		bifcntargs(ctx, 1, argc);
 		if (os_get_sysinfo(SYSINFO_HTML, 0, &result) && result != 0)
 		{
-			/* 
+			/*
 			 *   we're in HTML mode, so ask the underlying HTML OS
-			 *   implementation for its level of text color support 
+			 *   implementation for its level of text color support
 			 */
 			if (os_get_sysinfo(id, 0, &result))
 			{
@@ -3342,11 +3342,11 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 		bifcntargs(ctx, 1, argc);
 		runpnum(ctx->bifcxrun, 0);
 		break;
-		
+
 	default:
-		/* 
+		/*
 		 *   Other codes fail harmlessly with a nil return value.  Pop all
-		 *   remaining arguments and return nil. 
+		 *   remaining arguments and return nil.
 		 */
 		for ( ; argc > 1 ; --argc)
 			rundisc(ctx->bifcxrun);
@@ -3356,7 +3356,7 @@ void bifsysinfo(bifcxdef *ctx, int argc)
 }
 
 /*
- *   morePrompt - display the more prompt and wait for the user to respond 
+ *   morePrompt - display the more prompt and wait for the user to respond
  */
 void bifmore(bifcxdef *ctx, int argc)
 {
@@ -3369,12 +3369,12 @@ void bifmore(bifcxdef *ctx, int argc)
 }
 
 /*
- *   parserSetMe 
+ *   parserSetMe
  */
 void bifsetme(bifcxdef *ctx, int argc)
 {
 	objnum new_me;
-	
+
 	/* this function takes one argument */
 	bifcntargs(ctx, 1, argc);
 
@@ -3390,7 +3390,7 @@ void bifsetme(bifcxdef *ctx, int argc)
 }
 
 /*
- *   parserGetMe 
+ *   parserGetMe
  */
 void bifgetme(bifcxdef *ctx, int argc)
 {
@@ -3402,7 +3402,7 @@ void bifgetme(bifcxdef *ctx, int argc)
 }
 
 /*
- *   reSearch 
+ *   reSearch
  */
 void bifresearch(bifcxdef *ctx, int argc)
 {
@@ -3412,7 +3412,7 @@ void bifresearch(bifcxdef *ctx, int argc)
 	size_t  searchlen;
 	int     result_len;
 	int     match_ofs;
-	
+
 	/* this function takes two parameters: pattern, string */
 	bifcntargs(ctx, 2, argc);
 
@@ -3432,9 +3432,9 @@ void bifresearch(bifcxdef *ctx, int argc)
 									  (char *)searchstr, searchlen,
 									  &result_len);
 
-	/* 
+	/*
 	 *   if we didn't match, return nil; otherwise, return a list with the
-	 *   match offset and length 
+	 *   match offset and length
 	 */
 	if (match_ofs < 0)
 	{
@@ -3446,13 +3446,13 @@ void bifresearch(bifcxdef *ctx, int argc)
 		ushort listsiz;
 		runsdef val;
 		uchar *p;
-		
-		/* 
+
+		/*
 		 *   build a list consisting of two numbers and a string: two
 		 *   bytes for the list header, then two elements at (one byte for
 		 *   the datatype header, four bytes for the number), then the
 		 *   string element with (one byte for the datatype, two bytes for
-		 *   the string length prefix, and the bytes of the string) 
+		 *   the string length prefix, and the bytes of the string)
 		 */
 		listsiz = 2 + (1+4)*2 + (1 + 2 + (ushort)(result_len));
 
@@ -3467,11 +3467,11 @@ void bifresearch(bifcxdef *ctx, int argc)
 		oswp2(p, listsiz);
 		p += 2;
 
-		/* 
+		/*
 		 *   Add the offset element.  For consistency with TADS
 		 *   conventions, use 1 as the offset of the first character in
 		 *   the string - this makes it easy to use the offset value with
-		 *   substr(). 
+		 *   substr().
 		 */
 		*p++ = DAT_NUMBER;
 		oswp4s(p, match_ofs + 1);
@@ -3506,7 +3506,7 @@ void bifregroup(bifcxdef *ctx, int argc)
 	runsdef val;
 	uchar *p;
 	long numval;
-	
+
 	/* this function takes one parameter: the group number to retrieve */
 	bifcntargs(ctx, 1, argc);
 
@@ -3540,12 +3540,12 @@ void bifregroup(bifcxdef *ctx, int argc)
 	/* calculate the length of the string in this group */
 	len = reg->end_ofs - reg->start_ofs;
 
-	/* 
+	/*
 	 *   reserve the necessary heap space: two bytes for the list length
 	 *   prefix, two number elements (one byte each for the type, four
 	 *   bytes each for the value), and the string element (one byte for
 	 *   the type, two bytes for the length prefix, plus the string
-	 *   itself).  
+	 *   itself).
 	 */
 	hplen = (ushort)(2 + 2*(1+4) + (1 + 2 + len));
 	runhres(ctx->bifcxrun, hplen, 0);
@@ -3585,7 +3585,7 @@ void bifregroup(bifcxdef *ctx, int argc)
 
 
 /*
- *   inputevent 
+ *   inputevent
  */
 void bifinpevt(bifcxdef *ctx, int argc)
 {
@@ -3598,7 +3598,7 @@ void bifinpevt(bifcxdef *ctx, int argc)
 	runsdef val;
 	size_t paramlen = 0;
 	char keyname[20];
-	
+
 	/* check for a timeout value */
 	if (argc == 0)
 	{
@@ -3626,10 +3626,10 @@ void bifinpevt(bifcxdef *ctx, int argc)
 	/* ask the OS code for an event */
 	evt = os_get_event(timeout, use_timeout, &info);
 
-	/* 
+	/*
 	 *   the list always minimally needs two bytes of length prefix plus a
 	 *   number with the event code (one byte for the type, four bytes for
-	 *   the value) 
+	 *   the value)
 	 */
 	lstsiz = 2 + (1 + 4);
 
@@ -3637,11 +3637,11 @@ void bifinpevt(bifcxdef *ctx, int argc)
 	switch(evt)
 	{
 	case OS_EVT_KEY:
-		/* 
+		/*
 		 *   we need space for a string with one or two bytes (depending
 		 *   on whether or not we have an extended key code) - 1 byte for
 		 *   type code, 2 for length prefix, and 1 or 2 for the string's
-		 *   contents 
+		 *   contents
 		 */
 		paramlen = (info.key[0] == 0 ? 2 : 1);
 
@@ -3656,9 +3656,9 @@ void bifinpevt(bifcxdef *ctx, int argc)
 		break;
 
 	case OS_EVT_HREF:
-		/* 
+		/*
 		 *   we need space for the href string - 1 byte for type code, 2
-		 *   for length prefix, plus the string's contents 
+		 *   for length prefix, plus the string's contents
 		 */
 		paramlen = strlen(info.href);
 		lstsiz += 1 + 2 + (ushort)paramlen;
@@ -3718,7 +3718,7 @@ void bifinpevt(bifcxdef *ctx, int argc)
 void bifdelay(bifcxdef *ctx, int argc)
 {
 	long delay;
-	
+
 	/* ensure we have the right number of arguments */
 	bifcntargs(ctx, 1, argc);
 
@@ -3764,7 +3764,7 @@ void bifsetoutfilter(bifcxdef *ctx, int argc)
  *   Get an optional object argument.  If the next argument is not an
  *   object value, or we're out of arguments, we'll return MCMONINV.
  *   Otherwise, we'll pop the object value and return it, decrementing the
- *   remaining argument counter provided. 
+ *   remaining argument counter provided.
  */
 static objnum bif_get_optional_obj_arg(bifcxdef *ctx, int *rem_argc)
 {
@@ -3772,9 +3772,9 @@ static objnum bif_get_optional_obj_arg(bifcxdef *ctx, int *rem_argc)
 	if (*rem_argc == 0)
 		return MCMONINV;
 
-	/* 
+	/*
 	 *   if the next argument is not an object or nil, we're out of object
-	 *   arguments 
+	 *   arguments
 	 */
 	if (runtostyp(ctx->bifcxrun) != DAT_OBJECT
 		&& runtostyp(ctx->bifcxrun) != DAT_NIL)
@@ -3788,7 +3788,7 @@ static objnum bif_get_optional_obj_arg(bifcxdef *ctx, int *rem_argc)
 }
 
 /*
- *   execCommand flag values 
+ *   execCommand flag values
  */
 #define EC_HIDE_SUCCESS     0x00000001
 #define EC_HIDE_ERROR       0x00000002
@@ -3796,7 +3796,7 @@ static objnum bif_get_optional_obj_arg(bifcxdef *ctx, int *rem_argc)
 #define EC_SKIP_VALIDIO     0x00000008
 
 /*
- *   execCommand - execute a recursive command 
+ *   execCommand - execute a recursive command
  */
 void bifexec(bifcxdef *ctx, int argc)
 {
@@ -3812,10 +3812,10 @@ void bifexec(bifcxdef *ctx, int argc)
 	ulong  flags;
 	int    hide_any;
 	int    rem_argc;
-	
-	/* 
+
+	/*
 	 *   Check for the correct argument count.  The first two arguments
-	 *   are required; additional arguments are optional. 
+	 *   are required; additional arguments are optional.
 	 */
 	if (argc < 2 || argc > 6)
 		runsig(ctx->bifcxrun, ERR_BIFARGC);
@@ -3824,10 +3824,10 @@ void bifexec(bifcxdef *ctx, int argc)
 	actor = runpopobjnil(ctx->bifcxrun);
 	verb = runpopobjnil(ctx->bifcxrun);
 
-	/* 
+	/*
 	 *   The other object arguments are optional.  If we run into a
 	 *   numeric argument, it's the flags value, in which case we're out
-	 *   of objects. 
+	 *   of objects.
 	 */
 	rem_argc = argc - 2;
 	dobj = bif_get_optional_obj_arg(ctx, &rem_argc);
@@ -3849,11 +3849,11 @@ void bifexec(bifcxdef *ctx, int argc)
 		flags = 0;
 	}
 
-	/* 
+	/*
 	 *   make sure we don't have any arguments left - if we do, then it
 	 *   means that we got an incorrect type and skipped an argument when
 	 *   we were trying to sense the meanings of the arguments from their
-	 *   types 
+	 *   types
 	 */
 	if (rem_argc != 0)
 		runsig1(ctx->bifcxrun, ERR_INVTBIF, ERRTSTR, "execCommand");
@@ -3880,7 +3880,7 @@ void bifexec(bifcxdef *ctx, int argc)
 	{
 		uchar *p;
 		int hide;
-		
+
 		/* get the capture buffer size */
 		capture_end = tiocapturesize(ctx->bifcxtio);
 
@@ -3897,27 +3897,27 @@ void bifexec(bifcxdef *ctx, int argc)
 		/* show or hide the result, as appropriate */
 		if (hide)
 		{
-			/* 
+			/*
 			 *   We're hiding this result, so do not display the string.
 			 *   If there's an enclosing capture, remove the string from
-			 *   the enclosing capture.  
+			 *   the enclosing capture.
 			 */
 			if (capture_start != 0)
 				tiopopcapture(ctx->bifcxtio, capture_start);
 		}
 		else
 		{
-			/* 
+			/*
 			 *   We're showing the text.  If we're in an enclosing
 			 *   capture, do nothing - simply leave the string in the
-			 *   enclosing capture buffer; otherwise, actually display it 
+			 *   enclosing capture buffer; otherwise, actually display it
 			 */
 			if (capture_start == 0)
 			{
 				/* lock the capture object */
 				capture_obj = tiogetcapture(ctx->bifcxtio);
 				p = mcmlck(ctx->bifcxrun->runcxmem, capture_obj);
-				
+
 				ERRBEGIN(ctx->bifcxerr)
 				{
 					/* display the string */
@@ -3935,7 +3935,7 @@ void bifexec(bifcxdef *ctx, int argc)
 				mcmunlck(ctx->bifcxrun->runcxmem, capture_obj);
 			}
 		}
-		
+
 		/* clear the capture buffer if it wasn't on when we started */
 		if (capture_start == 0)
 			tioclrcapture(ctx->bifcxtio);
@@ -3945,15 +3945,15 @@ void bifexec(bifcxdef *ctx, int argc)
 	runpnum(ctx->bifcxrun, err);
 }
 
-/* 
- *   parserGetObj - get one of the objects associated with the command 
+/*
+ *   parserGetObj - get one of the objects associated with the command
  */
 void bifgetobj(bifcxdef *ctx, int argc)
 {
 	int id;
 	objnum obj = 0;
 	voccxdef *voc = ctx->bifcxrun->runcxvoc;
-	
+
 	/* check the argument count */
 	bifcntargs(ctx, 1, argc);
 
@@ -4013,9 +4013,9 @@ void bifgetobj(bifcxdef *ctx, int argc)
 		/* them */
 		voc_push_objlist(voc, voc->voccxthm, voc->voccxthc);
 
-		/* 
+		/*
 		 *   return directly, since we've already pushed the result (it's
-		 *   a list, not an object) 
+		 *   a list, not an object)
 		 */
 		return;
 
@@ -4031,9 +4031,9 @@ void bifgetobj(bifcxdef *ctx, int argc)
 
 /*
  *   parseNounList - parse a noun list.  Call like this:
- *   
+ *
  *   parserParseNounList(wordlist, typelist, starting_index, complain,
- *   multi, check_actor); 
+ *   multi, check_actor);
  */
 void bifparsenl(bifcxdef *ctx, int argc)
 {
@@ -4047,8 +4047,8 @@ void bifparsenl(bifcxdef *ctx, int argc)
 /*
  *   parserTokenize - given a string, produce a list of tokens.  Returns
  *   nil on error, or a list of token strings.
- *   
- *   parserTokenize(commandString); 
+ *
+ *   parserTokenize(commandString);
  */
 void bifprstok(bifcxdef *ctx, int argc)
 {
@@ -4062,8 +4062,8 @@ void bifprstok(bifcxdef *ctx, int argc)
 /*
  *   parserGetTokTypes - given a list of tokens (represented as strings),
  *   get a corresponding list of token types.
- *   
- *   parserGetTokTypes(tokenList); 
+ *
+ *   parserGetTokTypes(tokenList);
  */
 void bifprstoktyp(bifcxdef *ctx, int argc)
 {
@@ -4077,8 +4077,8 @@ void bifprstoktyp(bifcxdef *ctx, int argc)
 /*
  *   parserDictLookup - given a list of tokens and their types, produce a
  *   list of all of the objects that match all of the words.
- *   
- *   parserDictLookup(tokenList, typeList); 
+ *
+ *   parserDictLookup(tokenList, typeList);
  */
 void bifprsdict(bifcxdef *ctx, int argc)
 {
@@ -4092,9 +4092,9 @@ void bifprsdict(bifcxdef *ctx, int argc)
 /*
  *   parserResolveObjects - resolve an object list of the sort returned by
  *   parseNounList.  Validates and disambiguates the objects.
- *   
+ *
  *   parserResolveObjects(actor, verb, prep, otherobj, usageType,
- *   verprop, tokenList, objList, silent) 
+ *   verprop, tokenList, objList, silent)
  */
 void bifprsrslv(bifcxdef *ctx, int argc)
 {
@@ -4107,7 +4107,7 @@ void bifprsrslv(bifcxdef *ctx, int argc)
 
 /*
  *   parserReplaceCommand - replace the current command line with a new
- *   string.  Aborts the current command. 
+ *   string.  Aborts the current command.
  */
 void bifprsrplcmd(bifcxdef *ctx, int argc)
 {
@@ -4119,7 +4119,7 @@ void bifprsrplcmd(bifcxdef *ctx, int argc)
 }
 
 /*
- *   exitobj - throw a RUNEXITOBJ error 
+ *   exitobj - throw a RUNEXITOBJ error
  */
 void bifexitobj(bifcxdef *ctx, int argc)
 {
@@ -4131,7 +4131,7 @@ void bifexitobj(bifcxdef *ctx, int argc)
 }
 
 /*
- *   Standard system button labels for bifinpdlg() 
+ *   Standard system button labels for bifinpdlg()
  */
 #define BIFINPDLG_LBL_OK      1
 #define BIFINPDLG_LBL_CANCEL  2
@@ -4139,7 +4139,7 @@ void bifexitobj(bifcxdef *ctx, int argc)
 #define BIFINPDLG_LBL_NO      4
 
 /*
- *   inputdialog 
+ *   inputdialog
  */
 void bifinpdlg(bifcxdef *ctx, int argc)
 {
@@ -4183,12 +4183,12 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 	{
 		/* we're not using standard buttons */
 		std_btns = 0;
-		
+
 		/* get the response string list */
 		p = runpoplst(ctx->bifcxrun);
 		len = osrp2(p);
 		p += 2;
-		
+
 		/* build our internal button list */
 		for (bcnt = 0, dst = lblbuf ; len != 0 ; lstadv(&p, &len))
 		{
@@ -4201,10 +4201,10 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 				/* translate from internal to local characters */
 				for (xp = dst ; *xp != '\0' ; xp++)
 					*xp = (char)cmap_i2n(*xp);
-				
+
 				/* set this button to point to the converted text */
 				labels[bcnt++] = dst;
-				
+
 				/* move past this label in the button buffer */
 				dst += strlen(dst) + 1;
 			}
@@ -4212,7 +4212,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 			{
 				int id;
 				int resid;
-				
+
 				/* it's a standard system label ID - get the ID */
 				id = (int)osrp4s(p + 1);
 
@@ -4222,15 +4222,15 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 				case BIFINPDLG_LBL_OK:
 					resid = RESID_BTN_OK;
 					break;
-					
+
 				case BIFINPDLG_LBL_CANCEL:
 					resid = RESID_BTN_CANCEL;
 					break;
-					
+
 				case BIFINPDLG_LBL_YES:
 					resid = RESID_BTN_YES;
 					break;
-					
+
 				case BIFINPDLG_LBL_NO:
 					resid = RESID_BTN_NO;
 					break;
@@ -4240,7 +4240,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 					break;
 				}
 
-				/* 
+				/*
 				 *   if we got a valid resource ID, load the resource;
 				 *   otherwise, skip this button
 				 */
@@ -4255,7 +4255,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 					dst += strlen(dst) + 1;
 				}
 			}
-			
+
 			/* if we have exhausted our label array, stop now */
 			if (bcnt >= sizeof(labels)/sizeof(labels[0])
 				|| dst >= lblbuf + sizeof(lblbuf))
@@ -4294,7 +4294,7 @@ void bifinpdlg(bifcxdef *ctx, int argc)
 }
 
 /*
- *   Determine if a resource exists 
+ *   Determine if a resource exists
  */
 void bifresexists(bifcxdef *ctx, int argc)
 {
@@ -4303,7 +4303,7 @@ void bifresexists(bifcxdef *ctx, int argc)
 	appctxdef *appctx;
 	int found;
 	runsdef val;
-	
+
 	/* check for proper arguments */
 	bifcntargs(ctx, 1, argc);
 
@@ -4311,12 +4311,12 @@ void bifresexists(bifcxdef *ctx, int argc)
 	p = runpopstr(ctx->bifcxrun);
 	bifcstr(ctx, resname, (size_t)sizeof(resname), p);
 
-	/* 
+	/*
 	 *   if we have a host application context, and it provides a resource
 	 *   finder function, ask the resource finder if the resource is
 	 *   available; otherwise, report that the resource is not loadable,
 	 *   since we must not be running a version of the interpreter that
-	 *   supports external resource loading 
+	 *   supports external resource loading
 	 */
 	appctx = ctx->bifcxappctx;
 	found = (appctx != 0

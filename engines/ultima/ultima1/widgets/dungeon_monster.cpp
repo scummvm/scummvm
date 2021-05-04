@@ -107,7 +107,7 @@ Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(const Point &destPos)
 Shared::Maps::MapWidget::CanMove DungeonMonster::canMoveTo(Shared::Maps::MapBase *map, MapWidget *widget, const Point &destPos) {
 	// Get the details of the position
 	Shared::Maps::MapTile currTile, destTile;
-	
+
 	map->getTileAt(map->getPosition(), &currTile);
 	map->getTileAt(destPos, &destTile);
 

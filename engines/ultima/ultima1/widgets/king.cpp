@@ -45,7 +45,7 @@ void King::talk() {
 	if (areGuardsHostile()) {
 		addInfoMsg(_game->_res->HE_REJECTS_OFFER);
 		_game->endOfTurn();
-	
+
 	} else {
 		U1Dialogs::King *dialog = new U1Dialogs::King(_game, _map->getMapIndex());
 		dialog->show();

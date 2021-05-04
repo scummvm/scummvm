@@ -155,7 +155,7 @@ void ComposerEngine::sync<OldScript *>(Common::Serializer &ser, OldScript *&data
 template<>
 void ComposerEngine::sync<QueuedScript>(Common::Serializer &ser, QueuedScript &data, Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	ser.syncAsUint32LE(data._baseTime);
-	ser.syncAsUint32LE(data._duration);	
+	ser.syncAsUint32LE(data._duration);
 	ser.syncAsUint32LE(data._count);
 	ser.syncAsUint16LE(data._scriptId);
 	if (ser.isLoading()) data._baseTime += _timeDelta;
@@ -280,7 +280,7 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 	Common::Serializer ser(in, NULL);
 	byte magic[4];
 	ser.syncBytes(magic, 4);
-	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S') 
+	if (magic[0] != 'C' || magic[1] != 'M' || magic[2] != 'P' || magic[3] != 'S')
 		return Common::kUnknownError;
 
 	ser.syncVersion(0);
@@ -297,9 +297,9 @@ Common::Error ComposerEngine::loadGameState(int slot) {
 
 	// Unload all Libraries
 	Common::Array<uint16> libIds;
-	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++) 
+	for (Common::List<Library>::iterator i = _libraries.begin(); i != _libraries.end(); i++)
 		libIds.push_back((*i)._id);
-	for (uint32 i = 0; i < libIds.size(); i++) 
+	for (uint32 i = 0; i < libIds.size(); i++)
 		unloadLibrary(libIds[i]);
 
 	syncListReverse<Library>(ser, _libraries);

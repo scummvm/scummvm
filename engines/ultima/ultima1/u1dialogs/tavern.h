@@ -30,7 +30,7 @@ namespace Ultima1 {
 namespace Maps {
 	class MapCityCastle;
 }
-	
+
 namespace U1Dialogs {
 
 /**

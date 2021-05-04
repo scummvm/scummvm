@@ -481,15 +481,15 @@ int os_rename_file(const char *oldname, const char *newname);
  *   systems that have something like Unix environment variables, it might be
  *   desirable to define a TADS-specific variable (TADSPATH, for example)
  *   that provides a list of directories to search for TADS-related files.
- *   
+ *
  *   On return, fill in 'buf' with the full filename of the located copy of
  *   the file (if a copy was indeed found), in a format suitable for use with
  *   the osfopxxx() functions; in other words, after this function returns,
  *   the caller should be able to pass the contents of 'buf' to an osfopxxx()
  *   function to open the located file.
- *   
+ *
  *   Returns true (non-zero) if a copy of the file was located, false (zero)
- *   if the file could not be found in any of the standard locations.  
+ *   if the file could not be found in any of the standard locations.
  */
 bool os_locate(const char *fname, int flen, const char *arg0,
 			  char *buf, size_t bufsiz);
@@ -501,13 +501,13 @@ bool os_locate(const char *fname, int flen, const char *arg0,
  *   both reading and writing, and must be in "binary" mode rather than
  *   "text" mode, if the system makes such a distinction.  Returns null on
  *   failure.
- *   
+ *
  *   If 'fname' is non-null, then this routine should create and open a file
  *   with the given name.  When 'fname' is non-null, this routine does NOT
  *   need to store anything in 'buf'.  Note that the routine shouldn't try
  *   to put the file in a special directory or anything like that; just open
  *   the file with the name exactly as given.
- *   
+ *
  *   If 'fname' is null, this routine must choose a file name and fill in
  *   'buf' with the chosen name; if possible, the file should be in the
  *   conventional location for temporary files on this system, and should be
@@ -523,11 +523,11 @@ bool os_locate(const char *fname, int flen, const char *arg0,
  *   so we can pass it to osfdel_temp() later, but since the system is going
  *   to delete the file automatically, osfdel_temp() doesn't need to do
  *   anything and thus doesn't need the name.)
- *   
+ *
  *   After the caller is done with the file, it should close the file (using
  *   osfcls() as normal), then the caller MUST call osfdel_temp() to delete
  *   the temporary file.
- *   
+ *
  *   This interface is intended to take advantage of systems that have
  *   automatic support for temporary files, while allowing implementation on
  *   systems that don't have any special temp file support.  On systems that
@@ -539,10 +539,10 @@ bool os_locate(const char *fname, int flen, const char *arg0,
  *   simply use the same underlying system API that osfoprwbt() normally
  *   uses (although this routine must also generate a name for the temp file
  *   when the caller doesn't supply one).
- *   
+ *
  *   This routine can be implemented using ANSI library functions as
  *   follows: if 'fname' is non-null, return fopen(fname,"w+b"); otherwise,
- *   set buf[0] to '\0' and return tmpfile().  
+ *   set buf[0] to '\0' and return tmpfile().
  */
 osfildef *os_create_tempfile(const char *fname, char *buf);
 
@@ -553,7 +553,7 @@ osfildef *os_create_tempfile(const char *fname, char *buf);
  *   file manager will automatically delete a file opened as a temporary
  *   file, this routine should do nothing at all, since the system will take
  *   care of deleting the temp file.
- *   
+ *
  *   Callers are REQUIRED to call this routine after closing a file opened
  *   with os_create_tempfile().  When os_create_tempfile() is called with a
  *   non-null 'fname' argument, the same value should be passed as 'fname' to
@@ -565,33 +565,33 @@ osfildef *os_create_tempfile(const char *fname, char *buf);
  *   here to delete the named file; if the caller lets os_create_tempfile()
  *   generate a filename, then the generated filename must be passed to this
  *   routine.
- *   
+ *
  *   If os_create_tempfile() is implemented using ANSI library functions as
  *   described above, then this routine can also be implemented with ANSI
  *   library calls as follows: if 'fname' is non-null and fname[0] != '\0',
- *   then call remove(fname); otherwise do nothing.  
+ *   then call remove(fname); otherwise do nothing.
  */
 int osfdel_temp(const char *fname);
 
 /*
  *   Get the temporary file path.  This should fill in the buffer with a
  *   path prefix (suitable for strcat'ing a filename onto) for a good
- *   directory for a temporary file, such as the swap file.  
+ *   directory for a temporary file, such as the swap file.
  */
 void os_get_tmp_path(char *buf);
 
-/* 
+/*
  *   Generate a name for a temporary file.  This constructs a random file
  *   path in the system temp directory that isn't already used by an existing
  *   file.
- *   
+ *
  *   On systems with long filenames, this can be implemented by selecting a
  *   GUID-strength random name (such as 32 random hex digits) with a decent
  *   random number generator.  That's long enough that the odds of a
  *   collision are essentially zero.  On systems that only support short
  *   filenames, the odds of a collision are non-zero, so the routine should
  *   actually check that the chosen filename doesn't exist.
- *   
+ *
  *   Optionally, before returning, this routine *may* create (and close) an
  *   empty placeholder file to "reserve" the chosen filename.  This isn't
  *   required, and on systems with long filenames it's usually not necessary
@@ -600,10 +600,10 @@ void os_get_tmp_path(char *buf);
  *   this routine, or a separate process, from using the same filename before
  *   the caller has had a chance to use the returned name to create the
  *   actual temp file.
- *   
+ *
  *   Returns true on success, false on failure.  This can fail if there's no
  *   system temporary directory defined, or the temp directory is so full of
- *   other files that we can't find an unused filename.  
+ *   other files that we can't find an unused filename.
  */
 int os_gen_temp_filename(char *buf, size_t buflen);
 
@@ -1019,11 +1019,11 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   notation, as a series of path elements separated by '/' characters.
  *   Unlike true URLs, we don't use % encoding or a scheme prefix (file://,
  *   etc).
- *   
+ *
  *   The result path never ends in a trailing '/', unless the entire result
  *   path is "/".  This is for consistency; even if the source path ends with
  *   a local path separator, the result doesn't.
- *   
+ *
  *   If the local file system syntax uses '/' characters as ordinary filename
  *   characters, these must be replaced with some other suitable character in
  *   the result, since otherwise they'd be taken as path separators when the
@@ -1034,12 +1034,12 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   a filename extension on other platforms, replace '/' with '.', since
  *   this will provide reversibility as well as a good mapping if the URL is
  *   read back in on another platform.
- *   
+ *
  *   The local equivalents of "." and "..", if they exist, are converted to
  *   "." and ".." in the URL notation.
- *   
+ *
  *   Examples:
- *   
+ *
  *.   Windows: images\rooms\startroom.jpg -> images/rooms/startroom.jpg
  *.   Windows: ..\startroom.jpg -> ../startroom.jpg
  *.   Mac:     :images:rooms:startroom.jpg -> images/rooms/startroom.jpg
@@ -1048,7 +1048,7 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *.   VMS:     [-.images]startroom.jpg -> ../images/startroom.jpg
  *.   Unix:    images/rooms/startroom.jpg -> images/rooms/startroom.jpg
  *.   Unix:    ../images/startroom.jpg -> ../images/startroom.jpg
- *   
+ *
  *   If the local name is an absolute path in the local file system (e.g.,
  *   Unix /file, Windows C:\file), translate as follows.  If the local
  *   operating system uses a volume or device designator (Windows C:, VMS
@@ -1057,14 +1057,14 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   etc.  Include the local syntax for the device prefix.  For a system like
  *   Unix with a unified file system root ("/"), simply start with the root
  *   directory.  Examples:
- *   
+ *
  *.    Windows:  C:\games\deep.gam         -> /C:/games/deep.gam
  *.    Windows:  C:games\deep.gam          -> /C:./games/deep.gam
  *.    Windows:  \\SERVER\DISK\games\deep.gam -> /\\SERVER/DISK/games/deep.gam
  *.    Mac OS 9: Hard Disk:games:deep.gam  -> /Hard Disk:/games/deep.gam
  *.    VMS:      SYS$DISK:[games]deep.gam  -> /SYS$DISK:/games/deep.gam
  *.    Unix:     /games/deep.gam           -> /games/deep.gam
- *   
+ *
  *   Rationale: it's effectively impossible to create a truly portable
  *   representation of an absolute path.  Operating systems are too different
  *   in the way they represent root paths, and even if that were solvable, a
@@ -1087,11 +1087,11 @@ bool os_is_file_in_dir(const char *filename, const char *path,
  *   obviously won't reproduce the exact original path, but since that's
  *   impossible anyway, this is probably as good an approximation as we can
  *   create.
- *   
+ *
  *   Character sets: the input could be in local or UTF-8 character sets.
  *   The implementation shouldn't care, though - just treat bytes in the
  *   range 0-127 as plain ASCII, and everything else as opaque.  I.e., do not
- *   quote or otherwise modify characters outside the 0-127 range.  
+ *   quote or otherwise modify characters outside the 0-127 range.
  */
 void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
 					const char *src_path);
@@ -1101,25 +1101,25 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   file system's syntax.  Fills in result_buf with a file path, constructed
  *   using the local file system syntax, that corresponds to the path in
  *   src_url expressed in URL-style syntax.  Examples:
- *   
- *   images/rooms/startroom.jpg -> 
+ *
+ *   images/rooms/startroom.jpg ->
  *.   Windows   -> images\rooms\startroom.jpg
  *.   Mac OS 9  -> :images:rooms:startroom.jpg
  *.   VMS       -> [.images.rooms]startroom.jpg
- *   
+ *
  *   The source format isn't a true URL; it's simply a series of path
  *   elements separated by '/' characters.  Unlike true URLs, our input
  *   format doesn't use % encoding and doesn't have a scheme (file://, etc).
  *   (Any % in the source is treated as an ordinary character and left as-is,
  *   even if it looks like a %XX sequence.  Anything that looks like a scheme
  *   prefix is left as-is, with any // treated as path separators.
- *   
+ *
  *   images/file%20name.jpg ->
  *.   Windows   -> images\file%20name.jpg
- *   
+ *
  *   file://images/file.jpg ->
  *.   Windows   -> file_\\images\file.jpg
- *   
+ *
  *   Any characters in the path that are invalid in the local file system
  *   naming rules are converted to "_", unless "_" is itself invalid, in
  *   which case they're converted to "X".  One exception is that if '/' is a
@@ -1128,12 +1128,12 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   that os_cvt_dir_url uses as its replacement for '/', so that this
  *   substitution is reversible when a URL is generated and then read back in
  *   on this same platform.
- *   
+ *
  *   images/file:name.jpg ->
  *.   Windows   -> images\file_name.jpg
  *.   Mac OS 9  -> :images:file_name.jpg
  *.   Unix      -> images/file:name.jpg
- *   
+ *
  *   The path elements "." and ".." are specifically defined as having their
  *   Unix meanings: "." is an alias for the preceding path element, or the
  *   working directory if it's the first element, and ".." is an alias for
@@ -1146,13 +1146,13 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   notation, since it will have to be applied later, when the result_buf
  *   path is actually used to open a file, at which point it will combined
  *   with the working directory or another base path.
- *   
+ *
  *.  /images/../file.jpg -> [Windows] file.jpg
  *.  ../images/file.jpg ->
  *.   Windows  -> ..\images\file.jpg
  *.   Mac OS 9 -> ::images:file.jpg
  *.   VMS      -> [-.images]file.jpg
- *   
+ *
  *   If the URL path is absolute (starts with a '/'), the routine inspects
  *   the path to see if it was created by the same OS, according to the local
  *   rules for converting absolute paths in os_cvt_dir_url() (see).  If so,
@@ -1165,20 +1165,20 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   path, if any, as the root directory name, applying the usual "_" or "X"
  *   substitution for any characters that aren't allowed in local names.  The
  *   rest of the path is handled in the usual fashion.
- *   
+ *
  *.  /images/file.jpg ->
  *.    Windows -> \images\file.jpg
  *.    Unix    -> /images/file.jpg
- *   
+ *
  *.  /c:/images/file.jpg ->
  *.    Windows -> c:\images\file.jpg
  *.    Unix    -> /c:/images/file.jpg
  *.    VMS     -> SYS$DISK:[c__.images]file.jpg
- *   
+ *
  *.  /Hard Disk:/images/file.jpg ->
  *.    Windows -> \Hard Disk_\images\file.jpg
  *.    Unix    -> SYS$DISK:[Hard_Disk_.images]file.jpg
- *   
+ *
  *   Note how the device/volume prefix becomes the top-level directory when
  *   moving a path across machines.  It's simply not possible to reconstruct
  *   the exact original path in such cases, since device/volume syntax rules
@@ -1188,8 +1188,8 @@ void os_cvt_dir_url(char *result_buf, size_t result_buf_size,
  *   the original source system, if they want to use that approach to port
  *   the data rather than just changing the paths internally in the source
  *   material.
- *   
- *   Character sets: use the same rules as for os_cvt_dir_url().  
+ *
+ *   Character sets: use the same rules as for os_cvt_dir_url().
  */
 void os_cvt_url_dir(char *result_buf, size_t result_buf_size,
 					const char *src_url);

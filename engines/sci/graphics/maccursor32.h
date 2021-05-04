@@ -36,7 +36,7 @@ namespace Sci {
  *
  * GfxCursor32 was modeled after the PC SSCI structure in which cursors are
  * views that use the game's palette. It draws the cursor directly to the
- * game's frame. Mac cursors have their own individual palettes and are drawn 
+ * game's frame. Mac cursors have their own individual palettes and are drawn
  * independent of the rest of the game. GfxMacCursor32 uses CursorManager to
  * handle this, since it supports cursor palettes, and disables the GfxCursor32
  * functionality which CursorManager handles.

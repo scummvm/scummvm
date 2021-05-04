@@ -247,7 +247,7 @@ void HeroBelt::render(Common::SharedPtr<GfxContext> context, int time, Common::P
 			if (_heroBeltY >= kHeroBeltMaxY) {
 				_heroBeltY = kHeroBeltMaxY;
 				_heroBeltSpeed = 0;
-			}		
+			}
 		}
 	}
 
@@ -360,7 +360,7 @@ void HeroBelt::render(Common::SharedPtr<GfxContext> context, int time, Common::P
 		case kNoQuest:
 		case kNumQuests:
 			break;
-		}			
+		}
 		bg[_colour].render(context, viewPoint);
 		if (text != nullptr)
 			text[_colour].render(

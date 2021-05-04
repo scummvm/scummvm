@@ -185,7 +185,7 @@ FMVWidget::FMVWidget(Gfx::Driver *gfx, uint fmvIndex) :
 	_width = rect.right - rect.left;
 
 	_position.x = FMVMenuScreen::_formatRectPos.x;
-	_position.y = FMVMenuScreen::_formatRectPos.y + 
+	_position.y = FMVMenuScreen::_formatRectPos.y +
 	              (fmvIndex % FMVMenuScreen::_fmvPerPage) * (FMVMenuScreen::_fontHeight + 4);
 }
 

@@ -1,4 +1,4 @@
-PLEASE NOTE: 
+PLEASE NOTE:
 
 The binary object 'mmuhack.o' is stored in the source tree as it is very awkward to
 build it manually each time and would require the use of 2 toolchains to do so.

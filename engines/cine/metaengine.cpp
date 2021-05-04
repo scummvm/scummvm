@@ -225,7 +225,7 @@ SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int s
 		SaveStateDescriptor desc;
 		desc.setDescription(_("Empty autosave"));
 		desc.setSaveSlot(slot);
-		desc.setAutosave(true);		
+		desc.setAutosave(true);
 		desc.setWriteProtectedFlag(true);
 		return desc;
 	}

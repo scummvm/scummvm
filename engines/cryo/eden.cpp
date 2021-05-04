@@ -93,7 +93,7 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_lastPhrasesFile = 0;
 	_dialogSkipFlags = 0;
 	_voiceSamplesBuffer = nullptr;
-	
+
 	_mainBankBuf = nullptr;
 	_musicBuf = nullptr;
 	_gameLipsync = nullptr;

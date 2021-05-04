@@ -401,7 +401,7 @@ private:
 					width = fracToInt(height * displayAspect);
 			}
 		}
-		
+
 		drawRect.left = ((_windowWidth - width) / 2) + _gameScreenShakeXOffset * width / getWidth();
 		drawRect.top = ((_windowHeight - height) / 2) + _gameScreenShakeYOffset * height / getHeight();
 		drawRect.setWidth(width);

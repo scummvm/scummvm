@@ -1896,7 +1896,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion1", "",
 		WME_ENTRY2s("data.dcp", "438e04e70a107539a56fcd332d31f04d", 254298579,
 					"data.dcp", "438e04e70a107539a56fcd332d31f04d", 254298579), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Escape (Steam, July 2014) (German)
 	WME_WINENTRY("reversion1", "",
 		WME_ENTRY2s("data.dcp", "438e04e70a107539a56fcd332d31f04d", 254298579,
@@ -2061,7 +2061,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion1", "",
 		WME_ENTRY2s("data.dcp", "2ab1e724ea83e61049cc46a3604a9a53", 254281202,
 					"data.dcp", "2ab1e724ea83e61049cc46a3604a9a53", 254281202), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Escape (Steam, January 2016) (German)
 	WME_WINENTRY("reversion1", "",
 		WME_ENTRY2s("data.dcp", "2ab1e724ea83e61049cc46a3604a9a53", 254281202,
@@ -3046,12 +3046,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
 					"data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Desura, before April 2014) (English)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
 					"xlanguage_en.dcp", "74f3c75dc4f62e784682016b37990122", 8440487), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Desura, before April 2014) (Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "c4aa6295bc6cef6995430232298fdd5f", 255654527,
@@ -3357,17 +3357,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
 					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (Russian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
 					"xlanguage_ru.dcp", "a221b4a924d88c75606963fb66bf043a", 10430422), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (Simplified Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
 					"xlanguage_zh_s.dcp", "f668735372b0dde4b619c4d9d4678e3c", 8498109), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "28256eacb651a82cb07ffd99d0102988", 272211168,
@@ -3378,13 +3378,13 @@ static const WMEGameDescription gameDescriptions[] = {
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
 					"data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
 					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::ES_ESP, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (English)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
 					"xlanguage_en.dcp", "fa871d22a10f62b06fc22fc1469baf4e", 8534328,
 					"Linux.dcp", "16c3a8627216aab5b31c43186e0dfa70", 984535), Common::EN_ANY, Common::kPlatformLinux, ADGF_UNSTABLE, WME_LITE),
-	
+
 	// Reversion: The Meeting (Steam, August 2019) (French)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
@@ -3454,17 +3454,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_de.dcp", "38281c6be6b0114aff9251fddcf35c39", 8716897), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (English)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_en.dcp", "dc35e8240090c5909fb77ea5369294ab", 8534328), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (French)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_fr.dcp", "51b3579dad9ec26529aa977a6d92a65a", 8844755), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Italian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
@@ -3474,27 +3474,27 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Portuguese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_pt.dcp", "ee19b2ec802e2028a08b7b2c21a85f09", 8449509), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Russian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_ru.dcp", "bbff71b306ae5081ed556a44b3f18a2f", 10430422), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Simplified Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_zh_s.dcp", "fa6a6f5742184676cd7d967b518db52c", 8498109), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "5b1f360d29a650ea202a89903412e539", 272211168,
 					"xlanguage_zh_t.dcp", "32103394d993d9c6121655ee24a743b9", 8464532), Common::ZH_TWN, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, November 2019) (German)
 	WME_PLATENTRY("reversion2", "",
 		WME_ENTRY3s("data.dcp", "3c34d583c658b75650f0c978d47fd59d", 272228767,
@@ -3730,17 +3730,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_de.dcp", "7a5628acf0fc95596b93120d0adb16d2", 8716897), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (English)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_en.dcp", "a9a84556bd629fe28244b8dd3dc79d84", 8534328), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (French)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_fr.dcp", "05ff17668f416fa4b27caf5157cd0ffe", 8844755), Common::FR_FRA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Italian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
@@ -3750,27 +3750,27 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_nz.dcp", "45f52816d5ec5f8e0c1bd70a7aa17f7c", 8847936), Common::ZH_ANY, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Portuguese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_pt.dcp", "7718ef7709044bf85941eec4f2703664", 8449389), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Russian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_ru.dcp", "212e5c6d93e4ecc57694a25e0c5c10bc", 17512467), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Serbian)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_sr.dcp", "71f1fc086026bb76137cc9b91c642eff", 8541059), Common::SR_SER, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
 					"xlanguage_zh_s.dcp", "7a46d2c1bb6a6ed07583e347d4e13d9c", 8498688), Common::ZH_CNA, ADGF_UNSTABLE, WME_1_9_3),
-	
+
 	// Reversion: The Meeting (Steam, May 2020) (Traditional Chinese)
 	WME_WINENTRY("reversion2", "",
 		WME_ENTRY2s("data.dcp", "a59f2f4fe04478a3a078f8b84651ab27", 272211206,
@@ -3785,22 +3785,22 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
 					"xlanguage_de.dcp", "c5d72f4b8ee111fddfe1caee8d97dcea", 10235058), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, February 2020) (English)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
 					"xlanguage_en.dcp", "f1af088d8eda8ea96e09eb2a3183a782", 10021001), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, February 2020) (Portuguese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
 					"xlanguage_pt.dcp", "2b55f9688039912fae450e3f6872c8ce", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, February 2020) (Russian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
 					"xlanguage_ru.dcp", "660627fa165d1d60135b3fc2e09e333b", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, February 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "326b44d1edfe2cba6e4135bb2dec801f", 1806938525,
@@ -3815,27 +3815,27 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_de.dcp", "fd1465e8b305fd49854eb15d0caaa3bb", 10318916), Common::DE_DEU, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, April 16th 2020) (English)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_en.dcp", "690dbc088ccb0e198df17b9b9def3f67", 10104038), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, April 16th 2020) (Italian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_it.dcp", "8b48db31e4a5d5ef54d17c4d672d5ad7", 10309029), Common::IT_ITA, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, April 16th 2020) (Portuguese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_pt.dcp", "566e29be1c74e34263562f609f34e49b", 10204094), Common::PT_BRA, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, April 16th 2020) (Russian)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
 					"xlanguage_ru.dcp", "921555991ce2feee9e83f1d483a001c1", 19607612), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_2),
-	
+
 	// Reversion: The Return (Steam, April 16th 2020) (Simplified Chinese)
 	WME_WINENTRY("reversion3", "",
 		WME_ENTRY2s("data.dcp", "b8c6bb6a0bc56bc814f336468bf4f660", 1806937965,
@@ -5305,7 +5305,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
 		WME_ENTRY1s("data.dcp", "0898412c1d7c5b759089b2408a9591fe", 2779976), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),
-	
+
 	// Wilma Tetris
 	WME_WINENTRY("wtetris", "",
 		WME_ENTRY1s("data.dcp", "946e3a0496e6c12fb344c9ed861ff015", 2780093), Common::EN_ANY, ADGF_UNSTABLE, WME_1_1_39),

@@ -148,7 +148,7 @@ public:
 	Palette &saturatedAddNormalizedGray(Palette &output, byte firstIndex, byte lastIndex, signed grayDividend, signed grayDenominator) const;
 
 	bool empty() const;
-	uint colorCount() const;	
+	uint colorCount() const;
 	Palette &fillWithBlack();
 
 	/** Is the palette valid? (Mostly just checks the color format for correctness) */

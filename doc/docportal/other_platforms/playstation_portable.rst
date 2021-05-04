@@ -82,7 +82,7 @@ Virtual Keyboard Mode
 
 .. csv-table::
    :class: controls
-        
+
         START,Enter. Also exits virtual keyboard mode
         SELECT,Exits the virtual keyboard mode
         R button,Input: lowercase/uppercase letters (press to toggle)
@@ -102,7 +102,7 @@ Image Viewer
         Analog stick,Moves around the image
         "L/R buttons + START",Exits image viewer
 
-1st Person Game Mode 
+1st Person Game Mode
 **************************
 .. csv-table::
   	:class: controls

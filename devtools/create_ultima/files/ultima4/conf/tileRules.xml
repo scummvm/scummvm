@@ -31,7 +31,7 @@
     <rule name="lava" effect="lava" replacement="true"/>
     <rule name="signs" cantwalkon="all" talkover="true"/>
     <rule name="spacers" cantwalkon="all"/>
-    <rule name="monster" cantwalkon="all" livingthing="true"/>    
+    <rule name="monster" cantwalkon="all" livingthing="true"/>
 
     <!-- Dungeon tile rules -->
     <rule name="dng_altar" creatureunwalkable="true" unflyable="true"/>

@@ -180,7 +180,7 @@ void GlkInterface::initialize() {
 		_wp[i][TRUE_FG_COLOR] = zcolors[h_default_foreground];
 		_wp[i][TRUE_BG_COLOR] = zcolors[h_default_background];
 	}
-	
+
 	/*
 	 * Icky magic bit setting
 	 */
@@ -392,7 +392,7 @@ void GlkInterface::erase_window(zword w) {
 
 	else if (_wp._upper) {
 		//os_set_reverse_video(glk_window_get_stream(_wp._upper), true);
-		
+
 		memset(statusline, ' ', sizeof statusline);
 		_wp._upper.clear();
 		reset_status_ht();

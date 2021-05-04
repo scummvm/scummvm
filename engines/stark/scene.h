@@ -36,7 +36,7 @@ class Driver;
 class RenderEntry;
 }
 
-/** 
+/**
  * Manager for the current game scene
  */
 class Scene {

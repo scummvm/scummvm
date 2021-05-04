@@ -64,7 +64,7 @@ Reelroutines	db	1,44,0 	;Room number and x,y
 	db	23,0,50
 	dw	0
 	db	3,0,0
-	
+
 	db	28,11,20
 	dw	250
 	db	4,0,0
@@ -228,11 +228,11 @@ Reelroutines	db	1,44,0 	;Room number and x,y
 	db	11,11,20
 	dw	0
 	db 	50,20,0
-	
+
 	db	11,11,30
 	dw	0
 	db 	50,20,0
-	
+
 	db	11,22,20
 	dw	0
 	db 	50,20,0
@@ -345,7 +345,7 @@ gotrecep:	call	showgamereel
 	jz	nottalkedrecep
 	mov	talkedtorecep,1
 nottalkedrecep:	ret
-	
+
 	endp
 
 
@@ -487,7 +487,7 @@ notlouis1:	ret
 
 
 Louischair	proc	near
-          
+
 	cmp	rockstardead,0
 	jz	notlouis2
 	call	checkspeed
@@ -636,7 +636,7 @@ Barwoman	proc	near
 
 
 Interviewer	proc	near
-	
+
 	cmp	reeltowatch,68
 	jnz	notgeneralstart
 	inc	word ptr [es:bx+3]
@@ -669,7 +669,7 @@ Soldier1	proc	near
 	mov	mandead,2
 	jmp	gotsoldframe
 notaftersshot:	call	checkspeed
-	jnz	gotsoldframe	
+	jnz	gotsoldframe
 	inc	word ptr [es:bx+3]
 	jmp	gotsoldframe
 soldierwait:	cmp	lastweapon,1
@@ -734,7 +734,7 @@ rockspeed:	call	showgamereel
 	mov	pointermode,2
 	mov	watchingtime,0
 	ret
-	
+
 notalkrock:	mov	watchingtime,2
 	mov	pointermode,0
 	mov	al,mapy
@@ -755,7 +755,7 @@ rockcombatend:	mov	newlocation,45
 
 
 
-	
+
 
 
 
@@ -860,7 +860,7 @@ endmugger1:	push	es bx
 	mov	al,"W"
 	mov	ah,"E"
 	mov	cl,"T"
-	mov	ch,"A"	
+	mov	ch,"A"
 	call	findexobject
 	mov	command,al
 	mov	objecttype,4
@@ -868,7 +868,7 @@ endmugger1:	push	es bx
 	mov	al,"W"
 	mov	ah,"E"
 	mov	cl,"T"
-	mov	ch,"B"	
+	mov	ch,"B"
 	call	findexobject
 	mov	command,al
 	mov	objecttype,4
@@ -885,7 +885,7 @@ endmugger1:	push	es bx
 	ret
 
 endmugger2:	ret
-	
+
 
 	endp
 
@@ -1057,7 +1057,7 @@ guardspeed:	call	showgamereel
 	mov	watchingtime,2
 	ret
 iswaitingpool:	mov	pointermode,2
-	mov	watchingtime,0	
+	mov	watchingtime,0
 	ret
 
 combatover1:	mov	watchingtime,0
@@ -1090,7 +1090,7 @@ doneover2:	ret
 
 
 Security	proc	near
-	
+
 	cmp	word ptr [es:bx+3],32
 	jz	securwait
 	cmp	word ptr [es:bx+3],69
@@ -1098,7 +1098,7 @@ Security	proc	near
 	ret
 notaftersec:	mov	watchingtime,10
 	call	checkspeed
-	jnz	gotsecurframe	
+	jnz	gotsecurframe
 	inc	word ptr [es:bx+3]
 	jmp	gotsecurframe
 securwait:	cmp	lastweapon,1
@@ -1137,7 +1137,7 @@ Heavy	proc	near
 	mov	mandead,2
 	jmp	gotheavyframe
 notafterhshot:	call	checkspeed
-	jnz	gotheavyframe	
+	jnz	gotheavyframe
 	inc	word ptr [es:bx+3]
 	jmp	gotheavyframe
 heavywait:	cmp	lastweapon,1
@@ -1196,7 +1196,7 @@ notboss:	call	showgamereel
 	jz	nottalkedboss
 	mov	talkedtoboss,1
 nottalkedboss:	ret
-	
+
 	endp
 
 
@@ -1743,7 +1743,7 @@ gotmonks2text:	mov	dx,1
 
 	endp
 
-	
+
 	endif
 	else
 
@@ -2007,7 +2007,7 @@ gotendseq:	mov	[es:bx+3],ax
 	cmp	ax,134
 	jnz	notfadedown
 	push	es bx ax
-	call	fadescreendownhalf	
+	call	fadescreendownhalf
 	pop	ax bx es
 	jmp	notendseq
 notfadedown:	cmp	ax,324
@@ -2029,7 +2029,7 @@ notendseq:	call	showgamereel
 	mov	word ptr [es:bx+3],146
 	call	rollendcredits
 notendcreds:	ret
-	
+
 	endp
 
 
@@ -2078,7 +2078,7 @@ endcredits2:	push	cx si di es bx
 	call	vsync
 	pop	bx es di si
 	push	si di es bx
-	
+
 	mov	cx,18
 onelot:	push	cx
 	mov	di,75
@@ -2242,7 +2242,7 @@ ryansded:	mov	mandead,2
 
 	if	cd
 Madmantext	proc	near
-		         
+
 	cmp	speechcount,63
 	jnc	nomadtext
 	cmp	ch1playing,255
@@ -2260,11 +2260,11 @@ Madmantext	proc	near
 nomadtext:	ret
 
 	endp
-	
+
 	else
 
 Madmantext	proc	near
-		         
+
 	cmp	combatcount,61
 	jnc	nomadtext
 	mov	al,combatcount
@@ -2304,7 +2304,7 @@ Madmode	proc	near
 	cmp	combatcount,68
 	endif
 	jnc	iswatchmad
-	mov	pointermode,2	
+	mov	pointermode,2
 iswatchmad:	ret
 
 	endp
@@ -2314,7 +2314,7 @@ iswatchmad:	ret
 
 
 Priesttext	proc	near
-	
+
 	cmp	word ptr [es:bx+3],2
 	jc	nopriesttext
 	cmp	word ptr [es:bx+3],7
@@ -2554,7 +2554,7 @@ gotadvframe:	mov	[es:bx+3],ax
 noadvisor:	call	showgamereel
 	call	addtopeoplelist
 	ret
-		    
+
 	endp
 
 
@@ -2627,7 +2627,7 @@ finishsparky:	call	showgamereel
 	jz	nottalkedsparky
           	mov	talkedtosparky,1
 nottalkedsparky:	ret
-	
+
 	endp
 
 
@@ -2671,7 +2671,7 @@ Addtopeoplelist 	proc	near
 	mov	es,buffers
 	mov	[es:bx],ax	;reel pointer position
 	pop	ax
-	mov	[es:bx+2],ax	                      
+	mov	[es:bx+2],ax
 	mov	[es:bx+4],cl		;coversation number
 	pop	bx es
 	add	listpos,5
@@ -3017,7 +3017,7 @@ notquickp:	call	showframe
 
 
 
-		
+
 
 
 
@@ -3038,7 +3038,7 @@ Checkone	proc	near		;cx=x,y to check
 	mov	cl,4
 	shr	ax,cl
 	mov	ah,dl		; al,ah holds x,y in blocks
-	
+
 	push	ax
 	mov	ch,0
 	mov	cl,al
@@ -3361,7 +3361,7 @@ Checkforexit	proc	near
 	mov	flagx,dl
 	mov	flagy,dh
 	mov	al,lastflag
-	
+
 	test	al,64
 	jz	notnewdirect
 	mov	al,lastflagex
@@ -3383,7 +3383,7 @@ notnewdirect:	test	al,32
 	pop	bx
 	jz 	noshoe1
 	inc	bl
-noshoe1:	push	bx	
+noshoe1:	push	bx
 	mov	al,"W"
 	mov	ah,"E"
 	mov	cl,"T"
@@ -3393,7 +3393,7 @@ noshoe1:	push	bx
 	jz	noshoe2
 	inc	bl
 noshoe2:	cmp	bl,2
-	jz	notlouis	
+	jz	notlouis
 	mov	al,42
 	cmp	bl,0
 	jz	notravmessage
@@ -3446,7 +3446,7 @@ notanup:	ret
 
 Adjustdown	proc	near
 
-	push	es bx	
+	push	es bx
 	add	mapy,10
 	mov	al,lastflagex
 	mov	cl,16
@@ -3462,7 +3462,7 @@ Adjustdown	proc	near
 
 
 Adjustup	proc	near
- 
+
 	push	es bx
 	sub	mapy,10
 	mov	al,lastflagex
@@ -3500,7 +3500,7 @@ Adjustleft	proc	near
 
 
 Adjustright	proc	near
-	
+
 	push	es bx
 	add	mapx,11
 	mov	al,lastflagex
@@ -3550,7 +3550,7 @@ Reminders	proc	nar
 	mov	dh,"S"
 	xchg	al,ah
 	call	compare
-	jnz	forgotone	;is it in wallet?		
+	jnz	forgotone	;is it in wallet?
 havegotcard:	inc	progresspoints
 notfirst:	ret
 
@@ -3568,7 +3568,7 @@ notinedenslift:	ret
 
 
 
-	
+
 ;---------------------------------------------------------------------------
 ;
 ;	Sprite update routines for rain effect
@@ -3576,7 +3576,7 @@ notinedenslift:	ret
 ;---------------------------------------------------------------------------
 
 
-	
+
 
 Initrain 	proc	near
 
@@ -3619,8 +3619,8 @@ initrainside:	mov	cl,mapxsize
 initrainside2:	call	randomnumber
 	and	al,31
 	add	al,3
-	cmp	al,rainspace 
-	jnc	initrainside2	
+	cmp	al,rainspace
+	jnc	initrainside2
 	add	ch,al
 	cmp	ch,mapysize
 	jnc	finishinitrain
@@ -3657,16 +3657,16 @@ rainlocations:	db	1,44,10,16	;location,map x,y,seed
 	db	8,33,40,18
 	db	8,22,40,18
 	db	8,11,40,18
-    
+
 	db	21,44,20,18
 	db	255
 
 	endp
 
 
-	
 
-	
+
+
 
 
 
@@ -3681,7 +3681,7 @@ lookforlinestart:	call	getblockofpixel
               	dec	cl
 	inc	ch
 	cmp	cl,0
-	jz	endofthisline	
+	jz	endofthisline
 	cmp	ch,mapysize
 	jnc	endofthisline
 	jmp	lookforlinestart
@@ -3700,7 +3700,7 @@ lookforlineend:	call	getblockofpixel
 	inc	bh
 	jmp	lookforlineend
 
-foundlineend:	push	cx	
+foundlineend:	push	cx
 	mov	[es:di+2],bh
 	call	randomnumber
 	mov	[es:di+3],al
@@ -3713,7 +3713,7 @@ foundlineend:	push	cx
 	add	di,6
 	pop	cx
 	cmp	cl,0
-	jz	endofthisline	
+	jz	endofthisline
 	cmp	ch,mapysize
 	jnc	endofthisline
 	jmp	lookforlinestart
@@ -3726,7 +3726,7 @@ endofthisline:	ret
 
 
 Getblockofpixel	proc	near
-		
+
 	push	cx es di
 	mov	ax,mapxstart
 	add	cl,al
@@ -3801,7 +3801,7 @@ rainloop:	lodsb
 	jmp	morerain
 noplot:	add	di,320-1
 	loop	rainloop
-	pop	si	
+	pop	si
 	jmp	morerain
 
 finishrain:	cmp	ch1blockstocopy,0
@@ -3826,10 +3826,10 @@ nothunder:	ret
 
 
 
-	
 
-	
-	
+
+
+
 ;---------------------------------------------------------------------------
 ;
 ;	Sprite update routines for background objects
@@ -3842,7 +3842,7 @@ nothunder:	ret
 
 
 Backobject	proc	near
-	
+
 	mov	ds,setdat
 	mov	di,[es:bx+20]
 
@@ -3992,7 +3992,7 @@ hissnoise:	if	demo
 	endif
 	call	playchannel1
 	ret
-	
+
 	endp
 
 
@@ -4433,7 +4433,7 @@ notplot:	pop	si es cx
 
 
 Soundonreels	proc	near
-	
+
 	mov	bl,reallocation
 	add	bl,bl
 	xor	bh,bh
@@ -4446,10 +4446,10 @@ reelsoundloop:	mov	al,[cs:si]
              	mov	ax,[cs:si+1]
 	cmp	ax,reelpointer
 	jnz	skipreelsound
-	
+
 	cmp	ax,lastsoundreel
 	jz	skipreelsound
-	
+
 	mov	lastsoundreel,ax
 	mov	al,[cs:si]
 	cmp	al,64
@@ -4499,7 +4499,7 @@ r6	db	18
 	db	19
 	dw	23
   	db	255
-	
+
 r8	db	12
 	dw	51
 	db	13
@@ -4521,7 +4521,7 @@ r9	db	12
 r10	db	13
 	dw	16
 	db	255
-	
+
 r11	db	13
 	dw	20
 	db	255
@@ -4643,7 +4643,7 @@ r26	db	12
 	db	15
 	dw	102 ; was 90, should be mine cart
 	db	255
-	
+
 r27	db	22
 	dw	36
 	db	13
@@ -4866,7 +4866,7 @@ notmapup2:	cmp	ah,16
 	jnz	notmapupspec
 	sub	mapy,10
 	mov	nowinnewroom,1
-	ret	        
+	ret
 
 notmapupspec:	cmp	ah,8
 	jnz	notmapdownspec
@@ -4957,7 +4957,7 @@ bigroom:	sub	mapysize,8
 	call	maptopanel
 	add	mapysize,8
 	ret
-	
+
 	endp
 
 

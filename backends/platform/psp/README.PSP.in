@@ -42,13 +42,13 @@ Analog                  - Moves in a direction (left/right/up/down) (Useful to k
 
 Image Viewer
 ============
-For your convenience, I've included a simple image viewer in the PSP port. 
+For your convenience, I've included a simple image viewer in the PSP port.
 You can view anything you want while playing a game.
 There are a few simple rules to follow:
 
-- Images must be of PNG format. If you have images in another format, many 
+- Images must be of PNG format. If you have images in another format, many
   graphics utilities will convert them for you.
-- Images must be named psp_image1.png, psp_image2.png etc. This is to make 
+- Images must be named psp_image1.png, psp_image2.png etc. This is to make
   sure there's no possible conflict between image files and game files.
 - Images must be placed in the game directories. When using the image viewer,
   only the images of the particular game being played will be available for viewing.

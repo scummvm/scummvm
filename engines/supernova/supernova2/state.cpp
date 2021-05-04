@@ -1005,26 +1005,26 @@ void GameManager2::passageConstruction() {
 	};
 
 	changeRoom(PYR_ENTRANCE);
-	_rooms[PYR_ENTRANCE]->setSectionVisible(1, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(1,
 			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0, -1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(2, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(2,
 			!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 0,  1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(7, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(7,
 			wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  0));
 
 	if (!_rooms[PYR_ENTRANCE]->isSectionVisible(7)) {
 		_rooms[PYR_ENTRANCE]->getObject(3)->_type = EXIT;
 		_rooms[PYR_ENTRANCE]->getObject(3)->_click = 0;
-		_rooms[PYR_ENTRANCE]->setSectionVisible(3, 
+		_rooms[PYR_ENTRANCE]->setSectionVisible(3,
 				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1, -1));
-		_rooms[PYR_ENTRANCE]->setSectionVisible(4, 
+		_rooms[PYR_ENTRANCE]->setSectionVisible(4,
 				!wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 1,  1));
-		_rooms[PYR_ENTRANCE]->setSectionVisible(8, 
+		_rooms[PYR_ENTRANCE]->setSectionVisible(8,
 				wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  0));
 		if (!_rooms[PYR_ENTRANCE]->isSectionVisible(8)) {
-			_rooms[PYR_ENTRANCE]->setSectionVisible(5, 
+			_rooms[PYR_ENTRANCE]->setSectionVisible(5,
 				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2, -1));
-			_rooms[PYR_ENTRANCE]->setSectionVisible(6, 
+			_rooms[PYR_ENTRANCE]->setSectionVisible(6,
 				   !wall(_state._pyraS, _state._pyraZ, _state._pyraDirection, 2,  1));
 		} else {
 			_rooms[PYR_ENTRANCE]->setSectionVisible(5, kShownFalse);
@@ -1071,16 +1071,16 @@ void GameManager2::passageConstruction() {
 			break;
 		}
 	}
-	_rooms[PYR_ENTRANCE]->setSectionVisible(9, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(9,
 			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(1));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(10, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(10,
 			 _rooms[PYR_ENTRANCE]->isSectionVisible(7) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(2));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(11, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(11,
 			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(3));
-	_rooms[PYR_ENTRANCE]->setSectionVisible(12, 
+	_rooms[PYR_ENTRANCE]->setSectionVisible(12,
 			 _rooms[PYR_ENTRANCE]->isSectionVisible(8) &&
 			!_rooms[PYR_ENTRANCE]->isSectionVisible(4));
 }
@@ -1261,25 +1261,25 @@ void GameManager2::caught() {
 		_vm->removeMessage();
 	if        (_currentRoom->getId() <  MUS1) {
 	} else if (_currentRoom->getId() <= MUS2) {
-		_vm->renderImage( 8); 
+		_vm->renderImage( 8);
 		_vm->renderImage(18);
 	} else if (_currentRoom->getId() == MUS3) {
-		_vm->renderImage(12); 
+		_vm->renderImage(12);
 		_vm->renderImage(30);
 	} else if (_currentRoom->getId() == MUS4) {
-		_vm->renderImage( 8); 
+		_vm->renderImage( 8);
 		_vm->renderImage(18);
 	} else if (_currentRoom->getId() == MUS5) {
-		_vm->renderImage( 9); 
+		_vm->renderImage( 9);
 		_vm->renderImage(29);
 	} else if (_currentRoom->getId() <= MUS7) {
-		_vm->renderImage( 7); 
+		_vm->renderImage( 7);
 		_vm->renderImage(17);
 	} else if (_currentRoom->getId() <= MUS9) {
-		_vm->renderImage( 1); 
+		_vm->renderImage( 1);
 		_vm->renderImage( 7);
 	} else if (_currentRoom->getId() <= MUS11) {
-		_vm->renderImage( 2); 
+		_vm->renderImage( 2);
 		_vm->renderImage( 8);
 	}
 	caught2();
@@ -1327,11 +1327,11 @@ void GameManager2::drawClock() {
 	}
 	for (int i = 0; i < 3; i++) {
 		Object *o = r->getObject(i);
-		if ((o->_id == DOOR || o->_id == ENCRYPTED_DOOR || o->_id == SMALL_DOOR) && 
+		if ((o->_id == DOOR || o->_id == ENCRYPTED_DOOR || o->_id == SMALL_DOOR) &&
 				(o->_type & OPENED) && ! _state._alarmOn)
 			alarm();
 	}
-	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] && 
+	if (!_state._alarmOn && _currentRoom == _rooms[MUS4] &&
 			second >= 21 && second <= 40)
 		alarm();
 	if (_currentRoom == _rooms[MUS_ENTRANCE] && second >= 22 && second <= 29) {
@@ -1470,7 +1470,7 @@ void GameManager2::pressureAlarmCount() {
 	if (!(_state._alarmOn ||
 			(_currentRoom == _rooms[MUS22] && _currentRoom->isSectionVisible(6)))) {
 		_state._pressureCounter++;
-		if ((_currentRoom->getId() >= MUS12 && _state._pressureCounter > 8) || 
+		if ((_currentRoom->getId() >= MUS12 && _state._pressureCounter > 8) ||
 				_state._pressureCounter > 16)
 			alarm();
 	}

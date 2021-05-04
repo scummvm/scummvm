@@ -4,7 +4,7 @@
 	<livearea-background>
 		<image>bg.png</image>
 	</livearea-background>
-	
+
 	<gate>
 		<startup-image>startup.png</startup-image>
 	</gate>

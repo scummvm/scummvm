@@ -44,9 +44,9 @@ bool Sprite::contains(const Common::Point &pos) const {
 }
 
 enum {
-	kAnimOpEvent = 1, 
-	kAnimOpPlayWave = 2, 
-	kAnimOpPlayAnim = 3, 
+	kAnimOpEvent = 1,
+	kAnimOpPlayWave = 2,
+	kAnimOpPlayAnim = 3,
 	kAnimOpDrawSprite = 4
 };
 

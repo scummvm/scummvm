@@ -34,7 +34,7 @@ BaseStorage::BaseStorage() {}
 
 BaseStorage::BaseStorage(Common::String token, Common::String refreshToken, bool enabled):
 	_token(token), _refreshToken(refreshToken) {
-	_isEnabled = enabled; 
+	_isEnabled = enabled;
 }
 
 BaseStorage::~BaseStorage() {}
@@ -189,7 +189,7 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, Networking::JsonResponse
 	Common::JSONObject oauth;
 	bool requiresRefreshToken = !canReuseRefreshToken();
 	if (success) {
-		oauth = result.getVal("oauth")->asObject();		
+		oauth = result.getVal("oauth")->asObject();
 		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
 			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");

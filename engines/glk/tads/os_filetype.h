@@ -35,9 +35,9 @@ namespace TADS {
  * File types.  These type codes are used when opening or creating a
  *   file, so that the OS routine can set appropriate file system metadata
  *   to describe or find the file type.
- *   
+ *
  *   The type os_filetype_t is defined for documentary purposes; it's
- *   always just an int.  
+ *   always just an int.
  */
 enum os_filetype_t {
 	OSFTGAME  = 0,                               /* a game data file (.gam) */

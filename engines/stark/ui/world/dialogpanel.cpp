@@ -219,7 +219,7 @@ void DialogPanel::onMouseMove(const Common::Point &pos) {
 				}
 			}
 		}
-		
+
 		if (_options[_focusedOption]->containsPoint(pos)) {
 			_cursor->setCursorType(Cursor::kActive);
 		} else if (_scrollUpArrowVisible && _scrollUpArrowRect.contains(pos)) {

@@ -54,44 +54,44 @@ void SettingsMenuScreen::open() {
 			"The Longest Journey",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Return",
 			CLICK_HANDLER(SettingsMenuScreen, backHandler),
 			nullptr));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"Back",
 			CLICK_HANDLER(SettingsMenuScreen, backHandler),
 			nullptr));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"GSettings",
 			nullptr,
 			nullptr));
-	
+
 	_widgets.push_back(new CheckboxWidget(
 			"AprilHighRes",
 			StarkSettings->getBoolSetting(Settings::kHighModel),
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kHighModel>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighRes>)));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"HighResHelp",
 			nullptr,
 			nullptr));
 	_widgets.back()->setVisible(false);
-	
+
 	_widgets.push_back(new CheckboxWidget(
 			"Subtitles",
 			StarkSettings->getBoolSetting(Settings::kSubtitle),
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kSubtitle>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSubtitles>)));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"SubtitleHelp",
 			nullptr,
@@ -104,7 +104,7 @@ void SettingsMenuScreen::open() {
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kSpecialFX>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSpecialFX>)));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"SpecialFXHelp",
 			nullptr,
@@ -117,7 +117,7 @@ void SettingsMenuScreen::open() {
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kShadow>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kShadows>)));
 	_widgets.back()->setupSounds(3, 4);
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"ShadowsHelp",
 			nullptr,
@@ -131,7 +131,7 @@ void SettingsMenuScreen::open() {
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kHighResFMV>)));
 	_widgets.back()->setupSounds(3, 4);
 	_widgets.back()->setVisible(StarkSettings->hasLowResFMV());
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"FMVHelp",
 			nullptr,
@@ -149,7 +149,7 @@ void SettingsMenuScreen::open() {
 			_soundManager, 0,
 			Settings::kVoice,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kVoice>)));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"VoiceHelp",
 			nullptr,
@@ -162,7 +162,7 @@ void SettingsMenuScreen::open() {
 			_soundManager, 2,
 			Settings::kMusic,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kMusic>)));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"MusicHelp",
 			nullptr,
@@ -175,7 +175,7 @@ void SettingsMenuScreen::open() {
 			_soundManager, 1,
 			Settings::kSfx,
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kSfx>)));
-	
+
 	_widgets.push_back(new StaticLocationWidget(
 			"SfxHelp",
 			nullptr,
@@ -188,7 +188,7 @@ void SettingsMenuScreen::open() {
 			CLICK_HANDLER(SettingsMenuScreen, flipSettingHandler<Settings::kTimeSkip>),
 			MOVE_HANDLER(SettingsMenuScreen, textHandler<kAllowFF>)));
 	_widgets.back()->setupSounds(3, 4);
-		
+
 	_widgets.push_back(new StaticLocationWidget(
 			"AllowFFHelp",
 			nullptr,
@@ -349,7 +349,7 @@ bool VolumeWidget::isMouseInsideBg(const Common::Point &mousePos) const {
 		   mousePos.y >= _bgPosition.y && mousePos.y <= _bgPosition.y + _bgHeight;
 }
 
-TestSoundManager::TestSoundManager() : 
+TestSoundManager::TestSoundManager() :
 		_currentSound(nullptr),
 		_isLopping(false) {
 	for (int i = 0; i < 3; ++i) {

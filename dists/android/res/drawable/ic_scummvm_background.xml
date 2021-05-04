@@ -4,7 +4,7 @@
 	android:viewportHeight="108"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 	<group>
-		<!-- According to LINT: "Resource references will not work correctly in images generated for this vector icon for API < 21; 
+		<!-- According to LINT: "Resource references will not work correctly in images generated for this vector icon for API < 21;
 		     check generated icon to make sure it looks acceptable"
 		     So we don't reference @color/colorPrimary here in fillColor. Instead we use the explicit raw hex value -->
 		<path

@@ -53,7 +53,7 @@ public:
 
 	void setGlowX(int16 value);
 
-	void setGlowY(int16 value);	
+	void setGlowY(int16 value);
 
 	// Original name : blackbars
 	void drawBlackBars();
@@ -170,16 +170,16 @@ private:
 	View  *_underBarsView;
 
 	Common::Rect _underSubtitlesScreenRect;
-	Common::Rect _underSubtitlesBackupRect;	
+	Common::Rect _underSubtitlesBackupRect;
 
 	Common::Rect _underTopBarScreenRect;
 	Common::Rect _underBottomBarBackupRect;
 	Common::Rect _underBottomBarScreenRect;
 	Common::Rect _underTopBarBackupRect;
 
-	byte *_underSubtitlesViewBuf; // CHECKME: Useless?	
+	byte *_underSubtitlesViewBuf; // CHECKME: Useless?
 
-	byte *_mainViewBuf;	
+	byte *_mainViewBuf;
 
 	View  *_hnmView;
 	byte *_hnmViewBuf;
@@ -189,7 +189,7 @@ private:
 
 	Common::Rect _rect_dst, _rect_src;
 
-	View  *_view2;	
+	View  *_view2;
 
 	int _hnmFrameNum;
 
@@ -205,7 +205,7 @@ private:
 	color_t  _oldPalette[256];    // TODO palette_t ?
 	color_t  _newPalette[256];
 
-	bool _showBlackBars;	
+	bool _showBlackBars;
 
 	void saveUnderSubtitles(int16 y);
 

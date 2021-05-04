@@ -574,7 +574,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 				continue;
 			}
 
-			// GK2 has invalid audio36 map entries on CD 1 of the German 
+			// GK2 has invalid audio36 map entries on CD 1 of the German
 			//  version and CDs 5-6 of all versions. All are safe to ignore
 			//  because their content doesn't apply to the disc's chapter.
 			if (g_sci->getGameId() == GID_GK2) {
@@ -603,7 +603,7 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 					continue;
 				}
 			}
-			
+
 			// Lighthouse German has invalid audio36 map entries for
 			//  content that was cut from the game. These resources
 			//  existed in the English version even though they were
@@ -791,7 +791,7 @@ bool ResourceManager::isGMTrackIncluded() {
 	return result;
 }
 
-SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : 
+SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) :
 	_resMan(resMan), _soundVersion(soundVersion), _trackCount(0), _tracks(nullptr), _soundPriority(0xFF) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	if (!_resource)

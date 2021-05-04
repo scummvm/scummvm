@@ -525,7 +525,7 @@ void ProjectorMovie::update() {
 
 			// Compute the blur level from the focus point and the depth of the current point
 			uint8 blurLevel = abs(focus - depth) + 1;
-			
+
 			// No need to compute the effect for transparent pixels
 			byte a = *(dst + 3);
 			if (a != 0) {

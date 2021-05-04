@@ -129,7 +129,7 @@ reg_t disassemble(EngineState *s, reg_t pos, const Object *obj, bool printBWTag,
 		}
 
 		for (i = bytecount; i < 5; i++)
-			if (printCSyntax) 
+			if (printCSyntax)
 				debugN("      ");
 			else
 				debugN("   ");
@@ -1124,7 +1124,7 @@ void logBacktrace() {
 		case EXEC_STACK_TYPE_CALL: // Normal function
 			if (call.type == EXEC_STACK_TYPE_CALL)
 				con->debugPrintf(" %x: script %d - ", i, s->_segMan->getScript(call.addr.pc.getSegment())->getScriptNumber());
-			
+
 			if (call.debugSelector != -1) {
 				con->debugPrintf("%s::%s(", objname, g_sci->getKernel()->getSelectorName(call.debugSelector).c_str());
 			} else if (call.debugExportId != -1) {

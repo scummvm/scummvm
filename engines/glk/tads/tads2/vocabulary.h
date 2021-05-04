@@ -41,7 +41,7 @@ namespace TADS2 {
  *   Cover macro for parser errors.  Any parser error should be covered
  *   with this macro for documentation and search purposes.  (The macro
  *   doesn't do anything - this is just something to search for when we're
- *   trying to enumerate parser error codes.) 
+ *   trying to enumerate parser error codes.)
  */
 #define VOCERR(errcode) errcode
 
@@ -127,7 +127,7 @@ struct vocidef {
  *   vocwdef's are fixed in size.  They're allocated in a set of arrays
  *   (the voccxwp member of the voc context has the list of arrays).  Each
  *   array is of a fixed number of vocwdef entries; a maximum number of
- *   vocwdef arrays is possible. 
+ *   vocwdef arrays is possible.
  */
 #define VOCWPGSIZ   2000                   /* number of vocwdef's per array */
 #define VOCWPGMAX   16                  /* maximum number of vocwdef arrays */
@@ -135,7 +135,7 @@ struct vocidef {
 /*
  *   To find a vocwdef entry given its index, divide the index by the
  *   number of entries per array to find the array number, and use the
- *   remainder to find the index within that array. 
+ *   remainder to find the index within that array.
  */
 /*#define VOCW_IN_CACHE*/
 #ifdef VOCW_IN_CACHE
@@ -148,7 +148,7 @@ vocwdef *vocwget(struct voccxdef *ctx, uint idx);
 
 /*
  *   Special values for vocdtim - these values indicate that the daemon
- *   does not have a normal turn-based expiration time. 
+ *   does not have a normal turn-based expiration time.
  */
 #define VOCDTIM_EACH_TURN  0xffff            /* the daemon fires every turn */
 
@@ -190,17 +190,17 @@ struct voccxdef {
 	uint       voccxilst;      /* next unused byte in last inheritance page */
 	int        voccxredo;                   /* flag: redo command in buffer */
 
-	/* 
+	/*
 	 *   redo buffer - if voccxredo is set, and this buffer is not empty,
 	 *   we'll redo the command in this buffer rather than the one in our
-	 *   internal stack buffer 
+	 *   internal stack buffer
 	 */
 	char       voccxredobuf[VOCBUFSIZ];
 
 	/*
 	 *   "again" buffer - when we save the last command for repeating via
 	 *   the "again" command, we'll save the direct and indirect object
-	 *   words here, so that they can be recovered if "again" is used 
+	 *   words here, so that they can be recovered if "again" is used
 	 */
 	char       voccxagainbuf[VOCBUFSIZ];
 
@@ -225,7 +225,7 @@ struct voccxdef {
 	vocddef   *voccxalm;                            /* array of alarm slots */
 	uint       voccxalc;                  /* number of slots in alarm array */
 	char       voccxtim[26];            /* game's timestamp (asctime value) */
-	
+
 	objnum     voccxvtk;                /* object number of "take" deepverb */
 	objnum     voccxme;                      /* object number of "Me" actor */
 	objnum     voccxme_init;                     /* initial setting of "Me" */
@@ -268,7 +268,7 @@ struct voccxdef {
 	objnum     voccxactor;                                 /* current actor */
 	objnum     voccxverb;                       /* current command deepverb */
 	objnum     voccxprep;                    /* current command preposition */
-	
+
 	/* previous command values - used by "again" */
 	objnum     voccxlsa;                                  /* previous actor */
 	objnum     voccxlsv;                                   /* previous verb */
@@ -412,26 +412,26 @@ int try_preparse_cmd(voccxdef *ctx, char **cmd, int wrdcnt,
  *   recognize the sentence structure (for example, an indirect object is
  *   present, but we don't have a template defined using an indirect
  *   object for the verb).
- *   
+ *
  *   'wrdcnt' is the number of words in the cmd[] array.  If wrdcnt is
  *   zero, we'll automatically count the array entries, with the end of
  *   the array indicated by a null pointer entry.
- *   
+ *
  *   If do_fuses is true, we'll execute the fuses and daemons if the
  *   function exists and doesn't throw an ABORT error, or any other
  *   run-time error other than EXIT.
- *   
+ *
  *   This function calls the game-defined function parseUnknownVerb, if it
  *   exists.  If the function doesn't exist, we'll simply display the
  *   given error message, using the normal parseError mechanism.  The
  *   function should use "abort" or "exit" if it wants to cancel further
  *   processing of the command.
- *   
+ *
  *   We'll return true if the function exists and executes successfully,
  *   in which case normal processing should continue with any remaining
  *   command on the command line.  We'll return false if the function
  *   doesn't exist or throws an error other than EXIT, in which case the
- *   remainder of the command should be aborted.  
+ *   remainder of the command should be aborted.
  */
 int try_unknown_verb(voccxdef *ctx, objnum actor,
 					 char **cmd, int *typelist, int wrdcnt, int *next_start,
@@ -573,7 +573,7 @@ struct vocspdef {
 /* int vocspec(char *wordptr, int speccode); */
 #define vocspec(w, s) (*(w) == (s))
 
-/* 
+/*
  *   Set a fuse/daemon/notifier.
  */
 void vocsetfd(voccxdef *ctx, vocddef *what, objnum func, prpnum prop,
@@ -611,11 +611,11 @@ void vocdmnclr(voccxdef *ctx);
 /* display a parser error message */
 void vocerr(voccxdef *ctx, int err, const char *f, ...);
 
-/* 
+/*
  *   display a parser informational error message - this will display the
  *   message whether or not we're suppressing messages due to unknown
  *   words, and should be used when providing information, such as objects
- *   we're assuming by default 
+ *   we're assuming by default
  */
 void vocerr_info(voccxdef *ctx, int err, const char *f, ...);
 
@@ -654,7 +654,7 @@ uint vochsh(const uchar *t, int len);
 
 
 /*
- *   Undo types for voc subsystem 
+ *   Undo types for voc subsystem
  */
 #define VOC_UNDO_DAEMON   1                    /* fuse/daemon status change */
 #define VOC_UNDO_NEWOBJ   2                              /* object creation */
@@ -671,7 +671,7 @@ uint vochsh(const uchar *t, int len);
  *   some machines have relatively restrictive limitations on stack usage.
  *   To provide some elbow room, we'll use a stack-like structure of our
  *   own: we'll allocate out of this structure as needed, and whenever we
- *   leave a C stack frame, we'll also leave our own stack frame. 
+ *   leave a C stack frame, we'll also leave our own stack frame.
  */
 
 /* re-initialize the stack, allocating space for it if needed */
@@ -704,7 +704,7 @@ void *voc_stk_alo(voccxdef *ctx, uint siz);
  *   the defined VOCMAXAMBIG parameter, since it is the number of elements
  *   usually allocated.  The actual amount of space needed depends on how
  *   the functions in vocab.c and execmd.c work, so this parameter may
- *   need to be adjusted for changes to the player command parser. 
+ *   need to be adjusted for changes to the player command parser.
  */
 #define VOC_STACK_SIZE  (16 * VOCMAXAMBIG * sizeof(vocoldef))
 
@@ -714,8 +714,8 @@ void *voc_stk_alo(voccxdef *ctx, uint siz);
  *   thrown during execution.  This is a convenient cover single function
  *   to do all end-of-turn processing; this calls exefuse() and exedaem()
  *   as needed, trapping any 'abort' or 'exit' errors that occur.
- *   
- *   If 'do_fuses' is true, we'll run fuses and daemons.  Otherwise, 
+ *
+ *   If 'do_fuses' is true, we'll run fuses and daemons.  Otherwise,
  */
 int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 						  objnum actor, objnum verb,
@@ -724,26 +724,26 @@ int exe_fuses_and_daemons(voccxdef *ctx, int err, int do_fuses,
 
 /*
  *   Execute any pending fuses.  Return TRUE if any fuses were executed,
- *   FALSE otherwise.  
+ *   FALSE otherwise.
  */
 int exefuse(voccxdef *ctx, int do_run);
 
 /*
- *   Execute daemons 
+ *   Execute daemons
  */
 void exedaem(voccxdef *ctx);
 
 /*
  *   Get the number and size of words defined for an object.  The size
  *   returns the total byte count from all the words involved.  Do not
- *   include deleted words in the count.  
+ *   include deleted words in the count.
  */
 void voc_count(voccxdef *ctx, objnum objn, prpnum prp, int *cnt, int *siz);
 
 /*
  *   Iterate through all words for a particular object, calling a
  *   function with each vocwdef found.  If objn == MCMONINV, we'll call
- *   the callback for every word.  
+ *   the callback for every word.
  */
 void voc_iterate(voccxdef *ctx, objnum objn,
 				 void (*fn)(void *, vocdef *, vocwdef *), void *fnctx);
@@ -772,7 +772,7 @@ void voc_iterate(voccxdef *ctx, objnum objn,
 
 /* ------------------------------------------------------------------------ */
 /*
- *   parseNounPhrase status codes 
+ *   parseNounPhrase status codes
  */
 
 /* parse error occurred */
@@ -787,7 +787,7 @@ void voc_iterate(voccxdef *ctx, objnum objn,
 
 /* ------------------------------------------------------------------------ */
 /*
- *   parserResolveObjects usage codes 
+ *   parserResolveObjects usage codes
  */
 #define VOC_PRO_RESOLVE_DOBJ  1                            /* direct object */
 #define VOC_PRO_RESOLVE_IOBJ  2                          /* indirect object */

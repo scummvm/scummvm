@@ -173,7 +173,7 @@ void EventsManager::setButtonDown(MouseButton button, bool isDown) {
 		mask = MK_MBUTTON;
 		break;
 	default:
-		break;	
+		break;
 	}
 
 	if (isDown) {

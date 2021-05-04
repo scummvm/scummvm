@@ -422,7 +422,7 @@ bool XMLMapLoader::load(Map *map) {
 	map->_data.resize(map->_width * map->_height);
 
 	// Split up the text lines
-	Common::StringArray lines, cols;	
+	Common::StringArray lines, cols;
 	split(text, lines, '\n');
 	assert(lines.size() == map->_height);
 

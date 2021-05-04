@@ -180,7 +180,7 @@ public:
 	DataBlock_PC(DiskImage *disk, byte track, byte sector, uint16 offset = 0) :
 			_disk(disk),
 			_track(track),
-			_sector(sector),	
+			_sector(sector),
 			_offset(offset) { }
 
 	~DataBlock_PC() override { }

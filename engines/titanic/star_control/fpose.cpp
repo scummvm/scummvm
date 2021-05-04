@@ -177,7 +177,7 @@ FPose FPose::inverseTransform() const {
 	float B[16]={};
 
 	// B contains inverse of A
-	matrix4Inverse<float>(A,B);	
+	matrix4Inverse<float>(A,B);
 	matrix_inv._vector._x=B[12];
 	matrix_inv._vector._y=B[13];
 	matrix_inv._vector._z=B[14];

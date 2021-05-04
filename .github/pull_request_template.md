@@ -4,7 +4,7 @@ Thank you for contributing to ScummVM. Please read the following carefully befor
 
 Make sure your individual commits follow the guidelines found in the ScummVM Wiki: https://wiki.scummvm.org/index.php?title=Commit_Guidelines. If they're not please edit them before submitting the Pull Request.
 
-Proper documentation must also be included for common code and changes impacting user facing elements. 
+Proper documentation must also be included for common code and changes impacting user facing elements.
 
 Commits and Pull Requests should use the following template:
 

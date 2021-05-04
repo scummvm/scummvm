@@ -23,7 +23,7 @@
 #ifndef BACKEND_MORPHOS_DIALOGS_H
 #define BACKEND_MORPHOS_DIALOGS_H
 
-#if defined(__MORPHOS__) && defined(USE_SYSDIALOGS) 
+#if defined(__MORPHOS__) && defined(USE_SYSDIALOGS)
 
 #include "common/fs.h"
 #include "common/dialogs.h"

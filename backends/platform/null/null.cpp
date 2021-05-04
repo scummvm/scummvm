@@ -106,7 +106,7 @@ private:
 OSystem_NULL::OSystem_NULL() {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(__MORPHOS__)	
+	#elif defined(__MORPHOS__)
 		_fsFactory = new MorphOSFilesystemFactory();
 	#elif defined(POSIX)
 		_fsFactory = new POSIXFilesystemFactory();

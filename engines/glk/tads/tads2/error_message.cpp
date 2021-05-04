@@ -29,7 +29,7 @@ namespace TADS2 {
 
 errcxdef *lerini() {
 	errcxdef *errcx;                                         /* error context */
-  
+
 	// allocate an error context
 	if (!(errcx = (errcxdef *)ltk_suballoc(sizeof(errcxdef)))) {
 		// failure

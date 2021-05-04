@@ -196,7 +196,7 @@ Picture *Pictures::load(const Common::String &name) {
 		for (uint idx = 0; idx < palCount; ++idx)
 			pal[idx] = pic->format.RGBToColor(palette[idx * 3],
 				palette[idx * 3 + 1], palette[idx * 3 + 2]);
-		
+
 		const byte *srcP = (const byte *)img->getPixels();
 		byte *destP = (byte *)pic->getPixels();
 		for (int idx = 0; idx < img->w * img->h; ++idx, srcP++, destP += pic->format.bytesPerPixel) {

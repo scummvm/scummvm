@@ -38,7 +38,7 @@ public:
 	void stop();
 	void update();
 	bool isPlaying() const;
-public:	
+public:
 	IllusionsEngine_Duckman *_vm;
 	Video::VideoDecoder *_videoDecoder;
 	uint32 _callingThreadId;

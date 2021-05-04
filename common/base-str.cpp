@@ -489,7 +489,7 @@ TEMPLATE void BASESTRING::clear() {
 	_storage[0] = 0;
 }
 
-	
+
 TEMPLATE void BASESTRING::setChar(value_type c, uint32 p) {
 	assert(p < _size);
 
@@ -610,7 +610,7 @@ TEMPLATE uint64 BASESTRING::asUint64Ext() const {
 	uint64 result = 0;
 	uint64 base = 10;
 	uint32 skip = 0;
-	
+
 	if (_size >= 3 && _str[0] == '0' && _str[1] == 'x') {
 		base = 16;
 		skip = 2;

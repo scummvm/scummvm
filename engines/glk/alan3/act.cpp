@@ -113,7 +113,7 @@ void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches
 				context._break = false;
 			if (context._break)
 				return;
-			
+
 			if (multipleMatches[i + 1].instance != EOD)
 				para();
 		}

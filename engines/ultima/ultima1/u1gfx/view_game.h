@@ -36,7 +36,7 @@ namespace Actions {
 class Action;
 } // End of namespace Actions
 } // End of namespace Shared
-	
+
 namespace Ultima1 {
 namespace U1Gfx {
 

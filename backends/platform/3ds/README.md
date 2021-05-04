@@ -24,7 +24,7 @@ Table of Contents:
 1.0) Installation
 -----------------
 There are two possible formats to be used: 3DSX and CIA.
-The 3DSX format is considered more ethical because it does not make use of 
+The 3DSX format is considered more ethical because it does not make use of
 invalid title IDs, which get logged. It is also compatible with homebrew loading
 methods that do not involve CFW.
 The 3DSX format is exclusively used by the Homebrew Launcher and its derivatives.
@@ -35,7 +35,7 @@ Installing the Homebrew Launcher or any CFW is beyond the scope of this README.
 
 1.1) 3DSX installation
 ----------------
-You need to merely extract the ScummVM 3DSX files to your SD card so that all 
+You need to merely extract the ScummVM 3DSX files to your SD card so that all
 files reside in the `/3ds/scummvm/` directory. It can then be launched by Homebrew Launcher
 or a similar implementation.
 

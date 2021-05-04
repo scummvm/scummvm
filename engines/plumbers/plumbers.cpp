@@ -433,7 +433,7 @@ void PlumbersGame::loadMikeDecision(const Common::String &dirname, const Common:
 		Common::String nameW = Common::String::format("%s%dW.CEL", baseName.c_str(), i + 1);
 		if (!fileW.open(nameW))
 			error("unable to load image %s", nameW.c_str());
-		
+
 		_image->loadStream(fileW);
 		surf->copyRectToSurface(*_image->getSurface(), p.x + sz.x, p.y,
 					Common::Rect(0, 0, sz.x, sz.y));
@@ -479,7 +479,7 @@ void PlumbersGame::drawScreen() {
 			modSurf.create(surface->w, surface->h, pf);
 			modSurf.copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, surface->w, surface->h));
 			const Common::Rect rec = _scenes[_curSceneIdx]._choices[_hiLite]._region;
-			
+
 			for (int y = rec.top; y <= rec.bottom; y++) {
 				uint16 *p = (uint16 *) modSurf.getPixels() + modSurf.w * y + rec.left;
 				for (int x = rec.left; x < rec.right; x++, p++) {
@@ -885,7 +885,7 @@ void PlumbersGame::readTables3DO(const Common::String &fileName) {
 		if (!firstImg.contains(scene))
 			firstImg[scene] = bitmapCtr;
 	}
-	
+
 	uint scPtr = 0;
 	makeVideo(_scenes[scPtr++], "kirinweaver", "janp1weaver");
 	makeVideo(_scenes[scPtr++], "janp1weaver", "janp2weaver");
@@ -898,7 +898,7 @@ void PlumbersGame::readTables3DO(const Common::String &fileName) {
 	_scenes[scPtr]._decisionBitmap = "DEC00";
 	_scenes[scPtr]._choices[0]._sceneName = "miketest/sc01";
 	_scenes[scPtr++]._choices[1]._sceneName = "miketest/sc07a";
-	
+
 	for (uint scNo = 1; scNo <= 13; scNo++, scPtr++) {
 		Common::String imgScene = scNo == 5 ?
 			"sc44" : Common::String::format("sc%02d", scNo);
@@ -958,7 +958,7 @@ void PlumbersGame::readTables3DO(const Common::String &fileName) {
 	_scenes[scPtr]._choices[1]._sceneName = "restart";
 	_scenes[scPtr]._choices[1]._points = 0;
 	scPtr++;
-	
+
 	for (uint scNo = 15; scNo <= 32; scNo++) {
 		// there is no sc19
 		if (scNo == 19)

@@ -50,7 +50,7 @@ pcxpal:	push	cx
 	mov	cx,480
 convertpcx:	push	cx
 	push	di
-	mov	ds,workspace 
+	mov	ds,workspace
 	mov	es,buffers
 	mov	di,pointerback
 	mov	bx,0
@@ -130,7 +130,7 @@ Readabyte	proc	near
 	mov	si,0
 notendblock:	lodsb
 	ret
-	
+
 	endp
 
 
@@ -209,7 +209,7 @@ Setmode	proc	near
 	mov	ah,0
 	mov	al,13h
 	int	10h
-	
+
 	mov	al,6	; sets graphic controller
 	mov	dx,3ceh 	; register 6 (MM) to 1 - 64K
 	out	dx,al
@@ -263,7 +263,7 @@ Setmode	proc	near
 	mov	al,3fh
 	out	dx,al
 	ret
-	
+
 	endp
 
 
@@ -461,7 +461,7 @@ Dumpmap	proc	near
 
 	endp
 
-	
+
 
 
 Pixelcheckset	proc	near		;al=x, ah=y, es:bx=setlist pos
@@ -673,7 +673,7 @@ loop1:	in	al,dx
 	endif
 	pop	es ds di si dx cx bx ax
 	ret
-	
+
 	endp
 
 
@@ -1110,7 +1110,7 @@ width42:	movsw
 width41:	movsw
 width40:	movsw
 width39:	movsw
-width38:	movsw	   
+width38:	movsw
 width37:	movsw
 width36:	movsw
 width35:	movsw
@@ -1158,7 +1158,7 @@ width0: 	ret
 
 
 
-	
+
 
 Doblocks	proc	near
 
@@ -1214,10 +1214,10 @@ firstbitofblock:	movsw
 
 	mov	bh,12
 loop125:	movsw
-	movsw  
 	movsw
 	movsw
-	movsw 
+	movsw
+	movsw
 	movsw
 	movsw
 	movsw
@@ -1228,7 +1228,7 @@ loop125:	movsw
 	add	di,screenwidth-20
 	dec	bh
 	jnz	loop125
-	
+
 	add	di,4
 	mov	ax,0dfdfh
 	stosw
@@ -1269,7 +1269,7 @@ loop125:	movsw
 
 
 zeroblock:	pop	si
-	
+
 	pop	di cx
 	add	di,16
 	loop	loop124
@@ -1278,7 +1278,7 @@ zeroblock:	pop	si
 	add	di,screenwidth*16
 	loop	loop120
 	ret
-	
+
 	endp
 
 
@@ -1523,7 +1523,7 @@ nextline:	add	di,dx
 	dec	ch
 	jnz	bhloop2
 	ret
-	
+
 	endp
 
 
@@ -1595,7 +1595,7 @@ Transferinv	proc	near
 	mov	bx,exframedata
 	add	bx,ax
 	add	di,exframes
-	
+
 	push	bx
 	mov	al,itemtotran
 	mov	ah,0
@@ -1656,7 +1656,7 @@ Transfermap	proc	near
 	mov	bx,exframedata
 	add	bx,ax
 	add	di,exframes
-	
+
 	push	bx
 	mov	al,itemtotran
 	mov	ah,0

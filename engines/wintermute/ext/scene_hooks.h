@@ -40,4 +40,4 @@ void EmulateSceneHook(const char *sceneFilename) {
 
 } // End of namespace Wintermute
 
-#endif 
+#endif

@@ -288,7 +288,7 @@ private:
 	/**
 	 * Get the new location
 	 */
-	void getNewLocation(); 
+	void getNewLocation();
 public:
 	GolemCutscene();
 	~GolemCutscene() override {}

@@ -3,7 +3,7 @@
 ;See LICENSE file for full license text
 ;---------------------------------------------------------Inventory printer----
 
-Fillryan	proc	near	
+Fillryan	proc	near
 			; cx=what to search for
 	mov	es,buffers
 	mov	di,ryaninvlist
@@ -14,7 +14,7 @@ Fillryan	proc	near
 	mov	cx,20
 	mul	cx
 	add	si,ax
-	
+
 	mov	di,inventx
 	mov	bx,inventy
 
@@ -49,7 +49,7 @@ ryanloop1:	push	cx di bx
 
 
 
-Fillopen	proc	near	
+Fillopen	proc	near
 
 	call	deltextline
 
@@ -103,13 +103,13 @@ nextopenslot:	pop	es si
 
 
 Findallryan	proc	near
-	
+
 	push	di
 	mov	cx,30
 	mov	ax,0ffffh
 	rep	stosw
 	pop	di
-	
+
 	mov	cl,4
 	mov	ds,extras
 	mov	bx,exdata
@@ -142,7 +142,7 @@ notinryaninv:	add	bx,16
 
 
 Findallopen	proc	near
-	
+
 	push	di
 	mov	cx,16
 	mov	ax,0ffffh
@@ -303,7 +303,7 @@ examineagain:	mov	inmaparea,0
 	mov	objecttype,al
 	mov	itemframe,0
 	mov	pointerframe,0
-	
+
 	call	createpanel
 	call	showpanel
 	call	showman
@@ -541,13 +541,13 @@ Openob	proc	near
 	mov	ah,openedtype
 	mov	di,offset cs:commandline
 	call	copyname
-	
+
 	mov	di,inventx
 	mov	bx,inventy+86
 	mov	al,62
 	mov	dl,240
 	call	printmessage
-	
+
 	mov	di,lastxpos
 	add	di,5
 	mov	bx,inventy+86
@@ -558,7 +558,7 @@ Openob	proc	near
 	mov	al,0
 	mov	ah,0
 	call	printdirect
-	
+
 	call	fillopen
 	call	getopenedsize
 	mov	al,ah
@@ -704,7 +704,7 @@ notsetd2:
 	call	additionaltext
 	ret
 
-	
+
 	endp
 
 
@@ -839,7 +839,7 @@ findsometext:	call	searchforsame
 
 
 Searchforsame	proc	near
-		
+
 	mov	si,cx
 searchagain:	inc	si
 	mov	al,[es:bx]
@@ -1212,7 +1212,7 @@ sizeok2:	mov	ah,objecttype
 	mov	ax,[es:bx]
 	mov	itemframe,al
 	mov	objecttype,ah
-	
+
 	cmp	ah,4
 	jnz	makeswapex
 	call	geteitherad
@@ -1273,7 +1273,7 @@ actuallyswap:	mov	bl,itemframe
 Intoinv 	proc	near
 
 	cmp	pickup,0
-	jnz	notout	
+	jnz	notout
 	call	outofinv
 	ret
 
@@ -1351,7 +1351,7 @@ notinhere:	add	si,16
 	loop	takenloop
 
 	ret
-	
+
 	endp
 
 
@@ -1407,7 +1407,7 @@ dograb: 	call	delpointer
 	call	worktoscreen
 	call	delpointer
 	ret
-	
+
 	endp
 
 
@@ -1422,7 +1422,7 @@ Getfreead	proc	near
 	mov	bx,ax
 	mov	es,freedat
 	ret
-	
+
 	endp
 
 
@@ -1441,7 +1441,7 @@ Getexad 	proc	near
 	mov	es,extras
 	add	bx,exdata
 	ret
-	
+
 	endp
 
 
@@ -1546,7 +1546,7 @@ Getsetad	proc	near
 	mov	bx,ax
 	mov	es,setdat
 	ret
-	
+
 	endp
 
 
@@ -1872,7 +1872,7 @@ Useopened	proc	near
 	cmp	openedob,255
 	jz	cannotuseopen
 	cmp	pickup,0
-	jnz	notout2	
+	jnz	notout2
 	call	outofopen
 	ret
 
@@ -2135,7 +2135,7 @@ dogrb:	call	delpointer
 	mov	ax,[es:bx]
 	mov	itemframe,al
 	mov	objecttype,ah
-	
+
 	cmp	ah,4
 	jnz	makeintoex
 	call	geteitherad
@@ -2149,7 +2149,7 @@ makeintoex:	call	transfertoex
 	call	geteitherad
 	mov	byte ptr [es:bx+2],20 ; means it is in transit
 	mov	byte ptr [es:bx+3],255
-	
+
 actuallyout:	call	fillopen
 	call	undertextline
 	call	readmouse
@@ -2412,7 +2412,7 @@ dontpurge:	add	di,16
 
 
 
-	
+
 
 Emergencypurge	proc	near
 
@@ -2458,7 +2458,7 @@ cantpurge:	add	di,16
 	inc	cx
 	cmp	cx,numexobjects
 	jnz	lookforpurge
-	
+
 	mov	di,exdata
 	mov	bl,reallocation
 	mov	cx,0
@@ -2507,7 +2507,7 @@ Deleteexobject	proc 	near	;es:di holds data ad
 	mov	di,exdata
 	mov	cx,0
 deleteconts:	cmp	[es:di+2],bx
-	jnz	notinsideex	
+	jnz	notinsideex
 	push	bx cx di
 	call	deleteexobject	;Oooh missus!
 	pop	di cx bx	;Recursive code!
@@ -2539,7 +2539,7 @@ Deleteexframe	proc	near	;al holds frame to delete
 			;frame in bytes
 	mov	si,[es:di+2]
 	push	si
-	add	si,exframes 
+	add	si,exframes
 	mov	cx,exframeslen
 	sub	cx,[es:di+2]
 	mov	di,si	;di/si hold start of frame
@@ -2550,7 +2550,7 @@ Deleteexframe	proc	near	;al holds frame to delete
 	rep	movsb
 	pop	bx	;bx holds size now
 	sub	exframepos,bx
-	pop	si	;si holds start of frame 
+	pop	si	;si holds start of frame
 			;(offset only)
 	mov	cx,numexobjects*3
 	mov	di,exframedata
@@ -2584,7 +2584,7 @@ findlenextext:	mov	cl,[es:si]
 	inc	ax
 	inc	si
 	cmp	cl,0
-	jnz	findlenextext	
+	jnz	findlenextext
 
 	mov	cx,extextlen
 	mov	bx,si
@@ -2594,7 +2594,7 @@ findlenextext:	mov	cl,[es:si]
 	rep	movsb
 	pop	bx
 	sub	extextpos,bx
-	
+
 	pop	si
 	mov	cx,numexobjects
 	mov	di,extextdat

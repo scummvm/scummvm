@@ -203,7 +203,7 @@ void BurnedLetterViewWindow::onLButtonUp(const Common::Point &point, uint flags)
 			TempCursorChange cursorChange(kCursorWait);
 
 			Graphics::Surface *newFrame = _stillFrames->getFrameCopy(_curView);
-		
+
 			for (int i = 0; i < 189; i += offset) {
 				_preBuffer->move(0, offset, _preBuffer->h);
 
@@ -291,7 +291,7 @@ void BurnedLetterViewWindow::onMouseMove(const Common::Point &point, uint flags)
 bool BurnedLetterViewWindow::onSetCursor(uint message) {
 	Cursor cursorID = kCursorArrow;
 
-	if (_top.contains(_curMousePos) && _curView > 0) 
+	if (_top.contains(_curMousePos) && _curView > 0)
 		cursorID = kCursorMoveUp;
 
 	if (_bottom.contains(_curMousePos) && _curView < (_viewCount - 1))

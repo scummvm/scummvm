@@ -77,7 +77,7 @@ Game::Game(Configuration *cfg, Events *evt, Screen *scr, GUI *g, nuvie_game_t ty
 	game = this;
 	config = cfg;
 	event = evt;
-	
+
 	gui = g;
 
 	screen = scr;

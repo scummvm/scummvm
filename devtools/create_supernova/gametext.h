@@ -844,20 +844,20 @@ const char *gameText2[] = {
 	"Rede",    //Talk
 	"Gib",    //Give
 	// 10
-	"Gehe zu ",    //Go to 
-	"Schau ",    //Look at 
-	"Nimm ",    //Take 
-	"\231ffne ",    //Open 
-	"Schlie\341e ",    //Close 
+	"Gehe zu ",    //Go to
+	"Schau ",    //Look at
+	"Nimm ",    //Take
+	"\231ffne ",    //Open
+	"Schlie\341e ",    //Close
 	// 15
-	"Dr\201cke ",    //Push 
-	"Ziehe ",    //Pull 
-	"Benutze ",    //Use 
-	"Rede mit ",    //Talk to 
-	"Gib ",    //Give 
+	"Dr\201cke ",    //Push
+	"Ziehe ",    //Pull
+	"Benutze ",    //Use
+	"Rede mit ",    //Talk to
+	"Gib ",    //Give
 	// 20
-	" an ",    // to 
-	" mit ",    // with 
+	" an ",    // to
+	" mit ",    // with
 	"Es ist nichts Besonderes daran.",    //There's nothing special about it.
 	"|", //Dialog separator
 	"Gespr\204ch beenden",    //End of conversation
@@ -1091,7 +1091,7 @@ const char *gameText2[] = {
 	"(Taxi verlassen)",    //(Leave the taxi)
 	// 215
 	"(Bezahlen)",    //(Pay)
-	"Adresse:|                              ",    //Address:|                              
+	"Adresse:|                              ",    //Address:|
 	"Fuddeln gilt nicht!|Zu diesem Zeitpunkt kannst du diese|Adresse noch gar nicht kennen!",    //Fiddling with the system doesn't work!|At this time you can not|even know this address!
 	"Du hast nicht|mehr genug Geld.",    //You do not|have enough money left.
 	"Du merkst, da\341 das Taxi stark beschleunigt.",    //You notice the taxi is accelerating rapidly.
@@ -1459,7 +1459,7 @@ const char *gameText2[] = {
 	"Stecken Sie sich Ihre|Tomaten an den Hut!",    //You can keep your tomatoes!
 	"Das kann ja jeder sagen!",    //Anyone can say that!
 	"Niemand \224ffnet.",    //Nobody answers.
-	"Welche Zahl willst du eingeben:      ",    //What number do you want to enter:      
+	"Welche Zahl willst du eingeben:      ",    //What number do you want to enter:
 	"Falsche Eingabe",    //Invalid input
 	// 525
 	"Der Aufzug bewegt sich.",    //The elevator is moving.

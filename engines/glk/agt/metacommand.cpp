@@ -40,7 +40,7 @@ namespace AGT {
 				many */
 
 #define MAX_SUBCALL 2047  /* Maximum number of subroutine calls.
-				 If this is 0, no limit (except for the 
+				 If this is 0, no limit (except for the
 				 program's stack size). */
 
 

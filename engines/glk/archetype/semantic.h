@@ -70,7 +70,7 @@ extern int classify_as(progfile &f, int id_number, ClassifyType interpretation, 
 /**
  * Given an ID_Table index, finds what it represents and returns an appropriate enumerated
  * type and index.
- * 
+ *
  * If /K is asserted, default return is UNDEFINED_ID; else it is ENUMERATE_ID.
  * @param id_number		integer index to ID_Table
  * @param meaning		Output classification of ID

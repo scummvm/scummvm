@@ -170,7 +170,7 @@ void SoundChannel::setVolume(uint volume, uint duration, uint notify) {
 
 	if (notify) {
 		warning("TODO: Gradual volume change");
-		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);	
+		g_vm->_events->store(evtype_VolumeNotify, nullptr, 0, notify);
 	}
 }
 

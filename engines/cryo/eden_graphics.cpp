@@ -36,7 +36,7 @@ namespace Cryo {
 EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_glowH = _glowW = _glowY = _glowX = 0;
 	_showVideoSubtitle = false;
-	_showBlackBars = false;	
+	_showBlackBars = false;
 	_mainView = nullptr;
 	_mainViewBuf = nullptr;
 	_hnmView = nullptr;
@@ -211,25 +211,25 @@ void EdenGraphics::loadMouthRectFromCurChar() {
 void EdenGraphics::paneltobuf() {
 	setSrcRect(0, 16, 320 - 1, 169 - 1);
 	setDestRect(320, 16, 640 - 1, 169 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 void EdenGraphics::cursbuftopanel() {
 	setSrcRect(434, 40, 525 - 1, 111 - 1);
 	setDestRect(114, 40, 205 - 1, 111 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 void EdenGraphics::langbuftopanel() {
 	setSrcRect(328, 42, 407 - 1, 97 - 1);
 	setDestRect(8, 42,  87 - 1, 97 - 1);
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 // Original name: sauvefondbouche
 void EdenGraphics::saveMouthBackground() {
 	loadMouthRectFromCurChar();
-	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);	
+	CLBlitter_CopyViewRect(getMainView(), getMainView(), &_rect_src, &_rect_dst);
 }
 
 // Original name: restaurefondbouche
@@ -1329,7 +1329,7 @@ void EdenGraphics::initGlobals() {
 	_underSubtitlesBackupRect.top = 0;
 	_underSubtitlesBackupRect.left = _subtitlesXScrMargin;
 	_underSubtitlesBackupRect.right = _subtitlesXScrMargin + _subtitlesXWidth - 1;
-	_underSubtitlesBackupRect.bottom = 60 - 1;	
+	_underSubtitlesBackupRect.bottom = 60 - 1;
 }
 
 // Original name: sauvefondbulle

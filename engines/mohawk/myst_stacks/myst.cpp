@@ -1712,7 +1712,7 @@ void Myst::observatoryIncrementDay(int16 increment) {
 		// Update slider
 		// WORKAROUND: Have the day setting increment at 315/100 rather than x3 so that the slider
 		// will reach the bottom spot on day 31st. Only relevant when using the down button and
-		// not dragging the slider. Fixes Trac#10572. The original engine incremented it with x3 
+		// not dragging the slider. Fixes Trac#10572. The original engine incremented it with x3
 		// and has this bug, but it is less noticeable.
 		_observatoryDaySlider->setPosition(91 + (_state.observatoryDaySetting * 315) / 100 );
 		_observatoryDaySlider->restoreBackground();

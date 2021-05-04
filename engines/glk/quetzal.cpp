@@ -206,7 +206,7 @@ Common::WriteStream &QuetzalWriter::add(uint32 chunkId) {
 void QuetzalWriter::save(Common::WriteStream *out, const Common::String &saveName, uint32 formType) {
 	// Add chunks common to all Glk savegames
 	addCommonChunks(saveName);
-	
+
 	// Calculate the size of the chunks
 	uint size = 4;
 	for (uint idx = 0; idx < _chunks.size(); ++idx)

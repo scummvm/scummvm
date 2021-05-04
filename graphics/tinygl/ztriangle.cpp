@@ -664,7 +664,7 @@ void FrameBuffer::fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	const bool interpSTZ = false;
 	if (_depthWrite && _depthTestEnabled)
 		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, true>(p0, p1, p2);
-	else 
+	else
 		fillTriangle<interpRGB, interpZ, interpST, interpSTZ, DRAW_DEPTH_ONLY, false>(p0, p1, p2);
 }
 

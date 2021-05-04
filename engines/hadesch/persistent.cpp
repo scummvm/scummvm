@@ -212,7 +212,7 @@ bool Persistent::syncGameStream(Common::Serializer &s) {
 		s.syncAsByte(_statuesTouched[i]);
 	for (unsigned i = 0; i < ARRAYSIZE(_statuePhase); i++)
 		s.syncAsByte(_statuePhase[i]);
-	
+
 	s.syncAsByte(_argoSaidTroyFinally);
 	s.syncAsByte(_argoSaidCretePort);
 
@@ -309,5 +309,5 @@ bool Persistent::syncGameStream(Common::Serializer &s) {
 
 	return true;
 }
-	
+
 }

@@ -534,7 +534,7 @@ void MidiDriver_BASE::midiDumpFinish() {
 	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
 	midiDumpFile->write("MTrk", 4);							// start of second track
 	midiDumpFile->writeUint32BE(_midiDumpCache.size() + 4);	// track size (+4 because of the 'end of track' event)
-	midiDumpFile->write(_midiDumpCache.data(), _midiDumpCache.size());	
+	midiDumpFile->write(_midiDumpCache.data(), _midiDumpCache.size());
 	midiDumpFile->write("\0\xff\x2f\0", 4);			    	// meta event - end of track
 	midiDumpFile->finalize();
 	midiDumpFile->close();

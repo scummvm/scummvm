@@ -41,7 +41,7 @@ private:
 	Common::Point _size;
 protected:
 	/**
-	 * Calculate a character width 
+	 * Calculate a character width
 	 */
 	int getSourceCharacterWidth(uint charIndex, const Graphics::Surface &src,
 		const Common::Rect &charBounds);

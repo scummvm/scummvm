@@ -173,7 +173,7 @@ static bool isSierraDemo(Common::String &sierraId, uint32 resourceCount) {
 	// TODO: distinguish the full version of Phantasmagoria from the demo
 	// TODO: distinguish the full version of RAMA from the demo
 	// TODO: distinguish the full version of SQ6 from the demo
-	
+
 	return resourceCount < demoThreshold;
 }
 
@@ -234,7 +234,7 @@ static Common::String convertSierraGameId(Common::String sierraId, SciVersion sc
 		// late (PC).
 		return sciVersion < SCI_VERSION_1_1 ? "castlebrain" : "islandbrain";
 	}
-	
+
 	if (sierraId == "glory") {
 		// QFG1EGA, QFG1VGA, QFG3 and QFG4 all used the "glory" game ID
 
@@ -589,7 +589,7 @@ bool isSciCDVersion(const AdvancedMetaEngine::FileMap &allFiles) {
 
 void constructFallbackDetectionEntry(Common::String &gameId, Common::Platform platform, SciVersion sciVersion, Common::Language language, bool hasEgaViews, bool isCD, bool isDemo) {
 	Common::strlcpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf));
-	
+
 	s_fallbackDesc.extra = "";
 	s_fallbackDesc.language = language;
 	s_fallbackDesc.flags = !isCD ? ADGF_NO_FLAGS : ADGF_CD;
@@ -637,7 +637,7 @@ void constructFallbackDetectionEntry(Common::String &gameId, Common::Platform pl
 			s_fallbackDesc.extra = "Demo";
 		else if (isCD)
 			s_fallbackDesc.extra = "CD";
-	}	
+	}
 }
 
 ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
@@ -683,7 +683,7 @@ ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap 
 	bool isDemo = false;
 	Common::String gameId = convertSierraGameId(sierraGameId, sciVersion, resMan, &isDemo);
 	Common::Language language = Common::EN_ANY;
-	
+
 	// Try to determine the game language
 	// Load up text 0 and start looking for "#" characters
 	// Non-English versions contain strings like XXXX#YZZZZ

@@ -27,7 +27,7 @@ namespace BladeRunner {
 AIScriptIsabella::AIScriptIsabella(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 0;
 	_varNumOfTimesToHoldCurrentFrame = 0;
-	// _varChooseIdleAnimation can have valid values: 0, 
+	// _varChooseIdleAnimation can have valid values: 0,
 	_varChooseIdleAnimation = 0;
 	_var4 = 1;
 }

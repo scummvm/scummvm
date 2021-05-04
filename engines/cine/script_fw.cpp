@@ -3215,7 +3215,7 @@ void decompileScript(const byte *scriptPtr, uint16 scriptSize, uint16 scriptIdx)
 			position++;
 
 			sprintf(lineBuffer, "o2_wasZoneChecked(%d)\n", param1);
-			
+
 			break;
 		}
 

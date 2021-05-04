@@ -34,13 +34,13 @@ int cmdtog(errcxdef *ec, int prv, char *argp, int ofs,
 	{
 	case '+':
 		return(TRUE);
-		
+
 	case '-':
 		return(FALSE);
-		
+
 	case '\0':
 		return(!prv);
-		
+
 	default:
 		/* invalid - display usage if we have a callback for it */
 		if (usagefn != 0)
@@ -56,23 +56,23 @@ char *cmdarg(errcxdef *ec, char ***argpp, int *ip, int argc, int ofs,
 {
 	char *ret;
 
-	/* 
+	/*
 	 *   check to see if the argument is appended directly to the option;
-	 *   if not, look at the next string 
+	 *   if not, look at the next string
 	 */
 	ret = (**argpp) + ofs + 1;
 	if (*ret == '\0')
 	{
-		/* 
+		/*
 		 *   it's not part of this string - get the argument from the next
-		 *   string in the vector 
+		 *   string in the vector
 		 */
 		++(*ip);
 		++(*argpp);
 		ret = (*ip >= argc ? 0 : **argpp);
 	}
 
-	/* 
+	/*
 	 *   if we didn't find the argument, it's an error - display usage if
 	 *   we have a valid usage callback
 	 */

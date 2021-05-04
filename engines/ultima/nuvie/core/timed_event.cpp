@@ -755,7 +755,7 @@ TimedRest::TimedRest(uint8 hours, Actor *who_will_guard, Obj *campfire_obj)
 TimedRest::~TimedRest() {
 	//MapCoord loc = Game::get_game()->get_player()->get_actor()->get_location();
 	assert(campfire != 0);
-	
+
 	campfire->frame_n = 0; // extinguish campfire
 
 	bool can_heal = (Game::get_game()->get_clock()->get_rest_counter() == 0); //only heal once every 12 hours.

@@ -841,7 +841,7 @@ void GameManager::edit(Common::String &input, int x, int y, uint length) {
 						kScreenWidth - x : (length + 1) * (kFontWidth + 2);
 		background = kColorDarkBlue;
 	} else if (_vm->_MSPart == 2) {
-		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x)) 
+		overdrawWidth = ((int)((length + 1) * (kFontWidth2 + 2)) > (kScreenWidth - x))
 			? kScreenWidth - x : (length + 1) * (kFontWidth2 + 2);
 		background = kColorWhite35;
 	}

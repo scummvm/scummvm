@@ -507,7 +507,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 #else
 		glActiveTexture(GL_TEXTURE0);
 #endif
-		
+
 		glViewport(0, 0, _width, _height);
 		setProjection2D();
 	}

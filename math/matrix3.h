@@ -37,7 +37,7 @@ public:
 
 	void transpose();
 
-	
+
 	/**
 	 * Builds a matrix that maps the given local space forward direction vector to point towards the given
 	 * target direction, and the given local up direction towards the given target world up direction.

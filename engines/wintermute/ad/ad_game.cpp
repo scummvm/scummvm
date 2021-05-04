@@ -1602,7 +1602,7 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 	bool isCorrosion = BaseEngine::instance().getGameId() == "corrosion";
-	
+
 	if (isCorrosion) {
 		// Corrosion Enhanced Edition contain city map screen, which is
 		// mouse controlled and conflicts with those custom actions
@@ -1658,7 +1658,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 			for (uint32 i = 0; i < objects.size(); i++) {
 				BaseRegion *region;
 				if (objects[i]->getType() != OBJECT_ENTITY ||
-					!objects[i]->_active || 
+					!objects[i]->_active ||
 					!objects[i]->_registrable ||
 					(!(region = ((AdEntity *)objects[i])->_region))
 				) {
@@ -1673,7 +1673,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 					break;
 				}
 
-				// Something at the edge? Available with other actions. 
+				// Something at the edge? Available with other actions.
 				if (region->pointInRegion(xLeft, yCenter) ||
 					region->pointInRegion(xRight, yCenter) ||
 					region->pointInRegion(xCenter, yBottom) ||
@@ -1699,7 +1699,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 	}
 
 	BasePlatform::setCursorPos(p.x, p.y);
-	setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y)); 
+	setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y));
 	onMouseLeftDown();
 	onMouseLeftUp();
 	return true;
@@ -2422,7 +2422,7 @@ bool AdGame::onMouseLeftUp() {
 	} else {
 		handled = DID_SUCCEED(applyEvent("LeftRelease"));
 	}
-	
+
 	if (!handled) {
 		if (_activeObject != nullptr) {
 			_activeObject->applyEvent("LeftRelease");

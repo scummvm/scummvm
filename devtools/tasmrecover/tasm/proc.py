@@ -24,7 +24,7 @@ import op
 
 class proc:
 	last_addr = 0xc000
-	
+
 	def __init__(self, name):
 		self.name = name
 		self.calls = []
@@ -48,7 +48,7 @@ class proc:
 			if isinstance(self.stmts[i], op.label) and self.stmts[i].name == label:
 				self.stmts[i] = op._nop(None)
 				return
-	
+
 	def optimize_sequence(self, cls):
 		i = 0
 		stmts = self.stmts
@@ -88,7 +88,7 @@ class proc:
 				stmts[i] = op._nop(None)
 			i += 1
 		return
-	
+
 	def optimize(self, keep_labels=[]):
 		print "optimizing..."
 		#trivial simplifications
@@ -126,7 +126,7 @@ class proc:
 					self.stmts.pop(i)
 			else:
 				i += 1
-		
+
 		#eliminating unused labels
 		for s in list(self.stmts):
 			if not isinstance(s, op.label):
@@ -156,7 +156,7 @@ class proc:
 		self.optimize_sequence(op._stosw);
 		self.optimize_sequence(op._movsb);
 		self.optimize_sequence(op._movsw);
-	
+
 	def add(self, stmt):
 		#print stmt
 		comment = stmt.rfind(';')
@@ -173,14 +173,14 @@ class proc:
 
 		if len(stmt) == 0:
 			return
-		
+
 		s = stmt.split(None)
 		cmd = s[0]
 		cl = getattr(op, '_' + cmd)
 		arg = " ".join(s[1:]) if len(s) > 1 else str()
 		o = cl(arg)
 		self.stmts.append(o)
-	
+
 	def __str__(self):
 		r = []
 		for i in self.stmts:

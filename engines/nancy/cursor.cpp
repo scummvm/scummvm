@@ -111,7 +111,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 
 	// Create a temporary surface to hold the cursor since giving replaceCursor() a pointer
 	// to the original surface results in garbage. This also makes it so we don't have to deal
-	// with TVD's palettes 
+	// with TVD's palettes
 	Graphics::ManagedSurface temp;
 	temp.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getScreenPixelFormat());
 	temp.blitFrom(*surf, bounds, Common::Point());

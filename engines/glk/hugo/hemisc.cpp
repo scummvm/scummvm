@@ -119,7 +119,7 @@ void Hugo::AP(const char *a) {
 	for (i=0; i<alen; i++)
 	{
 		c = a[i];
-		
+
 		/* Left-justification */
 		if (thisline==0 && c==' ' && !textto && currentpos==0)
 			continue;
@@ -256,7 +256,7 @@ AddFontCode:
 			{
 				SETMEM(arraytable*16L + textto*2 + n, 0);
 				textto++;
-			}			
+			}
 			else if ((unsigned char)c >= ' ')
 			{
 				SETMEM(arraytable*16L + textto*2 + n, c);
@@ -544,7 +544,7 @@ void Hugo::ContextCommand() {
 ContextCommandLoop:
 
 	codeptr++;
-	
+
 	n = GetValue();
 #if !defined (COMPILE_V25)
 	if (n==0)
@@ -611,7 +611,7 @@ unsigned int Hugo::Dict() {
 		pos += Peek(pos) + 1;
 
 	loc = pos - 2;
-	
+
 	if ((long)(pos+strlen(line)) > (long)(codeend-dicttable*16L))
 	{
 #ifdef DEBUGGER
@@ -759,7 +759,7 @@ void Hugo::FileIO() {
 	if (game_version>=23) codeptr++; /* eol */
 
 	ioerror = 0;
-	
+
 	/* Make sure the filename is legal, 8 alphanumeric characters or less */
 	strcpy(line, GetWord(fnameval));
 	if (strlen(line) > 8) goto LeaveFileIO;
@@ -891,7 +891,7 @@ void Hugo::GetCommand() {
 		physical_windowleft+width, y+lineheight-1);
 
 	hugo_getline(a);
-	
+
 	/* If hugo_scrollwindowup() called by hugo_getline() shifted things */
 	if (current_text_y > y)
 	{
@@ -905,7 +905,7 @@ void Hugo::GetCommand() {
 		if (buffer[i]==' ')
 		{
 			buffer[i] = '\0';
-			TB_AddWord(buffer+start, physical_windowleft+width, y-lineheight, 
+			TB_AddWord(buffer+start, physical_windowleft+width, y-lineheight,
 				physical_windowleft+width+hugo_textwidth(buffer+start), y-1);
 			width += hugo_textwidth(buffer+start) + hugo_textwidth(" ");
 			start = i+1;
@@ -913,7 +913,7 @@ void Hugo::GetCommand() {
 		}
 	}
 	/* Add the final word */
-	TB_AddWord(buffer+start, physical_windowleft+width, y-lineheight, 
+	TB_AddWord(buffer+start, physical_windowleft+width, y-lineheight,
 		physical_windowleft+width+hugo_textwidth(buffer+start), y-1);
 #else
 	hugo_getline(a);
@@ -1050,25 +1050,25 @@ void Hugo::InitGame() {
 	context_commands = 0;
 #endif
 	game_reset = false;
-	
+
 	SetStackFrame(stack_depth, RUNROUTINE_BLOCK, 0, 0);
 
 	/* Figure out which objects have either a noun or an adjective property;
 	   store it in obj_parselist, one bit per object */
 	if ((!obj_parselist) && (obj_parselist = (char *)hugo_blockalloc(sizeof(char)*((objects+7)/8))))
 	{
-		
+
 		for (i=0; i<objects; i++)
 		{
 			if (i%8==0) obj_parselist[i/8] = 0;
-			
+
 			if (PropAddr(i, adjective, 0) || PropAddr(i, noun, 0))
 				obj_parselist[i/8] |= 1 << (i%8);
 			else
 				obj_parselist[i/8] &= ~(1 << (i%8));
 		}
 	}
-	
+
 #if defined (GLK)
 	if (_savegameSlot == -1) {
 #endif
@@ -1301,7 +1301,7 @@ void Hugo::LoadGame() {
 			}
 		}
 	}
-	
+
 	/* build punctuation string (additional user-specified punctuation) */
 	synptr = 2;
 	strcpy(punc_string, "");
@@ -1478,7 +1478,7 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 	/* hugo_font() should do this if necessary, but just in case */
 	if (lineheight < FIXEDLINEHEIGHT)
 		lineheight = FIXEDLINEHEIGHT;
-	
+
 	tempfcolor = fcolor;
 
 	/* The before-check of the linecount: */
@@ -1501,7 +1501,7 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 	/* The easy part is just skimming <a> and processing each code
 	   or printed character, as the case may be:
 	*/
-	
+
 	l = 0;	/* physical length of string */
 
 	for (i=0; i<(int)strlen(a); i++)
@@ -1651,7 +1651,7 @@ void Hugo::Printout(char *a, int no_scrollback_linebreak) {
 		if (!playback) skipping_more = false;
 
 		++full;
-		
+
 		/* The after-check of the linecount: */
 		if ((full) && full >= physical_windowheight/lineheight)
 		{
@@ -1678,14 +1678,14 @@ void Hugo::PromptMore() {
 	char temp_during_player_input;
 	int k, tempcurrentfont;
 	int temp_current_text_y = current_text_y;
-	
+
 	if (playback && skipping_more)
 	{
 		full = 0;
 		return;
 	}
 	skipping_more = false;
-	
+
 	/* Clear the key buffer */
 	while (hugo_iskeywaiting()) hugo_getkey();
 
@@ -2367,7 +2367,7 @@ void srandom(int seed)
 	rand_table[54] = seed;
 	rand_index1 = 0;
 	rand_index2 = 31;
-	
+
 	for (i = 0; i < 55; i++)
 	{
 		int ii = (21 * i) % 55;
@@ -2376,7 +2376,7 @@ void srandom(int seed)
 		k = seed - k;
 		seed = rand_table[ii];
 	}
-	
+
 	for (loop = 0; loop < 4; loop++)
 	{
 		for (i = 0; i < 55; i++)

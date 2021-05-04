@@ -64,7 +64,7 @@ private:
 	uint getBuyCost(int transportIndex) const;
 
 	/**
-	 * Add a transport to the overworld map 
+	 * Add a transport to the overworld map
 	 */
 	void addTransport(int transportIndex);
 protected:

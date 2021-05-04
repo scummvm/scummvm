@@ -155,7 +155,7 @@ scummvm (1.5.0+dfsg-1) unstable; urgency=low
 scummvm (1.4.1-1) unstable; urgency=low
 
   * New upstream release
-  * Install translations.dat into scummvm-data	
+  * Install translations.dat into scummvm-data
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Sat, 14 Jan 2012 11:39:15 +0100
 
@@ -166,7 +166,7 @@ scummvm (1.4.0-1) unstable; urgency=low
   * Remove Build-Conflicts on liboss-salsa-dev and disable ALSA on
     kfreebsd (Closes: #647124)
   * Bump debhelper level to 9, which enables default build flags
-    and thus hardened compiler flags	
+    and thus hardened compiler flags
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Sat, 05 Nov 2011 10:29:43 +0100
 
@@ -220,7 +220,7 @@ scummvm (1.2.0-1) unstable; urgency=low
   * Update to standards version 3.9.1:
     - Modify asound build dep to linux-any
   * Unversion several build deps even supported in oldstable
-	
+
  -- Moritz Muehlenhoff <jmm@debian.org>  Tue, 12 Oct 2010 21:49:29 +0200
 
 scummvm (1.1.1-1) unstable; urgency=low
@@ -228,7 +228,7 @@ scummvm (1.1.1-1) unstable; urgency=low
   * New upstream release
   * Switch to bz2 upstream tarball
   * Disable SCI engine as requested by upstream, it's not yet ready to
-    replace FreeSCI	
+    replace FreeSCI
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Fri, 07 May 2010 18:57:09 +0200
 
@@ -280,14 +280,14 @@ scummvm (1.0.0~rc1-1-1) unstable; urgency=low
   * Remove dh_desktop
   * Version the dependency on debhelper
   * Bump Standards-Version to 3.8.1, no changes needed
-  * Update copyright file	
+  * Update copyright file
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Tue, 01 Sep 2009 22:11:17 +0200
 
 scummvm (0.13.1-1) unstable; urgency=low
 
   * New upstream release (Closes: #530863)
-  * Bump Standards-Version to 3.8.1, add Homepage field	
+  * Bump Standards-Version to 3.8.1, add Homepage field
   * Bump debhelper level to 7
   * Build-depend on ghostscript instead of gs-gpl
   * Build-depend on texlive-base instead of tetex-bin
@@ -301,7 +301,7 @@ scummvm (0.13.0-1) unstable; urgency=low
   * Move maintainer to Debian Games Team, add myself and David as
     uploaders
   * Fix link to compability matrix in package description
-    (Closes: #508894) 
+    (Closes: #508894)
 
  -- Moritz Muehlenhoff <jmm@debian.org>  Sat, 07 Mar 2009 01:18:12 +0100
 
@@ -341,7 +341,7 @@ scummvm (0.9.1-1) unstable; urgency=low
 
   * New upstream release
   * debian/prepare: refer to me instead
-  * debian/copyright: add the date I adopted the package 
+  * debian/copyright: add the date I adopted the package
 
  -- David Weinehall <tao@debian.org>  Mon, 30 Oct 2006 16:44:12 +0200
 
@@ -581,7 +581,7 @@ scummvm (0.5.0-1) unstable; urgency=low
   * Restructure 00buildopts somewhat, to ease future maintenance.
   * Standards-Version 3.6.0, no changes required.
   * Revised the description.
-  * Sponsored by Joey Hess. (Tore fed me all the beer I could take .. 
+  * Sponsored by Joey Hess. (Tore fed me all the beer I could take ..
     and then asked me to do this. ;-)
 
  -- Tore Anderson <tore@linpro.no>  Fri,  1 Aug 2003 21:45:06 +0200

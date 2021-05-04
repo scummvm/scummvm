@@ -121,7 +121,7 @@ void SceneScriptUG12::PlayerWalkedIn() {
 	// thus kItemChair is still present and with a bit of pixel hunt also visible in this scene
 	// fix: remove rogue clickable chair item in this scene only.
 	// This code has to be in PlayerWalkedIn() (which is executed after SceneLoaded() when player enters the scene)
-	// and not in SceneLoaded(), as in that method, the item is not yet available in the sceneObjects 
+	// and not in SceneLoaded(), as in that method, the item is not yet available in the sceneObjects
 	// (SceneObjects::findById() returns -1 for it, in SceneLoaded())
 	Item_Remove_From_Current_Scene(kItemChair);
 #endif // !BLADERUNNER_ORIGINAL_BUGS

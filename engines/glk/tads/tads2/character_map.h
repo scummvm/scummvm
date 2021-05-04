@@ -33,7 +33,7 @@ struct errcxdef;
 /*
  *   Initialize the default character mappings.  If no mapping file is to
  *   be read, this function will establish identify mappings that leave
- *   characters untranslated. 
+ *   characters untranslated.
  */
 void cmap_init_default(void);
 
@@ -47,7 +47,7 @@ int cmap_load(char *filename);
 
 /*
  *   Turn off character translation.  This overrides any game character
- *   set that we find and simply uses the default translation. 
+ *   set that we find and simply uses the default translation.
  */
 void cmap_override(void);
 
@@ -62,10 +62,10 @@ void cmap_override(void);
  *   already been explicitly loaded, since an explicitly-loaded character
  *   set overrides the automatic character set selection that we attempt
  *   when loading a game.
- *   
+ *
  *   argv0 must be provided so that we know where to look for our mapping
  *   file on systems where mapping files are stored in the same directory
- *   as the TADS executables.  
+ *   as the TADS executables.
  */
 void cmap_set_game_charset(struct errcxdef *errctx,
 						   char *internal_id, char *internal_ldesc,
@@ -74,7 +74,7 @@ void cmap_set_game_charset(struct errcxdef *errctx,
 
 /* ------------------------------------------------------------------------ */
 /*
- *   Mapping macros 
+ *   Mapping macros
  */
 
 /* map a native character (read externally) into an internal character */
@@ -87,18 +87,18 @@ void cmap_set_game_charset(struct errcxdef *errctx,
 /* ------------------------------------------------------------------------ */
 /*
  *   Global character mapping tables.  The character map is established at
- *   start-up. 
+ *   start-up.
  */
 
-/* 
+/*
  *   input-mapping table - for native character 'n', cmap_input[n] yields
- *   the internal character code 
+ *   the internal character code
  */
 extern unsigned char G_cmap_input[256];
 
 /*
  *   output-mapping table - for internal character 'n', cmap_output[n]
- *   yields the output character code 
+ *   yields the output character code
  */
 extern unsigned char G_cmap_output[256];
 
@@ -110,15 +110,15 @@ extern char G_cmap_id[5];
 extern char G_cmap_ldesc[CMAP_LDESC_MAX_LEN + 1];
 
 /*
- *   Maximum expansion for an HTML entity mapping 
+ *   Maximum expansion for an HTML entity mapping
  */
 #define CMAP_MAX_ENTITY_EXPANSION  50
 
 
 /* ------------------------------------------------------------------------ */
-/* 
+/*
  *   Signatures for character map files.  The signature is stored at the
- *   beginning of the file.  
+ *   beginning of the file.
  */
 
 /* single-byte character map version 1.0.0 */

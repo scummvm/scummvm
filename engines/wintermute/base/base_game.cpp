@@ -2331,7 +2331,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// Used at kalimba.script on F9 keypress to reload list of available music
 	// Known params: "*.mb"
 	// Original implementation does not seem to look up at DCP packages
-	// This implementation looks up at savegame storage and for actual files 
+	// This implementation looks up at savegame storage and for actual files
 	// Return value expected to be an Array of Strings
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFiles") == 0) {
@@ -2340,7 +2340,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		Common::StringArray fnames;
 		BaseFileManager::getEngineInstance()->listMatchingFiles(fnames, pattern);
-		
+
 		stack->pushInt(0);
 		BaseScriptable *arr = makeSXArray(_gameRef, stack);
 		for (uint32 i = 0; i < fnames.size(); i++) {
@@ -3663,7 +3663,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "IsNumber") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		
+
 		bool result = false;
 		if (val->isInt() || val->isFloat()) {
 			result = true;
@@ -3725,7 +3725,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *str = stack->pop()->getString();
 		char *copy = new char[strlen(str) + 1];
-		strcpy(copy, str); 
+		strcpy(copy, str);
 
 		char *ptr = copy;
 		if (strcmp(name, "rTrim") != 0) {

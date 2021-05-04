@@ -291,7 +291,7 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 			_passwordEntered.deleteLastChar();
 	} else if ((character.keycode == Common::KEYCODE_SPACE || (character.keycode >= Common::KEYCODE_a && character.keycode <= Common::KEYCODE_z) ||
 			(character.keycode >= Common::KEYCODE_0 && character.keycode <= Common::KEYCODE_9)) && _passwordEntered.size() < 15) {
-	
+
 		if (character.keycode == Common::KEYCODE_SPACE)
 			_passwordEntered += ' ';
 		else if (character.keycode >= Common::KEYCODE_a && character.keycode <= Common::KEYCODE_z)
@@ -952,7 +952,7 @@ int PlayTransporterClosing::postExitRoom(Window *viewWindow, const Location &new
 
 	return SC_TRUE;
 }
- 
+
 bool SceneViewWindow::initializeAgent3LairTimeZoneAndEnvironment(Window *viewWindow, int environment) {
 	if (environment == -1)
 		((SceneViewWindow *)viewWindow)->getGlobalFlags().alNMWrongAlienPrefixCode = 0;

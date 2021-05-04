@@ -38,16 +38,16 @@ namespace TADS2 {
  *   between operating systems.  The application container context is an
  *   optional mechanism that the main application can use to provide
  *   structured interaction between itself and the TADS run-time subsystem.
- *   
+ *
  *   The function pointers contained herein are intended to allow the
  *   run-time subsystem to call the host system to notify it of certain
  *   events, or obtain optional services from the host system.  Any of
  *   these function pointers can be null, in which case the run-time
  *   subsystem will skip calling them.
- *   
+ *
  *   Note that each function has an associated callback context.  This
  *   allows the host system to recover any necessary context information
- *   when the callback is invoked.  
+ *   when the callback is invoked.
  */
 struct appctxdef {
 	/**
@@ -61,9 +61,9 @@ struct appctxdef {
 	 *   system, for example, to display a dialog prompting the user to
 	 *   select a game file to open.  A trivial implementation of this
 	 *   routine (that merely returns false) is okay.
-	 *   
+	 *
 	 *   This routine should return true (any non-zero value) if it
-	 *   provides the name of a file to open, false (zero) if not.  
+	 *   provides the name of a file to open, false (zero) if not.
 	 */
 	int (*get_game_name)(void *appctxdat, char *buf, size_t buflen);
 	void *get_game_name_ctx;
@@ -72,7 +72,7 @@ struct appctxdef {
 	 *   Set the .GAM file name.  When the run-time determines the name of
 	 *   the file it will use to read the game, it calls this routine.
 	 *   The host system should note the game filename if it will need to
-	 *   access the game file itself (for example, to load resources).  
+	 *   access the game file itself (for example, to load resources).
 	 */
 	void (*set_game_name)(void *appctxdat, const char *fname);
 	void *set_game_name_ctx;
@@ -80,7 +80,7 @@ struct appctxdef {
 	/**
 	 *   Set the root path for individual resources.  By default, we use the
 	 *   directory containing the game file, but this can be used to override
-	 *   that.  
+	 *   that.
 	 */
 	void (*set_res_dir)(void *appctxdat, const char *fname);
 	void *set_res_dir_ctx;
@@ -90,9 +90,9 @@ struct appctxdef {
 	 *   reader encounters a resource map in the file, it calls this
 	 *   routine with the seek offset of the first resource.  Each
 	 *   resource's address is given as an offset from this point.
-	 *   
+	 *
 	 *   fileno is the file number assigned by the host system in
-	 *   add_resfile.  File number zero is always the .GAM file.  
+	 *   add_resfile.  File number zero is always the .GAM file.
 	 */
 	void (*set_resmap_seek)(void *appctxdat, unsigned long seekpos, int fileno);
 	void *set_resmap_seek_ctx;
@@ -106,7 +106,7 @@ struct appctxdef {
 	 *   added before the resource map seek position is set, so the host
 	 *   system must simply store the resource information for later use.
 	 *   The 'fileno' is zero for the .GAM file, or the number assigned by
-	 *   the host system in add_resfile for other resource files.  
+	 *   the host system in add_resfile for other resource files.
 	 */
 	void (*add_resource)(void *appctxdat, unsigned long ofs,
 						 unsigned long siz, const char *nm, size_t nmlen,
@@ -125,7 +125,7 @@ struct appctxdef {
 	 *   copying the resource data into the .GAM file, but still allows the
 	 *   game to load resources by .GAM resource name, to create a testing
 	 *   environment that's consistent with the full build version (where the
-	 *   resources would actually be copied).  
+	 *   resources would actually be copied).
 	 */
 	void (*add_resource_link)(void *appctxdat,
 							  const char *fname, size_t fnamelen,
@@ -135,7 +135,7 @@ struct appctxdef {
 	/**
 	 *   Add a resource path.  'path' is a string giving a directory prefix
 	 *   in local system notation.
-	 *   
+	 *
 	 *   This adds a directory to the list of directories that we'll search
 	 *   when we're looking for an individual resource as an external file
 	 *   (such as a ".jpg" image file or ".ogg" sound file).  This can be
@@ -143,7 +143,7 @@ struct appctxdef {
 	 *   search after any previous directories.  We'll always search the
 	 *   default directory first (this is the directory containing the game
 	 *   file); then we'll search directories added with this call in the
-	 *   order in which the directories were added.  
+	 *   order in which the directories were added.
 	 */
 	void (*add_res_path)(void *appctxdat, const char *path, size_t len);
 	void *add_res_path_ctx;
@@ -153,7 +153,7 @@ struct appctxdef {
 	 *   return an osfildef* handle to the resource, with its seek position
 	 *   set to the first byte of the resource data, and set *res_size to
 	 *   the size in bytes of the resource data in the file.  If the
-	 *   resource cannot be found, returns null.  
+	 *   resource cannot be found, returns null.
 	 */
 	osfildef *(*find_resource)(void *appctxdat,
 							   const char *resname, size_t resnamelen,
@@ -164,9 +164,9 @@ struct appctxdef {
 	 *   Add a resource file.  The return value is a non-zero file number
 	 *   assigned by the host system; we'll use this number in subsequent
 	 *   calls to add_resource to add the resources from this file.
-	 *   
+	 *
 	 *   After calling this routine to add the file, we'll parse the file
-	 *   and add any resources using add_resource.  
+	 *   and add any resources using add_resource.
 	 */
 	int (*add_resfile)(void *appctxdat, const char *fname);
 	void *add_resfile_ctx;
@@ -174,7 +174,7 @@ struct appctxdef {
 	/**
 	 *   Determine if a resource exists.  Returns true if the resource can
 	 *   be loaded, false if not.  The resource name is in the standard
-	 *   URL-style format.  
+	 *   URL-style format.
 	 */
 	int (*resfile_exists)(void *appctxdat, const char *res_name,
 						  size_t res_name_len);
@@ -188,7 +188,7 @@ struct appctxdef {
 	 *   file.  Note that if the path is provided, it must be set up with
 	 *   a trailing path separator character, so that we can directly
 	 *   append a name to this path to form a valid fully-qualified
-	 *   filename.  
+	 *   filename.
 	 */
 	const char *ext_res_path;
 
@@ -204,9 +204,9 @@ struct appctxdef {
 	 *   function), we'll call the host system to ask it for the current
 	 *   setting, and use this new setting rather than the original command
 	 *   line setting.
-	 *   
+	 *
 	 *   Refer to bif.c for information on the meanings of the file safety
-	 *   levels.  
+	 *   levels.
 	 */
 	void (*set_io_safety_level)(void *ctx, int read, int write);
 	void (*get_io_safety_level)(void *ctx, int *read, int *write);
@@ -222,13 +222,13 @@ struct appctxdef {
 	 *   controls the game's ability to create servers of its own and accept
 	 *   incoming connections.  Each component can be set to one of the
 	 *   following:
-	 *   
+	 *
 	 *.     0 = no restrictions (least "safety"): all network access granted
 	 *.     1 = 'localhost' access only
 	 *.     2 = no network access
-	 *   
+	 *
 	 *   This only applies to the TADS 3 VM.  TADS 2 doesn't support any
-	 *   network features, so this doesn't apply.  
+	 *   network features, so this doesn't apply.
 	 */
 	void (*set_net_safety_level)(void *ctx, int client_level, int srv_level);
 	void (*get_net_safety_level)(void *ctx, int *client_level, int *srv_level);
@@ -237,7 +237,7 @@ struct appctxdef {
 	/**
 	 *   Name of run-time application for usage messages.  If this is
 	 *   null, the default run-time application name will be used for
-	 *   usage messages. 
+	 *   usage messages.
 	 */
 	const char *usage_app_name;
 };

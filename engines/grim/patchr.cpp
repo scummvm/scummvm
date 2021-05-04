@@ -219,7 +219,7 @@ uint32 PatchedFile::read(void *dataPtr, uint32 dataSize) {
 					WRITE_UINT32((uint32 *)data + i, READ_UINT32((uint32 *)data + i) ^ READ_UINT32((uint32 *)_diffBuffer + i));
 				for (uint32 i = diffRead - diffRead % 4; i < diffRead; ++i)
 					data[i] ^= _diffBuffer[i];
-				
+
 				readSize -= diffRead;
 				data += diffRead;
 			}

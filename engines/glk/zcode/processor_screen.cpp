@@ -214,7 +214,7 @@ void Processor::erase_window(zword win) {
 		_wp[win].updateColors();
 
 	_wp[win].clear();
-		
+
 	if (h_version == V6 && win != _wp._cwin && h_interpreter_number != INTERP_AMIGA)
 		_wp[_wp._cwin].updateColors();
 }
@@ -243,7 +243,7 @@ void Processor::z_erase_line() {
 
 void Processor::z_erase_window() {
 	short w = (short)zargs[0];
-	
+
 	flush_buffer();
 
 	if (w == -1 || w == -2)

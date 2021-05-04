@@ -408,13 +408,13 @@ int BaseFileManager::listMatchingPackageMembers(Common::ArchiveMemberList &list,
 //////////////////////////////////////////////////////////////////////////
 int BaseFileManager::listMatchingFiles(Common::StringArray &list, const Common::String &pattern) {
 	list = sfmFileList(pattern);
-	
+
 	Common::ArchiveMemberList files;
 	listMatchingDiskFileMembers(files, pattern);
 	for (Common::ArchiveMemberList::const_iterator it = files.begin(); it != files.end(); ++it) {
 		list.push_back((*it)->getName());
 	}
-		
+
 	return list.size();
 }
 

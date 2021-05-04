@@ -33,7 +33,7 @@ namespace Stark {
 
 namespace Gfx {
 class Texture;
-class SurfaceRenderer;	
+class SurfaceRenderer;
 }
 
 class SaveDataWidget;
@@ -76,7 +76,7 @@ private:
 	int _maxPage;
 
 	void backHandler();
-	
+
 	void prevPageHandler() { changePage(_page - 1); }
 	void nextPageHandler() { changePage(_page + 1); }
 
@@ -91,7 +91,7 @@ private:
  */
 class SaveMenuScreen : public SaveLoadMenuScreen {
 public:
-	SaveMenuScreen(Gfx::Driver *gfx, Cursor *cursor) : 
+	SaveMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 			SaveLoadMenuScreen(gfx, cursor, Screen::kScreenSaveMenu),
 			_slotToSaveAfterConfirm(nullptr) {}
 	virtual ~SaveMenuScreen() {}
@@ -115,7 +115,7 @@ private:
  */
 class LoadMenuScreen : public SaveLoadMenuScreen {
 public:
-	LoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor) : 
+	LoadMenuScreen(Gfx::Driver *gfx, Cursor *cursor) :
 			SaveLoadMenuScreen(gfx, cursor, Screen::kScreenLoadMenu),
 			_slotToLoadAfterConfirm(-1) {}
 	~LoadMenuScreen() override {}

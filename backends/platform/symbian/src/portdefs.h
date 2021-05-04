@@ -37,7 +37,7 @@
 #pragma GCC diagnostic ignored "-Wnarrowing"
 #endif
 #include <e32def.h>
-#if !defined(__IGNORE__E32STD_H__) // TKey type from system header 
+#if !defined(__IGNORE__E32STD_H__) // TKey type from system header
 #include <e32std.h> // doesn't meets with lua ones.
 #endif
 #if (__GNUC__ && __cplusplus)
@@ -178,7 +178,7 @@ namespace std
 	((sizeof (x) == sizeof (float)) ? __signbitf(x) \
 	: (sizeof (x) == sizeof (double)) ? __signbit(x) \
 	: __signbitl(x))
-#endif 
+#endif
 
 // Functions from openlibm not declared in Symbian math.h
 extern "C"{

@@ -266,7 +266,7 @@ extern const RoomTextOffsets love4TextOffsets[] = {
 	//{ TX_BRIDU146, 7082, 0 },
 	//{ TX_BRIDU146, 6918, 0 },
 	//{ TX_BRIDU146, 6585, 0 },
-	{ TX_GENER004, 5405, 0 },	
+	{ TX_GENER004, 5405, 0 },
 	{          -1, 0,    0 }
 };
 

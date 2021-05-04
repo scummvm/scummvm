@@ -36,7 +36,7 @@ void Archive::decryptHeader(Common::SeekableReadStream &inStream, Common::WriteS
 	uint32 size = inStream.readUint32LE();
 
 	bool encrypted = size > 1000000;
-	
+
 	inStream.seek(0);
 
 	if (encrypted) {
@@ -199,7 +199,7 @@ bool Archive::open(const char *fileName, const char *room) {
 		readDirectory();
 		return true;
 	}
-	
+
 	return false;
 }
 

@@ -92,7 +92,7 @@ SECTIONS
 		KEEP (*(.fini))
 		. = ALIGN(32);   /* REQUIRED. LD is flaky without it. */
 	} = 0
-	
+
 	PROVIDE (__etext = .);
 	PROVIDE (_etext = .);
 	PROVIDE (etext = .);
@@ -179,7 +179,7 @@ SECTIONS
 
 	_edata = .;
 	PROVIDE (edata = .);
-	
+
 	.sbss      :
 	{
 		__sbss_start = .;

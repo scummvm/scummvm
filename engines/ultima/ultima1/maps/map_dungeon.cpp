@@ -285,7 +285,7 @@ void MapDungeon::climb() {
 		addInfoMsg(_game->_res->WHAT);
 		_game->playFX(1);
 	} else if (getDirection() == Shared::Maps::DIR_LEFT || getDirection() == Shared::Maps::DIR_RIGHT) {
-		addInfoMsg(""); 
+		addInfoMsg("");
 		addInfoMsg(_game->_res->FACE_THE_LADDER);
 		_game->playFX(1);
 	} else if (tile._isLadderUp) {
@@ -303,7 +303,7 @@ void MapDungeon::castSpell(uint spellId) {
 
 void MapDungeon::leavingDungeon() {
 	Shared::Character &c = *_game->_party;
-	
+
 	// Don't allow the hit points addition to push the hit point total beyond 9999
 	if (c._hitPoints + _dungeonExitHitPoints > 9999)
 		_dungeonExitHitPoints = 9999 - c._hitPoints;

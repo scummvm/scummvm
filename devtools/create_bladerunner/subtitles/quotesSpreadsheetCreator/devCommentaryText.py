@@ -56,7 +56,7 @@ class devCommentaryText(object):
 	def __init__(self, traceModeEnabled = True):
 		self.m_traceModeEnabled = traceModeEnabled
 		return
-	
+
 	def printTexts(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] Printing all dev commentary text"
@@ -73,18 +73,18 @@ class devCommentaryText(object):
 		for (idTre, textTre) in DEV_ISEZ_QUOTES_TUPLE_LIST:
 			print "%s\t%s" % (idTre, textTre)
 		return
-		
+
 	def getAudioCommentaryTextEntriesList(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] getAudioCommentaryTextEntriesList"
 		return DEV_AUDIO_COMMENTARY_TUPLE_LIST
-		
+
 	def getISEZTextEntriesList(self):
-		
+
 		if self.m_traceModeEnabled:
 			print "[Trace] getISEZTextEntriesList"
 		return DEV_ISEZ_QUOTES_TUPLE_LIST
-		
+
 	def getExtraSpeechAudioEntriesList(self):
 		if self.m_traceModeEnabled:
 			print "[Trace] getExtraSpeechAudioEntriesList"

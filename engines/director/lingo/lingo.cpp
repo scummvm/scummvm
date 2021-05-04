@@ -584,7 +584,7 @@ void Lingo::execute(uint pc) {
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
 			break;
 		}
-	
+
 		Common::String instr = decodeInstruction(_currentArchive, _currentScript, _pc);
 		uint current = _pc;
 
@@ -1042,7 +1042,7 @@ int Datum::asCastId() const {
 			CastMember *member = movie->getCastMemberByName(asString());
 			if (member)
 				return member->getID();
-			
+
 			g_lingo->lingoError("Datum::asCastId: reference to non-existent cast member: %s", asString().c_str());
 			return 0;
 		}

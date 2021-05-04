@@ -91,7 +91,7 @@ struct lindef {
 /**
  *   Maximum allowed value for linlln, in bytes.  This allows subsystems
  *   that need to maintain local copies of seek locations to know how big
- *   an area to allocate for them.  
+ *   an area to allocate for them.
  */
 #define LINLLNMAX   20
 

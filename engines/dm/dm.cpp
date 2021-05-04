@@ -120,7 +120,7 @@ int16 DMEngine::getDistance(int16 mapx1, int16 mapy1, int16 mapx2, int16 mapy2) 
 	return ABS(mapx1 - mapx2) + ABS(mapy1 - mapy2);
 }
 
-DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) : 
+DMEngine::DMEngine(OSystem *syst, const DMADGameDescription *desc) :
 			Engine(syst), _console(nullptr), _gameVersion(desc),
 			_thingNone(0), _thingEndOfList(0xFFFE), _thingFirstExplosion(0xFF80),
 			_thingExplFireBall(0xFF80), _thingExplSlime(0xFF81), _thingExplLightningBolt(0xFF82),

@@ -585,7 +585,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		// TODO why calculate current animation by adding animationState to kModelAnimationIzoAwkwardPlayWithHands (298)?
 		//      seems prone to error.
-		//      This (based on the switch cases), results in "talking" animation framesets 300 - 305, 
+		//      This (based on the switch cases), results in "talking" animation framesets 300 - 305,
 		//      excepting the kModelAnimationIzoCalmTalk (299) which is used as the default or "ending" talking animation.
 		*animation = _animationState + kModelAnimationIzoAwkwardPlayWithHands;
 		++_animationFrame;
@@ -845,7 +845,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle)) {
 			// TODO a bug? Adding 3 to animationFrame when it is >= the num of frames of the frameset
-			//             will still keep it >= the num of frame of the frameset. 
+			//             will still keep it >= the num of frame of the frameset.
 			//             so why check again in the if clause below?
 			_animationFrame += 3;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationIzoIdle)) {

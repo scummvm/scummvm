@@ -43,19 +43,19 @@ namespace TADS2 {
 /* ------------------------------------------------------------------------ */
 /*
  *   A note on character sets:
- *   
+ *
  *   Except where noted, all character strings passed to and from the
  *   osxxx functions defined herein use the local operating system
  *   representation.  On a Windows machine localized to Eastern Europe,
  *   for example, the character strings passed to and from the osxxx
  *   functions would use single-byte characters in the Windows code page
  *   1250 representation.
- *   
+ *
  *   Callers that use multiple character sets must implement mappings to
  *   and from the local character set when calling the osxxx functions.
  *   The osxxx implementations are thus free to ignore any issues related
  *   to character set conversion or mapping.
- *   
+ *
  *   The osxxx implementations are specifically not permitted to use
  *   double-byte Unicode as the native character set, nor any other
  *   character set where a null byte could appear as part of a non-null
@@ -65,7 +65,7 @@ namespace TADS2 {
  *   mixed single-byte and double-byte characters) may be used as long as
  *   a null byte is never part of any multi-byte character, since this
  *   would guarantee that a null byte could always be taken as a null
- *   character without knowledge of the encoding or context.  
+ *   character without knowledge of the encoding or context.
  */
 
 /* ------------------------------------------------------------------------ */
@@ -76,33 +76,33 @@ namespace TADS2 {
  *   qualification to indicate that they use a non-default addressing
  *   model, the keyword OSFAR should be defined to the appropriate
  *   compiler-specific extension keyword.
- *   
+ *
  *   If you don't know what I'm talking about here, you should just ignore
  *   it, because your platform probably doesn't have anything this
  *   sinister.  As of this writing, this applies only to MS-DOS, and then
  *   only to 16-bit implementations that must interact with other 16-bit
- *   programs via dynamic linking or other mechanisms.  
+ *   programs via dynamic linking or other mechanisms.
  */
 
 
 /* ------------------------------------------------------------------------ */
 /*
  *   ANSI C99 exact-size integer types.
- *   
+ *
  *   C99 defines a set of integer types with exact bit sizes, named intXX_t
  *   for a signed integer with XX bits, and uintXX_t for unsigned.  XX can be
  *   8, 16, 32, or 64.  TADS uses the 16- and 32-bit sizes, so each platform
  *   is responsible for defining the following types:
- *   
+ *
  *.    int16_t   - a signed integer type storing EXACTLY 16 bits
  *.    uint16_t  - an unsigned integer type storing EXACTLY 16 bits
  *.    int32_t   - a signed integer type storing EXACTLY 32 bits
  *.    uint32_t  - an unsigned integer type storing EXACTLY 32 bits
- *   
+ *
  *   Many modern compilers provide definitions for these types via the
  *   standard header stdint.h.  Where stdint.h is provided, the platform code
  *   can merely #include <stdint.h>.
- *   
+ *
  *   For compilers where stdint.h isn't available, you must provide suitable
  *   typedefs.  Note that the types must be defined with the exact bit sizes
  *   specified; it's not sufficient to use a bigger type, because we depend
@@ -114,12 +114,12 @@ namespace TADS2 {
 /* ------------------------------------------------------------------------ */
 /*
  *   Thread-local storage (TLS).
- *   
+ *
  *   When TADS is compiled with threading support, it requires some variables
  *   to be "thread-local".  This means that the variables have global scope
  *   (so they're not stored in "auto" variables on the stack), but each
  *   thread has a private copy of each such variable.
- *   
+ *
  *   Nearly all systems that support threads also support thread-local
  *   storage.  Like threading support itself, though, TLS support is at
  *   present implemented only in non-portable OS APIs rather than standard C
@@ -129,7 +129,7 @@ namespace TADS2 {
  *   since these features are optional, systems that don't have threading and
  *   TLS support will simply need to disable the network features, which will
  *   allow all of the threading and TLS definitions in osifc to be omitted.
- *   
+ *
  *   There appear to be two common styles of TLS programming models.  The
  *   first provides non-standard compiler syntax for declarative creation of
  *   thread-local variables.  The Microsoft (on Windows) and Gnu compilers
@@ -140,14 +140,14 @@ namespace TADS2 {
  *   needs to add the special TLS storage class qualifier to an otherwise
  *   ordinary global variable declaration, and then can access the thread
  *   local as though it were an ordinary global.
- *   
+ *
  *   The second programming model is via explicit OS API calls to create,
  *   initialize, and access thread locals.  pthreads provides such an API, as
  *   does Win32.  In fact, when you use the declarative syntax with MSVC or
  *   gcc, the compiler generates the appropriate API calls, but the details
  *   are transparent to the program; in contrast, when using pthreads
  *   directly, the program must actively call the relevant APIs.
- *   
+ *
  *   It's probably the case that every system that has compiler-level support
  *   for declarative thread local creation also has procedural APIs, so the
  *   simplest way to abstract the platform differences would be to do
@@ -157,19 +157,19 @@ namespace TADS2 {
  *   like to use declarative syntax whenever it's available, but fall back on
  *   explicit API calls when it's not.  So our programming model is a union
  *   of the two styles:
- *   
+ *
  *   1. For each thread local, declare the thread local:
  *.      OS_DECL_TLS(char *, my_local);
- *   
+ *
  *   2. At main program startup (for the main thread only), initialize each
  *   thread local:
  *.      os_tls_create(my_local);
- *   
+ *
  *   3. Never get or set the value of a thread local directly; instead, use
  *   the get/set functions:
  *.      char *x = os_tls_get(char *, my_local);
  *.      os_tls_set(my_local, "hello");
- *   
+ *
  *   One key feature of this implementation is that each thread local is
  *   stored as a (void *) value.  We do it this way to allow a simple direct
  *   mapping to the pthreads APIs, since that's going to be the most common
@@ -184,20 +184,20 @@ namespace TADS2 {
  *   the structure at thread exit.
  */
 
-/*   
- *   
+/*
+ *
  *   Declare a thread local.
- *   
+ *
  *   - For compilers that support declarative TLS variables, the local OS
  *   headers should use the compiler support by #defining OS_DECL_TLS to the
  *   appropriate local declarative keyword.
- *   
+ *
  *   - For systems without declarative TLS support but with TLS APIs, the
  *   global declared by this macro actually stores the slot ID (what pthreads
  *   calls the "key") for the variable.  This macro should therefore expand
  *   to a declaration of the appropriate API type for a slot ID; for example,
  *   on pthreads, #define OS_DECL_TLS(t, v) pthread_key_t v.
- *   
+ *
  *   - For builds with no thread support, simply #define this to declare the
  *   variable as an ordinary global: #define OS_DECL_TLS(t, v) t v.
  */
@@ -212,10 +212,10 @@ namespace TADS2 {
  *   name in this case as an ordinary global of the slot ID type.  The
  *   os_tls_create() macro should therefore expand to a call to the slot
  *   creation API, storing the new slot ID in the global.
- *   
+ *
  *   Correspondingly, before the main thread exits, it should delete each
  *   slot it created, b calling os_tls_delete().
- *   
+ *
  *   For declarative systems, there's no action required here, so these
  *   macros can be defined to empty.
  */
@@ -229,7 +229,7 @@ namespace TADS2 {
  *   get the per-thread instance of the variable's storage.
  *.    #define os_tls_get(typ, varname) ((typ)pthread_getspecific(varname))
  *.    #define os_tls_set(varname, val) pthread_setspecific(varname, val)
- *   
+ *
  *   On declarative systems, the global variable itself is the thread local,
  *   so get/set can be implemented as direct access to the variable.
  *.    #define os_tls_get(typ, varname) varname
@@ -238,7 +238,7 @@ namespace TADS2 {
 
 /*
  *   Common TLS definitions - declarative thread locals
- *   
+ *
  *   For systems with declarative TLS support in the compiler, the OS header
  *   can #define OS_DECLARATIVE_TLS to pick up suitable definitions for the
  *   os_tls_xxx() macros.  The OS header must separately define OS_DECL_TLS
@@ -253,10 +253,10 @@ namespace TADS2 {
 
 /*
  *   Common TLS definitions - pthreads
- *   
+ *
  *   For pthreads systems without declarative TLS support in the compiler,
  *   the OS header can simply #define OS_PTHREAD_TLS to pick up the standard
- *   definitions below. 
+ *   definitions below.
  */
 #ifdef OS_PTHREAD_TLS
 #include <pthread.h>
@@ -268,15 +268,15 @@ namespace TADS2 {
 #endif
 
 /* ------------------------------------------------------------------------ */
-/* 
- *   OS main entrypoint 
+/*
+ *   OS main entrypoint
  */
 int os0main(int oargc, char **oargv,
-			int (*mainfn)(int, char **, char *), 
+			int (*mainfn)(int, char **, char *),
 			const char *before, const char *config);
 
-/* 
- *   new-style OS main entrypoint - takes an application container context 
+/*
+ *   new-style OS main entrypoint - takes an application container context
  */
 int os0main2(int oargc, char **oargv,
 			 int (*mainfn)(int, char **, appctxdef *, char *),
@@ -292,7 +292,7 @@ osfildef *oserrop(const char *arg0);
  *   Special "switch" statement optimization flags.  These definitions are
  *   OPTIONAL - if a platform doesn't provide these definitions, suitable
  *   code that's fully portable will be used.
- *   
+ *
  *   On some compilers, the performance of a "switch" statement can be
  *   improved by fully populating the switch with all possible "case"
  *   values.  When the compiler can safely assume that every possible "case"
@@ -301,12 +301,12 @@ osfildef *oserrop(const char *arg0);
  *   controlling expression of the switch: a range check is unnecessary
  *   because the compiler knows that the value can never be outside the
  *   "case" table.
- *   
+ *
  *   This type of optimization doesn't apply to all compilers.  When a given
  *   platform's compiler can be coerced to produce faster "switch"
  *   statements, though, there might be some benefit in defining these
  *   symbols according to local platform rules.
- *   
+ *
  *   First, #define OS_FILL_OUT_CASE_TABLES if you want this type of switch
  *   optimization at all.  This symbol is merely a flag, so it doesn't need
  *   a value - #defining it is enough to activate the special code.  If you
@@ -316,7 +316,7 @@ osfildef *oserrop(const char *arg0);
  *   #define OS_FILL_OUT_CASE_TABLES, then the portable code will know to
  *   fill out case tables with all possible alternatives where it's possible
  *   and potentially beneficial to do so.
- *   
+ *
  *   Second, if you #define OS_FILL_OUT_CASE_TABLES, you MUST ALSO #define
  *   OS_IMPOSSIBLE_DEFAULT_CASE.  The value for this symbol must be some
  *   code to insert into a "switch" statement at the point where a
@@ -327,11 +327,11 @@ osfildef *oserrop(const char *arg0);
  *   for it to do in many cases anyway).  You can use an empty definition
  *   for this symbol if your compiler doesn't have any special construct for
  *   indicating a fully-populated case table.
- *   
+ *
  *   Note that *most* switch statements in portable code won't care one way
  *   or the other about these definitions.  There's a time/space trade-off
  *   in fully populating a switch's case table, so only the most
- *   time-critical code will bother trying.  
+ *   time-critical code will bother trying.
  */
 
 
@@ -341,7 +341,7 @@ osfildef *oserrop(const char *arg0);
  *   TADS 2 swapping configuration.  Define OS_DEFAULT_SWAP_ENABLED to 0
  *   if you want swapping turned off, 1 if you want it turned on.  If we
  *   haven't defined a default swapping mode yet, turn swapping on by
- *   default.  
+ *   default.
  */
 #ifndef OS_DEFAULT_SWAP_ENABLED
 # define OS_DEFAULT_SWAP_ENABLED   1
@@ -349,7 +349,7 @@ osfildef *oserrop(const char *arg0);
 
 /*
  *   If the system "long description" (for the banner) isn't defined, make
- *   it the same as the platform ID string.  
+ *   it the same as the platform ID string.
  */
 #ifndef OS_SYSTEM_LDESC
 # define OS_SYSTEM_LDESC  OS_SYSTEM_NAME
@@ -357,7 +357,7 @@ osfildef *oserrop(const char *arg0);
 
 /*
  *   TADS 2 Usage Lines
- *   
+ *
  *   If the "usage" lines (i.e., the descriptive lines of text describing
  *   how to run the various programs) haven't been otherwise defined,
  *   define defaults for them here.  Some platforms use names other than
@@ -365,7 +365,7 @@ osfildef *oserrop(const char *arg0);
  *   tadsc, tadsr, and tadsdb), so the usage lines should be adjusted
  *   accordingly; simply define them earlier than this point (in this file
  *   or in one of the files included by this file, such as osunixt.h) for
- *   non-default text.  
+ *   non-default text.
  */
 #ifndef OS_TC_USAGE
 # define OS_TC_USAGE  "usage: tc [options] file"
@@ -380,7 +380,7 @@ osfildef *oserrop(const char *arg0);
 /*
  *   Ports can define a special TDB startup message, which is displayed
  *   after the copyright/version banner.  If it's not defined at this
- *   point, define it to an empty string.  
+ *   point, define it to an empty string.
  */
 #ifndef OS_TDB_STARTUP_MSG
 # define OS_TDB_STARTUP_MSG ""

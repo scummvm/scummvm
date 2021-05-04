@@ -89,7 +89,7 @@ private:
 	Common::SharedPtr<AmbiantAnimInternal> _internal;
 };
 
-	
+
 class AmbientAnimWeightedSet {
 public:
 	void readTableFilePriamSFX(const TextTable &table);

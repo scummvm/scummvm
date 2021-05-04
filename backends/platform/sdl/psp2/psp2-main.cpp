@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
 				game_id[path_param-gameid_param] = 0;
 				snprintf(path, 256, path_param + 6);
 			}
-			
+
 			const char* args[4];
 			args[0] = "ux0:app/VSCU00001/eboot.bin";
 			args[1] = "-p";

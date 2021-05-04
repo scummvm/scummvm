@@ -103,7 +103,7 @@ public:
 	Database *_db;
 	Sound *_sound;
 	Ambient *_ambient;
-	
+
 	Common::RandomSource *_rnd;
 
 	// Used by the projectors on J'nanin, see puzzle #14

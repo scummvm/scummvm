@@ -390,7 +390,7 @@ void banner_contents_display(contentid_t contents)
 		char ch = '\n';
 		os_put_buffer(&ch, 1);
 	}
-	
+
 	if (len && (contents->chars[len-1] == '\n'))
 	{
 		len --;

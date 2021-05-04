@@ -132,7 +132,7 @@ private:
 /** @addtogroup graphics_fontman
  *  @{
  */
- 
+
 /** Shortcut for accessing the font manager. */
 #define FontMan		(Graphics::FontManager::instance())
  /** @} */

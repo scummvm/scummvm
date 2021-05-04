@@ -42,7 +42,7 @@ namespace Common {
  *
  * @brief API for keyboard operations.
  *
- *		
+ *
  * @{
  */
 

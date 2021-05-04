@@ -35,7 +35,7 @@ namespace Common {
  * @ingroup common
  *
  * @brief  The Archive module allows for managing the members of arbitrary containers in a uniform
- * fashion. 
+ * fashion.
  * It also supports looking up by names and file names, opening a file, and returning a usable input stream.
  * @{
  */

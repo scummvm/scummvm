@@ -52,7 +52,7 @@ ISpAudio *_audio;
 
 WindowsTextToSpeechManager::WindowsTextToSpeechManager()
 	: _speechState(BROKEN){
-	init();	
+	init();
 	_threadParams.queue = &_speechQueue;
 	_threadParams.state = &_speechState;
 	_threadParams.mutex = &_speechMutex;

@@ -147,7 +147,7 @@ void FrameBuffer::plot(ZBufferPoint *p) {
 	const unsigned int z = p->z;
 	if (_depthWrite && _depthTestEnabled)
 		putPixel<true>(pixelOffset, col, p->x, p->y, z);
-	else 
+	else
 		putPixel<false>(pixelOffset, col, p->x, p->y, z);
 }
 

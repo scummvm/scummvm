@@ -84,7 +84,7 @@ void SoundZip::check(const Common::FSNode &gameDir, Story story) {
 	if (story != LURKING_HORROR && story != SHERLOCK)
 		return;
 	Common::String zipName = (story == LURKING_HORROR) ? "lhsound.zip" : "shsound.zip";
-	
+
 	// Check for the existance of the zip
 	Common::FSNode zipNode = gameDir.getChild(zipName);
 	if (!zipNode.exists())

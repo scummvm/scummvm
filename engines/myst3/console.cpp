@@ -168,7 +168,7 @@ bool Console::Cmd_Var(int argc, const char **argv) {
 	if (var < 1 || var > 2047) {
 		debugPrintf("Variable out of range %d\n", var);
 		return true;
-	}	
+	}
 	uint32 value = _vm->_state->getVar(var);
 
 	if (argc == 3) {

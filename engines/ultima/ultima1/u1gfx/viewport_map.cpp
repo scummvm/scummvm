@@ -33,7 +33,7 @@ BEGIN_MESSAGE_MAP(ViewportMap, Shared::ViewportMap)
 END_MESSAGE_MAP()
 
 ViewportMap::ViewportMap(TreeItem *parent) : Shared::ViewportMap(parent), _mapType(Maps::MAP_OVERWORLD) {
-	_sprites = new Sprites(this);	
+	_sprites = new Sprites(this);
 }
 
 ViewportMap::~ViewportMap() {

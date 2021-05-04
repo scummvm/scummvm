@@ -56,7 +56,7 @@ Rainlist	equ	undertimedtext+(256*undertimedysize)
 Initialreelrouts	equ	rainlist+(6*64)
 Initialvars	equ	initialreelrouts+lenofreelrouts
 Lengthofbuffer	equ	initialvars+lengthofvars
-		               
+
 Flags	equ	0		;offsets of items in backdrop segment
 Blocks	equ	flags+192
 Map	equ	0
@@ -138,7 +138,7 @@ liftpath	db	0
 lockstatus	db	1
 doorpath	db	0
 counttoopen	db	0
-counttoclose	db	0	
+counttoclose	db	0
 rockstardead	db	0
 generaldead	db	0
 sartaindead	db	0

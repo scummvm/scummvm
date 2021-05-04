@@ -37,7 +37,7 @@ namespace Common {
  *
  * @brief API for operations on IFF container files.
  *
- *		
+ *
  * @{
  */
 

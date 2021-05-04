@@ -124,7 +124,7 @@ const char *Look::get_description(uint16 tile_num, bool *plural) {
 	desc = look_tbl[tile_num];
 
 	len = strlen(desc);
- 
+
 	for (i = 0, j = 0; i < len;) {
 		if (desc[i] == '\\' || desc[i] == '/') {
 			has_plural = true;

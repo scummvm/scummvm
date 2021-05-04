@@ -1,7 +1,7 @@
 #define USE_NULL_DRIVER 1
 #define NULL_DRIVER_USE_FOR_TEST 1
 #include "null_osystem.h"
-#include "../backends/platform/null/null.cpp" 
+#include "../backends/platform/null/null.cpp"
 
 void Common::install_null_g_system() {
 	g_system = OSystem_NULL_create();

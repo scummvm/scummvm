@@ -52,7 +52,7 @@ void writeDatafile(File& outputFile, int fileNumber, const char* language, int p
 	}
 
 	// Write block size
-	
+
 	dataFile.seek(0, SEEK_END);
 	int length = dataFile.pos();
 	dataFile.seek(0, SEEK_SET);
@@ -101,7 +101,7 @@ void writeDocFile(File& outputFile, const char *fileExtension, const char* langu
 	}
 
 	// Write block size
-	
+
 	docFile.seek(0, SEEK_END);
 	int length = docFile.pos();
 	docFile.seek(0, SEEK_SET);

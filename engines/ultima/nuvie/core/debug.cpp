@@ -81,7 +81,7 @@ DebugLevelType debug(const char *func, const char *file, const int line, const b
 		::debugN("\n");
 #endif
 	}
-	
+
 	va_list ap;
 	va_start(ap, format);
 	Common::String buf = Common::String::vformat(format, ap);

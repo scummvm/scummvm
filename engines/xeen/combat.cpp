@@ -69,7 +69,7 @@ static const int ATTACK_TYPE_FX[23] = {
 	4, 5, 4, 9, 27, 29, 44, 51, 53, 61, 71
 };
 
-static const PowType MONSTER_SHOOT_POW[7] = { 
+static const PowType MONSTER_SHOOT_POW[7] = {
 	POW_MAGIC_ARROW, POW_SPARKLES, POW_FIREBALL,
 	POW_MEGAVOLTS, POW_COLD_RAY, POW_SPRAY, POW_ENERGY_BLAST
 };

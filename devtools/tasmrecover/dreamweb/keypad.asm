@@ -102,7 +102,7 @@ keypadlist:	dw	keypadx+9,keypadx+30,keypady+9,keypady+22,buttonone
 
 
 Loadkeypad	proc	near
-	
+
 	mov	dx,offset cs:extragraphics1
 	call	loadintotemp
 	ret
@@ -793,7 +793,7 @@ notaristoadd:	ret
 
 
 Lastfolder	proc	near
-	
+
 	cmp	folderpage,0
 	jnz	canlastf
 	call	blank
@@ -875,7 +875,7 @@ Showfolder	proc	near
 	mov	ah,0
 	call	showframe
 	call	folderexit
-	
+
 	cmp	folderpage,1
 	jz	noleftpage
 	call	showleftpage
@@ -939,7 +939,7 @@ Showleftpage	proc	near
 
 	mov	bx,12+5
 	mov	cx,9
-leftpageloop:	push	cx bx	
+leftpageloop:	push	cx bx
 	mov	ds,tempgraphics2
 	mov	di,0
 	mov	al,4
@@ -1002,7 +1002,7 @@ flipfolderline:	mov	al,[es:di]
 	add	di,320
 	loop	flipfolder
 	ret
-	
+
 	endp
 
 
@@ -1018,7 +1018,7 @@ Showrightpage	proc	near
 
 	mov	bx,12+37
 	mov	cx,7
-rightpageloop:	push	cx bx	
+rightpageloop:	push	cx bx
 	mov	ds,tempgraphics2
 	mov	di,143
 	mov	al,1
@@ -1350,7 +1350,7 @@ topwrap:	mov	al,0
 	ret
 botwrap:	mov	al,6
 	ret
-	
+
 	endp
 
 
@@ -1560,7 +1560,7 @@ gotkeyn:	mov	ah,0
 	call	showframe
 	cmp	presscount,1
 	jnz	notshown
-	call	showdiarypage	
+	call	showdiarypage
 notshown:	ret
 
 nokeyn:	mov	al,5
@@ -1602,7 +1602,7 @@ Dumpdiarykeys	proc	near
 	jz	notsartadd
 	mov	al,6
 	call	setlocation
-	
+
 	call	delpointer
 	mov	al,12
 	call	findtext1
@@ -1622,7 +1622,7 @@ Dumpdiarykeys	proc	near
 	call	worktoscreenm
 	call	showpointer
 	ret
-		             
+
 notsartadd:	mov	di,diaryx+48
 	mov	bx,diaryy+15
 	mov	cl,200

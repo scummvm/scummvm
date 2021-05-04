@@ -142,7 +142,7 @@ public:
 	 * Constructor
 	 */
 	ViewCharacterGeneration(Shared::TreeItem *parent = nullptr);
-	
+
 	/**
 	 * Destructor
 	 */

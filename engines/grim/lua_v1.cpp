@@ -580,7 +580,7 @@ void Lua_V1::SubmitSaveGameData() {
 		savedState->write(str, len);
 	}
 	savedState->endSection();
-	
+
 	//give ps2 saves a human-readable name
 	if (g_grim->getGameType() == GType_MONKEY4 &&
 		g_grim->getGamePlatform() == Common::kPlatformPS2) {

@@ -70,7 +70,7 @@ typedef DWORD SICHINTF;
 
 // Shell item
 #define INTERFACE IShellItem
-DECLARE_INTERFACE_(IShellItem, IUnknown) {	
+DECLARE_INTERFACE_(IShellItem, IUnknown) {
 	STDMETHOD(QueryInterface) (THIS_ REFIID riid, void **ppv) PURE;
 	STDMETHOD_(ULONG,AddRef) (THIS) PURE;
 	STDMETHOD_(ULONG,Release) (THIS) PURE;

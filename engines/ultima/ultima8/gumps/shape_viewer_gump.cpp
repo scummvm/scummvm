@@ -96,7 +96,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 	const Shape *shape = _flex->getShape(_curShape);
 	if (shape && _curFrame < shape->frameCount())
 		surf->Paint(shape, _curFrame, posx, posy);
-	
+
 	RenderedText *rendtext;
 	Font *font = FontManager::get_instance()->getGameFont(_fontNo, true);
 	if (!font)
@@ -119,7 +119,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		rendtext->draw(surf, 20, 10);
 		delete rendtext;
 	}
-	
+
 	{
 		// Dump the pixel val under the mouse cursor:
 		int32 mx = 0;
@@ -128,7 +128,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 
 		Mouse::get_instance()->getMouseCoords(mx, my);
 		ScreenSpaceToGump(mx, my);
-		
+
 		int32 relx = mx - (posx - _shapeX);
 		int32 rely = my - (posy - _shapeY);
 		if (shape && relx >= 0 && rely >= 0 && relx < _shapeW && rely < _shapeH) {

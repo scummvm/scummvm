@@ -47,11 +47,11 @@ static void tglDrawRectangle(Common::Rect rect, int r, int g, int b) {
 
 	if (rect.left < 0)
 		rect.left = 0;
-	if (rect.right >= c->fb->xsize)		
+	if (rect.right >= c->fb->xsize)
 		rect.right = c->fb->xsize - 1;
 	if (rect.top < 0)
 		rect.top = 0;
-	if (rect.bottom >= c->fb->ysize) 
+	if (rect.bottom >= c->fb->ysize)
 		rect.bottom = c->fb->ysize - 1;
 
 	for(int x = rect.left; x < rect.right; x++) {
@@ -460,7 +460,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.depthWrite = c->fb->getDepthWrite();
 	state.lightingEnabled = c->lighting_enabled;
 	state.depthTestEnabled = c->fb->getDepthTestEnabled();
-	if (c->current_texture != nullptr) 
+	if (c->current_texture != nullptr)
 		state.textureVersion = c->current_texture->versionNumber;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
@@ -490,7 +490,7 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->polygon_mode_front = state.polygonModeFront;
 	c->shadow_mode = state.shadowMode;
 	c->texture_2d_enabled = state.texture2DEnabled;
-	c->current_texture = state.texture; 
+	c->current_texture = state.texture;
 	c->texture_wrap_s = state.wrapS;
 	c->texture_wrap_t = state.wrapT;
 	c->fb->shadow_mask_buf = state.shadowMaskBuf;
@@ -507,9 +507,9 @@ void RasterizationDrawCall::execute(const Common::Rect &clippingRectangle, bool 
 }
 
 bool RasterizationDrawCall::operator==(const RasterizationDrawCall &other) const {
-	if (_vertexCount == other._vertexCount && 
-		_drawTriangleFront == other._drawTriangleFront && 
-		_drawTriangleBack == other._drawTriangleBack && 
+	if (_vertexCount == other._vertexCount &&
+		_drawTriangleFront == other._drawTriangleFront &&
+		_drawTriangleBack == other._drawTriangleBack &&
 		_state == other._state) {
 		for (int i = 0; i < _vertexCount; i++) {
 			if ((_vertex[i] != other._vertex[i])) {
@@ -598,7 +598,7 @@ void BlittingDrawCall::computeDirtyRegion() {
 		} else {
 			tglGetBlitImageSize(_image, blitWidth, blitHeight);
 		}
-	} 
+	}
 	if (blitHeight == 0) {
 		if (_transform._sourceRectangle.height() != 0) {
 			blitHeight = _transform._sourceRectangle.height();
@@ -627,7 +627,7 @@ bool BlittingDrawCall::operator==(const BlittingDrawCall &other) const {
 			_imageVersion == tglGetBlitImageVersion(other._image);
 }
 
-ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue) 
+ClearBufferDrawCall::ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue)
 	: _clearZBuffer(clearZBuffer), _clearColorBuffer(clearColorBuffer), _zValue(zValue), _rValue(rValue), _gValue(gValue), _bValue(bValue), DrawCall(DrawCall_Clear) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 	if (c->_enableDirtyRectangles) {
@@ -657,8 +657,8 @@ bool ClearBufferDrawCall::operator==(const ClearBufferDrawCall &other) const {
 
 
 bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationState &other) const {
-	return	beginType == other.beginType && 
-			currentFrontFace == other.currentFrontFace && 
+	return	beginType == other.beginType &&
+			currentFrontFace == other.currentFrontFace &&
 			cullFaceEnabled == other.cullFaceEnabled &&
 			colorMask == other.colorMask &&
 			depthTest == other.depthTest &&

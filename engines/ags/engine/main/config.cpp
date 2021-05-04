@@ -335,7 +335,7 @@ void override_config_ext(ConfigTree &cfg) {
 
 	INIwriteint(cfg, "misc", "antialias", _G(psp_gfx_smooth_sprites) != 0);
 	INIwritestring(cfg, "language", "translation", _G(psp_translation));
-	
+
 }
 
 void apply_config(const ConfigTree &cfg) {
@@ -499,7 +499,7 @@ void save_config_file() {
 			ConfMan.getActiveDomain()->erase("translation");
 	} else
 		ConfMan.getActiveDomain()->setVal("translation", _GP(usetup).translation);
-	
+
 	ConfMan.flushToDisk();
 
 	String cfg_file = find_user_cfg_file();

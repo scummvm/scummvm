@@ -455,7 +455,7 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 			// * SCRIPT_FINISHED,
 			// * SCRIPT_ERROR,
 			// * SCRIPT_WAITING_SCRIPT,
-			// * SCRIPT_THREAD_FINISHED		
+			// * SCRIPT_THREAD_FINISHED
 			debugN("ScEngine::GetNumScripts - unhandled enum: %d\n", _scripts[i]->_state);
 
 			// This method calculates thread counts to be shown at debug screen only

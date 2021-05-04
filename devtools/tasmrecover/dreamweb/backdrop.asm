@@ -113,7 +113,7 @@ Calcmapad	proc	near
 
 Getdimension	proc	near	;Routine finds width, length
 			;and top corner of room
-	
+
 	mov	es,buffers
 	mov	bx,mapflags
 	mov	ch,0
@@ -315,7 +315,7 @@ Eraseoldobs	proc	near
 
 	mov	es,buffers
 	mov	bx,spritetable
-	
+
 	mov	cx,16
 oberase:	push	cx bx
 	mov	ax,[es:bx+20]
@@ -361,7 +361,7 @@ Showallobs	proc	near
 	mov	cx,128*5
 	mov	al,255
 	rep	stosb
-		
+
 	mov	es,setframes
 	mov	frsegment,es
 	mov	ax,framedata
@@ -372,7 +372,7 @@ Showallobs	proc	near
 
 	mov	ds,setdat
 	mov	si,0
-	
+
 	mov	cx,128
 showobsloop:	push	cx si
 
@@ -509,7 +509,7 @@ Showallfree	proc	near
 
 	mov	ds,freedat
 	mov	si,2
-	
+
 	mov	cx,0
 loop127:	push	cx si
 
@@ -526,7 +526,7 @@ loop127:	push	cx si
 	add	ax,ax
 	add	ax,dx
 	mov	currentframe,ax
-		
+
 	push	es si
 	call	calcfrframe
 	mov	es,mapstore
@@ -599,7 +599,7 @@ Showallex	proc	near
 	mov	currentex,0
 
 	mov	si,exdata+2
-	
+
 	mov	cx,0
 exloop:	push	cx si
 
@@ -623,7 +623,7 @@ notinroom:	pop	si
 	add	ax,ax
 	add	ax,dx
 	mov	currentframe,ax
-		
+
 	push	es si
 	call	calcfrframe
 	mov	es,mapstore
@@ -673,7 +673,7 @@ finex:	ret
 
 
 Calcfrframe	proc	near
-	
+
 	mov	dx,frsegment
 	mov	ax,framesad
 	push	ax
@@ -727,7 +727,7 @@ nullframe:	pop	ax
 
 
 Finalframe	proc	near
-	
+
 	mov	ax,objecty
 	add	ax,offsety
 	mov	bx,objectx
@@ -741,7 +741,7 @@ Finalframe	proc	near
 	endp
 
 
-	
+
 
 
 
@@ -785,7 +785,7 @@ Getmapad	proc	near
 	mov	objecty,ax
 	mov	ch,1
 over146:	ret
-	
+
 	endp
 
 

@@ -60,7 +60,7 @@ global rbool DEBUG_DISAMBIG; /* Print out dismabiguation debugging info */
 global rbool DEBUG_SMSG;    /* Print out STANDARD message info */
 
 #define DEBUG_AGT_CMD flag[0]  /* This sends metacommand execution information
-			to either the screen or debugfile, depending on 
+			to either the screen or debugfile, depending on
 			whether DEBUG_OUT is true or false. */
 
 global rbool debug_disambig, debug_any;
@@ -99,7 +99,7 @@ global rbool PURE_DOT; /* Treats period as a letter-character and not
 				 even if there are no words in the dictionary
 				 containing periods. The only reason to set
 				 this was if you were concerned that knowledge
-				 about the presence or absence of periods in the 
+				 about the presence or absence of periods in the
 				 dictionary would give puzzles away. */
 
 
