@@ -341,9 +341,9 @@ void AnimManager::startSmkAnim(uint16 animation) {
 			smkVolumePan(0, 2, 0);
 		else if (animation == aBKG34 &&                                     // If it's BKG 34 and
 		         ((_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
-		          (_vm->_obj[oTUBOT34]._mode & OBJMODE_OBJSTATUS) ||    // if the whole tube is available or
-		          (_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS) ||   // if the outside of the tube is available or
-		          (_vm->_obj[oVALVOLAC34]._mode & OBJMODE_OBJSTATUS)))  // if the valve is closed
+		          _vm->isObjectVisible(oTUBOT34) ||    // if the whole tube is available or
+		          _vm->isObjectVisible(oTUBOFT34) ||   // if the outside of the tube is available or
+		          _vm->isObjectVisible(oVALVOLAC34)))  // if the valve is closed
 			smkVolumePan(0, 2, 0);
 	} else if (animFlag & SMKANIM_ICON) {
 		openSmkAnim(kSmackerIcon, _animTab[animation]._name);

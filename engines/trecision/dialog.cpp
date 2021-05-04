@@ -194,8 +194,8 @@ void DialogManager::afterChoice() {
 
 	case dTRAMP1717:
 		if (_curChoice == 136) {
-			_vm->_obj[ocTRAMP17]._mode &= ~OBJMODE_OBJSTATUS;
-			_vm->_obj[oTRAMPD17]._mode |= OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(ocTRAMP17, false);
+			_vm->setObjectVisible(oTRAMPD17, true);
 			_vm->_room[kRoom17]._bkgAnim = aBKG17B;
 			_vm->addIcon(kItemSkate);
 		} else if (_curChoice == 137) {
@@ -238,24 +238,24 @@ void DialogManager::afterChoice() {
 		_vm->_obj[oCHOCOLATES4A]._action = 1106;
 		_vm->_obj[oDOORC4A]._action = 1118;
 		_vm->_animMgr->_animTab[aBKG4A]._flag |= SMKANIM_OFF1;
-		_vm->_obj[ocHELLEN4A]._mode &= ~OBJMODE_OBJSTATUS;
-		_vm->_obj[oHELLENA4A]._mode |= OBJMODE_OBJSTATUS;
+		_vm->setObjectVisible(ocHELLEN4A, false);
+		_vm->setObjectVisible(oHELLENA4A, true);
 		break;
 
 	case dC581:
-		_vm->_obj[oWINDOWB58]._mode |= OBJMODE_OBJSTATUS;
+		_vm->setObjectVisible(oWINDOWB58, true);
 		if (_curChoice == 262)
 			_vm->_obj[oTASTIERA56]._examine = 1307;
 		break;
 
 	case dF542:
-		_vm->_obj[oGRATAC54]._mode &= ~OBJMODE_OBJSTATUS;
-		_vm->_obj[oDOORC54]._mode &= ~OBJMODE_OBJSTATUS;
-		_vm->_obj[oLAVATRICEL54]._mode &= ~OBJMODE_OBJSTATUS;
-		_vm->_obj[oLAVATRICEF54]._mode &= ~OBJMODE_OBJSTATUS;
-		_vm->_obj[oGRATAA54]._mode |= OBJMODE_OBJSTATUS;
-		_vm->_obj[oCHIAVI54]._mode |= OBJMODE_OBJSTATUS;
-		_vm->_obj[od54ALLA55]._mode |= OBJMODE_OBJSTATUS;
+		_vm->setObjectVisible(oGRATAC54, false);
+		_vm->setObjectVisible(oDOORC54, false);
+		_vm->setObjectVisible(oLAVATRICEL54, false);
+		_vm->setObjectVisible(oLAVATRICEF54, false);
+		_vm->setObjectVisible(oGRATAA54, true);
+		_vm->setObjectVisible(oCHIAVI54, true);
+		_vm->setObjectVisible(od54ALLA55, true);
 		break;
 	default:
 		break;
@@ -268,7 +268,7 @@ void DialogManager::afterChoice() {
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
 			if ((_choice[61]._flag & kObjFlagDone) && (_choice[62]._flag & kObjFlagDone) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
-				_vm->_obj[ocPOLIZIOTTO16]._mode &= ~OBJMODE_OBJSTATUS;
+				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			break;
 
 		case dTRAMP171:
@@ -283,7 +283,7 @@ void DialogManager::afterChoice() {
 
 		case dGUARDIAN18:
 			if (_curChoice == 152)
-				_vm->_obj[ocGUARD18]._mode &= ~OBJMODE_OBJSTATUS;
+				_vm->setObjectVisible(ocGUARD18, false);
 			else if (_curChoice == 155)
 				_vm->StartCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
 			break;
@@ -300,20 +300,20 @@ void DialogManager::afterChoice() {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom18, a1810ENTRADALNEGOZIO, 10, _vm->_curObj);
 				_vm->_obj[oDOORN18]._flag &= ~kObjFlagRoomOut;
 				_vm->_obj[oDOORN18]._action = 218;
-				_vm->_obj[oDOORN18]._anim = 0;
+				_vm->setObjectAnim(oDOORN18, 0);
 			} else if (_curChoice == 183)
 				_vm->_obj[oTESSERA1A]._action = 239;
 			break;
 
 		case dF181:
-			_vm->_obj[oRETE17]._mode |= OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(oRETE17, true);
 			_vm->_obj[oDOORA17]._examine = 196;
 			_vm->_obj[oDOORUA17]._examine = 187;
 			_vm->_obj[oDOORUB17]._examine = 192;
 			_vm->_obj[oDOORA17]._action = 188;
 			_vm->_obj[oDOORUA17]._action = 193;
 			_vm->_obj[oDOORUB17]._action = 197;
-			_vm->_obj[oFINGERPAD17]._mode &= ~OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(oFINGERPAD17, false);
 			_vm->_room[kRoom17]._flag &= ~kObjFlagDone;
 			_vm->_room[kRoom17]._flag |= kObjFlagExtra;
 			break;
@@ -345,8 +345,8 @@ void DialogManager::afterChoice() {
 			_vm->_obj[oSWITCH29]._action = 479;
 			_vm->_obj[od22TO29]._goRoom = kRoom29L;
 			_vm->_obj[od2ATO29]._goRoom = kRoom29L;
-			_vm->_obj[od22TO29]._mode &= ~OBJMODE_OBJSTATUS;
-			_vm->_obj[od22TO29I]._mode |= OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(od22TO29, false);
+			_vm->setObjectVisible(od22TO29I, true);
 			break;
 
 		case dF2G1:
@@ -385,7 +385,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF371:
-			_vm->_obj[oSCAFFALE36]._anim = a3615AAPRENDESCAFFALE;
+			_vm->setObjectAnim(oSCAFFALE36, a3615AAPRENDESCAFFALE);
 			_vm->_animMgr->smkVolumePan(0, 1, 1);
 			break;
 
@@ -403,8 +403,8 @@ void DialogManager::afterChoice() {
 			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; c++) {
 				if (!(_vm->_obj[c]._goRoom)) {
 					_vm->_obj[c]._goRoom = kRoom4A;
-					_vm->_obj[c]._mode |= OBJMODE_OBJSTATUS;
-					_vm->_obj[c - 40]._mode &= ~OBJMODE_OBJSTATUS;
+					_vm->setObjectVisible(c, true);
+					_vm->setObjectVisible(c - 40, false);
 					break;
 				}
 			}
@@ -456,17 +456,17 @@ void DialogManager::afterChoice() {
 
 		case dF562:
 			_vm->_obj[oDOOR58C55]._action = 1287;
-			_vm->_obj[oDOOR58C55]._anim = 0;
+			_vm->setObjectAnim(oDOOR58C55, 0);
 			_vm->_obj[oWINDOW58P55]._action = 1292;
-			_vm->_obj[oWINDOW58P55]._mode |= OBJMODE_OBJSTATUS;
-			_vm->_obj[oWINDOW58P55]._anim = 0;
+			_vm->setObjectVisible(oWINDOW58P55, true);
+			_vm->setObjectAnim(oWINDOW58P55, 0);
 			break;
 
 		case dF5A1:
 			_vm->_obj[oDOOR58C55]._action = 1286;
 			_vm->_obj[oWINDOW58P55]._action = 1291;
 			_vm->_obj[oWINDOWA5A]._action = 1403;
-			_vm->_obj[oGUARDIA58]._mode |= OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(oGUARDIA58, true);
 			_choice[286]._flag |= kObjFlagDone;
 			break;
 
@@ -478,7 +478,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dC582:
-			_vm->_obj[oWINDOWA58]._mode |= OBJMODE_OBJSTATUS;
+			_vm->setObjectVisible(oWINDOWA58, true);
 			_vm->addIcon(kItemGovernorsCode);
 			break;
 

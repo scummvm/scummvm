@@ -52,15 +52,13 @@ AnimType[3] = {	{1}, {1}, {1}	};
 void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	switch (doit) {
 	case fCLROBJSTATUS:
-		g_vm->_obj[obj]._mode &= ~OBJMODE_OBJSTATUS;
-		RegenRoom();
+		g_vm->setObjectVisible(obj, false);
 		break;
 	case fSETOBJSTATUS:
-		g_vm->_obj[obj]._mode |= OBJMODE_OBJSTATUS;
-		RegenRoom();
+		g_vm->setObjectVisible(obj, true);
 		break;
 	case fONETIME:
-		g_vm->_obj[obj]._anim = 0;
+		g_vm->setObjectAnim(obj, 0);
 		break;
 	case fCREPACCIO:
 		if (g_vm->_room[kRoom2E]._flag & kObjFlagExtra)
@@ -72,16 +70,16 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		doEvent(g_vm->_snake52._class, g_vm->_snake52._event, g_vm->_snake52._priority, g_vm->_snake52._u16Param1, g_vm->_snake52._u16Param2, g_vm->_snake52._u8Param, g_vm->_snake52._u32Param);
 		break;
 	case fPIRANHA:
-		g_vm->_obj[oLUCCHETTO53]._anim = 0;
-		g_vm->_obj[oGRATAC53]._anim = 0;
-		g_vm->_obj[oGRATAA53]._anim = 0;
+		g_vm->setObjectAnim(oLUCCHETTO53, 0);
+		g_vm->setObjectAnim(oGRATAC53, 0);
+		g_vm->setObjectAnim(oGRATAA53, 0);
 		g_vm->_obj[oLUCCHETTO53]._action = 1240;
 		g_vm->_obj[oGRATAC53]._action = 1243;
 		g_vm->_obj[oGRATAA53]._action = 1246;
 		g_vm->_obj[oLAGO53]._examine = 1237;
 		break;
 	case fMOREAU:
-		g_vm->_obj[oWINDOWB58]._anim = 0;
+		g_vm->setObjectAnim(oWINDOWB58, 0);
 		g_vm->_obj[oWINDOWB58]._action = 1358;
 		break;
 	case fDOOR58:
@@ -92,8 +90,8 @@ void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		break;
 	case fVALVEON34:
 		if (!(g_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) &&		// if the fmv is not done
-		    (g_vm->_obj[oTUBOA34]._mode & OBJMODE_OBJSTATUS) && // if there's a cut pipe
-		    !(g_vm->_obj[oTUBOFT34]._mode & OBJMODE_OBJSTATUS)) // if there's not tube outside
+		    (g_vm->isObjectVisible(oTUBOA34)) && // if there's a cut pipe
+		    !(g_vm->isObjectVisible(oTUBOFT34))) // if there's not tube outside
 			g_vm->_animMgr->smkVolumePan(0, 2, 1);
 		break;
 	case fVALVEOFF34:
@@ -189,8 +187,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		CharacterTalkInAction(g_vm->_obj[h->_object]._examine);
 		break;
 	case ATFCLR:
-		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode &= ~OBJMODE_OBJSTATUS;
-		RegenRoom();
+		g_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, false);
 		break;
 	case ATFCLRI:
 		g_vm->removeIcon(h->_curAnim->_atFrame[atf]._index);
@@ -202,8 +199,7 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		g_vm->_obj[h->_object]._action = h->_curAnim->_atFrame[atf]._index;
 		break;
 	case ATFSET:
-		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode |= OBJMODE_OBJSTATUS;
-		RegenRoom();
+		g_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, true);
 		break;
 	case ATFSETI:
 		g_vm->addIcon(h->_curAnim->_atFrame[atf]._index);
@@ -222,27 +218,21 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		break;
 	case ATFCOBJANIM:
 		g_vm->_obj[h->_object]._anim = h->_curAnim->_atFrame[atf]._index;
-		RegenRoom();
 		break;
 	case ATFCOBJBOX:
 		g_vm->_obj[h->_object]._nbox = h->_curAnim->_atFrame[atf]._index;
-		RegenRoom();
 		break;
 	case ATFCOBJPOS:
 		g_vm->_obj[h->_object]._position = h->_curAnim->_atFrame[atf]._index;
-		RegenRoom();
 		break;
 	case ATFSETFORE:
 		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_FOREGROUND;
-		RegenRoom();
 		break;
 	case ATFSETBACK:
 		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_BACKGROUND;
-		RegenRoom();
 		break;
 	case ATFSWITCH:
-		g_vm->_obj[h->_curAnim->_atFrame[atf]._index]._mode ^= OBJMODE_OBJSTATUS;
-		RegenRoom();
+		g_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, !g_vm->isObjectVisible(h->_curAnim->_atFrame[atf]._index));
 		break;
 	case ATFSETROOMT:
 		g_vm->setRoom(h->_curAnim->_atFrame[atf]._index, true);

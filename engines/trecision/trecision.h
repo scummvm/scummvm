@@ -217,6 +217,11 @@ public:
 	bool canPlayerInteract();
 	void addDirtyRect(Common::Rect rect);
 
+	// Objects
+	void setObjectVisible(uint16 objectId, bool visible);
+	bool isObjectVisible(uint16 objectId) const;
+	void setObjectAnim(uint16 objectId, uint16 animId);
+
 	Graphics::Surface _thumbnail;
 
 	uint16 _curRoom;
