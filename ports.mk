@@ -5,9 +5,7 @@
 #
 # POSIX specific
 #
-install:
-	$(INSTALL) -d "$(DESTDIR)$(bindir)"
-	$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+install-data:
 	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
 	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
 	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
@@ -26,32 +24,18 @@ ifneq ($(DIST_FILES_SHADERS),)
 	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
 	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
 endif
+
+install: install-data
+	$(INSTALL) -d "$(DESTDIR)$(bindir)"
+	$(INSTALL) -c -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
 	$(INSTALL) -c -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
 endif
 
-install-strip:
+install-strip: install-data
 	$(INSTALL) -d "$(DESTDIR)$(bindir)"
 	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
-	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
-	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
-	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.svg" "$(DESTDIR)$(datarootdir)/icons/hicolor/scalable/apps/scummvm.svg"
-	$(INSTALL) -d "$(DESTDIR)$(docdir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
-	$(INSTALL) -d "$(DESTDIR)$(datadir)"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_NETWORKING) $(DIST_FILES_VKEYBD) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
-	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/applications"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.desktop" "$(DESTDIR)$(datarootdir)/applications/scummvm.desktop"
-	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/metainfo"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.appdata.xml" "$(DESTDIR)$(datarootdir)/metainfo/scummvm.appdata.xml"
-ifneq ($(DIST_FILES_SHADERS),)
-	$(INSTALL) -d "$(DESTDIR)$(datadir)/shaders"
-	$(INSTALL) -c -m 644 $(DIST_FILES_SHADERS) "$(DESTDIR)$(datadir)/shaders"
-endif
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
 	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
