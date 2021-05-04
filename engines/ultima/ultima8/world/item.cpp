@@ -118,7 +118,7 @@ void Item::dumpInfo() const {
 
 Container *Item::getParentAsContainer() const {
 	// No parent, no container
-	if (!_parent)
+	if (!_parent || getObject(_parent) == nullptr)
 		return nullptr;
 
 	Container *p = getContainer(_parent);
