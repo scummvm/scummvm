@@ -2509,27 +2509,14 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oEXIT12CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT12CU]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT13CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT13CU]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT2BL:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT2BL]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT36F:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT36F]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT41D:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT41D]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT4CT:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT4CT]._goRoom, 0, 0, curObj);
+	case oEXIT58M:
+	case oEXIT59L:
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[curObj]._goRoom, 0, 0, curObj);
 		break;
 
 	case oEXIT58T:
@@ -2537,14 +2524,6 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		for (int a = 0; a < 6; a++)
 			_vm->setObjectVisible(oLED158 + a, false);
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58T]._goRoom, 0, 0, curObj);
-		break;
-
-	case oEXIT58M:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58M]._goRoom, 0, 0, curObj);
-		break;
-
-	case oEXIT59L:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT59L]._goRoom, 0, 0, curObj);
 		break;
 
 	default:
@@ -2798,27 +2777,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oEXIT12CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT12CU]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT13CU:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT13CU]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT2BL:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT2BL]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT36F:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT36F]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT41D:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT41D]._goRoom, 0, 0, curObj);
-		break;
-
 	case oEXIT4CT:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT4CT]._goRoom, 0, 0, curObj);
+	case oEXIT58M:
+	case oEXIT59L:
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[curObj]._goRoom, 0, 0, curObj);
 		break;
 
 	case oEXIT58T:
@@ -2826,14 +2792,6 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		for (uint8 a = 0; a < 6; a++)
 			_vm->setObjectVisible(oLED158 + a, false);
 		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58T]._goRoom, 0, 0, curObj);
-		break;
-
-	case oEXIT58M:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT58M]._goRoom, 0, 0, curObj);
-		break;
-
-	case oEXIT59L:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[oEXIT59L]._goRoom, 0, 0, curObj);
 		break;
 
 	case oPANELM2G:
