@@ -136,7 +136,6 @@ void TrecisionEngine::doClearText() {
 
 void TrecisionEngine::setRoom(uint16 r, bool b) {
 	_logicMgr->setupAltRoom(r, b);
-	RegenRoom();
 }
 
 /*-------------------------------------------------
@@ -218,7 +217,7 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 		lim.right++;
 		lim.bottom++;
 
-		if (checkedObj && (_obj[checkedObj]._mode & OBJMODE_OBJSTATUS)) {
+		if (checkedObj && isObjectVisible(checkedObj)) {
 			if (lim.contains(mx, my)) {
 
 				if ((_obj[checkedObj]._mode & OBJMODE_FULL) || (_obj[checkedObj]._mode & OBJMODE_LIM)) {
@@ -338,11 +337,6 @@ void TrecisionEngine::openSys() {
 	_graphicsMgr->clearScreen();
 
 	hideCursor();
-
-	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		OldObjStatus[i] = false;
-		VideoObjStatus[i] = false;
-	}
 }
 
 float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {

@@ -166,7 +166,7 @@ void TrecisionEngine::doAction() {
 		if (_curObj == oLASTLEV5)
 			CharacterSay(2003);
 
-		if (!_curObj || !(_obj[_curObj]._mode & OBJMODE_OBJSTATUS))
+		if (!_curObj || !isObjectVisible(_curObj))
 			return;
 
 		if (_obj[_curObj]._mode & OBJMODE_HIDDEN)
@@ -403,7 +403,7 @@ void TrecisionEngine::doCharacter() {
 			} else if (_curMessage->_u8Param)
 				_pathFind->setPosition(_curMessage->_u8Param);
 
-			if ((_curMessage->_u16Param1 == _obj[oCANCELLATA1B]._anim) && !(_obj[oBOTTIGLIA1D]._mode & OBJMODE_OBJSTATUS) && !(_obj[oRETE17]._mode & OBJMODE_OBJSTATUS)) {
+			if ((_curMessage->_u16Param1 == _obj[oCANCELLATA1B]._anim) && !isObjectVisible(oBOTTIGLIA1D) && !isObjectVisible(oRETE17)) {
 				_dialogMgr->playDialog(dF181);
 				hideCursor();
 				_pathFind->setPosition(1);
@@ -604,8 +604,7 @@ void TrecisionEngine::doMouseTake(uint16 curObj) {
 				}
 			}
 		} else {
-			_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
-			RegenRoom();
+			setObjectVisible(curObj, false);
 		}
 	}
 	addIcon(_obj[_curObj]._ninv);
@@ -681,8 +680,7 @@ void TrecisionEngine::doDoing() {
 	case ME_OPENCLOSE: {
 		uint16 curObj = _curMessage->_u16Param1;
 		uint16 curAnim = _curMessage->_u16Param2;
-		_obj[curObj]._mode &= ~OBJMODE_OBJSTATUS;
-		RegenRoom();
+		setObjectVisible(curObj, false);
 		if (curAnim)
 			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
 
@@ -690,7 +688,6 @@ void TrecisionEngine::doDoing() {
 	}
 		// no break!
 	case ME_WAITOPENCLOSE:
-		RegenRoom();
 		if (_actor->_curAction == hSTAND)
 			showCursor();
 		break;
@@ -799,7 +796,6 @@ void TrecisionEngine::doScript() {
 		break;
 
 	case ME_REGENROOM:
-		RegenRoom();
 		break;
 
 	case ME_CHANGER:

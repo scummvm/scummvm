@@ -30,9 +30,6 @@ namespace Trecision {
 /*-------------------------------------------------------------------------*/
 /*                          VARIABILI DI SERVIZIO         				   */
 /*-------------------------------------------------------------------------*/
-extern bool OldObjStatus[];
-extern bool VideoObjStatus[];
-
 extern struct SSortTable SortTable[];
 
 /*-------------------------------------------------------------------------*/

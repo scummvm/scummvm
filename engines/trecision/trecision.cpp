@@ -1112,4 +1112,35 @@ void TrecisionEngine::addDirtyRect(Common::Rect rect) {
 	_dirtyRects.push_back(rect);
 }
 
+void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
+	if (visible)
+		_obj[objectId]._mode |= OBJMODE_OBJSTATUS;
+	else
+		_obj[objectId]._mode &= ~OBJMODE_OBJSTATUS;
+
+	if (_obj[objectId]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+		// Find the object in the room, and update its status
+		uint16 index;
+		for (index = 0; index < MAXOBJINROOM; index++) {
+			if (_room[_curRoom]._object[index] == objectId || _room[_curRoom]._object[index] == 0)
+				break;
+		}
+
+		SortTable[_curSortTableNum]._index = objectId;
+		SortTable[_curSortTableNum]._roomIndex = index;
+		SortTable[_curSortTableNum]._remove = !isObjectVisible(objectId);
+		SortTable[_curSortTableNum]._curFrame = 0;
+		SortTable[_curSortTableNum]._isBitmap = true;
+		_curSortTableNum++;	
+	}
+}
+
+bool TrecisionEngine::isObjectVisible(uint16 objectId) const {
+	return _obj[objectId]._mode & OBJMODE_OBJSTATUS;
+}
+
+void TrecisionEngine::setObjectAnim(uint16 objectId, uint16 animId) {
+	_obj[objectId]._anim = animId;
+}
+
 } // End of namespace Trecision

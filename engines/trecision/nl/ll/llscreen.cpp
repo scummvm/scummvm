@@ -89,12 +89,6 @@ void ReadLoc() {
 	g_vm->_graphicsMgr->resetScreenBuffer();
 
 	g_vm->_curSortTableNum = 0;
-	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		OldObjStatus[i] = false;
-		VideoObjStatus[i] = false;
-	}
-
-	RegenRoom();
 
 	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
 		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
@@ -204,30 +198,18 @@ void ReadExtraObj41D() {
 	delete ff;
 }
 
-void RegenRoom() {
-	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-		if (g_vm->_room[g_vm->_curRoom]._object[a] == 0)
+void InitRegenRoom() {
+	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[index];
+		if (objectId == 0)
 			break;
 
-		if (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
-			bool status = (g_vm->_obj[g_vm->_room[g_vm->_curRoom]._object[a]]._mode & OBJMODE_OBJSTATUS);
-			if (status != OldObjStatus[a])
-				OldObjStatus[a] = status;
-		}
-	}
-}
-
-void PaintRegenRoom() {
-	for (uint16 a = 0; a < MAXOBJINROOM; a++) {
-		if (OldObjStatus[a] != VideoObjStatus[a]) {
-			SortTable[g_vm->_curSortTableNum]._index = g_vm->_room[g_vm->_curRoom]._object[a];
-			SortTable[g_vm->_curSortTableNum]._roomIndex = a;
-			SortTable[g_vm->_curSortTableNum]._remove = VideoObjStatus[a];
-			SortTable[g_vm->_curSortTableNum]._curFrame = 0;
-			SortTable[g_vm->_curSortTableNum]._isBitmap = true;
-			VideoObjStatus[a] = OldObjStatus[a];
-			g_vm->_curSortTableNum++;
-		}
+		SortTable[g_vm->_curSortTableNum]._index = objectId;
+		SortTable[g_vm->_curSortTableNum]._roomIndex = index;
+		SortTable[g_vm->_curSortTableNum]._remove = g_vm->isObjectVisible(objectId);
+		SortTable[g_vm->_curSortTableNum]._curFrame = 0;
+		SortTable[g_vm->_curSortTableNum]._isBitmap = true;
+		g_vm->_curSortTableNum++;
 	}
 }
 
@@ -261,10 +243,6 @@ void RedrawRoom() {
 	}
 
 	g_vm->_curSortTableNum = 0;
-	for (int i = 0; i < MAXOBJINROOM; ++i) {
-		OldObjStatus[i] = false;
-		VideoObjStatus[i] = false;
-	}
 
 	g_vm->_graphicsMgr->resetScreenBuffer();
 
@@ -273,8 +251,6 @@ void RedrawRoom() {
 
 	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI)
 		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
-
-	RegenRoom();
 
 	TextStatus = TEXT_OFF;
 	g_vm->_flagPaintCharacter = true;

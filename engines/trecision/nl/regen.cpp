@@ -44,7 +44,6 @@ SDObj DObj;
 
 void PaintScreen(bool flag) {
 	AtFrameNext();
-	PaintRegenRoom();
 
 	g_vm->_actorRect = nullptr;
 	for (int a = 0; a < 20; a++)
@@ -212,7 +211,7 @@ void PaintObjAnm(uint16 CurBox) {
 			SObject obj = g_vm->_obj[curObject];
 
 			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) &&
-			    (obj._mode & OBJMODE_OBJSTATUS) &&
+				g_vm->isObjectVisible(curObject) &&
 			    (obj._nbox == CurBox)) {
 
 				Common::Rect r = *d;
