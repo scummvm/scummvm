@@ -21,12 +21,10 @@
  */
 
 #include "common/scummsys.h"
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/struct.h"
 #include "trecision/defines.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
-#include "trecision/nl/extern.h"
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
 
@@ -38,6 +36,8 @@ namespace Trecision {
 
 // Variabili di servizio comuni a piu' funzioni di string.c
 uint16 CurS;
+
+uint32 _someoneSpeakTime;
 
 uint16 SpeakSomeOneAnimation;
 uint16 SpeakSomeOnePerson;
@@ -240,7 +240,7 @@ void CharacterTalkInAction(uint16 ss) {
 
 void CharacterContinueTalk() {
 	g_vm->_flagSkipTalk = false;
-	_characterSpeakTime = TheTime;
+	g_vm->_characterSpeakTime = g_vm->_curTime;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
 
@@ -274,7 +274,7 @@ void CharacterMute() {
 	g_vm->_flagSomeoneSpeaks = false;
 	g_vm->_flagCharacterSpeak = false;
 	g_vm->_flagSkipTalk = false;
-	_characterSpeakTime = 0L;
+	g_vm->_characterSpeakTime = 0;
 
 	g_vm->clearText();
 	g_vm->_lastObj = 0;
@@ -309,7 +309,7 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
 void SomeoneContinueTalk() {
 	uint16 posx, posy;
 
-	_someoneSpeakTime = TheTime;
+	_someoneSpeakTime = g_vm->_curTime;
 	g_vm->_flagSkipTalk = false;
 
 	substringagain = (CurSubString < (SubStringUsed - 1));
@@ -358,7 +358,7 @@ void doString() {
 
 	case ME_CHARACTERSPEAKING:
 		if (g_vm->_flagCharacterSpeak) {
-			if (g_vm->_flagSkipTalk || (TheTime > TalkTime + _characterSpeakTime)) {
+			if (g_vm->_flagSkipTalk || (g_vm->_curTime > TalkTime + g_vm->_characterSpeakTime)) {
 				if (substringagain)
 					CharacterContinueTalk();
 				else
@@ -384,7 +384,7 @@ void doString() {
 
 	case ME_SOMEONESPEAKING:
 		if (g_vm->_flagSomeoneSpeaks) {
-			if (g_vm->_flagSkipTalk || (TheTime >= (TalkTime + _someoneSpeakTime))) {
+			if (g_vm->_flagSkipTalk || (g_vm->_curTime >= (TalkTime + _someoneSpeakTime))) {
 				if (substringagain)
 					SomeoneContinueTalk();
 				else {

@@ -26,7 +26,6 @@
 #include "trecision/3d.h"
 
 #include "trecision/defines.h"
-#include "trecision/nl/extern.h"
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
