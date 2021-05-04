@@ -108,7 +108,7 @@ void PaintScreen(bool flag) {
 		if (i->_remove) {
 			DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 
-			DObj.l = g_vm->_obj[i->_index]._rect;
+			DObj.l = g_vm->_obj[i->_objectId]._rect;
 			DObj.objIndex = -1;
 			DObj.drawMask = false;
 			g_vm->_graphicsMgr->DrawObj(DObj);
@@ -175,9 +175,9 @@ void PaintObjAnm(uint16 CurBox) {
 	uint16 index = 0;
 	for (Common::Array<SSortTable>::iterator i = g_vm->_sortTable.begin(); i != g_vm->_sortTable.end(); ++i) {
 		if (!i->_remove) {
-			if (g_vm->_obj[i->_index]._nbox == CurBox) {
+			if (g_vm->_obj[i->_objectId]._nbox == CurBox) {
 				// l'oggetto bitmap al livello desiderato
-				SObject o = g_vm->_obj[i->_index];
+				SObject o = g_vm->_obj[i->_objectId];
 				DObj.rect = o._rect;
 				DObj.rect.translate(0, TOP);
 				DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
