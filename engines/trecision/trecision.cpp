@@ -219,6 +219,8 @@ Common::Error TrecisionEngine::run() {
 	_dialogMgr = new DialogManager(this);
 	_logicMgr = new LogicManager(this);
 	_soundMgr = new SoundManager(this);
+	_pathFind = new PathFinding3D(this);
+	_renderer = new Renderer3D(this);
 	setDebugger(new Console(this));
 
 	initMain();
