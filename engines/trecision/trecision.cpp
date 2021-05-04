@@ -26,7 +26,6 @@
 
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/defines.h"
-#include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/sysdef.h"
@@ -173,6 +172,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	}
 
 	_blinkLastDTextChar = MASKCOL;
+	_curTime = 0;
+	_characterSpeakTime = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {

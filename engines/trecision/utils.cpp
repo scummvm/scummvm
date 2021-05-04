@@ -24,7 +24,6 @@
 
 #include "trecision/graphics.h"
 #include "trecision/defines.h"
-#include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
@@ -361,10 +360,10 @@ void TrecisionEngine::ProcessTime() {
 	static uint8 OldRegInvSL = 0xFF;
 	static uint8 OldLightIcon = 0xFF;
 
-	TheTime = readTime();
+	_curTime = readTime();
 	_animMgr->refreshAllAnimations();
 
-	if (TheTime >= _nextRefresh) {
+	if (_curTime >= _nextRefresh) {
 		drawString();
 
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
@@ -381,10 +380,10 @@ void TrecisionEngine::ProcessTime() {
 		_textStackTop = -1;
 
 		uint32 paintTime = readTime();
-		if (paintTime - TheTime >= 5)
+		if (paintTime - _curTime >= 5)
 			_nextRefresh = paintTime + 1;
 		else
-			_nextRefresh = TheTime + 5;
+			_nextRefresh = _curTime + 5;
 	}
 }
 

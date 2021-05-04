@@ -16,8 +16,6 @@ MODULE_OBJS = \
 	3d.o \
 	video.o \
 	nl/do.o \
-	nl/globvar.o \
-	nl/process.o \
 	nl/regen.o \
 	nl/schedule.o \
 	nl/string.o \

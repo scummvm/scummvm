@@ -22,14 +22,12 @@
 
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
-
-
-#include "3d.h"
-#include "defines.h"
-#include "nl/extern.h"
-#include "nl/message.h"
-#include "nl/proto.h"
+#include "trecision/3d.h"
+#include "trecision/defines.h"
 #include "trecision/graphics.h"
+
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
 
 namespace Trecision {
 

@@ -23,9 +23,7 @@
 #include "common/scummsys.h"
 
 #include "trecision/sound.h"
-
 #include "trecision/trecision.h"
-#include "trecision/nl/extern.h"
 #include "trecision/defines.h"
 
 #include "audio/decoders/wave.h"
@@ -299,7 +297,7 @@ int32 SoundManager::talkStart(const char *name) {
 	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
 
 	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle[kSoundChannelSpeech], speechStream);
-	_characterSpeakTime = _vm->readTime();
+	_vm->_characterSpeakTime = _vm->readTime();
 
 	return TIME(speechStream->getLength().msecs());
 }

@@ -34,7 +34,6 @@
 
 #include "trecision/nl/proto.h"
 #include "trecision/nl/message.h"
-#include "trecision/nl/extern.h"
 
 
 namespace Trecision {
@@ -522,12 +521,12 @@ void TrecisionEngine::doIdle() {
 	if (GAMEAREA(_mouseY) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
 		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
-	if (_inventoryScrollTime > TheTime)
-		_inventoryScrollTime = TheTime;
+	if (_inventoryScrollTime > _curTime)
+		_inventoryScrollTime = _curTime;
 
-	if (isInventoryArea(_mouseY) && (TheTime > (INVSCROLLSP + _inventoryScrollTime))) {
+	if (isInventoryArea(_mouseY) && (_curTime > (INVSCROLLSP + _inventoryScrollTime))) {
 		doScrollInventory(_mouseX);
-		_inventoryScrollTime = TheTime;
+		_inventoryScrollTime = _curTime;
 	}
 
 	if (shouldQuit() && !_flagDialogActive && !_flagDialogMenuActive)
@@ -709,9 +708,9 @@ void TrecisionEngine::doScript() {
 	switch (message->_event) {
 	case ME_PAUSE:
 		if (!pauseStartTime) {
-			pauseStartTime = TheTime;
+			pauseStartTime = _curTime;
 			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
-		} else if (TheTime >= (pauseStartTime + message->_u16Param1))
+		} else if (_curTime >= (pauseStartTime + message->_u16Param1))
 			pauseStartTime = 0;
 		else
 			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);

@@ -23,7 +23,6 @@
 #include "common/scummsys.h"
 #include "trecision/dialog.h"
 
-#include "trecision/nl/extern.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
@@ -57,7 +56,7 @@ void doEvent(uint8 cls,  uint8 event,  uint8 priority,
 	lm->_u16Param2  = u16Param2;
 	lm->_u8Param  = u8Param;
 	lm->_u32Param  = u32Param;
-	lm->_timestamp = TheTime;
+	lm->_timestamp = g_vm->_curTime;
 
 	if (lq->_tail == MAXMESSAGE)
 		lq->_tail = 0;
