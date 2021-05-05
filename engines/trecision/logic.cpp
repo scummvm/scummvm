@@ -3823,7 +3823,7 @@ void LogicManager::doMouseLeftRight() {
 	if (_vm->_curRoom == kRoom52) {
 		// snake escape 52
 		if (_vm->isObjectVisible(oSNAKEU52)) {
-			if (GAMEAREA(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
+			if (_vm->isGameArea(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
 				_vm->StartCharacterAction(a526, 0, 1, 0);
 				_vm->setObjectAnim(oSCAVO51, a516);
 				_vm->_snake52.set(_vm->_curMessage);
@@ -3839,9 +3839,9 @@ void LogicManager::doMouseLeftRight() {
 
 	// If it's in a room without a character, like a map or a book
 	if (!_vm->_flagCharacterExists) {
-		if ((isInventoryArea(_vm->_curMessage->_u16Param2)) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
-			if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)
-			&& (_vm->whatIcon(_vm->_curMessage->_u16Param1)) && (_vm->_inventoryStatus == INV_INACTION)) {
+		if (_vm->isInventoryArea(_vm->_curMessage->_u16Param2) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
+			if (_vm->isIconArea(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)
+			&& _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
 				_vm->_useWith[WITH] = 0;
 				_vm->_curObj = 0;
 				_vm->_lightIcon = 0xFF;
@@ -3915,7 +3915,7 @@ void LogicManager::doMouseLeftRight() {
 	}
 
 	//	Game area
-	if (GAMEAREA(_vm->_curMessage->_u16Param2) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
+	if (_vm->isGameArea(_vm->_curMessage->_u16Param2) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
 		if (_vm->_flagscriptactive)
 			_vm->_curObj = _vm->_curMessage->_u32Param;
 
@@ -4006,12 +4006,12 @@ void LogicManager::doMouseLeftRight() {
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 		} else
 			doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
-	} else if (isInventoryArea(_vm->_curMessage->_u16Param2)) {
+	} else if (_vm->isInventoryArea(_vm->_curMessage->_u16Param2)) {
 		// Inventory area
 		if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
 			return;
 
-		if (ICONAREA(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
+		if (_vm->isIconArea(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
 			_vm->_characterQueue.initQueue();
 			_vm->_actor->actorStop();
 			_vm->_pathFind->nextStep();

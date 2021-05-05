@@ -30,6 +30,7 @@
 #include "trecision/nl/struct.h"
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
+#include "trecision/defines.h"
 
 #include "common/str-array.h"
 #include "common/keyboard.h"
@@ -190,11 +191,15 @@ public:
 	void freeKey();
 	uint32 readTime();
 	bool checkMask(uint16 mx, uint16 my);
-	float sinCosAngle(float sinus, float cosinus);
+	static float sinCosAngle(float sinus, float cosinus);
 	void ProcessTime();
 	void ProcessMouse();
-	float dist2D(float x1, float y1, float x2, float y2);
-	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
+	static float dist2D(float x1, float y1, float x2, float y2);
+	static float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
+	static bool isBetween(int a, int x, int b);
+	static bool isGameArea(int y);
+	static bool isInventoryArea(int y);
+	static bool isIconArea(int x, int y);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
@@ -215,6 +220,7 @@ public:
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 	bool canPlayerInteract();
 	void addDirtyRect(Common::Rect rect);
+	void reEvent();
 
 	// Objects
 	void setObjectVisible(uint16 objectId, bool visible);

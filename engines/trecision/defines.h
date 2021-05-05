@@ -2316,4 +2316,97 @@ enum InventoryItem {
 #define LIGHTRANGE 2048.0     // after 127 * val the light doesn't have an effect (deleted)
 #define CHARACTERMIDSIZE 91.0 // character half height
 
+/******************************************************************************
+Game Structure
+******************************************************************************/
+#define MAXICON 82 // Inventory icons
+
+#define MAXOBJINROOM 128           // Objects per room
+#define MAXSOUNDSINROOM 15         // Sounds per room
+#define MAXACTIONINROOM 32         // Number of actions per room
+#define MAXACTION 620              // Number of actions in the game
+#define MAXACTIONFRAMESINROOM 1200 // Number of action frames per room
+
+#define MAXSENTENCE 4000 // Max Examine phrases
+#define MAXOBJNAME 1400
+
+#define MAXSCRIPTFRAME 50
+#define MAXSCRIPT 15
+#define MAXTEXTSTACK 3
+
+#define MAXDIALOG 70
+#define MAXCHOICE 1000
+#define MAXSUBTITLES 1500
+#define MAXDISPCHOICES 5
+#define MAXNEWSMKPAL 40
+
+// define smacker animations
+#define MAXCHILD 4
+#define MAXATFRAME 16
+
+/******************************************************************************
+Null Objects
+******************************************************************************/
+#define NO_OBJECTS 0
+
+/******************************************************************************
+Screen management
+******************************************************************************/
+#define MAXX 640
+#define MAXY 480
+
+#define AREA 360
+#define TOP ((MAXY - AREA) / 2) // Coordinate y of game screen
+#define VIDEOTOP TOP
+#define ZBUFFERSIZE 200000L
+
+/******************************************************************************
+Low level text and color management
+******************************************************************************/
+#define CARHEI 10
+#define MAXDTEXTLINES 20
+#define MAXDTEXTCHARS 128
+#define MAXCHARS 128
+
+#define MAXLENSUBSTRING 128
+#define MAXSUBSTRING 16
+
+/******************************************************************************
+High level color management
+******************************************************************************/
+#define COLOR_CHARACTER HYELLOW
+#define COLOR_OBJECT HWHITE
+#define COLOR_INVENTORY HBLUE
+
+/******************************************************************************
+Inventory
+******************************************************************************/
+#define INV_ON 1       // Active
+#define INV_INACTION 2 // In use (the mouse is in the bottom)
+#define INV_PAINT 4    // Not yet ON (Going down)
+#define INV_DEPAINT 8  // Not yet OFF (Going up)
+#define INV_OFF 16     // Not on screen
+
+#define INVENTORY_HIDE 40 // ICONDY ...era a 48.
+#define INVENTORY_SHOW 0
+
+/******************************************************************************
+Inventory icon management
+******************************************************************************/
+#define FIRSTLINE (TOP + AREA) // First line of the inventory
+#define ICONDY 40              // Icon Height
+#define ICONDX 48              // Icon width
+#define ICONSHOWN 12           // Icons showed simultaneously
+#define INVSCROLLSP 5          // Scrolling speed
+#define ICONMARGDX 32          // Right margin
+#define ICONMARGSX 32          // Left margin
+
+/******************************************************************************
+Management of "Use with"
+******************************************************************************/
+#define USED 0
+#define WITH 1
+
+#define MAXMESSAGE 128
+
 #endif

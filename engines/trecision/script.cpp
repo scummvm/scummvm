@@ -258,7 +258,7 @@ void TrecisionEngine::doMouse() {
 	switch (_curMessage->_event) {
 	case ME_MMOVE:
 		int8 curPos;
-		if (GAMEAREA(_curMessage->_u16Param2))
+		if (isGameArea(_curMessage->_u16Param2))
 			curPos = POSGAME;
 		else if (isInventoryArea(_curMessage->_u16Param2))
 			curPos = POSINV;
@@ -345,7 +345,7 @@ void TrecisionEngine::doCharacter() {
 		_flagPaintCharacter = true;
 
 		if (_pathFind->_characterInMovement)
-			REEVENT;
+			reEvent();
 		else {
 			showCursor();
 
@@ -366,7 +366,7 @@ void TrecisionEngine::doCharacter() {
 
 	case ME_CHARACTERACTION:
 		if (_flagWaitRegen)
-			REEVENT;
+			reEvent();
 		_characterQueue.initQueue();
 		_inventoryRefreshStartLine = INVENTORY_HIDE;
 		refreshInventory(_inventoryRefreshStartIcon, INVENTORY_HIDE);
@@ -408,7 +408,7 @@ void TrecisionEngine::doCharacter() {
 				_pathFind->setPosition(1);
 			}
 		} else
-			REEVENT;
+			reEvent();
 		break;
 	default:
 		break;
@@ -431,7 +431,7 @@ void TrecisionEngine::doSystem() {
 
 		// if regen still has to occur
 		if (_flagWaitRegen)
-			REEVENT;
+			reEvent();
 
 		_logicMgr->doSystemChangeRoom();
 
@@ -518,7 +518,7 @@ void TrecisionEngine::doIdle() {
 		break;
 	}
 
-	if (GAMEAREA(_mouseY) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
+	if (isGameArea(_mouseY) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
 		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
 	if (_inventoryScrollTime > _curTime)
@@ -669,11 +669,11 @@ void TrecisionEngine::doDoing() {
 	switch (_curMessage->_event) {
 	case ME_INITOPENCLOSE:
 		if (_actor->_curAction == hSTAND)
-			REEVENT;
+			reEvent();
 		else if (_actor->_curFrame == 4)
 			doEvent(_curMessage->_class, ME_OPENCLOSE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 		else
-			REEVENT;
+			reEvent();
 
 		break;
 	case ME_OPENCLOSE: {

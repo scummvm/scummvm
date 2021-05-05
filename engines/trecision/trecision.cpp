@@ -28,7 +28,6 @@
 #include "trecision/defines.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
-#include "trecision/nl/sysdef.h"
 #include "trecision/console.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
@@ -1130,6 +1129,10 @@ bool TrecisionEngine::isObjectVisible(uint16 objectId) const {
 
 void TrecisionEngine::setObjectAnim(uint16 objectId, uint16 animId) {
 	_obj[objectId]._anim = animId;
+}
+
+void TrecisionEngine::reEvent() {
+	doEvent(_curMessage->_class, _curMessage->_event, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 }
 
 } // End of namespace Trecision

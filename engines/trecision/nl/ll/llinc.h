@@ -24,7 +24,7 @@
 #define TRECISION_LLINC_H
 
 #include "common/rect.h"
-#include "trecision/nl/sysdef.h"
+#include "trecision/defines.h"
 
 #define DRAWMASK        1
 #define COPYTORAM       2

@@ -180,7 +180,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_SHOWICONNAME:
-		if (ICONAREA(_mouseX, _mouseY)) {
+		if (isIconArea(_mouseX, _mouseY)) {
 			if (_inventoryStatus != INV_ON)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			_curInventory = whatIcon(_mouseX);
@@ -392,7 +392,7 @@ void TrecisionEngine::doScrollInventory(uint16 mouseX) {
 
 	if (mouseX <= ICONMARGSX && _iconBase)
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (BETWEEN(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
+	else if (isBetween(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
 
