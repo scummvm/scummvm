@@ -384,10 +384,7 @@ void AnimManager::startFullMotion(const char *name) {
 
 	_vm->_flagShowCharacter = false;
 	TextStatus = TEXT_OFF;
-	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-	memset(_vm->_screenBuffer + (TOP + AREA) * MAXX, 0, TOP * MAXX * 2);
-	memset(_vm->_screenBuffer, 0, MAXX * MAXY * 2);
 	_vm->_graphicsMgr->copyToScreen(0, AREA + TOP, MAXX, TOP);
 
 	_vm->_gameQueue.initQueue();
@@ -481,26 +478,28 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const byte *pal = smkDecoder->getPalette();
 	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 
-	if (smkDecoder->getCurFrame() == 0)
+	if (smkDecoder->getCurFrame() == 0) {
 		_vm->_graphicsMgr->setSmkBackground();
-
-	while (lastRect) {
-		bool intersects = false;
-		for (int32 a = 0; a < MAXCHILD; a++) {
-			if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
-				if (_animTab[animation]._lim[a].intersects(*lastRect)) {
-					intersects = true;
-					break;
+		_vm->_graphicsMgr->blitToScreenBuffer(frame16, 0, TOP, mask, false);
+	} else {
+		while (lastRect) {
+			bool intersects = false;
+			for (int32 a = 0; a < MAXCHILD; a++) {
+				if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
+					if (_animTab[animation]._lim[a].intersects(*lastRect)) {
+						intersects = true;
+						break;
+					}
 				}
 			}
-		}
 
-		if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
-			Graphics::Surface anim = frame16->getSubArea(*lastRect);
-			_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
-		}
+			if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
+				Graphics::Surface anim = frame16->getSubArea(*lastRect);
+				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
+			}
 
-		lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
+			lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
+		}
 	}
 
 	frame16->free();
