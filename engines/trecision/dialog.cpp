@@ -612,10 +612,8 @@ void DialogManager::playChoice(uint16 i) {
 		_choice[choice->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}
 
-	// WORKAROUND: For some reason, the dialog choices seem to include
-	// extra frames for each sentence. We chop them off here
 	for (int c = _curSubTitle; c < endSubTitle; c++)
-		totalLength += _subTitles[c]._length - 3;
+		totalLength += _subTitles[c]._length;
 
 	_vm->hideCursor();
 	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1);
