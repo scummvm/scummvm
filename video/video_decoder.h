@@ -944,7 +944,7 @@ private:
 
 	// Current playback status
 	bool _needsUpdate;
-	Audio::Timestamp _lastTimeChange, _endTime;
+	Audio::Timestamp _endTime;
 	bool _endTimeSet;
 	Common::Rational _playbackRate;
 	VideoTrack *_nextVideoTrack;
@@ -967,6 +967,7 @@ private:
 	bool hasAudio() const;
 
 protected:
+	Audio::Timestamp _lastTimeChange;
 	int32 _startTime;
 
 private:
