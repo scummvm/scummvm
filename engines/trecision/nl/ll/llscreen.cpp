@@ -66,7 +66,7 @@ void ReadLoc() {
 
 	g_vm->_soundMgr->fadeOut();
 
-	memset(g_vm->_screenBuffer, 0, MAXX * MAXY * 2);
+	g_vm->_graphicsMgr->clearScreenBufferTop();
 
 	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
 	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);

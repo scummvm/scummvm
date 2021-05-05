@@ -36,6 +36,7 @@ GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
 }
 
 GraphicsManager::~GraphicsManager() {
+	_screenBuffer.free();
 	_background.free();
 	_smkBackground.free();
 }
@@ -62,6 +63,7 @@ bool GraphicsManager::initScreen() {
 
 	clearScreen();
 
+	_screenBuffer.create(MAXX, MAXY, _screenFormat);
 	_background.create(MAXX, MAXY, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
 
@@ -74,7 +76,7 @@ void GraphicsManager::clearScreen() {
 
 void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int y) {
 	for (int curY = 0; curY < surface->h; curY++) {
-		memcpy(_vm->_screenBuffer + x + (y + curY) * MAXX, surface->getBasePtr(0, curY), surface->pitch);
+		memcpy(_screenBuffer.getBasePtr(x, y + curY), surface->getBasePtr(0, curY), surface->pitch);
 	}
 }
 
@@ -83,12 +85,11 @@ void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int 
 		for (int curX = 0; curX < surface->w; curX++) {
 			const int destX = x + curX;
 			const int destY = y + curY;
-			uint16 *dest = _vm->_screenBuffer + destX + destY * MAXX;
 			const uint16 pixel = (uint16)surface->getPixel(curX, curY);
 			if (pixel != mask) {
-				*dest = pixel;
+				_screenBuffer.setPixel(destX, destY, pixel);
 			} else if (useSmkBg) {
-				*dest = (uint16)_smkBackground.getPixel(destX, destY - TOP);
+				_screenBuffer.setPixel(destX, destY, _smkBackground.getPixel(destX, destY - TOP));
 			}
 		}
 	}
@@ -96,7 +97,7 @@ void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int 
 
 void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	g_system->copyRectToScreen(
-		_vm->_screenBuffer + x + y * MAXX,
+		_screenBuffer.getBasePtr(x, y),
 		MAXX * 2, x, y, w, h
 	);
 }
@@ -106,12 +107,16 @@ void GraphicsManager::setSmkBackground() {
 }
 
 void GraphicsManager::resetScreenBuffer() {
-	memset(_vm->_screenBuffer, 0, TOP * MAXX * 2);
-	memcpy(_vm->_screenBuffer + TOP * MAXX, _background.getPixels(), _background.pitch * AREA);
+	clearScreenBufferTop();
+	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * AREA);
 }
 
 uint16 *GraphicsManager::getBackgroundPtr() {
 	return (uint16 *)_background.getPixels();
+}
+
+uint16 *GraphicsManager::getScreenBufferPtr() {
+	return (uint16 *)_screenBuffer.getPixels();
 }
 
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
@@ -129,9 +134,13 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 	img.free();
 }
 
+void GraphicsManager::clearScreenBufferTop() {
+	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);
+}
+
 void GraphicsManager::putPixel(int x, int y, uint16 color) {
 	if (x > 0 && x < MAXX && y > 60 && y < 420) {
-		_vm->_screenBuffer[x + MAXX * y] = color;
+		_screenBuffer.setPixel(x, y, color);
 		_background.setPixel(x, y - 60, color);
 		_smkBackground.setPixel(x, y - 60, color);
 	}
@@ -251,9 +260,9 @@ void GraphicsManager::NlDissolve(uint8 val) {
 		float y = b;
 
 		if (CenterY - (int)y > TOP)
-			memset(_vm->_screenBuffer + TOP*MAXX, 0, (CenterY - (int)y - TOP) * MAXX * 2);
+			memset(_screenBuffer.getBasePtr(0, TOP), 0, (CenterY - (int)y - TOP) * MAXX * 2);
 		if ((AREA + TOP) > CenterY + (int)y)
-			memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
+			memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
 		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
@@ -267,13 +276,13 @@ void GraphicsManager::NlDissolve(uint8 val) {
 
 			int rightX = CenterX + (int)x;
 			if (rightX < MAXX) {
-				memset(_vm->_screenBuffer + rightX + (CenterY + (int)y) * MAXX, 0, (MAXX - rightX) * 2);
-				memset(_vm->_screenBuffer + rightX + (CenterY - (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, CenterY + (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, CenterY - (int)y), 0, (MAXX - rightX) * 2);
 			}
 			int leftX = CenterX - (int)x;
 			if (leftX > 0) {
-				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, leftX * 2);
-				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, CenterY - (int)y), 0, leftX * 2);
 			}
 		}
 
@@ -288,13 +297,13 @@ void GraphicsManager::NlDissolve(uint8 val) {
 
 			int rightX = CenterX + (int)x;
 			if (rightX < MAXX) {
-				memset(_vm->_screenBuffer + rightX + (CenterY + (int)y) * MAXX, 0, (MAXX - rightX) * 2);
-				memset(_vm->_screenBuffer + rightX + (CenterY - (int)y) * MAXX, 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, CenterY + (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, CenterY - (int)y), 0, (MAXX - rightX) * 2);
 			}
 			int leftX = CenterX - (int)x;
 			if (leftX > 0) {
-				memset(_vm->_screenBuffer + (CenterY + (int)y) * MAXX, 0, leftX * 2);
-				memset(_vm->_screenBuffer + (CenterY - (int)y) * MAXX, 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, CenterY - (int)y), 0, leftX * 2);
 			}
 		}
 
@@ -327,16 +336,16 @@ void GraphicsManager::DrawObj(SDObj d) {
 
 					if ((maskOffset != 0) && (b >= (d.rect.top + d.l.top)) && (b < (d.rect.top + d.l.bottom))) {
 						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.rect.left, buf, maskOffset * 2);
+							memcpy(_screenBuffer.getBasePtr(Sco + d.rect.left, b), buf, maskOffset * 2);
 
 						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.rect.left, buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
 
 						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + Sco + d.rect.left, buf, (d.l.right - Sco) * 2);
+							memcpy(_screenBuffer.getBasePtr(Sco + d.rect.left, b), buf, (d.l.right - Sco) * 2);
 
 						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-							memcpy(_vm->_screenBuffer + (b * MAXX) + d.l.left + d.rect.left, buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
+							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
 					}
 					Sco += *mask;
 					buf += *mask++;
@@ -346,7 +355,7 @@ void GraphicsManager::DrawObj(SDObj d) {
 		}
 	} else {
 		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
-			memcpy(_vm->_screenBuffer + (d.rect.top + b) * MAXX + (d.rect.left + d.l.left),
+			memcpy(_screenBuffer.getBasePtr(d.rect.left + d.l.left, d.rect.top + b),
 				   buf + (b * d.rect.width()) + d.l.left, d.l.width() * 2);
 		}
 	}

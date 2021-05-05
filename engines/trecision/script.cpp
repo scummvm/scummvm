@@ -104,10 +104,10 @@ void TrecisionEngine::evalScript() {
 
 bool TrecisionEngine::quitGame() {
 	for (int a = 0; a < TOP; a++)
-		memcpy(_zBuffer + a * MAXX, _screenBuffer + MAXX * a, MAXX * 2);
+		memcpy(_zBuffer + a * MAXX, _graphicsMgr->getScreenBufferPtr() + MAXX * a, MAXX * 2);
 
 	for (int a = 0; a < TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
 	SText.set(
@@ -130,7 +130,7 @@ bool TrecisionEngine::quitGame() {
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
 	for (int a = 0; a < TOP; a++)
-		memcpy(_screenBuffer + MAXX * a, _zBuffer + a * MAXX, MAXX * 2);
+		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, _zBuffer + a * MAXX, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -139,7 +139,7 @@ bool TrecisionEngine::quitGame() {
 
 void TrecisionEngine::demoOver() {
 	for (int a = 0; a < TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
 	SText.set(
