@@ -33,7 +33,7 @@
 #define _WIN32_IE 0x500
 #endif
 #include <shlobj.h>
-#include <wchar.h>
+#include <tchar.h>
 
 #include "common/scummsys.h"
 #include "common/config-manager.h"
@@ -106,7 +106,7 @@ void OSystem_Win32::initBackend() {
 			freopen("CONOUT$","w",stdout);
 			freopen("CONOUT$","w",stderr);
 		}
-		SetConsoleTitle("ScummVM Status Window");
+		SetConsoleTitle(TEXT("ScummVM Status Window"));
 	} else {
 		FreeConsole();
 	}
@@ -152,9 +152,12 @@ bool OSystem_Win32::displayLogFile() {
 
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
-	HINSTANCE shellExec = ShellExecute(getHwnd(), NULL, _logFilePath.c_str(), NULL, NULL, SW_SHOWNORMAL);
-	if ((intptr_t)shellExec > 32)
+	TCHAR *tLogFilePath = Win32::stringToTchar(_logFilePath);
+	HINSTANCE shellExec = ShellExecute(getHwnd(), NULL, tLogFilePath, NULL, NULL, SW_SHOWNORMAL);
+	if ((intptr_t)shellExec > 32) {
+		free(tLogFilePath);
 		return true;
+	}
 
 	// ShellExecute with the default verb failed, try the "Open with..." dialog
 	PROCESS_INFORMATION processInformation;
@@ -163,8 +166,8 @@ bool OSystem_Win32::displayLogFile() {
 	memset(&startupInfo, 0, sizeof(startupInfo));
 	startupInfo.cb = sizeof(startupInfo);
 
-	char cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
-	sprintf(cmdLine, "rundll32 shell32.dll,OpenAs_RunDLL %s", _logFilePath.c_str());
+	TCHAR cmdLine[MAX_PATH * 2];  // CreateProcess may change the contents of cmdLine
+	_stprintf(cmdLine, TEXT("rundll32 shell32.dll,OpenAs_RunDLL %s"), tLogFilePath);
 	BOOL result = CreateProcess(NULL,
 	                            cmdLine,
 	                            NULL,
@@ -175,6 +178,7 @@ bool OSystem_Win32::displayLogFile() {
 	                            NULL,
 	                            &startupInfo,
 	                            &processInformation);
+	free(tLogFilePath);
 	if (result) {
 		CloseHandle(processInformation.hProcess);
 		CloseHandle(processInformation.hThread);
@@ -185,7 +189,9 @@ bool OSystem_Win32::displayLogFile() {
 }
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
-	HINSTANCE result = ShellExecute(getHwnd(), NULL, /*(wchar_t*)nativeFilePath.utf16()*/url.c_str(), NULL, NULL, SW_SHOWNORMAL);
+	TCHAR *tUrl = Win32::stringToTchar(url);
+	HINSTANCE result = ShellExecute(getHwnd(), NULL, tUrl, NULL, NULL, SW_SHOWNORMAL);
+	free(tUrl);
 	// ShellExecute returns a value greater than 32 if successful
 	if ((intptr_t)result <= 32) {
 		warning("ShellExecute failed: error = %p", (void*)result);
@@ -207,14 +213,14 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	// We can not use "setlocale" (at least not for MSVC builds), since it
 	// will return locales like: "English_USA.1252", thus we need a special
 	// way to determine the locale string for Win32.
-	char langName[9];
-	char ctryName[9];
+	TCHAR langName[9];
+	TCHAR ctryName[9];
 
-	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
-		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
-		Common::String localeName = langName;
+	if (GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO639LANGNAME, langName, ARRAYSIZE(langName)) != 0 &&
+		GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_SISO3166CTRYNAME, ctryName, ARRAYSIZE(ctryName)) != 0) {
+		Common::String localeName = Win32::tcharToString(langName);
 		localeName += "_";
-		localeName += ctryName;
+		localeName += Win32::tcharToString(ctryName);
 
 		return localeName;
 	}
@@ -232,49 +238,49 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	}
 
 	// Use the My Pictures folder.
-	char picturesPath[MAX_PATH];
+	TCHAR picturesPath[MAX_PATH];
 
 	if (SHGetFolderPathFunc(NULL, CSIDL_MYPICTURES, NULL, SHGFP_TYPE_CURRENT, picturesPath) != S_OK) {
 		warning("Unable to access My Pictures directory");
 		return Common::String();
 	}
 
-	screenshotsPath = Common::String(picturesPath) + "\\ScummVM Screenshots\\";
+	_tcscat(picturesPath, TEXT("\\ScummVM Screenshots\\"));
 
 	// If the directory already exists (as it should in most cases),
 	// we don't want to fail, but we need to stop on other errors (such as ERROR_PATH_NOT_FOUND)
-	if (!CreateDirectory(screenshotsPath.c_str(), NULL)) {
+	if (!CreateDirectory(picturesPath, NULL)) {
 		if (GetLastError() != ERROR_ALREADY_EXISTS)
 			error("Cannot create ScummVM Screenshots folder");
 	}
 
-	return screenshotsPath;
+	return Win32::tcharToString(picturesPath);
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
-	char configFile[MAX_PATH];
+	TCHAR configFile[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, configFile) == S_OK) {
-		strcat(configFile, "\\ScummVM");
+		_tcscat(configFile, TEXT("\\ScummVM"));
 		if (!CreateDirectory(configFile, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
 				error("Cannot create ScummVM application data folder");
 		}
 
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
 
 		FILE *tmp = NULL;
-		if ((tmp = fopen(configFile, "r")) == NULL) {
+		if ((tmp = _tfopen(configFile, TEXT("r"))) == NULL) {
 			// Check windows directory
-			char oldConfigFile[MAX_PATH];
+			TCHAR oldConfigFile[MAX_PATH];
 			uint ret = GetWindowsDirectory(oldConfigFile, MAX_PATH);
 			if (ret == 0 || ret > MAX_PATH)
 				error("Cannot retrieve the path of the Windows directory");
 
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if ((tmp = fopen(oldConfigFile, "r"))) {
-				strcpy(configFile, oldConfigFile);
+			_tcscat(oldConfigFile, TEXT("\\" DEFAULT_CONFIG_FILE));
+			if ((tmp = _tfopen(oldConfigFile, TEXT("r")))) {
+				_tcscpy(configFile, oldConfigFile);
 
 				fclose(tmp);
 			}
@@ -288,14 +294,14 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 		if (ret == 0 || ret > MAX_PATH)
 			error("Cannot retrieve the path of the Windows directory");
 
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		_tcscat(configFile, TEXT("\\" DEFAULT_CONFIG_FILE));
 	}
 
-	return configFile;
+	return Win32::tcharToString(configFile);
 }
 
 Common::String OSystem_Win32::getDefaultLogFileName() {
-	char logFile[MAX_PATH];
+	TCHAR logFile[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, logFile) != S_OK) {
@@ -303,13 +309,13 @@ Common::String OSystem_Win32::getDefaultLogFileName() {
 		return Common::String();
 	}
 
-	strcat(logFile, "\\ScummVM");
+	_tcscat(logFile, TEXT("\\ScummVM"));
 	CreateDirectory(logFile, NULL);
-	strcat(logFile, "\\Logs");
+	_tcscat(logFile, TEXT("\\Logs"));
 	CreateDirectory(logFile, NULL);
-	strcat(logFile, "\\scummvm.log");
+	_tcscat(logFile, TEXT("\\scummvm.log"));
 
-	return logFile;
+	return Win32::tcharToString(logFile);
 }
 
 namespace {
