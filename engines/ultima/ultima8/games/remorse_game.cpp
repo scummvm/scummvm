@@ -75,8 +75,8 @@ bool RemorseGame::loadFiles() {
 	if (!loadPalette("static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
 	if (GAME_IS_REGRET) {
-		if (!loadPalette("static/cred.pal", PaletteManager::Pal_Cred))
-			return false;
+		// This one is not used at the moment, so allowed to fail
+		loadPalette("static/cred.pal", PaletteManager::Pal_Cred);
 	}
 	if (!loadPalette("static/diff.pal", PaletteManager::Pal_Diff))
 		return false;
@@ -84,8 +84,8 @@ bool RemorseGame::loadFiles() {
 		return false;
 	if (!loadPalette("static/misc2.pal", PaletteManager::Pal_Misc2))
 		return false;
-	if (!loadPalette("static/star.pal", PaletteManager::Pal_Star))
-		return false;
+	// We don't use his one at the moment, ok to fail.
+	loadPalette("static/star.pal", PaletteManager::Pal_Star);
 
 	pout << "Load GameData" << Std::endl;
 	GameData::get_instance()->loadRemorseData();

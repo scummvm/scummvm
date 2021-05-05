@@ -47,8 +47,13 @@ FileSystem::~FileSystem() {
 // Open a streaming file as readable. Streamed (0 on failure)
 Common::SeekableReadStream *FileSystem::ReadFile(const string &vfn) {
 	Common::SeekableReadStream *readStream;
-	if (!rawOpen(readStream, vfn))
-		return nullptr;
+	if (!rawOpen(readStream, vfn)) {
+		// Some games have some files in a "data" subdir.
+		string altpath = string::format("data/%s", vfn.c_str());
+		if (!rawOpen(readStream, altpath)) {
+			return nullptr;
+		}
+	}
 
 	return readStream;
 }
