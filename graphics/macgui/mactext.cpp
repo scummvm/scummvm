@@ -676,7 +676,7 @@ void MacText::render(int from, int to) {
 			debug(9, "MacText::render: line %d[%d] h:%d at %d,%d (%s) fontid: %d on %dx%d, fgcolor: %d bgcolor: %d, font: %p",
 				i, j, _textLines[i].height, xOffset, _textLines[i].y, _textLines[i].chunks[j].text.encode().c_str(),
 				_textLines[i].chunks[j].fontId, _surface->w, _surface->h, _textLines[i].chunks[j].fgcolor, _bgcolor,
-				(void *)_textLines[i].chunks[j].getFont());
+				(const void *)_textLines[i].chunks[j].getFont());
 
 			if (_textLines[i].chunks[j].text.empty())
 				continue;

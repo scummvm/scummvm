@@ -572,7 +572,7 @@ void Surface::debugPrint(int debuglevel, int width, int height, int x, int y, in
 	int tox = MIN<int>(x + width, w);
 	int toy = MIN<int>(y + height, h);
 
-	debug(debuglevel, "Surface: %d x %d, bpp: %d, format: %s, address: %p", w, h, format.bytesPerPixel, format.toString().c_str(), (void *)this);
+	debug(debuglevel, "Surface: %d x %d, bpp: %d, format: %s, address: %p", w, h, format.bytesPerPixel, format.toString().c_str(), (const void *)this);
 	debug(debuglevel, "displaying: %d x %d @ %d,%d, scale: %d", width, height, x, y, scale);
 	debugN(debuglevel, "+");
 	for (int xx = x; xx < tox; xx += scale)
