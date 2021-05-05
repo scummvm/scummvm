@@ -24,12 +24,13 @@
 
 #include "trecision/graphics.h"
 #include "trecision/defines.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
-#include "trecision/nl/struct.h"
 #include "trecision/logic.h"
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
+
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
+#include "trecision/nl/struct.h"
 
 namespace Trecision {
 
@@ -442,6 +443,22 @@ float TrecisionEngine::dist3D(float x1, float y1, float z1, float x2, float y2, 
 	double d2 = fabs((double)(y1 - y2));
 	double d3 = fabs((double)(z1 - z2));
 	return (float)sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+}
+
+bool TrecisionEngine::isBetween(int a, int x, int b) {
+	return x >= a && x <= b;
+}
+
+bool TrecisionEngine::isGameArea(int y) {
+	return isBetween(TOP, y, TOP + AREA - 1);
+}
+
+bool TrecisionEngine::isInventoryArea(int y) {
+	return y >= TOP + AREA;
+}
+
+bool TrecisionEngine::isIconArea(int x, int y) {
+	return y >= TOP + AREA && y < MAXY && x >= ICONMARGSX && x <= MAXX - ICONMARGDX;
 }
 
 } // End of namespace Trecision

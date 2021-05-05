@@ -364,7 +364,7 @@ void doString() {
 				else
 					CharacterMute();
 			} else
-				REEVENT;
+				g_vm->reEvent();
 		}
 		break;
 
@@ -372,14 +372,14 @@ void doString() {
 		if (!g_vm->_curMessage->_u16Param1)
 			SomeoneContinueTalk();
 		else
-			REEVENT;
+			g_vm->reEvent();
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
 		if (!g_vm->_curMessage->_u16Param1)
 			someoneMute();
 		else
-			REEVENT;
+			g_vm->reEvent();
 		break;
 
 	case ME_SOMEONESPEAKING:
@@ -393,7 +393,7 @@ void doString() {
 					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
 				}
 			} else
-				REEVENT;
+				g_vm->reEvent();
 		}
 		break;
 	default:

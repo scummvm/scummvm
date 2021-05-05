@@ -30,7 +30,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
-#include "trecision/nl/sysdef.h"
+#include "trecision/defines.h"
 
 namespace Trecision {
 

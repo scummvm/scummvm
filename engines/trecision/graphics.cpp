@@ -22,6 +22,7 @@
 
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
+#include "trecision/defines.h"
 
 #include "common/system.h"
 #include "engines/util.h"
