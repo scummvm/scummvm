@@ -129,7 +129,7 @@ void SDText::DText(uint16 *frameBuffer) {
 	if (text == nullptr)
 		return;
 
-	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_screenBuffer : frameBuffer;
+	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
 	uint16 curDy = checkDText();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {

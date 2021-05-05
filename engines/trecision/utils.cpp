@@ -330,9 +330,6 @@ void TrecisionEngine::openSys() {
 	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
 		_zBuffer[c] = 0x7FFF;
 
-	_screenBuffer = new uint16[MAXX * MAXY];
-	memset(_screenBuffer, 0, MAXX * MAXY * 2);
-
 	_graphicsMgr->clearScreen();
 
 	hideCursor();

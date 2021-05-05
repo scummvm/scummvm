@@ -64,7 +64,7 @@ void DialogManager::showChoices(uint16 i) {
 	int y = 5;
 	_curPos = -1;
 	_lastPos = -1;
-	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
+	_vm->_graphicsMgr->clearScreenBufferTop();
 
 	for (int c = 0; c < MAXDISPCHOICES; c++)
 		_dispChoice[c] = 0;
@@ -127,7 +127,7 @@ void DialogManager::playDialog(uint16 i) {
 	_vm->drawString();
 	PaintScreen(true);
 
-	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
+	_vm->_graphicsMgr->clearScreenBufferTop();
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
@@ -157,7 +157,7 @@ void DialogManager::playDialog(uint16 i) {
 void DialogManager::afterChoice() {
 	Dialog *dialog = &_dialog[_curDialog];
 
-	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
+	_vm->_graphicsMgr->clearScreenBufferTop();
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	switch (_curDialog) {
@@ -593,7 +593,7 @@ void DialogManager::playChoice(uint16 i) {
 	const int endSubTitle = choice->_firstSubTitle + choice->_subTitleNumb;
 	int totalLength = 0;
 
-	memset(_vm->_screenBuffer, 0, MAXX * TOP * 2);
+	_vm->_graphicsMgr->clearScreenBufferTop();
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_curChoice = i;

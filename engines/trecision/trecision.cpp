@@ -117,7 +117,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
 
-	_screenBuffer = nullptr;
 	_animMgr = nullptr;
 	_dialogMgr = nullptr;
 	_graphicsMgr = nullptr;
@@ -199,7 +198,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _zBuffer;
 	delete _actor;
 	delete[] TextArea;
-	delete[] _screenBuffer;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
 		delete[] _objPointers[i];
@@ -723,7 +721,7 @@ bool TrecisionEngine::dataSave() {
 	}
 
 	for (int a = 0; a < TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	SDText SText;
 	SText.set(
@@ -738,7 +736,7 @@ bool TrecisionEngine::dataSave() {
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -776,7 +774,7 @@ insave:
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText = textLength(saveNames[CurPos].c_str(), 0);
@@ -800,7 +798,7 @@ insave:
 		else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -820,7 +818,7 @@ insave:
 			saveNames[CurPos].clear();
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+				memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
@@ -836,7 +834,7 @@ insave:
 			if (ch == 0x1B) {
 				ch = 0;
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
@@ -851,7 +849,7 @@ insave:
 				saveNames[CurPos] += ch;
 
 			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+				memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 			saveNames[CurPos] += '_';	// add blinking cursor
 
@@ -879,7 +877,7 @@ insave:
 		}
 
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+			memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 		ret = false;
 
@@ -892,12 +890,12 @@ insave:
 	}
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -932,7 +930,7 @@ bool TrecisionEngine::dataLoad() {
 	}
 
 	for (int a = 0; a < TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	showCursor();
 
@@ -949,7 +947,7 @@ bool TrecisionEngine::dataLoad() {
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -981,7 +979,7 @@ bool TrecisionEngine::dataLoad() {
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				uint16 lenText = textLength(saveNames[CurPos].c_str(), 0);
@@ -1010,7 +1008,7 @@ bool TrecisionEngine::dataLoad() {
 		else {
 			if (OldPos != -1) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -1041,7 +1039,7 @@ bool TrecisionEngine::dataLoad() {
 void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	if (!skipLoad) {
 		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+			memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 		loadGameState(slot + 1);
 
@@ -1058,12 +1056,12 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	checkSystem();
 
 	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(_screenBuffer + MAXX * a, 0, MAXX * 2);
+		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 

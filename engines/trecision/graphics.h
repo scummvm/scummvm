@@ -37,6 +37,7 @@ class TrecisionEngine;
 class GraphicsManager {
 	TrecisionEngine *_vm;
 
+	Graphics::Surface _screenBuffer;
 	Graphics::Surface _background;
 	Graphics::Surface _smkBackground;
 	Graphics::PixelFormat _screenFormat;
@@ -58,9 +59,11 @@ public:
 	void setSmkBackground();
 	void resetScreenBuffer();
 	uint16 *getBackgroundPtr();
+	uint16 *getScreenBufferPtr();
 	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
-
+	void clearScreenBufferTop();
+	
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
 

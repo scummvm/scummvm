@@ -284,8 +284,6 @@ public:
 	// Snake management
 	Message _snake52;
 
-	uint16 *_screenBuffer;
-
 	uint32 _nextRefresh;
 
 	int16 _mouseX, _mouseY;
