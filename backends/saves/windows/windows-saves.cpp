@@ -24,6 +24,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <tchar.h>
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
  // required for SHGFP_TYPE_CURRENT in shlobj.h
 #define _WIN32_IE 0x500
@@ -36,24 +37,23 @@
 #include "backends/platform/sdl/win32/win32_wrapper.h"
 
 WindowsSaveFileManager::WindowsSaveFileManager() {
-	char defaultSavepath[MAX_PATH];
-
+	TCHAR defaultSavepath[MAX_PATH];
 
 	// Use the Application Data directory of the user profile.
 	if (SHGetFolderPathFunc(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, defaultSavepath) == S_OK) {
-		strcat(defaultSavepath, "\\ScummVM");
+		_tcscat(defaultSavepath, TEXT("\\ScummVM"));
 		if (!CreateDirectory(defaultSavepath, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
 				error("Cannot create ScummVM application data folder");
 		}
 
-		strcat(defaultSavepath, "\\Saved games");
+		_tcscat(defaultSavepath, TEXT("\\Saved games"));
 		if (!CreateDirectory(defaultSavepath, NULL)) {
 			if (GetLastError() != ERROR_ALREADY_EXISTS)
 				error("Cannot create ScummVM Saved games folder");
 		}
 
-		ConfMan.registerDefault("savepath", defaultSavepath);
+		ConfMan.registerDefault("savepath", Win32::tcharToString(defaultSavepath));
 	} else {
 		warning("Unable to access application data directory");
 	}
