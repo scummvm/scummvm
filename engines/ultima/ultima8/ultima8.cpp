@@ -1454,6 +1454,20 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 
 	_hasCheated = (rs->readByte() != 0);
 
+	// Integrity checks
+	if (!_avatarMoverProcess) {
+		warning("No AvatarMoverProcess.  Corrupt savegame?");
+		return false;
+	}
+	if (pal->_transform >= Transform_Invalid) {
+		warning("Invalid palette transform %d.  Corrupt savegame?", static_cast<int>(pal->_transform));
+		return false;
+	}
+	if (_saveCount > 1024*1024) {
+		warning("Improbable savecount %d.  Corrupt savegame?", _saveCount);
+		return false;
+	}
+
 	return true;
 }
 

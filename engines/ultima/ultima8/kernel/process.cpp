@@ -146,10 +146,32 @@ bool Process::loadData(Common::ReadStream *rs, uint32 version) {
 	_type = rs->readUint16LE();
 	_result = rs->readUint32LE();
 	uint32 waitcount = rs->readUint32LE();
+
+	if (waitcount > 1024*1024) {
+		warning("Improbable waitcount %d for proc %d. Corrupt save?", waitcount, _pid);
+		return false;
+	}
+
 	_waiting.resize(waitcount);
 	for (unsigned int i = 0; i < waitcount; ++i)
 		_waiting[i] = rs->readUint16LE();
 
+	return true;
+}
+
+bool Process::validateWaiters() const {
+	for (Std::vector<ProcId>::const_iterator i = _waiting.begin();
+			i != _waiting.end(); ++i) {
+		const Process *p = Kernel::get_instance()->getProcess(*i);
+		if (!p) {
+			// This can happen if a waiting process gets forcibly terminated.
+			warning("Invalid procid %d in waitlist for proc %d. Maybe a bug?", *i, _pid);
+		} else if (!p->is_suspended()) {
+			// This should never happen.
+			warning("Procid %d in waitlist for proc %d but not marked suspended", *i, _pid);
+			return false;
+		}
+	}
 	return true;
 }
 

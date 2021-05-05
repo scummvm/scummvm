@@ -120,6 +120,11 @@ public:
 	//! save Process data
 	virtual void saveData(Common::WriteStream *ws);
 
+	//! Check the waiting processes.  This is used after loading a game.
+	//! Ensures they are all valid processes and suspended.  Can't be done in
+	//! loadData because the waiters may not be loaded yet at that point.
+	bool validateWaiters() const;
+
 protected:
 	//! process id
 	ProcId _pid;

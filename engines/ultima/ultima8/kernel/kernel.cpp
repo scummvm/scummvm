@@ -349,8 +349,16 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 	Std::set<ProcId> procs;
 	for (Std::list<Process *>::const_iterator iter = _processes.begin(); iter != _processes.end(); iter++) {
 		const Process *p = *iter;
+		if (!_pIDs->isIDUsed(p->getPid())) {
+			warning("Process id %d exists but not marked used.  Corrupt save?", p->getPid());
+			return false;
+		}
 		if (procs.find(p->getPid()) != procs.end()) {
 			warning("Duplicate process id %d in processes.  Corrupt save?", p->getPid());
+			return false;
+		}
+		procs.insert(p->getPid());
+		if (!p->validateWaiters()) {
 			return false;
 		}
 		if (p->getTicksPerRun() > 100) {

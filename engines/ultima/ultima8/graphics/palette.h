@@ -51,7 +51,10 @@ enum PalTransforms {
 	Transform_GBR       = 6,
 
 	// O[b] = I[r]; O[r] = I[g]; O[g] = I[b];
-	Transform_BRG       = 7
+	Transform_BRG       = 7,
+
+	// Any value beyond this is invalid in savegames.
+	Transform_Invalid 	= 8
 };
 
 struct Palette {
