@@ -1200,7 +1200,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "spotthedifference", "Spot The Difference" },
 	{ "sproutsofevil", "Sprouts of evil" },
 	{ "sq3vga", "Space Quest III VGA Preview" },
-	{ "sq45", "Space Quest 4.5" },
+	{ "sq45", "Space Quest IV.5 - Roger Wilco And The Voyage Home" },
 	{ "sq55", "Space Quest 5.5" },
 	{ "sqdote", "Space Quest Minus 1: Decisions of the Elders" },
 	{ "sqdote2", "Space Quest: A Son of Xenon" },
