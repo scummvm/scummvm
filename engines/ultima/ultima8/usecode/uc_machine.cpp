@@ -2215,10 +2215,10 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 			CANT_HAPPEN_MSG("Global pointers not supported in U8");
 
 		if (size == 1) {
-			_globals->setEntries(offset, data[0], 1);
+			_globals->setEntries(offset, 1, data[0]);
 		} else if (size == 2) {
 			uint16 val = ((data[0] << 8) | data[1]);
-			_globals->setEntries(offset, val, 2);
+			_globals->setEntries(offset, 2, val);
 		} else {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
 		}
