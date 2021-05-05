@@ -304,7 +304,7 @@ const KYRAGameDescription adGameDescs[] = {
 			AD_ENTRY1s("GEMCUT.EMC", "d0d1f35c5e2b6dee64b048bb77d1fc00", 6998),
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
+			ADGF_UNSUPPORTED,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDIAMIGA, GUIO_RENDERAMIGA)
 		},
 		KYRA1_AMIGA_FLAGS
