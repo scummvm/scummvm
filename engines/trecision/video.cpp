@@ -96,9 +96,22 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		offset += _frameSizes[i] & ~3;
 	}
 
-	_startTime = g_system->getMillis() - (videoTrack->getFrameTime(frame).msecs() / getRate()).toInt();
+	_lastTimeChange = videoTrack->getFrameTime(frame);
+	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
 
 	return _fileStream->seek(start + offset, SEEK_SET);
+}
+
+void NightlongSmackerDecoder::forceSkip(uint frame) {
+	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+
+	decodeNextFrame();
+	while (getCurFrame() < frame) {
+		decodeNextFrame();
+	}
+
+	_lastTimeChange = videoTrack->getFrameTime(frame);
+	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
 }
 
 bool NightlongSmackerDecoder::endOfVideo() const {
@@ -192,14 +205,10 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 			else
 				smkDecoder->forceSeekToFrame(0);
 
-			while (smkDecoder->getCurFrame() < startFrame) {
-				drawFrame(smkDecoder, x, y, false);
-			}
+			smkDecoder->forceSkip(startFrame);
 		} else
 			smkDecoder->forceSeekToFrame(startFrame);
 	}
-	if (endFrame - startFrame > 2)
-		smkDecoder->setMute(false);
 }
 
 void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen) {
