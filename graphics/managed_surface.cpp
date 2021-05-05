@@ -101,8 +101,8 @@ ManagedSurface::ManagedSurface(const Surface *surf) :
 		return;
 	}
 
-	copyFrom(*surf);
 	_disposeAfterUse = DisposeAfterUse::NO;
+	copyFrom(*surf);
 }
 
 ManagedSurface::~ManagedSurface() {
