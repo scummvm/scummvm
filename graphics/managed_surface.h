@@ -136,7 +136,7 @@ public:
 	/**
 	 * Create a managed surface from plain Surface.
 	 *
-	 * If disiposeAgter use flag is set (default), the surface will reuse all structures
+	 * If disposeAfterUse flag is set (default), the surface will reuse all structures
 	 * from the surface and destroy it, otherwise it will make a copy.
 	 */
 	ManagedSurface(Surface *surf, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
@@ -161,7 +161,7 @@ public:
 	operator const Surface &() const { return _innerSurface; }
 
 	/**
-	 * Return the underyling Graphics::Surface
+	 * Return the underlying Graphics::Surface
 	 *
 	 * If a caller uses the non-const surfacePtr version and changes
 	 * the surface, they'll be responsible for calling addDirtyRect
@@ -610,7 +610,7 @@ public:
 	 * @param dstFormat  The desired format.
 	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
 	 */
-	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = 0) {
+	void convertToInPlace(const PixelFormat &dstFormat, const byte *palette = nullptr) {
 		_innerSurface.convertToInPlace(dstFormat, palette);
 	}
 
