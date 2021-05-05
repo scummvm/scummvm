@@ -257,6 +257,12 @@ void LBCode::nextToken() {
 			_currValue = READ_BE_UINT16(_data + _currOffset);
 			_currOffset += 2;
 			break;
+		case kLBCodeLiteralIntegerLE:
+			if (_currOffset + 2 > _size)
+				error("went off the end of code reading literal integer");
+			_currValue = READ_LE_UINT16(_data + _currOffset);
+			_currOffset += 2;
+			break;
 		default:
 			error("unknown kTokenLiteral type %02x", literalType);
 		}
@@ -759,6 +765,11 @@ void LBCode::parseMain() {
 
 	case kTokenNotifyCommand:
 		runNotifyCommand();
+		break;
+
+	case 4:
+		nextToken();
+		_stack.push(0);
 		break;
 
 	default:

@@ -948,6 +948,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0
 	},
 
+	{ // Version 2.0, has lots of additional livingbooks_code
+		{
+			"greeneggs",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("Outline", "bca2320b800f616118c2be239628a964", 3022),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV4,
+		0,
+		0
+	},
+
 	{
 		{
 			"greeneggs",

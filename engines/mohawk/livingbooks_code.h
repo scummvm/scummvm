@@ -145,7 +145,8 @@ struct LBList {
 };
 
 enum {
-	kLBCodeLiteralInteger = 0x1
+	kLBCodeLiteralInteger = 0x1,
+	kLBCodeLiteralIntegerLE = 0x11
 };
 
 enum {
