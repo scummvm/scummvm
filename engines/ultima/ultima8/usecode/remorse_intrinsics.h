@@ -216,7 +216,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Actor::I_setDead,
 	MovieGump::I_playMovieCutsceneAlt, // TODO: not exactly the same, Alt includes a fade.
 	AudioProcess::I_playSFX, // void Intrinsic0AA(2 bytes)
-	0, // int Actor::I_getFlag0x59Field1  Intrinsic0AB(4 bytes)
+	Actor::I_isFalling, // int Actor::I_getFlag0x59Field1  Intrinsic0AB(4 bytes)
 	Item::I_getFamilyOfType, // void Intrinsic0AC(2 bytes)
 	Item::I_getNpcNum, // based on same coff as 102 (-> variable name in TRIGGER::ordinal21)
 	Item::I_getQLo, // based on same coff set as 02B
