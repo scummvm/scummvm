@@ -58,6 +58,7 @@
 #endif
 
 #include <shlobj.h>
+#include <tchar.h>
 
 #include "common/scummsys.h"
 
@@ -118,11 +119,13 @@ void Win32TaskbarManager::setOverlayIcon(const Common::String &name, const Commo
 	}
 
 	// Compute full icon path
-	Common::String path = getIconPath(name, ".ico");
-	if (path.empty())
+	Common::String iconPath = getIconPath(name, ".ico");
+	if (iconPath.empty())
 		return;
 
-	HICON pIcon = (HICON)::LoadImage(NULL, path.c_str(), IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+	TCHAR *tIconPath = Win32::stringToTchar(iconPath);
+	HICON pIcon = (HICON)::LoadImage(NULL, tIconPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+	free(tIconPath);
 	if (!pIcon) {
 		warning("[Win32TaskbarManager::setOverlayIcon] Cannot load icon!");
 		return;
@@ -216,7 +219,7 @@ void Win32TaskbarManager::setCount(int count) {
 		lFont.lfHeight = 10;
 		lFont.lfWeight = FW_BOLD;
 		lFont.lfItalic = 1;
-		strcpy(lFont.lfFaceName, "Arial");
+		_tcscpy(lFont.lfFaceName, TEXT("Arial"));
 
 		HFONT hFont = CreateFontIndirect(&lFont);
 		SelectObject(hMemDC, hFont);
@@ -225,7 +228,9 @@ void Win32TaskbarManager::setCount(int count) {
 		SetRect(&rect, 4, 4, 12, 12);
 		SetTextColor(hMemDC, RGB(48, 48, 48));
 		SetBkMode(hMemDC, TRANSPARENT);
-		DrawText(hMemDC, countString.c_str(), -1, &rect, DT_NOCLIP|DT_CENTER);
+		TCHAR *tCountString = Win32::stringToTchar(countString);
+		DrawText(hMemDC, tCountString, -1, &rect, DT_NOCLIP|DT_CENTER);
+		free(tCountString);
 
 		// Set the text alpha to fully opaque (we consider the data inside the text rect)
 		DWORD *lpdwPixel = (DWORD *)lpBits;
