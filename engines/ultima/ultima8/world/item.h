@@ -598,7 +598,7 @@ public:
 	INTRINSIC(I_equip);
 	INTRINSIC(I_unequip);
 	INTRINSIC(I_avatarStoleSomething);
-	INTRINSIC(I_isOnScreen);
+	INTRINSIC(I_isPartlyOnScreen);
 	INTRINSIC(I_fireWeapon);
 	INTRINSIC(I_fireDistance);
 

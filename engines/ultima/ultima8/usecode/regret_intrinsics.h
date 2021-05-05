@@ -38,7 +38,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_getStatus, // Intrinsic004()
 	Item::I_orStatus, // Intrinsic005()
 	Item::I_equip, // Intrinsic006()
-	Item::I_isOnScreen, // Intrinsic007()
+	Item::I_isPartlyOnScreen, // Intrinsic007()
 	Actor::I_isNPC, // Intrinsic008()
 	Item::I_getZ, // Intrinsic009()
 	World::I_gameDifficulty, // Intrinsic00A()

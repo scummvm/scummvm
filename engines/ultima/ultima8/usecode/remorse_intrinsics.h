@@ -42,7 +42,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_getStatus,
 	Item::I_orStatus,
 	Item::I_equip, // void Intrinsic006(6 bytes)
-	Item::I_isOnScreen, //
+	Item::I_isPartlyOnScreen, //
 	Actor::I_isNPC, // byte Intrinsic008(Item *)
 	Item::I_getZ, // byte Intrinsic009(Item *)
 	Item::I_destroy, // void Intrinsic00A(Item *)
@@ -211,7 +211,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Egg::I_setEggXRange, // void Intrinsic0A3(6 bytes)
 	Item::I_overlaps,
 	Item::I_isOn,
-	0, // TODO: I_getAnimationsDisabled -> default to 0 (fine for now..)
+	UCMachine::I_true, // I_getAnimationsEnabled -> default to true (animations enabled)
 	Egg::I_getEggXRange, // void Intrinsic0A7(4 bytes)
 	Actor::I_setDead,
 	MovieGump::I_playMovieCutsceneAlt, // TODO: not exactly the same, Alt includes a fade.

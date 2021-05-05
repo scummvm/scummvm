@@ -217,7 +217,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Egg::I_setEggXRange(Egg *, int)", // based on disasm
 	"byte Item::I_overlaps(Item *, uint16 unk)", // same disasm as U8
 	"byte Item::I_isOn(Item *, itemno)", // part of same coff set 044, 046, 048, 04A, 04C, 04E, 0A5, 0BC, 0C5, 0DC, 0F1, 0FA, 12C
-	"int16 I_getAnimationsDisabled(void)", // From disasm. Not implemented, that's ok..
+	"int16 I_getAnimationsEnabled(void)",
 	"int16 Egg::I_getEggXRange(Egg *)", // based on disasm
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void I_playMovieCutsceneFullscreen(char *)", // same coff as 092
