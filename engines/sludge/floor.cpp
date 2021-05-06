@@ -20,12 +20,9 @@
  *
  */
 
-#include "graphics/surface.h"
-
 #include "sludge/fileset.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/sludge.h"

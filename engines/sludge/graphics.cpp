@@ -31,8 +31,6 @@
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/sprites.h"
-#include "sludge/sprbanks.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {

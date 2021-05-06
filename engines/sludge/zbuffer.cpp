@@ -20,16 +20,10 @@
  *
  */
 
-#include "common/debug.h"
-#include "graphics/pixelformat.h"
-#include "graphics/transparent_surface.h"
-
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
-#include "sludge/sprites.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {

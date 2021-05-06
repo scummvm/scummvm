@@ -20,11 +20,6 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/file.h"
-#include "common/list.h"
-#include "common/memstream.h"
-
 #include "audio/audiostream.h"
 #include "audio/decoders/wave.h"
 #include "audio/decoders/vorbis.h"
@@ -32,7 +27,6 @@
 
 #include "sludge/errors.h"
 #include "sludge/fileset.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"

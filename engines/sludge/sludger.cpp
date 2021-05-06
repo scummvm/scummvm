@@ -21,15 +21,11 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
 
-#include "sludge/backdrop.h"
-#include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/errors.h"
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
-#include "sludge/freeze.h"
 #include "sludge/floor.h"
 #include "sludge/fileset.h"
 #include "sludge/function.h"
@@ -46,13 +42,9 @@
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
-#include "sludge/sprites.h"
-#include "sludge/sprbanks.h"
 #include "sludge/statusba.h"
 #include "sludge/timing.h"
-#include "sludge/variable.h"
 #include "sludge/version.h"
-#include "sludge/zbuffer.h"
 
 namespace Sludge {
 

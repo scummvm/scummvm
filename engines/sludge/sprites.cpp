@@ -20,21 +20,14 @@
  *
  */
 
-#include "common/rect.h"
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
-
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/imgloader.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/sludge.h"
-#include "sludge/sludger.h"
-#include "sludge/sprites.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {

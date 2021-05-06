@@ -25,7 +25,6 @@
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/sludge.h"
-#include "sludge/variable.h"
 #include "sludge/version.h"
 
 namespace Sludge {

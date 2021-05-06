@@ -20,9 +20,7 @@
  *
  */
 
-#include "sludge/backdrop.h"
 #include "sludge/graphics.h"
-#include "sludge/newfatal.h"
 
 namespace Sludge {
 

@@ -20,14 +20,10 @@
  *
  */
 
-#include "common/system.h"
-
 #include "sludge/floor.h"
 #include "sludge/freeze.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"
-#include "sludge/loadsave.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/people.h"
@@ -36,11 +32,7 @@
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
-#include "sludge/sprbanks.h"
-#include "sludge/sprites.h"
-#include "sludge/variable.h"
 #include "sludge/version.h"
-#include "sludge/zbuffer.h"
 
 #define ANI_STAND 0
 #define ANI_WALK 1

@@ -20,12 +20,9 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/file.h"
 
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/sludge.h"
 
 namespace Sludge {
 

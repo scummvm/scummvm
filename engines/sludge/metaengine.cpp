@@ -20,9 +20,6 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/stream.h"
-
 #include "engines/advancedDetector.h"
 
 #include "sludge/sludge.h"

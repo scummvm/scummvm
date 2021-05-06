@@ -23,6 +23,11 @@
 #ifndef SLUDGE_CURSORS_H
 #define SLUDGE_CURSORS_H
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 class SludgeEngine;

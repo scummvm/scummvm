@@ -23,13 +23,11 @@
 #include "common/file.h"
 #include "common/system.h"
 
-#include "sludge/backdrop.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
-#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 
 namespace Sludge {

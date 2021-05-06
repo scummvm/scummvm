@@ -24,7 +24,6 @@
 
 #include "common/savefile.h"
 
-#include "sludge/backdrop.h"
 #include "sludge/bg_effects.h"
 #include "sludge/cursors.h"
 #include "sludge/errors.h"
@@ -35,21 +34,16 @@
 #include "sludge/graphics.h"
 #include "sludge/language.h"
 #include "sludge/loadsave.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
-#include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/savedata.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
-#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/speech.h"
-#include "sludge/variable.h"
 #include "sludge/version.h"
-#include "sludge/zbuffer.h"
 
 namespace Sludge {
 

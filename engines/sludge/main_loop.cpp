@@ -20,26 +20,15 @@
  *
  */
 
-#include "common/debug.h"
-
-#include "graphics/surface.h"
-
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
-#include "sludge/floor.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"
-#include "sludge/language.h"
 #include "sludge/loadsave.h"
-#include "sludge/newfatal.h"
-#include "sludge/objtypes.h"
 #include "sludge/people.h"
-#include "sludge/region.h"
-#include "sludge/statusba.h"
 #include "sludge/sound.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/speech.h"
 #include "sludge/timing.h"
 
 namespace Sludge {

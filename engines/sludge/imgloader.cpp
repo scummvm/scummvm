@@ -22,7 +22,7 @@
 
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/stream.h"
+
 #include "image/png.h"
 #include "graphics/surface.h"
 

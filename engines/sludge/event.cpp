@@ -21,7 +21,6 @@
  */
 
 #include "common/events.h"
-#include "common/keyboard.h"
 #include "common/system.h"
 
 #include "sludge/event.h"
@@ -33,7 +32,6 @@
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
-#include "sludge/variable.h"
 
 namespace Sludge {
 

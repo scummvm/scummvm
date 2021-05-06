@@ -21,9 +21,7 @@
  */
 
 #include "sludge/movie.h"
-#include "sludge/newfatal.h"
 #include "sludge/sound.h"
-#include "sludge/timing.h"
 
 namespace Sludge {
 

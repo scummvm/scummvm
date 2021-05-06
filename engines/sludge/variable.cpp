@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/debug.h"
 #include "common/savefile.h"
 #include "common/system.h"
 

@@ -19,9 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/random.h"

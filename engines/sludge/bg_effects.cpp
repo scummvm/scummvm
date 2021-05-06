@@ -23,8 +23,6 @@
 #include "common/debug.h"
 #include "common/file.h"
 
-#include "sludge/backdrop.h"
-#include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/variable.h"
 

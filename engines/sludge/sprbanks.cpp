@@ -20,13 +20,9 @@
  *
  */
 
-#include "common/textconsole.h"
-
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
-#include "sludge/sprites.h"
-#include "sludge/sprbanks.h"
 
 namespace Sludge {
 

@@ -19,25 +19,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
-#define SYMBIAN_USE_SYSTEM_REMOVE
 
 #include "common/config-manager.h"
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "sludge/backdrop.h"
 #include "sludge/bg_effects.h"
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/floor.h"
 #include "sludge/fonttext.h"
-#include "sludge/freeze.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"
-#include "sludge/language.h"
-#include "sludge/loadsave.h"
 #include "sludge/moreio.h"
 #include "sludge/movie.h"
 #include "sludge/newfatal.h"
@@ -48,12 +43,9 @@
 #include "sludge/sludger.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
-#include "sludge/sprbanks.h"
-#include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/sludge.h"
 #include "sludge/timing.h"
-#include "sludge/zbuffer.h"
 
 namespace Sludge {
 
