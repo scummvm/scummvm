@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-05 21:34+0000\n"
-"PO-Revision-Date: 2021-05-03 16:31+0000\n"
-"Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
+"PO-Revision-Date: 2021-05-07 06:25+0000\n"
+"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
 "Language: de_DE\n"
@@ -5458,20 +5458,16 @@ msgid "Right Click Interact"
 msgstr "Rechtsklick"
 
 #: engines/nancy/input.cpp:204
-#, fuzzy
-#| msgid "Fast mode"
 msgid "Fast move modifier"
-msgstr "Schneller Modus"
+msgstr "Modifikator für schnelle Bewegung"
 
 #: engines/nancy/input.cpp:212
 msgid "Toggle fast conversation mode"
 msgstr "Schnellen Konversations-Modus umschalten"
 
 #: engines/nancy/input.cpp:217
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
-msgstr "Schnellen Modus umschalten"
+msgstr "Konversationsmodus umschalten"
 
 #: engines/nancy/input.cpp:222
 msgid "Go to main menu"
@@ -5749,10 +5745,8 @@ msgid "Display/Hide Pause Menu"
 msgstr "Pause-Menü anzeigen/verbergen"
 
 #: engines/pegasus/pegasus.cpp:2798
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle Chatty AI"
-msgstr "Schnellen Modus umschalten"
+msgstr "Schalten Sie die gesprächige KI um"
 
 #: engines/pegasus/pegasus.cpp:2813
 msgid "Save Game"
@@ -7540,6 +7534,8 @@ msgstr "Erlaube, direkt zu einer Maus-Position zu springen"
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
 msgstr ""
+"Das Springen, ohne sich zu bewegen, zielt auf den Mauszeiger und nicht nur "
+"auf die Richtung."
 
 #: engines/ultima/ultima8/meta_engine.cpp:167
 msgid "Enable font replacement"
