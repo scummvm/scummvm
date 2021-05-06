@@ -87,7 +87,7 @@ void PaintScreen(bool flag) {
 			g_vm->_graphicsMgr->DrawObj(DObj);
 		} else {
 			for (int a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
-				memset(g_vm->_graphicsMgr->getScreenBufferPtr() + DObj.l.left + a * MAXX, 0x0000, (DObj.l.right - DObj.l.left) * 2);
+				memset(g_vm->_graphicsMgr->getScreenBufferPtr() + DObj.l.left + a * MAXX, 0, (DObj.l.right - DObj.l.left) * 2);
 		}
 		oldString.text = nullptr;
 		g_vm->addDirtyRect(DObj.l);

@@ -718,8 +718,7 @@ bool TrecisionEngine::dataSave() {
 		return skipSave;
 	}
 
-	for (int a = 0; a < TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferTop();
 
 	SDText SText;
 	SText.set(
@@ -733,8 +732,7 @@ bool TrecisionEngine::dataSave() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -874,8 +872,7 @@ insave:
 			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
-		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+		_graphicsMgr->clearScreenBufferInventoryFull();
 
 		ret = false;
 
@@ -887,9 +884,7 @@ insave:
 		saveGameState(CurPos + 1, saveNames[CurPos]);
 	}
 
-	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
@@ -927,8 +922,7 @@ bool TrecisionEngine::dataLoad() {
 		return !skipLoad;
 	}
 
-	for (int a = 0; a < TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferTop();
 
 	showCursor();
 
@@ -944,8 +938,7 @@ bool TrecisionEngine::dataLoad() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	for (int a = TOP + AREA; a < AREA + 2 * TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -1036,8 +1029,7 @@ bool TrecisionEngine::dataLoad() {
 
 void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	if (!skipLoad) {
-		for (int a = FIRSTLINE; a < MAXY; a++)
-			memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+		_graphicsMgr->clearScreenBufferInventoryFull();
 
 		loadGameState(slot + 1);
 
@@ -1053,9 +1045,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	_pathFind->nextStep();
 	checkSystem();
 
-	for (int a = FIRSTLINE; a < MAXY; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)

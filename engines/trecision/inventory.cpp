@@ -37,8 +37,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startLine > ICONDY)
 		startLine = ICONDY;
 
-	for (uint16 b = 0; b < ICONDY; b++)
-		memset(_graphicsMgr->getScreenBufferPtr() + (FIRSTLINE + b) * MAXX, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferInventory();
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
 		uint index = a + startIcon;

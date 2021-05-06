@@ -2356,7 +2356,7 @@ Screen management
 #define MAXY 480
 
 #define AREA 360
-#define TOP ((MAXY - AREA) / 2) // Coordinate y of game screen
+#define TOP ((MAXY - AREA) / 2) // Coordinate y of game screen (60)
 #define VIDEOTOP TOP
 #define ZBUFFERSIZE 200000L
 
