@@ -144,7 +144,7 @@ public:
 	void setInventoryStart(uint8 startIcon, uint8 startLine);
 	void doInventory();
 	void showInventoryName(uint16 obj, bool showhide);
-	uint8 whatIcon(uint16 mx);
+	uint8 whatIcon(Common::Point pos);
 	int8 iconPos(uint8 icon);
 	void removeIcon(uint8 icon);
 	void addIcon(uint8 icon);
@@ -153,7 +153,7 @@ public:
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
-	void doScrollInventory(uint16 mouseX);
+	void doScrollInventory(Common::Point pos);
 
 	// Script
 	void endScript();
@@ -179,7 +179,6 @@ public:
 	void doInvOperate();
 	void doDoing();
 	void doScript();
-	void doString();
 
 	// Utils
 	char *getNextSentence();
@@ -190,16 +189,16 @@ public:
 	void waitDelay(uint32 val);
 	void freeKey();
 	uint32 readTime();
-	bool checkMask(uint16 mx, uint16 my);
+	bool checkMask(Common::Point pos);
 	static float sinCosAngle(float sinus, float cosinus);
 	void ProcessTime();
 	void ProcessMouse();
 	static float dist2D(float x1, float y1, float x2, float y2);
 	static float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 	static bool isBetween(int a, int x, int b);
-	static bool isGameArea(int y);
-	static bool isInventoryArea(int y);
-	static bool isIconArea(int x, int y);
+	static bool isGameArea(Common::Point pos);
+	static bool isInventoryArea(Common::Point pos);
+	static bool isIconArea(Common::Point pos);
 
 	// Text
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
@@ -292,7 +291,7 @@ public:
 
 	uint32 _nextRefresh;
 
-	int16 _mouseX, _mouseY;
+	Common::Point _mousePos;
 	bool _mouseLeftBtn, _mouseRightBtn;
 	Common::KeyCode _curKey;
 	uint16 _curAscii;

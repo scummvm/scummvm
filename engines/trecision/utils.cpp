@@ -83,10 +83,10 @@ void TrecisionEngine::drawString() {
 
 void TrecisionEngine::redrawString() {
 	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && isCursorVisible()) {
-		if (isInventoryArea(_mouseY))
+		if (isInventoryArea(_mousePos))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
-			checkMask(_mouseX, _mouseY);
+			checkMask(_mousePos);
 			ShowObjName(_curObj, true);
 		}
 	}
@@ -208,7 +208,7 @@ uint32 TrecisionEngine::readTime() {
 	return (g_system->getMillis() * 3) / 50;
 }
 
-bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
+bool TrecisionEngine::checkMask(Common::Point pos) {
 	for (int8 a = MAXOBJINROOM - 1; a >= 0; a--) {
 		uint16 checkedObj = _room[_curRoom]._object[a];
 		Common::Rect lim = _obj[checkedObj]._lim;
@@ -218,7 +218,7 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 		lim.bottom++;
 
 		if (checkedObj && isObjectVisible(checkedObj)) {
-			if (lim.contains(mx, my)) {
+			if (lim.contains(pos)) {
 
 				if ((_obj[checkedObj]._mode & OBJMODE_FULL) || (_obj[checkedObj]._mode & OBJMODE_LIM)) {
 					_curObj = checkedObj;
@@ -235,8 +235,8 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 						int16 e = 0;
 						while (e < _obj[checkedObj]._rect.width()) {
 							if (!insideObj) { // not inside an object
-								if (b + TOP == my) {
-									if ((mx >= d + e) && (mx < d + e + *mask)) {
+								if (b + TOP == pos.y) {
+									if ((pos.x >= d + e) && (pos.x < d + e + *mask)) {
 										_curObj = 0;
 									}
 								}
@@ -245,8 +245,8 @@ bool TrecisionEngine::checkMask(uint16 mx, uint16 my) {
 								mask++;
 								insideObj = true;
 							} else { // inside an object
-								if (b + TOP == my) {
-									if ((mx >= d + e) && (mx < d + e + *mask)) {
+								if (b + TOP == pos.y) {
+									if ((pos.x >= d + e) && (pos.x < d + e + *mask)) {
 										_curObj = checkedObj;
 										return true;
 									}
@@ -387,18 +387,15 @@ void TrecisionEngine::ProcessTime() {
 
 void TrecisionEngine::ProcessMouse() {
 	static bool MaskMouse;
-	static uint16 oldMouseX;
-	static uint16 oldMouseY;
+	static Common::Point oldMousePos;
 	static bool lastMouseOn = true;
-	int16 mx = _mouseX;
-	int16 my = _mouseY;
+	int16 mx = _mousePos.x;
+	int16 my = _mousePos.y;
 
 	if (lastMouseOn && !isCursorVisible()) {
-		oldMouseX = 0; // Switch off
-		oldMouseY = 0;
+		oldMousePos = Common::Point(0, 0); // Switch off
 	} else if (!lastMouseOn && isCursorVisible()) {
-		oldMouseX = 0; // Switch on
-		oldMouseY = 0;
+		oldMousePos = Common::Point(0, 0); // Switch on
 	}
 
 	lastMouseOn = isCursorVisible();
@@ -415,12 +412,9 @@ void TrecisionEngine::ProcessMouse() {
 	} else {
 		MaskMouse = false;
 
-		if (!_flagscriptactive) {
-			if (mx != oldMouseX || my != oldMouseY) {
-				doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
-				oldMouseX = mx;
-				oldMouseY = my;
-			}
+		if (!_flagscriptactive && (mx != oldMousePos.x || my != oldMousePos.y)) {
+			doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
+			oldMousePos = Common::Point(mx, my);
 		}
 	}
 }
@@ -449,16 +443,16 @@ bool TrecisionEngine::isBetween(int a, int x, int b) {
 	return x >= a && x <= b;
 }
 
-bool TrecisionEngine::isGameArea(int y) {
-	return isBetween(TOP, y, TOP + AREA - 1);
+bool TrecisionEngine::isGameArea(Common::Point pos) {
+	return isBetween(TOP, pos.y, TOP + AREA - 1);
 }
 
-bool TrecisionEngine::isInventoryArea(int y) {
-	return y >= TOP + AREA;
+bool TrecisionEngine::isInventoryArea(Common::Point pos) {
+	return pos.y >= TOP + AREA;
 }
 
-bool TrecisionEngine::isIconArea(int x, int y) {
-	return y >= TOP + AREA && y < MAXY && x >= ICONMARGSX && x <= MAXX - ICONMARGDX;
+bool TrecisionEngine::isIconArea(Common::Point pos) {
+	return pos.y >= TOP + AREA && pos.y < MAXY && pos.x >= ICONMARGSX && pos.x <= MAXX - ICONMARGDX;
 }
 
 } // End of namespace Trecision
