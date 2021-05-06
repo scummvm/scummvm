@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-05 21:34+0000\n"
-"PO-Revision-Date: 2021-04-22 12:25+0000\n"
-"Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
+"PO-Revision-Date: 2021-05-07 06:25+0000\n"
+"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
 "Language: ja\n"
@@ -21,19 +21,17 @@ msgstr ""
 "X-Language-name: Japanese\n"
 
 #: gui/about.cpp:104
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s)"
-msgstr "(ビルドの日時：%s)"
+msgstr "（％s上に構築）"
 
 #: gui/about.cpp:111
-#, fuzzy
 msgid "Features compiled in:"
-msgstr "含まれた機能："
+msgstr "コンパイルされた機能："
 
 #: gui/about.cpp:120
-#, fuzzy
 msgid "Available engines:"
-msgstr "使用可能エンジン："
+msgstr "利用可能なエンジン："
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
@@ -90,23 +88,20 @@ msgid "Choose"
 msgstr "選択"
 
 #: gui/downloaddialog.cpp:49
-#, fuzzy
 msgid "Select directory where to download game data"
-msgstr "ダウンロードされたゲームデータを保存するフォルダーを選択する"
+msgstr "ゲームデータをダウンロードするディレクトリを選択します"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:577 gui/launcher.cpp:207
 msgid "Select directory with game data"
 msgstr "ゲームデータのフォルダーを選択する"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
-#, fuzzy
 msgid "From: "
-msgstr "元： "
+msgstr "から： "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
-#, fuzzy
 msgid "To: "
-msgstr "先： "
+msgstr "に： "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -122,13 +117,10 @@ msgid "Hide"
 msgstr "非表示"
 
 #: gui/downloaddialog.cpp:118
-#, fuzzy
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
-"インターネットの接続に制限があるようです。ダウンロードを続けてもよろしいです"
-"か？"
+msgstr "接続が制限されているようです。本当にそれと一緒にファイルをダウンロードしたいですか？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -154,9 +146,8 @@ msgid "No"
 msgstr "いいえ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:564
-#, fuzzy
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "指定されたフォルダーを開ませんでした！"
+msgstr "ScummVMは指定されたディレクトリを開くことができませんでした！"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -186,21 +177,21 @@ msgid "OK"
 msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"指定されたフォルダーに「%s」が既にあります。\n"
-"ダウンロード続けてもよろしいですか？"
+"%s は指定されたディレクトリにすでに存在します。\n"
+"本当にそのディレクトリにファイルをダウンロードしますか？"
 
 #: gui/downloaddialog.cpp:215
-#, fuzzy, c-format
+#, c-format
 msgid "Downloaded %s %S / %s %S"
 msgstr "%s %S / %s %Sダウンロード済み"
 
 #: gui/downloaddialog.cpp:222
-#, fuzzy, c-format
+#, c-format
 msgid "Download speed: %s %S"
 msgstr "ダウンロード速度：%s %S"
 
@@ -214,11 +205,10 @@ msgstr "ID："
 
 #: gui/editgamedialog.cpp:146 gui/editgamedialog.cpp:148
 #: gui/editgamedialog.cpp:149
-#, fuzzy
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
-msgstr "セーブデータ、コマンドラインから起動時などに使われる短縮のゲームID"
+msgstr "保存されたゲームを参照し、コマンドラインからゲームを実行するために使用される短いゲーム識別子"
 
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
@@ -285,27 +275,23 @@ msgid "GFX"
 msgstr "GFX"
 
 #: gui/editgamedialog.cpp:213
-#, fuzzy
 msgid "Override global graphic settings"
-msgstr "全般の画像設定を上書きする"
+msgstr "グローバルグラフィック設定を上書きする"
 
 #: gui/editgamedialog.cpp:215
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "共通設定に優先して適用する"
+msgstr "グローバルグラフィック設定を上書きする"
 
 #: gui/editgamedialog.cpp:225 gui/options.cpp:1813
 msgid "Shader"
 msgstr "シェーダー"
 
 #: gui/editgamedialog.cpp:228
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "全般のシェーダー設定を上書きする"
+msgstr "グローバルシェーダー設定をオーバーライドする"
 
 #: gui/editgamedialog.cpp:230
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
 msgstr "全般のシェーダー設定を上書きする"
@@ -332,23 +318,19 @@ msgid "Audio"
 msgstr "オーディオ"
 
 #: gui/editgamedialog.cpp:273
-#, fuzzy
 msgid "Override global audio settings"
-msgstr "全般のオーディオ設定を上書きする"
+msgstr "グローバルオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:275
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "全般のオーディオ設定を上書きする"
 
 #: gui/editgamedialog.cpp:284 gui/options.cpp:1873
-#, fuzzy
 msgid "Volume"
-msgstr "音量"
+msgstr "ボリューム"
 
 #: gui/editgamedialog.cpp:286 gui/options.cpp:1875
-#, fuzzy
 msgctxt "lowres"
 msgid "Volume"
 msgstr "音量"
@@ -894,10 +876,8 @@ msgstr "30分毎"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "自動セーブ"
+msgstr "自動"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
@@ -1307,7 +1287,7 @@ msgstr "アクセシビリティ"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "変更を破棄してダイアログを閉じます"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1315,11 +1295,11 @@ msgstr "適用"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "ダイアログを閉じずに変更を適用する"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "変更を適用してダイアログを閉じます"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -2113,7 +2093,7 @@ msgstr "<不正な値>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "数多くのアドベンチャーゲームやロールプレイングゲームの通訳"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2124,6 +2104,9 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVMは、データファイルが既にある場合に、さまざまな古典的なグラフィカルポイントアンドクリックアドベンチャーゲームやロールプレイングゲームを実行で"
+"きるようにするプログラムです。これに関する巧妙な部分：ScummVMは、ゲームに付属している実行可能ファイルを置き換えるだけなので、設計されたことのないシ"
+"ステムで実行できます!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2133,6 +2116,9 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"現在、ScummVMは、合計4000を超えるゲームを備えた膨大なアドベンチャーライブラリをサポートしています。 LucasArts、Sierra On-"
+"Line、Revolution "
+"Software、Cyan、Inc.、WestwoodStudiosなどの伝説的なスタジオによって公開された多くのクラシックをサポートしています."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2141,6 +2127,8 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"モンキーアイランドシリーズ、ブロークンソード、ミスト、ブレードランナー、その他の無数のゲームなどの画期的なタイトルの横に、いくつかの本当にあいまいな冒険と"
+"真に隠された宝石を見つけることができます."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2278,13 +2266,6 @@ msgid "Error"
 msgstr "エラー"
 
 #: engines/engine.cpp:504
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the README file for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2292,20 +2273,13 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"ゲームをCDから直接プレイしていますが\n"
-"これは問題を起こす事が知られています。\n"
-"代わりに、HDDへデータをコピーして\n"
-"実行する事をおすすめします。\n"
-"詳細はREADMEを参照してください。"
+"このゲームを直接プレイしているようです\n"
+"CDから。これは問題を引き起こすことが知られています、\n"
+"したがって、コピーすることをお勧めします\n"
+"代わりに、データファイルをハードディスクに保存します。\n"
+"詳細については、ドキュメント（CDオーディオ）を参照してください。"
 
 #: engines/engine.cpp:516
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the README file for details."
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2313,11 +2287,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"このゲームは、ディスクにオーディオトラックが\n"
-"存在します。これらのトラックは、ゲームで使用\n"
-"するために適切なツールでディスクから抽出する\n"
-"必要があります。\n"
-"詳細はREADMEを参照してください。"
+"このゲームのディスクにはオーディオトラックがあります。これら\n"
+"トラックは、を使用してディスクからリッピングする必要があります\n"
+"の適切なCDオーディオ抽出ツール\n"
+"ゲームの音楽を聴くため。\n"
+"詳細については、ドキュメント（CDオーディオ）を参照してください。"
 
 #: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4796,24 +4770,24 @@ msgstr "左ボタンで攻撃し、右ボタンでアイテムを拾う"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "言語固有のゲームコードやリソースがありません。"
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
-msgstr ""
+msgstr "このファンの翻訳に言語固有のゲームコードやリソースがありません."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "ゲームを間違って追加しました。ゲームのルートフォルダを追加してください。"
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr ""
+msgstr "ゲームを間違って追加しました。 GAME.DATファイルはISOイメージであり、そこからゲームデータファイルを抽出する必要があります。"
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5680,10 +5654,8 @@ msgstr "もう1つのイントロを使用する(CD版のみ)"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "スペイン版(CDバージョン)はまだサポートされていません"
+msgstr "Windows試用版はサポートされていません"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6025,13 +5997,13 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "FM-TOWNSゲームを200ピクセルの高さにトリミングします"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr ""
+msgstr "画面の下部で余分な40ピクセルを切り取り、標準の高さ200ピクセルにして、「アスペクト比補正」を使用できるようにします."
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6704,6 +6676,8 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"「アスペクト比補正」を有効にしました。ただし、FM-TOWNSの自然な解像度は320x240であるため、アスペクト比を補正することはできません。\n"
+"アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実現できます。"
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
