@@ -139,6 +139,16 @@ void GraphicsManager::clearScreenBufferTop() {
 	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);
 }
 
+void GraphicsManager::clearScreenBufferInventory() {
+	// Clears lines 420 - 460
+	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE, MAXX, FIRSTLINE + ICONDY), 0);
+}
+
+void GraphicsManager::clearScreenBufferInventoryFull() {
+	// Clears lines 420 - 480
+	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE, MAXX, MAXY), 0);
+}
+
 void GraphicsManager::putPixel(int x, int y, uint16 color) {
 	if (x > 0 && x < MAXX && y > 60 && y < 420) {
 		_screenBuffer.setPixel(x, y, color);
@@ -319,6 +329,8 @@ void GraphicsManager::DrawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 
+	// If we have a valid object, draw it, otherwise erase it
+	// by using the background buffer
 	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : getBackgroundPtr();
 	if (d.drawMask) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];

@@ -106,8 +106,7 @@ bool TrecisionEngine::quitGame() {
 	for (int a = 0; a < TOP; a++)
 		memcpy(_zBuffer + a * MAXX, _graphicsMgr->getScreenBufferPtr() + MAXX * a, MAXX * 2);
 
-	for (int a = 0; a < TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferTop();
 
 	SDText SText;
 	SText.set(
@@ -138,8 +137,7 @@ bool TrecisionEngine::quitGame() {
 }
 
 void TrecisionEngine::demoOver() {
-	for (int a = 0; a < TOP; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+	_graphicsMgr->clearScreenBufferTop();
 
 	SDText SText;
 	SText.set(
