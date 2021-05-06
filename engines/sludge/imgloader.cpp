@@ -26,6 +26,7 @@
 #include "image/png.h"
 #include "graphics/surface.h"
 
+#include "sludge/fileset.h"
 #include "sludge/hsi.h"
 #include "sludge/imgloader.h"
 #include "sludge/sludge.h"

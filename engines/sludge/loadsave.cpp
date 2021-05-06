@@ -27,6 +27,7 @@
 #include "sludge/backdrop.h"
 #include "sludge/bg_effects.h"
 #include "sludge/cursors.h"
+#include "sludge/errors.h"
 #include "sludge/event.h"
 #include "sludge/floor.h"
 #include "sludge/fonttext.h"

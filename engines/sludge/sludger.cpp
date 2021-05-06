@@ -26,6 +26,7 @@
 #include "sludge/backdrop.h"
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
+#include "sludge/errors.h"
 #include "sludge/event.h"
 #include "sludge/fonttext.h"
 #include "sludge/freeze.h"
@@ -48,6 +49,7 @@
 #include "sludge/sprites.h"
 #include "sludge/sprbanks.h"
 #include "sludge/statusba.h"
+#include "sludge/timing.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
 #include "sludge/zbuffer.h"
@@ -122,7 +124,7 @@ Common::File *openAndVerify(const Common::String &filename, char extra1, char ex
 }
 
 void initSludge() {
-	g_sludge->_timer.reset();
+	g_sludge->_timer->reset();
 	g_sludge->_languageMan->init();
 	g_sludge->_gfxMan->init();
 	g_sludge->_resMan->init();
@@ -216,7 +218,7 @@ bool initSludge(const Common::String &filename) {
 
 	int specialSettings = fp->readByte();
 	debugC(2, kSludgeDebugDataLoad, "specialSettings : %i", specialSettings);
-	g_sludge->_timer.setDesiredFPS(1000 / fp->readByte());
+	g_sludge->_timer->setDesiredFPS(1000 / fp->readByte());
 
 	readString(fp);  // Unused - was used for registration purposes.
 

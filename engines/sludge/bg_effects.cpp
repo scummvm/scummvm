@@ -26,6 +26,7 @@
 #include "sludge/backdrop.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
+#include "sludge/variable.h"
 
 namespace Sludge {
 

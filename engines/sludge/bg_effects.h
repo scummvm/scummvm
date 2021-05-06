@@ -23,9 +23,9 @@
 #ifndef SLUDGE_BG_EFFECTS_H
 #define SLUDGE_BG_EFFECTS_H
 
-#include "common/file.h"
-
 namespace Sludge {
+
+struct VariableStack;
 
 bool blurScreen();
 void blur_saveSettings(Common::WriteStream *stream);

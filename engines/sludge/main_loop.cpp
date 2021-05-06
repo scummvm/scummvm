@@ -57,7 +57,7 @@ int main_loop(Common::String filename) {
 	startNewFunctionNum(0, 0, NULL, noStack);
 
 	g_sludge->_evtMan->startGame();
-	g_sludge->_timer.init();
+	g_sludge->_timer->init();
 
 	while (!g_sludge->_evtMan->quit()) {
 		g_sludge->_evtMan->checkInput();
@@ -68,7 +68,7 @@ int main_loop(Common::String filename) {
 		}
 		sludgeDisplay();
 		g_sludge->_soundMan->handleSoundLists();
-		g_sludge->_timer.waitFrame();
+		g_sludge->_timer->waitFrame();
 	}
 
 	killSludge();

@@ -23,12 +23,12 @@
 #ifndef SLUDGE_GRAPHICS_H
 #define SLUDGE_GRAPHICS_H
 
-#include "common/stream.h"
-
-#include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
-
 #include "sludge/sprbanks.h"
+
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
 
 namespace Sludge {
 

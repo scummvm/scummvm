@@ -24,20 +24,25 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
+#include "common/random.h"
 
 #include "sludge/cursors.h"
 #include "sludge/event.h"
+#include "sludge/fileset.h"
 #include "sludge/fonttext.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
+#include "sludge/language.h"
 #include "sludge/main_loop.h"
 #include "sludge/newfatal.h"
+#include "sludge/objtypes.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
 #include "sludge/statusba.h"
+#include "sludge/timing.h"
 
 namespace Sludge {
 
@@ -75,6 +80,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	gamePath = "";
 
 	// Init managers
+	_timer = new Timer();
 	_fatalMan = new FatalMsgManager();
 	_peopleMan = new PeopleManager(this);
 	_resMan = new ResourceManager();
@@ -134,6 +140,7 @@ SludgeEngine::~SludgeEngine() {
 	delete _fatalMan;
 	_fatalMan = nullptr;
 	delete _statusBar;
+	delete _timer;
 }
 
 Common::Error SludgeEngine::run() {

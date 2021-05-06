@@ -29,6 +29,7 @@
 #include "sludge/function.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
+#include "sludge/objtypes.h"
 #include "sludge/region.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"

@@ -24,8 +24,6 @@
 
 #include "image/image_decoder.h"
 
-#include "graphics/surface.h"
-
 namespace Sludge {
 
 class HSIDecoder : public Image::ImageDecoder {

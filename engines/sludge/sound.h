@@ -23,13 +23,20 @@
 #ifndef SLUDGE_SOUND_H
 #define SLUDGE_SOUND_H
 
-#include "common/file.h"
+#include "common/list.h"
 
 #include "audio/mixer.h"
 
-#include "sludge/variable.h"
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
+//#include "sludge/variable.h"
 
 namespace Sludge {
+
+struct StackHandler;
 
 // Sound list stuff
 struct SoundList{

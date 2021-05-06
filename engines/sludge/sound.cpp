@@ -30,11 +30,13 @@
 #include "audio/decoders/vorbis.h"
 #include "audio/mods/mod_xm_s3m.h"
 
+#include "sludge/errors.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
+#include "sludge/variable.h"
 
 namespace Sludge {
 

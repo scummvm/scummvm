@@ -21,6 +21,8 @@
  */
 
 #include "sludge/builtin.h"
+#include "sludge/errors.h"
+#include "sludge/fileset.h"
 #include "sludge/function.h"
 #include "sludge/loadsave.h"
 #include "sludge/newfatal.h"

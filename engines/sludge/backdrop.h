@@ -23,11 +23,12 @@
 #ifndef SLUDGE_BACKDROP_H
 #define SLUDGE_BACKDROP_H
 
-#include "common/stream.h"
-
 #include "graphics/surface.h"
 
-#include "sludge/variable.h"
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
 
 namespace Sludge {
 

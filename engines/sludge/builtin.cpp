@@ -22,6 +22,7 @@
 #define SYMBIAN_USE_SYSTEM_REMOVE
 
 #include "common/config-manager.h"
+#include "common/random.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -51,6 +52,7 @@
 #include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/sludge.h"
+#include "sludge/timing.h"
 #include "sludge/zbuffer.h"
 
 namespace Sludge {
@@ -2408,7 +2410,7 @@ builtIn(_rem_launchWith) {
 
 builtIn(getFramesPerSecond) {
 	UNUSEDALL
-	fun->reg.setVariable(SVT_INT, g_sludge->_timer.getLastFps());
+	fun->reg.setVariable(SVT_INT, g_sludge->_timer->getLastFps());
 	return BR_CONTINUE;
 }
 

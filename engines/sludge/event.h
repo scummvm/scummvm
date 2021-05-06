@@ -23,8 +23,6 @@
 #ifndef SLUDGE_EVENT_H
 #define SLUDGE_EVENT_H
 
-#include "common/stream.h"
-
 namespace Sludge {
 
 struct FrozenStuffStruct;

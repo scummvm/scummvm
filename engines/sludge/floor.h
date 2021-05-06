@@ -22,9 +22,8 @@
 #ifndef SLUDGE_FLOOR_H
 #define SLUDGE_FLOOR_H
 
-#include "common/rect.h"
-
 namespace Common {
+struct Point;
 class SeekableReadStream;
 class WriteStream;
 }

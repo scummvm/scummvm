@@ -22,8 +22,6 @@
 #ifndef SLUDGE_STATUSBA_H
 #define SLUDGE_STATUSBA_H
 
-#include "common/str.h"
-
 namespace Sludge {
 
 struct StatusBar {
