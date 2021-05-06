@@ -35,8 +35,7 @@
 
 namespace Sludge {
 
-bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight)
-{
+bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight) {
 	if (checkSizeValide(thumbWidth, thumbHeight))
 	{
 		_thumbWidth = thumbWidth;
@@ -47,7 +46,6 @@ bool GraphicsManager::setThumbnailSize(int thumbWidth, int thumbHeight)
 }
 
 bool GraphicsManager::saveThumbnail(Common::WriteStream *stream) {
-
 	stream->writeUint32LE(_thumbWidth);
 	stream->writeUint32LE(_thumbHeight);
 

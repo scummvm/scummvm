@@ -29,8 +29,7 @@ namespace Sludge {
 
 extern float snapTexW, snapTexH;
 
-void GraphicsManager::setBrightnessLevel(int brightnessLevel)
-{
+void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
 	if (brightnessLevel < 0)
 		_brightnessLevel = 0;
 	else if (brightnessLevel > 255)
@@ -382,29 +381,29 @@ void transitionBlinds() {
 
 void GraphicsManager::fixBrightness() {
 	switch (_fadeMode) {
-		case 0:
-			transitionFader();
-			break;
-		case 1:
-			resetRandW();
-			// Fall through!
-		case 2:
-			transitionDisolve();
-			break;
-		case 3:
-			transitionTV();
-			break;
-		case 4:
-			transitionBlinds();
-			break;
-		case 5:
-			transitionCrossFader();
-			break;
-		case 6:
-			transitionSnapshotBox();
-			break;
-		default:
-			break;
+	case 0:
+		transitionFader();
+		break;
+	case 1:
+		resetRandW();
+		// Fall through!
+	case 2:
+		transitionDisolve();
+		break;
+	case 3:
+		transitionTV();
+		break;
+	case 4:
+		transitionBlinds();
+		break;
+	case 5:
+		transitionCrossFader();
+		break;
+	case 6:
+		transitionSnapshotBox();
+		break;
+	default:
+		break;
 	}
 }
 

@@ -131,24 +131,24 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 			if (fp->eos())
 				break;
 			switch (i) {
-				case 0: {
-					Common::String g = readStringEncoded(fp);
-					stringVar.makeTextVar(g);
-				}
-					break;
+			case 0: {
+				Common::String g = readStringEncoded(fp);
+				stringVar.makeTextVar(g);
+			}
+				break;
 
-				case 1:
-					stringVar.setVariable(SVT_INT, fp->readUint32LE());
-					break;
+			case 1:
+				stringVar.setVariable(SVT_INT, fp->readUint32LE());
+				break;
 
-				case 2:
-					stringVar.setVariable(SVT_INT, fp->readByte());
-					break;
+			case 2:
+				stringVar.setVariable(SVT_INT, fp->readByte());
+				break;
 
-				default:
-					fatal(LOAD_ERROR "Corrupt custom data file:", filename);
-					delete fp;
-					return false;
+			default:
+				fatal(LOAD_ERROR "Corrupt custom data file:", filename);
+				delete fp;
+				return false;
 			}
 		} else {
 			char *line = readTextPlain(fp);
@@ -196,26 +196,26 @@ bool CustomSaveHelper::stackToFile(const Common::String &filename, const Variabl
 	while (hereWeAre) {
 		if (_saveEncoding) {
 			switch (hereWeAre -> thisVar.varType) {
-				case SVT_STRING:
-					fp->writeByte(_encode1);
-					writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
-					break;
+			case SVT_STRING:
+				fp->writeByte(_encode1);
+				writeStringEncoded(hereWeAre -> thisVar.varData.theString, fp);
+				break;
 
-				case SVT_INT:
-					// Small enough to be stored as a char
-					if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
-						fp->writeByte(2 ^ _encode1);
-						fp->writeByte(hereWeAre -> thisVar.varData.intValue);
-					} else {
-						fp->writeByte(1 ^ _encode1);
-						fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
-					}
-					break;
+			case SVT_INT:
+				// Small enough to be stored as a char
+				if (hereWeAre -> thisVar.varData.intValue >= 0 && hereWeAre -> thisVar.varData.intValue < 256) {
+					fp->writeByte(2 ^ _encode1);
+					fp->writeByte(hereWeAre -> thisVar.varData.intValue);
+				} else {
+					fp->writeByte(1 ^ _encode1);
+					fp->writeUint32LE(hereWeAre -> thisVar.varData.intValue);
+				}
+				break;
 
-				default:
-					fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
-					delete fp;
-					return false;
+			default:
+				fatal("Can't create an encoded custom data file containing anything other than numbers and strings", filename);
+				delete fp;
+				return false;
 			}
 		} else {
 			Common::String makeSureItsText = hereWeAre->thisVar.getTextFromAnyVar();

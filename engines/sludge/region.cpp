@@ -33,8 +33,7 @@
 
 namespace Sludge {
 
-RegionManager::RegionManager(SludgeEngine *vm)
-{
+RegionManager::RegionManager(SludgeEngine *vm) {
 	_vm = vm;
 	_allScreenRegions = new ScreenRegionList;
 	_allScreenRegions->clear();
