@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-05 21:34+0000\n"
-"PO-Revision-Date: 2021-04-28 00:28+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2021-05-07 06:25+0000\n"
+"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
 "Language: uk_UA\n"
@@ -2126,7 +2126,7 @@ msgstr "<Невірне значення>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Перекладач для численних пригодницьких і рольових ігор"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2137,6 +2137,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM - це програма, яка дозволяє запускати широкий спектр класичних "
+"графічних ігор та рольових ігор \"наведи і клацни\", якщо у вас вже є їх "
+"файли даних. Розумна частина: ScummVM просто замінює виконувані файли, що "
+"постачаються разом із грою, дозволяючи відтворювати їх у системах, для яких "
+"вони ніколи не були розроблені!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2146,6 +2151,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"В даний час ScummVM підтримує величезну бібліотеку пригод із загальною "
+"кількістю понад 4000 ігор. Він підтримує багато класичних творів, "
+"опублікованих такими легендарними студіями, як LucasArts, Sierra On-Line, "
+"Revolution Software, Cyan, Inc. та Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2154,6 +2163,10 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Поряд із новаторськими назвами, як-от серія Monkey Island, Broken Sword, "
+"Myst, Blade Runner та незліченна кількість інших ігор, ви знайдете кілька "
+"справді незрозумілих пригод та справді прихованих дорогоцінних каменів, які "
+"слід дослідити."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2294,13 +2307,6 @@ msgid "Error"
 msgstr "Помилка"
 
 #: engines/engine.cpp:504
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the README file for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2308,20 +2314,13 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"Ви намагаєтесь грати гру безпосередньо з CD\n"
-"Відомо, що це призводить до проблем, і тому\n"
-"рекомендовано, щоби Ви скопіювали файли даних\n"
-"гри на жорсткий диск.\n"
-"Дивіться файл README для подальших інструкцій."
+"Ви, здається, граєте в цю гру безпосередньо\n"
+"з компакт-диска. Це, як відомо, викликає проблеми,\n"
+"і тому рекомендується скопіювати\n"
+"файли даних на жорсткий диск.\n"
+"Детальніше див. У документації (аудіо CD)."
 
 #: engines/engine.cpp:516
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the README file for details."
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2329,11 +2328,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"Ця гра має аудіодоріжки на диску. Їх потрібно\n"
-"переписати з диску з допомогою відповідної\n"
-"програми для копіювання аудіо з CD дисків, для\n"
-"того, щоб можна було слухати музику у грі.\n"
-"Дивіться файл README для подальших інструкцій."
+"На диску цієї гри є звукові доріжки. Ці\n"
+"доріжки потрібно вирвати з диска за допомогою\n"
+"відповідний інструмент для вилучення аудіо компакт-дисків у\n"
+"щоб послухати музику гри.\n"
+"Детальніше див. У документації (аудіо CD)."
 
 #: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4828,17 +4827,19 @@ msgstr "Ліва кнопка для атаки, права кнопка для 
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Відсутній специфічний для мови код гри та / або ресурси."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Відсутній специфічний для мови код гри та / або ресурси для цього перекладу "
+"фанатів."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "Ви додали гру неправильно. Будь ласка, додайте кореневу папку гри."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
@@ -4846,6 +4847,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Ви додали гру неправильно. Файл GAME.DAT - це образ ISO, і вам потрібно "
+"витягти з нього файли даних гри."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5725,10 +5728,8 @@ msgstr "Використовувати альтернативний вступ �
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "Spanish CD версія ще не підтримується"
+msgstr "Пробна версія Windows не підтримується"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6087,13 +6088,15 @@ msgstr "Використовувати більш нейтральну палі�
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Обріжте ігри FM-TOWNS до висоти 200 пікселів"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Виріжте зайві 40 пікселів внизу екрана, щоб зробити їх стандартними 200 "
+"пікселів, дозволяючи використовувати 'корекцію пропорцій'"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6764,6 +6767,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Ви ввімкнули \"корекцію пропорцій\". Однак природна роздільна здатність FM-"
+"TOWNS становить 320x240, що не дозволяє коректувати пропорції.\n"
+"Корекцію співвідношення сторін можна отримати, обрізавши роздільну здатність "
+"до 320x200, на вкладці \"двигун\"."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
