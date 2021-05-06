@@ -221,14 +221,14 @@ struct SortItem {
 
 	// Functions
 
-	// Check to see if we overlap si2
+	// Screenspace check to see if this overlaps si2
 	inline bool overlap(const SortItem &si2) const;
 
-	// Check to see if we occlude si2
+	// Screenspace check to see if this occludes si2. Assumes this is above of si2
 	inline bool occludes(const SortItem &si2) const;
 
-	// Operator less than
-	inline bool operator<(const SortItem &si2) const;
+	// Screenspace check to see if this is below si2. Assumes this overlaps si2
+	inline bool below(const SortItem &si2) const;
 
 	// Comparison for the sorted lists
 	inline bool ListLessThan(const SortItem *other) const {
@@ -237,7 +237,6 @@ struct SortItem {
 
 };
 
-// Check to see if we overlap si2
 inline bool SortItem::overlap(const SortItem &si2) const {
 	const int point_top_diff[2] = { _sxTop - si2._sxBot, _syTop - si2._syBot };
 	const int point_bot_diff[2] = { _sxBot - si2._sxTop, _syBot - si2._syTop };
@@ -272,7 +271,6 @@ inline bool SortItem::overlap(const SortItem &si2) const {
 	return !clear;
 }
 
-// Check to see if we occlude si2
 inline bool SortItem::occludes(const SortItem &si2) const {
 	const int point_top_diff[2] = { _sxTop - si2._sxTop, _syTop - si2._syTop };
 	const int point_bot_diff[2] = { _sxBot - si2._sxBot, _syBot - si2._syBot };
@@ -305,7 +303,7 @@ inline bool SortItem::occludes(const SortItem &si2) const {
 		top_right_res && top_left_res;
 }
 
-inline bool SortItem::operator<(const SortItem &si2) const {
+inline bool SortItem::below(const SortItem &si2) const {
 	const SortItem &si1 = *this;
 
 	if (si1._sprite != si2._sprite)
@@ -314,27 +312,34 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// Specialist z flat handling
 	if (si1._flat && si2._flat) {
 		// Differing z is easy for flats
-		if (si1._zTop != si2._zTop) return si1._zTop < si2._zTop;
+		if (si1._zTop != si2._zTop)
+			return si1._zTop < si2._zTop;
 
 		// Equal z
 
 		// Animated always gets drawn after
-		if (si1._anim != si2._anim) return si1._anim < si2._anim;
+		if (si1._anim != si2._anim)
+			return si1._anim < si2._anim;
 
 		// Trans always gets drawn after
-		if (si1._trans != si2._trans) return si1._trans < si2._trans;
+		if (si1._trans != si2._trans)
+			return si1._trans < si2._trans;
 
 		// Draw always gets drawn first
-		if (si1._draw != si2._draw) return si1._draw > si2._draw;
+		if (si1._draw != si2._draw)
+			return si1._draw > si2._draw;
 
 		// Solid always gets drawn first
-		if (si1._solid != si2._solid) return si1._solid > si2._solid;
+		if (si1._solid != si2._solid)
+			return si1._solid > si2._solid;
 
 		// Occludes always get drawn first
-		if (si1._occl != si2._occl) return si1._occl > si2._occl;
+		if (si1._occl != si2._occl)
+			return si1._occl > si2._occl;
 
 		// 32x32 flats get drawn first
-		if (si1._f32x32 != si2._f32x32) return si1._f32x32 > si2._f32x32;
+		if (si1._f32x32 != si2._f32x32)
+			return si1._f32x32 > si2._f32x32;
 	}
 	// Mixed, or non flat
 	else {
@@ -346,12 +351,16 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	}
 
 	// Clearly in y?
-	if (si1._y <= si2._yFar) return true;
-	if (si1._yFar >= si2._y) return false;
+	if (si1._y <= si2._yFar)
+		return true;
+	if (si1._yFar >= si2._y)
+		return false;
 
 	// Clearly in x?
-	if (si1._x <= si2._xLeft) return true;
-	if (si1._xLeft >= si2._x) return false;
+	if (si1._x <= si2._xLeft)
+		return true;
+	if (si1._xLeft >= si2._x)
+		return false;
 
 	// Are overlapping in all 3 dimentions if we come here
 
@@ -359,23 +368,28 @@ inline bool SortItem::operator<(const SortItem &si2) const {
 	// If an object's base (z-bottom) is higher another's, it should be rendered after.
 	// This check must be on the z-bottom and not the z-top because two objects with the
 	// same z-position may have different heights (think of a mouse sorting vs the Avatar).
-	if (si1._z < si2._z) return true;
-	if (si1._z > si2._z) return false;
+	if (si1._z != si2._z)
+		return si1._z < si2._z;
 
 	// Partial in X + Y front
-	if (si1._x + si1._y != si2._x + si2._y) return (si1._x + si1._y < si2._x + si2._y);
+	if (si1._x + si1._y != si2._x + si2._y)
+		return (si1._x + si1._y < si2._x + si2._y);
 
 	// Partial in X + Y back
-	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar) return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
+	if (si1._xLeft + si1._yFar != si2._xLeft + si2._yFar)
+		return (si1._xLeft + si1._yFar < si2._xLeft + si2._yFar);
 
 	// Partial in y?
-	if (si1._y != si2._y) return si1._y < si2._y;
+	if (si1._y != si2._y)
+		return si1._y < si2._y;
 
 	// Partial in x?
-	if (si1._x != si2._x) return si1._x < si2._x;
+	if (si1._x != si2._x)
+		return si1._x < si2._x;
 
 	// Just sort by shape number
-	if (si1._shapeNum != si2._shapeNum) return si1._shapeNum < si2._shapeNum;
+	if (si1._shapeNum != si2._shapeNum)
+		return si1._shapeNum < si2._shapeNum;
 
 	// And then by _frame
 	return si1._frame < si2._frame;
@@ -563,7 +577,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 			continue;
 
 		// Attempt to find which is infront
-		if (*si < *si2) {
+		if (si->below(*si2)) {
 			// si2 occludes si (us)
 			if (si2->_occl && si2->occludes(*si)) {
 				// No need to do any more checks, this isn't visible
