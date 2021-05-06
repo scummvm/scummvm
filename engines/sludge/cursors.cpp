@@ -20,7 +20,8 @@
  *
  */
 
-#include "sludge/allfiles.h"
+#include "common/system.h"
+
 #include "sludge/cursors.h"
 #include "sludge/event.h"
 #include "sludge/freeze.h"

@@ -24,6 +24,11 @@
 
 #include "common/rect.h"
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 class SludgeEngine;

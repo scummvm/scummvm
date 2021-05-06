@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"

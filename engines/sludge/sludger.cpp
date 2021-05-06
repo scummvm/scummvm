@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"

@@ -21,8 +21,8 @@
  */
 
 #include "common/file.h"
+#include "common/system.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/fonttext.h"
 #include "sludge/graphics.h"

@@ -23,8 +23,8 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/system.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/bg_effects.h"
 #include "sludge/builtin.h"

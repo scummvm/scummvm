@@ -27,7 +27,6 @@
 #include "graphics/transparent_surface.h"
 #include "graphics/palette.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"

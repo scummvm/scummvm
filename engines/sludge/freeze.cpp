@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"

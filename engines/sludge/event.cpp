@@ -22,6 +22,7 @@
 
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/system.h"
 
 #include "sludge/event.h"
 #include "sludge/freeze.h"

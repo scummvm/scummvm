@@ -24,7 +24,6 @@
 #include "graphics/pixelformat.h"
 #include "graphics/transparent_surface.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/moreio.h"

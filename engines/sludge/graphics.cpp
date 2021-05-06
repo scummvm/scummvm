@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/system.h"
+
 #include "engines/util.h"
 
 #include "sludge/backdrop.h"

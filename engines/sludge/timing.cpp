@@ -20,7 +20,8 @@
  *
  */
 
-#include "sludge/allfiles.h"
+#include "common/system.h"
+
 #include "sludge/timing.h"
 
 namespace Sludge {

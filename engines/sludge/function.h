@@ -22,7 +22,6 @@
 #ifndef SLUDGE_FUNCTION_H
 #define SLUDGE_FUNCTION_H
 
-#include "sludge/allfiles.h"
 #include "sludge/csludge.h"
 #include "sludge/variable.h"
 

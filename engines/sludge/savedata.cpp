@@ -21,8 +21,8 @@
  */
 
 #include "common/savefile.h"
+#include "common/system.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/savedata.h"

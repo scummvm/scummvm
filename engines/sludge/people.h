@@ -22,6 +22,7 @@
 #ifndef SLUDGE_PEOPLE_H
 #define SLUDGE_PEOPLE_H
 
+#include "common/list.h"
 #include "sludge/variable.h"
 
 namespace Sludge {

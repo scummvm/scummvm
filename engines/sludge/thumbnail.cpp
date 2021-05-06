@@ -21,9 +21,10 @@
  */
 
 #include "common/savefile.h"
+#include "common/system.h"
+
 #include "image/png.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/errors.h"
 #include "sludge/graphics.h"

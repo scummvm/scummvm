@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"

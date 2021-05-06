@@ -22,7 +22,6 @@
 
 #include "common/textconsole.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"

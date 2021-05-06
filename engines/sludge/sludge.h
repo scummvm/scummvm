@@ -28,7 +28,6 @@
 #include "graphics/pixelformat.h"
 #include "gui/debugger.h"
 
-#include "sludge/console.h"
 #include "sludge/fileset.h"
 #include "sludge/language.h"
 #include "sludge/objtypes.h"
@@ -50,9 +49,9 @@ class SpeechManager;
 class TextManager;
 class StatusBarManager;
 
-class SludgeConsole;
-
 struct SludgeGameDescription;
+
+#define IN_THE_CENTRE 65535
 
 // debug channels
 enum {

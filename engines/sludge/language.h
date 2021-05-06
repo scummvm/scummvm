@@ -24,8 +24,6 @@
 
 #include "common/file.h"
 
-#include "sludge/allfiles.h"
-
 namespace Sludge {
 
 class LanguageManager {

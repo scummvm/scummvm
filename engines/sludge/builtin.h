@@ -23,7 +23,7 @@
 #ifndef SLUDGE_BUILTIN_H
 #define SLUDGE_BUILTIN_H
 
-#include "sludge/allfiles.h"
+#include "common/str.h"
 
 namespace Sludge {
 

@@ -22,8 +22,6 @@
 #ifndef SLUDGER_H
 #define SLUDGER_H
 
-#include "sludge/allfiles.h"
-
 namespace Sludge {
 
 typedef struct _FILETIME {

@@ -22,6 +22,11 @@
 #ifndef SLUDGE_VARIABLE_H
 #define SLUDGE_VARIABLE_H
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 struct Persona;
@@ -149,4 +154,3 @@ void clearStackLib();
 } // End of namespace Sludge
 
 #endif
-

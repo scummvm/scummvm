@@ -20,7 +20,6 @@
  *
  */
 
-#include "sludge/allfiles.h"
 #include "sludge/floor.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"

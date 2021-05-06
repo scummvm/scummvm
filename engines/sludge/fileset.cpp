@@ -25,7 +25,6 @@
 #include "common/ustr.h"
 #include "common/config-manager.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"

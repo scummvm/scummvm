@@ -140,9 +140,6 @@ Common::Error SludgeEngine::run() {
 	// set global variable
 	g_sludge = this;
 
-	// create console
-	setDebugger(new SludgeConsole(this));
-
 	// debug log
 	main_loop(getGameFile());
 

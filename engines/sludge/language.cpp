@@ -22,7 +22,6 @@
 
 #include "common/debug.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/fileset.h"
 #include "sludge/language.h"
 #include "sludge/moreio.h"

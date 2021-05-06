@@ -20,9 +20,10 @@
  *
  */
 
+#include "common/system.h"
+
 #include "common/savefile.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/bg_effects.h"
 #include "sludge/cursors.h"

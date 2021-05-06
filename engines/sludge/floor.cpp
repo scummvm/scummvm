@@ -22,7 +22,6 @@
 
 #include "graphics/surface.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/fileset.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"

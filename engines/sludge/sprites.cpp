@@ -24,7 +24,6 @@
 #include "graphics/surface.h"
 #include "graphics/transparent_surface.h"
 
-#include "sludge/allfiles.h"
 #include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"
