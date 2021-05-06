@@ -86,6 +86,7 @@ void CruInventoryGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sc
 	} else {
 		Item *item = getItem(activeitem);
 		if (!item) {
+			resetText();
 			_inventoryItemGump->SetShape(0, 0);
 		} else {
 			GumpShapeArchive *gumpshapes = GameData::get_instance()->getGumps();
