@@ -27,12 +27,12 @@ static const ADGameDescription gameDescriptions[] = {
 	 GUIO1(GUIO_NOMIDI)},
 
 	{"Driller",
-	 0,
-	 AD_ENTRY1s("DRILLE.EXE", "eb7e9e0acb72e30cf6e9ed20a6480e7a", 51944),
+	 "",
+	 AD_ENTRY1s("DRILLER.EXE", "cafc0ea0d3424640a7723af87f8bfc0b", 17427),
 	 Common::EN_ANY,
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
-	 GUIO1(GUIO_NOMIDI)},
+	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 
 	{"Castle",
 	 0,

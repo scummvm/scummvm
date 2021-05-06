@@ -43,7 +43,7 @@ static Object *load8bitObject(StreamLoader &stream) {
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
-		debug("Number of colors", numberOfColours/2);
+		debug("Number of colors: %d", numberOfColours/2);
 		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
 			uint8 c = stream.get8();
 			colours->push_back(c >> 4);
@@ -217,13 +217,19 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 
 	Common::Array<uint8> binary;
 
-	uint32 i = offset;
+	uint32 i = 0;
 	while (i < fileSize) {
-		binary.push_back(buf[i]);
+		binary.push_back(buf[i]);		
 		i++;
 	}
 
 	StreamLoader streamLoader(binary);
+	streamLoader.skipBytes(0x210);
+	uint16 frameSize = streamLoader.get16();
+	Common::Array<uint8> *raw_border = streamLoader.nextBytes(frameSize);
+	debug("Found border image of size %x", frameSize);
+
+	streamLoader.setFileOffset(offset);
 	uint8 numberOfAreas = streamLoader.get8();
 	uint16 dbSize = streamLoader.rget16();
 	debug("Database ends at %x", dbSize);
@@ -244,8 +250,7 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 	globalByteCodeTable = streamLoader.get16();
 	debug("GBCT: %d\n", globalByteCodeTable);
 
-	streamLoader.setFileOffset(globalByteCodeTable);
-	//uint8 *ConditionPointer = &Base[GlobalByteCodeTable];
+	streamLoader.setFileOffset(offset + globalByteCodeTable);
 	uint8 numConditions = streamLoader.get8();
 	debug("%d global conditions", numConditions);
 	while (numConditions--) {
@@ -256,10 +261,10 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		Common::Array<uint8> *conditionData = streamLoader.nextBytes(lengthOfCondition);
 
 		//debug("Global condition %d", numCondition + 1);
-		//debug("%s", detokenise8bitCondition(*conditionData)->c_str());
+		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	streamLoader.setFileOffset(200);
+	streamLoader.setFileOffset(offset +200);
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = streamLoader.rget16();
@@ -270,16 +275,13 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
-		streamLoader.setFileOffset(fileOffsetForArea[area]);
+		streamLoader.setFileOffset(offset + fileOffsetForArea[area]);
 		Area *newArea = load8bitArea(streamLoader);
 
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-
-	debug("End of areas at %x", streamLoader.getFileOffset());
-
 	return Binary{8, startArea, areaMap, nullptr, nullptr};
 }
 
