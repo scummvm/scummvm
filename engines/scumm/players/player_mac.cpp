@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/macresman.h"
 #include "engines/engine.h"
 #include "scumm/players/player_mac.h"
 #include "scumm/resource.h"
