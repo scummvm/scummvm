@@ -57,48 +57,50 @@ SoundManager::~SoundManager() {
 }
 
 void SoundManager::soundTimer() {
-	uint32 ctime = g_system->getMillis() / 8;		    // entra una volta ogni otto
+	uint32 ctime = g_system->getMillis() / 8;  // only one time out of 8
 
 	if (ctime > _timer)
 		_timer = ctime;
 	else
 		return;
 
-	if (_soundFadeStatus) {	// solo se sono in un fad
-		if (_soundFadeStatus & SFADOUT) {
-			if (!g_system->getMixer()->isSoundHandleActive(_soundHandle[_backChannel])) {
+	// only if it's a fading
+	if (!_soundFadeStatus)
+		return;
+	
+	if (_soundFadeStatus & SFADOUT) {
+		if (!g_system->getMixer()->isSoundHandleActive(_soundHandle[_backChannel])) {
+			_soundFadeStatus &= (~SFADOUT);
+		}
+		else {
+			_soundFadeOutVal -= FADMULT;
+
+			if (_soundFadeOutVal > 0)
+				g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal / FADMULT));
+			else {
+				_soundFadeOutVal = 0;
+				g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal));
+
 				_soundFadeStatus &= (~SFADOUT);
 			}
-			else {
-				_soundFadeOutVal -= FADMULT;
-
-				if (_soundFadeOutVal > 0)
-					g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal / FADMULT));
-				else {
-					_soundFadeOutVal = 0;
-					g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal));
-
-					_soundFadeStatus &= (~SFADOUT);
-				}
-			}
 		}
-		if (_soundFadeStatus & SFADIN) {
-			_soundFadeInVal += FADMULT;
+	}
+	if (_soundFadeStatus & SFADIN) {
+		_soundFadeInVal += FADMULT;
 
-			if (_soundFadeInVal > _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT)
-				_soundFadeInVal = _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT;
+		if (_soundFadeInVal > _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT)
+			_soundFadeInVal = _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT;
 
-			g_system->getMixer()->setChannelVolume(_soundHandle[_stepChannel], VOLUME(_soundFadeInVal / FADMULT));
+		g_system->getMixer()->setChannelVolume(_soundHandle[_stepChannel], VOLUME(_soundFadeInVal / FADMULT));
 
-			for (int a = 2; a < SAMPLEVOICES; a++) {
-				if (_samplePlaying[a] != 0) {
-					_sampleVolume[a] += FADMULT;
+		for (int a = 2; a < SAMPLEVOICES; a++) {
+			if (_samplePlaying[a] != 0) {
+				_sampleVolume[a] += FADMULT;
 
-					if (_sampleVolume[a] > _gSample[_samplePlaying[a]]._volume * FADMULT)
-						_sampleVolume[a] = _gSample[_samplePlaying[a]]._volume * FADMULT;
+				if (_sampleVolume[a] > _gSample[_samplePlaying[a]]._volume * FADMULT)
+					_sampleVolume[a] = _gSample[_samplePlaying[a]]._volume * FADMULT;
 
-					g_system->getMixer()->setChannelVolume(_soundHandle[a], VOLUME(_sampleVolume[a] / FADMULT));
-				}
+				g_system->getMixer()->setChannelVolume(_soundHandle[a], VOLUME(_sampleVolume[a] / FADMULT));
 			}
 		}
 	}
