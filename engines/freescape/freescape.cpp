@@ -20,7 +20,8 @@
 #include "freescape/loaders/8bitBinaryLoader.h"
 
 #define OFFSET_DARKSIDE 0xc9ce
-#define OFFSET_DRILLER 0x9b40
+#define OFFSET_DRILLER_EGA 0x9b40
+#define OFFSET_DRILLER_CGA 0x7bb0
 #define OFFSET_CASTLE 0xe472
 #define OFFSET_TOTALECLIPSE 0xcdb7
 
@@ -96,12 +97,25 @@ Common::Error FreescapeEngine::run() {
 	_gfx->clear();
 	
 	Binary binary;
+	Common::String renderMode = "";
+
 	if (_targetName == "3Dkit")
 		binary = load16bitBinary("3DKIT.RUN");
 	else if (_targetName == "3Dkitcube")
 		binary = load16bitBinary("CUBE.RUN");
-	else if (_targetName == "Driller")
-		binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER);
+	else if (_targetName == "Driller") {
+		renderMode = "ega";
+		if (!ConfMan.hasKey("render_mode"))
+			renderMode = "ega";
+
+		if (renderMode == "ega")
+			binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER_EGA);
+		else if (renderMode == "cga")
+			binary = load8bitBinary("DRILLC.EXE", OFFSET_DRILLER_CGA);
+		else
+			error("Invalid render mode %s for Driller", renderMode.c_str());
+
+	}
 	else if (_targetName == "Castle")
 		binary = load8bitBinary("CME.EXE", OFFSET_CASTLE);
 	else
