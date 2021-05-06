@@ -27,6 +27,13 @@
 
 #include "backends/fs/stdiostream.h"
 
+// for Windows unicode fopen(): _wfopen()
+#if defined(WIN32) && defined(UNICODE)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include "backends/platform/sdl/win32/win32_wrapper.h"
+#endif
+
 StdioStream::StdioStream(void *handle) : _handle(handle) {
 	assert(handle);
 }
@@ -85,7 +92,13 @@ bool StdioStream::flush() {
 }
 
 StdioStream *StdioStream::makeFromPath(const Common::String &path, bool writeMode) {
+#if defined(WIN32) && defined(UNICODE)
+	wchar_t *wPath = Win32::stringToTchar(path);
+	FILE *handle = _wfopen(wPath, writeMode ? L"wb" : L"rb");
+	free(wPath);
+#else
 	FILE *handle = fopen(path.c_str(), writeMode ? "wb" : "rb");
+#endif
 
 	if (handle)
 		return new StdioStream(handle);
