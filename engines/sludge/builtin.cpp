@@ -93,6 +93,7 @@ extern LoadedFunction *saverFunc;
 
 typedef BuiltReturn (*builtInSludgeFunc)(int numParams, LoadedFunction *fun);
 struct builtInFunctionData {
+	const char *name;
 	builtInSludgeFunc func;
 	int paramNum;
 };
@@ -2573,6 +2574,13 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 
 	fatal("Unknown / unimplemented built-in function.");
 	return BR_ERROR;
+}
+
+const char *getBuiltInName(int num) {
+	if (num > NUM_FUNCS)
+		error("getBuiltInName: incorrect builtin number. %d > %d", num, NUM_FUNCS);
+
+	return builtInFunctionArray[num].name;
 }
 
 } // End of namespace Sludge

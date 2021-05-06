@@ -193,10 +193,7 @@ Common::String ResourceManager::convertString(const Common::String &s) {
 }
 
 Common::String ResourceManager::getNumberedString(int value) {
-	if (_sliceBusy) {
-		fatal("Can't read from data file", "I'm already reading something");
-		return NULL;
-	}
+	uint32 pos = _bigDataFile->pos();
 
 	_bigDataFile->seek((value << 2) + _startOfTextIndex, 0);
 	value = _bigDataFile->readUint32LE();
@@ -208,6 +205,9 @@ Common::String ResourceManager::getNumberedString(int value) {
 		// This is an older game - We need to convert the string to UTF-8
 		s = convertString(s);
 	}
+
+	if (_sliceBusy)
+		_bigDataFile->seek(pos);
 
 	return s;
 }

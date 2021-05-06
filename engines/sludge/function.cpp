@@ -164,6 +164,22 @@ void unfreezeSubs() {
 	}
 }
 
+Common::String getCommandParameter(int com, int param) {
+	switch(com) {
+	case SLU_LOAD_BUILT:
+		return getBuiltInName(param);
+
+	case SLU_SET_GLOBAL:
+		return Common::String::format("global%d", param);
+
+	case SLU_LOAD_STRING:
+		return Common::String::format("\"%s\"", g_sludge->_resMan->getNumberedString(param).c_str());
+
+	default:
+		return Common::String::format("%d", param);
+	}
+}
+
 bool continueFunction(LoadedFunction *fun) {
 	bool keepLooping = true;
 	bool advanceNow;
@@ -177,9 +193,9 @@ bool continueFunction(LoadedFunction *fun) {
 
 	while (keepLooping) {
 		advanceNow = true;
-		debugC(1, kSludgeDebugStackMachine, "Executing command line %i : ", fun->runThisLine);
 		param = fun->compiledLines[fun->runThisLine].param;
 		com = fun->compiledLines[fun->runThisLine].theCommand;
+		debugC(1, kSludgeDebugStackMachine, "Executing command line %i : %s(%s)", fun->runThisLine, sludgeText[com], getCommandParameter(com, param).c_str());
 
 		if (numBIFNames) {
 			setFatalInfo((fun->originalNumber < numUserFunc) ? allUserFunc[fun->originalNumber] : "Unknown user function", (com < numSludgeCommands) ? sludgeText[com] : ERROR_UNKNOWN_MCODE);
@@ -638,10 +654,12 @@ bool loadFunctionCode(LoadedFunction *newFunc) {
 		return false;
 
 	for (numLinesRead = 0; numLinesRead < numLines; numLinesRead++) {
-		newFunc->compiledLines[numLinesRead].theCommand = (SludgeCommand)readStream->readByte();
-		newFunc->compiledLines[numLinesRead].param = readStream->readUint16BE();
-		debugC(3, kSludgeDebugDataLoad, "command line %i: %i", numLinesRead,
-				newFunc->compiledLines[numLinesRead].theCommand);
+		byte com = readStream->readByte();
+		uint16 param = readStream->readUint16BE();
+		newFunc->compiledLines[numLinesRead].theCommand = (SludgeCommand)com;
+		newFunc->compiledLines[numLinesRead].param = param;
+		debugC(3, kSludgeDebugDataLoad, "command line %i: %s(%s)", numLinesRead,
+				sludgeText[com], getCommandParameter(com, param).c_str());
 	}
 	g_sludge->_resMan->finishAccess();
 

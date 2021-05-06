@@ -29,7 +29,7 @@
 
 namespace Sludge {
 
-#define FUNC(special,name,paramNum)      {builtIn_ ## name, paramNum},
+#define FUNC(special,name,paramNum)      {#name, builtIn_ ## name, paramNum},
 static builtInFunctionData builtInFunctionArray[] = {
 	FUNC(true, say, -1)
 	FUNC(true, skipSpeech, 0)

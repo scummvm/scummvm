@@ -40,6 +40,7 @@ enum BuiltReturn {
 
 bool failSecurityCheck(const Common::String &fn);
 BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun);
+const char *getBuiltInName(int num);
 
 } // End of namespace Sludge
 
