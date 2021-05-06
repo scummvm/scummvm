@@ -220,23 +220,11 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 		return false;
 	}
 
+	g_sludge->_resMan->dumpFile(f, "music%04d.xm");
+
 	// make audio stream
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	Common::SeekableReadStream *memImage = readStream->readStream(length);
-
-// debug output
-#if 0
-	Common::DumpFile *dump = new Common::DumpFile();
-	Common::String name = Common::String::format("mod_sound_%i", f);
-	dump->open(name);
-	byte *soundData = new byte[length];
-	memImage->read(soundData, length);
-	dump->write(soundData, length);
-	dump->finalize();
-	delete []soundData;
-	delete dump;
-	memImage->seek(0, SEEK_SET);
-#endif
 
 	if (memImage->size() != (int)length || readStream->err()) {
 		return fatal("Sound reading failed");
@@ -320,6 +308,8 @@ int SoundManager::makeSoundAudioStream(int f, Audio::AudioStream *&audiostream, 
 	uint32 length = g_sludge->_resMan->openFileFromNum(f);
 	if (!length)
 		return -1;
+
+	g_sludge->_resMan->dumpFile(f, "sound%04d.ogg");
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 	uint curr_ptr = readStream->pos();

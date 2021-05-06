@@ -145,6 +145,8 @@ bool FloorManager::setFloor(int fileNum) {
 	if (!g_sludge->_resMan->openFileFromNum(fileNum))
 		return false;
 
+	g_sludge->_resMan->dumpFile(fileNum, "floor%04d.flo");
+
 	// Find out how many polygons there are and reserve memory
 
 	_currentFloor->originalNum = fileNum;
