@@ -78,7 +78,7 @@ struct LegacyGraphicsMode {
 };
 
 // Table for using old names for scalers in the configuration
-// to keep compatibiblity with old config files.
+// to keep compatibility with old config files.
 static const LegacyGraphicsMode s_legacyGraphicsModes[] = {
 	{ "supereagle2x", "supereagle" },
 	{ "dotmatrix2x", "dotmatrix" },
@@ -111,6 +111,10 @@ OSystem_SDL::OSystem_SDL()
 
 OSystem_SDL::~OSystem_SDL() {
 	SDL_ShowCursor(SDL_ENABLE);
+
+#ifdef USE_OPENGL
+	clearGraphicsModes();
+#endif
 
 	// Delete the various managers here. Note that the ModularBackend
 	// destructors would also take care of this for us. However, various
@@ -848,17 +852,19 @@ int OSystem_SDL::getGraphicsMode() const {
 }
 
 void OSystem_SDL::setupGraphicsModes() {
-	_graphicsModes.clear();
+	clearGraphicsModes();
 	_graphicsModeIds.clear();
 	_defaultSDLMode = _defaultGLMode = -1;
 
 	// Count the number of graphics modes
+	const OSystem::GraphicsMode *srcModes;
 	const OSystem::GraphicsMode *srcMode;
 	int defaultMode;
 
 	GraphicsManager *manager = new SurfaceSdlGraphicsManager(_eventSource, _window);
-	srcMode = manager->getSupportedGraphicsModes();
 	defaultMode = manager->getDefaultGraphicsMode();
+	srcModes = manager->getSupportedGraphicsModes();
+	srcMode = srcModes;
 	while (srcMode->name) {
 		if (defaultMode == srcMode->id) {
 			_defaultSDLMode = _graphicsModes.size();
@@ -866,6 +872,7 @@ void OSystem_SDL::setupGraphicsModes() {
 		_graphicsModes.push_back(*srcMode);
 		srcMode++;
 	}
+	delete[] srcModes;
 	delete manager;
 	assert(_defaultSDLMode != -1);
 
@@ -881,7 +888,6 @@ void OSystem_SDL::setupGraphicsModes() {
 		srcMode++;
 	}
 	delete manager;
-	manager = nullptr;
 	assert(_defaultGLMode != -1);
 
 	// Set a null mode at the end
@@ -898,5 +904,19 @@ void OSystem_SDL::setupGraphicsModes() {
 		mode++;
 	}
 }
-#endif
 
+void OSystem_SDL::clearGraphicsModes() {
+	if (!_graphicsModes.empty()) {
+		int i = 0;
+
+		OSystem::GraphicsMode *mode = _graphicsModes.begin();
+		while (mode->name && i < _firstGLMode) {
+			free(const_cast<char *>(mode->name));
+			free(const_cast<char *>(mode->description));
+			mode++;
+			i++;
+		}
+		_graphicsModes.clear();
+	}
+}
+#endif

@@ -139,7 +139,7 @@ protected:
 #endif
 
 	/**
-	 * Initialze the SDL library.
+	 * Initialize the SDL library.
 	 */
 	virtual void initSDL();
 
@@ -163,9 +163,14 @@ protected:
 	int _defaultGLMode;
 
 	/**
-	 * Creates the merged graphics modes list
+	 * Create the merged graphics modes list.
 	 */
 	void setupGraphicsModes();
+
+	/**
+	 * Clear the merged graphics modes list.
+	 */
+	void clearGraphicsModes();
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const override;
 	virtual int getDefaultGraphicsMode() const override;
