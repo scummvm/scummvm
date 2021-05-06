@@ -51,7 +51,8 @@ void EggHatcherProcess::addEgg(Egg *egg) {
 void EggHatcherProcess::run() {
 	bool nearteleporter = false;
 	MainActor *av = getMainActor();
-	assert(av);
+	if (!av)
+		return;
 
 	// CONSTANTS!
 	const int range_mul = GAME_IS_U8 ? 32 : 64;
