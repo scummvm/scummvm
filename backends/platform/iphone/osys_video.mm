@@ -48,7 +48,7 @@ void OSystem_IPHONE::initVideoContext() {
 Common::List<Graphics::PixelFormat> OSystem_IPHONE::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 	// RGB565
-	list.push_back(Graphics::createPixelFormat<565>());
+	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0));
 	// CLUT8
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
@@ -131,8 +131,8 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 	const byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
-		_gamePalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(b[0], b[1], b[2]);
-		_gamePaletteRGBA5551[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(b[0], b[1], b[2]);
+		_gamePalette[i] = _videoContext->screenTexture.format.RGBToColor(b[0], b[1], b[2]);
+		_gamePaletteRGBA5551[i] = _videoContext->mouseTexture.format.RGBToColor(b[0], b[1], b[2]);
 		b += 3;
 	}
 
@@ -150,7 +150,7 @@ void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) const {
 	byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
-		Graphics::colorToRGB<Graphics::ColorMasks<565> >(_gamePalette[i], b[0], b[1], b[2]);
+		_videoContext->screenTexture.format.colorToRGB(_gamePalette[i], b[0], b[1], b[2]);
 		b += 3;
 	}
 }
@@ -363,6 +363,10 @@ int16 OSystem_IPHONE::getOverlayWidth() {
 	return _videoContext->overlayWidth;
 }
 
+Graphics::PixelFormat getOverlayFormat() const {
+	return _videoContext->overlayTexture.format;
+}
+
 bool OSystem_IPHONE::showMouse(bool visible) {
 	//printf("showMouse(%d)\n", visible);
 	bool last = _videoContext->mouseIsVisible;
@@ -429,7 +433,7 @@ void OSystem_IPHONE::setCursorPalette(const byte *colors, uint start, uint num) 
 	assert(start + num <= 256);
 
 	for (uint i = start; i < start + num; ++i, colors += 3)
-		_mouseCursorPalette[i] = Graphics::RGBToColor<Graphics::ColorMasks<5551> >(colors[0], colors[1], colors[2]);
+		_mouseCursorPalette[i] = _videoContext->mouseTexture.format.RGBToColor(colors[0], colors[1], colors[2]);
 
 	// FIXME: This is just stupid, our client code seems to assume that this
 	// automatically enables the cursor palette.
@@ -445,7 +449,7 @@ void OSystem_IPHONE::updateMouseTexture() {
 
 	Graphics::Surface &mouseTexture = _videoContext->mouseTexture;
 	if (mouseTexture.w != texWidth || mouseTexture.h != texHeight)
-		mouseTexture.create(texWidth, texHeight, Graphics::createPixelFormat<5551>());
+		mouseTexture.create(texWidth, texHeight, Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 
 	if (_mouseBuffer.format.bytesPerPixel == 1) {
 		const uint16 *palette;
