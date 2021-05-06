@@ -258,9 +258,9 @@ void TrecisionEngine::doMouse() {
 	switch (_curMessage->_event) {
 	case ME_MMOVE:
 		int8 curPos;
-		if (isGameArea(_curMessage->_u16Param2))
+		if (isGameArea(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2)))
 			curPos = POSGAME;
-		else if (isInventoryArea(_curMessage->_u16Param2))
+		else if (isInventoryArea(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2)))
 			curPos = POSINV;
 		else
 			curPos = POSUP;
@@ -270,7 +270,7 @@ void TrecisionEngine::doMouse() {
 			if (_flagSomeoneSpeaks || _flagDialogMenuActive || _flagDialogActive)
 				break;
 
-			checkMask(_curMessage->_u16Param1, _curMessage->_u16Param2);
+			checkMask(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2));
 			_logicMgr->doMouseGame();
 		} else if (curPos == POSINV) {
 			if (_logicMgr->doMouseInventory())
@@ -498,7 +498,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mouseX, _mouseY, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 		}
 		break;
@@ -509,7 +509,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mouseX, _mouseY, 0, 0);
+				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
 		}
@@ -518,14 +518,14 @@ void TrecisionEngine::doIdle() {
 		break;
 	}
 
-	if (isGameArea(_mouseY) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
+	if (isGameArea(_mousePos) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
 		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
 	if (_inventoryScrollTime > _curTime)
 		_inventoryScrollTime = _curTime;
 
-	if (isInventoryArea(_mouseY) && (_curTime > (INVSCROLLSP + _inventoryScrollTime))) {
-		doScrollInventory(_mouseX);
+	if (isInventoryArea(_mousePos) && (_curTime > (INVSCROLLSP + _inventoryScrollTime))) {
+		doScrollInventory(_mousePos);
 		_inventoryScrollTime = _curTime;
 	}
 

@@ -129,7 +129,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 
 	_curKey = Common::KEYCODE_INVALID;
 	_curAscii = 0;
-	_mouseX = _mouseY = 0;
+	_mousePos = Common::Point(0, 0);
 	_mouseLeftBtn = _mouseRightBtn = false;
 	_keybInput = false;
 
@@ -254,8 +254,7 @@ void TrecisionEngine::eventLoop() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
-			_mouseX = event.mouse.x;
-			_mouseY = event.mouse.y;
+			_mousePos = event.mouse;
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
@@ -761,8 +760,8 @@ insave:
 		checkSystem();
 		getKey();
 
-		int16 mx = _mouseX;
-		int16 my = _mouseY;
+		int16 mx = _mousePos.x;
+		int16 my = _mousePos.y;
 
 		if (my >= FIRSTLINE &&
 			my < FIRSTLINE + ICONDY &&
@@ -969,12 +968,12 @@ bool TrecisionEngine::dataLoad() {
 		checkSystem();
 		getKey();
 
-		if (_mouseY >= FIRSTLINE &&
-			_mouseY < (FIRSTLINE + ICONDY) &&
-			_mouseX >= ICONMARGSX &&
-			(_mouseX < (MAXX - ICONMARGDX))) {
+		if (_mousePos.y >= FIRSTLINE &&
+			_mousePos.y < (FIRSTLINE + ICONDY) &&
+			_mousePos.x >= ICONMARGSX &&
+			(_mousePos.x < (MAXX - ICONMARGDX))) {
 			OldPos = CurPos;
-			CurPos = (_mouseX - ICONMARGSX) / ICONDX;
+			CurPos = (_mousePos.x - ICONMARGSX) / ICONDX;
 
 			if (OldPos != CurPos) {
 				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)

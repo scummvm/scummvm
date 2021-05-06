@@ -1358,7 +1358,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemRatOnSkate:
-		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mouseX >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mouseY >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mouseX <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mouseY <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
+		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mousePos.x <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mousePos.y <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
 			_vm->_dialogMgr->playDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(kItemRatOnSkate);
@@ -3823,7 +3823,7 @@ void LogicManager::doMouseLeftRight() {
 	if (_vm->_curRoom == kRoom52) {
 		// snake escape 52
 		if (_vm->isObjectVisible(oSNAKEU52)) {
-			if (_vm->isGameArea(_vm->_curMessage->_u16Param2) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
+			if (_vm->isGameArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
 				_vm->StartCharacterAction(a526, 0, 1, 0);
 				_vm->setObjectAnim(oSCAVO51, a516);
 				_vm->_snake52.set(_vm->_curMessage);
@@ -3832,16 +3832,15 @@ void LogicManager::doMouseLeftRight() {
 		}
 	} else if (_vm->_curRoom == kRoomControlPanel) {
 		// Sys
-		_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2);
+		_vm->checkMask(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2));
 		DoSys(_vm->_curObj);
 		return;
 	}
 
 	// If it's in a room without a character, like a map or a book
 	if (!_vm->_flagCharacterExists) {
-		if (_vm->isInventoryArea(_vm->_curMessage->_u16Param2) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
-			if (_vm->isIconArea(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)
-			&& _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
+		if (_vm->isInventoryArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
+			if (_vm->isIconArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && _vm->whatIcon(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && (_vm->_inventoryStatus == INV_INACTION)) {
 				_vm->_useWith[WITH] = 0;
 				_vm->_curObj = 0;
 				_vm->_lightIcon = 0xFF;
@@ -3864,7 +3863,7 @@ void LogicManager::doMouseLeftRight() {
 
 	// Special management for 2C wheels
 	if (_vm->isObjectVisible(oBASEWHEELS2C) && _vm->_curRoom == kRoom2C) {
-		if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+		if (_vm->checkMask(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2))) {
 			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
 				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
 			else if (_vm->_curObj == oPULSANTE2C) {
@@ -3915,14 +3914,14 @@ void LogicManager::doMouseLeftRight() {
 	}
 
 	//	Game area
-	if (_vm->isGameArea(_vm->_curMessage->_u16Param2) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
+	if (_vm->isGameArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
 		if (_vm->_flagscriptactive)
 			_vm->_curObj = _vm->_curMessage->_u32Param;
 
 		int pmousex = _vm->_curMessage->_u16Param1;
 		int pmousey = _vm->_curMessage->_u16Param2;
 		if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
-			if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) {
+			if (_vm->checkMask(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2))) {
 				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
 					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
 					pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
@@ -3933,7 +3932,7 @@ void LogicManager::doMouseLeftRight() {
 		}
 		_vm->_characterQueue.initQueue();
 
-		if (_vm->checkMask(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && !_vm->_flagDialogActive) {
+		if (_vm->checkMask(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && !_vm->_flagDialogActive) {
 			if (_vm->_curRoom == kRoom1D && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (_vm->_curObj != oSCALA1D))
 				_vm->_curObj = oDONNA1D;
 			else if (_vm->_curRoom == kRoom2B && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BALLA28)) {
@@ -4006,12 +4005,12 @@ void LogicManager::doMouseLeftRight() {
 				doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 		} else
 			doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
-	} else if (_vm->isInventoryArea(_vm->_curMessage->_u16Param2)) {
+	} else if (_vm->isInventoryArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2))) {
 		// Inventory area
 		if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
 			return;
 
-		if (_vm->isIconArea(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2) && _vm->whatIcon(_vm->_curMessage->_u16Param1) && (_vm->_inventoryStatus == INV_INACTION)) {
+		if (_vm->isIconArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && _vm->whatIcon(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && (_vm->_inventoryStatus == INV_INACTION)) {
 			_vm->_characterQueue.initQueue();
 			_vm->_actor->actorStop();
 			_vm->_pathFind->nextStep();
@@ -4185,7 +4184,7 @@ void LogicManager::DoSys(uint16 curObj) {
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
 		if (!_vm->dataSave()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mousePos.x, _vm->_mousePos.y, 0, 0);
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_obj[o00EXIT]._goRoom, 0, 0, 0);
 		}
 		_vm->_curRoom = kRoomControlPanel;
@@ -4194,7 +4193,7 @@ void LogicManager::DoSys(uint16 curObj) {
 	case o00LOAD:
 		if (!_vm->dataLoad()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mouseX, _vm->_mouseY, 0, 0);
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mousePos.x, _vm->_mousePos.y, 0, 0);
 		}
 		break;
 

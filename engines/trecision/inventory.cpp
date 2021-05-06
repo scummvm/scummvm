@@ -123,7 +123,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_OPERATEICON:
-		_curInventory = whatIcon(_mouseX);
+		_curInventory = whatIcon(_mousePos);
 		if (_curInventory == 0)
 			break;
 
@@ -159,7 +159,7 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_EXAMINEICON:
-		_curInventory = whatIcon(_mouseX);
+		_curInventory = whatIcon(_mousePos);
 		_actor->actorStop();
 		_pathFind->nextStep();
 		if (_flagUseWithStarted) {
@@ -180,17 +180,17 @@ void TrecisionEngine::doInventory() {
 		break;
 
 	case ME_SHOWICONNAME:
-		if (isIconArea(_mouseX, _mouseY)) {
+		if (isIconArea(_mousePos)) {
 			if (_inventoryStatus != INV_ON)
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			_curInventory = whatIcon(_mouseX);
+			_curInventory = whatIcon(_mousePos);
 			showInventoryName(_curInventory, true);
 
 			if (!_flagUseWithStarted && !_flagSomeoneSpeaks) {
 				setInventoryStart(_iconBase, INVENTORY_SHOW);
 			}
 		} else {
-			if (!isInventoryArea(_mouseY))
+			if (!isInventoryArea(_mousePos))
 				break;
 			showInventoryName(NO_OBJECTS, true);
 			if (!_flagUseWithStarted) {
@@ -205,11 +205,11 @@ void TrecisionEngine::doInventory() {
 	}
 }
 
-uint8 TrecisionEngine::whatIcon(uint16 invmx) {
-	if (invmx < ICONMARGSX || invmx > MAXX - ICONMARGDX)
+uint8 TrecisionEngine::whatIcon(Common::Point pos) {
+	if (pos.x < ICONMARGSX || pos.x > MAXX - ICONMARGDX)
 		return 0;
 
-	int index = _iconBase + ((invmx - ICONMARGSX) / (ICONDX));
+	int index = _iconBase + ((pos.x - ICONMARGSX) / (ICONDX));
 	
 	return index < (int)_inventory.size() ? _inventory[index] : kItemNull;
 }
@@ -363,7 +363,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			setInventoryStart(_iconBase, INVENTORY_SHOW);
 			_inventoryStatus = INV_INACTION;
 			_inventoryCounter = INVENTORY_SHOW;
-			if (!isInventoryArea(_mouseY))
+			if (!isInventoryArea(_mousePos))
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
 			redrawString();
 			return;
@@ -376,7 +376,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			setInventoryStart(_iconBase, INVENTORY_HIDE);
 			_inventoryStatus = INV_OFF;
 			_inventoryCounter = INVENTORY_HIDE;
-			if (isInventoryArea(_mouseY) && !(_flagDialogActive || _flagDialogMenuActive))
+			if (isInventoryArea(_mousePos) && !(_flagDialogActive || _flagDialogMenuActive))
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
 				redrawString();
@@ -386,13 +386,13 @@ void TrecisionEngine::rollInventory(uint8 status) {
 	setInventoryStart(_iconBase, _inventoryCounter);
 }
 
-void TrecisionEngine::doScrollInventory(uint16 mouseX) {
+void TrecisionEngine::doScrollInventory(Common::Point pos) {
 	if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 		return;
 
-	if (mouseX <= ICONMARGSX && _iconBase)
+	if (pos.x <= ICONMARGSX && _iconBase)
 		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (isBetween(MAXX - ICONMARGDX, mouseX, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
+	else if (isBetween(MAXX - ICONMARGDX, pos.x, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
 		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
 
