@@ -48,6 +48,7 @@ class RegionManager;
 class SoundManager;
 class SpeechManager;
 class TextManager;
+class StatusBarManager;
 
 class SludgeConsole;
 
@@ -93,6 +94,7 @@ public:
 	PeopleManager *_peopleMan;
 	FloorManager *_floorMan;
 	FatalMsgManager *_fatalMan;
+	StatusBarManager *_statusBar;
 
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	~SludgeEngine() override;

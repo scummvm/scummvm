@@ -186,7 +186,7 @@ bool GraphicsManager::snapshot() {
 	// draw snapshot to rendersurface
 	displayBase();
 	_vm->_speechMan->display();
-	drawStatusBar();
+	g_sludge->_statusBar->draw();
 
 	// copy backdrop to snapshot
 	_snapshotSurface.copyFrom(_renderSurface);

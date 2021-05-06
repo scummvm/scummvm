@@ -34,162 +34,161 @@
 
 namespace Sludge {
 
-SpritePalette verbLinePalette;
-SpritePalette litVerbLinePalette;
-
-StatusStuff mainStatus;
-StatusStuff *nowStatus = & mainStatus;
-
-void setLitStatus(int i) {
-	nowStatus->litStatus = i;
+StatusBarManager::StatusBarManager(SludgeEngine *sludge) {
+	_nowStatus = &_mainStatus;
+	_sludge = sludge;
 }
 
-void killLastStatus() {
-	if (nowStatus->firstStatusBar) {
-		StatusBar *kill = nowStatus->firstStatusBar;
-		nowStatus->firstStatusBar = kill->next;
+void StatusBarManager::init() {
+	_mainStatus.firstStatusBar = NULL;
+	_mainStatus.alignStatus = IN_THE_CENTRE;
+	_mainStatus.litStatus = -1;
+	_mainStatus.statusX = 10;
+	_mainStatus.statusY = g_system->getHeight() - 15;
+	statusBarColour(255, 255, 255);
+	statusBarLitColour(255, 255, 128);
+}
+
+void StatusBarManager::setLitStatus(int i) {
+	_nowStatus->litStatus = i;
+}
+
+void StatusBarManager::killLastStatus() {
+	if (_nowStatus->firstStatusBar) {
+		StatusBar *kill = _nowStatus->firstStatusBar;
+		_nowStatus->firstStatusBar = kill->next;
 		delete kill;
 	}
 }
 
-void clearStatusBar() {
-	StatusBar *stat = nowStatus->firstStatusBar;
+void StatusBarManager::clear() {
+	StatusBar *stat = _nowStatus->firstStatusBar;
 	StatusBar *kill;
-	nowStatus->litStatus = -1;
+	_nowStatus->litStatus = -1;
 	while (stat) {
 		kill = stat;
 		stat = stat->next;
 		delete kill;
 	}
-	nowStatus->firstStatusBar = NULL;
+	_nowStatus->firstStatusBar = NULL;
 }
 
-void addStatusBar() {
+void StatusBarManager::addStatusBar() {
 	StatusBar *newStat = new StatusBar;
 	if (checkNew(newStat)) {
-		newStat->next = nowStatus->firstStatusBar;
+		newStat->next = _nowStatus->firstStatusBar;
 		newStat->text.clear();
-		nowStatus->firstStatusBar = newStat;
+		_nowStatus->firstStatusBar = newStat;
 	}
 }
 
-void setStatusBar(Common::String &txt) {
-	if (nowStatus->firstStatusBar) {
-		nowStatus->firstStatusBar->text.clear();
-		nowStatus->firstStatusBar->text = txt;
+void StatusBarManager::set(Common::String &txt) {
+	if (_nowStatus->firstStatusBar) {
+		_nowStatus->firstStatusBar->text.clear();
+		_nowStatus->firstStatusBar->text = txt;
 	}
 }
 
-void positionStatus(int x, int y) {
-	nowStatus->statusX = x;
-	nowStatus->statusY = y;
+void StatusBarManager::positionStatus(int x, int y) {
+	_nowStatus->statusX = x;
+	_nowStatus->statusY = y;
 }
 
-void drawStatusBar() {
-	float cameraZoom = g_sludge->_gfxMan->getCamZoom();
-	int y = nowStatus->statusY, n = 0;
-	StatusBar *stat = nowStatus->firstStatusBar;
+void StatusBarManager::draw() {
+	float cameraZoom = _sludge->_gfxMan->getCamZoom();
+	int y = _nowStatus->statusY, n = 0;
+	StatusBar *stat = _nowStatus->firstStatusBar;
 	while (stat) {
-		switch (nowStatus->alignStatus) {
+		switch (_nowStatus->alignStatus) {
 		case IN_THE_CENTRE:
-			g_sludge->_txtMan->pasteString(stat->text,
-					((g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom,
-					(n++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			_sludge->_txtMan->pasteString(stat->text,
+					((g_system->getWidth() - _sludge->_txtMan->stringWidth(stat->text)) >> 1) / cameraZoom, y / cameraZoom,
+					(n++ == _nowStatus->litStatus) ? _litVerbLinePalette : _verbLinePalette);
 			break;
 
 		case 1001:
-			g_sludge->_txtMan->pasteString(stat->text,
-					(g_system->getWidth() - g_sludge->_txtMan->stringWidth(stat->text)) - nowStatus->statusX / cameraZoom, y / cameraZoom,
-					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			_sludge->_txtMan->pasteString(stat->text,
+					(g_system->getWidth() - _sludge->_txtMan->stringWidth(stat->text)) - _nowStatus->statusX / cameraZoom, y / cameraZoom,
+					(n ++ == _nowStatus->litStatus) ? _litVerbLinePalette : _verbLinePalette);
 			break;
 
 		default:
-			g_sludge->_txtMan->pasteString(stat->text,
-					nowStatus->statusX / cameraZoom, y / cameraZoom,
-					(n ++ == nowStatus->litStatus) ? litVerbLinePalette : verbLinePalette);
+			_sludge->_txtMan->pasteString(stat->text,
+					_nowStatus->statusX / cameraZoom, y / cameraZoom,
+					(n ++ == _nowStatus->litStatus) ? _litVerbLinePalette : _verbLinePalette);
 		}
 		stat = stat->next;
-		y -= g_sludge->_txtMan->getFontHeight();
+		y -= _sludge->_txtMan->getFontHeight();
 	}
 }
 
-void statusBarColour(byte r, byte g, byte b) {
-	verbLinePalette.setColor(r, g, b);
-	nowStatus->statusR = r;
-	nowStatus->statusG = g;
-	nowStatus->statusB = b;
+void StatusBarManager::statusBarColour(byte r, byte g, byte b) {
+	_verbLinePalette.setColor(r, g, b);
+	_nowStatus->statusR = r;
+	_nowStatus->statusG = g;
+	_nowStatus->statusB = b;
 }
 
-void statusBarLitColour(byte r, byte g, byte b) {
-	litVerbLinePalette.setColor(r, g, b);
-	nowStatus->statusLR = r;
-	nowStatus->statusLG = g;
-	nowStatus->statusLB = b;
+void StatusBarManager::statusBarLitColour(byte r, byte g, byte b) {
+	_litVerbLinePalette.setColor(r, g, b);
+	_nowStatus->statusLR = r;
+	_nowStatus->statusLG = g;
+	_nowStatus->statusLB = b;
 }
 
-StatusStuff *copyStatusBarStuff(StatusStuff  *here) {
+StatusStuff *StatusBarManager::copyStatusBarStuff(StatusStuff *here) {
 
 	// Things we want to keep
-	here->statusLR = nowStatus->statusLR;
-	here->statusLG = nowStatus->statusLG;
-	here->statusLB = nowStatus->statusLB;
-	here->statusR = nowStatus->statusR;
-	here->statusG = nowStatus->statusG;
-	here->statusB = nowStatus->statusB;
-	here->alignStatus = nowStatus->alignStatus;
-	here->statusX = nowStatus->statusX;
-	here->statusY = nowStatus->statusY;
+	here->statusLR = _nowStatus->statusLR;
+	here->statusLG = _nowStatus->statusLG;
+	here->statusLB = _nowStatus->statusLB;
+	here->statusR = _nowStatus->statusR;
+	here->statusG = _nowStatus->statusG;
+	here->statusB = _nowStatus->statusB;
+	here->alignStatus = _nowStatus->alignStatus;
+	here->statusX = _nowStatus->statusX;
+	here->statusY = _nowStatus->statusY;
 
 	// Things we want to clear
 	here->litStatus = -1;
 	here->firstStatusBar = NULL;
 
-	StatusStuff *old = nowStatus;
-	nowStatus = here;
+	StatusStuff *old = _nowStatus;
+	_nowStatus = here;
 
 	return old;
 }
 
-void restoreBarStuff(StatusStuff *here) {
-	delete nowStatus;
-	verbLinePalette.setColor((byte)here->statusR, (byte)here->statusG, (byte)here->statusB);
-	litVerbLinePalette.setColor((byte)here->statusLR, (byte)here->statusLG, (byte)here->statusLB);
-	nowStatus = here;
+void StatusBarManager::restoreBarStuff(StatusStuff *here) {
+	delete _nowStatus;
+	_verbLinePalette.setColor((byte)here->statusR, (byte)here->statusG, (byte)here->statusB);
+	_litVerbLinePalette.setColor((byte)here->statusLR, (byte)here->statusLG, (byte)here->statusLB);
+	_nowStatus = here;
 }
 
 
-void initStatusBar() {
-	mainStatus.firstStatusBar = NULL;
-	mainStatus.alignStatus = IN_THE_CENTRE;
-	mainStatus.litStatus = -1;
-	mainStatus.statusX = 10;
-	mainStatus.statusY = g_system->getHeight() - 15;
-	statusBarColour(255, 255, 255);
-	statusBarLitColour(255, 255, 128);
-}
-
-const Common::String statusBarText() {
-	if (nowStatus->firstStatusBar) {
-		return nowStatus->firstStatusBar->text;
+const Common::String StatusBarManager::statusBarText() {
+	if (_nowStatus->firstStatusBar) {
+		return _nowStatus->firstStatusBar->text;
 	} else {
 		return "";
 	}
 }
 
-void saveStatusBars(Common::WriteStream *stream) {
-	StatusBar *viewLine = nowStatus->firstStatusBar;
+void StatusBarManager::saveStatusBars(Common::WriteStream *stream) {
+	StatusBar *viewLine = _nowStatus->firstStatusBar;
 
-	stream->writeUint16BE(nowStatus->alignStatus);
-	stream->writeSint16LE(nowStatus->litStatus);
-	stream->writeUint16BE(nowStatus->statusX);
-	stream->writeUint16BE(nowStatus->statusY);
+	stream->writeUint16BE(_nowStatus->alignStatus);
+	stream->writeSint16LE(_nowStatus->litStatus);
+	stream->writeUint16BE(_nowStatus->statusX);
+	stream->writeUint16BE(_nowStatus->statusY);
 
-	stream->writeByte(nowStatus->statusR);
-	stream->writeByte(nowStatus->statusG);
-	stream->writeByte(nowStatus->statusB);
-	stream->writeByte(nowStatus->statusLR);
-	stream->writeByte(nowStatus->statusLG);
-	stream->writeByte(nowStatus->statusLB);
+	stream->writeByte(_nowStatus->statusR);
+	stream->writeByte(_nowStatus->statusG);
+	stream->writeByte(_nowStatus->statusB);
+	stream->writeByte(_nowStatus->statusLR);
+	stream->writeByte(_nowStatus->statusLG);
+	stream->writeByte(_nowStatus->statusLB);
 
 	// Write what's being said
 	while (viewLine) {
@@ -200,29 +199,30 @@ void saveStatusBars(Common::WriteStream *stream) {
 	stream->writeByte(0);
 }
 
-bool loadStatusBars(Common::SeekableReadStream *stream) {
-	clearStatusBar();
+bool StatusBarManager::loadStatusBars(Common::SeekableReadStream *stream) {
+	clear();
 
-	nowStatus->alignStatus = stream->readUint16BE();
-	nowStatus->litStatus = stream->readSint16LE();
-	nowStatus->statusX = stream->readUint16BE();
-	nowStatus->statusY = stream->readUint16BE();
+	_nowStatus->alignStatus = stream->readUint16BE();
+	_nowStatus->litStatus = stream->readSint16LE();
+	_nowStatus->statusX = stream->readUint16BE();
+	_nowStatus->statusY = stream->readUint16BE();
 
-	nowStatus->statusR = stream->readByte();
-	nowStatus->statusG = stream->readByte();
-	nowStatus->statusB = stream->readByte();
-	nowStatus->statusLR = stream->readByte();
-	nowStatus->statusLG = stream->readByte();
-	nowStatus->statusLB = stream->readByte();
+	_nowStatus->statusR = stream->readByte();
+	_nowStatus->statusG = stream->readByte();
+	_nowStatus->statusB = stream->readByte();
+	_nowStatus->statusLR = stream->readByte();
+	_nowStatus->statusLG = stream->readByte();
+	_nowStatus->statusLB = stream->readByte();
 
-	verbLinePalette.setColor((byte)nowStatus->statusR, (byte)nowStatus->statusG, (byte)nowStatus->statusB);
-	litVerbLinePalette.setColor((byte)nowStatus->statusLR, (byte)nowStatus->statusLG, (byte)nowStatus->statusLB);
+	_verbLinePalette.setColor((byte)_nowStatus->statusR, (byte)_nowStatus->statusG, (byte)_nowStatus->statusB);
+	_litVerbLinePalette.setColor((byte)_nowStatus->statusLR, (byte)_nowStatus->statusLG, (byte)_nowStatus->statusLB);
 	// Read what's being said
-	StatusBar **viewLine = & (nowStatus->firstStatusBar);
+	StatusBar **viewLine = &(_nowStatus->firstStatusBar);
 	StatusBar *newOne;
 	while (stream->readByte()) {
 		newOne = new StatusBar;
-		if (! checkNew(newOne)) return false;
+		if (!checkNew(newOne))
+			return false;
 		newOne->text = readString(stream);
 		newOne->next = NULL;
 		(*viewLine) = newOne;

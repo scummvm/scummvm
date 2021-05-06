@@ -37,6 +37,7 @@
 #include "sludge/sludge.h"
 #include "sludge/sound.h"
 #include "sludge/speech.h"
+#include "sludge/statusba.h"
 
 namespace Sludge {
 
@@ -87,6 +88,7 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	_speechMan = new SpeechManager(this);
 	_regionMan = new RegionManager(this);
 	_floorMan = new FloorManager(this);
+	_statusBar = new StatusBarManager(this);
 }
 
 SludgeEngine::~SludgeEngine() {
@@ -131,6 +133,7 @@ SludgeEngine::~SludgeEngine() {
 	_floorMan = nullptr;
 	delete _fatalMan;
 	_fatalMan = nullptr;
+	delete _statusBar;
 }
 
 Common::Error SludgeEngine::run() {
@@ -147,4 +150,3 @@ Common::Error SludgeEngine::run() {
 }
 
 } // End of namespace Sludge
-

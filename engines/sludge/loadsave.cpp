@@ -142,7 +142,7 @@ bool saveGame(const Common::String &fname) {
 	g_sludge->_gfxMan->saveLightMap(fp);
 
 	g_sludge->_speechMan->save(fp);
-	saveStatusBars(fp);
+	g_sludge->_statusBar->saveStatusBars(fp);
 	g_sludge->_soundMan->saveSounds(fp);
 
 	fp->writeUint16BE(CustomSaveHelper::_saveEncoding);
@@ -274,7 +274,7 @@ bool loadGame(const Common::String &fname) {
 	}
 
 	g_sludge->_speechMan->load(fp);
-	loadStatusBars(fp);
+	g_sludge->_statusBar->loadStatusBars(fp);
 	g_sludge->_soundMan->loadSounds(fp);
 
 	CustomSaveHelper::_saveEncoding = fp->readUint16BE();

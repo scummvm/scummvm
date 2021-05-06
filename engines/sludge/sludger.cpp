@@ -131,7 +131,7 @@ void initSludge() {
 	g_sludge->_floorMan->init();
 	g_sludge->_objMan->init();
 	g_sludge->_speechMan->init();
-	initStatusBar();
+	g_sludge->_statusBar->init();
 	g_sludge->_evtMan->init();
 	g_sludge->_txtMan->init();
 	g_sludge->_cursorMan->init();
@@ -284,7 +284,7 @@ bool initSludge(const Common::String &filename) {
 		Common::String dataFolder = encodeFilename(dataFol);
 	}
 
-	positionStatus(10, winHeight - 15);
+	g_sludge->_statusBar->positionStatus(10, winHeight - 15);
 
 	return true;
 }
@@ -300,7 +300,7 @@ void displayBase() {
 void sludgeDisplay() {
 	displayBase();
 	g_sludge->_speechMan->display();
-	drawStatusBar();
+	g_sludge->_statusBar->draw();
 	g_sludge->_cursorMan->displayCursor();
 	g_sludge->_gfxMan->display();
 }

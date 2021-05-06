@@ -40,26 +40,41 @@ struct StatusStuff {
 	int statusLR, statusLG, statusLB;
 };
 
-void initStatusBar();
+class StatusBarManager {
+public:
+	StatusBarManager(SludgeEngine *sludge);
 
-void setStatusBar(Common::String &txt);
-void clearStatusBar();
-void addStatusBar();
-void killLastStatus();
-void statusBarColour(byte r, byte g, byte b);
-void statusBarLitColour(byte r, byte g, byte b);
-void setLitStatus(int i);
-const Common::String statusBarText();
-void positionStatus(int, int);
-void drawStatusBar();
+	void init();
+	void set(Common::String &txt);
+	void clear();
+	void addStatusBar();
+	void killLastStatus();
+	void statusBarColour(byte r, byte g, byte b);
+	void statusBarLitColour(byte r, byte g, byte b);
+	void setLitStatus(int i);
+	const Common::String statusBarText();
+	void positionStatus(int, int);
+	void draw();
 
-// Load and save
-bool loadStatusBars(Common::SeekableReadStream *stream);
-void saveStatusBars(Common::WriteStream *stream);
+	// Load and save
+	bool loadStatusBars(Common::SeekableReadStream *stream);
+	void saveStatusBars(Common::WriteStream *stream);
 
-// For freezing
-void restoreBarStuff(StatusStuff  *here);
-StatusStuff  *copyStatusBarStuff(StatusStuff  *here);
+	// For freezing
+	void restoreBarStuff(StatusStuff *here);
+	StatusStuff *copyStatusBarStuff(StatusStuff *here);
+
+	void setAlignStatus(uint16 val) { _nowStatus->alignStatus = val; }
+
+private:
+	SpritePalette _verbLinePalette;
+	SpritePalette _litVerbLinePalette;
+
+	StatusStuff _mainStatus;
+	StatusStuff *_nowStatus;
+
+	SludgeEngine *_sludge;
+};
 
 } // End of namespace Sludge
 

@@ -59,7 +59,6 @@ Variable *launchResult = NULL;
 
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
-extern StatusStuff  *nowStatus;
 extern int numBIFNames, numUserFunc;
 
 extern Common::String *allUserFunc;
@@ -203,7 +202,7 @@ builtIn(getMouseScreenY) {
 
 builtIn(getStatusText) {
 	UNUSEDALL
-	fun->reg.makeTextVar(statusBarText());
+	fun->reg.makeTextVar(g_sludge->_statusBar->statusBarText());
 	return BR_CONTINUE;
 }
 
@@ -723,7 +722,7 @@ builtIn(setStatusColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	statusBarColour((byte)red, (byte)green, (byte)blue);
+	g_sludge->_statusBar->statusBarColour((byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -734,7 +733,7 @@ builtIn(setLitStatusColour) {
 	if (!getRGBParams(red, green, blue, fun))
 		return BR_ERROR;
 
-	statusBarLitColour((byte)red, (byte)green, (byte)blue);
+	g_sludge->_statusBar->statusBarLitColour((byte)red, (byte)green, (byte)blue);
 	return BR_CONTINUE;
 }
 
@@ -1722,19 +1721,19 @@ builtIn(jumpCharacter) {
 
 builtIn(clearStatus) {
 	UNUSEDALL
-	clearStatusBar();
+	g_sludge->_statusBar->clear();
 	return BR_CONTINUE;
 }
 
 builtIn(removeLastStatus) {
 	UNUSEDALL
-	killLastStatus();
+	g_sludge->_statusBar->killLastStatus();
 	return BR_CONTINUE;
 }
 
 builtIn(addStatus) {
 	UNUSEDALL
-	addStatusBar();
+	g_sludge->_statusBar->addStatusBar();
 	return BR_CONTINUE;
 }
 
@@ -1742,7 +1741,7 @@ builtIn(statusText) {
 	UNUSEDALL
 	Common::String newText = fun->stack->thisVar.getTextFromAnyVar();
 	trimStack(fun->stack);
-	setStatusBar(newText);
+	g_sludge->_statusBar->set(newText);
 	return BR_CONTINUE;
 }
 
@@ -1752,7 +1751,7 @@ builtIn(lightStatus) {
 	if (!fun->stack->thisVar.getValueType(val, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	setLitStatus(val);
+	g_sludge->_statusBar->setLitStatus(val);
 	return BR_CONTINUE;
 }
 
@@ -1765,7 +1764,7 @@ builtIn(positionStatus) {
 	if (!fun->stack->thisVar.getValueType(x, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	positionStatus(x, y);
+	g_sludge->_statusBar->positionStatus(x, y);
 	return BR_CONTINUE;
 }
 
@@ -1775,7 +1774,7 @@ builtIn(alignStatus) {
 	if (!fun->stack->thisVar.getValueType(val, SVT_INT))
 		return BR_ERROR;
 	trimStack(fun->stack);
-	nowStatus->alignStatus = (int16)val;
+	g_sludge->_statusBar->setAlignStatus(val);
 	return BR_CONTINUE;
 }
 

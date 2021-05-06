@@ -88,7 +88,7 @@ bool GraphicsManager::freeze() {
 	StatusStuff *newStatusStuff = new StatusStuff;
 	if (!checkNew(newStatusStuff))
 		return false;
-	newFreezer->frozenStatus = copyStatusBarStuff(newStatusStuff);
+	newFreezer->frozenStatus = _vm->_statusBar->copyStatusBarStuff(newStatusStuff);
 
 	_vm->_regionMan->freeze(newFreezer);
 	_vm->_cursorMan->freeze(newFreezer);
@@ -155,7 +155,7 @@ void GraphicsManager::unfreeze(bool killImage) {
 	killParallax();
 	_parallaxStuff = _frozenStuff->parallaxStuff;
 	_vm->_cursorMan->resotre(_frozenStuff);
-	restoreBarStuff(_frozenStuff->frozenStatus);
+	_vm->_statusBar->restoreBarStuff(_frozenStuff->frozenStatus);
 	_vm->_evtMan->restore(_frozenStuff);
 	_vm->_speechMan->restore(_frozenStuff);
 
