@@ -32,7 +32,7 @@ protected:
 	ImgLoader() {}
 
 public:
-	static bool loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve = -1);
+	static bool loadImage(int num, const char *fname, Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve = -1);
 	static bool loadPNGImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, bool checkSig = true);
 	static bool loadHSIImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve = -1);
 };

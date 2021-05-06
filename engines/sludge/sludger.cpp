@@ -254,7 +254,7 @@ bool initSludge(const Common::String &filename) {
 
 		// read game icon
 		Graphics::Surface gameIcon;
-		if (!ImgLoader::loadImage(fp, &gameIcon, false))
+		if (!ImgLoader::loadImage(-1, "icon", fp, &gameIcon, false))
 			return false;
 
 	}
@@ -265,7 +265,7 @@ bool initSludge(const Common::String &filename) {
 
 		// read game logo
 		Graphics::Surface gameLogo;
-		if (!ImgLoader::loadImage(fp, &gameLogo))
+		if (!ImgLoader::loadImage(-1, "logo", fp, &gameLogo))
 			return false;
 	}
 

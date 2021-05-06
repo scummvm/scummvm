@@ -53,6 +53,8 @@ public:
 	const Common::String resourceNameFromNum(int i);
 	bool hasResourceNames() { return !_allResourceNames.empty(); }
 
+	void dumpFile(int num, const char *pattern);
+
 private:
 	bool _sliceBusy;
 	Common::File *_bigDataFile;

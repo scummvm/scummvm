@@ -99,6 +99,8 @@ bool GraphicsManager::loadSpriteBank(int fileNum, SpriteBank &loadhere, bool isF
 	if (!g_sludge->_resMan->openFileFromNum(fileNum))
 		return fatal("Can't open sprite bank / font");
 
+	g_sludge->_resMan->dumpFile(fileNum, "bank%d.duc");
+
 	loadhere.isFont = isFont;
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();

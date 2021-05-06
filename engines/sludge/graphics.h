@@ -84,8 +84,8 @@ public:
 	void blankAllScreen();
 	void darkScreen();
 	void saveHSI(Common::WriteStream *stream);
-	bool loadHSI(Common::SeekableReadStream *stream, int, int, bool);
-	bool mixHSI(Common::SeekableReadStream *stream, int x = 0, int y = 0);
+	bool loadHSI(int num, Common::SeekableReadStream *stream, int, int, bool);
+	bool mixHSI(int num, Common::SeekableReadStream *stream, int x = 0, int y = 0);
 	void drawLine(uint, uint, uint, uint);
 	void drawHorizontalLine(uint, uint, uint);
 	void drawVerticalLine(uint, uint, uint);

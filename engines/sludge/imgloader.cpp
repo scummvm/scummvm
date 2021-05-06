@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/stream.h"
 #include "image/png.h"
@@ -32,14 +33,45 @@
 
 namespace Sludge {
 
-bool ImgLoader::loadImage(Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
+bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream *stream, Graphics::Surface *dest, int reserve) {
 	debugC(3, kSludgeDebugGraphics, "Loading image at position: %i", stream->pos());
+
+	bool dumpPng = false;
+
 	int32 start_ptr = stream->pos();
 	if (!loadPNGImage(stream, dest)) {
 		stream->seek(start_ptr);
 		if (!loadHSIImage(stream, dest, reserve)) {
 			return false;
+		} else {
+			if (num != -1) {
+				g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%d.slx", fname).c_str());
+				dumpPng = true;
+			}
 		}
+	} else {
+		if (num != -1)
+			g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%d.png", fname).c_str());
+	}
+
+	if (!ConfMan.getBool("dump_scripts"))
+		return true;
+
+	if (dumpPng || (fname && num == -1)) {
+		// Debug code to output light map image
+		Common::DumpFile *outFile = new Common::DumpFile();
+		Common::String outName;
+
+		if (dumpPng)
+			outName = Common::String::format("dumps/%s%d.png", fname, num);
+		else
+			outName = Common::String::format("dumps/%s.png", fname);
+
+		outFile->open(outName);
+		Image::writePNG(*outFile, *dest);
+		outFile->finalize();
+		outFile->close();
+		delete outFile;
 	}
 	return true;
 }

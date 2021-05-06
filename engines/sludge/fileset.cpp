@@ -23,6 +23,7 @@
 #include "common/file.h"
 #include "common/debug.h"
 #include "common/ustr.h"
+#include "common/config-manager.h"
 
 #include "sludge/allfiles.h"
 #include "sludge/moreio.h"
@@ -219,6 +220,30 @@ bool ResourceManager::startAccess() {
 }
 void ResourceManager::finishAccess() {
 	_sliceBusy = false;
+}
+
+void ResourceManager::dumpFile(int num, const char *pattern) {
+	if (!ConfMan.getBool("dump_scripts"))
+		return;
+
+	Common::DumpFile dumpFile;
+	dumpFile.open(Common::String("dumps/") + Common::String::format(pattern, num));
+	uint32 pos = _bigDataFile->pos();
+
+	_bigDataFile->seek(_startOfDataIndex + (num << 2), 0);
+	_bigDataFile->seek(_bigDataFile->readUint32LE(), 1);
+
+	uint fsize = _bigDataFile->readUint32LE();
+
+	byte *data = (byte *)malloc(fsize);
+
+	_bigDataFile->read(data, fsize);
+	dumpFile.write(data, fsize);
+	dumpFile.close();
+
+	free(data);
+
+	_bigDataFile->seek(pos);
 }
 
 void ResourceManager::readResourceNames(Common::SeekableReadStream *readStream) {

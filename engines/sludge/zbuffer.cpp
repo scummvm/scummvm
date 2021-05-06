@@ -21,7 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "common/config-manager.h"
 #include "graphics/pixelformat.h"
 #include "graphics/transparent_surface.h"
 
@@ -91,16 +90,7 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 
-	if (ConfMan.getBool("dump_scripts")) {
-		Common::DumpFile dumpFile;
-		dumpFile.open(Common::String::format("dumps/zbuffer%d.zbu", num));
-		uint32 pos = readStream->pos();
-		byte *data = (byte *)malloc(fsize);
-		readStream->read(data, fsize);
-		dumpFile.write(data, fsize);
-		dumpFile.close();
-		readStream->seek(pos);
-	}
+	g_sludge->_resMan->dumpFile(num, "zbuffer%d.zbu");
 
 	if (readStream->readByte() != 'S')
 		return fatal("Not a Z-buffer file");

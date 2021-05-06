@@ -74,7 +74,7 @@ bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
 
 	_parallaxLayers.push_back(nP);
 
-	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &nP->surface, 0))
+	if (!ImgLoader::loadImage(v, "parallax", g_sludge->_resMan->getData(), &nP->surface, 0))
 		return false;
 
 	nP->fileNum = v;
@@ -196,7 +196,7 @@ bool GraphicsManager::snapshot() {
 }
 
 bool GraphicsManager::restoreSnapshot(Common::SeekableReadStream *stream) {
-	if (!(ImgLoader::loadImage(stream, &_snapshotSurface))) {
+	if (!(ImgLoader::loadImage(-1, NULL, stream, &_snapshotSurface))) {
 		return false;
 	}
 	return true;
@@ -256,7 +256,7 @@ void GraphicsManager::loadBackDrop(int fileNum, int x, int y) {
 		return;
 	}
 
-	if (!loadHSI(g_sludge->_resMan->getData(), x, y, false)) {
+	if (!loadHSI(fileNum, g_sludge->_resMan->getData(), x, y, false)) {
 		Common::String mess = Common::String::format("Can't paste overlay image outside scene dimensions\n\nX = %i\nY = %i\nWidth = %i\nHeight = %i", x, y, _sceneWidth, _sceneHeight);
 		fatal(mess);
 	}
@@ -278,7 +278,7 @@ void GraphicsManager::mixBackDrop(int fileNum, int x, int y) {
 		return;
 	}
 
-	if (!mixHSI(g_sludge->_resMan->getData(), x, y)) {
+	if (!mixHSI(fileNum, g_sludge->_resMan->getData(), x, y)) {
 		fatal("Can't paste overlay image outside screen dimensions");
 	}
 
@@ -381,7 +381,7 @@ bool GraphicsManager::loadLightMap(int v) {
 
 	Graphics::TransparentSurface tmp;
 
-	if (!ImgLoader::loadImage(g_sludge->_resMan->getData(), &tmp))
+	if (!ImgLoader::loadImage(v, "lightmap", g_sludge->_resMan->getData(), &tmp))
 		return false;
 
 	if (tmp.w != _sceneWidth || tmp.h != _sceneHeight) {
@@ -399,17 +399,6 @@ bool GraphicsManager::loadLightMap(int v) {
 	tmp.free();
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
-
-	// Debug code to output light map image
-#if 0
-	Common::DumpFile *outFile = new Common::DumpFile();
-	Common::String outName = Common::String::format("lightmap_%i.png", v);
-	outFile->open(outName);
-	Image::writePNG(*outFile, _lightMap);
-	outFile->finalize();
-	outFile->close();
-	delete outFile;
-#endif
 
 	return true;
 }
@@ -440,7 +429,7 @@ bool GraphicsManager::loadLightMap(int ssgVersion, Common::SeekableReadStream *s
 	return true;
 }
 
-bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, bool reserve) {
+bool GraphicsManager::loadHSI(int num, Common::SeekableReadStream *stream, int x, int y, bool reserve) {
 	debugC(1, kSludgeDebugGraphics, "Load HSI");
 	if (reserve) {
 		killAllBackDrop(); // kill all
@@ -448,7 +437,7 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 
 	Graphics::Surface tmp;
 
-	if (!ImgLoader::loadImage(stream, &tmp, (int)reserve))
+	if (!ImgLoader::loadImage(num, "hsi", stream, &tmp, (int)reserve))
 		return false;
 
 	uint realPicWidth = tmp.w;
@@ -480,10 +469,10 @@ bool GraphicsManager::loadHSI(Common::SeekableReadStream *stream, int x, int y, 
 	return true;
 }
 
-bool GraphicsManager::mixHSI(Common::SeekableReadStream *stream, int x, int y) {
+bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x, int y) {
 	debugC(1, kSludgeDebugGraphics, "Load mixHSI");
 	Graphics::Surface mixSurface;
-	if (!ImgLoader::loadImage(stream, &mixSurface, 0))
+	if (!ImgLoader::loadImage(num, "mixhsi", stream, &mixSurface, 0))
 		return false;
 
 	uint realPicWidth = mixSurface.w;
@@ -526,7 +515,7 @@ void GraphicsManager::loadBackdrop(int ssgVersion, Common::SeekableReadStream *s
 
 	_brightnessLevel = stream->readByte();
 
-	loadHSI(stream, 0, 0, true);
+	loadHSI(-1, stream, 0, 0, true);
 }
 
 bool GraphicsManager::getRGBIntoStack(uint x, uint y, StackHandler *sH) {
