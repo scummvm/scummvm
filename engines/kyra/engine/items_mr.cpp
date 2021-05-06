@@ -168,7 +168,7 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, Item item, int x, int y, int
 	bool needRepositioning = true;
 
 	while (needRepositioning) {
-		if ((_screen->getDrawLayer(posX, posY) <= 1 && _screen->getDrawLayer2(posX, posY, itemHeight) <= 1 && isDropable(posX, posY)) || posY == 187) {
+		if ((_screen->getDrawLayer(posX, posY) <= 1 && _screen->getDrawLayer2(posX, posY, itemHeight) <= 1 && isDropable(posX, posY)) || (posY == _interfaceCommandLineY1 - 1)) {
 			int posX2 = posX, posX3 = posX;
 			bool repositioning = true;
 
@@ -197,10 +197,10 @@ bool KyraEngine_MR::processItemDrop(uint16 sceneId, Item item, int x, int y, int
 			}
 		}
 
-		if (posY == 187)
+		if (posY == _interfaceCommandLineY1 - 1)
 			needRepositioning = false;
 		else
-			posY = MIN(posY + 2, 187);
+			posY = MIN(posY + 2, _interfaceCommandLineY1 - 1);
 	}
 
 	if (itemX == -1 || itemY == -1)
@@ -369,7 +369,7 @@ bool KyraEngine_MR::pickUpItem(int x, int y, int runScript) {
 }
 
 bool KyraEngine_MR::isDropable(int x, int y) {
-	if (y < 14 || y > 187)
+	if (y < 14 || (y > _interfaceCommandLineY1 - 1))
 		return false;
 
 	x -= 12;

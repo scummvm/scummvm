@@ -40,8 +40,8 @@ int Screen_MR::getLayer(int x, int y) {
 
 	if (y < 0) {
 		y = 0;
-	} else if (y >= _interfaceCommandLineY1) {
-		y = _interfaceCommandLineY1 - 1;
+	} else if (y >= 187) {
+		y = 187;
 		// The original actually limits the _maskMin/MaxY check to cases where y has already been clipped to 187.
 		// Whether this was intentional or not: Scenes actually require that we do it that way or animations may
 		// be drawn on the wrong layer (bug #11312).
