@@ -90,7 +90,7 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	Common::SeekableReadStream *readStream = g_sludge->_resMan->getData();
 
-	g_sludge->_resMan->dumpFile(num, "zbuffer%d.zbu");
+	g_sludge->_resMan->dumpFile(num, "zbuffer%04d.zbu");
 
 	if (readStream->readByte() != 'S')
 		return fatal("Not a Z-buffer file");

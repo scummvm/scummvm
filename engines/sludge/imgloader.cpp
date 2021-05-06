@@ -45,13 +45,13 @@ bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream
 			return false;
 		} else {
 			if (num != -1) {
-				g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%d.slx", fname).c_str());
+				g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%04d.slx", fname).c_str());
 				dumpPng = true;
 			}
 		}
 	} else {
 		if (num != -1)
-			g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%d.png", fname).c_str());
+			g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%04d.png", fname).c_str());
 	}
 
 	if (!ConfMan.getBool("dump_scripts"))
@@ -63,7 +63,7 @@ bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream
 		Common::String outName;
 
 		if (dumpPng)
-			outName = Common::String::format("dumps/%s%d.png", fname, num);
+			outName = Common::String::format("dumps/%s%04d.png", fname, num);
 		else
 			outName = Common::String::format("dumps/%s.png", fname);
 
