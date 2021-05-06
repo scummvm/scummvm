@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-05 21:34+0000\n"
-"PO-Revision-Date: 2021-04-17 22:40+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2021-05-07 06:25+0000\n"
+"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -1299,7 +1299,7 @@ msgstr "Доступность"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Отменить изменения и закрыть диалог"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1307,11 +1307,11 @@ msgstr "Применить"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Применить изменения, не закрывая диалоговое окно"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Примените изменения и закройте диалог"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -2124,7 +2124,7 @@ msgstr "<Неправильное значение>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Переводчик множества приключенческих и ролевых игр"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2135,6 +2135,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM - это программа, которая позволяет запускать широкий спектр "
+"классических графических приключенческих игр и ролевых игр, при условии, что "
+"у вас уже есть их файлы данных. Самое умное в этом: ScummVM просто заменяет "
+"исполняемые файлы, поставляемые с игрой, позволяя вам играть в них на "
+"системах, для которых они никогда не были разработаны!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2144,6 +2149,11 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"В настоящее время ScummVM поддерживает огромную библиотеку приключений, "
+"насчитывающую в общей сложности более 4000 игр. Он поддерживает множество "
+"классических произведений, выпущенных легендарными студиями, такими как "
+"LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. и Westwood "
+"Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2152,6 +2162,10 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
+"Рядом с новаторскими играми, такими как серия Monkey Island, Broken Sword, "
+"Myst, Blade Runner и бесчисленное множество других игр, вы найдете "
+"действительно малоизвестные приключения и действительно скрытые сокровища "
+"для исследования."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -2292,13 +2306,6 @@ msgid "Error"
 msgstr "Ошибка"
 
 #: engines/engine.cpp:504
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the README file for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2306,20 +2313,13 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"Похоже, вы пытаетесь запустить игру прямо\n"
-"с CD. Это обычно вызывает проблемы, и поэтому\n"
-"мы рекомендуем скопировать файлы данных игры\n"
-"на жёсткий диск. Подробности можно найти в\n"
-"файле README."
+"Похоже, вы играете в эту игру напрямую\n"
+"с компакт-диска. Известно, что это вызывает проблемы,\n"
+"поэтому рекомендуется скопировать\n"
+"файлы данных вместо этого на ваш жесткий диск.\n"
+"Подробности см. В документации (аудио компакт-диск)."
 
 #: engines/engine.cpp:516
-#, fuzzy
-#| msgid ""
-#| "This game has audio tracks in its disk. These\n"
-#| "tracks need to be ripped from the disk using\n"
-#| "an appropriate CD audio extracting tool in\n"
-#| "order to listen to the game's music.\n"
-#| "See the README file for details."
 msgid ""
 "This game has audio tracks in its disk. These\n"
 "tracks need to be ripped from the disk using\n"
@@ -2327,11 +2327,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"Диск этой игры содержит звуковые дорожки. Их\n"
-"необходимо переписать с диска с помощью\n"
-"соответствующей программы для копирования\n"
-"аудио дисков, и только после этого в игре появится\n"
-"музыка. Подробности можно найти в файле README."
+"У этой игры есть звуковые дорожки на диске. Эти\n"
+"треки необходимо скопировать с диска с помощью\n"
+"соответствующий инструмент для извлечения аудио компакт-дисков в\n"
+"чтобы послушать музыку из игры.\n"
+"Подробности см. В документации (аудио компакт-диск)."
 
 #: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4825,17 +4825,20 @@ msgstr "Левая кнопка для атаки, правая кнопка д�
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "Отсутствует код игры и / или ресурсы для конкретного языка."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
+"Отсутствует код игры для конкретного языка и / или ресурсы для этого "
+"фанатского перевода."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
 msgstr ""
+"Вы неправильно добавили игру. Добавьте, пожалуйста, корневую папку игры."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
@@ -4843,6 +4846,8 @@ msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
 msgstr ""
+"Вы неправильно добавили игру. Файл GAME.DAT представляет собой ISO-образ, и "
+"вам необходимо извлечь из него файлы данных игры."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5723,10 +5728,8 @@ msgstr "Использовать альтернативное вступлени
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
-#, fuzzy
-#| msgid "Spanish CD version is not yet supported"
 msgid "Windows Trial version is not supported"
-msgstr "Spanish CD версия ещё не поддерживается"
+msgstr "Пробная версия Windows не поддерживается"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6090,13 +6093,16 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr ""
+msgstr "Обрезать игры FM-TOWNS до высоты 200 пикселей"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
+"Вырежьте лишние 40 пикселей в нижней части экрана, чтобы сделать его "
+"стандартной высотой 200 пикселей, что позволяет использовать 'коррекцию "
+"соотношения сторон'"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6767,6 +6773,11 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"Вы включили «коррекцию соотношения сторон». Однако естественное разрешение "
+"FM-TOWNS составляет 320x240 пикселей, что не позволяет корректировать "
+"соотношение сторон.\n"
+"Коррекция соотношения сторон может быть достигнута путем обрезки разрешения "
+"до 320x200 на вкладке «Двигатель»."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
