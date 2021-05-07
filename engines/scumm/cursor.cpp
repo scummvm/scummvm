@@ -389,6 +389,11 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 }
 
 void ScummEngine_v5::redefineBuiltinCursorFromChar(int index, int chr) {
+	// TODO: The Mac cursor has to be extracted from the CURS resource.
+	// Or possibly just hard-code it, since it's so simple.
+	if (_game.platform == Common::kPlatformMacintosh)
+		return;
+
 	// Cursor image in both Loom versions are based on images from charset.
 	// This function is *only* supported for Loom!
 	assert(_game.id == GID_LOOM);

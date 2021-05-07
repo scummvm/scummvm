@@ -86,43 +86,9 @@ Player_V5M::Player_V5M(ScummEngine *scumm, Audio::Mixer *mixer)
 	assert(_vm->_game.id == GID_MONKEY);
 }
 
-// Try both with and without underscore in the filename, because hfsutils may
-// turn the space into an underscore. At least, it did for me.
-
-static const char *monkeyIslandFileNames[] = {
-	"Monkey Island",
-	"Monkey_Island"
-};
-
-bool Player_V5M::checkMusicAvailable() {
-	Common::MacResManager resource;
-
-	for (int i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
-		if (resource.exists(monkeyIslandFileNames[i])) {
-			return true;
-		}
-	}
-
-	GUI::MessageDialog dialog(_(
-		"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-		"instruments from. Music will be disabled."), _("OK"));
-	dialog.runModal();
-	return false;
-}
-
 bool Player_V5M::loadMusic(const byte *ptr) {
 	Common::MacResManager resource;
-	bool found = false;
-	uint i;
-
-	for (i = 0; i < ARRAYSIZE(monkeyIslandFileNames); i++) {
-		if (resource.open(monkeyIslandFileNames[i])) {
-			found = true;
-			break;
-		}
-	}
-
-	if (!found) {
+	if (!resource.open(_instrumentFile)) {
 		return false;
 	}
 
@@ -133,7 +99,7 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 	Common::MacResIDArray idArray = resource.getResIDArray(RES_SND);
 
 	// Load the three channels and their instruments
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		assert(READ_BE_UINT32(ptr) == MKTAG('C', 'h', 'a', 'n'));
 		uint32 len = READ_BE_UINT32(ptr + 4);
 		uint32 instrument = READ_BE_UINT32(ptr + 8);
@@ -172,7 +138,7 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 
 	uint32 samples[3];
 	uint32 maxSamples = 0;
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		samples[i] = 0;
 		for (uint j = 0; j < _channel[i]._length; j += 4) {
 			samples[i] += durationToSamples(READ_BE_UINT16(&_channel[i]._data[j]));
@@ -182,7 +148,7 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 		}
 	}
 
-	for (i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) {
 		_lastNoteSamples[i] = maxSamples - samples[i];
 	}
 

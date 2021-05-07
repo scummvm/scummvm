@@ -46,7 +46,7 @@ public:
 	Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds);
 	~Player_Mac() override;
 
-	void init();
+	void init(const Common::String &instrumentFile);
 
 	// MusicEngine API
 	void setMusicVolume(int vol) override;
@@ -98,7 +98,6 @@ private:
 	int _channelMask;
 	bool _fadeNoteEnds;
 
-	virtual bool checkMusicAvailable() { return false; }
 	virtual bool loadMusic(const byte *ptr) { return false; }
 	virtual bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) { return false; }
 
@@ -123,6 +122,7 @@ protected:
 	friend void syncWithSerializer(Common::Serializer &, Channel &);
 
 	ScummEngine *const _vm;
+	Common::String _instrumentFile;
 	Channel *_channel;
 
 	uint32 durationToSamples(uint16 duration);
