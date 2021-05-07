@@ -88,7 +88,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_inventoryScrollTime = 0;
 
 	_fastWalk = false;
-	_fastWalkLocked = false;
 
 	// Use With
 	_useWith[0] = _useWith[1] = 0;
@@ -268,14 +267,6 @@ void TrecisionEngine::eventLoop() {
 			_mouseRightBtn = false;
 			break;
 
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_CAPSLOCK) {
-				if (!_fastWalkLocked)
-					_fastWalk ^= true;
-				_fastWalkLocked = true;
-			}
-			break;
-
 		case Common::EVENT_KEYUP:
 			_curKey = event.kbd.keycode;
 			_curAscii = event.kbd.ascii;
@@ -290,7 +281,7 @@ void TrecisionEngine::eventLoop() {
 				break;
 
 			case Common::KEYCODE_CAPSLOCK:
-				_fastWalkLocked = false;
+				_fastWalk ^= true;
 				break;
 			default:
 				break;
