@@ -148,7 +148,6 @@ void read3D(Common::String c);
 
 void whereIs(int px, int py);
 void pointOut();
-void viewPanel(SPan *p);
 void pointProject(float x, float y, float z);
 void invPointProject(int x, int y);
 bool intersectLinePanel(SPan *p, float x, float y, float z);

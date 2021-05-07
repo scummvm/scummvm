@@ -45,8 +45,6 @@ class GraphicsManager {
 
 	static const Graphics::PixelFormat kImageFormat;
 
-	void putPixel(int x, int y, uint16 c);
-
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
@@ -59,7 +57,6 @@ public:
 	void setSmkBackground();
 	void resetScreenBuffer();
 	uint16 *getScreenBufferPtr();
-	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBufferTop();
 	void clearScreenBufferInventory();
