@@ -83,6 +83,12 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 	case kHotspotArrow:
 		_curCursorID = 5;
 		break;
+	case kExit:
+		if (g_nancy->getGameType() != kGameTypeVampire) {
+			_curCursorID = 3;
+			break;
+		}
+		// fall through
 	default: {
 		uint itemsOffset = 0;
 		if (itemID == -1) {
