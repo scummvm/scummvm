@@ -322,7 +322,6 @@ public:
 
 	// Data files
 	FastFile _dataFile;	// nldata.cd0
-	FastFile _speechFile;	// nlspeech.cd0
 
 	bool _flagDialogActive;
 	bool _flagDialogMenuActive;

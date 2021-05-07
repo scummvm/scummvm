@@ -177,7 +177,6 @@ TrecisionEngine::~TrecisionEngine() {
 		_animMgr->stopAllSmkAnims();
 
 	_dataFile.close();
-	_speechFile.close();
 	_soundMgr->stopSoundSystem();
 
 	delete _animMgr;
@@ -433,9 +432,6 @@ void TrecisionEngine::openDataFiles() {
 		!Common::File::exists("nlanim.cd3")
 		)
 		error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
-
-	if (!_speechFile.open("nlspeech.cd0"))
-		warning("openDataFiles() - nlspeech.cd0 is missing - skipping");
 
 	_font = readData("nlfont.fnt");
 	int size;
