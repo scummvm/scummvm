@@ -221,6 +221,7 @@ _optimization_level=
 _default_optimization_level=-O2
 _nuked_opl=yes
 _builtin_resources=yes
+_windows_unicode=no
 # Default commands
 _ranlib=ranlib
 _strip=strip
@@ -906,6 +907,8 @@ Optional Features:
                            you are doing!
   --no-builtin-resources   do not include additional resources (e.g. engine data, fonts)
                            into the ScummVM binary
+  --enable-windows-unicode  use Windows Unicode APIs
+  --disable-windows-unicode use Windows ANSI APIs (default)
 
 Optional Libraries:
   --with-alsa-prefix=DIR   prefix where alsa is installed (optional)
@@ -1375,6 +1378,12 @@ for ac_option in $@; do
 		;;
 	--no-builtin-resources)
 		_builtin_resources=no
+		;;
+	--enable-windows-unicode)
+		_windows_unicode=yes
+		;;
+	--disable-windows-unicode)
+		_windows_unicode=no
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -6022,6 +6031,11 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 			# TODO automate this required 2 step linking phase
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
+		fi
+		;;
+	mingw*)
+		if test "$_windows_unicode" = yes; then
+			append_var DEFINES "-DUNICODE -D_UNICODE"
 		fi
 		;;
 	riscos)
