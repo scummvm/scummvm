@@ -112,10 +112,6 @@ void GraphicsManager::resetScreenBuffer() {
 	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * AREA);
 }
 
-uint16 *GraphicsManager::getBackgroundPtr() {
-	return (uint16 *)_background.getPixels();
-}
-
 uint16 *GraphicsManager::getScreenBufferPtr() {
 	return (uint16 *)_screenBuffer.getPixels();
 }
@@ -136,6 +132,7 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 }
 
 void GraphicsManager::clearScreenBufferTop() {
+	// Clears lines 0 - 60
 	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);
 }
 
@@ -201,6 +198,11 @@ void GraphicsManager::drawLine(int x1, int y1, int x2, int y2, uint16 color) {
 			x += incX;
 		}
 	}
+}
+
+void GraphicsManager::clearScreenBufferInventoryDescriptions() {
+	// Clears lines 470 - 480
+	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE + ICONDY + 10, MAXX, MAXY), 0);
 }
 
 uint16 GraphicsManager::palTo16bit(uint8 r, uint8 g, uint8 b) const {
@@ -331,7 +333,7 @@ void GraphicsManager::DrawObj(SDObj d) {
 
 	// If we have a valid object, draw it, otherwise erase it
 	// by using the background buffer
-	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : getBackgroundPtr();
+	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : (uint16 *)_background.getPixels();
 	if (d.drawMask) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
@@ -372,6 +374,10 @@ void GraphicsManager::DrawObj(SDObj d) {
 				   buf + (b * d.rect.width()) + d.l.left, d.l.width() * 2);
 		}
 	}
+}
+
+void GraphicsManager::EraseObj(SDObj d) {
+	_screenBuffer.fillRect(Common::Rect(d.l.left, d.l.top + TOP, d.l.right, d.l.bottom + TOP), 0);
 }
 
 } // end of namespace

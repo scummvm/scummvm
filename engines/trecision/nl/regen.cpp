@@ -86,8 +86,7 @@ void PaintScreen(bool flag) {
 		if (oldString._rect.top >= TOP && oldString._rect.bottom < AREA + TOP) {
 			g_vm->_graphicsMgr->DrawObj(DObj);
 		} else {
-			for (int a = (DObj.l.top + TOP); a < (DObj.l.bottom + TOP); a++)
-				memset(g_vm->_graphicsMgr->getScreenBufferPtr() + DObj.l.left + a * MAXX, 0, (DObj.l.right - DObj.l.left) * 2);
+			g_vm->_graphicsMgr->EraseObj(DObj);
 		}
 		oldString.text = nullptr;
 		g_vm->addDirtyRect(DObj.l);
