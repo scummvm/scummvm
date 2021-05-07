@@ -29,6 +29,7 @@ namespace Sludge {
 struct FrozenStuffStruct;
 struct LoadedSpriteBank;
 struct ScreenRegion;
+struct VariableStack;
 
 class SludgeEngine;
 
@@ -52,7 +53,7 @@ struct PersonaAnimation {
 	int numFrames;
 
 	PersonaAnimation();
-	PersonaAnimation(int num, struct VariableStack *&stacky);
+	PersonaAnimation(int num, VariableStack *&stacky);
 	PersonaAnimation(PersonaAnimation *orig);
 	~PersonaAnimation();
 
