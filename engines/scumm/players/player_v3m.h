@@ -44,7 +44,6 @@ class Player_V3M : public Player_Mac {
 public:
 	Player_V3M(ScummEngine *scumm, Audio::Mixer *mixer);
 
-	bool checkMusicAvailable() override;
 	bool loadMusic(const byte *ptr) override;
 	bool getNextNote(int ch, uint32 &samples, int &pitchModifier, byte &velocity) override;
 };

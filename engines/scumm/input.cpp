@@ -185,7 +185,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
 			_mouse.x >>= 1;
 			_mouse.y = _mouse.y * 4 / 7;
-		} else if (_useCJKMode && _textSurfaceMultiplier == 2) {
+		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2)) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}

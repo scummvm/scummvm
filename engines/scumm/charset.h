@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "graphics/fonts/macfont.h"
 #include "graphics/sjis.h"
 #include "scumm/scumm.h"
 #include "scumm/gfx.h"
@@ -272,6 +273,19 @@ public:
 
 	void setCurID(int32 id) override {}
 	int getCharWidth(uint16 chr) override { return 8; }
+};
+
+class CharsetRendererMac : public CharsetRenderer {
+protected:
+	Graphics::MacFONTFont _macFont;
+
+public:
+	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
+
+	void setCurID(int32 id) override {}
+	int getFontHeight() override;
+	int getCharWidth(uint16 chr) override;
+	void printChar(int chr, bool ignoreCharsetMask) override;
 };
 
 #ifdef ENABLE_SCUMM_7_8

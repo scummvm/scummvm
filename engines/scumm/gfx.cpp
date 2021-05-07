@@ -331,6 +331,10 @@ void ScummEngine::initScreens(int b, int h) {
 		_res->nukeResource(rtBuffer, i + 5);
 	}
 
+	if (_macScreen) {
+		_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w, _textSurface.h), 0);
+	}
+
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen) {
 		if (!_townsClearLayerFlag && (h - b != _virtscr[kMainVirtScreen].h))
@@ -638,6 +642,11 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0 || height <= 0)
 		return;
 
+	if (_macScreen) {
+		mac_drawStripToScreen(vs, top, x, y, width, height);
+		return;
+	}
+
 	const void *src = vs->getPixels(x, top);
 	int m = _textSurfaceMultiplier;
 	int vsPitch;
@@ -778,6 +787,34 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 	// Finally blit the whole thing to the screen
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
+}
+
+  void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
+	const byte *src1 = vs->getPixels(x, top);
+	const byte *src2 = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
+	byte *dst = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+
+	for (int h = 0; h < height; h++) {
+		for (int w = 0; w < width; w++) {
+			dst[2 * w] = src1[w];
+			dst[2 * w + 1] = src1[w];
+		}
+
+		src1 += vs->pitch;
+		memcpy(dst + _macScreen->pitch, dst, width * 2);
+
+		for (int i = 0; i < 2; i++) {
+			for (int w = 0; w < width * 2; w++) {
+				if (src2[w]) {
+					dst[w] = src2[w];
+				}
+			}
+			src2 += _textSurface.pitch;
+			dst += _macScreen->pitch;
+		}
+	}
+
+	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
 
 // CGA
@@ -4048,6 +4085,9 @@ void ScummEngine::dissolveEffect(int width, int height) {
 			towns_drawStripToScreen(vs, x, y + vs->topline, x, y, width, height);
 		else
 #endif
+		if (_macScreen)
+			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
+		else
 			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
 
 

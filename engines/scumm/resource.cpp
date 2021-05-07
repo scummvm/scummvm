@@ -21,6 +21,7 @@
  */
 
 #include "common/str.h"
+#include "common/macresman.h"
 #ifndef MACOSX
 #include "common/config-manager.h"
 #endif

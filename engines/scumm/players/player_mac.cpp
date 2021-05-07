@@ -30,6 +30,7 @@ namespace Scumm {
 
 Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChannels, int channelMask, bool fadeNoteEnds)
 	: _vm(scumm),
+	  _channel(NULL),
 	  _mixer(mixer),
 	  _sampleRate(_mixer->getOutputRate()),
 	  _soundPlaying(-1),
@@ -40,12 +41,11 @@ Player_Mac::Player_Mac(ScummEngine *scumm, Audio::Mixer *mixer, int numberOfChan
 	assert(mixer);
 }
 
-void Player_Mac::init() {
+void Player_Mac::init(const Common::String &instrumentFile) {
+	_instrumentFile = instrumentFile;
 	_channel = new Player_Mac::Channel[_numberOfChannels];
 
-	int i;
-
-	for (i = 0; i < _numberOfChannels; i++) {
+	for (int i = 0; i < _numberOfChannels; i++) {
 		_channel[i]._looped = false;
 		_channel[i]._length = 0;
 		_channel[i]._data = NULL;
@@ -76,17 +76,16 @@ void Player_Mac::init() {
 	_pitchTable[125] = 2799362;
 	_pitchTable[126] = 2965820;
 	_pitchTable[127] = 3142177;
-	for (i = 115; i >= 0; --i) {
+
+	for (int i = 115; i >= 0; --i) {
 		_pitchTable[i] = _pitchTable[i + 12] / 2;
 	}
 
 	setMusicVolume(255);
 
-	if (!checkMusicAvailable()) {
-		return;
+	if (!instrumentFile.empty()) {
+		_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	}
-
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_Mac::~Player_Mac() {

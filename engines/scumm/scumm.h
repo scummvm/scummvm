@@ -344,19 +344,19 @@ public:
 	void pauseEngineIntern(bool pause) override;
 
 protected:
-	virtual void setupScumm();
+	virtual void setupScumm(const Common::String &macResourceFile);
 	virtual void resetScumm();
 
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 
-	void setupCharsetRenderer();
+	void setupCharsetRenderer(const Common::String &macFontFile);
 	void setupCostumeRenderer();
 
 	virtual void loadLanguageBundle();
 	void loadCJKFont();
 	void loadKorFont();
-	void setupMusic(int midi);
+	void setupMusic(int midi, const Common::String &macInstrumentFile);
 	void setTalkSpeed(int talkspeed);
 	int getTalkSpeed();
 
@@ -951,7 +951,8 @@ protected:
 
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
-	void drawStripToScreen(VirtScreen *vs, int x, int w, int t, int b);
+	void drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom);
+	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
 public:
@@ -1378,6 +1379,7 @@ protected:
 	byte _townsActiveLayerFlags;
 	static const uint8 _townsLayer2Mask[];
 
+	Graphics::Surface *_macScreen;
 	TownsScreen *_townsScreen;
 #else
 	void scrollLeft() { redrawBGStrip(_gdi->_numStrips - 1, 1); }
