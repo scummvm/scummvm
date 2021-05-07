@@ -22,6 +22,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <shellapi.h> // for CommandLineToArgvW()
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
  // required for SHGetSpecialFolderPath in shlobj.h
 #define _WIN32_IE 0x400
@@ -147,5 +148,29 @@ Common::String tcharToString(const TCHAR *t) {
 	return s;
 #endif
 }
+
+#ifdef UNICODE
+char **getArgvUtf8(int *argc) {
+	// get command line arguments in wide-character
+	LPWSTR *wargv = CommandLineToArgvW(GetCommandLineW(), argc);
+
+	// convert each argument to utf8
+	char **argv = (char **)malloc((*argc + 1) * sizeof(char *));
+	for (int i = 0; i < *argc; ++i) {
+		argv[i] = Win32::unicodeToAnsi(wargv[i]);
+	}
+	argv[*argc] = NULL; // null terminated array
+
+	LocalFree(wargv);
+	return argv;
+}
+
+void freeArgvUtf8(int argc, char **argv) {
+	for (int i = 0; i < argc; ++i) {
+		free(argv[i]);
+	}
+	free(argv);
+}
+#endif
 
 }
