@@ -1019,6 +1019,8 @@ void MainActor::detonateBomb() {
 							0x800, true, _x, _y);
 	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
 		Item *founditem = getItem(uclist.getuint16(i));
+		if (founditem->hasFlags(FLG_CONTAINED))
+			continue;
 		founditem->callUsecodeEvent_use();
 	}
 	return;
