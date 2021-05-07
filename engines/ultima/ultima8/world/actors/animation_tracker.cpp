@@ -171,11 +171,10 @@ bool AnimationTracker::step() {
 	if (_currentFrame == _endFrame) {
 		_done = true;
 
-		// toggle ACT_FIRSTSTEP flag if necessary
+		// toggle ACT_FIRSTSTEP flag if necessary. This is remembered
+		// between two-step animations.
 		if (_animAction->hasFlags(AnimAction::AAF_TWOSTEP))
 			_firstStep = !_firstStep;
-		else
-			_firstStep = true;
 
 		return false;
 	}
