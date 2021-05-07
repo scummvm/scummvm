@@ -302,8 +302,7 @@ public:
 	uint8 _curStack;
 
 	// Text
-	int16 _textStackTop;
-	StackText _textStack[MAXTEXTSTACK];
+	Common::List<StackText> _textStack;
 
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;

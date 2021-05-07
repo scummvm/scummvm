@@ -140,7 +140,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_lastObj = 0;
 
 	_curStack = 0;
-	_textStackTop = -1;
 
 	_flagscriptactive = false;
 

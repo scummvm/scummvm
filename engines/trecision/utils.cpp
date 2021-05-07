@@ -45,39 +45,34 @@ char *TrecisionEngine::getNextSentence() {
 }
 
 void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
-	_textStackTop++;
-	if (_textStackTop >= MAXTEXTSTACK) {
-		warning("MAXTEXTSTACK Reached!");
-		return;
-	}
+	StackText t;
+	t.x = x;
+	t.y = y;
+	t.tcol = tcol;
+	t.scol = scol;
+	strcpy(t.text, text);
 
-	_textStack[_textStackTop].x = x;
-	_textStack[_textStackTop].y = y;
-	_textStack[_textStackTop].tcol = tcol;
-	_textStack[_textStackTop].scol = scol;
-	_textStack[_textStackTop].clear = false;
-	strcpy(_textStack[_textStackTop].text, text);
+	_textStack.push_back(t);
 }
 
 void TrecisionEngine::clearText() {
-	if (_textStackTop >= 0) {
-		// The stack isn't empty
-		if (!_textStack[_textStackTop].clear)
-			// The previous is a string to write, return
-			_textStackTop--;
+	if (!_textStack.empty()) {
+		if (!_textStack.back().clear)
+			// The last entry is a string to be shown, remove it
+			_textStack.pop_back();
 	} else {
-		// the stack is empty
-		_textStackTop = 0;
-		_textStack[_textStackTop].clear = true;
+		StackText t;
+		t.clear = true;
+		_textStack.push_back(t);
 	}
 }
 
 void TrecisionEngine::drawString() {
-	for (int16 i = 0; i <= _textStackTop; i++) {
-		if (_textStack[i].clear)
+	for (Common::List<StackText>::iterator i = _textStack.begin(); i != _textStack.end(); ++i) {
+		if (i->clear)
 			doClearText();
 		else
-			_textStack[i].doText();
+			i->doText();
 	}
 }
 
@@ -357,7 +352,7 @@ void TrecisionEngine::ProcessTime() {
 		}
 
 		PaintScreen(false);
-		_textStackTop = -1;
+		_textStack.clear();
 
 		uint32 paintTime = readTime();
 		if (paintTime - _curTime >= 5)
