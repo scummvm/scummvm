@@ -120,7 +120,9 @@ msgstr "非表示"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr "接続が制限されているようです。本当にそれと一緒にファイルをダウンロードしたいですか？"
+msgstr ""
+"接続が制限されているようです。本当にそれと一緒にファイルをダウンロードしたい"
+"ですか？"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -208,7 +210,9 @@ msgstr "ID："
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
-msgstr "保存されたゲームを参照し、コマンドラインからゲームを実行するために使用される短いゲーム識別子"
+msgstr ""
+"保存されたゲームを参照し、コマンドラインからゲームを実行するために使用される"
+"短いゲーム識別子"
 
 #: gui/editgamedialog.cpp:148
 msgctxt "lowres"
@@ -2104,9 +2108,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
-"ScummVMは、データファイルが既にある場合に、さまざまな古典的なグラフィカルポイントアンドクリックアドベンチャーゲームやロールプレイングゲームを実行で"
-"きるようにするプログラムです。これに関する巧妙な部分：ScummVMは、ゲームに付属している実行可能ファイルを置き換えるだけなので、設計されたことのないシ"
-"ステムで実行できます!"
+"ScummVMは、データファイルが既にある場合に、さまざまな古典的なグラフィカルポイ"
+"ントアンドクリックアドベンチャーゲームやロールプレイングゲームを実行できるよ"
+"うにするプログラムです。これに関する巧妙な部分：ScummVMは、ゲームに付属してい"
+"る実行可能ファイルを置き換えるだけなので、設計されたことのないシステムで実行"
+"できます!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2116,9 +2122,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
-"現在、ScummVMは、合計4000を超えるゲームを備えた膨大なアドベンチャーライブラリをサポートしています。 LucasArts、Sierra On-"
-"Line、Revolution "
-"Software、Cyan、Inc.、WestwoodStudiosなどの伝説的なスタジオによって公開された多くのクラシックをサポートしています."
+"現在、ScummVMは、合計4000を超えるゲームを備えた膨大なアドベンチャーライブラリ"
+"をサポートしています。 LucasArts、Sierra On-Line、Revolution Software、Cyan、"
+"Inc.、WestwoodStudiosなどの伝説的なスタジオによって公開された多くのクラシック"
+"をサポートしています."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2127,8 +2134,9 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
-"モンキーアイランドシリーズ、ブロークンソード、ミスト、ブレードランナー、その他の無数のゲームなどの画期的なタイトルの横に、いくつかの本当にあいまいな冒険と"
-"真に隠された宝石を見つけることができます."
+"モンキーアイランドシリーズ、ブロークンソード、ミスト、ブレードランナー、その"
+"他の無数のゲームなどの画期的なタイトルの横に、いくつかの本当にあいまいな冒険"
+"と真に隠された宝石を見つけることができます."
 
 #: engines/advancedDetector.cpp:215
 msgid "Illegitimate game copy detected. We provide no support in such cases"
@@ -4780,14 +4788,17 @@ msgstr "このファンの翻訳に言語固有のゲームコードやリソー
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr "ゲームを間違って追加しました。ゲームのルートフォルダを追加してください。"
+msgstr ""
+"ゲームを間違って追加しました。ゲームのルートフォルダを追加してください。"
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr "ゲームを間違って追加しました。 GAME.DATファイルはISOイメージであり、そこからゲームデータファイルを抽出する必要があります。"
+msgstr ""
+"ゲームを間違って追加しました。 GAME.DATファイルはISOイメージであり、そこから"
+"ゲームデータファイルを抽出する必要があります。"
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -6003,7 +6014,9 @@ msgstr "FM-TOWNSゲームを200ピクセルの高さにトリミングします"
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr "画面の下部で余分な40ピクセルを切り取り、標準の高さ200ピクセルにして、「アスペクト比補正」を使用できるようにします."
+msgstr ""
+"画面の下部で余分な40ピクセルを切り取り、標準の高さ200ピクセルにして、「アスペ"
+"クト比補正」を使用できるようにします."
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
@@ -6676,8 +6689,10 @@ msgid ""
 "Aspect ratio correction can be acheived by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
-"「アスペクト比補正」を有効にしました。ただし、FM-TOWNSの自然な解像度は320x240であるため、アスペクト比を補正することはできません。\n"
-"アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実現できます。"
+"「アスペクト比補正」を有効にしました。ただし、FM-TOWNSの自然な解像度は320x240"
+"であるため、アスペクト比を補正することはできません。\n"
+"アスペクト比の補正は、[エンジン]タブで解像度を320x200にトリミングすることで実"
+"現できます。"
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
