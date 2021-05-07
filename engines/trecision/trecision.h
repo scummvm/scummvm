@@ -212,7 +212,6 @@ public:
 	bool dataSave();
 	bool dataLoad();
 	void performLoad(int slot, bool skipLoad);
-	void resetZBuffer(int x1, int y1, int x2, int y2);
 	bool canPlayerInteract();
 	void addDirtyRect(Common::Rect rect);
 	void reEvent();
@@ -318,7 +317,6 @@ public:
 	uint16 *_arrows;
 	uint8 *_textureArea;
 	uint16 *_icons;
-	int16 *_zBuffer;
 
 	Actor *_actor;
 

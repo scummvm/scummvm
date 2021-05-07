@@ -99,7 +99,7 @@ int16 _shadowFaces[SHADOWFACESNUM][3] = {
 };
 
 Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
-	_zBuf = nullptr;
+	_zBuffer = new int16[ZBUFFERSIZE / 2];
 	_curPage = nullptr;
 
 	_minXClip = 0;
@@ -145,6 +145,7 @@ Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
 }
 
 Renderer3D::~Renderer3D() {
+	delete[] _zBuffer;
 }
 
 void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
@@ -220,7 +221,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			// screen offset
 			int32 sl = el + MAXX * y;
 			// pointer to zbuffer
-			int16 *z = _zBuf + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
+			int16 *z = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
 			uint16 *screenPtr = _curPage + sl;
 
 			zl <<= 16;
@@ -363,7 +364,7 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 			// screen offset
 			int32 sl = el + MAXX * y;
 
-			int16 *zBufferPtr = _zBuf + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
+			int16 *zBufferPtr = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
 			uint16 *screenPtr = _curPage + sl;
 
 			// loop through every pixel in horizontal scanline
@@ -414,11 +415,26 @@ void Renderer3D::shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 /*------------------------------------------------
 	Initialize a 3D Room
 --------------------------------------------------*/
-void Renderer3D::init3DRoom(uint16 *destBuffer, int16 *zBuffer) {
+void Renderer3D::init3DRoom(uint16 *destBuffer) {
 	_curPage = destBuffer;
-	_zBuf = zBuffer;
 	_cx = (MAXX - 1) / 2;
 	_cy = (MAXY - 1) / 2;
+
+	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
+		_zBuffer[c] = 0x7FFF;
+}
+
+void Renderer3D::resetZBuffer(int x1, int y1, int x2, int y2) {
+	if (x1 > x2 || y1 > y2)
+		return;
+
+	int size = (x2 - x1) * (y2 - y1);
+	if (size * 2 > ZBUFFERSIZE)
+		warning("Warning: _zBuffer size %d!\n", size * 2);
+
+	int16 *d = _zBuffer;
+	for (int i = 0; i < size; ++i)
+		*d++ = 0x7FFF;
 }
 
 /*------------------------------------------------
@@ -775,8 +791,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				int py1 = 0; //(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
 				int py2 = 0; //(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
 
-				int p1 = _zBuf[p0] < 0x7FFF;
-				int p2 = _zBuf[p0 + 1] < 0x7FFF;
+				int p1 = _zBuffer[p0] < 0x7FFF;
+				int p2 = _zBuffer[p0 + 1] < 0x7FFF;
 
 				if (p1 != p2) {
 					int px1 = _curPage[px0 + a - 1];
@@ -787,9 +803,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 					// if the first is the character
 					if (p1)
-						_zBuf[p0] = 0x00BF | py1;
+						_zBuffer[p0] = 0x00BF | py1;
 					else
-						_zBuf[p0] = 0x003F | py2;
+						_zBuffer[p0] = 0x003F | py2;
 
 					if (a + 1 < _zBufWid) {
 						p0++;
@@ -797,16 +813,16 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 						// if the second is the character
 						if (p2)
-							_zBuf[p0] = 0x00BF | py2;
+							_zBuffer[p0] = 0x00BF | py2;
 						else
-							_zBuf[p0] = 0x003F | py1;
+							_zBuffer[p0] = 0x003F | py1;
 					}
 				} else {
 					// set value alpha max
 					if (p1)
-						_zBuf[p0] = 0x00FF | py1;
+						_zBuffer[p0] = 0x00FF | py1;
 					else
-						_zBuf[p0] = 0x0000 | py1;
+						_zBuffer[p0] = 0x0000 | py1;
 				}
 
 				p0++;
@@ -814,9 +830,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				// if it's the last of the line
 				if (a == _zBufWid - 1) {
 					if (p2)
-						_zBuf[p0] = 0x00FF | py2;
+						_zBuffer[p0] = 0x00FF | py2;
 					else
-						_zBuf[p0] = 0x0000 | py2;
+						_zBuffer[p0] = 0x0000 | py2;
 				}
 			}
 			p0++;

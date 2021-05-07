@@ -97,7 +97,7 @@ void read3D(Common::String filename) {
 
 	g_vm->_pathFind->initSortPan();
 
-	g_vm->_renderer->init3DRoom(g_vm->_graphicsMgr->getScreenBufferPtr(), g_vm->_zBuffer);
+	g_vm->_renderer->init3DRoom(g_vm->_graphicsMgr->getScreenBufferPtr());
 	g_vm->_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
 }
 
