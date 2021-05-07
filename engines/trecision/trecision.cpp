@@ -769,8 +769,7 @@ insave:
 			CurPos = ((mx - ICONMARGSX) / ICONDX);
 
 			if (OldPos != CurPos) {
-				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText = textLength(saveNames[CurPos].c_str(), 0);
@@ -793,9 +792,7 @@ insave:
 		}
 		else {
 			if (OldPos != -1) {
-				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
@@ -813,9 +810,7 @@ insave:
 		if (_inventory[CurPos] == iEMPTYSLOT) {
 			saveNames[CurPos].clear();
 
-			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+			_graphicsMgr->clearScreenBufferInventoryDescriptions();
 			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
@@ -829,9 +824,7 @@ insave:
 
 			if (ch == 0x1B) {
 				ch = 0;
-				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
 				goto insave;
@@ -844,8 +837,7 @@ insave:
 			else if (saveNames[CurPos].size() < 39 && Common::isPrint(ch))
 				saveNames[CurPos] += ch;
 
-			for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-				memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+			_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 			saveNames[CurPos] += '_';	// add blinking cursor
 
@@ -969,8 +961,7 @@ bool TrecisionEngine::dataLoad() {
 			CurPos = (_mousePos.x - ICONMARGSX) / ICONDX;
 
 			if (OldPos != CurPos) {
-				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
+				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				uint16 lenText = textLength(saveNames[CurPos].c_str(), 0);
@@ -998,9 +989,7 @@ bool TrecisionEngine::dataLoad() {
 		}
 		else {
 			if (OldPos != -1) {
-				for (int a = FIRSTLINE + ICONDY + 10; a < FIRSTLINE + ICONDY + 10 + CARHEI; a++)
-					memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 

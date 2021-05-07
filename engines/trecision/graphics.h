@@ -58,13 +58,13 @@ public:
 	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg);
 	void setSmkBackground();
 	void resetScreenBuffer();
-	uint16 *getBackgroundPtr();
 	uint16 *getScreenBufferPtr();
 	void drawLine(int x1, int y1, int x2, int y2, uint16 color);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBufferTop();
 	void clearScreenBufferInventory();
 	void clearScreenBufferInventoryFull();
+	void clearScreenBufferInventoryDescriptions();
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
@@ -74,6 +74,7 @@ public:
 
 	void NlDissolve(uint8 val);
 	void DrawObj(SDObj d);
+	void EraseObj(SDObj d);
 
 }; // end of class
 
