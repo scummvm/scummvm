@@ -261,7 +261,6 @@ public:
 	uint16 _lastObj;
 
 	bool _fastWalk;
-	bool _fastWalkLocked;
 
 	// Use With
 	uint16 _useWith[2];
