@@ -85,8 +85,10 @@ bool SdlGraphicsManager::setState(const State &state) {
 		// pixel format instead.
 		Graphics::PixelFormat format = state.pixelFormat;
 		Common::List<Graphics::PixelFormat> supportedFormats = getSupportedFormats();
-		if (Common::find(supportedFormats.begin(), supportedFormats.end(), format) == supportedFormats.end())
-			format = supportedFormats.front();
+		if (!supportedFormats.empty()) {
+			if (Common::find(supportedFormats.begin(), supportedFormats.end(), format) == supportedFormats.end())
+				format = supportedFormats.front();
+		}
 		initSize(state.screenWidth, state.screenHeight, &format);
 #else
 		initSize(state.screenWidth, state.screenHeight, nullptr);
