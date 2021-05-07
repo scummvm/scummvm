@@ -95,6 +95,26 @@ TCHAR *stringToTchar(const Common::String& s);
  */
 Common::String tcharToString(const TCHAR *s);
 
+#ifdef UNICODE
+/**
+ * Returns command line arguments in argc / argv format in UTF8.
+ *
+ * @param argc argument count
+ * @return argument array
+ *
+ * @note Return value must be freed by the caller with freeArgvUtf8()
+ */
+char **getArgvUtf8(int *argc);
+
+/**
+ * Frees an argument array created by getArgvUtf8()
+ *
+ * @param argc argument count in argv
+ * @param argv argument array created by getArgvUtf8()
+ */
+void freeArgvUtf8(int argc, char **argv);
+#endif
+
 }
 
 #endif

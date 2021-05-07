@@ -35,6 +35,7 @@
 #include <windows.h>
 
 #include "backends/platform/sdl/win32/win32.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
@@ -56,6 +57,10 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 }
 
 int main(int argc, char *argv[]) {
+#ifdef UNICODE
+	argv = Win32::getArgvUtf8(&argc);
+#endif
+
 	// Create our OSystem instance
 	g_system = new OSystem_Win32();
 	assert(g_system);
@@ -72,6 +77,10 @@ int main(int argc, char *argv[]) {
 
 	// Free OSystem
 	g_system->destroy();
+
+#ifdef UNICODE
+	Win32::freeArgvUtf8(argc, argv);
+#endif
 
 	return res;
 }
