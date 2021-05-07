@@ -123,6 +123,7 @@ void Scene::process() {
 		// fall through
 	case kLoad:
 		load();
+		run(); // Extra run() call to fix the single frame with a wrong palette in TVD
 		// fall through
 	case kStartSound:
 		_state = kRun;
@@ -436,7 +437,6 @@ void Scene::init() {
 		// Load savefile directly from the launcher
 		int saveSlot = ConfMan.getInt("save_slot");
 		if (saveSlot >= 0 && saveSlot <= g_nancy->getMetaEngine()->getMaximumSaveSlot()) {
-			// Set to Scene but do not do the loading yet
 			g_nancy->loadGameState(saveSlot);
 		}
 	} else {
