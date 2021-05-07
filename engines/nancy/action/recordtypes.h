@@ -457,10 +457,12 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "PlayDigiSoundAndDie"; }
 };
 
-class PlaySoundPanFrameAnchorAndDie : public Unimplemented {
+class PlaySoundPanFrameAnchorAndDie : public ActionRecord {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
 
+	SoundDescription _sound;
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PlaySoundPanFrameAnchorAndDie"; }
 };

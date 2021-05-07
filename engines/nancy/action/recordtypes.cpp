@@ -516,7 +516,15 @@ void PlayDigiSoundAndDie::execute() {
 }
 
 void PlaySoundPanFrameAnchorAndDie::readData(Common::SeekableReadStream &stream) {
-	stream.skip(0x20);
+	_sound.read(stream, SoundDescription::kDIGI);
+	stream.skip(2);
+}
+
+void PlaySoundPanFrameAnchorAndDie::execute() {
+	g_nancy->_sound->loadSound(_sound, true);
+	g_nancy->_sound->playSound(_sound);
+	g_nancy->_sound->calculatePanForAllSounds();
+	_isDone = true;
 }
 
 void PlaySoundMultiHS::readData(Common::SeekableReadStream &stream) {

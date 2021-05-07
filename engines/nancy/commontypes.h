@@ -118,6 +118,7 @@ struct SoundDescription {
 	uint16 channelID = 0;
 	uint16 numLoops = 0;
 	uint16 volume = 0;
+	uint16 panAnchorFrame = 0;
 
 	void read(Common::SeekableReadStream &stream, Type type);
 };

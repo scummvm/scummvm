@@ -30,6 +30,8 @@
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/sound.h"
 
+#include "engines/nancy/state/scene.h"
+
 namespace Nancy {
 
 enum SoundType {
@@ -284,7 +286,7 @@ SoundManager::~SoundManager() {
 	stopAllSounds();
 }
 
-void SoundManager::loadSound(const SoundDescription &description) {
+void SoundManager::loadSound(const SoundDescription &description, bool panning) {
 	if (description.name == "NO SOUND") {
 		return;
 	}
@@ -293,13 +295,16 @@ void SoundManager::loadSound(const SoundDescription &description) {
 		_mixer->stopHandle(_channels[description.channelID].handle);
 	}
 
-	delete _channels[description.channelID].stream;
-	_channels[description.channelID].stream = nullptr;
+	Channel &chan = _channels[description.channelID];
 
-	_channels[description.channelID].name = description.name;
-	_channels[description.channelID].numLoops = description.numLoops;
-	_channels[description.channelID].volume = description.volume;
+	delete chan.stream;
+	chan.stream = nullptr;
 
+	chan.name = description.name;
+	chan.numLoops = description.numLoops;
+	chan.volume = description.volume;
+	chan.panAnchorFrame = description.panAnchorFrame;
+	chan.isPanning = panning;
 
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(description.name + (g_nancy->getGameType() == kGameTypeVampire ? ".dwd" : ".his"));
 	if (file) {
@@ -401,6 +406,28 @@ void SoundManager::stopSound(const Common::String &chunkName) {
 void SoundManager::stopAllSounds() {
 	for (uint i = 0; i < 31; ++i) {
 		stopSound(i);
+	}
+}
+
+void SoundManager::calculatePanForAllSounds() {
+	uint16 viewportFrameID = NancySceneState.getSceneInfo().frameID;
+	const State::Scene::SceneSummary &sceneSummary = NancySceneState.getSceneSummary();
+	for (uint i = 0; i < 31; ++i) {
+		Channel &chan = _channels[i];
+		if (chan.isPanning) {
+			switch (sceneSummary.totalViewAngle) {
+			case 180:
+				_mixer->setChannelBalance(chan.handle, CLIP<int32>((viewportFrameID - chan.panAnchorFrame) * sceneSummary.soundPanPerFrame * 364, -32768, 32767) / 256);
+				break;
+			case 360:
+				// TODO
+				_mixer->setChannelBalance(chan.handle, 0);
+				break;
+			default:
+				_mixer->setChannelBalance(chan.handle, 0);
+				break;
+			}
+		}
 	}
 }
 

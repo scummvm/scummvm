@@ -97,7 +97,9 @@ void SoundDescription::read(Common::SeekableReadStream &stream, Type type) {
 	}
 	stream.skip(2);
 	volume = stream.readUint16LE();
-	stream.skip(6);
+	stream.skip(2);
+	panAnchorFrame = stream.readUint16LE();
+	stream.skip(2);
 }
 
 } // End of namespace Nancy

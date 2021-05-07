@@ -47,7 +47,7 @@ public:
 	void loadCommonSounds();
 
 	// Load a sound into a channel without starting it
-	void loadSound(const SoundDescription &description);
+	void loadSound(const SoundDescription &description, bool panning = false);
 
 	void playSound(uint16 channelID);
 	void playSound(const SoundDescription &description);
@@ -65,6 +65,8 @@ public:
 	void stopSound(const SoundDescription &description);
 	void stopSound(const Common::String &chunkName);
 	void stopAllSounds();
+	
+	void calculatePanForAllSounds();
 
 	// Used when changing scenes
 	void stopAndUnloadSpecificSounds();
@@ -77,6 +79,8 @@ protected:
 		Audio::Mixer::SoundType type;
 		uint16 numLoops = 0;
 		uint volume = 0;
+		uint16 panAnchorFrame = 0;
+		bool isPanning = false;
 		Audio::SeekableAudioStream *stream = nullptr;
 		Audio::SoundHandle handle;
 	};

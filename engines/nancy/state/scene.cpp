@@ -70,8 +70,11 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 	sound.read(stream, SoundDescription::kScene);
 
 	ser.skip(6);
-	ser.syncAsByte(dontWrap);
-	ser.skip(9);
+	ser.syncAsUint16LE(dontWrap);
+	ser.syncAsUint16LE(soundWrapAroundPan);
+	ser.syncAsUint16LE(soundPanPerFrame);
+	ser.syncAsUint16LE(totalViewAngle);
+	ser.syncAsUint16LE(horizontalScrollDelta);
 	ser.syncAsUint16LE(verticalScrollDelta);
 	ser.syncAsUint16LE(horizontalEdgeSize);
 	ser.syncAsUint16LE(verticalEdgeSize);
@@ -567,6 +570,14 @@ void Scene::run() {
 	// Update the UI elements and handle input
 	NancyInput input = g_nancy->_input->getInput();
 	_viewport.handleInput(input);
+	
+	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
+
+	if (_sceneState.currentScene.frameID != _viewport.getCurFrame()) {
+		_sceneState.currentScene.frameID = _viewport.getCurFrame();
+		g_nancy->_sound->calculatePanForAllSounds();
+	}
+
 	_actionManager.handleInput(input);
 	_menuButton->handleInput(input);
 	_helpButton->handleInput(input);
@@ -584,9 +595,6 @@ void Scene::run() {
 		g_nancy->_sound->playSound("GLOB");
 		requestStateChange(NancyState::kHelp);
 	}
-
-	_sceneState.currentScene.frameID = _viewport.getCurFrame();
-	_sceneState.currentScene.verticalOffset = _viewport.getCurVerticalScroll();
 
 	// Handle invisible map button
 	for (uint i = 0; i < ARRAYSIZE(g_nancy->getConstants().mapAccessSceneIDs); ++i) {
