@@ -1018,7 +1018,7 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	}
 
 	if (sent)
-		_textMgr->CharacterTalkInAction(sent);
+		_textMgr->CharacterSayInAction(sent);
 	else
 		clearText();
 }

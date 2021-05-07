@@ -33,18 +33,18 @@ private:
 	TrecisionEngine *_vm;
 
 	uint32 _someoneSpeakTime;
-	uint16 SuperStringLen;
-	bool substringagain;
-	uint32 TalkTime;
-	uint16 SpeakSomeOneAnimation;
-	char SubString[MAXSUBSTRING][MAXLENSUBSTRING];
-	uint16 SubStringUsed;
-	const char *SuperString;
-	uint16 SubStringStart;
-	uint16 CurS;
-	uint16 CurSubString;
-	char sn[13];
-	uint16 SpeakSomeOnePerson;
+	uint16 _superStringLen;
+	bool _subStringAgain;
+	uint32 _talkTime;
+	uint16 _talkingPersonAnimId;
+	char _subString[MAXSUBSTRING][MAXLENSUBSTRING];
+	uint16 _subStringUsed;
+	const char *_superString;
+	uint16 _subStringStart;
+	uint16 _curSentenceId;
+	uint16 _curSubString;
+	char _lastFilename[13];
+	uint16 _talkingPersonId;
 
 	void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
 	void FormattingSuperString();
@@ -60,10 +60,10 @@ public:
 	~TextManager();
 
 	void doString();
-	void ShowObjName(uint16 obj, bool showhide);
-	void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim);
+	void ShowObjName(uint16 obj, bool show);
+	void SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim);
 	void CharacterSay(uint16 i);
-	void CharacterTalkInAction(uint16 ss);
+	void CharacterSayInAction(uint16 ss);
 }; // end of class
 
 } // end of namespace
