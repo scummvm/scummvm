@@ -41,7 +41,7 @@ template<typename Pixel>
 void Normal2x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch,
 							int width, int height) {
 	uint8 *r;
-	int b = sizeof(Pixel);
+	const int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
@@ -103,7 +103,7 @@ void Normal3x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	uint8 *r;
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
-	int b = sizeof(Pixel);
+	const int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
@@ -136,7 +136,7 @@ void Normal4x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	const uint32 dstPitch2 = dstPitch * 2;
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 dstPitch4 = dstPitch * 4;
-	int b = sizeof(Pixel);
+	const int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
@@ -177,7 +177,7 @@ void Normal5x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	const uint32 dstPitch3 = dstPitch * 3;
 	const uint32 dstPitch4 = dstPitch * 4;
 	const uint32 dstPitch5 = dstPitch * 5;
-	int b = sizeof(Pixel);
+	const int b = sizeof(Pixel);
 
 	assert(IS_ALIGNED(dstPtr, 2));
 	while (height--) {
