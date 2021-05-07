@@ -81,7 +81,7 @@ void DialogManager::showChoices(uint16 i) {
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_vm->_flagDialogMenuActive = true;
-	_vm->showCursor();
+	_vm->_graphicsMgr->showCursor();
 }
 
 void DialogManager::updateChoices(int16 dmx, int16 dmy) {
@@ -574,7 +574,7 @@ void DialogManager::afterChoice() {
 
 void DialogManager::dialogHandler(int numFrame) {
 	if (_vm->_flagDialogActive && !_vm->_flagDialogMenuActive) {
-		_vm->hideCursor();
+		_vm->_graphicsMgr->hideCursor();
 		if (numFrame == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
 			_vm->_sdText._rect.left = _subTitles[i]._x;
@@ -615,7 +615,7 @@ void DialogManager::playChoice(uint16 i) {
 	for (int c = _curSubTitle; c < endSubTitle; c++)
 		totalLength += _subTitles[c]._length;
 
-	_vm->hideCursor();
+	_vm->_graphicsMgr->hideCursor();
 	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1);
 }
 

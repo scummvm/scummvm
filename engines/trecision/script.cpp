@@ -46,7 +46,7 @@ void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
 		_flagscriptactive = false;
-		showCursor();
+		_graphicsMgr->showCursor();
 		redrawString();
 	}
 }
@@ -54,7 +54,7 @@ void TrecisionEngine::endScript() {
 void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
 	_flagscriptactive = true;
-	hideCursor();
+	_graphicsMgr->hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
@@ -80,7 +80,7 @@ void TrecisionEngine::playScript(uint16 id) {
 void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
 		_curScriptFrame[_curStack]++;
-		hideCursor();
+		_graphicsMgr->hideCursor();
 
 		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		if (curFrame->isEmptyEvent()) {
@@ -103,8 +103,10 @@ void TrecisionEngine::evalScript() {
 }
 
 bool TrecisionEngine::quitGame() {
+	byte *tmpBuffer = new byte[MAXX * TOP * 2];
+
 	for (int a = 0; a < TOP; a++)
-		memcpy(_zBuffer + a * MAXX, _graphicsMgr->getScreenBufferPtr() + MAXX * a, MAXX * 2);
+		memcpy(tmpBuffer + a * MAXX, _graphicsMgr->getScreenBufferPtr() + MAXX * a, MAXX * 2);
 
 	_graphicsMgr->clearScreenBufferTop();
 
@@ -129,9 +131,11 @@ bool TrecisionEngine::quitGame() {
 	bool exitFl = ((ch == 'y') || (ch == 'Y'));
 
 	for (int a = 0; a < TOP; a++)
-		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, _zBuffer + a * MAXX, MAXX * 2);
+		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, tmpBuffer + a * MAXX, MAXX * 2);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	delete[] tmpBuffer;
 
 	return exitFl;
 }
@@ -345,7 +349,7 @@ void TrecisionEngine::doCharacter() {
 		if (_pathFind->_characterInMovement)
 			reEvent();
 		else {
-			showCursor();
+			_graphicsMgr->showCursor();
 
 			if (_curMessage->_event == ME_CHARACTERGOTOACTION)
 				doEvent(MC_ACTION, ME_MOUSEOPERATE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, _curMessage->_u32Param);
@@ -372,7 +376,7 @@ void TrecisionEngine::doCharacter() {
 		if (_curMessage->_u16Param1 > hLAST) {
 			_animMgr->startSmkAnim(_curMessage->_u16Param1);
 			InitAtFrameHandler(_curMessage->_u16Param1, _curMessage->_u32Param);
-			hideCursor();
+			_graphicsMgr->hideCursor();
 			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 		} else
 			_actor->actorDoAction(_curMessage->_u16Param1);
@@ -385,7 +389,7 @@ void TrecisionEngine::doCharacter() {
 		AtFrameHandler(kAnimTypeCharacter);
 		//	If the animation is over
 		if (!_animMgr->_playingAnims[kSmackerAction]) {
-			showCursor();
+			_graphicsMgr->showCursor();
 			_flagShowCharacter = true;
 			_pathFind->_characterInMovement = false;
 			_characterQueue.initQueue();
@@ -402,7 +406,7 @@ void TrecisionEngine::doCharacter() {
 
 			if ((_curMessage->_u16Param1 == _obj[oCANCELLATA1B]._anim) && !isObjectVisible(oBOTTIGLIA1D) && !isObjectVisible(oRETE17)) {
 				_dialogMgr->playDialog(dF181);
-				hideCursor();
+				_graphicsMgr->hideCursor();
 				_pathFind->setPosition(1);
 			}
 		} else
@@ -467,7 +471,7 @@ void TrecisionEngine::doIdle() {
 		if (canPlayerInteract()) {
 			_actor->actorStop();
 			_pathFind->nextStep();
-			showCursor();
+			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			_flagShowCharacter = false;
@@ -481,7 +485,7 @@ void TrecisionEngine::doIdle() {
 		if (canPlayerInteract()) {
 			_actor->actorStop();
 			_pathFind->nextStep();
-			showCursor();
+			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
 			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			_flagShowCharacter = false;
@@ -532,7 +536,7 @@ void TrecisionEngine::doIdle() {
 }
 
 void TrecisionEngine::doRoomIn(uint16 curObj) {
-	hideCursor();
+	_graphicsMgr->hideCursor();
 
 	uint16 curAction = _obj[curObj]._anim;
 	uint16 curPos = _obj[curObj]._ninv;
@@ -543,7 +547,7 @@ void TrecisionEngine::doRoomIn(uint16 curObj) {
 }
 
 void TrecisionEngine::doRoomOut(uint16 curObj) {
-	hideCursor();
+	_graphicsMgr->hideCursor();
 
 	uint16 curAction, curPos;
 	_logicMgr->roomOut(curObj, &curAction, &curPos);
@@ -686,7 +690,7 @@ void TrecisionEngine::doDoing() {
 		// no break!
 	case ME_WAITOPENCLOSE:
 		if (_actor->_curAction == hSTAND)
-			showCursor();
+			_graphicsMgr->showCursor();
 		break;
 
 	default:

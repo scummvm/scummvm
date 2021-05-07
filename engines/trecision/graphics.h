@@ -59,6 +59,7 @@ public:
 	uint16 *getScreenBufferPtr();
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBufferTop();
+	void clearScreenBufferTopDescription();
 	void clearScreenBufferInventory();
 	void clearScreenBufferInventoryFull();
 	void clearScreenBufferInventoryDescriptions();
@@ -72,6 +73,11 @@ public:
 	void NlDissolve(uint8 val);
 	void DrawObj(SDObj d);
 	void EraseObj(SDObj d);
+
+	void initCursor();
+	bool isCursorVisible();
+	void showCursor();
+	void hideCursor();
 
 }; // end of class
 
