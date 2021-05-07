@@ -572,8 +572,8 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 	int maxy = ((y + range) / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
-	for (int cx = minx; cx <= maxx; cx++) {
-		for (int cy = miny; cy <= maxy; cy++) {
+	for (int cy = miny; cy <= maxy; cy++) {
+		for (int cx = minx; cx <= maxx; cx++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
@@ -598,7 +598,7 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 				// check item against loopscript
 				if (item->checkLoopScript(loopscript, scriptsize)) {
 					assert(itemlist->getElementSize() == 2);
-					uint16 objid = item->getObjId();
+					const uint16 objid = item->getObjId();
 					uint8 buf[2];
 					buf[0] = static_cast<uint8>(objid);
 					buf[1] = static_cast<uint8>(objid >> 8);
@@ -641,8 +641,8 @@ void CurrentMap::surfaceSearch(UCList *itemlist, const uint8 *loopscript,
 	int maxy = ((origin[1]) / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
-	for (int cx = minx; cx <= maxx; cx++) {
-		for (int cy = miny; cy <= maxy; cy++) {
+	for (int cy = miny; cy <= maxy; cy++) {
+		for (int cx = minx; cx <= maxx; cx++) {
 			item_list::const_iterator iter;
 			for (iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
