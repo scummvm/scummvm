@@ -58,7 +58,9 @@ void Viewport::handleInput(NancyInput &input) {
 	byte direction = 0;
 
 	// Make cursor sticky when scrolling the viewport
-	if (input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton) && _stickyCursorPos.x > -1) {
+	if (	g_nancy->getGameType() != kGameTypeVampire &&
+			input.input & (NancyInput::kLeftMouseButton | NancyInput::kRightMouseButton)
+			&& _stickyCursorPos.x > -1) {
 		g_system->warpMouse(_stickyCursorPos.x, _stickyCursorPos.y);
 		input.mousePos = _stickyCursorPos;
 	}
