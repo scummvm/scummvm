@@ -28,6 +28,7 @@
 const char *const directoryGlobs[] = {
 	"game",
 	"iff",
+	"cifTree",
 	0
 };
 
@@ -61,6 +62,17 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			"nancy1", 0,
 			AD_ENTRY1s("ciftree.dat", "9f89e0b53717515ae0eb82d14ffe0e88", 4317962),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy1
+	},
+	{ // MD5 by fracturehill
+		{
+			"nancy1", 0,
+			AD_ENTRY1s("ciftree.dat", "e1cd21841ab1b83a0ea0755ce0254cbc", 4480956),
+			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO0()

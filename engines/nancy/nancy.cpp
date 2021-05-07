@@ -192,6 +192,8 @@ void NancyEngine::setState(NancyState::NancyState state, NancyState::NancyState 
 			s->onStateEnter();
 		}
 
+		_input->forceCleanInput();
+
 		return;
 	}
 	case NancyState::kCheat:
@@ -297,6 +299,7 @@ void NancyEngine::bootGameEngine() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "game");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "datafiles");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "ciftree");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdsound");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "cdsound");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "hdvideo");
