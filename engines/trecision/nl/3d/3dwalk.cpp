@@ -269,55 +269,6 @@ void pointOut() {
 }
 
 /*------------------------------------------------
-				View Panel
---------------------------------------------------*/
-void viewPanel(SPan *p) {
-	Common::Point projVerts[4];
-
-	uint16 col = (p->_flags & 0x80000000) ? 0x3C0 : 0x3FF;
-	if (p->_flags & 0x80000000) {
-		pointProject(p->_x1, 0.0, p->_z1);
-		projVerts[0] = Common::Point(_x2d, _y2d);
-
-		pointProject(p->_x2, 0.0, p->_z2);
-		projVerts[1] = Common::Point(_x2d, _y2d);
-
-		SPan *panel = &g_vm->_pathFind->_panel[p->_col1 & 0x7F];
-		pointProject((p->_col1 & 0x80) ? panel->_x2 : panel->_x1, 0.0, (p->_col1 & 0x80) ? panel->_z2 : panel->_z1);
-		projVerts[2] = Common::Point(_x2d, _y2d);
-
-		panel = &g_vm->_pathFind->_panel[p->_col2 & 0x7F];
-		pointProject((p->_col2 & 0x80) ? panel->_x2 : panel->_x1, 0.0, (p->_col2 & 0x80) ? panel->_z2 : panel->_z1);
-		projVerts[3] = Common::Point(_x2d, _y2d);
-
-		g_vm->_graphicsMgr->drawLine(projVerts[0].x, projVerts[0].y, projVerts[2].x, projVerts[2].y, 0x1C1);
-		g_vm->_graphicsMgr->drawLine(projVerts[1].x, projVerts[1].y, projVerts[3].x, projVerts[3].y, 0x1C1);
-	}
-
-	if (p->_flags & (1 << 28))
-		col = g_vm->_graphicsMgr->palTo16bit(233, 238, 21);
-
-	pointProject(p->_x1, 0.0, p->_z1);
-	projVerts[0] = Common::Point(_x2d, _y2d);
-	pointProject(p->_x1, p->_h, p->_z1);
-	projVerts[1] = Common::Point(_x2d, _y2d);
-
-	pointProject(p->_x2, 0.0, p->_z2);
-	projVerts[2] = Common::Point(_x2d, _y2d);
-	pointProject(p->_x2, p->_h, p->_z2);
-	projVerts[3] = Common::Point(_x2d, _y2d);
-
-	// H1
-	g_vm->_graphicsMgr->drawLine(projVerts[0].x, projVerts[0].y, projVerts[1].x, projVerts[1].y, col);
-	// H2
-	g_vm->_graphicsMgr->drawLine(projVerts[2].x, projVerts[2].y, projVerts[3].x, projVerts[3].y, col);
-	// B
-	g_vm->_graphicsMgr->drawLine(projVerts[0].x, projVerts[0].y, projVerts[2].x, projVerts[2].y, col);
-	// T
-	g_vm->_graphicsMgr->drawLine(projVerts[1].x, projVerts[1].y, projVerts[3].x, projVerts[3].y, col);
-}
-
-/*------------------------------------------------
 		Projects 3D point on 2D screen
 --------------------------------------------------*/
 void pointProject(float x, float y, float z) {
