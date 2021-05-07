@@ -50,6 +50,7 @@ void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol,
 	t.y = y;
 	t.tcol = tcol;
 	t.scol = scol;
+	t.clear = false;
 	strcpy(t.text, text);
 
 	_textStack.push_back(t);
