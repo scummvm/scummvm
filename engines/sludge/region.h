@@ -22,8 +22,6 @@
 #ifndef SLUDGE_REGION_H
 #define SLUDGE_REGION_H
 
-//#include "sludge/freeze.h"
-
 namespace Sludge {
 
 struct ObjectType;
