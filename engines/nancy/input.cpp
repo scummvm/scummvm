@@ -50,9 +50,7 @@ void InputManager::processEvents() {
 			}
 			break;
 		case EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (_inputBeginState == NancyState::kNone) {
-				_inputBeginState = g_nancy->getState();
-			}
+			_inputBeginState = g_nancy->getState();
 
 			switch (event.customType) {
 			case kNancyActionLeftClick:
