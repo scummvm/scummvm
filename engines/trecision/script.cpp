@@ -28,6 +28,7 @@
 #include "trecision/defines.h"
 #include "trecision/trecision.h"
 #include "trecision/sound.h"
+#include "trecision/text.h"
 
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
@@ -165,7 +166,7 @@ void TrecisionEngine::doAction() {
 		// Action in the game area
 		_curObj = _curMessage->_u32Param;
 		if (_curObj == oLASTLEV5)
-			CharacterSay(2003);
+			_textMgr->CharacterSay(2003);
 
 		if (!_curObj || !isObjectVisible(_curObj))
 			return;
@@ -202,7 +203,7 @@ void TrecisionEngine::doAction() {
 			_useWith[WITH] = 0;
 			_useWithInv[USED] = false;
 			_useWithInv[WITH] = false;
-			ShowObjName(_curObj, true);
+			_textMgr->ShowObjName(_curObj, true);
 			return;
 		}
 	}
@@ -243,7 +244,7 @@ void TrecisionEngine::doAction() {
 		break;
 
 	case ME_USEWITH:
-		ShowObjName(0, false);
+		_textMgr->ShowObjName(0, false);
 		doUseWith();
 		break;
 
@@ -292,7 +293,7 @@ void TrecisionEngine::doMouse() {
 				break;
 
 			_curObj = 0;
-			ShowObjName(_curObj, true);
+			_textMgr->ShowObjName(_curObj, true);
 
 			if (_flagDialogMenuActive)
 				_dialogMgr->updateChoices(_curMessage->_u16Param1, _curMessage->_u16Param2);
@@ -360,7 +361,7 @@ void TrecisionEngine::doCharacter() {
 				doEvent(MC_SYSTEM, ME_CHANGEROOM, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 			} else if (_curMessage->_event == ME_CHARACTERDOACTION) {
 				_lastObj = 0;
-				ShowObjName(_curObj, true);
+				_textMgr->ShowObjName(_curObj, true);
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
 		}
@@ -396,7 +397,7 @@ void TrecisionEngine::doCharacter() {
 			AtFrameEnd(kAnimTypeCharacter);
 			_flagWaitRegen = true;
 			_lastObj = 0;
-			ShowObjName(_curObj, true);
+			_textMgr->ShowObjName(_curObj, true);
 			//	If the room changes at the end
 			if (_curMessage->_u16Param2) {
 				_flagShowCharacter = false;
@@ -565,7 +566,7 @@ void TrecisionEngine::doMouseExamine(uint16 curObj) {
 	bool printSentence = _logicMgr->mouseExamine(curObj);
 
 	if (printSentence && _obj[curObj]._examine)
-		CharacterSay(_obj[curObj]._examine);
+		_textMgr->CharacterSay(_obj[curObj]._examine);
 }
 
 void TrecisionEngine::doMouseOperate(uint16 curObj) {
@@ -575,7 +576,7 @@ void TrecisionEngine::doMouseOperate(uint16 curObj) {
 	bool printSentence = _logicMgr->mouseOperate(curObj);
 
 	if (printSentence && _obj[curObj]._action)
-		CharacterSay(_obj[curObj]._action);
+		_textMgr->CharacterSay(_obj[curObj]._action);
 }
 
 void TrecisionEngine::doMouseTake(uint16 curObj) {
@@ -647,7 +648,7 @@ void TrecisionEngine::doScreenUseWithScreen() {
 	bool printSentence = _logicMgr->useScreenWithScreen();
 
 	if (printSentence)
-		CharacterSay(_obj[_useWith[USED]]._action);
+		_textMgr->CharacterSay(_obj[_useWith[USED]]._action);
 }
 
 void TrecisionEngine::doInvExamine() {
@@ -655,7 +656,7 @@ void TrecisionEngine::doInvExamine() {
 		warning("doInvExamine - _curInventory not set properly");
 
 	if (_inventoryObj[_curInventory]._examine)
-		CharacterSay(_inventoryObj[_curInventory]._examine);
+		_textMgr->CharacterSay(_inventoryObj[_curInventory]._examine);
 }
 
 void TrecisionEngine::doInvOperate() {
@@ -664,7 +665,7 @@ void TrecisionEngine::doInvOperate() {
 
 	bool printSentence = _logicMgr->operateInventory();
 	if (_inventoryObj[_curInventory]._action && printSentence)
-		CharacterSay(_inventoryObj[_curInventory]._action);
+		_textMgr->CharacterSay(_inventoryObj[_curInventory]._action);
 }
 
 void TrecisionEngine::doDoing() {
@@ -785,7 +786,7 @@ void TrecisionEngine::doScript() {
 		break;
 
 	case ME_CHARACTERSAY:
-		CharacterSay(message->_u32Param);
+		_textMgr->CharacterSay(message->_u32Param);
 		break;
 
 	case ME_PLAYSOUND:

@@ -22,6 +22,8 @@
 
 #include <common/system.h>
 
+
+#include "trecision/text.h"
 #include "trecision/graphics.h"
 #include "trecision/defines.h"
 #include "trecision/logic.h"
@@ -83,7 +85,7 @@ void TrecisionEngine::redrawString() {
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
 			checkMask(_mousePos);
-			ShowObjName(_curObj, true);
+			_textMgr->ShowObjName(_curObj, true);
 		}
 	}
 }

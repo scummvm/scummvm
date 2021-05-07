@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	sound.o \
 	script.o \
+	text.o \
 	trecision.o \
 	utils.o \
 	3d.o \
@@ -18,7 +19,6 @@ MODULE_OBJS = \
 	nl/do.o \
 	nl/regen.o \
 	nl/schedule.o \
-	nl/string.o \
 	nl/3d/3dvar.o \
 	nl/3d/3dwalk.o \
 	nl/ll/llmouse.o \
