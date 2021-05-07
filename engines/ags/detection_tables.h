@@ -1491,19 +1491,19 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 #define GAME_ENTRY_PLUGIN(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::UNK_LANG, \
-	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
+	Common::kPlatformUnknown, ADGF_TESTING, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
 
 #define GAME_ENTRY_PLUGIN_LANG(ID, FILENAME, MD5, SIZE, PLUGIN_ARR, LANG) \
 	{{ ID, nullptr, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
-	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
+	Common::kPlatformUnknown, ADGF_TESTING, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
 
 #define GAME_ENTRY_PLUGIN_PLATFORM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR, PLATFORM) \
 	{{ ID, PLATFORM, AD_ENTRY1s(FILENAME, MD5, SIZE), Common::UNK_LANG, \
-	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
+	Common::kPlatformUnknown, ADGF_TESTING, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
 
 #define GAME_ENTRY_PLUGIN_LANG_PLATFORM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR, LANG, PLATFORM) \
 	{{ ID, PLATFORM, AD_ENTRY1s(FILENAME, MD5, SIZE), LANG, \
-	Common::kPlatformUnknown, ADGF_UNSTABLE, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
+	Common::kPlatformUnknown, ADGF_TESTING, GUIO1(GUIO_NOLANG) }, PLUGIN_ARR }
 
 static const PluginVersion AGSTEAM_WADJETEYE[] = { { "agsteam", kWadjetEye }, { nullptr, 0 } };
 static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
