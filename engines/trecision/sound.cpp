@@ -51,9 +51,13 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 
 	_soundFadeInVal = 0;
 	_soundFadeOutVal = 0;
+
+	if (!_speechFile.open("nlspeech.cd0"))
+		warning("SoundManager - nlspeech.cd0 is missing - skipping");
 }
 
 SoundManager::~SoundManager() {
+	_speechFile.close();
 }
 
 void SoundManager::soundTimer() {
@@ -287,12 +291,12 @@ void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *li
 }
 
 int32 SoundManager::talkStart(const char *name) {
-	if (!_vm->_speechFile.isOpen())
+	if (!_speechFile.isOpen())
 		return 0;
 
 	talkStop();
 
-	Common::SeekableReadStream *stream = _vm->_speechFile.createReadStreamForMember(name);
+	Common::SeekableReadStream *stream = _speechFile.createReadStreamForMember(name);
 	if (!stream)
 		return 0;
 

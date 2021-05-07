@@ -66,6 +66,8 @@ private:
 	Audio::SeekableAudioStream *_sfxStream[NUMSAMPLES];
 	Audio::SoundHandle    _soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
 
+	FastFile _speechFile; // nlspeech.cd0
+
 	SSound _gSample[MAXSAMPLE];
 
 	uint32 _timer;
