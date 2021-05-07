@@ -23,6 +23,8 @@
 #include "trecision/trecision.h"
 #include "trecision/dialog.h"
 
+
+#include "text.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/nl/message.h"
@@ -319,20 +321,20 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF1C1:
-			CharacterSay(334);
+			_vm->_textMgr->CharacterSay(334);
 			break;
 
 		case dF1D1:
-			CharacterSay(1502);
+			_vm->_textMgr->CharacterSay(1502);
 			break;
 
 		case dF2E1:
-			CharacterSay(621);
+			_vm->_textMgr->CharacterSay(621);
 			_vm->_obj[oCATWALKA2E]._action = 622;
 			break;
 
 		case dF2E2:
-			CharacterSay(1561);
+			_vm->_textMgr->CharacterSay(1561);
 			_vm->_inventoryObj[kItemMicrowaveGun]._examine = 1562;
 			break;
 
@@ -351,7 +353,7 @@ void DialogManager::afterChoice() {
 
 		case dF2G1:
 			_vm->_obj[oPANELM2G]._action = 660;
-			CharacterSay(659);
+			_vm->_textMgr->CharacterSay(659);
 			break;
 
 		case dF2G2:
@@ -365,7 +367,7 @@ void DialogManager::afterChoice() {
 
 		case dF331:
 			_vm->_obj[oTUBET33]._lim = Common::Rect(0, 0, 0, 0);
-			CharacterSay(1997);
+			_vm->_textMgr->CharacterSay(1997);
 			break;
 
 		case dF362:
@@ -396,7 +398,7 @@ void DialogManager::afterChoice() {
 
 		case dF451:
 			_vm->_obj[od44ALLA45]._goRoom = kRoom45S;
-			CharacterSay(1712);
+			_vm->_textMgr->CharacterSay(1712);
 			break;
 
 		case dF491:
@@ -447,11 +449,11 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF4P1:
-			CharacterSay(1707);
+			_vm->_textMgr->CharacterSay(1707);
 			break;
 
 		case dF4P2:
-			CharacterSay(1708);
+			_vm->_textMgr->CharacterSay(1708);
 			break;
 
 		case dF562:

@@ -33,6 +33,7 @@
 #include "trecision/graphics.h"
 #include "trecision/video.h"
 #include "trecision/logic.h"
+#include "trecision/text.h"
 #include "trecision/sound.h"
 
 #include "engines/util.h"
@@ -121,6 +122,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_soundMgr = nullptr;
 	_renderer = nullptr;
 	_pathFind = nullptr;
+	_textMgr = nullptr;
 	
 	_actorRect = nullptr;
 	_nextRefresh = 0;
@@ -184,6 +186,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _soundMgr;
 	delete _renderer;
 	delete _pathFind;
+	delete _textMgr;
 	
 	delete[] _font;
 	delete[] _arrows;
@@ -212,6 +215,7 @@ Common::Error TrecisionEngine::run() {
 	_soundMgr = new SoundManager(this);
 	_pathFind = new PathFinding3D(this);
 	_renderer = new Renderer3D(this);
+	_textMgr = new TextManager(this);
 	setDebugger(new Console(this));
 
 	initMain();
@@ -1014,7 +1018,7 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	}
 
 	if (sent)
-		CharacterTalkInAction(sent);
+		_textMgr->CharacterTalkInAction(sent);
 	else
 		clearText();
 }

@@ -20,42 +20,44 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "trecision/nl/struct.h"
-#include "trecision/defines.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
-#include "trecision/trecision.h"
-#include "trecision/actor.h"
 
-#include "common/config-manager.h"
+#include "trecision/trecision.h"
 #include "trecision/sound.h"
-#include "trecision/video.h"
+#include "trecision/actor.h"
+#include "trecision/text.h"
+
+#include <common/config-manager.h>
 
 namespace Trecision {
 
-// Variabili di servizio comuni a piu' funzioni di string.c
-uint16 CurS;
+TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
+	_someoneSpeakTime = 0;
+	SuperStringLen = 0;
+	substringagain = false;
+	TalkTime = 0;
+	SpeakSomeOneAnimation = 0;
+	for (int i = 0; i < MAXSUBSTRING; ++i) {
+		for (int j = 0; j < MAXLENSUBSTRING; ++j) {
+			SubString[i][j] = 0;
+		}
+	}
+	SubStringUsed = 0;
+	SuperString = nullptr;
+	SubStringStart = 0;
+	CurS = 0;
+	CurSubString = 0;
+	for (int i = 0; i < 13; ++i)
+		sn[i] = 0;
+	SpeakSomeOnePerson = 0;
+}
 
-uint32 _someoneSpeakTime;
+TextManager::~TextManager() {
+}
 
-uint16 SpeakSomeOneAnimation;
-uint16 SpeakSomeOnePerson;
-
-const char  *SuperString;
-uint16 SuperStringLen;
-char  SubString[MAXSUBSTRING][MAXLENSUBSTRING];
-uint16 SubStringStart;
-bool  substringagain;
-uint16 CurSubString;
-uint16 SubStringUsed;
-
-char sn[13];
-uint32 TalkTime;
-const char *dunno = "?";
-
-void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
-	uint16 lenText = g_vm->textLength(string, 0);
+void TextManager::PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
+	uint16 lenText = _vm->textLength(string, 0);
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
 	else if (lenText > 320)
@@ -74,7 +76,207 @@ void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16
 		*posy = VIDEOTOP + 1;
 }
 
-void ShowObjName(uint16 obj, bool showhide) {
+void TextManager::FormattingSuperString() {
+	SubStringUsed = 0;
+	substringagain = true;
+	while (substringagain) {
+		FormattingOneString();
+		SubStringUsed++;
+	}
+}
+
+void TextManager::FormattingOneString() {
+	uint16 i;
+	memset(SubString[SubStringUsed], '\0', MAXLENSUBSTRING);
+
+	const uint16 available = (SuperStringLen - SubStringStart);
+	for (i = 0; i < available; i++) {
+		switch (SuperString[i + SubStringStart]) {
+		case '\0':
+			substringagain = false;
+			return;
+
+		case '@':
+			substringagain = true;
+			SubStringStart += (i + 1);
+			return;
+
+		default:
+			SubString[SubStringUsed][i] = SuperString[i + SubStringStart];
+			break;
+		}
+	}
+
+	SubString[SubStringUsed][i] = '\0';
+	substringagain = false;
+}
+
+void TextManager::CharacterTalk(const char *s) {
+	g_vm->_flagSomeoneSpeaks = true;
+	g_vm->_flagCharacterSpeak = true;
+	g_vm->_flagSkipTalk = false;
+
+	SuperString = s;
+	SuperStringLen = strlen(SuperString);
+	SubStringStart = 0;
+	CurSubString = 0;
+	FormattingSuperString();
+
+	CharacterContinueTalk();
+
+	g_vm->_characterQueue.initQueue();
+	g_vm->_actor->actorStop();
+}
+
+void TextManager::CharacterContinueTalk() {
+	g_vm->_flagSkipTalk = false;
+	g_vm->_characterSpeakTime = g_vm->_curTime;
+
+	substringagain = (CurSubString < (SubStringUsed - 1));
+
+	uint16 posx, posy;
+	if (g_vm->_flagCharacterExists)
+		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
+	else
+		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
+
+	g_vm->clearText();
+	if (ConfMan.getBool("subtitles"))
+		g_vm->addText(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
+
+	if (!g_vm->_flagDialogActive) {
+		if (CurSubString)
+			sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
+		else
+			sprintf(sn, "s%04d.wav", CurS);
+	}
+
+	TalkTime = g_vm->_soundMgr->talkStart(sn);
+	if (!TalkTime)
+		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
+
+	CurSubString++;
+
+	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+}
+
+void TextManager::CharacterMute() {
+	g_vm->_flagSomeoneSpeaks = false;
+	g_vm->_flagCharacterSpeak = false;
+	g_vm->_flagSkipTalk = false;
+	g_vm->_characterSpeakTime = 0;
+
+	g_vm->clearText();
+	g_vm->_lastObj = 0;
+	g_vm->_lastInv = 0;
+
+	g_vm->redrawString();
+	g_vm->_soundMgr->talkStop();
+
+	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
+}
+
+void TextManager::SomeoneContinueTalk() {
+	uint16 posx, posy;
+
+	_someoneSpeakTime = g_vm->_curTime;
+	g_vm->_flagSkipTalk = false;
+
+	substringagain = (CurSubString < (SubStringUsed - 1));
+
+	if (SpeakSomeOnePerson)
+		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim.left, g_vm->_obj[SpeakSomeOnePerson]._lim.top, SubString[CurSubString], &posx, &posy, false);
+	else
+		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
+
+	g_vm->clearText();
+	if (ConfMan.getBool("subtitles"))
+		g_vm->addText(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
+
+	if (CurSubString)
+		sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
+	else
+		sprintf(sn, "s%04d.wav", CurS);
+
+	TalkTime = g_vm->_soundMgr->talkStart(sn);
+	if (!TalkTime)
+		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
+
+	CurSubString++;
+	doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+}
+
+void TextManager::someoneMute() {
+	g_vm->_flagCharacterSpeak = false;
+	g_vm->_flagSkipTalk = false;
+	g_vm->_flagSomeoneSpeaks = false;
+	_someoneSpeakTime = 0;
+
+	g_vm->clearText();
+	g_vm->_lastObj = 0;
+	g_vm->_lastInv = 0;
+
+	g_vm->redrawString();
+	g_vm->_soundMgr->talkStop();
+}
+
+// ******************************************************* //
+
+void TextManager::doString() {
+	switch (g_vm->_curMessage->_event) {
+	case ME_CHARACTERSPEAK:
+		CharacterSay(g_vm->_curMessage->_u16Param1);
+		break;
+
+	case ME_CHARACTERSPEAKING:
+		if (g_vm->_flagCharacterSpeak) {
+			if (g_vm->_flagSkipTalk || (g_vm->_curTime > TalkTime + g_vm->_characterSpeakTime)) {
+				if (substringagain)
+					CharacterContinueTalk();
+				else
+					CharacterMute();
+			} else
+				g_vm->reEvent();
+		}
+		break;
+
+	case ME_SOMEONEWAIT2SPEAK:
+		if (!g_vm->_curMessage->_u16Param1)
+			SomeoneContinueTalk();
+		else
+			g_vm->reEvent();
+		break;
+
+	case ME_SOMEONEWAIT2MUTE:
+		if (!g_vm->_curMessage->_u16Param1)
+			someoneMute();
+		else
+			g_vm->reEvent();
+		break;
+
+	case ME_SOMEONESPEAKING:
+		if (g_vm->_flagSomeoneSpeaks) {
+			if (g_vm->_flagSkipTalk || (g_vm->_curTime >= (TalkTime + _someoneSpeakTime))) {
+				if (substringagain)
+					SomeoneContinueTalk();
+				else {
+					if (SpeakSomeOneAnimation)
+						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, SpeakSomeOneAnimation, true, 0, 0);
+					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
+				}
+			} else
+				g_vm->reEvent();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void TextManager::ShowObjName(uint16 obj, bool showhide) {
+	static const char *dunno = "?";
+
 	uint16 posx;
 	uint16 posy;
 	Common::String locsent;
@@ -156,138 +358,7 @@ void ShowObjName(uint16 obj, bool showhide) {
 	}
 }
 
-void FormattingSuperString() {
-	SubStringUsed  = 0;
-	substringagain = true;
-	while (substringagain) {
-		FormattingOneString();
-		SubStringUsed++;
-	}
-}
-
-void FormattingOneString() {
-	uint16 i;
-	memset(SubString[SubStringUsed], '\0', MAXLENSUBSTRING);
-
-	const uint16 available = (SuperStringLen - SubStringStart);
-	for (i = 0; i < available; i++) {
-		switch (SuperString[i + SubStringStart]) {
-		case '\0':
-			substringagain = false;
-			return;
-
-		case '@':
-			substringagain = true;
-			SubStringStart += (i + 1);
-			return;
-
-		default:
-			SubString[SubStringUsed][i] = SuperString[i + SubStringStart];
-			break;
-		}
-	}
-
-	SubString[SubStringUsed][i] = '\0';
-	substringagain = false;
-}
-
-void CharacterSay(uint16 i) {
-	CurS = i;
-
-	//	if he took some action
-	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
-		g_vm->StartCharacterAction(hBOH, 0, 0, 0);
-	else
-		CharacterTalk(g_vm->_sentence[i]);
-}
-
-void CharacterTalk(const char *s) {
-	g_vm->_flagSomeoneSpeaks = true;
-	g_vm->_flagCharacterSpeak = true;
-	g_vm->_flagSkipTalk = false;
-
-	SuperString = s;
-	SuperStringLen = strlen(SuperString);
-	SubStringStart = 0;
-	CurSubString = 0;
-	FormattingSuperString();
-
-	CharacterContinueTalk();
-
-	g_vm->_characterQueue.initQueue();
-	g_vm->_actor->actorStop();
-}
-
-void CharacterTalkInAction(uint16 ss) {
-	const char *s = g_vm->_sentence[ss];
-
-	if (s[0] == '*')
-		return;
-	CurS = ss;
-
-	g_vm->_flagSomeoneSpeaks = true;
-	g_vm->_flagCharacterSpeak = true;
-	g_vm->_flagSkipTalk = false;
-
-	SuperString = s;
-	SuperStringLen = strlen(SuperString);
-	SubStringStart = 0;
-	CurSubString = 0;
-	FormattingSuperString();
-
-	CharacterContinueTalk();
-}
-
-void CharacterContinueTalk() {
-	g_vm->_flagSkipTalk = false;
-	g_vm->_characterSpeakTime = g_vm->_curTime;
-
-	substringagain = (CurSubString < (SubStringUsed - 1));
-
-	uint16 posx, posy;
-	if (g_vm->_flagCharacterExists)
-		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
-	else
-		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
-
-	g_vm->clearText();
-	if (ConfMan.getBool("subtitles"))
-		g_vm->addText(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
-
-	if (!g_vm->_flagDialogActive) {
-		if (CurSubString)
-			sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
-		else
-			sprintf(sn, "s%04d.wav", CurS);
-	}
-
-	TalkTime = g_vm->_soundMgr->talkStart(sn);
-	if (!TalkTime)
-		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
-
-	CurSubString++;
-
-	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
-}
-
-void CharacterMute() {
-	g_vm->_flagSomeoneSpeaks = false;
-	g_vm->_flagCharacterSpeak = false;
-	g_vm->_flagSkipTalk = false;
-	g_vm->_characterSpeakTime = 0;
-
-	g_vm->clearText();
-	g_vm->_lastObj = 0;
-	g_vm->_lastInv = 0;
-
-	g_vm->redrawString();
-	g_vm->_soundMgr->talkStop();
-
-	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
-}
-
-void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
+void TextManager::SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
 	SpeakSomeOneAnimation = NewAnim;
 	SpeakSomeOnePerson = Person;
 	g_vm->_flagSomeoneSpeaks = true;
@@ -306,99 +377,34 @@ void SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
 	doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
 }
 
-void SomeoneContinueTalk() {
-	uint16 posx, posy;
+void TextManager::CharacterSay(uint16 i) {
+	CurS = i;
 
-	_someoneSpeakTime = g_vm->_curTime;
-	g_vm->_flagSkipTalk = false;
-
-	substringagain = (CurSubString < (SubStringUsed - 1));
-
-	if (SpeakSomeOnePerson)
-		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim.left, g_vm->_obj[SpeakSomeOnePerson]._lim.top, SubString[CurSubString], &posx, &posy, false);
+	//	if he took some action
+	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
+		g_vm->StartCharacterAction(hBOH, 0, 0, 0);
 	else
-		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
-
-	g_vm->clearText();
-	if (ConfMan.getBool("subtitles"))
-		g_vm->addText(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
-
-	if (CurSubString)
-		sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
-	else
-		sprintf(sn, "s%04d.wav", CurS);
-
-	TalkTime = g_vm->_soundMgr->talkStart(sn);
-	if (!TalkTime)
-		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
-
-	CurSubString++;
-	doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+		CharacterTalk(g_vm->_sentence[i]);
 }
 
-void someoneMute() {
-	g_vm->_flagCharacterSpeak = false;
+void TextManager::CharacterTalkInAction(uint16 ss) {
+	const char *s = g_vm->_sentence[ss];
+
+	if (s[0] == '*')
+		return;
+	CurS = ss;
+
+	g_vm->_flagSomeoneSpeaks = true;
+	g_vm->_flagCharacterSpeak = true;
 	g_vm->_flagSkipTalk = false;
-	g_vm->_flagSomeoneSpeaks = false;
-	_someoneSpeakTime = 0;
 
-	g_vm->clearText();
-	g_vm->_lastObj = 0;
-	g_vm->_lastInv = 0;
+	SuperString = s;
+	SuperStringLen = strlen(SuperString);
+	SubStringStart = 0;
+	CurSubString = 0;
+	FormattingSuperString();
 
-	g_vm->redrawString();
-	g_vm->_soundMgr->talkStop();
-}
-
-void doString() {
-	switch (g_vm->_curMessage->_event) {
-	case ME_CHARACTERSPEAK:
-		CharacterSay(g_vm->_curMessage->_u16Param1);
-		break;
-
-	case ME_CHARACTERSPEAKING:
-		if (g_vm->_flagCharacterSpeak) {
-			if (g_vm->_flagSkipTalk || (g_vm->_curTime > TalkTime + g_vm->_characterSpeakTime)) {
-				if (substringagain)
-					CharacterContinueTalk();
-				else
-					CharacterMute();
-			} else
-				g_vm->reEvent();
-		}
-		break;
-
-	case ME_SOMEONEWAIT2SPEAK:
-		if (!g_vm->_curMessage->_u16Param1)
-			SomeoneContinueTalk();
-		else
-			g_vm->reEvent();
-		break;
-
-	case ME_SOMEONEWAIT2MUTE:
-		if (!g_vm->_curMessage->_u16Param1)
-			someoneMute();
-		else
-			g_vm->reEvent();
-		break;
-
-	case ME_SOMEONESPEAKING:
-		if (g_vm->_flagSomeoneSpeaks) {
-			if (g_vm->_flagSkipTalk || (g_vm->_curTime >= (TalkTime + _someoneSpeakTime))) {
-				if (substringagain)
-					SomeoneContinueTalk();
-				else {
-					if (SpeakSomeOneAnimation)
-						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, SpeakSomeOneAnimation, true, 0, 0);
-					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
-				}
-			} else
-				g_vm->reEvent();
-		}
-		break;
-	default:
-		break;
-	}
+	CharacterContinueTalk();
 }
 
 } // End of namespace Trecision
