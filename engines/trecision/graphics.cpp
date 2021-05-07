@@ -26,6 +26,7 @@
 
 #include "common/system.h"
 #include "engines/util.h"
+#include "graphics/cursorman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -47,12 +48,18 @@ bool GraphicsManager::initScreen() {
 
 	// Find a 16-bit format, currently we don't support other color depths
 	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
+	bool found = false;
 	for (Common::List<Graphics::PixelFormat>::const_iterator i = formats.begin(); i != formats.end(); ++i) {
 		if (i->bytesPerPixel == 2) {
 			bestFormat = &*i;
+			found = true;
 			break;
 		}
 	}
+
+	if (!found)
+		return false;
+	
 	initGraphics(MAXX, MAXY, bestFormat);
 
 	_screenFormat = g_system->getScreenFormat();
@@ -134,6 +141,11 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 void GraphicsManager::clearScreenBufferTop() {
 	// Clears lines 0 - 60
 	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);
+}
+
+void GraphicsManager::clearScreenBufferTopDescription() {
+	// Clears lines 20 - 30
+	_screenBuffer.fillRect(Common::Rect(0, TOP - 20, MAXX, TOP - 20 + CARHEI), 0);
 }
 
 void GraphicsManager::clearScreenBufferInventory() {
@@ -324,6 +336,37 @@ void GraphicsManager::DrawObj(SDObj d) {
 
 void GraphicsManager::EraseObj(SDObj d) {
 	_screenBuffer.fillRect(Common::Rect(d.l.left, d.l.top + TOP, d.l.right, d.l.bottom + TOP), 0);
+}
+
+void GraphicsManager::initCursor() {
+	const int cw = 21, ch = 21;
+	const int cx = 10, cy = 10;
+	uint16 cursor[cw * ch];
+	memset(cursor, 0, ARRAYSIZE(cursor) * 2);
+
+	const uint16 cursorColor = palTo16bit(255, 255, 255);
+
+	for (int i = 0; i < cw; i++) {
+		if (i >= 8 && i <= 12 && i != 10)
+			continue;
+		cursor[cx * cw + i] = cursorColor; // horizontal
+		cursor[cx + cw * i] = cursorColor; // vertical
+	}
+
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
+}
+
+void GraphicsManager::showCursor() {
+	CursorMan.showMouse(true);
+}
+
+void GraphicsManager::hideCursor() {
+	CursorMan.showMouse(false);
+}
+
+bool GraphicsManager::isCursorVisible() {
+	return CursorMan.isVisible();
 }
 
 } // end of namespace

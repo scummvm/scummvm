@@ -44,7 +44,6 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
-#include "graphics/cursorman.h"
 
 #include "common/savefile.h"
 #include "common/str.h"
@@ -221,7 +220,7 @@ Common::Error TrecisionEngine::run() {
 	setDebugger(new Console(this));
 
 	initMain();
-	initCursor();
+	_graphicsMgr->initCursor();
 
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
@@ -574,37 +573,6 @@ void TrecisionEngine::checkSystem() {
 	eventLoop();
 }
 
-void TrecisionEngine::initCursor() {
-	const int cw = 21, ch = 21;
-	const int cx = 10, cy = 10;
-	uint16 cursor[cw * ch];
-	memset(cursor, 0, ARRAYSIZE(cursor) * 2);
-
-	const uint16 cursorColor = _graphicsMgr->palTo16bit(255, 255, 255);
-
-	for (int i = 0; i < cw; i++) {
-		if (i >= 8 && i <= 12 && i != 10)
-			continue;
-		cursor[cx * cw + i] = cursorColor;	// horizontal
-		cursor[cx + cw * i] = cursorColor;	// vertical
-	}
-
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
-}
-
-void TrecisionEngine::showCursor() {
-	CursorMan.showMouse(true);
-}
-
-void TrecisionEngine::hideCursor() {
-	CursorMan.showMouse(false);
-}
-
-bool TrecisionEngine::isCursorVisible() {
-	return CursorMan.isVisible();
-}
-
 byte *TrecisionEngine::readData(Common::String fileName) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
 	if (stream == nullptr)
@@ -879,9 +847,7 @@ insave:
 	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
-	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+	_graphicsMgr->clearScreenBufferTopDescription();
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	// Restore the inventory
@@ -916,7 +882,7 @@ bool TrecisionEngine::dataLoad() {
 
 	_graphicsMgr->clearScreenBufferTop();
 
-	showCursor();
+	_graphicsMgr->showCursor();
 
 	SDText SText;
 	SText.set(
@@ -1037,13 +1003,11 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	_graphicsMgr->clearScreenBufferInventoryFull();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
-	for (int a = TOP - 20; a < TOP - 20 + CARHEI; a++)
-		memset(_graphicsMgr->getScreenBufferPtr() + MAXX * a, 0, MAXX * 2);
-
+	_graphicsMgr->clearScreenBufferTopDescription();
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	if (_flagscriptactive) {
-		hideCursor();
+		_graphicsMgr->hideCursor();
 	}
 }
 
@@ -1054,13 +1018,13 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	if (Act > hLAST) {
 		_animMgr->startSmkAnim(Act);
 		InitAtFrameHandler(Act, _curObj);
-		hideCursor();
+		_graphicsMgr->hideCursor();
 		_flagShowCharacter = false;
 		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, _curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			_curObj = 0;
-		hideCursor();
+		_graphicsMgr->hideCursor();
 		_actor->actorDoAction(Act);
 		_pathFind->nextStep();
 	}

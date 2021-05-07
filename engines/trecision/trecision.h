@@ -209,10 +209,6 @@ public:
 
 	// Others
 	void checkSystem();
-	void initCursor();
-	bool isCursorVisible();
-	void showCursor();
-	void hideCursor();
 	bool dataSave();
 	bool dataLoad();
 	void performLoad(int slot, bool skipLoad);

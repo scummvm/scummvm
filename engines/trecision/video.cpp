@@ -391,30 +391,32 @@ void AnimManager::startFullMotion(const char *name) {
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	_vm->_actor->actorStop();
-	_vm->hideCursor();
+	_vm->_graphicsMgr->hideCursor();
 }
 
 void AnimManager::stopFullMotion() {
+	const uint16 curDialog = _vm->_dialogMgr->_curDialog;
+
 	_vm->_flagDialogActive = false;
 	_vm->_flagDialogMenuActive = false;
-	_vm->showCursor();
+	_vm->_graphicsMgr->showCursor();
 	_vm->_flagSomeoneSpeaks = false;
 
 	_vm->_lightIcon = 0xFF;
-	if (_vm->_dialogMgr->_curDialog == dFCRED) {
+	if (curDialog == dFCRED) {
 		_vm->quitGame();
 		return;
 	}
 
-	if (!((_vm->_dialogMgr->_curDialog == dSHOPKEEPER1A) && (_vm->_dialogMgr->_curChoice == 185))) {
-		if ((_vm->_dialogMgr->_curDialog == dF582) || (_vm->_dialogMgr->_curDialog == dFLOG) || (_vm->_dialogMgr->_curDialog == dINTRO) || (_vm->_dialogMgr->_curDialog == dF362) || (_vm->_dialogMgr->_curDialog == dC381) || (_vm->_dialogMgr->_curDialog == dF381) ||
-		    (_vm->_dialogMgr->_curDialog == dF491) || ((_vm->_dialogMgr->_curDialog == dC581) && !(_vm->_dialogMgr->_choice[886]._flag & kObjFlagDone) && (_vm->_dialogMgr->_choice[258]._flag & kObjFlagDone)) ||
-		    ((_vm->_dialogMgr->_curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
+	if (!((curDialog == dSHOPKEEPER1A) && (_vm->_dialogMgr->_curChoice == 185))) {
+		if ((curDialog == dF582) || (curDialog == dFLOG) || (curDialog == dINTRO) || (curDialog == dF362) || (curDialog == dC381) || (curDialog == dF381) ||
+		    (curDialog == dF491) || ((curDialog == dC581) && !(_vm->_dialogMgr->_choice[886]._flag & kObjFlagDone) && (_vm->_dialogMgr->_choice[258]._flag & kObjFlagDone)) ||
+		    ((curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			_vm->_flagShowCharacter = false;
 		else
 			RedrawRoom();
 
-		if (_vm->_dialogMgr->_curDialog == dF582)
+		if (curDialog == dF582)
 			_vm->_soundMgr->fadeOut();
 	}
 }

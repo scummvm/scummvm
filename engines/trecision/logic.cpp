@@ -2173,7 +2173,7 @@ bool LogicManager::useScreenWithScreen() {
 void LogicManager::roomOut(uint16 curObj, uint16 *action, uint16 *pos) {
 	if (curObj == oSCALA32 && _vm->isObjectVisible(oBOTOLAC32)) {
 		CharacterSay(_vm->_obj[curObj]._action);
-		_vm->showCursor();
+		_vm->_graphicsMgr->showCursor();
 		*action = 0;
 		*pos = 0;
 	} else {
@@ -4132,7 +4132,7 @@ void LogicManager::doSystemChangeRoom() {
 		initControlPanel();
 
 	ReadLoc();
-	_vm->showCursor();
+	_vm->_graphicsMgr->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {
 		_vm->setRoom(kRoom21, _vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B);

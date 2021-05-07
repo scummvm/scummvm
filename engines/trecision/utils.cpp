@@ -82,7 +82,7 @@ void TrecisionEngine::drawString() {
 }
 
 void TrecisionEngine::redrawString() {
-	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && isCursorVisible()) {
+	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && _graphicsMgr->isCursorVisible()) {
 		if (isInventoryArea(_mousePos))
 			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
@@ -333,7 +333,7 @@ void TrecisionEngine::openSys() {
 
 	_graphicsMgr->clearScreen();
 
-	hideCursor();
+	_graphicsMgr->hideCursor();
 }
 
 float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
@@ -392,16 +392,16 @@ void TrecisionEngine::ProcessMouse() {
 	int16 mx = _mousePos.x;
 	int16 my = _mousePos.y;
 
-	if (lastMouseOn && !isCursorVisible()) {
+	if (lastMouseOn && !_graphicsMgr->isCursorVisible()) {
 		oldMousePos = Common::Point(0, 0); // Switch off
-	} else if (!lastMouseOn && isCursorVisible()) {
+	} else if (!lastMouseOn && _graphicsMgr->isCursorVisible()) {
 		oldMousePos = Common::Point(0, 0); // Switch on
 	}
 
-	lastMouseOn = isCursorVisible();
+	lastMouseOn = _graphicsMgr->isCursorVisible();
 	checkSystem();
 
-	if (!isCursorVisible())
+	if (!_graphicsMgr->isCursorVisible())
 		return;
 
 	if (_mouseLeftBtn || _mouseRightBtn) {
