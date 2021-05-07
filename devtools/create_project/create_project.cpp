@@ -289,6 +289,10 @@ int main(int argc, char *argv[]) {
 			setup.useSDL2 = false;
 		} else if (!std::strcmp(argv[i], "--use-canonical-lib-names")) {
 			setup.useCanonicalLibNames = true;
+		} else if (!std::strcmp(argv[i], "--use-windows-unicode")) {
+			setup.useWindowsUnicode = true;
+		} else if (!std::strcmp(argv[i], "--use-windows-ansi")) {
+			setup.useWindowsUnicode = false;
 		} else {
 			std::cerr << "ERROR: Unknown parameter \"" << argv[i] << "\"\n";
 			return -1;
@@ -724,6 +728,10 @@ void displayHelp(const char *exe) {
 	        " --use-canonical-lib-names  Use canonical library names for linking. This makes it easy to use\n"
 	        "                            e.g. vcpkg-provided libraries\n"
 	        "                            (default: false)\n"
+	        " --use-windows-unicode      Use Windows Unicode APIs\n"
+	        "                            (default: false)\n"
+	        " --use-windows-ansi         Use Windows ANSI APIs\n"
+	        "                            (default: true)\n"
 	        "\n"
 	        "Engines settings:\n"
 	        " --list-engines             list all available engines and their default state\n"
