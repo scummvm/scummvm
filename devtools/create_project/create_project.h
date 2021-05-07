@@ -245,6 +245,7 @@ struct BuildSetup {
 	bool useSDL2;              ///< Whether to use SDL2 or not.
 	bool useCanonicalLibNames; ///< Whether to use canonical libraries names or default ones
 	bool useStaticDetection;   ///< Whether to link detection features inside the executable or not.
+	bool useWindowsUnicode;    ///< Whether to use Windows Unicode APIs or ANSI APIs.
 
 	BuildSetup() {
 		devTools = false;
@@ -254,6 +255,7 @@ struct BuildSetup {
 		useSDL2 = true;
 		useCanonicalLibNames = false;
 		useStaticDetection = true;
+		useWindowsUnicode = false;
 	}
 
 	bool featureEnabled(std::string feature) const;
