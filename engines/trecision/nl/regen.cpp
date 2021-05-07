@@ -243,7 +243,7 @@ void PaintObjAnm(uint16 CurBox) {
 			if (g_vm->_actorRect)
 				g_vm->_actorRect->extend(l);
 
-			g_vm->resetZBuffer(x1, y1, x2, y2);
+			g_vm->_renderer->resetZBuffer(x1, y1, x2, y2);
 		}
 
 		g_vm->_renderer->drawCharacter(DRAWFACES);

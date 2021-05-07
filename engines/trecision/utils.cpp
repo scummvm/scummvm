@@ -278,19 +278,6 @@ Graphics::Surface *TrecisionEngine::convertScummVMThumbnail(Graphics::Surface *t
 	return result;
 }
 
-void TrecisionEngine::resetZBuffer(int x1, int y1, int x2, int y2) {
-	if (x1 > x2 || y1 > y2)
-		return;
-
-	int size = (x2 - x1) * (y2 - y1);
-	if (size * 2 > ZBUFFERSIZE)
-		warning("Warning: _zBuffer size %d!\n", size * 2);
-
-	int16 *d = _zBuffer;
-	for (int i = 0; i < size; ++i)
-		*d++ = 0x7FFF;
-}
-
 void TrecisionEngine::openSys() {
 	// head
 	int32 idx = 0;
@@ -325,11 +312,6 @@ void TrecisionEngine::openSys() {
 	_actor->_texture = (STexture *)&FTexture[0];
 
 	TextArea = new char[MAXTEXTAREA];
-
-	// zbuffer
-	_zBuffer = new int16[ZBUFFERSIZE / 2];
-	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
-		_zBuffer[c] = 0x7FFF;
 
 	_graphicsMgr->clearScreen();
 

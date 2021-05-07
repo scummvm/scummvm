@@ -148,7 +148,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
 	_arrows = nullptr;
 	_textureArea = nullptr;
 	_icons = nullptr;
-	_zBuffer = nullptr;
 	_actor = nullptr;
 
 	_flagDialogActive = false;
@@ -193,7 +192,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _arrows;
 	delete[] _textureArea;
 	delete[] _icons;
-	delete[] _zBuffer;
 	delete _actor;
 	delete[] TextArea;
 

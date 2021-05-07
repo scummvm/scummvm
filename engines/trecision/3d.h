@@ -41,7 +41,7 @@ private:
 	int16 _maxXClip;
 	int16 _maxYClip;
 
-	int16 *_zBuf;
+	int16 *_zBuffer;
 
 	int16 _zBufStartX;
 	int16 _zBufStartY;
@@ -79,7 +79,8 @@ public:
 	Renderer3D(TrecisionEngine *vm);
 	~Renderer3D();
 
-	void init3DRoom(uint16 *destBuffer, int16 *zBuffer);
+	void init3DRoom(uint16 *destBuffer);
+	void resetZBuffer(int x1, int y1, int x2, int y2);
 	void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawCharacter(uint8 flag);
 }; // end of class
