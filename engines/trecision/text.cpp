@@ -34,23 +34,23 @@ namespace Trecision {
 
 TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 	_someoneSpeakTime = 0;
-	SuperStringLen = 0;
-	substringagain = false;
-	TalkTime = 0;
-	SpeakSomeOneAnimation = 0;
+	_superStringLen = 0;
+	_subStringAgain = false;
+	_talkTime = 0;
+	_talkingPersonAnimId = 0;
 	for (int i = 0; i < MAXSUBSTRING; ++i) {
 		for (int j = 0; j < MAXLENSUBSTRING; ++j) {
-			SubString[i][j] = 0;
+			_subString[i][j] = 0;
 		}
 	}
-	SubStringUsed = 0;
-	SuperString = nullptr;
-	SubStringStart = 0;
-	CurS = 0;
-	CurSubString = 0;
+	_subStringUsed = 0;
+	_superString = nullptr;
+	_subStringStart = 0;
+	_curSentenceId = 0;
+	_curSubString = 0;
 	for (int i = 0; i < 13; ++i)
-		sn[i] = 0;
-	SpeakSomeOnePerson = 0;
+		_lastFilename[i] = 0;
+	_talkingPersonId = 0;
 }
 
 TextManager::~TextManager() {
@@ -77,196 +77,195 @@ void TextManager::PositionString(uint16 x, uint16 y, const char *string, uint16 
 }
 
 void TextManager::FormattingSuperString() {
-	SubStringUsed = 0;
-	substringagain = true;
-	while (substringagain) {
+	_subStringUsed = 0;
+	_subStringAgain = true;
+	while (_subStringAgain) {
 		FormattingOneString();
-		SubStringUsed++;
+		_subStringUsed++;
 	}
 }
 
 void TextManager::FormattingOneString() {
 	uint16 i;
-	memset(SubString[SubStringUsed], '\0', MAXLENSUBSTRING);
+	memset(_subString[_subStringUsed], '\0', MAXLENSUBSTRING);
 
-	const uint16 available = (SuperStringLen - SubStringStart);
+	const uint16 available = (_superStringLen - _subStringStart);
 	for (i = 0; i < available; i++) {
-		switch (SuperString[i + SubStringStart]) {
+		switch (_superString[i + _subStringStart]) {
 		case '\0':
-			substringagain = false;
+			_subStringAgain = false;
 			return;
 
 		case '@':
-			substringagain = true;
-			SubStringStart += (i + 1);
+			_subStringAgain = true;
+			_subStringStart += (i + 1);
 			return;
 
 		default:
-			SubString[SubStringUsed][i] = SuperString[i + SubStringStart];
+			_subString[_subStringUsed][i] = _superString[i + _subStringStart];
 			break;
 		}
 	}
 
-	SubString[SubStringUsed][i] = '\0';
-	substringagain = false;
+	_subString[_subStringUsed][i] = '\0';
+	_subStringAgain = false;
 }
 
 void TextManager::CharacterTalk(const char *s) {
-	g_vm->_flagSomeoneSpeaks = true;
-	g_vm->_flagCharacterSpeak = true;
-	g_vm->_flagSkipTalk = false;
+	_vm->_flagSomeoneSpeaks = true;
+	_vm->_flagCharacterSpeak = true;
+	_vm->_flagSkipTalk = false;
 
-	SuperString = s;
-	SuperStringLen = strlen(SuperString);
-	SubStringStart = 0;
-	CurSubString = 0;
+	_superString = s;
+	_superStringLen = strlen(_superString);
+	_subStringStart = 0;
+	_curSubString = 0;
 	FormattingSuperString();
 
 	CharacterContinueTalk();
 
-	g_vm->_characterQueue.initQueue();
-	g_vm->_actor->actorStop();
+	_vm->_characterQueue.initQueue();
+	_vm->_actor->actorStop();
 }
 
 void TextManager::CharacterContinueTalk() {
-	g_vm->_flagSkipTalk = false;
-	g_vm->_characterSpeakTime = g_vm->_curTime;
+	_vm->_flagSkipTalk = false;
+	_vm->_characterSpeakTime = _vm->_curTime;
 
-	substringagain = (CurSubString < (SubStringUsed - 1));
+	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
 	uint16 posx, posy;
-	if (g_vm->_flagCharacterExists)
-		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
+	if (_vm->_flagCharacterExists)
+		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 	else
-		PositionString(MAXX / 2, 30, SubString[CurSubString], &posx, &posy, false);
+		PositionString(MAXX / 2, 30, _subString[_curSubString], &posx, &posy, false);
 
-	g_vm->clearText();
+	_vm->clearText();
 	if (ConfMan.getBool("subtitles"))
-		g_vm->addText(posx, posy, SubString[CurSubString], COLOR_OBJECT, MASKCOL);
+		_vm->addText(posx, posy, _subString[_curSubString], COLOR_OBJECT, MASKCOL);
 
-	if (!g_vm->_flagDialogActive) {
-		if (CurSubString)
-			sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
+	if (!_vm->_flagDialogActive) {
+		if (_curSubString)
+			sprintf(_lastFilename, "s%04d%c.wav", _curSentenceId, _curSubString + 'a');
 		else
-			sprintf(sn, "s%04d.wav", CurS);
+			sprintf(_lastFilename, "s%04d.wav", _curSentenceId);
 	}
 
-	TalkTime = g_vm->_soundMgr->talkStart(sn);
-	if (!TalkTime)
-		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
+	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
+	if (!_talkTime)
+		_talkTime = (strlen(_subString[_curSubString]) * 5) / 2 + 50;
 
-	CurSubString++;
+	_curSubString++;
 
 	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TextManager::CharacterMute() {
-	g_vm->_flagSomeoneSpeaks = false;
-	g_vm->_flagCharacterSpeak = false;
-	g_vm->_flagSkipTalk = false;
-	g_vm->_characterSpeakTime = 0;
+	_vm->_flagSomeoneSpeaks = false;
+	_vm->_flagCharacterSpeak = false;
+	_vm->_flagSkipTalk = false;
+	_vm->_characterSpeakTime = 0;
 
-	g_vm->clearText();
-	g_vm->_lastObj = 0;
-	g_vm->_lastInv = 0;
+	_vm->clearText();
+	_vm->_lastObj = 0;
+	_vm->_lastInv = 0;
 
-	g_vm->redrawString();
-	g_vm->_soundMgr->talkStop();
+	_vm->redrawString();
+	_vm->_soundMgr->talkStop();
 
-	if ((g_vm->_curRoom == kRoom12CU) || (g_vm->_curRoom == kRoom13CU))
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, g_vm->_oldRoom, 0, 0, g_vm->_curObj);
+	if ((_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU))
+		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_oldRoom, 0, 0, _vm->_curObj);
 }
 
 void TextManager::SomeoneContinueTalk() {
+	_someoneSpeakTime = _vm->_curTime;
+	_vm->_flagSkipTalk = false;
+
+	_subStringAgain = (_curSubString < (_subStringUsed - 1));
+
 	uint16 posx, posy;
-
-	_someoneSpeakTime = g_vm->_curTime;
-	g_vm->_flagSkipTalk = false;
-
-	substringagain = (CurSubString < (SubStringUsed - 1));
-
-	if (SpeakSomeOnePerson)
-		PositionString(g_vm->_obj[SpeakSomeOnePerson]._lim.left, g_vm->_obj[SpeakSomeOnePerson]._lim.top, SubString[CurSubString], &posx, &posy, false);
+	if (_talkingPersonId)
+		PositionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], &posx, &posy, false);
 	else
-		PositionString(g_vm->_actor->_lim[0], g_vm->_actor->_lim[2], SubString[CurSubString], &posx, &posy, true);
+		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 
-	g_vm->clearText();
+	_vm->clearText();
 	if (ConfMan.getBool("subtitles"))
-		g_vm->addText(posx, posy, SubString[CurSubString], HYELLOW, MASKCOL);
+		_vm->addText(posx, posy, _subString[_curSubString], HYELLOW, MASKCOL);
 
-	if (CurSubString)
-		sprintf(sn, "s%04d%c.wav", CurS, CurSubString + 'a');
+	if (_curSubString)
+		sprintf(_lastFilename, "s%04d%c.wav", _curSentenceId, _curSubString + 'a');
 	else
-		sprintf(sn, "s%04d.wav", CurS);
+		sprintf(_lastFilename, "s%04d.wav", _curSentenceId);
 
-	TalkTime = g_vm->_soundMgr->talkStart(sn);
-	if (!TalkTime)
-		TalkTime = (strlen(SubString[CurSubString]) * 5) / 2 + 50;
+	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
+	if (!_talkTime)
+		_talkTime = (strlen(_subString[_curSubString]) * 5) / 2 + 50;
 
-	CurSubString++;
+	_curSubString++;
 	doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TextManager::someoneMute() {
-	g_vm->_flagCharacterSpeak = false;
-	g_vm->_flagSkipTalk = false;
-	g_vm->_flagSomeoneSpeaks = false;
+	_vm->_flagCharacterSpeak = false;
+	_vm->_flagSkipTalk = false;
+	_vm->_flagSomeoneSpeaks = false;
 	_someoneSpeakTime = 0;
 
-	g_vm->clearText();
-	g_vm->_lastObj = 0;
-	g_vm->_lastInv = 0;
+	_vm->clearText();
+	_vm->_lastObj = 0;
+	_vm->_lastInv = 0;
 
-	g_vm->redrawString();
-	g_vm->_soundMgr->talkStop();
+	_vm->redrawString();
+	_vm->_soundMgr->talkStop();
 }
 
 // ******************************************************* //
 
 void TextManager::doString() {
-	switch (g_vm->_curMessage->_event) {
+	switch (_vm->_curMessage->_event) {
 	case ME_CHARACTERSPEAK:
-		CharacterSay(g_vm->_curMessage->_u16Param1);
+		CharacterSay(_vm->_curMessage->_u16Param1);
 		break;
 
 	case ME_CHARACTERSPEAKING:
-		if (g_vm->_flagCharacterSpeak) {
-			if (g_vm->_flagSkipTalk || (g_vm->_curTime > TalkTime + g_vm->_characterSpeakTime)) {
-				if (substringagain)
+		if (_vm->_flagCharacterSpeak) {
+			if (_vm->_flagSkipTalk || (_vm->_curTime > _talkTime + _vm->_characterSpeakTime)) {
+				if (_subStringAgain)
 					CharacterContinueTalk();
 				else
 					CharacterMute();
 			} else
-				g_vm->reEvent();
+				_vm->reEvent();
 		}
 		break;
 
 	case ME_SOMEONEWAIT2SPEAK:
-		if (!g_vm->_curMessage->_u16Param1)
+		if (!_vm->_curMessage->_u16Param1)
 			SomeoneContinueTalk();
 		else
-			g_vm->reEvent();
+			_vm->reEvent();
 		break;
 
 	case ME_SOMEONEWAIT2MUTE:
-		if (!g_vm->_curMessage->_u16Param1)
+		if (!_vm->_curMessage->_u16Param1)
 			someoneMute();
 		else
-			g_vm->reEvent();
+			_vm->reEvent();
 		break;
 
 	case ME_SOMEONESPEAKING:
-		if (g_vm->_flagSomeoneSpeaks) {
-			if (g_vm->_flagSkipTalk || (g_vm->_curTime >= (TalkTime + _someoneSpeakTime))) {
-				if (substringagain)
+		if (_vm->_flagSomeoneSpeaks) {
+			if (_vm->_flagSkipTalk || (_vm->_curTime >= (_talkTime + _someoneSpeakTime))) {
+				if (_subStringAgain)
 					SomeoneContinueTalk();
 				else {
-					if (SpeakSomeOneAnimation)
-						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, SpeakSomeOneAnimation, true, 0, 0);
-					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
+					if (_talkingPersonAnimId)
+						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, _talkingPersonAnimId, true, 0, 0);
+					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 				}
 			} else
-				g_vm->reEvent();
+				_vm->reEvent();
 		}
 		break;
 	default:
@@ -274,134 +273,132 @@ void TextManager::doString() {
 	}
 }
 
-void TextManager::ShowObjName(uint16 obj, bool showhide) {
+void TextManager::ShowObjName(uint16 obj, bool show) {
 	static const char *dunno = "?";
 
-	uint16 posx;
-	uint16 posy;
 	Common::String locsent;
 
-	if (g_vm->_flagSomeoneSpeaks)
+	if (_vm->_flagSomeoneSpeaks)
 		return;
 
-	if (g_vm->_lastInv) {
-		g_vm->clearText();
-		g_vm->_lastInv = 0;
+	if (_vm->_lastInv) {
+		_vm->clearText();
+		_vm->_lastInv = 0;
 	}
 
-	if (g_vm->_flagUseWithStarted) {
-		if (!showhide) {
-			g_vm->clearText();
-			g_vm->_lastObj = obj;
+	if (_vm->_flagUseWithStarted) {
+		if (!show) {
+			_vm->clearText();
+			_vm->_lastObj = obj;
 			return;
 		}
 
-		if ((g_vm->_obj[g_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(g_vm->_obj[g_vm->_curObj]._flag & kObjFlagExamine))
+		if ((_vm->_obj[_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine))
 			return;
 
-		locsent += g_vm->_sysText[kMessageUse];
-		if (g_vm->_useWithInv[USED])
-			locsent += g_vm->_objName[g_vm->_inventoryObj[g_vm->_useWith[USED]]._name];
-		else if (g_vm->_obj[g_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
+		locsent += _vm->_sysText[kMessageUse];
+		if (_vm->_useWithInv[USED])
+			locsent += _vm->_objName[_vm->_inventoryObj[_vm->_useWith[USED]]._name];
+		else if (_vm->_obj[_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
 			locsent += dunno;
 		else
-			locsent += g_vm->_objName[g_vm->_obj[g_vm->_useWith[USED]]._name];
+			locsent += _vm->_objName[_vm->_obj[_vm->_useWith[USED]]._name];
 
-		locsent += g_vm->_sysText[kMessageWith];
-		if (obj && (g_vm->_useWithInv[USED] || (obj != g_vm->_useWith[USED]))) {
-			if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+		locsent += _vm->_sysText[kMessageWith];
+		if (obj && (_vm->_useWithInv[USED] || (obj != _vm->_useWith[USED]))) {
+			if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 				locsent += dunno;
 			else
-				locsent += g_vm->_objName[g_vm->_obj[obj]._name];
+				locsent += _vm->_objName[_vm->_obj[obj]._name];
 		}
 
-		g_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = g_vm->textLength(locsent.c_str(), 0);
+		_vm->_lastObj = (obj | 0x8000);
+		uint16 lenText = _vm->textLength(locsent.c_str(), 0);
 
-		posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
-		posy = MAXY - CARHEI;
+		uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
+		uint16 posy = MAXY - CARHEI;
 
-		if (g_vm->_lastObj)
-			g_vm->clearText();
-		g_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
+		if (_vm->_lastObj)
+			_vm->clearText();
+		_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
-		if (!obj || !showhide) {
-			g_vm->clearText();
-			g_vm->_lastObj = obj;
+		if (!obj || !show) {
+			_vm->clearText();
+			_vm->_lastObj = obj;
 			return;
 		}
 
-		if (obj == g_vm->_lastObj)
+		if (obj == _vm->_lastObj)
 			return;
-		if (!(g_vm->_obj[obj]._flag & kObjFlagExamine)) {
-			if ((g_vm->_obj[obj]._flag & kObjFlagDone) || (g_vm->_room[g_vm->_obj[obj]._goRoom]._flag & kObjFlagDone)) {
-				locsent = g_vm->_sysText[kMessageGoto];
-				if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+		if (!(_vm->_obj[obj]._flag & kObjFlagExamine)) {
+			if ((_vm->_obj[obj]._flag & kObjFlagDone) || (_vm->_room[_vm->_obj[obj]._goRoom]._flag & kObjFlagDone)) {
+				locsent = _vm->_sysText[kMessageGoto];
+				if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					locsent += dunno;
 				else
-					locsent += g_vm->_objName[g_vm->_obj[obj]._name];
+					locsent += _vm->_objName[_vm->_obj[obj]._name];
 			} else
-				locsent = g_vm->_sysText[kMessageGoto2];
-		} else if (g_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+				locsent = _vm->_sysText[kMessageGoto2];
+		} else if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 			locsent = dunno;
 		else
-			locsent = g_vm->_objName[g_vm->_obj[obj]._name];
+			locsent = _vm->_objName[_vm->_obj[obj]._name];
 
-		posx = (g_vm->_obj[obj]._lim.left + g_vm->_obj[obj]._lim.right) / 2;
-		posy = (obj == oWHEELS2C) ? 187 : g_vm->_obj[obj]._lim.top;
+		uint16 posx = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
+		uint16 posy = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
-		if (g_vm->_lastObj)
-			g_vm->clearText();
-		g_vm->_lastObj = obj;
-		g_vm->addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
+		if (_vm->_lastObj)
+			_vm->clearText();
+		_vm->_lastObj = obj;
+		_vm->addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
-void TextManager::SomeoneTalk(uint16 s, uint16 Person, uint16 NewAnim) {
-	SpeakSomeOneAnimation = NewAnim;
-	SpeakSomeOnePerson = Person;
-	g_vm->_flagSomeoneSpeaks = true;
-	g_vm->_flagSkipTalk = false;
+void TextManager::SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
+	_talkingPersonAnimId = NewAnim;
+	_talkingPersonId = Person;
+	_vm->_flagSomeoneSpeaks = true;
+	_vm->_flagSkipTalk = false;
 
-	CurS = s;
-	SuperString = g_vm->_sentence[s];
-	SuperStringLen = strlen(SuperString);
-	SubStringStart = 0;
-	CurSubString = 0;
+	_curSentenceId = s;
+	_superString = _vm->_sentence[s];
+	_superStringLen = strlen(_superString);
+	_subStringStart = 0;
+	_curSubString = 0;
 
 	FormattingSuperString();
 
-	if (SpeakSomeOneAnimation)
-		doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, SpeakSomeOneAnimation, 0, 0, 0);
-	doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, SpeakSomeOneAnimation, 0, 0, 0);
+	if (_talkingPersonAnimId)
+		doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, _talkingPersonAnimId, 0, 0, 0);
+	doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 }
 
 void TextManager::CharacterSay(uint16 i) {
-	CurS = i;
+	_curSentenceId = i;
 
 	//	if he took some action
-	if (g_vm->_sentence[i][0] == '*' && !g_vm->_animMgr->_playingAnims[kSmackerAction])
-		g_vm->StartCharacterAction(hBOH, 0, 0, 0);
+	if (_vm->_sentence[i][0] == '*' && !_vm->_animMgr->_playingAnims[kSmackerAction])
+		_vm->StartCharacterAction(hBOH, 0, 0, 0);
 	else
-		CharacterTalk(g_vm->_sentence[i]);
+		CharacterTalk(_vm->_sentence[i]);
 }
 
-void TextManager::CharacterTalkInAction(uint16 ss) {
-	const char *s = g_vm->_sentence[ss];
+void TextManager::CharacterSayInAction(uint16 ss) {
+	const char *s = _vm->_sentence[ss];
 
 	if (s[0] == '*')
 		return;
-	CurS = ss;
+	_curSentenceId = ss;
 
-	g_vm->_flagSomeoneSpeaks = true;
-	g_vm->_flagCharacterSpeak = true;
-	g_vm->_flagSkipTalk = false;
+	_vm->_flagSomeoneSpeaks = true;
+	_vm->_flagCharacterSpeak = true;
+	_vm->_flagSkipTalk = false;
 
-	SuperString = s;
-	SuperStringLen = strlen(SuperString);
-	SubStringStart = 0;
-	CurSubString = 0;
+	_superString = s;
+	_superStringLen = strlen(_superString);
+	_subStringStart = 0;
+	_curSubString = 0;
 	FormattingSuperString();
 
 	CharacterContinueTalk();

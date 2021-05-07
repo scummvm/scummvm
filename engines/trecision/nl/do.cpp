@@ -179,13 +179,13 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 
 	switch (type) {
 	case ATFTEXT:
-		g_vm->_textMgr->CharacterTalkInAction(h->_curAnim->_atFrame[atf]._index);
+		g_vm->_textMgr->CharacterSayInAction(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFTEXTACT:
-		g_vm->_textMgr->CharacterTalkInAction(g_vm->_obj[h->_object]._action);
+		g_vm->_textMgr->CharacterSayInAction(g_vm->_obj[h->_object]._action);
 		break;
 	case ATFTEXTEX:
-		g_vm->_textMgr->CharacterTalkInAction(g_vm->_obj[h->_object]._examine);
+		g_vm->_textMgr->CharacterSayInAction(g_vm->_obj[h->_object]._examine);
 		break;
 	case ATFCLR:
 		g_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, false);
@@ -267,13 +267,13 @@ void ProcessAtFrame(ATFHandle *h, int type, int atf) {
 			if (g_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
-			g_vm->_textMgr->SomeoneTalk(307 + dc, oDONNA1D, 0);
+			g_vm->_textMgr->SomeoneSay(307 + dc, oDONNA1D, 0);
 			if (dc < 6)
 				dc ++;
 			break;
 
 		case 2:
-			g_vm->_textMgr->SomeoneTalk(1788, ocNEGOZIANTE1A, 0);
+			g_vm->_textMgr->SomeoneSay(1788, ocNEGOZIANTE1A, 0);
 			break;
 		default:
 			break;
