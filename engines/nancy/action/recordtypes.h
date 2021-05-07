@@ -86,17 +86,26 @@ protected:
 	virtual Common::String getRecordTypeName() const override { return "HotMultiframeMultisceneChange"; }
 };
 
-class PaletteThisScene : public Unimplemented {
+class PaletteThisScene : public ActionRecord {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
+
+	byte _paletteID;
+	byte _unknownEnum; // enum w values 1-3
+	uint16 _paletteStart;
+	uint16 _paletteSize;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PaletteThisScene"; }
 };
 
-class PaletteNextScene : public Unimplemented {
+class PaletteNextScene : public ActionRecord {
 public:
 	virtual void readData(Common::SeekableReadStream &stream) override;
+	virtual void execute() override;
+
+	byte _paletteID;
 
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PaletteNextScene"; }
@@ -463,6 +472,7 @@ public:
 	virtual void execute() override;
 
 	SoundDescription _sound;
+
 protected:
 	virtual Common::String getRecordTypeName() const override { return "PlaySoundPanFrameAnchorAndDie"; }
 };

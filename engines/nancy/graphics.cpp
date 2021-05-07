@@ -130,6 +130,16 @@ void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const
 	}
 }
 
+void GraphicsManager::loadSurfacePalette(Graphics::ManagedSurface &inSurf, const Common::String paletteFilename, uint paletteStart, uint paletteSize) {
+	Common::File f;
+	if (f.open(paletteFilename + ".bmp")) {
+		Image::BitmapDecoder dec;
+		if (dec.loadStream(f)) {
+			inSurf.setPalette(dec.getPalette(), paletteStart, paletteSize);
+		}
+	}
+}
+
 void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::ManagedSurface &dst, bool verticalFlip, bool doubleSize) {
 	if (dst.w != (doubleSize ? src.w * 2 : src.w) || dst.h != (doubleSize ? src.h * 2 : src.h)) {
 		const uint32 *palette = dst.getPalette();

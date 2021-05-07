@@ -197,12 +197,24 @@ void Viewport::loadVideo(const Common::String &filename, uint frameNr, uint vert
 
 	if (palette.size()) {
 		GraphicsManager::loadSurfacePalette(_drawSurface, palette);
-		GraphicsManager::loadSurfacePalette(_fullFrame, palette);
+		_fullFrame.setPalette(_drawSurface.getPalette(), 0, 256);
 	}
 
 	_movementLastFrame = 0;
 	_nextMovementTime = 0;
 	_dontWrap = dontWrap;
+}
+
+void Viewport::setPalette(const Common::String &paletteName) {
+	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName);
+	_fullFrame.setPalette(_drawSurface.getPalette(), 0, 256);
+	_needsRedraw = true;
+}
+
+void Viewport::setPalette(const Common::String &paletteName, uint paletteStart, uint paletteSize) {
+	GraphicsManager::loadSurfacePalette(_drawSurface, paletteName, paletteStart, paletteSize);
+	_fullFrame.setPalette(_drawSurface.getPalette(), 0, 256);
+	_needsRedraw = true;
 }
 
 void Viewport::setFrame(uint frameNr) {

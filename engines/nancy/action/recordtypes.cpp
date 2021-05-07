@@ -113,11 +113,35 @@ void HotMultiframeMultisceneChange::readData(Common::SeekableReadStream &stream)
 }
 
 void PaletteThisScene::readData(Common::SeekableReadStream &stream) {
-	stream.skip(6);
+	_paletteID = stream.readByte();
+	_unknownEnum = stream.readByte();
+	_paletteStart = stream.readUint16LE();
+	_paletteSize = stream.readUint16LE();
+}
+
+void PaletteThisScene::execute() {
+	NancySceneState.getSceneInfo().paletteID = _paletteID;
+	const State::Scene::SceneSummary &ssum = NancySceneState.getSceneSummary();
+
+	if (_unknownEnum > 1 && _unknownEnum < 3) {
+		// Not sure what the difference is between the 3 types
+		NancySceneState.getViewport().setPalette(ssum.palettes[_paletteID], _paletteStart, _paletteSize);
+	} else {
+		NancySceneState.getViewport().setPalette(ssum.palettes[_paletteID]);
+	}
+
+	finishExecution();
 }
 
 void PaletteNextScene::readData(Common::SeekableReadStream &stream) {
-	stream.skip(6);
+	// Structure is the same as PaletteThisScene, but the original engine only uses the palette ID
+	_paletteID = stream.readByte();
+	stream.skip(5);
+}
+
+void PaletteNextScene::execute() {
+	NancySceneState.getNextSceneInfo().paletteID = _paletteID;
+	_isDone = true;
 }
 
 void StartFrameNextScene::readData(Common::SeekableReadStream &stream) {

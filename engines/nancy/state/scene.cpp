@@ -63,9 +63,12 @@ void Scene::SceneSummary::read(Common::SeekableReadStream &stream) {
 
 	// Load the palette data in The Vampire Diaries
 	ser.skip(4, kGameTypeVampire, kGameTypeVampire);
-	ser.syncBytes((byte *)buf, 10, kGameTypeVampire, kGameTypeVampire);
-	videoPaletteFile = buf;
-	ser.skip(0x14, kGameTypeVampire, kGameTypeVampire);
+	if (ser.getVersion() == kGameTypeVampire) {
+		palettes.resize(3);
+		readFilename(stream, palettes[0]);
+		readFilename(stream, palettes[1]);
+		readFilename(stream, palettes[2]);
+	}
 
 	sound.read(stream, SoundDescription::kScene);
 
@@ -479,6 +482,8 @@ void Scene::load() {
 				_sceneState.nextScene.verticalOffset,
 				_sceneState.doNotStartSound == true ? "true" : "false");
 
+	_sceneState.currentScene = _sceneState.nextScene;
+
 	// Search for Action Records, maximum for a scene is 30
 	Common::SeekableReadStream *actionRecordChunk = nullptr;
 
@@ -491,18 +496,15 @@ void Scene::load() {
 	}
 
 	_viewport.loadVideo(_sceneState.summary.videoFile,
-						_sceneState.nextScene.frameID,
-						_sceneState.nextScene.verticalOffset,
+						_sceneState.currentScene.frameID,
+						_sceneState.currentScene.verticalOffset,
 						_sceneState.summary.dontWrap,
 						_sceneState.summary.videoFormat,
-						_sceneState.summary.videoPaletteFile);
+						_sceneState.summary.palettes.size() ? _sceneState.summary.palettes[_sceneState.currentScene.paletteID] : Common::String());
 
 	if (_viewport.getFrameCount() <= 1) {
 		_viewport.disableEdges(kLeft | kRight);
 	}
-
-	_sceneState.currentScene.verticalOffset = _sceneState.nextScene.verticalOffset;
-	_sceneState.currentScene.frameID = _sceneState.nextScene.frameID;
 
 	if (_sceneState.summary.videoFormat == 1) {
 		// TODO
@@ -521,8 +523,8 @@ void Scene::load() {
 		}
 	}
 
-	_sceneState.currentScene = _sceneState.nextScene;
 	_timers.sceneTime = 0;
+	_sceneState.nextScene.paletteID = 0;
 
 	_state = kStartSound;
 }
