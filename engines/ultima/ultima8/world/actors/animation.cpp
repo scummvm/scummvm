@@ -79,6 +79,8 @@ bool isCombatAnimCru(const Sequence anim) {
 	case kneelEndCru:
 	case kneelAndFire:
 	case brightFireLargeWpn:
+	case kneelCombatRollLeft:
+	case kneelCombatRollRight:
 	case combatRollLeft:
 	case combatRollRight:
 	case slideLeft:

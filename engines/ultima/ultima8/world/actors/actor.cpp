@@ -493,6 +493,8 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		if (anim == Animation::kneelStartCru || anim == Animation::kneelAndFire ||
 				anim == Animation::kneelAndFireSmallWeapon ||
 				anim == Animation::kneelAndFireLargeWeapon ||
+				anim == Animation::kneelCombatRollLeft ||
+				anim == Animation::kneelCombatRollRight ||
 				anim == Animation::kneelingAdvance ||
 				anim == Animation::kneelingRetreat) {
 			setActorFlag(ACT_KNEELING);
@@ -509,14 +511,14 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 				_attackMoveDodgeFactor = 3;
 				break;
 			case Animation::run:
-			case Animation::combatRollLeft:
-			case Animation::combatRollRight:
+			case Animation::kneelCombatRollLeft:
+			case Animation::kneelCombatRollRight:
 			case Animation::stopRunningAndDrawLargeWeapon:
 			case Animation::stopRunningAndDrawSmallWeapon:
 			case Animation::jumpForward:
 			case Animation::jump:
-			case Animation::slowCombatRollLeft:
-			case Animation::slowCombatRollRight:
+			case Animation::combatRollLeft:
+			case Animation::combatRollRight:
 			//case Animation::startRunSmallWeapon:
 			//case Animation::startRunLargeWeapon:
 			case Animation::startRun:
@@ -1369,7 +1371,7 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 						lastanim = doAnimAfter(Animation::fallForwardsCru, dir_current, lastanim);
 					}
 
-					lastanim = doAnimAfter(Animation::combatRollLeft, dir_current, lastanim);
+					lastanim = doAnimAfter(Animation::kneelCombatRollLeft, dir_current, lastanim);
 					tookHitCru();
 				}
 			}

@@ -198,13 +198,13 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	} else if (hasMovementFlags(MOVE_JUMP)) {
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
 			if (avatar->isKneeling())
-				avatar->doAnim(Animation::slowCombatRollLeft, direction);
+				avatar->doAnim(Animation::kneelCombatRollLeft, direction);
 			else
 				avatar->doAnim(Animation::combatRollLeft, direction);
 			return;
 		} else if (hasMovementFlags(MOVE_TURN_RIGHT)) {
 			if (avatar->isKneeling())
-				avatar->doAnim(Animation::slowCombatRollRight, direction);
+				avatar->doAnim(Animation::kneelCombatRollRight, direction);
 			else
 				avatar->doAnim(Animation::combatRollRight, direction);
 			return;

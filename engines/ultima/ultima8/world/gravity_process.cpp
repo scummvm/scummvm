@@ -338,10 +338,10 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 
 	if (height / 8 > 2 &&
 		(lastanim != Animation::quickJumpCru &&
-		 lastanim != Animation::slowCombatRollLeft &&
-		 lastanim != Animation::slowCombatRollRight &&
 		 lastanim != Animation::combatRollLeft &&
 		 lastanim != Animation::combatRollRight &&
+		 lastanim != Animation::kneelCombatRollLeft &&
+		 lastanim != Animation::kneelCombatRollRight &&
 		 lastanim != Animation::run &&
 		 lastanim != Animation::jumpForward &&
 		 lastanim != Animation::unknownAnim30 &&

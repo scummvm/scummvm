@@ -112,8 +112,8 @@ enum Sequence {
 	unreadyLargeWeapon = 16,
 	fallBackwardsCru = 18,
 	fallForwardsCru = 20,
-	combatRollLeft = 23,
-	combatRollRight = 24,
+	kneelCombatRollLeft = 23,
+	kneelCombatRollRight = 24,
 	stopRunningAndDrawLargeWeapon = 25,
 	kneelAndFire = 26,
 	slideLeft = 28,
@@ -149,8 +149,8 @@ enum Sequence {
 	quickJumpCru = 58,
 	jumpLanding = 59,
 	surrenderStand = 60,
-	slowCombatRollLeft = 61,
-	slowCombatRollRight = 62,
+	combatRollLeft = 61,
+	combatRollRight = 62,
 	finishFiring = 63,
 
 	crusaderAbsoluteAnimFlag = 0x1000, //!< Bit mask magic to say we want an exact number, don't do mapping from U8 animation numbers
