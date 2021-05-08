@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "image/png.h"
+
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
 #include "sludge/newfatal.h"
@@ -168,6 +171,22 @@ bool GraphicsManager::setZBuffer(int num) {
 
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
+
+	if (!ConfMan.getBool("dump_scripts"))
+		return true;
+
+	// Debug code to output light map image
+
+	for (int i = 0; i < _zBuffer->numPanels; ++i) {
+		Common::DumpFile *outFile = new Common::DumpFile();
+
+		outFile->open(Common::String::format("dumps/zbuffer%04d-%d.png", num, i));
+		Image::writePNG(*outFile, _zBuffer->sprites[i]);
+		outFile->finalize();
+		outFile->close();
+		delete outFile;
+	}
+
 	return true;
 }
 
