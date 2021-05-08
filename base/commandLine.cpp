@@ -845,7 +845,7 @@ unknownOption:
 	return command;
 }
 
-/** List all supported game IDs, i.e. all games which any loaded plugin supports. */
+/** List all available game IDs, i.e. all games which any loaded plugin supports. */
 static void listGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -853,6 +853,10 @@ static void listGames() {
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+		/* If for some reason, we can't find the MetaEngine for this Engine, just ignore it */
+		if (!p) {
+			continue;
+		}
 
 		PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
@@ -861,7 +865,7 @@ static void listGames() {
 	}
 }
 
-/** List all detected game IDs, i.e. all games which any loaded plugin supports. */
+/** List all known game IDs, i.e. all games which can be detected. */
 static void listAllGames() {
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
@@ -877,7 +881,7 @@ static void listAllGames() {
 	}
 }
 
-/** List all supported engines, i.e. all loaded plugins. */
+/** List all supported engines, i.e. all loaded engine plugins. */
 static void listEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
@@ -885,12 +889,16 @@ static void listEngines() {
 	const PluginList &plugins = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
+		/* If for some reason, we can't find the MetaEngine for this Engine, just ignore it */
+		if (!p) {
+			continue;
+		}
 
 		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
 	}
 }
 
-/** List all detection engines, i.e. all loaded plugins. */
+/** List all detection engines, i.e. all loaded detection plugins. */
 static void listAllEngines() {
 	printf("Engine ID       Engine Name                                           \n"
 	       "--------------- ------------------------------------------------------\n");
