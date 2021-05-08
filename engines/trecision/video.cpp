@@ -21,23 +21,20 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "common/file.h"
-#include "common/events.h"
 
+#include "trecision/actor.h"
 #include "trecision/defines.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
+#include "trecision/dialog.h"
 #include "trecision/graphics.h"
+#include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-
-
-
-#include "actor.h"
-#include "dialog.h"
-#include "sound.h"
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
 
 namespace Trecision {
 

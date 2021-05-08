@@ -20,10 +20,23 @@
  *
  */
 
+#include "common/scummsys.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/translation.h"
+#include "engines/util.h"
+#include "gui/saveload.h"
+
 #include "trecision/trecision.h"
 #include "trecision/actor.h"
 #include "trecision/3d.h"
-
 #include "trecision/nl/3d/3dinc.h"
 #include "trecision/defines.h"
 #include "trecision/nl/message.h"
@@ -35,21 +48,6 @@
 #include "trecision/logic.h"
 #include "trecision/text.h"
 #include "trecision/sound.h"
-
-#include "engines/util.h"
-#include "common/scummsys.h"
-#include "common/error.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/fs.h"
-
-#include "common/savefile.h"
-#include "common/str.h"
-#include "common/translation.h"
-#include "gui/saveload.h"
 
 namespace Common {
 class File;

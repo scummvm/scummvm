@@ -24,8 +24,8 @@
 #define TRECISION_FASTFILE_H
 
 #include "common/archive.h"
-#include "common/stream.h"
 #include "common/array.h"
+#include "common/stream.h"
 
 namespace Trecision {
 

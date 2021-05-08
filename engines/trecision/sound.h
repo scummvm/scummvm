@@ -23,7 +23,6 @@
 #ifndef TRECISION_SOUND_H
 #define TRECISION_SOUND_H
 
-#include "common/file.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {

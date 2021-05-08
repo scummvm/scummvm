@@ -24,6 +24,7 @@
 #define TRECISION_LLINC_H
 
 #include "common/rect.h"
+
 #include "trecision/defines.h"
 
 #define DRAWMASK        1

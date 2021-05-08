@@ -20,11 +20,10 @@
  *
  */
 
-#include "trecision/trecision.h"
 #include "trecision/3d.h"
-
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 #define SHADOWVERTSNUM 42

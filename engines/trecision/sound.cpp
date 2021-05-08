@@ -20,17 +20,17 @@
  *
  */
 
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
+#include "audio/decoders/wave.h"
+#include "common/memstream.h"
 #include "common/scummsys.h"
+#include "common/system.h"
 
+#include "trecision/3d.h"	// for _defActionLen
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/defines.h"
-
-#include "audio/decoders/wave.h"
-#include "common/memstream.h"
-#include "common/system.h"
-#include "audio/mixer.h"
-#include "audio/audiostream.h"
 
 namespace Trecision {
 
@@ -215,7 +215,7 @@ void SoundManager::waitEndFading() {
 }
 
 void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
-	extern unsigned char _defActionLen[];
+	extern uint8 _defActionLen[];
 
 	bool stepRight = false;
 	bool stepLeft = false;

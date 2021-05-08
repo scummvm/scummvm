@@ -20,16 +20,16 @@
  *
  */
 
-#include "common/util.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "trecision/3d.h"
+#include "common/util.h"
 
+#include "trecision/3d.h"
+#include "trecision/actor.h"
 #include "trecision/defines.h"
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
-#include "trecision/actor.h"
+#include "trecision/nl/3d/3dinc.h"
 
 namespace Trecision {
 

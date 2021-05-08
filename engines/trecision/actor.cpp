@@ -20,12 +20,11 @@
  *
  */
 
-#include "trecision/trecision.h"
-#include "trecision/actor.h"
 #include "trecision/3d.h"
+#include "trecision/actor.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
-
+#include "trecision/trecision.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 

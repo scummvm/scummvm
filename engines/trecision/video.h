@@ -23,11 +23,11 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
-#include "trecision/nl/struct.h"
-
 #include "common/file.h"
-#include "video/smk_decoder.h"
 #include "common/serializer.h"
+#include "video/smk_decoder.h"
+
+#include "trecision/nl/struct.h"
 
 namespace Trecision {
 

@@ -20,15 +20,14 @@
  *
  */
 
+#include "common/scummsys.h"
+
 #include "trecision/dialog.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"
-
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
-
-#include "common/scummsys.h"
 
 namespace Trecision {
 
