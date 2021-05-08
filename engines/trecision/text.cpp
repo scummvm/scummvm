@@ -20,15 +20,14 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
-
 #include "trecision/trecision.h"
 #include "trecision/sound.h"
 #include "trecision/actor.h"
 #include "trecision/text.h"
-
-#include <common/config-manager.h>
 
 namespace Trecision {
 

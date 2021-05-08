@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+
 #include "trecision/nl/3d/3dinc.h"
 
 /*------------------------------------------------

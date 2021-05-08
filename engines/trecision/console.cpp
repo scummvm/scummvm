@@ -22,14 +22,12 @@
 
 #include "common/file.h"
 #include "gui/debugger.h"
+
 #include "trecision/console.h"
-
-
-
-#include "dialog.h"
-#include "nl/message.h"
-#include "nl/proto.h"
+#include "trecision/dialog.h"
 #include "trecision/trecision.h"
+#include "trecision/nl/message.h"
+#include "trecision/nl/proto.h"
 
 namespace Trecision {
 

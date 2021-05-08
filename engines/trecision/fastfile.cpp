@@ -21,14 +21,12 @@
  */
 
 #include "common/scummsys.h"
+#include "common/str.h"
+#include "common/substream.h"
+#include "common/memstream.h"
 #include "trecision/trecision.h"
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
-
-#include "common/str.h"
-#include "common/file.h"
-#include "common/substream.h"
-#include <common/memstream.h>
 
 namespace Trecision {
 

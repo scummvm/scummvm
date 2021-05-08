@@ -25,6 +25,7 @@
 
 #include "trecision/defines.h"
 #include "trecision/trecision.h"
+#include "trecision/nl/3d/3dinc.h"
 
 namespace Trecision {
 struct SVVertex {

@@ -22,18 +22,18 @@
 
 #include "common/util.h"
 #include "common/scummsys.h"
-#include "trecision/3d.h"
 
-#include "trecision/nl/3d/3dinc.h"
+#include "trecision/3d.h"
+#include "trecision/actor.h"
 #include "trecision/defines.h"
+#include "trecision/graphics.h"
+#include "trecision/sound.h"
+#include "trecision/trecision.h"
+#include "trecision/video.h"
+#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/trecision.h"
-#include "trecision/graphics.h"
-#include "trecision/sound.h"
-#include "trecision/video.h"
-#include "trecision/actor.h"
 
 namespace Trecision {
 

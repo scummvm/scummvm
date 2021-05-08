@@ -20,6 +20,9 @@
  *
  */
 
+#include "common/scummsys.h"
+#include "graphics/scaler.h"
+
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/dialog.h"
@@ -29,13 +32,8 @@
 #include "trecision/trecision.h"
 #include "trecision/sound.h"
 #include "trecision/text.h"
-
-#include "common/scummsys.h"
-#include "graphics/scaler.h"
-
 #include "trecision/nl/proto.h"
 #include "trecision/nl/message.h"
-
 
 namespace Trecision {
 

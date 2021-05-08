@@ -20,14 +20,12 @@
  *
  */
 
-#include <cstring>
-
 #include "common/scummsys.h"
 
-#include "trecision/nl/ll/llinc.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
+#include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
 

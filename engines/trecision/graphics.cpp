@@ -20,15 +20,15 @@
  *
  */
 
-#include "trecision/graphics.h"
-#include "trecision/trecision.h"
-#include "trecision/defines.h"
-
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+
+#include "trecision/defines.h"
+#include "trecision/graphics.h"
+#include "trecision/trecision.h"
 
 namespace Trecision {
 

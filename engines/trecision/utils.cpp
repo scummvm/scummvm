@@ -20,16 +20,15 @@
  *
  */
 
-#include <common/system.h>
-
+#include "common/system.h"
 
 #include "trecision/text.h"
-#include "trecision/graphics.h"
+#include "trecision/actor.h"
 #include "trecision/defines.h"
+#include "trecision/graphics.h"
 #include "trecision/logic.h"
 #include "trecision/trecision.h"
-#include "trecision/actor.h"
-
+#include "trecision/nl/3d/3dinc.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"

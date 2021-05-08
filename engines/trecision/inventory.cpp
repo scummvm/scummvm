@@ -20,15 +20,14 @@
  *
  */
 
-#include "text.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/logic.h"
+#include "trecision/text.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 

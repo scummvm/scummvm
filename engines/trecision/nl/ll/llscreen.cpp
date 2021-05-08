@@ -20,21 +20,21 @@
  *
  */
 
-#include <common/file.h>
-
-#include "common/system.h"
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/str.h"
-#include "trecision/dialog.h"
-#include "trecision/trecision.h"
-#include "trecision/nl/3d/3dinc.h"
+#include "common/system.h"
+
 #include "trecision/defines.h"
-#include "trecision/nl/proto.h"
-#include "trecision/nl/struct.h"
-#include "trecision/nl/ll/llinc.h"
+#include "trecision/dialog.h"
 #include "trecision/graphics.h"
 #include "trecision/sound.h"
+#include "trecision/trecision.h"
 #include "trecision/video.h"
+#include "trecision/nl/proto.h"
+#include "trecision/nl/struct.h"
+#include "trecision/nl/3d/3dinc.h"
+#include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
 

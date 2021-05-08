@@ -23,20 +23,17 @@
 #ifndef TRECISION_TRECISION_H
 #define TRECISION_TRECISION_H
 
-#include "engines/engine.h"
-
-#include "trecision/nl/3d/3dinc.h"
-#include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/struct.h"
-#include "trecision/fastfile.h"
-#include "trecision/video.h"
-#include "trecision/defines.h"
-
 #include "common/str-array.h"
 #include "common/keyboard.h"
-#include "graphics/surface.h"
 #include "common/str.h"
+#include "engines/engine.h"
+#include "graphics/surface.h"
 
+#include "trecision/defines.h"
+#include "trecision/fastfile.h"
+#include "trecision/video.h"
+#include "trecision/nl/ll/llinc.h"
+#include "trecision/nl/struct.h"
 
 namespace Trecision {
 class AnimManager;
