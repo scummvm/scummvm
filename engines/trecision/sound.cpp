@@ -290,7 +290,7 @@ void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *li
 	g_system->getMixer()->playStream(type, &_soundHandle[_stepChannel], _sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
 
-int32 SoundManager::talkStart(const char *name) {
+int32 SoundManager::talkStart(Common::String name) {
 	if (!_speechFile.isOpen())
 		return 0;
 

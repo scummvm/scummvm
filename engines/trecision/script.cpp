@@ -46,7 +46,7 @@ void TrecisionEngine::endScript() {
 	if (_curStack == 0) {
 		_flagscriptactive = false;
 		_graphicsMgr->showCursor();
-		redrawString();
+		_textMgr->redrawString();
 	}
 }
 
@@ -187,7 +187,7 @@ void TrecisionEngine::doAction() {
 				_useWithInv[USED] = false;
 				_useWithInv[WITH] = false;
 				_flagUseWithStarted = false;
-				clearText();
+				_textMgr->clearLastText();
 			} else
 				doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
 			_curObj = 0;
@@ -380,7 +380,7 @@ void TrecisionEngine::doCharacter() {
 		} else
 			_actor->actorDoAction(_curMessage->_u16Param1);
 
-		clearText();
+		_textMgr->clearLastText();
 		break;
 
 	case ME_CHARACTERCONTINUEACTION:

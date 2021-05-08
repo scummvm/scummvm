@@ -28,6 +28,7 @@
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/sound.h"
+#include "trecision/text.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 #include "trecision/nl/3d/3dinc.h"
@@ -72,23 +73,21 @@ void PaintScreen(bool flag) {
 		g_vm->addDirtyRect(DObj.l);
 	}
 
-// CANCELLO LA SCRITTA
+	// CANCELLO LA SCRITTA
 	if (TextStatus & TEXT_DEL) {
 		// cancello scritta
 		DObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
-		DObj.l.left = oldString._rect.left;
-		DObj.l.top = oldString._rect.top - TOP;
-		DObj.l.setWidth(oldString._rect.width());
-		DObj.l.setHeight(oldString._rect.height());
+		DObj.l = g_vm->_textMgr->getOldTextRect();
+		DObj.l.translate(0, -TOP);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
 
-		if (oldString._rect.top >= TOP && oldString._rect.bottom < AREA + TOP) {
+		if (DObj.l.top >= 0 && DObj.l.bottom < AREA) {
 			g_vm->_graphicsMgr->DrawObj(DObj);
 		} else {
 			g_vm->_graphicsMgr->EraseObj(DObj);
 		}
-		oldString.text = nullptr;
+		g_vm->_textMgr->clearOldText();
 		g_vm->addDirtyRect(DObj.l);
 
 		if (!(TextStatus & TEXT_DRAW))        // se non c'e' nuova scritta
@@ -123,8 +122,7 @@ void PaintScreen(bool flag) {
 	}
 
 	if (TextStatus & TEXT_DRAW) {
-		curString.DText();
-		g_vm->_dirtyRects.push_back(curString._rect);
+		g_vm->_textMgr->drawCurString();
 		TextStatus = TEXT_DRAW;                 // Activate text update
 	}
 

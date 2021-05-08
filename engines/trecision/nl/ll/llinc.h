@@ -54,10 +54,10 @@ struct SDText {
 	Common::Rect _subtitleRect;
 	uint16 tcol;
 	uint16 scol;
-	const char *text;
+	Common::String text;
 
 	void set(SDText org);
-	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const char *sign);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, Common::String text);
 
 	void DText(uint16 *frameBuffer = nullptr);
 	uint16 checkDText();
@@ -94,8 +94,6 @@ extern char *TextArea;
 // DTEXT
 extern char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
-extern SDText curString;
-extern SDText oldString;
 extern uint8  TextStatus;
 
 int Compare(const void *p1, const void *p2);

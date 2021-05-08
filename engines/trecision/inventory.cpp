@@ -229,13 +229,13 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		return;
 
 	if (_lastObj) {
-		clearText();
+		_textMgr->clearLastText();
 		_lastObj = 0;
 	}
 
 	if (_flagUseWithStarted) {
 		if (!showhide) {
-			clearText();
+			_textMgr->clearLastText();
 			_lastInv = 0;
 			return;
 		}
@@ -265,14 +265,14 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 
 		_lastInv = (obj | 0x8000);
 		if (_lastInv)
-			clearText();
-		addText(posX, posY, locsent, COLOR_INVENTORY, MASKCOL);
+			_textMgr->clearLastText();
+		_textMgr->addText(posX, posY, locsent, COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (obj == _lastInv)
 			return;
 
 		if (!obj || !showhide) {
-			clearText();
+			_textMgr->clearLastText();
 			_lastInv = 0;
 			return;
 		}
@@ -284,10 +284,10 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		posX = CLIP(posX - (lenText / 2), 2, MAXX - 2 - lenText);
 
 		if (_lastInv)
-			clearText();
+			_textMgr->clearLastText();
 
 		if (_inventoryObj[obj]._name)
-			addText(posX, posY, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			_textMgr->addText(posX, posY, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
@@ -299,7 +299,7 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 	_inventory.remove_at(pos);
 	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN; 
 
-	redrawString();
+	_textMgr->redrawString();
 }
 
 void TrecisionEngine::addIcon(uint8 icon) {
@@ -312,7 +312,7 @@ void TrecisionEngine::addIcon(uint8 icon) {
 	//	To show the icon that enters the inventory
 	//	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);
 	//	FlagForceRegenInventory = true;
-	redrawString();
+	_textMgr->redrawString();
 }
 
 void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
@@ -364,7 +364,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			_inventoryCounter = INVENTORY_SHOW;
 			if (!isInventoryArea(_mousePos))
 				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
-			redrawString();
+			_textMgr->redrawString();
 			return;
 		}
 	} else if (status == INV_DEPAINT) {
@@ -378,7 +378,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			if (isInventoryArea(_mousePos) && !(_flagDialogActive || _flagDialogMenuActive))
 				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
-				redrawString();
+				_textMgr->redrawString();
 			return;
 		}
 	}

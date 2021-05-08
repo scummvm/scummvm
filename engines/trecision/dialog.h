@@ -44,7 +44,7 @@ public:
 	DialogManager(TrecisionEngine *vm);
 	~DialogManager();
 
-	void dialogPrint(int x, int y, int c, const char *txt);
+	void dialogPrint(int x, int y, int c, Common::String txt);
 	void updateChoices(int16 dmx, int16 dmy);
 	void selectChoice(int16 dmx, int16 dmy);
 	void playDialog(uint16 i);

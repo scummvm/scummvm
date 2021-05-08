@@ -205,8 +205,6 @@ struct StackText {
 	uint16 tcol, scol;
 	char text[256];
 	bool clear;
-
-	void doText();
 };
 
 } // End of namespace Trecision
