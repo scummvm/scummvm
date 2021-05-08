@@ -86,6 +86,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO0()
 	},
+	{
+		"nl",
+		0,
+		AD_ENTRY1s("data.nl", "7665db13ad2a1ceb576531be3e1efb30", 392950),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_DEMO,
+		GUIO0()
+	},
+
 	AD_TABLE_END_MARKER
 };
 
