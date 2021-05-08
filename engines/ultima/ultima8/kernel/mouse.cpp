@@ -203,8 +203,11 @@ int Mouse::getMouseFrame() {
 
 	switch (cursor) {
 	case MOUSE_NORMAL: {
+		if (GAME_IS_CRUSADER)
+			return -1;
+
 		bool combat = false;
-		MainActor *av = getMainActor();
+		const MainActor *av = getMainActor();
 		if (av) {
 			combat = av->isInCombat();
 		}
