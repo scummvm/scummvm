@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-05 21:34+0000\n"
+"POT-Creation-Date: 2021-05-07 20:18+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4752,19 +4752,19 @@ msgstr "Valsspeel modus aangezet"
 msgid "Debug info and level selection becomes available"
 msgstr "Debug info en level selectie komen beschikbaar"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
 msgid "Move up"
 msgstr "Beweeg omhoog"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
 msgid "Move down"
 msgstr "Beweeg omlaag"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
 msgid "Move left"
 msgstr "Beweeg naar links"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
 msgid "Move right"
 msgstr "Beweeg naar rechts"
 
@@ -5456,78 +5456,78 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Geef bestandsnaam voor bewaren"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:164
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Linker Klik"
 
-#: engines/nancy/input.cpp:173
+#: engines/nancy/input.cpp:171
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Rechter klik eenmalig"
 
-#: engines/nancy/input.cpp:204
+#: engines/nancy/input.cpp:202
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Snelle modus"
 
-#: engines/nancy/input.cpp:212
+#: engines/nancy/input.cpp:210
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle fast conversation mode"
 msgstr "Snelle modus aan-/uitzetten"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:215
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle end conversation mode"
 msgstr "Snelle modus aan-/uitzetten"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:220
 #, fuzzy
 msgid "Go to main menu"
 msgstr "Terug naar s~t~artmenu"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:225
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "Plaats bewaar/laad speldisk"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:230
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Gaan datum opgeslagen"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:235
 #, fuzzy
 #| msgid "Show options menu"
 msgid "Go to setup menu"
 msgstr "Toon opties menu"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:240
 #, fuzzy
 #| msgid "Show game credits"
 msgid "Show credits"
 msgstr "Tool spel credits"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:245
 #, fuzzy
 #| msgid "Swap screens"
 msgid "Go to map screen"
 msgstr "Wissel schermen"
 
-#: engines/nancy/input.cpp:253
+#: engines/nancy/input.cpp:251
 #, fuzzy
 #| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
 msgstr "Valsspeel modus aangezet"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
 msgstr ""
 

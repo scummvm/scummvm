@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-05 21:34+0000\n"
+"POT-Creation-Date: 2021-05-07 20:18+0000\n"
 "PO-Revision-Date: 2021-03-07 12:24+0000\n"
 "Last-Translator: Joohan Lee <losernator@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4684,19 +4684,19 @@ msgstr "치트 모드 활성화"
 msgid "Debug info and level selection becomes available"
 msgstr "디버그 정보와 레벨 선택이 가능해집니다"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
 msgid "Move up"
 msgstr "위로 이동"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
 msgid "Move down"
 msgstr "아래로 이동"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
 msgid "Move left"
 msgstr "왼쪽으로 이동"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
 msgid "Move right"
 msgstr "오른쪽으로 이동"
 
@@ -5380,76 +5380,76 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "저장할 파일명을 입력"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:164
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "왼쪽 클릭"
 
-#: engines/nancy/input.cpp:173
+#: engines/nancy/input.cpp:171
 #, fuzzy
 #| msgid "Right Click"
 msgid "Right Click Interact"
 msgstr "오른쪽 클릭"
 
-#: engines/nancy/input.cpp:204
+#: engines/nancy/input.cpp:202
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "고속 모드"
 
-#: engines/nancy/input.cpp:212
+#: engines/nancy/input.cpp:210
 #, fuzzy
 msgid "Toggle fast conversation mode"
 msgstr "드래그 모드 전환"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:215
 #, fuzzy
 msgid "Toggle end conversation mode"
 msgstr "드래그 모드 전환"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:220
 #, fuzzy
 #| msgid "Open main menu"
 msgid "Go to main menu"
 msgstr "메인 메뉴 열기"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:225
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "저장하거나 불러올 디스크를 넣어 주세요"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:230
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "날짜가 기록되지 않음"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:235
 #, fuzzy
 #| msgid "Show options menu"
 msgid "Go to setup menu"
 msgstr "옵션 메뉴 보이기"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:240
 #, fuzzy
 #| msgid "Show game credits"
 msgid "Show credits"
 msgstr "게임 크레딧 표시"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:245
 #, fuzzy
 msgid "Go to map screen"
 msgstr "스크린샷 저장"
 
-#: engines/nancy/input.cpp:253
+#: engines/nancy/input.cpp:251
 #, fuzzy
 #| msgid "Enable cheat mode"
 msgid "Open general cheat menu"
 msgstr "치트 모드 활성화"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
 msgstr ""
 

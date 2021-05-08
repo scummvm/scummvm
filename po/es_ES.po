@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-05 21:34+0000\n"
+"POT-Creation-Date: 2021-05-07 20:18+0000\n"
 "PO-Revision-Date: 2021-05-04 15:25+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4737,19 +4737,19 @@ msgstr "Activar trucos"
 msgid "Debug info and level selection becomes available"
 msgstr "Desbloquea la información de depuración y el selector de nivel"
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
 msgid "Move up"
 msgstr "Mover hacia arriba"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
 msgid "Move down"
 msgstr "Mover hacia abajo"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
 msgid "Move left"
 msgstr "Mover hacia la izquierda"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
 msgid "Move right"
 msgstr "Mover hacia la derecha"
 
@@ -5448,55 +5448,55 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Nombre del archivo de partida inválido"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:164
 msgid "Left Click Interact"
 msgstr "Interactuar con el botón izquierdo"
 
-#: engines/nancy/input.cpp:173
+#: engines/nancy/input.cpp:171
 msgid "Right Click Interact"
 msgstr "Interactuar con el botón derecho"
 
-#: engines/nancy/input.cpp:204
+#: engines/nancy/input.cpp:202
 msgid "Fast move modifier"
 msgstr "Modificador de movimiento rápido"
 
-#: engines/nancy/input.cpp:212
+#: engines/nancy/input.cpp:210
 msgid "Toggle fast conversation mode"
 msgstr "Acelerar conversaciones"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:215
 msgid "Toggle end conversation mode"
 msgstr "Terminar conversaciones"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:220
 msgid "Go to main menu"
 msgstr "Ir al menú principal"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:225
 msgid "Go to save/load menu"
 msgstr "Ir al menú de guardado/carga"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:230
 msgid "Reload last save"
 msgstr "Cargar la última partida guardada"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:235
 msgid "Go to setup menu"
 msgstr "Ir al menú de configuración"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:240
 msgid "Show credits"
 msgstr "Mostrar créditos"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:245
 msgid "Go to map screen"
 msgstr "Ir a la pantalla del mapa"
 
-#: engines/nancy/input.cpp:253
+#: engines/nancy/input.cpp:251
 msgid "Open general cheat menu"
 msgstr "Abrir menú de trucos generales"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
 msgstr "Abrir menú de trucos de indicadores de eventos"
 

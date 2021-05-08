@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-05 21:34+0000\n"
+"POT-Creation-Date: 2021-05-07 20:18+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4773,22 +4773,22 @@ msgstr "Gaitu helio modua"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
-#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:180
+#: engines/hdb/metaengine.cpp:193 engines/nancy/input.cpp:178
 #, fuzzy
 msgid "Move up"
 msgstr "Atzera mugitu"
 
-#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:186
+#: engines/hdb/metaengine.cpp:199 engines/nancy/input.cpp:184
 #, fuzzy
 msgid "Move down"
 msgstr "Eskuinera irristatu"
 
-#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:192
+#: engines/hdb/metaengine.cpp:205 engines/nancy/input.cpp:190
 #, fuzzy
 msgid "Move left"
 msgstr "Ezkerrera irristatu"
 
-#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:198
+#: engines/hdb/metaengine.cpp:211 engines/nancy/input.cpp:196
 #, fuzzy
 msgid "Move right"
 msgstr "Eskuinera irristatu"
@@ -5467,72 +5467,72 @@ msgstr ""
 msgid "Invalid file name for saving"
 msgstr "Sartu gordetzeko fitxategi-izena"
 
-#: engines/nancy/input.cpp:166
+#: engines/nancy/input.cpp:164
 #, fuzzy
 #| msgid "Left Click"
 msgid "Left Click Interact"
 msgstr "Ezker-klika"
 
-#: engines/nancy/input.cpp:173
+#: engines/nancy/input.cpp:171
 #, fuzzy
 #| msgid "Right Click Once"
 msgid "Right Click Interact"
 msgstr "Eskuin-klika behin"
 
-#: engines/nancy/input.cpp:204
+#: engines/nancy/input.cpp:202
 #, fuzzy
 #| msgid "Fast mode"
 msgid "Fast move modifier"
 msgstr "Modu bizkorra"
 
-#: engines/nancy/input.cpp:212
+#: engines/nancy/input.cpp:210
 #, fuzzy
 msgid "Toggle fast conversation mode"
 msgstr "Modu bizkorra"
 
-#: engines/nancy/input.cpp:217
+#: engines/nancy/input.cpp:215
 #, fuzzy
 msgid "Toggle end conversation mode"
 msgstr "Modu bizkorra"
 
-#: engines/nancy/input.cpp:222
+#: engines/nancy/input.cpp:220
 #, fuzzy
 msgid "Go to main menu"
 msgstr "It~z~uli abiarazlera"
 
-#: engines/nancy/input.cpp:227
+#: engines/nancy/input.cpp:225
 #, fuzzy
 #| msgid "Insert save/load game disk"
 msgid "Go to save/load menu"
 msgstr "Sartu partida gordeak dituen diskoa"
 
-#: engines/nancy/input.cpp:232
+#: engines/nancy/input.cpp:230
 #, fuzzy
 #| msgid "No date saved"
 msgid "Reload last save"
 msgstr "Ez dago datarik gordeta"
 
-#: engines/nancy/input.cpp:237
+#: engines/nancy/input.cpp:235
 #, fuzzy
 msgid "Go to setup menu"
 msgstr "Aukerak"
 
-#: engines/nancy/input.cpp:242
+#: engines/nancy/input.cpp:240
 #, fuzzy
 msgid "Show credits"
 msgstr "Saguaren kurtsorea erakutsi"
 
-#: engines/nancy/input.cpp:247
+#: engines/nancy/input.cpp:245
 #, fuzzy
 msgid "Go to map screen"
 msgstr "Heldutako korritze barra gaituta"
 
-#: engines/nancy/input.cpp:253
+#: engines/nancy/input.cpp:251
 #, fuzzy
 msgid "Open general cheat menu"
 msgstr "Gaitu helio modua"
 
-#: engines/nancy/input.cpp:258
+#: engines/nancy/input.cpp:256
 msgid "Open event flags cheat menu"
 msgstr ""
 
