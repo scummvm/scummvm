@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/debug.h"
 
 #include "image/png.h"
@@ -54,7 +53,7 @@ bool ImgLoader::loadImage(int num, const char *fname, Common::SeekableReadStream
 			g_sludge->_resMan->dumpFile(num, Common::String::format("%s%%04d.png", fname).c_str());
 	}
 
-	if (!ConfMan.getBool("dump_scripts"))
+	if (!g_sludge->_dumpScripts)
 		return true;
 
 	if (dumpPng || (fname && num == -1)) {

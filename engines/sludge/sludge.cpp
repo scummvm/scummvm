@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
+#include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/error.h"
 #include "common/random.h"
@@ -65,6 +66,8 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 
 	DebugMan.enableDebugChannel("Data Load");
 	DebugMan.enableDebugChannel("Built-in");
+
+	_dumpScripts = ConfMan.getBool("dump_scripts");
 
 	// init graphics
 	_origFormat = new Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);

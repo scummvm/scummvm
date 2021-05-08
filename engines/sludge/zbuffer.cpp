@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "image/png.h"
 
 #include "sludge/fileset.h"
@@ -172,7 +171,7 @@ bool GraphicsManager::setZBuffer(int num) {
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
 
-	if (!ConfMan.getBool("dump_scripts"))
+	if (!g_sludge->_dumpScripts)
 		return true;
 
 	// Debug code to output light map image

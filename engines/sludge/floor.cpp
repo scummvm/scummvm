@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
-
 #include "sludge/fileset.h"
 #include "sludge/floor.h"
 #include "sludge/graphics.h"
@@ -255,7 +253,7 @@ bool FloorManager::setFloor(int fileNum) {
 }
 
 void FloorManager::dumpFloor(int fileNum) {
-	if (!ConfMan.getBool("dump_scripts"))
+	if (!g_sludge->_dumpScripts)
 		return;
 
 	Common::DumpFile dumpFile;

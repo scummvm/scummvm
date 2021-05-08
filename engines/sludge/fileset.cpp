@@ -21,7 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "common/config-manager.h"
 
 #include "sludge/fileset.h"
 #include "sludge/moreio.h"
@@ -221,7 +220,7 @@ void ResourceManager::finishAccess() {
 }
 
 void ResourceManager::dumpFile(int num, const char *pattern) {
-	if (!ConfMan.getBool("dump_scripts"))
+	if (!g_sludge->_dumpScripts)
 		return;
 
 	Common::DumpFile dumpFile;

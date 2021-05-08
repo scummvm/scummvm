@@ -97,6 +97,8 @@ public:
 	FatalMsgManager *_fatalMan;
 	StatusBarManager *_statusBar;
 
+	bool _dumpScripts;
+
 	SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc);
 	~SludgeEngine() override;
 
