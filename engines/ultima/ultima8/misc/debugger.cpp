@@ -154,6 +154,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::nextInvItem", WRAP_METHOD(Debugger, cmdNextInventory));
 	registerCmd("MainActor::useInventoryItem", WRAP_METHOD(Debugger, cmdUseInventoryItem));
 	registerCmd("MainActor::useMedikit", WRAP_METHOD(Debugger, cmdUseMedikit));
+	registerCmd("MainActor::useEnergyCube", WRAP_METHOD(Debugger, cmdUseEnergyCube));
 	registerCmd("MainActor::detonateBomb", WRAP_METHOD(Debugger, cmdDetonateBomb));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 	registerCmd("ItemSelectionProcess::startSelection", WRAP_METHOD(Debugger, cmdStartSelection));
@@ -1093,6 +1094,22 @@ bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 
 	MainActor *av = getMainActor();
 	av->useInventoryItem(0x351);
+	return false;
+}
+
+bool Debugger::cmdUseEnergyCube(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't use energy cube: avatarInStasis\n");
+		return false;
+	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
+	MainActor *av = getMainActor();
+	av->useInventoryItem(0x582);
 	return false;
 }
 
