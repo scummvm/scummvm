@@ -196,16 +196,11 @@ void WeaselGump::InitGump(Gump *newparent, bool take_focus) {
 }
 
 Gump *WeaselGump::playMovie(const Std::string &filename) {
-	const Std::string path = Std::string::format("flics/%s.avi", filename.c_str());
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(path);
-	if (!rs) {
+	MovieGump *gump = MovieGump::CruMovieViewer(filename, 600, 450, nullptr, this);
+	if (!gump) {
 		warning("Couldn't load flic %s", filename.c_str());
 		return nullptr;
 	}
-	Gump *gump = new MovieGump(600, 450, rs, false, false);
-	gump->InitGump(this, true);
-	gump->setRelativePosition(CENTER);
 	gump->CreateNotifier();
 	return gump;
 }

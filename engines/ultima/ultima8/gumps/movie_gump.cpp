@@ -40,6 +40,60 @@
 namespace Ultima {
 namespace Ultima8 {
 
+static Std::string _fixCrusaderMovieName(const Std::string &s) {
+	/*
+	 HACK! The game comes with movies MVA01.AVI etc, but the usecode mentions both
+	 MVA01 and MVA1.  We do a translation here.	 These are the strings we need to fix:
+	 008E: 0D	push string	"mva1"
+	 036D: 0D	push string	"mva3a"
+	 04E3: 0D	push string	"mva4"
+	 0656: 0D	push string	"mva5a"
+	 07BD: 0D	push string	"mva6"
+	 0944: 0D	push string	"mva7"
+	 0A68: 0D	push string	"mva8"
+	 0B52: 0D	push string	"mva9"
+	*/
+	if (s.size() == 4)
+		return Std::string::format("mva0%c", s[3]);
+	else if (s.equals("mva3a"))
+		return "mva03a";
+	else if (s.equals("mva5a"))
+		return "mva05a";
+
+	return s;
+}
+
+static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
+	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
+	FileSystem *filesys = FileSystem::get_instance();
+	Common::SeekableReadStream *rs = filesys->ReadFile(path);
+	if (!rs) {
+		// Try with a "0" in the name
+		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
+		rs = filesys->ReadFile(adjustedfn);
+		if (!rs)
+			return nullptr;
+	}
+	return rs;
+}
+
+static Common::SeekableReadStream *_tryLoadCruAVI(const Std::string &filename) {
+	Common::SeekableReadStream *rs = _tryLoadCruMovieFile(filename, "avi");
+	if (!rs)
+		warning("movie %s not found", filename.c_str());
+	return rs;
+}
+
+// Convenience function that tries to open both TXT (No Remorse)
+// and IFF (No Regret) subtitle formats.
+static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filename) {
+	Common::SeekableReadStream *txtfile = _tryLoadCruMovieFile(filename, "txt");
+	if (txtfile)
+		return txtfile;
+	return _tryLoadCruMovieFile(filename, "iff");
+}
+
+
 DEFINE_RUNTIME_CLASSTYPE_CODE(MovieGump)
 
 MovieGump::MovieGump() : ModalGump(), _player(nullptr) {
@@ -134,7 +188,7 @@ bool MovieGump::OnKeyDown(int key, int mod) {
 	return true;
 }
 
-//static
+/*static*/
 ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack, bool noScale) {
 	ModalGump *gump;
 	if (GAME_IS_U8)
@@ -154,6 +208,18 @@ ProcId MovieGump::U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool 
 		gump->CreateNotifier();
 		return gump->GetNotifyProcess()->getPid();
 	}
+}
+
+/*static*/ MovieGump *MovieGump::CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent) {
+	Common::SeekableReadStream *rs = _tryLoadCruAVI(fname);
+	if (!rs)
+		return nullptr;
+
+	MovieGump *gump = new MovieGump(x, y, rs, false, false, pal);
+	gump->InitGump(parent, true);
+	gump->setRelativePosition(CENTER);
+	gump->loadSubtitles(_tryLoadCruSubtitle(fname));
+	return gump;
 }
 
 void MovieGump::loadSubtitles(Common::SeekableReadStream *rs) {
@@ -197,59 +263,6 @@ void MovieGump::saveData(Common::WriteStream *ws) {
 
 }
 
-static Std::string _fixCrusaderMovieName(const Std::string &s) {
-	/*
-	 HACK! The game comes with movies MVA01.AVI etc, but the usecode mentions both
-	 MVA01 and MVA1.  We do a translation here.	 These are the strings we need to fix:
-	 008E: 0D	push string	"mva1"
-	 036D: 0D	push string	"mva3a"
-	 04E3: 0D	push string	"mva4"
-	 0656: 0D	push string	"mva5a"
-	 07BD: 0D	push string	"mva6"
-	 0944: 0D	push string	"mva7"
-	 0A68: 0D	push string	"mva8"
-	 0B52: 0D	push string	"mva9"
-	*/
-	if (s.size() == 4)
-		return Std::string::format("mva0%c", s[3]);
-	else if (s.equals("mva3a"))
-		return "mva03a";
-	else if (s.equals("mva5a"))
-		return "mva05a";
-
-	return s;
-}
-
-static Common::SeekableReadStream *_tryLoadCruMovieFile(const Std::string &filename, const char *extn) {
-	const Std::string path = Std::string::format("flics/%s.%s", filename.c_str(), extn);
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(path);
-	if (!rs) {
-		// Try with a "0" in the name
-		const Std::string adjustedfn = Std::string::format("flics/0%s.%s", filename.c_str(), extn);
-		rs = filesys->ReadFile(adjustedfn);
-		if (!rs)
-			return nullptr;
-	}
-	return rs;
-}
-
-static Common::SeekableReadStream *_tryLoadCruAVI(const Std::string &filename) {
-	Common::SeekableReadStream *rs = _tryLoadCruMovieFile(filename, "avi");
-	if (!rs)
-		warning("movie %s not found", filename.c_str());
-	return rs;
-}
-
-// Convenience function that tries to open both TXT (No Remorse)
-// and IFF (No Regret) subtitle formats.
-static Common::SeekableReadStream *_tryLoadCruSubtitle(const Std::string &filename) {
-	Common::SeekableReadStream *txtfile = _tryLoadCruMovieFile(filename, "txt");
-	if (txtfile)
-		return txtfile;
-	return _tryLoadCruMovieFile(filename, "iff");
-}
-
 uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
@@ -267,13 +280,7 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		const Palette *pal = palman->getPalette(PaletteManager::Pal_Game);
 		assert(pal);
 
-		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
-		if (rs) {
-			MovieGump *gump = new MovieGump(x, y, rs, false, false, pal->_palette);
-			gump->InitGump(nullptr, true);
-			gump->setRelativePosition(CENTER);
-			gump->loadSubtitles(_tryLoadCruSubtitle(name));
-		}
+		CruMovieViewer(name, x, y, pal->_palette, nullptr);
 	}
 
 	return 0;
@@ -286,13 +293,7 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	ARG_UINT16(y);
 
 	if (item) {
-		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
-		if (rs) {
-			MovieGump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
-			gump->InitGump(nullptr, true);
-			gump->setRelativePosition(CENTER);
-			gump->loadSubtitles(_tryLoadCruSubtitle(name));
-		}
+		CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
 	}
 
 	return 0;
@@ -312,13 +313,7 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
 
 	if (item) {
-		Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
-		if (rs) {
-			MovieGump *gump = new MovieGump(x * 3, y * 3, rs, false, false);
-			gump->InitGump(nullptr, true);
-			gump->setRelativePosition(CENTER);
-			gump->loadSubtitles(_tryLoadCruSubtitle(name));
-		}
+		CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
 	}
 
 	return 0;
@@ -330,13 +325,7 @@ uint32 MovieGump::I_playMovieCutsceneRegret(const uint8 *args, unsigned int /*ar
 
 	warning("MovieGump::I_playMovieCutsceneRegret: TODO: use fade argument %d", fade);
 
-	Common::SeekableReadStream *rs = _tryLoadCruAVI(name);
-	if (rs) {
-		MovieGump *gump = new MovieGump(640, 480, rs, false, false);
-		gump->InitGump(nullptr, true);
-		gump->setRelativePosition(CENTER);
-		gump->loadSubtitles(_tryLoadCruSubtitle(name));
-	}
+	CruMovieViewer(name, 640, 480, nullptr, nullptr);
 
 	return 0;
 }

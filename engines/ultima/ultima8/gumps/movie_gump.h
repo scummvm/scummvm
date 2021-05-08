@@ -56,6 +56,7 @@ public:
 	bool OnKeyDown(int key, int mod) override;
 
 	static ProcId U8MovieViewer(Common::SeekableReadStream *rs, bool fade, bool introMusicHack, bool noScale);
+	static MovieGump *CruMovieViewer(const Std::string fname, int x, int y, const byte *pal, Gump *parent);
 
 	bool loadData(Common::ReadStream *rs);
 	void saveData(Common::WriteStream *ws) override;

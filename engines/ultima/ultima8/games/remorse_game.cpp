@@ -28,6 +28,7 @@
 #include "ultima/ultima8/filesys/file_system.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
@@ -149,15 +150,13 @@ bool RemorseGame::startInitialUsecode(int saveSlot) {
 
 
 static ProcId playMovie(const char *movieID, bool fade, bool noScale) {
-	const Std::string filename = Std::string::format("flics/%s.avi", movieID);
-	FileSystem *filesys = FileSystem::get_instance();
-	Common::SeekableReadStream *rs = filesys->ReadFile(filename);
-	if (!rs) {
-		pout << "RemorseGame::playIntro: movie not found." << Std::endl;
+	MovieGump *gump = MovieGump::CruMovieViewer(movieID, 640, 480, nullptr, nullptr);
+	if (!gump) {
+		pout << "RemorseGame::playIntro: movie " << movieID << " not found." << Std::endl;
 		return 0;
 	}
-	// TODO: Add support for subtitles (.txt file).  The format is very simple.
-	return MovieGump::U8MovieViewer(rs, fade, false, noScale);
+	gump->CreateNotifier();
+	return gump->GetNotifyProcess()->getPid();
 }
 
 ProcId RemorseGame::playIntroMovie(bool fade) {
