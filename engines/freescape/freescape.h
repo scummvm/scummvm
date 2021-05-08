@@ -24,6 +24,7 @@ typedef struct Binary {
 	AreaMap *areasByAreaID;
 	Common::Array<uint8> *border;
 	Common::Array<uint8> *palette;
+	uint16 ncolors;
 } Binary;
 
 class Console;

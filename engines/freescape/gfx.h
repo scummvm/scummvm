@@ -120,6 +120,12 @@ public:
      */
 	Graphics::Surface *convertFromPalette(Graphics::PixelBuffer *rawsurf);
 
+
+    /**
+	 *   Show palette on screen
+     */
+	void renderPalette(Common::Array<uint8> *raw_palette, uint16 ncolors);
+
 	virtual void init() = 0;
 	virtual void clear() = 0;
 

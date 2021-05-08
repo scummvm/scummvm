@@ -129,20 +129,17 @@ float specColors[16][3] = {
 	{1, 1, 1}
 };
 
-
-Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
-{
+Common::Array <uint8>*getPaletteGradient(float *c1, float *c2, uint16 ncolors) {
 	Common::Array <uint8> *raw_palette = new Common::Array <uint8>();
 	uint16 y0, y1, y2;
-	debug("palette:");
-	for(int c = 0; c < 16; c++)
+	for(int c = 0; c < ncolors; c++)
 	{
-		float ic = (float)c / 15.0f;
+		float ic = (float)c / float(ncolors-1);
 		ic = sqrt(ic);
 		y0  = 255*(ic*c2[0] + (1-ic)*c1[0]);
 		y1  = 255*(ic*c2[1] + (1-ic)*c1[1]);
 		y2  = 255*(ic*c2[2] + (1-ic)*c1[2]);
-		debug("%x %x %x", y0, y1, y2);
+		//debug("%x %x %x", y0, y1, y2);
 		raw_palette->push_back(y0);
 		raw_palette->push_back(y1);
 		raw_palette->push_back(y2);
@@ -151,7 +148,7 @@ Common::Array <uint8>*getPaletteGradient(float *c1, float *c2)
 }
 
 
-Area *load8bitArea(StreamLoader &stream) {
+Area *load8bitArea(StreamLoader &stream, uint16 ncolors) {
 	uint32 base = stream.getFileOffset();
 	uint8 skippedValue = stream.get8();
 	uint8 numberOfObjects = stream.get8();
@@ -165,7 +162,12 @@ Area *load8bitArea(StreamLoader &stream) {
 	uint8 ci4 = stream.get8()&15; 
 
 	debug("Colors: %d %d %d %d", ci1, ci2, ci3, ci4);
-	Common::Array <uint8> *raw_palette = getPaletteGradient(specColors[ci4], specColors[ci3]);
+
+	float *f1, *f2;
+	f1 = specColors[ci3];
+	f2 = specColors[ci4];
+
+	Common::Array <uint8> *raw_palette = getPaletteGradient(f1, f2, ncolors);
 
 	debug("Area %d", areaNumber);
 	debug("Objects: %d", numberOfObjects);
@@ -202,8 +204,37 @@ Area *load8bitArea(StreamLoader &stream) {
 	return (new Area(areaNumber, objectsByID, entrancesByID, 0, 1, raw_palette));
 }
 
+struct BinaryTable {
+	const char *filename;
+	int ncolors;
+	int offset;
+};
 
-Binary load8bitBinary(Common::String filename, uint offset) {
+static const BinaryTable binaryTable[] = {
+	{ "DRILLE.EXE",  8,  0x9b40},
+	{ "DRILLC.EXE",  4,  0x7bb0},
+	{ "TOTE.EXE",    8,  0xcdb7},
+    //{ "TOTC.EXE",  8,  ??????},
+	{ nullptr,       0,  0  }
+};
+
+Binary load8bitBinary(Common::String filename) {
+	int offset = 0;
+	int ncolors = 0;
+
+	const BinaryTable *entry = binaryTable;
+	while (entry->filename) {
+		debug(entry->filename);
+		if (filename == entry->filename)
+			break;
+		entry++;
+	}
+	if (!entry->filename)
+		error("Unknown game to load %s", filename.c_str());
+
+	offset = entry->offset;
+	ncolors = entry->ncolors;
+
 	Common::File *file = new Common::File();
 
 	if (!file->open(filename)) {
@@ -264,7 +295,7 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		debug("%s", detokenise8bitCondition(*conditionData)->c_str());
 	}
 
-	streamLoader.setFileOffset(offset +200);
+	streamLoader.setFileOffset(offset + 200);
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
 	for (uint16 area = 0; area < numberOfAreas; area++) {
 		fileOffsetForArea[area] = streamLoader.rget16();
@@ -276,13 +307,13 @@ Binary load8bitBinary(Common::String filename, uint offset) {
 		debug("Area offset %d", fileOffsetForArea[area]);
 
 		streamLoader.setFileOffset(offset + fileOffsetForArea[area]);
-		Area *newArea = load8bitArea(streamLoader);
+		Area *newArea = load8bitArea(streamLoader, ncolors);
 
 		if (newArea) {
 			(*areaMap)[newArea->getAreaID()] = newArea;
 		}
 	}
-	return Binary{8, startArea, areaMap, nullptr, nullptr};
+	return Binary{8, startArea, areaMap, nullptr, nullptr, ncolors};
 }
 
 } // namespace Freescape

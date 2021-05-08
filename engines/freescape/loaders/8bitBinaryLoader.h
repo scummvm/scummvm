@@ -15,7 +15,7 @@
 
 namespace Freescape {
 
-Binary load8bitBinary(Common::String, uint offset);
+Binary load8bitBinary(Common::String filename);
 
 }
 
