@@ -29,7 +29,6 @@
 namespace Trecision {
 
 class TextManager {
-private:
 	TrecisionEngine *_vm;
 
 	uint32 _someoneSpeakTime;
@@ -43,8 +42,12 @@ private:
 	uint16 _subStringStart;
 	uint16 _curSentenceId;
 	uint16 _curSubString;
-	char _lastFilename[13];
+	Common::String _lastFilename;
 	uint16 _talkingPersonId;
+	SDText _curString;
+	SDText _oldString;
+	
+	Common::List<StackText> _textStack;
 
 	void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
 	void FormattingSuperString();
@@ -64,6 +67,18 @@ public:
 	void SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim);
 	void CharacterSay(uint16 i);
 	void CharacterSayInAction(uint16 ss);
+
+	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
+	void clearLastText();
+	void drawText(StackText text);
+	void clearText();
+	void drawTexts();	
+	void redrawString();
+	void clearTextStack();
+	Common::Rect getOldTextRect() const;
+	void clearOldText();
+	
+	void drawCurString();
 }; // end of class
 
 } // end of namespace

@@ -42,7 +42,7 @@ DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {
 
 DialogManager::~DialogManager() {}
 
-void DialogManager::dialogPrint(int x, int y, int c, const char *txt) {
+void DialogManager::dialogPrint(int x, int y, int c, Common::String txt) {
 	SDText curChoice;
 	curChoice.set(
 		Common::Rect(x, y, _vm->textLength(txt, 0) + x, y),
@@ -122,8 +122,8 @@ void DialogManager::playDialog(uint16 i) {
 	_vm->_characterQueue.initQueue();
 	_vm->_inventoryStatus = INV_OFF;
 	_vm->_inventoryCounter = INVENTORY_HIDE;
-	_vm->clearText();
-	_vm->drawString();
+	_vm->_textMgr->clearLastText();
+	_vm->_textMgr->drawTexts();
 	PaintScreen(true);
 
 	_vm->_graphicsMgr->clearScreenBufferTop();

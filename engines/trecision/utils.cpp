@@ -45,92 +45,6 @@ char *TrecisionEngine::getNextSentence() {
 	return _textPtr;
 }
 
-void TrecisionEngine::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
-	StackText t;
-	t.x = x;
-	t.y = y;
-	t.tcol = tcol;
-	t.scol = scol;
-	t.clear = false;
-	strcpy(t.text, text);
-
-	_textStack.push_back(t);
-}
-
-void TrecisionEngine::clearText() {
-	if (!_textStack.empty()) {
-		if (!_textStack.back().clear)
-			// The last entry is a string to be shown, remove it
-			_textStack.pop_back();
-	} else {
-		StackText t;
-		t.clear = true;
-		_textStack.push_back(t);
-	}
-}
-
-void TrecisionEngine::drawString() {
-	for (Common::List<StackText>::iterator i = _textStack.begin(); i != _textStack.end(); ++i) {
-		if (i->clear)
-			doClearText();
-		else
-			i->doText();
-	}
-}
-
-void TrecisionEngine::redrawString() {
-	if (!_flagDialogActive && !_flagDialogMenuActive && !_flagSomeoneSpeaks && !_flagscriptactive && _graphicsMgr->isCursorVisible()) {
-		if (isInventoryArea(_mousePos))
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
-		else {
-			checkMask(_mousePos);
-			_textMgr->ShowObjName(_curObj, true);
-		}
-	}
-}
-
-void StackText::doText() {
-	curString._rect.left = x;
-	curString._rect.top = y;
-	curString._rect.setWidth(g_vm->textLength(text, 0));
-	int16 w = curString._rect.width();
-
-	if ((y == MAXY - CARHEI) && (w > 600))
-		w = w * 3 / 5;
-	else if ((y != MAXY - CARHEI) && (w > 960))
-		w = w * 2 / 5;
-	else if ((y != MAXY - CARHEI) && (w > 320))
-		w = w * 3 / 5;
-
-	curString._rect.setWidth(w);
-
-	curString.text = text;
-	uint16 hstring = curString.checkDText();
-	curString._subtitleRect = Common::Rect(curString._rect.width(), hstring);
-	curString._rect.setHeight(hstring);
-	curString.tcol = tcol;
-	curString.scol = scol;
-
-	if (curString._rect.top <= hstring)
-		curString._rect.top += hstring;
-	else
-		curString._rect.top -= hstring;
-
-	if (curString._rect.top <= VIDEOTOP)
-		curString._rect.top = VIDEOTOP + 1;
-
-	TextStatus |= TEXT_DRAW;
-}
-
-void TrecisionEngine::doClearText() {
-	if (!oldString.text && curString.text) {
-		oldString.set(curString);
-		curString.text = nullptr;
-
-		TextStatus |= TEXT_DEL;
-	}
-}
-
 void TrecisionEngine::setRoom(uint16 r, bool b) {
 	_logicMgr->setupAltRoom(r, b);
 }
@@ -138,11 +52,11 @@ void TrecisionEngine::setRoom(uint16 r, bool b) {
 /*-------------------------------------------------
  * Compute string length from character 0 to num
  *-------------------------------------------------*/
-uint16 TrecisionEngine::textLength(const char *text, uint16 num) {
-	if (text == nullptr)
+uint16 TrecisionEngine::textLength(Common::String text, uint16 num) {
+	if (text.empty())
 		return 0;
 
-	uint16 len = (num == 0) ? strlen(text) : num;
+	uint16 len = (num == 0) ? text.size() : num;
 
 	uint16 retVal = 0;
 	for (uint16 c = 0; c < len; c++)
@@ -341,7 +255,7 @@ void TrecisionEngine::ProcessTime() {
 	_animMgr->refreshAllAnimations();
 
 	if (_curTime >= _nextRefresh) {
-		drawString();
+		_textMgr->drawTexts();
 
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 			rollInventory(_inventoryStatus);
@@ -354,7 +268,7 @@ void TrecisionEngine::ProcessTime() {
 		}
 
 		PaintScreen(false);
-		_textStack.clear();
+		_textMgr->clearTextStack();
 
 		uint32 paintTime = readTime();
 		if (paintTime - _curTime >= 5)

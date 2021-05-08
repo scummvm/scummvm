@@ -564,7 +564,7 @@ bool LogicManager::startPlayDialog() {
 		} else {
 			TendIn();
 			_vm->_flagNoPaintScreen = false;
-			_vm->redrawString();
+			_vm->_textMgr->redrawString();
 		}
 	} else {
 		dialogHandled = false;
@@ -650,8 +650,8 @@ void LogicManager::endChangeRoom() {
 	if (_vm->_curRoom == kRoom19 && !(_vm->_room[kRoom19]._flag & kObjFlagDone)) {
 		_vm->playScript(s19EVA);
 		_vm->_flagNoPaintScreen = false;
-		_vm->clearText();
-		_vm->redrawString();
+		_vm->_textMgr->clearLastText();
+		_vm->_textMgr->redrawString();
 		_vm->_soundMgr->waitEndFading();
 	}
 	// CHECKME: This check is identical to the 3rd one, thus it's always false
@@ -659,13 +659,13 @@ void LogicManager::endChangeRoom() {
 		_vm->_pathFind->setPosition(10);
 		TendIn();
 		_vm->_flagNoPaintScreen = false;
-		_vm->clearText();
-		_vm->redrawString();
+		_vm->_textMgr->clearLastText();
+		_vm->_textMgr->redrawString();
 	} else if (!dialogHandled) {
 		TendIn();
 		_vm->_flagNoPaintScreen = false;
-		_vm->clearText();
-		_vm->redrawString();
+		_vm->_textMgr->clearLastText();
+		_vm->_textMgr->redrawString();
 	}
 
 	//	Sentence
@@ -3936,7 +3936,7 @@ void LogicManager::doMouseLeftRight() {
 			if (_vm->_curRoom == kRoom1D && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (_vm->_curObj != oSCALA1D))
 				_vm->_curObj = oDONNA1D;
 			else if (_vm->_curRoom == kRoom2B && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BALLA28)) {
-				_vm->clearText();
+				_vm->_textMgr->clearLastText();
 				_vm->_curObj = oDOOR2B;
 				_vm->StartCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
 				if (_vm->_flagUseWithStarted) {
@@ -3951,7 +3951,7 @@ void LogicManager::doMouseLeftRight() {
 					_vm->_useWithInv[USED] = false;
 					_vm->_useWithInv[WITH] = false;
 					_vm->_flagUseWithStarted = false;
-					_vm->clearText();
+					_vm->_textMgr->clearLastText();
 				}
 				return;
 			} else if (_vm->_curRoom == kRoom35 && !(_vm->_room[kRoom35]._flag & kObjFlagExtra) && ((_vm->_curObj == oFRONTOFFICEC35)
@@ -3971,7 +3971,7 @@ void LogicManager::doMouseLeftRight() {
 					_vm->_useWithInv[USED] = false;
 					_vm->_useWithInv[WITH] = false;
 					_vm->_flagUseWithStarted = false;
-					_vm->clearText();
+					_vm->_textMgr->clearLastText();
 				}
 				return;
 			} else if ((_vm->_curMessage->_event == ME_MLEFT) &&

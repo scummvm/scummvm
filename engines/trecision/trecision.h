@@ -181,7 +181,7 @@ public:
 	// Utils
 	char *getNextSentence();
 	void setRoom(uint16 r, bool b);
-	uint16 textLength(const char *text, uint16 num);
+	uint16 textLength(Common::String text, uint16 num);
 	char getKey();
 	char waitKey();
 	void waitDelay(uint32 val);
@@ -197,13 +197,6 @@ public:
 	static bool isGameArea(Common::Point pos);
 	static bool isInventoryArea(Common::Point pos);
 	static bool isIconArea(Common::Point pos);
-
-	// Text
-	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
-	void clearText();
-	void drawString();
-	void doClearText();
-	void redrawString();
 
 	// Others
 	void checkSystem();
@@ -297,9 +290,6 @@ public:
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
 	SScript _script[MAXSCRIPT];
 	uint8 _curStack;
-
-	// Text
-	Common::List<StackText> _textStack;
 
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;

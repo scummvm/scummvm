@@ -91,7 +91,7 @@ public:
 	void fadeIn(int num);
 	void waitEndFading();
 	void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-	int32 talkStart(const char *name);
+	int32 talkStart(Common::String name);
 	void talkStop();
 	void loadRoomSounds();
 

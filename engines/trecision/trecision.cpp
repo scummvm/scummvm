@@ -726,7 +726,7 @@ insave:
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText = textLength(saveNames[CurPos].c_str(), 0);
+				LenText = textLength(saveNames[CurPos], 0);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 				SText.set(
@@ -796,7 +796,7 @@ insave:
 			saveNames[CurPos] += '_';	// add blinking cursor
 
 			posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-			LenText = textLength(saveNames[CurPos].c_str(), 0);
+			LenText = textLength(saveNames[CurPos], 0);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(
@@ -916,7 +916,7 @@ bool TrecisionEngine::dataLoad() {
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = textLength(saveNames[CurPos].c_str(), 0);
+				uint16 lenText = textLength(saveNames[CurPos], 0);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else
@@ -1018,7 +1018,7 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	if (sent)
 		_textMgr->CharacterSayInAction(sent);
 	else
-		clearText();
+		_textMgr->clearLastText();
 }
 
 bool TrecisionEngine::canPlayerInteract() {

@@ -45,8 +45,6 @@ char *TextArea;
 // DTEXT
 char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
-SDText curString;
-SDText oldString;
 uint8  TextStatus;
 
 int actionInRoom(int curA) {

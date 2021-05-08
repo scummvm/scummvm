@@ -21,12 +21,14 @@
  */
 
 #include "common/config-manager.h"
+#include "common/str.h"
 
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
-#include "trecision/trecision.h"
-#include "trecision/sound.h"
 #include "trecision/actor.h"
+#include "trecision/graphics.h"
+#include "trecision/sound.h"
+#include "trecision/trecision.h"
 #include "trecision/text.h"
 
 namespace Trecision {
@@ -47,8 +49,6 @@ TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 	_subStringStart = 0;
 	_curSentenceId = 0;
 	_curSubString = 0;
-	for (int i = 0; i < 13; ++i)
-		_lastFilename[i] = 0;
 	_talkingPersonId = 0;
 }
 
@@ -128,26 +128,27 @@ void TextManager::CharacterTalk(const char *s) {
 }
 
 void TextManager::CharacterContinueTalk() {
+	uint16 posx, posy;
+	
 	_vm->_flagSkipTalk = false;
 	_vm->_characterSpeakTime = _vm->_curTime;
 
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
-	uint16 posx, posy;
 	if (_vm->_flagCharacterExists)
 		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 	else
 		PositionString(MAXX / 2, 30, _subString[_curSubString], &posx, &posy, false);
 
-	_vm->clearText();
+	clearLastText();
 	if (ConfMan.getBool("subtitles"))
-		_vm->addText(posx, posy, _subString[_curSubString], COLOR_OBJECT, MASKCOL);
+		addText(posx, posy, _subString[_curSubString], COLOR_OBJECT, MASKCOL);
 
 	if (!_vm->_flagDialogActive) {
 		if (_curSubString)
-			sprintf(_lastFilename, "s%04d%c.wav", _curSentenceId, _curSubString + 'a');
+			_lastFilename = Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a');
 		else
-			sprintf(_lastFilename, "s%04d.wav", _curSentenceId);
+			_lastFilename = Common::String::format("s%04d.wav", _curSentenceId);
 	}
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
@@ -165,11 +166,11 @@ void TextManager::CharacterMute() {
 	_vm->_flagSkipTalk = false;
 	_vm->_characterSpeakTime = 0;
 
-	_vm->clearText();
+	clearLastText();
 	_vm->_lastObj = 0;
 	_vm->_lastInv = 0;
 
-	_vm->redrawString();
+	redrawString();
 	_vm->_soundMgr->talkStop();
 
 	if ((_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU))
@@ -188,14 +189,14 @@ void TextManager::SomeoneContinueTalk() {
 	else
 		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 
-	_vm->clearText();
+	clearLastText();
 	if (ConfMan.getBool("subtitles"))
-		_vm->addText(posx, posy, _subString[_curSubString], HYELLOW, MASKCOL);
+		addText(posx, posy, _subString[_curSubString], HYELLOW, MASKCOL);
 
 	if (_curSubString)
-		sprintf(_lastFilename, "s%04d%c.wav", _curSentenceId, _curSubString + 'a');
+		_lastFilename = Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a');
 	else
-		sprintf(_lastFilename, "s%04d.wav", _curSentenceId);
+		_lastFilename = Common::String::format("s%04d.wav", _curSentenceId);
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
 	if (!_talkTime)
@@ -211,11 +212,11 @@ void TextManager::someoneMute() {
 	_vm->_flagSomeoneSpeaks = false;
 	_someoneSpeakTime = 0;
 
-	_vm->clearText();
+	clearLastText();
 	_vm->_lastObj = 0;
 	_vm->_lastInv = 0;
 
-	_vm->redrawString();
+	redrawString();
 	_vm->_soundMgr->talkStop();
 }
 
@@ -281,13 +282,13 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 		return;
 
 	if (_vm->_lastInv) {
-		_vm->clearText();
+		clearLastText();
 		_vm->_lastInv = 0;
 	}
 
 	if (_vm->_flagUseWithStarted) {
 		if (!show) {
-			_vm->clearText();
+			clearLastText();
 			_vm->_lastObj = obj;
 			return;
 		}
@@ -312,17 +313,17 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 		}
 
 		_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = _vm->textLength(locsent.c_str(), 0);
+		uint16 lenText = _vm->textLength(locsent, 0);
 
 		uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		uint16 posy = MAXY - CARHEI;
 
 		if (_vm->_lastObj)
-			_vm->clearText();
-		_vm->addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
+			clearLastText();
+		addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (!obj || !show) {
-			_vm->clearText();
+			clearLastText();
 			_vm->_lastObj = obj;
 			return;
 		}
@@ -348,9 +349,9 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 
 		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (_vm->_lastObj)
-			_vm->clearText();
+			clearLastText();
 		_vm->_lastObj = obj;
-		_vm->addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
+		addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
@@ -401,6 +402,109 @@ void TextManager::CharacterSayInAction(uint16 ss) {
 	FormattingSuperString();
 
 	CharacterContinueTalk();
+}
+
+void TextManager::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
+	StackText t;
+	t.x = x;
+	t.y = y;
+	t.tcol = tcol;
+	t.scol = scol;
+	t.clear = false;
+	strcpy(t.text, text);
+
+	_textStack.push_back(t);
+}
+
+void TextManager::clearLastText() {
+	if (!_textStack.empty()) {
+		if (!_textStack.back().clear)
+			// The last entry is a string to be shown, remove it
+			_textStack.pop_back();
+	} else {
+		StackText t;
+		t.clear = true;
+		_textStack.push_back(t);
+	}
+}
+
+void TextManager::drawText(StackText text) {
+	_curString._rect.left = text.x;
+	_curString._rect.top = text.y;
+	_curString._rect.setWidth(g_vm->textLength(text.text, 0));
+	int16 w = _curString._rect.width();
+
+	if (text.y == MAXY - CARHEI && w > 600)
+		w = w * 3 / 5;
+	else if (text.y != MAXY - CARHEI && w > 960)
+		w = w * 2 / 5;
+	else if (text.y != MAXY - CARHEI && w > 320)
+		w = w * 3 / 5;
+
+	_curString._rect.setWidth(w);
+
+	_curString.text = text.text;
+	uint16 hstring = _curString.checkDText();
+	_curString._subtitleRect = Common::Rect(_curString._rect.width(), hstring);
+	_curString._rect.setHeight(hstring);
+	_curString.tcol = text.tcol;
+	_curString.scol = text.scol;
+
+	if (_curString._rect.top <= hstring)
+		_curString._rect.top += hstring;
+	else
+		_curString._rect.top -= hstring;
+
+	if (_curString._rect.top <= VIDEOTOP)
+		_curString._rect.top = VIDEOTOP + 1;
+
+	TextStatus |= TEXT_DRAW;
+}
+
+void TextManager::clearText() {
+	if (_oldString.text.empty() && !_curString.text.empty()) {
+		_oldString.set(_curString);
+		_curString.text.clear();
+
+		TextStatus |= TEXT_DEL;
+	}
+}
+
+void TextManager::drawTexts() {
+	for (Common::List<StackText>::iterator i = _textStack.begin(); i != _textStack.end(); ++i) {
+		if (i->clear)
+			clearText();
+		else
+			drawText(*i);
+	}
+}
+
+void TextManager::redrawString() {
+	if (!_vm->_flagDialogActive && !_vm->_flagDialogMenuActive && !_vm->_flagSomeoneSpeaks && !_vm->_flagscriptactive && _vm->_graphicsMgr->isCursorVisible()) {
+		if (_vm->isInventoryArea(_vm->_mousePos))
+			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
+		else {
+			_vm->checkMask(_vm->_mousePos);
+			ShowObjName(_vm->_curObj, true);
+		}
+	}
+}
+
+void TextManager::clearTextStack() {
+	_textStack.clear();
+}
+
+void TextManager::drawCurString() {
+	_curString.DText();
+	_vm->_dirtyRects.push_back(_curString._rect);
+}
+
+Common::Rect TextManager::getOldTextRect() const {
+	return _oldString._rect;
+}
+
+void TextManager::clearOldText() {
+	_oldString.text.clear();
 }
 
 } // End of namespace Trecision
