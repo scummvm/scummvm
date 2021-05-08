@@ -51,7 +51,7 @@ _ax(0), _ay(0), _az(0) {
 void ItemSelectionProcess::run() {
 }
 
-bool ItemSelectionProcess::selectNextItem() {
+bool ItemSelectionProcess::selectNextItem(bool grab) {
 	MainActor *mainactor = getMainActor();
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 
@@ -94,7 +94,20 @@ bool ItemSelectionProcess::selectNextItem() {
 				continue;
 
 			candidates.push_back(item);
+			if (grab) {
+				const ShapeInfo *info = item->getShapeInfo();
+				if (!info || !(info->_flags & ShapeInfo::SI_CRU_SELECTABLE)) {
+					MainActor *actor = getMainActor();
+					if (actor)
+						actor->addItemCru(item, true);
+				}
+			}
 		}
+	}
+
+	if (grab) {
+		clearSelection();
+		return false;
 	}
 
 	if (candidates.size() < 1) {

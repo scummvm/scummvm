@@ -226,6 +226,7 @@ private:
 	bool cmdDetonateBomb(int argc, const char **argv);
 	bool cmdStartSelection(int argc, const char **argv);
 	bool cmdUseSelection(int argc, const char **argv);
+	bool cmdGrabItems(int argc, const char **argv);
 
 	// Object Manager
 	bool cmdObjectTypes(int argc, const char **argv);

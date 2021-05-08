@@ -42,16 +42,16 @@ public:
 
 	void run() override;
 
-	//!< Select the next item
-	bool selectNextItem();
+	//! Select the next item.  If grab is true, pick up loose items now.
+	bool selectNextItem(bool grab);
 
-	//!< Clear the selector
+	//! Clear the selector sprite
 	void clearSelection();
 
-	//!< Avatar moved - clear the selector if needed.
+	//! Avatar moved - clear the selector if needed.
 	void avatarMoved();
 
-	//!< Use the selected item (if any)
+	//! Use the selected item (if any)
 	void useSelectedItem();
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

@@ -159,6 +159,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 	registerCmd("ItemSelectionProcess::startSelection", WRAP_METHOD(Debugger, cmdStartSelection));
 	registerCmd("ItemSelectionProcess::useSelectedItem", WRAP_METHOD(Debugger, cmdUseSelection));
+	registerCmd("ItemSelectionProcess::grabItems", WRAP_METHOD(Debugger, cmdGrabItems));
 
 	registerCmd("ObjectManager::objectTypes", WRAP_METHOD(Debugger, cmdObjectTypes));
 	registerCmd("ObjectManager::objectInfo", WRAP_METHOD(Debugger, cmdObjectInfo));
@@ -1498,7 +1499,7 @@ bool Debugger::cmdStartSelection(int argc, const char **argv) {
 
 	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
 	if (proc)
-		proc->selectNextItem();
+		proc->selectNextItem(false);
 	return false;
 }
 
@@ -1516,6 +1517,23 @@ bool Debugger::cmdUseSelection(int argc, const char **argv) {
 	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
 	if (proc)
 		proc->useSelectedItem();
+	return false;
+}
+
+bool Debugger::cmdGrabItems(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't grab items: avatarInStasis\n");
+		return false;
+	}
+
+	// Only if controlling avatar.
+	if (!_isAvatarControlled()) {
+		return false;
+	}
+
+	ItemSelectionProcess *proc = ItemSelectionProcess::get_instance();
+	if (proc)
+		proc->selectNextItem(true);
 	return false;
 }
 
