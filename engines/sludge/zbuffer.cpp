@@ -151,7 +151,7 @@ bool GraphicsManager::setZBuffer(int num) {
 
 			for (int i = 0; i < _zBuffer->numPanels; ++i) {
 				byte *target = (byte *)_zBuffer->sprites[i].getBasePtr(x, y);
-				if (n && (sorted[i] == n || i == 0)) {
+				if (sorted[i] == n || i == 0) {
 					byte *source = (byte *)_backdropSurface.getBasePtr(x, y);
 					target[0] = source[0];
 					target[1] = source[1];
