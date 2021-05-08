@@ -104,6 +104,38 @@ Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) 
 }
 
 
+void Renderer::renderPalette(Common::Array<uint8> *raw_palette, uint16 ncolors) {
+	Graphics::PixelBuffer *palette;
+	if (_palette)
+		palette = _palette;
+	else if (raw_palette) {
+		palette = new Graphics::PixelBuffer(_palettePixelFormat, 16, DisposeAfterUse::NO); 
+		*palette = raw_palette->data();
+	} else 
+		error("No palette to show");
+
+	selectTargetWindow(nullptr, false, true);
+	Common::Rect view = viewport();
+	uint8 r, g, b;
+	uint16 c;
+	uint16 top = view.top;
+	uint16 size = kOriginalHeight/ncolors; 
+	uint16 bottom = size;
+
+	for (c = 0; c < ncolors; c++) {
+		view = Common::Rect(view.left, top, view.right, bottom);
+		palette->getRGBAt(c, r, g, b);
+		debug("color: %d %x %x %x", c, r, g, b);
+		drawRect2D(view, 255, r, g, b);
+		bottom = bottom + size;
+		top = top + size;
+	}
+
+	flipBuffer();
+	g_system->updateScreen();
+
+}
+
 Texture *Renderer::copyScreenshotToTexture() {
 	Graphics::Surface *surface = getScreenshot();
 

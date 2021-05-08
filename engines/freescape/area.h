@@ -34,12 +34,12 @@ public:
 	Object *entranceWithID(uint16 objectID);
 	uint16 getAreaID();
 	void draw(Freescape::Renderer *gfx);
+	Common::Array<uint8> *raw_palette;
 
 private:
 	uint16 areaID;
 	uint8 skyColor;
 	uint8 groundColor;
-	Common::Array<uint8> *raw_palette;
 	ObjectMap *objectsByID;
 	ObjectMap *entrancesByID;
 	Common::Array<Object *> drawableObjects;

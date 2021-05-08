@@ -19,11 +19,6 @@
 #include "freescape/loaders/16bitBinaryLoader.h"
 #include "freescape/loaders/8bitBinaryLoader.h"
 
-#define OFFSET_DARKSIDE 0xc9ce
-#define OFFSET_DRILLER_EGA 0x9b40
-#define OFFSET_DRILLER_CGA 0x7bb0
-#define OFFSET_CASTLE 0xe472
-#define OFFSET_TOTALECLIPSE 0xcdb7
 
 namespace Freescape {
 
@@ -81,8 +76,6 @@ void FreescapeEngine::drawBorder() {
 
 	Texture *t = _gfx->createTexture(_border);
 	const Common::Rect rect(0, 0, _screenW, _screenH);
-	//g_system->copyRectToScreen(_borderSurf->getPixels(), _borderSurf->pitch, 0, 0, _screenW, _screenH);
-
 
 	_gfx->drawTexturedRect2D(rect, rect, t, 1.0, false);
 	_gfx->flipBuffer();
@@ -104,35 +97,28 @@ Common::Error FreescapeEngine::run() {
 	else if (_targetName == "3Dkitcube")
 		binary = load16bitBinary("CUBE.RUN");
 	else if (_targetName == "Driller") {
-		renderMode = "ega";
 		if (!ConfMan.hasKey("render_mode"))
 			renderMode = "ega";
+		else
+			renderMode = ConfMan.get("render_mode");
 
+		debug("renderMode: %s", renderMode.c_str());
 		if (renderMode == "ega")
-			binary = load8bitBinary("DRILLE.EXE", OFFSET_DRILLER_EGA);
+			binary = load8bitBinary("DRILLE.EXE");
 		else if (renderMode == "cga")
-			binary = load8bitBinary("DRILLC.EXE", OFFSET_DRILLER_CGA);
+			binary = load8bitBinary("DRILLC.EXE");
 		else
 			error("Invalid render mode %s for Driller", renderMode.c_str());
 
-	}
-	else if (_targetName == "Castle")
-		binary = load8bitBinary("CME.EXE", OFFSET_CASTLE);
+	} else if (_targetName == "Castle")
+		binary = load8bitBinary("CME.EXE");
 	else
 		error("%s is an invalid game", _targetName.c_str());
 
 	if (binary.areasByAreaID) {
 		_areasByAreaID = binary.areasByAreaID;
 		if (binary.palette) {
-			uint pSize = 0; 
-			if (binary.bits == 16)
-				pSize = 256;
-			else if (binary.bits == 8)
-				pSize = 16;
-			else
-				error("Invalid number of bits %d", binary.bits);
-
-			Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, pSize, DisposeAfterUse::NO);
+			Graphics::PixelBuffer *palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, binary.ncolors, DisposeAfterUse::NO);
 			*palette = binary.palette->data();
 			_gfx->_palette = palette;
 		}
@@ -148,6 +134,7 @@ Common::Error FreescapeEngine::run() {
 		assert(_areasByAreaID->contains(_startArea));
 		Area *area = (*_areasByAreaID)[_startArea];
 		assert(area);
+		//_gfx->renderPalette(area->raw_palette, binary.ncolors);
 		drawBorder();
 		area->draw(_gfx);
 	}	
