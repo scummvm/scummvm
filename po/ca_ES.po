@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-07 20:18+0000\n"
+"POT-Creation-Date: 2021-05-08 20:58+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2788,27 +2788,27 @@ msgid "Resolution: %dx%d"
 msgstr ""
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
 msgid "Enabled aspect ratio correction"
 msgstr "S'ha activat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
 msgid "Disabled aspect ratio correction"
 msgstr "S'ha desactivat la correcció de la relació d'aspecte"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2505
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
 msgid "Filtering enabled"
 msgstr "Filtratge activat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2488
 msgid "Filtering disabled"
 msgstr "Filtratge desactivat"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 #, fuzzy
 msgid "Stretch mode"
 msgstr "Mode heli"
@@ -2818,7 +2818,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (no escalat)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
 msgid "Active graphics filter:"
 msgstr "Filtre de gràfics actiu:"
 

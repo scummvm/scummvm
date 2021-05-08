@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-07 20:18+0000\n"
+"POT-Creation-Date: 2021-05-08 20:58+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2731,27 +2731,27 @@ msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2483
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2489
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2505
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2507
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2488
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2534
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
 
@@ -2760,7 +2760,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "רגיל (ללא קנה מידה)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2448
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
 msgid "Active graphics filter:"
 msgstr "פילטר גרפי פעיל:"
 
