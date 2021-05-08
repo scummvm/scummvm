@@ -572,6 +572,15 @@ void CurrentMap::areaSearch(UCList *itemlist, const uint8 *loopscript,
 	int maxy = ((y + range) / _mapChunkSize) + 1;
 	clipMapChunks(minx, maxx, miny, maxy);
 
+	//
+	// NOTE: Iteration order of chunks here is important for
+	// usecode compatibility!
+	//
+	// eg, No Remorse Mission 2 has a camera which searches for
+	// trigger with qlo = 5, but there are 2 of those on the map.
+	// We need to return in the correct order or it triggers
+	// the wrong one and breaks the game.
+	//
 	for (int cy = miny; cy <= maxy; cy++) {
 		for (int cx = minx; cx <= maxx; cx++) {
 			item_list::const_iterator iter;
