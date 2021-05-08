@@ -79,7 +79,7 @@ Common::String Encounter::ScriptEntry::toString() {
 }
 
 Encounter::Encounter(AsylumEngine *engine) : _vm(engine),
-	_index(0), _speechResourceId(0), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
+	_index(0), _speechResourceId(0), _soundResourceId(kResourceNone), _item(NULL), _objectId1(kObjectNone), _objectId2(kObjectNone), _objectId3(kObjectNone),
 	_actorIndex(kActorInvalid), _shouldEnablePlayer(false), _wasPlayerDisabled(false), _isClosing(false), _isScriptRunning(false) {
 
 	memset(&_keywordIndexes, 0, sizeof(_keywordIndexes));

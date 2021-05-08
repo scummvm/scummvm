@@ -293,6 +293,7 @@ void ScriptManager::reset(uint32 count) {
 	_exit = false;
 	_processNextEntry = false;
 
+	_lastProcessedCmd = NULL;
 	_currentScript = NULL;
 	_currentQueueEntry = NULL;
 }
