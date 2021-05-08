@@ -544,6 +544,22 @@ void PluginManager::loadAllPlugins() {
 		PluginList pl((*pp)->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
+
+#ifndef DETECTION_STATIC
+	/*
+	 * When detection is dynamic, loading above only gets us a PLUGIN_TYPE_DETECTION plugin
+	 * We must register all plugins linked in it in order to use them
+	 */
+	PluginList dpl = getPlugins(PLUGIN_TYPE_DETECTION);
+	_pluginsInMem[PLUGIN_TYPE_ENGINE_DETECTION].clear();
+	for (PluginList::iterator it = dpl.begin();
+	                            it != dpl.end();
+	                            ++it) {
+		const Detection &detectionConnect = (*it)->get<Detection>();
+		const PluginList &pl = detectionConnect.getPlugins();
+		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
+	}
+#endif
 }
 
 void PluginManager::loadAllPluginsOfType(PluginType type) {
