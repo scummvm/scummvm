@@ -300,27 +300,8 @@ static void initGraphicsModes() {
 	s_supportedGraphicsModes->push_back(gm);
 }
 
-const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::supportedGraphicsModes() const {
-	if (!s_supportedGraphicsModes)
-		initGraphicsModes();
-
-	int size = s_supportedGraphicsModes->size();
-	OSystem::GraphicsMode *modes = new OSystem::GraphicsMode[size];
-	memcpy(modes, &(*s_supportedGraphicsModes)[0], size * sizeof(OSystem::GraphicsMode));
-
-	// Do deep copy. Each can be freed independently of the other.
-	OSystem::GraphicsMode *gm = modes;
-	while (gm->name) {
-		gm->name = scumm_strdup(gm->name);
-		gm->description = scumm_strdup(gm->description);
-		++gm;
-	}
-
-	return modes;
-}
-
 const OSystem::GraphicsMode *SurfaceSdlGraphicsManager::getSupportedGraphicsModes() const {
-	return supportedGraphicsModes();
+	return s_supportedGraphicsModes->begin();
 }
 
 int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
