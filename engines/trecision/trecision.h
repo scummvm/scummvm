@@ -26,6 +26,7 @@
 #include "common/str-array.h"
 #include "common/keyboard.h"
 #include "common/str.h"
+#include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
@@ -118,11 +119,12 @@ class TrecisionEngine : public Engine {
 	SCamera FCamera;
 
 public:
-	TrecisionEngine(OSystem *syst);
+	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
 	~TrecisionEngine() override;
 
 	// ScummVM
 	Common::Error run() override;
+	bool isDemo() const;
 	void eventLoop();
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return canPlayerInteract(); }
@@ -211,6 +213,8 @@ public:
 	void setObjectVisible(uint16 objectId, bool visible);
 	bool isObjectVisible(uint16 objectId) const;
 	void setObjectAnim(uint16 objectId, uint16 animId);
+
+	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
 

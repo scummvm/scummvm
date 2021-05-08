@@ -57,7 +57,7 @@ namespace Trecision {
 
 TrecisionEngine *g_vm;
 
-TrecisionEngine::TrecisionEngine(OSystem *syst) : Engine(syst) {
+TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "AUTORUN");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
@@ -245,6 +245,10 @@ Common::Error TrecisionEngine::run() {
 	return Common::kNoError;
 }
 
+bool TrecisionEngine::isDemo() const {
+	return _gameDescription->flags & ADGF_DEMO;
+}
+
 void TrecisionEngine::eventLoop() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -419,12 +423,13 @@ void TrecisionEngine::openDataFiles() {
 	if (!_dataFile.open("nldata.cd0"))
 		error("openDataFiles() - Error opening nldata.cd0");
 
-	if (!Common::File::exists("nlanim.cd1") ||
-		!Common::File::exists("nlanim.cd2") ||
-		!Common::File::exists("nlanim.cd3")
-		)
-		error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
-
+	if (!isDemo()) {
+		if (!Common::File::exists("nlanim.cd1") ||
+			!Common::File::exists("nlanim.cd2") ||
+			!Common::File::exists("nlanim.cd3"))
+			error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
+	}
+	
 	_font = readData("nlfont.fnt");
 	int size;
 	_arrows = readData16("frecc.bm", size);

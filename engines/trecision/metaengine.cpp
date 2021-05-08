@@ -36,7 +36,7 @@ class TrecisionMetaEngine : public AdvancedMetaEngine {
 };
 
 Common::Error TrecisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	*engine = new Trecision::TrecisionEngine(syst);
+	*engine = new Trecision::TrecisionEngine(syst, desc);
 	return Common::kNoError;
 }
 
