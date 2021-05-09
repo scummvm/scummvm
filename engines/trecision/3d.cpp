@@ -1496,15 +1496,7 @@ void PathFinding3D::setPosition(int num) {
 				_curPanel = -1;
 				_oldPanel = -1;
 
-				_step[0]._px = _vm->_actor->_px + _vm->_actor->_dx;
-				_step[0]._pz = _vm->_actor->_pz + _vm->_actor->_dz;
-				_step[0]._dx = 0.0;
-				_step[0]._dz = 0.0;
-
-				_step[0]._theta = _vm->_actor->_theta;
-				_step[0]._curAction = hSTAND;
-				_step[0]._curFrame = 0;
-				_step[0]._curPanel = _curPanel;
+				reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
 
 				_characterGoToPosition = num;
 				return;
@@ -1531,15 +1523,7 @@ void PathFinding3D::goToPosition(int num) {
 				_curStep = 0;
 				_lastStep = 0;
 
-				_step[0]._px = _vm->_actor->_px + _vm->_actor->_dx;
-				_step[0]._pz = _vm->_actor->_pz + _vm->_actor->_dz;
-				_step[0]._dx = 0.0;
-				_step[0]._dz = 0.0;
-
-				_step[0]._theta = _vm->_actor->_theta;
-				_step[0]._curAction = hSTAND;
-				_step[0]._curFrame = 0;
-				_step[0]._curPanel = _curPanel;
+				reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
 
 				_oldPanel = _curPanel;
 				_curPanel = -1;
@@ -1837,14 +1821,7 @@ void PathFinding3D::buildFramelist() {
 		startpos = len;
 	}
 
-	_step[b]._px = _curX;
-	_step[b]._pz = _curZ;
-	_step[b]._dx = 0;
-	_step[b]._dz = 0;
-	_step[b]._theta = theta;
-	_step[b]._curAction = hSTAND;
-	_step[b]._curFrame = 0;
-	_step[b]._curPanel = _curPanel;
+	reset(b, _curX, _curZ, theta);
 
 	_lastStep = b; // last step
 	_curStep = 0;  // current step
@@ -2103,18 +2080,30 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 		error("read3D(): Too many panels");
 
 	for (int i = 0; i < _panelNum; ++i) {
-		g_vm->_pathFind->_panel[i]._x1 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._z1 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._x2 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._z2 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._h = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._flags = ff->readUint32LE();
+		_panel[i]._x1 = ff->readFloatLE();
+		_panel[i]._z1 = ff->readFloatLE();
+		_panel[i]._x2 = ff->readFloatLE();
+		_panel[i]._z2 = ff->readFloatLE();
+		_panel[i]._h = ff->readFloatLE();
+		_panel[i]._flags = ff->readUint32LE();
 
-		g_vm->_pathFind->_panel[i]._near1 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._near2 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._col1 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._col2 = ff->readSByte();
+		_panel[i]._near1 = ff->readSByte();
+		_panel[i]._near2 = ff->readSByte();
+		_panel[i]._col1 = ff->readSByte();
+		_panel[i]._col2 = ff->readSByte();
 	}
+}
+
+void PathFinding3D::reset(uint16 idx,float px, float pz, float theta) {
+	_step[idx]._px = px;
+	_step[idx]._pz = pz;
+	_step[idx]._dx = 0.0f;
+	_step[idx]._dz = 0.0f;
+
+	_step[idx]._theta = theta;
+	_step[idx]._curAction = hSTAND;
+	_step[idx]._curFrame = 0;
+	_step[idx]._curPanel = _curPanel;
 }
 
 } // End of namespace Trecision

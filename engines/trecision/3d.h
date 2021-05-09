@@ -125,6 +125,8 @@ public:
 	void initSortPan();
 	void read3D(Common::SeekableReadStream *ff);
 
+	void reset(uint16 idx, float px, float pz, float theta);
+
 }; // end of class
 
 } // end of namespace
