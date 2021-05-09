@@ -43,9 +43,11 @@ GlobEgg::~GlobEgg() {
 void GlobEgg::enterFastArea() {
 	uint32 coordmask = ~0x1FFU;
 	unsigned int coordshift = 1;
+	unsigned int offset = 1;
 	if (GAME_IS_CRUSADER) {
 		coordmask = ~0x3FFU;
 		coordshift = 2;
+		offset = 2;
 	}
 
 	// Expand it
@@ -63,8 +65,8 @@ void GlobEgg::enterFastArea() {
 
 
 			// calculate object's world position
-			int32 itemx = (_x & coordmask) + (globitem.x << coordshift) + 1;
-			int32 itemy = (_y & coordmask) + (globitem.y << coordshift) + 1;
+			int32 itemx = (_x & coordmask) + (globitem.x << coordshift) + offset;
+			int32 itemy = (_y & coordmask) + (globitem.y << coordshift) + offset;
 			int32 itemz = _z + globitem.z;
 
 			item->move(itemx, itemy, itemz);
