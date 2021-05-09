@@ -852,6 +852,14 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 	_characterGoToPosition = -1;
 
 	_panelNum = 0;
+
+	for (int i = 0; i < MAXPATHNODES; ++i) {
+		_pathNode[i]._x = 0.0f;
+		_pathNode[i]._z = 0.0f;
+		_pathNode[i]._dist = 0.0f;
+		_pathNode[i]._oldPanel = 0;
+		_pathNode[i]._curPanel = 0;
+	}
 }
 
 PathFinding3D::~PathFinding3D() {
@@ -901,8 +909,8 @@ void PathFinding3D::findPath() {
 				_pathNode[_numPathNodes]._x = _x3d;
 				_pathNode[_numPathNodes]._z = _z3d;
 				_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _x3d, _z3d);
-				_pathNode[_numPathNodes]._oldp = b;
-				_pathNode[_numPathNodes]._curp = b;
+				_pathNode[_numPathNodes]._oldPanel = b;
+				_pathNode[_numPathNodes]._curPanel = b;
 				_numPathNodes++;
 
 				// CORNERS - lever intersections in corners
@@ -943,8 +951,8 @@ void PathFinding3D::findPath() {
 				_pathNode[_numPathNodes]._x = actor->_px;
 				_pathNode[_numPathNodes]._z = actor->_pz;
 				_pathNode[_numPathNodes]._dist = 0.0;
-				_pathNode[_numPathNodes]._oldp = _oldPanel;
-				_pathNode[_numPathNodes]._curp = _oldPanel;
+				_pathNode[_numPathNodes]._oldPanel = _oldPanel;
+				_pathNode[_numPathNodes]._curPanel = _oldPanel;
 				_numPathNodes++;
 			} else if (b == _curPanel) {
 				inters++;
@@ -952,8 +960,8 @@ void PathFinding3D::findPath() {
 				_pathNode[_numPathNodes]._x = _curX;
 				_pathNode[_numPathNodes]._z = _curZ;
 				_pathNode[_numPathNodes]._dist = dist;
-				_pathNode[_numPathNodes]._oldp = _curPanel;
-				_pathNode[_numPathNodes]._curp = _curPanel;
+				_pathNode[_numPathNodes]._oldPanel = _curPanel;
+				_pathNode[_numPathNodes]._curPanel = _curPanel;
 				_numPathNodes++;
 			}
 		}
@@ -974,17 +982,17 @@ void PathFinding3D::findPath() {
 
 		if (((inters & 1) && (_curPanel < 0) && (_oldPanel < 0)) ||
 			((inters - 1 & 1) && (_curPanel < 0) &&
-			 (!findAttachedPanel(_pathNode[_numPathNodes - 2]._curp, _pathNode[_numPathNodes - 1]._curp) ||
-			  pointInside(_pathNode[_numPathNodes - 1]._curp, _curX, _curZ)))) {
+			 (!findAttachedPanel(_pathNode[_numPathNodes - 2]._curPanel, _pathNode[_numPathNodes - 1]._curPanel) ||
+			  pointInside(_pathNode[_numPathNodes - 1]._curPanel, _curX, _curZ)))) {
 
-			_curPanel = _pathNode[_numPathNodes - 1]._curp;
+			_curPanel = _pathNode[_numPathNodes - 1]._curPanel;
 
 			pointOut(); // remove the point found
 
 			_pathNode[_numPathNodes]._x = _curX;
 			_pathNode[_numPathNodes]._z = _curZ;
-			_pathNode[_numPathNodes]._oldp = _curPanel;
-			_pathNode[_numPathNodes]._curp = _curPanel;
+			_pathNode[_numPathNodes]._oldPanel = _curPanel;
+			_pathNode[_numPathNodes]._curPanel = _curPanel;
 
 			_numPathNodes++;
 		}
@@ -1045,14 +1053,14 @@ void PathFinding3D::findPath() {
 
 		// If in the last line there's an obstacle, remove the first node
 		if (inters) {
-			_curPanel = _pathNode[_numPathNodes - 1]._curp;
+			_curPanel = _pathNode[_numPathNodes - 1]._curPanel;
 
 			pointOut(); // take out the point found
 
 			_pathNode[_numPathNodes]._x = _curX;
 			_pathNode[_numPathNodes]._z = _curZ;
-			_pathNode[_numPathNodes]._oldp = _curPanel;
-			_pathNode[_numPathNodes]._curp = _curPanel;
+			_pathNode[_numPathNodes]._oldPanel = _curPanel;
+			_pathNode[_numPathNodes]._curPanel = _curPanel;
 
 			_numPathNodes++;
 		}
@@ -1060,8 +1068,8 @@ void PathFinding3D::findPath() {
 		_pathNode[_numPathNodes]._x = _curX;
 		_pathNode[_numPathNodes]._z = _curZ;
 		_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
-		_pathNode[_numPathNodes]._oldp = _curPanel;
-		_pathNode[_numPathNodes]._curp = _curPanel;
+		_pathNode[_numPathNodes]._oldPanel = _curPanel;
+		_pathNode[_numPathNodes]._curPanel = _curPanel;
 		_numPathNodes++;
 
 		findShortPath();
@@ -1070,15 +1078,15 @@ void PathFinding3D::findPath() {
 		_pathNode[_numPathNodes]._x = actor->_px;
 		_pathNode[_numPathNodes]._z = actor->_pz;
 		_pathNode[_numPathNodes]._dist = 0.0;
-		_pathNode[_numPathNodes]._oldp = _oldPanel;
-		_pathNode[_numPathNodes]._curp = _oldPanel;
+		_pathNode[_numPathNodes]._oldPanel = _oldPanel;
+		_pathNode[_numPathNodes]._curPanel = _oldPanel;
 		_numPathNodes++;
 
 		_pathNode[_numPathNodes]._x = _curX;
 		_pathNode[_numPathNodes]._z = _curZ;
 		_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
-		_pathNode[_numPathNodes]._oldp = _curPanel;
-		_pathNode[_numPathNodes]._curp = _curPanel;
+		_pathNode[_numPathNodes]._oldPanel = _curPanel;
+		_pathNode[_numPathNodes]._curPanel = _curPanel;
 		_numPathNodes++;
 
 		displayPath();
@@ -1102,8 +1110,8 @@ void PathFinding3D::findShortPath() {
 	TempPath[count]._x = _vm->_actor->_px;
 	TempPath[count]._z = _vm->_actor->_pz;
 	TempPath[count]._dist = 0.0;
-	TempPath[count]._oldp = _oldPanel;
-	TempPath[count]._curp = _oldPanel;
+	TempPath[count]._oldPanel = _oldPanel;
+	TempPath[count]._curPanel = _oldPanel;
 	count++;
 
 	// for every obstacle, try to go around it by the right and the left
@@ -1114,10 +1122,10 @@ void PathFinding3D::findShortPath() {
 		if (count >= MAXPATHNODES - 2)
 			count = MAXPATHNODES - 2;
 
-		curp = _pathNode[a]._curp;
+		curp = _pathNode[a]._curPanel;
 
 		// if source and destination panel are on the same block
-		if (!findAttachedPanel(curp, _pathNode[a + 1]._curp))
+		if (!findAttachedPanel(curp, _pathNode[a + 1]._curPanel))
 			continue;
 
 		// go around obstacle starting with _near1
@@ -1148,14 +1156,14 @@ void PathFinding3D::findShortPath() {
 			for (;;) {
 				TempPath[count]._x = curx;
 				TempPath[count]._z = curz;
-				TempPath[count]._oldp = oldp;
-				TempPath[count]._curp = curp;
+				TempPath[count]._oldPanel = oldp;
+				TempPath[count]._curPanel = curp;
 				count++;
 				if (count >= MAXPATHNODES - 2)
 					count = MAXPATHNODES - 2;
 
 				// if it reaches the point, exit the loop
-				if (curp == _pathNode[a + 1]._curp) {
+				if (curp == _pathNode[a + 1]._curPanel) {
 					memcpy(&TempPath[count], &_pathNode[a + 1], sizeof(SPathNode));
 					count++;
 					if (count >= MAXPATHNODES - 2)
@@ -1164,7 +1172,7 @@ void PathFinding3D::findShortPath() {
 				}
 
 				// If it's back to the starting panel, it didn't find a route
-				if (((curp == _pathNode[a]._curp) && b) || (b > _panelNum)) {
+				if (((curp == _pathNode[a]._curPanel) && b) || (b > _panelNum)) {
 					fail = 1; // stop at the edge first
 					break;    // and stop walking
 				}
@@ -1209,8 +1217,8 @@ void PathFinding3D::findShortPath() {
 	TempPath[count]._x = _curX;
 	TempPath[count]._z = _curZ;
 	TempPath[count]._dist = 0.0;
-	TempPath[count]._oldp = _curPanel;
-	TempPath[count]._curp = _curPanel;
+	TempPath[count]._oldPanel = _curPanel;
+	TempPath[count]._curPanel = _curPanel;
 	count++;
 
 	// after walking around all obstacles, optimize
@@ -1300,18 +1308,18 @@ void PathFinding3D::findShortPath() {
 
 			// if from A it's possible to reach B directly
 			if (!inters) {
-				curp = _pathNode[_numPathNodes - 1]._curp;
-				oldp = TempPath[b]._oldp;
+				curp = _pathNode[_numPathNodes - 1]._curPanel;
+				oldp = TempPath[b]._oldPanel;
 
 				for (c = a; c <= b; c++) {
-					if ((TempPath[c]._oldp == curp) && (TempPath[c]._curp == oldp))
+					if ((TempPath[c]._oldPanel == curp) && (TempPath[c]._curPanel == oldp))
 						break;
 				}
 
 				// if they weren't connected it means it went through the floor
 				if (c > b) {
-					_pathNode[_numPathNodes - 1]._curp = -1; // start
-					TempPath[b]._oldp = -1;                  // destination
+					_pathNode[_numPathNodes - 1]._curPanel = -1; // start
+					TempPath[b]._oldPanel = -1;                  // destination
 				}
 				a = b - 1;
 				break;
@@ -1327,19 +1335,19 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 	int b = 0;
 	float len = 0.0;
 
-	int curp = _pathNode[a]._curp;
-	float curx = _pathNode[a]._x;
-	float curz = _pathNode[a]._z;
+	int curPanel = _pathNode[a]._curPanel;
+	float curX = _pathNode[a]._x;
+	float curZ = _pathNode[a]._z;
 
 	for (;;) {
 		// if the point is reached, stop
-		if (curp == _pathNode[a + 1]._curp) {
-			len += _vm->dist2D(curx, curz, _pathNode[a + 1]._x, _pathNode[a + 1]._z);
+		if (curPanel == _pathNode[a + 1]._curPanel) {
+			len += _vm->dist2D(curX, curZ, _pathNode[a + 1]._x, _pathNode[a + 1]._z);
 			break;
 		}
 
 		// if it's back to the starting plane, there's no route
-		if (((curp == _pathNode[a]._curp) && b) || (b > _panelNum)) {
+		if (((curPanel == _pathNode[a]._curPanel) && b) || (b > _panelNum)) {
 			len += 32000.0; // Absurd length
 			break;
 		}
@@ -1347,30 +1355,30 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 		// Otherwise it goes to the next plane
 
 		// if nearP is attached to curp via vertex1
-		if (_panel[nearP]._near1 == curp) {
+		if (_panel[nearP]._near1 == curPanel) {
 			// go to vertex 2 next time
-			len += _vm->dist2D(curx, curz, destX, destZ);
+			len += _vm->dist2D(curX, curZ, destX, destZ);
 
-			curx = destX;
-			curz = destZ;
+			curX = destX;
+			curZ = destZ;
 
 			destX = _panel[nearP]._x2;
 			destZ = _panel[nearP]._z2;
 
-			curp = nearP;
-			nearP = _panel[curp]._near2;
+			curPanel = nearP;
+			nearP = _panel[curPanel]._near2;
 		} else {
 			// go to vertex 1 newt time
-			len += _vm->dist2D(curx, curz, destX, destZ);
+			len += _vm->dist2D(curX, curZ, destX, destZ);
 
-			curx = destX;
-			curz = destZ;
+			curX = destX;
+			curZ = destZ;
 
 			destX = _panel[nearP]._x1;
 			destZ = _panel[nearP]._z1;
 
-			curp = nearP;
-			nearP = _panel[curp]._near1;
+			curPanel = nearP;
+			nearP = _panel[curPanel]._near1;
 		}
 
 		b++;
@@ -1655,7 +1663,7 @@ void PathFinding3D::buildFramelist() {
 			v += _vm->_actor->_vertexNum;
 		}
 	} else if ((_vm->_actor->_curAction >= hSTOP0) && (_vm->_actor->_curAction <= hSTOP9)) {
-		// if he was stopped, starts moving qgqin
+		// if he was stopped, starts moving again
 
 		// compute current frame
 		CurA = hWALK;
@@ -1728,7 +1736,6 @@ void PathFinding3D::buildFramelist() {
 
 	// if he was walking
 	if (_step[a - 1]._curAction == hWALK)
-		//o		CurA = _step[a-1]._curFrame + hSTOP1;		// stop previous step.
 		CurA = _step[a - 1]._curFrame + hSTOP0; // stop previous step.
 	else
 		CurA = hSTOP0; // stop step 01
@@ -1778,7 +1785,6 @@ void PathFinding3D::buildFramelist() {
 
 	// now insert exact directions and start and destination points
 	b = 0;
-	//startpos = _step[0]._pz;
 
 	len = 0.0;
 	startpos = 0.0;
@@ -1814,7 +1820,7 @@ void PathFinding3D::buildFramelist() {
 			_step[b]._dz = curlen * oz;
 			_step[b]._theta = theta;
 
-			_step[b]._curPanel = _pathNode[a]._curp;
+			_step[b]._curPanel = _pathNode[a]._curPanel;
 
 			b++;
 		}
@@ -2104,6 +2110,351 @@ void PathFinding3D::reset(uint16 idx,float px, float pz, float theta) {
 	_step[idx]._curAction = hSTAND;
 	_step[idx]._curFrame = 0;
 	_step[idx]._curPanel = _curPanel;
+}
+
+/*------------------------------------------------
+		Compare panel distance (qsort)
+--------------------------------------------------*/
+int panelCompare(const void *arg1, const void *arg2) {
+	SSortPan *p1 = (SSortPan *)arg1;
+	SSortPan *p2 = (SSortPan *)arg2;
+
+	if (p1->_min > p2->_min)
+		return 1;
+
+	if (p1->_min < p2->_min)
+		return -1;
+
+	return 0;
+}
+
+/*------------------------------------------------
+				Sort the panels
+--------------------------------------------------*/
+void PathFinding3D::sortPanel() {
+	qsort(&_sortPan[0], _numSortPan, sizeof(SSortPan), panelCompare);
+}
+
+/*------------------------------------------------
+  Find the 3D point corresponding to the 2D point
+--------------------------------------------------*/
+void PathFinding3D::whereIs(int px, int py) {
+	float inters = 32000.0;
+
+	_vm->_actor->_px += _vm->_actor->_dx;
+	_vm->_actor->_pz += _vm->_actor->_dz;
+
+	_oldPanel = _curPanel;
+	_curPanel = -2;
+
+	invPointProject(px, py);
+	float x = _x3d;
+	float y = _y3d;
+	float z = _z3d;
+
+	// Try to intersect with the floor
+	if (intersectLineFloor(x, y, z)) {
+		_curPanel = -1;
+		_curX = _x3d;
+		_curZ = _z3d;
+	}
+
+	// try all the panels and choose the closest one
+	for (int b = 0; b < _panelNum; b++) {
+		if (intersectLinePanel(&_panel[b], x, y, z)) {
+			float temp = _vm->dist3D(_vm->_actor->_camera->_ex, _vm->_actor->_camera->_ey, _vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
+
+			if (temp < inters) {
+				inters = temp;
+				_curPanel = b;
+				_curX = _x3d;
+				_curZ = _z3d;
+			}
+		}
+	}
+
+	_lookX = _curX;
+	_lookZ = _curZ;
+
+	pointOut();
+
+	_vm->_actor->_px -= _vm->_actor->_dx;
+	_vm->_actor->_pz -= _vm->_actor->_dz;
+}
+
+/*------------------------------------------------
+  Brings out point from inner panel
+--------------------------------------------------*/
+void PathFinding3D::pointOut() {
+#define LARGEVAL 60.0 // 30 cm = 15 enlarge * 2
+
+	float x = 0.0, z = 0.0;
+	float inters = 32000.0;
+
+	// TODO: ask an italian speaker the meaning of this comment :)
+	// se ho beccato il pavimento devo contare quante volte interseca
+	// i box larghi la retta omino pto
+	if (_curPanel < 0)
+		return;
+
+	SPan *panel = &_panel[_curPanel];
+	float nx = panel->_z1 - panel->_z2;
+	float nz = panel->_x2 - panel->_x1;
+	float temp = sqrt(nx * nx + nz * nz);
+	nx /= temp;
+	nz /= temp;
+
+	// move the point on the wide panel
+	for (int b = 0; b < _panelNum; b++) {
+		panel = &_panel[b];
+		// Only check the external panels with the same flag
+		if ((panel->_flags & 0x80000000) && (panel->_flags & (_panel[_curPanel]._flags & 0x7FFFFFFF))) {
+			// check point 1
+			temp = _vm->dist2D(_curX, _curZ, panel->_x1, panel->_z1);
+
+			if (temp < inters) {
+				inters = temp;
+				_curPanel = b;
+				x = panel->_x1;
+				z = panel->_z1;
+			}
+
+			// check point 2
+			temp = _vm->dist2D(_curX, _curZ, panel->_x2, panel->_z2);
+
+			if (temp < inters) {
+				inters = temp;
+				_curPanel = b;
+				x = panel->_x2;
+				z = panel->_z2;
+			}
+
+			// check point a 1/3
+			temp = _vm->dist2D(_curX, _curZ, (panel->_x1 * 2.0 + panel->_x2) / 3.0, (panel->_z1 * 2.0 + panel->_z2) / 3.0);
+
+			if (temp < inters) {
+				inters = temp;
+				_curPanel = b;
+				x = (panel->_x1 * 2.0 + panel->_x2) / 3.0;
+				z = (panel->_z1 * 2.0 + panel->_z2) / 3.0;
+			}
+
+			// check point a 2/3
+			temp = _vm->dist2D(_curX, _curZ, (panel->_x1 + panel->_x2 * 2.0) / 3.0, (panel->_z1 + panel->_z2 * 2.0) / 3.0);
+
+			if (temp < inters) {
+				inters = temp;
+				_curPanel = b;
+				x = (panel->_x1 + panel->_x2 * 2.0) / 3.0;
+				z = (panel->_z1 + panel->_z2 * 2.0) / 3.0;
+			}
+
+			// check intersection with camera
+			if (intersectLineLine(panel->_x1, panel->_z1, panel->_x2, panel->_z2, _vm->_actor->_camera->_ex, _vm->_actor->_camera->_ez, _curX, _curZ)) {
+				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
+
+				if (temp < inters) {
+					inters = temp;
+					_curPanel = b;
+					x = _x3d;
+					z = _z3d;
+				}
+			}
+
+			// check intersection with character
+			if (intersectLineLine(panel->_x1, panel->_z1, panel->_x2, panel->_z2, _vm->_actor->_px, _vm->_actor->_pz, _curX, _curZ)) {
+				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
+
+				if (temp < inters) {
+					inters = temp;
+					_curPanel = b;
+					x = _x3d;
+					z = _z3d;
+				}
+			}
+
+			// check intersection with normal panel
+			if (intersectLineLine(panel->_x1, panel->_z1, panel->_x2, panel->_z2,
+								  _curX + nx * LARGEVAL, _curZ + nz * LARGEVAL, _curX - nx * LARGEVAL, _curZ - nz * LARGEVAL)) {
+				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
+
+				if (temp < inters) {
+					inters = temp;
+					_curPanel = b;
+					x = _x3d;
+					z = _z3d;
+				}
+			}
+		}
+	}
+
+	_curX = x;
+	_curZ = z;
+
+#undef LARGEVAL
+}
+
+/*------------------------------------------------
+		Projects 2D point in a 3D world
+--------------------------------------------------*/
+void PathFinding3D::invPointProject(int x, int y) {
+	float px = (float)(x - _cx) / _vm->_actor->_camera->_fovX;
+	float py = (float)(y - _cy) / _vm->_actor->_camera->_fovY;
+
+	_x3d = (float)(px * _invP[0][0] + py * _invP[0][1] + _invP[0][2]);
+	_y3d = (float)(px * _invP[1][0] + py * _invP[1][1] + _invP[1][2]);
+	_z3d = (float)(px * _invP[2][0] + py * _invP[2][1] + _invP[2][2]);
+
+	_x3d += _vm->_actor->_camera->_ex;
+	_y3d += _vm->_actor->_camera->_ey;
+	_z3d += _vm->_actor->_camera->_ez;
+}
+
+/*------------------------------------------------
+		Intersects a 3D line with the panel
+--------------------------------------------------*/
+bool PathFinding3D::intersectLinePanel(SPan *p, float x, float y, float z) {
+	// If it's an enlarged panel
+	if (p->_flags & 0x80000000)
+		return false;
+
+	float x1 = _vm->_actor->_camera->_ex;
+	float y1 = _vm->_actor->_camera->_ey;
+	float z1 = _vm->_actor->_camera->_ez;
+
+	float dx = (x - x1);
+	float dy = (y - y1);
+	float dz = (z - z1);
+	float t = sqrt(dx * dx + dy * dy + dz * dz);
+	dx /= t;
+	dy /= t;
+	dz /= t;
+
+	float nx = p->_z1 - p->_z2;
+	float nz = p->_x2 - p->_x1;
+	t = sqrt(nx * nx + nz * nz);
+	nx /= t;
+	nz /= t;
+	// ny is always equal to zero for panels
+
+	float n = nx * p->_x1 + nz * p->_z1 - nx * x - nz * z;
+	float d = dx * nx + dz * nz;
+
+	if (d != 0.0) {
+		t = n / d;
+
+		if (t <= 0.0)
+			return false;
+
+		_x3d = x1 + dx * t;
+		_y3d = y1 + dy * t;
+		_z3d = z1 + dz * t;
+
+		float minx = MIN(p->_x1, p->_x2) - 1.5;
+		float maxx = MAX(p->_x1, p->_x2) + 1.5;
+		float minz = MIN(p->_z1, p->_z2) - 1.5;
+		float maxz = MAX(p->_z1, p->_z2) + 1.5;
+
+		// check if it fits inside the panel
+		if ((_x3d >= minx) && (_x3d <= maxx) && (_y3d >= 0.0) && (_y3d <= p->_h) && (_z3d >= minz) && (_z3d <= maxz))
+			return true;
+
+		return false;
+	}
+
+	return false;
+}
+
+/*------------------------------------------------
+		Intersects 3D line with the floor
+--------------------------------------------------*/
+bool PathFinding3D::intersectLineFloor(float x, float y, float z) {
+	float x1 = _vm->_actor->_camera->_ex;
+	float y1 = _vm->_actor->_camera->_ey;
+	float z1 = _vm->_actor->_camera->_ez;
+
+	float dx = (x - x1);
+	float dy = (y - y1);
+	float dz = (z - z1);
+	float t = sqrt(dx * dx + dy * dy + dz * dz);
+	dx /= t;
+	dy /= t;
+	dz /= t;
+
+	// ny is always equal to 1 for the floor
+
+	if (dy != 0.0) {
+		t = -y / dy;
+
+		if (t <= 0.0)
+			return false;
+
+		_x3d = x1 + dx * t;
+		_y3d = y1 + dy * t;
+		_z3d = z1 + dz * t;
+
+		return true;
+	}
+
+	return false;
+}
+
+/*------------------------------------------------
+		Intersects a 2D line with a 2D line
+--------------------------------------------------*/
+bool PathFinding3D::intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
+	float divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
+	if (divisor == 0.0)
+		return false;
+
+	float r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
+	float s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
+	if ((r < 0) || (r > 1) || (s < 0) || (s > 1))
+		return false;
+
+	_x3d = xa + r * (xb - xa);
+	_y3d = 0.0;
+	_z3d = ya + r * (yb - ya);
+
+	return true;
+}
+
+/*------------------------------------------------
+  Tells after which panel the character stands
+--------------------------------------------------*/
+void PathFinding3D::actorOrder() {
+#define LARGEVAL 15.0 // 30 cm (max)
+	if (_forcedActorPos != BOX_NORMAL) {
+		_actorPos = _forcedActorPos;
+		return;
+	}
+
+	Actor *actor = _vm->_actor;
+
+	float ox = actor->_px + actor->_dx - actor->_camera->_ex;
+	float oz = actor->_pz + actor->_dz - actor->_camera->_ez;
+	float dist = sqrt(ox * ox + oz * oz);
+	float lx = (-oz / dist) * LARGEVAL;
+	float lz = (ox / dist) * LARGEVAL;
+
+	ox = actor->_px + actor->_dx;
+	oz = actor->_pz + actor->_dz;
+
+	// It must be copied in front of the nearest box
+	_actorPos = _sortPan[1]._num;
+	// from closest to farthest
+	for (int b = 1; b < _numSortPan; b++) {
+		for (int a = 0; a < _panelNum; a++) {
+			// If it's not wide and belongs to this level
+			if (!(_panel[a]._flags & 0x80000000) && (_panel[a]._flags & (1 << (_sortPan[b]._num - 1)))) {
+				// If it intersects the center of the character camera
+				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox, oz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox + lx, oz + lz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox - lx, oz - lz)) {
+					// If it intersects it must be copied after the next box
+					_actorPos = _sortPan[b + 1]._num;
+				}
+			}
+		}
+	}
 }
 
 } // End of namespace Trecision

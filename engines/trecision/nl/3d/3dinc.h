@@ -107,8 +107,8 @@ struct SSortPan {
 struct SPathNode {
 	float _x, _z;
 	float _dist;
-	int16 _oldp;
-	int16 _curp;
+	int16 _oldPanel;
+	int16 _curPanel;
 };
 
 struct SStep {
@@ -143,18 +143,7 @@ extern int    _numSortPan;
 extern uint8  _defActionLen[];
 
 int actionInRoom(int curA);
-void read3D(Common::String c);
 
-void whereIs(int px, int py);
-void pointOut();
-void pointProject(float x, float y, float z);
-void invPointProject(int x, int y);
-bool intersectLinePanel(SPan *p, float x, float y, float z);
-bool intersectLineFloor(float x, float y, float z);
-bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
-int panCompare(const void *arg1, const void *arg2);
-void sortPanel();
-void actorOrder();
 
 } // End of namespace Trecision
 

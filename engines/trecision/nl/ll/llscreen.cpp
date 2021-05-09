@@ -82,7 +82,7 @@ void ReadLoc() {
 		g_vm->_soundMgr->loadRoomSounds();
 
 	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
-	read3D(fname);
+	g_vm->read3D(fname);
 
 	g_vm->_graphicsMgr->resetScreenBuffer();
 

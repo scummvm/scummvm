@@ -138,6 +138,7 @@ public:
 	// Data files
 	byte *readData(Common::String fileName);
 	uint16 *readData16(Common::String fileName, int &size);
+	void read3D(Common::String c);
 
 	// Inventory
 	void refreshInventory(uint8 startIcon, uint8 startLine);
@@ -195,8 +196,8 @@ public:
 	static float sinCosAngle(float sinus, float cosinus);
 	void ProcessTime();
 	void ProcessMouse();
-	static float dist2D(float x1, float y1, float x2, float y2);
-	static float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
+	float dist2D(float x1, float y1, float x2, float y2);
+	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 	static bool isBetween(int a, int x, int b);
 	static bool isGameArea(Common::Point pos);
 	static bool isInventoryArea(Common::Point pos);

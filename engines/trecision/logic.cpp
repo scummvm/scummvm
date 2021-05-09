@@ -270,7 +270,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	switch (room) {
 	case kRoom21:
 		if (!altRoomFl) {
-			read3D("21.3d");
+			_vm->read3D("21.3d");
 			_vm->_room[kRoom21]._flag &= ~kObjFlagExtra;
 			_vm->_pathFind->setPosition(14);
 			_vm->_obj[oCATENAT21]._position = 5;
@@ -298,7 +298,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectVisible(oCUNICOLO21, true);
 			_vm->setObjectVisible(oCARTELLONE21, true);
 		} else {
-			read3D("212.3d");
+			_vm->read3D("212.3d");
 			_vm->_room[kRoom21]._flag |= kObjFlagExtra;
 			_vm->_pathFind->setPosition(15);
 			_vm->_obj[oCATENAT21]._position = 6;
@@ -330,14 +330,14 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		break;
 	case kRoom24:
 		if (!altRoomFl) {
-			read3D("24.3d");
+			_vm->read3D("24.3d");
 			_vm->_room[kRoom24]._flag &= ~kObjFlagExtra;
 			_vm->_obj[oPASSAGE24]._position = 3;
 			_vm->_obj[oMACERIE24]._position = 3;
 			_vm->setObjectVisible(oDUMMY24, false);
 			_vm->setObjectVisible(oDUMMY24A, true);
 		} else {
-			read3D("242.3d");
+			_vm->read3D("242.3d");
 			_vm->_room[kRoom24]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(od24TO26, true);
 			_vm->_obj[oPASSAGE24]._position = 4;
@@ -349,12 +349,12 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 
 	case kRoom2A:
 		if (!altRoomFl) {
-			read3D("2A.3d");
+			_vm->read3D("2A.3d");
 			_vm->_room[kRoom2A]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2A2, true);
 			_vm->setObjectVisible(oDUMMY2A, false);
 		} else {
-			read3D("2A2.3d");
+			_vm->read3D("2A2.3d");
 			_vm->_room[kRoom2A]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2A, true);
 			_vm->setObjectVisible(oDUMMY2A2, false);
@@ -362,12 +362,12 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		break;
 	case kRoom2B:
 		if (!altRoomFl) {
-			read3D("2B.3d");
+			_vm->read3D("2B.3d");
 			_vm->_room[kRoom2B]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDOOR2B, true);
 			_vm->setObjectVisible(od2BTO28, false);
 		} else {
-			read3D("2B2.3d");
+			_vm->read3D("2B2.3d");
 			_vm->_room[kRoom2B]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(oDOOR2B, false);
 			_vm->setObjectVisible(od2BTO28, true);
@@ -378,7 +378,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oCATWALKA2E]._nbox = BOX_BACKGROUND;
 			_vm->_obj[oCATWALKA2E]._position = 2;
 			_vm->setObjectAnim(oCATWALKA2E, a2E2PRIMAPALLONTANANDO);
-			read3D("2E.3d");
+			_vm->read3D("2E.3d");
 			_vm->_room[kRoom2E]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2E, false);
 			_vm->_obj[oENTRANCE2E]._flag &= ~kObjFlagExamine;
@@ -389,7 +389,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		} else {
 			_vm->_obj[oCATWALKA2E]._position = 3;
 			_vm->setObjectAnim(oCATWALKA2E, a2E3PRIMAPAVVICINANDO);
-			read3D("2E2.3d");
+			_vm->read3D("2E2.3d");
 			_vm->_room[kRoom2E]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2E, true);
 			_vm->setObjectVisible(oENTRANCE2E, true);
@@ -405,7 +405,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 		if (!altRoomFl) {
 			_vm->_obj[oVIADOTTO2GV]._position = 7;
 			_vm->setObjectAnim(oVIADOTTO2GV, a2G7ATTRAVERSAPONTICELLO);
-			read3D("2GV.3d");
+			_vm->read3D("2GV.3d");
 			_vm->_room[kRoom2GV]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2GV, false);
 			_vm->setObjectVisible(oRAGAZZOS2GV, false);
@@ -618,7 +618,7 @@ void LogicManager::endChangeRoom() {
 		_vm->setObjectVisible(oCAMPO28, false);
 		_vm->setObjectVisible(oCARTELLOA28, false);
 		_vm->setObjectVisible(oCARTELLOS28, true);
-		read3D("282.3d");
+		_vm->read3D("282.3d");
 	} else if (_vm->_curRoom == kRoom28 && _vm->isObjectVisible(oPULSANTEABA2D)) {
 		_vm->_animMgr->_animTab[aBKG28]._flag &= ~(SMKANIM_OFF1 | SMKANIM_OFF3);
 		_vm->setObjectVisible(oCAMPO28, true);
@@ -697,7 +697,7 @@ void LogicManager::endChangeRoom() {
 	else if (_vm->_curRoom == kRoom5A && !(_vm->_room[kRoom5A]._flag & kObjFlagDone))
 		_vm->_textMgr->CharacterSay(1408);
 	else if (_vm->_curRoom == kRoomControlPanel && (_vm->_oldRoom == kRoomControlPanel))
-		_vm->_logicMgr->DoSys(o00LOAD);
+		_vm->_logicMgr->doSys(o00LOAD);
 	_vm->_inventoryObj[kItemPositioner]._flag &= ~kObjFlagExtra;
 }
 
@@ -1368,7 +1368,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_dialogMgr->playDialog(dF1D1);
 			*updateInventory = false;
 			_vm->removeIcon(kItemRatOnSkate);
-			read3D("1d2.3d"); // after skate
+			_vm->read3D("1d2.3d"); // after skate
 			_vm->setObjectVisible(oDONNA1D, false);
 			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
 			_vm->_animMgr->_animTab[aBKG1D]._flag |= SMKANIM_OFF1;
@@ -1863,7 +1863,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oLICANTROPOM4P, true);
 			_vm->setObjectVisible(oSANGUE4P, true);
 			_vm->_room[kRoom4P]._flag |= kObjFlagExtra;
-			read3D("4p2.3d"); // after werewolf
+			_vm->read3D("4p2.3d"); // after werewolf
 			_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			_vm->_dialogMgr->playDialog(dF4P2);
 			*printSentence = false;
@@ -2907,7 +2907,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oPROIETTORE35:
 		_vm->_room[kRoom35]._flag |= kObjFlagExtra;
-		read3D("352.3d"); // After the shock
+		_vm->read3D("352.3d"); // After the shock
 
 		_vm->setObjectVisible(oRIBELLEA35, false);
 		_vm->setObjectVisible(oDOORC35, false);
@@ -3842,7 +3842,7 @@ void LogicManager::doMouseLeftRight() {
 	} else if (_vm->_curRoom == kRoomControlPanel) {
 		// Sys
 		_vm->checkMask(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2));
-		DoSys(_vm->_curObj);
+		doSys(_vm->_curObj);
 		return;
 	}
 
@@ -3936,7 +3936,7 @@ void LogicManager::doMouseLeftRight() {
 					pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
 				}
 			}
-			whereIs(pmousex, pmousey);
+			_vm->_pathFind->whereIs(pmousex, pmousey);
 			_vm->_pathFind->findPath();
 		}
 		_vm->_characterQueue.initQueue();
@@ -4155,26 +4155,26 @@ void LogicManager::doSystemChangeRoom() {
 	//			for save/load
 	else if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
 		switch (_vm->_curRoom) {
-		case kRoom15: read3D("152.3d"); break;
-		case kRoom17: read3D("172.3d"); break;
-		case kRoom1D: read3D("1d2.3d"); break;
-		case kRoom21: read3D("212.3d"); break;
-		case kRoom24: read3D("242.3d"); break;
-		case kRoom28: read3D("282.3d"); break;
-		case kRoom2A: read3D("2A2.3d"); break;
-		case kRoom2B: read3D("2B2.3d"); break;
-		case kRoom2E: read3D("2E2.3d"); break;
-		case kRoom2GV: read3D("2GV2.3d"); break;
-		case kRoom35: read3D("352.3d"); break;
-		case kRoom37: read3D("372.3d"); break;
-		case kRoom4P: read3D("4P2.3d"); break;
+		case kRoom15: _vm->read3D("152.3d"); break;
+		case kRoom17: _vm->read3D("172.3d"); break;
+		case kRoom1D: _vm->read3D("1d2.3d"); break;
+		case kRoom21: _vm->read3D("212.3d"); break;
+		case kRoom24: _vm->read3D("242.3d"); break;
+		case kRoom28: _vm->read3D("282.3d"); break;
+		case kRoom2A: _vm->read3D("2A2.3d"); break;
+		case kRoom2B: _vm->read3D("2B2.3d"); break;
+		case kRoom2E: _vm->read3D("2E2.3d"); break;
+		case kRoom2GV: _vm->read3D("2GV2.3d"); break;
+		case kRoom35: _vm->read3D("352.3d"); break;
+		case kRoom37: _vm->read3D("372.3d"); break;
+		case kRoom4P: _vm->read3D("4P2.3d"); break;
 		default:
 			break;
 		}
 	}
 }
 
-void LogicManager::DoSys(uint16 curObj) {
+void LogicManager::doSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:
 		if (_vm->quitPrompt())
