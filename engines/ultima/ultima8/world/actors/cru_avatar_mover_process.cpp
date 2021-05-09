@@ -380,8 +380,9 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		Direction dir_left = Direction_TurnByDelta(direction, -4, dirmode_16dirs);
 		Point3 origpt;
 		avatar->getLocation(origpt);
-		static const int ADJUSTMENTS[] = {0x10, 0x10, 0x20, 0x20, 0x30, 0x30,
-			0x40, 0x40, 0x50, 0x50};
+		// Double the values in original to match our coordinate space
+		static const int ADJUSTMENTS[] = {0x20, 0x20, 0x40, 0x40, 0x60, 0x60,
+			0x80, 0x80, 0xA0, 0xA0};
 
 		for (int i = 0; i < ARRAYSIZE(ADJUSTMENTS); i++) {
 			Direction testdir = (i % 2 ? dir_left : dir_right);
