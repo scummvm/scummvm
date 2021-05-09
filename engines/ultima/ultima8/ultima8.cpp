@@ -125,7 +125,7 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_screen(nullptr), _fontManager(nullptr), _paletteManager(nullptr), _gameData(nullptr),
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
-		_avatarInStasis(false), _paintEditorItems(false), _inversion(0),
+		_avatarInStasis(false), _cruStasis(false), _paintEditorItems(false), _inversion(0),
 		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
 	    _lerpFactor(256), _inBetweenFrame(false), _unkCrusaderFlag(false), _moveKeyFrame(0) {
@@ -864,7 +864,7 @@ void Ultima8Engine::writeSaveInfo(Common::WriteStream *ws) {
 
 bool Ultima8Engine::canSaveGameStateCurrently(bool isAutosave) {
 	// Can't save when avatar in stasis during cutscenes
-	if (_avatarInStasis)
+	if (_avatarInStasis || _cruStasis)
 		return false;
 
 	// Check for gumps that prevent saving
@@ -1507,13 +1507,12 @@ uint32 Ultima8Engine::I_getAvatarInStasis(const uint8 * /*args*/, unsigned int /
 }
 
 uint32 Ultima8Engine::I_setCruStasis(const uint8 *args, unsigned int argsize) {
-	// This is like avatar stasis, but stops a lot of other keyboard inputs too.
-	warning("I_setCruStasis: TODO: implement me");
+	get_instance()->setCruStasis(true);
 	return 0;
 }
 
 uint32 Ultima8Engine::I_clrCruStasis(const uint8 *args, unsigned int argsize) {
-	warning("I_clrCruStasis: TODO: implement me");
+	get_instance()->setCruStasis(false);
 	return 0;
 }
 

@@ -123,6 +123,7 @@ private:
 	unsigned int _inversion;
 	bool _unkCrusaderFlag; //!< not sure what this is but it's only used in usecode for crusader, so just keep track of it..
 	uint32 _moveKeyFrame; //!< An imperfect way for the Crusader usecode to stop remote camera viewing.
+	bool _cruStasis; //!< A slightly different kind of stasis for Crusader that stops some keyboard events
 private:
 	/**
 	 * Does engine deinitialization
@@ -259,6 +260,12 @@ public:
 	}
 	void setUnkCrusaderFlag(bool flag) {
 		_unkCrusaderFlag = flag;
+	}
+	void setCruStasis(bool flag) {
+		_cruStasis = flag;
+	}
+	bool isCruStasis() const {
+		return _cruStasis;
 	}
 
 	void moveKeyEvent();

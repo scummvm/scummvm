@@ -1179,6 +1179,10 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 }
 
 bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isCruStasis()) {
+		debugPrintf("Can't move camera: cruStasis\n");
+		return false;
+	}
 	Actor *actor = getControlledActor();
 	if (actor) {
 		int32 x, y, z;
@@ -1803,8 +1807,14 @@ bool Debugger::cmdU8ShapeViewer(int argc, const char **argv) {
 
 bool Debugger::cmdShowMenu(int argc, const char **argv) {
 	World *world = World::get_instance();
+	// In Crusader escape is also used to stop controlling another NPC
 	if (world && world->getControlledNPCNum() != 1) {
 		world->setControlledNPCNum(1);
+		return false;
+	}
+	if (Ultima8Engine::get_instance()->isCruStasis()) {
+		Ultima8Engine::get_instance()->moveKeyEvent();
+		debugPrintf("Not opening menu: cruStasis\n");
 		return false;
 	}
 	MenuGump::showMenu();
