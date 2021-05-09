@@ -242,13 +242,13 @@ void AnimTypeManager::ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		switch (h->_curAnim->_atFrame[atf]._index) {
 		case 1: {
 			Common::String filename = Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName);
-			read3D(filename);
+			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom]._flag &= ~kObjFlagExtra;
 			}
 			break;
 		case 2: {
 			Common::String filename = Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName);
-			read3D(filename);
+			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
 			if (_vm->_curRoom == kRoom37)
 				_vm->_animMgr->smkVolumePan(0, 1, 1);

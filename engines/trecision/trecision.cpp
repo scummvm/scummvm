@@ -603,6 +603,57 @@ uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 	return buf;
 }
 
+void TrecisionEngine::read3D(Common::String filename) {
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
+	if (ff == nullptr)
+		error("read3D: Can't open 3D file %s", filename.c_str());
+
+	_actor->read3D(ff);
+	_pathFind->read3D(ff);
+
+	delete ff;
+
+	// projection matrix
+	_proj[0][0] = _actor->_camera->_e1[0];
+	_proj[0][1] = _actor->_camera->_e1[1];
+	_proj[0][2] = _actor->_camera->_e1[2];
+	_proj[1][0] = _actor->_camera->_e2[0];
+	_proj[1][1] = _actor->_camera->_e2[1];
+	_proj[1][2] = _actor->_camera->_e2[2];
+	_proj[2][0] = _actor->_camera->_e3[0];
+	_proj[2][1] = _actor->_camera->_e3[1];
+	_proj[2][2] = _actor->_camera->_e3[2];
+
+	// Compute 3x3 inverse matrix for 2D points on 3D
+	float det = _proj[0][0] * _proj[1][1] * _proj[2][2] +
+				_proj[0][1] * _proj[1][2] * _proj[2][0] +
+				_proj[0][2] * _proj[1][0] * _proj[2][1] -
+				_proj[2][0] * _proj[1][1] * _proj[0][2] -
+				_proj[2][1] * _proj[1][2] * _proj[2][0] -
+				_proj[2][2] * _proj[1][0] * _proj[2][1];
+
+	if (det == 0.0)
+		error("read3D : Unexpected data error while computing inverse matrix");
+
+	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
+	_invP[0][1] = (_proj[0][1] * _proj[2][2] - _proj[0][2] * _proj[2][1]) / (-det);
+	_invP[0][2] = (_proj[0][1] * _proj[1][2] - _proj[0][2] * _proj[1][1]) / det;
+	_invP[1][0] = (_proj[1][0] * _proj[2][2] - _proj[1][2] * _proj[2][0]) / (-det);
+	_invP[1][1] = (_proj[0][0] * _proj[2][2] - _proj[0][2] * _proj[2][0]) / det;
+	_invP[1][2] = (_proj[0][0] * _proj[1][2] - _proj[0][2] * _proj[1][0]) / (-det);
+	_invP[2][0] = (_proj[1][0] * _proj[2][1] - _proj[1][1] * _proj[2][0]) / det;
+	_invP[2][1] = (_proj[0][0] * _proj[2][1] - _proj[0][1] * _proj[2][0]) / (-det);
+	_invP[2][2] = (_proj[0][0] * _proj[1][1] - _proj[0][1] * _proj[1][0]) / det;
+
+	_cx = 320;
+	_cy = 240;
+
+	_pathFind->initSortPan();
+
+	_renderer->init3DRoom(_graphicsMgr->getScreenBufferPtr());
+	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
+}
+
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
@@ -1059,8 +1110,8 @@ void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 	if (_obj[objectId]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
 		SSortTable entry;
 		entry._objectId = objectId;
-		entry._remove = !g_vm->isObjectVisible(objectId);
-		g_vm->_sortTable.push_back(entry);
+		entry._remove = !isObjectVisible(objectId);
+		_sortTable.push_back(entry);
 	}
 }
 

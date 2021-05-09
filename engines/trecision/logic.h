@@ -79,7 +79,7 @@ public:
 	void doMouseLeftRight();
 
 	void doSystemChangeRoom();
-	void DoSys(uint16 curObj);
+	void doSys(uint16 curObj);
 
 	bool isCloseupOrControlRoom() const;
 

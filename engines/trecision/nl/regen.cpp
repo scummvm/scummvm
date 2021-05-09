@@ -109,7 +109,7 @@ void PaintScreen(bool flag) {
 	}
 
 	// trova la posizione dell'omino
-	actorOrder();
+	g_vm->_pathFind->actorOrder();
 
 	// PER OGNI BOX DALL'ORIZZONTE IN AVANTI...
 	// COPIA PER LIVELLO

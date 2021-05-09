@@ -92,7 +92,13 @@ private:
 
 	bool pointInside(int pan, float x, float z);
 
-	SPathNode _pathNode[MAXPATHNODES];	
+	SPathNode _pathNode[MAXPATHNODES];
+	void sortPanel();
+	void pointOut();
+	void invPointProject(int x, int y);
+	bool intersectLinePanel(SPan *p, float x, float y, float z);
+	bool intersectLineFloor(float x, float y, float z);
+	bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
 
 public:
 	PathFinding3D(TrecisionEngine *vm);
@@ -124,8 +130,9 @@ public:
 	void sortPath();
 	void initSortPan();
 	void read3D(Common::SeekableReadStream *ff);
-
 	void reset(uint16 idx, float px, float pz, float theta);
+	void whereIs(int px, int py);
+	void actorOrder();
 
 }; // end of class
 

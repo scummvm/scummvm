@@ -376,16 +376,15 @@ void Actor::actorDoAction(int action) {
 	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
 		float curLen = FRAMECENTER(v) - firstFrame;
 
-		_vm->_pathFind->_step[stepIdx]._dx = curLen * ox;
-		_vm->_pathFind->_step[stepIdx]._dz = curLen * oz;
-		_vm->_pathFind->_step[stepIdx]._px = px;
-		_vm->_pathFind->_step[stepIdx]._pz = pz;
-
-		_vm->_pathFind->_step[stepIdx]._curAction = action;
-		_vm->_pathFind->_step[stepIdx]._curFrame = stepIdx - _vm->_pathFind->_curStep;
-
-		_vm->_pathFind->_step[stepIdx]._theta = theta;
-		_vm->_pathFind->_step[stepIdx]._curPanel = _curPanel;
+		SStep *curStep = &_vm->_pathFind->_step[stepIdx];
+		curStep->_dx = curLen * ox;
+		curStep->_dz = curLen * oz;
+		curStep->_px = px;
+		curStep->_pz = pz;
+		curStep->_curAction = action;
+		curStep->_curFrame = stepIdx - _vm->_pathFind->_curStep;
+		curStep->_theta = theta;
+		curStep->_curPanel = _curPanel;
 
 		v += _vertexNum;
 
