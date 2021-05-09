@@ -33,12 +33,12 @@ void SDText::set(SDText org) {
 	set(org._rect, org._subtitleRect, org.tcol, org.scol, org.text);
 }
 
-void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uint16 pscol, Common::String text) {
+void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uint16 pscol, Common::String pText) {
 	_rect = rect;
 	_subtitleRect = subtitleRect;
 	tcol = ptcol;
 	scol = pscol;
-	text = text;
+	text = pText;
 }
 
 /*-------------------------------------------------------------
