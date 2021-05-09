@@ -102,7 +102,6 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 void NightlongSmackerDecoder::forceSkip(uint frame) {
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 
-	decodeNextFrame();
 	while (getCurFrame() < frame) {
 		decodeNextFrame();
 	}
@@ -112,7 +111,7 @@ void NightlongSmackerDecoder::forceSkip(uint frame) {
 }
 
 bool NightlongSmackerDecoder::endOfVideo() const {
-	return (uint32)getCurFrame() >= getFrameCount() - 1;
+	return getCurFrame() >= (int32)getFrameCount() - 1;
 }
 
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
@@ -178,33 +177,17 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 }
 
 void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame) {
-	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
-	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
 	startFrame = CLIP<int32>(startFrame, 0, smkDecoder->getFrameCount() - 1);
 	endFrame = CLIP<int32>(endFrame, 0, smkDecoder->getFrameCount() - 1);
-	const Dialog *curDialog = &_vm->_dialogMgr->_dialog[_vm->_dialogMgr->_curDialog];
 
-	//	If choices are attached
-	if (smkDecoder->getCurFrame() != startFrame) {
-		for (int a = 0; a < MAXNEWSMKPAL; a++) {
-			if ((curDialog->_newPal[a] > startFrame || !curDialog->_newPal[a]) && a) {
-				smkDecoder->forceSeekToFrame(curDialog->_newPal[a - 1] - 1);
-				break;
-			}
+	// If choices are attached
+	if (startFrame > 0 && startFrame > smkDecoder->getCurFrame()) {
+		int seekFrame = MAX(startFrame - 10, 0);
 
-			if (!curDialog->_newPal[a] || curDialog->_newPal[a] == startFrame)
-				break;
-		}
-
-		if (endFrame - startFrame > 2) {
-			if (startFrame > 10)
-				smkDecoder->forceSeekToFrame(startFrame - 10);
-			else
-				smkDecoder->forceSeekToFrame(0);
-
+		smkDecoder->forceSeekToFrame(seekFrame);
+		if (seekFrame != startFrame) {
 			smkDecoder->forceSkip(startFrame);
-		} else
-			smkDecoder->forceSeekToFrame(startFrame);
+		}
 	}
 }
 
