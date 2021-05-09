@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-09 04:11+0000\n"
-"PO-Revision-Date: 2021-05-07 06:25+0000\n"
-"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
+"PO-Revision-Date: 2021-05-09 16:25+0000\n"
+"Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
 "Language: ja\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: gui/about.cpp:104
 #, c-format
 msgid "(built on %s)"
-msgstr "（％s上に構築）"
+msgstr "(%s上に構築)"
 
 #: gui/about.cpp:111
 msgid "Features compiled in:"
@@ -97,11 +97,11 @@ msgstr "ゲームデータのフォルダーを選択する"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr "から： "
+msgstr "ダウンロード元： "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr "に： "
+msgstr "ダウンロード先： "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -120,9 +120,7 @@ msgstr "非表示"
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
-"接続が制限されているようです。本当にそれと一緒にファイルをダウンロードしたい"
-"ですか？"
+msgstr "接続が制限されているようです。ダウンロードしてもよろしいですか?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -149,7 +147,7 @@ msgstr "いいえ"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:564
 msgid "ScummVM couldn't open the specified directory!"
-msgstr "ScummVMは指定されたディレクトリを開くことができませんでした！"
+msgstr "指定されたディレクトリーが開けませんでした!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
@@ -184,13 +182,13 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
-"%s は指定されたディレクトリにすでに存在します。\n"
-"本当にそのディレクトリにファイルをダウンロードしますか？"
+"%s は指定されたディレクトリーに存在します。\n"
+"本当にここにダウンロードしますか?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr "%s %S / %s %Sダウンロード済み"
+msgstr "ダウンロード済 %s %S / %s %S"
 
 #: gui/downloaddialog.cpp:222
 #, c-format
@@ -6014,9 +6012,7 @@ msgstr "FM-TOWNSゲームを200ピクセルの高さにトリミングします"
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr ""
-"画面の下部で余分な40ピクセルを切り取り、標準の高さ200ピクセルにして、「アスペ"
-"クト比補正」を使用できるようにします."
+msgstr "画面下部の余分な40pxをカットし、「アスペクト比補正」を使って標準的な200pxの高さにします"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
