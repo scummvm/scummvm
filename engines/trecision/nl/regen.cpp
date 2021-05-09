@@ -113,7 +113,7 @@ void PaintScreen(bool flag) {
 
 	// PER OGNI BOX DALL'ORIZZONTE IN AVANTI...
 	// COPIA PER LIVELLO
-	for (int liv = _numSortPan; liv >= 0; liv--) {
+	for (int liv = g_vm->_pathFind->_numSortPan; liv >= 0; liv--) {
 		uint16 CurBox = g_vm->_pathFind->_sortPan[liv]._num;
 
 		// disegna tutti gli oggetti e le animazioni che intersecano
@@ -228,7 +228,7 @@ void PaintObjAnm(uint16 CurBox) {
 		}
 	}
 
-	if (_actorPos == CurBox && g_vm->_flagShowCharacter && g_vm->_flagCharacterExists) {
+	if (g_vm->_actorPos == CurBox && g_vm->_flagShowCharacter && g_vm->_flagCharacterExists) {
 		g_vm->_renderer->drawCharacter(CALCPOINTS);
 
 		int x1 = g_vm->_actor->_lim[0];
@@ -247,7 +247,7 @@ void PaintObjAnm(uint16 CurBox) {
 
 		g_vm->_renderer->drawCharacter(DRAWFACES);
 
-	} else if (_actorPos == CurBox && !g_vm->_flagDialogActive) {
+	} else if (g_vm->_actorPos == CurBox && !g_vm->_flagDialogActive) {
 		g_vm->_animMgr->refreshSmkAnim(g_vm->_animMgr->_playingAnims[kSmackerAction]);
 	}
 }

@@ -702,8 +702,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
 			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
 
-			_x2d = _cx + (int)((l0 * _curCamera->_fovX) / l2);
-			_y2d = _cy + (int)((l1 * _curCamera->_fovY) / l2);
+			int _x2d = _cx + (int)((l0 * _curCamera->_fovX) / l2);
+			int _y2d = _cy + (int)((l1 * _curCamera->_fovY) / l2);
 
 			_vVertex[a]._x = _x2d;
 			_vVertex[a]._y = _y2d;
@@ -860,6 +860,12 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 		_pathNode[i]._oldPanel = 0;
 		_pathNode[i]._curPanel = 0;
 	}
+
+	_curPanel = -1;
+	_oldPanel = -1;
+
+	_numPathNodes = 0;
+	_numSortPan = 0;
 }
 
 PathFinding3D::~PathFinding3D() {
@@ -2098,6 +2104,39 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 		_panel[i]._col1 = ff->readSByte();
 		_panel[i]._col2 = ff->readSByte();
 	}
+
+		// projection matrix
+	float _proj[3][3];
+	_proj[0][0] = _vm->_actor->_camera->_e1[0];
+	_proj[0][1] = _vm->_actor->_camera->_e1[1];
+	_proj[0][2] = _vm->_actor->_camera->_e1[2];
+	_proj[1][0] = _vm->_actor->_camera->_e2[0];
+	_proj[1][1] = _vm->_actor->_camera->_e2[1];
+	_proj[1][2] = _vm->_actor->_camera->_e2[2];
+	_proj[2][0] = _vm->_actor->_camera->_e3[0];
+	_proj[2][1] = _vm->_actor->_camera->_e3[1];
+	_proj[2][2] = _vm->_actor->_camera->_e3[2];
+
+	// Compute 3x3 inverse matrix for 2D points on 3D
+	float det = _proj[0][0] * _proj[1][1] * _proj[2][2] +
+				_proj[0][1] * _proj[1][2] * _proj[2][0] +
+				_proj[0][2] * _proj[1][0] * _proj[2][1] -
+				_proj[2][0] * _proj[1][1] * _proj[0][2] -
+				_proj[2][1] * _proj[1][2] * _proj[2][0] -
+				_proj[2][2] * _proj[1][0] * _proj[2][1];
+
+	if (det == 0.0)
+		error("read3D : Unexpected data error while computing inverse matrix");
+
+	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
+	_invP[0][1] = (_proj[0][1] * _proj[2][2] - _proj[0][2] * _proj[2][1]) / (-det);
+	_invP[0][2] = (_proj[0][1] * _proj[1][2] - _proj[0][2] * _proj[1][1]) / det;
+	_invP[1][0] = (_proj[1][0] * _proj[2][2] - _proj[1][2] * _proj[2][0]) / (-det);
+	_invP[1][1] = (_proj[0][0] * _proj[2][2] - _proj[0][2] * _proj[2][0]) / det;
+	_invP[1][2] = (_proj[0][0] * _proj[1][2] - _proj[0][2] * _proj[1][0]) / (-det);
+	_invP[2][0] = (_proj[1][0] * _proj[2][1] - _proj[1][1] * _proj[2][0]) / det;
+	_invP[2][1] = (_proj[0][0] * _proj[2][1] - _proj[0][1] * _proj[2][0]) / (-det);
+	_invP[2][2] = (_proj[0][0] * _proj[1][1] - _proj[0][1] * _proj[1][0]) / det;
 }
 
 void PathFinding3D::reset(uint16 idx,float px, float pz, float theta) {
@@ -2424,12 +2463,12 @@ bool PathFinding3D::intersectLineLine(float xa, float ya, float xb, float yb, fl
 --------------------------------------------------*/
 void PathFinding3D::actorOrder() {
 #define LARGEVAL 15.0 // 30 cm (max)
-	if (_forcedActorPos != BOX_NORMAL) {
-		_actorPos = _forcedActorPos;
+	Actor *actor = _vm->_actor;
+
+	if (_vm->_forcedActorPos != BOX_NORMAL) {
+		_vm->_actorPos = _vm->_forcedActorPos;
 		return;
 	}
-
-	Actor *actor = _vm->_actor;
 
 	float ox = actor->_px + actor->_dx - actor->_camera->_ex;
 	float oz = actor->_pz + actor->_dz - actor->_camera->_ez;
@@ -2441,7 +2480,7 @@ void PathFinding3D::actorOrder() {
 	oz = actor->_pz + actor->_dz;
 
 	// It must be copied in front of the nearest box
-	_actorPos = _sortPan[1]._num;
+	_vm->_actorPos = _sortPan[1]._num;
 	// from closest to farthest
 	for (int b = 1; b < _numSortPan; b++) {
 		for (int a = 0; a < _panelNum; a++) {
@@ -2450,7 +2489,7 @@ void PathFinding3D::actorOrder() {
 				// If it intersects the center of the character camera
 				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox, oz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox + lx, oz + lz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox - lx, oz - lz)) {
 					// If it intersects it must be copied after the next box
-					_actorPos = _sortPan[b + 1]._num;
+					_vm->_actorPos = _sortPan[b + 1]._num;
 				}
 			}
 		}

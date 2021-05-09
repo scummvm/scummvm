@@ -51,22 +51,11 @@
 namespace Trecision {
 
 
-float  _proj[3][3];
-float  _invP[3][3];
-
-int    _actorPos;
-int    _forcedActorPos;
-
 int    _cx, _cy;
-int    _x2d, _y2d;
 
 float  _x3d, _y3d, _z3d;
 
-int    _curPanel = - 1, _oldPanel = - 1;
 float  _curX, _curZ;
-
-int    _numPathNodes;
-int    _numSortPan;
 
 uint8  _defActionLen[hLAST + 1] = {
 	/* STAND */		1,
