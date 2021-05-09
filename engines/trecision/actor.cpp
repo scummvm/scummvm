@@ -22,6 +22,8 @@
 
 #include "trecision/3d.h"
 #include "trecision/actor.h"
+
+#include "trecision/scheduler.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
@@ -413,9 +415,9 @@ void Actor::actorDoAction(int action) {
 
 	// Starts action
 	if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
-		doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXIT, MP_DEFAULT, _vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
+		_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXIT, MP_DEFAULT, _vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv, _vm->_curObj);
 	else
-		doEvent(MC_CHARACTER, ME_CHARACTERDOACTION, MP_DEFAULT, 0, 0, 0, 0);
+		_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERDOACTION, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void Actor::actorStop() {

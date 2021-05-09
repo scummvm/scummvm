@@ -33,8 +33,11 @@
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
+
+#include "trecision/anim.h"
+#include "trecision/scheduler.h"
+
 #include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 
 namespace Trecision {
 
@@ -142,7 +145,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 
 	if (!smkDecoder->loadFile(filename)) {
 		warning("playMovie: File %s not found", filename.c_str());
-		doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+		_vm->_scheduler->doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 		return;
 	}
 
@@ -171,7 +174,7 @@ void AnimManager::playMovie(Common::String filename, int startFrame, int endFram
 	}
 
 	_vm->freeKey();
-	doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 
 	delete smkDecoder;
 }
@@ -444,7 +447,7 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 			_vm->_flagPaintCharacter = true;
 		} else {
 			_smkAnims[slot]->rewind();
-			InitAtFrameHandler(animation, 0);
+			_vm->_animTypeMgr->init(animation, 0);
 		}
 	}
 }

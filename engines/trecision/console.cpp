@@ -24,6 +24,8 @@
 #include "gui/debugger.h"
 
 #include "trecision/console.h"
+
+#include "trecision/scheduler.h"
 #include "trecision/dialog.h"
 #include "trecision/trecision.h"
 #include "trecision/nl/message.h"
@@ -49,7 +51,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 	}
 
 	const int newRoom = atoi(argv[1]);
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, newRoom, 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, newRoom, 0, 0, 0);
 
 	return false;
 }

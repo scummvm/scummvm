@@ -22,6 +22,7 @@
 
 #include "common/system.h"
 
+#include "trecision/scheduler.h"
 #include "trecision/text.h"
 #include "trecision/actor.h"
 #include "trecision/defines.h"
@@ -301,14 +302,14 @@ void TrecisionEngine::ProcessMouse() {
 
 	if (_mouseLeftBtn || _mouseRightBtn) {
 		if (!MaskMouse) {
-			doEvent(MC_MOUSE, _mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
+			_scheduler->doEvent(MC_MOUSE, _mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
 			MaskMouse = true;
 		}
 	} else {
 		MaskMouse = false;
 
 		if (!_flagscriptactive && (mx != oldMousePos.x || my != oldMousePos.y)) {
-			doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
+			_scheduler->doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
 			oldMousePos = Common::Point(mx, my);
 		}
 	}

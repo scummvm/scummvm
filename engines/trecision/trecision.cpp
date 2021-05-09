@@ -35,6 +35,10 @@
 #include "gui/saveload.h"
 
 #include "trecision/trecision.h"
+
+
+#include "anim.h"
+#include "scheduler.h"
 #include "trecision/actor.h"
 #include "trecision/3d.h"
 #include "trecision/nl/3d/3dinc.h"
@@ -121,6 +125,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_renderer = nullptr;
 	_pathFind = nullptr;
 	_textMgr = nullptr;
+	_animTypeMgr = nullptr;
 	
 	_actorRect = nullptr;
 	_nextRefresh = 0;
@@ -185,6 +190,8 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _renderer;
 	delete _pathFind;
 	delete _textMgr;
+	delete _scheduler;
+	delete _animTypeMgr;
 	
 	delete[] _font;
 	delete[] _arrows;
@@ -214,6 +221,9 @@ Common::Error TrecisionEngine::run() {
 	_pathFind = new PathFinding3D(this);
 	_renderer = new Renderer3D(this);
 	_textMgr = new TextManager(this);
+	_scheduler = new Scheduler(this);
+	_animTypeMgr = new AnimTypeManager(this);
+	
 	setDebugger(new Console(this));
 
 	initMain();
@@ -229,12 +239,12 @@ Common::Error TrecisionEngine::run() {
 			ProcessTime();
 
 		ProcessMouse();
-		Scheduler();
+		_scheduler->process();
 
 		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
 			break;
 
-		AtFrameHandler(kAnimTypeBackground);
+		_animTypeMgr->handler(kAnimTypeBackground);
 
 		ProcessTheMessage();
 
@@ -419,7 +429,7 @@ void TrecisionEngine::initMain() {
 
 	ProcessTime();
 
-	doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
+	_scheduler->doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TrecisionEngine::openDataFiles() {
@@ -621,8 +631,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 			_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
 
 			_inventory[i] = LASTICON + i;
-		}
-		else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
+		} else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
 			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
 			if (headerRead) {
 				saveNames.push_back(header.description);
@@ -634,13 +643,11 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 				delete thumbnail;
 
 				_inventory[i] = LASTICON + i;
-			}
-			else {
+			} else {
 				saveNames.push_back(_sysText[kMessageEmptySpot]);
 				_inventory[i] = iEMPTYSLOT;
 			}
-		}
-		else {
+		} else {
 			saveNames.push_back(_sysText[kMessageEmptySpot]);
 			_inventory[i] = iEMPTYSLOT;
 		}
@@ -751,8 +758,7 @@ insave:
 
 			if (_mouseLeftBtn)
 				break;
-		}
-		else {
+		} else {
 			if (OldPos != -1) {
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -929,7 +935,7 @@ bool TrecisionEngine::dataLoad() {
 					posX = 2;
 				else
 					posX = posX - (lenText / 2);
-				if ((posX + lenText) > MAXX - 2)
+				if (posX + lenText > MAXX - 2)
 					posX = MAXX - 2 - lenText;
 
 				SText.set(
@@ -946,8 +952,7 @@ bool TrecisionEngine::dataLoad() {
 
 			if (_mouseLeftBtn && (_inventory[CurPos] != iEMPTYSLOT))
 				break;
-		}
-		else {
+		} else {
 			if (OldPos != -1) {
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
@@ -987,7 +992,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 		_flagscriptactive = false;
 
 		_oldRoom = _curRoom;
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
+		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
 	}
 
 	_actor->actorStop();
@@ -1011,10 +1016,10 @@ void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	_flagInventoryLocked = false;
 	if (Act > hLAST) {
 		_animMgr->startSmkAnim(Act);
-		InitAtFrameHandler(Act, _curObj);
+		_animTypeMgr->init(Act, _curObj);
 		_graphicsMgr->hideCursor();
 		_flagShowCharacter = false;
-		doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, _curObj);
+		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, _curObj);
 	} else {
 		if ((Act == aWALKIN) || (Act == aWALKOUT))
 			_curObj = 0;
@@ -1068,7 +1073,7 @@ void TrecisionEngine::setObjectAnim(uint16 objectId, uint16 animId) {
 }
 
 void TrecisionEngine::reEvent() {
-	doEvent(_curMessage->_class, _curMessage->_event, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+	_scheduler->doEvent(_curMessage->_class, _curMessage->_event, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 }
 
 } // End of namespace Trecision

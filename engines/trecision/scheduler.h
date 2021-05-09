@@ -8,36 +8,39 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  */
 
-#ifndef TRECISION_PROTO_H
-#define TRECISION_PROTO_H
+#ifndef TRECISION_SCHEDULER_H
+#define TRECISION_SCHEDULER_H
 
-#include "common/scummsys.h"
-
-namespace Common {
-class SeekableReadStream;
-}
+#include "trecision/trecision.h"
 
 namespace Trecision {
 
-struct SDObj;
-struct STexture;
-struct SPan;
+class Scheduler {
+private:
+	TrecisionEngine *_vm;
+	int maxmesg, maxmesh, maxmesa;
 
-void PaintScreen(bool flag);
-void PaintObjAnm(uint16 CurBox);
-void ProcessTheMessage();
+public:
+	Scheduler(TrecisionEngine *vm);
+	~Scheduler();
 
+	void process();
+	void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
+
+}; // end of class
+
+} // end of namespace
 #endif
-} // End of namespace Trecision
+

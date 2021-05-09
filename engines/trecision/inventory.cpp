@@ -20,6 +20,7 @@
  *
  */
 
+#include "scheduler.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/defines.h"
@@ -133,7 +134,7 @@ void TrecisionEngine::doInventory() {
 			_useWithInv[WITH] = true;
 
 			if (_useWith[USED] != _curInventory) {
-				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
 			} else {
 				_animMgr->smkStop(kSmackerIcon);
@@ -154,7 +155,7 @@ void TrecisionEngine::doInventory() {
 			_useWithInv[USED] = true;
 			showInventoryName(_curInventory, true);
 		} else
-			doEvent(MC_ACTION, ME_INVOPERATE, MP_DEFAULT, 0, 0, 0, _curInventory);
+			_scheduler->doEvent(MC_ACTION, ME_INVOPERATE, MP_DEFAULT, 0, 0, 0, _curInventory);
 		break;
 
 	case ME_EXAMINEICON:
@@ -167,7 +168,7 @@ void TrecisionEngine::doInventory() {
 			_useWith[WITH] = _curInventory;
 			_useWithInv[WITH] = true;
 			if (_useWith[USED] != _curInventory) {
-				doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
 				_lightIcon = 0xFF;
 			} else {
 				_animMgr->smkStop(kSmackerIcon);
@@ -175,13 +176,13 @@ void TrecisionEngine::doInventory() {
 				_lightIcon = _curInventory;
 			}
 		} else
-			doEvent(MC_ACTION, ME_INVEXAMINE, MP_DEFAULT, 0, 0, 0, _curInventory);
+			_scheduler->doEvent(MC_ACTION, ME_INVEXAMINE, MP_DEFAULT, 0, 0, 0, _curInventory);
 		break;
 
 	case ME_SHOWICONNAME:
 		if (isIconArea(_mousePos)) {
 			if (_inventoryStatus != INV_ON)
-				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			_curInventory = whatIcon(_mousePos);
 			showInventoryName(_curInventory, true);
 
@@ -363,7 +364,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			_inventoryStatus = INV_INACTION;
 			_inventoryCounter = INVENTORY_SHOW;
 			if (!isInventoryArea(_mousePos))
-				doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
 			_textMgr->redrawString();
 			return;
 		}
@@ -376,7 +377,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			_inventoryStatus = INV_OFF;
 			_inventoryCounter = INVENTORY_HIDE;
 			if (isInventoryArea(_mousePos) && !(_flagDialogActive || _flagDialogMenuActive))
-				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else
 				_textMgr->redrawString();
 			return;
@@ -390,9 +391,9 @@ void TrecisionEngine::doScrollInventory(Common::Point pos) {
 		return;
 
 	if (pos.x <= ICONMARGSX && _iconBase)
-		doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
+		_scheduler->doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
 	else if (isBetween(MAXX - ICONMARGDX, pos.x, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
-		doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
+		_scheduler->doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TrecisionEngine::syncInventory(Common::Serializer &ser) {
