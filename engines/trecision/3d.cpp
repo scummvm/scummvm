@@ -850,6 +850,8 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 
 	_characterInMovement = false;
 	_characterGoToPosition = -1;
+
+	_panelNum = 0;
 }
 
 PathFinding3D::~PathFinding3D() {
@@ -2091,6 +2093,27 @@ void PathFinding3D::initSortPan() {
 			_numSortPan = b;
 			break;
 		}
+	}
+}
+
+void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
+	// read panels
+	_panelNum = ff->readSint32LE();
+	if (_panelNum > MAXPANELSINROOM)
+		error("read3D(): Too many panels");
+
+	for (int i = 0; i < _panelNum; ++i) {
+		g_vm->_pathFind->_panel[i]._x1 = ff->readFloatLE();
+		g_vm->_pathFind->_panel[i]._z1 = ff->readFloatLE();
+		g_vm->_pathFind->_panel[i]._x2 = ff->readFloatLE();
+		g_vm->_pathFind->_panel[i]._z2 = ff->readFloatLE();
+		g_vm->_pathFind->_panel[i]._h = ff->readFloatLE();
+		g_vm->_pathFind->_panel[i]._flags = ff->readUint32LE();
+
+		g_vm->_pathFind->_panel[i]._near1 = ff->readSByte();
+		g_vm->_pathFind->_panel[i]._near2 = ff->readSByte();
+		g_vm->_pathFind->_panel[i]._col1 = ff->readSByte();
+		g_vm->_pathFind->_panel[i]._col2 = ff->readSByte();
 	}
 }
 

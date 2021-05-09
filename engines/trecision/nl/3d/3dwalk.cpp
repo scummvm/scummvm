@@ -39,25 +39,8 @@ void read3D(Common::String filename) {
 		error("read3D: Can't open 3D file %s", filename.c_str());
 
 	g_vm->_actor->read3D(ff);
-	
-	// read panels
-	_panelNum = ff->readSint32LE();
-	if (_panelNum > MAXPANELSINROOM)
-		error("read3D(): Too many panels");
+	g_vm->_pathFind->read3D(ff);
 
-	for (int i = 0; i < _panelNum; ++i) {
-		g_vm->_pathFind->_panel[i]._x1 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._z1 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._x2 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._z2 = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._h = ff->readFloatLE();
-		g_vm->_pathFind->_panel[i]._flags = ff->readUint32LE();
-
-		g_vm->_pathFind->_panel[i]._near1 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._near2 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._col1 = ff->readSByte();
-		g_vm->_pathFind->_panel[i]._col2 = ff->readSByte();
-	}
 	delete ff;
 
 	// projection matrix
@@ -134,7 +117,7 @@ void whereIs(int px, int py) {
 	}
 
 	// try all the panels and choose the closest one
-	for (int b = 0; b < _panelNum; b++) {
+	for (int b = 0; b < g_vm->_pathFind->_panelNum; b++) {
 		if (intersectLinePanel(&g_vm->_pathFind->_panel[b], x, y, z)) {
 			float temp = g_vm->dist3D(g_vm->_actor->_camera->_ex, g_vm->_actor->_camera->_ey, g_vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
 
@@ -179,7 +162,7 @@ void pointOut() {
 	nz /= temp;
 
 	// move the point on the wide panel
-	for (int b = 0; b < _panelNum; b++) {
+	for (int b = 0; b < g_vm->_pathFind->_panelNum; b++) {
 		panel = &g_vm->_pathFind->_panel[b];
 		// Only check the external panels with the same flag
 		if ((panel->_flags & 0x80000000) && (panel->_flags & (g_vm->_pathFind->_panel[_curPanel]._flags & 0x7FFFFFFF))) {
@@ -458,7 +441,7 @@ void actorOrder() {
 	_actorPos = g_vm->_pathFind->_sortPan[1]._num;
 	// from closest to farthest
 	for (int b = 1; b < _numSortPan; b++) {
-		for (int a = 0; a < _panelNum; a++) {
+		for (int a = 0; a < g_vm->_pathFind->_panelNum; a++) {
 			// If it's not wide and belongs to this level
 			if (!(g_vm->_pathFind->_panel[a]._flags & 0x80000000) && (g_vm->_pathFind->_panel[a]._flags & (1 << (g_vm->_pathFind->_sortPan[b]._num - 1)))) {
 				// If it intersects the center of the character camera
