@@ -720,6 +720,10 @@ void DialogManager::loadData(Common::File *file) {
 		subTitle->_startFrame = file->readUint16LE();
 		subTitle->_length = file->readUint16LE();
 	}
+
+	if (_vm->isDemo()) {
+		_subTitles[975]._length = 113;
+	}
 }
 
 } // End of namespace Trecision

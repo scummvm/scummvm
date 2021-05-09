@@ -95,8 +95,10 @@ char TrecisionEngine::getKey() {
 }
 
 char TrecisionEngine::waitKey() {
+	_graphicsMgr->hideCursor();
 	while (_curKey == Common::KEYCODE_INVALID)
 		checkSystem();
+	_graphicsMgr->showCursor();
 
 	Common::KeyCode t = _curKey;
 	_curKey = Common::KEYCODE_INVALID;

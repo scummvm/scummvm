@@ -242,6 +242,9 @@ Common::Error TrecisionEngine::run() {
 			evalScript();
 	}
 
+	if (isDemo())
+		_graphicsMgr->showDemoPic();
+
 	return Common::kNoError;
 }
 

@@ -1131,18 +1131,22 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemRubysSafeboxKey:
 		if (_vm->_useWith[WITH] == oSTRONGBOXC15) {
-			_vm->_dialogMgr->playDialog(dF151);
-			_vm->setObjectVisible(oSTRONGBOXC15, false);
-			_vm->setObjectVisible(oCASSAFORTEA15, true);
-			_vm->setObjectVisible(oSLOT13, false);
-			_vm->setObjectVisible(oASCENSOREA13, false);
-			_vm->setObjectVisible(oASCENSOREC13, true);
-			_vm->addIcon(kItemPistol);
-			_vm->addIcon(kItemTubeOfAcidFull);
-			_vm->addIcon(kItemRubysReport);
-			_vm->removeIcon(kItemRubysSafeboxKey);
-			*printSentence = false;
-			*updateInventory = false;
+			if (_vm->isDemo()) {
+				_vm->demoOver();
+			} else {
+				_vm->_dialogMgr->playDialog(dF151);
+				_vm->setObjectVisible(oSTRONGBOXC15, false);
+				_vm->setObjectVisible(oCASSAFORTEA15, true);
+				_vm->setObjectVisible(oSLOT13, false);
+				_vm->setObjectVisible(oASCENSOREA13, false);
+				_vm->setObjectVisible(oASCENSOREC13, true);
+				_vm->addIcon(kItemPistol);
+				_vm->addIcon(kItemTubeOfAcidFull);
+				_vm->addIcon(kItemRubysReport);
+				_vm->removeIcon(kItemRubysSafeboxKey);
+				*printSentence = false;
+				*updateInventory = false;
+			}
 		} else if ((_vm->_useWith[WITH] == oCARA11) || (_vm->_useWith[WITH] == oCARB11) || (_vm->_useWith[WITH] == oTAKE12) || (_vm->_useWith[WITH] == oBOX12) || (_vm->_useWith[WITH] == oDOOR18) || (_vm->_useWith[WITH] == oPADLOCK1B) || (_vm->_useWith[WITH] == oDOORC21) || (_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOORC33) || (_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
 			*printSentence = false;
 			_vm->_textMgr->CharacterSay(1469);
@@ -2171,11 +2175,13 @@ bool LogicManager::useScreenWithScreen() {
 }
 
 void LogicManager::roomOut(uint16 curObj, uint16 *action, uint16 *pos) {
+	*action = 0;
+	*pos = 0;
 	if (curObj == oSCALA32 && _vm->isObjectVisible(oBOTOLAC32)) {
 		_vm->_textMgr->CharacterSay(_vm->_obj[curObj]._action);
 		_vm->_graphicsMgr->showCursor();
-		*action = 0;
-		*pos = 0;
+	} else if (_vm->isDemo() && curObj == oFINGERPADP16) {
+		_vm->demoOver();
 	} else {
 		*action = _vm->_obj[curObj]._anim;
 		*pos = _vm->_obj[curObj]._ninv;
@@ -2188,9 +2194,11 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 	switch (curObj) {
 	case oMAPPA12:
 		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1211OSSERVAMAPPAPALAZZO, 0, 0, curObj);
-		_vm->_dialogMgr->_choice[4]._flag &= ~DLGCHOICE_HIDE;
-		_vm->_dialogMgr->_choice[18]._flag &= ~DLGCHOICE_HIDE;
-		_vm->_dialogMgr->_choice[33]._flag &= ~DLGCHOICE_HIDE;
+		if (!_vm->isDemo()) {
+			_vm->_dialogMgr->_choice[4]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->_choice[18]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->_choice[33]._flag &= ~DLGCHOICE_HIDE;
+		}
 		retVal = false;
 		break;
 

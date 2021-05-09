@@ -369,4 +369,24 @@ bool GraphicsManager::isCursorVisible() {
 	return CursorMan.isVisible();
 }
 
+void GraphicsManager::showDemoPic() {
+	Common::File file;
+	if (file.open("EndPic.bm")) {
+		Graphics::Surface *pic = new Graphics::Surface();
+		pic->create(MAXX, MAXY, kImageFormat);
+
+		file.read(pic->getPixels(), MAXX * MAXY * 2);
+		updatePixelFormat((uint16*)pic->getPixels(), MAXX * MAXY);
+		g_system->copyRectToScreen(pic->getPixels(), pic->pitch, 0, 0, pic->w, pic->h);
+		g_system->updateScreen();
+
+		pic->free();
+		delete pic;
+
+		_vm->freeKey();
+		_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
+		_vm->waitKey();
+	}
+}
+
 } // end of namespace
