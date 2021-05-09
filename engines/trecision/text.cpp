@@ -30,6 +30,7 @@
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/text.h"
+#include "trecision/scheduler.h"
 
 namespace Trecision {
 
@@ -157,7 +158,7 @@ void TextManager::CharacterContinueTalk() {
 
 	_curSubString++;
 
-	doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TextManager::CharacterMute() {
@@ -174,7 +175,7 @@ void TextManager::CharacterMute() {
 	_vm->_soundMgr->talkStop();
 
 	if ((_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU))
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_oldRoom, 0, 0, _vm->_curObj);
+		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_oldRoom, 0, 0, _vm->_curObj);
 }
 
 void TextManager::SomeoneContinueTalk() {
@@ -203,7 +204,7 @@ void TextManager::SomeoneContinueTalk() {
 		_talkTime = (strlen(_subString[_curSubString]) * 5) / 2 + 50;
 
 	_curSubString++;
-	doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TextManager::someoneMute() {
@@ -261,8 +262,8 @@ void TextManager::doString() {
 					SomeoneContinueTalk();
 				else {
 					if (_talkingPersonAnimId)
-						doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, _talkingPersonAnimId, true, 0, 0);
-					doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
+						_vm->_scheduler->doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, _talkingPersonAnimId, true, 0, 0);
+					_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 				}
 			} else
 				_vm->reEvent();
@@ -370,8 +371,8 @@ void TextManager::SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
 	FormattingSuperString();
 
 	if (_talkingPersonAnimId)
-		doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, _talkingPersonAnimId, 0, 0, 0);
-	doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
+		_vm->_scheduler->doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, _talkingPersonAnimId, 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 }
 
 void TextManager::CharacterSay(uint16 i) {
@@ -482,7 +483,7 @@ void TextManager::drawTexts() {
 void TextManager::redrawString() {
 	if (!_vm->_flagDialogActive && !_vm->_flagDialogMenuActive && !_vm->_flagSomeoneSpeaks && !_vm->_flagscriptactive && _vm->_graphicsMgr->isCursorVisible()) {
 		if (_vm->isInventoryArea(_vm->_mousePos))
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
+			_vm->_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
 			_vm->checkMask(_vm->_mousePos);
 			ShowObjName(_vm->_curObj, true);

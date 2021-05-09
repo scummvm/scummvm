@@ -46,6 +46,8 @@ class Actor;
 class Renderer3D;
 class PathFinding3D;
 class TextManager;
+class Scheduler;
+class AnimTypeManager;
 
 #define SAVE_VERSION_ORIGINAL 102
 #define SAVE_VERSION_SCUMMVM  103
@@ -303,6 +305,8 @@ public:
 	Renderer3D *_renderer;
 	PathFinding3D *_pathFind;
 	TextManager *_textMgr;
+	Scheduler *_scheduler;
+	AnimTypeManager *_animTypeMgr;
 
 	uint8 *_font;
 	uint16 *_arrows;

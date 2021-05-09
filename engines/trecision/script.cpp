@@ -23,6 +23,8 @@
 #include "common/scummsys.h"
 #include "graphics/scaler.h"
 
+#include "trecision/anim.h"
+#include "trecision/scheduler.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/dialog.h"
@@ -32,13 +34,13 @@
 #include "trecision/trecision.h"
 #include "trecision/sound.h"
 #include "trecision/text.h"
-#include "trecision/nl/proto.h"
+
 #include "trecision/nl/message.h"
 
 namespace Trecision {
 
 void SScriptFrame::sendFrame() {
-	doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
+	g_vm->_scheduler->doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
 }
 
 void TrecisionEngine::endScript() {
@@ -190,7 +192,7 @@ void TrecisionEngine::doAction() {
 				_flagUseWithStarted = false;
 				_textMgr->clearLastText();
 			} else
-				doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
 			_curObj = 0;
 			return;
 		}
@@ -283,9 +285,9 @@ void TrecisionEngine::doMouse() {
 				break;
 
 			if (_inventoryStatus == INV_OFF)
-				doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else if (_inventoryStatus == INV_INACTION)
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, 0);
 		} else {
 			// Up area
 			if (_curRoom == kRoomControlPanel)
@@ -352,12 +354,12 @@ void TrecisionEngine::doCharacter() {
 			_graphicsMgr->showCursor();
 
 			if (_curMessage->_event == ME_CHARACTERGOTOACTION)
-				doEvent(MC_ACTION, ME_MOUSEOPERATE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, _curMessage->_u32Param);
+				_scheduler->doEvent(MC_ACTION, ME_MOUSEOPERATE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, _curMessage->_u32Param);
 			else if (_curMessage->_event == ME_CHARACTERGOTOEXAMINE)
-				doEvent(MC_ACTION, ME_MOUSEEXAMINE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, _curMessage->_u32Param);
+				_scheduler->doEvent(MC_ACTION, ME_MOUSEEXAMINE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, _curMessage->_u32Param);
 			else if (_curMessage->_event == ME_CHARACTERGOTOEXIT) {
 				_flagShowCharacter = false;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+				_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 			} else if (_curMessage->_event == ME_CHARACTERDOACTION) {
 				_lastObj = 0;
 				_textMgr->ShowObjName(_curObj, true);
@@ -375,9 +377,9 @@ void TrecisionEngine::doCharacter() {
 		_inventoryStatus = INV_OFF;
 		if (_curMessage->_u16Param1 > hLAST) {
 			_animMgr->startSmkAnim(_curMessage->_u16Param1);
-			InitAtFrameHandler(_curMessage->_u16Param1, _curMessage->_u32Param);
+			_animTypeMgr->init(_curMessage->_u16Param1, _curMessage->_u32Param);
 			_graphicsMgr->hideCursor();
-			doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+			_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 		} else
 			_actor->actorDoAction(_curMessage->_u16Param1);
 
@@ -386,21 +388,21 @@ void TrecisionEngine::doCharacter() {
 
 	case ME_CHARACTERCONTINUEACTION:
 		_flagShowCharacter = false;
-		AtFrameHandler(kAnimTypeCharacter);
+		_animTypeMgr->handler(kAnimTypeCharacter);
 		//	If the animation is over
 		if (!_animMgr->_playingAnims[kSmackerAction]) {
 			_graphicsMgr->showCursor();
 			_flagShowCharacter = true;
 			_pathFind->_characterInMovement = false;
 			_characterQueue.initQueue();
-			AtFrameEnd(kAnimTypeCharacter);
+			_animTypeMgr->end(kAnimTypeCharacter);
 			_flagWaitRegen = true;
 			_lastObj = 0;
 			_textMgr->ShowObjName(_curObj, true);
 			//	If the room changes at the end
 			if (_curMessage->_u16Param2) {
 				_flagShowCharacter = false;
-				doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curMessage->_u16Param2, 0, _curMessage->_u8Param, _curMessage->_u32Param);
+				_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curMessage->_u16Param2, 0, _curMessage->_u8Param, _curMessage->_u32Param);
 			} else if (_curMessage->_u8Param)
 				_pathFind->setPosition(_curMessage->_u8Param);
 
@@ -420,7 +422,7 @@ void TrecisionEngine::doCharacter() {
 void TrecisionEngine::doSystem() {
 	switch (_curMessage->_event) {
 	case ME_START:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, _curObj);
+		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, _curObj);
 		break;
 
 	case ME_REDRAWROOM:
@@ -462,7 +464,7 @@ void TrecisionEngine::doIdle() {
 	case 'Q':
 		if (!_flagDialogActive && !_flagDialogMenuActive) {
 			if (quitPrompt())
-				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+				_scheduler->doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		}
 		break;
 
@@ -473,7 +475,7 @@ void TrecisionEngine::doIdle() {
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
+			_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
 			::createThumbnailFromScreen(&_thumbnail);
@@ -487,7 +489,7 @@ void TrecisionEngine::doIdle() {
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
-			doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
+			_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoomControlPanel, 0, 0, c);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
 			::createThumbnailFromScreen(&_thumbnail);
@@ -500,7 +502,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
-			doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+			_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 		}
 		break;
@@ -511,7 +513,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
-				doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+				_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
 		}
@@ -521,7 +523,7 @@ void TrecisionEngine::doIdle() {
 	}
 
 	if (isGameArea(_mousePos) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
-		doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
+		_scheduler->doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
 
 	if (_inventoryScrollTime > _curTime)
 		_inventoryScrollTime = _curTime;
@@ -532,7 +534,7 @@ void TrecisionEngine::doIdle() {
 	}
 
 	if (shouldQuit() && !_flagDialogActive && !_flagDialogMenuActive)
-		doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+		_scheduler->doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 }
 
 void TrecisionEngine::doRoomIn(uint16 curObj) {
@@ -541,7 +543,7 @@ void TrecisionEngine::doRoomIn(uint16 curObj) {
 	uint16 curAction = _obj[curObj]._anim;
 	uint16 curPos = _obj[curObj]._ninv;
 
-	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[curObj]._goRoom, curAction, curPos, curObj);
+	_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _obj[curObj]._goRoom, curAction, curPos, curObj);
 
 	_obj[curObj]._flag |= kObjFlagDone;
 }
@@ -553,7 +555,7 @@ void TrecisionEngine::doRoomOut(uint16 curObj) {
 	_logicMgr->roomOut(curObj, &curAction, &curPos);
 
 	if (curAction)
-		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, _obj[curObj]._goRoom, curPos, curObj);
+		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, _obj[curObj]._goRoom, curPos, curObj);
 
 	_obj[curObj]._flag |= kObjFlagDone;
 }
@@ -586,7 +588,7 @@ void TrecisionEngine::doMouseTake(uint16 curObj) {
 	uint16 curAction = _obj[curObj]._anim;
 
 	if (curAction)
-		doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, 0, 0, curObj);
+		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, 0, 0, curObj);
 
 	// Remove object being taken
 	if (del) {
@@ -673,7 +675,7 @@ void TrecisionEngine::doDoing() {
 		if (_actor->_curAction == hSTAND)
 			reEvent();
 		else if (_actor->_curFrame == 4)
-			doEvent(_curMessage->_class, ME_OPENCLOSE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+			_scheduler->doEvent(_curMessage->_class, ME_OPENCLOSE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 		else
 			reEvent();
 
@@ -683,7 +685,7 @@ void TrecisionEngine::doDoing() {
 		uint16 curAnim = _curMessage->_u16Param2;
 		setObjectVisible(curObj, false);
 		if (curAnim)
-			doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
+			_scheduler->doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
 
 		_curMessage->_event = ME_WAITOPENCLOSE;
 	}
@@ -711,11 +713,11 @@ void TrecisionEngine::doScript() {
 	case ME_PAUSE:
 		if (!pauseStartTime) {
 			pauseStartTime = _curTime;
-			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
+			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
 		} else if (_curTime >= (pauseStartTime + message->_u16Param1))
 			pauseStartTime = 0;
 		else
-			doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
+			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
 
 		break;
 
@@ -800,7 +802,7 @@ void TrecisionEngine::doScript() {
 		break;
 
 	case ME_CHANGER:
-		doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, index, index2, value, _curObj);
+		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, index, index2, value, _curObj);
 		break;
 
 	default:

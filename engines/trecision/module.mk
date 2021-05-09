@@ -3,6 +3,7 @@ MODULE := engines/trecision
 MODULE_OBJS = \
 	console.o \
 	actor.o \
+	anim.o \
 	dialog.o \
 	fastfile.o \
 	graphics.o \
@@ -10,13 +11,13 @@ MODULE_OBJS = \
 	logic.o \
 	metaengine.o \
 	sound.o \
+	scheduler.o \
 	script.o \
 	text.o \
 	trecision.o \
 	utils.o \
 	3d.o \
 	video.o \
-	nl/do.o \
 	nl/regen.o \
 	nl/schedule.o \
 	nl/3d/3dvar.o \

@@ -25,6 +25,7 @@
 #include "common/str.h"
 #include "common/system.h"
 
+#include "trecision/anim.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
@@ -90,7 +91,7 @@ void ReadLoc() {
 	} else
 		g_vm->_animMgr->smkStop(kSmackerBackground);
 
-	InitAtFrameHandler(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
+	g_vm->_animTypeMgr->init(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
 }
 
 void TendIn() {

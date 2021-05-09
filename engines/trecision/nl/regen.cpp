@@ -25,6 +25,7 @@
 
 #include "trecision/3d.h"
 #include "trecision/actor.h"
+#include "trecision/anim.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/sound.h"
@@ -41,7 +42,7 @@ namespace Trecision {
 SDObj DObj;
 
 void PaintScreen(bool flag) {
-	AtFrameNext();
+	g_vm->_animTypeMgr->next();
 
 	g_vm->_actorRect = nullptr;
 	g_vm->_dirtyRects.clear();
