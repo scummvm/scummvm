@@ -550,8 +550,8 @@ void AnimManager::drawSmkActionFrame() {
 		frame16->free();
 		delete frame16;
 
-		_vm->_actorRect = &_vm->_dirtyRects.back();
 		_vm->addDirtyRect(_animRect);
+		_vm->_actorRect = &_vm->_dirtyRects.back();
 	}
 }
 
