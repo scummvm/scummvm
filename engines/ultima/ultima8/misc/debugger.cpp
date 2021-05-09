@@ -1187,7 +1187,8 @@ bool Debugger::cmdCameraOnAvatar(int argc, const char **argv) {
 	if (actor) {
 		int32 x, y, z;
 		actor->getCentre(x, y, z);
-		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+		if (x || y || z)
+			CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
 	}
 	return false;
 }
