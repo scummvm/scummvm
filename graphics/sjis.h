@@ -20,13 +20,13 @@
  *
  */
 
-// The code in this file is currently only used in KYRA and SCI.
-// So if neither of those is enabled, we will skip compiling it.
+// The code in this file is currently used in KYRA, SCI, SCUMM, SAGA, 
+// and AGOS. If none of those are enabled, we will skip compiling it.
 // We also enable this code for ScummVM builds including support
 // for dynamic engine plugins.
 // If you plan to use this code in another engine, you will have
 // to add the proper define check here.
-#if !(defined(ENABLE_KYRA) || defined(ENABLE_SCI) || defined(ENABLE_SCUMM) || defined(ENABLE_SAGA) || defined(DYNAMIC_MODULES))
+#if !(defined(ENABLE_KYRA) || defined(ENABLE_SCI) || defined(ENABLE_SCUMM) || defined(ENABLE_SAGA) || defined(ENABLE_AGOS) || defined(DYNAMIC_MODULES))
 
 // If neither of the above mentioned is enabled, do not include the SJIS code.
 
