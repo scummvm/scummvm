@@ -246,7 +246,7 @@ void DialogManager::afterChoice() {
 	case dC581:
 		_vm->setObjectVisible(oWINDOWB58, true);
 		if (_curChoice == 262)
-			_vm->_obj[oTASTIERA56]._examine = 1307;
+			_vm->_obj[oKEYBOARD56]._examine = 1307;
 		break;
 
 	case dF542:
@@ -256,7 +256,7 @@ void DialogManager::afterChoice() {
 		_vm->setObjectVisible(oLAVATRICEF54, false);
 		_vm->setObjectVisible(oGRATAA54, true);
 		_vm->setObjectVisible(oCHIAVI54, true);
-		_vm->setObjectVisible(od54ALLA55, true);
+		_vm->setObjectVisible(od54TO55, true);
 		break;
 	default:
 		break;
@@ -396,7 +396,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF451:
-			_vm->_obj[od44ALLA45]._goRoom = kRoom45S;
+			_vm->_obj[od44TO45]._goRoom = kRoom45S;
 			_vm->_textMgr->CharacterSay(1712);
 			break;
 
