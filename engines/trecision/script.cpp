@@ -127,7 +127,8 @@ bool TrecisionEngine::quitPrompt() {
 
 	char ch = waitKey();
 
-	bool exitFl = ((ch == 'y') || (ch == 'Y'));
+	bool exitFl = ((ch == 'y') || (ch == 'Y')) ||
+	              ((ch == 'j') || (ch == 'J')); // German hack
 
 	for (int a = 0; a < TOP; a++)
 		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, tmpBuffer + a * MAXX, MAXX * 2);
