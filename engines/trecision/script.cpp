@@ -119,7 +119,7 @@ bool TrecisionEngine::quitPrompt() {
 	);
 	SText.DText();
 
-	_graphicsMgr->copyToScreen(0, 0, 640, 480);
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	freeKey();
 
