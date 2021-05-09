@@ -159,7 +159,7 @@ public:
 	void endScript();
 	void playScript(uint16 id);
 	void evalScript();
-	bool quitGame();
+	bool quitPrompt();
 	void demoOver();
 	void doAction();
 	void doMouse();

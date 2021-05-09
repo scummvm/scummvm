@@ -101,7 +101,7 @@ void TrecisionEngine::evalScript() {
 	}
 }
 
-bool TrecisionEngine::quitGame() {
+bool TrecisionEngine::quitPrompt() {
 	byte *tmpBuffer = new byte[MAXX * TOP * 2];
 
 	for (int a = 0; a < TOP; a++)
@@ -119,7 +119,7 @@ bool TrecisionEngine::quitGame() {
 	);
 	SText.DText();
 
-	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+	_graphicsMgr->copyToScreen(0, 0, 640, 480);
 
 	freeKey();
 
@@ -460,7 +460,7 @@ void TrecisionEngine::doIdle() {
 	case 'q':
 	case 'Q':
 		if (!_flagDialogActive && !_flagDialogMenuActive) {
-			if (quitGame())
+			if (quitPrompt())
 				doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		}
 		break;
