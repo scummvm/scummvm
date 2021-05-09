@@ -61,8 +61,8 @@ void PaintScreen(bool flag) {
 		DObj.drawMask = false;
 		g_vm->_graphicsMgr->DrawObj(DObj);
 
-		g_vm->_actorRect = &g_vm->_dirtyRects.back();
 		g_vm->addDirtyRect(DObj.l);
+		g_vm->_actorRect = &g_vm->_dirtyRects.back();
 	} else if (g_vm->_animMgr->_animRect.left != MAXX) {
 		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 		DObj.l = g_vm->_animMgr->_animRect;
@@ -70,8 +70,8 @@ void PaintScreen(bool flag) {
 		DObj.drawMask = false;
 		g_vm->_graphicsMgr->DrawObj(DObj);
 
-		g_vm->_actorRect = &g_vm->_dirtyRects.back();
 		g_vm->addDirtyRect(DObj.l);
+		g_vm->_actorRect = &g_vm->_dirtyRects.back();
 	}
 
 	// CANCELLO LA SCRITTA
