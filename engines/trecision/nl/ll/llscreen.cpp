@@ -48,16 +48,6 @@ char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
 uint8  TextStatus;
 
-int actionInRoom(int curA) {
-	for (int b = 0; b < MAXACTIONINROOM; b++) {
-		if (g_vm->_room[g_vm->_curRoom]._actions[b] == curA)
-			return b;
-	}
-
-	warning("Action %d not found in room %d", curA, g_vm->_curRoom);
-	return 0;
-}
-
 void ReadLoc() {
 	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & kObjFlagDone))
 		g_vm->_flagShowCharacter = true;

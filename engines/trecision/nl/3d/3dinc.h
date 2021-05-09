@@ -123,26 +123,13 @@ struct SStep {
 class TrecisionEngine;
 
 
-extern float  _proj[3][3];
-extern float  _invP[3][3];
-
-extern int    _actorPos;
-extern int    _forcedActorPos;
-
 extern int    _cx, _cy;
-extern int    _x2d, _y2d;
 
 extern float  _x3d, _y3d, _z3d;
 
-extern int    _curPanel, _oldPanel;
 extern float  _curX, _curZ;
 
-extern int    _numPathNodes;
-extern int    _numSortPan;
-
 extern uint8  _defActionLen[];
-
-int actionInRoom(int curA);
 
 
 } // End of namespace Trecision

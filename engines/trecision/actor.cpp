@@ -384,7 +384,7 @@ void Actor::actorDoAction(int action) {
 		curStep->_curAction = action;
 		curStep->_curFrame = stepIdx - _vm->_pathFind->_curStep;
 		curStep->_theta = theta;
-		curStep->_curPanel = _curPanel;
+		curStep->_curPanel = _vm->_pathFind->_curPanel;
 
 		v += _vertexNum;
 

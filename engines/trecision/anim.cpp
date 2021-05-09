@@ -103,13 +103,13 @@ void AnimTypeManager::ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->_flagCharacterExists = true;
 		break;
 	case fCHARACTERFOREGROUND:
-		_forcedActorPos = BOX_FOREGROUND;
+		_vm->_forcedActorPos = BOX_FOREGROUND;
 		break;
 	case fCHARACTERBACKGROUND:
-		_forcedActorPos = BOX_BACKGROUND;
+		_vm->_forcedActorPos = BOX_BACKGROUND;
 		break;
 	case fCHARACTERNORM:
-		_forcedActorPos = BOX_NORMAL;
+		_vm->_forcedActorPos = BOX_NORMAL;
 		break;
 	case fSETEXTRA:
 		_vm->_obj[obj]._flag |= kObjFlagExtra;

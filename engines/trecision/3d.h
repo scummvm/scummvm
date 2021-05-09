@@ -100,6 +100,9 @@ private:
 	bool intersectLineFloor(float x, float y, float z);
 	bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
 
+	float _invP[3][3];
+	int _numPathNodes;
+
 public:
 	PathFinding3D(TrecisionEngine *vm);
 	~PathFinding3D();
@@ -109,6 +112,9 @@ public:
 	int _curStep;
 	int _lastStep;
 	int _panelNum;
+	int _curPanel;
+	int _oldPanel;
+	int _numSortPan;
 
 	int8 _characterGoToPosition;
 	bool _characterInMovement;
