@@ -6012,7 +6012,9 @@ msgstr "FM-TOWNSゲームを200ピクセルの高さにトリミングします"
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
-msgstr "画面下部の余分な40pxをカットし、「アスペクト比補正」を使って標準的な200pxの高さにします"
+msgstr ""
+"画面下部の余分な40pxをカットし、「アスペクト比補正」を使って標準的な200pxの高"
+"さにします"
 
 #: engines/scumm/dialogs.cpp:165
 #, c-format
