@@ -79,6 +79,8 @@ public:
 	void showCursor();
 	void hideCursor();
 
+	void showDemoPic();
+
 }; // end of class
 
 } // end of namespace

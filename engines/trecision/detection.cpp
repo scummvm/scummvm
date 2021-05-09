@@ -88,7 +88,7 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"nl",
-		0,
+		"Demo",
 		AD_ENTRY1s("data.nl", "7665db13ad2a1ceb576531be3e1efb30", 392950),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -134,11 +134,11 @@ public:
 	}
 
 	const char *getName() const override {
-		return "Trecision Adventure Engine";
+		return "Trecision Adventure Module";
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "(C) 1997-98 Trecision S.p.A.";
+		return "(C) 1993-98 Trecision S.p.A.";
 	}
 };
 
