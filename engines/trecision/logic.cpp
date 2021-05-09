@@ -4168,7 +4168,7 @@ void LogicManager::doSystemChangeRoom() {
 void LogicManager::DoSys(uint16 curObj) {
 	switch (curObj) {
 	case o00QUIT:
-		if (_vm->quitGame())
+		if (_vm->quitPrompt())
 			doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
 		break;
 
