@@ -423,28 +423,48 @@ const char *ITEinterfaceTextStrings[][53] = {
 		NULL,
 		"Cardango una partida guardada"
 	},
-	// Russian IHNM
+	// Russian IHNM & ITE fan translations
 	{
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, NULL,
-		NULL, NULL, NULL, NULL, "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB?",
-		"Load Successful!",
+		// "Идти", "Осмотреть", "Взять", "Говорить", "Открыть",
+		"\xC8\xE4\xF2\xE8", "\xCE\xF1\xEC\xEE\xF2\xF0\xE5\xF2\xFC", "\xC2\xE7\xFF\xF2\xFC", "\xC3\xEE\xE2\xEE\xF0\xE8\xF2\xFC", "\xCE\xF2\xEA\xF0\xFB\xF2\xFC",
+		// "Закрыть", "Применить", "Дать", "Настройки", "Тест",
+		"\xC7\xE0\xEA\xF0\xFB\xF2\xFC", "\xCF\xF0\xE8\xEC\xE5\xED\xE8\xF2\xFC", "\xC4\xE0\xF2\xFC", "\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8", "\xD2\xE5\xF1\xF2",
+		// "Demo", "Помощь", "Выйти из игры", "БЫСТ", "МЕДЛ",
+		"Demo", "\xCF\xEE\xEC\xEE\xF9\xFC", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB", "\xC1\xDB\xD1\xD2", "\xCC\xC5\xC4\xCB",
+		// "ВКЛ", "ВЫКЛ", "Продолжить", "Чтение", "Запись",
+		"\xC2\xCA\xCB", "\xC2\xDB\xCA\xCB", "\xCF\xF0\xEE\xE4\xEE\xEB\xE6\xE8\xF2\xFC", "\xD7\xF2\xE5\xED\xE8\xE5", "\xC7\xE0\xEF\xE8\xF1\xFC",
+		// "Настройки игры", "Субтитры", "Музыка", "Звук", "Отмена",
+		"\xCD\xE0\xF1\xF2\xF0\xEE\xE9\xEA\xE8 \xE8\xE3\xF0\xFB", "\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB", "\xCC\xF3\xE7\xFB\xEA\xE0", "\xC7\xE2\xF3\xEA", "\xCE\xF2\xEC\xE5\xED\xE0",
+		// "Выход", "OK", "СРД", "Мышь", "10%",
+		"\xC2\xFB\xF5\xEE\xE4", "OK", "\xD1\xD0\xC4", "\xCC\xFB\xF8\xFC", "10%",
+		"20%", "30%", "40%", "50%", "60%",
+		// "70%", "80%", "90%", "МАКС", "Выйти из игры?",
+		"70%", "80%", "90%", "\xCC\xC0\xCA\xD1", "\xC2\xFB\xE9\xF2\xE8 \xE8\xE7 \xE8\xE3\xF0\xFB?",
+		// "Игра загружена!",
+		"\xC8\xE3\xF0\xE0 \xE7\xE0\xE3\xF0\xF3\xE6\xE5\xED\xE0!",
+		// "Введите имя записи",
 		"\xC2\xE2\xE5\xE4\xE8\xF2\xE5 \xE8\xEC\xFF \xE7\xE0\xEF\xE8\xF1\xE8",
-		"\xC4\xE0\xF2\xFC %s >> %s",
-		"\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s",
+		// "Дать -> %s -> %s",
+		"\xC4\xE0\xF2\xFC -> %s -> %s",
+		// "Использовать %s >> %s",
+		"\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s", //two different lines for IHNM & ITE; check in saga.cpp, SagaEngine::getTextString()
+		// "[Новая запись]",
 		"[\xCD\xEE\xE2\xE0\xFF \xE7\xE0\xEF\xE8\xF1\xFC]",
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		// "Я не могу это взять.",
+		"\xDF \xED\xE5 \xEC\xEE\xE3\xF3 \xFD\xF2\xEE \xE2\xE7\xFF\xF2\xFC.",
+		// "Ничего особенного.",
+		"\xCD\xE8\xF7\xE5\xE3\xEE \xEE\xF1\xEE\xE1\xE5\xED\xED\xEE\xE3\xEE.",
+		// "Здесь нечего открывать.",
+		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xEE\xF2\xEA\xF0\xFB\xE2\xE0\xF2\xFC.",
+		// "Здесь нечего закрыть.",
+		"\xC7\xE4\xE5\xF1\xFC \xED\xE5\xF7\xE5\xE3\xEE \xE7\xE0\xEA\xF0\xFB\xF2\xFC.",
+		// "Я не знаю, как это сделать.",
+		"\xDF \xED\xE5 \xE7\xED\xE0\xFE, \xEA\xE0\xEA \xFD\xF2\xEE \xF1\xE4\xE5\xEB\xE0\xF2\xFC.",
+		// "Субтитры",
+		"\xD1\xF3\xE1\xF2\xE8\xF2\xF0\xFB",
+		// "Что скажет Риф?",
+		"\xD7\xF2\xEE \xF1\xEA\xE0\xE6\xE5\xF2 \xD0\xE8\xF4?",
+		// " Загрузка "
 		"       \xC7\xE0\xE3\xF0\xF3\xE7\xEA\xE0     "
 	},
 	// French fan translation : ACTIONS
@@ -553,6 +573,14 @@ const char *pieceNames[][PUZZLE_PIECES] = {
 		"\x96\x83\x83q\x83\x82", "\x82\xA9\x82\xF1\x82\xC8", "\x8B\xE0\x82\xC3\x82\xBF", "\x8A\xAA\x8E\xDA", "\x95\x80",
 		// "ハサミ", "曲尺", "のこぎり", "木づち", "ペンキブラシ"
 		"\x83n\x83T\x83~", "\x8B\xC8\x8E\xDA", "\x82\xCC\x82\xB1\x82\xAC\x82\xE8", "\x96\xD8\x82\xC3\x82\xBF", "\x83y\x83\x93\x83L\x83u\x83\x89\x83V"
+	},
+	{
+		// "отвертка", "клещи", "струбцина", "деревянный зажим", "уровень",
+		"\xEE\xF2\xE2\xE5\xF0\xF2\xEA\xE0", "\xEA\xEB\xE5\xF9\xE8", "\xF1\xF2\xF0\xF3\xE1\xF6\xE8\xED\xE0", "\xE4\xE5\xF0\xE5\xE2\xFF\xED\xED\xFB\xE9 \xE7\xE0\xE6\xE8\xEC", "\xF3\xF0\xEE\xE2\xE5\xED\xFC",
+		// "шпагат", "рубанок", "молоток", "рулетка", "топорик",
+		"\xF8\xEF\xE0\xE3\xE0\xF2", "\xF0\xF3\xE1\xE0\xED\xEE\xEA", "\xEC\xEE\xEB\xEE\xF2\xEE\xEA", "\xF0\xF3\xEB\xE5\xF2\xEA\xE0", "\xF2\xEE\xEF\xEE\xF0\xE8\xEA",
+		// "ножницы", "линейка", "пила", "киянка", "кисть"
+		"\xED\xEE\xE6\xED\xE8\xF6\xFB", "\xEB\xE8\xED\xE5\xE9\xEA\xE0", "\xEF\xE8\xEB\xE0", "\xEA\xE8\xFF\xED\xEA\xE0", "\xEA\xE8\xF1\xF2\xFC"
 	}
 };
 
@@ -591,6 +619,16 @@ const char *hintStr[][4] = {
 		"\x90V\x82\xB5\x82\xAD\x82\xC5\x82\xAB\x82\xBD\x8B\xF3\x8A\xD4\x82\xC6\x8C`\x82\xAA\x8D\x87\x82\xA4\n\x83s\x81[\x83X\x82\xF0\x91{\x82\xB5\x82\xC4\x82\xB2\x82\xE7\x82\xF1\x81\x42",
 		// "置いたピースの位置は\nどれも合ってるよ。"
 		"\x92u\x82\xA2\x82\xBD\x83s\x81[\x83X\x82\xCC\x88\xCA\x92u\x82\xCD\n\x82\xC7\x82\xEA\x82\xE0\x8D\x87\x82\xC1\x82\xC4\x82\xE9\x82\xE6\x81\x42"
+	},
+	{
+		// "Сперва посмотри, какие фрагменты в какой угол можно поставить.",
+		"\xD1\xEF\xE5\xF0\xE2\xE0 \xEF\xEE\xF1\xEC\xEE\xF2\xF0\xE8, \xEA\xE0\xEA\xE8\xE5 \xF4\xF0\xE0\xE3\xEC\xE5\xED\xF2\xFB \xE2 \xEA\xE0\xEA\xEE\xE9 \xF3\xE3\xEE\xEB \xEC\xEE\xE6\xED\xEE \xEF\xEE\xF1\xF2\xE0\xE2\xE8\xF2\xFC.",
+		// "Посмотри, в какой угол подходит наименьшее количество фрагментов, и начни с него.",
+		"\xCF\xEE\xF1\xEC\xEE\xF2\xF0\xE8, \xE2 \xEA\xE0\xEA\xEE\xE9 \xF3\xE3\xEE\xEB \xEF\xEE\xE4\xF5\xEE\xE4\xE8\xF2 \xED\xE0\xE8\xEC\xE5\xED\xFC\xF8\xE5\xE5 \xEA\xEE\xEB\xE8\xF7\xE5\xF1\xF2\xE2\xEE \xF4\xF0\xE0\xE3\xEC\xE5\xED\xF2\xEE\xE2, \xE8 \xED\xE0\xF7\xED\xE8 \xF1 \xED\xE5\xE3\xEE.",
+		// "Смотри, какие фрагменты подойдут к новым углам и сторонам.",
+		"\xD1\xEC\xEE\xF2\xF0\xE8, \xEA\xE0\xEA\xE8\xE5 \xF4\xF0\xE0\xE3\xEC\xE5\xED\xF2\xFB \xEF\xEE\xE4\xEE\xE9\xE4\xF3\xF2 \xEA \xED\xEE\xE2\xFB\xEC \xF3\xE3\xEB\xE0\xEC \xE8 \xF1\xF2\xEE\xF0\xEE\xED\xE0\xEC.",
+		// "Не вижу, чтобы что-нибудь было не так."
+		"\xCD\xE5 \xE2\xE8\xE6\xF3, \xF7\xF2\xEE\xE1\xFB \xF7\xF2\xEE-\xED\xE8\xE1\xF3\xE4\xFC \xE1\xFB\xEB\xEE \xED\xE5 \xF2\xE0\xEA."
 	}
 };
 
@@ -634,6 +672,18 @@ const char *solicitStr[][NUM_SOLICIT_REPLIES] = {
 		"\x82\xBF\x82\xE5\x82\xC1\x82\xC6\x81I\n\x83q\x83\x93\x83g\x97~\x82\xB5\x82\xA2\x81H",
 		// "私なら違う方法で\nやってるだろうな。"
 		"\x8E\x84\x82\xC8\x82\xE7\x88\xE1\x82\xA4\x95\xFB\x96@\x82\xC5\n\x82\xE2\x82\xC1\x82\xC4\x82\xE9\x82\xBE\x82\xEB\x82\xA4\x82\xC8\x81\x42"
+	},
+	{
+		// "Эй, лис! Подсказка не нужна?",
+		"\xDD\xE9, \xEB\xE8\xF1! \xCF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xE0 \xED\xE5 \xED\xF3\xE6\xED\xE0?",
+		// "Хочешь помогу?",
+		"\xD5\xEE\xF7\xE5\xF8\xFC \xEF\xEE\xEC\xEE\xE3\xF3?",
+		// "М-м-м... М-м-м...",
+		"\xCC-\xEC-\xEC... \xCC-\xEC-\xEC...",
+		// "Пст! Хочешь подсказку?",
+		"\xCF\xF1\xF2! \xD5\xEE\xF7\xE5\xF8\xFC \xEF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xF3?",
+		// "Знаешь, а я бы сделал по-другому."
+		"\xC7\xED\xE0\xE5\xF8\xFC, \xE0 \xFF \xE1\xFB \xF1\xE4\xE5\xEB\xE0\xEB \xEF\xEE-\xE4\xF0\xF3\xE3\xEE\xEC\xF3."
 	}
 };
 
@@ -665,6 +715,14 @@ const char *sakkaStr[][NUM_SAKKA] = {
 		"\x82\xC8\x82\xA9\x82\xC8\x82\xA9\x82\xCB\x81I",
 		// "どうしたの！"
 		"\x82\xC7\x82\xA4\x82\xB5\x82\xBD\x82\xCC\x81I"
+	},
+	{
+		// "Эй, испытуемым помогать нельзя!",
+		"\xDD\xE9, \xE8\xF1\xEF\xFB\xF2\xF3\xE5\xEC\xFB\xEC \xEF\xEE\xEC\xEE\xE3\xE0\xF2\xFC \xED\xE5\xEB\xFC\xE7\xFF!",
+		// "Ребята! Это ведь испытание!",
+		"\xD0\xE5\xE1\xFF\xF2\xE0! \xDD\xF2\xEE \xE2\xE5\xE4\xFC \xE8\xF1\xEF\xFB\xF2\xE0\xED\xE8\xE5!",
+		// "Да хватит вам, это не по правилам!"
+		"\xC4\xE0 \xF5\xE2\xE0\xF2\xE8\xF2 \xE2\xE0\xEC, \xFD\xF2\xEE \xED\xE5 \xEF\xEE \xEF\xF0\xE0\xE2\xE8\xEB\xE0\xEC!"
 	}
 };
 
@@ -708,6 +766,18 @@ const char *whineStr[][NUM_WHINES] = {
 		"\x83T\x83\x62\x83J\x82\xCC\x93\xAA\x82\xCC\x92\x86\x82\xC5\x82\xCD\n\x82\xE0\x82\xA4\x8A\xAE\x90\xAC\x82\xB5\x82\xC4\x82\xE9\x82\xF1\x82\xBE\x81I",
 		// "ああ、ヒントに対抗できる\nルールが思い出せない。"
 		"\x82\xA0\x82\xA0\x81\x41\x83q\x83\x93\x83g\x82\xC9\x91\xCE\x8DR\x82\xC5\x82\xAB\x82\xE9\n\x83\x8B\x81[\x83\x8B\x82\xAA\x8Ev\x82\xA2\x8Fo\x82\xB9\x82\xC8\x82\xA2\x81\x42"
+	},
+	{
+		// "Ой, Сакка, да брось!",
+		"\xCE\xE9, \xD1\xE0\xEA\xEA\xE0, \xE4\xE0 \xE1\xF0\xEE\xF1\xFC!",
+		// "Подсказочка лишней не будет, а?",
+		"\xCF\xEE\xE4\xF1\xEA\xE0\xE7\xEE\xF7\xEA\xE0 \xEB\xE8\xF8\xED\xE5\xE9 \xED\xE5 \xE1\xF3\xE4\xE5\xF2, \xE0?",
+		// "Эх...",
+		"\xDD\xF5...",
+		// "Мне кажется, этот узор ударил тебя в голову, Сакка!",
+		"\xCC\xED\xE5 \xEA\xE0\xE6\xE5\xF2\xF1\xFF, \xFD\xF2\xEE\xF2 \xF3\xE7\xEE\xF0 \xF3\xE4\xE0\xF0\xE8\xEB \xF2\xE5\xE1\xFF \xE2 \xE3\xEE\xEB\xEE\xE2\xF3, \xD1\xE0\xEA\xEA\xE0!",
+		// "Ну, я не помню ни одного правила, явно запрещающего подсказки."
+		"\xCD\xF3, \xFF \xED\xE5 \xEF\xEE\xEC\xED\xFE \xED\xE8 \xEE\xE4\xED\xEE\xE3\xEE \xEF\xF0\xE0\xE2\xE8\xEB\xE0, \xFF\xE2\xED\xEE \xE7\xE0\xEF\xF0\xE5\xF9\xE0\xFE\xF9\xE5\xE3\xEE \xEF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xE8."
 	}
 };
 
@@ -745,6 +815,16 @@ const char *optionsStr[][4] = {
 		"\x81u\x82\xA2\x82\xA2\x82\xA6\x81\x41\x8E\xA9\x95\xAA\x82\xC5\x89\xF0\x82\xAB\x82\xBD\x82\xA2\x82\xF1\x82\xC5\x82\xB7\x81\x42\x81v",
 		// "%sの位置が違うんじゃないかな。"
 		"%s\x82\xCC\x88\xCA\x92u\x82\xAA\x88\xE1\x82\xA4\x82\xF1\x82\xB6\x82\xE1\x82\xC8\x82\xA2\x82\xA9\x82\xC8\x81\x42"
+	},
+	{
+		// "\"Я решу эту головоломку в другой раз.\"",
+		"\"\xDF \xF0\xE5\xF8\xF3 \xFD\xF2\xF3 \xE3\xEE\xEB\xEE\xE2\xEE\xEB\xEE\xEC\xEA\xF3 \xE2 \xE4\xF0\xF3\xE3\xEE\xE9 \xF0\xE0\xE7.\"",
+		// "\"Да, дайте мне подсказку, пожалуйста.\"",
+		"\"\xC4\xE0, \xE4\xE0\xE9\xF2\xE5 \xEC\xED\xE5 \xEF\xEE\xE4\xF1\xEA\xE0\xE7\xEA\xF3, \xEF\xEE\xE6\xE0\xEB\xF3\xE9\xF1\xF2\xE0.\"",
+		// "\"Нет, спасибо, я хочу догадаться сам.\"",
+		"\"\xCD\xE5\xF2, \xF1\xEF\xE0\xF1\xE8\xE1\xEE, \xFF \xF5\xEE\xF7\xF3 \xE4\xEE\xE3\xE0\xE4\xE0\xF2\xFC\xF1\xFF \xF1\xE0\xEC.\"",
+		// "Мне кажется, %s не на своем месте."
+		"\xCC\xED\xE5 \xEA\xE0\xE6\xE5\xF2\xF1\xFF, %s \xED\xE5 \xED\xE0 \xF1\xE2\xEE\xE5\xEC \xEC\xE5\xF1\xF2\xE5."
 	}
 };
 
@@ -862,6 +942,37 @@ const IntroDialogue introDialogueCave1[][4] = {
 		"\x94\xDE\x82\xE7\x82\xCD\x81\x41\x94\xF2\x8Ds\x82\xCC\x94\xE9\x96\xA7\x82\xE2\x81\x41\x8DK\x95\x9F\x82\xCC\x94\xE9\x96\xA7\x81\x41\x91\xBC\x82\xC9\x82\xE0\x81\x41"
 		// "我々の想像を越えた多くの秘密を知っていたのです。"
 		"\x89\xE4\x81X\x82\xCC\x91z\x91\x9C\x82\xF0\x89z\x82\xA6\x82\xBD\x91\xBD\x82\xAD\x82\xCC\x94\xE9\x96\xA7\x82\xF0\x92m\x82\xC1\x82\xC4\x82\xA2\x82\xBD\x82\xCC\x82\xC5\x82\xB7\x81\x42"
+	} },
+	// -----------------------------------------------------
+	{ {// Russian fan translation
+		0,		// cave voice 0
+		// "Мы видим небо, видим землю, видим воду "
+		"\xCC\xFB \xE2\xE8\xE4\xE8\xEC \xED\xE5\xE1\xEE, \xE2\xE8\xE4\xE8\xEC \xE7\xE5\xEC\xEB\xFE, \xE2\xE8\xE4\xE8\xEC \xE2\xEE\xE4\xF3 "
+		// "и мы задумываемся - единственные ли мы?"
+		"\xE8 \xEC\xFB \xE7\xE0\xE4\xF3\xEC\xFB\xE2\xE0\xE5\xEC\xF1\xFF - \xE5\xE4\xE8\xED\xF1\xF2\xE2\xE5\xED\xED\xFB\xE5 \xEB\xE8 \xEC\xFB?"
+	},
+	{
+		1,		// cave voice 1
+		// "Задолго до нашего существования "
+		"\xC7\xE0\xE4\xEE\xEB\xE3\xEE \xE4\xEE \xED\xE0\xF8\xE5\xE3\xEE \xF1\xF3\xF9\xE5\xF1\xF2\xE2\xEE\xE2\xE0\xED\xE8\xFF "
+		// "Землёй правили люди."
+		"\xC7\xE5\xEC\xEB\xB8\xE9 \xEF\xF0\xE0\xE2\xE8\xEB\xE8 \xEB\xFE\xE4\xE8."
+	},
+	{
+		2,		// cave voice 2
+		// "Они создавали удивительные вещи "
+		"\xCE\xED\xE8 \xF1\xEE\xE7\xE4\xE0\xE2\xE0\xEB\xE8 \xF3\xE4\xE8\xE2\xE8\xF2\xE5\xEB\xFC\xED\xFB\xE5 \xE2\xE5\xF9\xE8 "
+		// "и сдвигали целые горы."
+		"\xE8 \xF1\xE4\xE2\xE8\xE3\xE0\xEB\xE8 \xF6\xE5\xEB\xFB\xE5 \xE3\xEE\xF0\xFB."
+	},
+	{
+		3,		// cave voice 3
+		// "Они знали тайны полета, "
+		"\xCE\xED\xE8 \xE7\xED\xE0\xEB\xE8 \xF2\xE0\xE9\xED\xFB \xEF\xEE\xEB\xE5\xF2\xE0, "
+		// "тайны счастья и прочие тайны "
+		"\xF2\xE0\xE9\xED\xFB \xF1\xF7\xE0\xF1\xF2\xFC\xFF \xE8 \xEF\xF0\xEE\xF7\xE8\xE5 \xF2\xE0\xE9\xED\xFB "
+		// "за пределами нашего воображения."
+		"\xE7\xE0 \xEF\xF0\xE5\xE4\xE5\xEB\xE0\xEC\xE8 \xED\xE0\xF8\xE5\xE3\xEE \xE2\xEE\xEE\xE1\xF0\xE0\xE6\xE5\xED\xE8\xFF."
 	} }
 };
 
@@ -946,6 +1057,27 @@ const IntroDialogue introDialogueCave2[][3] = {
 		6,		// cave voice 6
 		// "私達は彼らの子供なのです。"
 		"\x8E\x84\x92\x42\x82\xCD\x94\xDE\x82\xE7\x82\xCC\x8Eq\x8B\x9F\x82\xC8\x82\xCC\x82\xC5\x82\xB7\x81\x42"
+	} },
+	{ { // Russian fan translation
+		4,		// cave voice 4
+		// "Люди также знали тайну жизни "
+		"\xCB\xFE\xE4\xE8 \xF2\xE0\xEA\xE6\xE5 \xE7\xED\xE0\xEB\xE8 \xF2\xE0\xE9\xED\xF3 \xE6\xE8\xE7\xED\xE8 "
+		// "и воспользовались этим, чтобы "
+		"\xE8 \xE2\xEE\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xEB\xE8\xF1\xFC \xFD\xF2\xE8\xEC, \xF7\xF2\xEE\xE1\xFB "
+		// "наделить нас четырьмя великими дарами:"
+		"\xED\xE0\xE4\xE5\xEB\xE8\xF2\xFC \xED\xE0\xF1 \xF7\xE5\xF2\xFB\xF0\xFC\xEC\xFF \xE2\xE5\xEB\xE8\xEA\xE8\xEC\xE8 \xE4\xE0\xF0\xE0\xEC\xE8:"
+	},
+	{
+		5,		// cave voice 5
+		// "Рассудительным умом, чувственным "
+		"\xD0\xE0\xF1\xF1\xF3\xE4\xE8\xF2\xE5\xEB\xFC\xED\xFB\xEC \xF3\xEC\xEE\xEC, \xF7\xF3\xE2\xF1\xF2\xE2\xE5\xED\xED\xFB\xEC "
+		// "сердцем, говорящим ртом и умелыми руками."
+		"\xF1\xE5\xF0\xE4\xF6\xE5\xEC, \xE3\xEE\xE2\xEE\xF0\xFF\xF9\xE8\xEC \xF0\xF2\xEE\xEC \xE8 \xF3\xEC\xE5\xEB\xFB\xEC\xE8 \xF0\xF3\xEA\xE0\xEC\xE8."
+	},
+	{
+		6,		// cave voice 6
+		// "Мы их дети."
+		"\xCC\xFB \xE8\xF5 \xE4\xE5\xF2\xE8."
 	} }
 };
 
@@ -1031,8 +1163,28 @@ const IntroDialogue introDialogueCave3[][3] = {
 		"\x8E\x84\x92\x42\x82\xB3\x82\xA6\x82\xBB\x82\xCC\x8B\x43\x82\xAA\x82\xA0\x82\xC1\x82\xBD\x82\xE7\x81\x41"
 		// "幸福の秘密も教えてくれていたことでしょう。"
 		"\x8DK\x95\x9F\x82\xCC\x94\xE9\x96\xA7\x82\xE0\x8B\xB3\x82\xA6\x82\xC4\x82\xAD\x82\xEA\x82\xC4\x82\xA2\x82\xBD\x82\xB1\x82\xC6\x82\xC5\x82\xB5\x82\xE5\x82\xA4\x81\x42"
-	}
-	}
+	} },
+	{ {// Russian fan translation
+		7,		// cave voice 7
+		// "Они научили нас пользоваться "
+		"\xCE\xED\xE8 \xED\xE0\xF3\xF7\xE8\xEB\xE8 \xED\xE0\xF1 \xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC\xF1\xFF "
+		// "руками и разговаривать."
+		"\xF0\xF3\xEA\xE0\xEC\xE8 \xE8 \xF0\xE0\xE7\xE3\xEE\xE2\xE0\xF0\xE8\xE2\xE0\xF2\xFC."
+	},
+	{
+		8,		// cave voice 8
+		// "Они показали нам удовольствие от размышлений."
+		"\xCE\xED\xE8 \xEF\xEE\xEA\xE0\xE7\xE0\xEB\xE8 \xED\xE0\xEC \xF3\xE4\xEE\xE2\xEE\xEB\xFC\xF1\xF2\xE2\xE8\xE5 \xEE\xF2 \xF0\xE0\xE7\xEC\xFB\xF8\xEB\xE5\xED\xE8\xE9."
+	},
+	{
+		9,		// cave voice 9
+		// "Они любили нас и поведали "
+		"\xCE\xED\xE8 \xEB\xFE\xE1\xE8\xEB\xE8 \xED\xE0\xF1 \xE8 \xEF\xEE\xE2\xE5\xE4\xE0\xEB\xE8 "
+		// "бы нам тайну счастья, когда "
+		"\xE1\xFB \xED\xE0\xEC \xF2\xE0\xE9\xED\xF3 \xF1\xF7\xE0\xF1\xF2\xFC\xFF, \xEA\xEE\xE3\xE4\xE0 "
+		// "бы мы были готовы к этому."
+		"\xE1\xFB \xEC\xFB \xE1\xFB\xEB\xE8 \xE3\xEE\xF2\xEE\xE2\xFB \xEA \xFD\xF2\xEE\xEC\xF3."
+	} }
 };
 
 const IntroDialogue introDialogueCave4[][4] = {
@@ -1144,6 +1296,34 @@ const IntroDialogue introDialogueCave4[][4] = {
 		"\x82\xBB\x82\xEA\x82\xC6\x82\xE0\x94\xDF\x89^\x82\xC9\x93\xB1\x82\xA9\x82\xEA\x82\xBD\x82\xCC\x82\xBE\x82\xEB\x82\xA4\x82\xA9\x81H\x81@\x82\xBB\x82\xB5\x82\xC4\x8E\x84\x92\x42\x82\xE0\x81\x41"
 		// "ある日同じ運命に導かれるのだろうか？"
 		"\x82\xA0\x82\xE9\x93\xFA\x93\xAF\x82\xB6\x89^\x96\xBD\x82\xC9\x93\xB1\x82\xA9\x82\xEA\x82\xE9\x82\xCC\x82\xBE\x82\xEB\x82\xA4\x82\xA9\x81H"
+	} },
+	{ {// Russian fan translation
+		10,		// cave voice 10
+		// "Теперь мы видим небо, землю "
+		"\xD2\xE5\xEF\xE5\xF0\xFC \xEC\xFB \xE2\xE8\xE4\xE8\xEC \xED\xE5\xE1\xEE, \xE7\xE5\xEC\xEB\xFE "
+		// "и воду, которые унаследовали, и "
+		"\xE8 \xE2\xEE\xE4\xF3, \xEA\xEE\xF2\xEE\xF0\xFB\xE5 \xF3\xED\xE0\xF1\xEB\xE5\xE4\xEE\xE2\xE0\xEB\xE8, \xE8  "
+		// "задумываемся... Почему они исчезли?"
+		"\xE7\xE0\xE4\xF3\xEC\xFB\xE2\xE0\xE5\xEC\xF1\xFF... \xCF\xEE\xF7\xE5\xEC\xF3 \xEE\xED\xE8 \xE8\xF1\xF7\xE5\xE7\xEB\xE8?"
+	},
+	{
+		11,		// cave voice 11
+		// "Живы ли они и где сейчас? "
+		"\xC6\xE8\xE2\xFB \xEB\xE8 \xEE\xED\xE8 \xE8 \xE3\xE4\xE5 \xF1\xE5\xE9\xF7\xE0\xF1? "
+		// "На звёздах? В глубинах океана? В ветре?"
+		"\xCD\xE0 \xE7\xE2\xB8\xE7\xE4\xE0\xF5? \xC2 \xE3\xEB\xF3\xE1\xE8\xED\xE0\xF5 \xEE\xEA\xE5\xE0\xED\xE0? \xC2 \xE2\xE5\xF2\xF0\xE5?"
+	},
+	{
+		12,		// cave voice 12
+		// "Мы задумываемся - хорошая их "
+		"\xCC\xFB \xE7\xE0\xE4\xF3\xEC\xFB\xE2\xE0\xE5\xEC\xF1\xFF - \xF5\xEE\xF0\xEE\xF8\xE0\xFF \xE8\xF5 "
+		// "постигла судьба или плохая?"
+		"\xEF\xEE\xF1\xF2\xE8\xE3\xEB\xE0 \xF1\xF3\xE4\xFC\xE1\xE0 \xE8\xEB\xE8 \xEF\xEB\xEE\xF5\xE0\xFF?"
+	},
+	{
+		13,		// cave voice 13
+		// "И не разделим ли мы однажды ту же участь?"
+		"\xC8 \xED\xE5 \xF0\xE0\xE7\xE4\xE5\xEB\xE8\xEC \xEB\xE8 \xEC\xFB \xEE\xE4\xED\xE0\xE6\xE4\xFB \xF2\xF3 \xE6\xE5 \xF3\xF7\xE0\xF1\xF2\xFC?"
 	}
 	}
 };
@@ -1154,20 +1334,44 @@ const IntroCredit creditsValley[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Producer"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	// "Продюсер"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Walter Hochbrueckner"},
+	// "Уолтер Хохбрюкнер"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD3\xEE\xEB\xF2\xE5\xF0 \xD5\xEE\xF5\xE1\xF0\xFE\xEA\xED\xE5\xF0"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Ausf\201hrender Produzent"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Produttore Esecutivo"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Producteur Executif"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Executive Producer"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	// "Исполнительный продюсер"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC8\xF1\xEF\xEE\xEB\xED\xE8\xF2\xE5\xEB\xFC\xED\xFB\xE9 \xEF\xF0\xEE\xE4\xFE\xF1\xE5\xF0"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert McNally"},
+	// "Роберт Макнелли"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsHeader, "2nd Executive Producer"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Herausgeber"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editore"},
 	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Editeur"},
 	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsHeader, "Publisher"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"}
+	// "Издатель"
+	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xC8\xE7\xE4\xE0\xF2\xE5\xEB\xFC"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Jon Van Caneghem"},
+	// "Джон Ван Канегем"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE\xED \xC2\xE0\xED \xCA\xE0\xED\xE5\xE3\xE5\xEC"}
 };
 
 const IntroCredit creditsTreeHouse1[] = {
@@ -1176,12 +1380,22 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Progetto"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Conception"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Game Design"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	// "Дизайн игры"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xE7\xE0\xE9\xED \xE8\xE3\xF0\xFB"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Talin, Joe Pearce, Robert McNally"},
+	// "Талин, Джо Пирс, Роберт Макнелли"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED, \xC4\xE6\xEE \xCF\xE8\xF0\xF1, \xD0\xEE\xE1\xE5\xF0\xF2 \xCC\xE0\xEA\xED\xE5\xEB\xEB\xE8"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "und Carolly Hauksdottir"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "e Carolly Hauksdottir"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "et Carolly Hauksdottir"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "and Carolly Hauksdottir"},
+	// "и Кэролли Хёйхсдоттир"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xE8 \xCA\xFD\xF0\xEE\xEB\xEB\xE8 \xD5\xB8\xE9\xF5\xF1\xE4\xEE\xF2\xF2\xE8\xF0"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein, and Bill Rotsler"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsHeader, "Geschichte und Dialoge"},
@@ -1192,7 +1406,11 @@ const IntroCredit creditsTreeHouse1[] = {
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein et Bill Rotsler"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Screenplay and Dialog"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Robert Leh, Len Wein"},
-	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "and Bill Rotsler"}
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "and Bill Rotsler"},
+	// "Сценарий и диалоги"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xD1\xF6\xE5\xED\xE0\xF0\xE8\xE9 \xE8 \xE4\xE8\xE0\xEB\xEE\xE3\xE8"},
+	// "Роберт Ле, Лен Уэйн и Билл Ротслер"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD0\xEE\xE1\xE5\xF0\xF2 \xCB\xE5, \xCB\xE5\xED \xD3\xFD\xE9\xED \xE8 \xC1\xE8\xEB\xEB \xD0\xEE\xF2\xF1\xEB\xE5\xF0"}
 };
 
 const IntroCredit creditsTreeHouse2[] = {
@@ -1203,18 +1421,27 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Grafica"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Graphismes"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Art"},
+	// "Художники"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xD5\xF3\xE4\xEE\xE6\xED\xE8\xEA\xE8"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Ed Lacabanne, Glenn Price, April Lee,"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price, April Lee,"},
 	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Edward Lacabanne, Glenn Price,"},
+	// "Эдвард Лакабанн, Гленн Прайс, Эйприл Ли,"
+	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsText, "\xDD\xE4\xE2\xE0\xF0\xE4 \xCB\xE0\xEA\xE0\xE1\xE0\xED\xED, \xC3\xEB\xE5\xED\xED \xCF\xF0\xE0\xE9\xF1, \xDD\xE9\xEF\xF0\xE8\xEB \xCB\xE8,"},
 	{Common::UNK_LANG, kITECreditsWyrmKeep, kITECreditsText, "Lisa Sample, Brian Dowrick, Reed Waller,"},
 	{Common::EN_ANY, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey e Talin"},
 	{Common::FR_FRA, kITECreditsWyrmKeep, kITECreditsText, "Allison Hershey et Talin"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsText, "Lisa Iennaco, Brian Dowrick, Reed"},
+	// "Лиза Айеннако, Брайан Доурик, Рид"
+	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsText, "\xCB\xE8\xE7\xE0 \xC0\xE9\xE5\xED\xED\xE0\xEA\xEE, \xC1\xF0\xE0\xE9\xE0\xED \xC4\xEE\xF3\xF0\xE8\xEA, \xD0\xE8\xE4"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Waller, Allison Hershey and Talin"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey und Talin"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Waller, Allison Hershey e Talin"},
@@ -1222,12 +1449,22 @@ const IntroCredit creditsTreeHouse2[] = {
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "April Lee, Lisa Iennaco,"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Brian Dowrick, Reed Waller,"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Allison Hershey and Talin"},
+	// "Уоллер, Эллисон Херши и Талин"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD3\xEE\xEB\xEB\xE5\xF0, \xDD\xEB\xEB\xE8\xF1\xEE\xED \xD5\xE5\xF0\xF8\xE8 \xE8 \xD2\xE0\xEB\xE8\xED"},
 	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
 	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsHeader, "Grafische Leitung"},
 	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Direzione Grafica"},
 	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsHeader, "Directeur Artistique"},
 	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsHeader, "Art Direction"},
-	{Common::UNK_LANG, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"}
+	// "Художественный руководитель"
+	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsHeader, "\xD5\xF3\xE4\xEE\xE6\xE5\xF1\xF2\xE2\xE5\xED\xED\xFB\xE9 \xF0\xF3\xEA\xEE\xE2\xEE\xE4\xE8\xF2\xE5\xEB\xFC"},
+	{Common::EN_ANY, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::DE_DEU, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::IT_ITA, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::FR_FRA, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"},
+	{Common::JA_JPN, kITECreditsNotWyrmKeep, kITECreditsText, "Allison Hershey"},
+	// "Эллисон Херши"
+	{Common::RU_RUS, kITECreditsNotWyrmKeep, kITECreditsText, "\xDD\xEB\xEB\xE8\xF1\xEE\xED \xD5\xE5\xF0\xF8\xE8"}
 };
 
 const IntroCredit creditsFairePath1[] = {
@@ -1236,16 +1473,30 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Programmazione"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Programmeurs"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Programming (original)"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	// "Программирование"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xF0\xEE\xE3\xF0\xE0\xEC\xEC\xE8\xF0\xEE\xE2\xE0\xED\xE8\xE5"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Talin, Walter Hochbrueckner,"},
+	// "Талин, Уолтер Хохбрюкнер,"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED, \xD3\xEE\xEB\xF2\xE5\xF0 \xD5\xEE\xF5\xE1\xF0\xFE\xEA\xED\xE5\xF0,"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
 	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Joe Burks und Robert Wiggins"},
 	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Joe Burks e Robert Wiggins"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Joe Burks et Robert Wiggins"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Joe Burks and Robert Wiggins"},
+	// "Джо Буркс и Роберт Виггинс"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC4\xE6\xEE \xC1\xF3\xF0\xEA\xF1 \xE8 \xD0\xEE\xE1\xE5\xF0\xF2 \xC2\xE8\xE3\xE3\xE8\xED\xF1"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Additional Programming"},
 	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "Programmeur Additionnel"},
+	// "Дополнительное программирование"
+	{Common::RU_RUS, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsHeader, "\xC4\xEE\xEF\xEE\xEB\xED\xE8\xF2\xE5\xEB\xFC\xED\xEE\xE5 \xEF\xF0\xEE\xE3\xF0\xE0\xEC\xEC\xE8\xF0\xEE\xE2\xE0\xED\xE8\xE5"},
 	{Common::EN_ANY, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
 	{Common::FR_FRA, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "John Bolton"},
+	// "Джон Болтон"
+	{Common::RU_RUS, kITECreditsPCCD | kITECreditsWyrmKeep, kITECreditsText, "\xC4\xE6\xEE\xED \xC1\xEE\xEB\xF2\xEE\xED"},
 	{Common::UNK_LANG, kITECreditsMac, kITECreditsHeader, "Macintosh Version"},
 	{Common::UNK_LANG, kITECreditsMac, kITECreditsText, "Michael McNally and Robert McNally"},
 	{Common::EN_ANY, kITECreditsAny, kITECreditsHeader, "Music and Sound"},
@@ -1253,7 +1504,15 @@ const IntroCredit creditsFairePath1[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Musica e Sonoro"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Musique et Sons"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Music and Sound (original)"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Matt Nathan"}
+	// "Музыка и звук"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCC\xF3\xE7\xFB\xEA\xE0 \xE8 \xE7\xE2\xF3\xEA"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Matt Nathan"},
+	// "Мэтт Натан"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xCC\xFD\xF2\xF2 \xCD\xE0\xF2\xE0\xED"}
 };
 
 const IntroCredit creditsFairePath2[] = {
@@ -1262,9 +1521,21 @@ const IntroCredit creditsFairePath2[] = {
 	{Common::IT_ITA, kITECreditsAny, kITECreditsHeader, "Regia"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Dirig\202 par"},
 	{Common::JA_JPN, kITECreditsAny, kITECreditsHeader, "Directed by"},
-	{Common::UNK_LANG, kITECreditsAny, kITECreditsText, "Talin"},
+	// "Директор проекта"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xC4\xE8\xF0\xE5\xEA\xF2\xEE\xF0 \xEF\xF0\xEE\xE5\xEA\xF2\xE0"},
+	{Common::EN_ANY, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::DE_DEU, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::IT_ITA, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Talin"},
+	{Common::JA_JPN, kITECreditsAny, kITECreditsText, "Talin"},
+	// "Талин"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xD2\xE0\xEB\xE8\xED"},
 	{Common::FR_FRA, kITECreditsAny, kITECreditsHeader, "Traduction Francaise"},
-	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"}
+	{Common::FR_FRA, kITECreditsAny, kITECreditsText, "Ryfatwork, Momo le Yetty et Darknior"},
+	// "Перевод на русский язык"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsHeader, "\xCF\xE5\xF0\xE5\xE2\xEE\xE4 \xED\xE0 \xF0\xF3\xF1\xF1\xEA\xE8\xE9 \xFF\xE7\xFB\xEA"},
+	// "Бюро переводов Old-games.ru"
+	{Common::RU_RUS, kITECreditsAny, kITECreditsText, "\xC1\xFE\xF0\xEE \xEF\xE5\xF0\xE5\xE2\xEE\xE4\xEE\xE2 Old-games.ru"}
 };
 
 const IntroCredit creditsTent[6] = {

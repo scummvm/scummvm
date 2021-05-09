@@ -650,6 +650,30 @@ static const SAGAGameDescription gameDescriptions[] = {
  		NULL,
  	},
 
+	// Inherit the earth - Russian CD version (fan translation)
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+				{ "ite.rsc",		GAME_RESOURCEFILE,	"fedbe4a01170f7a94e3426a2a9550be3", 9779482},
+				{ "scripts.rsc",	GAME_SCRIPTFILE,	"50a0d2d7003c926a3832d503c8534e90", 328255},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+	},
+
 	// ITE floppy versions ////////////////////////////////////////////////////////////////////////////////////
 
 	// Inherit the earth - German Floppy version
@@ -735,6 +759,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 				AD_LISTEND
 			},
 			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_ITE,
+		GF_ITE_FLOPPY,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		ITEPatch_Files,
+	},
+
+	// Inherit the earth - Russian Disk version (fan translation)
+	{
+		{
+			"ite",
+			"Floppy",
+			{
+				{"ite.rsc",		GAME_RESOURCEFILE,					"fedbe4a01170f7a94e3426a2a9550be3", 9150935},
+				{"scripts.rsc",	GAME_SCRIPTFILE,					"50a0d2d7003c926a3832d503c8534e90", 328194},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NOSPEECH)

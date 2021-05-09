@@ -524,6 +524,13 @@ const char *SagaEngine::getTextString(int textStringId) {
 			break;
 	}
 
+	if (getLanguage() == Common::RU_RUS && textStringId == 43) {
+		if (getGameId() == GID_ITE)
+			return "\xCF\xF0\xE8\xEC\xE5\xED\xE8\xF2\xFC -> %s -> %s"; // "Применить -> %s -> %s"
+		else
+			return "\xC8\xF1\xEF\xEE\xEB\xFC\xE7\xEE\xE2\xE0\xF2\xFC %s >> %s"; // "Использовать %s >> %s"
+	}
+
 	string = ITEinterfaceTextStrings[lang][textStringId];
 	if (!string)
 		string = ITEinterfaceTextStrings[0][textStringId];

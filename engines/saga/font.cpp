@@ -281,7 +281,7 @@ void DefaultFont::textDrawRect(FontId fontId, const char *text, const Common::Re
 }
 
 int DefaultFont::translateChar(int charId) {
-	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 254))
+	if (charId <= 127 || (_vm->getLanguage() == Common::RU_RUS && charId <= 255))
 		return charId;					// normal character
 	else
 		return _charMap[charId - 128];	// extended character
