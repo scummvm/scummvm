@@ -402,7 +402,7 @@ void DialogManager::afterChoice() {
 
 		case dF491:
 			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; c++) {
-				if (!(_vm->_obj[c]._goRoom)) {
+				if (!_vm->_obj[c]._goRoom) {
 					_vm->_obj[c]._goRoom = kRoom4A;
 					_vm->setObjectVisible(c, true);
 					_vm->setObjectVisible(c - 40, false);

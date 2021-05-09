@@ -347,17 +347,8 @@ void Actor::actorDoAction(int action) {
 	float px = _px + _dx;
 	float pz = _pz + _dz;
 	float theta = _theta;
-	int b = 0;
 
-	_vm->_pathFind->_step[b]._px = px;
-	_vm->_pathFind->_step[b]._pz = pz;
-	_vm->_pathFind->_step[b]._dx = 0.0f;
-	_vm->_pathFind->_step[b]._dz = 0.0f;
-
-	_vm->_pathFind->_step[b]._theta = theta;
-	_vm->_pathFind->_step[b]._curAction = hSTAND;
-	_vm->_pathFind->_step[b]._curFrame = 0;
-	_vm->_pathFind->_step[b]._curPanel = _curPanel;
+	_vm->_pathFind->reset(0, px, pz, theta);
 
 	float t = ((270.0f - theta) * PI2) / 360.0f;
 	float ox = cos(t);
@@ -381,19 +372,20 @@ void Actor::actorDoAction(int action) {
 
 	len = _defActionLen[action];
 
-	for (b = _vm->_pathFind->_curStep; b < len + _vm->_pathFind->_curStep; b++) {
+	uint16 stepIdx;
+	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
 		float curLen = FRAMECENTER(v) - firstFrame;
 
-		_vm->_pathFind->_step[b]._dx = curLen * ox;
-		_vm->_pathFind->_step[b]._dz = curLen * oz;
-		_vm->_pathFind->_step[b]._px = px;
-		_vm->_pathFind->_step[b]._pz = pz;
+		_vm->_pathFind->_step[stepIdx]._dx = curLen * ox;
+		_vm->_pathFind->_step[stepIdx]._dz = curLen * oz;
+		_vm->_pathFind->_step[stepIdx]._px = px;
+		_vm->_pathFind->_step[stepIdx]._pz = pz;
 
-		_vm->_pathFind->_step[b]._curAction = action;
-		_vm->_pathFind->_step[b]._curFrame = b - _vm->_pathFind->_curStep;
+		_vm->_pathFind->_step[stepIdx]._curAction = action;
+		_vm->_pathFind->_step[stepIdx]._curFrame = stepIdx - _vm->_pathFind->_curStep;
 
-		_vm->_pathFind->_step[b]._theta = theta;
-		_vm->_pathFind->_step[b]._curPanel = _curPanel;
+		_vm->_pathFind->_step[stepIdx]._theta = theta;
+		_vm->_pathFind->_step[stepIdx]._curPanel = _curPanel;
 
 		v += _vertexNum;
 
@@ -401,17 +393,9 @@ void Actor::actorDoAction(int action) {
 			v = _characterArea;
 	}
 
-	_vm->_pathFind->_step[b]._px = px;
-	_vm->_pathFind->_step[b]._pz = pz;
-	_vm->_pathFind->_step[b]._dx = 0.0;
-	_vm->_pathFind->_step[b]._dz = 0.0;
+	_vm->_pathFind->reset(stepIdx, px, pz, theta);
 
-	_vm->_pathFind->_step[b]._theta = theta;
-	_vm->_pathFind->_step[b]._curAction = hSTAND;
-	_vm->_pathFind->_step[b]._curFrame = 0;
-	_vm->_pathFind->_step[b]._curPanel = _curPanel;
-
-	_vm->_pathFind->_lastStep = b; // Last step
+	_vm->_pathFind->_lastStep = stepIdx; // Last step
 
 	// Starts action
 	if (_vm->_obj[_vm->_curObj]._flag & kObjFlagRoomOut)
@@ -421,20 +405,8 @@ void Actor::actorDoAction(int action) {
 }
 
 void Actor::actorStop() {
-	int b = 0;
-
-	_vm->_pathFind->_step[b]._px = _px + _dx;
-	_vm->_pathFind->_step[b]._pz = _pz + _dz;
-	_vm->_pathFind->_step[b]._dx = 0.0;
-	_vm->_pathFind->_step[b]._dz = 0.0;
-
-	_vm->_pathFind->_step[b]._theta = _theta;
-	_vm->_pathFind->_step[b]._curAction = hSTAND;
-	_vm->_pathFind->_step[b]._curFrame = 0;
-	_vm->_pathFind->_step[b]._curPanel = _curPanel;
-
+	_vm->_pathFind->reset(0, _px + _dx, _pz + _dz, _theta);
 	_vm->_pathFind->_characterGoToPosition = -1;
-
 	_vm->_pathFind->_curStep = 0;
 	_vm->_pathFind->_lastStep = 0;
 }
