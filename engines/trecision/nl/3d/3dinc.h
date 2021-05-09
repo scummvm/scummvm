@@ -126,7 +126,6 @@ class TrecisionEngine;
 extern float  _proj[3][3];
 extern float  _invP[3][3];
 
-extern int    _panelNum;
 extern int    _actorPos;
 extern int    _forcedActorPos;
 

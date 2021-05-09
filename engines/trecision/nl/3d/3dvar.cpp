@@ -54,7 +54,6 @@ namespace Trecision {
 float  _proj[3][3];
 float  _invP[3][3];
 
-int    _panelNum;
 int    _actorPos;
 int    _forcedActorPos;
 

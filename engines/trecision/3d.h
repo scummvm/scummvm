@@ -102,6 +102,7 @@ public:
 	float _lookZ;
 	int _curStep;
 	int _lastStep;
+	int _panelNum;
 
 	int8 _characterGoToPosition;
 	bool _characterInMovement;
@@ -122,7 +123,7 @@ public:
 //	int pathCompare(const void *arg1, const void *arg2);
 	void sortPath();
 	void initSortPan();
-
+	void read3D(Common::SeekableReadStream *ff);
 
 }; // end of class
 
