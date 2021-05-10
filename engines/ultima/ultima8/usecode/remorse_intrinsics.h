@@ -189,9 +189,9 @@ Intrinsic RemorseIntrinsics[] = {
 	PaletteFaderProcess::I_jumpToAllBlack, // TODO: should also resume cycle process.
 	// 0x090
 	MusicProcess::I_stopMusic, // void Intrinsic090(void)
-	0, // void Intrinsic091(void)
+	0, // pause cycler - not needed as our cycler does not run when paused
 	MovieGump::I_playMovieCutsceneAlt, // TODO: not exactly the same, Alt includes a fade.
-	0, // void Intrinsic093(void)
+	0, // resume cycler - not needed as our cycler does not run when paused
 	Game::I_playCredits, // TODO: Implement this
 	Ultima8Engine::I_moveKeyDownRecently,
 	MainActor::I_teleportToEgg, // void Intrinsic096(4 bytes)

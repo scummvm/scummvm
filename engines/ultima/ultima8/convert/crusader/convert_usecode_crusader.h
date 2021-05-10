@@ -195,9 +195,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void PaletteFaderProcess::I_jumpToAllBlack(void)",
 	// 0090
 	"void MusicProcess::I_stopMusic(void)",
-	"void I_setSomeMovieGlobal(void)", // sets some global (cleared by 93)
+	"void I_setSomeMovieGlobal(void)", // sets global (cleared by 93) to control palette cycling
 	"void I_playMovieCutsceneFullscreen(char *)", // same coff as 0A9
-	"void I_clearSomeMovieGlobal(void)", // clears some global (set by 91)
+	"void I_clearSomeMovieGlobal(void)", // clears global (set by 91) to control palette cycling
 	"void Game::I_playCredits(void)",
 	"byte Kernel::I_getCurrentKeyDown(void)", // get global - something about keyboard (by disasm)
 	"int16 MainActor::I_teleportToEgg(int, int)", // a bit different to the U8 one - uses main actor map by default.
