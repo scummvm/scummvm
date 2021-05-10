@@ -1402,7 +1402,7 @@ ProcId Actor::dieCru(uint16 damageType, uint16 damagePts, Direction srcDir) {
 	if (!created_koresh) {
 		bool fall_backwards = true;
 		bool fall_random_dir = false;
-		Direction dirtest[8];
+		Direction dirtest[9];
 		/* 0x383 == 899 (robot), 1423 = plasma death, 1430 = fire death skeleton */
 		if (getShape() != 899 && getShape() != 0x58f && getShape() != 0x596) {
 			dirtest[0] = _direction;
