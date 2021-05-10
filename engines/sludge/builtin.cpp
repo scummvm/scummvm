@@ -2385,12 +2385,14 @@ builtIn(_rem_launchWith) {
 		Common::FSList files;
 		gameDataDir.getChildren(files, Common::FSNode::kListFilesOnly);
 
-		for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
-			Common::String fileName = file->getName();
-			fileName.toLowercase();
-			if (fileName.hasSuffix(".dat") || fileName == "data") {
-				g_sludge->launchNext = file->getName();
-				return BR_CONTINUE;
+		if (!files.empty()) {
+			for (Common::FSList::const_iterator file = files.begin(); file != files.end(); ++file) {
+				Common::String fileName = file->getName();
+				fileName.toLowercase();
+				if (fileName.hasSuffix(".dat") || fileName == "data") {
+					g_sludge->launchNext = file->getName();
+					return BR_CONTINUE;
+				}
 			}
 		}
 	}
