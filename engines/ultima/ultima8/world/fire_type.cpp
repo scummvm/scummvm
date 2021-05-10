@@ -31,6 +31,7 @@
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/ultima8.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -68,6 +69,11 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 	int16 shape = 0;
 
 	// First randomize the sprite and sound
+	if (GAME_IS_REGRET) {
+		// there are some differences which we need to implement.
+		warning("TODO: update FireType::makeBulletSplashShapeAndPlaySound for No Regret");
+	}
+
 	switch (_typeNo) {
 		case 1:
 		case 0xb:
