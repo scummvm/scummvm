@@ -375,6 +375,9 @@ builtIn(pasteImage) {
 		return BR_CONTINUE;
 
 	g_sludge->_cursorMan->pasteCursor(x, y, pp);
+
+	delete pp;
+
 	return BR_CONTINUE;
 }
 
