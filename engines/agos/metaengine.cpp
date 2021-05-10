@@ -207,10 +207,10 @@ void AGOSEngine::loadArchives() {
 				continue;
 
 			if (!SearchMan.hasArchive(ag->fileName)) {
-				Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(ag->fileName);
-
-				if (stream)
-					SearchMan.add(ag->fileName, Common::makeInstallShieldArchive(stream, DisposeAfterUse::YES), ag->fileType);
+				// Assumes the cabinet file is named data1.cab
+				Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+				if (cabinet)
+					SearchMan.add(ag->fileName, cabinet);
 			}
 		}
 	}

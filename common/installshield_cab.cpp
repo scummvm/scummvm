@@ -48,20 +48,26 @@
 #include "common/hash-str.h"
 #include "common/installshield_cab.h"
 #include "common/memstream.h"
+#include "common/substream.h"
+#include "common/ptr.h"
 #include "common/zlib.h"
 
 namespace Common {
 
+namespace {
+
 class InstallShieldCabinet : public Archive {
 public:
-	InstallShieldCabinet(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse);
-	~InstallShieldCabinet();
+	InstallShieldCabinet();
+
+	bool open(const String &baseName);
+	void close();
 
 	// Archive API implementation
-	bool hasFile(const String &name) const;
-	int listMembers(ArchiveMemberList &list) const;
-	const ArchiveMemberPtr getMember(const String &name) const;
-	SeekableReadStream *createReadStreamForMember(const String &name) const;
+	virtual bool hasFile(const String &name) const;
+	virtual int listMembers(ArchiveMemberList &list) const;
+	virtual const ArchiveMemberPtr getMember(const String &name) const;
+	virtual SeekableReadStream *createReadStreamForMember(const String &name) const;
 
 private:
 	struct FileEntry {
@@ -69,54 +75,74 @@ private:
 		uint32 compressedSize;
 		uint32 offset;
 		uint16 flags;
+		uint16 volume;
 	};
 
+	int _version;
 	typedef HashMap<String, FileEntry, IgnoreCase_Hash, IgnoreCase_EqualTo> FileMap;
 	FileMap _map;
-	Common::SeekableReadStream *_stream;
-	DisposeAfterUse::Flag _disposeAfterUse;
+	String _baseName;
+
+	String getHeaderName() const;
+	String getVolumeName(uint volume) const;
 };
 
-InstallShieldCabinet::~InstallShieldCabinet() {
-	_map.clear();
-
-	if (_disposeAfterUse == DisposeAfterUse::YES)
-		delete _stream;
+InstallShieldCabinet::InstallShieldCabinet() : _version(0) {
 }
 
-InstallShieldCabinet::InstallShieldCabinet(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) : _stream(stream), _disposeAfterUse(disposeAfterUse) {
-	// Note that we only support a limited subset of cabinet files
-	// Only single cabinet files and ones without data shared between
-	// cabinets.
+bool InstallShieldCabinet::open(const String &baseName) {
+	// Store the base name so we can generate file names
+	_baseName = baseName;
+
+	// Try to find the file
+	SeekableReadStream *header = SearchMan.createReadStreamForMember(getHeaderName());
+	if (!header)
+		header = SearchMan.createReadStreamForMember(getVolumeName(1));
+
+	if (!header) {
+		close();
+		return false;
+	}
+
+	// Note that we only support v5 and v6 cabinet files
 
 	// Check for the magic uint32
-	uint32 magic = _stream->readUint32LE();
+	uint32 magic = header->readUint32LE();
 	if (magic != 0x28635349) {
 		warning("InstallShieldCabinet::InstallShieldCabinet(): Magic ID doesn't match: expecting %x but got %x", 0x28635349, magic);
-		return;
+		close();
+		return false;
 	}
 
-	uint32 version = _stream->readUint32LE();
+	uint32 version = header->readUint32LE();
 
-	if (version != 0x01000004) {
+	switch(version) {
+	case 0x01000004:
+		_version = 5;
+		break;
+	case 0x0100600c:
+		_version = 6;
+		break;
+	default:
 		warning("Unsupported CAB version %08x", version);
-		return;
+		close();
+		return false;
 	}
 
-	/* uint32 volumeInfo = */ _stream->readUint32LE();
-	uint32 cabDescriptorOffset = _stream->readUint32LE();
-	/* uint32 cabDescriptorSize = */ _stream->readUint32LE();
+	/* uint32 volumeInfo = */ header->readUint32LE();
+	uint32 cabDescriptorOffset = header->readUint32LE();
+	/* uint32 cabDescriptorSize = */ header->readUint32LE();
 
-	_stream->seek(cabDescriptorOffset);
+	header->seek(cabDescriptorOffset);
 
-	_stream->skip(12);
-	uint32 fileTableOffset = _stream->readUint32LE();
-	_stream->skip(4);
-	uint32 fileTableSize = _stream->readUint32LE();
-	uint32 fileTableSize2 = _stream->readUint32LE();
-	uint32 directoryCount = _stream->readUint32LE();
-	_stream->skip(8);
-	uint32 fileCount = _stream->readUint32LE();
+	header->skip(12);
+	uint32 fileTableOffset = header->readUint32LE();
+	header->skip(4);
+	uint32 fileTableSize = header->readUint32LE();
+	uint32 fileTableSize2 = header->readUint32LE();
+	uint32 directoryCount = header->readUint32LE();
+	header->skip(8);
+	uint32 fileCount = header->readUint32LE();
 
 	if (fileTableSize != fileTableSize2)
 		warning("file table sizes do not match");
@@ -124,38 +150,72 @@ InstallShieldCabinet::InstallShieldCabinet(SeekableReadStream *stream, DisposeAf
 	// We're ignoring file groups and components since we
 	// should not need them. Moving on to the files...
 
-	_stream->seek(cabDescriptorOffset + fileTableOffset);
-	uint32 fileTableCount = directoryCount + fileCount;
-	uint32 *fileTableOffsets = new uint32[fileTableCount];
-	for (uint32 i = 0; i < fileTableCount; i++)
-		fileTableOffsets[i] = _stream->readUint32LE();
+	if (_version >= 6) {
+		uint32 fileTableOffset2 = header->readUint32LE();
 
-	for (uint32 i = directoryCount; i < fileCount + directoryCount; i++) {
-		_stream->seek(cabDescriptorOffset + fileTableOffset + fileTableOffsets[i]);
-		uint32 nameOffset = _stream->readUint32LE();
-		/* uint32 directoryIndex = */ _stream->readUint32LE();
+		for (uint32 i = 0; i < fileCount; i++) {
+			header->seek(cabDescriptorOffset + fileTableOffset + fileTableOffset2 + i * 0x57);
+			FileEntry entry;
+			entry.flags = header->readUint16LE();
+			entry.uncompressedSize = header->readUint32LE();
+			header->skip(4);
+			entry.compressedSize = header->readUint32LE();
+			header->skip(4);
+			entry.offset = header->readUint32LE();
+			header->skip(36);
+			uint32 nameOffset = header->readUint32LE();
+			/* uint32 directoryIndex = */ header->readUint16LE();
+			header->skip(12);
+			/* entry.linkPrev = */ header->readUint32LE();
+			/* entry.linkNext = */ header->readUint32LE();
+			/* entry.linkFlags = */ header->readByte();
+			entry.volume = header->readUint16LE();
 
-		// First read in data needed by us to get at the file data
-		FileEntry entry;
-		entry.flags = _stream->readUint16LE();
-		entry.uncompressedSize = _stream->readUint32LE();
-		entry.compressedSize = _stream->readUint32LE();
-		_stream->skip(20);
-		entry.offset = _stream->readUint32LE();
+			// Make sure the entry has a name and data inside the cab
+			if (nameOffset == 0 || entry.offset == 0 || (entry.flags & 8))
+				continue;
 
-		// Then let's get the string
-		_stream->seek(cabDescriptorOffset + fileTableOffset + nameOffset);
-		String fileName;
-
-		char c = _stream->readByte();
-		while (c) {
-			fileName += c;
-			c = _stream->readByte();
+			// Then let's get the string
+			header->seek(cabDescriptorOffset + fileTableOffset + nameOffset);
+			String fileName = header->readString();
+			_map[fileName] = entry;
 		}
-		_map[fileName] = entry;
+	} else {
+		header->seek(cabDescriptorOffset + fileTableOffset);
+		uint32 fileTableCount = directoryCount + fileCount;
+		Array<uint32> fileTableOffsets;
+		fileTableOffsets.resize(fileTableCount);
+		for (uint32 i = 0; i < fileTableCount; i++)
+			fileTableOffsets[i] = header->readUint32LE();
+
+		for (uint32 i = directoryCount; i < fileCount + directoryCount; i++) {
+			header->seek(cabDescriptorOffset + fileTableOffset + fileTableOffsets[i]);
+			uint32 nameOffset = header->readUint32LE();
+			/* uint32 directoryIndex = */ header->readUint32LE();
+
+			// First read in data needed by us to get at the file data
+			FileEntry entry;
+			entry.flags = header->readUint16LE();
+			entry.uncompressedSize = header->readUint32LE();
+			entry.compressedSize = header->readUint32LE();
+			header->skip(20);
+			entry.offset = header->readUint32LE();
+			entry.volume = 0;
+
+			// Then let's get the string
+			header->seek(cabDescriptorOffset + fileTableOffset + nameOffset);
+			String fileName = header->readString();
+			_map[fileName] = entry;
+		}
 	}
 
-	delete[] fileTableOffsets;
+	return true;
+}
+
+void InstallShieldCabinet::close() {
+	_baseName.clear();
+	_map.clear();
+	_version = 0;
 }
 
 bool InstallShieldCabinet::hasFile(const String &name) const {
@@ -179,16 +239,25 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const String
 
 	const FileEntry &entry = _map[name];
 
-	_stream->seek(entry.offset);
+	ScopedPtr<SeekableReadStream> stream(SearchMan.createReadStreamForMember(getVolumeName((entry.volume == 0) ? 1 : entry.volume)));
+	if (!stream) {
+		warning("Failed to open volume for file '%s'", name.c_str());
+		return 0;
+	}
 
-	if (!(entry.flags & 0x04)) // Not compressed
-		return _stream->readStream(entry.uncompressedSize);
+	if (!(entry.flags & 0x04)) {
+		// Uncompressed
+		// Return a substream
+		return new SeekableSubReadStream(stream.release(), entry.offset, entry.offset + entry.uncompressedSize, DisposeAfterUse::YES);
+	}
+
+	stream->seek(entry.offset);
 
 #ifdef USE_ZLIB
 	byte *src = (byte *)malloc(entry.compressedSize);
 	byte *dst = (byte *)malloc(entry.uncompressedSize);
 
-	_stream->read(src, entry.compressedSize);
+	stream->read(src, entry.compressedSize);
 
 	bool result = inflateZlibInstallShield(dst, entry.uncompressedSize, src, entry.compressedSize);
 	free(src);
@@ -206,8 +275,24 @@ SeekableReadStream *InstallShieldCabinet::createReadStreamForMember(const String
 #endif
 }
 
-Archive *makeInstallShieldArchive(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
-	return new InstallShieldCabinet(stream, disposeAfterUse);
+String InstallShieldCabinet::getHeaderName() const {
+	return _baseName + "1.hdr";
 }
 
-} // End of namespace AGOS
+String InstallShieldCabinet::getVolumeName(uint volume) const {
+	return String::format("%s%d.cab", _baseName.c_str(), volume);
+}
+
+} // End of anonymous namespace
+
+Archive *makeInstallShieldArchive(const String &baseName) {
+	InstallShieldCabinet *cab = new InstallShieldCabinet();
+	if (!cab->open(baseName)) {
+		delete cab;
+		return 0;
+	}
+
+	return cab;
+}
+
+} // End of namespace Common
