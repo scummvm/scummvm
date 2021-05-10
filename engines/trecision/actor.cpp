@@ -362,7 +362,7 @@ void Actor::actorDoAction(int action) {
 	int cur = 0;
 
 	while (cur < action)
-		cfp += _defActionLen[cur++];
+		cfp += _vm->_defActionLen[cur++];
 	v = &_characterArea[cfp * _vertexNum];
 
 	if (action == hWALKOUT)
@@ -370,7 +370,7 @@ void Actor::actorDoAction(int action) {
 	else if (action == hLAST)
 		v = _characterArea;
 
-	len = _defActionLen[action];
+	len = _vm->_defActionLen[action];
 
 	uint16 stepIdx;
 	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
@@ -443,6 +443,10 @@ void Actor::read3D(Common::SeekableReadStream *ff) {
 		_light[i]._inten = ff->readSByte();
 		_light[i]._position = ff->readSByte();
 	}
+}
+
+float Actor::FRAMECENTER(SVertex *v) {
+	return (-v[86]._z - v[164]._z) / 2.0;
 }
 
 } // End of namespace Trecision

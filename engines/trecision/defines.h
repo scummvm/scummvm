@@ -2409,4 +2409,13 @@ Management of "Use with"
 
 #define MAXMESSAGE 128
 
+
+#define PI 3.1415927f
+#define PI2 6.2831853f
+#define EPSILON 0.007f
+#define MAXSTEP 1000
+#define MAXPATHNODES 50
+#define MAXPANELSINROOM 400
+
+
 #endif

@@ -416,8 +416,8 @@ void Renderer3D::shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 --------------------------------------------------*/
 void Renderer3D::init3DRoom(uint16 *destBuffer) {
 	_curPage = destBuffer;
-	_cx = (MAXX - 1) / 2;
-	_cy = (MAXY - 1) / 2;
+	_vm->_cx = (MAXX - 1) / 2;
+	_vm->_cy = (MAXY - 1) / 2;
 
 	for (int c = 0; c < ZBUFFERSIZE / 2; ++c)
 		_zBuffer[c] = 0x7FFF;
@@ -498,7 +498,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		int cfp = 0;
 		int cur = 0;
 		while (cur < actor->_curAction)
-			cfp += _defActionLen[cur++];
+			cfp += _vm->_defActionLen[cur++];
 
 		if (actor->_curAction == hWALKOUT)
 			cfp = 1;
@@ -702,8 +702,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
 			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
 
-			int _x2d = _cx + (int)((l0 * _curCamera->_fovX) / l2);
-			int _y2d = _cy + (int)((l1 * _curCamera->_fovY) / l2);
+			int _x2d = _vm->_cx + (int)((l0 * _curCamera->_fovX) / l2);
+			int _y2d = _vm->_cy + (int)((l1 * _curCamera->_fovY) / l2);
 
 			_vVertex[a]._x = _x2d;
 			_vVertex[a]._y = _y2d;
@@ -729,7 +729,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		actor->_lim[3] = (actor->_lim[3] >= _maxYClip - 1) ? _maxYClip : actor->_lim[3]++;
 
 		if (actor->_curAction == hLAST) // exit displacer
-			actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _defActionLen[hLAST]);
+			actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _vm->_defActionLen[hLAST]);
 
 		// set zbuffer vars
 		setZBufferRegion(actor->_lim[0], actor->_lim[2], actor->_lim[1] - actor->_lim[0]);
@@ -866,6 +866,12 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 
 	_numPathNodes = 0;
 	_numSortPan = 0;
+	_x3d = 0.0f;
+	_y3d = 0.0f;
+	_z3d = 0.0f;
+
+	_curX = 0.0f;
+	_curZ = 0.0f;
 }
 
 PathFinding3D::~PathFinding3D() {
@@ -1649,21 +1655,21 @@ void PathFinding3D::buildFramelist() {
 	int a = 0;
 	// compute offset
 	SVertex *v = _vm->_actor->_characterArea;
-	float firstframe = FRAMECENTER(v);
+	float firstframe = _vm->_actor->FRAMECENTER(v);
 	float startpos = 0.0;
 
 	// if he was already walking
 	int CurA, CurF, cfp;
 	if (_vm->_actor->_curAction == hWALK) {
 		// compute current frame
-		cfp = _defActionLen[hSTART] + 1 + _vm->_actor->_curFrame;
+		cfp = _vm->_defActionLen[hSTART] + 1 + _vm->_actor->_curFrame;
 		v += cfp * _vm->_actor->_vertexNum;
 
 		CurA = hWALK;
 		CurF = _vm->_actor->_curFrame;
 
 		// if it wasn't the last frame, take the next step
-		if (_vm->_actor->_curFrame < _defActionLen[hWALK] - 1) {
+		if (_vm->_actor->_curFrame < _vm->_defActionLen[hWALK] - 1) {
 			cfp++;
 			CurF++;
 			v += _vm->_actor->_vertexNum;
@@ -1676,7 +1682,7 @@ void PathFinding3D::buildFramelist() {
 		//o		CurF = _vm->_actor->_curAction - hSTOP1;
 		CurF = _vm->_actor->_curAction - hSTOP0;
 
-		cfp = _defActionLen[hSTART] + 1 + CurF;
+		cfp = _vm->_defActionLen[hSTART] + 1 + CurF;
 		v += cfp * _vm->_actor->_vertexNum;
 	} else {
 		// if he was standing, start working or turn
@@ -1689,12 +1695,12 @@ void PathFinding3D::buildFramelist() {
 		// start from the first frame
 		v += _vm->_actor->_vertexNum;
 	}
-	oz = -FRAMECENTER(v) + firstframe;
+	oz = -_vm->_actor->FRAMECENTER(v) + firstframe;
 
 	// at this point, CurA / _curAction is either hSTART or hWALK
 
 	// until it arrives at the destination
-	while (((curlen = oz + FRAMECENTER(v) - firstframe) < len) || (!a)) {
+	while (((curlen = oz + _vm->_actor->FRAMECENTER(v) - firstframe) < len) || (!a)) {
 		_step[a]._pz = oz - firstframe; // where to render
 		_step[a]._dz = curlen;          // where it is
 		_step[a]._curAction = CurA;
@@ -1706,29 +1712,29 @@ void PathFinding3D::buildFramelist() {
 		CurF++;
 		cfp++;
 
-		if (CurF >= _defActionLen[CurA]) {
+		if (CurF >= _vm->_defActionLen[CurA]) {
 			if (CurA == hSTART) {
 				CurA = hWALK;
 				CurF = 0;
-				cfp = _defActionLen[hSTART] + 1;
+				cfp = _vm->_defActionLen[hSTART] + 1;
 
 				ox = 0.0;
 			} else if (CurA == hWALK) {
 				CurA = hWALK;
 				CurF = 0;
-				cfp = _defActionLen[hSTART] + 1;
+				cfp = _vm->_defActionLen[hSTART] + 1;
 
 				// end walk frame
-				ox = FRAMECENTER(v) - firstframe;
+				ox = _vm->_actor->FRAMECENTER(v) - firstframe;
 
 				v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
-				ox -= FRAMECENTER(v);
+				ox -= _vm->_actor->FRAMECENTER(v);
 			}
 
 			v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
 			// only if it doesn't end
-			if ((oz + ox + FRAMECENTER(v) - firstframe) < len)
+			if ((oz + ox + _vm->_actor->FRAMECENTER(v) - firstframe) < len)
 				oz += ox;
 			else
 				break;
@@ -1753,12 +1759,12 @@ void PathFinding3D::buildFramelist() {
 	int b = 0;
 	cfp = 0;
 	while (b != CurA)
-		cfp += _defActionLen[b++];
+		cfp += _vm->_defActionLen[b++];
 
 	v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
-	for (b = 0; b < _defActionLen[CurA]; b++) {
-		curlen = oz + FRAMECENTER(v) - firstframe;
+	for (b = 0; b < _vm->_defActionLen[CurA]; b++) {
+		curlen = oz + _vm->_actor->FRAMECENTER(v) - firstframe;
 		_step[a]._pz = oz - firstframe; // where to render
 		_step[a]._dz = curlen;          // where it is
 		_step[a]._curAction = CurA;
@@ -2337,8 +2343,8 @@ void PathFinding3D::pointOut() {
 		Projects 2D point in a 3D world
 --------------------------------------------------*/
 void PathFinding3D::invPointProject(int x, int y) {
-	float px = (float)(x - _cx) / _vm->_actor->_camera->_fovX;
-	float py = (float)(y - _cy) / _vm->_actor->_camera->_fovY;
+	float px = (float)(x - _vm->_cx) / _vm->_actor->_camera->_fovX;
+	float py = (float)(y - _vm->_cy) / _vm->_actor->_camera->_fovY;
 
 	_x3d = (float)(px * _invP[0][0] + py * _invP[0][1] + _invP[0][2]);
 	_y3d = (float)(px * _invP[1][0] + py * _invP[1][1] + _invP[1][2]);
