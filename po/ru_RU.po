@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-09 04:11+0000\n"
+"POT-Creation-Date: 2021-05-09 23:27+0000\n"
 "PO-Revision-Date: 2021-05-07 06:25+0000\n"
 "Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4015,8 +4015,8 @@ msgstr "Автор перевода не желает, чтобы его пер�
 #: engines/kyra/detection_tables.h:983 engines/lure/detection.cpp:222
 #: engines/mohawk/detection_tables.h:954 engines/mohawk/detection_tables.h:1045
 #: engines/mohawk/detection_tables.h:1060 engines/neverhood/detection.cpp:110
-#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:937
-#: engines/saga/detection_tables.h:996 engines/sci/detection_tables.h:4871
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:985
+#: engines/saga/detection_tables.h:1044 engines/sci/detection_tables.h:4871
 #: engines/sci/detection_tables.h:4879 engines/sherlock/detection_tables.h:214
 #: engines/stark/detection.cpp:293 engines/teenagent/detection.cpp:102
 #: engines/zvision/detection_tables.h:190
