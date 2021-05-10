@@ -2571,7 +2571,7 @@ BuiltReturn callBuiltIn(int whichFunc, int numParams, LoadedFunction *fun) {
 }
 
 const char *getBuiltInName(int num) {
-	if (num > NUM_FUNCS)
+	if (num >= NUM_FUNCS)
 		error("getBuiltInName: incorrect builtin number. %d > %d", num, NUM_FUNCS);
 
 	return builtInFunctionArray[num].name;
