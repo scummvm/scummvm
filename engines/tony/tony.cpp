@@ -120,13 +120,9 @@ Common::ErrorCode TonyEngine::init() {
 		return Common::kUnknownError;
 
 	if (isCompressed()) {
-		Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
-		if (!stream)
-			error("Failed to open data1.cab");
-
-		Common::Archive *cabinet = Common::makeInstallShieldArchive(stream);
+		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
 		if (!cabinet)
-			error("Failed to parse data1.cab");
+			error("Failed to open the InstallShield cabinet");
 
 		SearchMan.add("data1.cab", cabinet);
 	}

@@ -42,11 +42,13 @@ class SeekableReadStream;
 
 /**
  * This factory method creates an Archive instance corresponding to the content
- * of the InstallShield compressed stream.
+ * of the single- or multi-file InstallShield cabinet with the given base name
  *
  * May return 0 in case of a failure.
+ * 
+ * @param baseName The base filename, e.g. the "data" in "data1.cab"
  */
-Archive *makeInstallShieldArchive(SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
+Archive *makeInstallShieldArchive(const Common::String &baseName);
 
 /** @} */
 

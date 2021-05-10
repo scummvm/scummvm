@@ -315,13 +315,9 @@ void NancyEngine::bootGameEngine() {
 	ConfMan.registerDefault("second_chance", false);
 
 	// Load archive
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember("data1.cab");
-	if (stream) {
-		Common::Archive *cab = Common::makeInstallShieldArchive(stream);
-
-		if (cab) {
-			SearchMan.add("data1.hdr", cab);
-		}
+	Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+	if (cabinet) {
+		SearchMan.add("data1.cab", cabinet);
 	}
 
 	_resource = new ResourceManager();
