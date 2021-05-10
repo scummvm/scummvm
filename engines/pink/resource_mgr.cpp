@@ -20,8 +20,6 @@
  *
  */
 
-#include "common/substream.h"
-
 #include "pink/cel_decoder.h"
 #include "pink/file.h"
 #include "pink/pink.h"
@@ -59,7 +57,7 @@ static int resDescComp(const void *a, const void *b) {
 	return scumm_stricmp((const char *)a, (const char *)b);
 }
 
-Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
+Common::SeekableReadStream *ResourceMgr::getResourceStream(const Common::String &name) {
 	Common::SeekableReadStream *stream;
 
 	ResourceDescription *desc = (ResourceDescription *)bsearch(name.c_str(), _resDescTable, _resCount, sizeof(ResourceDescription), resDescComp);
@@ -71,9 +69,13 @@ Common::SafeSeekableSubReadStream *ResourceMgr::getResourceStream(const Common::
 
 	stream->seek(desc->offset);
 
+	byte *data = (byte *)malloc(desc->size);
+	stream->read(data, desc->size);
+
+	Common::MemoryReadStream *memstream = new Common::MemoryReadStream(data, desc->size, DisposeAfterUse::YES);
+
 	debugC(kPinkDebugLoadingResources, "Got stream of %s resource", name.c_str());
-	return new Common::SafeSeekableSubReadStream(stream, desc->offset,
-												 desc->offset + desc->size);
+	return memstream;
 }
 
 } // End of namespace Pink

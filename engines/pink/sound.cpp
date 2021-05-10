@@ -29,7 +29,7 @@
 
 namespace Pink {
 
-void Sound::play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundType type, byte volume, int8 balance, bool isLoop) {
+void Sound::play(Common::SeekableReadStream *stream, Audio::Mixer::SoundType type, byte volume, int8 balance, bool isLoop) {
 	// Vox files in pink have wave format.
 	// RIFF (little-endian) data, WAVE audio, Microsoft PCM, 8 bit, mono 22050 Hz
 

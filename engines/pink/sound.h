@@ -30,17 +30,13 @@
 
 #include "pink/constants.h"
 
-namespace Common {
-	class SafeSeekableSubReadStream;
-}
-
 namespace Pink {
 
 class Sound {
 public:
 	~Sound() { stop(); }
 
-	void play(Common::SafeSeekableSubReadStream *stream, Audio::Mixer::SoundType type, byte volume = 100, int8 balance = 0, bool isLoop = false);
+	void play(Common::SeekableReadStream *stream, Audio::Mixer::SoundType type, byte volume = 100, int8 balance = 0, bool isLoop = false);
 
 	bool isPlaying() const { return g_system->getMixer()->isSoundHandleActive(_handle); }
 

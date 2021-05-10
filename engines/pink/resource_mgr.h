@@ -46,7 +46,7 @@ public:
 
 	void clear();
 
-	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &name);
+	Common::SeekableReadStream *getResourceStream(const Common::String &name);
 
 	PinkEngine *getGame() const { return _game; }
 

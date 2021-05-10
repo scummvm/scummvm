@@ -46,7 +46,7 @@ public:
 	Actor *findActor(const Common::String &name);
 	LeadActor *getLeadActor() { return _leadActor; }
 
-	Common::SafeSeekableSubReadStream *getResourceStream(const Common::String &fileName) { return _resMgr.getResourceStream(fileName); }
+	Common::SeekableReadStream *getResourceStream(const Common::String &fileName) { return _resMgr.getResourceStream(fileName); }
 
 	virtual void clear();
 	void pause(bool paused);

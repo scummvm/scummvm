@@ -21,8 +21,6 @@
  */
 
 #include "common/debug.h"
-#include "common/memstream.h"
-#include "common/substream.h"
 
 #include "pink/archive.h"
 #include "pink/pink.h"
@@ -62,16 +60,7 @@ void ActionSound::start() {
 	} else
 		_actor->endAction();
 
-	Common::SafeSeekableSubReadStream *stream = page->getResourceStream(_fileName);
-	byte *data = (byte *)malloc(stream->size());
-	stream->read(data, stream->size());
-
-	Common::MemoryReadStream *memstream = new Common::MemoryReadStream(data, stream->size(), DisposeAfterUse::YES);
-	delete stream;
-
-	Common::SafeSeekableSubReadStream *stream2 = new Common::SafeSeekableSubReadStream(memstream, 0, memstream->size(), DisposeAfterUse::YES);
-
-	_sound.play(stream2, soundType, _volume, 0, _isLoop);
+	_sound.play(page->getResourceStream(_fileName), soundType, _volume, 0, _isLoop);
 
 	debugC(6, kPinkDebugActions, "Actor %s has now ActionSound %s", _actor->getName().c_str(), _name.c_str());
 }
