@@ -1053,6 +1053,12 @@ bool MacMenu::mouseClick(int x, int y) {
 							int y1 = _items[_activeItem]->submenu->bbox.top;
 							uint w = _items[_activeItem]->submenu->bbox.width() + 2;
 							uint h = _items[_activeItem]->submenu->bbox.height() + 2;
+
+							if (x1 + w > _wm->_screenCopy->w)
+								w = _wm->_screenCopy->w - 1 - x1;
+							if (y1 + h > _wm->_screenCopy->h)
+								h = _wm->_screenCopy->h - 1 - y1;
+
 							g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);
 						}
 
@@ -1145,6 +1151,12 @@ bool MacMenu::mouseClick(int x, int y) {
 				int y1 = _menustack.back()->bbox.top;
 				uint w = _menustack.back()->bbox.width() + 2;
 				uint h = _menustack.back()->bbox.height() + 2;
+
+				if (x1 + w > _wm->_screenCopy->w)
+					w = _wm->_screenCopy->w - 1 - x1;
+				if (y1 + h > _wm->_screenCopy->h)
+					h = _wm->_screenCopy->h - 1 - y1;
+
 				g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);
 			}
 
