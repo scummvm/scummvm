@@ -69,7 +69,8 @@ bool DamageInfo::applyToItem(Item *item, uint16 points) const {
 	if (_sound) {
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio) {
-			audio->playSFX(_sound, 0x10, item->getObjId(), 1, true);
+			ObjId objid = item ? item->getObjId() : 0;
+			audio->playSFX(_sound, 0x10, objid, 1, true);
 		}
 	}
 	if (replaceItem()) {
