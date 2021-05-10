@@ -47,7 +47,7 @@ CruPathfinderProcess::CruPathfinderProcess() : Process(),
 		_nextTurn(false), _turnAtEnd(false), _lastDir(dir_current),
 		_nextDir(dir_current), _nextDir2(dir_current),
 		_solidObject(true), _directPathBlocked(false), _noShotAvailable(true),
-		_dir16Flag(false), _stopDistance(0)
+		_dir16Flag(false), _stopDistance(0), _maxSteps(0)
 {
 }
 
