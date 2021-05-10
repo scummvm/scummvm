@@ -27,65 +27,13 @@
 
 #include "trecision/defines.h"
 
-#define DRAWMASK        1
-#define COPYTORAM       2
 
-#define TEXT_OFF	0
-#define TEXT_DRAW   2
-#define TEXT_DEL    4
-
-#define MAXTEXTAREA		200000L
-#define SMKANBUFFER     6L
-#define SMKBKGBUFFER    4L
-#define SMKICONBUFFER   2L
-
-#define MAXSYSTEXT	30
-#define MAXMAT 20
 
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Trecision {
-
-// DRAW STRUCT
-struct SDText {
-	Common::Rect _rect;
-	Common::Rect _subtitleRect;
-	uint16 tcol;
-	uint16 scol;
-	Common::String text;
-
-	void set(SDText org);
-	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, Common::String pText);
-
-	void DText(uint16 *frameBuffer = nullptr);
-	uint16 checkDText();
-};
-
-
-struct SDObj {
-	Common::Rect rect;
-	Common::Rect l;
-	int objIndex;
-	bool drawMask;
-};
-
-// fastfile
-struct SFileEntry {
-	char name[12];
-	int offset;
-};
-
-struct SFileHandle {
-	char inuse;
-	int pos;
-	int size;
-	SFileEntry *pfe;
-};
-
-
-// FUNCTIONS
 
 // GAME POINTER
 extern uint16 _actionPosition[];
@@ -103,7 +51,6 @@ void TendIn();
 void ReadObj(Common::SeekableReadStream *stream);
 void ReadExtraObj2C();
 void ReadExtraObj41D();
-void SoundFadIn(int num);
 
 } // End of namespace Trecision
 
