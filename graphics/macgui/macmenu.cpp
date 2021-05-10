@@ -977,8 +977,18 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	if (recursive && menu->highlight != -1 && menu->items[menu->highlight]->submenu != nullptr)
 		renderSubmenu(menu->items[menu->highlight]->submenu, false);
 
-	if (_wm->_mode & kWMModalMenuMode)
-		g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, r->width() + 2, r->height() + 2);
+	if (_wm->_mode & kWMModalMenuMode) {
+		// TODO: Instead of cropping, reposition the submenu
+		int w = r->width() + 2;
+		if (r->left + w >= _screen.w)
+			w = _screen.w - 1 - r->left;
+
+		int h = r->height() + 2;
+		if (r->top + h >= _screen.h)
+			h = _screen.h - 1 - r->top;
+
+		g_system->copyRectToScreen(_screen.getBasePtr(r->left, r->top), _screen.pitch, r->left, r->top, w, h);
+	}
 }
 
 void MacMenu::drawSubMenuArrow(ManagedSurface *dst, int x, int y, int color) {
@@ -1093,6 +1103,12 @@ bool MacMenu::mouseClick(int x, int y) {
 					int y1 = menu->items[_activeSubItem]->submenu->bbox.top;
 					uint w = menu->items[_activeSubItem]->submenu->bbox.width() + 2;
 					uint h = menu->items[_activeSubItem]->submenu->bbox.height() + 2;
+
+					if (x1 + w > _wm->_screenCopy->w)
+						w = _wm->_screenCopy->w - 1 - x1;
+					if (y1 + h > _wm->_screenCopy->h)
+						h = _wm->_screenCopy->h - 1 - y1;
+
 					g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);
 				}
 			}
