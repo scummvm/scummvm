@@ -2421,7 +2421,10 @@ bool UCMachine::loadLists(Common::ReadStream *rs, uint32 version) {
 		uint16 lid = rs->readUint16LE();
 		UCList *l = new UCList(2); // the "2" will be ignored by load()
 		bool ret = l->load(rs, version);
-		if (!ret) return false;
+		if (!ret) {
+			delete l;
+			return false;
+		}
 
 		_listHeap[lid] = l;
 	}
