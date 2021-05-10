@@ -20,7 +20,6 @@ MODULE_OBJS = \
 	video.o \
 	nl/regen.o \
 	nl/schedule.o \
-	nl/3d/3dvar.o \
 	nl/3d/3dwalk.o \
 	nl/ll/llmouse.o \
 	nl/ll/llscreen.o

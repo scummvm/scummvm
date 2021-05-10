@@ -33,7 +33,7 @@ namespace Trecision {
 
 struct SDObj;
 struct STexture;
-struct SPan;
+
 
 void PaintScreen(bool flag);
 void PaintObjAnm(uint16 CurBox);

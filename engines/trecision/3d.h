@@ -25,12 +25,43 @@
 
 #include "trecision/defines.h"
 #include "trecision/trecision.h"
-#include "trecision/nl/3d/3dinc.h"
 
 namespace Trecision {
 struct SVVertex {
 	int32 _x, _y, _z;
 	int32 _angle;
+};
+
+struct SSortPan {
+	int _num;
+	float _min;
+};
+
+struct SPathNode {
+	float _x, _z;
+	float _dist;
+	int16 _oldPanel;
+	int16 _curPanel;
+};
+
+struct SPan {
+	float _x1, _z1;
+	float _x2, _z2;
+	float _h;
+	int _flags;
+	char _near1;
+	char _near2;
+	char _col1;
+	char _col2;
+};
+
+struct SStep {
+	float _px, _pz;
+	float _dx, _dz;
+	float _theta;
+	int _curAction;
+	int _curFrame;
+	int16 _curPanel;
 };
 
 class Renderer3D {
@@ -102,6 +133,8 @@ private:
 
 	float _invP[3][3];
 	int _numPathNodes;
+	float _x3d, _y3d, _z3d;
+	float _curX, _curZ;
 
 public:
 	PathFinding3D(TrecisionEngine *vm);

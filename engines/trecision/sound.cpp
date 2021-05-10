@@ -215,8 +215,6 @@ void SoundManager::waitEndFading() {
 }
 
 void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
-	extern uint8 _defActionLen[];
-
 	bool stepRight = false;
 	bool stepLeft = false;
 
@@ -247,14 +245,14 @@ void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *li
 	case hSTOP2:
 	case hSTOP3:
 	case hSTOP9:
-		if (frame >= _defActionLen[act] - 1)
+		if (frame >= _vm->_defActionLen[act] - 1)
 			stepLeft = true;
 	case hSTOP4:
 	case hSTOP5:
 	case hSTOP6:
 	case hSTOP7:
 	case hSTOP8:
-		if (frame >= _defActionLen[act] - 1)
+		if (frame >= _vm->_defActionLen[act] - 1)
 			stepRight = true;
 		break;
 	default:

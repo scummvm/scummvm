@@ -36,7 +36,7 @@ public:
 	Actor(TrecisionEngine *vm);
 	~Actor();
 
-	SVertex *_characterArea; // TODO: Make it private
+	SVertex *_characterArea;
 
 	SVertex  *_vertex;
 	SFace    *_face;
@@ -65,6 +65,8 @@ public:
 	void actorDoAction(int action);
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
+	float FRAMECENTER(SVertex *v);
+
 }; // end of class
 
 } // end of namespace

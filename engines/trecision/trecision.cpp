@@ -35,13 +35,10 @@
 #include "gui/saveload.h"
 
 #include "trecision/trecision.h"
-
-
-#include "anim.h"
-#include "scheduler.h"
+#include "trecision/anim.h"
+#include "trecision/scheduler.h"
 #include "trecision/actor.h"
 #include "trecision/3d.h"
-#include "trecision/nl/3d/3dinc.h"
 #include "trecision/defines.h"
 #include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
@@ -207,6 +204,7 @@ TrecisionEngine::~TrecisionEngine() {
 		delete[] _objPointers[i];
 		delete[] _maskPointers[i];
 	}
+
 }
 
 Common::Error TrecisionEngine::run() {
