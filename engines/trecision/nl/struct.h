@@ -207,5 +207,31 @@ struct StackText {
 	bool clear;
 };
 
+struct SDText {
+	Common::Rect _rect;
+	Common::Rect _subtitleRect;
+	uint16 tcol;
+	uint16 scol;
+	Common::String text;
+
+	void set(SDText org);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, Common::String pText);
+
+	void DText(uint16 *frameBuffer = nullptr);
+	uint16 checkDText();
+};
+
+struct SDObj {
+	Common::Rect rect;
+	Common::Rect l;
+	int objIndex;
+	bool drawMask;
+};
+
+struct SFileEntry {
+	char name[12];
+	int offset;
+};
+
 } // End of namespace Trecision
 #endif

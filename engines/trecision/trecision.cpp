@@ -682,7 +682,6 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 bool TrecisionEngine::dataSave() {
 	const Common::Array<byte> savedInventory = _inventory;
 	const uint8 savedIconBase = _iconBase;
-	char ch;
 	Common::StringArray saveNames;
 	saveNames.reserve(MAXSAVEFILE);
 	uint16 posx, LenText;
@@ -740,7 +739,6 @@ insave:
 	int8 CurPos = -1;
 	int8 OldPos = -1;
 	bool skipSave = false;
-	ch = 0;
 
 	loadSaveSlots(saveNames);
 
@@ -806,7 +804,7 @@ insave:
 		for (;;) {
 			_keybInput = true;
 			checkSystem();
-			ch = getKey();
+			char ch = getKey();
 			freeKey();
 
 			_keybInput = false;

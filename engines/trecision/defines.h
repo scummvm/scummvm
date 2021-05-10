@@ -2417,5 +2417,12 @@ Management of "Use with"
 #define MAXPATHNODES 50
 #define MAXPANELSINROOM 400
 
+#define TEXT_OFF 0
+#define TEXT_DRAW 2
+#define TEXT_DEL 4
+
+#define MAXTEXTAREA 200000L
+#define MAXSYSTEXT 30
+#define MAXMAT 20
 
 #endif
