@@ -32,33 +32,14 @@ class AsylumEngine;
 class Reaction {
 public:
 	Reaction(AsylumEngine *engine);
-	virtual ~Reaction();
+	virtual ~Reaction() {};
 
-	void run(int32 reactionIndex);
+	void run(uint32 reactionIndex);
 
 private:
 	AsylumEngine* _vm;
 
-	//////////////////////////////////////////////////////////////////////////
-	// Reaction functions
-	//////////////////////////////////////////////////////////////////////////
-	void chapter1(int32 reactionIndex);
-	void chapter2(int32 reactionIndex);
-	void chapter3(int32 reactionIndex);
-	void chapter4(int32 reactionIndex);
-	void chapter5(int32 reactionIndex);
-	void chapter6(int32 reactionIndex);
-	void chapter7(int32 reactionIndex);
-	void chapter8(int32 reactionIndex);
-	void chapter9(int32 reactionIndex);
-	void chapter10(int32 reactionIndex);
-	void chapter11(int32 reactionIndex);
-	void chapter12(int32 reactionIndex);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Utils
-	//////////////////////////////////////////////////////////////////////////
-	void play(int32 index);
+	void play(uint32 index);
 };
 
 } // End of namespace Asylum
