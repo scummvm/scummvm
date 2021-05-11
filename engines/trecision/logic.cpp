@@ -3055,7 +3055,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_comb49[0] = curObj;
 		_vm->_soundMgr->play(wASTA49);
 		if ((_comb49[3] == oFORO749) && (_comb49[2] == oFORO849) && (_comb49[1] == oFORO449) && (_comb49[0] == oFORO549)) {
-			PaintScreen(false);
+			_vm->_renderer->paintScreen(false);
 			_vm->waitDelay(60);
 			_vm->setObjectVisible(oOMBRAS49, true);
 			_vm->setObjectVisible(oSCOMPARTO49, true);
@@ -3111,7 +3111,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_soundMgr->play(wPAD1 + curObj - oNUMERO14C);
 		if (a < 5)
 			break;
-		PaintScreen(false);
+		_vm->_renderer->paintScreen(false);
 		_vm->waitDelay(60);
 		if ((_comb4CT[0] == 5) && (_comb4CT[1] == 6) && (_comb4CT[2] == 2) &&
 			(_comb4CT[3] == 3) && (_comb4CT[4] == 9) && (_comb4CT[5] == 6)) {
@@ -3283,7 +3283,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_count58 < 6)
 			break;
 
-		PaintScreen(false);
+		_vm->_renderer->paintScreen(false);
 		_vm->waitDelay(60);
 		_count58 = 0;
 		for (int a = 0; a < 6; a++)

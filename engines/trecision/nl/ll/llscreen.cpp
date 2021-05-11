@@ -24,6 +24,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "trecision/3d.h"
 
 #include "trecision/anim.h"
 #include "trecision/defines.h"
@@ -32,7 +33,6 @@
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-#include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 #include "trecision/nl/ll/llinc.h"
 
@@ -93,7 +93,7 @@ void TendIn() {
 
 	g_vm->_flagPaintCharacter = true;
 	g_vm->_soundMgr->waitEndFading();
-	PaintScreen(true);
+	g_vm->_renderer->paintScreen(true);
 
 	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }
@@ -230,7 +230,7 @@ void RedrawRoom() {
 
 	TextStatus = TEXT_OFF;
 	g_vm->_flagPaintCharacter = true;
-	PaintScreen(true);
+	g_vm->_renderer->paintScreen(true);
 	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 
