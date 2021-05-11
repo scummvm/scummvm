@@ -338,6 +338,7 @@ public:
 	INTRINSIC(I_getDex);
 	INTRINSIC(I_getInt);
 	INTRINSIC(I_getHp);
+	INTRINSIC(I_getMaxHp);
 	INTRINSIC(I_getMana);
 	INTRINSIC(I_getAlignment);
 	INTRINSIC(I_getEnemyAlignment);

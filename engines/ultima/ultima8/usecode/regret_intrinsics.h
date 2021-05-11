@@ -44,7 +44,7 @@ Intrinsic RegretIntrinsics[] = {
 	World::I_gameDifficulty, // Intrinsic00A()
 	Item::I_getQLo, // Intrinsic00B()
 	Item::I_destroy, // Intrinsic00C()
-	0, // Intrinsic00D()
+	Actor::I_getUnkByte, // Intrinsic00D()
 	Item::I_getX, // Intrinsic00E()
 	Item::I_getY, // Intrinsic00F()
 	// 0010
@@ -267,7 +267,7 @@ Intrinsic RegretIntrinsics[] = {
 	Item::I_getQLo, // Intrinsic0DC()
 	Item::I_getQHi, // Intrinsic0DD()
 	Actor::I_getNpcNum, // Intrinsic0DE()
-	0, // Intrinsic0DF() Item::I_setField0x81
+	Actor::I_setUnkByte, // Intrinsic0DF() Item::I_setField0x81
 	// 00E0
 	Item::I_hurl, // Intrinsic0E0()
 	Actor::I_setDead, // Intrinsic0E1()
@@ -297,7 +297,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_setDead, // Intrinsic0F8()
 	Item::I_getQLo, // Intrinsic0F9()
 	Actor::I_setDead, // Intrinsic0FA()
-	0, // DTable::I_getMaxHPForNPC()
+	Actor::I_getMaxHp, // DTable::I_getMaxHPForNPC()
 	Actor::I_setHp, // Intrinsic0FC()
 	Item::I_getQLo, // Intrinsic0FD()
 	BatteryChargerProcess::I_create, // Intrinsic0FE()

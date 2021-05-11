@@ -2009,6 +2009,13 @@ uint32 Actor::I_getHp(const uint8 *args, unsigned int /*argsize*/) {
 	return actor->getHP();
 }
 
+uint32 Actor::I_getMaxHp(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->getMaxHP();
+}
+
 uint32 Actor::I_getMana(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ACTOR_FROM_PTR(actor);
 	if (!actor) return 0;
