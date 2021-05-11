@@ -26,7 +26,6 @@
 #include "common/array.h"
 
 #include "asylum/puzzles/puzzle.h"
-#include "asylum/resources/polygons.h"
 
 namespace Asylum {
 
@@ -53,7 +52,6 @@ private:
 	Common::Array<MusicalNote> _melody;
 	MusicalNote _soundingNote;
 	uint32 _notesNumber;
-	Polygon _polygons[5];
 	bool _ok;
 
 	//////////////////////////////////////////////////////////////////////////
