@@ -188,14 +188,14 @@ public:
 	void updateReverseStereo();
 
 	/**
-	 * Gets a sine cosine pair.
+	 * Gets an inventory ring point
 	 *
-	 * @param index1 The first index.
-	 * @param index2 The second index.
+	 * @param nPoints Number of Points
+	 * @param index   Point index
 	 *
-	 * @return The sine cosine values.
+	 * @return        Inventory ring point
 	 */
-	Common::Point getSinCosValues(int32 index1, int32 index2) const;
+	Common::Point getInventoryRingPoint(uint32 nPoints, uint32 index) const;
 
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
@@ -230,7 +230,6 @@ private:
 	Puzzles     *_puzzles;
 	SharedData   _data;
 	int          _gameFlags[130];
-	int16        _sinCosTables[72];
 	bool         _introPlayed;
 	int32        _tickOffset;
 
@@ -241,21 +240,6 @@ private:
 	 * Play the intro
 	 */
 	void playIntro();
-
-	/**
-	 * Initializes the sine/cosine tables.
-	 */
-	void initSinCosTables(double a2, int32 a3, int32 a4);
-
-	/**
-	 * Calculate the offset into the sine/cosine tables.
-	 *
-	 * @param val The value.
-	 *
-	 * @return The calculated offset.
-	 */
-	int32 computeSinCosOffset(int32 val) const;
-
 
 	// Debug
 	friend class Console;
