@@ -1687,9 +1687,9 @@ void Scene::playerReaction() {
 
 	if (count > 0) {
 		for (uint32 i = 0; i < count; i++) {
-			Common::Point ret = _vm->getSinCosValues(count, i);
-			int32 x = point.x + player->getPoint2()->x + ret.x;
-			int32 y = point.y + player->getPoint2()->y / 2 - ret.y;
+			Common::Point ringPoint = _vm->getInventoryRingPoint(count, i);
+			int32 x = point.x + player->getPoint2()->x + ringPoint.x;
+			int32 y = point.y + player->getPoint2()->y / 2 - ringPoint.y;
 
 			if (mouse.x >= x && mouse.x <= (x + 40) && mouse.y >= y && mouse.y <= (y + 40)) {
 				// Handle reaction

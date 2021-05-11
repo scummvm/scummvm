@@ -21,6 +21,7 @@
  */
 
 #include "common/debug-channels.h"
+#include "common/rect.h"
 
 #include "engines/util.h"
 
@@ -49,6 +50,21 @@
 
 namespace Asylum {
 
+// inventory ring is a circle of radius 80 centered at (-20, 20)
+static const int16 inventoryRingPoints[36][2] = {
+	{ -20,  100},
+	{ -20,  100}, { -20,  -60},
+	{ -20,  100}, { -89,  -20}, {  49,  -20},
+	{ -20,  100}, {-100,   20}, { -20,  -60}, {  60,   20},
+	{ -20,  100}, { -96,   45}, { -67,  -45}, {  27,  -45}, {  56,   45},
+	{ -20,  100}, { -89,   60}, { -89,  -20}, { -20,  -60}, {  49,  -20}, {  49,   60},
+	{ -20,  100}, { -82,   70}, { -98,    3}, { -56,  -51}, {  13,  -53}, {  57,   -1}, {  45,   67},
+	{ -20,  100}, { -77,   77}, {-100,   20}, { -77,  -37}, { -20,  -60}, {  37,  -37}, {  60,   20}, {  37,   77}
+};
+
+// first 8 triangular numbers
+static const uint32 inventoryRingOffsets[8] = {0, 1, 3, 6, 10, 15, 21, 28};
+
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
 	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _reaction(NULL), _resource(NULL), _savegame(NULL),
 	_scene(NULL), _screen(NULL), _script(NULL), _special(NULL), _speech(NULL), _sound(NULL), _text(NULL),
@@ -56,7 +72,6 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 
 	// Init data
 	memset(&_gameFlags, 0, sizeof(_gameFlags));
-	memset(&_sinCosTables, 0, sizeof(_sinCosTables));
 	_introPlayed = false;
 	_tickOffset = 0;
 
@@ -146,9 +161,6 @@ Common::Error AsylumEngine::run() {
 	_speech    = new Speech(this);
 	_text      = new Text(this);
 	_video     = new VideoPlayer(this, _mixer);
-
-	// Init tables
-	initSinCosTables(80.0, 40, 40);
 
 	// Create main menu
 	_menu  = new Menu(this);
@@ -504,62 +516,17 @@ void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 	_handler->handleEvent(evt);
 }
 
-
-void AsylumEngine::initSinCosTables(double a2, int32 a3, int32 a4) {
-	uint32 offset = 0;
-	uint32 baseStep = 1;
-
-	do {
-		if (baseStep >= 1) {
-			uint32 baseAngle = 90;
-			int32 step = baseStep;
-
-			int16 *val = &_sinCosTables[2 * offset];
-
-			do {
-				double angle = (double)(baseAngle % 360) * 3.141592653589 * 0.005555555555555556;
-
-				*val       = (int16)(cos(angle) * a2 - (a3 / 2.0));
-				*(val + 1) = (int16)(sin(angle) * a2 + (a4 / 2.0));
-
-				baseAngle += 360 / baseStep;
-				val += 2;
-				--step;
-			} while (step);
-
-			offset += baseStep;
-		}
-
-		++baseStep;
-
-	} while (baseStep <= 8);
-}
-
-int32 AsylumEngine::computeSinCosOffset(int32 val) const {
-	int32 offset = 0;
-	for (int32 i = val; i > 0; --i)
-		offset += i;
-
-	return offset - val;
-}
-
-Common::Point AsylumEngine::getSinCosValues(int32 index1, int32 index2) const {
+Common::Point AsylumEngine::getInventoryRingPoint(uint32 nPoints, uint32 index) const {
 	if (!_scene)
-		error("[AsylumEngine::getSinCosValues] Subsystems not initialized properly!");
+		error("[AsylumEngine::getInventoryRingPoint] Subsystems not initialized properly!");
 
-	Common::Point values;
+	const int16 (*pointPtr)[2];
+	if (_scene->worldstats()->chapter == kChapter11)
+		pointPtr = &inventoryRingPoints[inventoryRingOffsets[7] + index + 3];
+	else
+		pointPtr = &inventoryRingPoints[inventoryRingOffsets[nPoints - 1] + index];
 
-	if (_scene->worldstats()->chapter == kChapter11) {
-		int32 offset = computeSinCosOffset(8) + index2 + 3;
-		values.x = _sinCosTables[2 * offset];
-		values.y = _sinCosTables[2 * offset + 1];
-	} else {
-		int32 offset = computeSinCosOffset(index1) + index2;
-		values.x = _sinCosTables[2 * offset];
-		values.y = _sinCosTables[2 * offset + 1];
-	}
-
-	return values;
+	return Common::Point((*pointPtr)[0], (*pointPtr)[1]);
 }
 
 void AsylumEngine::updateReverseStereo() {
