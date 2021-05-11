@@ -76,6 +76,11 @@ typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
 struct SVertex {
 	float _x, _y, _z;
 	float _nx, _ny, _nz;
+
+	void clear() {
+		_x = _y = _z = 0.0f;
+		_nx = _ny = _nz = 0.0f;
+	}
 };
 
 struct SFace {
@@ -202,7 +207,8 @@ public:
 	static bool isGameArea(Common::Point pos);
 	static bool isInventoryArea(Common::Point pos);
 	static bool isIconArea(Common::Point pos);
-
+	int getRoomObjectIndex(uint16 objectId);
+	
 	// Others
 	void checkSystem();
 	bool dataSave();

@@ -20,6 +20,7 @@
  *
  */
 
+#include "3d.h"
 #include "common/system.h"
 
 #include "trecision/scheduler.h"
@@ -269,7 +270,7 @@ void TrecisionEngine::ProcessTime() {
 			OldLightIcon = _lightIcon;
 		}
 
-		PaintScreen(false);
+		_renderer->paintScreen(false);
 		_textMgr->clearTextStack();
 
 		uint32 paintTime = readTime();
@@ -348,6 +349,18 @@ bool TrecisionEngine::isInventoryArea(Common::Point pos) {
 
 bool TrecisionEngine::isIconArea(Common::Point pos) {
 	return pos.y >= TOP + AREA && pos.y < MAXY && pos.x >= ICONMARGSX && pos.x <= MAXX - ICONMARGDX;
+}
+
+int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
+	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
+		const uint16 curObjId = _room[g_vm->_curRoom]._object[index];
+		if (curObjId == 0)
+			return -1;
+		if (curObjId == objectId)
+			return index;
+	}
+
+	return -1;
 }
 
 } // End of namespace Trecision

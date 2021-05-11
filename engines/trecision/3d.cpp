@@ -21,6 +21,9 @@
  */
 
 #include "trecision/3d.h"
+#include "trecision/anim.h"
+#include "trecision/sound.h"
+#include "trecision/text.h"
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
@@ -129,18 +132,12 @@ Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
 		_shadowIntens[i] = 0;
 
 	for (int i = 0; i < MAXVERTEX; ++i) {
-		_vVertex[i]._x = 0;
-		_vVertex[i]._y = 0;
-		_vVertex[i]._z = 0;
-		_vVertex[i]._angle = 0;
-
-		_shVertex[i]._x = 0;
-		_shVertex[i]._y = 0;
-		_shVertex[i]._z = 0;
-		_shVertex[i]._nx = 0;
-		_shVertex[i]._ny = 0;
-		_shVertex[i]._nz = 0;
+		_vVertex[i].clear();
+		_shVertex[i].clear();
 	}
+
+	DObj.rect = Common::Rect(0, 0, 0, 0);
+	DObj.l = Common::Rect(0, 0, 0, 0);
 }
 
 Renderer3D::~Renderer3D() {
@@ -841,6 +838,198 @@ void Renderer3D::drawCharacter(uint8 flag) {
 	}
 }
 
+void Renderer3D::paintScreen(bool flag) {
+	_vm->_animTypeMgr->next();
+
+	_vm->_actorRect = nullptr;
+	_vm->_dirtyRects.clear();
+	_vm->_flagPaintCharacter = true; // always redraws the character
+
+	int x1 = _vm->_actor->_lim[0];
+	int y1 = _vm->_actor->_lim[2] - TOP;
+	int x2 = _vm->_actor->_lim[1];
+	int y2 = _vm->_actor->_lim[3] - TOP;
+
+	// erase character
+	if (_vm->_flagShowCharacter && x2 > x1 && y2 > y1) { // if a description exists
+		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		DObj.l = Common::Rect(x1, y1, x2, y2);
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
+		_vm->_graphicsMgr->DrawObj(DObj);
+
+		_vm->addDirtyRect(DObj.l);
+		_vm->_actorRect = &_vm->_dirtyRects.back();
+	} else if (_vm->_animMgr->_animRect.left != MAXX) {
+		DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		DObj.l = _vm->_animMgr->_animRect;
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
+		_vm->_graphicsMgr->DrawObj(DObj);
+
+		_vm->addDirtyRect(DObj.l);
+		_vm->_actorRect = &_vm->_dirtyRects.back();
+	}
+
+	// If there's text to remove
+	if (TextStatus & TEXT_DEL) {
+		// remove text
+		DObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
+		DObj.l = _vm->_textMgr->getOldTextRect();
+		DObj.l.translate(0, -TOP);
+		DObj.objIndex = -1;
+		DObj.drawMask = false;
+
+		if (DObj.l.top >= 0 && DObj.l.bottom < AREA) {
+			_vm->_graphicsMgr->DrawObj(DObj);
+		} else {
+			_vm->_graphicsMgr->EraseObj(DObj);
+		}
+		_vm->_textMgr->clearOldText();
+		_vm->addDirtyRect(DObj.l);
+
+		if (!(TextStatus & TEXT_DRAW)) // if there's no new text
+			TextStatus = TEXT_OFF;     // stop updating text
+	}
+
+	// Suppress all the objects you removed
+	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
+		if (i->_remove) {
+			DObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+
+			DObj.l = _vm->_obj[i->_objectId]._rect;
+			DObj.objIndex = -1;
+			DObj.drawMask = false;
+			_vm->_graphicsMgr->DrawObj(DObj);
+			_vm->addDirtyRect(DObj.l);
+		}
+	}
+
+	// Find the position of the character
+	_vm->_pathFind->actorOrder();
+
+	// For every box from the horizon forward...
+	// Copy per level
+	for (int liv = _vm->_pathFind->_numSortPan; liv >= 0; liv--) {
+		uint16 curBox = _vm->_pathFind->_sortPan[liv]._num;
+
+		// draws all objects and animations that intersect the boundaries and refer to the current box
+		paintObjAnm(curBox);
+	}
+
+	if (TextStatus & TEXT_DRAW) {
+		_vm->_textMgr->drawCurString();
+		TextStatus = TEXT_DRAW; // Activate text update
+	}
+
+	_vm->_soundMgr->SoundPasso((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame, _vm->_room[_vm->_curRoom]._sounds);
+
+	if (!flag && !_vm->_flagDialogActive) {
+		_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
+	}
+
+	_vm->_sortTable.clear();
+
+	_vm->_flagPaintCharacter = false;
+	_vm->_flagWaitRegen = false;
+
+	// Handle papaverine delayed action
+	if ((_vm->_curRoom == kRoom4A) && (_vm->_obj[oCHOCOLATES4A]._flag & kObjFlagExtra)) {
+		if (_vm->_animMgr->smkCurFrame(kSmackerBackground) > 480) {
+			_vm->playScript(s4AHELLEN);
+			_vm->_obj[oCHOCOLATES4A]._flag &= ~kObjFlagExtra;
+		}
+	}
+	//
+}
+
+/* -------------------------------------------------
+    Draw all objects and animations that intersect
+         boundaries belonging to curbox
+ --------------------------------------------------*/
+void Renderer3D::paintObjAnm(uint16 curBox) {
+	_vm->_animMgr->refreshAnim(curBox);
+
+	// draws new cards belonging to the current box
+	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
+		if (!i->_remove && _vm->_obj[i->_objectId]._nbox == curBox) {
+			// the bitmap object at the desired level
+			SObject obj = _vm->_obj[i->_objectId];
+			DObj.rect = obj._rect;
+			DObj.rect.translate(0, TOP);
+			DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
+			DObj.objIndex = _vm->getRoomObjectIndex(i->_objectId);
+			DObj.drawMask = obj._mode & OBJMODE_MASK;
+			_vm->_graphicsMgr->DrawObj(DObj);
+			_vm->_dirtyRects.push_back(DObj.rect);
+		}
+	}
+
+	for (DirtyRectsIterator d = _vm->_dirtyRects.begin(); d != _vm->_dirtyRects.end(); ++d) {
+		for (int b = 0; b < MAXOBJINROOM; b++) {
+			const uint16 curObject = _vm->_room[_vm->_curRoom]._object[b];
+			if (!curObject)
+				break;
+
+			SObject obj = _vm->_obj[curObject];
+
+			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) && _vm->isObjectVisible(curObject) && (obj._nbox == curBox)) {
+				Common::Rect r = *d;
+				Common::Rect r2 = obj._rect;
+
+				r2.translate(0, TOP);
+
+				// Include the bottom right of the rect in the intersects() check
+				r2.bottom++;
+				r2.right++;
+
+				if (r.intersects(r2)) {
+					DObj.rect = obj._rect;
+					DObj.rect.translate(0, TOP);
+
+					// Restore the bottom right of the rect
+					r2.bottom--;
+					r2.right--;
+
+					// TODO: Simplify this?
+					const int16 xr1 = (r2.left > r.left) ? 0 : r.left - r2.left;
+					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
+					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
+					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
+					DObj.l = Common::Rect(xr1, yr1, xr2, yr2);
+					DObj.objIndex = b;
+					DObj.drawMask = obj._mode & OBJMODE_MASK;
+
+					_vm->_graphicsMgr->DrawObj(DObj);
+				}
+			}
+		}
+	}
+
+	if (_vm->_actorPos == curBox && _vm->_flagShowCharacter && _vm->_flagCharacterExists) {
+		drawCharacter(CALCPOINTS);
+
+		int x1 = _vm->_actor->_lim[0];
+		int y1 = _vm->_actor->_lim[2];
+		int x2 = _vm->_actor->_lim[1];
+		int y2 = _vm->_actor->_lim[3];
+
+		if (x2 > x1 && y2 > y1) {
+			// enlarge the rectangle of the character
+			Common::Rect l(x1, y1, x2, y2);
+			if (_vm->_actorRect)
+				_vm->_actorRect->extend(l);
+
+			resetZBuffer(x1, y1, x2, y2);
+		}
+
+		drawCharacter(DRAWFACES);
+
+	} else if (_vm->_actorPos == curBox && !_vm->_flagDialogActive) {
+		_vm->_animMgr->refreshSmkAnim(_vm->_animMgr->_playingAnims[kSmackerAction]);
+	}
+}
+
 // Path Finding
 PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 	_lookX = 0.0f;
@@ -853,13 +1042,8 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 
 	_panelNum = 0;
 
-	for (int i = 0; i < MAXPATHNODES; ++i) {
-		_pathNode[i]._x = 0.0f;
-		_pathNode[i]._z = 0.0f;
-		_pathNode[i]._dist = 0.0f;
-		_pathNode[i]._oldPanel = 0;
-		_pathNode[i]._curPanel = 0;
-	}
+	for (int i = 0; i < MAXPATHNODES; ++i)
+		_pathNode[i].clear();
 
 	_curPanel = -1;
 	_oldPanel = -1;
@@ -872,6 +1056,23 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 
 	_curX = 0.0f;
 	_curZ = 0.0f;
+
+	for (int i = 0; i < 3; ++i) {
+		_invP[i][0] = 0.0f;
+		_invP[i][1] = 0.0f;
+		_invP[i][2] = 0.0f;
+	}
+
+	for (int i = 0; i < MAXPANELSINROOM; ++i)
+		_panel[i].clear();
+
+	for (int i = 0; i < 32; ++i) {
+		_sortPan[i]._num = 0;
+		_sortPan[i]._min = 0.0f;
+	}
+
+	for (int i = 0; i < MAXSTEP; ++i)
+		_step[i].clear();
 }
 
 PathFinding3D::~PathFinding3D() {
@@ -1345,7 +1546,7 @@ void PathFinding3D::findShortPath() {
 --------------------------------------------------*/
 float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 	int b = 0;
-	float len = 0.0;
+	float len = 0.0f;
 
 	int curPanel = _pathNode[a]._curPanel;
 	float curX = _pathNode[a]._x;
@@ -1635,7 +1836,7 @@ void PathFinding3D::buildFramelist() {
 	}
 
 	float len = 0.0;
-	float curlen = 0.0;
+	float curLen = 0.0;
 
 	float ox = _pathNode[0]._x;
 	float oz = _pathNode[0]._z;
@@ -1655,77 +1856,77 @@ void PathFinding3D::buildFramelist() {
 	int a = 0;
 	// compute offset
 	SVertex *v = _vm->_actor->_characterArea;
-	float firstframe = _vm->_actor->FRAMECENTER(v);
-	float startpos = 0.0;
+	float firstFrame = _vm->_actor->FRAMECENTER(v);
+	float startPos = 0.0;
 
 	// if he was already walking
-	int CurA, CurF, cfp;
+	int curAction, curFrame, cfp;
 	if (_vm->_actor->_curAction == hWALK) {
 		// compute current frame
 		cfp = _vm->_defActionLen[hSTART] + 1 + _vm->_actor->_curFrame;
 		v += cfp * _vm->_actor->_vertexNum;
 
-		CurA = hWALK;
-		CurF = _vm->_actor->_curFrame;
+		curAction = hWALK;
+		curFrame = _vm->_actor->_curFrame;
 
 		// if it wasn't the last frame, take the next step
 		if (_vm->_actor->_curFrame < _vm->_defActionLen[hWALK] - 1) {
 			cfp++;
-			CurF++;
+			curFrame++;
 			v += _vm->_actor->_vertexNum;
 		}
 	} else if ((_vm->_actor->_curAction >= hSTOP0) && (_vm->_actor->_curAction <= hSTOP9)) {
 		// if he was stopped, starts moving again
 
 		// compute current frame
-		CurA = hWALK;
+		curAction = hWALK;
 		//o		CurF = _vm->_actor->_curAction - hSTOP1;
-		CurF = _vm->_actor->_curAction - hSTOP0;
+		curFrame = _vm->_actor->_curAction - hSTOP0;
 
-		cfp = _vm->_defActionLen[hSTART] + 1 + CurF;
+		cfp = _vm->_defActionLen[hSTART] + 1 + curFrame;
 		v += cfp * _vm->_actor->_vertexNum;
 	} else {
 		// if he was standing, start working or turn
 		oz = 0.0;
 		cfp = 1;
 
-		CurA = hSTART;
-		CurF = 0;
+		curAction = hSTART;
+		curFrame = 0;
 
 		// start from the first frame
 		v += _vm->_actor->_vertexNum;
 	}
-	oz = -_vm->_actor->FRAMECENTER(v) + firstframe;
+	oz = -_vm->_actor->FRAMECENTER(v) + firstFrame;
 
 	// at this point, CurA / _curAction is either hSTART or hWALK
 
 	// until it arrives at the destination
-	while (((curlen = oz + _vm->_actor->FRAMECENTER(v) - firstframe) < len) || (!a)) {
-		_step[a]._pz = oz - firstframe; // where to render
-		_step[a]._dz = curlen;          // where it is
-		_step[a]._curAction = CurA;
-		_step[a]._curFrame = CurF;
+	while (((curLen = oz + _vm->_actor->FRAMECENTER(v) - firstFrame) < len) || (!a)) {
+		_step[a]._pz = oz - firstFrame; // where to render
+		_step[a]._dz = curLen;          // where it is
+		_step[a]._curAction = curAction;
+		_step[a]._curFrame = curFrame;
 
 		a++;
 		v += _vm->_actor->_vertexNum;
 
-		CurF++;
+		curFrame++;
 		cfp++;
 
-		if (CurF >= _vm->_defActionLen[CurA]) {
-			if (CurA == hSTART) {
-				CurA = hWALK;
-				CurF = 0;
+		if (curFrame >= _vm->_defActionLen[curAction]) {
+			if (curAction == hSTART) {
+				curAction = hWALK;
+				curFrame = 0;
 				cfp = _vm->_defActionLen[hSTART] + 1;
 
 				ox = 0.0;
-			} else if (CurA == hWALK) {
-				CurA = hWALK;
-				CurF = 0;
+			} else if (curAction == hWALK) {
+				curAction = hWALK;
+				curFrame = 0;
 				cfp = _vm->_defActionLen[hSTART] + 1;
 
 				// end walk frame
-				ox = _vm->_actor->FRAMECENTER(v) - firstframe;
+				ox = _vm->_actor->FRAMECENTER(v) - firstFrame;
 
 				v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 				ox -= _vm->_actor->FRAMECENTER(v);
@@ -1734,7 +1935,7 @@ void PathFinding3D::buildFramelist() {
 			v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
 			// only if it doesn't end
-			if ((oz + ox + _vm->_actor->FRAMECENTER(v) - firstframe) < len)
+			if ((oz + ox + _vm->_actor->FRAMECENTER(v) - firstFrame) < len)
 				oz += ox;
 			else
 				break;
@@ -1748,35 +1949,35 @@ void PathFinding3D::buildFramelist() {
 
 	// if he was walking
 	if (_step[a - 1]._curAction == hWALK)
-		CurA = _step[a - 1]._curFrame + hSTOP0; // stop previous step.
+		curAction = _step[a - 1]._curFrame + hSTOP0; // stop previous step.
 	else
-		CurA = hSTOP0; // stop step 01
+		curAction = hSTOP0; // stop step 01
 
-	assert(CurA <= hLAST); // _defActionLen below has a size of hLAST + 1
+	assert(curAction <= hLAST); // _defActionLen below has a size of hLAST + 1
 
-	CurF = 0;
+	curFrame = 0;
 
 	int b = 0;
 	cfp = 0;
-	while (b != CurA)
+	while (b != curAction)
 		cfp += _vm->_defActionLen[b++];
 
 	v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
-	for (b = 0; b < _vm->_defActionLen[CurA]; b++) {
-		curlen = oz + _vm->_actor->FRAMECENTER(v) - firstframe;
-		_step[a]._pz = oz - firstframe; // where to render
-		_step[a]._dz = curlen;          // where it is
-		_step[a]._curAction = CurA;
-		_step[a]._curFrame = CurF;
+	for (b = 0; b < _vm->_defActionLen[curAction]; b++) {
+		curLen = oz + _vm->_actor->FRAMECENTER(v) - firstFrame;
+		_step[a]._pz = oz - firstFrame; // where to render
+		_step[a]._dz = curLen;          // where it is
+		_step[a]._curAction = curAction;
+		_step[a]._curFrame = curFrame;
 
 		a++;
-		CurF++;
+		curFrame++;
 		v += _vm->_actor->_vertexNum;
 	}
 
 	// how far is it from the destination?
-	float approx = (len - curlen - EPSILON) / (a - 2);
+	float approx = (len - curLen - EPSILON) / (a - 2);
 	float theta = 0.0;
 	// Adjust all the steps so it arrives exactly where clicked 
 	for (b = 1; b < a; b++) {
@@ -1799,9 +2000,9 @@ void PathFinding3D::buildFramelist() {
 	b = 0;
 
 	len = 0.0;
-	startpos = 0.0;
+	startPos = 0.0;
 	for (a = 0; a < _numPathNodes - 1; a++) {
-		curlen = 0.0;
+		curLen = 0.0;
 		len += _vm->dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z,
 					  _pathNode[a + 1]._x, 0.0, _pathNode[a + 1]._z);
 
@@ -1824,19 +2025,19 @@ void PathFinding3D::buildFramelist() {
 			theta += 360.0;
 
 		while ((b < _lastStep) && (_step[b]._dz <= len)) {
-			curlen = (_step[b]._dz - _step[b]._pz);
+			curLen = (_step[b]._dz - _step[b]._pz);
 
-			_step[b]._px = _pathNode[a]._x + (_step[b]._pz - startpos) * ox;
-			_step[b]._pz = _pathNode[a]._z + (_step[b]._pz - startpos) * oz;
-			_step[b]._dx = curlen * ox;
-			_step[b]._dz = curlen * oz;
+			_step[b]._px = _pathNode[a]._x + (_step[b]._pz - startPos) * ox;
+			_step[b]._pz = _pathNode[a]._z + (_step[b]._pz - startPos) * oz;
+			_step[b]._dx = curLen * ox;
+			_step[b]._dz = curLen * oz;
 			_step[b]._theta = theta;
 
 			_step[b]._curPanel = _pathNode[a]._curPanel;
 
 			b++;
 		}
-		startpos = len;
+		startPos = len;
 	}
 
 	reset(b, _curX, _curZ, theta);
@@ -1845,13 +2046,13 @@ void PathFinding3D::buildFramelist() {
 	_curStep = 0;  // current step
 
 	// starting angle
-	float oldtheta = _vm->_actor->_theta;
+	float oldTheta = _vm->_actor->_theta;
 	// first angle walk
 	theta = _step[0]._theta;
 
 	// if he starts from standstill position
 	if ((_step[0]._curAction == hSTART) && (_step[0]._curFrame == 0) && (_lastStep > 4) && (_step[0]._theta == _step[1]._theta)) {
-		approx = theta - oldtheta;
+		approx = theta - oldTheta;
 
 		if (approx > 180.0)
 			approx = -360.0 + approx;
@@ -1861,16 +2062,16 @@ void PathFinding3D::buildFramelist() {
 		approx /= 3.0;
 
 		for (b = 0; b < 2; b++) {
-			_step[b]._theta = oldtheta + (float)(b + 1) * approx;
+			_step[b]._theta = oldTheta + (float)(b + 1) * approx;
 			_step[b]._theta = (_step[b]._theta > 360.0) ? _step[b]._theta - 360.0 : (_step[b]._theta < 0.0) ? _step[b]._theta + 360.0 : _step[b]._theta;
 
 			theta = _step[b]._theta;
 
-			curlen = sqrt(_step[b]._dx * _step[b]._dx + _step[b]._dz * _step[b]._dz);
+			curLen = sqrt(_step[b]._dx * _step[b]._dx + _step[b]._dz * _step[b]._dz);
 
 			theta = ((270.0 - theta) * PI) / 180.0;
-			ox = cos(theta) * curlen;
-			oz = sin(theta) * curlen;
+			ox = cos(theta) * curLen;
+			oz = sin(theta) * curLen;
 
 			cx = _step[b]._px + _step[b]._dx;
 			float cz = _step[b]._pz + _step[b]._dz;
@@ -1884,13 +2085,13 @@ void PathFinding3D::buildFramelist() {
 	}
 
 	// makes the curve
-	oldtheta = _step[2]._theta;
+	oldTheta = _step[2]._theta;
 	for (b = 3; b <= _lastStep; b++) {
 		theta = _step[b]._theta;
 
 		// if it made a curve
-		if (oldtheta != theta) {
-			approx = theta - oldtheta;
+		if (oldTheta != theta) {
+			approx = theta - oldTheta;
 
 			if (approx > 180.0)
 				approx = -360.0 + approx;
@@ -1903,14 +2104,14 @@ void PathFinding3D::buildFramelist() {
 			_step[b - 1]._theta += approx;
 			_step[b - 1]._theta = (_step[b - 1]._theta > 360.0) ? _step[b - 1]._theta - 360.0 : (_step[b - 1]._theta < 0.0) ? _step[b - 1]._theta + 360.0 : _step[b - 1]._theta;
 
-			oldtheta = _step[b - 1]._theta;
-			startpos = oldtheta;
+			oldTheta = _step[b - 1]._theta;
+			startPos = oldTheta;
 
-			curlen = sqrt(_step[b - 1]._dx * _step[b - 1]._dx + _step[b - 1]._dz * _step[b - 1]._dz);
+			curLen = sqrt(_step[b - 1]._dx * _step[b - 1]._dx + _step[b - 1]._dz * _step[b - 1]._dz);
 
-			oldtheta = ((270.0 - oldtheta) * PI) / 180.0;
-			ox = cos(oldtheta) * curlen;
-			oz = sin(oldtheta) * curlen;
+			oldTheta = ((270.0 - oldTheta) * PI) / 180.0;
+			ox = cos(oldTheta) * curLen;
+			oz = sin(oldTheta) * curLen;
 
 			cx = _step[b - 1]._px + _step[b - 1]._dx;
 			float cz = _step[b - 1]._pz + _step[b - 1]._dz;
@@ -1925,14 +2126,14 @@ void PathFinding3D::buildFramelist() {
 			_step[b]._theta -= approx;
 			_step[b]._theta = (_step[b]._theta > 360.0) ? _step[b]._theta - 360.0 : (_step[b]._theta < 0.0) ? _step[b]._theta + 360.0 : _step[b]._theta;
 
-			oldtheta = theta;
+			oldTheta = theta;
 			theta = _step[b]._theta;
 
-			curlen = sqrt(_step[b]._dx * _step[b]._dx + _step[b]._dz * _step[b]._dz);
+			curLen = sqrt(_step[b]._dx * _step[b]._dx + _step[b]._dz * _step[b]._dz);
 
 			theta = ((270.0 - theta) * PI) / 180.0;
-			ox = cos(theta) * curlen;
-			oz = sin(theta) * curlen;
+			ox = cos(theta) * curLen;
+			oz = sin(theta) * curLen;
 
 			cx = _step[b]._px + _step[b]._dx;
 			cz = _step[b]._pz + _step[b]._dz;
@@ -1944,7 +2145,7 @@ void PathFinding3D::buildFramelist() {
 			_step[b]._dz = cz - _step[b]._pz;
 
 		} else
-			oldtheta = theta;
+			oldTheta = theta;
 	}
 
 	lookAt(_lookX, _lookZ);

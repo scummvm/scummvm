@@ -23,21 +23,14 @@
 #ifndef TRECISION_PROTO_H
 #define TRECISION_PROTO_H
 
-#include "common/scummsys.h"
-
 namespace Common {
 class SeekableReadStream;
 }
 
 namespace Trecision {
 
-struct SDObj;
-struct STexture;
-
-
-void PaintScreen(bool flag);
-void PaintObjAnm(uint16 CurBox);
 void ProcessTheMessage();
 
-#endif
 } // End of namespace Trecision
+
+#endif

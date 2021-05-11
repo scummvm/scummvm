@@ -30,6 +30,11 @@ namespace Trecision {
 struct SVVertex {
 	int32 _x, _y, _z;
 	int32 _angle;
+
+	void clear() {
+		_x = _y = _z = 0;
+		_angle = 0;
+	}
 };
 
 struct SSortPan {
@@ -42,6 +47,13 @@ struct SPathNode {
 	float _dist;
 	int16 _oldPanel;
 	int16 _curPanel;
+
+	void clear() {
+		_x = _z = 0.0f;
+		_dist = 0.0f;
+		_oldPanel = 0;
+		_curPanel = 0;
+	}
 };
 
 struct SPan {
@@ -53,6 +65,15 @@ struct SPan {
 	char _near2;
 	char _col1;
 	char _col2;
+
+	void clear() {
+		_x1 = _z1 = 0.0f;
+		_x2 = _z2 = 0.0f;
+		_h = 0.0f;
+		_flags = 0;
+		_near1 = _near2 = 0;
+		_col1 = _col2 = 0;
+	}
 };
 
 struct SStep {
@@ -62,6 +83,15 @@ struct SStep {
 	int _curAction;
 	int _curFrame;
 	int16 _curPanel;
+
+	void clear() {
+		_px = _pz = 0.0f;
+		_dx = _dz = 0.0f;
+		_theta = 0.0f;
+		_curAction = 0;
+		_curFrame = 0;
+		_curPanel = 0;
+	}
 };
 
 class Renderer3D {
@@ -100,12 +130,15 @@ private:
 	uint16 _lTextY[480];
 	uint16 _rTextY[480];
 
+	SDObj DObj;
+
 	void setZBufferRegion(int16 sx, int16 sy, int16 dx);
 	int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3);
 	void textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2, int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3, STexture *t);
 	void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2);
 	void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 cv, int32 zv);
 	void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2);
+	void paintObjAnm(uint16 curBox);
 
 public:
 	Renderer3D(TrecisionEngine *vm);
@@ -115,6 +148,8 @@ public:
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 	void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawCharacter(uint8 flag);
+	void paintScreen(bool flag);
+
 }; // end of class
 
 class PathFinding3D {
