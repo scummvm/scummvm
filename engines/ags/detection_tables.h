@@ -1776,6 +1776,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("justignorethem", "justignorethem.exe", "182e930ace9d62a22d09779cac72e597", 94918926), // Steam
 	GAME_ENTRY("justignorethem", "justignorethem.exe", "7a3096ac0237cb6aa8e1718e28caf039", 98544330),
 	GAME_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159, AGSSPRITEFONT_CLIFFTOP), // Steam
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245, AGSSPRITEFONT_CLIFFTOP), // GOG 1.04
+	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658), // Steam
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	GAME_ENTRY("lamplightcity", "lamplight city.ags", "70a52d0ba7e5975df40aef460142f770", 979393622), // Linux, GOG
@@ -2483,9 +2486,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("justanotherpointnclickadventure", "Advent.exe", "6a98b4cc2f5a55421248be53f15a6a99", 9582620),
 	GAME_ENTRY("kanjigakusei", "KanjiGakusei.exe", "c1bce0ccfa858f0f5d2fe19997d89b05", 17604764),
 	GAME_ENTRY("kartquest", "Kart.exe", "465f972675db2da6040518221af5b0ba", 77317312),
-	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159, AGSSPRITEFONT_CLIFFTOP), // Steam
-	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245, AGSSPRITEFONT_CLIFFTOP), // GOG 1.04
-	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("keptoshi", "Keptosh.exe", "95b7dd55f6e15c8a2118856ed9fe8ff9", 2904848),
 	GAME_ENTRY("keys", "Keys.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 85582285),
 	GAME_ENTRY("killereye", "killereye.exe", "0710e2ec71042617f565c01824f0cf3c", 1009042),
