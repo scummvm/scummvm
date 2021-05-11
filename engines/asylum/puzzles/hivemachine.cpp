@@ -59,105 +59,6 @@ PuzzleHiveMachine::PuzzleHiveMachine(AsylumEngine *engine) : Puzzle(engine) {
 	_soundingNote = kMusicalNoteNone;
 	_notesNumber = 0;
 	_ok = false;
-
-	_polygons[0].points.push_back(Common::Point(306, 108));
-	_polygons[0].points.push_back(Common::Point(334, 111));
-	_polygons[0].points.push_back(Common::Point(340, 112));
-	_polygons[0].points.push_back(Common::Point(346, 120));
-	_polygons[0].points.push_back(Common::Point(352, 127));
-	_polygons[0].points.push_back(Common::Point(371, 142));
-	_polygons[0].points.push_back(Common::Point(363, 160));
-	_polygons[0].points.push_back(Common::Point(363, 172));
-	_polygons[0].points.push_back(Common::Point(362, 182));
-	_polygons[0].points.push_back(Common::Point(363, 190));
-	_polygons[0].points.push_back(Common::Point(348, 202));
-	_polygons[0].points.push_back(Common::Point(318, 210));
-	_polygons[0].points.push_back(Common::Point(292, 194));
-	_polygons[0].points.push_back(Common::Point(278, 193));
-	_polygons[0].points.push_back(Common::Point(268, 180));
-	_polygons[0].points.push_back(Common::Point(270, 162));
-	_polygons[0].points.push_back(Common::Point(266, 152));
-	_polygons[0].points.push_back(Common::Point(273, 137));
-	_polygons[0].points.push_back(Common::Point(283, 120));
-
-	_polygons[1].points.push_back(Common::Point(436, 171));
-	_polygons[1].points.push_back(Common::Point(464, 181));
-	_polygons[1].points.push_back(Common::Point(482, 201));
-	_polygons[1].points.push_back(Common::Point(472, 228));
-	_polygons[1].points.push_back(Common::Point(473, 245));
-	_polygons[1].points.push_back(Common::Point(460, 262));
-	_polygons[1].points.push_back(Common::Point(452, 262));
-	_polygons[1].points.push_back(Common::Point(416, 244));
-	_polygons[1].points.push_back(Common::Point(403, 231));
-	_polygons[1].points.push_back(Common::Point(378, 220));
-	_polygons[1].points.push_back(Common::Point(379, 215));
-	_polygons[1].points.push_back(Common::Point(387, 201));
-	_polygons[1].points.push_back(Common::Point(405, 177));
-
-	_polygons[2].points.push_back(Common::Point(357, 249));
-	_polygons[2].points.push_back(Common::Point(368, 252));
-	_polygons[2].points.push_back(Common::Point(407, 277));
-	_polygons[2].points.push_back(Common::Point(415, 283));
-	_polygons[2].points.push_back(Common::Point(422, 294));
-	_polygons[2].points.push_back(Common::Point(413, 314));
-	_polygons[2].points.push_back(Common::Point(413, 324));
-	_polygons[2].points.push_back(Common::Point(406, 337));
-	_polygons[2].points.push_back(Common::Point(386, 343));
-	_polygons[2].points.push_back(Common::Point(368, 350));
-	_polygons[2].points.push_back(Common::Point(354, 347));
-	_polygons[2].points.push_back(Common::Point(335, 347));
-	_polygons[2].points.push_back(Common::Point(325, 339));
-	_polygons[2].points.push_back(Common::Point(320, 319));
-	_polygons[2].points.push_back(Common::Point(325, 308));
-	_polygons[2].points.push_back(Common::Point(324, 292));
-	_polygons[2].points.push_back(Common::Point(329, 286));
-	_polygons[2].points.push_back(Common::Point(341, 272));
-	_polygons[2].points.push_back(Common::Point(347, 253));
-
-	_polygons[3].points.push_back(Common::Point(247, 249));
-	_polygons[3].points.push_back(Common::Point(260, 263));
-	_polygons[3].points.push_back(Common::Point(279, 279));
-	_polygons[3].points.push_back(Common::Point(298, 290));
-	_polygons[3].points.push_back(Common::Point(299, 308));
-	_polygons[3].points.push_back(Common::Point(303, 322));
-	_polygons[3].points.push_back(Common::Point(294, 337));
-	_polygons[3].points.push_back(Common::Point(286, 342));
-	_polygons[3].points.push_back(Common::Point(241, 342));
-	_polygons[3].points.push_back(Common::Point(232, 338));
-	_polygons[3].points.push_back(Common::Point(219, 315));
-	_polygons[3].points.push_back(Common::Point(224, 284));
-	_polygons[3].points.push_back(Common::Point(224, 267));
-
-	_polygons[4].points.push_back(Common::Point(222, 156));
-	_polygons[4].points.push_back(Common::Point(231, 164));
-	_polygons[4].points.push_back(Common::Point(237, 174));
-	_polygons[4].points.push_back(Common::Point(246, 184));
-	_polygons[4].points.push_back(Common::Point(258, 187));
-	_polygons[4].points.push_back(Common::Point(266, 183));
-	_polygons[4].points.push_back(Common::Point(275, 195));
-	_polygons[4].points.push_back(Common::Point(261, 198));
-	_polygons[4].points.push_back(Common::Point(253, 205));
-	_polygons[4].points.push_back(Common::Point(247, 215));
-	_polygons[4].points.push_back(Common::Point(243, 232));
-	_polygons[4].points.push_back(Common::Point(246, 247));
-	_polygons[4].points.push_back(Common::Point(226, 261));
-	_polygons[4].points.push_back(Common::Point(202, 247));
-	_polygons[4].points.push_back(Common::Point(186, 236));
-	_polygons[4].points.push_back(Common::Point(184, 227));
-	_polygons[4].points.push_back(Common::Point(175, 217));
-	_polygons[4].points.push_back(Common::Point(170, 210));
-	_polygons[4].points.push_back(Common::Point(171, 196));
-	_polygons[4].points.push_back(Common::Point(175, 186));
-	_polygons[4].points.push_back(Common::Point(177, 180));
-	_polygons[4].points.push_back(Common::Point(183, 172));
-	_polygons[4].points.push_back(Common::Point(201, 158));
-	_polygons[4].points.push_back(Common::Point(207, 158));
-
-	_polygons[0].boundingRect = Common::Rect(264, 106, 370, 211);
-	_polygons[1].boundingRect = Common::Rect(376, 171, 483, 264);
-	_polygons[2].boundingRect = Common::Rect(317, 247, 424, 352);
-	_polygons[3].boundingRect = Common::Rect(217, 247, 305, 345);
-	_polygons[4].boundingRect = Common::Rect(168, 154, 278, 264);
 }
 
 PuzzleHiveMachine::~PuzzleHiveMachine() {
@@ -235,9 +136,21 @@ void PuzzleHiveMachine::updateCursor() {
 }
 
 int32 PuzzleHiveMachine::findRect() {
-	for (uint32 i = 0; i < 5; ++i)
-		if (_polygons[i].contains(getCursor()->position()))
-			return i;
+	Common::Point mouse = getCursor()->position();
+	GraphicResource resource(_vm);
+
+	for (uint32 i = 0; i < 5; ++i) {
+		resource.load(getWorld()->graphicResourceIds[i + 13]);
+		GraphicFrame *frame = resource.getFrame(0);
+		Common::Point point(mouse.x - keyPoints[i].x, mouse.y - keyPoints[i].y);
+
+		if (frame->getRect().contains(point)) {
+			point.x -= frame->x;
+			point.y -= frame->y;
+			if (frame->surface.getPixel(point.x, point.y))
+				return i;
+		}
+	}
 
 	return -1;
 }
