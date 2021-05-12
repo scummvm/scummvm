@@ -35,10 +35,10 @@
 
 namespace Graphics {
 
-static const int kBModShift = 0;//img->format.bShift;
-static const int kGModShift = 8;//img->format.gShift;
-static const int kRModShift = 16;//img->format.rShift;
-static const int kAModShift = 24;//img->format.aShift;
+static const int kBModShift = 8;//img->format.bShift;
+static const int kGModShift = 16;//img->format.gShift;
+static const int kRModShift = 24;//img->format.rShift;
+static const int kAModShift = 0;//img->format.aShift;
 
 #ifdef SCUMM_LITTLE_ENDIAN
 static const int kAIndex = 0;
