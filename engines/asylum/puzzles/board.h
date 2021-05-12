@@ -72,7 +72,7 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	// Helpers
 	//////////////////////////////////////////////////////////////////////////
-	bool updateScreen();
+	void updateScreen();
 	int32 findRect();
 	bool stopSound();
 	void checkSlots();
@@ -84,7 +84,7 @@ private:
 	// Event Handling
 	//////////////////////////////////////////////////////////////////////////
 	bool init(const AsylumEvent &evt);
-	bool activate(const AsylumEvent &evt) { return updateScreen(); }
+	bool activate(const AsylumEvent &evt) { return updateScreen(), true; }
 	bool update(const AsylumEvent &evt);
 	virtual bool mouseRightDown(const AsylumEvent &evt);
 
