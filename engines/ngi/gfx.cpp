@@ -778,7 +778,7 @@ void Bitmap::putDib(int x, int y, const Palette &palette, byte alpha) {
 	if (y1 < 0)
 		y1 = 0;
 
-	int alphac = TS_ARGB(0xff, alpha, 0xff, 0xff);
+	int alphac = TS_ARGB(alpha, 0xff, 0xff, 0xff);
 
 	_surface->blit(g_nmi->_backgroundSurface, x1, y1, _flipping, &sub, alphac);
 	g_nmi->_system->copyRectToScreen(g_nmi->_backgroundSurface.getBasePtr(x1, y1), g_nmi->_backgroundSurface.pitch, x1, y1, sub.width(), sub.height());
