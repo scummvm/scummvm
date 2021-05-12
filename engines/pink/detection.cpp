@@ -39,12 +39,13 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
-static const DebugChannelOption debugFlagList[] = {
+static const DebugChannelDef debugFlagList[] = {
 	{Pink::kPinkDebugGeneral, "general", "General issues"},
 	{Pink::kPinkDebugLoadingResources, "loading_resources", "Loading resources data"},
 	{Pink::kPinkDebugLoadingObjects, "loading_objects", "Serializing objects from Orb"},
 	{Pink::kPinkDebugScripts, "scripts", "Sequences"},
-	{Pink::kPinkDebugActions, "actions", "Actions"}
+	{Pink::kPinkDebugActions, "actions", "Actions"},
+	DEBUG_CHANNEL_DELIMITER
 };
 
 
@@ -68,11 +69,8 @@ public:
 		return "Pink Panther (C) Wanderlust Interactive";
 	}
 
-	const DebugChannelOptions getDebugChannelOptions() const override {
-		DebugChannelOptions options;
-		for (int i = 0; i < 5; i++)
-			options.push_back(debugFlagList[i]);
-		return options;
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
