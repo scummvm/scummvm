@@ -634,6 +634,7 @@ protected:
 public:
 	/** The name of the (macintosh/rescumm style) container file, if any. */
 	Common::String _containerFile;
+	Common::String _macCursorFile;
 
 	bool openFile(BaseScummFile &file, const Common::String &filename, bool resourceFile = false);
 

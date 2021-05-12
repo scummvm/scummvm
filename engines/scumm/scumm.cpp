@@ -1341,7 +1341,7 @@ Common::Error ScummEngine::init() {
 			if (macResourceFile.empty()) {
 				GUI::MessageDialog dialog(_(
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
-"font will be disabled."), _("OK"));
+"versions of font and cursor will be disabled."), _("OK"));
 				dialog.runModal();
 			}
 		} else if (_game.id == GID_MONKEY) {
@@ -1465,6 +1465,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		if (_game.id == GID_LOOM) {
 			macInstrumentFile = macResourceFile;
 			macFontFile = macResourceFile;
+			_macCursorFile = macResourceFile;
 		} else if (_game.id == GID_MONKEY) {
 			macInstrumentFile = macResourceFile;
 		}
