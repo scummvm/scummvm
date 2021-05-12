@@ -194,7 +194,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// clear the flag and add the global ones
 	DebugMan.debugFlagsClear();
 	// before we instantiate the engine, we register debug channels for it
-	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannelOptions());
+	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannels());
 
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
