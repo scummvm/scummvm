@@ -610,7 +610,9 @@ void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, 
 }
 
 void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum, bool scale) {
-	setGfx(new Graphics::ManagedSurface(gfx), statenum, scale);
+	const Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface(gfx);
+	setGfx(tmpGfx, statenum, scale);
+	delete tmpGfx;
 }
 
 void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale) {
@@ -898,7 +900,9 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 }
 
 void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
-	setGfx(new Graphics::ManagedSurface(gfx), scale);
+	const Graphics::ManagedSurface *tmpGfx = new Graphics::ManagedSurface(gfx);
+	setGfx(tmpGfx, scale);
+	delete tmpGfx;
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
