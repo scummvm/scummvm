@@ -24,6 +24,7 @@
 
 #include "common/func.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/config-manager.h"
 
 #ifdef DYNAMIC_MODULES
@@ -732,6 +733,9 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 	// the game in the presented directory.
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+		// set the debug flags
+		DebugMan.debugFlagsClear();
+		DebugMan.debugFlagsRegister(metaEngine.getDebugChannelOptions());
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
@@ -927,6 +931,9 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 
 		// Take the first detection entry
 		const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+		// set debug flags before call detectGames
+		DebugMan.debugFlagsClear();
+		DebugMan.debugFlagsRegister(metaEngine.getDebugChannelOptions());
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
