@@ -408,6 +408,15 @@ bool NuvieEngine::playIntro() {
 		// Loading a savegame from the launcher, so skip intro
 		return true;
 
+	bool skip_intro;
+	string key = config_get_game_key(_config);
+	key.append("/skip_intro");
+	_config->value(key, skip_intro, false);
+
+	if (skip_intro)
+		return true;
+
+
 	if (_script->play_cutscene("/intro.lua")) {
 		bool should_quit = false;
 		_config->value("config/quit", should_quit, false);
