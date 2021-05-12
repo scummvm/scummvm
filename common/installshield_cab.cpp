@@ -123,6 +123,9 @@ bool InstallShieldCabinet::open(const String &baseName) {
 	case 0x0100600c:
 		_version = 6;
 		break;
+	case 0x020004B0: // Found in some Russian variants of Nancy Drew games. Possibly a malformed header
+		_version = 6;
+		break;
 	default:
 		warning("Unsupported CAB version %08x", version);
 		close();
