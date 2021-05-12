@@ -1569,9 +1569,37 @@ int CharsetRendererMac::getCharWidth(uint16 chr) {
 	return _macFont.getCharWidth(chr);
 }
 
+int CharsetRendererMac::evenDown(int x) {
+	if (x & 1)
+		x--;
+	return x;
+}
+
+int CharsetRendererMac::evenUp(int x) {
+	if (x & 1)
+		x++;
+	return x;
+}
+
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	_macFont.drawChar(&_vm->_textSurface, chr, _left, _top, _color);
-	_left += getCharWidth(chr);
+	int width = _macFont.getCharWidth(chr);	
+
+	// Mark the virtual screen as dirty, using downscaled coordinates.
+
+	VirtScreen *vs;
+
+	if ((vs = _vm->findVirtScreen(_top / 2)) != NULL) {
+		int vsLeft = evenDown(_left) / 2;
+		int vsRight = evenUp(_left + width) / 2;
+		int vsTop = evenDown(_top) / 2;
+		int vsBottom = evenUp(_top + _macFont.getFontHeight()) / 2;
+
+		_vm->markRectAsDirty(vs->number, vsLeft, vsRight, vsTop - vs->topline, vsBottom - vs->topline);
+	}
+
+	// Adjust the position, using real screen coordinates
+	_left += width;
 }
 
 #ifdef ENABLE_SCUMM_7_8
