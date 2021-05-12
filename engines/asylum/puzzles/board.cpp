@@ -80,7 +80,7 @@ bool PuzzleBoard::init(const AsylumEvent &)  {
 	return true;
 }
 
-bool PuzzleBoard::updateScreen()  {
+void PuzzleBoard::updateScreen()  {
 	getScreen()->clearGraphicsInQueue();
 
 	getScreen()->draw(getWorld()->graphicResourceIds[_data.backgroundIndex]);
@@ -88,8 +88,6 @@ bool PuzzleBoard::updateScreen()  {
 
 	getScreen()->drawGraphicsInQueue();
 	getScreen()->copyBackBufferToScreen();
-
-	return true;
 }
 
 bool PuzzleBoard::update(const AsylumEvent &) {
