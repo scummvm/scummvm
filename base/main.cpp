@@ -191,6 +191,11 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		metaEngineDetection.registerDefaultSettings(target);
 	}
 
+	// before we instantiate the engine, we register debug channels for it
+	DebugChannelOptions debugChannelOptions = metaEngineDetection.getDebugChannelOptions();
+	for (uint i = 0; i < debugChannelOptions.size(); i++)
+		DebugMan.addDebugChannel(debugChannelOptions[i].channel, debugChannelOptions[i].name, debugChannelOptions[i].description);
+
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 	err = metaEngine.createInstance(&system, &engine);
