@@ -140,7 +140,7 @@ public:
 	void burnSpriteToBackDrop(int x1, int y1, Sprite &single, const SpritePalette &fontPal);
 
 	void resetSpriteLayers(ZBufferData *ptrZBuffer, int x, int y, bool upsidedown);
-	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, bool disposeAfterUse = false);
+	void addSpriteDepth(Graphics::Surface *ptr, int depth, int x, int y, Graphics::FLIP_FLAGS flip, int width = -1, int height = -1, bool disposeAfterUse = false, byte trans = 255);
 	void displaySpriteLayers();
 	void killSpriteLayers();
 

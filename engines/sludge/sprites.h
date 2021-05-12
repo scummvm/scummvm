@@ -92,9 +92,10 @@ struct SpriteDisplay {
 	bool freeAfterUse;
 	Graphics::FLIP_FLAGS flip;
 	Graphics::Surface *surface;
+	byte transparency;
 
-	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false) :
-			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free) {
+	SpriteDisplay(int xpos, int ypos, Graphics::FLIP_FLAGS f, Graphics::Surface *ptr, int w = -1, int h = 1, bool free = false, byte trans = 255) :
+			x(xpos), y(ypos), flip(f), surface(ptr), width(w), height(h), freeAfterUse(free), transparency(trans) {
 	}
 };
 

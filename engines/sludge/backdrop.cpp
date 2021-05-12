@@ -344,7 +344,7 @@ void GraphicsManager::drawHorizontalLine(uint x1, uint y, uint x2) {
 
 void GraphicsManager::darkScreen() {
 	Graphics::TransparentSurface tmp(_backdropSurface, false);
-	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(0, 255 >> 1, 0, 0));
+	tmp.blit(_backdropSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 >> 1, 0, 0, 0));
 
 	// reset zBuffer
 	if (_zBuffer->originalNum >= 0) {
@@ -479,7 +479,7 @@ bool GraphicsManager::mixHSI(int num, Common::SeekableReadStream *stream, int x,
 		return false;
 
 	Graphics::TransparentSurface tmp(mixSurface, false);
-	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255, 255 >> 1, 255, 255));
+	tmp.blit(_backdropSurface, x, y, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 >> 1, 255, 255, 255));
 	mixSurface.free();
 
 	return true;
