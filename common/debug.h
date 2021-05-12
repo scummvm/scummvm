@@ -25,6 +25,8 @@
 
 #include "common/scummsys.h"
 
+#include "metaengine.h"
+
 #ifdef DISABLE_TEXT_CONSOLE
 
 inline void debug(const char *s, ...) {}
@@ -160,11 +162,13 @@ extern bool gDebugChannelsOnly;
 
 /** Global constant for EventRecorder debug channel. */
 enum GlobalDebugLevels {
-	kDebugLevelEventRec = 1 << 30
+	kDebugLevelEventRec = 1 << 30,
+	kDebugGlobalTest = 1 << 29
 };
 
-enum GlobalDebugFlags {
-	kDebugGlobalTest = 1 << 31
+static const DebugChannelDef globalDebugChannels[] = {
+	{kDebugGlobalTest, "test", "test global debug flag"},
+	{0, "delimiter", "delimiter"}
 };
 
 /** @} */

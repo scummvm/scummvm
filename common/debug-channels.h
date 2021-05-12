@@ -155,7 +155,7 @@ public:
 	/**
 	 * register engine specified flags
 	 */
-	void debugFlagsRegister(const DebugChannelOptions &options);
+	void debugFlagsRegister(const DebugChannelDef *channels);
 
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
