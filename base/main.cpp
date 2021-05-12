@@ -151,18 +151,6 @@ void saveLastLaunchedTarget(const Common::String &target) {
 	}
 }
 
-void debugFlagsRegister(const DebugChannelOptions &options) {
-	for (uint i = 0; i < options.size(); i++)
-		DebugMan.addDebugChannel(options[i].channel, options[i].name, options[i].description);
-}
-
-void debugFlagClear() {
-	// first we clear all the debug channels
-	// then we add the global debug flags
-	DebugMan.clearAllDebugChannels();
-	DebugMan.addDebugChannel(kDebugGlobalTest, "test", "test global debug flag");
-}
-
 // TODO: specify the possible return values here
 static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, OSystem &system, const Common::String &edebuglevels) {
 	assert(plugin);
@@ -204,9 +192,9 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	}
 
 	// clear the flag and add the global ones
-	debugFlagClear();
+	DebugMan.debugFlagsClear();
 	// before we instantiate the engine, we register debug channels for it
-	debugFlagsRegister(metaEngineDetection.getDebugChannelOptions());
+	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannelOptions());
 
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
@@ -527,7 +515,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	MusicManager::instance();
 	Common::DebugManager::instance();
 	// set the global debug flags as soon as we instantiate the debug mannager
-	debugFlagClear();
+	DebugMan.debugFlagsClear();
 
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
