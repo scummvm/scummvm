@@ -23,8 +23,6 @@
 #include "common/config-manager.h"
 #include "common/str.h"
 
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
 #include "trecision/sound.h"

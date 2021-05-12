@@ -40,8 +40,6 @@ namespace Trecision {
 
 // GAME POINTER
 uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
-// DATA POINTER
-char *TextArea;
 // DTEXT
 char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE

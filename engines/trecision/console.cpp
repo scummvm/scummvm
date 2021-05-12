@@ -24,12 +24,9 @@
 #include "gui/debugger.h"
 
 #include "trecision/console.h"
-
 #include "trecision/scheduler.h"
 #include "trecision/dialog.h"
 #include "trecision/trecision.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 
 namespace Trecision {
 

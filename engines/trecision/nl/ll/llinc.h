@@ -35,10 +35,6 @@ class SeekableReadStream;
 
 namespace Trecision {
 
-// GAME POINTER
-extern uint16 _actionPosition[];
-// DATA POINTER
-extern char *TextArea;
 // DTEXT
 extern char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE

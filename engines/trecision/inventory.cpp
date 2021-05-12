@@ -29,8 +29,6 @@
 #include "trecision/text.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 
 namespace Trecision {
 
