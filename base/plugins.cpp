@@ -735,7 +735,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) const 
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.debugFlagsClear();
-		DebugMan.debugFlagsRegister(metaEngine.getDebugChannelOptions());
+		DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
 		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
@@ -933,7 +933,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set debug flags before call detectGames
 		DebugMan.debugFlagsClear();
-		DebugMan.debugFlagsRegister(metaEngine.getDebugChannelOptions());
+		DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
