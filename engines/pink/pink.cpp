@@ -45,12 +45,6 @@ PinkEngine::PinkEngine(OSystem *system, const ADGameDescription *desc)
 	_desc(desc), _bro(nullptr), _menu(nullptr), _actor(nullptr),
 	_module(nullptr), _director(nullptr), _pdaMgr(this) {
 
-	DebugMan.addDebugChannel(kPinkDebugGeneral, "general", "General issues");
-	DebugMan.addDebugChannel(kPinkDebugLoadingResources, "loading_resources", "Loading resources data");
-	DebugMan.addDebugChannel(kPinkDebugLoadingObjects, "loading_objects", "Serializing objects from Orb");
-	DebugMan.addDebugChannel(kPinkDebugScripts, "scripts", "Sequences");
-	DebugMan.addDebugChannel(kPinkDebugActions, "actions", "Actions");
-
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "install");
 }
