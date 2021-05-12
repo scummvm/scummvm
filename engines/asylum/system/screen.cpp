@@ -712,6 +712,9 @@ void Screen::clearGraphicsInQueue() {
 void Screen::graphicsSelectionSort() {
 	uint32 maxIdx;
 
+	if (!_queueItems.size())
+		return;
+
 	for (uint32 i = 0; i < _queueItems.size() - 1; i++) {
 		maxIdx = i;
 
