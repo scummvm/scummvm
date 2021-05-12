@@ -23,8 +23,6 @@
 #include "trecision/trecision.h"
 #include "trecision/scheduler.h"
 
-#include "trecision/nl/message.h"
-
 namespace Trecision {
 
 Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {

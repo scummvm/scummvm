@@ -124,6 +124,7 @@ class TrecisionEngine : public Engine {
 	STexture FTexture[MAXMAT];
 	SLight VLight[MAXLIGHT];
 	SCamera FCamera;
+	char *TextArea;
 
 public:
 	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);

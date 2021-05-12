@@ -27,8 +27,6 @@
 #include "trecision/text.h"
 #include "trecision/trecision.h"
 
-#include "trecision/nl/message.h"
-
 namespace Trecision {
 
 #define ATF_WAITTEXT 1

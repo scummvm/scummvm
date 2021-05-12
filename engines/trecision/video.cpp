@@ -33,11 +33,8 @@
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-
 #include "trecision/anim.h"
 #include "trecision/scheduler.h"
-
-#include "trecision/nl/message.h"
 
 namespace Trecision {
 

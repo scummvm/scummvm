@@ -31,7 +31,6 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/translation.h"
-#include "engines/util.h"
 #include "gui/saveload.h"
 
 #include "trecision/trecision.h"
@@ -40,7 +39,6 @@
 #include "trecision/actor.h"
 #include "trecision/3d.h"
 #include "trecision/defines.h"
-#include "trecision/nl/message.h"
 #include "trecision/nl/proto.h"
 #include "trecision/console.h"
 #include "trecision/dialog.h"

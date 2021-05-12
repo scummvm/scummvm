@@ -72,6 +72,7 @@ public:
 
 	void NlDissolve(uint8 val);
 	void DrawObj(SDObj d);
+
 	void EraseObj(SDObj d);
 
 	void initCursor();

@@ -35,8 +35,6 @@
 #include "trecision/sound.h"
 #include "trecision/text.h"
 
-#include "trecision/nl/message.h"
-
 namespace Trecision {
 
 void SScriptFrame::sendFrame() {

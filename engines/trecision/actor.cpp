@@ -27,8 +27,6 @@
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 
 namespace Trecision {
 

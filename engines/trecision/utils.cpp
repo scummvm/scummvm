@@ -30,8 +30,6 @@
 #include "trecision/graphics.h"
 #include "trecision/logic.h"
 #include "trecision/trecision.h"
-#include "trecision/nl/message.h"
-#include "trecision/nl/proto.h"
 #include "trecision/nl/struct.h"
 
 namespace Trecision {
