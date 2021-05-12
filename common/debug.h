@@ -163,6 +163,10 @@ enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
 };
 
+enum GlobalDebugFlags {
+	kDebugGlobalTest = 1 << 31
+};
+
 /** @} */
 
 #endif
