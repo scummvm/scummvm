@@ -74,10 +74,18 @@ struct ExtraGuiOption {
 	bool defaultState;         /*!< Default state of the checkbox (checked or not). */
 };
 
+struct DebugChannelOption {
+	uint32 channel;
+	Common::String name;
+	Common::String description;
+};
+
 /**
  * Array of ExtraGuiOption structures.
  */
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
+
+typedef Common::Array<DebugChannelOption> DebugChannelOptions;
 
 /**
  * @todo Doc required
@@ -160,6 +168,11 @@ public:
 	 */
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
+	}
+
+	virtual const DebugChannelOptions getDebugChannelOptions() const {
+		warning("Using the default implementation of getDebugChannelOptions");
+		return DebugChannelOptions();
 	}
 
 	/**
