@@ -32,7 +32,6 @@
 #include "asylum/puzzles/lock.h"
 #include "asylum/puzzles/morguedoor.h"
 #include "asylum/puzzles/pipes.h"
-#include "asylum/puzzles/puzzle11.h"
 #include "asylum/puzzles/tictactoe.h"
 #include "asylum/puzzles/timemachine.h"
 #include "asylum/puzzles/vcr.h"
@@ -84,7 +83,7 @@ void Puzzles::initPuzzles() {
 	_puzzles[kPuzzleBoardYouth]      = new PuzzleBoardYouth(_vm);
 	_puzzles[kPuzzleBoardKeyHidesTo] = new PuzzleBoardKeyHidesTo(_vm);
 	_puzzles[kPuzzleWritings]        = new PuzzleWritings(_vm);
-	_puzzles[kPuzzle11]              = new Puzzle11(_vm);
+	_puzzles[kPuzzle11]              = NULL;
 	_puzzles[kPuzzleMorgueDoor]      = new PuzzleMorgueDoor(_vm);
 	_puzzles[kPuzzleClock]           = new PuzzleClock(_vm);
 	_puzzles[kPuzzleTimeMachine]     = new PuzzleTimeMachine(_vm);
@@ -104,7 +103,7 @@ void Puzzles::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(8);
 	_puzzles[kPuzzleBoardKeyHidesTo]->saveLoadWithSerializer(s);
 	_puzzles[kPuzzleMorgueDoor]->saveLoadWithSerializer(s);
-	_puzzles[kPuzzle11]->saveLoadWithSerializer(s);
+	s.skip(80); // skip Puzzle 11
 	_puzzles[kPuzzleTimeMachine]->saveLoadWithSerializer(s);
 	_puzzles[kPuzzleClock]->saveLoadWithSerializer(s);
 	_puzzles[kPuzzleFisherman]->saveLoadWithSerializer(s);

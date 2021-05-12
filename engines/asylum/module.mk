@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	puzzles/puzzles.o \
 	puzzles/tictactoe.o \
 	puzzles/timemachine.o \
-	puzzles/puzzle11.o \
 	puzzles/vcr.o \
 	puzzles/wheel.o \
 	puzzles/writings.o \
