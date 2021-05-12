@@ -128,6 +128,18 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 		return (gDebugChannelsEnabled & channel) != 0;
 }
 
+void DebugManager::debugFlagsRegister(const DebugChannelOptions &options) {
+	for (uint i = 0; i < options.size(); i++)
+		addDebugChannel(options[i].channel, options[i].name, options[i].description);
+}
+
+void DebugManager::debugFlagsClear() {
+	// first we clear all the debug channels
+	// then we add the global debug flags
+	clearAllDebugChannels();
+	addDebugChannel(kDebugGlobalTest, "test", "test global debug flag");
+}
+
 } // End of namespace Common
 
 bool debugLevelSet(int level) {
