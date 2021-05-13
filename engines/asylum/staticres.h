@@ -28,18 +28,18 @@
 namespace Asylum {
 
 /** This fixes the menu icons text x position on screen */
-const Common::Rect menuRects[12] = {Common::Rect(  40,  19,   93,  68),
-                                    Common::Rect( 140,  19,  193,  68),
-                                    Common::Rect( 239,  19,  292,  68),
-                                    Common::Rect( 340,  19,  393,  68),
-                                    Common::Rect( 439,  19,  492,  68),
-                                    Common::Rect( 538,  19,  591,  68),
-                                    Common::Rect(  40, 400,   93, 449),
-                                    Common::Rect( 140, 400,  193, 449),
-                                    Common::Rect( 239, 400,  292, 449),
-                                    Common::Rect( 340, 400,  393, 449),
-                                    Common::Rect( 538, 400,  591, 449), // The last two icons are swapped
-                                    Common::Rect( 439, 400,  492, 449)};
+const int16 menuRects[12][4] = {{ 40,  19,   93,  68},
+								{140,  19,  193,  68},
+								{239,  19,  292,  68},
+								{340,  19,  393,  68},
+								{439,  19,  492,  68},
+								{538,  19,  591,  68},
+								{ 40, 400,   93, 449},
+								{140, 400,  193, 449},
+								{239, 400,  292, 449},
+								{340, 400,  393, 449},
+								{538, 400,  591, 449}, // The last two icons are swapped
+								{439, 400,  492, 449}};
 
 const uint32 eyeFrameIndex[8] = {3, 5, 1, 7, 4, 8, 2, 6};
 
@@ -70,15 +70,9 @@ const int encounterPortrait2Index[80] = {32, 33, 34, 21, 22, 23, 24, 25, 26, 27,
                                           4,  5,  6, 35, 33, 34, 35, 36, 37, 36};
 
 // Delta array for points
-static Common::Point deltaPointsArray[8] = {
-	Common::Point( 0, -1),
-	Common::Point(-1, -1),
-	Common::Point(-1,  0),
-	Common::Point(-1,  1),
-	Common::Point( 0,  1),
-	Common::Point( 1,  1),
-	Common::Point( 1,  0),
-	Common::Point( 1, -1)
+static const int16 deltaPointsArray[8][2] = {
+	{ 0, -1}, {-1, -1}, {-1,  0}, {-1,  1},
+	{ 0,  1}, { 1,  1}, { 1,  0}, { 1, -1}
 };
 
 // We hardcode all the text resources here. It makes the resulting code easier,

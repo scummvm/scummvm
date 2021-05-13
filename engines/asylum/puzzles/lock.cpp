@@ -34,11 +34,11 @@
 
 namespace Asylum {
 
-const Common::Point puzzleLockPolygons[16] = {
-	Common::Point(159, 293), Common::Point(151, 318), Common::Point(179, 322), Common::Point(185, 298),
-	Common::Point(212, 303), Common::Point(207, 327), Common::Point(234, 332), Common::Point(239, 308),
-	Common::Point(149, 333), Common::Point(146, 365), Common::Point(172, 369), Common::Point(176, 338),
-	Common::Point(202, 345), Common::Point(200, 375), Common::Point(226, 379), Common::Point(231, 347)
+const int16 puzzleLockPolygons[16][2] = {
+	{159, 293}, {151, 318}, {179, 322}, {185, 298},
+	{212, 303}, {207, 327}, {234, 332}, {239, 308},
+	{149, 333}, {146, 365}, {172, 369}, {176, 338},
+	{202, 345}, {200, 375}, {226, 379}, {231, 347}
 };
 
 PuzzleLock::PuzzleLock(AsylumEngine *engine) : Puzzle(engine) {

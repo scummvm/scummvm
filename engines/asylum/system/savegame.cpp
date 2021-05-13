@@ -51,7 +51,7 @@ namespace Asylum {
 
 #define SAVEGAME_MOVIES "asylum.movies"
 
-static const Common::String savegame_version = "v1.01 FINAL";
+static const char *savegame_version = "v1.01 FINAL";
 
 Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false) {
 	memset(&_moviesViewed, 0, sizeof(_moviesViewed));
@@ -249,7 +249,7 @@ bool Savegame::readHeader(Common::InSaveFile *file) {
 
 	// Original does not do any version check
 	// Until we can verify all versions have compatible savegames, we only handle the final patched version savegames
-	if (version != savegame_version || build != SAVEGAME_BUILD) {
+	if (version != Common::String(savegame_version) || build != SAVEGAME_BUILD) {
 		_valid = false;
 		return false;
 	}
@@ -262,7 +262,7 @@ void Savegame::writeHeader(Common::OutSaveFile *file) const {
 	// We write saved games with a 1.01 final version (build 851)
 
 	write(file, SAVEGAME_VERSION_SIZE, "Version Length");
-	write(file, savegame_version, SAVEGAME_VERSION_SIZE, "Version");
+	write(file, Common::String(savegame_version), SAVEGAME_VERSION_SIZE, "Version");
 	write(file, SAVEGAME_BUILD, "Build");
 }
 

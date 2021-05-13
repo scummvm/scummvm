@@ -36,74 +36,27 @@
 
 namespace Asylum {
 
-const Common::Point connectorPoints[] = {
-	Common::Point(158,  59),
-	Common::Point(163, 172),
-	Common::Point(168, 272),
-
-	Common::Point(202,  59),
-	Common::Point(205, 132),
-	Common::Point(206, 172),
-
-	Common::Point(271,  60),
-	Common::Point(272, 131),
-	Common::Point(273, 262),
-
-	Common::Point(318, 169),
-	Common::Point(319, 206),
-	Common::Point(318, 261),
-
-	Common::Point(380,  72),
-	Common::Point(360, 171),
-	Common::Point(360, 206),
-
-	Common::Point(428, 172),
-	Common::Point(401, 242),
-	Common::Point(399, 295),
-
-	Common::Point(469, 119),
-	Common::Point(466, 171),
-	Common::Point(460, 294),
+const int16 connectorPoints[21][2] = {
+	{158,  59}, {163, 172}, {168, 272},
+	{202,  59}, {205, 132}, {206, 172},
+	{271,  60}, {272, 131}, {273, 262},
+	{318, 169}, {319, 206}, {318, 261},
+	{380,  72}, {360, 171}, {360, 206},
+	{428, 172}, {401, 242}, {399, 295},
+	{469, 119}, {466, 171}, {460, 294},
 };
 
-const Common::Point peepholePoints[] = {
-	Common::Point(140,  65),
-	Common::Point(311,  44),
-	Common::Point(387,  48),
-	Common::Point(475,  72),
-	Common::Point(189,  67),
-	Common::Point(246,  66),
-	Common::Point(169, 113),
-	Common::Point(215, 106),
-	Common::Point(280, 105),
-	Common::Point(336,  95),
-	Common::Point(434,  80),
-	Common::Point(248, 136),
-	Common::Point(303, 154),
-	Common::Point(407, 125),
-	Common::Point(470, 151),
-	Common::Point(193, 180),
-	Common::Point(347, 176),
-	Common::Point(401, 177),
-	Common::Point(245, 201),
-	Common::Point(325, 196),
-	Common::Point(347, 212),
-	Common::Point(406, 213),
-	Common::Point(431, 218),
-	Common::Point(174, 228),
-	Common::Point(217, 234),
-	Common::Point(280, 227),
-	Common::Point(325, 239),
-	Common::Point(370, 244),
-	Common::Point(467, 239),
-	Common::Point(303, 267),
-	Common::Point(405, 273),
-	Common::Point(356, 293),
-	Common::Point(436, 294),
-	Common::Point(182, 317),
-	Common::Point(277, 299),
-	Common::Point(324, 291),
-	Common::Point(461, 323)
+static const int16 peepholePoints[37][2] = {
+	{140,  65}, {311,  44}, {387,  48}, {475,  72},
+	{189,  67}, {246,  66}, {169, 113}, {215, 106},
+	{280, 105}, {336,  95}, {434,  80}, {248, 136},
+	{303, 154}, {407, 125}, {470, 151}, {193, 180},
+	{347, 176}, {401, 177}, {245, 201}, {325, 196},
+	{347, 212}, {406, 213}, {431, 218}, {174, 228},
+	{217, 234}, {280, 227}, {325, 239}, {370, 244},
+	{467, 239}, {303, 267}, {405, 273}, {356, 293},
+	{436, 294}, {182, 317}, {277, 299}, {324, 291},
+	{461, 323}
 };
 
 const uint32 peepholeResources[] = {15, 15, 15, 15, 32, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 32, 32, 15,
@@ -376,7 +329,7 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[1], 0, Common::Point(0, 0), kDrawFlagNone, 0, 4);
 
 	for (uint32 i = 0; i < ARRAYSIZE(_connectors); ++i)
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[_connectorResources[_connectors[i].getState()]], 0, connectorPoints[i], kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[_connectorResources[_connectors[i].getState()]], 0, &connectorPoints[i], kDrawFlagNone, 0, 1);
 
 	uint32 filled = 0;
 	for (uint32 i = 0; i < 4; ++i) {
@@ -396,7 +349,7 @@ bool PuzzlePipes::update(const AsylumEvent &) {
 	_frameIndex = (_frameIndex + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[15]);
 	for (uint32 i = 0; i < ARRAYSIZE(_peepholes); ++i)
 		if (_peepholes[i].isConnected())
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[peepholeResources[i]], _frameIndex, peepholePoints[i], kDrawFlagNone, 0, 1);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[peepholeResources[i]], _frameIndex, &peepholePoints[i], kDrawFlagNone, 0, 1);
 
 	getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[2], _frameIndexLever, Common::Point(540, 90), kDrawFlagNone, 0, 1);
 	_isLeverReady = false;
@@ -599,7 +552,7 @@ void PuzzlePipes::updateCursor() {
 
 int32 PuzzlePipes::findRect() {
 	for (uint32 i = 0; i < ARRAYSIZE(connectorPoints); ++i)
-		if (Common::Rect(connectorPoints[i].x - 5, connectorPoints[i].y - 5, connectorPoints[i].x + 30, connectorPoints[i].y + 30).contains(getCursor()->position()))
+		if (Common::Rect(connectorPoints[i][0] - 5, connectorPoints[i][1] - 5, connectorPoints[i][0] + 30, connectorPoints[i][1] + 30).contains(getCursor()->position()))
 			return i;
 
 	for (uint32 i = 0; i < _spiders.size(); ++i)

@@ -120,16 +120,20 @@ void Puzzle::exitPuzzle() {
 //////////////////////////////////////////////////////////////////////////
 // Hit test functions
 //////////////////////////////////////////////////////////////////////////
-bool Puzzle::hitTest(const Common::Point *polygonPoint, const Common::Point &point, uint32 index) const {
-	Polygon polygon(polygonPoint[index], polygonPoint[index + 1], polygonPoint[index + 2], polygonPoint[index + 3]);
+
+bool Puzzle::hitTest(const int16 (*polygonPoint)[2], const Common::Point &point, uint32 index) const {
+	Common::Point p1(polygonPoint[index + 0][0], polygonPoint[index + 0][1]),
+				  p2(polygonPoint[index + 1][0], polygonPoint[index + 1][1]),
+				  p3(polygonPoint[index + 2][0], polygonPoint[index + 2][1]),
+				  p4(polygonPoint[index + 3][0], polygonPoint[index + 3][1]);
+
+	Polygon polygon(p1, p2, p3, p4);
 
 	return polygon.contains(point);
 }
 
-bool Puzzle::hitTest(const Common::Point *polygonPoint, const Common::Point &point) const {
-	Polygon polygon(polygonPoint[0], polygonPoint[1], polygonPoint[2], polygonPoint[3]);
-
-	return polygon.contains(point);
+bool Puzzle::hitTest(const int16 (*polygonPoint)[2], const Common::Point &point) const {
+	return hitTest(polygonPoint, point, 0);
 }
 
 } // end of namespace Asylum

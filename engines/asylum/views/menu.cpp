@@ -179,7 +179,7 @@ void Menu::closeCredits() {
 
 Menu::MenuScreen Menu::findMousePosition() {
 	for (uint i = 0; i < ARRAYSIZE(menuRects); i++)
-		if (menuRects[i].contains(getCursor()->position()))
+		if (_vm->rectContains(&menuRects[i], getCursor()->position()))
 			return (MenuScreen)i;
 
 	return kMenuNone;
@@ -430,7 +430,9 @@ bool Menu::update() {
 				_iconFrames[icon] = (_iconFrames[icon] + 1) % GraphicResource::getFrameCount(_vm, MAKE_RESOURCE(kResourcePackShared, icon + 4));
 
 				// Draw text
-				getText()->drawCentered(Common::Point(menuRects[icon].left - 5, menuRects[icon].bottom + 5), menuRects[icon].width(), MAKE_RESOURCE(kResourcePackText, 1309 + icon));
+				getText()->drawCentered(Common::Point(menuRects[icon][0] - 5, menuRects[icon][3] + 5),
+										menuRects[icon][2] - menuRects[icon][0],
+										MAKE_RESOURCE(kResourcePackText, 1309 + icon));
 
 				if (!_dword_455C74 || _currentIcon != icon) {
 					_dword_455C74 = true;

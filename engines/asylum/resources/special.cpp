@@ -40,20 +40,14 @@
 
 namespace Asylum {
 
-static const Common::Rect actorRects[] = {
-	Common::Rect(1100,  150, 1130,  245),
-	Common::Rect( 848,  161,  884,  216),
-	Common::Rect( 861,  334,  884,  413),
-	Common::Rect( 600,  193,  621,  229),
-	Common::Rect( 805,  156,  957,  225),
-	Common::Rect( 641,  162,  791,  226),
-	Common::Rect( 695,  159,  808,  213),
-	Common::Rect( 925,  158, 1054,  224),
-	Common::Rect(1158,  162, 1293,  248),
-	Common::Rect(1319,  218, 1469,  351),
-	Common::Rect( 430,  351,  508,  407),
-	Common::Rect( 762,  339,  864,  398),
-	Common::Rect( 962,  328, 1080,  373),
+static const int16 actorRects[13][4] = {
+	{1100,  150, 1130,  245}, { 848,  161,  884,  216},
+	{ 861,  334,  884,  413}, { 600,  193,  621,  229},
+	{ 805,  156,  957,  225}, { 641,  162,  791,  226},
+	{ 695,  159,  808,  213}, { 925,  158, 1054,  224},
+	{1158,  162, 1293,  248}, {1319,  218, 1469,  351},
+	{ 430,  351,  508,  407}, { 762,  339,  864,  398},
+	{ 962,  328, 1080,  373},
 };
 
 static const int32 zapPatterns[9][16] = {
@@ -779,19 +773,19 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				actor1->updateStatus(kActorStatusWalking2);
 			}
 
-			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, actorRects[0]);
-			tentacle(11, kGameFlag722, kGameFlag723, kGameFlag724, actorRects[1]);
-			tentacle(12, kGameFlag725, kGameFlag726, kGameFlag727, actorRects[2]);
-			tentacle(13, kGameFlag728, kGameFlag729, kGameFlag730, actorRects[3]);
-			rock(2, kGameFlag597, kGameFlag598, kGameFlag599, kGameFlag600, actorRects[6]);
-			rock(3, kGameFlag684, kGameFlag685, kGameFlag686, kGameFlag687, actorRects[7]);
-			rock(4, kGameFlag688, kGameFlag689, kGameFlag690, kGameFlag691, actorRects[8]);
-			rock(5, kGameFlag692, kGameFlag693, kGameFlag694, kGameFlag695, actorRects[9]);
-			rock(6, kGameFlag696, kGameFlag697, kGameFlag698, kGameFlag699, actorRects[10]);
-			rock(7, kGameFlag700, kGameFlag701, kGameFlag702, kGameFlag703, actorRects[11]);
-			rock(8, kGameFlag704, kGameFlag705, kGameFlag706, kGameFlag707, actorRects[12]);
-			rock(16, kGameFlag1054, kGameFlag1055, kGameFlag1056, kGameFlag1057, actorRects[4]);
-			rock(17, kGameFlag1058, kGameFlag1059, kGameFlag1060, kGameFlag1061, actorRects[5]);
+			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, &actorRects[0]);
+			tentacle(11, kGameFlag722, kGameFlag723, kGameFlag724, &actorRects[1]);
+			tentacle(12, kGameFlag725, kGameFlag726, kGameFlag727, &actorRects[2]);
+			tentacle(13, kGameFlag728, kGameFlag729, kGameFlag730, &actorRects[3]);
+			rock(2, kGameFlag597, kGameFlag598, kGameFlag599, kGameFlag600, &actorRects[6]);
+			rock(3, kGameFlag684, kGameFlag685, kGameFlag686, kGameFlag687, &actorRects[7]);
+			rock(4, kGameFlag688, kGameFlag689, kGameFlag690, kGameFlag691, &actorRects[8]);
+			rock(5, kGameFlag692, kGameFlag693, kGameFlag694, kGameFlag695, &actorRects[9]);
+			rock(6, kGameFlag696, kGameFlag697, kGameFlag698, kGameFlag699, &actorRects[10]);
+			rock(7, kGameFlag700, kGameFlag701, kGameFlag702, kGameFlag703, &actorRects[11]);
+			rock(8, kGameFlag704, kGameFlag705, kGameFlag706, kGameFlag707, &actorRects[12]);
+			rock(16, kGameFlag1054, kGameFlag1055, kGameFlag1056, kGameFlag1057, &actorRects[4]);
+			rock(17, kGameFlag1058, kGameFlag1059, kGameFlag1060, kGameFlag1061, &actorRects[5]);
 			break;
 
 		case kObjectMonsterHurt:
@@ -2016,7 +2010,8 @@ void Special::checkOtherObject(Object *object, ObjectId otherObjectId, GameFlag 
 // Chapter 11 helpers
 //////////////////////////////////////////////////////////////////////////
 
-void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const Common::Rect &rect) {
+void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, GameFlag flag4, const int16 (*rectPtr)[4]) {
+	Common::Rect rect((*rectPtr)[0], (*rectPtr)[1], (*rectPtr)[2], (*rectPtr)[3]);
 	Actor *actor = getScene()->getActor(actorIndex);
 
 	if (!(_vm->isGameFlagNotSet(flag1) && _vm->isGameFlagSet(flag2)))
@@ -2076,8 +2071,10 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 	}
 }
 
-void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const Common::Rect &rect) {
+void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFlag flag3, const int16 (*rectPtr)[4]) {
+	Common::Rect rect((*rectPtr)[0], (*rectPtr)[1], (*rectPtr)[2], (*rectPtr)[3]);
 	Actor *actor = getScene()->getActor(actorIndex);
+
 	if (_vm->isGameFlagSet(flag1)
 	 && _vm->isGameFlagNotSet(flag3)
 	 && !_vm->isGameFlagSet(flag2)

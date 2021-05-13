@@ -33,15 +33,15 @@
 
 namespace Asylum {
 
-const Common::Point puzzleFishermanPolygons[31] = {
-	Common::Point( 10,  53), Common::Point(113,  52), Common::Point(222,  46), Common::Point(328,  51),
-	Common::Point(426,  51), Common::Point(523,  49), Common::Point(277, 398), Common::Point( 30,  44),
-	Common::Point(112,  44), Common::Point( 93, 400), Common::Point(  0, 400), Common::Point(130,  44),
-	Common::Point(210,  44), Common::Point(201, 400), Common::Point(112, 400), Common::Point(224,  44),
-	Common::Point(315,  44), Common::Point(309, 400), Common::Point(219, 400), Common::Point(326,  44),
-	Common::Point(411,  44), Common::Point(415, 400), Common::Point(326, 400), Common::Point(422,  44),
-	Common::Point(506,  44), Common::Point(526, 400), Common::Point(434, 400), Common::Point(523,  44),
-	Common::Point(607,  44), Common::Point(640, 400), Common::Point(545, 400)
+const int16 puzzleFishermanPolygons[31][2] = {
+	{ 10,  53}, {113,  52}, {222,  46}, {328,  51},
+	{426,  51}, {523,  49}, {277, 398}, { 30,  44},
+	{112,  44}, { 93, 400}, {  0, 400}, {130,  44},
+	{210,  44}, {201, 400}, {112, 400}, {224,  44},
+	{315,  44}, {309, 400}, {219, 400}, {326,  44},
+	{411,  44}, {415, 400}, {326, 400}, {422,  44},
+	{506,  44}, {526, 400}, {434, 400}, {523,  44},
+	{607,  44}, {640, 400}, {545, 400}
 };
 
 PuzzleFisherman::PuzzleFisherman(AsylumEngine *engine) : Puzzle(engine) {
@@ -98,7 +98,7 @@ bool PuzzleFisherman::update(const AsylumEvent &)  {
 	// Draw 7 graphics
 	for (uint32 i = 0; i < 6; i++) {
 		if (_state[i])
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, puzzleFishermanPolygons[i], kDrawFlagNone, 0, 1);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[40 + i], 0, &puzzleFishermanPolygons[i], kDrawFlagNone, 0, 1);
 	}
 
 	getScreen()->drawGraphicsInQueue();
@@ -151,10 +151,10 @@ bool PuzzleFisherman::mouseLeftDown(const AsylumEvent &evt) {
 		}
 	}
 
-	if (puzzleFishermanPolygons[6].x < evt.mouse.x
-	 && puzzleFishermanPolygons[6].y < evt.mouse.y
-	 && puzzleFishermanPolygons[6].x + 70 > evt.mouse.x
-	 && puzzleFishermanPolygons[6].y + 30 > evt.mouse.y) {
+	if (puzzleFishermanPolygons[6][0] < evt.mouse.x
+	 && puzzleFishermanPolygons[6][1] < evt.mouse.y
+	 && puzzleFishermanPolygons[6][0] + 70 > evt.mouse.x
+	 && puzzleFishermanPolygons[6][1] + 30 > evt.mouse.y) {
 		 getSound()->playSound(getWorld()->graphicResourceIds[10], false, Config.sfxVolume - 10);
 
 		 for (uint32 i = 0; i < 6; i++)
@@ -203,10 +203,10 @@ void PuzzleFisherman::updateCursor() {
 	if (found)
 		return;
 
-	if (puzzleFishermanPolygons[6].x >= mousePos.x
-	 || puzzleFishermanPolygons[6].y >= mousePos.y
-	 || puzzleFishermanPolygons[6].x + 70 <= mousePos.x
-	 || puzzleFishermanPolygons[6].y + 30 <= mousePos.y) {
+	if (puzzleFishermanPolygons[6][0] >= mousePos.x
+	 || puzzleFishermanPolygons[6][1] >= mousePos.y
+	 || puzzleFishermanPolygons[6][0] + 70 <= mousePos.x
+	 || puzzleFishermanPolygons[6][1] + 30 <= mousePos.y) {
 		 if (getCursor()->getAnimation() != kCursorAnimationNone)
 			 getCursor()->set(getWorld()->graphicResourceIds[47], -1, kCursorAnimationNone, 7);
 		 else if (getCursor()->getAnimation() != kCursorAnimationMirror)

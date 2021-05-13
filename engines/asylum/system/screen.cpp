@@ -85,6 +85,10 @@ void Screen::draw(ResourceId resourceId, uint32 frameIndex, const Common::Point 
 	draw(resourceId, frameIndex, source, flags, kResourceNone, Common::Point(0, 0), colorKey);
 }
 
+void Screen::draw(ResourceId resourceId, uint32 frameIndex, const int16 (*srcPtr)[2], DrawFlags flags, bool colorKey) {
+	draw(resourceId, frameIndex, Common::Point((*srcPtr)[0], (*srcPtr)[1]), flags, kResourceNone, Common::Point(0, 0), colorKey);
+}
+
 void Screen::drawTransparent(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum) {
 	byte *index = _transTable;
 	selectTransTable(transTableNum);
@@ -627,6 +631,10 @@ void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const C
 	item.transTableNum = transTableNum;
 
 	_queueItems.push_back(item);
+}
+
+void Screen::addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const int16 (*pointPtr)[2], DrawFlags flags, int32 transTableNum, int32 priority) {
+	addGraphicToQueue(resourceId, frameIndex, Common::Point((*pointPtr)[0], (*pointPtr)[1]), flags, transTableNum, priority);
 }
 
 void Screen::addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 resourceIdDestination, const Common::Point &destination, DrawFlags flags, int32 priority) {
@@ -1228,6 +1236,10 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int16 x
 //////////////////////////////////////////////////////////////////////////
 void Screen::drawLine(const Common::Point &source, const Common::Point &destination, uint32 color) {
 	_backBuffer.drawLine(source.x, source.y, destination.x, destination.y, color);
+}
+
+void Screen::drawLine(const int16 (*srcPtr)[2], const int16 (*dstPtr)[2], uint32 color) {
+	_backBuffer.drawLine((*srcPtr)[0], (*srcPtr)[1], (*dstPtr)[0], (*dstPtr)[1], color);
 }
 
 void Screen::drawRect(const Common::Rect &rect, uint32 color) {

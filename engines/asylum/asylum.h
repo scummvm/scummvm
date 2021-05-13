@@ -24,6 +24,7 @@
 #define ASYLUM_ASYLUM_H
 
 #include "common/random.h"
+#include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/system.h"
@@ -167,6 +168,8 @@ public:
 	// Misc
 	uint getRandom(uint max) { return max ? _rnd->getRandomNumber(max - 1) : 0; }
 	uint getRandomBit()      { return _rnd->getRandomBit(); }
+
+	bool rectContains(const int16 (*rectPtr)[4], const Common::Point &p) const;
 
 	/**
 	 * Switch message handler.

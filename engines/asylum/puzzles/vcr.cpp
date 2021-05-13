@@ -162,8 +162,8 @@ bool PuzzleVCR::mouseLeftDown(const AsylumEvent &evt) {
 	//////////////////////////////////////////////////////////////////////////
 	Color jack = getJackOnHand();
 	if (jack != kNone) {
-		if (evt.mouse.x >= (int32)puzzleVCRPolygons[kBlackJack].left && evt.mouse.x <= (int32)puzzleVCRPolygons[kYellowJack].right
-		 && evt.mouse.y >= (int32)puzzleVCRPolygons[kBlackJack].top  && evt.mouse.y <= (int32)puzzleVCRPolygons[kYellowJack].bottom) {
+		if (evt.mouse.x >= (int32)puzzleVCRPolygons[kBlackJack][0] && evt.mouse.x <= (int32)puzzleVCRPolygons[kYellowJack][2]
+		 && evt.mouse.y >= (int32)puzzleVCRPolygons[kBlackJack][1] && evt.mouse.y <= (int32)puzzleVCRPolygons[kYellowJack][3]) {
 
 			_jacksState[jack] = kOnTable;
 			getSound()->playSound(getWorld()->graphicResourceIds[50]);
@@ -578,8 +578,7 @@ void PuzzleVCR::updateStopButton() {
 // Helpers
 //////////////////////////////////////////////////////////////////////////
 int PuzzleVCR::inPolygon(const Common::Point &point, int polygonIndex) const {
-	return point.x >= puzzleVCRPolygons[polygonIndex].left && point.x <= puzzleVCRPolygons[polygonIndex].right
-	    && point.y >= puzzleVCRPolygons[polygonIndex].top  && point.y <= puzzleVCRPolygons[polygonIndex].bottom;
+	return _vm->rectContains(&puzzleVCRPolygons[polygonIndex], point);
 }
 
 PuzzleVCR::Color PuzzleVCR::getJackOnHand() const {

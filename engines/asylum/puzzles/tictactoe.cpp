@@ -35,28 +35,22 @@ namespace Asylum {
 
 extern int g_debugPolygons;
 
-const Common::Point puzzleTicTacToePolygons[36] = {
-	Common::Point( 27, 381), Common::Point(172, 368), Common::Point(190, 474), Common::Point( 36, 476),
-	Common::Point(176, 362), Common::Point(294, 328), Common::Point(331, 456), Common::Point(191, 472),
-	Common::Point(304, 327), Common::Point(426, 306), Common::Point(457, 440), Common::Point(340, 460),
-	Common::Point( 26, 257), Common::Point(151, 238), Common::Point(169, 356), Common::Point( 27, 373),
-	Common::Point(162, 234), Common::Point(275, 214), Common::Point(299, 321), Common::Point(173, 355),
-	Common::Point(283, 210), Common::Point(403, 173), Common::Point(437, 294), Common::Point(305, 317),
-	Common::Point( 22, 120), Common::Point(132, 126), Common::Point(146, 223), Common::Point( 25, 247),
-	Common::Point(144, 119), Common::Point(247,  87), Common::Point(268, 205), Common::Point(159, 222),
-	Common::Point(259,  84), Common::Point(380,  73), Common::Point(405, 169), Common::Point(281, 201)
+const int16 puzzleTicTacToePolygons[36][2] = {
+	{ 27, 381}, {172, 368}, {190, 474}, { 36, 476},
+	{176, 362}, {294, 328}, {331, 456}, {191, 472},
+	{304, 327}, {426, 306}, {457, 440}, {340, 460},
+	{ 26, 257}, {151, 238}, {169, 356}, { 27, 373},
+	{162, 234}, {275, 214}, {299, 321}, {173, 355},
+	{283, 210}, {403, 173}, {437, 294}, {305, 317},
+	{ 22, 120}, {132, 126}, {146, 223}, { 25, 247},
+	{144, 119}, {247,  87}, {268, 205}, {159, 222},
+	{259,  84}, {380,  73}, {405, 169}, {281, 201}
 };
 
-const Common::Point puzzleTicTacToePositions[9] = {
-	Common::Point( 62, 367),
-	Common::Point(193, 343),
-	Common::Point(329, 319),
-	Common::Point( 38, 247),
-	Common::Point(167, 217),
-	Common::Point(296, 193),
-	Common::Point( 19, 121),
-	Common::Point(147,  98),
-	Common::Point(269,  70)
+const int16 puzzleTicTacToePositions[9][2] = {
+	{ 62, 367}, {193, 343}, {329, 319},
+	{ 38, 247}, {167, 217}, {296, 193},
+	{ 19, 121}, {147,  98}, {269,  70}
 };
 
 static const struct {
@@ -210,17 +204,17 @@ void PuzzleTicTacToe::drawField() {
 
 	if (g_debugPolygons) {
 		for (uint32 p = 0; p < ARRAYSIZE(puzzleTicTacToePolygons) - 4; p += 4) {
-			getScreen()->drawLine(puzzleTicTacToePolygons[p],     puzzleTicTacToePolygons[p + 1]);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 1], puzzleTicTacToePolygons[p + 2]);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 2], puzzleTicTacToePolygons[p + 3]);
-			getScreen()->drawLine(puzzleTicTacToePolygons[p + 3], puzzleTicTacToePolygons[p]);
+			getScreen()->drawLine(&puzzleTicTacToePolygons[p],     &puzzleTicTacToePolygons[p + 1]);
+			getScreen()->drawLine(&puzzleTicTacToePolygons[p + 1], &puzzleTicTacToePolygons[p + 2]);
+			getScreen()->drawLine(&puzzleTicTacToePolygons[p + 2], &puzzleTicTacToePolygons[p + 3]);
+			getScreen()->drawLine(&puzzleTicTacToePolygons[p + 3], &puzzleTicTacToePolygons[p]);
 		}
 	}
 
 	// Draw X & O
 	for (int32 i = 0; i < ARRAYSIZE(puzzleTicTacToePositions); i++) {
 		char mark = _gameField[i];
-		Common::Point point = puzzleTicTacToePositions[i];
+		Common::Point point = Common::Point(puzzleTicTacToePositions[i][0], puzzleTicTacToePositions[i][1]);
 
 		if (_lastMarkedField == i) {
 			if (mark == 'O')

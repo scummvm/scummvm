@@ -40,7 +40,7 @@ public:
 
 	struct CharMap {
 		char character;
-		Common::Point position;
+		int16 posX, posY;
 	};
 
 	struct PuzzleData {

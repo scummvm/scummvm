@@ -997,8 +997,8 @@ IMPLEMENT_OPCODE(UpdateActor)
 
 			if (player->canMove(&point, newDirection, 3, false)) {
 
-				point.x += (int16)(3 * deltaPointsArray[newDirection].x);
-				point.y += (int16)(3 * deltaPointsArray[newDirection].y);
+				point.x += (int16)(3 * deltaPointsArray[newDirection][0]);
+				point.y += (int16)(3 * deltaPointsArray[newDirection][1]);
 
 				player->setPosition(point.x, point.y, actor->getDirection(), 0);
 			}

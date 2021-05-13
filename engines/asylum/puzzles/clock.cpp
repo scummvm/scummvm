@@ -40,25 +40,11 @@ const uint32 puzzleClockFrameIndexes[28] = {
 	11, 13, 15, 17,  0,  0, 182, 0
 };
 
-const Common::Point puzzleClockPoints[3] = {
-	Common::Point(322, 187),
-	Common::Point(267, 109),
-	Common::Point(274, 124)
-};
-
-const Common::Rect puzzleClockRects[12] = {
-	Common::Rect(354, 121, 373, 142),
-	Common::Rect(384, 119, 405, 146),
-	Common::Rect(405, 135, 424, 160),
-	Common::Rect(404, 168, 425, 193),
-	Common::Rect(389, 205, 410, 236),
-	Common::Rect(359, 240, 383, 270),
-	Common::Rect(325, 255, 341, 284),
-	Common::Rect(294, 253, 313, 284),
-	Common::Rect(277, 237, 294, 264),
-	Common::Rect(273, 201, 301, 235),
-	Common::Rect(290, 168, 315, 195),
-	Common::Rect(315, 133, 344, 162)
+const int16 puzzleClockRects[12][4] = {
+	{354, 121, 373, 142}, {384, 119, 405, 146}, {405, 135, 424, 160},
+	{404, 168, 425, 193}, {389, 205, 410, 236}, {359, 240, 383, 270},
+	{325, 255, 341, 284}, {294, 253, 313, 284}, {277, 237, 294, 264},
+	{273, 201, 301, 235}, {290, 168, 315, 195}, {315, 133, 344, 162}
 };
 
 PuzzleClock::PuzzleClock(AsylumEngine *engine) : Puzzle(engine) {
@@ -104,12 +90,12 @@ bool PuzzleClock::update(const AsylumEvent &evt) {
 	getScreen()->clearGraphicsInQueue();
 	getScreen()->draw(getWorld()->graphicResourceIds[5]);
 
-	getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndexes[0], puzzleClockPoints[0]);
+	getScreen()->draw(getWorld()->graphicResourceIds[2], _frameIndexes[0], Common::Point(322, 187));
 	_frameIndexes[0]++;
 	_frameIndexes[0] %= GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[2]);
 
-	getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndexes[1], puzzleClockPoints[1]);
-	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[2], puzzleClockPoints[2]);
+	getScreen()->draw(getWorld()->graphicResourceIds[4], _frameIndexes[1], Common::Point(267, 109));
+	getScreen()->draw(getWorld()->graphicResourceIds[3], _frameIndexes[2], Common::Point(274, 124));
 
 	if (_currentFrameIndex == _frameIndexes[2]) {
 		if (_showCursor) {
@@ -177,7 +163,7 @@ void PuzzleClock::updateCursor() {
 
 int32 PuzzleClock::findRect() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleClockRects); i++) {
-		if (puzzleClockRects[i].contains(getCursor()->position()))
+		if (_vm->rectContains(&puzzleClockRects[i], getCursor()->position()))
 			return i;
 	}
 
