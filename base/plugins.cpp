@@ -678,6 +678,8 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
 		const Plugin *p = EngineMan.findPlugin(engineId);
 		if (p) {
 			const MetaEngineDetection &engine = p->get<MetaEngineDetection>();
+			DebugMan.debugFlagsClear();
+			DebugMan.debugFlagsRegister(engine.getDebugChannels());
 
 			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 			if (pluginResult.gameId) {
@@ -707,6 +709,8 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 
 	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &engine = (*iter)->get<MetaEngineDetection>();
+		DebugMan.debugFlagsClear();
+		DebugMan.debugFlagsRegister(engine.getDebugChannels());
 		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 
 		if (pluginResult.gameId) {
@@ -866,6 +870,8 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 
 	// Make sure it does support the game ID
 	const MetaEngineDetection &engine = foundPlugin->get<MetaEngineDetection>();
+	DebugMan.debugFlagsClear();
+	DebugMan.debugFlagsRegister(engine.getDebugChannels());
 	PlainGameDescriptor desc = engine.findGame(domain->getVal("gameid").c_str());
 	if (!desc.gameId) {
 		return QualifiedGameDescriptor();
