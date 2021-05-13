@@ -133,7 +133,10 @@ static const Plugin *detectPlugin() {
 
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
-	PlainGameDescriptor game = plugin->get<MetaEngineDetection>().findGame(gameId.c_str());
+	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+	DebugMan.debugFlagsClear();
+	DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
+	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
 		return 0;
@@ -229,6 +232,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
+		// here, we don't need to set the debug channels because it has been set earlier
 		PlainGameDescriptor game = metaEngineDetection.findGame(ConfMan.get("gameid").c_str());
 		if (game.description) {
 			caption = game.description;
