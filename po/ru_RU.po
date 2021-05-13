@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-09 23:27+0000\n"
-"PO-Revision-Date: 2021-05-07 06:25+0000\n"
-"Last-Translator: iplaysomegames101 <eduardodelphinodepaula@gmail.com>\n"
+"PO-Revision-Date: 2021-05-14 03:25+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
 "Language: ru_RU\n"
@@ -1311,7 +1311,7 @@ msgstr "Применить изменения, не закрывая диало�
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr "Примените изменения и закройте диалог"
+msgstr "Применить изменения и закрыть диалог"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -2124,7 +2124,7 @@ msgstr "<Неправильное значение>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr "Переводчик множества приключенческих и ролевых игр"
+msgstr "Интерпретатор множества приключенческих и ролевых игр"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2162,7 +2162,7 @@ msgid ""
 "Myst, Blade Runner and countless other games you will find some really "
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
-"Рядом с новаторскими играми, такими как серия Monkey Island, Broken Sword, "
+"Наряду с новаторскими играми, такими как серия Monkey Island, Broken Sword, "
 "Myst, Blade Runner и бесчисленное множество других игр, вы найдете "
 "действительно малоизвестные приключения и действительно скрытые сокровища "
 "для исследования."
@@ -2327,11 +2327,11 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the Documentation (CD audio) for details."
 msgstr ""
-"У этой игры есть звуковые дорожки на диске. Эти\n"
+"У этой игры есть звуковые треки на диске. Эти\n"
 "треки необходимо скопировать с диска с помощью\n"
-"соответствующий инструмент для извлечения аудио компакт-дисков в\n"
-"чтобы послушать музыку из игры.\n"
-"Подробности см. В документации (аудио компакт-диск)."
+"подходящей программы для извлечения CD-аудио,\n"
+"чтобы в игре появилась музыка.\n"
+"Подробности см. в документации (CD-аудио)."
 
 #: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:251 engines/sky/metaengine.cpp:176
@@ -4825,14 +4825,14 @@ msgstr "Левая кнопка для атаки, правая кнопка д�
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr "Отсутствует код игры и / или ресурсы для конкретного языка."
+msgstr "Отсутствует код игры и/или ресурсы для конкретного языка."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
 msgstr ""
-"Отсутствует код игры для конкретного языка и / или ресурсы для этого "
+"Отсутствует код игры для конкретного языка и/или ресурсы для этого "
 "фанатского перевода."
 
 #: engines/kyra/detection_tables.h:1402
@@ -5093,7 +5093,7 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"Это триальная Windows версия игры. Чтобы играть в полную версию, вам "
+"Это триальная Windows-версия игры. Чтобы играть в полную версию, вам "
 "необходимо использовать оригинальную игру и купить ключ у Wyrmkeep"
 
 #: engines/lab/processroom.cpp:330
@@ -5729,7 +5729,7 @@ msgstr "Использовать альтернативное вступлени
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:609
 msgid "Windows Trial version is not supported"
-msgstr "Пробная версия Windows не поддерживается"
+msgstr "Пробная версия для Windows не поддерживается"
 
 #: engines/saga/metaengine.cpp:114
 msgid "I Have No Mouth support not compiled in"
@@ -6093,15 +6093,15 @@ msgstr ""
 
 #: engines/scumm/detection.cpp:172
 msgid "Trim FM-TOWNS games to 200 pixels height"
-msgstr "Обрезать игры FM-TOWNS до высоты 200 пикселей"
+msgstr "Обрезать игры FM-TOWNS до высоты в 200 пикселей"
 
 #: engines/scumm/detection.cpp:173
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
 msgstr ""
-"Вырежьте лишние 40 пикселей в нижней части экрана, чтобы сделать его "
-"стандартной высотой 200 пикселей, что позволяет использовать 'коррекцию "
+"Отрезать лишние 40 пикселей в нижней части экрана, чтобы сделать его высоту "
+"стандартной, в 200 пикселей, что позволит использовать 'коррекцию "
 "соотношения сторон'"
 
 #: engines/scumm/dialogs.cpp:165
@@ -6777,7 +6777,7 @@ msgstr ""
 "FM-TOWNS составляет 320x240 пикселей, что не позволяет корректировать "
 "соотношение сторон.\n"
 "Коррекция соотношения сторон может быть достигнута путем обрезки разрешения "
-"до 320x200 на вкладке «Двигатель»."
+"до 320x200 на вкладке «Движок»."
 
 #: engines/scumm/scumm.cpp:1953
 #, c-format
