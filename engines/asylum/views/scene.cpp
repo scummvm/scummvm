@@ -2198,10 +2198,8 @@ int32 Scene::findActionArea(ActionAreaType type, const Common::Point &pt, bool h
 				continue;
 
 			if (g_debugPolygons && highlight) {
-#ifdef DEBUG
 				// Highlight each polygon as it gets checked for action
 				debugHighlightPolygon(area->polygonIndex);
-#endif
 			}
 
 			bool found = false;
