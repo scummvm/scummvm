@@ -35,7 +35,7 @@ namespace Trecision {
  *
  * bsearch comparison routine
  * --------------------------------------------------*/
-int Compare(const void *p1, const void *p2) {
+int compareFileEntries(const void *p1, const void *p2) {
 	SFileEntry *p1c = (SFileEntry *)p1, *p2c = (SFileEntry*)p2;
 	return (scumm_stricmp((p1c)->name, (p2c)->name));
 }
@@ -51,7 +51,7 @@ const FastFile::FileEntry *FastFile::getEntry(const Common::String &name) const 
 	FileEntry key;
 	strncpy(key.name, name.c_str(), ARRAYSIZE(key.name));
 
-	FileEntry *entry = (FileEntry *)bsearch(&key, &_fileEntries[0], _fileEntries.size(), sizeof(FileEntry), Compare);
+	FileEntry *entry = (FileEntry *)bsearch(&key, &_fileEntries[0], _fileEntries.size(), sizeof(FileEntry), compareFileEntries);
 	return entry;
 }
 

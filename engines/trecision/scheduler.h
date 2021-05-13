@@ -24,13 +24,15 @@
 #define TRECISION_SCHEDULER_H
 
 #include "trecision/trecision.h"
+#include "trecision/struct.h"
 
 namespace Trecision {
-
 class Scheduler {
 private:
 	TrecisionEngine *_vm;
-	int maxmesg, maxmesh, maxmesa;
+	int8 _maxMessageGame;
+	int8 _maxMessageCharacter;
+	int8 _maxMessageAnim;
 
 public:
 	Scheduler(TrecisionEngine *vm);

@@ -34,7 +34,7 @@
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
 #include "trecision/nl/ll/llinc.h"
-#include "trecision/nl/struct.h"
+#include "trecision/struct.h"
 
 namespace Trecision {
 class AnimManager;
@@ -188,6 +188,7 @@ public:
 	void doInvOperate();
 	void doDoing();
 	void doScript();
+	void ProcessTheMessage();
 
 	// Utils
 	char *getNextSentence();
@@ -242,6 +243,7 @@ public:
 
 	char *_textPtr;
 	SDText _sdText;
+	char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 	Common::List<Common::Rect> _dirtyRects;
 	Common::Rect *_actorRect;
 

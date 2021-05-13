@@ -39,7 +39,6 @@
 #include "trecision/actor.h"
 #include "trecision/3d.h"
 #include "trecision/defines.h"
-#include "trecision/nl/proto.h"
 #include "trecision/console.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
@@ -171,6 +170,11 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_actorPos = 0;
 	_forcedActorPos = 0;
+
+	for (int i = 0; i < MAXDTEXTLINES; ++i) {
+		for (int j = 0; j < MAXDTEXTCHARS; ++i)
+			DTextLines[i][j] = '\0';
+	}
 }
 
 TrecisionEngine::~TrecisionEngine() {

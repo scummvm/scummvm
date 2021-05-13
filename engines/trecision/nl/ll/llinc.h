@@ -35,12 +35,9 @@ class SeekableReadStream;
 
 namespace Trecision {
 
-// DTEXT
-extern char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
 extern uint8  TextStatus;
 
-int Compare(const void *p1, const void *p2);
 void RedrawRoom();
 void ReadLoc();
 void TendIn();

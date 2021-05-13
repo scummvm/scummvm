@@ -134,44 +134,6 @@ struct Dialog {
 	uint16	_newPal[MAXNEWSMKPAL];
 };
 
-// MESSAGES FOR THE SCHEDULER
-struct Message {
-	uint8 _class;							// message class
-	uint8 _event;							// message name
-	uint8 _priority;						// message priority
-
-	uint8 _u8Param;
-	uint16 _u16Param1;						// byte parameter 1
-	uint16 _u16Param2;						// byte parameter 2
-	uint32 _u32Param;						// int parameter
-	uint32 _timestamp;
-
-	void set(Message *src) {
-		_class = src->_class;
-		_event = src->_event;
-		_priority = src->_priority;
-		_u8Param = src->_u8Param;
-		_u16Param1 = src->_u16Param1;
-		_u16Param2 = src->_u16Param2;
-		_u32Param = src->_u32Param;
-		_timestamp = src->_timestamp;
-	}
-};
-
-struct MessageQueue {
-	uint8 _head, _tail, _len;
-	Message *_event[MAXMESSAGE];
-
-	void orderEvents();
-	bool testEmptyQueue(uint8 cls);
-	bool testEmptyCharacterQueue4Script();
-	bool getMessage();
-	void initQueue();
-
-private:
-	inline uint8 predEvent(uint8 i);
-};
-
 struct SSortTable {
 	uint16 _objectId;                        // Object ID
 	bool  _remove;                           // Whether to copy or remove
@@ -231,6 +193,50 @@ struct SDObj {
 struct SFileEntry {
 	char name[12];
 	int offset;
+};
+
+struct ElevatorAction {
+	uint16 dialog;
+	uint16 choice;
+	uint16 action;
+	uint16 newRoom;
+};
+
+struct Message {
+	uint8 _class;    // message class
+	uint8 _event;    // message name
+	uint8 _priority; // message priority
+
+	uint8 _u8Param;
+	uint16 _u16Param1; // byte parameter 1
+	uint16 _u16Param2; // byte parameter 2
+	uint32 _u32Param;  // int parameter
+	uint32 _timestamp;
+
+	void set(Message *src) {
+		_class = src->_class;
+		_event = src->_event;
+		_priority = src->_priority;
+		_u8Param = src->_u8Param;
+		_u16Param1 = src->_u16Param1;
+		_u16Param2 = src->_u16Param2;
+		_u32Param = src->_u32Param;
+		_timestamp = src->_timestamp;
+	}
+};
+
+struct MessageQueue {
+	uint8 _head, _tail, _len;
+	Message *_event[MAXMESSAGE];
+
+	void orderEvents();
+	bool testEmptyQueue(uint8 cls);
+	bool testEmptyCharacterQueue4Script();
+	bool getMessage();
+	void initQueue();
+
+private:
+	uint8 predEvent(uint8 i);
 };
 
 } // End of namespace Trecision
