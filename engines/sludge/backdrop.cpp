@@ -103,8 +103,6 @@ void GraphicsManager::drawParallax() {
 	if (!_parallaxLayers || _parallaxLayers->empty())
 		return;
 
-	// TODO: simulate image repeating effect
-	warning("Drawing parallaxStuff");
 	// display parallax from bottom to top
 	for (ParallaxLayers::iterator it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
 		ParallaxLayer *p = *it;
@@ -114,25 +112,15 @@ void GraphicsManager::drawParallax() {
 		uint w = p->wrapS ? _sceneWidth : p->surface.w;
 		uint h = p->wrapT ? _sceneHeight : p->surface.h;
 
-		warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d winDims: %d x %d surf: %d x %d", p->cameraX, p->cameraY, w, h, _sceneWidth, _sceneHeight, _winWidth, _winHeight, p->surface.w, p->surface.h);
+		debugC(1, kSludgeDebugGraphics, "drawParallax(): camX: %d camY: %d dims: %d x %d sceneDims: %d x %d winDims: %d x %d surf: %d x %d", p->cameraX, p->cameraY, w, h, _sceneWidth, _sceneHeight, _winWidth, _winHeight, p->surface.w, p->surface.h);
 
-#if 0
-		const GLfloat vertices[] = {
-			(GLfloat) - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
-			w - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
-			(GLfloat) - (*it)->cameraX, h - (*it)->cameraY, 0.1f,
-			w - (*it)->cameraX, h - (*it)->cameraY, 0.1f
-		};
-
-		const GLfloat texCoords[] = {
-			0.0f, 0.0f,
-			texw, 0.0f,
-			0.0f, texh,
-			texw, texh
-		};
-			drawQuad(shader.smartScaler, vertices, 1, texCoords);
-#endif
-
+		Graphics::TransparentSurface tmp(p->surface, false);
+		for (uint y = 0; y < _sceneHeight; y += p->surface.h) {
+			for (uint x = 0; x < _sceneWidth; x += p->surface.w) {
+				tmp.blit(_renderSurface, x - p->cameraX, y - p->cameraY);
+				debugC(3, kSludgeDebugGraphics, "drawParallax(): blit to: %d, %d", x - p->cameraX, y - p->cameraY);
+			}
+		}
 	}
 }
 
