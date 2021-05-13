@@ -18,9 +18,6 @@ MODULE_OBJS = \
 	utils.o \
 	3d.o \
 	video.o \
-	nl/schedule.o \
-	nl/3d/3dwalk.o \
-	nl/ll/llmouse.o \
 	nl/ll/llscreen.o
 
 # This module can be built as a plugin

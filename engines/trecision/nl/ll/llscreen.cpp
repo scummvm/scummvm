@@ -33,15 +33,11 @@
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-#include "trecision/nl/struct.h"
+#include "trecision/struct.h"
 #include "trecision/nl/ll/llinc.h"
 
 namespace Trecision {
 
-// GAME POINTER
-uint16 _actionPosition[MAXACTIONINROOM];			// Starting position of each action in the room
-// DTEXT
-char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 // MOUSE
 uint8  TextStatus;
 
@@ -188,12 +184,6 @@ void ReadExtraObj41D() {
 	delete ff;
 }
 
-struct ElevatorAction {
-	uint16 dialog;
-	uint16 choice;
-	uint16 action;
-	uint16 newRoom;
-};
 
 void RedrawRoom() {
 	const uint16 curDialog = g_vm->_dialogMgr->_curDialog;

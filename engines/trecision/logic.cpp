@@ -22,7 +22,7 @@
 
 #include "common/config-manager.h"
 
-#include "trecision/nl/struct.h"
+#include "trecision/struct.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/defines.h"

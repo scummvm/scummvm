@@ -26,9 +26,9 @@
 namespace Trecision {
 
 Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
-	maxmesg = 0;
-	maxmesh = 0;
-	maxmesa = 0;
+	_maxMessageGame = 0;
+	_maxMessageCharacter = 0;
+	_maxMessageAnim = 0;
 }
 
 Scheduler::~Scheduler() {
@@ -78,11 +78,11 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	MessageQueue *lq;
 
 	if (cls <= CLASS_GAME)
-		lq = &g_vm->_gameQueue;
+		lq = &_vm->_gameQueue;
 	else if (cls <= CLASS_ANIM)
-		lq = &g_vm->_animQueue;
+		lq = &_vm->_animQueue;
 	else
-		lq = &g_vm->_characterQueue;
+		lq = &_vm->_characterQueue;
 
 	if (lq->_len >= MAXMESSAGE)
 		return;
@@ -96,20 +96,79 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	lm->_u16Param2 = u16Param2;
 	lm->_u8Param = u8Param;
 	lm->_u32Param = u32Param;
-	lm->_timestamp = g_vm->_curTime;
+	lm->_timestamp = _vm->_curTime;
 
 	if (lq->_tail == MAXMESSAGE)
 		lq->_tail = 0;
 	lq->_len++;
 
-	if (lq == &g_vm->_gameQueue && lq->_len > maxmesg)
-		maxmesg = lq->_len;
-	else if (lq == &g_vm->_animQueue && lq->_len > maxmesa)
-		maxmesa = lq->_len;
-	else if (lq == &g_vm->_characterQueue && lq->_len > maxmesh)
-		maxmesh = lq->_len;
+	if (lq == &_vm->_gameQueue && lq->_len > _maxMessageGame)
+		_maxMessageGame = lq->_len;
+	else if (lq == &_vm->_animQueue && lq->_len > _maxMessageAnim)
+		_maxMessageAnim = lq->_len;
+	else if (lq == &_vm->_characterQueue && lq->_len > _maxMessageCharacter)
+		_maxMessageCharacter = lq->_len;
 
 	lq->orderEvents();
+}
+
+
+
+uint8 MessageQueue::predEvent(uint8 i) {
+	return i == 0 ? MAXMESSAGE - 1 : i - 1;
+};
+
+bool MessageQueue::getMessage() {
+	if (!_len)
+		return true;
+
+	g_vm->_curMessage = _event[_head++];
+	if (_head == MAXMESSAGE)
+		_head = 0;
+	_len--;
+
+	return false;
+}
+
+void MessageQueue::initQueue() {
+	_head = 0;
+	_tail = 0;
+	_len = 0;
+}
+
+void MessageQueue::orderEvents() {
+	for (uint8 pos = predEvent(_tail); pos != _head; pos = predEvent(pos)) {
+		if (_event[pos]->_priority > _event[predEvent(pos)]->_priority) {
+			if (_event[pos]->_priority < MP_HIGH)
+				_event[pos]->_priority++;
+			SWAP(_event[pos], _event[predEvent(pos)]);
+		}
+	}
+}
+
+bool MessageQueue::testEmptyQueue(uint8 cls) {
+	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
+		if (_event[pos]->_class != cls)
+			return false;
+	}
+
+	return true;
+}
+
+bool MessageQueue::testEmptyCharacterQueue4Script() {
+	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
+		if (_event[pos]->_class != MC_CHARACTER)
+			continue;
+
+		if (_event[pos]->_event == ME_CHARACTERACTION || _event[pos]->_event == ME_CHARACTERGOTO || _event[pos]->_event == ME_CHARACTERGOTOACTION || _event[pos]->_event == ME_CHARACTERGOTOEXAMINE || _event[pos]->_event == ME_CHARACTERCONTINUEACTION)
+			return false;
+	}
+
+	//	true when:
+	//	1) the queue is empty
+	//	2) or there's a particular action in progress
+
+	return true;
 }
 
 } // End of namespace Trecision

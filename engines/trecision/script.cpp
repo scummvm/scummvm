@@ -808,4 +808,51 @@ void TrecisionEngine::doScript() {
 	}
 }
 
+void TrecisionEngine::ProcessTheMessage() {
+	switch (_curMessage->_class) {
+	case MC_CHARACTER:
+		doCharacter();
+		break;
+
+	case MC_IDLE:
+		doIdle();
+		break;
+
+	case MC_MOUSE:
+		doMouse();
+		break;
+
+	case MC_SYSTEM:
+		doSystem();
+		break;
+
+	case MC_INVENTORY:
+		doInventory();
+		break;
+
+	case MC_ACTION:
+		doAction();
+		break;
+
+	case MC_STRING:
+		_textMgr->doString();
+		break;
+
+	case MC_DOING:
+		doDoing();
+		break;
+
+	case MC_DIALOG:
+		_dialogMgr->doDialog();
+		break;
+
+	case MC_SCRIPT:
+		doScript();
+		break;
+
+	default:
+		break;
+	}
+}
+
 } // End of namespace Trecision
