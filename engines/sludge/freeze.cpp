@@ -20,11 +20,10 @@
  *
  */
 
-#include "sludge/backdrop.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
-#include "sludge/freeze.h"
 #include "sludge/graphics.h"
+#include "sludge/freeze.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/region.h"
@@ -64,8 +63,9 @@ bool GraphicsManager::freeze() {
 	newFreezer->lightMapSurface.copyFrom(_lightMap);
 	newFreezer->lightMapNumber = _lightMapNumber;
 
-	newFreezer->parallaxStuff = _parallaxStuff;
-	_parallaxStuff = NULL;
+	newFreezer->parallaxLayers = _parallaxLayers;
+	_parallaxLayers = NULL;
+
 	newFreezer->zBufferSprites = _zBuffer->sprites;
 	newFreezer->zBufferNumber = _zBuffer->originalNum;
 	newFreezer->zPanels = _zBuffer->numPanels;
@@ -148,7 +148,8 @@ void GraphicsManager::unfreeze(bool killImage) {
 	}
 
 	killParallax();
-	_parallaxStuff = _frozenStuff->parallaxStuff;
+	_parallaxLayers = _frozenStuff->parallaxLayers;
+
 	_vm->_cursorMan->resotre(_frozenStuff);
 	_vm->_statusBar->restoreBarStuff(_frozenStuff->frozenStatus);
 	_vm->_evtMan->restore(_frozenStuff);

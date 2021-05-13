@@ -23,6 +23,11 @@
 #ifndef SLUDGE_EVENT_H
 #define SLUDGE_EVENT_H
 
+namespace Common {
+class SeekableReadStream;
+class WriteStream;
+}
+
 namespace Sludge {
 
 struct FrozenStuffStruct;

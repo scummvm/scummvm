@@ -24,9 +24,9 @@
 #include "common/system.h"
 
 #include "sludge/event.h"
+#include "sludge/graphics.h"
 #include "sludge/freeze.h"
 #include "sludge/function.h"
-#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"
 #include "sludge/region.h"

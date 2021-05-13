@@ -46,7 +46,7 @@ struct FrozenStuffStruct {
 	Graphics::Surface lightMapSurface;
 	Graphics::Surface *zBufferSprites;
 	int zPanels;
-	Parallax *parallaxStuff;
+	ParallaxLayers *parallaxLayers;
 	int lightMapNumber, zBufferNumber;
 	SpeechStruct *speech;
 	StatusStuff  *frozenStatus;

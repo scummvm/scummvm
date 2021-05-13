@@ -23,8 +23,8 @@
 #include "common/system.h"
 
 #include "sludge/fonttext.h"
-#include "sludge/freeze.h"
 #include "sludge/graphics.h"
+#include "sludge/freeze.h"
 #include "sludge/moreio.h"
 #include "sludge/newfatal.h"
 #include "sludge/objtypes.h"

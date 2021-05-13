@@ -22,7 +22,6 @@
 
 #include "image/png.h"
 
-#include "sludge/backdrop.h"
 #include "sludge/event.h"
 #include "sludge/fileset.h"
 #include "sludge/graphics.h"
@@ -38,25 +37,25 @@
 
 namespace Sludge {
 
-Parallax::Parallax() {
-	_parallaxLayers.clear();
-}
+void GraphicsManager::killParallax() {
+	if (!_parallaxLayers)
+		return;
 
-Parallax::~Parallax() {
-	kill();
-}
-
-void Parallax::kill() {
-	ParallaxLayers::iterator it;
-	for (it = _parallaxLayers.begin(); it != _parallaxLayers.end(); ++it) {
+	for (ParallaxLayers::iterator it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
 		(*it)->surface.free();
 		delete (*it);
 		(*it) = nullptr;
 	}
-	_parallaxLayers.clear();
+	_parallaxLayers->clear();
+
+	delete _parallaxLayers;
+	_parallaxLayers = nullptr;
 }
 
-bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
+bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
+	if (!_parallaxLayers)
+		_parallaxLayers = new ParallaxLayers;
+
 	setResourceForFatal(v);
 	if (!g_sludge->_resMan->openFileFromNum(v))
 		return fatal("Can't open parallax image");
@@ -65,7 +64,7 @@ bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
 	if (!checkNew(nP))
 		return false;
 
-	_parallaxLayers.push_back(nP);
+	_parallaxLayers->push_back(nP);
 
 	if (!ImgLoader::loadImage(v, "parallax", g_sludge->_resMan->getData(), &nP->surface, 0))
 		return false;
@@ -112,20 +111,22 @@ bool Parallax::add(uint16 v, uint16 fracX, uint16 fracY) {
 	return true;
 }
 
-void Parallax::draw() {
-	// draw parallaxStuff
-	if (!_parallaxLayers.empty()) {
+void GraphicsManager::drawParallax() {
+	if (!_parallaxLayers || _parallaxLayers->empty())
+		return;
+
 		// TODO: simulate image repeating effect
 		warning("Drawing parallaxStuff");
 #if 0
 		// display parallax from bottom to top
-		ParallaxLayers::iterator it;
-		for (it = _parallax.begin(); it != _parallax.end(); ++it) {
-			(*it)->cameraX = sortOutPCamera(cameraX, (*it)->fractionX, (int)(sceneWidth - (float)winWidth / cameraZoom), (int)((*it)->surface.w - (float)winWidth / cameraZoom));
-			(*it)->cameraY = sortOutPCamera(cameraY, (*it)->fractionY, (int)(sceneHeight - (float)winHeight / cameraZoom), (int)((*it)->surface.h - (float)winHeight / cameraZoom));
+		for (ParallaxLayers::iterator it it = _parallax.begin(); it != _parallax.end(); ++it) {
+			(*it)->cameraX = sortOutPCamera(cameraX, (*it)->fractionX, (int)(_sceneWidth - (float)winWidth / cameraZoom), (int)((*it)->surface.w - (float)winWidth / cameraZoom));
+			(*it)->cameraY = sortOutPCamera(cameraY, (*it)->fractionY, (int)(_sceneHeight - (float)winHeight / cameraZoom), (int)((*it)->surface.h - (float)winHeight / cameraZoom));
 
 			uint w = ((*it)->wrapS) ? sceneWidth : (*it)->surface.w;
 			uint h = ((*it)->wrapT) ? sceneHeight : (*it)->surface.h;
+
+			warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d", (*it)->cameraX, (*it)->cameraY, w, h, _sceneWidth, _sceneHeight);
 
 			const GLfloat vertices[] = {
 				(GLfloat) - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
@@ -144,12 +145,11 @@ void Parallax::draw() {
 
 		}
 #endif
-	}
 }
 
-void Parallax::save(Common::WriteStream *stream) {
+void GraphicsManager::saveParallax(Common::WriteStream *stream) {
 	ParallaxLayers::iterator it;
-	for (it = _parallaxLayers.begin(); it != _parallaxLayers.end(); ++it) {
+	for (it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
 		stream->writeByte(1);
 		stream->writeUint16BE((*it)->fileNum);
 		stream->writeUint16BE((*it)->fractionX);

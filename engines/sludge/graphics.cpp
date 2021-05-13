@@ -24,10 +24,9 @@
 
 #include "engines/util.h"
 
-#include "sludge/backdrop.h"
 #include "sludge/event.h"
-#include "sludge/freeze.h"
 #include "sludge/graphics.h"
+#include "sludge/freeze.h"
 #include "sludge/newfatal.h"
 #include "sludge/sludge.h"
 #include "sludge/sludger.h"
@@ -53,8 +52,7 @@ void GraphicsManager::init() {
 	_lightMapMode = LIGHTMAPMODE_PIXEL;
 	_lightMapNumber = 0;
 
-	// Parallax
-	_parallaxStuff = new Parallax;
+	_parallaxLayers = nullptr;
 
 	// Camera
 	_cameraZoom = 1.0;
@@ -95,12 +93,7 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::kill() {
-	// kill parallax
-	if (_parallaxStuff) {
-		_parallaxStuff->kill();
-		delete _parallaxStuff;
-		_parallaxStuff = nullptr;
-	}
+	killParallax();
 
 	// kill frozen stuff
 	FrozenStuffStruct *killMe = _frozenStuff;
@@ -173,28 +166,6 @@ void GraphicsManager::display() {
 void GraphicsManager::clear() {
 	_renderSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h),
 			_renderSurface.format.RGBToColor(0, 0, 0));
-}
-
-bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
-	if (!_parallaxStuff)
-		_parallaxStuff = new Parallax;
-	return _parallaxStuff->add(v, fracX, fracY);
-}
-
-void GraphicsManager::killParallax() {
-	if (!_parallaxStuff)
-		return;
-	_parallaxStuff->kill();
-}
-
-void GraphicsManager::saveParallax(Common::WriteStream *fp) {
-	if (_parallaxStuff)
-		_parallaxStuff->save(fp);
-}
-
-void GraphicsManager::drawParallax() {
-	if (_parallaxStuff)
-		_parallaxStuff->draw();
 }
 
 void GraphicsManager::aimCamera(int cameraX, int cameraY) {

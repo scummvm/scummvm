@@ -24,8 +24,8 @@
 
 #include "sludge/cursors.h"
 #include "sludge/event.h"
-#include "sludge/freeze.h"
 #include "sludge/graphics.h"
+#include "sludge/freeze.h"
 #include "sludge/newfatal.h"
 #include "sludge/people.h"
 #include "sludge/sludge.h"

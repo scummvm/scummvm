@@ -20,7 +20,8 @@
  *
  */
 
-#include "sludge/backdrop.h"
+#include "common/system.h"
+
 #include "sludge/event.h"
 #include "sludge/function.h"
 #include "sludge/graphics.h"

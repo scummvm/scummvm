@@ -52,6 +52,16 @@ enum ELightMapMode {
 	LIGHTMAPMODE_NUM
 };
 
+// Parallax
+struct ParallaxLayer {
+	Graphics::Surface surface;
+	int speedX, speedY;
+	bool wrapS, wrapT;
+	uint16 fileNum, fractionX, fractionY;
+	int cameraX, cameraY;
+};
+typedef Common::List<ParallaxLayer *> ParallaxLayers;
+
 class GraphicsManager {
 public:
 	GraphicsManager(SludgeEngine *vm);
@@ -191,9 +201,6 @@ private:
 	int _lightMapNumber;
 	Graphics::Surface _lightMap;
 
-	// Parallax
-	Parallax *_parallaxStuff;
-
 	// Camera
 	float _cameraZoom;
 	int _cameraX, _cameraY;
@@ -234,6 +241,13 @@ private:
 	// Transition
 	byte _brightnessLevel;
 	byte _fadeMode;
+
+	// Parallax
+	ParallaxLayers *_parallaxLayers;
+
+	inline int sortOutPCamera(int cX, int fX, int sceneMax, int boxMax) {
+		return (fX == 65535) ? (sceneMax ? ((cX * boxMax) / sceneMax) : 0) : ((cX * fX) / 100);
+	}
 };
 
 } // End of namespace Sludge
