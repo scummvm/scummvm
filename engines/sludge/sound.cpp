@@ -224,7 +224,7 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 	if (memImage->size() != (int)length || readStream->err()) {
 		return fatal("Sound reading failed");
 	}
-	Audio::LoopingAudioStream *stream = new Audio::LoopingAudioStream(Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO), 0, DisposeAfterUse::YES);
+	Audio::LoopingAudioStream *stream = new Audio::LoopingAudioStream(Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack), 0, DisposeAfterUse::YES, false);
 
 	if (stream) {
 		// play sound
