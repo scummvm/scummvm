@@ -147,9 +147,9 @@ Common::Error WaynesWorldEngine::run() {
 	drawImageToScreen("r00/backg", 0, 0);
 
 	drawInterface(2);
-	// changeRoom(0);
+	changeRoom(0);
 	// _wayneSpriteX = -1; _garthSpriteX = -1;
-	changeRoom(1); // DEBUG
+	// changeRoom(31); // DEBUG
 	// _logic->r31_displayCategories();
 	// _logic->_r1_eventFlag = 1;
 	// _logic->_r1_eventCtr = 3;
