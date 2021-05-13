@@ -121,7 +121,7 @@ private:
 	int tick();
 	void updateRow();
 	int seek(int samplePos);
-	bool rewind() override { setSequencePos(0); return true; }
+	bool rewind() override { setSequencePos(0); _dataLeft = _initialDataLength; return true; }
 
 	// Sample
 	void downsample(int *buf, int count);
