@@ -354,6 +354,7 @@ void AsylumEngine::playIntro() {
 					}
 				}
 
+				_system->updateScreen();
 				_system->delayMillis(100);
 
 			} while (_sound->isPlaying(introSpeech) && !skip);
