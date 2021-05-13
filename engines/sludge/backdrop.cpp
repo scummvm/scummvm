@@ -76,35 +76,23 @@ bool GraphicsManager::loadParallax(uint16 v, uint16 fracX, uint16 fracY) {
 	// 65535 is the value of AUTOFIT constant in Sludge
 	if (fracX == 65535) {
 		nP->wrapS = false;
-//		if (nP->surface.w < _winWidth) {
-//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
-//			return false;
-//		}
+		if (nP->surface.w < _winWidth) {
+			fatal("For AUTOFIT parallax backgrounds, the image must be at least as wide as the game window/screen.");
+			return false;
+		}
 	} else {
 		nP->wrapS = true;
 	}
 
 	if (fracY == 65535) {
 		nP->wrapT = false;
-//		if (nP->surface.h < _winHeight) {
-//			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
-//			return false;
-//		}
+		if (nP->surface.h < _winHeight) {
+			fatal("For AUTOFIT parallax backgrounds, the image must be at least as tall as the game window/screen.");
+			return false;
+		}
 	} else {
 		nP->wrapT = true;
 	}
-
-	// TODO: reinterpret this part
-#if 0
-	if (nP->wrapS)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	if (nP->wrapT)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	else
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-#endif
 
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
@@ -119,13 +107,14 @@ void GraphicsManager::drawParallax() {
 	warning("Drawing parallaxStuff");
 	// display parallax from bottom to top
 	for (ParallaxLayers::iterator it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
-		(*it)->cameraX = sortOutPCamera(_cameraX, (*it)->fractionX, (int)(_sceneWidth - (float)_winWidth / _cameraZoom), (int)((*it)->surface.w - (float)_winWidth / _cameraZoom));
-		(*it)->cameraY = sortOutPCamera(_cameraY, (*it)->fractionY, (int)(_sceneHeight - (float)_winHeight / _cameraZoom), (int)((*it)->surface.h - (float)_winHeight / _cameraZoom));
+		ParallaxLayer *p = *it;
+		p->cameraX = sortOutPCamera(_cameraX, p->fractionX, (int)(_sceneWidth - (float)_winWidth / _cameraZoom), (int)(p->surface.w - (float)_winWidth / _cameraZoom));
+		p->cameraY = sortOutPCamera(_cameraY, p->fractionY, (int)(_sceneHeight - (float)_winHeight / _cameraZoom), (int)(p->surface.h - (float)_winHeight / _cameraZoom));
 
-		uint w = ((*it)->wrapS) ? _sceneWidth : (*it)->surface.w;
-		uint h = ((*it)->wrapT) ? _sceneHeight : (*it)->surface.h;
+		uint w = p->wrapS ? _sceneWidth : p->surface.w;
+		uint h = p->wrapT ? _sceneHeight : p->surface.h;
 
-		warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d", (*it)->cameraX, (*it)->cameraY, w, h, _sceneWidth, _sceneHeight);
+		warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d winDims: %d x %d surf: %d x %d", p->cameraX, p->cameraY, w, h, _sceneWidth, _sceneHeight, _winWidth, _winHeight, p->surface.w, p->surface.h);
 
 #if 0
 		const GLfloat vertices[] = {
