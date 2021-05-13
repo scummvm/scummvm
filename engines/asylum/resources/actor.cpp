@@ -1698,8 +1698,8 @@ bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 dista
 	if (_field_944 == 1 || _field_944 == 4)
 		return true;
 
-	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[direction].x);
-	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[direction].y);
+	int16 x = (hasDelta ? point->x : point->x + deltaPointsArray[direction][0]);
+	int16 y = (hasDelta ? point->y : point->y + deltaPointsArray[direction][1]);
 
 	// Check scene rect
 	if (!_field_944) {
@@ -1725,8 +1725,8 @@ bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 dista
 		uint32 allowed = 0;
 
 		while (getScene()->findActionArea(kActionAreaType1, Common::Point(x, y), true) != -1) {
-			x += deltaPointsArray[direction].x;
-			y += deltaPointsArray[direction].y;
+			x += deltaPointsArray[direction][0];
+			y += deltaPointsArray[direction][1];
 
 			++allowed;
 
@@ -1901,8 +1901,8 @@ bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const
 bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 	int32 dist = getAbsoluteDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
-	int32 x = point->x + deltaPointsArray[dir].x * dist - (_field_948 + 10);
-	int32 y = point->y + deltaPointsArray[dir].y * dist - (_field_94C + 10);
+	int32 x = point->x + deltaPointsArray[dir][0] * dist - (_field_948 + 10);
+	int32 y = point->y + deltaPointsArray[dir][1] * dist - (_field_94C + 10);
 	int32 x1 = x + 2 * _field_948 + 20;
 	int32 y1 = y + 2 * _field_94C + 20;
 
@@ -3648,7 +3648,8 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 		return true;
 
 	// Initialize base coordinates
-	Common::Point basePoint = deltaPointsArray[direction] + point;
+	Common::Point delta     = Common::Point(deltaPointsArray[direction][0], deltaPointsArray[direction][1]);
+	Common::Point basePoint = delta + point;
 	Common::Rect  rect      = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
 	for (int16 i = 1; i < loopcount; i++) {
@@ -3658,7 +3659,7 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 		if (!rect.contains(basePoint))
 			return false;
 
-		basePoint += deltaPointsArray[direction];
+		basePoint += delta;
 	}
 
 	return true;

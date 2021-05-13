@@ -583,4 +583,11 @@ bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
 	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) == 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
+// Misc
+//////////////////////////////////////////////////////////////////////////
+bool AsylumEngine::rectContains(const int16 (*rectPtr)[4], const Common::Point &p) const {
+	return ((*rectPtr)[0] <= p.x) && (p.x < (*rectPtr)[2]) && ((*rectPtr)[1] <= p.y) && (p.y < (*rectPtr)[3]);
+}
+
 } // namespace Asylum

@@ -78,6 +78,7 @@ public:
 	// Drawing
 	void draw(ResourceId resourceId);
 	void draw(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags = kDrawFlagNone, bool colorKey = true);
+	void draw(ResourceId resourceId, uint32 frameIndex, const int16 (*srcPtr)[2], DrawFlags flags = kDrawFlagNone, bool colorKey = true);
 	void draw(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags= kDrawFlagNone, bool colorKey = true);
 	void drawTransparent(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
 	void drawTransparent(GraphicResource *resource, uint32 frameIndex, const Common::Point &source, DrawFlags flags, uint32 transTableNum);
@@ -116,6 +117,7 @@ public:
 
 	// Graphic queue
 	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const Common::Point &point, DrawFlags flags, int32 transTableNum, int32 priority);
+	void addGraphicToQueue(ResourceId resourceId, uint32 frameIndex, const int16 (*pointPtr)[2], DrawFlags flags, int32 transTableNum, int32 priority);
 	void addGraphicToQueueCrossfade(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 objectResourceId, const Common::Point &destination, uint32 transTableNum);
 	void addGraphicToQueueMasked(ResourceId resourceId, uint32 frameIndex, const Common::Point &source, int32 objectResourceId, const Common::Point &destination, DrawFlags flags, int32 priority);
 	void addGraphicToQueue(GraphicQueueItem const &item);
@@ -127,7 +129,8 @@ public:
 	void copyToBackBuffer(const byte *buffer, int32 pitch, int16 x, int16 y, uint16 width, uint16 height, bool mirrored = false);
 
 	// Debug
-	void drawLine(const Common::Point &origin, const Common::Point &destination, uint32 color = 0xFF);
+	void drawLine(const Common::Point &source, const Common::Point &destination, uint32 color = 0xFF);
+	void drawLine(const int16 (*srcPtr)[2], const int16 (*dstPtr)[2], uint32 color = 0xFF);
 	void drawRect(const Common::Rect &rect, uint32 color = 0xFF);
 	void copyToBackBufferClipped(Graphics::Surface *surface, int16 x, int16 y);
 

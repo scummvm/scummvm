@@ -34,25 +34,16 @@
 
 namespace Asylum {
 
-const Common::Rect puzzleTimeMachineRects[10] = {
-	Common::Rect(  0, 241,  20, 276),
-	Common::Rect(  0, 285,  20, 320),
-	Common::Rect(117, 245, 137, 280),
-	Common::Rect(117, 284, 137, 319),
-	Common::Rect(236, 246, 256, 281),
-	Common::Rect(236, 290, 256, 325),
-	Common::Rect(356, 245, 376, 280),
-	Common::Rect(356, 287, 376, 322),
-	Common::Rect(476, 248, 496, 283),
-	Common::Rect(475, 290, 495, 325)
+const int16 puzzleTimeMachineRects[10][4] = {
+	{  0, 241,  20, 276}, {  0, 285,  20, 320},
+	{117, 245, 137, 280}, {117, 284, 137, 319},
+	{236, 246, 256, 281}, {236, 290, 256, 325},
+	{356, 245, 376, 280}, {356, 287, 376, 322},
+	{476, 248, 496, 283}, {475, 290, 495, 325}
 };
 
-const Common::Point puzzleTimeMachinePoints[5] = {
-	Common::Point(-65,  -30),
-	Common::Point(-20,  -68),
-	Common::Point( 25, -106),
-	Common::Point( 70, -144),
-	Common::Point(115, -182)
+const int16 puzzleTimeMachinePoints[5][2] = {
+	{-65,  -30}, {-20,  -68}, { 25, -106}, { 70, -144}, {115, -182}
 };
 
 PuzzleTimeMachine::PuzzleTimeMachine(AsylumEngine *engine) : Puzzle(engine) {
@@ -105,7 +96,8 @@ void PuzzleTimeMachine::reset() {
 
 	_index  = -1;
 	_index2 = 0;
-	_point  = _newPoint = puzzleTimeMachinePoints[0];
+	_point.x = _newPoint.x = puzzleTimeMachinePoints[0][0];
+	_point.y = _newPoint.y = puzzleTimeMachinePoints[0][1];
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,12 +157,12 @@ bool PuzzleTimeMachine::update(const AsylumEvent &)  {
 	// Show all buttons
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
 		if ((uint32)_index != i || _leftButtonClicked)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i][0], puzzleTimeMachineRects[i][1]), kDrawFlagNone, 0, 5);
 	}
 
 	for (uint32 i = 1; i < ARRAYSIZE(puzzleTimeMachineRects); i += 2) {
 		if ((uint32)_index != i || _leftButtonClicked)
-			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i].left, puzzleTimeMachineRects[i].top), kDrawFlagNone, 0, 5);
+			getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[44 + i], 0, Common::Point(puzzleTimeMachineRects[i][0], puzzleTimeMachineRects[i][1]), kDrawFlagNone, 0, 5);
 	}
 
 	_leftButtonClicked = true;
@@ -216,7 +208,7 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 
 	int32 index = -1;
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
-		if (puzzleTimeMachineRects[i].contains(evt.mouse)) {
+		if (_vm->rectContains(&puzzleTimeMachineRects[i], evt.mouse)) {
 			index = i;
 
 			break;
@@ -229,7 +221,8 @@ bool PuzzleTimeMachine::mouseLeftDown(const AsylumEvent &evt) {
 	getSound()->playSound(getWorld()->soundResourceIds[14]);
 	if ((_index2 / 2) != (uint32)index / 2) {
 		getSound()->playSound(getWorld()->soundResourceIds[16]);
-		_newPoint = puzzleTimeMachinePoints[index / 2];
+		_newPoint.x = puzzleTimeMachinePoints[index / 2][0];
+		_newPoint.y = puzzleTimeMachinePoints[index / 2][1];
 	}
 
 	if (index % 2)
@@ -256,7 +249,7 @@ bool PuzzleTimeMachine::mouseRightDown(const AsylumEvent &) {
 //////////////////////////////////////////////////////////////////////////
 void PuzzleTimeMachine::updateCursor() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleTimeMachineRects); i++) {
-		if (puzzleTimeMachineRects[i].contains(getCursor()->position())) {
+		if (_vm->rectContains(&puzzleTimeMachineRects[i], getCursor()->position())) {
 			if (getCursor()->getAnimation() != kCursorAnimationMirror)
 				getCursor()->set(getWorld()->graphicResourceIds[62], -1, kCursorAnimationMirror, 7);
 

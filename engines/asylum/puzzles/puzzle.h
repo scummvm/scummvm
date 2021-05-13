@@ -70,8 +70,8 @@ protected:
 	//////////////////////////////////////////////////////////////////////////
 	// Hit test functions
 	//////////////////////////////////////////////////////////////////////////
-	bool hitTest(const Common::Point *polygonPoint, const Common::Point &point, uint32 index) const;
-	bool hitTest(const Common::Point *polygonPoint, const Common::Point &point) const;
+	bool hitTest(const int16 (*polygonPoint)[2], const Common::Point &point, uint32 index) const;
+	bool hitTest(const int16 (*polygonPoint)[2], const Common::Point &point) const;
 };
 
 } // End of namespace Asylum

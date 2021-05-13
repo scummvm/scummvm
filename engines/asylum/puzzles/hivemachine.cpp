@@ -34,21 +34,12 @@
 
 namespace Asylum {
 
-const Common::Point keyPoints[] = {
-	Common::Point(246, 106),
-	Common::Point(377, 171),
-	Common::Point(319, 250),
-	Common::Point(220, 249),
-	Common::Point(167, 154)
+const int16 keyPoints[5][2] = {
+	{246, 106}, {377, 171}, {319, 250}, {220, 249}, {167, 154}
 };
 
-const Common::Point indicatorPoints[] = {
-	Common::Point(260, 410),
-	Common::Point(279, 411),
-	Common::Point(298, 411),
-	Common::Point(318, 412),
-	Common::Point(338, 413),
-	Common::Point(358, 413)
+const int16 indicatorPoints[6][2] = {
+	{260, 410}, {279, 411}, {298, 411}, {318, 412}, {338, 413}, {358, 413}
 };
 
 PuzzleHiveMachine::PuzzleHiveMachine(AsylumEngine *engine) : Puzzle(engine) {
@@ -142,7 +133,7 @@ int32 PuzzleHiveMachine::findRect() {
 	for (uint32 i = 0; i < 5; ++i) {
 		resource.load(getWorld()->graphicResourceIds[i + 13]);
 		GraphicFrame *frame = resource.getFrame(0);
-		Common::Point point(mouse.x - keyPoints[i].x, mouse.y - keyPoints[i].y);
+		Common::Point point(mouse.x - keyPoints[i][0], mouse.y - keyPoints[i][1]);
 
 		if (frame->getRect().contains(point)) {
 			point.x -= frame->x;
@@ -186,7 +177,7 @@ void PuzzleHiveMachine::updateScreen() {
 			frameIndex = _frameIndex1;
 		} else
 			frameIndex = _frameIndex;
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[resourceId], frameIndex, keyPoints[i], kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[resourceId], frameIndex, &keyPoints[i], kDrawFlagNone, 0, 1);
 	}
 
 	if (_counterKey)
@@ -197,7 +188,7 @@ void PuzzleHiveMachine::updateScreen() {
 	}
 
 	for (uint32 i = 0; i < _notesNumber; ++i)
-		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[84], 0, indicatorPoints[i], kDrawFlagNone, 0, 1);
+		getScreen()->addGraphicToQueue(getWorld()->graphicResourceIds[84], 0, &indicatorPoints[i], kDrawFlagNone, 0, 1);
 
 	_frameIndex = (_frameIndex + 1) % GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[13]);
 	if (_counterKey)

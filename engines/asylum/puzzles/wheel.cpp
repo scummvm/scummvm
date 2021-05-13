@@ -64,70 +64,19 @@ const uint32 puzzleWheelClockResourceIndexes[16] = {
 	53
 };
 
-const Common::Point puzzleWheelPoints[56] = {
-	Common::Point(  0,   0),
-	Common::Point(  0,   0),
-	Common::Point(  0,   0),
-	Common::Point(250, 254),
-	Common::Point(122,  24),
-	Common::Point(208,  68),	// 5
-	Common::Point(238, 160),
-	Common::Point(218, 234),
-	Common::Point(162, 228),
-	Common::Point( 71, 222),
-	Common::Point( 22, 165),	// 10
-	Common::Point( 35,  70),
-	Common::Point(278,   0),
-	Common::Point(536, 146),
-	Common::Point(122,  24),
-	Common::Point(208,  68),	// 15
-	Common::Point(238, 160),
-	Common::Point(218, 234),
-	Common::Point(162, 228),
-	Common::Point( 71, 222),
-	Common::Point( 22, 165),	// 20
-	Common::Point( 35,  70),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),	// 25
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(358, 268),	// 30
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),	// 35
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),	// 40
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),
-	Common::Point(342,  87),	// 45
-	Common::Point(342,  87),
-	Common::Point(536, 146),
-	Common::Point(406, 106),
-	Common::Point(402, 217),
-	Common::Point(369, 128),	// 50
-	Common::Point(368, 197),
-	Common::Point(452, 184),
-	Common::Point(470, 144),
-	Common::Point(442, 116),
-	Common::Point(347, 166)		// 55
+const int16 puzzleWheelPoints[56][2] = {
+	{  0,   0}, {  0,   0}, {  0,   0}, {250, 254}, {122,  24}, {208,  68}, {238, 160},
+	{218, 234}, {162, 228}, { 71, 222}, { 22, 165}, { 35,  70}, {278,   0}, {536, 146},
+	{122,  24}, {208,  68}, {238, 160}, {218, 234}, {162, 228}, { 71, 222}, { 22, 165},
+	{ 35,  70}, {342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87},
+	{342,  87}, {342,  87}, {358, 268}, {342,  87}, {342,  87}, {342,  87}, {342,  87},
+	{342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87},
+	{342,  87}, {342,  87}, {342,  87}, {342,  87}, {342,  87}, {536, 146}, {406, 106},
+	{402, 217}, {369, 128}, {368, 197}, {452, 184}, {470, 144}, {442, 116}, {347, 166}
 };
 
-const Common::Rect puzzleWheelRects[4] = {
-	Common::Rect(425, 268, 491, 407),
-	Common::Rect(358, 268, 424, 407),
-	Common::Rect(561, 251, 594, 324),
-	Common::Rect(280, 276, 310, 400)
+const int16 puzzleWheelRects[4][4] = {
+	{425, 268, 491, 407}, {358, 268, 424, 407}, {561, 251, 594, 324}, {280, 276, 310, 400}
 };
 
 PuzzleWheel::PuzzleWheel(AsylumEngine *engine) : Puzzle(engine) {
@@ -186,7 +135,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 	getScreen()->draw(getWorld()->graphicResourceIds[0]);
 
 	// Blinking red light
-	getScreen()->draw(getWorld()->graphicResourceIds[12], (uint32)_frameIndexes[11], puzzleWheelPoints[12]);
+	getScreen()->draw(getWorld()->graphicResourceIds[12], (uint32)_frameIndexes[11], &puzzleWheelPoints[12]);
 	_frameIndexes[11] = (_frameIndexes[11] + 1) % (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[12]);
 
 	// Clock
@@ -196,7 +145,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndex + 22], 0, Common::Point(342, 87));
 
 	// Chain
-	getScreen()->draw(getWorld()->graphicResourceIds[3], (uint32)_frameIndexes[0], puzzleWheelPoints[3]);
+	getScreen()->draw(getWorld()->graphicResourceIds[3], (uint32)_frameIndexes[0], &puzzleWheelPoints[3]);
 
 	// Update chain frame index
 	if (_moveChain) {
@@ -228,7 +177,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 			pointIndex = 4 + i;
 		}
 
-		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], (uint32)_frameIndexes[frameIndex], puzzleWheelPoints[pointIndex]);
+		getScreen()->draw(getWorld()->graphicResourceIds[resourceIndex], (uint32)_frameIndexes[frameIndex], &puzzleWheelPoints[pointIndex]);
 
 		if (_frameIndexes[frameIndex] != (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[resourceIndex]) - 1)
 			++_frameIndexes[frameIndex];
@@ -239,7 +188,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 	// Sparks
 	for (uint32 i = 0; i < 8; i++) {
 		if (_frameIndexesSparks[i] >= 0) {
-			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], (uint32)_frameIndexesSparks[i], puzzleWheelPoints[48 + i]);
+			getScreen()->draw(getWorld()->graphicResourceIds[57 + i], (uint32)_frameIndexesSparks[i], &puzzleWheelPoints[48 + i]);
 
 			if (_frameIndexesSparks[i] == (int32)GraphicResource::getFrameCount(_vm, getWorld()->graphicResourceIds[57 + i]) - 1)
 				_frameIndexesSparks[i] = -1;
@@ -250,9 +199,9 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 
 	// Lever
 	if (_resourceIndexLever == 13)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], puzzleWheelPoints[13]);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], &puzzleWheelPoints[13]);
 	else if (_resourceIndexLever == 54)
-		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], puzzleWheelPoints[47]);
+		getScreen()->draw(getWorld()->graphicResourceIds[_resourceIndexLever], (uint32)_frameIndexes[10], &puzzleWheelPoints[47]);
 
 	// Update lever frame index
 	if (_moveLever) {
@@ -276,7 +225,7 @@ bool PuzzleWheel::update(const AsylumEvent &)  {
 	}
 
 	// Wheel
-	getScreen()->draw(getWorld()->graphicResourceIds[30], _frameIndexWheel, puzzleWheelPoints[30]);
+	getScreen()->draw(getWorld()->graphicResourceIds[30], _frameIndexWheel, &puzzleWheelPoints[30]);
 
 	// Update wheel frame index
 	if (_showTurnedClock) {
@@ -366,7 +315,7 @@ void PuzzleWheel::updateCursor() {
 
 int32 PuzzleWheel::findRect() {
 	for (uint32 i = 0; i < ARRAYSIZE(puzzleWheelRects); i++) {
-		if (puzzleWheelRects[i].contains(getCursor()->position()))
+		if (_vm->rectContains(&puzzleWheelRects[i], getCursor()->position()))
 			return i;
 	}
 

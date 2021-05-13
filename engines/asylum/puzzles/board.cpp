@@ -177,8 +177,8 @@ int32 PuzzleBoard::findRect() {
 	Common::Point mousePos = getCursor()->position();
 
 	for (uint32 i = 0; i < _data.charMapSize; i++) {
-		if (mousePos.x >= _data.charMap[i].position.x && mousePos.x < _data.charMap[i].position.x + 12
-		 && mousePos.y >= _data.charMap[i].position.y && mousePos.y < _data.charMap[i].position.y + 18)
+		if (mousePos.x >= _data.charMap[i].posX && mousePos.x < _data.charMap[i].posX + 12
+		 && mousePos.y >= _data.charMap[i].posY && mousePos.y < _data.charMap[i].posY + 18)
 			if (!_charUsed[i])
 				return i;
 	}
