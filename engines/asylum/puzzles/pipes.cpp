@@ -223,13 +223,12 @@ void Connector::disconnect(Connector *connector) {
 //////////////////////////////////////////////////////////////////////////
 // Spider
 //////////////////////////////////////////////////////////////////////////
-Spider::Spider(const Common::Rect &rect, Common::String id) {
+Spider::Spider(AsylumEngine *engine, const Common::Rect &rect) : _vm(engine) {
 	_boundingBox = rect;
-	_rnd = new Common::RandomSource(Common::String("pipes_spider") + id);
 	_isAlive = true;
-	_location.x = (int16)_rnd->getRandomNumber((uint16)(_boundingBox.right - _boundingBox.left)) + _boundingBox.left;
-	_location.y = (int16)_rnd->getRandomNumber((uint16)(_boundingBox.bottom - _boundingBox.top)) + _boundingBox.top;
-	_direction = Direction((uint32)1 << _rnd->getRandomNumber(3));
+	_location.x = (int16)rnd((uint16)(_boundingBox.right - _boundingBox.left + 1)) + _boundingBox.left;
+	_location.y = (int16)rnd((uint16)(_boundingBox.bottom - _boundingBox.top + 1)) + _boundingBox.top;
+	_direction = Direction((uint32)1 << rnd(4));
 	_stepsNumber = 0;
 	_steps = 0;
 
@@ -237,16 +236,16 @@ Spider::Spider(const Common::Rect &rect, Common::String id) {
 }
 
 void Spider::randomize(Direction excluded) {
-	if (_rnd->getRandomNumber(5) == 5)
+	if (rnd(6) == 5)
 		_delta = Common::Point(0, 0);
 	else {
 		while (_direction == excluded)
-			_direction = Direction((uint32)1 << _rnd->getRandomNumber(3));
+			_direction = Direction((uint32)1 << rnd(4));
 
 		_delta = Common::Point((_direction & kBinNum0010 ? 1 : 0) - (_direction & kBinNum1000 ? 1 : 0), (_direction & kBinNum0100 ? 1 : 0) - (_direction & kBinNum0001 ? 1 : 0));
 	}
 
-	_stepsNumber = _rnd->getRandomNumber(maxStepsNumber - minStepsNumber) + minStepsNumber;
+	_stepsNumber = rnd(maxStepsNumber - minStepsNumber + 1) + minStepsNumber;
 	_steps = 0;
 }
 
@@ -522,13 +521,13 @@ void PuzzlePipes::setup() {
 	_connectors[13].initGroup();
 	_connectors[15].initGroup();
 
-	uint32 i = rnd(kBinNum0111);
+	uint32 i = rnd(kBinNum1000);
 	if (i & kBinNum0001)
-		_spiders.push_back(new Spider(Common::Rect(-10,  45,  92, 315), "1"));
+		_spiders.push_back(new Spider(_vm, Common::Rect(-10,  45,  92, 315)));
 	if (i & kBinNum0010)
-		_spiders.push_back(new Spider(Common::Rect(-10, 389, 149, 476), "2"));
+		_spiders.push_back(new Spider(_vm, Common::Rect(-10, 389, 149, 476)));
 	if (i & kBinNum0100)
-		_spiders.push_back(new Spider(Common::Rect(544, 225, 650, 490), "3"));
+		_spiders.push_back(new Spider(_vm, Common::Rect(544, 225, 650, 490)));
 
 	if (i) {
 		_frameIndexSpider = new uint32[_spiders.size()];

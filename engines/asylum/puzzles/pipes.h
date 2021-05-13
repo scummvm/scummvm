@@ -133,8 +133,8 @@ private:
 
 class Spider {
 public:
-	Spider(const Common::Rect &rect, Common::String id);
-	~Spider() { delete _rnd; }
+	Spider(AsylumEngine *engine, const Common::Rect &rect);
+	~Spider() {}
 
 	bool isAlive() const { return _isAlive; }
 	bool isActive() const { return _delta != Common::Point(0, 0); }
@@ -147,7 +147,7 @@ public:
 	void smash() { _isAlive = false; }
 private:
 	static const uint32 minStepsNumber = 20, maxStepsNumber = 200;
-	Common::RandomSource *_rnd;
+	AsylumEngine *_vm;
 	bool _isAlive;
 	Common::Point _location;
 	Common::Point _delta;
