@@ -31,7 +31,7 @@
 #include "common/singleton.h"
 #include "common/str.h"
 
-#include "metaengine.h"
+#include "engines/metaengine.h"
 
 namespace Common {
 

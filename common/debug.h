@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 
-#include "metaengine.h"
+#include "engines/metaengine.h"
 
 #ifdef DISABLE_TEXT_CONSOLE
 
