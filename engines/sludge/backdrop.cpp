@@ -115,36 +115,36 @@ void GraphicsManager::drawParallax() {
 	if (!_parallaxLayers || _parallaxLayers->empty())
 		return;
 
-		// TODO: simulate image repeating effect
-		warning("Drawing parallaxStuff");
+	// TODO: simulate image repeating effect
+	warning("Drawing parallaxStuff");
+	// display parallax from bottom to top
+	for (ParallaxLayers::iterator it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
+		(*it)->cameraX = sortOutPCamera(_cameraX, (*it)->fractionX, (int)(_sceneWidth - (float)_winWidth / _cameraZoom), (int)((*it)->surface.w - (float)_winWidth / _cameraZoom));
+		(*it)->cameraY = sortOutPCamera(_cameraY, (*it)->fractionY, (int)(_sceneHeight - (float)_winHeight / _cameraZoom), (int)((*it)->surface.h - (float)_winHeight / _cameraZoom));
+
+		uint w = ((*it)->wrapS) ? _sceneWidth : (*it)->surface.w;
+		uint h = ((*it)->wrapT) ? _sceneHeight : (*it)->surface.h;
+
+		warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d", (*it)->cameraX, (*it)->cameraY, w, h, _sceneWidth, _sceneHeight);
+
 #if 0
-		// display parallax from bottom to top
-		for (ParallaxLayers::iterator it it = _parallax.begin(); it != _parallax.end(); ++it) {
-			(*it)->cameraX = sortOutPCamera(cameraX, (*it)->fractionX, (int)(_sceneWidth - (float)winWidth / cameraZoom), (int)((*it)->surface.w - (float)winWidth / cameraZoom));
-			(*it)->cameraY = sortOutPCamera(cameraY, (*it)->fractionY, (int)(_sceneHeight - (float)winHeight / cameraZoom), (int)((*it)->surface.h - (float)winHeight / cameraZoom));
+		const GLfloat vertices[] = {
+			(GLfloat) - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
+			w - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
+			(GLfloat) - (*it)->cameraX, h - (*it)->cameraY, 0.1f,
+			w - (*it)->cameraX, h - (*it)->cameraY, 0.1f
+		};
 
-			uint w = ((*it)->wrapS) ? sceneWidth : (*it)->surface.w;
-			uint h = ((*it)->wrapT) ? sceneHeight : (*it)->surface.h;
-
-			warning("camX: %d camY: %d dims: %d x %d sceneDims: %d x %d", (*it)->cameraX, (*it)->cameraY, w, h, _sceneWidth, _sceneHeight);
-
-			const GLfloat vertices[] = {
-				(GLfloat) - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
-				w - (*it)->cameraX, (GLfloat) - (*it)->cameraY, 0.1f,
-				(GLfloat) - (*it)->cameraX, h - (*it)->cameraY, 0.1f,
-				w - (*it)->cameraX, h - (*it)->cameraY, 0.1f
-			};
-
-			const GLfloat texCoords[] = {
-				0.0f, 0.0f,
-				texw, 0.0f,
-				0.0f, texh,
-				texw, texh
-			};
+		const GLfloat texCoords[] = {
+			0.0f, 0.0f,
+			texw, 0.0f,
+			0.0f, texh,
+			texw, texh
+		};
 			drawQuad(shader.smartScaler, vertices, 1, texCoords);
-
-		}
 #endif
+
+	}
 }
 
 void GraphicsManager::saveParallax(Common::WriteStream *stream) {
