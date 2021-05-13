@@ -65,12 +65,12 @@ bool PuzzleBoard::init(const AsylumEvent &)  {
 	getText()->loadFont(getWorld()->graphicResourceIds[35]);
 
 	// Prepare text to draw
-	_text = "";
+	_text.clear();
 
 	for (uint32 i = 0; i < _data.soundResourceSize; i++) {
 		_data.soundResources[i].played = false;
 		_text += getText()->get(MAKE_RESOURCE(kResourcePackText, 1068 + _data.soundResources[i].index));
-		_text += " ";
+		_text += ' ';
 	}
 
 	updateScreen();
