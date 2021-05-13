@@ -817,6 +817,24 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
 }
 
+void ScummEngine::mac_restoreCharsetBg() {
+	_nextLeft = _string[0].xpos;
+	_nextTop = _string[0].ypos + _screenTop;
+
+	if (_charset->_hasMask) {
+		_charset->_hasMask = false;
+		_charset->_str.left = -1;
+		_charset->_left = -1;
+
+		_textSurface.fillRect(Common::Rect(_textSurface.w, _textSurface.h), 0);
+		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
+		if (!vs->h)
+			return;
+
+		markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
+	}
+}
+
 // CGA
 // indy3 loom maniac monkey1 zak
 //

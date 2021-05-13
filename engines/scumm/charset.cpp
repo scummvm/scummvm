@@ -1513,7 +1513,7 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 #endif
 
 CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile)
-	 : CharsetRenderer(vm) {
+	 : CharsetRendererCommon(vm) {
 
 	// As far as I can tell, Loom uses only font size 13 for in-game text.
 	// The font is also provided in sizes 9 and 12, and it's possible that
@@ -1582,24 +1582,73 @@ int CharsetRendererMac::evenUp(int x) {
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
-	_macFont.drawChar(&_vm->_textSurface, chr, _left, _top, _color);
-	int width = _macFont.getCharWidth(chr);	
-
 	// Mark the virtual screen as dirty, using downscaled coordinates.
 
 	VirtScreen *vs;
+	int top = evenDown(_top) / 2;
 
-	if ((vs = _vm->findVirtScreen(_top / 2)) != NULL) {
-		int vsLeft = evenDown(_left) / 2;
-		int vsRight = evenUp(_left + width) / 2;
-		int vsTop = evenDown(_top) / 2;
-		int vsBottom = evenUp(_top + _macFont.getFontHeight()) / 2;
+	if ((vs = _vm->findVirtScreen(top)) == NULL) {
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", top, chr);
+		return;
+	}
 
-		_vm->markRectAsDirty(vs->number, vsLeft, vsRight, vsTop - vs->topline, vsBottom - vs->topline);
+	if (chr == '@')
+		return;
+
+	if (_enableShadow) {
+		_macFont.drawChar(&_vm->_textSurface, chr, _left + 1, _top - 1, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, _left - 1, _top + 1, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, _left + 2, _top + 2, _shadowColor);
+	}
+	_macFont.drawChar(&_vm->_textSurface, chr, _left, _top, _color);
+	int width = _macFont.getCharWidth(chr);
+
+	int left = _left;
+	int right = _left + width;
+	int bottom = _top + _macFont.getFontHeight();
+
+	if (_enableShadow) {
+		left--;
+		right += 2;
+		top--;
+		bottom++;
+	}
+
+	int vsLeft = evenDown(left) / 2;
+	int vsRight = evenUp(right) / 2;
+	int vsTop = evenDown(top) / 2;
+	int vsBottom = evenUp(bottom) / 2;
+
+	if (_firstChar) {
+		_str.left = _left;
+		_str.top = _top;
+		_str.right = _right;
+		_str.bottom = _top;
+		_firstChar = false;
+	}
+
+	_vm->markRectAsDirty(vs->number, vsLeft, vsRight, vsTop - vs->topline, vsBottom - vs->topline);
+
+	if (!ignoreCharsetMask) {
+		_hasMask = true;
+		_textScreenID = vs->number;
 	}
 
 	// Adjust the position, using real screen coordinates
 	_left += width;
+}
+
+void CharsetRendererMac::setColor(byte color) {
+	_color = color;
+	_enableShadow = false;
+	_shadowColor = 0;
+
+	if (_vm->_game.id == GID_LOOM) {
+		_enableShadow = ((color & 0xF0) != 0);
+		// Anything outside the ordinary palette should be fine.
+		_shadowColor = 255;
+		_color &= 0x0F;
+	}
 }
 
 #ifdef ENABLE_SCUMM_7_8

@@ -275,7 +275,7 @@ public:
 	int getCharWidth(uint16 chr) override { return 8; }
 };
 
-class CharsetRendererMac : public CharsetRenderer {
+class CharsetRendererMac : public CharsetRendererCommon {
 protected:
 	Graphics::MacFONTFont _macFont;
 
@@ -288,6 +288,7 @@ public:
 	int getFontHeight() override;
 	int getCharWidth(uint16 chr) override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
+	void setColor(byte color) override;
 };
 
 #ifdef ENABLE_SCUMM_7_8
