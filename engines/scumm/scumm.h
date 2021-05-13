@@ -954,6 +954,7 @@ protected:
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom);
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
+	void mac_restoreCharsetBg();
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
 public:
