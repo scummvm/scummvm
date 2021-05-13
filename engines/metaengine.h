@@ -76,11 +76,11 @@ struct ExtraGuiOption {
 
 struct DebugChannelDef {
 	uint32 channel;
-	Common::String name;
-	Common::String description;
+	const char *name;
+	const char *description;
 };
 
-#define DEBUG_CHANNEL_DELIMITER {0, "", ""}
+#define DEBUG_CHANNEL_END {0, NULL, NULL}
 
 /**
  * Array of ExtraGuiOption structures.
