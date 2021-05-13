@@ -71,7 +71,7 @@
 
 namespace Modules {
 
-class ModXmS3mStream : public Audio::AudioStream {
+class ModXmS3mStream : public Audio::RewindableAudioStream {
 private:
 	struct Channel {
 		Instrument *instrument;
@@ -121,6 +121,7 @@ private:
 	int tick();
 	void updateRow();
 	int seek(int samplePos);
+	bool rewind() override { setSequencePos(0); return true; }
 
 	// Sample
 	void downsample(int *buf, int count);
@@ -1368,7 +1369,7 @@ void ModXmS3mStream::setSequencePos(int pos) {
 
 namespace Audio {
 
-AudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate, int interpolation) {
+RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse, int rate, int interpolation) {
 	Modules::ModXmS3mStream *soundStream = new Modules::ModXmS3mStream(stream, rate, interpolation);
 
 	if (disposeAfterUse == DisposeAfterUse::YES)

@@ -85,7 +85,7 @@ class AudioStream;
  * @param rate				sample rate
  * @param interpolation		interpolation effect level
  */
-AudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
+RewindableAudioStream *makeModXmS3mStream(Common::SeekableReadStream *stream,
 		DisposeAfterUse::Flag disposeAfterUse,
 		int rate = 48000, int interpolation = 0);
 
