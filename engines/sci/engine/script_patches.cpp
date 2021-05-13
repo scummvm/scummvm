@@ -19260,6 +19260,38 @@ static const uint16 sq4FloppyPatchSoftwareClerkMessage[] = {
 	PATCH_END
 };
 
+// Floppy versions have two easter eggs in the software store which can lockup
+//  the game if run at the same time. One is activated by smelling an area in
+//  the upper left of room 397 and the other by tasting the same area on the
+//  right side. Both eggs are room scripts and the latter can interrupt the
+//  former and prevent the player from regaining control.
+//
+// We fix this as Sierra did in the English Amiga version by switching the
+//  taste easter egg from a room script to an ego script.
+//
+// Applies to: English PC Floppy, German PC Floppy, Macintosh, PC-98
+// Responsible method: box:doVerb
+static const uint16 sq4FloppySignatureSoftwareStoreEasterEggs[] = {
+	0x35, SIG_MAGICDWORD, 0x0a,         // ldi 0a [ taste ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0018),           // bnt 0018
+	0x38, SIG_SELECTOR16(script),       // pushi script
+	0x76,                               // push0
+	0x81, 0x02,                         // lag 02  [ rm397 ]
+	0x4a, 0x04,                         // send 04 [ rm397 script? ]
+	SIG_ADDTOOFFSET(+12),
+	0x81, 0x02,                         // lag 02  [ rm397 ]
+	SIG_END
+};
+
+static const uint16 sq4FloppyPatchSoftwareStoreEasterEggs[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x81, 0x00,                         // lag 00 [ ego ]
+	PATCH_ADDTOOFFSET(+14),
+	0x81, 0x00,                         // lag 00 [ ego ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -19291,6 +19323,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   391, "CD: missing Audio for universal remote control", 1, sq4CdSignatureMissingAudioUniversalRemote,     sq4CdPatchMissingAudioUniversalRemote },
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   397, "Floppy: software clerk message fix",             1, sq4FloppySignatureSoftwareClerkMessage,        sq4FloppyPatchSoftwareClerkMessage },
+	{  true,   397, "Floppy: software store easter eggs fix",         1, sq4FloppySignatureSoftwareStoreEasterEggs,     sq4FloppyPatchSoftwareStoreEasterEggs },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
