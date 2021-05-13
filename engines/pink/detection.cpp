@@ -45,7 +45,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Pink::kPinkDebugLoadingObjects, "loading_objects", "Serializing objects from Orb"},
 	{Pink::kPinkDebugScripts, "scripts", "Sequences"},
 	{Pink::kPinkDebugActions, "actions", "Actions"},
-	DEBUG_CHANNEL_DELIMITER
+	DEBUG_CHANNEL_END
 };
 
 

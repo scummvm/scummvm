@@ -168,7 +168,7 @@ enum GlobalDebugLevels {
 
 static const DebugChannelDef globalDebugChannels[] = {
 	{kDebugGlobalTest, "test", "test global debug flag"},
-	{0, "delimiter", "delimiter"}
+	DEBUG_CHANNEL_END
 };
 
 /** @} */
