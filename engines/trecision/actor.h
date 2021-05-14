@@ -52,12 +52,12 @@ public:
 	uint32 _vertexNum;
 	uint32 _faceNum;
 	uint32 _lightNum;
-	int _matNum;
 
 	float _px, _pz;
 	float _dx, _dz;
 	float _theta;
-	int   _lim[6];
+
+	int _lim[6];
 
 	int _curFrame;
 	int _curAction;
