@@ -54,7 +54,7 @@ TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 TextManager::~TextManager() {
 }
 
-void TextManager::PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
+void TextManager::positionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
 	uint16 lenText = _vm->textLength(string);
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
@@ -74,16 +74,16 @@ void TextManager::PositionString(uint16 x, uint16 y, const char *string, uint16 
 		*posy = VIDEOTOP + 1;
 }
 
-void TextManager::FormattingSuperString() {
+void TextManager::formattingSuperString() {
 	_subStringUsed = 0;
 	_subStringAgain = true;
 	while (_subStringAgain) {
-		FormattingOneString();
+		formattingOneString();
 		_subStringUsed++;
 	}
 }
 
-void TextManager::FormattingOneString() {
+void TextManager::formattingOneString() {
 	uint16 i;
 	memset(_subString[_subStringUsed], '\0', MAXLENSUBSTRING);
 
@@ -109,7 +109,7 @@ void TextManager::FormattingOneString() {
 	_subStringAgain = false;
 }
 
-void TextManager::CharacterTalk(const char *s) {
+void TextManager::characterTalk(const char *s) {
 	_vm->_flagSomeoneSpeaks = true;
 	_vm->_flagCharacterSpeak = true;
 	_vm->_flagSkipTalk = false;
@@ -118,15 +118,15 @@ void TextManager::CharacterTalk(const char *s) {
 	_superStringLen = strlen(_superString);
 	_subStringStart = 0;
 	_curSubString = 0;
-	FormattingSuperString();
+	formattingSuperString();
 
-	CharacterContinueTalk();
+	characterContinueTalk();
 
 	_vm->_characterQueue.initQueue();
 	_vm->_actor->actorStop();
 }
 
-void TextManager::CharacterContinueTalk() {
+void TextManager::characterContinueTalk() {
 	uint16 posx, posy;
 	
 	_vm->_flagSkipTalk = false;
@@ -135,9 +135,9 @@ void TextManager::CharacterContinueTalk() {
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
 	if (_vm->_flagCharacterExists)
-		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
+		positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 	else
-		PositionString(MAXX / 2, 30, _subString[_curSubString], &posx, &posy, false);
+		positionString(MAXX / 2, 30, _subString[_curSubString], &posx, &posy, false);
 
 	clearLastText();
 	if (ConfMan.getBool("subtitles"))
@@ -159,7 +159,7 @@ void TextManager::CharacterContinueTalk() {
 	_vm->_scheduler->doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 
-void TextManager::CharacterMute() {
+void TextManager::characterMute() {
 	_vm->_flagSomeoneSpeaks = false;
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSkipTalk = false;
@@ -176,7 +176,7 @@ void TextManager::CharacterMute() {
 		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_oldRoom, 0, 0, _vm->_curObj);
 }
 
-void TextManager::SomeoneContinueTalk() {
+void TextManager::someoneContinueTalk() {
 	_someoneSpeakTime = _vm->_curTime;
 	_vm->_flagSkipTalk = false;
 
@@ -184,9 +184,9 @@ void TextManager::SomeoneContinueTalk() {
 
 	uint16 posx, posy;
 	if (_talkingPersonId)
-		PositionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], &posx, &posy, false);
+		positionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], &posx, &posy, false);
 	else
-		PositionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
+		positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
 
 	clearLastText();
 	if (ConfMan.getBool("subtitles"))
@@ -224,16 +224,16 @@ void TextManager::someoneMute() {
 void TextManager::doString() {
 	switch (_vm->_curMessage->_event) {
 	case ME_CHARACTERSPEAK:
-		CharacterSay(_vm->_curMessage->_u16Param1);
+		characterSay(_vm->_curMessage->_u16Param1);
 		break;
 
 	case ME_CHARACTERSPEAKING:
 		if (_vm->_flagCharacterSpeak) {
 			if (_vm->_flagSkipTalk || (_vm->_curTime > _talkTime + _vm->_characterSpeakTime)) {
 				if (_subStringAgain)
-					CharacterContinueTalk();
+					characterContinueTalk();
 				else
-					CharacterMute();
+					characterMute();
 			} else
 				_vm->reEvent();
 		}
@@ -241,7 +241,7 @@ void TextManager::doString() {
 
 	case ME_SOMEONEWAIT2SPEAK:
 		if (!_vm->_curMessage->_u16Param1)
-			SomeoneContinueTalk();
+			someoneContinueTalk();
 		else
 			_vm->reEvent();
 		break;
@@ -257,7 +257,7 @@ void TextManager::doString() {
 		if (_vm->_flagSomeoneSpeaks) {
 			if (_vm->_flagSkipTalk || (_vm->_curTime >= (_talkTime + _someoneSpeakTime))) {
 				if (_subStringAgain)
-					SomeoneContinueTalk();
+					someoneContinueTalk();
 				else {
 					if (_talkingPersonAnimId)
 						_vm->_scheduler->doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, _talkingPersonAnimId, true, 0, 0);
@@ -272,7 +272,7 @@ void TextManager::doString() {
 	}
 }
 
-void TextManager::ShowObjName(uint16 obj, bool show) {
+void TextManager::showObjName(uint16 obj, bool show) {
 	static const char *dunno = "?";
 
 	Common::String locsent;
@@ -346,7 +346,7 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 		uint16 posx = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
 		uint16 posy = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
 
-		PositionString(posx, posy, locsent.c_str(), &posx, &posy, false);
+		positionString(posx, posy, locsent.c_str(), &posx, &posy, false);
 		if (_vm->_lastObj)
 			clearLastText();
 		_vm->_lastObj = obj;
@@ -354,7 +354,7 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 	}
 }
 
-void TextManager::SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
+void TextManager::someoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
 	_talkingPersonAnimId = NewAnim;
 	_talkingPersonId = Person;
 	_vm->_flagSomeoneSpeaks = true;
@@ -366,24 +366,24 @@ void TextManager::SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
 	_subStringStart = 0;
 	_curSubString = 0;
 
-	FormattingSuperString();
+	formattingSuperString();
 
 	if (_talkingPersonAnimId)
 		_vm->_scheduler->doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, _talkingPersonAnimId, 0, 0, 0);
 	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 }
 
-void TextManager::CharacterSay(uint16 i) {
+void TextManager::characterSay(uint16 i) {
 	_curSentenceId = i;
 
 	//	if he took some action
 	if (_vm->_sentence[i][0] == '*' && !_vm->_animMgr->_playingAnims[kSmackerAction])
 		_vm->startCharacterAction(hBOH, 0, 0, 0);
 	else
-		CharacterTalk(_vm->_sentence[i]);
+		characterTalk(_vm->_sentence[i]);
 }
 
-void TextManager::CharacterSayInAction(uint16 ss) {
+void TextManager::characterSayInAction(uint16 ss) {
 	const char *s = _vm->_sentence[ss];
 
 	if (s[0] == '*')
@@ -398,9 +398,9 @@ void TextManager::CharacterSayInAction(uint16 ss) {
 	_superStringLen = strlen(_superString);
 	_subStringStart = 0;
 	_curSubString = 0;
-	FormattingSuperString();
+	formattingSuperString();
 
-	CharacterContinueTalk();
+	characterContinueTalk();
 }
 
 void TextManager::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
@@ -484,7 +484,7 @@ void TextManager::redrawString() {
 			_vm->_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
 		else {
 			_vm->checkMask(_vm->_mousePos);
-			ShowObjName(_vm->_curObj, true);
+			showObjName(_vm->_curObj, true);
 		}
 	}
 }

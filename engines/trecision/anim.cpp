@@ -45,7 +45,7 @@ AnimTypeManager::~AnimTypeManager() {
 
 }
 
-void AnimTypeManager::ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
+void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	switch (doit) {
 	case fCLROBJSTATUS:
 		_vm->setObjectVisible(obj, false);
@@ -169,18 +169,18 @@ void AnimTypeManager::ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	}
 }
 
-void AnimTypeManager::ProcessAtFrame(ATFHandle *h, int type, int atf) {
+void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 	static int dc = 0;
 
 	switch (type) {
 	case ATFTEXT:
-		_vm->_textMgr->CharacterSayInAction(h->_curAnim->_atFrame[atf]._index);
+		_vm->_textMgr->characterSayInAction(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFTEXTACT:
-		_vm->_textMgr->CharacterSayInAction(_vm->_obj[h->_object]._action);
+		_vm->_textMgr->characterSayInAction(_vm->_obj[h->_object]._action);
 		break;
 	case ATFTEXTEX:
-		_vm->_textMgr->CharacterSayInAction(_vm->_obj[h->_object]._examine);
+		_vm->_textMgr->characterSayInAction(_vm->_obj[h->_object]._examine);
 		break;
 	case ATFCLR:
 		_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, false);
@@ -201,7 +201,7 @@ void AnimTypeManager::ProcessAtFrame(ATFHandle *h, int type, int atf) {
 		_vm->addIcon(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFDO:
-		ExecuteAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
+		executeAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
 		break;
 	case ATFROOM:
 		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
@@ -261,13 +261,13 @@ void AnimTypeManager::ProcessAtFrame(ATFHandle *h, int type, int atf) {
 			if (_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
-			_vm->_textMgr->SomeoneSay(307 + dc, oDONNA1D, 0);
+			_vm->_textMgr->someoneSay(307 + dc, oDONNA1D, 0);
 			if (dc < 6)
 				dc++;
 			break;
 
 		case 2:
-			_vm->_textMgr->SomeoneSay(1788, ocNEGOZIANTE1A, 0);
+			_vm->_textMgr->someoneSay(1788, ocNEGOZIANTE1A, 0);
 			break;
 		default:
 			break;
@@ -325,7 +325,7 @@ void AnimTypeManager::end(int type) {
 			if (child == 0 || (child == 1 && !(flag & SMKANIM_OFF1))
 			|| (child == 2 && !(flag & SMKANIM_OFF2)) || (child == 3 && !(flag & SMKANIM_OFF3))
 			|| (child == 4 && !(flag & SMKANIM_OFF4)))
-				ProcessAtFrame(h, anim->_atFrame[a]._type, a);
+				processAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
 
@@ -354,7 +354,7 @@ void AnimTypeManager::handler(int type) {
 				(anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
 				(anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
 				(anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
-				ProcessAtFrame(h, anim->_atFrame[a]._type, a);
+				processAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
 

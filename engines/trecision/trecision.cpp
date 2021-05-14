@@ -1050,7 +1050,7 @@ void TrecisionEngine::startCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 	}
 
 	if (sent)
-		_textMgr->CharacterSayInAction(sent);
+		_textMgr->characterSayInAction(sent);
 	else
 		_textMgr->clearLastText();
 }

@@ -67,4 +67,3 @@ public:
 
 } // end of namespace
 #endif
-

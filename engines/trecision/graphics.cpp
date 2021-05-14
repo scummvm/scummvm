@@ -208,7 +208,7 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 			((((val1 & _bitMask[0]) * num + (val2 & _bitMask[0]) * (8 - num)) >> 3) & _bitMask[0]));
 }
 
-void GraphicsManager::NlDissolve(uint8 val) {
+void GraphicsManager::dissolve(uint8 val) {
 	uint16 CenterX = MAXX / 2;
 	uint16 CenterY = MAXY / 2;
 
@@ -285,7 +285,7 @@ void GraphicsManager::NlDissolve(uint8 val) {
 	clearScreen();
 }
 
-void GraphicsManager::DrawObj(SDObj d) {
+void GraphicsManager::drawObj(SDObj d) {
 	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
 		return;
 
@@ -334,7 +334,7 @@ void GraphicsManager::DrawObj(SDObj d) {
 	}
 }
 
-void GraphicsManager::EraseObj(SDObj d) {
+void GraphicsManager::eraseObj(SDObj d) {
 	_screenBuffer.fillRect(Common::Rect(d.l.left, d.l.top + TOP, d.l.right, d.l.bottom + TOP), 0);
 }
 
