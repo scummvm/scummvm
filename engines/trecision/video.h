@@ -77,7 +77,7 @@ private:
 	int _curCD;
 
 	void openSmk(int slot, Common::SeekableReadStream *stream);
-	void openSmkAnim(int slot, Common::String name);
+	void openSmkAnim(int slot, const Common::String &name);
 	void closeSmk(int slot);
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
@@ -100,7 +100,7 @@ public:
 	int16 smkCurFrame(int slot);
 	void smkStop(uint16 slot);
 
-	void playMovie(Common::String filename, int startFrame = 0, int endFrame = -1);
+	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1);
 	void startFullMotion(const char *name);
 	void stopFullMotion();
 

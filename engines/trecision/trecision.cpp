@@ -580,7 +580,7 @@ void TrecisionEngine::checkSystem() {
 	eventLoop();
 }
 
-byte *TrecisionEngine::readData(Common::String fileName) {
+byte *TrecisionEngine::readData(const Common::String &fileName) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
 	if (stream == nullptr)
 		error("readData(): File %s not found", fileName.c_str());
@@ -592,7 +592,7 @@ byte *TrecisionEngine::readData(Common::String fileName) {
 	return buf;
 }
 
-uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
+uint16 *TrecisionEngine::readData16(const Common::String &fileName, int &size) {
 	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
 	if (stream == nullptr)
 		error("readData16(): File %s not found", fileName.c_str());
@@ -606,7 +606,7 @@ uint16 *TrecisionEngine::readData16(Common::String fileName, int &size) {
 	return buf;
 }
 
-void TrecisionEngine::read3D(Common::String filename) {
+void TrecisionEngine::read3D(const Common::String &filename) {
 
 	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
@@ -762,7 +762,7 @@ insave:
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				LenText = textLength(saveNames[CurPos], 0);
+				LenText = textLength(saveNames[CurPos]);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 				SText.set(
@@ -831,7 +831,7 @@ insave:
 			saveNames[CurPos] += '_';	// add blinking cursor
 
 			posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-			LenText = textLength(saveNames[CurPos], 0);
+			LenText = textLength(saveNames[CurPos]);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
 			SText.set(
@@ -951,7 +951,7 @@ bool TrecisionEngine::dataLoad() {
 				_graphicsMgr->clearScreenBufferInventoryDescriptions();
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
-				uint16 lenText = textLength(saveNames[CurPos], 0);
+				uint16 lenText = textLength(saveNames[CurPos]);
 				if (posX - (lenText / 2) < 2)
 					posX = 2;
 				else

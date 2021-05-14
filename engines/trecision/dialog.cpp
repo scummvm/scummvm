@@ -42,10 +42,10 @@ DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {
 
 DialogManager::~DialogManager() {}
 
-void DialogManager::dialogPrint(int x, int y, int c, Common::String txt) {
+void DialogManager::dialogPrint(int x, int y, int c, const Common::String &txt) {
 	SDText curChoice;
 	curChoice.set(
-		Common::Rect(x, y, _vm->textLength(txt, 0) + x, y),
+		Common::Rect(x, y, _vm->textLength(txt) + x, y),
 		Common::Rect(0, 0, MAXX, MAXY),
 		c,
 		MASKCOL,
