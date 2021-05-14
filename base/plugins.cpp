@@ -640,6 +640,7 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 		if (!strcmp(plugin->getName(), (*pl)->getName())) {
 			// Found a duplicated module. Replace the old one.
 			found = true;
+			(*pl)->unloadPlugin();
 			delete *pl;
 			*pl = plugin;
 			debug(1, "Replaced the duplicated plugin: '%s'", plugin->getName());
