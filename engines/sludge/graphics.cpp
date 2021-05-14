@@ -77,7 +77,7 @@ void GraphicsManager::init() {
 	_zBuffer->sprites = nullptr;
 
 	// Colors
-	_currentBlankColour = _renderSurface.format.ARGBToColor(255, 0, 0, 0);
+	_currentBlankColour = _renderSurface.format.ARGBToColor(0, 0, 0, 0);
 	_currentBurnR = 0;
 	_currentBurnG = 0;
 	_currentBurnB = 0;
@@ -164,8 +164,7 @@ void GraphicsManager::display() {
 }
 
 void GraphicsManager::clear() {
-	_renderSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h),
-			_renderSurface.format.RGBToColor(0, 0, 0));
+	_renderSurface.fillRect(Common::Rect(0, 0, _backdropSurface.w, _backdropSurface.h), _renderSurface.format.ARGBToColor(0, 0, 0, 0));
 }
 
 void GraphicsManager::aimCamera(int cameraX, int cameraY) {
