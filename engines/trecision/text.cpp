@@ -55,7 +55,7 @@ TextManager::~TextManager() {
 }
 
 void TextManager::PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
-	uint16 lenText = _vm->textLength(string, 0);
+	uint16 lenText = _vm->textLength(string);
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
 	else if (lenText > 320)
@@ -312,7 +312,7 @@ void TextManager::ShowObjName(uint16 obj, bool show) {
 		}
 
 		_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = _vm->textLength(locsent, 0);
+		uint16 lenText = _vm->textLength(locsent);
 
 		uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
 		uint16 posy = MAXY - CARHEI;
@@ -430,7 +430,7 @@ void TextManager::clearLastText() {
 void TextManager::drawText(StackText text) {
 	_curString._rect.left = text.x;
 	_curString._rect.top = text.y;
-	_curString._rect.setWidth(g_vm->textLength(text.text, 0));
+	_curString._rect.setWidth(g_vm->textLength(text.text));
 	int16 w = _curString._rect.width();
 
 	if (text.y == MAXY - CARHEI && w > 600)

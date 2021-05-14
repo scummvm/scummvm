@@ -114,7 +114,7 @@ void SoundManager::stopSoundSystem() {
 	g_system->getMixer()->stopAll();
 }
 
-void SoundManager::loadAudioWav(int num, Common::String fileName) {
+void SoundManager::loadAudioWav(int num, const Common::String &fileName) {
 	assert(num != 0xFFFF);
 	Common::SeekableReadStream *stream = _vm->_dataFile.createReadStreamForMember(fileName);
 	byte *buf = new byte[stream->size()];
@@ -288,7 +288,7 @@ void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *li
 	g_system->getMixer()->playStream(type, &_soundHandle[_stepChannel], _sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
 
-int32 SoundManager::talkStart(Common::String name) {
+int32 SoundManager::talkStart(const Common::String &name) {
 	if (!_speechFile.isOpen())
 		return 0;
 

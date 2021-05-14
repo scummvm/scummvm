@@ -83,7 +83,7 @@ private:
 public:
 	void soundTimer();
 	void stopSoundSystem();
-	void loadAudioWav(int num, Common::String fileName);
+	void loadAudioWav(int num, const Common::String &fileName);
 	void play(int num);
 	void stop(int num);
 	void stopAll();
@@ -91,7 +91,7 @@ public:
 	void fadeIn(int num);
 	void waitEndFading();
 	void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
-	int32 talkStart(Common::String name);
+	int32 talkStart(const Common::String &name);
 	void talkStop();
 	void loadRoomSounds();
 

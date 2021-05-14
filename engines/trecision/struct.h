@@ -177,7 +177,7 @@ struct SDText {
 	Common::String text;
 
 	void set(SDText org);
-	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, Common::String pText);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
 
 	void DText(uint16 *frameBuffer = nullptr);
 	uint16 checkDText();

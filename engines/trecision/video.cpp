@@ -137,7 +137,7 @@ AnimManager::~AnimManager() {
 	}
 }
 
-void AnimManager::playMovie(Common::String filename, int startFrame, int endFrame) {
+void AnimManager::playMovie(const Common::String &filename, int startFrame, int endFrame) {
 	NightlongSmackerDecoder *smkDecoder = new NightlongSmackerDecoder;
 
 	if (!smkDecoder->loadFile(filename)) {
@@ -222,7 +222,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	_vm->_sdText.DText((uint16 *)surface->getPixels());
 }
 
-void AnimManager::openSmkAnim(int slot, Common::String name) {
+void AnimManager::openSmkAnim(int slot, const Common::String &name) {
 	//debug("Opening anim %s", name.c_str());
 	for (int i = 0; i < 3; i++) {
 		// Open the animation, or swap the 3 CDs to find it

@@ -142,9 +142,9 @@ public:
 	bool syncGameStream(Common::Serializer &ser);
 
 	// Data files
-	byte *readData(Common::String fileName);
-	uint16 *readData16(Common::String fileName, int &size);
-	void read3D(Common::String c);
+	byte *readData(const Common::String &fileName);
+	uint16 *readData16(const Common::String &fileName, int &size);
+	void read3D(const Common::String &c);
 
 	// Inventory
 	void refreshInventory(uint8 startIcon, uint8 startLine);
@@ -193,7 +193,7 @@ public:
 	// Utils
 	char *getNextSentence();
 	void setRoom(uint16 r, bool b);
-	uint16 textLength(Common::String text, uint16 num);
+	uint16 textLength(const Common::String &text, uint16 begin = 0, uint16 end = 0);
 	char getKey();
 	char waitKey();
 	void waitDelay(uint32 val);
