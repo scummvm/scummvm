@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-14 20:35+0000\n"
-"PO-Revision-Date: 2021-05-14 21:18+0000\n"
+"PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -4766,24 +4766,24 @@ msgstr "왼쪽 버튼으로 공격, 오른쪽 버튼으로 아이템 습득"
 
 #: engines/kyra/detection_tables.h:83
 msgid "Missing language specific game code and/or resources."
-msgstr ""
+msgstr "언어 고유의 게임 코드나 리소스가 없습니다."
 
 #: engines/kyra/detection_tables.h:84
 msgid ""
 "Missing language specific game code and/or resources for this fan "
 "translation."
-msgstr ""
+msgstr "이 비공식 번역에 언어 고유의 게임 코드나 리소스가 없습니다."
 
 #: engines/kyra/detection_tables.h:1402
 msgid "You added the game incorrectly. Please add the root folder of the game."
-msgstr ""
+msgstr "게임을 잘못 추가했습니다. 게임의 루트 폴더를 추가해 주십시오."
 
 #. I18N: The file in the game directory needs to be extracted
 #: engines/kyra/detection_tables.h:1418
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr ""
+msgstr "게임을 잘못 추가했습니다. GAME.DAT는 ISO 이미지로 여기서 게임 데이터 파일을 추출해야 합니다."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -4955,7 +4955,7 @@ msgid ""
 msgstr ""
 "%d개의 원본 게임 저장 파일을 성공적으로 ScummVM에 가져왔습니다. \n"
 "나중에 원본 게임 저장 파일을 수동으로 가져오려면 ScummVM \n"
-"디버그 콘솔을 열고 'import_savefile'명령을 사용해야합니다.\n"
+"디버그 콘솔을 열고 'import_savefile'명령을 사용해야 합니다.\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:280
@@ -5012,9 +5012,9 @@ msgstr ""
 "\n"
 "이 게임은 EOB II의 번역된(영어가 아닌) 버전으로 게임과 함께 제공된 \n"
 "특정 글꼴파일이 포함된 해당 언어의 문자를 사용합니다.\n"
-"따라서 영문판 또는 다른 EOB I 게임의 글꼴 파일을 사용할 순는 없습니다.\n"
+"따라서 영문판 또는 다른 EOB I 게임의 글꼴 파일을 사용할 수는 없습니다.\n"
 "\n"
-"게임은 실행 되지만, 특정 언어의 문자는 표지되지 않게 됩니다.\n"
+"게임은 실행되지만, 특정 언어의 문자는 표시되지 않게 됩니다.\n"
 "올바른 글꼴 파일을 EOB II 게임 데이터 디렉토리에 복사해주세요.\n"
 "\n"
 
@@ -5023,8 +5023,8 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리"
-"터를 사용하고 Wyrmkeep에서 시리얼 키를 구입해야합니다"
+"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리터를 사용하고 Wyrmkeep에서 시리얼 키를 "
+"구입해야 합니다"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
@@ -5195,8 +5195,7 @@ msgstr "게임 불러오기"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr ""
-"새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게됩니다."
+msgstr "새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5216,17 +5215,13 @@ msgstr "데모에서는 도서관을 벗어날 수 없습니다."
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr ""
-"Riven 실행파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 "
-"'rivendmo.exe'입니다. "
+msgstr "Riven 실행 파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 'rivendmo.exe'입니다. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr ""
-"'arcriven.z' 설치 파일도 사용가능합니다. 추가로 맥용 'Riven'실행 파일도 사용"
-"가능합니다."
+msgstr "'arcriven.z' 설치 파일도 사용 가능합니다. 추가로 맥용 'Riven' 실행 파일도 사용 가능합니다."
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
@@ -5315,7 +5310,7 @@ msgstr "PS2 버전은 아직 지원되지 않습니다"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
-msgstr "와이드스크린 개조"
+msgstr "와이드 스크린 개조"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
@@ -5535,7 +5530,7 @@ msgstr "제작 영상을 전체 화면으로 확장"
 
 #: engines/neverhood/detection.cpp:139
 msgid "Scale the making of videos, so that they use the whole screen"
-msgstr "제작 영상이 전체화면을 사용하도록 크기조절 합니다"
+msgstr "제작 영상이 전체 화면을 사용하도록 크기 조절합니다"
 
 #: engines/parallaction/saveload.cpp:130
 #, c-format
@@ -5705,7 +5700,7 @@ msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
 
 #: engines/sci/detection.cpp:186
 msgid "Use special cartoon scaler for drawing character sprites"
-msgstr "케릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
+msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
 
 #: engines/sci/detection.cpp:195
 msgid "Prefer digital sound effects"
@@ -5713,7 +5708,7 @@ msgstr "디지털 사운드 효과 선호"
 
 #: engines/sci/detection.cpp:196
 msgid "Prefer digital sound effects instead of synthesized ones"
-msgstr "신디사이져 대신 디지털 사운드 이펙트 선호"
+msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
 
 #: engines/sci/detection.cpp:215
 msgid "Use CD audio"
@@ -5755,7 +5750,7 @@ msgstr "비디오 업스케일"
 
 #: engines/sci/detection.cpp:260
 msgid "Upscale videos to double their size"
-msgstr "실제 사이즈의 두배 크기로 비디오를 업스케일합니다"
+msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일합니다"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
@@ -6050,7 +6045,7 @@ msgstr "이름을 입력해야 합니다"
 
 #: engines/scumm/dialogs.cpp:185
 msgid "The game was NOT saved (disk full?)"
-msgstr "게임이 저장되지 않았습니다 (디스크 부족?)"
+msgstr "게임이 저장되지 않았습니다 (디스크 공간 부족?)"
 
 #: engines/scumm/dialogs.cpp:186
 msgid "The game was NOT loaded"
@@ -6580,15 +6575,15 @@ msgstr "써커 펀치"
 
 #: engines/scumm/help.cpp:319
 msgid "These are for Indy on left."
-msgstr "인디가 왼쪽에 있을 기준입니다."
+msgstr "인디가 왼쪽에 있을 때 기준입니다."
 
 #: engines/scumm/help.cpp:320
 msgid "When Indy is on the right,"
-msgstr "인디가 오른 쪽에 있을 경우"
+msgstr "인디가 오른쪽에 있을 경우"
 
 #: engines/scumm/help.cpp:321
 msgid "7, 4, and 1 are switched with"
-msgstr "7, 4 그리고 1이"
+msgstr "7, 4, 1이"
 
 #: engines/scumm/help.cpp:322
 msgid "9, 6, and 3, respectively."
@@ -6656,7 +6651,7 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"불법복제를 막기 위해 Putt-Putt Saves the Zoo iOS 버전은 지원되지 않습니다.\n"
+"불법복제를 막기 위해 Putt-Putt Saves the Zoo iOS 라이트 버전은 지원되지 않습니다.\n"
 "풀 버전은 iTunes Store에서 구매 가능합니다."
 
 #: engines/scumm/metaengine.cpp:422
