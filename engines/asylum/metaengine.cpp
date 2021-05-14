@@ -37,25 +37,10 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
-	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual SaveStateList listSaves(const char *target) const override;
-	virtual int getMaximumSaveSlot() const override;
-	virtual void removeSaveState(const char *target, int slot) const override;
 };
 
-bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsLoadingDuringStartup) ||
-		(f == kSupportsDeleteSave);
-}
-
 bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
-	return
-		(f == kSupportsReturnToLauncher) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+	return (f == kSupportsReturnToLauncher);
 }
 
 Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -64,19 +49,6 @@ Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	}
 	return desc ? Common::kNoError : Common::kUnsupportedGameidError;
 }
-
-SaveStateList AsylumMetaEngine::listSaves(const char * /*target*/) const {
-	error("[AsylumMetaEngine::listSaves] Not implemented");
-}
-
-int AsylumMetaEngine::getMaximumSaveSlot() const {
-	error("[AsylumMetaEngine::getMaximumSaveSlot] Not implemented");
-}
-
-void AsylumMetaEngine::removeSaveState(const char * /*target*/, int /*slot*/) const {
-	error("[AsylumMetaEngine::removeSaveState] Not implemented");
-}
-
 
 #if PLUGIN_ENABLED_DYNAMIC(ASYLUM)
 	REGISTER_PLUGIN_DYNAMIC(ASYLUM, PLUGIN_TYPE_ENGINE, AsylumMetaEngine);
