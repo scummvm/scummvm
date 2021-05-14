@@ -42,8 +42,7 @@ enum GfxScreenUpscaledMode {
 	GFX_SCREEN_UPSCALED_DISABLED	= 0,
 	GFX_SCREEN_UPSCALED_480x300     = 1,
 	GFX_SCREEN_UPSCALED_640x400		= 2,
-	GFX_SCREEN_UPSCALED_640x440		= 3,
-	GFX_SCREEN_UPSCALED_640x480		= 4
+	GFX_SCREEN_UPSCALED_640x440		= 3
 };
 
 enum GfxScreenMasks {
@@ -186,7 +185,7 @@ private:
 	int16 _ditheredPicColors[DITHERED_BG_COLORS_SIZE];
 
 	// These screens have the real resolution of the game engine (320x200 for
-	// SCI0/SCI1/SCI11 games, 640x480 for SCI2 games). SCI0 games will be
+	// SCI0/SCI1/SCI11 PC games, other resolutions on Mac). SCI0 games will be
 	// dithered in here at any time.
 	byte *_visualScreen;
 	byte *_priorityScreen;
@@ -267,7 +266,6 @@ public:
 
 			case GFX_SCREEN_UPSCALED_640x400:
 			case GFX_SCREEN_UPSCALED_640x440:
-			case GFX_SCREEN_UPSCALED_640x480:
 				putScaledPixelOnDisplay(x, y, color);
 				break;
 			default:
@@ -313,7 +311,6 @@ public:
 		switch (_upscaledHires) {
 		case GFX_SCREEN_UPSCALED_640x400:
 		case GFX_SCREEN_UPSCALED_640x440:
-		case GFX_SCREEN_UPSCALED_640x480:
 			// For regular upscaled modes forward to the regular putPixel
 			putPixel(x, y, drawMask, color, priority, control);
 			return;
@@ -377,18 +374,6 @@ public:
 			}
 			break;
 		}
-		case GFX_SCREEN_UPSCALED_640x480: {
-			int16 startY = (y * 12) / 5;
-			int16 endY = ((y + 1) * 12) / 5;
-			displayOffset = (startY * _displayWidth) + x * 2;
-
-			for (int16 curY = startY; curY < endY; curY++) {
-				_displayScreen[displayOffset] = color;
-				_displayScreen[displayOffset + 1] = color;
-				displayOffset += _displayWidth;
-			}
-			break;
-		}
 		default:
 			break;
 		}
@@ -418,8 +403,7 @@ public:
 				_displayScreen[offset] = color;
 				break;
 			case GFX_SCREEN_UPSCALED_640x400:
-			case GFX_SCREEN_UPSCALED_640x440:
-			case GFX_SCREEN_UPSCALED_640x480: {
+			case GFX_SCREEN_UPSCALED_640x440: {
 				// to 1-> 4 pixels upscaling for all of those, so that fonts won't look weird
 				int displayOffset = (_upscaledHeightMapping[startingY] + y * 2) * _displayWidth + x * 2;
 				_displayScreen[displayOffset] = color;
