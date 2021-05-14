@@ -812,7 +812,8 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 
 	_screen.clear(_wm->_colorGreen);
 
-	drawFilledRoundRect(&_screen, r, kDesktopArc, _wm->_colorWhite);
+	drawFilledRoundRect(&_screen, r, (_wm->_mode & kWMModeWin95) ? 0 : kDesktopArc, _wm->_colorWhite);
+
 	r.top = 7;
 	_screen.fillRect(r, _wm->_colorWhite);
 	r.top = kMenuHeight - 1;
