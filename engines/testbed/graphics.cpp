@@ -35,8 +35,6 @@
 #include "graphics/surface.h"
 #include "graphics/VectorRendererSpec.h"
 
-#include "backends/graphics/null/null-graphics.h"
-
 namespace Testbed {
 
 byte GFXTestSuite::_palette[256 * 3] = {0, 0, 0, 255, 255, 255, 255, 255, 255};
@@ -1231,7 +1229,6 @@ TestExitStatus GFXtests::cursorTrails() {
 	return passed;
 }
 
-
 TestExitStatus GFXtests::pixelFormatsSupported() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing pixel formats. Here we iterate over all the supported pixel formats and display some colors using them\n"
@@ -1255,7 +1252,15 @@ TestExitStatus GFXtests::pixelFormatsRequired() {
 		return kTestSkipped;
 	}
 
-	return GFXtests::pixelFormats(NullGraphicsManager().getSupportedFormats());
+	Common::List<Graphics::PixelFormat> list;
+	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0)); // BBDoU, Frotz, HDB, Hopkins, Nuvie, Petka, Riven, Sherlock (3DO), Titanic, Tony, Ultima 4, Ultima 8, ZVision
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0)); // Full Pipe, Gnap (little endian), Griffon, Groovie 2, SCI32 (HQ videos), Sludge, Sword25, Ultima 8, Wintermute
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24)); // Gnap (big endian)
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0)); // SCUMM HE99+, Last Express
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15)); // Dragons
+	// list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return GFXtests::pixelFormats(list);
 }
 
 TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> &pfList) {
@@ -1272,8 +1277,8 @@ TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> 
 		if (iter->bytesPerPixel == 1) {
 			// Palettes already tested
 			continue;
-		} else if (iter->bytesPerPixel == 3) {
-			Testsuite::logDetailedPrintf("Can't test pixels with bpp == 3\n");
+		} else if (iter->bytesPerPixel != 2 && iter->bytesPerPixel != 4) {
+			Testsuite::logDetailedPrintf("bytesPerPixel must be 1, 2, or 4\n");
 			continue;
 		}
 
