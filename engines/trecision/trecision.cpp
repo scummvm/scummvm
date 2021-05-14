@@ -173,7 +173,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	for (int i = 0; i < MAXDTEXTLINES; ++i) {
 		for (int j = 0; j < MAXDTEXTCHARS; ++j)
-			DTextLines[i][j] = '\0';
+			_drawTextLines[i][j] = '\0';
 	}
 }
 
@@ -239,9 +239,9 @@ Common::Error TrecisionEngine::run() {
 	while (!shouldQuit()) {
 		eventLoop();
 		if (!_flagNoPaintScreen)
-			ProcessTime();
+			processTime();
 
-		ProcessMouse();
+		processMouse();
 		_scheduler->process();
 
 		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
@@ -249,7 +249,7 @@ Common::Error TrecisionEngine::run() {
 
 		_animTypeMgr->handler(kAnimTypeBackground);
 
-		ProcessTheMessage();
+		processCurrentMessage();
 
 		if (_flagscriptactive)
 			evalScript();
@@ -423,14 +423,14 @@ void TrecisionEngine::initMain() {
 	openDataFiles();
 	openSys();
 
-	LoadAll();
+	loadAll();
 
 	initMessageSystem();
 	_logicMgr->initInventory();
 
 	_curRoom = kRoomIntro;
 
-	ProcessTime();
+	processTime();
 
 	_scheduler->doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
 }
@@ -477,10 +477,10 @@ void TrecisionEngine::initMessageSystem() {
 	}
 }
 
-void TrecisionEngine::LoadAll() {
+void TrecisionEngine::loadAll() {
 	Common::File dataNl;
 	if (!dataNl.open("DATA.NL"))
-		error("LoadAll : Couldn't open DATA.NL");
+		error("loadAll : Couldn't open DATA.NL");
 
 	for (int i = 0; i < MAXROOMS; ++i) {
 		dataNl.read(&_room[i]._baseName, ARRAYSIZE(_room[i]._baseName));
@@ -1031,7 +1031,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	}
 }
 
-void TrecisionEngine::StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
+void TrecisionEngine::startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
 	_characterQueue.initQueue();
 
 	_flagInventoryLocked = false;
@@ -1095,6 +1095,186 @@ void TrecisionEngine::setObjectAnim(uint16 objectId, uint16 animId) {
 
 void TrecisionEngine::reEvent() {
 	_scheduler->doEvent(_curMessage->_class, _curMessage->_event, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
+}
+
+void TrecisionEngine::ReadLoc() {
+	if (g_vm->_curRoom == kRoom11 && !(g_vm->_room[kRoom11]._flag & kObjFlagDone))
+		g_vm->_flagShowCharacter = true;
+
+	g_vm->_soundMgr->fadeOut();
+
+	g_vm->_graphicsMgr->clearScreenBufferTop();
+
+	Common::String filename = Common::String::format("%s.cr", g_vm->_room[g_vm->_curRoom]._baseName);
+	Common::SeekableReadStream *picFile = g_vm->_dataFile.createReadStreamForCompressedMember(filename);
+
+	SObject bgInfo;
+	bgInfo.readRect(picFile);
+
+	g_vm->_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
+	g_vm->_sortTable.clear();
+	readObj(picFile);
+
+	g_vm->_soundMgr->stopAll();
+
+	if (g_vm->_room[g_vm->_curRoom]._sounds[0] != 0)
+		g_vm->_soundMgr->loadRoomSounds();
+
+	Common::String fname = Common::String::format("%s.3d", g_vm->_room[g_vm->_curRoom]._baseName);
+	g_vm->read3D(fname);
+
+	g_vm->_graphicsMgr->resetScreenBuffer();
+
+	if (g_vm->_room[g_vm->_curRoom]._bkgAnim) {
+		g_vm->_animMgr->startSmkAnim(g_vm->_room[g_vm->_curRoom]._bkgAnim);
+	} else
+		g_vm->_animMgr->smkStop(kSmackerBackground);
+
+	g_vm->_animTypeMgr->init(g_vm->_room[g_vm->_curRoom]._bkgAnim, 0);
+}
+
+void TrecisionEngine::TendIn() {
+	_textStatus = TEXT_OFF;
+
+	if (g_vm->_curRoom == kRoomIntro) {
+		g_vm->_dialogMgr->playDialog(dFLOG);
+		return;
+	}
+
+	g_vm->_flagPaintCharacter = true;
+	g_vm->_soundMgr->waitEndFading();
+	g_vm->_renderer->paintScreen(true);
+
+	g_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
+}
+
+void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
+	SObject *obj = &g_vm->_obj[objectId];
+
+	if (obj->_mode & OBJMODE_FULL) {
+		obj->readRect(stream);
+
+		uint32 size = obj->_rect.width() * obj->_rect.height();
+		delete[] g_vm->_objPointers[objIndex];
+		g_vm->_objPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			g_vm->_objPointers[objIndex][i] = stream->readUint16LE();
+
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->_objPointers[objIndex], size);
+	}
+
+	if (obj->_mode & OBJMODE_MASK) {
+		obj->readRect(stream);
+
+		uint32 size = stream->readUint32LE();
+		delete[] g_vm->_objPointers[objIndex];
+		g_vm->_objPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			g_vm->_objPointers[objIndex][i] = stream->readUint16LE();
+
+		g_vm->_graphicsMgr->updatePixelFormat(g_vm->_objPointers[objIndex], size);
+
+		size = stream->readUint32LE();
+		delete[] g_vm->_maskPointers[objIndex];
+		g_vm->_maskPointers[objIndex] = new uint8[size];
+		for (uint32 i = 0; i < size; ++i)
+			g_vm->_maskPointers[objIndex][i] = (uint8)stream->readByte();
+	}
+
+	if (obj->_mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+		SSortTable entry;
+		entry._objectId = objectId;
+		entry._remove = !g_vm->isObjectVisible(objectId);
+		g_vm->_sortTable.push_back(entry);
+	}
+}
+
+void TrecisionEngine::readObj(Common::SeekableReadStream *stream) {
+	if (!g_vm->_room[g_vm->_curRoom]._object[0])
+		return;
+
+	for (uint16 objIndex = 0; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		if (g_vm->_curRoom == kRoom41D && objIndex == PATCHOBJ_ROOM41D)
+			break;
+
+		if (g_vm->_curRoom == kRoom2C && objIndex == PATCHOBJ_ROOM2C)
+			break;
+
+		readObject(stream, objIndex, objectId);
+	}
+}
+
+void TrecisionEngine::readExtraObj2C() {
+	if (!g_vm->_room[g_vm->_curRoom]._object[32])
+		return;
+
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("2c2.bm");
+
+	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		readObject(ff, objIndex, objectId);
+	}
+
+	delete ff;
+}
+
+void TrecisionEngine::readExtraObj41D() {
+	if (!g_vm->_room[g_vm->_curRoom]._object[32])
+		return;
+
+	Common::SeekableReadStream *ff = g_vm->_dataFile.createReadStreamForMember("41d2.bm");
+	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = g_vm->_room[g_vm->_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		readObject(ff, objIndex, objectId);
+	}
+	delete ff;
+}
+
+void TrecisionEngine::RedrawRoom() {
+	const uint16 curDialog = g_vm->_dialogMgr->_curDialog;
+	const uint16 curChoice = g_vm->_dialogMgr->_curChoice;
+	const uint16 bgAnim = g_vm->_room[g_vm->_curRoom]._bkgAnim;
+	const ElevatorAction elevatorActions[6] = {
+		{dASCENSORE12, 3, a129PARLACOMPUTERESCENDE, kRoom13},
+		{dASCENSORE12, 4, a129PARLACOMPUTERESCENDE, kRoom16},
+		{dASCENSORE13, 17, a139CHIUDONOPORTESU, kRoom12},
+		{dASCENSORE13, 18, a1316CHIUDONOPORTEGIU, kRoom16},
+		{dASCENSORE16, 32, a1616SALECONASCENSORE, kRoom12},
+		{dASCENSORE16, 33, a1616SALECONASCENSORE, kRoom13},
+	};
+
+	g_vm->_flagShowCharacter = g_vm->_dialogMgr->showCharacterAfterDialog();
+
+	for (int i = 0; i < 6; ++i) {
+		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
+			g_vm->startCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
+			break;
+		}
+	}
+
+	g_vm->_sortTable.clear();
+	g_vm->_graphicsMgr->resetScreenBuffer();
+
+	if (bgAnim)
+		g_vm->_animMgr->startSmkAnim(bgAnim);
+
+	if (g_vm->_curRoom == kRoom4P && curDialog == dF4PI)
+		g_vm->_animMgr->smkGoto(kSmackerBackground, 21);
+
+	_textStatus = TEXT_OFF;
+	g_vm->_flagPaintCharacter = true;
+	g_vm->_renderer->paintScreen(true);
+	g_vm->_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 
 } // End of namespace Trecision

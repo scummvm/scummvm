@@ -248,7 +248,7 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 	return PI2 - (float)acos(cosinus);
 }
 
-void TrecisionEngine::ProcessTime() {
+void TrecisionEngine::processTime() {
 	static uint8 OldRegInvSI = 0xFF;
 	static uint8 OldRegInvSL = 0xFF;
 	static uint8 OldLightIcon = 0xFF;
@@ -280,7 +280,7 @@ void TrecisionEngine::ProcessTime() {
 	}
 }
 
-void TrecisionEngine::ProcessMouse() {
+void TrecisionEngine::processMouse() {
 	static bool MaskMouse;
 	static Common::Point oldMousePos;
 	static bool lastMouseOn = true;
@@ -386,7 +386,7 @@ uint16 SDText::checkDText() {
 
 	uint8 curLine = 0;
 	if (g_vm->textLength(text) <= _rect.width()) {
-		strcpy((char *)g_vm->DTextLines[curLine], text.c_str());
+		strcpy((char *)g_vm->_drawTextLines[curLine], text.c_str());
 		return CARHEI;
 	}
 
@@ -403,9 +403,9 @@ uint16 SDText::checkDText() {
 			else if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					g_vm->DTextLines[curLine][b - curInit] = text[b];
+					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
 
-				g_vm->DTextLines[curLine][b - curInit] = '\0';
+				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
 				curLine++;
 
 				curInit = lastSpace + 1;
@@ -418,8 +418,8 @@ uint16 SDText::checkDText() {
 			if (g_vm->textLength(text, curInit, a) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
-					g_vm->DTextLines[curLine][b - curInit] = text[b];
-				g_vm->DTextLines[curLine][b - curInit] = '\0';
+					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
+				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
 
 				tmpDy += CARHEI;
 
@@ -429,9 +429,9 @@ uint16 SDText::checkDText() {
 			if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					g_vm->DTextLines[curLine][b - curInit] = text[b];
+					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
 
-				g_vm->DTextLines[curLine][b - curInit] = '\0';
+				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
 				curLine++;
 
 				curInit = lastSpace + 1;
@@ -439,9 +439,9 @@ uint16 SDText::checkDText() {
 
 				if (curInit < text.size()) {
 					for (b = curInit; b < text.size(); b++)
-						g_vm->DTextLines[curLine][b - curInit] = text[b];
+						g_vm->_drawTextLines[curLine][b - curInit] = text[b];
 
-					g_vm->DTextLines[curLine][b - curInit] = '\0';
+					g_vm->_drawTextLines[curLine][b - curInit] = '\0';
 
 					tmpDy += CARHEI;
 				}
@@ -467,7 +467,7 @@ void SDText::DText(uint16 *frameBuffer) {
 	uint16 curDy = checkDText();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
-		char *curText = (char *)g_vm->DTextLines[b];
+		char *curText = (char *)g_vm->_drawTextLines[b];
 		uint16 inc = (_rect.width() - g_vm->textLength(curText)) / 2;
 		uint16 len = strlen(curText);
 

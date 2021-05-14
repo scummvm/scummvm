@@ -872,7 +872,7 @@ void Renderer3D::paintScreen(bool flag) {
 	}
 
 	// If there's text to remove
-	if (TextStatus & TEXT_DEL) {
+	if (_vm->_textStatus & TEXT_DEL) {
 		// remove text
 		DObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
 		DObj.l = _vm->_textMgr->getOldTextRect();
@@ -888,8 +888,8 @@ void Renderer3D::paintScreen(bool flag) {
 		_vm->_textMgr->clearOldText();
 		_vm->addDirtyRect(DObj.l);
 
-		if (!(TextStatus & TEXT_DRAW)) // if there's no new text
-			TextStatus = TEXT_OFF;     // stop updating text
+		if (!(_vm->_textStatus & TEXT_DRAW)) // if there's no new text
+			_vm->_textStatus = TEXT_OFF;     // stop updating text
 	}
 
 	// Suppress all the objects you removed
@@ -917,9 +917,9 @@ void Renderer3D::paintScreen(bool flag) {
 		paintObjAnm(curBox);
 	}
 
-	if (TextStatus & TEXT_DRAW) {
+	if (_vm->_textStatus & TEXT_DRAW) {
 		_vm->_textMgr->drawCurString();
-		TextStatus = TEXT_DRAW; // Activate text update
+		_vm->_textStatus = TEXT_DRAW; // Activate text update
 	}
 
 	_vm->_soundMgr->SoundPasso((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame, _vm->_room[_vm->_curRoom]._sounds);

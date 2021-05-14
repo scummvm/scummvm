@@ -284,7 +284,7 @@ void DialogManager::afterChoice() {
 			if (_curChoice == 152)
 				_vm->setObjectVisible(ocGUARD18, false);
 			else if (_curChoice == 155)
-				_vm->StartCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
+				_vm->startCharacterAction(a184ENTRACLUB, kRoom19, 2, 0);
 			break;
 
 		case dEVA19:
@@ -359,7 +359,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF321:
-			_vm->StartCharacterAction(a3111TRASCINA, 0, 11, 0);
+			_vm->startCharacterAction(a3111TRASCINA, 0, 11, 0);
 			break;
 
 		case dF331:
@@ -390,7 +390,7 @@ void DialogManager::afterChoice() {
 
 		case dF431:
 			_vm->_flagShowCharacter = true;
-			_vm->StartCharacterAction(aWALKIN, 0, 11, 0);
+			_vm->startCharacterAction(aWALKIN, 0, 11, 0);
 			break;
 
 		case dF451:
@@ -442,7 +442,7 @@ void DialogManager::afterChoice() {
 			_vm->addIcon(kItemPrisonMap);
 			_vm->addIcon(kItemParallelCutter);
 			_vm->addIcon(kItemWristComm);
-			_vm->StartCharacterAction(a511, 0, 1, 0);
+			_vm->startCharacterAction(a511, 0, 1, 0);
 			break;
 
 		case dF4P1:
@@ -576,10 +576,10 @@ void DialogManager::dialogHandler(int numFrame) {
 		_vm->_graphicsMgr->hideCursor();
 		if (numFrame == _subTitles[_curSubTitle]._startFrame) {
 			int i = _curSubTitle++;
-			_vm->_sdText._rect.left = _subTitles[i]._x;
-			_vm->_sdText._rect.top = _subTitles[i]._y;
-			_vm->_sdText.tcol = _subTitles[i]._color;
-			_vm->_sdText.text = _vm->_sentence[_subTitles[i]._sentence];
+			_vm->_drawText._rect.left = _subTitles[i]._x;
+			_vm->_drawText._rect.top = _subTitles[i]._y;
+			_vm->_drawText.tcol = _subTitles[i]._color;
+			_vm->_drawText.text = _vm->_sentence[_subTitles[i]._sentence];
 		}
 	}
 }

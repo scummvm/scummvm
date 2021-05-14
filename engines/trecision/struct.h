@@ -20,12 +20,8 @@
  *
  */
 
-/* -----------------08/07/97 21.43-------------------
-			Structures definitions
- --------------------------------------------------*/
-
-#ifndef TRECISION_NL_STRUCT_H
-#define TRECISION_NL_STRUCT_H
+#ifndef TRECISION_STRUCT_H
+#define TRECISION_STRUCT_H
 
 #include "common/rect.h"
 #include "common/scummsys.h"

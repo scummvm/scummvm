@@ -150,7 +150,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 	bool skipVideo = false;
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
-	_vm->_sdText.text.clear();
+	_vm->_drawText.text.clear();
 
 	smkDecoder->start();
 	//debug("playMovie %s, %d - %d", filename.c_str(), startFrame, endFrame);
@@ -210,16 +210,16 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 		return;
 
 	_vm->_dialogMgr->dialogHandler(frameNum);
-	if (_vm->_sdText.text.empty())
+	if (_vm->_drawText.text.empty())
 		return;
 
 	// Subtitles can be placed in different coordinates in the video,
 	// which are set inside dialogHandler(), but are then reset to
 	// fixed coordinates
-	_vm->_sdText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_sdText.checkDText() + (380 - TOP));
-	_vm->_sdText._subtitleRect = Common::Rect(MAXX, MAXY);
-	_vm->_sdText.scol = MASKCOL;
-	_vm->_sdText.DText((uint16 *)surface->getPixels());
+	_vm->_drawText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_drawText.checkDText() + (380 - TOP));
+	_vm->_drawText._subtitleRect = Common::Rect(MAXX, MAXY);
+	_vm->_drawText.scol = MASKCOL;
+	_vm->_drawText.DText((uint16 *)surface->getPixels());
 }
 
 void AnimManager::openSmkAnim(int slot, const Common::String &name) {
@@ -363,7 +363,7 @@ void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
 	_vm->_flagShowCharacter = false;
-	TextStatus = TEXT_OFF;
+	_vm->_textStatus = TEXT_OFF;
 	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 	_vm->_graphicsMgr->copyToScreen(0, AREA + TOP, MAXX, TOP);
 
@@ -394,7 +394,7 @@ void AnimManager::stopFullMotion() {
 		    ((curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			_vm->_flagShowCharacter = false;
 		else
-			RedrawRoom();
+			_vm->RedrawRoom();
 
 		if (curDialog == dF582)
 			_vm->_soundMgr->fadeOut();
