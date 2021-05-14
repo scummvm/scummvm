@@ -65,7 +65,7 @@ public:
 	void actorDoAction(int action);
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
-	float FRAMECENTER(SVertex *v);
+	float frameCenter(SVertex *v);
 
 }; // end of class
 

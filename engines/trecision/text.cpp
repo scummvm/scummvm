@@ -430,7 +430,7 @@ void TextManager::clearLastText() {
 void TextManager::drawText(StackText text) {
 	_curString._rect.left = text.x;
 	_curString._rect.top = text.y;
-	_curString._rect.setWidth(g_vm->textLength(text.text));
+	_curString._rect.setWidth(_vm->textLength(text.text));
 	int16 w = _curString._rect.width();
 
 	if (text.y == MAXY - CARHEI && w > 600)

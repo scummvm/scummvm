@@ -431,7 +431,7 @@ void AnimManager::refreshSmkAnim(uint16 animation) {
 
 	for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
-			g_vm->addDirtyRect(_animTab[animation]._lim[a]);
+			_vm->addDirtyRect(_animTab[animation]._lim[a]);
 			Common::Rect l = _animTab[animation]._lim[a];
 		}
 	}
