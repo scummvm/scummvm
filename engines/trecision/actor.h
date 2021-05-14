@@ -32,16 +32,18 @@ class Actor {
 private:
 	TrecisionEngine *_vm;
 
+	STexture _textureArea[MAXMAT];
+
 public:
 	Actor(TrecisionEngine *vm);
 	~Actor();
 
 	SVertex *_characterArea;
-
 	SVertex  *_vertex;
-	SFace    *_face;
+
+	SFace *_face;
 	SLight   *_light;
-	SCamera  *_camera;
+	SCamera *_camera;
 	STexture *_texture;
 
 	uint16 _textureMat[256][91];
@@ -66,6 +68,7 @@ public:
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
 	float frameCenter(SVertex *v);
+	void initTextures();
 
 }; // end of class
 

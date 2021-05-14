@@ -75,6 +75,34 @@ Actor::~Actor() {
 //	delete _texture;
 }
 
+void Actor::initTextures() {
+	// head
+	uint8 idx = 0;
+	_textureArea[idx]._dx = 300 / 2;
+	_textureArea[idx]._dy = 208 / 2;
+	_textureArea[idx]._angle = 0;
+	_textureArea[idx]._texture = _vm->_textureArea;
+	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	// body
+	idx = 1;
+	_textureArea[idx]._dx = 300;
+	_textureArea[idx]._dy = 300;
+	_textureArea[idx]._angle = 0;
+	_textureArea[idx]._texture = _textureArea[0]._texture + (300 * 208) / 4;
+	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	// arms
+	idx = 2;
+	_textureArea[idx]._dx = 300;
+	_textureArea[idx]._dy = 150;
+	_textureArea[idx]._angle = 0;
+	_textureArea[idx]._texture = _textureArea[1]._texture + 300 * 300;
+	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+
+	_texture = (STexture *)&_textureArea[0];
+}
+
 static const float _vertsCorr[104][3] = {
 	0.000000f, 0.000000f, 0.000000f, 0.000000f, 0.000000f, 0.000000f,
 	0.000000f, 0.000000f, 0.000000f, 0.000000f, 0.000000f, 0.000000f,
