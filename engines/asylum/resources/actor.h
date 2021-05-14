@@ -85,7 +85,7 @@ struct ActorData : public Common::Serializable {
 class Actor : public Common::Serializable {
 public:
 	Actor(AsylumEngine *engine, ActorIndex index);
-	virtual ~Actor();
+	virtual ~Actor() {};
 
 	//////////////////////////////////////////////////////////////////////////
 	// Public variables & accessors

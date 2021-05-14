@@ -99,9 +99,6 @@ WorldStats::~WorldStats() {
 	CLEAR_ARRAY(Object, objects);
 	CLEAR_ARRAY(Actor, actors);
 	CLEAR_ARRAY(ActionArea, actions);
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 // Load necessary World Stats content

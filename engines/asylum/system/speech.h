@@ -34,7 +34,7 @@ class AsylumEngine;
 class Speech {
 public:
 	Speech(AsylumEngine *engine);
-	virtual ~Speech();
+	~Speech() {};
 
 	/**
 	 * Play speech

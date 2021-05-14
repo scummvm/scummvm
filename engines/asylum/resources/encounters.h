@@ -85,7 +85,7 @@ public:
 class Encounter : public EventHandler {
 public:
 	Encounter(AsylumEngine *engine);
-	virtual ~Encounter();
+	virtual ~Encounter() {};
 
 	void run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2, ActorIndex actorIndex);
 

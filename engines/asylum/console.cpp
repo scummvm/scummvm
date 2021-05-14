@@ -219,9 +219,6 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 
 Console::~Console() {
 	DebugMan.clearAllDebugChannels();
-
-	// Zero passed pointers
-	_vm = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////

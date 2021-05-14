@@ -33,7 +33,7 @@ class GraphicResource;
 class SceneTitle {
 public:
 	SceneTitle(AsylumEngine *engine);
-	~SceneTitle();
+	~SceneTitle() {};
 
 	void load();
 

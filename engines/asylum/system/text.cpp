@@ -40,9 +40,6 @@ Text::Text(AsylumEngine *engine) : _vm(engine) {
 
 Text::~Text() {
 	delete _fontResource;
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 ResourceId Text::loadFont(ResourceId resourceId) {

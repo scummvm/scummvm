@@ -42,7 +42,7 @@ struct GraphicQueueItem;
 class Puzzle : public EventHandler, public Common::Serializable {
 public:
 	Puzzle(AsylumEngine *engine);
-	virtual ~Puzzle();
+	virtual ~Puzzle() {};
 
 	bool handleEvent(const AsylumEvent &evt);
 

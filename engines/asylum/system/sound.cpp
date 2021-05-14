@@ -44,10 +44,6 @@ Sound::Sound(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine), _mixer(mi
 
 Sound::~Sound() {
 	cleanupQueue();
-
-	// Zero-out passed pointers
-	_vm = NULL;
-	_mixer = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -38,7 +38,7 @@ class AsylumEngine;
 class Savegame {
 public:
 	Savegame(AsylumEngine *engine);
-	~Savegame();
+	~Savegame() {};
 
 	/**
 	 * Checks if saved games are present

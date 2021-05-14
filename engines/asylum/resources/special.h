@@ -37,7 +37,7 @@ class Special {
 public:
 
 	Special(AsylumEngine *engine);
-	virtual ~Special();
+	~Special() {};
 
 	void run(Object* object, ActorIndex index);
 

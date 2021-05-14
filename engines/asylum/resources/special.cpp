@@ -71,12 +71,6 @@ Special::Special(AsylumEngine *engine) : _vm(engine) {
 	_chapter5Counter = 0;
 }
 
-Special::~Special() {
-	// Zero-out passed pointers
-	_vm = NULL;
-}
-
-
 void Special::run(Object* object, ActorIndex index) {
 	switch (getWorld()->chapter) {
 	default:

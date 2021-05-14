@@ -40,9 +40,6 @@ Cursor::Cursor(AsylumEngine *engine) : _vm(engine),
 
 Cursor::~Cursor() {
 	delete _cursorRes;
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 void Cursor::hide() const {
