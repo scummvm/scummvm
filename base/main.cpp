@@ -457,6 +457,11 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	if (Base::processSettings(command, settings, res)) {
 		if (res.getCode() != Common::kNoError)
 			warning("%s", res.getDesc().c_str());
+
+		PluginManager::instance().unloadDetectionPlugin();
+		PluginManager::instance().unloadAllPlugins();
+		PluginManager::destroy();
+
 		return res.getCode();
 	}
 
