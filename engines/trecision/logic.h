@@ -52,6 +52,9 @@ class LogicManager {
 	uint16 _wheel;
 	uint16 _wheelPos[3];
 
+	// CloseUp12 and 13
+	uint16 _closeUpObj;
+
 public:
 	LogicManager(TrecisionEngine *vm);
 	~LogicManager();
@@ -79,7 +82,6 @@ public:
 	void doMouseLeftRight();
 
 	void doSystemChangeRoom();
-	void doSys(uint16 curObj);
 
 	bool isCloseupOrControlRoom() const;
 
@@ -87,6 +89,7 @@ private:
 	void startCharacterAnimations();
 	bool startPlayDialog();
 	void initControlPanel();
+	void doSys(uint16 curObj);
 };
 ; // end of class
 

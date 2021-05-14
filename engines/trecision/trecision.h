@@ -118,59 +118,29 @@ class TrecisionEngine : public Engine {
 	void loadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
 	void openSys();
-	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
-	
-	SLight _lightArea[MAXLIGHT];
-	SCamera _cameraArea;
-	char *_textArea;
-
-public:
-	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
-	~TrecisionEngine() override;
-
-	// ScummVM
-	Common::Error run() override;
-	bool isDemo() const;
 	void eventLoop();
-	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return canPlayerInteract(); }
-	bool canSaveGameStateCurrently() override { return canPlayerInteract(); }
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
-	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
-	bool syncGameStream(Common::Serializer &ser);
+	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
 
 	// Data files
 	byte *readData(const Common::String &fileName);
 	uint16 *readData16(const Common::String &fileName, int &size);
-	void read3D(const Common::String &c);
 
 	// Inventory
 	void refreshInventory(uint8 startIcon, uint8 startLine);
 	void moveInventoryLeft();
 	void moveInventoryRight();
-	void setInventoryStart(uint8 startIcon, uint8 startLine);
 	void doInventory();
-	void showInventoryName(uint16 obj, bool showhide);
-	uint8 whatIcon(Common::Point pos);
-	int8 iconPos(uint8 icon);
-	void removeIcon(uint8 icon);
-	void addIcon(uint8 icon);
-	void replaceIcon(uint8 oldIcon, uint8 newIcon);
 	void syncInventory(Common::Serializer &ser);
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
 	void doScrollInventory(Common::Point pos);
-
+	
 	// Script
 	void endScript();
-	void playScript(uint16 id);
 	void evalScript();
-	bool quitPrompt();
-	void demoOver();
 	void doAction();
 	void doMouse();
-	void startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
 	void doCharacter();
 	void doSystem();
 	void doIdle();
@@ -179,7 +149,6 @@ public:
 	void doMouseExamine(uint16 curObj);
 	void doMouseOperate(uint16 curObj);
 	void doMouseTake(uint16 curObj);
-	void doMouseTalk(uint16 curObj);
 	void doUseWith();
 	void doScreenUseWithScreen();
 	void doInvExamine();
@@ -190,31 +159,84 @@ public:
 
 	// Utils
 	char *getNextSentence();
+	char getKey();
+	void processTime();
+	void processMouse();
+	static bool isBetween(int a, int x, int b);
+
+	// Others
+	void performLoad(int slot, bool skipLoad);
+	bool canPlayerInteract();
+
+	// Objects
+	void readObj(Common::SeekableReadStream *stream);
+	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
+
+	SLight _lightArea[MAXLIGHT];
+	SCamera _cameraArea;
+	char *_textArea;
+	uint16 _curScriptFrame[10];
+	uint8 _actionLen[MAXACTION];
+	char *_textPtr;
+
+	uint16 _curAscii;
+	bool _keybInput;
+	bool _gamePaused;
+	uint8 _curStack;
+
+public:
+	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
+	~TrecisionEngine() override;
+
+	// ScummVM
+	Common::Error run() override;
+	bool isDemo() const;
+	bool hasFeature(EngineFeature f) const override;
+	bool canLoadGameStateCurrently() override { return canPlayerInteract(); }
+	bool canSaveGameStateCurrently() override { return canPlayerInteract(); }
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+	bool syncGameStream(Common::Serializer &ser);
+
+	// Data files
+	void read3D(const Common::String &c);
+
+	// Inventory
+	void setInventoryStart(uint8 startIcon, uint8 startLine);
+	void showInventoryName(uint16 obj, bool showhide);
+	uint8 whatIcon(Common::Point pos);
+	int8 iconPos(uint8 icon);
+	void removeIcon(uint8 icon);
+	void addIcon(uint8 icon);
+	void replaceIcon(uint8 oldIcon, uint8 newIcon);
+
+	// Script
+	void playScript(uint16 id);
+	bool quitPrompt();
+	void demoOver();
+	void startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
+	void doMouseTalk(uint16 curObj);
+
+	// Utils
 	void setRoom(uint16 r, bool b);
 	uint16 textLength(const Common::String &text, uint16 begin = 0, uint16 end = 0);
-	char getKey();
 	char waitKey();
 	void waitDelay(uint32 val);
 	void freeKey();
 	uint32 readTime();
 	bool checkMask(Common::Point pos);
 	static float sinCosAngle(float sinus, float cosinus);
-	void processTime();
-	void processMouse();
 	float dist2D(float x1, float y1, float x2, float y2);
 	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
-	static bool isBetween(int a, int x, int b);
 	static bool isGameArea(Common::Point pos);
 	static bool isInventoryArea(Common::Point pos);
 	static bool isIconArea(Common::Point pos);
 	int getRoomObjectIndex(uint16 objectId);
-	
+
 	// Others
 	void checkSystem();
 	bool dataSave();
 	bool dataLoad();
-	void performLoad(int slot, bool skipLoad);
-	bool canPlayerInteract();
 	void addDirtyRect(Common::Rect rect);
 	void reEvent();
 
@@ -222,15 +244,12 @@ public:
 	void setObjectVisible(uint16 objectId, bool visible);
 	bool isObjectVisible(uint16 objectId) const;
 	void setObjectAnim(uint16 objectId, uint16 animId);
-
 	void RedrawRoom();
 	void ReadLoc();
 	void TendIn();
-	void readObj(Common::SeekableReadStream *stream);
 	void readExtraObj2C();
 	void readExtraObj41D();
-	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
-	
+
 	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
@@ -240,14 +259,10 @@ public:
 	SRoom _room[MAXROOMS];
 
 	Common::List<SSortTable> _sortTable;
-	uint16 _curScriptFrame[10];
 
 	uint16 _curObj;
 	SObject _obj[MAXOBJ];
 
-	uint8 _actionLen[MAXACTION];
-
-	char *_textPtr;
 	SDText _drawText;
 	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 	Common::List<Common::Rect> _dirtyRects;
@@ -263,8 +278,6 @@ public:
 	uint8 _lightIcon;
 	uint8 _inventoryRefreshStartIcon;
 	uint8 _inventoryRefreshStartLine;
-	uint16 _lastCurInventory;
-	uint16 _lastLightIcon;
 	int16 _inventoryCounter;
 	bool  _flagInventoryLocked;
 	int16 _inventorySpeed[8];
@@ -301,17 +314,10 @@ public:
 	Common::Point _mousePos;
 	bool _mouseLeftBtn, _mouseRightBtn;
 	Common::KeyCode _curKey;
-	uint16 _curAscii;
-	bool _keybInput;
 
-	bool _gamePaused = false;
-	// CloseUp12 and 13
-	uint16 _closeUpObj;
-
-	bool _flagscriptactive;
+	bool _flagScriptActive;
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
 	SScript _script[MAXSCRIPT];
-	uint8 _curStack;
 
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;

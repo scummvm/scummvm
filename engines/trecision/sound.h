@@ -80,15 +80,16 @@ private:
 	int16 _soundFadeInVal;
 	int16 _soundFadeOutVal;
 
+	void loadAudioWav(int num, const Common::String &fileName);
+	void fadeIn(int num);
+
 public:
 	void soundTimer();
 	void stopSoundSystem();
-	void loadAudioWav(int num, const Common::String &fileName);
 	void play(int num);
 	void stop(int num);
 	void stopAll();
 	void fadeOut();
-	void fadeIn(int num);
 	void waitEndFading();
 	void soundStep(int midx, int midz, int act, int frame, uint16 *list);
 	int32 talkStart(const Common::String &name);

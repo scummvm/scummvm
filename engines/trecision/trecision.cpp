@@ -73,7 +73,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
-	_lastCurInventory = 0;
 	_flagInventoryLocked = false;
 	_inventorySpeed[0] = 20;
 	_inventorySpeed[1] = 10;
@@ -108,7 +107,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_inventoryStatus = INV_OFF;
 	_lightIcon = 0xFF;
 	_inventoryRefreshStartLine = INVENTORY_HIDE;
-	_lastLightIcon = 0xFF;
 	_inventoryCounter = INVENTORY_HIDE;
 
 	_animMgr = nullptr;
@@ -132,14 +130,13 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_gamePaused = false;
 
-	_closeUpObj = 0;
 	_textPtr = nullptr;
 	_lastInv = 0;
 	_lastObj = 0;
 
 	_curStack = 0;
 
-	_flagscriptactive = false;
+	_flagScriptActive = false;
 
 	_font = nullptr;
 	_arrows = nullptr;
@@ -251,7 +248,7 @@ Common::Error TrecisionEngine::run() {
 
 		processCurrentMessage();
 
-		if (_flagscriptactive)
+		if (_flagScriptActive)
 			evalScript();
 	}
 
@@ -1008,7 +1005,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 
 		_flagNoPaintScreen = true;
 		_curStack = 0;
-		_flagscriptactive = false;
+		_flagScriptActive = false;
 
 		_oldRoom = _curRoom;
 		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
@@ -1024,7 +1021,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	_graphicsMgr->clearScreenBufferTopDescription();
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	if (_flagscriptactive) {
+	if (_flagScriptActive) {
 		_graphicsMgr->hideCursor();
 	}
 }
@@ -1055,7 +1052,7 @@ void TrecisionEngine::startCharacterAction(uint16 Act, uint16 NewRoom, uint8 New
 
 bool TrecisionEngine::canPlayerInteract() {
 	return (!_flagSomeoneSpeaks &&
-			!_flagscriptactive &&
+			!_flagScriptActive &&
 			!_flagDialogActive &&
 			!_flagDialogMenuActive &&
 			(_actor->_curAction < hWALKIN) &&

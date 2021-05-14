@@ -56,6 +56,8 @@ LogicManager::LogicManager(TrecisionEngine *vm) : _vm(vm) {
 		_wheelPos[i] = 0;
 
 	_slotMachine41Counter = 0;
+
+	_closeUpObj = 0;
 }
 LogicManager::~LogicManager() {}
 
@@ -671,8 +673,8 @@ void LogicManager::endChangeRoom() {
 	if (_vm->_curRoom == kRoom17 && (_vm->_oldRoom == kRoom18) && !(_vm->_room[kRoom17]._flag & kObjFlagDone) && _vm->isObjectVisible(oRETE17))
 		_vm->_textMgr->characterSay(189);
 
-	if ((_vm->_curRoom == kRoom12CU || _vm->_curRoom == kRoom13CU) && _vm->_closeUpObj && _vm->_obj[_vm->_closeUpObj]._examine)
-		_vm->_textMgr->characterSay(_vm->_obj[_vm->_closeUpObj]._examine);
+	if ((_vm->_curRoom == kRoom12CU || _vm->_curRoom == kRoom13CU) && _closeUpObj && _vm->_obj[_closeUpObj]._examine)
+		_vm->_textMgr->characterSay(_vm->_obj[_closeUpObj]._examine);
 	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !(_vm->_room[kRoom23A]._flag & kObjFlagDone)) {
 		_vm->_flagShowCharacter = true;
 		_vm->startCharacterAction(aWALKIN, 0, 0, 361);
@@ -2213,7 +2215,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		else
 			_vm->setObjectVisible(oFUSE12CU, false);
 		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom12CU, 0, 0, curObj);
-		_vm->_closeUpObj = curObj;
+		_closeUpObj = curObj;
 		break;
 
 	case oLETTERA13:
@@ -2223,7 +2225,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		else
 			_vm->setObjectVisible(oLETTER13CU, false);
 		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom13CU, 0, 0, curObj);
-		_vm->_closeUpObj = curObj;
+		_closeUpObj = curObj;
 		break;
 
 	case oCUCININO14:
@@ -3921,7 +3923,7 @@ void LogicManager::doMouseLeftRight() {
 
 	//	Game area
 	if (_vm->isGameArea(Common::Point(_vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2)) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
-		if (_vm->_flagscriptactive)
+		if (_vm->_flagScriptActive)
 			_vm->_curObj = _vm->_curMessage->_u32Param;
 
 		int pmousex = _vm->_curMessage->_u16Param1;
@@ -4074,8 +4076,6 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
-	_vm->_lastCurInventory = 0;
-	_vm->_lastLightIcon = 0xFF;
 	_vm->_inventoryStatus = INV_OFF;
 	_vm->_lightIcon = 0xFF;
 	_vm->_flagInventoryLocked = false;
