@@ -22,7 +22,7 @@
 
 #include "graphics/thumbnail.h"
 #include "graphics/scaler.h"
-#include "graphics/colormasks.h"
+#include "graphics/pixelformat.h"
 #include "common/endian.h"
 #include "common/algorithm.h"
 #include "common/system.h"
