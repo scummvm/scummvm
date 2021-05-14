@@ -157,10 +157,11 @@ bool GraphicsManager::initGfx() {
 }
 
 void GraphicsManager::display() {
-	g_system->copyRectToScreen((byte *)_renderSurface.getPixels(), _renderSurface.pitch, 0, 0, _renderSurface.w, _renderSurface.h);
-	g_system->updateScreen();
 	if (_brightnessLevel < 255)
 		fixBrightness();
+
+	g_system->copyRectToScreen((byte *)_renderSurface.getPixels(), _renderSurface.pitch, 0, 0, _renderSurface.w, _renderSurface.h);
+	g_system->updateScreen();
 }
 
 void GraphicsManager::clear() {

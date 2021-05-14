@@ -41,27 +41,10 @@ void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
 
 unsigned lastFrom, lastTo;
 
-void transitionFader() {
-#if 0
-	glEnable(GL_BLEND);
+void GraphicsManager::transitionFader() {
+	uint br = MIN<uint>(255, _brightnessLevel);
 
-	const GLfloat vertices[] = {
-		0.f, (GLfloat)winHeight, 0.f,
-		(GLfloat)winWidth, (GLfloat)winHeight, 0.f,
-		0.f, 0.f, 0.f,
-		(GLfloat)winWidth, 0.f, 0.f
-	};
-
-	glUseProgram(shader.color);
-
-	setPMVMatrix(shader.color);
-	setPrimaryColor(0.0f, 0.0f, 0.0f, 1.0f - brightnessLevel / 255.f);
-	drawQuad(shader.color, vertices, 0);
-
-	glUseProgram(0);
-
-	glDisable(GL_BLEND);
-#endif
+	blendColor(&_renderSurface, TS_ARGB(br, 255, 255, 255), Graphics::BLEND_MULTIPLY);
 }
 
 void transitionCrossFader() {

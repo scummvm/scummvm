@@ -186,6 +186,8 @@ public:
 	void fixBrightness();
 	void resetRandW();
 
+	void transitionFader();
+
 private:
 	SludgeEngine *_vm;
 
