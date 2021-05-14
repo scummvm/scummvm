@@ -172,7 +172,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_forcedActorPos = 0;
 
 	for (int i = 0; i < MAXDTEXTLINES; ++i) {
-		for (int j = 0; j < MAXDTEXTCHARS; ++i)
+		for (int j = 0; j < MAXDTEXTCHARS; ++j)
 			DTextLines[i][j] = '\0';
 	}
 }
