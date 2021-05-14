@@ -42,6 +42,10 @@ byte GFXTestSuite::_palette[256 * 3] = {0, 0, 0, 255, 255, 255, 255, 255, 255};
 GFXTestSuite::GFXTestSuite() {
 	// Add tests here
 
+	// Pixel Formats
+	addTest("pixelFormatsSupported", &GFXtests::pixelFormatsSupported);
+	addTest("pixelFormatsRequired", &GFXtests::pixelFormatsRequired);
+
 	// Blitting buffer on screen
 	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
 
@@ -67,7 +71,6 @@ GFXTestSuite::GFXTestSuite() {
 	// Specific Tests:
 	addTest("PaletteRotation", &GFXtests::paletteRotation);
 	addTest("cursorTrailsInGUI", &GFXtests::cursorTrails);
-	//addTest("Pixel Formats", &GFXtests::pixelFormats);
 }
 
 void GFXTestSuite::prepare() {
@@ -1226,18 +1229,41 @@ TestExitStatus GFXtests::cursorTrails() {
 	return passed;
 }
 
-TestExitStatus GFXtests::pixelFormats() {
+TestExitStatus GFXtests::pixelFormatsSupported() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing pixel formats. Here we iterate over all the supported pixel formats and display some colors using them\n"
 		"This may take long, especially if the backend supports many pixel formats";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Pixel Formats\n");
+		Testsuite::logPrintf("Info! Skipping test : Supported Pixel Formats\n");
 		return kTestSkipped;
 	}
 
-	Common::List<Graphics::PixelFormat> pfList = g_system->getSupportedFormats();
+	return GFXtests::pixelFormats(g_system->getSupportedFormats());
+}
 
+TestExitStatus GFXtests::pixelFormatsRequired() {
+	Testsuite::clearScreen();
+	Common::String info = "Testing pixel formats. Here we iterate over some pixel formats directly required by some engines and display some colors using them\n"
+		"This may fail, especially if the backend does not support many pixel formats";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Required Pixel Formats\n");
+		return kTestSkipped;
+	}
+
+	Common::List<Graphics::PixelFormat> list;
+	list.push_back(Graphics::PixelFormat(2, 5, 6, 5, 0, 11,  5,  0,  0)); // BBDoU, Frotz, HDB, Hopkins, Nuvie, Petka, Riven, Sherlock (3DO), Titanic, Tony, Ultima 4, Ultima 8, ZVision
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0)); // Full Pipe, Gnap (little endian), Griffon, Groovie 2, SCI32 (HQ videos), Sludge, Sword25, Ultima 8, Wintermute
+	list.push_back(Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24)); // Gnap (big endian)
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 0, 10,  5,  0,  0)); // SCUMM HE99+, Last Express
+	list.push_back(Graphics::PixelFormat(2, 5, 5, 5, 1, 10,  5,  0, 15)); // Dragons
+	// list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return GFXtests::pixelFormats(list);
+}
+
+TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> &pfList) {
 	int numFormatsTested = 0;
 	int numPassed = 0;
 	int numFailed = 0;
@@ -1246,11 +1272,13 @@ TestExitStatus GFXtests::pixelFormats() {
 
 	for (Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin(); iter != pfList.end(); iter++) {
 		numFormatsTested++;
+
+		Testsuite::logPrintf("Info! Testing Pixel Format: %s, %d of %d\n", iter->toString().c_str(), numFormatsTested, pfList.size());
 		if (iter->bytesPerPixel == 1) {
 			// Palettes already tested
 			continue;
-		} else if (iter->bytesPerPixel > 2) {
-			Testsuite::logDetailedPrintf("Can't test pixels with bpp > 2\n");
+		} else if (iter->bytesPerPixel != 2 && iter->bytesPerPixel != 4) {
+			Testsuite::logDetailedPrintf("bytesPerPixel must be 1, 2, or 4\n");
 			continue;
 		}
 
@@ -1273,7 +1301,7 @@ TestExitStatus GFXtests::pixelFormats() {
 
 		Common::Point pt(0, 170);
 		Common::String msg;
-		msg = Common::String::format("Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
+		msg = Common::String::format("Testing Pixel Format %s, %d of %d", iter->toString().c_str(), numFormatsTested, pfList.size());
 		Testsuite::writeOnScreen(msg, pt, true);
 
 		// CopyRectToScreen could have been used, but that may involve writing code which
