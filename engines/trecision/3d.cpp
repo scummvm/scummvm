@@ -1856,7 +1856,7 @@ void PathFinding3D::buildFramelist() {
 	int a = 0;
 	// compute offset
 	SVertex *v = _vm->_actor->_characterArea;
-	float firstFrame = _vm->_actor->FRAMECENTER(v);
+	float firstFrame = _vm->_actor->frameCenter(v);
 	float startPos = 0.0;
 
 	// if he was already walking
@@ -1896,12 +1896,12 @@ void PathFinding3D::buildFramelist() {
 		// start from the first frame
 		v += _vm->_actor->_vertexNum;
 	}
-	oz = -_vm->_actor->FRAMECENTER(v) + firstFrame;
+	oz = -_vm->_actor->frameCenter(v) + firstFrame;
 
 	// at this point, CurA / _curAction is either hSTART or hWALK
 
 	// until it arrives at the destination
-	while (((curLen = oz + _vm->_actor->FRAMECENTER(v) - firstFrame) < len) || (!a)) {
+	while (((curLen = oz + _vm->_actor->frameCenter(v) - firstFrame) < len) || (!a)) {
 		_step[a]._pz = oz - firstFrame; // where to render
 		_step[a]._dz = curLen;          // where it is
 		_step[a]._curAction = curAction;
@@ -1926,16 +1926,16 @@ void PathFinding3D::buildFramelist() {
 				cfp = _vm->_defActionLen[hSTART] + 1;
 
 				// end walk frame
-				ox = _vm->_actor->FRAMECENTER(v) - firstFrame;
+				ox = _vm->_actor->frameCenter(v) - firstFrame;
 
 				v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
-				ox -= _vm->_actor->FRAMECENTER(v);
+				ox -= _vm->_actor->frameCenter(v);
 			}
 
 			v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
 			// only if it doesn't end
-			if ((oz + ox + _vm->_actor->FRAMECENTER(v) - firstFrame) < len)
+			if ((oz + ox + _vm->_actor->frameCenter(v) - firstFrame) < len)
 				oz += ox;
 			else
 				break;
@@ -1965,7 +1965,7 @@ void PathFinding3D::buildFramelist() {
 	v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
 	for (b = 0; b < _vm->_defActionLen[curAction]; b++) {
-		curLen = oz + _vm->_actor->FRAMECENTER(v) - firstFrame;
+		curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
 		_step[a]._pz = oz - firstFrame; // where to render
 		_step[a]._dz = curLen;          // where it is
 		_step[a]._curAction = curAction;

@@ -352,7 +352,7 @@ bool TrecisionEngine::isIconArea(Common::Point pos) {
 
 int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
 	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
-		const uint16 curObjId = _room[g_vm->_curRoom]._object[index];
+		const uint16 curObjId = _room[_curRoom]._object[index];
 		if (curObjId == 0)
 			return -1;
 		if (curObjId == objectId)
@@ -477,7 +477,7 @@ void SDText::DText(uint16 *frameBuffer) {
 		}
 
 		for (uint16 c = 0; c < len; c++) {
-			byte curChar = curText[c]; /* legge prima parte del font */
+			byte curChar = curText[c]; /* reads the first part of the font */
 
 			const uint16 charOffset = g_vm->_font[curChar * 3] + (uint16)(g_vm->_font[curChar * 3 + 1] << 8);
 			uint16 fontDataOffset = 768;

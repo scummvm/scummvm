@@ -353,7 +353,7 @@ void Actor::actorDoAction(int action) {
 	float oz = sin(t);
 
 	SVertex *v = _characterArea;
-	float firstFrame = FRAMECENTER(v);
+	float firstFrame = frameCenter(v);
 
 	int len;
 	int cfp = 0;
@@ -372,7 +372,7 @@ void Actor::actorDoAction(int action) {
 
 	uint16 stepIdx;
 	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
-		float curLen = FRAMECENTER(v) - firstFrame;
+		float curLen = frameCenter(v) - firstFrame;
 
 		SStep *curStep = &_vm->_pathFind->_step[stepIdx];
 		curStep->_dx = curLen * ox;
@@ -427,7 +427,7 @@ void Actor::read3D(Common::SeekableReadStream *ff) {
 	if (_lightNum > MAXLIGHT)
 		error("read3D(): Too many lights");
 
-	for (uint32 i = 0; i < g_vm->_actor->_lightNum; ++i) {
+	for (uint32 i = 0; i < _lightNum; ++i) {
 		_light[i]._x = ff->readFloatLE();
 		_light[i]._y = ff->readFloatLE();
 		_light[i]._z = ff->readFloatLE();
@@ -443,7 +443,7 @@ void Actor::read3D(Common::SeekableReadStream *ff) {
 	}
 }
 
-float Actor::FRAMECENTER(SVertex *v) {
+float Actor::frameCenter(SVertex *v) {
 	return (-v[86]._z - v[164]._z) / 2.0;
 }
 
