@@ -1534,16 +1534,16 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	_cursorHeight = cursor->h;
 
 #ifdef USE_RGB_COLOR
-	_cursorFormat = _overlayFormat;
+	_cursorFormat = cursor->format;
 	_cursorTransparent = _cursorFormat.RGBToColor(0xFF, 0, 0xFF);
 
 	// Allocate a new buffer for the cursor
 	delete[] _cursor;
 	_cursor = new byte[_cursorWidth * _cursorHeight * _cursorFormat.bytesPerPixel];
 	assert(_cursor);
-	Graphics::crossBlit(_cursor, (const byte *)cursor->getPixels(),
-	                    _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
-	                    _cursorWidth, _cursorHeight, _cursorFormat, cursor->format);
+	Graphics::copyBlit(_cursor, (const byte *)cursor->getPixels(),
+	                   _cursorWidth * _cursorFormat.bytesPerPixel, cursor->pitch,
+	                   _cursorWidth, _cursorHeight, _cursorFormat.bytesPerPixel);
 
 	_useCursor = true;
 #else
