@@ -1918,7 +1918,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'TestbedOptions' overlays = 'screen_center' size = '400, 300'>
+	<dialog name = 'TestbedOptions'  overlays = 'screen' inset = '32' >
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Headline'
 					height = 'Globals.Line.Height'

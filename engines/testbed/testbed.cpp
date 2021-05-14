@@ -54,6 +54,7 @@
 namespace Testbed {
 
 void TestbedExitDialog::init() {
+	resize(80, 40, 500, 330);
 	_xOffset = 25;
 	_yOffset = 0;
 	Common::String text = "Thank you for using ScummVM testbed! Here are yor summarized results:";
