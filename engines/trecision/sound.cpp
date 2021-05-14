@@ -214,7 +214,7 @@ void SoundManager::waitEndFading() {
 		_vm->readExtraObj41D();
 }
 
-void SoundManager::SoundPasso(int midx, int midz, int act, int frame, uint16 *list) {
+void SoundManager::soundStep(int midx, int midz, int act, int frame, uint16 *list) {
 	bool stepRight = false;
 	bool stepLeft = false;
 

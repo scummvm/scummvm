@@ -49,13 +49,13 @@ class TextManager {
 	
 	Common::List<StackText> _textStack;
 
-	void PositionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
-	void FormattingSuperString();
-	void FormattingOneString();
-	void CharacterTalk(const char *s);
-	void CharacterContinueTalk();
-	void CharacterMute();
-	void SomeoneContinueTalk();
+	void positionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
+	void formattingSuperString();
+	void formattingOneString();
+	void characterTalk(const char *s);
+	void characterContinueTalk();
+	void characterMute();
+	void someoneContinueTalk();
 	void someoneMute();
 
 public:
@@ -63,10 +63,10 @@ public:
 	~TextManager();
 
 	void doString();
-	void ShowObjName(uint16 obj, bool show);
-	void SomeoneSay(uint16 s, uint16 Person, uint16 NewAnim);
-	void CharacterSay(uint16 i);
-	void CharacterSayInAction(uint16 ss);
+	void showObjName(uint16 obj, bool show);
+	void someoneSay(uint16 s, uint16 Person, uint16 NewAnim);
+	void characterSay(uint16 i);
+	void characterSayInAction(uint16 ss);
 
 	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
 	void clearLastText();

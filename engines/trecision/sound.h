@@ -90,7 +90,7 @@ public:
 	void fadeOut();
 	void fadeIn(int num);
 	void waitEndFading();
-	void SoundPasso(int midx, int midz, int act, int frame, uint16 *list);
+	void soundStep(int midx, int midz, int act, int frame, uint16 *list);
 	int32 talkStart(const Common::String &name);
 	void talkStop();
 	void loadRoomSounds();

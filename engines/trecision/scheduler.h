@@ -24,7 +24,6 @@
 #define TRECISION_SCHEDULER_H
 
 #include "trecision/trecision.h"
-#include "trecision/struct.h"
 
 namespace Trecision {
 class Scheduler {

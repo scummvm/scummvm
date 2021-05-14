@@ -141,7 +141,7 @@ void TrecisionEngine::doInventory() {
 			}
 		} else if (_inventoryObj[_curInventory]._flag & kObjFlagUseWith) {
 			if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
-				_textMgr->CharacterSay(1565);
+				_textMgr->characterSay(1565);
 				return;
 			}
 			_animMgr->startSmkAnim(_inventoryObj[_curInventory]._anim);
@@ -330,7 +330,7 @@ void TrecisionEngine::doInventoryUseWithInventory() {
 	_logicMgr->useInventoryWithInventory(&refreshInventory, &printSentence);
 
 	if (printSentence)
-		_textMgr->CharacterSay(_inventoryObj[_useWith[USED]]._action);
+		_textMgr->characterSay(_inventoryObj[_useWith[USED]]._action);
 	if (refreshInventory)
 		setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
@@ -347,7 +347,7 @@ void TrecisionEngine::doInventoryUseWithScreen() {
 	_logicMgr->useInventoryWithScreen(&refreshInventory, &printSentence);
 
 	if (printSentence)
-		_textMgr->CharacterSay(_inventoryObj[_useWith[USED]]._action);
+		_textMgr->characterSay(_inventoryObj[_useWith[USED]]._action);
 
 	if (refreshInventory)
 		setInventoryStart(_iconBase, INVENTORY_SHOW);

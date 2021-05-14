@@ -38,9 +38,9 @@ struct ATFHandle {
 class AnimTypeManager {
 private:
 	TrecisionEngine *_vm;
-	void ExecuteAtFrameDoit(ATFHandle *h, int doit, int obj);
+	void executeAtFrameDoit(ATFHandle *h, int doit, int obj);
 	void process(ATFHandle *h, int type, int atf);
-	void ProcessAtFrame(ATFHandle *h, int type, int atf);
+	void processAtFrame(ATFHandle *h, int type, int atf);
 
 	ATFHandle AnimType[3]{};
 

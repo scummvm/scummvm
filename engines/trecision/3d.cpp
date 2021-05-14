@@ -856,7 +856,7 @@ void Renderer3D::paintScreen(bool flag) {
 		DObj.l = Common::Rect(x1, y1, x2, y2);
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
-		_vm->_graphicsMgr->DrawObj(DObj);
+		_vm->_graphicsMgr->drawObj(DObj);
 
 		_vm->addDirtyRect(DObj.l);
 		_vm->_actorRect = &_vm->_dirtyRects.back();
@@ -865,7 +865,7 @@ void Renderer3D::paintScreen(bool flag) {
 		DObj.l = _vm->_animMgr->_animRect;
 		DObj.objIndex = -1;
 		DObj.drawMask = false;
-		_vm->_graphicsMgr->DrawObj(DObj);
+		_vm->_graphicsMgr->drawObj(DObj);
 
 		_vm->addDirtyRect(DObj.l);
 		_vm->_actorRect = &_vm->_dirtyRects.back();
@@ -881,9 +881,9 @@ void Renderer3D::paintScreen(bool flag) {
 		DObj.drawMask = false;
 
 		if (DObj.l.top >= 0 && DObj.l.bottom < AREA) {
-			_vm->_graphicsMgr->DrawObj(DObj);
+			_vm->_graphicsMgr->drawObj(DObj);
 		} else {
-			_vm->_graphicsMgr->EraseObj(DObj);
+			_vm->_graphicsMgr->eraseObj(DObj);
 		}
 		_vm->_textMgr->clearOldText();
 		_vm->addDirtyRect(DObj.l);
@@ -900,7 +900,7 @@ void Renderer3D::paintScreen(bool flag) {
 			DObj.l = _vm->_obj[i->_objectId]._rect;
 			DObj.objIndex = -1;
 			DObj.drawMask = false;
-			_vm->_graphicsMgr->DrawObj(DObj);
+			_vm->_graphicsMgr->drawObj(DObj);
 			_vm->addDirtyRect(DObj.l);
 		}
 	}
@@ -922,7 +922,7 @@ void Renderer3D::paintScreen(bool flag) {
 		_vm->_textStatus = TEXT_DRAW; // Activate text update
 	}
 
-	_vm->_soundMgr->SoundPasso((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame, _vm->_room[_vm->_curRoom]._sounds);
+	_vm->_soundMgr->soundStep((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame, _vm->_room[_vm->_curRoom]._sounds);
 
 	if (!flag && !_vm->_flagDialogActive) {
 		_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
@@ -960,7 +960,7 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 			DObj.l = Common::Rect(DObj.rect.width(), DObj.rect.height());
 			DObj.objIndex = _vm->getRoomObjectIndex(i->_objectId);
 			DObj.drawMask = obj._mode & OBJMODE_MASK;
-			_vm->_graphicsMgr->DrawObj(DObj);
+			_vm->_graphicsMgr->drawObj(DObj);
 			_vm->_dirtyRects.push_back(DObj.rect);
 		}
 	}
@@ -1000,7 +1000,7 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 					DObj.objIndex = b;
 					DObj.drawMask = obj._mode & OBJMODE_MASK;
 
-					_vm->_graphicsMgr->DrawObj(DObj);
+					_vm->_graphicsMgr->drawObj(DObj);
 				}
 			}
 		}
