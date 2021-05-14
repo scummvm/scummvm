@@ -541,7 +541,7 @@ void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
 
 	// Game flags
 	for (uint32 i = 0; i < ARRAYSIZE(_gameFlags); i++)
-		s.syncAsSint32LE(_gameFlags[i]);
+		s.syncAsUint32LE(_gameFlags[i]);
 
 	// The original has the script data in the middle of other shared data,
 	// so to be compatible with original savegames, we want to save it in
@@ -562,26 +562,24 @@ void AsylumEngine::saveLoadWithSerializer(Common::Serializer &s) {
 //////////////////////////////////////////////////////////////////////////
 // Game flags
 //////////////////////////////////////////////////////////////////////////
-#define FLAG_MASK 0xFFFFFFE0
-
 void AsylumEngine::setGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] |= 1 << (flag % FLAG_MASK);
+	_gameFlags[flag / 32] |= 1 << (flag % 32);
 }
 
 void AsylumEngine::clearGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] &= ~(1 << (uint32)(flag % FLAG_MASK));
+	_gameFlags[flag / 32] &= ~(1 << (flag % 32));
 }
 
 void AsylumEngine::toggleGameFlag(GameFlag flag) {
-	_gameFlags[flag / 32] ^= 1 << (uint32)(flag % FLAG_MASK);
+	_gameFlags[flag / 32] ^= 1 << (flag % 32);
 }
 
 bool AsylumEngine::isGameFlagSet(GameFlag flag) const {
-	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) != 0;
+	return ((1 << (flag % 32)) & _gameFlags[flag / 32]) >> (flag % 32) != 0;
 }
 
 bool AsylumEngine::isGameFlagNotSet(GameFlag flag) const {
-	return ((1 << (flag % FLAG_MASK)) & (unsigned int)_gameFlags[flag / 32]) >> (flag % FLAG_MASK) == 0;
+	return ((1 << (flag % 32)) & _gameFlags[flag / 32]) >> (flag % 32) == 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
