@@ -26,6 +26,8 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 
+#include "graphics/colormasks.h"
+
 namespace Graphics {
 
 /**
@@ -212,6 +214,14 @@ struct PixelFormat {
 			((   b >> bLoss) << bShift);
 	}
 
+	template<class T>
+	inline uint32 RGBToColorT(uint8 r, uint8 g, uint8 b) const {
+		return T::kAlphaMask |
+		       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
+		       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
+		       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
+	}
+
 	/** Return an ARGB color value from alpha, red, green, and blue values. */
 	inline uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) const {
 		return
@@ -221,11 +231,26 @@ struct PixelFormat {
 			((b >> bLoss) << bShift);
 	}
 
+	template<class T>
+	inline uint32 ARGBToColorT(uint8 a, uint8 r, uint8 g, uint8 b) const {
+		return (((a << T::kAlphaShift) >> (8 - T::kAlphaBits)) & T::kAlphaMask) |
+		       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
+		       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
+		       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
+	}
+
 	/** Retrieve red, green, and blue values from an RGB color value. */
 	inline void colorToRGB(uint32 color, uint8 &r, uint8 &g, uint8 &b) const {
 		r = expand(rBits(), color >> rShift);
 		g = expand(gBits(), color >> gShift);
 		b = expand(bBits(), color >> bShift);
+	}
+
+	template<class T>
+	inline void colorToRGBT(uint32 color, uint8 &r, uint8 &g, uint8 &b) const {
+		r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
+		g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
+		b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
 	}
 
 	/** Retrieve alpha, red, green, and blue values from an ARGB color value. */
@@ -234,6 +259,14 @@ struct PixelFormat {
 		r = expand(rBits(), color >> rShift);
 		g = expand(gBits(), color >> gShift);
 		b = expand(bBits(), color >> bShift);
+	}
+
+	template<class T>
+	inline void colorToARGBT(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) const {
+		a = ((color & T::kAlphaMask) >> T::kAlphaShift) << (8 - T::kAlphaBits);
+		r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
+		g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
+		b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
 	}
 
 	/**
@@ -341,6 +374,51 @@ struct PixelFormat {
 	/** Return string representation. */
 	Common::String toString() const;
 };
+
+template<>
+inline uint32 PixelFormat::RGBToColorT<ColorMasks<0> >(uint8 r, uint8 g, uint8 b) const {
+	return RGBToColor(r, g, b);
+}
+
+template<>
+inline uint32 PixelFormat::ARGBToColorT<ColorMasks<0> >(uint8 a, uint8 r, uint8 g, uint8 b) const {
+	return ARGBToColor(a, r, g, b);
+}
+
+template<>
+inline void PixelFormat::colorToRGBT<ColorMasks<0> >(uint32 color, uint8 &r, uint8 &g, uint8 &b) const {
+	colorToRGB(color, r, g, b);
+}
+
+template<>
+inline void PixelFormat::colorToARGBT<ColorMasks<0> >(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) const {
+	colorToARGB(color, a, r, g, b);
+}
+
+/**
+ * Convert a 'bitFormat' as defined by one of the ColorMasks
+ * into a PixelFormat.
+ */
+template<int bitFormat>
+PixelFormat createPixelFormat() {
+	PixelFormat format;
+
+	format.bytesPerPixel = ColorMasks<bitFormat>::kBytesPerPixel;
+
+	format.rLoss = 8 - ColorMasks<bitFormat>::kRedBits;
+	format.gLoss = 8 - ColorMasks<bitFormat>::kGreenBits;
+	format.bLoss = 8 - ColorMasks<bitFormat>::kBlueBits;
+	format.aLoss = 8 - ColorMasks<bitFormat>::kAlphaBits;
+
+	format.rShift = ColorMasks<bitFormat>::kRedShift;
+	format.gShift = ColorMasks<bitFormat>::kGreenShift;
+	format.bShift = ColorMasks<bitFormat>::kBlueShift;
+	format.aShift = ColorMasks<bitFormat>::kAlphaShift;
+
+	return format;
+}
+
+
 /** @} */
 } // End of namespace Graphics
 

@@ -23,7 +23,7 @@
 #ifndef GRAPHICS_COLORMASKS_H
 #define GRAPHICS_COLORMASKS_H
 
-#include "graphics/pixelformat.h"
+#include "common/scummsys.h"
 
 namespace Graphics {
 
@@ -286,63 +286,6 @@ struct ColorMasks<8888> {
 
 	typedef uint32 PixelType;
 };
-
-template<class T>
-uint32 RGBToColor(uint8 r, uint8 g, uint8 b) {
-	return T::kAlphaMask |
-	       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
-	       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
-	       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
-}
-
-template<class T>
-uint32 ARGBToColor(uint8 a, uint8 r, uint8 g, uint8 b) {
-	return (((a << T::kAlphaShift) >> (8 - T::kAlphaBits)) & T::kAlphaMask) |
-	       (((r << T::kRedShift) >> (8 - T::kRedBits)) & T::kRedMask) |
-	       (((g << T::kGreenShift) >> (8 - T::kGreenBits)) & T::kGreenMask) |
-	       (((b << T::kBlueShift) >> (8 - T::kBlueBits)) & T::kBlueMask);
-}
-
-template<class T>
-void colorToRGB(uint32 color, uint8 &r, uint8 &g, uint8 &b) {
-	r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
-	g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
-	b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
-}
-
-template<class T>
-void colorToARGB(uint32 color, uint8 &a, uint8 &r, uint8 &g, uint8 &b) {
-	a = ((color & T::kAlphaMask) >> T::kAlphaShift) << (8 - T::kAlphaBits);
-	r = ((color & T::kRedMask) >> T::kRedShift) << (8 - T::kRedBits);
-	g = ((color & T::kGreenMask) >> T::kGreenShift) << (8 - T::kGreenBits);
-	b = ((color & T::kBlueMask) >> T::kBlueShift) << (8 - T::kBlueBits);
-}
-
-
-
-/**
- * Convert a 'bitFormat' as defined by one of the ColorMasks
- * into a PixelFormat.
- */
-template<int bitFormat>
-PixelFormat createPixelFormat() {
-	PixelFormat format;
-
-	format.bytesPerPixel = ColorMasks<bitFormat>::kBytesPerPixel;
-
-	format.rLoss = 8 - ColorMasks<bitFormat>::kRedBits;
-	format.gLoss = 8 - ColorMasks<bitFormat>::kGreenBits;
-	format.bLoss = 8 - ColorMasks<bitFormat>::kBlueBits;
-	format.aLoss = 8 - ColorMasks<bitFormat>::kAlphaBits;
-
-	format.rShift = ColorMasks<bitFormat>::kRedShift;
-	format.gShift = ColorMasks<bitFormat>::kGreenShift;
-	format.bShift = ColorMasks<bitFormat>::kBlueShift;
-	format.aShift = ColorMasks<bitFormat>::kAlphaShift;
-
-	return format;
-}
-
 
 } // End of namespace Graphics
 
