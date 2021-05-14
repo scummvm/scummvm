@@ -39,6 +39,9 @@
 #include "graphics/palette.h"
 #include "graphics/sjis.h"
 
+#define EXPLOSION_ANIM_DURATION 750
+#define VORTEX_ANIM_DURATION 750
+
 namespace Kyra {
 
 Screen_EoB::Screen_EoB(EoBCoreEngine *vm, OSystem *system) : Screen(vm, system, _screenDimTable, _screenDimTableCount), _cursorColorKey16Bit(0x8000) {
@@ -1115,7 +1118,6 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 	if (numElements > 150)
 		numElements = 150;
 
-	uint32 incPerElement = (18 << 8) / numElements;
 
 	for (int i = 0; i < numElements; i++) {
 		ptr2[i] = ptr3[i] = 0;
@@ -1124,6 +1126,12 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 		ptr7[i] = _vm->_rnd.getRandomNumberRng(1024 / stepSize, 2048 / stepSize);
 		ptr8[i] = scale << 8;
 	}
+
+	uint32 playSpeedDelay = ((EXPLOSION_ANIM_DURATION << 15) / numElements) >> 7;
+	uint32 frameDelay = (1000 << 8) / 60;
+	uint32 playSpeedTimer = 0;
+	uint32 frameTimer = frameDelay;
+	uint32 start = _system->getMillis();
 
 	for (int l = 2; l;) {
 		if (l != 2) {
@@ -1138,12 +1146,18 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 					else
 						setPagePixel(0, px, py, ptr6[i]);
 				}
+
+				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+					updateScreen();
+					frameTimer += frameDelay;
+				}
+				playSpeedTimer += playSpeedDelay;
+				if (_system->getMillis() < start + (playSpeedTimer >> 15))
+					_vm->delayUntil(start + (playSpeedTimer >> 15));
 			}
 		}
 
 		l = 0;
-		uint32 timer = 0;
-		uint32 start = _system->getMillis();
 
 		for (int i = 0; i < numElements; i++) {
 			if (ptr4[i] <= 0)
@@ -1171,25 +1185,23 @@ void Screen_EoB::drawExplosion(int scale, int radius, int numElements, int stepS
 				ptr6[i] = getPagePixel(0, px, py);
 			}
 
-			timer += incPerElement ;
-
 			assert((ptr8[i] >> 8) < colorTableSize);
 			int pxVal2 = colorTable[ptr8[i] >> 8];
 			if (pxVal2) {
 				l = 1;
-				if (pxVal1 == _gfxCol && posWithinRect(px, py, rX1, rY1, rX2, rY2)) {
+				if (pxVal1 == _gfxCol && posWithinRect(px, py, rX1, rY1, rX2, rY2))
 					setPagePixel(0, px, py, pxVal2);
-					uint32 cur = _system->getMillis();
-					if (cur < start + (timer >> 8))  {
-						updateScreen();
-						cur = _system->getMillis();
-						if (cur < start + (timer >> 8))
-							_system->delayMillis(start + (timer >> 8) - cur);
-					}
-				}
 			} else {
 				ptr7[i] = 0;
 			}
+
+			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				updateScreen();
+				frameTimer += frameDelay;
+			}
+			playSpeedTimer += playSpeedDelay;
+			if (_system->getMillis() < start + (playSpeedTimer >> 15))
+				_vm->delayUntil(start + (playSpeedTimer >> 15));
 		}
 	}
 
@@ -1217,8 +1229,10 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 	int cy = 48;
 	radius <<= 6;
 
-	uint32 incPerElement = (12 << 8) / numElements;
-	uint32 timer = 0;
+	uint32 playSpeedDelay = ((VORTEX_ANIM_DURATION << 16) / numElements) >> 8;
+	uint32 frameDelay = (1000 << 8) / 60;
+	uint32 playSpeedTimer = 0;
+	uint32 frameTimer = frameDelay;
 	uint32 start = _system->getMillis();
 
 	for (int i = 0; i < numElements; i++) {
@@ -1280,6 +1294,14 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 					setPagePixel16bit(0, px, py, pixBackup[ii]);
 				else
 					setPagePixel(0, px, py, pixBackup[ii]);
+
+				if (_system->getMillis() >= start + (frameTimer >> 8)) {
+					updateScreen();
+					frameTimer += frameDelay;
+				}
+				playSpeedTimer += playSpeedDelay;
+				if (_system->getMillis() < start + (playSpeedTimer >> 16))
+					_vm->delayUntil(start + (playSpeedTimer >> 16));
 			}
 		}
 
@@ -1316,23 +1338,21 @@ void Screen_EoB::drawVortex(int numElements, int radius, int stepSize, int, int 
 			uint8 tblIndex = CLIP(colTableIndex[ii] >> 8, 0, colorTableSize - 1);
 			uint8 tc2 = colorTable[tblIndex];
 
-			timer += incPerElement;
-
 			if (tc2) {
 				i = 1;
-				if (tc1 == _gfxCol && !pixDelay[ii]) {
+				if (tc1 == _gfxCol && !pixDelay[ii])
 					setPagePixel(0, px, py, tc2);
-					uint32 cur = _system->getMillis();
-					if (cur < start + (timer >> 8)) {
-						updateScreen();
-						cur = _system->getMillis();
-						if (cur < start + (timer >> 8))
-							_system->delayMillis(start + (timer >> 8) - cur);
-					}
-				}
 			} else {
 				colTableStep[ii] = 0;
 			}
+
+			if (_system->getMillis() >= start + (frameTimer >> 8)) {
+				updateScreen();
+				frameTimer += frameDelay;
+			}
+			playSpeedTimer += playSpeedDelay;
+			if (_system->getMillis() < start + (playSpeedTimer >> 16))
+				_vm->delayUntil(start + (playSpeedTimer >> 16));
 		}
 		d++;
 	}
@@ -1776,6 +1796,9 @@ const uint8 Screen_EoB::_egaMatchTable[] = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x3F, 0x3F, 0x3F
 };
+
+#undef EXPLOSION_ANIM_DURATION
+#undef VORTEX_ANIM_DURATION
 
 uint16 *OldDOSFont::_cgaDitheringTable = 0;
 int OldDOSFont::_numRef = 0;
