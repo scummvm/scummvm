@@ -232,7 +232,7 @@ private:
 	// Game data
 	Puzzles     *_puzzles;
 	SharedData   _data;
-	int          _gameFlags[130];
+	uint32       _gameFlags[130];
 	bool         _introPlayed;
 	int32        _tickOffset;
 
