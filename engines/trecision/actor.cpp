@@ -40,7 +40,6 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_vertexNum = 0;
 	_faceNum = 0;
 	_lightNum = 0;
-	_matNum = 0;
 
 	_px = _pz = 0.0;
 	_dx = _dz = 0.0;
