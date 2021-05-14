@@ -220,6 +220,7 @@ private:
 	void activate();
 	bool init();
 	bool update();
+	bool action(AsylumAction a);
 	bool key(const AsylumEvent &evt);
 	bool clickDown(const AsylumEvent &evt);
 

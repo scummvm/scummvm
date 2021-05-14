@@ -23,8 +23,13 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
-#include "asylum/asylum.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymap.h"
 
+#include "common/translation.h"
+
+#include "asylum/asylum.h"
+#include "asylum/shared.h"
 
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
@@ -37,6 +42,7 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
@@ -48,6 +54,47 @@ Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 		*engine = new Asylum::AsylumEngine(syst, desc);
 	}
 	return desc ? Common::kNoError : Common::kUnsupportedGameidError;
+}
+
+Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Asylum;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "asylum", "Sanitarium");
+
+	Action *act;
+
+	act = new Action("VERSION", _("Show version"));
+	act->setCustomEngineActionEvent(kAsylumActionShowVersion);
+	act->addDefaultInputMapping("v");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Quick load"));
+	act->setCustomEngineActionEvent(kAsylumActionQuickLoad);
+	act->addDefaultInputMapping("S+l");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVE", _("Quick save"));
+	act->setCustomEngineActionEvent(kAsylumActionQuickSave);
+	act->addDefaultInputMapping("S+s");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SARAH", _("Switch to Sarah"));
+	act->setCustomEngineActionEvent(kAsylumActionSwitchToSarah);
+	act->addDefaultInputMapping("s");
+	engineKeyMap->addAction(act);
+
+	act = new Action("GRIMWALL", _("Switch to Grimwall"));
+	act->setCustomEngineActionEvent(kAsylumActionSwitchToGrimwall);
+	act->addDefaultInputMapping("g");
+	engineKeyMap->addAction(act);
+
+	act = new Action("OLMEC", _("Switch to Olmec"));
+	act->setCustomEngineActionEvent(kAsylumActionSwitchToOlmec);
+	act->addDefaultInputMapping("o");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ASYLUM)

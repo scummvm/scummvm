@@ -388,6 +388,12 @@ void AsylumEngine::handleEvents() {
 		default:
 			break;
 
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			// Handle custom actions
+			if (_handler)
+				_handler->handleEvent(ev);
+			break;
+
 		case Common::EVENT_KEYDOWN:
 			if ((ev.kbd.flags & Common::KBD_CTRL) && ev.kbd.keycode == Common::KEYCODE_d) {
 				_console->attach();
