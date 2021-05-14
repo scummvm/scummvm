@@ -120,10 +120,9 @@ class TrecisionEngine : public Engine {
 	void openSys();
 	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
 	
-	STexture FTexture[MAXMAT];
-	SLight VLight[MAXLIGHT];
-	SCamera FCamera;
-	char *TextArea;
+	SLight _lightArea[MAXLIGHT];
+	SCamera _cameraArea;
+	char *_textArea;
 
 public:
 	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);

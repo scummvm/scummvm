@@ -192,42 +192,17 @@ Graphics::Surface *TrecisionEngine::convertScummVMThumbnail(Graphics::Surface *t
 }
 
 void TrecisionEngine::openSys() {
-	// head
-	int32 idx = 0;
-	FTexture[idx]._dx = 300 / 2;
-	FTexture[idx]._dy = 208 / 2;
-	FTexture[idx]._angle = 0;
-	FTexture[idx]._texture = _textureArea;
-	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
-	// body
-	idx = 1;
-	FTexture[idx]._dx = 300;
-	FTexture[idx]._dy = 300;
-	FTexture[idx]._angle = 0;
-	FTexture[idx]._texture = FTexture[0]._texture + (300 * 208) / 4;
-	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
-	// arms
-	idx = 2;
-	FTexture[idx]._dx = 300;
-	FTexture[idx]._dy = 150;
-	FTexture[idx]._angle = 0;
-	FTexture[idx]._texture = FTexture[1]._texture + 300 * 300;
-	FTexture[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
-
 	delete _actor;
 	_actor = new Actor(this);
+	_actor->initTextures();
 	_actor->readModel("jm.om");
 
-	_actor->_light = (SLight *)&VLight;
-	_actor->_camera = (SCamera *)&FCamera;
-	_actor->_texture = (STexture *)&FTexture[0];
+	_actor->_light = (SLight *)&_lightArea;
+	_actor->_camera = (SCamera *)&_cameraArea;
 
-	TextArea = new char[MAXTEXTAREA];
+	_textArea = new char[MAXTEXTAREA];
 
 	_graphicsMgr->clearScreen();
-
 	_graphicsMgr->hideCursor();
 }
 
@@ -281,7 +256,7 @@ void TrecisionEngine::processTime() {
 }
 
 void TrecisionEngine::processMouse() {
-	static bool MaskMouse;
+	static bool maskMouse;
 	static Common::Point oldMousePos;
 	static bool lastMouseOn = true;
 	int16 mx = _mousePos.x;
@@ -300,12 +275,12 @@ void TrecisionEngine::processMouse() {
 		return;
 
 	if (_mouseLeftBtn || _mouseRightBtn) {
-		if (!MaskMouse) {
+		if (!maskMouse) {
 			_scheduler->doEvent(MC_MOUSE, _mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
-			MaskMouse = true;
+			maskMouse = true;
 		}
 	} else {
-		MaskMouse = false;
+		maskMouse = false;
 
 		if (!_flagscriptactive && (mx != oldMousePos.x || my != oldMousePos.y)) {
 			_scheduler->doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);

@@ -200,7 +200,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete[] _textureArea;
 	delete[] _icons;
 	delete _actor;
-	delete[] TextArea;
+	delete[] _textArea;
 
 	for (int i = 0; i < MAXOBJINROOM; ++i) {
 		delete[] _objPointers[i];
@@ -557,9 +557,9 @@ void TrecisionEngine::loadAll() {
 	int numFileRef = dataNl.readSint32LE();
 	dataNl.skip(numFileRef * (12 + 4));	// fileRef name + offset
 
-	dataNl.read(TextArea, MAXTEXTAREA);
+	dataNl.read(_textArea, MAXTEXTAREA);
 
-	_textPtr = TextArea;
+	_textPtr = _textArea;
 
 	for (int a = 0; a < MAXOBJNAME; a++)
 		_objName[a] = getNextSentence();
