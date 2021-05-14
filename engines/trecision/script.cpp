@@ -44,7 +44,7 @@ void SScriptFrame::sendFrame() {
 void TrecisionEngine::endScript() {
 	_curStack--;
 	if (_curStack == 0) {
-		_flagscriptactive = false;
+		_flagScriptActive = false;
 		_graphicsMgr->showCursor();
 		_textMgr->redrawString();
 	}
@@ -52,7 +52,7 @@ void TrecisionEngine::endScript() {
 
 void TrecisionEngine::playScript(uint16 id) {
 	_curStack++;
-	_flagscriptactive = true;
+	_flagScriptActive = true;
 	_graphicsMgr->hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 

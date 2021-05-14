@@ -282,7 +282,7 @@ void TrecisionEngine::processMouse() {
 	} else {
 		maskMouse = false;
 
-		if (!_flagscriptactive && (mx != oldMousePos.x || my != oldMousePos.y)) {
+		if (!_flagScriptActive && (mx != oldMousePos.x || my != oldMousePos.y)) {
 			_scheduler->doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
 			oldMousePos = Common::Point(mx, my);
 		}

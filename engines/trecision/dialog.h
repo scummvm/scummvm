@@ -39,6 +39,7 @@ class DialogManager {
 	uint16 _dispChoice[MAXDISPCHOICES];
 	uint16 _curDispChoice;
 	DialogSubTitle _subTitles[MAXSUBTITLES];
+	uint16 _curSubTitle;
 
 public:
 	DialogManager(TrecisionEngine *vm);
@@ -61,7 +62,6 @@ public:
 
 	uint16 _curDialog;
 	uint16 _curChoice;
-	uint16 _curSubTitle;
 };
 ; // end of class
 
