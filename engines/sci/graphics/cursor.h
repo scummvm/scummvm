@@ -129,10 +129,15 @@ private:
 	// ugly, which is why they aren't enabled by default.
 	bool _useOriginalKQ6WinCursors;
 
+	// The Windows CD version of SQ4 used its own black and white cursors.
+	// If this is true (set from the windows_cursors ini setting) then we use
+	// them instead of the DOS color cursors, which are the default.
+	bool _useOriginalSQ4WinCursors;
+
 	// The CD version of SQ4 contains a complete set of silver mouse cursors.
 	// If this is true (set from the silver_cursors ini setting), then we use
 	// these instead and replace the game's gold cursors with their silver
-	// equivalents.
+	// equivalents. If this is true, _useOriginalSQ4WinCursors is ignored.
 	bool _useSilverSQ4CDCursors;
 };
 

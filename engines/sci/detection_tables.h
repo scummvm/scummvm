@@ -1637,7 +1637,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
 								  GAMEOPTION_MIDI_MODE,                \
 								  GAMEOPTION_RGB_RENDERING,            \
-								  GAMEOPTION_KQ_WINDOWS_CURSORS)
+								  GAMEOPTION_WINDOWS_CURSORS)
 
 	// King's Quest 5 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.018"
@@ -1992,7 +1992,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 						  GAMEOPTION_RGB_RENDERING)
 
 #define GUIO_KQ6_CD_WINDOWS GUIO7(GUIO_NOASPECT,                       \
-								  GAMEOPTION_KQ_WINDOWS_CURSORS,       \
+								  GAMEOPTION_WINDOWS_CURSORS,          \
 								  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
 						          GAMEOPTION_PREFER_DIGITAL_SFX,       \
 								  GAMEOPTION_ORIGINAL_SAVELOAD,        \
@@ -2117,7 +2117,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{"resource.msg", 0, "51ca9f8afc42ef442f6545b3c82a9165", 596121},
 		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
+		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
@@ -5175,7 +5175,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 						  GAMEOPTION_MIDI_MODE,				\
 						  GAMEOPTION_RGB_RENDERING)
 
-#define GUIO_SQ4_CD_WINDOWS GUIO6(GUIO_MIDIGM,				\
+#define GUIO_SQ4_CD_WINDOWS GUIO7(GUIO_MIDIGM,				\
+						  GAMEOPTION_WINDOWS_CURSORS,		\
 						  GAMEOPTION_SQ4_SILVER_CURSORS,	\
 	                      GAMEOPTION_PREFER_DIGITAL_SFX,	\
 	                      GAMEOPTION_ORIGINAL_SAVELOAD,		\

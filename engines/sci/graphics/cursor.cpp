@@ -64,6 +64,11 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	else
 		_useOriginalKQ6WinCursors = false;
 
+	if (g_sci && g_sci->getGameId() == GID_SQ4 && g_sci->getPlatform() == Common::kPlatformWindows)
+		_useOriginalSQ4WinCursors = ConfMan.getBool("windows_cursors");
+	else
+		_useOriginalSQ4WinCursors = false;
+
 	if (g_sci && g_sci->getGameId() == GID_SQ4 && getSciVersion() == SCI_VERSION_1_1)
 		_useSilverSQ4CDCursors = ConfMan.getBool("silver_cursors");
 	else
@@ -214,6 +219,9 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		default:
 			break;
 		}
+	} else if (_useOriginalSQ4WinCursors) {
+		// Use the Windows black and white cursors
+		celNum += 1;
 	}
 
 	if (!_cachedCursors.contains(viewNum))

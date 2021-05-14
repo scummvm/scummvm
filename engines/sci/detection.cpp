@@ -219,9 +219,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		}
 	},
 
-	// KQ5 and KQ6 CD Windows - windows cursors
+	// KQ5 and KQ6 and SQ4 CD Windows - windows cursors
 	{
-		GAMEOPTION_KQ_WINDOWS_CURSORS,
+		GAMEOPTION_WINDOWS_CURSORS,
 		{
 			_s("Use Windows cursors"),
 			_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
