@@ -226,19 +226,17 @@ void Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, in
 	}
 
 	if ((x != SCR_NO_VALUE) && (y != SCR_NO_VALUE)) {
+		// We cannot set character position right away,
+		// because room switch will occur only after the script end,
+		// and character position may be still changing meanwhile.
 		_G(new_room_pos) = 0;
 
-		if (_G(loaded_game_file_version) <= kGameVersion_272) {
-			// Set position immediately on 2.x.
-			chaa->x = x;
-			chaa->y = y;
-		} else {
-			// don't check X or Y bounds, so that they can do a
-			// walk-in animation if they want
-			_G(new_room_x) = x;
-			_G(new_room_y) = y;
-			if (direction != SCR_NO_VALUE) _G(new_room_loop) = direction;
-		}
+		// Don't check X or Y bounds, so that they can do a
+		// walk-in animation if they want
+		_G(new_room_x) = x;
+		_G(new_room_y) = y;
+		if (direction != SCR_NO_VALUE)
+			_G(new_room_loop) = direction;
 	}
 
 	NewRoom(room);
