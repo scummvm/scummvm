@@ -1176,11 +1176,6 @@ bool MacMenu::mouseClick(int x, int y) {
 	if (_activeItem != -1) {
 		_activeSubItem = -1;
 
-		if (_menustack.size()) {
-			_contentIsDirty = true;
-			_wm->setFullRefresh(true);
-		}
-
 		return true;
 	}
 
