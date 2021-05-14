@@ -441,7 +441,7 @@ void TrecisionEngine::doSystem() {
 		_actor->actorStop();
 
 		if (_curMessage->_u16Param2)
-			StartCharacterAction(_curMessage->_u16Param2, 0, 0, 0);
+			startCharacterAction(_curMessage->_u16Param2, 0, 0, 0);
 
 		_logicMgr->endChangeRoom();
 
@@ -808,7 +808,7 @@ void TrecisionEngine::doScript() {
 	}
 }
 
-void TrecisionEngine::ProcessTheMessage() {
+void TrecisionEngine::processCurrentMessage() {
 	switch (_curMessage->_class) {
 	case MC_CHARACTER:
 		doCharacter();

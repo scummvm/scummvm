@@ -378,7 +378,7 @@ void TextManager::CharacterSay(uint16 i) {
 
 	//	if he took some action
 	if (_vm->_sentence[i][0] == '*' && !_vm->_animMgr->_playingAnims[kSmackerAction])
-		_vm->StartCharacterAction(hBOH, 0, 0, 0);
+		_vm->startCharacterAction(hBOH, 0, 0, 0);
 	else
 		CharacterTalk(_vm->_sentence[i]);
 }
@@ -457,7 +457,7 @@ void TextManager::drawText(StackText text) {
 	if (_curString._rect.top <= VIDEOTOP)
 		_curString._rect.top = VIDEOTOP + 1;
 
-	TextStatus |= TEXT_DRAW;
+	_vm->_textStatus |= TEXT_DRAW;
 }
 
 void TextManager::clearText() {
@@ -465,7 +465,7 @@ void TextManager::clearText() {
 		_oldString.set(_curString);
 		_curString.text.clear();
 
-		TextStatus |= TEXT_DEL;
+		_vm->_textStatus |= TEXT_DEL;
 	}
 }
 

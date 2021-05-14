@@ -17,8 +17,7 @@ MODULE_OBJS = \
 	trecision.o \
 	utils.o \
 	3d.o \
-	video.o \
-	nl/ll/llscreen.o
+	video.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TRECISION), DYNAMIC_PLUGIN)

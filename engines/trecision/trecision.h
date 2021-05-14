@@ -33,7 +33,6 @@
 #include "trecision/defines.h"
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
-#include "trecision/nl/ll/llinc.h"
 #include "trecision/struct.h"
 
 namespace Trecision {
@@ -116,7 +115,7 @@ class TrecisionEngine : public Engine {
 	void initMain();
 	void initMessageSystem();
 	void openDataFiles();
-	void LoadAll();
+	void loadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
 	void openSys();
 	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
@@ -172,7 +171,7 @@ public:
 	void demoOver();
 	void doAction();
 	void doMouse();
-	void StartCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
+	void startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
 	void doCharacter();
 	void doSystem();
 	void doIdle();
@@ -188,7 +187,7 @@ public:
 	void doInvOperate();
 	void doDoing();
 	void doScript();
-	void ProcessTheMessage();
+	void processCurrentMessage();
 
 	// Utils
 	char *getNextSentence();
@@ -201,8 +200,8 @@ public:
 	uint32 readTime();
 	bool checkMask(Common::Point pos);
 	static float sinCosAngle(float sinus, float cosinus);
-	void ProcessTime();
-	void ProcessMouse();
+	void processTime();
+	void processMouse();
 	float dist2D(float x1, float y1, float x2, float y2);
 	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 	static bool isBetween(int a, int x, int b);
@@ -225,6 +224,14 @@ public:
 	bool isObjectVisible(uint16 objectId) const;
 	void setObjectAnim(uint16 objectId, uint16 animId);
 
+	void RedrawRoom();
+	void ReadLoc();
+	void TendIn();
+	void readObj(Common::SeekableReadStream *stream);
+	void readExtraObj2C();
+	void readExtraObj41D();
+	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
+	
 	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
@@ -242,8 +249,8 @@ public:
 	uint8 _actionLen[MAXACTION];
 
 	char *_textPtr;
-	SDText _sdText;
-	char DTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
+	SDText _drawText;
+	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 	Common::List<Common::Rect> _dirtyRects;
 	Common::Rect *_actorRect;
 
@@ -351,6 +358,8 @@ public:
 	int _cx, _cy;
 
 	int _forcedActorPos;
+	uint8 _textStatus;
+
 	uint8 const _defActionLen[hLAST + 1] = {
 		/* STAND */ 1,
 		/* PARTE */ 1,
