@@ -910,7 +910,7 @@ void Renderer3D::paintScreen(bool flag) {
 
 	// For every box from the horizon forward...
 	// Copy per level
-	for (int liv = _vm->_pathFind->_numSortPan; liv >= 0; liv--) {
+	for (int liv = _vm->_pathFind->_numSortPanel; liv >= 0; liv--) {
 		uint16 curBox = _vm->_pathFind->_sortPan[liv]._num;
 
 		// draws all objects and animations that intersect the boundaries and refer to the current box
@@ -1049,7 +1049,7 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 	_oldPanel = -1;
 
 	_numPathNodes = 0;
-	_numSortPan = 0;
+	_numSortPanel = 0;
 	_x3d = 0.0f;
 	_y3d = 0.0f;
 	_z3d = 0.0f;
@@ -2248,9 +2248,9 @@ void PathFinding3D::sortPath() {
 			Initializes sort panel
 --------------------------------------------------*/
 void PathFinding3D::initSortPan() {
-	_numSortPan = 31;
+	_numSortPanel = 31;
 
-	for (int a = 1; a < _numSortPan - 1; ++a) {
+	for (int a = 1; a < _numSortPanel - 1; ++a) {
 		_sortPan[a]._min = 32000.0f;
 		_sortPan[a]._num = a;
 	}
@@ -2272,7 +2272,7 @@ void PathFinding3D::initSortPan() {
 
 			float min = MIN(dist1, dist2);
 
-			for (int a = 0; a < _numSortPan; ++a) {
+			for (int a = 0; a < _numSortPanel; ++a) {
 				if (_panel[b]._flags & (1 << a)) {
 					if (_sortPan[a + 1]._min > min)
 						_sortPan[a + 1]._min = min;
@@ -2283,10 +2283,10 @@ void PathFinding3D::initSortPan() {
 
 	sortPanel();
 
-	for (int b = 0; b < _numSortPan; ++b) {
+	for (int b = 0; b < _numSortPanel; ++b) {
 		if (_sortPan[b]._num == BOX_BACKGROUND) {
-			// now the panels go from 0 (foreground) to _numSortPan (background)
-			_numSortPan = b;
+			// now the panels go from 0 (foreground) to _numSortPanel (background)
+			_numSortPanel = b;
 			break;
 		}
 	}
@@ -2378,7 +2378,7 @@ int panelCompare(const void *arg1, const void *arg2) {
 				Sort the panels
 --------------------------------------------------*/
 void PathFinding3D::sortPanel() {
-	qsort(&_sortPan[0], _numSortPan, sizeof(SSortPan), panelCompare);
+	qsort(&_sortPan[0], _numSortPanel, sizeof(SSortPan), panelCompare);
 }
 
 /*------------------------------------------------
@@ -2689,7 +2689,7 @@ void PathFinding3D::actorOrder() {
 	// It must be copied in front of the nearest box
 	_vm->_actorPos = _sortPan[1]._num;
 	// from closest to farthest
-	for (int b = 1; b < _numSortPan; b++) {
+	for (int b = 1; b < _numSortPanel; b++) {
 		for (int a = 0; a < _panelNum; a++) {
 			// If it's not wide and belongs to this level
 			if (!(_panel[a]._flags & 0x80000000) && (_panel[a]._flags & (1 << (_sortPan[b]._num - 1)))) {
@@ -2701,6 +2701,11 @@ void PathFinding3D::actorOrder() {
 			}
 		}
 	}
+}
+
+void PathFinding3D::syncGameStream(Common::Serializer &ser) {
+	ser.syncAsSint32LE(_curPanel);
+	ser.syncAsSint32LE(_oldPanel);
 }
 
 } // End of namespace Trecision

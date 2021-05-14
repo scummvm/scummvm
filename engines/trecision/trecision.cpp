@@ -370,9 +370,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 
 	syncInventory(ser);
 	_actor->syncGameStream(ser);
-
-	ser.syncAsSint32LE(_pathFind->_curPanel);
-	ser.syncAsSint32LE(_pathFind->_oldPanel);
+	_pathFind->syncGameStream(ser);
 
 	for (int a = 0; a < MAXROOMS; a++) {
 		ser.syncBytes((byte *)_room[a]._baseName, 4);

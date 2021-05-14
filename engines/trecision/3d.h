@@ -156,33 +156,38 @@ class PathFinding3D {
 private:
 	TrecisionEngine *_vm;
 
-	bool pointInside(int pan, float x, float z);
-
 	SPathNode _pathNode[MAXPATHNODES];
+	float _invP[3][3];
+	int _numPathNodes;
+	float _x3d, _y3d, _z3d;
+	float _curX, _curZ;
+	float _lookX, _lookZ;
+	int _panelNum;
+	int _oldPanel;
+
+	bool pointInside(int pan, float x, float z);
 	void sortPanel();
 	void pointOut();
 	void invPointProject(int x, int y);
 	bool intersectLinePanel(SPan *p, float x, float y, float z);
 	bool intersectLineFloor(float x, float y, float z);
 	bool intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd);
-
-	float _invP[3][3];
-	int _numPathNodes;
-	float _x3d, _y3d, _z3d;
-	float _curX, _curZ;
+	void findShortPath();
+	float evalPath(int a, float destX, float destZ, int nearP);
+	void lookAt(float x, float z);
+	void buildFramelist();
+	void displayPath();
+	bool findAttachedPanel(int srcPanel, int destPanel);
+	void sortPath();
 
 public:
 	PathFinding3D(TrecisionEngine *vm);
 	~PathFinding3D();
 
-	float _lookX;
-	float _lookZ;
 	int _curStep;
 	int _lastStep;
-	int _panelNum;
 	int _curPanel;
-	int _oldPanel;
-	int _numSortPan;
+	int _numSortPanel;
 
 	int8 _characterGoToPosition;
 	bool _characterInMovement;
@@ -191,23 +196,15 @@ public:
 	SPan _panel[MAXPANELSINROOM];
 
 	void findPath();
-	void findShortPath();
-	float evalPath(int a, float destX, float destZ, int nearP);
 	void setPosition(int num);
 	void goToPosition(int num);
-	void lookAt(float x, float z);
-	void buildFramelist();
 	int nextStep();
-	void displayPath();
-	bool findAttachedPanel(int srcPanel, int destPanel);
-//	int pathCompare(const void *arg1, const void *arg2);
-	void sortPath();
 	void initSortPan();
 	void read3D(Common::SeekableReadStream *ff);
 	void reset(uint16 idx, float px, float pz, float theta);
 	void whereIs(int px, int py);
 	void actorOrder();
-
+	void syncGameStream(Common::Serializer &ser);
 }; // end of class
 
 } // end of namespace
