@@ -254,23 +254,8 @@ void Gump::Paint(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 }
 
 void Gump::PaintThis(RenderSurface *surf, int32 /*lerp_factor*/, bool /*scaled*/) {
-	if (_shape) {
-#if 0
-		Rect sr;
-		ShapeFrame *f = shape->getFrame(_frameNum);
-		sr.h = f->height;
-		sr.w = f->height;
-		sr.x = -f->xoff;
-		sr.y = -f->yoff;
-
-		if (surf->CheckClipped(sr))
-#endif
-			surf->Paint(_shape, _frameNum, 0, 0);
-#if 0
-		else
-			surf->PaintNoClip(shape, _frameNum, 0, 0);
-#endif
-	}
+	if (_shape)
+		surf->Paint(_shape, _frameNum, 0, 0);
 }
 
 void Gump::PaintChildren(RenderSurface *surf, int32 lerp_factor, bool scaled) {
