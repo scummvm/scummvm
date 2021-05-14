@@ -1046,25 +1046,11 @@ bool MacMenu::mouseClick(int x, int y) {
 
 				if (_activeItem != -1) { // Restore background
 					if (_items[_activeItem]->submenu != nullptr) {
-						_wm->setFullRefresh(true);
-
-						if (_wm->_mode & kWMModalMenuMode) {
-							int x1 = _items[_activeItem]->submenu->bbox.left;
-							int y1 = _items[_activeItem]->submenu->bbox.top;
-							uint w = _items[_activeItem]->submenu->bbox.width() + 2;
-							uint h = _items[_activeItem]->submenu->bbox.height() + 2;
-
-							if (x1 + w > _wm->_screenCopy->w)
-								w = _wm->_screenCopy->w - 1 - x1;
-							if (y1 + h > _wm->_screenCopy->h)
-								h = _wm->_screenCopy->h - 1 - y1;
-
-							g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);
-						}
+						if (_wm->_mode & kWMModalMenuMode)
+							g_system->copyRectToScreen(_wm->_screenCopy->getPixels(), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 
 						_menustack.pop_back(); // Drop previous submenu
 						_contentIsDirty = true;
-						_wm->setFullRefresh(true);
 					}
 				}
 
@@ -1104,19 +1090,8 @@ bool MacMenu::mouseClick(int x, int y) {
 
 		if (numSubItem != _activeSubItem) {
 			if (_wm->_mode & kWMModalMenuMode) {
-				if (_activeSubItem != -1 && menu->items[_activeSubItem]->submenu != nullptr) {
-					int x1 = menu->items[_activeSubItem]->submenu->bbox.left;
-					int y1 = menu->items[_activeSubItem]->submenu->bbox.top;
-					uint w = menu->items[_activeSubItem]->submenu->bbox.width() + 2;
-					uint h = menu->items[_activeSubItem]->submenu->bbox.height() + 2;
-
-					if (x1 + w > _wm->_screenCopy->w)
-						w = _wm->_screenCopy->w - 1 - x1;
-					if (y1 + h > _wm->_screenCopy->h)
-						h = _wm->_screenCopy->h - 1 - y1;
-
-					g_system->copyRectToScreen(_wm->_screenCopy->getBasePtr(x1, y1), _wm->_screenCopy->pitch, x1, y1, w, h);
-				}
+				if (_activeSubItem == -1 || menu->items[_activeSubItem]->submenu != nullptr)
+					g_system->copyRectToScreen(_wm->_screenCopy->getPixels(), _wm->_screenCopy->pitch, 0, 0, _wm->_screenCopy->w, _wm->_screenCopy->h);
 			}
 			_activeSubItem = numSubItem;
 			menu->highlight = _activeSubItem;
