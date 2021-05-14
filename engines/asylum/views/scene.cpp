@@ -84,9 +84,6 @@ Scene::~Scene() {
 
 	delete _polygons;
 	delete _ws;
-
-	// Zero passed pointers
-	_vm = NULL;
 }
 
 void Scene::enter(ResourcePackId packId) {

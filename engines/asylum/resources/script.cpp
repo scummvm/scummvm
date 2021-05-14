@@ -218,12 +218,6 @@ ScriptManager::~ScriptManager() {
 
 	_scripts.clear();
 	_queue.reset();
-
-	_currentScript = NULL;
-	_currentQueueEntry = NULL;
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 void ScriptManager::load(Common::SeekableReadStream *stream) {

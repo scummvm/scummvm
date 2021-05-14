@@ -39,7 +39,7 @@ class AsylumEngine;
 class Object : public Common::Serializable {
 public:
 	Object(AsylumEngine *engine);
-	virtual ~Object();
+	virtual ~Object() {};
 
 	//////////////////////////////////////////////////////////////////////////
 	// Public variables & accessors

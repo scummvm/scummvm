@@ -38,7 +38,7 @@ class Text;
 class Menu : public EventHandler {
 public:
 	Menu(AsylumEngine *vm);
-	~Menu();
+	virtual ~Menu() {};
 
 	/**
 	 * Shows the menu

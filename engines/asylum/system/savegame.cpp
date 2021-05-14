@@ -59,11 +59,6 @@ Savegame::Savegame(AsylumEngine *engine) : _vm(engine), _index(0), _valid(false)
 	memset(&_savegameToScene, 0, sizeof(_savegameToScene));
 }
 
-Savegame::~Savegame() {
-	// Zero passed pointers
-	_vm = NULL;
-}
-
 bool Savegame::hasSavegames() const {
 	for (uint i = 0; i < SAVEGAME_COUNT; i++)
 		if (isSavegamePresent(getFilename(i)))

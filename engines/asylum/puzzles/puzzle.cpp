@@ -38,11 +38,6 @@ namespace Asylum {
 Puzzle::Puzzle(AsylumEngine *engine): _vm(engine) {
 }
 
-Puzzle::~Puzzle() {
-	// Zero passed pointers
-	_vm = NULL;
-}
-
 void Puzzle::saveLoadWithSerializer(Common::Serializer &) {
 	// By default, we do not save any data
 }

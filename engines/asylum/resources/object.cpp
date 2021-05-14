@@ -47,11 +47,6 @@ Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
 	memset(&_randomResourceIds, 0, sizeof(_randomResourceIds));
 }
 
-Object::~Object() {
-	// Zero passed pointers
-	_vm = NULL;
-}
-
 /////////////////////////////////////////////////////////////////////////
 // Loading & destroying
 /////////////////////////////////////////////////////////////////////////

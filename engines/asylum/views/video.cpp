@@ -43,9 +43,6 @@ VideoPlayer::VideoPlayer(AsylumEngine *engine, Audio::Mixer *mixer) : _vm(engine
 
 VideoPlayer::~VideoPlayer() {
 	delete _smkDecoder;
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////

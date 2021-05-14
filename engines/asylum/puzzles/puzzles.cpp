@@ -50,9 +50,6 @@ Puzzles::~Puzzles() {
 	// Cleanup puzzles
 	for (uint i = 0; i < ARRAYSIZE(_puzzles); i++)
 		delete _puzzles[i];
-
-	// Zero passed pointers
-	_vm = NULL;
 }
 
 void Puzzles::reset() {

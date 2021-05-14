@@ -66,12 +66,6 @@ Screen::~Screen() {
 	_backBuffer.free();
 
 	clearTransTables();
-
-	_transTableBuffer = NULL;
-	_transTable = NULL;
-
-	// Zero-out passed pointers
-	_vm = NULL;
 }
 
 //////////////////////////////////////////////////////////////////////////

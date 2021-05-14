@@ -37,9 +37,6 @@ GraphicResource::GraphicResource(AsylumEngine *engine, ResourceId id) : _vm(engi
 
 GraphicResource::~GraphicResource() {
 	clear();
-
-	// Zero passed pointers
-	_vm = NULL;
 }
 
 bool GraphicResource::load(ResourceId id) {

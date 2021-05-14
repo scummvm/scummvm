@@ -40,15 +40,6 @@ Speech::Speech(AsylumEngine *engine): _vm(engine), _textData(0), _textDataPos(0)
 	_textResourceId  = kResourceNone;
 }
 
-Speech::~Speech() {
-	// Text resource data is disposed as part of the resource manager
-	_textData = 0;
-	_textDataPos = 0;
-
-	// Zero-out passed pointers
-	_vm = NULL;
-}
-
 ResourceId Speech::play(ResourceId soundResourceId, ResourceId textResourceId) {
 	if (soundResourceId)
 		if (getSound()->isPlaying(_soundResourceId))
