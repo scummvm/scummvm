@@ -129,6 +129,8 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 }
 
 void DebugManager::debugFlagsRegister(const DebugChannelDef *channels) {
+	if (!channels)
+		return;
 	for (uint i = 0; channels[i].channel != 0; i++)
 		addDebugChannel(channels[i].channel, channels[i].name, channels[i].description);
 }
