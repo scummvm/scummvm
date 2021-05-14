@@ -833,6 +833,8 @@ void DarkMoonEngine::seq_playFinale() {
 	sq.printText(15, textColor1);           // The temple ceases to exist
 	if (_flags.platform != Common::kPlatformAmiga) {
 		sq.initDelayedPaletteFade(6, 1);
+	} else if (skipFlag()) {
+		_screen->fadeToBlack();
 	} else {
 		_screen->fadePalette(_screen->getPalette(5), 127);
 		sq.copyPalette(5, 0);
