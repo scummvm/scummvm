@@ -308,6 +308,9 @@ bool Scene::handleEvent(const AsylumEvent &evt) {
 	case EVENT_ASYLUM_UPDATE:
 		return update();
 
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		return action((AsylumAction)evt.customType);
+
 	case Common::EVENT_KEYDOWN:
 		if (evt.kbd.flags & Common::KBD_CTRL)
 			_isCTRLPressed = true;
@@ -405,58 +408,37 @@ bool Scene::update() {
 	return true;
 }
 
+bool Scene::action(AsylumAction a) {
+	switch (a) {
+	case kAsylumActionShowVersion:
+		// TODO show version!
+		break;
+
+	case kAsylumActionQuickLoad:
+		getSaveLoad()->quickLoad();
+		break;
+
+	case kAsylumActionQuickSave:
+		getSaveLoad()->quickSave();
+		break;
+
+	case kAsylumActionSwitchToSarah:
+	case kAsylumActionSwitchToGrimwall:
+	case kAsylumActionSwitchToOlmec:
+		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
+			return true;
+
+		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206 + a - kAsylumActionSwitchToSarah)]->scriptIndex,
+								 getSharedData()->getPlayerIndex());
+		break;
+	}
+
+	return true;
+}
+
 bool Scene::key(const AsylumEvent &evt) {
 	if (!_ws)
 		error("[Scene::key] WorldStats not initialized properly");
-
-	// TODO add support for debug commands
-
-	//////////////////////////////////////////////////////////////////////////
-	// Check for keyboard shortcuts
-	if (evt.kbd.ascii == Config.keyShowVersion) {
-		// TODO show version!
-
-		return true;
-	}
-
-	if (evt.kbd.ascii == Config.keyQuickLoad) {
-		getSaveLoad()->quickLoad();
-
-		return true;
-	}
-
-	if (evt.kbd.ascii == Config.keyQuickSave) {
-		getSaveLoad()->quickSave();
-
-		return true;
-	}
-
-	if (evt.kbd.ascii == Config.keySwitchToSara) {
-		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
-			return true;
-
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2206)]->scriptIndex, getSharedData()->getPlayerIndex());
-
-		return true;
-	}
-
-	if (evt.kbd.ascii == Config.keySwitchToGrimwall) {
-		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
-			return true;
-
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2207)]->scriptIndex, getSharedData()->getPlayerIndex());
-
-		return true;
-	}
-
-	if (evt.kbd.ascii == Config.keySwitchToOlmec) {
-		if (getCursor()->isHidden() || _ws->chapter != kChapter9)
-			return true;
-
-		getScript()->queueScript(_ws->actions[_ws->getActionAreaIndexById(2208)]->scriptIndex, getSharedData()->getPlayerIndex());
-
-		return true;
-	}
 
 	switch (evt.kbd.keycode) {
 	default:
