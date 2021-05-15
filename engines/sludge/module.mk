@@ -15,7 +15,6 @@ MODULE_OBJS := \
 	hsi.o \
 	imgloader.o \
 	language.o \
-	loadsave.o \
 	main_loop.o \
 	metaengine.o \
 	moreio.o \
@@ -25,6 +24,7 @@ MODULE_OBJS := \
 	people.o \
 	region.o \
 	savedata.o \
+	saveload.o \
 	sludge.o \
 	sludger.o \
 	sound.o \
