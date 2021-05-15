@@ -459,10 +459,7 @@ namespace Common {
 bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const {
 	// FIXME/TODO: We don't handle the case that a file is listed as a regular
 	// file and as one with resource fork.
-	if (!allFiles.contains(fname))
-		return false;
-
-	Common::String hashname = Common::String::format("%s:%d", allFiles[fname].getPath().c_str(), _md5Bytes);
+	Common::String hashname = Common::String::format("%s:%d", fname.c_str(), _md5Bytes);
 
 	if (MD5Man.contains(hashname)) {
 		fileProps.md5 = MD5Man.getMD5(hashname);
@@ -487,6 +484,9 @@ bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, con
 			return true;
 		}
 	}
+
+	if (!allFiles.contains(fname))
+		return false;
 
 	Common::File testFile;
 
