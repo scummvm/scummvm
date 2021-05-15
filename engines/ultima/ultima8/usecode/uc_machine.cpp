@@ -1043,9 +1043,9 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x3E:
 			// 3E xx
-			// push the value of the unsigned 8 bit local var xx as 16 bit int
+			// push the value of the sign-extended 8 bit local var xx as 16 bit int
 			si8a = static_cast<int8>(cs->readByte());
-			ui16a = p->_stack.access1(p->_bp + si8a);
+			ui16a = static_cast<uint16>(static_cast<int8>(p->_stack.access1(p->_bp + si8a)));
 			p->_stack.push2(ui16a);
 			LOGPF(("push byte\t%s = %02Xh\n", print_bp(si8a), ui16a));
 			break;
