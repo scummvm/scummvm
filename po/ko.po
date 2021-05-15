@@ -4783,7 +4783,9 @@ msgstr "게임을 잘못 추가했습니다. 게임의 루트 폴더를 추가�
 msgid ""
 "You added the game incorrectly. The GAME.DAT file is an ISO image and you "
 "need to extract the game data files from it."
-msgstr "게임을 잘못 추가했습니다. GAME.DAT는 ISO 이미지로 여기서 게임 데이터 파일을 추출해야 합니다."
+msgstr ""
+"게임을 잘못 추가했습니다. GAME.DAT는 ISO 이미지로 여기서 게임 데이터 파일을 "
+"추출해야 합니다."
 
 #: engines/kyra/metaengine.cpp:117
 msgid "Lands of Lore support is not compiled in"
@@ -5023,8 +5025,8 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리터를 사용하고 Wyrmkeep에서 시리얼 키를 "
-"구입해야 합니다"
+"현재 게임은 평가판 Windows 버전입니다. 정식 버전을 플레이하려면 원본 인터프리"
+"터를 사용하고 Wyrmkeep에서 시리얼 키를 구입해야 합니다"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
@@ -5195,7 +5197,8 @@ msgstr "게임 불러오기"
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid ""
 "Are you sure you want to start a new game? All unsaved progress will be lost."
-msgstr "새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
+msgstr ""
+"새로운 게임을 시작하시겠습니까? 저장되지 않은 진행 사항은 사라지게 됩니다."
 
 #: engines/mohawk/myst_stacks/menu.cpp:301
 #: engines/mohawk/riven_stacks/aspit.cpp:372
@@ -5215,13 +5218,17 @@ msgstr "데모에서는 도서관을 벗어날 수 없습니다."
 msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
-msgstr "Riven 실행 파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 'rivendmo.exe'입니다. "
+msgstr ""
+"Riven 실행 파일을 찾을 수 없습니다. 윈도우즈용 실행 파일은 'riven.exe' 또는 "
+"'rivendmo.exe'입니다. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
 "Using the 'arcriven.z' installer file also works. In addition, you can use "
 "the Mac 'Riven' executable."
-msgstr "'arcriven.z' 설치 파일도 사용 가능합니다. 추가로 맥용 'Riven' 실행 파일도 사용 가능합니다."
+msgstr ""
+"'arcriven.z' 설치 파일도 사용 가능합니다. 추가로 맥용 'Riven' 실행 파일도 사"
+"용 가능합니다."
 
 #: engines/mohawk/riven.cpp:172
 msgid ""
@@ -6651,7 +6658,8 @@ msgid ""
 "piracy.\n"
 "The full version is available for purchase from the iTunes Store."
 msgstr ""
-"불법복제를 막기 위해 Putt-Putt Saves the Zoo iOS 라이트 버전은 지원되지 않습니다.\n"
+"불법복제를 막기 위해 Putt-Putt Saves the Zoo iOS 라이트 버전은 지원되지 않습"
+"니다.\n"
 "풀 버전은 iTunes Store에서 구매 가능합니다."
 
 #: engines/scumm/metaengine.cpp:422
