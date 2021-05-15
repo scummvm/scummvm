@@ -827,6 +827,7 @@ void ScummEngine::mac_restoreCharsetBg() {
 		_charset->_left = -1;
 
 		_textSurface.fillRect(Common::Rect(_textSurface.w, _textSurface.h), 0);
+
 		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
 		if (!vs->h)
 			return;
