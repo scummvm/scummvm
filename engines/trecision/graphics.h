@@ -58,6 +58,7 @@ public:
 	void resetScreenBuffer();
 	uint16 *getScreenBufferPtr();
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
+	void clearScreenBuffer();
 	void clearScreenBufferTop();
 	void clearScreenBufferTopDescription();
 	void clearScreenBufferInventory();
