@@ -495,6 +495,8 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 				anim == Animation::kneelAndFireLargeWeapon ||
 				anim == Animation::kneelCombatRollLeft ||
 				anim == Animation::kneelCombatRollRight ||
+				anim == Animation::combatRollLeft ||
+				anim == Animation::combatRollRight ||
 				anim == Animation::kneelingAdvance ||
 				anim == Animation::kneelingRetreat) {
 			setActorFlag(ACT_KNEELING);
