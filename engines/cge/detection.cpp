@@ -27,6 +27,14 @@
 #include "common/translation.h"
 
 #include "cge/fileio.h"
+#include "cge/cge.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{CGE::kCGEDebugBitmap, "bitmap", "CGE Bitmap debug channel"},
+	{CGE::kCGEDebugFile, "file", "CGE IO debug channel"},
+	{CGE::kCGEDebugEngine, "engine", "CGE Engine debug channel"},
+	DEBUG_CHANNEL_END
+};
 
 namespace CGE {
 
@@ -121,6 +129,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Soltys (C) 1994-1996 L.K. Avalon";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
