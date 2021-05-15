@@ -32,12 +32,21 @@
 #include "agos/detection.h"
 #include "agos/intern_detection.h"
 #include "agos/obsolete.h" // Obsolete ID table.
+#include "agos/agos.h"
 
 /**
  * Conversion table mapping old obsolete target names to the
  * corresponding new target and platform combination.
  *
  */
+
+static const DebugChannelDef debugFlagList[] = {
+	{AGOS::kDebugOpcode, "opcode", "Opcode debug level"},
+	{AGOS::kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level"},
+	{AGOS::kDebugSubroutine, "subroutine", "Subroutine debug level"},
+	{AGOS::kDebugVGAScript, "vga_script", "VGA Script debug level"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor agosGames[] = {
 	{"pn", "Personal Nightmare"},
@@ -85,6 +94,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "AGOS (C) Adventure Soft";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
