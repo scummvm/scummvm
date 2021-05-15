@@ -1636,6 +1636,13 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_str.right = right;
 		_str.bottom = top;
 		_firstChar = false;
+	} else {
+		if (_str.left > left)
+			_str.left = left;
+		if (_str.right < right)
+			_str.right = right;
+		if (_str.bottom < bottom)
+			_str.bottom = bottom;
 	}
 
 	_vm->markRectAsDirty(vs->number, left, right, top - vs->topline, bottom - vs->topline);
