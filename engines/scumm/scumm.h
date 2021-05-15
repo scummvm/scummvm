@@ -1096,6 +1096,7 @@ public:
 	 */
 	Graphics::Surface _textSurface;
 	int _textSurfaceMultiplier;
+	Graphics::Surface *_macScreen;
 
 protected:
 	byte _charsetColor;
@@ -1381,7 +1382,6 @@ protected:
 	byte _townsActiveLayerFlags;
 	static const uint8 _townsLayer2Mask[];
 
-	Graphics::Surface *_macScreen;
 	TownsScreen *_townsScreen;
 #else
 	void scrollLeft() { redrawBGStrip(_gdi->_numStrips - 1, 1); }
