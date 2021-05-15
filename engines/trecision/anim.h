@@ -42,7 +42,8 @@ private:
 	void process(ATFHandle *h, int type, int atf);
 	void processAtFrame(ATFHandle *h, int type, int atf);
 
-	ATFHandle AnimType[3]{};
+	ATFHandle _animType[3]{};
+	int _oneSpeakDialogCount;
 
 public:
 	AnimTypeManager(TrecisionEngine *vm);
