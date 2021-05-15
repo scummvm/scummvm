@@ -1151,6 +1151,11 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 		}
 #endif
 
+		if (_macScreen) {
+			byte *mask = (byte *)_textSurface.getBasePtr(rect.left * _textSurfaceMultiplier, (rect.top + vs->topline) * _textSurfaceMultiplier);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
+		}
+
 		if (_game.features & GF_16BIT_COLOR)
 			fill(screenBuf, vs->pitch, _16BitPalette[backColor], width, height, vs->format.bytesPerPixel);
 		else
@@ -1449,6 +1454,11 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 					return;
 			}
 #endif
+
+			if (_macScreen) {
+				byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop + vs->topline) * _textSurfaceMultiplier);
+				fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.format.bytesPerPixel);
+			}
 
 			fill(backbuff, vs->pitch, color, width, height, vs->format.bytesPerPixel);
 		}
