@@ -24,6 +24,16 @@
 #define AGS_DETECTION_H
 
 #include "engines/advancedDetector.h"
+#include "ags/ags.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{AGS::kDebugGraphics, "Graphics", "Graphics debug level"},
+	{AGS::kDebugPath, "Path", "Pathfinding debug level"},
+	{AGS::kDebugFilePath, "FilePath", "File path debug level"},
+	{AGS::kDebugScan, "Scan", "Scan for unrecognised games"},
+	{AGS::kDebugScript, "Script", "Enable debug script dump"},
+	DEBUG_CHANNEL_END
+};
 
 namespace AGS {
 
@@ -67,6 +77,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "AGS Engine (C) Chris Jones";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
