@@ -313,6 +313,10 @@ void ActorAnimProcess::run() {
 			_tracker->getPosition(x2, y2, z2);
 			a->collideMove(x2, y2, z2, false, true); // forced move
 			a->setFrame(_tracker->getFrame());
+		} else {
+			x2 = x;
+			y2 = y;
+			z2 = z;
 		}
 	}
 
@@ -332,11 +336,12 @@ void ActorAnimProcess::run() {
 #ifdef WATCHACTOR
 	if (_itemNum == watchactor) {
 		pout << "Animation [" << Kernel::get_instance()->getFrameNum()
-		     << "] showing frame (" << x << "," << y << "," << z << ")"
-		     << " shape (" << a->getShape() << "," << _tracker->getFrame()
+		     << "] showing frame (" << x << "," << y << "," << z << ")-("
+			 << x2 << "," << y2 << "," << z2 << ")"
+		     << " shp (" << a->getShape() << "," << _tracker->getFrame()
 		     << ") sfx " << _tracker->getAnimFrame()->_sfx
 		     << " rep " << _repeatCounter << ConsoleStream::hex
-			 << " flags " << _tracker->getAnimFrame()->_flags << " "
+			 << " flg " << _tracker->getAnimFrame()->_flags << " "
 			 << ConsoleStream::dec;
 
 		if (_tracker->isDone()) pout << "D";
