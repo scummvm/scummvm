@@ -652,12 +652,6 @@ void ScummEngine::CHARSET_1() {
 	_charset->_center = _string[0].center;
 	_charset->setColor(_charsetColor);
 
-	if (_macScreen) {
-		_charset->_top *= 2;
-		_charset->_startLeft *= 2;
-		_charset->_left *= 2;
-	}
-
 	if (a && a->_charset)
 		_charset->setCurID(a->_charset);
 	else
@@ -1027,12 +1021,6 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->setColor(_string[a].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
-
-	if (_macScreen) {
-		_charset->_top *= 2;
-		_charset->_startLeft *= 2;
-		_charset->_left *= 2;
-	}
 
 	// HACK: Correct positions of text in books in Indy3 Mac.
 	// See also bug #8759.

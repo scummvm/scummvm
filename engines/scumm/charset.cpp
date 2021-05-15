@@ -1562,79 +1562,64 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 }
 
 int CharsetRendererMac::getFontHeight() {
-	return _macFont.getFontHeight();
+	return _macFont.getFontHeight() / 2;
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) {
-	return _macFont.getCharWidth(chr);
-}
-
-int CharsetRendererMac::evenDown(int x) {
-	if (x & 1)
-		x--;
-	return x;
-}
-
-int CharsetRendererMac::evenUp(int x) {
-	if (x & 1)
-		x++;
-	return x;
+	return _macFont.getCharWidth(chr) / 2;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// Mark the virtual screen as dirty, using downscaled coordinates.
 
 	VirtScreen *vs;
-	int top = evenDown(_top) / 2;
 
-	if ((vs = _vm->findVirtScreen(top)) == NULL) {
-		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", top, chr);
+	if ((vs = _vm->findVirtScreen(_top)) == NULL) {
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
 		return;
 	}
 
 	if (chr == '@')
 		return;
 
+	int macLeft = 2 * _left;
+	int macTop = 2 * _top;
+
 	if (_enableShadow) {
-		_macFont.drawChar(&_vm->_textSurface, chr, _left + 1, _top - 1, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, _left - 1, _top + 1, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, _left + 2, _top + 2, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop - 1, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft - 1, macTop + 1, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop + 2, _shadowColor);
 	}
-	_macFont.drawChar(&_vm->_textSurface, chr, _left, _top, _color);
-	int width = _macFont.getCharWidth(chr);
+	_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop, _color);
+	int width = getCharWidth(chr);
 
 	int left = _left;
 	int right = _left + width;
+	int top = _top;
 	int bottom = _top + _macFont.getFontHeight();
 
 	if (_enableShadow) {
 		left--;
-		right += 2;
+		right++;
 		top--;
 		bottom++;
 	}
 
-	int vsLeft = evenDown(left) / 2;
-	int vsRight = evenUp(right) / 2;
-	int vsTop = evenDown(top) / 2;
-	int vsBottom = evenUp(bottom) / 2;
-
 	if (_firstChar) {
-		_str.left = _left;
-		_str.top = _top;
-		_str.right = _right;
-		_str.bottom = _top;
+		_str.left = left;
+		_str.top = top;
+		_str.right = right;
+		_str.bottom = top;
 		_firstChar = false;
 	}
 
-	_vm->markRectAsDirty(vs->number, vsLeft, vsRight, vsTop - vs->topline, vsBottom - vs->topline);
+	_vm->markRectAsDirty(vs->number, left, right, top - vs->topline, bottom - vs->topline);
 
 	if (!ignoreCharsetMask) {
 		_hasMask = true;
 		_textScreenID = vs->number;
 	}
 
-	// Adjust the position, using real screen coordinates
 	_left += width;
 }
 

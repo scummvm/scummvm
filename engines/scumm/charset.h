@@ -279,8 +279,6 @@ class CharsetRendererMac : public CharsetRendererCommon {
 protected:
 	Graphics::MacFONTFont _macFont;
 
-	int evenDown(int x);
-	int evenUp(int x);
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
 
