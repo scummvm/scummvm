@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-14 20:35+0000\n"
+"POT-Creation-Date: 2021-05-15 10:53+0000\n"
 "PO-Revision-Date: 2021-05-03 13:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -2034,11 +2034,11 @@ msgstr "Προχώρα"
 msgid "Clear value"
 msgstr "Σβήσιμο τιμής"
 
-#: base/main.cpp:616
+#: base/main.cpp:621
 msgid "Error running game:"
 msgstr "Σφάλμα κατά την εκτέλεση του παιχνιδιού:"
 
-#: base/main.cpp:663
+#: base/main.cpp:668
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Δεν ήταν δυνατή η εύρεση μηχανής η οποία να μπορεί να εκτελέσει το "
