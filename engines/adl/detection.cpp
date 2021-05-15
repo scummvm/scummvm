@@ -30,6 +30,7 @@
 #include "adl/detection.h"
 #include "adl/disk.h"
 #include "adl/disk_image_helpers.h"
+#include "adl/adl.h"
 
 namespace Adl {
 
@@ -40,6 +41,11 @@ namespace Adl {
 #define GAMEOPTION_COLOR_DEFAULT_ON  GUIO_GAMEOPTIONS3
 #define GAMEOPTION_NTSC              GUIO_GAMEOPTIONS4
 #define GAMEOPTION_MONO_TEXT         GUIO_GAMEOPTIONS5
+
+static const DebugChannelDef debugFlagList[] = {
+	{Adl::kDebugChannelScript, "Script", "Trace script execution"},
+	DEBUG_CHANNEL_END
+};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -336,6 +342,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Sierra On-Line";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const override;

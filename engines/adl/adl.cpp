@@ -102,7 +102,6 @@ AdlEngine::AdlEngine(OSystem *syst, const AdlGameDescription *gd) :
 		_canRestoreNow(false) {
 
 	_random = new Common::RandomSource("adl");
-	DebugMan.addDebugChannel(kDebugChannelScript, "Script", "Trace script execution");
 }
 
 bool AdlEngine::pollEvent(Common::Event &event) const {
