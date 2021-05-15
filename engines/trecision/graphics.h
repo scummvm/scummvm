@@ -82,7 +82,7 @@ public:
 
 	void showDemoPic();
 
-}; // end of class
+};
 
-} // end of namespace
+} // End of namespace Trecision
 #endif

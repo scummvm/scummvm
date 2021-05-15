@@ -389,4 +389,4 @@ void GraphicsManager::showDemoPic() {
 	}
 }
 
-} // end of namespace
+} // End of namespace Trecision

@@ -153,7 +153,6 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 	_vm->_drawText.text.clear();
 
 	smkDecoder->start();
-	//debug("playMovie %s, %d - %d", filename.c_str(), startFrame, endFrame);
 
 	setVideoRange(smkDecoder, startFrame, endFrame);
 
@@ -223,7 +222,6 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 }
 
 void AnimManager::openSmkAnim(int slot, const Common::String &name) {
-	//debug("Opening anim %s", name.c_str());
 	for (int i = 0; i < 3; i++) {
 		// Open the animation, or swap the 3 CDs to find it
 		if (_animFile[slot].hasFile(name)) {

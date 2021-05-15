@@ -102,4 +102,4 @@ bool Console::Cmd_Item(int argc, const char **argv) {
 	return false;
 }
 
-} // End of namespace StarTrek
+} // End of namespace Trecision

@@ -150,7 +150,7 @@ public:
 	void drawCharacter(uint8 flag);
 	void paintScreen(bool flag);
 
-}; // end of class
+};
 
 class PathFinding3D {
 private:
@@ -205,8 +205,8 @@ public:
 	void whereIs(int px, int py);
 	void actorOrder();
 	void syncGameStream(Common::Serializer &ser);
-}; // end of class
+};
 
-} // end of namespace
+} // End of namespace Trecision
 #endif
 

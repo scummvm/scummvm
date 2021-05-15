@@ -65,5 +65,5 @@ public:
 };
 ; // end of class
 
-} // end of namespace
+} // End of namespace Trecision
 #endif

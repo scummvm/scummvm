@@ -1879,7 +1879,6 @@ void PathFinding3D::buildFramelist() {
 
 		// compute current frame
 		curAction = hWALK;
-		//o		CurF = _vm->_actor->_curAction - hSTOP1;
 		curFrame = _vm->_actor->_curAction - hSTOP0;
 
 		cfp = _vm->_defActionLen[hSTART] + 1 + curFrame;
