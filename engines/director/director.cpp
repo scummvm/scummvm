@@ -45,25 +45,6 @@ uint32 wmMode = 0;
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
-	DebugMan.addDebugChannel(kDebug32bpp, "32bpp", "Work in 32bpp mode");
-	DebugMan.addDebugChannel(kDebugCompile, "compile", "Lingo Compilation");
-	DebugMan.addDebugChannel(kDebugCompileOnly, "compileonly", "Skip Lingo code execution");
-	DebugMan.addDebugChannel(kDebugDesktop, "desktop", "Show the Classic Mac desktop");
-	DebugMan.addDebugChannel(kDebugEndVideo, "endvideo", "Fake that the end of video is reached setting");
-	DebugMan.addDebugChannel(kDebugEvents, "events", "Event processing");
-	DebugMan.addDebugChannel(kDebugFast, "fast", "Fast (no delay) playback");
-	DebugMan.addDebugChannel(kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames");
-	DebugMan.addDebugChannel(kDebugImages, "images", "Image drawing");
-	DebugMan.addDebugChannel(kDebugLingoExec, "lingoexec", "Lingo Execution");
-	DebugMan.addDebugChannel(kDebugLoading, "loading", "Loading");
-	DebugMan.addDebugChannel(kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode");
-	DebugMan.addDebugChannel(kDebugNoLoop, "noloop", "Do not loop the playback");
-	DebugMan.addDebugChannel(kDebugParse, "parse", "Lingo code parsing");
-	DebugMan.addDebugChannel(kDebugPreprocess, "preprocess", "Lingo preprocessing");
-	DebugMan.addDebugChannel(kDebugScreenshot, "screenshot", "screenshot each frame");
-	DebugMan.addDebugChannel(kDebugSlow, "slow", "Slow playback");
-	DebugMan.addDebugChannel(kDebugText, "text", "Text rendering");
-
 	g_director = this;
 
 	// Setup mixer
