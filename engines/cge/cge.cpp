@@ -45,11 +45,6 @@ const int CGEEngine::_maxSceneArr[5] = {1, 8, 16, 23, 24};
 CGEEngine::CGEEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	: Engine(syst), _gameDescription(gameDescription), _randomSource("cge") {
 
-	// Debug/console setup
-	DebugMan.addDebugChannel(kCGEDebugBitmap, "bitmap", "CGE Bitmap debug channel");
-	DebugMan.addDebugChannel(kCGEDebugFile, "file", "CGE IO debug channel");
-	DebugMan.addDebugChannel(kCGEDebugEngine, "engine", "CGE Engine debug channel");
-
 	_bitmapPalette = nullptr;
 	_pocLight = nullptr;
 	_keyboard = nullptr;
