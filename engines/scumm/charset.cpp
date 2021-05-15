@@ -1515,6 +1515,8 @@ void CharsetRendererPCE::setDrawCharIntern(uint16 chr) {
 CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile)
 	 : CharsetRendererCommon(vm) {
 
+	_pad = false;
+
 	// As far as I can tell, Loom uses only font size 13 for in-game text.
 	// The font is also provided in sizes 9 and 12, and it's possible that
 	// 12 is used for system messages, e.g. the original pause dialog. We
@@ -1570,7 +1572,12 @@ int CharsetRendererMac::getCharWidth(uint16 chr) {
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
-	// Mark the virtual screen as dirty, using downscaled coordinates.
+	// If this is the beginning of a line, assume the position will be
+	// correct without any padding.
+
+	if (_firstChar || _top != _lastTop) {
+		_pad = false;
+	}
 
 	VirtScreen *vs;
 
@@ -1582,27 +1589,41 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
+	// Scale up the virtual coordinates to get the high resolution ones.
+
 	int macLeft = 2 * _left;
 	int macTop = 2 * _top;
 
-	if (_enableShadow) {
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop - 1, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft - 1, macTop + 1, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop + 2, _shadowColor);
+	// The last character ended on an odd X coordinate. This information
+	// was lost in the rounding, so we compensate for it here.
+
+	if (_pad) {
+		macLeft++;
+		_pad = false;
 	}
-	_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop, _color);
-	int width = getCharWidth(chr);
-
-	int left = _left;
-	int right = _left + width;
-	int top = _top;
-	int bottom = _top + _macFont.getFontHeight();
 
 	if (_enableShadow) {
-		left--;
-		right++;
-		top--;
-		bottom++;
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop + 2, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 3, macTop + 3, _shadowColor);
+	}
+
+	_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop + 1, _color);
+
+	// Mark the virtual screen as dirty, using downscaled coordinates.
+
+	int left, right, top, bottom;
+
+	if (_enableShadow) {
+		left = macLeft / 2;
+		right = (macLeft + _macFont.getCharWidth(chr) + 3) / 2;
+		top = macTop / 2;
+		bottom = (macTop + _macFont.getFontHeight() + 3) / 2;
+	} else {
+		left = (macLeft + 1) / 2;
+		right = (macLeft + _macFont.getCharWidth(chr) + 1) / 2;
+		top = (macTop + 1) / 2;
+		bottom = (macTop + _macFont.getFontHeight() + 1) / 2;
 	}
 
 	if (_firstChar) {
@@ -1620,7 +1641,15 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_textScreenID = vs->number;
 	}
 
-	_left += width;
+	// The next character may have to be adjusted to compensate for
+	// rounding errors.
+
+	macLeft += _macFont.getCharWidth(chr);
+	if (macLeft & 1)
+		_pad = true;
+
+	_left = macLeft / 2;
+	_lastTop = _top;
 }
 
 void CharsetRendererMac::setColor(byte color) {
