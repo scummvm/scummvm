@@ -70,8 +70,8 @@ public:
 	float frameCenter(SVertex *v);
 	void initTextures();
 
-}; // end of class
+};
 
-} // end of namespace
+} // End of namespace Trecision
 #endif
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef STARTREK_CONSOLE_H
-#define STARTREK_CONSOLE_H
+#ifndef TRECISION_CONSOLE_H
+#define TRECISION_CONSOLE_H
 
 #include "gui/debugger.h"
 
@@ -43,5 +43,5 @@ private:
 	bool Cmd_Item(int argc, const char **argv);
 };
 
-} // End of namespace StarTrek
+} // End of namespace Trecision
 #endif

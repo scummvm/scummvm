@@ -2293,7 +2293,7 @@ enum InventoryItem {
 #define dF5A1               61    // Joshua sends the poisonous syringe to Eva, she uses it to kill the guard
 #define dF582               62    // Ending sequence, Joshua confronts Hugh
 #define dF4PI               63    // Joshua meets the werewolf for the first time
-#define dFLOG               64    // Dreamcatcher Team17, Trecision and Nightlong logos
+#define dFLOG               64    // Company logos
 #define dFCRED              65    // Credits
 
 #define PATCHOBJ_ROOM41D 89
@@ -2387,7 +2387,7 @@ Inventory
 #define INV_DEPAINT 8  // Not yet OFF (Going up)
 #define INV_OFF 16     // Not on screen
 
-#define INVENTORY_HIDE 40 // ICONDY ...era a 48.
+#define INVENTORY_HIDE 40 // ICONDY ...was 48.
 #define INVENTORY_SHOW 0
 
 /******************************************************************************

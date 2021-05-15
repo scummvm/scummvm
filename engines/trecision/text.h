@@ -79,8 +79,8 @@ public:
 	void clearOldText();
 	
 	void drawCurString();
-}; // end of class
+};
 
-} // end of namespace
+} // End of namespace Trecision
 #endif
 

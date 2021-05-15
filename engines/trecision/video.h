@@ -113,5 +113,5 @@ public:
 	void syncGameStream(Common::Serializer &ser);
 	void loadAnimTab(Common::File *file);
 };
-} // end of namespace
+} // End of namespace Trecision
 #endif

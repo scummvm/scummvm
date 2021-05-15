@@ -53,8 +53,8 @@ public:
 	void end(int type);
 	void handler(int type);
 
-}; // end of class
+};
 
-} // end of namespace
+} // End of namespace Trecision
 #endif
 
