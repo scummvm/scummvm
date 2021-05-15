@@ -100,8 +100,6 @@ BladeRunnerEngine::BladeRunnerEngine(OSystem *syst, const ADGameDescription *des
 	: Engine(syst),
 	  _rnd("bladerunner") {
 
-	DebugMan.addDebugChannel(kDebugScript, "Script", "Debug the scripts");
-
 	_windowIsActive     = true;
 	_gameIsRunning      = true;
 	_gameJustLaunched   = true;

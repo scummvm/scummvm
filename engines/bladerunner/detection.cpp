@@ -33,6 +33,11 @@
 
 #include "engines/advancedDetector.h"
 
+static const DebugChannelDef debugFlagList[] = {
+	{BladeRunner::kDebugScript, "Script", "Debug the scripts"},
+	DEBUG_CHANNEL_END
+};
+
 namespace BladeRunner {
 
 static const PlainGameDescriptor bladeRunnerGames[] = {
@@ -99,6 +104,7 @@ public:
 	const char *getEngineId() const override;
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
+	const DebugChannelDef *getDebugChannels() const override;
 };
 
 BladeRunnerMetaEngineDetection::BladeRunnerMetaEngineDetection()
@@ -118,6 +124,10 @@ const char *BladeRunnerMetaEngineDetection::getName() const {
 
 const char *BladeRunnerMetaEngineDetection::getOriginalCopyright() const {
 	return "Blade Runner (C) 1997 Westwood Studios";
+}
+
+const DebugChannelDef *BladeRunnerMetaEngineDetection::getDebugChannels() const {
+	return debugFlagList;
 }
 
 REGISTER_PLUGIN_STATIC(BLADERUNNER_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, BladeRunnerMetaEngineDetection);
