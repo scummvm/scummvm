@@ -202,7 +202,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x00:
 			// 00 xx
 			// pop 16 bit int, and assign LS 8 bit int into bp+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.pop2();
 			p->_stack.assign1(p->_bp + si8a, static_cast<uint8>(ui16a));
 			LOGPF(("pop byte\t%s = %02Xh\n", print_bp(si8a), ui16a));
@@ -211,7 +211,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x01:
 			// 01 xx
 			// pop 16 bit int into bp+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.pop2();
 			p->_stack.assign2(p->_bp + si8a, ui16a);
 			LOGPF(("pop\t\t%s = %04Xh\n", print_bp(si8a), ui16a));
@@ -220,7 +220,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x02:
 			// 02 xx
 			// pop 32 bit int into bp+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui32a = p->_stack.pop4();
 			p->_stack.assign4(p->_bp + si8a, ui32a);
 			LOGPF(("pop dword\t%s = %08Xh\n", print_bp(si8a), ui32a));
@@ -229,7 +229,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x03: {
 			// 03 xx yy
 			// pop yy bytes into bp+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			uint8 size = cs->readByte();
 			uint8 buf[256];
 			p->_stack.pop(buf, size);
@@ -253,9 +253,9 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x09: {
 			// 09 xx yy zz
 			// pop yy bytes into an element of list bp+xx (or slist if zz set)
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui32a = cs->readByte();
-			si8b = static_cast<int8>(cs->readByte());
+			si8b = cs->readSByte();
 			LOGPF(("assign element\t%s (%02X) (slist==%02X)\n",
 			       print_bp(si8a), ui32a, si8b));
 			ui16a = p->_stack.pop2() - 1; // index
@@ -289,7 +289,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x0A:
 			// 0A xx
 			// push sign-extended 8 bit xx onto the stack as 16 bit
-			ui16a = static_cast<int8>(cs->readByte());
+			ui16a = cs->readSByte();
 			p->_stack.push2(ui16a);
 			LOGPF(("push byte\t%04Xh\n", ui16a));
 			break;
@@ -1044,7 +1044,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x3E:
 			// 3E xx
 			// push the value of the sign-extended 8 bit local var xx as 16 bit int
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = static_cast<uint16>(static_cast<int8>(p->_stack.access1(p->_bp + si8a)));
 			p->_stack.push2(ui16a);
 			LOGPF(("push byte\t%s = %02Xh\n", print_bp(si8a), ui16a));
@@ -1053,7 +1053,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x3F:
 			// 3F xx
 			// push the value of the 16 bit local var xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			p->_stack.push2(ui16a);
 			LOGPF(("push\t\t%s = %04Xh\n", print_bp(si8a), ui16a));
@@ -1062,7 +1062,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x40:
 			// 40 xx
 			// push the value of the 32 bit local var xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui32a = p->_stack.access4(p->_bp + si8a);
 			p->_stack.push4(ui32a);
 			LOGPF(("push dword\t%s = %08Xh\n", print_bp(si8a), ui32a));
@@ -1072,7 +1072,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 41 xx
 			// push the string local var xx
 			// duplicating the string?
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			p->_stack.push2(duplicateString(ui16a));
 			LOGPF(("push string\t%s\n", print_bp(si8a)));
@@ -1082,7 +1082,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 42 xx yy
 			// push the list (with yy size elements) at BP+xx
 			// duplicating the list?
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = cs->readByte();
 			ui16b = p->_stack.access2(p->_bp + si8a);
 			UCList *l = new UCList(ui16a);
@@ -1104,7 +1104,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 43 xx
 			// push the stringlist local var xx
 			// duplicating the list, duplicating the strings in the list
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = 2;
 			ui16b = p->_stack.access2(p->_bp + si8a);
 			UCList *l = new UCList(ui16a);
@@ -1160,7 +1160,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x45:
 			// 45 xx yy
 			// push huge of size yy from BP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16b = cs->readByte();
 			p->_stack.push(p->_stack.access(p->_bp + si8a), ui16b);
 			LOGPF(("push huge\t%s %02X\n", print_bp(si8a), ui16b));
@@ -1175,7 +1175,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x4B:
 			// 4B xx
 			// push 32 bit pointer address of BP+XX
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			p->_stack.push4(stackToPtr(p->_pid, p->_bp + si8a));
 			LOGPF(("push addr\t%s\n", print_bp(si8a)));
 			break;
@@ -1536,7 +1536,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x62:
 			// 62 xx
 			// free the string in var BP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			freeString(ui16a);
 			LOGPF(("free string\t%s = %04X\n", print_bp(si8a), ui16a));
@@ -1545,7 +1545,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x63:
 			// 63 xx
 			// free the stringlist in var BP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			freeStringList(ui16a);
 			LOGPF(("free slist\t%s = %04X\n", print_bp(si8a), ui16a));
@@ -1554,7 +1554,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x64:
 			// 64 xx
 			// free the list in var BP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			freeList(ui16a);
 			LOGPF(("free list\t%s = %04X\n", print_bp(si8a), ui16a));
@@ -1565,7 +1565,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// free the string at SP+xx
 			// NB: sometimes there's a 32-bit string pointer at SP+xx
 			//     However, the low word of this is exactly the 16bit ref
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_stack.getSP() + si8a);
 			freeString(ui16a);
 			LOGPF(("free string\t%s = %04X\n", print_sp(si8a), ui16a));
@@ -1574,7 +1574,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x66:
 			// 66 xx
 			// free the list at SP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_stack.getSP() + si8a);
 			freeList(ui16a);
 			LOGPF(("free list\t%s = %04X\n", print_sp(si8a), ui16a));
@@ -1583,7 +1583,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x67:
 			// 67 xx
 			// free the string list at SP+xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_stack.getSP() + si8a);
 			freeStringList(ui16a);
 			LOGPF(("free slist\t%s = %04x\n", print_sp(si8a), ui16a));
@@ -1594,7 +1594,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x69:
 			// 69 xx
 			// push the string in var BP+xx as 32 bit pointer
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			p->_stack.push4(stringToPtr(ui16a));
 			LOGPF(("str to ptr\t%s\n", print_bp(si8a)));
@@ -1674,7 +1674,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 6E xx
 			// subtract xx from stack pointer
 			// (effect on SP is the same as popping xx bytes)
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			p->_stack.addSP(-si8a);
 			LOGPF(("move sp\t\t%s%02Xh\n", si8a < 0 ? "-" : "", si8a < 0 ? -si8a : si8a));
 			break;
@@ -1682,7 +1682,7 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x6F:
 			// 6F xx
 			// push 32 pointer address of SP-xx
-			si8a = static_cast<int8>(cs->readByte());
+			si8a = cs->readSByte();
 			p->_stack.push4(stackToPtr(p->_pid, static_cast<uint16>(p->_stack.getSP() - si8a)));
 			LOGPF(("push addr\t%s\n", print_sp(-si8a)));
 			break;
