@@ -331,10 +331,6 @@ void ScummEngine::initScreens(int b, int h) {
 		_res->nukeResource(rtBuffer, i + 5);
 	}
 
-	if (_macScreen) {
-		_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w, _textSurface.h), 0);
-	}
-
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	if (_townsScreen) {
 		if (!_townsClearLayerFlag && (h - b != _virtscr[kMainVirtScreen].h))
@@ -790,28 +786,29 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 }
 
   void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
-	const byte *src1 = vs->getPixels(x, top);
-	const byte *src2 = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
-	byte *dst = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+	const byte *pixels = vs->getPixels(x, top);
+	const byte *ts = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
+	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
+
+	int pixelsPitch = vs->pitch;
+	int tsPitch = _textSurface.pitch;
+	int macPitch = _macScreen->pitch;
 
 	for (int h = 0; h < height; h++) {
 		for (int w = 0; w < width; w++) {
-			dst[2 * w] = src1[w];
-			dst[2 * w + 1] = src1[w];
+			if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
+				mac[2 * w] = pixels[w];
+			if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
+				mac[2 * w + 1] = pixels[w];
+			if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
+				mac[2 * w + macPitch] = pixels[w];
+			if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
+				mac[2 * w + macPitch + 1] = pixels[w];
 		}
 
-		src1 += vs->pitch;
-		memcpy(dst + _macScreen->pitch, dst, width * 2);
-
-		for (int i = 0; i < 2; i++) {
-			for (int w = 0; w < width * 2; w++) {
-				if (src2[w]) {
-					dst[w] = src2[w];
-				}
-			}
-			src2 += _textSurface.pitch;
-			dst += _macScreen->pitch;
-		}
+		pixels += pixelsPitch;
+		ts += tsPitch * 2;
+		mac += macPitch * 2;
 	}
 
 	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
@@ -826,7 +823,7 @@ void ScummEngine::mac_restoreCharsetBg() {
 		_charset->_str.left = -1;
 		_charset->_left = -1;
 
-		_textSurface.fillRect(Common::Rect(_textSurface.w, _textSurface.h), 0);
+		clearTextSurface();
 
 		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
 		if (!vs->h)

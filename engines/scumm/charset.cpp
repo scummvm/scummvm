@@ -1603,12 +1603,16 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	if (_enableShadow) {
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop + 2, _shadowColor);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 3, macTop + 3, _shadowColor);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop, 0);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop + 2, 0);
+		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 3, macTop + 3, 0);
+		_macFont.drawChar(_vm->_macScreen, chr, macLeft + 2, macTop, _shadowColor);
+		_macFont.drawChar(_vm->_macScreen, chr, macLeft, macTop + 2, _shadowColor);
+		_macFont.drawChar(_vm->_macScreen, chr, macLeft + 3, macTop + 3, _shadowColor);
 	}
 
-	_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop + 1, _color);
+	_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop + 1, 0);
+	_macFont.drawChar(_vm->_macScreen, chr, macLeft + 1, macTop + 1, _color);
 
 	// Mark the virtual screen as dirty, using downscaled coordinates.
 
