@@ -341,21 +341,12 @@ bool AnimationTracker::step() {
 	}
 
 	if (!targetok || (f.is_onground() && !support)) {
-
 		// If on ground, try to adjust properly. Never do it for dead Crusader NPCs,
 		// as they don't get gravity and the death process gets stuck.
 		// TODO: Profile the effect of disabling this for pathfinding.
 		//       It shouldn't be necessary in that case, and may provide a
 		//       worthwhile speed-up.
 		if (f.is_onground() && zd > 8 && !(is_crusader && a->isDead())) {
-			if (is_crusader && !targetok && support) {
-				// Possibly trying to step onto an elevator platform which stops at a z slightly
-				// above the floor.  Re-scan with a small adjustment.
-				// This is a bit of a temporary hack to make navigation possible.. it "hurls"
-				// the avatar sometimes.
-				tz += 2;
-			}
-
 			targetok = cm->scanForValidPosition(tx, ty, tz, a, _dir,
 			                                    true, tx, ty, tz);
 
@@ -383,7 +374,7 @@ bool AnimationTracker::step() {
 
 #ifdef WATCHACTOR
 	if (a->getObjId() == watchactor) {
-		pout << "AnimationTracker: step (" << tx - _x << "," << ty - _y
+		pout << "AnimationTracker: step (" << _x << "," << _y << "," << _z << ") +("<< tx - _x << "," << ty - _y
 		     << "," << tz - _z << ")" << Std::endl;
 	}
 #endif
@@ -408,24 +399,9 @@ bool AnimationTracker::step() {
 		        a->getShapeInfo()->_flags,
 		        _actor, &support, 0);
 
-
 		if (!support) {
 			_unsupported = true;
 			return false;
-		} else {
-#if 0
-			// This check causes really weird behaviour when fall()
-			// doesn't make things fall off non-land items, so disabled for now
-
-			Item *supportitem = getItem(support);
-			assert(supportitem);
-			if (!supportitem->getShapeInfo()->is_land()) {
-//				pout << "Not land: "; supportitem->dumpInfo();
-				// invalid support
-				_unsupported = true;
-				return false;
-			}
-#endif
 		}
 	}
 

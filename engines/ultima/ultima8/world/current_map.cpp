@@ -865,17 +865,25 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 	// TODO: clean this up. Currently the mask arrays are filled with more
 	// data than is actually used.
 	const uint32 blockflagmask = (ShapeInfo::SI_SOLID | ShapeInfo::SI_DAMAGING) & item->getShapeInfo()->_flags;
+	if (!blockflagmask)
+		warning("scanForValidPosition non-solid object, should be valid anywhere");
 
-	Direction searchdir = static_cast<Direction>(((int)movedir + 2) % 4);
+	Direction searchdir = static_cast<Direction>(((int)movedir + 4) % 8);
 
 	bool xdir = (Direction_XFactor(searchdir) != 0);
 	bool ydir = (Direction_YFactor(searchdir) != 0);
 
-	// mark everything as valid, but without support
-	uint32 validmask[17];
-	uint32 supportmask[17];
-	for (int i = 0; i < 17; ++i) {
-		validmask[i] = 0x1FFFF;
+	int searchtype = ((int)searchdir / 2);
+
+	// The number of grid points on each side of x/y/z to scan.
+	const int scansize = GAME_IS_CRUSADER ? 10 : 8;
+
+	// Mark everything as valid, but without support.  We only use SCANSIZE * 2 + 1 bits of the mask
+	// but fill them all for simplicity.  Mask arrays are bigger than needed for either game.
+	uint32 validmask[24];
+	uint32 supportmask[24];
+	for (int i = 0; i < scansize * 2 + 1; ++i) {
+		validmask[i] = 0xFFFFFFFF;
 		supportmask[i] = 0;
 	}
 
@@ -884,7 +892,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 
 	// Note on scan direction:
 	// The 'horiz' variable below will always mean a direction in
-	// the positive  x/y directions, with the exception of searchdir 1,
+	// the positive  x/y directions, with the exception of searchtype 1,
 	// in which case positive horiz points in the (positive x, negative y)
 	// direction.
 
@@ -899,8 +907,7 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 
 	for (int cx = minx; cx <= maxx; cx++) {
 		for (int cy = miny; cy <= maxy; cy++) {
-			item_list::const_iterator iter;
-			for (iter = _items[cx][cy].begin();
+			for (item_list::const_iterator iter = _items[cx][cy].begin();
 			        iter != _items[cx][cy].end(); ++iter) {
 				const Item *citem = *iter;
 				if (citem->getObjId() == item->getObjId())
@@ -919,14 +926,13 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 
 				int minv = iz - z - zd + 1;
 				int maxv = iz + izd - z - 1;
-				if (minv < -8) minv = -8;
-				if (maxv > 8) maxv = 8;
+				if (minv < -scansize) minv = -scansize;
+				if (maxv > scansize) maxv = scansize;
 
-				int sminx, smaxx, sminy, smaxy;
-				sminx = ix - ixd + 1 - x;
-				smaxx = ix + xd - 1  - x;
-				sminy = iy - iyd + 1 - y;
-				smaxy = iy + yd - 1  - y;
+				int sminx = ix - ixd + 1 - x;
+				int smaxx = ix + xd - 1  - x;
+				int sminy = iy - iyd + 1 - y;
+				int smaxy = iy + yd - 1  - y;
 
 				int minh = -100;
 				int maxh = 100;
@@ -939,26 +945,26 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 					minh = sminx;
 				if (xdir && maxh > smaxx)
 					maxh = smaxx;
-				if ((ydir && searchdir != 1) && minh < sminy)
+				if ((ydir && searchtype != 1) && minh < sminy)
 					minh = sminy;
-				if ((ydir && searchdir != 1) && maxh > smaxy)
+				if ((ydir && searchtype != 1) && maxh > smaxy)
 					maxh = smaxy;
-				if (searchdir == 1 && minh < -smaxy)
+				if (searchtype == 1 && minh < -smaxy)
 					minh = -smaxy;
-				if (searchdir == 1 && maxh > -sminy)
+				if (searchtype == 1 && maxh > -sminy)
 					maxh = -sminy;
 
-				if (minh < -8) minh = -8;
-				if (maxh > 8) maxh = 8;
+				if (minh < -scansize) minh = -scansize;
+				if (maxh > scansize) maxh = scansize;
 
 				for (int j = minv; j <= maxv; ++j)
 					for (int i = minh; i <= maxh; ++i)
-						validmask[j + 8] &= ~(1 << (i + 8));
+						validmask[j + scansize] &= ~(1 << (i + scansize));
 
 				if (wantsupport && si->is_solid() &&
-				        iz + izd >= z - 8 && iz + izd <= z + 8) {
+				        iz + izd >= z - scansize && iz + izd <= z + scansize) {
 					for (int i = minh; i <= maxh; ++i)
-						supportmask[iz + izd - z + 8] |= (1 << (i + 8));
+						supportmask[iz + izd - z + scansize] |= (1 << (i + scansize));
 
 				}
 			}
@@ -968,40 +974,45 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 	bool foundunsupported = false;
 
 #if 0
-	for (unsigned int i = 0; i < 17; ++i) {
-		pout.printf("%05x | %05x\n", validmask[16 - i], supportmask[16 - i]);
+	pout.Print("valid | support\n");
+	for (unsigned int i = 0; i < SCANSIZE * 2 + 1; ++i) {
+		pout.Print("%05x | %05x\n", validmask[SCANSIZE * 2 - i], supportmask[SCANSIZE * 2 - i]);
 	}
-	pout.printf("-----------\n");
+	pout.Print("-----------\n");
 #endif
 
-	for (unsigned int i = 0; i < 3; ++i) {
-		int horiz;
-		if (i % 2 == 0)
-			horiz = 4 * (i / 2);
-		else
-			horiz = -4 - 4 * (i / 2);
+	//
+	// Crusader also has some floor pieces and elevators which are 1 z-pixel offset,
+	// presumably to fix render-order issues.  We need to be able to step up/down
+	// to them smoothly.
+	//
+	static const int SEARCH_OFFSETS_U8[] = {0, -4, 4, -8, 8};
+	static const int SEARCH_OFFSETS_CRU[] = {0, -1, 1, -4, 4, -5, 5, -8, 8, -9, 9};
 
-		for (unsigned int j = 0; j < 5; ++j) {
-			int vert;
-			if (j % 2 == 0)
-				vert = 4 * (j / 2);
-			else
-				vert = -4 - 4 * (j / 2);
+	const int *search_offsets = GAME_IS_CRUSADER ? SEARCH_OFFSETS_CRU : SEARCH_OFFSETS_U8;
+	const unsigned int nhoriz = GAME_IS_CRUSADER ? 7 : 3;
+	const unsigned int nvert = GAME_IS_CRUSADER ? 11 : 5;
+	for (unsigned int i = 0; i < nhoriz; ++i) {
+		const int horiz = search_offsets[i];
 
-			if (validmask[vert + 8] & (1 << (horiz + 8))) {
+		for (unsigned int j = 0; j < nvert; ++j) {
+			const int vert = search_offsets[j];
+			const uint32 checkbit = (1 << (horiz + scansize));
+
+			if (validmask[vert + scansize] & checkbit) {
 				if (!wantsupport || !foundunsupported ||
-				        (supportmask[vert + 8] & (1 << (horiz + 8)))) {
+				        (supportmask[vert + scansize] & checkbit)) {
 					tz = z + vert;
 					tx = x;
-					if (searchdir != 0)
+					if (searchtype != 0)
 						tx += horiz;
 					ty = y;
-					if (searchdir == 1)
+					if (searchtype == 1)
 						ty -= horiz;
-					else if (searchdir != 2)
+					else if (searchtype != 2)
 						ty += horiz;
 				}
-				if (!wantsupport || (supportmask[vert + 8] & (1 << (horiz + 8))))
+				if (!wantsupport || (supportmask[vert + scansize] & checkbit))
 					return true;
 				foundunsupported = true;
 			}
