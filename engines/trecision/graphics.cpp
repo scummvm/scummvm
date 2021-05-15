@@ -138,6 +138,10 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 	img.free();
 }
 
+void GraphicsManager::clearScreenBuffer() {
+	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, MAXY), 0);
+}
+
 void GraphicsManager::clearScreenBufferTop() {
 	// Clears lines 0 - 60
 	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);

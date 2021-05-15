@@ -114,20 +114,8 @@ void DialogManager::selectChoice(int16 dmx, int16 dmy) {
 
 void DialogManager::playDialog(uint16 i) {
 	_curDialog = i;
-	_vm->_flagDialogActive = true;
 	_curChoice = 0;
 	_curSubTitle = 0;
-	_vm->_flagShowCharacter = false;
-
-	_vm->_characterQueue.initQueue();
-	_vm->_inventoryStatus = INV_OFF;
-	_vm->_inventoryCounter = INVENTORY_HIDE;
-	_vm->_textMgr->clearLastText();
-	_vm->_textMgr->drawTexts();
-	_vm->_renderer->paintScreen(true);
-
-	_vm->_graphicsMgr->clearScreenBufferTop();
-	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
 

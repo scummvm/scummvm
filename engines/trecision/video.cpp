@@ -27,14 +27,15 @@
 #include "common/system.h"
 
 #include "trecision/actor.h"
+#include "trecision/anim.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
+#include "trecision/scheduler.h"
 #include "trecision/sound.h"
+#include "trecision/text.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
-#include "trecision/anim.h"
-#include "trecision/scheduler.h"
 
 namespace Trecision {
 
@@ -169,6 +170,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 		g_system->delayMillis(10);
 	}
 
+	_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
 	_vm->freeKey();
 	_vm->_scheduler->doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
 
@@ -360,10 +362,16 @@ void AnimManager::stopAllSmkAnims() {
 void AnimManager::startFullMotion(const char *name) {
 	stopAllSmkAnims();
 
+	_vm->_flagDialogActive = true;
 	_vm->_flagShowCharacter = false;
+
 	_vm->_textStatus = TEXT_OFF;
-	_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-	_vm->_graphicsMgr->copyToScreen(0, AREA + TOP, MAXX, TOP);
+	_vm->_inventoryStatus = INV_OFF;
+	_vm->_inventoryCounter = INVENTORY_HIDE;
+
+	_vm->_textMgr->clearTextStack();
+	_vm->_graphicsMgr->clearScreen();
+	_vm->_graphicsMgr->clearScreenBuffer();
 
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
@@ -377,10 +385,10 @@ void AnimManager::stopFullMotion() {
 
 	_vm->_flagDialogActive = false;
 	_vm->_flagDialogMenuActive = false;
-	_vm->_graphicsMgr->showCursor();
 	_vm->_flagSomeoneSpeaks = false;
-
 	_vm->_lightIcon = 0xFF;
+	_vm->_graphicsMgr->showCursor();
+
 	if (curDialog == dFCRED) {
 		_vm->quitGame();
 		return;
