@@ -62,7 +62,7 @@ void NightlongSmackerDecoder::muteTrack(uint track, bool mute) {
 }
 
 void NightlongSmackerDecoder::setMute(bool mute) {
-	for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); it++) {
+	for (TrackList::iterator it = getTrackListBegin(); it != getTrackListEnd(); ++it) {
 		if ((*it)->getTrackType() == Track::kTrackTypeAudio)
 			((AudioTrack *)*it)->setMute(mute);
 	}
