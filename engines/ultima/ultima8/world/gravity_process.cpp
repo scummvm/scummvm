@@ -336,7 +336,8 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 	Animation::Sequence lastanim = actor->getLastAnim();
 	Kernel *kernel = Kernel::get_instance();
 
-	if (height / 8 > 2 &&
+	if (!actor->isDead() &&
+		height / 8 > 2 &&
 		(lastanim != Animation::quickJumpCru &&
 		 lastanim != Animation::combatRollLeft &&
 		 lastanim != Animation::combatRollRight &&
@@ -351,14 +352,13 @@ void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
 		ProcId lpid = actor->doAnim(Animation::jumpLanding, dir_current);
 
 		Animation::Sequence nextanim = actor->isInCombat() ? Animation::combatStand : Animation::stand;
-		ProcId spid = actor->doAnim(nextanim, dir_current);
-		Process *sp = kernel->getProcess(spid);
-		sp->waitFor(lpid);
+		actor->doAnimAfter(nextanim, dir_current, lpid);
 
 		// 'ooof' (Note: same sound no is used in No Remorse and No Regret)
 		AudioProcess *audioproc = AudioProcess::get_instance();
 		if (audioproc) audioproc->playSFX(0x8f, 250, _itemNum, 0); // CONSTANT!
 	} else {
+
 		Process *currentanim = kernel->findProcess(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
 		if (currentanim) {
 			// TODO: Is this the right thing?
