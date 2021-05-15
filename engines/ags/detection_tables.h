@@ -215,6 +215,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "welcometosunnymunarvagir", "Welcome to Sunny Munarvagir" },
 	{ "whispersofamachine", "Whispers of a Machine" },
 	{ "zniwadventure", "Zniw Adventure" },
+	// Commercial Italian games
+	{ "onironauta", "Onironauta" },
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	{ "10waysfromsunday", "10 Ways from Sunday" },
@@ -312,6 +314,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "apprenticedeluxe", "Apprentice Deluxe" },
 	{ "aprofoundjourney", "A Profound Journey" },
 	{ "archeos", "Archeos" },
+	{ "ardensvale", "Arden's Value" },
 	{ "arewethereyet", "Are we there yet?" },
 	{ "aroomwithoutyou", "A Room Without You In It" },
 	{ "armageddonmargaret", "Armageddon Margaret" },
@@ -397,6 +400,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "boyindahood", "Boy in da hood" },
 	{ "bradbradsonkeyquest", "Brad Bradson: Key Quest" },
 	{ "breakdownbyonedollar", "Breakdown by OneDollar" },
+	{ "brokenwindows1", "Broken Windows - Chapter 1" },
 	{ "brotherswreckers", "Brothers & Wreckers" },
 	{ "bsg78unexpectedattherisingstar", "BSG78 - Unexpected at the Rising Star" },
 	{ "btd", "BTD" },
@@ -772,6 +776,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "koddurova", "Kod Durova" },
 	{ "koffeekrisis", "Koffee Krisis" },
 	{ "koscheitheimmortal", "Koschei The Immortal" },
+	{ "kq4retold", "King's Quest IV: The Perils of Rosella Retold" },
 	{ "kristmaskrisis", "Kristmas Krisis" },
 	{ "ktx1", "KTX-1" },
 	{ "kumastory", "Kuma Story" },
@@ -917,6 +922,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "murphyssalvagejustmyluck", "Murphy's Salvage: Just My Luck" },
 	{ "murranchronicles1", "Murran Chronicles 1" },
 	{ "murranchronicles2", "Murran Chronicles 2" },
+	{ "myburdentokeep", "My Burden to Keep" },
 	{ "mysterioushouse", "Mysterious house" },
 	{ "mysticseer", "Mystic Seer" },
 	{ "mythicalgambitflawlessfatality", "Mythical Gambit: Flawless Fatality" },
@@ -1082,6 +1088,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "redbow", "Red Bow" },
 	{ "reddwarf", "Red Dwarf" },
 	{ "redflagg", "Red Flagg" },
+	{ "redhotoverdrive", "Red Hot Overdrive" },
 	{ "redpantsmeetsrobinsonclauseau", "Redpants meets Robinson Clauseau" },
 	{ "redpantstheprincessandthebeanstalk", "Redpants: The Princess and the Beanstalk" },
 	{ "reefriversquestforekoban", "Reef Rivers: Quest for Ekoban" },
@@ -1637,6 +1644,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// hacked to specify plugin, errors on loading room107 saying that
 	// "room animations are no longer supported"
 	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 8686711),
+	UNSUPPORTED_GAME_ENTRY("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 	// uses unsupported agslua plugin
 	UNSUPPORTED_GAME_ENTRY("allthewaydown", "deepuns3.exe", "6c0b5468657c22d62201e3769cd8d2b3", 29830067),
 	// Commercial game that likely uses custom extensions. Not only does it seem
@@ -1850,6 +1858,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004), // Steam
+	// Commerical Italian games
+	GAME_ENTRY_LANG_PLATFORM("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA, nullptr),
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	DEMO_ENTRY("3geeks", "3GEEKS_Demo.exe", "7ddb9e776648faed5a51170d087074e9", 512546851), // itch.io
@@ -1898,6 +1908,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("oott", "demo_tkc.exe", "54da0ce99f3e8b556db6d236c8ef76ba", 415137576), // Steam
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96534651),
 	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96536204),
+	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96799674),
+	DEMO_ENTRY("phantomfellows", "TPF.exe", "71961f24fd94e30e61167d7b0720cd35", 96799833),
 	DEMO_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 727898212),
 	DEMO_ENTRY("pubmastersquest", "pub master quest [demo].exe", "e1676318c8a040fcf508b817013dc8fe", 23431689),
 	DEMO_ENTRY("puzzlebots", "puzzlebots_demo.exe", "34b49df9cf6eadb5c3587b3921d5b72f", 354138961),
@@ -2035,6 +2047,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("archeos", "archeos.exe", "2ff048659aaefd20d342db6428a5f1a0", 6659974),
 	GAME_ENTRY("archeos", "archeos.exe", "2ff048659aaefd20d342db6428a5f1a0", 6661410),
 	GAME_ENTRY("archeos", "archeos.ags", "050b3e5c5486fb6b977712cb4e4d6058", 4217618),
+	GAME_ENTRY("ardensvale", "Arden's Vale.exe", "588df1c52f2ecdc6af866cd06b9810e1", 20097804),
 	GAME_ENTRY("arewethereyet", "arewethereyet.exe", "f120690b506dd63cd7d1112ea6af2f77", 1054672),
 	GAME_ENTRY("aroomwithoutyou", "aroomwithoutyou.ags", "34ba844fe761f8a9da2cf1076c30d847", 27163303),
 	GAME_ENTRY("aroomwithoutyou", "aroomwithoutyou.exe", "7ddb9e776648faed5a51170d087074e9", 29650615),
@@ -2127,6 +2140,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("boyindahood", "boy in da hood.exe", "afe40dc1416dd51e896ee0444d799f07", 12260759),
 	GAME_ENTRY("bradbradsonkeyquest", "badness.exe", "0500aacb6c176d47ac0f8158f055db83", 1190580),
 	GAME_ENTRY("breakdownbyonedollar", "breakdown.exe", "710ac163c281a5a539ffe2386264b990", 5273352),
+	GAME_ENTRY("brokenwindows1", "Police.exe", "7ddb9e776648faed5a51170d087074e9", 16971333),
 	GAME_ENTRY("bsg78unexpectedattherisingstar", "bsg-e01.exe", "cf1ff01dfb8261f791ac95a7f5f05c1c", 401029955),
 	GAME_ENTRY("btd", "btd.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6450527),
 	GAME_ENTRY("bttf3", "tfg - bttf iii - timeline of mi.exe", "7ddb9e776648faed5a51170d087074e9", 157518001),
@@ -2500,6 +2514,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("koddurova", "Kod Durova.exe", "615e73fc1874e92d60a1996c2330ea36", 498427333, Common::RU_RUS),
 	GAME_ENTRY("koffeekrisis", "Koffee Krisis.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 2423111),
 	GAME_ENTRY("koscheitheimmortal", "Koschei.exe", "465f972675db2da6040518221af5b0ba", 2771442),
+	GAME_ENTRY("kq4retold", "King's Quest 4.exe", "da6140c1e246d5f7641464bda80c45d5", 148103603),
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),
 	GAME_ENTRY("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
 	GAME_ENTRY("kumastory", "Kuma Story.exe", "54e966a013d104bf23603c780438d089", 2893472),
@@ -2652,6 +2667,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("murphyssalvagejustmyluck", "space.exe", "f8029b1e9ff5ac01ae23896af44e885a", 51351465),
 	GAME_ENTRY("murranchronicles1", "Jersey Devil.exe", "06a03fe35791b0578068ab1873455463", 20555872),
 	GAME_ENTRY("murranchronicles2", "Talons.exe", "06a03fe35791b0578068ab1873455463", 17613066),
+	GAME_ENTRY("myburdentokeep", "MBTK.exe", "52b5831250acb676c3c76b8e47af4b2c", 35230042),
 	GAME_ENTRY("mysterioushouse", "mh.exe", "495d45fb8adfd49690ae3b97921feec6", 42400316),
 	GAME_ENTRY("mysticseer", "NickOfTime.exe", "f120690b506dd63cd7d1112ea6af2f77", 4460113),
 	GAME_ENTRY("mythicalgambitflawlessfatality", "MGFF.exe", "4887d3dca056a0772741b42f66e018fb", 59711760),
@@ -2824,6 +2840,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("recess2", "Recess2.exe", "45ab4f29031b50c8d01d10a269f77ff5", 2805921),
 	GAME_ENTRY("reddwarf", "Red Dwarf.exe", "06a03fe35791b0578068ab1873455463", 2812268),
 	GAME_ENTRY("redflagg", "Red Flagg.exe", "5901879fafae3812f71b3a2d73bee40e", 79414802),
+	GAME_ENTRY("redhotoverdrive", "RHO.exe", "bdaf20d9779c01986d6d8b7e1d6118ee", 11718460),
 	GAME_ENTRY("redpantsmeetsrobinsonclauseau", "DBL.exe", "c0aab3e02bbaf8468770480079436f61", 15658119),
 	GAME_ENTRY("redpantstheprincessandthebeanstalk", "Redpants - The Princess and the Beanstalk.exe", "c0aab3e02bbaf8468770480079436f61", 28517345),
 	GAME_ENTRY("reefriversquestforekoban", "Quest for Ekoban.exe", "338fa79960d40689063af31c671b8729", 179342350),
