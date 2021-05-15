@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-15 10:53+0000\n"
+"POT-Creation-Date: 2021-05-15 20:03+0000\n"
 "PO-Revision-Date: 2021-05-09 16:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3632,7 +3632,7 @@ msgstr "アップデートを確認中..."
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:305 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:458 engines/teenagent/resources.cpp:98
-#: engines/tony/tony.cpp:196 engines/toon/toon.cpp:4956
+#: engines/tony/tony.cpp:192 engines/toon/toon.cpp:4956
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "%sエンジンのデータファイルが見つかりません。"
@@ -3640,14 +3640,14 @@ msgstr "%sエンジンのデータファイルが見つかりません。"
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:947
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:313 engines/supernova/supernova.cpp:463
-#: engines/tony/tony.cpp:209 engines/toon/toon.cpp:4969
+#: engines/tony/tony.cpp:205 engines/toon/toon.cpp:4969
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "%sエンジンのデータファイルが壊れています。"
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:958
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
-#: engines/mortevielle/mortevielle.cpp:323 engines/tony/tony.cpp:220
+#: engines/mortevielle/mortevielle.cpp:323 engines/tony/tony.cpp:216
 #: engines/toon/toon.cpp:4980
 #, c-format
 msgid ""
@@ -7016,7 +7016,7 @@ msgstr ""
 msgid "Saturn CD version is not yet supported"
 msgstr "セガサターン版はまだサポートされていません"
 
-#: engines/tony/tony.cpp:257
+#: engines/tony/tony.cpp:253
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
 msgstr "異なるフォントはエンジンデータファイル'%s'に存在しません。"

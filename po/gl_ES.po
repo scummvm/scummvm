@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-15 10:53+0000\n"
+"POT-Creation-Date: 2021-05-15 20:03+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Galician <https://translations.scummvm.org/projects/scummvm/"
@@ -3768,7 +3768,7 @@ msgstr "Buscar actualizacións..."
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:64
 #: engines/mortevielle/mortevielle.cpp:305 engines/sky/compact.cpp:131
 #: engines/supernova/supernova.cpp:458 engines/teenagent/resources.cpp:98
-#: engines/tony/tony.cpp:196 engines/toon/toon.cpp:4956
+#: engines/tony/tony.cpp:192 engines/toon/toon.cpp:4956
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Non se puido localizar o ficheiro de datos do motor %s."
@@ -3776,14 +3776,14 @@ msgstr "Non se puido localizar o ficheiro de datos do motor %s."
 #: engines/access/resources.cpp:52 engines/drascula/drascula.cpp:947
 #: engines/hugo/hugo.cpp:448 engines/lure/lure.cpp:73
 #: engines/mortevielle/mortevielle.cpp:313 engines/supernova/supernova.cpp:463
-#: engines/tony/tony.cpp:209 engines/toon/toon.cpp:4969
+#: engines/tony/tony.cpp:205 engines/toon/toon.cpp:4969
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "O ficheiro de datos do motor %s está danado."
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:958
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
-#: engines/mortevielle/mortevielle.cpp:323 engines/tony/tony.cpp:220
+#: engines/mortevielle/mortevielle.cpp:323 engines/tony/tony.cpp:216
 #: engines/toon/toon.cpp:4980
 #, c-format
 msgid ""
@@ -7181,7 +7181,7 @@ msgstr ""
 msgid "Saturn CD version is not yet supported"
 msgstr "ID de xogo non compatible"
 
-#: engines/tony/tony.cpp:257
+#: engines/tony/tony.cpp:253
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Variante de fonte non presente no ficheiro de datos do motor \"%s\"."
