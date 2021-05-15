@@ -55,6 +55,10 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 	if (gDebugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
+	for (DebugChannelMap::iterator i = gDebugChannels.begin(); i != gDebugChannels.end(); i++)
+		if (i->_value.channel == channel)
+			error("Duplicate engine debug channel id '%d' for flag '%s'", channel, name.c_str());
+
 	gDebugChannels[name] = DebugChannel(channel, name, description);
 
 	return true;
@@ -131,8 +135,9 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 void DebugManager::debugFlagsRegister(const DebugChannelDef *channels) {
 	if (!channels)
 		return;
-	for (uint i = 0; channels[i].channel != 0; i++)
+	for (uint i = 0; channels[i].channel != 0; i++) {
 		addDebugChannel(channels[i].channel, channels[i].name, channels[i].description);
+	}
 }
 
 void DebugManager::debugFlagsClear() {
