@@ -79,190 +79,190 @@ void LogicManager::syncGameStream(Common::Serializer &ser) {
 }
 
 void LogicManager::initScript() {
-	int f = 0;
+	int idx = 0;
 
-	_vm->_script[s16CARD]._firstFrame = f;
+	_vm->_script[s16CARD]._firstFrame = idx;
 	_vm->_script[s16CARD]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_CHARACTER;
-	_vm->_scriptFrame[f]._event = ME_CHARACTERACTION;
-	_vm->_scriptFrame[f++]._u16Param1 = a166USECREDITCARD;
+	_vm->_scriptFrame[idx]._class = MC_CHARACTER;
+	_vm->_scriptFrame[idx]._event = ME_CHARACTERACTION;
+	_vm->_scriptFrame[idx++]._u16Param1 = a166USECREDITCARD;
 
-	_vm->_scriptFrame[f]._class = MC_ACTION;
-	_vm->_scriptFrame[f]._event = ME_MOUSEOPERATE;
-	_vm->_scriptFrame[f++]._u32Param = oTICKETOFFICE16;
+	_vm->_scriptFrame[idx]._class = MC_ACTION;
+	_vm->_scriptFrame[idx]._event = ME_MOUSEOPERATE;
+	_vm->_scriptFrame[idx++]._u32Param = oTICKETOFFICE16;
 
-	_vm->_script[S16MONEY]._firstFrame = ++f;
+	_vm->_script[S16MONEY]._firstFrame = ++idx;
 	_vm->_script[S16MONEY]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_CHARACTER;
-	_vm->_scriptFrame[f]._event = ME_CHARACTERACTION;
-	_vm->_scriptFrame[f++]._u16Param1 = a167USEMONEY;
+	_vm->_scriptFrame[idx]._class = MC_CHARACTER;
+	_vm->_scriptFrame[idx]._event = ME_CHARACTERACTION;
+	_vm->_scriptFrame[idx++]._u16Param1 = a167USEMONEY;
 
-	_vm->_scriptFrame[f]._class = MC_ACTION;
-	_vm->_scriptFrame[f]._event = ME_MOUSEOPERATE;
-	_vm->_scriptFrame[f++]._u32Param = oTICKETOFFICE16;
+	_vm->_scriptFrame[idx]._class = MC_ACTION;
+	_vm->_scriptFrame[idx]._event = ME_MOUSEOPERATE;
+	_vm->_scriptFrame[idx++]._u32Param = oTICKETOFFICE16;
 
-	_vm->_script[s19EVA]._firstFrame = ++f;
+	_vm->_script[s19EVA]._firstFrame = ++idx;
 	_vm->_script[s19EVA]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param1 = 214;
-	_vm->_scriptFrame[f]._u16Param2 = TOP + 140;
-	_vm->_scriptFrame[f++]._u32Param = ocEVA19;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param1 = 214;
+	_vm->_scriptFrame[idx]._u16Param2 = TOP + 140;
+	_vm->_scriptFrame[idx++]._u32Param = ocEVA19;
 
-	_vm->_script[s4AHELLEN]._firstFrame = ++f;
+	_vm->_script[s4AHELLEN]._firstFrame = ++idx;
 	_vm->_script[s4AHELLEN]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_CHARACTER;
-	_vm->_scriptFrame[f]._event = ME_CHARACTERACTION;
-	_vm->_scriptFrame[f++]._u16Param1 = a4A2;
+	_vm->_scriptFrame[idx]._class = MC_CHARACTER;
+	_vm->_scriptFrame[idx]._event = ME_CHARACTERACTION;
+	_vm->_scriptFrame[idx++]._u16Param1 = a4A2;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param1 = 336;
-	_vm->_scriptFrame[f]._u16Param2 = 263 + TOP;
-	_vm->_scriptFrame[f++]._u32Param = 0;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param1 = 336;
+	_vm->_scriptFrame[idx]._u16Param2 = 263 + TOP;
+	_vm->_scriptFrame[idx++]._u32Param = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param1 = 336;
-	_vm->_scriptFrame[f]._u16Param2 = 260 + TOP;
-	_vm->_scriptFrame[f++]._u32Param = 0;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param1 = 336;
+	_vm->_scriptFrame[idx]._u16Param2 = 260 + TOP;
+	_vm->_scriptFrame[idx++]._u32Param = 0;
 
-	_vm->_scriptFrame[f]._class = MC_DIALOG;
-	_vm->_scriptFrame[f]._event = ME_STARTDIALOG;
-	_vm->_scriptFrame[f++]._u16Param1 = dF4A3;
+	_vm->_scriptFrame[idx]._class = MC_DIALOG;
+	_vm->_scriptFrame[idx]._event = ME_STARTDIALOG;
+	_vm->_scriptFrame[idx++]._u16Param1 = dF4A3;
 
-	_vm->_script[s49SUNDIAL]._firstFrame = ++f;
+	_vm->_script[s49SUNDIAL]._firstFrame = ++idx;
 	_vm->_script[s49SUNDIAL]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_SCRIPT;
-	_vm->_scriptFrame[f]._event = ME_CHANGER;
-	_vm->_scriptFrame[f]._u16Param1 = kRoom49;
-	_vm->_scriptFrame[f]._u16Param2 = a496;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f++]._u32Param = 1;
+	_vm->_scriptFrame[idx]._class = MC_SCRIPT;
+	_vm->_scriptFrame[idx]._event = ME_CHANGER;
+	_vm->_scriptFrame[idx]._u16Param1 = kRoom49;
+	_vm->_scriptFrame[idx]._u16Param2 = a496;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx++]._u32Param = 1;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param1 = 360;
-	_vm->_scriptFrame[f]._u16Param2 = 255 + TOP;
-	_vm->_scriptFrame[f++]._u32Param = 0;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param1 = 360;
+	_vm->_scriptFrame[idx]._u16Param2 = 255 + TOP;
+	_vm->_scriptFrame[idx++]._u32Param = 0;
 
-	_vm->_scriptFrame[f]._class = MC_SCRIPT;
-	_vm->_scriptFrame[f]._event = ME_CHANGER;
-	_vm->_scriptFrame[f]._u16Param1 = kRoom4A;
-	_vm->_scriptFrame[f]._u16Param2 = 0;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f++]._u32Param = 1;
+	_vm->_scriptFrame[idx]._class = MC_SCRIPT;
+	_vm->_scriptFrame[idx]._event = ME_CHANGER;
+	_vm->_scriptFrame[idx]._u16Param1 = kRoom4A;
+	_vm->_scriptFrame[idx]._u16Param2 = 0;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx++]._u32Param = 1;
 
 	//	Fast change room in double room of level 2
-	_vm->_script[s21TO22]._firstFrame = ++f;
+	_vm->_script[s21TO22]._firstFrame = ++idx;
 	_vm->_script[s21TO22]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 317;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 166;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oCATENAT21;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 317;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 166;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oCHAIN21;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 429;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 194;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f++]._u32Param = od21TO22;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 429;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 194;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx++]._u32Param = od21TO22;
 
-	_vm->_script[s21TO23]._firstFrame = ++f;
+	_vm->_script[s21TO23]._firstFrame = ++idx;
 	_vm->_script[s21TO23]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 317;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 166;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oCATENAT21;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 317;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 166;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oCHAIN21;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 204;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 157;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f++]._u32Param = od21TO23;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 204;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 157;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx++]._u32Param = od21TO23;
 
-	_vm->_script[s24TO23]._firstFrame = ++f;
+	_vm->_script[s24TO23]._firstFrame = ++idx;
 	_vm->_script[s24TO23]._flag = 0;
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 316;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 213;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oPASSAGE24;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 316;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 213;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oPASSAGE24;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 120;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 196;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f++]._u32Param = od24TO23;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 120;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 196;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx++]._u32Param = od24TO23;
 
-	_vm->_script[s24TO26]._firstFrame = ++f;
+	_vm->_script[s24TO26]._firstFrame = ++idx;
 	_vm->_script[s24TO26]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 316;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 213;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oPASSAGE24;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 316;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 213;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oPASSAGE24;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 527;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 187;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f++]._u32Param = od24TO26;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 527;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 187;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx++]._u32Param = od24TO26;
 
-	_vm->_script[s2ETO2C]._firstFrame = ++f;
+	_vm->_script[s2ETO2C]._firstFrame = ++idx;
 	_vm->_script[s2ETO2C]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 420;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 238;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oCATWALKA2E;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 420;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 238;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oCATWALKA2E;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 66;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 336;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f++]._u32Param = od2ETO2C;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 66;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 336;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx++]._u32Param = od2ETO2C;
 
-	_vm->_script[s2ETO2F]._firstFrame = ++f;
+	_vm->_script[s2ETO2F]._firstFrame = ++idx;
 	_vm->_script[s2ETO2F]._flag = 0;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 420;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 238;
-	_vm->_scriptFrame[f]._event = ME_MRIGHT;
-	_vm->_scriptFrame[f++]._u32Param = oCATWALKA2E;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 420;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 238;
+	_vm->_scriptFrame[idx]._event = ME_MRIGHT;
+	_vm->_scriptFrame[idx++]._u32Param = oCATWALKA2E;
 
-	_vm->_scriptFrame[f]._class = MC_MOUSE;
-	_vm->_scriptFrame[f]._u16Param1 = 213;
-	_vm->_scriptFrame[f]._u8Param = 1;
-	_vm->_scriptFrame[f]._u16Param2 = 69;
-	_vm->_scriptFrame[f]._event = ME_MLEFT;
-	_vm->_scriptFrame[f]._u32Param = oENTRANCE2E;
+	_vm->_scriptFrame[idx]._class = MC_MOUSE;
+	_vm->_scriptFrame[idx]._u16Param1 = 213;
+	_vm->_scriptFrame[idx]._u8Param = 1;
+	_vm->_scriptFrame[idx]._u16Param2 = 69;
+	_vm->_scriptFrame[idx]._event = ME_MLEFT;
+	_vm->_scriptFrame[idx]._u32Param = oENTRANCE2E;
 }
 
 void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
@@ -272,8 +272,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->read3D("21.3d");
 			_vm->_room[kRoom21]._flag &= ~kObjFlagExtra;
 			_vm->_pathFind->setPosition(14);
-			_vm->_obj[oCATENAT21]._position = 5;
-			_vm->_obj[oUSCITA21]._position = 11;
+			_vm->_obj[oCHAIN21]._position = 5;
+			_vm->_obj[oEXIT21]._position = 11;
 
 			// if we can go beyond
 			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
@@ -286,7 +286,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			}
 
 			_vm->setObjectAnim(od21TO23, 0);
-			_vm->setObjectVisible(oUSCITA21, true);
+			_vm->setObjectVisible(oEXIT21, true);
 
 			_vm->_obj[od21TO22]._flag |= kObjFlagRoomOut;
 			_vm->_obj[od21TO22]._flag &= ~kObjFlagExamine;
@@ -294,19 +294,19 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectAnim(oDOORA21, a212);
 			_vm->setObjectAnim(oDOORC21, a219);
 
-			_vm->setObjectVisible(oCUNICOLO21, true);
-			_vm->setObjectVisible(oCARTELLONE21, true);
+			_vm->setObjectVisible(oCUNICLE21, true);
+			_vm->setObjectVisible(oBILLBOARD21, true);
 		} else {
 			_vm->read3D("212.3d");
 			_vm->_room[kRoom21]._flag |= kObjFlagExtra;
 			_vm->_pathFind->setPosition(15);
-			_vm->_obj[oCATENAT21]._position = 6;
-			_vm->_obj[oUSCITA21]._position = 21;
+			_vm->_obj[oCHAIN21]._position = 6;
+			_vm->_obj[oEXIT21]._position = 21;
 
 			_vm->_obj[od21TO23]._flag |= kObjFlagRoomOut;
 			_vm->_obj[od21TO23]._flag &= ~kObjFlagExamine;
 			_vm->setObjectAnim(od21TO23, aWALKOUT);
-			_vm->setObjectVisible(oUSCITA21, true);
+			_vm->setObjectVisible(oEXIT21, true);
 
 			// If we can go beyond
 			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
@@ -323,8 +323,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectAnim(oDOORA21, 0);
 			_vm->setObjectAnim(oDOORC21, 0);
 
-			_vm->setObjectVisible(oCUNICOLO21, false);
-			_vm->setObjectVisible(oCARTELLONE21, false);
+			_vm->setObjectVisible(oCUNICLE21, false);
+			_vm->setObjectVisible(oBILLBOARD21, false);
 		}
 		break;
 	case kRoom24:
@@ -332,7 +332,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->read3D("24.3d");
 			_vm->_room[kRoom24]._flag &= ~kObjFlagExtra;
 			_vm->_obj[oPASSAGE24]._position = 3;
-			_vm->_obj[oMACERIE24]._position = 3;
+			_vm->_obj[oRUINS24]._position = 3;
 			_vm->setObjectVisible(oDUMMY24, false);
 			_vm->setObjectVisible(oDUMMY24A, true);
 		} else {
@@ -340,7 +340,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_room[kRoom24]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(od24TO26, true);
 			_vm->_obj[oPASSAGE24]._position = 4;
-			_vm->_obj[oMACERIE24]._position = 4;
+			_vm->_obj[oRUINS24]._position = 4;
 			_vm->setObjectVisible(oDUMMY24A, false);
 			_vm->setObjectVisible(oDUMMY24, true);
 		}
@@ -381,34 +381,34 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_room[kRoom2E]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2E, false);
 			_vm->_obj[oENTRANCE2E]._flag &= ~kObjFlagExamine;
-			_vm->setObjectVisible(oPASSERELLAB2E, false);
-			_vm->setObjectVisible(oCRATERE2E, false);
-			_vm->setObjectVisible(oARBUSTI2E, false);
-			_vm->_obj[oCREPACCIO2E]._position = 6;
+			_vm->setObjectVisible(oCATWALKB2E, false);
+			_vm->setObjectVisible(oCRATER2E, false);
+			_vm->setObjectVisible(oSHRUBS2E, false);
+			_vm->_obj[oCRACK2E]._position = 6;
 		} else {
 			_vm->_obj[oCATWALKA2E]._position = 3;
-			_vm->setObjectAnim(oCATWALKA2E, a2E3PRIMAPAVVICINANDO);
+			_vm->setObjectAnim(oCATWALKA2E, a2E3FIRSTAPPROACH);
 			_vm->read3D("2E2.3d");
 			_vm->_room[kRoom2E]._flag |= kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2E, true);
 			_vm->setObjectVisible(oENTRANCE2E, true);
 			_vm->_obj[oENTRANCE2E]._flag |= kObjFlagExamine;
-			_vm->setObjectVisible(oPASSERELLAB2E, true);
-			_vm->setObjectVisible(oCRATERE2E, true);
-			_vm->setObjectVisible(oARBUSTI2E, true);
-			_vm->_obj[oCREPACCIO2E]._position = 7;
+			_vm->setObjectVisible(oCATWALKB2E, true);
+			_vm->setObjectVisible(oCRATER2E, true);
+			_vm->setObjectVisible(oSHRUBS2E, true);
+			_vm->_obj[oCRACK2E]._position = 7;
 			_vm->_obj[oCATWALKA2E]._nbox = BOX_FOREGROUND;
 		}
 		break;
 	case kRoom2GV:
 		if (!altRoomFl) {
-			_vm->_obj[oVIADOTTO2GV]._position = 7;
-			_vm->setObjectAnim(oVIADOTTO2GV, a2G7ATTRAVERSAPONTICELLO);
+			_vm->_obj[oVIADUCT2GV]._position = 7;
+			_vm->setObjectAnim(oVIADUCT2GV, a2G7CROSSBRIDGE);
 			_vm->read3D("2GV.3d");
 			_vm->_room[kRoom2GV]._flag &= ~kObjFlagExtra;
 			_vm->setObjectVisible(oDUMMY2GV, false);
-			_vm->setObjectVisible(oRAGAZZOS2GV, false);
-			_vm->setObjectVisible(oCOCCODRILLO2GV, false);
+			_vm->setObjectVisible(oGIRLS2GV, false);
+			_vm->setObjectVisible(oCROCODILE2GV, false);
 		}
 		break;
 	default:
@@ -417,9 +417,9 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 }
 
 struct CharacterAnimation {
-	uint16 curRoom;
-	uint16 oldRoom;
-	uint16 action;
+	uint16 _curRoom;
+	uint16 _oldRoom;
+	uint16 _action;
 };
 
 void LogicManager::startCharacterAnimations() {
@@ -475,13 +475,13 @@ void LogicManager::startCharacterAnimations() {
 		const CharacterAnimation anim = characterAnimations[i];
 		const bool positionerRoom = _vm->_curRoom >= kRoom44 && _vm->_curRoom <= kRoom49;
 		const bool checkPositioner = !positionerRoom || !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra);
-		if (_vm->_curRoom == anim.curRoom && _vm->_oldRoom == anim.oldRoom && checkPositioner) {
-			_vm->startCharacterAction(anim.action, 0, 0, 0);
+		if (_vm->_curRoom == anim._curRoom && _vm->_oldRoom == anim._oldRoom && checkPositioner) {
+			_vm->startCharacterAction(anim._action, 0, 0, 0);
 			break;
 		}
 		
 		i++;
-	} while (characterAnimations[i].curRoom != 0);
+	} while (characterAnimations[i]._curRoom != 0);
 
 	if (_vm->_curRoom == kRoom18 && _vm->_oldRoom == kRoom17 && !(_vm->_room[kRoom18]._flag & kObjFlagDone)) {
 		_vm->startCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
@@ -1159,7 +1159,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oBOTOLAA1B, a1B6ASCENDEBOTOLA);
 			*printSentence = false;
-		} else if (_vm->_useWith[WITH] == oCATENAT21) {
+		} else if (_vm->_useWith[WITH] == oCHAIN21) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a216, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oALTOPARLANTE25) {
@@ -1487,7 +1487,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oCARTELLONE24, false);
 			_vm->setObjectVisible(oCARTELLONE2H, false);
 			_vm->setObjectVisible(oPASSERELLA24, false);
-			_vm->setObjectVisible(oMACERIE24, false);
+			_vm->setObjectVisible(oRUINS24, false);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTUBOT34) && _vm->isObjectVisible(oVALVOLAC34)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a341USAPINZE, 0, 0, _vm->_useWith[WITH]);
@@ -1554,7 +1554,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemPincers:
 	case kItemMagneticBar:
-		if (_vm->_useWith[WITH] == oCATENAT21) {
+		if (_vm->_useWith[WITH] == oCHAIN21) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
 				if (_vm->_useWith[USED] == kItemPincers)
 					_vm->_dialogMgr->playDialog(dF212B);
@@ -2096,7 +2096,7 @@ bool LogicManager::useScreenWithScreen() {
 			_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
 			_vm->setObjectVisible(oRAMPINO21, false);
 			_vm->setObjectVisible(oTUBO21, false);
-			_vm->setObjectVisible(oCATENAT21, true);
+			_vm->setObjectVisible(oCHAIN21, true);
 			printSentence = false;
 		}
 		break;
@@ -2392,7 +2392,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		retVal = false;
 		break;
 
-	case oCREPACCIO2E:
+	case oCRACK2E:
 		if (_vm->_room[kRoom2E]._flag & kObjFlagExtra)
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E7GUARDACREPACCIODILA, 0, 0, curObj);
 		else
@@ -2693,7 +2693,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->setObjectAnim(od22TO29I, a2215);
 		break;
 
-	case oCATENAT21:
+	case oCHAIN21:
 		if ((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212);                             // 436
@@ -3618,9 +3618,9 @@ bool LogicManager::mouseClick(uint16 curObj) {
 		}
 
 		if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
-			if ((curObj == oTUBO21) || (curObj == oCARTELLONE21) || (curObj == oESSE21)
+			if ((curObj == oTUBO21) || (curObj == oBILLBOARD21) || (curObj == oESSE21)
 			|| (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22)
-			|| (curObj == oDOORC21) || (curObj == oDOORA21) || (curObj == oCUNICOLO21) || (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVTO26)) {
+			|| (curObj == oDOORC21) || (curObj == oDOORA21) || (curObj == oCUNICLE21) || (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVTO26)) {
 				_vm->_pathFind->_characterGoToPosition = -1;
 				retVal = true;
 			}

@@ -33,12 +33,14 @@ namespace Trecision {
 
 AnimTypeManager::AnimTypeManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < 3; ++i) {
-		AnimType[i]._curFrame = 1;
-		AnimType[i]._lastFrame = 0;
-		AnimType[i]._object = 0;
-		AnimType[i]._status = 0;
-		AnimType[i]._curAnim = nullptr;
+		_animType[i]._curFrame = 1;
+		_animType[i]._lastFrame = 0;
+		_animType[i]._object = 0;
+		_animType[i]._status = 0;
+		_animType[i]._curAnim = nullptr;
 	}
+
+	_oneSpeakDialogCount = 0;
 }
 
 AnimTypeManager::~AnimTypeManager() {
@@ -58,9 +60,9 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		break;
 	case fCREPACCIO:
 		if (_vm->_room[kRoom2E]._flag & kObjFlagExtra)
-			_vm->_obj[oCREPACCIO2E]._position = 7;
+			_vm->_obj[oCRACK2E]._position = 7;
 		else
-			_vm->_obj[oCREPACCIO2E]._position = 6;
+			_vm->_obj[oCRACK2E]._position = 6;
 		break;
 	case fSERPVIA:
 		_vm->_scheduler->doEvent(_vm->_snake52._class, _vm->_snake52._event, _vm->_snake52._priority, _vm->_snake52._u16Param1, _vm->_snake52._u16Param2, _vm->_snake52._u8Param, _vm->_snake52._u32Param);
@@ -170,8 +172,6 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 }
 
 void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
-	static int dc = 0;
-
 	switch (type) {
 	case ATFTEXT:
 		_vm->_textMgr->characterSayInAction(h->_curAnim->_atFrame[atf]._index);
@@ -261,9 +261,9 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 			if (_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
-			_vm->_textMgr->someoneSay(307 + dc, oDONNA1D, 0);
-			if (dc < 6)
-				dc++;
+			_vm->_textMgr->someoneSay(307 + _oneSpeakDialogCount, oDONNA1D, 0);
+			if (_oneSpeakDialogCount < 6)
+				_oneSpeakDialogCount++;
 			break;
 
 		case 2:
@@ -284,12 +284,12 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 
 void AnimTypeManager::init(uint16 an, uint16 obj) {
 	SAnim *anim = &_vm->_animMgr->_animTab[an];
-	ATFHandle *handle = &AnimType[kAnimTypeCharacter];
+	ATFHandle *handle = &_animType[kAnimTypeCharacter];
 	
 	if (anim->_flag & SMKANIM_BKG)
-		handle = &AnimType[kAnimTypeBackground];
+		handle = &_animType[kAnimTypeBackground];
 	if (anim->_flag & SMKANIM_ICON)
-		handle = &AnimType[kAnimTypeIcon];
+		handle = &_animType[kAnimTypeIcon];
 
 	handle->_curAnim = anim;
 	handle->_object = obj ? obj : _vm->_curObj;
@@ -300,13 +300,13 @@ void AnimTypeManager::init(uint16 an, uint16 obj) {
 
 void AnimTypeManager::next() {
 	for (int i = 0; i < 3; ++i) {
-		if (!(AnimType[i]._status & ATF_WAITTEXT) || !_vm->_flagCharacterSpeak)
-			AnimType[i]._curFrame++;
+		if (!(_animType[i]._status & ATF_WAITTEXT) || !_vm->_flagCharacterSpeak)
+			_animType[i]._curFrame++;
 	}
 }
 
 void AnimTypeManager::end(int type) {
-	ATFHandle *h = &AnimType[type];
+	ATFHandle *h = &_animType[type];
 	SAnim *anim = h->_curAnim;
 	h->_curFrame = 0;
 
@@ -333,7 +333,7 @@ void AnimTypeManager::end(int type) {
 }
 
 void AnimTypeManager::handler(int type) {
-	ATFHandle *h = &AnimType[type];
+	ATFHandle *h = &_animType[type];
 	SAnim *anim = h->_curAnim;
 	if (anim == nullptr)
 		return;

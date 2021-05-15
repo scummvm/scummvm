@@ -213,8 +213,8 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 }
 
 void GraphicsManager::dissolve(uint8 val) {
-	uint16 CenterX = MAXX / 2;
-	uint16 CenterY = MAXY / 2;
+	uint16 centerX = MAXX / 2;
+	uint16 centerY = MAXY / 2;
 
 	int lastv = 9000;
 
@@ -228,16 +228,16 @@ void GraphicsManager::dissolve(uint8 val) {
 
 		lastv = (sv - cv) + val;
 
-		float a = (float)(((CenterX + 200) / val) * lastv);
-		float b = (float)((CenterY / val) * lastv);
+		float a = (float)(((centerX + 200) / val) * lastv);
+		float b = (float)((centerY / val) * lastv);
 
 		float x = 0.0f;
 		float y = b;
 
-		if (CenterY - (int)y > TOP)
-			memset(_screenBuffer.getBasePtr(0, TOP), 0, (CenterY - (int)y - TOP) * MAXX * 2);
-		if ((AREA + TOP) > CenterY + (int)y)
-			memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, (AREA + TOP - (CenterY + (int)y)) * MAXX * 2);
+		if (centerY - (int)y > TOP)
+			memset(_screenBuffer.getBasePtr(0, TOP), 0, (centerY - (int)y - TOP) * MAXX * 2);
+		if ((AREA + TOP) > centerY + (int)y)
+			memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, (AREA + TOP - (centerY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
 		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
@@ -249,15 +249,15 @@ void GraphicsManager::dissolve(uint8 val) {
 			}
 			x += 1.0f;
 
-			int rightX = CenterX + (int)x;
+			int rightX = centerX + (int)x;
 			if (rightX < MAXX) {
-				memset(_screenBuffer.getBasePtr(rightX, CenterY + (int)y), 0, (MAXX - rightX) * 2);
-				memset(_screenBuffer.getBasePtr(rightX, CenterY - (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, centerY + (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, centerY - (int)y), 0, (MAXX - rightX) * 2);
 			}
-			int leftX = CenterX - (int)x;
+			int leftX = centerX - (int)x;
 			if (leftX > 0) {
-				memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, leftX * 2);
-				memset(_screenBuffer.getBasePtr(0, CenterY - (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, centerY - (int)y), 0, leftX * 2);
 			}
 		}
 
@@ -270,15 +270,15 @@ void GraphicsManager::dissolve(uint8 val) {
 				d2 += a * a * (-2.0f * y + 3.0f);
 			y -= 1.0f;
 
-			int rightX = CenterX + (int)x;
+			int rightX = centerX + (int)x;
 			if (rightX < MAXX) {
-				memset(_screenBuffer.getBasePtr(rightX, CenterY + (int)y), 0, (MAXX - rightX) * 2);
-				memset(_screenBuffer.getBasePtr(rightX, CenterY - (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, centerY + (int)y), 0, (MAXX - rightX) * 2);
+				memset(_screenBuffer.getBasePtr(rightX, centerY - (int)y), 0, (MAXX - rightX) * 2);
 			}
-			int leftX = CenterX - (int)x;
+			int leftX = centerX - (int)x;
 			if (leftX > 0) {
-				memset(_screenBuffer.getBasePtr(0, CenterY + (int)y), 0, leftX * 2);
-				memset(_screenBuffer.getBasePtr(0, CenterY - (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, leftX * 2);
+				memset(_screenBuffer.getBasePtr(0, centerY - (int)y), 0, leftX * 2);
 			}
 		}
 
@@ -300,11 +300,11 @@ void GraphicsManager::drawObj(SDObj d) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
 		for (uint16 b = d.rect.top; b < d.rect.bottom; b++) {
-			uint16 Sco = 0;
+			uint16 sco = 0;
 			uint16 c = 0;
-			while (Sco < d.rect.width()) {
+			while (sco < d.rect.width()) {
 				if (c == 0) { // jump
-					Sco += *mask;
+					sco += *mask;
 					mask++;
 
 					c = 1;
@@ -312,19 +312,19 @@ void GraphicsManager::drawObj(SDObj d) {
 					uint16 maskOffset = *mask;
 
 					if ((maskOffset != 0) && (b >= (d.rect.top + d.l.top)) && (b < (d.rect.top + d.l.bottom))) {
-						if ((Sco >= d.l.left) && ((Sco + maskOffset) < d.l.right))
-							memcpy(_screenBuffer.getBasePtr(Sco + d.rect.left, b), buf, maskOffset * 2);
+						if ((sco >= d.l.left) && ((sco + maskOffset) < d.l.right))
+							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, maskOffset * 2);
 
-						else if ((Sco < d.l.left) && ((Sco + maskOffset) < d.l.right) && ((Sco + maskOffset) >= d.l.left))
-							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - Sco, (maskOffset + Sco - d.l.left) * 2);
+						else if ((sco < d.l.left) && ((sco + maskOffset) < d.l.right) && ((sco + maskOffset) >= d.l.left))
+							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (maskOffset + sco - d.l.left) * 2);
 
-						else if ((Sco >= d.l.left) && ((Sco + maskOffset) >= d.l.right) && (Sco < d.l.right))
-							memcpy(_screenBuffer.getBasePtr(Sco + d.rect.left, b), buf, (d.l.right - Sco) * 2);
+						else if ((sco >= d.l.left) && ((sco + maskOffset) >= d.l.right) && (sco < d.l.right))
+							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, (d.l.right - sco) * 2);
 
-						else if ((Sco < d.l.left) && ((Sco + maskOffset) >= d.l.right))
-							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - Sco, (d.l.right - d.l.left) * 2);
+						else if ((sco < d.l.left) && ((sco + maskOffset) >= d.l.right))
+							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (d.l.right - d.l.left) * 2);
 					}
-					Sco += *mask;
+					sco += *mask;
 					buf += *mask++;
 					c = 0;
 				}

@@ -130,7 +130,7 @@ private:
 	uint16 _lTextY[480];
 	uint16 _rTextY[480];
 
-	SDObj DObj;
+	SDObj drawObj;
 
 	void setZBufferRegion(int16 sx, int16 sy, int16 dx);
 	int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3);

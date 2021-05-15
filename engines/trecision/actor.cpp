@@ -41,9 +41,9 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_faceNum = 0;
 	_lightNum = 0;
 
-	_px = _pz = 0.0;
-	_dx = _dz = 0.0;
-	_theta = 0.0;
+	_px = _pz = 0.0f;
+	_dx = _dz = 0.0f;
+	_theta = 0.0f;
 
 	for (uint8 i = 0; i < 6; ++i)
 		_lim[i] = 0;
@@ -69,9 +69,6 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 Actor::~Actor() {
 	delete[] _characterArea;
 	delete[] _face;
-//	delete _light;
-//	delete _camera;
-//	delete _texture;
 }
 
 void Actor::initTextures() {
