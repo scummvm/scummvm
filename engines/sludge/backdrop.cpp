@@ -125,6 +125,9 @@ void GraphicsManager::drawParallax() {
 }
 
 void GraphicsManager::saveParallax(Common::WriteStream *stream) {
+	if (!_parallaxLayers)
+		return;
+
 	ParallaxLayers::iterator it;
 	for (it = _parallaxLayers->begin(); it != _parallaxLayers->end(); ++it) {
 		stream->writeByte(1);
