@@ -278,6 +278,8 @@ public:
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
 	Graphics::MacFONTFont _macFont;
+	bool _pad;
+	int _lastTop;
 
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
