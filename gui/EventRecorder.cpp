@@ -88,8 +88,6 @@ EventRecorder::EventRecorder() {
 	_lastScreenshotTime = 0;
 	_screenshotPeriod = 0;
 	_playbackFile = nullptr;
-
-	DebugMan.addDebugChannel(kDebugLevelEventRec, "EventRec", "Event recorder debug level");
 }
 
 EventRecorder::~EventRecorder() {
