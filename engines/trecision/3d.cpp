@@ -1857,7 +1857,6 @@ void PathFinding3D::buildFramelist() {
 	// compute offset
 	SVertex *v = _vm->_actor->_characterArea;
 	float firstFrame = _vm->_actor->frameCenter(v);
-	float startPos = 0.0;
 
 	// if he was already walking
 	int curAction, curFrame, cfp;
@@ -2000,7 +1999,7 @@ void PathFinding3D::buildFramelist() {
 	b = 0;
 
 	len = 0.0;
-	startPos = 0.0;
+	float startPos = 0.0;
 	for (a = 0; a < _numPathNodes - 1; a++) {
 		curLen = 0.0;
 		len += _vm->dist3D(_pathNode[a]._x, 0.0, _pathNode[a]._z,
