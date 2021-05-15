@@ -95,8 +95,8 @@ bool ItemSelectionProcess::selectNextItem(bool grab) {
 
 			candidates.push_back(item);
 			if (grab) {
-				const ShapeInfo *info = item->getShapeInfo();
-				if (!info || !(info->_flags & ShapeInfo::SI_CRU_SELECTABLE)) {
+				const ShapeInfo *info_g = item->getShapeInfo();
+				if (!info_g || !(info_g->_flags & ShapeInfo::SI_CRU_SELECTABLE)) {
 					MainActor *actor = getMainActor();
 					if (actor)
 						actor->addItemCru(item, true);
