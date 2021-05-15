@@ -132,14 +132,6 @@ public:
 	 * Automatically executed when an End Of Track meta event is received.
 	 */
 	void deinitSource(uint8 source) override;
-	/**
-	 * Set the volume for this source. This will be used to scale the volume values in the MIDI
-	 * data from this source. Expected volume values are 0 - 256.
-	 * Note that source volume remains set for the source number even after deinitializing the
-	 * source. If the same source numbers are consistently used for music and SFX sources, the
-	 * source volume will only need to be set once.
-	 */
-	void setSourceVolume(uint8 source, uint16 volume) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
 
@@ -148,6 +140,7 @@ public:
 protected:
 	void initControlData() override;
 	void initMidiDevice() override;
+	void applySourceVolume(uint8 source) override;
 
 private:
 	void writeRhythmSetup(byte note, byte customTimbreId);

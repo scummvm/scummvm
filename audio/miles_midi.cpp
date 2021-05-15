@@ -55,11 +55,6 @@ MidiDriver_Miles_Midi::MidiDriver_Miles_Midi(MusicType midiType, MilesMT32Instru
 	_instrumentTablePtr = instrumentTablePtr;
 	_instrumentTableCount = instrumentTableCount;
 
-	// Disable user volume scaling by default. Most (all?)
-	// engines using Miles implement this themselves. Can
-	// be turned on using the property function.
-	_userVolumeScaling = false;
-
 	setSourceNeutralVolume(MILES_DEFAULT_SOURCE_NEUTRAL_VOLUME);
 }
 
@@ -141,7 +136,7 @@ void MidiDriver_Miles_Midi::send(int8 source, uint32 b) {
 
 	byte command = b & 0xf0;
 	byte dataChannel = b & 0xf;
-	byte outputChannel = source < 0 ? dataChannel : _sources[source].channelMap[dataChannel];
+	byte outputChannel = source < 0 ? dataChannel : _channelMap[source][dataChannel];
 
 	MidiChannelEntry &outputChannelEntry = _midiChannels[outputChannel];
 	// Only send the message to the MIDI device if the channel is not locked or
@@ -382,7 +377,7 @@ void MidiDriver_Miles_Midi::lockChannel(uint8 source, uint8 dataChannel) {
 
 	_midiChannels[lockChannel].locked = true;
 	_midiChannels[lockChannel].lockDataChannel = dataChannel;
-	_sources[source].channelMap[dataChannel] = lockChannel;
+	_channelMap[source][dataChannel] = lockChannel;
 	// Copy current controller values so they can be restored when unlocking the channel
 	*_midiChannels[lockChannel].unlockData = *_midiChannels[lockChannel].currentData;
 	_midiChannels[lockChannel].currentData->source = source;
@@ -424,7 +419,7 @@ void MidiDriver_Miles_Midi::unlockChannel(uint8 outputChannel) {
 
 	// Unlock the channel
 	channel.locked = false;
-	_sources[channel.currentData->source].channelMap[channel.lockDataChannel] = channel.lockDataChannel;
+	_channelMap[channel.currentData->source][channel.lockDataChannel] = channel.lockDataChannel;
 	channel.lockDataChannel = -1;
 	channel.currentData->source = channel.unlockData->source;
 
@@ -874,11 +869,7 @@ void MidiDriver_Miles_Midi::deinitSource(uint8 source) {
 	MidiDriver_MT32GM::deinitSource(source);
 }
 
-void MidiDriver_Miles_Midi::setSourceVolume(uint8 source, uint16 volume) {
-	assert(source < MAXIMUM_SOURCES);
-
-	_sources[source].volume = volume;
-
+void MidiDriver_Miles_Midi::applySourceVolume(uint8 source) {
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
 		if (!isOutputChannelUsed(i))
 			continue;

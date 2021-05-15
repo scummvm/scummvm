@@ -30,13 +30,10 @@
 
 // The initialization of the static const integral data members is done in the class definition,
 // but we still need to provide a definition if they are odr-used.
-const uint8 MidiDriver_MT32GM::MAXIMUM_SOURCES;
-const uint16 MidiDriver_MT32GM::DEFAULT_SOURCE_NEUTRAL_VOLUME;
 const uint8 MidiDriver_MT32GM::MT32_DEFAULT_CHANNEL_VOLUME;
 const uint8 MidiDriver_MT32GM::GM_DEFAULT_CHANNEL_VOLUME;
 const uint8 MidiDriver_MT32GM::MAXIMUM_MT32_ACTIVE_NOTES;
 const uint8 MidiDriver_MT32GM::MAXIMUM_GM_ACTIVE_NOTES;
-const uint16 MidiDriver_MT32GM::FADING_DELAY;
 
 // These are the power-on default instruments of the Roland MT-32 family.
 const byte MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS[8] = {
@@ -78,6 +75,14 @@ const uint8 MidiDriver_MT32GM::GS_DRUMKIT_FALLBACK_MAP[128] = {
 	 0,  0,  0,  0,  0,  0,  0, 127 // No drumkit defined; CM-64/32L (127)
 };
 
+// Callback hooked up to the driver wrapped by the MIDI driver
+// object. Executes onTimer and the external callback set by
+// the setTimerCallback function.
+void MidiDriver_MT32GM::timerCallback(void *data) {
+	MidiDriver_MT32GM *driver = (MidiDriver_MT32GM *)data;
+	driver->onTimer();
+}
+
 MidiDriver_MT32GM::MidiDriver_MT32GM(MusicType midiType) :
 		_driver(0),
 		_nativeMT32(false),
@@ -85,18 +90,10 @@ MidiDriver_MT32GM::MidiDriver_MT32GM(MusicType midiType) :
 		_midiDataReversePanning(false),
 		_midiDeviceReversePanning(false),
 		_scaleGSPercussionVolumeToMT32(false),
-		_userVolumeScaling(true),
-		_userMusicVolume(192),
-		_userSfxVolume(192),
-		_userMute(false),
 		_isOpen(false),
 		_outputChannelMask(65535), // Channels 1-16
 		_baseFreq(250),
-		_timerRate(0),
-		_fadeDelay(0),
-		_sysExDelay(0),
-		_timer_param(0),
-		_timer_proc(0) {
+		_sysExDelay(0) {
 	memset(_controlData, 0, sizeof(_controlData));
 
 	switch (midiType) {
@@ -113,11 +110,10 @@ MidiDriver_MT32GM::MidiDriver_MT32GM(MusicType midiType) :
 	}
 
 	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		// Default source type: 0 = music, 1+ = SFX
-		_sources[i].type = i == 0 ? SOURCE_TYPE_MUSIC : SOURCE_TYPE_SFX;
+		_availableChannels[i] = 0;
 		// Default MIDI channel mapping: data channel == output channel
 		for (int j = 0; j < MIDI_CHANNEL_COUNT; ++j) {
-			_sources[i].channelMap[j] = j;
+			_channelMap[i][j] = j;
 		}
 	}
 
@@ -382,19 +378,13 @@ void MidiDriver_MT32GM::close() {
 
 uint32 MidiDriver_MT32GM::property(int prop, uint32 param) {
 	switch (prop) {
-	case PROP_USER_VOLUME_SCALING:
-		if (param == 0xFFFF)
-			return _userVolumeScaling ? 1 : 0;
-		_userVolumeScaling = param > 0;
-		break;
 	case PROP_MIDI_DATA_REVERSE_PANNING:
 		if (param == 0xFFFF)
 			return _midiDataReversePanning ? 1 : 0;
 		_midiDataReversePanning = param > 0;
 		break;
 	default:
-		MidiDriver::property(prop, param);
-		break;
+		return MidiDriver_Multisource::property(prop, param);
 	}
 	return 0;
 }
@@ -871,100 +861,6 @@ void MidiDriver_MT32GM::stopAllNotes(bool stopSustainedNotes) {
 	_activeNotesMutex.unlock();
 }
 
-void MidiDriver_MT32GM::startFade(uint16 duration, uint16 targetVolume) {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		startFade(i, duration, targetVolume);
-	}
-}
-
-void MidiDriver_MT32GM::startFade(uint8 source, uint16 duration, uint16 targetVolume) {
-	assert(source < MAXIMUM_SOURCES);
-
-	_fadingMutex.lock();
-
-	_sources[source].fadePassedTime = 0;
-	_sources[source].fadeStartVolume = _sources[source].volume;
-	_sources[source].fadeEndVolume = targetVolume;
-	_sources[source].fadeDuration = duration * 1000;
-
-	_fadingMutex.unlock();
-}
-
-void MidiDriver_MT32GM::abortFade(FadeAbortType abortType) {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		abortFade(i, abortType);
-	}
-}
-
-void MidiDriver_MT32GM::abortFade(uint8 source, FadeAbortType abortType) {
-	assert(source < MAXIMUM_SOURCES);
-
-	if (!isFading(source)) {
-		return;
-	}
-
-	_fadingMutex.lock();
-
-	_sources[source].fadeDuration = 0;
-	uint16 newSourceVolume;
-	switch (abortType) {
-	case FADE_ABORT_TYPE_END_VOLUME:
-		newSourceVolume = _sources[source].fadeEndVolume;
-		break;
-	case FADE_ABORT_TYPE_START_VOLUME:
-		newSourceVolume = _sources[source].fadeStartVolume;
-		break;
-	case FADE_ABORT_TYPE_CURRENT_VOLUME:
-	default:
-		_fadingMutex.unlock();
-		return;
-	}
-	setSourceVolume(source, newSourceVolume);
-
-	_fadingMutex.unlock();
-}
-
-bool MidiDriver_MT32GM::isFading() {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		if (isFading(i))
-			return true;
-	}
-	return false;
-}
-
-bool MidiDriver_MT32GM::isFading(uint8 source) {
-	assert(source < MAXIMUM_SOURCES);
-
-	return _sources[source].fadeDuration > 0;
-}
-
-void MidiDriver_MT32GM::updateFading() {
-	Common::StackLock lock(_fadingMutex);
-
-	_fadeDelay -= _fadeDelay < _timerRate ? _fadeDelay : _timerRate;
-
-	bool updatedVolume = false;
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-
-		if (_sources[i].fadeDuration > 0) {
-			_sources[i].fadePassedTime += _timerRate;
-
-			if (_sources[i].fadePassedTime >= _sources[i].fadeDuration) {
-				// Fade has finished
-				setSourceVolume(i, _sources[i].fadeEndVolume);
-				updatedVolume = true;
-				_sources[i].fadeDuration = 0;
-			} else if (_fadeDelay == 0) {
-				setSourceVolume(i, ((_sources[i].fadePassedTime * (_sources[i].fadeEndVolume - _sources[i].fadeStartVolume)) /
-					_sources[i].fadeDuration) + _sources[i].fadeStartVolume);
-				updatedVolume = true;
-			}
-		}
-	}
-
-	if (updatedVolume)
-		_fadeDelay = FADING_DELAY;
-}
 
 void MidiDriver_MT32GM::clearSysExQueue() {
 	Common::StackLock lock(_sysExQueueMutex);
@@ -1031,23 +927,23 @@ bool MidiDriver_MT32GM::allocateSourceChannels(uint8 source, uint8 numChannels) 
 		}
 		// Clear the source channel mapping.
 		if (i != MIDI_RHYTHM_CHANNEL)
-			_sources[source].channelMap[i] = -1;
+			_channelMap[source][i] = -1;
 	}
 
 	_allocationMutex.unlock();
 
-	_sources[source].availableChannels = claimedChannels;
+	_availableChannels[source] = claimedChannels;
 
 	return true;
 }
 
 int8 MidiDriver_MT32GM::mapSourceChannel(uint8 source, uint8 dataChannel) {
-	int8 outputChannel = _sources[source].channelMap[dataChannel];
+	int8 outputChannel = _channelMap[source][dataChannel];
 	if (outputChannel == -1) {
 		for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
-			if ((_sources[source].availableChannels >> i) & 1) {
-				_sources[source].availableChannels &= ~(1 << i);
-				_sources[source].channelMap[dataChannel] = i;
+			if ((_availableChannels[source] >> i) & 1) {
+				_availableChannels[source] &= ~(1 << i);
+				_channelMap[source][dataChannel] = i;
 				outputChannel = i;
 				break;
 			}
@@ -1062,7 +958,7 @@ int8 MidiDriver_MT32GM::mapSourceChannel(uint8 source, uint8 dataChannel) {
 void MidiDriver_MT32GM::deinitSource(uint8 source) {
 	assert(source < MAXIMUM_SOURCES);
 
-	abortFade(source, FADE_ABORT_TYPE_END_VOLUME);
+	MidiDriver_Multisource::deinitSource(source);
 
 	// Free channels which were used by this source.
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
@@ -1072,102 +968,47 @@ void MidiDriver_MT32GM::deinitSource(uint8 source) {
 		if (_controlData[i]->source == source)
 			_controlData[i]->source = -1;
 	}
-	_sources[source].availableChannels = 0xFFFF;
+	_availableChannels[source] = 0xFFFF;
 	// Reset the data to output channel mapping
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
-		_sources[source].channelMap[i] = i;
+		_channelMap[source][i] = i;
 	}
-
-	_activeNotesMutex.lock();
-
-	// Stop any active notes.
-	for (int i = 0; i < _maximumActiveNotes; ++i) {
-		if (_activeNotes[i].source == source) {
-			if (_activeNotes[i].sustain) {
-				// Turn off sustain
-				controlChange(_activeNotes[i].channel, MIDI_CONTROLLER_SUSTAIN, 0x00, source, *_controlData[i]);
-			} else {
-				// Send note off
-				noteOnOff(_activeNotes[i].channel, MIDI_COMMAND_NOTE_OFF, _activeNotes[i].note, 0x00, source, *_controlData[i]);
-			}
-		}
-	}
-
-	_activeNotesMutex.unlock();
 
 	// TODO Optionally reset some controllers to their
 	// default values? Pitch wheel, volume, sustain...
 }
 
-void MidiDriver_MT32GM::setSourceType(SourceType type) {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		setSourceType(i, type);
-	}
-}
-
-void MidiDriver_MT32GM::setSourceType(uint8 source, SourceType type) {
-	assert(source < MAXIMUM_SOURCES);
-
-	_sources[source].type = type;
-
-	// Make sure music/sfx volume gets applied
+void MidiDriver_MT32GM::applySourceVolume(uint8 source) {
 	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
 		if (!isOutputChannelUsed(i))
 			continue;
 
-		if (_controlData[i]->source == source)
-			controlChange(i, MIDI_CONTROLLER_VOLUME, _controlData[i]->volume, source, *_controlData[i]);
+		if (source == 0xFF || _controlData[i]->source == source)
+			controlChange(i, MIDI_CONTROLLER_VOLUME, _controlData[i]->volume, _controlData[i]->source, *_controlData[i]);
 	}
 }
 
-void MidiDriver_MT32GM::setSourceVolume(uint16 volume) {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		setSourceVolume(i, volume);
+void MidiDriver_MT32GM::stopAllNotes(uint8 source, uint8 channel) {
+	_activeNotesMutex.lock();
+
+	for (int i = 0; i < _maximumActiveNotes; ++i) {
+		if ((source == 0xFF || _activeNotes[i].source == source) &&
+				(channel == 0xFF || _activeNotes[i].channel == channel)) {
+			if (_activeNotes[i].sustain) {
+				// Turn off sustain
+				controlChange(_activeNotes[i].channel, MIDI_CONTROLLER_SUSTAIN, 0x00, _activeNotes[i].source, *_controlData[i]);
+			} else {
+				// Send note off
+				noteOnOff(_activeNotes[i].channel, MIDI_COMMAND_NOTE_OFF, _activeNotes[i].note, 0x00, _activeNotes[i].source, *_controlData[i]);
+			}
+		}
 	}
-}
 
-void MidiDriver_MT32GM::setSourceVolume(uint8 source, uint16 volume) {
-	assert(source < MAXIMUM_SOURCES);
-
-	_sources[source].volume = volume;
-
-	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
-		if (!isOutputChannelUsed(i))
-			continue;
-
-		if (_controlData[i]->source == source)
-			controlChange(i, MIDI_CONTROLLER_VOLUME, _controlData[i]->volume, source, *_controlData[i]);
-	}
-}
-
-void MidiDriver_MT32GM::setSourceNeutralVolume(uint16 volume) {
-	for (int i = 0; i < MAXIMUM_SOURCES; ++i) {
-		setSourceNeutralVolume(i, volume);
-	}
-}
-
-void MidiDriver_MT32GM::setSourceNeutralVolume(uint8 source, uint16 volume) {
-	assert(source < MAXIMUM_SOURCES);
-
-	_sources[source].neutralVolume = volume;
-}
-
-void MidiDriver_MT32GM::syncSoundSettings() {
-	_userMusicVolume = MIN(256, ConfMan.getInt("music_volume"));
-	_userSfxVolume = MIN(256, ConfMan.getInt("sfx_volume"));
-	_userMute = ConfMan.getBool("mute");
-
-	// Make sure music/sfx volume gets applied
-	for (int i = 0; i < MIDI_CHANNEL_COUNT; ++i) {
-		if (!isOutputChannelUsed(i))
-			continue;
-
-		controlChange(i, MIDI_CONTROLLER_VOLUME, _controlData[i]->volume, _controlData[i]->source, *_controlData[i]);
-	}
+	_activeNotesMutex.unlock();
 }
 
 void MidiDriver_MT32GM::onTimer() {
-	updateFading();
+	MidiDriver_Multisource::onTimer();
 
 	_sysExQueueMutex.lock();
 
