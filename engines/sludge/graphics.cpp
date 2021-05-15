@@ -77,7 +77,7 @@ void GraphicsManager::init() {
 	_zBuffer->sprites = nullptr;
 
 	// Colors
-	_currentBlankColour = _renderSurface.format.ARGBToColor(0, 0, 0, 0);
+	_currentBlankColour = _renderSurface.format.ARGBToColor(0xff, 0, 0, 0);
 	_currentBurnR = 0;
 	_currentBurnG = 0;
 	_currentBurnB = 0;
