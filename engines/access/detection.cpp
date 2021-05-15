@@ -23,11 +23,20 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 #include "access/detection.h"
+#include "access/access.h"
 
 static const PlainGameDescriptor AccessGames[] = {
 	{"amazon", "Amazon: Guardians of Eden"},
 	{"martian", "Martian Memorandum"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Access::kDebugPath, "path", "Pathfinding debug level"},
+	{Access::kDebugScripts, "scripts", "Game scripts"},
+	{Access::kDebugGraphics, "graphics", "Graphics handling"},
+	{Access::kDebugSound, "sound", "Sound and Music handling"},
+	DEBUG_CHANNEL_END
 };
 
 #include "access/detection_tables.h"
@@ -48,6 +57,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Access Engine (C) 1989-1994 Access Software";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
