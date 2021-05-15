@@ -555,6 +555,8 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 
 	// Reset charset mask
 	_charset->_hasMask = false;
+	if (_macScreen)
+		_macScreen->fillRect(Common::Rect(_macScreen->w, _macScreen->h), 0);
 	clearTextSurface();
 
 	_lastCodePtr = NULL;
