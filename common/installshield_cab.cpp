@@ -104,30 +104,26 @@ bool InstallShieldCabinet::open(const String &baseName) {
 		return false;
 	}
 
-	// Note that we only support v5 and v6 cabinet files
-
-	// Check for the magic uint32
-	uint32 magic = header->readUint32LE();
-	if (magic != 0x28635349) {
-		warning("InstallShieldCabinet::InstallShieldCabinet(): Magic ID doesn't match: expecting %x but got %x", 0x28635349, magic);
+	// Check for the cab signature
+	uint32 signature = header->readUint32LE();
+	if (signature != 0x28635349) {
+		warning("InstallShieldCabinet::InstallShieldCabinet(): Signature doesn't match: expecting %x but got %x", 0x28635349, signature);
 		close();
 		return false;
 	}
 
-	uint32 version = header->readUint32LE();
+	// We support cabinet versions 5 - 13, with some exceptions:
+	// - obfuscated files are not deobfuscated
+	// - no support for files split across volumes
+	// - single-volume v5 cabinets only
 
-	switch(version) {
-	case 0x01000004:
-		_version = 5;
-		break;
-	case 0x0100600c:
-		_version = 6;
-		break;
-	case 0x020004B0: // Found in some Russian variants of Nancy Drew games. Possibly a malformed header
-		_version = 6;
-		break;
-	default:
-		warning("Unsupported CAB version %08x", version);
+	uint32 magicBytes = header->readUint32LE();
+	int shift = magicBytes >> 24;
+	_version = shift == 1 ? (magicBytes >> 12) & 0xf : (magicBytes & 0xffff) / 100;
+	_version = (_version == 0) ? 5 : _version;
+
+	if (_version < 5 || _version > 13) {
+		warning("Unsupported CAB version %d, magic bytes %08x", _version, magicBytes);
 		close();
 		return false;
 	}
