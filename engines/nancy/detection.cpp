@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 
 #include "engines/nancy/detection.h"
+#include "engines/nancy/nancy.h"
 //#include "engines/nancy/dialogs.h"
 
 const char *const directoryGlobs[] = {
@@ -30,6 +31,13 @@ const char *const directoryGlobs[] = {
 	"iff",
 	"cifTree",
 	0
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Nancy::kDebugEngine, "Engine", "Engine debug level"},
+	{Nancy::kDebugActionRecord, "ActionRecord", "Action Record debug level"},
+	{Nancy::kDebugScene, "Scene", "Scene debug level"},
+	DEBUG_CHANNEL_END
 };
 
 static const PlainGameDescriptor nancyGames[] = {
@@ -234,6 +242,10 @@ public:
 
 	virtual const char *getOriginalCopyright() const override {
 		return "Nancy Drew Engine copyright Her Interactive, 1995-2012";
+	}
+
+	virtual const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	virtual void registerDefaultSettings(const Common::String &target) const override;
