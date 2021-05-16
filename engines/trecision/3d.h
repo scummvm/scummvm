@@ -23,8 +23,8 @@
 #ifndef TRECISION_3D_H
 #define TRECISION_3D_H
 
-#include "trecision/defines.h"
-#include "trecision/trecision.h"
+#include "trecision/struct.h"
+#include "common/serializer.h"
 
 namespace Trecision {
 struct SVVertex {
@@ -93,6 +93,7 @@ struct SStep {
 		_curPanel = 0;
 	}
 };
+class TrecisionEngine;
 
 class Renderer3D {
 private:

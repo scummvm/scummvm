@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "common/file.h"
 
 namespace Trecision {
 class TrecisionEngine;
