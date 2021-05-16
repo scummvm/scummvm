@@ -54,18 +54,6 @@ namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
-	DebugMan.addDebugChannel(kDebugActor, "Actor", "Enable Actor Debug");
-	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Enable Animation Debug");
-	DebugMan.addDebugChannel(kDebugCallbacks, "Callbacks", "Enable Callbacks Debug");
-	DebugMan.addDebugChannel(kDebugDialog, "Dialog", "Enable Dialog Debug");
-	DebugMan.addDebugChannel(kDebugFont, "Font", "Enable Font Debug");
-	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Enable Inventory Debug");
-	DebugMan.addDebugChannel(kDebugMusic, "Music", "Enable Music Debug");
-	DebugMan.addDebugChannel(kDebugObject, "Object", "Enable Object Debug");
-	DebugMan.addDebugChannel(kDebugPack, "Pack", "Enable Pack Debug");
-	DebugMan.addDebugChannel(kDebugScene, "Scene", "Enable Scene Debug");
-	DebugMan.addDebugChannel(kDebugSurface, "Surface", "Enable Surface Debug");
-
 	music = new MusicPlayer(this);
 	dialog = new Dialog(this);
 	res = new Resources();

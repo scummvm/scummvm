@@ -26,6 +26,22 @@
 #include "common/translation.h"
 
 #include "engines/advancedDetector.h"
+#include "teenagent/teenagent.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{TeenAgent::kDebugActor, "Actor", "Enable Actor Debug"},
+	{TeenAgent::kDebugAnimation, "Animation", "Enable Animation Debug"},
+	{TeenAgent::kDebugCallbacks, "Callbacks", "Enable Callbacks Debug"},
+	{TeenAgent::kDebugDialog, "Dialog", "Enable Dialog Debug"},
+	{TeenAgent::kDebugFont, "Font", "Enable Font Debug"},
+	{TeenAgent::kDebugInventory, "Inventory", "Enable Inventory Debug"},
+	{TeenAgent::kDebugMusic, "Music", "Enable Music Debug"},
+	{TeenAgent::kDebugObject, "Object", "Enable Object Debug"},
+	{TeenAgent::kDebugPack, "Pack", "Enable Pack Debug"},
+	{TeenAgent::kDebugScene, "Scene", "Enable Scene Debug"},
+	{TeenAgent::kDebugSurface, "Surface", "Enable Surface Debug"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor teenAgentGames[] = {
 	{ "teenagent", "Teen Agent" },
@@ -202,6 +218,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "TEENAGENT (C) 1994 Metropolis";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
