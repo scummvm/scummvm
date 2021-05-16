@@ -24,6 +24,7 @@
 #include "ultima/ultima8/world/actors/npc_dat.h"
 
 #include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/ultima8.h"
 #include "common/memstream.h"
 
 namespace Ultima {
@@ -79,10 +80,16 @@ Std::vector<NPCDat *> NPCDat::load(RawArchive *archive) {
 	return result;
 }
 
+
 /*static*/
 uint16 NPCDat::randomlyGetStrongerWeaponTypes(uint shapeno) {
 	// Apologies for the massive stack of constants, that's how
 	// it is in the original (fn at 10a0:3b10) :(
+
+	// This also combines the version from No Regret, which is the same
+	// for 899, 0x371, 0x385, 0x1b4, 0x2cb, 0x528, 0x338, 0x4d1, 0x4e6,
+	// and other differences as noted.
+	// Some shapes are only valid in each game, but that's ok.
 
 	int rnd = getRandom();
 
@@ -94,10 +101,17 @@ uint16 NPCDat::randomlyGetStrongerWeaponTypes(uint shapeno) {
 			return 7;
 	case 0x2fd:
 	case 0x319: /* shape 793 - guardsq */
-		if (rnd % 4 == 0)
-			return 0xc;
-		else
-			return 3;
+		if (GAME_IS_REMORSE) {
+			if (rnd % 4 == 0)
+				return 0xc;
+			else
+				return 3;
+		} else {
+			if (rnd % 2 == 0)
+				return 8;
+			else
+				return 9;
+		}
 	case 0x1b4:
 		if (rnd % 4 == 0)
 			return 0xd;
@@ -148,8 +162,25 @@ uint16 NPCDat::randomlyGetStrongerWeaponTypes(uint shapeno) {
 			return 9;
 		else
 			return 8;
+	case 0x30c: // for No Remorse
+		if (rnd % 2 == 0)
+			return 4;
+		else
+			return 0xf;
+	case 0x308: // for No Remorse
+		if (rnd % 2 == 0)
+			return 10;
+		else
+			return 0xb;
+	case 0x57a: // for No Remorse
+		if (rnd % 2 == 0)
+			return 0xd;
+		else
+			return 0xf;
+	case 0x5e2: // for No Remorse
+			return 0xe;
 	default:
-		return 7;
+		return GAME_IS_REMORSE ? 7 : 0xf;
 	}
 }
 
