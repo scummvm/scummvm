@@ -77,10 +77,6 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 		_backgroundSoundScriptLastRoomId(0),
 		_backgroundSoundScriptLastAgeId(0),
 		_transition(0), _frameLimiter(0), _inventoryManualHide(false) {
-	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
-	DebugMan.addDebugChannel(kDebugNode, "Node", "Track Node Changes");
 
 	// Add subdirectories to the search path to allow running from a full HDD install
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
