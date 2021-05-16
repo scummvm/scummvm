@@ -25,6 +25,13 @@
 #include "common/translation.h"
 
 #include "hopkins/detection.h"
+#include "hopkins/hopkins.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Hopkins::kDebugPath, "Path", "Pathfinding debug level"},
+	{Hopkins::kDebugGraphics, "Graphics", "Graphics debug level"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor hopkinsGames[] = {
 	{"hopkins", "Hopkins FBI"},
@@ -80,6 +87,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Hopkins FBI (C) 1997-2003 MP Entertainment";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
