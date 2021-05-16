@@ -23,6 +23,7 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
+#include "macventure/macventure.h"
 
 namespace MacVenture {
 
@@ -38,6 +39,17 @@ static const ADGameDescription gameDescriptions[] = {
 };
 
 } // End of namespace MacVenture
+
+static const DebugChannelDef debugFlagList[] = {
+	{MacVenture::kMVDebugMain, "main", "Engine state"},
+	{MacVenture::kMVDebugGUI, "gui", "Gui"},
+	{MacVenture::kMVDebugText, "text", "Text decoders and printers"},
+	{MacVenture::kMVDebugImage, "image", "Image decoders and renderers"},
+	{MacVenture::kMVDebugScript, "script", "Script engine"},
+	{MacVenture::kMVDebugSound, "sound", "Sound decoders"},
+	{MacVenture::kMVDebugContainer, "container", "Containers"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor macventureGames[] = {
 	{ "shadowgate", "Shadowgate" },
@@ -67,6 +79,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "(C) ICOM Simulations";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
