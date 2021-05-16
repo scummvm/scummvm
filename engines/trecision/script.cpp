@@ -102,11 +102,6 @@ void TrecisionEngine::evalScript() {
 }
 
 bool TrecisionEngine::quitPrompt() {
-	byte *tmpBuffer = new byte[MAXX * TOP * 2];
-
-	for (int a = 0; a < TOP; a++)
-		memcpy(tmpBuffer + a * MAXX, _graphicsMgr->getScreenBufferPtr() + MAXX * a, MAXX * 2);
-
 	_graphicsMgr->clearScreenBufferTop();
 
 	SDText drawText;
@@ -122,21 +117,12 @@ bool TrecisionEngine::quitPrompt() {
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	freeKey();
-
 	checkSystem();
 
-	Common::KeyCode ch = waitKey();
+	_graphicsMgr->clearScreenBufferTop();
 
-	bool exitFl = (ch == Common::KEYCODE_y || ch == Common::KEYCODE_j); // German confirmation is J, English and French use 'Y'
-
-	for (int a = 0; a < TOP; a++)
-		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, tmpBuffer + a * MAXX, MAXX * 2);
-
-	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	delete[] tmpBuffer;
-
-	return exitFl;
+	const Common::KeyCode ch = waitKey();
+	return (ch == Common::KEYCODE_y || ch == Common::KEYCODE_j); // German confirmation is J, English and French use 'Y'
 }
 
 void TrecisionEngine::demoOver() {
