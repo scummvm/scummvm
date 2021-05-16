@@ -256,9 +256,6 @@ void TrecisionEngine::processTime() {
 }
 
 void TrecisionEngine::processMouse() {
-	static bool maskMouse;
-	static Common::Point oldMousePos;
-	static bool lastMouseOn = true;
 	int16 mx = _mousePos.x;
 	int16 my = _mousePos.y;
 
