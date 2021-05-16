@@ -24,11 +24,21 @@
 
 #include "engines/advancedDetector.h"
 
+#include "petka/petka.h"
+
 static const PlainGameDescriptor petkaGames[] = {
 	{"petka_demo", "Red Comrades Demo"},
 	{"petka1", "Red Comrades 1: Save the Galaxy"},
 	{"petka2", "Red Comrades 2: For the Great Justice"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Petka::kPetkaDebugGeneral, "general", "General issues"},
+	{Petka::kPetkaDebugResources, "resources", "Resources"},
+	{Petka::kPetkaDebugMessagingSystem, "message_system", "Engine message system"},
+	{Petka::kPetkaDebugDialogs, "dialogs", "Dialogs"},
+	DEBUG_CHANNEL_END
 };
 
 #include "petka/detection_tables.h"
@@ -50,6 +60,10 @@ public:
 
 	virtual const char *getOriginalCopyright() const override {
 		return "Red Comrades (C) S.K.I.F.";
+	}
+
+	virtual const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
