@@ -29,10 +29,17 @@
 #include "engines/advancedDetector.h"
 
 #include "dreamweb/detection.h"
+#include "dreamweb/dreamweb.h"
 
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
 	{ 0, 0 }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{DreamWeb::kDebugAnimation, "Animation", "Animation Debug Flag"},
+	{DreamWeb::kDebugSaveLoad, "SaveLoad", "Track Save/Load Function"},
+	DEBUG_CHANNEL_END
 };
 
 #include "dreamweb/detection_tables.h"
@@ -80,6 +87,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "DreamWeb (C) Creative Reality";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
