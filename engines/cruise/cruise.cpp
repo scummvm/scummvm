@@ -43,9 +43,6 @@ CruiseEngine *_vm;
 CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc)
 	: Engine(syst), _gameDescription(gameDesc), _rnd("cruise") {
 
-	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
-	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
-
 	_vm = this;
 	setDebugger(new Debugger());
 	_sound = new PCSound(_mixer, this);
