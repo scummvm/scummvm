@@ -295,7 +295,6 @@ public:
 	AnimTypeManager *_animTypeMgr;
 
 	uint8 *_font;
-	uint16 *_arrows;
 	uint8 *_textureArea;
 	uint16 *_icons;
 

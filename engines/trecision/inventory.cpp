@@ -35,7 +35,7 @@ namespace Trecision {
 void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	uint16 *screenBuffer = _graphicsMgr->getScreenBufferPtr();
 	if (startLine > ICONDY)
-		startLine = ICONDY;
+		return;
 
 	_graphicsMgr->clearScreenBufferInventory();
 
@@ -55,22 +55,11 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		}
 	}
 
-	// Arrows
-	if (startIcon != 0) { // Copy left
-		int16 leftArrow = ICONMARGSX * ICONDY * 3;
-		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX,
-				  _arrows + leftArrow + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
-		}
-	}
+	if (startIcon != 0)
+		_graphicsMgr->drawLeftInventoryArrow(startLine);
 
-	if (startIcon + ICONSHOWN < _inventory.size()) { // Copy right
-		int16 rightArrow = ICONMARGDX * ICONDY * 2;
-		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + MAXX - ICONMARGDX,
-				  _arrows + rightArrow + ICONMARGSX * ICONDY * 2 + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
-		}
-	}
+	if (startIcon + ICONSHOWN < _inventory.size())
+		_graphicsMgr->drawRightInventoryArrow(startLine);
 
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, ICONDY);
 }

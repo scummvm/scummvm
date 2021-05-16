@@ -139,7 +139,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_flagScriptActive = false;
 
 	_font = nullptr;
-	_arrows = nullptr;
 	_textureArea = nullptr;
 	_icons = nullptr;
 	_actor = nullptr;
@@ -192,7 +191,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _animTypeMgr;
 	
 	delete[] _font;
-	delete[] _arrows;
 	delete[] _textureArea;
 	delete[] _icons;
 	delete _actor;
@@ -348,9 +346,6 @@ void TrecisionEngine::openDataFiles() {
 	
 	_font = readData("nlfont.fnt");
 	int size;
-	_arrows = readData16("frecc.bm", size);
-	_graphicsMgr->updatePixelFormat(_arrows, size);
-
 	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("icone.bm");
 	size = ceil(ff->size() / 2.0);
 	int iconSize = ICONDX * ICONDY;
@@ -362,6 +357,8 @@ void TrecisionEngine::openDataFiles() {
 		_icons[iconSize + i] = ff->readUint16LE();
 	delete ff;
 	_graphicsMgr->updatePixelFormat(&_icons[iconSize], size);
+
+	_graphicsMgr->loadInventoryIcons();
 
 	_textureArea = readData("textur.bm");
 }
