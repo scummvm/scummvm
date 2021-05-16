@@ -37,6 +37,7 @@
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/npc_dat.h"
 #include "common/memstream.h"
 
 namespace Ultima {
@@ -105,16 +106,16 @@ bool RemorseGame::startGame() {
 	for (uint16 i = 384; i < 512; ++i)
 		objman->reserveObjId(i);
 
-	// FIXME: fix flags and such
 	Actor *actor = ItemFactory::createActor(1, 0, 0, Item::FLG_IN_NPC_LIST,
 	                                        1, 1, Item::EXT_PERMANENT_NPC, false);
 	if (!actor)
 		error("Couldn't create MainActor");
 
-	// TODO: these should be read from DTable data.
+	const NPCDat *npcData = GameData::get_instance()->getNPCDataForShape(1);
+
 	actor->setStr(75);
-	actor->setHP(150);
-	actor->setInt(5000);
+	actor->setHP(npcData->getMaxHp());
+	actor->setInt(5000); // max mana (energy) is 2x intelligence, or 10000.
 	actor->setMana(2500);
 
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
