@@ -49,9 +49,6 @@ MortevielleEngine *g_vm;
 
 MortevielleEngine::MortevielleEngine(OSystem *system, const MortevielleGameDescription *gameDesc):
 		Engine(system), _gameDescription(gameDesc), _randomSource("mortevielle") {
-	// Set debug channels
-	DebugMan.addDebugChannel(kMortevielleCore, "core", "Core debugging");
-	DebugMan.addDebugChannel(kMortevielleGraphics, "graphics", "Graphics debugging");
 
 	g_vm = this;
 	setDebugger(new Debugger(this));

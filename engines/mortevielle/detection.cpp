@@ -24,10 +24,17 @@
 #include "engines/advancedDetector.h"
 
 #include "mortevielle/detection.h"
+#include "mortevielle/mortevielle.h"
 
 static const PlainGameDescriptor MortevielleGame[] = {
 	{"mortevielle", "Mortville Manor"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Mortevielle::kMortevielleCore, "core", "Core debugging"},
+	{Mortevielle::kMortevielleGraphics, "graphics", "Graphics debugging"},
+	DEBUG_CHANNEL_END
 };
 
 #include "mortevielle/detection_tables.h"
@@ -52,6 +59,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Mortville Manor (C) 1987-89 Lankhor";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
