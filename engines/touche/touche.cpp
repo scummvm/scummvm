@@ -103,13 +103,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "database");
 
-	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
-	DebugMan.addDebugChannel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
-	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
-	DebugMan.addDebugChannel(kDebugCharset,  "Charset",   "Charset debug level");
-
 	setDebugger(new ToucheConsole(this));
 
 	_newEpisodeNum = 0;
