@@ -244,9 +244,9 @@ public:
 	void setObjectVisible(uint16 objectId, bool visible);
 	bool isObjectVisible(uint16 objectId) const;
 	void setObjectAnim(uint16 objectId, uint16 animId);
-	void RedrawRoom();
-	void ReadLoc();
-	void TendIn();
+	void redrawRoom();
+	void readLoc();
+	void tendIn();
 	void readExtraObj2C();
 	void readExtraObj41D();
 

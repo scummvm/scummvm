@@ -49,7 +49,7 @@ void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 
 bool Trecision::TrecisionEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsSubtitleOptions) ||
-		   //		   (f == kSupportsReturnToLauncher) ||
+//		   (f == kSupportsReturnToLauncher) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
 		   (f == kSupportsSavingDuringRuntime) ||
 		   (f == kSupportsChangingOptionsDuringRuntime);

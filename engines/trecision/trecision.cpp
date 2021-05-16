@@ -199,6 +199,7 @@ TrecisionEngine::~TrecisionEngine() {
 		delete[] _maskPointers[i];
 	}
 
+	g_vm = nullptr;
 }
 
 Common::Error TrecisionEngine::run() {
@@ -502,7 +503,6 @@ uint16 *TrecisionEngine::readData16(const Common::String &fileName, int &size) {
 }
 
 void TrecisionEngine::read3D(const Common::String &filename) {
-
 	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
 		error("read3D: Can't open 3D file %s", filename.c_str());
@@ -616,7 +616,7 @@ void TrecisionEngine::reEvent() {
 	_scheduler->doEvent(_curMessage->_class, _curMessage->_event, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
 }
 
-void TrecisionEngine::ReadLoc() {
+void TrecisionEngine::readLoc() {
 	if (_curRoom == kRoom11 && !(_room[kRoom11]._flag & kObjFlagDone))
 		_flagShowCharacter = true;
 
@@ -652,7 +652,7 @@ void TrecisionEngine::ReadLoc() {
 	_animTypeMgr->init(_room[_curRoom]._bkgAnim, 0);
 }
 
-void TrecisionEngine::TendIn() {
+void TrecisionEngine::tendIn() {
 	_textStatus = TEXT_OFF;
 
 	if (_curRoom == kRoomIntro) {
@@ -759,7 +759,7 @@ void TrecisionEngine::readExtraObj41D() {
 	delete ff;
 }
 
-void TrecisionEngine::RedrawRoom() {
+void TrecisionEngine::redrawRoom() {
 	const uint16 curDialog = _dialogMgr->_curDialog;
 	const uint16 curChoice = _dialogMgr->_curChoice;
 	const uint16 bgAnim = _room[_curRoom]._bkgAnim;

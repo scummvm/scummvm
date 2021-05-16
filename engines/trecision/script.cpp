@@ -409,7 +409,7 @@ void TrecisionEngine::doSystem() {
 		break;
 
 	case ME_REDRAWROOM:
-		RedrawRoom();
+		redrawRoom();
 		break;
 
 	case ME_CHANGEROOM:
