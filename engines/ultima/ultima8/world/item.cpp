@@ -3481,7 +3481,6 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 	#endif
 
 	item->move(x, y, z);
-	//item->collideMove(x, y, z, true, true);
 	return 0;
 }
 
