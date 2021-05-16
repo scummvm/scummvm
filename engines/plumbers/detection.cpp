@@ -25,9 +25,16 @@
 #include "engines/advancedDetector.h"
 #include "engines/game.h"
 
+#include "plumbers/plumbers.h"
+
 static const PlainGameDescriptor plumbersGames[] = {
 	{"plumbers", "Plumbers Don't Wear Ties!"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Plumbers::kDebugGeneral, "general", "General debug level"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Plumbers {
@@ -75,6 +82,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Plumbers Don't Wear Ties (C) 1993-94 Kirin Entertainment";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
