@@ -186,13 +186,13 @@ void ScummEngine::towns_updateGfx() {
 		return;
 
 	uint32 cur = _system->getMillis();
-	while (_scrollTimer <= cur) {
+	if (_scrollTimer <= cur) {
 		if (!_scrollTimer)
 			_scrollTimer = cur;
 		_scrollTimer += 1000 / 60;
 		_townsScreen->scrollLayers(1, _scrollRequest);
 		if (_townsScreen->isScrolling(0))
-			_scrollDeltaAdjust = 1;
+			_scrollDeltaAdjust++;
 		_scrollRequest = 0;
 	}
 

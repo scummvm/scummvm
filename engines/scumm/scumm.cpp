@@ -2275,9 +2275,16 @@ Common::Error ScummEngine::go() {
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		// FM-Towns only. The original does this to make the engine wait for the scrolling to catch up.
-		if (_scrollDeltaAdjust)
-			delta = delta * 4 / (4 - _scrollDeltaAdjust);
+		// FM-Towns only. The original has a mechanism to let the scrolling catch up to the engine. This avoids glitches, e. g.
+		// when the engine draws actors or objects to the far left/right of the screen while the scrolling hasn't caught up yet.
+		// MI2 FM-Towns normally adds an amount of 4 to a counter on each 60 Hz tick from inside an interrupt handler, but only
+		// an amount of 3 while the smooth scrolling is in progress. The counter divided by 4 has to reach the VAR_TIMER_NEXT
+		// before the main loop continues. We try to imitate that behaviour here to avoid glitches, but without making it
+		// overly complicated...
+		if (_scrollDeltaAdjust) {
+			int adj = MIN<int>(_scrollDeltaAdjust * 4 / 3 - _scrollDeltaAdjust, delta * 4 / 3 - delta);
+			delta += adj;
+		}
 		_scrollDeltaAdjust = 0;
 #endif
 		if (delta < 1)	// Ensure we don't get into an endless loop
