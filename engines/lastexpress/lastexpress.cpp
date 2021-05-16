@@ -68,17 +68,6 @@ LastExpressEngine::LastExpressEngine(OSystem *syst, const ADGameDescription *gd)
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
-
-	// Initialize the custom debug levels
-	DebugMan.addDebugChannel(kLastExpressDebugGraphics, "Graphics", "Debug graphics & animation/sequence playback");
-	DebugMan.addDebugChannel(kLastExpressDebugResource, "Resource", "Debug resource management");
-	DebugMan.addDebugChannel(kLastExpressDebugCursor, "Cursor", "Debug cursor handling");
-	DebugMan.addDebugChannel(kLastExpressDebugSound, "Sound", "Debug sound playback");
-	DebugMan.addDebugChannel(kLastExpressDebugSubtitle, "Subtitle", "Debug subtitles");
-	DebugMan.addDebugChannel(kLastExpressDebugSavegame, "Savegame", "Debug savegames");
-	DebugMan.addDebugChannel(kLastExpressDebugLogic, "Logic", "Debug logic");
-	DebugMan.addDebugChannel(kLastExpressDebugScenes, "Scenes", "Debug scenes & hotspots");
-	DebugMan.addDebugChannel(kLastExpressDebugUnknown, "Unknown", "Debug unknown data");
 }
 
 LastExpressEngine::~LastExpressEngine() {
