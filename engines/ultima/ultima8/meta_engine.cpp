@@ -90,7 +90,7 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_SELECT_ITEMS, "SELECT_ITEM", "Select Item", "ItemSelectionProcess::startSelection", nullptr, "s", nullptr, 0 },
 	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr, 0 },
 	{ ACTION_GRAB_ITEMS, "GRAB_ITEM", "Grab Items", "ItemSelectionProcess::grabItems", nullptr, "g", nullptr, 0 },
-	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::tryAttack", nullptr, "SPACE", nullptr, 0 },
+	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::startAttack", "AvatarMoverProcess::stopAttack", "SPACE", nullptr, 0 },
 	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr, 0 },
 	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "LCTRL", nullptr, FLAG_MENU_ENABLED },
 	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER", FLAG_MENU_ENABLED },

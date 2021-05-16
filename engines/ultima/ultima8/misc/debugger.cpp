@@ -112,7 +112,8 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("AvatarMoverProcess::stopMoveRun", WRAP_METHOD(Debugger, cmdStopMoveRun));
 	registerCmd("AvatarMoverProcess::startMoveStep", WRAP_METHOD(Debugger, cmdStartMoveStep));
 	registerCmd("AvatarMoverProcess::stopMoveStep", WRAP_METHOD(Debugger, cmdStopMoveStep));
-	registerCmd("AvatarMoverProcess::tryAttack", WRAP_METHOD(Debugger, cmdAttack));
+	registerCmd("AvatarMoverProcess::startAttack", WRAP_METHOD(Debugger, cmdStartAttack));
+	registerCmd("AvatarMoverProcess::stopAttack", WRAP_METHOD(Debugger, cmdStopAttack));
 
 	registerCmd("CameraProcess::moveToAvatar", WRAP_METHOD(Debugger, cmdCameraOnAvatar));
 
@@ -1165,7 +1166,7 @@ bool Debugger::cmdUseKeyring(int argc, const char **argv) {
 	return false;
 }
 
-bool Debugger::cmdAttack(int argc, const char **argv) {
+bool Debugger::cmdStartAttack(int argc, const char **argv) {
 	Ultima8Engine *engine = Ultima8Engine::get_instance();
 	if (engine->isAvatarInStasis()) {
 		debugPrintf("Can't attack: avatarInStasis\n");
@@ -1173,7 +1174,16 @@ bool Debugger::cmdAttack(int argc, const char **argv) {
 	}
 	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
 	if (proc) {
-		proc->tryAttack();
+		proc->setMovementFlag(AvatarMoverProcess::MOVE_ATTACKING);
+	}
+	return false;
+}
+
+bool Debugger::cmdStopAttack(int argc, const char **argv) {
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+	AvatarMoverProcess *proc = engine->getAvatarMoverProcess();
+	if (proc) {
+		proc->clearMovementFlag(AvatarMoverProcess::MOVE_ATTACKING);
 	}
 	return false;
 }

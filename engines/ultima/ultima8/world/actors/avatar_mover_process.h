@@ -61,25 +61,26 @@ public:
 	void onMouseDown(int button, int32 mx, int32 my);
 	void onMouseUp(int button);
 
-	virtual void tryAttack() = 0;
-
 	enum MovementFlags {
 		MOVE_MOUSE_DIRECTION = 0x001,
-		MOVE_RUN = 0x002,
+		MOVE_RUN  = 0x0002,
 		MOVE_STEP = 0x0004, // also side-steps in crusader
 		MOVE_JUMP = 0x0008, // used for roll in crusader (when combined with left/right), and crouch (when combined with back)
 
 		// Tank controls
-		MOVE_TURN_LEFT = 0x0010,
+		MOVE_TURN_LEFT  = 0x0010,
 		MOVE_TURN_RIGHT = 0x0020,
-		MOVE_FORWARD = 0x0040,
-		MOVE_BACK = 0x0080,
+		MOVE_FORWARD    = 0x0040,
+		MOVE_BACK       = 0x0080,
 
 		// Directional controls
-		MOVE_LEFT = 0x0100,
+		MOVE_LEFT  = 0x0100,
 		MOVE_RIGHT = 0x0200,
-		MOVE_UP = 0x0400,
-		MOVE_DOWN = 0x0800,
+		MOVE_UP    = 0x0400,
+		MOVE_DOWN  = 0x0800,
+
+		// Firing weapon (Crusader only)
+		MOVE_ATTACKING = 0x1000,
 
 		MOVE_ANY_DIRECTION = MOVE_MOUSE_DIRECTION | MOVE_FORWARD | MOVE_BACK | MOVE_LEFT | MOVE_RIGHT | MOVE_UP | MOVE_DOWN
 	};

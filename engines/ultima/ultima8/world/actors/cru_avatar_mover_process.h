@@ -46,13 +46,13 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	void tryAttack() override;
-
 	double getAvatarAngleDegrees() const {
 		return static_cast<double>(_avatarAngle) / 100.0;
 	}
 
 private:
+	/** Try readying or firing weapon. */
+	void tryAttack();
 
 	/**
 	* Angle of avatar in centidegrees (1/100deg).  The original game runs the keyboard

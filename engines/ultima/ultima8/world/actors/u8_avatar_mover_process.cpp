@@ -755,10 +755,6 @@ bool U8AvatarMoverProcess::canAttack() {
 	return (Kernel::get_instance()->getFrameNum() > _lastAttack + (25 - avatar->getDex()));
 }
 
-void U8AvatarMoverProcess::tryAttack() {
-	error("tryAttack should only be called in Crusader");
-}
-
 void U8AvatarMoverProcess::saveData(Common::WriteStream *ws) {
 	AvatarMoverProcess::saveData(ws);
 	// Note: this field used to be the last thing saved in AvatarMoverProcess,

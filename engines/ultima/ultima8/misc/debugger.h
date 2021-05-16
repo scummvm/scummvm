@@ -174,7 +174,8 @@ private:
 	bool cmdStopMoveRun(int argc, const char **argv);
 	bool cmdStartMoveStep(int argc, const char **argv);
 	bool cmdStopMoveStep(int argc, const char **argv);
-	bool cmdAttack(int argc, const char **argv);
+	bool cmdStartAttack(int argc, const char **argv);
+	bool cmdStopAttack(int argc, const char **argv);
 
 	bool cmdCameraOnAvatar(int argc, const char **argv);
 

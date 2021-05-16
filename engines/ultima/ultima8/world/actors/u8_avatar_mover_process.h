@@ -44,8 +44,6 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
-	void tryAttack() override;
-
 protected:
 	void handleHangingMode() override;
 	void handleCombatMode() override;

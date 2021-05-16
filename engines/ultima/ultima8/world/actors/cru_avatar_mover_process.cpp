@@ -103,6 +103,7 @@ void CruAvatarMoverProcess::run() {
 			Direction dir = getTurnDirForTurnFlags(curdir, dirmode);
 			clearMovementFlag(MOVE_TURN_LEFT | MOVE_TURN_RIGHT);
 			step(anim, dir);
+			return;
 		}
 	}
 
@@ -263,6 +264,11 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
+	if (hasMovementFlags(MOVE_ATTACKING) && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+		tryAttack();
+		return;
+	}
+
 	if (_isAnimRunningJumping(lastanim) || _isAnimStartRunning(idleanim)) {
 		idleanim = Animation::stopRunningAndDrawSmallWeapon;
 	}
@@ -364,6 +370,11 @@ void CruAvatarMoverProcess::handleNormalMode() {
 	// doing another animation?
 	if (avatar->isBusy())
 		return;
+
+	if (hasMovementFlags(MOVE_ATTACKING) && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+		tryAttack();
+		return;
+	}
 
 	// not doing anything in particular? stand
 	if (lastanim != Animation::stand && currentIdleTime == 0) {
@@ -531,7 +542,6 @@ void CruAvatarMoverProcess::tryAttack() {
 			Animation::Sequence fireanim = (avatar->isKneeling() ?
 											Animation::kneelAndFire : Animation::attack);
 			uint16 fireanimpid = avatar->doAnim(fireanim, dir);
-			waitFor(fireanimpid);
 
 			if (wpn->getShape() == 0x332)
 				_SGA1Loaded = false;
@@ -545,6 +555,8 @@ void CruAvatarMoverProcess::tryAttack() {
 
 			if (wpninfo->_shotDelay) {
 				waitFor(kernel->addProcess(new DelayProcess(wpninfo->_shotDelay)));
+			} else {
+				waitFor(fireanimpid);
 			}
 		}
 	}
