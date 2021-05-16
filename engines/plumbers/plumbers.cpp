@@ -85,8 +85,6 @@ PlumbersGame::PlumbersGame(OSystem *syst, const ADGameDescription *gameDesc) :
 	_totScore = 0;
 	_cheatEnabled = false;
 	_cheatFSM = 0;
-
-	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
 }
 
 PlumbersGame::~PlumbersGame() {
