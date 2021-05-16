@@ -116,19 +116,6 @@ void PauseDialog::handleKeyDown(Common::KeyState state) {
 
 
 GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
-	DebugMan.addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	DebugMan.addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
-	DebugMan.addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
-	DebugMan.addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
-	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
-	DebugMan.addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
-
 	_sound     = 0; _mult     = 0; _game    = 0;
 	_global    = 0; _dataIO   = 0; _goblin  = 0;
 	_vidPlayer = 0; _init     = 0; _inter   = 0;
