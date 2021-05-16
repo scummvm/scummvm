@@ -27,7 +27,6 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 
-#include "trecision/3d.h"	// for _defActionLen
 #include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/defines.h"
@@ -75,8 +74,7 @@ void SoundManager::soundTimer() {
 	if (_soundFadeStatus & SFADOUT) {
 		if (!g_system->getMixer()->isSoundHandleActive(_soundHandle[_backChannel])) {
 			_soundFadeStatus &= (~SFADOUT);
-		}
-		else {
+		} else {
 			_soundFadeOutVal -= FADMULT;
 
 			if (_soundFadeOutVal > 0)
