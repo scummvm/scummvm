@@ -142,7 +142,9 @@ bool Player_V3M::loadMusic(const byte *ptr) {
 
 		if (_channel[i].loadInstrument(stream)) {
 			debug(6, "Player_V3M::loadMusic: Channel %d - Loaded Instrument %d (%s)", i, instrument, resource.getResName(RES_SND, instrument).c_str());
+			delete stream;
 		} else {
+			delete stream;
 			return false;
 		}
 	}

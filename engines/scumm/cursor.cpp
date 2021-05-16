@@ -605,8 +605,10 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 			Graphics::MacCursor macCursor;
 			if (macCursor.readFromStream(*curs)) {
 				CursorMan.replaceCursor(&macCursor);
+				delete curs;
 				return;
 			}
+			delete curs;
 		}
 	}
 

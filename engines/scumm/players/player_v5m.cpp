@@ -121,9 +121,11 @@ bool Player_V5M::loadMusic(const byte *ptr) {
 
 				if (!_channel[i].loadInstrument(stream)) {
 					resource.close();
+					delete stream;
 					return false;
 				}
 
+				delete stream;
 				break;
 			}
 		}
