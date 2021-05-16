@@ -189,21 +189,17 @@ void GraphicsManager::transitionDisolve() {
 	}
 }
 
-void transitionTV() {
+void GraphicsManager::transitionTV() {
+	if (!_transitionTexture)
+		reserveTransitionTexture();
 
-#if 0
-	if (! transitionTextureName) reserveTransitionTexture();
-
-	uint32 n;
-	uint32 y;
-
-	GLubyte *toScreen = transitionTexture;
-	GLubyte *end = transitionTexture + (256 * 256 * 4);
+	byte *toScreen = (byte *)_transitionTexture->getPixels();
+	byte *end = (byte *)_transitionTexture->getBasePtr(255, 255);
 
 	do {
 		// generate next number
-		n = _randbuffer[_randp1][1];
-		y = (n << 27) | ((n >> (32 - 27)) + _randbuffer[_randp2][1]);
+		uint32 n = _randbuffer[_randp1][1];
+		uint32 y = (n << 27) | ((n >> (32 - 27)) + _randbuffer[_randp2][1]);
 
 		n = _randbuffer[_randp1][0];
 		_randbuffer[_randp1][1] = (n << 19) | ((n >> (32 - 19)) + _randbuffer[_randp2][0]);
@@ -215,48 +211,21 @@ void transitionTV() {
 		if (!_randp2--)
 			_randp2 = RANDKK - 1;
 
-		if ((y & 255u) > brightnessLevel) {
-			toScreen[0] = toScreen[1] = toScreen[2] = (n & 255);
-			toScreen[3] = (n & 255);
+		if ((y & 255u) > _brightnessLevel) {
+			toScreen[0] = (n & 255);
+			toScreen[1] = toScreen[2] = toScreen[3] = (n & 255);
 		} else {
 			toScreen[0] = toScreen[1] = toScreen[2] = toScreen[3] = 0;
 		}
 		toScreen += 4;
-	}while (toScreen < end);
+	} while (toScreen < end);
 
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, transitionTexture, transitionTextureName);
-
-	glEnable(GL_BLEND);
-
-	const GLfloat vertices[] = {
-		0.f, (GLfloat)winHeight, 0.f,
-		(GLfloat)winWidth, (GLfloat)winHeight, 0.f,
-		0.f, 0.f, 0.f,
-		(GLfloat)winWidth, 0.f, 0.f
-	};
-
-	const GLfloat texCoords[] = {
-		0.0f, 1.0f,
-		1.0f, 1.0f,
-		0.0f, 0.0f,
-		1.0f, 0.0f
-	};
-
-	glUseProgram(shader.texture);
-
-	setPMVMatrix(shader.texture);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 1);
-
-	setPrimaryColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-	drawQuad(shader.texture, vertices, 1, texCoords);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 0);
-	glUseProgram(0);
-
-	glDisable(GL_BLEND);
-#endif
+	// The original stretched the texture, we just tile it
+	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h) {
+		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w) {
+			_transitionTexture->blit(_renderSurface, x, y);
+		}
+	}
 }
 
 void transitionBlinds() {

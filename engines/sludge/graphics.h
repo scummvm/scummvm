@@ -189,6 +189,7 @@ public:
 
 	void transitionFader();
 	void transitionDisolve();
+	void transitionTV();
 
 private:
 	SludgeEngine *_vm;
