@@ -26,10 +26,16 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "voyeur/detection.h"
+#include "voyeur/voyeur.h"
 
 static const PlainGameDescriptor voyeurGames[] = {
 	{"voyeur", "Voyeur"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Voyeur::kDebugScripts, "scripts", "Game scripts"},
+	DEBUG_CHANNEL_END
 };
 
 #include "voyeur/detection_tables.h"
@@ -50,6 +56,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Voyeur (C) Philips P.O.V. Entertainment Group";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

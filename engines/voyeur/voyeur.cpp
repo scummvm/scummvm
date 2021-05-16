@@ -63,8 +63,6 @@ VoyeurEngine::VoyeurEngine(OSystem *syst, const VoyeurGameDescription *gameDesc)
 	_voyeurArea = AREA_NONE;
 	_loadGameSlot = -1;
 
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-
 	_stampLibPtr = nullptr;
 	_controlGroupPtr = nullptr;
 	_stampData = nullptr;
