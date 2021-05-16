@@ -46,9 +46,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_roomDesc(kNumRoomTexts), _freeDesc(kNumFreeTexts),
 	_personText(kNumPersonTexts) {
 
-	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Animation Debug Flag");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-
 	_vSyncPrevTick = 0;
 	_sound = 0;
 	_speed = 1;
