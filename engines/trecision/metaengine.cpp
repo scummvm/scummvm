@@ -47,6 +47,14 @@ void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	thumb.copyFrom(((Trecision::TrecisionEngine *)g_engine)->_thumbnail);
 }
 
+bool Trecision::TrecisionEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsSubtitleOptions) ||
+		   //		   (f == kSupportsReturnToLauncher) ||
+		   (f == kSupportsLoadingDuringRuntime) ||
+		   (f == kSupportsSavingDuringRuntime) ||
+		   (f == kSupportsChangingOptionsDuringRuntime);
+}
+
 #if PLUGIN_ENABLED_DYNAMIC(TRECISION)
 	REGISTER_PLUGIN_DYNAMIC(TRECISION, PLUGIN_TYPE_ENGINE, TrecisionMetaEngine);
 #else
