@@ -573,7 +573,7 @@ void AttackProcess::genericAttack() {
 				if (a->isInCombat()) {
 					if (randomOf(3) != 0) {
 						const Animation::Sequence lastanim = a->getLastAnim();
-						if ((lastanim != Animation::unreadyWeapon)) // TODO: && (lastanim != Animation::unreadyLargeWeapon))
+						if ((lastanim != Animation::unreadyWeapon) && (lastanim != Animation::unreadyLargeWeapon))
 							a->doAnim(Animation::unreadyWeapon, dir_current);
 						else
 							a->doAnim(Animation::readyWeapon, dir_current);
@@ -755,6 +755,8 @@ void AttackProcess::genericAttack() {
 }
 
 void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
+	if (GAME_IS_REGRET)
+		warning("TODO: checkRandomAttackSound: Update for No Regret");
 	AudioProcess *audio = AudioProcess::get_instance();
 	int16 attacksound = -1;
 	if (!_playedStartSound) {
