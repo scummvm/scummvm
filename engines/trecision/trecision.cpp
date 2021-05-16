@@ -167,6 +167,10 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_actorPos = 0;
 	_forcedActorPos = 0;
+
+	maskMouse = false;
+	oldMousePos = Common::Point(0, 0);
+	lastMouseOn = true;
 }
 
 TrecisionEngine::~TrecisionEngine() {

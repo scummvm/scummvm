@@ -184,6 +184,10 @@ class TrecisionEngine : public Engine {
 	bool _gamePaused;
 	uint8 _curStack;
 
+	bool maskMouse;
+	Common::Point oldMousePos;
+	bool lastMouseOn;
+
 public:
 	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
 	~TrecisionEngine() override;
