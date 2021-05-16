@@ -87,38 +87,19 @@ void transitionCrossFader() {
 #endif
 }
 
-void transitionSnapshotBox() {
-#if 0
-	if (! snapshotTextureName) return;
+void GraphicsManager::transitionSnapshotBox() {
+	if (!_snapshotSurface.getPixels())
+		return;
 
-	//glTexEnvf (GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
+	if (_brightnessLevel == 255)
+		return;
 
-	float xScale = (float) brightnessLevel * winWidth / 510.f;// 510 = 255*2
-	float yScale = (float) brightnessLevel * winHeight / 510.f;
+	uint32 xScale = (255 - _brightnessLevel) * _winWidth / 255;
+	uint32 yScale = (255 - _brightnessLevel) * _winHeight / 255;
 
-	const GLfloat vertices[] = {
-		xScale, winHeight - yScale, 0,
-		winWidth - xScale, winHeight - yScale, 0,
-		xScale, yScale, 0,
-		winWidth - xScale, yScale, 0
-	};
+	Graphics::Surface *surf = _snapshotSurface.scale(xScale, yScale);
 
-	const GLfloat texCoords[] = {
-		0.0f, snapTexH,
-		snapTexW, snapTexH,
-		0.0f, 0.0f,
-		snapTexW, 0.0f
-	};
-
-	glUseProgram(shader.texture);
-
-	setPMVMatrix(shader.texture);
-
-	drawQuad(shader.texture, vertices, 1, texCoords);
-
-	glUseProgram(0);
-#endif
+	_renderSurface.copyRectToSurface(surf->getPixels(), surf->pitch, (_winWidth - xScale) / 2, (_winHeight - yScale) / 2, xScale, yScale);
 }
 
 //----------------------------------------------------

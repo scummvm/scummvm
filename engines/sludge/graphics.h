@@ -191,6 +191,7 @@ public:
 	void transitionDisolve();
 	void transitionTV();
 	void transitionBlinds();
+	void transitionSnapshotBox();
 
 private:
 	SludgeEngine *_vm;
