@@ -28,12 +28,7 @@ namespace Sludge {
 extern float snapTexW, snapTexH;
 
 void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
-	if (brightnessLevel < 0)
-		_brightnessLevel = 0;
-	else if (brightnessLevel > 255)
-		_brightnessLevel = 255;
-	else
-		_brightnessLevel = brightnessLevel;
+	_brightnessLevel = CLIP(brightnessLevel, 0, 255);
 }
 
 //----------------------------------------------------
@@ -43,13 +38,14 @@ void GraphicsManager::setBrightnessLevel(int brightnessLevel) {
 unsigned lastFrom, lastTo;
 
 void GraphicsManager::transitionFader() {
-	uint br = MIN<uint>(255, _brightnessLevel);
-
-	blendColor(&_renderSurface, TS_ARGB(br, 255, 255, 255), Graphics::BLEND_MULTIPLY);
+	blendColor(&_renderSurface, TS_ARGB(_brightnessLevel, 255, 255, 255), Graphics::BLEND_MULTIPLY);
 }
 
 void GraphicsManager::transitionCrossFader() {
 	if (!_snapshotSurface.getPixels())
+		return;
+
+	if (_brightnessLevel == 255)
 		return;
 
 	Graphics::TransparentSurface tmp(_snapshotSurface, false);
@@ -132,11 +128,9 @@ void GraphicsManager::transitionDisolve() {
 	} while (toScreen < end);
 
 	// The original stretched the texture, we just tile it
-	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h) {
-		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w) {
+	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
+		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
 			_transitionTexture->blit(_renderSurface, x, y);
-		}
-	}
 }
 
 void GraphicsManager::transitionTV() {
@@ -171,11 +165,9 @@ void GraphicsManager::transitionTV() {
 	} while (toScreen < end);
 
 	// The original stretched the texture, we just tile it
-	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h) {
-		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w) {
+	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
+		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
 			_transitionTexture->blit(_renderSurface, x, y);
-		}
-	}
 }
 
 void GraphicsManager::transitionBlinds() {
@@ -199,14 +191,12 @@ void GraphicsManager::transitionBlinds() {
 				}
 			}
 		}
-
-		// The original stretched the texture, we just tile it
-		for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h) {
-			for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w) {
-				_transitionTexture->blit(_renderSurface, x, y);
-			}
-		}
 	}
+
+	// The original stretched the texture, we just tile it
+	for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h)
+		for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w)
+			_transitionTexture->blit(_renderSurface, x, y);
 }
 
 //----------------------------------------------------
