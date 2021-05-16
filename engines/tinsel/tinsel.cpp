@@ -908,12 +908,6 @@ const char *const TinselEngine::_textFiles[][3] = {
 TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc) :
 		Engine(syst), _gameDescription(gameDesc), _random("tinsel"),
 		_sound(0), _midiMusic(0), _pcmMusic(0), _bmv(0) {
-	// Register debug flags
-	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
-	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
-	DebugMan.addDebugChannel(kTinselDebugSound, "sound", "Sound debugging");
-	DebugMan.addDebugChannel(kTinselDebugMusic, "music", "Music debugging");
-
 	_vm = this;
 
 	_gameId = 0;
