@@ -1084,7 +1084,7 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		restoreVerbBG(verb);
 
 		_string[4].charset = vs->charset_nr;
-		_string[4].xpos = vs->origLeft;
+		_string[4].xpos = _language != Common::HE_ISR ? vs->curRect.left : vs->origLeft;
 		_string[4].ypos = vs->curRect.top;
 		_string[4].right = _screenWidth - 1;
 		_string[4].center = vs->center;
@@ -1110,7 +1110,9 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		drawString(4, msg);
 		_charset->_center = tmp;
 
-		vs->curRect.left = _charset->_str.left;
+		if (_language == Common::HE_ISR)
+			vs->curRect.left = _charset->_str.left;
+
 		vs->curRect.right = _charset->_str.right;
 		vs->curRect.bottom = _charset->_str.bottom;
 		vs->oldRect = _charset->_str;
