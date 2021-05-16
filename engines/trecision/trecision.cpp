@@ -167,11 +167,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_actorPos = 0;
 	_forcedActorPos = 0;
-
-	for (int i = 0; i < MAXDTEXTLINES; ++i) {
-		for (int j = 0; j < MAXDTEXTCHARS; ++j)
-			_drawTextLines[i][j] = '\0';
-	}
 }
 
 TrecisionEngine::~TrecisionEngine() {
@@ -706,15 +701,15 @@ bool TrecisionEngine::dataSave() {
 
 	_graphicsMgr->clearScreenBufferTop();
 
-	SDText SText;
-	SText.set(
+	SDText drawText;
+	drawText.set(
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageSavePosition]
 	);
-	SText.draw();
+	drawText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -760,14 +755,14 @@ insave:
 				LenText = textLength(saveNames[CurPos]);
 
 				posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-				SText.set(
+				drawText.set(
 					Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
 					Common::Rect(0, 0, LenText, CARHEI),
 					MOUSECOL,
 					MASKCOL,
 					saveNames[CurPos].c_str()
 				);
-				SText.draw();
+				drawText.draw();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -829,7 +824,7 @@ insave:
 			LenText = textLength(saveNames[CurPos]);
 
 			posx = CLIP(posx - (LenText / 2), 2, MAXX - 2 - LenText);
-			SText.set(
+			drawText.set(
 				Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
 				Common::Rect(0, 0, LenText, CARHEI),
 				MOUSECOL,
@@ -840,7 +835,7 @@ insave:
 			if ((readTime() / 8) & 1)
 				_blinkLastDTextChar = 0x0000;
 
-			SText.draw();
+			drawText.draw();
 			_blinkLastDTextChar = MASKCOL;
 
 			saveNames[CurPos].deleteLastChar();	// remove blinking cursor
@@ -900,15 +895,15 @@ bool TrecisionEngine::dataLoad() {
 
 	_graphicsMgr->showCursor();
 
-	SDText SText;
-	SText.set(
+	SDText drawText;
+	drawText.set(
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageLoadPosition]
 	);
-	SText.draw();
+	drawText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -954,14 +949,14 @@ bool TrecisionEngine::dataLoad() {
 				if (posX + lenText > MAXX - 2)
 					posX = MAXX - 2 - lenText;
 
-				SText.set(
+				drawText.set(
 					Common::Rect(posX, FIRSTLINE + ICONDY + 10, lenText + posX, CARHEI + (FIRSTLINE + ICONDY + 10)),
 					Common::Rect(0, 0, lenText, CARHEI),
 					MOUSECOL,
 					MASKCOL,
 					saveNames[CurPos].c_str()
 				);
-				SText.draw();
+				drawText.draw();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}

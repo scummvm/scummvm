@@ -350,18 +350,24 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uin
 	tcol = ptcol;
 	scol = pscol;
 	text = pText;
+
+	// Clean output buffer
+	for (int i = 0; i < MAXDTEXTLINES; ++i) {
+		for (int j = 0; j < MAXDTEXTCHARS; ++j)
+			_drawTextLines[i][j] = '\0';
+	}
 }
 
 /*-------------------------------------------------------------
-   checkDText - Computes and returns the dy of the given DText
+   calcWidth - Computes and returns the dy of the current text
 --------------------------------------------------------------*/
-uint16 SDText::checkDText() {
+uint16 SDText::calcWidth() {
 	if (text.empty())
 		return 0;
 
 	uint8 curLine = 0;
 	if (g_vm->textLength(text) <= _rect.width()) {
-		strcpy((char *)g_vm->_drawTextLines[curLine], text.c_str());
+		strcpy((char *)_drawTextLines[curLine], text.c_str());
 		return CARHEI;
 	}
 
@@ -378,9 +384,9 @@ uint16 SDText::checkDText() {
 			else if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
+					_drawTextLines[curLine][b - curInit] = text[b];
 
-				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
+				_drawTextLines[curLine][b - curInit] = '\0';
 				curLine++;
 
 				curInit = lastSpace + 1;
@@ -393,8 +399,8 @@ uint16 SDText::checkDText() {
 			if (g_vm->textLength(text, curInit, a) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
-					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
-				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
+					_drawTextLines[curLine][b - curInit] = text[b];
+				_drawTextLines[curLine][b - curInit] = '\0';
 
 				tmpDy += CARHEI;
 
@@ -404,9 +410,9 @@ uint16 SDText::checkDText() {
 			if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
-					g_vm->_drawTextLines[curLine][b - curInit] = text[b];
+					_drawTextLines[curLine][b - curInit] = text[b];
 
-				g_vm->_drawTextLines[curLine][b - curInit] = '\0';
+				_drawTextLines[curLine][b - curInit] = '\0';
 				curLine++;
 
 				curInit = lastSpace + 1;
@@ -414,9 +420,9 @@ uint16 SDText::checkDText() {
 
 				if (curInit < text.size()) {
 					for (b = curInit; b < text.size(); b++)
-						g_vm->_drawTextLines[curLine][b - curInit] = text[b];
+						_drawTextLines[curLine][b - curInit] = text[b];
 
-					g_vm->_drawTextLines[curLine][b - curInit] = '\0';
+					_drawTextLines[curLine][b - curInit] = '\0';
 
 					tmpDy += CARHEI;
 				}
@@ -439,10 +445,10 @@ void SDText::draw(uint16 *frameBuffer) {
 		return;
 
 	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
-	uint16 curDy = checkDText();
+	uint16 curDy = calcWidth();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
-		char *curText = (char *)g_vm->_drawTextLines[b];
+		char *curText = (char *)_drawTextLines[b];
 		uint16 inc = (_rect.width() - g_vm->textLength(curText)) / 2;
 		uint16 len = strlen(curText);
 
