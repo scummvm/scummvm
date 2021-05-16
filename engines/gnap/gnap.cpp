@@ -94,8 +94,6 @@ static const char *kSceneNames[] = {
 GnapEngine::GnapEngine(OSystem *syst, const ADGameDescription *gd) :
 	Engine(syst), _gameDescription(gd) {
 
-	DebugMan.addDebugChannel(kDebugBasic, "basic", "Basic debug level");
-
 	_random = new Common::RandomSource("gnap");
 
 	Engine::syncSoundSettings();
