@@ -25,10 +25,25 @@
 
 #include "engines/advancedDetector.h"
 #include "groovie/detection.h"
+#include "groovie/groovie.h"
 
 namespace Groovie {
 
 #define GAMEOPTION_T7G_FAST_MOVIE_SPEED  GUIO_GAMEOPTIONS1
+
+static const DebugChannelDef debugFlagList[] = {
+	{Groovie::kDebugVideo, "Video", "Debug video and audio playback"},
+	{Groovie::kDebugResource, "Resource", "Debug resource management"},
+	{Groovie::kDebugScript, "Script", "Debug the scripts"},
+	{Groovie::kDebugUnknown, "Unknown", "Report values of unknown data in files"},
+	{Groovie::kDebugHotspots, "Hotspots", "Show the hotspots"},
+	{Groovie::kDebugCursor, "Cursor", "Debug cursor decompression / switching"},
+	{Groovie::kDebugMIDI, "MIDI", "Debug MIDI / XMIDI files"},
+	{Groovie::kDebugScriptvars, "Scriptvars", "Print out any change to script variables"},
+	{Groovie::kDebugCell, "Cell", "Debug the cell game (in the microscope)"},
+	{Groovie::kDebugFast, "Fast", "Play videos quickly, with no sound (unstable)"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor groovieGames[] = {
 	// Games
@@ -333,6 +348,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Groovie Engine (C) 1990-1996 Trilobyte";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
