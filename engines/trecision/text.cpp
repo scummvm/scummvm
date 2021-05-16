@@ -443,16 +443,16 @@ void TextManager::drawText(StackText text) {
 	_curString._rect.setWidth(w);
 
 	_curString.text = text.text;
-	uint16 hstring = _curString.calcWidth();
-	_curString._subtitleRect = Common::Rect(_curString._rect.width(), hstring);
-	_curString._rect.setHeight(hstring);
+	uint16 height = _curString.calcHeight();
+	_curString._subtitleRect = Common::Rect(_curString._rect.width(), height);
+	_curString._rect.setHeight(height);
 	_curString.tcol = text.tcol;
 	_curString.scol = text.scol;
 
-	if (_curString._rect.top <= hstring)
-		_curString._rect.top += hstring;
+	if (_curString._rect.top <= height)
+		_curString._rect.top += height;
 	else
-		_curString._rect.top -= hstring;
+		_curString._rect.top -= height;
 
 	if (_curString._rect.top <= VIDEOTOP)
 		_curString._rect.top = VIDEOTOP + 1;

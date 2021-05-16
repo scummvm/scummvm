@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	logic.o \
 	metaengine.o \
 	sound.o \
+	saveload.o \
 	scheduler.o \
 	script.o \
 	text.o \
