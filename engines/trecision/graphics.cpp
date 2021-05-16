@@ -153,11 +153,6 @@ void GraphicsManager::clearScreenBufferTopDescription() {
 }
 
 void GraphicsManager::clearScreenBufferInventory() {
-	// Clears lines 420 - 460
-	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE, MAXX, FIRSTLINE + ICONDY), 0);
-}
-
-void GraphicsManager::clearScreenBufferInventoryFull() {
 	// Clears lines 420 - 480
 	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE, MAXX, MAXY), 0);
 }

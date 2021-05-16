@@ -713,7 +713,7 @@ bool TrecisionEngine::dataSave() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	_graphicsMgr->clearScreenBufferInventoryFull();
+	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -843,7 +843,7 @@ insave:
 			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
-		_graphicsMgr->clearScreenBufferInventoryFull();
+		_graphicsMgr->clearScreenBufferInventory();
 
 		ret = false;
 
@@ -855,7 +855,7 @@ insave:
 		saveGameState(CurPos + 1, saveNames[CurPos]);
 	}
 
-	_graphicsMgr->clearScreenBufferInventoryFull();
+	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	_graphicsMgr->clearScreenBufferTopDescription();
@@ -907,7 +907,7 @@ bool TrecisionEngine::dataLoad() {
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
-	_graphicsMgr->clearScreenBufferInventoryFull();
+	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
@@ -994,7 +994,7 @@ bool TrecisionEngine::dataLoad() {
 
 void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	if (!skipLoad) {
-		_graphicsMgr->clearScreenBufferInventoryFull();
+		_graphicsMgr->clearScreenBufferInventory();
 
 		loadGameState(slot + 1);
 
@@ -1010,7 +1010,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	_pathFind->nextStep();
 	checkSystem();
 
-	_graphicsMgr->clearScreenBufferInventoryFull();
+	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
 	_graphicsMgr->clearScreenBufferTopDescription();
