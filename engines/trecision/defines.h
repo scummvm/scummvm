@@ -2334,12 +2334,6 @@ Game Structure
 #define MAXSCRIPT 15
 #define MAXTEXTSTACK 3
 
-#define MAXDIALOG 70
-#define MAXCHOICE 1000
-#define MAXSUBTITLES 1500
-#define MAXDISPCHOICES 5
-#define MAXNEWSMKPAL 40
-
 // define smacker animations
 #define MAXCHILD 4
 #define MAXATFRAME 16
