@@ -62,7 +62,6 @@ public:
 	void clearScreenBufferTop();
 	void clearScreenBufferTopDescription();
 	void clearScreenBufferInventory();
-	void clearScreenBufferInventoryFull();
 	void clearScreenBufferInventoryDescriptions();
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
