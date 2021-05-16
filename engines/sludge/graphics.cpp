@@ -90,6 +90,7 @@ void GraphicsManager::init() {
 	resetRandW();
 	_brightnessLevel = 255;
 	_fadeMode = 2;
+	_transitionTexture = nullptr;
 }
 
 void GraphicsManager::kill() {
@@ -142,6 +143,12 @@ void GraphicsManager::kill() {
 
 	if (_origBackdropSurface.getPixels())
 		_origBackdropSurface.free();
+
+	if (_transitionTexture) {
+		_transitionTexture->free();
+		delete _transitionTexture;
+		_transitionTexture = nullptr;
+	}
 }
 
 bool GraphicsManager::initGfx() {

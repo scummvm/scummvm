@@ -185,8 +185,10 @@ public:
 	void setFadeMode(int fadeMode) { _fadeMode = fadeMode; };
 	void fixBrightness();
 	void resetRandW();
+	void reserveTransitionTexture();
 
 	void transitionFader();
+	void transitionDisolve();
 
 private:
 	SludgeEngine *_vm;
@@ -243,6 +245,12 @@ private:
 	// Transition
 	byte _brightnessLevel;
 	byte _fadeMode;
+
+#define RANDKK 17
+
+	uint32 _randbuffer[RANDKK][2];
+	int _randp1, _randp2;
+	Graphics::TransparentSurface *_transitionTexture;
 
 	// Parallax
 	ParallaxLayers *_parallaxLayers;
