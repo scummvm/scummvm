@@ -23,6 +23,7 @@
 #include "common/debug.h"
 #include "common/file.h"
 
+#include "sludge/graphics.h"
 #include "sludge/newfatal.h"
 #include "sludge/variable.h"
 
@@ -106,7 +107,7 @@ static int *s_matrixEffectData = NULL;
 static int s_matrixEffectBase = 0;
 #endif
 
-void blur_saveSettings(Common::WriteStream *stream) {
+void GraphicsManager::blur_saveSettings(Common::WriteStream *stream) {
 	if (s_matrixEffectData) {
 		stream->writeUint32LE(s_matrixEffectDivide);
 		stream->writeUint32LE(s_matrixEffectWidth);
@@ -132,7 +133,7 @@ static int *blur_allocateMemoryForEffect() {
 	return s_matrixEffectData;
 }
 
-void blur_loadSettings(Common::SeekableReadStream *stream) {
+void GraphicsManager::blur_loadSettings(Common::SeekableReadStream *stream) {
 	s_matrixEffectDivide = stream->readUint32LE();
 	s_matrixEffectWidth = stream->readUint32LE();
 	s_matrixEffectHeight = stream->readUint32LE();
@@ -148,7 +149,7 @@ void blur_loadSettings(Common::SeekableReadStream *stream) {
 	}
 }
 
-bool blur_createSettings(int numParams, VariableStack *&stack) {
+bool GraphicsManager::blur_createSettings(int numParams, VariableStack *&stack) {
 	bool createNullThing = true;
 	Common::String error = "";
 
@@ -242,14 +243,6 @@ bool blur_createSettings(int numParams, VariableStack *&stack) {
 	return !createNullThing;
 }
 
-// FIXME - Disabled until blurScreen() is internally implemented where these are used...
-//         although these may be replaced by common/util.h, CLIP() function to replace clampi
-//         and various methods of Graphics::Surface.
-#if 0
-static inline int clampi(int i, int min, int max) {
-	return (i >= max) ? max : ((i <= min) ? min : i);
-}
-
 static inline void blur_createSourceLine(byte *createLine, byte *fromLine, int overlapOnLeft, int width) {
 	int miniX;
 	memcpy(createLine + overlapOnLeft * 4, fromLine, width * 4);
@@ -266,10 +259,8 @@ static inline void blur_createSourceLine(byte *createLine, byte *fromLine, int o
 		createLine[miniX * 4 + 2] = fromLine[width * 4 - 2];
 	}
 }
-#endif
 
-bool blurScreen() {
-#if 0
+bool GraphicsManager::blurScreen() {
 	if (s_matrixEffectWidth && s_matrixEffectHeight && s_matrixEffectDivide && s_matrixEffectData) {
 		byte *thisLine;
 		int y, x;
@@ -281,31 +272,20 @@ bool blurScreen() {
 		if (!checkNew(sourceLine))
 			return false;
 
-		int picWidth = sceneWidth;
-		int picHeight = sceneHeight;
-
-		if (!NPOT_textures) {
-			picWidth = getNextPOT(sceneWidth);
-			picHeight = getNextPOT(sceneHeight);
-		}
-
-		// Retrieve the texture
-		saveTexture(backdropTextureName, backdropTexture);
-
 		for (y = 0; y < s_matrixEffectHeight; y++) {
-			sourceLine[y] = new byte[(s_matrixEffectWidth - 1 + picWidth) * 4];
+			sourceLine[y] = new byte[(s_matrixEffectWidth - 1 + _sceneWidth) * 4];
 			ok &= (sourceLine[y] != NULL);
 		}
 
 		if (ok) {
 			for (y = 0; y < s_matrixEffectHeight; y++) {
-				int miniY = clampi(y - overlapAbove - 1, 0, sceneHeight - 1);
+				int miniY = CLIP<int>(y - overlapAbove - 1, 0, _sceneHeight - 1);
 
-				blur_createSourceLine(sourceLine[y], backdropTexture + miniY * picWidth * 4, overlapOnLeft, picWidth);
+				blur_createSourceLine(sourceLine[y], (byte *)_origBackdropSurface.getBasePtr(0, miniY), overlapOnLeft, _sceneWidth);
 			}
 
-			for (y = 0; y < sceneHeight; y++) {
-				thisLine = backdropTexture + y * picWidth * 4;
+			for (y = 0; y < _sceneHeight; y++) {
+				thisLine = (byte *)_origBackdropSurface.getBasePtr(0, y);
 
 				//-------------------------
 				// Scroll source lines
@@ -317,11 +297,11 @@ bool blurScreen() {
 				sourceLine[s_matrixEffectHeight - 1] = tempLine;
 				{
 					int h = s_matrixEffectHeight - 1;
-					int miniY = clampi(y + (s_matrixEffectHeight - overlapAbove - 1), 0, sceneHeight - 1);
+					int miniY = CLIP<int>(y + (s_matrixEffectHeight - overlapAbove - 1), 0, _sceneHeight - 1);
 
-					blur_createSourceLine(sourceLine[h], backdropTexture + miniY * picWidth * 4, overlapOnLeft, picWidth);
+					blur_createSourceLine(sourceLine[h], (byte *)_origBackdropSurface.getBasePtr(0, miniY), overlapOnLeft, _sceneWidth);
 				}
-				for (x = 0; x < sceneWidth; x++) {
+				for (x = 0; x < _sceneWidth; x++) {
 					int totalRed = 0;
 					int totalGreen = 0;
 					int totalBlue = 0;
@@ -361,13 +341,11 @@ bool blurScreen() {
 		for (y = 0; y < s_matrixEffectHeight; y++) {
 			delete sourceLine[y];
 		}
-		delete sourceLine;
+		delete[] sourceLine;
 		sourceLine = NULL;
 
-		texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, picWidth, picHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, backdropTexture, backdropTextureName);
 		return true;
 	}
-#endif
 	return false;
 }
 

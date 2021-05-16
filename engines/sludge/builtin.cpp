@@ -25,7 +25,6 @@
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "sludge/bg_effects.h"
 #include "sludge/builtin.h"
 #include "sludge/cursors.h"
 #include "sludge/event.h"
@@ -2524,14 +2523,14 @@ builtIn(_rem_setMaximumAA) {
 
 builtIn(setBackgroundEffect) {
 	UNUSEDALL
-	bool done = blur_createSettings(numParams, fun->stack);
+	bool done = g_sludge->_gfxMan->blur_createSettings(numParams, fun->stack);
 	fun->reg.setVariable(SVT_INT, done ? 1 : 0);
 	return BR_CONTINUE;
 }
 
 builtIn(doBackgroundEffect) {
 	UNUSEDALL
-	bool done = blurScreen();
+	bool done = g_sludge->_gfxMan->blurScreen();
 	fun->reg.setVariable(SVT_INT, done ? 1 : 0);
 	return BR_CONTINUE;
 }

@@ -24,7 +24,6 @@
 
 #include "common/savefile.h"
 
-#include "sludge/bg_effects.h"
 #include "sludge/cursors.h"
 #include "sludge/errors.h"
 #include "sludge/event.h"
@@ -143,7 +142,7 @@ bool saveGame(const Common::String &fname) {
 
 	fp->writeUint16BE(CustomSaveHelper::_saveEncoding);
 
-	blur_saveSettings(fp);
+	g_sludge->_gfxMan->blur_saveSettings(fp);
 
 	g_sludge->_gfxMan->saveColors(fp);
 
@@ -283,7 +282,7 @@ bool loadGame(const Common::String &fname) {
 			fp->readFloatLE();
 		}
 
-		blur_loadSettings(fp);
+		g_sludge->_gfxMan->blur_loadSettings(fp);
 	}
 
 	if (ssgVersion >= VERSION(1, 3)) {

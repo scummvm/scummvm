@@ -43,6 +43,7 @@ struct OnScreenPerson;
 struct SpriteBank;
 struct Sprite;
 struct SpriteLayers;
+struct VariableStack;
 struct ZBufferData;
 
 enum ELightMapMode {
@@ -193,6 +194,12 @@ public:
 	void transitionBlinds();
 	void transitionSnapshotBox();
 	void transitionCrossFader();
+
+	// BG effects
+	bool blurScreen();
+	void blur_saveSettings(Common::WriteStream *stream);
+	void blur_loadSettings(Common::SeekableReadStream *stream);
+	bool blur_createSettings(int numParams, VariableStack *&stack);
 
 private:
 	SludgeEngine *_vm;
