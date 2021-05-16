@@ -25,6 +25,19 @@
 #include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 
+#include "draci/draci.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Draci::kDraciGeneralDebugLevel, "general", "Draci general debug info"},
+	{Draci::kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions"},
+	{Draci::kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info"},
+	{Draci::kDraciLogicDebugLevel, "logic", "Game logic debug info"},
+	{Draci::kDraciAnimationDebugLevel, "animation", "Animation debug info"},
+	{Draci::kDraciSoundDebugLevel, "sound", "Sound debug info"},
+	{Draci::kDraciWalkingDebugLevel, "walking", "Walking debug info"},
+	DEBUG_CHANNEL_END
+};
+
 static const PlainGameDescriptor draciGames[] = {
 	{ "draci", "Draci Historie" },
 	{ 0, 0 }
@@ -93,6 +106,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Draci Historie (C) 1995 NoSense";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
