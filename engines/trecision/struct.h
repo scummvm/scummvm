@@ -105,31 +105,6 @@ struct SAnim {
 	SAtFrame _atFrame[MAXATFRAME];
 };
 
-struct DialogSubTitle {
-	uint16 _sentence;
-	uint16 _x, _y, _color;          // you can compact this info using a bit field
-	uint16 _startFrame, _length;    // Frame at which the subtitle starts and its length
-};
-
-struct DialogChoice {
-	uint16	_flag;			// DLGCHOICE_HIDE|DLGCHOICE_ONETIME|DLGCHOICE_FRAUD...if used...
-	uint16	_sentenceIndex;	// Index in the sentence array.
-	uint16	_firstSubTitle, _subTitleNumb;	 	// starting index and number of sub title sentences
-	uint16	_on[MAXDISPCHOICES], _off[MAXDISPCHOICES];
-	uint16  _startFrame;    // Starting frame of the choice
-	uint16  _nextDialog;
-};
-
-struct Dialog {
-	uint16	_flag;				// DONT_SKIP .. and more
-	uint16 	_interlocutor;		// Person I'm talking to... Maybe it's not needed
-	char	_startAnim[14];		// aANIMATION or text table index by filename.
-	uint16	_startLen;
-	uint16 	_firstChoice;
-	uint16	_choiceNumb;
-	uint16	_newPal[MAXNEWSMKPAL];
-};
-
 struct SSortTable {
 	uint16 _objectId;                        // Object ID
 	bool  _remove;                           // Whether to copy or remove
