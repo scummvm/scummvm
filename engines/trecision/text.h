@@ -23,10 +23,14 @@
 #ifndef TRECISION_TEXT_H
 #define TRECISION_TEXT_H
 
-#include "trecision/defines.h"
-#include "trecision/trecision.h"
+#define MAXLENSUBSTRING 128
+#define MAXSUBSTRING 16
+
+#include "common/scummsys.h"
 
 namespace Trecision {
+
+class TrecisionEngine;
 
 class TextManager {
 	TrecisionEngine *_vm;
