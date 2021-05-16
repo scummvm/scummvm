@@ -24,7 +24,19 @@
 #include "engines/advancedDetector.h"
 
 #include "sludge/detection.h"
+#include "sludge/sludge.h"
 
+
+static const DebugChannelDef debugFlagList[] = {
+	{Sludge::kSludgeDebugFatal, "script", "Script debug level"},
+	{Sludge::kSludgeDebugDataLoad, "loading", "Data loading debug level"},
+	{Sludge::kSludgeDebugStackMachine, "stack", "Stack Machine debug level"},
+	{Sludge::kSludgeDebugBuiltin, "builtin", "Built-in debug level"},
+	{Sludge::kSludgeDebugGraphics, "graphics", "Graphics debug level"},
+	{Sludge::kSludgeDebugZBuffer, "zBuffer", "ZBuffer debug level"},
+	{Sludge::kSludgeDebugSound, "sound", "Sound debug level"},
+	DEBUG_CHANNEL_END
+};
 static const PlainGameDescriptor sludgeGames[] = {
 	{ "sludge",			"Sludge Game" },
 	{ "welcome",		"Welcome Example" },
@@ -79,6 +91,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Sludge (C) 2000-2014 Hungry Software and contributors";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	// for fall back detection
