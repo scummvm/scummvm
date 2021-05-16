@@ -159,7 +159,7 @@ class TrecisionEngine : public Engine {
 
 	// Utils
 	char *getNextSentence();
-	char getKey();
+	uint16 getKey();
 	void processTime();
 	void processMouse();
 	static bool isBetween(int a, int x, int b);
@@ -220,7 +220,7 @@ public:
 	// Utils
 	void setRoom(uint16 r, bool b);
 	uint16 textLength(const Common::String &text, uint16 begin = 0, uint16 end = 0);
-	char waitKey();
+	Common::KeyCode waitKey();
 	void waitDelay(uint32 val);
 	void freeKey();
 	uint32 readTime();

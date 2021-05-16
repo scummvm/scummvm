@@ -714,7 +714,7 @@ bool TrecisionEngine::dataSave() {
 		MASKCOL,
 		_sysText[kMessageSavePosition]
 	);
-	SText.DText();
+	SText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -767,7 +767,7 @@ insave:
 					MASKCOL,
 					saveNames[CurPos].c_str()
 				);
-				SText.DText();
+				SText.draw();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -801,7 +801,7 @@ insave:
 		for (;;) {
 			_keybInput = true;
 			checkSystem();
-			char ch = getKey();
+			uint16 ch = getKey();
 			freeKey();
 
 			_keybInput = false;
@@ -840,7 +840,7 @@ insave:
 			if ((readTime() / 8) & 1)
 				_blinkLastDTextChar = 0x0000;
 
-			SText.DText();
+			SText.draw();
 			_blinkLastDTextChar = MASKCOL;
 
 			saveNames[CurPos].deleteLastChar();	// remove blinking cursor
@@ -908,7 +908,7 @@ bool TrecisionEngine::dataLoad() {
 		MASKCOL,
 		_sysText[kMessageLoadPosition]
 	);
-	SText.DText();
+	SText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -961,7 +961,7 @@ bool TrecisionEngine::dataLoad() {
 					MASKCOL,
 					saveNames[CurPos].c_str()
 				);
-				SText.DText();
+				SText.draw();
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}

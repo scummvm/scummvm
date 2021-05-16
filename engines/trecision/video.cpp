@@ -220,7 +220,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	_vm->_drawText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_drawText.checkDText() + (380 - TOP));
 	_vm->_drawText._subtitleRect = Common::Rect(MAXX, MAXY);
 	_vm->_drawText.scol = MASKCOL;
-	_vm->_drawText.DText((uint16 *)surface->getPixels());
+	_vm->_drawText.draw((uint16 *)surface->getPixels());
 }
 
 void AnimManager::openSmkAnim(int slot, const Common::String &name) {

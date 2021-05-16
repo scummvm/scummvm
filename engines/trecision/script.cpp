@@ -109,15 +109,15 @@ bool TrecisionEngine::quitPrompt() {
 
 	_graphicsMgr->clearScreenBufferTop();
 
-	SDText SText;
-	SText.set(
+	SDText drawText;
+	drawText.set(
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageConfirmExit]
 	);
-	SText.DText();
+	drawText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -125,10 +125,9 @@ bool TrecisionEngine::quitPrompt() {
 
 	checkSystem();
 
-	char ch = waitKey();
+	Common::KeyCode ch = waitKey();
 
-	bool exitFl = ((ch == 'y') || (ch == 'Y')) ||
-	              ((ch == 'j') || (ch == 'J')); // German hack
+	bool exitFl = (ch == Common::KEYCODE_y || ch == Common::KEYCODE_j); // German confirmation is J, English and French use 'Y'
 
 	for (int a = 0; a < TOP; a++)
 		memcpy(_graphicsMgr->getScreenBufferPtr() + MAXX * a, tmpBuffer + a * MAXX, MAXX * 2);
@@ -143,15 +142,15 @@ bool TrecisionEngine::quitPrompt() {
 void TrecisionEngine::demoOver() {
 	_graphicsMgr->clearScreenBufferTop();
 
-	SDText SText;
-	SText.set(
+	SDText drawText;
+	drawText.set(
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageDemoOver]
 	);
-	SText.DText();
+	drawText.draw();
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -455,7 +454,7 @@ void TrecisionEngine::doSystem() {
 }
 
 void TrecisionEngine::doIdle() {
-	char c = getKey();
+	uint16 c = getKey();
 	switch (c) {
 	// Quit
 	case 'q':
