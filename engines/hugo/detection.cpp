@@ -24,6 +24,21 @@
 #include "engines/advancedDetector.h"
 
 #include "hugo/detection.h"
+#include "hugo/hugo.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Hugo::kDebugSchedule, "Schedule", "Script Schedule debug level"},
+	{Hugo::kDebugEngine, "Engine", "Engine debug level"},
+	{Hugo::kDebugDisplay, "Display", "Display debug level"},
+	{Hugo::kDebugMouse, "Mouse", "Mouse debug level"},
+	{Hugo::kDebugParser, "Parser", "Parser debug level"},
+	{Hugo::kDebugFile, "File", "File IO debug level"},
+	{Hugo::kDebugRoute, "Route", "Route debug level"},
+	{Hugo::kDebugInventory, "Inventory", "Inventory debug level"},
+	{Hugo::kDebugObject, "Object", "Object debug level"},
+	{Hugo::kDebugMusic, "Music", "Music debug level"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Hugo {
 
@@ -128,6 +143,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Hugo Engine (C) 1989-1997 David P. Gray";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
