@@ -41,6 +41,8 @@ GraphicsManager::~GraphicsManager() {
 	_screenBuffer.free();
 	_background.free();
 	_smkBackground.free();
+	_leftInventoryArrow.free();
+	_rightInventoryArrow.free();
 }
 
 bool GraphicsManager::initScreen() {
@@ -123,19 +125,45 @@ uint16 *GraphicsManager::getScreenBufferPtr() {
 	return (uint16 *)_screenBuffer.getPixels();
 }
 
+void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height) {
+	surface->create(width, height, kImageFormat);
+
+	for (uint16 y = 0; y < height; y++) {
+		for (uint16 x = 0; x < width; x++) {
+			surface->setPixel(x, y, stream->readUint16LE());
+		}
+	}
+
+	surface->convertToInPlace(_screenFormat);
+}
+
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
-	Graphics::Surface img;
-	img.create(width, height, kImageFormat);
+	readSurface(stream, &_background, width, height);
+}
 
-	uint16 *buffer = new uint16[width * height];
-	for (int i = 0; i < width * height; ++i)
-		buffer[i] = stream->readUint16LE();
+void GraphicsManager::loadInventoryIcons() {
+	Common::SeekableReadStream *arrowsDataFile = _vm->_dataFile.createReadStreamForMember("frecc.bm");
 
-	memcpy(img.getPixels(), buffer, img.pitch * img.h);
-	img.convertToInPlace(_screenFormat);
-	_background.copyFrom(img);
-	delete[] buffer;
-	img.free();
+	// The data file contains images for deactivated arrows, which aren't used. Skip them.
+	arrowsDataFile->skip(ICONMARGDX * ICONDY * 2 * 3);
+	readSurface(arrowsDataFile, &_leftInventoryArrow, ICONMARGSX, ICONDY);
+	readSurface(arrowsDataFile, &_rightInventoryArrow, ICONMARGSX, ICONDY);
+
+	delete arrowsDataFile;
+}
+
+void GraphicsManager::drawLeftInventoryArrow(byte startLine) {
+	Graphics::Surface arrow = _leftInventoryArrow.getSubArea(Common::Rect(
+		0, startLine, _leftInventoryArrow.w, _leftInventoryArrow.h
+	));
+	copyToScreenBuffer(&arrow, 0, FIRSTLINE);
+}
+
+void GraphicsManager::drawRightInventoryArrow(byte startLine) {
+	Graphics::Surface arrow = _rightInventoryArrow.getSubArea(Common::Rect(
+		0, startLine, _rightInventoryArrow.w, _rightInventoryArrow.h
+	));
+	copyToScreenBuffer(&arrow, MAXX - ICONMARGDX, FIRSTLINE);
 }
 
 void GraphicsManager::clearScreenBuffer() {
@@ -371,16 +399,9 @@ bool GraphicsManager::isCursorVisible() {
 void GraphicsManager::showDemoPic() {
 	Common::File file;
 	if (file.open("EndPic.bm")) {
-		Graphics::Surface *pic = new Graphics::Surface();
-		pic->create(MAXX, MAXY, kImageFormat);
-
-		file.read(pic->getPixels(), MAXX * MAXY * 2);
-		updatePixelFormat((uint16*)pic->getPixels(), MAXX * MAXY);
-		g_system->copyRectToScreen(pic->getPixels(), pic->pitch, 0, 0, pic->w, pic->h);
+		readSurface(&file, &_screenBuffer, MAXX, MAXY);
+		copyToScreen(0, 0, MAXX, MAXY);
 		g_system->updateScreen();
-
-		pic->free();
-		delete pic;
 
 		_vm->freeKey();
 		_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;

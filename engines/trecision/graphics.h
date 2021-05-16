@@ -40,10 +40,14 @@ class GraphicsManager {
 	Graphics::Surface _screenBuffer;
 	Graphics::Surface _background;
 	Graphics::Surface _smkBackground;
+	Graphics::Surface _leftInventoryArrow;
+	Graphics::Surface _rightInventoryArrow;
 	Graphics::PixelFormat _screenFormat;
 	uint16 _bitMask[3];
 
 	static const Graphics::PixelFormat kImageFormat;
+
+	void readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height);
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
@@ -63,6 +67,8 @@ public:
 	void clearScreenBufferTopDescription();
 	void clearScreenBufferInventory();
 	void clearScreenBufferInventoryDescriptions();
+	void drawLeftInventoryArrow(byte startLine);
+	void drawRightInventoryArrow(byte startLine);
 
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
@@ -80,8 +86,8 @@ public:
 	void showCursor();
 	void hideCursor();
 
+	void loadInventoryIcons();
 	void showDemoPic();
-
 };
 
 } // End of namespace Trecision
