@@ -28,12 +28,20 @@
 #include "common/md5.h"
 
 #include "cryomni3d/detection.h"
+#include "cryomni3d/cryomni3d.h"
 
 namespace CryOmni3D {
 
 static const PlainGameDescriptor cryomni3DGames[] = {
 	{"versailles", "Versailles 1685"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{CryOmni3D::kDebugFile, "File", "Track File Accesses"},
+	{CryOmni3D::kDebugVariable, "Variable", "Track Variable Accesses"},
+	{CryOmni3D::kDebugSaveLoad, "SaveLoad", "Track Save/Load Function"},
+	DEBUG_CHANNEL_END
 };
 
 } // End of namespace CryOmni3D
@@ -69,6 +77,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Cryo game Engine (C) 1997-2002 Cryo Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
