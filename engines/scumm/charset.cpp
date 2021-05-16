@@ -1604,7 +1604,13 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 		_pad = false;
 	}
 
-	if (_enableShadow) {
+	bool enableShadow = _enableShadow;
+
+	// HACK: Notes and their names shoudl always be drawn with a shadow.
+	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95)
+		enableShadow = true;
+
+	if (enableShadow) {
 		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop, 0);
 		_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop + 2, 0);
 		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 3, macTop + 3, 0);
@@ -1620,7 +1626,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	int left, right, top, bottom;
 
-	if (_enableShadow) {
+	if (enableShadow) {
 		left = macLeft / 2;
 		right = (macLeft + _macFont.getCharWidth(chr) + 3) / 2;
 		top = macTop / 2;
