@@ -563,7 +563,7 @@ bool LogicManager::startPlayDialog() {
 			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
 			_vm->setObjectAnim(oTOPO1C, a1C3RACCOGLIETOPO);
 		} else {
-			_vm->TendIn();
+			_vm->tendIn();
 			_vm->_flagNoPaintScreen = false;
 			_vm->_textMgr->redrawString();
 		}
@@ -658,12 +658,12 @@ void LogicManager::endChangeRoom() {
 	// CHECKME: This check is identical to the 3rd one, thus it's always false
 	else if (_vm->_curRoom == kRoom21 && (/*!( _room[_vm->_curRoom]._flag & OBJFLAG_DONE ) || */ (_vm->_oldRoom == kRoom1C))) {
 		_vm->_pathFind->setPosition(10);
-		_vm->TendIn();
+		_vm->tendIn();
 		_vm->_flagNoPaintScreen = false;
 		_vm->_textMgr->clearLastText();
 		_vm->_textMgr->redrawString();
 	} else if (!dialogHandled) {
-		_vm->TendIn();
+		_vm->tendIn();
 		_vm->_flagNoPaintScreen = false;
 		_vm->_textMgr->clearLastText();
 		_vm->_textMgr->redrawString();
@@ -4137,7 +4137,7 @@ void LogicManager::doSystemChangeRoom() {
 	else if (_vm->_curRoom == kRoomControlPanel)
 		initControlPanel();
 
-	_vm->ReadLoc();
+	_vm->readLoc();
 	_vm->_graphicsMgr->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {

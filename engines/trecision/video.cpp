@@ -400,7 +400,7 @@ void AnimManager::stopFullMotion() {
 		    ((curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			_vm->_flagShowCharacter = false;
 		else
-			_vm->RedrawRoom();
+			_vm->redrawRoom();
 
 		if (curDialog == dF582)
 			_vm->_soundMgr->fadeOut();
