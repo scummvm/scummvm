@@ -172,6 +172,22 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// Ultima VI - German Patch 1.6 https://sirjohn.de/ultima-6/
+	// Note: Not all user interface elements are translated in ScummVM
+	{
+		{
+			"ultima6",
+			0,
+			AD_ENTRY1s("converse.a", "5242f0228bbc9c3a60c7aa6071499688", 198797),
+			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		GAME_ULTIMA6,
+		0
+	},
+
 	// PC98 Ultima 6
 	{
 		{
