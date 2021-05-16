@@ -26,6 +26,22 @@
 #include "common/file.h"
 
 #include "ngi/detection.h"
+#include "ngi/ngi.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{NGI::kDebugPathfinding, "path", "Pathfinding"},
+	{NGI::kDebugDrawing, "drawing", "Drawing"},
+	{NGI::kDebugLoading, "loading", "Scene loading"},
+	{NGI::kDebugAnimation, "animation", "Animation"},
+	{NGI::kDebugBehavior, "behavior", "Behavior"},
+	{NGI::kDebugMemory, "memory", "Memory management"},
+	{NGI::kDebugEvents, "events", "Event handling"},
+	{NGI::kDebugInventory, "inventory", "Inventory"},
+	{NGI::kDebugSceneLogic, "scenelogic", "Scene Logic"},
+	{NGI::kDebugInteractions, "interactions", "Interactions"},
+	{NGI::kDebugXML, "xml", "XML"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor ngiGames[] = {
 	{"ngi", 		"Nikita Game Interface game"},
@@ -170,6 +186,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Full Pipe (C) Pipe Studio";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
