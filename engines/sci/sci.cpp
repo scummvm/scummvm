@@ -111,34 +111,6 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	_forceHiresGraphics = false;
 
-	// Set up the engine specific debug levels
-	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
-	DebugMan.addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
-	DebugMan.addDebugChannel(kDebugLevelGraphics, "Graphics", "Graphics debugging");
-	DebugMan.addDebugChannel(kDebugLevelStrings, "Strings", "Strings debugging");
-	DebugMan.addDebugChannel(kDebugLevelMemory, "Memory", "Memory debugging");
-	DebugMan.addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
-	DebugMan.addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
-	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	DebugMan.addDebugChannel(kDebugLevelBaseSetter, "Base", "Base Setter debugging");
-	DebugMan.addDebugChannel(kDebugLevelParser, "Parser", "Parser debugging");
-	DebugMan.addDebugChannel(kDebugLevelSaid, "Said", "Said specs debugging");
-	DebugMan.addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
-	DebugMan.addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
-	DebugMan.addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
-	DebugMan.addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
-	DebugMan.addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
-	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
-	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
-	DebugMan.addDebugChannel(kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched");
-	DebugMan.addDebugChannel(kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered");
-	DebugMan.addDebugChannel(kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging");
-	DebugMan.addDebugChannel(kDebugLevelGame, "Game", "Debug calls from game scripts");
-	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
-	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
-	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
-	DebugMan.addDebugChannel(kDebugLevelDebugMode, "DebugMode", "Enable game debug mode at start of game");
-
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
