@@ -23,9 +23,11 @@
 #ifndef TRECISION_SCHEDULER_H
 #define TRECISION_SCHEDULER_H
 
-#include "trecision/trecision.h"
+#include "common/scummsys.h"
 
 namespace Trecision {
+class TrecisionEngine;
+
 class Scheduler {
 private:
 	TrecisionEngine *_vm;
