@@ -177,7 +177,7 @@ struct SDText {
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
 
 	void draw(uint16 *frameBuffer = nullptr);
-	uint16 calcWidth();
+	uint16 calcHeight();
 };
 
 struct SDObj {

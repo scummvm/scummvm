@@ -359,9 +359,9 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uin
 }
 
 /*-------------------------------------------------------------
-   calcWidth - Computes and returns the dy of the current text
+   calcHeight - Computes and returns the dy of the current text
 --------------------------------------------------------------*/
-uint16 SDText::calcWidth() {
+uint16 SDText::calcHeight() {
 	if (text.empty())
 		return 0;
 
@@ -445,7 +445,7 @@ void SDText::draw(uint16 *frameBuffer) {
 		return;
 
 	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
-	uint16 curDy = calcWidth();
+	uint16 curDy = calcHeight();
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
 		char *curText = (char *)_drawTextLines[b];
