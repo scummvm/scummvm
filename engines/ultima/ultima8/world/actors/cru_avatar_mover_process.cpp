@@ -45,6 +45,10 @@ CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAn
 CruAvatarMoverProcess::~CruAvatarMoverProcess() {
 }
 
+static bool _isAnimRunningWalking(Animation::Sequence anim) {
+	return (anim == Animation::run || anim == Animation::combatRunSmallWeapon ||
+			anim == Animation::walk);
+}
 
 void CruAvatarMoverProcess::run() {
 
@@ -84,6 +88,22 @@ void CruAvatarMoverProcess::run() {
 		}
 	} else {
 		_avatarAngle = -1;
+		// Check for a turn request while running or walking.  This only happens
+		// once per arrow keydown, so clear the flag.
+		if (avatar->isBusy() && _isAnimRunningWalking(avatar->getLastAnim())
+			&& hasMovementFlags(MOVE_FORWARD)
+			&& (hasMovementFlags(MOVE_TURN_LEFT) || hasMovementFlags(MOVE_TURN_RIGHT))) {
+			Kernel *kernel = Kernel::get_instance();
+			// Stop the current animation and turn now.
+			kernel->killProcesses(avatar->getObjId(), ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, true);
+
+			Direction curdir = avatar->getDir();
+			Animation::Sequence anim = hasMovementFlags(MOVE_RUN) ? Animation::run : Animation::walk;
+			DirectionMode dirmode = avatar->animDirMode(anim);
+			Direction dir = getTurnDirForTurnFlags(curdir, dirmode);
+			clearMovementFlag(MOVE_TURN_LEFT | MOVE_TURN_RIGHT);
+			step(anim, dir);
+		}
 	}
 
 	// Now do the regular process
@@ -104,11 +124,6 @@ static bool _isAnimRunningJumping(Animation::Sequence anim) {
 static bool _isAnimStartRunning(Animation::Sequence anim) {
 	return (anim == Animation::startRun || anim == Animation::startRunSmallWeapon ||
 			anim == Animation::startRunLargeWeapon);
-}
-
-static bool _isAnimRunningWalking(Animation::Sequence anim) {
-	return (anim == Animation::run || anim == Animation::combatRunSmallWeapon ||
-			anim == Animation::walk);
 }
 
 void CruAvatarMoverProcess::handleCombatMode() {
