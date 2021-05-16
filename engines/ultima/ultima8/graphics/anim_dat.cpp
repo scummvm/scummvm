@@ -116,7 +116,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::fallBackwards:
 			return Animation::fallBackwardsCru;
 		case Animation::die:
-			return Animation::fallBackwardsCru; // by default fall over backwards. TODO: randomly use Animation::fallForwardsCru for some deaths.
+			return Animation::fallBackwardsCru; // by default fall over backwards.
 		case Animation::advance:
 			return (smallwpn ? Animation::advanceSmallWeapon : Animation::advanceLargeWeapon);
 		// Kneel start/end never used in code - mover process uses correct ones.

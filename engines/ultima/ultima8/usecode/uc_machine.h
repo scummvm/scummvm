@@ -102,6 +102,7 @@ private:
 	Std::map<uint16, UCList *> _listHeap;
 	Std::map<uint16, Std::string> _stringHeap;
 
+	// Add a string to the list (copies the string)
 	uint16 assignString(const char *str);
 	uint16 assignList(UCList *l);
 

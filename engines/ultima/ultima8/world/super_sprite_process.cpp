@@ -118,7 +118,6 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 	}
 
 	float travel = _destpt.maxDistXYZ(_nextpt);
-	// FIXME: how to get this scaled correctly?
 	float speed = firetypedat->getCellsPerRound() * 32.0f;
 	float rounds = travel / speed;
 	if (rounds < 1)

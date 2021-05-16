@@ -1201,8 +1201,7 @@ void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_
 		}
 	}
 
-	// FIXME: What are the equivalent Crusader animations here?
-	if (damage && !fallingprocid && GAME_IS_U8) {
+	if (damage && !fallingprocid) {
 		ProcId anim1pid = doAnim(Animation::stumbleBackwards, dir);
 		ProcId anim2pid;
 		if (isInCombat())
