@@ -2362,9 +2362,6 @@ Low level text and color management
 #define MAXDTEXTCHARS 128
 #define MAXCHARS 128
 
-#define MAXLENSUBSTRING 128
-#define MAXSUBSTRING 16
-
 /******************************************************************************
 High level color management
 ******************************************************************************/

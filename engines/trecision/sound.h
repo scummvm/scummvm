@@ -23,7 +23,11 @@
 #ifndef TRECISION_SOUND_H
 #define TRECISION_SOUND_H
 
-#include "trecision/trecision.h"
+#include "trecision/fastfile.h"
+#include "common/file.h"
+#include "common/serializer.h"
+#include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Trecision {
 
@@ -54,6 +58,8 @@ struct SSound {
 	uint8 _flag;
 	int8  _panning;
 };
+
+class TrecisionEngine;
 
 class SoundManager {
 public:
