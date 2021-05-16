@@ -192,6 +192,7 @@ public:
 	void transitionTV();
 	void transitionBlinds();
 	void transitionSnapshotBox();
+	void transitionCrossFader();
 
 private:
 	SludgeEngine *_vm;

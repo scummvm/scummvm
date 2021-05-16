@@ -48,43 +48,12 @@ void GraphicsManager::transitionFader() {
 	blendColor(&_renderSurface, TS_ARGB(br, 255, 255, 255), Graphics::BLEND_MULTIPLY);
 }
 
-void transitionCrossFader() {
-#if 0
-	if (! snapshotTextureName) return;
+void GraphicsManager::transitionCrossFader() {
+	if (!_snapshotSurface.getPixels())
+		return;
 
-	glBindTexture(GL_TEXTURE_2D, snapshotTextureName);
-
-	glEnable(GL_BLEND);
-
-	const GLfloat vertices[] = {
-		0.f, (GLfloat)winHeight, 0.f,
-		(GLfloat)winWidth, (GLfloat)winHeight, 0.f,
-		0.f, 0.f, 0.f,
-		(GLfloat)winWidth, 0.f, 0.f
-	};
-
-	const GLfloat texCoords[] = {
-		0.0f, snapTexH,
-		snapTexW, snapTexH,
-		0.0f, 0.0f,
-		snapTexW, 0.0f
-	};
-
-	glUseProgram(shader.texture);
-
-	setPMVMatrix(shader.texture);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 1);
-
-	setPrimaryColor(1.0f, 1.0f, 1.0f, 1.0f - brightnessLevel / 255.f);
-
-	drawQuad(shader.texture, vertices, 1, texCoords);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 0);
-	glUseProgram(0);
-
-	glDisable(GL_BLEND);
-#endif
+	Graphics::TransparentSurface tmp(_snapshotSurface, false);
+	tmp.blit(_renderSurface, 0, 0, Graphics::FLIP_NONE, nullptr, TS_ARGB(255 - _brightnessLevel, 0xff, 0xff, 0xff));
 }
 
 void GraphicsManager::transitionSnapshotBox() {
