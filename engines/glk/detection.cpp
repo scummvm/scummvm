@@ -30,6 +30,7 @@
 
 #include "glk/detection.h"
 #include "glk/game_description.h"
+#include "glk/glk.h"
 
 #include "glk/adrift/detection.h"
 #include "glk/advsys/detection.h"
@@ -61,6 +62,15 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/translation.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Glk::kDebugCore, "core", "Core engine debug level"},
+	{Glk::kDebugScripts, "scripts", "Game scripts"},
+	{Glk::kDebugGraphics, "graphics", "Graphics handling"},
+	{Glk::kDebugSound, "sound", "Sound and Music handling"},
+	{Glk::kDebugSpeech, "speech", "Text to Speech handling"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Glk {
 
@@ -141,6 +151,10 @@ PlainGameList GlkMetaEngineDetection::getSupportedGames() const {
 #define FIND_GAME(SUBENGINE) \
 	Glk::GameDescriptor gd##SUBENGINE = Glk::SUBENGINE::SUBENGINE##MetaEngine::findGame(gameId); \
 	if (gd##SUBENGINE._description) return gd##SUBENGINE
+
+const DebugChannelDef *GlkMetaEngineDetection::getDebugChannels() const {
+	return debugFlagList;
+}
 
 PlainGameDescriptor GlkMetaEngineDetection::findGame(const char *gameId) const {
 	FIND_GAME(Adrift);
