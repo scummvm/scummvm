@@ -1554,12 +1554,14 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 					}
 				}
 			}
+			delete fond;
 		}
 
 		assert(fontId);
 
 		Common::SeekableReadStream *font = resource.getResource(MKTAG('F', 'O', 'N', 'T'), fontId);
 		_macFont.loadFont(*font, &fontFamily, 13, 0);
+		delete font;
 	}
 }
 
