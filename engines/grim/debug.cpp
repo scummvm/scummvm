@@ -27,26 +27,6 @@
 namespace Grim {
 
 void Debug::registerDebugChannels() {
-	DebugMan.addDebugChannel(Info, "info", "");
-	DebugMan.addDebugChannel(Warning, "warning", "");
-	DebugMan.addDebugChannel(Error, "error", "");
-	DebugMan.addDebugChannel(Engine, "engine", "");
-	DebugMan.addDebugChannel(Lua, "lua", "");
-	DebugMan.addDebugChannel(Bitmaps, "bitmaps", "");
-	DebugMan.addDebugChannel(Models, "models", "");
-	DebugMan.addDebugChannel(Actors, "actors", "");
-	DebugMan.addDebugChannel(Costumes, "costumes", "");
-	DebugMan.addDebugChannel(Chores, "chores", "");
-	DebugMan.addDebugChannel(Fonts, "fonts", "");
-	DebugMan.addDebugChannel(Keyframes, "keyframes", "");
-	DebugMan.addDebugChannel(Movie, "movie", "");
-	DebugMan.addDebugChannel(Sound, "sound", "");
-	DebugMan.addDebugChannel(Scripts, "scripts", "");
-	DebugMan.addDebugChannel(Sets, "sets", "");
-	DebugMan.addDebugChannel(TextObjects, "textobjects", "");
-	DebugMan.addDebugChannel(Patchr, "patchr", "");
-	DebugMan.addDebugChannel(Lipsync, "lipsync", "");
-	DebugMan.addDebugChannel(Sprites, "sprites", "");
 }
 
 bool Debug::isChannelEnabled(DebugChannel chan) {
