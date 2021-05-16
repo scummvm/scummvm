@@ -26,8 +26,24 @@
 
 #include "kyra/detection.h"
 #include "kyra/detection_tables.h"
+#include "kyra/kyra_v1.h"
 
 namespace {
+
+static const DebugChannelDef debugFlagList[] = {
+	{Kyra::kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level"},
+	{Kyra::kDebugLevelScript, "Script", "Script interpreter debug level"},
+	{Kyra::kDebugLevelSprites, "Sprites", "Sprite debug level"},
+	{Kyra::kDebugLevelScreen, "Screen", "Screen debug level"},
+	{Kyra::kDebugLevelSound, "Sound", "Sound debug level"},
+	{Kyra::kDebugLevelAnimator, "Animator", "Animator debug level"},
+	{Kyra::kDebugLevelMain, "Main", "Generic debug level"},
+	{Kyra::kDebugLevelGUI, "GUI", "GUI debug level"},
+	{Kyra::kDebugLevelSequence, "Sequence", "Sequence debug level"},
+	{Kyra::kDebugLevelMovie, "Movie", "Movie debug level"},
+	{Kyra::kDebugLevelTimer, "Timer", "Timer debug level"},
+	DEBUG_CHANNEL_END
+};
 
 const char *const directoryGlobs[] = {
 	"malcolm",
@@ -154,6 +170,10 @@ public:
 
 	const char *getName() const override {
 		return "Kyra";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const char *getOriginalCopyright() const override {
