@@ -407,6 +407,14 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 		Direction dir_left = Direction_TurnByDelta(direction, -4, dirmode_16dirs);
 		Point3 origpt;
 		avatar->getLocation(origpt);
+
+		int32 dims[3];
+		avatar->getFootpadWorld(dims[0], dims[1], dims[2]);
+		int32 start[3];
+		start[0] = origpt.x;
+		start[1] = origpt.y;
+		start[2] = origpt.z;
+
 		// Double the values in original to match our coordinate space
 		static const int ADJUSTMENTS[] = {0x20, 0x20, 0x40, 0x40, 0x60, 0x60,
 			0x80, 0x80, 0xA0, 0xA0};
@@ -416,11 +424,31 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			int32 x = origpt.x + Direction_XFactor(testdir) * ADJUSTMENTS[i];
 			int32 y = origpt.y + Direction_YFactor(testdir) * ADJUSTMENTS[i];
 			int32 z = origpt.z;
-			// Note: we don't actually need the blocker output, just add the parameter
-			// for compilers that can't tell nullptr from 0..
-			const Item *blocker;
-			if (currentmap->isValidPosition(x, y, z, avatar->getShape(), avatar->getObjId(),
-											nullptr, nullptr, &blocker)) {
+
+			//
+			// Check if we can slide from the original point to a different
+			// start point (otherwise we might pop through walls, lasers, etc).
+			// This is like Item::collideMove, but we want to stop on any blockers
+			// and not trigger any events
+			//
+			bool startvalid = true;
+			Std::list<CurrentMap::SweepItem> collisions;
+			int32 end[3];
+			end[0] = x;
+			end[1] = y;
+			end[2] = z;
+			avatar->setLocation(origpt.x, origpt.y, origpt.z);
+			currentmap->sweepTest(start, end, dims, avatar->getShapeInfo()->_flags,
+								  avatar->getObjId(),false, &collisions);
+			for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
+				 it != collisions.end(); it++) {
+				if (!it->_touching && it->_blocking) {
+					startvalid = false;
+					break;
+				}
+			}
+
+			if (startvalid) {
 				avatar->setLocation(x, y, z);
 				res = avatar->tryAnim(testaction, direction);
 				if (res == Animation::SUCCESS) {
