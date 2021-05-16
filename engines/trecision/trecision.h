@@ -264,7 +264,6 @@ public:
 	SObject _obj[MAXOBJ];
 
 	SDText _drawText;
-	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 	Common::List<Common::Rect> _dirtyRects;
 	Common::Rect *_actorRect;
 

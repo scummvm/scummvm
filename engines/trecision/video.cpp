@@ -217,7 +217,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	// Subtitles can be placed in different coordinates in the video,
 	// which are set inside dialogHandler(), but are then reset to
 	// fixed coordinates
-	_vm->_drawText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_drawText.checkDText() + (380 - TOP));
+	_vm->_drawText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_drawText.calcWidth() + (380 - TOP));
 	_vm->_drawText._subtitleRect = Common::Rect(MAXX, MAXY);
 	_vm->_drawText.scol = MASKCOL;
 	_vm->_drawText.draw((uint16 *)surface->getPixels());

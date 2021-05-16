@@ -443,7 +443,7 @@ void TextManager::drawText(StackText text) {
 	_curString._rect.setWidth(w);
 
 	_curString.text = text.text;
-	uint16 hstring = _curString.checkDText();
+	uint16 hstring = _curString.calcWidth();
 	_curString._subtitleRect = Common::Rect(_curString._rect.width(), hstring);
 	_curString._rect.setHeight(hstring);
 	_curString.tcol = text.tcol;

@@ -171,12 +171,13 @@ struct SDText {
 	uint16 tcol;
 	uint16 scol;
 	Common::String text;
+	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 
 	void set(SDText org);
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
 
 	void draw(uint16 *frameBuffer = nullptr);
-	uint16 checkDText();
+	uint16 calcWidth();
 };
 
 struct SDObj {
