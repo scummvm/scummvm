@@ -38,7 +38,8 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(CruAvatarMoverProcess)
 
 static const int REBEL_BASE_MAP = 40;
 
-CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAngle(0), _SGA1Loaded(false) {
+CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(),
+_avatarAngle(0), _SGA1Loaded(false), _nextFireTick(0) {
 }
 
 
@@ -473,11 +474,14 @@ void CruAvatarMoverProcess::tryAttack() {
 	if (!wpn || !wpn->getShapeInfo() || !wpn->getShapeInfo()->_weaponInfo)
 		return;
 
+	Kernel *kernel = Kernel::get_instance();
+	if (kernel->getTickNum() < _nextFireTick)
+		return;
+
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
 	}
 
-	Kernel *kernel = Kernel::get_instance();
 	AudioProcess *audio = AudioProcess::get_instance();
 	const WeaponInfo *wpninfo = wpn->getShapeInfo()->_weaponInfo;
 
@@ -518,13 +522,11 @@ void CruAvatarMoverProcess::tryAttack() {
 				avatar->doAnim(Animation::reloadSmallWeapon, dir_current);
 			}
 
-			int delayproc = kernel->addProcess(new DelayProcess(15));
-			this->waitFor(delayproc);
+			_nextFireTick = kernel->getTickNum() + 15;
 		} else {
 			// no shots left
 			audio->playSFX(0x2a, 0x80, avatar->getObjId(), 1);
-			int delayproc = kernel->addProcess(new DelayProcess(20));
-			this->waitFor(delayproc);
+			_nextFireTick = kernel->getTickNum() + 20;
 		}
 	} else {
 		// Check for SGA1 reload anim (which happens every shot)
@@ -554,7 +556,7 @@ void CruAvatarMoverProcess::tryAttack() {
 			}
 
 			if (wpninfo->_shotDelay) {
-				waitFor(kernel->addProcess(new DelayProcess(wpninfo->_shotDelay)));
+				_nextFireTick = kernel->getTickNum() + wpninfo->_shotDelay;
 			} else {
 				waitFor(fireanimpid);
 			}

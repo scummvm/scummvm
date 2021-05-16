@@ -67,6 +67,11 @@ private:
 	 */
 	bool _SGA1Loaded;
 
+	/**
+	 * Next tick the avatar can fire a weapon again.
+	 */
+	uint32 _nextFireTick;
+
 	void handleHangingMode() override;
 	void handleCombatMode() override;
 	void handleNormalMode() override;
