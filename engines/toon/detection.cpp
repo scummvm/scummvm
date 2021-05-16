@@ -23,10 +23,27 @@
 #include "engines/advancedDetector.h"
 
 #include "base/plugins.h"
+#include "toon/toon.h"
 
 static const PlainGameDescriptor toonGames[] = {
 	{ "toon", "Toonstruck" },
 	{ 0, 0 }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Toon::kDebugAnim, "Anim", "Animation debug level"},
+	{Toon::kDebugCharacter, "Character", "Character debug level"},
+	{Toon::kDebugAudio, "Audio", "Audio debug level"},
+	{Toon::kDebugHotspot, "Hotspot", "Hotspot debug level"},
+	{Toon::kDebugFont, "Font", "Font debug level"},
+	{Toon::kDebugPath, "Path", "Path debug level"},
+	{Toon::kDebugMovie, "Movie", "Movie debug level"},
+	{Toon::kDebugPicture, "Picture", "Picture debug level"},
+	{Toon::kDebugResource, "Resource", "Resource debug level"},
+	{Toon::kDebugState, "State", "State debug level"},
+	{Toon::kDebugTools, "Tools", "Tools debug level"},
+	{Toon::kDebugText, "Text", "Text debug level"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Toon {
@@ -151,6 +168,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Toonstruck (C) 1996 Virgin Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
