@@ -23,9 +23,10 @@
 #ifndef TRECISION_ANIM_H
 #define TRECISION_ANIM_H
 
-#include "trecision/trecision.h"
+#include "trecision/struct.h"
 
 namespace Trecision {
+class TrecisionEngine;
 
 struct ATFHandle {
 	int16 _curFrame;
