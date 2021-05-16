@@ -228,52 +228,35 @@ void GraphicsManager::transitionTV() {
 	}
 }
 
-void transitionBlinds() {
-#if 0
-	if (! transitionTextureName) reserveTransitionTexture();
+void GraphicsManager::transitionBlinds() {
+	if (!_transitionTexture)
+		reserveTransitionTexture();
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	int level = _brightnessLevel / 16;
 
-	GLubyte *toScreen = transitionTexture;
+	for (int b = 0; b < 16; b++) {
+		byte *toScreen = (byte *)_transitionTexture->getBasePtr(0, b * 16);
 
-	int level = brightnessLevel / 8;
+		if (level)
+			memset(toScreen, 0, 256 * 4 * level);
+		if (level < 32) {
+			for (int y = 0; y < 16 - level; y++) {
+				toScreen = (byte *)_transitionTexture->getBasePtr(0, b * 16 + y);
+				for (int i = 0; i < 256; i++) {
+					toScreen[0] = 0xff;
+					toScreen[1] = toScreen[2] = toScreen[3] = 0;
+					toScreen += 4;
+				}
+			}
+		}
 
-	if (level) memset(toScreen, 0, 256 * 32 * level);
-	if (level < 32) memset(toScreen + 256 * 32 * level, 255, 256 * 32 * (32 - level));
-
-	texImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 256, 256, 0, GL_RGBA, GL_UNSIGNED_BYTE, transitionTexture, transitionTextureName);
-
-	glEnable(GL_BLEND);
-
-	const GLfloat vertices[] = {
-		0.f, (GLfloat)winHeight, 0.f,
-		(GLfloat)winWidth, (GLfloat)winHeight, 0.f,
-		0.f, 0.f, 0.f,
-		(GLfloat)winWidth, 0.f, 0.f
-	};
-
-	const GLfloat texCoords[] = {
-		0.0f, 0.0f,
-		1.0f, 0.0f,
-		0.0f, 25.0f,
-		1.0f, 25.0f
-	};
-
-	glUseProgram(shader.texture);
-
-	setPMVMatrix(shader.texture);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 1);
-
-	setPrimaryColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-	drawQuad(shader.texture, vertices, 1, texCoords);
-
-	glUniform1i(glGetUniformLocation(shader.texture, "modulateColor"), 0);
-	glUseProgram(0);
-
-	glDisable(GL_BLEND);
-#endif
+		// The original stretched the texture, we just tile it
+		for (uint y = 0; y < _sceneHeight; y += _transitionTexture->h) {
+			for (uint x = 0; x < _sceneWidth; x += _transitionTexture->w) {
+				_transitionTexture->blit(_renderSurface, x, y);
+			}
+		}
+	}
 }
 
 //----------------------------------------------------

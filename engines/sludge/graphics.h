@@ -190,6 +190,7 @@ public:
 	void transitionFader();
 	void transitionDisolve();
 	void transitionTV();
+	void transitionBlinds();
 
 private:
 	SludgeEngine *_vm;
