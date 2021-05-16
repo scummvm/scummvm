@@ -55,15 +55,6 @@ SludgeEngine::SludgeEngine(OSystem *syst, const SludgeGameDescription *gameDesc)
 	// register your random source
 	_rnd = new Common::RandomSource("sludge");
 
-	// Add debug channels
-	DebugMan.addDebugChannel(kSludgeDebugFatal, "script", "Script debug level");
-	DebugMan.addDebugChannel(kSludgeDebugDataLoad, "loading", "Data loading debug level");
-	DebugMan.addDebugChannel(kSludgeDebugStackMachine, "stack", "Stack Machine debug level");
-	DebugMan.addDebugChannel(kSludgeDebugBuiltin, "builtin", "Built-in debug level");
-	DebugMan.addDebugChannel(kSludgeDebugGraphics, "graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kSludgeDebugZBuffer, "zBuffer", "ZBuffer debug level");
-	DebugMan.addDebugChannel(kSludgeDebugSound, "sound", "Sound debug level");
-
 	//DebugMan.enableDebugChannel("loading");
 	//DebugMan.enableDebugChannel("builtin");
 
