@@ -28,12 +28,20 @@
 #include "common/translation.h"
 
 #include "mads/detection.h"
+#include "mads/mads.h"
 
 static const PlainGameDescriptor MADSGames[] = {
 	{"dragonsphere", "Dragonsphere"},
 	{"nebular", "Rex Nebular and the Cosmic Gender Bender"},
 	{"phantom", "Return of the Phantom"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{MADS::kDebugPath, "Path", "Pathfinding debug level"},
+	{MADS::kDebugScripts, "scripts", "Game scripts"},
+	{MADS::kDebugGraphics, "graphics", "Graphics handling"},
+	DEBUG_CHANNEL_END
 };
 
 #define GAMEOPTION_EASY_MOUSE          GUIO_GAMEOPTIONS1
@@ -130,6 +138,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "MADS (C) Microprose";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
