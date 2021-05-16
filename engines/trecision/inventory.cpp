@@ -40,19 +40,15 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	_graphicsMgr->clearScreenBufferInventory();
 
 	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		uint index = a + startIcon;
-		if (index >= _inventory.size())
+		if (a + startIcon >= _inventory.size())
 			break;
+		const byte iconIndex = _inventory[a + startIcon];
+		if (iconIndex == _lightIcon)
+			continue;
 
-		if (_inventory[index] >= LASTICON) {
-			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
-					   _icons + (_inventory[index] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
-		} else if (_inventory[index] != _lightIcon) {
-			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
-					   _icons + _inventory[index] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
-		}
+		for (uint16 b = 0; b < (ICONDY - startLine); b++)
+			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * ICONDX + ICONMARGSX,
+				   _icons + iconIndex * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 	}
 
 	if (startIcon != 0)
