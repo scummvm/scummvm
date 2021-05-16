@@ -33,6 +33,7 @@
 namespace Trecision {
 
 void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
+	uint16 *screenBuffer = _graphicsMgr->getScreenBufferPtr();
 	if (startLine > ICONDY)
 		startLine = ICONDY;
 
@@ -45,11 +46,11 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 
 		if (_inventory[index] >= LASTICON) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(_graphicsMgr->getScreenBufferPtr() + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
+				memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
 					   _icons + (_inventory[index] - LASTICON + READICON + 1) * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		} else if (_inventory[index] != _lightIcon) {
 			for (uint16 b = 0; b < (ICONDY - startLine); b++)
-				memcpy(_graphicsMgr->getScreenBufferPtr() + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
+				memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * (ICONDX) + ICONMARGSX,
 					   _icons + _inventory[index] * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
 		}
 	}
@@ -58,7 +59,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startIcon != 0) { // Copy left
 		int16 leftArrow = ICONMARGSX * ICONDY * 3;
 		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(_graphicsMgr->getScreenBufferPtr() + (FIRSTLINE + b) * MAXX,
+			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX,
 				  _arrows + leftArrow + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
@@ -66,7 +67,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startIcon + ICONSHOWN < _inventory.size()) { // Copy right
 		int16 rightArrow = ICONMARGDX * ICONDY * 2;
 		for (uint16 b = 0; b < (ICONDY - startLine); b++) {
-			memcpy(_graphicsMgr->getScreenBufferPtr() + (FIRSTLINE + b) * MAXX + MAXX - ICONMARGDX,
+			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + MAXX - ICONMARGDX,
 				  _arrows + rightArrow + ICONMARGSX * ICONDY * 2 + (b + startLine) * ICONMARGSX, ICONMARGSX * 2);
 		}
 	}
