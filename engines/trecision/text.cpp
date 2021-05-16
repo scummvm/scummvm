@@ -494,7 +494,7 @@ void TextManager::clearTextStack() {
 }
 
 void TextManager::drawCurString() {
-	_curString.DText();
+	_curString.draw();
 	_vm->_dirtyRects.push_back(_curString._rect);
 }
 

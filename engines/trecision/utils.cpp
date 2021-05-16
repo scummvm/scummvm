@@ -65,7 +65,7 @@ uint16 TrecisionEngine::textLength(const Common::String &text, uint16 begin, uin
 	return retVal;
 }
 
-char TrecisionEngine::getKey() {
+uint16 TrecisionEngine::getKey() {
 	Common::KeyCode key = _curKey;
 	uint16 ascii = _curAscii;
 	_curKey = Common::KEYCODE_INVALID;
@@ -94,7 +94,7 @@ char TrecisionEngine::getKey() {
 	}
 }
 
-char TrecisionEngine::waitKey() {
+Common::KeyCode TrecisionEngine::waitKey() {
 	_graphicsMgr->hideCursor();
 	while (_curKey == Common::KEYCODE_INVALID)
 		checkSystem();
@@ -224,9 +224,9 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 }
 
 void TrecisionEngine::processTime() {
-	static uint8 OldRegInvSI = 0xFF;
-	static uint8 OldRegInvSL = 0xFF;
-	static uint8 OldLightIcon = 0xFF;
+	static uint8 oldRegInvSI = 0xFF;
+	static uint8 oldRegInvSL = 0xFF;
+	static uint8 oldLightIcon = 0xFF;
 
 	_curTime = readTime();
 	_animMgr->refreshAllAnimations();
@@ -237,11 +237,11 @@ void TrecisionEngine::processTime() {
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 			rollInventory(_inventoryStatus);
 
-		if (_inventoryStatus != INV_OFF && (OldRegInvSI != _inventoryRefreshStartIcon || OldRegInvSL != _inventoryRefreshStartLine || OldLightIcon != _lightIcon)) {
+		if (_inventoryStatus != INV_OFF && (oldRegInvSI != _inventoryRefreshStartIcon || oldRegInvSL != _inventoryRefreshStartLine || oldLightIcon != _lightIcon)) {
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
-			OldRegInvSI = _inventoryRefreshStartIcon;
-			OldRegInvSL = _inventoryRefreshStartLine;
-			OldLightIcon = _lightIcon;
+			oldRegInvSI = _inventoryRefreshStartIcon;
+			oldRegInvSL = _inventoryRefreshStartLine;
+			oldLightIcon = _lightIcon;
 		}
 
 		_renderer->paintScreen(false);
@@ -428,7 +428,7 @@ uint16 SDText::checkDText() {
 	return 0;
 }
 
-void SDText::DText(uint16 *frameBuffer) {
+void SDText::draw(uint16 *frameBuffer) {
 	uint16 tmpTCol = tcol;
 	uint16 tmpSCol = scol;
 	g_vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
