@@ -49,10 +49,6 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc)
 	: Engine(syst),
 	_gameDescription(gameDesc),
 	_rnd("cine") {
-	DebugMan.addDebugChannel(kCineDebugScript,    "Script",    "Script debug level");
-	DebugMan.addDebugChannel(kCineDebugPart,      "Part",      "Part debug level");
-	DebugMan.addDebugChannel(kCineDebugSound,     "Sound",     "Sound debug level");
-	DebugMan.addDebugChannel(kCineDebugCollision, "Collision", "Collision debug level");
 
 	// Setup mixer
 	syncSoundSettings();
