@@ -186,8 +186,6 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "credits");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
-	Debug::registerDebugChannels();
-
 
 	//Remastered:
 	if (getGameFlags() & ADGF_REMASTERED) {
