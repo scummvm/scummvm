@@ -23,10 +23,12 @@
 #ifndef TRECISION_ACTOR_H
 #define TRECISION_ACTOR_H
 
-#include "trecision/defines.h"
-#include "trecision/trecision.h"
+#include "trecision/struct.h"
+#include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Trecision {
+class TrecisionEngine;
 
 class Actor {
 private:
