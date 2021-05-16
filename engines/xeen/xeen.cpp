@@ -35,11 +35,6 @@ XeenEngine *g_vm = nullptr;
 
 XeenEngine::XeenEngine(OSystem *syst, const XeenGameDescription *gameDesc)
 		: Engine(syst), _gameDescription(gameDesc), _randomSource("Xeen") {
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound processing");
 
 	_combat = nullptr;
 	_debugger = nullptr;

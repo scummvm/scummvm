@@ -25,6 +25,7 @@
 #include "common/translation.h"
 
 #include "xeen/detection.h"
+#include "xeen/xeen.h"
 
 static const PlainGameDescriptor XeenGames[] = {
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },
@@ -32,6 +33,14 @@ static const PlainGameDescriptor XeenGames[] = {
 	{ "worldofxeen", "Might and Magic: World of Xeen" },
 	{ "swordsofxeen", "Might and Magic: Swords of Xeen" },
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Xeen::kDebugPath, "Path", "Pathfinding debug level"},
+	{Xeen::kDebugScripts, "scripts", "Game scripts"},
+	{Xeen::kDebugGraphics, "graphics", "Graphics handling"},
+	{Xeen::kDebugSound, "sound", "Sound processing"},
+	DEBUG_CHANNEL_END
 };
 
 #define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
@@ -81,6 +90,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Xeen (C) 1992-1993 New World Computing, Inc.";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
