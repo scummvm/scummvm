@@ -26,6 +26,23 @@
 #include "gob/dataio.h"
 #include "gob/detection/detection.h"
 #include "gob/detection/tables.h"
+#include "gob/gob.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Gob::kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level"},
+	{Gob::kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level"},
+	{Gob::kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level"},
+	{Gob::kDebugSound, "Sound", "Sound output debug level"},
+	{Gob::kDebugExpression, "Expression", "Expression parser debug level"},
+	{Gob::kDebugGameFlow, "Gameflow", "Gameflow debug level"},
+	{Gob::kDebugFileIO, "FileIO", "File Input/Output debug level"},
+	{Gob::kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level"},
+	{Gob::kDebugGraphics, "Graphics", "Graphics debug level"},
+	{Gob::kDebugVideo, "Video", "IMD/VMD video debug level"},
+	{Gob::kDebugHotspots, "Hotspots", "Hotspots debug level"},
+	{Gob::kDebugDemo, "Demo", "Demo script debug level"},
+	DEBUG_CHANNEL_END
+};
 
 class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
@@ -37,6 +54,10 @@ public:
 
 	const char *getName() const override;
 	const char *getOriginalCopyright() const override;
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
+	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
 
