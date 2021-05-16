@@ -57,17 +57,6 @@ NGIEngine::NGIEngine(OSystem *syst, const NGIGameDescription *gameDesc) :
 	_modalObject(nullptr),
 	_currSoundList1(),
 	_mapTable() {
-	DebugMan.addDebugChannel(kDebugPathfinding, "path", "Pathfinding");
-	DebugMan.addDebugChannel(kDebugDrawing, "drawing", "Drawing");
-	DebugMan.addDebugChannel(kDebugLoading, "loading", "Scene loading");
-	DebugMan.addDebugChannel(kDebugAnimation, "animation", "Animation");
-	DebugMan.addDebugChannel(kDebugBehavior, "behavior", "Behavior");
-	DebugMan.addDebugChannel(kDebugMemory, "memory", "Memory management");
-	DebugMan.addDebugChannel(kDebugEvents, "events", "Event handling");
-	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory");
-	DebugMan.addDebugChannel(kDebugSceneLogic, "scenelogic", "Scene Logic");
-	DebugMan.addDebugChannel(kDebugInteractions, "interactions", "Interactions");
-	DebugMan.addDebugChannel(kDebugXML, "xml", "XML");
 
 	// Setup mixer
 	if (!_mixer->isReady()) {
