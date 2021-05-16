@@ -34,6 +34,11 @@ static const PlainGameDescriptor gnapGames[] = {
 	{ 0, 0 }
 };
 
+static const DebugChannelDef debugFlagList[] = {
+	{Gnap::kDebugBasic, "basic", "Basic debug level"},
+	DEBUG_CHANNEL_END
+};
+
 namespace Gnap {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -89,6 +94,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Gnap (C) Artech Digital Entertainment 1997";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
