@@ -310,14 +310,6 @@ void TrecisionEngine::eventLoop() {
 	g_system->updateScreen();
 }
 
-bool TrecisionEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsSubtitleOptions) ||
-//		   (f == kSupportsReturnToLauncher) ||
-		   (f == kSupportsLoadingDuringRuntime) ||
-		   (f == kSupportsSavingDuringRuntime) ||
-		   (f == kSupportsChangingOptionsDuringRuntime);
-}
-
 void TrecisionEngine::initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
 		_obj[c]._position = -1;
