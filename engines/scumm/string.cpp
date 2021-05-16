@@ -1936,7 +1936,7 @@ void ScummEngine::loadLanguageBundle() {
 	for (uint32 i = 0; i < numTranslatedRoom; i++) {
 		byte roomId = file.readByte();
 
-		TranslationRoom &room = _roomIndex.getVal(roomId);
+		TranslationRoom &room = _roomIndex.getOrCreateVal(roomId);
 
 		uint16 numScript = file.readUint16LE();
 		for (int sc = 0; sc < numScript; sc++) {
