@@ -64,8 +64,6 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 	_gameDescription = gameDesc;
 	_rnd = new Common::RandomSource("macventure");
 
-	initDebugChannels();
-
 	_resourceManager = NULL;
 	_globalSettings = NULL;
 	_gui = NULL;
@@ -128,16 +126,6 @@ MacVentureEngine::~MacVentureEngine() {
 
 	if (_dataBundle)
 		delete _dataBundle;
-}
-
-void MacVentureEngine::initDebugChannels() {
-	DebugMan.addDebugChannel(kMVDebugMain, "main", "Engine state");
-	DebugMan.addDebugChannel(kMVDebugGUI, "gui", "Gui");
-	DebugMan.addDebugChannel(kMVDebugText, "text", "Text decoders and printers");
-	DebugMan.addDebugChannel(kMVDebugImage, "image", "Image decoders and renderers");
-	DebugMan.addDebugChannel(kMVDebugScript, "script", "Script engine");
-	DebugMan.addDebugChannel(kMVDebugSound, "sound", "Sound decoders");
-	DebugMan.addDebugChannel(kMVDebugContainer, "container", "Containers");
 }
 
 Common::Error MacVentureEngine::run() {
