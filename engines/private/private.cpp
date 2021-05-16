@@ -52,11 +52,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
-	// Debug channels
-	DebugMan.addDebugChannel(kPrivateDebugFunction, "functions", "Function execution debug channel");
-	DebugMan.addDebugChannel(kPrivateDebugCode, "code", "Code execution debug channel");
-	DebugMan.addDebugChannel(kPrivateDebugScript, "script", "Script execution debug channel");
-
 	// Global object for external reference
 	g_private = this;
 
