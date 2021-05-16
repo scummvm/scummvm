@@ -466,11 +466,11 @@ void SDText::draw(uint16 *frameBuffer) {
 
 			for (uint16 a = b * CARHEI; a < (b + 1) * CARHEI; a++) {
 				uint16 curPos = 0;
-				uint16 CurColor = tmpSCol;
+				uint16 curColor = tmpSCol;
 
 				while (curPos <= charWidth - 1) {
 					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
-						if (CurColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
+						if (curColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
 							const uint16 charLeft = inc + curPos;
 							const uint16 charRight = charLeft + g_vm->_font[charOffset + fontDataOffset];
 							uint16 *dst1 = buffer + _rect.left + charLeft + (_rect.top + a) * MAXX;
@@ -495,7 +495,7 @@ void SDText::draw(uint16 *frameBuffer) {
 							if (dst && size > 0) {
 								uint16 *d = dst;
 								for (uint32 i = 0; i < size; i++)
-									*d++ = CurColor;
+									*d++ = curColor;
 							}
 						}
 					}
@@ -503,12 +503,12 @@ void SDText::draw(uint16 *frameBuffer) {
 					curPos += g_vm->_font[charOffset + fontDataOffset];
 					fontDataOffset++;
 
-					if (CurColor == tmpSCol)
-						CurColor = 0;
-					else if (CurColor == 0)
-						CurColor = tmpTCol;
-					else if (CurColor == tmpTCol)
-						CurColor = tmpSCol;
+					if (curColor == tmpSCol)
+						curColor = 0;
+					else if (curColor == 0)
+						curColor = tmpTCol;
+					else if (curColor == tmpTCol)
+						curColor = tmpSCol;
 				}
 			}
 			inc += charWidth;
