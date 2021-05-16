@@ -28,11 +28,26 @@
 #include "common/textconsole.h"
 
 #include "parallaction/detection.h"
+#include "parallaction/parallaction.h"
 
 static const PlainGameDescriptor parallactionGames[] = {
 	{"nippon", "Nippon Safes Inc."},
 	{"bra", "The Big Red Adventure"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Parallaction::kDebugDialogue, "dialogue", "Dialogues debug level"},
+	{Parallaction::kDebugParser, "parser", "Parser debug level"},
+	{Parallaction::kDebugDisk, "disk", "Disk debug level"},
+	{Parallaction::kDebugWalk, "walk", "Walk debug level"},
+	{Parallaction::kDebugGraphics, "gfx", "Gfx debug level"},
+	{Parallaction::kDebugExec, "exec", "Execution debug level"},
+	{Parallaction::kDebugInput, "input", "Input debug level"},
+	{Parallaction::kDebugAudio, "audio", "Audio debug level"},
+	{Parallaction::kDebugMenu, "menu", "Menu debug level"},
+	{Parallaction::kDebugInventory, "inventory", "Inventory debug level"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Parallaction {
@@ -202,6 +217,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Nippon Safes Inc. (C) Dynabyte";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
