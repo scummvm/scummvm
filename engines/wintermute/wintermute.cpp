@@ -71,14 +71,6 @@ WintermuteEngine::WintermuteEngine(OSystem *syst, const WMEGameDescription *desc
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
-	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kWintermuteDebugLog, "enginelog", "Covers the same output as the log-file in WME");
-	DebugMan.addDebugChannel(kWintermuteDebugSaveGame, "savegame", "Savegames");
-	DebugMan.addDebugChannel(kWintermuteDebugFont, "font", "Text-drawing-related messages");
-	DebugMan.addDebugChannel(kWintermuteDebugFileAccess, "file-access", "Non-critical problems like missing files");
-	DebugMan.addDebugChannel(kWintermuteDebugAudio, "audio", "audio-playback-related issues");
-	DebugMan.addDebugChannel(kWintermuteDebugGeneral, "general", "various issues not covered by any of the above");
-
 	_game = nullptr;
 	_debugger = nullptr;
 	_dbgController = nullptr;
