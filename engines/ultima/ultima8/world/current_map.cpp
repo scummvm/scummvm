@@ -984,14 +984,16 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 	//
 	// Crusader also has some floor pieces and elevators which are 1 z-pixel offset,
 	// presumably to fix render-order issues.  We need to be able to step up/down
-	// to them smoothly.
+	// to them smoothly, so check 1 px either side of the step sizes as well.  Also
+	// check +/- 2 px which can happen on walkways
 	//
 	static const int SEARCH_OFFSETS_U8[] = {0, -4, 4, -8, 8};
-	static const int SEARCH_OFFSETS_CRU[] = {0, -1, 1, -4, 4, -5, 5, -8, 8, -9, 9};
+	static const int SEARCH_OFFSETS_CRU[] = {0, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5, -7, 7, -8, 8, -9, 9};
 
 	const int *search_offsets = GAME_IS_CRUSADER ? SEARCH_OFFSETS_CRU : SEARCH_OFFSETS_U8;
-	const unsigned int nhoriz = GAME_IS_CRUSADER ? 7 : 3;
-	const unsigned int nvert = GAME_IS_CRUSADER ? 11 : 5;
+	const unsigned int nhoriz = GAME_IS_CRUSADER ? 11 : 3;
+	const unsigned int nvert = GAME_IS_CRUSADER ?
+		ARRAYSIZE(SEARCH_OFFSETS_CRU) : ARRAYSIZE(SEARCH_OFFSETS_U8);
 	for (unsigned int i = 0; i < nhoriz; ++i) {
 		const int horiz = search_offsets[i];
 
