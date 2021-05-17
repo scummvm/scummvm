@@ -31,6 +31,7 @@
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
+#include "trecision/scheduler.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
@@ -38,14 +39,14 @@ namespace Trecision {
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (uint i = 0; i < _inventory.size(); ++i) {
+	for (uint i = 0; i < ICONSHOWN; ++i) {
 		Common::String saveFileName = getSaveStateName(i + 1);
 		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
 		ExtendedSavegameHeader header;
 
 		if (!saveFile) {
 			saveNames.push_back(_sysText[kMessageEmptySpot]);
-			_inventory[i] = iEMPTYSLOT;
+			_inventory.push_back(EMPTYSLOT);
 			continue;
 		}
 
@@ -58,30 +59,25 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 			buf[39] = '\0';
 			saveNames.push_back(buf);
 
-			uint16 *thumbnailBuf = _icons + (READICON + 1 + i) * ICONDX * ICONDY;
-			saveFile->read((void *)thumbnailBuf, ICONDX * ICONDY * sizeof(uint16));
-			_graphicsMgr->updatePixelFormat(thumbnailBuf, ICONDX * ICONDY);
+			_inventory.push_back(EMPTYSLOT + i + 1);
 
-			_inventory[i] = LASTICON + i;
+			// This is freed inside setSaveSlotThumbnail()
+			Graphics::Surface *thumbnail = new Graphics::Surface();
+			_graphicsMgr->readSurface(saveFile, thumbnail, ICONDX, ICONDY);
+			_graphicsMgr->setSaveSlotThumbnail(i, thumbnail);
 		} else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
 			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
 			if (headerRead) {
 				saveNames.push_back(header.description);
-
-				Graphics::Surface *thumbnail = convertScummVMThumbnail(header.thumbnail);
-				uint16 *thumbnailBuf = _icons + (READICON + 1 + i) * ICONDX * ICONDY;
-				memcpy(thumbnailBuf, thumbnail->getPixels(), ICONDX * ICONDY * 2);
-				thumbnail->free();
-				delete thumbnail;
-
-				_inventory[i] = LASTICON + i;
+				_inventory.push_back(EMPTYSLOT + i + 1);
+				_graphicsMgr->setSaveSlotThumbnail(i, header.thumbnail);
 			} else {
 				saveNames.push_back(_sysText[kMessageEmptySpot]);
-				_inventory[i] = iEMPTYSLOT;
+				_inventory.push_back(EMPTYSLOT);
 			}
 		} else {
 			saveNames.push_back(_sysText[kMessageEmptySpot]);
-			_inventory[i] = iEMPTYSLOT;
+			_inventory.push_back(EMPTYSLOT);
 		}
 
 		delete saveFile;
@@ -203,7 +199,7 @@ insave:
 	}
 
 	if (!skipSave) {
-		if (_inventory[CurPos] == iEMPTYSLOT) {
+		if (_inventory[CurPos] == EMPTYSLOT) {
 			saveNames[CurPos].clear();
 
 			_graphicsMgr->clearScreenBufferInventoryDescriptions();
@@ -375,7 +371,7 @@ bool TrecisionEngine::dataLoad() {
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (_mouseLeftBtn && (_inventory[CurPos] != iEMPTYSLOT))
+			if (_mouseLeftBtn && (_inventory[CurPos] != EMPTYSLOT))
 				break;
 		} else {
 			if (OldPos != -1) {
@@ -491,6 +487,35 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	_logicMgr->syncGameStream(ser);
 
 	return true;
+}
+
+void TrecisionEngine::performLoad(int slot, bool skipLoad) {
+	if (!skipLoad) {
+		_graphicsMgr->clearScreenBufferInventory();
+
+		loadGameState(slot + 1);
+
+		_flagNoPaintScreen = true;
+		_curStack = 0;
+		_flagScriptActive = false;
+
+		_oldRoom = _curRoom;
+		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
+	}
+
+	_actor->actorStop();
+	_pathFind->nextStep();
+	checkSystem();
+
+	_graphicsMgr->clearScreenBufferInventory();
+	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
+
+	_graphicsMgr->clearScreenBufferTopDescription();
+	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
+
+	if (_flagScriptActive) {
+		_graphicsMgr->hideCursor();
+	}
 }
 
 } // End of namespace Trecision

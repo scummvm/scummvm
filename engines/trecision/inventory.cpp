@@ -33,22 +33,22 @@
 namespace Trecision {
 
 void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
-	uint16 *screenBuffer = _graphicsMgr->getScreenBufferPtr();
 	if (startLine > ICONDY)
 		return;
 
 	_graphicsMgr->clearScreenBufferInventory();
 
-	for (uint16 a = 0; a < ICONSHOWN; a++) {
-		if (a + startIcon >= _inventory.size())
+	for (byte iconSlot = 0; iconSlot < ICONSHOWN; iconSlot++) {
+		if (iconSlot + startIcon >= _inventory.size())
 			break;
-		const byte iconIndex = _inventory[a + startIcon];
+		const byte iconIndex = _inventory[iconSlot + startIcon];
 		if (iconIndex == _lightIcon)
 			continue;
 
-		for (uint16 b = 0; b < (ICONDY - startLine); b++)
-			memcpy(screenBuffer + (FIRSTLINE + b) * MAXX + a * ICONDX + ICONMARGSX,
-				   _icons + iconIndex * ICONDX * ICONDY + (b + startLine) * ICONDX, ICONDX * 2);
+		if (iconIndex < EMPTYSLOT)
+			_graphicsMgr->drawInventoryIcon(iconIndex - 1, iconSlot, startLine);
+		else
+			_graphicsMgr->drawSaveSlotThumbnail(iconIndex - EMPTYSLOT - 1, iconSlot, startLine);
 	}
 
 	if (startIcon != 0)
