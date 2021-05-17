@@ -80,11 +80,9 @@ class TrecisionEngine : public Engine {
 	void loadSaveSlots(Common::StringArray &saveNames);
 	void openSys();
 	void eventLoop();
-	Graphics::Surface *convertScummVMThumbnail(Graphics::Surface *thumbnail);
 
 	// Data files
 	byte *readData(const Common::String &fileName);
-	uint16 *readData16(const Common::String &fileName, int &size);
 
 	// Inventory
 	void refreshInventory(uint8 startIcon, uint8 startLine);
@@ -296,7 +294,6 @@ public:
 
 	uint8 *_font;
 	uint8 *_textureArea;
-	uint16 *_icons;
 
 	Actor *_actor;
 

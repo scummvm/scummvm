@@ -180,18 +180,6 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 	return false;
 }
 
-Graphics::Surface *TrecisionEngine::convertScummVMThumbnail(Graphics::Surface *thumbnail) {
-	Graphics::Surface *thumbnailConverted = thumbnail->convertTo(g_system->getScreenFormat());
-	Graphics::Surface *result = thumbnailConverted->scale(ICONDX, ICONDY);
-
-	thumbnailConverted->free();
-	delete thumbnailConverted;
-	thumbnail->free();
-	delete thumbnail;
-
-	return result;
-}
-
 void TrecisionEngine::openSys() {
 	delete _actor;
 	_actor = new Actor(this);

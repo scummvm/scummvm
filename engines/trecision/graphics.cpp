@@ -44,6 +44,8 @@ GraphicsManager::~GraphicsManager() {
 	_smkBackground.free();
 	_leftInventoryArrow.free();
 	_rightInventoryArrow.free();
+	_inventoryIcons.free();
+	_saveSlotThumbnails.free();
 }
 
 bool GraphicsManager::initScreen() {
@@ -77,6 +79,7 @@ bool GraphicsManager::initScreen() {
 	_screenBuffer.create(MAXX, MAXY, _screenFormat);
 	_background.create(MAXX, MAXY, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
+	_saveSlotThumbnails.create(READICON * ICONDX, ICONDY, _screenFormat);
 
 	return true;
 }
@@ -87,7 +90,9 @@ void GraphicsManager::clearScreen() {
 
 void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int y) {
 	for (int curY = 0; curY < surface->h; curY++) {
-		memcpy(_screenBuffer.getBasePtr(x, y + curY), surface->getBasePtr(0, curY), surface->pitch);
+		// NOTE: We use surface width for the pitch so that memcpy works
+		// correcly with surfaces from getSubArea()
+		memcpy(_screenBuffer.getBasePtr(x, y + curY), surface->getBasePtr(0, curY), surface->w * 2);
 	}
 }
 
@@ -126,12 +131,14 @@ uint16 *GraphicsManager::getScreenBufferPtr() {
 	return (uint16 *)_screenBuffer.getPixels();
 }
 
-void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height) {
-	surface->create(width, height, kImageFormat);
+void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count) {
+	surface->create(width * count, height, kImageFormat);
 
-	for (uint16 y = 0; y < height; y++) {
-		for (uint16 x = 0; x < width; x++) {
-			surface->setPixel(x, y, stream->readUint16LE());
+	for (uint16 i = 0; i < count; i++) {
+		for (uint16 y = 0; y < height; y++) {
+			for (uint16 x = 0; x < width; x++) {
+				surface->setPixel(width * i + x, y, stream->readUint16LE());
+			}
 		}
 	}
 
@@ -144,13 +151,30 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 
 void GraphicsManager::loadInventoryIcons() {
 	Common::SeekableReadStream *arrowsDataFile = _vm->_dataFile.createReadStreamForMember("frecc.bm");
-
 	// The data file contains images for deactivated arrows, which aren't used. Skip them.
 	arrowsDataFile->skip(ICONMARGDX * ICONDY * 2 * 3);
 	readSurface(arrowsDataFile, &_leftInventoryArrow, ICONMARGSX, ICONDY);
 	readSurface(arrowsDataFile, &_rightInventoryArrow, ICONMARGSX, ICONDY);
-
 	delete arrowsDataFile;
+
+	Common::SeekableReadStream *iconsDataFile = _vm->_dataFile.createReadStreamForMember("icone.bm");
+	readSurface(iconsDataFile, &_inventoryIcons, ICONDX, ICONDY, READICON);
+	delete iconsDataFile;
+}
+
+void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thumbnail) {
+	thumbnail->convertToInPlace(_screenFormat);
+	Graphics::Surface *scaled = thumbnail->scale(ICONDX, ICONDY);
+
+	thumbnail->free();
+	delete thumbnail;
+
+	for (uint16 y = 0; y < ICONDY; y++) {
+		memcpy(_saveSlotThumbnails.getBasePtr(ICONDX * iconSlot, y), scaled->getBasePtr(0, y), ICONDX * 2);
+	}
+
+	scaled->free();
+	delete scaled;
 }
 
 void GraphicsManager::drawLeftInventoryArrow(byte startLine) {
@@ -165,6 +189,25 @@ void GraphicsManager::drawRightInventoryArrow(byte startLine) {
 		0, startLine, _rightInventoryArrow.w, _rightInventoryArrow.h
 	));
 	copyToScreenBuffer(&arrow, MAXX - ICONMARGDX, FIRSTLINE);
+}
+
+void GraphicsManager::drawInventoryIcon(byte iconIndex, byte iconSlot, byte startLine) {
+	Graphics::Surface icon = _inventoryIcons.getSubArea(Common::Rect(
+		iconIndex * ICONDX,
+		startLine,
+		iconIndex * ICONDX + ICONDX,
+		_inventoryIcons.h
+	));
+	copyToScreenBuffer(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
+}
+
+void GraphicsManager::drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte startLine) {
+	Graphics::Surface icon = _saveSlotThumbnails.getSubArea(Common::Rect(
+		iconIndex * ICONDX,
+		startLine,
+		iconIndex * ICONDX + ICONDX,
+		_saveSlotThumbnails.h));
+	copyToScreenBuffer(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
 }
 
 void GraphicsManager::clearScreenBuffer() {

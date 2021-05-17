@@ -2044,10 +2044,7 @@ enum AnimationId {
 /*                           INVENTORY OBJECTS          				   */
 /*-------------------------------------------------------------------------*/
 #define READICON   		121 //64 //56 //28
-#define LASTICON   		122
-#define INVICONNUM   	13
-
-#define iEMPTYSLOT   	121
+#define EMPTYSLOT   	121	// for saving/loading
 
 enum InventoryItem {
 	kItemNull = 0,

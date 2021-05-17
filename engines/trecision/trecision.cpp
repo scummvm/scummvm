@@ -140,7 +140,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_font = nullptr;
 	_textureArea = nullptr;
-	_icons = nullptr;
 	_actor = nullptr;
 
 	_flagDialogActive = false;
@@ -192,7 +191,6 @@ TrecisionEngine::~TrecisionEngine() {
 	
 	delete[] _font;
 	delete[] _textureArea;
-	delete[] _icons;
 	delete _actor;
 	delete[] _textArea;
 
@@ -345,18 +343,6 @@ void TrecisionEngine::openDataFiles() {
 	}
 	
 	_font = readData("nlfont.fnt");
-	int size;
-	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("icone.bm");
-	size = ceil(ff->size() / 2.0);
-	int iconSize = ICONDX * ICONDY;
-	int arraySize = size + iconSize * (INVICONNUM + 1);
-	_icons = new uint16[arraySize];
-	for (int i = 0; i < arraySize; ++i)
-		_icons[i] = 0;
-	for (int i = 0; i < size; ++i)
-		_icons[iconSize + i] = ff->readUint16LE();
-	delete ff;
-	_graphicsMgr->updatePixelFormat(&_icons[iconSize], size);
 
 	_graphicsMgr->loadInventoryIcons();
 
@@ -489,20 +475,6 @@ byte *TrecisionEngine::readData(const Common::String &fileName) {
 	return buf;
 }
 
-uint16 *TrecisionEngine::readData16(const Common::String &fileName, int &size) {
-	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
-	if (stream == nullptr)
-		error("readData16(): File %s not found", fileName.c_str());
-
-	size = ceil(stream->size() / 2.0);
-	uint16 *buf = new uint16[size];
-	for (int i = 0; i < size; ++i)
-		buf[i] = stream->readUint16LE();
-	delete stream;
-
-	return buf;
-}
-
 void TrecisionEngine::read3D(const Common::String &filename) {
 	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
@@ -520,35 +492,6 @@ void TrecisionEngine::read3D(const Common::String &filename) {
 
 	_renderer->init3DRoom(_graphicsMgr->getScreenBufferPtr());
 	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
-}
-
-void TrecisionEngine::performLoad(int slot, bool skipLoad) {
-	if (!skipLoad) {
-		_graphicsMgr->clearScreenBufferInventory();
-
-		loadGameState(slot + 1);
-
-		_flagNoPaintScreen = true;
-		_curStack = 0;
-		_flagScriptActive = false;
-
-		_oldRoom = _curRoom;
-		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
-	}
-
-	_actor->actorStop();
-	_pathFind->nextStep();
-	checkSystem();
-
-	_graphicsMgr->clearScreenBufferInventory();
-	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
-
-	_graphicsMgr->clearScreenBufferTopDescription();
-	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
-
-	if (_flagScriptActive) {
-		_graphicsMgr->hideCursor();
-	}
 }
 
 void TrecisionEngine::startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
