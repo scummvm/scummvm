@@ -59,7 +59,6 @@ public:
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
 	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg);
-	void setSmkBackground();
 	uint16 *getScreenBufferPtr();
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBuffer();
