@@ -431,7 +431,7 @@ void NancyEngine::preloadCals(const IFF &boot) {
 }
 
 void NancyEngine::readChunkList(const IFF &boot, Common::Serializer &ser, const Common::String &prefix) {
-	byte numChunks;
+	byte numChunks = 0;
 	ser.syncAsByte(numChunks);
 	for (byte i = 0; i < numChunks; ++ i) {
 		Common::String name = Common::String::format("%s%d", prefix.c_str(), i);
