@@ -450,47 +450,46 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 
 	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x9D, kGameTypeNancy2, kGameTypeNancy2);
+	ser.skip(0x9D, kGameTypeNancy2, kGameTypeNancy3);
 	ser.syncAsUint16LE(_firstScene.sceneID);
 	ser.skip(12, kGameTypeVampire, kGameTypeVampire); // Palette
 	ser.syncAsUint16LE(_firstScene.frameID);
 	ser.syncAsUint16LE(_firstScene.verticalOffset);
-	ser.syncAsUint16LE(_startTimeHours, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint16LE(_startTimeMinutes, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(_startTimeHours);
+	ser.syncAsUint16LE(_startTimeMinutes);
 
 	ser.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 
-	// nancy3 has not been looked into, skip straight to images
-	ser.skip(0xA7, kGameTypeNancy3, kGameTypeNancy3);
+	readChunkList(boot, ser, "FR"); // frames
+	readChunkList(boot, ser, "LG"); // logos
 
-	readChunkList(boot, ser, "FR");
-	readChunkList(boot, ser, "LG");
-
-	if (ser.getVersion() < kGameTypeNancy3) {
-		readChunkList(boot, ser, "OB");
+	if (ser.getVersion() == kGameTypeNancy3) {
+		readChunkList(boot, ser, "PLG"); // partner logos
 	}
+	
+	readChunkList(boot, ser, "OB"); // objects
 
 	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0x10, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x20, kGameTypeNancy2, kGameTypeNancy2);
+	ser.skip(0x20, kGameTypeNancy2, kGameTypeNancy3);
 	readRect(*bsum, _textboxScreenPosition);
 
 	ser.skip(0x5E, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0x59, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0x89, kGameTypeNancy2, kGameTypeNancy2);
-	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy2);
-	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy2);
-	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy2);
+	ser.skip(0x89, kGameTypeNancy2, kGameTypeNancy3);
+	ser.syncAsUint16LE(_horizontalEdgesSize);
+	ser.syncAsUint16LE(_verticalEdgesSize);
+	ser.skip(0x1C);
 	int16 time = 0;
-	ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsSint16LE(time);
 	_playerTimeMinuteLength = time;
-	ser.skip(2, kGameTypeNancy1, kGameTypeNancy2);
-	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeVampire, kGameTypeNancy2);
+	ser.skip(2, kGameTypeNancy1, kGameTypeNancy3);
+	ser.syncAsByte(_overrideMovementTimeDeltas);
 
 	if (_overrideMovementTimeDeltas) {
-		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
+		ser.syncAsSint16LE(time);
 		_slowMovementTimeDelta = time;
-		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
+		ser.syncAsSint16LE(time);
 		_fastMovementTimeDelta = time;
 	}
 }
