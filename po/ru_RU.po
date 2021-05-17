@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 16:44+0000\n"
-"PO-Revision-Date: 2021-05-14 03:25+0000\n"
+"PO-Revision-Date: 2021-05-17 17:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -3917,10 +3917,8 @@ msgstr ""
 "Использовать шрифты со сглаживанием, даже если игра этого не запрашивала"
 
 #: engines/asylum/metaengine.cpp:67
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Показать чертежи"
+msgstr "Показать версию"
 
 #: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3931,22 +3929,16 @@ msgid "Quick save"
 msgstr "Быстрое сохнарение"
 
 #: engines/asylum/metaengine.cpp:82
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Переключиться в игру"
+msgstr "Переключиться на Сару"
 
 #: engines/asylum/metaengine.cpp:87
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Переключиться в игру"
+msgstr "Переключиться на Гримвелла"
 
 #: engines/asylum/metaengine.cpp:92
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Переключиться в игру"
+msgstr "Переключиться на Ольмека"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -6812,16 +6804,12 @@ msgstr ""
 "до 320x200 на вкладке «Движок»."
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"Не удалось найти исполнимый файл 'Loom' Macintosh, чтобы прочитать\n"
-"данные об инструментах. Музыка будет выключена."
+"Не удалось найти исполнимый файл 'Loom' Macintosh. Музыка и шрифты\n"
+"высокого разрешения будут выключены."
 
 #: engines/scumm/scumm.cpp:1365
 msgid ""
