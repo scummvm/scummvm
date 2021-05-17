@@ -281,6 +281,8 @@ protected:
 	bool _pad;
 	int _lastTop;
 
+	void printCharInternal(int chr, int color, bool shadow, int x, int y);
+
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
 
