@@ -596,6 +596,48 @@ void TrecisionEngine::readLoc() {
 	_animTypeMgr->init(_room[_curRoom]._bkgAnim, 0);
 }
 
+void TrecisionEngine::redrawRoom() {
+	const uint16 curDialog = _dialogMgr->_curDialog;
+	const uint16 curChoice = _dialogMgr->_curChoice;
+	const uint16 bgAnim = _room[_curRoom]._bkgAnim;
+	const ElevatorAction elevatorActions[6] = {
+		{dASCENSORE12, 3, a129PARLACOMPUTERESCENDE, kRoom13},
+		{dASCENSORE12, 4, a129PARLACOMPUTERESCENDE, kRoom16},
+		{dASCENSORE13, 17, a139CHIUDONOPORTESU, kRoom12},
+		{dASCENSORE13, 18, a1316CHIUDONOPORTEGIU, kRoom16},
+		{dASCENSORE16, 32, a1616SALECONASCENSORE, kRoom12},
+		{dASCENSORE16, 33, a1616SALECONASCENSORE, kRoom13},
+	};
+
+	_flagShowCharacter = _dialogMgr->showCharacterAfterDialog();
+	_flagPaintCharacter = true;
+	_textStatus = TEXT_OFF;
+
+	for (int i = 0; i < 6; ++i) {
+		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
+			startCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
+			break;
+		}
+	}
+
+	Common::String filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
+	Common::SeekableReadStream *picFile = _dataFile.createReadStreamForCompressedMember(filename);
+
+	SObject bgInfo;
+	bgInfo.readRect(picFile);
+
+	_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());	
+	_sortTable.clear();
+
+	if (bgAnim)
+		_animMgr->startSmkAnim(bgAnim);
+
+	if (_curRoom == kRoom4P && curDialog == dF4PI)
+		_animMgr->smkGoto(kSmackerBackground, 21);
+
+	_renderer->paintScreen(true);
+}
+
 void TrecisionEngine::tendIn() {
 	_textStatus = TEXT_OFF;
 
@@ -701,42 +743,6 @@ void TrecisionEngine::readExtraObj41D() {
 		readObject(ff, objIndex, objectId);
 	}
 	delete ff;
-}
-
-void TrecisionEngine::redrawRoom() {
-	const uint16 curDialog = _dialogMgr->_curDialog;
-	const uint16 curChoice = _dialogMgr->_curChoice;
-	const uint16 bgAnim = _room[_curRoom]._bkgAnim;
-	const ElevatorAction elevatorActions[6] = {
-		{dASCENSORE12, 3, a129PARLACOMPUTERESCENDE, kRoom13},
-		{dASCENSORE12, 4, a129PARLACOMPUTERESCENDE, kRoom16},
-		{dASCENSORE13, 17, a139CHIUDONOPORTESU, kRoom12},
-		{dASCENSORE13, 18, a1316CHIUDONOPORTEGIU, kRoom16},
-		{dASCENSORE16, 32, a1616SALECONASCENSORE, kRoom12},
-		{dASCENSORE16, 33, a1616SALECONASCENSORE, kRoom13},
-	};
-
-	_flagShowCharacter = _dialogMgr->showCharacterAfterDialog();
-
-	for (int i = 0; i < 6; ++i) {
-		if (curDialog == elevatorActions[i].dialog && curChoice == elevatorActions[i].choice) {
-			startCharacterAction(elevatorActions[i].action, elevatorActions[i].newRoom, 20, 0);
-			break;
-		}
-	}
-
-	_sortTable.clear();
-
-	if (bgAnim)
-		_animMgr->startSmkAnim(bgAnim);
-
-	if (_curRoom == kRoom4P && curDialog == dF4PI)
-		_animMgr->smkGoto(kSmackerBackground, 21);
-
-	_textStatus = TEXT_OFF;
-	_flagPaintCharacter = true;
-	_renderer->paintScreen(true);
-	_graphicsMgr->copyToScreen(0, 0, 640, 480);
 }
 
 } // End of namespace Trecision
