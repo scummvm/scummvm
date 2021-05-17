@@ -155,7 +155,7 @@ static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilena
 	}
 
 	if (diskImg->open(disk1.c_str()) && diskImg->openSubFile("00.LFL")) {
-		debug(0, "Success");
+		debugC(0, kDebugGlobalDetection, "Success");
 		return diskImg;
 	}
 	delete diskImg;
@@ -214,7 +214,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, Co
 	Common::FSNode fontFile;
 
 	if (searchFSNode(fslist, "chinese_gb16x12.fnt", fontFile)) {
-		debug(0, "Chinese detected");
+		debugC(0, kDebugGlobalDetection, "Chinese detected");
 		return Common::ZH_CNA;
 	}
 
@@ -222,7 +222,7 @@ static Common::Language detectLanguage(const Common::FSList &fslist, byte id, Co
 		// Detect Korean fan translated games
 		Common::FSNode langFile;
 		if (searchFSNode(fslist, "korean.trs", langFile)) {
-			debug(0, "Korean fan translation detected");
+			debugC(0, kDebugGlobalDetection, "Korean fan translation detected");
 			return Common::KO_KOR;
 		}
 
@@ -454,7 +454,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 			if (isDiskImg) {
 				tmp = openDiskImage(d.node, gfp);
 
-				debug(2, "Falling back to disk-based detection");
+				debugC(2, kDebugGlobalDetection, "Falling back to disk-based detection");
 			} else {
 				tmp = d.node.createReadStream();
 			}
@@ -475,7 +475,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 
 					// Print some debug info.
 					int filesize = tmp->size();
-					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
+					debugC(1, kDebugGlobalDetection, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
 						file.c_str(), md5str.c_str(), filesize);
 
 					// Sanity check: We *should* have found a matching gameid/variant at this point.
