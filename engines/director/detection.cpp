@@ -187,7 +187,7 @@ static const char *directoryGlobs[] = {
 	0
 };
 
-static DebugChannelDef debugFlagList[] = {
+static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugCompile, "compile", "Lingo Compilation"},
 	{Director::kDebugCompileOnly, "compileonly", "Skip Lingo code execution"},
 	{Director::kDebugDesktop, "desktop", "Show the Classic Mac desktop"},
