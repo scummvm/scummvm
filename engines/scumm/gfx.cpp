@@ -785,54 +785,6 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-  void ScummEngine::mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height) {
-	const byte *pixels = vs->getPixels(x, top);
-	const byte *ts = (byte *)_textSurface.getBasePtr(x * 2, y * 2);
-	byte *mac = (byte *)_macScreen->getBasePtr(x * 2, y * 2);
-
-	int pixelsPitch = vs->pitch;
-	int tsPitch = _textSurface.pitch;
-	int macPitch = _macScreen->pitch;
-
-	for (int h = 0; h < height; h++) {
-		for (int w = 0; w < width; w++) {
-			if (ts[2 * w] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w] = pixels[w];
-			if (ts[2 * w + 1] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + 1] = pixels[w];
-			if (ts[2 * w + tsPitch] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + macPitch] = pixels[w];
-			if (ts[2 * w + tsPitch + 1] == CHARSET_MASK_TRANSPARENCY)
-				mac[2 * w + macPitch + 1] = pixels[w];
-		}
-
-		pixels += pixelsPitch;
-		ts += tsPitch * 2;
-		mac += macPitch * 2;
-	}
-
-	_system->copyRectToScreen(_macScreen->getBasePtr(x * 2, y * 2), _macScreen->pitch, x * 2, y * 2, width * 2, height * 2);
-}
-
-void ScummEngine::mac_restoreCharsetBg() {
-	_nextLeft = _string[0].xpos;
-	_nextTop = _string[0].ypos + _screenTop;
-
-	if (_charset->_hasMask) {
-		_charset->_hasMask = false;
-		_charset->_str.left = -1;
-		_charset->_left = -1;
-
-		clearTextSurface();
-
-		VirtScreen *vs = &_virtscr[_charset->_textScreenID];
-		if (!vs->h)
-			return;
-
-		markRectAsDirty(vs->number, Common::Rect(vs->w, vs->h), USAGE_BIT_RESTORED);
-	}
-}
-
 // CGA
 // indy3 loom maniac monkey1 zak
 //
