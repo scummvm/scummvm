@@ -47,7 +47,7 @@ namespace Asylum {
 
 #define SAVEGAME_NAME "asylum"
 
-#define SAVEGAME_QUICKSLOT 25
+#define SAVEGAME_QUICKSLOT 24
 
 #define SAVEGAME_MOVIES "asylum.movies"
 
@@ -129,7 +129,7 @@ bool Savegame::quickLoad() {
 		return false;
 
 	_index = SAVEGAME_QUICKSLOT;
-	_vm->startGame((ResourcePackId)(getSharedData()->cdNumber + 4), AsylumEngine::kStartGameLoad);
+	_vm->startGame(getScenePack(), AsylumEngine::kStartGameLoad);
 
 	return true;
 }
@@ -157,7 +157,7 @@ bool Savegame::quickSave() {
 	_index = 24;
 
 	// Check if there is a quick save already
-	if (isSavegamePresent(getFilename(SAVEGAME_QUICKSLOT))) {
+	if (!isSavegamePresent(getFilename(SAVEGAME_QUICKSLOT))) {
 		_names[_index] = getText()->get(MAKE_RESOURCE(kResourcePackText, 1342));
 
 		save();
@@ -214,7 +214,7 @@ bool Savegame::check() {
 
 Common::String Savegame::getFilename(uint32 index) const {
 	if (index > SAVEGAME_COUNT - 1)
-		error("[Savegame::getFilename] Invalid savegame index (was:%d, valid: [0-25])", index);
+		error("[Savegame::getFilename] Invalid savegame index (was:%d, valid: [0-24])", index);
 
 	return Common::String::format("%s%02d.sav", SAVEGAME_NAME, index);
 }
@@ -491,21 +491,21 @@ void Savegame::loadMoviesViewed() {
 //////////////////////////////////////////////////////////////////////////
 void Savegame::setName(uint32 index, Common::String name) {
 	if (index >= ARRAYSIZE(_names))
-		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
+		error("[Savegame::setName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
 
 	_names[index] = name;
 }
 
 Common::String Savegame::getName(uint32 index) const {
 	if (index >= ARRAYSIZE(_names))
-		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names));
+		error("[Savegame::getName] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_names) - 1);
 
 	return _names[index];
 }
 
 bool Savegame::hasSavegame(uint32 index) const {
 	if (index >= ARRAYSIZE(_savegames))
-		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames));
+		error("[Savegame::hasSavegame] Invalid index (was: %d, max: %d)", index, ARRAYSIZE(_savegames) - 1);
 
 	return _savegames[index];
 }
