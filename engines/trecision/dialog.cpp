@@ -24,11 +24,11 @@
 #include "trecision/actor.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
-
 #include "trecision/scheduler.h"
 #include "trecision/graphics.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {

@@ -27,6 +27,7 @@
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 #define SHADOWVERTSNUM 42

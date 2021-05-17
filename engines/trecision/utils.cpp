@@ -31,6 +31,7 @@
 #include "trecision/logic.h"
 #include "trecision/trecision.h"
 #include "trecision/struct.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 
