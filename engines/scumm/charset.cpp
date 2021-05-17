@@ -1606,7 +1606,17 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	bool enableShadow = _enableShadow;
 
-	// HACK: Notes and their names shoudl always be drawn with a shadow.
+	// Shadowing is a bit of guesswork. It doesn't look like it's using
+	// the Mac's built-in form of shadowed text (which, as I recall it,
+	// never looked particularly good anyway). This seems to match the
+	// original look for normal text.
+
+	// HACK: Notes and their names should always be drawn with a shadow.
+	//       Actually, this doesn't quite match the original but I can't
+	//       figure out what the original does here. The "c" looks like
+	//       it's shadowed in the normal way, but everything else looks
+	//       kind-of-but-not-quite outlined instead. Weird.
+
 	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95)
 		enableShadow = true;
 
