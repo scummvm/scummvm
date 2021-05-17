@@ -99,6 +99,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Discord and Humble Bundle versions of Indiana Jones and the Fate of Atlantis.
    - Added smooth scrolling for FM-TOWNS versions of games.
    - Added optional trimming to 200 pixels for some FM-TOWNS games, so aspect-ratio correction is possible.
+   - Fixed audio distortion in Loom for PC-Engine.
+   - Added support for the high resolution font and cursor in the Macintosh version of Loom.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
