@@ -29,39 +29,39 @@ Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 	_maxMessageGame = 0;
 	_maxMessageCharacter = 0;
 	_maxMessageAnim = 0;
+
+	_token = CLASS_CHAR;
+	_counter = 0;
 }
 
 Scheduler::~Scheduler() {
-
 }
 
 void Scheduler::process() {
-	static uint8 token = CLASS_CHAR;
-	static uint8 counter = 0;
 	bool retry = true;
 
 	while (retry) {
 		retry = false;
-		switch (token) {
+		switch (_token) {
 		case CLASS_GAME:
-			if (counter++ <= 30) {
-				token = CLASS_ANIM;
+			if (_counter++ <= 30) {
+				_token = CLASS_ANIM;
 				if (_vm->_gameQueue.getMessage())
 					_vm->_curMessage = &_vm->_idleMsg;
 			} else {
-				counter = 0;
+				_counter = 0;
 				_vm->_curMessage = &_vm->_idleMsg;
 			}
 			break;
 
 		case CLASS_ANIM:
-			token = CLASS_CHAR;
+			_token = CLASS_CHAR;
 			if (_vm->_animQueue.getMessage())
 				retry = true;
 			break;
 
 		case CLASS_CHAR:
-			token = CLASS_GAME;
+			_token = CLASS_GAME;
 			if (_vm->_flagPaintCharacter || _vm->_characterQueue.getMessage())
 				retry = true;
 			break;
