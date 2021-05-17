@@ -1624,17 +1624,26 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95)
 		enableShadow = true;
 
-	if (enableShadow) {
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 2, macTop, 0);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft, macTop + 2, 0);
-		_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 3, macTop + 3, 0);
-		_macFont.drawChar(_vm->_macScreen, chr, macLeft + 2, macTop, _shadowColor);
-		_macFont.drawChar(_vm->_macScreen, chr, macLeft, macTop + 2, _shadowColor);
-		_macFont.drawChar(_vm->_macScreen, chr, macLeft + 3, macTop + 3, _shadowColor);
-	}
+	printCharInternal(chr, _color, enableShadow, macLeft, macTop);
 
-	_macFont.drawChar(&_vm->_textSurface, chr, macLeft + 1, macTop + 1, 0);
-	_macFont.drawChar(_vm->_macScreen, chr, macLeft + 1, macTop + 1, _color);
+	// HACK: The way we combine high and low resolution graphics means
+	//       that sometimes, when a note name is drawn on the distaff, the
+	//       note itself gets overdrawn by the low-resolution graphics.
+	//
+	//       The only workaround I can think of is to force the note to be
+	//       redrawn along with its name. It's enough to redraw it on the
+	//       text surface. We can assume the correct color is already on
+	//       screen.
+	//
+	//       Note that this will not affect the Practice Mode box, since
+	//       this note names are drawn by drawChar(), not printChar().
+
+	if (chr >= 16 && chr <= 23) {
+		int xOffset[] = { 16, 14, 12, 8, 6, 2, 0, 8 };
+
+		int note = (chr == 23) ? 60 : 95;
+		printCharInternal(note, -1, enableShadow, macLeft + 18, macTop + xOffset[chr - 16]);
+	}
 
 	// Mark the virtual screen as dirty, using downscaled coordinates.
 
@@ -1683,6 +1692,25 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	_left = macLeft / 2;
 	_lastTop = _top;
+}
+
+void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
+	if (shadow) {
+		_macFont.drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
+		_macFont.drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
+		_macFont.drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
+
+		if (color != -1) {
+			_macFont.drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
+			_macFont.drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
+			_macFont.drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
+		}
+	}
+
+	_macFont.drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+
+	if (color != -1)
+		_macFont.drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
