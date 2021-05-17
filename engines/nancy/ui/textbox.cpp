@@ -290,9 +290,10 @@ void Textbox::assembleTextLine(char *rawCaption, Common::String &output, uint si
 	// Fix spaces at the end of the string in nancy1
 	output.trim();
 
-	// Fix at least one broken string in TVD
-	if (output.hasSuffix(">>")) {
-		output.deleteLastChar();
+	// Scan the text line for doubly-closed tokens; happens in some strings in The Vampire Diaries
+	uint pos = Common::String::npos;
+	while (pos = output.find(">>"), pos != Common::String::npos) {
+		output.replace(pos, 2, ">");
 	}
 }
 
