@@ -32,7 +32,7 @@
 namespace Trecision {
 #define SHADOWVERTSNUM 42
 
-static int16 _shadowVerts[SHADOWVERTSNUM] = {
+static const int16 _shadowVerts[SHADOWVERTSNUM] = {
 	6, 15, 23,
 	24, 32, 78,
 	80, 81, 83,
@@ -50,7 +50,7 @@ static int16 _shadowVerts[SHADOWVERTSNUM] = {
 };
 #define SHADOWFACESNUM 48
 
-int16 _shadowFaces[SHADOWFACESNUM][3] = {
+const int16 _shadowFaces[SHADOWFACESNUM][3] = {
 	{22, 21, 5}, {7, 5, 22},
 	{7, 19, 5}, {5, 2, 19},
 	{27, 24, 16}, {27, 16, 18},
