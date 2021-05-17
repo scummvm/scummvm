@@ -171,7 +171,6 @@ public:
 	}
 
 	virtual const DebugChannelDef *getDebugChannels() const {
-		warning("Using the default implementation of getDebugChannels");
 		return NULL;
 	}
 
