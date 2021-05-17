@@ -232,7 +232,7 @@ void InventoryBox::Curtains::init() {
 	Common::Rect bounds = _parent->getBounds();
 	_drawSurface.create(bounds.width(), bounds.height(), g_nancy->_graphicsManager->getInputPixelFormat());
 
-	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
 		_drawSurface.setPalette(g_nancy->_graphicsManager->_object0.getPalette(), 0, 256);
 	}
 

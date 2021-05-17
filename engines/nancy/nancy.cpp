@@ -313,10 +313,12 @@ void NancyEngine::bootGameEngine() {
 	ConfMan.registerDefault("original_menus", false);
 	ConfMan.registerDefault("second_chance", false);
 
-	// Load archive
-	Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
-	if (cabinet) {
-		SearchMan.add("data1.cab", cabinet);
+	// Load archive if running a compressed variant
+	if (isCompressed()) {
+		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+		if (cabinet) {
+			SearchMan.add("data1.cab", cabinet);
+		}
 	}
 
 	_resource = new ResourceManager();
@@ -506,6 +508,10 @@ Common::Error NancyEngine::synchronize(Common::Serializer &ser) {
 	NancySceneState._actionManager.synchronize(ser);
 
 	return Common::kNoError;
+}
+
+bool NancyEngine::isCompressed() {
+	return getGameFlags() & GF_COMPRESSED;
 }
 
 } // End of namespace Nancy

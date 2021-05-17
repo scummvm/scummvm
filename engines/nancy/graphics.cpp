@@ -146,7 +146,7 @@ void GraphicsManager::copyToManaged(const Graphics::Surface &src, Graphics::Mana
 		bool hasTransColor = dst.hasTransparentColor();
 		dst.create(doubleSize ? src.w * 2 : src.w, doubleSize ? src.h * 2 : src.h, src.format);
 
-		if (palette && g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+		if (palette && g_nancy->getGameType() == kGameTypeVampire) {
 			// free() clears the _hasPalette flag but doesn't clear the palette itself, so
 			// we just set it to itself; hopefully this doesn't cause any issues
 			dst.setPalette(palette, 0, 256);
@@ -234,7 +234,7 @@ void GraphicsManager::debugDrawToScreen(const Graphics::Surface &surf) {
 }
 
 const Graphics::PixelFormat &GraphicsManager::getInputPixelFormat() {
-	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
 		return _clut8Format;
 	} else {
 		return _inputPixelFormat;
@@ -246,7 +246,7 @@ const Graphics::PixelFormat &GraphicsManager::getScreenPixelFormat() {
 }
 
 uint GraphicsManager::getTransColor() {
-	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
 		return 1; // If this isn't correct, try picking the pixel at [0, 0] inside the palette bitmap
 	} else {
 		return _inputPixelFormat.ARGBToColor(0, 0, 255, 0);

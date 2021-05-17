@@ -160,6 +160,8 @@ private:
 
 	Common::Error synchronize(Common::Serializer &serializer);
 
+	bool isCompressed();
+
 	bool _cheatTypeIsEventFlag;
 
 	GameFlow _gameFlow;

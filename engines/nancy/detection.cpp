@@ -52,7 +52,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("boot.iff", "66d3b6fe9a90d35de7a28950870719ec", 20340),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			Nancy::NGF_8BITCOLOR,
+			ADGF_NO_FLAGS,
 			GUIO0()
 		},
 		Nancy::kGameTypeVampire
@@ -75,6 +75,22 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			Common::RU_RUS,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		Nancy::kGameTypeNancy1
+	},
+	{ // MD5 by fracturehill
+		{
+			"nancy1", 0,
+			{
+				{"data1.hdr", 0, "39b33ad649d3e7261508d3c6907f237f", 139814},
+				{"data1.cab", 0, "f900861c47b0cb88191f5c6189db6cb1", 1916153},
+				{"data2.cab", 0, "9c652edb9846a721839cb7e1dcc94a3e", 462008320},
+				AD_LISTEND
+			},
+			Common::RU_RUS,
+			Common::kPlatformWindows,
+			Nancy::GF_COMPRESSED,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy1
@@ -112,7 +128,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Nancy::GF_COMPRESSED,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy3
@@ -139,7 +155,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Nancy::GF_COMPRESSED,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy3
@@ -166,7 +182,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Nancy::GF_COMPRESSED,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy3
@@ -182,7 +198,7 @@ static const Nancy::NancyGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS,
+			Nancy::GF_COMPRESSED,
 			GUIO0()
 		},
 		Nancy::kGameTypeNancy3

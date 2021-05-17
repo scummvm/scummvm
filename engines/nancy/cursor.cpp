@@ -124,7 +124,7 @@ void CursorManager::setCursor(CursorType type, int16 itemID) {
 
 	// Convert the trans color from the original format to the screen format
 	uint transColor;
-	if (g_nancy->getGameFlags() & NGF_8BITCOLOR) {
+	if (g_nancy->getGameType() == kGameTypeVampire) {
 		uint8 r, g, b;
 		uint32 input = surf->getPalette()[1];
 		r = input & 0xFF;
