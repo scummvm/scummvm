@@ -142,6 +142,7 @@ void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::
 
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
 	readSurface(stream, &_background, width, height);
+	_smkBackground.copyFrom(_background);
 	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * _background.h);
 }
 
