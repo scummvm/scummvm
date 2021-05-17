@@ -313,16 +313,17 @@ void SoundManager::loadSound(const SoundDescription &description, bool panning) 
 }
 
 void SoundManager::playSound(uint16 channelID) {
-	if (channelID > 31 || _channels[channelID].stream == 0)
+	if (channelID > 31 || _channels[channelID].stream == nullptr)
 		return;
 
-	_channels[channelID].stream->seek(0);
+	Channel &chan = _channels[channelID];
+	chan.stream->seek(0);
 
-	_mixer->playStream(	_channels[channelID].type,
-						&_channels[channelID].handle,
-						Audio::makeLoopingAudioStream(_channels[channelID].stream, _channels[channelID].numLoops),
+	_mixer->playStream(	chan.type,
+						&chan.handle,
+						Audio::makeLoopingAudioStream(chan.stream, chan.numLoops),
 						channelID,
-						_channels[channelID].volume * 255 / 100,
+						chan.volume * 255 / 100,
 						0, DisposeAfterUse::NO);
 }
 
@@ -384,12 +385,14 @@ void SoundManager::stopSound(uint16 channelID) {
 	if (channelID > 31)
 		return;
 
+	Channel &chan = _channels[channelID];
+
 	if (isSoundPlaying(channelID)) {
-		_mixer->stopHandle(_channels[channelID].handle);
+		_mixer->stopHandle(chan.handle);
 	}
-	_channels[channelID].name = Common::String();
-	delete _channels[channelID].stream;
-	_channels[channelID].stream = nullptr;
+	chan.name = Common::String();
+	delete chan.stream;
+	chan.stream = nullptr;
 }
 
 void SoundManager::stopSound(const SoundDescription &description) {
