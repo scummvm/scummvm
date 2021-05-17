@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 16:44+0000\n"
-"PO-Revision-Date: 2021-05-07 17:20+0000\n"
+"PO-Revision-Date: 2021-05-17 17:01+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -3929,10 +3929,8 @@ msgstr ""
 "nicht selbst anfordert"
 
 #: engines/asylum/metaengine.cpp:67
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Blaupause anzeigen"
+msgstr "Version anzeigen"
 
 #: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3943,22 +3941,16 @@ msgid "Quick save"
 msgstr "Schnellspeichern"
 
 #: engines/asylum/metaengine.cpp:82
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Wechsle"
+msgstr "Zu Sarah wechseln"
 
 #: engines/asylum/metaengine.cpp:87
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Wechsle"
+msgstr "Zu Grimwall wechseln"
 
 #: engines/asylum/metaengine.cpp:92
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Wechsle"
+msgstr "Zu Olmec wechseln"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -6868,16 +6860,12 @@ msgstr ""
 "die Auflösung auf 320x200 begrenzt wird."
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"Macintosh-Programmdatei für Instrumente in \"Loom\" nicht\n"
-"gefunden. Musik wird abgeschaltet."
+"Die Programmdatei für die Macintosh-Version von \"Loom\" nicht gefunden.\n"
+"Musik und hochauflösende Schriften werden deaktiviert."
 
 #: engines/scumm/scumm.cpp:1365
 msgid ""
