@@ -364,7 +364,7 @@ bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, Common::Strin
 	fileProps.size = computeMD5(allFiles[fname], fileProps.md5, 16384);
 
 	if (fileProps.size != -1) {
-		debug(3, "> '%s': '%s'", fname.c_str(), fileProps.md5.c_str());
+		debugC(3, kDebugGlobalDetection, "> '%s': '%s'", fname.c_str(), fileProps.md5.c_str());
 		filePropsMap[fname] = fileProps;
 	}
 
@@ -379,7 +379,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 	if (!matched.empty())
 		return matched;
 
-	debug(3, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting disk image detection in dir '%s'", parent.getPath().c_str());
 
 	FilePropertiesMap filesProps;
 
@@ -433,30 +433,30 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 				continue;
 
 			if (fDesc.md5 && fDesc.md5 != filesProps[fileName].md5) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fDesc.md5, filesProps[fileName].md5.c_str());
+				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fDesc.md5, filesProps[fileName].md5.c_str());
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
 			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
-				debug(3, "Size Mismatch. Skipping");
+				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping");
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
-			debug(3, "Matched file: %s", fileName.c_str());
+			debugC(3, kDebugGlobalDetection, "Matched file: %s", fileName.c_str());
 		}
 
 		// This assumes that the detection table groups together games that have the same gameId and platform
 		if (allFilesPresent) {
 			if (!game.hasUnknownFiles) {
-				debug(2, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				debugC(2, kDebugGlobalDetection, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 				// If we just added an unknown variant for this game and platform, remove it
 				if (!matched.empty() && strcmp(matched.back().desc->gameId, game.desc->gameId) == 0 && matched.back().desc->platform == game.desc->platform)
 					matched.pop_back();
 				matched.push_back(game);
 			} else {
-				debug(5, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
+				debugC(5, kDebugGlobalDetection, "Skipping game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 				// If we already added a known or unknown variant for this game and platform, don't add another
 				if (matched.empty() || strcmp(matched.back().desc->gameId, game.desc->gameId) != 0 || matched.back().desc->platform != game.desc->platform)
 					matched.push_back(game);
