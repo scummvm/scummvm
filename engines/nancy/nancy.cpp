@@ -449,7 +449,8 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.setVersion(_gameDescription->gameType);
 
 	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy2);
+	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x9D, kGameTypeNancy2, kGameTypeNancy2);
 	ser.syncAsUint16LE(_firstScene.sceneID);
 	ser.skip(12, kGameTypeVampire, kGameTypeVampire); // Palette
 	ser.syncAsUint16LE(_firstScene.frameID);
@@ -457,8 +458,7 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 	ser.syncAsUint16LE(_startTimeHours, kGameTypeVampire, kGameTypeNancy2);
 	ser.syncAsUint16LE(_startTimeMinutes, kGameTypeVampire, kGameTypeNancy2);
 
-	ser.skip(0xA4, kGameTypeVampire, kGameTypeNancy1);
-	ser.skip(0x9E, kGameTypeNancy2, kGameTypeNancy2);
+	ser.skip(0xA4, kGameTypeVampire, kGameTypeNancy2);
 
 	// nancy3 has not been looked into, skip straight to images
 	ser.skip(0xA7, kGameTypeNancy3, kGameTypeNancy3);
@@ -472,23 +472,25 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 
 	ser.skip(0x28, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0x10, kGameTypeNancy1, kGameTypeNancy1);
+	ser.skip(0x20, kGameTypeNancy2, kGameTypeNancy2);
 	readRect(*bsum, _textboxScreenPosition);
 
 	ser.skip(0x5E, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0x59, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
-	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy1);
-	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy1);
+	ser.skip(0x89, kGameTypeNancy2, kGameTypeNancy2);
+	ser.syncAsUint16LE(_horizontalEdgesSize, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(_verticalEdgesSize, kGameTypeVampire, kGameTypeNancy2);
+	ser.skip(0x1C, kGameTypeVampire, kGameTypeNancy2);
 	int16 time = 0;
-	ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
+	ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
 	_playerTimeMinuteLength = time;
-	ser.skip(2, kGameTypeNancy1, kGameTypeNancy1);
-	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeVampire, kGameTypeNancy1);
+	ser.skip(2, kGameTypeNancy1, kGameTypeNancy2);
+	ser.syncAsByte(_overrideMovementTimeDeltas, kGameTypeVampire, kGameTypeNancy2);
 
 	if (_overrideMovementTimeDeltas) {
-		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
 		_slowMovementTimeDelta = time;
-		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy1);
+		ser.syncAsSint16LE(time, kGameTypeVampire, kGameTypeNancy2);
 		_fastMovementTimeDelta = time;
 	}
 }
