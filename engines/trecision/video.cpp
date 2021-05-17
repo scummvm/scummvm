@@ -466,7 +466,6 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
 
 	if (smkDecoder->getCurFrame() == 0) {
-		_vm->_graphicsMgr->setSmkBackground();
 		_vm->_graphicsMgr->blitToScreenBuffer(frame16, 0, TOP, mask, false);
 	} else {
 		while (lastRect) {

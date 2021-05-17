@@ -118,10 +118,6 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	);
 }
 
-void GraphicsManager::setSmkBackground() {
-	_smkBackground.copyFrom(_background);
-}
-
 uint16 *GraphicsManager::getScreenBufferPtr() {
 	return (uint16 *)_screenBuffer.getPixels();
 }
