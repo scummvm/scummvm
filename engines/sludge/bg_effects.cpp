@@ -284,7 +284,7 @@ bool GraphicsManager::blurScreen() {
 				blur_createSourceLine(sourceLine[y], (byte *)_origBackdropSurface.getBasePtr(0, miniY), overlapOnLeft, _sceneWidth);
 			}
 
-			for (y = 0; y < _sceneHeight; y++) {
+			for (y = 0; y < (int)_sceneHeight; y++) {
 				thisLine = (byte *)_origBackdropSurface.getBasePtr(0, y);
 
 				//-------------------------
@@ -301,7 +301,7 @@ bool GraphicsManager::blurScreen() {
 
 					blur_createSourceLine(sourceLine[h], (byte *)_origBackdropSurface.getBasePtr(0, miniY), overlapOnLeft, _sceneWidth);
 				}
-				for (x = 0; x < _sceneWidth; x++) {
+				for (x = 0; x < (int)_sceneWidth; x++) {
 					int totalRed = 0;
 					int totalGreen = 0;
 					int totalBlue = 0;
