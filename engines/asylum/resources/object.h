@@ -170,7 +170,7 @@ public:
 private:
 	AsylumEngine *_vm;
 
-	int32 _index;   ///< our index
+	//int32 _index;   ///< our index
 
 	//////////////////////////////////////////////////////////////////////////
 	// Data

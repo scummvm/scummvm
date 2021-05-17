@@ -50,8 +50,8 @@ private:
 
 	// Unused puzzle variables
 	int8   _state[5];
-	bool   _data_4572BC;
-	bool   _data_4572CC;
+	//bool   _data_4572BC;
+	//bool   _data_4572CC;
 	uint32 _data_45AAA8;
 	uint32 _data_45AAAC;
 	uint32 _currentFrameIndex;

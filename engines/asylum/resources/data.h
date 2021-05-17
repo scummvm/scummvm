@@ -51,11 +51,11 @@ class SharedData;
 
 class CrowsData {
 public:
-	CrowsData(SharedData *sharedData) : _sharedData(sharedData), _data() {}
+	CrowsData(SharedData *sharedData) : /* _sharedData(sharedData), */_data() { memset(_data, 0, sizeof(_data)); }
 	int32 &operator [](uint32 index);
 private:
 	int32 _data[84];
-	SharedData *_sharedData;
+	//SharedData *_sharedData;
 };
 
 /**

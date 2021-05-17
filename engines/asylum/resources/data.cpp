@@ -131,7 +131,7 @@ void SharedData::reset() {
 	_chapter2FrameIndexOffset = 1;
 }
 
-static const uint32 chapter2DataSizes[5] = {5, 9, 23, 18, 9};
+//static const uint32 chapter2DataSizes[5] = {5, 9, 23, 18, 9};
 int32 &CrowsData::operator[](uint32 index) {
 	if (index >= ARRAYSIZE(_data))
 		error("[CrowsData::operator[]] Invalid index (was: %d, valid: [0;%d])", index, ARRAYSIZE(_data) - 1);

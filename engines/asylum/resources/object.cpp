@@ -37,7 +37,7 @@
 namespace Asylum {
 
 Object::Object(AsylumEngine *engine) : x(0), y(0), flags(0), actionType(0),
-	_vm(engine), _index(0),
+	_vm(engine), /* _index(0), */
 	_id(kObjectNone), _resourceId(kResourceNone), _field_20(0), _frameIndex(0), _frameCount(0),
 	_field_2C(0), _field_30(0), _field_34(0), _field_3C(0), _polygonIndex(0), _field_B4(0),
 	_tickCount(0), _tickCount2(0), _field_C0(0), _priority(0), _scriptIndex(0), _transparency(0),
