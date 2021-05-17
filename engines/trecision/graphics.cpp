@@ -122,11 +122,6 @@ void GraphicsManager::setSmkBackground() {
 	_smkBackground.copyFrom(_background);
 }
 
-void GraphicsManager::resetScreenBuffer() {
-	clearScreenBufferTop();
-	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * AREA);
-}
-
 uint16 *GraphicsManager::getScreenBufferPtr() {
 	return (uint16 *)_screenBuffer.getPixels();
 }
@@ -147,6 +142,7 @@ void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::
 
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {
 	readSurface(stream, &_background, width, height);
+	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * _background.h);
 }
 
 void GraphicsManager::loadInventoryIcons() {
@@ -258,6 +254,14 @@ uint16 GraphicsManager::shadow(uint32 val, uint8 num) {
 	return ((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
 			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
 			(((val & _bitMask[0]) * num >> 7) & _bitMask[0]));
+}
+
+void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
+	int px1 = _screenBuffer.getPixel(x - 1, y);
+	int px2 = _screenBuffer.getPixel(x, y);
+
+	_screenBuffer.setPixel(x - 1, y, aliasing(px1, px2, 6));      // 75% 25%
+	_screenBuffer.setPixel(x, y, aliasing(px1, px2, 2));            // 25% 75%
 }
 
 /*------------------------------------------------

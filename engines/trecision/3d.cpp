@@ -103,7 +103,6 @@ int16 _shadowFaces[SHADOWFACESNUM][3] = {
 
 Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
 	_zBuffer = new int16[ZBUFFERSIZE / 2];
-	_curPage = nullptr;
 
 	_minXClip = 0;
 	_minYClip = 0;
@@ -219,7 +218,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			int32 sl = el + MAXX * y;
 			// pointer to zbuffer
 			int16 *z = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
-			uint16 *screenPtr = _curPage + sl;
+			uint16 *screenPtr = _vm->_graphicsMgr->getScreenBufferPtr() + sl;
 
 			zl <<= 16;
 			cl <<= 8;
@@ -362,8 +361,8 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 			int32 sl = el + MAXX * y;
 
 			int16 *zBufferPtr = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
-			uint16 *screenPtr = _curPage + sl;
-
+			uint16 *screenPtr = _vm->_graphicsMgr->getScreenBufferPtr() + sl;
+			
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				if (*zBufferPtr != zv) {
@@ -412,8 +411,7 @@ void Renderer3D::shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 /*------------------------------------------------
 	Initialize a 3D Room
 --------------------------------------------------*/
-void Renderer3D::init3DRoom(uint16 *destBuffer) {
-	_curPage = destBuffer;
+void Renderer3D::init3DRoom() {
 	_vm->_cx = (MAXX - 1) / 2;
 	_vm->_cy = (MAXY - 1) / 2;
 
@@ -781,22 +779,15 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 		int p0 = 0;
 		for (int b = _zBufStartY; b < actor->_lim[3]; b++) {
-			int px0 = b * MAXX + _zBufStartX;
 			for (int a = 1; a < _zBufWid; a++) {
-				// CHECKME: These are always 0
-				//bool _shadowSplit;
-				int py1 = 0; //(_zBuf[p0]   >= 0x7FF0) * 0x8000 * _shadowSplit;
-				int py2 = 0; //(_zBuf[p0 + 1] >= 0x7FF0) * 0x8000 * _shadowSplit;
+				int py1 = (_zBuffer[p0]   >= 0x7FF0) * 0x8000;
+				int py2 = (_zBuffer[p0 + 1] >= 0x7FF0) * 0x8000;
 
 				int p1 = _zBuffer[p0] < 0x7FFF;
 				int p2 = _zBuffer[p0 + 1] < 0x7FFF;
 
 				if (p1 != p2) {
-					int px1 = _curPage[px0 + a - 1];
-					int px2 = _curPage[px0 + a];
-
-					_curPage[px0 + a - 1] = _vm->_graphicsMgr->aliasing(px1, px2, 6); // 75% 25%
-					_curPage[px0 + a] = _vm->_graphicsMgr->aliasing(px1, px2, 2);     // 25% 75%
+					_vm->_graphicsMgr->pixelAliasing(a + _zBufStartX, b);
 
 					// if the first is the character
 					if (p1)
