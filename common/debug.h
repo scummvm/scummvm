@@ -162,11 +162,13 @@ extern bool gDebugChannelsOnly;
 
 /** Global constant for EventRecorder debug channel. */
 enum GlobalDebugLevels {
+	kDebugGlobalDetection = 1 << 29,
 	kDebugLevelEventRec = 1 << 30
 };
 
 static const DebugChannelDef globalDebugChannels[] = {
 	{kDebugLevelEventRec, "EventRec", "Event recorder debug level"},
+	{kDebugGlobalDetection, "Detection", "debug messages for advancedDetector"},
 	DEBUG_CHANNEL_END
 };
 
