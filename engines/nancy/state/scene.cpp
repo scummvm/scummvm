@@ -412,7 +412,7 @@ void Scene::init() {
 	_timers.pushedPlayTime = 0;
 	_timers.timeOfDay = Timers::kDay;
 
-	_sceneState.nextScene.sceneID = g_nancy->_firstSceneID;
+	changeScene(g_nancy->_firstScene);
 
 	Common::SeekableReadStream *chunk = g_nancy->getBootChunkStream("HINT");
 

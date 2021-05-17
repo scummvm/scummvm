@@ -68,7 +68,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 	_cursorManager = new CursorManager();
 
 	_resource = nullptr;
-	_firstSceneID = 0;
 	_startTimeHours = 0;
 	_overrideMovementTimeDeltas = false;
 	_cheatTypeIsEventFlag = false;
@@ -449,13 +448,15 @@ void NancyEngine::readBootSummary(const IFF &boot) {
 
 	ser.skip(0x71, kGameTypeVampire, kGameTypeVampire);
 	ser.skip(0xA3, kGameTypeNancy1, kGameTypeNancy2);
-	ser.syncAsUint16LE(_firstSceneID);
-	ser.skip(4, kGameTypeNancy1, kGameTypeNancy2);
-	ser.syncAsUint16LE(_startTimeHours, kGameTypeNancy1, kGameTypeNancy2);
+	ser.syncAsUint16LE(_firstScene.sceneID);
+	ser.skip(12, kGameTypeVampire, kGameTypeVampire); // Palette
+	ser.syncAsUint16LE(_firstScene.frameID);
+	ser.syncAsUint16LE(_firstScene.verticalOffset);
+	ser.syncAsUint16LE(_startTimeHours, kGameTypeVampire, kGameTypeNancy2);
+	ser.syncAsUint16LE(_startTimeMinutes, kGameTypeVampire, kGameTypeNancy2);
 
-	ser.skip(0xB8, kGameTypeVampire, kGameTypeVampire);
-	ser.skip(0xA6, kGameTypeNancy1, kGameTypeNancy1);
-	ser.skip(0xA0, kGameTypeNancy2, kGameTypeNancy2);
+	ser.skip(0xA4, kGameTypeVampire, kGameTypeNancy1);
+	ser.skip(0x9E, kGameTypeNancy2, kGameTypeNancy2);
 
 	// nancy3 has not been looked into, skip straight to images
 	ser.skip(0xA7, kGameTypeNancy3, kGameTypeNancy3);

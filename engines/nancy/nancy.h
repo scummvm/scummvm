@@ -123,8 +123,10 @@ public:
 	Common::RandomSource *_randomSource;
 
 	// BSUM data
-	uint16 _firstSceneID;
+	SceneChangeDescription _firstScene;
+	
 	uint16 _startTimeHours;
+	uint16 _startTimeMinutes;
 
 	bool _overrideMovementTimeDeltas;
 	Time _slowMovementTimeDelta;
