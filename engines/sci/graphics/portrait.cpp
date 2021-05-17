@@ -86,7 +86,7 @@ void Portrait::init() {
 	//   9E9E9E9E for vizier
 	Common::String fileName = "actors/" + _resourceName + ".bin";
 	Common::SeekableReadStream *file = SearchMan.createReadStreamForMember(fileName);
-		;
+
 	if (!file) {
 		fileName = _resourceName + ".bin";
 		file = SearchMan.createReadStreamForMember(fileName);
