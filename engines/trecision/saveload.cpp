@@ -270,7 +270,7 @@ insave:
 	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
-	_graphicsMgr->clearScreenBufferTopDescription();
+	_graphicsMgr->clearScreenBufferTop();
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	// Restore the inventory
@@ -510,7 +510,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, TOP);
 
-	_graphicsMgr->clearScreenBufferTopDescription();
+	_graphicsMgr->clearScreenBufferTop();
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
 	if (_flagScriptActive) {

@@ -202,7 +202,8 @@ void GraphicsManager::drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte 
 		iconIndex * ICONDX,
 		startLine,
 		iconIndex * ICONDX + ICONDX,
-		_saveSlotThumbnails.h));
+		_saveSlotThumbnails.h
+	));
 	copyToScreenBuffer(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
 }
 
@@ -213,11 +214,6 @@ void GraphicsManager::clearScreenBuffer() {
 void GraphicsManager::clearScreenBufferTop() {
 	// Clears lines 0 - 60
 	_screenBuffer.fillRect(Common::Rect(0, 0, MAXX, TOP), 0);
-}
-
-void GraphicsManager::clearScreenBufferTopDescription() {
-	// Clears lines 20 - 30
-	_screenBuffer.fillRect(Common::Rect(0, TOP - 20, MAXX, TOP - 20 + CARHEI), 0);
 }
 
 void GraphicsManager::clearScreenBufferInventory() {
@@ -299,8 +295,8 @@ void GraphicsManager::dissolve(uint8 val) {
 
 		lastv = (sv - cv) + val;
 
-		float a = (float)(((centerX + 200) / val) * lastv);
-		float b = (float)((centerY / val) * lastv);
+		const float a = (float)(((centerX + 200) / val) * lastv);
+		const float b = (float)((centerY / val) * lastv);
 
 		float x = 0.0f;
 		float y = b;
@@ -380,19 +376,19 @@ void GraphicsManager::drawObj(SDObj d) {
 
 					c = 1;
 				} else { // copy
-					uint16 maskOffset = *mask;
+					const uint16 maskOffset = *mask;
 
-					if ((maskOffset != 0) && (b >= (d.rect.top + d.l.top)) && (b < (d.rect.top + d.l.bottom))) {
-						if ((sco >= d.l.left) && ((sco + maskOffset) < d.l.right))
+					if (maskOffset != 0 && b >= d.rect.top + d.l.top && b < d.rect.top + d.l.bottom) {
+						if (sco >= d.l.left && sco + maskOffset < d.l.right)
 							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, maskOffset * 2);
 
-						else if ((sco < d.l.left) && ((sco + maskOffset) < d.l.right) && ((sco + maskOffset) >= d.l.left))
+						else if (sco < d.l.left && sco + maskOffset < d.l.right && sco + maskOffset >= d.l.left)
 							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (maskOffset + sco - d.l.left) * 2);
 
-						else if ((sco >= d.l.left) && ((sco + maskOffset) >= d.l.right) && (sco < d.l.right))
+						else if (sco >= d.l.left && sco + maskOffset >= d.l.right && sco < d.l.right)
 							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, (d.l.right - sco) * 2);
 
-						else if ((sco < d.l.left) && ((sco + maskOffset) >= d.l.right))
+						else if (sco < d.l.left && sco + maskOffset >= d.l.right)
 							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (d.l.right - d.l.left) * 2);
 					}
 					sco += *mask;
@@ -428,8 +424,7 @@ void GraphicsManager::initCursor() {
 		cursor[cx + cw * i] = cursorColor; // vertical
 	}
 
-	Graphics::PixelFormat format = g_system->getScreenFormat();
-	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &format);
+	CursorMan.pushCursor(cursor, cw, ch, cx, cy, 0, false, &_screenFormat);
 }
 
 void GraphicsManager::showCursor() {
