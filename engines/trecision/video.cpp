@@ -371,7 +371,6 @@ void AnimManager::startFullMotion(const char *name) {
 
 	_vm->_textMgr->clearTextStack();
 	_vm->_graphicsMgr->clearScreen();
-	_vm->_graphicsMgr->clearScreenBuffer();
 
 	_vm->_gameQueue.initQueue();
 	_vm->_animQueue.initQueue();
