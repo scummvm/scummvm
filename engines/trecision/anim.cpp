@@ -26,6 +26,7 @@
 #include "trecision/scheduler.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 

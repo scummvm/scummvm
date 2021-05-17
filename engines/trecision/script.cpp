@@ -34,6 +34,7 @@
 #include "trecision/trecision.h"
 #include "trecision/sound.h"
 #include "trecision/text.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 

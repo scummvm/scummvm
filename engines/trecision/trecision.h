@@ -26,13 +26,13 @@
 #include "common/str-array.h"
 #include "common/keyboard.h"
 #include "common/str.h"
+#include "common/serializer.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
 
 #include "trecision/defines.h"
 #include "trecision/fastfile.h"
-#include "trecision/video.h"
 #include "trecision/struct.h"
 
 namespace Trecision {
