@@ -1052,6 +1052,7 @@ bool MacMenu::mouseClick(int x, int y) {
 
 						_menustack.pop_back(); // Drop previous submenu
 						_contentIsDirty = true;
+						_wm->setFullRefresh(true);
 					}
 				}
 
