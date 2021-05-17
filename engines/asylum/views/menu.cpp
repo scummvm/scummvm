@@ -832,7 +832,7 @@ void Menu::updateLoadGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(Common::Point(550, 347));
+	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
 }
 
@@ -992,7 +992,7 @@ void Menu::updateSaveGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(Common::Point(550, 347));
+	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1337));
 }
 
@@ -1102,7 +1102,7 @@ void Menu::updateDeleteGame() {
 	else
 		getText()->loadFont(kFontBlue);
 
-	getText()->setPosition(Common::Point(550, 347));
+	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1347));
 }
 
@@ -1651,6 +1651,7 @@ void Menu::clickLoadGame() {
 						getSaveLoad()->setIndex(saveIndex);
 					}
 				}
+				break;
 			}
 		} else if (cursor.x >= 30) {
 			snprintf((char *)&text, sizeof(text), "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
@@ -1658,13 +1659,14 @@ void Menu::clickLoadGame() {
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)) {
-				 uint32 saveIndex = (uint32)(index + _startIndex);
+				uint32 saveIndex = (uint32)(index + _startIndex);
 				if (saveIndex < 25) {
 					if (getSaveLoad()->hasSavegame(saveIndex)) {
 						_dword_455C80 = true;
 						getSaveLoad()->setIndex(saveIndex);
 					}
 				}
+				break;
 			}
 		}
 
@@ -1738,6 +1740,7 @@ void Menu::clickSaveGame() {
 			if (cursor.x <= (350 + getText()->getWidth((char *)&text))
 			 && cursor.y >= y
 			 && cursor.y <= (y + 24)
+			 && getScene()
 			 && getWorld()->chapter != kChapterNone) {
 				if (index + _startIndex < 25) {
 					uint32 saveIndex = (uint32)(index + _startIndex + 6);
@@ -1752,6 +1755,7 @@ void Menu::clickSaveGame() {
 						getCursor()->hide();
 					}
 				}
+				break;
 			}
 		} else if (cursor.x >= 30) {
 			snprintf((char *)&text, sizeof(text), "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
@@ -1774,6 +1778,7 @@ void Menu::clickSaveGame() {
 						getCursor()->hide();
 					}
 				}
+				break;
 			}
 		}
 
@@ -1850,20 +1855,22 @@ void Menu::clickDeleteGame() {
 						getSaveLoad()->setIndex(saveIndex + 6);
 					}
 				}
+				break;
 			}
 		} else if (cursor.x >= 30) {
 			snprintf((char *)&text, sizeof(text), "%d. %s ", index + _startIndex + 1, getSaveLoad()->getName((uint32)(index + _startIndex)).c_str());
 
 			if (cursor.x <= (30 + getText()->getWidth((char *)&text))
-				&& cursor.y >= y
-				&& cursor.y <= (y + 24)) {
-					uint32 saveIndex = (uint32)(index + _startIndex);
-					if (saveIndex < 25) {
-						if (getSaveLoad()->hasSavegame(saveIndex)) {
-							_dword_455C80 = true;
-							getSaveLoad()->setIndex(saveIndex);
-						}
+			 && cursor.y >= y
+			 && cursor.y <= (y + 24)) {
+				uint32 saveIndex = (uint32)(index + _startIndex);
+				if (saveIndex < 25) {
+					if (getSaveLoad()->hasSavegame(saveIndex)) {
+						_dword_455C80 = true;
+						getSaveLoad()->setIndex(saveIndex);
 					}
+				}
+				break;
 			}
 		}
 
