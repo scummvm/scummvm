@@ -1605,6 +1605,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	}
 
 	bool enableShadow = _enableShadow;
+	int color = _color;
 
 	// Shadowing is a bit of guesswork. It doesn't look like it's using
 	// the Mac's built-in form of shadowed text (which, as I recall it,
@@ -1621,10 +1622,20 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       shadowing at all. I'll just keep it like this for now,
 	//       because it makes the notes stand out a bit better.
 
-	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95)
+	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95) {
 		enableShadow = true;
+	}
 
-	printCharInternal(chr, _color, enableShadow, macLeft, macTop);
+	// HACK: Apparently, note names are never drawn in light gray. Only
+	//       white for known notes, and dark gray for unknown ones. This
+	//       hack ensures that we won't be left with a mix of white and
+	//       light gray note names, because apparently the game never
+	//       changes them back to light gray once the draft is done?
+
+	if (chr >= 16 && chr <= 23 && _color == 7)
+		color = 15;
+
+	printCharInternal(chr, color, enableShadow, macLeft, macTop);
 
 	// HACK: The way we combine high and low resolution graphics means
 	//       that sometimes, when a note name is drawn on the distaff, the
