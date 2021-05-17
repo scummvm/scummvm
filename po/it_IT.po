@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 18:02+0000\n"
-"PO-Revision-Date: 2021-05-03 22:35+0000\n"
+"PO-Revision-Date: 2021-05-17 21:03+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -3945,10 +3945,8 @@ msgstr ""
 "esplicitamente"
 
 #: engines/asylum/metaengine.cpp:67
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Mostra progetto"
+msgstr "Mostra versione"
 
 #: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3959,22 +3957,16 @@ msgid "Quick save"
 msgstr "Salvataggio rapido"
 
 #: engines/asylum/metaengine.cpp:82
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Passa al Gioco"
+msgstr "Passa a Sarah"
 
 #: engines/asylum/metaengine.cpp:87
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Passa al Gioco"
+msgstr "Passa a Grimwall"
 
 #: engines/asylum/metaengine.cpp:92
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Passa al Gioco"
+msgstr "Passa a Olmec"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -6865,16 +6857,13 @@ msgstr ""
 "verticale\" presente nella scheda \"motore\"."
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"L'eseguibile Macintosh di 'Loom', necessario per caricare gli\n"
-"strumenti, non è stato trovato. La musica non verrà riprodotta."
+"L'eseguibile Macintosh di 'Loom' non è stato trovato. I caratteri ed il "
+"puntatore\n"
+"ad alta risoluzione, così come la musica, saranno disabilitati."
 
 #: engines/scumm/scumm.cpp:1365
 msgid ""
