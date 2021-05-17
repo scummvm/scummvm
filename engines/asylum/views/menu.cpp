@@ -1677,7 +1677,7 @@ void Menu::clickSaveGame() {
 
 	if (_dword_455C80) {
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1340)))
-		 || cursor.y < 273 || cursor.y > (247 + 24)) {
+		 || cursor.y < 273 || cursor.y > (273 + 24)) {
 			if (cursor.x >= 369 && cursor.x <= (369 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1341)))
 			 && cursor.y >= 273 && cursor.y <= (273 + 24))
 				_dword_455C80 = false;
