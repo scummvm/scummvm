@@ -131,7 +131,7 @@ public:
 	 *
 	 * @param flags The flags.
 	 */
-	void setNextFrame(int flags);
+	void setNextFrame(uint32 flags);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Misc

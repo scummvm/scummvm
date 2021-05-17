@@ -296,7 +296,7 @@ bool Console::cmdListFiles(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdListActions(int32 argc, const char **argv) {
+bool Console::cmdListActions(int argc, const char **argv) {
 	if (argc != 1 && argc != 2) {
 		debugPrintf("Syntax: %s <index> (use nothing for all)\n", argv[0]);
 		return true;
@@ -326,7 +326,7 @@ bool Console::cmdListActions(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdListActors(int32 argc, const char **argv) {
+bool Console::cmdListActors(int argc, const char **argv) {
 	if (argc != 1 && argc != 2 && argc != 4) {
 		debugPrintf("Syntax: %s <index> (use nothing for all) (<x>, <y>)\n", argv[0]);
 		return true;
@@ -367,7 +367,7 @@ bool Console::cmdListActors(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdListFlags(int32 argc, const char **argv) {
+bool Console::cmdListFlags(int argc, const char **argv) {
 	if (argc != 1 && argc != 2) {
 		debugPrintf("Syntax: %s <type> (nothing: all  -  1: show set flags  -  0: show unset flags)\n", argv[0]);
 		return true;
@@ -407,7 +407,7 @@ bool Console::cmdListFlags(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdShowWorldStats(int32, const char **) {
+bool Console::cmdShowWorldStats(int, const char **) {
 	debugPrintf("WorldStats\n");
 	debugPrintf("----------\n");
 	debugPrintf("%s", getWorld()->toString().c_str());
@@ -415,7 +415,7 @@ bool Console::cmdShowWorldStats(int32, const char **) {
 	return true;
 }
 
-bool Console::cmdShowObject(int32 argc, const char **argv) {
+bool Console::cmdShowObject(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Syntax: %s [id|idx] <target>\n", argv[0]);
 		return true;
@@ -448,7 +448,7 @@ bool Console::cmdShowObject(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdShowAction(int32 argc, const char **argv) {
+bool Console::cmdShowAction(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Syntax: %s [id|idx] <target>\n", argv[0]);
 		return true;
@@ -481,7 +481,7 @@ bool Console::cmdShowAction(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdListObjects(int32 argc, const char **argv) {
+bool Console::cmdListObjects(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s [onscreen|*]\n", argv[0]);
 		return true;
@@ -514,7 +514,7 @@ bool Console::cmdListObjects(int32 argc, const char **argv) {
 //////////////////////////////////////////////////////////////////////////
 // Video / Scene / Script commands
 //////////////////////////////////////////////////////////////////////////
-bool Console::cmdPlayVideo(int32 argc, const char **argv) {
+bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <video number>\n", argv[0]);
 		return true;
@@ -535,7 +535,7 @@ bool Console::cmdPlayVideo(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdGetStatus(int32 argc, const char **argv) {
+bool Console::cmdGetStatus(int argc, const char **argv) {
 	Actor *actor;
 
 	if (argc == 1) {
@@ -558,7 +558,7 @@ bool Console::cmdGetStatus(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdSetStatus(int32 argc, const char **argv) {
+bool Console::cmdSetStatus(int argc, const char **argv) {
 	Actor *actor;
 	int32 status;
 
@@ -589,7 +589,7 @@ bool Console::cmdSetStatus(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdShowScript(int32 argc, const char **argv) {
+bool Console::cmdShowScript(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <script index>\n", argv[0]);
 		return true;
@@ -616,7 +616,7 @@ bool Console::cmdShowScript(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdRunScript(int32 argc, const char **argv) {
+bool Console::cmdRunScript(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Syntax: %s <script index> <actor index>\n", argv[0]);
 		return true;
@@ -640,7 +640,7 @@ bool Console::cmdRunScript(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdKillScript(int32 argc, const char **argv) {
+bool Console::cmdKillScript(int argc, const char **argv) {
 	if (argc == 1) {
 		debugPrintf("Scripts running:\n");
 		for (uint32 i = 0; i < ARRAYSIZE(getScript()->_queue.entries); i++)
@@ -658,7 +658,7 @@ bool Console::cmdKillScript(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdChangeScene(int32 argc, const char **argv) {
+bool Console::cmdChangeScene(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <scene number>\n", argv[0]);
 		return true;
@@ -680,7 +680,7 @@ bool Console::cmdChangeScene(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdRunEncounter(int32 argc, const char **argv) {
+bool Console::cmdRunEncounter(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <encounter index>\n", argv[0]);
 		return true;
@@ -719,7 +719,7 @@ bool Console::cmdRunEncounter(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdShowEncounter(int32 argc, const char **argv) {
+bool Console::cmdShowEncounter(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <encounter index>\n", argv[0]);
 		return true;
@@ -745,7 +745,7 @@ bool Console::cmdShowEncounter(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
+bool Console::cmdRunPuzzle(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Syntax: %s <puzzle index>\n", argv[0]);
 		debugPrintf("        0   VCR\n");
@@ -797,7 +797,7 @@ bool Console::cmdRunPuzzle(int32 argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdListItems(int32 argc, const char **argv) {
+bool Console::cmdListItems(int argc, const char **argv) {
 	ChapterIndex chapter = getWorld()->chapter;
 	uint32 maxIndex;
 	for (maxIndex = 0; maxIndex < 16; maxIndex++) {
@@ -826,7 +826,7 @@ bool Console::cmdListItems(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdAddToInventory(int32 argc, const char **argv) {
+bool Console::cmdAddToInventory(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
 		debugPrintf("Syntax: %s <item index> (<count>)\n", argv[0]);
 		return true;
@@ -849,7 +849,7 @@ bool Console::cmdAddToInventory(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdRemoveFromInventory(int32 argc, const char **argv) {
+bool Console::cmdRemoveFromInventory(int argc, const char **argv) {
 	if (argc != 2 && argc != 3) {
 		debugPrintf("Syntax: %s <item index> (<count>)\n", argv[0]);
 		return true;
@@ -872,7 +872,7 @@ bool Console::cmdRemoveFromInventory(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdSetPalette(int32 argc, const char **argv) {
+bool Console::cmdSetPalette(int argc, const char **argv) {
 	if (argc != 3) {
 		debugPrintf("Syntax: %s <pack> <index>\n", argv[0]);
 		return true;
@@ -907,7 +907,7 @@ bool Console::cmdSetPalette(int32 argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdDrawResource(int32 argc, const char **argv) {
+bool Console::cmdDrawResource(int argc, const char **argv) {
 	if (argc != 3 && argc != 4) {
 		debugPrintf("Syntax: %s <pack> <index> (<frame>)\n", argv[0]);
 		return true;
@@ -967,7 +967,7 @@ bool Console::cmdDrawResource(int32 argc, const char **argv) {
 //////////////////////////////////////////////////////////////////////////
 // Flags commands
 //////////////////////////////////////////////////////////////////////////
-bool Console::cmdToggleFlag(int32 argc, const char **argv) {
+bool Console::cmdToggleFlag(int argc, const char **argv) {
 	if (argc != 2 || atoi(argv[1]) > 1512 || atoi(argv[1]) < 0) {
 		debugPrintf("Syntax: <value> between 0 and 1512\n");
 		return true;

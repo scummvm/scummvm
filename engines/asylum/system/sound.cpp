@@ -353,7 +353,7 @@ void Sound::convertVolumeFrom(int32 &vol) {
 	// affecting the right speaker. Thus -10,000 means the left speaker is
 	// silent.
 
-	int32 v = CLIP(vol, -10000, 0);
+	int32 v = CLIP<int32>(vol, -10000, 0);
 	if (v) {
 		vol = (int)((double)Audio::Mixer::kMaxChannelVolume * pow(10.0, (double)v / 2000.0) + 0.5);
 	} else {
@@ -378,7 +378,7 @@ void Sound::convertPan(int32 &pan) {
 	// affecting the right speaker. Thus -10,000 means the left speaker is
 	// silent.
 
-	int32 p = CLIP(pan, -10000, 10000);
+	int32 p = CLIP<int32>(pan, -10000, 10000);
 	if (p < 0) {
 		pan = (int)(255.0 * pow(10.0, (double)p / 2000.0) + 127.5);
 	} else if (p > 0) {

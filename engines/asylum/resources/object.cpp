@@ -401,7 +401,7 @@ void Object::update() {
 	getSpecial()->run(this, -1);
 }
 
-void Object::setNextFrame(int32 targetFlags) {
+void Object::setNextFrame(uint32 targetFlags) {
 	flags |= targetFlags | kObjectFlagEnabled;
 
 	if (flags & kObjectFlag10000)

@@ -51,8 +51,8 @@ public:
 	// Engine options
 	bool showEncounterSubtitles;
 	int  gammaLevel;
-	int  ambientVolume;
-	int  movieVolume;
+	int32  ambientVolume;
+	int32  movieVolume;
 	bool musicStatus; // On or Off
 	bool reverseStereo;
 	int  performance;    ///< performance only affects sound: perf > 0 ? 22050hz/16bit : 11025hz/8bit

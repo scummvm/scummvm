@@ -62,35 +62,35 @@ private:
 
 	bool cmdListFiles(int argc, const char **argv);
 
-	bool cmdListActions(int32 argc, const char **argv);
-	bool cmdListActors(int32 argc, const char **argv);
-	bool cmdListFlags(int32 argc, const char **argv);
-	bool cmdShowObject(int32 argc, const char **argv);
-	bool cmdShowAction(int32 argc, const char **argv);
-	bool cmdListObjects(int32 argc, const char **argv);
-	bool cmdShowWorldStats(int32 argc, const char **argv);
+	bool cmdListActions(int argc, const char **argv);
+	bool cmdListActors(int argc, const char **argv);
+	bool cmdListFlags(int argc, const char **argv);
+	bool cmdShowObject(int argc, const char **argv);
+	bool cmdShowAction(int argc, const char **argv);
+	bool cmdListObjects(int argc, const char **argv);
+	bool cmdShowWorldStats(int argc, const char **argv);
 
-	bool cmdPlayVideo(int32 argc, const char **argv);
-	bool cmdShowScript(int32 argc, const char **argv);
-	bool cmdRunScript(int32 argc, const char **argv);
-	bool cmdKillScript(int32 argc, const char **argv);
-	bool cmdChangeScene(int32 argc, const char **argv);
-	bool cmdRunPuzzle(int32 argc, const char **argv);
+	bool cmdPlayVideo(int argc, const char **argv);
+	bool cmdShowScript(int argc, const char **argv);
+	bool cmdRunScript(int argc, const char **argv);
+	bool cmdKillScript(int argc, const char **argv);
+	bool cmdChangeScene(int argc, const char **argv);
+	bool cmdRunPuzzle(int argc, const char **argv);
 
-	bool cmdGetStatus(int32 argc, const char **argv);
-	bool cmdSetStatus(int32 argc, const char **argv);
+	bool cmdGetStatus(int argc, const char **argv);
+	bool cmdSetStatus(int argc, const char **argv);
 
-	bool cmdRunEncounter(int32 argc, const char **argv);
-	bool cmdShowEncounter(int32 argc, const char **argv);
+	bool cmdRunEncounter(int argc, const char **argv);
+	bool cmdShowEncounter(int argc, const char **argv);
 
-	bool cmdListItems(int32 argc, const char **argv);
-	bool cmdAddToInventory(int32 argc, const char **argv);
-	bool cmdRemoveFromInventory(int32 argc, const char **argv);
+	bool cmdListItems(int argc, const char **argv);
+	bool cmdAddToInventory(int argc, const char **argv);
+	bool cmdRemoveFromInventory(int argc, const char **argv);
 
-	bool cmdSetPalette(int32 argc, const char **argv);
-	bool cmdDrawResource(int32 argc, const char **argv);
+	bool cmdSetPalette(int argc, const char **argv);
+	bool cmdDrawResource(int argc, const char **argv);
 
-	bool cmdToggleFlag(int32 argc, const char **argv);
+	bool cmdToggleFlag(int argc, const char **argv);
 };
 
 } // End of namespace Asylum
