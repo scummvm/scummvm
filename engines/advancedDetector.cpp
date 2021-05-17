@@ -391,7 +391,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 		return Common::kUserCanceled;
 	}
 
-	debug(2, "Running %s", gameDescriptor.description.c_str());
+	debugC(2, kDebugGlobalDetection, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
 
 	PluginList pl = EngineMan.getPlugins(PLUGIN_TYPE_ENGINE);
@@ -541,7 +541,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 	const ADGameDescription *g;
 	const byte *descPtr;
 
-	debug(3, "Starting detection in dir '%s'", parent.getPath().c_str());
+	debugC(3, kDebugGlobalDetection, "Starting detection in dir '%s'", parent.getPath().c_str());
 
 	// Check which files are included in some ADGameDescription *and* whether
 	// they are present. Compute MD5s and file sizes for the available files.
@@ -556,7 +556,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 			FileProperties tmp;
 			if (getFileProperties(allFiles, *g, fname, tmp)) {
-				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
+				debugC(3, kDebugGlobalDetection, "> '%s': '%s'", fname.c_str(), tmp.md5.c_str());
 			}
 
 			// Both positive and negative results are cached to avoid
@@ -603,18 +603,18 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 				continue;
 
 			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[tstr].md5) {
-				debug(3, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
+				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[tstr].md5.c_str());
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
 			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[tstr].size) {
-				debug(3, "Size Mismatch. Skipping");
+				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping");
 				game.hasUnknownFiles = true;
 				continue;
 			}
 
-			debug(3, "Matched file: %s", tstr.c_str());
+			debugC(3, kDebugGlobalDetection, "Matched file: %s", tstr.c_str());
 			curFilesMatched++;
 		}
 
@@ -633,11 +633,11 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		}
 
 		if (allFilesPresent && !game.hasUnknownFiles) {
-			debug(2, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
+			debugC(2, kDebugGlobalDetection, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
 			if (curFilesMatched > maxFilesMatched) {
-				debug(2, " ... new best match, removing all previous candidates");
+				debugC(2, kDebugGlobalDetection, " ... new best match, removing all previous candidates");
 				maxFilesMatched = curFilesMatched;
 
 				matched.clear();	// Remove any prior, lower ranked matches.
@@ -645,12 +645,12 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 			} else if (curFilesMatched == maxFilesMatched) {
 				matched.push_back(game);
 			} else {
-				debug(2, " ... skipped");
+				debugC(2, kDebugGlobalDetection, " ... skipped");
 			}
 
 			gotAnyMatchesWithAllFiles = true;
 		} else {
-			debug(5, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
+			debugC(5, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 		}
 	}
@@ -671,7 +671,7 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 		bool fileMissing = false;
 
 		for (filenames = ptr->filenames; *filenames; ++filenames) {
-			debug(3, "++ %s", *filenames);
+			debugC(3, kDebugGlobalDetection, "++ %s", *filenames);
 			if (!allFiles.contains(*filenames)) {
 				fileMissing = true;
 				break;
@@ -681,12 +681,12 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 		}
 
 		if (!fileMissing) {
-			debug(4, "Matched: %s", agdesc->gameId);
+			debugC(4, kDebugGlobalDetection, "Matched: %s", agdesc->gameId);
 
 			if (numMatchedFiles > maxNumMatchedFiles) {
 				maxNumMatchedFiles = numMatchedFiles;
 
-				debug(4, "and overridden");
+				debugC(4, kDebugGlobalDetection, "and overridden");
 
 				ADDetectedGame game(agdesc);
 				game.hasUnknownFiles = true;
