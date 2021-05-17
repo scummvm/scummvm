@@ -60,7 +60,6 @@ public:
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
 	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg);
 	void setSmkBackground();
-	void resetScreenBuffer();
 	uint16 *getScreenBufferPtr();
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBuffer();
@@ -80,6 +79,7 @@ public:
 
 	uint16 shadow(uint32 val, uint8 num);
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
+	void pixelAliasing(uint16 x, uint16 y);
 
 	void dissolve(uint8 val);
 	void drawObj(SDObj d);

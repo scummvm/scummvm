@@ -490,7 +490,7 @@ void TrecisionEngine::read3D(const Common::String &filename) {
 
 	_pathFind->initSortPan();
 
-	_renderer->init3DRoom(_graphicsMgr->getScreenBufferPtr());
+	_renderer->init3DRoom();
 	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
 }
 
@@ -585,8 +585,6 @@ void TrecisionEngine::readLoc() {
 
 	Common::String fname = Common::String::format("%s.3d", _room[_curRoom]._baseName);
 	read3D(fname);
-
-	_graphicsMgr->resetScreenBuffer();
 
 	if (_room[_curRoom]._bkgAnim) {
 		_animMgr->startSmkAnim(_room[_curRoom]._bkgAnim);
@@ -726,7 +724,6 @@ void TrecisionEngine::redrawRoom() {
 	}
 
 	_sortTable.clear();
-	_graphicsMgr->resetScreenBuffer();
 
 	if (bgAnim)
 		_animMgr->startSmkAnim(bgAnim);
