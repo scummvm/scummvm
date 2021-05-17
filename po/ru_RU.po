@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 14:07+0000\n"
+"POT-Creation-Date: 2021-05-17 16:44+0000\n"
 "PO-Revision-Date: 2021-05-14 03:25+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -167,8 +167,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1955 engines/scumm/players/player_v3m.cpp:130
-#: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
+#: engines/scumm/scumm.cpp:1344 engines/scumm/scumm.cpp:1366
+#: engines/scumm/scumm.cpp:2041 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
@@ -3843,7 +3843,7 @@ msgstr "Восстановить"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Быстрое сохранение или загрузка не поддерживаются в этой локации"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2516
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2602
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3854,7 +3854,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2506
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2592
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3865,7 +3865,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2529
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2615
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6798,7 +6798,7 @@ msgstr "Поддержка для версии HE v71+ не скомпилиро
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "Поддержка для версии SCUMM v7-8 не скомпилирована"
 
-#: engines/scumm/scumm.cpp:548
+#: engines/scumm/scumm.cpp:550
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6811,7 +6811,27 @@ msgstr ""
 "Коррекция соотношения сторон может быть достигнута путем обрезки разрешения "
 "до 320x200 на вкладке «Движок»."
 
-#: engines/scumm/scumm.cpp:1953
+#: engines/scumm/scumm.cpp:1343
+#, fuzzy
+#| msgid ""
+#| "Could not find the 'Loom' Macintosh executable to read the\n"
+#| "instruments from. Music will be disabled."
+msgid ""
+"Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
+"versions of font and cursor will be disabled."
+msgstr ""
+"Не удалось найти исполнимый файл 'Loom' Macintosh, чтобы прочитать\n"
+"данные об инструментах. Музыка будет выключена."
+
+#: engines/scumm/scumm.cpp:1365
+msgid ""
+"Could not find the 'Monkey Island' Macintosh executable to read the\n"
+"instruments from. Music will be disabled."
+msgstr ""
+"Не удалось найти исполнимый файл 'Monkey Island' Macintosh, чтобы прочитать\n"
+"данные об инструментах. Музыка будет выключена."
+
+#: engines/scumm/scumm.cpp:2039
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6820,7 +6840,7 @@ msgstr ""
 "Режим \"родного\" MIDI требует обновление Roland Upgrade от\n"
 "LucasArts, но не хватает %s. Переключаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2814
+#: engines/scumm/scumm.cpp:2900
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -6829,22 +6849,6 @@ msgstr ""
 "Сейчас должна запуститься игра Maniac Mansion. Но, чтобы это работало, файлы "
 "игры Maniac Mansion должны быть скопированы в директорию 'Maniac' внутри "
 "директории игры Tentacle и сама игра должна быть добавлена в ScummVM."
-
-#: engines/scumm/players/player_v3m.cpp:129
-msgid ""
-"Could not find the 'Loom' Macintosh executable to read the\n"
-"instruments from. Music will be disabled."
-msgstr ""
-"Не удалось найти исполнимый файл 'Loom' Macintosh, чтобы прочитать\n"
-"данные об инструментах. Музыка будет выключена."
-
-#: engines/scumm/players/player_v5m.cpp:107
-msgid ""
-"Could not find the 'Monkey Island' Macintosh executable to read the\n"
-"instruments from. Music will be disabled."
-msgstr ""
-"Не удалось найти исполнимый файл 'Monkey Island' Macintosh, чтобы прочитать\n"
-"данные об инструментах. Музыка будет выключена."
 
 #: engines/scumm/imuse/drivers/amiga.cpp:654
 msgid ""
