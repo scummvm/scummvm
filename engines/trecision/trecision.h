@@ -325,6 +325,8 @@ public:
 	int _forcedActorPos;
 	uint8 _textStatus;
 
+	uint32 _pauseStartTime;
+
 	uint8 const _defActionLen[hLAST + 1] = {
 		/* STAND */ 1,
 		/* PARTE */ 1,

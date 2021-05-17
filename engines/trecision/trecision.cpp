@@ -169,6 +169,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	maskMouse = false;
 	oldMousePos = Common::Point(0, 0);
 	lastMouseOn = true;
+
+	_pauseStartTime = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {

@@ -685,7 +685,6 @@ void TrecisionEngine::doDoing() {
 }
 
 void TrecisionEngine::doScript() {
-	static uint32 pauseStartTime = 0;
 	Message *message = _curMessage;
 	uint8 scope = message->_u8Param;
 	uint16 index = message->_u16Param1;
@@ -695,11 +694,11 @@ void TrecisionEngine::doScript() {
 
 	switch (message->_event) {
 	case ME_PAUSE:
-		if (!pauseStartTime) {
-			pauseStartTime = _curTime;
+		if (!_pauseStartTime) {
+			_pauseStartTime = _curTime;
 			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
-		} else if (_curTime >= (pauseStartTime + message->_u16Param1))
-			pauseStartTime = 0;
+		} else if (_curTime >= (_pauseStartTime + message->_u16Param1))
+			_pauseStartTime = 0;
 		else
 			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
 
