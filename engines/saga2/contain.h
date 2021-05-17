@@ -1,0 +1,582 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ *
+ * Based on the original sources
+ *   Faery Tale II -- The Halls of the Dead
+ *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
+ */
+
+#ifndef SAGA2_CONTAIN_H
+#define SAGA2_CONTAIN_H
+
+#include "saga2/fta.h"
+#include "saga2/panel.h"
+#include "saga2/floating.h"
+#include "saga2/images.h"
+#include "saga2/button.h"
+#include "saga2/intrface.h"
+
+namespace Saga2 {
+
+//DNode
+//	gPanel
+//		gControl
+class ContainerView;
+class ScrollingContainerView;
+class ActorContainerView;
+class ReadyContainerView;
+class SmallContainerView;
+class EnchantContainerView;
+//		gWindow
+//			DecoratedWindow
+//				FloatingWindow
+class ContainerWindow;
+class ContainerNode;
+//DList
+class ContainerList;
+struct ContainerAppearanceDef;
+
+/* ===================================================================== *
+   Class definitions
+ * ===================================================================== */
+
+//  The base class for all container panels
+
+class ContainerView : public gControl {
+
+	friend class ContainerWindow;
+	friend class TangibleContainerWindow;
+	friend class IntangibleContainerWindow;
+
+protected:
+
+	enum imageData {
+		selectorX = 10,
+		selectorY = 25,
+	};
+
+public:
+
+	ContainerNode   &node;
+
+	Point16         iconOrigin;     //  of the top left icon.
+	Point16         iconSpacing;    //  The spacing between icons (in both X and Y)
+
+	//  The number of rows and columns of icons that can be seen
+	int16           visibleRows,
+	                visibleCols;
+
+	//  The total number of rows, and the scroll position of the control
+	int16           totalRows,
+	                scrollPosition;
+
+	//  Pointer to the object that this control is showing the
+	//  contents of.
+	GameObject      *containerObject;
+
+	//  Mass and bulk indicators
+	int16           totalMass,
+	                totalBulk;
+
+	//  Number of visible objects currently in the container
+	int16           numObjects;
+
+	// These indicators are static
+	// becuase there is only one mouse cursor,
+	// and therefore only one set of information
+	// about the last place it's been anywhere on the game screen.
+	//  ID of the last object the mouse was on
+	enum {
+		bufSize     = 60,
+		accelSpeed  = 8,    // this tells the multi-item getting gadget how many items to grab per time unit
+	};
+
+	static ObjectID lastPickedObjectID;
+
+	// this will be used to hold a value of uint16 plus a -1 as a flag
+	static int32    lastPickedObjectQuantity;
+
+	// this will be used to determine if the cursor has been
+	// held over an object long enough to qualify for the hint to be displayed
+	static bool objTextAlarm;
+
+	// buffer for the mouse text
+	static char mouseText[ bufSize ];
+
+	// determines if the cursor is in *A* container view
+	static bool mouseInView;
+
+	// number of items to move for merged objects
+	static uint16 numPicked;
+
+	// merged object currently being gotten
+	static GameObject *objToGet;
+
+	static int32 amountAccumulator;
+
+	static int16 amountIndY;
+
+	//  Constructor
+	ContainerView(
+	    gPanelList &,
+	    const Rect16 &,
+	    ContainerNode &nd,
+	    ContainerAppearanceDef &app,
+	    AppFunc *cmd = NULL);
+
+	//  Destructor
+	~ContainerView();
+
+	// redraw the panel offscreen
+	virtual void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
+
+	// draws the mereged object multi-item selector
+	void drawSelector(gPort &port, Point16 &pos);
+
+	//  Draw the quantity indicator below the object if quantity > 1
+	void drawQuantity(gPort &port, GameObject *item, ProtoObj *objProto, int16 x, int16 y);
+
+	//  returns TRUE if the object is visible for this type of
+	//  container.
+	virtual bool isVisible(GameObject *obj);
+
+	//  total the mass, bulk, and number of all objects in container.
+	void totalObjects(void);
+
+	//  Get the Nth visible object from this container.
+	ObjectID getObject(int16 slotNum);
+
+	void setContainer(GameObject *container);
+
+	// get the slot the point is over
+	TilePoint pickObjectSlot(const Point16 &pickPos);
+
+	//  Get the object in a slot (u/v)
+	GameObject *getObject(const TilePoint &slot);
+
+	// Get the object that the point is over
+	GameObject *pickObject(const Point16 &pickPos);
+
+	//  Get the object ID that the point is over
+	ObjectID  pickObjectID(const Point16 &pickPos);
+
+protected: // actions within a container
+
+	// These are the actions when there is no Item in the mouse
+	virtual void clickOn(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj);
+	virtual void dblClickOn(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj);
+
+	// this gets a merged item
+	void getMerged(GameObject *obj);
+
+	// drop Physical Object into container
+	virtual void dropPhysical(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj, int16 num = 1);
+
+	// Use Physical Object on other object in container
+	virtual void usePhysical(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj);
+
+	// Use Concept or Psycological object in container
+	// note: only valid container use is to drop into
+	//       center characters's ready container.
+	virtual void useConcept(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj);
+
+	// Use Spell or Skill on other object in container or
+	// drop into center characters's ready container.
+	virtual void useSpell(gPanelMessage &msg, GameObject *mObj,  GameObject *cObj);
+
+	//  Event-handling functions
+
+	bool activate(gEventType why);       // activate the control
+	void deactivate(void);
+
+	virtual void pointerMove(gPanelMessage &msg);
+	virtual bool pointerHit(gPanelMessage &msg);
+	virtual void pointerRelease(gPanelMessage &msg);
+	virtual void timerTick(gPanelMessage &msg);
+
+	void dblClick(GameObject *mouseObject, GameObject *slotObject, gPanelMessage &msg);
+
+private:
+	//  Container manipulation functions
+	void add(ObjectID newObj);
+	void remove(ObjectID obj);
+	void swap(ObjectID newObj, ObjectID oldObj);
+
+	//  Determine if the mouse is pointing a new object, and if so,
+	//  adjust the mouse text
+	void updateMouseText(Point16 &pickPos);
+	void setCursorText(GameObject *obj);
+	void setDelayedCursorText(GameObject *obj);
+};
+
+// sub class for ready inventory items
+
+class ReadyContainerView : public ContainerView {
+private:
+	void            **backImages;       // pointers to background imagery
+	int16           numIm;
+
+public:
+
+	ReadyContainerView(gPanelList &,
+	                   const Rect16 &,
+	                   ContainerNode &,
+	                   void **backgrounds,
+	                   int16 numRes,
+	                   int16 numRows,
+	                   int16 numCols,
+	                   int16 totRows,
+	                   AppFunc *cmd);
+
+	// redraw the panel offscreen
+	virtual void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
+
+	void setScrollOffset(int8 num);
+	void timerTick(gPanelMessage &msg);
+};
+
+//  sub class for enchantment container panels
+
+class  EnchantmentContainerView : public ContainerView {
+public:
+	EnchantmentContainerView(gPanelList &list,
+	                         ContainerNode &nd,
+	                         ContainerAppearanceDef &app,
+	                         AppFunc *cmd = NULL);
+
+	virtual void pointerMove(gPanelMessage &msg);
+	virtual bool pointerHit(gPanelMessage &msg);
+};
+
+
+//  The container window is simply a floating window with an embedded
+//  container view panel and a close button control
+
+class ContainerWindow : public FloatingWindow {
+protected:
+	gCompButton     *closeCompButton;       //  the close button object
+	ContainerView   *view;          //  the container view object
+
+public:
+	ContainerWindow(ContainerNode &nd,
+	                ContainerAppearanceDef &app,
+	                const char saveas[]);
+
+	virtual ~ContainerWindow(void);
+
+	ContainerView &getView(void);
+	GameObject *containerObject(void) {
+		return getView().containerObject;
+	}
+
+	virtual void massBulkUpdate(void) {}
+};
+
+//  Base class for all container windows with scroll control
+class ScrollableContainerWindow : public ContainerWindow {
+protected:
+	gCompButton     *scrollCompButton;
+
+public:
+	ScrollableContainerWindow(ContainerNode &nd,
+	                          ContainerAppearanceDef &app,
+	                          const char saveas[]);
+
+	void scrollUp(void) {
+		if (view->scrollPosition > 0) view->scrollPosition--;
+	}
+
+	void scrollDown(void) {
+		if (view->scrollPosition + view->visibleRows < view->totalRows)
+			view->scrollPosition++;
+	}
+};
+
+//  A container window for tangible containers
+class TangibleContainerWindow : public ScrollableContainerWindow {
+private:
+	gCompImage      *containerSpriteImg;
+	CMassWeightIndicator *massWeightIndicator;
+
+	Rect16          objRect;
+	void            **pieImag;
+	uint16          pieImagNum;
+	bool            deathFlag;
+
+private:
+	void setContainerSprite(void);
+
+public:
+
+	TangibleContainerWindow(ContainerNode &nd,
+	                        ContainerAppearanceDef &app);
+	~TangibleContainerWindow(void);
+
+	void drawClipped(gPort &port, const Point16 &offset, const Rect16 &clip);
+
+	// this sets the mass and bulk gauges for physical containers
+	void massBulkUpdate(void);
+};
+
+class IntangibleContainerWindow : public ScrollableContainerWindow {
+protected:
+	friend  void setMindContainer(int index, IntangibleContainerWindow &cw);
+private:
+	gMultCompButton *mindSelectorCompButton;
+	void **mindImage;
+
+public:
+
+	IntangibleContainerWindow(ContainerNode &nd, ContainerAppearanceDef &app);
+};
+
+class EnchantmentContainerWindow : public ContainerWindow {
+protected:
+	gCompButton     *scrollCompButton;
+
+public:
+	EnchantmentContainerWindow(ContainerNode &nd,
+	                           ContainerAppearanceDef &app);
+};
+
+/* ===================================================================== *
+    ContainerAppearanceDef: A record listing container appearance info
+ * ===================================================================== */
+
+struct ContainerAppearanceDef {
+	Rect16          defaultWindowPos;       //  default position of window
+	Rect16          viewRect;               //  position of view within window
+	Rect16          closeRect,              //  position of close button
+	                scrollRect,             //  position of scrolling button
+	                iconRect,               //  position of container icon
+	                massRect;               //  position of mass & bulk indicator
+	hResID          closeResID[ 2 ],        //  resource ID's for close box
+	                scrollResID[ 2 ];       //  resource ID's for scroll indicator
+	Point16         iconOrigin,
+	                iconSpacing;
+	uint16          rows,
+	                cols,
+	                totRows;
+
+	ContainerAppearanceDef(
+	    Rect16      _defaultWindowPos,
+	    Rect16      _viewRect,
+	    Rect16      _closeRect,
+	    Rect16      _scrollRect,
+	    Rect16      _iconRect,
+	    Rect16      _massRect,
+	    hResID      _closeResID_0,
+	    hResID      _closeResID_1,
+	    hResID      _scrollResID_0,
+	    hResID      _scrollResID_1,
+	    Point16     _iconOrigin,
+	    Point16     _iconSpacing,
+	    uint16      _rows,
+	    uint16      _cols,
+	    uint16      _totRows)
+		:   defaultWindowPos(_defaultWindowPos),
+		    viewRect(_viewRect),
+		    closeRect(_closeRect),
+		    scrollRect(_scrollRect),
+		    iconRect(_iconRect),
+		    massRect(_massRect),
+		    iconOrigin(_iconOrigin),
+		    iconSpacing(_iconSpacing),
+		    rows(_rows),
+		    cols(_cols),
+		    totRows(_totRows) {
+		closeResID[ 0 ]     = _closeResID_0;
+		closeResID[ 1 ]     = _closeResID_1;
+		scrollResID[ 0 ]    = _scrollResID_0;
+		scrollResID[ 1 ]    = _scrollResID_1;
+	}
+};
+
+/* ===================================================================== *
+    ContainerNode: records the fact that a container was open for a
+    specific player
+ * ===================================================================== */
+
+//  ContainerNode records the fact that a container was opened for a
+//  specific player
+
+//  REM: What about the ordering of windows?
+
+class ContainerNode : public DNode {
+
+	friend class    ContainerList;
+	friend class    ContainerView;
+	friend class    ContainerWindow;
+
+public:
+	enum ContainerNodeOwnerType {
+		readyType   = 0,                    //  This is a player ready container
+		deadType,                           //  The "dead" container
+		mentalType,                         //  A player's mental container
+		physicalType,                       //  Physical container
+		enchantType                         //  Enchantment container
+	};
+
+	enum ContainerNodeOwners {
+		nobody = 255                        //  owner = 255 means it's on the ground
+	};
+
+	enum containerAction {
+		actionUpdate    = (1 << 0),         //  Refresh this window
+		actionDelete    = (1 << 1),         //  Delete this window
+		actionHide      = (1 << 2),         //  Refresh this window
+		actionShow      = (1 << 3),         //  Refresh this window
+	};
+
+private:
+	ObjectID        object;                 //  Object being viewed
+	uint8           type;                   //  type of container
+	uint8           owner;                  //  which brother owns this container
+	Rect16          position;               //  position of window
+	ContainerWindow *window;                //  window, which may be NULL if hidden.
+	uint8           action;                 //  What action to take on container
+public:
+	uint8           mindType;               //  mindContainer type
+
+private:
+	//  Nested structure used to archive ContainerNodes
+	struct Archive {
+		ObjectID        object;
+		uint8           type;
+		uint8           owner;
+		Rect16          position;
+		uint8           mindType;
+		bool            shown;
+	};
+
+public:
+	ContainerNode(void) {}
+	ContainerNode(ContainerList &cl, ObjectID id, int type);
+	~ContainerNode();
+
+	static int32 archiveSize(void) {
+		return sizeof(Archive);
+	}
+	void *restore(void *buf);
+	void *archive(void *buf);
+
+	//  Hide or show this container window.
+	void hide(void);
+	void show(void);
+	void update(void);                   //  Update container associated with this node
+
+	//  Set for lazy deletion
+	void markForDelete(void)   {
+		action |= actionDelete;
+	}
+	void markForShow(void) {
+		action |= actionShow;
+		action &= ~actionHide;
+	}
+	void markForHide(void) {
+		action |= actionHide;
+		action &= ~actionShow;
+	}
+	void markForUpdate(void)   {
+		action |= actionUpdate;
+	}
+
+	//  Find the address of the window and/or view
+	ContainerWindow *getWindow(void);
+	ContainerView   *getView(void);
+
+	//  Access functions
+	uint8 getType(void) {
+		return type;
+	}
+	uint8 getOwnerIndex(void) {
+		return owner;
+	}
+	ObjectID getObject(void) {
+		return object;
+	}
+	Rect16 &getPosition(void) {
+		return position;
+	}
+	void setObject(ObjectID id) {
+		object = id;
+	}
+
+	//  returns TRUE if the object represented by the container can be
+	//  accessed by the player.
+	bool isAccessable(ObjectID enactor);
+
+	void changeOwner(int16 newOwner);
+};
+
+//  A list of container nodes
+
+class ContainerList : public DList {
+
+	friend class ContainerNodeIterator;
+
+public:
+	void add(ContainerNode &cn) {
+		addHead(cn);
+	}
+	void remove(ContainerNode &cn) {
+		cn.remove();
+	}
+	void moveToFront(ContainerNode &cn) {
+		cn.remove();
+		add(cn);
+	}
+	ContainerNode *find(ObjectID id);
+	ContainerNode *find(ObjectID id, int16 type);
+
+	//  Set which player is viewing the container windows.
+	void setPlayerNum(PlayerActorID playerNum);
+	void doDeferredActions(void);
+	void setUpdate(ObjectID id);
+};
+
+extern ContainerList    globalContainerList;
+
+ContainerNode *CreateContainerNode(ObjectID id, bool open = TRUE, int16 mindType = 0);
+ContainerNode *CreateReadyContainerNode(PlayerActorID player);
+ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type);
+
+/* ===================================================================== *
+   Exports
+ * ===================================================================== */
+
+void initContainers(void);
+void cleanupContainers(void);
+
+void initContainerNodes(void);
+void saveContainerNodes(SaveFileConstructor &saveGame);
+void loadContainerNodes(SaveFileReader &saveGame);
+void cleanupContainerNodes(void);
+
+extern void updateContainerWindows(void);
+
+extern APPFUNC(cmdCloseButtonFunc);
+extern APPFUNC(cmdMindContainerFunc);
+extern APPFUNC(cmdScrollFunc);
+
+} // end of namespace Saga2
+
+#endif
