@@ -288,6 +288,7 @@ public:
 	int getFontHeight() override;
 	int getCharWidth(uint16 chr) override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
+	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 	void setColor(byte color) override;
 };
 

@@ -1616,6 +1616,10 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	//       figure out what the original does here. The "c" looks like
 	//       it's shadowed in the normal way, but everything else looks
 	//       kind-of-but-not-quite outlined instead. Weird.
+	//
+	//       Even weirder, I've seen screenshots where there is no
+	//       shadowing at all. I'll just keep it like this for now,
+	//       because it makes the notes stand out a bit better.
 
 	if ((chr >= 16 && chr <= 23) || chr == 60 || chr == 95)
 		enableShadow = true;
@@ -1679,6 +1683,10 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	_left = macLeft / 2;
 	_lastTop = _top;
+}
+
+void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
+	_macFont.drawChar(&s, chr, x, y, _color);
 }
 
 void CharsetRendererMac::setColor(byte color) {
