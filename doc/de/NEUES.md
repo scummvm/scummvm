@@ -103,6 +103,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für weiches Scrolling in verschiedenen FM-Towns-Spielen hinzugefügt.
    - Die Darstellung von FM-TOWNS-Spielen kann nun auf eine Höhe von 200 Pixeln beschränkt werden, um eine
      Seitenverhältniskorrektur zu ermöglichen.
+   - Audioprobleme in der PC-Engine-Version von Loom korrigiert.
+   - Unterstützung für hochauflösende Schriftarten und Cursor-Darstellungen in der Macintosh-Version von Loom hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
