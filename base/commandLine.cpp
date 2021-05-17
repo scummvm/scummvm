@@ -549,8 +549,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-all-debugflags")
 			END_COMMAND
 
-			DO_LONG_COMMAND("list-debugflags")
-			END_COMMAND
+			DO_OPTION_OPT(0, "list-debugflags", "global")
+				ensureFirstCommand(command, "list-debugflags");
+				command = "list-debugflags";
+			END_OPTION
 
 			DO_LONG_COMMAND("list-engines")
 			END_COMMAND
@@ -958,9 +960,24 @@ static void printDebugFlags(const DebugChannelDef *debugChannels) {
 	}
 }
 
-/** List global debug flags*/
-static void listGlobalDebugFlags() {
-	printDebugFlags(globalDebugChannels);
+/** List debug flags*/
+static void listDebugFlags(const Common::String &engineID) {
+	if (engineID == "global")
+		printDebugFlags(globalDebugChannels);
+	else {
+		const PluginList &plugins = EngineMan.getPlugins();
+		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
+			if (metaEngine.getEngineId() == engineID) {
+				printf("Flag name       Flag description                                           \n");
+				printf("--------------- ------------------------------------------------------\n");
+				printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+				printDebugFlags(metaEngine.getDebugChannels());
+				return;
+			}
+		}
+		printf("Cannot find engine %s\n", engineID.c_str());
+	}
 }
 
 /** List all engine specified debug channels */
@@ -1464,7 +1481,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listAllEngineDebugFlags();
 		return true;
 	} else if (command == "list-debugflags") {
-		listGlobalDebugFlags();
+		listDebugFlags(settings["list-debugflags"]);
 		return true;
 	} else if (command == "list-games") {
 		listGames();
