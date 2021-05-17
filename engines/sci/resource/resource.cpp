@@ -28,6 +28,7 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 #ifdef ENABLE_SCI32
+#include "common/installshield_cab.h"
 #include "common/memstream.h"
 #endif
 
@@ -731,6 +732,18 @@ int ResourceManager::addAppropriateSources() {
 
 	if (Common::File::exists("altres.map"))
 		addSource(new VolumeResourceSource("altres.000", addExternalMap("altres.map"), 0));
+
+#ifdef ENABLE_SCI32
+	// Some LSL7 Polish CDs have all of the patch files in InstallShield cabinet files
+	//  (data1.cab/hdr) while the rest of the game is in normal SCI files. Trac #10066
+	if (g_sci &&
+		g_sci->getGameId() == GID_LSL7 && g_sci->getLanguage() == Common::PL_POL) {
+		Common::Archive *archive = Common::makeInstallShieldArchive("data");
+		if (archive != nullptr) {
+			SearchMan.add("data1.cab", archive);
+		}
+	}
+#endif
 
 	return 1;
 }
