@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -3915,6 +3915,38 @@ msgstr "Suavizada"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+#| msgid "Show blueprint"
+msgid "Show version"
+msgstr "Mostrar modelo"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+msgid "Quick load"
+msgstr "Carregar rápido"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+msgid "Quick save"
+msgstr "Guardar rápido"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Mudar para o Jogo"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Mudar para o Jogo"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Mudar para o Jogo"
+
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "Falha ao inicializar recursos"
@@ -7761,10 +7793,6 @@ msgstr ""
 msgid "Save game"
 msgstr "Guardar jogo"
 
-#: engines/wintermute/keymapper_tables.h:686
-msgid "Quick save"
-msgstr "Guardar rápido"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr ""
@@ -7776,10 +7804,6 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:706
-msgid "Quick load"
-msgstr "Carregar rápido"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

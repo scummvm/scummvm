@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2021-05-04 15:25+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -3937,6 +3937,38 @@ msgstr ""
 "Muestra los textos con bordes suavizados aunque el juego no utilice este "
 "efecto"
 
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+#| msgid "Show blueprint"
+msgid "Show version"
+msgstr "Mostrar planos"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+msgid "Quick load"
+msgstr "Carga rápida"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+msgid "Quick save"
+msgstr "Guardado rápido"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Volver al juego"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Volver al juego"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Volver al juego"
+
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "No se han podido iniciar los recursos"
@@ -7858,10 +7890,6 @@ msgstr "Cambiar tamaño de fuente"
 msgid "Save game"
 msgstr "Guardar partida"
 
-#: engines/wintermute/keymapper_tables.h:686
-msgid "Quick save"
-msgstr "Guardado rápido"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr "Andar despacio"
@@ -7873,10 +7901,6 @@ msgstr "Andar a velocidad media"
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr "Andar rápido"
-
-#: engines/wintermute/keymapper_tables.h:706
-msgid "Quick load"
-msgstr "Carga rápida"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

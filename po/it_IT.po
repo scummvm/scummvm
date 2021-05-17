@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2021-05-03 22:35+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -3943,6 +3943,38 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Applica l'antialiasing ai testi, anche se il gioco non lo richiede "
 "esplicitamente"
+
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+#| msgid "Show blueprint"
+msgid "Show version"
+msgstr "Mostra progetto"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+msgid "Quick load"
+msgstr "Carica Salvataggio rapido"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+msgid "Quick save"
+msgstr "Salvataggio rapido"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Passa al Gioco"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Passa al Gioco"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Passa al Gioco"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -7882,10 +7914,6 @@ msgstr "Cambia dimensione testi"
 msgid "Save game"
 msgstr "Salva gioco"
 
-#: engines/wintermute/keymapper_tables.h:686
-msgid "Quick save"
-msgstr "Salvataggio rapido"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr "Andatura camminata: Lenta"
@@ -7897,10 +7925,6 @@ msgstr "Andatura camminata: Media"
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr "Andatura camminata: Veloce"
-
-#: engines/wintermute/keymapper_tables.h:706
-msgid "Quick load"
-msgstr "Carica Salvataggio rapido"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

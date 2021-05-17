@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2020-09-29 17:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -3937,6 +3937,39 @@ msgstr "Wygładzany"
 #: engines/ags/detection.cpp:110
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
+
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+msgid "Show version"
+msgstr "Pokaż etykiety obiektów"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+#, fuzzy
+msgid "Quick load"
+msgstr "Tryb klikania"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+#, fuzzy
+msgid "Quick save"
+msgstr "Tryb klikania"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Przełącz do gry"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Przełącz do gry"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Przełącz do gry"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -7870,11 +7903,6 @@ msgstr ""
 msgid "Save game"
 msgstr "Zapis:"
 
-#: engines/wintermute/keymapper_tables.h:686
-#, fuzzy
-msgid "Quick save"
-msgstr "Tryb klikania"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr ""
@@ -7886,11 +7914,6 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:706
-#, fuzzy
-msgid "Quick load"
-msgstr "Tryb klikania"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

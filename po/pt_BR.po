@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2021-05-04 11:25+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -3922,6 +3922,38 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Utiliza suavização para desenhar texto mesmo que o jogo não precise disso"
 
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+#| msgid "Show blueprint"
+msgid "Show version"
+msgstr "Exibir projeto"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+msgid "Quick load"
+msgstr "Carregamento rápido"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+msgid "Quick save"
+msgstr "Salvamento rápido"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Mudar para o Jogo"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Mudar para o Jogo"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Mudar para o Jogo"
+
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "Falha ao inicializar recursos"
@@ -7833,10 +7865,6 @@ msgstr "Mudar tamanho da fonte"
 msgid "Save game"
 msgstr "Salvar jogo"
 
-#: engines/wintermute/keymapper_tables.h:686
-msgid "Quick save"
-msgstr "Salvamento rápido"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr "Velocidade de caminhada: Baixa"
@@ -7848,10 +7876,6 @@ msgstr "Velocidade de caminhada: Média"
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr "Velocidade de caminhada: Alta"
-
-#: engines/wintermute/keymapper_tables.h:706
-msgid "Quick load"
-msgstr "Carregamento rápido"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

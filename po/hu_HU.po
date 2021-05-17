@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2021-05-04 11:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3895,6 +3895,38 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Használjon élsimítást a szöveg rajzolásához, akkor is ha a játék nem kéri"
 
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+#| msgid "Show blueprint"
+msgid "Show version"
+msgstr "Terv mutatása"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+msgid "Quick load"
+msgstr "Gyorstöltés"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+msgid "Quick save"
+msgstr "Gyorsmentés"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Átvált játékra"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Átvált játékra"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Átvált játékra"
+
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
 msgstr "Nem sikerült inicializálni az erõforrásokat"
@@ -7762,10 +7794,6 @@ msgstr "Betûméret változtatás"
 msgid "Save game"
 msgstr "Játék mentés"
 
-#: engines/wintermute/keymapper_tables.h:686
-msgid "Quick save"
-msgstr "Gyorsmentés"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr "Séta sebesség: Lassú"
@@ -7777,10 +7805,6 @@ msgstr "Séta sebesség: Közepes"
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr "Séta sebesség: Gyors"
-
-#: engines/wintermute/keymapper_tables.h:706
-msgid "Quick load"
-msgstr "Gyorstöltés"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041

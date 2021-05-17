@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-17 03:17+0000\n"
+"POT-Creation-Date: 2021-05-17 14:07+0000\n"
 "PO-Revision-Date: 2021-04-12 23:51+0000\n"
 "Last-Translator: Henrik Andersson <henke@henke37.cjb.net>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3964,6 +3964,39 @@ msgstr "Antialiserad"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
+#: engines/asylum/metaengine.cpp:67
+#, fuzzy
+msgid "Show version"
+msgstr "Visa objektrad"
+
+#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+#, fuzzy
+msgid "Quick load"
+msgstr "Klickläge"
+
+#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+#, fuzzy
+msgid "Quick save"
+msgstr "Klickläge"
+
+#: engines/asylum/metaengine.cpp:82
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Sarah"
+msgstr "Växla till spelet"
+
+#: engines/asylum/metaengine.cpp:87
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Grimwall"
+msgstr "Växla till spelet"
+
+#: engines/asylum/metaengine.cpp:92
+#, fuzzy
+#| msgid "Switch to Game"
+msgid "Switch to Olmec"
+msgstr "Växla till spelet"
+
 #: engines/bladerunner/bladerunner.cpp:359
 #, fuzzy
 msgid "Failed to initialize resources"
@@ -7882,11 +7915,6 @@ msgstr ""
 msgid "Save game"
 msgstr "Spara spelet:"
 
-#: engines/wintermute/keymapper_tables.h:686
-#, fuzzy
-msgid "Quick save"
-msgstr "Klickläge"
-
 #: engines/wintermute/keymapper_tables.h:691
 msgid "Walking speed: Low"
 msgstr "Gånghastighet: Långsam"
@@ -7898,11 +7926,6 @@ msgstr "Gånghastighet: Medium"
 #: engines/wintermute/keymapper_tables.h:701
 msgid "Walking speed: High"
 msgstr "Gånghastighet: Snabb"
-
-#: engines/wintermute/keymapper_tables.h:706
-#, fuzzy
-msgid "Quick load"
-msgstr "Klickläge"
 
 #: engines/wintermute/keymapper_tables.h:711
 #: engines/wintermute/keymapper_tables.h:1041
