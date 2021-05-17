@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 16:44+0000\n"
-"PO-Revision-Date: 2020-09-29 17:13+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2021-05-17 17:34+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
 "X-Poedit-Language: Polish\n"
@@ -887,10 +887,8 @@ msgstr "Co 30 min"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Autozapis"
+msgstr "Auto"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
@@ -900,12 +898,12 @@ msgstr ""
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
 msgid "Medium"
-msgstr ""
+msgstr "Średni"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Mały"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1024,22 +1022,20 @@ msgstr "Pełny ekran"
 
 #: gui/options.cpp:1334
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync w grach 3D"
 
 #: gui/options.cpp:1334
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "Poczekaj aż V-sync odśiweży ekran w renderze 3D"
 
 #: gui/options.cpp:1337
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "Renderer graficzny:"
+msgstr "Renderer graficzny 3D:"
 
 #: gui/options.cpp:1339
-#, fuzzy
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "Renderer graficzny:"
+msgstr "Renderer graficzny 3D:"
 
 #: gui/options.cpp:1352
 #, fuzzy
@@ -1751,7 +1747,7 @@ msgstr "Nie udało się połączyć z usługą chmury."
 
 #: gui/options.cpp:3136
 msgid "Failed to connect storage: "
-msgstr "Nie udało się się połączyć z usługą chmury: "
+msgstr "Nie udało się połączyć z usługą chmury: "
 
 #: gui/options.cpp:3156
 msgid ""
