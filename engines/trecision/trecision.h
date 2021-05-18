@@ -73,7 +73,6 @@ typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
 
 class TrecisionEngine : public Engine {
 	void initMain();
-	void openDataFiles();
 	void loadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
 	void eventLoop();

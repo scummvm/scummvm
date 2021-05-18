@@ -196,7 +196,9 @@ TrecisionEngine::~TrecisionEngine() {
 
 Common::Error TrecisionEngine::run() {
 	syncSoundSettings();
-	openDataFiles();
+
+	if (!_dataFile.open("nldata.cd0"))
+		error("Error opening nldata.cd0");
 
 	_graphicsMgr = new GraphicsManager(this);
 	if (!_graphicsMgr->init())
@@ -321,18 +323,6 @@ void TrecisionEngine::initMain() {
 	processTime();
 
 	_scheduler->doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
-}
-
-void TrecisionEngine::openDataFiles() {
-	if (!_dataFile.open("nldata.cd0"))
-		error("openDataFiles() - Error opening nldata.cd0");
-
-	if (!isDemo()) {
-		if (!Common::File::exists("nlanim.cd1") ||
-			!Common::File::exists("nlanim.cd2") ||
-			!Common::File::exists("nlanim.cd3"))
-			error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
-	}
 }
 
 void TrecisionEngine::loadAll() {
