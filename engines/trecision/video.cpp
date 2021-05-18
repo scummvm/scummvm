@@ -103,7 +103,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 void NightlongSmackerDecoder::forceSkip(uint frame) {
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 
-	while (getCurFrame() < frame) {
+	while (getCurFrame() < (int)frame) {
 		decodeNextFrame();
 	}
 

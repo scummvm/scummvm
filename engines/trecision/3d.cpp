@@ -2204,8 +2204,8 @@ bool PathFinding3D::findAttachedPanel(int srcPanel, int destPanel) {
 		Compare route distance (qsort)
 --------------------------------------------------*/
 int pathCompare(const void *arg1, const void *arg2) {
-	SPathNode *p1 = (SPathNode *)arg1;
-	SPathNode *p2 = (SPathNode *)arg2;
+	const SPathNode *p1 = (const SPathNode *)arg1;
+	const SPathNode *p2 = (const SPathNode *)arg2;
 
 	if (p1->_dist < p2->_dist)
 		return -1;
@@ -2341,8 +2341,8 @@ void PathFinding3D::reset(uint16 idx,float px, float pz, float theta) {
 		Compare panel distance (qsort)
 --------------------------------------------------*/
 int panelCompare(const void *arg1, const void *arg2) {
-	SSortPan *p1 = (SSortPan *)arg1;
-	SSortPan *p2 = (SSortPan *)arg2;
+	const SSortPan *p1 = (const SSortPan *)arg1;
+	const SSortPan *p2 = (const SSortPan *)arg2;
 
 	if (p1->_min > p2->_min)
 		return 1;
