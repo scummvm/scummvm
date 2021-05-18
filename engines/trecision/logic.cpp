@@ -58,6 +58,9 @@ LogicManager::LogicManager(TrecisionEngine *vm) : _vm(vm) {
 	_slotMachine41Counter = 0;
 
 	_closeUpObj = 0;
+
+	initInventory();
+	initScript();
 }
 LogicManager::~LogicManager() {}
 

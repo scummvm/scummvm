@@ -134,7 +134,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_flagScriptActive = false;
 
-	_textureArea = nullptr;
 	_actor = nullptr;
 
 	_flagDialogActive = false;
@@ -186,7 +185,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _scheduler;
 	delete _animTypeMgr;
 	
-	delete[] _textureArea;
 	delete _actor;
 	delete[] _textArea;
 
@@ -212,11 +210,11 @@ Common::Error TrecisionEngine::run() {
 	_textMgr = new TextManager(this);
 	_scheduler = new Scheduler(this);
 	_animTypeMgr = new AnimTypeManager(this);
-	
+	_actor = new Actor(this);
+
 	setDebugger(new Console(this));
 
 	initMain();
-	_graphicsMgr->initCursor();
 
 	// Check if a saved game is to be loaded from the launcher
 	if (ConfMan.hasKey("save_slot"))
@@ -308,17 +306,18 @@ void TrecisionEngine::initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
 		_obj[c]._position = -1;
 
-	_logicMgr->initScript();
-	openDataFiles();
-	openSys();
+	_textArea = new char[MAXTEXTAREA];
+	_curRoom = kRoomIntro;
+	_gameQueue.initQueue();
+	_animQueue.initQueue();
+	_characterQueue.initQueue();
+	for (uint8 i = 0; i < MAXMESSAGE; i++) {
+		_gameQueue._event[i] = &_gameMsg[i];
+		_characterQueue._event[i] = &_characterMsg[i];
+		_animQueue._event[i] = &_animMsg[i];
+	}
 
 	loadAll();
-
-	initMessageSystem();
-	_logicMgr->initInventory();
-
-	_curRoom = kRoomIntro;
-
 	processTime();
 
 	_scheduler->doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
@@ -333,19 +332,6 @@ void TrecisionEngine::openDataFiles() {
 			!Common::File::exists("nlanim.cd2") ||
 			!Common::File::exists("nlanim.cd3"))
 			error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
-	}
-	
-	_textureArea = readData("textur.bm");
-}
-
-void TrecisionEngine::initMessageSystem() {
-	_gameQueue.initQueue();
-	_animQueue.initQueue();
-	_characterQueue.initQueue();
-	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		_gameQueue._event[i] = &_gameMsg[i];
-		_characterQueue._event[i] = &_characterMsg[i];
-		_animQueue._event[i] = &_animMsg[i];
 	}
 }
 
