@@ -30,16 +30,6 @@
 
 namespace Trecision {
 
-/* -----------------19/01/98 17.12-------------------
- * Compare
- *
- * bsearch comparison routine
- * --------------------------------------------------*/
-int compareFileEntries(const void *p1, const void *p2) {
-	SFileEntry *p1c = (SFileEntry *)p1, *p2c = (SFileEntry*)p2;
-	return (scumm_stricmp((p1c)->name, (p2c)->name));
-}
-
 FastFile::FastFile() : Common::Archive(), _stream(nullptr), _compBuffer(nullptr), _compStream(nullptr) {
 }
 
@@ -47,12 +37,13 @@ FastFile::~FastFile() {
 	close();
 }
 
-const FastFile::FileEntry *FastFile::getEntry(const Common::String &name) const {
-	FileEntry key;
-	strncpy(key.name, name.c_str(), ARRAYSIZE(key.name));
+const FileEntry *FastFile::getEntry(const Common::String &name) const {
+	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it) {
+		if (it->name.equalsIgnoreCase(name))
+			return it;
+	}
 
-	FileEntry *entry = (FileEntry *)bsearch(&key, &_fileEntries[0], _fileEntries.size(), sizeof(FileEntry), compareFileEntries);
-	return entry;
+	return nullptr;
 }
 
 bool FastFile::open(const Common::String &name) {
@@ -66,7 +57,8 @@ bool FastFile::open(const Common::String &name) {
 	_fileEntries.resize(numFiles);
 	for (int i = 0; i < numFiles; i++) {
 		FileEntry *entry = &_fileEntries[i];
-		_stream->read(entry->name, ARRAYSIZE(entry->name));
+		for (int j = 0; j < 12; j++)
+			entry->name += _stream->readByte();
 		entry->offset = _stream->readUint32LE();
 	}
 
@@ -156,16 +148,16 @@ Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const 
 	if (ff == nullptr)
 		error("createReadStreamForCompressedMember - File not found %s", name.c_str());
 
-	int32 dataSize = ff->size() - 8;
+	const int32 dataSize = ff->size() - 8;
 
-	uint32 signature = ff->readUint32LE();
+	const uint32 signature = ff->readUint32LE();
 	if (signature != FAST_COOKIE)
 		error("createReadStreamForCompressedMember - %s has a bad signature and can't be loaded", name.c_str());
 
-	int32 decompSize = ff->readSint32LE();
+	const int32 decompSize = ff->readSint32LE();
 
 	uint8 *ibuf = new uint8[dataSize];
-	int32 realSize = MAX(dataSize, decompSize) + 8 + 100;	// add extra padding for the decompressor
+	const int32 realSize = MAX(dataSize, decompSize) + 8 + 100; // add extra padding for the decompressor
 
 	delete _compStream;
 	_compBuffer = new uint8[realSize];

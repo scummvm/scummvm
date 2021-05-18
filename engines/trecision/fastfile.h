@@ -29,6 +29,11 @@
 
 namespace Trecision {
 
+struct FileEntry {
+	Common::String name;
+	uint32 offset;
+};
+
 class FastFile : public Common::Archive {
 public:
 	FastFile();
@@ -44,11 +49,6 @@ public:
 	int listMembers(Common::ArchiveMemberList &list) const override;
 	const Common::ArchiveMemberPtr getMember(const Common::String &name) const override;
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
-
-	struct FileEntry {
-		char name[12];
-		uint32 offset;
-	};
 
 private:
 	Common::SeekableReadStream *_stream;
