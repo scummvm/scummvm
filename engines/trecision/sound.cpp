@@ -179,7 +179,7 @@ void SoundManager::fadeOut() {
 
 void SoundManager::fadeIn(int num) {
 	Audio::AudioStream *stream = _sfxStream[num];
-	Audio::Mixer::SoundType type = _gSample[num]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = (_gSample[num]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	if (stream != nullptr && _gSample[num]._flag & kSoundFlagSoundLoop)
 		stream = Audio::makeLoopingAudioStream(_sfxStream[num], 0);
 
