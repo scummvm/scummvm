@@ -691,10 +691,29 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		actor->_lim[5] = (int)dist;
 
 		// vertex clipping
-		actor->_lim[0] = (actor->_lim[0] <= _minXClip + 1) ? _minXClip : actor->_lim[0]--;
-		actor->_lim[1] = (actor->_lim[1] >= _maxXClip - 1) ? _maxXClip : actor->_lim[1]++;
-		actor->_lim[2] = (actor->_lim[2] <= _minYClip + 1) ? _minYClip : actor->_lim[2]--;
-		actor->_lim[3] = (actor->_lim[3] >= _maxYClip - 1) ? _maxYClip : actor->_lim[3]++;
+		if (actor->_lim[0] <= _minXClip + 1) {
+			actor->_lim[0] = _minXClip;
+		} else {
+			actor->_lim[0]--;
+		}
+
+		if (actor->_lim[1] >= _maxXClip - 1) {
+			actor->_lim[1] = _maxXClip;
+		} else {
+			actor->_lim[1]++;
+		}
+
+		if (actor->_lim[2] <= _minYClip + 1) {
+			actor->_lim[2] = _minYClip;
+		} else {
+			actor->_lim[2]--;
+		}
+
+		if (actor->_lim[3] >= _maxYClip - 1) {
+			actor->_lim[3] = _maxYClip;
+		} else {
+			actor->_lim[3]++;
+		}
 
 		if (actor->_curAction == hLAST) // exit displacer
 			actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _vm->_defActionLen[hLAST]);
@@ -1158,7 +1177,7 @@ void PathFinding3D::findPath() {
 		// if outside the last panel it moves the last node
 
 		if (((inters & 1) && (_curPanel < 0) && (_oldPanel < 0)) ||
-			((inters - 1 & 1) && (_curPanel < 0) &&
+			(((inters - 1) & 1) && (_curPanel < 0) &&
 			 (!findAttachedPanel(_pathNode[_numPathNodes - 2]._curPanel, _pathNode[_numPathNodes - 1]._curPanel) ||
 			  pointInside(_pathNode[_numPathNodes - 1]._curPanel, _curX, _curZ)))) {
 

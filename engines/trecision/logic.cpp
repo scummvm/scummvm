@@ -2619,7 +2619,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 			else
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a143CPRENDECREDITCARD, 0, 0, curObj);
-			_vm->setObjectAnim(curObj, NULL);
+			_vm->setObjectAnim(curObj, 0);
 		} else
 			retVal = true;
 		break;
