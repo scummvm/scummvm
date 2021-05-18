@@ -35,7 +35,7 @@ namespace Trecision {
 
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm) {
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm), _font(nullptr) {
 }
 
 GraphicsManager::~GraphicsManager() {
@@ -46,9 +46,10 @@ GraphicsManager::~GraphicsManager() {
 	_rightInventoryArrow.free();
 	_inventoryIcons.free();
 	_saveSlotThumbnails.free();
+	delete[] _font;
 }
 
-bool GraphicsManager::initScreen() {
+bool GraphicsManager::init() {
 	const Graphics::PixelFormat *bestFormat = &kImageFormat;
 
 	// Find a 16-bit format, currently we don't support other color depths
@@ -80,6 +81,8 @@ bool GraphicsManager::initScreen() {
 	_background.create(MAXX, MAXY, _screenFormat);
 	_smkBackground.create(MAXX, AREA, _screenFormat);
 	_saveSlotThumbnails.create(READICON * ICONDX, ICONDY, _screenFormat);
+
+	loadData();
 
 	return true;
 }
@@ -142,7 +145,7 @@ void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 
 	memcpy(_screenBuffer.getBasePtr(0, TOP), _background.getPixels(), _background.pitch * _background.h);
 }
 
-void GraphicsManager::loadInventoryIcons() {
+void GraphicsManager::loadData() {
 	Common::SeekableReadStream *arrowsDataFile = _vm->_dataFile.createReadStreamForMember("frecc.bm");
 	// The data file contains images for deactivated arrows, which aren't used. Skip them.
 	arrowsDataFile->skip(ICONMARGDX * ICONDY * 2 * 3);
@@ -153,6 +156,8 @@ void GraphicsManager::loadInventoryIcons() {
 	Common::SeekableReadStream *iconsDataFile = _vm->_dataFile.createReadStreamForMember("icone.bm");
 	readSurface(iconsDataFile, &_inventoryIcons, ICONDX, ICONDY, READICON);
 	delete iconsDataFile;
+
+	_font = _vm->readData("nlfont.fnt");
 }
 
 void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thumbnail) {
@@ -404,6 +409,77 @@ void GraphicsManager::drawObj(SDObj d) {
 
 void GraphicsManager::eraseObj(SDObj d) {
 	_screenBuffer.fillRect(Common::Rect(d.l.left, d.l.top + TOP, d.l.right, d.l.bottom + TOP), 0);
+}
+
+uint16 GraphicsManager::getCharWidth(byte character) {
+	return _font[character * 3 + 2];
+}
+
+void GraphicsManager::drawChar(byte curChar, uint16 sColor, uint16 tColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface) {
+	const uint16 charOffset = _font[curChar * 3] + (uint16)(_font[curChar * 3 + 1] << 8);
+	uint16 fontDataOffset = 768;
+	const uint16 charWidth = getCharWidth(curChar);
+
+	for (uint16 y = line * CARHEI; y < (line + 1) * CARHEI; y++) {
+		uint16 curPos = 0;
+		uint16 curColor = sColor;
+
+		while (curPos <= charWidth - 1) {
+			if (y >= subtitleRect.top && y < subtitleRect.bottom) {
+				if (curColor != MASKCOL && (_font[charOffset + fontDataOffset])) {
+					const uint16 charLeft = inc + curPos;
+					const uint16 charRight = charLeft + _font[charOffset + fontDataOffset];
+					drawCharPixel(
+						y,
+						charLeft,
+						charRight,
+						rect,
+						subtitleRect,
+						curColor,
+						externalSurface
+					);
+				}
+			}
+
+			curPos += _font[charOffset + fontDataOffset];
+			fontDataOffset++;
+
+			if (curColor == sColor)
+				curColor = 0;
+			else if (curColor == 0)
+				curColor = tColor;
+			else if (curColor == tColor)
+				curColor = sColor;
+		}
+	}
+}
+
+void GraphicsManager::drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface) {
+	Graphics::Surface *surface = externalSurface ? externalSurface : &_screenBuffer;
+	uint16 *dst1 = (uint16 *)surface->getBasePtr(rect.left + charLeft, rect.top + y);
+	uint16 *dst2 = (uint16 *)surface->getBasePtr(rect.left + subtitleRect.left, rect.top + y);
+	uint16 *dst = nullptr;
+	uint16 size = 0;
+
+	if (charLeft >= subtitleRect.left && charRight < subtitleRect.right) {
+		dst = dst1;
+		size = charRight - charLeft;
+	} else if (charLeft < subtitleRect.left && charRight < subtitleRect.right && charRight > subtitleRect.left) {
+		dst = dst2;
+		size = charRight - subtitleRect.left;
+	} else if (charLeft >= subtitleRect.left && charRight >= subtitleRect.right && subtitleRect.right > charLeft) {
+		dst = dst1;
+		size = subtitleRect.right - charLeft;
+	} else if (charLeft < subtitleRect.left && charRight >= subtitleRect.right && subtitleRect.right > charLeft) {
+		dst = dst2;
+		size = subtitleRect.right - subtitleRect.left;
+	}
+
+	if (dst && size > 0) {
+		uint16 *d = dst;
+		for (uint32 i = 0; i < size; i++)
+			*d++ = color;
+	}
 }
 
 void GraphicsManager::initCursor() {

@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "graphics/surface.h"
 #include "trecision/defines.h"
 
 namespace Trecision {
@@ -33,10 +34,10 @@ namespace Trecision {
 struct SRoom {
 	char  _baseName[4];                     // Room name
 	uint8 _flag;							// Room visited or not
-	uint16 _bkgAnim;						    // Background animation
-	uint16 _object[MAXOBJINROOM];            // Objects in the room
-	uint16 _sounds[MAXSOUNDSINROOM];         // Sounds of the room
-	uint16 _actions[MAXACTIONINROOM];        // Character actions in the room
+	uint16 _bkgAnim;                        // Background animation
+	uint16 _object[MAXOBJINROOM];           // Objects in the room
+	uint16 _sounds[MAXSOUNDSINROOM];        // Sounds of the room
+	uint16 _actions[MAXACTIONINROOM];       // Character actions in the room
 };
 
 struct SObject {
@@ -155,7 +156,7 @@ struct SDText {
 	void set(SDText org);
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
 
-	void draw(TrecisionEngine *vm, uint16 *frameBuffer = nullptr);
+	void draw(TrecisionEngine *vm, Graphics::Surface *externalSurface = nullptr);
 	uint16 calcHeight(TrecisionEngine *vm);
 };
 

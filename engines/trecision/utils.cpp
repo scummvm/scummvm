@@ -61,7 +61,7 @@ uint16 TrecisionEngine::textLength(const Common::String &text, uint16 begin, uin
 
 	uint16 retVal = 0;
 	for (uint16 c = begin; c < end; c++)
-		retVal += _font[(uint8)text[c] * 3 + 2];
+		retVal += _graphicsMgr->getCharWidth(text[c]);
 
 	return retVal;
 }
@@ -420,7 +420,7 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	return 0;
 }
 
-void SDText::draw(TrecisionEngine *vm, uint16 *frameBuffer) {
+void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 	uint16 tmpTCol = tcol;
 	uint16 tmpSCol = scol;
 	vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
@@ -430,11 +430,10 @@ void SDText::draw(TrecisionEngine *vm, uint16 *frameBuffer) {
 	if (text.empty())
 		return;
 
-	uint16 *buffer = (frameBuffer == nullptr) ? vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
-	uint16 curDy = calcHeight(vm);
+	const uint16 curDy = calcHeight(vm);
 
-	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
-		char *curText = (char *)_drawTextLines[b];
+	for (uint16 line = 0; line < curDy / CARHEI; line++) {
+		char *curText = (char *)_drawTextLines[line];
 		uint16 inc = (_rect.width() - vm->textLength(curText)) / 2;
 		uint16 len = strlen(curText);
 
@@ -443,64 +442,24 @@ void SDText::draw(TrecisionEngine *vm, uint16 *frameBuffer) {
 			len = strlen(curText);
 		}
 
-		for (uint16 c = 0; c < len; c++) {
-			byte curChar = curText[c]; /* reads the first part of the font */
+		for (uint16 index = 0; index < len; index++) {
+			const byte curChar = curText[index];
 
-			const uint16 charOffset = vm->_font[curChar * 3] + (uint16)(vm->_font[curChar * 3 + 1] << 8);
-			uint16 fontDataOffset = 768;
-			const uint16 charWidth = vm->_font[curChar * 3 + 2];
-
-			if (c == len - 1 && vm->_blinkLastDTextChar != MASKCOL)
+			if (index == len - 1 && vm->_blinkLastDTextChar != MASKCOL)
 				tmpTCol = vm->_blinkLastDTextChar;
 
-			for (uint16 a = b * CARHEI; a < (b + 1) * CARHEI; a++) {
-				uint16 curPos = 0;
-				uint16 curColor = tmpSCol;
+			vm->_graphicsMgr->drawChar(
+				curChar,
+				tmpSCol,
+				tmpTCol,
+				line,
+				_rect,
+				_subtitleRect,
+				inc,
+				externalSurface
+			);
 
-				while (curPos <= charWidth - 1) {
-					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
-						if (curColor != MASKCOL && (vm->_font[charOffset + fontDataOffset])) {
-							const uint16 charLeft = inc + curPos;
-							const uint16 charRight = charLeft + vm->_font[charOffset + fontDataOffset];
-							uint16 *dst1 = buffer + _rect.left + charLeft + (_rect.top + a) * MAXX;
-							uint16 *dst2 = buffer + _rect.left + _subtitleRect.left + (_rect.top + a) * MAXX;
-							uint16 *dst = nullptr;
-							uint16 size = 0;
-
-							if (charLeft >= _subtitleRect.left && charRight < _subtitleRect.right) {
-								dst = dst1;
-								size = charRight - charLeft;
-							} else if (charLeft < _subtitleRect.left && charRight < _subtitleRect.right && charRight > _subtitleRect.left) {
-								dst = dst2;
-								size = charRight - _subtitleRect.left;
-							} else if (charLeft >= _subtitleRect.left && charRight >= _subtitleRect.right && _subtitleRect.right > charLeft) {
-								dst = dst1;
-								size = _subtitleRect.right - charLeft;
-							} else if (charLeft < _subtitleRect.left && charRight >= _subtitleRect.right && _subtitleRect.right > charLeft) {
-								dst = dst2;
-								size = _subtitleRect.right - _subtitleRect.left;
-							}
-
-							if (dst && size > 0) {
-								uint16 *d = dst;
-								for (uint32 i = 0; i < size; i++)
-									*d++ = curColor;
-							}
-						}
-					}
-
-					curPos += vm->_font[charOffset + fontDataOffset];
-					fontDataOffset++;
-
-					if (curColor == tmpSCol)
-						curColor = 0;
-					else if (curColor == 0)
-						curColor = tmpTCol;
-					else if (curColor == tmpTCol)
-						curColor = tmpSCol;
-				}
-			}
-			inc += charWidth;
+			inc += vm->_graphicsMgr->getCharWidth(curChar);
 		}
 	}
 }
