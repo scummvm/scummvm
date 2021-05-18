@@ -96,7 +96,7 @@ public:
 	uint16 _curDialog;
 	uint16 _curChoice;
 };
-; // end of class
+// end of class
 
 } // End of namespace Trecision
 #endif
