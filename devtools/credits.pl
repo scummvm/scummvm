@@ -672,6 +672,16 @@ begin_credits("Credits");
 				add_person("Berian Williams", "AGA", "AgsCreditz");
 			end_section();
 
+			begin_section("Asylum");
+				add_person("Alex Bevilacqua", "alexbevi", "");
+				add_person("Alex Fontoura", "xesf", "");
+				add_person("Alexander Panov", "alxpnv", "");
+				add_person("Benjamin Haisch", "john_doe", "");
+				add_person("", "Deledrius", "");
+				add_person("Filippos Karapetis", "bluegr", "");
+				add_person("Joseph Davies", "", "");
+				add_person("Julien Templier", "littleboy", "");
+			end_section();
 
 			begin_section("Avalanche");
 				add_person("Peter Bozs&oacute;", "uruk", "");
