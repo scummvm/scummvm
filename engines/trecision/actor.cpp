@@ -36,6 +36,7 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_light = nullptr;
 	_camera = nullptr;
 	_texture = nullptr;
+	_textureData = nullptr;
 
 	_vertexNum = 0;
 	_faceNum = 0;
@@ -64,11 +65,19 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	}
 
 	_characterArea = nullptr;
+	_textureData = _vm->readData("textur.bm");
+
+	initTextures();
+	readModel("jm.om");
+
+	_light = (SLight *)&_lightArea;
+	_camera = (SCamera *)&_cameraArea;
 }
 
 Actor::~Actor() {
 	delete[] _characterArea;
 	delete[] _face;
+	delete[] _textureData;
 }
 
 void Actor::initTextures() {
@@ -77,7 +86,7 @@ void Actor::initTextures() {
 	_textureArea[idx]._dx = 300 / 2;
 	_textureArea[idx]._dy = 208 / 2;
 	_textureArea[idx]._angle = 0;
-	_textureArea[idx]._texture = _vm->_textureArea;
+	_textureArea[idx]._texture = _textureData;
 	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	// body

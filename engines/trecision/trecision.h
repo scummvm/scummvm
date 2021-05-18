@@ -55,7 +55,6 @@ class AnimTypeManager;
 #define MAXOBJ          	  1400           // Game objects
 #define MAXINVENTORY    	  150            // Inventory Items
 #define MAXSAVEFILE		12
-#define MAXLIGHT 40
 
 enum TrecisionMessageIds {
 	kMessageSavePosition = 9,
@@ -74,15 +73,10 @@ typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
 
 class TrecisionEngine : public Engine {
 	void initMain();
-	void initMessageSystem();
 	void openDataFiles();
 	void loadAll();
 	void loadSaveSlots(Common::StringArray &saveNames);
-	void openSys();
 	void eventLoop();
-
-	// Data files
-	byte *readData(const Common::String &fileName);
 
 	// Inventory
 	void refreshInventory(uint8 startIcon, uint8 startLine);
@@ -131,8 +125,6 @@ class TrecisionEngine : public Engine {
 	void readObj(Common::SeekableReadStream *stream);
 	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
 
-	SLight _lightArea[MAXLIGHT];
-	SCamera _cameraArea;
 	char *_textArea;
 	uint16 _curScriptFrame[10];
 	uint8 _actionLen[MAXACTION];
@@ -294,8 +286,6 @@ public:
 	TextManager *_textMgr;
 	Scheduler *_scheduler;
 	AnimTypeManager *_animTypeMgr;
-
-	uint8 *_textureArea;
 
 	Actor *_actor;
 

@@ -55,13 +55,14 @@ class LogicManager {
 	// CloseUp12 and 13
 	uint16 _closeUpObj;
 
+	void initScript();
+	void initInventory();
+
 public:
 	LogicManager(TrecisionEngine *vm);
 	~LogicManager();
 
 	void syncGameStream(Common::Serializer &ser);
-	void initScript();
-	void initInventory();
 
 	void setupAltRoom(uint16 room, bool altRoomFl);
 	void endChangeRoom();

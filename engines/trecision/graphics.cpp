@@ -83,6 +83,8 @@ bool GraphicsManager::init() {
 	_saveSlotThumbnails.create(READICON * ICONDX, ICONDY, _screenFormat);
 
 	loadData();
+	initCursor();
+	hideCursor();
 
 	return true;
 }

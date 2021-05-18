@@ -180,21 +180,6 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 	return false;
 }
 
-void TrecisionEngine::openSys() {
-	delete _actor;
-	_actor = new Actor(this);
-	_actor->initTextures();
-	_actor->readModel("jm.om");
-
-	_actor->_light = (SLight *)&_lightArea;
-	_actor->_camera = (SCamera *)&_cameraArea;
-
-	_textArea = new char[MAXTEXTAREA];
-
-	_graphicsMgr->clearScreen();
-	_graphicsMgr->hideCursor();
-}
-
 float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 	if (sinus == 0 && cosinus == 0)
 		return 0;

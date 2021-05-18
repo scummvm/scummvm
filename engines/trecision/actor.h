@@ -28,13 +28,21 @@
 #include "common/serializer.h"
 
 namespace Trecision {
+
+#define MAXLIGHT 40
+
 class TrecisionEngine;
 
 class Actor {
-private:
 	TrecisionEngine *_vm;
 
+	SLight _lightArea[MAXLIGHT];
+	SCamera _cameraArea;
+	uint8 *_textureData;
 	STexture _textureArea[MAXMAT];
+
+	void initTextures();
+	void readModel(const char *filename);
 
 public:
 	Actor(TrecisionEngine *vm);
@@ -64,14 +72,11 @@ public:
 	int _curFrame;
 	int _curAction;
 
-	void readModel(const char *filename);
 	void syncGameStream(Common::Serializer &ser);
 	void actorDoAction(int action);
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
 	float frameCenter(SVertex *v);
-	void initTextures();
-
 };
 
 } // End of namespace Trecision
