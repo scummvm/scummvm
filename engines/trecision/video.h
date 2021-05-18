@@ -101,7 +101,7 @@ public:
 	void smkStop(uint16 slot);
 
 	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1);
-	void startFullMotion(const char *name);
+	void startFullMotion();
 	void stopFullMotion();
 
 	void refreshAllAnimations();

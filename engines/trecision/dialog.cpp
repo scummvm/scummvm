@@ -117,7 +117,7 @@ void DialogManager::playDialog(uint16 i) {
 	_curChoice = 0;
 	_curSubTitle = 0;
 
-	_vm->_animMgr->startFullMotion((const char *)_dialog[i]._startAnim);
+	_vm->_animMgr->startFullMotion();
 
 	int skip = 0;
 	int curChoice = 0;
