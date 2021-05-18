@@ -36,13 +36,12 @@ class TextManager {
 	TrecisionEngine *_vm;
 
 	uint32 _someoneSpeakTime;
-	uint16 _superStringLen;
 	bool _subStringAgain;
 	uint32 _talkTime;
 	uint16 _talkingPersonAnimId;
 	char _subString[MAXSUBSTRING][MAXLENSUBSTRING];
 	uint16 _subStringUsed;
-	const char *_superString;
+	Common::String _superString;
 	uint16 _subStringStart;
 	uint16 _curSentenceId;
 	uint16 _curSubString;

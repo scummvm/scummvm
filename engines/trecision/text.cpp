@@ -35,7 +35,6 @@ namespace Trecision {
 
 TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 	_someoneSpeakTime = 0;
-	_superStringLen = 0;
 	_subStringAgain = false;
 	_talkTime = 0;
 	_talkingPersonAnimId = 0;
@@ -45,7 +44,6 @@ TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 		}
 	}
 	_subStringUsed = 0;
-	_superString = nullptr;
 	_subStringStart = 0;
 	_curSentenceId = 0;
 	_curSubString = 0;
@@ -88,7 +86,7 @@ void TextManager::formattingOneString() {
 	uint16 i;
 	memset(_subString[_subStringUsed], '\0', MAXLENSUBSTRING);
 
-	const uint16 available = (_superStringLen - _subStringStart);
+	const uint16 available = (_superString.size() - _subStringStart);
 	for (i = 0; i < available; i++) {
 		switch (_superString[i + _subStringStart]) {
 		case '\0':
@@ -116,7 +114,6 @@ void TextManager::characterTalk(const char *s) {
 	_vm->_flagSkipTalk = false;
 
 	_superString = s;
-	_superStringLen = strlen(_superString);
 	_subStringStart = 0;
 	_curSubString = 0;
 	formattingSuperString();
@@ -363,7 +360,6 @@ void TextManager::someoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
 
 	_curSentenceId = s;
 	_superString = _vm->_sentence[s];
-	_superStringLen = strlen(_superString);
 	_subStringStart = 0;
 	_curSubString = 0;
 
@@ -396,7 +392,6 @@ void TextManager::characterSayInAction(uint16 ss) {
 	_vm->_flagSkipTalk = false;
 
 	_superString = s;
-	_superStringLen = strlen(_superString);
 	_subStringStart = 0;
 	_curSubString = 0;
 	formattingSuperString();
