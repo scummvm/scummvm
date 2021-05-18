@@ -95,6 +95,8 @@ public:
 
 	void closeMenu();
 
+	bool checkIntersects(Common::Rect &rect);
+
 	Common::Rect _bbox;
 
 private:
