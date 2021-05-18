@@ -167,11 +167,6 @@ struct SDObj {
 	bool drawMask;
 };
 
-struct SFileEntry {
-	char name[12];
-	int offset;
-};
-
 struct ElevatorAction {
 	uint16 dialog;
 	uint16 choice;
