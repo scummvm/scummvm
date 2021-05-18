@@ -38,8 +38,8 @@
 
 namespace Trecision {
 
-void SScriptFrame::sendFrame() {
-	g_vm->_scheduler->doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
+void SScriptFrame::sendFrame(Scheduler *scheduler) {
+	scheduler->doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
 }
 
 void TrecisionEngine::endScript() {
@@ -69,7 +69,7 @@ void TrecisionEngine::playScript(uint16 id) {
 		loop = false;
 		curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 		SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
-		curFrame->sendFrame();
+		curFrame->sendFrame(_scheduler);
 		if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
 			_curScriptFrame[_curStack]++;
 			loop = true;
@@ -93,7 +93,7 @@ void TrecisionEngine::evalScript() {
 			loop = false;
 			curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 			SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
-			curFrame->sendFrame();
+			curFrame->sendFrame(_scheduler);
 			if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
 				_curScriptFrame[_curStack]++;
 				loop = true;
@@ -113,7 +113,7 @@ bool TrecisionEngine::quitPrompt() {
 		MASKCOL,
 		_sysText[kMessageConfirmExit]
 	);
-	drawText.draw();
+	drawText.draw(this);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -137,7 +137,7 @@ void TrecisionEngine::demoOver() {
 		MASKCOL,
 		_sysText[kMessageDemoOver]
 	);
-	drawText.draw();
+	drawText.draw(this);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 

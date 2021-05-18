@@ -110,6 +110,8 @@ struct SSortTable {
 	bool  _remove;                           // Whether to copy or remove
 };
 
+class Scheduler;
+
 struct SScriptFrame {
 	uint8 _class;
 	uint8 _event;
@@ -123,7 +125,7 @@ struct SScriptFrame {
 
 	bool  _noWait;
 
-	void sendFrame();
+	void sendFrame(Scheduler *scheduler);
 	bool isEmptyEvent() const { return _class == 0 && _event == 0;  }
 };
 
@@ -140,6 +142,8 @@ struct StackText {
 	bool clear;
 };
 
+class TrecisionEngine;
+
 struct SDText {
 	Common::Rect _rect;
 	Common::Rect _subtitleRect;
@@ -151,8 +155,8 @@ struct SDText {
 	void set(SDText org);
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
 
-	void draw(uint16 *frameBuffer = nullptr);
-	uint16 calcHeight();
+	void draw(TrecisionEngine *vm, uint16 *frameBuffer = nullptr);
+	uint16 calcHeight(TrecisionEngine *vm);
 };
 
 struct SDObj {
@@ -204,7 +208,7 @@ struct MessageQueue {
 	void orderEvents();
 	bool testEmptyQueue(uint8 cls);
 	bool testEmptyCharacterQueue4Script();
-	bool getMessage();
+	bool getMessage(Message **msg);
 	void initQueue();
 
 private:

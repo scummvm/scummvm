@@ -53,15 +53,11 @@ class File;
 
 namespace Trecision {
 
-TrecisionEngine *g_vm;
-
 TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) : Engine(syst), _gameDescription(desc) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "AUTORUN");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FMV");
-
-	g_vm = nullptr;
 
 	_curRoom = 0;
 	_oldRoom = 0;
@@ -200,13 +196,9 @@ TrecisionEngine::~TrecisionEngine() {
 		delete[] _objPointers[i];
 		delete[] _maskPointers[i];
 	}
-
-	g_vm = nullptr;
 }
 
 Common::Error TrecisionEngine::run() {
-	g_vm = this;
-
 	syncSoundSettings();
 
 	_graphicsMgr = new GraphicsManager(this);

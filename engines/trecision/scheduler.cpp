@@ -46,7 +46,7 @@ void Scheduler::process() {
 		case CLASS_GAME:
 			if (_counter++ <= 30) {
 				_token = CLASS_ANIM;
-				if (_vm->_gameQueue.getMessage())
+				if (_vm->_gameQueue.getMessage(&_vm->_curMessage))
 					_vm->_curMessage = &_vm->_idleMsg;
 			} else {
 				_counter = 0;
@@ -56,13 +56,13 @@ void Scheduler::process() {
 
 		case CLASS_ANIM:
 			_token = CLASS_CHAR;
-			if (_vm->_animQueue.getMessage())
+			if (_vm->_animQueue.getMessage(&_vm->_curMessage))
 				retry = true;
 			break;
 
 		case CLASS_CHAR:
 			_token = CLASS_GAME;
-			if (_vm->_flagPaintCharacter || _vm->_characterQueue.getMessage())
+			if (_vm->_flagPaintCharacter || _vm->_characterQueue.getMessage(&_vm->_curMessage))
 				retry = true;
 			break;
 
@@ -118,11 +118,11 @@ uint8 MessageQueue::predEvent(uint8 i) {
 	return i == 0 ? MAXMESSAGE - 1 : i - 1;
 };
 
-bool MessageQueue::getMessage() {
+bool MessageQueue::getMessage(Message **msg) {
 	if (!_len)
 		return true;
 
-	g_vm->_curMessage = _event[_head++];
+	*msg = _event[_head++];
 	if (_head == MAXMESSAGE)
 		_head = 0;
 	_len--;

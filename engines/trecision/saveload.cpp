@@ -123,7 +123,7 @@ bool TrecisionEngine::dataSave() {
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageSavePosition]);
-	drawText.draw();
+	drawText.draw(this);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -175,7 +175,7 @@ insave:
 					MOUSECOL,
 					MASKCOL,
 					saveNames[CurPos].c_str());
-				drawText.draw();
+				drawText.draw(this);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
@@ -247,7 +247,7 @@ insave:
 			if ((readTime() / 8) & 1)
 				_blinkLastDTextChar = 0x0000;
 
-			drawText.draw();
+			drawText.draw(this);
 			_blinkLastDTextChar = MASKCOL;
 
 			saveNames[CurPos].deleteLastChar(); // remove blinking cursor
@@ -314,7 +314,7 @@ bool TrecisionEngine::dataLoad() {
 		MOUSECOL,
 		MASKCOL,
 		_sysText[kMessageLoadPosition]);
-	drawText.draw();
+	drawText.draw(this);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, TOP);
 
@@ -366,7 +366,7 @@ bool TrecisionEngine::dataLoad() {
 					MOUSECOL,
 					MASKCOL,
 					saveNames[CurPos].c_str());
-				drawText.draw();
+				drawText.draw(this);
 
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}

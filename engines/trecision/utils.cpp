@@ -347,12 +347,12 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uin
 /*-------------------------------------------------------------
    calcHeight - Computes and returns the dy of the current text
 --------------------------------------------------------------*/
-uint16 SDText::calcHeight() {
+uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	if (text.empty())
 		return 0;
 
 	uint8 curLine = 0;
-	if (g_vm->textLength(text) <= _rect.width()) {
+	if (vm->textLength(text) <= _rect.width()) {
 		strcpy((char *)_drawTextLines[curLine], text.c_str());
 		return CARHEI;
 	}
@@ -365,9 +365,9 @@ uint16 SDText::calcHeight() {
 	while (a < text.size()) {
 		a++;
 		if (a < text.size() && text[a] == ' ') {
-			if (g_vm->textLength(text, curInit, a) <= _rect.width())
+			if (vm->textLength(text, curInit, a) <= _rect.width())
 				lastSpace = a;
-			else if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
+			else if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					_drawTextLines[curLine][b - curInit] = text[b];
@@ -382,7 +382,7 @@ uint16 SDText::calcHeight() {
 			} else
 				return 0;
 		} else if (a == text.size()) {
-			if (g_vm->textLength(text, curInit, a) <= _rect.width()) {
+			if (vm->textLength(text, curInit, a) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < a; b++)
 					_drawTextLines[curLine][b - curInit] = text[b];
@@ -393,7 +393,7 @@ uint16 SDText::calcHeight() {
 				return tmpDy;
 			}
 
-			if (g_vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
+			if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; b++)
 					_drawTextLines[curLine][b - curInit] = text[b];
@@ -420,38 +420,38 @@ uint16 SDText::calcHeight() {
 	return 0;
 }
 
-void SDText::draw(uint16 *frameBuffer) {
+void SDText::draw(TrecisionEngine *vm, uint16 *frameBuffer) {
 	uint16 tmpTCol = tcol;
 	uint16 tmpSCol = scol;
-	g_vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
+	vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
 	if (scol != MASKCOL)
-		g_vm->_graphicsMgr->updatePixelFormat(&tmpSCol, 1);
+		vm->_graphicsMgr->updatePixelFormat(&tmpSCol, 1);
 
 	if (text.empty())
 		return;
 
-	uint16 *buffer = (frameBuffer == nullptr) ? g_vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
-	uint16 curDy = calcHeight();
+	uint16 *buffer = (frameBuffer == nullptr) ? vm->_graphicsMgr->getScreenBufferPtr() : frameBuffer;
+	uint16 curDy = calcHeight(vm);
 
 	for (uint16 b = 0; b < (curDy / CARHEI); b++) {
 		char *curText = (char *)_drawTextLines[b];
-		uint16 inc = (_rect.width() - g_vm->textLength(curText)) / 2;
+		uint16 inc = (_rect.width() - vm->textLength(curText)) / 2;
 		uint16 len = strlen(curText);
 
 		if (len >= MAXCHARS) {
-			strcpy(curText, g_vm->_sysText[kMessageError]);
+			strcpy(curText, vm->_sysText[kMessageError]);
 			len = strlen(curText);
 		}
 
 		for (uint16 c = 0; c < len; c++) {
 			byte curChar = curText[c]; /* reads the first part of the font */
 
-			const uint16 charOffset = g_vm->_font[curChar * 3] + (uint16)(g_vm->_font[curChar * 3 + 1] << 8);
+			const uint16 charOffset = vm->_font[curChar * 3] + (uint16)(vm->_font[curChar * 3 + 1] << 8);
 			uint16 fontDataOffset = 768;
-			const uint16 charWidth = g_vm->_font[curChar * 3 + 2];
+			const uint16 charWidth = vm->_font[curChar * 3 + 2];
 
-			if (c == len - 1 && g_vm->_blinkLastDTextChar != MASKCOL)
-				tmpTCol = g_vm->_blinkLastDTextChar;
+			if (c == len - 1 && vm->_blinkLastDTextChar != MASKCOL)
+				tmpTCol = vm->_blinkLastDTextChar;
 
 			for (uint16 a = b * CARHEI; a < (b + 1) * CARHEI; a++) {
 				uint16 curPos = 0;
@@ -459,9 +459,9 @@ void SDText::draw(uint16 *frameBuffer) {
 
 				while (curPos <= charWidth - 1) {
 					if (a >= _subtitleRect.top && a < _subtitleRect.bottom) {
-						if (curColor != MASKCOL && (g_vm->_font[charOffset + fontDataOffset])) {
+						if (curColor != MASKCOL && (vm->_font[charOffset + fontDataOffset])) {
 							const uint16 charLeft = inc + curPos;
-							const uint16 charRight = charLeft + g_vm->_font[charOffset + fontDataOffset];
+							const uint16 charRight = charLeft + vm->_font[charOffset + fontDataOffset];
 							uint16 *dst1 = buffer + _rect.left + charLeft + (_rect.top + a) * MAXX;
 							uint16 *dst2 = buffer + _rect.left + _subtitleRect.left + (_rect.top + a) * MAXX;
 							uint16 *dst = nullptr;
@@ -489,7 +489,7 @@ void SDText::draw(uint16 *frameBuffer) {
 						}
 					}
 
-					curPos += g_vm->_font[charOffset + fontDataOffset];
+					curPos += vm->_font[charOffset + fontDataOffset];
 					fontDataOffset++;
 
 					if (curColor == tmpSCol)

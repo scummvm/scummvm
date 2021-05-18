@@ -444,7 +444,7 @@ void TextManager::drawText(StackText text) {
 	_curString._rect.setWidth(w);
 
 	_curString.text = text.text;
-	uint16 height = _curString.calcHeight();
+	uint16 height = _curString.calcHeight(_vm);
 	_curString._subtitleRect = Common::Rect(_curString._rect.width(), height);
 	_curString._rect.setHeight(height);
 	_curString.tcol = text.tcol;
@@ -495,7 +495,7 @@ void TextManager::clearTextStack() {
 }
 
 void TextManager::drawCurString() {
-	_curString.draw();
+	_curString.draw(_vm);
 	_vm->_dirtyRects.push_back(_curString._rect);
 }
 
