@@ -213,6 +213,9 @@ public:
 	void readExtraObj2C();
 	void readExtraObj41D();
 
+	// Data files
+	byte *readData(const Common::String &fileName);
+
 	const ADGameDescription *_gameDescription;
 
 	Graphics::Surface _thumbnail;
@@ -292,7 +295,6 @@ public:
 	Scheduler *_scheduler;
 	AnimTypeManager *_animTypeMgr;
 
-	uint8 *_font;
 	uint8 *_textureArea;
 
 	Actor *_actor;

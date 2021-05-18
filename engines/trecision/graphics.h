@@ -47,14 +47,19 @@ class GraphicsManager {
 
 	Graphics::PixelFormat _screenFormat;
 	uint16 _bitMask[3];
+	uint8 *_font;
 
 	static const Graphics::PixelFormat kImageFormat;
+
+	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
+	void drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface = nullptr);
+	void initCursor();
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
 
-	bool initScreen();
+	bool init();
 	void clearScreen();
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
@@ -64,7 +69,7 @@ public:
 	void clearScreenBuffer();
 	void clearScreenBufferTop();
 	void clearScreenBufferInventory();
-	void clearScreenBufferInventoryDescriptions();
+	void clearScreenBufferSaveSlotDescriptions();
 	void drawLeftInventoryArrow(byte startLine);
 	void drawRightInventoryArrow(byte startLine);
 	void drawInventoryIcon(byte iconIndex, byte iconSlot, byte startLine);
@@ -76,20 +81,21 @@ public:
 	void updatePixelFormat(uint16 *p, uint32 len) const;
 
 	uint16 shadow(uint32 val, uint8 num);
-	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 	void pixelAliasing(uint16 x, uint16 y);
 
 	void dissolve(uint8 val);
-	void drawObj(SDObj d);
 
+	void drawObj(SDObj d);
 	void eraseObj(SDObj d);
 
-	void initCursor();
+	uint16 getCharWidth(byte character);
+	void drawChar(byte curChar, uint16 sColor, uint16 tColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);
+
 	bool isCursorVisible();
 	void showCursor();
 	void hideCursor();
 
-	void loadInventoryIcons();
+	void loadData();
 	void showDemoPic();
 };
 

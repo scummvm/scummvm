@@ -134,7 +134,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_flagScriptActive = false;
 
-	_font = nullptr;
 	_textureArea = nullptr;
 	_actor = nullptr;
 
@@ -187,7 +186,6 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _scheduler;
 	delete _animTypeMgr;
 	
-	delete[] _font;
 	delete[] _textureArea;
 	delete _actor;
 	delete[] _textArea;
@@ -200,9 +198,10 @@ TrecisionEngine::~TrecisionEngine() {
 
 Common::Error TrecisionEngine::run() {
 	syncSoundSettings();
+	openDataFiles();
 
 	_graphicsMgr = new GraphicsManager(this);
-	if (!_graphicsMgr->initScreen())
+	if (!_graphicsMgr->init())
 		return Common::kUnsupportedColorMode;
 	_animMgr = new AnimManager(this);
 	_dialogMgr = new DialogManager(this);
@@ -336,10 +335,6 @@ void TrecisionEngine::openDataFiles() {
 			error("openDataFiles() - nlanim.cd1 or nlanim.cd2 or nlanim.cd3 is missing");
 	}
 	
-	_font = readData("nlfont.fnt");
-
-	_graphicsMgr->loadInventoryIcons();
-
 	_textureArea = readData("textur.bm");
 }
 
