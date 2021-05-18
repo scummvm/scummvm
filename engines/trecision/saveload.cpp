@@ -163,7 +163,7 @@ insave:
 			CurPos = ((mx - ICONMARGSX) / ICONDX);
 
 			if (OldPos != CurPos) {
-				_graphicsMgr->clearScreenBufferInventoryDescriptions();
+				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 
 				posx = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				LenText = textLength(saveNames[CurPos]);
@@ -184,7 +184,7 @@ insave:
 				break;
 		} else {
 			if (OldPos != -1) {
-				_graphicsMgr->clearScreenBufferInventoryDescriptions();
+				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
@@ -202,7 +202,7 @@ insave:
 		if (_inventory[CurPos] == EMPTYSLOT) {
 			saveNames[CurPos].clear();
 
-			_graphicsMgr->clearScreenBufferInventoryDescriptions();
+			_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 			_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 		}
 
@@ -216,7 +216,7 @@ insave:
 
 			if (ch == 0x1B) {
 				ch = 0;
-				_graphicsMgr->clearScreenBufferInventoryDescriptions();
+				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 
 				goto insave;
@@ -229,7 +229,7 @@ insave:
 			else if (saveNames[CurPos].size() < 39 && Common::isPrint(ch))
 				saveNames[CurPos] += ch;
 
-			_graphicsMgr->clearScreenBufferInventoryDescriptions();
+			_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 
 			saveNames[CurPos] += '_'; // add blinking cursor
 
@@ -349,7 +349,7 @@ bool TrecisionEngine::dataLoad() {
 			CurPos = (_mousePos.x - ICONMARGSX) / ICONDX;
 
 			if (OldPos != CurPos) {
-				_graphicsMgr->clearScreenBufferInventoryDescriptions();
+				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 
 				uint16 posX = ICONMARGSX + ((CurPos) * (ICONDX)) + ICONDX / 2;
 				uint16 lenText = textLength(saveNames[CurPos]);
@@ -375,7 +375,7 @@ bool TrecisionEngine::dataLoad() {
 				break;
 		} else {
 			if (OldPos != -1) {
-				_graphicsMgr->clearScreenBufferInventoryDescriptions();
+				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
