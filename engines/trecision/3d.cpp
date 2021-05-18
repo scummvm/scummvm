@@ -334,18 +334,16 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 
 		if (!(dx <= 0)) {
 			// screen offset
-			int32 sl = el + MAXX * y;
-
+			int16 x = el;
 			int16 *zBufferPtr = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
-			uint16 *screenPtr = _vm->_graphicsMgr->getScreenBufferPtr() + sl;
 			
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				if (*zBufferPtr != zv) {
-					*screenPtr = _vm->_graphicsMgr->shadow(*screenPtr, cv);
+					_vm->_graphicsMgr->shadow(x, y, cv);
 					*zBufferPtr = zv;
 				}
-				screenPtr++;  // increase screen x
+				x++;          // increase screen x
 				zBufferPtr++; // increase zbuffer
 				dx--;         // pixel to do --
 			}

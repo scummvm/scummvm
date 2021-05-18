@@ -80,7 +80,7 @@ public:
 	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
 
-	uint16 shadow(uint32 val, uint8 num);
+	void shadow(uint16 x, uint16 y, uint8 num);
 	void pixelAliasing(uint16 x, uint16 y);
 
 	void dissolve(uint8 val);
