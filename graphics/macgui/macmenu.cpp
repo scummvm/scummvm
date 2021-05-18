@@ -890,7 +890,7 @@ void MacMenu::renderSubmenu(MacMenuSubMenu *menu, bool recursive) {
 	_screen.hLine(r->left + 3, r->bottom + 1, r->right + 1, _wm->_colorBlack);
 
 	int y = r->top + 1;
-	int x = _align == kTextAlignRight ? -kMenuWin95LeftDropdownPadding: kMenuWin95LeftDropdownPadding;
+	int x = _align == kTextAlignRight ? -_menuRightDropdownPadding: _menuLeftDropdownPadding;
 	x += r->left;
 
 	for (uint i = 0; i < menu->items.size(); i++) {
