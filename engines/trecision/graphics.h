@@ -54,6 +54,7 @@ class GraphicsManager {
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 	void drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface = nullptr);
 	void initCursor();
+	void copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y);
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
@@ -62,8 +63,8 @@ public:
 	bool init();
 	void clearScreen();
 	void copyToScreen(int x, int y, int w, int h);
-	void copyToScreenBuffer(Graphics::Surface *surface, int x, int y);
-	void blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg);
+	void copyToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette);
+	void blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg);
 	uint16 *getScreenBufferPtr();
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBuffer();
@@ -77,7 +78,6 @@ public:
 	void setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thumbnail);
 	void readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count = 1);
 
-	uint16 palTo16bit(uint8 r, uint8 g, uint8 b) const;
 	void updatePixelFormat(uint16 *p, uint32 len) const;
 
 	void shadow(uint16 x, uint16 y, uint8 num);

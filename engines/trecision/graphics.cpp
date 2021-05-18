@@ -93,7 +93,16 @@ void GraphicsManager::clearScreen() {
 	g_system->fillScreen(0);
 }
 
-void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int y) {
+void GraphicsManager::copyToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette) {
+	Graphics::Surface *surface16 = surface->convertTo(_screenFormat, palette);
+
+	copyToScreenBufferInner(surface16, x, y);
+
+	surface16->free();
+	delete surface16;
+}
+
+void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y) {
 	for (int curY = 0; curY < surface->h; curY++) {
 		// NOTE: We use surface width for the pitch so that memcpy works
 		// correcly with surfaces from getSubArea()
@@ -101,12 +110,15 @@ void GraphicsManager::copyToScreenBuffer(Graphics::Surface *surface, int x, int 
 	}
 }
 
-void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int y, uint16 mask, bool useSmkBg) {
-	for (int curY = 0; curY < surface->h; curY++) {
-		for (int curX = 0; curX < surface->w; curX++) {
+void GraphicsManager::blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg) {
+	const uint16 mask = (uint16)_screenFormat.RGBToColor(palette[0], palette[1], palette[2]);
+	Graphics::Surface *surface16 = surface->convertTo(_screenFormat, palette);
+
+	for (int curY = 0; curY < surface16->h; curY++) {
+		for (int curX = 0; curX < surface16->w; curX++) {
 			const int destX = x + curX;
 			const int destY = y + curY;
-			const uint16 pixel = (uint16)surface->getPixel(curX, curY);
+			const uint16 pixel = (uint16)surface16->getPixel(curX, curY);
 			if (pixel != mask) {
 				_screenBuffer.setPixel(destX, destY, pixel);
 			} else if (useSmkBg) {
@@ -114,6 +126,9 @@ void GraphicsManager::blitToScreenBuffer(Graphics::Surface *surface, int x, int 
 			}
 		}
 	}
+
+	surface16->free();
+	delete surface16;
 }
 
 void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
@@ -181,14 +196,14 @@ void GraphicsManager::drawLeftInventoryArrow(byte startLine) {
 	Graphics::Surface arrow = _leftInventoryArrow.getSubArea(Common::Rect(
 		0, startLine, _leftInventoryArrow.w, _leftInventoryArrow.h
 	));
-	copyToScreenBuffer(&arrow, 0, FIRSTLINE);
+	copyToScreenBufferInner(&arrow, 0, FIRSTLINE);
 }
 
 void GraphicsManager::drawRightInventoryArrow(byte startLine) {
 	Graphics::Surface arrow = _rightInventoryArrow.getSubArea(Common::Rect(
 		0, startLine, _rightInventoryArrow.w, _rightInventoryArrow.h
 	));
-	copyToScreenBuffer(&arrow, MAXX - ICONMARGDX, FIRSTLINE);
+	copyToScreenBufferInner(&arrow, MAXX - ICONMARGDX, FIRSTLINE);
 }
 
 void GraphicsManager::drawInventoryIcon(byte iconIndex, byte iconSlot, byte startLine) {
@@ -198,7 +213,7 @@ void GraphicsManager::drawInventoryIcon(byte iconIndex, byte iconSlot, byte star
 		iconIndex * ICONDX + ICONDX,
 		_inventoryIcons.h
 	));
-	copyToScreenBuffer(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
+	copyToScreenBufferInner(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
 }
 
 void GraphicsManager::drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte startLine) {
@@ -208,7 +223,7 @@ void GraphicsManager::drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte 
 		iconIndex * ICONDX + ICONDX,
 		_saveSlotThumbnails.h
 	));
-	copyToScreenBuffer(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
+	copyToScreenBufferInner(&icon, iconSlot * ICONDX + ICONMARGSX, FIRSTLINE);
 }
 
 void GraphicsManager::clearScreenBuffer() {
@@ -228,10 +243,6 @@ void GraphicsManager::clearScreenBufferInventory() {
 void GraphicsManager::clearScreenBufferSaveSlotDescriptions() {
 	// Clears lines 470 - 480
 	_screenBuffer.fillRect(Common::Rect(0, FIRSTLINE + ICONDY + 10, MAXX, MAXY), 0);
-}
-
-uint16 GraphicsManager::palTo16bit(uint8 r, uint8 g, uint8 b) const {
-	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
 void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
@@ -493,7 +504,7 @@ void GraphicsManager::initCursor() {
 	uint16 cursor[cw * ch];
 	memset(cursor, 0, ARRAYSIZE(cursor) * 2);
 
-	const uint16 cursorColor = palTo16bit(255, 255, 255);
+	const uint16 cursorColor = (uint16)_screenFormat.RGBToColor(255, 255, 255);
 
 	for (int i = 0; i < cw; i++) {
 		if (i >= 8 && i <= 12 && i != 10)

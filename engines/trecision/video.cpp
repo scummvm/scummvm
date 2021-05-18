@@ -460,13 +460,11 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	if (!frame)
 		return;
 
-	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
 	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
-	const byte *pal = smkDecoder->getPalette();
-	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+	const byte *palette = smkDecoder->getPalette();
 
 	if (smkDecoder->getCurFrame() == 0) {
-		_vm->_graphicsMgr->blitToScreenBuffer(frame16, 0, TOP, mask, false);
+		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, false);
 	} else {
 		while (lastRect) {
 			bool intersects = false;
@@ -480,16 +478,13 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 			}
 
 			if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
-				Graphics::Surface anim = frame16->getSubArea(*lastRect);
-				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, mask, true);
+				Graphics::Surface anim = frame->getSubArea(*lastRect);
+				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
 			}
 
 			lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
 		}
 	}
-
-	frame16->free();
-	delete frame16;
 }
 
 void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
@@ -513,10 +508,7 @@ void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 		return;
 
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
-	Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-	_vm->_graphicsMgr->copyToScreenBuffer(frame16, stx, FIRSTLINE);
-	frame16->free();
-	delete frame16;
+	_vm->_graphicsMgr->copyToScreenBuffer(frame, stx, FIRSTLINE, smkDecoder->getPalette());
 
 	if (smkDecoder->endOfVideo())
 		smkDecoder->rewind();
@@ -528,8 +520,7 @@ void AnimManager::drawSmkActionFrame() {
 	if (!frame)
 		return;
 
-	const byte *pal = smkDecoder->getPalette();
-	uint16 mask = _vm->_graphicsMgr->palTo16bit(pal[0], pal[1], pal[2]);
+	const byte *palette = smkDecoder->getPalette();
 
 	if (smkCurFrame(kSmackerAction) == 0) {
 		for (uint16 curY = 0; curY < AREA; curY++) {
@@ -545,12 +536,8 @@ void AnimManager::drawSmkActionFrame() {
 	}
 
 	if (_animRect.width() > 0 && _animRect.height() > 0) {
-		Graphics::Surface *frame16 = frame->convertTo(g_system->getScreenFormat(), smkDecoder->getPalette());
-		Graphics::Surface anim = frame16->getSubArea(_animRect);
-		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animRect.left, _animRect.top + TOP, mask, false);
-		frame16->free();
-		delete frame16;
-
+		Graphics::Surface anim = frame->getSubArea(_animRect);
+		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animRect.left, _animRect.top + TOP, palette, false);
 		_vm->addDirtyRect(_animRect);
 		_vm->_actorRect = &_vm->_dirtyRects.back();
 	}
