@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 18:02+0000\n"
-"PO-Revision-Date: 2021-05-04 11:25+0000\n"
+"PO-Revision-Date: 2021-05-18 10:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -3896,10 +3896,8 @@ msgstr ""
 "Használjon élsimítást a szöveg rajzolásához, akkor is ha a játék nem kéri"
 
 #: engines/asylum/metaengine.cpp:67
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Terv mutatása"
+msgstr "Verzió megjelenítése"
 
 #: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3910,22 +3908,16 @@ msgid "Quick save"
 msgstr "Gyorsmentés"
 
 #: engines/asylum/metaengine.cpp:82
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Átvált játékra"
+msgstr "Átvált Sarah-ra"
 
 #: engines/asylum/metaengine.cpp:87
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Átvált játékra"
+msgstr "Átvált Grimwall-ra"
 
 #: engines/asylum/metaengine.cpp:92
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Átvált játékra"
+msgstr "Átvált Olmec-re"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -6776,16 +6768,12 @@ msgstr ""
 "320x200-ra vágja."
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"Nem található a 'Loom' Macintosh futtató állomány, hogy \n"
-"beolvassa a hangszereket. Zene le lessz tiltva."
+"Nem található a 'Loom' Macintosh futtató állomány. Zene és a nagy\n"
+"felbontású fontok le lesznek tiltva."
 
 #: engines/scumm/scumm.cpp:1365
 msgid ""
