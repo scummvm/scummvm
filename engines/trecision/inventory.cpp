@@ -54,7 +54,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 	if (startIcon != 0)
 		_graphicsMgr->drawLeftInventoryArrow(startLine);
 
-	if (startIcon + ICONSHOWN < _inventory.size())
+	if (startIcon + ICONSHOWN < (int)_inventory.size())
 		_graphicsMgr->drawRightInventoryArrow(startLine);
 
 	_graphicsMgr->copyToScreen(0, FIRSTLINE, MAXX, ICONDY);
@@ -194,8 +194,8 @@ uint8 TrecisionEngine::whatIcon(Common::Point pos) {
 		return 0;
 
 	int index = _iconBase + ((pos.x - ICONMARGSX) / (ICONDX));
-	
-	return index < (int)_inventory.size() ? _inventory[index] : kItemNull;
+
+	return index < (int)_inventory.size() ? _inventory[index] : 0;
 }
 
 int8 TrecisionEngine::iconPos(uint8 icon) {
@@ -374,7 +374,7 @@ void TrecisionEngine::doScrollInventory(Common::Point pos) {
 
 	if (pos.x <= ICONMARGSX && _iconBase)
 		_scheduler->doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
-	else if (isBetween(MAXX - ICONMARGDX, pos.x, MAXX) && (_iconBase + ICONSHOWN < _inventory.size()))
+	else if (isBetween(MAXX - ICONMARGDX, pos.x, MAXX) && (_iconBase + ICONSHOWN < (int)_inventory.size()))
 		_scheduler->doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
 }
 

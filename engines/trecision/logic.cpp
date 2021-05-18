@@ -1235,7 +1235,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_obj[ocTRAMP17]._action = 1462;
 			_vm->_textMgr->characterSay(_vm->_obj[ocTRAMP17]._action);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_dialogMgr->_choice[78]._flag & kObjFlagDone) || ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[92]._flag & kObjFlagDone)))) {
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_dialogMgr->_choice[78]._flag & kObjFlagDone) || ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || ((_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[92]._flag & kObjFlagDone))))) {
 			_vm->_dialogMgr->_choice[78]._flag &= ~DLGCHOICE_HIDE;
 			if ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone)) {
 				_vm->_dialogMgr->_choice[92]._flag &= ~DLGCHOICE_HIDE;
