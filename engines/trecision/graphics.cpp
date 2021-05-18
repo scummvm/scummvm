@@ -121,8 +121,12 @@ void GraphicsManager::blitToScreenBuffer(const Graphics::Surface *surface, int x
 			const uint16 pixel = (uint16)surface16->getPixel(curX, curY);
 			if (pixel != mask) {
 				_screenBuffer.setPixel(destX, destY, pixel);
+				if (useSmkBg)
+					_smkBackground.setPixel(destX, destY - TOP, pixel);
 			} else if (useSmkBg) {
-				_screenBuffer.setPixel(destX, destY, _smkBackground.getPixel(destX, destY - TOP));
+				const uint16 bgPixel = _background.getPixel(destX, destY - TOP);
+				_screenBuffer.setPixel(destX, destY, bgPixel);
+				_smkBackground.setPixel(destX, destY - TOP, bgPixel);
 			}
 		}
 	}
@@ -380,7 +384,7 @@ void GraphicsManager::drawObj(SDObj d) {
 
 	// If we have a valid object, draw it, otherwise erase it
 	// by using the background buffer
-	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : (uint16 *)_background.getPixels();
+	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : (uint16 *)_smkBackground.getPixels();
 	if (d.drawMask) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 

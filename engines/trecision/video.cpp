@@ -464,7 +464,7 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const byte *palette = smkDecoder->getPalette();
 
 	if (smkDecoder->getCurFrame() == 0) {
-		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, false);
+		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
 	} else {
 		while (lastRect) {
 			bool intersects = false;
