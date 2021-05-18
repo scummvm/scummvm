@@ -418,19 +418,17 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 	const uint16 curDy = calcHeight(vm);
 
 	for (uint16 line = 0; line < curDy / CARHEI; line++) {
-		char *curText = (char *)_drawTextLines[line];
+		Common::String curText = _drawTextLines[line];
 		uint16 inc = (_rect.width() - vm->textLength(curText)) / 2;
-		uint16 len = strlen(curText);
 
-		if (len >= MAXCHARS) {
-			strcpy(curText, vm->_sysText[kMessageError]);
-			len = strlen(curText);
+		if (curText.size() >= MAXCHARS) {
+			curText = vm->_sysText[kMessageError];
 		}
 
-		for (uint16 index = 0; index < len; index++) {
+		for (uint16 index = 0; index < curText.size(); index++) {
 			const byte curChar = curText[index];
 
-			if (index == len - 1 && vm->_blinkLastDTextChar != MASKCOL)
+			if (index == curText.size() - 1 && vm->_blinkLastDTextChar != MASKCOL)
 				tmpTCol = vm->_blinkLastDTextChar;
 
 			vm->_graphicsMgr->drawChar(

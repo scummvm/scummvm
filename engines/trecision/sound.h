@@ -53,7 +53,7 @@ enum SoundChannel {
 };
 
 struct SSound {
-	char  _name[14];
+	Common::String _name;
 	uint8 _volume;
 	uint8 _flag;
 	int8  _panning;

@@ -115,8 +115,8 @@ void SoundManager::stopSoundSystem() {
 void SoundManager::loadAudioWav(int num, const Common::String &fileName) {
 	assert(num != 0xFFFF);
 	Common::SeekableReadStream *stream = _vm->_dataFile.createReadStreamForMember(fileName);
-	byte *buf = new byte[stream->size()];
-	int size = stream->size();
+	const int size = stream->size();
+	byte *buf = new byte[size];
 	stream->read(buf, size);
 	delete stream;
 	_sfxStream[num] = Audio::makeWAVStream(new Common::MemoryReadStream(buf, size), DisposeAfterUse::YES);
@@ -137,7 +137,7 @@ void SoundManager::play(int num) {
 	}
 
 	Audio::AudioStream *stream = _sfxStream[num];
-	Audio::Mixer::SoundType type = _gSample[num]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = (_gSample[num]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 	if (stream != nullptr && _gSample[num]._flag & kSoundFlagSoundLoop)
 		stream = Audio::makeLoopingAudioStream(_sfxStream[num], 0);
 
@@ -281,7 +281,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame, uint16 *lis
 	_sfxStream[b]->rewind();
 
 	int panpos = ((midx - 320) * 127 / 320) / 2;
-	Audio::Mixer::SoundType type = _gSample[b]._flag & kSoundFlagBgMusic ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::Mixer::SoundType type = (_gSample[b]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
 
 	g_system->getMixer()->playStream(type, &_soundHandle[_stepChannel], _sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
 }
@@ -315,7 +315,7 @@ void SoundManager::loadRoomSounds() {
 		if (b == 0)
 			break;
 
-		if (!scumm_stricmp(_gSample[b]._name, "RUOTE2C.WAV"))
+		if (_gSample[b]._name.equalsIgnoreCase("RUOTE2C.WAV"))
 			break;
 
 		loadAudioWav(b, _gSample[b]._name);
@@ -336,7 +336,8 @@ void SoundManager::syncGameStream(Common::Serializer &ser) {
 
 void SoundManager::loadSamples(Common::File *file) {
 	for (int i = 0; i < MAXSAMPLE; ++i) {
-		file->read(&_gSample[i]._name, ARRAYSIZE(_gSample[i]._name));
+		for (int j = 0; j < 14; j++)
+			_gSample[i]._name += file->readByte();
 		_gSample[i]._volume = file->readByte();
 		_gSample[i]._flag = file->readByte();
 		_gSample[i]._panning = file->readSByte();

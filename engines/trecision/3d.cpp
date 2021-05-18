@@ -484,7 +484,6 @@ void Renderer3D::drawCharacter(uint8 flag) {
 	SCamera *_curCamera = actor->_camera;
 	SLight *_curLight = actor->_light;
 	STexture *_curTexture = actor->_texture;
-	SVertex *_curVertex = actor->_vertex;
 	SFace *_curFace = actor->_face;
 
 	int vertexNum = actor->_vertexNum;
@@ -597,13 +596,12 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			}
 
 			if ((_curLight->_inten & 0x80) && lint) { // if it's shadowed and still on
-				_curVertex = actor->_vertex;
 
 				// casts shadow vertices
 				for (int a = 0; a < SHADOWVERTSNUM; a++) {
-					pa0 = _curVertex[_shadowVerts[a]]._x;
-					pa1 = _curVertex[_shadowVerts[a]]._y;
-					pa2 = _curVertex[_shadowVerts[a]]._z;
+					pa0 = actor->_vertex[_shadowVerts[a]]._x;
+					pa1 = actor->_vertex[_shadowVerts[a]]._y;
+					pa2 = actor->_vertex[_shadowVerts[a]]._z;
 
 					_shVertex[vertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
 					_shVertex[vertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
@@ -624,17 +622,17 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				l1 = l1 * t;
 				l2 = l2 * t;
 
-				_curVertex = actor->_vertex;
+				SVertex *curVertex = actor->_vertex;
 				for (int a = 0; a < vertexNum; a++) {
-					pa0 = _curVertex->_nx;
-					pa1 = _curVertex->_ny;
-					pa2 = _curVertex->_nz;
+					pa0 = curVertex->_nx;
+					pa1 = curVertex->_ny;
+					pa2 = curVertex->_nz;
 
 					lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
 					lint = CLIP(lint, 0, 180);
 
 					_vVertex[a]._angle -= (180 - lint);
-					_curVertex++;
+					curVertex++;
 				}
 			}
 
@@ -645,8 +643,6 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		for (int a = 0; a < vertexNum; a++)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
-		_curVertex = actor->_vertex;
-
 		// Calculate the distance of the character from the room
 		tx = _curCamera->_ex - actor->_px;
 		ty = _curCamera->_ey;
@@ -654,11 +650,13 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
+		SVertex *curVertex = actor->_vertex;
+		
 		for (int a = 0; a < vertexNum + _totalShadowVerts; a++) {
 			if (a < vertexNum) {
-				l0 = _curVertex->_x;
-				l1 = _curVertex->_z;
-				pa1 = ty - _curVertex->_y;
+				l0 = curVertex->_x;
+				l1 = curVertex->_z;
+				pa1 = ty - curVertex->_y;
 			} else {
 				l0 = _shVertex[a]._x;
 				l1 = _shVertex[a]._z;
@@ -687,7 +685,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			actor->_lim[4] = MIN(_vVertex[a]._z, actor->_lim[4]);
 			actor->_lim[5] = MAX(_vVertex[a]._z, actor->_lim[5]);
 
-			_curVertex++;
+			curVertex++;
 		}
 		actor->_lim[4] = (int)dist;
 		actor->_lim[5] = (int)dist;
@@ -2068,7 +2066,6 @@ void PathFinding3D::buildFramelist() {
 			_step[b - 1]._theta = (_step[b - 1]._theta > 360.0f) ? _step[b - 1]._theta - 360.0f : (_step[b - 1]._theta < 0.0f) ? _step[b - 1]._theta + 360.0f : _step[b - 1]._theta;
 
 			oldTheta = _step[b - 1]._theta;
-			startPos = oldTheta;
 
 			curLen = sqrt(_step[b - 1]._dx * _step[b - 1]._dx + _step[b - 1]._dz * _step[b - 1]._dz);
 

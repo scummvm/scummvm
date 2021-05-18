@@ -59,7 +59,7 @@ void TrecisionEngine::loadAll() {
 		error("loadAll : Couldn't open DATA.NL");
 
 	for (int i = 0; i < MAXROOMS; ++i) {
-		dataNl.read(&_room[i]._baseName, ARRAYSIZE(_room[i]._baseName));
+		dataNl.read(&_room[i]._baseName, 4);
 		_room[i]._flag = dataNl.readByte();
 		dataNl.readByte(); // Padding
 		_room[i]._bkgAnim = dataNl.readUint16LE();
@@ -135,6 +135,7 @@ void TrecisionEngine::loadAll() {
 	int numFileRef = dataNl.readSint32LE();
 	dataNl.skip(numFileRef * (12 + 4));	// fileRef name + offset
 
+	_textArea = new char[MAXTEXTAREA];
 	dataNl.read(_textArea, MAXTEXTAREA);
 
 	_textPtr = _textArea;
