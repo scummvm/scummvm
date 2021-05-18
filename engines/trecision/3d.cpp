@@ -2397,9 +2397,8 @@ void PathFinding3D::pointOut() {
 	float x = 0.0f, z = 0.0f;
 	float inters = 32000.0f;
 
-	// TODO: ask an italian speaker the meaning of this comment :)
-	// se ho beccato il pavimento devo contare quante volte interseca
-	// i box larghi la retta omino pto
+	// If I hit the floor, I have to count how many times
+	// the straight line intersects with the wide panels
 	if (_curPanel < 0)
 		return;
 
