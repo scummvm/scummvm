@@ -250,10 +250,13 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
 					Shadow Pixel
 				(dark) 0..8 (light)
 --------------------------------------------------*/
-uint16 GraphicsManager::shadow(uint32 val, uint8 num) {
-	return ((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
+void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
+	const uint16 val = _screenBuffer.getPixel(x, y);
+	const uint16 shadow =
+			((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
 			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
 			(((val & _bitMask[0]) * num >> 7) & _bitMask[0]));
+	_screenBuffer.setPixel(x, y, shadow);
 }
 
 void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
