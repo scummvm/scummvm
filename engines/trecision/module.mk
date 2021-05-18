@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	inventory.o \
 	logic.o \
 	metaengine.o \
+	resource.o \
 	sound.o \
 	saveload.o \
 	scheduler.o \

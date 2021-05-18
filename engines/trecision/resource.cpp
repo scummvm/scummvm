@@ -1,0 +1,277 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#include "common/scummsys.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/archive.h"
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/savefile.h"
+#include "common/str.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
+
+#include "trecision/trecision.h"
+#include "trecision/anim.h"
+#include "trecision/scheduler.h"
+#include "trecision/actor.h"
+#include "trecision/3d.h"
+#include "trecision/defines.h"
+#include "trecision/console.h"
+#include "trecision/dialog.h"
+#include "trecision/graphics.h"
+#include "trecision/video.h"
+#include "trecision/logic.h"
+#include "trecision/text.h"
+#include "trecision/sound.h"
+
+namespace Common {
+class File;
+}
+
+namespace Trecision {
+
+void TrecisionEngine::loadAll() {
+	Common::File dataNl;
+	if (!dataNl.open("DATA.NL"))
+		error("loadAll : Couldn't open DATA.NL");
+
+	for (int i = 0; i < MAXROOMS; ++i) {
+		dataNl.read(&_room[i]._baseName, ARRAYSIZE(_room[i]._baseName));
+		_room[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		_room[i]._bkgAnim = dataNl.readUint16LE();
+		for (int j = 0; j < MAXOBJINROOM; ++j)
+			_room[i]._object[j] = dataNl.readUint16LE();
+		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
+			_room[i]._sounds[j] = dataNl.readUint16LE();
+		for (int j = 0; j < MAXACTIONINROOM; ++j)
+			_room[i]._actions[j] = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXOBJ; ++i) {
+		uint16 w = dataNl.readUint16LE();
+		uint16 h = dataNl.readUint16LE();
+		_obj[i]._rect.left = dataNl.readUint16LE();
+		_obj[i]._rect.top = dataNl.readUint16LE();
+		_obj[i]._rect.setWidth(w);
+		_obj[i]._rect.setHeight(h);
+
+		_obj[i]._lim.left = dataNl.readUint16LE();
+		_obj[i]._lim.top = dataNl.readUint16LE();
+		_obj[i]._lim.right = dataNl.readUint16LE();
+		_obj[i]._lim.bottom = dataNl.readUint16LE();
+
+		_obj[i]._position = dataNl.readSByte();
+		dataNl.readByte(); // Padding
+		_obj[i]._name = dataNl.readUint16LE();
+		_obj[i]._examine = dataNl.readUint16LE();
+		_obj[i]._action = dataNl.readUint16LE();
+		_obj[i]._goRoom = dataNl.readByte();
+		_obj[i]._nbox = dataNl.readByte();
+		_obj[i]._ninv = dataNl.readByte();
+		_obj[i]._mode = dataNl.readByte();
+		_obj[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		_obj[i]._anim = dataNl.readUint16LE();
+	}
+
+	for (int i = 0; i < MAXINVENTORY; ++i) {
+		_inventoryObj[i]._name = dataNl.readUint16LE();
+		_inventoryObj[i]._examine = dataNl.readUint16LE();
+		_inventoryObj[i]._action = dataNl.readUint16LE();
+		_inventoryObj[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		_inventoryObj[i]._anim = dataNl.readUint16LE();
+	}
+
+	_soundMgr->loadSamples(&dataNl);
+
+	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
+		_scriptFrame[i]._class = dataNl.readByte();
+		_scriptFrame[i]._event = dataNl.readByte();
+		_scriptFrame[i]._u8Param = dataNl.readByte();
+		dataNl.readByte(); // Padding
+		_scriptFrame[i]._u16Param1 = dataNl.readUint16LE();
+		_scriptFrame[i]._u16Param2 = dataNl.readUint16LE();
+		_scriptFrame[i]._u32Param = dataNl.readUint16LE();
+		_scriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
+	}
+
+	for (int i = 0; i < MAXSCRIPT; ++i) {
+		_script[i]._firstFrame = dataNl.readUint16LE();
+		_script[i]._flag = dataNl.readByte();
+		dataNl.readByte(); // Padding
+	}
+
+	_animMgr->loadAnimTab(&dataNl);
+	_dialogMgr->loadData(&dataNl);
+
+	for (int i = 0; i < MAXACTION; ++i)
+		_actionLen[i] = dataNl.readByte();
+
+	int numFileRef = dataNl.readSint32LE();
+	dataNl.skip(numFileRef * (12 + 4));	// fileRef name + offset
+
+	dataNl.read(_textArea, MAXTEXTAREA);
+
+	_textPtr = _textArea;
+
+	for (int a = 0; a < MAXOBJNAME; a++)
+		_objName[a] = getNextSentence();
+
+	for (int a = 0; a < MAXSENTENCE; a++)
+		_sentence[a] = getNextSentence();
+
+	for (int a = 0; a < MAXSYSTEXT; a++)
+		_sysText[a] = getNextSentence();
+
+	dataNl.close();
+}
+
+byte *TrecisionEngine::readData(const Common::String &fileName) {
+	Common::SeekableReadStream *stream = _dataFile.createReadStreamForMember(fileName);
+	if (stream == nullptr)
+		error("readData(): File %s not found", fileName.c_str());
+
+	byte *buf = new byte[stream->size()];
+	stream->read(buf, stream->size());
+	delete stream;
+
+	return buf;
+}
+
+void TrecisionEngine::read3D(const Common::String &filename) {
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
+	if (ff == nullptr)
+		error("read3D: Can't open 3D file %s", filename.c_str());
+
+	_actor->read3D(ff);
+	_pathFind->read3D(ff);
+
+	delete ff;
+
+	_cx = 320;
+	_cy = 240;
+
+	_pathFind->initSortPan();
+
+	_renderer->init3DRoom();
+	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
+}
+
+void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
+	SObject *obj = &_obj[objectId];
+
+	if (obj->_mode & OBJMODE_FULL) {
+		obj->readRect(stream);
+
+		uint32 size = obj->_rect.width() * obj->_rect.height();
+		delete[] _objPointers[objIndex];
+		_objPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			_objPointers[objIndex][i] = stream->readUint16LE();
+
+		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
+	}
+
+	if (obj->_mode & OBJMODE_MASK) {
+		obj->readRect(stream);
+
+		uint32 size = stream->readUint32LE();
+		delete[] _objPointers[objIndex];
+		_objPointers[objIndex] = new uint16[size];
+		for (uint32 i = 0; i < size; ++i)
+			_objPointers[objIndex][i] = stream->readUint16LE();
+
+		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
+
+		size = stream->readUint32LE();
+		delete[] _maskPointers[objIndex];
+		_maskPointers[objIndex] = new uint8[size];
+		for (uint32 i = 0; i < size; ++i)
+			_maskPointers[objIndex][i] = (uint8)stream->readByte();
+	}
+
+	if (obj->_mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+		SSortTable entry;
+		entry._objectId = objectId;
+		entry._remove = !isObjectVisible(objectId);
+		_sortTable.push_back(entry);
+	}
+}
+
+void TrecisionEngine::readObj(Common::SeekableReadStream *stream) {
+	if (!_room[_curRoom]._object[0])
+		return;
+
+	for (uint16 objIndex = 0; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = _room[_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		if (_curRoom == kRoom41D && objIndex == PATCHOBJ_ROOM41D)
+			break;
+
+		if (_curRoom == kRoom2C && objIndex == PATCHOBJ_ROOM2C)
+			break;
+
+		readObject(stream, objIndex, objectId);
+	}
+}
+
+void TrecisionEngine::readExtraObj2C() {
+	if (!_room[_curRoom]._object[32])
+		return;
+
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("2c2.bm");
+
+	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = _room[_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		readObject(ff, objIndex, objectId);
+	}
+
+	delete ff;
+}
+
+void TrecisionEngine::readExtraObj41D() {
+	if (!_room[_curRoom]._object[32])
+		return;
+
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("41d2.bm");
+	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
+		const uint16 objectId = _room[_curRoom]._object[objIndex];
+		if (!objectId)
+			break;
+
+		readObject(ff, objIndex, objectId);
+	}
+	delete ff;
+}
+
+} // End of namespace Trecision
