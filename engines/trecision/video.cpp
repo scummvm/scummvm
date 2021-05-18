@@ -574,7 +574,7 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 
 void AnimManager::loadAnimTab(Common::File *file) {
 	for (uint16 i = 0; i < MAXANIM; ++i) {
-		file->read(&_animTab[i]._name, ARRAYSIZE(_animTab[i]._name));
+		file->read(&_animTab[i]._name, 14);
 
 		_animTab[i]._flag = file->readUint16LE();
 

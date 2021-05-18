@@ -208,8 +208,6 @@ int8 TrecisionEngine::iconPos(uint8 icon) {
 }
 
 void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
-	static const char *dunno = "?";
-
 	if (_logicMgr->isCloseupOrControlRoom() || _flagSomeoneSpeaks)
 		return;
 
@@ -236,7 +234,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 				strcat(locsent, _objName[_inventoryObj[obj]._name]);
 		} else {
 			if (_obj[_useWith[USED]]._mode & OBJMODE_HIDDEN)
-				strcat(locsent, dunno);
+				strcat(locsent, "?");	// dunno
 			else
 				strcat(locsent, _objName[_obj[_useWith[USED]]._name]);
 			strcat(locsent, _sysText[kMessageWith]);

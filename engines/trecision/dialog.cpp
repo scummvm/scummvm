@@ -670,7 +670,7 @@ void DialogManager::loadData(Common::File *file) {
 		dialog->_flag = file->readUint16LE();
 		dialog->_interlocutor = file->readUint16LE();
 
-		file->read(&dialog->_startAnim, ARRAYSIZE(dialog->_startAnim));
+		file->read(&dialog->_startAnim, 14);
 
 		dialog->_startLen = file->readUint16LE();
 		dialog->_firstChoice = file->readUint16LE();

@@ -52,12 +52,12 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 
 		const byte version = saveFile->readByte();
 
-		if (saveFile && version == SAVE_VERSION_ORIGINAL) {
+		if (version == SAVE_VERSION_ORIGINAL) {
 			// Original saved game, convert
-			char buf[40];
-			saveFile->read(buf, 40);
-			buf[39] = '\0';
-			saveNames.push_back(buf);
+			Common::String saveName;
+			for (int i = 0; i < 40; i++)
+				saveName += saveFile->readByte();
+			saveNames.push_back(saveName);
 
 			_inventory.push_back(EMPTYSLOT + i + 1);
 
@@ -65,7 +65,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 			Graphics::Surface *thumbnail = new Graphics::Surface();
 			_graphicsMgr->readSurface(saveFile, thumbnail, ICONDX, ICONDY);
 			_graphicsMgr->setSaveSlotThumbnail(i, thumbnail);
-		} else if (saveFile && version == SAVE_VERSION_SCUMMVM) {
+		} else if (version == SAVE_VERSION_SCUMMVM) {
 			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
 			if (headerRead) {
 				saveNames.push_back(header.description);

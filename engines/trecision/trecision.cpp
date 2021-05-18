@@ -308,7 +308,6 @@ void TrecisionEngine::initMain() {
 	for (int c = 0; c < MAXOBJ; c++)
 		_obj[c]._position = -1;
 
-	_textArea = new char[MAXTEXTAREA];
 	_curRoom = kRoomIntro;
 	_gameQueue.initQueue();
 	_animQueue.initQueue();
