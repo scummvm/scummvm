@@ -2488,10 +2488,12 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 		wpntype = wpntype2;
 	}
 
-	if (wpntype) {
-		// TODO: Nasty hard coded list.. use the ini file for this.
-		static const int WPNSHAPES[] = {0, 0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333,
-			0x0334, 0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386};
+	// TODO: Nasty hard coded list.. use the ini file for this.
+	static const int WPNSHAPES[] = {0, 0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333,
+		0x0334, 0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386,
+		// Regret-specific weapon types
+		0x05F6, 0x05F5, 0x0198};
+	if (wpntype && wpntype < ARRAYSIZE(WPNSHAPES)) {
 		// wpntype is an offset into wpn table
 		Item *weapon = ItemFactory::createItem(WPNSHAPES[wpntype], 0, 0, 0, 0, newactor->getMapNum(), 0, true);
 		if (weapon) {
