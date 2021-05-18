@@ -1038,6 +1038,15 @@ bool MacMenu::keyEvent(Common::Event &event) {
 	return false;
 }
 
+bool MacMenu::checkIntersects(Common::Rect &rect) {
+	if (_bbox.intersects(rect))
+		return true;
+	for (uint i = 0; i < _menustack.size(); i++)
+		if (_menustack[i]->bbox.intersects(rect))
+			return true;
+	return false;
+}
+
 bool MacMenu::mouseClick(int x, int y) {
 	if (_bbox.contains(x, y)) {
 		for (uint i = 0; i < _items.size(); i++) {

@@ -657,7 +657,19 @@ void MacWindowManager::draw() {
 
 	// Menu is drawn on top of everything and always
 	if (_menu && !(_mode & kWMModeFullscreen)) {
-		_menu->draw(_screen, _fullRefresh);
+		if (_fullRefresh)
+			_menu->draw(_screen, _fullRefresh);
+		else {
+			// add intersection check with menu
+			bool menuRedraw = false;
+			for (Common::Array<Common::Rect>::iterator dirty = dirtyRects.begin(); dirty != dirtyRects.end(); dirty++) {
+				if (_menu->checkIntersects(*dirty)) {
+					menuRedraw = true;
+					break;
+				}
+			}
+			_menu->draw(_screen, menuRedraw);
+		}
 	}
 
 	_fullRefresh = false;
