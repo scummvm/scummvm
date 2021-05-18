@@ -92,7 +92,7 @@ private:
 	void initControlPanel();
 	void doSys(uint16 curObj);
 };
-; // end of class
+// end of class
 
 } // End of namespace Trecision
 #endif

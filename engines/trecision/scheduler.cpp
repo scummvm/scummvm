@@ -116,7 +116,7 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 
 uint8 MessageQueue::predEvent(uint8 i) {
 	return i == 0 ? MAXMESSAGE - 1 : i - 1;
-};
+}
 
 bool MessageQueue::getMessage(Message **msg) {
 	if (!_len)
