@@ -164,7 +164,6 @@ static const char *credits[] = {
 "C0""Alex Fontoura",
 "C0""Alexander Panov",
 "C0""Benjamin Haisch",
-"C0""Deledrius",
 "C0""Filippos Karapetis",
 "C0""Joseph Davies",
 "C0""Julien Templier",

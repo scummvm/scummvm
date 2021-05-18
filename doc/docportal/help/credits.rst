@@ -255,8 +255,6 @@ Asylum
      -
    * - Benjamin Haisch
      -
-   * - Deledrius
-     -
    * - Filippos Karapetis
      -
    * - Joseph Davies
