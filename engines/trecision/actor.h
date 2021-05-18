@@ -41,10 +41,10 @@ public:
 	~Actor();
 
 	SVertex *_characterArea;
-	SVertex  *_vertex;
+	SVertex *_vertex;
 
 	SFace *_face;
-	SLight   *_light;
+	SLight *_light;
 	SCamera *_camera;
 	STexture *_texture;
 

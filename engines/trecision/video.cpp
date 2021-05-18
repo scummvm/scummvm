@@ -359,7 +359,7 @@ void AnimManager::stopAllSmkAnims() {
 	}
 }
 
-void AnimManager::startFullMotion(const char *name) {
+void AnimManager::startFullMotion() {
 	stopAllSmkAnims();
 
 	_vm->_flagDialogActive = true;
