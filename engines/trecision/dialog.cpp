@@ -51,7 +51,7 @@ void DialogManager::dialogPrint(int x, int y, int c, const Common::String &txt) 
 		MASKCOL,
 		txt
 	);
-	curChoice.draw();
+	curChoice.draw(_vm);
 }
 
 void DialogManager::showChoices(uint16 i) {

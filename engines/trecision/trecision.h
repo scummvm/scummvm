@@ -351,8 +351,6 @@ public:
 	};
 };
 
-extern TrecisionEngine *g_vm;
-
 } // End of namespace Trecision
 
 #endif
