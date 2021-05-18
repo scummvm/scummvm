@@ -92,6 +92,23 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// World of Xeen French- French untested
+		// https://bugs.scummvm.org/ticket/12559
+		{
+			"worldofxeen",
+			nullptr,
+			AD_ENTRY2s("xeen.cc", "b9bb33bbd3783e7930ddedb189d7ba54", 13203565,
+					   "dark.cc",  "437618b6b5e76f174719dcb529edbfbb", 11152923),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_WorldOfXeen,
+		0
+	},
+
+	{
 		// Clouds of Xeen
 		{
 			"cloudsofxeen",
@@ -145,6 +162,22 @@ static const XeenGameDescription gameDescriptions[] = {
 			Common::ZH_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_Clouds,
+		0
+	},
+
+	{
+		// Clouds of Xeen- French untested
+		// https://bugs.scummvm.org/ticket/12557
+		{
+			"cloudsofxeen",
+			nullptr,
+			AD_ENTRY1s("xeen.cc", "b9bb33bbd3783e7930ddedb189d7ba54", 13203565),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_Clouds,
@@ -206,6 +239,22 @@ static const XeenGameDescription gameDescriptions[] = {
 			Common::ZH_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
+		// Darkside of Xeen- French untested
+		// https://bugs.scummvm.org/ticket/12558
+		{
+			"darksideofxeen",
+			nullptr,
+			AD_ENTRY1s("dark.cc", "437618b6b5e76f174719dcb529edbfbb", 11152923),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_TESTING,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
 		},
 		GType_DarkSide,
