@@ -176,8 +176,6 @@ static const int _vertsCorrList[84] = {
 	379, 380, 381, 382};
 
 void Actor::readModel(const char *filename) {
-	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 256 * 91);
-
 	Common::SeekableReadStream *ff = _vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
 		error("readModel - Error opening file %s", filename);
