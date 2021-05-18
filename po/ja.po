@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-17 18:02+0000\n"
-"PO-Revision-Date: 2021-05-09 16:25+0000\n"
+"PO-Revision-Date: 2021-05-18 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3877,10 +3877,8 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr "ゲームが要求していない場合でも、テキストにアンチエイリアシングを使用"
 
 #: engines/asylum/metaengine.cpp:67
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "設計図を表示"
+msgstr "バージョンを表示"
 
 #: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3891,22 +3889,16 @@ msgid "Quick save"
 msgstr "クイックセーブ"
 
 #: engines/asylum/metaengine.cpp:82
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "ゲームへ切り替え"
+msgstr "Sarahへ切り替え"
 
 #: engines/asylum/metaengine.cpp:87
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "ゲームへ切り替え"
+msgstr "Grimwallへ切り替え"
 
 #: engines/asylum/metaengine.cpp:92
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "ゲームへ切り替え"
+msgstr "Olmecへ切り替え"
 
 #: engines/bladerunner/bladerunner.cpp:359
 msgid "Failed to initialize resources"
@@ -6725,16 +6717,12 @@ msgstr ""
 "現できます。"
 
 #: engines/scumm/scumm.cpp:1343
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"楽器をロードするためのMacintoshの実行ファイル「Loom」が見つかりません。\n"
-"音楽は無効になります。"
+"Macintosh用実行ファイル「Loom」が見つかりません。\n"
+"音楽、高解像度のフォントやカーソルは使えなくなります。"
 
 #: engines/scumm/scumm.cpp:1365
 msgid ""
