@@ -424,8 +424,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	uint16 unused = 0;
 
 	if (ser.isLoading()) {
-		ser.skip(40, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MIN);                               // description
-		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MIN); // thumbnail
+		ser.skip(40, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);                               // description
+		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // thumbnail
 	}
 
 	ser.syncAsUint16LE(_curRoom);
