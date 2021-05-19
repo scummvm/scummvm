@@ -24,6 +24,25 @@
 #include "base/plugins.h"
 
 #include "asylum/detection_table.h"
+#include "asylum/asylum.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Asylum::kDebugLevelMain,      "Main",      "Generic debug level"},
+	{Asylum::kDebugLevelResources, "Resources", "Resources debugging"},
+	{Asylum::kDebugLevelSprites,   "Sprites",   "Sprites debugging"},
+	{Asylum::kDebugLevelInput,     "Input",     "Input events debugging"},
+	{Asylum::kDebugLevelMenu,      "Menu",      "Menu debugging"},
+	{Asylum::kDebugLevelScripts,   "Scripts",   "Scripts debugging"},
+	{Asylum::kDebugLevelSound,     "Sound",     "Sound debugging"},
+	{Asylum::kDebugLevelSavegame,  "Savegame",  "Saving & restoring game debugging"},
+	{Asylum::kDebugLevelScene,     "Scene",     "Scene process and draw debugging"},
+	{Asylum::kDebugLevelObjects,   "Objects",   "Debug Object objects"},
+	{Asylum::kDebugLevelActor,     "Actor",     "Debug Actor"},
+	{Asylum::kDebugLevelEncounter, "Encounter", "Debug Encounter"},
+	{Asylum::kDebugLevelVideo,     "Video",     "Debug Video"},
+	{Asylum::kDebugLevelCommands,  "Commands",  "Script commands debugging"},
+	DEBUG_CHANNEL_END
+};
 
 class AsylumMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
@@ -47,6 +66,10 @@ public:
 
 	const char *getOriginalCopyright() const {
 		return "Sanitarium (c) ASC Games";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
