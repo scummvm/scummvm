@@ -37,14 +37,6 @@
 
 namespace Trecision {
 
-// Version history:
-// - 102: Original version
-// - 103: Added ScummVM metadata
-// - 104: Removed unused data
-#define SAVE_VERSION_ORIGINAL 102
-#define SAVE_VERSION_SCUMMVM_MIN 103
-#define SAVE_VERSION_SCUMMVM 104
-
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
@@ -61,7 +53,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 
 		const byte version = saveFile->readByte();
 
-		if (version == SAVE_VERSION_ORIGINAL) {
+		if (version >= SAVE_VERSION_ORIGINAL_MIN && version <= SAVE_VERSION_ORIGINAL_MAX) {
 			// Original saved game, convert
 			Common::String saveName;
 			for (int j = 0; j < 40; j++)
@@ -432,25 +424,25 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	uint16 unused = 0;
 
 	if (ser.isLoading()) {
-		ser.skip(40, SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL);                               // description
-		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL, SAVE_VERSION_ORIGINAL); // thumbnail
+		ser.skip(40, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MIN);                               // description
+		ser.skip(ICONDX * ICONDY * sizeof(uint16), SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MIN); // thumbnail
 	}
 
 	ser.syncAsUint16LE(_curRoom);
-	ser.syncAsByte(unused, 102, 103);	// _inventorySize
-	ser.syncAsByte(unused, 102, 103);	// _cyberInventorySize
+	ser.syncAsByte(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _inventorySize
+	ser.syncAsByte(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _cyberInventorySize
 	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(_flagSkipTalk);
-	ser.syncAsSint16LE(unused, 102, 103);	// _flagSkipEnable
-	ser.syncAsSint16LE(unused, 102, 103);	// _flagMouseEnabled
-	ser.syncAsSint16LE(unused, 102, 103);	// _flagScreenRefreshed
+	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagSkipEnable
+	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagMouseEnabled
+	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagScreenRefreshed
 	ser.syncAsSint16LE(_flagPaintCharacter);
 	ser.syncAsSint16LE(_flagSomeoneSpeaks);
 	ser.syncAsSint16LE(_flagCharacterSpeak);
 	ser.syncAsSint16LE(_flagInventoryLocked);
 	ser.syncAsSint16LE(_flagUseWithStarted);
-	ser.syncAsSint16LE(unused, 102, 103); // _flagMousePolling
-	ser.syncAsSint16LE(unused, 102, 103); // _flagDialogSolitaire
+	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagMousePolling
+	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagDialogSolitaire
 	ser.syncAsSint16LE(_flagCharacterExists);
 
 	syncInventory(ser);
@@ -491,7 +483,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	_animMgr->syncGameStream(ser);
-	ser.skip(NUMSAMPLES * 2, 102, 103);	// SoundManager::syncGameStream()
+	ser.skip(NUMSAMPLES * 2, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // SoundManager::syncGameStream()
 	_dialogMgr->syncGameStream(ser);
 	_logicMgr->syncGameStream(ser);
 

@@ -373,7 +373,7 @@ void Actor::syncGameStream(Common::Serializer &ser) {
 	float unused = 0;
 	
 	ser.syncAsFloatLE(_px);
-	ser.syncAsFloatLE(unused, 102, 103);
+	ser.syncAsFloatLE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
 	ser.syncAsFloatLE(_pz);
 	ser.syncAsFloatLE(_dx);
 	ser.syncAsFloatLE(_dz);
