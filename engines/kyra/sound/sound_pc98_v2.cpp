@@ -53,8 +53,12 @@ bool SoundTownsPC98_v2::init() {
 
 	if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
 		if (_resInfo[_currentResourceSet])
-			if (_resInfo[_currentResourceSet]->cdaTableSize)
-				_vm->checkCD();
+			if (_resInfo[_currentResourceSet]->cdaTableSize) {
+				if (!_vm->existExtractedCDAudioFiles()
+				    && !_vm->areDataAndCDAudioAreReadFromSameCDDrive()) {
+					_vm->warnForGameHasCDAudioButNoExtractedFilesFound();
+				}
+			}
 
 		// Initialize CD for audio
 		bool hasRealCD = g_system->getAudioCDManager()->open();
