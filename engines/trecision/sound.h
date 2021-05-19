@@ -99,6 +99,7 @@ public:
 	void soundStep(int midx, int midz, int act, int frame, uint16 *list);
 	int32 talkStart(const Common::String &name);
 	void talkStop();
+	void deleteRoomSounds();
 	void loadRoomSounds();
 
 	void syncGameStream(Common::Serializer &ser);
