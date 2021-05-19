@@ -128,6 +128,8 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 
 	_curCD = 1;
 	swapCD(_curCD);
+
+	_bgAnimRestarted = false;
 }
 
 AnimManager::~AnimManager() {
@@ -303,6 +305,7 @@ void AnimManager::startSmkAnim(uint16 animation) {
 	// choose how to open
 	if (animFlag & SMKANIM_BKG) {
 		openSmkAnim(kSmackerBackground, _animTab[animation]._name);
+		_bgAnimRestarted = false;
 
 		// Turns off when not needed
 		if (animation == aBKG11 && (animFlag & SMKANIM_OFF1))
@@ -447,6 +450,7 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 		} else {
 			_smkAnims[slot]->rewind();
 			_vm->_animTypeMgr->init(animation, 0);
+			_bgAnimRestarted = true;
 		}
 	}
 }
@@ -460,7 +464,7 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
 	const byte *palette = smkDecoder->getPalette();
 
-	if (smkDecoder->getCurFrame() == 0) {
+	if (smkDecoder->getCurFrame() == 0 && !_bgAnimRestarted) {
 		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
 	} else {
 		while (lastRect) {
