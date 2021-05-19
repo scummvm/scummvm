@@ -24,6 +24,7 @@
 #include "trecision/actor.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
+#include "trecision/logic.h"
 #include "trecision/scheduler.h"
 #include "trecision/graphics.h"
 #include "trecision/text.h"
@@ -207,12 +208,12 @@ void DialogManager::afterChoice() {
 		break;
 	case dF213B:
 	case dF213:
-		_vm->setRoom(kRoom21, true);
+		_vm->_logicMgr->setupAltRoom(kRoom21, true);
 		break;
 
 	case dF212B:
 	case dF212:
-		_vm->setRoom(kRoom21, false);
+		_vm->_logicMgr->setupAltRoom(kRoom21, false);
 		break;
 
 	case dF321:

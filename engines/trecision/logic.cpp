@@ -540,7 +540,7 @@ bool LogicManager::startPlayDialog() {
 		_vm->_dialogMgr->playDialog(dF491);
 	} else if (_vm->_curRoom == kRoom4A && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra) && _vm->isObjectVisible(ocHELLEN4A)) {
 		if (_vm->_curRoom == kRoom41D)
-			_vm->readExtraObj41D();
+			_vm->readExtraObj41D();		
 		_vm->_dialogMgr->playDialog(dC4A1);
 	} else if (_vm->_curRoom == kRoom4P && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
 		_vm->_dialogMgr->playDialog(dF4PI);
@@ -2083,7 +2083,7 @@ bool LogicManager::useScreenWithScreen() {
 	case oRAMPINO21:
 		if (_vm->_useWith[WITH] == oTUBO21) {
 			_vm->_dialogMgr->playDialog(dF211);
-			_vm->setRoom(kRoom21, true);
+			_vm->_logicMgr->setupAltRoom(kRoom21, true);
 			_vm->_animMgr->_animTab[aBKG21]._flag &= ~SMKANIM_OFF1;
 			_vm->setObjectVisible(oRAMPINO21, false);
 			_vm->setObjectVisible(oTUBO21, false);
@@ -2752,11 +2752,11 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oPASSAGE24:
 		if (_vm->_room[kRoom24]._flag & kObjFlagExtra) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a244, 0, 14, curObj);
-			_vm->setRoom(kRoom24, false);
+			_vm->_logicMgr->setupAltRoom(kRoom24, false);
 			retVal = false;
 		} else {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a243, 0, 13, curObj);
-			_vm->setRoom(kRoom24, true);
+			_vm->_logicMgr->setupAltRoom(kRoom24, true);
 			retVal = false;
 		}
 		break;
@@ -4091,16 +4091,16 @@ void LogicManager::doSystemChangeRoom() {
 	if (_vm->_room[_vm->_oldRoom]._flag & kObjFlagExtra) {
 		switch (_vm->_curObj) {
 		case od2ETO2C:
-			_vm->setRoom(kRoom2E, false);
+			_vm->_logicMgr->setupAltRoom(kRoom2E, false);
 			break;
 		case od24TO23:
-			_vm->setRoom(kRoom24, false);
+			_vm->_logicMgr->setupAltRoom(kRoom24, false);
 			break;
 		case od21TO22:
-			_vm->setRoom(kRoom21, false);
+			_vm->_logicMgr->setupAltRoom(kRoom21, false);
 			break;
 		case od2GVTO26:
-			_vm->setRoom(kRoom2GV, false);
+			_vm->_logicMgr->setupAltRoom(kRoom2GV, false);
 			break;
 		default:
 			break;
@@ -4108,13 +4108,13 @@ void LogicManager::doSystemChangeRoom() {
 	} else {
 		switch (_vm->_curObj) {
 		case oENTRANCE2E:
-			_vm->setRoom(kRoom2E, true);
+			_vm->_logicMgr->setupAltRoom(kRoom2E, true);
 			break;
 		case od24TO26:
-			_vm->setRoom(kRoom24, true);
+			_vm->_logicMgr->setupAltRoom(kRoom24, true);
 			break;
 		case od21TO23:
-			_vm->setRoom(kRoom21, true);
+			_vm->_logicMgr->setupAltRoom(kRoom21, true);
 			break;
 		default:
 			break;
@@ -4132,13 +4132,13 @@ void LogicManager::doSystemChangeRoom() {
 	_vm->_graphicsMgr->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {
-		_vm->setRoom(kRoom21, _vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B);
+		_vm->_logicMgr->setupAltRoom(kRoom21, _vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B);
 	} else if (_vm->_curRoom == kRoom24) {
-		_vm->setRoom(kRoom24, _vm->_oldRoom == kRoom26);
+		_vm->_logicMgr->setupAltRoom(kRoom24, _vm->_oldRoom == kRoom26);
 	} else if (_vm->_curRoom == kRoom2A) {
-		_vm->setRoom(kRoom2A, _vm->_oldRoom == kRoom25);
+		_vm->_logicMgr->setupAltRoom(kRoom2A, _vm->_oldRoom == kRoom25);
 	} else if (_vm->_curRoom == kRoom2B) {
-		_vm->setRoom(kRoom2B, _vm->_oldRoom == kRoom28);
+		_vm->_logicMgr->setupAltRoom(kRoom2B, _vm->_oldRoom == kRoom28);
 	}
 	//			for save/load
 	else if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
