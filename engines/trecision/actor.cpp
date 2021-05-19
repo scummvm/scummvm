@@ -70,6 +70,11 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	initTextures();
 	readModel("jm.om");
 
+	for (int i = 0; i < MAXLIGHT; ++i)
+		_lightArea[i].clear();
+	
+	_cameraArea.clear();
+	
 	_light = (SLight *)&_lightArea;
 	_camera = (SCamera *)&_cameraArea;
 }

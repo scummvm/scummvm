@@ -161,6 +161,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	lastMouseOn = true;
 
 	_pauseStartTime = 0;
+	_textStatus = TEXT_OFF;
 }
 
 TrecisionEngine::~TrecisionEngine() {
