@@ -673,7 +673,7 @@ void TrecisionEngine::doDoing() {
 
 		_curMessage->_event = ME_WAITOPENCLOSE;
 	}
-		// no break!
+		// fall through
 	case ME_WAITOPENCLOSE:
 		if (_actor->_curAction == hSTAND)
 			_graphicsMgr->showCursor();

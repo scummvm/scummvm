@@ -245,6 +245,8 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame, uint16 *lis
 	case hSTOP9:
 		if (frame >= _vm->_defActionLen[act] - 1)
 			stepLeft = true;
+		// FIXME: Is fallthrough intended here?
+		// fall through
 	case hSTOP4:
 	case hSTOP5:
 	case hSTOP6:
