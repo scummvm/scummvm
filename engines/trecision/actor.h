@@ -43,6 +43,7 @@ class Actor {
 
 	void initTextures();
 	void readModel(const char *filename);
+	void microproseHeadFix(uint32 actionNum);
 
 public:
 	Actor(TrecisionEngine *vm);

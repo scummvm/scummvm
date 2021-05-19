@@ -175,6 +175,140 @@ static const int _vertsCorrList[84] = {
 	371, 372, 373, 374, 375, 376, 377, 378,
 	379, 380, 381, 382};
 
+/**********************************************
+  Microprose head correction
+**********************************************/
+void Actor::microproseHeadFix(uint32 actionNum) {
+	static const uint16 idx1 = 306;
+	static const uint16 idx2 = 348;
+	static const uint16 idx3 = 288;
+	
+	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3];
+	int c, d, f;
+
+	v1[0] = _vertex[idx2]._x - _vertex[idx1]._x;
+	v1[1] = _vertex[idx2]._y - _vertex[idx1]._y;
+	v1[2] = _vertex[idx2]._z - _vertex[idx1]._z;
+	double s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+	v1[0] /= s;
+	v1[1] /= s;
+	v1[2] /= s;
+
+	v2[0] = _vertex[idx3]._x - _vertex[idx1]._x;
+	v2[1] = _vertex[idx3]._y - _vertex[idx1]._y;
+	v2[2] = _vertex[idx3]._z - _vertex[idx1]._z;
+	s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
+	v2[0] /= s;
+	v2[1] /= s;
+	v2[2] /= s;
+
+	m1[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
+	m1[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
+	m1[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
+	s = sqrt(m1[1][0] * m1[1][0] + m1[1][1] * m1[1][1] + m1[1][2] * m1[1][2]);
+	m1[1][0] /= s;
+	m1[1][1] /= s;
+	m1[1][2] /= s;
+
+	m1[2][0] = m1[1][1] * v1[2] - v1[1] * m1[1][2];
+	m1[2][1] = m1[1][2] * v1[0] - v1[2] * m1[1][0];
+	m1[2][2] = m1[1][0] * v1[1] - v1[0] * m1[1][1];
+	s = sqrt(m1[2][0] * m1[2][0] + m1[2][1] * m1[2][1] + m1[2][2] * m1[2][2]);
+	m1[2][0] /= s;
+	m1[2][1] /= s;
+	m1[2][2] /= s;
+
+	m1[0][0] = v1[0];
+	m1[0][1] = v1[1];
+	m1[0][2] = v1[2];
+
+	for (uint b = 0; b < actionNum; b++) {
+		SVertex *sv = &_vertex[b * _vertexNum];
+
+		v1[0] = sv[idx2]._x - sv[idx1]._x;
+		v1[1] = sv[idx2]._y - sv[idx1]._y;
+		v1[2] = sv[idx2]._z - sv[idx1]._z;
+		s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
+		v1[0] /= s;
+		v1[1] /= s;
+		v1[2] /= s;
+
+		v2[0] = sv[idx3]._x - sv[idx1]._x;
+		v2[1] = sv[idx3]._y - sv[idx1]._y;
+		v2[2] = sv[idx3]._z - sv[idx1]._z;
+		s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
+		v2[0] /= s;
+		v2[1] /= s;
+		v2[2] /= s;
+
+		m2[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
+		m2[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
+		m2[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
+		s = sqrt(m2[1][0] * m2[1][0] + m2[1][1] * m2[1][1] + m2[1][2] * m2[1][2]);
+		m2[1][0] /= s;
+		m2[1][1] /= s;
+		m2[1][2] /= s;
+
+		m2[2][0] = m2[1][1] * v1[2] - v1[1] * m2[1][2];
+		m2[2][1] = m2[1][2] * v1[0] - v1[2] * m2[1][0];
+		m2[2][2] = m2[1][0] * v1[1] - v1[0] * m2[1][1];
+		s = sqrt(m2[2][0] * m2[2][0] + m2[2][1] * m2[2][1] + m2[2][2] * m2[2][2]);
+		m2[2][0] /= s;
+		m2[2][1] /= s;
+		m2[2][2] /= s;
+
+		m2[0][0] = v1[0];
+		m2[0][1] = v1[1];
+		m2[0][2] = v1[2];
+
+		v2[0] = sv[idx1]._x;
+		v2[1] = sv[idx1]._y;
+		v2[2] = sv[idx1]._z;
+
+		v1[0] = _vertex[idx1]._x;
+		v1[1] = _vertex[idx1]._y;
+		v1[2] = _vertex[idx1]._z;
+
+		for (int e = 279; e < 383; ++e) {
+			for (f = 0; f < 84; ++f) {
+				if (_vertsCorrList[f] == e)
+					break;
+			}
+			if (f == 84)
+				continue;
+
+			v[0] = _vertsCorr[e - 279][0];
+			v[1] = _vertsCorr[e - 279][2];
+			v[2] = _vertsCorr[e - 279][1];
+
+			q[0] = 0.0;
+			q[1] = 0.0;
+			q[2] = 0.0;
+			for (d = 0; d < 3; d++) {
+				for (c = 0; c < 3; c++)
+					q[c] += m1[c][d] * v[d];
+			}
+			v[0] = 0.0;
+			v[1] = 0.0;
+			v[2] = 0.0;
+			for (d = 0; d < 3; d++) {
+				for (c = 0; c < 3; c++)
+					v[c] += m2[d][c] * q[d];
+			}
+
+			if (b < 42) {
+				sv[e]._x += _vertsCorr[e - 279][0];
+				sv[e]._y += _vertsCorr[e - 279][2];
+				sv[e]._z += _vertsCorr[e - 279][1];
+			} else {
+				sv[e]._x += v[0];
+				sv[e]._y += v[1];
+				sv[e]._z += v[2];
+			}
+		}
+	}
+}
+
 void Actor::readModel(const char *filename) {
 	Common::SeekableReadStream *ff = _vm->_dataFile.createReadStreamForMember(filename);
 	if (ff == nullptr)
@@ -227,134 +361,7 @@ void Actor::readModel(const char *filename) {
 	_curFrame = 0;
 	_curAction = hSTAND;
 
-	// fixup Microprose head correction
-#define P1 306
-#define P2 348
-#define P3 288
-	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3], s;
-	int c, d, f;
-
-	v1[0] = _vertex[P2]._x - _vertex[P1]._x;
-	v1[1] = _vertex[P2]._y - _vertex[P1]._y;
-	v1[2] = _vertex[P2]._z - _vertex[P1]._z;
-	s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
-	v1[0] /= s;
-	v1[1] /= s;
-	v1[2] /= s;
-
-	v2[0] = _vertex[P3]._x - _vertex[P1]._x;
-	v2[1] = _vertex[P3]._y - _vertex[P1]._y;
-	v2[2] = _vertex[P3]._z - _vertex[P1]._z;
-	s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
-	v2[0] /= s;
-	v2[1] /= s;
-	v2[2] /= s;
-
-	m1[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
-	m1[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
-	m1[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
-	s = sqrt(m1[1][0] * m1[1][0] + m1[1][1] * m1[1][1] + m1[1][2] * m1[1][2]);
-	m1[1][0] /= s;
-	m1[1][1] /= s;
-	m1[1][2] /= s;
-
-	m1[2][0] = m1[1][1] * v1[2] - v1[1] * m1[1][2];
-	m1[2][1] = m1[1][2] * v1[0] - v1[2] * m1[1][0];
-	m1[2][2] = m1[1][0] * v1[1] - v1[0] * m1[1][1];
-	s = sqrt(m1[2][0] * m1[2][0] + m1[2][1] * m1[2][1] + m1[2][2] * m1[2][2]);
-	m1[2][0] /= s;
-	m1[2][1] /= s;
-	m1[2][2] /= s;
-
-	m1[0][0] = v1[0];
-	m1[0][1] = v1[1];
-	m1[0][2] = v1[2];
-
-	for (uint b = 0; b < actionNum; b++) {
-		SVertex *sv = &_vertex[b * _vertexNum];
-
-		v1[0] = sv[P2]._x - sv[P1]._x;
-		v1[1] = sv[P2]._y - sv[P1]._y;
-		v1[2] = sv[P2]._z - sv[P1]._z;
-		s = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]);
-		v1[0] /= s;
-		v1[1] /= s;
-		v1[2] /= s;
-
-		v2[0] = sv[P3]._x - sv[P1]._x;
-		v2[1] = sv[P3]._y - sv[P1]._y;
-		v2[2] = sv[P3]._z - sv[P1]._z;
-		s = sqrt(v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]);
-		v2[0] /= s;
-		v2[1] /= s;
-		v2[2] /= s;
-
-		m2[1][0] = v2[1] * v1[2] - v1[1] * v2[2];
-		m2[1][1] = v2[2] * v1[0] - v1[2] * v2[0];
-		m2[1][2] = v2[0] * v1[1] - v1[0] * v2[1];
-		s = sqrt(m2[1][0] * m2[1][0] + m2[1][1] * m2[1][1] + m2[1][2] * m2[1][2]);
-		m2[1][0] /= s;
-		m2[1][1] /= s;
-		m2[1][2] /= s;
-
-		m2[2][0] = m2[1][1] * v1[2] - v1[1] * m2[1][2];
-		m2[2][1] = m2[1][2] * v1[0] - v1[2] * m2[1][0];
-		m2[2][2] = m2[1][0] * v1[1] - v1[0] * m2[1][1];
-		s = sqrt(m2[2][0] * m2[2][0] + m2[2][1] * m2[2][1] + m2[2][2] * m2[2][2]);
-		m2[2][0] /= s;
-		m2[2][1] /= s;
-		m2[2][2] /= s;
-
-		m2[0][0] = v1[0];
-		m2[0][1] = v1[1];
-		m2[0][2] = v1[2];
-
-		v2[0] = sv[P1]._x;
-		v2[1] = sv[P1]._y;
-		v2[2] = sv[P1]._z;
-
-		v1[0] = _vertex[P1]._x;
-		v1[1] = _vertex[P1]._y;
-		v1[2] = _vertex[P1]._z;
-
-		for (int e = 279; e < 383; e++) {
-			for (f = 0; f < 84; f++) {
-				if (_vertsCorrList[f] == e)
-					break;
-			}
-			if (f == 84)
-				continue;
-
-			v[0] = _vertsCorr[e - 279][0];
-			v[1] = _vertsCorr[e - 279][2];
-			v[2] = _vertsCorr[e - 279][1];
-
-			q[0] = 0.0;
-			q[1] = 0.0;
-			q[2] = 0.0;
-			for (d = 0; d < 3; d++) {
-				for (c = 0; c < 3; c++)
-					q[c] += m1[c][d] * v[d];
-			}
-			v[0] = 0.0;
-			v[1] = 0.0;
-			v[2] = 0.0;
-			for (d = 0; d < 3; d++) {
-				for (c = 0; c < 3; c++)
-					v[c] += m2[d][c] * q[d];
-			}
-
-			if (b < 42) {
-				sv[e]._x += _vertsCorr[e - 279][0];
-				sv[e]._y += _vertsCorr[e - 279][2];
-				sv[e]._z += _vertsCorr[e - 279][1];
-			} else {
-				sv[e]._x += v[0];
-				sv[e]._y += v[1];
-				sv[e]._z += v[2];
-			}
-		}
-	}
+	microproseHeadFix(actionNum);
 }
 
 void Actor::syncGameStream(Common::Serializer &ser) {
