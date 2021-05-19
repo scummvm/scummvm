@@ -1442,9 +1442,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->replaceIcon(kItemCanWithFuel, kItemLargeCans);
 			}
 			*printSentence = false;
+			// FIXME: is fallthrough intended here?
 		} else
 			break;
-
+		// fall through
 	case kItemBookstoreKey:
 		if (_vm->_useWith[WITH] == oDOOR2A) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2A2USEKEY, 0, 0, _vm->_useWith[WITH]);
