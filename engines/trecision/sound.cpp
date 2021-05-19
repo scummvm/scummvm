@@ -23,7 +23,6 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
-#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -34,185 +33,122 @@
 namespace Trecision {
 
 SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
-	for (int i = 0; i < NUMSAMPLES; ++i)
-		_sfxStream[i] = nullptr;
-
-	_timer = 0;
-
-	for (int i = 0; i < SAMPLEVOICES; ++i) {
-		_samplePlaying[i] = 0;
-		_sampleVolume[i] = 0;
-	}
-
-	_stepChannel = kSoundChannelStep;
-	_backChannel = kSoundChannelBack;
-	_soundFadeStatus = SFADNONE;
-
-	_soundFadeInVal = 0;
-	_soundFadeOutVal = 0;
-
 	if (!_speechFile.open("nlspeech.cd0"))
 		warning("SoundManager - nlspeech.cd0 is missing - skipping");
+
+	for (int i = 0; i < MAXSOUNDS; i++) {
+		_sounds[i].soundId = -1;
+	}
+
+	_stepLeftStream = nullptr;
+	_stepRightStream = nullptr;
 }
 
 SoundManager::~SoundManager() {
 	g_system->getMixer()->stopAll();
 	_speechFile.close();
-	deleteRoomSounds();
+	stopAll();
 }
 
-void SoundManager::soundTimer() {
-	uint32 ctime = g_system->getMillis() / 8;  // only one time out of 8
+void SoundManager::play(int soundId) {
+	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
 
-	if (ctime > _timer)
-		_timer = ctime;
-	else
-		return;
+	for (uint16 soundSlot = 0; soundSlot < MAXSOUNDSINROOM; soundSlot++) {
+		if (curRoom->_sounds[soundSlot] == 0)
+			return;
 
-	// only if it's a fading
-	if (!_soundFadeStatus)
-		return;
-	
-	if (_soundFadeStatus & SFADOUT) {
-		if (!g_system->getMixer()->isSoundHandleActive(_soundHandle[_backChannel])) {
-			_soundFadeStatus &= (~SFADOUT);
-		} else {
-			_soundFadeOutVal -= FADMULT;
+		if (curRoom->_sounds[soundSlot] == soundId) {
+			const SoundType soundType = (_gSample[soundId]._flag & kSoundFlagBgMusic) ? kSoundTypeMusic : kSoundTypeSfx;
+			Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+			// We need to copy this WAV to memory since it will be streamed
+			Common::SeekableReadStream *memStream = soundFileStream->readStream(soundFileStream->size());
+			delete soundFileStream;
 
-			if (_soundFadeOutVal > 0)
-				g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal / FADMULT));
-			else {
-				_soundFadeOutVal = 0;
-				g_system->getMixer()->setChannelVolume(_soundHandle[_backChannel], VOLUME(_soundFadeOutVal));
+			stopSoundType(soundType);
+			
+			Audio::Mixer::SoundType type =
+				(_gSample[soundId]._flag & kSoundFlagBgMusic) ?
+				Audio::Mixer::kMusicSoundType :
+				Audio::Mixer::kSFXSoundType;
 
-				_soundFadeStatus &= (~SFADOUT);
-			}
+			int volume = VOLUME(_gSample[soundId]._volume);
+
+			// FIXME: This looks wrong - it makes the room music silent
+			/*if (_gSample[soundId]._flag & kSoundFlagSoundOn) {
+				volume = 0;
+			}*/
+
+			_sounds[soundType].soundId = soundId;
+
+			Audio::AudioStream *stream = nullptr;
+			
+			if (_gSample[soundId]._flag & kSoundFlagSoundLoop)
+				stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(memStream, DisposeAfterUse::YES), 0);
+			else
+				stream = Audio::makeWAVStream(memStream, DisposeAfterUse::YES);
+
+			g_system->getMixer()->playStream(
+				type,
+				&_sounds[soundType].soundHandle,
+				stream,
+				-1,
+				volume,
+				0,
+				DisposeAfterUse::NO
+			);
 		}
 	}
-	if (_soundFadeStatus & SFADIN) {
-		_soundFadeInVal += FADMULT;
-
-		if (_soundFadeInVal > _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT)
-			_soundFadeInVal = _gSample[_samplePlaying[_stepChannel]]._volume * FADMULT;
-
-		g_system->getMixer()->setChannelVolume(_soundHandle[_stepChannel], VOLUME(_soundFadeInVal / FADMULT));
-
-		for (int a = 2; a < SAMPLEVOICES; a++) {
-			if (_samplePlaying[a] != 0) {
-				_sampleVolume[a] += FADMULT;
-
-				if (_sampleVolume[a] > _gSample[_samplePlaying[a]]._volume * FADMULT)
-					_sampleVolume[a] = _gSample[_samplePlaying[a]]._volume * FADMULT;
-
-				g_system->getMixer()->setChannelVolume(_soundHandle[a], VOLUME(_sampleVolume[a] / FADMULT));
-			}
-		}
-	}
 }
 
-void SoundManager::loadAudioWav(int num, const Common::String &fileName) {
-	assert(num != 0xFFFF);
-	Common::SeekableReadStream *stream = _vm->_dataFile.createReadStreamForMember(fileName);
-	// We need to copy this WAV to memory since it will be streamed
-	Common::SeekableReadStream *memStream = stream->readStream(stream->size());
-	delete stream;
-	_sfxStream[num] = Audio::makeWAVStream(memStream, DisposeAfterUse::YES);
-}
-
-void SoundManager::play(int num) {
-	int channel = 2;
-	if (g_system->getMixer()->isSoundHandleActive(_soundHandle[channel])) {
-		g_system->getMixer()->stopHandle(_soundHandle[channel]);
-		_samplePlaying[channel] = 0;
-	}
-
-	int volume = VOLUME(_gSample[num]._volume);
-
-	if (_gSample[num]._flag & kSoundFlagSoundOn) {
-		volume = 0;
-		_sampleVolume[channel] = 0;
-	}
-
-	Audio::AudioStream *stream = _sfxStream[num];
-	Audio::Mixer::SoundType type = (_gSample[num]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
-	if (stream != nullptr && _gSample[num]._flag & kSoundFlagSoundLoop)
-		stream = Audio::makeLoopingAudioStream(_sfxStream[num], 0);
-
-	g_system->getMixer()->playStream(type, &_soundHandle[channel], stream, -1, volume, 0, DisposeAfterUse::NO);
-
-	_samplePlaying[channel] = num;
-}
-
-void SoundManager::stop(int num) {
-	for (int a = 2; a < kSoundChannelSpeech; a++) {
-		if (_samplePlaying[a] == num) {
-			g_system->getMixer()->stopHandle(_soundHandle[a]);
-			_samplePlaying[a] = 0;
+void SoundManager::stop(int soundId) {
+	for (int i = 0; i < MAXSOUNDS; i++) {
+		if (_sounds[i].soundId == soundId) {
+			g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
+			return;
 		}
 	}
 }
 
 void SoundManager::stopAll() {
-	for (int a = 0; a < SAMPLEVOICES; a++) {
-		g_system->getMixer()->stopHandle(_soundHandle[a]);
-		_samplePlaying[a] = 0;
+	for (int i = 0; i < MAXSOUNDS; i++) {
+		g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
 	}
 
-	_soundFadeOutVal = SFADNONE;
-	_soundFadeStatus = 0;
+	delete _stepLeftStream;
+	_stepLeftStream = nullptr;
+	delete _stepRightStream;
+	_stepRightStream = nullptr;
 }
 
-void SoundManager::fadeOut() {
-	for (int a = 0; a < SAMPLEVOICES; a++) {	// Turns off all channels except background
-		if (a != _backChannel) {
-			g_system->getMixer()->stopHandle(_soundHandle[a]);
-			_samplePlaying[a] = 0;
+void SoundManager::stopAllExceptMusic() {
+	for (int i = 0; i < MAXSOUNDS; i++) {
+		if (i != kSoundTypeMusic) {
+			g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
 		}
 	}
 
-	_soundFadeOutVal = g_system->getMixer()->getChannelVolume(_soundHandle[_backChannel]) * FADMULT;
-	_soundFadeStatus = SFADOUT;
+	delete _stepLeftStream;
+	_stepLeftStream = nullptr;
+	delete _stepRightStream;
+	_stepRightStream = nullptr;
 }
 
-void SoundManager::fadeIn(int num) {
-	Audio::AudioStream *stream = _sfxStream[num];
-	Audio::Mixer::SoundType type = (_gSample[num]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
-	if (stream != nullptr && _gSample[num]._flag & kSoundFlagSoundLoop)
-		stream = Audio::makeLoopingAudioStream(_sfxStream[num], 0);
-
-	g_system->getMixer()->playStream(type, &_soundHandle[_stepChannel], stream, -1, 0, 0, DisposeAfterUse::NO);
-
-	_samplePlaying[_stepChannel] = num;
-
-	_soundFadeInVal = 0;
-	_soundFadeStatus |= SFADIN;
+void SoundManager::stopSoundType(SoundType type) {
+	if (g_system->getMixer()->isSoundHandleActive(_sounds[type].soundHandle)) {
+		g_system->getMixer()->stopHandle(_sounds[type].soundHandle);
+	}
 }
 
 void SoundManager::waitEndFading() {
-	while ((_soundFadeInVal != (_gSample[_samplePlaying[_stepChannel]]._volume * FADMULT)) && (_samplePlaying[_stepChannel] != 0) && (_soundFadeOutVal != 0))
-		_vm->checkSystem();
-	_soundFadeStatus = SFADNONE;
-
-	g_system->getMixer()->stopHandle(_soundHandle[_backChannel]);
-
-	g_system->getMixer()->setChannelVolume(_soundHandle[_stepChannel], VOLUME(_gSample[_samplePlaying[_stepChannel]]._volume));
-	_samplePlaying[_backChannel] = 0;
-
-	for (uint8 a = 2; a < kSoundChannelSpeech; a++) {
-		if (_samplePlaying[a] != 0)
-			g_system->getMixer()->setChannelVolume(_soundHandle[a], VOLUME(_gSample[_samplePlaying[a]]._volume));
-	}
-
-	SWAP(_stepChannel, _backChannel);
-
 	if (_vm->_curRoom == kRoom41D)
 		_vm->readExtraObj41D();
 }
 
-void SoundManager::soundStep(int midx, int midz, int act, int frame, uint16 *list) {
+void SoundManager::soundStep(int midx, int midz, int act, int frame) {
+	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
 	bool stepRight = false;
 	bool stepLeft = false;
-
+	
 	switch (act) {
 	case hWALK:
 		if (frame == 3)
@@ -259,78 +195,92 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame, uint16 *lis
 	if (!stepRight && !stepLeft)
 		return;
 
-	int b;
-	for (int a = 0; a < MAXSOUNDSINROOM; a++) {
-		b = list[a];
+	int soundId;
+	for (int soundSlot = 0; soundSlot < MAXSOUNDSINROOM; soundSlot++) {
+		soundId = curRoom->_sounds[soundSlot];
 
-		if (stepRight && (_gSample[b]._flag & kSoundFlagStepRight))
+		if (stepRight && (_gSample[soundId]._flag & kSoundFlagStepRight)) {
+			if (!_stepRightStream) {
+				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+				_stepRightStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::NO);
+			}
 			break;
-		if (stepLeft && (_gSample[b]._flag & kSoundFlagStepLeft))
+		}
+
+		if (stepLeft && (_gSample[soundId]._flag & kSoundFlagStepLeft)) {
+			if (!_stepLeftStream) {
+				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+				_stepLeftStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::NO);
+			}
 			break;
-		if (b == 0)
+		}
+
+		if (soundId == 0)
 			return;
 	}
 
-	midz = ((int)(_gSample[b]._volume) * 1000) / ABS(midz);
+	midz = ((int)(_gSample[soundId]._volume) * 1000) / ABS(midz);
 
 	if (midz > 255)
 		midz = 255;
 
-	g_system->getMixer()->stopHandle(_soundHandle[_stepChannel]);
-	_sfxStream[b]->rewind();
+	g_system->getMixer()->stopHandle(_sounds[kSoundTypeStep].soundHandle);
 
-	int panpos = ((midx - 320) * 127 / 320) / 2;
-	Audio::Mixer::SoundType type = (_gSample[b]._flag & kSoundFlagBgMusic) ? Audio::Mixer::kMusicSoundType : Audio::Mixer::kSFXSoundType;
+	Audio::SeekableAudioStream *stream = stepLeft ? _stepLeftStream : _stepRightStream;
+	stream->rewind();
 
-	g_system->getMixer()->playStream(type, &_soundHandle[_stepChannel], _sfxStream[b], -1, VOLUME(midz), panpos, DisposeAfterUse::NO);
+	const int panpos = ((midx - 320) * 127 / 320) / 2;
+
+	g_system->getMixer()->playStream(
+		Audio::Mixer::kSFXSoundType,
+		&_sounds[kSoundTypeStep].soundHandle,
+		stream,
+		-1,
+		VOLUME(midz),
+		panpos,
+		DisposeAfterUse::NO
+	);
 }
 
 int32 SoundManager::talkStart(const Common::String &name) {
 	if (!_speechFile.isOpen())
 		return 0;
 
-	talkStop();
+	stopSoundType(kSoundTypeSpeech);
 
 	Common::SeekableReadStream *stream = _speechFile.createReadStreamForMember(name);
 	if (!stream)
 		return 0;
 
-	Audio::SeekableAudioStream *speechStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	_sounds[kSoundTypeSpeech].soundId = -1;
 
-	g_system->getMixer()->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle[kSoundChannelSpeech], speechStream);
+	g_system->getMixer()->playStream(
+		Audio::Mixer::kSpeechSoundType,
+		&_sounds[kSoundTypeSpeech].soundHandle,
+		audioStream
+	);
 	_vm->_characterSpeakTime = _vm->readTime();
 
-	return TIME(speechStream->getLength().msecs());
-}
-
-void SoundManager::talkStop() {
-	g_system->getMixer()->stopHandle(_soundHandle[kSoundChannelSpeech]);
-}
-
-void SoundManager::deleteRoomSounds() {
-	for (int i = 0; i < NUMSAMPLES; ++i) {
-		delete _sfxStream[i];
-		_sfxStream[i] = nullptr;
-	}
+	return TIME(audioStream->getLength().msecs());
 }
 
 void SoundManager::loadRoomSounds() {
-	deleteRoomSounds();
-	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
-		uint16 b = _vm->_room[_vm->_curRoom]._sounds[a];
+	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
+	
+	stopAll();
 
-		if (b == 0)
+	for (uint16 soundSlot = 0; soundSlot < MAXSOUNDSINROOM; soundSlot++) {
+		const uint16 soundId = curRoom->_sounds[soundSlot];
+
+		if (soundId == 0)
 			break;
 
-		if (_gSample[b]._name.equalsIgnoreCase("RUOTE2C.WAV"))
+		if (_gSample[soundId]._name.equalsIgnoreCase("RUOTE2C.WAV"))
 			break;
 
-		loadAudioWav(b, _gSample[b]._name);
-
-		if (_gSample[b]._flag & kSoundFlagBgMusic)
-			fadeIn(b);
-		else if (_gSample[b]._flag & kSoundFlagSoundOn)
-			play(b);
+		if ((_gSample[soundId]._flag & kSoundFlagBgMusic) || (_gSample[soundId]._flag & kSoundFlagSoundOn))
+			play(soundId);
 	}
 }
 

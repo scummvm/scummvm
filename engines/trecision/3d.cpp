@@ -908,7 +908,7 @@ void Renderer3D::paintScreen(bool flag) {
 		_vm->_textStatus = TEXT_DRAW; // Activate text update
 	}
 
-	_vm->_soundMgr->soundStep((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame, _vm->_room[_vm->_curRoom]._sounds);
+	_vm->_soundMgr->soundStep((_vm->_actor->_lim[1] + _vm->_actor->_lim[0]) / 2, (_vm->_actor->_lim[5] + _vm->_actor->_lim[4]) / 2, _vm->_actor->_curAction, _vm->_actor->_curFrame);
 
 	if (!flag && !_vm->_flagDialogActive) {
 		_vm->_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);

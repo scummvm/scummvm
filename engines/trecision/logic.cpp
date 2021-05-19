@@ -3295,7 +3295,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
 			(_comb58[3] == oTASTO858) && (_comb58[4] == oTASTO558) && (_comb58[5] == oTASTO958)) {
-			_vm->_soundMgr->fadeOut();
+			_vm->_soundMgr->stopAllExceptMusic();
 			_vm->_dialogMgr->playDialog(dF582);
 		} else
 			_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, kRoom58, 0, 2, curObj);

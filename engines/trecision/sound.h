@@ -23,9 +23,9 @@
 #ifndef TRECISION_SOUND_H
 #define TRECISION_SOUND_H
 
+#include "trecision/defines.h"
 #include "trecision/fastfile.h"
 #include "common/file.h"
-#include "common/serializer.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
@@ -34,28 +34,30 @@ namespace Trecision {
 #define SOUND_OFF 0
 #define SOUND_ON 1
 
-#define SFADNONE 0
-#define SFADIN 1
-#define SFADOUT 2
-
+#define MAXSOUNDS 4
 #define SAMPLEVOICES 6
 #define NUMSAMPLES   145            // Maximum number of samples in the game
 
 #define VOLUME(a)	( (a * 255) / 127 )
 #define TIME(a)		( (a * 3) / 50 )
-#define FADMULT		100
-
-enum SoundChannel {
-	kSoundChannelBack = 0,
-	kSoundChannelStep = 1,
-	kSoundChannelSpeech = 5
-};
 
 struct SSound {
 	Common::String _name;
 	uint8 _volume;
 	uint8 _flag;
 	int8  _panning;
+};
+
+enum SoundType {
+	kSoundTypeMusic = 0,
+	kSoundTypeSpeech = 1,
+	kSoundTypeSfx = 2,
+	kSoundTypeStep = 3
+};
+
+struct ActiveSound {
+	int soundId;
+	Audio::SoundHandle soundHandle;
 };
 
 class TrecisionEngine;
@@ -67,38 +69,23 @@ public:
 
 private:
 	TrecisionEngine *_vm;
-	Audio::SeekableAudioStream *_sfxStream[NUMSAMPLES];
-	Audio::SoundHandle    _soundHandle[SAMPLEVOICES];	// Sample handles for each mixer channel
-
 	FastFile _speechFile; // nlspeech.cd0
 
+	ActiveSound _sounds[MAXSOUNDS];
 	SSound _gSample[NUMSAMPLES];
-
-	uint32 _timer;
-	int16 _samplePlaying[SAMPLEVOICES];			// sample currently playing
-	int16 _sampleVolume[SAMPLEVOICES];
-
-	uint8 _stepChannel;
-	uint8 _backChannel;
-	uint8 _soundFadeStatus;
-
-	int16 _soundFadeInVal;
-	int16 _soundFadeOutVal;
-
-	void loadAudioWav(int num, const Common::String &fileName);
-	void fadeIn(int num);
+	
+	Audio::SeekableAudioStream *_stepLeftStream;
+	Audio::SeekableAudioStream *_stepRightStream;
 
 public:
-	void soundTimer();
-	void play(int num);
-	void stop(int num);
+	void play(int soundId);
+	void stop(int soundId);
+	void stopSoundType(SoundType type);
 	void stopAll();
-	void fadeOut();
+	void stopAllExceptMusic();
 	void waitEndFading();
-	void soundStep(int midx, int midz, int act, int frame, uint16 *list);
+	void soundStep(int midx, int midz, int act, int frame);
 	int32 talkStart(const Common::String &name);
-	void talkStop();
-	void deleteRoomSounds();
 	void loadRoomSounds();
 
 	void loadSamples(Common::File *file);

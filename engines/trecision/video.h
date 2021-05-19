@@ -105,7 +105,6 @@ public:
 	void startFullMotion();
 	void stopFullMotion();
 
-	void refreshAllAnimations();
 	void refreshAnim(int box);
 	void refreshSmkAnim(uint16 animation);
 	void startSmkAnim(uint16 animation);

@@ -203,7 +203,6 @@ void TrecisionEngine::processTime() {
 	static uint8 oldLightIcon = 0xFF;
 
 	_curTime = readTime();
-	_animMgr->refreshAllAnimations();
 
 	if (_curTime >= _nextRefresh) {
 		_textMgr->drawTexts();
