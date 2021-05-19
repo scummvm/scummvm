@@ -20,6 +20,8 @@
  *
  */
 
+#include "backends/keymapper/keymapper.h"
+
 #include "common/debug-channels.h"
 #include "common/rect.h"
 
@@ -383,7 +385,10 @@ void AsylumEngine::handleEvents() {
 	_console->onFrame();
 
 	AsylumEvent ev;
+	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
+
 	while (_eventMan->pollEvent(ev)) {
+		keymapper->setEnabled(_handler == _scene);
 		switch (ev.type) {
 		default:
 			break;
