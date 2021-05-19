@@ -515,7 +515,7 @@ bool Engine::areDataAndCDAudioReadFromSameCDDrive() {
 			"from the CD. This is known to cause problems,\n"
 			"and it is therefore recommended that you copy\n"
 			"the data files to your hard disk instead.\n"
-			"See the Documentation (CD audio) for details."), _("OK"));
+			"See the documentation (CD audio) for details."), _("OK"));
 		dialog.runModal();
 		return true;
 	}
@@ -535,11 +535,11 @@ void Engine::warnMissingExtractedCDAudio() {
 	// - The game has audio tracks,
 	// - and the tracks have not been ripped.
 	GUI::MessageDialog dialog(
-		_("This game has audio tracks in its disk. These\n"
-		"tracks need to be ripped from the disk using\n"
+		_("This game has audio tracks on its CD. These\n"
+		"tracks need to be ripped from the CD using\n"
 		"an appropriate CD audio extracting tool in\n"
 		"order to listen to the game's music.\n"
-		"See the Documentation (CD audio) for details."), _("OK"));
+		"See the documentation (CD audio) for details."), _("OK"));
 	dialog.runModal();
 }
 
