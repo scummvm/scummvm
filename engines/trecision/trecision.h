@@ -179,7 +179,6 @@ public:
 	void doMouseTalk(uint16 curObj);
 
 	// Utils
-	void setRoom(uint16 r, bool b);
 	uint16 textLength(const Common::String &text, uint16 begin = 0, uint16 end = 0);
 	Common::KeyCode waitKey();
 	void waitDelay(uint32 val);

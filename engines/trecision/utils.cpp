@@ -45,10 +45,6 @@ char *TrecisionEngine::getNextSentence() {
 	return _textPtr;
 }
 
-void TrecisionEngine::setRoom(uint16 r, bool b) {
-	_logicMgr->setupAltRoom(r, b);
-}
-
 /*-------------------------------------------------
  * Compute string length from character begin to end
  *-------------------------------------------------*/

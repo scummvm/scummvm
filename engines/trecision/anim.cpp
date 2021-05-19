@@ -21,6 +21,8 @@
  */
 
 #include "trecision/anim.h"
+
+#include "logic.h"
 #include "trecision/3d.h"
 #include "trecision/dialog.h"
 #include "trecision/scheduler.h"
@@ -232,10 +234,10 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, !_vm->isObjectVisible(h->_curAnim->_atFrame[atf]._index));
 		break;
 	case ATFSETROOMT:
-		_vm->setRoom(h->_curAnim->_atFrame[atf]._index, true);
+		_vm->_logicMgr->setupAltRoom(h->_curAnim->_atFrame[atf]._index, true);
 		break;
 	case ATFSETROOMF:
-		_vm->setRoom(h->_curAnim->_atFrame[atf]._index, false);
+		_vm->_logicMgr->setupAltRoom(h->_curAnim->_atFrame[atf]._index, false);
 		break;
 	case ATFREADBOX:
 		switch (h->_curAnim->_atFrame[atf]._index) {

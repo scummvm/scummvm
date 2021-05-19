@@ -24,6 +24,7 @@
 #define TRECISION_LOGIC_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Trecision {
 class TrecisionEngine;
