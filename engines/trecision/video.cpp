@@ -408,10 +408,8 @@ void AnimManager::stopFullMotion() {
 
 void AnimManager::refreshAnim(int box) {
 	for (int a = 0; a < MAXSMACK; a++) {
-		if ((_playingAnims[a] != 0) && (box == BOX_BACKGROUND)) {
-			if (a != 1) {
-				refreshSmkAnim(_playingAnims[a]);
-			}
+		if (_playingAnims[a] != 0 && box == BOX_BACKGROUND && a != kSmackerAction) {
+			refreshSmkAnim(_playingAnims[a]);
 		}
 	}
 }
@@ -476,12 +474,12 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 				}
 			}
 
-			if (smkCurFrame(kSmackerBackground) > 0 && !intersects) {
+			if (smkDecoder->getCurFrame() > 0 && !intersects) {
 				Graphics::Surface anim = frame->getSubArea(*lastRect);
 				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
 			}
 
-			lastRect = _smkAnims[kSmackerBackground]->getNextDirtyRect();
+			lastRect = smkDecoder->getNextDirtyRect();
 		}
 	}
 }
@@ -521,7 +519,7 @@ void AnimManager::drawSmkActionFrame() {
 
 	const byte *palette = smkDecoder->getPalette();
 
-	if (smkCurFrame(kSmackerAction) == 0) {
+	if (smkDecoder->getCurFrame() == 0) {
 		for (uint16 curY = 0; curY < AREA; curY++) {
 			for (uint16 curX = 0; curX < MAXX; curX++) {
 				if (frame->getPixel(curX, curY)) {
