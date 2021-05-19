@@ -48,6 +48,16 @@ class TextManager;
 class Scheduler;
 class AnimTypeManager;
 
+// Saved game versions
+// Version history:
+// - 102: Original PC full version
+// - 103: Original PC demo version
+// - 110: First ScummVM version
+#define SAVE_VERSION_ORIGINAL_MIN 102
+#define SAVE_VERSION_ORIGINAL_MAX 109
+#define SAVE_VERSION_SCUMMVM_MIN 110
+#define SAVE_VERSION_SCUMMVM 110
+
 #define MAXROOMS         	  100            // Game rooms
 #define MAXOBJ          	  1400           // Game objects
 #define MAXINVENTORY    	  150            // Inventory Items
