@@ -171,7 +171,7 @@ TrecisionEngine::~TrecisionEngine() {
 		_animMgr->stopAllSmkAnims();
 
 	_dataFile.close();
-	_soundMgr->stopSoundSystem();
+	_thumbnail.free();
 
 	delete _animMgr;
 	delete _dialogMgr;

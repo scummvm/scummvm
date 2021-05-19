@@ -56,7 +56,11 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 }
 
 SoundManager::~SoundManager() {
+	g_system->getMixer()->stopAll();
 	_speechFile.close();
+
+	for (int i = 0; i < NUMSAMPLES; ++i)
+		delete _sfxStream[i];
 }
 
 void SoundManager::soundTimer() {
@@ -106,10 +110,6 @@ void SoundManager::soundTimer() {
 			}
 		}
 	}
-}
-
-void SoundManager::stopSoundSystem() {
-	g_system->getMixer()->stopAll();
 }
 
 void SoundManager::loadAudioWav(int num, const Common::String &fileName) {

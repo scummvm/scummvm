@@ -91,7 +91,6 @@ private:
 
 public:
 	void soundTimer();
-	void stopSoundSystem();
 	void play(int num);
 	void stop(int num);
 	void stopAll();
