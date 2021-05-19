@@ -182,7 +182,7 @@ const short ModXmS3mStream::sinetable[] = {
 ModXmS3mStream::ModXmS3mStream(Common::SeekableReadStream *stream, int initialPos, int rate, int interpolation) :
 	_rampBuf(nullptr), _playCount(nullptr), _channels(nullptr),
 	_mixBuffer(nullptr), _sampleRate(rate), _interpolation(interpolation),
-	_seqPos(initialPos) _mixBufferSamples(0), _finished(false) {
+	_seqPos(initialPos), _mixBufferSamples(0), _finished(false) {
 	if (!_module.load(*stream)) {
 		warning("It's not a valid Mod/S3m/Xm sound file");
 		_loadSuccess = false;
