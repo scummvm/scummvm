@@ -478,7 +478,6 @@ void TrecisionEngine::tendIn() {
 	}
 
 	_flagPaintCharacter = true;
-	_soundMgr->waitEndFading();
 	_renderer->paintScreen(true);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
