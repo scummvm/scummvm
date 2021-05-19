@@ -360,7 +360,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "beautiesandbeasts", "Beauties and Beasts" },
 	{ "beforethedarkcrystal2", "Before the Dark Crystal II" },
 	{ "benjaminjordan", "Benjamin Jordan" },
-	{ "benjordancase1", "Ben Jordan Case 1" },
 	{ "bentheredanthat", "Ben There, Dan That!" },
 	{ "bernardsroom", "Bernards Room" },
 	{ "besieged", "besieged" },
@@ -374,12 +373,14 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "billyboysimportantwinelottery", "Billy Boy's Important Wine Lottery" },
 	{ "billymasterswasright", "Billy Masters Was Right" },
 	{ "birdy", "Birdy" },
-	{ "bj7thecardinalsins", "BJ7: The Cardinal Sins" },
-	{ "bjcase2", "BJ Case 2" },
-	{ "bjcase3", "BJ Case 3" },
-	{ "bjcase4", "BJ Case 4" },
-	{ "bjcase5", "BJ Case 5" },
-	{ "bjcase6", "BJ Case 6" },
+	{ "bjcase1", "Ben Jordan Paranormal Investigator Case 1" },
+	{ "bjcase2", "Ben Jordan Paranormal Investigator Case 2" },
+	{ "bjcase3", "Ben Jordan Paranormal Investigator Case 3" },
+	{ "bjcase4", "Ben Jordan Paranormal Investigator Case 4" },
+	{ "bjcase5", "Ben Jordan Paranormal Investigator Case 5" },
+	{ "bjcase6", "Ben Jordan Paranormal Investigator Case 6" },
+	{ "bjcase7", "Ben Jordan Paranormal Investigator Case 7: The Cardinal Sins" },
+	{ "bjcase8", "Ben Jordan Paranormal Investigator Case 8" },
 	{ "blackmailinbrooklyn", "Blackmail In Brooklyn" },
 	{ "blackmorph", "Black Morph" },
 	{ "blacksect1", "Black Sect Remake" },
@@ -1757,8 +1758,10 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
 	GAME_ENTRY("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058), // Steam
 	GAME_ENTRY("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462), // Steam
+	GAME_ENTRY("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275659086),
 	GAME_ENTRY("footballgame", "football game", "76703ac67835bdbfde5b378a147c8ba2", 164951859), // Steam
 	GAME_ENTRY("footballgame", "football game.exe", "76703ac67835bdbfde5b378a147c8ba2", 164951859),
+	GAME_ENTRY("footballgame", "football game.exe", "8283bcdb6ec07ec4a4040ef34215ec96", 164960522),
 	GAME_ENTRY("geminirue", "GeminiRue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61906750), // v1.1 CD Release
 	GAME_ENTRY("geminirue", "gemini rue.exe", "f3c0c7d3892bdd8963e8ce017f73de08", 61986506), // GOG
 	GAME_ENTRY("geminirue", "gemini rue.exe", "0bdfb2139abaae5ae2dc85f1aacfd3f6", 61926695),
@@ -1792,10 +1795,12 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "4b18403fd1d150321f50cff9232d7b28", 982468239), // Steam
 	GAME_ENTRY("lamplightcity", "lamplight city.ags", "69936bd2263616bb0bd64fa6b4fe5a8d", 979409133), // Steam
 	GAME_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797285), // Steam
+	GAME_ENTRY("legendofhand", "legend of hand.exe", "fc478dd7564c908615c9366398d995c8", 75797155),
 	GAME_ENTRY("mage", "ac2game.dat", "2e822f554994f36e0c62da2acda874da", 30492258), // GOG, Mac
 	GAME_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492089), // GOG, Windows
 	GAME_ENTRY("mage", "mages_initiation.exe", "2e822f554994f36e0c62da2acda874da", 30492087), // Steam
 	GAME_ENTRY("metaldead", "metaldead.exe", "91996c5379e82787b68e84ab67d9672f", 1504754877), // Steam
+	GAME_ENTRY("metaldead", "metaldead.exe", "3b0874c12fa643efa5fcdc43f647c871", 1501335400),
 	GAME_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078740517), // Steam
 	GAME_ENTRY("neofeud", "neofeud.exe", "6e861b1f476ff7cdf036082abb271329", 2078743375),
 	GAME_ENTRY("oott", "oott-tkc.exe", "11c2421258465cba4bd773c49d918ee3", 467834855), // GOG
@@ -1827,6 +1832,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("samaritan", "samaritan.exe", "6a3b669b7d34ec9356a665afe0c2c003", 78438375), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642157876), // Steam
 	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
+	GAME_ENTRY("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
 	GAME_ENTRY("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
 	GAME_ENTRY_PLUGIN("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, AGSTEAM_WADJETEYE), // Steam
 	GAME_ENTRY("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040), // Steam
@@ -1858,6 +1864,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP), // GOG
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004), // Steam
+	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100010235),
 	// Commerical Italian games
 	GAME_ENTRY_LANG_PLATFORM("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA, nullptr),
 
@@ -2098,7 +2105,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("beautiesandbeasts", "beautiesandbeasts.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 6507202),
 	GAME_ENTRY("beforethedarkcrystal2", "Before the Dark Crystal II.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 59569723),
 	GAME_ENTRY("benjaminjordan", "bj1.exe", "4b1378721f4f066f75102f3dca809224", 5678910),
-	GAME_ENTRY("benjordancase1", "bj1deluxe.exe", "8275249f4ffbc28c1f10ad09a2786814", 8293704),
 	GAME_ENTRY("bentheredanthat", "btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 46342499),
 	GAME_ENTRY_PLATFORM("bentheredanthat", "btdt.exe", "90413e9ae57e222f8913b09d2bc847bc", 89521873, "Special Edition"), // Steam
 	GAME_ENTRY("bernardsroom", "bernardsRoom.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 8767774),
@@ -2113,12 +2119,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("billyboysimportantwinelottery", "billyboy.exe", "5881d6b88386317dc9d67524a14b11d4", 4872317),
 	GAME_ENTRY("billymasterswasright", "Billy Masters Was Right.exe", "6fe5526eb7dc5b8fe82fb447a4701af7", 44901409),
 	GAME_ENTRY("birdy", "birdy.exe", "06a03fe35791b0578068ab1873455463", 4250415),
-	GAME_ENTRY("bj7thecardinalsins", "bj7.exe", "18b284c22010850f79bc5c20054a70c4", 13714066),
+	GAME_ENTRY("bjcase1", "bj1deluxe.exe", "8275249f4ffbc28c1f10ad09a2786814", 8293704),
 	GAME_ENTRY("bjcase2", "bj2.exe", "465f972675db2da6040518221af5b0ba", 6318491),
+	GAME_ENTRY_PLATFORM("bjcase2", "BJ2Deluxe.exe", "18b284c22010850f79bc5c20054a70c4", 7055507, "Deluxe Edition"),
 	GAME_ENTRY("bjcase3", "bj3.exe", "61f113e2e52e0dd27aeb438a55dd9b8c", 10841883),
 	GAME_ENTRY("bjcase4", "bj4.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 15303392),
 	GAME_ENTRY("bjcase5", "bj5.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 13681827),
 	GAME_ENTRY("bjcase6", "bj6.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 18281493),
+	GAME_ENTRY("bjcase7", "bj7.exe", "18b284c22010850f79bc5c20054a70c4", 13714066),
+	GAME_ENTRY("bjcase8", "BJ8.exe", "98df40b0885b4e5f90f1093987f1f56c", 28334295),
 	GAME_ENTRY("blackmailinbrooklyn", "brooklyn.exe", "3192c36199d2b0784f866b28da7106d8", 4913695),
 	GAME_ENTRY("blackmorph", "liechi.exe", "46859c6f77bdb311266daa589561fa6b", 14476030),
 	GAME_ENTRY("blacksect1", "Black Sect Remake.exe", "615e73fc1874e92d60a1996c2330ea36", 34503092),
@@ -2515,6 +2524,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("koffeekrisis", "Koffee Krisis.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 2423111),
 	GAME_ENTRY("koscheitheimmortal", "Koschei.exe", "465f972675db2da6040518221af5b0ba", 2771442),
 	GAME_ENTRY("kq4retold", "King's Quest 4.exe", "da6140c1e246d5f7641464bda80c45d5", 148103603),
+	GAME_ENTRY("kq4retold", "KQ4Retold.exe", "da6140c1e246d5f7641464bda80c45d5", 293710098),
+	GAME_ENTRY("kq4retold", "King's Quest 4.ags", "e9e8f833b86874526cb5e356d1e287eb", 145563043),
+	GAME_ENTRY("kq4retold", "ac2game.dat", "da6140c1e246d5f7641464bda80c45d5", 293710098),
 	GAME_ENTRY("kristmaskrisis", "Kristmas Krisis.exe", "90413e9ae57e222f8913b09d2bc847bc", 2067681),
 	GAME_ENTRY("ktx1", "KTX-1.exe", "615e73fc1874e92d60a1996c2330ea36", 13806290),
 	GAME_ENTRY("kumastory", "Kuma Story.exe", "54e966a013d104bf23603c780438d089", 2893472),
