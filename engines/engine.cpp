@@ -456,7 +456,7 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
 }
 
 /**
- * Checks if supported (extracted) audio files are found
+ * Checks if supported (extracted) audio files are found.
  *
  * @return			true if audio files of the expected naming scheme are found, as long as ScummVM
  *					is also build with support to the respective audio format (eg. ogg, flac, mad/mp3)

@@ -587,15 +587,18 @@ public:
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-	/** Check if extraced CD Audio files are found.
-	*/
+	/**
+	 * Check if extracted CD Audio files are found.
+	 */
 	bool existExtractedCDAudioFiles();
-	/** On some systems, check whether the game appears to be run
-	* from the same CD drive, which also should play CD audio.
-	*/
+	/**
+	 * On some systems, check whether the game appears to be run
+	 * from the same CD drive, which also should play CD audio.
+	 */
 	bool areDataAndCDAudioReadFromSameCDDrive();
-	/** Display a warning for no extracted CD Audio files found.
-	*/
+	/**
+	 *Display a warning for no extracted CD Audio files found.
+	 */
 	void warnMissingExtractedCDAudio();
 
 	/**
