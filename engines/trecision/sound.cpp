@@ -58,9 +58,7 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 SoundManager::~SoundManager() {
 	g_system->getMixer()->stopAll();
 	_speechFile.close();
-
-	for (int i = 0; i < NUMSAMPLES; ++i)
-		delete _sfxStream[i];
+	deleteRoomSounds();
 }
 
 void SoundManager::soundTimer() {
@@ -310,7 +308,15 @@ void SoundManager::talkStop() {
 	g_system->getMixer()->stopHandle(_soundHandle[kSoundChannelSpeech]);
 }
 
+void SoundManager::deleteRoomSounds() {
+	for (int i = 0; i < NUMSAMPLES; ++i) {
+		delete _sfxStream[i];
+		_sfxStream[i] = nullptr;
+	}
+}
+
 void SoundManager::loadRoomSounds() {
+	deleteRoomSounds();
 	for (uint16 a = 0; a < MAXSOUNDSINROOM; a++) {
 		uint16 b = _vm->_room[_vm->_curRoom]._sounds[a];
 
