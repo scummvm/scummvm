@@ -1716,30 +1716,33 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
 IMPLEMENT_OPCODE(Interact)
-	Actor *actor = getScene()->getActor(cmd->param2 == 2 ? getSharedData()->getPlayerIndex() : cmd->param1);
-
-	if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatusWalkingTo2) {
-		if (cmd->param2 == 2)
-			_processNextEntry = true;
-
-		return;
-	}
+	Actor *player = getScene()->getActor(), *actor = getScene()->getActor((ActorIndex)cmd->param1);
 
 	if (cmd->param2 == 2) {
+		if (player->getStatus() == kActorStatusWalkingTo || player->getStatus() == kActorStatusWalkingTo2) {
+			_processNextEntry = true;
+
+			return;
+		}
+
 		cmd->param2 = 1;
 		_processNextEntry = false;
 
-		if ((actor->getPoint1()->x + actor->getPoint2()->x == cmd->param6) && (actor->getPoint1()->y + actor->getPoint2()->y == cmd->param7)) {
-			getScene()->getActor()->faceTarget((uint32)cmd->param1, kDirectionFromActor);
-			actor->updateFromDirection((ActorDirection)((actor->getDirection() + 4) & 7));
+		if ((player->getPoint1()->x + player->getPoint2()->x == cmd->param6)
+		 && (player->getPoint1()->y + player->getPoint2()->y == cmd->param7)) {
+			player->faceTarget((uint32)cmd->param1, kDirectionFromActor);
+			actor->updateFromDirection((ActorDirection)((player->getDirection() + 4) & 7));
 		} else {
 			_currentQueueEntry->currentLine = cmd->param3;
 		}
 	} else {
 		Common::Point point;
 
+		if (actor->getStatus() == kActorStatusWalkingTo || actor->getStatus() == kActorStatusWalkingTo2)
+			return;
+
 		if (actor->canInteract(&point, &cmd->param4)) {
-			getScene()->getActor()->processStatus(point.x, point.y, (bool)cmd->param4);
+			player->processStatus(point.x, point.y, (bool)cmd->param4);
 			cmd->param6 = point.x;
 			cmd->param7 = point.y;
 
