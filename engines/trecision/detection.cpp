@@ -60,6 +60,15 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"nl",
 		0,
+		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 436598),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_NO_FLAGS,
+		GUIO0()
+	},
+	{
+		"nl",
+		0,
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 457299),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
