@@ -67,24 +67,28 @@ reg_t SoundCommandParser::kDoSoundInit(EngineState *s, int argc, reg_t *argv) {
 int SoundCommandParser::getSoundResourceId(reg_t obj) {
 	int resourceId = obj.getSegment() ? (int)readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 	// Modify the resourceId for the Windows versions that have an alternate MIDI soundtrack, like SSCI did.
-	if (g_sci && g_sci->_features->useAltWinGMSound()) {
+	if (g_sci->_features->useAltWinGMSound()) {
 		// Check if the alternate MIDI song actually exists...
 		// There are cases where it just doesn't exist (e.g. SQ4, room 530 -
 		// bug #5829). In these cases, use the DOS tracks instead.
 		if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId + 1000)))
 			resourceId += 1000;
 	}
-	if (g_sci->isCD() && g_sci->getGameId() == GID_SQ4 && resourceId < 1000) {
-		// For Space Quest 4 a few additional samples and also higher quality samples were played.
-		// We must not connect this to General MIDI support, because that will get disabled
-		// in case the user hasn't also chosen a General MIDI output device.
-		// We use those samples for DOS platform as well. We do basically the same for Space Quest 3,
-		// which also contains a few samples that were not played under the original interpreter.
-		// Maybe some fan wishes to opt-out of this. In this case a game specific option should be added.
-		// For more information see enhancement/bug #10228
-		// TODO: Check, if there are also enhanced samples for any of the other General MIDI games.
-		if (_resMan->testResource(ResourceId(kResourceTypeAudio, resourceId + 1000)))
+	if (g_sci->getGameId() == GID_SQ4 &&
+		g_sci->getPlatform() == Common::kPlatformWindows &&
+		_useDigitalSFX &&
+		resourceId < 1000) {
+		// SQ4 CD Windows played Windows-exclusive digital samples instead of MIDI sounds
+		// when available. It did this when the "sound1000" was set to true in sierra.ini,
+		// which was always the case. If there was no audio resource with the given id,
+		// it would add 1000 and use that if it existed. Otherwise, it would fall back on
+		// the MIDI sound resource. Although this behavior existed in other Windows
+		// SCI 1.1 interpreters, SQ4 CD is the only game known to enable sound1000 in
+		// sierra.ini and include Windows-exclusive audio resources.
+		if (!_resMan->testResource(ResourceId(kResourceTypeAudio, resourceId)) &&
+			_resMan->testResource(ResourceId(kResourceTypeAudio, resourceId + 1000))) {
 			resourceId += 1000;
+		}
 	}
 
 	return resourceId;
