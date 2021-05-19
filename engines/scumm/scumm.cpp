@@ -1475,7 +1475,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
 		if (!existExtractedCDAudioFiles()
 		    && !areDataAndCDAudioReadFromSameCDDrive()) {
-			warnForGameHasCDAudioButNoExtractedFilesFound();
+			warnMissingExtractedCDAudio();
 		}
 		_system->getAudioCDManager()->open();
 	}

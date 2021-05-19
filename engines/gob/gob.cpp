@@ -298,7 +298,7 @@ Common::Error GobEngine::run() {
 	if (isCD()) {
 		if (!existExtractedCDAudioFiles()
 		    && !areDataAndCDAudioReadFromSameCDDrive()) {
-			warnForGameHasCDAudioButNoExtractedFilesFound();
+			warnMissingExtractedCDAudio();
 		}
 	}
 

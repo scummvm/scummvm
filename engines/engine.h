@@ -596,7 +596,7 @@ public:
 	bool areDataAndCDAudioReadFromSameCDDrive();
 	/** Display a warning for no extracted CD Audio files found.
 	*/
-	void warnForGameHasCDAudioButNoExtractedFilesFound();
+	void warnMissingExtractedCDAudio();
 
 	/**
 	 * Check whether it is time to autosave, and if so, do it.

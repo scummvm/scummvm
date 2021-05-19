@@ -51,7 +51,7 @@ SoundTowns_LoK::~SoundTowns_LoK() {
 bool SoundTowns_LoK::init() {
 	if (!_vm->existExtractedCDAudioFiles()
 	    && !_vm->areDataAndCDAudioReadFromSameCDDrive()) {
-		_vm->warnForGameHasCDAudioButNoExtractedFilesFound();
+		_vm->warnMissingExtractedCDAudio();
 	}
 	int unused = 0;
 	_musicFadeTable = _vm->staticres()->loadRawData(k1TownsMusicFadeTable, unused);
