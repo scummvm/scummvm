@@ -240,6 +240,16 @@ struct SLight {
 	uint8 _fallOff;
 	int8 _inten;
 	int8 _position;
+
+	void clear() {
+		_x = _y = _z = 0.0f;
+		_dx = _dy = _dz = 0.0f;
+		_inr = _outr = 0.0f;
+		_hotspot = 0;
+		_fallOff = 0;
+		_inten = 0;
+		_position = 0;
+	}
 };
 
 struct SCamera {
@@ -248,6 +258,13 @@ struct SCamera {
 	float _e2[3];
 	float _e3[3];
 	float _fovX, _fovY;
+
+	void clear() {
+		_ex = _ey = _ez = 0.0f;
+		_fovX = _fovY = 0.0f;
+		for (uint8 i = 0; i < 3; ++i)
+			_e1[i] = _e2[i] = _e3[i] = 0.0f;
+	}
 };
 
 } // End of namespace Trecision
