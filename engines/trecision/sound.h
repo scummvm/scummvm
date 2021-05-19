@@ -39,8 +39,7 @@ namespace Trecision {
 #define SFADOUT 2
 
 #define SAMPLEVOICES 6
-#define MAXSAMPLE 	 145            // Maximum number of samples in the game
-#define NUMSAMPLES   MAXSAMPLE
+#define NUMSAMPLES   145            // Maximum number of samples in the game
 
 #define VOLUME(a)	( (a * 255) / 127 )
 #define TIME(a)		( (a * 3) / 50 )
@@ -73,7 +72,7 @@ private:
 
 	FastFile _speechFile; // nlspeech.cd0
 
-	SSound _gSample[MAXSAMPLE];
+	SSound _gSample[NUMSAMPLES];
 
 	uint32 _timer;
 	int16 _samplePlaying[SAMPLEVOICES];			// sample currently playing
@@ -102,7 +101,6 @@ public:
 	void deleteRoomSounds();
 	void loadRoomSounds();
 
-	void syncGameStream(Common::Serializer &ser);
 	void loadSamples(Common::File *file);
 };
 

@@ -36,6 +36,15 @@
 #include "trecision/video.h"
 
 namespace Trecision {
+
+// Version history:
+// - 102: Original version
+// - 103: Added ScummVM metadata
+// - 104: Removed unused data
+#define SAVE_VERSION_ORIGINAL 102
+#define SAVE_VERSION_SCUMMVM_MIN 103
+#define SAVE_VERSION_SCUMMVM 104
+
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
@@ -65,7 +74,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 			Graphics::Surface *thumbnail = new Graphics::Surface();
 			_graphicsMgr->readSurface(saveFile, thumbnail, ICONDX, ICONDY);
 			_graphicsMgr->setSaveSlotThumbnail(i, thumbnail);
-		} else if (version == SAVE_VERSION_SCUMMVM) {
+		} else if (version >= SAVE_VERSION_SCUMMVM_MIN) {
 			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
 			if (headerRead) {
 				saveNames.push_back(header.description);
@@ -428,20 +437,20 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	ser.syncAsUint16LE(_curRoom);
-	ser.syncAsByte(unused); // _inventorySize
-	ser.syncAsByte(unused); // _cyberInventorySize
+	ser.syncAsByte(unused, 102, 103);	// _inventorySize
+	ser.syncAsByte(unused, 102, 103);	// _cyberInventorySize
 	ser.syncAsByte(_iconBase);
 	ser.syncAsSint16LE(_flagSkipTalk);
-	ser.syncAsSint16LE(unused); // _flagSkipEnable
-	ser.syncAsSint16LE(unused); // _flagMouseEnabled
-	ser.syncAsSint16LE(unused); // _flagScreenRefreshed
+	ser.syncAsSint16LE(unused, 102, 103);	// _flagSkipEnable
+	ser.syncAsSint16LE(unused, 102, 103);	// _flagMouseEnabled
+	ser.syncAsSint16LE(unused, 102, 103);	// _flagScreenRefreshed
 	ser.syncAsSint16LE(_flagPaintCharacter);
 	ser.syncAsSint16LE(_flagSomeoneSpeaks);
 	ser.syncAsSint16LE(_flagCharacterSpeak);
 	ser.syncAsSint16LE(_flagInventoryLocked);
 	ser.syncAsSint16LE(_flagUseWithStarted);
-	ser.syncAsSint16LE(unused); // FlagMousePolling
-	ser.syncAsSint16LE(unused); // FlagDialogSolitaire
+	ser.syncAsSint16LE(unused, 102, 103); // _flagMousePolling
+	ser.syncAsSint16LE(unused, 102, 103); // _flagDialogSolitaire
 	ser.syncAsSint16LE(_flagCharacterExists);
 
 	syncInventory(ser);
@@ -482,7 +491,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	}
 
 	_animMgr->syncGameStream(ser);
-	_soundMgr->syncGameStream(ser);
+	ser.skip(NUMSAMPLES * 2, 102, 103);	// SoundManager::syncGameStream()
 	_dialogMgr->syncGameStream(ser);
 	_logicMgr->syncGameStream(ser);
 
