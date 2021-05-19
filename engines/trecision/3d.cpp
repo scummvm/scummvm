@@ -458,6 +458,9 @@ int8 Renderer3D::clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int
 	Draw the character
 --------------------------------------------------*/
 void Renderer3D::drawCharacter(uint8 flag) {
+	if (!_vm->_flagShowCharacter)
+		return;
+	
 	Actor *actor = _vm->_actor;
 
 	// Compute pointer to frame
@@ -506,9 +509,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		float e32 = _curCamera->_e3[2];
 
 		// Light directions
-		float l0 = 0.0;
-		float l1 = 0.0;
-		float l2 = 0.0;
+		float l0 = 0.0f;
+		float l1 = 0.0f;
+		float l2 = 0.0f;
 
 		actor->_lim[0] = 32000;
 		actor->_lim[1] = -32000;
@@ -526,9 +529,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			_vVertex[i]._angle = 180;
 
 		float dist;
-		float tx = 0;
-		float ty = 0;
-		float tz = 0;
+		float tx = 0.0f;
+		float ty = 0.0f;
+		float tz = 0.0f;
 		float pa0, pa1, pa2;
 
 		for (uint32 b = 0; b < actor->_lightNum; b++) {
@@ -670,17 +673,17 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
 			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
 
-			int _x2d = _vm->_cx + (int)((l0 * _curCamera->_fovX) / l2);
-			int _y2d = _vm->_cy + (int)((l1 * _curCamera->_fovY) / l2);
+			int x2d = _vm->_cx + (int)((l0 * _curCamera->_fovX) / l2);
+			int y2d = _vm->_cy + (int)((l1 * _curCamera->_fovY) / l2);
 
-			_vVertex[a]._x = _x2d;
-			_vVertex[a]._y = _y2d;
+			_vVertex[a]._x = x2d;
+			_vVertex[a]._y = y2d;
 			_vVertex[a]._z = (int32)((dist - l2) * 128.0);
 
-			actor->_lim[0] = MIN(_x2d, actor->_lim[0]);
-			actor->_lim[1] = MAX(_x2d, actor->_lim[1]);
-			actor->_lim[2] = MIN(_y2d, actor->_lim[2]);
-			actor->_lim[3] = MAX(_y2d, actor->_lim[3]);
+			actor->_lim[0] = MIN(x2d, actor->_lim[0]);
+			actor->_lim[1] = MAX(x2d, actor->_lim[1]);
+			actor->_lim[2] = MIN(y2d, actor->_lim[2]);
+			actor->_lim[3] = MAX(y2d, actor->_lim[3]);
 
 			actor->_lim[4] = MIN(_vVertex[a]._z, actor->_lim[4]);
 			actor->_lim[5] = MAX(_vVertex[a]._z, actor->_lim[5]);
