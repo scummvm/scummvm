@@ -94,7 +94,7 @@ void SoundManager::play(int soundId) {
 				-1,
 				volume,
 				0,
-				DisposeAfterUse::NO
+				DisposeAfterUse::YES
 			);
 		}
 	}
@@ -258,7 +258,11 @@ int32 SoundManager::talkStart(const Common::String &name) {
 	g_system->getMixer()->playStream(
 		Audio::Mixer::kSpeechSoundType,
 		&_sounds[kSoundTypeSpeech].soundHandle,
-		audioStream
+		audioStream,
+		-1,
+		Audio::Mixer::kMaxChannelVolume,	// TODO
+		0,
+		DisposeAfterUse::YES
 	);
 	_vm->_characterSpeakTime = _vm->readTime();
 
