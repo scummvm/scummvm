@@ -113,11 +113,10 @@ void SoundManager::soundTimer() {
 void SoundManager::loadAudioWav(int num, const Common::String &fileName) {
 	assert(num != 0xFFFF);
 	Common::SeekableReadStream *stream = _vm->_dataFile.createReadStreamForMember(fileName);
-	const int size = stream->size();
-	byte *buf = new byte[size];
-	stream->read(buf, size);
+	// We need to copy this WAV to memory since it will be streamed
+	Common::SeekableReadStream *memStream = stream->readStream(stream->size());
 	delete stream;
-	_sfxStream[num] = Audio::makeWAVStream(new Common::MemoryReadStream(buf, size), DisposeAfterUse::YES);
+	_sfxStream[num] = Audio::makeWAVStream(memStream, DisposeAfterUse::YES);
 }
 
 void SoundManager::play(int num) {
