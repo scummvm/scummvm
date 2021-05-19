@@ -139,11 +139,6 @@ void SoundManager::stopSoundType(SoundType type) {
 	}
 }
 
-void SoundManager::waitEndFading() {
-	if (_vm->_curRoom == kRoom41D)
-		_vm->readExtraObj41D();
-}
-
 void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
 	bool stepRight = false;

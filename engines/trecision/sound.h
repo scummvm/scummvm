@@ -83,7 +83,6 @@ public:
 	void stopSoundType(SoundType type);
 	void stopAll();
 	void stopAllExceptMusic();
-	void waitEndFading();
 	void soundStep(int midx, int midz, int act, int frame);
 	int32 talkStart(const Common::String &name);
 	void loadRoomSounds();
