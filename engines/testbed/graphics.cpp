@@ -1282,6 +1282,8 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 	Common::sort(pfList.begin(), pfList.end(), PixelFormatComparator());
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 
+	bool seenTutorials[9] = {};
+
 	for (Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin(); iter != pfList.end(); iter++) {
 		numFormatsTested++;
 
@@ -1292,6 +1294,28 @@ TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfLis
 		} else if (iter->bytesPerPixel != 2 && iter->bytesPerPixel != 4) {
 			Testsuite::logDetailedPrintf("bytesPerPixel must be 1, 2, or 4\n");
 			continue;
+		}
+
+		if (!seenTutorials[iter->aLoss]) {
+			showPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), iter->aLoss);
+
+			Common::Point pt(0, 170);
+			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, false);
+
+			Common::String tutorial;
+			tutorial = Common::String::format("Testing a group of Pixel Formats with %d-bit alpha channel.\nPlease, memorize the pattern displayed in the frame above.", 8 - iter->aLoss);
+			if (iter->aLoss < 7) {
+				tutorial += "\nIt should contain horizontal and vertical gradients for several different colors.";
+			} else if (iter->aLoss == 7) {
+				tutorial += "\nTop half of the frame should be empty, containing only a cross.";
+				tutorial += "\nBottom half of the frame should contain *only horizontal* gradients for several different colors.";
+			} else {
+				tutorial += "\nIt should contain *only horizontal* gradients for several different colors.";
+			}
+			tutorial += "\nWe are going to display the same pattern in other Pixel Formats.";
+
+			Testsuite::displayMessage(tutorial);
+			seenTutorials[iter->aLoss] = true;
 		}
 
 		// Draw some nice gradients
@@ -1382,6 +1406,35 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 	dstSurface.blitFrom(*screen);
 
 
+	// Init palette, if we are demonstating a CLUT8 preview
+	// There are nTones different combinations of alpha and brightness levels for each color
+
+	if (pf.bytesPerPixel == 1) {
+		byte palette[paletteSize * 3] = {0};
+		memcpy(palette, stdPalette, nStdColors * 3);
+
+		level[nLevels - 1] = 256;
+		for (uint c = 0; c < nColors; c++) {
+			uint idx = 3 * (nStdColors + c * nTones);
+			for (uint alpha = 1; alpha < nLevels; alpha++) {
+				for (uint brightness = alpha; brightness < nLevels; brightness++) {
+					uint value = level[alpha] * level[brightness] / 256;
+					if (value == 256) {
+					    value = 255;
+					}
+
+					palette[idx++] = colorR[c] * value;
+					palette[idx++] = colorG[c] * value;
+					palette[idx++] = colorB[c] * value;
+				}
+			}
+		}
+		level[nLevels - 1] = 255;
+
+		g_system->getPaletteManager()->setPalette(palette, 0, paletteSize);
+	}
+
+
 	// Display the color gradients
 
 	for (uint c = 0; c < nColors; c++) {
@@ -1402,6 +1455,25 @@ void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
 					Graphics::ManagedSurface tmp(xStep, yStep, pf);
 					tmp.clear(color);
 					dstSurface.blitFrom(tmp, Common::Point(x, y));
+				} else {
+					int a = 0;
+					if (aLoss == 8 && brightness) {
+						a = nLevels - 1;
+					} else if (aLoss == 7 && brightness && level[alpha] >= 128) {
+						a = nLevels - 1;
+					} else if (aLoss < 7 && brightness && alpha) {
+						a = alpha;
+					}
+					int b = brightness;
+
+					// draw colored rect with pre-calculated tone similar to the color after blit
+					if (a) {
+						uint tone = (2 * nLevels - MIN(a, b)) * (MIN(a, b) - 1) / 2 + ABS(a - b);
+						uint color = nStdColors + c * nTones + tone;
+						for (uint dy = 0; dy < yStep; dy++) {
+							dstSurface.hLine(x, y + dy, x + xStep - 1, color);
+						}
+					}
 				}
 			}
 		}
