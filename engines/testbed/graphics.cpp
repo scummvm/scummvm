@@ -1239,7 +1239,8 @@ TestExitStatus GFXtests::pixelFormatsSupported() {
 		return kTestSkipped;
 	}
 
-	return GFXtests::pixelFormats(g_system->getSupportedFormats());
+	Common::List<Graphics::PixelFormat> list = g_system->getSupportedFormats();
+	return GFXtests::pixelFormats(list);
 }
 
 TestExitStatus GFXtests::pixelFormatsRequired() {
@@ -1263,11 +1264,22 @@ TestExitStatus GFXtests::pixelFormatsRequired() {
 	return GFXtests::pixelFormats(list);
 }
 
-TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> &pfList) {
+struct PixelFormatComparator {
+	bool operator()(const Graphics::PixelFormat &l, const Graphics::PixelFormat &r) {
+		return l.aLoss != r.aLoss ? l.aLoss < r.aLoss:
+		       l.rLoss != r.rLoss ? l.rLoss < r.rLoss:
+		       l.gLoss != r.gLoss ? l.gLoss < r.gLoss:
+		       l.bLoss != r.bLoss ? l.bLoss < r.bLoss:
+		                            l.toString() < r.toString();
+	}
+};
+
+TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfList) {
 	int numFormatsTested = 0;
 	int numPassed = 0;
 	int numFailed = 0;
 
+	Common::sort(pfList.begin(), pfList.end(), PixelFormatComparator());
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 
 	for (Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin(); iter != pfList.end(); iter++) {
