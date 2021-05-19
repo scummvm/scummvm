@@ -324,7 +324,6 @@ void TrecisionEngine::initMain() {
 }
 
 void TrecisionEngine::checkSystem() {
-	_animMgr->refreshAllAnimations();
 	eventLoop();
 }
 
@@ -398,7 +397,7 @@ void TrecisionEngine::readLoc() {
 	if (_curRoom == kRoom11 && !(_room[kRoom11]._flag & kObjFlagDone))
 		_flagShowCharacter = true;
 
-	_soundMgr->fadeOut();
+	_soundMgr->stopAllExceptMusic();
 
 	_graphicsMgr->clearScreenBufferTop();
 

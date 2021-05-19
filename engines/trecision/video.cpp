@@ -405,7 +405,7 @@ void AnimManager::stopFullMotion() {
 			_vm->redrawRoom();
 
 		if (curDialog == dF582)
-			_vm->_soundMgr->fadeOut();
+			_vm->_soundMgr->stopAllExceptMusic();
 	}
 }
 
@@ -415,10 +415,6 @@ void AnimManager::refreshAnim(int box) {
 			refreshSmkAnim(_playingAnims[a]);
 		}
 	}
-}
-
-void AnimManager::refreshAllAnimations() {
-	_vm->_soundMgr->soundTimer();
 }
 
 void AnimManager::refreshSmkAnim(uint16 animation) {
