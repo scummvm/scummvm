@@ -299,7 +299,7 @@ Common::Error MadeEngine::run() {
 	if ((getFeatures() & GF_CD) || (getFeatures() & GF_CD_COMPRESSED)) {
 		if (!existExtractedCDAudioFiles()
 		    && !areDataAndCDAudioReadFromSameCDDrive()) {
-			warnForGameHasCDAudioButNoExtractedFilesFound();
+			warnMissingExtractedCDAudio();
 		}
 	}
 

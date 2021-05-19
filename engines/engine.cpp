@@ -530,7 +530,7 @@ bool Engine::areDataAndCDAudioReadFromSameCDDrive() {
  * This method only shows the warning. It does not check for the
  * existence of the ripped audio files.
  */
-void Engine::warnForGameHasCDAudioButNoExtractedFilesFound() {
+void Engine::warnMissingExtractedCDAudio() {
 	// Display a modal informative dialogue for the case when:
 	// - The game has audio tracks,
 	// - and the tracks have not been ripped.
