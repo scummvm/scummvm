@@ -138,6 +138,10 @@ AsylumEngine::~AsylumEngine() {
 	_gameDescription = NULL;
 }
 
+bool AsylumEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsReturnToLauncher);
+}
+
 Common::Error AsylumEngine::run() {
 	// Initialize the graphics
 	initGraphics(640, 480);

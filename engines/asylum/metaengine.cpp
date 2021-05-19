@@ -33,20 +33,21 @@
 
 class AsylumMetaEngine : public AdvancedMetaEngine {
 public:
-	virtual const char *getName() const override {
+	const char *getName() const override {
 		return "asylum";
 	}
 
-	virtual const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const {
 		return "Sanitarium (c) ASC Games";
 	}
 
+	bool hasFeature(MetaEngineFeature f) const;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
-bool Asylum::AsylumEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsReturnToLauncher);
+bool AsylumMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return false;
 }
 
 Common::Error AsylumMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
