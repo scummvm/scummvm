@@ -278,7 +278,7 @@ Common::Error DrasculaEngine::run() {
 	}
 
 	if (!existExtractedCDAudioFiles()
-	    && !areDataAndCDAudioAreReadFromSameCDDrive()) {
+	    && !areDataAndCDAudioReadFromSameCDDrive()) {
 		warnForGameHasCDAudioButNoExtractedFilesFound();
 	}
 
