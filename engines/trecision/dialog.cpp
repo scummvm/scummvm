@@ -69,7 +69,7 @@ void DialogManager::showChoices(uint16 i) {
 		_dispChoice[c] = 0;
 
 	_curDispChoice = 0;
-	for (int c = dialog->_firstChoice; c < (dialog->_firstChoice + dialog->_choiceNumb); c++) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			_dispChoice[_curDispChoice++] = c;
 			dialogPrint(x, y, HWHITE, _vm->_sentence[_choice[c]._sentenceIndex]);
@@ -84,7 +84,7 @@ void DialogManager::showChoices(uint16 i) {
 }
 
 void DialogManager::updateChoices(int16 dmx, int16 dmy) {
-	if ((dmy >= MAXDISPCHOICES) && (dmy < (CARHEI * (_curDispChoice)+5)))
+	if ((dmy >= MAXDISPCHOICES) && (dmy < CARHEI * _curDispChoice + 5))
 		_curPos = (dmy - 5) / CARHEI;
 	else
 		_curPos = -1;
