@@ -68,7 +68,7 @@ bool FastFile::open(const Common::String &name) {
 void FastFile::close() {
 	delete _stream;
 	_stream = nullptr;
-	delete[] _compStream;
+	delete _compStream;
 	_compStream = nullptr;
 	_fileEntries.clear();
 }
@@ -159,8 +159,8 @@ Common::SeekableReadStream *FastFile::createReadStreamForCompressedMember(const 
 	uint8 *ibuf = new uint8[dataSize];
 	const int32 realSize = MAX(dataSize, decompSize) + 8 + 100; // add extra padding for the decompressor
 
-	delete[] _compStream;
-	_compBuffer = new uint8[realSize];
+	delete _compStream;
+	_compBuffer = (uint8 *) malloc (realSize);
 
 	ff->read(ibuf, dataSize);
 	delete ff;
