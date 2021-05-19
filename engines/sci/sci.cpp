@@ -291,7 +291,6 @@ Common::Error SciEngine::run() {
 	//  - King's Quest 6 CD demo
 	//  - Gabriel Knight 1 CD
 	//  - Police Quest 4 CD
-	// TODO: Check, if Gabriel Knight 1 floppy supports high resolution
 	//
 	// Gabriel Knight 1 on Mac is hi-res only, so it should NOT get this option.
 	// Confirmed by [md5] and originally by clone2727.
