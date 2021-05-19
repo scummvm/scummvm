@@ -162,6 +162,8 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_pauseStartTime = 0;
 	_textStatus = TEXT_OFF;
+
+	_cx = _cy = 0;
 }
 
 TrecisionEngine::~TrecisionEngine() {
