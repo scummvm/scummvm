@@ -334,15 +334,8 @@ void SoundManager::loadRoomSounds() {
 	}
 }
 
-void SoundManager::syncGameStream(Common::Serializer &ser) {
-	for (int a = 0; a < MAXSAMPLE; a++) {
-		ser.syncAsByte(_gSample[a]._volume);
-		ser.syncAsByte(_gSample[a]._flag);
-	}
-}
-
 void SoundManager::loadSamples(Common::File *file) {
-	for (int i = 0; i < MAXSAMPLE; ++i) {
+	for (int i = 0; i < NUMSAMPLES; ++i) {
 		for (int j = 0; j < 14; j++)
 			_gSample[i]._name += file->readByte();
 		_gSample[i]._volume = file->readByte();
