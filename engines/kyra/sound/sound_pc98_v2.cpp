@@ -55,7 +55,7 @@ bool SoundTownsPC98_v2::init() {
 		if (_resInfo[_currentResourceSet])
 			if (_resInfo[_currentResourceSet]->cdaTableSize) {
 				if (!_vm->existExtractedCDAudioFiles()
-				    && !_vm->areDataAndCDAudioAreReadFromSameCDDrive()) {
+				    && !_vm->areDataAndCDAudioReadFromSameCDDrive()) {
 					_vm->warnForGameHasCDAudioButNoExtractedFilesFound();
 				}
 			}

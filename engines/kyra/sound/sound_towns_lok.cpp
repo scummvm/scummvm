@@ -50,7 +50,7 @@ SoundTowns_LoK::~SoundTowns_LoK() {
 
 bool SoundTowns_LoK::init() {
 	if (!_vm->existExtractedCDAudioFiles()
-	    && !_vm->areDataAndCDAudioAreReadFromSameCDDrive()) {
+	    && !_vm->areDataAndCDAudioReadFromSameCDDrive()) {
 		_vm->warnForGameHasCDAudioButNoExtractedFilesFound();
 	}
 	int unused = 0;
