@@ -181,7 +181,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 		// edge right - edge left
 		int16 dx = er - el;
 
-		if (!(dx <= 0)) {
+		if (dx > 0) {
 			// slope dc/_dx
 			int32 mc = ((int16)(_rColor[y] - (cl = _lColor[y])) << 8) / dx;
 			// slope _dz/_dx
@@ -332,7 +332,7 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 		// edge right - edge left
 		int16 dx = er - el;
 
-		if (!(dx <= 0)) {
+		if (dx > 0) {
 			// screen offset
 			int16 x = el;
 			int16 *zBufferPtr = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
