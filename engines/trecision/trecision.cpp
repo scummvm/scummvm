@@ -217,10 +217,6 @@ Common::Error TrecisionEngine::run() {
 
 	initMain();
 
-	// Check if a saved game is to be loaded from the launcher
-	if (ConfMan.hasKey("save_slot"))
-		loadGameState(ConfMan.getInt("save_slot"));
-
 	while (!shouldQuit()) {
 		eventLoop();
 		if (!_flagNoPaintScreen)
@@ -316,6 +312,10 @@ void TrecisionEngine::initMain() {
 
 	loadAll();
 	processTime();
+
+	// Check if a saved game is to be loaded from the launcher
+	if (ConfMan.hasKey("save_slot"))
+		loadGameState(ConfMan.getInt("save_slot"));
 
 	_scheduler->changeRoom(_curRoom, 0, 0, _curObj);
 }
