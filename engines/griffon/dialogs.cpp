@@ -530,6 +530,7 @@ void GriffonEngine::configMenu() {
 		g_system->delayMillis(10);
 	} while (!_shouldQuit && !exitMenu && _gameMode != kGameModeNewGame && _gameMode != kGameModeLoadGame);
 
+
 	configwindow->free();
 	_itemTicks = _ticks + 210;
 }
@@ -854,6 +855,5 @@ void GriffonEngine::saveLoadNew() {
 	} while (!_shouldQuit);
 
 }
-
 
 } // end of namespace Griffon
