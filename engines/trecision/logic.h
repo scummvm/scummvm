@@ -56,7 +56,6 @@ class LogicManager {
 	// CloseUp12 and 13
 	uint16 _closeUpObj;
 
-	void initScript();
 	void initInventory();
 
 public:
