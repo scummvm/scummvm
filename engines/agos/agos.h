@@ -1212,7 +1212,7 @@ protected:
 	void colorBlock(WindowBlock *window, uint16 x, uint16 y, uint16 w, uint16 h);
 
 	void restoreWindow(WindowBlock *window);
-	void restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h);
+	void restoreBlock(uint16 left, uint16 top, uint16 right, uint16 bottom);
 
 	byte *getBackBuf();
 	byte *getBackGround();
