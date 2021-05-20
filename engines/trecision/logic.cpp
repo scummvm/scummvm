@@ -3685,8 +3685,8 @@ void LogicManager::doMouseLeftRight() {
 				_vm->setObjectVisible(omWHEELS2C, false);
 				_vm->setObjectVisible(oPULSANTE2C, false);
 				_vm->setObjectVisible(_wheelPos[0] * 3 + 0 + oWHEEL1A2C, false);
-				_vm->setObjectVisible(_wheelPos[0] * 3 + 1 + oWHEEL1A2C, false);
-				_vm->setObjectVisible(_wheelPos[0] * 3 + 2 + oWHEEL1A2C, false);
+				_vm->setObjectVisible(_wheelPos[1] * 3 + 1 + oWHEEL1A2C, false);
+				_vm->setObjectVisible(_wheelPos[2] * 3 + 2 + oWHEEL1A2C, false);
 				_vm->setObjectVisible(oCAMPO2C, true);
 				_vm->setObjectVisible(oTEMPIO2C, true);
 				_vm->setObjectVisible(oLEONE2C, true);
