@@ -392,13 +392,6 @@ void TrecisionEngine::doCharacter() {
 
 void TrecisionEngine::doSystem() {
 	switch (_curMessage->_event) {
-	case ME_START:
-		error("Removed event MC_START called");
-
-	case ME_REDRAWROOM:
-		redrawRoom();
-		break;
-
 	case ME_CHANGEROOM:
 		if (_curRoom == 0)
 			return;
@@ -643,37 +636,6 @@ void TrecisionEngine::doInvOperate() {
 		_textMgr->characterSay(_inventoryObj[_curInventory]._action);
 }
 
-void TrecisionEngine::doDoing() {
-	switch (_curMessage->_event) {
-	case ME_INITOPENCLOSE:
-		if (_actor->_curAction == hSTAND)
-			reEvent();
-		else if (_actor->_curFrame == 4)
-			_scheduler->doEvent(_curMessage->_class, ME_OPENCLOSE, _curMessage->_priority, _curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, _curMessage->_u32Param);
-		else
-			reEvent();
-
-		break;
-	case ME_OPENCLOSE: {
-		uint16 curObj = _curMessage->_u16Param1;
-		uint16 curAnim = _curMessage->_u16Param2;
-		setObjectVisible(curObj, false);
-		if (curAnim)
-			_scheduler->doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, curAnim, 0, 0, 0);
-
-		_curMessage->_event = ME_WAITOPENCLOSE;
-	}
-		// fall through
-	case ME_WAITOPENCLOSE:
-		if (_actor->_curAction == hSTAND)
-			_graphicsMgr->showCursor();
-		break;
-
-	default:
-		break;
-	}
-}
-
 void TrecisionEngine::doScript() {
 	Message *message = _curMessage;
 	uint8 scope = message->_u8Param;
@@ -683,97 +645,6 @@ void TrecisionEngine::doScript() {
 	SObject *obj = &_obj[index];
 
 	switch (message->_event) {
-	case ME_PAUSE:
-		if (!_pauseStartTime) {
-			_pauseStartTime = _curTime;
-			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
-		} else if (_curTime >= (_pauseStartTime + message->_u16Param1))
-			_pauseStartTime = 0;
-		else
-			_scheduler->doEvent(message->_class, message->_event, message->_priority, message->_u16Param1, message->_u16Param2, message->_u8Param, message->_u32Param);
-
-		break;
-
-	case ME_SETOBJ:
-		switch (scope) {
-		case C_ONAME:
-			obj->_name = (uint16)value;
-			break;
-		case C_OEXAMINE:
-			obj->_examine = (uint16)value;
-			break;
-		case C_OACTION:
-			obj->_action = (uint16)value;
-			break;
-		case C_OGOROOM:
-			obj->_goRoom = (uint8)value;
-			break;
-		case C_OMODE:
-			if (value)
-				obj->_mode |= (uint8)index2;
-			else
-				obj->_mode &= ~(uint8)index2;
-			break;
-		case C_OFLAG:
-			if (value)
-				obj->_flag |= (uint8)index2;
-			else
-				obj->_flag &= ~(uint8)index2;
-			break;
-		default:
-			break;
-		}
-		break;
-
-	case ME_SETINVOBJ:
-		switch (scope) {
-		case C_INAME:
-			_inventoryObj[index]._name = (uint16)value;
-			break;
-		case C_IEXAMINE:
-			_inventoryObj[index]._examine = (uint16)value;
-			break;
-		case C_IACTION:
-			_inventoryObj[index]._action = (uint16)value;
-			break;
-		case C_IFLAG:
-			if (value)
-				_inventoryObj[index]._flag |= (uint8)index2;
-			else
-				_inventoryObj[index]._flag &= ~(uint8)index2;
-			break;
-		default:
-			break;
-		}
-		break;
-
-	case ME_ADDICON:
-		addIcon(index);
-		break;
-
-	case ME_KILLICON:
-		removeIcon(index);
-		break;
-
-	case ME_PLAYDIALOG:
-		_dialogMgr->playDialog(index);
-		break;
-
-	case ME_CHARACTERSAY:
-		_textMgr->characterSay(message->_u32Param);
-		break;
-
-	case ME_PLAYSOUND:
-		_soundMgr->play(index);
-		break;
-
-	case ME_STOPSOUND:
-		_soundMgr->stop(index);
-		break;
-
-	case ME_REGENROOM:
-		break;
-
 	case ME_CHANGER:
 		_scheduler->changeRoom(index, index2, value, _curObj);
 		break;
@@ -811,10 +682,6 @@ void TrecisionEngine::processCurrentMessage() {
 
 	case MC_STRING:
 		_textMgr->doString();
-		break;
-
-	case MC_DOING:
-		doDoing();
 		break;
 
 	case MC_DIALOG:
