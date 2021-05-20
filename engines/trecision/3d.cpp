@@ -1588,7 +1588,7 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 /*------------------------------------------------
 	Check if a point is inside a panel
 --------------------------------------------------*/
-bool PathFinding3D::pointInside(int pan, float x, float z) {
+bool PathFinding3D::pointInside(int pan, float x, float z) const {
 	if (pan < 0)
 		return false;
 
@@ -1647,9 +1647,9 @@ bool PathFinding3D::pointInside(int pan, float x, float z) {
 
 	int counter = 0;
 	for (int j = 5; --j;) {
-		bool yFlag1 = (vtx1[1] >= z);
+		const bool yFlag1 = (vtx1[1] >= z);
 		if (yFlag0 != yFlag1) {
-			bool xFlag0 = (vtx0[0] >= x);
+			const bool xFlag0 = (vtx0[0] >= x);
 			if ((xFlag0 == (vtx1[0] >= x)) && (xFlag0))
 				counter += (yFlag0 ? -1 : 1);
 			else if ((vtx1[0] - (vtx1[1] - z) * (vtx0[0] - vtx1[0]) / (vtx0[1] - vtx1[1])) >= x)
