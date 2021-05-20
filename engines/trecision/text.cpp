@@ -171,7 +171,7 @@ void TextManager::characterMute() {
 	_vm->_soundMgr->stopSoundType(kSoundTypeSpeech);
 
 	if ((_vm->_curRoom == kRoom12CU) || (_vm->_curRoom == kRoom13CU))
-		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _vm->_oldRoom, 0, 0, _vm->_curObj);
+		_vm->_scheduler->changeRoom(_vm->_oldRoom, 0, 0, _vm->_curObj);
 }
 
 void TextManager::someoneContinueTalk() {

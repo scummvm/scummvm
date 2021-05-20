@@ -240,16 +240,17 @@ void TrecisionEngine::processMouse() {
 	if (!_graphicsMgr->isCursorVisible())
 		return;
 
-	if (_mouseLeftBtn || _mouseRightBtn) {
-		if (!maskMouse) {
-			_scheduler->doEvent(MC_MOUSE, _mouseRightBtn ? ME_MRIGHT : ME_MLEFT, MP_DEFAULT, mx, my, 0, 0);
-			maskMouse = true;
-		}
+	if (_mouseLeftBtn && !maskMouse) {
+		_scheduler->leftClick(mx, my);
+		maskMouse = true;
+	} else if (_mouseRightBtn && !maskMouse) {
+		_scheduler->rightClick(mx, my);
+		maskMouse = true;
 	} else {
 		maskMouse = false;
 
 		if (!_flagScriptActive && (mx != oldMousePos.x || my != oldMousePos.y)) {
-			_scheduler->doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, mx, my, 0, 0);
+			_scheduler->mouseMove(mx, my);
 			oldMousePos = Common::Point(mx, my);
 		}
 	}
