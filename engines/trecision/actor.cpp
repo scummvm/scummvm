@@ -398,7 +398,6 @@ void Actor::actorDoAction(int action) {
 	SVertex *v = _characterArea;
 	float firstFrame = frameCenter(v);
 
-	int len;
 	int cfp = 0;
 	int cur = 0;
 
@@ -411,9 +410,9 @@ void Actor::actorDoAction(int action) {
 	else if (action == hLAST)
 		v = _characterArea;
 
-	len = _vm->_defActionLen[action];
+	int len = _vm->_defActionLen[action];
 
-	uint16 stepIdx;
+	int stepIdx;
 	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
 		float curLen = frameCenter(v) - firstFrame;
 

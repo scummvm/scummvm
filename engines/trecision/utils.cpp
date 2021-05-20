@@ -25,10 +25,8 @@
 #include "trecision/3d.h"
 #include "trecision/scheduler.h"
 #include "trecision/text.h"
-#include "trecision/actor.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
-#include "trecision/logic.h"
 #include "trecision/trecision.h"
 #include "trecision/struct.h"
 #include "trecision/video.h"
@@ -177,7 +175,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 }
 
 float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
-	if (sinus == 0 && cosinus == 0)
+	if (floatComp(sinus, 0.0f) == 0 && floatComp(cosinus, 0.0f) == 0)
 		return 0;
 
 	float t = (float)sqrt((double)(sinus * sinus) + (double)(cosinus * cosinus));
@@ -185,7 +183,7 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 	sinus /= t;
 
 	// 1e3 & 2e4 quad
-	if (sinus >= 0)
+	if (floatComp(sinus, 0.0f) >= 0)
 		// 1 & 2 quad
 		return (float)acos(cosinus);
 
@@ -422,26 +420,30 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 			curText = vm->_sysText[kMessageError];
 		}
 
-		for (uint16 index = 0; index < curText.size(); index++) {
+		for (uint index = 0; index < curText.size(); index++) {
 			const byte curChar = curText[index];
 
 			if (index == curText.size() - 1 && vm->_blinkLastDTextChar != MASKCOL)
 				tmpTCol = vm->_blinkLastDTextChar;
 
-			vm->_graphicsMgr->drawChar(
-				curChar,
-				tmpSCol,
-				tmpTCol,
-				line,
-				_rect,
-				_subtitleRect,
-				inc,
-				externalSurface
-			);
+			vm->_graphicsMgr->drawChar(curChar, tmpSCol, tmpTCol, line, _rect, _subtitleRect, inc, externalSurface);
 
 			inc += vm->_graphicsMgr->getCharWidth(curChar);
 		}
 	}
 }
 
+int TrecisionEngine::floatComp(float f1, float f2) const {
+	static const float epsilon = 1.0e-05f;
+
+	const float diff = f1 - f2;
+	if (abs(diff) < epsilon)
+		// equality
+		return 0;
+
+	if (f1 > f2)
+		return 1;
+
+	return -1;
+}
 } // End of namespace Trecision

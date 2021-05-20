@@ -329,8 +329,8 @@ void GraphicsManager::dissolve(uint8 val) {
 			memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, (AREA + TOP - (centerY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
-		while (a * a * (y - 0.5f) > b * b * (x + 1.0f)) {
-			if (d1 < 0.0f)
+		while (_vm->floatComp(a * a * (y - 0.5f), b * b * (x + 1.0f)) == 1) {
+			if (_vm->floatComp(d1, 0.0f) == -1)
 				d1 += b * b * (2.0f * x + 3.0f);
 			else {
 				d1 += b * b * (2.0f * x + 3.0f) + a * a * (-2.0f * y + 2.0f);
@@ -351,8 +351,8 @@ void GraphicsManager::dissolve(uint8 val) {
 		}
 
 		float d2 = b * b * (x + 0.5f) * (x + 0.5f) + a * a * (y - 1.0f) * (y - 1.0f) - a * a * b * b;
-		while (y > 0.0f) {
-			if (d2 < 0.0f) {
+		while (_vm->floatComp(y, 0.0f) == 1) {
+			if (_vm->floatComp(d2, 0.0f) == -1) {
 				d2 += b * b * (2.0f * x + 2.0f) + a * a * (-2.0f * y + 3.0f);
 				x += 1.0f;
 			} else
