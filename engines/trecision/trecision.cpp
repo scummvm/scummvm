@@ -229,9 +229,6 @@ Common::Error TrecisionEngine::run() {
 		processMouse();
 		_scheduler->process();
 
-		if (_curMessage->_class == MC_SYSTEM && _curMessage->_event == ME_QUIT)
-			break;
-
 		_animTypeMgr->handler(kAnimTypeBackground);
 
 		processCurrentMessage();
@@ -320,7 +317,7 @@ void TrecisionEngine::initMain() {
 	loadAll();
 	processTime();
 
-	_scheduler->doEvent(MC_SYSTEM, ME_START, MP_DEFAULT, 0, 0, 0, 0);
+	_scheduler->changeRoom(_curRoom, 0, 0, _curObj);
 }
 
 void TrecisionEngine::checkSystem() {

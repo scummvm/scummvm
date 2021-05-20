@@ -2455,10 +2455,8 @@ Management of "Use with"
 
 #define MC_SYSTEM 2
 
-#define ME_QUIT 0
-#define ME_START 1
-//#define ME_SAVEGAME 2
-//#define ME_LOADGAME 3
+#define ME_QUIT 0	// removed
+#define ME_START 1	// removed
 #define ME_CHANGEROOM 4 // (room,door,...)
 #define ME_REDRAWROOM 7
 
@@ -2470,7 +2468,6 @@ Management of "Use with"
 
 #define ME_OPEN 0
 #define ME_CLOSE 1
-//#define ME_PAINT 2
 #define ME_ONELEFT 4
 #define ME_ONERIGHT 5
 #define ME_OPERATEICON 6  // (mx,my,0,0)

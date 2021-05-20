@@ -84,10 +84,10 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->_obj[oWINDOWB58]._action = 1358;
 		break;
 	case fDOOR58:
-		_vm->_scheduler->doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 468, 180 + TOP, true, oDOOR58C55);
+		_vm->_scheduler->leftClick(468, 180 + TOP);
 		break;
 	case fHELLEN:
-		_vm->_scheduler->doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, 336, 263 + TOP, true, 0);
+		_vm->_scheduler->leftClick(336, 263 + TOP);
 		break;
 	case fVALVEON34:
 		if (!(_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) && // if the fmv is not done
@@ -160,7 +160,7 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		break;
 	case fENDDEMO:
 		_vm->demoOver();
-		_vm->_scheduler->doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+		_vm->quitGame();
 		break;
 	case fSTOP2TXT:
 		h->_status |= ATF_WAITTEXT;
@@ -207,7 +207,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		executeAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
 		break;
 	case ATFROOM:
-		_vm->_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
+		_vm->_scheduler->changeRoom(h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
 		break;
 	case ATFSETPOS:
 		_vm->_pathFind->setPosition(h->_curAnim->_atFrame[atf]._index);
@@ -278,7 +278,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		break;
 	case ATFEND:
 		_vm->demoOver();
-		_vm->_scheduler->doEvent(MC_SYSTEM, ME_QUIT, MP_SYSTEM, 0, 0, 0, 0);
+		_vm->quitGame();
 		break;
 	default:
 		break;
