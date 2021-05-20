@@ -697,7 +697,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		uint32 resId = readVarInt(*abmpStream);
 		int32 offset = readVarInt(*abmpStream);
 		if (offset >= 0)
-			offset += moreOffset + abmpEnd;
+			offset += moreOffset;
 		uint32 compSize = readVarInt(*abmpStream);
 		uint32 uncompSize = readVarInt(*abmpStream);
 		uint32 compressionType = readVarInt(*abmpStream);
@@ -732,6 +732,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 	Resource *ilsRes = resourceMap[2];
 	uint32 ilsUnk1 = readVarInt(stream);
 	debug(3, "ILS: length: %d unk1: %d", ilsRes->size, ilsUnk1);
+	_ilsBodyOffset = stream.pos();
 	uint32 ilsLength = ilsRes->size;
 	unsigned long ilsActualUncompLength = ilsRes->uncompSize;
 	Common::SeekableReadStreamEndian *ilsStream = readZlibData(stream, ilsLength, &ilsActualUncompLength, _isBigEndian);
@@ -831,7 +832,7 @@ Common::SeekableReadStreamEndian *RIFXArchive::getResource(uint32 tag, uint16 id
 		if (res.offset == -1) {
 			return new Common::MemoryReadStreamEndian(_ilsData[id], res.uncompSize, bigEndian, DisposeAfterUse::NO);
 		} else {
-			_stream->seek(res.offset + 5);
+			_stream->seek(_ilsBodyOffset + res.offset);
 			unsigned long actualUncompLength = res.uncompSize;
 			Common::SeekableReadStreamEndian *stream = readZlibData(*_stream, res.size, &actualUncompLength, _isBigEndian);
 			if (!stream) {
