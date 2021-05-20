@@ -55,11 +55,6 @@ enum SoundType {
 	kSoundTypeStep = 3
 };
 
-struct ActiveSound {
-	int soundId;
-	Audio::SoundHandle soundHandle;
-};
-
 class TrecisionEngine;
 
 class SoundManager {
@@ -71,7 +66,7 @@ private:
 	TrecisionEngine *_vm;
 	FastFile _speechFile; // nlspeech.cd0
 
-	ActiveSound _sounds[MAXSOUNDS];
+	Audio::SoundHandle _soundHandles[MAXSOUNDS];
 	SSound _gSample[NUMSAMPLES];
 
 	Audio::SeekableAudioStream *_stepLeftStream;
@@ -79,7 +74,6 @@ private:
 
 public:
 	void play(int soundId);
-	void stop(int soundId);
 	void stopSoundType(SoundType type);
 	void stopAll();
 	void stopAllExceptMusic();
