@@ -163,7 +163,7 @@ class PathFinding3D {
 	int _panelNum;
 	int _oldPanel;
 
-	bool pointInside(int pan, float x, float z);
+	bool pointInside(int pan, float x, float z) const;
 	void sortPanel();
 	void pointOut();
 	void invPointProject(int x, int y);
