@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-19 04:40+0000\n"
+"POT-Creation-Date: 2021-05-19 21:49+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3863,33 +3863,33 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "게임이 요청하지 않더라도 텍스트를 그리기 위해 안티앨리어싱을 사용합니다"
 
-#: engines/asylum/metaengine.cpp:67
+#: engines/asylum/metaengine.cpp:68
 #, fuzzy
 #| msgid "Show blueprint"
 msgid "Show version"
 msgstr "청사진 표시"
 
-#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
 msgstr "빠른 불러오기"
 
-#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:686
 msgid "Quick save"
 msgstr "빠른 저장"
 
-#: engines/asylum/metaengine.cpp:82
+#: engines/asylum/metaengine.cpp:83
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Sarah"
 msgstr "게임으로 전환"
 
-#: engines/asylum/metaengine.cpp:87
+#: engines/asylum/metaengine.cpp:88
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Grimwall"
 msgstr "게임으로 전환"
 
-#: engines/asylum/metaengine.cpp:92
+#: engines/asylum/metaengine.cpp:93
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Olmec"

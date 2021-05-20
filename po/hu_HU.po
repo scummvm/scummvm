@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-19 04:40+0000\n"
+"POT-Creation-Date: 2021-05-19 21:49+0000\n"
 "PO-Revision-Date: 2021-05-18 10:25+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -3895,27 +3895,27 @@ msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 "Használjon élsimítást a szöveg rajzolásához, akkor is ha a játék nem kéri"
 
-#: engines/asylum/metaengine.cpp:67
+#: engines/asylum/metaengine.cpp:68
 msgid "Show version"
 msgstr "Verzió megjelenítése"
 
-#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
 msgstr "Gyorstöltés"
 
-#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:686
 msgid "Quick save"
 msgstr "Gyorsmentés"
 
-#: engines/asylum/metaengine.cpp:82
+#: engines/asylum/metaengine.cpp:83
 msgid "Switch to Sarah"
 msgstr "Átvált Sarah-ra"
 
-#: engines/asylum/metaengine.cpp:87
+#: engines/asylum/metaengine.cpp:88
 msgid "Switch to Grimwall"
 msgstr "Átvált Grimwall-ra"
 
-#: engines/asylum/metaengine.cpp:92
+#: engines/asylum/metaengine.cpp:93
 msgid "Switch to Olmec"
 msgstr "Átvált Olmec-re"
 

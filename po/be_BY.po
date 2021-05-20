@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-19 04:40+0000\n"
+"POT-Creation-Date: 2021-05-19 21:49+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -3936,33 +3936,33 @@ msgstr "Са згладжваннем"
 msgid "Use antialiasing to draw text even if the game does not ask for it"
 msgstr ""
 
-#: engines/asylum/metaengine.cpp:67
+#: engines/asylum/metaengine.cpp:68
 #, fuzzy
 #| msgid "Show blueprint"
 msgid "Show version"
 msgstr "Паказаць краслюнак"
 
-#: engines/asylum/metaengine.cpp:72 engines/wintermute/keymapper_tables.h:706
+#: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
 msgstr "Хуткая загрузка"
 
-#: engines/asylum/metaengine.cpp:77 engines/wintermute/keymapper_tables.h:686
+#: engines/asylum/metaengine.cpp:78 engines/wintermute/keymapper_tables.h:686
 msgid "Quick save"
 msgstr "Хуткае захаванне"
 
-#: engines/asylum/metaengine.cpp:82
+#: engines/asylum/metaengine.cpp:83
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Sarah"
 msgstr "Пераключыцца ў гульню"
 
-#: engines/asylum/metaengine.cpp:87
+#: engines/asylum/metaengine.cpp:88
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Grimwall"
 msgstr "Пераключыцца ў гульню"
 
-#: engines/asylum/metaengine.cpp:92
+#: engines/asylum/metaengine.cpp:93
 #, fuzzy
 #| msgid "Switch to Game"
 msgid "Switch to Olmec"
