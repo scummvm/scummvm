@@ -40,9 +40,7 @@
 
 #include "common/config-manager.h"
 
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
-#endif
 
 namespace Griffon {
 

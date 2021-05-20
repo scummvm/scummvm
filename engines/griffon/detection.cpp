@@ -22,17 +22,14 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
-#ifdef USE_TTS
 #include "common/text-to-speech.h"
 #include "common/translation.h"
-#endif
 
 static const PlainGameDescriptor griffonGames[] = {
 	{"griffon", "The Griffon Legend"},
 	{NULL, NULL}
 };
 
-#ifdef USE_TTS
 #define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -48,8 +45,6 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
-#endif
-
 namespace Griffon {
 
 static const ADGameDescription gameDescriptions[] = {
@@ -59,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_ENTRY1s("objectdb.dat", "ec5371da28f01ccf88980b32d9de2232", 27754),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DROPPLATFORM,	
+		ADGF_DROPPLATFORM,
 #ifdef USE_TTS
 		GUIO2(GUIO_NOMIDI, GAMEOPTION_TTS_NARRATOR)
 #else
@@ -74,7 +69,7 @@ static const ADGameDescription gameDescriptions[] = {
 
 class GriffonMetaEngineDetection: public AdvancedMetaEngineDetection {
 public:
-	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames 
+	GriffonMetaEngineDetection() : AdvancedMetaEngineDetection(Griffon::gameDescriptions, sizeof(ADGameDescription), griffonGames
 #ifdef USE_TTS
 			, optionsList
 #endif
