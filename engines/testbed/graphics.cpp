@@ -1239,7 +1239,8 @@ TestExitStatus GFXtests::pixelFormatsSupported() {
 		return kTestSkipped;
 	}
 
-	return GFXtests::pixelFormats(g_system->getSupportedFormats());
+	Common::List<Graphics::PixelFormat> list = g_system->getSupportedFormats();
+	return GFXtests::pixelFormats(list);
 }
 
 TestExitStatus GFXtests::pixelFormatsRequired() {
@@ -1263,12 +1264,25 @@ TestExitStatus GFXtests::pixelFormatsRequired() {
 	return GFXtests::pixelFormats(list);
 }
 
-TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> &pfList) {
+struct PixelFormatComparator {
+	bool operator()(const Graphics::PixelFormat &l, const Graphics::PixelFormat &r) {
+		return l.aLoss != r.aLoss ? l.aLoss < r.aLoss:
+		       l.rLoss != r.rLoss ? l.rLoss < r.rLoss:
+		       l.gLoss != r.gLoss ? l.gLoss < r.gLoss:
+		       l.bLoss != r.bLoss ? l.bLoss < r.bLoss:
+		                            l.toString() < r.toString();
+	}
+};
+
+TestExitStatus GFXtests::pixelFormats(Common::List<Graphics::PixelFormat> &pfList) {
 	int numFormatsTested = 0;
 	int numPassed = 0;
 	int numFailed = 0;
 
+	Common::sort(pfList.begin(), pfList.end(), PixelFormatComparator());
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
+
+	bool seenTutorials[9] = {};
 
 	for (Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin(); iter != pfList.end(); iter++) {
 		numFormatsTested++;
@@ -1282,45 +1296,39 @@ TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> 
 			continue;
 		}
 
-		// Switch to that pixel Format
-		g_system->beginGFXTransaction();
-			g_system->initSize(320, 200, &(*iter));
-		g_system->endGFXTransaction();
-		Testsuite::clearScreen(true);
+		if (!seenTutorials[iter->aLoss]) {
+			showPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), iter->aLoss);
+
+			Common::Point pt(0, 170);
+			Testsuite::writeOnScreen("Example displayed with Pixel Format CLUT8", pt, false);
+
+			Common::String tutorial;
+			tutorial = Common::String::format("Testing a group of Pixel Formats with %d-bit alpha channel.\nPlease, memorize the pattern displayed in the frame above.", 8 - iter->aLoss);
+			if (iter->aLoss < 7) {
+				tutorial += "\nIt should contain horizontal and vertical gradients for several different colors.";
+			} else if (iter->aLoss == 7) {
+				tutorial += "\nTop half of the frame should be empty, containing only a cross.";
+				tutorial += "\nBottom half of the frame should contain *only horizontal* gradients for several different colors.";
+			} else {
+				tutorial += "\nIt should contain *only horizontal* gradients for several different colors.";
+			}
+			tutorial += "\nWe are going to display the same pattern in other Pixel Formats.";
+
+			Testsuite::displayMessage(tutorial);
+			seenTutorials[iter->aLoss] = true;
+		}
 
 		// Draw some nice gradients
-		// Pick up some colors
-		uint colors[6];
-
-		colors[0] = iter->RGBToColor(255, 255, 255);
-		colors[1] = iter->RGBToColor(135, 48, 21);
-		colors[2] = iter->RGBToColor(205, 190, 87);
-		colors[3] = iter->RGBToColor(0, 32, 64);
-		colors[4] = iter->RGBToColor(181, 126, 145);
-		colors[5] = iter->RGBToColor(47, 78, 36);
+		showPixelFormat(*iter, iter->aLoss);
 
 		Common::Point pt(0, 170);
 		Common::String msg;
 		msg = Common::String::format("Testing Pixel Format %s, %d of %d", iter->toString().c_str(), numFormatsTested, pfList.size());
 		Testsuite::writeOnScreen(msg, pt, true);
 
-		// CopyRectToScreen could have been used, but that may involve writing code which
-		// already resides in graphics/surface.h
-		// So using Graphics::Surface
-
-		Graphics::Surface *screen = g_system->lockScreen();
-
-		// Draw 6 rectangles centered at (50, 160), piled over one another
-		// each with color in colors[]
-		for (int i = 0; i < 6; i++) {
-			screen->fillRect(Common::Rect::center(160, 20 + i * 10, 100, 10), colors[i]);
-		}
-
-		g_system->unlockScreen();
-		g_system->updateScreen();
 		g_system->delayMillis(500);
 
-		if (Testsuite::handleInteractiveInput("Were you able to notice the colored rectangles on the screen for this format?", "Yes", "No", kOptionLeft)) {
+		if (Testsuite::handleInteractiveInput("Were you able to notice the colored gradients inside a white frame on the screen for this format?\nDid they match the pattern that was displayed before?", "Yes", "No", kOptionLeft)) {
 			numPassed++;
 		} else {
 			numFailed++;
@@ -1342,6 +1350,168 @@ TestExitStatus GFXtests::pixelFormats(const Common::List<Graphics::PixelFormat> 
 	}
 
 	return kTestPassed;
+}
+
+void GFXtests::showPixelFormat(const Graphics::PixelFormat &pf, uint aLoss) {
+
+	// Those constants can be configured
+
+	// Grid position and sizes
+	const uint xOffset = 3;
+	const uint yOffset = 10;
+	const uint xStep = 5;
+	const uint yStep = 5;
+
+	// Base colors to modify     [R][Y][G][C][B][M][W]
+	const uint nColors = 7;
+	const uint colorR[nColors] = {1, 1, 0, 0, 0, 1, 1};
+	const uint colorG[nColors] = {0, 1, 1, 1, 0, 0, 1};
+	const uint colorB[nColors] = {0, 0, 0, 1, 1, 1, 1};
+
+	// Number of levels in gradient
+	// It is applied both to alpha levels and brightness levels,
+	// e.g. for nLevels = 3 and red color we will test those #RRGGBBAA colors:
+	//   #00000000 #80000000 #FF000000
+	//   #00000080 #80000080 #FF000080
+	//   #000000FF #800000FF #FF0000FF
+	const uint nLevels = 9;
+
+	// UI palette
+	const uint nStdColors = 2;
+	byte stdPalette[nStdColors * 3] = {0, 0, 0, 255, 255, 0};
+
+
+	// Those constants are calculated
+
+	const uint nTones = nLevels * (nLevels - 1) / 2;
+	const uint paletteSize = nStdColors + nColors * nTones;
+	STATIC_ASSERT(paletteSize < 256, "can't fit the tones in CLUT8");
+
+	uint level[nLevels];
+	for (uint i = 0; i < nLevels - 1; i++) {
+		level[i] = i * 256 / (nLevels - 1);
+	}
+	level[nLevels - 1] = 255;
+
+
+	// Init screen and working with dstSurface
+
+	g_system->beginGFXTransaction();
+		g_system->initSize(320, 200, &pf);
+	g_system->endGFXTransaction();
+	Testsuite::clearScreen(true);
+
+	Graphics::Surface *screen = g_system->lockScreen();
+	Graphics::ManagedSurface dstSurface(screen->w, screen->h, screen->format);
+	dstSurface.blitFrom(*screen);
+
+
+	// Init palette, if we are demonstating a CLUT8 preview
+	// There are nTones different combinations of alpha and brightness levels for each color
+
+	if (pf.bytesPerPixel == 1) {
+		byte palette[paletteSize * 3] = {0};
+		memcpy(palette, stdPalette, nStdColors * 3);
+
+		level[nLevels - 1] = 256;
+		for (uint c = 0; c < nColors; c++) {
+			uint idx = 3 * (nStdColors + c * nTones);
+			for (uint alpha = 1; alpha < nLevels; alpha++) {
+				for (uint brightness = alpha; brightness < nLevels; brightness++) {
+					uint value = level[alpha] * level[brightness] / 256;
+					if (value == 256) {
+					    value = 255;
+					}
+
+					palette[idx++] = colorR[c] * value;
+					palette[idx++] = colorG[c] * value;
+					palette[idx++] = colorB[c] * value;
+				}
+			}
+		}
+		level[nLevels - 1] = 255;
+
+		g_system->getPaletteManager()->setPalette(palette, 0, paletteSize);
+	}
+
+
+	// Display the color gradients
+
+	for (uint c = 0; c < nColors; c++) {
+		for (uint alpha = 0; alpha < nLevels; alpha++) {
+			for (uint brightness = 0; brightness < nLevels; brightness++) {
+				uint x = xOffset + (nLevels * c + brightness) * xStep;
+				uint y = yOffset + alpha * yStep;
+
+				if (pf.bytesPerPixel != 1) {
+					uint a = level[alpha];
+					uint r = colorR[c] * level[brightness];
+					uint g = colorG[c] * level[brightness];
+					uint b = colorB[c] * level[brightness];
+					uint color = pf.ARGBToColor(a, r, g, b);
+
+					// blit transparent surface with given color
+					// this cannot be done with drawing methods, since they ignore alpha
+					Graphics::ManagedSurface tmp(xStep, yStep, pf);
+					tmp.clear(color);
+					dstSurface.blitFrom(tmp, Common::Point(x, y));
+				} else {
+					int a = 0;
+					if (aLoss == 8 && brightness) {
+						a = nLevels - 1;
+					} else if (aLoss == 7 && brightness && level[alpha] >= 128) {
+						a = nLevels - 1;
+					} else if (aLoss < 7 && brightness && alpha) {
+						a = alpha;
+					}
+					int b = brightness;
+
+					// draw colored rect with pre-calculated tone similar to the color after blit
+					if (a) {
+						uint tone = (2 * nLevels - MIN(a, b)) * (MIN(a, b) - 1) / 2 + ABS(a - b);
+						uint color = nStdColors + c * nTones + tone;
+						for (uint dy = 0; dy < yStep; dy++) {
+							dstSurface.hLine(x, y + dy, x + xStep - 1, color);
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	// Display a frame around the gradients
+
+	{
+		const uint white = pf.bytesPerPixel == 1 ? 1 : pf.RGBToColor(255, 255, 255);
+
+		uint x1 = xOffset - 2;
+		uint y1 = yOffset - 2;
+		uint x2 = xOffset + 2 + nLevels * xStep * nColors;
+		uint y2 = yOffset + 2 + nLevels * yStep;
+		dstSurface.frameRect(Common::Rect(x1, y1, x2, y2), white);
+
+		// cross out the empty area for 1-bit alpha patterns
+
+		if (aLoss == 7) {
+			uint dy = yStep * int(nLevels / 2);
+			y2 = yOffset + dy - 2;
+			dstSurface.drawLine(x1, y2, x2 - 1, y2, white);
+
+			x1 = (x1 + x2 - dy) / 2;
+			x2 = x1 + dy;
+			dstSurface.drawLine(x1, y1, x2, y2, white);
+			dstSurface.drawLine(x1, y2, x2, y1, white);
+		}
+	}
+
+
+	// End working with dstSurface
+
+	g_system->copyRectToScreen(dstSurface.getPixels(), dstSurface.pitch, 0, 0,
+	                           dstSurface.w, dstSurface.h);
+	g_system->unlockScreen();
+	g_system->updateScreen();
 }
 
 } // End of namespace Testbed
