@@ -385,7 +385,7 @@ void GraphicsManager::drawObj(SDObj d) {
 	// If we have a valid object, draw it, otherwise erase it
 	// by using the background buffer
 	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : (uint16 *)_smkBackground.getPixels();
-	if (d.drawMask) {
+	if (d.drawMask && d.objIndex >= 0) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
 		for (uint16 b = d.rect.top; b < d.rect.bottom; b++) {
