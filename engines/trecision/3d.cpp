@@ -123,7 +123,7 @@ Renderer3D::~Renderer3D() {
 void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1,
 								 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
 								 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
-								 STexture *t) {
+								 const STexture *t) {
 	int32 cl;  // color of left edge of horizontal scanline
 	int32 zl;  // zbuffer of left edge of horizontal scanline
 	int32 olx; // texture x of left edge of horizontal scanline
@@ -137,7 +137,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 
 	int16 yBottom = y1;
 	int16 yTop = y1;
-	uint8 *texture = t->_texture;
+	const uint8 *texture = t->_texture;
 
 	if (yBottom > y2) {
 		if (y2 < _minYClip)
