@@ -96,16 +96,6 @@ void TrecisionEngine::doInventory() {
 		}
 		break;
 
-	case ME_ONELEFT:
-		if (_inventoryStatus == INV_INACTION)
-			moveInventoryLeft();
-		break;
-
-	case ME_ONERIGHT:
-		if (_inventoryStatus == INV_INACTION)
-			moveInventoryRight();
-		break;
-
 	case ME_OPERATEICON:
 		_curInventory = whatIcon(_mousePos);
 		if (_curInventory == 0)
@@ -369,13 +359,13 @@ void TrecisionEngine::rollInventory(uint8 status) {
 }
 
 void TrecisionEngine::doScrollInventory(Common::Point pos) {
-	if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
+	if (_inventoryStatus != INV_INACTION)
 		return;
 
 	if (pos.x <= ICONMARGSX && _iconBase)
-		_scheduler->doEvent(MC_INVENTORY, ME_ONERIGHT, MP_DEFAULT, 0, 0, 0, 0);
+		moveInventoryRight();
 	else if (isBetween(MAXX - ICONMARGDX, pos.x, MAXX) && (_iconBase + ICONSHOWN < (int)_inventory.size()))
-		_scheduler->doEvent(MC_INVENTORY, ME_ONELEFT, MP_DEFAULT, 0, 0, 0, 0);
+		moveInventoryLeft();
 }
 
 void TrecisionEngine::syncInventory(Common::Serializer &ser) {
