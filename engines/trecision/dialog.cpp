@@ -609,10 +609,6 @@ void DialogManager::playChoice(uint16 i) {
 
 void DialogManager::doDialog() {
 	switch (_vm->_curMessage->_event) {
-	case ME_ENDCHOICE:
-		afterChoice();
-		break;
-
 	case ME_STARTDIALOG:
 		playDialog(_vm->_curMessage->_u16Param1);
 		break;

@@ -145,7 +145,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 
 	if (!smkDecoder->loadFile(filename)) {
 		warning("playMovie: File %s not found", filename.c_str());
-		_vm->_scheduler->doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+		_vm->_dialogMgr->afterChoice();
 		return;
 	}
 
@@ -174,7 +174,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 
 	_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
 	_vm->freeKey();
-	_vm->_scheduler->doEvent(MC_DIALOG, ME_ENDCHOICE, MP_HIGH, smkDecoder->getCurFrame(), 0, 0, 0);
+	_vm->_dialogMgr->afterChoice();
 
 	delete smkDecoder;
 }

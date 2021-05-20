@@ -2444,8 +2444,8 @@ Management of "Use with"
 /* Mouse events */
 #define MC_MOUSE 1
 
-#define ME_MLEFT 0  // (mx,my,...)
-#define ME_MRIGHT 1 // (mx,my,...)
+#define ME_MLEFT 0  // (mx,my,...) - used by game scripts
+#define ME_MRIGHT 1 // (mx,my,...) - used by game scripts
 #define ME_MMOVE 3  // (mx,my,direction,...)
 
 /*************************************************************************
@@ -2455,10 +2455,7 @@ Management of "Use with"
 
 #define MC_SYSTEM 2
 
-#define ME_QUIT 0	// removed
-#define ME_START 1	// removed
 #define ME_CHANGEROOM 4 // (room,door,...)
-#define ME_REDRAWROOM 7
 
 /*************************************************************************
 * Inventory                                                              *
@@ -2468,8 +2465,6 @@ Management of "Use with"
 
 #define ME_OPEN 0
 #define ME_CLOSE 1
-//#define ME_ONELEFT 4	// removed
-//#define ME_ONERIGHT 5	// removed
 #define ME_OPERATEICON 6  // (mx,my,0,0)
 #define ME_EXAMINEICON 7  // (mx,my,0,0)
 #define ME_SHOWICONNAME 8 // (mx,my,0,0)
@@ -2494,11 +2489,8 @@ Management of "Use with"
 /* Notification of mouse action */
 #define MC_ACTION 5
 
-#define ME_MOUSEOPERATE 0
+#define ME_MOUSEOPERATE 0 // used by game scripts
 #define ME_MOUSEEXAMINE 1
-//#define ME_INVOPERATE 2
-//#define ME_INVEXAMINE 3
-//#define ME_USEWITH 4
 
 
 /*************************************************************************
@@ -2507,77 +2499,13 @@ Management of "Use with"
 /* Notification of dialog event */
 #define MC_DIALOG 6
 
-#define ME_ENDCHOICE 0
-#define ME_STARTDIALOG 1
-
-
-/*************************************************************************
-* DOING                                                                 *
-*************************************************************************/
-/* Notification of doing event */
-#define MC_DOING 8
-
-#define ME_INITOPENCLOSE 0
-#define ME_OPENCLOSE 1
-#define ME_WAITOPENCLOSE 2
+#define ME_STARTDIALOG 1	// used by game scripts
 
 /*************************************************************************
 * SCRIPT                                                                *
 *************************************************************************/
-// #define C_RANIM   0                     // Room
-
-#define C_ONAME 0    // Object
-#define C_OEXAMINE 1 // Object
-#define C_OACTION 2  // Object
-#define C_OGOROOM 3  // Object
-#define C_OMODE 4    // Object
-#define C_OFLAG 5    // Object
-
-#define C_INAME 0    // InvObject
-#define C_IEXAMINE 1 // InvObject
-#define C_IACTION 2  // InvObject
-#define C_IFLAG 3    // InvObject
-
-#define C_AFLAG 0  // Anim
-#define C_ADELAY 1 // Anim
-
-#define C_WAITASTART 1
-#define C_WAITAEND 0
-
-#define C_DDEFANI 0 // Dialog
-#define C_DLINKANI 1
-#define C_DSPEAKANI 2
-#define C_DLISTENANI 3
-#define C_DCHOICEDISABLED 4
-
-#define C_DADEFANI 0 // Dialog Alternative
-#define C_DALINKANI 1
-#define C_DASPEAKANI 2
-#define C_DALISTENANI 3
-
-#define C_SEMDIAG 0 // Semafori
-
 #define MC_SCRIPT 9      // (b,w1,w2,l)
-#define ME_PAUSE 0       // (0,time,0,0)
-#define ME_SETROOM 1     // (campo,indice,[bit/indice2c],valore)
-#define ME_SETOBJ 2      // (campo,indice,[bit/indice2c],valore)
-#define ME_SETINVOBJ 3   // (campo,indice,[bit/indice2c],valore)
-#define ME_SETANIM 4     // (campo,indice,[bit/indice2c],valore)
-#define ME_ADDICON 5     // (0,icona,0,0)
-#define ME_PLAYDIALOG 6  // (0,dialogo,0,0)
-#define ME_SOMEONETALK 7 // (0,obj,anim,sentence)
-#define ME_SETSEM 8      // (0,indice,valore,0)
-#define ME_SETBOX 9      // (on/off,room,box,0)
-#define ME_SETADIALOG 10 // (campo, 0, 0, valore)
-#define ME_TORNAORBO 11
-#define ME_SETDIALOG 12       // (campo, indice, 0, valore)
-#define ME_SETANIMATIONOFF 13 // (0, 0, 0, valore)
-#define ME_PLAYSOUND 14       // (0,indice,0,0)
-#define ME_STOPSOUND 15       // (0,indice,0,0)
-#define ME_CHARACTERSAY 16    // (0,0,0,sentence)
-#define ME_REGENROOM 17
-#define ME_CHANGER 18  // (0,room,door,0)
-#define ME_KILLICON 19 // (0,icona,0,0)
+#define ME_CHANGER 18  // (0,room,door,0) - used by game scripts
 
 
 /*************************************************************************
@@ -2600,7 +2528,7 @@ Management of "Use with"
 #define ME_CHARACTERGOTOACTION 3
 #define ME_CHARACTERGOTOEXAMINE 4
 
-#define ME_CHARACTERACTION 9
+#define ME_CHARACTERACTION 9	// used by game scripts
 #define ME_CHARACTERCONTINUEACTION 10
 #define ME_CHARACTERGOTOEXIT 11
 #define ME_CHARACTERDOACTION 12
