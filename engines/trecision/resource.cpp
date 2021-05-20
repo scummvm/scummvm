@@ -216,12 +216,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 			_maskPointers[objIndex][i] = (uint8)stream->readByte();
 	}
 
-	if (obj->_mode & (OBJMODE_MASK | OBJMODE_FULL)) {
-		SSortTable entry;
-		entry._objectId = objectId;
-		entry._remove = !isObjectVisible(objectId);
-		_sortTable.push_back(entry);
-	}
+	refreshObject(objectId);
 }
 
 void TrecisionEngine::readObj(Common::SeekableReadStream *stream) {

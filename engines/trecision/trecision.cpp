@@ -361,11 +361,16 @@ void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 	else
 		_obj[objectId]._mode &= ~OBJMODE_OBJSTATUS;
 
+	refreshObject(objectId);
+}
+
+void TrecisionEngine::refreshObject(uint16 objectId) {
 	if (_obj[objectId]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
 		SSortTable entry;
 		entry._objectId = objectId;
 		entry._remove = !isObjectVisible(objectId);
 		_sortTable.push_back(entry);
+		_sortTableReplay.push_back(entry);
 	}
 }
 
@@ -397,6 +402,7 @@ void TrecisionEngine::readLoc() {
 
 	_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
 	_sortTable.clear();
+	_sortTableReplay.clear();
 	readObj(picFile);
 
 	_soundMgr->stopAll();
@@ -447,6 +453,7 @@ void TrecisionEngine::redrawRoom() {
 
 	_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
 	_sortTable.clear();
+	_sortTable = _sortTableReplay;
 
 	if (bgAnim)
 		_animMgr->startSmkAnim(bgAnim);

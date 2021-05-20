@@ -112,7 +112,6 @@ class TrecisionEngine : public Engine {
 	void doScreenUseWithScreen();
 	void doInvExamine();
 	void doInvOperate();
-	void doDoing();
 	void doScript();
 	void processCurrentMessage();
 
@@ -202,6 +201,7 @@ public:
 
 	// Objects
 	void setObjectVisible(uint16 objectId, bool visible);
+	void refreshObject(uint16 objectId);
 	bool isObjectVisible(uint16 objectId) const;
 	void setObjectAnim(uint16 objectId, uint16 animId);
 	void redrawRoom();
@@ -222,6 +222,7 @@ public:
 	SRoom _room[MAXROOMS];
 
 	Common::List<SSortTable> _sortTable;
+	Common::List<SSortTable> _sortTableReplay;
 
 	uint16 _curObj;
 	SObject _obj[MAXOBJ];
