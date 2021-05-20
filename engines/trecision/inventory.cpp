@@ -108,7 +108,7 @@ void TrecisionEngine::doInventory() {
 			_useWithInv[WITH] = true;
 
 			if (_useWith[USED] != _curInventory) {
-				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				doUseWith();
 				_lightIcon = 0xFF;
 			} else {
 				_animMgr->smkStop(kSmackerIcon);
@@ -129,7 +129,7 @@ void TrecisionEngine::doInventory() {
 			_useWithInv[USED] = true;
 			showInventoryName(_curInventory, true);
 		} else
-			_scheduler->doEvent(MC_ACTION, ME_INVOPERATE, MP_DEFAULT, 0, 0, 0, _curInventory);
+			doInvOperate();
 		break;
 
 	case ME_EXAMINEICON:
@@ -142,7 +142,7 @@ void TrecisionEngine::doInventory() {
 			_useWith[WITH] = _curInventory;
 			_useWithInv[WITH] = true;
 			if (_useWith[USED] != _curInventory) {
-				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_DEFAULT, 0, 0, 0, 0);
+				doUseWith();
 				_lightIcon = 0xFF;
 			} else {
 				_animMgr->smkStop(kSmackerIcon);
@@ -150,7 +150,7 @@ void TrecisionEngine::doInventory() {
 				_lightIcon = _curInventory;
 			}
 		} else
-			_scheduler->doEvent(MC_ACTION, ME_INVEXAMINE, MP_DEFAULT, 0, 0, 0, _curInventory);
+			doInvExamine();
 		break;
 
 	case ME_SHOWICONNAME:

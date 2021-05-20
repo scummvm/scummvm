@@ -3222,6 +3222,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (_vm->_mouseRightBtn && (_vm->_room[kRoom14]._flag & kObjFlagDone)) {
 				if (_vm->_pathFind->_characterGoToPosition != 4)
 					_vm->_pathFind->goToPosition(4);
+				_vm->_mouseRightBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
@@ -3232,6 +3233,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (_vm->_mouseLeftBtn) {
 				if (_vm->_pathFind->_characterGoToPosition != 2)
 					_vm->_pathFind->goToPosition(2);
+				_vm->_mouseLeftBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
@@ -3242,6 +3244,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (_vm->_mouseRightBtn) {
 				if (_vm->_pathFind->_characterGoToPosition != 9)
 					_vm->_pathFind->goToPosition(9);
+				_vm->_mouseRightBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
@@ -3252,6 +3255,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (_vm->_mouseRightBtn) {
 				if (_vm->_pathFind->_characterGoToPosition != 1)
 					_vm->_pathFind->goToPosition(1);
+				_vm->_mouseRightBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
@@ -3314,6 +3318,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (_vm->_mouseLeftBtn) {
 				if (_vm->_pathFind->_characterGoToPosition != 7)
 					_vm->_pathFind->goToPosition(7);
+				_vm->_mouseLeftBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 
@@ -3334,6 +3339,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			if (!_vm->_flagUseWithStarted && _vm->_mouseLeftBtn) {
 				if (_vm->_pathFind->_characterGoToPosition != 2)
 					_vm->_pathFind->goToPosition(2);
+				_vm->_mouseLeftBtn = false;
 			} else if (_vm->_pathFind->_characterGoToPosition != _vm->_obj[curObj]._position)
 				_vm->_pathFind->goToPosition(_vm->_obj[curObj]._position);
 

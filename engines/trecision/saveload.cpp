@@ -84,6 +84,7 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 		delete saveFile;
 	}
 
+	_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 	refreshInventory(0, 0);
 }
 
@@ -181,8 +182,10 @@ insave:
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (_mouseLeftBtn)
+			if (_mouseLeftBtn) {
+				_mouseLeftBtn = false;
 				break;
+			}
 		} else {
 			if (OldPos != -1) {
 				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
@@ -193,6 +196,7 @@ insave:
 			CurPos = -1;
 
 			if (_mouseLeftBtn || _mouseRightBtn) {
+				_mouseLeftBtn = _mouseRightBtn = false;
 				skipSave = true;
 				break;
 			}
@@ -372,8 +376,10 @@ bool TrecisionEngine::dataLoad() {
 				_graphicsMgr->copyToScreen(0, FIRSTLINE + ICONDY + 10, MAXX, CARHEI);
 			}
 
-			if (_mouseLeftBtn && (_inventory[CurPos] != EMPTYSLOT))
+			if (_mouseLeftBtn && (_inventory[CurPos] != EMPTYSLOT)) {
+				_mouseLeftBtn = false;
 				break;
+			}
 		} else {
 			if (OldPos != -1) {
 				_graphicsMgr->clearScreenBufferSaveSlotDescriptions();
@@ -384,6 +390,7 @@ bool TrecisionEngine::dataLoad() {
 			CurPos = -1;
 
 			if (_mouseLeftBtn || _mouseRightBtn) {
+				_mouseLeftBtn = _mouseRightBtn = false;
 				retval = false;
 				skipLoad = true;
 				break;

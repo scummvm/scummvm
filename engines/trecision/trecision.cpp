@@ -65,6 +65,15 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
+	_inventoryRefreshStartIconOld = 0xFF;
+	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
+	_curObj = 1;
+	_inventoryRefreshStartLine = INVENTORY_HIDE;
+	_inventoryRefreshStartLineOld = 0xFF;
+	_lightIcon = 0xFF;
+	_lightIconOld = 0xFF;
+	_inventoryStatus = INV_OFF;
+	_inventoryCounter = INVENTORY_HIDE;	
 	_flagInventoryLocked = false;
 	_inventorySpeed[0] = 20;
 	_inventorySpeed[1] = 10;
@@ -92,15 +101,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 		_sysText[i] = nullptr;
 
 	_curMessage = nullptr;
-
-	// Original values
-	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
-	_curObj = 1;
-	_inventoryStatus = INV_OFF;
-	_lightIcon = 0xFF;
-	_inventoryRefreshStartLine = INVENTORY_HIDE;
-	_inventoryCounter = INVENTORY_HIDE;
-
 	_animMgr = nullptr;
 	_dialogMgr = nullptr;
 	_graphicsMgr = nullptr;
@@ -110,7 +110,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_pathFind = nullptr;
 	_textMgr = nullptr;
 	_animTypeMgr = nullptr;
-
 	_actorRect = nullptr;
 	_nextRefresh = 0;
 
@@ -251,20 +250,12 @@ void TrecisionEngine::eventLoop() {
 			_mousePos = event.mouse;
 			break;
 
-		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
 			_mouseLeftBtn = true;
 			break;
 
-		case Common::EVENT_LBUTTONUP:
-			_mouseLeftBtn = false;
-			break;
-
-		case Common::EVENT_RBUTTONDOWN:
-			_mouseRightBtn = true;
-			break;
-
 		case Common::EVENT_RBUTTONUP:
-			_mouseRightBtn = false;
+			_mouseRightBtn = true;
 			break;
 
 		case Common::EVENT_KEYUP:
