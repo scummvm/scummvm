@@ -22,6 +22,7 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+
 #include "common/text-to-speech.h"
 #include "common/translation.h"
 

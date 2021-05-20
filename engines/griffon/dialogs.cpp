@@ -269,12 +269,12 @@ void GriffonEngine::configMenu() {
 		"Exit + Save", "",
 		"Exit"
 	};
-	static const int curselMapTitles[25] = {
+	static const int curselMapTitles[15] = {
 		0, 0, 0, 0, 0,
 		0, 0, 9, 9, 12,
 		12, 15, 15, 18, 20,
 	};
-	static const int curselMapValues[25] = {
+	static const int curselMapValues[17] = {
 		0, 0, 0, 0, 0,
 		0, 0, 9, 10, 12,
 		13, 15, 16, 0, 0,

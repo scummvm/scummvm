@@ -35,11 +35,9 @@
  */
 
 #include "common/system.h"
-
 #include "griffon/griffon.h"
 
 #include "common/config-manager.h"
-
 #include "common/text-to-speech.h"
 
 namespace Griffon {
@@ -141,18 +139,16 @@ const char *story2[27] = {
 int textToSpeech(int nextparagraph, const char *story[], int arraysize) {
 	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		if ((_ttsMan->isSpeaking()) == false) {
-			Common::String paragraph;
-			while (nextparagraph < arraysize && story[nextparagraph][0] != ' ') {
-				if (!paragraph.empty())
-					paragraph += " ";
-				paragraph += story[nextparagraph++];
-			}
-			while (nextparagraph < arraysize && story[nextparagraph][0] == ' ') {
-				nextparagraph += 1;
-			}
-			_ttsMan->say(paragraph);
+		Common::String paragraph;
+		while (nextparagraph < arraysize && story[nextparagraph][0] != ' ') {
+			if (!paragraph.empty())
+				paragraph += " ";
+			paragraph += story[nextparagraph++];
 		}
+		while (nextparagraph < arraysize && story[nextparagraph][0] == ' ') {
+			nextparagraph += 1;
+		}
+		_ttsMan->say(paragraph, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	}
 	return nextparagraph;
 }
@@ -232,7 +228,7 @@ void GriffonEngine::intro() {
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
-	int nextparagraph = 10;
+	int nextparagraph = 0;
 
 	do {
 		Common::Rect rc;
@@ -264,10 +260,10 @@ void GriffonEngine::intro() {
 		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
 
-		#ifdef USE_TTS
+#ifdef USE_TTS
 			if (i == nextparagraph)
 				nextparagraph = textToSpeech(nextparagraph, story, ARRAYSIZE(story));
-		#endif
+#endif
 
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
@@ -405,10 +401,10 @@ void GriffonEngine::endOfGame() {
 		for (int i = 0; i < ARRAYSIZE(story2); i++) {
 			int yy = y + i * 10;
 
-		#ifdef USE_TTS
+#ifdef USE_TTS
 			if (i == nextparagraph)
 				nextparagraph = textToSpeech(nextparagraph, story2, ARRAYSIZE(story2));
-		#endif
+#endif
 
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story2[i]) * 4;
