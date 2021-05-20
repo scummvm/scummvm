@@ -1644,7 +1644,7 @@ void Encounter::runScript() {
 
 		case kOpcodePrepareMovie:
 			if (!getSharedData()->getMatteBarHeight()) {
-				getScreen()->loadPalette();
+				getScreen()->loadGrayPalette();
 				getSharedData()->setMatteBarHeight(1);
 				getSharedData()->movieIndex = (uint16)getVariableInv(entry.param2);
 				getSharedData()->setMatteVar1(1);

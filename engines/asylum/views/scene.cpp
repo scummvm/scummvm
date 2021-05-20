@@ -363,7 +363,7 @@ bool Scene::init() {
 
 	getScreen()->setPalette(paletteResource);
 	getScreen()->setGammaLevel(paletteResource);
-	getScreen()->loadPalette();
+	getScreen()->loadGrayPalette();
 	getScreen()->setupTransTables(3, _ws->cellShadeMask1, _ws->cellShadeMask2, _ws->cellShadeMask3);
 	getScreen()->selectTransTable(1);
 

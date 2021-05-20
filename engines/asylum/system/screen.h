@@ -96,7 +96,7 @@ public:
 	// Palette
 	void setPalette(ResourceId id);
 	void setMainPalette(const byte *data);
-	void loadPalette();
+	void loadGrayPalette();
 	void updatePalette();
 	void updatePalette(int32 param);
 	void setupPalette(byte *buffer, int start, int count);

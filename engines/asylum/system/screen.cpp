@@ -264,7 +264,7 @@ byte *Screen::getPaletteData(ResourceId id) {
 	return (resource->data + resource->getData(12));
 }
 
-void Screen::loadPalette() {
+void Screen::loadGrayPalette() {
 	// Get the current action palette
 	ResourceId paletteId = getWorld()->actions[getScene()->getActor()->getActionIndex3()]->paletteResourceId;
 	if (!paletteId)
@@ -272,9 +272,13 @@ void Screen::loadPalette() {
 
 	// Get the data
 	byte *paletteData = getPaletteData(paletteId);
+	paletteData += 4;
 
-	// Store data into our global palette
-	memcpy(&_currentPalette, paletteData, sizeof(_currentPalette));
+	// Store grayscale data into our global palette
+	for (uint32 j = 3; j < ARRAYSIZE(_currentPalette) - 3; j += 3) {
+		uint32 gray = 4 * (paletteData[j] + paletteData[j + 1] + paletteData[j + 2]) / 3;
+		_currentPalette[j] = _currentPalette[j + 1] = _currentPalette[j + 2] = (byte)gray;
+	}
 }
 
 void Screen::setPalette(ResourceId id) {
@@ -342,11 +346,14 @@ void Screen::updatePalette(int32 param) {
 		byte *paletteData = getPaletteData(paletteId);
 		paletteData += 4;
 
+		float fParam = param / 20.0;
 		for (uint32 j = 3; j < ARRAYSIZE(_mainPalette) - 3; j += 3) {
-			_mainPalette[j]     = (byte)(4 * paletteData[j]     + param * (4 * paletteData[j]     - _currentPalette[j]));
-			_mainPalette[j + 1] = (byte)(4 * paletteData[j + 1] + param * (4 * paletteData[j + 1] - _currentPalette[j + 1]));
-			_mainPalette[j + 2] = (byte)(4 * paletteData[j + 2] + param * (4 * paletteData[j + 2] - _currentPalette[j + 2]));
+			_mainPalette[j]     = (byte)((1.0 - fParam) * 4 * paletteData[j]     + fParam * _currentPalette[j]);
+			_mainPalette[j + 1] = (byte)((1.0 - fParam) * 4 * paletteData[j + 1] + fParam * _currentPalette[j + 1]);
+			_mainPalette[j + 2] = (byte)((1.0 - fParam) * 4 * paletteData[j + 2] + fParam * _currentPalette[j + 2]);
 		}
+
+		setupPalette(NULL, 0, 0);
 	}
 }
 

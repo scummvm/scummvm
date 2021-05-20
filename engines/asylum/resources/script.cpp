@@ -1024,7 +1024,7 @@ IMPLEMENT_OPCODE(PlayMovie)
 
 		if (!getSharedData()->getMatteBarHeight()) {
 			getCursor()->hide();
-			getScreen()->loadPalette();
+			getScreen()->loadGrayPalette();
 			getSharedData()->setMatteVar1(1);
 			getSharedData()->setMatteBarHeight(1);
 			getSharedData()->setMatteVar2(0);
@@ -1187,7 +1187,7 @@ END_OPCODE
 // Opcode 0x3B
 IMPLEMENT_OPCODE(CreatePalette)
 	if (!cmd->param2) {
-		getScreen()->loadPalette();
+		getScreen()->loadGrayPalette();
 		cmd->param2 = 1;
 	}
 
