@@ -196,7 +196,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 		if (stepRight && (_gSample[soundId]._flag & kSoundFlagStepRight)) {
 			if (!_stepRightStream) {
 				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
-				_stepRightStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::NO);
+				_stepRightStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::YES);
 			}
 			break;
 		}
@@ -204,7 +204,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 		if (stepLeft && (_gSample[soundId]._flag & kSoundFlagStepLeft)) {
 			if (!_stepLeftStream) {
 				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
-				_stepLeftStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::NO);
+				_stepLeftStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::YES);
 			}
 			break;
 		}
