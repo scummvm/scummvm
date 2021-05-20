@@ -150,7 +150,7 @@ void TextManager::characterContinueTalk() {
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
 	if (!_talkTime)
-		_talkTime = (strlen(_subString[_curSubString]) * 5) / 2 + 50;
+		_talkTime = Common::String(_subString[_curSubString]).size() * 5 / 2 + 50;
 
 	_curSubString++;
 
@@ -197,7 +197,7 @@ void TextManager::someoneContinueTalk() {
 
 	_talkTime = _vm->_soundMgr->talkStart(_lastFilename);
 	if (!_talkTime)
-		_talkTime = (strlen(_subString[_curSubString]) * 5) / 2 + 50;
+		_talkTime = Common::String(_subString[_curSubString]).size() * 5 / 2 + 50;
 
 	_curSubString++;
 	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
