@@ -2468,8 +2468,8 @@ Management of "Use with"
 
 #define ME_OPEN 0
 #define ME_CLOSE 1
-#define ME_ONELEFT 4
-#define ME_ONERIGHT 5
+//#define ME_ONELEFT 4	// removed
+//#define ME_ONERIGHT 5	// removed
 #define ME_OPERATEICON 6  // (mx,my,0,0)
 #define ME_EXAMINEICON 7  // (mx,my,0,0)
 #define ME_SHOWICONNAME 8 // (mx,my,0,0)
