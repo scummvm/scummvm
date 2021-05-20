@@ -379,7 +379,6 @@ void TrecisionEngine::doCharacter() {
 
 			if ((_curMessage->_u16Param1 == _obj[oCANCELLATA1B]._anim) && !isObjectVisible(oBOTTIGLIA1D) && !isObjectVisible(oRETE17)) {
 				_dialogMgr->playDialog(dF181);
-				_graphicsMgr->hideCursor();
 				_pathFind->setPosition(1);
 			}
 		} else
