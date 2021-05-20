@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "gui/message.h"
 
@@ -1083,46 +1084,25 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 
 	int fileNum = g_lingo->pop().asInt() - 1;
 	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
-	Common::Array<Common::String> directory_list;
-
-	// this part is to split string by /
-	// i think we need to wrap this to function
-	uint last = 0;
-	for (uint i = 0; i < path.size(); i++) {
-		if (path[i] == '/') {
-			directory_list.push_back(path.substr(last, i - last));
-			last = i + 1;
-		}
-	}
-	if (last != path.size())
-		directory_list.push_back(path.substr(last, path.size() - last));
+	Common::StringTokenizer directory_list(path, "/");
 
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
-	if (d.getChild(directory_list[0]).exists()) {
+	if (d.getChild(directory_list.nextToken()).exists()) {
 		// then this part is for the "relative to current directory"
 		// we find the child directory recursively
-		uint current_pos = 0;
-		while (current_pos < directory_list.size() && d.exists()) {
-			d = d.getChild(directory_list[current_pos]);
-			current_pos++;
-		}
+		directory_list.reset();
+		while (!directory_list.empty() && d.exists())
+			d = d.getChild(directory_list.nextToken());
 	} else {
 		// we first match the path with game data dir
-		uint current_pos = 0;
-		while (current_pos < directory_list.size()) {
-			if (directory_list[current_pos].equalsIgnoreCase(d.getName()))
+		while (!directory_list.empty())
+			if (directory_list.nextToken().equalsIgnoreCase(d.getName()))
 				break;
-			current_pos++;
-		}
-		if (current_pos == directory_list.size())
-			error("Cannot find game directory in path %s\n", path.c_str());
 		// then we go deep to the end of path
 		// skip the current directory which is the game data directory
-		current_pos++;
-		while (current_pos < directory_list.size() && d.exists()) {
-			d = d.getChild(directory_list[current_pos]);
-			current_pos++;
-		}
+		directory_list.nextToken();
+		while (!directory_list.empty() && d.exists())
+			d = d.getChild(directory_list.nextToken());
 	}
 
 	Datum r;
