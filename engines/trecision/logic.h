@@ -82,7 +82,7 @@ public:
 	bool doMouseInventory();
 	void doMouseLeftRight();
 
-	void doSystemChangeRoom();
+	void doSystemChangeRoom(uint16 room);
 
 	bool isCloseupOrControlRoom() const;
 

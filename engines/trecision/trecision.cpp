@@ -308,7 +308,7 @@ void TrecisionEngine::initMain() {
 	if (ConfMan.hasKey("save_slot"))
 		loadGameState(ConfMan.getInt("save_slot"));
 
-	_scheduler->changeRoom(_curRoom, 0, 0, _curObj);
+	changeRoom(_curRoom);
 }
 
 void TrecisionEngine::checkSystem() {
