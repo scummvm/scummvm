@@ -175,7 +175,7 @@ public:
 	void playScript(uint16 id);
 	bool quitPrompt();
 	void demoOver();
-	void startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent);
+	void startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 sent);
 	void doMouseTalk(uint16 curObj);
 
 	// Utils

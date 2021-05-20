@@ -327,21 +327,21 @@ void TrecisionEngine::checkSystem() {
 	eventLoop();
 }
 
-void TrecisionEngine::startCharacterAction(uint16 Act, uint16 NewRoom, uint8 NewPos, uint16 sent) {
+void TrecisionEngine::startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 sent) {
 	_characterQueue.initQueue();
 
 	_flagInventoryLocked = false;
-	if (Act > hLAST) {
-		_animMgr->startSmkAnim(Act);
-		_animTypeMgr->init(Act, _curObj);
+	if (action > hLAST) {
+		_animMgr->startSmkAnim(action);
+		_animTypeMgr->init(action, _curObj);
 		_graphicsMgr->hideCursor();
 		_flagShowCharacter = false;
-		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, Act, NewRoom, NewPos, _curObj);
+		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERCONTINUEACTION, MP_DEFAULT, action, newRoom, newPos, _curObj);
 	} else {
-		if ((Act == aWALKIN) || (Act == aWALKOUT))
+		if ((action == aWALKIN) || (action == aWALKOUT))
 			_curObj = 0;
 		_graphicsMgr->hideCursor();
-		_actor->actorDoAction(Act);
+		_actor->actorDoAction(action);
 		_pathFind->nextStep();
 	}
 
