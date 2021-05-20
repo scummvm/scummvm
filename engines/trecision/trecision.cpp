@@ -370,6 +370,15 @@ void TrecisionEngine::refreshObject(uint16 objectId) {
 		entry._objectId = objectId;
 		entry._remove = !isObjectVisible(objectId);
 		_sortTable.push_back(entry);
+
+		// Remove previous instances
+		for (Common::List<SSortTable>::iterator it = _sortTableReplay.begin(); it != _sortTableReplay.end(); ++it) {
+			if (it->_objectId == objectId) {
+				_sortTableReplay.erase(it);
+				break;
+			}
+		}
+
 		_sortTableReplay.push_back(entry);
 	}
 }
