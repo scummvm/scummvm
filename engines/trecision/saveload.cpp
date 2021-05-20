@@ -501,7 +501,7 @@ void TrecisionEngine::performLoad(int slot, bool skipLoad) {
 		_flagScriptActive = false;
 
 		_oldRoom = _curRoom;
-		_scheduler->doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, _curRoom, 0, 0, 0);
+		_scheduler->changeRoom(_curRoom, 0, 0, 0);
 	}
 
 	_actor->actorStop();
