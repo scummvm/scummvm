@@ -201,7 +201,7 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 	_videoLockOut |= 0x8000;
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		restoreBlock(window->y + window->height, window->x + window->width, window->y, window->x);
+		restoreBlock(window->x, window->y, window->x + window->width, window->y + window->height);
 	} else if (getGameType() == GType_SIMON2) {
 		if (_restoreWindow6 && _windowArray[2] == window) {
 			window = _windowArray[6];
@@ -232,7 +232,7 @@ void AGOSEngine::restoreWindow(WindowBlock *window) {
 	_videoLockOut &= ~0x8000;
 }
 
-void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
+void AGOSEngine::restoreBlock(uint16 left, uint16 top, uint16 right, uint16 bottom) {
 	byte *dst, *src;
 	uint i;
 
@@ -240,18 +240,18 @@ void AGOSEngine::restoreBlock(uint16 x, uint16 y, uint16 w, uint16 h) {
 	dst = (byte *)screen->getPixels();
 	src = getBackGround();
 
-	dst += y * screen->pitch;
-	src += y * _backGroundBuf->pitch;
+	dst += top * screen->pitch;
+	src += top * _backGroundBuf->pitch;
 
 	uint8 paletteMod = 0;
-	Common::Rect dirtyRect(x, y, x + w, h);
-	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO) && y >= 133)
+	Common::Rect dirtyRect(left, top, right, bottom);
+	if (getGameType() == GType_ELVIRA1 && !(getFeatures() & GF_DEMO) && top >= 133)
 		paletteMod = 16;
 
-	while (y < h) {
-		for (i = x; i < w; i++)
+	while (top < bottom) {
+		for (i = left; i < right; i++)
 			dst[i] = src[i] + paletteMod;
-		y++;
+		top++;
 		dst += screen->pitch;
 		src += _backGroundBuf->pitch;
 	}
