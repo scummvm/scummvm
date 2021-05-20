@@ -112,7 +112,29 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	lq->orderEvents();
 }
 
+void Scheduler::changeRoom(uint16 newRoom, uint16 action, uint8 position, uint16 object) {
+	doEvent(MC_SYSTEM, ME_CHANGEROOM, MP_SYSTEM, newRoom, action, position, object);
+}
 
+void Scheduler::mouseMove(uint16 x, uint16 y) {
+	doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, x, y, 0, 0);
+}
+
+void Scheduler::leftClick(uint16 x, uint16 y) {
+	doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, x, y, 0, 0);
+}
+
+void Scheduler::rightClick(uint16 x, uint16 y) {
+	doEvent(MC_MOUSE, ME_MRIGHT, MP_DEFAULT, x, y, 0, 0);
+}
+
+void Scheduler::mouseExamine(uint16 object) {
+	doEvent(MC_ACTION, ME_MOUSEEXAMINE, MP_DEFAULT, 0, 0, 0, object);
+}
+
+void Scheduler::mouseOperate(uint16 object) {
+	doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, object);
+}
 
 uint8 MessageQueue::predEvent(uint8 i) {
 	return i == 0 ? MAXMESSAGE - 1 : i - 1;
