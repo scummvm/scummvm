@@ -60,7 +60,7 @@ public:
 	void setMute(bool mute);
 	bool forceSeekToFrame(uint frame);
 	void forceSkip(uint frame);
-	bool endOfVideo() const;
+	bool endOfVideo() const override;
 };
 
 class AnimManager {
