@@ -287,7 +287,7 @@ int16 AnimManager::smkCurFrame(int slot) {
 void AnimManager::startSmkAnim(uint16 animation) {
 	int slot;
 	uint16 animFlag = _animTab[animation]._flag;
-	
+
 	// choose the buffer to use
 	if (animFlag & SMKANIM_BKG)
 		slot = kSmackerBackground;
@@ -500,7 +500,7 @@ void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 			break;
 		}
 	}
-	
+
 	if (a == ICONSHOWN)
 		return;
 

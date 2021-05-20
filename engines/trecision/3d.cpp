@@ -336,7 +336,7 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 			// screen offset
 			int16 x = el;
 			int16 *zBufferPtr = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
-			
+		
 			// loop through every pixel in horizontal scanline
 			while (dx) {
 				if (*zBufferPtr != zv) {
@@ -460,7 +460,7 @@ int8 Renderer3D::clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int
 void Renderer3D::drawCharacter(uint8 flag) {
 	if (!_vm->_flagShowCharacter)
 		return;
-	
+
 	Actor *actor = _vm->_actor;
 
 	// Compute pointer to frame
@@ -654,7 +654,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		dist = tx * e30 + ty * e31 + tz * e32;
 
 		SVertex *curVertex = actor->_vertex;
-		
+	
 		for (int a = 0; a < vertexNum + _totalShadowVerts; a++) {
 			if (a < vertexNum) {
 				l0 = curVertex->_x;
@@ -1302,7 +1302,7 @@ void PathFinding3D::findShortPath() {
 	float len1, len2;
 	int curPanel, nearPanel, oldPanel;
 	float destX, destZ;
-	
+
 	bool fail = false;
 
 	int count = 0;
@@ -1962,7 +1962,7 @@ void PathFinding3D::buildFramelist() {
 	// how far is it from the destination?
 	float approx = (len - curLen - EPSILON) / (a - 2);
 	float theta = 0.0f;
-	// Adjust all the steps so it arrives exactly where clicked 
+	// Adjust all the steps so it arrives exactly where clicked
 	for (b = 1; b < a; b++) {
 		// verify there's no reverse step
 		if ((_step[b - 1]._dz > (_step[b]._dz + approx * b)) || ((_step[b]._dz + approx * b + EPSILON) >= len)) {

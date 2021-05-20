@@ -94,7 +94,7 @@ class TrecisionEngine : public Engine {
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
 	void doScrollInventory(Common::Point pos);
-	
+
 	// Script
 	void endScript();
 	void evalScript();

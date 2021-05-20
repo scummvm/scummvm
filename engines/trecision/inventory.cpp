@@ -280,7 +280,7 @@ void TrecisionEngine::removeIcon(uint8 icon) {
 		return;
 
 	_inventory.remove_at(pos);
-	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN; 
+	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN;
 
 	_textMgr->redrawString();
 }
@@ -290,7 +290,7 @@ void TrecisionEngine::addIcon(uint8 icon) {
 		return;
 
 	_inventory.push_back(icon);
-	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN; 
+	_iconBase = _inventory.size() <= ICONSHOWN ? 0 : _inventory.size() - ICONSHOWN;
 
 	//	To show the icon that enters the inventory
 	//	doEvent(MC_INVENTORY,ME_OPEN,MP_DEFAULT,0,0,0,0);

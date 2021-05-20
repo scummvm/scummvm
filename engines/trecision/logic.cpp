@@ -473,7 +473,7 @@ void LogicManager::startCharacterAnimations() {
 	};
 
 	int i = 0;
-	
+
 	do {
 		const CharacterAnimation anim = characterAnimations[i];
 		const bool positionerRoom = _vm->_curRoom >= kRoom44 && _vm->_curRoom <= kRoom49;
@@ -482,7 +482,7 @@ void LogicManager::startCharacterAnimations() {
 			_vm->startCharacterAction(anim._action, 0, 0, 0);
 			break;
 		}
-		
+	
 		i++;
 	} while (characterAnimations[i]._curRoom != 0);
 
@@ -540,7 +540,7 @@ bool LogicManager::startPlayDialog() {
 		_vm->_dialogMgr->playDialog(dF491);
 	} else if (_vm->_curRoom == kRoom4A && (_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra) && _vm->isObjectVisible(ocHELLEN4A)) {
 		if (_vm->_curRoom == kRoom41D)
-			_vm->readExtraObj41D();		
+			_vm->readExtraObj41D();
 		_vm->_dialogMgr->playDialog(dC4A1);
 	} else if (_vm->_curRoom == kRoom4P && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
 		_vm->_dialogMgr->playDialog(dF4PI);

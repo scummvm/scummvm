@@ -65,7 +65,7 @@ bool GraphicsManager::init() {
 
 	if (!found)
 		return false;
-	
+
 	initGraphics(MAXX, MAXY, bestFormat);
 
 	_screenFormat = g_system->getScreenFormat();
@@ -309,7 +309,7 @@ void GraphicsManager::dissolve(uint8 val) {
 
 	uint32 sv = _vm->readTime();
 	uint32 cv = _vm->readTime();
-	
+
 	while (sv + val > cv) {
 		_vm->checkSystem();
 		if (lastv + cv < sv + val)

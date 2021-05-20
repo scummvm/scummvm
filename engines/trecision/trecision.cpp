@@ -110,7 +110,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_pathFind = nullptr;
 	_textMgr = nullptr;
 	_animTypeMgr = nullptr;
-	
+
 	_actorRect = nullptr;
 	_nextRefresh = 0;
 
@@ -183,7 +183,7 @@ TrecisionEngine::~TrecisionEngine() {
 	delete _textMgr;
 	delete _scheduler;
 	delete _animTypeMgr;
-	
+
 	delete _actor;
 	delete[] _textArea;
 
@@ -457,7 +457,7 @@ void TrecisionEngine::redrawRoom() {
 	SObject bgInfo;
 	bgInfo.readRect(picFile);
 
-	_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());	
+	_graphicsMgr->loadBackground(picFile, bgInfo._rect.width(), bgInfo._rect.height());
 	_sortTable.clear();
 
 	if (bgAnim)

@@ -73,7 +73,7 @@ private:
 
 	ActiveSound _sounds[MAXSOUNDS];
 	SSound _gSample[NUMSAMPLES];
-	
+
 	Audio::SeekableAudioStream *_stepLeftStream;
 	Audio::SeekableAudioStream *_stepRightStream;
 
