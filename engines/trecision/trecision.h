@@ -184,13 +184,14 @@ public:
 	void freeKey();
 	uint32 readTime();
 	bool checkMask(Common::Point pos);
-	static float sinCosAngle(float sinus, float cosinus);
+	float sinCosAngle(float sinus, float cosinus);
 	float dist2D(float x1, float y1, float x2, float y2);
 	float dist3D(float x1, float y1, float z1, float x2, float y2, float z2);
 	static bool isGameArea(Common::Point pos);
 	static bool isInventoryArea(Common::Point pos);
 	static bool isIconArea(Common::Point pos);
 	int getRoomObjectIndex(uint16 objectId);
+	int floatComp(float f1, float f2) const;
 
 	// Others
 	void checkSystem();

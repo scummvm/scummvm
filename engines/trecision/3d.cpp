@@ -548,9 +548,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 					dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
 
 					// adjust light intensity due to the distance
-					if (dist > _curLight->_outr) // if it's out of range it's off
+					if (_vm->floatComp(dist, _curLight->_outr) == 1) // if it's out of range it's off
 						lint = 0;
-					else if (dist > _curLight->_inr) // if it's inside the circle it's decreased
+					else if (_vm->floatComp(dist, _curLight->_inr) == 1) // if it's inside the circle it's decreased
 						lint = (int)((float)lint * (_curLight->_outr - dist) / (_curLight->_outr - _curLight->_inr));
 				}
 			}
@@ -567,7 +567,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 				// Adjust light intensity according to the spot
 				tx = (float)_curLight->_fallOff;
-				if (tx) { // for light spot only
+				if (_curLight->_fallOff) { // for light spot only
 					ty = (float)_curLight->_hotspot;
 
 					pa0 = _curLight->_dx * cost - _curLight->_dz * sint;
@@ -588,10 +588,10 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 					_shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
 
-					if (tz > tx) { // if it's out of the falloff
+					if (_vm->floatComp(tz, tx) == 1) { // tz > tx - if it's out of the falloff
 						lint = 0;
 						_shadowIntens[_shadowLightNum] = 0;
-					} else if (tz > ty) { // if it's between the falloff and the hotspot
+					} else if (_vm->floatComp(tz, ty) == 1) { // tz > ty - if it's between the falloff and the hotspot
 						lint = (int)((float)lint * (tx - tz) / (tx - ty));
 						_shadowIntens[_shadowLightNum] = (int)((float)_shadowIntens[_shadowLightNum] * (tx - tz) / (tx - ty));
 					}
@@ -1075,17 +1075,15 @@ void PathFinding3D::findPath() {
 	_numPathNodes = 0;
 
 	// if you have clicked behind the starting panel or the corner it's not possible to walk
-	if ((_curPanel < 0) && (_oldPanel >= 0) &&
+	if (_curPanel < 0 && _oldPanel >= 0 &&
 		// behind the starting panel
 		(pointInside(b = _oldPanel, _curX, _curZ) ||
 		 // behind the panel corner1
 		 ((_vm->dist2D(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ) ||
-		   pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ))) ||
+		  (pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ))) ||
 		 // behind the panel corner2
 		 ((_vm->dist2D(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ) ||
-		   pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ))))) {
+		  (pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ))))) {
 		_curX = actor->_px;
 		_curZ = actor->_pz;
 		actor->_px -= actor->_dx;
@@ -1122,7 +1120,7 @@ void PathFinding3D::findPath() {
 						_numPathNodes--;
 
 						// If the click is inside the nearby panel
-						if ((_curPanel < 0) && (pointInside(b, _curX, _curZ))) {
+						if (_curPanel < 0 && pointInside(b, _curX, _curZ)) {
 							_curX = actor->_px;
 							_curZ = actor->_pz;
 							actor->_px -= actor->_dx;
@@ -1133,10 +1131,9 @@ void PathFinding3D::findPath() {
 							return;
 						}
 					}
-				} else if ((b == _panel[_curPanel]._near1) || (b == _panel[_curPanel]._near2)) {
+				} else if (b == _panel[_curPanel]._near1 || b == _panel[_curPanel]._near2) {
 					// otherwise if it is near the finish panel
-					if ((fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON) &&
-						(b != _oldPanel) && (b != _curPanel)) {
+					if (fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
 						// and the distance is very small to the intersection
 						inters--;
 						_numPathNodes--;
@@ -1214,16 +1211,16 @@ void PathFinding3D::findPath() {
 										  _panel[_panel[b]._col1 & 0x7F]._x2, _panel[_panel[b]._col1 & 0x7F]._z2,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
 										  _curX, _curZ))
-						if ((_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON) &&
-							(_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON))
+						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							inters++;
 				} else {
 					if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 										  _panel[_panel[b]._col1 & 0x7F]._x1, _panel[_panel[b]._col1 & 0x7F]._z1,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
 										  _curX, _curZ))
-						if ((_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON) &&
-							(_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON))
+						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							inters++;
 				}
 
@@ -1232,16 +1229,16 @@ void PathFinding3D::findPath() {
 										  _panel[_panel[b]._col2 & 0x7F]._x2, _panel[_panel[b]._col2 & 0x7F]._z2,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
 										  _curX, _curZ))
-						if ((_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON) &&
-							(_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON))
+						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							inters++;
 				} else {
 					if (intersectLineLine(_panel[b]._x2, _panel[b]._z2,
 										  _panel[_panel[b]._col2 & 0x7F]._x1, _panel[_panel[b]._col2 & 0x7F]._z1,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
 										  _curX, _curZ))
-						if ((_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON) &&
-							(_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON))
+						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							inters++;
 				}
 			}
@@ -1682,7 +1679,7 @@ void PathFinding3D::setPosition(int num) {
 				float oz = curLight->_dz;
 
 				// If it's a null light
-				if ((ox == 0.0f) && (oz == 0.0f))
+				if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f))
 					warning("setPosition: Unknown error : null light");
 
 				float t = sqrt(ox * ox + oz * oz);
@@ -1690,9 +1687,9 @@ void PathFinding3D::setPosition(int num) {
 				oz /= t;
 
 				float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
-				if (theta >= 360.0f)
+				if (_vm->floatComp(theta, 360.0f) >= 0) // theta >= 360.0f
 					theta -= 360.0f;
-				if (theta < 0.0f)
+				if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
 					theta += 360.0f;
 
 				_vm->_actor->_theta = theta;
@@ -1750,7 +1747,7 @@ void PathFinding3D::lookAt(float x, float z) {
 	float oz = _step[_lastStep]._pz - z;
 
 	// If the light is null
-	if ((ox == 0.0f) && (oz == 0.0f)) {
+	if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0) {
 		memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
 		memcpy(&_step[_lastStep + 2], &_step[_lastStep + 1], sizeof(SStep));
 		_lastStep += 2;
@@ -1763,31 +1760,31 @@ void PathFinding3D::lookAt(float x, float z) {
 	oz /= t;
 
 	float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
-	if (theta >= 360.0f)
+	if (_vm->floatComp(theta, 360.0f) >= 0) //theta >= 360.0f
 		theta -= 360.0f;
-	if (theta < 0.0f)
+	if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
 		theta += 360.0f;
 
 	float approx = theta - _step[_lastStep]._theta;
 
-	if ((approx < 30.0f) && (approx > -30.0f))
+	if (_vm->floatComp(approx, 30.0f) == -1 && _vm->floatComp(approx, -30.0f) == 1) // approx < 30.0f && approx > -30.0f
 		approx = 0.0f;
-	else if (approx > 180.0f)
+	else if (_vm->floatComp(approx, 180.0f) == 1) // approx > 180.0f
 		approx = -360.0f + approx;
-	else if (approx < -180.0f)
+	else if (_vm->floatComp(approx, -180.0f) == -1) // approx < -180.0f
 		approx = 360.0f + approx;
 
 	approx /= 3.0f;
 
 	// Antepenultimate 1/3
 	_step[_lastStep]._theta += approx;
-	_step[_lastStep]._theta = (_step[_lastStep]._theta > 360.0f) ? _step[_lastStep]._theta - 360.0f : (_step[_lastStep]._theta < 0.0f) ? _step[_lastStep]._theta + 360.0f : _step[_lastStep]._theta;
+	_step[_lastStep]._theta = _vm->floatComp(_step[_lastStep]._theta, 360.0f) == 1 ? _step[_lastStep]._theta - 360.0f : _vm->floatComp(_step[_lastStep]._theta, 0.0f) == -1 ? _step[_lastStep]._theta + 360.0f : _step[_lastStep]._theta;
 
 	// Penultimate 2/3
 	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
 	_lastStep++;
 	_step[_lastStep]._theta += approx;
-	_step[_lastStep]._theta = (_step[_lastStep]._theta > 360.0f) ? _step[_lastStep]._theta - 360.0f : (_step[_lastStep]._theta < 0.0f) ? _step[_lastStep]._theta + 360.0f : _step[_lastStep]._theta;
+	_step[_lastStep]._theta = _vm->floatComp(_step[_lastStep]._theta, 360.0f) == 1 ? _step[_lastStep]._theta - 360.0f : _vm->floatComp(_step[_lastStep]._theta, 0.0f) == -1 ? _step[_lastStep]._theta + 360.0f : _step[_lastStep]._theta;
 
 	// Last right step
 	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
@@ -1833,7 +1830,7 @@ void PathFinding3D::buildFramelist() {
 		oz = _pathNode[a]._z;
 	}
 	// total route length calculated - if too small, returns
-	if (len < 2.0f) {
+	if (_vm->floatComp(len, 2.0f) == -1) {
 		lookAt(_lookX, _lookZ);
 		return;
 	}
@@ -1884,7 +1881,8 @@ void PathFinding3D::buildFramelist() {
 	// at this point, CurA / _curAction is either hSTART or hWALK
 
 	// until it arrives at the destination
-	while (((curLen = oz + _vm->_actor->frameCenter(v) - firstFrame) < len) || (!a)) {
+	curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
+	while (_vm->floatComp(curLen, len) == -1 || !a) {
 		_step[a]._pz = oz - firstFrame; // where to render
 		_step[a]._dz = curLen;          // where it is
 		_step[a]._curAction = curAction;
@@ -1918,11 +1916,12 @@ void PathFinding3D::buildFramelist() {
 			v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
 			// only if it doesn't end
-			if ((oz + ox + _vm->_actor->frameCenter(v) - firstFrame) < len)
+			if (_vm->floatComp(oz + ox + _vm->_actor->frameCenter(v) - firstFrame, len) == -1) // oz + ox + _vm->_actor->frameCenter(v) - firstFrame < len
 				oz += ox;
 			else
 				break;
 		}
+		curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
 	}
 
 	if (!a)
@@ -1965,7 +1964,7 @@ void PathFinding3D::buildFramelist() {
 	// Adjust all the steps so it arrives exactly where clicked
 	for (b = 1; b < a; b++) {
 		// verify there's no reverse step
-		if ((_step[b - 1]._dz > (_step[b]._dz + approx * b)) || ((_step[b]._dz + approx * b + EPSILON) >= len)) {
+		if (_vm->floatComp(_step[b - 1]._dz, _step[b]._dz + approx * b) == 1 || _vm->floatComp(_step[b]._dz + approx * b + EPSILON, len) >= 0) {
 			theta = _step[b]._dz - _step[b]._pz;
 			_step[b]._dz = _step[b - 1]._dz;
 			_step[b]._pz = _step[b]._dz - theta;
@@ -1993,22 +1992,21 @@ void PathFinding3D::buildFramelist() {
 		ox = _pathNode[a + 1]._x - _pathNode[a]._x;
 		oz = _pathNode[a + 1]._z - _pathNode[a]._z;
 		// if it's a useless node, remove it
-		if ((ox == 0.0f) && (oz == 0.0f)) {
+		if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0)
 			continue;
-		}
 
 		approx = sqrt(ox * ox + oz * oz);
 		ox /= approx;
 		oz /= approx;
 
 		theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI + 180.0f;
-		if (theta >= 360.0f)
+		if (_vm->floatComp(theta, 360.0f) >= 0)
 			theta -= 360.0f;
-		if (theta < 0.0f)
+		if (_vm->floatComp(theta, 0.0f) == -1)
 			theta += 360.0f;
 
-		while ((b < _lastStep) && (_step[b]._dz <= len)) {
-			curLen = (_step[b]._dz - _step[b]._pz);
+		while (b < _lastStep && _vm->floatComp(_step[b]._dz, len) <= 0) {
+			curLen = _step[b]._dz - _step[b]._pz;
 
 			_step[b]._px = _pathNode[a]._x + (_step[b]._pz - startPos) * ox;
 			_step[b]._pz = _pathNode[a]._z + (_step[b]._pz - startPos) * oz;
@@ -2034,19 +2032,19 @@ void PathFinding3D::buildFramelist() {
 	theta = _step[0]._theta;
 
 	// if he starts from standstill position
-	if ((_step[0]._curAction == hSTART) && (_step[0]._curFrame == 0) && (_lastStep > 4) && (_step[0]._theta == _step[1]._theta)) {
+	if ((_step[0]._curAction == hSTART) && (_step[0]._curFrame == 0) && (_lastStep > 4) && _vm->floatComp(_step[0]._theta, _step[1]._theta) == 0) {
 		approx = theta - oldTheta;
 
-		if (approx > 180.0f)
+		if (_vm->floatComp(approx, 180.0f) == 1)
 			approx = -360.0f + approx;
-		else if (approx < -180.0f)
+		else if (_vm->floatComp(approx, -180.0f) == -1)
 			approx = 360.0f + approx;
 
 		approx /= 3.0f;
 
 		for (b = 0; b < 2; b++) {
 			_step[b]._theta = oldTheta + (float)(b + 1) * approx;
-			_step[b]._theta = (_step[b]._theta > 360.0f) ? _step[b]._theta - 360.0f : (_step[b]._theta < 0.0f) ? _step[b]._theta + 360.0f : _step[b]._theta;
+			_step[b]._theta = _vm->floatComp(_step[b]._theta, 360.0f) == 1 ? _step[b]._theta - 360.0f : _vm->floatComp(_step[b]._theta, 0.0f) == -1 ? _step[b]._theta + 360.0f : _step[b]._theta;
 
 			theta = _step[b]._theta;
 
@@ -2073,19 +2071,19 @@ void PathFinding3D::buildFramelist() {
 		theta = _step[b]._theta;
 
 		// if it made a curve
-		if (oldTheta != theta) {
+		if (_vm->floatComp(oldTheta, theta) != 0) {
 			approx = theta - oldTheta;
 
-			if (approx > 180.0f)
+			if (_vm->floatComp(approx, 180.0f) == 1)
 				approx = -360.0f + approx;
-			else if (approx < -180.0f)
+			else if (_vm->floatComp(approx, -180.0f) == -1)
 				approx = 360.0f + approx;
 
 			approx /= 3.0f;
 
 			// for the previous one
 			_step[b - 1]._theta += approx;
-			_step[b - 1]._theta = (_step[b - 1]._theta > 360.0f) ? _step[b - 1]._theta - 360.0f : (_step[b - 1]._theta < 0.0f) ? _step[b - 1]._theta + 360.0f : _step[b - 1]._theta;
+			_step[b - 1]._theta = _vm->floatComp(_step[b - 1]._theta, 360.0f) == 1 ? _step[b - 1]._theta - 360.0f : _vm->floatComp(_step[b - 1]._theta, 0.0f) == -1 ? _step[b - 1]._theta + 360.0f : _step[b - 1]._theta;
 
 			oldTheta = _step[b - 1]._theta;
 
@@ -2106,7 +2104,7 @@ void PathFinding3D::buildFramelist() {
 
 			// for the next one
 			_step[b]._theta -= approx;
-			_step[b]._theta = (_step[b]._theta > 360.0f) ? _step[b]._theta - 360.0f : (_step[b]._theta < 0.0f) ? _step[b]._theta + 360.0f : _step[b]._theta;
+			_step[b]._theta = _vm->floatComp(_step[b]._theta, 360.0f) == 1 ? _step[b]._theta - 360.0f : _vm->floatComp(_step[b]._theta, 0.0f) == -1 ? _step[b]._theta + 360.0f : _step[b]._theta;
 
 			oldTheta = theta;
 			theta = _step[b]._theta;
@@ -2392,7 +2390,7 @@ void PathFinding3D::whereIs(int px, int py) {
 		if (intersectLinePanel(&_panel[b], x, y, z)) {
 			float temp = _vm->dist3D(_vm->_actor->_camera->_ex, _vm->_actor->_camera->_ey, _vm->_actor->_camera->_ez, _x3d, _y3d, _z3d);
 
-			if (temp < inters) {
+			if (_vm->floatComp(temp, inters) == -1) {
 				inters = temp;
 				_curPanel = b;
 				_curX = _x3d;
@@ -2439,7 +2437,7 @@ void PathFinding3D::pointOut() {
 			// check point 1
 			temp = _vm->dist2D(_curX, _curZ, panel->_x1, panel->_z1);
 
-			if (temp < inters) {
+			if (_vm->floatComp(temp, inters) == -1) {
 				inters = temp;
 				_curPanel = b;
 				x = panel->_x1;
@@ -2449,7 +2447,7 @@ void PathFinding3D::pointOut() {
 			// check point 2
 			temp = _vm->dist2D(_curX, _curZ, panel->_x2, panel->_z2);
 
-			if (temp < inters) {
+			if (_vm->floatComp(temp, inters) == -1) {
 				inters = temp;
 				_curPanel = b;
 				x = panel->_x2;
@@ -2459,7 +2457,7 @@ void PathFinding3D::pointOut() {
 			// check point a 1/3
 			temp = _vm->dist2D(_curX, _curZ, (panel->_x1 * 2.0f + panel->_x2) / 3.0f, (panel->_z1 * 2.0f + panel->_z2) / 3.0f);
 
-			if (temp < inters) {
+			if (_vm->floatComp(temp, inters) == -1) {
 				inters = temp;
 				_curPanel = b;
 				x = (panel->_x1 * 2.0f + panel->_x2) / 3.0f;
@@ -2469,7 +2467,7 @@ void PathFinding3D::pointOut() {
 			// check point a 2/3
 			temp = _vm->dist2D(_curX, _curZ, (panel->_x1 + panel->_x2 * 2.0f) / 3.0f, (panel->_z1 + panel->_z2 * 2.0f) / 3.0f);
 
-			if (temp < inters) {
+			if (_vm->floatComp(temp, inters) == -1) {
 				inters = temp;
 				_curPanel = b;
 				x = (panel->_x1 + panel->_x2 * 2.0f) / 3.0f;
@@ -2480,7 +2478,7 @@ void PathFinding3D::pointOut() {
 			if (intersectLineLine(panel->_x1, panel->_z1, panel->_x2, panel->_z2, _vm->_actor->_camera->_ex, _vm->_actor->_camera->_ez, _curX, _curZ)) {
 				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
-				if (temp < inters) {
+				if (_vm->floatComp(temp, inters) == -1) {
 					inters = temp;
 					_curPanel = b;
 					x = _x3d;
@@ -2492,7 +2490,7 @@ void PathFinding3D::pointOut() {
 			if (intersectLineLine(panel->_x1, panel->_z1, panel->_x2, panel->_z2, _vm->_actor->_px, _vm->_actor->_pz, _curX, _curZ)) {
 				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
-				if (temp < inters) {
+				if (_vm->floatComp(temp, inters) == -1) {
 					inters = temp;
 					_curPanel = b;
 					x = _x3d;
@@ -2505,7 +2503,7 @@ void PathFinding3D::pointOut() {
 								  _curX + nx * largeValue, _curZ + nz * largeValue, _curX - nx * largeValue, _curZ - nz * largeValue)) {
 				temp = _vm->dist2D(_curX, _curZ, _x3d, _z3d);
 
-				if (temp < inters) {
+				if (_vm->floatComp(temp, inters) == -1) {
 					inters = temp;
 					_curPanel = b;
 					x = _x3d;
@@ -2565,10 +2563,10 @@ bool PathFinding3D::intersectLinePanel(SPan *p, float x, float y, float z) {
 	float n = nx * p->_x1 + nz * p->_z1 - nx * x - nz * z;
 	float d = dx * nx + dz * nz;
 
-	if (d != 0.0) {
+	if (_vm->floatComp(d, 0.0f) != 0) {
 		t = n / d;
 
-		if (t <= 0.0)
+		if (_vm->floatComp(t, 0.0f) <= 0)
 			return false;
 
 		_x3d = x1 + dx * t;
@@ -2581,7 +2579,7 @@ bool PathFinding3D::intersectLinePanel(SPan *p, float x, float y, float z) {
 		float maxZ = MAX(p->_z1, p->_z2) + 1.5f;
 
 		// check if it fits inside the panel
-		if ((_x3d >= minX) && (_x3d <= maxX) && (_y3d >= 0.0) && (_y3d <= p->_h) && (_z3d >= minZ) && (_z3d <= maxZ))
+		if (_vm->floatComp(_x3d, minX) >= 0 && _vm->floatComp(_x3d, maxX) <= 0 && _vm->floatComp(_y3d, 0.0) >= 0 && _vm->floatComp(_y3d, p->_h) <= 0 && _vm->floatComp(_z3d, minZ) >= 0 && _vm->floatComp(_z3d, maxZ) <= 0)
 			return true;
 
 		return false;
@@ -2608,10 +2606,10 @@ bool PathFinding3D::intersectLineFloor(float x, float y, float z) {
 
 	// ny is always equal to 1 for the floor
 
-	if (dy != 0.0f) {
+	if (_vm->floatComp(dy, 0.0f) != 0) {
 		t = -y / dy;
 
-		if (t <= 0.0f)
+		if (_vm->floatComp(t, 0.0f) <= 0)
 			return false;
 
 		_x3d = x1 + dx * t;
@@ -2629,12 +2627,12 @@ bool PathFinding3D::intersectLineFloor(float x, float y, float z) {
 --------------------------------------------------*/
 bool PathFinding3D::intersectLineLine(float xa, float ya, float xb, float yb, float xc, float yc, float xd, float yd) {
 	float divisor = (float)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
-	if (divisor == 0.0f)
+	if (_vm->floatComp(divisor, 0.0f) == 0)
 		return false;
 
 	float r = (float)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc)) / divisor;
 	float s = (float)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya)) / divisor;
-	if (r < 0.0f || r > 1.0f || s < 0.0f || s > 1.0f)
+	if (_vm->floatComp(r, 0.0f) == -1 || _vm->floatComp(r, 1.0f) == 1 || _vm->floatComp(s, 0.0f) == -1 || _vm->floatComp(s, 1.0f) == 1)
 		return false;
 
 	_x3d = xa + r * (xb - xa);
