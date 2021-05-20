@@ -126,7 +126,7 @@ void TextManager::characterTalk(const char *s) {
 
 void TextManager::characterContinueTalk() {
 	uint16 posx, posy;
-	
+
 	_vm->_flagSkipTalk = false;
 	_vm->_characterSpeakTime = _vm->_curTime;
 

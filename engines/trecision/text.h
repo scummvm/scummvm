@@ -49,7 +49,7 @@ class TextManager {
 	uint16 _talkingPersonId;
 	SDText _curString;
 	SDText _oldString;
-	
+
 	Common::List<StackText> _textStack;
 
 	void positionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
@@ -75,12 +75,12 @@ public:
 	void clearLastText();
 	void drawText(StackText text);
 	void clearText();
-	void drawTexts();	
+	void drawTexts();
 	void redrawString();
 	void clearTextStack();
 	Common::Rect getOldTextRect() const;
 	void clearOldText();
-	
+
 	void drawCurString();
 };
 

@@ -288,7 +288,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 void AnimTypeManager::init(uint16 an, uint16 obj) {
 	SAnim *anim = &_vm->_animMgr->_animTab[an];
 	ATFHandle *handle = &_animType[kAnimTypeCharacter];
-	
+
 	if (anim->_flag & SMKANIM_BKG)
 		handle = &_animType[kAnimTypeBackground];
 	if (anim->_flag & SMKANIM_ICON)

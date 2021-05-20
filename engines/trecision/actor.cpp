@@ -72,9 +72,9 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 
 	for (int i = 0; i < MAXLIGHT; ++i)
 		_lightArea[i].clear();
-	
+
 	_cameraArea.clear();
-	
+
 	_light = (SLight *)&_lightArea;
 	_camera = (SCamera *)&_cameraArea;
 }
@@ -187,7 +187,7 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 	static const uint16 idx1 = 306;
 	static const uint16 idx2 = 348;
 	static const uint16 idx3 = 288;
-	
+
 	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3];
 	int c, d, f;
 
@@ -371,7 +371,7 @@ void Actor::readModel(const char *filename) {
 
 void Actor::syncGameStream(Common::Serializer &ser) {
 	float unused = 0;
-	
+
 	ser.syncAsFloatLE(_px);
 	ser.syncAsFloatLE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
 	ser.syncAsFloatLE(_pz);

@@ -65,7 +65,7 @@ void SoundManager::play(int soundId) {
 			delete soundFileStream;
 
 			stopSoundType(soundType);
-			
+
 			Audio::Mixer::SoundType type =
 				(_gSample[soundId]._flag & kSoundFlagBgMusic) ?
 				Audio::Mixer::kMusicSoundType :
@@ -81,7 +81,7 @@ void SoundManager::play(int soundId) {
 			_sounds[soundType].soundId = soundId;
 
 			Audio::AudioStream *stream = nullptr;
-			
+
 			if (_gSample[soundId]._flag & kSoundFlagSoundLoop)
 				stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(memStream, DisposeAfterUse::YES), 0);
 			else
@@ -143,7 +143,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
 	bool stepRight = false;
 	bool stepLeft = false;
-	
+
 	switch (act) {
 	case hWALK:
 		if (frame == 3)
@@ -265,7 +265,7 @@ int32 SoundManager::talkStart(const Common::String &name) {
 
 void SoundManager::loadRoomSounds() {
 	SRoom *curRoom = &_vm->_room[_vm->_curRoom];
-	
+
 	stopAll();
 
 	for (uint16 soundSlot = 0; soundSlot < MAXSOUNDSINROOM; soundSlot++) {
