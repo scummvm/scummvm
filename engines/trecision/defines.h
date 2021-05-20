@@ -2496,9 +2496,9 @@ Management of "Use with"
 
 #define ME_MOUSEOPERATE 0
 #define ME_MOUSEEXAMINE 1
-#define ME_INVOPERATE 2
-#define ME_INVEXAMINE 3
-#define ME_USEWITH 4
+//#define ME_INVOPERATE 2
+//#define ME_INVEXAMINE 3
+//#define ME_USEWITH 4
 
 
 /*************************************************************************

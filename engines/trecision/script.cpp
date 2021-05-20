@@ -176,7 +176,7 @@ void TrecisionEngine::doAction() {
 				_flagUseWithStarted = false;
 				_textMgr->clearLastText();
 			} else
-				_scheduler->doEvent(MC_ACTION, ME_USEWITH, MP_SYSTEM, 0, 0, 0, 0);
+				doUseWith();
 			_curObj = 0;
 			return;
 		}
@@ -218,19 +218,6 @@ void TrecisionEngine::doAction() {
 			doRoomOut(_curObj);
 		else
 			doMouseExamine(_curObj);
-		break;
-
-	case ME_INVOPERATE:
-		doInvOperate();
-		break;
-
-	case ME_INVEXAMINE:
-		doInvExamine();
-		break;
-
-	case ME_USEWITH:
-		_textMgr->showObjName(0, false);
-		doUseWith();
 		break;
 
 	default:
@@ -486,6 +473,7 @@ void TrecisionEngine::doIdle() {
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
 			_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+			_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 		}
 		break;
@@ -497,6 +485,7 @@ void TrecisionEngine::doIdle() {
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
 				_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+				_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
 		}
@@ -607,6 +596,8 @@ void TrecisionEngine::doMouseTalk(uint16 curObj) {
 }
 
 void TrecisionEngine::doUseWith() {
+	_textMgr->showObjName(0, false);
+
 	if (_useWithInv[USED]) {
 		if (_useWithInv[WITH])
 			doInventoryUseWithInventory();

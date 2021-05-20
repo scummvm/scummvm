@@ -194,10 +194,6 @@ float TrecisionEngine::sinCosAngle(float sinus, float cosinus) {
 }
 
 void TrecisionEngine::processTime() {
-	static uint8 oldRegInvSI = 0xFF;
-	static uint8 oldRegInvSL = 0xFF;
-	static uint8 oldLightIcon = 0xFF;
-
 	_curTime = readTime();
 
 	if (_curTime >= _nextRefresh) {
@@ -206,11 +202,14 @@ void TrecisionEngine::processTime() {
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 			rollInventory(_inventoryStatus);
 
-		if (_inventoryStatus != INV_OFF && (oldRegInvSI != _inventoryRefreshStartIcon || oldRegInvSL != _inventoryRefreshStartLine || oldLightIcon != _lightIcon)) {
+		if (_inventoryStatus != INV_OFF && (
+			_inventoryRefreshStartIconOld != _inventoryRefreshStartIcon ||
+			_inventoryRefreshStartLineOld != _inventoryRefreshStartLine ||
+			_lightIconOld != _lightIcon)) {
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
-			oldRegInvSI = _inventoryRefreshStartIcon;
-			oldRegInvSL = _inventoryRefreshStartLine;
-			oldLightIcon = _lightIcon;
+			_inventoryRefreshStartIconOld = _inventoryRefreshStartIcon;
+			_inventoryRefreshStartLineOld = _inventoryRefreshStartLine;
+			_lightIconOld = _lightIcon;
 		}
 
 		_renderer->paintScreen(false);
@@ -243,9 +242,11 @@ void TrecisionEngine::processMouse() {
 	if (_mouseLeftBtn && !maskMouse) {
 		_scheduler->leftClick(mx, my);
 		maskMouse = true;
+		_mouseLeftBtn = false;
 	} else if (_mouseRightBtn && !maskMouse) {
 		_scheduler->rightClick(mx, my);
 		maskMouse = true;
+		_mouseRightBtn = false;
 	} else {
 		maskMouse = false;
 
