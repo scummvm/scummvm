@@ -36,10 +36,6 @@ SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
 	if (!_speechFile.open("nlspeech.cd0"))
 		warning("SoundManager - nlspeech.cd0 is missing - skipping");
 
-	for (int i = 0; i < MAXSOUNDS; i++) {
-		_sounds[i].soundId = -1;
-	}
-
 	_stepLeftStream = nullptr;
 	_stepRightStream = nullptr;
 }
@@ -78,8 +74,6 @@ void SoundManager::play(int soundId) {
 				volume = 0;
 			}*/
 
-			_sounds[soundType].soundId = soundId;
-
 			Audio::AudioStream *stream = nullptr;
 
 			if (_gSample[soundId]._flag & kSoundFlagSoundLoop)
@@ -89,7 +83,7 @@ void SoundManager::play(int soundId) {
 
 			g_system->getMixer()->playStream(
 				type,
-				&_sounds[soundType].soundHandle,
+				&_soundHandles[soundType],
 				stream,
 				-1,
 				volume,
@@ -100,18 +94,9 @@ void SoundManager::play(int soundId) {
 	}
 }
 
-void SoundManager::stop(int soundId) {
-	for (int i = 0; i < MAXSOUNDS; i++) {
-		if (_sounds[i].soundId == soundId) {
-			g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
-			return;
-		}
-	}
-}
-
 void SoundManager::stopAll() {
 	for (int i = 0; i < MAXSOUNDS; i++) {
-		g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
+		g_system->getMixer()->stopHandle(_soundHandles[i]);
 	}
 
 	delete _stepLeftStream;
@@ -123,7 +108,7 @@ void SoundManager::stopAll() {
 void SoundManager::stopAllExceptMusic() {
 	for (int i = 0; i < MAXSOUNDS; i++) {
 		if (i != kSoundTypeMusic) {
-			g_system->getMixer()->stopHandle(_sounds[i].soundHandle);
+			g_system->getMixer()->stopHandle(_soundHandles[i]);
 		}
 	}
 
@@ -134,8 +119,8 @@ void SoundManager::stopAllExceptMusic() {
 }
 
 void SoundManager::stopSoundType(SoundType type) {
-	if (g_system->getMixer()->isSoundHandleActive(_sounds[type].soundHandle)) {
-		g_system->getMixer()->stopHandle(_sounds[type].soundHandle);
+	if (g_system->getMixer()->isSoundHandleActive(_soundHandles[type])) {
+		g_system->getMixer()->stopHandle(_soundHandles[type]);
 	}
 }
 
@@ -218,7 +203,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 	if (midz > 255)
 		midz = 255;
 
-	g_system->getMixer()->stopHandle(_sounds[kSoundTypeStep].soundHandle);
+	g_system->getMixer()->stopHandle(_soundHandles[kSoundTypeStep]);
 
 	Audio::SeekableAudioStream *stream = stepLeft ? _stepLeftStream : _stepRightStream;
 	stream->rewind();
@@ -227,7 +212,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 
 	g_system->getMixer()->playStream(
 		Audio::Mixer::kSFXSoundType,
-		&_sounds[kSoundTypeStep].soundHandle,
+		&_soundHandles[kSoundTypeStep],
 		stream,
 		-1,
 		VOLUME(midz),
@@ -247,11 +232,10 @@ int32 SoundManager::talkStart(const Common::String &name) {
 		return 0;
 
 	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
-	_sounds[kSoundTypeSpeech].soundId = -1;
 
 	g_system->getMixer()->playStream(
 		Audio::Mixer::kSpeechSoundType,
-		&_sounds[kSoundTypeSpeech].soundHandle,
+		&_soundHandles[kSoundTypeSpeech],
 		audioStream,
 		-1,
 		Audio::Mixer::kMaxChannelVolume,	// TODO
