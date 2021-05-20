@@ -101,7 +101,6 @@ class TrecisionEngine : public Engine {
 	void doAction();
 	void doMouse();
 	void doCharacter();
-	void doSystem();
 	void doIdle();
 	void doRoomIn(uint16 curObj);
 	void doRoomOut(uint16 curObj);
@@ -176,6 +175,7 @@ public:
 	void demoOver();
 	void startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 sent);
 	void doMouseTalk(uint16 curObj);
+	void changeRoom(uint16 room, uint16 action = 0, byte position = 0);
 
 	// Utils
 	uint16 textLength(const Common::String &text, uint16 begin = 0, uint16 end = 0);

@@ -207,7 +207,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		executeAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
 		break;
 	case ATFROOM:
-		_vm->_scheduler->changeRoom(h->_curAnim->_atFrame[atf]._index, 0, 0, h->_object);
+		_vm->changeRoom(h->_curAnim->_atFrame[atf]._index);
 		break;
 	case ATFSETPOS:
 		_vm->_pathFind->setPosition(h->_curAnim->_atFrame[atf]._index);

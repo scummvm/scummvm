@@ -330,7 +330,7 @@ void TrecisionEngine::doCharacter() {
 				_scheduler->mouseExamine((uint16)_curMessage->_u32Param);
 			else if (_curMessage->_event == ME_CHARACTERGOTOEXIT) {
 				_flagShowCharacter = false;
-				_scheduler->changeRoom(_curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param, (uint16)_curMessage->_u32Param);
+				changeRoom(_curMessage->_u16Param1, _curMessage->_u16Param2, _curMessage->_u8Param);
 			} else if (_curMessage->_event == ME_CHARACTERDOACTION) {
 				_lastObj = 0;
 				_textMgr->showObjName(_curObj, true);
@@ -373,7 +373,7 @@ void TrecisionEngine::doCharacter() {
 			//	If the room changes at the end
 			if (_curMessage->_u16Param2) {
 				_flagShowCharacter = false;
-				_scheduler->changeRoom(_curMessage->_u16Param2, 0, _curMessage->_u8Param, (uint16)_curMessage->_u32Param);
+				changeRoom(_curMessage->_u16Param2, 0, _curMessage->_u8Param);
 			} else if (_curMessage->_u8Param)
 				_pathFind->setPosition(_curMessage->_u8Param);
 
@@ -389,33 +389,26 @@ void TrecisionEngine::doCharacter() {
 	}
 }
 
-void TrecisionEngine::doSystem() {
-	switch (_curMessage->_event) {
-	case ME_CHANGEROOM:
-		if (_curRoom == 0)
-			return;
+void TrecisionEngine::changeRoom(uint16 room, uint16 action, byte position) {
+	if (_curRoom == 0)
+		return;
 
-		// if regen still has to occur
-		if (_flagWaitRegen)
-			reEvent();
+	// if regen still has to occur
+	if (_flagWaitRegen)
+		reEvent();
 
-		_logicMgr->doSystemChangeRoom();
+	_logicMgr->doSystemChangeRoom(room);
 
-		_pathFind->setPosition(_curMessage->_u8Param);
-		_actor->actorStop();
+	_pathFind->setPosition(position);
+	_actor->actorStop();
 
-		if (_curMessage->_u16Param2)
-			startCharacterAction(_curMessage->_u16Param2, 0, 0, 0);
+	if (action)
+		startCharacterAction(action, 0, 0, 0);
 
-		_logicMgr->endChangeRoom();
+	_logicMgr->endChangeRoom();
 
-		_room[_curRoom]._flag |= kObjFlagDone; // Visited
-		_renderer->drawCharacter(CALCPOINTS);                         // for right _actorPos entrance
-
-		break;
-	default:
-		break;
-	}
+	_room[_curRoom]._flag |= kObjFlagDone; // Visited
+	_renderer->drawCharacter(CALCPOINTS);                         // for right _actorPos entrance
 }
 
 void TrecisionEngine::doIdle() {
@@ -437,7 +430,7 @@ void TrecisionEngine::doIdle() {
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
-			_scheduler->changeRoom(kRoomControlPanel, 0, 0, c);
+			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
 			::createThumbnailFromScreen(&_thumbnail);
@@ -451,7 +444,7 @@ void TrecisionEngine::doIdle() {
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
 			_obj[o00EXIT]._goRoom = _curRoom;
-			_scheduler->changeRoom(kRoomControlPanel, 0, 0, c);
+			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
 			::createThumbnailFromScreen(&_thumbnail);
@@ -507,7 +500,7 @@ void TrecisionEngine::doRoomIn(uint16 curObj) {
 	uint16 curAction = _obj[curObj]._anim;
 	uint16 curPos = _obj[curObj]._ninv;
 
-	_scheduler->changeRoom(_obj[curObj]._goRoom, curAction, curPos, curObj);
+	changeRoom(_obj[curObj]._goRoom, curAction, curPos);
 
 	_obj[curObj]._flag |= kObjFlagDone;
 }
@@ -637,15 +630,13 @@ void TrecisionEngine::doInvOperate() {
 
 void TrecisionEngine::doScript() {
 	Message *message = _curMessage;
-	uint8 scope = message->_u8Param;
 	uint16 index = message->_u16Param1;
 	uint16 index2 = message->_u16Param2;
 	uint32 value = message->_u32Param;
-	SObject *obj = &_obj[index];
 
 	switch (message->_event) {
 	case ME_CHANGER:
-		_scheduler->changeRoom(index, index2, value, _curObj);
+		changeRoom(index, index2, value);
 		break;
 
 	default:
@@ -665,10 +656,6 @@ void TrecisionEngine::processCurrentMessage() {
 
 	case MC_MOUSE:
 		doMouse();
-		break;
-
-	case MC_SYSTEM:
-		doSystem();
 		break;
 
 	case MC_INVENTORY:

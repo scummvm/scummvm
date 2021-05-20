@@ -48,7 +48,7 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 	}
 
 	const int newRoom = atoi(argv[1]);
-	_vm->_scheduler->changeRoom(newRoom, 0, 0, 0);
+	_vm->changeRoom(newRoom);
 
 	return false;
 }

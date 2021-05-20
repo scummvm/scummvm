@@ -285,7 +285,7 @@ void DialogManager::afterChoice() {
 
 		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
-				_vm->_scheduler->changeRoom(kRoom18, a1810ENTRADALNEGOZIO, 10, _vm->_curObj);
+				_vm->changeRoom(kRoom18, a1810ENTRADALNEGOZIO, 10);
 				_vm->_obj[oDOORN18]._flag &= ~kObjFlagRoomOut;
 				_vm->_obj[oDOORN18]._action = 218;
 				_vm->setObjectAnim(oDOORN18, 0);
@@ -365,7 +365,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF381:
-			_vm->_scheduler->changeRoom(kRoom41, 0, 18, _vm->_curObj);
+			_vm->changeRoom(kRoom41, 0, 18);
 			_vm->_cyberInventory = _vm->_inventory;
 			_vm->_iconBase = 0;
 			_vm->_inventory.clear();
@@ -481,7 +481,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dINTRO:
-			_vm->_scheduler->changeRoom(kRoom11, 0, 20, _vm->_curObj);
+			_vm->changeRoom(kRoom11);
 			break;
 
 		case dF582:
