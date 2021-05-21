@@ -370,6 +370,8 @@ bool LogicManager::startPlayDialog() {
 			_vm->_flagNoPaintScreen = false;
 			_vm->_textMgr->redrawString();
 		}
+	} else if (_vm->_curRoom == kRoomIntro) {
+		_vm->_dialogMgr->playDialog(dFLOG);
 	} else {
 		dialogHandled = false;
 	}
