@@ -2281,7 +2281,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("awomanforallseasons", "A Woman For All Seasons.exe", "77c325a29d4b45fe9bb38761fb17118b", 4171441),
 	GAME_ENTRY("axmasevetale", "mags.exe", "71ca0d6c1c699595f28a2125948d4a84", 6489870),
 	GAME_ENTRY("backdoorman", "hustler.exe", "2c26669a627da8e1e5159319b78ad1ce", 9558000),
-	GAME_ENTRY("badbunker", "Bad Bunker.exe", "b216ee957dd677023e02d900281a02d6", 2457312),
+	GAME_ENTRY("badbunker", "Bad Bunker.exe", "b216ee957dd677023e02d900281a02d6", 3457312),
 	GAME_ENTRY("badluck", "bad luck.exe", "f120690b506dd63cd7d1112ea6af2f77", 10618466),
 	GAME_ENTRY("baldysadventure", "baldy.exe", "ea0d3284542db629f36cb6fc785e07bc", 179358984),
 	GAME_ENTRY("baltazarthefamiliar", "baltazar.exe", "9cb3c8dc7a8ab9c44815955696be2677", 2867294),
