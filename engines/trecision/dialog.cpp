@@ -137,7 +137,7 @@ void DialogManager::playDialog(uint16 i) {
 	if ((_dialog[i]._startLen > 0) && !skip)
 		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 0, _dialog[i]._startLen - 1);
 	else {
-		_vm->_animMgr->smkSoundOnOff(1, false);
+		_vm->_animMgr->smkToggleAudio(1, false);
 		afterChoice();
 	}
 }
@@ -374,7 +374,7 @@ void DialogManager::afterChoice() {
 
 		case dF371:
 			_vm->setObjectAnim(oSCAFFALE36, a3615AAPRENDESCAFFALE);
-			_vm->_animMgr->smkVolumePan(0, 1, 1);
+			_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 			break;
 
 		case dF431:

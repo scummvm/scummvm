@@ -93,10 +93,10 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		if (!(_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) && // if the fmv is not done
 			(_vm->isObjectVisible(oTUBOA34)) &&                      // if there's a cut pipe
 			!(_vm->isObjectVisible(oTUBOFT34)))                      // if there's not tube outside
-			_vm->_animMgr->smkVolumePan(0, 2, 1);
+			_vm->_animMgr->smkToggleTrackAudio(0, 2, true);
 		break;
 	case fVALVEOFF34:
-		_vm->_animMgr->smkVolumePan(0, 2, 0);
+		_vm->_animMgr->smkToggleTrackAudio(0, 2, false);
 		break;
 
 	case fCHARACTEROFF:
@@ -124,12 +124,12 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	case fANIMOFF1:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF1;
 		if ((_vm->_curRoom == kRoom11) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P))
-			_vm->_animMgr->smkVolumePan(0, 1, 0);
+			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 	case fANIMOFF2:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF2;
 		if ((_vm->_curRoom == kRoom2E))
-			_vm->_animMgr->smkVolumePan(0, 2, 0);
+			_vm->_animMgr->smkToggleTrackAudio(0, 2, false);
 		break;
 	case fANIMOFF3:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF3;
@@ -137,19 +137,19 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 	case fANIMOFF4:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF4;
 		if (_vm->_curRoom == kRoom28)
-			_vm->_animMgr->smkVolumePan(0, 1, 0);
+			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 
 	case fANIMON1:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF1;
 		if ((_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P)) {
-			_vm->_animMgr->smkVolumePan(0, 1, 1);
+			_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 		}
 		break;
 	case fANIMON2:
 		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF2;
 		if ((_vm->_curRoom == kRoom2E)) {
-			_vm->_animMgr->smkVolumePan(0, 2, 1);
+			_vm->_animMgr->smkToggleTrackAudio(0, 2, true);
 		}
 		break;
 	case fANIMON3:
@@ -252,7 +252,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
 			if (_vm->_curRoom == kRoom37)
-				_vm->_animMgr->smkVolumePan(0, 1, 1);
+				_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 			} break;
 		default:
 			break;
