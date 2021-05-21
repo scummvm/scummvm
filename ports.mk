@@ -166,6 +166,7 @@ ifdef USE_DOCKTILEPLUGIN
 	mkdir -p $(bundle_name)/Contents/PlugIns
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
 endif
+	codesign -s - --deep --force $(bundle_name)
 
 ifdef USE_DOCKTILEPLUGIN
 bundle: scummvm-static scummvm.docktileplugin bundle-pack
@@ -188,12 +189,12 @@ ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
 endif
 	$(STRIP) scummvm
-	ldid -S scummvm
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/icon-72.png $(bundle_name)/
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/
+	codesign -s - --deep --force $(bundle_name)
 
 ios7bundle: iphone
 	mkdir -p $(bundle_name)
@@ -303,7 +304,6 @@ ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) $(bundle_name)/
 endif
 	$(STRIP) scummvm
-	ldid -S scummvm
 	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/ios7/Images.xcassets/AppIcon.appiconset/icon4-29@2x.png $(bundle_name)/AppIcon29x29@2x.png
@@ -327,6 +327,7 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-1242x2208.png $(bundle_name)/LaunchImage-800-Portrait-736h@3x.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-2208x1242.png $(bundle_name)/LaunchImage-800-Landscape-736h@3x.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
+	codesign -s - --deep --force $(bundle_name)
 
 
 ifndef WITHOUT_SDL
