@@ -164,6 +164,7 @@ public:
 	// Inventory
 	void setInventoryStart(uint8 startIcon, uint8 startLine);
 	void showInventoryName(uint16 obj, bool showhide);
+	void showIconName();
 	uint8 whatIcon(Common::Point pos);
 	int8 iconPos(uint8 icon);
 	void removeIcon(uint8 icon);

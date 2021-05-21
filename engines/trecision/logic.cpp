@@ -3991,7 +3991,7 @@ void LogicManager::doSys(uint16 curObj) {
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
 		if (!_vm->dataSave()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
-			_vm->_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mousePos.x, _vm->_mousePos.y, 0, 0);
+			_vm->showIconName();
 			_vm->changeRoom(_vm->_obj[o00EXIT]._goRoom);
 		}
 		_vm->_curRoom = kRoomControlPanel;
@@ -4000,7 +4000,7 @@ void LogicManager::doSys(uint16 curObj) {
 	case o00LOAD:
 		if (!_vm->dataLoad()) {
 			_vm->showInventoryName(NO_OBJECTS, false);
-			_vm->_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _vm->_mousePos.x, _vm->_mousePos.y, 0, 0);
+			_vm->showIconName();
 		}
 		break;
 

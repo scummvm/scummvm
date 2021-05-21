@@ -77,6 +77,25 @@ void TrecisionEngine::moveInventoryRight() {
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
+void TrecisionEngine::showIconName() {
+	if (isIconArea(_mousePos)) {
+		if (_inventoryStatus != INV_ON)
+			_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+		_curInventory = whatIcon(_mousePos);
+		showInventoryName(_curInventory, true);
+
+		if (!_flagUseWithStarted && !_flagSomeoneSpeaks) {
+			setInventoryStart(_iconBase, INVENTORY_SHOW);
+		}
+	} else if (isInventoryArea(_mousePos)) {
+		showInventoryName(NO_OBJECTS, true);
+		if (!_flagUseWithStarted) {
+			_lightIcon = 0xFF;
+			setInventoryStart(_iconBase, INVENTORY_SHOW);
+		}
+	}
+}
+
 void TrecisionEngine::doInventory() {
 	switch (_curMessage->_event) {
 	case ME_OPEN:
@@ -151,27 +170,6 @@ void TrecisionEngine::doInventory() {
 			}
 		} else
 			doInvExamine();
-		break;
-
-	case ME_SHOWICONNAME:
-		if (isIconArea(_mousePos)) {
-			if (_inventoryStatus != INV_ON)
-				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			_curInventory = whatIcon(_mousePos);
-			showInventoryName(_curInventory, true);
-
-			if (!_flagUseWithStarted && !_flagSomeoneSpeaks) {
-				setInventoryStart(_iconBase, INVENTORY_SHOW);
-			}
-		} else {
-			if (!isInventoryArea(_mousePos))
-				break;
-			showInventoryName(NO_OBJECTS, true);
-			if (!_flagUseWithStarted) {
-				_lightIcon = 0xFF;
-				setInventoryStart(_iconBase, INVENTORY_SHOW);
-			}
-		}
 		break;
 
 	default:

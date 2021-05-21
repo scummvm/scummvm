@@ -234,7 +234,7 @@ void TrecisionEngine::doMouse() {
 			if (_inventoryStatus == INV_OFF)
 				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
 			else if (_inventoryStatus == INV_INACTION)
-				_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _curMessage->_u16Param1, _curMessage->_u16Param2, 0, 0);
+				showIconName();
 		} else {
 			// Up area
 			if (_curRoom == kRoomControlPanel)
@@ -433,7 +433,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
-			_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+			showIconName();
 			_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 		}
@@ -445,7 +445,7 @@ void TrecisionEngine::doIdle() {
 			::createThumbnailFromScreen(&_thumbnail);
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
-				_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, _mousePos.x, _mousePos.y, 0, 0);
+				showIconName();
 				_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
