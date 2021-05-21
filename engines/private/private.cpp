@@ -299,6 +299,13 @@ Common::Error PrivateEngine::run() {
 	return Common::kNoError;
 }
 
+void PrivateEngine::ignoreEvents() {
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
+	g_system->updateScreen();
+	g_system->delayMillis(10);
+}
+
 void PrivateEngine::initFuncs() {
 	for (const Private::FuncTable *fnc = funcTable; fnc->name; fnc++) {
 		Common::String name(fnc->name);
@@ -985,6 +992,10 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, sh, stream, -1, Audio::Mixer::kMaxChannelVolume);
+}
+
+bool PrivateEngine::isSoundActive() {
+	return _mixer->isSoundIDActive(-1);
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {
