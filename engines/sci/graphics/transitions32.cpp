@@ -210,6 +210,19 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 		color = g_sci->_gfxPalette32->getPlatformBlack();
 	}
 
+	// HACK: Swap Mac black/white colors to PC palette for kShowStyleDissolve.
+	// We perform most SCI32 Mac palette conversions while drawing pics, views, and color CelObjs.
+	// That doesn't work for kShowStyleDisolve, it uses a CelObjMem that's initialized from the
+	// current frameout buffer after Mac palette conversions have already taken place.
+	// Example: GK1 room 471 which dissolves from an already black screen to black.
+	if (type == kShowStyleDissolve && g_sci->getPlatform() == Common::kPlatformMacintosh) {
+		if (color == 0) {
+			color == 255;
+		} else if (color == 255) {
+			color = 0;
+		}
+	}
+
 	Plane *plane = g_sci->_gfxFrameout->getPlanes().findByObject(planeObj);
 	if (plane == nullptr) {
 		error("Plane %04x:%04x is not present in active planes list", PRINT_REG(planeObj));
