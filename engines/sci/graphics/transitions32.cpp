@@ -217,7 +217,7 @@ void GfxTransitions32::kernelSetShowStyle(const uint16 argc, const reg_t planeOb
 	// Example: GK1 room 471 which dissolves from an already black screen to black.
 	if (type == kShowStyleDissolve && g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		if (color == 0) {
-			color == 255;
+			color = 255;
 		} else if (color == 255) {
 			color = 0;
 		}
