@@ -226,28 +226,16 @@ void TrecisionEngine::doAction() {
 }
 
 void TrecisionEngine::doMouse() {
-#define POSUP 0
-#define POSGAME 1
-#define POSINV 2
-
 	switch (_curMessage->_event) {
 	case ME_MMOVE:
-		int8 curPos;
-		if (isGameArea(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2)))
-			curPos = POSGAME;
-		else if (isInventoryArea(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2)))
-			curPos = POSINV;
-		else
-			curPos = POSUP;
-
-		if (curPos == POSGAME) {
+		if (isGameArea(_mousePos)) {
 			// Game area
 			if (_flagSomeoneSpeaks || _flagDialogMenuActive || _flagDialogActive)
 				break;
 
-			checkMask(Common::Point(_curMessage->_u16Param1, _curMessage->_u16Param2));
+			checkMask(_mousePos);
 			_logicMgr->doMouseGame();
-		} else if (curPos == POSINV) {
+		} else if (isInventoryArea(_mousePos)) {
 			if (_logicMgr->doMouseInventory())
 				break;
 			if ((_flagSomeoneSpeaks && !_flagCharacterSpeak) || _flagDialogMenuActive || _flagDialogActive)
@@ -268,7 +256,7 @@ void TrecisionEngine::doMouse() {
 			_textMgr->showObjName(_curObj, true);
 
 			if (_flagDialogMenuActive)
-				_dialogMgr->updateChoices(_curMessage->_u16Param1, _curMessage->_u16Param2);
+				_dialogMgr->updateChoices(_mousePos.x, _mousePos.y);
 		}
 		break;
 
@@ -282,7 +270,7 @@ void TrecisionEngine::doMouse() {
 			break;
 
 		if (_flagDialogActive && _flagDialogMenuActive) {
-			_dialogMgr->selectChoice(_curMessage->_u16Param1, _curMessage->_u16Param2);
+			_dialogMgr->selectChoice(_mousePos.x, _mousePos.y);
 			break;
 		}
 
