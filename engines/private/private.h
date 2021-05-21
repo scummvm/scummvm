@@ -77,7 +77,7 @@ typedef struct ExitInfo {
 } ExitInfo;
 
 typedef struct MaskInfo {
-	Graphics::ManagedSurface *surf;
+	Graphics::Surface *surf;
 	Common::String nextSetting;
 	Common::Point point;
 	Symbol *flag1;
@@ -202,9 +202,9 @@ public:
 
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;
-	Graphics::ManagedSurface *loadMask(const Common::String &, int, int, bool);
-	void drawMask(Graphics::ManagedSurface *);
-	bool inMask(Graphics::ManagedSurface *, Common::Point);
+	Graphics::Surface *loadMask(const Common::String &, int, int, bool);
+	void drawMask(Graphics::Surface *);
+	bool inMask(Graphics::Surface *, Common::Point);
 	uint32 _transparentColor;
 	Common::Rect screenRect;
 	Common::String _framePath;

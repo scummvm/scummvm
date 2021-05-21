@@ -426,7 +426,7 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
 	return false;
 }
 
-bool PrivateEngine::inMask(Graphics::ManagedSurface *surf, Common::Point mousePos) {
+bool PrivateEngine::inMask(Graphics::Surface *surf, Common::Point mousePos) {
 	if (surf == NULL)
 		return false;
 
@@ -1040,13 +1040,14 @@ void PrivateEngine::drawScreenFrame() {
 }
 
 
-Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
+Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
-	Graphics::ManagedSurface *surf = new Graphics::ManagedSurface();
+	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(screenRect, _transparentColor);
 	Graphics::Surface *csurf = decodeImage(name);
-	surf->transBlitFrom(*csurf, Common::Point(x,y));
+	Common::Rect crect(csurf->w, csurf->h);
+	surf->copyRectToSurface(*csurf, x, y, crect);
 	csurf->free();
 	delete csurf;
 	_image->destroy();
@@ -1058,8 +1059,8 @@ Graphics::ManagedSurface *PrivateEngine::loadMask(const Common::String &name, in
 	return surf;
 }
 
-void PrivateEngine::drawMask(Graphics::ManagedSurface *surf) {
-	_compositeSurface->transBlitFrom(surf->rawSurface(), _origin, _transparentColor);
+void PrivateEngine::drawMask(Graphics::Surface *surf) {
+	_compositeSurface->transBlitFrom(*surf, _origin, _transparentColor);
 }
 
 void PrivateEngine::drawScreen() {
@@ -1163,7 +1164,6 @@ void PrivateEngine::loadInventory(uint32 x, const Common::Rect &r1, const Common
 	int16 offset = 0;
 	for (NameList::const_iterator it = inventory.begin(); it != inventory.end(); ++it) {
 		offset = offset + 22;
-		//debug("%hd %hd", rect->left, rect->top + offset);
 		loadMask(*it, r1.left, r1.top + offset, true);
 	}
 }
