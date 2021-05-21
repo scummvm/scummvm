@@ -1895,17 +1895,22 @@ END_OPCODE
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x63
 IMPLEMENT_OPCODE(UpdateGlobalFlags)
+	if (!_vm->sound()->isPlaying(getSpeech()->getSoundResourceId())) {
+		if (cmd->param1) {
+			getSharedData()->setFlag(kFlag1, false);
+			getSharedData()->setFlag(kFlag2, false);
+		} else {
+			cmd->param1 = 1;
+		}
+
+		return;
+	}
+
 	if (cmd->param1) {
 		getSharedData()->setFlag(kFlag1, true);
 		getSharedData()->setFlag(kFlag2, true);
 	}
-
-	if (_vm->sound()->isPlaying(getSpeech()->getSoundResourceId())) {
-		_processNextEntry = true;
-		return;
-	} else if (!cmd->param1) {
-		cmd->param1 = 1;
-	}
+	_processNextEntry = true;
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
