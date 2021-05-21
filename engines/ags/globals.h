@@ -167,7 +167,14 @@ struct ViewStruct;
 class Globals {
 public:
 	/**
-	 * \defgroup Allegro globals
+	 * @defgroup agsglobals AGS Globals
+	 * @ingroup agsengine
+	 * @brief Globals for the AGS engine
+	 */
+
+	/**
+	 * @defgroup agsallegroglobals Allegro globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -213,7 +220,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup agsplatformdriver globals
+	 * @defgroup agsplatformdriverglobals agsplatformdriver globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -225,7 +233,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup agsplugin globals
+	 * @defgroup agspluginglobals agsplugin globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -234,7 +243,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup agsstaticobject globals
+	 * @defgroup agsstaticobjectglobals agsstaticobject globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -244,7 +254,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup audio globals
+	 * @defgroup agsaudioglobals audio globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -273,7 +284,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup button globals
+	 * @defgroup agsbuttonglobals button globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -283,7 +295,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_dynamicarray globals
+	 * @defgroup agscc_dynamicarrayglobals cc_dynamicarray globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -292,7 +305,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_dynamicobject globals
+	 * @defgroup agscc_dynamicobjectglobals cc_dynamicobject globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -301,7 +315,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_error globals
+	 * @defgroup agscc_errorglobals cc_error globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -315,7 +330,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_instance globals
+	 * @defgroup agscc_instanceglobals cc_instance globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -330,7 +346,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_options globals
+	 * @defgroup agscc_optionsglobals cc_options globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -339,7 +356,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_script globals
+	 * @defgroup agscc_scriptglobals cc_script globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -351,7 +369,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cc_serializer globals
+	 * @defgroup agscc_serializerglobals cc_serializer globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -360,7 +379,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup character globals
+	 * @defgroup agscharacterglobals character globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -371,7 +391,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup character globals
+	 * @defgroup agscharacterglobals character globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -399,7 +420,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup cscdialog globals
+	 * @defgroup agscscdialogglobals cscdialog globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -418,7 +440,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup debug globals
+	 * @defgroup agsdebugglobals debug globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -451,7 +474,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup debug globals
+	 * @defgroup agsdebugglobals debug globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -460,7 +484,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup dialog globals
+	 * @defgroup agsdialogglobals dialog globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -478,7 +503,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup display globals
+	 * @defgroup agsdisplayglobals display globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -495,7 +521,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup draw globals
+	 * @defgroup agsdrawglobals draw globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -534,7 +561,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup draw_software globals
+	 * @defgroup agsdraw_softwareglobals draw_software globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -551,7 +579,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup engine globals
+	 * @defgroup agsengineglobals engine globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -560,7 +589,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup engine globals
+	 * @defgroup agsengineglobals engine globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -570,7 +600,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup engine_setup globals
+	 * @defgroup agsengine_setupglobals engine_setup globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -580,7 +611,8 @@ public:
 
 
 	/**
-	 * \defgroup event globals
+	 * @defgroup agseventglobals event globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -601,7 +633,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup file globals
+	 * @defgroup agsfileglobals file globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -617,7 +650,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup fonts globals
+	 * @defgroup agsfontsglobals fonts globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -629,7 +663,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup game globals
+	 * @defgroup agsgameglobals game globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -704,7 +739,8 @@ public:
 	 /**@}*/
 
 	/**
-	 * \defgroup game_init globals
+	 * @defgroup agsgame_initglobals game_init globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -719,7 +755,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup game_run globals
+	 * @defgroup agsgame_runglobals game_run globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -738,7 +775,8 @@ public:
 	 /**@}*/
 
 	/**
-	 * \defgroup gfxfilter_aad3d globals
+	 * @defgroup agsgfxfilter_aad3dglobals gfxfilter_aad3d globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -747,7 +785,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup gfxfilter_allegro globals
+	 * @defgroup agsgfxfilter_allegroglobals gfxfilter_allegro globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -756,7 +795,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup gfxfilter_allegro globals
+	 * @defgroup agsgfxfilter_allegroglobals gfxfilter_allegro globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -765,7 +805,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup gfxfilter_d3d globals
+	 * @defgroup agsgfxfilter_d3dglobals gfxfilter_d3d globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -774,7 +815,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup global_dialog globals
+	 * @defgroup agsglobal_dialogglobals global_dialog globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -783,7 +825,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup global_object globals
+	 * @defgroup agsglobal_objectglobals global_object globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -793,7 +836,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup graphics_mode globals
+	 * @defgroup agsgraphics_modeglobals graphics_mode globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -812,7 +856,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup gui globals
+	 * @defgroup agsguiglobals gui globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -824,7 +869,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guibutton globals
+	 * @defgroup agsguibuttonglobals guibutton globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -834,7 +880,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guidialog globals
+	 * @defgroup agsguidialogglobals guidialog globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -856,7 +903,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guiinv globals
+	 * @defgroup agsguiinvglobals guiinv globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -866,7 +914,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guilabel globals
+	 * @defgroup agsguilabelglobals guilabel globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -876,7 +925,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guilistbox globals
+	 * @defgroup agsguilistboxglobals guilistbox globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -886,7 +936,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guimain globals
+	 * @defgroup agsguimainglobals guimain globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -897,7 +948,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guislider globals
+	 * @defgroup agsguisliderglobals guislider globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -907,7 +959,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup guitextbox globals
+	 * @defgroup agsguitextboxglobals guitextbox globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -917,7 +970,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup interactions globals
+	 * @defgroup agsinteractionsglobals interactions globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -927,7 +981,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup invwindow globals
+	 * @defgroup agsinvwindowglobals invwindow globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -936,7 +991,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup lzw globals
+	 * @defgroup agslzwglobals lzw globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -948,7 +1004,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup main globals
+	 * @defgroup agsmainglobals main globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -998,7 +1055,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup managedobjectpool globals
+	 * @defgroup agsmanagedobjectpoolglobals managedobjectpool globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1007,7 +1065,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup mouse globals
+	 * @defgroup agsmouseglobals mouse globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1033,7 +1092,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup mousew32 globals
+	 * @defgroup agsmousew32globals mousew32 globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1044,7 +1104,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup overlay globals
+	 * @defgroup agsoverlayglobals overlay globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1054,7 +1115,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup quit globals
+	 * @defgroup agsquitglobals quit globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1064,7 +1126,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup quit globals
+	 * @defgroup agsquitglobals quit globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1076,7 +1139,8 @@ public:
 	 /**@}*/
 
 	/**
-	 * \defgroup room globals
+	 * @defgroup agsroomglobals room globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1088,7 +1152,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup route_finder_impl globals
+	 * @defgroup agsroute_finder_implglobals route_finder_impl globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1102,7 +1167,8 @@ public:
 	 /**@}*/
 
 	/**
-	 * \defgroup screen globals
+	 * @defgroup agsscreenglobals screen globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1113,7 +1179,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup script globals
+	 * @defgroup agsscriptglobal script globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1158,7 +1225,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup script_runtime globals
+	 * @defgroup agsscript_runtimeglobals script_runtime globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1169,7 +1237,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup soundcache globals
+	 * @defgroup agssoundcacheglobals soundcache globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1179,7 +1248,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup string globals
+	 * @defgroup agsstringglobals string globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1188,7 +1258,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup systemimports globals
+	 * @defgroup agssystemimportsglobals systemimports globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1198,7 +1269,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup sys_events globals
+	 * @defgroup agssys_eventsglobals sys_events globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1208,7 +1280,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup timer globals
+	 * @defgroup agstimerglobals timer globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1221,7 +1294,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup translation globals
+	 * @defgroup agstranslationglobals translation globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1232,7 +1306,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup walkablearea globals
+	 * @defgroup agswalkableareaglobals walkablearea globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1241,7 +1316,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup walkbehind globals
+	 * @defgroup agswalkbehindglobals walkbehind globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 
@@ -1258,7 +1334,8 @@ public:
 	/**@}*/
 
 	/**
-	 * \defgroup wordsdictionary globals
+	 * @defgroup agswordsdictionaryglobals wordsdictionary globals
+	 * @ingroup agsglobals
 	 * @{
 	 */
 

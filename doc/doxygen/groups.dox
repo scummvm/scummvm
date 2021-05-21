@@ -45,3 +45,11 @@
 @brief API of various image decoders used in engines.
 
 */
+
+/**
+
+@defgroup agsengine AGS Engine
+@brief Engine to run Adventure Game Studio games.
+
+*/
+
