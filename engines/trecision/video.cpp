@@ -263,14 +263,14 @@ void AnimManager::smkGoto(int slot, int frame) {
 	_smkAnims[slot]->forceSeekToFrame(frame);
 }
 
-void AnimManager::smkVolumePan(int slot, int track, int vol) {
+void AnimManager::smkToggleTrackAudio(int slot, int track, bool on) {
 	if (_smkAnims[slot] == nullptr)
 		return;
 
-	_smkAnims[slot]->muteTrack(track, vol == 0);
+	_smkAnims[slot]->muteTrack(track, !on);
 }
 
-void AnimManager::smkSoundOnOff(int slot, bool on) {
+void AnimManager::smkToggleAudio(int slot, bool on) {
 	if (_smkAnims[slot] == nullptr)
 		return;
 
@@ -296,55 +296,59 @@ void AnimManager::startSmkAnim(uint16 animation) {
 	else
 		slot = kSmackerAction;
 
-	if (_playingAnims[slot] != 0) {
-		smkStop(slot);
-	}
+	smkStop(slot);
 
 	_playingAnims[slot] = animation;
 
 	// choose how to open
-	if (animFlag & SMKANIM_BKG) {
+	if (slot == kSmackerBackground) {
 		openSmkAnim(kSmackerBackground, _animTab[animation]._name);
 		_bgAnimRestarted = false;
 
-		// Turns off when not needed
-		if (animation == aBKG11 && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG14 && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG1C && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
-			_animTab[animation]._flag |= SMKANIM_OFF1;
-			smkVolumePan(0, 1, 0);
-		} else if (animation == aBKG1D && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG22 && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG48 && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG4P && (animFlag & SMKANIM_OFF1))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG28 && (animFlag & SMKANIM_OFF4))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG37 && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
-			smkVolumePan(0, 1, 0);
-		else if (animation == aBKG2E && (animFlag & SMKANIM_OFF2))
-			smkVolumePan(0, 2, 0);
-		else if (animation == aBKG2G && (_vm->_dialogMgr->_choice[556]._flag & kObjFlagDone))
-			smkVolumePan(0, 2, 0);
-		else if (animation == aBKG34 &&                                     // If it's BKG 34 and
-		         ((_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) ||          // if the FMV is already done or
-		          _vm->isObjectVisible(oTUBOT34) ||    // if the whole tube is available or
-		          _vm->isObjectVisible(oTUBOFT34) ||   // if the outside of the tube is available or
-		          _vm->isObjectVisible(oVALVOLAC34)))  // if the valve is closed
-			smkVolumePan(0, 2, 0);
-	} else if (animFlag & SMKANIM_ICON) {
+		toggleMuteBgAnim(animation);
+	} else if (slot == kSmackerIcon) {
 		openSmkAnim(kSmackerIcon, _animTab[animation]._name);
 	} else {
 		uint32 st = _vm->readTime();
-
 		openSmkAnim(kSmackerAction, _animTab[animation]._name);
 		_vm->_nextRefresh += _vm->readTime() - st; // fixup opening time
 	}
+}
+
+void AnimManager::toggleMuteBgAnim(uint16 animation) {
+	uint16 animFlag = _animTab[animation]._flag;
+	NightlongSmackerDecoder *decoder = _smkAnims[kSmackerBackground];
+
+	// Turns off when not needed
+	if (animation == aBKG11 && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG14 && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG1C && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
+		_animTab[animation]._flag |= SMKANIM_OFF1;
+		decoder->muteTrack(1, true);
+	} else if (animation == aBKG1D && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG22 && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG48 && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG4P && (animFlag & SMKANIM_OFF1))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG28 && (animFlag & SMKANIM_OFF4))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG37 && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
+		decoder->muteTrack(1, true);
+	else if (animation == aBKG2E && (animFlag & SMKANIM_OFF2))
+		decoder->muteTrack(2, true);
+	else if (animation == aBKG2G && (_vm->_dialogMgr->_choice[556]._flag & kObjFlagDone))
+		decoder->muteTrack(2, true);
+	else if (animation == aBKG34 &&                                   // If it's BKG 34 and
+			 ((_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) || // if the FMV is already done or
+			  _vm->isObjectVisible(oTUBOT34) ||                       // if the whole tube is available or
+			  _vm->isObjectVisible(oTUBOFT34) ||                      // if the outside of the tube is available or
+			  _vm->isObjectVisible(oVALVOLAC34)))                     // if the valve is closed
+		decoder->muteTrack(2, true);
 }
 
 void AnimManager::smkStop(uint16 slot) {

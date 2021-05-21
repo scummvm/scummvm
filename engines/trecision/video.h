@@ -79,6 +79,7 @@ private:
 
 	void openSmk(int slot, Common::SeekableReadStream *stream);
 	void openSmkAnim(int slot, const Common::String &name);
+	void toggleMuteBgAnim(uint16 animation);
 	void closeSmk(int slot);
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
@@ -96,8 +97,8 @@ public:
 	SAnim _animTab[MAXANIM];
 
 	void smkGoto(int slot, int frame);
-	void smkSoundOnOff(int slot, bool on);
-	void smkVolumePan(int slot, int track, int vol);
+	void smkToggleAudio(int slot, bool on);
+	void smkToggleTrackAudio(int slot, int track, bool on);
 	int16 smkCurFrame(int slot);
 	void smkStop(uint16 slot);
 
