@@ -476,11 +476,6 @@ void TrecisionEngine::redrawRoom() {
 void TrecisionEngine::tendIn() {
 	_textStatus = TEXT_OFF;
 
-	if (_curRoom == kRoomIntro) {
-		_dialogMgr->playDialog(dFLOG);
-		return;
-	}
-
 	_flagPaintCharacter = true;
 	_renderer->paintScreen(true);
 
