@@ -854,8 +854,6 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 		_tracks = new Track[_trackCount];
 		data = *_resource;
 
-		byte channelCount;
-
 		for (int trackNr = 0; trackNr < _trackCount; trackNr++) {
 			// Track info starts with track type:BYTE
 			// Then the channel information gets appended Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
@@ -865,11 +863,10 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 			_tracks[trackNr].type = *data++;
 			// Counting # of channels used
 			SciSpan<const byte> data2 = data;
-			channelCount = 0;
+			byte channelCount = 0;
 			while (*data2 != 0xFF) {
 				data2 += 6;
 				channelCount++;
-				_tracks[trackNr].channelCount++;
 			}
 			_tracks[trackNr].channels = new Channel[channelCount];
 			_tracks[trackNr].channelCount = 0;
@@ -895,6 +892,12 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 					if ((uint32)dataOffset + size > _resource->size()) {
 						warning("Invalid size inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 						size = _resource->size() - dataOffset;
+					}
+
+					if (size == 0) {
+						warning("Empty channel in sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
+						data += 6;
+						continue;
 					}
 
 					channel->data = _resource->subspan(dataOffset, size);
