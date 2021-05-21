@@ -43,6 +43,11 @@ class Globals;
 
 namespace AGS {
 
+/**
+ * @defgroup agsengine AGS Engine
+ * @brief Engine to run Adventure Game Studio games.
+ */
+
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
 
