@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-19 21:49+0000\n"
-"PO-Revision-Date: 2020-11-29 17:10+0000\n"
+"PO-Revision-Date: 2021-05-21 13:33+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Poedit-SourceCharset: iso-8859-1\n"
 "X-Language-name: Nederlands\n"
 
@@ -305,22 +305,17 @@ msgid "Keymaps"
 msgstr "Toetskoppelingen"
 
 #: gui/editgamedialog.cpp:251 gui/options.cpp:1854 engines/dialogs.cpp:323
-#, fuzzy
 msgid "Backend"
 msgstr "Backend"
 
 #: gui/editgamedialog.cpp:254
-#, fuzzy
-#| msgid "Override global audio settings"
 msgid "Override global backend settings"
-msgstr "Negeer algemene audio instellingen"
+msgstr "Negeer algemene backend instellingen"
 
 #: gui/editgamedialog.cpp:256
-#, fuzzy
-#| msgid "Override global audio settings"
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "Negeer algemene audio instellingen"
+msgstr "Negeer algemene backend instellingen"
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:1868 engines/dialogs.cpp:291
 msgid "Audio"
@@ -892,25 +887,23 @@ msgstr "Elke 30 minuten"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
-#, fuzzy
-#| msgid "Autosave"
 msgid "Auto"
-msgstr "Automatisch opslaan"
+msgstr "Automatisch"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "Groot"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
 msgid "Medium"
-msgstr ""
+msgstr "Gemiddeld"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "Klein"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -1041,11 +1034,9 @@ msgid "Game 3D Renderer:"
 msgstr "3D Renderer Spel:"
 
 #: gui/options.cpp:1339
-#, fuzzy
-#| msgid "Game 3D Renderer:"
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr "3D Renderer Spel:"
+msgstr "Spel 3D Renderer:"
 
 #: gui/options.cpp:1352
 msgid "3D Anti-aliasing:"
@@ -1310,7 +1301,7 @@ msgstr "Toegankelijkheid"
 
 #: gui/options.cpp:1956
 msgid "Discard changes and close the dialog"
-msgstr ""
+msgstr "Negeer wijzigingen en sluit het venster"
 
 #: gui/options.cpp:1957
 msgid "Apply"
@@ -1318,11 +1309,11 @@ msgstr "Toepassen"
 
 #: gui/options.cpp:1957
 msgid "Apply changes without closing the dialog"
-msgstr ""
+msgstr "Pas de wijzigingen toe zonder het venster te sluiten"
 
 #: gui/options.cpp:1958
 msgid "Apply changes and close the dialog"
-msgstr ""
+msgstr "Pas de wijzigingen toe en sluit het venster"
 
 #: gui/options.cpp:2045
 msgid "FluidSynth Settings"
@@ -1353,17 +1344,15 @@ msgstr "Plugins Pad:"
 
 #: gui/options.cpp:2093
 msgid "ScummVM config path: "
-msgstr ""
+msgstr "ScummVM configuratie pad: "
 
 #: gui/options.cpp:2097
 msgid "Theme:"
 msgstr "Thema:"
 
 #: gui/options.cpp:2101
-#, fuzzy
-#| msgid "Upscale videos"
 msgid "GUI scale:"
-msgstr "Videos opschalen"
+msgstr "GUI schaal:"
 
 #: gui/options.cpp:2108
 msgid "GUI renderer:"
@@ -1380,20 +1369,24 @@ msgstr "Auto opslaan:"
 
 #: gui/options.cpp:2131
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Altijd teruggaan naar de launcher bij het verlaten van een spel"
 
 #: gui/options.cpp:2132
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Altijd teruggaan naar de launcher bij het verlaten van een spel in plaats "
+"van ScummVM afsluiten."
 
 #: gui/options.cpp:2139
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Vraag om bevestiging bij afsluiten"
 
 #: gui/options.cpp:2140
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
+"Vraag om toestemming bij het afsluiten van ScummVM of bij het verlaten van "
+"een spel."
 
 #: gui/options.cpp:2148
 msgid "GUI language:"
@@ -2126,7 +2119,7 @@ msgstr "<Ongeldige waarde>"
 #. I18N: One line summary as shown in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:33
 msgid "Interpreter for numerous adventure games and role-playing games"
-msgstr ""
+msgstr "Interpreter voor diverse adventure spellen en rollenspellen"
 
 #. I18N: 1 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:38
@@ -2137,6 +2130,11 @@ msgid ""
 "replaces the executables shipped with the game, allowing you to play them on "
 "systems for which they were never designed!"
 msgstr ""
+"ScummVM is een programma wat het mogelijk maakt om een grote verscheidenheid "
+"aan klasieke grafische point-and-click adventure spellen en rollenspellen te "
+"spelen, mits je de benodigde data bestanden al hebt. The unieke hiervan is: "
+"ScummVM vervangt de executables die bij het spel geleverd worden, waardoor "
+"je ze kan spelen op systemen waar ze niet voor waren gemaakt!"
 
 #. I18N: 2 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:46
@@ -2146,6 +2144,10 @@ msgid ""
 "like LucasArts, Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood "
 "Studios."
 msgstr ""
+"Momenteel ondersteunt ScummVM een grote hoeveelheid aan adventures met meer "
+"dan 4000 spellen in totaal. Het ondersteunt vele klasiekers gepubliceerd "
+"door legendarische studios als LucasArts, Sierra On-Line, Revolution "
+"Software, Cyan, Inc. en Westwood Studios."
 
 #. I18N: 3 of 3 paragraph of ScummVM description in *nix distributions
 #: dists/scummvm.appdata.xml.cpp:52
@@ -2300,13 +2302,6 @@ msgid "Error"
 msgstr "Fout"
 
 #: engines/engine.cpp:504
-#, fuzzy
-#| msgid ""
-#| "You appear to be playing this game directly\n"
-#| "from the CD. This is known to cause problems,\n"
-#| "and it is therefore recommended that you copy\n"
-#| "the data files to your hard disk instead.\n"
-#| "See the README file for details."
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2318,7 +2313,7 @@ msgstr ""
 "Hiervan is bekend dat dit problemen veroorzaakt.\n"
 "Het wordt daarom aangeraden om de data\n"
 "bestanden naar uw harddisk te kopiëren.\n"
-"Voor details kijk in de README."
+"Lees de documentatie (CD audio) voor details."
 
 #: engines/engine.cpp:516
 #, fuzzy
@@ -2365,10 +2360,8 @@ msgid "WARNING: "
 msgstr ""
 
 #: engines/engine.cpp:644
-#, fuzzy
-#| msgid "Full title of the game"
 msgid " Shall we still run the game?"
-msgstr "Volledige titel van het spel"
+msgstr " Wilt u dit spel nog steeds spelen?"
 
 #: engines/engine.cpp:645
 msgid ""
@@ -4099,7 +4092,7 @@ msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 #, fuzzy
 #| msgid "   Are you sure you want to quit ?   "
 msgid "Are you sure you want to quit?"
-msgstr "   Weet u zeker dat u wilt stoppen?   "
+msgstr "Weet u zeker dat u wilt stoppen?"
 
 #: engines/buried/saveload.cpp:108
 msgid "Invalid save file name"
@@ -5564,10 +5557,8 @@ msgid "Open event flags cheat menu"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:41
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Speech"
-msgstr "Speeltijd: "
+msgstr "Speler Spraak"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
@@ -5665,10 +5656,8 @@ msgid "Player Data"
 msgstr "Speler 1: Links"
 
 #: engines/nancy/dialogs.cpp:126
-#, fuzzy
-#| msgid "Playtime: "
 msgid "Player Time:"
-msgstr "Speeltijd: "
+msgstr "Speeltijd:"
 
 #: engines/nancy/dialogs.cpp:128
 msgid "Days"
@@ -5693,10 +5682,8 @@ msgid "Software Timer"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:137
-#, fuzzy
-#| msgid "Time: "
 msgid "Timer On"
-msgstr "Tijd: "
+msgstr "Timer Aan"
 
 #: engines/nancy/dialogs.cpp:144
 #, fuzzy
@@ -7269,10 +7256,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Kan de '%s' data file niet vinden."
 
 #: engines/twine/detection.cpp:218
-#, fuzzy
-#| msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "Dit spel vereist de FoxTail subengine die niet meegecompileerd is."
+msgstr "Dit spel vereist Giflib die niet meegecompileerd is in ScummVM"
 
 #: engines/twine/metaengine.cpp:71
 msgid "Enable wall collisions"
