@@ -477,7 +477,7 @@ void TextManager::drawTexts() {
 void TextManager::redrawString() {
 	if (!_vm->_flagDialogActive && !_vm->_flagDialogMenuActive && !_vm->_flagSomeoneSpeaks && !_vm->_flagScriptActive && _vm->_graphicsMgr->isCursorVisible()) {
 		if (_vm->isInventoryArea(_vm->_mousePos))
-			_vm->_scheduler->doEvent(MC_INVENTORY, ME_SHOWICONNAME, MP_DEFAULT, 0, 0, 0, 0);
+			_vm->showIconName();
 		else {
 			_vm->checkMask(_vm->_mousePos);
 			showObjName(_vm->_curObj, true);

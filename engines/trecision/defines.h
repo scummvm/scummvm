@@ -2458,8 +2458,6 @@ Management of "Use with"
 #define ME_CLOSE 1
 #define ME_OPERATEICON 6  // (mx,my,0,0)
 #define ME_EXAMINEICON 7  // (mx,my,0,0)
-#define ME_SHOWICONNAME 8 // (mx,my,0,0)
-
 
 /*************************************************************************
 * STRINGS                                                                *
