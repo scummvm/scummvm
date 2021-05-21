@@ -3830,6 +3830,27 @@ static const uint16 gk1MacTalismanInsetPatch[] = {
 	PATCH_END
 };
 
+// In the final scene before the credits the wrong font is used and the 'a' with
+//  an umlaut in "Schattenjager" isn't displayed. endTalker:font is set to 999
+//  which doesn't include decorated characters. Font 40 has the same glyphs as
+//  999 plus the decorated characters, so we use that instead. This patch is
+//  only to be applied to English versions; localized ones have different fonts.
+//
+// Applies to: English CD versions
+// Responsible method: heap in script 670
+static const uint16 gk1EndGameFontSignature[] = {
+	SIG_MAGICDWORD,                     // endTalker
+	SIG_UINT16(0x0002),                 // modeless = 2
+	SIG_UINT16(0x03e7),                 // font = 999
+	SIG_END
+};
+
+static const uint16 gk1EndGameFontPatch[] = {
+	PATCH_ADDTOOFFSET(+2),
+	PATCH_UINT16(0x0028),               // font = 40
+	PATCH_END
+};
+
 // Narrator lockup fix for GK1 CD / Mac, see sciNarratorLockupSignature.
 //  The custom code in these versions overlaps with the generic patch signature
 //  so we enable the correct one based on game version and platform.
@@ -3890,6 +3911,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
 	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
+	{ false,   670, "fix end game font",                           1, gk1EndGameFontSignature,          gk1EndGameFontPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
 	{  true,   710, "fix day 9 mummy animation (cd)",              1, gk1MummyAnimateCDSignature,       gk1MummyAnimateCDPatch },
@@ -21413,6 +21435,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 56))) {
 					enablePatch(signatureTable, "mac: fix missing talisman view");
+				}
+
+				if (g_sci->getLanguage() == Common::EN_ANY &&
+					g_sci->getResMan()->testResource(ResourceId(kResourceTypeFont, 40))) {
+					enablePatch(signatureTable, "fix end game font");
 				}
 				break;
 			case GID_GK2:
