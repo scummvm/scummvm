@@ -57,6 +57,19 @@ void TrecisionEngine::playScript(uint16 id) {
 	_graphicsMgr->hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
 
+	processScriptFrame();
+}
+
+void TrecisionEngine::evalScript() {
+	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
+		_curScriptFrame[_curStack]++;
+		_graphicsMgr->hideCursor();
+
+		processScriptFrame();
+	}
+}
+
+void TrecisionEngine::processScriptFrame() {
 	SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
 	// If the event is empty, terminate the script
 	if (curFrame->isEmptyEvent()) {
@@ -73,31 +86,6 @@ void TrecisionEngine::playScript(uint16 id) {
 		if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
 			_curScriptFrame[_curStack]++;
 			loop = true;
-		}
-	}
-}
-
-void TrecisionEngine::evalScript() {
-	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
-		_curScriptFrame[_curStack]++;
-		_graphicsMgr->hideCursor();
-
-		SScriptFrame *curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
-		if (curFrame->isEmptyEvent()) {
-			endScript();
-			return;
-		}
-
-		bool loop = true;
-		while (loop) {
-			loop = false;
-			curFrame = &_scriptFrame[_curScriptFrame[_curStack]];
-			SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
-			curFrame->sendFrame(_scheduler);
-			if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
-				_curScriptFrame[_curStack]++;
-				loop = true;
-			}
 		}
 	}
 }

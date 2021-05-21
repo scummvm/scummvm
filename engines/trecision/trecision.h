@@ -98,6 +98,7 @@ class TrecisionEngine : public Engine {
 	// Script
 	void endScript();
 	void evalScript();
+	void processScriptFrame();
 	void doAction();
 	void doMouse();
 	void doCharacter();
