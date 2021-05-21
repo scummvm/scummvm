@@ -770,12 +770,16 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 		Private::Symbol *sym = maps.locations.getVal(*it);
 		sym->u.val = val;
 	}
+
+	// Inventory
+	inventory.clear();
 	uint32 size = stream->readUint32LE();
 	for (uint32 i = 0; i < size; ++i) {
 		inventory.push_back(stream->readString());
 	}
 
 	// Dossiers
+	_dossiers.clear();
 	size = stream->readUint32LE();
 	DossierInfo m;
 	for (uint32 i = 0; i < size; ++i) {
@@ -1046,7 +1050,16 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	surf->create(_screenW, _screenH, _pixelFormat);
 	surf->fillRect(screenRect, _transparentColor);
 	Graphics::Surface *csurf = decodeImage(name);
-	Common::Rect crect(csurf->w, csurf->h);
+
+	uint32 hdiff = 0;
+	uint32 wdiff = 0;
+
+	if (x+csurf->h > _screenH)
+		hdiff = x+csurf->h - _screenH;
+	if (y+csurf->w > _screenW)
+		wdiff = y+csurf->w - _screenW;
+
+	Common::Rect crect(csurf->w - wdiff, csurf->h - hdiff);
 	surf->copyRectToSurface(*csurf, x, y, crect);
 	csurf->free();
 	delete csurf;
