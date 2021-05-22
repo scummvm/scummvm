@@ -41,6 +41,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{LastExpress::kLastExpressDebugLogic, "Logic", "Debug logic"},
 	{LastExpress::kLastExpressDebugScenes, "Scenes", "Debug scenes & hotspots"},
 	{LastExpress::kLastExpressDebugUnknown, "Unknown", "Debug unknown data"},
+	DEBUG_CHANNEL_END
 };
 
 static const ADGameDescription gameDescriptions[] = {
