@@ -137,8 +137,8 @@ const char *story2[27] = {
 
 #ifdef USE_TTS
 int textToSpeech(int nextparagraph, const char *story[], int arraysize) {
-	Common::TextToSpeechManager *_ttsMan = g_system->getTextToSpeechManager();
-	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && story[nextparagraph][0] != 0) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && story[nextparagraph][0] != 0) {
 		Common::String paragraph;
 		while (nextparagraph < arraysize && story[nextparagraph][0] != ' ') {
 			if (!paragraph.empty())
@@ -148,7 +148,7 @@ int textToSpeech(int nextparagraph, const char *story[], int arraysize) {
 		while (nextparagraph < arraysize && story[nextparagraph][0] == ' ') {
 			nextparagraph += 1;
 		}
-		_ttsMan->say(paragraph, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+		ttsMan->say(paragraph, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 	}
 	return nextparagraph;
 }
