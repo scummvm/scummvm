@@ -139,7 +139,7 @@ bool MessageQueue::getMessage(Message **msg) {
 	*msg = _event[_head++];
 	if (_head == MAXMESSAGE)
 		_head = 0;
-	_len--;
+	--_len;
 
 	return false;
 }

@@ -159,7 +159,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			y3 = _maxYClip;
 		yTop = y3;
 	}
-	for (y = yBottom; y < yTop; y++) {
+	for (y = yBottom; y < yTop; ++y) {
 		_lEdge[y] = _maxXClip;
 		_rEdge[y] = _minXClip;
 	}
@@ -170,7 +170,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 	textureScanEdge(x3, y3, z3, c3, tx3, ty3, x1, y1, z1, c1, tx1, ty1);
 
 	// Gouraud fill the horizontal scanlines
-	for (y = yBottom; y < yTop; y++) {
+	for (y = yBottom; y < yTop; ++y) {
 		int32 el = _lEdge[y];
 		if (el < _minXClip)
 			el = _minXClip;
@@ -207,13 +207,13 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 					*screenPtr = (uint16)(_vm->_actor->_textureMat[texture[(olx >> 16) + t->_dx * (oly >> 16)]][cl >> 9]);
 					*z = (int16)sl;
 				}
-				screenPtr++; // increase screen x
-				z++;         // increase zbuffer
+				++screenPtr; // increase screen x
+				++z;         // increase zbuffer
 				zl += mz;    // increase the zbuffer by _dz/_dx
 				cl += mc;    // increase the color by dc/_dx
 				olx += mtx;
 				oly += mty;
-				dx--; // pixel to do --
+				--dx; // pixel to do --
 			}
 		}
 	}
@@ -251,7 +251,7 @@ void Renderer3D::textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 	ty1 <<= 16;
 
 	// step through edge and record color values along the way
-	for (int32 count = y1; count < y2; count++) {
+	for (int32 count = y1; count < y2; ++count) {
 		int16 x = (uint16)(x1 >> 16);
 		if (x < _lEdge[count]) {
 			_lEdge[count] = x;
@@ -308,7 +308,7 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 		yTop = y3;
 	}
 
-	for (int16 y = yBottom; y < yTop; y++) {
+	for (int16 y = yBottom; y < yTop; ++y) {
 		_lEdge[y] = _maxXClip;
 		_rEdge[y] = _minXClip;
 	}
@@ -319,7 +319,7 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 	shadowScanEdge(x3, y3, x1, y1);
 
 	// gouraud fill the horizontal scanlines
-	for (int16 y = yBottom; y < yTop; y++) {
+	for (int16 y = yBottom; y < yTop; ++y) {
 		// coordinate of left edge of horizontal scanline
 		int32 el = _lEdge[y];
 		if (el < _minXClip)
@@ -343,9 +343,9 @@ void Renderer3D::shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2,
 					_vm->_graphicsMgr->shadow(x, y, cv);
 					*zBufferPtr = zv;
 				}
-				x++;          // increase screen x
-				zBufferPtr++; // increase zbuffer
-				dx--;         // pixel to do --
+				++x;          // increase screen x
+				++zBufferPtr; // increase zbuffer
+				--dx;         // pixel to do --
 			}
 		}
 	}
@@ -370,7 +370,7 @@ void Renderer3D::shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2) {
 	x1 <<= 16; // starting x coordinate
 
 	// step through edge and record color values along the way
-	for (int32 count = y1; count < y2; count++) {
+	for (int32 count = y1; count < y2; ++count) {
 		int16 x = (int16)(x1 >> 16);
 		if (x < _lEdge[count])
 			_lEdge[count] = x;
@@ -534,7 +534,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		float tz = 0.0f;
 		float pa0, pa1, pa2;
 
-		for (uint32 b = 0; b < actor->_lightNum; b++) {
+		for (uint32 b = 0; b < actor->_lightNum; ++b) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
@@ -601,7 +601,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			if ((_curLight->_inten & 0x80) && lint) { // if it's shadowed and still on
 
 				// casts shadow vertices
-				for (int a = 0; a < SHADOWVERTSNUM; a++) {
+				for (int a = 0; a < SHADOWVERTSNUM; ++a) {
 					pa0 = actor->_vertex[_shadowVerts[a]]._x;
 					pa1 = actor->_vertex[_shadowVerts[a]]._y;
 					pa2 = actor->_vertex[_shadowVerts[a]]._z;
@@ -614,7 +614,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				// per default all shadows are equally faint
 				// _shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
 
-				_shadowLightNum++;
+				++_shadowLightNum;
 				_totalShadowVerts += SHADOWVERTSNUM;
 			}
 
@@ -626,7 +626,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				l2 = l2 * t;
 
 				SVertex *curVertex = actor->_vertex;
-				for (int a = 0; a < vertexNum; a++) {
+				for (int a = 0; a < vertexNum; ++a) {
 					pa0 = curVertex->_nx;
 					pa1 = curVertex->_ny;
 					pa2 = curVertex->_nz;
@@ -635,15 +635,15 @@ void Renderer3D::drawCharacter(uint8 flag) {
 					lint = CLIP(lint, 0, 180);
 
 					_vVertex[a]._angle -= (180 - lint);
-					curVertex++;
+					++curVertex;
 				}
 			}
 
-			_curLight++;
+			++_curLight;
 		}
 
 		// rearranged light values so they can be viewed
-		for (int a = 0; a < vertexNum; a++)
+		for (int a = 0; a < vertexNum; ++a)
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
 		// Calculate the distance of the character from the room
@@ -655,7 +655,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 		SVertex *curVertex = actor->_vertex;
 	
-		for (int a = 0; a < vertexNum + _totalShadowVerts; a++) {
+		for (int a = 0; a < vertexNum + _totalShadowVerts; ++a) {
 			if (a < vertexNum) {
 				l0 = curVertex->_x;
 				l1 = curVertex->_z;
@@ -688,7 +688,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			actor->_lim[4] = MIN(_vVertex[a]._z, actor->_lim[4]);
 			actor->_lim[5] = MAX(_vVertex[a]._z, actor->_lim[5]);
 
-			curVertex++;
+			++curVertex;
 		}
 		actor->_lim[4] = (int)dist;
 		actor->_lim[5] = (int)dist;
@@ -697,25 +697,25 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		if (actor->_lim[0] <= _minXClip + 1) {
 			actor->_lim[0] = _minXClip;
 		} else {
-			actor->_lim[0]--;
+			--actor->_lim[0];
 		}
 
 		if (actor->_lim[1] >= _maxXClip - 1) {
 			actor->_lim[1] = _maxXClip;
 		} else {
-			actor->_lim[1]++;
+			++actor->_lim[1];
 		}
 
 		if (actor->_lim[2] <= _minYClip + 1) {
 			actor->_lim[2] = _minYClip;
 		} else {
-			actor->_lim[2]--;
+			--actor->_lim[2];
 		}
 
 		if (actor->_lim[3] >= _maxYClip - 1) {
 			actor->_lim[3] = _maxYClip;
 		} else {
-			actor->_lim[3]++;
+			++actor->_lim[3];
 		}
 
 		if (actor->_curAction == hLAST) // exit displacer
@@ -729,8 +729,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		if (actor->_curAction == hLAST)
 			setClipping(0, actor->_lim[2], MAXX, actor->_lim[3]);
 
-		for (int b = 0; b < _shadowLightNum; b++) {
-			for (int a = 0; a < SHADOWFACESNUM; a++) {
+		for (int b = 0; b < _shadowLightNum; ++b) {
+			for (int a = 0; a < SHADOWFACESNUM; ++a) {
 				int p0 = _shadowFaces[a][0] + vertexNum + b * SHADOWVERTSNUM;
 				int p1 = _shadowFaces[a][1] + vertexNum + b * SHADOWVERTSNUM;
 				int p2 = _shadowFaces[a][2] + vertexNum + b * SHADOWVERTSNUM;
@@ -768,12 +768,12 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				}
 			}
 
-			_curFace++;
+			++_curFace;
 		}
 
 		int p0 = 0;
-		for (int b = _zBufStartY; b < actor->_lim[3]; b++) {
-			for (int a = 1; a < _zBufWid; a++) {
+		for (int b = _zBufStartY; b < actor->_lim[3]; ++b) {
+			for (int a = 1; a < _zBufWid; ++a) {
 				int py1 = (_zBuffer[p0]   >= 0x7FF0) * 0x8000;
 				int py2 = (_zBuffer[p0 + 1] >= 0x7FF0) * 0x8000;
 
@@ -790,8 +790,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 						_zBuffer[p0] = 0x003F | py2;
 
 					if (a + 1 < _zBufWid) {
-						p0++;
-						a++;
+						++p0;
+						++a;
 
 						// if the second is the character
 						if (p2)
@@ -807,7 +807,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 						_zBuffer[p0] = 0x0000 | py1;
 				}
 
-				p0++;
+				++p0;
 
 				// if it's the last of the line
 				if (a == _zBufWid - 1) {
@@ -817,7 +817,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 						_zBuffer[p0] = 0x0000 | py2;
 				}
 			}
-			p0++;
+			++p0;
 		}
 		if (actor->_curAction == hLAST)
 			setClipping(0, TOP, MAXX, AREA + TOP);
@@ -952,7 +952,7 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 	}
 
 	for (DirtyRectsIterator d = _vm->_dirtyRects.begin(); d != _vm->_dirtyRects.end(); ++d) {
-		for (int b = 0; b < MAXOBJINROOM; b++) {
+		for (int b = 0; b < MAXOBJINROOM; ++b) {
 			const uint16 curObject = _vm->_room[_vm->_curRoom]._object[b];
 			if (!curObject)
 				break;
@@ -966,16 +966,16 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 				r2.translate(0, TOP);
 
 				// Include the bottom right of the rect in the intersects() check
-				r2.bottom++;
-				r2.right++;
+				++r2.bottom;
+				++r2.right;
 
 				if (r.intersects(r2)) {
 					drawObj.rect = obj._rect;
 					drawObj.rect.translate(0, TOP);
 
 					// Restore the bottom right of the rect
-					r2.bottom--;
-					r2.right--;
+					--r2.bottom;
+					--r2.right;
 
 					// TODO: Simplify this?
 					const int16 xr1 = (r2.left > r.left) ? 0 : r.left - r2.left;
@@ -1096,19 +1096,19 @@ void PathFinding3D::findPath() {
 
 	float dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
 
-	for (b = 0; b < _panelNum; b++) {
+	for (b = 0; b < _panelNum; ++b) {
 		if (_panel[b]._flags & 0x80000000) { // it must be a wide panel
 			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 								  _panel[b]._x2, _panel[b]._z2,
 								  actor->_px, actor->_pz, _curX, _curZ)) {
-				inters++;
+				++inters;
 
 				_pathNode[_numPathNodes]._x = _x3d;
 				_pathNode[_numPathNodes]._z = _z3d;
 				_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _x3d, _z3d);
 				_pathNode[_numPathNodes]._oldPanel = b;
 				_pathNode[_numPathNodes]._curPanel = b;
-				_numPathNodes++;
+				++_numPathNodes;
 
 				// CORNERS - lever intersections in corners
 				if ((b == _panel[_oldPanel]._near1) || (b == _panel[_oldPanel]._near2)) {
@@ -1116,8 +1116,8 @@ void PathFinding3D::findPath() {
 					if ((_pathNode[_numPathNodes - 1]._dist < EPSILON) &&
 						(b != _oldPanel) && (b != _curPanel)) {
 						// and the distance is very small to the intersection
-						inters--;
-						_numPathNodes--;
+						--inters;
+						--_numPathNodes;
 
 						// If the click is inside the nearby panel
 						if (_curPanel < 0 && pointInside(b, _curX, _curZ)) {
@@ -1135,30 +1135,30 @@ void PathFinding3D::findPath() {
 					// otherwise if it is near the finish panel
 					if (fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
 						// and the distance is very small to the intersection
-						inters--;
-						_numPathNodes--;
+						--inters;
+						--_numPathNodes;
 					}
 				}
 
 			} else if (b == _oldPanel) {
 				// always adds start and finish node only in on a panel
-				inters++;
+				++inters;
 
 				_pathNode[_numPathNodes]._x = actor->_px;
 				_pathNode[_numPathNodes]._z = actor->_pz;
 				_pathNode[_numPathNodes]._dist = 0.0f;
 				_pathNode[_numPathNodes]._oldPanel = _oldPanel;
 				_pathNode[_numPathNodes]._curPanel = _oldPanel;
-				_numPathNodes++;
+				++_numPathNodes;
 			} else if (b == _curPanel) {
-				inters++;
+				++inters;
 
 				_pathNode[_numPathNodes]._x = _curX;
 				_pathNode[_numPathNodes]._z = _curZ;
 				_pathNode[_numPathNodes]._dist = dist;
 				_pathNode[_numPathNodes]._oldPanel = _curPanel;
 				_pathNode[_numPathNodes]._curPanel = _curPanel;
-				_numPathNodes++;
+				++_numPathNodes;
 			}
 		}
 	}
@@ -1190,7 +1190,7 @@ void PathFinding3D::findPath() {
 			_pathNode[_numPathNodes]._oldPanel = _curPanel;
 			_pathNode[_numPathNodes]._curPanel = _curPanel;
 
-			_numPathNodes++;
+			++_numPathNodes;
 		}
 
 		// if it arrives on the floor
@@ -1198,7 +1198,7 @@ void PathFinding3D::findPath() {
 
 		// Count the intersections with narrow panels
 		// and with the union of large panels and small panels
-		for (b = 0; b < _panelNum; b++) {
+		for (b = 0; b < _panelNum; ++b) {
 			if (!(_panel[b]._flags & 0x80000000)) {
 				if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 									  _panel[b]._x2, _panel[b]._z2,
@@ -1221,7 +1221,7 @@ void PathFinding3D::findPath() {
 										  _curX, _curZ))
 						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
 							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
-							inters++;
+							++inters;
 				}
 
 				if (_panel[b]._col2 & 0x80) {
@@ -1231,7 +1231,7 @@ void PathFinding3D::findPath() {
 										  _curX, _curZ))
 						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
 							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
-							inters++;
+							++inters;
 				} else {
 					if (intersectLineLine(_panel[b]._x2, _panel[b]._z2,
 										  _panel[_panel[b]._col2 & 0x7F]._x1, _panel[_panel[b]._col2 & 0x7F]._z1,
@@ -1239,7 +1239,7 @@ void PathFinding3D::findPath() {
 										  _curX, _curZ))
 						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
 							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
-							inters++;
+							++inters;
 				}
 			}
 
@@ -1258,7 +1258,7 @@ void PathFinding3D::findPath() {
 			_pathNode[_numPathNodes]._oldPanel = _curPanel;
 			_pathNode[_numPathNodes]._curPanel = _curPanel;
 
-			_numPathNodes++;
+			++_numPathNodes;
 		}
 
 		_pathNode[_numPathNodes]._x = _curX;
@@ -1266,7 +1266,7 @@ void PathFinding3D::findPath() {
 		_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldPanel = _curPanel;
 		_pathNode[_numPathNodes]._curPanel = _curPanel;
-		_numPathNodes++;
+		++_numPathNodes;
 
 		findShortPath();
 		displayPath();
@@ -1276,14 +1276,14 @@ void PathFinding3D::findPath() {
 		_pathNode[_numPathNodes]._dist = 0.0f;
 		_pathNode[_numPathNodes]._oldPanel = _oldPanel;
 		_pathNode[_numPathNodes]._curPanel = _oldPanel;
-		_numPathNodes++;
+		++_numPathNodes;
 
 		_pathNode[_numPathNodes]._x = _curX;
 		_pathNode[_numPathNodes]._z = _curZ;
 		_pathNode[_numPathNodes]._dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
 		_pathNode[_numPathNodes]._oldPanel = _curPanel;
 		_pathNode[_numPathNodes]._curPanel = _curPanel;
-		_numPathNodes++;
+		++_numPathNodes;
 
 		displayPath();
 	}
@@ -1309,13 +1309,13 @@ void PathFinding3D::findShortPath() {
 	tempPath[count]._dist = 0.0f;
 	tempPath[count]._oldPanel = _oldPanel;
 	tempPath[count]._curPanel = _oldPanel;
-	count++;
+	++count;
 
 	// for every obstacle, try to go around it by the right and the left
 	// then take the sorter path
-	for (int a = 0; a < _numPathNodes - 1; a++) {
+	for (int a = 0; a < _numPathNodes - 1; ++a) {
 		memcpy(&tempPath[count], &_pathNode[a], sizeof(SPathNode));
-		count++;
+		++count;
 		if (count >= MAXPATHNODES - 2)
 			count = MAXPATHNODES - 2;
 
@@ -1355,14 +1355,14 @@ void PathFinding3D::findShortPath() {
 				tempPath[count]._z = curZ;
 				tempPath[count]._oldPanel = oldPanel;
 				tempPath[count]._curPanel = curPanel;
-				count++;
+				++count;
 				if (count >= MAXPATHNODES - 2)
 					count = MAXPATHNODES - 2;
 
 				// if it reaches the point, exit the loop
 				if (curPanel == _pathNode[a + 1]._curPanel) {
 					memcpy(&tempPath[count], &_pathNode[a + 1], sizeof(SPathNode));
-					count++;
+					++count;
 					if (count >= MAXPATHNODES - 2)
 						count = MAXPATHNODES - 2;
 					break;
@@ -1400,7 +1400,7 @@ void PathFinding3D::findShortPath() {
 					nearPanel = _panel[curPanel]._near1;
 				}
 
-				b++;
+				++b;
 			}
 		} else {
 			fail = true;
@@ -1416,17 +1416,17 @@ void PathFinding3D::findShortPath() {
 	tempPath[count]._dist = 0.0f;
 	tempPath[count]._oldPanel = _curPanel;
 	tempPath[count]._curPanel = _curPanel;
-	count++;
+	++count;
 
 	// after walking around all obstacles, optimize
 	_numPathNodes = 0;
-	for (int a = 0; a < count; a++) {
+	for (int a = 0; a < count; ++a) {
 		if (_numPathNodes > MAXPATHNODES - 2)
 			_numPathNodes = MAXPATHNODES - 2;
 
 		int b;
 		// remove all the attached nodes
-		for (b = count - 1; b >= a; b--) {
+		for (b = count - 1; b >= a; --b) {
 			if (_vm->dist2D(tempPath[b]._x, tempPath[b]._z, tempPath[a]._x, tempPath[a]._z) < EPSILON)
 				break;
 		}
@@ -1434,18 +1434,18 @@ void PathFinding3D::findShortPath() {
 		a = b;
 
 		memcpy(&_pathNode[_numPathNodes], &tempPath[a], sizeof(SPathNode));
-		_numPathNodes++;
+		++_numPathNodes;
 
-		for (b = count - 1; b > a + 1; b--) {
+		for (b = count - 1; b > a + 1; --b) {
 			int inters = 0;
-			for (int c = 0; c < _panelNum; c++) {
+			for (int c = 0; c < _panelNum; ++c) {
 				// it must never intersect the small panel
 				if (!(_panel[c]._flags & 0x80000000)) {
 					if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
 										  _panel[c]._x2, _panel[c]._z2,
 										  tempPath[a]._x, tempPath[a]._z,
 										  tempPath[b]._x, tempPath[b]._z))
-						inters++;
+						++inters;
 
 					if (_panel[c]._col1 & 0x80) {
 						if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
@@ -1457,7 +1457,7 @@ void PathFinding3D::findShortPath() {
 
 							// intersect at a point distant from the start and the finish
 							if ((len1 > EPSILON) && (len2 > EPSILON))
-								inters++;
+								++inters;
 						}
 					} else if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
 												 _panel[_panel[c]._col1 & 0x7F]._x1, _panel[_panel[c]._col1 & 0x7F]._z1,
@@ -1468,7 +1468,7 @@ void PathFinding3D::findShortPath() {
 
 						// intersect at a point distant from the start and the finish
 						if ((len1 > EPSILON) && (len2 > EPSILON))
-							inters++;
+							++inters;
 					}
 
 					if (_panel[c]._col2 & 0x80) {
@@ -1481,7 +1481,7 @@ void PathFinding3D::findShortPath() {
 
 							// intersect at a point distant from the start and the finish
 							if ((len1 > EPSILON) && (len2 > EPSILON))
-								inters++;
+								++inters;
 						}
 					} else if (intersectLineLine(_panel[c]._x2, _panel[c]._z2,
 												 _panel[_panel[c]._col2 & 0x7F]._x1, _panel[_panel[c]._col2 & 0x7F]._z1,
@@ -1492,7 +1492,7 @@ void PathFinding3D::findShortPath() {
 
 						// intersect at a point distant from the start and the finish
 						if ((len1 > EPSILON) && (len2 > EPSILON))
-							inters++;
+							++inters;
 					}
 
 					if (inters)
@@ -1506,7 +1506,7 @@ void PathFinding3D::findShortPath() {
 				oldPanel = tempPath[b]._oldPanel;
 
 				int c;
-				for (c = a; c <= b; c++) {
+				for (c = a; c <= b; ++c) {
 					if ((tempPath[c]._oldPanel == curPanel) && (tempPath[c]._curPanel == oldPanel))
 						break;
 				}
@@ -1576,7 +1576,7 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 			nearP = _panel[curPanel]._near1;
 		}
 
-		b++;
+		++b;
 	}
 
 	return len;
@@ -1665,7 +1665,7 @@ bool PathFinding3D::pointInside(int pan, float x, float z) const {
 void PathFinding3D::setPosition(int num) {
 	SLight *curLight = _vm->_actor->_light;
 
-	for (uint32 a = 0; a < _vm->_actor->_lightNum; a++) {
+	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a) {
 		// If it's off
 		if (curLight->_inten == 0) {
 			// If it's the required position
@@ -1706,14 +1706,14 @@ void PathFinding3D::setPosition(int num) {
 			}
 		}
 
-		curLight++;
+		++curLight;
 	}
 }
 
 void PathFinding3D::goToPosition(int num) {
 	SLight *curLight = _vm->_actor->_light;
 
-	for (uint32 a = 0; a < _vm->_actor->_lightNum; a++) {
+	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a) {
 		// If it's off and if it's a position
 		if (curLight->_inten == 0) {
 			// If it's the right position
@@ -1738,7 +1738,7 @@ void PathFinding3D::goToPosition(int num) {
 			}
 		}
 
-		curLight++;
+		++curLight;
 	}
 }
 
@@ -1782,18 +1782,18 @@ void PathFinding3D::lookAt(float x, float z) {
 
 	// Penultimate 2/3
 	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
-	_lastStep++;
+	++_lastStep;
 	_step[_lastStep]._theta += approx;
 	_step[_lastStep]._theta = _vm->floatComp(_step[_lastStep]._theta, 360.0f) == 1 ? _step[_lastStep]._theta - 360.0f : _vm->floatComp(_step[_lastStep]._theta, 0.0f) == -1 ? _step[_lastStep]._theta + 360.0f : _step[_lastStep]._theta;
 
 	// Last right step
 	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
-	_lastStep++;
+	++_lastStep;
 	_step[_lastStep]._theta = theta;
 
 	//	????
 	memcpy(&_step[_lastStep + 1], &_step[_lastStep], sizeof(SStep));
-	_lastStep++;
+	++_lastStep;
 	_step[_lastStep]._theta = theta;
 }
 
@@ -1802,8 +1802,8 @@ void PathFinding3D::lookAt(float x, float z) {
 --------------------------------------------------*/
 void PathFinding3D::buildFramelist() {
 	// check that it never crosses or touches a narrow panel
-	for (int a = 1; a < _numPathNodes; a++) {
-		for (int c = 0; c < _panelNum; c++) {
+	for (int a = 1; a < _numPathNodes; ++a) {
+		for (int c = 0; c < _panelNum; ++c) {
 			// it must never intersect narrow panel
 			if (!(_panel[c]._flags & 0x80000000)) {
 				if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
@@ -1823,7 +1823,7 @@ void PathFinding3D::buildFramelist() {
 	float ox = _pathNode[0]._x;
 	float oz = _pathNode[0]._z;
 
-	for (int a = 1; a < _numPathNodes; a++) {
+	for (int a = 1; a < _numPathNodes; ++a) {
 		len += _vm->dist3D(_pathNode[a]._x, 0.0f, _pathNode[a]._z, ox, 0.0f, oz);
 
 		ox = _pathNode[a]._x;
@@ -1852,8 +1852,8 @@ void PathFinding3D::buildFramelist() {
 
 		// if it wasn't the last frame, take the next step
 		if (_vm->_actor->_curFrame < _vm->_defActionLen[hWALK] - 1) {
-			cfp++;
-			curFrame++;
+			++cfp;
+			++curFrame;
 			v += _vm->_actor->_vertexNum;
 		}
 	} else if ((_vm->_actor->_curAction >= hSTOP0) && (_vm->_actor->_curAction <= hSTOP9)) {
@@ -1888,11 +1888,11 @@ void PathFinding3D::buildFramelist() {
 		_step[a]._curAction = curAction;
 		_step[a]._curFrame = curFrame;
 
-		a++;
+		++a;
 		v += _vm->_actor->_vertexNum;
 
-		curFrame++;
-		cfp++;
+		++curFrame;
+		++cfp;
 
 		if (curFrame >= _vm->_defActionLen[curAction]) {
 			if (curAction == hSTART) {
@@ -1946,15 +1946,15 @@ void PathFinding3D::buildFramelist() {
 
 	v = &_vm->_actor->_characterArea[cfp * _vm->_actor->_vertexNum];
 
-	for (b = 0; b < _vm->_defActionLen[curAction]; b++) {
+	for (b = 0; b < _vm->_defActionLen[curAction]; ++b) {
 		curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
 		_step[a]._pz = oz - firstFrame; // where to render
 		_step[a]._dz = curLen;          // where it is
 		_step[a]._curAction = curAction;
 		_step[a]._curFrame = curFrame;
 
-		a++;
-		curFrame++;
+		++a;
+		++curFrame;
 		v += _vm->_actor->_vertexNum;
 	}
 
@@ -1962,7 +1962,7 @@ void PathFinding3D::buildFramelist() {
 	float approx = (len - curLen - EPSILON) / (a - 2);
 	float theta = 0.0f;
 	// Adjust all the steps so it arrives exactly where clicked
-	for (b = 1; b < a; b++) {
+	for (b = 1; b < a; ++b) {
 		// verify there's no reverse step
 		if (_vm->floatComp(_step[b - 1]._dz, _step[b]._dz + approx * b) == 1 || _vm->floatComp(_step[b]._dz + approx * b + EPSILON, len) >= 0) {
 			theta = _step[b]._dz - _step[b]._pz;
@@ -1983,7 +1983,7 @@ void PathFinding3D::buildFramelist() {
 
 	len = 0.0f;
 	float startPos = 0.0f;
-	for (a = 0; a < _numPathNodes - 1; a++) {
+	for (a = 0; a < _numPathNodes - 1; ++a) {
 		curLen = 0.0f;
 		len += _vm->dist3D(_pathNode[a]._x, 0.0f, _pathNode[a]._z,
 					  _pathNode[a + 1]._x, 0.0f, _pathNode[a + 1]._z);
@@ -2016,7 +2016,7 @@ void PathFinding3D::buildFramelist() {
 
 			_step[b]._curPanel = _pathNode[a]._curPanel;
 
-			b++;
+			++b;
 		}
 		startPos = len;
 	}
@@ -2042,7 +2042,7 @@ void PathFinding3D::buildFramelist() {
 
 		approx /= 3.0f;
 
-		for (b = 0; b < 2; b++) {
+		for (b = 0; b < 2; ++b) {
 			_step[b]._theta = oldTheta + (float)(b + 1) * approx;
 			_step[b]._theta = _vm->floatComp(_step[b]._theta, 360.0f) == 1 ? _step[b]._theta - 360.0f : _vm->floatComp(_step[b]._theta, 0.0f) == -1 ? _step[b]._theta + 360.0f : _step[b]._theta;
 
@@ -2067,7 +2067,7 @@ void PathFinding3D::buildFramelist() {
 
 	// makes the curve
 	oldTheta = _step[2]._theta;
-	for (b = 3; b <= _lastStep; b++) {
+	for (b = 3; b <= _lastStep; ++b) {
 		theta = _step[b]._theta;
 
 		// if it made a curve
@@ -2147,7 +2147,7 @@ int PathFinding3D::nextStep() {
 
 	// increase the current step if it's not the last frame
 	if (_curStep < _lastStep) {
-		_curStep++;
+		++_curStep;
 		return false;
 	}
 
@@ -2178,7 +2178,7 @@ bool PathFinding3D::findAttachedPanel(int srcPanel, int destPanel) {
 	int curPanel = srcPanel;
 	int nearPanel = _panel[srcPanel]._near1;
 
-	for (int b = 0;; b++) {
+	for (int b = 0;; ++b) {
 		// if they are attached, return true
 		if (curPanel == destPanel)
 			return true;
@@ -2666,8 +2666,8 @@ void PathFinding3D::actorOrder() {
 	// It must be copied in front of the nearest box
 	_vm->_actorPos = _sortPan[1]._num;
 	// from closest to farthest
-	for (int b = 1; b < _numSortPanel; b++) {
-		for (int a = 0; a < _panelNum; a++) {
+	for (int b = 1; b < _numSortPanel; ++b) {
+		for (int a = 0; a < _panelNum; ++a) {
 			// If it's not wide and belongs to this level
 			if (!(_panel[a]._flags & 0x80000000) && (_panel[a]._flags & (1 << (_sortPan[b]._num - 1)))) {
 				// If it intersects the center of the character camera
