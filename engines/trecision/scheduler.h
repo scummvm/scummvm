@@ -43,7 +43,6 @@ public:
 
 	void process();
 	void doEvent(uint8 cls, uint8 event, uint8 priority, uint16 u16Param1, uint16 u16Param2, uint8 u8Param, uint32 u32Param);
-	void mouseMove(uint16 x, uint16 y);
 	void leftClick(uint16 x, uint16 y);
 	void rightClick(uint16 x, uint16 y);
 	void mouseExamine(uint16 object);

@@ -2446,7 +2446,6 @@ Management of "Use with"
 
 #define ME_MLEFT 0  // (mx,my,...) - used by game scripts
 #define ME_MRIGHT 1 // (mx,my,...) - used by game scripts
-#define ME_MMOVE 3  // (mx,my,direction,...)
 
 /*************************************************************************
 * Inventory                                                              *

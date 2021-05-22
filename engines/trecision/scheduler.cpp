@@ -112,10 +112,6 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	lq->orderEvents();
 }
 
-void Scheduler::mouseMove(uint16 x, uint16 y) {
-	doEvent(MC_MOUSE, ME_MMOVE, MP_DEFAULT, x, y, 0, 0);
-}
-
 void Scheduler::leftClick(uint16 x, uint16 y) {
 	doEvent(MC_MOUSE, ME_MLEFT, MP_DEFAULT, x, y, 0, 0);
 }
