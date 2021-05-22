@@ -62,6 +62,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Sci::kDebugLevelResMan, "ResMan", "Resource manager debugging"},
 	{Sci::kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game"},
 	{Sci::kDebugLevelDebugMode, "DebugMode", "Enable game debug mode at start of game"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Sci {
