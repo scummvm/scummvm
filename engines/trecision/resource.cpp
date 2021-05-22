@@ -129,8 +129,7 @@ void TrecisionEngine::loadAll() {
 	_animMgr->loadAnimTab(&dataNl);
 	_dialogMgr->loadData(&dataNl);
 
-	for (int i = 0; i < MAXACTION; ++i)
-		_actionLen[i] = dataNl.readByte();
+	dataNl.skip(620);	// actions (unused)
 
 	int numFileRef = dataNl.readSint32LE();
 	dataNl.skip(numFileRef * (12 + 4));	// fileRef name + offset

@@ -2321,8 +2321,6 @@ Game Structure
 #define MAXOBJINROOM 128           // Objects per room
 #define MAXSOUNDSINROOM 15         // Sounds per room
 #define MAXACTIONINROOM 32         // Number of actions per room
-#define MAXACTION 620              // Number of actions in the game
-#define MAXACTIONFRAMESINROOM 1200 // Number of action frames per room
 
 #define MAXSENTENCE 4000 // Max Examine phrases
 #define MAXOBJNAME 1400

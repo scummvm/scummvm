@@ -133,7 +133,6 @@ class TrecisionEngine : public Engine {
 
 	char *_textArea;
 	uint16 _curScriptFrame[10];
-	uint8 _actionLen[MAXACTION];
 	char *_textPtr;
 
 	uint16 _curAscii;
