@@ -213,31 +213,30 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		if ((obj | 0x8000) == _lastInv)
 			return;
 
-		char locsent[256];
-		strcpy(locsent, _sysText[kMessageUse]);
+		Common::String desc = _sysText[kMessageUse];
 		if (_useWithInv[USED]) {
-			strcat(locsent, _objName[_inventoryObj[_useWith[USED]]._name]);
-			strcat(locsent, _sysText[kMessageWith]);
+			desc += _objName[_inventoryObj[_useWith[USED]]._name];
+			desc += _sysText[kMessageWith];
 			if (obj && (_inventoryObj[_useWith[USED]]._name != _inventoryObj[obj]._name))
-				strcat(locsent, _objName[_inventoryObj[obj]._name]);
+				desc += _objName[_inventoryObj[obj]._name];
 		} else {
 			if (_obj[_useWith[USED]]._mode & OBJMODE_HIDDEN)
-				strcat(locsent, "?");	// dunno
+				desc += "?";	// dunno
 			else
-				strcat(locsent, _objName[_obj[_useWith[USED]]._name]);
-			strcat(locsent, _sysText[kMessageWith]);
+				desc += _objName[_obj[_useWith[USED]]._name];
+			desc += _sysText[kMessageWith];
 			if (obj && (_obj[_useWith[USED]]._name != _inventoryObj[obj]._name))
-				strcat(locsent, _objName[_inventoryObj[obj]._name]);
+				desc += _objName[_inventoryObj[obj]._name];
 		}
 
-		uint16 lenText = textLength(locsent);
-		uint16 posX = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
-		uint16 posY = MAXY - CARHEI;
+		const uint16 lenText = textLength(desc);
+		const uint16 posX = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
+		const uint16 posY = MAXY - CARHEI;
 
 		_lastInv = (obj | 0x8000);
 		if (_lastInv)
 			_textMgr->clearLastText();
-		_textMgr->addText(posX, posY, locsent, COLOR_INVENTORY, MASKCOL);
+		_textMgr->addText(posX, posY, desc.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (obj == _lastInv)
 			return;
@@ -247,12 +246,13 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			_lastInv = 0;
 			return;
 		}
-		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
-		uint16 posY = MAXY - CARHEI;
-		_lastInv = obj;
-		uint16 lenText = textLength(_objName[_inventoryObj[obj]._name]);
 
+		const uint16 lenText = textLength(_objName[_inventoryObj[obj]._name]);
+		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
 		posX = CLIP(posX - (lenText / 2), 2, MAXX - 2 - lenText);
+		const uint16 posY = MAXY - CARHEI;
+		
+		_lastInv = obj;
 
 		if (_lastInv)
 			_textMgr->clearLastText();
@@ -263,7 +263,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 }
 
 void TrecisionEngine::removeIcon(uint8 icon) {
-	int8 pos = iconPos(icon);
+	const int8 pos = iconPos(icon);
 	if (pos == -1)
 		return;
 
