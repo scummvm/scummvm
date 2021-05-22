@@ -33,6 +33,7 @@
 #include "engines/savestate.h"
 #include "graphics/surface.h"
 
+#include "ags/detection.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/lib/allegro/system.h"
 #include "ags/engine/util/mutex_std.h"
@@ -50,14 +51,6 @@ namespace AGS {
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 200
-
-enum AGSDebugChannels {
-	kDebugGraphics = 1 << 0,
-	kDebugPath     = 1 << 1,
-	kDebugScan     = 1 << 2,
-	kDebugFilePath = 1 << 3,
-	kDebugScript   = 1 << 4
-};
 
 struct AGSGameDescription;
 struct PluginVersion;

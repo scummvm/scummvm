@@ -24,18 +24,16 @@
 #define AGS_DETECTION_H
 
 #include "engines/advancedDetector.h"
-#include "ags/ags.h"
-
-static const DebugChannelDef debugFlagList[] = {
-	{AGS::kDebugGraphics, "Graphics", "Graphics debug level"},
-	{AGS::kDebugPath, "Path", "Pathfinding debug level"},
-	{AGS::kDebugFilePath, "FilePath", "File path debug level"},
-	{AGS::kDebugScan, "Scan", "Scan for unrecognised games"},
-	{AGS::kDebugScript, "Script", "Enable debug script dump"},
-	DEBUG_CHANNEL_END
-};
 
 namespace AGS {
+
+enum AGSDebugChannels {
+	kDebugGraphics = 1 << 0,
+	kDebugPath     = 1 << 1,
+	kDebugScan     = 1 << 2,
+	kDebugFilePath = 1 << 3,
+	kDebugScript   = 1 << 4
+};
 
 struct PluginVersion {
 	const char *_plugin;
@@ -62,6 +60,8 @@ class AGSMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _extra;
 	mutable Common::String _filename;
 	mutable Common::String _md5;
+
+	static const DebugChannelDef debugFlagList[];
 
 public:
 	AGSMetaEngineDetection();
