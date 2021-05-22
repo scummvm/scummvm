@@ -51,6 +51,8 @@ AnimTypeManager::~AnimTypeManager() {
 }
 
 void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
+	SAnim *anim = &_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim];
+
 	switch (doit) {
 	case fCLROBJSTATUS:
 		_vm->setObjectVisible(obj, false);
@@ -122,41 +124,40 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		break;
 
 	case fANIMOFF1:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF1;
+		anim->_flag |= SMKANIM_OFF1;
 		if ((_vm->_curRoom == kRoom11) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P))
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 	case fANIMOFF2:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF2;
+		anim->_flag |= SMKANIM_OFF2;
 		if ((_vm->_curRoom == kRoom2E))
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, false);
 		break;
 	case fANIMOFF3:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF3;
+		anim->_flag |= SMKANIM_OFF3;
 		break;
 	case fANIMOFF4:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag |= SMKANIM_OFF4;
+		anim->_flag |= SMKANIM_OFF4;
 		if (_vm->_curRoom == kRoom28)
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 
 	case fANIMON1:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF1;
+		anim->_flag &= ~SMKANIM_OFF1;
 		if ((_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P)) {
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 		}
 		break;
 	case fANIMON2:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF2;
-		if ((_vm->_curRoom == kRoom2E)) {
+		anim->_flag &= ~SMKANIM_OFF2;
+		if (_vm->_curRoom == kRoom2E)
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, true);
-		}
 		break;
 	case fANIMON3:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF3;
+		anim->_flag &= ~SMKANIM_OFF3;
 		break;
 	case fANIMON4:
-		_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag &= ~SMKANIM_OFF4;
+		anim->_flag &= ~SMKANIM_OFF4;
 		break;
 	case fENDDEMO:
 		_vm->demoOver();
@@ -175,9 +176,11 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 }
 
 void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
+	const uint16 index = h->_curAnim->_atFrame[atf]._index;
+
 	switch (type) {
 	case ATFTEXT:
-		_vm->_textMgr->characterSayInAction(h->_curAnim->_atFrame[atf]._index);
+		_vm->_textMgr->characterSayInAction(index);
 		break;
 	case ATFTEXTACT:
 		_vm->_textMgr->characterSayInAction(_vm->_obj[h->_object]._action);
@@ -186,69 +189,69 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		_vm->_textMgr->characterSayInAction(_vm->_obj[h->_object]._examine);
 		break;
 	case ATFCLR:
-		_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, false);
+		_vm->setObjectVisible(index, false);
 		break;
 	case ATFCLRI:
-		_vm->removeIcon(h->_curAnim->_atFrame[atf]._index);
+		_vm->removeIcon(index);
 		break;
 	case ATFCEX:
-		_vm->_obj[h->_object]._examine = h->_curAnim->_atFrame[atf]._index;
+		_vm->_obj[h->_object]._examine = index;
 		break;
 	case ATFCACT:
-		_vm->_obj[h->_object]._action = h->_curAnim->_atFrame[atf]._index;
+		_vm->_obj[h->_object]._action = index;
 		break;
 	case ATFSET:
-		_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, true);
+		_vm->setObjectVisible(index, true);
 		break;
 	case ATFSETI:
-		_vm->addIcon(h->_curAnim->_atFrame[atf]._index);
+		_vm->addIcon(index);
 		break;
 	case ATFDO:
-		executeAtFrameDoit(h, h->_curAnim->_atFrame[atf]._index, h->_object);
+		executeAtFrameDoit(h, index, h->_object);
 		break;
 	case ATFROOM:
-		_vm->changeRoom(h->_curAnim->_atFrame[atf]._index);
+		_vm->changeRoom(index);
 		break;
 	case ATFSETPOS:
-		_vm->_pathFind->setPosition(h->_curAnim->_atFrame[atf]._index);
+		_vm->_pathFind->setPosition(index);
 		break;
 	case ATFDIALOG:
-		_vm->_dialogMgr->playDialog(h->_curAnim->_atFrame[atf]._index);
+		_vm->_dialogMgr->playDialog(index);
 		break;
 	case ATFCOBJANIM:
-		_vm->_obj[h->_object]._anim = h->_curAnim->_atFrame[atf]._index;
+		_vm->_obj[h->_object]._anim = index;
 		break;
 	case ATFCOBJBOX:
-		_vm->_obj[h->_object]._nbox = h->_curAnim->_atFrame[atf]._index;
+		_vm->_obj[h->_object]._nbox = index;
 		break;
 	case ATFCOBJPOS:
-		_vm->_obj[h->_object]._position = h->_curAnim->_atFrame[atf]._index;
+		_vm->_obj[h->_object]._position = index;
 		break;
 	case ATFSETFORE:
-		_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_FOREGROUND;
+		_vm->_obj[index]._nbox = BOX_FOREGROUND;
 		break;
 	case ATFSETBACK:
-		_vm->_obj[h->_curAnim->_atFrame[atf]._index]._nbox = BOX_BACKGROUND;
+		_vm->_obj[index]._nbox = BOX_BACKGROUND;
 		break;
 	case ATFSWITCH:
-		_vm->setObjectVisible(h->_curAnim->_atFrame[atf]._index, !_vm->isObjectVisible(h->_curAnim->_atFrame[atf]._index));
+		_vm->setObjectVisible(index, !_vm->isObjectVisible(index));
 		break;
 	case ATFSETROOMT:
-		_vm->_logicMgr->setupAltRoom(h->_curAnim->_atFrame[atf]._index, true);
+		_vm->_logicMgr->setupAltRoom(index, true);
 		break;
 	case ATFSETROOMF:
-		_vm->_logicMgr->setupAltRoom(h->_curAnim->_atFrame[atf]._index, false);
+		_vm->_logicMgr->setupAltRoom(index, false);
 		break;
 	case ATFREADBOX:
-		switch (h->_curAnim->_atFrame[atf]._index) {
+		switch (index) {
 		case 1: {
-			Common::String filename = Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName);
+			const Common::String filename = Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName);
 			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom]._flag &= ~kObjFlagExtra;
 			}
 			break;
 		case 2: {
-			Common::String filename = Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName);
+			const Common::String filename = Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName);
 			_vm->read3D(filename);
 			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
 			if (_vm->_curRoom == kRoom37)
@@ -259,7 +262,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		}
 		break;
 	case ATFONESPEAK:
-		switch (h->_curAnim->_atFrame[atf]._index) {
+		switch (index) {
 		case 1:
 			if (_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
