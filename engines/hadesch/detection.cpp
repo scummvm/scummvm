@@ -32,7 +32,7 @@
 
 static const DebugChannelDef debugFlagList[] = {
 	{Hadesch::kHadeschDebugGeneral, "general", "General issues"},
-	{Hadesch::kHadeschDebugMessagingSystem, "resources", "Resources"},
+	{Hadesch::kHadeschDebugResources, "resources", "Resources"},
 	{Hadesch::kHadeschDebugMessagingSystem, "message_system", "Engine message system"},
 	{Hadesch::kHadeschDebugDialogs, "dialogs", "Dialogs"},
 	DEBUG_CHANNEL_END
