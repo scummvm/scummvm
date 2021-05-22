@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-01-27 11:15+0000\n"
 "Last-Translator: Morgan Roberts <morganroberts@mentercaerffili.cymru>\n"
 "Language-Team: Welsh <https://translations.scummvm.org/projects/scummvm/"
@@ -6647,11 +6647,11 @@ msgstr ""
 msgid "Show labels for objects on mouse hover"
 msgstr ""
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr ""
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""

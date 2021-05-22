@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -7073,11 +7073,11 @@ msgstr "הצג תוויות של אובייקטים"
 msgid "Show labels for objects on mouse hover"
 msgstr "הצג תוויות לאובייקטים בריחוף העכבר"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr "השתמש בדיבור באנגלית"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "השתמש בדיבור באנגלית במקום גרמנית בכל שפה שאינה גרמנית"

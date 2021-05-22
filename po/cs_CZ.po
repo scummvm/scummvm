@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -7120,11 +7120,11 @@ msgstr "Zobrazit jmenovky objektů"
 msgid "Show labels for objects on mouse hover"
 msgstr "Zobrazit jmenovky objektů při najetí myši"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr "Použít anglickou řeč"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "Použít anglickou řeč místo německé pro každý jazyk kromě němčiny"

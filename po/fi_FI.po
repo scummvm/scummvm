@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-05-18 20:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -7090,11 +7090,11 @@ msgstr "Näytä esineiden tiedot"
 msgid "Show labels for objects on mouse hover"
 msgstr "Näytä esineiden kuvaus kohdistaessasi kursorin esineen ylle"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr "Käytä englanninkielistä puhetta"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""

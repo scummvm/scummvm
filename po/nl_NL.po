@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-05-21 13:33+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7203,11 +7203,11 @@ msgstr "Toon objectnamen"
 msgid "Show labels for objects on mouse hover"
 msgstr "Toon labels voor objecten als de muis er over zweeft"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 msgid "Use English speech"
 msgstr "Gebruik Engels"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "Gebruik Engels in plaats van Duits voor elke taal anders dan Duits"

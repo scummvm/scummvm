@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-22 10:02+0000\n"
+"POT-Creation-Date: 2021-05-22 10:29+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7126,12 +7126,12 @@ msgstr "Mostra les etiquetes dels objectes"
 msgid "Show labels for objects on mouse hover"
 msgstr "Mostra etiquetes al posar el ratolí sobre els objectes"
 
-#: engines/sword25/detection.cpp:49
+#: engines/sword25/detection.cpp:48
 #, fuzzy
 msgid "Use English speech"
 msgstr "Text i Veus:"
 
-#: engines/sword25/detection.cpp:50
+#: engines/sword25/detection.cpp:49
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
