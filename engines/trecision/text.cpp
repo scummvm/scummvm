@@ -272,8 +272,7 @@ void TextManager::doString() {
 
 void TextManager::showObjName(uint16 obj, bool show) {
 	static const char *dunno = "?";
-
-	Common::String locsent;
+	Common::String desc;
 
 	if (_vm->_flagSomeoneSpeaks)
 		return;
@@ -293,31 +292,31 @@ void TextManager::showObjName(uint16 obj, bool show) {
 		if ((_vm->_obj[_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine))
 			return;
 
-		locsent += _vm->_sysText[kMessageUse];
+		desc = _vm->_sysText[kMessageUse];
+	
 		if (_vm->_useWithInv[USED])
-			locsent += _vm->_objName[_vm->_inventoryObj[_vm->_useWith[USED]]._name];
+			desc += _vm->_objName[_vm->_inventoryObj[_vm->_useWith[USED]]._name];
 		else if (_vm->_obj[_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
-			locsent += dunno;
+			desc += dunno;
 		else
-			locsent += _vm->_objName[_vm->_obj[_vm->_useWith[USED]]._name];
+			desc += _vm->_objName[_vm->_obj[_vm->_useWith[USED]]._name];
 
-		locsent += _vm->_sysText[kMessageWith];
+		desc += _vm->_sysText[kMessageWith];
 		if (obj && (_vm->_useWithInv[USED] || (obj != _vm->_useWith[USED]))) {
 			if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-				locsent += dunno;
+				desc += dunno;
 			else
-				locsent += _vm->_objName[_vm->_obj[obj]._name];
+				desc += _vm->_objName[_vm->_obj[obj]._name];
 		}
 
 		_vm->_lastObj = (obj | 0x8000);
-		uint16 lenText = _vm->textLength(locsent);
-
-		uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
-		uint16 posy = MAXY - CARHEI;
+		const uint16 lenText = _vm->textLength(desc);
+		const uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
+		const uint16 posy = MAXY - CARHEI;
 
 		if (_vm->_lastObj)
 			clearLastText();
-		addText(posx, posy, locsent.c_str(), COLOR_INVENTORY, MASKCOL);
+		addText(posx, posy, desc.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (!obj || !show) {
 			clearLastText();
@@ -329,37 +328,37 @@ void TextManager::showObjName(uint16 obj, bool show) {
 			return;
 		if (!(_vm->_obj[obj]._flag & kObjFlagExamine)) {
 			if ((_vm->_obj[obj]._flag & kObjFlagDone) || (_vm->_room[_vm->_obj[obj]._goRoom]._flag & kObjFlagDone)) {
-				locsent = _vm->_sysText[kMessageGoto];
+				desc = _vm->_sysText[kMessageGoto];
 				if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-					locsent += dunno;
+					desc += dunno;
 				else
-					locsent += _vm->_objName[_vm->_obj[obj]._name];
+					desc += _vm->_objName[_vm->_obj[obj]._name];
 			} else
-				locsent = _vm->_sysText[kMessageGoto2];
+				desc = _vm->_sysText[kMessageGoto2];
 		} else if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
-			locsent = dunno;
+			desc = dunno;
 		else
-			locsent = _vm->_objName[_vm->_obj[obj]._name];
+			desc = _vm->_objName[_vm->_obj[obj]._name];
 
 		uint16 posx = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
 		uint16 posy = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
 
-		positionString(posx, posy, locsent.c_str(), &posx, &posy, false);
+		positionString(posx, posy, desc.c_str(), &posx, &posy, false);
 		if (_vm->_lastObj)
 			clearLastText();
 		_vm->_lastObj = obj;
-		addText(posx, posy, locsent.c_str(), COLOR_OBJECT, MASKCOL);
+		addText(posx, posy, desc.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
-void TextManager::someoneSay(uint16 s, uint16 Person, uint16 NewAnim) {
-	_talkingPersonAnimId = NewAnim;
-	_talkingPersonId = Person;
+void TextManager::someoneSay(uint16 sentence, uint16 person, uint16 anim) {
+	_talkingPersonAnimId = anim;
+	_talkingPersonId = person;
 	_vm->_flagSomeoneSpeaks = true;
 	_vm->_flagSkipTalk = false;
 
-	_curSentenceId = s;
-	_superString = _vm->_sentence[s];
+	_curSentenceId = sentence;
+	_superString = _vm->_sentence[sentence];
 	_subStringStart = 0;
 	_curSubString = 0;
 
