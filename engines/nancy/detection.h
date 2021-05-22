@@ -44,6 +44,12 @@ struct NancyGameDescription {
 	GameType gameType;
 };
 
+enum NancyDebugChannels {
+	kDebugEngine    	= 1 << 0,
+	kDebugActionRecord  = 1 << 1,
+	kDebugScene			= 1 << 2
+};
+
 } // End of namespace Nancy
 
 #endif // NANCY_DETECTION_H

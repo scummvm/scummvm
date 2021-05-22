@@ -23,7 +23,6 @@
 #include "common/config-manager.h"
 
 #include "engines/nancy/detection.h"
-#include "engines/nancy/nancy.h"
 //#include "engines/nancy/dialogs.h"
 
 const char *const directoryGlobs[] = {
