@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-21 23:35+0000\n"
+"POT-Creation-Date: 2021-05-22 10:02+0000\n"
 "PO-Revision-Date: 2021-05-03 13:51+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3785,7 +3785,7 @@ msgstr "Να μη γίνει προσομοίωση \"παράσιτων\" το�
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:51
-#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:235
+#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:236
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:163
 #: engines/zvision/detection_tables.h:50
@@ -3794,7 +3794,7 @@ msgstr "Χρήση αρχικών οθονών αποθήκευσης/φόρτω
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:52
-#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:236
+#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:237
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:164
 #: engines/zvision/detection_tables.h:51
@@ -5880,126 +5880,126 @@ msgstr "Η υποστήριξη για το SAGA2 δεν έχει ενσωματ
 msgid "Error loading game resources."
 msgstr "Σφάλμα στη φόρτωση πόρων παιχνιδιού."
 
-#: engines/sci/detection.cpp:173
+#: engines/sci/detection.cpp:174
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr ""
 "Παράλειψη του βήματος χρωματικής αντιπαράθεσης της EGA (φόντα πλήρους "
 "χρώματος)"
 
-#: engines/sci/detection.cpp:174
+#: engines/sci/detection.cpp:175
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 "Παράλειψη του βήματος χρωματικής αντιπαράθεσης σε παιχνίδια EGA, τα γραφικά "
 "εμφανίζονται με πλήρη χρώματα"
 
-#: engines/sci/detection.cpp:183
+#: engines/sci/detection.cpp:184
 msgid "Enable high resolution graphics"
 msgstr "Ενεργοποίηση γραφικών υψηλής ανάλυσης"
 
-#: engines/sci/detection.cpp:184
+#: engines/sci/detection.cpp:185
 msgid "Enable high resolution graphics/content"
 msgstr "Ενεργοποίηση γραφικών/περιεχομένου υψηλής ανάλυσης"
 
-#: engines/sci/detection.cpp:193
+#: engines/sci/detection.cpp:194
 msgid "Enable black-lined video"
 msgstr "Ενεργοποίηση βίντεο με μαύρες γραμμές"
 
-#: engines/sci/detection.cpp:194
+#: engines/sci/detection.cpp:195
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 "Σχεδιασμός μαύρων γραμμών πάνω στα βίντεο για την αύξηση της οξύτητας τους"
 
-#: engines/sci/detection.cpp:204
+#: engines/sci/detection.cpp:205
 msgid "Use high-quality video scaling"
 msgstr "Χρήση κλιμάκωσης video υψηλής ποιότητας"
 
-#: engines/sci/detection.cpp:205
+#: engines/sci/detection.cpp:206
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "Χρήση γραμμικής παρεμβολής για την κλιμάκωση βίντεο, όπου είναι δυνατή"
 
-#: engines/sci/detection.cpp:215
+#: engines/sci/detection.cpp:216
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "Χρήση υψηλής ποιότητας κλιμάκωσης cel \"LarryScale\""
 
-#: engines/sci/detection.cpp:216
+#: engines/sci/detection.cpp:217
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "Χρήση ειδικού καρτούν-κλιμακωτή στη σχεδίαση των sprite των χαρακτήρων"
 
-#: engines/sci/detection.cpp:225
+#: engines/sci/detection.cpp:226
 msgid "Prefer digital sound effects"
 msgstr "Προτίμηση ψηφιακών ακουστικών εφε"
 
-#: engines/sci/detection.cpp:226
+#: engines/sci/detection.cpp:227
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "Προτίμηση ψηφιακών ηχητικών εφέ αντί για εφέ δυναμικής σύνθεσης"
 
-#: engines/sci/detection.cpp:245
+#: engines/sci/detection.cpp:246
 msgid "Use CD audio"
 msgstr "Χρήση ήχου CD"
 
-#: engines/sci/detection.cpp:246
+#: engines/sci/detection.cpp:247
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "Χρήση ήχου CD αντί για ήχο παιχνιδιού, όπου είναι διαθέσιμο"
 
-#: engines/sci/detection.cpp:256
+#: engines/sci/detection.cpp:257
 msgid "Use Windows cursors"
 msgstr "Χρήση δρομέων Windows"
 
-#: engines/sci/detection.cpp:257
+#: engines/sci/detection.cpp:258
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 "Χρήση δρομέων Windows (μικρότεροι και ασπρόμαυροι) αντί για τους δρομείς DOS"
 
-#: engines/sci/detection.cpp:267
+#: engines/sci/detection.cpp:268
 msgid "Use silver cursors"
 msgstr "Χρήση ασημένιων δρομέων"
 
-#: engines/sci/detection.cpp:268
+#: engines/sci/detection.cpp:269
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 "Χρήση των εναλλακτικών ασημένιων δρομέων αντί των προκαθορισμένων χρυσών"
 
-#: engines/sci/detection.cpp:278
+#: engines/sci/detection.cpp:279
 msgid "Enable content censoring"
 msgstr "Ενεργοποίηση λογοκρισίας περιεχομένου"
 
-#: engines/sci/detection.cpp:279
+#: engines/sci/detection.cpp:280
 msgid "Enable the game's built-in optional content censoring"
 msgstr "Ενεργοποίηση του προαιρετικού ενσωματωμένου φίλτρου λογοκρισίας"
 
-#: engines/sci/detection.cpp:289
+#: engines/sci/detection.cpp:290
 msgid "Upscale videos"
 msgstr "Αύξηση κλιμάκωσης βίντεο"
 
-#: engines/sci/detection.cpp:290
+#: engines/sci/detection.cpp:291
 msgid "Upscale videos to double their size"
 msgstr "Αύξηση κλιμάκωσης εικόνας στα βίντεο σε διπλάσιο μέγεθός"
 
-#: engines/sci/detection.cpp:300
+#: engines/sci/detection.cpp:301
 msgid "Use RGB rendering"
 msgstr "Χρήση απόδοσης RGB"
 
-#: engines/sci/detection.cpp:301
+#: engines/sci/detection.cpp:302
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "Χρήση απόδοσης RGB για τη βελτίωση των μεταβάσεων μεταξύ οθονών"
 
-#: engines/sci/detection.cpp:311
+#: engines/sci/detection.cpp:312
 msgid "Use per-resource modified palettes"
 msgstr "Χρήση τροποποιημένης παλέτας ανά πόρο"
 
-#: engines/sci/detection.cpp:312
+#: engines/sci/detection.cpp:313
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 "Χρήση ειδικής παλέτας για κάθε στοιχείο (resource) παιχνιδιού για βελτιωμένη "
 "απεικόνιση"
 
-#: engines/sci/detection.cpp:342
+#: engines/sci/detection.cpp:343
 msgid "MIDI mode:"
 msgstr "Λειτουργία MIDI:"
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:344
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -6007,15 +6007,15 @@ msgstr ""
 "Αν χρησιμοποιείτε εξωτερικές συσκευές MIDI (π.χ. μέσω USB-MIDI), επιλέξτε "
 "εδώ τη συσκευή σας"
 
-#: engines/sci/detection.cpp:348
+#: engines/sci/detection.cpp:349
 msgid "Standard (GM / MT-32)"
 msgstr "Τυπικό (GM / MT-32)"
 
-#: engines/sci/detection.cpp:352
+#: engines/sci/detection.cpp:353
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection.cpp:356
+#: engines/sci/detection.cpp:357
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6229,29 +6229,29 @@ msgstr ""
 "της Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:175
+#: engines/scumm/detection.cpp:176
 msgid "Show Object Line"
 msgstr "Προβολή Γραμμής Αντικειμένων"
 
-#: engines/scumm/detection.cpp:176
+#: engines/scumm/detection.cpp:177
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Παρουσίαση των ονομάτων των αντικειμένων στο κάτω μέρος της οθόνης"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:183
 msgid "Use NES Classic Palette"
 msgstr "Χρήση NES Classic Παλέτας"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:184
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Χρήσης μια παλέτας πιο ουδέτερων χρωμάτων που προσομοιώνει καλύτερα το NES "
 "Classic"
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:190
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Περικοπή παιχνιδιών FM-TOWNS σε ύψος 200 πίξελ"
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:191
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"

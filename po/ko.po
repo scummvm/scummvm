@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-21 23:35+0000\n"
+"POT-Creation-Date: 2021-05-22 10:02+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3678,7 +3678,7 @@ msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:51
-#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:235
+#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:236
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:163
 #: engines/zvision/detection_tables.h:50
@@ -3687,7 +3687,7 @@ msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:52
-#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:236
+#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:237
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:164
 #: engines/zvision/detection_tables.h:51
@@ -5701,117 +5701,117 @@ msgstr "SAGA2 지원이 컴파일 되지 않음"
 msgid "Error loading game resources."
 msgstr "게임 리소스 불러오기 오류."
 
-#: engines/sci/detection.cpp:173
+#: engines/sci/detection.cpp:174
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr "EGA 디더링 패스 건너뛰기 (풀컬러 배경화면)"
 
-#: engines/sci/detection.cpp:174
+#: engines/sci/detection.cpp:175
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr "EGA게임의 디더링 패스를 건너뛰고 그래픽이 풀 컬러로 표시됩니다"
 
-#: engines/sci/detection.cpp:183
+#: engines/sci/detection.cpp:184
 msgid "Enable high resolution graphics"
 msgstr "고해상도 그래픽 사용"
 
-#: engines/sci/detection.cpp:184
+#: engines/sci/detection.cpp:185
 msgid "Enable high resolution graphics/content"
 msgstr "고해상도 그래픽/컨텐츠를 사용합니다"
 
-#: engines/sci/detection.cpp:193
+#: engines/sci/detection.cpp:194
 msgid "Enable black-lined video"
 msgstr "비디오에 검은선 표시"
 
-#: engines/sci/detection.cpp:194
+#: engines/sci/detection.cpp:195
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr "선명도를 높이기 위해 비디오 위에 검은 선을 그립니다"
 
-#: engines/sci/detection.cpp:204
+#: engines/sci/detection.cpp:205
 msgid "Use high-quality video scaling"
 msgstr "고품질 비디오 크기조절 사용"
 
-#: engines/sci/detection.cpp:205
+#: engines/sci/detection.cpp:206
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr "비디오 크기조절 할때 가능하면 선형 필터링을 사용"
 
-#: engines/sci/detection.cpp:215
+#: engines/sci/detection.cpp:216
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr "고품질 \"래리스케일\" 셀 크기조절 사용"
 
-#: engines/sci/detection.cpp:216
+#: engines/sci/detection.cpp:217
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr "캐릭터를 표시할 때 특별한 카툰 크기조절 방식을 사용합니다"
 
-#: engines/sci/detection.cpp:225
+#: engines/sci/detection.cpp:226
 msgid "Prefer digital sound effects"
 msgstr "디지털 사운드 효과 선호"
 
-#: engines/sci/detection.cpp:226
+#: engines/sci/detection.cpp:227
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr "합성 음원 대신 디지털 사운드 이펙트 선호"
 
-#: engines/sci/detection.cpp:245
+#: engines/sci/detection.cpp:246
 msgid "Use CD audio"
 msgstr "CD 오디오 사용"
 
-#: engines/sci/detection.cpp:246
+#: engines/sci/detection.cpp:247
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr "사용 가능할 경우 게임 오디오 대신 CD 오디오를 사용합니다"
 
-#: engines/sci/detection.cpp:256
+#: engines/sci/detection.cpp:257
 msgid "Use Windows cursors"
 msgstr "윈도우즈 커서 사용"
 
-#: engines/sci/detection.cpp:257
+#: engines/sci/detection.cpp:258
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr "도스 커서 대신에 윈도우즈 커서(작은 크기, 흑백)를 사용합니다"
 
-#: engines/sci/detection.cpp:267
+#: engines/sci/detection.cpp:268
 msgid "Use silver cursors"
 msgstr "실버 커서 사용"
 
-#: engines/sci/detection.cpp:268
+#: engines/sci/detection.cpp:269
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr "금색 커서 대신에 은색 대체 커서 세트를 사용합니다"
 
-#: engines/sci/detection.cpp:278
+#: engines/sci/detection.cpp:279
 msgid "Enable content censoring"
 msgstr "컨텐츠 검열 사용"
 
-#: engines/sci/detection.cpp:279
+#: engines/sci/detection.cpp:280
 msgid "Enable the game's built-in optional content censoring"
 msgstr "컨텐츠 검열에 대한 내장 게임 옵션을 사용합니다"
 
-#: engines/sci/detection.cpp:289
+#: engines/sci/detection.cpp:290
 msgid "Upscale videos"
 msgstr "비디오 업스케일"
 
-#: engines/sci/detection.cpp:290
+#: engines/sci/detection.cpp:291
 msgid "Upscale videos to double their size"
 msgstr "실제 사이즈의 두 배 크기로 비디오를 업스케일합니다"
 
-#: engines/sci/detection.cpp:300
+#: engines/sci/detection.cpp:301
 msgid "Use RGB rendering"
 msgstr "RGB 렌더링 사용"
 
-#: engines/sci/detection.cpp:301
+#: engines/sci/detection.cpp:302
 msgid "Use RGB rendering to improve screen transitions"
 msgstr "화면 전환효과를 개선하기위해 RGB 렌더링을 사용합니다"
 
-#: engines/sci/detection.cpp:311
+#: engines/sci/detection.cpp:312
 msgid "Use per-resource modified palettes"
 msgstr "리소스별 변경된 팔레트 사용"
 
-#: engines/sci/detection.cpp:312
+#: engines/sci/detection.cpp:313
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr "비주얼 향상을 위해 리소스별 커스텀 팔레트 사용"
 
-#: engines/sci/detection.cpp:342
+#: engines/sci/detection.cpp:343
 msgid "MIDI mode:"
 msgstr "MIDI 모드:"
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:344
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
@@ -5819,15 +5819,15 @@ msgstr ""
 "외장 MIDI 장치를 사용하는 경우 (USB-MIDI 등), 여기서 사용하는 장치를 선택하십"
 "시오"
 
-#: engines/sci/detection.cpp:348
+#: engines/sci/detection.cpp:349
 msgid "Standard (GM / MT-32)"
 msgstr "표준 (GM / MT-32)"
 
-#: engines/sci/detection.cpp:352
+#: engines/sci/detection.cpp:353
 msgid "Roland D-110 / D-10 / D-20"
 msgstr "Roland D-110 / D-10 / D-20"
 
-#: engines/sci/detection.cpp:356
+#: engines/sci/detection.cpp:357
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
@@ -6011,27 +6011,27 @@ msgstr ""
 "이 경우 원본 Sierra 패치를 적용해야 할 수도 있습니다.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:175
+#: engines/scumm/detection.cpp:176
 msgid "Show Object Line"
 msgstr "오브젝트 이름 표시"
 
-#: engines/scumm/detection.cpp:176
+#: engines/scumm/detection.cpp:177
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "오브젝트의 이름을 화면 하단에 표시합니다"
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:183
 msgid "Use NES Classic Palette"
 msgstr "NES 클래식 팔레트"
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:184
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "NES 클래식 버전을 재현하는 더 자연스러운 컬러 팔레트를 사용합니다"
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:190
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "FM-TOWNS 게임을 200픽셀 높이로 잘라냄"
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:191
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
