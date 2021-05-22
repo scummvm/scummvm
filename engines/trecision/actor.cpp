@@ -227,7 +227,7 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 	m1[0][1] = v1[1];
 	m1[0][2] = v1[2];
 
-	for (uint b = 0; b < actionNum; b++) {
+	for (uint b = 0; b < actionNum; ++b) {
 		SVertex *sv = &_vertex[b * _vertexNum];
 
 		v1[0] = sv[idx2]._x - sv[idx1]._x;
@@ -289,15 +289,15 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 			q[0] = 0.0;
 			q[1] = 0.0;
 			q[2] = 0.0;
-			for (d = 0; d < 3; d++) {
-				for (c = 0; c < 3; c++)
+			for (d = 0; d < 3; ++d) {
+				for (c = 0; c < 3; ++c)
 					q[c] += m1[c][d] * v[d];
 			}
 			v[0] = 0.0;
 			v[1] = 0.0;
 			v[2] = 0.0;
-			for (d = 0; d < 3; d++) {
-				for (c = 0; c < 3; c++)
+			for (d = 0; d < 3; ++d) {
+				for (c = 0; c < 3; ++c)
 					v[c] += m2[d][c] * q[d];
 			}
 
@@ -413,7 +413,7 @@ void Actor::actorDoAction(int action) {
 	int len = _vm->_defActionLen[action];
 
 	int stepIdx;
-	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; stepIdx++) {
+	for (stepIdx = _vm->_pathFind->_curStep; stepIdx < len + _vm->_pathFind->_curStep; ++stepIdx) {
 		float curLen = frameCenter(v) - firstFrame;
 
 		SStep *curStep = &_vm->_pathFind->_step[stepIdx];

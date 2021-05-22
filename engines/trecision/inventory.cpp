@@ -67,13 +67,13 @@ void TrecisionEngine::setInventoryStart(uint8 startIcon, uint8 startLine) {
 
 void TrecisionEngine::moveInventoryLeft() {
 	if (_iconBase < _inventory.size() - ICONSHOWN)
-		_iconBase++;
+		++_iconBase;
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
 void TrecisionEngine::moveInventoryRight() {
 	if (_iconBase > 0)
-		_iconBase--;
+		--_iconBase;
 	setInventoryStart(_iconBase, INVENTORY_SHOW);
 }
 
