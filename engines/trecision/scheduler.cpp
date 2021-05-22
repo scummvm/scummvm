@@ -44,7 +44,8 @@ void Scheduler::process() {
 		retry = false;
 		switch (_token) {
 		case CLASS_GAME:
-			if (_counter++ <= 30) {
+			if (_counter <= 30) {
+				++_counter;
 				_token = CLASS_ANIM;
 				if (_vm->_gameQueue.getMessage(&_vm->_curMessage))
 					_vm->_curMessage = &_vm->_idleMsg;
@@ -100,7 +101,7 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 
 	if (lq->_tail == MAXMESSAGE)
 		lq->_tail = 0;
-	lq->_len++;
+	++lq->_len;
 
 	if (lq == &_vm->_gameQueue && lq->_len > _maxMessageGame)
 		_maxMessageGame = lq->_len;
@@ -154,7 +155,7 @@ void MessageQueue::orderEvents() {
 	for (uint8 pos = predEvent(_tail); pos != _head; pos = predEvent(pos)) {
 		if (_event[pos]->_priority > _event[predEvent(pos)]->_priority) {
 			if (_event[pos]->_priority < MP_HIGH)
-				_event[pos]->_priority++;
+				++_event[pos]->_priority;
 			SWAP(_event[pos], _event[predEvent(pos)]);
 		}
 	}

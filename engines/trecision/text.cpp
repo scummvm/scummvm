@@ -78,7 +78,7 @@ void TextManager::formattingSuperString() {
 	_subStringAgain = true;
 	while (_subStringAgain) {
 		formattingOneString();
-		_subStringUsed++;
+		++_subStringUsed;
 	}
 }
 
@@ -87,7 +87,7 @@ void TextManager::formattingOneString() {
 	memset(_subString[_subStringUsed], '\0', MAXLENSUBSTRING);
 
 	const uint16 available = (_superString.size() - _subStringStart);
-	for (i = 0; i < available; i++) {
+	for (i = 0; i < available; ++i) {
 		switch (_superString[i + _subStringStart]) {
 		case '\0':
 			_subStringAgain = false;
@@ -152,7 +152,7 @@ void TextManager::characterContinueTalk() {
 	if (!_talkTime)
 		_talkTime = Common::String(_subString[_curSubString]).size() * 5 / 2 + 50;
 
-	_curSubString++;
+	++_curSubString;
 
 	_vm->_scheduler->doEvent(MC_STRING, ME_CHARACTERSPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
@@ -199,7 +199,7 @@ void TextManager::someoneContinueTalk() {
 	if (!_talkTime)
 		_talkTime = Common::String(_subString[_curSubString]).size() * 5 / 2 + 50;
 
-	_curSubString++;
+	++_curSubString;
 	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONESPEAKING, MP_DEFAULT, 0, 0, 0, 0);
 }
 

@@ -103,7 +103,7 @@ void GraphicsManager::copyToScreenBuffer(const Graphics::Surface *surface, int x
 }
 
 void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y) {
-	for (int curY = 0; curY < surface->h; curY++) {
+	for (int curY = 0; curY < surface->h; ++curY) {
 		// NOTE: We use surface width for the pitch so that memcpy works
 		// correcly with surfaces from getSubArea()
 		memcpy(_screenBuffer.getBasePtr(x, y + curY), surface->getBasePtr(0, curY), surface->w * 2);
@@ -114,8 +114,8 @@ void GraphicsManager::blitToScreenBuffer(const Graphics::Surface *surface, int x
 	const uint16 mask = (uint16)_screenFormat.RGBToColor(palette[0], palette[1], palette[2]);
 	Graphics::Surface *surface16 = surface->convertTo(_screenFormat, palette);
 
-	for (int curY = 0; curY < surface16->h; curY++) {
-		for (int curX = 0; curX < surface16->w; curX++) {
+	for (int curY = 0; curY < surface16->h; ++curY) {
+		for (int curX = 0; curX < surface16->w; ++curX) {
 			const int destX = x + curX;
 			const int destY = y + curY;
 			const uint16 pixel = (uint16)surface16->getPixel(curX, curY);
@@ -149,9 +149,9 @@ uint16 *GraphicsManager::getScreenBufferPtr() {
 void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count) {
 	surface->create(width * count, height, kImageFormat);
 
-	for (uint16 i = 0; i < count; i++) {
-		for (uint16 y = 0; y < height; y++) {
-			for (uint16 x = 0; x < width; x++) {
+	for (uint16 i = 0; i < count; ++i) {
+		for (uint16 y = 0; y < height; ++y) {
+			for (uint16 x = 0; x < width; ++x) {
 				surface->setPixel(width * i + x, y, stream->readUint16LE());
 			}
 		}
@@ -188,7 +188,7 @@ void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thu
 	thumbnail->free();
 	delete thumbnail;
 
-	for (uint16 y = 0; y < ICONDY; y++) {
+	for (uint16 y = 0; y < ICONDY; ++y) {
 		memcpy(_saveSlotThumbnails.getBasePtr(ICONDX * iconSlot, y), scaled->getBasePtr(0, y), ICONDX * 2);
 	}
 
@@ -254,17 +254,17 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
 		return;
 
 	uint8 r, g, b;
-	for (uint32 a = 0; a < len; a++) {
+	for (uint32 a = 0; a < len; ++a) {
 		const uint16 t = p[a];
 		kImageFormat.colorToRGB(t, r, g, b);
 		p[a] = _screenFormat.RGBToColor(r, g, b);
 	}
 }
 
-/*------------------------------------------------
-					Shadow Pixel
-				(dark) 0..8 (light)
---------------------------------------------------*/
+/**
+ *					Shadow Pixel
+ *				(dark) 0..8 (light)
+ */
 void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
 	const uint16 val = _screenBuffer.getPixel(x, y);
 	const uint16 shadow =
@@ -282,9 +282,9 @@ void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
 	_screenBuffer.setPixel(x, y, aliasing(px1, px2, 2));            // 25% 75%
 }
 
-/*------------------------------------------------
-					Aliasing Pixel
---------------------------------------------------*/
+/**
+ *					Aliasing Pixel
+ */
 uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 	// 0:   0% val1 100% val2
 	// 1:  12% val1  87% val2
@@ -388,13 +388,13 @@ void GraphicsManager::drawObj(SDObj d) {
 	if (d.drawMask && d.objIndex >= 0) {
 		uint8 *mask = _vm->_maskPointers[d.objIndex];
 
-		for (uint16 b = d.rect.top; b < d.rect.bottom; b++) {
+		for (uint16 b = d.rect.top; b < d.rect.bottom; ++b) {
 			uint16 sco = 0;
 			uint16 c = 0;
 			while (sco < d.rect.width()) {
 				if (c == 0) { // jump
 					sco += *mask;
-					mask++;
+					++mask;
 
 					c = 1;
 				} else { // copy
@@ -420,7 +420,7 @@ void GraphicsManager::drawObj(SDObj d) {
 			}
 		}
 	} else {
-		for (uint16 b = d.l.top; b < d.l.bottom; b++) {
+		for (uint16 b = d.l.top; b < d.l.bottom; ++b) {
 			memcpy(_screenBuffer.getBasePtr(d.rect.left + d.l.left, d.rect.top + b),
 				   buf + (b * d.rect.width()) + d.l.left, d.l.width() * 2);
 		}
@@ -440,7 +440,7 @@ void GraphicsManager::drawChar(byte curChar, uint16 sColor, uint16 tColor, uint1
 	uint16 fontDataOffset = 768;
 	const uint16 charWidth = getCharWidth(curChar);
 
-	for (uint16 y = line * CARHEI; y < (line + 1) * CARHEI; y++) {
+	for (uint16 y = line * CARHEI; y < (line + 1) * CARHEI; ++y) {
 		uint16 curPos = 0;
 		uint16 curColor = sColor;
 
@@ -462,7 +462,7 @@ void GraphicsManager::drawChar(byte curChar, uint16 sColor, uint16 tColor, uint1
 			}
 
 			curPos += _font[charOffset + fontDataOffset];
-			fontDataOffset++;
+			++fontDataOffset;
 
 			if (curColor == sColor)
 				curColor = 0;
@@ -497,7 +497,7 @@ void GraphicsManager::drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight,
 
 	if (dst && size > 0) {
 		uint16 *d = dst;
-		for (uint32 i = 0; i < size; i++)
+		for (uint32 i = 0; i < size; ++i)
 			*d++ = color;
 	}
 }
@@ -510,7 +510,7 @@ void GraphicsManager::initCursor() {
 
 	const uint16 cursorColor = (uint16)_screenFormat.RGBToColor(255, 255, 255);
 
-	for (int i = 0; i < cw; i++) {
+	for (int i = 0; i < cw; ++i) {
 		if (i >= 8 && i <= 12 && i != 10)
 			continue;
 		cursor[cx * cw + i] = cursorColor; // horizontal
