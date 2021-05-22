@@ -62,7 +62,8 @@ static const DebugChannelDef debugFlagList[] = {
 		{Scumm::DEBUG_SOUND, "SOUND", "Sound related debug"},
 		{Scumm::DEBUG_INSANE, "INSANE", "Track INSANE"},
 		{Scumm::DEBUG_SMUSH, "SMUSH", "Track SMUSH"},
-		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"}
+		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"},
+		DEBUG_CHANNEL_END
 };
 
 using namespace Scumm;
