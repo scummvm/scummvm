@@ -52,6 +52,8 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
+#endif
+
 static const DebugChannelDef debugFlagList[] = {
 	{Lure::kLureDebugScripts, "scripts", "Scripts debugging"},
 	{Lure::kLureDebugAnimations, "animations", "Animations debugging"},
@@ -61,8 +63,6 @@ static const DebugChannelDef debugFlagList[] = {
 	{Lure::kLureDebugStrings, "strings", "Strings debugging"},
 	DEBUG_CHANNEL_END
 };
-
-#endif
 
 namespace Lure {
 
