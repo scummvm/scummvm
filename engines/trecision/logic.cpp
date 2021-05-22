@@ -64,15 +64,15 @@ LogicManager::LogicManager(TrecisionEngine *vm) : _vm(vm) {
 LogicManager::~LogicManager() {}
 
 void LogicManager::syncGameStream(Common::Serializer &ser) {
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < 7; ++i)
 		ser.syncAsUint16LE(_comb35[i]);
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 		ser.syncAsUint16LE(_comb49[i]);
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 6; ++i)
 		ser.syncAsUint16LE(_comb4CT[i]);
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < 6; ++i)
 		ser.syncAsUint16LE(_comb58[i]);
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 3; ++i)
 		ser.syncAsUint16LE(_wheelPos[i]);
 	ser.syncAsUint16LE(_wheel);
 	ser.syncAsUint16LE(_count35);
@@ -295,7 +295,7 @@ void LogicManager::startCharacterAnimations() {
 			break;
 		}
 	
-		i++;
+		++i;
 	} while (characterAnimations[i]._curRoom != 0);
 
 	if (_vm->_curRoom == kRoom18 && _vm->_oldRoom == kRoom17 && !(_vm->_room[kRoom18]._flag & kObjFlagDone)) {
@@ -1528,7 +1528,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->setObjectAnim(oSLOT41, a414);
 			else
 				_vm->_textMgr->characterSay(2015);
-			_slotMachine41Counter++;
+			++_slotMachine41Counter;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFESSURA41) && ((_vm->_obj[oFUCILE42]._anim == 0) || (_vm->_obj[oFUCILE42]._anim == a428) || (_vm->_obj[oFUCILE42]._anim == a429))) {
 			_vm->_textMgr->characterSay(2010);
@@ -2326,7 +2326,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 
 	case oEXIT58T:
 		_count58 = 0;
-		for (int a = 0; a < 6; a++)
+		for (int a = 0; a < 6; ++a)
 			_vm->setObjectVisible(oLED158 + a, false);
 		_vm->changeRoom(_vm->_obj[oEXIT58T]._goRoom);
 		break;
@@ -2594,7 +2594,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oEXIT58T:
 		_count58 = 0;
-		for (uint8 a = 0; a < 6; a++)
+		for (uint8 a = 0; a < 6; ++a)
 			_vm->setObjectVisible(oLED158 + a, false);
 		_vm->changeRoom(_vm->_obj[oEXIT58T]._goRoom);
 		break;
@@ -2843,7 +2843,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oFORO549:
 	case oFORO649:
 	case oFORO749:
-		for (int a = oASTAC49; a <= oASTA749; a++)
+		for (int a = oASTAC49; a <= oASTA749; ++a)
 			_vm->setObjectVisible(a, false);
 		_vm->setObjectVisible(oASTAC49 + curObj - oFOROC49, true);
 		_comb49[3] = _comb49[2];
@@ -2880,7 +2880,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oASTA549:
 	case oASTA649:
 	case oASTA749:
-		for (int a = oASTAC49; a <= oASTA749; a++)
+		for (int a = oASTAC49; a <= oASTA749; ++a)
 			_vm->setObjectVisible(a, false);
 		_vm->setObjectVisible(oASTAC49, true);
 		_vm->changeRoom(kRoom49, a496, 1);
@@ -2898,7 +2898,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oNUMERO94C:
 	case oNUMERO04C: {
 		int a;
-		for (a = 0; a < 6; a++) {
+		for (a = 0; a < 6; ++a) {
 			if (_comb4CT[a] == 0) {
 				_vm->setObjectVisible(a + oAST14C, true);
 				_comb4CT[a] = curObj - oNUMERO14C + 1;
@@ -2912,14 +2912,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->waitDelay(60);
 		if ((_comb4CT[0] == 5) && (_comb4CT[1] == 6) && (_comb4CT[2] == 2) &&
 			(_comb4CT[3] == 3) && (_comb4CT[4] == 9) && (_comb4CT[5] == 6)) {
-			for (a = 0; a < 6; a++) {
+			for (a = 0; a < 6; ++a) {
 				_comb4CT[a] = 0;
 				_vm->setObjectVisible(oAST14C + a, false);
 			}
 			_vm->changeRoom(kRoom51, 0, 1);
 			_vm->_flagCharacterExists = true;
 		} else {
-			for (a = 0; a < 6; a++) {
+			for (a = 0; a < 6; ++a) {
 				_comb4CT[a] = 0;
 				_vm->setObjectVisible(oAST14C + a, false);
 			}
@@ -2962,7 +2962,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPULSANTECD:
-		for (int a = oPULSANTE1AD; a <= oPULSANTE33AD; a++) {
+		for (int a = oPULSANTE1AD; a <= oPULSANTE33AD; ++a) {
 			if ((_vm->_obj[a]._goRoom == _vm->_obj[oEXIT41D]._goRoom) ||
 				((_vm->_obj[a]._goRoom == kRoom45) && (_vm->_obj[oEXIT41D]._goRoom == kRoom45S))) {
 				_vm->_textMgr->characterSay(903);
@@ -3076,14 +3076,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 		_vm->_soundMgr->play(wPAD1 + curObj - oTASTO158);
 		_vm->setObjectVisible(oLED158 + _count58, true);
-		_count58++;
+		++_count58;
 		if (_count58 < 6)
 			break;
 
 		_vm->_renderer->paintScreen(false);
 		_vm->waitDelay(60);
 		_count58 = 0;
-		for (int a = 0; a < 6; a++)
+		for (int a = 0; a < 6; ++a)
 			_vm->setObjectVisible(oLED158 + a, false);
 
 		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
@@ -3183,7 +3183,7 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 		break;
 
 	case ocNEGOZIANTE1A:
-		for (int c = _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice; c < (_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice + _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._choiceNumb); c++) {
+		for (int c = _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice; c < (_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice + _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._choiceNumb); ++c) {
 			if (!(_vm->_dialogMgr->_choice[c]._flag & DLGCHOICE_HIDE)) {
 				_vm->_dialogMgr->playDialog(_vm->_obj[curObj]._goRoom);
 				retVal = false;
@@ -3529,7 +3529,7 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case kItemPositioner:
-		for (int a = oROOM41; a <= oROOM45B; a++)
+		for (int a = oROOM41; a <= oROOM45B; ++a)
 			_vm->setObjectVisible(a, false);
 		_vm->changeRoom(kRoom41D);
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
@@ -3575,7 +3575,7 @@ void LogicManager::doMouseGame() {
 		const uint16 displacerRoom = oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - kRoom41;
 		if ((_vm->_curObj >= oPULSANTE1AD) && (_vm->_curObj <= oPULSANTE33AD)) {
 			if (!_vm->isObjectVisible(displacerRoom)) {
-				for (int a = oROOM41; a <= oROOM4X; a++) {
+				for (int a = oROOM41; a <= oROOM4X; ++a) {
 					if (_vm->isObjectVisible(a))
 						_vm->setObjectVisible(a, false);
 				}
@@ -3587,7 +3587,7 @@ void LogicManager::doMouseGame() {
 					_vm->setObjectVisible(displacerRoom, true);
 			}
 		} else {
-			for (int a = oROOM41; a <= oROOM4X; a++) {
+			for (int a = oROOM41; a <= oROOM4X; ++a) {
 				if (_vm->isObjectVisible(a))
 					_vm->setObjectVisible(a, false);
 			}

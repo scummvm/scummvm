@@ -269,7 +269,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 
 			_vm->_textMgr->someoneSay(307 + _oneSpeakDialogCount, oDONNA1D, 0);
 			if (_oneSpeakDialogCount < 6)
-				_oneSpeakDialogCount++;
+				++_oneSpeakDialogCount;
 			break;
 
 		case 2:
@@ -307,7 +307,7 @@ void AnimTypeManager::init(uint16 an, uint16 obj) {
 void AnimTypeManager::next() {
 	for (int i = 0; i < 3; ++i) {
 		if (!(_animType[i]._status & ATF_WAITTEXT) || !_vm->_flagCharacterSpeak)
-			_animType[i]._curFrame++;
+			++_animType[i]._curFrame;
 	}
 }
 
@@ -324,7 +324,7 @@ void AnimTypeManager::end(int type) {
 
 	uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
 
-	for (int32 a = 0; a < MAXATFRAME; a++) {
+	for (int32 a = 0; a < MAXATFRAME; ++a) {
 		// if it's time to run this AtFrame
 		if (anim->_atFrame[a]._numFrame == 0 && anim->_atFrame[a]._type) {
 			const uint8 child = anim->_atFrame[a]._child;
@@ -345,14 +345,14 @@ void AnimTypeManager::handler(int type) {
 		return;
 
 	if (h->_curFrame == 0)
-		h->_curFrame++;
+		++h->_curFrame;
 	// if this ATFrame has already been applied
 	if (h->_curFrame <= h->_lastFrame)
 		return;
 
 	uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
 
-	for (int32 a = 0; a < MAXATFRAME; a++) {
+	for (int32 a = 0; a < MAXATFRAME; ++a) {
 		// if it's time to run this AtFrame
 		if ((anim->_atFrame[a]._numFrame > h->_lastFrame) && (anim->_atFrame[a]._numFrame <= h->_curFrame) && (anim->_atFrame[a]._numFrame != 0)) {
 			if (anim->_atFrame[a]._child == 0 ||

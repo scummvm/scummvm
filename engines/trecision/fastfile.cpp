@@ -55,9 +55,9 @@ bool FastFile::open(const Common::String &name) {
 
 	int numFiles = _stream->readUint32LE();
 	_fileEntries.resize(numFiles);
-	for (int i = 0; i < numFiles; i++) {
+	for (int i = 0; i < numFiles; ++i) {
 		FileEntry *entry = &_fileEntries[i];
-		for (int j = 0; j < 12; j++)
+		for (int j = 0; j < 12; ++j)
 			entry->name += _stream->readByte();
 		entry->offset = _stream->readUint32LE();
 	}
@@ -126,7 +126,7 @@ void FastFile::decompress(const unsigned char *src, uint32 srcSize, unsigned cha
 
 			for (uint16 i = 0; i < num; ++i) {
 				*d++ = *cs++;
-				bytesWritten++;
+				++bytesWritten;
 				assert(bytesWritten <= decompSize);
 			}
 
@@ -136,7 +136,7 @@ void FastFile::decompress(const unsigned char *src, uint32 srcSize, unsigned cha
 			assert(bytesWritten <= decompSize);
 		} else {
 			*d++ = *s++;
-			bytesWritten++;
+			++bytesWritten;
 			assert(bytesWritten <= decompSize);
 		}
 	}

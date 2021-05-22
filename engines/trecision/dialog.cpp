@@ -66,13 +66,14 @@ void DialogManager::showChoices(uint16 i) {
 	_lastPos = -1;
 	_vm->_graphicsMgr->clearScreenBufferTop();
 
-	for (int c = 0; c < MAXDISPCHOICES; c++)
+	for (int c = 0; c < MAXDISPCHOICES; ++c)
 		_dispChoice[c] = 0;
 
 	_curDispChoice = 0;
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
-			_dispChoice[_curDispChoice++] = c;
+			_dispChoice[_curDispChoice] = c;
+			++_curDispChoice;
 			dialogPrint(x, y, HWHITE, _vm->_sentence[_choice[c]._sentenceIndex]);
 			y += CARHEI;
 		}
@@ -91,7 +92,7 @@ void DialogManager::updateChoices(int16 dmx, int16 dmy) {
 		_curPos = -1;
 
 	if ((_curPos != _lastPos) && ((_curPos != -1) || (_lastPos != -1))) {
-		for (int c = 0; c < MAXDISPCHOICES; c++) {
+		for (int c = 0; c < MAXDISPCHOICES; ++c) {
 			if (_dispChoice[c] != 0) {
 				if (c == _curPos)
 					dialogPrint(10, 5 + c * CARHEI, HGREEN, _vm->_sentence[_choice[_dispChoice[c]]._sentenceIndex]);
@@ -122,19 +123,19 @@ void DialogManager::playDialog(uint16 i) {
 
 	int skip = 0;
 	int curChoice = 0;
-	for (int c = _dialog[_curDialog]._firstChoice; c < (_dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb); ++c) {
+	for (int c = _dialog[_curDialog]._firstChoice; c < _dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb; ++c) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
-			curChoice++;
+			++curChoice;
 	}
 
-	if ((_curDialog == dC581) && !(_choice[262]._flag & DLGCHOICE_HIDE))
-		skip++;
-	if ((_curDialog == dC581) && (curChoice == 1))
-		skip++;
-	if ((_curDialog == dSHOPKEEPER1A) && (curChoice == 1))
-		skip++;
+	if (_curDialog == dC581 && !(_choice[262]._flag & DLGCHOICE_HIDE))
+		++skip;
+	if (_curDialog == dC581 && curChoice == 1)
+		++skip;
+	if (_curDialog == dSHOPKEEPER1A && curChoice == 1)
+		++skip;
 	// if there's a pre-dialog
-	if ((_dialog[i]._startLen > 0) && !skip)
+	if (_dialog[i]._startLen > 0 && !skip)
 		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 0, _dialog[i]._startLen - 1);
 	else {
 		_vm->_animMgr->smkToggleAudio(1, false);
@@ -388,7 +389,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF491:
-			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; c++) {
+			for (int c = oPULSANTE1AD; c <= oPULSANTE33AD; ++c) {
 				if (!_vm->_obj[c]._goRoom) {
 					_vm->_obj[c]._goRoom = kRoom4A;
 					_vm->setObjectVisible(c, true);
@@ -523,7 +524,7 @@ void DialogManager::afterChoice() {
 
 	// If there's only one option, show it immediately, otherwise show available choices
 	int res = 0;
-	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; c++) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
 			if (_choice[c]._flag & DLGCHOICE_EXITNOW) {
 				if (res == 0)
@@ -545,9 +546,9 @@ void DialogManager::afterChoice() {
 
 	// If no option is visible, close the dialog
 	res = 0;
-	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; c++) {
+	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
-			res++;
+			++res;
 	}
 
 	if (res == 0) {
@@ -564,7 +565,8 @@ void DialogManager::dialogHandler(int numFrame) {
 	if (_vm->_flagDialogActive && !_vm->_flagDialogMenuActive) {
 		_vm->_graphicsMgr->hideCursor();
 		if (numFrame == _subTitles[_curSubTitle]._startFrame) {
-			int i = _curSubTitle++;
+			int i = _curSubTitle;
+			++_curSubTitle;
 			_vm->_drawText._rect.left = _subTitles[i]._x;
 			_vm->_drawText._rect.top = _subTitles[i]._y;
 			_vm->_drawText.tcol = _subTitles[i]._color;
@@ -595,12 +597,12 @@ void DialogManager::playChoice(uint16 i) {
 		choice->_flag |= DLGCHOICE_HIDE;
 
 	// Disable other choices
-	for (int c = 0; c < MAXDISPCHOICES; c++) {
+	for (int c = 0; c < MAXDISPCHOICES; ++c) {
 		_choice[choice->_off[c]]._flag |= DLGCHOICE_HIDE;
 		_choice[choice->_on[c]]._flag &= ~DLGCHOICE_HIDE;
 	}
 
-	for (int c = _curSubTitle; c < endSubTitle; c++)
+	for (int c = _curSubTitle; c < endSubTitle; ++c)
 		totalLength += _subTitles[c]._length;
 
 	_vm->_graphicsMgr->hideCursor();
@@ -633,21 +635,21 @@ bool DialogManager::showCharacterAfterDialog() const {
 }
 
 void DialogManager::syncGameStream(Common::Serializer &ser) {
-	for (int a = 0; a < MAXCHOICE; a++) {
+	for (int a = 0; a < MAXCHOICE; ++a) {
 		DialogChoice *choice = &_choice[a];
 		ser.syncAsUint16LE(choice->_flag);
 		ser.syncAsUint16LE(choice->_sentenceIndex);
 		ser.syncAsUint16LE(choice->_firstSubTitle);
 		ser.syncAsUint16LE(choice->_subTitleNumb);
-		for (int i = 0; i < MAXDISPCHOICES; i++)
+		for (int i = 0; i < MAXDISPCHOICES; ++i)
 			ser.syncAsUint16LE(choice->_on[i]);
-		for (int i = 0; i < MAXDISPCHOICES; i++)
+		for (int i = 0; i < MAXDISPCHOICES; ++i)
 			ser.syncAsUint16LE(choice->_off[i]);
 		ser.syncAsUint16LE(choice->_startFrame);
 		ser.syncAsUint16LE(choice->_nextDialog);
 	}
 
-	for (int a = 0; a < MAXDIALOG; a++) {
+	for (int a = 0; a < MAXDIALOG; ++a) {
 		Dialog *dialog = &_dialog[a];
 		ser.syncAsUint16LE(dialog->_flag);
 		ser.syncAsUint16LE(dialog->_interlocutor);
@@ -655,7 +657,7 @@ void DialogManager::syncGameStream(Common::Serializer &ser) {
 		ser.syncAsUint16LE(dialog->_startLen);
 		ser.syncAsUint16LE(dialog->_firstChoice);
 		ser.syncAsUint16LE(dialog->_choiceNumb);
-		for (int i = 0; i < MAXNEWSMKPAL; i++)
+		for (int i = 0; i < MAXNEWSMKPAL; ++i)
 			ser.syncAsUint16LE(dialog->_newPal[i]);
 	}
 }

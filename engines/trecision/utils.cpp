@@ -36,16 +36,16 @@ namespace Trecision {
 char *TrecisionEngine::getNextSentence() {
 	while (*_textPtr) {
 		*_textPtr = ~(*_textPtr);
-		_textPtr++;
+		++_textPtr;
 	}
 
-	_textPtr++;
+	++_textPtr;
 	return _textPtr;
 }
 
-/*-------------------------------------------------
+/**
  * Compute string length from character begin to end
- *-------------------------------------------------*/
+ */
 uint16 TrecisionEngine::textLength(const Common::String &text, uint16 begin, uint16 end) {
 	if (text.empty())
 		return 0;
@@ -54,7 +54,7 @@ uint16 TrecisionEngine::textLength(const Common::String &text, uint16 begin, uin
 		end = text.size();
 
 	uint16 retVal = 0;
-	for (uint16 c = begin; c < end; c++)
+	for (uint16 c = begin; c < end; ++c)
 		retVal += _graphicsMgr->getCharWidth(text[c]);
 
 	return retVal;
@@ -117,13 +117,13 @@ uint32 TrecisionEngine::readTime() {
 }
 
 bool TrecisionEngine::checkMask(Common::Point pos) {
-	for (int8 a = MAXOBJINROOM - 1; a >= 0; a--) {
+	for (int8 a = MAXOBJINROOM - 1; a >= 0; --a) {
 		uint16 checkedObj = _room[_curRoom]._object[a];
 		Common::Rect lim = _obj[checkedObj]._lim;
 		lim.translate(0, TOP);
 		// Trecision includes the bottom and right coordinates
-		lim.right++;
-		lim.bottom++;
+		++lim.right;
+		++lim.bottom;
 
 		if (checkedObj && isObjectVisible(checkedObj)) {
 			if (lim.contains(pos)) {
@@ -138,7 +138,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 					int16 d = _obj[checkedObj]._rect.left;
 					uint16 max = _obj[checkedObj]._rect.bottom;
 
-					for (uint16 b = _obj[checkedObj]._rect.top; b < max; b++) {
+					for (uint16 b = _obj[checkedObj]._rect.top; b < max; ++b) {
 						bool insideObj = false;
 						int16 e = 0;
 						while (e < _obj[checkedObj]._rect.width()) {
@@ -150,7 +150,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 								}
 
 								e += *mask;
-								mask++;
+								++mask;
 								insideObj = true;
 							} else { // inside an object
 								if (b + TOP == pos.y) {
@@ -161,7 +161,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 								}
 
 								e += *mask;
-								mask++;
+								++mask;
 								insideObj = false;
 							}
 						}
@@ -248,9 +248,9 @@ void TrecisionEngine::processMouse() {
 	}
 }
 
-/*------------------------------------------------
-		Fake distance between two 2D points
---------------------------------------------------*/
+/**
+ *		Fake distance between two 2D points
+ */
 float TrecisionEngine::dist2D(float x1, float y1, float x2, float y2) {
 	const double dx = x1 - x2;
 	const double dy = y1 - y2;
@@ -258,9 +258,9 @@ float TrecisionEngine::dist2D(float x1, float y1, float x2, float y2) {
 	return (float)sqrt(dx * dx + dy * dy);
 }
 
-/*------------------------------------------------
-			Distance between two 3D points
---------------------------------------------------*/
+/**
+ *			Distance between two 3D points
+ */
 float TrecisionEngine::dist3D(float x1, float y1, float z1, float x2, float y2, float z2) {
 	const double dx = x1 - x2;
 	const double dy = y1 - y2;
@@ -285,7 +285,7 @@ bool TrecisionEngine::isIconArea(Common::Point pos) {
 }
 
 int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
-	for (uint16 index = 0; index < MAXOBJINROOM; index++) {
+	for (uint16 index = 0; index < MAXOBJINROOM; ++index) {
 		const uint16 curObjId = _room[_curRoom]._object[index];
 		if (curObjId == 0)
 			return -1;
@@ -317,9 +317,9 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uin
 	}
 }
 
-/*-------------------------------------------------------------
-   calcHeight - Computes and returns the dy of the current text
---------------------------------------------------------------*/
+/**
+ *   calcHeight - Computes and returns the dy of the current text
+ */
 uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	if (text.empty())
 		return 0;
@@ -336,17 +336,17 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	uint16 curInit = 0;
 
 	while (a < text.size()) {
-		a++;
+		++a;
 		if (a < text.size() && text[a] == ' ') {
 			if (vm->textLength(text, curInit, a) <= _rect.width())
 				lastSpace = a;
 			else if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
-				for (b = curInit; b < lastSpace; b++)
+				for (b = curInit; b < lastSpace; ++b)
 					_drawTextLines[curLine][b - curInit] = text[b];
 
 				_drawTextLines[curLine][b - curInit] = '\0';
-				curLine++;
+				++curLine;
 
 				curInit = lastSpace + 1;
 
@@ -357,7 +357,7 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 		} else if (a == text.size()) {
 			if (vm->textLength(text, curInit, a) <= _rect.width()) {
 				uint16 b;
-				for (b = curInit; b < a; b++)
+				for (b = curInit; b < a; ++b)
 					_drawTextLines[curLine][b - curInit] = text[b];
 				_drawTextLines[curLine][b - curInit] = '\0';
 
@@ -368,17 +368,17 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 
 			if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
-				for (b = curInit; b < lastSpace; b++)
+				for (b = curInit; b < lastSpace; ++b)
 					_drawTextLines[curLine][b - curInit] = text[b];
 
 				_drawTextLines[curLine][b - curInit] = '\0';
-				curLine++;
+				++curLine;
 
 				curInit = lastSpace + 1;
 				tmpDy += CARHEI;
 
 				if (curInit < text.size()) {
-					for (b = curInit; b < text.size(); b++)
+					for (b = curInit; b < text.size(); ++b)
 						_drawTextLines[curLine][b - curInit] = text[b];
 
 					_drawTextLines[curLine][b - curInit] = '\0';
@@ -405,7 +405,7 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 
 	const uint16 curDy = calcHeight(vm);
 
-	for (uint16 line = 0; line < curDy / CARHEI; line++) {
+	for (uint16 line = 0; line < curDy / CARHEI; ++line) {
 		Common::String curText = _drawTextLines[line];
 		uint16 inc = (_rect.width() - vm->textLength(curText)) / 2;
 
@@ -413,7 +413,7 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 			curText = vm->_sysText[kMessageError];
 		}
 
-		for (uint index = 0; index < curText.size(); index++) {
+		for (uint index = 0; index < curText.size(); ++index) {
 			const byte curChar = curText[index];
 
 			if (index == curText.size() - 1 && vm->_blinkLastDTextChar != MASKCOL)

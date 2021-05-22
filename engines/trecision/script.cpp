@@ -42,7 +42,7 @@ void SScriptFrame::sendFrame(Scheduler *scheduler) {
 }
 
 void TrecisionEngine::endScript() {
-	_curStack--;
+	--_curStack;
 	if (_curStack == 0) {
 		_flagScriptActive = false;
 		_graphicsMgr->showCursor();
@@ -51,7 +51,7 @@ void TrecisionEngine::endScript() {
 }
 
 void TrecisionEngine::playScript(uint16 id) {
-	_curStack++;
+	++_curStack;
 	_flagScriptActive = true;
 	_graphicsMgr->hideCursor();
 	_curScriptFrame[_curStack] = _script[id]._firstFrame;
@@ -61,7 +61,7 @@ void TrecisionEngine::playScript(uint16 id) {
 
 void TrecisionEngine::evalScript() {
 	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
-		_curScriptFrame[_curStack]++;
+		++_curScriptFrame[_curStack];
 		_graphicsMgr->hideCursor();
 
 		processScriptFrame();
@@ -83,7 +83,7 @@ void TrecisionEngine::processScriptFrame() {
 		SScriptFrame *nextFrame = &_scriptFrame[_curScriptFrame[_curStack] + 1];
 		curFrame->sendFrame(_scheduler);
 		if (curFrame->_noWait && !nextFrame->isEmptyEvent()) {
-			_curScriptFrame[_curStack]++;
+			++_curScriptFrame[_curStack];
 			loop = true;
 		}
 	}
@@ -525,7 +525,7 @@ void TrecisionEngine::doMouseTake(uint16 curObj) {
 	// Remove object being taken
 	if (del) {
 		if (curAction) {
-			for (uint16 j = 0; j < MAXATFRAME; j++) {
+			for (uint16 j = 0; j < MAXATFRAME; ++j) {
 				SAtFrame *frame = &_animMgr->_animTab[curAction]._atFrame[j];
 				if (frame->_type == ATFCLR && frame->_index == curObj)
 					break;
