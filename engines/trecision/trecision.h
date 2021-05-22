@@ -101,6 +101,7 @@ class TrecisionEngine : public Engine {
 	void processScriptFrame();
 	void doAction();
 	void doMouse();
+	void processMouseMovement();
 	void doCharacter();
 	void doIdle();
 	void doRoomIn(uint16 curObj);
@@ -141,8 +142,6 @@ class TrecisionEngine : public Engine {
 	uint8 _curStack;
 
 	bool maskMouse;
-	Common::Point oldMousePos;
-	bool lastMouseOn;
 
 public:
 	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
@@ -278,7 +277,7 @@ public:
 	uint32 _nextRefresh;
 
 	Common::Point _mousePos;
-	bool _mouseLeftBtn, _mouseRightBtn;
+	bool _mouseMoved, _mouseLeftBtn, _mouseRightBtn;
 	Common::KeyCode _curKey;
 
 	bool _flagScriptActive;

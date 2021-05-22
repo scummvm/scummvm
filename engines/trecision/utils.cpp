@@ -225,13 +225,6 @@ void TrecisionEngine::processMouse() {
 	int16 mx = _mousePos.x;
 	int16 my = _mousePos.y;
 
-	if (lastMouseOn && !_graphicsMgr->isCursorVisible()) {
-		oldMousePos = Common::Point(0, 0); // Switch off
-	} else if (!lastMouseOn && _graphicsMgr->isCursorVisible()) {
-		oldMousePos = Common::Point(0, 0); // Switch on
-	}
-
-	lastMouseOn = _graphicsMgr->isCursorVisible();
 	checkSystem();
 
 	if (!_graphicsMgr->isCursorVisible())
@@ -248,9 +241,9 @@ void TrecisionEngine::processMouse() {
 	} else {
 		maskMouse = false;
 
-		if (!_flagScriptActive && (mx != oldMousePos.x || my != oldMousePos.y)) {
-			_scheduler->mouseMove(mx, my);
-			oldMousePos = Common::Point(mx, my);
+		if (!_flagScriptActive && _mouseMoved) {
+			processMouseMovement();
+			_mouseMoved = false;
 		}
 	}
 }

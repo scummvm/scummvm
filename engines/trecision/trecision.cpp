@@ -116,7 +116,7 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_curKey = Common::KEYCODE_INVALID;
 	_curAscii = 0;
 	_mousePos = Common::Point(0, 0);
-	_mouseLeftBtn = _mouseRightBtn = false;
+	_mouseMoved = _mouseLeftBtn = _mouseRightBtn = false;
 	_keybInput = false;
 
 	_gamePaused = false;
@@ -156,8 +156,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_forcedActorPos = 0;
 
 	maskMouse = false;
-	oldMousePos = Common::Point(0, 0);
-	lastMouseOn = true;
 
 	_pauseStartTime = 0;
 	_textStatus = TEXT_OFF;
@@ -247,6 +245,7 @@ void TrecisionEngine::eventLoop() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_MOUSEMOVE:
+			_mouseMoved = true;
 			_mousePos = event.mouse;
 			break;
 

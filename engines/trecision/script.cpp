@@ -213,41 +213,41 @@ void TrecisionEngine::doAction() {
 	}
 }
 
+void TrecisionEngine::processMouseMovement() {
+	if (isGameArea(_mousePos)) {
+		// Game area
+		if (_flagSomeoneSpeaks || _flagDialogMenuActive || _flagDialogActive)
+			return;
+
+		checkMask(_mousePos);
+		_logicMgr->doMouseGame();
+	} else if (isInventoryArea(_mousePos)) {
+		if (_logicMgr->doMouseInventory())
+			return;
+		if ((_flagSomeoneSpeaks && !_flagCharacterSpeak) || _flagDialogMenuActive || _flagDialogActive)
+			return;
+		if (_animMgr->_playingAnims[kSmackerAction])
+			return;
+
+		if (_inventoryStatus == INV_OFF)
+			_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+		else if (_inventoryStatus == INV_INACTION)
+			showIconName();
+	} else {
+		// Up area
+		if (_curRoom == kRoomControlPanel)
+			return;
+
+		_curObj = 0;
+		_textMgr->showObjName(_curObj, true);
+
+		if (_flagDialogMenuActive)
+			_dialogMgr->updateChoices(_mousePos.x, _mousePos.y);
+	}
+}
+
 void TrecisionEngine::doMouse() {
 	switch (_curMessage->_event) {
-	case ME_MMOVE:
-		if (isGameArea(_mousePos)) {
-			// Game area
-			if (_flagSomeoneSpeaks || _flagDialogMenuActive || _flagDialogActive)
-				break;
-
-			checkMask(_mousePos);
-			_logicMgr->doMouseGame();
-		} else if (isInventoryArea(_mousePos)) {
-			if (_logicMgr->doMouseInventory())
-				break;
-			if ((_flagSomeoneSpeaks && !_flagCharacterSpeak) || _flagDialogMenuActive || _flagDialogActive)
-				break;
-			if (_animMgr->_playingAnims[kSmackerAction])
-				break;
-
-			if (_inventoryStatus == INV_OFF)
-				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
-			else if (_inventoryStatus == INV_INACTION)
-				showIconName();
-		} else {
-			// Up area
-			if (_curRoom == kRoomControlPanel)
-				break;
-
-			_curObj = 0;
-			_textMgr->showObjName(_curObj, true);
-
-			if (_flagDialogMenuActive)
-				_dialogMgr->updateChoices(_mousePos.x, _mousePos.y);
-		}
-		break;
-
 	case ME_MRIGHT:
 	case ME_MLEFT:
 		if (_flagSomeoneSpeaks) {
