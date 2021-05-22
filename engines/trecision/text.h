@@ -67,7 +67,7 @@ public:
 
 	void doString();
 	void showObjName(uint16 obj, bool show);
-	void someoneSay(uint16 s, uint16 Person, uint16 NewAnim);
+	void someoneSay(uint16 sentence, uint16 person, uint16 anim);
 	void characterSay(uint16 i);
 	void characterSayInAction(uint16 ss);
 
