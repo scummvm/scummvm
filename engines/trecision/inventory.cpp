@@ -20,7 +20,7 @@
  *
  */
 
-#include "scheduler.h"
+#include "trecision/scheduler.h"
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/defines.h"

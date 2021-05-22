@@ -31,7 +31,6 @@
 #include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/graphics.h"
-#include "trecision/scheduler.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 

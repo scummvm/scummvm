@@ -25,7 +25,6 @@
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/logic.h"
-#include "trecision/scheduler.h"
 #include "trecision/graphics.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"

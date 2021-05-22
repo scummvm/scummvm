@@ -22,7 +22,7 @@
 
 #include "trecision/anim.h"
 
-#include "logic.h"
+#include "trecision/logic.h"
 #include "trecision/3d.h"
 #include "trecision/dialog.h"
 #include "trecision/scheduler.h"
