@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-21 23:35+0000\n"
+"POT-Creation-Date: 2021-05-22 10:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3586,7 +3586,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:299 engines/dreamweb/detection.cpp:51
-#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:235
+#: engines/neverhood/detection.cpp:124 engines/sci/detection.cpp:236
 #: engines/sherlock/detection.cpp:59 engines/toltecs/detection.cpp:213
 #: engines/ultima/detection.cpp:55 engines/ultima/ultima8/meta_engine.cpp:163
 #: engines/zvision/detection_tables.h:50
@@ -3595,7 +3595,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:88 engines/cine/detection.cpp:53
 #: engines/drascula/detection.cpp:300 engines/dreamweb/detection.cpp:52
-#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:236
+#: engines/neverhood/detection.cpp:125 engines/sci/detection.cpp:237
 #: engines/sherlock/detection.cpp:60 engines/toltecs/detection.cpp:214
 #: engines/ultima/detection.cpp:56 engines/ultima/ultima8/meta_engine.cpp:164
 #: engines/zvision/detection_tables.h:51
@@ -5426,131 +5426,131 @@ msgstr ""
 msgid "Error loading game resources."
 msgstr ""
 
-#: engines/sci/detection.cpp:173
+#: engines/sci/detection.cpp:174
 msgid "Skip EGA dithering pass (full color backgrounds)"
 msgstr ""
 
-#: engines/sci/detection.cpp:174
+#: engines/sci/detection.cpp:175
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
 
-#: engines/sci/detection.cpp:183
+#: engines/sci/detection.cpp:184
 msgid "Enable high resolution graphics"
 msgstr ""
 
-#: engines/sci/detection.cpp:184
+#: engines/sci/detection.cpp:185
 msgid "Enable high resolution graphics/content"
 msgstr ""
 
-#: engines/sci/detection.cpp:193
+#: engines/sci/detection.cpp:194
 msgid "Enable black-lined video"
 msgstr ""
 
-#: engines/sci/detection.cpp:194
+#: engines/sci/detection.cpp:195
 msgid "Draw black lines over videos to increase their apparent sharpness"
 msgstr ""
 
-#: engines/sci/detection.cpp:204
+#: engines/sci/detection.cpp:205
 msgid "Use high-quality video scaling"
 msgstr ""
 
-#: engines/sci/detection.cpp:205
+#: engines/sci/detection.cpp:206
 msgid "Use linear interpolation when upscaling videos, where possible"
 msgstr ""
 
-#: engines/sci/detection.cpp:215
+#: engines/sci/detection.cpp:216
 msgid "Use high-quality \"LarryScale\" cel scaling"
 msgstr ""
 
-#: engines/sci/detection.cpp:216
+#: engines/sci/detection.cpp:217
 msgid "Use special cartoon scaler for drawing character sprites"
 msgstr ""
 
-#: engines/sci/detection.cpp:225
+#: engines/sci/detection.cpp:226
 msgid "Prefer digital sound effects"
 msgstr ""
 
-#: engines/sci/detection.cpp:226
+#: engines/sci/detection.cpp:227
 msgid "Prefer digital sound effects instead of synthesized ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:245
+#: engines/sci/detection.cpp:246
 msgid "Use CD audio"
 msgstr ""
 
-#: engines/sci/detection.cpp:246
+#: engines/sci/detection.cpp:247
 msgid "Use CD audio instead of in-game audio, if available"
 msgstr ""
 
-#: engines/sci/detection.cpp:256
+#: engines/sci/detection.cpp:257
 msgid "Use Windows cursors"
 msgstr ""
 
-#: engines/sci/detection.cpp:257
+#: engines/sci/detection.cpp:258
 msgid ""
 "Use the Windows cursors (smaller and monochrome) instead of the DOS ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:267
+#: engines/sci/detection.cpp:268
 msgid "Use silver cursors"
 msgstr ""
 
-#: engines/sci/detection.cpp:268
+#: engines/sci/detection.cpp:269
 msgid ""
 "Use the alternate set of silver cursors instead of the normal golden ones"
 msgstr ""
 
-#: engines/sci/detection.cpp:278
+#: engines/sci/detection.cpp:279
 msgid "Enable content censoring"
 msgstr ""
 
-#: engines/sci/detection.cpp:279
+#: engines/sci/detection.cpp:280
 msgid "Enable the game's built-in optional content censoring"
 msgstr ""
 
-#: engines/sci/detection.cpp:289
+#: engines/sci/detection.cpp:290
 msgid "Upscale videos"
 msgstr ""
 
-#: engines/sci/detection.cpp:290
+#: engines/sci/detection.cpp:291
 msgid "Upscale videos to double their size"
 msgstr ""
 
-#: engines/sci/detection.cpp:300
+#: engines/sci/detection.cpp:301
 msgid "Use RGB rendering"
 msgstr ""
 
-#: engines/sci/detection.cpp:301
+#: engines/sci/detection.cpp:302
 msgid "Use RGB rendering to improve screen transitions"
 msgstr ""
 
-#: engines/sci/detection.cpp:311
+#: engines/sci/detection.cpp:312
 msgid "Use per-resource modified palettes"
 msgstr ""
 
-#: engines/sci/detection.cpp:312
+#: engines/sci/detection.cpp:313
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
 
-#: engines/sci/detection.cpp:342
+#: engines/sci/detection.cpp:343
 msgid "MIDI mode:"
 msgstr ""
 
-#: engines/sci/detection.cpp:343
+#: engines/sci/detection.cpp:344
 msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
 
-#: engines/sci/detection.cpp:348
+#: engines/sci/detection.cpp:349
 msgid "Standard (GM / MT-32)"
 msgstr ""
 
-#: engines/sci/detection.cpp:352
+#: engines/sci/detection.cpp:353
 msgid "Roland D-110 / D-10 / D-20"
 msgstr ""
 
-#: engines/sci/detection.cpp:356
+#: engines/sci/detection.cpp:357
 msgid "Yamaha FB-01"
 msgstr ""
 
@@ -5688,27 +5688,27 @@ msgid ""
 "\n"
 msgstr ""
 
-#: engines/scumm/detection.cpp:175
+#: engines/scumm/detection.cpp:176
 msgid "Show Object Line"
 msgstr ""
 
-#: engines/scumm/detection.cpp:176
+#: engines/scumm/detection.cpp:177
 msgid "Show the names of objects at the bottom of the screen"
 msgstr ""
 
-#: engines/scumm/detection.cpp:182
+#: engines/scumm/detection.cpp:183
 msgid "Use NES Classic Palette"
 msgstr ""
 
-#: engines/scumm/detection.cpp:183
+#: engines/scumm/detection.cpp:184
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
-#: engines/scumm/detection.cpp:189
+#: engines/scumm/detection.cpp:190
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr ""
 
-#: engines/scumm/detection.cpp:190
+#: engines/scumm/detection.cpp:191
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
