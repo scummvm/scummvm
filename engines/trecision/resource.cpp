@@ -35,16 +35,12 @@
 
 #include "trecision/trecision.h"
 #include "trecision/anim.h"
-#include "trecision/scheduler.h"
 #include "trecision/actor.h"
 #include "trecision/3d.h"
 #include "trecision/defines.h"
-#include "trecision/console.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
 #include "trecision/video.h"
-#include "trecision/logic.h"
-#include "trecision/text.h"
 #include "trecision/sound.h"
 
 namespace Common {

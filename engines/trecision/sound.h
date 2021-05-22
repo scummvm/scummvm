@@ -23,7 +23,6 @@
 #ifndef TRECISION_SOUND_H
 #define TRECISION_SOUND_H
 
-#include "trecision/defines.h"
 #include "trecision/fastfile.h"
 #include "common/file.h"
 #include "audio/mixer.h"
