@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-22 10:29+0000\n"
-"PO-Revision-Date: 2021-05-03 13:51+0000\n"
+"PO-Revision-Date: 2021-05-23 02:35+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3980,10 +3980,8 @@ msgstr ""
 "απαιτεί"
 
 #: engines/asylum/metaengine.cpp:68
-#, fuzzy
-#| msgid "Show blueprint"
 msgid "Show version"
-msgstr "Προβολή προσχεδίου"
+msgstr "Προβολή έκδοσης"
 
 #: engines/asylum/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:706
 msgid "Quick load"
@@ -3994,22 +3992,16 @@ msgid "Quick save"
 msgstr "Γρήγορη αποθήκευση"
 
 #: engines/asylum/metaengine.cpp:83
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Sarah"
-msgstr "Μετάβαση στο Παιχνίδι"
+msgstr "Εναλλαγή σε Sarah"
 
 #: engines/asylum/metaengine.cpp:88
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Grimwall"
-msgstr "Μετάβαση στο Παιχνίδι"
+msgstr "Εναλλαγή σε Grimwall"
 
 #: engines/asylum/metaengine.cpp:93
-#, fuzzy
-#| msgid "Switch to Game"
 msgid "Switch to Olmec"
-msgstr "Μετάβαση στο Παιχνίδι"
+msgstr "Εναλλαγή σε Olmec"
 
 #: engines/bladerunner/bladerunner.cpp:357
 msgid "Failed to initialize resources"
@@ -6937,16 +6929,13 @@ msgstr ""
 "περικοπή της ανάλυσης σε 320x200 από το φάκελο (tab) 'μηχανή'."
 
 #: engines/scumm/scumm.cpp:1325
-#, fuzzy
-#| msgid ""
-#| "Could not find the 'Loom' Macintosh executable to read the\n"
-#| "instruments from. Music will be disabled."
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"Δεν βρέθηκε το εκτελέσιμο του 'Loom' για Macintosh ώστε να \n"
-"διαβαστούν τα όργανα. Η μουσική θα είναι απενεργοποιημένη."
+"Δεν βρέθηκε το εκτελέσιμο του 'Loom' για Macintosh. Η μουσική και οι "
+"εκδοχές\n"
+"υψηλής ανάλυσης γραμματοσειράς (font) θα απενεργοποιηθούν."
 
 #: engines/scumm/scumm.cpp:1347
 msgid ""
