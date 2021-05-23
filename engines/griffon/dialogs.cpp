@@ -195,6 +195,8 @@ void GriffonEngine::title(int mode) {
 						ttsMan->say(optionTitles[cursel]);
 					break;
 				case kGriffonConfirm:
+					if (ttsMan != nullptr)
+							ttsMan->stop();
 					switch(cursel) {
 					case 0:
 						_ticks = g_system->getMillis();
@@ -272,7 +274,7 @@ void GriffonEngine::configMenu() {
 		0, 0, 9, 9, 12,
 		12, 15, 15, 18, 20,
 	};
-	static const int curselMapValues[MAXCURSEL+1] = {
+	static const int curselMapValues[25] = {
 		0, 0, 0, 0, 0,
 		0, 0, 9, 10, 12,
 		13, 15, 16, 0, 0,
@@ -508,6 +510,8 @@ void GriffonEngine::configMenu() {
 						saveConfig();
 						// fall through
 					case 17:
+						if (ttsMan != nullptr)
+							ttsMan->stop();
 						exitMenu = true;
 						break;
 					default:
@@ -673,11 +677,13 @@ void GriffonEngine::saveLoadNew() {
 				_itemTicks = _ticks + 220;
 
 				if (_event.customType == kGriffonConfirm) {
+
 					if (curRow == 0) {
 						if (curCol == 0) {
 							// NEW GAME
+							if (ttsMan != nullptr)
+								ttsMan->stop();
 							_gameMode = kGameModeNewGame;
-
 							return;
 						} else if (curCol == 1) {
 							// SAVE GAME
@@ -690,6 +696,8 @@ void GriffonEngine::saveLoadNew() {
 							curRow = 1;
 							tickPause = _ticks + 125;
 						} else if (curCol == 3) {
+							if (ttsMan != nullptr)
+								ttsMan->stop();
 							// RETURN
 							return;
 						} else if (curCol == 4) {

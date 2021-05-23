@@ -223,6 +223,8 @@ void GriffonEngine::intro() {
 	_secsInGame = 0;
 	_secStart = 0;
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	bool ldStop = false;
 	bool speedUp = false;
 	int cnt = 0;
@@ -269,9 +271,11 @@ void GriffonEngine::intro() {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
-
-			if (yy < 10 && i == ARRAYSIZE(story) - 1)
-				return;
+			if (yy < 10 && i == ARRAYSIZE(story) - 1) {
+				if (ttsMan != nullptr)
+					if (ttsMan->isSpeaking() == false)
+						return;
+			}
 		}
 
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
@@ -303,11 +307,15 @@ void GriffonEngine::intro() {
 					speedUp = true;
 					cnt = 6;
 				}
-				else if (_event.customType == kGriffonMenu)
+				else if (_event.customType == kGriffonMenu) {
+					if (ttsMan != nullptr)
+						ttsMan->stop();
 					return;
+				}
 			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
-				if (_event.customType == kGriffonCutsceneSpeedUp)
+				if (_event.customType == kGriffonCutsceneSpeedUp) {
 					speedUp = false;
+				}
 			}
 
 			CHECK_QUIT();
@@ -336,6 +344,8 @@ void GriffonEngine::endOfGame() {
 	float ld = 0;
 	bool ldstop = false; // CHECKME: Check if actually used
 	int nextparagraph = 0;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	do {
 		ld += 4 * _fpsr;
@@ -411,8 +421,11 @@ void GriffonEngine::endOfGame() {
 				drawString(_videoBuffer, story2[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == ARRAYSIZE(story2)-1)
-				break;
+			if (yy < 10 && i == ARRAYSIZE(story2)-1) {
+				if (ttsMan != nullptr)
+					if (ttsMan->isSpeaking() == false)
+						break;
+			}
 		}
 
 		ya = 255;
@@ -448,8 +461,11 @@ void GriffonEngine::endOfGame() {
 			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				if (_event.customType == kGriffonCutsceneSpeedUp)
 					spd = 1.0f;
-				else if (_event.customType == kGriffonMenu)
+				else if (_event.customType == kGriffonMenu) {
+					if (ttsMan != nullptr)
+						ttsMan->stop();
 					break;
+				}
 			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 				if (_event.customType == kGriffonCutsceneSpeedUp)
 					spd = 0.2f;
