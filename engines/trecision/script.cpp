@@ -401,6 +401,7 @@ void TrecisionEngine::doIdle() {
 	// Skip
 	case 0x1B:
 		if (canPlayerInteract()) {
+			::createThumbnailFromScreen(&_thumbnail);
 			_actor->actorStop();
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
@@ -408,13 +409,13 @@ void TrecisionEngine::doIdle() {
 			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
-			::createThumbnailFromScreen(&_thumbnail);
 		}
 		break;
 
 	// Sys
 	case 0x3B:
 		if (canPlayerInteract()) {
+			::createThumbnailFromScreen(&_thumbnail);
 			_actor->actorStop();
 			_pathFind->nextStep();
 			_graphicsMgr->showCursor();
@@ -422,7 +423,6 @@ void TrecisionEngine::doIdle() {
 			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
 			_flagCharacterExists = false;
-			::createThumbnailFromScreen(&_thumbnail);
 		}
 		break;
 
