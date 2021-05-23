@@ -61,17 +61,17 @@ struct SPan {
 	float _x2, _z2;
 	float _h;
 	int _flags;
-	char _near1;
-	char _near2;
-	char _col1;
-	char _col2;
+	int16 _nearPanel1;
+	int16 _nearPanel2;
+	int8 _col1;
+	int8 _col2;
 
 	void clear() {
 		_x1 = _z1 = 0.0f;
 		_x2 = _z2 = 0.0f;
 		_h = 0.0f;
 		_flags = 0;
-		_near1 = _near2 = 0;
+		_nearPanel1 = _nearPanel2 = 0;
 		_col1 = _col2 = 0;
 	}
 };
@@ -160,8 +160,8 @@ class PathFinding3D {
 	float _x3d, _y3d, _z3d;
 	float _curX, _curZ;
 	float _lookX, _lookZ;
-	int _panelNum;
-	int _oldPanel;
+	int32 _panelNum;
+	int16 _oldPanel;
 
 	bool pointInside(int pan, float x, float z) const;
 	void sortPanel();
@@ -175,7 +175,7 @@ class PathFinding3D {
 	void lookAt(float x, float z);
 	void buildFramelist();
 	void displayPath();
-	bool findAttachedPanel(int srcPanel, int destPanel);
+	bool findAttachedPanel(int16 srcPanel, int16 destPanel);
 	void sortPath();
 
 public:
@@ -184,7 +184,7 @@ public:
 
 	int _curStep;
 	int _lastStep;
-	int _curPanel;
+	int16 _curPanel;
 	int _numSortPanel;
 
 	int8 _characterGoToPosition;
