@@ -3996,7 +3996,6 @@ void LogicManager::doSys(uint16 curObj) {
 			_vm->showIconName();
 			_vm->changeRoom(_vm->_obj[o00EXIT]._goRoom);
 		}
-		_vm->_curRoom = kRoomControlPanel;
 		break;
 
 	case o00LOAD:
