@@ -22,6 +22,15 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "quux/quux.h"
+
+// Here is the right place to set up the engine specific debug channels.
+// The list must be terminated by the DEBUG_CHANNEL_END macro
+static const DebugChannelDef debugFlagList[] = {
+	{ Quux::kQuuxDebugExample, "example", "this is just an example for a engine specific debug channel" },
+	{ Quux::kQuuxDebugExample2, "example2", "also an example" },
+	DEBUG_CHANNEL_END
+};
 
 namespace Quux {
 static const PlainGameDescriptor quuxGames[] = {
@@ -60,6 +69,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Quux Entertainment Ltd.";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

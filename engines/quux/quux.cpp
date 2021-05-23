@@ -50,10 +50,6 @@ QuuxEngine::QuuxEngine(OSystem *syst)
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
-	// Here is the right place to set up the engine specific debug channels
-	DebugMan.addDebugChannel(kQuuxDebugExample, "example", "this is just an example for a engine specific debug channel");
-	DebugMan.addDebugChannel(kQuuxDebugExample2, "example2", "also an example");
-
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("quux");
 
