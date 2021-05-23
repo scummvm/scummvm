@@ -57,15 +57,15 @@ OPEN(write_guide,'README.guide','W')
 /*
 Prepare Amiga guide, add intro and fixed text.
 */
-WRITELN(write_guide,'@DATABASE ScummVM README.guide')
-WRITELN(write_guide,'@$VER: ScummVM Readme 2.3.0git')
-WRITELN(write_guide,'@(C) by The ScummVM team')
-WRITELN(write_guide,'@AUTHOR The ScummVM team')
-WRITELN(write_guide,'@WORDWRAP')
-WRITELN(write_guide,'@NODE "main" "ScummVM README Guide"')
-WRITELN(write_guide,'@{b}')
-WRITELN(write_guide,ScummVM README)
-WRITELN(write_guide,'@{ub}')
+CALL WRITELN write_guide,'@DATABASE ScummVM README.guide'
+CALL WRITELN write_guide,'@$VER: ScummVM Readme 2.3.0git'
+CALL WRITELN write_guide,'@(C) by The ScummVM team'
+CALL WRITELN write_guide,'@AUTHOR The ScummVM team'
+CALL WRITELN write_guide,'@WORDWRAP'
+CALL WRITELN write_guide,'@NODE "main" "ScummVM README Guide"'
+CALL WRITELN write_guide,'@{b}'
+CALL WRITELN write_guide,ScummVM README
+CALL WRITELN write_guide,'@{ub}'
 
 DO WHILE ~EOF(read_md)
 	v_line=READLN(read_md)
@@ -116,13 +116,13 @@ DO WHILE ~EOF(read_md)
 		END
 	END
 
-	WRITELN(write_guide,v_line)
+	CALL WRITELN write_guide,v_line
 END
 
 /*
 Close guide and clean up.
 */
-WRITELN(write_guide,'@ENDNODE')
+CALL WRITELN write_guide,'@ENDNODE'
 
 CLOSE(read_md)
 CLOSE(write_guide)
