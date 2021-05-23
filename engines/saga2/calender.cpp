@@ -124,7 +124,7 @@ int CalenderTime::lightLevel(int maxLevel) {
 	//  to framesAtNoon*2/3. Then we clip off the part of the
 	//  curve below zero, and above 1/3, giving 1/3 night,
 	//  1/6 morning, 1/3 day, and 1/6 evening.
-	solarLevel = clamp(globalConfig.showNight ? /* 0 */ (dayBias * 5 / 4) : (framesAtNoon / 3),
+	solarLevel = CLIP(globalConfig.showNight ? /* 0 */ (dayBias * 5 / 4) : (framesAtNoon / 3),
 	                   solarAngle * 2 + season - framesAtNoon / 3 + dayBias * 2,
 	                   framesAtNoon / 3);
 
