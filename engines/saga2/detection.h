@@ -47,7 +47,8 @@ enum GameFileTypes {
 	GAME_PATCHFILE        = 1 << 10,   // IHNM patch file (patch.re_/patch.res)
 	// SAGA 2 (Dinotopia, FTA2)
 	GAME_IMAGEFILE        = 1 << 11,   // Game images
-	GAME_OBJRESOURCEFILE  = 1 << 12    // Game object data
+	GAME_OBJRESOURCEFILE  = 1 << 12,   // Game object data
+	GAME_EXECUTABLE		  = 1 << 13
 };
 
 struct SAGA2GameDescription {

@@ -48,6 +48,8 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("saga2");
 
+	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
+
 	debug("Saga2Engine::Saga2Engine");
 }
 
