@@ -1065,7 +1065,7 @@ PathFinding3D::~PathFinding3D() {
 }
 
 void PathFinding3D::findPath() {
-	int b;
+	int16 b;
 
 	Actor *actor = _vm->_actor;
 	actor->_px += actor->_dx;
@@ -1080,10 +1080,10 @@ void PathFinding3D::findPath() {
 		(pointInside(b = _oldPanel, _curX, _curZ) ||
 		 // behind the panel corner1
 		 ((_vm->dist2D(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ))) ||
+		  (pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ))) ||
 		 // behind the panel corner2
 		 ((_vm->dist2D(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._near2, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._near1, _curX, _curZ))))) {
+		  (pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ))))) {
 		_curX = actor->_px;
 		_curZ = actor->_pz;
 		actor->_px -= actor->_dx;
@@ -1111,7 +1111,7 @@ void PathFinding3D::findPath() {
 				++_numPathNodes;
 
 				// CORNERS - lever intersections in corners
-				if ((b == _panel[_oldPanel]._near1) || (b == _panel[_oldPanel]._near2)) {
+				if ((b == _panel[_oldPanel]._nearPanel1) || (b == _panel[_oldPanel]._nearPanel2)) {
 					// otherwise if it's near the starting panel
 					if ((_pathNode[_numPathNodes - 1]._dist < EPSILON) &&
 						(b != _oldPanel) && (b != _curPanel)) {
@@ -1131,7 +1131,7 @@ void PathFinding3D::findPath() {
 							return;
 						}
 					}
-				} else if (b == _panel[_curPanel]._near1 || b == _panel[_curPanel]._near2) {
+				} else if (b == _panel[_curPanel]._nearPanel1 || b == _panel[_curPanel]._nearPanel2) {
 					// otherwise if it is near the finish panel
 					if (fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
 						// and the distance is very small to the intersection
@@ -1325,22 +1325,22 @@ void PathFinding3D::findShortPath() {
 		if (!findAttachedPanel(curPanel, _pathNode[a + 1]._curPanel))
 			continue;
 
-		// go around obstacle starting with _near1
-		len1 = evalPath(a, _panel[curPanel]._x1, _panel[curPanel]._z1, _panel[curPanel]._near1) + _vm->dist2D(_pathNode[a]._x, _pathNode[a]._z, _panel[curPanel]._x1, _panel[curPanel]._z1);
+		// go around obstacle starting with _nearPanel1
+		len1 = evalPath(a, _panel[curPanel]._x1, _panel[curPanel]._z1, _panel[curPanel]._nearPanel1) + _vm->dist2D(_pathNode[a]._x, _pathNode[a]._z, _panel[curPanel]._x1, _panel[curPanel]._z1);
 
-		// go around obstacle starting with _near2
-		len2 = evalPath(a, _panel[curPanel]._x2, _panel[curPanel]._z2, _panel[curPanel]._near2) + _vm->dist2D(_pathNode[a]._x, _pathNode[a]._z, _panel[curPanel]._x2, _panel[curPanel]._z2);
+		// go around obstacle starting with _nearPanel2
+		len2 = evalPath(a, _panel[curPanel]._x2, _panel[curPanel]._z2, _panel[curPanel]._nearPanel2) + _vm->dist2D(_pathNode[a]._x, _pathNode[a]._z, _panel[curPanel]._x2, _panel[curPanel]._z2);
 
 		// Check which route was shorter
 		if ((len1 < 32000.0f) && (len2 < 32000.0f)) {
 			if (len1 < len2) {
 				destX = _panel[curPanel]._x1;
 				destZ = _panel[curPanel]._z1;
-				nearPanel = _panel[curPanel]._near1;
+				nearPanel = _panel[curPanel]._nearPanel1;
 			} else {
 				destX = _panel[curPanel]._x2;
 				destZ = _panel[curPanel]._z2;
-				nearPanel = _panel[curPanel]._near2;
+				nearPanel = _panel[curPanel]._nearPanel2;
 			}
 
 			float curX = _pathNode[a]._x;
@@ -1376,7 +1376,7 @@ void PathFinding3D::findShortPath() {
 
 				// otherwise go to the next panel
 
-				if (_panel[nearPanel]._near1 == curPanel) {
+				if (_panel[nearPanel]._nearPanel1 == curPanel) {
 					// go to summit 2 next time
 					curX = destX;
 					curZ = destZ;
@@ -1386,7 +1386,7 @@ void PathFinding3D::findShortPath() {
 
 					oldPanel = curPanel;
 					curPanel = nearPanel;
-					nearPanel = _panel[curPanel]._near2;
+					nearPanel = _panel[curPanel]._nearPanel2;
 				} else {
 					// go to summit 1 next time
 					curX = destX;
@@ -1397,7 +1397,7 @@ void PathFinding3D::findShortPath() {
 
 					oldPanel = curPanel;
 					curPanel = nearPanel;
-					nearPanel = _panel[curPanel]._near1;
+					nearPanel = _panel[curPanel]._nearPanel1;
 				}
 
 				++b;
@@ -1550,7 +1550,7 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 		// Otherwise it goes to the next plane
 
 		// if nearP is attached to curp via vertex1
-		if (_panel[nearP]._near1 == curPanel) {
+		if (_panel[nearP]._nearPanel1 == curPanel) {
 			// go to vertex 2 next time
 			len += _vm->dist2D(curX, curZ, destX, destZ);
 
@@ -1561,7 +1561,7 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 			destZ = _panel[nearP]._z2;
 
 			curPanel = nearP;
-			nearP = _panel[curPanel]._near2;
+			nearP = _panel[curPanel]._nearPanel2;
 		} else {
 			// go to vertex 1 newt time
 			len += _vm->dist2D(curX, curZ, destX, destZ);
@@ -1573,7 +1573,7 @@ float PathFinding3D::evalPath(int a, float destX, float destZ, int nearP) {
 			destZ = _panel[nearP]._z1;
 
 			curPanel = nearP;
-			nearP = _panel[curPanel]._near1;
+			nearP = _panel[curPanel]._nearPanel1;
 		}
 
 		++b;
@@ -2166,7 +2166,7 @@ void PathFinding3D::displayPath() {
 /**
  *	Check if two panels are in the same block
  */
-bool PathFinding3D::findAttachedPanel(int srcPanel, int destPanel) {
+bool PathFinding3D::findAttachedPanel(int16 srcPanel, int16 destPanel) {
 	// if at least one is on the floor, return false
 	if (srcPanel < 0 || destPanel < 0)
 		return false;
@@ -2175,8 +2175,8 @@ bool PathFinding3D::findAttachedPanel(int srcPanel, int destPanel) {
 	if (srcPanel == destPanel)
 		return true;
 
-	int curPanel = srcPanel;
-	int nearPanel = _panel[srcPanel]._near1;
+	int16 curPanel = srcPanel;
+	int16 nearPanel = _panel[srcPanel]._nearPanel1;
 
 	for (int b = 0;; ++b) {
 		// if they are attached, return true
@@ -2191,12 +2191,12 @@ bool PathFinding3D::findAttachedPanel(int srcPanel, int destPanel) {
 			return false;
 
 		// if they are attached to vertex 1, take 2
-		if (_panel[nearPanel]._near1 == curPanel) {
+		if (_panel[nearPanel]._nearPanel1 == curPanel) {
 			curPanel = nearPanel;
-			nearPanel = _panel[curPanel]._near2;
+			nearPanel = _panel[curPanel]._nearPanel2;
 		} else {
 			curPanel = nearPanel;
-			nearPanel = _panel[curPanel]._near1;
+			nearPanel = _panel[curPanel]._nearPanel1;
 		}
 	}
 }
@@ -2286,8 +2286,8 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 		_panel[i]._h = ff->readFloatLE();
 		_panel[i]._flags = ff->readUint32LE();
 
-		_panel[i]._near1 = ff->readSByte();
-		_panel[i]._near2 = ff->readSByte();
+		_panel[i]._nearPanel1 = ff->readSByte();
+		_panel[i]._nearPanel2 = ff->readSByte();
 		_panel[i]._col1 = ff->readSByte();
 		_panel[i]._col2 = ff->readSByte();
 	}
