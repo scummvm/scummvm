@@ -898,55 +898,6 @@ void gPort::scrollPixels(
 	}
 }
 
-void gPort::drawTextInBox(
-	char			*str,
-	int16			length,
-	const Rect16	&r,
-	int16			pos,
-	Point16			borders )
-{
-	int16			height,width;
-	int16			x, y;
-	Rect16			newClip,
-					saveClip = clip;
-
-	if (!font)
-		return;
-
-	height = font->height;
-	width  = TextWidth ( font, str, length, textStyles );
-
-	if (textStyles & (textStyleUnderScore|textStyleUnderBar))
-	{
-		if (font->baseLine + 2 >= font->height) height++;
-	}
-
-		//	Calculate x position of text string
-
-	if (pos & textPosLeft) x = r.x + borders.x;
-	else if (pos & textPosRight) x = r.x + r.width - width - borders.x;
-	else x = r.x + (r.width - width) / 2;
-
-		//	Calculate y position of text string
-
-	if (pos & textPosHigh) y = r.y + borders.y;
-	else if (pos & textPosLow) y = r.y + r.height - height - borders.y;
-	else y = r.y + (r.height - height) / 2;
-
-		//	Calculate clipping region
-
-	clip = intersect( clip, r );
-
-		//	Draw the text
-
-	moveTo( x, y );
-	drawText( str, length );
-
-		//	Restore the clipping region
-
-	clip = saveClip;
-}
-
 
 /* ======================================================================= *
    Image Mapping
@@ -1084,15 +1035,6 @@ errorCode NewTempPort(gPort &port, int width, int height) {
 void DisposeTempPort(gPort &port) {
 	if (port.map) TempFree(port.map);
 	port.map = NULL;
-}
-
-void gPort::drawText(
-	char			*str,					/* string to draw				*/
-	int16			length) {
-	if (length < 0) length = strlen( str );
-
-	if (length > 0)
-		penPos.x += drawClippedString( str, length, penPos.x, penPos.y );
 }
 
 } // end of namespace Saga2
