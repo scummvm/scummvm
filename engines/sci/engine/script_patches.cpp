@@ -3761,6 +3761,102 @@ static const uint16 gk1BayouRitualAviPatch[] = {
 	PATCH_END
 };
 
+// The comic-book cartoon scenes have timing problems. Many delays are too fast,
+//  instantaneous, or random. As with other GK1 timing bugs, these scripts were
+//  written against CPUs that couldn't run the interpreter at full speed.
+//
+// Most cartoon delays are implemented by setting Script:seconds to one or two.
+//  At slower CPU speeds, Sierra's interpreter lagged enough that it appeared to
+//  deliver the requested durations. But without that lag, the real behavior is
+//  exposed. When Script:seconds is set, the first second is deducted on the
+//  next doit except in some cases when there are stale values from a previous
+//  delay. A one second delay is usually no delay at all. Subsequent seconds
+//  are deducted whenever the seconds value of the system clock changes. This
+//  means that the duration of the 2nd "second" depends on the system clock's
+//  subsecond value when the delay was requested. A script that requests a two
+//  second delay usually gets a random delay between zero and one second.
+//
+// We fix this by replacing all the one and two second cartoon delays with the
+//  equivalent in ticks. This makes the durations match the requested values and
+//  removes the inconsistencies due to subseconds. These correct timings expose
+//  broken animation in one of the bayou cartoon panels due to the script
+//  specifying the wrong view number, so we fix that too.
+//
+// There is still room for improvement in the bayou cartoons. Several delays are
+//  implemented by waiting on disabled messages that instantly cue. All fades
+//  are done by unthrottled inner loops and the scene timing implicitly depends
+//  on those going slowly. This is why several panels only appear for an instant
+//  before the entire screen changes.
+//
+// Applies to: All versions
+// Responsible methods: doTheCloseUp:changeState, roomScript:changeState (480),
+//                      cutToTheHeart:changeState, sCutPanel1:changeState,
+//                      sCutPanel2:changeState, sCutPanel4:changeState
+static const uint16 gk1CartoonTimingPcSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1c,                         // aTop seconds [ seconds = 1 ]
+	SIG_END
+};
+
+static const uint16 gk1CartoonTimingMacSignature1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1e,                         // aTop seconds [ seconds = 1 ]
+	SIG_END
+};
+
+static const uint16 gk1CartoonTimingPatch1[] = {
+	0x35, 0x3c,                                // ldi 3c
+	0x65, PATCH_GETORIGINALBYTEADJUST(+3, +4), // aTop ticks [ ticks = 60 ]
+	PATCH_END
+};
+
+static const uint16 gk1CartoonTimingPcSignature2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1c,                         // aTop seconds [ seconds = 2 ]
+	SIG_END
+};
+
+static const uint16 gk1CartoonTimingMacSignature2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x02,                         // ldi 02
+	0x65, 0x1e,                         // aTop seconds [ seconds = 2 ]
+	SIG_END
+};
+
+static const uint16 gk1CartoonTimingPatch2[] = {
+	0x35, 0x78,                                // ldi 78
+	0x65, PATCH_GETORIGINALBYTEADJUST(+3, +4), // aTop ticks [ ticks = 120 ]
+	PATCH_END
+};
+
+// During the bayou cartoon when Malia recognizes Gabriel, the third panel's
+//  animation is broken. The script attempts to animate Gabriel's face but it
+//  instead it specifies the wrong view and draws a fragment of Malia's face.
+//  This wasn't noticed because of the broken timing (see above patch notes)
+//  that immediately overwrote the wrong first view with the correct second.
+//  Now that we've fixed the timing, we fix this view as well so that the panel
+//  animates correctly. We know that 6142 is the correct view because the script
+//  attempts to unload it afterwards.
+//
+// Applies to: All versions
+// Responsible method: roomScript:changeState(64)
+static const uint16 gk1BayouCartoonViewSignature[] = {
+	0x39, SIG_SELECTOR8(view),          // pushi view
+	SIG_MAGICDWORD,
+	0x78,                               // push1
+	0x38, SIG_UINT16(0x17fd),           // pushi 17fd [ view 6141: Malia ]
+	SIG_END
+};
+
+static const uint16 gk1BayouCartoonViewPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x38, PATCH_UINT16(0x17fe),         // pushi 17fe [ view 6142: Gabriel ]
+	PATCH_END
+};
+
 // On day 6, an envelope is dropped off in the bookstore after 20 seconds, but
 //  if the game is in the middle of a message sequence then it can lockup.
 //  When a timer expires, bookstore:cue tests a number of properties to make
@@ -3910,7 +4006,26 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   410, "fix day 2 binoculars lockup",                 1, gk1Day2BinocularsLockupSignature, gk1Day2BinocularsLockupPatch },
 	{  true,   420, "fix day 6 empty booth message",               6, gk1EmptyBoothMessageSignature,    gk1EmptyBoothMessagePatch },
 	{  true,   420, "fix lorelei dance timer",                     1, gk1LoreleiDanceTimerSignature,    gk1LoreleiDanceTimerPatch },
+	{ false,   471, "pc: fix cartoon timing",                      4, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
+	{ false,   471, "pc: fix cartoon timing",                      3, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
+	{ false,   471, "mac: fix cartoon timing",                     4, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
+	{ false,   471, "mac: fix cartoon timing",                     3, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
+	{ false,   480, "pc: fix cartoon timing",                     10, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
+	{ false,   480, "pc: fix cartoon timing",                      7, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
+	{ false,   480, "mac: fix cartoon timing",                    10, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
+	{ false,   480, "mac: fix cartoon timing",                     7, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
+	{  true,   480, "fix bayou cartoon view",                      1, gk1BayouCartoonViewSignature,     gk1BayouCartoonViewPatch },
 	{  true,   480, "win: play day 6 bayou ritual avi videos",     3, gk1BayouRitualAviSignature,       gk1BayouRitualAviPatch },
+	{ false,   720, "pc: fix cartoon timing",                      2, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
+	{ false,   720, "pc: fix cartoon timing",                      6, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
+	{ false,   720, "mac: fix cartoon timing",                     2, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
+	{ false,   720, "mac: fix cartoon timing",                     6, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
+	{ false,   891, "pc: fix cartoon timing",                      1, gk1CartoonTimingPcSignature1,     gk1CartoonTimingPatch1 },
+	{ false,   891, "mac: fix cartoon timing",                     1, gk1CartoonTimingMacSignature1,    gk1CartoonTimingPatch1 },
+	{ false,   892, "pc: fix cartoon timing",                      1, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
+	{ false,   892, "mac: fix cartoon timing",                     1, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
+	{ false,   894, "pc: fix cartoon timing",                      1, gk1CartoonTimingPcSignature2,     gk1CartoonTimingPatch2 },
+	{ false,   894, "mac: fix cartoon timing",                     1, gk1CartoonTimingMacSignature2,    gk1CartoonTimingPatch2 },
 	{ false,   670, "fix end game font",                           1, gk1EndGameFontSignature,          gk1EndGameFontPatch },
 	{  true,   710, "fix day 9 vine swing speech playing",         1, gk1Day9VineSwingSignature,        gk1Day9VineSwingPatch },
 	{  true,   710, "fix day 9 mummy animation (floppy)",          1, gk1MummyAnimateFloppySignature,   gk1MummyAnimateFloppyPatch },
@@ -21435,6 +21550,12 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 
 				if (_isMacSci11 && !g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 56))) {
 					enablePatch(signatureTable, "mac: fix missing talisman view");
+				}
+
+				if (!_isMacSci11) {
+					enablePatch(signatureTable, "pc: fix cartoon timing");
+				} else {
+					enablePatch(signatureTable, "mac: fix cartoon timing");
 				}
 
 				if (g_sci->getLanguage() == Common::EN_ANY &&
