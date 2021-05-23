@@ -1657,7 +1657,7 @@ void ScummEngine::resetScumm() {
 		delete _townsScreen;
 		_scrollRequest = _scrollDeltaAdjust = 0;
 		_scrollDestOffset = _scrollTimer = 0;
-		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _outputPixelFormat);
+		_townsScreen = new TownsScreen(_system);
 		_townsScreen->setupLayer(0, 512, _screenHeight, _textSurfaceMultiplier, _textSurfaceMultiplier, (_outputPixelFormat.bytesPerPixel == 2) ? 32767 : 256);
 		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 1, 1, 16, _textPalette);
 	}
