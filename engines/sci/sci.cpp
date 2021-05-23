@@ -81,35 +81,60 @@
 
 namespace Sci {
 
-SciEngine *g_sci = 0;
+SciEngine *g_sci = nullptr;
 
-SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
-		: Engine(syst), _gameDescription(desc), _gameId(gameId), _rng("sci") {
-
-	assert(g_sci == 0);
-	g_sci = this;
-
-	_gfxMacIconBar = 0;
-
-	_audio = 0;
-	_sync = nullptr;
+SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId) :
+	Engine(syst),
+	_gfxAnimate(nullptr),
+	_gfxCache(nullptr),
+	_gfxCompare(nullptr),
+	_gfxControls16(nullptr),
+	_gfxCoordAdjuster(nullptr),
+	_gfxCursor(nullptr),
+	_gfxMenu(nullptr),
+	_gfxPalette16(nullptr),
+	_gfxRemap16(nullptr),
+	_gfxPaint16(nullptr),
+	_gfxPorts(nullptr),
+	_gfxScreen(nullptr),
+	_gfxText16(nullptr),
+	_gfxTransitions(nullptr),
+	_gfxMacIconBar(nullptr),
 #ifdef ENABLE_SCI32
-	_audio32 = nullptr;
-	_video32 = nullptr;
-	_gfxCursor32 = nullptr;
+	_gfxControls32(nullptr),
+	_gfxPalette32(nullptr),
+	_gfxRemap32(nullptr),
+	_gfxPaint32(nullptr),
+	_gfxText32(nullptr),
+	_audio32(nullptr),
+	_video32(nullptr),
+	_gfxFrameout(nullptr),
+	_gfxTransitions32(nullptr),
+	_gfxCursor32(nullptr),
 #endif
-	_guestAdditions = nullptr;
-	_features = 0;
-	_resMan = 0;
-	_gamestate = 0;
-	_kernel = 0;
-	_vocabulary = 0;
-	_vocabularyLanguage = 1; // we load english vocabulary on startup
-	_eventMan = 0;
-	_console = 0;
-	_opcode_formats = 0;
+	_audio(nullptr),
+	_sync(nullptr),
+	_soundCmd(nullptr),
+	_features(nullptr),
+	_guestAdditions(nullptr),
+	_opcode_formats(nullptr),
+	_debugState(),
+	_gameDescription(desc),
+	_gameId(gameId),
+	_resMan(nullptr),
+	_scriptPatcher(nullptr),
+	_gamestate(nullptr),
+	_kernel(nullptr),
+	_vocabulary(nullptr),
+	_vocabularyLanguage(1), // we load english vocabulary on startup
+	_eventMan(nullptr),
+	_gameObjectAddress(),
+	_console(nullptr),
+	_rng("sci"),
+	_forceHiresGraphics(false) {
 
-	_forceHiresGraphics = false;
+	assert(g_sci == nullptr);
+	g_sci = this;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -226,7 +251,7 @@ SciEngine::~SciEngine() {
 
 	delete _scriptPatcher;
 	delete _resMan;	// should be deleted last
-	g_sci = 0;
+	g_sci = nullptr;
 }
 
 extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
@@ -245,9 +270,6 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 */
-
-	// Reset, so that error()s before SoundCommandParser is initialized wont cause a crash
-	_soundCmd = NULL;
 
 	// Add the after market patches for the specified game, if they exist
 	_resMan->addNewGMPatch(_gameId);
@@ -278,8 +300,6 @@ Common::Error SciEngine::run() {
 		// Initialize the game screen
 		_gfxScreen = new GfxScreen(_resMan);
 		_gfxScreen->enableUndithering(ConfMan.getBool("disable_dithering"));
-	} else {
-		_gfxScreen = nullptr;
 	}
 
 	_kernel = new Kernel(_resMan, segMan);
@@ -565,33 +585,6 @@ bool SciEngine::initGame() {
 }
 
 void SciEngine::initGraphics() {
-
-	// Reset all graphics objects
-	_gfxAnimate = 0;
-	_gfxCache = 0;
-	_gfxCompare = 0;
-	_gfxControls16 = 0;
-	_gfxCoordAdjuster = 0;
-	_gfxCursor = 0;
-	_gfxMacIconBar = 0;
-	_gfxMenu = 0;
-	_gfxPaint16 = 0;
-	_gfxPalette16 = 0;
-	_gfxRemap16 = 0;
-	_gfxPorts = 0;
-	_gfxText16 = 0;
-	_gfxTransitions = 0;
-#ifdef ENABLE_SCI32
-	_gfxControls32 = 0;
-	_gfxText32 = 0;
-	_gfxFrameout = 0;
-	_gfxPaint32 = 0;
-	_gfxPalette32 = 0;
-	_gfxRemap32 = 0;
-	_gfxTransitions32 = 0;
-	_gfxCursor32 = 0;
-#endif
-
 	if (hasMacIconBar())
 		_gfxMacIconBar = new GfxMacIconBar();
 

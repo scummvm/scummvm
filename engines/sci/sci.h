@@ -245,24 +245,25 @@ public:
 	GfxCache *_gfxCache;
 	GfxCompare *_gfxCompare;
 	GfxControls16 *_gfxControls16; // Controls for 16-bit gfx
-	GfxControls32 *_gfxControls32; // Controls for 32-bit gfx
 	GfxCoordAdjuster16 *_gfxCoordAdjuster;
 	GfxCursor *_gfxCursor;
 	GfxMenu *_gfxMenu; // Menu for 16-bit gfx
 	GfxPalette *_gfxPalette16;
-	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
 	GfxRemap *_gfxRemap16;	// Remapping for the QFG4 demo
-	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
-	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
-	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
+	GfxPorts *_gfxPorts; // Port management for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	GfxText16 *_gfxText16;
-	GfxText32 *_gfxText32;
 	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
+	GfxControls32 *_gfxControls32; // Controls for 32-bit gfx
+	GfxPalette32 *_gfxPalette32; // Palette for 32-bit gfx
+	GfxRemap32 *_gfxRemap32; // Remapping for 32-bit gfx
+	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
+	GfxText32 *_gfxText32;
+
 	Audio32 *_audio32;
 	Video32 *_video32;
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
