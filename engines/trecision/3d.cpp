@@ -2292,17 +2292,18 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 		_panel[i]._col2 = ff->readSByte();
 	}
 
-		// projection matrix
+	// projection matrix
 	float _proj[3][3];
-	_proj[0][0] = _vm->_actor->_camera->_e1[0];
-	_proj[0][1] = _vm->_actor->_camera->_e1[1];
-	_proj[0][2] = _vm->_actor->_camera->_e1[2];
-	_proj[1][0] = _vm->_actor->_camera->_e2[0];
-	_proj[1][1] = _vm->_actor->_camera->_e2[1];
-	_proj[1][2] = _vm->_actor->_camera->_e2[2];
-	_proj[2][0] = _vm->_actor->_camera->_e3[0];
-	_proj[2][1] = _vm->_actor->_camera->_e3[1];
-	_proj[2][2] = _vm->_actor->_camera->_e3[2];
+	SCamera *cam = _vm->_actor->_camera;
+	_proj[0][0] = cam->_e1[0];
+	_proj[0][1] = cam->_e1[1];
+	_proj[0][2] = cam->_e1[2];
+	_proj[1][0] = cam->_e2[0];
+	_proj[1][1] = cam->_e2[1];
+	_proj[1][2] = cam->_e2[2];
+	_proj[2][0] = cam->_e3[0];
+	_proj[2][1] = cam->_e3[1];
+	_proj[2][2] = cam->_e3[2];
 
 	// Compute 3x3 inverse matrix for 2D points on 3D
 	float det = _proj[0][0] * _proj[1][1] * _proj[2][2] +
@@ -2312,7 +2313,7 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 				_proj[2][1] * _proj[1][2] * _proj[2][0] -
 				_proj[2][2] * _proj[1][0] * _proj[2][1];
 
-	if (det == 0.0)
+	if (_vm->floatComp(det, 0.0f) == 0)
 		error("read3D : Unexpected data error while computing inverse matrix");
 
 	_invP[0][0] = (_proj[1][1] * _proj[2][2] - _proj[1][2] * _proj[2][1]) / det;
