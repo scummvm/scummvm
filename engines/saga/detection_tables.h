@@ -1151,6 +1151,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
+#if 0
 	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
 	{
 		{
@@ -1208,6 +1209,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,	// font array
 		NULL,
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL }
 };
