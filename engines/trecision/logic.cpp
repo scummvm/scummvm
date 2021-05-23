@@ -3991,11 +3991,10 @@ void LogicManager::doSys(uint16 curObj) {
 		if (_vm->_oldRoom == kRoomControlPanel)
 			break;
 		_vm->_curRoom = _vm->_obj[o00EXIT]._goRoom;
-		if (!_vm->dataSave()) {
-			_vm->showInventoryName(NO_OBJECTS, false);
-			_vm->showIconName();
-			_vm->changeRoom(_vm->_obj[o00EXIT]._goRoom);
-		}
+		_vm->dataSave();
+		_vm->showInventoryName(NO_OBJECTS, false);
+		_vm->showIconName();
+		_vm->changeRoom(_vm->_obj[o00EXIT]._goRoom);
 		break;
 
 	case o00LOAD:
