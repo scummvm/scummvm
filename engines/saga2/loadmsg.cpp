@@ -26,98 +26,37 @@
 
 #include "saga2/std.h"
 
-#include "saga2/gdraw.h"
-#include "saga2/vwpage.h"
-#include "saga2/loadmsg.h"
-#include "saga2/palette.h"
-#include "saga2/display.h"
-
+#include "graphics/palette.h"
 namespace Saga2 {
 
-struct wPaletteEntry {
-	uint8           r,
-	                g,
-	                b,
-	                pad;
-};
-
-//  An entire palette of 256 colors
-
-struct wPalette {
-	wPaletteEntry   entry[ 256 ];
-};
-
-
-static gPalette         normalPalette;      //  Currently loaded palette
-
-
-void w2gPalette(wPalette *w, gPalette *g) {
-	for (int i = 0; i < 256; i++) {
-		g->entry[ i ].r = w->entry[i].r >> 2;
-		g->entry[ i ].g = w->entry[i].g >> 2;
-		g->entry[ i ].b = w->entry[i].b >> 2;
-	}
-}
-
-
-void useWPalette(wPalette *wp) {
-	w2gPalette(wp, &normalPalette);
-	setCurrentPalette(&normalPalette);
-}
-
-
-
-//void usePalette( void *p, size_t s);
-//extern "C" void cdecl _BltPixels( uint8 *srcPtr, uint32 srcMod,
-//									uint8 *dstPtr, uint32 dstMod,
-//									uint32 width, uint32 height );
-
-extern gDisplayPort         mainPort;               // default rendering port
-extern uint8 normalPal[1024];
 extern uint32 loadingWindowWidth;
 extern uint32 loadingWindowHeight;
-extern uint8 loadingWindowData[];
-extern uint8 loadingWindowPalette[];
+extern uint8 *loadingWindowData;
+extern uint8 *loadingWindowPalette;
 
-int16 showBitmapAtX = 0;
-int16 showBitmapAtY = 0;
-
-gPixelMap mess;
-
-#ifdef _WIN32
-extern CFTWindow *pWindow;
-void displayEventLoop(void);
-#endif
-
-static bool inLoadMode = FALSE;
+static bool inLoadMode = false;
 
 void initLoadMode(void) {
-	inLoadMode = TRUE;
+	inLoadMode = true;
 }
 
 void updateLoadMode(void) {
 	if (inLoadMode) {
-#ifdef _WIN32
-		resumeDDGraphics();
-#endif
-		mess.data = &loadingWindowData[0];
-		mess.size.x = loadingWindowWidth;
-		mess.size.y = loadingWindowHeight;
-		mainPort.bltPixels(mess, 0, 0, showBitmapAtX, showBitmapAtY, loadingWindowWidth, loadingWindowHeight);
-#ifdef _WIN32
-		pWindow->Flip();
-		//mainPort.bltPixels(  mess,0,0,showBitmapAtX,showBitmapAtY,loadingWindowWidth,loadingWindowHeight);
-		//pWindow->Flip();
-#endif
-		useWPalette((wPalette *) loadingWindowPalette); //normalPal
-#ifdef _WIN32
-		suspendDDGraphics();
-#endif
+		byte normalPalette[768];
+
+		for (int i = 0; i < 256; i++) {
+			normalPalette[i * 3 + 0] = loadingWindowPalette[i * 4 + 0];
+			normalPalette[i * 3 + 1] = loadingWindowPalette[i * 4 + 1];
+			normalPalette[i * 3 + 2] = loadingWindowPalette[i * 4 + 2];
+		}
+
+		g_system->getPaletteManager()->setPalette(normalPalette, 0, 256);
+		g_system->copyRectToScreen(loadingWindowData, loadingWindowWidth, 0, 0, loadingWindowWidth, loadingWindowHeight);
 	}
 }
 
 void closeLoadMode(void) {
-	inLoadMode = FALSE;
+	inLoadMode = false;
 	//blackOut();
 }
 

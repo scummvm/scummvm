@@ -35,6 +35,7 @@
 #include "saga2/saga2.h"
 
 #include "saga2/std.h"
+#include "saga2/loadmsg.h"
 
 namespace Saga2 {
 
@@ -61,7 +62,7 @@ Saga2Engine::~Saga2Engine() {
 
 Common::Error Saga2Engine::run() {
 	// Initialize graphics using following:
-	initGraphics(320, 200);
+	initGraphics(640, 480);
 
 	// Additional setup.
 	debug("Saga2Engine::init");
@@ -70,6 +71,17 @@ Common::Error Saga2Engine::run() {
 	debug("Saga2Engine::go: Hello, World!");
 
 	loadExeResources();
+
+	loadingScreen();
+
+	// Simple main event loop
+	Common::Event evt;
+	while (!shouldQuit()) {
+		g_system->getEventManager()->pollEvent(evt);
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
 
 	main_saga2();
 
