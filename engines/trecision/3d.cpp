@@ -2286,6 +2286,10 @@ void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
 		_panel[i]._h = ff->readFloatLE();
 		_panel[i]._flags = ff->readUint32LE();
 
+		// Note : Despite the panels are stored in an int16 with a MAXPANELSINROOM set to 400,
+		// _panelNum is stored in a int32 and nearPanel1 and 2 were stored in an int8
+		// in the data files. It's weird, but that's how the original game works so please
+		// don't change that.
 		_panel[i]._nearPanel1 = ff->readSByte();
 		_panel[i]._nearPanel2 = ff->readSByte();
 		_panel[i]._col1 = ff->readSByte();
