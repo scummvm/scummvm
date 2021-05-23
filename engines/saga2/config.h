@@ -64,7 +64,6 @@ struct configuration {
    FTA2 INI file code
  * ===================================================================== */
 
-void readConfig(void);
 void writeConfig(void);
 void findProgramDir(char *argv);
 void restoreProgramDir(void);

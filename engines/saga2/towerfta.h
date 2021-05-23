@@ -43,9 +43,6 @@ TERMINATOR(termCtlBreakTrap);
 INITIALIZER(initSystemConfig);
 // uses null cleanup
 
-INITIALIZER(readConfigFile);
-// uses null cleanup
-
 INITIALIZER(initMemPool);
 TERMINATOR(termMemPool);
 

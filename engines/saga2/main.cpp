@@ -189,7 +189,6 @@ void SystemKeyHandler(short, short);
 void waitForVideoFile(char *fileName);
 
 void memtest(void);
-void readConfig(void);
 void runPathFinder(void);
 
 bool setupGame(void);
@@ -812,64 +811,6 @@ void closeResources(void) {
 	if (resFile)       delete resFile;
 	resFile = NULL;
 }
-
-//-----------------------------------------------------------------------
-//	Routine to initialize an arbitrary resource file
-
-static bool lookForResource(
-    char *basePath,      // path to data file
-    char *fileName,      // file name & extension
-    configProblem errID) { // in case something goes wrong
-	char filespec[260];
-	bool fe;
-
-	strncpy(filespec, basePath, 260);
-	if (filespec[strlen(filespec) - 1] != '\\')
-		strcat(filespec, "\\");
-
-	strcat(filespec, fileName);
-
-	fe = fileExists(filespec);
-
-	while (!fe && retryConfigError(cpResDiskMissing, "Looking for a program data file")) {
-		SystemEventLoop();
-		fe = fileExists(filespec);
-	}
-//		   (driveInfo(filespec)==driveCDROM) &&
-
-	if (!fe) {
-		error("lookForResource: %s: %d", filespec, errID);
-		return FALSE;
-	}
-
-	if (!fileReadable(filespec)) {
-		error("lookforResource: %s: %d", filespec, cpResFileLocked);
-		return FALSE;
-	}
-
-
-	return TRUE;
-}
-
-//-----------------------------------------------------------------------
-//	Routine to initialize all the resource files
-
-bool testResourceConfig(void) {
-
-	if (
-	    lookForResource(globalConfig.imageResfilePath,  IMAGE_RESFILE,  cpResFileMissing) &&
-	    lookForResource(globalConfig.mainResfilePath,   OBJECT_RESFILE, cpResFileMissing) &&
-	    lookForResource(globalConfig.dataResfilePath,   AUX_RESFILE,    cpResFileMissing) &&
-	    lookForResource(globalConfig.scriptResfilePath, SCRIPT_RESFILE, cpResFileMissing) &&
-	    lookForResource(globalConfig.voiceResfilePath,  VOICE_RESFILE,  cpResFileMissing) &&
-	    lookForResource(globalConfig.soundResfilePath,  SOUND_RESFILE,  cpResFileMissing)) {
-		waitForVideoFile("INTRO.SMK");
-		return TRUE;
-	}
-	return FALSE;
-
-}
-
 
 /********************************************************************/
 /*                                                                  */

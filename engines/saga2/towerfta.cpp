@@ -65,7 +65,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ errLoggersInitialized,     &initErrorLoggers,     &termErrorLoggers,     cpInternal },
 	{ breakHandlerInitialized,   &initCtlBreakTrap,     &termCtlBreakTrap,     cpInternal },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase,        cpInternal },
-	{ configInitialized,         &readConfigFile,       &termTowerBase,        cpInternal },
 	{ memoryInitialized,         &initMemPool,          &termMemPool,          cpInsufVirtMemFree },
 	{ graphicsSystemInitialized, &initGraphicsSystem,   &termGraphicsSystem,   cpDDrawInitFail },
 	{ videoInitialized,          &initVideoPlayer,      &termVideoPlayer,      cpInternal },
@@ -121,7 +120,6 @@ void cleanupMousePointer(void);
 //void mainEnable( void );
 //void mainDisable( void );
 //void lightsOut( void );
-bool testResourceConfig(void);
 void resetInputDevices(void);
 #ifdef _WIN32
 //	void localCursorOn( void );
@@ -179,16 +177,6 @@ TERMINATOR(termCtlBreakTrap) {
 
 INITIALIZER(initSystemConfig) {
 	return TRUE;
-}
-
-// uses null cleanup
-
-// ------------------------------------------------------------------------
-
-INITIALIZER(readConfigFile) {
-	readConfig();
-	return testResourceConfig();
-	//return TRUE;
 }
 
 // uses null cleanup

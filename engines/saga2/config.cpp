@@ -83,34 +83,6 @@ static void defaultConfig(configuration &config) {
 }
 
 //-----------------------------------------------------------------------
-//	reads settings from INI file
-
-void readConfig(void) {
-	defaultConfig(globalConfig);
-
-	globalConfig.musicVolume = GetPrivateProfileInt("Sound", "MusicVolume", 127, iniFile);
-	globalConfig.soundVolume = GetPrivateProfileInt("Sound", "SoundVolume", 127, iniFile);
-	globalConfig.voiceVolume = GetPrivateProfileInt("Sound", "VoiceVolume", 127, iniFile);
-	globalConfig.autoAggression = GetPrivateProfileInt("Options", "AutoAggression", TRUE, iniFile);
-	globalConfig.autoWeapon = GetPrivateProfileInt("Options", "AutoWeapon", FALSE, iniFile);
-	globalConfig.speechText = GetPrivateProfileInt("Options", "SpeechText", TRUE, iniFile);
-	globalConfig.showNight = GetPrivateProfileInt("Options", "Night", TRUE, iniFile);
-#ifdef _WIN32
-	globalConfig.windowed = GetPrivateProfileInt("Options", "Windowed", FALSE, iniFile);
-#endif
-	GetPrivateProfileString("Paths", "SoundFile", ".\\", globalConfig.soundResfilePath, sizeof(globalConfig.soundResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "VoiceFile", ".\\", globalConfig.voiceResfilePath, sizeof(globalConfig.voiceResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "ImageFile", ".\\", globalConfig.imageResfilePath, sizeof(globalConfig.imageResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "VideoPath", ".\\", globalConfig.videoFilePath, sizeof(globalConfig.videoFilePath), iniFile);
-	GetPrivateProfileString("Paths", "MainResFile", ".\\", globalConfig.mainResfilePath, sizeof(globalConfig.mainResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "DataFile", ".\\", globalConfig.dataResfilePath, sizeof(globalConfig.dataResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "ScriptFile", ".\\", globalConfig.scriptResfilePath, sizeof(globalConfig.scriptResfilePath), iniFile);
-	GetPrivateProfileString("Paths", "Saves", ".\\", globalConfig.savedGamePath, sizeof(globalConfig.savedGamePath), iniFile);
-	if (globalConfig.savedGamePath[strlen(globalConfig.savedGamePath) - 1] != '\\')
-		strcat(globalConfig.savedGamePath, "\\");
-}
-
-//-----------------------------------------------------------------------
 //	saves settings to INI file
 
 void writeConfig(void) {

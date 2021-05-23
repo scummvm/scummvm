@@ -36,7 +36,6 @@ enum initializationStates {
 	errLoggersInitialized,
 	breakHandlerInitialized,
 	configTestInitialized,
-	configInitialized,
 	delayedErrInitialized,
 	graphicsSystemInitialized,
 	procResEnabled,
