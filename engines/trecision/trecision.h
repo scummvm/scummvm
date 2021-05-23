@@ -150,8 +150,8 @@ public:
 	Common::Error run() override;
 	bool isDemo() const;
 	bool hasFeature(EngineFeature f) const override;
-	bool canLoadGameStateCurrently() override { return canPlayerInteract(); }
-	bool canSaveGameStateCurrently() override { return canPlayerInteract(); }
+	bool canLoadGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
+	bool canSaveGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	bool syncGameStream(Common::Serializer &ser);
