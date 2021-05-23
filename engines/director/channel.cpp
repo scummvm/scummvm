@@ -314,6 +314,8 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
+		if (_sprite->_cast->isEditable() == editable)
+			return;
 		_sprite->_cast->setEditable(editable);
 
 		if (_widget) {
@@ -322,11 +324,7 @@ void Channel::setEditable(bool editable) {
 			((Graphics::MacText *)_widget)->_focusable = editable;
 			((Graphics::MacText *)_widget)->setEditable(editable);
 			((Graphics::MacText *)_widget)->_selectable = editable;
-			// only when the widget is editable, then we set it to active
-			// otherwise, the active widget may switch very frequently between
-			// editable widgets and non-editable widgets
-			if (editable)
-				g_director->_wm->setActiveWidget(_widget);
+			g_director->_wm->setActiveWidget(_widget);
 		}
 	}
 }
