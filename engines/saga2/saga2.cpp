@@ -71,13 +71,6 @@ Common::Error Saga2Engine::run() {
 
 	loadExeResources();
 
-	// Simple main event loop
-	Common::Event evt;
-	while (!shouldQuit()) {
-		g_system->getEventManager()->pollEvent(evt);
-		g_system->delayMillis(10);
-	}
-
 	main_saga2();
 
 	return Common::kNoError;

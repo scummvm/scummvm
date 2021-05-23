@@ -52,8 +52,10 @@ void cleanupErrorHandlers() {
 }
 
 bool initializeGame() {
-	warning("STUB: initializeGame()");
-	return false;
+	if (setupGame())
+		return TRUE;
+
+	return FALSE;
 }
 void shutdownGame() {
 	warning("STUB: shutdownGame");
