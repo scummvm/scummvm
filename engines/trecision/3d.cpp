@@ -1679,7 +1679,7 @@ void PathFinding3D::setPosition(int num) {
 				float oz = curLight->_dz;
 
 				// If it's a null light
-				if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f))
+				if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0) // ox == 0.0f && oz == 0.0f
 					warning("setPosition: Unknown error : null light");
 
 				float t = sqrt(ox * ox + oz * oz);
