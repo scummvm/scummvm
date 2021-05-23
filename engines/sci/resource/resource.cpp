@@ -267,7 +267,6 @@ ResourceSource::~ResourceSource() {
 MacResourceForkResourceSource::MacResourceForkResourceSource(const Common::String &name, int volNum)
  : ResourceSource(kSourceMacResourceFork, name, volNum) {
 	_macResMan = new Common::MacResManager();
-	assert(_macResMan);
 }
 
 MacResourceForkResourceSource::~MacResourceForkResourceSource() {

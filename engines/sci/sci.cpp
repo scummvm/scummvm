@@ -258,7 +258,6 @@ extern int showScummVMDialog(const Common::U32String &message, const Common::U32
 
 Common::Error SciEngine::run() {
 	_resMan = new ResourceManager();
-	assert(_resMan);
 	_resMan->addAppropriateSources();
 	_resMan->init();
 
