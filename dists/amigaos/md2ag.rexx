@@ -39,10 +39,10 @@ ELSE DO
 	p_instpath=COMPRESS(p_instpath,'"')
 END
 
-OPEN(read_md,p_readme,'R')
+CALL OPEN read_md,p_readme,'R'
 
 IF READCH(read_md,18)~='# [ScummVM README]' THEN DO
-	CLOSE(read_md)
+	CALL CLOSE read_md
 	SAY p_readme' is not the ScummVM README.md file. Aborting!'
 	EXIT
 END
@@ -50,9 +50,9 @@ ELSE
 	/*
 	Skip the first "Build Status" line.
 	*/
-	CALL READLN(read_md)
+	CALL READLN read_md
 
-OPEN(write_guide,'README.guide','W')
+CALL OPEN write_guide,'README.guide','W'
 
 /*
 Prepare Amiga guide, add intro and fixed text.
@@ -64,7 +64,7 @@ CALL WRITELN write_guide,'@AUTHOR The ScummVM team'
 CALL WRITELN write_guide,'@WORDWRAP'
 CALL WRITELN write_guide,'@NODE "main" "ScummVM README Guide"'
 CALL WRITELN write_guide,'@{b}'
-CALL WRITELN write_guide,ScummVM README
+CALL WRITELN write_guide,'ScummVM README'
 CALL WRITELN write_guide,'@{ub}'
 
 DO WHILE ~EOF(read_md)
@@ -124,8 +124,8 @@ Close guide and clean up.
 */
 CALL WRITELN write_guide,'@ENDNODE'
 
-CLOSE(read_md)
-CLOSE(write_guide)
+CALL CLOSE read_md
+CALL CLOSE write_guide
 
 /*
 Install finished README.guide to installation path and delete README.guide.
