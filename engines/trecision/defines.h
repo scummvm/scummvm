@@ -2482,17 +2482,6 @@ Management of "Use with"
 #define MC_SCRIPT 9      // (b,w1,w2,l)
 #define ME_CHANGER 18  // (0,room,door,0) - used by game scripts
 
-
-/*************************************************************************
-* ANIMATIONS                                                            *
-*************************************************************************/
-/* Notification of mouse action */
-#define MC_ANIMATION 64
-
-#define ME_ADDANIM 1
-#define ME_DELANIM 2
-
-
 /*************************************************************************
 * CHARACTER                                                             *
 *************************************************************************/
