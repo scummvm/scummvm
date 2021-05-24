@@ -18941,19 +18941,23 @@ static const uint16 sq4CdPatchSocksDoor[] = {
 //   This is patched to add the "Both" text resource (i.e. we end up with
 //   "Speech", "Text" and "Both")
 static const uint16 sq4CdSignatureTextOptionsButton[] = {
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x31, 0x20,                         // bnt 20
 	SIG_MAGICDWORD,
-	0x35, 0x01,                         // ldi 0x01
-	0xa1, 0x53,                         // sag global[0x53]
-	0x39, 0x03,                         // pushi 0x03
+	0x35, 0x01,                         // ldi 01
+	0xa1, 0x53,                         // sag global[53]
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
 	0x78,                               // push1
-	0x39, 0x09,                         // pushi 0x09
-	0x54, 0x06,                         // self 0x06
+	0x39, 0x09,                         // pushi 09 "Text"
+	0x54, 0x06,                         // self 06 [ self loop: 9 ]
 	SIG_END
 };
 
 static const uint16 sq4CdPatchTextOptionsButton[] = {
-	PATCH_ADDTOOFFSET(+7),
-	0x39, 0x0b,                         // pushi 0x0b
+	PATCH_ADDTOOFFSET(+13),
+	0x39, 0x0b,                         // pushi 0b "Both"
 	PATCH_END
 };
 
