@@ -27,6 +27,8 @@
 #ifndef SAGA2_HRESMGR_H
 #define SAGA2_HRESMGR_H
 
+#include "common/file.h"
+
 #include "saga2/rmem.h"
 #include "saga2/ioerrors.h"
 
@@ -75,9 +77,8 @@ class hResource;
 
 struct hResEntry {
 	hResID              id;                 // id of this entry or BAD_ID
-	size_t              offset;             // offset in file
-private:
-	size_t              size;               // size in file
+	uint32              offset;             // offset in file
+	uint32              size;               // size in file
 public:
 
 	hResEntry()         {
@@ -129,12 +130,13 @@ protected:
 	hResContext *parent;
 	hResEntry   *base;
 	RHANDLE     *data; // allocated array of handles
-	HR_FILE     *handle;
+	Common::File _file;
+	Common::File     *handle;
 	uint32      bytecount;
 	uint32      bytepos;
 
 	hResEntry   *findEntry(hResID id, RHANDLE **capture = NULL);
-	HR_FILE     *openExternal(HR_FILE *fh);
+	Common::File     *openExternal(Common::File *fh);
 
 public:
 	bool        valid;
@@ -163,7 +165,7 @@ public:
 	RHANDLE     load(hResID id, const char [], bool async = FALSE, bool cacheable = TRUE);
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = TRUE);
 	void        release(RHANDLE p);
-	HR_FILE     *resFileHandle(void) {
+	Common::File     *resFileHandle(void) {
 		return handle;
 	}
 
@@ -190,6 +192,7 @@ public:
 
 	hResContext *newContext(hResID id, const char []);
 	void        disposeContext(hResContext *con);
+	void readResource(hResEntry &element);
 };
 
 /* ===================================================================== *

@@ -736,26 +736,19 @@ static bool openResource(
     char *fileName,      // file name & extension
     char *description,   // description of this resource
     configProblem errID) { // in case something goes wrong
-	char filespec[260];
-
-	strncpy(filespec, basePath, 260);
-	if (filespec[strlen(filespec) - 1] != '\\')
-		strcat(filespec, "\\");
-	strcat(filespec, fileName);
-
 	if (hr) delete hr;
 	hr = NULL;
 
-	hr = NEW_PRES hResource(filespec, defaultPath, description);
+	hr = NEW_PRES hResource(fileName, defaultPath, description);
 
 	while ((hr == NULL || !hr->valid) && retryConfigError(cpResDiskMissing, description)) {
 		if (hr) delete hr;
 		hr = NULL;
-		hr = NEW_PRES hResource(filespec, defaultPath, description);
+		hr = NEW_PRES hResource(fileName, defaultPath, description);
 	}
 
 	if (hr == NULL || !hr->valid) {
-		error("openResource: %s: %d", filespec, errID);
+		error("openResource: %s: %d", fileName, errID);
 //		return FALSE;
 	}
 	return TRUE;
