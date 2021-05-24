@@ -18,9 +18,8 @@ ifdef DIST_FILES_DOCS
 	# AmigaOS AREXX will error with a "Program not found" message
 	# if srcdir is '.'. Copy the script to cwd instead.
 	cp ${srcdir}/dists/amigaos/md2ag.rexx .
-	cp "${srcdir}/README.md" .
 	rx md2ag.rexx README.md "$(AMIGAOSPATH)/doc/"
-	rm -f md2ag.rexx README.md
+	rm -f md2ag.rexx
 endif
 	# Copy mandatory installation files.
 	makedir all $(AMIGAOSPATH)/extras
