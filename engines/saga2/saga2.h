@@ -34,6 +34,10 @@ namespace Saga2 {
 
 class Console;
 
+enum {
+	kDebugResources = 1 << 0,
+};
+
 class Saga2Engine : public Engine {
 private:
 	// We need random numbers

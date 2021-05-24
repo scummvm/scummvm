@@ -25,13 +25,12 @@
  */
 
 #include "saga2/std.h"
+#include "saga2/saga2.h"
 #include "saga2/rmemfta.h"
 #include "saga2/errclass.h"
-#include "common/debug.h"
-
 #include "saga2/hresmgr.h"
-
 #include "saga2/fta.h"
+#include "common/debug.h"
 
 namespace Saga2 {
 
@@ -423,8 +422,7 @@ void hResource::readResource(hResEntry &element) {
 	element.offset = _file.readUint32LE();
 	element.size = _file.readUint32LE();
 	uint32 id = element.id;
-	//debug(3, "readResource: id %u, offset %u, size %u", element.id, (uint)element.offset, (uint)element.size);
-	debug(3, "%c%c%c%c, offset: %d, size: %d", (id >> 24),  (id >> 16) & 0xFF, (id >> 8) & 0xFF, id & 0xFF, element.offset, element.size);
+	debugC(kDebugResources, "%s, offset: %d, size: %d", tag2str(id), element.offset, element.size);
 }
 
 hResource::hResource(char *resname, char *extname, const char desc[]) {

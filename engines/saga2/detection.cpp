@@ -20,10 +20,15 @@
  *
  */
 
+#include "saga2/saga2.h"
+#include "saga2/detection.h"
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
-#include "saga2/detection.h"
+static const DebugChannelDef debugFlagList[] = {
+	{Saga2::kDebugResources, "Resources", "Debug the resources"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Saga2 {
 static const PlainGameDescriptor saga2Games[] = {
@@ -105,6 +110,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "SAGA2 (C) Wyrmkeep Entertainment";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 
