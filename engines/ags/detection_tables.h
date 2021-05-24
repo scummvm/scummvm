@@ -784,7 +784,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "johnjebediahgunelisoladisepheret", "John Jebediah Gun e l'Isola di Sepheret" },
 	{ "johnlosthiskey", "John Lost his key" },
 	{ "johnnyrocket", "Johnny_Rocket" },
-	{ "johnsinclair", "John Sinclair - Voodoo in London (Demo)" },
+	{ "johnsinclair", "John Sinclair - Voodoo in London" },
 	{ "jonnysmallvalley", "Jonny Smallvalley" },
 	{ "jorry", "Jorry" },
 	{ "juliusdangerous2", "Julius Dangerous 2" },
@@ -1937,6 +1937,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY("hiliaderoleagainsthell", "dark trial demo.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 36442694),
 	DEMO_ENTRY("indycositalianver", "cosdemo2.1-it.exe", "f120690b506dd63cd7d1112ea6af2f77", 5772985),
 	DEMO_ENTRY("jamesperis2", "james2.exe", "06a03fe35791b0578068ab1873455463", 35766505),
+	DEMO_ENTRY("johnsinclair", "John Sinclair - Voodoo in London.exe", "d72e72697a755c7de395b0f6c8cbbf0d", 56795991),
 	DEMO_ENTRY("jorry", "jorry demo.exe", "fe5f7dc7785b335aec72a2a834629bad", 124667001),
 	DEMO_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487685, AGSSPRITEFONT_CLIFFTOP), // Steam
 	DEMO_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197490245, AGSSPRITEFONT_CLIFFTOP), // GOG
@@ -2580,7 +2581,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("johnjebediahgunelisoladisepheret", "JJG.exe", "a28cb95e1769ba1bfa48f850390746c2", 88957123),
 	GAME_ENTRY("johnlosthiskey", "Newgame.exe", "0b7529a76f38283d6e850b8d56526fc1", 1453831),
 	GAME_ENTRY("johnnyrocket", "Rocket.exe", "a524cbb1c51589903c4043b98917f1d9", 10366294),
-	GAME_ENTRY("johnsinclair", "John Sinclair - Voodoo in London.exe", "d72e72697a755c7de395b0f6c8cbbf0d", 56795991),
 	GAME_ENTRY("johnsinclair", "John Sinclair- Voodoo in London.exe", "68c4cdee67c40bf96cf78e11f9073ddd", 238169392),
 	GAME_ENTRY("jonnysmallvalley", "Jonny Smallvalley.exe", "01d0e6bd812abaa307bcb10fc2193416", 34437869),
 	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.exe", "e2d4a98de69b1f8e6462c387710a441a", 146931732),
