@@ -376,7 +376,7 @@ void AsylumEngine::handleEvents() {
 	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
 
 	while (_eventMan->pollEvent(ev)) {
-		keymapper->setEnabled(_handler == _scene);
+		keymapper->setEnabled(_handler == _scene || (_handler == _menu && !_menu->isEditingSavegameName()));
 		switch (ev.type) {
 		default:
 			break;
