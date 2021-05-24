@@ -34,10 +34,6 @@
 
 namespace Saga2 {
 
-#if DEBUG
-extern char *idname(long s);
-#endif
-
 /* ===================================================================== *
    Calls which do disk access
     bool hResContext::seek(hResID id)
@@ -68,54 +64,54 @@ extern char *idname(long s);
  * ===================================================================== */
 
 hResContext::hResContext() {
-	valid = false;
-	base = nullptr;
-	parent = nullptr;
-	data = nullptr;
-	numEntries = 0;
-	handle = &_file;
+	_valid = false;
+	_base = nullptr;
+	_parent = nullptr;
+	_data = nullptr;
+	_numEntries = 0;
+	_handle = &_file;
 }
 
 hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	hResEntry   *entry;
 
-	valid = false;
-	res = sire->res;
-	numEntries = 0;
-	bytecount = 0;
-	bytepos = 0;
-	handle = &_file;
+	_valid = false;
+	_res = sire->_res;
+	_numEntries = 0;
+	_bytecount = 0;
+	_bytepos = 0;
+	_handle = &_file;
 
-	if (!res->valid)
+	if (!_res->_valid)
 		return;
 
-	parent = sire;
+	_parent = sire;
 
-	if ((entry = parent->findEntry(id)) == nullptr)
+	if ((entry = _parent->findEntry(id)) == nullptr)
 		return;
 
-	numEntries = entry->resSize() / sizeof * entry;
+	_numEntries = entry->resSize() / sizeof * entry;
 
-	base = (hResEntry *)((uint8 *)res->groups +
-	                     (entry->offset - res->firstGroupOffset));
+	_base = (hResEntry *)((uint8 *)_res->groups +
+	                     (entry->offset - _res->firstGroupOffset));
 
-	data = (RHANDLE *)malloc(numEntries * sizeof(RHANDLE));
-	if (data == nullptr)
+	_data = (RHANDLE *)malloc(_numEntries * sizeof(RHANDLE));
+	if (_data == nullptr)
 		return;
 
-	valid = true;
+	_valid = true;
 }
 
 hResContext::~hResContext() {
-	if (data) {
-		if (valid) {
-			for (int i = 0; i < numEntries; i++) {
-				free(data[ i ]);
-				data[i] = nullptr;
+	if (_data) {
+		if (_valid) {
+			for (int i = 0; i < _numEntries; i++) {
+				free(_data[ i ]);
+				_data[i] = nullptr;
 			}
 		}
-		free(data);
-		data = nullptr;
+		free(_data);
+		_data = nullptr;
 	}
 }
 
@@ -123,13 +119,13 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	hResEntry       *entry;
 	int16           i;
 
-	bytecount = 0;
-	bytepos = 0;
-	if (!valid) return nullptr;
+	_bytecount = 0;
+	_bytepos = 0;
+	if (!_valid) return nullptr;
 
-	for (i = 0, entry = base; i < numEntries; i++, entry++) {
+	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
 		if (entry->id == id) {
-			if (capture) *capture = &data[ i ];
+			if (capture) *capture = &_data[ i ];
 			return entry;
 		}
 	}
@@ -140,7 +136,7 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 uint32 hResContext::size(hResID id) {
 	hResEntry   *entry;
 
-	if (!valid) return 0;
+	if (!_valid) return 0;
 
 	if ((entry = findEntry(id)) == nullptr) return 0;
 
@@ -148,7 +144,7 @@ uint32 hResContext::size(hResID id) {
 }
 
 uint32 hResContext::count(void) {
-	return numEntries;
+	return _numEntries;
 }
 
 uint32 hResContext::count(hResID id) {
@@ -156,11 +152,11 @@ uint32 hResContext::count(hResID id) {
 	hResEntry       *entry;
 	int16           i;
 
-	bytecount = 0;
-	bytepos = 0;
-	if (!valid) return 0;
+	_bytecount = 0;
+	_bytepos = 0;
+	if (!_valid) return 0;
 
-	for (i = 0, entry = base; i < numEntries; i++, entry++) {
+	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
 		if ((entry->id & 0x00ffffff) == (id & 0x00ffffff)) count++;
 	}
 
@@ -174,9 +170,9 @@ Common::File *hResContext::openExternal(Common::File *fh) {
 	Common::File *file;
 	file = &_file;
 
-	bytecount = 0;
-	bytepos = 0;
-	strcpy(name, res->externalPath);
+	_bytecount = 0;
+	_bytepos = 0;
+	strcpy(name, _res->externalPath);
 	len = strlen(name);
 	size = fh->readUint32LE();
 	fh->read(&name, sizeof(name));
@@ -185,82 +181,82 @@ Common::File *hResContext::openExternal(Common::File *fh) {
 	return file;
 }
 
-// this function sets handle
+// this function sets _handle
 
 bool hResContext::seek(hResID id) {
 	hResEntry   *entry;
 
-	bytecount = 0;
-	bytepos = 0;
-	if (!valid) return false;
+	_bytecount = 0;
+	_bytepos = 0;
+	if (!_valid) return false;
 
 	if ((entry = findEntry(id)) == nullptr) return false;
 
-	bytecount = entry->resSize();
-	bytepos = entry->resOffset();
+	_bytecount = entry->resSize();
+	_bytepos = entry->resOffset();
 
-	if (HR_SEEK(res->handle, bytepos, SEEK_SET) != 0)
+	if (HR_SEEK(_res->_handle, _bytepos, SEEK_SET) != 0)
 		error("Error seeking resource file:\n");
 
 	if (entry->isExternal()) {
-		// resource data is actually a path name
+		// resource _data is actually a path name
 
-		handle = openExternal(res->handle);
-		return (handle != nullptr);
+		_handle = openExternal(_res->_handle);
+		return (_handle != nullptr);
 	}
 
-	handle = res->handle;
+	_handle = _res->_handle;
 
 	return true;
 }
 
 void hResContext::rest(void) {
-	bytecount = 0;
-	bytepos = 0;
-	if (valid && handle && handle != res->handle) {
-		HR_CLOSE(handle);
-		handle = nullptr;
+	_bytecount = 0;
+	_bytepos = 0;
+	if (_valid && _handle && _handle != _res->_handle) {
+		HR_CLOSE(_handle);
+		_handle = nullptr;
 	}
 }
 
 bool hResContext::read(void *buffer, int32 size) {
-	if (!valid) return false;
-	bytecount = 0;
-	bytepos = 0;
-	return (HR_READ(buffer, size, 1, handle) == 1);
+	if (!_valid) return false;
+	_bytecount = 0;
+	_bytepos = 0;
+	return (HR_READ(buffer, size, 1, _handle) == 1);
 }
 
 bool hResContext::eor(void) {
-	return (bytecount < 1);
+	return (_bytecount < 1);
 }
 
 uint32 hResContext::readbytes(void *buffer, uint32 size) {
 	int32 bytesRead;
-	if (!valid || bytecount < 1) return 0;
+	if (!_valid || _bytecount < 1) return 0;
 
-	if (HR_SEEK(res->handle, bytepos, SEEK_SET) != 0)
+	if (HR_SEEK(_res->_handle, _bytepos, SEEK_SET) != 0)
 		error("Error seeking resource file:");
-	bytesRead = HR_READ(buffer, 1, MIN(size, bytecount), handle);
-	bytecount -= bytesRead;
-	bytepos += bytesRead;
+	bytesRead = HR_READ(buffer, 1, MIN(size, _bytecount), _handle);
+	_bytecount -= bytesRead;
+	_bytepos += bytesRead;
 	return bytesRead;
 }
 
 bool hResContext::skip(int32 amount) {
-	if (!valid) return false;
+	if (!_valid) return false;
 
-	HR_SEEK(res->handle, amount, SEEK_CUR);
-	bytecount -= amount;
-	bytepos -= amount;
+	HR_SEEK(_res->_handle, amount, SEEK_CUR);
+	_bytecount -= amount;
+	_bytepos -= amount;
 	return true;
 }
 
 bool hResContext::get(hResID id, void *buffer, int32 size) {
 	bool    result = false;
 
-	if (!valid) return false;
-	bytecount = 0;
-	bytepos = 0;
+	if (!_valid) return false;
+	_bytecount = 0;
+	_bytepos = 0;
 
 	if (size == NATURAL_SIZE) {
 		hResEntry   *entry;
@@ -283,10 +279,10 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 	hResEntry   *entry;
 	RHANDLE     *capture;
 
-	if (!valid)
+	if (!_valid)
 		return nullptr;
-	bytecount = 0;
-	bytepos = 0;
+	_bytecount = 0;
+	_bytepos = 0;
 
 	if ((entry = findEntry(id, &capture)) == nullptr)
 		return nullptr;
@@ -339,15 +335,15 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 
 RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 	hResEntry   *entry;
-	RHANDLE     *capture; //, handle;
+	RHANDLE     *capture; //, _handle;
 
-	if (!valid)
+	if (!_valid)
 		return nullptr;
-	bytecount = 0;
-	bytepos = 0;
+	_bytecount = 0;
+	_bytepos = 0;
 
-	entry = &base[ index ];
-	capture = &data[ index ];
+	entry = &_base[ index ];
+	capture = &_data[ index ];
 
 	if (*capture != nullptr && **capture != nullptr) {
 		RLockHandle(*capture);
@@ -364,7 +360,7 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 		if (cacheable)
 			RCacheHandle(*capture);
 
-		HR_SEEK(res->handle, entry->resOffset(), SEEK_SET);
+		HR_SEEK(_res->_handle, entry->resOffset(), SEEK_SET);
 
 		if (read(**capture, entry->resSize()) == false) {
 			RDisposeHandle(*capture);
@@ -377,23 +373,18 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 }
 
 void hResContext::release(RHANDLE p) {
-//	if (p) RUnlockHandle( p );               // make movable, cacheable
-	bytecount = 0;
-	bytepos = 0;
+	_bytecount = 0;
+	_bytepos = 0;
 
 	hResEntry   *entry;
 	RHANDLE     *d;
 
-	if (valid && p != nullptr) {
-		entry = base;
-		d = data;
+	if (_valid && p != nullptr) {
+		entry = _base;
+		d = _data;
 
 		while (entry->id != BAD_ID) {
 			if ((RHANDLE)p == *d) {
-#if DEBUG
-				if (entry->useCount() > 32)
-					throw gError("Suspicious usage count!\n");
-#endif
 
 				entry->abandon();
 				if (!entry->isUsed()) {
@@ -405,11 +396,6 @@ void hResContext::release(RHANDLE p) {
 			entry++;
 			d++;
 		}
-
-//#define fatal     throw gError
-
-//		fatal( "RESOURCE RELEASE PROBLEM\n" );
-
 	}
 }
 
@@ -428,15 +414,12 @@ void hResource::readResource(hResEntry &element) {
 hResource::hResource(char *resname, char *extname, const char desc[]) {
 	hResEntry   origin;
 	uint32      size;
-#if DEBUG
-	strncpy(description, desc, 32);
-#endif
 
-	valid = false;
-	base = nullptr;
-	parent = nullptr;
-	data = nullptr;
-	numEntries = 0;
+	_valid = false;
+	_base = nullptr;
+	_parent = nullptr;
+	_data = nullptr;
+	_numEntries = 0;
 
 	strncpy(externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
@@ -448,39 +431,35 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	_file.seek(origin.offset - sizeof(uint32), SEEK_SET);
 	firstGroupOffset = _file.readUint32LE();
 
-	// allocate buffers for root, groups and data
+	// allocate buffers for root, groups and _data
 
-	base = (hResEntry *)malloc(origin.resSize());
+	_base = (hResEntry *)malloc(origin.resSize());
 	size = origin.offset - firstGroupOffset - sizeof(uint32);
 	groups = (hResEntry *)malloc(size);
 
-	if (base == nullptr || groups == nullptr) return;
+	if (_base == nullptr || groups == nullptr) return;
 
-	readResource(*base);
+	readResource(*_base);
 	_file.seek(firstGroupOffset, SEEK_SET);
 	readResource(*groups);
 
-	res = this;
-	numEntries = origin.resSize() / sizeof origin;
-	valid = true;
+	_res = this;
+	_numEntries = origin.resSize() / sizeof origin;
+	_valid = true;
 }
 
 hResource::~hResource() {
-	if (base) free(base);
+	if (_base) free(_base);
 	if (groups) free(groups);
-	if (handle) free(handle);
+	if (_handle) free(_handle);
 }
 
 hResContext *hResource::newContext(hResID id, const char desc[]) {
 	hResContext *result;
 
 	result = new hResContext(this, id, desc);
-	if (result == nullptr || !result->valid) {
-#if DEBUG
-		error("Error accessing resource group %s.", idname(id));
-#else
+	if (result == nullptr || !result->_valid) {
 		error("Error accessing resource group.");
-#endif
 	}
 	return result;
 }

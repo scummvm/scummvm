@@ -196,7 +196,7 @@ static void loadMagicData(void) {
 	spellRes =  auxResFile->newContext(
 	                RES_ID('S', 'P', 'E', 'L'),
 	                "spell resources");
-	if (spellRes == NULL || !spellRes->valid)
+	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing spell resource group.\n");
 	i = 1;
 	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, RES_ID('S', 'T', 'A', 0), 23, 24);

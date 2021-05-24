@@ -741,13 +741,13 @@ static bool openResource(
 
 	hr = NEW_PRES hResource(fileName, defaultPath, description);
 
-	while ((hr == NULL || !hr->valid) && retryConfigError(cpResDiskMissing, description)) {
+	while ((hr == NULL || !hr->_valid) && retryConfigError(cpResDiskMissing, description)) {
 		if (hr) delete hr;
 		hr = NULL;
 		hr = NEW_PRES hResource(fileName, defaultPath, description);
 	}
 
-	if (hr == NULL || !hr->valid) {
+	if (hr == NULL || !hr->_valid) {
 		error("openResource: %s: %d", fileName, errID);
 //		return FALSE;
 	}

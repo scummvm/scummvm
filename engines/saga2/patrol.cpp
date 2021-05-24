@@ -261,7 +261,7 @@ void initPatrolRoutes(void) {
 	patrolRouteRes =    auxResFile->newContext(
 	                        RES_ID('P', 'T', 'R', 'L'),
 	                        "patrol route resource");
-	if (patrolRouteRes == NULL || !patrolRouteRes->valid)
+	if (patrolRouteRes == NULL || !patrolRouteRes->_valid)
 		error("Error accessing patrol route resource group.");
 
 	//  Allocate the patrol route list array

@@ -317,7 +317,7 @@ static void loadWeaponData(void) {
 	spellRes =  auxResFile->newContext(
 	                RES_ID('I', 'T', 'E', 'M'),
 	                "weapon resources");
-	if (spellRes == NULL || !spellRes->valid)
+	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing weapon resource group.");
 
 	// get spell effects
