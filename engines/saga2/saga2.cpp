@@ -39,6 +39,7 @@
 
 namespace Saga2 {
 
+bool openResources();
 void main_saga2();
 
 Saga2Engine::Saga2Engine(OSystem *syst)
@@ -68,6 +69,8 @@ Common::Error Saga2Engine::run() {
 
 	// Additional setup.
 	debug("Saga2Engine::init");
+
+	openResources();
 
 	// Your main even loop should be (invoked from) here.
 	debug("Saga2Engine::go: Hello, World!");

@@ -27,6 +27,7 @@
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/errclass.h"
+#include "common/debug.h"
 
 #include "saga2/hresmgr.h"
 
@@ -76,6 +77,7 @@ hResContext::hResContext() {
 	parent = NULL;
 	data = NULL;
 	numEntries = 0;
+	handle = &_file;
 }
 
 hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
@@ -89,6 +91,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	numEntries = 0;
 	bytecount = 0;
 	bytepos = 0;
+	handle = &_file;
 
 	if (!res->valid) return;
 
@@ -168,19 +171,22 @@ uint32 hResContext::count(hResID id) {
 	return count;
 }
 
-HR_FILE *hResContext::openExternal(HR_FILE *fh) {
+Common::File *hResContext::openExternal(Common::File *fh) {
 	char    name[160];
 	int     len;
 	uint16  size;
+	Common::File *file;
+	file = &_file;
 
 	bytecount = 0;
 	bytepos = 0;
 	strcpy(name, res->externalPath);
 	len = strlen(name);
-	if (HR_READ(&size, sizeof size, 1, fh) != 1) return NULL;
-	HR_READ(&name[len], size, 1, fh);
+	size = fh->readUint32LE();
+	fh->read(&name, sizeof(name));
 	name[len + size] = 0;
-	return HR_OPEN(name, "rb");
+	file->open(name);
+	return file;
 }
 
 // this function sets handle
@@ -412,6 +418,15 @@ void hResContext::release(RHANDLE p) {
    Resource file
  * ===================================================================== */
 
+void hResource::readResource(hResEntry &element) {
+	element.id = _file.readUint32LE();
+	element.offset = _file.readUint32LE();
+	element.size = _file.readUint32LE();
+	uint32 id = element.id;
+	//debug(3, "readResource: id %u, offset %u, size %u", element.id, (uint)element.offset, (uint)element.size);
+	debug(3, "%c%c%c%c, offset: %d, size: %d", (id >> 24),  (id >> 16) & 0xFF, (id >> 8) & 0xFF, id & 0xFF, element.offset, element.size);
+}
+
 hResource::hResource(char *resname, char *extname, const char desc[]) {
 	hResEntry   origin;
 	uint32      size;
@@ -427,28 +442,25 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 
 	strncpy(externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
-	if ((handle = HR_OPEN(resname, "rb")) == NULL) return;
+	_file.open(resname);	
 
-	if (HR_READ(&origin, sizeof origin, 1, handle) != 1) return;
-
+	readResource(origin);
 	if (origin.id != HRES_ID) return;
 
-	HR_SEEK(handle, origin.offset - sizeof(uint32), SEEK_SET);
-	if (HR_READ(&firstGroupOffset, sizeof firstGroupOffset, 1, handle) != 1) {
-		return;
-	}
+	_file.seek(origin.offset - sizeof(uint32), SEEK_SET);
+	firstGroupOffset = _file.readUint32LE();
 
 	// allocate buffers for root, groups and data
 
-	base = (hResEntry *)RNewPtr(origin.resSize(), NULL, desc);
+	base = (hResEntry *)malloc(origin.resSize());
 	size = origin.offset - firstGroupOffset - sizeof(uint32);
-	groups = (hResEntry *)RNewPtr(size, NULL, desc);
+	groups = (hResEntry *)malloc(size);
 
 	if (base == NULL || groups == NULL) return;
 
-	if (HR_READ(base, origin.resSize(), 1, handle) != 1) return;
-	HR_SEEK(handle, firstGroupOffset, SEEK_SET);
-	if (HR_READ(groups, size, 1, handle) != 1) return;
+	readResource(*base);
+	_file.seek(firstGroupOffset, SEEK_SET);
+	readResource(*groups);
 
 	res = this;
 	numEntries = origin.resSize() / sizeof origin;
@@ -456,9 +468,9 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 }
 
 hResource::~hResource() {
-	if (base) RDisposePtr(base);
-	if (groups) RDisposePtr(groups);
-	if (handle) HR_CLOSE(handle);
+	if (base) free(base);
+	if (groups) free(groups);
+	if (handle) free(handle);
 }
 
 hResContext *hResource::newContext(hResID id, const char desc[]) {

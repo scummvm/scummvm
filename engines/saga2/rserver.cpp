@@ -165,8 +165,9 @@ void RequestResource(
 }
 
 void initServers(void) {
+	warning("STUB: initServers()");
+#if 0
 	int16           i;
-
 	resourceServer = NEW_PRES ResourceServer(resFile->resFileHandle());
 	if (resourceServer == NULL) {
 		error("Unable to start up resource server!\n");
@@ -175,6 +176,7 @@ void initServers(void) {
 	for (i = 0; i < numResRequests; i++) {
 		NEW_PRES ResourceRequest(resourceRequestPool);
 	}
+#endif
 }
 
 void cleanupServers(void) {
