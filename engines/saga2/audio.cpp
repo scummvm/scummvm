@@ -29,6 +29,14 @@
 
 namespace Saga2 {
 
+void initAudio() {
+	warning("STUB: initAudio()");
+}
+
+void cleanupAudio() {
+	warning("STUB: cleanupAudio()");
+}
+
 void *audioAlloc(size_t s, char desc[])
 {
 	warning("STUB: audioAlloc()");

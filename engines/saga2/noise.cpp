@@ -220,50 +220,6 @@ static ATTENUATOR(volumeFromDist) {
  * ===================================================================== */
 
 //-----------------------------------------------------------------------
-//	init - this allocates timers, but no audio
-
-bool initAudio(void) {
-	// read audio INI file settings
-#if DEBUG
-	debugStatuses = GetPrivateProfileInt("Debug", "Status", 0, iniFile);
-	debugResource = GetPrivateProfileInt("Debug", "Resource", 0, iniFile);
-	randomAudioTesting = GetPrivateProfileInt("Debug", "AudioStress", 0, iniFile);
-	debugAudioThemes = GetPrivateProfileInt("Debug", "AudioThemes", 0, iniFile);
-#endif
-
-
-	voiceRes = NULL;
-	musicRes = NULL;
-	soundRes = NULL;
-	loopRes = NULL;
-	longRes = NULL;
-
-	//allocate primary audio interface
-	audio = new audioInterface;
-	if (audio == NULL)   return FALSE;
-
-
-	// check for missing drivers
-#ifndef REQUIRE_AUDIO
-	if (audio->dig == NULL && !retryConfigError(cpNoDIGAudioCheck, "Digital sound driver not loaded"))
-		return FALSE;
-
-	if (audio->mid == NULL && !retryConfigError(cpNoMDIAudioCheck, "MIDI music driver not loaded"))
-		return FALSE;
-#else
-#ifndef _WIN32
-	REQUIRE(audio->dig, cpNoDIGAudio);
-	REQUIRE(audio->mid, cpNoMDIAudio);
-	//if ( audio->dig==NULL )
-	//  return FALSE;
-	//if ( audio->mid==NULL )
-	//  return FALSE;
-#endif
-#endif
-	return TRUE;
-}
-
-//-----------------------------------------------------------------------
 //	after system initialization - startup code
 
 void startAudio(void) {
@@ -379,34 +335,6 @@ void startAudio(void) {
 		audio->disable(volLoops);
 	if (disSound)
 		audio->disable(volSound);
-}
-
-//-----------------------------------------------------------------------
-//	cleanup
-
-
-void cleanupAudio(void) {
-	if (audio) {
-		audio->cleanupAudioInterface();
-
-		delete audio;
-		audio = NULL;
-
-		killIt(clickData[1]);
-		killIt(clickData[2]);
-
-		killIt(voiceDec);
-		killIt(musicDec);
-		killIt(soundDec);
-		killIt(longSoundDec);
-		killIt(loopDec);
-		killIt(memDec);
-		killIt(musicRes);
-		killIt(soundRes);
-		killIt(longRes);
-		killIt(loopRes);
-		killIt(voiceRes);
-	}
 }
 
 //-----------------------------------------------------------------------
