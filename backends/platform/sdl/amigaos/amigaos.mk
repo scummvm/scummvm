@@ -19,9 +19,10 @@ ifdef DIST_FILES_DOCS
 	# if srcdir is '.'. Copy the script to cwd instead.
 	# Some for README.md which can't be open when not in the cwd
 	cp ${srcdir}/dists/amigaos/md2ag.rexx .
-	# README.md needs to be copied to root, so that buildbot
-	# (cross-compil/out of tree) can pick it up.
-	cp ${srcdir}/README.md README.md.tmp
+	# README.md needs to be in current working directory
+	# when building out of tree it needs to be here
+	# LC_ALL is here to workaround Debian bug #973647
+	LC_ALL=C iconv -f 'UTF-8' -t 'ASCII//TRANSLIT' ${srcdir}/README.md -o README.md.tmp
 	rx md2ag.rexx README.md.tmp "$(AMIGAOSPATH)/doc/"
 	rm -f md2ag.rexx README.md.tmp
 endif
