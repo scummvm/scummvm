@@ -257,8 +257,6 @@ void TextManager::doString() {
 				if (_subStringAgain)
 					someoneContinueTalk();
 				else {
-					if (_talkingPersonAnimId)
-						_vm->_scheduler->doEvent(MC_ANIMATION, ME_DELANIM, MP_SYSTEM, _talkingPersonAnimId, true, 0, 0);
 					_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 				}
 			} else
@@ -364,8 +362,6 @@ void TextManager::someoneSay(uint16 sentence, uint16 person, uint16 anim) {
 
 	formattingSuperString();
 
-	if (_talkingPersonAnimId)
-		_vm->_scheduler->doEvent(MC_ANIMATION, ME_ADDANIM, MP_SYSTEM, _talkingPersonAnimId, 0, 0, 0);
 	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
 }
 
