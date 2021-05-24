@@ -288,22 +288,12 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 		return nullptr;
 
 	if (*capture != nullptr && **capture != nullptr) {
-		RLockHandle(*capture);
-
 		entry->use();
 	} else {
 		if (*capture == nullptr)
-			*capture = RNewHandle(entry->resSize(), nullptr, desc);
-		else {
-			if (RAllocHandleData(*capture, entry->resSize(), desc) == nullptr)
-				return nullptr;
-		}
+			*capture = (RHANDLE)malloc(entry->resSize());
 
 		if (*capture == nullptr) return nullptr;
-
-		RLockHandle(*capture);
-		if (cacheable)
-			RCacheHandle(*capture);
 
 		//  If it's an external resource, then load synchronously
 
@@ -314,7 +304,7 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 			if (seek(id) && read(**capture, entry->resSize())) {
 				entry->use();
 			} else {
-				RDisposeHandle(*capture);
+				free(*capture);
 				*capture = nullptr;
 			}
 
@@ -346,24 +336,17 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 	capture = &_data[ index ];
 
 	if (*capture != nullptr && **capture != nullptr) {
-		RLockHandle(*capture);
 		entry->use();
 	} else {
 		if (*capture == nullptr)
-			*capture = RNewHandle(entry->resSize(), nullptr, desc);
-		else
-			RAllocHandleData(*capture, entry->resSize(), desc);
+			*capture = (RHANDLE)malloc(entry->resSize());
 
 		if (*capture == nullptr) return nullptr;
 
-		RLockHandle(*capture);
-		if (cacheable)
-			RCacheHandle(*capture);
-
-		HR_SEEK(_res->_handle, entry->resOffset(), SEEK_SET);
+		_res->_handle->seek(entry->resOffset(), SEEK_SET);
 
 		if (read(**capture, entry->resSize()) == false) {
-			RDisposeHandle(*capture);
+			free(*capture);
 			*capture = nullptr;
 		}
 		entry->use();
