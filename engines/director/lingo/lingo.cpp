@@ -468,7 +468,11 @@ void Lingo::printStack(const char *s, uint pc) {
 }
 
 void Lingo::printCallStack(uint pc) {
-	debugC(5, kDebugLingoExec, "Call stack:");
+	if (g_lingo->_callstack.size() == 0) {
+		debugC(2, kDebugLingoExec, "\nEnd of execution");
+		return;
+	}
+	debugC(2, kDebugLingoExec, "\nCall stack:");
 	for (int i = 0; i < (int)g_lingo->_callstack.size(); i++) {
 		CFrame *frame = g_lingo->_callstack[i];
 		uint framePc = pc;
@@ -476,12 +480,12 @@ void Lingo::printCallStack(uint pc) {
 			framePc = g_lingo->_callstack[i + 1]->retpc;
 
 		if (frame->sp.type != VOIDSYM) {
-			debugC(5, kDebugLingoExec, "#%d %s:%d", i + 1,
+			debugC(2, kDebugLingoExec, "#%d %s:%d", i + 1,
 				g_lingo->_callstack[i]->sp.name->c_str(),
 				framePc
 			);
 		} else {
-			debugC(5, kDebugLingoExec, "#%d [unknown]:%d", i + 1,
+			debugC(2, kDebugLingoExec, "#%d [unknown]:%d", i + 1,
 				framePc
 			);
 		}
@@ -598,7 +602,7 @@ void Lingo::execute(uint pc) {
 				debug("me: %s", _currentMe.asString(true).c_str());
 		}
 
-		debugC(1, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
+		debugC(3, kDebugLingoExec, "[%3d]: %s", current, instr.c_str());
 
 		_pc++;
 		(*((*_currentScript)[_pc - 1]))();
