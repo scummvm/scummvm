@@ -96,8 +96,8 @@ DO WHILE ~EOF(read_md)
 	*/
 	IF POS('[here](',v_line)>0 THEN DO
 		v_locallink=SUBSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
-		v_line=DELSTR(v_line,POS('(',v_line),POS(')',v_line)-POS('(',v_line))
-		v_line=INSERT('@{"'v_locallink'" link 'v_locallink'/main}',v_line,POS(']',v_line))
+		v_line=DELSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
+		v_line=INSERT('@{"'v_locallink'" link 'v_locallink'/main}',v_line,POS(']',v_line)+1)
 	END
 
 	/*
@@ -106,14 +106,35 @@ DO WHILE ~EOF(read_md)
 	IF POS('http',v_line)>0 THEN DO
 		IF POS('(http',v_line)>0 THEN DO
 			v_weblink=SUBSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
-			v_line=DELSTR(v_line,POS('(',v_line),POS(')',v_line)-POS('(',v_line))
-			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,POS(']',v_line))
+			v_weblink=COMPRESS(v_weblink,'>')
+			v_line=DELSTR(v_line,POS('(',v_line)+1,POS(')',v_line)-POS('(',v_line)-1)
+			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,POS(']',v_line)+1)
 		END
 		ELSE DO
-			v_weblink=SUBSTR(v_line,POS('<',v_line)+1,POS('/>',v_line)-POS('<',v_line))
-			v_line=DELSTR(v_line,POS('<',v_line)+1,POS('/>',v_line)-POS('<',v_line))
-			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,POS('>',v_line)+2)
+			v_weblink=SUBSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('/>',v_line)-LASTPOS('<',v_line)-1)
+			v_line=DELSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('>',v_line)-LASTPOS('<',v_line)-1)
+			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,LASTPOS('>',v_line)-1)
 		END
+	END
+
+	/*
+	Make the links stand out.
+	*/
+	IF POS('[',v_line)>0 THEN DO
+		v_line=INSERT('@{b}',v_line,POS('[',v_line)-1)
+		v_line=INSERT('@{ub} ',v_line,POS(']',v_line))
+	END
+
+	/*
+	There is one long line with two weblinks.
+	*/
+	IF POS('[Supported Games]',v_line)>0 THEN DO
+		v_weblink=SUBSTR(v_line,LASTPOS('(',v_line)+1,LASTPOS(')',v_line)-LASTPOS('(',v_line)-1)
+		v_weblink=COMPRESS(v_weblink,'>')
+		v_line=DELSTR(v_line,LASTPOS('(',v_line)+1,LASTPOS(')',v_line)-LASTPOS('(',v_line)-1)
+		v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,LASTPOS(']',v_line)+1)
+		v_line=INSERT('@{b}',v_line,LASTPOS('[',v_line)-1)
+		v_line=INSERT('@{ub} ',v_line,LASTPOS(']',v_line))
 	END
 
 	CALL WRITELN write_guide,v_line
