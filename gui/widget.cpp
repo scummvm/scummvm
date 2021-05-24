@@ -673,6 +673,70 @@ void PicButtonWidget::drawWidget() {
 
 #pragma mark -
 
+void GameThumbButton::setGfx(const Graphics::ManagedSurface *gfx, int statenum, bool scale) {
+	_gfx[statenum].free();
+
+	if (!gfx || !gfx->getPixels())
+		return;
+
+	if (gfx->format.bytesPerPixel == 1) {
+		warning("GameThumbButton::setGfx got paletted surface passed");
+		return;
+	}
+
+	float sf = g_gui.getScaleFactor();
+	if (scale && sf != 1.0) {
+		float scalingFactor = (float)gfx->w / _w;
+		Graphics::Surface *tmp4 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
+		Graphics::Surface *tmp2 = tmp4->scale(_w, (uint16)(gfx->h / scalingFactor), false);
+		Graphics::Surface tmp3 = tmp2->getSubArea(Common::Rect(0,(tmp2->h -_h)/2, tmp2->w, (tmp2->h + _h)/2));
+		_gfx[statenum].copyFrom(tmp3);
+		tmp4->free();
+		delete tmp4;
+		tmp2->free();
+		delete tmp2;
+	} else {
+		_gfx[statenum].copyFrom(*gfx);
+	}
+}
+
+void GameThumbButton::setGfxFromTheme(const char *name, int statenum, bool scale) {
+	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
+
+	setGfx(gfx, statenum, scale);
+
+	return;
+}
+
+void GameThumbButton::drawWidget() {
+	if (_showButton)
+		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(), _state, getFlags());
+
+	Graphics::ManagedSurface *gfx;
+
+	if (_state == ThemeEngine::kStateHighlight)
+		gfx = &_gfx[kPicButtonHighlight];
+	else if (_state == ThemeEngine::kStateDisabled)
+		gfx = &_gfx[kPicButtonStateDisabled];
+	else if (_state == ThemeEngine::kStatePressed)
+		gfx = &_gfx[kPicButtonStatePressed];
+	else
+		gfx = &_gfx[kPicButtonStateEnabled];
+
+	if (!gfx->getPixels())
+		gfx = &_gfx[kPicButtonStateEnabled];
+
+	if (gfx->getPixels()) {
+		const int x = _x + (_w - gfx->w) / 2;
+		const int y = _y + (_h - gfx->h) / 2;
+
+		g_gui.theme()->drawWidgetBackground(Common::Rect(x, y, x+_w, y+_h),ThemeEngine::WidgetBackground::kThumbnailBackground);
+		g_gui.theme()->drawSurface(Common::Point(x, y), *gfx, _transparency);
+	}
+}
+
+#pragma mark -
+
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
@@ -898,16 +962,18 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 
 	float sf = g_gui.getScaleFactor();
 	if (scale && sf != 1.0) {
-		_w = gfx->w * sf;
-		_h = gfx->h * sf;
+		// _w = gfx->w * sf;
+		// _h = gfx->h * sf;
 	} else {
-		_w = gfx->w;
-		_h = gfx->h;
+		// _w = gfx->w;
+		// _h = gfx->h;
 	}
 
 	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
-		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, _h, false);
-		_gfx.copyFrom(*tmp2);
+		float scalingFactor = (float)gfx->w / _w;
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, (uint16)(gfx->h / scalingFactor), false);
+		Graphics::Surface tmp3 = tmp2->getSubArea(Common::Rect(0,(tmp2->h -_h)/2, tmp2->w, (tmp2->h + _h)/2)); // scale(_w, _h, false);
+		_gfx.copyFrom(tmp3);
 		tmp2->free();
 		delete tmp2;
 	} else {

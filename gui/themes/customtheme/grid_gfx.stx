@@ -128,7 +128,14 @@
 		<bitmap filename = 'editbtn_small.bmp' scalable_file = 'editbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'switchbtn_small.bmp' scalable_file = 'switchbtn.svg' width = '16' height = '16'/>
 		<bitmap filename = 'fastreplay_small.bmp' scalable_file = 'fastreplay.svg' width = '16' height = '16'/>
-		<bitmap filename = 'agi-kq3.bmp' width = '256' height = '256'/>
+		<bitmap filename = 'adl-hires1.png' width = '512' height = '512'/>
+		<bitmap filename = 'sky-sky.png' width = '512' height = '512'/>
+		<bitmap filename = 'lure-lure.png' width = '512' height = '512'/>
+		<bitmap filename = 'queen-queen.png' width = '512' height = '512'/>
+		<bitmap filename = 'dos.png' width = '419' height = '443'/>
+		<bitmap filename = 'amiga.png' width = '256' height = '256'/>
+		<bitmap filename = 'apple2.png' width = '845' height = '1024'/>
+		<bitmap filename = 'win.png' width = '277' height = '240'/>
 	</bitmaps>
 
 	<fonts>

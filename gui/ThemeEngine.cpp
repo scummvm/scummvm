@@ -121,6 +121,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDDefaultBackground,            "default_bg",           kDrawLayerBackground,   kDDNone},
 	{kDDTextSelectionBackground,      "text_selection",       kDrawLayerForeground,  kDDNone},
 	{kDDTextSelectionFocusBackground, "text_selection_focus", kDrawLayerForeground,  kDDNone},
+	{kDDThumbnailBackground,    	  "thumb_bg",   		  kDrawLayerBackground,   kDDNone},
 
 	{kDDWidgetBackgroundDefault,    "widget_default",   kDrawLayerBackground,   kDDNone},
 	{kDDWidgetBackgroundSmall,      "widget_small",     kDrawLayerBackground,   kDDNone},
@@ -1269,6 +1270,10 @@ void ThemeEngine::drawWidgetBackground(const Common::Rect &r, WidgetBackground b
 
 	case kWidgetBackgroundSlider:
 		drawDD(kDDWidgetBackgroundSlider, r);
+		break;
+
+	case kThumbnailBackground:
+		drawDD(kDDThumbnailBackground, r);
 		break;
 
 	default:
