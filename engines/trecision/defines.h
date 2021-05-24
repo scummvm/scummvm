@@ -2451,7 +2451,6 @@ Management of "Use with"
 /* String names */
 #define MC_STRING 4
 
-#define ME_CHARACTERSPEAK 2    // (...)
 #define ME_CHARACTERSPEAKING 3 // (someone,)
 #define ME_SOMEONESPEAKING 5   // (...)
 #define ME_SOMEONEWAIT2SPEAK 7
