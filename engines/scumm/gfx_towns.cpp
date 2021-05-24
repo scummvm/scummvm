@@ -641,6 +641,7 @@ template void TownsScreen::transferRect<uint16, uint16, 2, 2, false>(uint8 *dst,
 template void TownsScreen::transferRect<uint16, uint8, 1, 1, true>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
 #else
 template void TownsScreen::transferRect<uint8, uint8, 2, 2, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
+//template void TownsScreen::transferRect<uint8, uint8, 2, 2, true>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
 template void TownsScreen::transferRect<uint8, uint8, 1, 1, false>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
 template void TownsScreen::transferRect<uint8, uint8, 1, 1, true>(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
 #endif
@@ -672,8 +673,9 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 #else
 			if (l->numCol == 16) {
 				if (l->scaleH == 2 && l->scaleW == 2) {
-					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-						transferRect<dstPixelType, uint8, 2, 2, true>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
+					//for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
+					//	transferRect<dstPixelType, uint8, 2, 2, true>(dst, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
+					error("TownsScreen::updateOutputBuffer(): Unsupported scale/color config");
 				} else
 #endif
 				if (l->scaleH == 1 && l->scaleW == 1) {
@@ -686,7 +688,7 @@ template<typename dstPixelType> void TownsScreen::updateScreenBuffer() {
 			} else {
 				if (l->scaleH == 2 && l->scaleW == 2) {
 					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
-						transferRect<dstPixelType, uint8, 2, 2, false>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
+						transferRect<dstPixelType, uint8, 2, 2, false>(dst, l, r->left >> 1, r->top >> 1, (r->right - r->left) >> 1, (r->bottom - r->top) >> 1);
 				} else if (l->scaleH == 1 && l->scaleW == 1) {
 					for (Common::List<Common::Rect>::iterator r = _dirtyRects.begin(); r != _dirtyRects.end(); ++r)
 						transferRect<dstPixelType, uint8, 1, 1, false>(dst, l, r->left, r->top, r->right - r->left, r->bottom - r->top);
