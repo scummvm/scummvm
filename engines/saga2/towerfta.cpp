@@ -292,10 +292,10 @@ TERMINATOR(termAudioChannels) {
 
 INITIALIZER(initResourceHandles) {
 	tileRes = resFile->newContext(RES_ID('T', 'I', 'L', 'E'), "tile resources");
-	if (!tileRes->valid)
+	if (!tileRes->_valid)
 		return FALSE;
 	listRes = objResFile->newContext(RES_ID('L', 'I', 'S', 'T'), "list resources");
-	if (!listRes->valid)
+	if (!listRes->_valid)
 		return FALSE;
 	resImports = (ResImportTable *)LoadResource(listRes, RES_ID('I', 'M', 'P', 'O'), "res imports");
 	if (!resImports)

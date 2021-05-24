@@ -2676,7 +2676,7 @@ void initObjectSoundFXTable(void) {
 	itemRes =   auxResFile->newContext(
 	                RES_ID('I', 'T', 'E', 'M'),
 	                "item resources");
-	if (itemRes == NULL || !itemRes->valid)
+	if (itemRes == NULL || !itemRes->_valid)
 		error("Error accessing item resource group.\n");
 
 	objectSoundFXTable =

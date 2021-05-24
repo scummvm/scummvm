@@ -122,31 +122,28 @@ public:
 class hResContext {
 
 protected:
-#if DEBUG
-	char        description[32];
-#endif
-	uint16      numEntries;
-	hResource   *res;
-	hResContext *parent;
-	hResEntry   *base;
-	RHANDLE     *data; // allocated array of handles
+	uint16      _numEntries;
+	hResource   *_res;
+	hResContext *_parent;
+	hResEntry   *_base;
+	RHANDLE     *_data; // allocated array of handles
 	Common::File _file;
-	Common::File     *handle;
-	uint32      bytecount;
-	uint32      bytepos;
+	Common::File     *_handle;
+	uint32      _bytecount;
+	uint32      _bytepos;
 
 	hResEntry   *findEntry(hResID id, RHANDLE **capture = NULL);
 	Common::File     *openExternal(Common::File *fh);
 
 public:
-	bool        valid;
+	bool        _valid;
 
 	hResContext();
 	hResContext(hResContext *sire, hResID id, const char []);
 	~hResContext();
 
 	uint32      getResID(void) {
-		return base->id;
+		return _base->id;
 	}
 
 	uint32      size(hResID id);
@@ -157,7 +154,7 @@ public:
 	uint32          readbytes(void *buffer, uint32 size);
 	bool        eor(void);
 	inline size_t   bytesleft(void) {
-		return bytecount;
+		return _bytecount;
 	}
 	bool        read(void *buffer, int32 size);
 	bool        skip(int32 amount);
@@ -166,11 +163,11 @@ public:
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = TRUE);
 	void        release(RHANDLE p);
 	Common::File     *resFileHandle(void) {
-		return handle;
+		return _handle;
 	}
 
 	RHANDLE     dataHandle(int16 index) {
-		return data[ index ];
+		return _data[ index ];
 	}
 };
 
