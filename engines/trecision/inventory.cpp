@@ -80,7 +80,7 @@ void TrecisionEngine::moveInventoryRight() {
 void TrecisionEngine::showIconName() {
 	if (isIconArea(_mousePos)) {
 		if (_inventoryStatus != INV_ON)
-			_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+			openInventory();
 		_curInventory = whatIcon(_mousePos);
 		showInventoryName(_curInventory, true);
 
@@ -96,85 +96,78 @@ void TrecisionEngine::showIconName() {
 	}
 }
 
-void TrecisionEngine::doInventory() {
-	switch (_curMessage->_event) {
-	case ME_OPEN:
-		if (!_flagInventoryLocked && (_inventoryStatus == INV_OFF) && !_flagDialogActive) {
-			_inventoryCounter = INVENTORY_HIDE;
-			_inventorySpeedIndex = 0;
-			_inventoryStatus = INV_PAINT;
-		}
-		break;
-
-	case ME_CLOSE:
-		if (!_flagInventoryLocked && (_inventoryStatus == INV_INACTION) && !_flagDialogActive) {
-			_inventoryCounter = INVENTORY_SHOW;
-			_inventorySpeedIndex = 0;
-			_inventoryStatus = INV_DEPAINT;
-			_lightIcon = 0xFF;
-		}
-		break;
-
-	case ME_OPERATEICON:
-		_curInventory = whatIcon(_mousePos);
-		if (_curInventory == 0)
-			break;
-
-		if (_flagUseWithStarted) {
-			_flagInventoryLocked = false;
-			_flagUseWithStarted = false;
-			_useWith[WITH] = _curInventory;
-			_useWithInv[WITH] = true;
-
-			if (_useWith[USED] != _curInventory) {
-				doUseWith();
-				_lightIcon = 0xFF;
-			} else {
-				_animMgr->smkStop(kSmackerIcon);
-				showInventoryName(_curInventory, true);
-				_lightIcon = _curInventory;
-			}
-		} else if (_inventoryObj[_curInventory]._flag & kObjFlagUseWith) {
-			if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
-				_textMgr->characterSay(1565);
-				return;
-			}
-			_animMgr->startSmkAnim(_inventoryObj[_curInventory]._anim);
-			_lightIcon = _curInventory;
-			setInventoryStart(_iconBase, INVENTORY_SHOW);
-			_flagInventoryLocked = true;
-			_flagUseWithStarted = true;
-			_useWith[USED] = _curInventory;
-			_useWithInv[USED] = true;
-			showInventoryName(_curInventory, true);
-		} else
-			doInvOperate();
-		break;
-
-	case ME_EXAMINEICON:
-		_curInventory = whatIcon(_mousePos);
-		_actor->actorStop();
-		_pathFind->nextStep();
-		if (_flagUseWithStarted) {
-			_flagInventoryLocked = false;
-			_flagUseWithStarted = false;
-			_useWith[WITH] = _curInventory;
-			_useWithInv[WITH] = true;
-			if (_useWith[USED] != _curInventory) {
-				doUseWith();
-				_lightIcon = 0xFF;
-			} else {
-				_animMgr->smkStop(kSmackerIcon);
-				showInventoryName(_curInventory, true);
-				_lightIcon = _curInventory;
-			}
-		} else
-			doInvExamine();
-		break;
-
-	default:
-		break;
+void TrecisionEngine::openInventory() {
+	if (!_flagInventoryLocked && (_inventoryStatus == INV_OFF) && !_flagDialogActive) {
+		_inventoryCounter = INVENTORY_HIDE;
+		_inventorySpeedIndex = 0;
+		_inventoryStatus = INV_PAINT;
 	}
+}
+
+void TrecisionEngine::closeInventory() {
+	if (!_flagInventoryLocked && (_inventoryStatus == INV_INACTION) && !_flagDialogActive) {
+		_inventoryCounter = INVENTORY_SHOW;
+		_inventorySpeedIndex = 0;
+		_inventoryStatus = INV_DEPAINT;
+		_lightIcon = 0xFF;
+	}
+}
+
+void TrecisionEngine::examineItem() {
+	_curInventory = whatIcon(_mousePos);
+	_actor->actorStop();
+	_pathFind->nextStep();
+	if (_flagUseWithStarted) {
+		_flagInventoryLocked = false;
+		_flagUseWithStarted = false;
+		_useWith[WITH] = _curInventory;
+		_useWithInv[WITH] = true;
+		if (_useWith[USED] != _curInventory) {
+			doUseWith();
+			_lightIcon = 0xFF;
+		} else {
+			_animMgr->smkStop(kSmackerIcon);
+			showInventoryName(_curInventory, true);
+			_lightIcon = _curInventory;
+		}
+	} else
+		doInvExamine();
+}
+
+void TrecisionEngine::useItem() {
+	_curInventory = whatIcon(_mousePos);
+	if (_curInventory == 0)
+		return;
+
+	if (_flagUseWithStarted) {
+		_flagInventoryLocked = false;
+		_flagUseWithStarted = false;
+		_useWith[WITH] = _curInventory;
+		_useWithInv[WITH] = true;
+
+		if (_useWith[USED] != _curInventory) {
+			doUseWith();
+			_lightIcon = 0xFF;
+		} else {
+			_animMgr->smkStop(kSmackerIcon);
+			showInventoryName(_curInventory, true);
+			_lightIcon = _curInventory;
+		}
+	} else if (_inventoryObj[_curInventory]._flag & kObjFlagUseWith) {
+		if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
+			_textMgr->characterSay(1565);
+			return;
+		}
+		_animMgr->startSmkAnim(_inventoryObj[_curInventory]._anim);
+		_lightIcon = _curInventory;
+		setInventoryStart(_iconBase, INVENTORY_SHOW);
+		_flagInventoryLocked = true;
+		_flagUseWithStarted = true;
+		_useWith[USED] = _curInventory;
+		_useWithInv[USED] = true;
+		showInventoryName(_curInventory, true);
+	} else
+		doInvOperate();
 }
 
 uint8 TrecisionEngine::whatIcon(Common::Point pos) {
@@ -334,7 +327,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			_inventoryStatus = INV_INACTION;
 			_inventoryCounter = INVENTORY_SHOW;
 			if (!isInventoryArea(_mousePos))
-				_scheduler->doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
+				closeInventory();
 			_textMgr->redrawString();
 			return;
 		}
@@ -347,7 +340,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			_inventoryStatus = INV_OFF;
 			_inventoryCounter = INVENTORY_HIDE;
 			if (isInventoryArea(_mousePos) && !(_flagDialogActive || _flagDialogMenuActive))
-				_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+				openInventory();
 			else
 				_textMgr->redrawString();
 			return;

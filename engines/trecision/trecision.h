@@ -88,7 +88,6 @@ class TrecisionEngine : public Engine {
 	void refreshInventory(uint8 startIcon, uint8 startLine);
 	void moveInventoryLeft();
 	void moveInventoryRight();
-	void doInventory();
 	void syncInventory(Common::Serializer &ser);
 	void doInventoryUseWithInventory();
 	void doInventoryUseWithScreen();
@@ -168,6 +167,10 @@ public:
 	void removeIcon(uint8 icon);
 	void addIcon(uint8 icon);
 	void replaceIcon(uint8 oldIcon, uint8 newIcon);
+	void openInventory();
+	void closeInventory();
+	void useItem();
+	void examineItem();
 
 	// Script
 	void playScript(uint16 id);
