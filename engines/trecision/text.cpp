@@ -37,7 +37,6 @@ TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 	_someoneSpeakTime = 0;
 	_subStringAgain = false;
 	_talkTime = 0;
-	_talkingPersonAnimId = 0;
 	for (int i = 0; i < MAXSUBSTRING; ++i) {
 		for (int j = 0; j < MAXLENSUBSTRING; ++j) {
 			_subString[i][j] = 0;
@@ -221,9 +220,6 @@ void TextManager::someoneMute() {
 
 void TextManager::doString() {
 	switch (_vm->_curMessage->_event) {
-	case ME_CHARACTERSPEAK:
-		characterSay(_vm->_curMessage->_u16Param1);
-		break;
 
 	case ME_CHARACTERSPEAKING:
 		if (_vm->_flagCharacterSpeak) {
@@ -257,7 +253,7 @@ void TextManager::doString() {
 				if (_subStringAgain)
 					someoneContinueTalk();
 				else {
-					_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
+					_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, 0, 0, 0, 0);
 				}
 			} else
 				_vm->reEvent();
@@ -349,8 +345,7 @@ void TextManager::showObjName(uint16 obj, bool show) {
 	}
 }
 
-void TextManager::someoneSay(uint16 sentence, uint16 person, uint16 anim) {
-	_talkingPersonAnimId = anim;
+void TextManager::someoneSay(uint16 sentence, uint16 person) {
 	_talkingPersonId = person;
 	_vm->_flagSomeoneSpeaks = true;
 	_vm->_flagSkipTalk = false;
@@ -362,7 +357,7 @@ void TextManager::someoneSay(uint16 sentence, uint16 person, uint16 anim) {
 
 	formattingSuperString();
 
-	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, _talkingPersonAnimId, 0, 0, 0);
+	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, 0, 0, 0, 0);
 }
 
 void TextManager::characterSay(uint16 i) {

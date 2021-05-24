@@ -38,7 +38,6 @@ class TextManager {
 	uint32 _someoneSpeakTime;
 	bool _subStringAgain;
 	uint32 _talkTime;
-	uint16 _talkingPersonAnimId;
 	char _subString[MAXSUBSTRING][MAXLENSUBSTRING];
 	uint16 _subStringUsed;
 	Common::String _superString;
@@ -67,7 +66,7 @@ public:
 
 	void doString();
 	void showObjName(uint16 obj, bool show);
-	void someoneSay(uint16 sentence, uint16 person, uint16 anim);
+	void someoneSay(uint16 sentence, uint16 person);
 	void characterSay(uint16 i);
 	void characterSayInAction(uint16 ss);
 

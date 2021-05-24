@@ -263,17 +263,20 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		break;
 	case ATFONESPEAK:
 		switch (index) {
-		case 1:
+		case 1:	// Storekeeper's wife
 			if (_vm->_room[kRoom1D]._flag & kObjFlagExtra)
 				break;
 
-			_vm->_textMgr->someoneSay(307 + _oneSpeakDialogCount, oDONNA1D, 0);
+			// Quotes spoken by the storekeeper's wife while she is in the cellar
+			_vm->_textMgr->someoneSay(307 + _oneSpeakDialogCount, oDONNA1D);
 			if (_oneSpeakDialogCount < 6)
 				++_oneSpeakDialogCount;
 			break;
 
-		case 2:
-			_vm->_textMgr->someoneSay(1788, ocNEGOZIANTE1A, 0);
+		case 2:	// Storekeeper
+			// Quote when you enter the liquor store: "Ah, it's you again... look round
+			// if you want, but don't disturb me, I've got a lot to do"
+			_vm->_textMgr->someoneSay(1788, ocNEGOZIANTE1A);
 			break;
 		default:
 			break;
