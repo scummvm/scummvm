@@ -70,8 +70,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ videoInitialized,          &initVideoPlayer,      &termVideoPlayer,      cpInternal },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro,        cpInternal },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer,      cpDTimerInitFail },
-	{ audioInitialized,          &initAudio,            &termAudio,            cpDSoundInitFail },
-	{ SVGAInitialized,           &initGraphics,         &termGraphics,         cpInternal },
 	{ resourcesInitialized,      &initResourceFiles,    &termResourceFiles,    cpResFileMissing },
 	{ serversInitialized,        &initResourceServers,  &termResourceServers,  cpInternal },
 	{ pathFinderInitialized,     &initPathFinders,      &termPathFinders,      cpInternal },
@@ -229,24 +227,6 @@ extern INITIALIZER(initSystemTimer);
 
 TERMINATOR(termSystemTimer) {
 	cleanupSystemTimer();
-}
-
-
-// ------------------------------------------------------------------------
-
-extern INITIALIZER(initAudio);
-
-TERMINATOR(termAudio) {
-	cleanupAudio();
-}
-
-
-// ------------------------------------------------------------------------
-
-extern INITIALIZER(initGraphics);
-
-TERMINATOR(termGraphics) {
-	cleanupGraphics();
 }
 
 

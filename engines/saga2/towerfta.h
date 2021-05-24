@@ -58,12 +58,6 @@ TERMINATOR(termPlayOutro);
 INITIALIZER(initSystemTimer);
 TERMINATOR(termSystemTimer);
 
-INITIALIZER(initAudio);
-TERMINATOR(termAudio);
-
-INITIALIZER(initGraphics);
-TERMINATOR(termGraphics);
-
 INITIALIZER(initResourceFiles);
 TERMINATOR(termResourceFiles);
 
