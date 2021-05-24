@@ -78,6 +78,34 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 	int y = 0;
 	int x = 0;
 	bool upscale = false;
+
+	//
+	// Slight HACK: test if we need to scale up this frame without
+	// changing the output data yet.  This has a bit of duplicated code
+	// with the loop below just to measure the frame size from the
+	// first block.
+	//
+	if (_streamType == ID_RRV1 || _streamType == ID_RRV2) {
+		stream.seek(offsets[0], SEEK_SET);
+		const int cmdLen = stream.readUint32LE();
+		uint8 *cmdData = new uint8[cmdLen];
+		stream.read(cmdData, cmdLen);
+		Common::BitStreamMemoryStream cmdMemStream(cmdData, cmdLen);
+		Common::BitStreamMemory8MSB cmdBitStream(cmdMemStream);
+		int total = 0;
+		while (!cmdBitStream.eos()) {
+			uint32 idx = cmdBitStream.getBits(4);
+			total += BASE_LEN[idx];
+			if (idx != 0 && idx != 8) {
+			   total += cmdBitStream.getBits(FINE_LEN_BITS[idx]);
+			}
+		}
+		delete [] cmdData;
+
+		if (total == _width * blockHeight / 2)
+			upscale = true;
+	}
+
 	for (int i = 0; i < numOffsets; i++) {
 		stream.seek(offsets[i], SEEK_SET);
 		const int cmdLen = stream.readUint32LE();
@@ -132,17 +160,7 @@ const Graphics::Surface *JYV1Decoder::decodeFrame(Common::SeekableReadStream &st
 			}
 			skipping = !skipping;
 		}
-
-		// Slight HACK - if we only used half the expected height, then
-		// this frame should be upscaled.  Go back and do it again.
-		if (!upscale && y == blockHeight / 2) {
-			y = 0;
-			i--;
-			upscale = true;
-		}
-
 		delete [] cmdData;
-
 	}
 	return &_surface;
 }
