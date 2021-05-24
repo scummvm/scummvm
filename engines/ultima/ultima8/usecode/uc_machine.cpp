@@ -2068,7 +2068,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 
 const Std::string &UCMachine::getString(uint16 str) const {
-	static Std::string emptystring("");
+	static const Std::string emptystring("");
 
 	Std::map<uint16, Std::string>::const_iterator iter =
 			_stringHeap.find(str);
