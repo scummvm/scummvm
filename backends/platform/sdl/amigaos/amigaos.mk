@@ -19,6 +19,8 @@ ifdef DIST_FILES_DOCS
 	# if srcdir is '.'. Copy the script to cwd instead.
 	# Some for README.md which can't be open when not in the cwd
 	cp ${srcdir}/dists/amigaos/md2ag.rexx .
+	# README.md needs to be copied to root, so that buildbot
+	# (cross-compil/out of tree) can pick it up.
 	cp ${srcdir}/README.md README.md.tmp
 	rx md2ag.rexx README.md.tmp "$(AMIGAOSPATH)/doc/"
 	rm -f md2ag.rexx README.md.tmp
