@@ -303,7 +303,7 @@ public:
 
 protected:
 	void drawWidget() override;
-
+	
 	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
 	int _alpha;
 	bool _transparency;
@@ -458,6 +458,33 @@ protected:
 	void drawWidget() override;
 
 	ThemeEngine::WidgetBackground _backgroundType;
+};
+
+/* GameThumbButton */
+class GameThumbButton : public PicButtonWidget {
+public:
+	GameThumbButton(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0): PicButtonWidget(boss, x, y, w, h, tooltip, cmd, hotkey) {};
+	GameThumbButton(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0): PicButtonWidget(boss, name, tooltip, cmd, hotkey) {};
+	
+	void setGfx(const Graphics::ManagedSurface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
+	void drawWidget(void);
+};
+
+/* GameContainerWidget */
+class GameContainerWidget : public ContainerWidget {
+public:
+	GameContainerWidget(GuiObject *boss, int x, int y, int w, int h) : ContainerWidget(boss, x, y, w, h) {};
+};
+
+/* GridContainerWidget */
+class GridContainerWidget : public ContainerWidget {
+public:
+	GridContainerWidget(GuiObject *boss, int x, int y, int w, int h) : ContainerWidget(boss, x, y, w, h) {};
+	GridContainerWidget(GuiObject *boss, const Common::String &name) : ContainerWidget(boss, name) {};
+
+	int selectedGame;
+	Common::Array<GameContainerWidget> _entries;
 };
 
 /* OptionsContainerWidget */
