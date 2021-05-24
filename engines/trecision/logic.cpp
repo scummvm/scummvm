@@ -3600,7 +3600,7 @@ void LogicManager::doMouseGame() {
 		_vm->_textMgr->showObjName(_vm->_curObj, true);
 
 	if (_vm->_inventoryStatus == INV_INACTION)
-		_vm->_scheduler->doEvent(MC_INVENTORY, ME_CLOSE, MP_DEFAULT, 0, 0, 0, 0);
+		_vm->closeInventory();
 }
 
 // Returns true when it's in a room without a character, such as the map
@@ -3657,9 +3657,9 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_lightIcon = 0xFF;
 				_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
 				if (_vm->_curMessage->_event == ME_MRIGHT || _vm->_flagUseWithStarted)
-					_vm->_scheduler->doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+					_vm->useItem();
 				else
-					_vm->_scheduler->doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+					_vm->examineItem();
 			}
 			return;
 		}
@@ -3831,9 +3831,9 @@ void LogicManager::doMouseLeftRight() {
 			_vm->_lightIcon = 0xFF;
 			_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
 			if (_vm->_curMessage->_event == ME_MRIGHT || _vm->_flagUseWithStarted)
-				_vm->_scheduler->doEvent(MC_INVENTORY, ME_OPERATEICON, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+				_vm->useItem();
 			else
-				_vm->_scheduler->doEvent(MC_INVENTORY, ME_EXAMINEICON, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+				_vm->examineItem();
 		}
 	}
 }

@@ -2446,17 +2446,6 @@ Management of "Use with"
 #define ME_MRIGHT 1 // (mx,my,...) - used by game scripts
 
 /*************************************************************************
-* Inventory                                                              *
-*************************************************************************/
-/* Inventory events */
-#define MC_INVENTORY 3
-
-#define ME_OPEN 0
-#define ME_CLOSE 1
-#define ME_OPERATEICON 6  // (mx,my,0,0)
-#define ME_EXAMINEICON 7  // (mx,my,0,0)
-
-/*************************************************************************
 * STRINGS                                                                *
 *************************************************************************/
 /* String names */

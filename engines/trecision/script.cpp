@@ -229,7 +229,7 @@ void TrecisionEngine::processMouseMovement() {
 			return;
 
 		if (_inventoryStatus == INV_OFF)
-			_scheduler->doEvent(MC_INVENTORY, ME_OPEN, MP_DEFAULT, 0, 0, 0, 0);
+			openInventory();
 		else if (_inventoryStatus == INV_INACTION)
 			showIconName();
 	} else {
@@ -455,7 +455,7 @@ void TrecisionEngine::doIdle() {
 	}
 
 	if (isGameArea(_mousePos) && ((_inventoryStatus == INV_ON) || (_inventoryStatus == INV_INACTION)))
-		_scheduler->doEvent(MC_INVENTORY, ME_CLOSE, MP_SYSTEM, 0, 0, 0, 0);
+		closeInventory();
 
 	if (_inventoryScrollTime > _curTime)
 		_inventoryScrollTime = _curTime;
@@ -631,10 +631,6 @@ void TrecisionEngine::processCurrentMessage() {
 
 	case MC_MOUSE:
 		doMouse();
-		break;
-
-	case MC_INVENTORY:
-		doInventory();
 		break;
 
 	case MC_ACTION:
