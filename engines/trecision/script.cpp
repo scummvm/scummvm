@@ -530,7 +530,7 @@ void TrecisionEngine::doMouseTake(uint16 curObj) {
 				if (frame->_type == ATFCLR && frame->_index == curObj)
 					break;
 
-				if (frame->_type == 0) {
+				if (frame->_type == ATFNONE) {
 					frame->_child = 0;
 					frame->_numFrame = 1;
 					frame->_type = ATFCLR;
