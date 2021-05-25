@@ -24,7 +24,7 @@
 #define AGS_STD_UNORDERED_SET_H
 
 #include "common/array.h"
-//#include <unordered_set>
+//#include "ags/lib/std/unordered_set.h"
 
 namespace AGS3 {
 namespace std {
@@ -36,53 +36,53 @@ namespace std {
 template <class T, class Hash = Common::Hash<T>, class Pred = Common::EqualTo<T> >
 class unordered_set : public Common::Array<T> {
 private:
-	Hash _hash;
-	Pred _comparitor;
+Hash _hash;
+Pred _comparitor;
 public:
-	struct Entry {
-		const T &_value;
-		Entry(const T &item) : _value(item) {}
-	};
+struct Entry {
+	const T &_value;
+	Entry(const T &item) : _value(item) {}
+};
 public:
-	using iterator = typename Common::Array<T>::iterator;
-	using const_iterator = typename Common::Array<T>::const_iterator;
+using iterator = typename Common::Array<T>::iterator;
+using const_iterator = typename Common::Array<T>::const_iterator;
 
-	unordered_set() {}
+unordered_set() {}
 
-	/**
-	 * Locate an item in the set
-	 */
-	iterator find(const T &item) {
-		iterator it;
-		for (it = this->begin(); it != this->end() && *it != item; ++it) {
-		}
-
-		return it;
+/**
+ * Locate an item in the set
+ */
+iterator find(const T &item) {
+	iterator it;
+	for (it = this->begin(); it != this->end() && *it != item; ++it) {
 	}
 
-	/**
-	 * Adds an item
-	 */
-	Entry insert(const T &item) {
-		this->push_back(item);
-		return Entry(item);
+	return it;
+}
+
+/**
+ * Adds an item
+ */
+Entry insert(const T &item) {
+	this->push_back(item);
+	return Entry(item);
+}
+
+/**
+ * Returns the number of keys that match the specified key
+ */
+size_t count(const T item) const {
+	size_t total = 0;
+	for (const_iterator it = this->begin(); it != this->end(); ++it) {
+		if (*it == item)
+			++total;
+		else if (!_comparitor(item, *it))
+			// Passed beyond possibility of matches
+			break;
 	}
 
-	/**
-	 * Returns the number of keys that match the specified key
-	 */
-	size_t count(const T item) const {
-		size_t total = 0;
-		for (const_iterator it = this->begin(); it != this->end(); ++it) {
-			if (*it == item)
-				++total;
-			else if (!_comparitor(item, *it))
-				// Passed beyond possibility of matches
-				break;
-		}
-
-		return total;
-	}
+	return total;
+}
 };
 
 } // namespace std

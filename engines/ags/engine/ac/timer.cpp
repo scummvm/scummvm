@@ -20,17 +20,17 @@
  *
  */
 
+#include "ags/lib/std/thread.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/core/platform.h"
-#include "ags/lib/std/chrono.h"
-#include "ags/lib/std/thread.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/ags.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
+namespace {
 const auto MAXIMUM_FALL_BEHIND = 3;
+}
 
 std::chrono::microseconds GetFrameDuration() {
 	if (_G(framerate_maxed)) {
@@ -66,14 +66,12 @@ void WaitForNextFrame() {
 		_G(next_frame_timestamp) = now;
 	}
 
-	if (_G(next_frame_timestamp) > now) {
-		auto frame_time_remaining = _G(next_frame_timestamp) - now;
+	auto frame_time_remaining = _G(next_frame_timestamp) - now;
+	if (frame_time_remaining > std::chrono::milliseconds::zero()) {
 		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
 	_G(next_frame_timestamp) += frameDuration;
-
-	::AGS::g_vm->_rawScreen->update();
 }
 
 void skipMissedTicks() {

@@ -21,7 +21,7 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include <string.h>
+//include <string.h>
 #include "ags/shared/debugging/assert.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/file.h"

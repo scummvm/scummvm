@@ -53,8 +53,7 @@ enum BitmapFlip {
 } // namespace AGS
 } // namespace AGS3
 
-// Declare the actual bitmap class
-#include "ags/shared/gfx/allegrobitmap.h"
+#include "ags/shared/gfx/allegro_bitmap.h"
 
 namespace AGS3 {
 namespace AGS {

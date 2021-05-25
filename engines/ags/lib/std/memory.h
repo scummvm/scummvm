@@ -40,13 +40,13 @@ using unique_ptr = Common::ScopedPtr<T, DL>;
 
 template<class T>
 T *memcpy(T *dest, const T *src, size_t n) {
-	return (T *)::memcpy(dest, src, n);
+return (T *)::memcpy(dest, src, n);
 }
 
 template<class T>
 shared_ptr<T> static_pointer_cast(const shared_ptr<T> &src) {
-	T *ptr = src.get();
-	return shared_ptr<T>(ptr);
+T *ptr = src.get();
+return shared_ptr<T>(ptr);
 }
 
 } // namespace std

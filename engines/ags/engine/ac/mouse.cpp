@@ -22,30 +22,31 @@
 
 #include "ags/engine/ac/mouse.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/dynobj/scriptmouse.h"
-#include "ags/engine/ac/dynobj/scriptsystem.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/dynobj/script_mouse.h"
+#include "ags/engine/ac/dynobj/script_system.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_mouse.h"
 #include "ags/engine/ac/global_screen.h"
+#include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/system.h"
-#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/device/mousew32.h"
-#include "ags/shared/gui/guibutton.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/engine/device/mousew32.h"
-#include "ags/shared/ac/spritecache.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/engine/device/mouse_w32.h"
+#include "ags/shared/ac/sprite_cache.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/gfx/gfxfilter.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/global_game.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -54,9 +55,8 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern void ags_domouse(int str);
-extern int misbuttondown(int buno);
 
-// The mouse functions are static so the script doesn't pass
+// The _GP(mouse). functions are static so the script doesn't pass
 // in an object parameter
 void Mouse_SetVisible(int isOn) {
 	if (isOn)
@@ -80,7 +80,7 @@ void SetMouseBounds(int x1, int y1, int x2, int y2) {
 	} else {
 		if (x1 < 0 || x1 > xmax || x2 < 0 || x2 > xmax || x1 > x2 || y1 < 0 || y1 > ymax || y2 < 0 || y2 > ymax || y1 > y2)
 			debug_script_warn("SetMouseBounds: arguments are out of range and will be corrected: (%d,%d)-(%d,%d), range is (%d,%d)-(%d,%d)",
-				x1, y1, x2, y2, 0, 0, xmax, ymax);
+			                  x1, y1, x2, y2, 0, 0, xmax, ymax);
 		x1 = Math::Clamp(x1, 0, xmax);
 		x2 = Math::Clamp(x2, x1, xmax);
 		y1 = Math::Clamp(y1, 0, ymax);
@@ -106,7 +106,7 @@ void set_mouse_cursor(int newcurs) {
 
 	// if it's same cursor and there's animation in progress, then don't assign a new pic just yet
 	if (newcurs == _G(cur_cursor) && _GP(game).mcurs[newcurs].view >= 0 &&
-		(_G(mouse_frame) > 0 || _G(mouse_delay) > 0)) {
+	        (_G(mouse_frame) > 0 || _G(mouse_delay) > 0)) {
 		return;
 	}
 
@@ -124,17 +124,17 @@ void set_mouse_cursor(int newcurs) {
 
 	// If it's inventory cursor, draw hotspot crosshair sprite upon it
 	if ((newcurs == MODE_USE) && (_GP(game).mcurs[newcurs].pic > 0) &&
-		((_GP(game).hotdot > 0) || (_GP(game).invhotdotsprite > 0))) {
+	        ((_GP(game).hotdot > 0) || (_GP(game).invhotdotsprite > 0))) {
 		// If necessary, create a copy of the cursor and put the hotspot
 		// dot onto it
 		_G(dotted_mouse_cursor) = BitmapHelper::CreateBitmapCopy(_G(mousecurs)[0]);
 
 		if (_GP(game).invhotdotsprite > 0) {
 			draw_sprite_slot_support_alpha(_G(dotted_mouse_cursor),
-				(_GP(game).SpriteInfos[_GP(game).mcurs[newcurs].pic].Flags & SPF_ALPHACHANNEL) != 0,
-				hotspotx - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Width / 2,
-				hotspoty - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Height / 2,
-				_GP(game).invhotdotsprite);
+			                               (_GP(game).SpriteInfos[_GP(game).mcurs[newcurs].pic].Flags & SPF_ALPHACHANNEL) != 0,
+			                               hotspotx - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Width / 2,
+			                               hotspoty - _GP(game).SpriteInfos[_GP(game).invhotdotsprite].Height / 2,
+			                               _GP(game).invhotdotsprite);
 		} else {
 			putpixel_compensate(_G(dotted_mouse_cursor), hotspotx, hotspoty, MakeColor(_GP(game).hotdot));
 
@@ -216,7 +216,6 @@ void set_cursor_mode(int newmode) {
 	if ((newmode < 0) || (newmode >= _GP(game).numcursors))
 		quit("!SetCursorMode: invalid cursor mode specified");
 
-	_G(guis_need_update) = 1;
 	if (_GP(game).mcurs[newmode].flags & MCF_DISABLED) {
 		find_next_enabled_cursor(newmode);
 		return;
@@ -248,7 +247,6 @@ void enable_cursor_mode(int modd) {
 			gbpt->SetEnabled(true);
 		}
 	}
-	_G(guis_need_update) = 1;
 }
 
 void disable_cursor_mode(int modd) {
@@ -266,7 +264,6 @@ void disable_cursor_mode(int modd) {
 		}
 	}
 	if (_G(cur_mode) == modd) find_next_enabled_cursor(modd);
-	_G(guis_need_update) = 1;
 }
 
 void RefreshMouse() {
@@ -299,35 +296,23 @@ int GetCursorMode() {
 int IsButtonDown(int which) {
 	if ((which < 1) || (which > 3))
 		quit("!IsButtonDown: only works with eMouseLeft, eMouseRight, eMouseMiddle");
-	if (misbuttondown(which - 1))
+	if (ags_misbuttondown(which - 1))
 		return 1;
 	return 0;
 }
 
 int IsModeEnabled(int which) {
 	return (which < 0) || (which >= _GP(game).numcursors) ? 0 :
-		which == MODE_USE ? _G(playerchar)->activeinv > 0 :
-	(_GP(game).mcurs[which].flags & MCF_DISABLED) == 0;
+	       which == MODE_USE ? _G(playerchar)->activeinv > 0 :
+	       (_GP(game).mcurs[which].flags & MCF_DISABLED) == 0;
 }
 
 void Mouse_EnableControl(bool on) {
+	bool should_control_mouse =
+	    _GP(usetup).mouse_ctrl_when == kMouseCtrl_Always ||
+	    (_GP(usetup).mouse_ctrl_when == kMouseCtrl_Fullscreen && (_GP(scsystem).windowed == 0));
+	_GP(mouse).SetMovementControl(should_control_mouse & on);
 	_GP(usetup).mouse_ctrl_enabled = on; // remember setting in config
-
-	bool is_windowed = _GP(scsystem).windowed != 0;
-	// Whether mouse movement should be controlled by the engine - this is
-	// determined based on related config option.
-	bool should_control_mouse = _GP(usetup).mouse_ctrl_when == kMouseCtrl_Always ||
-		(_GP(usetup).mouse_ctrl_when == kMouseCtrl_Fullscreen && !is_windowed);
-	// Whether mouse movement control is supported by the engine - this is
-	// determined on per platform basis. Some builds may not have such
-	// capability, e.g. because of how backend library implements mouse utils.
-	bool can_control_mouse = _G(platform)->IsMouseControlSupported(is_windowed);
-	// The resulting choice is made based on two aforementioned factors.
-	on &= should_control_mouse && can_control_mouse;
-	if (on)
-		_GP(mouse).EnableControl(!is_windowed);
-	else
-		_GP(mouse).DisableControl();
 }
 
 //=============================================================================
@@ -562,7 +547,7 @@ RuntimeScriptValue Sc_Mouse_GetSpeed(const RuntimeScriptValue *params, int32_t p
 }
 
 RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t param_count) {
-	ASSERT_VARIABLE_VALUE("_GP(mouse).Speed");
+	ASSERT_VARIABLE_VALUE("Mouse::Speed");
 	_GP(mouse).SetSpeed(params[0].FValue);
 	return RuntimeScriptValue();
 }

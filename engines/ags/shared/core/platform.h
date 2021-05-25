@@ -58,7 +58,7 @@ namespace AGS3 {
 #define AGS_PLATFORM_OS_PSP     (0)
 #elif defined(__APPLE__)
 #define AGS_PLATFORM_SCUMMVM    (0)
-#include "ags/shared/TargetConditionals.h"
+#include "ags/shared/ags/shared/TargetConditionals.h"
 #ifndef TARGET_OS_SIMULATOR
 #define TARGET_OS_SIMULATOR (0)
 #endif

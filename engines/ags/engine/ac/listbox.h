@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_LISTBOX_H
 #define AGS_ENGINE_AC_LISTBOX_H
 
-#include "ags/shared/gui/guilistbox.h"
+#include "ags/shared/gui/gui_listbox.h"
 
 namespace AGS3 {
 

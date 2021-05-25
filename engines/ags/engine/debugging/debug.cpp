@@ -20,35 +20,42 @@
  *
  */
 
-#include "ags/lib/std/initializer_list.h"
-#include "ags/lib/std/limits.h"
 #include "ags/lib/std/memory.h"
+#include "ags/lib/std/limits.h"
 #include "ags/shared/core/platform.h"
+#if AGS_PLATFORM_OS_WINDOWS
+#define NOMINMAX
+#define BITMAP WINDOWS_BITMAP
+//include <windows.h>
+#undef BITMAP
+#endif
+//include <SDL.h>
+#include "ags/lib/std/initializer_list.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/debugging/agseditordebugger.h"
+#include "ags/engine/debugging/ags_editor_debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
-#include "ags/shared/debugging/debugmanager.h"
+#include "ags/shared/debugging/debug_manager.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/debugging/consoleoutputtarget.h"
-#include "ags/engine/debugging/logfile.h"
-#include "ags/engine/debugging/messagebuffer.h"
+#include "ags/engine/debugging/console_output_target.h"
+#include "ags/engine/debugging/log_file.h"
+#include "ags/engine/debugging/message_buffer.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/script_common.h"
 #include "ags/shared/script/cc_error.h"
+#include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/shared/util/textstreamwriter.h"
+#include "ags/shared/util/text_stream_writer.h"
 #include "ags/globals.h"
-#include "ags/events.h"
-
 #if AGS_PLATFORM_OS_WINDOWS
-#include <winalleg.h>
 #include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
 #endif
 
@@ -57,12 +64,8 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-static const char *OutputMsgBufID = "buffer";
-static const char *OutputFileID = "file";
-static const char *OutputSystemID = "stdout";
-static const char *OutputGameConsoleID = "console";
-
 #if AGS_PLATFORM_OS_WINDOWS
+
 HWND editor_window_handle = 0;
 
 IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
@@ -77,16 +80,21 @@ IAGSEditorDebugger *GetEditorDebugger(const char *instanceToken) {
 
 #endif
 
+static const char *OutputMsgBufID = "buffer";
+static const char *OutputFileID = "file";
+static const char *OutputSystemID = "stdout";
+static const char *OutputGameConsoleID = "console";
+
 PDebugOutput create_log_output(const String &name, const String &path = "", LogFile::OpenMode open_mode = LogFile::kLogFile_Overwrite) {
 	// Else create new one, if we know this ID
 	if (name.CompareNoCase(OutputSystemID) == 0) {
 		return _GP(DbgMgr).RegisterOutput(OutputSystemID, AGSPlatformDriver::GetDriver(), kDbgMsg_None);
 	} else if (name.CompareNoCase(OutputFileID) == 0) {
 		_GP(DebugLogFile).reset(new LogFile());
-		String logfile_path = !path.IsEmpty() ? path : String::FromFormat("%s/ags.log", _G(platform)->GetAppOutputDirectory());
+		String logfile_path = !path.IsEmpty() ? path : Path::ConcatPaths(_G(platform)->GetAppOutputDirectory(), "ags.log");
 		if (!_GP(DebugLogFile)->OpenFile(logfile_path, open_mode))
 			return nullptr;
-		_G(platform)->WriteStdOut("Logging to %s", logfile_path.GetCStr());
+		Debug::Printf(kDbgMsg_Info, "Logging to %s", logfile_path.GetCStr());
 		auto dbgout = _GP(DbgMgr).RegisterOutput(OutputFileID, _GP(DebugLogFile).get(), kDbgMsg_None);
 		return dbgout;
 	} else if (name.CompareNoCase(OutputGameConsoleID) == 0) {
@@ -106,9 +114,6 @@ std::vector<String> parse_log_multigroup(const String &group_str) {
 			break;
 		case 'g':
 			grplist.push_back("game");
-			break;
-		case 's':
-			grplist.push_back("script");
 			break;
 		case 'c':
 			grplist.push_back("sprcache");
@@ -139,8 +144,8 @@ MessageType get_messagetype_from_string(const String &mt) {
 typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
-		bool def_enabled,
-		std::initializer_list<DbgGroupOption> def_opts) {
+                      bool def_enabled,
+                      std::initializer_list<DbgGroupOption> def_opts) {
 	String value = INIreadstring(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;
@@ -205,32 +210,30 @@ void apply_debug_config(const ConfigTree &cfg) {
 	apply_log_config(cfg, OutputSystemID, /* defaults */ true, { DbgGroupOption(kDbgGroup_Main, kDbgMsg_Info) });
 	bool legacy_log_enabled = INIreadint(cfg, "misc", "log", 0) != 0;
 	apply_log_config(cfg, OutputFileID,
-		/* defaults */
-		legacy_log_enabled, {
-			DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
-			DbgGroupOption(kDbgGroup_Game, kDbgMsg_Info),
-			DbgGroupOption(kDbgGroup_Script, kDbgMsg_All),
-	#ifdef DEBUG_SPRITECACHE
-			DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_All),
-	#else
-			DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_Info),
-	#endif
-	#ifdef DEBUG_MANAGED_OBJECTS
-			DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_All),
-	#else
-			DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_Info),
-	#endif
-		});
+	                 /* defaults */
+	legacy_log_enabled, {
+		DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
+		DbgGroupOption(kDbgGroup_Game, kDbgMsg_Info),
+#ifdef DEBUG_SPRITECACHE
+		DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_All),
+#else
+		DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_Info),
+#endif
+#ifdef DEBUG_MANAGED_OBJECTS
+		DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_All),
+#else
+		DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_Info),
+#endif
+	});
 
-	// Init game console if the game was compiled in Debug mode
-	if (_GP(game).options[OPT_DEBUGMODE] != 0) {
+	// Init game console if the game was compiled in Debug mode or is run in test mode
+	if (_GP(game).options[OPT_DEBUGMODE] != 0 || (_G(debug_flags) & DBG_DEBUGMODE) != 0) {
 		apply_log_config(cfg, OutputGameConsoleID,
-			/* defaults */
-			true, {
-				DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
-				DbgGroupOption(kDbgGroup_Game, kDbgMsg_All),
-				DbgGroupOption(kDbgGroup_Script, kDbgMsg_All)
-			});
+		                 /* defaults */
+		true, {
+			DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
+			DbgGroupOption(kDbgGroup_Game, kDbgMsg_All)
+		});
 		debug_set_console(true);
 	}
 
@@ -238,10 +241,8 @@ void apply_debug_config(const ConfigTree &cfg) {
 	// then open "warnings.log" for printing script warnings.
 	if (_GP(game).options[OPT_DEBUGMODE] != 0 && !_GP(DebugLogFile)) {
 		auto dbgout = create_log_output(OutputFileID, "warnings.log", LogFile::kLogFile_OverwriteAtFirstMessage);
-		if (dbgout) {
+		if (dbgout)
 			dbgout->SetGroupFilter(kDbgGroup_Game, kDbgMsg_Warn);
-			dbgout->SetGroupFilter(kDbgGroup_Script, kDbgMsg_Warn);
-		}
 	}
 
 	// We don't need message buffer beyond this point
@@ -319,6 +320,11 @@ bool get_script_position(ScriptPosition &script_pos) {
 	return false;
 }
 
+struct Breakpoint {
+	char scriptName[80];
+	int lineNumber;
+};
+
 bool send_message_to_editor(const char *msg, const char *errorMsg) {
 	String callStack = get_cur_script(25);
 	if (callStack.IsEmpty())
@@ -327,7 +333,7 @@ bool send_message_to_editor(const char *msg, const char *errorMsg) {
 	char messageToSend[STD_BUFFER_SIZE];
 	sprintf(messageToSend, "<?xml version=\"1.0\" encoding=\"Windows-1252\"?><Debugger Command=\"%s\">", msg);
 #if AGS_PLATFORM_OS_WINDOWS
-	sprintf(&messageToSend[strlen(messageToSend)], "  <EngineWindow>%d</EngineWindow> ", (int)win_get_window());
+	sprintf(&messageToSend[strlen(messageToSend)], "  <EngineWindow>%d</EngineWindow> ", (int)sys_win_get_window());
 #endif
 	sprintf(&messageToSend[strlen(messageToSend)], "  <ScriptState><![CDATA[%s]]></ScriptState> ", callStack.GetCStr());
 	if (errorMsg != nullptr) {
@@ -353,7 +359,7 @@ bool init_editor_debugging() {
 #endif
 
 	if (_G(editor_debugger) == nullptr)
-		quit("_G(editor_debugger) is NULL but debugger enabled");
+		quit("editor_debugger is NULL but debugger enabled");
 
 	if (_G(editor_debugger)->Initialize()) {
 		_G(editor_debugging_initialized) = 1;
@@ -396,7 +402,7 @@ int check_for_messages_from_editor() {
 			free(msg);
 			return 2;
 		} else if ((strncmp(msgPtr, "SETBREAK", 8) == 0) ||
-			(strncmp(msgPtr, "DELBREAK", 8) == 0)) {
+		           (strncmp(msgPtr, "DELBREAK", 8) == 0)) {
 			bool isDelete = (msgPtr[0] == 'D');
 			// Format:  SETBREAK $scriptname$lineNumber$
 			msgPtr += 10;
@@ -415,7 +421,7 @@ int check_for_messages_from_editor() {
 			if (isDelete) {
 				for (i = 0; i < _G(numBreakpoints); i++) {
 					if ((_G(breakpoints)[i].lineNumber == lineNumber) &&
-						(strcmp(_G(breakpoints)[i].scriptName, scriptNameBuf) == 0)) {
+					        (strcmp(_G(breakpoints)[i].scriptName, scriptNameBuf) == 0)) {
 						_G(numBreakpoints)--;
 						_G(breakpoints).erase(_G(breakpoints).begin() + i);
 						break;
@@ -433,9 +439,9 @@ int check_for_messages_from_editor() {
 			_G(game_paused_in_debugger) = 0;
 			_G(break_on_next_script_step) = 1;
 		} else if (strncmp(msgPtr, "EXIT", 4) == 0) {
-			_G(want_exit) = true;
-			_G(abort_engine) = true;
-			_G(check_dynamic_sprites_at_exit) = false;
+			_G(want_exit) = 1;
+			_G(abort_engine) = 1;
+			_G(check_dynamic_sprites_at_exit) = 0;
 		}
 
 		free(msg);
@@ -444,6 +450,9 @@ int check_for_messages_from_editor() {
 
 	return 0;
 }
+
+
+
 
 bool send_exception_to_editor(const char *qmsg) {
 #if AGS_PLATFORM_OS_WINDOWS
@@ -510,7 +519,7 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 
 	for (int i = 0; i < _G(numBreakpoints); i++) {
 		if ((_G(breakpoints)[i].lineNumber == linenum) &&
-			(strcmp(_G(breakpoints)[i].scriptName, scriptName) == 0)) {
+		        (strcmp(_G(breakpoints)[i].scriptName, scriptName) == 0)) {
 			break_into_debugger();
 			break;
 		}
@@ -520,16 +529,20 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 int scrlockWasDown = 0;
 
 void check_debug_keys() {
+#ifdef TODO
 	if (_GP(play).debug_mode) {
 		// do the run-time script debugging
 
-		if (!::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && scrlockWasDown)
+		const Uint8 *ks = SDL_GetKeyboardState(NULL);
+		if ((!ks[SDL_SCANCODE_SCROLLLOCK]) && (scrlockWasDown))
 			scrlockWasDown = 0;
-		else if (::AGS::g_events->isKeyPressed(KEY_SCRLOCK) && !scrlockWasDown) {
+		else if ((ks[SDL_SCANCODE_SCROLLLOCK]) && (!scrlockWasDown)) {
+
 			_G(break_on_next_script_step) = 1;
 			scrlockWasDown = 1;
 		}
 	}
+#endif
 }
 
 } // namespace AGS3

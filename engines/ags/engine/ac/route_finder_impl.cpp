@@ -27,12 +27,13 @@
 //=============================================================================
 
 #include "ags/engine/ac/route_finder_impl.h"
-#include "ags/engine/ac/route_finder_jps.h"
+#include "ags/lib/std/math.h"
 #include "ags/shared/ac/common.h"   // quit()
-#include "ags/engine/ac/movelist.h"     // MoveList
+#include "ags/engine/ac/move_list.h"     // MoveList
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/engine/ac/route_finder_jps.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -44,6 +45,8 @@ namespace Engine {
 namespace RouteFinder {
 
 #define MAKE_INTCOORD(x,y) (((unsigned short)x << 16) | ((unsigned short)y))
+
+static const int MAXNAVPOINTS = MAXNEEDSTAGES;
 
 void init_pathfinder() {
 }
@@ -229,7 +232,7 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 
 	int mlist = movlst;
 	_G(mls)[mlist].numstage = _G(num_navpoints);
-	memcpy(&_G(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int32_t) * _G(num_navpoints));
+	memcpy(&_G(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int) * _G(num_navpoints));
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", _G(num_navpoints));
 #endif
@@ -246,6 +249,7 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 	_G(mls)[mlist].lasty = -1;
 	return mlist;
 }
+
 
 } // namespace RouteFinder
 } // namespace Engine

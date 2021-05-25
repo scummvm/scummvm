@@ -31,12 +31,12 @@ namespace Plugins {
 namespace AGSParallax {
 
 struct Sprite {
-	int32 x = 0;
-	int32 y = 0;
-	int slot = -1;
-	int speed = 0;
+int32 x = 0;
+int32 y = 0;
+int slot = -1;
+int speed = 0;
 
-	void syncGame(Serializer &s);
+void syncGame(Serializer &s);
 };
 
 #define MAX_SPEED 1000
@@ -48,28 +48,28 @@ struct Sprite {
  */
 class AGSParallax : public PluginBase {
 private:
-	static IAGSEngine *_engine;
-	static int32 _screenWidth;
-	static int32 _screenHeight;
-	static int32 _screenColorDepth;
+static IAGSEngine *_engine;
+static int32 _screenWidth;
+static int32 _screenHeight;
+static int32 _screenColorDepth;
 
-	static bool _enabled;
-	static Sprite _sprites[MAX_SPRITES];
+static bool _enabled;
+static Sprite _sprites[MAX_SPRITES];
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static int64 AGS_EngineOnEvent(int event, NumberPtr data);
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *lpEngine);
+static int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
-	static void pxDrawSprite(ScriptMethodParams &params);
-	static void pxDeleteSprite(ScriptMethodParams &params);
+static void pxDrawSprite(ScriptMethodParams &params);
+static void pxDeleteSprite(ScriptMethodParams &params);
 
 private:
-	static void syncGame(Serializer &s);
-	static void Draw(bool foreground);
-	static void clear();
+static void syncGame(Serializer &s);
+static void Draw(bool foreground);
+static void clear();
 
 public:
-	AGSParallax();
+AGSParallax();
 };
 
 } // namespace AGSParallax

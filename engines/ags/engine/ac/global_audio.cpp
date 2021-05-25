@@ -22,20 +22,19 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
-#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -65,7 +64,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 
 	// only play the sound if it's not already playing
 	if ((_GP(ambient)[channel].channel < 1) || (!channel_is_playing(_GP(ambient)[channel].channel)) ||
-		(_GP(ambient)[channel].num != sndnum)) {
+	        (_GP(ambient)[channel].num != sndnum)) {
 
 		StopAmbientSound(channel);
 		// in case a normal non-ambient sound was playing, stop it too
@@ -210,8 +209,7 @@ int IsMusicPlaying() {
 
 	AudioChannelsLock lock;
 	auto *ch = lock.GetChannel(SCHAN_MUSIC);
-	if (ch == nullptr) {
-		// This was probably a hacky fix in case it was not reset by game update; TODO: find out if needed
+	if (ch == nullptr) { // This was probably a hacky fix in case it was not reset by game update; TODO: find out if needed
 		_G(current_music_type) = 0;
 		return 0;
 	}
@@ -237,7 +235,7 @@ int PlayMusicQueued(int musnum) {
 	}
 
 	if ((_GP(play).music_queue_size > 0) &&
-		(_GP(play).music_queue[_GP(play).music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
+	        (_GP(play).music_queue[_GP(play).music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
 		debug_script_warn("PlayMusicQueued: cannot queue music after a repeating tune has been queued");
 		return 0;
 	}
@@ -321,7 +319,7 @@ void SetMusicVolume(int newvol) {
 
 void SetMusicMasterVolume(int newvol) {
 	const int min_volume = _G(loaded_game_file_version) < kGameVersion_330 ? 0 :
-		-LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
+	                       -LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
 	if ((newvol < min_volume) | (newvol > 100))
 		quitprintf("!SetMusicMasterVolume: invalid volume - must be from %d to %d", min_volume, 100);
 	_GP(play).music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
@@ -379,7 +377,7 @@ void PlayMP3File(const char *filename) {
 
 	debug_script_log("PlayMP3File %s", filename);
 
-	AssetPath asset_name("", filename);
+	AssetPath asset_name(filename, "audio");
 
 	int useChan = prepare_for_new_music();
 	bool doLoop = (_GP(play).music_repeat > 0);
@@ -498,6 +496,8 @@ int IsMusicVoxAvailable() {
 	return _GP(play).separate_music_lib;
 }
 
+
+
 ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) {
 	if (!play_voice_nonblocking(ch->index_id, sndid, as_speech))
 		return NULL;
@@ -539,13 +539,9 @@ static bool play_voice_clip_on_channel(const String &voice_name) {
 	}
 
 	if (speechmp3 != nullptr) {
-		SoundClipWaveBase *clip = dynamic_cast<SoundClipWaveBase *>(speechmp3);
-		if (clip)
-			clip->_soundType = Audio::Mixer::kSpeechSoundType;
-
 		if (!speechmp3->play()) {
 			// not assigned to a channel, so clean up manually.
-			//speechmp3->destroy();
+			speechmp3->destroy();
 			delete speechmp3;
 			speechmp3 = nullptr;
 		}

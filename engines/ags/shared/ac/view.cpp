@@ -20,8 +20,9 @@
  *
  */
 
+//include <string.h>
 #include "ags/shared/ac/view.h"
-#include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/aligned_stream.h"
 
 namespace AGS3 {
 
@@ -178,7 +179,7 @@ void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, ViewStruct *ne
 			newv[a].loops[b].Initialize(oldv[a].numframes[b]);
 
 			if ((oldv[a].numframes[b] > 0) &&
-				(oldv[a].frames[b][oldv[a].numframes[b] - 1].pic == -1)) {
+			        (oldv[a].frames[b][oldv[a].numframes[b] - 1].pic == -1)) {
 				newv[a].loops[b].flags = LOOPFLAG_RUNNEXTLOOP;
 				newv[a].loops[b].numFrames--;
 			} else

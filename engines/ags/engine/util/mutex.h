@@ -46,10 +46,4 @@ public:
 } // namespace AGS
 } // namespace AGS3
 
-#if 0
-// insert platforms here
-#else
-#include "ags/engine/util/mutex_std.h"
-#endif
-
 #endif

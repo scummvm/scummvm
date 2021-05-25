@@ -25,8 +25,8 @@
 #define AGS_CONSOLE_H
 
 #include "gui/debugger.h"
-#include "ags/shared/debugging/debugmanager.h"
-#include "ags/shared/debugging/outputhandler.h"
+#include "ags/shared/debugging/debug_manager.h"
+#include "ags/shared/debugging/output_handler.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS {

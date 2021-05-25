@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_STD_H
 #define AGS_ENGINE_UTIL_MUTEX_STD_H
 
-#include "ags/engine/util/mutex.h"
 #include "ags/lib/std/mutex.h"
+#include "ags/engine/util/mutex.h"
 
 namespace AGS3 {
 namespace AGS {

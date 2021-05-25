@@ -24,26 +24,26 @@
 // Graphics initialization
 //
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/gfx/ali3dexception.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/gfx/gfxdriverfactory.h"
+#include "ags/engine/gfx/gfx_driver_factory.h"
 #include "ags/engine/gfx/gfxfilter.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine_setup.h"
 #include "ags/engine/main/graphics_mode.h"
-#include "ags/engine/main/main_allegro.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 // Don't try to figure out the window size on the mac because the port resizes itself.
-#if AGS_PLATFORM_OS_MACOS || defined(ALLEGRO_SDL2) || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID || defined(USE_HIGHRES)
+#if AGS_PLATFORM_OS_MACOS || defined(ALLEGRO_SDL2) || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 #define USE_SIMPLE_GFX_INIT
 #endif
 
@@ -78,7 +78,7 @@ DisplayModeSetup::DisplayModeSetup()
 
 Size get_desktop_size() {
 	Size sz;
-	get_desktop_resolution(&sz.Width, &sz.Height);
+	sys_get_desktop_resolution(sz.Width, sz.Height);
 	return sz;
 }
 
@@ -92,13 +92,13 @@ Size get_max_display_size(bool windowed) {
 bool create_gfx_driver(const String &gfx_driver_id) {
 	_G(GfxFactory) = GetGfxDriverFactory(gfx_driver_id);
 	if (!_G(GfxFactory)) {
-		Debug::Printf(kDbgMsg_Error, "Failed to initialize %s graphics factory. Error: %s", gfx_driver_id.GetCStr(), get_allegro_error());
+		Debug::Printf(kDbgMsg_Error, "Failed to initialize %s graphics factory", gfx_driver_id.GetCStr());
 		return false;
 	}
 	Debug::Printf("Using graphics factory: %s", gfx_driver_id.GetCStr());
 	_G(gfxDriver) = _G(GfxFactory)->GetDriver();
 	if (!_G(gfxDriver)) {
-		Debug::Printf(kDbgMsg_Error, "Failed to create graphics driver. Error: %s", get_allegro_error());
+		Debug::Printf(kDbgMsg_Error, "Failed to create graphics driver");
 		return false;
 	}
 	Debug::Printf("Created graphics driver: %s", _G(gfxDriver)->GetDriverName());
@@ -113,7 +113,7 @@ bool graphics_mode_set_filter_any(const GfxFilterSetup &setup) {
 		if (def_filter.CompareNoCase(setup.ID) == 0)
 			return false;
 		Debug::Printf(kDbgMsg_Error, "Failed to apply gfx filter: %s; will try to use factory default filter '%s' instead",
-			setup.UserRequest.GetCStr(), def_filter.GetCStr());
+		              setup.UserRequest.GetCStr(), def_filter.GetCStr());
 		if (!graphics_mode_set_filter(def_filter))
 			return false;
 	}
@@ -122,7 +122,7 @@ bool graphics_mode_set_filter_any(const GfxFilterSetup &setup) {
 }
 
 bool find_nearest_supported_mode(const IGfxModeList &modes, const Size &wanted_size, const int color_depth,
-	const Size *ratio_reference, const Size *upper_bound, DisplayMode &dm, int *mode_index) {
+                                 const Size *ratio_reference, const Size *upper_bound, DisplayMode &dm, int *mode_index) {
 	uint32_t wanted_ratio = 0;
 	if (ratio_reference && !ratio_reference->IsNull()) {
 		wanted_ratio = (ratio_reference->Height << kShift) / ratio_reference->Width;
@@ -165,8 +165,8 @@ bool find_nearest_supported_mode(const IGfxModeList &modes, const Size &wanted_s
 		bool same_diff_h_higher = (diff_h == nearest_height_diff && nearest_height < wanted_size.Height);
 
 		if (nearest_width == 0 ||
-			((diff_w < nearest_width_diff || same_diff_w_higher) && diff_h <= nearest_height_diff) ||
-			((diff_h < nearest_height_diff || same_diff_h_higher) && diff_w <= nearest_width_diff)) {
+		        ((diff_w < nearest_width_diff || same_diff_w_higher) && diff_h <= nearest_height_diff) ||
+		        ((diff_h < nearest_height_diff || same_diff_h_higher) && diff_w <= nearest_width_diff)) {
 			nearest_width = mode.Width;
 			nearest_width_diff = diff_w;
 			nearest_height = mode.Height;
@@ -196,7 +196,7 @@ Size set_game_frame_after_screen_size(const Size &game_size, const Size screen_s
 		int scale;
 		if (setup.ScaleDef == kFrame_MaxRound)
 			scale = Math::Min((screen_size.Width / game_size.Width) << kShift,
-			(screen_size.Height / game_size.Height) << kShift);
+			                  (screen_size.Height / game_size.Height) << kShift);
 		else
 			scale = convert_scaling_to_fp(setup.ScaleFactor);
 
@@ -253,7 +253,7 @@ bool try_init_compatible_mode(const DisplayMode &dm, const bool match_device_rat
 	const Size &screen_size = Size(dm.Width, dm.Height);
 	// Find nearest compatible mode and init that
 	Debug::Printf("Attempting to find nearest supported resolution for screen size %d x %d (%d-bit) %s",
-		dm.Width, dm.Height, dm.ColorDepth, dm.Windowed ? "windowed" : "fullscreen");
+	              dm.Width, dm.Height, dm.ColorDepth, dm.Windowed ? "windowed" : "fullscreen");
 	const Size device_size = get_max_display_size(dm.Windowed);
 	if (dm.Windowed)
 		Debug::Printf("Maximal allowed window size: %d x %d", device_size.Width, device_size.Height);
@@ -300,12 +300,12 @@ bool try_init_compatible_mode(const DisplayMode &dm, const bool match_device_rat
 
 // Try to find and initialize compatible display mode as close to given setup as possible
 bool try_init_mode_using_setup(const Size &game_size, const DisplayModeSetup &dm_setup,
-	const int col_depth, const GameFrameSetup &frame_setup,
-	const GfxFilterSetup &filter_setup) {
+                               const int col_depth, const GameFrameSetup &frame_setup,
+                               const GfxFilterSetup &filter_setup) {
 	// We determine the requested size of the screen using setup options
 	const Size screen_size = precalc_screen_size(game_size, dm_setup, frame_setup);
 	DisplayMode dm(GraphicResolution(screen_size.Width, screen_size.Height, col_depth),
-		dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
+	               dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
 	if (!try_init_compatible_mode(dm, dm_setup.ScreenSize.SizeDef == kScreenDef_Explicit ? false : dm_setup.ScreenSize.MatchDeviceRatio))
 		return false;
 
@@ -349,12 +349,12 @@ void log_out_driver_modes(const int color_depth) {
 // Create requested graphics driver and try to find and initialize compatible display mode as close to user setup as possible;
 // if the given setup fails, gets default setup for the opposite type of mode (fullscreen/windowed) and tries that instead.
 bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id, const Size &game_size, const DisplayModeSetup &dm_setup,
-	const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup, const GfxFilterSetup &filter_setup) {
+        const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup, const GfxFilterSetup &filter_setup) {
 	if (!graphics_mode_create_renderer(gfx_driver_id))
 		return false;
 
 	const int use_col_depth =
-		color_depth.Forced ? color_depth.Bits : _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
+	    color_depth.Forced ? color_depth.Bits : _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
 	// Log out supported driver modes
 	log_out_driver_modes(use_col_depth);
 
@@ -372,11 +372,11 @@ bool create_gfx_driver_and_init_mode_any(const String &gfx_driver_id, const Size
 }
 
 bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
-	const Size &game_size,
-	const DisplayModeSetup &dm_setup,
-	const ColorDepthOption &color_depth,
-	const GameFrameSetup &frame_setup,
-	const GfxFilterSetup &filter_setup) {
+        const Size &game_size,
+        const DisplayModeSetup &dm_setup,
+        const ColorDepthOption &color_depth,
+        const GameFrameSetup &frame_setup,
+        const GfxFilterSetup &filter_setup) {
 	if (!graphics_mode_create_renderer(gfx_driver_id)) {
 		return false;
 	}
@@ -384,7 +384,7 @@ bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
 	const int col_depth = _G(gfxDriver)->GetDisplayDepthForNativeDepth(color_depth.Bits);
 
 	DisplayMode dm(GraphicResolution(game_size.Width, game_size.Height, col_depth),
-		dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
+	               dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
 
 	if (!graphics_mode_set_dm(dm)) {
 		return false;
@@ -404,8 +404,7 @@ bool simple_create_gfx_driver_and_init_mode(const String &gfx_driver_id,
 
 
 void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, const int color_depth) {
-	_G(proper_exit) = true;
-	_G(platform)->FinishedUsingGraphicsMode();
+	_G(proper_exit) = 1;
 
 	String main_error;
 	ScreenSizeSetup scsz = setup.DisplayMode.ScreenSize;
@@ -413,22 +412,21 @@ void display_gfx_mode_error(const Size &game_size, const ScreenSetup &setup, con
 	Size wanted_screen;
 	if (scsz.SizeDef == kScreenDef_Explicit)
 		main_error.Format("There was a problem initializing graphics mode %d x %d (%d-bit), or finding nearest compatible mode, with game size %d x %d and filter '%s'.",
-			scsz.Size.Width, scsz.Size.Height, color_depth, game_size.Width, game_size.Height, filter ? filter->GetInfo().Id.GetCStr() : "Undefined");
+		                  scsz.Size.Width, scsz.Size.Height, color_depth, game_size.Width, game_size.Height, filter ? filter->GetInfo().Id.GetCStr() : "Undefined");
 	else
 		main_error.Format("There was a problem finding and/or creating valid graphics mode for game size %d x %d (%d-bit) and requested filter '%s'.",
-			game_size.Width, game_size.Height, color_depth, setup.Filter.UserRequest.IsEmpty() ? "Undefined" : setup.Filter.UserRequest.GetCStr());
+		                  game_size.Width, game_size.Height, color_depth, setup.Filter.UserRequest.IsEmpty() ? "Undefined" : setup.Filter.UserRequest.GetCStr());
 
 	_G(platform)->DisplayAlert("%s\n"
-		"(Problem: '%s')\n"
-		"Try to correct the problem, or seek help from the AGS homepage."
-		"%s",
-		main_error.GetCStr(), get_allegro_error(), _G(platform)->GetGraphicsTroubleshootingText());
+	                           "Try to correct the problem, or seek help from the AGS homepage."
+	                           "%s",
+	                           main_error.GetCStr(), _G(platform)->GetGraphicsTroubleshootingText());
 }
 
 bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, const ColorDepthOption &color_depth) {
 	// Log out display information
 	Size device_size;
-	if (get_desktop_resolution(&device_size.Width, &device_size.Height) == 0)
+	if (sys_get_desktop_resolution(device_size.Width, device_size.Height) == 0)
 		Debug::Printf("Device display resolution: %d x %d", device_size.Width, device_size.Height);
 	else
 		Debug::Printf(kDbgMsg_Error, "Unable to obtain device resolution");
@@ -439,10 +437,10 @@ bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, cons
 	GameFrameSetup gameframe = setup.DisplayMode.Windowed ? setup.WinGameFrame : setup.FsGameFrame;
 	const String scale_option = make_scaling_option(gameframe);
 	Debug::Printf(kDbgMsg_Info, "Graphic settings: driver: %s, windowed: %s, screen def: %s, screen size: %d x %d, match device ratio: %s, game scale: %s",
-		setup.DriverID.GetCStr(),
-		setup.DisplayMode.Windowed ? "yes" : "no", screen_sz_def_options[scsz.SizeDef],
-		scsz.Size.Width, scsz.Size.Height,
-		ignore_device_ratio ? "ignore" : (scsz.MatchDeviceRatio ? "yes" : "no"), scale_option.GetCStr());
+	              setup.DriverID.GetCStr(),
+	              setup.DisplayMode.Windowed ? "yes" : "no", screen_sz_def_options[scsz.SizeDef],
+	              scsz.Size.Width, scsz.Size.Height,
+	              ignore_device_ratio ? "ignore" : (scsz.MatchDeviceRatio ? "yes" : "no"), scale_option.GetCStr());
 
 	// Prepare the list of available gfx factories, having the one requested by user at first place
 	// TODO: make factory & driver IDs case-insensitive!
@@ -462,11 +460,11 @@ bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, cons
 	for (StringV::const_iterator sit = ids.begin(); sit != ids.end(); ++sit) {
 		result =
 #ifdef USE_SIMPLE_GFX_INIT
-			simple_create_gfx_driver_and_init_mode
+		    simple_create_gfx_driver_and_init_mode
 #else
-			create_gfx_driver_and_init_mode_any
+		    create_gfx_driver_and_init_mode_any
 #endif
-			(*sit, game_size, setup.DisplayMode, color_depth, gameframe, setup.Filter);
+		    (*sit, game_size, setup.DisplayMode, color_depth, gameframe, setup.Filter);
 
 		if (result)
 			break;
@@ -484,19 +482,11 @@ ActiveDisplaySetting graphics_mode_get_last_setting(bool windowed) {
 	return windowed ? _GP(SavedWindowedSetting) : _GP(SavedFullscreenSetting);
 }
 
-bool graphics_mode_update_render_frame();
-void GfxDriverOnSurfaceUpdate() {
-	// Resize render frame using current scaling settings
-	graphics_mode_update_render_frame();
-	on_coordinates_scaling_changed();
-}
-
 bool graphics_mode_create_renderer(const String &driver_id) {
 	if (!create_gfx_driver(driver_id))
 		return false;
 
 	_G(gfxDriver)->SetCallbackOnInit(GfxDriverOnInitCallback);
-	_G(gfxDriver)->SetCallbackOnSurfaceUpdate(GfxDriverOnSurfaceUpdate);
 	// TODO: this is remains of the old code; find out if this is really
 	// the best time and place to set the tint method
 	_G(gfxDriver)->SetTintMethod(TintReColourise);
@@ -504,28 +494,24 @@ bool graphics_mode_create_renderer(const String &driver_id) {
 }
 
 bool graphics_mode_set_dm_any(const Size &game_size, const DisplayModeSetup &dm_setup,
-	const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup) {
+                              const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup) {
 	// We determine the requested size of the screen using setup options
 	const Size screen_size = precalc_screen_size(game_size, dm_setup, frame_setup);
 	DisplayMode dm(GraphicResolution(screen_size.Width, screen_size.Height, color_depth.Bits),
-		dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
+	               dm_setup.Windowed, dm_setup.RefreshRate, dm_setup.VSync);
 	return try_init_compatible_mode(dm, dm_setup.ScreenSize.MatchDeviceRatio);
 }
 
 bool graphics_mode_set_dm(const DisplayMode &dm) {
 	Debug::Printf("Attempt to switch gfx mode to %d x %d (%d-bit) %s",
-		dm.Width, dm.Height, dm.ColorDepth, dm.Windowed ? "windowed" : "fullscreen");
+	              dm.Width, dm.Height, dm.ColorDepth, dm.Windowed ? "windowed" : "fullscreen");
 
 	// Tell Allegro new default bitmap color depth (must be done before set_gfx_mode)
 	// TODO: this is also done inside ALSoftwareGraphicsDriver implementation; can remove one?
 	set_color_depth(dm.ColorDepth);
-	// TODO: this is remains of the old code; find out what it means and do we
-	// need this if we are not using allegro software driver?
-	if (dm.RefreshRate >= 50)
-		request_refresh_rate(dm.RefreshRate);
 
 	if (!_G(gfxDriver)->SetDisplayMode(dm)) {
-		Debug::Printf(kDbgMsg_Error, "Failed to init gfx mode. Error: %s", get_allegro_error());
+		Debug::Printf(kDbgMsg_Error, "Failed to init gfx mode");
 		return false;
 	}
 
@@ -535,7 +521,7 @@ bool graphics_mode_set_dm(const DisplayMode &dm) {
 	else
 		_GP(SavedFullscreenSetting).Dm = rdm;
 	Debug::Printf("Succeeded. Using gfx mode %d x %d (%d-bit) %s",
-		rdm.Width, rdm.Height, rdm.ColorDepth, rdm.Windowed ? "windowed" : "fullscreen");
+	              rdm.Width, rdm.Height, rdm.ColorDepth, rdm.Windowed ? "windowed" : "fullscreen");
 	return true;
 }
 
@@ -550,15 +536,15 @@ bool graphics_mode_update_render_frame() {
 	Rect render_frame = CenterInRect(RectWH(screen_size), RectWH(frame_size));
 
 	if (!_G(gfxDriver)->SetRenderFrame(render_frame)) {
-		Debug::Printf(kDbgMsg_Error, "Failed to set render frame (%d, %d, %d, %d : %d x %d). Error: %s",
-			render_frame.Left, render_frame.Top, render_frame.Right, render_frame.Bottom,
-			render_frame.GetWidth(), render_frame.GetHeight(), get_allegro_error());
+		Debug::Printf(kDbgMsg_Error, "Failed to set render frame (%d, %d, %d, %d : %d x %d)",
+		              render_frame.Left, render_frame.Top, render_frame.Right, render_frame.Bottom,
+		              render_frame.GetWidth(), render_frame.GetHeight());
 		return false;
 	}
 
 	Rect dst_rect = _G(gfxDriver)->GetRenderDestination();
 	Debug::Printf("Render frame set, render dest (%d, %d, %d, %d : %d x %d)",
-		dst_rect.Left, dst_rect.Top, dst_rect.Right, dst_rect.Bottom, dst_rect.GetWidth(), dst_rect.GetHeight());
+	              dst_rect.Left, dst_rect.Top, dst_rect.Right, dst_rect.Bottom, dst_rect.GetWidth(), dst_rect.GetHeight());
 	// init game scaling transformation
 	_GP(GameScaling).Init(native_size, _G(gfxDriver)->GetRenderDestination());
 	return true;
@@ -603,8 +589,15 @@ bool graphics_mode_set_filter(const String &filter_id) {
 	}
 	Rect filter_rect = filter->GetDestination();
 	Debug::Printf("Graphics filter set: '%s', filter dest (%d, %d, %d, %d : %d x %d)", filter->GetInfo().Id.GetCStr(),
-		filter_rect.Left, filter_rect.Top, filter_rect.Right, filter_rect.Bottom, filter_rect.GetWidth(), filter_rect.GetHeight());
+	              filter_rect.Left, filter_rect.Top, filter_rect.Right, filter_rect.Bottom, filter_rect.GetWidth(), filter_rect.GetHeight());
 	return true;
+}
+
+void graphics_mode_on_window_changed(const Size &sz) {
+	if (!_G(gfxDriver))
+		return; // nothing to update
+	_G(gfxDriver)->UpdateDeviceScreen(sz);
+	graphics_mode_update_render_frame();
 }
 
 void graphics_mode_shutdown() {
@@ -612,9 +605,6 @@ void graphics_mode_shutdown() {
 		_G(GfxFactory)->Shutdown();
 	_G(GfxFactory) = nullptr;
 	_G(gfxDriver) = nullptr;
-
-	// Tell Allegro that we are no longer in graphics mode
-	set_gfx_mode(GFX_TEXT, 0, 0, 0, 0);
 }
 
 } // namespace AGS3

@@ -24,7 +24,7 @@
 #define AGS_SHARED_UTIL_COMPRESS_H
 
 #include "ags/shared/core/types.h"
-#include "ags/shared/util/wgt2allg.h" // color (allegro RGB)
+#include "ags/shared/util/wgt2_allg.h"
 
 namespace AGS3 {
 
@@ -37,7 +37,7 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-void csavecompressed(Shared::Stream *out, const unsigned char *tobesaved, const color pala[256]);
+void csavecompressed(Shared::Stream *out, const unsigned char *tobesaved, const RGB pala[256]);
 // RLE compression
 void cpackbitl(const uint8_t *line, int size, Shared::Stream *out);
 void cpackbitl16(const uint16_t *line, int size, Shared::Stream *out);
@@ -49,10 +49,10 @@ int  cunpackbitl32(uint32_t *line, int size, Shared::Stream *in);
 
 //=============================================================================
 
-void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const color *pall);
-void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, color *pall);
-void savecompressed_allegro(Shared::Stream *out, const Shared::Bitmap *bmpp, const color *pall);
-void loadcompressed_allegro(Shared::Stream *in, Shared::Bitmap **bimpp, color *pall);
+void save_lzw(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
+void load_lzw(Shared::Stream *in, Shared::Bitmap **bmm, int dst_bpp, RGB *pall);
+void savecompressed_allegro(Shared::Stream *out, const Shared::Bitmap *bmpp, const RGB *pall);
+void loadcompressed_allegro(Shared::Stream *in, Shared::Bitmap **bimpp, RGB *pall);
 
 } // namespace AGS3
 

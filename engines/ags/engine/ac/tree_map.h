@@ -20,8 +20,14 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_TREEMAP_H
-#define AGS_ENGINE_AC_TREEMAP_H
+//=============================================================================
+//
+// TODO: remove and replace with std::map / unordered_map?
+// some helper functions may be required too.
+//=============================================================================
+
+#ifndef AGS_ENGINE_AC_TREE_MAP_H
+#define AGS_ENGINE_AC_TREE_MAP_H
 
 namespace AGS3 {
 
@@ -33,7 +39,7 @@ struct TreeMap {
 	char *translation;
 
 	TreeMap();
-	char *findValue(const char *key);
+	const char *findValue(const char *key) const;
 	void addText(const char *ntx, char *trans);
 	void clear();
 	~TreeMap();

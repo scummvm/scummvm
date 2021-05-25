@@ -23,9 +23,9 @@
 #include "ags/engine/ac/global_dialog.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/dialog.h"
-#include "ags/shared/ac/dialogtopic.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/dialog_topic.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
@@ -47,7 +47,7 @@ void RunDialog(int tum) {
 			_GP(play).stop_dialog_at_end = DIALOG_NEWTOPIC + tum;
 		else
 			quitprintf("!RunDialog: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
-				_GP(last_in_dialog_request_script_pos).Section.GetCStr(), _GP(last_in_dialog_request_script_pos).Line);
+			           _GP(last_in_dialog_request_script_pos).Section.GetCStr(), _GP(last_in_dialog_request_script_pos).Line);
 		return;
 	}
 

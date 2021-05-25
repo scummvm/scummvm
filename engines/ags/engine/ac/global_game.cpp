@@ -20,63 +20,64 @@
  *
  */
 
+#include "ags/lib/std/math.h"
 #include "ags/shared/core/platform.h"
-#include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/util/path.h"
+#include "ags/shared/ac/audio_clip_type.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/global_hotspot.h"
-#include "ags/engine/ac/global_inventoryitem.h"
+#include "ags/engine/ac/global_inventory_item.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/hotspot.h"
-#include "ags/engine/ac/keycode.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/object.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
-#include "ags/engine/main/game_start.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/main/game_start.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/gfx/graphicsdriver.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/engine/gfx/graphics_driver.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/game_file.h"
+#include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/platform/base/sys_main.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 
-#define ALLEGRO_KEYBOARD_HANDLER
-
 void GiveScore(int amnt) {
-	_G(guis_need_update) = 1;
+	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_AllScore);
 	_GP(play).score += amnt;
 
 	if ((amnt > 0) && (_GP(play).score_sound >= 0))
@@ -109,19 +110,7 @@ void RestoreGameSlot(int slnum) {
 void DeleteSaveSlot(int slnum) {
 	String nametouse;
 	nametouse = get_save_game_path(slnum);
-	Shared::File::DeleteFile(nametouse);
-	// The code below renames the highest save game to fill in the gap
-	// This does not work (because the system rename() function does not
-	// handle our "/saves/" prefix). We could remove it here and use
-	// g_system->getSavefileManager()->renameSavefile. But it might
-	// actually be better to not fill the gap. The original AGS engine
-	// sorts savegame by date, but as we don't have access to the date,
-	// we save them by slot. So moving the highest slot to the gap may
-	// not be a good idea. An alternative would be to shift by one all
-	// the savegames after the removed one.
-	// One aspect to keep in mind is that MAXSAVEGAMES is 50, but we
-	// allow slot up to 099. So we have some margin.
-#ifndef AGS_PLATFORM_SCUMMVM
+	::remove(nametouse);
 	if ((slnum >= 1) && (slnum <= MAXSAVEGAMES)) {
 		String thisname;
 		for (int i = MAXSAVEGAMES; i > slnum; i--) {
@@ -134,7 +123,6 @@ void DeleteSaveSlot(int slnum) {
 		}
 
 	}
-#endif
 }
 
 void PauseGame() {
@@ -153,15 +141,19 @@ int IsGamePaused() {
 	return 0;
 }
 
+bool GetSaveSlotDescription(int slnum, String &description) {
+	if (read_savedgame_description(get_save_game_path(slnum), description))
+		return true;
+	description.Format("INVALID SLOT %d", slnum);
+	return false;
+}
+
 int GetSaveSlotDescription(int slnum, char *desbuf) {
 	VALIDATE_STRING(desbuf);
 	String description;
-	if (read_savedgame_description(get_save_game_path(slnum), description)) {
-		strcpy(desbuf, description);
-		return 1;
-	}
-	sprintf(desbuf, "INVALID SLOT %d", slnum);
-	return 0;
+	bool res = GetSaveSlotDescription(slnum, description);
+	snprintf(desbuf, MAX_MAXSTRLEN, "%s", description.GetCStr());
+	return res ? 1 : 0;
 }
 
 int LoadSaveSlotScreenshot(int slnum, int width, int height) {
@@ -180,8 +172,8 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	// resize the sprite to the requested size
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, _GP(spriteset)[gotSlot]->GetColorDepth());
 	newPic->StretchBlt(_GP(spriteset)[gotSlot],
-		RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
-		RectWH(0, 0, width, height));
+	                   RectWH(0, 0, _GP(game).SpriteInfos[gotSlot].Width, _GP(game).SpriteInfos[gotSlot].Height),
+	                   RectWH(0, 0, width, height));
 
 	update_polled_stuff_if_runtime();
 
@@ -190,6 +182,31 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	add_dynamic_sprite(gotSlot, newPic);
 
 	return gotSlot;
+}
+
+void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count) {
+	if (max_count == 0)
+		return; // duh
+
+	String svg_dir = get_save_game_directory();
+	String svg_suff = get_save_game_suffix();
+	String searchPath = Path::ConcatPaths(svg_dir, String::FromFormat("agssave.???%s", svg_suff.GetCStr()));
+	time_t time = 0;
+
+	SaveStateList saveList = ::AGS::g_vm->listSaves();
+	for (uint idx = 0; idx < saveList.size(); ++idx) {
+		int saveGameSlot = saveList[idx].getSaveSlot();
+
+		// only list games .000 to .099 (to allow higher slots for other perposes)
+		if (saveGameSlot > 99)
+			continue;
+
+		String description;
+		GetSaveSlotDescription(saveGameSlot, description);
+		saves.push_back(SaveListItem(saveGameSlot, description, time));
+		if (saves.size() >= max_count)
+			break;
+	}
 }
 
 void SetGlobalInt(int index, int valu) {
@@ -240,10 +257,8 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	}
 
 	if ((mode & RAGMODE_LOADNOW) == 0) {
-		// need to copy, since the script gets destroyed
-		get_install_dir_path(_G(gamefilenamebuf), newgame);
-		_GP(ResPaths).GamePak.Path = _G(gamefilenamebuf);
-		_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(_G(gamefilenamebuf));
+		_GP(ResPaths).GamePak.Path = PathFromInstallDir(newgame);
+		_GP(ResPaths).GamePak.Name = newgame;
 		_GP(play).takeover_data = data;
 		_G(load_new_game_restore) = -1;
 
@@ -261,14 +276,20 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	unload_old_room();
 	_G(displayed_room) = -10;
 
+#if defined (AGS_AUTO_WRITE_USER_CONFIG)
 	save_config_file(); // save current user config in case engine fails to run new game
+#endif // AGS_AUTO_WRITE_USER_CONFIG
 	unload_game_file();
 
 	// Adjust config (NOTE: normally, RunAGSGame would need a redesign to allow separate config etc per each game)
 	_GP(usetup).translation = ""; // reset to default, prevent from trying translation file of game A in game B
 
-	if (Shared::AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path) != Shared::kAssetNoError)
+	_GP(AssetMgr)->RemoveAllLibraries();
+
+	// TODO: refactor and share same code with the startup!
+	if (_GP(AssetMgr)->AddLibrary(_GP(ResPaths).GamePak.Path) != Shared::kAssetNoError)
 		quitprintf("!RunAGSGame: unable to load new game file '%s'", _GP(ResPaths).GamePak.Path.GetCStr());
+	engine_assign_assetpaths();
 
 	show_preload();
 
@@ -312,8 +333,7 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_FRAMESPEED:
 	case GP_FRAMEIMAGE:
 	case GP_FRAMESOUND:
-	case GP_ISFRAMEFLIPPED:
-	{
+	case GP_ISFRAMEFLIPPED: {
 		if ((data1 < 1) || (data1 > _GP(game).numviews)) {
 			quitprintf("!GetGameParameter: invalid view specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
@@ -336,7 +356,6 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 			return (pvf->flags & VFLG_FLIPSPRITE) ? 1 : 0;
 		else
 			quit("GetGameParameter internal error");
-		return 0;
 	}
 	case GP_ISRUNNEXTLOOP:
 		return Game_GetRunNextSettingForLoop(data1, data2);
@@ -410,9 +429,13 @@ int SetGameOption(int opt, int setting) {
 
 	if (opt == OPT_DUPLICATEINV)
 		update_invorder();
-	else if (opt == OPT_DISABLEOFF)
+	else if (opt == OPT_DISABLEOFF) {
 		_G(gui_disabled_style) = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
-	else if (opt == OPT_PORTRAITSIDE) {
+		// If GUI was disabled at this time then also update it, as visual style could've changed
+		if (_GP(play).disabled_user_interface > 0) {
+			GUI::MarkAllGUIForUpdate();
+		}
+	} else if (opt == OPT_PORTRAITSIDE) {
 		if (setting == 0)  // set back to Left
 			_GP(play).swap_portrait_side = 0;
 	}
@@ -459,7 +482,7 @@ void StartCutscene(int skipwith) {
 
 	if (is_in_cutscene()) {
 		quitprintf("!StartCutscene: already in a cutscene; previous started in \"%s\", line %d",
-			last_cutscene_script_pos.Section.GetCStr(), last_cutscene_script_pos.Line);
+		           last_cutscene_script_pos.Section.GetCStr(), last_cutscene_script_pos.Line);
 	}
 
 	if ((skipwith < 1) || (skipwith > 6))
@@ -533,12 +556,12 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		int mover = GetInvAt(xxx, yyy);
 		if (mover > 0) {
 			if (_GP(play).get_loc_name_last_time != 1000 + mover)
-				_G(guis_need_update) = 1;
+				GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 			_GP(play).get_loc_name_last_time = 1000 + mover;
 			strcpy(tempo, get_translation(_GP(game).invinfo[mover].name));
 		} else if ((_GP(play).get_loc_name_last_time > 1000) && (_GP(play).get_loc_name_last_time < 1000 + MAX_INV)) {
 			// no longer selecting an item
-			_G(guis_need_update) = 1;
+			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 			_GP(play).get_loc_name_last_time = -1;
 		}
 		return;
@@ -557,7 +580,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 	if (loctype == 0) {
 		if (_GP(play).get_loc_name_last_time != 0) {
 			_GP(play).get_loc_name_last_time = 0;
-			_G(guis_need_update) = 1;
+			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 		}
 		return;
 	}
@@ -567,7 +590,7 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 		onhs = _G(getloctype_index);
 		strcpy(tempo, get_translation(_GP(game).chars[onhs].name));
 		if (_GP(play).get_loc_name_last_time != 2000 + onhs)
-			_G(guis_need_update) = 1;
+			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 		_GP(play).get_loc_name_last_time = 2000 + onhs;
 		return;
 	}
@@ -582,253 +605,24 @@ void GetLocationName(int xxx, int yyy, char *tempo) {
 			tempo[1] = 0;
 		}
 		if (_GP(play).get_loc_name_last_time != 3000 + aa)
-			_G(guis_need_update) = 1;
+			GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 		_GP(play).get_loc_name_last_time = 3000 + aa;
 		return;
 	}
 	onhs = _G(getloctype_index);
-	if (onhs > 0)
-		strcpy(tempo, get_translation(_GP(thisroom).Hotspots[onhs].Name));
+	if (onhs > 0) strcpy(tempo, get_translation(_GP(thisroom).Hotspots[onhs].Name));
 	if (_GP(play).get_loc_name_last_time != onhs)
-		_G(guis_need_update) = 1;
+		GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 	_GP(play).get_loc_name_last_time = onhs;
 }
 
 int IsKeyPressed(int keycode) {
-	if (keyboard_needs_poll())
-		poll_keyboard();
-
-	switch (keycode) {
-	case eAGSKeyCodeBackspace:
-		return ags_iskeypressed(__allegro_KEY_BACKSPACE);
-	case eAGSKeyCodeTab:
-		return ags_iskeypressed(__allegro_KEY_TAB);
-	case eAGSKeyCodeReturn:
-		return ags_iskeypressed(__allegro_KEY_ENTER) || ags_iskeypressed(__allegro_KEY_ENTER_PAD);
-	case eAGSKeyCodeEscape:
-		return ags_iskeypressed(__allegro_KEY_ESC);
-	case eAGSKeyCodeSpace:
-		return ags_iskeypressed(__allegro_KEY_SPACE);
-	case eAGSKeyCodeSingleQuote:
-		return ags_iskeypressed(__allegro_KEY_QUOTE);
-	case eAGSKeyCodeComma:
-		return ags_iskeypressed(__allegro_KEY_COMMA);
-	case eAGSKeyCodePeriod:
-		return ags_iskeypressed(__allegro_KEY_STOP);
-	case eAGSKeyCodeForwardSlash:
-		return ags_iskeypressed(__allegro_KEY_SLASH) || ags_iskeypressed(__allegro_KEY_SLASH_PAD);
-	case eAGSKeyCodeBackSlash:
-		return ags_iskeypressed(__allegro_KEY_BACKSLASH) || ags_iskeypressed(__allegro_KEY_BACKSLASH2);
-	case eAGSKeyCodeSemiColon:
-		return ags_iskeypressed(__allegro_KEY_SEMICOLON);
-	case eAGSKeyCodeEquals:
-		return ags_iskeypressed(__allegro_KEY_EQUALS) || ags_iskeypressed(__allegro_KEY_EQUALS_PAD);
-	case eAGSKeyCodeOpenBracket:
-		return ags_iskeypressed(__allegro_KEY_OPENBRACE);
-	case eAGSKeyCodeCloseBracket:
-		return ags_iskeypressed(__allegro_KEY_CLOSEBRACE);
-	// NOTE: we're treating EQUALS like PLUS, even though it is only available shifted.
-	case eAGSKeyCodePlus:
-		return ags_iskeypressed(__allegro_KEY_EQUALS) || ags_iskeypressed(__allegro_KEY_PLUS_PAD);
-	case eAGSKeyCodeHyphen:
-		return ags_iskeypressed(__allegro_KEY_MINUS) || ags_iskeypressed(__allegro_KEY_MINUS_PAD);
-
-	// non-shifted versions of keys
-	case eAGSKeyCodeColon:
-		return ags_iskeypressed(__allegro_KEY_COLON) || ags_iskeypressed(__allegro_KEY_COLON2);
-	case eAGSKeyCodeAsterisk:
-		return ags_iskeypressed(__allegro_KEY_ASTERISK);
-	case eAGSKeyCodeAt:
-		return ags_iskeypressed(__allegro_KEY_AT);
-
-	case eAGSKeyCode0:
-		return ags_iskeypressed(__allegro_KEY_0);
-	case eAGSKeyCode1:
-		return ags_iskeypressed(__allegro_KEY_1);
-	case eAGSKeyCode2:
-		return ags_iskeypressed(__allegro_KEY_2);
-	case eAGSKeyCode3:
-		return ags_iskeypressed(__allegro_KEY_3);
-	case eAGSKeyCode4:
-		return ags_iskeypressed(__allegro_KEY_4);
-	case eAGSKeyCode5:
-		return ags_iskeypressed(__allegro_KEY_5);
-	case eAGSKeyCode6:
-		return ags_iskeypressed(__allegro_KEY_6);
-	case eAGSKeyCode7:
-		return ags_iskeypressed(__allegro_KEY_7);
-	case eAGSKeyCode8:
-		return ags_iskeypressed(__allegro_KEY_8);
-	case eAGSKeyCode9:
-		return ags_iskeypressed(__allegro_KEY_9);
-
-	case eAGSKeyCodeA:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('A'));
-	case eAGSKeyCodeB:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('B'));
-	case eAGSKeyCodeC:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('C'));
-	case eAGSKeyCodeD:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('D'));
-	case eAGSKeyCodeE:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('E'));
-	case eAGSKeyCodeF:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('F'));
-	case eAGSKeyCodeG:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('G'));
-	case eAGSKeyCodeH:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('H'));
-	case eAGSKeyCodeI:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('I'));
-	case eAGSKeyCodeJ:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('J'));
-	case eAGSKeyCodeK:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('K'));
-	case eAGSKeyCodeL:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('L'));
-	case eAGSKeyCodeM:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('M'));
-	case eAGSKeyCodeN:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('N'));
-	case eAGSKeyCodeO:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('O'));
-	case eAGSKeyCodeP:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('P'));
-	case eAGSKeyCodeQ:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Q'));
-	case eAGSKeyCodeR:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('R'));
-	case eAGSKeyCodeS:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('S'));
-	case eAGSKeyCodeT:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('T'));
-	case eAGSKeyCodeU:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('U'));
-	case eAGSKeyCodeV:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('V'));
-	case eAGSKeyCodeW:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('W'));
-	case eAGSKeyCodeX:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('X'));
-	case eAGSKeyCodeY:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Y'));
-	case eAGSKeyCodeZ:
-		return ags_iskeypressed(_G(platform)->ConvertKeycodeToScanCode('Z'));
-
-	case eAGSKeyCodeF1:
-		return ags_iskeypressed(__allegro_KEY_F1);
-	case eAGSKeyCodeF2:
-		return ags_iskeypressed(__allegro_KEY_F2);
-	case eAGSKeyCodeF3:
-		return ags_iskeypressed(__allegro_KEY_F3);
-	case eAGSKeyCodeF4:
-		return ags_iskeypressed(__allegro_KEY_F4);
-	case eAGSKeyCodeF5:
-		return ags_iskeypressed(__allegro_KEY_F5);
-	case eAGSKeyCodeF6:
-		return ags_iskeypressed(__allegro_KEY_F6);
-	case eAGSKeyCodeF7:
-		return ags_iskeypressed(__allegro_KEY_F7);
-	case eAGSKeyCodeF8:
-		return ags_iskeypressed(__allegro_KEY_F8);
-	case eAGSKeyCodeF9:
-		return ags_iskeypressed(__allegro_KEY_F9);
-	case eAGSKeyCodeF10:
-		return ags_iskeypressed(__allegro_KEY_F10);
-	case eAGSKeyCodeF11:
-		return ags_iskeypressed(__allegro_KEY_F11);
-	case eAGSKeyCodeF12:
-		return ags_iskeypressed(__allegro_KEY_F12);
-
-	case eAGSKeyCodeHome:
-		return ags_iskeypressed(__allegro_KEY_HOME) || ags_iskeypressed(__allegro_KEY_7_PAD);
-	case eAGSKeyCodeUpArrow:
-		return ags_iskeypressed(__allegro_KEY_UP) || ags_iskeypressed(__allegro_KEY_8_PAD);
-	case eAGSKeyCodePageUp:
-		return ags_iskeypressed(__allegro_KEY_PGUP) || ags_iskeypressed(__allegro_KEY_9_PAD);
-	case eAGSKeyCodeLeftArrow:
-		return ags_iskeypressed(__allegro_KEY_LEFT) || ags_iskeypressed(__allegro_KEY_4_PAD);
-	case eAGSKeyCodeNumPad5:
-		return ags_iskeypressed(__allegro_KEY_5_PAD);
-	case eAGSKeyCodeRightArrow:
-		return ags_iskeypressed(__allegro_KEY_RIGHT) || ags_iskeypressed(__allegro_KEY_6_PAD);
-	case eAGSKeyCodeEnd:
-		return ags_iskeypressed(__allegro_KEY_END) || ags_iskeypressed(__allegro_KEY_1_PAD);
-	case eAGSKeyCodeDownArrow:
-		return ags_iskeypressed(__allegro_KEY_DOWN) || ags_iskeypressed(__allegro_KEY_2_PAD);
-	case eAGSKeyCodePageDown:
-		return ags_iskeypressed(__allegro_KEY_PGDN) || ags_iskeypressed(__allegro_KEY_3_PAD);
-	case eAGSKeyCodeInsert:
-		return ags_iskeypressed(__allegro_KEY_INSERT) || ags_iskeypressed(__allegro_KEY_0_PAD);
-	case eAGSKeyCodeDelete:
-		return ags_iskeypressed(__allegro_KEY_DEL) || ags_iskeypressed(__allegro_KEY_DEL_PAD);
-
-	// These keys are not defined in the eAGSKey enum but are in the manual
-	// https://adventuregamestudio.github.io/ags-manual/ASCIIcodes.html
-
-	case 403:
-		return ags_iskeypressed(__allegro_KEY_LSHIFT);
-	case 404:
-		return ags_iskeypressed(__allegro_KEY_RSHIFT);
-	case 405:
-		return ags_iskeypressed(__allegro_KEY_LCONTROL);
-	case 406:
-		return ags_iskeypressed(__allegro_KEY_RCONTROL);
-	case 407:
-		return ags_iskeypressed(__allegro_KEY_ALT);
-
-	// (noted here for interest)
-	// The following are the AGS_EXT_KEY_SHIFT, derived from applying arithmetic to the original keycodes.
-	// These do not have a corresponding ags key enum, do not appear in the manual and may not be accessible because of OS contraints.
-
-	case 392:
-		return ags_iskeypressed(__allegro_KEY_PRTSCR);
-	case 393:
-		return ags_iskeypressed(__allegro_KEY_PAUSE);
-	case 394:
-		return ags_iskeypressed(__allegro_KEY_ABNT_C1);
-	case 395:
-		return ags_iskeypressed(__allegro_KEY_YEN);
-	case 396:
-		return ags_iskeypressed(__allegro_KEY_KANA);
-	case 397:
-		return ags_iskeypressed(__allegro_KEY_CONVERT);
-	case 398:
-		return ags_iskeypressed(__allegro_KEY_NOCONVERT);
-	case 400:
-		return ags_iskeypressed(__allegro_KEY_CIRCUMFLEX);
-	case 402:
-		return ags_iskeypressed(__allegro_KEY_KANJI);
-	case 420:
-		return ags_iskeypressed(__allegro_KEY_ALTGR);
-	case 421:
-		return ags_iskeypressed(__allegro_KEY_LWIN);
-	case 422:
-		return ags_iskeypressed(__allegro_KEY_RWIN);
-	case 423:
-		return ags_iskeypressed(__allegro_KEY_MENU);
-	case 424:
-		return ags_iskeypressed(__allegro_KEY_SCRLOCK);
-	case 425:
-		return ags_iskeypressed(__allegro_KEY_NUMLOCK);
-	case 426:
-		return ags_iskeypressed(__allegro_KEY_CAPSLOCK);
-
-	// Allegro4 keys that were never supported:
-	// __allegro_KEY_COMMAND
-	// __allegro_KEY_TILDE
-	// __allegro_KEY_BACKQUOTE
-
-	default:
-		// Remaining Allegro4 keycodes are offset by AGS_EXT_KEY_SHIFT
-		if (keycode >= AGS_EXT_KEY_SHIFT) {
-			if (ags_iskeypressed(keycode - AGS_EXT_KEY_SHIFT)) {
-				return 1;
-			}
-		}
+	auto status = ags_iskeydown(static_cast<eAGSKeyCode>(keycode));
+	if (status < 0) {
 		debug_script_log("IsKeyPressed: unsupported keycode %d", keycode);
 		return 0;
 	}
+	return status;
 }
 
 int SaveScreenShot(const char *namm) {
@@ -836,12 +630,12 @@ int SaveScreenShot(const char *namm) {
 	String svg_dir = get_save_game_directory();
 
 	if (strchr(namm, '.') == nullptr)
-		fileName.Format("%s%s.bmp", svg_dir.GetCStr(), namm);
+		fileName = Path::MakePath(svg_dir, namm, "bmp");
 	else
-		fileName.Format("%s%s", svg_dir.GetCStr(), namm);
+		fileName = Path::ConcatPaths(svg_dir, namm);
 
 	Bitmap *buffer = CopyScreenIntoBitmap(_GP(play).GetMainViewport().GetWidth(), _GP(play).GetMainViewport().GetHeight());
-	if (!buffer->SaveToFile(fileName, _G(palette))) {
+	if (!buffer->SaveToFile(fileName, _G(palette)) != 0) {
 		delete buffer;
 		return 0;
 	}
@@ -861,17 +655,13 @@ void SetMultitasking(int mode) {
 	if ((mode == 1) && (!_GP(scsystem).windowed))
 		mode = 0;
 
+	// Install engine callbacks for switching in and out the window
 	if (mode == 0) {
-		if (set_display_switch_mode(SWITCH_PAUSE) == -1)
-			set_display_switch_mode(SWITCH_AMNESIA);
-		// install callbacks to stop the sound when switching away
-		set_display_switch_callback(SWITCH_IN, display_switch_in_resume);
-		set_display_switch_callback(SWITCH_OUT, display_switch_out_suspend);
+		sys_set_background_mode(false);
+		sys_evt_set_focus_callbacks(display_switch_in_resume, display_switch_out_suspend);
 	} else {
-		if (set_display_switch_mode(SWITCH_BACKGROUND) == -1)
-			set_display_switch_mode(SWITCH_BACKAMNESIA);
-		set_display_switch_callback(SWITCH_IN, display_switch_in);
-		set_display_switch_callback(SWITCH_OUT, display_switch_out);
+		sys_set_background_mode(true);
+		sys_evt_set_focus_callbacks(display_switch_in, display_switch_out);
 	}
 }
 
@@ -991,26 +781,17 @@ void SetGraphicalVariable(const char *varName, int p_value) {
 }
 
 int WaitImpl(int skip_type, int nloops) {
+	if ((nloops < 1) && (_G(loaded_game_file_version) >= kGameVersion_262)) // 2.62+
+		quit("!Wait: must wait at least 1 loop");
+
 	_GP(play).wait_counter = nloops;
-	_GP(play).wait_skipped_by = SKIP_AUTOTIMER; // we set timer flag by default to simplify that case
-	_GP(play).wait_skipped_by_data = 0;
 	_GP(play).key_skip_wait = skip_type;
 
-	GameLoopUntilValueIsZero(&_GP(play).wait_counter);
+	GameLoopUntilValueIsZeroOrLess(&_GP(play).wait_counter);
 
-	if (_GP(game).options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
-		// < 3.5.1 return 1 is skipped by user input, otherwise 0
-		return (_GP(play).wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
-	}
-	// >= 3.5.1 return positive keycode, negative mouse button code, or 0 as time-out
-	switch (_GP(play).wait_skipped_by) {
-	case SKIP_KEYPRESS:
-		return _GP(play).wait_skipped_by_data;
-	case SKIP_MOUSECLICK:
-		return -(_GP(play).wait_skipped_by_data + 1); // convert to 1-based code and negate
-	default:
-		return 0;
-	}
+	if (_GP(play).wait_counter < 0)
+		return 1;
+	return 0;
 }
 
 void scrWait(int nloops) {
@@ -1021,16 +802,8 @@ int WaitKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_AUTOTIMER, nloops);
 }
 
-int WaitMouse(int nloops) {
-	return WaitImpl(SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
-}
-
 int WaitMouseKey(int nloops) {
 	return WaitImpl(SKIP_KEYPRESS | SKIP_MOUSECLICK | SKIP_AUTOTIMER, nloops);
-}
-
-void SkipWait() {
-	_GP(play).wait_counter = 0;
 }
 
 } // namespace AGS3

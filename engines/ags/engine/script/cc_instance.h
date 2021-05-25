@@ -20,20 +20,14 @@
  *
  */
 
-//=============================================================================
-//
-// 'C'-style script interpreter
-//
-//=============================================================================
+#ifndef AGS_ENGINE_SCRIPT_CC_INSTANCE_H
+#define AGS_ENGINE_SCRIPT_CC_INSTANCE_H
 
-#ifndef AGS_ENGINE_SCRIPT_CCINSTANCE_H
-#define AGS_ENGINE_SCRIPT_CCINSTANCE_H
-
-#include "ags/lib/std/map.h"
 #include "ags/lib/std/memory.h"
+#include "ags/lib/std/map.h"
 #include "ags/shared/script/script_common.h"
 #include "ags/shared/script/cc_script.h"  // ccScript
-#include "ags/engine/script/nonblockingscriptfunction.h"
+#include "ags/engine/script/non_blocking_script_function.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
@@ -108,7 +102,7 @@ struct ScriptPosition {
 struct ccInstance {
 public:
 	// TODO: change to std:: if moved to C++11
-	typedef std::unordered_map<int, ScriptVariable> ScVarMap;
+	typedef std::unordered_map<int32_t, ScriptVariable> ScVarMap;
 	typedef std::shared_ptr<ScVarMap>                   PScVarMap;
 public:
 	int32_t flags;
@@ -217,10 +211,6 @@ protected:
 	// Function call stack processing
 	void    PushToFuncCallStack(FunctionCallStack &func_callstack, const RuntimeScriptValue &rval);
 	void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
-
-private:
-	enum WorkaroundResult { WR_NONE, WR_SKIP_FUNCTION };
-	WorkaroundResult checkForWorkaround(ScriptOperation &codeOp);
 };
 
 } // namespace AGS3

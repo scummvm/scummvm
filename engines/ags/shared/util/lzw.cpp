@@ -11,7 +11,7 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PUR_G(pos)E.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -169,7 +169,7 @@ void lzwcompress(Stream *lzw_in, Stream *out) {
 		if (len++ >= run) {
 			if (match >= THRESHOLD) {
 				buf[0] |= mask;
-				// _G(pos)sible fix: change int* to short* ??
+				// possible fix: change int* to short* ??
 				*(short *)(buf + size) = ((match - 3) << 12) | ((i - _G(pos) - 1) & (N - 1));
 				size += 2;
 				len -= match;
@@ -215,12 +215,12 @@ void myputc(int ccc, Stream *out) {
 
 void lzwexpand(Stream *lzw_in, Stream *out) {
 	int bits, ch, i, j, len, mask;
-	char *lzBuffer;
+	char *buf;
 	//  printf(" UnShrinking: %s ",filena);
 	_G(putbytes) = 0;
 
-	lzBuffer = (char *)malloc(N);
-	if (lzBuffer == nullptr) {
+	buf = (char *)malloc(N);
+	if (buf == nullptr) {
 		quit("compress.cpp: unable to decompress: insufficient memory");
 	}
 	i = N - F;
@@ -238,13 +238,13 @@ void lzwexpand(Stream *lzw_in, Stream *out) {
 				j = (i - j - 1) & (N - 1);
 
 				while (len--) {
-					myputc(lzBuffer[i] = lzBuffer[j], out);
+					myputc(buf[i] = buf[j], out);
 					j = (j + 1) & (N - 1);
 					i = (i + 1) & (N - 1);
 				}
 			} else {
 				ch = lzw_in->ReadByte();
-				myputc(lzBuffer[i] = ch, out);
+				myputc(buf[i] = ch, out);
 				i = (i + 1) & (N - 1);
 			}
 
@@ -259,7 +259,7 @@ void lzwexpand(Stream *lzw_in, Stream *out) {
 			break;
 	}
 
-	free(lzBuffer);
+	free(buf);
 	expand_to_mem = 0;
 }
 

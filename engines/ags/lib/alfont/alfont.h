@@ -31,20 +31,20 @@
 namespace AGS3 {
 
 struct ALFONT_FONT {
-	Common::MemoryReadStream _ttfData;
-	int _size;
-	Common::HashMap<int, Graphics::Font *> _fonts;
+Common::MemoryReadStream _ttfData;
+int _size;
+Common::HashMap<int, Graphics::Font *> _fonts;
 
-	ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
-	ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
+ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
+ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
 
-	~ALFONT_FONT() {
-		for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
-			it != _fonts.end(); ++it)
-			delete (*it)._value;
-	}
+~ALFONT_FONT() {
+	for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
+	        it != _fonts.end(); ++it)
+		delete(*it)._value;
+}
 
-	Graphics::Font *getFont();
+Graphics::Font *getFont();
 };
 
 inline void alfont_init() {}
@@ -56,6 +56,7 @@ extern void alfont_destroy_font(ALFONT_FONT *font);
 extern size_t alfont_text_length(ALFONT_FONT *font, const char *text);
 extern size_t alfont_text_height(ALFONT_FONT *font);
 extern void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color);
+extern void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *font, const char *text, int x, int y, uint32 color);
 extern const char *alfont_get_name(ALFONT_FONT *font);
 extern void alfont_set_font_size(ALFONT_FONT *font, int size);
 

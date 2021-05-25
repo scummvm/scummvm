@@ -20,10 +20,12 @@
  *
  */
 
+//include <cstdio>
+//include <string.h>
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/dynobj/cc_dynamicarray.h"
-#include "ags/engine/ac/dynobj/managedobjectpool.h"
-#include "ags/shared/gui/guidefines.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_array.h"
+#include "ags/engine/ac/dynobj/managed_object_pool.h"
+#include "ags/shared/gui/gui_defines.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/engine/script/cc_instance.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -31,20 +33,19 @@
 #include "ags/shared/script/cc_options.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/script/systemimports.h"
+#include "ags/engine/script/system_imports.h"
 #include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/misc.h"
-#include "ags/shared/util/textstreamwriter.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
-#include "ags/engine/ac/dynobj/scriptuserobject.h"
-#include "ags/engine/ac/statobj/agsstaticobject.h"
-#include "ags/engine/ac/statobj/staticarray.h"
-#include "ags/engine/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
+#include "ags/shared/util/text_stream_writer.h"
+#include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/ac/statobj/ags_static_object.h"
+#include "ags/engine/ac/statobj/static_array.h"
+#include "ags/engine/ac/dynobj/cc_dynamic_object_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
 #include "ags/globals.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -238,13 +239,15 @@ ccInstance *ccInstance::Fork() {
 }
 
 void ccInstance::Abort() {
-	if (pc != 0)
+	if ((this != nullptr) && (pc != 0))
 		flags |= INSTF_ABORTED;
 }
 
 void ccInstance::AbortAndDestroy() {
-	Abort();
-	flags |= INSTF_FREE;
+	if (this != nullptr) {
+		Abort();
+		flags |= INSTF_FREE;
+	}
 }
 
 #define ASSERT_STACK_SPACE_AVAILABLE(N) \
@@ -283,7 +286,7 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	int32_t startat = -1;
 	int k;
 	char mangledName[200];
-	snprintf(mangledName, 200, "%s$", funcname);
+	sprintf(mangledName, "%s$", funcname);
 
 	for (k = 0; k < instanceof->numexports; k++) {
 		char *thisExportName = instanceof->exports[k];
@@ -342,9 +345,6 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	PopValuesFromStack(numargs);
 	pc = 0;
 	_G(current_instance) = currentInstanceWas;
-
-	if (_G(abort_engine))
-		return -1;
 
 	// NOTE that if proper multithreading is added this will need
 	// to be reconsidered, since the GC could be run in the middle
@@ -420,8 +420,6 @@ int ccInstance::Run(int32_t curpc) {
 	FunctionCallStack func_callstack;
 
 	while (1) {
-		if (_G(abort_engine))
-			return -1;
 
 		/*
 		if (!codeInst->ReadOperation(codeOp, pc))
@@ -515,19 +513,6 @@ int ccInstance::Run(int32_t curpc) {
 
 		if (write_debug_dump) {
 			DumpInstruction(codeOp);
-		}
-
-		switch (checkForWorkaround(codeOp)) {
-		case WorkaroundResult::WR_SKIP_FUNCTION:
-			codeOp.Instruction.Code = 0;
-			_G(current_instance) = this;
-			next_call_needs_object = 0;
-			num_args_to_func = -1;
-
-			pc += codeOp.ArgCount + 1;
-			continue;
-		default:
-			break;
 		}
 
 		switch (codeOp.Instruction.Code) {
@@ -862,10 +847,10 @@ int ccInstance::Run(int32_t curpc) {
 			break;
 		}
 		case SCMD_MEMINITPTR: {
-			char *address = nullptr;
+			const char *address = nullptr;
 
 			if (reg1.Type == kScValStaticArray && reg1.StcArr->GetDynamicManager()) {
-				address = (char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
+				address = (const char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
 			} else if (reg1.Type == kScValDynamicObject ||
 			           reg1.Type == kScValPluginObject) {
 				address = reg1.Ptr;
@@ -1022,15 +1007,14 @@ int ccInstance::Run(int32_t curpc) {
 					cc_error("invalid pointer type for object function call: %d", reg1.Type);
 				}
 			} else if (reg1.Type == kScValStaticFunction) {
-				RuntimeScriptValue *head = func_callstack.GetHead();
-				return_value = reg1.SPfn(head + 1, num_args_to_func);
+				return_value = reg1.SPfn(func_callstack.GetHead() + 1, num_args_to_func);
 			} else if (reg1.Type == kScValObjectFunction) {
 				cc_error("unexpected object function pointer on SCMD_CALLEXT");
 			} else {
 				cc_error("invalid pointer type for function call: %d", reg1.Type);
 			}
 
-			if (_G(ccError) || _G(abort_engine)) {
+			if (_G(ccError)) {
 				return -1;
 			}
 
@@ -1070,7 +1054,6 @@ int ccInstance::Run(int32_t curpc) {
 			case kScValStackPtr:
 				registers[SREG_OP] = reg1;
 				break;
-
 			case kScValStaticArray:
 				if (reg1.StcArr->GetDynamicManager()) {
 					registers[SREG_OP].SetDynamicObject(
@@ -1078,8 +1061,7 @@ int ccInstance::Run(int32_t curpc) {
 					    reg1.StcArr->GetDynamicManager());
 					break;
 				}
-				// fall through
-
+			// fall-through intended
 			default:
 				cc_error("internal error: SCMD_CALLOBJ argument is not an object of built-in or user-defined type");
 				return -1;
@@ -1156,7 +1138,7 @@ int ccInstance::Run(int32_t curpc) {
 				int currentStackSize = registers[SREG_SP].RValue - &stack[0];
 				int currentDataSize = stackdata_ptr - stackdata;
 				if (currentStackSize + 1 >= CC_STACK_SIZE ||
-				        currentDataSize + arg1.IValue >= (int)CC_STACK_DATA_SIZE) {
+				        currentDataSize + arg1.IValue >= (int32_t)CC_STACK_DATA_SIZE) {
 					cc_error("stack overflow, attempted grow to %d bytes", currentDataSize + arg1.IValue);
 					return -1;
 				}
@@ -1216,10 +1198,6 @@ int ccInstance::Run(int32_t curpc) {
 	}
 }
 
-ccInstance::WorkaroundResult ccInstance::checkForWorkaround(ScriptOperation &codeOp) {
-	return WorkaroundResult::WR_NONE;
-}
-
 String ccInstance::GetCallStack(int maxLines) {
 	String buffer = String::FromFormat("in \"%s\", line %d\n", runningInst->instanceof->GetSectionName(pc), line_number);
 
@@ -1243,7 +1221,7 @@ void ccInstance::GetScriptPosition(ScriptPosition &script_pos) {
 RuntimeScriptValue ccInstance::GetSymbolAddress(const char *symname) {
 	int k;
 	char altName[200];
-	snprintf(altName, 200, "%s$", symname);
+	sprintf(altName, "%s$", symname);
 	RuntimeScriptValue rval_null;
 
 	for (k = 0; k < instanceof->numexports; k++) {
@@ -1265,48 +1243,42 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 		return;
 	}
 
-	// The original opens and close the script.log file for each call, which
-	// is very slow, and also doesn't work in ScummVM (as the file is open
-	// in write only mode, which overwrites the previous content, so we only
-	// get the last line). So we use a Common::DumpFile that we keep open
-	// instead.
-	if (_G(scriptDumpFile) == nullptr) {
-		_G(scriptDumpFile) = new Common::DumpFile();
-		_G(scriptDumpFile)->open("script.log");
-	}
-	Common::String msg = Common::String::format("Line %3d, IP:%8d (SP:%p) ", line_num, pc, (void*)registers[SREG_SP].RValue);
+	Stream *data_s = ci_fopen("script.log", kFile_Create, kFile_Write);
+	TextStreamWriter writer(data_s);
+	writer.WriteFormat("Line %3d, IP:%8d (SP:%p) ", line_num, pc, registers[SREG_SP].RValue);
 
 	const ScriptCommandInfo &cmd_info = sccmd_info[op.Instruction.Code];
-	msg += cmd_info.CmdName;
+	writer.WriteString(cmd_info.CmdName);
 
 	for (int i = 0; i < cmd_info.ArgCount; ++i) {
 		if (i > 0) {
-			msg += ',';
+			writer.WriteChar(',');
 		}
-		RuntimeScriptValue arg = op.Args[i];
 		if (cmd_info.ArgIsReg[i]) {
-			msg += Common::String::format(" %s", regnames[arg.IValue]);
+			writer.WriteFormat(" %s", regnames[op.Args[i].IValue]);
 		} else {
-			if (arg.Type == kScValStackPtr || arg.Type == kScValGlobalVar)
+			RuntimeScriptValue arg = op.Args[i];
+			if (arg.Type == kScValStackPtr || arg.Type == kScValGlobalVar) {
 				arg = *arg.RValue;
-			switch(arg.Type) {
+			}
+			switch (arg.Type) {
 			case kScValInteger:
 			case kScValPluginArg:
-				msg += Common::String::format(" %d", arg.IValue);
+				writer.WriteFormat(" %d", arg.IValue);
 				break;
 			case kScValFloat:
-				msg += Common::String::format(" %f", arg.FValue);
+				writer.WriteFormat(" %f", arg.FValue);
 				break;
 			case kScValStringLiteral:
-				msg += Common::String::format(" \"%s\"", arg.Ptr);
+				writer.WriteFormat(" \"%s\"", arg.Ptr);
 				break;
 			case kScValStackPtr:
 			case kScValGlobalVar:
-				msg += Common::String::format(" %p", (void*)arg.RValue);
+				writer.WriteFormat(" %p", arg.RValue);
 				break;
 			case kScValData:
 			case kScValCodePtr:
-				msg += Common::String::format(" %p", (void*)arg.GetPtrWithOffset());
+				writer.WriteFormat(" %p", arg.GetPtrWithOffset());
 				break;
 			case kScValStaticArray:
 			case kScValStaticObject:
@@ -1314,23 +1286,23 @@ void ccInstance::DumpInstruction(const ScriptOperation &op) {
 			case kScValStaticFunction:
 			case kScValObjectFunction:
 			case kScValPluginFunction:
-			case kScValPluginObject:
-			{
+			case kScValPluginObject: {
 				String name = _GP(simp).findName(arg);
-				if (!name.IsEmpty())
-					msg += Common::String::format(" &%s", name.GetCStr());
-				else
-					msg += Common::String::format(" %p", (void*)arg.GetPtrWithOffset());
+				if (!name.IsEmpty()) {
+					writer.WriteFormat(" &%s", name.GetCStr());
+				} else {
+					writer.WriteFormat(" %p", arg.GetPtrWithOffset());
+				}
 			}
-				break;
+			break;
 			case kScValUndefined:
-				msg += " undefined";
+				writer.WriteString("undefined");
 				break;
 			}
 		}
 	}
-	msg += '\n';
-	_G(scriptDumpFile)->writeString(msg);
+	writer.WriteLineBreak();
+	// the writer will delete data stream internally
 }
 
 bool ccInstance::IsBeingRun() const {
@@ -1372,8 +1344,8 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 			code = (intptr_t *)malloc(codesize * sizeof(intptr_t));
 			// 64 bit: Read code into 8 byte array, necessary for being able to perform
 			// relocations on the references.
-			for (int idx = 0; idx < codesize; ++idx)
-				code[idx] = scri->code[idx];
+			for (i = 0; i < codesize; ++i)
+				code[i] = scri->code[i];
 		}
 	}
 
@@ -1514,11 +1486,11 @@ bool ccInstance::ResolveScriptImports(PScript scri) {
 		resolved_imports = nullptr;
 		return false;
 	}
-	resolved_imports = new int[numimports];
 
+	resolved_imports = new int[numimports];
 	for (int i = 0; i < scri->numimports; ++i) {
-		// MACPORT FIX 9/6/5: changed from NULL TO 0
 		if (scri->imports[i] == nullptr) {
+			resolved_imports[i] = -1;
 			continue;
 		}
 
@@ -1598,7 +1570,7 @@ bool ccInstance::AddGlobalVar(const ScriptVariable &glvar) {
 		*/
 		Debug::Printf(kDbgMsg_Warn, "WARNING: global variable refers to data beyond allocated buffer (%d, %d)", glvar.ScAddress, globaldatasize);
 	}
-	globalvars->insert(std::make_pair((int)glvar.ScAddress, glvar));
+	globalvars->insert(std::make_pair(glvar.ScAddress, glvar));
 	return true;
 }
 
@@ -1669,82 +1641,82 @@ bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {
 /*
 bool ccInstance::ReadOperation(ScriptOperation &op, int32_t at_pc)
 {
-	op.Instruction.Code         = code[at_pc];
-	op.Instruction.InstanceId   = (op.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
-	op.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
+    op.Instruction.Code         = code[at_pc];
+    op.Instruction.InstanceId   = (op.Instruction.Code >> INSTANCE_ID_SHIFT) & INSTANCE_ID_MASK;
+    op.Instruction.Code        &= INSTANCE_ID_REMOVEMASK; // now this is pure instruction code
 
-	int want_args = sccmd_info[op.Instruction.Code].ArgCount;
-	if (at_pc + want_args >= codesize)
-	{
-		cc_error("unexpected end of code data at %d", at_pc + want_args);
-		return false;
-	}
-	op.ArgCount = want_args;
+    int want_args = sccmd_info[op.Instruction.Code].ArgCount;
+    if (at_pc + want_args >= codesize)
+    {
+        cc_error("unexpected end of code data at %d", at_pc + want_args);
+        return false;
+    }
+    op.ArgCount = want_args;
 
-	at_pc++;
-	for (int i = 0; i < op.ArgCount; ++i, ++at_pc)
-	{
-		char fixup = code_fixups[at_pc];
-		if (fixup > 0)
-		{
-			// could be relative pointer or import address
-			if (!FixupArgument(code[at_pc], fixup, op.Args[i]))
-			{
-				return false;
-			}
-		}
-		else
-		{
-			// should be a numeric literal (int32 or float)
-			op.Args[i].SetInt32( (int32_t)code[at_pc] );
-		}
-	}
+    at_pc++;
+    for (int i = 0; i < op.ArgCount; ++i, ++at_pc)
+    {
+        char fixup = code_fixups[at_pc];
+        if (fixup > 0)
+        {
+            // could be relative pointer or import address
+            if (!FixupArgument(code[at_pc], fixup, op.Args[i]))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            // should be a numeric literal (int32 or float)
+            op.Args[i].SetInt32( (int32_t)code[at_pc] );
+        }
+    }
 
-	return true;
+    return true;
 }
 */
 /*
 bool ccInstance::FixupArgument(intptr_t code_value, char fixup_type, RuntimeScriptValue &argument)
 {
-	switch (fixup_type)
-	{
-	case FIXUP_GLOBALDATA:
-		{
-			ScriptVariable *gl_var = (ScriptVariable*)code_value;
-			argument.SetGlobalVar(&gl_var->RValue);
-		}
-		break;
-	case FIXUP_FUNCTION:
-		// originally commented -- CHECKME: could this be used in very old versions of AGS?
-		//      code[fixup] += (long)&code[0];
-		// This is a program counter value, presumably will be used as SCMD_CALL argument
-		argument.SetInt32((int32_t)code_value);
-		break;
-	case FIXUP_STRING:
-		argument.SetStringLiteral(&strings[0] + code_value);
-		break;
-	case FIXUP_IMPORT:
-		{
-			const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
-			if (import)
-			{
-				argument = import->Value;
-			}
-			else
-			{
-				cc_error("cannot resolve import, key = %ld", code_value);
-				return false;
-			}
-		}
-		break;
-	case FIXUP_STACK:
-		argument = GetStackPtrOffsetFw((int32_t)code_value);
-		break;
-	default:
-		cc_error("internal fixup type error: %d", fixup_type);
-		return false;;
-	}
-	return true;
+    switch (fixup_type)
+    {
+    case FIXUP_GLOBALDATA:
+        {
+            ScriptVariable *gl_var = (ScriptVariable*)code_value;
+            argument.SetGlobalVar(&gl_var->RValue);
+        }
+        break;
+    case FIXUP_FUNCTION:
+        // originally commented -- CHECKME: could this be used in very old versions of AGS?
+        //      code[fixup] += (long)&code[0];
+        // This is a program counter value, presumably will be used as SCMD_CALL argument
+        argument.SetInt32((int32_t)code_value);
+        break;
+    case FIXUP_STRING:
+        argument.SetStringLiteral(&strings[0] + code_value);
+        break;
+    case FIXUP_IMPORT:
+        {
+            const ScriptImport *import = _GP(simp).getByIndex((int32_t)code_value);
+            if (import)
+            {
+                argument = import->Value;
+            }
+            else
+            {
+                cc_error("cannot resolve import, key = %ld", code_value);
+                return false;
+            }
+        }
+        break;
+    case FIXUP_STACK:
+        argument = GetStackPtrOffsetFw((int32_t)code_value);
+        break;
+    default:
+        cc_error("internal fixup type error: %d", fixup_type);
+        return false;
+    }
+    return true;
 }
 */
 //-----------------------------------------------------------------------------

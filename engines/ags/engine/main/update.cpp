@@ -24,29 +24,30 @@
 // Game update procedure
 //
 
+#include "ags/lib/std/math.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/characterextras.h"
+#include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/gamestate.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/game_state.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
-#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/sys_events.h"
-#include "ags/engine/ac/roomobject.h"
-#include "ags/engine/ac/roomstatus.h"
-#include "ags/engine/main/mainheader.h"
+#include "ags/engine/ac/room_object.h"
+#include "ags/engine/ac/room_status.h"
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/update.h"
-#include "ags/engine/ac/screenoverlay.h"
-#include "ags/engine/ac/viewframe.h"
-#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/ac/screen_overlay.h"
+#include "ags/engine/ac/view_frame.h"
+#include "ags/engine/ac/walkable_area.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/main/game_run.h"
-#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -54,7 +55,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
+int do_movelist_move(short *mlnum, int *xx, int *yy) {
 	int need_to_fix_sprite = 0;
 	if (mlnum[0] < 1) quit("movelist_move: attempted to move on a non-exist movelist");
 	MoveList *cmls;
@@ -68,29 +69,29 @@ int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 		// if the X-movement has finished, and the Y-per-move is < 1, finish
 		// This can cause jump at the end, but without it the character will
 		// walk on the spot for a while if the Y-per-move is for example 0.2
-//    if ((ypermove & 0xfffff000) == 0) cmls->doneflag|=2;
-//    int ypmm=(ypermove >> 16) & 0x0000ffff;
+		//    if ((ypermove & 0xfffff000) == 0) cmls->doneflag|=2;
+		//    int ypmm=(ypermove >> 16) & 0x0000ffff;
 
 		// NEW 2.15 SR-1 plan: if X-movement has finished, and Y-per-move is < 1,
 		// allow it to finish more easily by moving target zone
 
 		int adjAmnt = 3;
 		// 2.70: if the X permove is also <=1, don't do the skipping
-		if ((((uint32)xpermove & 0xffff0000) == 0xffff0000) ||
-			(((uint32)xpermove & 0xffff0000) == 0x00000000))
+		if (((xpermove & 0xffff0000) == 0xffff0000) ||
+		        ((xpermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
 		// 2.61 RC1: correct this to work with > -1 as well as < 1
 		if (ypermove == 0) {
 		}
 		// Y per move is < 1, so finish the move
-		else if (((uint32)ypermove & 0xffff0000) == 0)
+		else if ((ypermove & 0xffff0000) == 0)
 			targety -= adjAmnt;
 		// Y per move is -1 exactly, don't snap to finish
-		else if ((uint32)ypermove == 0xffff0000) {
+		else if (ypermove == (fixed)0xffff0000) {
 		}
 		// Y per move is > -1, so finish the move
-		else if (((uint32)ypermove & 0xffff0000) == 0xffff0000)
+		else if ((ypermove & 0xffff0000) == 0xffff0000)
 			targety += adjAmnt;
 	} else xps = cmls->fromx + (int)(fixtof(xpermove) * (float)cmls->onpart);
 
@@ -100,29 +101,29 @@ int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 		int adjAmnt = 3;
 
 		// if the Y permove is also <=1, don't skip as far
-		if ((((uint32)ypermove & 0xffff0000) == 0xffff0000) ||
-			((ypermove & 0xffff0000) == 0x00000000))
+		if (((ypermove & 0xffff0000) == 0xffff0000) ||
+		        ((ypermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
 		if (xpermove == 0) {
 		}
 		// Y per move is < 1, so finish the move
-		else if (((uint32)xpermove & 0xffff0000) == 0)
+		else if ((xpermove & 0xffff0000) == 0)
 			targetx -= adjAmnt;
 		// X per move is -1 exactly, don't snap to finish
-		else if ((uint32)xpermove == 0xffff0000) {
+		else if (xpermove == (fixed)0xffff0000) {
 		}
 		// X per move is > -1, so finish the move
-		else if (((uint32)xpermove & 0xffff0000) == 0xffff0000)
+		else if ((xpermove & 0xffff0000) == 0xffff0000)
 			targetx += adjAmnt;
 
 		/*    int xpmm=(xpermove >> 16) & 0x0000ffff;
 		//    if ((xpmm==0) | (xpmm==0xffff)) cmls->doneflag|=1;
-			if (xpmm==0) cmls->doneflag|=1;*/
+		    if (xpmm==0) cmls->doneflag|=1;*/
 	} else yps = cmls->fromy + (int)(fixtof(ypermove) * (float)cmls->onpart);
 	// check if finished horizontal movement
 	if (((xpermove > 0) && (xps >= targetx)) ||
-		((xpermove < 0) && (xps <= targetx))) {
+	        ((xpermove < 0) && (xps <= targetx))) {
 		cmls->doneflag |= 1;
 		xps = targetx;
 		// if the Y is almost there too, finish it
@@ -133,7 +134,7 @@ int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 	} else if (xpermove == 0)
 		cmls->doneflag |= 1;
 	// check if finished vertical movement
-	if ((ypermove > 0) &(yps >= targety)) {
+	if ((ypermove > 0) & (yps >= targety)) {
 		cmls->doneflag |= 2;
 		yps = targety;
 	} else if ((ypermove < 0) & (yps <= targety)) {
@@ -158,7 +159,7 @@ int do_movelist_move(int16_t *mlnum, int32_t *xx, int32_t *yy) {
 			xps = cmls->fromx;
 			yps = cmls->fromy;
 		}
-		if (cmls->onstage >= cmls->numstage - 1) { // last stage is just dest pos
+		if (cmls->onstage >= cmls->numstage - 1) {  // last stage is just dest pos
 			cmls->numstage = 0;
 			mlnum[0] = 0;
 			need_to_fix_sprite = 1;
@@ -180,11 +181,8 @@ void update_script_timers() {
 
 void update_cycling_views() {
 	// update graphics for object if cycling view
-	for (int aa = 0; aa < _G(croom)->numobj; aa++) {
-
-		RoomObject *obj = &_G(objs)[aa];
-
-		obj->UpdateCyclingView();
+	for (int i = 0; i < _G(croom)->numobj; ++i) {
+		_G(objs)[i].UpdateCyclingView(i);
 	}
 }
 
@@ -224,15 +222,12 @@ void update_following_exactly_characters(int &numSheep, int *followingAsSheep) {
 
 void update_overlay_timers() {
 	// update overlay timers
-	for (size_t i = 0; i < _GP(screenover).size();) {
-		if (_GP(screenover)[i].timeout > 0) {
-			_GP(screenover)[i].timeout--;
-			if (_GP(screenover)[i].timeout == 0) {
-				remove_screen_overlay_index(i);
-				continue;
-			}
+	for (int aa = 0; aa < _G(numscreenover); aa++) {
+		if (_GP(screenover)[aa].timeout > 0) {
+			_GP(screenover)[aa].timeout--;
+			if (_GP(screenover)[aa].timeout == 0)
+				remove_screen_overlay(_GP(screenover)[aa].type);
 		}
-		i++;
 	}
 }
 
@@ -251,12 +246,12 @@ void update_speech_and_messages() {
 			if ((is_voice_playing) && (_GP(play).fast_forward == 0)) {
 				if (_GP(play).messagetime <= 1)
 					_GP(play).messagetime = 1;
-			} else // if the voice has finished, remove the speech
+			} else  // if the voice has finished, remove the speech
 				_GP(play).messagetime = 0;
 		}
 
 		if (_GP(play).messagetime < 1 && _GP(play).speech_display_post_time_ms > 0 &&
-			_GP(play).fast_forward == 0) {
+		        _GP(play).fast_forward == 0) {
 			if (!_GP(play).speech_in_post_state) {
 				_GP(play).messagetime = ::lround(_GP(play).speech_display_post_time_ms * get_current_fps() / 1000.0f);
 			}
@@ -317,7 +312,7 @@ void update_sierra_speech() {
 				// the lip-sync has finished, so just stay idle
 			} else {
 				while ((_G(curLipLinePhoneme) < _G(splipsync)[_G(curLipLine)].numPhonemes) &&
-					((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _G(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
+				        ((_G(curLipLinePhoneme) < 0) || (voice_pos_ms >= _G(splipsync)[_G(curLipLine)].endtimeoffs[_G(curLipLinePhoneme)]))) {
 					_G(curLipLinePhoneme)++;
 					if (_G(curLipLinePhoneme) >= _G(splipsync)[_G(curLipLine)].numPhonemes)
 						_G(facetalkframe) = _GP(game).default_lipsync_frame;
@@ -333,18 +328,18 @@ void update_sierra_speech() {
 		} else if (_G(facetalkwait) > 0) _G(facetalkwait)--;
 		// don't animate if the speech has finished
 		else if ((_GP(play).messagetime < 1) && (_G(facetalkframe) == 0) &&
-			// if _GP(play).close_mouth_speech_time = 0, this means animation should play till
-			// the speech ends; but this should not work in voice mode, and also if the
-			// speech is in the "post" state
-			(_GP(play).speech_has_voice || _GP(play).speech_in_post_state || _GP(play).close_mouth_speech_time > 0))
+		         // if _GP(play).close_mouth_speech_time = 0, this means animation should play till
+		         // the speech ends; but this should not work in voice mode, and also if the
+		         // speech is in the "post" state
+		         (_GP(play).speech_has_voice || _GP(play).speech_in_post_state || _GP(play).close_mouth_speech_time > 0))
 			;
 		else {
 			// Close mouth at end of sentence: if speech has entered the "post" state,
 			// or if this is a text only mode and close_mouth_speech_time is set
 			if (_GP(play).speech_in_post_state ||
-				(!_GP(play).speech_has_voice &&
-				(_GP(play).messagetime < _GP(play).close_mouth_speech_time) &&
-					(_GP(play).close_mouth_speech_time > 0))) {
+			        (!_GP(play).speech_has_voice &&
+			         (_GP(play).messagetime < _GP(play).close_mouth_speech_time) &&
+			         (_GP(play).close_mouth_speech_time > 0))) {
 				_G(facetalkframe) = 0;
 				_G(facetalkwait) = _GP(play).messagetime;
 			} else if ((_GP(game).options[OPT_LIPSYNCTEXT]) && (_G(facetalkrepeat) > 0)) {
@@ -357,10 +352,10 @@ void update_sierra_speech() {
 				// normal non-lip-sync
 				_G(facetalkframe)++;
 				if ((_G(facetalkframe) >= _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) ||
-					(!_GP(play).speech_has_voice && (_GP(play).messagetime < 1) && (_GP(play).close_mouth_speech_time > 0))) {
+				        (!_GP(play).speech_has_voice && (_GP(play).messagetime < 1) && (_GP(play).close_mouth_speech_time > 0))) {
 
 					if ((_G(facetalkframe) >= _G(views)[_G(facetalkview)].loops[_G(facetalkloop)].numFrames) &&
-						(_G(views)[_G(facetalkview)].loops[_G(facetalkloop)].RunNextLoop())) {
+					        (_G(views)[_G(facetalkview)].loops[_G(facetalkloop)].RunNextLoop())) {
 						_G(facetalkloop)++;
 					} else {
 						_G(facetalkloop) = 0;

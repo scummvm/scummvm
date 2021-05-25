@@ -20,17 +20,18 @@
  *
  */
 
+//include <cstdio>
 #include "ags/engine/ac/string.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
@@ -255,21 +256,23 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 			line_length = wgettextwidth_compensate(lines[rr], fonnt);
 			if (line_length > _G(longestline))
 				_G(longestline) = line_length;
-		} else
-			for (size_t rr = 0; rr < lines.Count(); rr++) {
-				line_length = wgettextwidth_compensate(lines[rr], fonnt);
-				if (line_length > _G(longestline))
-					_G(longestline) = line_length;
-			}
-		return lines.Count();
+		}
+	else
+		for (size_t rr = 0; rr < lines.Count(); rr++) {
+			line_length = wgettextwidth_compensate(lines[rr], fonnt);
+			if (line_length > _G(longestline))
+				_G(longestline) = line_length;
+		}
+	return lines.Count();
 }
 
+int MAXSTRLEN = MAX_MAXSTRLEN;
 void check_strlen(char *ptt) {
-	_G(MAXSTRLEN) = MAX_MAXSTRLEN;
-	const byte *charstart = (const byte *)&_GP(game).chars[0];
-	const byte *charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
-	if (((const byte *)&ptt[0] >= charstart) && ((const byte *)&ptt[0] <= charend))
-		_G(MAXSTRLEN) = 30;
+	MAXSTRLEN = MAX_MAXSTRLEN;
+	long charstart = (long)&_GP(game).chars[0];
+	long charend = charstart + sizeof(CharacterInfo) * _GP(game).numcharacters;
+	if (((long)&ptt[0] >= charstart) && ((long)&ptt[0] <= charend))
+		MAXSTRLEN = 30;
 }
 
 /*void GetLanguageString(int indxx,char*buffr) {

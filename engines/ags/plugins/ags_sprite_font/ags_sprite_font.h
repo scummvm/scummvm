@@ -37,24 +37,24 @@ namespace AGSSpriteFont {
 
 class AGSSpriteFont : public PluginBase {
 protected:
-	static IAGSEngine *_engine;
-	static SpriteFontRenderer *_fontRenderer;
-	static VariableWidthSpriteFontRenderer *_vWidthRenderer;
+static IAGSEngine *_engine;
+static SpriteFontRenderer *_fontRenderer;
+static VariableWidthSpriteFontRenderer *_vWidthRenderer;
 
 protected:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
-	static void AGS_EngineShutdown();
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *lpEngine);
+static void AGS_EngineShutdown();
 
 private:
-	static void SetSpriteFont(ScriptMethodParams &params);
-	static void SetVariableSpriteFont(ScriptMethodParams &params);
-	static void SetGlyph(ScriptMethodParams &params);
-	static void SetSpacing(ScriptMethodParams &params);
-	static void SetLineHeightAdjust(ScriptMethodParams &params);
+static void SetSpriteFont(ScriptMethodParams &params);
+static void SetVariableSpriteFont(ScriptMethodParams &params);
+static void SetGlyph(ScriptMethodParams &params);
+static void SetSpacing(ScriptMethodParams &params);
+static void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
-	AGSSpriteFont();
+AGSSpriteFont();
 };
 
 } // namespace AGSSpriteFont

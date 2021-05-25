@@ -31,30 +31,30 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_display.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/system.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/shared/util/stream.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/media/video/video.h"
 #include "ags/ags.h"
 #include "ags/events.h"
-#include "ags/engine/media/video/video.h"
 
 namespace AGS3 {
 
 using AGS::Shared::AssetManager;
 
 static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip, int flags, bool showError) {
-	std::unique_ptr<Stream> video_stream(AssetManager::OpenAsset(name));
+	std::unique_ptr<Stream> video_stream(_GP(AssetMgr)->OpenAsset(name));
 	if (!video_stream) {
 		if (showError)
 			Display("Unable to load video '%s'", name);
@@ -97,10 +97,10 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 
 				if (stretchVideo) {
 					scr.transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h),
-						Common::Rect(0, 0, scr.w, scr.h));
+					                  Common::Rect(0, 0, scr.w, scr.h));
 				} else {
 					scr.blitFrom(*frame, Common::Point((scr.w - frame->w) / 2,
-						(scr.h - frame->h) / 2));
+					                                   (scr.h - frame->h) / 2));
 				}
 			}
 

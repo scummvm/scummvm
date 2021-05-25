@@ -24,7 +24,7 @@
 #define AGS_ENGINE_AC_EVENT_H
 
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtime_script_value.h"
 
 namespace AGS3 {
 

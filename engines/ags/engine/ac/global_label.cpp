@@ -22,15 +22,16 @@
 
 #include "ags/engine/ac/global_label.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/label.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/globals.h"
+#include "ags/shared/gui/gui_main.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+
 
 void SetLabelColor(int guin, int objn, int colr) {
 	if ((guin < 0) | (guin >= _GP(game).numgui))

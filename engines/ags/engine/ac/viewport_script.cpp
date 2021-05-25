@@ -26,11 +26,11 @@
 //
 //=============================================================================
 
-#include "ags/engine/ac/dynobj/scriptcamera.h"
-#include "ags/engine/ac/dynobj/scriptviewport.h"
-#include "ags/engine/ac/dynobj/scriptuserobject.h"
+#include "ags/engine/ac/dynobj/script_camera.h"
+#include "ags/engine/ac/dynobj/script_viewport.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -501,7 +501,7 @@ RuntimeScriptValue Sc_Viewport_SetZOrder(void *self, const RuntimeScriptValue *p
 	API_OBJCALL_VOID_PINT(ScriptViewport, Viewport_SetZOrder);
 }
 
-RuntimeScriptValue Sc_Viewport_GetAtScreenXY(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Viewport_GetAtScreenXY(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJAUTO_PINT2(ScriptViewport, Viewport_GetAtScreenXY);
 }
 
@@ -551,7 +551,7 @@ void RegisterViewportAPI() {
 	ccAddExternalObjectFunction("Viewport::set_Visible", Sc_Viewport_SetVisible);
 	ccAddExternalObjectFunction("Viewport::get_ZOrder", Sc_Viewport_GetZOrder);
 	ccAddExternalObjectFunction("Viewport::set_ZOrder", Sc_Viewport_SetZOrder);
-	ccAddExternalObjectFunction("Viewport::GetAtScreenXY", Sc_Viewport_GetAtScreenXY);
+	ccAddExternalStaticFunction("Viewport::GetAtScreenXY", Sc_Viewport_GetAtScreenXY);
 	ccAddExternalObjectFunction("Viewport::SetPosition", Sc_Viewport_SetPosition);
 	ccAddExternalObjectFunction("Viewport::ScreenToRoomPoint", Sc_Viewport_ScreenToRoomPoint);
 	ccAddExternalObjectFunction("Viewport::RoomToScreenPoint", Sc_Viewport_RoomToScreenPoint);

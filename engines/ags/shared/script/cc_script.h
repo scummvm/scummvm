@@ -20,26 +20,19 @@
  *
  */
 
-//=============================================================================
-//
-// 'C'-style script compiler
-//
-//=============================================================================
-
 #ifndef AGS_SHARED_SCRIPT_CC_SCRIPT_H
 #define AGS_SHARED_SCRIPT_CC_SCRIPT_H
 
-#include "ags/shared/core/types.h"
 #include "ags/lib/std/memory.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
 namespace AGS {
 namespace Shared {
 class Stream;
-} // namespace Shared
-} // namespace AGS
-
+}
+}
 using namespace AGS; // FIXME later
 
 struct ccScript {

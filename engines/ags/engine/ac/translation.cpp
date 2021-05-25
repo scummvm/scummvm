@@ -20,20 +20,21 @@
  *
  */
 
+//include <cstdio>
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/translation.h"
 #include "ags/engine/ac/tree_map.h"
-#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -41,10 +42,10 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void close_translation() {
-	if (_G(transtree) != nullptr) {
-		delete _G(transtree);
-		_G(transtree) = nullptr;
-	}
+	delete _G(transtree);
+	_G(transtree) = nullptr;
+	_G(trans_name) = "";
+	_G(trans_filename) = "";
 }
 
 bool parse_translation(Stream *language_file, String &parse_error);
@@ -53,27 +54,23 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 
 	if (lang.IsEmpty())
 		return false;
-	sprintf(_G(transFileName), "%s.tra", lang.GetCStr());
+	_G(trans_filename) = String::FromFormat("%s.tra", lang.GetCStr());
 
-	Stream *language_file = find_open_asset(_G(transFileName));
+	Stream *language_file = _GP(AssetMgr)->OpenAsset(_G(trans_filename));
 	if (language_file == nullptr) {
-		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", _G(transFileName));
+		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", _G(trans_filename).GetCStr());
 		return false;
 	}
-	// in case it's inside a library file, record the offset
-	_G(lang_offs_start) = language_file->GetPosition();
 
 	char transsig[16] = { 0 };
 	language_file->Read(transsig, 15);
 	if (strcmp(transsig, "AGSTranslation") != 0) {
-		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", _G(transFileName));
+		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", _G(trans_filename).GetCStr());
 		delete language_file;
 		return false;
 	}
 
-	if (_G(transtree) != nullptr) {
-		close_translation();
-	}
+	delete _G(transtree);
 	_G(transtree) = new TreeMap();
 
 	String parse_error;
@@ -81,8 +78,8 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 	delete language_file;
 
 	if (!result) {
+		parse_error.Prepend(String::FromFormat("Failed to read translation file: %s:\n", _G(trans_filename).GetCStr()));
 		close_translation();
-		parse_error.Prepend(String::FromFormat("Failed to read translation file: %s:\n", _G(transFileName)));
 		if (quit_on_error) {
 			parse_error.PrependChar('!');
 			quit(parse_error);
@@ -95,8 +92,20 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 			return false;
 		}
 	}
-	Debug::Printf("Translation initialized: %s", _G(transFileName));
+	Debug::Printf("Translation initialized: %s", _G(trans_filename).GetCStr());
 	return true;
+}
+
+String get_translation_name() {
+	return _G(trans_name);
+}
+
+String get_translation_path() {
+	return _G(trans_filename);
+}
+
+const TreeMap *get_translation_tree() {
+	return _G(transtree);
 }
 
 bool parse_translation(Stream *language_file, String &parse_error) {
@@ -127,8 +136,8 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 			uidfrom = language_file->ReadInt32();
 			read_string_decrypt(language_file, wasgamename, sizeof(wasgamename));
 			if ((uidfrom != _GP(game).uniqueid) || (strcmp(wasgamename, _GP(game).gamename) != 0)) {
-				parse_error.Format("The translation file is not compatible with this game. The translation is designed for '%s'.",
-					wasgamename);
+				parse_error.Format("The translation file is not compatible with this _GP(game). The translation is designed for '%s'.",
+				                   wasgamename);
 				return false;
 			}
 		} else if (blockType == 3) {

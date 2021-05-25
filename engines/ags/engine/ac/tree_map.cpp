@@ -20,9 +20,9 @@
  *
  */
 
+#include "common/str.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/tree_map.h"
-#include "common/str.h"
 
 namespace AGS3 {
 
@@ -33,13 +33,12 @@ TreeMap::TreeMap() {
 	translation = nullptr;
 }
 
-char *TreeMap::findValue(const char *key) {
+const char *TreeMap::findValue(const char *key) const {
 	if (text == nullptr)
 		return nullptr;
 
 	if (strcmp(key, text) == 0)
 		return translation;
-	//debug_script_warn("Compare: '%s' with '%s'", key, text);
 
 	if (strcmp(key, text) < 0) {
 		if (left == nullptr)
@@ -54,7 +53,7 @@ char *TreeMap::findValue(const char *key) {
 
 void TreeMap::addText(const char *ntx, char *trans) {
 	if ((ntx == nullptr) || (ntx[0] == 0) ||
-		((text != nullptr) && (strcmp(ntx, text) == 0)))
+	        ((text != nullptr) && (strcmp(ntx, text) == 0)))
 		// don't add if it's an empty string or if it's already here
 		return;
 

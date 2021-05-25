@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DISPLAY_H
 #define AGS_ENGINE_AC_DISPLAY_H
 
-#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/gui_main.h"
 
 namespace AGS3 {
 
@@ -47,12 +47,11 @@ bool ShouldAntiAliasText();
 int GetTextDisplayLength(const char *text);
 // Calculates number of game loops for displaying a text on screen
 int GetTextDisplayTime(const char *text, int canberel = 0);
-// Draw an outline if requested, then draw the text on top
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 void wouttext_aligned(Shared::Bitmap *ds, int usexp, int yy, int oriwid, int usingfont, color_t text_color, const char *text, HorAlignment align);
 // TODO: GUI classes located in Common library do not make use of outlining,
 // need to find a way to make all code use same functions.
-// Get the maximal height of the given font, with corresponding outlining
+// Get the maximal height of the given font, with possible outlining in mind
 int getfontheight_outlined(int font);
 // Get line spacing for the given font, with possible outlining in mind
 int getfontspacing_outlined(int font);
@@ -60,7 +59,6 @@ int getfontspacing_outlined(int font);
 int getfontlinegap(int font);
 // Gets the total maximal height of the given number of lines printed with the given font
 int getheightoflines(int font, int numlines);
-// Get the maximal width of the given font, with corresponding outlining
 int wgettextwidth_compensate(const char *tex, int font);
 void do_corner(Shared::Bitmap *ds, int sprn, int xx1, int yy1, int typx, int typy);
 // Returns the image of a button control on the GUI under given child index
@@ -78,7 +76,7 @@ int get_textwindow_top_border_height(int twgui);
 // Warning!: draw_text_window() and draw_text_window_and_bar() can create new text_window_ds
 void draw_text_window(Shared::Bitmap **text_window_ds, bool should_free_ds, int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum);
 void draw_text_window_and_bar(Shared::Bitmap **text_window_ds, bool should_free_ds,
-	int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight = 0, int ifnum = -1);
+                              int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight = 0, int ifnum = -1);
 int get_textwindow_padding(int ifnum);
 
 } // namespace AGS3

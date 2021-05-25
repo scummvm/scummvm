@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_GLOBAL_FILE_H
-#define AGS_ENGINE_AC_GLOBAL_FILE_H
+#ifndef AGS_ENGINE_AC_GLOBALFILE_H
+#define AGS_ENGINE_AC_GLOBALFILE_H
 
 #include "ags/shared/util/file.h"
 
 namespace AGS3 {
+
 namespace AGS {
 namespace Shared {
 class Stream;

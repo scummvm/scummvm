@@ -23,15 +23,16 @@
 #include "ags/engine/ac/global_button.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/button.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guibutton.h"
-#include "ags/globals.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_button.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+
 
 void SetButtonText(int guin, int objn, const char *newtx) {
 	VALIDATE_STRING(newtx);
@@ -80,6 +81,8 @@ int GetButtonPic(int guin, int objn, int ptype) {
 	} else { // pushed pic
 		return guil->PushedImage;
 	}
+
+	quit("internal error in getbuttonpic");
 }
 
 void SetButtonPic(int guin, int objn, int ptype, int slotn) {

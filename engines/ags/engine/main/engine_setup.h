@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN_ENGINESETUP_H
-#define AGS_ENGINE_MAIN_ENGINESETUP_H
+#ifndef AGS_ENGINE_MAIN_ENGINE_SETUP_H
+#define AGS_ENGINE_MAIN_ENGINE_SETUP_H
 
 #include "ags/shared/util/geometry.h"
-#include "ags/engine/gfx/gfxdefines.h"
+#include "ags/engine/gfx/gfx_defines.h"
 
 namespace AGS3 {
 

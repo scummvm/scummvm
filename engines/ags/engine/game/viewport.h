@@ -50,7 +50,7 @@ typedef std::weak_ptr<Viewport> ViewportRef;
 template <typename T>
 bool is_uninitialized(std::weak_ptr<T> const &weak) {
 	using wt = std::weak_ptr<T>;
-	return !weak.owner_before(wt{}) && !wt{}.owner_before(weak);
+	return !weak.owner_before(wt{}) &&!wt{} .owner_before(weak);
 }
 
 
@@ -224,4 +224,4 @@ private:
 
 } // namespace AGS3
 
-#endif
+#endif // AGS_ENGINE_AC_VIEWPORT_H

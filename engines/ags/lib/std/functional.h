@@ -28,15 +28,27 @@ namespace std {
 
 template <class _Arg, class _Result>
 struct unary_function { // base class for unary functions
-	using argument_type = _Arg;
-	using result_type = _Result;
+using argument_type = _Arg;
+using result_type = _Result;
 };
 
 template <class _Arg1, class _Arg2, class _Result>
 struct binary_function { // base class for binary functions
-	using first_argument_type = _Arg1;
-	using second_argument_type = _Arg2;
-	using result_type = _Result;
+using first_argument_type = _Arg1;
+using second_argument_type = _Arg2;
+using result_type = _Result;
+};
+
+template <typename _Fty>
+struct function {
+_Fty *_fn;
+
+function() : _fn(nullptr) {}
+function(_Fty *fn) : _fn(fn) {}
+
+operator _Fty &() {
+	return *_fn;
+}
 };
 
 } // namespace std

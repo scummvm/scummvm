@@ -28,14 +28,16 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_GAME_MAINGAMEFILE_H
-#define AGS_SHARED_GAME_MAINGAMEFILE_H
+#ifndef AGS_SHARED_GAME_MAIN_GAME_FILE_H
+#define AGS_SHARED_GAME_MAIN_GAME_FILE_H
 
+#include "ags/lib/std/functional.h"
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/std/vector.h"
+#include "ags/shared/core/platform.h"
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/game/plugininfo.h"
+#include "ags/shared/game/plugin_info.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/stream.h"
@@ -71,14 +73,21 @@ enum MainGameFileErrorType {
 	kMGFErr_CreateScriptModuleFailed,
 	kMGFErr_GameEntityFailed,
 	kMGFErr_PluginDataFmtNotSupported,
-	kMGFErr_PluginDataSizeTooLarge
+	kMGFErr_PluginDataSizeTooLarge,
+	kMGFErr_ExtUnexpectedEOF,
+	kMGFErr_ExtUnknown,
+	kMGFErr_ExtBlockDataOverlapping
 };
 
 String GetMainGameFileErrorText(MainGameFileErrorType err);
 
 typedef TypedCodeError<MainGameFileErrorType, GetMainGameFileErrorText> MainGameFileError;
 typedef ErrorHandle<MainGameFileError> HGameFileError;
-typedef std::shared_ptr<Stream> PStream;
+#ifdef AGS_PLATFORM_SCUMMVM
+typedef std::shared_ptr<Stream> UStream;
+#else
+typedef std::unique_ptr<Stream> UStream;
+#endif
 
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {
@@ -98,7 +107,7 @@ struct MainGameSource {
 	// currently is to let "alternate" game formats indicate themselves
 	std::set<String>    Caps;
 	// A ponter to the opened stream
-	PStream             InputStream;
+	UStream             InputStream;
 
 	MainGameSource();
 };
@@ -136,12 +145,17 @@ struct LoadedGameEntities {
 
 // Tells if the given path (library filename) contains main game file
 bool               IsMainGameLibrary(const String &filename);
+// Scans given directory path for a package containing main game data, returns first found or none.
+String             FindGameData(const String &path);
+String             FindGameData(const String &path, std::function<bool(const String &)> fn_testfile);
 // Opens main game file for reading from an arbitrary file
 HGameFileError     OpenMainGameFile(const String &filename, MainGameSource &src);
 // Opens main game file for reading from the asset library (uses default asset name)
 HGameFileError     OpenMainGameFileFromDefaultAsset(MainGameSource &src);
 // Reads game data, applies necessary conversions to match current format version
 HGameFileError     ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver);
+// Pre-reads the heading game data, just enough to identify the game and its special file locations
+void               PreReadGameData(GameSetupStruct &game, Stream *in, GameDataVersion data_ver);
 // Applies necessary updates, conversions and fixups to the loaded data
 // making it compatible with current engine
 HGameFileError     UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver);

@@ -22,33 +22,31 @@
 
 #include "ags/shared/util/geometry.h"
 #include "ags/lib/std/algorithm.h"
-#include "ags/lib/std/algorithm.h"
+//include <cmath>
 
 namespace AGS3 {
-
 //namespace AGS
 //{
-//namespace Shared
+//namespace Common
 //{
 
-bool AreRectsIntersecting(const Rect &r1, const Rect &r2) {
-	// NOTE: remember that in AGS Y axis is pointed downwards
+bool AreRectsIntersecting(const Rect &r1, const Rect &r2) { // NOTE: remember that in AGS Y axis is pointed downwards
 	return r1.Left <= r2.Right && r1.Right >= r2.Left &&
-		r1.Top <= r2.Bottom && r1.Bottom >= r2.Top;
+	       r1.Top <= r2.Bottom && r1.Bottom >= r2.Top;
 }
 
 bool IsRectInsideRect(const Rect &place, const Rect &item) {
 	return item.Left >= place.Left && item.Right <= place.Right &&
-		item.Top >= place.Top && item.Bottom <= place.Bottom;
+	       item.Top >= place.Top && item.Bottom <= place.Bottom;
 }
 
 float DistanceBetween(const Rect &r1, const Rect &r2) {
 	// https://gamedev.stackexchange.com/a/154040
 	Rect rect_outer(
-		std::min(r1.Left, r2.Left),
-		std::min(r1.Top, r2.Top),
-		std::max(r1.Right, r2.Right),
-		std::max(r1.Bottom, r2.Bottom)
+	    std::min(r1.Left, r2.Left),
+	    std::min(r1.Top, r2.Top),
+	    std::max(r1.Right, r2.Right),
+	    std::max(r1.Bottom, r2.Bottom)
 	);
 	int inner_width = std::max(0, rect_outer.GetWidth() - r1.GetWidth() - r2.GetWidth());
 	int inner_height = std::max(0, rect_outer.GetHeight() - r1.GetHeight() - r2.GetHeight());
@@ -100,17 +98,17 @@ Rect OffsetRect(const Rect &r, const Point off) {
 
 Rect CenterInRect(const Rect &place, const Rect &item) {
 	return RectWH((place.GetWidth() >> 1) - (item.GetWidth() >> 1),
-		(place.GetHeight() >> 1) - (item.GetHeight() >> 1),
-		item.GetWidth(), item.GetHeight());
+	              (place.GetHeight() >> 1) - (item.GetHeight() >> 1),
+	              item.GetWidth(), item.GetHeight());
 }
 
 Rect ClampToRect(const Rect &place, const Rect &item) {
 	return Rect(
-		AGSMath::Clamp(item.Left, place.Left, place.Right),
-		AGSMath::Clamp(item.Top, place.Top, place.Bottom),
-		AGSMath::Clamp(item.Right, place.Left, place.Right),
-		AGSMath::Clamp(item.Bottom, place.Top, place.Bottom)
-	);
+	           AGSMath::Clamp(item.Left, place.Left, place.Right),
+	           AGSMath::Clamp(item.Top, place.Top, place.Bottom),
+	           AGSMath::Clamp(item.Right, place.Left, place.Right),
+	           AGSMath::Clamp(item.Bottom, place.Top, place.Bottom)
+	       );
 }
 
 Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &placement) {
@@ -121,12 +119,12 @@ Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &place
 		return place;
 	case kPlaceStretchProportional:
 		return CenterInRect(place,
-			RectWH(ProportionalStretch(place.GetWidth(), place.GetHeight(), item.GetWidth(), item.GetHeight())));
+		                    RectWH(ProportionalStretch(place.GetWidth(), place.GetHeight(), item.GetWidth(), item.GetHeight())));
 	default:
 		return RectWH(place.Left + item.Left, place.Top + item.Top, item.GetWidth(), item.GetHeight());
 	}
 }
 
-//} // namespace Shared
+//} // namespace Common
 //} // namespace AGS
 } // namespace AGS3

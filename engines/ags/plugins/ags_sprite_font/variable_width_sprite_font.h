@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_AGS_SPRITE_FONT_VAR_WIDTH_SPR_FONT_H
 
 #include "ags/plugins/plugin_base.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/ags_sprite_font/variable_width_font.h"
 
 namespace AGS3 {
@@ -33,28 +33,28 @@ namespace AGSSpriteFont {
 
 class VariableWidthSpriteFontRenderer : public IAGSFontRenderer {
 public:
-	VariableWidthSpriteFontRenderer(IAGSEngine *engine);
-	virtual ~VariableWidthSpriteFontRenderer();
-	bool LoadFromDisk(int fontNumber, int fontSize) override {
-		return true;
-	}
-	void FreeMemory(int fontNumber) override { }
-	bool SupportsExtendedCharacters(int fontNumber) override;
-	int GetTextWidth(const char *text, int fontNumber) override;
-	int GetTextHeight(const char *text, int fontNumber) override;
-	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
-	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
-	void EnsureTextValidForFont(char *text, int fontNumber) override;
-	void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
-	void SetSprite(int fontNum, int spriteNum);
-	void SetSpacing(int fontNum, int spacing);
-	void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
+VariableWidthSpriteFontRenderer(IAGSEngine *engine);
+virtual ~VariableWidthSpriteFontRenderer();
+bool LoadFromDisk(int fontNumber, int fontSize) override {
+	return true;
+}
+void FreeMemory(int fontNumber) override { }
+bool SupportsExtendedCharacters(int fontNumber) override;
+int GetTextWidth(const char *text, int fontNumber) override;
+int GetTextHeight(const char *text, int fontNumber) override;
+void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
+void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
+void EnsureTextValidForFont(char *text, int fontNumber) override;
+void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
+void SetSprite(int fontNum, int spriteNum);
+void SetSpacing(int fontNum, int spacing);
+void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
 
 protected:
-	IAGSEngine *_engine;
-	std::vector<VariableWidthFont * > _fonts;
-	VariableWidthFont *getFontFor(int fontNum);
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
+IAGSEngine *_engine;
+std::vector<VariableWidthFont * > _fonts;
+VariableWidthFont *getFontFor(int fontNum);
+void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
 };
 
 } // namespace AGSSpriteFont

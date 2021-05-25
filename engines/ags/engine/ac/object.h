@@ -32,7 +32,7 @@
 #define AGS_ENGINE_AC_OBJECT_H
 
 #include "ags/shared/ac/common_defines.h"
-#include "ags/engine/ac/dynobj/scriptobject.h"
+#include "ags/engine/ac/dynobj/script_object.h"
 
 namespace AGS3 {
 

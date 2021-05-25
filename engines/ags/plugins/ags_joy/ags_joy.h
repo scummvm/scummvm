@@ -31,31 +31,31 @@ namespace AGSJoy {
 
 class AGSJoy : public PluginBase {
 private:
-	static IAGSEngine *_engine;
+static IAGSEngine *_engine;
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-	static void Count(ScriptMethodParams &params);
-	static void Name(ScriptMethodParams &params);
-	static void Rescan(ScriptMethodParams &params);
-	static void Open(ScriptMethodParams &params);
-	static void IsOpen(ScriptMethodParams &params);
-	static void Click(ScriptMethodParams &params);
-	static void Close(ScriptMethodParams &params);
-	static void Valid(ScriptMethodParams &params);
-	static void Unplugged(ScriptMethodParams &params);
-	static void GetName(ScriptMethodParams &params);
-	static void GetAxis(ScriptMethodParams &params);
-	static void IsButtonDown(ScriptMethodParams &params);
-	static void IsJoyBtnDown(ScriptMethodParams &params);
-	static void Update(ScriptMethodParams &params);
-	static void DisableEvents(ScriptMethodParams &params);
-	static void EnableEvents(ScriptMethodParams &params);
+static void Count(ScriptMethodParams &params);
+static void Name(ScriptMethodParams &params);
+static void Rescan(ScriptMethodParams &params);
+static void Open(ScriptMethodParams &params);
+static void IsOpen(ScriptMethodParams &params);
+static void Click(ScriptMethodParams &params);
+static void Close(ScriptMethodParams &params);
+static void Valid(ScriptMethodParams &params);
+static void Unplugged(ScriptMethodParams &params);
+static void GetName(ScriptMethodParams &params);
+static void GetAxis(ScriptMethodParams &params);
+static void IsButtonDown(ScriptMethodParams &params);
+static void IsJoyBtnDown(ScriptMethodParams &params);
+static void Update(ScriptMethodParams &params);
+static void DisableEvents(ScriptMethodParams &params);
+static void EnableEvents(ScriptMethodParams &params);
 
 public:
-	AGSJoy();
+AGSJoy();
 };
 
 } // namespace AGSJoy

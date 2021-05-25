@@ -29,8 +29,8 @@
 namespace AGS3 {
 
 struct tm : public TimeDate {
-	int tm_yday;  // days since January 1 - [0, 365]
-	int tm_isdst; // daylight savings time flag
+int tm_yday;  // days since January 1 - [0, 365]
+int tm_isdst; // daylight savings time flag
 };
 
 typedef int64 time_t;

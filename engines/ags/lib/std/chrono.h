@@ -32,39 +32,41 @@ namespace chrono {
 
 class duration {
 private:
-	uint32 _value;
+uint32 _value;
 public:
-	duration() : _value(0) {
-	}
-	duration(uint32 value) : _value(value) {
-	}
+duration() : _value(0) {
+}
+duration(uint32 value) : _value(value) {
+}
 
-	size_t count() const {
-		// durations for ScummVM are hardcoded to be in milliseconds
-		return 1000;
-	}
+size_t count() const {
+	// durations for ScummVM are hardcoded to be in milliseconds
+	return 1000;
+}
 
-	operator uint32() const {
-		return _value;
-	}
+operator uint32() const {
+	return _value;
+}
 
-	inline bool operator>=(const duration &rhs) const {
-		return _value >= rhs._value;
-	}
+inline bool operator>=(const duration &rhs) const {
+	return _value >= rhs._value;
+}
 };
 
 class milliseconds : public duration {
 public:
-	milliseconds() : duration(0) {}
-	milliseconds(uint32 val) : duration(val) {}
+milliseconds() : duration(0) {}
+milliseconds(uint32 val) : duration(val) {}
 
-	static milliseconds zero() { return milliseconds(); }
+static milliseconds zero() {
+	return milliseconds();
+}
 };
 
 class microseconds : public duration {
 public:
-	microseconds() : duration(0) {}
-	microseconds(long val) : duration(val / 1000) {}
+microseconds() : duration(0) {}
+microseconds(long val) : duration(val / 1000) {}
 };
 
 
@@ -73,15 +75,15 @@ struct system_clock {
 
 
 struct steady_clock { // wraps QueryPerformanceCounter
-	using rep = uint32;
-	using period = milliseconds;
-	using duration = milliseconds;
-	using time_point = uint32;
-	static constexpr bool is_steady = true;
+using rep = uint32;
+using period = milliseconds;
+using duration = milliseconds;
+using time_point = uint32;
+static constexpr bool is_steady = true;
 
-	static time_point now() { // get current time
-		return g_system->getMillis();
-	}
+static time_point now() { // get current time
+	return g_system->getMillis();
+}
 };
 
 using high_resolution_clock = steady_clock;
@@ -91,7 +93,7 @@ duration duration_cast(T param);
 
 template<class T>
 duration duration_cast(T param) {
-	return duration(param);
+return duration(param);
 }
 
 } // namespace chrono

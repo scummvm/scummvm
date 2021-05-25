@@ -25,8 +25,6 @@
 
 namespace AGS3 {
 
-// Gets region ID at the given room coordinates;
-// if region is disabled or non-existing, returns 0 (no area)
 int  GetRegionIDAtRoom(int xxx, int yyy);
 void SetAreaLightLevel(int area, int brightness);
 void SetRegionTint(int area, int red, int green, int blue, int amount, int luminance = 100);

@@ -22,9 +22,9 @@
 
 #include "ags/detection.h"
 #include "ags/game_scanner.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/core/assetmanager.h"
-#include "ags/shared/util/multifilelib.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/shared/core/asset_manager.h"
+#include "ags/shared/util/multi_file_lib.h"
 #include "ags/shared/util/string.h"
 #include "ags/engine/main/game_file.h"
 #include "ags/globals.h"
@@ -57,7 +57,7 @@ void GameScanner::scan(const Common::String &startFolder) {
 		debug("// Pre 2.5 games that aren't supported");
 		for (EntryArray::iterator it = _oldGames.begin(); it != _oldGames.end(); ++it) {
 			debug("UNSUPPORTED_GAME_ENTRY(\"\", \"%s\", \"%s\", %u),",
-				it->_filename.c_str(), it->_md5.c_str(), (uint32)it->_filesize);
+			      it->_filename.c_str(), it->_md5.c_str(), (uint32)it->_filesize);
 		}
 		debugN("\n");
 	}
@@ -73,8 +73,8 @@ void GameScanner::scan(const Common::String &startFolder) {
 
 	for (EntryArray::iterator it = _games.begin(); it != _games.end(); ++it) {
 		debug("GAME_ENTRY(\"%s\", \"%s\", \"%s\", %u),",
-			it->_id.c_str(), it->_filename.c_str(),
-			it->_md5.c_str(), (uint32)it->_filesize);
+		      it->_id.c_str(), it->_filename.c_str(),
+		      it->_md5.c_str(), (uint32)it->_filesize);
 	}
 	debugN("\n");
 }
@@ -90,8 +90,8 @@ void GameScanner::scanFolder(const Common::FSNode &folder) {
 		if (node.isDirectory()) {
 			scanFolder(node);
 		} else if (filename.hasSuffixIgnoreCase(".exe") ||
-				filename.hasSuffixIgnoreCase(".ags") ||
-				filename.equalsIgnoreCase("ac2game.dat")) {
+		           filename.hasSuffixIgnoreCase(".ags") ||
+		           filename.equalsIgnoreCase("ac2game.dat")) {
 			Common::String path = node.getPath();
 			scanFile(path);
 		}
@@ -99,6 +99,7 @@ void GameScanner::scanFolder(const Common::FSNode &folder) {
 }
 
 void GameScanner::scanFile(const Common::String &filename) {
+#ifdef TODO
 	Common::File f;
 	Common::FSNode fsNode(filename);
 	if (!f.open(fsNode))
@@ -111,7 +112,7 @@ void GameScanner::scanFile(const Common::String &filename) {
 	const ::AGS::AGSGameDescription *gameP = ::AGS::GAME_DESCRIPTIONS;
 	for (; gameP->desc.gameId; ++gameP) {
 		if (size == gameP->desc.filesDescriptions[0].fileSize &&
-				md5 == gameP->desc.filesDescriptions[0].md5)
+		        md5 == gameP->desc.filesDescriptions[0].md5)
 			// Known game, so skip
 			return;
 	}
@@ -153,6 +154,9 @@ void GameScanner::scanFile(const Common::String &filename) {
 
 		_games.push_back(e);
 	}
+#else
+	error("TODO: GameScanner::scanFile");
+#endif
 }
 
 Common::String GameScanner::convertGameNameToId(const Common::String &name) {

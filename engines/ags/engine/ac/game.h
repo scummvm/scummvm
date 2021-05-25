@@ -29,13 +29,12 @@
 #ifndef AGS_ENGINE_AC_GAME_H
 #define AGS_ENGINE_AC_GAME_H
 
-#include "ags/engine/ac/dynobj/scriptviewframe.h"
+#include "ags/engine/ac/dynobj/script_view_frame.h"
 #include "ags/engine/main/game_file.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
-// Forward declaration
 namespace AGS {
 namespace Shared {
 class Bitmap;
@@ -152,6 +151,7 @@ void restore_after_dialog();
 Shared::String get_save_game_directory();
 Shared::String get_save_game_suffix();
 void set_save_game_suffix(const Shared::String &suffix);
+// Returns full path to the save for the given slot number
 Shared::String get_save_game_path(int slotNum);
 void restore_game_dialog();
 void save_game_dialog();
@@ -164,6 +164,7 @@ bool read_savedgame_screenshot(const Shared::String &savedgame, int &want_shot);
 // Tries to restore saved game and displays an error on failure; if the error occured
 // too late, when the game data was already overwritten, shuts engine down.
 bool try_restore_save(int slot);
+bool try_restore_save(const Shared::String &path, int slot);
 void serialize_bitmap(const Shared::Bitmap *thispic, Shared::Stream *out);
 // On Windows we could just use IIDFromString but this is platform-independant
 void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffer);
@@ -195,6 +196,14 @@ const char *get_global_message(int msnum);
 void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize);
+
+// Notifies the game objects that certain sprite was updated.
+// This make them update their render states, caches, and so on.
+void game_sprite_updated(int sprnum);
+// Notifies the game objects that certain sprite was deleted.
+// Those which used that sprite will reset to dummy sprite 0, update their render states and caches.
+void game_sprite_deleted(int sprnum);
+
 
 extern void set_loop_counter(unsigned int new_counter);
 

@@ -93,7 +93,7 @@ void AGSCreditz::draw() {
 								_state->_timer = 0;
 								_state->_currentStatic++;
 								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-									_state->_currentStatic < (int)_state->_stCredits[_state->_creditSequence].size())
+								        _state->_currentStatic < (int)_state->_stCredits[_state->_creditSequence].size())
 									drawCredit(_state->_creditSequence, _state->_currentStatic);
 								else
 									return;
@@ -101,15 +101,15 @@ void AGSCreditz::draw() {
 						} else {
 							// Text
 							if (_state->_timer <= (_state->_stSeqSettings[_state->_creditSequence].speed *
-								((int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].title.size() +
-								(int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].credit.size()))) {
+							                       ((int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].title.size() +
+							                        (int)_state->_stCredits[_state->_creditSequence][_state->_currentStatic].credit.size()))) {
 								drawCredit(_state->_creditSequence, _state->_currentStatic);
 								_state->_timer++;
 							} else {
 								_state->_timer = 0;
 								_state->_currentStatic++;
 								if (_state->_stCredits[_state->_creditSequence][_state->_currentStatic].pause <= 0 &&
-									(int)_state->_currentStatic <= (int)_state->_stCredits[_state->_creditSequence].size())
+								        (int)_state->_currentStatic <= (int)_state->_stCredits[_state->_creditSequence].size())
 									drawCredit(_state->_creditSequence, _state->_currentStatic);
 								else
 									return;
@@ -357,7 +357,7 @@ void AGSCreditz::doCredits() {
 				}
 			} else {
 				_engine->GetTextExtent(_state->_credits[_state->_creditSequence][current_line]._fontSlot,
-					_state->_credits[_state->_creditSequence][current_line]._text.c_str(), &dum, &increment);
+				                       _state->_credits[_state->_creditSequence][current_line]._text.c_str(), &dum, &increment);
 			}
 
 			if ((_state->_yPos + _state->_sequenceHeight + increment) > 0)
@@ -410,7 +410,7 @@ Common::String AGSCreditz::extractParameter(Common::String &line, const Common::
 }
 
 void AGSCreditz::specialEffect(int sequence, int credit, const Common::String &text,
-	int font, int color, int32 x_pos) {
+                               int font, int color, int32 x_pos) {
 	Common::String creditt[3];
 	Common::String credit_text, dots;
 	int32 scrn_width, dum, rightside_width, leftside_width, dotwidth;
@@ -594,7 +594,7 @@ void AGSCreditz::calculateSequenceHeight(int sequence) {
 	height = 0;
 
 	for (uint currentCredit = 0; currentCredit < _state->_credits[sequence].size();
-		++currentCredit) {
+	        ++currentCredit) {
 
 		if (_state->_credits[sequence][currentCredit]._isSet) {
 			if (_state->_credits[sequence][currentCredit]._image) {
@@ -604,8 +604,8 @@ void AGSCreditz::calculateSequenceHeight(int sequence) {
 					creditHeight = _state->_credits[sequence][currentCredit]._colorHeight;
 			} else {
 				_engine->GetTextExtent(_state->_credits[sequence][currentCredit]._fontSlot,
-					_state->_credits[sequence][currentCredit]._text.c_str(),
-					&dum, &creditHeight);
+				                       _state->_credits[sequence][currentCredit]._text.c_str(),
+				                       &dum, &creditHeight);
 			}
 
 			height += creditHeight;
@@ -634,7 +634,7 @@ void AGSCreditz::startSequence(int sequence) {
 		_state->_creditSequence = sequence;
 
 		_engine->GetScreenDimensions(&_state->_screenWidth, &_state->_screenHeight,
-			&_state->_screenColorDepth);
+		                             &_state->_screenColorDepth);
 
 		if (_state->_seqSettings[sequence].automatic) {
 			calculateSequenceHeight(sequence);

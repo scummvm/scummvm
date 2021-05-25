@@ -31,31 +31,31 @@ namespace AGSCreditz {
 
 class AGSCreditz2 : public AGSCreditz {
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
-	static int64 AGS_EngineOnEvent(int event, NumberPtr data);
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *engine);
+static int64 AGS_EngineOnEvent(int event, NumberPtr data);
 
-	static void RunCreditSequence(ScriptMethodParams &params);
-	static void SetCredit(ScriptMethodParams &params);
-	static void GetCredit(ScriptMethodParams &params);
-	static void CreditsSettings(ScriptMethodParams &params);
-	static void SequenceSettings(ScriptMethodParams &params);
-	static void IsSequenceFinished(ScriptMethodParams &params);
-	static void PauseScrolling(ScriptMethodParams &params);
-	static void SetCreditImage(ScriptMethodParams &params);
-	static void ResetSequence(ScriptMethodParams &params);
+static void RunCreditSequence(ScriptMethodParams &params);
+static void SetCredit(ScriptMethodParams &params);
+static void GetCredit(ScriptMethodParams &params);
+static void CreditsSettings(ScriptMethodParams &params);
+static void SequenceSettings(ScriptMethodParams &params);
+static void IsSequenceFinished(ScriptMethodParams &params);
+static void PauseScrolling(ScriptMethodParams &params);
+static void SetCreditImage(ScriptMethodParams &params);
+static void ResetSequence(ScriptMethodParams &params);
 
-	static void SetStaticCredit(ScriptMethodParams &params);
-	static void SetStaticCreditTitle(ScriptMethodParams &params);
-	static void SetStaticPause(ScriptMethodParams &params);
-	static void RunStaticCreditSequence(ScriptMethodParams &params);
-	static void IsStaticSequenceFinished(ScriptMethodParams &params);
-	static void ShowStaticCredit(ScriptMethodParams &params);
-	static void SetStaticImage(ScriptMethodParams &params);
-	static void GetCurrentStaticCredit(ScriptMethodParams &params);
+static void SetStaticCredit(ScriptMethodParams &params);
+static void SetStaticCreditTitle(ScriptMethodParams &params);
+static void SetStaticPause(ScriptMethodParams &params);
+static void RunStaticCreditSequence(ScriptMethodParams &params);
+static void IsStaticSequenceFinished(ScriptMethodParams &params);
+static void ShowStaticCredit(ScriptMethodParams &params);
+static void SetStaticImage(ScriptMethodParams &params);
+static void GetCurrentStaticCredit(ScriptMethodParams &params);
 
 public:
-	AGSCreditz2();
+AGSCreditz2();
 };
 
 } // namespace AGSCreditz

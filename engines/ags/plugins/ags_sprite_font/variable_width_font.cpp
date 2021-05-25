@@ -50,7 +50,7 @@ void VariableWidthFont::SetLineHeightAdjust(int LineHeight, int SpacingHeight, i
 	LineHeightAdjust = LineHeight;
 	LineSpacingAdjust = SpacingHeight;
 	LineSpacingOverride = SpacingOverride;
- }
+}
 
 } // namespace AGSSpriteFont
 } // namespace Plugins

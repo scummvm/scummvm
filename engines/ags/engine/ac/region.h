@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_REGION_H
 #define AGS_ENGINE_AC_REGION_H
 
-#include "ags/engine/ac/dynobj/scriptregion.h"
+#include "ags/engine/ac/dynobj/script_region.h"
 
 namespace AGS3 {
 

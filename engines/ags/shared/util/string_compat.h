@@ -20,26 +20,18 @@
  *
  */
 
-#ifndef AGS_SHARED_UTIL_STRINGCOMPAT_H
-#define AGS_SHARED_UTIL_STRINGCOMPAT_H
+#ifndef AGS_SHARED_UTIL_STRING_COMPAT_H
+#define AGS_SHARED_UTIL_STRING_COMPAT_H
 
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 char *ags_strlwr(char *s);
 char *ags_strupr(char *s);
 int ags_stricmp(const char *, const char *);
 int ags_strnicmp(const char *, const char *, size_t);
 char *ags_strdup(const char *s);
-
-#ifdef __cplusplus
-}
-#endif
 
 } // namespace AGS3
 

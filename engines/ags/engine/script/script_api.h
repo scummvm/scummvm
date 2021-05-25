@@ -27,12 +27,13 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_SCRIPT_SCRIPTAPI_H
-#define AGS_ENGINE_SCRIPT_SCRIPTAPI_H
+#ifndef AGS_ENGINE_SCRIPT_SCRIPT_API_H
+#define AGS_ENGINE_SCRIPT_SCRIPT_API_H
 
+//include <stdarg.h>
 #include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/statobj/agsstaticobject.h"
+#include "ags/engine/ac/statobj/ags_static_object.h"
 #include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
@@ -47,7 +48,7 @@ typedef RuntimeScriptValue ScriptAPIObjectFunction(void *self, const RuntimeScri
 // Uses EITHER sc_args/sc_argc or varg_ptr as parameter list, whichever is not
 // NULL, with varg_ptr having HIGHER priority.
 const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
-	const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr);
+                          const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr);
 // Sprintf that takes script values as arguments
 inline const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format, const RuntimeScriptValue *args, int32_t argc) {
 	return ScriptSprintf(buffer, buf_length, format, args, argc, nullptr);

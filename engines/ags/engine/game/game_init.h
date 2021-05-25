@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_GAME_GAMEINIT_H
-#define AGS_ENGINE_GAME_GAMEINIT_H
+#ifndef AGS_ENGINE_GAME_GAME_INIT_H
+#define AGS_ENGINE_GAME_GAME_INIT_H
 
 #include "ags/shared/game/main_game_file.h"
 #include "ags/shared/util/string.h"

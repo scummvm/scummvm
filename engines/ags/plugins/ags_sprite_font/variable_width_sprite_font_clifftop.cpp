@@ -35,14 +35,14 @@ VariableWidthSpriteFontRendererClifftop::~VariableWidthSpriteFontRendererCliffto
 
 int VariableWidthSpriteFontRendererClifftop::GetTextHeight(const char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
-	if(strcmp("<LINE_SPACING>", text) == 0)
+	if (strcmp("<LINE_SPACING>", text) == 0)
 		return font->LineSpacingOverride;
 
-	for(int i = 0; i < (int)strlen(text); i++) {
+	for (int i = 0; i < (int)strlen(text); i++) {
 		if (font->characters.count(text[i]) > 0) {
 			int height = font->characters[text[i]].Height;
 
-			if(strcmp("ZHwypgfjqhkilIK", text) == 0 || strcmp("ZhypjIHQFb", text) == 0 || strcmp("YpyjIHgMNWQ", text) == 0 || strcmp("BigyjTEXT", text) == 0)
+			if (strcmp("ZHwypgfjqhkilIK", text) == 0 || strcmp("ZhypjIHQFb", text) == 0 || strcmp("YpyjIHgMNWQ", text) == 0 || strcmp("BigyjTEXT", text) == 0)
 				height += font->LineSpacingAdjust;
 			else
 				height += font->LineHeightAdjust;
@@ -100,23 +100,23 @@ void VariableWidthSpriteFontRendererClifftop::Draw(BITMAP *src, BITMAP *dest, in
 	int destxx = (startx + destx) * bpp;
 	for (int x = startx; x < width; ++x, srcxx += bpp, destxx += bpp) {
 
-		int srcyy =  (starty + srcy) * srcPitch;
+		int srcyy = (starty + srcy) * srcPitch;
 		int destyy = (starty + desty) * destPitch;
 		for (int y = starty; y <  height; ++y, srcyy += srcPitch, destyy += destPitch) {
 			uint8 *srcCol = srccharbuffer + srcyy + srcxx;
-			uint8 * destCol = destcharbuffer + destyy + destxx;
+			uint8 *destCol = destcharbuffer + destyy + destxx;
 			if (destColDepth == 8) {
 				if (*srcCol != transColor)
 					*destCol = *srcCol;
 			} else if (destColDepth == 16) {
-				if (*((uint16*)srcCol) != transColor)
-					*((uint16*)destCol) = *((uint16*)srcCol);
+				if (*((uint16 *)srcCol) != transColor)
+					*((uint16 *)destCol) = *((uint16 *)srcCol);
 			} else if (destColDepth == 32) {
 				//if (*((uint32*)srcCol) != transColor)
-				//	*((uint32*)destCol) = *((uint32*)srcCol);
+				//  *((uint32*)destCol) = *((uint32*)srcCol);
 
-				uint32 srcargb = *((uint32*)srcCol);
-				uint32& destargb = *((uint32*)destCol);
+				uint32 srcargb = *((uint32 *)srcCol);
+				uint32 &destargb = *((uint32 *)destCol);
 
 				srca = (geta32(srcargb));
 

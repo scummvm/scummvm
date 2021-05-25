@@ -29,12 +29,28 @@ namespace AGS3 {
 
 using namespace AGS; // FIXME later
 
+struct SaveListItem {
+	int    Slot;
+	Shared::String Description;
+	time_t FileTime = 0;
+
+	SaveListItem(int slot, const Shared::String &desc, time_t ft)
+		: Slot(slot), Description(desc), FileTime(ft) {
+	}
+
+	inline bool operator < (const SaveListItem &other) const {
+		return FileTime < other.FileTime;
+	}
+};
+
+
 void GiveScore(int amnt);
 void restart_game();
 void RestoreGameSlot(int slnum);
 void DeleteSaveSlot(int slnum);
 int  GetSaveSlotDescription(int slnum, char *desbuf);
 int  LoadSaveSlotScreenshot(int slnum, int width, int height);
+void FillSaveList(std::vector<SaveListItem> &saves, size_t max_count = -1);
 void PauseGame();
 void UnPauseGame();
 int  IsGamePaused();
@@ -89,9 +105,7 @@ int GetGraphicalVariable(const char *varName);
 void SetGraphicalVariable(const char *varName, int p_value);
 void scrWait(int nloops);
 int WaitKey(int nloops);
-int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
-void SkipWait();
 
 } // namespace AGS3
 

@@ -41,6 +41,8 @@ bool        engine_try_set_gfxmode_any(const ScreenSetup &setup);
 // Tries to switch between fullscreen and windowed mode; uses previously saved
 // setup if it is available, or default settings for the new mode
 bool        engine_try_switch_windowed_gfxmode();
+// Update graphic renderer and render frame when window size changes
+void        engine_on_window_changed(const Size &sz);
 // Shutdown graphics mode (used before shutting down tha application)
 void        engine_shutdown_gfxmode();
 
@@ -51,12 +53,22 @@ struct PackLocation {
 	String Path; // full path
 };
 // Game resource paths
+// TODO: the asset path configuration should certainly be revamped at some
+// point, with uniform method of configuring auxiliary paths and packages.
 struct ResourcePaths {
-	String       DataDir;    // path to the data directory
 	PackLocation GamePak;    // main game package
 	PackLocation AudioPak;   // audio package
 	PackLocation SpeechPak;  // voice-over package
+	String       DataDir;    // path to the data directory
+	// NOTE: optional directories are currently only for compatibility with Editor (game test runs)
+	// This is bit ugly, but remain so until more flexible configuration is designed
+	String       DataDir2;   // optional data directory
+	String       AudioDir2;  // optional audio directory
+	String       VoiceDir2;  // optional voice-over directory
 };
+
+// (Re-)Assign all known asset search paths to the AssetManager
+void engine_assign_assetpaths();
 
 // Register a callback that will be called before engine is initialised.
 // Used for apps to register their own plugins and other configuration

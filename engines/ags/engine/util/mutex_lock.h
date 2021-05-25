@@ -29,6 +29,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
+
 class MutexLock {
 private:
 	BaseMutex *_m;
@@ -58,6 +59,7 @@ public:
 		Release();
 	}
 }; // class MutexLock
+
 
 } // namespace Engine
 } // namespace AGS

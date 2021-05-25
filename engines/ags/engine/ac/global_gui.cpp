@@ -23,19 +23,19 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/gui.h"
-#include "ags/engine/ac/guicontrol.h"
+#include "ags/engine/ac/gui_control.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -75,7 +75,6 @@ void InterfaceOn(int ifn) {
 		debug_script_log("GUIOn(%d) ignored (already on)", ifn);
 		return;
 	}
-	_G(guis_need_update) = 1;
 	_GP(guis)[ifn].SetVisible(true);
 	debug_script_log("GUI %d turned on", ifn);
 	// modal interface
@@ -99,7 +98,6 @@ void InterfaceOff(int ifn) {
 		_GP(guis)[ifn].MouseOverCtrl = -1;
 	}
 	_GP(guis)[ifn].OnControlPositionChanged();
-	_G(guis_need_update) = 1;
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) UnPauseGame();
 }
@@ -188,9 +186,9 @@ int GetTextHeight(const char *text, int fontnum, int width) {
 	if ((fontnum < 0) || (fontnum >= _GP(game).numfonts))
 		quit("!GetTextHeight: invalid font number.");
 
-	if (break_up_text_into_lines(text, _GP(fontLines), data_to_game_coord(width), fontnum) == 0)
+	if (break_up_text_into_lines(text, Lines, data_to_game_coord(width), fontnum) == 0)
 		return 0;
-	return game_to_data_coord(getheightoflines(fontnum, _GP(fontLines).Count()));
+	return game_to_data_coord(getheightoflines(fontnum, Lines.Count()));
 }
 
 int GetFontHeight(int fontnum) {
@@ -213,17 +211,22 @@ void SetGUIBackgroundPic(int guin, int slotn) {
 }
 
 void DisableInterface() {
+	if (_GP(play).disabled_user_interface == 0 && // only if was enabled before
+	        _G(gui_disabled_style) != GUIDIS_UNCHANGED) { // If GUI looks change when disabled, then update them all
+		GUI::MarkAllGUIForUpdate();
+	}
 	_GP(play).disabled_user_interface++;
-	_G(guis_need_update) = 1;
 	set_mouse_cursor(CURS_WAIT);
 }
 
 void EnableInterface() {
-	_G(guis_need_update) = 1;
 	_GP(play).disabled_user_interface--;
 	if (_GP(play).disabled_user_interface < 1) {
 		_GP(play).disabled_user_interface = 0;
 		set_default_cursor();
+		if (_G(gui_disabled_style) != GUIDIS_UNCHANGED) { // If GUI looks change when disabled, then update them all
+			GUI::MarkAllGUIForUpdate();
+		}
 	}
 }
 // Returns 1 if user interface is enabled, 0 if disabled

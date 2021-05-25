@@ -22,8 +22,8 @@
 
 #include "ags/engine/ac/dynobj/cc_dialog.h"
 #include "ags/engine/ac/dialog.h"
-#include "ags/shared/ac/dialogtopic.h"
-#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/dialog_topic.h"
+#include "ags/shared/ac/game_struct_defines.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,7 +36,7 @@ const char *CCDialog::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCDialog::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptDialog *shh = (ScriptDialog *)const_cast<char *>(address);
+	const ScriptDialog *shh = (const ScriptDialog *)address;
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

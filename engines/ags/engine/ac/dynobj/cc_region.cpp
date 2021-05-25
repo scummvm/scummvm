@@ -21,9 +21,9 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_region.h"
-#include "ags/engine/ac/dynobj/scriptregion.h"
+#include "ags/engine/ac/dynobj/script_region.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,7 +36,7 @@ const char *CCRegion::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCRegion::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptRegion *shh = (ScriptRegion *)const_cast<char *>(address);
+	const ScriptRegion *shh = (const ScriptRegion *)address;
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

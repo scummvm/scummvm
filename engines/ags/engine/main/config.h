@@ -34,13 +34,11 @@ using AGS::Shared::ConfigTree;
 // Set up default config settings
 void config_defaults();
 // Find and default configuration file (usually located in the game installation directory)
-String find_default_cfg_file(const char *alt_cfg_file);
+String find_default_cfg_file();
 // Find all-games user configuration file
 String find_user_global_cfg_file();
 // Find and game-specific user configuration file (located into writable user directory)
 String find_user_cfg_file();
-// Read optional data file name and location from config
-void read_game_data_location(const AGS::Shared::ConfigTree &cfg);
 // Apply overriding values from the external config (e.g. for mobile ports)
 void override_config_ext(ConfigTree &cfg);
 // Setup game using final config tree
@@ -50,6 +48,7 @@ void post_config();
 
 void save_config_file();
 
+ScreenSizeDefinition parse_screendef(const String &option, ScreenSizeDefinition def_value);
 void parse_scaling_option(const String &scaling_option, FrameScaleDefinition &scale_def, int &scale_factor);
 void parse_scaling_option(const String &scaling_option, GameFrameSetup &frame_setup);
 String make_scaling_option(FrameScaleDefinition scale_def, int scale_factor = 0);

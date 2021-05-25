@@ -27,18 +27,17 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_UTIL_INIUTIL_H
-#define AGS_SHARED_UTIL_INIUTIL_H
+#ifndef AGS_SHARED_UTIL_INI_UTIL_H
+#define AGS_SHARED_UTIL_INI_UTIL_H
 
 #include "ags/lib/std/map.h"
 #include "ags/shared/util/string.h"
-#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-typedef std::map<String, String> StringOrderMap;
+typedef std::map<String, String>         StringOrderMap;
 typedef StringOrderMap::const_iterator   StrStrOIter;
 
 typedef std::map<String, StringOrderMap> ConfigTree;

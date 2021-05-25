@@ -26,11 +26,11 @@
 //
 //=============================================================================
 
-#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audio_defines.h"
 #include "ags/engine/media/audio/sound.h"
-#include "ags/engine/media/audio/soundcache.h"
-#include "ags/engine/media/audio/soundclip.h"
-#include "ags/engine/media/audio/clip_mymidi.h"
+#include "ags/engine/media/audio/sound_cache.h"
+#include "ags/engine/media/audio/sound_clip.h"
+#include "ags/engine/media/audio/clip_my_midi.h"
 #include "audio/mods/mod_xm_s3m.h"
 #include "audio/mods/protracker.h"
 #include "audio/decoders/mp3.h"
@@ -98,13 +98,13 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
 	Common::SeekableReadStream *data = get_cached_sound(asset_name);
 	if (data) {
 		// determine the file extension
-		size_t lastDot = asset_name.second.FindCharReverse('.');
-		if (lastDot == AGS::Shared::String::npos || lastDot == asset_name.second.GetLength() - 1) {
+		size_t lastDot = asset_name.Filter.FindCharReverse('.');
+		if (lastDot == AGS::Shared::String::npos || lastDot == asset_name.Filter.GetLength() - 1) {
 			delete data;
 			return nullptr;
 		}
 		// get the first char of the extensin
-		char charAfterDot = toupper(asset_name.second[lastDot + 1]);
+		char charAfterDot = toupper(asset_name.Filter[lastDot + 1]);
 
 		// use the appropriate loader
 		Audio::AudioStream *audioStream = nullptr;

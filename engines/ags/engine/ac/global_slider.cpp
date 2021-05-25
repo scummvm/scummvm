@@ -22,15 +22,16 @@
 
 #include "ags/engine/ac/global_slider.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/slider.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guislider.h"
-#include "ags/globals.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_slider.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+
 
 void SetSliderValue(int guin, int objn, int valn) {
 	if ((guin < 0) | (guin >= _GP(game).numgui)) quit("!SetSliderValue: invalid GUI number");

@@ -26,16 +26,17 @@
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
-#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/walkbehind.h"
+#include "ags/engine/ac/walk_behind.h"
 #include "ags/engine/main/engine.h"
-#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audio_defines.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/lib/std/array.h"
 #include "ags/lib/std/chrono.h"
+#include "ags/lib/std/memory.h"
 #include "ags/lib/std/set.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/fixed.h"
@@ -56,6 +57,7 @@ using Version = AGS::Shared::Version;
 namespace AGS {
 namespace Shared {
 
+class AssetManager;
 class Bitmap;
 class DebugManager;
 struct Font;
@@ -209,13 +211,30 @@ public:
 	PALETTE _current_palette;
 	PALETTE _prev_current_palette;
 
-	volatile int _mouse_x = 0;	// X position
-	volatile int _mouse_y = 0;	// Y position
-	volatile int _mouse_z = 0;	// Mouse wheel vertical
-	volatile int _mouse_b = 0;	// Mouse buttons bitflags
-	volatile int _mouse_pos = 0;	// X position in upper 16 bits, Y in lower 16
+	volatile int _mouse_x = 0;  // X position
+	volatile int _mouse_y = 0;  // Y position
+	volatile int _mouse_z = 0;  // Mouse wheel vertical
+	volatile int _mouse_b = 0;  // Mouse buttons bitflags
+	volatile int _mouse_pos = 0;    // X position in upper 16 bits, Y in lower 16
+	volatile int _sys_mouse_x = 0; // mouse x position
+	volatile int _sys_mouse_y = 0; // mouse y position
+	volatile int _sys_mouse_z = 0; // mouse wheel position
+	volatile int _freeze_mouse_flag;
 
-	volatile int freeze_mouse_flag;
+	int _mouse_button_state = 0;
+	int _mouse_accum_button_state = 0;
+	uint32 _mouse_clear_at_time = 0;
+	int _mouse_accum_relx = 0, _mouse_accum_rely = 0;
+
+	/**@}*/
+
+	/**
+	 * @defgroup agsstaticobjectglobals agsstaticobject globals
+	 * @ingroup agsglobals
+	 * @{
+	 */
+
+	std::unique_ptr<Shared::AssetManager> *_AssetMgr;
 
 	/**@}*/
 
@@ -435,7 +454,8 @@ public:
 	NewControl **_vobjs;
 	OnScreenWindow *_oswi;
 
-	int controlid = 0;
+	int _windowcount = 0, _curswas = 0;
+	int _win_x = 0, _win_y = 0, _win_width = 0, _win_height = 0;
 
 	/**@}*/
 
@@ -736,7 +756,7 @@ public:
 	int _gameHasBeenRestored = 0;
 	int _oldeip = 0;
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * @defgroup agsgame_initglobals game_init globals
@@ -760,8 +780,8 @@ public:
 	 * @{
 	 */
 
-	 // Following 3 parameters instruct the engine to run game loops until
-	 // certain condition is not fullfilled.
+	// Following 3 parameters instruct the engine to run game loops until
+	// certain condition is not fullfilled.
 	int _restrict_until = 0;
 	int _user_disabled_for = 0;
 	const void *_user_disabled_data = nullptr;
@@ -772,7 +792,7 @@ public:
 	uint32 _t1 = 0; // timer for FPS
 	int _old_key_shifts = 0; // for saving shift modes
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * @defgroup agsgfxfilter_aad3dglobals gfxfilter_aad3d globals
@@ -890,7 +910,7 @@ public:
 	AGS::Shared::Bitmap *_windowBuffer = nullptr;
 	AGS::Engine::IDriverDependantBitmap *_dialogDDB = nullptr;
 
-	#define MAXSAVEGAMES_20 20
+#define MAXSAVEGAMES_20 20
 	int _myscrnwid = 320, _myscrnhit = 200;
 	char *_lpTemp = nullptr, *_lpTemp2 = nullptr;
 	int _numsaves = 0, _toomanygames = 0;
@@ -1009,6 +1029,7 @@ public:
 	 * @{
 	 */
 
+	String _appPath;
 	String _appDirectory; // Needed for library loading
 	String _cmdGameDataPath;
 
@@ -1111,6 +1132,7 @@ public:
 
 	std::vector<ScreenOverlay> *_screenover;
 	int _is_complete_overlay = 0, _is_text_overlay = 0;
+	int _numscreenover = 0;
 
 	/**@}*/
 
@@ -1136,7 +1158,7 @@ public:
 	char _return_to_room[150] = { '\0' };
 	char _quit_message[256] = { '\0' };
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * @defgroup agsroomglobals room globals
@@ -1164,7 +1186,7 @@ public:
 	AGS::Shared::Bitmap *_wallscreen = nullptr;
 	int _lastcx = 0, _lastcy = 0;
 
-	 /**@}*/
+	/**@}*/
 
 	/**
 	 * @defgroup agsscreenglobals screen globals
@@ -1300,6 +1322,7 @@ public:
 	 */
 
 	TreeMap *_transtree = nullptr;
+	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
 	char _transFileName[MAX_PATH] = { 0 };
 

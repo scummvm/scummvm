@@ -27,14 +27,153 @@
 //
 //=============================================================================
 
-#include "ags/engine/ac/route_finder_jps.h"
-
-// Not all platforms define INFINITY
-#ifndef INFINITY
-#define INFINITY   ((float)(1e+300 * 1e+300)) // This must overflow
-#endif
+#include "ags/lib/std/queue.h"
+#include "ags/lib/std/vector.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/functional.h"
+#include "ags/lib/std/math.h"
+#include "ags/lib/std/xutility.h"
 
 namespace AGS3 {
+
+// TODO: this could be cleaned up/simplified ...
+
+// further optimizations possible:
+//    - forward refinement should use binary search
+
+class Navigation {
+public:
+	Navigation();
+
+	void Resize(int width, int height);
+
+	enum NavResult {
+		// unreachable
+		NAV_UNREACHABLE,
+		// straight line exists
+		NAV_STRAIGHT,
+		// path used
+		NAV_PATH
+	};
+
+	// ncpath = navpoint-compressed path
+	// opath = path composed of individual grid elements
+	NavResult NavigateRefined(int sx, int sy, int ex, int ey, std::vector<int> &opath,
+	                          std::vector<int> &ncpath);
+
+	NavResult Navigate(int sx, int sy, int ex, int ey, std::vector<int> &opath);
+
+	bool TraceLine(int srcx, int srcy, int targx, int targy, int &lastValidX, int &lastValidY) const;
+	bool TraceLine(int srcx, int srcy, int targx, int targy, std::vector<int> *rpath = nullptr) const;
+
+	inline void SetMapRow(int y, const unsigned char *row) {
+		map[y] = row;
+	}
+
+	inline static int PackSquare(int x, int y);
+	inline static void UnpackSquare(int sq, int &x, int &y);
+
+private:
+	// priority queue entry
+	struct Entry {
+		float cost;
+		int index;
+
+		inline Entry() {}
+
+		inline Entry(float ncost, int nindex)
+			: cost(ncost)
+			, index(nindex) {
+		}
+
+		inline bool operator <(const Entry &b) const {
+			return cost < b.cost;
+		}
+
+		inline bool operator >(const Entry &b) const {
+			return cost > b.cost;
+		}
+	};
+
+	int mapWidth;
+	int mapHeight;
+	std::vector<const unsigned char *> map;
+
+	typedef unsigned short tFrameId;
+	typedef int tPrev;
+
+	struct NodeInfo {
+		// quantized min distance from origin
+		unsigned short dist;
+		// frame id (counter to detect new search)
+		tFrameId frameId;
+		// previous node index (packed, relative to current node)
+		tPrev prev;
+
+		inline NodeInfo()
+			: dist(0)
+			, frameId(0)
+			, prev(-1) {
+		}
+	};
+
+	static const float DIST_SCALE_PACK;
+	static const float DIST_SCALE_UNPACK;
+
+	std::vector<NodeInfo> mapNodes;
+	tFrameId frameId;
+
+	std::priority_queue<Entry, std::vector<Entry>, Common::Greater<Entry> > pq;
+
+	// temporary buffers:
+	mutable std::vector<int> fpath;
+	std::vector<int> ncpathIndex;
+	std::vector<int> rayPath, orayPath;
+
+	// temps for routing towards unreachable areas
+	int cnode;
+	int closest;
+
+	// orthogonal only (this should correspond to what AGS is doing)
+	bool nodiag;
+
+	bool navLock;
+
+	void IncFrameId();
+
+	// outside map test
+	inline bool Outside(int x, int y) const;
+	// stronger inside test
+	bool Passable(int x, int y) const;
+	// plain access, unchecked
+	inline bool Walkable(int x, int y) const;
+
+	void AddPruned(int *buf, int &bcount, int x, int y) const;
+	bool HasForcedNeighbor(int x, int y, int dx, int dy) const;
+	int FindJump(int x, int y, int dx, int dy, int ex, int ey);
+	int FindOrthoJump(int x, int y, int dx, int dy, int ex, int ey);
+
+	// neighbor reachable (nodiag only)
+	bool Reachable(int x0, int y0, int x1, int y1) const;
+
+	static inline int sign(int n) {
+		return n < 0 ? -1 : (n > 0 ? 1 : 0);
+	}
+
+	static inline int iabs(int n) {
+		return n < 0 ? -n : n;
+	}
+
+	static inline int iclamp(int v, int min, int max) {
+		return v < min ? min : (v > max ? max : v);
+	}
+
+	static inline int ClosestDist(int dx, int dy) {
+		return dx * dx + dy * dy;
+		// Manhattan?
+		//return iabs(dx) + iabs(dy);
+	}
+};
 
 // Navigation
 
@@ -49,7 +188,7 @@ Navigation::Navigation()
 	, frameId(1)
 	, cnode(0)
 	, closest(0)
-	// no diagonal route - this should correspond to what AGS does
+	  // no diagonal route - this should correspond to what AGS does
 	, nodiag(true)
 	, navLock(false) {
 }
@@ -73,6 +212,26 @@ void Navigation::IncFrameId() {
 	}
 }
 
+inline int Navigation::PackSquare(int x, int y) {
+	return (y << 16) + x;
+}
+
+inline void Navigation::UnpackSquare(int sq, int &x, int &y) {
+	y = sq >> 16;
+	x = sq & ((1 << 16) - 1);
+}
+
+inline bool Navigation::Outside(int x, int y) const {
+	return
+	    (unsigned)x >= (unsigned)mapWidth ||
+	    (unsigned)y >= (unsigned)mapHeight;
+}
+
+inline bool Navigation::Walkable(int x, int y) const {
+	// invert condition because of AGS
+	return map[y][x] != 0;
+}
+
 bool Navigation::Passable(int x, int y) const {
 	return !Outside(x, y) && Walkable(x, y);
 }
@@ -81,7 +240,7 @@ bool Navigation::Reachable(int x0, int y0, int x1, int y1) const {
 	assert(nodiag);
 
 	return Passable(x1, y1) &&
-		(Passable(x1, y0) || Passable(x0, y1));
+	       (Passable(x1, y0) || Passable(x0, y1));
 }
 
 // A* using jump point search (JPS)
@@ -95,18 +254,18 @@ void Navigation::AddPruned(int *buf, int &bcount, int x, int y) const {
 
 bool Navigation::HasForcedNeighbor(int x, int y, int dx, int dy) const {
 	if (!dy) {
-		return  (!Passable(x, y - 1) && Passable(x + dx, y - 1)) ||
-			(!Passable(x, y + 1) && Passable(x + dx, y + 1));
+		return (!Passable(x, y - 1) && Passable(x + dx, y - 1)) ||
+		       (!Passable(x, y + 1) && Passable(x + dx, y + 1));
 	}
 
 	if (!dx) {
-		return  (!Passable(x - 1, y) && Passable(x - 1, y + dy)) ||
-			(!Passable(x + 1, y) && Passable(x + 1, y + dy));
+		return (!Passable(x - 1, y) && Passable(x - 1, y + dy)) ||
+		       (!Passable(x + 1, y) && Passable(x + 1, y + dy));
 	}
 
 	return
-		(!Passable(x - dx, y) && Passable(x - dx, y + dy)) ||
-		(!Passable(x, y - dy) && Passable(x + dx, y - dy));
+	    (!Passable(x - dx, y) && Passable(x - dx, y + dy)) ||
+	    (!Passable(x, y - dy) && Passable(x + dx, y - dy));
 }
 
 int Navigation::FindOrthoJump(int x, int y, int dx, int dy, int ex, int ey) {
@@ -162,7 +321,7 @@ int Navigation::FindJump(int x, int y, int dx, int dy, int ex, int ey) {
 
 	if (dx && dy) {
 		if (FindOrthoJump(x, y, dx, 0, ex, ey) ||
-			FindOrthoJump(x, y, 0, dy, ex, ey))
+		        FindOrthoJump(x, y, 0, dy, ex, ey))
 			return PackSquare(x, y);
 	}
 
@@ -181,10 +340,10 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 	if (!TraceLine(sx, sy, ex, ey, &opath))
 		return NAV_STRAIGHT;
 
-	NodeInfo &ni = mapNodes[sy * mapWidth + sx];
-	ni.dist = 0;
-	ni.frameId = frameId;
-	ni.prev = -1;
+	NodeInfo &nodeInfo = mapNodes[sy * mapWidth + sx];
+	nodeInfo.dist = 0;
+	nodeInfo.frameId = frameId;
+	nodeInfo.prev = -1;
 
 	closest = 0x7fffffff;
 	cnode = PackSquare(sx, sy);
@@ -202,9 +361,9 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 		int x, y;
 		UnpackSquare(e.index, x, y);
 
-		int dx = x - ex;
-		int dy = y - ey;
-		int edist = ClosestDist(dx, dy);
+		int vdx = x - ex;
+		int vdy = y - ey;
+		int edist = ClosestDist(vdx, vdy);
 
 		if (edist < closest) {
 			closest = edist;
@@ -250,78 +409,78 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 			// filter
 			int px, py;
 			UnpackSquare(prev, px, py);
-			int dX = sign(x - px);
-			int dY = sign(y - py);
-			assert(dX || dY);
+			int dx = sign(x - px);
+			int dy = sign(y - py);
+			assert(dx || dy);
 
-			if (!dY) {
-				AddPruned(pneig, ncount, x + dX, y);
+			if (!dy) {
+				AddPruned(pneig, ncount, x + dx, y);
 
 				// add corners
-				if (!nodiag || Passable(x + dX, y)) {
+				if (!nodiag || Passable(x + dx, y)) {
 					if (!Passable(x, y + 1))
-						AddPruned(pneig, ncount, x + dX, y + 1);
+						AddPruned(pneig, ncount, x + dx, y + 1);
 
 					if (!Passable(x, y - 1))
-						AddPruned(pneig, ncount, x + dX, y - 1);
+						AddPruned(pneig, ncount, x + dx, y - 1);
 				}
-			} else if (!dX) {
+			} else if (!dx) {
 				// same as above but transposed
-				AddPruned(pneig, ncount, x, y + dY);
+				AddPruned(pneig, ncount, x, y + dy);
 
 				// add corners
-				if (!nodiag || Passable(x, y + dY)) {
+				if (!nodiag || Passable(x, y + dy)) {
 					if (!Passable(x + 1, y))
-						AddPruned(pneig, ncount, x + 1, y + dY);
+						AddPruned(pneig, ncount, x + 1, y + dy);
 
 					if (!Passable(x - 1, y))
-						AddPruned(pneig, ncount, x - 1, y + dY);
+						AddPruned(pneig, ncount, x - 1, y + dy);
 				}
 			} else {
 				// diagonal case
-				AddPruned(pneig, ncount, x, y + dY);
-				AddPruned(pneig, ncount, x + dX, y);
+				AddPruned(pneig, ncount, x, y + dy);
+				AddPruned(pneig, ncount, x + dx, y);
 
-				if (!nodiag || Reachable(x, y, x + dX, y + dY))
-					AddPruned(pneig, ncount, x + dX, y + dY);
+				if (!nodiag || Reachable(x, y, x + dx, y + dy))
+					AddPruned(pneig, ncount, x + dx, y + dy);
 
-				if (!Passable(x - dX, y) &&
-					(nodiag || Reachable(x, y, x - dX, y + dY)))
-					AddPruned(pneig, ncount, x - dX, y + dY);
+				if (!Passable(x - dx, y) &&
+				        (nodiag || Reachable(x, y, x - dx, y + dy)))
+					AddPruned(pneig, ncount, x - dx, y + dy);
 
-				if (!Passable(x, y - dY) &&
-					(nodiag || Reachable(x, y, x + dX, y - dY)))
-					AddPruned(pneig, ncount, x + dX, y - dY);
+				if (!Passable(x, y - dy) &&
+				        (nodiag || Reachable(x, y, x + dx, y - dy)))
+					AddPruned(pneig, ncount, x + dx, y - dy);
 			}
 		}
 
 		// sort by heuristics
 		Entry sort[8];
 
-		for (int idx = 0; idx < ncount; idx++) {
+		for (int ni = 0; ni < ncount; ni++) {
 			int nx, ny;
-			UnpackSquare(pneig[idx], nx, ny);
+			UnpackSquare(pneig[ni], nx, ny);
 			float edx = (float)(nx - ex);
 			float edy = (float)(ny - ey);
-			sort[idx].cost = sqrt(edx * edx + edy * edy);
-			sort[idx].index = pneig[idx];
+			sort[ni].cost = sqrt(edx * edx + edy * edy);
+			sort[ni].index = pneig[ni];
 		}
 
-		std::sort(sort, sort + ncount, Common::Less<Entry>());
+		std::sort(sort, sort + ncount);
 
 		int succ[8];
 		int nsucc = 0;
 
-		for (int idx = 0; idx < ncount; idx++)
-			pneig[idx] = sort[idx].index;
+		for (int ni = 0; ni < ncount; ni++)
+			pneig[ni] = sort[ni].index;
 
-		for (int idx = 0; idx < ncount; idx++) {
+		for (int ni = 0; ni < ncount; ni++) {
 			int nx, ny;
-			UnpackSquare(pneig[idx], nx, ny);
+			UnpackSquare(pneig[ni], nx, ny);
 
-			int dX = nx - x;
-			int dY = ny - y;
-			int j = FindJump(x, y, dX, dY, ex, ey);
+			int dx = nx - x;
+			int dy = ny - y;
+			int j = FindJump(x, y, dx, dy, ex, ey);
 
 			if (j < 0)
 				continue;
@@ -329,19 +488,19 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 			succ[nsucc++] = j;
 		}
 
-		for (int idx = 0; idx < nsucc; idx++) {
+		for (int ni = 0; ni < nsucc; ni++) {
 			int nx, ny;
-			UnpackSquare(succ[idx], nx, ny);
+			UnpackSquare(succ[ni], nx, ny);
 			assert(Walkable(nx, ny));
 
-			NodeInfo &nodeInfo = mapNodes[ny * mapWidth + nx];
+			NodeInfo &mapNode = mapNodes[ny * mapWidth + nx];
 
-			float ndist = nodeInfo.frameId != frameId ? INFINITY : nodeInfo.dist * DIST_SCALE_UNPACK;
+			float ndist = mapNode.frameId != frameId ? INFINITY : mapNode.dist * DIST_SCALE_UNPACK;
 
-			float dX = (float)(nx - x);
-			float dY = (float)(ny - y);
+			float dx = (float)(nx - x);
+			float dy = (float)(ny - y);
 			// FIXME: can do better here
-			float cost = sqrt(dX * dX + dY * dY);
+			float cost = sqrt(dx * dx + dy * dy);
 			float ecost = dist + cost;
 
 			float edx = (float)(nx - ex);
@@ -357,9 +516,9 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 				if (ecost > 65535.0f)
 					continue;
 
-				nodeInfo.dist = (unsigned short)(ecost + 0.5f);
-				nodeInfo.frameId = frameId;
-				nodeInfo.prev = PackSquare(x, y);
+				mapNode.dist = (unsigned short)(ecost + 0.5f);
+				mapNode.frameId = frameId;
+				mapNode.prev = PackSquare(x, y);
 				pq.push(Entry(ecost + heur, PackSquare(nx, ny)));
 			}
 		}
@@ -418,7 +577,7 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 	}
 
 	if (ex < 0 || ex >= mapWidth || ey < 0 || ey >= mapHeight ||
-		mapNodes[ey * mapWidth + ex].frameId != frameId) {
+	        mapNodes[ey * mapWidth + ex].frameId != frameId) {
 		// path not found
 		return NAV_UNREACHABLE;
 	}
@@ -452,7 +611,7 @@ Navigation::NavResult Navigation::Navigate(int sx, int sy, int ex, int ey, std::
 }
 
 Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey,
-	std::vector<int> &opath, std::vector<int> &ncpath) {
+        std::vector<int> &opath, std::vector<int> &ncpath) {
 	ncpath.clear();
 
 	NavResult res = Navigate(sx, sy, ex, ey, opath);
@@ -529,7 +688,7 @@ Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey
 
 	std::swap(opath, fpath);
 
-	// Validate ncpath in debug builds
+	// validate cpath
 	for (int i = 0; i < (int)ncpath.size() - 1; i++) {
 		int tx, ty;
 		UnpackSquare(ncpath[i], fx, fy);
@@ -591,7 +750,6 @@ Navigation::NavResult Navigation::NavigateRefined(int sx, int sy, int ex, int ey
 	opath.push_back(ncpath[0]);
 
 	for (int i = 1; i < (int)ncpath.size(); i++) {
-//		int fx, fy;
 		int tx, ty;
 
 		UnpackSquare(ncpath[i - 1], fx, fy);

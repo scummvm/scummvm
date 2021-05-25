@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_TEXTBOX_H
 #define AGS_ENGINE_AC_TEXTBOX_H
 
-#include "ags/shared/gui/guitextbox.h"
+#include "ags/shared/gui/gui_textbox.h"
 
 namespace AGS3 {
 

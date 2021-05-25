@@ -22,23 +22,19 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/string.h"
-#include "ags/globals.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+const char *game_file_sig = "Adventure Creator Game File v2";
 
 void quitprintf(const char *fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);
 	String text = String::FromFormatV(fmt, ap);
 	va_end(ap);
-
-	// WORKAROUND: In ScummVM we have to make this an error, because
-	// too many places calling it presume it doesn't return,
-	// and will throw a wobbly if does
-	error("%s", (const char *)text);
+	quit(text);
 }
 
 } // namespace AGS3

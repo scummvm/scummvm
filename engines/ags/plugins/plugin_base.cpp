@@ -103,7 +103,7 @@ void *pluginOpen(const char *filename) {
 		return new AGSSpriteFont::AGSSpriteFont();
 
 	if (fname.equalsIgnoreCase("agsgalaxy") || fname.equalsIgnoreCase("agsgalaxy-unified") ||
-			fname.equalsIgnoreCase("agsgalaxy-disjoint"))
+	        fname.equalsIgnoreCase("agsgalaxy-disjoint"))
 		return new AGSGalaxySteam::AGSGalaxy();
 
 	if (fname.equalsIgnoreCase("ags_Nickenstien_GFX"))
@@ -113,7 +113,7 @@ void *pluginOpen(const char *filename) {
 		return new AGSGalaxySteam::AGSWadjetEyeSteam();
 
 	if (fname.equalsIgnoreCase("agsteam") || fname.equalsIgnoreCase("agsteam-unified") ||
-			fname.equalsIgnoreCase("agsteam-disjoint"))
+	        fname.equalsIgnoreCase("agsteam-disjoint"))
 		return new AGSGalaxySteam::AGSSteam();
 
 	if (fname.equalsIgnoreCase("AGSWadjetUtil"))

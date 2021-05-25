@@ -26,24 +26,21 @@
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/version.h"
 #include "ags/shared/util/ini_util.h"
-#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
 using AGS::Shared::ConfigTree;
 using AGS::Shared::String;
 
-//=============================================================================
-
-void main_print_help();
-
-int ags_entry_point(int argc, char *argv[]);
-
 extern void main_init(int argc, const char *argv[]);
 
 extern int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]);
 
+extern AGS::Shared::String GetPathFromCmdArg(int arg_index);
+
 extern String get_engine_string();
+
+extern void main_print_help();
 
 extern void main_set_gamedir(int argc, const char *argv[]);
 

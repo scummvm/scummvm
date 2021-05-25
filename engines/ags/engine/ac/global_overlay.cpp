@@ -24,24 +24,22 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/system.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/globals.h"
+#include "ags/shared/util/wgt2_allg.h"
 
 namespace AGS3 {
 
 using namespace Shared;
 using namespace Engine;
-
-
 
 void RemoveOverlay(int ovrid) {
 	if (find_overlay_of_type(ovrid) < 0) quit("!RemoveOverlay: invalid overlay id passed");
@@ -71,7 +69,7 @@ int CreateTextOverlay(int xx, int yy, int wii, int fontid, int text_color, const
 	if (xx != OVR_AUTOPLACE) {
 		data_to_game_coords(&xx, &yy);
 		wii = data_to_game_coord(wii);
-	} else // allow DisplaySpeechBackground to be shrunk
+	} else  // allow DisplaySpeechBackground to be shrunk
 		allowShrink = 1;
 
 	return CreateTextOverlayCore(xx, yy, wii, fontid, text_color, text, disp_type, allowShrink);

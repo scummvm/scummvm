@@ -22,16 +22,15 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/sprite.h"
 #include "ags/engine/ac/system.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/gfx/graphicsdriver.h"
-#include "ags/globals.h"
+#include "ags/engine/gfx/graphics_driver.h"
 
 namespace AGS3 {
 
@@ -120,7 +119,7 @@ Bitmap *tmpdbl, *curspr;
 int newwid, newhit;
 void initialize_sprite(int ee) {
 
-	if ((ee < 0) || (ee > _GP(spriteset).GetSpriteSlotCount()))
+	if ((ee < 0) || ((size_t)ee > _GP(spriteset).GetSpriteSlotCount()))
 		quit("initialize_sprite: invalid sprite number");
 
 	if ((_GP(spriteset)[ee] == nullptr) && (ee > 0)) {
@@ -150,11 +149,7 @@ void initialize_sprite(int ee) {
 			tmpdbl = BitmapHelper::CreateTransparentBitmap(newwid, newhit, curspr->GetColorDepth());
 			if (tmpdbl == nullptr)
 				quit("Not enough memory to load sprite graphics");
-			tmpdbl->Acquire();
-			curspr->Acquire();
 			tmpdbl->StretchBlt(curspr, RectWH(0, 0, tmpdbl->GetWidth(), tmpdbl->GetHeight()), Shared::kBitmap_Transparency);
-			curspr->Release();
-			tmpdbl->Release();
 			delete curspr;
 			_GP(spriteset).SubstituteBitmap(ee, tmpdbl);
 		}

@@ -20,15 +20,15 @@
  *
  */
 
-#include "ags/lib/std/vector.h"
 #include "ags/lib/alfont/alfont.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common.h" // set_our_eip
-#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/font/ttffontrenderer.h"
-#include "ags/shared/font/wfnfontrenderer.h"
+#include "ags/shared/font/ttf_font_renderer.h"
+#include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gui/guidefines.h" // MAXLINE
+#include "ags/shared/gui/gui_defines.h" // MAXLINE
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
@@ -46,8 +46,8 @@ Font::Font()
 	, Renderer2(nullptr) {
 }
 
-} // namespace Shared
-} // namespace AGS
+} // Common
+} // AGS
 
 FontInfo::FontInfo()
 	: Flags(0)
@@ -55,9 +55,7 @@ FontInfo::FontInfo()
 	, SizeMultiplier(1)
 	, Outline(FONT_OUTLINE_NONE)
 	, YOffset(0)
-	, LineSpacing(0)
-	, AutoOutlineStyle(kRounded)
-	, AutoOutlineThickness(1) {
+	, LineSpacing(0) {
 }
 
 
@@ -82,7 +80,7 @@ bool font_first_renderer_loaded() {
 }
 
 bool is_font_loaded(size_t fontNumber) {
-	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;;
+	return fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer != nullptr;
 }
 
 IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
@@ -136,12 +134,6 @@ int get_font_outline(size_t font_number) {
 	return _GP(fonts)[font_number].Info.Outline;
 }
 
-int get_font_outline_thickness(size_t font_number) {
-	if (font_number >= _GP(fonts).size())
-		return 0;
-	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
-}
-
 void set_font_outline(size_t font_number, int outline_type) {
 	if (font_number >= _GP(fonts).size())
 		return;
@@ -176,6 +168,12 @@ bool use_default_linespacing(size_t fontNumber) {
 
 // Project-dependent implementation
 extern int wgettextwidth_compensate(const char *tex, int font);
+
+namespace AGS {
+namespace Shared {
+SplitLines Lines;
+}
+}
 
 // Replaces AGS-specific linebreak tags with common '\n'
 void unescape_script_string(const char *cstr, std::vector<char> &out) {
@@ -291,7 +289,7 @@ void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t
 		return;                   // each char is clipped but this speeds it up
 
 	if (_GP(fonts)[fontNumber].Renderer != nullptr) {
-		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, ds->GetAllegroBitmap(), xxx, yyy, text_color);
+		_GP(fonts)[fontNumber].Renderer->RenderText(texx, fontNumber, (BITMAP *)ds->GetAllegroBitmap(), xxx, yyy, text_color);
 	}
 }
 

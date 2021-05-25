@@ -29,15 +29,15 @@
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/ac/system.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guibutton.h"
-#include "ags/shared/gui/guilabel.h"
-#include "ags/shared/gui/guilistbox.h"
-#include "ags/shared/gui/guitextbox.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_label.h"
+#include "ags/shared/gui/gui_listbox.h"
+#include "ags/shared/gui/gui_textbox.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/blender.h"
 #include "ags/globals.h"
@@ -53,7 +53,7 @@ extern void replace_macro_tokens(const char *, String &);
 extern void ensure_text_valid_for_font(char *, int);
 //
 
- // in ac_runningame
+// in ac_runningame
 
 
 bool GUIMain::HasAlphaChannel() const {
@@ -67,17 +67,17 @@ bool GUIMain::HasAlphaChannel() const {
 	}
 	// transparent background, enable alpha blending
 	return _GP(game).GetColorDepth() >= 24 &&
-		// transparent background have alpha channel only since 3.2.0;
-		// "classic" gui rendering mode historically had non-alpha transparent backgrounds
-		// (3.2.0 broke the compatibility, now we restore it)
-		_G(loaded_game_file_version) >= kGameVersion_320 && _GP(game).options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
+	       // transparent background have alpha channel only since 3.2.0;
+	       // "classic" gui rendering mode historically had non-alpha transparent backgrounds
+	       // (3.2.0 broke the compatibility, now we restore it)
+	       _G(loaded_game_file_version) >= kGameVersion_320 && _GP(game).options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
 }
 
 //=============================================================================
 // Engine-specific implementation split out of acgui.h
 //=============================================================================
 
-void check_font(int32_t *fontnum) {
+void check_font(int *fontnum) {
 	// do nothing
 }
 
@@ -112,6 +112,10 @@ namespace Shared {
 
 bool GUIObject::IsClickable() const {
 	return (Flags & kGUICtrl_Clickable) != 0;
+}
+
+void GUIObject::NotifyParentChanged() {
+	_GP(guis)[ParentId].MarkChanged();
 }
 
 void GUILabel::PrepareTextToDraw() {

@@ -45,7 +45,7 @@ void check_debug_keys();
 #define DBG_NOSFX      0x10
 #define DBG_NOMUSIC    0x20
 #define DBG_NOSCRIPT   0x40
-#define DBG_DBGSCRIPT  0x80
+// #define DBG_DBGSCRIPT  0x80 // unused
 #define DBG_DEBUGMODE 0x100
 #define DBG_REGONLY   0x200
 #define DBG_NOVIDEO   0x400

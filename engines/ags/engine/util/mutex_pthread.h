@@ -29,6 +29,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
+
 class PThreadMutex : public BaseMutex {
 public:
 	inline PThreadMutex() {
@@ -52,6 +53,7 @@ private:
 };
 
 typedef PThreadMutex Mutex;
+
 
 } // namespace Engine
 } // namespace AGS

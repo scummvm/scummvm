@@ -32,7 +32,9 @@ namespace std {
 #define FLOAT_UNASSIGNED (float)999999.0
 
 template<class T>
-inline bool isUndefined(T val) { return val == FLOAT_UNASSIGNED; }
+inline bool isUndefined(T val) {
+return val == FLOAT_UNASSIGNED;
+}
 
 } // namespace std
 } // namespace AGS3

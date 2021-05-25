@@ -29,6 +29,8 @@
 #ifndef AGS_SHARED_UTIL_MATH_H
 #define AGS_SHARED_UTIL_MATH_H
 
+#include "ags/lib/std/limits.h"
+
 namespace AGS3 {
 
 #ifndef M_PI
@@ -75,6 +77,13 @@ inline T Surplus(const T &larger, const T &smaller) {
 	return larger > smaller ? larger - smaller : 0;
 }
 
+// Tests if the big-type value is in range of the result type;
+// returns same value converted if it's in range, or provided replacement if it's not.
+template <typename T, typename TBig>
+inline T InRangeOrDef(const TBig &val, const T &def) {
+	return (val >= std::numeric_limits<T>::min() && val <= std::numeric_limits<T>::max()) ? val : def;
+}
+
 inline float RadiansToDegrees(float rads) {
 	return rads * (float)(180.0 / M_PI);
 }
@@ -82,6 +91,7 @@ inline float RadiansToDegrees(float rads) {
 inline float DegreesToRadians(float deg) {
 	return deg * (float)(M_PI / 180.0);
 }
+
 } // namespace Math
 
 } // namespace Shared

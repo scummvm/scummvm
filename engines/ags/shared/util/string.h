@@ -46,10 +46,10 @@
 #ifndef AGS_SHARED_UTIL_STRING_H
 #define AGS_SHARED_UTIL_STRING_H
 
+//include <stdarg.h>
 #include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
-#include "common/str.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -59,8 +59,6 @@ class Stream;
 
 class String {
 public:
-	static const uint32 npos = (uint32)-1;
-
 	// Standard constructor: intialize empty string
 	String();
 	// Copy constructor
@@ -75,13 +73,19 @@ public:
 	String(const Common::String &s);
 	~String();
 
+	static const uint32 npos = 0xffffffff;
+
+	// TODO: get rid of condition in GetCStr! either make it nullable and test for consequences in engine code,
+	// or make sure it points to "" literal when string is not assigned; also check if GetNullableCStr may be removed.
+	// OR do opposite: make helper function that returns non-null cstr explicitly.
+
 	// Get underlying C-string for reading; this method guarantees valid C-string
 	inline const char *GetCStr() const {
 		return _cstr ? _cstr : "";
 	}
 	// Get C-string or nullptr
 	inline const char *GetNullableCStr() const {
-		return _cstr ? _cstr : nullptr;
+		return _cstr;
 	}
 	// Get character count
 	inline size_t GetLength() const {
@@ -93,7 +97,7 @@ public:
 	}
 
 	// Those getters are for tests only, hence if AGS_PLATFORM_DEBUG
-#if AGS_PLATFORM_DEBUG
+	#if AGS_PLATFORM_DEBUG
 	inline const char *GetBuffer() const {
 		return _buf;
 	}
@@ -105,7 +109,7 @@ public:
 	inline size_t GetRefCount() const {
 		return _bufHead ? _bufHead->RefCount : 0;
 	}
-#endif
+	#endif
 
 	// Read() method implies that string length is initially unknown.
 	// max_chars parameter determine the buffer size limit.
@@ -145,7 +149,7 @@ public:
 	int     CompareRightNoCase(const char *cstr, size_t count = npos) const;
 
 	// These functions search for character or substring inside this string
-	// and return the index of the (first) character, or npos if nothing found.
+	// and return the index of the (first) character, or -1 if nothing found.
 	size_t  FindChar(char c, size_t from = 0) const;
 	size_t  FindCharReverse(char c, size_t from = npos) const;
 	size_t  FindString(const char *cstr, size_t from = 0) const;
@@ -162,7 +166,7 @@ public:
 	// This also means that there's always at least one section in any string,
 	// even if there are no separating chars.
 	bool    FindSection(char separator, size_t first, size_t last, bool exclude_first_sep, bool exclude_last_sep,
-		size_t &from, size_t &to) const;
+						size_t &from, size_t &to) const;
 
 	// Get Nth character with bounds check (as opposed to subscript operator)
 	inline char GetAt(size_t index) const {
@@ -213,7 +217,7 @@ public:
 	String  RightSection(char separator, bool exclude_separator = true) const;
 	// Extract the range of Xth to Yth fields, separated by the given character
 	String  Section(char separator, size_t first, size_t last,
-		bool exclude_first_sep = true, bool exclude_last_sep = true) const;
+					bool exclude_first_sep = true, bool exclude_last_sep = true) const;
 	// Splits the string into segments divided by the instances of a given character,
 	// including empty segments e.g. if separators follow each other;
 	// returns at least one segment (equal to full string if no separator was found)
@@ -251,7 +255,7 @@ public:
 	void    ClipRightSection(char separator, bool include_separator = true);
 	// Cuts out the range of Xth to Yth fields separated by the given character
 	void    ClipSection(char separator, size_t first, size_t last,
-		bool include_first_sep = true, bool include_last_sep = true);
+						bool include_first_sep = true, bool include_last_sep = true);
 	// Sets string length to zero
 	void    Empty();
 	// Makes a new string by filling N chars with certain value
@@ -268,6 +272,8 @@ public:
 	void    MakeLower();
 	// Convert string to uppercase equivalent
 	void    MakeUpper();
+	// Merges sequences of same characters into one
+	void    MergeSequences(char c = 0);
 	// Prepend* methods add content before the string's head, increasing its length
 	// Add C-string before string's head
 	void    Prepend(const char *cstr);
@@ -308,7 +314,7 @@ public:
 	// Truncate the string to range of Xth to Yth fields separated by the
 	// given character
 	void    TruncateToSection(char separator, size_t first, size_t last,
-		bool exclude_first_sep = true, bool exclude_last_sep = true);
+							  bool exclude_first_sep = true, bool exclude_last_sep = true);
 	// Wraps the given string buffer without owning it, won't count references,
 	// won't delete it at destruction. Can be used with string literals.
 	void    Wrap(const char *cstr);
@@ -337,12 +343,13 @@ public:
 	inline bool operator <(const char *cstr) const {
 		return Compare(cstr) < 0;
 	}
+
 	// Converts an AGS string to a ScummVM one
 	operator Common::String() const {
 		return Common::String(GetNullableCStr());
 	}
 
-private:
+	private:
 	// Creates new empty string with buffer enough to fit given length
 	void    Create(size_t buffer_length);
 	// Release string and copy data to the new buffer
@@ -350,6 +357,8 @@ private:
 	// Aligns data at given offset
 	void    Align(size_t offset);
 
+	// Tells if this object shares its string buffer with others
+	bool    IsShared() const;
 	// Ensure this string is a compact independent copy, with ref counter = 1
 	void    BecomeUnique();
 	// Ensure this string is independent, and there's enough space before

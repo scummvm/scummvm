@@ -22,6 +22,7 @@
 
 #include "ags/engine/ac/global_viewport.h"
 #include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/globals.h"
 

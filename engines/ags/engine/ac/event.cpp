@@ -23,22 +23,22 @@
 #include "ags/engine/ac/event.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/global_screen.h"
 #include "ags/engine/ac/gui.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/screen.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/globals.h"
@@ -60,8 +60,6 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 
 	if (includeRoom && _G(roominst)) {
 		toret = RunScriptFunctionIfExists(_G(roominst), tsname, numParams, params);
-		if (_G(abort_engine))
-			return -1;
 
 		if (_G(eventClaimed) == EVENT_CLAIMED) {
 			_G(eventClaimed) = eventClaimedOldValue;
@@ -99,12 +97,12 @@ void run_room_event(int id) {
 	}
 }
 
-void run_event_block_inv(int invNum, int event_) {
+void run_event_block_inv(int invNum, int event) {
 	_G(evblockbasename) = "inventory%d";
 	if (_G(loaded_game_file_version) > kGameVersion_272) {
-		run_interaction_script(_GP(game).invScripts[invNum].get(), event_);
+		run_interaction_script(_GP(game).invScripts[invNum].get(), event);
 	} else {
-		run_interaction_event(_GP(game).intrInv[invNum].get(), event_);
+		run_interaction_event(_GP(game).intrInv[invNum].get(), event);
 	}
 
 }
@@ -180,9 +178,6 @@ void process_event(EventHappened *evp) {
 		} else
 			quit("process_event: RunEvBlock: unknown evb type");
 
-		if (_G(abort_engine))
-			return;
-
 		_G(evblockbasename) = oldbasename;
 		_G(evblocknum) = oldblocknum;
 
@@ -210,7 +205,7 @@ void process_event(EventHappened *evp) {
 
 		const bool ignore_transition = (_GP(play).screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
-			(_G(saved_viewport_bitmap) == nullptr) && !ignore_transition) {
+		        (_G(saved_viewport_bitmap) == nullptr) && !ignore_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
 			// but it is now when the screen fades in (Eg. a save game was restored
 			// with a different setting). Therefore just fade normally.
@@ -219,7 +214,6 @@ void process_event(EventHappened *evp) {
 		}
 
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
-		//const Size &data_res = _GP(game).GetDataRes();
 		const Rect &viewport = _GP(play).GetMainViewport();
 
 		if ((theTransition == FADE_INSTANT) || ignore_transition)
@@ -255,7 +249,7 @@ void process_event(EventHappened *evp) {
 					int lyp = viewport.GetHeight() / 2 - boxhit / 2;
 					_G(gfxDriver)->Vsync();
 					temp_scr->Blit(saved_backbuf, lxp, lyp, lxp, lyp,
-						boxwid, boxhit);
+					               boxwid, boxhit);
 					render_to_screen();
 					WaitForNextFrame();
 				}
@@ -287,7 +281,6 @@ void process_event(EventHappened *evp) {
 				WaitForNextFrame();
 				transparency -= 16;
 			}
-			_G(saved_viewport_bitmap)->Release();
 
 			delete _G(saved_viewport_bitmap);
 			_G(saved_viewport_bitmap) = nullptr;
@@ -296,7 +289,7 @@ void process_event(EventHappened *evp) {
 		} else if (theTransition == FADE_DISSOLVE) {
 			int pattern[16] = { 0, 4, 14, 9, 5, 11, 2, 8, 10, 3, 12, 7, 15, 6, 13, 1 };
 			int aa, bb, cc;
-			color interpal[256];
+			RGB interpal[256];
 
 			IDriverDependantBitmap *ddb = prepare_screen_for_transition_in();
 			for (aa = 0; aa < 16; aa++) {
@@ -360,9 +353,10 @@ void processallevents(int numev, EventHappened *evlist) {
 	_G(inside_processevent)++;
 
 	for (dd = 0; dd < numev; dd++) {
+
 		process_event(&copyOfList[dd]);
 
-		if (room_was != _GP(play).room_changes || _G(abort_engine))
+		if (room_was != _GP(play).room_changes)
 			break;  // changed room, so discard other events
 	}
 

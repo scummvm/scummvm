@@ -56,7 +56,7 @@ void fwritestring(const char *strptr, Stream *out) {
 	}
 }
 
-ccScript *ccScript::CreateFromStream(Shared::Stream *in) {
+ccScript *ccScript::CreateFromStream(Stream *in) {
 	ccScript *scri = new ccScript();
 	if (!scri->Read(in)) {
 		delete scri;
@@ -171,7 +171,7 @@ ccScript::~ccScript() {
 	Free();
 }
 
-void ccScript::Write(Shared::Stream *out) {
+void ccScript::Write(Stream *out) {
 	int n;
 	out->Write(_G(scfilesig), 4);
 	out->WriteInt32(SCOM_VERSION);
@@ -205,7 +205,7 @@ void ccScript::Write(Shared::Stream *out) {
 	out->WriteInt32(ENDFILESIG);
 }
 
-bool ccScript::Read(Shared::Stream *in) {
+bool ccScript::Read(Stream *in) {
 	instances = 0;
 	int n;
 	char gotsig[5];
@@ -290,7 +290,7 @@ bool ccScript::Read(Shared::Stream *in) {
 		sectionOffsets = nullptr;
 	}
 
-	if (in->ReadInt32() != (int32)ENDFILESIG) {
+	if ((uint32)in->ReadInt32() != ENDFILESIG) {
 		cc_error("internal error rebuilding script");
 		return false;
 	}

@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CCREGION_H
 #define AGS_ENGINE_AC_DYNOBJ_CCREGION_H
 
-#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
 namespace AGS3 {
 
@@ -37,6 +37,7 @@ struct CCRegion final : AGSCCDynamicObject {
 	int Serialize(const char *address, char *buffer, int bufsize) override;
 
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
+
 };
 
 } // namespace AGS3

@@ -23,12 +23,13 @@
 #ifndef AGS_ENGINE_AC_STRING_H
 #define AGS_ENGINE_AC_STRING_H
 
-#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
+//include <stdarg.h>
+#include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 
 namespace AGS3 {
 
 // Check that a supplied buffer from a text script function was not null
-#define VALIDATE_STRING(strin) if (!strin) quit("!String argument was null: make sure you pass a string buffer")
+#define VALIDATE_STRING(strin) if ((unsigned long)strin <= 4096) quit("!String argument was null: make sure you pass a string, not an int, as a buffer")
 
 int String_IsNullOrEmpty(const char *thisString);
 const char *String_Copy(const char *srcString);

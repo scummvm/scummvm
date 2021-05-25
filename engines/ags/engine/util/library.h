@@ -36,13 +36,14 @@ public:
 
 	virtual ~BaseLibrary() {}
 
+	virtual AGS::Shared::String GetFilenameForLib(const AGS::Shared::String &libraryName) = 0;
+
 	virtual bool Load(const AGS::Shared::String &libraryName) = 0;
 
 	virtual bool Unload() = 0;
 
 	virtual void *GetFunctionAddress(const AGS::Shared::String &functionName) = 0;
 };
-
 
 } // namespace Engine
 } // namespace AGS

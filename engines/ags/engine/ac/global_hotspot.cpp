@@ -23,24 +23,30 @@
 #include "ags/engine/ac/global_hotspot.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/event.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/hotspot.h"
 #include "ags/engine/ac/properties.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/engine/script/script.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+
+
+
+
+
 
 void DisableHotspot(int hsnum) {
 	if ((hsnum < 1) | (hsnum >= MAX_ROOM_HOTSPOTS))
@@ -78,8 +84,12 @@ int GetHotspotPointY(int hotspot) {
 
 int GetHotspotIDAtScreen(int scrx, int scry) {
 	VpPoint vpt = _GP(play).ScreenToRoomDivDown(scrx, scry);
-	if (vpt.second < 0) return 0;
-	return get_hotspot_at(vpt.first.X, vpt.first.Y);
+	if (vpt.second < 0)
+		return 0;
+	Point pt = vpt.first;
+	if ((pt.X >= _GP(thisroom).Width) | (pt.X < 0) | (pt.Y < 0) | (pt.Y >= _GP(thisroom).Height))
+		return 0;
+	return get_hotspot_at(pt.X, pt.Y);
 }
 
 void GetHotspotName(int hotspot, char *buffer) {

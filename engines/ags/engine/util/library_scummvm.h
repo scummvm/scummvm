@@ -27,13 +27,13 @@
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/plugins/plugin_base.h"
+#include "ags/engine/util/library.h"
 
 namespace AGS3 {
-
 namespace AGS {
 namespace Engine {
 
-class ScummVMLibrary : BaseLibrary {
+class ScummVMLibrary : public BaseLibrary {
 public:
 	ScummVMLibrary()
 		: _library(nullptr) {
@@ -42,6 +42,10 @@ public:
 	~ScummVMLibrary() override {
 		Unload();
 	};
+
+	AGS::Shared::String GetFilenameForLib(const AGS::Shared::String &libraryName) override {
+		return AGS::Shared::String::FromFormat("%s.dll", libraryName.GetCStr());
+	}
 
 	bool Load(const AGS::Shared::String &libraryName) override {
 		Unload();

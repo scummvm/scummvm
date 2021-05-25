@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN_GAMEFILE_H
-#define AGS_ENGINE_MAIN_GAMEFILE_H
+#ifndef AGS_ENGINE_MAIN_GAME_FILE_H
+#define AGS_ENGINE_MAIN_GAME_FILE_H
 
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/string.h"

@@ -21,9 +21,9 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_hotspot.h"
-#include "ags/engine/ac/dynobj/scripthotspot.h"
+#include "ags/engine/ac/dynobj/script_hotspot.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,7 +36,7 @@ const char *CCHotspot::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCHotspot::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptHotspot *shh = (ScriptHotspot *)const_cast<char *>(address);
+	const ScriptHotspot *shh = (const ScriptHotspot *)address;
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

@@ -20,14 +20,15 @@
  *
  */
 
+//include <string.h>
 #include "ags/engine/script/script.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_dialog.h"
@@ -37,10 +38,11 @@
 #include "ags/engine/ac/global_hotspot.h"
 #include "ags/engine/ac/global_object.h"
 #include "ags/engine/ac/global_room.h"
-#include "ags/engine/ac/invwindow.h"
+#include "ags/engine/ac/inv_window.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/room_object.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_options.h"
 #include "ags/engine/debugging/debugger.h"
@@ -117,13 +119,13 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 
 	if (evnt < 0 || (size_t)evnt >= nint->Events.size() ||
-		(nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {
+	        (nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
 		if (chkAny < 0);
 		else if ((size_t)chkAny < nint->Events.size() &&
-			(nint->Events[chkAny].Response.get() != nullptr) && (nint->Events[chkAny].Response->Cmds.size() > 0))
+		         (nint->Events[chkAny].Response.get() != nullptr) && (nint->Events[chkAny].Response->Cmds.size() > 0))
 			return 0;
 
 		// Otherwise, run unhandled_event
@@ -140,9 +142,6 @@ int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 	int cmdsrun = 0, retval = 0;
 	// Right, so there were some commands defined in response to the event.
 	retval = run_interaction_commandlist(nint->Events[evnt].Response.get(), &nint->Events[evnt].TimesRun, &cmdsrun);
-
-	if (_G(abort_engine))
-		return -1;
 
 	// An inventory interaction, but the wrong item was used
 	if ((isInv) && (cmdsrun == 0))
@@ -310,8 +309,6 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 		_G(ccErrorString) = "script is already in execution";
 		return -3;
 	}
-
-	assert(_G(num_scripts) < MAX_SCRIPT_AT_ONCE);
 	_G(scripts)[_G(num_scripts)].init();
 	_G(scripts)[_G(num_scripts)].inst = sci;
 	// CHECKME: this conditional block will never run, because
@@ -361,9 +358,6 @@ int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam,
 	} else
 		quit("Too many parameters to RunScriptFunctionIfExists");
 
-	if (_G(abort_engine))
-		return -1;
-
 	// 100 is if Aborted (eg. because we are LoadAGSGame'ing)
 	if ((toret != 0) && (toret != -2) && (toret != 100)) {
 		quit_with_script_error(tsname);
@@ -401,7 +395,7 @@ int RunTextScript(ccInstance *sci, const char *tsname) {
 				RunScriptFunctionIfExists(_GP(moduleInst)[kk], tsname, 0, nullptr);
 
 			if ((room_changes_was != _GP(play).room_changes) ||
-				(restore_game_count_was != _G(gameHasBeenRestored)))
+			        (restore_game_count_was != _G(gameHasBeenRestored)))
 				return 0;
 		}
 	}
@@ -435,13 +429,15 @@ int RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeScrip
 		bool eventWasClaimed;
 		int toret = run_claimable_event(tsname, true, 2, params, &eventWasClaimed);
 
-		if (eventWasClaimed || _G(abort_engine))
+		if (eventWasClaimed)
 			return toret;
 	}
 
 	// response to a button click, better update guis
-	if (ags_strnicmp(tsname, "interface_click", 15) == 0)
-		_G(guis_need_update) = 1;
+	if (ags_strnicmp(tsname, "interface_click", 15) == 0) {
+		// interface_click(int interface, int button)
+		_GP(guis)[iparam.IValue].MarkChanged();
+	}
 
 	return RunScriptFunctionIfExists(sci, tsname, 2, params);
 }
@@ -635,8 +631,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		switch (nicl->Cmds[i].Type) {
 		case 0:  // Do nothing
 			break;
-		case 1:
-		{ // Run script
+		case 1: { // Run script
 			TempEip tempip(4001);
 			RuntimeScriptValue rval_null;
 			if ((strstr(_G(evblockbasename), "character") != nullptr) || (strstr(_G(evblockbasename), "inventory") != nullptr)) {
@@ -654,9 +649,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		case 2:  // Add score (first time)
 			if (timesrun[0] > 0)
 				break;
-			timesrun[0]++;
-			// fall through
-
+			timesrun[0] ++;
 		case 3:  // Add score
 			GiveScore(IPARAM1);
 			break;
@@ -677,8 +670,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		case 8:  // Play Flic
 			play_flc_file(IPARAM1, IPARAM2);
 			break;
-		case 9:
-		{ // Run Dialog
+		case 9: { // Run Dialog
 			int roomWas = _GP(play).room_changes;
 			RunDialog(IPARAM1);
 			// if they changed room within the dialog script,
@@ -835,9 +827,6 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		}
 
-		if (_G(abort_engine))
-			return -1;
-
 		// if the room changed within the action, nicl is no longer valid
 		if (room_was != _GP(play).room_changes)
 			return -1;
@@ -871,8 +860,8 @@ void run_unhandled_event(int evnt) {
 		evtype = 4;
 	if ((evtype == 1) & ((evnt == 0) | (evnt == 5) | (evnt == 6)))
 		;  // character stands on hotspot, mouse moves over hotspot, any click
-	else if ((evtype == 2) & (evnt == 4)); // any click on object
-	else if ((evtype == 3) & (evnt == 4)); // any click on character
+	else if ((evtype == 2) & (evnt == 4));  // any click on object
+	else if ((evtype == 3) & (evnt == 4));  // any click on character
 	else if (evtype > 0) {
 		can_run_delayed_command();
 

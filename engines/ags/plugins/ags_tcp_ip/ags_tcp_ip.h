@@ -32,11 +32,11 @@ namespace AGSTcpIp {
 
 class AGSTcpIp : public PluginBase {
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *engine);
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *engine);
 
 public:
-	AGSTcpIp();
+AGSTcpIp();
 };
 
 } // namespace AGSTcpIp

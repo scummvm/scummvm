@@ -22,25 +22,30 @@
 
 #include "ags/engine/ac/dynobj/cc_hotspot.h"
 #include "ags/engine/ac/hotspot.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_hotspot.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+
+
+
+
 
 void Hotspot_SetEnabled(ScriptHotspot *hss, int newval) {
 	if (newval)
@@ -66,11 +71,23 @@ int Hotspot_GetWalkToY(ScriptHotspot *hss) {
 }
 
 ScriptHotspot *GetHotspotAtScreen(int xx, int yy) {
-	return &_G(scrHotspot)[GetHotspotIDAtScreen(xx, yy)];
+	int hsnum = GetHotspotIDAtScreen(xx, yy);
+	ScriptHotspot *ret_hotspot;
+	if (hsnum <= 0)
+		ret_hotspot = &_G(scrHotspot)[0];
+	else
+		ret_hotspot = &_G(scrHotspot)[hsnum];
+	return ret_hotspot;
 }
 
 ScriptHotspot *GetHotspotAtRoom(int x, int y) {
-	return &_G(scrHotspot)[get_hotspot_at(x, y)];
+	int hsnum = get_hotspot_at(x, y);
+	ScriptHotspot *ret_hotspot;
+	if (hsnum <= 0)
+		ret_hotspot = &_G(scrHotspot)[0];
+	else
+		ret_hotspot = &_G(scrHotspot)[hsnum];
+	return ret_hotspot;
 }
 
 void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
@@ -117,7 +134,7 @@ bool Hotspot_SetTextProperty(ScriptHotspot *hss, const char *property, const cha
 
 int get_hotspot_at(int xpp, int ypp) {
 	int onhs = _GP(thisroom).HotspotMask->GetPixel(room_to_mask_coord(xpp), room_to_mask_coord(ypp));
-	if (onhs <= 0 || onhs >= MAX_ROOM_HOTSPOTS) return 0;
+	if (onhs < 0) return 0;
 	if (_G(croom)->hotspot_enabled[onhs] == 0) return 0;
 	return onhs;
 }
@@ -128,8 +145,6 @@ int get_hotspot_at(int xpp, int ypp) {
 //
 //=============================================================================
 
-
-
 RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptHotspot, _GP(ccDynamicHotspot), GetHotspotAtRoom);
 }
@@ -137,11 +152,6 @@ RuntimeScriptValue Sc_GetHotspotAtRoom(const RuntimeScriptValue *params, int32_t
 // ScriptHotspot *(int xx, int yy)
 RuntimeScriptValue Sc_GetHotspotAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_OBJ_PINT2(ScriptHotspot, _GP(ccDynamicHotspot), GetHotspotAtScreen);
-}
-
-RuntimeScriptValue Sc_Hotspot_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaHotspot);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
 // void (ScriptHotspot *hss, char *buffer)
@@ -216,7 +226,6 @@ RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *p
 void RegisterHotspotAPI() {
 	ccAddExternalStaticFunction("Hotspot::GetAtRoomXY^2", Sc_GetHotspotAtRoom);
 	ccAddExternalStaticFunction("Hotspot::GetAtScreenXY^2", Sc_GetHotspotAtScreen);
-	ccAddExternalStaticFunction("Hotspot::GetDrawingSurface", Sc_Hotspot_GetDrawingSurface);
 	ccAddExternalObjectFunction("Hotspot::GetName^1", Sc_Hotspot_GetName);
 	ccAddExternalObjectFunction("Hotspot::GetProperty^1", Sc_Hotspot_GetProperty);
 	ccAddExternalObjectFunction("Hotspot::GetPropertyText^2", Sc_Hotspot_GetPropertyText);

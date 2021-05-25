@@ -46,7 +46,6 @@
 //
 //=============================================================================
 
-#include "ags/lib/std/utility.h"
 #include "ags/lib/std/vector.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -117,7 +116,6 @@ void DirtyRects::Reset() {
 	for (size_t i = 0; i < DirtyRows.size(); ++i)
 		DirtyRows[i].numSpans = 0;
 }
-
 
 void dispose_invalid_regions(bool /* room_only */) {
 	_GP(RoomCamRects).clear();
@@ -230,7 +228,7 @@ void invalidate_rect_on_surf(int x1, int y1, int x2, int y2, DirtyRects &rects) 
 			dirtyRow[a].numSpans++;
 		} else {
 			// didn't fit in an existing span, and there are none spare
-			int nearestDist = 99999, nearestWas = -1, extendLeft = 0;
+			int nearestDist = 99999, nearestWas = -1, extendLeft = false;
 			int tleft, tright;
 			// find the nearest span, and enlarge that to include this rect
 			for (s = 0; s < dirtyRow[a].numSpans; s++) {
@@ -313,7 +311,7 @@ void update_invalid_region(Bitmap *ds, Bitmap *src, const DirtyRects &rects, boo
 		const int surf_height = rects.SurfaceSize.Height;
 		// TODO: is this IsMemoryBitmap check is still relevant?
 		// If bitmaps properties match and no transform required other than linear offset
-		if ((src->GetColorDepth() == ds->GetColorDepth()) && (ds->IsMemoryBitmap())) {
+		if (src->GetColorDepth() == ds->GetColorDepth()) {
 			const int bypp = src->GetBPP();
 			// do the fast memory copy
 			for (int i = 0; i < surf_height; i++) {
@@ -382,7 +380,7 @@ void update_black_invreg_and_reset(Bitmap *ds) {
 }
 
 void update_room_invreg_and_reset(int view_index, Bitmap *ds, Bitmap *src, bool no_transform) {
-	if (view_index < 0 || _GP(RoomCamRects).empty())
+	if (view_index < 0 || _GP(RoomCamRects).size() == 0)
 		return;
 
 	update_invalid_region(ds, src, _GP(RoomCamRects)[view_index], no_transform);

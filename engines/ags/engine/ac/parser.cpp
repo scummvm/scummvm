@@ -20,19 +20,21 @@
  *
  */
 
+//include <cctype> //isalnum()
+//include <cstdio>
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/parser.h"
 #include "ags/engine/ac/string.h"
-#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/ac/words_dictionary.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -304,8 +306,6 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 //
 //=============================================================================
 
-
-
 // int (const char *wordToFind)
 RuntimeScriptValue Sc_Parser_FindWordID(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Parser_FindWordID, const char);
@@ -327,7 +327,6 @@ RuntimeScriptValue Sc_Said(const RuntimeScriptValue *params, int32_t param_count
 }
 
 
-
 void RegisterParserAPI() {
 	ccAddExternalStaticFunction("Parser::FindWordID^1", Sc_Parser_FindWordID);
 	ccAddExternalStaticFunction("Parser::ParseText^1", Sc_ParseText);
@@ -342,4 +341,4 @@ void RegisterParserAPI() {
 	ccAddExternalFunctionForPlugin("Parser::Said^1", (void *)Said);
 }
 
-} // namespace ASG3
+} // namespace AGS3

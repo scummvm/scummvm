@@ -23,9 +23,9 @@
 #ifndef AGS_SHARED_CORE_DEFVERSION_H
 #define AGS_SHARED_CORE_DEFVERSION_H
 
-#define ACI_VERSION_STR      "3.5.1.0"
+#define ACI_VERSION_STR      "3.6.0.2"
 #if defined (RC_INVOKED) // for MSVC resource compiler
-#define ACI_VERSION_MSRC_DEF  3,5,1,0
+#define ACI_VERSION_MSRC_DEF  3,6,0,2
 #endif
 
 #ifdef NO_MP3_PLAYER
@@ -34,6 +34,6 @@
 #define SPECIAL_VERSION ""
 #endif
 
-#define ACI_COPYRIGHT_YEARS "2011-2020"
+#define ACI_COPYRIGHT_YEARS "2011-2021"
 
 #endif

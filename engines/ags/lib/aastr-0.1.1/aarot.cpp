@@ -44,7 +44,7 @@ namespace AGS3 {
  * Engine of anti-aliased rotation.
  */
 static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
-		fixed _scalex, fixed _scaley, int _masked) {
+                              fixed _scalex, fixed _scaley, int _masked) {
 	int sw, sh, dw, dh;
 	fixed fx0, fy0, fux, fuy, fvx, fvy;
 	fixed fdw, fdh, fsinangle, fcosangle;
@@ -64,8 +64,8 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 	int sxinc, sxdd, sxi1, sxi2;
 	int syinc, sydd, syi1, syi2;
 	unsigned long num;
-	void (*add) (BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
-	void (*put) (byte *_addr, int _x);
+	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
+	void (*put)(byte * _addr, int _x);
 
 	if (_dst->clip) {
 		xbeg = _dst->cl;
@@ -284,8 +284,8 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 
 	/* Completely clipped by y?  */
 	if ((point[ledge[0]].dy >= yend)
-		|| ((ledge[2] == -1) && (point[ledge[1]].dy < ybeg))
-		|| (point[ledge[2]].dy < ybeg))
+	        || ((ledge[2] == -1) && (point[ledge[1]].dy < ybeg))
+	        || (point[ledge[2]].dy < ybeg))
 		return;
 
 	/* Color manipulation routines.  */
@@ -367,34 +367,34 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 
 	ldx = lpoint1->dx;
 	aa_PREPARE(ldxinc, ldxdd, ldxi1, ldxi2,
-		lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
+	           lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
 
 	lsx = lpoint1->sx;
 	lsy = lpoint1->sy;
 	if (lpoint1->sx != lpoint2->sx) {
 		lsc = &lsx;
 		aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-			lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
+		           lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
 	} else {
 		lsc = &lsy;
 		aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-			lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
+		           lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
 	}
 
 	rdx = rpoint1->dx;
 	aa_PREPARE(rdxinc, rdxdd, rdxi1, rdxi2,
-		rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
+	           rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
 
 	rsx = rpoint1->sx;
 	rsy = rpoint1->sy;
 	if (rpoint1->sx != rpoint2->sx) {
 		rsc = &rsx;
 		aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-			rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
+		           rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
 	} else {
 		rsc = &rsy;
 		aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-			rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
+		           rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
 	}
 
 	/* Skip region clipped on top.  */
@@ -410,14 +410,14 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 			if (lpoint1->sx != lpoint2->sx) {
 				lsc = &lsx;
 				aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-					lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
+				           lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
 			} else {
 				lsc = &lsy;
 				aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-					lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
+				           lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
 			}
 			aa_PREPARE(ldxinc, ldxdd, ldxi1, ldxi2,
-				lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
+			           lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
 		}
 		aa_ADVANCE(*lsc, lscinc, lscdd, lsci1, lsci2);
 		aa_ADVANCE(ldx, ldxinc, ldxdd, ldxi1, ldxi2);
@@ -431,14 +431,14 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 			if (rpoint1->sx != rpoint2->sx) {
 				rsc = &rsx;
 				aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-					rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
+				           rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
 			} else {
 				rsc = &rsy;
 				aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-					rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
+				           rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
 			}
 			aa_PREPARE(rdxinc, rdxdd, rdxi1, rdxi2,
-				rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
+			           rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
 		}
 		aa_ADVANCE(*rsc, rscinc, rscdd, rsci1, rsci2);
 		aa_ADVANCE(rdx, rdxinc, rdxdd, rdxi1, rdxi2);
@@ -454,9 +454,9 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 			int curxend;
 
 			aa_PREPARE(sxinc, sxdd, sxi1, sxi2,
-				rsx - lsx, rdx - ldx);
+			           rsx - lsx, rdx - ldx);
 			aa_PREPARE(syinc, sydd, syi1, syi2,
-				rsy - lsy, rdx - ldx);
+			           rsy - lsy, rdx - ldx);
 
 			for (sx = lsx, sy = lsy, dx = ldx; dx < xbeg; dx++) {
 				aa_ADVANCE(sx, sxinc, sxdd, sxi1, sxi2);
@@ -465,8 +465,8 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 
 			curxend = (rdx < xend) ? (rdx + 1) : xend;
 			for (; dx < curxend; dx++) {
-				(*add) (_src, sx, sx + dsx, sy, sy + dsy, num);
-				(*put) (daddr, dx);
+				(*add)(_src, sx, sx + dsx, sy, sy + dsy, num);
+				(*put)(daddr, dx);
 
 				aa_ADVANCE(sx, sxinc, sxdd, sxi1, sxi2);
 				aa_ADVANCE(sy, syinc, sydd, syi1, syi2);
@@ -484,14 +484,14 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 			if (lpoint1->sx != lpoint2->sx) {
 				lsc = &lsx;
 				aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-					lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
+				           lpoint2->sx - lpoint1->sx, lpoint2->dy - lpoint1->dy);
 			} else {
 				lsc = &lsy;
 				aa_PREPARE(lscinc, lscdd, lsci1, lsci2,
-					lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
+				           lpoint2->sy - lpoint1->sy, lpoint2->dy - lpoint1->dy);
 			}
 			aa_PREPARE(ldxinc, ldxdd, ldxi1, ldxi2,
-				lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
+			           lpoint2->dx - lpoint1->dx, lpoint2->dy - lpoint1->dy);
 		}
 		aa_ADVANCE(*lsc, lscinc, lscdd, lsci1, lsci2);
 		aa_ADVANCE(ldx, ldxinc, ldxdd, ldxi1, ldxi2);
@@ -505,14 +505,14 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
 			if (rpoint1->sx != rpoint2->sx) {
 				rsc = &rsx;
 				aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-					rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
+				           rpoint2->sx - rpoint1->sx, rpoint2->dy - rpoint1->dy);
 			} else {
 				rsc = &rsy;
 				aa_PREPARE(rscinc, rscdd, rsci1, rsci2,
-					rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
+				           rpoint2->sy - rpoint1->sy, rpoint2->dy - rpoint1->dy);
 			}
 			aa_PREPARE(rdxinc, rdxdd, rdxi1, rdxi2,
-				rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
+			           rpoint2->dx - rpoint1->dx, rpoint2->dy - rpoint1->dy);
 		}
 		aa_ADVANCE(*rsc, rscinc, rscdd, rsci1, rsci2);
 		aa_ADVANCE(rdx, rdxinc, rdxdd, rdxi1, rdxi2);
@@ -525,7 +525,7 @@ static void _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed 
  * Anti-aliased bitmap rotation with scaling.
  */
 void aa_rotate_scaled_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
-		fixed _scalex, fixed _scaley) {
+                             fixed _scalex, fixed _scaley) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, _scalex, _scaley, 0);
 }
 
@@ -533,7 +533,7 @@ void aa_rotate_scaled_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _
  * Anti-aliased bitmap rotation with scaling (masked).
  */
 void aa_rotate_scaled_sprite(BITMAP *_dst, BITMAP *_src, int _x, int _y, fixed _angle,
-		fixed _scalex, fixed _scaley) {
+                             fixed _scalex, fixed _scaley) {
 	_aa_rotate_bitmap(_src, _dst, _x, _y, _angle, _scalex, _scaley, 1);
 }
 

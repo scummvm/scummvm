@@ -31,6 +31,7 @@
 //
 //=============================================================================
 
+#include "ags/lib/std/utility.h"
 #include "ags/engine/script/cc_instance.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/file.h"
@@ -48,6 +49,7 @@ class RoomStruct;
 using namespace AGS::Shared;
 
 extern void quit(const char *);
+// in script/script_common
 
 std::pair<String, String> cc_error_at_line(const char *error_msg) {
 	ccInstance *sci = ccInstance::GetCurrentInstance();

@@ -162,7 +162,7 @@ void AGSCreditz2::ResetSequence(ScriptMethodParams &params) {
 
 void AGSCreditz2::SetStaticCredit(ScriptMethodParams &params) {
 	PARAMS8(int, sequence, int, id, string, credit, int, xPos, int, yPos,
-		int, font, int, color, int, genOutline);
+	        int, font, int, color, int, genOutline);
 
 	assert(sequence >= 0 && sequence <= 10);
 	if (id >= (int)_state->_stCredits[sequence].size())
@@ -180,7 +180,7 @@ void AGSCreditz2::SetStaticCredit(ScriptMethodParams &params) {
 
 void AGSCreditz2::SetStaticCreditTitle(ScriptMethodParams &params) {
 	PARAMS8(int, sequence, int, id, string, title, int, xPos, int, yPos,
-		int, font, int, color, int, genOutline);
+	        int, font, int, color, int, genOutline);
 
 	assert(sequence >= 0 && sequence < 10);
 	if (id >= (int)_state->_stCredits[sequence].size())
@@ -240,7 +240,7 @@ void AGSCreditz2::IsStaticSequenceFinished(ScriptMethodParams &params) {
 
 void AGSCreditz2::ShowStaticCredit(ScriptMethodParams &params) {
 	PARAMS6(int, sequence, int, id, int, time, int, style,
-		int, styleSettings1, int, styleSettings2);
+	        int, styleSettings1, int, styleSettings2);
 
 	_state->_creditSequence = sequence;
 	_state->_creditsRunning = true;

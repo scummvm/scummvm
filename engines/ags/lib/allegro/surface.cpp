@@ -31,8 +31,8 @@
 namespace AGS3 {
 
 BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
-		w(owner->w), h(owner->h), pitch(owner->pitch), format(owner->format),
-		clip(true), ct(0), cl(0), cr(owner->w), cb(owner->h) {
+	w(owner->w), h(owner->h), pitch(owner->pitch), format(owner->format),
+	clip(true), ct(0), cl(0), cr(owner->w), cb(owner->h) {
 	line.resize(h);
 	for (uint y = 0; y < h; ++y)
 		line[y] = (byte *)_owner->getBasePtr(0, y);
@@ -59,7 +59,7 @@ void BITMAP::makeOpaque() {
 
 	unsigned char *pixels = getPixels();
 	for (int y = 0 ; y < h ; ++y, pixels += pitch) {
-		uint32 *data = (uint32*)pixels;
+		uint32 *data = (uint32 *)pixels;
 		for (int x = 0 ; x < w ; ++x, ++data)
 			(*data) |= alphaMask;
 	}
@@ -109,11 +109,11 @@ const int SCALE_THRESHOLD = 0x100;
 #define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
-		int dstX, int dstY, bool horizFlip, bool vertFlip,
-		bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
-		int tintBlue) {
+                  int dstX, int dstY, bool horizFlip, bool vertFlip,
+                  bool skipTrans, int srcAlpha, int tintRed, int tintGreen,
+                  int tintBlue) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
-		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
+	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
 	// Allegro disables draw when the clipping rect has negative width/height.
 	// Common::Rect instead asserts, which we don't want.
@@ -123,7 +123,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	// Figure out the dest area that will be updated
 	Common::Rect dstRect(dstX, dstY, dstX + srcRect.width(), dstY + srcRect.height());
 	Common::Rect destRect = dstRect.findIntersectingRect(
-		Common::Rect(cl, ct, cr, cb));
+	                            Common::Rect(cl, ct, cr, cb));
 	if (destRect.isEmpty())
 		// Area is entirely outside the clipping area, so nothing to draw
 		return;
@@ -166,9 +166,9 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 			continue;
 		byte *destP = (byte *)destArea.getBasePtr(0, destY);
 		const byte *srcP = (const byte *)src.getBasePtr(
-			horizFlip ? srcRect.right - 1 : srcRect.left,
-			vertFlip ? srcRect.bottom - 1 - yCtr :
-			srcRect.top + yCtr);
+		                       horizFlip ? srcRect.right - 1 : srcRect.left,
+		                       vertFlip ? srcRect.bottom - 1 - yCtr :
+		                       srcRect.top + yCtr);
 
 		// Loop through the pixels of the row
 		for (int destX = xStart, xCtr = 0, xCtrBpp = 0; xCtr < dstRect.width(); ++destX, ++xCtr, xCtrBpp += src.format.bytesPerPixel) {
@@ -198,7 +198,7 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 			// We need the rgb values to do blending and/or convert between formats
 			if (src.format.bytesPerPixel == 1) {
-				const RGB& rgb = palette[srcCol];
+				const RGB &rgb = palette[srcCol];
 				aSrc = 0xff;
 				rSrc = rgb.r;
 				gSrc = rgb.g;
@@ -239,9 +239,9 @@ void BITMAP::draw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 }
 
 void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
-		const Common::Rect &dstRect, bool skipTrans, int srcAlpha) {
+                         const Common::Rect &dstRect, bool skipTrans, int srcAlpha) {
 	assert(format.bytesPerPixel == 2 || format.bytesPerPixel == 4 ||
-		(format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
+	       (format.bytesPerPixel == 1 && srcBitmap->format.bytesPerPixel == 1));
 
 	// Allegro disables draw when the clipping rect has negative width/height.
 	// Common::Rect instead asserts, which we don't want.
@@ -250,7 +250,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 	// Figure out the dest area that will be updated
 	Common::Rect destRect = dstRect.findIntersectingRect(
-		Common::Rect(cl, ct, cr, cb));
+	                            Common::Rect(cl, ct, cr, cb));
 	if (destRect.isEmpty())
 		// Area is entirely outside the clipping area, so nothing to draw
 		return;
@@ -289,16 +289,16 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 	int yStart = (dstRect.top < destRect.top) ? dstRect.top - destRect.top : 0;
 
 	for (int destY = yStart, yCtr = 0, scaleYCtr = 0; yCtr < dstRect.height();
-			++destY, ++yCtr, scaleYCtr += scaleY) {
+	        ++destY, ++yCtr, scaleYCtr += scaleY) {
 		if (destY < 0 || destY >= destArea.h)
 			continue;
 		byte *destP = (byte *)destArea.getBasePtr(0, destY);
 		const byte *srcP = (const byte *)src.getBasePtr(
-			srcRect.left, srcRect.top + scaleYCtr / SCALE_THRESHOLD);
+		                       srcRect.left, srcRect.top + scaleYCtr / SCALE_THRESHOLD);
 
 		// Loop through the pixels of the row
 		for (int destX = xStart, xCtr = 0, scaleXCtr = 0; xCtr < dstRect.width();
-				++destX, ++xCtr, scaleXCtr += scaleX) {
+		        ++destX, ++xCtr, scaleXCtr += scaleX) {
 			if (destX < 0 || destX >= destArea.w)
 				continue;
 
@@ -325,7 +325,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 
 			// We need the rgb values to do blending and/or convert between formats
 			if (src.format.bytesPerPixel == 1) {
-				const RGB& rgb = palette[srcCol];
+				const RGB &rgb = palette[srcCol];
 				aSrc = 0xff;
 				rSrc = rgb.r;
 				gSrc = rgb.g;
@@ -355,7 +355,7 @@ void BITMAP::stretchDraw(const BITMAP *srcBitmap, const Common::Rect &srcRect,
 }
 
 void BITMAP::blendPixel(uint8 aSrc, uint8 rSrc, uint8 gSrc, uint8 bSrc, uint8 &aDest, uint8 &rDest, uint8 &gDest, uint8 &bDest, uint32 alpha) const {
-	switch(_G(_blender_mode)) {
+	switch (_G(_blender_mode)) {
 	case kSourceAlphaBlender:
 		blendSourceAlpha(aSrc, rSrc, gSrc, bSrc, aDest, rDest, gDest, bDest, alpha);
 		break;

@@ -63,7 +63,7 @@ Common::FSNode getFSNode(const char *path) {
 		filePath = filePath.substr(strlen(AGS::Shared::SAVE_FOLDER_PREFIX));
 		node = Common::FSNode(ConfMan.get("savepath"));
 	} else {
-		node =  Common::FSNode(filePath);
+		node = Common::FSNode(filePath);
 		if (node.isReadable())
 			return node;
 		node = Common::FSNode(ConfMan.get("path"));
@@ -103,7 +103,7 @@ Common::FSNode getFSNode(const char *path) {
 
 int  ags_file_exists(const char *path) {
 	Common::FSNode node = getFSNode(path);
-	return node.exists() && !node.isDirectory()  ? 1 : 0;
+	return node.exists() && !node.isDirectory() ? 1 : 0;
 }
 
 int ags_directory_exists(const char *path) {
@@ -120,7 +120,7 @@ file_off_t ags_file_size(const char *path) {
 	Common::FSNode node = getFSNode(path);
 	Common::File f;
 
-	return f.open(node) ? f.size() : (file_off_t )-1;
+	return f.open(node) ? f.size() : (file_off_t)-1;
 }
 
 } // namespace AGS3

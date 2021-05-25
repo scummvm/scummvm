@@ -20,17 +20,16 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN_GAME_RUN_H
-#define AGS_ENGINE_MAIN_GAME_RUN_H
+#ifndef AGS_ENGINE_MAIN__GAMERUN_H
+#define AGS_ENGINE_MAIN__GAMERUN_H
 
 namespace AGS3 {
 
 namespace AGS {
 namespace Engine {
 class IDriverDependantBitmap;
-} // namespace Engine
-} // namespace AGS
-
+}
+}
 using namespace AGS::Engine; // FIXME later
 
 // Loops game frames until certain event takes place (for blocking actions)
@@ -50,7 +49,7 @@ void UpdateGameOnce(bool checkControls = false, IDriverDependantBitmap *extraBit
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
 float get_current_fps();
-// Runs service key controls, returns false if key input was claimed by the engine,
+// Runs service key controls, returns false if no key was pressed or key input was claimed by the engine,
 // otherwise returns true and provides a keycode.
 bool run_service_key_controls(int &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,

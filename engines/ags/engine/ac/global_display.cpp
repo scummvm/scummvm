@@ -20,13 +20,15 @@
  *
  */
 
+//include <cstdio>
+//include <stdarg.h>
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_display.h"
 #include "ags/engine/ac/global_screen.h"
@@ -34,11 +36,10 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/speech.h"
 #include "ags/engine/ac/string.h"
-#include "ags/engine/ac/topbarsettings.h"
+#include "ags/engine/ac/top_bar_settings.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/engine/main/game_run.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -108,8 +109,8 @@ void DisplayMessageAtY(int msnum, int ypos) {
 	if (_G(display_message_aschar) > 0) {
 		_G(display_message_aschar) = 0;
 		quit("!DisplayMessage: data column specified a character for local\n"
-			"message; use the message editor to select the character for room\n"
-			"messages.\n");
+		     "message; use the message editor to select the character for room\n"
+		     "messages.\n");
 	}
 
 	int repeatloop = 1;
@@ -175,7 +176,7 @@ void DisplayAtY(int ypos, const char *texx) {
 		}
 
 		_display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4,
-			get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+		            get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
 	}
 }
 

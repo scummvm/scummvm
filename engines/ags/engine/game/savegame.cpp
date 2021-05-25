@@ -23,60 +23,61 @@
 #include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
-#include "ags/engine/ac/gamesetup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
+#include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/region.h"
-#include "ags/engine/ac/richgamemedia.h"
+#include "ags/engine/ac/rich_game_media.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomstatus.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/engine/ac/room_status.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/device/mousew32.h"
+#include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/game/savegame.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/engine/game/savegame_internal.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/shared/util/math.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
 using namespace Shared;
 using namespace Engine;
 
-// function is currently implemented in game.cpp
+// function is currently implemented in savegame_v321.cpp
 HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
 
 namespace AGS {
 namespace Engine {
 
-const char *SavegameSource::LegacySignature = "Adventure Game Studio saved game";
-const char *SavegameSource::Signature = "Adventure Game Studio saved game v2";
+const String SavegameSource::LegacySignature = "Adventure Game Studio saved game";
+const String SavegameSource::Signature = "Adventure Game Studio saved game v2";
 
 SavegameSource::SavegameSource()
 	: Version(kSvgVersion_Undefined) {
@@ -84,7 +85,8 @@ SavegameSource::SavegameSource()
 
 SavegameDescription::SavegameDescription()
 	: MainDataVersion(kGameVersion_Undefined)
-	, ColorDepth(0) {
+	, ColorDepth(0)
+	, LegacyID(0) {
 }
 
 PreservedParams::PreservedParams()
@@ -122,7 +124,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_IncompatibleEngine:
 		return "Save was written by incompatible engine, or file is corrupted.";
 	case kSvgErr_GameGuidMismatch:
-		return "Game GUID does not match, saved by a different game.";
+		return "Game GUID does not match, saved by a different _GP(game).";
 	case kSvgErr_ComponentListOpeningTagFormat:
 		return "Failed to parse opening tag of the components list.";
 	case kSvgErr_ComponentListClosingTagMissing:
@@ -144,7 +146,7 @@ String GetSavegameErrorText(SavegameErrorType err) {
 	case kSvgErr_UnsupportedComponentVersion:
 		return "Component data version not supported.";
 	case kSvgErr_GameContentAssertion:
-		return "Saved content does not match current game.";
+		return "Saved content does not match current _GP(game).";
 	case kSvgErr_InconsistentData:
 		return "Inconsistent save data, or file is corrupted.";
 	case kSvgErr_InconsistentPlugin:
@@ -174,9 +176,11 @@ HSaveError ReadDescription(Stream *in, SavegameVersion &svg_ver, SavegameDescrip
 	svg_ver = (SavegameVersion)in->ReadInt32();
 	if (svg_ver < kSvgVersion_LowestSupported || svg_ver > kSvgVersion_Current)
 		return new SavegameError(kSvgErr_FormatVersionNotSupported,
-			String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
+		                         String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
 
 	// Enviroment information
+	if (svg_ver >= kSvgVersion_351)
+		in->ReadInt32(); // enviroment info size
 	if (elems & kSvgDesc_EnvInfo) {
 		desc.EngineName = StrUtil::ReadString(in);
 		desc.EngineVersion.SetFromString(StrUtil::ReadString(in));
@@ -186,15 +190,19 @@ HSaveError ReadDescription(Stream *in, SavegameVersion &svg_ver, SavegameDescrip
 		if (svg_ver >= kSvgVersion_Cmp_64bit)
 			desc.MainDataVersion = (GameDataVersion)in->ReadInt32();
 		desc.ColorDepth = in->ReadInt32();
+		if (svg_ver >= kSvgVersion_351)
+			desc.LegacyID = in->ReadInt32();
 	} else {
-		StrUtil::SkipString(in);
-		StrUtil::SkipString(in);
-		StrUtil::SkipString(in);
-		StrUtil::SkipString(in);
-		StrUtil::SkipString(in);
+		StrUtil::SkipString(in); // engine name
+		StrUtil::SkipString(in); // engine version
+		StrUtil::SkipString(in); // game guid
+		StrUtil::SkipString(in); // game title
+		StrUtil::SkipString(in); // main data filename
 		if (svg_ver >= kSvgVersion_Cmp_64bit)
 			in->ReadInt32(); // game data version
 		in->ReadInt32(); // color depth
+		if (svg_ver >= kSvgVersion_351)
+			in->ReadInt32(); // game legacy id
 	}
 	// User description
 	if (elems & kSvgDesc_UserText)
@@ -219,9 +227,9 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 
 	// Check saved game format version
 	if (svg_ver < kSvgVersion_LowestSupported ||
-		svg_ver > kSvgVersion_Current) {
+	        svg_ver > kSvgVersion_Current) {
 		return new SavegameError(kSvgErr_FormatVersionNotSupported,
-			String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
+		                         String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
 	}
 
 	if (elems & kSvgDesc_UserImage)
@@ -232,10 +240,10 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 	String version_str = String::FromStream(in);
 	Version eng_version(version_str);
 	if (eng_version > _G(EngineVersion) ||
-		eng_version < _G(SavedgameLowestBackwardCompatVersion)) {
+	        eng_version < _G(SavedgameLowestBackwardCompatVersion)) {
 		// Engine version is either non-forward or non-backward compatible
 		return new SavegameError(kSvgErr_IncompatibleEngine,
-			String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), _G(SavedgameLowestBackwardCompatVersion).LongString.GetCStr(), _G(EngineVersion).LongString.GetCStr()));
+		                         String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), _G(SavedgameLowestBackwardCompatVersion).LongString.GetCStr(), _G(EngineVersion).LongString.GetCStr()));
 	}
 	if (elems & kSvgDesc_EnvInfo) {
 		desc.MainDataFilename.Read(in);
@@ -262,12 +270,12 @@ HSaveError OpenSavegameBase(const String &filename, SavegameSource *src, Savegam
 	// Check saved game signature
 	bool is_new_save = false;
 	size_t pre_sig_pos = in->GetPosition();
-	String svg_sig = String::FromStreamCount(in.get(), strlen(SavegameSource::Signature));
+	String svg_sig = String::FromStreamCount(in.get(), SavegameSource::Signature.GetLength());
 	if (svg_sig.Compare(SavegameSource::Signature) == 0) {
 		is_new_save = true;
 	} else {
 		in->Seek(pre_sig_pos, kSeekBegin);
-		svg_sig = String::FromStreamCount(in.get(), strlen(SavegameSource::LegacySignature));
+		svg_sig = String::FromStreamCount(in.get(), SavegameSource::LegacySignature.GetLength());
 		if (svg_sig.Compare(SavegameSource::LegacySignature) != 0)
 			return new SavegameError(kSvgErr_SignatureFailed);
 	}
@@ -292,6 +300,7 @@ HSaveError OpenSavegameBase(const String &filename, SavegameSource *src, Savegam
 			desc->EngineName = temp_desc.EngineName;
 			desc->EngineVersion = temp_desc.EngineVersion;
 			desc->GameGuid = temp_desc.GameGuid;
+			desc->LegacyID = temp_desc.LegacyID;
 			desc->GameTitle = temp_desc.GameTitle;
 			desc->MainDataFilename = temp_desc.MainDataFilename;
 			desc->MainDataVersion = temp_desc.MainDataVersion;
@@ -327,7 +336,7 @@ void DoBeforeRestore(PreservedParams &pp) {
 
 	// cleanup dynamic sprites
 	// NOTE: sprite 0 is a special constant sprite that cannot be dynamic
-	for (int i = 1; i < _GP(spriteset).GetSpriteSlotCount(); ++i) {
+	for (int i = 1; i < (int)_GP(spriteset).GetSpriteSlotCount(); ++i) {
 		if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC) {
 			// do this early, so that it changing _GP(guibuts) doesn't
 			// affect the restored data
@@ -453,19 +462,19 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	if (create_global_script()) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-			String::FromFormat("Unable to recreate global script: %s", _G(ccErrorString).GetCStr()));
+		                         String::FromFormat("Unable to recreate global script: %s", _G(ccErrorString).GetCStr()));
 	}
 
 	// read the global data into the newly created script
 	if (r_data.GlobalScript.Data.get())
 		memcpy(_G(gameinst)->globaldata, r_data.GlobalScript.Data.get(),
-			Math::Min((size_t)_G(gameinst)->globaldatasize, r_data.GlobalScript.Len));
+		       Math::Min((size_t)_G(gameinst)->globaldatasize, r_data.GlobalScript.Len));
 
 	// restore the script module data
 	for (int i = 0; i < _G(numScriptModules); ++i) {
 		if (r_data.ScriptModules[i].Data.get())
 			memcpy(_GP(moduleInst)[i]->globaldata, r_data.ScriptModules[i].Data.get(),
-				Math::Min((size_t)_GP(moduleInst)[i]->globaldatasize, r_data.ScriptModules[i].Len));
+			       Math::Min((size_t)_GP(moduleInst)[i]->globaldatasize, r_data.ScriptModules[i].Len));
 	}
 
 	setup_player_character(_GP(game).playercharacter);
@@ -501,7 +510,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// ensure that the current cursor is locked
 	_GP(spriteset).Precache(_GP(game).mcurs[r_data.CursorID].pic);
 
-	::AGS::g_vm->set_window_title(_GP(play).game_name);
+	sys_window_set_title(_GP(play).game_name);
 
 	update_polled_stuff_if_runtime();
 
@@ -512,7 +521,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 			}
 		}
 
-		_G(in_new_room) = 3; // don't run "enters screen" events
+		_G(in_new_room) = 3;  // don't run "enters screen" events
 		// now that room has loaded, copy saved light levels in
 		for (size_t i = 0; i < MAX_ROOM_REGIONS; ++i) {
 			_GP(thisroom).Regions[i].Light = r_data.RoomLightLevels[i];
@@ -552,10 +561,10 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 				continue;
 			if ((size_t)chan_info.ClipID >= _GP(game).audioClips.size()) {
 				return new SavegameError(kSvgErr_GameObjectInitFailed,
-					String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, _GP(game).audioClips.size()));
+				                         String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, _GP(game).audioClips.size()));
 			}
 			play_audio_clip_on_channel(i, &_GP(game).audioClips[chan_info.ClipID],
-				chan_info.Priority, chan_info.Repeat, chan_info.Pos);
+			                           chan_info.Priority, chan_info.Repeat, chan_info.Pos);
 
 			auto *ch = lock.GetChannel(i);
 			if (ch != nullptr) {
@@ -599,7 +608,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	recreate_overlay_ddbs();
 
-	_G(guis_need_update) = 1;
+	GUI::MarkAllGUIForUpdate();
 
 	RestoreViewportsAndCameras(r_data);
 
@@ -625,7 +634,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		AudioChannelsLock lock;
 
 		if ((_G(crossFading) > 0 && !lock.GetChannelIfPlaying(_G(crossFading))) ||
-			(_G(crossFading) <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
+		        (_G(crossFading) <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
 			_G(current_music_type) = 0; // playback failed, reset flag
 		}
 	}
@@ -635,7 +644,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	return HSaveError::None();
 }
 
-HSaveError RestoreGameState(PStream in, SavegameVersion svg_version) {
+HSaveError RestoreGameState(Stream *in, SavegameVersion svg_version) {
 	PreservedParams pp;
 	RestoredData r_data;
 	DoBeforeRestore(pp);
@@ -643,7 +652,7 @@ HSaveError RestoreGameState(PStream in, SavegameVersion svg_version) {
 	if (svg_version >= kSvgVersion_Components)
 		err = SavegameComponents::ReadAll(in, svg_version, pp, r_data);
 	else
-		err = restore_game_data(in.get(), svg_version, pp, r_data);
+		err = restore_game_data(in, svg_version, pp, r_data);
 	if (!err)
 		return err;
 	return DoAfterRestore(pp, r_data);
@@ -661,6 +670,8 @@ void WriteSaveImage(Stream *out, const Bitmap *screenshot) {
 void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_image) {
 	// Data format version
 	out->WriteInt32(kSvgVersion_Current);
+	soff_t env_pos = out->GetPosition();
+	out->WriteInt32(0);
 	// Enviroment information
 	StrUtil::WriteString("Adventure Game Studio run-time engine", out);
 	StrUtil::WriteString(_G(EngineVersion).LongString, out);
@@ -669,15 +680,20 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	StrUtil::WriteString(_GP(ResPaths).GamePak.Name, out);
 	out->WriteInt32(_G(loaded_game_file_version));
 	out->WriteInt32(_GP(game).GetColorDepth());
+	out->WriteInt32(_GP(game).uniqueid);
+	soff_t env_end_pos = out->GetPosition();
+	out->Seek(env_pos, kSeekBegin);
+	out->WriteInt32(env_end_pos - env_pos);
+	out->Seek(env_end_pos, kSeekBegin);
 	// User description
 	StrUtil::WriteString(user_text, out);
 	WriteSaveImage(out, user_image);
 }
 
-PStream StartSavegame(const String &filename, const String &user_text, const Bitmap *user_image) {
+Stream *StartSavegame(const String &filename, const String &user_text, const Bitmap *user_image) {
 	Stream *out = Shared::File::CreateFile(filename);
 	if (!out)
-		return PStream();
+		return nullptr;
 
 	// Initialize and write Vista header
 	RICH_GAME_MEDIA_HEADER vistaHeader;
@@ -690,12 +706,7 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	vistaHeader.dwThumbnailSize = 0;
 	convert_guid_from_text_to_binary(_GP(game).guid, &vistaHeader.guidGameId[0]);
 
-#if 1
 	vistaHeader.setSaveName(user_text);
-#else
-	uconvert(_GP(game).gamename, U_ASCII, (char *)&vistaHeader.szGameName[0], U_UNICODE, RM_MAXLENGTH);
-	uconvert(user_text, U_ASCII, (char *)&vistaHeader.szSaveName[0], U_UNICODE, RM_MAXLENGTH);
-#endif
 
 	vistaHeader.szLevelName[0] = 0;
 	vistaHeader.szComments[0] = 0;
@@ -703,14 +714,14 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	vistaHeader.WriteToFile(out);
 
 	// Savegame signature
-	out->Write(SavegameSource::Signature, strlen(SavegameSource::Signature));
+	out->Write(SavegameSource::Signature.GetCStr(), SavegameSource::Signature.GetLength());
 
 	// CHECKME: what is this plugin hook suppose to mean, and if it is called here correctly
 	pl_run_plugin_hooks(AGSE_PRESAVEGAME, 0);
 
 	// Write descrition block
 	WriteDescription(out, user_text, user_image);
-	return PStream(out);
+	return out;
 }
 
 void DoBeforeSave() {
@@ -730,7 +741,7 @@ void DoBeforeSave() {
 	}
 }
 
-void SaveGameState(PStream out) {
+void SaveGameState(Stream *out) {
 	DoBeforeSave();
 	SavegameComponents::WriteAllCommon(out);
 }

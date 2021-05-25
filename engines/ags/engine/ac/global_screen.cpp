@@ -21,25 +21,33 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_screen.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/screen.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
+
+
+
+
+
+
+
+
+
 
 void FlipScreen(int amount) {
 	if ((amount < 0) | (amount > 3)) quit("!FlipScreen: invalid argument (0-3)");
@@ -158,7 +166,7 @@ void SetNextScreenTransition(int newtrans) {
 
 void SetFadeColor(int red, int green, int blue) {
 	if ((red < 0) || (red > 255) || (green < 0) || (green > 255) ||
-		(blue < 0) || (blue > 255))
+	        (blue < 0) || (blue > 255))
 		quit("!SetFadeColor: Red, Green and Blue must be 0-255");
 
 	_GP(play).fade_to_red = red;

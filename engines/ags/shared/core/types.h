@@ -63,7 +63,7 @@ typedef int16 int16_t;
 typedef int32 int32_t;
 typedef int64 int64_t;
 
-typedef int64 soff_t;		// Stream offset type
+typedef int64 soff_t;       // Stream offset type
 typedef int64 intptr_t;
 
 // fixed point type
@@ -72,6 +72,7 @@ typedef int64 intptr_t;
 
 #undef INT16_MIN
 #undef INT16_MAX
+#undef UINT16_MAX
 #undef INT32_MIN
 #undef INT32_MAX
 #undef INT_MIN
@@ -80,6 +81,7 @@ typedef int64 intptr_t;
 #undef SIZE_MAX
 #define INT16_MIN     -32768
 #define INT16_MAX     0x7fff
+#define UINT16_MAX    0xffff
 #define INT32_MIN     (-2147483647 - 1)
 #define INT32_MAX       2147483647
 #define INT_MIN     (-2147483647 - 1)
@@ -108,11 +110,19 @@ union NumberPtr {
 	void *_ptr;
 	const void *_constPtr;
 
-	NumberPtr() : _ptr(nullptr) {}
-	NumberPtr(int value) { _ptr = nullptr; _value = value; }
-	NumberPtr(void *ptr) : _ptr(ptr) {}
-	NumberPtr(const void *ptr) : _constPtr(ptr) {}
-	operator int() const { return _value; }
+	NumberPtr() : _ptr(nullptr) {
+	}
+	NumberPtr(int value) {
+		_ptr = nullptr;
+		_value = value;
+	}
+	NumberPtr(void *ptr) : _ptr(ptr) {
+	}
+	NumberPtr(const void *ptr) : _constPtr(ptr) {
+	}
+	operator int() const {
+		return _value;
+	}
 };
 
 } // namespace AGS3

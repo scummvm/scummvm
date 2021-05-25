@@ -20,22 +20,25 @@
  *
  */
 
-#include "ags/lib/allegro.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_display.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_video.h"
 #include "ags/engine/ac/path_helper.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/media/video/video.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 void scrPlayVideo(const char *name, int skip, int flags) {
 	EndSkippingUntilCharStops();
@@ -54,6 +57,9 @@ void scrPlayVideo(const char *name, int skip, int flags) {
 	pause_sound_if_necessary_and_play_video(name, skip, flags);
 }
 
+
+#ifndef AGS_NO_VIDEO_PLAYER
+
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
 	int musplaying = _GP(play).cur_music_number, i;
 	int ambientWas[MAX_SOUND_CHANNELS];
@@ -69,8 +75,8 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 	} else {
 		// Unsure what the video type is, so try each in turn
 		if (!play_avi_video(name, skip, flags, false) &&
-				!play_mpeg_video(name, skip, flags, false) &&
-				!play_theora_video(name, skip, flags, false))
+		        !play_mpeg_video(name, skip, flags, false) &&
+		        !play_theora_video(name, skip, flags, false))
 			Display("Unsupported video '%s'", name);
 	}
 
@@ -85,5 +91,12 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 		}
 	}
 }
+
+#else
+
+void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
+}
+
+#endif
 
 } // namespace AGS3

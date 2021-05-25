@@ -26,7 +26,7 @@
 //
 //=============================================================================
 
-#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/game_struct_defines.h"
 
 namespace AGS3 {
 

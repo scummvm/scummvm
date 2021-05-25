@@ -41,8 +41,8 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game.h"
 #include "ags/globals.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/room.h"
 #include "ags/shared/core/def_version.h"
 #include "ags/engine/debugging/debugger.h"
@@ -51,13 +51,13 @@
 #include "ags/engine/game/savegame.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
-#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/main/quit.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/ac/route_finder.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/script/cc_options.h"
 
@@ -70,9 +70,9 @@ namespace AGS {
 AGSEngine *g_vm;
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
-		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
-		_globals(nullptr), _forceTextAA(false) {
+	_gameDescription(gameDesc), _randomSource("AGS"), _events(nullptr), _music(nullptr),
+	_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
+	_globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
 
 	_events = new EventsManager();
@@ -87,10 +87,10 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 AGSEngine::~AGSEngine() {
 	if (_G(proper_exit) == 0) {
 		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
-			"Program pointer: %+03d  (write this number down), ACI version %s\n"
-			"If you see a list of numbers above, please write them down and contact\n"
-			"developers. Otherwise, note down any other information displayed.",
-			_G(our_eip), _G(EngineVersion).LongString.GetCStr());
+		                           "Program pointer: %+03d  (write this number down), ACI version %s\n"
+		                           "If you see a list of numbers above, please write them down and contact\n"
+		                           "developers. Otherwise, note down any other information displayed.",
+		                           _G(our_eip), _G(EngineVersion).LongString.GetCStr());
 	}
 
 	delete _screen;
@@ -135,9 +135,6 @@ Common::Error AGSEngine::run() {
 	const int ARGC = 2;
 	AGS3::main_init(ARGC, ARGV);
 
-#if AGS_PLATFORM_OS_WINDOWS
-	setup_malloc_handling();
-#endif
 	_G(debug_flags) = 0;
 
 	if (ConfMan.hasKey("display_fps"))
@@ -171,23 +168,13 @@ Common::Error AGSEngine::run() {
 
 	_G(loadSaveGameOnStartup) = ConfMan.getInt("save_slot");
 
-#ifdef USE_CUSTOM_EXCEPTION_HANDLER
-	if (_GP(usetup).disable_exception_handling)
-#endif
-	{
-		syncSoundSettings();
-		AGS3::initialize_engine(startup_opts);
+	syncSoundSettings();
+	AGS3::initialize_engine(startup_opts);
 
-		// Do shutdown stuff
-		::AGS3::quit_free();
+	// Do shutdown stuff
+	::AGS3::quit_free();
 
-		return Common::kNoError;
-	}
-#ifdef USE_CUSTOM_EXCEPTION_HANDLER
-	else {
-		return initialize_engine_with_exception_handling(initialize_engine, startup_opts);
-	}
-#endif
+	return Common::kNoError;
 }
 
 SaveStateList AGSEngine::listSaves() const {
@@ -209,12 +196,12 @@ void AGSEngine::setGraphicsMode(size_t w, size_t h) {
 
 bool AGSEngine::canLoadGameStateCurrently() {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-		!_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }
 
 bool AGSEngine::canSaveGameStateCurrently() {
 	return !_GP(thisroom).Options.SaveLoadDisabled &&
-		!_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
+	       !_G(inside_script) && !_GP(play).fast_forward && !_G(no_blocking_functions);
 }
 
 Common::Error AGSEngine::loadGameState(int slot) {

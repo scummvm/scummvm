@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_GFX_GFXDEF_H
-#define AGS_SHARED_GFX_GFXDEF_H
+#ifndef AGS_SHARED_GFX_GFX_DEF_H
+#define AGS_SHARED_GFX_GFX_DEF_H
 
 namespace AGS3 {
 namespace AGS {
@@ -43,6 +43,7 @@ enum BlendMode {
 };
 
 namespace GfxDef {
+
 inline int Trans100ToAlpha255(int transparency) {
 	return ((100 - transparency) * 255) / 100;
 }
@@ -101,6 +102,7 @@ inline int LegacyTrans100ToAlpha255(int legacy_transparency) {
 	// the rest of the range works as alpha (only 100-ranged)
 	return legacy_transparency * 255 / 100;
 }
+
 } // namespace GfxDef
 
 } // namespace Shared

@@ -20,20 +20,21 @@
  *
  */
 
-#ifndef AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
-#define AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
+#ifndef AGS_ENGINE_GAME_SAVEGAME_INTERNAL_H
+#define AGS_ENGINE_GAME_SAVEGAME_INTERNAL_H
 
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common_defines.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audio_defines.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Shared::Bitmap;
+using AGS::Shared::Bitmap;
 
 typedef std::shared_ptr<Bitmap> PBitmap;
 
@@ -81,10 +82,10 @@ struct RestoredData {
 	std::vector<ScriptData> ScriptModules;
 	// Room data (has to be be preserved until room is loaded)
 	PBitmap                 RoomBkgScene[MAX_ROOM_BGFRAMES];
-	int16_t                 RoomLightLevels[MAX_ROOM_REGIONS];
-	int32_t                 RoomTintLevels[MAX_ROOM_REGIONS];
-	int16_t                 RoomZoomLevels1[MAX_WALK_AREAS + 1];
-	int16_t                 RoomZoomLevels2[MAX_WALK_AREAS + 1];
+	short                   RoomLightLevels[MAX_ROOM_REGIONS];
+	int                     RoomTintLevels[MAX_ROOM_REGIONS];
+	short                   RoomZoomLevels1[MAX_WALK_AREAS + 1];
+	short                   RoomZoomLevels2[MAX_WALK_AREAS + 1];
 	RoomVolumeMod           RoomVolume;
 	// Mouse cursor parameters
 	int                     CursorID;

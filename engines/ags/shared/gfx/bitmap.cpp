@@ -128,7 +128,7 @@ struct PixelTransCpy32 {
 
 struct PixelTransSkip32 {
 	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
-		return *(uint32_t *)data == (uint32_t)mask_color || (use_alpha && data[3] == 0);
+		return *(color_t *)data == (color_t)mask_color || (use_alpha && data[3] == 0);
 	}
 };
 

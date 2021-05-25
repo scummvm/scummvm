@@ -23,12 +23,12 @@
 #include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/shared/ac/characterinfo.h"
-#include "ags/shared/ac/dialogtopic.h"
+#include "ags/shared/ac/character_info.h"
+#include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/gamestate.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/game_state.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_dialog.h"
 #include "ags/engine/ac/global_display.h"
@@ -36,35 +36,35 @@
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/global_translation.h"
-#include "ags/engine/ac/keycode.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/parser.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/string.h"
-#include "ags/engine/ac/dynobj/scriptdialogoptionsrendering.h"
-#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/engine/ac/dynobj/script_drawing_surface.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/engine/script/cc_instance.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guitextbox.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_textbox.h"
 #include "ags/engine/main/game_run.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/script/script.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/gfx_util.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/media/audio/audio_system.h"
+
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
-#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -305,8 +305,8 @@ int run_dialog_script(DialogTopic *dtpp, int dialogID, int offse, int optionInde
 }
 
 int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, int numdisp, int mouseison, int areawid,
-						 int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
-						 int linespacing, int utextcol, int padding) {
+                         int bullet_wid, int usingfont, DialogTopic *dtop, char *disporder, short *dispyp,
+                         int linespacing, int utextcol, int padding) {
 	int ww;
 
 	color_t text_color;
@@ -327,7 +327,7 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			else text_color = ds->GetCompatibleColor(utextcol);
 		}
 
-		break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[ww]]), _GP(fontLines), areawid - (2 * padding + 2 + bullet_wid), usingfont);
+		break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[ww]]), Lines, areawid - (2 * padding + 2 + bullet_wid), usingfont);
 		dispyp[ww] = curyp;
 		if (_GP(game).dialog_bullet > 0) {
 			draw_gui_sprite_v330(ds, _GP(game).dialog_bullet, dlgxp, curyp, ds_has_alpha);
@@ -341,8 +341,8 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 			sprintf(tempbfr, "%d.", ww + 1);
 			wouttext_outline(ds, dlgxp + actualpicwid, curyp, usingfont, text_color, tempbfr);
 		}
-		for (size_t cc = 0; cc < _GP(fontLines).Count(); cc++) {
-			wouttext_outline(ds, dlgxp + ((cc == 0) ? 0 : 9) + bullet_wid, curyp, usingfont, text_color, _GP(fontLines)[cc]);
+		for (size_t cc = 0; cc < Lines.Count(); cc++) {
+			wouttext_outline(ds, dlgxp + ((cc == 0) ? 0 : 9) + bullet_wid, curyp, usingfont, text_color, Lines[cc]);
 			curyp += linespacing;
 		}
 		if (ww < numdisp - 1)
@@ -356,8 +356,8 @@ int write_dialog_options(Bitmap *ds, bool ds_has_alpha, int dlgxp, int curyp, in
 #define GET_OPTIONS_HEIGHT {\
 		needheight = 0;\
 		for (int i = 0; i < numdisp; ++i) {\
-			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), _GP(fontLines), areawid-(2*padding+2+bullet_wid), usingfont);\
-			needheight += getheightoflines(usingfont, _GP(fontLines).Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
+			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid-(2*padding+2+bullet_wid), usingfont);\
+			needheight += getheightoflines(usingfont, Lines.Count()) + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 		}\
 		if (parserInput) needheight += parserInput->Height + data_to_game_coord(_GP(game).options[OPT_DIALOGGAP]);\
 	}
@@ -504,7 +504,10 @@ void DialogOptions::Prepare(int _dlgnum, bool _runGameLoopsInBackground) {
 }
 
 void DialogOptions::Show() {
-	if (numdisp < 1) quit("!DoDialog: all options have been turned off");
+	if (numdisp < 1) {
+		debug_script_warn("Dialog: all options have been turned off, stopping dialog.");
+		return;
+	}
 	// Don't display the options if there is only one and the parser
 	// is not enabled.
 	if (!((numdisp > 1) || (parserInput != nullptr) || (_GP(play).show_single_dialog_option))) {
@@ -587,8 +590,7 @@ void DialogOptions::Show() {
 	update_polled_stuff_if_runtime();
 
 	Redraw();
-	while (Run() && !SHOULD_QUIT) {
-	}
+	while (Run());
 
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);
@@ -639,7 +641,7 @@ void DialogOptions::Redraw() {
 		int biggest = 0;
 		padding = _GP(guis)[_GP(game).options[OPT_DIALOGIFACE]].Padding;
 		for (int i = 0; i < numdisp; ++i) {
-			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), _GP(fontLines), areawid - ((2 * padding + 2) + bullet_wid), usingfont);
+			break_up_text_into_lines(get_translation(dtop->optionnames[(int)disporder[i]]), Lines, areawid - ((2 * padding + 2) + bullet_wid), usingfont);
 			if (_G(longestline) > biggest)
 				biggest = _G(longestline);
 		}
@@ -649,7 +651,7 @@ void DialogOptions::Redraw() {
 		if (areawid < data_to_game_coord(_GP(play).min_dialogoption_width)) {
 			areawid = data_to_game_coord(_GP(play).min_dialogoption_width);
 			if (_GP(play).min_dialogoption_width > _GP(play).max_dialogoption_width)
-				quit("!game.min_dialogoption_width is larger than game.max_dialogoption_width");
+				quit("!_GP(game).min_dialogoption_width is larger than _GP(game).max_dialogoption_width");
 		}
 
 		GET_OPTIONS_HEIGHT
@@ -791,6 +793,9 @@ void DialogOptions::Redraw() {
 }
 
 bool DialogOptions::Run() {
+	// Run() can be called in a loop, so keep events going.
+	sys_evt_process_pending();
+
 	const bool new_custom_render = usingCustomRendering && _GP(game).options[OPT_DIALOGOPTIONSAPI] >= 0;
 
 	if (runGameLoopsInBackground) {
@@ -812,7 +817,7 @@ bool DialogOptions::Run() {
 		if (parserInput) {
 			wantRefresh = true;
 			// type into the parser
-			if ((gkey == 361) || ((gkey == ' ') && (strlen(parserInput->Text) == 0))) {
+			if ((gkey == eAGSKeyCodeF3) || ((gkey == eAGSKeyCodeSpace) && (strlen(parserInput->Text) == 0))) {
 				// write previous contents into textbox (F3 or Space when box is empty)
 				for (unsigned int i = strlen(parserInput->Text); i < strlen(_GP(play).lastParserEntry); i++) {
 					parserInput->OnKeyPress(_GP(play).lastParserEntry[i]);
@@ -820,7 +825,7 @@ bool DialogOptions::Run() {
 				//ags_domouse(DOMOUSE_DISABLE);
 				Redraw();
 				return true; // continue running loop
-			} else if ((gkey >= 32) || (gkey == 13) || (gkey == 8)) {
+			} else if ((gkey >= eAGSKeyCodeSpace) || (gkey == eAGSKeyCodeReturn) || (gkey == eAGSKeyCodeBackspace)) {
 				parserInput->OnKeyPress(gkey);
 				if (!parserInput->IsActivated) {
 					//ags_domouse(DOMOUSE_DISABLE);
@@ -830,7 +835,7 @@ bool DialogOptions::Run() {
 			}
 		} else if (new_custom_render) {
 			_GP(runDialogOptionKeyPressHandlerFunc).params[0].SetDynamicObject(&_GP(ccDialogOptionsRendering), &_GP(ccDialogOptionsRendering));
-			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(GetKeyForKeyPressCb(gkey));
+			_GP(runDialogOptionKeyPressHandlerFunc).params[1].SetInt32(AGSKeyToScriptKey(gkey));
 			run_function_on_non_blocking_thread(&_GP(runDialogOptionKeyPressHandlerFunc));
 		}
 		// Allow selection of options by keyboard shortcuts
@@ -885,7 +890,7 @@ bool DialogOptions::Run() {
 			parserActivated = 1;
 	}
 
-	int mouseButtonPressed = NONE;
+	int mouseButtonPressed = MouseNone;
 	int mouseWheelTurn = 0;
 	if (run_service_mb_controls(mouseButtonPressed, mouseWheelTurn) && mouseButtonPressed >= 0 &&
 	        !_GP(play).IsIgnoringInput()) {
@@ -934,7 +939,7 @@ bool DialogOptions::Run() {
 
 	if (parserActivated) {
 		// They have selected a custom parser-based option
-		if (!parserInput->Text.IsEmpty()) {
+		if (!parserInput->Text.IsEmpty() != 0) {
 			chose = DLG_OPTION_PARSER;
 			return false; // end dialog options running loop
 		} else {
@@ -961,7 +966,7 @@ bool DialogOptions::Run() {
 
 	update_polled_stuff_if_runtime();
 
-	if (!runGameLoopsInBackground && _GP(play).fast_forward == 0) {
+	if (!runGameLoopsInBackground && (_GP(play).fast_forward == 0)) {
 		// note if runGameLoopsInBackground then it's called inside UpdateGameOnce
 		WaitForNextFrame();
 	}
@@ -1004,9 +1009,10 @@ int show_dialog_options(int _dlgnum, int sayChosenOption, bool _runGameLoopsInBa
 	DlgOpt.Close();
 
 	int dialog_choice = DlgOpt.chose;
-	if (dialog_choice != CHOSE_TEXTPARSER) {
+	if (dialog_choice >= 0) { // NOTE: this condition also excludes CHOSE_TEXTPARSER
+		assert(dialog_choice >= 0 && dialog_choice < MAXTOPICOPTIONS);
 		DialogTopic *dialog_topic = DlgOpt.dtop;
-		int32_t &option_flags = dialog_topic->optionflags[dialog_choice];
+		int &option_flags = dialog_topic->optionflags[dialog_choice];
 		const char *option_name = DlgOpt.dtop->optionnames[dialog_choice];
 
 		option_flags |= DFLG_HASBEENCHOSEN;
@@ -1081,8 +1087,6 @@ void do_conversation(int dlgnum) {
 		}
 
 		int chose = show_dialog_options(dlgnum, SAYCHOSEN_USEFLAG, (_GP(game).options[OPT_RUNGAMEDLGOPTS] != 0));
-		if (SHOULD_QUIT)
-			return;
 
 		if (chose == CHOSE_TEXTPARSER) {
 			_G(said_speech_line) = 0;
@@ -1096,8 +1100,10 @@ void do_conversation(int dlgnum) {
 				EnableInterface();
 				set_mouse_cursor(CURS_ARROW);
 			}
-		} else {
+		} else if (chose >= 0) {
 			tocar = run_dialog_script(dtop, dlgnum, dtop->entrypoints[chose], chose + 1);
+		} else {
+			tocar = RUN_DIALOG_STOP_DIALOG;
 		}
 
 		if (tocar == RUN_DIALOG_GOTO_PREVIOUS) {
@@ -1117,21 +1123,16 @@ void do_conversation(int dlgnum) {
 			}
 			dlgnum = tocar;
 		}
-
 	}
-
 }
 
 // end dialog manager
-
 
 //=============================================================================
 //
 // Script API Functions
 //
 //=============================================================================
-
-
 
 // int (ScriptDialog *sd)
 RuntimeScriptValue Sc_Dialog_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {

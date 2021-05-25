@@ -116,7 +116,7 @@ int save_bitmap(Common::WriteStream &out, BITMAP *bmp, const RGB *pal) {
 	}
 	Graphics::ManagedSurface surface(bmp->w, bmp->h, requiredFormat_3byte);
 	surface.rawBlitFrom(bmp->getSurface(), Common::Rect(0, 0, src.w, src.h),
-		Common::Point(0, 0), src.getPalette());
+	                    Common::Point(0, 0), src.getPalette());
 
 	int dstPitch = surface.w * 3;
 	int extraDataLength = (dstPitch % 4) ? 4 - (dstPitch % 4) : 0;

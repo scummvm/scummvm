@@ -22,7 +22,7 @@
 
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/shared/util/math.h"
 #include "ags/globals.h"
@@ -72,13 +72,12 @@ inline const char *GetArgPtr(const RuntimeScriptValue *sc_args, va_list *varg_pt
 // snprintf but formatting values ourselves, or by using some library method
 // that supports customizing, such as getting arguments in a custom way.
 const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
-	const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr) {
+                          const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr) {
 	if (!buffer || buf_length == 0) {
 		cc_error("Internal error in ScriptSprintf: buffer is null");
 		return "";
 	}
-	if (!format) {
-		// NOTE: interpreter (usually) catches null-pointer sent as format at some stage earlier
+	if (!format) {// NOTE: interpreter (usually) catches null-pointer sent as format at some stage earlier
 		cc_error("Internal error in ScriptSprintf: format string is null");
 		return "";
 	}
@@ -173,7 +172,7 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 				*(out_ptr++) = '%';
 				continue;
 			} else if (fmt_done >= kFormatParseArgFirst && fmt_done <= kFormatParseArgLast &&
-				(varg_ptr || arg_idx < sc_argc)) {
+			           (varg_ptr || arg_idx < sc_argc)) {
 				// Print the actual value
 				// NOTE: snprintf is called with avail_outbuf + 1 here, because we let it use our reserved
 				// character for null-terminator, in case we are at the end of the buffer

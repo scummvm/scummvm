@@ -22,18 +22,16 @@
 
 #include "ags/engine/ac/label.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
-
-
 
 // ** LABEL FUNCTIONS
 
@@ -49,7 +47,6 @@ void Label_SetText(GUILabel *labl, const char *newtx) {
 	newtx = get_translation(newtx);
 
 	if (strcmp(labl->GetText(), newtx)) {
-		_G(guis_need_update) = 1;
 		labl->SetText(newtx);
 	}
 }
@@ -61,7 +58,7 @@ int Label_GetTextAlignment(GUILabel *labl) {
 void Label_SetTextAlignment(GUILabel *labl, int align) {
 	if (labl->TextAlignment != align) {
 		labl->TextAlignment = (HorAlignment)align;
-		_G(guis_need_update) = 1;
+		labl->NotifyParentChanged();
 	}
 }
 
@@ -72,7 +69,7 @@ int Label_GetColor(GUILabel *labl) {
 void Label_SetColor(GUILabel *labl, int colr) {
 	if (labl->TextColor != colr) {
 		labl->TextColor = colr;
-		_G(guis_need_update) = 1;
+		labl->NotifyParentChanged();
 	}
 }
 
@@ -86,7 +83,7 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 
 	if (fontnum != guil->Font) {
 		guil->Font = fontnum;
-		_G(guis_need_update) = 1;
+		guil->NotifyParentChanged();
 	}
 }
 
@@ -95,8 +92,6 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 // Script API Functions
 //
 //=============================================================================
-
-
 
 // void (GUILabel *labl, char *buffer)
 RuntimeScriptValue Sc_Label_GetText(void *self, const RuntimeScriptValue *params, int32_t param_count) {

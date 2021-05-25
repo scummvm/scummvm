@@ -21,9 +21,9 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_object.h"
-#include "ags/engine/ac/dynobj/scriptobject.h"
+#include "ags/engine/ac/dynobj/script_object.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,7 +36,7 @@ const char *CCObject::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCObject::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptObject *shh = (ScriptObject *)const_cast<char *>(address);
+	const ScriptObject *shh = (const ScriptObject *)address;
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

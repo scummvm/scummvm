@@ -31,14 +31,14 @@ namespace AGSSpriteFont {
 
 class SpriteFontRendererClifftop : public SpriteFontRenderer {
 public:
-	SpriteFontRendererClifftop(IAGSEngine *engine);
-	virtual ~SpriteFontRendererClifftop(void);
+SpriteFontRendererClifftop(IAGSEngine *engine);
+virtual ~SpriteFontRendererClifftop(void);
 
-	bool SupportsExtendedCharacters(int fontNumber) override;
-	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
+bool SupportsExtendedCharacters(int fontNumber) override;
+void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 
 private:
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
+void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
 
 };
 

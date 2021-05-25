@@ -20,10 +20,9 @@
  *
  */
 
-#include "ags/events.h"
 #include "common/system.h"
+#include "ags/events.h"
 #include "ags/globals.h"
-#include "ags/engine/ac/keycode.h"
 
 namespace AGS {
 
@@ -88,7 +87,7 @@ void EventsManager::pollEvents() {
 			// mouse move and the prior one was also, then discard the prior one.
 			// This'll help prevent too many mouse move events accumulating
 			if (e.type == Common::EVENT_MOUSEMOVE && !_pendingEvents.empty() &&
-					_pendingEvents.back().type == Common::EVENT_MOUSEMOVE)
+			        _pendingEvents.back().type == Common::EVENT_MOUSEMOVE)
 				_pendingEvents.back() = e;
 			else
 				_pendingEvents.push(e);
@@ -102,6 +101,8 @@ bool EventsManager::keypressed() {
 	return !_pendingKeys.empty();
 }
 
+#define EXTENDED_KEY_CODE ('\0')
+
 int EventsManager::readKey() {
 	pollEvents();
 	if (_pendingKeys.empty())
@@ -114,7 +115,7 @@ int EventsManager::readKey() {
 
 	if (isExtendedKey(keyState.keycode))
 		code |= EXTENDED_KEY_CODE;
-	else if ((keyState.flags & (Common::KBD_CTRL | Common::KBD_ALT))  == 0)
+	else if ((keyState.flags & (Common::KBD_CTRL | Common::KBD_ALT)) == 0)
 		code |= keyState.ascii;
 	else
 		code |= scancode;
@@ -133,11 +134,11 @@ void EventsManager::warpMouse(const Common::Point &newPos) {
 
 bool EventsManager::isModifierKey(const Common::KeyCode &keycode) const {
 	return keycode == Common::KEYCODE_LCTRL || keycode == Common::KEYCODE_LALT
-		|| keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
-		|| keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
-		|| keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
-		|| keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
-		|| keycode == Common::KEYCODE_SCROLLOCK;
+	       || keycode == Common::KEYCODE_RCTRL || keycode == Common::KEYCODE_RALT
+	       || keycode == Common::KEYCODE_LSHIFT || keycode == Common::KEYCODE_RSHIFT
+	       || keycode == Common::KEYCODE_LSUPER || keycode == Common::KEYCODE_RSUPER
+	       || keycode == Common::KEYCODE_CAPSLOCK || keycode == Common::KEYCODE_NUMLOCK
+	       || keycode == Common::KEYCODE_SCROLLOCK;
 }
 
 bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
@@ -159,7 +160,7 @@ bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
 	};
 
 	for (const Common::KeyCode *kc = EXTENDED_KEYS;
-			*kc != Common::KEYCODE_INVALID; ++kc) {
+	        *kc != Common::KEYCODE_INVALID; ++kc) {
 		if (keycode == *kc)
 			return true;
 	}
@@ -178,51 +179,95 @@ int EventsManager::getScancode(Common::KeyCode keycode) const {
 		return (int)keycode - Common::KEYCODE_F1 + AGS3::__allegro_KEY_F1;
 
 	switch (keycode) {
-	case Common::KEYCODE_ESCAPE: return AGS3::__allegro_KEY_ESC;
-	case Common::KEYCODE_TILDE: return AGS3::__allegro_KEY_TILDE;
-	case Common::KEYCODE_MINUS: return AGS3::__allegro_KEY_MINUS;
-	case Common::KEYCODE_EQUALS: return AGS3::__allegro_KEY_EQUALS;
-	case Common::KEYCODE_BACKSPACE: return AGS3::__allegro_KEY_BACKSPACE;
-	case Common::KEYCODE_TAB: return AGS3::__allegro_KEY_TAB;
-	case Common::KEYCODE_LEFTBRACKET: return AGS3::__allegro_KEY_OPENBRACE;
-	case Common::KEYCODE_RIGHTBRACKET: return AGS3::__allegro_KEY_CLOSEBRACE;
-	case Common::KEYCODE_RETURN: return AGS3::__allegro_KEY_ENTER;
-	case Common::KEYCODE_COLON: return AGS3::__allegro_KEY_COLON;
-	case Common::KEYCODE_QUOTE: return AGS3::__allegro_KEY_QUOTE;
-	case Common::KEYCODE_BACKSLASH: return AGS3::__allegro_KEY_BACKSLASH;
-	case Common::KEYCODE_COMMA: return AGS3::__allegro_KEY_COMMA;
-	case Common::KEYCODE_SLASH: return AGS3::__allegro_KEY_SLASH;
-	case Common::KEYCODE_SPACE: return AGS3::__allegro_KEY_SPACE;
-	case Common::KEYCODE_INSERT: return AGS3::__allegro_KEY_INSERT;
-	case Common::KEYCODE_DELETE: return AGS3::__allegro_KEY_DEL;
-	case Common::KEYCODE_HOME: return AGS3::__allegro_KEY_HOME;
-	case Common::KEYCODE_END: return AGS3::__allegro_KEY_END;
-	case Common::KEYCODE_PAGEUP: return AGS3::__allegro_KEY_PGUP;
-	case Common::KEYCODE_PAGEDOWN: return AGS3::__allegro_KEY_PGDN;
-	case Common::KEYCODE_LEFT: return AGS3::__allegro_KEY_LEFT;
-	case Common::KEYCODE_RIGHT: return AGS3::__allegro_KEY_RIGHT;
-	case Common::KEYCODE_UP: return AGS3::__allegro_KEY_UP;
-	case Common::KEYCODE_DOWN: return AGS3::__allegro_KEY_DOWN;
-	case Common::KEYCODE_KP_DIVIDE: return AGS3::__allegro_KEY_SLASH_PAD;
-	case Common::KEYCODE_ASTERISK: return AGS3::__allegro_KEY_ASTERISK;
-	case Common::KEYCODE_KP_MINUS: return AGS3::__allegro_KEY_MINUS_PAD;
-	case Common::KEYCODE_KP_PLUS: return AGS3::__allegro_KEY_PLUS_PAD;
-	case Common::KEYCODE_KP_PERIOD: return AGS3::__allegro_KEY_DEL_PAD;
-	case Common::KEYCODE_KP_ENTER: return AGS3::__allegro_KEY_ENTER_PAD;
-	case Common::KEYCODE_PRINT: return AGS3::__allegro_KEY_PRTSCR;
-	case Common::KEYCODE_PAUSE: return AGS3::__allegro_KEY_PAUSE;
-	case Common::KEYCODE_SEMICOLON: return AGS3::__allegro_KEY_SEMICOLON;
+	case Common::KEYCODE_ESCAPE:
+		return AGS3::__allegro_KEY_ESC;
+	case Common::KEYCODE_TILDE:
+		return AGS3::__allegro_KEY_TILDE;
+	case Common::KEYCODE_MINUS:
+		return AGS3::__allegro_KEY_MINUS;
+	case Common::KEYCODE_EQUALS:
+		return AGS3::__allegro_KEY_EQUALS;
+	case Common::KEYCODE_BACKSPACE:
+		return AGS3::__allegro_KEY_BACKSPACE;
+	case Common::KEYCODE_TAB:
+		return AGS3::__allegro_KEY_TAB;
+	case Common::KEYCODE_LEFTBRACKET:
+		return AGS3::__allegro_KEY_OPENBRACE;
+	case Common::KEYCODE_RIGHTBRACKET:
+		return AGS3::__allegro_KEY_CLOSEBRACE;
+	case Common::KEYCODE_RETURN:
+		return AGS3::__allegro_KEY_ENTER;
+	case Common::KEYCODE_COLON:
+		return AGS3::__allegro_KEY_COLON;
+	case Common::KEYCODE_QUOTE:
+		return AGS3::__allegro_KEY_QUOTE;
+	case Common::KEYCODE_BACKSLASH:
+		return AGS3::__allegro_KEY_BACKSLASH;
+	case Common::KEYCODE_COMMA:
+		return AGS3::__allegro_KEY_COMMA;
+	case Common::KEYCODE_SLASH:
+		return AGS3::__allegro_KEY_SLASH;
+	case Common::KEYCODE_SPACE:
+		return AGS3::__allegro_KEY_SPACE;
+	case Common::KEYCODE_INSERT:
+		return AGS3::__allegro_KEY_INSERT;
+	case Common::KEYCODE_DELETE:
+		return AGS3::__allegro_KEY_DEL;
+	case Common::KEYCODE_HOME:
+		return AGS3::__allegro_KEY_HOME;
+	case Common::KEYCODE_END:
+		return AGS3::__allegro_KEY_END;
+	case Common::KEYCODE_PAGEUP:
+		return AGS3::__allegro_KEY_PGUP;
+	case Common::KEYCODE_PAGEDOWN:
+		return AGS3::__allegro_KEY_PGDN;
+	case Common::KEYCODE_LEFT:
+		return AGS3::__allegro_KEY_LEFT;
+	case Common::KEYCODE_RIGHT:
+		return AGS3::__allegro_KEY_RIGHT;
+	case Common::KEYCODE_UP:
+		return AGS3::__allegro_KEY_UP;
+	case Common::KEYCODE_DOWN:
+		return AGS3::__allegro_KEY_DOWN;
+	case Common::KEYCODE_KP_DIVIDE:
+		return AGS3::__allegro_KEY_SLASH_PAD;
+	case Common::KEYCODE_ASTERISK:
+		return AGS3::__allegro_KEY_ASTERISK;
+	case Common::KEYCODE_KP_MINUS:
+		return AGS3::__allegro_KEY_MINUS_PAD;
+	case Common::KEYCODE_KP_PLUS:
+		return AGS3::__allegro_KEY_PLUS_PAD;
+	case Common::KEYCODE_KP_PERIOD:
+		return AGS3::__allegro_KEY_DEL_PAD;
+	case Common::KEYCODE_KP_ENTER:
+		return AGS3::__allegro_KEY_ENTER_PAD;
+	case Common::KEYCODE_PRINT:
+		return AGS3::__allegro_KEY_PRTSCR;
+	case Common::KEYCODE_PAUSE:
+		return AGS3::__allegro_KEY_PAUSE;
+	case Common::KEYCODE_SEMICOLON:
+		return AGS3::__allegro_KEY_SEMICOLON;
 
-	case Common::KEYCODE_LSHIFT: return AGS3::__allegro_KEY_LSHIFT;
-	case Common::KEYCODE_RSHIFT: return AGS3::__allegro_KEY_RSHIFT;
-	case Common::KEYCODE_LCTRL: return AGS3::__allegro_KEY_LCONTROL;
-	case Common::KEYCODE_RCTRL: return AGS3::__allegro_KEY_RCONTROL;
-	case Common::KEYCODE_LALT: return AGS3::__allegro_KEY_ALT;
-	case Common::KEYCODE_RALT: return AGS3::__allegro_KEY_ALT;
-	case Common::KEYCODE_SCROLLOCK: return AGS3::__allegro_KEY_SCRLOCK;
-	case Common::KEYCODE_NUMLOCK: return AGS3::__allegro_KEY_NUMLOCK;
-	case Common::KEYCODE_CAPSLOCK: return AGS3::__allegro_KEY_CAPSLOCK;
-	default: return 0;
+	case Common::KEYCODE_LSHIFT:
+		return AGS3::__allegro_KEY_LSHIFT;
+	case Common::KEYCODE_RSHIFT:
+		return AGS3::__allegro_KEY_RSHIFT;
+	case Common::KEYCODE_LCTRL:
+		return AGS3::__allegro_KEY_LCONTROL;
+	case Common::KEYCODE_RCTRL:
+		return AGS3::__allegro_KEY_RCONTROL;
+	case Common::KEYCODE_LALT:
+		return AGS3::__allegro_KEY_ALT;
+	case Common::KEYCODE_RALT:
+		return AGS3::__allegro_KEY_ALT;
+	case Common::KEYCODE_SCROLLOCK:
+		return AGS3::__allegro_KEY_SCRLOCK;
+	case Common::KEYCODE_NUMLOCK:
+		return AGS3::__allegro_KEY_NUMLOCK;
+	case Common::KEYCODE_CAPSLOCK:
+		return AGS3::__allegro_KEY_CAPSLOCK;
+	default:
+		return 0;
 	}
 }
 

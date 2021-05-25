@@ -70,7 +70,7 @@ static bool scanLine(BITMAP *bmp, int x, int y, int src_color, int &left, int &r
  *  the part of the line which it has dealt with.
  */
 static int flooder(BITMAP *bmp, int x, int y, int src_color, int dest_color,
-		Common::Array<FLOODED_LINE> &scratchMem) {
+                   Common::Array<FLOODED_LINE> &scratchMem) {
 	FLOODED_LINE *p;
 	int left = 0, right = 0;
 	int c;
@@ -79,9 +79,15 @@ static int flooder(BITMAP *bmp, int x, int y, int src_color, int dest_color,
 
 	bool ret;
 	switch (bmp->format.bytesPerPixel) {
-	case 1: ret = scanLine<byte>(bmp, x, y, src_color, left, right); break;
-	case 2: ret = scanLine<byte>(bmp, x, y, src_color, left, right); break;
-	case 4: ret = scanLine<byte>(bmp, x, y, src_color, left, right); break;
+	case 1:
+		ret = scanLine<byte>(bmp, x, y, src_color, left, right);
+		break;
+	case 2:
+		ret = scanLine<byte>(bmp, x, y, src_color, left, right);
+		break;
+	case 4:
+		ret = scanLine<byte>(bmp, x, y, src_color, left, right);
+		break;
 	default:
 		error("Unknown format");
 	}
@@ -132,7 +138,7 @@ static int flooder(BITMAP *bmp, int x, int y, int src_color, int dest_color,
  *  number of tests.
  */
 static bool check_flood_line(BITMAP *bmp, int y, int left, int right, int src_color, int dest_color,
-		Common::Array<FLOODED_LINE> &scratchMem) {
+                             Common::Array<FLOODED_LINE> &scratchMem) {
 	int c;
 	FLOODED_LINE *p;
 	bool ret = false;

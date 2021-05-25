@@ -28,11 +28,12 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_GAME_ROOMFILE_H
-#define AGS_SHARED_GAME_ROOMFILE_H
+#ifndef AGS_SHARED_GAME_ROOM_FILE_H
+#define AGS_SHARED_GAME_ROOM_FILE_H
 
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
+#include "ags/shared/core/platform.h"
 #include "ags/shared/game/room_version.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/stream.h"
@@ -66,7 +67,12 @@ String GetRoomFileErrorText(RoomFileErrorType err);
 
 typedef TypedCodeError<RoomFileErrorType, GetRoomFileErrorText> RoomFileError;
 typedef ErrorHandle<RoomFileError> HRoomFileError;
-typedef std::shared_ptr<Stream> PStream;
+#ifdef AGS_PLATFORM_SCUMMVM
+typedef std::shared_ptr<Stream> UStream;
+#else
+typedef std::unique_ptr<Stream> UStream;
+#endif
+
 
 
 // RoomDataSource defines a successfully opened room file
@@ -76,13 +82,15 @@ struct RoomDataSource {
 	// Room file format version
 	RoomFileVersion     DataVersion;
 	// A ponter to the opened stream
-	PStream             InputStream;
+	UStream             InputStream;
 
 	RoomDataSource();
 };
 
-// Opens room file for reading from an arbitrary file
+// Opens room data for reading from an arbitrary file
 HRoomFileError OpenRoomFile(const String &filename, RoomDataSource &src);
+// Opens room data for reading from asset of a given name
+HRoomFileError OpenRoomFileFromAsset(const String &filename, RoomDataSource &src);
 // Reads room data
 HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_ver);
 // Applies necessary updates, conversions and fixups to the loaded data

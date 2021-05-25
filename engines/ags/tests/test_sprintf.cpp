@@ -21,11 +21,11 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include <string.h>
+//include <string.h>
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/debugging/assert.h"
 #include "ags/engine/script/script_api.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtime_script_value.h"
 
 namespace AGS3 {
 
@@ -52,9 +52,9 @@ void Test_ScriptSprintf() {
 	//
 	// Correct format, extra placeholder
 	const char *result =
-		ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE,
-			"testing ScriptSprintf:\nThis is int: %10d\nThis is float: %.4f\nThis is string: '%s'\nThis placeholder will be ignored: %d",
-			params, 3);
+	    ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE,
+	                  "testing ScriptSprintf:\nThis is int: %10d\nThis is float: %.4f\nThis is string: '%s'\nThis placeholder will be ignored: %d",
+	                  params, 3);
 	assert(strcmp(result, "testing ScriptSprintf:\nThis is int:        123\nThis is float: 0.4560\nThis is string: 'string literal'\nThis placeholder will be ignored: %d") == 0);
 	// Literal percent sign
 	result = ScriptSprintf(ScSfBuffer, STD_BUFFER_SIZE, "%d%%", params, 3);
@@ -86,11 +86,11 @@ void Test_ScriptSprintf() {
 	assert(strcmp(result, "12345678%d") == 0);
 
 	// Test null string pointer in backward-compatibility mode
-	loaded_game_file_version = kGameVersion_312;
+	_G(loaded_game_file_version) = kGameVersion_312;
 	params[0].SetStringLiteral(NULL);
 	result = ScriptSprintf(ScSfBuffer, 10, "A%sB", params, 1);
 	assert(strcmp(result, "A(null)B") == 0);
-	loaded_game_file_version = kGameVersion_Undefined;
+	_G(loaded_game_file_version) = kGameVersion_Undefined;
 
 	//
 	// Called-from-plugin variant
@@ -99,9 +99,9 @@ void Test_ScriptSprintf() {
 	//
 	// Correct format, matching number of arguments
 	result =
-		ScriptVSprintf__(ScSfBuffer, STD_BUFFER_SIZE,
-			"testing ScriptVSprintf:\nThis is int: %10d\nThis is float: %.4f\nThis is string: '%s'\n",
-			argi, argf, argcc);
+	    ScriptVSprintf__(ScSfBuffer, STD_BUFFER_SIZE,
+	                     "testing ScriptVSprintf:\nThis is int: %10d\nThis is float: %.4f\nThis is string: '%s'\n",
+	                     argi, argf, argcc);
 	assert(strcmp(result, "testing ScriptVSprintf:\nThis is int:        123\nThis is float: 0.4560\nThis is string: 'string literal'\n") == 0);
 	// Literal percent sign
 	result = ScriptVSprintf__(ScSfBuffer, STD_BUFFER_SIZE, "%d%%", argi);
@@ -124,10 +124,10 @@ void Test_ScriptSprintf() {
 	assert(strcmp(result, "1234567812") == 0);
 
 	// Test null string pointer in backward-compatibility mode
-	loaded_game_file_version = kGameVersion_312;
+	_G(loaded_game_file_version) = kGameVersion_312;
 	result = ScriptVSprintf__(ScSfBuffer, 10, "A%sB", NULL);
 	assert(strcmp(result, "A(null)B") == 0);
-	loaded_game_file_version = kGameVersion_Undefined;
+	_G(loaded_game_file_version) = kGameVersion_Undefined;
 }
 
 } // namespace AGS3

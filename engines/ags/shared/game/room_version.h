@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_GAME_ROOMVERSION_H
-#define AGS_SHARED_GAME_ROOMVERSION_H
+#ifndef AGS_SHARED_GAME_ROOM_VERSION_H
+#define AGS_SHARED_GAME_ROOM_VERSION_H
 
 namespace AGS3 {
 

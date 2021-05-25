@@ -25,8 +25,8 @@
 #include "ags/achievements_tables.h"
 #include "ags/ags.h"
 #include "ags/shared/util/directory.h"
-#include "ags/shared/util/filestream.h"
-#include "ags/engine/ac/richgamemedia.h"
+#include "ags/shared/util/file_stream.h"
+#include "ags/engine/ac/rich_game_media.h"
 #include "ags/engine/game/savegame.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -56,10 +56,10 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 	SaveStateList saveList;
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 		Common::String filename = Common::String::format("%s%s",
-			::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX, file->c_str());
+		                          ::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX, file->c_str());
 
 		::AGS3::AGS::Shared::FileStream saveFile(filename, ::AGS3::AGS::Shared::kFile_Open,
-			::AGS3::AGS::Shared::kFile_Read);
+		        ::AGS3::AGS::Shared::kFile_Read);
 		if (saveFile.IsValid()) {
 			AGS3::RICH_GAME_MEDIA_HEADER rich_media_header;
 			rich_media_header.ReadFromFile(&saveFile);
@@ -88,11 +88,11 @@ SaveStateList AGSMetaEngine::listSaves(const char *target) const {
 
 bool AGSMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		(f == kSupportsListSaves) ||
-		(f == kSupportsDeleteSave) ||
-		(f == kSavesSupportMetaInfo) ||
-		(f == kSavesSupportThumbnail) ||
-		(f == kSupportsLoadingDuringStartup);
+	    (f == kSupportsListSaves) ||
+	    (f == kSupportsDeleteSave) ||
+	    (f == kSavesSupportMetaInfo) ||
+	    (f == kSavesSupportThumbnail) ||
+	    (f == kSupportsLoadingDuringStartup);
 }
 
 Common::String AGSMetaEngine::getSavegameFile(int saveGameIdx, const char *target) const {
@@ -107,11 +107,11 @@ Common::String AGSMetaEngine::getSavegameFile(int saveGameIdx, const char *targe
 
 SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	Common::String filename = Common::String::format("%s%s",
-		::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX,
-		getSavegameFile(slot, target).c_str());
+	                          ::AGS3::AGS::Shared::SAVE_FOLDER_PREFIX,
+	                          getSavegameFile(slot, target).c_str());
 
 	::AGS3::AGS::Shared::FileStream saveFile(filename, ::AGS3::AGS::Shared::kFile_Open,
-		::AGS3::AGS::Shared::kFile_Read);
+	        ::AGS3::AGS::Shared::kFile_Read);
 	if (saveFile.IsValid()) {
 		AGS3::RICH_GAME_MEDIA_HEADER rich_media_header;
 		rich_media_header.ReadFromFile(&saveFile);
@@ -126,14 +126,14 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 
 			// Thumbnail handling
 			if (rich_media_header.dwThumbnailOffsetLowerDword != 0 &&
-					rich_media_header.dwThumbnailSize != 0) {
+			        rich_media_header.dwThumbnailSize != 0) {
 				// Read in the thumbnail data
 				byte *thumbData = (byte *)malloc(rich_media_header.dwThumbnailSize);
 				saveFile.Seek(rich_media_header.dwThumbnailOffsetLowerDword,
-					AGS3::AGS::Shared::kSeekCurrent);
+				              AGS3::AGS::Shared::kSeekCurrent);
 				saveFile.Read(thumbData, rich_media_header.dwThumbnailSize);
 				Common::MemoryReadStream thumbStream(thumbData,
-					rich_media_header.dwThumbnailSize, DisposeAfterUse::YES);
+				                                     rich_media_header.dwThumbnailSize, DisposeAfterUse::YES);
 
 				// Decode the thumbnail
 				Image::BitmapDecoder decoder;

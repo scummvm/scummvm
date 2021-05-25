@@ -23,17 +23,17 @@
 #include "ags/engine/ac/global_room.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/event.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_game.h"
-#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/script/script.h"
@@ -46,12 +46,12 @@ using namespace Shared;
 
 void SetAmbientTint(int red, int green, int blue, int opacity, int luminance) {
 	if ((red < 0) || (green < 0) || (blue < 0) ||
-		(red > 255) || (green > 255) || (blue > 255) ||
-		(opacity < 0) || (opacity > 100) ||
-		(luminance < 0) || (luminance > 100))
+	        (red > 255) || (green > 255) || (blue > 255) ||
+	        (opacity < 0) || (opacity > 100) ||
+	        (luminance < 0) || (luminance > 100))
 		quit("!SetTint: invalid parameter. R,G,B must be 0-255, opacity & luminance 0-100");
 
-	debug_script_log("Set ambient tint RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
+	debug_script_log("Set _GP(ambient) tint RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
 
 	_GP(play).rtint_enabled = opacity > 0;
 	_GP(play).rtint_red = red;
@@ -90,7 +90,7 @@ void NewRoom(int nrnum) {
 			_GP(play).stop_dialog_at_end = DIALOG_NEWROOM + nrnum;
 		else {
 			quitprintf("!NewRoom: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
-				_GP(last_in_dialog_request_script_pos).Section.GetCStr(), _GP(last_in_dialog_request_script_pos).Line);
+			           _GP(last_in_dialog_request_script_pos).Section.GetCStr(), _GP(last_in_dialog_request_script_pos).Line);
 		}
 		return;
 	}

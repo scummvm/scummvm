@@ -30,13 +30,18 @@
 #define AGS_SHARED_UTIL_PATH_H
 
 #include "ags/shared/util/string.h"
-#include "common/fs.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 namespace Path {
+
+// Get a filename from a path
+String get_filename(const String &path);
+// Get an extension from a filename
+String get_extension(const String &path);
+
 // Tells if the given path is a directory
 bool    IsDirectory(const String &directory);
 // Tells if the given path is a file
@@ -44,6 +49,10 @@ bool    IsFile(const String &filename);
 // Tells if the given path is file or directory;
 // may be used to check if it's valid to use
 bool    IsFileOrDir(const String &filename);
+// Returns filename part out of the longer path
+String  GetFilename(const String &path);
+// Returns file's extension; file may be a fully qualified path too
+String  GetFileExtension(const String &path);
 
 // Makes a platform-dependant path comparison.
 // This takes into consideration platform's filename case (in)sensivity and
@@ -58,6 +67,8 @@ String  GetDirectoryPath(const String &path);
 // Tells if the path points to the parent path's location or lower directory;
 // return FALSE if the path points to outside of the parent location.
 bool    IsSameOrSubDir(const String &parent, const String &path);
+// Tells if the path is relative.
+bool    IsRelativePath(const String &path);
 
 // Makes a path have only '/' slashes; this is to make it easier to work
 // with path, knowing it contains only one type of directory separators
@@ -71,9 +82,14 @@ String  MakeTrailingSlash(const String &path);
 String  MakeAbsolutePath(const String &path);
 // Tries to create a relative path that would point to 'path' location
 // if walking out of the 'base'. Returns empty string on failure.
+// NOTE: the 'base' is only considered a directory if it has a trailing slash.
 String  MakeRelativePath(const String &base, const String &path);
 // Concatenates parent and relative paths
 String  ConcatPaths(const String &parent, const String &child);
+// Creates path by combining directory, file name and extension
+String  MakePath(const String &parent, const String &filename, const String &ext);
+// Splits path into components, divided by path separator
+std::vector<String> Split(const String &path);
 
 // Subsitutes illegal characters with '_'. This function uses a combined set
 // of illegal chars from all the supported platforms to make a name that
@@ -84,14 +100,6 @@ String  FixupSharedFilename(const String &filename);
 String  GetPathInASCII(const String &path);
 // Converts filepath from command line's argument into ASCII variant
 String  GetCmdLinePathInASCII(const char *arg, int arg_index);
-
-inline String get_filename(const String &pathAndName) {
-	size_t p = pathAndName.FindCharReverse('/');
-	if (p != String::npos)
-		return String(pathAndName.GetNullableCStr() + p + 1);
-	return pathAndName;
-}
-
 } // namespace Path
 
 } // namespace Shared

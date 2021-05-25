@@ -84,7 +84,7 @@ void release_bitmap(BITMAP *bitmap) {
 void clear_to_color(BITMAP *bitmap, int color) {
 	Graphics::ManagedSurface &surf = **bitmap;
 
-   surf.clear(color);
+	surf.clear(color);
 }
 
 int bitmap_color_depth(BITMAP *bmp) {
@@ -98,76 +98,76 @@ int bitmap_mask_color(BITMAP *bmp) {
 	// For other color depths this is bright pink (RGB 255, 0, 255).
 	// The alpha chanel should be 0.
 	//if (bmp-format.bytesPerPixel == 1)
-	//	return 0;
+	//  return 0;
 	//return bmp->format.AGRBToColor(0, 255, 0, 255);
 	return bmp->getTransparentColor();
 }
 
 void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height) {
 	dest->draw(src, Common::Rect(src_x, src_y, src_x + width, src_y + height),
-		dst_x, dst_y, false, false, false, -1);
+	           dst_x, dst_y, false, false, false, -1);
 }
 
 void stretch_blit(const BITMAP *src, BITMAP *dest,
-		int source_x, int source_y, int source_width, int source_height,
-		int dest_x, int dest_y, int dest_width, int dest_height) {
+                  int source_x, int source_y, int source_width, int source_height,
+                  int dest_x, int dest_y, int dest_width, int dest_height) {
 	dest->stretchDraw(src,
-		Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
-		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
-		false, -1);
+	                  Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
+	                  Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
+	                  false, -1);
 }
 
 void masked_blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height) {
 	assert(src->format == dest->format);
 
 	dest->draw(src, Common::Rect(src_x, src_y, src_x + width, src_y + height),
-		dst_x, dst_y, false, false, true, -1);
+	           dst_x, dst_y, false, false, true, -1);
 }
 
 void masked_stretch_blit(const BITMAP *src, BITMAP *dest,
-		int source_x, int source_y, int source_width, int source_height,
-		int dest_x, int dest_y, int dest_width, int dest_height) {
+                         int source_x, int source_y, int source_width, int source_height,
+                         int dest_x, int dest_y, int dest_width, int dest_height) {
 	dest->stretchDraw(src,
-		Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
-		Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
-		true, -1);
+	                  Common::Rect(source_x, source_y, source_x + source_width, source_y + source_height),
+	                  Common::Rect(dest_x, dest_y, dest_x + dest_width, dest_y + dest_height),
+	                  true, -1);
 }
 
 void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, false, false, true, -1);
+	          x, y, false, false, true, -1);
 }
 
 void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h) {
 	bmp->stretchDraw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		Common::Rect(x, y, x + w, y + h),
-		true, -1);
+	                 Common::Rect(x, y, x + w, y + h),
+	                 true, -1);
 }
 
 void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, false, false, true, _G(trans_blend_alpha));
+	          x, y, false, false, true, _G(trans_blend_alpha));
 }
 
 void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, false, false, true, color,
-		_G(trans_blend_red), _G(trans_blend_green), _G(trans_blend_blue));
+	          x, y, false, false, true, color,
+	          _G(trans_blend_red), _G(trans_blend_green), _G(trans_blend_blue));
 }
 
 void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, true, false, true, -1);
+	          x, y, true, false, true, -1);
 }
 
 void draw_sprite_v_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, false, true, true, -1);
+	          x, y, false, true, true, -1);
 }
 
 void draw_sprite_vh_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmp->draw(sprite, Common::Rect(0, 0, sprite->w, sprite->h),
-		x, y, true, true, true, -1);
+	          x, y, true, true, true, -1);
 }
 
 void rotate_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, fixed angle) {
@@ -221,8 +221,8 @@ void bmp_write16(byte *addr, int color) {
 
 void bmp_write24(byte *addr, int color) {
 	*addr = (color & 0xff);
-	*(addr+1) = ((color >> 8) & 0xff);
-	*(addr+2) = ((color >> 16) & 0xff);
+	*(addr + 1) = ((color >> 8) & 0xff);
+	*(addr + 2) = ((color >> 16) & 0xff);
 }
 
 void bmp_write32(byte *addr, int color) {
@@ -369,6 +369,10 @@ void circlefill(BITMAP *bmp, int x, int y, int radius, int color) {
 
 void clear_bitmap(BITMAP *bmp) {
 	bmp->clear();
+}
+
+void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a) {
+	// TODO
 }
 
 } // namespace AGS3

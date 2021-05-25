@@ -26,11 +26,13 @@
 //
 //=============================================================================
 
-#include "ags/lib/alfont/alfont.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/globals.h"
+//include <alfont.h>
+#include "ags/shared/ac/game_setup_struct.h"
 
 namespace AGS3 {
+
+
+
 
 //=============================================================================
 // Engine-specific implementation split out of acfonts.cpp

@@ -32,14 +32,14 @@ namespace AGSSpriteFont {
 
 class VariableWidthSpriteFontRendererClifftop : public VariableWidthSpriteFontRenderer {
 public:
-	VariableWidthSpriteFontRendererClifftop(IAGSEngine *engine);
-	virtual ~VariableWidthSpriteFontRendererClifftop(void);
+VariableWidthSpriteFontRendererClifftop(IAGSEngine *engine);
+virtual ~VariableWidthSpriteFontRendererClifftop(void);
 
-	int GetTextHeight(const char *text, int fontNumber) override;
-	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
+int GetTextHeight(const char *text, int fontNumber) override;
+void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 
 private:
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
+void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height, int colour);
 };
 
 } // namespace AGSSpriteFont

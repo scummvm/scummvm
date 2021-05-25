@@ -56,7 +56,7 @@ public:
 	// ncpath = navpoint-compressed path
 	// opath = path composed of individual grid elements
 	NavResult NavigateRefined(int sx, int sy, int ex, int ey, std::vector<int> &opath,
-		std::vector<int> &ncpath);
+	                          std::vector<int> &ncpath);
 
 	NavResult Navigate(int sx, int sy, int ex, int ey, std::vector<int> &opath);
 
@@ -76,7 +76,7 @@ private:
 		float cost;
 		int index;
 
-		inline Entry() = default;
+		inline Entry() {}
 
 		inline Entry(float ncost, int nindex)
 			: cost(ncost)
@@ -183,8 +183,8 @@ inline void Navigation::UnpackSquare(int sq, int &x, int &y) {
 
 inline bool Navigation::Outside(int x, int y) const {
 	return
-		(unsigned)x >= (unsigned)mapWidth ||
-		(unsigned)y >= (unsigned)mapHeight;
+	    (unsigned)x >= (unsigned)mapWidth ||
+	    (unsigned)y >= (unsigned)mapHeight;
 }
 
 inline bool Navigation::Walkable(int x, int y) const {

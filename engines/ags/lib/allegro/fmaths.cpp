@@ -56,9 +56,8 @@ fixed fixatan(fixed x) {
 
 		if (d > 0)
 			a = c + 1;
-		else
-			if (d < 0)
-				b = c - 1;
+		else if (d < 0)
+			b = c - 1;
 
 	} while ((a <= b) && (d));
 

@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_AC_ASSETHELPER_H
-#define AGS_ENGINE_AC_ASSETHELPER_H
+#ifndef AGS_ENGINE_AC_ASSET_HELPER_H
+#define AGS_ENGINE_AC_ASSET_HELPER_H
 
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/utility.h"
@@ -46,25 +46,27 @@ using AGS::Shared::String;
 
 // Looks for valid asset library everywhere and returns path, or empty string if failed
 String  find_assetlib(const String &filename);
-// Looks up for known valid asset library and returns path, or empty string if failed
-String  get_known_assetlib(const String &filename);
-// Looks for asset everywhere and returns opened stream, or NULL if failed
-Stream *find_open_asset(const String &filename);
 
 extern "C" {
 	struct PACKFILE; // Allegro 4's own stream type
 }
 
-// AssetPath combines asset library and item names
-// TODO: implement support for registering multiple libraries at once for
-// the AssetManager, then we could remove assetlib parameter.
-typedef std::pair<String, String> AssetPath;
+// AssetPath combines asset name and optional library filter, that serves to narrow down the search
+struct AssetPath {
+	String Name;
+	String Filter;
+
+	AssetPath(const String &name = "", const String &filter = "") : Name(name), Filter(filter) {
+	}
+};
 
 // Returns the path to the audio asset, considering the given bundling type
 AssetPath get_audio_clip_assetpath(int bundling_type, const String &filename);
 // Returns the path to the voice-over asset
 AssetPath get_voice_over_assetpath(const String &filename);
 
+// Locates asset among known locations, on success returns open stream and asset's size.
+Stream *LocateAsset(const AssetPath &path, size_t &asset_size);
 // Custom AGS PACKFILE user object
 // TODO: it is preferrable to let our Stream define custom readable window instead,
 // keeping this as simple as possible for now (we may require a stream classes overhaul).

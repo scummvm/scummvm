@@ -21,17 +21,17 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/string.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
 
 
 

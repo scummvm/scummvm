@@ -22,15 +22,13 @@
 
 #include "ags/engine/ac/region.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_region.h"
-#include "ags/engine/ac/room.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/dynobj/cc_region.h"
-#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
-#include "ags/shared/game/roomstruct.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/shared/game/room_struct.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -41,7 +39,10 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 ScriptRegion *GetRegionAtRoom(int xx, int yy) {
-	return &_G(scrRegion)[GetRegionIDAtRoom(xx, yy)];
+	int hsnum = GetRegionIDAtRoom(xx, yy);
+	if (hsnum < 0)
+		hsnum = 0;
+	return &_G(scrRegion)[hsnum];
 }
 
 ScriptRegion *GetRegionAtScreen(int x, int y) {
@@ -140,11 +141,6 @@ RuntimeScriptValue Sc_GetRegionAtScreen(const RuntimeScriptValue *params, int32_
 	API_SCALL_OBJ_PINT2(ScriptRegion, _GP(ccDynamicRegion), GetRegionAtScreen);
 }
 
-RuntimeScriptValue Sc_Region_GetDrawingSurface(const RuntimeScriptValue *params, int32_t param_count) {
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaRegion);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
-}
-
 RuntimeScriptValue Sc_Region_Tint(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT5(ScriptRegion, Region_Tint);
 }
@@ -218,7 +214,6 @@ RuntimeScriptValue Sc_Region_GetTintLuminance(void *self, const RuntimeScriptVal
 void RegisterRegionAPI() {
 	ccAddExternalStaticFunction("Region::GetAtRoomXY^2", Sc_GetRegionAtRoom);
 	ccAddExternalStaticFunction("Region::GetAtScreenXY^2", Sc_GetRegionAtScreen);
-	ccAddExternalStaticFunction("Region::GetDrawingSurface", Sc_Region_GetDrawingSurface);
 	ccAddExternalObjectFunction("Region::Tint^4", Sc_Region_TintNoLum);
 	ccAddExternalObjectFunction("Region::Tint^5", Sc_Region_Tint);
 	ccAddExternalObjectFunction("Region::RunInteraction^1", Sc_Region_RunInteraction);

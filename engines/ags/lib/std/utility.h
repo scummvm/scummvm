@@ -28,18 +28,23 @@ namespace std {
 
 template<class T1, class T2>
 struct pair {
-	T1 first;
-	T2 second;
+T1 first;
+T2 second;
 
-	pair() {
-	}
-	pair(T1 first_, T2 second_) : first(first_), second(second_) {
-	}
+pair() {
+}
+pair(T1 first_, T2 second_) : first(first_), second(second_) {
+}
 };
 
 template< class T1, class T2 >
 pair<T1, T2> make_pair(T1 first, T2 second) {
-	return pair<T1, T2>(first, second);
+return pair<T1, T2>(first, second);
+}
+
+template<class T>
+T move(const T &v) {
+return v;
 }
 
 } // namespace std

@@ -23,9 +23,9 @@
 #include "ags/lib/std/memory.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/ini_util.h"
-#include "ags/shared/util/inifile.h"
+#include "ags/shared/util/ini_file.h"
 #include "ags/shared/util/stream.h"
-#include "ags/shared/util/textstreamwriter.h"
+#include "ags/shared/util/text_stream_writer.h"
 
 namespace AGS3 {
 namespace AGS {

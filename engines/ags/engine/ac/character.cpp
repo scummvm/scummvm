@@ -28,7 +28,7 @@
 
 #include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
@@ -42,44 +42,43 @@
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/gui.h"
-#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/object.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/room.h"
-#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/screen_overlay.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/system.h"
-#include "ags/engine/ac/viewframe.h"
-#include "ags/engine/ac/walkablearea.h"
-#include "ags/shared/gui/guimain.h"
+#include "ags/engine/ac/view_frame.h"
+#include "ags/engine/ac/walkable_area.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/engine/ac/route_finder.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/main/update.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/engine/gfx/graphicsdriver.h"
-#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/lib/std/math.h"
+#include "ags/engine/gfx/graphics_driver.h"
+#include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_character.h"
 #include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
-
-// **** CHARACTER: FUNCTIONS ****
 
 void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addIndex) {
 	int ee;
@@ -123,10 +122,9 @@ void Character_AddInventory(CharacterInfo *chaa, ScriptInvItem *invi, int addInd
 		_G(charextra)[charid].invorder[addIndex] = inum;
 	}
 	_G(charextra)[charid].invorder_count++;
-	_G(guis_need_update) = 1;
+	GUI::MarkInventoryForUpdate(charid, charid == _GP(game).playercharacter);
 	if (chaa == _G(playerchar))
 		run_on_event(GE_ADD_INV, RuntimeScriptValue().SetInt32(inum));
-
 }
 
 void Character_AddWaypoint(CharacterInfo *chaa, int x, int y) {
@@ -226,17 +224,19 @@ void Character_ChangeRoomSetLoop(CharacterInfo *chaa, int room, int x, int y, in
 	}
 
 	if ((x != SCR_NO_VALUE) && (y != SCR_NO_VALUE)) {
-		// We cannot set character position right away,
-		// because room switch will occur only after the script end,
-		// and character position may be still changing meanwhile.
 		_G(new_room_pos) = 0;
 
-		// Don't check X or Y bounds, so that they can do a
-		// walk-in animation if they want
-		_G(new_room_x) = x;
-		_G(new_room_y) = y;
-		if (direction != SCR_NO_VALUE)
-			_G(new_room_loop) = direction;
+		if (_G(loaded_game_file_version) <= kGameVersion_272) {
+			// Set position immediately on 2.x.
+			chaa->x = x;
+			chaa->y = y;
+		} else {
+			// don't check X or Y bounds, so that they can do a
+			// walk-in animation if they want
+			_G(new_room_x) = x;
+			_G(new_room_y) = y;
+			if (direction != SCR_NO_VALUE) _G(new_room_loop) = direction;
+		}
 	}
 
 	NewRoom(room);
@@ -663,7 +663,7 @@ void Character_LoseInventory(CharacterInfo *chap, ScriptInvItem *invi) {
 			}
 		}
 	}
-	_G(guis_need_update) = 1;
+	GUI::MarkInventoryForUpdate(charid, charid == _GP(game).playercharacter);
 
 	if (chap == _G(playerchar))
 		run_on_event(GE_LOSE_INV, RuntimeScriptValue().SetInt32(inum));
@@ -705,7 +705,7 @@ void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *t
 
 ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 
-	int ovltype = DisplaySpeechBackground(chaa->index_id, (const char *)texx);
+	int ovltype = DisplaySpeechBackground(chaa->index_id, texx);
 	int ovri = find_overlay_of_type(ovltype);
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
@@ -1030,8 +1030,6 @@ ScriptInvItem *Character_GetActiveInventory(CharacterInfo *chaa) {
 }
 
 void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit) {
-	_G(guis_need_update) = 1;
-
 	if (iit == nullptr) {
 		chaa->activeinv = -1;
 
@@ -1040,6 +1038,7 @@ void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit) {
 			if (GetCursorMode() == MODE_USE)
 				set_cursor_mode(0);
 		}
+		GUI::MarkInventoryForUpdate(chaa->index_id, chaa->index_id == _GP(game).playercharacter);
 		return;
 	}
 
@@ -1055,6 +1054,7 @@ void Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit) {
 		update_inv_cursor(iit->id);
 		set_cursor_mode(MODE_USE);
 	}
+	GUI::MarkInventoryForUpdate(chaa->index_id, chaa->index_id == _GP(game).playercharacter);
 }
 
 int Character_GetAnimating(CharacterInfo *chaa) {
@@ -1543,6 +1543,8 @@ void Character_SetZ(CharacterInfo *chaa, int newval) {
 	chaa->z = newval;
 }
 
+
+
 int Character_GetSpeakingFrame(CharacterInfo *chaa) {
 
 	if ((_G(face_talking) >= 0) && (_G(facetalkrepeat))) {
@@ -1562,7 +1564,7 @@ int Character_GetSpeakingFrame(CharacterInfo *chaa) {
 //=============================================================================
 
 // order of loops to turn character in circle from down to down
-const int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
+int turnlooporder[8] = {0, 6, 1, 7, 3, 5, 2, 4};
 
 void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims) {
 	CharacterInfo *chin = &_GP(game).chars[chac];
@@ -1809,7 +1811,7 @@ int doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *che
 	return 0;
 }
 
-int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int step) {
+int find_nearest_walkable_area_within(int *xx, int *yy, int range, int step) {
 	int ex, ey, nearest = 99999, thisis, nearx = 0, neary = 0;
 	int startx = 0, starty = 14;
 	int roomWidthLowRes = room_to_mask_coord(_GP(thisroom).Width);
@@ -1867,7 +1869,7 @@ int find_nearest_walkable_area_within(int32_t *xx, int32_t *yy, int range, int s
 	return 0;
 }
 
-void find_nearest_walkable_area(int32_t *xx, int32_t *yy) {
+void find_nearest_walkable_area(int *xx, int *yy) {
 
 	int pixValue = _GP(thisroom).WalkAreaMask->GetPixel(room_to_mask_coord(xx[0]), room_to_mask_coord(yy[0]));
 	// only fix this code if the game was built with 2.61 or above
@@ -2242,7 +2244,7 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
 		ypp = -1;
 	}
 
-	_displayspeech((const char *)displbuf, chid, xpp, ypp, width, 1);
+	_displayspeech(displbuf, chid, xpp, ypp, width, 1);
 }
 
 void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int isThought) {
@@ -2262,13 +2264,14 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	_G(said_speech_line) = 1;
 
+	int aa;
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
-		for (size_t i = 0; i < _GP(screenover).size();) {
-			if (_GP(screenover)[i].timeout > 0)
-				remove_screen_overlay(_GP(screenover)[i].type);
-			else
-				i++;
+		for (aa = 0; aa < _G(numscreenover); aa++) {
+			if (_GP(screenover)[aa].timeout > 0) {
+				remove_screen_overlay(_GP(screenover)[aa].type);
+				aa--;
+			}
 		}
 	}
 	_G(said_text) = 1;
@@ -2279,7 +2282,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 	int isPause = 1;
 	// if the message is all .'s, don't display anything
-	for (int aa = 0; texx[aa] != 0; aa++) {
+	for (aa = 0; texx[aa] != 0; aa++) {
 		if (texx[aa] != '.') {
 			isPause = 0;
 			break;
@@ -2384,12 +2387,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 		if ((speakingChar->view < 0) ||
 		        (speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
 		        (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1)) {
-#if AGS_PLATFORM_SCUMMVM
-			// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
-			return;
-#else
 			quitprintf("Unable to display speech because the character %s has an invalid view frame (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
-#endif
 		}
 
 		_G(our_eip) = 1504;
@@ -2630,12 +2628,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 			if (speakingChar->on && // don't bother checking if character is not visible (also fixes 'Trilby's Notes' legacy game)
 			        ((speakingChar->loop >= _G(views)[speakingChar->view].numLoops) ||
 			         (_G(views)[speakingChar->view].loops[speakingChar->loop].numFrames < 1))) {
-#if AGS_PLATFORM_SCUMMVM
-				// WORKAROUND: Fix crash in Fatman intro by ignoring invalid speeches
-				return;
-#else
 				quitprintf("!Unable to display speech because the character %s has an invalid speech view (View %d, loop %d, frame %d)", speakingChar->scrname, speakingChar->view + 1, speakingChar->loop, speakingChar->frame);
-#endif
 			}
 
 			// set up the speed of the first frame
@@ -2813,8 +2806,6 @@ PViewport FindNearestViewport(int charid) {
 // Script API Functions
 //
 //=============================================================================
-
-
 
 // void | CharacterInfo *chaa, ScriptInvItem *invi, int addIndex
 RuntimeScriptValue Sc_Character_AddInventory(void *self, const RuntimeScriptValue *params, int32_t param_count) {

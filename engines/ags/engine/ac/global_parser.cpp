@@ -22,7 +22,7 @@
 
 #include "ags/engine/ac/global_parser.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/string.h"
 #include "ags/globals.h"
 

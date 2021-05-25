@@ -39,41 +39,41 @@ using namespace AGS::Shared;
 #endif
 
 const char *IniFileText = ""
-"global_item=global_value" ENDL
-"[section1]" ENDL
-"item1" ENDL
-"//this is comment" ENDL
-"item2=" ENDL
-"item3=value" ENDL
-"item4=another value" ENDL
-"[this_section_should_be_deleted]" ENDL
-"item1=value1" ENDL
-"item2=value2" ENDL
-";this is comment" ENDL
-"[section3]" ENDL
-"item_to_be_deleted=value" ENDL
-"item_to_be_kept=another value" ENDL
-"     [     section4     ]      " ENDL
-"        item1     =     value  " ENDL;
+                          "global_item=global_value" ENDL
+                          "[section1]" ENDL
+                          "item1" ENDL
+                          "//this is comment" ENDL
+                          "item2=" ENDL
+                          "item3=value" ENDL
+                          "item4=another value" ENDL
+                          "[this_section_should_be_deleted]" ENDL
+                          "item1=value1" ENDL
+                          "item2=value2" ENDL
+                          ";this is comment" ENDL
+                          "[section3]" ENDL
+                          "item_to_be_deleted=value" ENDL
+                          "item_to_be_kept=another value" ENDL
+                          "     [     section4     ]      " ENDL
+                          "        item1     =     value  " ENDL;
 
 const char *IniFileText2 = ""
-"global_item=global_value" ENDL
-"[section1]" ENDL
-"item1=value1" ENDL
-"//this is comment" ENDL
-"item2=value2" ENDL
-"item3=value3" ENDL
-"new_item=new_value" ENDL
-"[section3]" ENDL
-"item_to_be_kept=another value" ENDL
-"     [     section4     ]      " ENDL
-"new_item1=new_value1" ENDL
-"        item1     =     value  " ENDL
-"new_item2=new_value2" ENDL
-"[section5]" ENDL
-"item5_1=value5_1" ENDL
-"item5_2=value5_2" ENDL
-"item5_3=value5_3" ENDL;
+                           "global_item=global_value" ENDL
+                           "[section1]" ENDL
+                           "item1=value1" ENDL
+                           "//this is comment" ENDL
+                           "item2=value2" ENDL
+                           "item3=value3" ENDL
+                           "new_item=new_value" ENDL
+                           "[section3]" ENDL
+                           "item_to_be_kept=another value" ENDL
+                           "     [     section4     ]      " ENDL
+                           "new_item1=new_value1" ENDL
+                           "        item1     =     value  " ENDL
+                           "new_item2=new_value2" ENDL
+                           "[section5]" ENDL
+                           "item5_1=value5_1" ENDL
+                           "item5_2=value5_2" ENDL
+                           "item5_3=value5_3" ENDL;
 
 bool operator==(const StringOrderMap &lhs, const StringOrderMap &rhs) {
 	if (lhs.size() != rhs.size())
@@ -182,7 +182,8 @@ void Test_IniFile() {
 		++sec;
 		IniFile::ItemIterator item = sec->Begin();
 		item->SetValue("value1");
-		++item; ++item;
+		++item;
+		++item;
 		item->SetValue("value2");
 		++item;
 		item->SetValue("value3");
@@ -191,12 +192,16 @@ void Test_IniFile() {
 		item->SetValue("new_value");
 
 		// Removing a section
-		sec = ini.Begin(); ++sec; ++sec;
+		sec = ini.Begin();
+		++sec;
+		++sec;
 		ini.RemoveSection(sec);
 		assert(ini.GetSectionCount() == section_count - 1);
 
 		// Removing an item
-		sec = ini.Begin(); ++sec; ++sec;
+		sec = ini.Begin();
+		++sec;
+		++sec;
 		assert(sec->GetName() == "section3");
 		item = sec->Begin();
 		assert(item->GetKey() == "item_to_be_deleted");

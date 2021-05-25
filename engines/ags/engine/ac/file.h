@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_AC_FILE_H
 #define AGS_ENGINE_AC_FILE_H
 
-#include "ags/engine/ac/dynobj/scriptfile.h"
+#include "ags/engine/ac/dynobj/script_file.h"
 #include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {

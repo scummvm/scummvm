@@ -31,11 +31,11 @@ namespace std {
 template<class T>
 class array : public Common::Array<T> {
 public:
-	array() : Common::Array<T>() {
-	}
-	array(size_t size) : Common::Array<T>() {
-		Common::Array<T>::resize(size);
-	}
+array() : Common::Array<T>() {
+}
+array(size_t size) : Common::Array<T>() {
+	Common::Array<T>::resize(size);
+}
 };
 
 } // namespace std

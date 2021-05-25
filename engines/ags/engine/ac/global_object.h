@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_GLOBAL_OBJECT_H
-#define AGS_ENGINE_AC_GLOBAL_OBJECT_H
+#ifndef AGS_ENGINE_AC_GLOBALOBJECT_H
+#define AGS_ENGINE_AC_GLOBALOBJECT_H
 
 namespace AGS3 {
+
 namespace AGS {
 namespace Shared {
 class Bitmap;
-} // namespace Shared
-} // namespace AGS
-
+}
+}
 using namespace AGS; // FIXME later
 
 // TODO: merge with other Rect declared in bitmap unit

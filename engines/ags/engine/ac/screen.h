@@ -30,7 +30,6 @@ namespace Shared {
 class Bitmap;
 } // namespace Shared
 } // namespace AGS
-
 namespace AGS {
 namespace Engine {
 class IDriverDependantBitmap;

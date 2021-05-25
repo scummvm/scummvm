@@ -25,12 +25,13 @@
 //
 
 #include "ags/shared/core/platform.h"
-#include "ags/engine/ac/cdaudio.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/cd_audio.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/translation.h"
-#include "ags/engine/debugging/agseditordebugger.h"
+#include "ags/engine/debugging/ags_editor_debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
@@ -38,12 +39,13 @@
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/quit.h"
-#include "ags/shared/ac/spritecache.h"
-#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/shared/ac/sprite_cache.h"
+#include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/plugin_engine.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/globals.h"
@@ -74,10 +76,10 @@ void quit_shutdown_scripts() {
 
 void quit_check_dynamic_sprites(QuitReason qreason) {
 	if ((qreason & kQuitKind_NormalExit) && (_G(check_dynamic_sprites_at_exit)) &&
-		(_GP(game).options[OPT_DEBUGMODE] != 0)) {
+	        (_GP(game).options[OPT_DEBUGMODE] != 0)) {
 		// game exiting normally -- make sure the dynamic sprites
 		// have been deleted
-		for (int i = 1; i < _GP(spriteset).GetSpriteSlotCount(); i++) {
+		for (size_t i = 1; i < _GP(spriteset).GetSpriteSlotCount(); i++) {
 			if (_GP(game).SpriteInfos[i].Flags & SPF_DYNAMICALLOC)
 				debug_script_warn("Dynamic sprite %d was never deleted", i);
 		}
@@ -124,8 +126,8 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 		} else {
 			qreason = kQuit_GameError;
 			alertis.Format("An error has occurred. Please contact the game author for support, as this "
-				"is likely to be a scripting error and not a bug in AGS.\n"
-				"(ACI version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
+			               "is likely to be a scripting error and not a bug in AGS.\n"
+			               "(ACI version %s)\n\n", _G(EngineVersion).LongString.GetCStr());
 		}
 
 		alertis.Append(get_cur_script(5));
@@ -138,13 +140,13 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 	} else if (qmsg[0] == '%') {
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
-			"to treat warnings as errors.\n"
-			"(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), get_cur_script(5).GetCStr());
+		               "to treat warnings as errors.\n"
+		               "(ACI version %s)\n\n%s\n", _G(EngineVersion).LongString.GetCStr(), get_cur_script(5).GetCStr());
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
-			"(ACI version %s)\n"
-			"\nError: ", _G(EngineVersion).LongString.GetCStr());
+		               "(ACI version %s)\n"
+		               "\nError: ", _G(EngineVersion).LongString.GetCStr());
 		return kQuit_FatalError;
 	}
 }
@@ -164,12 +166,7 @@ void quit_release_data() {
 	resetRoomStatuses();
 	_GP(thisroom).Free();
 	_GP(play).Free();
-
-	/*  _CrtMemState memstart;
-	_CrtMemCheckpoint(&memstart);
-	_CrtMemDumpStatistics( &memstart );*/
-
-	Shared::AssetManager::DestroyInstance();
+	_GP(AssetMgr).reset();
 }
 
 void quit_delete_temp_files() {
@@ -267,12 +264,6 @@ void quit_free() {
 	shutdown_debug();
 
 	_G(our_eip) = 9904;
-}
-
-extern "C" {
-	void quit_c(char *msg) {
-		quit(msg);
-	}
 }
 
 } // namespace AGS3

@@ -20,9 +20,9 @@
  *
  */
 
+#include "ags/lib/std/utility.h"
 #include "ags/shared/script/script_common.h"  // current_line
 #include "ags/shared/util/string.h"
-#include "ags/lib/std/utility.h"
 #include "ags/globals.h"
 
 namespace AGS3 {

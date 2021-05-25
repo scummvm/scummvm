@@ -44,8 +44,8 @@ namespace AGS3 {
  * Engine of anti-aliased stretching.
  */
 static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
-	int _sx, int _sy, int _sw, int _sh,
-	int _dx, int _dy, int _dw, int _dh, int _masked) {
+                             int _sx, int _sy, int _sw, int _sh,
+                             int _dx, int _dy, int _dw, int _dh, int _masked) {
 	int sx, sy, dx, dy, ydx, ysx;
 	int xinc, yinc, dsx, dsy;
 	int xi1, xi2, xdd, yxdd;
@@ -53,7 +53,7 @@ static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	int dxbeg, dxend, dybeg, dyend;
 	unsigned long num;
 	void (*add)(BITMAP * _src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned long _num);
-	void (*put)(byte *_addr, int _x);
+	void (*put)(byte * _addr, int _x);
 
 	if ((_dw <= 0) || (_dh <= 0) || (_sw <= 0) || (_sh <= 0))
 		return;
@@ -190,8 +190,8 @@ static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 		byte *daddr = bmp_write_line(_dst, dy);
 
 		for (dx = ydx, sx = ysx, xdd = yxdd; dx < dxend; dx++) {
-			(*add) (_src, sx, sx + dsx, sy, sy + dsy, num);
-			(*put) (daddr, dx);
+			(*add)(_src, sx, sx + dsx, sy, sy + dsy, num);
+			(*put)(daddr, dx);
 
 			aa_ADVANCE(sx, xinc, xdd, xi1, xi2);
 		}
@@ -206,8 +206,8 @@ static void _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
  * Anti-aliased bitmap stretching with blit.
  */
 void aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
-	int _sx, int _sy, int _sw, int _sh,
-	int _dx, int _dy, int _dw, int _dh) {
+                     int _sx, int _sy, int _sw, int _sh,
+                     int _dx, int _dy, int _dw, int _dh) {
 	_aa_stretch_blit(_src, _dst, _sx, _sy, _sw, _sh, _dx, _dy, _dw, _dh, 0);
 }
 

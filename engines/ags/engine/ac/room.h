@@ -23,15 +23,14 @@
 #ifndef AGS_ENGINE_AC_ROOM_H
 #define AGS_ENGINE_AC_ROOM_H
 
-#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
-#include "ags/shared/ac/characterinfo.h"
-#include "ags/engine/script/runtimescriptvalue.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/engine/ac/dynobj/script_drawing_surface.h"
+#include "ags/shared/ac/character_info.h"
+#include "ags/engine/script/runtime_script_value.h"
+#include "ags/shared/game/room_struct.h"
 
 namespace AGS3 {
 
 ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber);
-ScriptDrawingSurface *Room_GetDrawingSurfaceForMask(RoomAreaMask mask);
 int Room_GetObjectCount();
 int Room_GetWidth();
 int Room_GetHeight();

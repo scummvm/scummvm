@@ -31,44 +31,44 @@ namespace std {
 template<class T>
 class list : public Common::List<T> {
 public:
-	struct reverse_iterator {
-	private:
-		typename Common::List<T>::iterator _it;
-	public:
-		reverse_iterator(typename Common::List<T>::iterator it) : _it(it) {
-		}
-		reverse_iterator() {
-		}
-
-		T operator*() const {
-			return *_it;
-		}
-
-		reverse_iterator &operator++() {
-			--_it;
-			return *this;
-		}
-
-		bool operator==(const reverse_iterator &rhs) {
-			return _it == rhs._it;
-		}
-		bool operator!=(const reverse_iterator &rhs) {
-			return _it != rhs._it;
-		}
-	};
+struct reverse_iterator {
+private:
+	typename Common::List<T>::iterator _it;
 public:
-	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
-	        const T &element) {
-		Common::List<T>::insert(pos, element);
-		return pos;
+	reverse_iterator(typename Common::List<T>::iterator it) : _it(it) {
+	}
+	reverse_iterator() {
 	}
 
-	reverse_iterator rbegin() {
-		return reverse_iterator(Common::List<T>::reverse_begin());
+	T operator*() const {
+		return *_it;
 	}
-	reverse_iterator rend() {
-		return reverse_iterator(Common::List<T>::end());
+
+	reverse_iterator &operator++() {
+		--_it;
+		return *this;
 	}
+
+	bool operator==(const reverse_iterator &rhs) {
+		return _it == rhs._it;
+	}
+	bool operator!=(const reverse_iterator &rhs) {
+		return _it != rhs._it;
+	}
+};
+public:
+typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
+        const T &element) {
+	Common::List<T>::insert(pos, element);
+	return pos;
+}
+
+reverse_iterator rbegin() {
+	return reverse_iterator(Common::List<T>::reverse_begin());
+}
+reverse_iterator rend() {
+	return reverse_iterator(Common::List<T>::end());
+}
 };
 
 } // namespace std

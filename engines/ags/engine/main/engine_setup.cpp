@@ -25,24 +25,24 @@
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/runtime_defines.h"
-#include "ags/engine/ac/walkbehind.h"
-#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/ac/walk_behind.h"
+#include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/device/mousew32.h"
+#include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/engine/gfx/ali3dexception.h"
-#include "ags/engine/gfx/graphicsdriver.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guiinv.h"
+#include "ags/engine/gfx/graphics_driver.h"
+#include "ags/shared/gui/gui_main.h"
+#include "ags/shared/gui/gui_inv.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/main/engine_setup.h"
 #include "ags/engine/media/video/video.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -127,7 +127,7 @@ void engine_init_resolution_settings(const Size game_size) {
 	_GP(usetup).textheight = getfontheight_outlined(0) + 1;
 
 	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, _GP(game).color_depth * 8,
-		_GP(game).IsLegacyLetterbox() ? " letterbox-by-design" : "");
+	              _GP(game).IsLegacyLetterbox() ? " letterbox-by-design" : "");
 
 	convert_gui_to_game_resolution(_G(loaded_game_file_version));
 	convert_objects_to_data_resolution(_G(loaded_game_file_version));
@@ -197,23 +197,9 @@ void engine_setup_color_conversions(int coldepth) {
 		// when we're using 32-bit colour, it converts hi-color images
 		// the wrong way round - so fix that
 
-#if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-		_G(_rgb_b_shift_16) = 0;
-		_G(_rgb_g_shift_16) = 5;
-		_G(_rgb_r_shift_16) = 11;
-
-		_G(_rgb_b_shift_15) = 0;
-		_G(_rgb_g_shift_15) = 5;
-		_G(_rgb_r_shift_15) = 10;
-
-		_G(_rgb_r_shift_32) = 0;
-		_G(_rgb_g_shift_32) = 8;
-		_G(_rgb_b_shift_32) = 16;
-#else
 		_G(_rgb_r_shift_16) = 11;
 		_G(_rgb_g_shift_16) = 5;
 		_G(_rgb_b_shift_16) = 0;
-#endif
 	} else if (coldepth == 16) {
 		// ensure that any 32-bit graphics displayed are converted
 		// properly to the current depth
@@ -262,14 +248,14 @@ void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_des
 	_GP(mouse).SetSpeedUnit(1.f);
 	if (_GP(usetup).mouse_speed_def == kMouseSpeed_CurrentDisplay) {
 		Size cur_desktop;
-		if (get_desktop_resolution(&cur_desktop.Width, &cur_desktop.Height) == 0)
+		if (sys_get_desktop_resolution(cur_desktop.Width, cur_desktop.Height) == 0)
 			_GP(mouse).SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
-			(float)cur_desktop.Height / (float)init_desktop.Height));
+			                                  (float)cur_desktop.Height / (float)init_desktop.Height));
 	}
 
 	Mouse_EnableControl(_GP(usetup).mouse_ctrl_enabled);
-	Debug::Printf(kDbgMsg_Info, "Mouse control: %s, base: %f, speed: %f", _GP(mouse).IsControlEnabled() ? "on" : "off",
-		_GP(mouse).GetSpeedUnit(), _GP(mouse).GetSpeed());
+	Debug::Printf(kDbgMsg_Info, "Mouse speed control: %s, unit: %f, user value: %f",
+	              _GP(usetup).mouse_ctrl_enabled ? "enabled" : "disabled", _GP(mouse).GetSpeedUnit(), _GP(mouse).GetSpeed());
 
 	on_coordinates_scaling_changed();
 
@@ -281,11 +267,11 @@ void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_des
 // Reset mouse controls before changing gfx mode
 void engine_pre_gfxmode_mouse_cleanup() {
 	// Always disable mouse control and unlock mouse when releasing down gfx mode
-	_GP(mouse).DisableControl();
+	_GP(mouse).SetMovementControl(false);
 	_GP(mouse).UnlockFromWindow();
 }
 
-// Fill in scsystem struct with display mode parameters
+// Fill in _GP(scsystem) struct with display mode parameters
 void engine_setup_scsystem_screen(const DisplayMode &dm) {
 	_GP(scsystem).coldepth = dm.ColorDepth;
 	_GP(scsystem).windowed = dm.Windowed;
@@ -300,16 +286,11 @@ void engine_post_gfxmode_setup(const Size &init_desktop) {
 
 	engine_setup_scsystem_screen(dm);
 	engine_post_gfxmode_driver_setup();
-	engine_post_gfxmode_screen_setup(dm, has_driver_changed);
-	if (has_driver_changed)
+	if (has_driver_changed) {
 		engine_post_gfxmode_draw_setup(dm);
+	}
+	engine_post_gfxmode_screen_setup(dm, has_driver_changed);
 	engine_post_gfxmode_mouse_setup(dm, init_desktop);
-
-	// TODO: the only reason this call was put here is that it requires
-	// "windowed" flag to be specified. Find out whether this function
-	// has anything to do with graphics mode at all. It is quite possible
-	// that we may split it into two functions, or remove parameter.
-	_G(platform)->PostAllegroInit(_GP(scsystem).windowed != 0);
 
 	video_on_gfxmode_changed();
 	invalidate_screen();
@@ -329,7 +310,7 @@ void engine_pre_gfxsystem_shutdown() {
 
 void on_coordinates_scaling_changed() {
 	// Reset mouse graphic area and bounds
-	_GP(mouse).SetGraphicArea();
+	_GP(mouse).UpdateGraphicArea();
 	// If mouse bounds do not have valid values yet, then limit cursor to viewport
 	if (_GP(play).mboundx1 == 0 && _GP(play).mboundy1 == 0 && _GP(play).mboundx2 == 0 && _GP(play).mboundy2 == 0)
 		_GP(mouse).SetMoveLimit(_GP(play).GetMainViewport());

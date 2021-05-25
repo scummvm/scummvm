@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CCINVENTORY_H
 #define AGS_ENGINE_AC_DYNOBJ_CCINVENTORY_H
 
-#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
 namespace AGS3 {
 

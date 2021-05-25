@@ -25,11 +25,10 @@
 //
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/game.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/util/directory.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/room.h"
@@ -37,15 +36,14 @@
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/gfx/ali3dexception.h"
-#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/engine/main/game_start.h"
 #include "ags/engine/script/script.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/timer.h"
-#include "ags/globals.h"
 #include "ags/ags.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -111,39 +109,39 @@ void do_start_game() {
 		start_game();
 }
 
-void initialize_start_and_play_game(int override_start_room, int loadSaveOnStartup) {
-//	try { // BEGIN try for ALI3DEXception
+void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnStartup) {
+	//try { // BEGIN try for ALI3DEXception
 
-		set_cursor_mode(MODE_WALK);
+	set_cursor_mode(MODE_WALK);
 
-		if (_G(convert_16bit_bgr)) {
-			// Disable text as speech while displaying the warning message
-			// This happens if the user's graphics card does BGR order 16-bit colour
-			int oldalways = _GP(game).options[OPT_ALWAYSSPCH];
-			_GP(game).options[OPT_ALWAYSSPCH] = 0;
-			// PSP: This is normal. Don't show a warning.
-			//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this game. You may experience colour problems during the game. Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
-			_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
-		}
+	if (_G(convert_16bit_bgr)) {
+		// Disable text as speech while displaying the warning message
+		// This happens if the user's graphics card does BGR order 16-bit colour
+		int oldalways = _GP(game).options[OPT_ALWAYSSPCH];
+		_GP(game).options[OPT_ALWAYSSPCH] = 0;
+		// PSP: This is normal. Don't show a warning.
+		//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this _GP(game). You may experience colour problems during the _GP(game). Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
+		_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
+	}
 
-		::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
-		if (override_start_room)
-			_G(playerchar)->room = override_start_room;
+	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
+	if (override_start_room)
+		_G(playerchar)->room = override_start_room;
 
-		Debug::Printf(kDbgMsg_Info, "Engine initialization complete");
-		Debug::Printf(kDbgMsg_Info, "Starting game");
+	Debug::Printf(kDbgMsg_Info, "Engine initialization complete");
+	Debug::Printf(kDbgMsg_Info, "Starting game");
 
-		start_game_init_editor_debugging();
+	start_game_init_editor_debugging();
 
-		start_game_load_savegame_on_startup();
+	start_game_load_savegame_on_startup();
 
-		do_start_game();
+	do_start_game();
 
-		RunGameUntilAborted();
+	RunGameUntilAborted();
 
-//	} catch (Ali3DException gfxException) {
-//		quit((char *)gfxException._message);
-//	}
+	/*} catch (Ali3DException gfxException) {
+	    quit((char *)gfxException._message);
+	}*/
 }
 
 } // namespace AGS3

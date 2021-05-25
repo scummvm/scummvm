@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_AC_GAMEVERSION_H
-#define AGS_SHARED_AC_GAMEVERSION_H
+#ifndef AGS_SHARED_AC_GAME_VERSION_H
+#define AGS_SHARED_AC_GAME_VERSION_H
 
 namespace AGS3 {
 
@@ -74,6 +74,7 @@ Room names are serialized when game is compiled in "debug" mode.
 
 Interactions are now scripts. The number for "not set" changed from 0 to -1 for
 a lot of variables (views, sounds).
+Deprecated switch between low-res and high-res native coordinates.
 37 : 3.1.0
 
 Dialogs are now scripts. New character animation speed.
@@ -113,43 +114,39 @@ Font custom line spacing.
 Sprites have "real" resolution. Expanded FontInfo data format.
 Option to allow legacy relative asset resolutions.
 
-51 :
-Fonts have adjustable outline
-
 */
 
 enum GameDataVersion {
-	kGameVersion_Undefined      = 0,
-	kGameVersion_230            = 12,
-	kGameVersion_240            = 12,
-	kGameVersion_250            = 18,
-	kGameVersion_251            = 19, // same as 2.52
-	kGameVersion_253            = 20,
-	kGameVersion_254            = 21,
-	kGameVersion_255            = 22,
-	kGameVersion_256            = 24,
-	kGameVersion_260            = 25,
-	kGameVersion_261            = 26,
-	kGameVersion_262            = 27,
-	kGameVersion_270            = 31,
-	kGameVersion_272            = 32,
-	kGameVersion_300            = 35,
-	kGameVersion_301            = 36,
-	kGameVersion_310            = 37,
-	kGameVersion_311            = 39,
-	kGameVersion_312            = 40,
-	kGameVersion_320            = 41,
-	kGameVersion_321            = 42,
-	kGameVersion_330            = 43,
-	kGameVersion_331            = 44,
-	kGameVersion_340_1          = 45,
-	kGameVersion_340_2          = 46,
-	kGameVersion_340_4          = 47,
-	kGameVersion_341            = 48,
-	kGameVersion_341_2          = 49,
-	kGameVersion_350            = 50,
-	kGameVersion_351            = 51,
-	kGameVersion_Current        = kGameVersion_351
+	kGameVersion_Undefined = 0,
+	kGameVersion_230 = 12,
+	kGameVersion_240 = 12,
+	kGameVersion_250 = 18,
+	kGameVersion_251 = 19, // same as 2.52
+	kGameVersion_253 = 20,
+	kGameVersion_254 = 21,
+	kGameVersion_255 = 22,
+	kGameVersion_256 = 24,
+	kGameVersion_260 = 25,
+	kGameVersion_261 = 26,
+	kGameVersion_262 = 27,
+	kGameVersion_270 = 31,
+	kGameVersion_272 = 32,
+	kGameVersion_300 = 35,
+	kGameVersion_301 = 36,
+	kGameVersion_310 = 37,
+	kGameVersion_311 = 39,
+	kGameVersion_312 = 40,
+	kGameVersion_320 = 41,
+	kGameVersion_321 = 42,
+	kGameVersion_330 = 43,
+	kGameVersion_331 = 44,
+	kGameVersion_340_1 = 45,
+	kGameVersion_340_2 = 46,
+	kGameVersion_340_4 = 47,
+	kGameVersion_341 = 48,
+	kGameVersion_341_2 = 49,
+	kGameVersion_350 = 50,
+	kGameVersion_Current = kGameVersion_350
 };
 
 } // namespace AGS3

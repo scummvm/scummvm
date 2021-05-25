@@ -20,49 +20,58 @@
  *
  */
 
-/*
-#include "ags/ags.h"
-#include "ags/detection.h"
-#include "ags/events.h"
-#include "ags/game_scanner.h"
-#include "ags/music.h"
-#include "common/scummsys.h"
-#include "common/config-manager.h"
-#include "common/debug-channels.h"
-#include "common/events.h"
-#include "common/file.h"
-#include "engines/util.h"
-*/
+//
+// Entry point of the application here.
+//
+//
+// For Windows main() function is really called _mangled_main and is called
+// not by system, but from insides of allegro library.
+// (See allegro\platform\alwin.h)
+// What about other platforms?
+//
+
 #include "ags/shared/core/platform.h"
+#define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
 #include "ags/lib/std/set.h"
+#include "ags/lib/allegro.h" // allegro_exit
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/game.h"
-#include "ags/globals.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/engine/ac/gamestate.h"
-#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/shared/core/def_version.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/engine/game/savegame.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/engine.h"
-#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/platform/base/agsplatformdriver.h"
-#include "ags/engine/script/script.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/engine/ac/route_finder.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
+#include "ags/shared/util/string_compat.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
-using namespace Shared;
-using namespace Engine;
+#if AGS_PLATFORM_OS_WINDOWS && !AGS_PLATFORM_DEBUG
+#define USE_CUSTOM_EXCEPTION_HANDLER
+#endif
 
-extern HSaveError load_game(int slotNumber, bool &data_overwritten);
+using namespace AGS::Shared;
+using namespace AGS::Engine;
+
+void main_pre_init() {
+	_G(our_eip) = -999;
+	_GP(AssetMgr)->SetSearchPriority(Shared::kAssetPriorityDir);
+	_GP(play).takeover_data = 0;
+}
+
+void main_create_platform_driver() {
+	_G(platform) = AGSPlatformDriver::GetDriver();
+}
 
 // this needs to be updated if the "play" struct changes
 #define SVG_VERSION_BWCOMPAT_MAJOR      3
@@ -76,25 +85,18 @@ extern HSaveError load_game(int slotNumber, bool &data_overwritten);
 #define SVG_VERSION_FWCOMPAT_RELEASE    1
 #define SVG_VERSION_FWCOMPAT_REVISION   1111
 
-void main_pre_init() {
-	_G(our_eip) = -999;
-	Shared::AssetManager::SetSearchPriority(Shared::kAssetPriorityDir);
-	_GP(play).takeover_data = 0;
-}
-
-void main_create_platform_driver() {
-	_G(platform) = AGSPlatformDriver::GetDriver();
-}
-
 void main_init(int argc, const char *argv[]) {
 	_G(EngineVersion) = Version(ACI_VERSION_STR " " SPECIAL_VERSION);
-
+#if defined (BUILD_STR)
+	_G(EngineVersion).BuildInfo = BUILD_STR;
+#endif
 	_G(SavedgameLowestBackwardCompatVersion) = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
 	_G(SavedgameLowestForwardCompatVersion) = Version(SVG_VERSION_FWCOMPAT_MAJOR, SVG_VERSION_FWCOMPAT_MINOR, SVG_VERSION_FWCOMPAT_RELEASE, SVG_VERSION_FWCOMPAT_REVISION);
 
-	Shared::AssetManager::CreateInstance();
+	_GP(AssetMgr).reset(new AssetManager());
 	main_pre_init();
 	main_create_platform_driver();
+	_G(platform)->MainInitAdjustments();
 
 	_G(global_argv) = argv;
 	_G(global_argc) = argc;
@@ -102,11 +104,97 @@ void main_init(int argc, const char *argv[]) {
 
 String get_engine_string() {
 	return String::FromFormat("Adventure Game Studio v%s Interpreter\n"
-		"ACI version %s\n", _G(EngineVersion).ShortString.GetCStr(), _G(EngineVersion).LongString.GetCStr());
+	                          "Copyright (c) 1999-2011 Chris Jones and " ACI_COPYRIGHT_YEARS " others\n"
+#ifdef BUILD_STR
+	                          "ACI version %s (Build: %s)\n",
+	                          _G(EngineVersion).ShortString.GetCStr(), _G(EngineVersion).LongString.GetCStr(), _G(EngineVersion).BuildInfo.GetCStr());
+#else
+	                          "ACI version %s\n", _G(EngineVersion).ShortString.GetCStr(), _G(EngineVersion).LongString.GetCStr());
+#endif
 }
 
 void main_print_help() {
-	// No implementation
+	_G(platform)->WriteStdOut("%s",
+	                          "Usage: ags [OPTIONS] [GAMEFILE or DIRECTORY]\n\n"
+	                          //--------------------------------------------------------------------------------|
+	                          "Options:\n"
+	                          "  --conf FILEPATH              Specify explicit config file to read on startup\n"
+#if AGS_PLATFORM_OS_WINDOWS
+	                          "  --console-attach             Write output to the parent process's console\n"
+#endif
+	                          "  --fps                        Display fps counter\n"
+	                          "  --fullscreen                 Force display mode to fullscreen\n"
+	                          "  --gfxdriver <id>             Request graphics driver. Available options:\n"
+#if AGS_PLATFORM_OS_WINDOWS
+	                          "                                 d3d9, ogl, software\n"
+#else
+	                          "                                 ogl, software\n"
+#endif
+	                          "  --gfxfilter FILTER [SCALING]\n"
+	                          "                               Request graphics filter. Available options:\n"
+	                          "                                 hqx, linear, none, stdscale\n"
+	                          "                                 (support differs between graphic drivers);\n"
+	                          "                                 scaling is specified by integer number\n"
+	                          "  --help                       Print this help message and stop\n"
+	                          "  --loadsavedgame FILEPATH     Load savegame on startup\n"
+	                          "  --localuserconf              Read and write user config in the game's \n"
+	                          "                               directory rather than using standard system path.\n"
+	                          "                               Game directory must be writeable.\n"
+	                          "  --log-OUTPUT=GROUP[:LEVEL][,GROUP[:LEVEL]][,...]\n"
+	                          "  --log-OUTPUT=+GROUPLIST[:LEVEL]\n"
+	                          "                               Setup logging to the chosen OUTPUT with given\n"
+	                          "                               log groups and verbosity levels. Groups may\n"
+	                          "                               be also defined by a LIST of one-letter IDs,\n"
+	                          "                               preceded by '+', e.g. +ABCD:LEVEL. Verbosity may\n"
+	                          "                               be also defined by a numberic ID.\n"
+	                          "                               OUTPUTs are\n"
+	                          "                                 stdout, file, console\n"
+	                          "                               (where \"console\" is internal engine's console)\n"
+	                          "                               GROUPs are:\n"
+	                          "                                 all, main (m), game (g), manobj (o),\n"
+	                          "                                 sprcache (c)\n"
+	                          "                               LEVELs are:\n"
+	                          "                                 all, alert (1), fatal (2), error (3), warn (4),\n"
+	                          "                                 info (5), debug (6)\n"
+	                          "                               Examples:\n"
+	                          "                                 --log-stdout=+mg:debug\n"
+	                          "                                 --log-file=all:warn\n"
+	                          "  --log-file-path=PATH         Define custom path for the log file\n"
+	                          //--------------------------------------------------------------------------------|
+#if AGS_PLATFORM_OS_WINDOWS
+	                          "  --no-message-box             Disable alerts as modal message boxes\n"
+#endif
+	                          "  --noiface                    Don't draw game GUI\n"
+	                          "  --noscript                   Don't run room scripts; *WARNING:* unreliable\n"
+	                          "  --nospr                      Don't draw room objects and characters\n"
+	                          "  --noupdate                   Don't run game update\n"
+	                          "  --novideo                    Don't play game videos\n"
+#if AGS_PLATFORM_OS_WINDOWS
+	                          "  --setup                      Run setup application\n"
+#endif
+	                          "  --shared-data-dir DIR        Set the shared game data directory\n"
+	                          "  --startr <room_number>       Start game by loading certain room.\n"
+	                          "  --tell                       Print various information concerning engine\n"
+	                          "                                 and the game; for selected output use:\n"
+	                          "  --tell-config                Print contents of merged game config\n"
+	                          "  --tell-configpath            Print paths to available config files\n"
+	                          "  --tell-data                  Print information on game data and its location\n"
+	                          "  --tell-gameproperties        Print information on game general settings\n"
+	                          "  --tell-engine                Print engine name and version\n"
+	                          "  --tell-filepath              Print all filepaths engine uses for the game\n"
+	                          "  --tell-graphicdriver         Print list of supported graphic drivers\n"
+	                          "\n"
+	                          "  --test                       Run game in the test mode\n"
+	                          "  --version                    Print engine's version and stop\n"
+	                          "  --user-data-dir DIR          Set the save game directory\n"
+	                          "  --windowed                   Force display mode to windowed\n"
+	                          "\n"
+	                          "Gamefile options:\n"
+	                          "  /dir/path/game/              Launch the game in specified directory\n"
+	                          "  /dir/path/game/penguin.exe   Launch penguin.exe\n"
+	                          "  [nothing]                    Launch the game in the current directory\n"
+	                          //--------------------------------------------------------------------------------|
+	                         );
 }
 
 int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
@@ -116,53 +204,49 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		//
 		// Startup options
 		//
-		if (scumm_stricmp(arg, "--help") == 0 || scumm_stricmp(arg, "/?") == 0 || scumm_stricmp(arg, "-?") == 0) {
+		if (ags_stricmp(arg, "--help") == 0 || ags_stricmp(arg, "/?") == 0 || ags_stricmp(arg, "-?") == 0) {
 			_G(justDisplayHelp) = true;
-			return 0;
 		}
-		if (scumm_stricmp(arg, "-v") == 0 || scumm_stricmp(arg, "--version") == 0) {
+		if (ags_stricmp(arg, "-v") == 0 || ags_stricmp(arg, "--version") == 0) {
 			_G(justDisplayVersion) = true;
-			return 0;
-		} else if (scumm_stricmp(arg, "-updatereg") == 0)
+		} else if (ags_stricmp(arg, "--updatereg") == 0)
 			_G(debug_flags) |= DBG_REGONLY;
-#if AGS_PLATFORM_DEBUG
-		else if ((scumm_stricmp(arg, "--startr") == 0) && (ee < argc - 1)) {
+		else if ((ags_stricmp(arg, "--startr") == 0) && (ee < argc - 1)) {
 			_G(override_start_room) = atoi(argv[ee + 1]);
 			ee++;
-		}
-#endif
-		else if ((scumm_stricmp(arg, "--testre") == 0) && (ee < argc - 2)) {
-			strncpy(_G(return_to_roomedit), argv[ee + 1], 30);
-			strncpy(_G(return_to_room), argv[ee + 2], 150);
-			ee += 2;
-		} else if (scumm_stricmp(arg, "-noexceptionhandler") == 0) _GP(usetup).disable_exception_handling = true;
-		else if (scumm_stricmp(arg, "--setup") == 0) {
+		} else if (ags_stricmp(arg, "--noexceptionhandler") == 0) _GP(usetup).disable_exception_handling = true;
+		else if (ags_stricmp(arg, "--setup") == 0) {
 			_G(justRunSetup) = true;
-		} else if (scumm_stricmp(arg, "-registergame") == 0) {
+		} else if (ags_stricmp(arg, "--registergame") == 0) {
 			_G(justRegisterGame) = true;
-		} else if (scumm_stricmp(arg, "-unregistergame") == 0) {
+		} else if (ags_stricmp(arg, "--unregistergame") == 0) {
 			_G(justUnRegisterGame) = true;
-		} else if ((scumm_stricmp(arg, "-loadsavedgame") == 0) && (argc > ee + 1)) {
+		} else if ((ags_stricmp(arg, "--loadsavedgame") == 0) && (argc > ee + 1)) {
 			_G(loadSaveGameOnStartup) = atoi(argv[ee + 1]);
 			ee++;
-		} else if ((scumm_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
+		} else if ((ags_stricmp(arg, "--enabledebugger") == 0) && (argc > ee + 1)) {
 			strcpy(_G(editor_debugger_instance_token), argv[ee + 1]);
 			_G(editor_debugging_enabled) = 1;
 			_G(force_window) = 1;
 			ee++;
-		} else if (scumm_stricmp(arg, "--runfromide") == 0 && (argc > ee + 3)) {
+		} else if (ags_stricmp(arg, "--conf") == 0 && (argc > ee + 1)) {
+			_GP(usetup).conf_path = argv[++ee];
+		} else if (ags_stricmp(arg, "--localuserconf") == 0) {
+			_GP(usetup).local_user_conf = true;
+		} else if (ags_stricmp(arg, "--runfromide") == 0 && (argc > ee + 4)) {
 			_GP(usetup).install_dir = argv[ee + 1];
-			_GP(usetup).install_audio_dir = argv[ee + 2];
-			_GP(usetup).install_voice_dir = argv[ee + 3];
-			ee += 3;
-		} else if (scumm_stricmp(arg, "--takeover") == 0) {
+			_GP(usetup).opt_data_dir = argv[ee + 2];
+			_GP(usetup).opt_audio_dir = argv[ee + 3];
+			_GP(usetup).opt_voice_dir = argv[ee + 4];
+			ee += 4;
+		} else if (ags_stricmp(arg, "--takeover") == 0) {
 			if (argc < ee + 2)
 				break;
 			_GP(play).takeover_data = atoi(argv[ee + 1]);
 			strncpy(_GP(play).takeover_from, argv[ee + 2], 49);
 			_GP(play).takeover_from[49] = 0;
 			ee += 2;
-		} else if (scumm_strnicmp(arg, "--tell", 6) == 0) {
+		} else if (ags_strnicmp(arg, "--tell", 6) == 0) {
 			if (arg[6] == 0)
 				_G(tellInfoKeys).insert(String("all"));
 			else if (arg[6] == '-' && arg[7] != 0)
@@ -171,13 +255,17 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 		//
 		// Config overrides
 		//
-		else if (scumm_stricmp(arg, "-windowed") == 0 || scumm_stricmp(arg, "--windowed") == 0)
+		else if ((ags_stricmp(arg, "--user-data-dir") == 0) && (argc > ee + 1))
+			cfg["misc"]["user_data_dir"] = argv[++ee];
+		else if ((ags_stricmp(arg, "--shared-data-dir") == 0) && (argc > ee + 1))
+			cfg["misc"]["shared_data_dir"] = argv[++ee];
+		else if (ags_stricmp(arg, "--windowed") == 0)
 			_G(force_window) = 1;
-		else if (scumm_stricmp(arg, "-fullscreen") == 0 || scumm_stricmp(arg, "--fullscreen") == 0)
+		else if (ags_stricmp(arg, "--fullscreen") == 0)
 			_G(force_window) = 2;
-		else if ((scumm_stricmp(arg, "-gfxdriver") == 0 || scumm_stricmp(arg, "--gfxdriver") == 0) && (argc > ee + 1)) {
+		else if ((ags_stricmp(arg, "--gfxdriver") == 0) && (argc > ee + 1)) {
 			INIwritestring(cfg, "graphics", "driver", argv[++ee]);
-		} else if ((scumm_stricmp(arg, "-gfxfilter") == 0 || scumm_stricmp(arg, "--gfxfilter") == 0) && (argc > ee + 1)) {
+		} else if ((ags_stricmp(arg, "--gfxfilter") == 0) && (argc > ee + 1)) {
 			// NOTE: we make an assumption here that if user provides scaling factor,
 			// this factor means to be applied to windowed mode only.
 			INIwritestring(cfg, "graphics", "filter", argv[++ee]);
@@ -185,19 +273,24 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 				INIwritestring(cfg, "graphics", "game_scale_win", argv[++ee]);
 			else
 				INIwritestring(cfg, "graphics", "game_scale_win", "max_round");
-		} else if (scumm_stricmp(arg, "--fps") == 0) _G(display_fps) = kFPS_Forced;
-		else if (scumm_stricmp(arg, "--test") == 0) _G(debug_flags) |= DBG_DEBUGMODE;
-		else if (scumm_stricmp(arg, "-noiface") == 0) _G(debug_flags) |= DBG_NOIFACE;
-		else if (scumm_stricmp(arg, "-nosprdisp") == 0) _G(debug_flags) |= DBG_NODRAWSPRITES;
-		else if (scumm_stricmp(arg, "-nospr") == 0) _G(debug_flags) |= DBG_NOOBJECTS;
-		else if (scumm_stricmp(arg, "-noupdate") == 0) _G(debug_flags) |= DBG_NOUPDATE;
-		else if (scumm_stricmp(arg, "-nosound") == 0) _G(debug_flags) |= DBG_NOSFX;
-		else if (scumm_stricmp(arg, "-nomusic") == 0) _G(debug_flags) |= DBG_NOMUSIC;
-		else if (scumm_stricmp(arg, "-noscript") == 0) _G(debug_flags) |= DBG_NOSCRIPT;
-		else if (scumm_stricmp(arg, "-novideo") == 0) _G(debug_flags) |= DBG_NOVIDEO;
-		else if (scumm_stricmp(arg, "-dbgscript") == 0) _G(debug_flags) |= DBG_DBGSCRIPT;
-		else if (scumm_stricmp(arg, "--log") == 0) INIwriteint(cfg, "misc", "log", 1);
-		else if (scumm_stricmp(arg, "--no-log") == 0) INIwriteint(cfg, "misc", "log", 0);
+		} else if (ags_stricmp(arg, "--fps") == 0) _G(display_fps) = kFPS_Forced;
+		else if (ags_stricmp(arg, "--test") == 0) _G(debug_flags) |= DBG_DEBUGMODE;
+		else if (ags_stricmp(arg, "--noiface") == 0) _G(debug_flags) |= DBG_NOIFACE;
+		else if (ags_stricmp(arg, "--nosprdisp") == 0) _G(debug_flags) |= DBG_NODRAWSPRITES;
+		else if (ags_stricmp(arg, "--nospr") == 0) _G(debug_flags) |= DBG_NOOBJECTS;
+		else if (ags_stricmp(arg, "--noupdate") == 0) _G(debug_flags) |= DBG_NOUPDATE;
+		else if (ags_stricmp(arg, "--nosound") == 0) _G(debug_flags) |= DBG_NOSFX;
+		else if (ags_stricmp(arg, "--nomusic") == 0) _G(debug_flags) |= DBG_NOMUSIC;
+		else if (ags_stricmp(arg, "--noscript") == 0) _G(debug_flags) |= DBG_NOSCRIPT;
+		else if (ags_stricmp(arg, "--novideo") == 0) _G(debug_flags) |= DBG_NOVIDEO;
+		else if (ags_strnicmp(arg, "--log-", 6) == 0 && arg[6] != 0) {
+			String logarg = arg + 6;
+			size_t split_at = logarg.FindChar('=');
+			if (split_at >= 0)
+				cfg["log"][logarg.Left(split_at)] = logarg.Mid(split_at + 1);
+			else
+				cfg["log"][logarg] = "";
+		}
 		//
 		// Special case: data file location
 		//
@@ -205,26 +298,24 @@ int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 	}
 
 	if (datafile_argv > 0) {
-		_G(cmdGameDataPath) = argv[datafile_argv];
+		_G(cmdGameDataPath) = GetPathFromCmdArg(datafile_argv);
 	} else {
 		// assign standard path for mobile/consoles (defined in their own platform implementation)
 		_G(cmdGameDataPath) = _G(psp_game_file_name);
 	}
 
-	if (!_G(tellInfoKeys).empty())
+	if (_G(tellInfoKeys).size() > 0)
 		_G(justTellInfo) = true;
 
 	return 0;
 }
 
 void main_set_gamedir(int argc, const char *argv[]) {
-	_G(appDirectory) = Path::GetDirectoryPath("./");
-#ifdef DEPRECATED
-	if ((_G(loadSaveGameOnStartup) != nullptr) && (argv[0] != nullptr)) {
-		// When launched by double-clicking a save game file, the curdir will
-		// be the save game folder unless we correct it
-		Directory::SetCurrentDirectory(_G(appDirectory));
-	} else {
+	_G(appPath) = GetPathFromCmdArg(0);
+	_G(appDirectory) = Path::GetDirectoryPath(_G(appPath));
+
+	// TODO: remove following when supporting unicode paths
+	{
 		// It looks like Allegro library does not like ANSI (ACP) paths.
 		// When *not* working in U_UNICODE filepath mode, whenever it gets
 		// current directory for its own operations, it "fixes" it by
@@ -237,25 +328,16 @@ void main_set_gamedir(int argc, const char *argv[]) {
 		else
 			Debug::Printf(kDbgMsg_Error, "Unable to determine current directory: GetPathInASCII failed.\nArg: %s", cur_dir.GetCStr());
 	}
-#endif
 }
 
-const char *get_allegro_error() {
-	return "ERROR"; // allegro_error;
-}
-
-#define ALLEGRO_ERROR_SIZE 256
-char allegro_error[ALLEGRO_ERROR_SIZE];
-
-const char *set_allegro_error(const char *format, ...) {
-	va_list argptr;
-	va_start(argptr, format);
-	Common::String msg = Common::String::format(format, argptr);
-	strncpy(allegro_error, msg.c_str(), ALLEGRO_ERROR_SIZE - 1);
-	allegro_error[ALLEGRO_ERROR_SIZE - 1] = '\0';
-
-	va_end(argptr);
-	return allegro_error;
+String GetPathFromCmdArg(int arg_index) {
+	if (arg_index < 0 || arg_index >= _G(global_argc))
+		return "";
+	String path = Path::GetCmdLinePathInASCII(_G(global_argv)[arg_index], arg_index);
+	if (!path.IsEmpty())
+		return Path::MakeAbsolutePath(path);
+	Debug::Printf(kDbgMsg_Error, "Unable to determine path: GetCmdLinePathInASCII failed.\nCommand line argument %i: %s", arg_index, _G(global_argv)[arg_index]);
+	return _G(global_argv)[arg_index];
 }
 
 } // namespace AGS3

@@ -21,7 +21,7 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_gui.h"
-#include "ags/engine/ac/dynobj/scriptgui.h"
+#include "ags/engine/ac/dynobj/script_gui.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -34,7 +34,7 @@ const char *CCGUI::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCGUI::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptGUI *shh = (ScriptGUI *)const_cast<char *>(address);
+	const ScriptGUI *shh = (const ScriptGUI *)address;
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

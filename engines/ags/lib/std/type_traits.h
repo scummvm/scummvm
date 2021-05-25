@@ -31,17 +31,17 @@ namespace std {
 // STRUCT TEMPLATE remove_extent
 template <class _Ty>
 struct remove_extent { // remove array extent
-	using type = _Ty;
+using type = _Ty;
 };
 
 template <class _Ty, size_t _Ix>
 struct remove_extent<_Ty[_Ix]> {
-	using type = _Ty;
+using type = _Ty;
 };
 
 template <class _Ty>
 struct remove_extent<_Ty[]> {
-	using type = _Ty;
+using type = _Ty;
 };
 
 template <class _Ty>

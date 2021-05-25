@@ -33,8 +33,6 @@
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/stream.h"
 
-namespace AGS3 {
-
 using namespace AGS::Shared;
 
 #define AE_WAITFLAG   0x80000000
@@ -141,7 +139,5 @@ HRoomFileError ReadPre250Scripts(Stream *in) {
 		err = ReadAncientGraphicalScripts(in);
 	return err;
 }
-
-} // namespace AGS3
 
 #endif // OBSOLETE

@@ -42,7 +42,9 @@
 
 namespace AGS3 {
 
-inline int install_allegro() { return 0; }
+inline int install_allegro() {
+	return 0;
+}
 inline void allegro_exit() {}
 
 } // namespace AGS3

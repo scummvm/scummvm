@@ -27,10 +27,8 @@
 #include "ags/shared/core/types.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/gfx_def.h"
-#include "ags/shared/util/wgt2allg.h"
 
 namespace AGS3 {
-
 namespace AGS {
 namespace Shared {
 class Bitmap;
@@ -45,17 +43,6 @@ class IDriverDependantBitmap;
 using namespace AGS; // FIXME later
 
 #define IS_ANTIALIAS_SPRITES _GP(usetup).enable_antialiasing && (_GP(play).disable_antialiasing == 0)
-
-// [IKM] WARNING: these definitions has to be made AFTER Allegro headers
-// were included, because they override few Allegro function names;
-// otherwise Allegro headers should not be included at all to the same
-// code unit which uses these defines.
-#define getr32(xx) ((xx >> _G(_rgb_r_shift_32)) & 0xFF)
-#define getg32(xx) ((xx >> _G(_rgb_g_shift_32)) & 0xFF)
-#define getb32(xx) ((xx >> _G(_rgb_b_shift_32)) & 0xFF)
-#define geta32(xx) ((xx >> _G(_rgb_a_shift_32)) & 0xFF)
-#define makeacol32(r,g,b,a) ((r << _G(_rgb_r_shift_32)) | (g << _G(_rgb_g_shift_32)) | (b << _G(_rgb_b_shift_32)) | (a << _G(_rgb_a_shift_32)))
-
 
 struct CachedActSpsData {
 	int xWas, yWas;
@@ -75,10 +62,9 @@ struct RoomCameraDrawData {
 	// For more details see comment in ALSoftwareGraphicsDriver::RenderToBackBuffer().
 	AGS::Shared::PBitmap Buffer;      // this is the actual bitmap
 	AGS::Shared::PBitmap Frame;       // this is either same bitmap reference or sub-bitmap of virtual screen
-	bool    IsOffscreen = false; // whether room viewport was offscreen (cannot use sub-bitmap)
-	bool    IsOverlap = false;   // whether room viewport overlaps any others (marking dirty rects is complicated)
+	bool    IsOffscreen; // whether room viewport was offscreen (cannot use sub-bitmap)
+	bool    IsOverlap;   // whether room viewport overlaps any others (marking dirty rects is complicated)
 };
-
 
 // Converts AGS color index to the actual bitmap color using game's color depth
 int MakeColor(int color_index);
@@ -135,9 +121,9 @@ void construct_engine_overlay();
 void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
 void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Shared::Bitmap *image, bool src_has_alpha,
-	Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+                               Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_sprite_slot_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
-	Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+                                    Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha, Shared::BlendMode blend_mode);
 void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 // Render game on screen

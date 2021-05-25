@@ -22,15 +22,15 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/engine/media/audio/audio.h"
-#include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/dynobj/cc_audioclip.h"
-#include "ags/engine/ac/dynobj/cc_audiochannel.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/audio_clip_type.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/dynobj/cc_audio_clip.h"
+#include "ags/engine/ac/dynobj/cc_audio_channel.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/audiochannel.h"
-#include "ags/engine/ac/audioclip.h"
-#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/audio_channel.h"
+#include "ags/engine/ac/audio_clip.h"
+#include "ags/engine/ac/game_setup.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/media/audio/sound.h"
 #include "ags/engine/debugging/debug_log.h"
@@ -39,7 +39,7 @@
 #include "ags/engine/ac/file.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/shared/util/stream.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/globals.h"
@@ -195,14 +195,14 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 			break;
 		}
 		if ((ch->_priority < lowestPrioritySoFar) &&
-			(ch->_sourceClipType == clip->type)) {
+		        (ch->_sourceClipType == clip->type)) {
 			lowestPrioritySoFar = ch->_priority;
 			lowestPriorityID = i;
 		}
 	}
 
 	if ((channelToUse < 0) && (lowestPriorityID >= 0) &&
-		(lowestPrioritySoFar <= priority)) {
+	        (lowestPrioritySoFar <= priority)) {
 		stop_or_fade_out_channel(lowestPriorityID, lowestPriorityID, clip);
 		channelToUse = lowestPriorityID;
 	} else if ((channelToUse >= 0) && (_GP(play).crossfading_in_channel < 1)) {
@@ -551,11 +551,11 @@ void update_directional_sound_vol() {
 		auto *ch = lock.GetChannelIfPlaying(chnum);
 		if ((ch != nullptr) && (ch->_xSource >= 0)) {
 			ch->apply_directional_modifier(
-				get_volume_adjusted_for_distance(ch->_vol,
-					ch->_xSource,
-					ch->_ySource,
-					ch->_maximumPossibleDistanceAway) -
-				ch->_vol);
+			    get_volume_adjusted_for_distance(ch->_vol,
+			                                     ch->_xSource,
+			                                     ch->_ySource,
+			                                     ch->_maximumPossibleDistanceAway) -
+			    ch->_vol);
 		}
 	}
 }
@@ -824,7 +824,7 @@ void update_audio_system_on_game_loop() {
 			_GP(play).cur_music_number = -1;
 			play_next_queued();
 		} else if ((_GP(game).options[OPT_CROSSFADEMUSIC] > 0) &&
-			(_GP(play).music_queue_size > 0) && (!_G(crossFading))) {
+		           (_GP(play).music_queue_size > 0) && (!_G(crossFading))) {
 			// want to crossfade, and new tune in the queue
 			auto *ch = lock.GetChannel(SCHAN_MUSIC);
 			if (ch) {
@@ -864,10 +864,10 @@ void stopmusic() {
 			update_music_volume();
 		}
 	} else if ((_GP(game).options[OPT_CROSSFADEMUSIC] > 0)
-		&& (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
-		&& (_G(current_music_type) != 0)
-		&& (_G(current_music_type) != MUS_MIDI)
-		&& (_G(current_music_type) != MUS_MOD)) {
+	           && (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
+	           && (_G(current_music_type) != 0)
+	           && (_G(current_music_type) != MUS_MIDI)
+	           && (_G(current_music_type) != MUS_MOD)) {
 
 		_G(crossFading) = -1;
 		_G(crossFadeStep) = 0;
@@ -945,9 +945,9 @@ int prepare_for_new_music() {
 	int useChannel = SCHAN_MUSIC;
 
 	if ((_GP(game).options[OPT_CROSSFADEMUSIC] > 0)
-		&& (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
-		&& (_G(current_music_type) != MUS_MIDI)
-		&& (_G(current_music_type) != MUS_MOD)) {
+	        && (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
+	        && (_G(current_music_type) != MUS_MIDI)
+	        && (_G(current_music_type) != MUS_MOD)) {
 
 		if (_G(crossFading) > 0) {
 			// It's still crossfading to the previous track

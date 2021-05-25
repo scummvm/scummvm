@@ -21,9 +21,9 @@
  */
 
 #include "ags/engine/ac/draw.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/room_struct.h"
 #include "ags/engine/game/viewport.h"
 #include "ags/globals.h"
 
@@ -49,6 +49,7 @@ void Camera::SetSize(const Size cam_size) {
 
 	_position.SetWidth(real_size.Width);
 	_position.SetHeight(real_size.Height);
+	SetAt(_position.Left, _position.Top); // readjust in case went off-room after size changed
 	for (auto vp = _viewportRefs.begin(); vp != _viewportRefs.end(); ++vp) {
 		auto locked_vp = vp->lock();
 		if (locked_vp)

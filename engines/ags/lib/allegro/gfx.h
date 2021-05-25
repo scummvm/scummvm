@@ -117,62 +117,62 @@ namespace AGS3 {
 #define COLORCONV_KEEP_TRANS        0x4000000
 
 #define COLORCONV_DITHER            (COLORCONV_DITHER_PAL |          \
-									 COLORCONV_DITHER_HI)
+                                     COLORCONV_DITHER_HI)
 
 #define COLORCONV_EXPAND_256        (COLORCONV_8_TO_15 |             \
-									 COLORCONV_8_TO_16 |             \
-									 COLORCONV_8_TO_24 |             \
-									 COLORCONV_8_TO_32)
+                                     COLORCONV_8_TO_16 |             \
+                                     COLORCONV_8_TO_24 |             \
+                                     COLORCONV_8_TO_32)
 
 #define COLORCONV_REDUCE_TO_256     (COLORCONV_15_TO_8 |             \
-									 COLORCONV_16_TO_8 |             \
-									 COLORCONV_24_TO_8 |             \
-									 COLORCONV_32_TO_8 |             \
-									 COLORCONV_32A_TO_8)
+                                     COLORCONV_16_TO_8 |             \
+                                     COLORCONV_24_TO_8 |             \
+                                     COLORCONV_32_TO_8 |             \
+                                     COLORCONV_32A_TO_8)
 
 #define COLORCONV_EXPAND_15_TO_16    COLORCONV_15_TO_16
 
 #define COLORCONV_REDUCE_16_TO_15    COLORCONV_16_TO_15
 
 #define COLORCONV_EXPAND_HI_TO_TRUE (COLORCONV_15_TO_24 |            \
-									 COLORCONV_15_TO_32 |            \
-									 COLORCONV_16_TO_24 |            \
-									 COLORCONV_16_TO_32)
+                                     COLORCONV_15_TO_32 |            \
+                                     COLORCONV_16_TO_24 |            \
+                                     COLORCONV_16_TO_32)
 
 #define COLORCONV_REDUCE_TRUE_TO_HI (COLORCONV_24_TO_15 |            \
-									 COLORCONV_24_TO_16 |            \
-									 COLORCONV_32_TO_15 |            \
-									 COLORCONV_32_TO_16)
+                                     COLORCONV_24_TO_16 |            \
+                                     COLORCONV_32_TO_15 |            \
+                                     COLORCONV_32_TO_16)
 
 #define COLORCONV_24_EQUALS_32      (COLORCONV_24_TO_32 |            \
-									 COLORCONV_32_TO_24)
+                                     COLORCONV_32_TO_24)
 
 #define COLORCONV_TOTAL             (COLORCONV_EXPAND_256 |          \
-									 COLORCONV_REDUCE_TO_256 |       \
-									 COLORCONV_EXPAND_15_TO_16 |     \
-									 COLORCONV_REDUCE_16_TO_15 |     \
-									 COLORCONV_EXPAND_HI_TO_TRUE |   \
-									 COLORCONV_REDUCE_TRUE_TO_HI |   \
-									 COLORCONV_24_EQUALS_32 |        \
-									 COLORCONV_32A_TO_15 |           \
-									 COLORCONV_32A_TO_16 |           \
-									 COLORCONV_32A_TO_24)
+                                     COLORCONV_REDUCE_TO_256 |       \
+                                     COLORCONV_EXPAND_15_TO_16 |     \
+                                     COLORCONV_REDUCE_16_TO_15 |     \
+                                     COLORCONV_EXPAND_HI_TO_TRUE |   \
+                                     COLORCONV_REDUCE_TRUE_TO_HI |   \
+                                     COLORCONV_24_EQUALS_32 |        \
+                                     COLORCONV_32A_TO_15 |           \
+                                     COLORCONV_32A_TO_16 |           \
+                                     COLORCONV_32A_TO_24)
 
 #define COLORCONV_PARTIAL           (COLORCONV_EXPAND_15_TO_16 |     \
-									 COLORCONV_REDUCE_16_TO_15 |     \
-									 COLORCONV_24_EQUALS_32)
+                                     COLORCONV_REDUCE_16_TO_15 |     \
+                                     COLORCONV_24_EQUALS_32)
 
 #define COLORCONV_MOST              (COLORCONV_EXPAND_15_TO_16 |     \
-									 COLORCONV_REDUCE_16_TO_15 |     \
-									 COLORCONV_EXPAND_HI_TO_TRUE |   \
-									 COLORCONV_REDUCE_TRUE_TO_HI |   \
-									 COLORCONV_24_EQUALS_32)
+                                     COLORCONV_REDUCE_16_TO_15 |     \
+                                     COLORCONV_EXPAND_HI_TO_TRUE |   \
+                                     COLORCONV_REDUCE_TRUE_TO_HI |   \
+                                     COLORCONV_24_EQUALS_32)
 
 #define COLORCONV_KEEP_ALPHA        (COLORCONV_TOTAL                 \
-									 & ~(COLORCONV_32A_TO_8 |        \
-											 COLORCONV_32A_TO_15 |       \
-											 COLORCONV_32A_TO_16 |       \
-											 COLORCONV_32A_TO_24))
+                                     & ~(COLORCONV_32A_TO_8 |        \
+                                             COLORCONV_32A_TO_15 |       \
+                                             COLORCONV_32A_TO_16 |       \
+                                             COLORCONV_32A_TO_24))
 
 AL_FUNC(void, set_color_conversion, (int mode));
 AL_FUNC(int, get_color_conversion, ());
@@ -194,9 +194,9 @@ extern void add_palette_if_needed(Graphics::ManagedSurface &surf);
 extern void blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 extern void masked_blit(const BITMAP *src, BITMAP *dest, int src_x, int src_y, int dst_x, int dst_y, int width, int height);
 extern void stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
-	int dest_x, int dest_y, int dest_width, int dest_height);
+                         int dest_x, int dest_y, int dest_width, int dest_height);
 extern void masked_stretch_blit(const BITMAP *src, BITMAP *dest, int source_x, int source_y, int source_width, int source_height,
-	int dest_x, int dest_y, int dest_width, int dest_height);
+                                int dest_x, int dest_y, int dest_width, int dest_height);
 extern void draw_trans_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y);
 extern void draw_lit_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int color);
 extern void draw_sprite_h_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y);
@@ -235,6 +235,9 @@ extern void rect(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void rectfill(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void triangle(BITMAP *bmp, int x1, int y_1, int x2, int y2, int x3, int y3, int color);
 extern void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
+
+typedef unsigned long(*BLENDER_FUNC)(unsigned long x, unsigned long y, unsigned long n);
+extern void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a);
 
 } // namespace AGS3
 

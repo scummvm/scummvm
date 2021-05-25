@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_SYSTEMAUDIO_H
-#define AGS_ENGINE_AC_SYSTEMAUDIO_H
+#ifndef AGS_ENGINE_AC_SYSTEM_AUDIO_H
+#define AGS_ENGINE_AC_SYSTEM_AUDIO_H
 
-#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
+#include "ags/engine/ac/dynobj/script_audio_channel.h"
 
 namespace AGS3 {
 
@@ -38,7 +38,6 @@ int     System_GetHardwareAcceleration();
 int     System_GetNumLock();
 int     System_GetCapsLock();
 int     System_GetScrollLock();
-void    System_SetNumLock(int newValue);
 int     System_GetVsync();
 void    System_SetVsync(int newValue);
 int     System_GetWindowed();

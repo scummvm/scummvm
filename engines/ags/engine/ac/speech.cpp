@@ -24,8 +24,8 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/speech.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_display.h"
 #include "ags/shared/debugging/out.h"
@@ -85,9 +85,6 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 // Script API Functions
 //
 //=============================================================================
-
-
-
 
 RuntimeScriptValue Sc_Speech_GetAnimationStopTimeMargin(const RuntimeScriptValue *params, int32_t param_count) {
 	API_VARGET_INT(_GP(play).close_mouth_speech_time);

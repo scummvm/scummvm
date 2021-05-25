@@ -20,18 +20,19 @@
  *
  */
 
+//include <string.h>
 #include "ags/engine/ac/dynobj/cc_serializer.h"
-#include "ags/engine/ac/dynobj/all_dynamicclasses.h"
-#include "ags/engine/ac/dynobj/all_scriptclasses.h"
-#include "ags/engine/ac/dynobj/scriptcamera.h"
-#include "ags/engine/ac/dynobj/scriptcontainers.h"
-#include "ags/engine/ac/dynobj/scriptfile.h"
-#include "ags/engine/ac/dynobj/scriptuserobject.h"
-#include "ags/engine/ac/dynobj/scriptviewport.h"
+#include "ags/engine/ac/dynobj/all_dynamic_classes.h"
+#include "ags/engine/ac/dynobj/all_script_classes.h"
+#include "ags/engine/ac/dynobj/script_camera.h"
+#include "ags/engine/ac/dynobj/script_containers.h"
+#include "ags/engine/ac/dynobj/script_file.h"
+#include "ags/engine/ac/dynobj/script_user_object.h"
+#include "ags/engine/ac/dynobj/script_viewport.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/plugins/agsplugin.h"
-#include "ags/plugins/pluginobjectreader.h"
+#include "ags/plugins/ags_plugin.h"
+#include "ags/plugins/plugin_object_reader.h"
 #include "ags/globals.h"
 
 namespace AGS3 {

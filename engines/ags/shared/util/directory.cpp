@@ -20,12 +20,12 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/fs.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stdio_compat.h"
-#include "common/config-manager.h"
-#include "common/fs.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -66,8 +66,8 @@ bool CreateAllDirectories(const String &parent, const String &path) {
 
 String SetCurrentDirectory(const String &path) {
 	warning("TODO: SetCurrentDirectory: %s", path.GetNullableCStr());
-//	chdir(path);
-//	return GetCurrentDirectory();
+	//  chdir(path);
+	//  return GetCurrentDirectory();
 	return path;
 }
 

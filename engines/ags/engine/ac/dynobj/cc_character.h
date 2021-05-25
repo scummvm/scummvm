@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_CCCHARACTER_H
-#define AGS_ENGINE_AC_DYNOBJ_CCCHARACTER_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CC_CHARACTER_H
+#define AGS_ENGINE_AC_DYNOBJ_CC_CHARACTER_H
 
-#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
 namespace AGS3 {
 

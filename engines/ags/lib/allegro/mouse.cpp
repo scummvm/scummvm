@@ -29,12 +29,12 @@ namespace AGS3 {
 
 static bool isMouseButtonDown(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONDOWN || type == Common::EVENT_MBUTTONDOWN ||
-		type == Common::EVENT_RBUTTONDOWN;
+	       type == Common::EVENT_RBUTTONDOWN;
 }
 
 static bool isMouseButtonUp(Common::EventType type) {
 	return type == Common::EVENT_LBUTTONUP || type == Common::EVENT_MBUTTONUP ||
-		type == Common::EVENT_RBUTTONUP;
+	       type == Common::EVENT_RBUTTONUP;
 }
 
 static bool isMouseWheel(Common::EventType type) {
@@ -43,7 +43,7 @@ static bool isMouseWheel(Common::EventType type) {
 
 static bool isMouseEvent(Common::EventType type) {
 	return type == Common::EVENT_MOUSEMOVE || isMouseButtonDown(type) ||
-		isMouseButtonUp(type) || isMouseWheel(type);
+	       isMouseButtonUp(type) || isMouseWheel(type);
 }
 
 

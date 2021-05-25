@@ -25,39 +25,47 @@
 //
 
 #include "ags/shared/core/platform.h"
-#include "ags/globals.h"
-#include "ags/engine/main/mainheader.h"
+
+//include <errno.h>
+#if AGS_PLATFORM_OS_WINDOWS
+//include <process.h>  // _spawnl
+#endif
+#include "ags/lib/allegro.h" // allegro_install and _exit
+
+#include "ags/engine/main/main_header.h"
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/characterextras.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/character_extras.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
-#include "ags/engine/ac/gamesetup.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/game_setup.h"
+#include "ags/shared/ac/game_setup_struct.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/gui.h"
-#include "ags/engine/ac/lipsync.h"
-#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/lip_sync.h"
+#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/sys_events.h"
-#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/speech.h"
-#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/translation.h"
-#include "ags/engine/ac/viewframe.h"
-#include "ags/engine/ac/dynobj/scriptobject.h"
-#include "ags/engine/ac/dynobj/scriptsystem.h"
-#include "ags/shared/core/assetmanager.h"
+#include "ags/engine/ac/view_frame.h"
+#include "ags/engine/ac/dynobj/script_object.h"
+#include "ags/engine/ac/dynobj/script_system.h"
+#include "ags/shared/core/asset_manager.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/font/agsfontrenderer.h"
+#include "ags/shared/font/ags_font_renderer.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/engine/gfx/graphicsdriver.h"
-#include "ags/engine/gfx/gfxdriverfactory.h"
+#include "ags/shared/gfx/image.h"
+#include "ags/engine/gfx/graphics_driver.h"
+#include "ags/engine/gfx/gfx_driver_factory.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/main/config.h"
 #include "ags/engine/main/game_file.h"
@@ -66,78 +74,96 @@
 #include "ags/engine/main/engine_setup.h"
 #include "ags/engine/main/graphics_mode.h"
 #include "ags/engine/main/main.h"
-#include "ags/engine/main/main_allegro.h"
-#include "ags/engine/media/audio/audio_system.h"
-#include "ags/shared/gfx/image.h"
+#include "ags/engine/platform/base/sys_main.h"
+#include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/path.h"
-#include "ags/globals.h"
+//#include "ags/engine/media/audio/audio_core.h"
+//#include "ags/engine/platform/util/pe.h"
 #include "ags/ags.h"
-#include "common/fs.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-#define ALLEGRO_KEYBOARD_HANDLER
-
-bool engine_init_allegro() {
-	Debug::Printf(kDbgMsg_Info, "Initializing allegro");
-
+bool engine_init_backend() {
 	_G(our_eip) = -199;
-	// Initialize allegro
-	set_uformat(U_ASCII);
-	if (install_allegro()) {
-		const char *al_err = get_allegro_error();
-		const char *user_hint = _G(platform)->GetAllegroFailUserHint();
-		_G(platform)->DisplayAlert("Unable to initialize Allegro system driver.\n%s\n\n%s",
-		                       al_err[0] ? al_err : "Allegro library provided no further information on the problem.",
-		                       user_hint);
+	// Initialize SDL
+	Debug::Printf(kDbgMsg_Info, "Initializing backend libs");
+	if (sys_main_init()) {
+		const char *user_hint = _G(platform)->GetBackendFailUserHint();
+		_G(platform)->DisplayAlert("Unable to initialize SDL library.\n\n%s",
+		                           user_hint);
 		return false;
 	}
+
+	// Initialize stripped allegro library
+	set_uformat(U_ASCII);
+	if (install_allegro()) {
+		_G(platform)->DisplayAlert("Internal error: unable to initialize stripped Allegro 4 library.");
+		return false;
+	}
+
+	_G(platform)->PostBackendInit();
 	return true;
 }
 
-void engine_setup_allegro() {
-	// Setup allegro using constructed config string
-	const char *al_config_data = "[mouse]\n"
-	                             "mouse_accel_factor = 0\n";
-	override_config_data(al_config_data, ustrsize(al_config_data));
+void winclosehook() {
+	_G(want_exit) = 1;
+	_G(abort_engine) = 1;
+	_G(check_dynamic_sprites_at_exit) = 0;
 }
 
 void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
 	_G(our_eip) = -198;
-	//set_window_title("Adventure Game Studio");
+	sys_window_set_title(_GP(game).gamename);
+	sys_window_set_icon();
+	sys_evt_set_quit_callback(winclosehook);
 	_G(our_eip) = -197;
+}
 
-	_G(platform)->SetGameWindowIcon();
+// Fills map with game settings, to e.g. let setup application(s)
+// display correct properties to the user
+static void fill_game_properties(StringOrderMap &map) {
+	map["title"] = _GP(game).gamename;
+	map["guid"] = _GP(game).guid;
+	map["legacy_uniqueid"] = StrUtil::IntToString(_GP(game).uniqueid);
+	map["legacy_resolution"] = StrUtil::IntToString(_GP(game).GetResolutionType());
+	map["legacy_letterbox"] = StrUtil::IntToString(_GP(game).options[OPT_LETTERBOX]);
+	map["resolution_width"] = StrUtil::IntToString(_GP(game).GetDefaultRes().Width);
+	map["resolution_height"] = StrUtil::IntToString(_GP(game).GetDefaultRes().Height);
+	map["resolution_bpp"] = StrUtil::IntToString(_GP(game).GetColorDepth());
+	map["render_at_screenres"] = StrUtil::IntToString(
+	                                 _GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_UserDefined ? -1 :
+	                                 (_GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled ? 1 : 0));
 }
 
 // Starts up setup application, if capable.
 // Returns TRUE if should continue running the game, otherwise FALSE.
-bool engine_run_setup(const String &exe_path, ConfigTree &cfg, int &app_res) {
+bool engine_run_setup(const ConfigTree &cfg, int &app_res) {
 	app_res = EXIT_NORMAL;
 #if AGS_PLATFORM_OS_WINDOWS
 	{
-		String cfg_file = find_user_cfg_file();
-		if (cfg_file.IsEmpty()) {
-			app_res = EXIT_ERROR;
-			return false;
-		}
-
 		Debug::Printf(kDbgMsg_Info, "Running Setup");
 
+		ConfigTree cfg_with_meta = cfg;
+		fill_game_properties(cfg_with_meta["gameproperties"]);
 		ConfigTree cfg_out;
-		SetupReturnValue res = _G(platform)->RunSetup(cfg, cfg_out);
+		SetupReturnValue res = _G(platform)->RunSetup(cfg_with_meta, cfg_out);
 		if (res != kSetup_Cancel) {
-			if (!IniUtil::Merge(cfg_file, cfg_out)) {
+			String cfg_file = PreparePathForWriting(GetGameUserConfigDir(), DefaultConfigFileName);
+			if (cfg_file.IsEmpty()) {
+				_G(platform)->DisplayAlert("Unable to write into directory '%s'.\n%s",
+				                           GetGameUserConfigDir().FullDir.GetCStr(), _G(platform)->GetDiskWriteAccessTroubleshootingText());
+			} else if (!IniUtil::Merge(cfg_file, cfg_out)) {
 				_G(platform)->DisplayAlert("Unable to write to the configuration file (error code 0x%08X).\n%s",
-				                       _G(platform)->GetLastSystemError(), _G(platform)->GetDiskWriteAccessTroubleshootingText());
+				                           _G(platform)->GetLastSystemError(), _G(platform)->GetDiskWriteAccessTroubleshootingText());
 			}
 		}
 		if (res != kSetup_RunGame)
@@ -147,10 +173,11 @@ bool engine_run_setup(const String &exe_path, ConfigTree &cfg, int &app_res) {
 
 		// Just re-reading the config file seems to cause a caching
 		// problem on Win9x, so let's restart the process.
+		sys_main_shutdown();
 		allegro_exit();
 		char quotedpath[MAX_PATH];
-		snprintf(quotedpath, MAX_PATH, "\"%s\"", exe_path.GetCStr());
-		_spawnl(_P_OVERLAY, exe_path, quotedpath, NULL);
+		snprintf(quotedpath, MAX_PATH, "\"%s\"", _G(appPath).GetCStr());
+		_spawnl(_P_OVERLAY, _G(appPath), quotedpath, NULL);
 	}
 #endif
 	return true;
@@ -168,105 +195,80 @@ void engine_force_window() {
 	}
 }
 
-String find_game_data_in_directory(const String &path) {
-	Common::String test_file;
-	String first_nonstd_fn;
-
-	Common::FSNode folder(path);
-	Common::FSList files;
-	if (folder.getChildren(files, Common::FSNode::kListFilesOnly)) {
-		// Select first found data file; files with standart names (*.ags) have
-		// higher priority over files with custom names.
-		for (Common::FSList::iterator it = files.begin(); it != files.end(); ++it) {
-			test_file = it->getName();
-
-			// Add a bit of sanity and do not parse contents of the 10k-files-large
-			// digital sound libraries.
-			// NOTE: we could certainly benefit from any kind of flag in file lib
-			// that would tell us this is the main lib without extra parsing.
-			if (test_file.hasSuffixIgnoreCase(".vox"))
-				continue;
-
-			// *.ags is a standart cross-platform file pattern for AGS games,
-			// ac2game.dat is a legacy file name for very old games,
-			// *.exe is a MS Win executable; it is included to this case because
-			// users often run AGS ports with Windows versions of games.
-			bool is_std_name = test_file.hasSuffixIgnoreCase(".ags") ||
-				test_file.equalsIgnoreCase("ac2game.dat") ||
-				test_file.hasSuffixIgnoreCase(".exe");
-			if (is_std_name || first_nonstd_fn.IsEmpty()) {
-				test_file = it->getName();
-
-				if (IsMainGameLibrary(test_file)) {
-					if (is_std_name) {
-						return test_file;
-					} else
-						first_nonstd_fn = test_file;
-				}
-			}
-		}
+// Scans given directory for the AGS game config. If such config exists
+// and it contains data file name, then returns one.
+// Otherwise returns empty string.
+static String find_game_data_in_config(const String &path) {
+	// First look for config
+	ConfigTree cfg;
+	String def_cfg_file = Path::ConcatPaths(path, DefaultConfigFileName);
+	if (IniUtil::Read(def_cfg_file, cfg)) {
+		String data_file = INIreadstring(cfg, "misc", "datafile");
+		Debug::Printf("Found game config: %s", def_cfg_file.GetCStr());
+		Debug::Printf(" Cfg: data file: %s", data_file.GetCStr());
+		// Only accept if it's a relative path
+		if (!data_file.IsEmpty() && is_relative_filename(data_file))
+			return Path::ConcatPaths(path, data_file);
 	}
-
-	return first_nonstd_fn;
+	return ""; // not found in config
 }
 
-bool search_for_game_data_file(String &filename, String &search_path) {
-	Debug::Printf("Looking for the game data file");
-	// 1. From command line argument, treated as a directory
+// Scans for game data in several common locations.
+// When it does so, it first looks for game config file, which contains
+// explicit directions to game data in its settings.
+// If such config is not found, it scans same location for *any* game data instead.
+String search_for_game_data_file(String &was_searching_in) {
+	Debug::Printf("Looking for the game data.\n Cwd: %s\n Path arg: %s",
+	              Directory::GetCurrentDirectory().GetCStr(),
+	              _G(cmdGameDataPath).GetCStr());
+	// 1. From command line argument, which may be a directory or actual file
 	if (!_G(cmdGameDataPath).IsEmpty()) {
-		// set from cmd arg (do any conversions if needed)
-		filename = _G(cmdGameDataPath);
-		if (!filename.IsEmpty() && Path::IsDirectory(filename)) {
-			search_path = filename;
-			filename = find_game_data_in_directory(search_path);
-		}
-	}
-	// 2.2. Search in the provided data dir
-	else if (!_GP(usetup).data_files_dir.IsEmpty()) {
-		search_path = _GP(usetup).data_files_dir;
-		filename = find_game_data_in_directory(search_path);
-	}
-	// 3. Look in known locations
-	else {
-#ifdef DEPRECATED
-		// 3.1. Look for attachment in the running executable
-		//
-		// this will use argument zero, the executable's name
-		filename = GetPathFromCmdArg(0);
-		if (filename.IsEmpty() || !Shared::AssetManager::IsDataFile(filename)) {
-			// 3.2 Look in current directory
-			search_path = Directory::GetCurrentDirectory();
-			filename = find_game_data_in_directory(search_path);
-			if (filename.IsEmpty()) {
-				// 3.3 Look in executable's directory (if it's different from current dir)
-				if (Path::ComparePaths(_G(appDirectory), search_path)) {
-					search_path = _G(appDirectory);
-					filename = find_game_data_in_directory(search_path);
-				}
-			}
-		}
-#endif
+		if (Path::IsFile(_G(cmdGameDataPath)))
+			return _G(cmdGameDataPath); // this path is a file
+		if (!Path::IsDirectory(_G(cmdGameDataPath)))
+			return ""; // path is neither file nor directory
+		was_searching_in = _G(cmdGameDataPath);
+		Debug::Printf("Searching in (cmd arg): %s", was_searching_in.GetCStr());
+		// first scan for config
+		String data_path = find_game_data_in_config(_G(cmdGameDataPath));
+		if (!data_path.IsEmpty())
+			return data_path;
+		// if not found in config, lookup for data in same dir
+		return FindGameData(_G(cmdGameDataPath));
 	}
 
-	// Finally, store game file's absolute path, or report error
-	if (filename.IsEmpty()) {
-		Debug::Printf(kDbgMsg_Error, "Game data file could not be found. Search path used: '%s'", search_path.GetCStr());
-		return false;
+	// 2. Look in other known locations
+	// 2.1. Look for attachment in the running executable
+	if (!_G(appPath).IsEmpty() && Shared::AssetManager::IsDataFile(_G(appPath))) {
+		Debug::Printf("Found game data embedded in executable");
+		was_searching_in = Path::GetDirectoryPath(_G(appPath));
+		return _G(appPath);
 	}
-	filename = Path::MakeAbsolutePath(filename);
-	Debug::Printf(kDbgMsg_Info, "Located game data file: %s", filename.GetCStr());
-	return true;
-}
 
-// Try to initialize main game package found at the given path
-bool engine_try_init_gamedata(String gamepak_path) {
-	// Search for an available game package in the known locations
-	AssetError err = AssetManager::SetDataFile(gamepak_path);
-	if (err != kAssetNoError) {
-		_G(platform)->DisplayAlert("ERROR: The game data is missing, is of unsupported format or corrupt.\nFile: '%s'", gamepak_path.GetCStr());
-		return false;
-	}
-	return true;
+	// 2.2 Look in current working directory
+	String cur_dir = Directory::GetCurrentDirectory();
+	was_searching_in = cur_dir;
+	Debug::Printf("Searching in (cwd): %s", was_searching_in.GetCStr());
+	// first scan for config
+	String data_path = find_game_data_in_config(cur_dir);
+	if (!data_path.IsEmpty())
+		return data_path;
+	// if not found in config, lookup for data in same dir
+	data_path = FindGameData(cur_dir);
+	if (!data_path.IsEmpty())
+		return data_path;
+
+	// 2.3 Look in executable's directory (if it's different from current dir)
+	if (Path::ComparePaths(_G(appDirectory), cur_dir) == 0)
+		return ""; // no luck
+	was_searching_in = _G(appDirectory);
+	Debug::Printf("Searching in (exe dir): %s", was_searching_in.GetCStr());
+	// first scan for config
+	data_path = find_game_data_in_config(_G(appDirectory));
+	if (!data_path.IsEmpty())
+		return data_path;
+	// if not found in config, lookup for data in same dir
+	return FindGameData(_G(appDirectory));
 }
 
 void engine_init_fonts() {
@@ -292,13 +294,12 @@ void engine_locate_speech_pak() {
 		String speech_filepath = find_assetlib(speech_file);
 		if (!speech_filepath.IsEmpty()) {
 			Debug::Printf("Initializing speech vox");
-			if (AssetManager::SetDataFile(speech_filepath) != Shared::kAssetNoError) {
+			if (_GP(AssetMgr)->AddLibrary(speech_filepath) != Shared::kAssetNoError) {
 				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
-				AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path); // switch back to the main data pack
 				return;
 			}
 			// TODO: why is this read right here??? move this to InitGameState!
-			Stream *speechsync = AssetManager::OpenAsset("syncdata.dat");
+			Stream *speechsync = _GP(AssetMgr)->OpenAsset("syncdata.dat");
 			if (speechsync != nullptr) {
 				// this game has voice lip sync
 				int lipsync_fmt = speechsync->ReadInt32();
@@ -310,7 +311,7 @@ void engine_locate_speech_pak() {
 					for (int ee = 0; ee < _G(numLipLines); ee++) {
 						_G(splipsync)[ee].numPhonemes = speechsync->ReadInt16();
 						speechsync->Read(_G(splipsync)[ee].filename, 14);
-						_G(splipsync)[ee].endtimeoffs = (int32_t *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int32_t));
+						_G(splipsync)[ee].endtimeoffs = (int *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(int));
 						speechsync->ReadArrayOfInt32(_G(splipsync)[ee].endtimeoffs, _G(splipsync)[ee].numPhonemes);
 						_G(splipsync)[ee].frame = (short *)malloc(_G(splipsync)[ee].numPhonemes * sizeof(short));
 						speechsync->ReadArrayOfInt16(_G(splipsync)[ee].frame, _G(splipsync)[ee].numPhonemes);
@@ -318,12 +319,11 @@ void engine_locate_speech_pak() {
 				}
 				delete speechsync;
 			}
-			AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path); // switch back to the main data pack
 			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
 			_GP(play).want_speech = 1;
-		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, get_voice_install_dir()) != 0) {
+		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
 			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
-			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but voice installation directory is defined: enabling voice-over.");
+			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but explicit voice directory is defined: enabling voice-over.");
 			_GP(play).want_speech = 1;
 		}
 		_GP(ResPaths).SpeechPak.Name = speech_file;
@@ -336,28 +336,46 @@ void engine_locate_audio_pak() {
 	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
-		if (AssetManager::SetDataFile(music_filepath) == kAssetNoError) {
-			AssetManager::SetDataFile(_GP(ResPaths).GamePak.Path);
+		if (_GP(AssetMgr)->AddLibrary(music_filepath) == kAssetNoError) {
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
 			_GP(play).separate_music_lib = 1;
 			_GP(ResPaths).AudioPak.Name = music_file;
 			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
 			_G(platform)->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
-			                       music_file.GetCStr());
+			                           music_file.GetCStr());
 		}
+	} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
+		Debug::Printf(kDbgMsg_Info, "Audio pack was not found, but explicit audio directory is defined.");
 	}
 }
 
-void engine_init_keyboard() {
-#ifdef ALLEGRO_KEYBOARD_HANDLER
-	Debug::Printf(kDbgMsg_Info, "Initializing keyboard");
+// Assign asset locations to the AssetManager
+void engine_assign_assetpaths() {
+	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).GamePak.Path, ",audio"); // main pack may have audio bundled too
+	// The asset filters are currently a workaround for limiting search to certain locations;
+	// this is both an optimization and to prevent unexpected behavior.
+	// - empty filter is for regular files
+	// audio - audio clips
+	// voice - voice-over clips
+	// NOTE: we add extra optional directories first because they should have higher priority
+	// TODO: maybe change AssetManager library order to stack-like later (last added = top priority)?
+	if (!_GP(ResPaths).DataDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).DataDir2, _GP(ResPaths).DataDir) != 0)
+		_GP(AssetMgr)->AddLibrary(_GP(ResPaths).DataDir2, ",audio,voice"); // dir may have anything
+	if (!_GP(ResPaths).AudioDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).AudioDir2, _GP(ResPaths).DataDir) != 0)
+		_GP(AssetMgr)->AddLibrary(_GP(ResPaths).AudioDir2, "audio");
+	if (!_GP(ResPaths).VoiceDir2.IsEmpty() && Path::ComparePaths(_GP(ResPaths).VoiceDir2, _GP(ResPaths).DataDir) != 0)
+		_GP(AssetMgr)->AddLibrary(_GP(ResPaths).VoiceDir2, "voice");
 
-	install_keyboard();
-#endif
-#if AGS_PLATFORM_OS_LINUX
-//	setlocale(LC_NUMERIC, "C"); // needed in X platform because install keyboard affects locale of printfs
-#endif
+	_GP(AssetMgr)->AddLibrary(_GP(ResPaths).DataDir, ",audio,voice"); // dir may have anything
+	if (!_GP(ResPaths).AudioPak.Path.IsEmpty())
+		_GP(AssetMgr)->AddLibrary(_GP(ResPaths).AudioPak.Path, "audio");
+	if (!_GP(ResPaths).SpeechPak.Path.IsEmpty())
+		_GP(AssetMgr)->AddLibrary(_GP(ResPaths).SpeechPak.Path, "voice");
+}
+
+void engine_init_keyboard() {
+	/* do nothing */
 }
 
 void engine_init_timer() {
@@ -373,6 +391,7 @@ void engine_init_audio() {
 		audio_core_init(); // audio core system
 	}
 #endif
+
 	_G(our_eip) = -181;
 
 	if (_GP(usetup).audio_backend == 0) {
@@ -386,12 +405,28 @@ void engine_init_audio() {
 void engine_init_debug() {
 	if ((_G(debug_flags) & (~DBG_DEBUGMODE)) > 0) {
 		_G(platform)->DisplayAlert("Engine debugging enabled.\n"
-		                       "\nNOTE: You have selected to enable one or more engine debugging options.\n"
-		                       "These options cause many parts of the game to behave abnormally, and you\n"
-		                       "may not see the game as you are used to it. The point is to test whether\n"
-		                       "the engine passes a point where it is crashing on you normally.\n"
-		                       "[Debug flags enabled: 0x%02X]", _G(debug_flags));
+		                           "\nNOTE: You have selected to enable one or more engine debugging options.\n"
+		                           "These options cause many parts of the game to behave abnormally, and you\n"
+		                           "may not see the game as you are used to it. The point is to test whether\n"
+		                           "the engine passes a point where it is crashing on you normally.\n"
+		                           "[Debug flags enabled: 0x%02X]", _G(debug_flags));
 	}
+}
+
+void atexit_handler() {
+	if (_G(proper_exit) == 0) {
+		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
+		                           "Program pointer: %+03d  (write this number down), ACI version %s\n"
+		                           "If you see a list of numbers above, please write them down and contact\n"
+		                           "developers. Otherwise, note down any other information displayed.",
+		                           _G(our_eip), _G(EngineVersion).LongString.GetCStr());
+	}
+}
+
+void engine_init_exit_handler() {
+	Debug::Printf(kDbgMsg_Info, "Install exit handler");
+
+	atexit(atexit_handler);
 }
 
 void engine_init_rand() {
@@ -415,7 +450,6 @@ int engine_load_game_data() {
 	HError err = load_game_file();
 	if (!err) {
 		_G(proper_exit) = 1;
-		_G(platform)->FinishedUsingGraphicsMode();
 		display_game_file_error(err);
 		return EXIT_ERROR;
 	}
@@ -438,35 +472,12 @@ int engine_check_register_game() {
 	return 0;
 }
 
-void engine_init_title() {
-	_G(our_eip) = -91;
-	::AGS::g_vm->set_window_title(_GP(game).gamename);
-	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", _GP(game).gamename);
-}
-
-void engine_init_directories() {
-	Debug::Printf(kDbgMsg_Info, "Data directory: %s", _GP(usetup).data_files_dir.GetCStr());
-	if (!_GP(usetup).install_dir.IsEmpty())
-		Debug::Printf(kDbgMsg_Info, "Optional install directory: %s", _GP(usetup).install_dir.GetCStr());
-	if (!_GP(usetup).install_audio_dir.IsEmpty())
-		Debug::Printf(kDbgMsg_Info, "Optional audio directory: %s", _GP(usetup).install_audio_dir.GetCStr());
-	if (!_GP(usetup).install_voice_dir.IsEmpty())
-		Debug::Printf(kDbgMsg_Info, "Optional voice-over directory: %s", _GP(usetup).install_voice_dir.GetCStr());
+// Setup paths and directories that may be affected by user configuration
+void engine_init_user_directories() {
 	if (!_GP(usetup).user_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "User data directory: %s", _GP(usetup).user_data_dir.GetCStr());
 	if (!_GP(usetup).shared_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "Shared data directory: %s", _GP(usetup).shared_data_dir.GetCStr());
-
-	_GP(ResPaths).DataDir = _GP(usetup).data_files_dir;
-	_GP(ResPaths).GamePak.Path = _GP(usetup).main_data_filepath;
-	_GP(ResPaths).GamePak.Name = Shared::Path::get_filename(_GP(usetup).main_data_filepath);
-
-	set_install_dir(_GP(usetup).install_dir, _GP(usetup).install_audio_dir, _GP(usetup).install_voice_dir);
-	if (!_GP(usetup).install_dir.IsEmpty()) {
-		// running in debugger: don't redirect to the game exe folder (_Debug)
-		// TODO: find out why we need to do this (and do we?)
-		_GP(ResPaths).DataDir = ".";
-	}
 
 	// if end-user specified custom save path, use it
 	bool res = false;
@@ -479,9 +490,7 @@ void engine_init_directories() {
 	}
 	// if there is no custom path, or if custom path failed, use default system path
 	if (!res) {
-		char newDirBuffer[MAX_PATH];
-		sprintf(newDirBuffer, "%s/%s", UserSavedgamesRootToken, _GP(game).saveGameFolderName);
-		SetSaveGameDirectoryPath(newDirBuffer);
+		SetSaveGameDirectoryPath(Path::ConcatPaths(UserSavedgamesRootToken, _GP(game).saveGameFolderName));
 	}
 }
 
@@ -489,10 +498,8 @@ void engine_init_directories() {
 extern char android_base_directory[256];
 #endif // AGS_PLATFORM_OS_ANDROID
 
+// TODO: remake/remove this nonsense
 int check_write_access() {
-#if AGS_PLATFORM_SCUMMVM
-	return true;
-#else
 
 	if (_G(platform)->GetDiskFreeSpaceMB() < 2)
 		return 0;
@@ -504,10 +511,13 @@ int check_write_access() {
 	String tempPath = String::FromFormat("%s""tmptest.tmp", svg_dir.GetCStr());
 	Stream *temp_s = Shared::File::CreateFile(tempPath);
 	if (!temp_s)
-		// TODO: move this somewhere else (Android platform driver init?)
+		// TODO: The fallback should be done on all platforms, and there's
+		// already similar procedure found in SetSaveGameDirectoryPath.
+		// If Android has extra dirs to fallback to, they should be provided
+		// by platform driver's method, not right here!
 #if AGS_PLATFORM_OS_ANDROID
 	{
-//		put_backslash(android_base_directory);
+		put_backslash(android_base_directory);
 		tempPath.Format("%s""tmptest.tmp", android_base_directory);
 		temp_s = Shared::File::CreateFile(tempPath);
 		if (temp_s == NULL) return 0;
@@ -528,7 +538,6 @@ int check_write_access() {
 		return 0;
 
 	return 1;
-#endif
 }
 
 int engine_check_disk_space() {
@@ -545,7 +554,7 @@ int engine_check_disk_space() {
 
 int engine_check_font_was_loaded() {
 	if (!font_first_renderer_loaded()) {
-		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the game.");
+		_G(platform)->DisplayAlert("No game fonts found. At least one font is required to run the _GP(game).");
 		_G(proper_exit) = 1;
 		return EXIT_ERROR;
 	}
@@ -555,7 +564,7 @@ int engine_check_font_was_loaded() {
 
 // Do the preload graphic if available
 void show_preload() {
-	color temppal[256];
+	RGB temppal[256];
 	Bitmap *splashsc = BitmapHelper::CreateRawBitmapOwner(load_pcx("preload.pcx", temppal));
 	if (splashsc != nullptr) {
 		Debug::Printf("Displaying preload image");
@@ -589,12 +598,12 @@ int engine_init_sprites() {
 
 	HError err = _GP(spriteset).InitFile(SpriteCache::DefaultSpriteFileName, SpriteCache::DefaultSpriteIndexName);
 	if (!err) {
-		_G(platform)->FinishedUsingGraphicsMode();
+		sys_main_shutdown();
 		allegro_exit();
 		_G(proper_exit) = 1;
 		_G(platform)->DisplayAlert("Could not load sprite set file %s\n%s",
-		                       SpriteCache::DefaultSpriteFileName,
-		                       err->FullMessage().GetCStr());
+		                           SpriteCache::DefaultSpriteFileName.GetCStr(),
+		                           err->FullMessage().GetCStr());
 		return EXIT_ERROR;
 	}
 
@@ -616,7 +625,7 @@ void engine_init_game_settings() {
 	}
 
 	for (ee = 0; ee < _GP(game).numcursors; ee++) {
-		// The cursor graphics are assigned to _G(mousecurs)[] and so cannot
+		// The cursor graphics are assigned to mousecurs[] and so cannot
 		// be removed from memory
 		if (_GP(game).mcurs[ee].pic >= 0)
 			_GP(spriteset).Precache(_GP(game).mcurs[ee].pic);
@@ -829,8 +838,8 @@ void engine_init_game_settings() {
 	_GP(play).shake_screen_yoff = 0;
 
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
-	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int32_t));
-	memset(&_GP(play).default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int32_t));
+	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int));
+	memset(&_GP(play).default_audio_type_volumes[0], -1, MAX_AUDIO_TYPES * sizeof(int));
 
 	// reset graphical script vars (they're still used by some games)
 	for (ee = 0; ee < MAXGLOBALVARS; ee++)
@@ -870,14 +879,20 @@ void engine_prepare_to_start_game() {
 	Debug::Printf("Prepare to start game");
 
 	engine_setup_scsystem_auxiliary();
-#if AGS_PLATFORM_SCUMMVM
-	clear_sound_cache();
-#endif
 
 #if AGS_PLATFORM_OS_ANDROID
 	if (psp_load_latest_savegame)
 		selectLatestSavegame();
 #endif
+}
+
+// TODO: move to test unit
+Bitmap *test_allegro_bitmap;
+IDriverDependantBitmap *test_allegro_ddb;
+void allegro_bitmap_test_init() {
+	test_allegro_bitmap = nullptr;
+	// Switched the test off for now
+	//test_allegro_bitmap = AllegroBitmap::CreateBitmap(320,200,32);
 }
 
 // Only allow searching around for game data on desktop systems;
@@ -888,75 +903,75 @@ void engine_prepare_to_start_game() {
 #endif
 
 // Define location of the game data either using direct settings or searching
-// for the available resource packs in common locations
-HError define_gamedata_location_checkall(const String &exe_path) {
+// for the available resource packs in common locations.
+// Returns two paths:
+// - startup_dir: this is where engine found game config and/or data;
+// - data_path: full path of the main data pack;
+// data_path's directory (may or not be eq to startup_dir) should be considered data directory,
+// and this is where engine look for all game data.
+HError define_gamedata_location_checkall(String &data_path, String &startup_dir) {
 	// First try if they provided a startup option
 	if (!_G(cmdGameDataPath).IsEmpty()) {
 		// If not a valid path - bail out
 		if (!Path::IsFileOrDir(_G(cmdGameDataPath)))
-			return new Error(String::FromFormat("Defined game location is not a valid path.\nPath: '%s'", _G(cmdGameDataPath).GetCStr()));
-		// Switch working dir to this path to be able to look for config and other assets there
-		Directory::SetCurrentDirectory(Path::GetDirectoryPath(_G(cmdGameDataPath)));
+			return new Error(String::FromFormat("Provided game location is not a valid path.\n Cwd: %s\n Path: %s",
+			                                    Directory::GetCurrentDirectory().GetCStr(),
+			                                    _G(cmdGameDataPath).GetCStr()));
 		// If it's a file, then keep it and proceed
 		if (Path::IsFile(_G(cmdGameDataPath))) {
-			_GP(usetup).main_data_filepath = _G(cmdGameDataPath);
+			Debug::Printf("Using provided game data path: %s", _G(cmdGameDataPath).GetCStr());
+			startup_dir = Path::GetDirectoryPath(_G(cmdGameDataPath));
+			data_path = _G(cmdGameDataPath);
 			return HError::None();
 		}
 	}
-	// Read game data location from the default config file.
-	// This is an optional setting that may instruct which game file to use as a primary asset library.
-	ConfigTree cfg;
-	String def_cfg_file = find_default_cfg_file(exe_path);
-	IniUtil::Read(def_cfg_file, cfg);
-	read_game_data_location(cfg);
-	if (!_GP(usetup).main_data_filename.IsEmpty())
-		return HError::None();
 
 #if defined (AGS_SEARCH_FOR_GAME_ON_LAUNCH)
 	// No direct filepath provided, search in common locations.
-	String path, search_path;
-	if (search_for_game_data_file(path, search_path)) {
-		_GP(usetup).main_data_filepath = path;
-		return HError::None();
+	data_path = search_for_game_data_file(startup_dir);
+	if (data_path.IsEmpty()) {
+		return new Error("Engine was not able to find any compatible game data.",
+		                 startup_dir.IsEmpty() ? String() : String::FromFormat("Searched in: %s", startup_dir.GetCStr()));
 	}
-	return new Error("Engine was not able to find any compatible game data.",
-	                 search_path.IsEmpty() ? String() : String::FromFormat("Searched in: %s", search_path.GetCStr()));
+	data_path = Path::MakeAbsolutePath(data_path);
+	Debug::Printf(kDbgMsg_Info, "Located game data pak: %s", data_path.GetCStr());
+	return HError::None();
 #else
+	// No direct filepath provided, bail out.
 	return new Error("The game location was not defined by startup settings.");
 #endif
 }
 
 // Define location of the game data
-bool define_gamedata_location(const String &exe_path) {
-	HError err = define_gamedata_location_checkall(exe_path);
+bool define_gamedata_location() {
+	String data_path, startup_dir;
+	HError err = define_gamedata_location_checkall(data_path, startup_dir);
 	if (!err) {
 		_G(platform)->DisplayAlert("ERROR: Unable to determine game data.\n%s", err->FullMessage().GetCStr());
 		main_print_help();
 		return false;
 	}
 
-	// On success: set all the necessary path and filename settings,
-	// derive missing ones from available.
-	if (_GP(usetup).main_data_filename.IsEmpty()) {
-		_GP(usetup).main_data_filename = Shared::Path::get_filename(_GP(usetup).main_data_filepath);
-	} else if (_GP(usetup).main_data_filepath.IsEmpty()) {
-		if (_GP(usetup).data_files_dir.IsEmpty() || !is_relative_filename(_GP(usetup).main_data_filename))
-			_GP(usetup).main_data_filepath = _GP(usetup).main_data_filename;
-		else
-			_GP(usetup).main_data_filepath = Path::ConcatPaths(_GP(usetup).data_files_dir, _GP(usetup).main_data_filename);
-	}
-	if (_GP(usetup).data_files_dir.IsEmpty())
-		_GP(usetup).data_files_dir = Path::GetDirectoryPath(_GP(usetup).main_data_filepath);
+	// On success: set all the necessary path and filename settings
+	_GP(usetup).startup_dir = startup_dir;
+	_GP(usetup).main_data_file = data_path;
+	_GP(usetup).main_data_dir = Path::GetDirectoryPath(data_path);
 	return true;
 }
 
 // Find and preload main game data
-bool engine_init_gamedata(const String &exe_path) {
+bool engine_init_gamedata() {
 	Debug::Printf(kDbgMsg_Info, "Initializing game data");
-	if (!define_gamedata_location(exe_path))
+	// First, find data location
+	if (!define_gamedata_location())
 		return false;
-	if (!engine_try_init_gamedata(_GP(usetup).main_data_filepath))
+
+	// Try init game lib
+	AssetError asset_err = _GP(AssetMgr)->AddLibrary(_GP(usetup).main_data_file);
+	if (asset_err != kAssetNoError) {
+		_G(platform)->DisplayAlert("ERROR: The game data is missing, is of unsupported format or corrupt.\nFile: '%s'", _GP(usetup).main_data_file.GetCStr());
 		return false;
+	}
 
 	// Pre-load game name and savegame folder names from data file
 	// TODO: research if that is possible to avoid this step and just
@@ -967,31 +982,59 @@ bool engine_init_gamedata(const String &exe_path) {
 		display_game_file_error(err);
 		return false;
 	}
+
+	// Setup _GP(ResPaths), so that we know out main locations further
+	_GP(ResPaths).GamePak.Path = _GP(usetup).main_data_file;
+	_GP(ResPaths).GamePak.Name = Path::GetFilename(_GP(usetup).main_data_file);
+	_GP(ResPaths).DataDir = _GP(usetup).install_dir.IsEmpty() ? _GP(usetup).main_data_dir : Path::MakeAbsolutePath(_GP(usetup).install_dir);
+	_GP(ResPaths).DataDir2 = Path::MakeAbsolutePath(_GP(usetup).opt_data_dir);
+	_GP(ResPaths).AudioDir2 = Path::MakeAbsolutePath(_GP(usetup).opt_audio_dir);
+	_GP(ResPaths).VoiceDir2 = Path::MakeAbsolutePath(_GP(usetup).opt_voice_dir);
+
+	Debug::Printf(kDbgMsg_Info, "Startup directory: %s", _GP(usetup).startup_dir.GetCStr());
+	Debug::Printf(kDbgMsg_Info, "Data directory: %s", _GP(ResPaths).DataDir.GetCStr());
+	if (!_GP(ResPaths).DataDir2.IsEmpty())
+		Debug::Printf(kDbgMsg_Info, "Opt data directory: %s", _GP(ResPaths).DataDir2.GetCStr());
+	if (!_GP(ResPaths).AudioDir2.IsEmpty())
+		Debug::Printf(kDbgMsg_Info, "Opt audio directory: %s", _GP(ResPaths).AudioDir2.GetCStr());
+	if (!_GP(ResPaths).VoiceDir2.IsEmpty())
+		Debug::Printf(kDbgMsg_Info, "Opt voice-over directory: %s", _GP(ResPaths).VoiceDir2.GetCStr());
 	return true;
 }
 
-void engine_read_config(const String &exe_path, ConfigTree &cfg) {
+void engine_read_config(ConfigTree &cfg) {
+	if (!_GP(usetup).conf_path.IsEmpty()) {
+		IniUtil::Read(_GP(usetup).conf_path, cfg);
+		return;
+	}
+
 	// Read default configuration file
-	String def_cfg_file = find_default_cfg_file(exe_path);
+	String def_cfg_file = find_default_cfg_file();
 	IniUtil::Read(def_cfg_file, cfg);
 
 	// Disabled on Windows because people were afraid that this config could be mistakenly
 	// created by some installer and screw up their games. Until any kind of solution is found.
 	String user_global_cfg_file;
-#if !AGS_PLATFORM_SCUMMVM
-#if !AGS_PLATFORM_OS_WINDOWS
 	// Read user global configuration file
 	user_global_cfg_file = find_user_global_cfg_file();
 	if (Path::ComparePaths(user_global_cfg_file, def_cfg_file) != 0)
 		IniUtil::Read(user_global_cfg_file, cfg);
-#endif
+
+	// Handle directive to search for the user config inside the game directory;
+	// this option may come either from command line or default/global config.
+	_GP(usetup).local_user_conf |= INIreadint(cfg, "misc", "localuserconf", 0) != 0;
+	if (_GP(usetup).local_user_conf) {
+		// Test if the file is writeable, if it is then both engine and setup
+		// applications may actually use it fully as a user config, otherwise
+		// fallback to default behavior.
+		_GP(usetup).local_user_conf = File::TestWriteFile(def_cfg_file);
+	}
 
 	// Read user configuration file
 	String user_cfg_file = find_user_cfg_file();
 	if (Path::ComparePaths(user_cfg_file, def_cfg_file) != 0 &&
 	        Path::ComparePaths(user_cfg_file, user_global_cfg_file) != 0)
 		IniUtil::Read(user_cfg_file, cfg);
-#endif
 
 	// Apply overriding options from mobile port settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
@@ -1001,27 +1044,14 @@ void engine_read_config(const String &exe_path, ConfigTree &cfg) {
 }
 
 // Gathers settings from all available sources into single ConfigTree
-void engine_prepare_config(ConfigTree &cfg, const String &exe_path, const ConfigTree &startup_opts) {
+void engine_prepare_config(ConfigTree &cfg, const ConfigTree &startup_opts) {
 	Debug::Printf(kDbgMsg_Info, "Setting up game configuration");
 	// Read configuration files
-	engine_read_config(exe_path, cfg);
+	engine_read_config(cfg);
 	// Merge startup options in
 	for (const auto &sectn : startup_opts)
 		for (const auto &opt : sectn._value)
 			cfg[sectn._key][opt._key] = opt._value;
-
-	// Add "meta" config settings to let setup application(s)
-	// display correct properties to the user
-	INIwriteint(cfg, "misc", "defaultres", _GP(game).GetResolutionType());
-	INIwriteint(cfg, "misc", "letterbox", _GP(game).options[OPT_LETTERBOX]);
-	INIwriteint(cfg, "misc", "game_width", _GP(game).GetDefaultRes().Width);
-	INIwriteint(cfg, "misc", "game_height", _GP(game).GetDefaultRes().Height);
-	INIwriteint(cfg, "misc", "gamecolordepth", _GP(game).color_depth * 8);
-	if (_GP(game).options[OPT_RENDERATSCREENRES] != kRenderAtScreenRes_UserDefined) {
-		// force enabled/disabled
-		INIwriteint(cfg, "graphics", "render_at_screenres", _GP(game).options[OPT_RENDERATSCREENRES] == kRenderAtScreenRes_Enabled);
-		INIwriteint(cfg, "disabled", "render_at_screenres", 1);
-	}
 }
 
 // Applies configuration to the running game
@@ -1031,16 +1061,12 @@ void engine_set_config(const ConfigTree cfg) {
 	post_config();
 }
 
-//
-// --tell command support: printing engine/game info by request
-//
-
 static bool print_info_needs_game(const std::set<String> &keys) {
 	return keys.count("all") > 0 || keys.count("config") > 0 || keys.count("configpath") > 0 ||
-	       keys.count("data") > 0;
+	       keys.count("data") > 0 || keys.count("filepath") > 0 || keys.count("gameproperties") > 0;
 }
 
-static void engine_print_info(const std::set<String> &keys, const String &exe_path, ConfigTree *user_cfg) {
+static void engine_print_info(const std::set<String> &keys, ConfigTree *user_cfg) {
 	const bool all = keys.count("all") > 0;
 	ConfigTree data;
 	if (all || keys.count("engine") > 0) {
@@ -1055,12 +1081,12 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 		}
 	}
 	if (all || keys.count("configpath") > 0) {
-		String def_cfg_file = find_default_cfg_file(exe_path);
+		String def_cfg_file = find_default_cfg_file();
 		String gl_cfg_file = find_user_global_cfg_file();
 		String user_cfg_file = find_user_cfg_file();
-		data["config-path"]["default"] = def_cfg_file;
-		data["config-path"]["global"] = gl_cfg_file;
-		data["config-path"]["user"] = user_cfg_file;
+		data["configpath"]["default"] = def_cfg_file;
+		data["configpath"]["global"] = gl_cfg_file;
+		data["configpath"]["user"] = user_cfg_file;
 	}
 	if ((all || keys.count("config") > 0) && user_cfg) {
 		for (const auto &sectn : *user_cfg) {
@@ -1071,9 +1097,24 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 	}
 	if (all || keys.count("data") > 0) {
 		data["data"]["gamename"] = _GP(game).gamename;
-		data["data"]["version"] = String::FromFormat("%d", _G(loaded_game_file_version));
+		data["data"]["version"] = StrUtil::IntToString(_G(loaded_game_file_version));
 		data["data"]["compiledwith"] = _GP(game).compiled_with;
-		data["data"]["basepack"] = _GP(usetup).main_data_filepath;
+		data["data"]["basepack"] = _GP(ResPaths).GamePak.Path;
+	}
+	if (all || keys.count("gameproperties") > 0) {
+		fill_game_properties(data["gameproperties"]);
+	}
+	if (all || keys.count("filepath") > 0) {
+		data["filepath"]["exe"] = _G(appPath);
+		data["filepath"]["cwd"] = Directory::GetCurrentDirectory();
+		data["filepath"]["datadir"] = Path::MakePathNoSlash(_GP(ResPaths).DataDir);
+		if (!_GP(ResPaths).DataDir2.IsEmpty()) {
+			data["filepath"]["datadir2"] = Path::MakePathNoSlash(_GP(ResPaths).DataDir2);
+			data["filepath"]["audiodir2"] = Path::MakePathNoSlash(_GP(ResPaths).AudioDir2);
+			data["filepath"]["voicedir2"] = Path::MakePathNoSlash(_GP(ResPaths).VoiceDir2);
+		}
+		data["filepath"]["savegamedir"] = Path::MakePathNoSlash(GetGameUserDataDir().FullDir);
+		data["filepath"]["appdatadir"] = Path::MakePathNoSlash(GetGameAppDataDir().FullDir);
 	}
 	String full;
 	IniUtil::WriteToString(full, data);
@@ -1090,41 +1131,39 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	//-----------------------------------------------------
 	// Install backend
-	if (!engine_init_allegro())
+	if (!engine_init_backend())
 		return EXIT_ERROR;
 
 	//-----------------------------------------------------
 	// Locate game data and assemble game config
-	const String exe_path = _G(global_argv)[0];
 	if (_G(justTellInfo) && !print_info_needs_game(_G(tellInfoKeys))) {
-		engine_print_info(_G(tellInfoKeys), exe_path, nullptr);
+		engine_print_info(_G(tellInfoKeys), nullptr);
 		return EXIT_NORMAL;
 	}
 
-	if (!engine_init_gamedata(exe_path))
+	if (!engine_init_gamedata())
 		return EXIT_ERROR;
 	ConfigTree cfg;
-	engine_prepare_config(cfg, exe_path, startup_opts);
-	if (_G(justTellInfo)) {
-		engine_print_info(_G(tellInfoKeys), exe_path, &cfg);
-		return EXIT_NORMAL;
-	}
+	engine_prepare_config(cfg, startup_opts);
 	// Test if need to run built-in setup program (where available)
-	if (_G(justRunSetup)) {
+	if (!_G(justTellInfo) && _G(justRunSetup)) {
 		int res;
-		if (!engine_run_setup(exe_path, cfg, res))
+		if (!engine_run_setup(cfg, res))
 			return res;
 	}
 	// Set up game options from user config
 	engine_set_config(cfg);
-	engine_setup_allegro();
 	engine_force_window();
+	if (_G(justTellInfo)) {
+		engine_print_info(_G(tellInfoKeys), &cfg);
+		return EXIT_NORMAL;
+	}
 
 	_G(our_eip) = -190;
 
 	//-----------------------------------------------------
-	// Init data paths and other directories, locate general data files
-	engine_init_directories();
+	// Init auxiliary data files and other directories, initialize asset manager
+	engine_init_user_directories();
 
 	_G(our_eip) = -191;
 
@@ -1136,9 +1175,10 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	_G(our_eip) = -193;
 
+	engine_assign_assetpaths();
+
 	//-----------------------------------------------------
 	// Begin setting up systems
-	engine_setup_window();
 
 	_G(our_eip) = -194;
 
@@ -1166,6 +1206,8 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	_G(our_eip) = -10;
 
+	engine_init_exit_handler();
+
 	engine_init_rand();
 
 	engine_init_pathfinder();
@@ -1182,8 +1224,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	res = engine_check_register_game();
 	if (res != 0)
 		return res;
-
-	engine_init_title();
 
 	_G(our_eip) = -189;
 
@@ -1206,11 +1246,12 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	if (!engine_try_set_gfxmode_any(_GP(usetup).Screen))
 		return EXIT_ERROR;
 
+	// Configure game window after renderer was initialized
+	engine_setup_window();
+
 	SetMultitasking(0);
 
-	// [ER] 2014-03-13
-	// Hide the system cursor via allegro
-	show_os_cursor(MOUSE_CURSOR_NONE);
+	sys_window_show_cursor(false); // hide the system cursor
 
 	show_preload();
 
@@ -1222,8 +1263,11 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	engine_prepare_to_start_game();
 
+	allegro_bitmap_test_init();
+
 	initialize_start_and_play_game(_G(override_start_room), _G(loadSaveGameOnStartup));
 
+	quit("|bye!");
 	return EXIT_NORMAL;
 }
 
@@ -1287,6 +1331,12 @@ bool engine_try_switch_windowed_gfxmode() {
 	}
 	ags_clear_input_buffer();
 	return res;
+}
+
+void engine_on_window_changed(const Size &sz) {
+	graphics_mode_on_window_changed(sz);
+	on_coordinates_scaling_changed();
+	invalidate_screen();
 }
 
 void engine_shutdown_gfxmode() {

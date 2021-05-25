@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_AC_DRAWSOFTWARE_H
-#define AGS_ENGINE_AC_DRAWSOFTWARE_H
+#ifndef AGS_ENGINE_AC_DRAW_SOFTWARE_H
+#define AGS_ENGINE_AC_DRAW_SOFTWARE_H
 
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"

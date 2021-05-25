@@ -35,35 +35,35 @@ namespace AGSBlend {
  */
 class AGSBlend : public PluginBase {
 private:
-	static IAGSEngine *_engine;
+static IAGSEngine *_engine;
 private:
-	static const char *AGS_GetPluginName();
-	static void AGS_EngineStartup(IAGSEngine *lpEngine);
+static const char *AGS_GetPluginName();
+static void AGS_EngineStartup(IAGSEngine *lpEngine);
 
 private:
-	/**
-	 * Gets the alpha value at coords x,y
-	 */
-	static void GetAlpha(ScriptMethodParams &params);
+/**
+ * Gets the alpha value at coords x,y
+ */
+static void GetAlpha(ScriptMethodParams &params);
 
-	/**
-	 * Sets the alpha value at coords x,y
-	 */
-	static void PutAlpha(ScriptMethodParams &params);
+/**
+ * Sets the alpha value at coords x,y
+ */
+static void PutAlpha(ScriptMethodParams &params);
 
-	/**
-	 * Translates index from a 2D array to a 1D array
-	 */
-	static int xytolocale(int x, int y, int width);
+/**
+ * Translates index from a 2D array to a 1D array
+ */
+static int xytolocale(int x, int y, int width);
 
-	static void HighPass(ScriptMethodParams &params);
-	static void Blur(ScriptMethodParams &params);
-	static void DrawSprite(ScriptMethodParams &params);
-	static void DrawAdd(ScriptMethodParams &params);
-	static void DrawAlpha(ScriptMethodParams &params);
+static void HighPass(ScriptMethodParams &params);
+static void Blur(ScriptMethodParams &params);
+static void DrawSprite(ScriptMethodParams &params);
+static void DrawAdd(ScriptMethodParams &params);
+static void DrawAlpha(ScriptMethodParams &params);
 
 public:
-	AGSBlend();
+AGSBlend();
 };
 
 } // namespace AGSBlend

@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef AGS_ENGINE_UTIL_MUTEX_BASE_H
-#define AGS_ENGINE_UTIL_MUTEX_BASE_H
+#ifndef AGS_ENGINE_PLATFORM_MUTEX_BASE_H
+#define AGS_ENGINE_PLATFORM_MUTEX_BASE_H
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
+
 
 class BaseMutex {
 public:

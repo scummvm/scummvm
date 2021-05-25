@@ -30,7 +30,6 @@
 #define AGS_SHARED_UTIL_GEOMETRY_H
 
 #include "ags/shared/util/math.h"
-#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -144,15 +143,15 @@ inline Line VLine(int x, int y1, int y2) {
 }
 
 struct Size {
-	int32_t Width;
-	int32_t Height;
+	int Width;
+	int Height;
 
 	Size() {
 		Width = 0;
 		Height = 0;
 	}
 
-	Size(int32_t width, int32_t height) {
+	Size(int width, int height) {
 		Width = width;
 		Height = height;
 	}
@@ -163,7 +162,7 @@ struct Size {
 
 	inline static Size Clamp(const Size &sz, const Size &floor, const Size &ceil) {
 		return Size(AGSMath::Clamp(sz.Width, floor.Width, ceil.Width),
-			AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
+					AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
 	}
 
 	// Indicates if current size exceeds other size by any metric
@@ -179,8 +178,7 @@ struct Size {
 		return Width != size.Width || Height != size.Height;
 	}
 
-	inline bool operator<(const Size &other) const {
-		// TODO: this implementation is silly and not universally useful; make a realistic one and replace with another function where necessary
+	inline bool operator<(const Size &other) const { // TODO: this implementation is silly and not universally useful; make a realistic one and replace with another function where necessary
 		return Width < other.Width || (Width == other.Width && Height < other.Height);
 	}
 
@@ -348,7 +346,7 @@ struct Circle {
 bool AreRectsIntersecting(const Rect &r1, const Rect &r2);
 // Tells if the item is completely inside place
 bool IsRectInsideRect(const Rect &place, const Rect &item);
-// Calculates a distance between two axis-aligned rectangles
+// Calculates a distance between two axis-aligned rectangles, returns 0 if they intersect
 float DistanceBetween(const Rect &r1, const Rect &r2);
 
 int AlignInHRange(int x1, int x2, int off_x, int width, FrameAlignment align);
@@ -362,6 +360,7 @@ Rect OffsetRect(const Rect &r, const Point off);
 Rect CenterInRect(const Rect &place, const Rect &item);
 Rect ClampToRect(const Rect &place, const Rect &item);
 Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &placement);
+
 //} // namespace Shared
 //} // namespace AGS
 } // namespace AGS3

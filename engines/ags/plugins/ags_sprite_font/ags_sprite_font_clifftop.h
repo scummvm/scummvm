@@ -31,12 +31,12 @@ namespace AGSSpriteFont {
 
 class AGSSpriteFontClifftopGames : public AGSSpriteFont {
 private:
-	static void AGS_EngineStartup(IAGSEngine *engine);
+static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static void SetLineHeightAdjust(ScriptMethodParams &params);
+static void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
-	AGSSpriteFontClifftopGames();
+AGSSpriteFontClifftopGames();
 };
 
 } // namespace AGSSpriteFont

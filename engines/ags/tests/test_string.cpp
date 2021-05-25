@@ -191,7 +191,7 @@ void Test_String() {
 		String s7 = s1.Right(5);
 		String s8 = s1.Right(100);
 		String s9 = s1.Left(0);
-		String s10 = s1.Mid((size_t)-1, 0);
+		String s10 = s1.Mid((size_t) - 1, 0);
 		String s11 = s1.Right(0);
 
 		assert(strcmp(s2, "this") == 0);
@@ -368,7 +368,7 @@ void Test_String() {
 	// Test SetAt
 	{
 		String s1 = "strimg wiyh typos";
-		s1.SetAt((size_t)-1, 'a');
+		s1.SetAt((size_t) - 1, 'a');
 		assert(strcmp(s1, "strimg wiyh typos") == 0);
 		s1.SetAt(100, 'a');
 		assert(strcmp(s1, "strimg wiyh typos") == 0);

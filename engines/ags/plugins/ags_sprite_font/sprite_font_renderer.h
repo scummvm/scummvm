@@ -24,7 +24,7 @@
 #define AGS_PLUGINS_AGS_SPRITE_FONT_SPR_FONT_RENDERER_H
 
 #include "ags/plugins/ags_sprite_font/sprite_font.h"
-#include "ags/plugins/agsplugin.h"
+#include "ags/plugins/ags_plugin.h"
 #include "ags/lib/std/vector.h"
 
 namespace AGS3 {
@@ -33,25 +33,25 @@ namespace AGSSpriteFont {
 
 class SpriteFontRenderer : public IAGSFontRenderer {
 public:
-	SpriteFontRenderer(IAGSEngine *engine);
-	virtual ~SpriteFontRenderer(void);
-	bool LoadFromDisk(int fontNumber, int fontSize) override {
-		return true;
-	}
-	void FreeMemory(int fontNumber) override { }
-	bool SupportsExtendedCharacters(int fontNumber) override;
-	int GetTextWidth(const char *text, int fontNumber) override;
-	int GetTextHeight(const char *text, int fontNumber) override;
-	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
-	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
-	void EnsureTextValidForFont(char *text, int fontNumber) override;
-	void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);
+SpriteFontRenderer(IAGSEngine *engine);
+virtual ~SpriteFontRenderer(void);
+bool LoadFromDisk(int fontNumber, int fontSize) override {
+	return true;
+}
+void FreeMemory(int fontNumber) override { }
+bool SupportsExtendedCharacters(int fontNumber) override;
+int GetTextWidth(const char *text, int fontNumber) override;
+int GetTextHeight(const char *text, int fontNumber) override;
+void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
+void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
+void EnsureTextValidForFont(char *text, int fontNumber) override;
+void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);
 
 protected:
-	SpriteFont *getFontFor(int fontNum);
-	void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
-	std::vector<SpriteFont * > _fonts;
-	IAGSEngine *_engine;
+SpriteFont *getFontFor(int fontNum);
+void Draw(BITMAP *src, BITMAP *dest, int destx, int desty, int srcx, int srcy, int width, int height);
+std::vector<SpriteFont * > _fonts;
+IAGSEngine *_engine;
 };
 
 } // namespace AGSSpriteFont

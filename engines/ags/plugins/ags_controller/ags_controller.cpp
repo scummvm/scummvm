@@ -53,7 +53,7 @@ void AGSController::AGS_EngineStartup(IAGSEngine *engine) {
 	SCRIPT_METHOD_EXT(Controller::GetAxis, Controller_GetAxis);
 	SCRIPT_METHOD_EXT(Controller::GetPOV, Controller_GetPOV);
 	SCRIPT_METHOD_EXT(Controller::IsButtonDown, Controller_IsButtonDown);
-	SCRIPT_METHOD_EXT(Controller::GetName^0, Controller_GetName);
+	SCRIPT_METHOD_EXT(Controller::GetName ^ 0, Controller_GetName);
 	SCRIPT_METHOD_EXT(Controller::Rumble, Controller_Rumble);
 	SCRIPT_METHOD_EXT(Controller::IsButtonDownOnce, Controller_IsButtonDownOnce);
 	SCRIPT_METHOD_EXT(Controller::PressAnyKey, Controller_PressAnyKey);
@@ -113,7 +113,7 @@ void AGSController::Controller_IsButtonDown(ScriptMethodParams &params) {
 
 void AGSController::Controller_GetName(ScriptMethodParams &params) {
 	int joystickNum = ConfMan.getInt("joystick_num");
-	params._result = (joystickNum != -1) ? "Joystick" :"";
+	params._result = (joystickNum != -1) ? "Joystick" : "";
 }
 
 void AGSController::Controller_Rumble(ScriptMethodParams &params) {

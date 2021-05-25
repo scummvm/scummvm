@@ -23,7 +23,7 @@
 #include "ags/engine/ac/global_timer.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/game_state.h"
 #include "ags/globals.h"
 
 namespace AGS3 {

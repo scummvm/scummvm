@@ -29,26 +29,27 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/cdaudio.h"
+
+#include "ags/engine/ac/cd_audio.h"
 #include "ags/engine/ac/display.h"
-#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/event.h"
 #include "ags/engine/ac/game.h"
 #include "ags/engine/ac/global_audio.h"
 #include "ags/engine/ac/global_button.h"
 #include "ags/engine/ac/global_character.h"
-#include "ags/engine/ac/global_datetime.h"
+#include "ags/engine/ac/global_date_time.h"
 #include "ags/engine/ac/global_debug.h"
 #include "ags/engine/ac/global_dialog.h"
 #include "ags/engine/ac/global_display.h"
-#include "ags/engine/ac/global_drawingsurface.h"
-#include "ags/engine/ac/global_dynamicsprite.h"
+#include "ags/engine/ac/global_drawing_surface.h"
+#include "ags/engine/ac/global_dynamic_sprite.h"
 #include "ags/engine/ac/global_file.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/global_gui.h"
 #include "ags/engine/ac/global_hotspot.h"
-#include "ags/engine/ac/global_inventoryitem.h"
-#include "ags/engine/ac/global_invwindow.h"
+#include "ags/engine/ac/global_inventory_item.h"
+#include "ags/engine/ac/global_inv_window.h"
 #include "ags/engine/ac/global_label.h"
 #include "ags/engine/ac/global_listbox.h"
 #include "ags/engine/ac/global_mouse.h"
@@ -66,10 +67,10 @@
 #include "ags/engine/ac/global_timer.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/global_video.h"
-#include "ags/engine/ac/global_viewframe.h"
+#include "ags/engine/ac/global_view_frame.h"
 #include "ags/engine/ac/global_viewport.h"
-#include "ags/engine/ac/global_walkablearea.h"
-#include "ags/engine/ac/global_walkbehind.h"
+#include "ags/engine/ac/global_walkable_area.h"
+#include "ags/engine/ac/global_walk_behind.h"
 #include "ags/engine/ac/math.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/parser.h"
@@ -78,10 +79,12 @@
 #include "ags/engine/media/video/video.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/engine/media/audio/audio_system.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+
 
 // void (char*texx, ...)
 RuntimeScriptValue Sc_sc_AbortGame(const RuntimeScriptValue *params, int32_t param_count) {
@@ -543,7 +546,7 @@ RuntimeScriptValue Sc_GetInvGraphic(const RuntimeScriptValue *params, int32_t pa
 	API_SCALL_INT_PINT(GetInvGraphic);
 }
 
-// void (int indx,char*buff)
+// void (int indx,char*_G(buff))
 RuntimeScriptValue Sc_GetInvName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT_POBJ(GetInvName, char);
 }
@@ -713,16 +716,6 @@ RuntimeScriptValue Sc_GetWalkableAreaAtRoom(const RuntimeScriptValue *params, in
 // int (int xxx,int yyy)
 RuntimeScriptValue Sc_GetWalkableAreaAtScreen(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT2(GetWalkableAreaAtScreen);
-}
-
-RuntimeScriptValue Sc_GetDrawingSurfaceForWalkableArea(const RuntimeScriptValue *params, int32_t param_count) {
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
-}
-
-RuntimeScriptValue Sc_GetDrawingSurfaceForWalkbehind(const RuntimeScriptValue *params, int32_t param_count) {
-	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
-	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
 // void (int amnt)
@@ -1869,17 +1862,9 @@ RuntimeScriptValue Sc_WaitKey(const RuntimeScriptValue *params, int32_t param_co
 	API_SCALL_INT_PINT(WaitKey);
 }
 
-RuntimeScriptValue Sc_WaitMouse(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_INT_PINT(WaitMouse);
-}
-
 // int (int nloops)
 RuntimeScriptValue Sc_WaitMouseKey(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_PINT(WaitMouseKey);
-}
-
-RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID(SkipWait);
 }
 
 //=============================================================================
@@ -2082,8 +2067,6 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("GetWalkableAreaAtRoom",    Sc_GetWalkableAreaAtRoom);
 	ccAddExternalStaticFunction("GetWalkableAreaAt",        Sc_GetWalkableAreaAtScreen);
 	ccAddExternalStaticFunction("GetWalkableAreaAtScreen",  Sc_GetWalkableAreaAtScreen);
-	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkableArea", Sc_GetDrawingSurfaceForWalkableArea);
-	ccAddExternalStaticFunction("GetDrawingSurfaceForWalkbehind", Sc_GetDrawingSurfaceForWalkbehind);
 	ccAddExternalStaticFunction("GiveScore",                Sc_GiveScore);
 	ccAddExternalStaticFunction("HasPlayerBeenInRoom",      Sc_HasPlayerBeenInRoom);
 	ccAddExternalStaticFunction("HideMouseCursor",          Sc_HideMouseCursor);
@@ -2319,9 +2302,7 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("UpdatePalette",            Sc_UpdatePalette);
 	ccAddExternalStaticFunction("Wait",                     Sc_scrWait);
 	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
-	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
 	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
-	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 

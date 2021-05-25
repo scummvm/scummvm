@@ -21,11 +21,10 @@
  */
 
 #include "ags/engine/ac/route_finder.h"
-
 #include "ags/engine/ac/route_finder_impl.h"
 #include "ags/engine/ac/route_finder_impl_legacy.h"
-
 #include "ags/shared/debugging/out.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -34,6 +33,7 @@ using AGS::Shared::Bitmap;
 class IRouteFinder {
 public:
 	virtual ~IRouteFinder() {}
+
 	virtual void init_pathfinder() = 0;
 	virtual void shutdown_pathfinder() = 0;
 	virtual void set_wallscreen(Bitmap *wallscreen) = 0;
@@ -119,8 +119,7 @@ void init_pathfinder(GameDataVersion game_file_version) {
 }
 
 void shutdown_pathfinder() {
-	if (route_finder_impl)
-		route_finder_impl->shutdown_pathfinder();
+	route_finder_impl->shutdown_pathfinder();
 }
 
 void set_wallscreen(Bitmap *wallscreen) {

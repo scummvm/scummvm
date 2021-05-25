@@ -33,7 +33,7 @@ VariableWidthSpriteFontRenderer::VariableWidthSpriteFontRenderer(IAGSEngine *eng
 
 
 VariableWidthSpriteFontRenderer::~VariableWidthSpriteFontRenderer(void) {
-	for(int i = 0; i < (int)_fonts.size(); i++)
+	for (int i = 0; i < (int)_fonts.size(); i++)
 		delete _fonts[i];
 	_fonts.clear();
 }
@@ -74,13 +74,12 @@ void VariableWidthSpriteFontRenderer::SetSpacing(int fontNum, int spacing) {
 
 }
 
-void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride)
- {
+void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride) {
 	VariableWidthFont *font = getFontFor(fontNum);
 	font->LineHeightAdjust = LineHeight;
 	font->LineSpacingAdjust = SpacingHeight;
 	font->LineSpacingOverride = SpacingOverride;
- }
+}
 
 void VariableWidthSpriteFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
@@ -165,23 +164,23 @@ void VariableWidthSpriteFontRenderer::Draw(BITMAP *src, BITMAP *dest, int destx,
 	int destxx = (startx + destx) * bpp;
 	for (int x = startx; x < width; ++x, srcxx += bpp, destxx += bpp) {
 
-		int srcyy =  (starty + srcy) * srcPitch;
+		int srcyy = (starty + srcy) * srcPitch;
 		int destyy = (starty + desty) * destPitch;
 		for (int y = starty; y <  height; ++y, srcyy += srcPitch, destyy += destPitch) {
 			uint8 *srcCol = srccharbuffer + srcyy + srcxx;
-			uint8 * destCol = destcharbuffer + destyy + destxx;
+			uint8 *destCol = destcharbuffer + destyy + destxx;
 			if (destColDepth == 8) {
 				if (*srcCol != transColor)
 					*destCol = *srcCol;
 			} else if (destColDepth == 16) {
-				if (*((uint16*)srcCol) != transColor)
-					*((uint16*)destCol) = *((uint16*)srcCol);
+				if (*((uint16 *)srcCol) != transColor)
+					*((uint16 *)destCol) = *((uint16 *)srcCol);
 			} else if (destColDepth == 32) {
 				//if (*((uint32*)srcCol) != transColor)
-				//	*((uint32*)destCol) = *((uint32*)srcCol);
+				//  *((uint32*)destCol) = *((uint32*)srcCol);
 
-				uint32 srcargb = *((uint32*)srcCol);
-				uint32& destargb = *((uint32*)destCol);
+				uint32 srcargb = *((uint32 *)srcCol);
+				uint32 &destargb = *((uint32 *)destCol);
 
 				srca = (geta32(srcargb));
 

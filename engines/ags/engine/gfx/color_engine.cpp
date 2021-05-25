@@ -26,10 +26,8 @@
 //
 //=============================================================================
 
-#include "ags/shared/core/platform.h"
-
-#include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/gfx/bitmap.h"
+#include "ags/lib/allegro.h"
+#include "ags/shared/util/wgt2_allg.h"
 
 namespace AGS3 {
 
@@ -54,7 +52,7 @@ void __my_setcolor(int *ctset, int newcol, int wantColDep) {
 			ctset[0] = newcol;
 	} else {
 		ctset[0] = makecol_depth(wantColDep, col_lookups[newcol] >> 16,
-			(col_lookups[newcol] >> 8) & 0x000ff, col_lookups[newcol] & 0x000ff);
+		                         (col_lookups[newcol] >> 8) & 0x000ff, col_lookups[newcol] & 0x000ff);
 
 		// in case it's used on an alpha-channel sprite, make sure it's visible
 		if (wantColDep > 16)

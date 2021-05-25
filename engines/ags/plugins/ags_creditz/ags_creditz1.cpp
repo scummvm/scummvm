@@ -45,7 +45,7 @@ void AGSCreditz1::AGS_EngineStartup(IAGSEngine *engine) {
 	_engine = engine;
 	engine->RequestEventHook(AGSE_POSTSCREENDRAW);
 	_engine->GetScreenDimensions(&_state->_screenWidth,
-		&_state->_screenHeight, &_state->_screenColorDepth);
+	                             &_state->_screenHeight, &_state->_screenColorDepth);
 
 	SCRIPT_METHOD(SetCredit);
 	SCRIPT_METHOD(ScrollCredits);
@@ -151,7 +151,7 @@ void AGSCreditz1::GetCredit(ScriptMethodParams &params) {
 	PARAMS1(int, ID);
 
 	params._result = (_state->_credits[0][ID]._text == IMAGE_TEXT) ?
-		"image" : _state->_credits[0][ID]._text.c_str();
+	                 "image" : _state->_credits[0][ID]._text.c_str();
 }
 
 void AGSCreditz1::IsCreditScrollingFinished(ScriptMethodParams &params) {
@@ -178,7 +178,7 @@ void AGSCreditz1::GetEmptyLineHeight(ScriptMethodParams &params) {
 
 void AGSCreditz1::SetStaticCredit(ScriptMethodParams &params) {
 	PARAMS8(int, ID, int, x, int, y, int, font, int, creditcolour, \
-		bool, center, int, generateoutline, string, credit);
+	        bool, center, int, generateoutline, string, credit);
 
 	if (ID >= (int)_state->_credits[0].size())
 		_state->_credits[0].resize(ID + 1);
@@ -216,7 +216,7 @@ void AGSCreditz1::StartEndStaticCredits(ScriptMethodParams &params) {
 	} else {
 		_state->_currentStatic = 0;
 		_engine->GetScreenDimensions(&_state->_screenWidth,
-			&_state->_screenHeight, &_state->_screenColorDepth);
+		                             &_state->_screenHeight, &_state->_screenColorDepth);
 
 		_state->_staticScreenWidth = (res == 1) ? 320 : 640;
 		_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
@@ -239,7 +239,7 @@ void AGSCreditz1::SetStaticPause(ScriptMethodParams &params) {
 
 void AGSCreditz1::SetStaticCreditTitle(ScriptMethodParams &params) {
 	PARAMS8(int, ID, int, x, int, y, int, titlefont, int, titlecolour, \
-		int, centered, int, generateoutline, string, title);
+	        int, centered, int, generateoutline, string, title);
 
 	StCredit &c = _state->_stCredits[0][ID];
 	c.title_x = x;
@@ -253,7 +253,7 @@ void AGSCreditz1::SetStaticCreditTitle(ScriptMethodParams &params) {
 
 void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 	PARAMS6(int, ID, int, time, int, style, int, transtime, \
-		int, sound, int, res);
+	        int, sound, int, res);
 	const StCredit &c = _state->_stCredits[0][ID];
 
 	if (!_state->_staticCredits) {
@@ -266,7 +266,7 @@ void AGSCreditz1::ShowStaticCredit(ScriptMethodParams &params) {
 			}
 
 			_engine->GetScreenDimensions(&_state->_screenWidth,
-				&_state->_screenHeight, &_state->_screenColorDepth);
+			                             &_state->_screenHeight, &_state->_screenColorDepth);
 
 			_state->_staticScreenWidth = (res == 1) ? 320 : 640;
 			_state->_staticWidthMatches = _state->_screenWidth == _state->_staticScreenWidth;
@@ -292,7 +292,7 @@ void AGSCreditz1::GetStaticCreditTitle(ScriptMethodParams &params) {
 
 void AGSCreditz1::SetStaticCreditImage(ScriptMethodParams &params) {
 	PARAMS7(int, ID, int, x, int, y, int, slot, int, Hcentered, \
-		bool, Vcentered, int, time);
+	        bool, Vcentered, int, time);
 
 	if (Hcentered) {
 		BITMAP *gfx = _engine->GetSpriteGraphic(slot);

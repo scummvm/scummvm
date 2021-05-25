@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_GLOBALCHARACTER_H
-#define AGS_ENGINE_AC_GLOBALCHARACTER_H
+#ifndef AGS_ENGINE_AC_GLOBAL_CHARACTER_H
+#define AGS_ENGINE_AC_GLOBAL_CHARACTER_H
 
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 
 namespace AGS3 {
 
@@ -91,6 +91,6 @@ void __sc_displayspeech(int chid, const char *text);
 void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch);
 int DisplaySpeechBackground(int charid, const char *speel);
 
-} // nemspace AGS3
+} // namespace AGS3
 
 #endif

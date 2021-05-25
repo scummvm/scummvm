@@ -29,64 +29,101 @@
 namespace AGS3 {
 namespace std {
 
-template<typename T> inline T abs(T x) { return ABS(x); }
-template<typename T> inline T min(T a, T b) { return MIN(a, b); }
-template<typename T> inline T max(T a, T b) { return MAX(a, b); }
-template<typename T> inline T clip(T v, T amin, T amax) { return CLIP(v, amin, amax); }
-template<typename T> inline T sqrt(T x) { return ::sqrt(x); }
-template<typename T> inline void swap(T &a, T &b) { SWAP(a, b); }
+template<typename T> inline T abs(T x) {
+return ABS(x);
+}
+template<typename T> inline T min(T a, T b) {
+return MIN(a, b);
+}
+template<typename T> inline T max(T a, T b) {
+return MAX(a, b);
+}
+template<typename T> inline T clip(T v, T amin, T amax) {
+return CLIP(v, amin, amax);
+}
+template<typename T> inline T sqrt(T x) {
+return ::sqrt(x);
+}
+template<typename T> inline void swap(T &a, T &b) {
+SWAP(a, b);
+}
 
 template<class In, class Value>
 In fill(In first, In last, const Value &val) {
-	return Common::fill(first, last, val);
+return Common::fill(first, last, val);
 }
 
 template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
-	Common::sort(first, last, comp);
+Common::sort(first, last, comp);
 }
 
 template<typename T>
 void sort(T *first, T *last) {
-	Common::sort(first, last, Common::Less<T>());
+Common::sort(first, last, Common::Less<T>());
 }
 
 template<class T>
 void sort(T first, T last) {
-	Common::sort(first, last);
+Common::sort(first, last);
+}
+
+template<class In, class T>
+In find(In first, In last, const T &v) {
+return Common::find(first, last, v);
 }
 
 template<class T>
 T unique(T first, T last) {
-	T pos;
-	for (pos = first + 1; pos < last; ++pos) {
-		// Check for duplicate
-		for (T existingPos = first; existingPos < last; ++existingPos) {
-			if (*pos == *existingPos) {
-				// Found a match, so shift values over the duplicate
-				while (pos < (last - 1)) {
-					T &prior = pos;
-					++pos;
-					prior = pos;
-				}
-
-				--last;
-				break;
+T pos;
+for (pos = first + 1; pos < last; ++pos) {
+	// Check for duplicate
+	for (T existingPos = first; existingPos < last; ++existingPos) {
+		if (*pos == *existingPos) {
+			// Found a match, so shift values over the duplicate
+			while (pos < (last - 1)) {
+				T &prior = pos;
+				++pos;
+				prior = pos;
 			}
+
+			--last;
+			break;
 		}
 	}
+}
 
-	return pos;
+return pos;
 }
 
 template<class ForwardIt, class T>
 ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T &value) {
-	for (ForwardIt it = first; it < last; ++it) {
-		if (*it >= value)
-			return it;
-	}
+for (ForwardIt it = first; it < last; ++it) {
+	if (*it >= value)
+		return it;
+}
 
-	return last;
+return last;
+}
+
+template<class ForwardIt, class T>
+ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T &value) {
+for (ForwardIt it = first; it < last; ++it) {
+	if (*it > value)
+		return it;
+}
+
+return last;
+}
+
+template<class ForwardIt, class T, class Compare>
+ForwardIt upper_bound(ForwardIt first, ForwardIt last, const T &value, Compare comp) {
+for (ForwardIt it = first; it < last; ++it) {
+	if (comp(value, *it))
+		return it;
+}
+
+return last;
 }
 
 } // namespace std

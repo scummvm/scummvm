@@ -74,8 +74,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_DEBUGGING_OUT_H
-#define AGS_SHARED_DEBUGGING_OUT_H
+#ifndef AGS_SHARED_CORE_DEBUGGING_OUT_H
+#define AGS_SHARED_CORE_DEBUGGING_OUT_H
 
 #include "ags/shared/util/string.h"
 

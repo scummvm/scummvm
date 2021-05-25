@@ -23,8 +23,8 @@
 #include "ags/console.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
-#include "ags/shared/ac/spritecache.h"
-#include "ags/shared/gfx/allegrobitmap.h"
+#include "ags/shared/ac/sprite_cache.h"
+#include "ags/shared/gfx/allegro_bitmap.h"
 #include "ags/shared/script/cc_options.h"
 #include "image/png.h"
 
@@ -61,8 +61,8 @@ static const LevelName levelNames[] = {
 	{nullptr, AGS3::AGS::Shared::kDbgMsg_None}
 };
 
-struct GroupName{
-	const char* name;
+struct GroupName {
+	const char *name;
 	AGS3::uint32_t group;
 };
 

@@ -1,3 +1,5 @@
+//=============================================================================
+//
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -23,15 +25,15 @@
 //=============================================================================
 //
 // IAGSStream is a contract for stream class, provided by engine to plugin
-// on the need, such as saving/restoring the game.
+// on the need, such as saving/restoring the _GP(game).
 // The user is advised to use advanced helper methods, such as Read/WriteX
 // and Read/WriteArrayOfX to allow the stream implementation properly control
 // endianness conversions and data padding, when needed.
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_API_IAGSSTREAM_H
-#define AGS_SHARED_API_IAGSSTREAM_H
+#ifndef AGS_SHARED_API_STREAM_API_H
+#define AGS_SHARED_API_STREAM_API_H
 
 // TODO: it would probably be better to not include core definition headers
 // in API class headers, but make separate core headers specifically for
@@ -39,6 +41,7 @@
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {
+
 namespace AGS {
 namespace Shared {
 

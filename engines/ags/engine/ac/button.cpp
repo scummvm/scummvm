@@ -24,22 +24,24 @@
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
-#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
-#include "ags/engine/gui/animatingguibutton.h"
-#include "ags/shared/gui/guimain.h"
+#include "ags/engine/gui/animating_gui_button.h"
+#include "ags/shared/gui/gui_main.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
-#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/script_string.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
+
+// *** BUTTON FUNCTIONS
 
 void Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat) {
 	int guin = butt->ParentId;
@@ -92,7 +94,6 @@ void Button_SetText(GUIButton *butt, const char *newtx) {
 	newtx = get_translation(newtx);
 
 	if (strcmp(butt->GetText(), newtx)) {
-		_G(guis_need_update) = 1;
 		butt->SetText(newtx);
 	}
 }
@@ -103,7 +104,7 @@ void Button_SetFont(GUIButton *butt, int newFont) {
 
 	if (butt->Font != newFont) {
 		butt->Font = newFont;
-		_G(guis_need_update) = 1;
+		butt->NotifyParentChanged();
 	}
 }
 
@@ -118,7 +119,6 @@ int Button_GetClipImage(GUIButton *butt) {
 void Button_SetClipImage(GUIButton *butt, int newval) {
 	if (butt->IsClippingImage() != (newval != 0)) {
 		butt->SetClipImage(newval != 0);
-		_G(guis_need_update) = 1;
 	}
 }
 
@@ -140,7 +140,7 @@ void Button_SetMouseOverGraphic(GUIButton *guil, int slotn) {
 		guil->CurrentImage = slotn;
 	guil->MouseOverImage = slotn;
 
-	_G(guis_need_update) = 1;
+	guil->NotifyParentChanged();
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -154,18 +154,16 @@ void Button_SetNormalGraphic(GUIButton *guil, int slotn) {
 	if (((guil->IsMouseOver == 0) || (guil->MouseOverImage < 1)) && (guil->IsPushed == 0))
 		guil->CurrentImage = slotn;
 	guil->Image = slotn;
-
-	// WORKAROUND: Showing the map in Shivah has a button with invalid slot -1
-	if (slotn == -1) {
+	// update the clickable area to the same size as the graphic
+	if (slotn < 0 || (size_t)slotn >= _GP(game).SpriteInfos.size()) {
 		guil->Width = 0;
 		guil->Height = 0;
 	} else {
-		// update the clickable area to the same size as the graphic
 		guil->Width = _GP(game).SpriteInfos[slotn].Width;
 		guil->Height = _GP(game).SpriteInfos[slotn].Height;
 	}
 
-	_G(guis_need_update) = 1;
+	guil->NotifyParentChanged();
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -180,7 +178,7 @@ void Button_SetPushedGraphic(GUIButton *guil, int slotn) {
 		guil->CurrentImage = slotn;
 	guil->PushedImage = slotn;
 
-	_G(guis_need_update) = 1;
+	guil->NotifyParentChanged();
 	FindAndRemoveButtonAnimation(guil->ParentId, guil->Id);
 }
 
@@ -191,7 +189,7 @@ int Button_GetTextColor(GUIButton *butt) {
 void Button_SetTextColor(GUIButton *butt, int newcol) {
 	if (butt->TextColor != newcol) {
 		butt->TextColor = newcol;
-		_G(guis_need_update) = 1;
+		butt->NotifyParentChanged();
 	}
 }
 
@@ -216,7 +214,7 @@ int UpdateAnimatingButton(int bu) {
 			_G(animbuts)[bu].frame = 0;
 			// multi-loop anim, go back
 			while ((_G(animbuts)[bu].loop > 0) &&
-				(tview->loops[_G(animbuts)[bu].loop - 1].RunNextLoop()))
+			        (tview->loops[_G(animbuts)[bu].loop - 1].RunNextLoop()))
 				_G(animbuts)[bu].loop--;
 		} else
 			return 1;
@@ -229,7 +227,7 @@ int UpdateAnimatingButton(int bu) {
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].CurrentImage = _GP(guibuts)[_G(animbuts)[bu].buttonid].Image;
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].PushedImage = 0;
 	_GP(guibuts)[_G(animbuts)[bu].buttonid].MouseOverImage = 0;
-	_G(guis_need_update) = 1;
+	_GP(guibuts)[_G(animbuts)[bu].buttonid].NotifyParentChanged();
 
 	_G(animbuts)[bu].wait = _G(animbuts)[bu].speed + tview->loops[_G(animbuts)[bu].loop].frames[_G(animbuts)[bu].frame].speed;
 	return 0;
@@ -292,7 +290,7 @@ int Button_GetTextAlignment(GUIButton *butt) {
 void Button_SetTextAlignment(GUIButton *butt, int align) {
 	if (butt->TextAlignment != align) {
 		butt->TextAlignment = (FrameAlignment)align;
-		_G(guis_need_update) = 1;
+		butt->NotifyParentChanged();
 	}
 }
 
@@ -301,8 +299,6 @@ void Button_SetTextAlignment(GUIButton *butt, int align) {
 // Script API Functions
 //
 //=============================================================================
-
-
 
 // void | GUIButton *butt, int view, int loop, int speed, int repeat
 RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *params, int32_t param_count) {

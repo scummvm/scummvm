@@ -31,7 +31,7 @@
 
 #include "ags/lib/std/vector.h"
 #include "ags/engine/game/game_init.h"
-#include "ags/shared/game/plugininfo.h"
+#include "ags/shared/game/plugin_info.h"
 
 namespace AGS3 {
 

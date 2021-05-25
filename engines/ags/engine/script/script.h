@@ -25,11 +25,11 @@
 
 #include "ags/lib/std/vector.h"
 
-#include "ags/shared/game/roomstruct.h" // MAX_ROOM_OBJECTS
+#include "ags/shared/game/room_struct.h" // MAX_ROOM_OBJECTS
 #include "ags/engine/script/cc_instance.h"
-#include "ags/engine/script/executingscript.h"
-#include "ags/engine/script/nonblockingscriptfunction.h"
-#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/script/executing_script.h"
+#include "ags/engine/script/non_blocking_script_function.h"
+#include "ags/engine/ac/dynobj/script_system.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/string.h"
 
@@ -54,10 +54,10 @@ void    cancel_all_scripts();
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst);
 // Queues a script function to be run either called by the engine or from another script
 void    QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-	const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+                            const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
 // Try to run a script function right away
 void    RunScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-	const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+                          const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
 
 int     RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params);
 int     RunTextScript(ccInstance *sci, const char *tsname);

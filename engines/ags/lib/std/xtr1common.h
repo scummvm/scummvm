@@ -29,12 +29,12 @@ namespace std {
 // STRUCT TEMPLATE conditional
 template <bool _Test, class _Ty1, class _Ty2>
 struct conditional { // Choose _Ty1 if _Test is true, and _Ty2 otherwise
-	using type = _Ty1;
+using type = _Ty1;
 };
 
 template <class _Ty1, class _Ty2>
 struct conditional<false, _Ty1, _Ty2> {
-	using type = _Ty2;
+using type = _Ty2;
 };
 
 template <bool _Test, class _Ty1, class _Ty2>

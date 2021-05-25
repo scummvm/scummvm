@@ -21,13 +21,15 @@
  */
 
 #include "ags/engine/ac/dynobj/cc_character.h"
-#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/character_info.h"
 #include "ags/engine/ac/global_character.h"
-#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+
 
 // return the type name of the object
 const char *CCCharacter::GetType() {
@@ -37,7 +39,7 @@ const char *CCCharacter::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCCharacter::Serialize(const char *address, char *buffer, int bufsize) {
-	CharacterInfo *chaa = (CharacterInfo *)const_cast<char *>(address);
+	const CharacterInfo *chaa = (const CharacterInfo *)address;
 	StartSerialize(buffer);
 	SerializeInt(chaa->index_id);
 	return EndSerialize();
@@ -57,7 +59,7 @@ void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) 
 	// inventory for older games that reply on the previous behaviour.
 	if (_G(loaded_game_file_version) < kGameVersion_270) {
 		const int invoffset = 112;
-		if (offset >= invoffset && offset < (int)(invoffset + MAX_INV * sizeof(short))) {
+		if (offset >= invoffset && offset < (intptr_t)(invoffset + MAX_INV * sizeof(short))) {
 			update_invorder();
 		}
 	}

@@ -44,6 +44,7 @@ Shared::String cbuf_to_string_and_free(char *char_buf);
 namespace AGS {
 namespace Shared {
 namespace StrUtil {
+
 enum ConversionError {
 	kNoError,   // conversion successful
 	kFailed,    // conversion failed (e.g. wrong format)
@@ -76,7 +77,8 @@ void            ReadCStr(char *buf, Stream *in, size_t buf_limit);
 void            SkipCStr(Stream *in);
 void            WriteCStr(const char *cstr, Stream *out);
 void            WriteCStr(const String &s, Stream *out);
-}
+
+} // namespace StrUtil
 } // namespace Shared
 } // namespace AGS
 } // namespace AGS3
