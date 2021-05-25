@@ -488,6 +488,30 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	file.syncString(PHAROAH_ENDING_TEXT2());
 
 	cc.add("CONSTANTS" + num, file);
+
+	Common::MemFile keys;
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_ITEM());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_QUICK());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_EXCHANGE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_FXON());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_MUSICON());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_LOAD());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_SAVE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_QUIT());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_MRWIZARD());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_ROLL());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_CREATE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_MGT());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_INT());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_PER());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_END());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_SPD());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_ACY());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_LCK());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_DIFFICULTY()->KEY_ADVENTURER());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_DIFFICULTY()->KEY_WARRIOR());
+
+	cc.add("CONSTKEYS" + num, keys);
 }
 
 void writeConstants(CCArchive &cc) {
