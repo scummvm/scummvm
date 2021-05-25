@@ -340,10 +340,10 @@ void AnimManager::toggleMuteBgAnim(uint16 animation) {
 		decoder->muteTrack(1, true);
 	else if (animation == aBKG2E && (animFlag & SMKANIM_OFF2))
 		decoder->muteTrack(2, true);
-	else if (animation == aBKG2G && (_vm->_dialogMgr->_choice[556]._flag & kObjFlagDone))
+	else if (animation == aBKG2G && (_vm->_dialogMgr->isChoiceAvailable(556)))
 		decoder->muteTrack(2, true);
 	else if (animation == aBKG34 &&                                   // If it's BKG 34 and
-			 ((_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) || // if the FMV is already done or
+			 ((_vm->_dialogMgr->isChoiceAvailable(616)) || // if the FMV is already done or
 			  _vm->isObjectVisible(oTUBOT34) ||                       // if the whole tube is available or
 			  _vm->isObjectVisible(oTUBOFT34) ||                      // if the outside of the tube is available or
 			  _vm->isObjectVisible(oVALVOLAC34)))                     // if the valve is closed
@@ -385,7 +385,7 @@ void AnimManager::startFullMotion() {
 }
 
 void AnimManager::stopFullMotion() {
-	const uint16 curDialog = _vm->_dialogMgr->_curDialog;
+	const uint16 curDialog = _vm->_dialogMgr->getCurDialog();
 
 	_vm->_flagDialogActive = false;
 	_vm->_flagDialogMenuActive = false;
@@ -398,9 +398,9 @@ void AnimManager::stopFullMotion() {
 		return;
 	}
 
-	if (!((curDialog == dSHOPKEEPER1A) && (_vm->_dialogMgr->_curChoice == 185))) {
+	if (!((curDialog == dSHOPKEEPER1A) && (_vm->_dialogMgr->getCurChoice() == 185))) {
 		if ((curDialog == dF582) || (curDialog == dFLOG) || (curDialog == dINTRO) || (curDialog == dF362) || (curDialog == dC381) || (curDialog == dF381) ||
-		    (curDialog == dF491) || ((curDialog == dC581) && !(_vm->_dialogMgr->_choice[886]._flag & kObjFlagDone) && (_vm->_dialogMgr->_choice[258]._flag & kObjFlagDone)) ||
+		    (curDialog == dF491) || ((curDialog == dC581) && !(_vm->_dialogMgr->isChoiceAvailable(886)) && (_vm->_dialogMgr->isChoiceAvailable(258))) ||
 		    ((curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
 			_vm->_flagShowCharacter = false;
 		else

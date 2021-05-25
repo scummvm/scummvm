@@ -70,7 +70,7 @@ void DialogManager::showChoices(uint16 i) {
 
 	_curDispChoice = 0;
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
+		if (isChoiceVisible(c)) {
 			_dispChoice[_curDispChoice] = c;
 			++_curDispChoice;
 			dialogPrint(x, y, HWHITE, _vm->_sentence[_choice[c]._sentenceIndex]);
@@ -118,16 +118,19 @@ void DialogManager::playDialog(uint16 i) {
 	_curChoice = 0;
 	_curSubTitle = 0;
 
+	if (_curDialog == dSHOPKEEPER1A)
+		_dialog[_curDialog]._startLen = 0;
+	
 	_vm->_animMgr->startFullMotion();
 
 	int skip = 0;
 	int curChoice = 0;
 	for (int c = _dialog[_curDialog]._firstChoice; c < _dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb; ++c) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
+		if (isChoiceVisible(c))
 			++curChoice;
 	}
 
-	if (_curDialog == dC581 && !(_choice[262]._flag & DLGCHOICE_HIDE))
+	if (_curDialog == dC581 && isChoiceVisible(262))
 		++skip;
 	if (_curDialog == dC581 && curChoice == 1)
 		++skip;
@@ -140,6 +143,28 @@ void DialogManager::playDialog(uint16 i) {
 		_vm->_animMgr->smkToggleAudio(1, false);
 		afterChoice();
 	}
+
+	if (_curDialog == dSHOPKEEPER1A)
+		_dialog[_curDialog]._startLen = 1;
+}
+
+void DialogManager::toggleChoice(uint16 choice, bool enable) {
+	if (enable)
+		_choice[choice]._flag &= ~DLGCHOICE_HIDE;
+	else
+		_choice[choice]._flag |= DLGCHOICE_HIDE;
+}
+
+void DialogManager::clearExitFlag(uint16 choice) {
+	_choice[choice]._flag &= ~DLGCHOICE_EXITDLG;
+}
+
+bool DialogManager::isChoiceVisible(uint16 choice) const {
+	return !(_choice[choice]._flag & DLGCHOICE_HIDE);
+}
+
+bool DialogManager::isChoiceAvailable(uint16 choice) const {
+	return !(_choice[choice]._flag & kObjFlagDone);
 }
 
 void DialogManager::afterChoice() {
@@ -196,13 +221,13 @@ void DialogManager::afterChoice() {
 			_vm->_inventoryObj[kItemRubysPhoto]._action = 1465;
 			_vm->_obj[oTESSERA1A]._action = 238;
 			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
-				_choice[154]._flag &= ~DLGCHOICE_HIDE;
-				_choice[153]._flag |= DLGCHOICE_HIDE;
+				toggleChoice(154, true);
+				toggleChoice(153, false);
 			} else
-				_choice[153]._flag &= ~DLGCHOICE_HIDE;
+				toggleChoice(153, true);
 		} else if (_curChoice == 154) {
 			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra)
-				_choice[183]._flag &= ~DLGCHOICE_HIDE;
+				toggleChoice(183, true);
 		} else if (_curChoice == 155)
 			_vm->_obj[ocGUARD18]._action = 228;
 		break;
@@ -255,7 +280,7 @@ void DialogManager::afterChoice() {
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
-			if ((_choice[61]._flag & kObjFlagDone) && (_choice[62]._flag & kObjFlagDone) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if ((isChoiceAvailable(61)) && (isChoiceAvailable(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			break;
 
@@ -459,7 +484,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dC581:
-			if (!(_choice[886]._flag & kObjFlagDone) && (_choice[258]._flag & kObjFlagDone)) {
+			if (!(isChoiceAvailable(886)) && (isChoiceAvailable(258))) {
 				_vm->_pathFind->setPosition(1);
 				playDialog(dF581);
 			}
@@ -515,7 +540,7 @@ void DialogManager::afterChoice() {
 
 	// Immediately starts the fraud choice
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
-		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && (!(_choice[c]._flag & DLGCHOICE_HIDE))) {
+		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && isChoiceVisible(c)) {
 			playChoice(c);
 			return;
 		}
@@ -524,7 +549,7 @@ void DialogManager::afterChoice() {
 	// If there's only one option, show it immediately, otherwise show available choices
 	int res = 0;
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE)) {
+		if (isChoiceVisible(c)) {
 			if (_choice[c]._flag & DLGCHOICE_EXITNOW) {
 				if (res == 0)
 					res = c;
@@ -546,7 +571,7 @@ void DialogManager::afterChoice() {
 	// If no option is visible, close the dialog
 	res = 0;
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
-		if (!(_choice[c]._flag & DLGCHOICE_HIDE))
+		if (isChoiceVisible(c))
 			++res;
 	}
 
@@ -593,12 +618,12 @@ void DialogManager::playChoice(uint16 i) {
 
 	// if it was 'one time', disable it
 	if (choice->_flag & DLGCHOICE_ONETIME)
-		choice->_flag |= DLGCHOICE_HIDE;
+		toggleChoice(i, false);
 
 	// Disable other choices
 	for (int c = 0; c < MAXDISPCHOICES; ++c) {
-		_choice[choice->_off[c]]._flag |= DLGCHOICE_HIDE;
-		_choice[choice->_on[c]]._flag &= ~DLGCHOICE_HIDE;
+		toggleChoice(choice->_off[c], false);
+		toggleChoice(choice->_on[c], true);
 	}
 
 	for (int c = _curSubTitle; c < endSubTitle; ++c)
@@ -631,6 +656,17 @@ bool DialogManager::showCharacterAfterDialog() const {
 	default:
 		return true;
 	}
+}
+
+bool DialogManager::handleShopKeeperDialog(uint16 curObj) {
+	for (int c = _dialog[dSHOPKEEPER1A]._firstChoice; c < (_dialog[dSHOPKEEPER1A]._firstChoice + _dialog[dSHOPKEEPER1A]._choiceNumb); ++c) {
+		if (isChoiceVisible(c)) {
+			playDialog(_vm->_obj[curObj]._goRoom);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void DialogManager::syncGameStream(Common::Serializer &ser) {

@@ -91,8 +91,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oEXIT21]._position = 11;
 
 			// if we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
-				|| ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone))) {
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isChoiceAvailable(436)) || (_vm->_dialogMgr->isChoiceAvailable(466))))
+				|| ((_vm->_dialogMgr->isChoiceAvailable(451)) || (_vm->_dialogMgr->isChoiceAvailable(481)))) {
 				_vm->_obj[od21TO23]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO23]._flag &= ~kObjFlagExamine;
 			} else {
@@ -124,8 +124,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectVisible(oEXIT21, true);
 
 			// If we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone)))
-				|| ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone))) {
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isChoiceAvailable(436)) || (_vm->_dialogMgr->isChoiceAvailable(466))))
+				|| ((_vm->_dialogMgr->isChoiceAvailable(451)) || (_vm->_dialogMgr->isChoiceAvailable(481)))) {
 				_vm->_obj[od21TO22]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO22]._flag &= ~kObjFlagExamine;
 			} else {
@@ -804,7 +804,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_inventoryObj[kItemBankNote]._flag |= kObjFlagExtra;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocPOLIZIOTTO16) && (_vm->_inventoryObj[kItemBankNote]._flag & kObjFlagExtra)) {
-			_vm->_dialogMgr->_choice[62]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(62, true);
 			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
 			*printSentence = false;
 		}
@@ -976,14 +976,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemSubwayCard:
 		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && (_vm->_obj[oMAPPA16]._flag & kObjFlagExtra)) {
-			if (_vm->_dialogMgr->_choice[49]._flag & kObjFlagDone) {
+			if (_vm->_dialogMgr->isChoiceAvailable(49)) {
 				_vm->_textMgr->characterSay(1457);
 				*printSentence = false;
 			} else {
-				_vm->_dialogMgr->_choice[46]._flag |= DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_choice[47]._flag |= DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_choice[48]._flag |= DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_choice[49]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_dialogMgr->toggleChoice(46, false);
+				_vm->_dialogMgr->toggleChoice(47, false);
+				_vm->_dialogMgr->toggleChoice(48, false);
+				_vm->_dialogMgr->toggleChoice(49, true);
 				_vm->playScript(s16CARD);
 				*printSentence = false;
 			}
@@ -998,10 +998,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemFiveCreditCoin:
 		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && (_vm->_obj[oMAPPA16]._flag & kObjFlagExtra)) {
-			_vm->_dialogMgr->_choice[46]._flag |= DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[47]._flag |= DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[48]._flag |= DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[50]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(46, false);
+			_vm->_dialogMgr->toggleChoice(47, false);
+			_vm->_dialogMgr->toggleChoice(48, false);
+			_vm->_dialogMgr->toggleChoice(50, true);
 			_vm->playScript(S16MONEY);
 			*printSentence = false;
 			_vm->removeIcon(kItemFiveCreditCoin);
@@ -1021,34 +1021,34 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemRubysPhoto:
-		if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->_choice[81]._flag & kObjFlagDone)) {
+		if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->isChoiceAvailable(81))) {
 			_vm->_textMgr->characterSay(1463);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->_choice[91]._flag & kObjFlagDone)) {
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->isChoiceAvailable(91))) {
 			_vm->_obj[ocTRAMP17]._action = 1462;
 			_vm->_textMgr->characterSay(_vm->_obj[ocTRAMP17]._action);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_dialogMgr->_choice[78]._flag & kObjFlagDone) || ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || ((_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[92]._flag & kObjFlagDone))))) {
-			_vm->_dialogMgr->_choice[78]._flag &= ~DLGCHOICE_HIDE;
-			if ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone)) {
-				_vm->_dialogMgr->_choice[92]._flag &= ~DLGCHOICE_HIDE;
-				if (_vm->_dialogMgr->_choice[80]._flag & kObjFlagDone)
-					_vm->_dialogMgr->_choice[121]._flag &= ~DLGCHOICE_HIDE;
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_dialogMgr->isChoiceAvailable(78)) || ((_vm->_dialogMgr->isChoiceAvailable(79)) || ((_vm->_dialogMgr->isChoiceAvailable(83)) && !(_vm->_dialogMgr->isChoiceAvailable(92)))))) {
+			_vm->_dialogMgr->toggleChoice(78, true);
+			if ((_vm->_dialogMgr->isChoiceAvailable(79)) || (_vm->_dialogMgr->isChoiceAvailable(83))) {
+				_vm->_dialogMgr->toggleChoice(92, true);
+				if (_vm->_dialogMgr->isChoiceAvailable(80))
+					_vm->_dialogMgr->toggleChoice(121, true);
 				else
-					_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
+					_vm->_dialogMgr->toggleChoice(122, true);
 			} else
-				_vm->_dialogMgr->_choice[91]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_dialogMgr->toggleChoice(91, true);
 			_vm->_dialogMgr->playDialog(dTRAMP171);
 			*updateInventory = false;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
 			_vm->_obj[ocPOLIZIOTTO16]._flag |= kObjFlagExtra;
 			_vm->_textMgr->characterSay(1461);
-			if ((_vm->_dialogMgr->_choice[61]._flag & kObjFlagDone) && (_vm->_dialogMgr->_choice[62]._flag & kObjFlagDone) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if ((_vm->_dialogMgr->isChoiceAvailable(61)) && (_vm->_dialogMgr->isChoiceAvailable(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
-			if (_vm->_dialogMgr->_choice[152]._flag & kObjFlagDone)
+			if (_vm->_dialogMgr->isChoiceAvailable(152))
 				_vm->_textMgr->characterSay(1465);
 			else
 				_vm->_textMgr->characterSay(1464);
@@ -1065,27 +1065,27 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemBeerCan:
 		if (_vm->_useWith[WITH] == ocTRAMP17) {
-			if ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone)) {
-				_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_HIDE;
-				if (_vm->_dialogMgr->_choice[81]._flag & kObjFlagDone) {
-					_vm->_dialogMgr->_choice[81]._flag &= ~DLGCHOICE_HIDE;
-					_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
+			if (_vm->_dialogMgr->isChoiceAvailable(79) || _vm->_dialogMgr->isChoiceAvailable(83)) {
+				_vm->_dialogMgr->toggleChoice(80, true);
+				if (_vm->_dialogMgr->isChoiceAvailable(81)) {
+					_vm->_dialogMgr->toggleChoice(81, true);
+					_vm->_dialogMgr->clearExitFlag(80);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(kItemBeerCan);
 				*printSentence = false;
-			} else { // if( !(_vm->_dialogMgr->_choice[79]._flag & OBJFLAG_DONE) )
-				_vm->_dialogMgr->_choice[79]._flag &= ~DLGCHOICE_HIDE;
-				if (!(_vm->_dialogMgr->_choice[78]._flag & kObjFlagDone)) {
-					_vm->_dialogMgr->_choice[106]._flag &= ~DLGCHOICE_HIDE;
+			} else {
+				_vm->_dialogMgr->toggleChoice(79, true);
+				if (!_vm->_dialogMgr->isChoiceAvailable(78)) {
+					_vm->_dialogMgr->toggleChoice(106, true);
 					_vm->_obj[ocTRAMP17]._action = 213;
 				} else {
-					_vm->_dialogMgr->_choice[107]._flag &= ~DLGCHOICE_HIDE;
-					if (_vm->_dialogMgr->_choice[80]._flag & kObjFlagDone)
-						_vm->_dialogMgr->_choice[121]._flag &= ~DLGCHOICE_HIDE;
+					_vm->_dialogMgr->toggleChoice(107, true);
+					if (_vm->_dialogMgr->isChoiceAvailable(80))
+						_vm->_dialogMgr->toggleChoice(121, true);
 					else
-						_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
+						_vm->_dialogMgr->toggleChoice(122, true);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
@@ -1098,27 +1098,27 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemWineBottle:
 		if (_vm->_useWith[WITH] == ocTRAMP17) {
-			if ((_vm->_dialogMgr->_choice[79]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[83]._flag & kObjFlagDone)) {
-				_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_HIDE;
-				if (_vm->_dialogMgr->_choice[81]._flag & kObjFlagDone) {
-					_vm->_dialogMgr->_choice[81]._flag &= ~DLGCHOICE_HIDE;
-					_vm->_dialogMgr->_choice[80]._flag &= ~DLGCHOICE_EXITDLG;
+			if ((_vm->_dialogMgr->isChoiceAvailable(79)) || (_vm->_dialogMgr->isChoiceAvailable(83))) {
+				_vm->_dialogMgr->toggleChoice(80, true);
+				if (_vm->_dialogMgr->isChoiceAvailable(81)) {
+					_vm->_dialogMgr->toggleChoice(81, true);
+					_vm->_dialogMgr->clearExitFlag(80);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
 				_vm->removeIcon(kItemWineBottle);
 				*printSentence = false;
 			} else {
-				_vm->_dialogMgr->_choice[83]._flag &= ~DLGCHOICE_HIDE;
-				if (!(_vm->_dialogMgr->_choice[78]._flag & kObjFlagDone)) {
-					_vm->_dialogMgr->_choice[106]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_dialogMgr->toggleChoice(83, true);
+				if (!(_vm->_dialogMgr->isChoiceAvailable(78))) {
+					_vm->_dialogMgr->toggleChoice(106, true);
 					_vm->_obj[ocTRAMP17]._action = 213;
 				} else {
-					_vm->_dialogMgr->_choice[107]._flag &= ~DLGCHOICE_HIDE;
-					if (_vm->_dialogMgr->_choice[80]._flag & kObjFlagDone)
-						_vm->_dialogMgr->_choice[121]._flag &= ~DLGCHOICE_HIDE;
+					_vm->_dialogMgr->toggleChoice(107, true);
+					if (_vm->_dialogMgr->isChoiceAvailable(80))
+						_vm->_dialogMgr->toggleChoice(121, true);
 					else
-						_vm->_dialogMgr->_choice[122]._flag &= ~DLGCHOICE_HIDE;
+						_vm->_dialogMgr->toggleChoice(122, true);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
 				*updateInventory = false;
@@ -1132,12 +1132,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemBottleOfChateau:
 		if (_vm->_useWith[WITH] == ocNEGOZIANTE1A) {
 			*printSentence = false;
-			if (_vm->_dialogMgr->_choice[183]._flag & kObjFlagDone) {
-				_vm->_dialogMgr->_choice[185]._flag &= ~DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._startLen = 0;
+			if (_vm->_dialogMgr->isChoiceAvailable(183)) {
+				_vm->_dialogMgr->toggleChoice(185, true);
 				_vm->_dialogMgr->playDialog(dSHOPKEEPER1A);
 				*updateInventory = false;
-				_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._startLen = 1;
 				_vm->replaceIcon(kItemBottleOfChateau, kItemMembershipCard);
 			} else
 				_vm->_textMgr->characterSay(2006);
@@ -1145,8 +1143,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemMembershipCard:
-		if ((_vm->_useWith[WITH] == ocGUARD18) && !(_vm->_dialogMgr->_choice[155]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->_choice[155]._flag &= ~DLGCHOICE_HIDE;
+		if ((_vm->_useWith[WITH] == ocGUARD18) && !(_vm->_dialogMgr->isChoiceAvailable(155))) {
+			_vm->_dialogMgr->toggleChoice(155, true);
 			_vm->_dialogMgr->playDialog(dGUARDIAN18);
 			*updateInventory = false;
 			_vm->_obj[ocGUARD18]._flag &= ~kObjFlagPerson;
@@ -1809,19 +1807,19 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == oDOOR57C55) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, kRoom57, 17, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (!(_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[901]._flag & kObjFlagDone))) {
+		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (!(_vm->_dialogMgr->isChoiceAvailable(871)) || (_vm->_dialogMgr->isChoiceAvailable(901)))) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a552, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone)) {
+		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (_vm->_dialogMgr->isChoiceAvailable(871))) {
 			_vm->_textMgr->characterSay(1287);
 			*printSentence = false;
 		}
 		break;
 
 	case kItemVideoRecorder:
-		if ((_vm->_useWith[WITH] == oKEYBOARD56) && (_vm->_dialogMgr->_choice[260]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[262]._flag & kObjFlagDone) && (_vm->_inventoryObj[kItemVideoRecorder]._examine != 1752)) {
+		if ((_vm->_useWith[WITH] == oKEYBOARD56) && (_vm->_dialogMgr->isChoiceAvailable(260)) && !(_vm->_dialogMgr->isChoiceAvailable(262)) && (_vm->_inventoryObj[kItemVideoRecorder]._examine != 1752)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a566, 0, 0, _vm->_useWith[WITH]);
-			_vm->_dialogMgr->_choice[262]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(262, true);
 			_vm->_inventoryObj[kItemVideoRecorder]._examine = 1752;
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oKEYBOARD56) && (_vm->_inventoryObj[kItemVideoRecorder]._examine == 1752)) {
@@ -1832,7 +1830,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemTester:
-		if ((_vm->_useWith[WITH] == oPANNELLOA) && (_vm->_dialogMgr->_choice[856]._flag & kObjFlagDone)) {
+		if ((_vm->_useWith[WITH] == oPANNELLOA) && (_vm->_dialogMgr->isChoiceAvailable(856))) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a569, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oPANNELLOA]._flag |= kObjFlagExtra;
 			*printSentence = false;
@@ -1862,13 +1860,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemFloatingPoisonSyringe:
-		if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[286]._flag & kObjFlagDone)) {
+		if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->isChoiceAvailable(871)) && !(_vm->_dialogMgr->isChoiceAvailable(286))) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dC5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
 			*printSentence = false;
 			_vm->_room[kRoom5A]._flag |= kObjFlagExtra;
-		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone)) {
+		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->isChoiceAvailable(871))) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dF5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
@@ -1993,9 +1991,9 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 	case oMAPPA12:
 		_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1211OSSERVAMAPPAPALAZZO, 0, 0, curObj);
 		if (!_vm->isDemo()) {
-			_vm->_dialogMgr->_choice[4]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[18]._flag &= ~DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[33]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(4, true);
+			_vm->_dialogMgr->toggleChoice(18, true);
+			_vm->_dialogMgr->toggleChoice(33, true);
 		}
 		retVal = false;
 		break;
@@ -2102,8 +2100,8 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oTESSERA1A:
-		if (((_vm->_dialogMgr->_choice[151]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[152]._flag & kObjFlagDone)) && !(_vm->_dialogMgr->_choice[183]._flag & kObjFlagDone))
-			_vm->_dialogMgr->_choice[183]._flag &= ~DLGCHOICE_HIDE;
+		if (((_vm->_dialogMgr->isChoiceAvailable(151)) || (_vm->_dialogMgr->isChoiceAvailable(152))) && !(_vm->_dialogMgr->isChoiceAvailable(183)))
+			_vm->_dialogMgr->toggleChoice(183, true);
 		_vm->_obj[oTESSERA1A]._flag |= kObjFlagExtra;
 		retVal = true;
 		break;
@@ -2358,7 +2356,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oSCALA16:
 		if (!(_vm->_obj[oSCALA16]._flag & kObjFlagExtra)) {
 			_vm->_obj[oSCALA16]._flag |= kObjFlagExtra;
-			_vm->_dialogMgr->_choice[61]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(61, true);
 			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
 			_vm->_obj[oSCALA16]._action = 166;
 			_vm->_obj[ocPOLIZIOTTO16]._action = 166;
@@ -2448,8 +2446,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oDOORC18:
 		if (_vm->_obj[ocGUARD18]._flag & kObjFlagPerson) {
-			_vm->_dialogMgr->_choice[151]._flag |= DLGCHOICE_HIDE;
-			_vm->_dialogMgr->_choice[152]._flag &= ~DLGCHOICE_HIDE;
+			_vm->_dialogMgr->toggleChoice(151, false);
+			_vm->_dialogMgr->toggleChoice(152, true);
 			_vm->_dialogMgr->playDialog(dGUARDIAN18);
 			_vm->_obj[ocGUARD18]._flag &= ~kObjFlagPerson;
 			_vm->_obj[ocGUARD18]._action = 227;
@@ -2491,13 +2489,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCHAIN21:
-		if ((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->_choice[436]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[466]._flag & kObjFlagDone))) {
+		if ((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isChoiceAvailable(436)) || (_vm->_dialogMgr->isChoiceAvailable(466)))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212);                             // 436
 			else                                                 // Go left
 				_vm->_dialogMgr->playDialog(dF213);                             // 466
 			retVal = false;
-		} else if ((_vm->_dialogMgr->_choice[451]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[481]._flag & kObjFlagDone)) {
+		} else if ((_vm->_dialogMgr->isChoiceAvailable(451)) || (_vm->_dialogMgr->isChoiceAvailable(481))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212B);                            // 451
 			else                                                 // Go left
@@ -2727,7 +2725,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCOMPUTER36:
-		if (!(_vm->_dialogMgr->_choice[646]._flag & kObjFlagDone)) {
+		if (!(_vm->_dialogMgr->isChoiceAvailable(646))) {
 			_vm->_dialogMgr->playDialog(dF361);
 			_vm->_obj[oCOMPUTER36]._action = 2004;
 			retVal = false;
@@ -2930,8 +2928,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 		}
 	case oDOORC4A:
-		if (!(_vm->_dialogMgr->_choice[245]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[766]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->_choice[245]._flag &= ~DLGCHOICE_HIDE;
+		if (!(_vm->_dialogMgr->isChoiceAvailable(245)) && !(_vm->_dialogMgr->isChoiceAvailable(766))) {
+			_vm->_dialogMgr->toggleChoice(245, true);
 			_vm->_dialogMgr->playDialog(dC4A1);
 			_vm->_pathFind->setPosition(14);
 			_vm->_obj[oDOORC4A]._action = 1117;
@@ -2944,8 +2942,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oPULSANTE4A:
 		if (_vm->_obj[curObj]._anim)
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
-		else if (!(_vm->_dialogMgr->_choice[244]._flag & kObjFlagDone)) {
-			_vm->_dialogMgr->_choice[244]._flag &= ~DLGCHOICE_HIDE;
+		else if (!(_vm->_dialogMgr->isChoiceAvailable(244))) {
+			_vm->_dialogMgr->toggleChoice(244, true);
 			_vm->_dialogMgr->playDialog(dC4A1);
 			_vm->_obj[oPULSANTE4A]._examine = 1108;
 			_vm->_obj[oPULSANTE4A]._action = 1109;
@@ -2983,7 +2981,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oDOORC54:
-		if (!(_vm->_dialogMgr->_choice[826]._flag & kObjFlagDone)) {
+		if (!(_vm->_dialogMgr->isChoiceAvailable(826))) {
 			_vm->_dialogMgr->playDialog(dF541);
 			retVal = false;
 		} else
@@ -2991,7 +2989,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oLAVATRICEL54:
-		if ((_vm->_obj[curObj]._anim) && (_vm->_obj[oSECCHIOS54]._flag & kObjFlagExtra) && _vm->isObjectVisible(oGRATAC54) && !(_vm->_dialogMgr->_choice[841]._flag & kObjFlagDone))
+		if ((_vm->_obj[curObj]._anim) && (_vm->_obj[oSECCHIOS54]._flag & kObjFlagExtra) && _vm->isObjectVisible(oGRATAC54) && !(_vm->_dialogMgr->isChoiceAvailable(841)))
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		else
 			retVal = true;
@@ -3006,7 +3004,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oKEYBOARD56:
-		if (_vm->_dialogMgr->_choice[262]._flag & kObjFlagDone) {
+		if (_vm->_dialogMgr->isChoiceAvailable(262)) {
 			if (_vm->isObjectVisible(od56TO59))
 				_vm->_textMgr->characterSay(_vm->_obj[curObj]._action);
 			else
@@ -3041,7 +3039,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oWINDOWA5A:
-		if ((_vm->_dialogMgr->_choice[871]._flag & kObjFlagDone) && !(_vm->_dialogMgr->_choice[286]._flag & kObjFlagDone)) {
+		if ((_vm->_dialogMgr->isChoiceAvailable(871)) && !(_vm->_dialogMgr->isChoiceAvailable(286))) {
 			_vm->_dialogMgr->playDialog(dC5A1);
 			retVal = false;
 		} else
@@ -3049,7 +3047,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oWINDOWB5A:
-		if (!(_vm->_dialogMgr->_choice[256]._flag & kObjFlagDone)) {
+		if (!(_vm->_dialogMgr->isChoiceAvailable(256))) {
 			_vm->_textMgr->characterSay(1999);
 			retVal = false;
 		} else
@@ -3151,27 +3149,27 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 
 	switch (curObj) {
 	case oTICKETOFFICE16:
-		if ((_vm->_obj[oFINGERPADP16]._flag & kObjFlagRoomOut) && (_vm->_dialogMgr->_choice[50]._flag & kObjFlagDone)) {
+		if ((_vm->_obj[oFINGERPADP16]._flag & kObjFlagRoomOut) && (_vm->_dialogMgr->isChoiceAvailable(50))) {
 			_vm->_textMgr->characterSay(147);
 			retVal = false;
 			break;
 		}
 
-		if ((_vm->_dialogMgr->_choice[49]._flag & DLGCHOICE_HIDE) && (_vm->_dialogMgr->_choice[50]._flag & DLGCHOICE_HIDE)) {
+		if (!_vm->_dialogMgr->isChoiceVisible(49) && !_vm->_dialogMgr->isChoiceVisible(50)) {
 			if (_vm->_obj[oMAPPA16]._flag & kObjFlagExtra) {
-				_vm->_dialogMgr->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_choice[48]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_dialogMgr->toggleChoice(46, true);
+				_vm->_dialogMgr->toggleChoice(48, true);
 				_vm->_obj[oTICKETOFFICE16]._flag |= kObjFlagExtra;
 			}
 			else {
-				if (_vm->_dialogMgr->_choice[46]._flag & kObjFlagDone) {
+				if (_vm->_dialogMgr->isChoiceAvailable(46)) {
 					_vm->_textMgr->characterSay(_vm->_obj[oTICKETOFFICE16]._action);
 					retVal = false;
 					break;
 				}
 
-				_vm->_dialogMgr->_choice[46]._flag &= ~DLGCHOICE_HIDE;
-				_vm->_dialogMgr->_choice[47]._flag &= ~DLGCHOICE_HIDE;
+				_vm->_dialogMgr->toggleChoice(46, true);
+				_vm->_dialogMgr->toggleChoice(47, true);
 			}
 		}
 		break;
@@ -3183,13 +3181,8 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 		break;
 
 	case ocNEGOZIANTE1A:
-		for (int c = _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice; c < (_vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._firstChoice + _vm->_dialogMgr->_dialog[dSHOPKEEPER1A]._choiceNumb); ++c) {
-			if (!(_vm->_dialogMgr->_choice[c]._flag & DLGCHOICE_HIDE)) {
-				_vm->_dialogMgr->playDialog(_vm->_obj[curObj]._goRoom);
-				retVal = false;
-				return retVal;
-			}
-		}
+		if (!_vm->_dialogMgr->handleShopKeeperDialog(curObj))
+			return false;
 
 		if (_vm->_obj[ocNEGOZIANTE1A]._action) {
 			_vm->_textMgr->characterSay(_vm->_obj[ocNEGOZIANTE1A]._action);
@@ -3442,59 +3435,59 @@ bool LogicManager::operateInventory() {
 
 	switch (_vm->_curInventory) {
 	case kItemMinicom:
-		if ((_vm->_dialogMgr->_choice[166]._flag & kObjFlagDone) && (_vm->_curRoom == kRoom17 || _vm->_curRoom == kRoom1B || _vm->_curRoom == kRoom1C || _vm->_curRoom == kRoom1D)) {
+		if ((_vm->_dialogMgr->isChoiceAvailable(166)) && (_vm->_curRoom == kRoom17 || _vm->_curRoom == kRoom1B || _vm->_curRoom == kRoom1C || _vm->_curRoom == kRoom1D)) {
 			if (_vm->isObjectVisible(oNUMERO17)) {
-				if (!(_vm->_dialogMgr->_choice[196]._flag & kObjFlagDone)) {
+				if (!(_vm->_dialogMgr->isChoiceAvailable(196))) {
 					if (_vm->_curRoom == kRoom17) {
-						if (_vm->_dialogMgr->_choice[198]._flag & kObjFlagDone) {
+						if (_vm->_dialogMgr->isChoiceAvailable(198)) {
 							_vm->_inventoryObj[kItemMinicom]._action = 1787;
 							printSentence = true;
 						} else {
-							_vm->_dialogMgr->_choice[197]._flag |= DLGCHOICE_HIDE;
-							_vm->_dialogMgr->_choice[198]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_dialogMgr->toggleChoice(197, false);
+							_vm->_dialogMgr->toggleChoice(198, true);
 							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->setObjectVisible(oFAX17, true);
 						}
 					} else {
-						if (_vm->_dialogMgr->_choice[199]._flag & kObjFlagDone) {
+						if (_vm->_dialogMgr->isChoiceAvailable(199)) {
 							_vm->_inventoryObj[kItemMinicom]._action = 1787;
 							printSentence = true;
 						} else {
-							_vm->_dialogMgr->_choice[197]._flag |= DLGCHOICE_HIDE;
-							_vm->_dialogMgr->_choice[199]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_dialogMgr->toggleChoice(197, false);
+							_vm->_dialogMgr->toggleChoice(199, true);
 							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->setObjectVisible(oFAX17, true);
 						}
 					}
 				} else {
-					if ((_vm->_dialogMgr->_choice[198]._flag & kObjFlagDone) || (_vm->_dialogMgr->_choice[199]._flag & kObjFlagDone)) {
+					if ((_vm->_dialogMgr->isChoiceAvailable(198)) || (_vm->_dialogMgr->isChoiceAvailable(199))) {
 						_vm->_inventoryObj[kItemMinicom]._action = 1787;
 						printSentence = true;
 					} else if (_vm->_curRoom == kRoom17) {
-						if (_vm->_dialogMgr->_choice[201]._flag & kObjFlagDone) {
+						if (_vm->_dialogMgr->isChoiceAvailable(201)) {
 							_vm->_inventoryObj[kItemMinicom]._action = 1787;
 							printSentence = true;
 						} else {
-							_vm->_dialogMgr->_choice[201]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_dialogMgr->toggleChoice(201, true);
 							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->setObjectVisible(oFAX17, true);
 						}
 					} else {
-						if (_vm->_dialogMgr->_choice[200]._flag & kObjFlagDone) {
+						if (_vm->_dialogMgr->isChoiceAvailable(200)) {
 							_vm->_inventoryObj[kItemMinicom]._action = 1787;
 							printSentence = true;
 						} else {
-							_vm->_dialogMgr->_choice[200]._flag &= ~DLGCHOICE_HIDE;
+							_vm->_dialogMgr->toggleChoice(200, true);
 							_vm->_dialogMgr->playDialog(dSAM17);
 							printSentence = false;
 							_vm->setObjectVisible(oFAX17, true);
 						}
 					}
 				}
-			} else if (_vm->_dialogMgr->_choice[197]._flag & kObjFlagDone) {
+			} else if (_vm->_dialogMgr->isChoiceAvailable(197)) {
 				_vm->_inventoryObj[kItemMinicom]._action = 1786;
 				printSentence = true;
 			} else {

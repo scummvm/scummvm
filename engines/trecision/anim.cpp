@@ -91,7 +91,7 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->_scheduler->leftClick(336, 263 + TOP);
 		break;
 	case fVALVEON34:
-		if (!(_vm->_dialogMgr->_choice[616]._flag & kObjFlagDone) && // if the fmv is not done
+		if (!(_vm->_dialogMgr->isChoiceAvailable(616)) && // if the fmv is not done
 			(_vm->isObjectVisible(oTUBOA34)) &&                      // if there's a cut pipe
 			!(_vm->isObjectVisible(oTUBOFT34)))                      // if there's not tube outside
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, true);

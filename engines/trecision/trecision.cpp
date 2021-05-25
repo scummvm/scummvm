@@ -428,8 +428,8 @@ void TrecisionEngine::readLoc() {
 }
 
 void TrecisionEngine::redrawRoom() {
-	const uint16 curDialog = _dialogMgr->_curDialog;
-	const uint16 curChoice = _dialogMgr->_curChoice;
+	const uint16 curDialog = _dialogMgr->getCurDialog();
+	const uint16 curChoice = _dialogMgr->getCurChoice();
 	const uint16 bgAnim = _room[_curRoom]._bkgAnim;
 	static const ElevatorAction elevatorActions[6] = {
 		{dASCENSORE12, 3, a129PARLACOMPUTERESCENDE, kRoom13},
