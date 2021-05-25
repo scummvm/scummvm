@@ -50,24 +50,31 @@ const char *MSBuildProvider::getPropertiesExtension() {
 
 namespace {
 
-inline void outputConfiguration(std::ostream &project, const std::string &config, const std::string &platform) {
-	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << platform << "\">\n"
+inline void outputConfiguration(std::ostream &project, const std::string &config, MSVC_Architecture arch) {
+	project << "\t\t<ProjectConfiguration Include=\"" << config << "|" << getMSVCConfigName(arch) << "\">\n"
 	        << "\t\t\t<Configuration>" << config << "</Configuration>\n"
-	        << "\t\t\t<Platform>" << platform << "</Platform>\n"
+	        << "\t\t\t<Platform>" << getMSVCConfigName(arch) << "</Platform>\n"
 	        << "\t\t</ProjectConfiguration>\n";
 }
 
-inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, const std::string &toolset) {
-	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"Configuration\">\n"
-	        << "\t\t<ConfigurationType>" << ((name == setup.projectName || setup.devTools || setup.tests) ? "Application" : "StaticLibrary") << "</ConfigurationType>\n"
-	        << "\t\t<PlatformToolset>" << toolset << "</PlatformToolset>\n"
-	        << "\t</PropertyGroup>\n";
+inline void outputConfigurationType(const BuildSetup &setup, std::ostream &project, const std::string &name, const std::string &config, MSVC_Architecture arch, const MSVCVersion &msvc) {
+	project << "\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"Configuration\">\n";
+	if (name == setup.projectName || setup.devTools || setup.tests) {
+		project << "\t\t<ConfigurationType>Application</ConfigurationType>\n";
+	} else {
+		project << "\t\t<ConfigurationType>StaticLibrary</ConfigurationType>\n";
+	}
+	project << "\t\t<PlatformToolset>" << (config == "LLVM" ? msvc.toolsetLLVM : msvc.toolsetMSVC ) << "</PlatformToolset>\n";
+	if (msvc.version >= 16 && config == "Analysis") {
+		project << "\t\t<EnableASAN>true</EnableASAN>\n";
+	}	
+	project << "\t</PropertyGroup>\n";
 }
 
-inline void outputProperties(std::ostream &project, const std::string &config, const std::string &properties) {
-	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"PropertySheets\">\n"
+inline void outputProperties(const BuildSetup &setup, std::ostream &project, const std::string &config, MSVC_Architecture arch) {
+	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << getMSVCConfigName(arch) << "'\" Label=\"PropertySheets\">\n"
 	        << "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\n"
-	        << "\t\t<Import Project=\"" << properties << "\" />\n"
+	        << "\t\t<Import Project=\"" << setup.projectDescription + '_' << config << getMSVCArchName(arch) << ".props" << "\" />\n"
 	        << "\t</ImportGroup>\n";
 }
 
@@ -87,10 +94,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "\t<ItemGroup Label=\"ProjectConfigurations\">\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfiguration(project, "Debug", getMSVCConfigName(*arch));
-		outputConfiguration(project, "Analysis", getMSVCConfigName(*arch));
-		outputConfiguration(project, "LLVM", getMSVCConfigName(*arch));
-		outputConfiguration(project, "Release", getMSVCConfigName(*arch));
+		outputConfiguration(project, "Debug", *arch);
+		outputConfiguration(project, "Analysis", *arch);
+		outputConfiguration(project, "LLVM", *arch);
+		outputConfiguration(project, "Release", *arch);
 	}
 	project << "\t</ItemGroup>\n";
 
@@ -111,10 +118,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputConfigurationType(setup, project, name, "Release|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "Analysis|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
-		outputConfigurationType(setup, project, name, "LLVM|" + getMSVCConfigName(*arch), _msvcVersion.toolsetLLVM);
-		outputConfigurationType(setup, project, name, "Debug|" + getMSVCConfigName(*arch), _msvcVersion.toolsetMSVC);
+		outputConfigurationType(setup, project, name, "Release", *arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "Analysis", *arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "LLVM", *arch, _msvcVersion);
+		outputConfigurationType(setup, project, name, "Debug", *arch, _msvcVersion);
 	}
 
 	project << "\t<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\n"
@@ -122,10 +129,10 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	        << "\t</ImportGroup>\n";
 
 	for (std::list<MSVC_Architecture>::const_iterator arch = _archs.begin(); arch != _archs.end(); ++arch) {
-		outputProperties(project, "Release|" + getMSVCConfigName(*arch), setup.projectDescription + "_Release" + getMSVCArchName(*arch) + ".props");
-		outputProperties(project, "Analysis|" + getMSVCConfigName(*arch), setup.projectDescription + "_Analysis" + getMSVCArchName(*arch) + ".props");
-		outputProperties(project, "LLVM|" + getMSVCConfigName(*arch), setup.projectDescription + "_LLVM" + getMSVCArchName(*arch) + ".props");
-		outputProperties(project, "Debug|" + getMSVCConfigName(*arch), setup.projectDescription + "_Debug" + getMSVCArchName(*arch) + ".props");
+		outputProperties(setup, project, "Release", *arch);
+		outputProperties(setup, project, "Analysis", *arch);
+		outputProperties(setup, project, "LLVM", *arch);
+		outputProperties(setup, project, "Debug", *arch);
 	}
 
 	project << "\t<PropertyGroup Label=\"UserMacros\" />\n";
@@ -418,7 +425,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 	           << "\t</ImportGroup>\n"
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_" << configuration << getMSVCArchName(arch) << "</_PropertySheetDisplayName>\n"
-	           << "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
+			   << "\t\t<LinkIncremental>" << ((isRelease || configuration == "Analysis") ? "false" : "true") << "</LinkIncremental>\n"
 	           << "\t\t<GenerateManifest>false</GenerateManifest>\n"
 	           << "\t</PropertyGroup>\n"
 	           << "\t<ItemDefinitionGroup>\n"
@@ -447,13 +454,12 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, M
 		           << "\t\t\t<BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>\n"
 		           << "\t\t\t<RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>\n"
 		           << "\t\t\t<FunctionLevelLinking>true</FunctionLevelLinking>\n"
-		           << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
-		if (_version >= 14) {
-			// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
-			properties << "\t\t\t<DebugInformationFormat>" << (arch != ARCH_ARM64 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+				   << "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n";
+		// Since MSVC 2015 Edit and Continue is supported for x86 and x86-64, but not for ARM.
+		if (configuration != "Analysis" && (arch == ARCH_X86 || (arch == ARCH_AMD64 && _version >= 14))) {
+			properties << "\t\t\t<DebugInformationFormat>EditAndContinue</DebugInformationFormat>\n";
 		} else {
-			// Older MSVC versions did not support Edit and Continue for x64, thus we do not use it.
-			properties << "\t\t\t<DebugInformationFormat>" << (arch == ARCH_X86 ? "EditAndContinue" : "ProgramDatabase") << "</DebugInformationFormat>\n";
+			properties << "\t\t\t<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>\n";
 		}
 		properties << "\t\t\t<EnablePREfast>" << (configuration == "Analysis" ? "true" : "false") << "</EnablePREfast>\n";
 

@@ -30,8 +30,10 @@
 static const PlainGameDescriptor sagaGames[] = {
 	{"ite", "Inherit the Earth: Quest for the Orb"},
 	{"ihnm", "I Have No Mouth and I Must Scream"},
+#if 0
 	{"dino", "Dinotopia"},
 	{"fta2", "Faery Tale Adventure II: Halls of the Dead"},
+#endif
 	{0, 0}
 };
 

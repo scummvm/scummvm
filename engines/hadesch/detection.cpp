@@ -30,6 +30,14 @@
 
 #include "detection_tables.h"
 
+static const DebugChannelDef debugFlagList[] = {
+	{Hadesch::kHadeschDebugGeneral, "general", "General issues"},
+	{Hadesch::kHadeschDebugResources, "resources", "Resources"},
+	{Hadesch::kHadeschDebugMessagingSystem, "message_system", "Engine message system"},
+	{Hadesch::kHadeschDebugDialogs, "dialogs", "Dialogs"},
+	DEBUG_CHANNEL_END
+};
+
 namespace Hadesch {
 static const PlainGameDescriptor hadeschGames[] = {
 	{"hadesch", "Hades Challenge"},
@@ -77,6 +85,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Hades Challenge (C) Disney's Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

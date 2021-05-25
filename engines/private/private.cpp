@@ -52,11 +52,6 @@ PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	  _maxNumberClicks(0), _sirenWarning(0), _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
-	// Debug channels
-	DebugMan.addDebugChannel(kPrivateDebugFunction, "functions", "Function execution debug channel");
-	DebugMan.addDebugChannel(kPrivateDebugCode, "code", "Code execution debug channel");
-	DebugMan.addDebugChannel(kPrivateDebugScript, "script", "Script execution debug channel");
-
 	// Global object for external reference
 	g_private = this;
 
@@ -297,6 +292,13 @@ Common::Error PrivateEngine::run() {
 		g_system->delayMillis(10);
 	}
 	return Common::kNoError;
+}
+
+void PrivateEngine::ignoreEvents() {
+	Common::Event event;
+	g_system->getEventManager()->pollEvent(event);
+	g_system->updateScreen();
+	g_system->delayMillis(10);
 }
 
 void PrivateEngine::initFuncs() {
@@ -985,6 +987,10 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, sh, stream, -1, Audio::Mixer::kMaxChannelVolume);
+}
+
+bool PrivateEngine::isSoundActive() {
+	return _mixer->isSoundIDActive(-1);
 }
 
 void PrivateEngine::playVideo(const Common::String &name) {

@@ -91,22 +91,6 @@ AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engin
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data/vids");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data/music");
 
-	// Initialize custom debug levels
-	DebugMan.addDebugChannel(kDebugLevelMain,      "Main",      "Generic debug level");
-	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
-	DebugMan.addDebugChannel(kDebugLevelSprites,   "Sprites",   "Sprites debugging");
-	DebugMan.addDebugChannel(kDebugLevelInput,     "Input",     "Input events debugging");
-	DebugMan.addDebugChannel(kDebugLevelMenu,      "Menu",      "Menu debugging");
-	DebugMan.addDebugChannel(kDebugLevelScripts,   "Scripts",   "Scripts debugging");
-	DebugMan.addDebugChannel(kDebugLevelSound,     "Sound",     "Sound debugging");
-	DebugMan.addDebugChannel(kDebugLevelSavegame,  "Savegame",  "Saving & restoring game debugging");
-	DebugMan.addDebugChannel(kDebugLevelScene,     "Scene",     "Scene process and draw debugging");
-	DebugMan.addDebugChannel(kDebugLevelObjects,   "Objects",   "Debug Object objects");
-	DebugMan.addDebugChannel(kDebugLevelActor,     "Actor",     "Debug Actor");
-	DebugMan.addDebugChannel(kDebugLevelEncounter, "Encounter", "Debug Encounter");
-	DebugMan.addDebugChannel(kDebugLevelVideo,     "Video",     "Debug Video");
-	DebugMan.addDebugChannel(kDebugLevelCommands,  "Commands",  "Script commands debugging");
-
 	// Initialize random number source
 	_rnd = new Common::RandomSource("asylum");
 }
@@ -392,7 +376,7 @@ void AsylumEngine::handleEvents() {
 	Common::Keymapper *const keymapper = _eventMan->getKeymapper();
 
 	while (_eventMan->pollEvent(ev)) {
-		keymapper->setEnabled(_handler == _scene);
+		keymapper->setEnabled(_handler == _scene || (_handler == _menu && !_menu->isEditingSavegameName()));
 		switch (ev.type) {
 		default:
 			break;

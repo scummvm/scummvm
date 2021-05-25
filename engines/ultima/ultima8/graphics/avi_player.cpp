@@ -80,7 +80,7 @@ void AVIPlayer::paint(RenderSurface *surf, int /*lerp*/) {
 	if (_decoder->needsUpdate())
 	{
 		const Graphics::Surface *frame = _decoder->decodeNextFrame();
-		if (!frame) {
+		if (!frame || _decoder->getCurFrame() < 0) {
 			// Some sort of decoding error?
 			_playing = false;
 			return;

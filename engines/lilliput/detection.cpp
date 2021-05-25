@@ -25,6 +25,7 @@
 #include "common/textconsole.h"
 
 #include "lilliput/detection.h"
+#include "lilliput/lilliput.h"
 
 namespace Lilliput {
 
@@ -33,6 +34,15 @@ static const PlainGameDescriptor lilliputGames[] = {
 	{"robin", "Adventures of Robin Hood"},
 	{"rome", "Rome: Pathway to Power"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Lilliput::kDebugEngine, "Engine", "Engine debug level"},
+	{Lilliput::kDebugScript, "Script", "Script debug level"},
+	{Lilliput::kDebugSound,  "Sound",  "Sound debug level"},
+	{Lilliput::kDebugEngineTBC, "EngineTBC", "Engine debug level"},
+	{Lilliput::kDebugScriptTBC, "ScriptTBC", "Script debug level"},
+	DEBUG_CHANNEL_END
 };
 
 static const LilliputGameDescription gameDescriptions[] = {

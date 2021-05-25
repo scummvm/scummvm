@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "common/tokenizer.h"
 
 #include "gui/message.h"
 
@@ -1083,7 +1084,26 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 
 	int fileNum = g_lingo->pop().asInt() - 1;
 	Common::String path = pathMakeRelative(g_lingo->pop().asString(), true, false, true);
-	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir()).getChild(path);
+	Common::StringTokenizer directory_list(path, "/");
+
+	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
+	if (d.getChild(directory_list.nextToken()).exists()) {
+		// then this part is for the "relative to current directory"
+		// we find the child directory recursively
+		directory_list.reset();
+		while (!directory_list.empty() && d.exists())
+			d = d.getChild(directory_list.nextToken());
+	} else {
+		// we first match the path with game data dir
+		while (!directory_list.empty())
+			if (directory_list.nextToken().equalsIgnoreCase(d.getName()))
+				break;
+		// then we go deep to the end of path
+		// skip the current directory which is the game data directory
+		directory_list.nextToken();
+		while (!directory_list.empty() && d.exists())
+			d = d.getChild(directory_list.nextToken());
+	}
 
 	Datum r;
 	if (d.exists()) {
@@ -1091,8 +1111,14 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 		if (!d.getChildren(f, Common::FSNode::kListAll)) {
 			warning("Cannot acces directory %s", path.c_str());
 		} else {
-			if ((uint)fileNum < f.size())
-				r = Datum(f.operator[](fileNum).getName());
+			if ((uint)fileNum < f.size()) {
+				// here, we sort all the fileNames
+				Common::Array<Common::String> fileNameList;
+				for (uint i = 0; i < f.size(); i++)
+					fileNameList.push_back(f[i].getName());
+				Common::sort(fileNameList.begin(), fileNameList.end());
+				r = Datum(fileNameList[fileNum]);
+			}
 		}
 	}
 

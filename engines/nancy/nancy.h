@@ -55,12 +55,6 @@ namespace Nancy {
 
 static const int kSavegameVersion = 1;
 
-enum NancyDebugChannels {
-	kDebugEngine    	= 1 << 0,
-	kDebugActionRecord  = 1 << 1,
-	kDebugScene			= 1 << 2
-};
-
 struct NancyGameDescription;
 
 class ResourceManager;

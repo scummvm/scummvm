@@ -74,11 +74,6 @@ AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine
 		_rawScreen(nullptr), _screen(nullptr), _gfxDriver(nullptr),
 		_globals(nullptr), _forceTextAA(false) {
 	g_vm = this;
-	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
-	DebugMan.addDebugChannel(kDebugFilePath, "FilePath", "File path debug level");
-	DebugMan.addDebugChannel(kDebugScan, "Scan", "Scan for unrecognised games");
-	DebugMan.addDebugChannel(kDebugScript, "Script", "Enable debug script dump");
 
 	_events = new EventsManager();
 	_music = new Music();

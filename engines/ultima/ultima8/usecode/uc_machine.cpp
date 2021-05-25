@@ -619,8 +619,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x1D:
 			// 1D
 			// subtract two 32 bit integers
-			si32a = static_cast<int16>(p->_stack.pop4());
-			si32b = static_cast<int16>(p->_stack.pop4());
+			si32a = static_cast<int32>(p->_stack.pop4());
+			si32b = static_cast<int32>(p->_stack.pop4());
 			p->_stack.push4(static_cast<uint32>(si32b - si32a));
 			LOGPF(("sub long\n"));
 			break;
@@ -637,8 +637,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x1F:
 			// 1F
 			// multiply two 32 bit integers
-			si32a = static_cast<int16>(p->_stack.pop4());
-			si32b = static_cast<int16>(p->_stack.pop4());
+			si32a = static_cast<int32>(p->_stack.pop4());
+			si32b = static_cast<int32>(p->_stack.pop4());
 			p->_stack.push4(static_cast<uint32>(si32a * si32b));
 			LOGPF(("mul long\n"));
 			break;
@@ -660,8 +660,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x21:
 			// 21
 			// divide two 32 bit integers
-			si32a = static_cast<int16>(p->_stack.pop4());
-			si32b = static_cast<int16>(p->_stack.pop4());
+			si32a = static_cast<int32>(p->_stack.pop4());
+			si32b = static_cast<int32>(p->_stack.pop4());
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b / si32a));
 			} else {
@@ -689,8 +689,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x23:
 			// 23
 			// 32 bit mod
-			si32a = static_cast<int16>(p->_stack.pop4());
-			si32b = static_cast<int16>(p->_stack.pop4());
+			si32a = static_cast<int32>(p->_stack.pop4());
+			si32b = static_cast<int32>(p->_stack.pop4());
 			if (si32a != 0) {
 				p->_stack.push4(static_cast<uint32>(si32b % si32a));
 			} else {
@@ -939,8 +939,8 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x37:
 			// 37
 			// 32 bit not-equal (only used in Crusader)
-			si32a = static_cast<int16>(p->_stack.pop4());
-			si32b = static_cast<int16>(p->_stack.pop4());
+			si32a = static_cast<int32>(p->_stack.pop4());
+			si32b = static_cast<int32>(p->_stack.pop4());
 			if (si32a != si32b) {
 				p->_stack.push2(1);
 			} else {
@@ -2068,7 +2068,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 
 const Std::string &UCMachine::getString(uint16 str) const {
-	static Std::string emptystring("");
+	static const Std::string emptystring("");
 
 	Std::map<uint16, Std::string>::const_iterator iter =
 			_stringHeap.find(str);

@@ -49,16 +49,6 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	syncSoundSettings();
 
 	g_vm = this;
-	DebugMan.addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
-	DebugMan.addDebugChannel(kDebugParser, "parser", "Parser debug level");
-	DebugMan.addDebugChannel(kDebugDisk, "disk", "Disk debug level");
-	DebugMan.addDebugChannel(kDebugWalk, "walk", "Walk debug level");
-	DebugMan.addDebugChannel(kDebugGraphics, "gfx", "Gfx debug level");
-	DebugMan.addDebugChannel(kDebugExec, "exec", "Execution debug level");
-	DebugMan.addDebugChannel(kDebugInput, "input", "Input debug level");
-	DebugMan.addDebugChannel(kDebugAudio, "audio", "Audio debug level");
-	DebugMan.addDebugChannel(kDebugMenu, "menu", "Menu debug level");
-	DebugMan.addDebugChannel(kDebugInventory, "inventory", "Inventory debug level");
 
 	_screenWidth = 0;
 	_screenHeight = 0;

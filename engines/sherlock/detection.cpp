@@ -24,11 +24,20 @@
 #include "engines/advancedDetector.h"
 
 #include "sherlock/detection.h"
+#include "sherlock/sherlock.h"
 
 static const PlainGameDescriptor sherlockGames[] = {
 	{ "scalpel", "The Case of the Serrated Scalpel" },
 	{ "rosetattoo", "The Case of the Rose Tattoo" },
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Sherlock::kDebugLevelScript, "scripts", "Script debug level"},
+	{Sherlock::kDebugLevelAdLibDriver, "AdLib", "AdLib driver debugging"},
+	{Sherlock::kDebugLevelMT32Driver, "MT32", "MT32 driver debugging"},
+	{Sherlock::kDebugLevelMusic, "Music", "Music debugging"},
+	DEBUG_CHANNEL_END
 };
 
 
@@ -136,6 +145,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Sherlock (C) 1992-1996 Mythos Software, (C) 1992-1996 Electronic Arts";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

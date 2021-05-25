@@ -1162,19 +1162,6 @@ ToonEngine::ToonEngine(OSystem *syst, const ADGameDescription *gameDescription)
 	_useAlternativeFont = false;
 	_isDemo = _gameDescription->flags & ADGF_DEMO;
 
-	DebugMan.addDebugChannel(kDebugAnim, "Anim", "Animation debug level");
-	DebugMan.addDebugChannel(kDebugCharacter, "Character", "Character debug level");
-	DebugMan.addDebugChannel(kDebugAudio, "Audio", "Audio debug level");
-	DebugMan.addDebugChannel(kDebugHotspot, "Hotspot", "Hotspot debug level");
-	DebugMan.addDebugChannel(kDebugFont, "Font", "Font debug level");
-	DebugMan.addDebugChannel(kDebugPath, "Path", "Path debug level");
-	DebugMan.addDebugChannel(kDebugMovie, "Movie", "Movie debug level");
-	DebugMan.addDebugChannel(kDebugPicture, "Picture", "Picture debug level");
-	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
-	DebugMan.addDebugChannel(kDebugState, "State", "State debug level");
-	DebugMan.addDebugChannel(kDebugTools, "Tools", "Tools debug level");
-	DebugMan.addDebugChannel(kDebugText, "Text", "Text debug level");
-
 	_resources = NULL;
 	_animationManager = NULL;
 	_moviePlayer = NULL;

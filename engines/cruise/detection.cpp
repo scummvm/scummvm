@@ -24,10 +24,17 @@
 #include "engines/advancedDetector.h"
 
 #include "cruise/detection.h"
+#include "cruise/cruise.h"
 
 static const PlainGameDescriptor cruiseGames[] = {
 	{"cruise", "Cruise for a Corpse"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Cruise::kCruiseDebugScript, "scripts", "Scripts debug level"},
+	{Cruise::kCruiseDebugSound, "sound", "Sound debug level"},
+	DEBUG_CHANNEL_END
 };
 
 namespace Cruise {
@@ -186,6 +193,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Cinematique evo 2 (C) Delphine Software";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

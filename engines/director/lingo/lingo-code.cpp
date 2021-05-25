@@ -292,7 +292,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 
 	g_lingo->_callstack.push_back(fp);
 
-	if (debugChannelSet(5, kDebugLingoExec)) {
+	if (debugChannelSet(2, kDebugLingoExec)) {
 		g_lingo->printCallStack(0);
 	}
 }
@@ -335,7 +335,7 @@ void Lingo::popContext() {
 		g_lingo->_localvars = fp->localvars;
 	}
 
-	if (debugChannelSet(5, kDebugLingoExec)) {
+	if (debugChannelSet(2, kDebugLingoExec)) {
 		g_lingo->printCallStack(g_lingo->_pc);
 	}
 
@@ -1401,7 +1401,7 @@ void LC::c_callfunc() {
 }
 
 void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
-	if (debugChannelSet(5, kDebugLingoExec))
+	if (debugChannelSet(3, kDebugLingoExec))
 		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
 
 	Symbol funcSym;

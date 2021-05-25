@@ -314,10 +314,16 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
+		if (_sprite->_cast->isEditable() == editable)
+			return;
 		_sprite->_cast->setEditable(editable);
 
 		if (_widget) {
-			_widget->_editable = editable;
+			// since this method may called after the widget is created
+			// so we better also set the attributes which may affected by editable
+			((Graphics::MacText *)_widget)->_focusable = editable;
+			((Graphics::MacText *)_widget)->setEditable(editable);
+			((Graphics::MacText *)_widget)->_selectable = editable;
 			g_director->_wm->setActiveWidget(_widget);
 		}
 	}
@@ -375,6 +381,8 @@ void Channel::replaceWidget() {
 		Common::Rect bbox(getBbox());
 		_sprite->_cast->_modified = false;
 
+//		if (_sprite->_cast->_type == kCastText)
+//			debug("%s %d\n", ((TextCastMember *)_sprite->_cast)->_ftext.c_str(), ((TextCastMember *)_sprite->_cast)->_editable);
 		_widget = _sprite->_cast->createWidget(bbox, this);
 		if (_widget) {
 			_widget->_priority = _priority;

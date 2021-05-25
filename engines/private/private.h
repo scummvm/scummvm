@@ -186,6 +186,7 @@ public:
 		return true;
 	}
 
+	void ignoreEvents();
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
@@ -271,6 +272,7 @@ public:
 	// Sounds
 	void playSound(const Common::String &, uint, bool, bool);
 	void stopSound(bool);
+	bool isSoundActive();
 	bool _noStopSounds;
 
 	Common::String getPaperShuffleSound();

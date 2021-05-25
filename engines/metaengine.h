@@ -75,6 +75,20 @@ struct ExtraGuiOption {
 };
 
 /**
+ * debug channels structure
+ */
+struct DebugChannelDef {
+	uint32 channel;				/*!< enum value, channel id, e.g. kDebugGlobalDetection */
+	const char *name;			/*!< name of debug channel, e.g. "detection" */
+	const char *description;	/*!< description of debug channel, e.g. "track scripts" */
+};
+
+/**
+ * delimiter of the array of DebugChannelDef
+ */
+#define DEBUG_CHANNEL_END {0, NULL, NULL}
+
+/**
  * Array of ExtraGuiOption structures.
  */
 typedef Common::Array<ExtraGuiOption> ExtraGuiOptions;
@@ -160,6 +174,17 @@ public:
 	 */
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
 		return ExtraGuiOptions();
+	}
+
+	/**
+	 * Return a list of engine specified debug channels
+	 *
+	 * If engine has no specified debug channels or not supported yet, then it will return NULL
+	 *
+	 * @return A list of engine specified debug channels
+	 */
+	virtual const DebugChannelDef *getDebugChannels() const {
+		return NULL;
 	}
 
 	/**

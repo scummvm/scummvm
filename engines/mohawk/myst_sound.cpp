@@ -46,10 +46,12 @@ MystSound::~MystSound() {
 }
 
 Audio::RewindableAudioStream *MystSound::makeAudioStream(uint16 id, CueList *cueList) {
-	if (_vm->isGameVariant(GF_ME))
-		return Audio::makeWAVStream(_vm->getResource(ID_MSND, convertMystID(id)), DisposeAfterUse::YES);
-	else
+	if (_vm->isGameVariant(GF_ME)) {
+		Common::SeekableReadStream *stream = _vm->getResource(ID_MSND, convertMystID(id));
+		return Audio::makeWAVStream(stream->readStream(stream->size()), DisposeAfterUse::YES);
+	} else {
 		return makeMohawkWaveStream(_vm->getResource(ID_MSND, id), cueList);
+	}
 }
 
 void MystSound::playEffect(uint16 id, bool loop) {

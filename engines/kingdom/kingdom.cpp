@@ -53,8 +53,6 @@ KingdomGame::KingdomGame(OSystem *syst, const ADGameDescription *gameDesc) : Eng
 	_console = nullptr;
 	_rnd = new Common::RandomSource("kingdom");
 
-	DebugMan.addDebugChannel(kDebugGeneral, "general", "General debug level");
-
 	_logic = nullptr;
 
 	_asPtr = nullptr;

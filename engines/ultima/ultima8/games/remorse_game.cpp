@@ -44,12 +44,6 @@ namespace Ultima {
 namespace Ultima8 {
 
 RemorseGame::RemorseGame() : Game() {
-	// Set some defaults for gameplay-related settings
-	ConfMan.registerDefault("endgame", true);
-	ConfMan.registerDefault("footsteps", true);
-	ConfMan.registerDefault("talkspeed", 96);
-	ConfMan.registerDefault("subtitles", true);
-	ConfMan.registerDefault("speech_mute", false);
 }
 
 RemorseGame::~RemorseGame() {
@@ -59,7 +53,7 @@ RemorseGame::~RemorseGame() {
 static bool loadPalette(const char *path, PaletteManager::PalIndex index) {
 	Common::SeekableReadStream *pf = FileSystem::get_instance()->ReadFile(path);
 	if (!pf) {
-		perr << "Unable to load static/*.pal." << Std::endl;
+		perr << "Unable to load " << path << Std::endl;
 		return false;
 	}
 
@@ -120,23 +114,20 @@ bool RemorseGame::startGame() {
 
 	ObjectManager::get_instance()->assignActorObjId(actor, 1);
 
-	if (GAME_IS_REMORSE) {
-		// Some useful points to warp into for testing..
-		actor->setLocation(0, 0, 0); // Map 1 (mission 1)
-		//actor->setLocation(60716, 59400, 16); // Map 1 (mission 1)
-		//actor->setLocation(42493, 26621, 16); // Map 2 (mission 1 / level 4)
-		//actor->setLocation(34302, 32254, 16); // Map 3 (mission 2)
-		//actor->setLocation(34813, 33789, 16); // Map 4
-		//actor->setLocation(37373, 30205, 16); // Map 5
-		//actor->setLocation(37373, 30205, 16); // Map 6
-		//actor->setLocation(35070, 26142, 96); // Map 7
-		//actor->setLocation(29693, 32253, 0); // Map 8 - unfinished area?
-		//actor->setLocation(2046, 2046, 0); // Map 9
-		//actor->setLocation(14845, 6141, 0); // Map 22 - debugging map
-		//actor->setLocation(34302, 32254, 16); // Map 40 (Rebel base)
-	} else {
-		actor->setLocation(58174, 56606, 16);
-	}
+	actor->setLocation(0, 0, 0); // Map 1 (mission 1)
+
+	// Some useful points to warp into for testing No Remorse
+	//actor->setLocation(60716, 59400, 16); // Map 1 (mission 1)
+	//actor->setLocation(42493, 26621, 16); // Map 2 (mission 1 / level 4)
+	//actor->setLocation(34302, 32254, 16); // Map 3 (mission 2)
+	//actor->setLocation(34813, 33789, 16); // Map 4
+	//actor->setLocation(37373, 30205, 16); // Map 5
+	//actor->setLocation(37373, 30205, 16); // Map 6
+	//actor->setLocation(35070, 26142, 96); // Map 7
+	//actor->setLocation(29693, 32253, 0); // Map 8 - unfinished area?
+	//actor->setLocation(2046, 2046, 0); // Map 9
+	//actor->setLocation(14845, 6141, 0); // Map 22 - debugging map
+	//actor->setLocation(34302, 32254, 16); // Map 40 (Rebel base)
 
 	World::get_instance()->switchMap(0);
 

@@ -26,6 +26,15 @@
 #include "engines/advancedDetector.h"
 
 #include "titanic/detection.h"
+#include "titanic/debugger.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Titanic::kDebugCore, "core", "Core engine debug level"},
+	{Titanic::kDebugScripts, "scripts", "Game scripts"},
+	{Titanic::kDebugGraphics, "graphics", "Graphics handling"},
+	{Titanic::kDebugStarfield, "starfield", "Starfield logic"},
+	DEBUG_CHANNEL_END
+};
 
 static const PlainGameDescriptor TitanicGames[] = {
 	{"titanic", "Starship Titanic"},
@@ -50,6 +59,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Starship Titanic (C) The Digital Village";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

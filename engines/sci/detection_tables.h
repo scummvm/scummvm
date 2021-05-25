@@ -5368,7 +5368,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_PIRATED, GUIO_SQ4_CD	},
 
-	// Space Quest 4 - Spanish DOS CD (from jvprat, is still text only, not talkie, also includes english language)
+	// Space Quest 4 - Spanish DOS Floppy version distributed on a CD (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
 	// SCI interpreter version 1.000.200 (just a guess)
 	{"sq4", "", {
@@ -5380,7 +5380,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "776fba81c110d1908776232cbe190e20", 1253752},
 		{"resource.005", 0, "55fae26c2a92f16ef72c1e216e827c0f", 1098328},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_SQ4_CD	},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
+
+	// Space Quest 4 - Spanish DOS 5.25" Floppy (from mgtroyas, #12524)
+	{"sq4", "", {
+		{"resource.map", 0, "a634cf7bdae116e1e8f1d98ddf8a9621", 6345},
+		{"resource.000", 0, "8000a55aebc50a68b7cce07a8c33758c", 204315},
+		{"resource.001", 0, "e924cf86a72ada7736043f045cce345f", 1064718},
+		{"resource.002", 0, "c11e157a742c84a56f0a080cf5fee215", 857007},
+		{"resource.003", 0, "619c0dd6b07cf032dabe80f5f69b2fc6", 1170919},
+		{"resource.004", 0, "55fae26c2a92f16ef72c1e216e827c0f", 1064458},
+		{"resource.005", 0, "42a307941edeb1a3be31daeb2e4be90b", 1154954},
+		{"resource.006", 0, "11a6f691c54f458494d06afa9961c9cb", 923517},
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16 },
 
 	// Space Quest 4 - Spanish DOS Floppy (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.056", VERSION file reports "1.000"

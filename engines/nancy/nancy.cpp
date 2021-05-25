@@ -55,10 +55,6 @@ NancyEngine *g_nancy;
 NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine(syst), _gameDescription(gd), _system(syst) {
 	g_nancy = this;
 
-	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugActionRecord, "ActionRecord", "Action Record debug level");
-	DebugMan.addDebugChannel(kDebugScene, "Scene", "Scene debug level");
-
 	_randomSource = new Common::RandomSource("Nancy");
 	_randomSource->setSeed(_randomSource->getSeed());
 

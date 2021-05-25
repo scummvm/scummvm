@@ -52,10 +52,6 @@ CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
 	syncSoundSettings();
 
 	unlockPalette();
-
-	DebugMan.addDebugChannel(kDebugFile, "File", "Track File Accesses");
-	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
-	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
 }
 
 CryOmni3DEngine::~CryOmni3DEngine() {

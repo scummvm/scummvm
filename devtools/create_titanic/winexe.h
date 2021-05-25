@@ -84,7 +84,7 @@ private:
 };
 
 struct WinResourceID_Hash {
-	uint operator()(const WinResourceID &id) const { return hashit(id.toString()); }
+	uint operator()(const WinResourceID &id) const { return hashit(id.toString().c_str()); }
 };
 
 struct WinResourceID_EqualTo {

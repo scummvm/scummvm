@@ -45,6 +45,8 @@ public:
 		return "Infocom games (C) Infocom\nScott Adams games (C) Scott Adams";
 	}
 
+	const DebugChannelDef *getDebugChannels() const override;
+
 	/**
 	 * Returns a list of games supported by this engine.
 	 */

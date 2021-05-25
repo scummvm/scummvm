@@ -63,6 +63,8 @@ public:
 	void setDword455C78(bool state) { _dword_455C78 = state; }
 	void setDword455C80(bool state) { _dword_455C80 = state; }
 
+	bool isEditingSavegameName() { return _activeScreen == kMenuSaveGame && _isEditingSavegameName; };
+
 private:
 	AsylumEngine *_vm;
 

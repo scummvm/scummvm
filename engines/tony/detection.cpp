@@ -25,10 +25,19 @@
 #include "engines/advancedDetector.h"
 
 #include "tony/detection.h"
+#include "tony/tony.h"
 
 static const PlainGameDescriptor tonyGames[] = {
 	{"tony", "Tony Tough and the Night of Roasted Moths"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Tony::kTonyDebugAnimations, "animations", "Animations debugging"},
+	{Tony::kTonyDebugActions, "actions", "Actions debugging"},
+	{Tony::kTonyDebugSound, "sound", "Sound debugging"},
+	{Tony::kTonyDebugMusic, "music", "Music debugging"},
+	DEBUG_CHANNEL_END
 };
 
 #include "tony/detection_tables.h"
@@ -56,6 +65,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Tony Tough and the Night of Roasted Moths (C) Protonic Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

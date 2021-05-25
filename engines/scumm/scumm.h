@@ -63,6 +63,9 @@ namespace Common {
 class SeekableReadStream;
 class WriteStream;
 }
+namespace Graphics {
+class FontSJIS;
+}
 
 /**
  * This is the namespace of the SCUMM engine.

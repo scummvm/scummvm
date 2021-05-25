@@ -89,10 +89,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 	_flcFrameSurface(nullptr), _shadScaleValue(0), _shadLineLen(0), _scaleValue(0), _dialogImage(nullptr), _mobTranslationData(nullptr),
 	_mobTranslationSize(0), _missingVoice(false) {
 
-	// Debug/console setup
-	DebugMan.addDebugChannel(DebugChannel::kScript, "script", "Prince Script debug channel");
-	DebugMan.addDebugChannel(DebugChannel::kEngine, "engine", "Prince Engine debug channel");
-
 	DebugMan.enableDebugChannel("script");
 
 	memset(_audioStream, 0, sizeof(_audioStream));

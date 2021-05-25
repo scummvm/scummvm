@@ -37,6 +37,7 @@
 #include "scumm/detection_tables.h"
 #include "scumm/file.h"
 #include "scumm/file_nes.h"
+#include "scumm/scumm.h"
 
 #pragma mark -
 #pragma mark --- Detection code ---
@@ -51,6 +52,19 @@
 #pragma mark --- Plugin code ---
 #pragma mark -
 
+static const DebugChannelDef debugFlagList[] = {
+		{Scumm::DEBUG_SCRIPTS, "SCRIPTS", "Track script execution"},
+		{Scumm::DEBUG_OPCODES, "OPCODES", "Track opcode execution"},
+		{Scumm::DEBUG_IMUSE, "IMUSE", "Track iMUSE events"},
+		{Scumm::DEBUG_RESOURCE, "RESOURCE", "Track resource loading/management"},
+		{Scumm::DEBUG_VARS, "VARS", "Track variable changes",},
+		{Scumm::DEBUG_ACTORS, "ACTORS", "Actor-related debug"},
+		{Scumm::DEBUG_SOUND, "SOUND", "Sound related debug"},
+		{Scumm::DEBUG_INSANE, "INSANE", "Track INSANE"},
+		{Scumm::DEBUG_SMUSH, "SMUSH", "Track SMUSH"},
+		{Scumm::DEBUG_MOONBASE_AI, "MOONBASEAI", "Track Moonbase AI"},
+		DEBUG_CHANNEL_END
+};
 
 using namespace Scumm;
 
@@ -58,6 +72,10 @@ class ScummMetaEngineDetection : public MetaEngineDetection {
 public:
 	const char *getEngineId() const override {
 		return "scumm";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const char *getName() const override;

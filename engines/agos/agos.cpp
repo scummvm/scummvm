@@ -163,10 +163,6 @@ Common::Error AGOSEngine_Elvira1::init() {
 AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	: Engine(system), _rnd("agos"), _gameDescription(gd) {
 
-	DebugMan.addDebugChannel(kDebugOpcode, "opcode", "Opcode debug level");
-	DebugMan.addDebugChannel(kDebugVGAOpcode, "vga_opcode", "VGA Opcode debug level");
-	DebugMan.addDebugChannel(kDebugSubroutine, "subroutine", "Subroutine debug level");
-	DebugMan.addDebugChannel(kDebugVGAScript, "vga_script", "VGA Script debug level");
 	//Image dumping command disabled as it doesn't work well
 #if 0
 	DebugMan.addDebugChannel(kDebugImageDump, "image_dump", "Enable dumping of images to files");

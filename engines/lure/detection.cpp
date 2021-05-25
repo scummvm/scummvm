@@ -27,6 +27,7 @@
 #include "common/translation.h"
 
 #include "lure/detection.h"
+#include "lure/lure.h"
 
 static const PlainGameDescriptor lureGames[] = {
 	{"lure", "Lure of the Temptress"},
@@ -52,6 +53,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 };
 
 #endif
+
+static const DebugChannelDef debugFlagList[] = {
+	{Lure::kLureDebugScripts, "scripts", "Scripts debugging"},
+	{Lure::kLureDebugAnimations, "animations", "Animations debugging"},
+	{Lure::kLureDebugHotspots, "hotspots", "Hotspots debugging"},
+	{Lure::kLureDebugFights, "fights", "Fights debugging"},
+	{Lure::kLureDebugSounds, "sounds", "Sounds debugging"},
+	{Lure::kLureDebugStrings, "strings", "Strings debugging"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Lure {
 
@@ -260,6 +271,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Lure of the Temptress (C) Revolution";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

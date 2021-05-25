@@ -603,14 +603,14 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 		return stream;
 
 	Common::String fileName = Common::String::format("audio/%s", _audioFileNamesTable[index]);
-	Common::File f;
-	if (f.open(fileName)) {
+	Common::File *f = new Common::File();
+	if (f->open(fileName)) {
 		int size = 0, rate = 0;
 		uint8 flags = 0;
 		switch (type) {
 		case kAnimationSoundType8BitsRAW:
 		case kAnimationSoundType16BitsRAW:
-			size = f.size();
+			size = f->size();
 			rate = 22050;
 			flags = Audio::FLAG_UNSIGNED;
 			if (type == kAnimationSoundType16BitsRAW)
@@ -619,18 +619,21 @@ Audio::RewindableAudioStream *AnimationSequencePlayer::loadSound(int index, Anim
 			if (size != 0) {
 				uint8 *sampleData = (uint8 *)malloc(size);
 				if (sampleData) {
-					f.read(sampleData, size);
+					f->read(sampleData, size);
 					stream = Audio::makeRawStream(sampleData, size, rate, flags);
 				}
 			}
+			delete f;
 			break;
 		case kAnimationSoundTypeWAV:
-			stream = Audio::makeWAVStream(&f, DisposeAfterUse::NO);
+			stream = Audio::makeWAVStream(f, DisposeAfterUse::YES);
 			break;
 		default:
+			delete f;
 			break;
 		}
-
+	} else {
+		delete f;
 	}
 	return stream;
 }

@@ -24,6 +24,7 @@
 
 #include "engines/advancedDetector.h"
 #include "engines/myst3/detection.h"
+#include "engines/myst3/myst3.h"
 
 
 namespace Myst3 {
@@ -31,6 +32,14 @@ namespace Myst3 {
 static const PlainGameDescriptor myst3Games[] = {
 	{ "myst3", "Myst III Exile" },
 	{ 0, 0 }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Myst3::kDebugVariable, "Variable", "Track Variable Accesses"},
+	{Myst3::kDebugSaveLoad, "SaveLoad", "Track Save/Load Function"},
+	{Myst3::kDebugScript, "Script", "Track Script Execution"},
+	{Myst3::kDebugNode, "Node", "Track Node Changes"},
+	DEBUG_CHANNEL_END
 };
 
 static const char *directoryGlobs[] = {
@@ -207,6 +216,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Myst III Exile (C) Presto Studios";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

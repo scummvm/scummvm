@@ -577,7 +577,6 @@ void ResourcePatcher::patchResource(Resource &resource, const GameResourcePatch 
 		assert(newSize > 0);
 
 		target = new byte[newSize];
-		assert(target);
 
 		oldData = resource._data;
 		resource._data = target;

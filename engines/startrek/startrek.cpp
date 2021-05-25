@@ -62,12 +62,6 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	else if (getGameType() == GType_STJR)
 		error("Star Trek: Judgment Rites is not yet supported");
 
-	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
-	DebugMan.addDebugChannel(kDebugSavegame, "savegame", "Savegames");
-	DebugMan.addDebugChannel(kDebugSpace, "space", "Space and Pseudo-3D");
-	DebugMan.addDebugChannel(kDebugGeneral, "general", "General");
-
 	_gfx = nullptr;
 	_activeMenu = nullptr;
 	_sound = nullptr;

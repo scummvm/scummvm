@@ -28,11 +28,21 @@
 #include "common/file.h"
 
 #include "startrek/detection.h"
+#include "startrek/startrek.h"
 
 static const PlainGameDescriptor starTrekGames[] = {
 	{"st25", "Star Trek: 25th Anniversary"},
 	{"stjr", "Star Trek: Judgment Rites"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{StarTrek::kDebugSound, "sound", "Sound"},
+	{StarTrek::kDebugGraphics, "graphics", "Graphics"},
+	{StarTrek::kDebugSavegame, "savegame", "Savegames"},
+	{StarTrek::kDebugSpace, "space", "Space and Pseudo-3D"},
+	{StarTrek::kDebugGeneral, "general", "General"},
+	DEBUG_CHANNEL_END
 };
 
 
@@ -332,6 +342,10 @@ static const StarTrekGameDescription gameDescriptions[] = {
 class StarTrekMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	StarTrekMetaEngineDetection() : AdvancedMetaEngineDetection(StarTrek::gameDescriptions, sizeof(StarTrek::StarTrekGameDescription), starTrekGames) {
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const char *getEngineId() const override {

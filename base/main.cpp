@@ -133,7 +133,10 @@ static const Plugin *detectPlugin() {
 
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
-	PlainGameDescriptor game = plugin->get<MetaEngineDetection>().findGame(gameId.c_str());
+	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
+	DebugMan.debugFlagsClear();
+	DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
+	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
 		return 0;
@@ -191,6 +194,11 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		metaEngineDetection.registerDefaultSettings(target);
 	}
 
+	// clear the flag and add the global ones
+	DebugMan.debugFlagsClear();
+	// before we instantiate the engine, we register debug channels for it
+	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannels());
+
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
 	err = metaEngine.createInstance(&system, &engine);
@@ -224,6 +232,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	Common::String caption(ConfMan.get("description"));
 
 	if (caption.empty()) {
+		// here, we don't need to set the debug channels because it has been set earlier
 		PlainGameDescriptor game = metaEngineDetection.findGame(ConfMan.get("gameid").c_str());
 		if (game.description) {
 			caption = game.description;
@@ -509,6 +518,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	system.getAudioCDManager();
 	MusicManager::instance();
 	Common::DebugManager::instance();
+	// set the global debug flags as soon as we instantiate the debug mannager
+	DebugMan.debugFlagsClear();
 
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup

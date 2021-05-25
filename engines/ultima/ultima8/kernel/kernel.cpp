@@ -144,6 +144,8 @@ void Kernel::runProcesses() {
 		return;
 	}
 
+	int num_run = 0;
+
 	_currentProcess = _processes.begin();
 	while (_currentProcess != _processes.end()) {
 		Process *p = *_currentProcess;
@@ -158,6 +160,23 @@ void Kernel::runProcesses() {
 				(_paused || _tickNum % p->getTicksPerRun() == 0)) {
 			_runningProcess = p;
 			p->run();
+
+			num_run++;
+
+			//
+			// WORKAROUND:
+			// In Crusader: No Remorse, the HOVER near the end of Mission 3
+			// (Floor 1) gets stuck in a tight loop after moving to the
+			// destination (path egg frame 0).
+			//
+			// Something is probably not right about the switch trigger, but until
+			// we can work out what it is avoid the game totally hanging at this
+			// point.
+			//
+			if (num_run > 500) {
+				warning("Seem to be stuck in process loop - killing current process");
+				p->fail();
+			}
 
 			if (!_runningProcess)
 				return; // If this happens then the list was reset so leave NOW!

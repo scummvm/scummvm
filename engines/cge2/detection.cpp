@@ -28,6 +28,12 @@
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
 #include "cge2/fileio.h"
+#include "cge2/cge2.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{CGE2::kCGE2DebugOpcode, "opcode", "CGE2 opcode debug channel"},
+	DEBUG_CHANNEL_END
+};
 
 namespace CGE2 {
 
@@ -113,6 +119,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Sfinx (C) 1994-1997 Janusz B. Wisniewski and L.K. Avalon";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;

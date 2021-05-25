@@ -483,7 +483,7 @@ void OSystem_iOS7::setMouseCursor(const void *buf, uint w, uint h, int hotspotX,
 	       pixelFormat.rLoss, pixelFormat.gLoss, pixelFormat.bLoss, pixelFormat.aLoss,
 	       pixelFormat.rShift, pixelFormat.gShift, pixelFormat.bShift, pixelFormat.aShift);
 #endif
-	assert(pixelFormat.bytesPerPixel == 1 || pixelFormat.bytesPerPixel == 2);
+	assert(pixelFormat.bytesPerPixel == 1 || pixelFormat.bytesPerPixel == 2 || pixelFormat.bytesPerPixel == 4);
 
 	if (_mouseBuffer.w != w || _mouseBuffer.h != h || _mouseBuffer.format != pixelFormat || !_mouseBuffer.getPixels())
 		_mouseBuffer.create(w, h, pixelFormat);
@@ -545,17 +545,20 @@ void OSystem_iOS7::updateMouseTexture() {
 	} else {
 		if (crossBlit((byte *)mouseTexture.getPixels(), (const byte *)_mouseBuffer.getPixels(), mouseTexture.pitch,
 			          _mouseBuffer.pitch, _mouseBuffer.w, _mouseBuffer.h, mouseTexture.format, _mouseBuffer.format)) {
-			// Apply color keying since the original cursor had no alpha channel.
-			const uint16 *src = (const uint16 *)_mouseBuffer.getPixels();
+			// Apply color keying
+			const uint8 * src = (const uint8 *)_mouseBuffer.getPixels();
+			int srcBpp = _mouseBuffer.format.bytesPerPixel;
+
 			uint8 *dstRaw = (uint8 *)mouseTexture.getPixels();
 
 			for (uint y = 0; y < _mouseBuffer.h; ++y, dstRaw += mouseTexture.pitch) {
 				uint16 *dst = (uint16 *)dstRaw;
-				for (uint x = 0; x < _mouseBuffer.w; ++x, ++dst) {
-					if (*src++ == _mouseKeyColor)
+				for (uint x = 0; x < _mouseBuffer.w; ++x, ++dst, src += srcBpp) {
+					if (
+						(srcBpp == 2 && *((const uint16*)src) == _mouseKeyColor) ||
+						(srcBpp == 4 && *((const uint32*)src) == _mouseKeyColor)
+					)
 						*dst &= ~1;
-					else
-						*dst |= 1;
 				}
 			}
 		} else {

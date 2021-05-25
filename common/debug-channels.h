@@ -31,6 +31,7 @@
 #include "common/singleton.h"
 #include "common/str.h"
 
+#include "engines/metaengine.h"
 
 namespace Common {
 
@@ -143,6 +144,18 @@ public:
 	 * Test whether the given debug channel is enabled.
 	 */
 	bool isDebugChannelEnabled(uint32 channel, bool enforce = false);
+
+
+	/**
+	 * clear all the engine specified flags
+	 * only left the global debug flags
+	 */
+	void debugFlagsClear();
+
+	/**
+	 * register engine specified flags
+	 */
+	void debugFlagsRegister(const DebugChannelDef *channels);
 
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;

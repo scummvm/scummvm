@@ -82,7 +82,7 @@ bool ActorAnimProcess::init() {
 	_animAborted = false;
 	_attackedSomething = false;
 
-	_interpolate = ConfMan.getBool("interpolate");
+	_interpolate = Ultima8Engine::get_instance()->isInterpolationEnabled();
 
 	Actor *actor = getActor(_itemNum);
 	assert(actor);

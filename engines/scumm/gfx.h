@@ -470,7 +470,7 @@ public:
 // Helper class for FM-Towns output (required for specific hardware effects like switching graphics layers on and off).
 class TownsScreen {
 public:
-	TownsScreen(OSystem *system, int width, int height, Graphics::PixelFormat &format);
+	TownsScreen(OSystem *system);
 	~TownsScreen();
 
 	void setupLayer(int layer, int width, int height, int scaleW, int scaleH, int numCol, void *srcPal = 0);
@@ -491,17 +491,12 @@ public:
 	int getLayerScaleH(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleH : 0; }
 
 private:
-	void updateOutputBuffer();
-	void outputToScreen();
-	uint16 calc16BitColor(const uint8 *palEntry);
-
 	struct TownsScreenLayer {
 		uint8 *pixels;
 		uint8 *palette;
 		int pitch;
 		int width;
 		int height;
-		int modW;
 		int bpp;
 		int numCol;
 		int hScroll;
@@ -511,12 +506,16 @@ private:
 		bool enabled;
 		bool ready;
 
-		uint16 *bltInternX;
-		uint8 **bltInternY;
 		uint16 *bltTmpPal;
 	} _layers[2];
 
-	uint8 *_outBuffer;
+	template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool col4bit> void transferRect(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
+	template<typename dstPixelType> void updateScreenBuffer();
+
+#ifdef USE_RGB_COLOR
+	void update16BitPalette();
+	uint16 calc16BitColor(const uint8 *palEntry);
+#endif
 
 	int _height;
 	int _width;

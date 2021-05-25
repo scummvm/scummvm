@@ -27,6 +27,7 @@
 #include "common/translation.h"
 
 #include "cine/detection.h"
+#include "cine/cine.h"
 
 static const PlainGameDescriptor cineGames[] = {
 	{"fw", "Future Wars"},
@@ -35,6 +36,14 @@ static const PlainGameDescriptor cineGames[] = {
 };
 
 #include "cine/detection_tables.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Cine::kCineDebugScript,    "Script",    "Script debug level"},
+	{Cine::kCineDebugPart,      "Part",      "Part debug level"},
+	{Cine::kCineDebugSound,     "Sound",     "Sound debug level"},
+	{Cine::kCineDebugCollision, "Collision", "Collision debug level"},
+	DEBUG_CHANNEL_END
+};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -75,6 +84,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Cinematique evo 1 (C) Delphine Software";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

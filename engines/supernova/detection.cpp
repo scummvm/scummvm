@@ -25,8 +25,14 @@
 #include "common/gui_options.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "supernova/supernova.h"
 
 #define GAMEOPTION_IMPROVED GUIO_GAMEOPTIONS1
+
+static const DebugChannelDef debugFlagList[] = {
+	{Supernova::kDebugGeneral, "general", "Supernova general debug channel"},
+	DEBUG_CHANNEL_END
+};
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
@@ -116,6 +122,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Mission Supernova (C) 1994 Thomas and Steffen Dingel";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

@@ -110,11 +110,6 @@ static const byte _basisPalette[768] = {
 
 LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd) : Engine(syst), _gameDescription(gd) {
 	_system = syst;
-	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugScript, "Script", "Script debug level");
-	DebugMan.addDebugChannel(kDebugSound,  "Sound",  "Sound debug level");
-	DebugMan.addDebugChannel(kDebugEngineTBC, "EngineTBC", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugScriptTBC, "ScriptTBC", "Script debug level");
 
 	setDebugger(new LilliputConsole(this));
 	_rnd = 0;

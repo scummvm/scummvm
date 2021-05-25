@@ -112,6 +112,13 @@ static void fSyncSound(ArgArray args) {
 
 	if (s != "\"\"") {
 		g_private->playSound(s, 1, true, false);
+		while (g_private->isSoundActive())
+			g_private->ignoreEvents();
+
+		uint32 i = 100;
+		while(i--) // one second extra
+			g_private->ignoreEvents();
+
 	}
 }
 

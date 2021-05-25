@@ -205,7 +205,6 @@ public:
 	void setInitialFlags();
 	void setNewGameState();
 
-	void initDebugChannels();
 	void reset();
 	void resetInternals();
 	void resetGui();

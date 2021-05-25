@@ -25,6 +25,7 @@
 #include "base/plugins.h"
 
 #include "tsage/detection.h"
+#include "tsage/tsage.h"
 
 static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "ringworld", "Ringworld: Revenge of the Patriarch" },
@@ -32,6 +33,11 @@ static const PlainGameDescriptor tSageGameTitles[] = {
 	{ "ringworld2", "Return to Ringworld" },
 	{ "sherlock-logo", "The Lost Files of Sherlock Holmes (Logo)" },
 	{ 0, 0 }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{TsAGE::kRingDebugScripts, "scripts", "Scripts debugging"},
+	DEBUG_CHANNEL_END
 };
 
 #include "tsage/detection_tables.h"
@@ -51,6 +57,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "(C) Tsunami Media";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

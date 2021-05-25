@@ -376,6 +376,10 @@ public:
 		_hasCheated = true;
 	}
 	Gump *getMenuGump() const;
+
+	bool isInterpolationEnabled() const {
+		return _interpolate;
+	}
 };
 
 } // End of namespace Ultima8

@@ -69,12 +69,6 @@ TitanicEngine::TitanicEngine(OSystem *syst, const TitanicGameDescription *gameDe
 	_script = nullptr;
 	CMusicRoom::_musicHandler = nullptr;
 	_loadSaveSlot = -1;
-
-	// Set up debug channels
-	DebugMan.addDebugChannel(kDebugCore, "core", "Core engine debug level");
-	DebugMan.addDebugChannel(kDebugScripts, "scripts", "Game scripts");
-	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics handling");
-	DebugMan.addDebugChannel(kDebugStarfield, "starfield", "Starfield logic");
 }
 
 TitanicEngine::~TitanicEngine() {

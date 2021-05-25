@@ -63,13 +63,6 @@ StarkEngine::StarkEngine(OSystem *syst, const ADGameDescription *gameDesc) :
 		_frameLimiter(nullptr),
 		_gameDescription(gameDesc),
 		_lastClickTime(0) {
-	// Add the available debug channels
-	DebugMan.addDebugChannel(kDebugArchive, "Archive", "Debug the archive loading");
-	DebugMan.addDebugChannel(kDebugXMG, "XMG", "Debug the loading of XMG images");
-	DebugMan.addDebugChannel(kDebugXRC, "XRC", "Debug the loading of XRC resource trees");
-	DebugMan.addDebugChannel(kDebugModding, "Modding", "Debug the loading of modded assets");
-	DebugMan.addDebugChannel(kDebugAnimation, "Animation", "Debug the animation changes");
-	DebugMan.addDebugChannel(kDebugUnknown, "Unknown", "Debug unknown values on the data");
 
 	addModsToSearchPath();
 }

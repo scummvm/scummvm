@@ -24,6 +24,8 @@
 
 #include "engines/advancedDetector.h"
 
+#include "pink/pink.h"
+
 static const PlainGameDescriptor pinkGames[] = {
 	{"peril", "The Pink Panther: Passport to Peril"},
 	{"pokus", "The Pink Panther: Hokus Pokus Pink"},
@@ -35,6 +37,15 @@ static const PlainGameDescriptor pinkGames[] = {
 static const char *directoryGlobs[] = {
 	"install",
 	nullptr
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Pink::kPinkDebugGeneral, "general", "General issues"},
+	{Pink::kPinkDebugLoadingResources, "loading_resources", "Loading resources data"},
+	{Pink::kPinkDebugLoadingObjects, "loading_objects", "Serializing objects from Orb"},
+	{Pink::kPinkDebugScripts, "scripts", "Sequences"},
+	{Pink::kPinkDebugActions, "actions", "Actions"},
+	DEBUG_CHANNEL_END
 };
 
 
@@ -56,6 +67,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Pink Panther (C) Wanderlust Interactive";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

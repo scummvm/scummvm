@@ -768,7 +768,6 @@ int MidiDriver_CMS::open() {
 
 	_rate = _mixer->getOutputRate();
 	_cms = new CMSEmulator(_rate);
-	assert(_cms);
 
 	for (uint i = 0; i < ARRAYSIZE(_channel); ++i)
 		_channel[i] = Channel();

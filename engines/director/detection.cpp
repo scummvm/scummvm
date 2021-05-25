@@ -27,6 +27,7 @@
 #include "common/file.h"
 
 #include "director/detection.h"
+#include "director/director.h"
 
 static const PlainGameDescriptor directorGames[] = {
 	{ "director",			"Macromedia Director Game" },
@@ -186,6 +187,27 @@ static const char *directoryGlobs[] = {
 	0
 };
 
+static const DebugChannelDef debugFlagList[] = {
+	{Director::kDebugCompile, "compile", "Lingo Compilation"},
+	{Director::kDebugCompileOnly, "compileonly", "Skip Lingo code execution"},
+	{Director::kDebugDesktop, "desktop", "Show the Classic Mac desktop"},
+	{Director::kDebugEndVideo, "endvideo", "Fake that the end of video is reached setting"},
+	{Director::kDebugEvents, "events", "Event processing"},
+	{Director::kDebugFast, "fast", "Fast (no delay) playback"},
+	{Director::kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames"},
+	{Director::kDebugImages, "images", "Image drawing"},
+	{Director::kDebugLingoExec, "lingoexec", "Lingo Execution"},
+	{Director::kDebugLoading, "loading", "Loading"},
+	{Director::kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode"},
+	{Director::kDebugNoLoop, "noloop", "Do not loop the playback"},
+	{Director::kDebugParse, "parse", "Lingo code parsing"},
+	{Director::kDebugPreprocess, "preprocess", "Lingo preprocessing"},
+	{Director::kDebugScreenshot, "screenshot", "screenshot each frame"},
+	{Director::kDebugSlow, "slow", "Slow playback"},
+	{Director::kDebugText, "text", "Text rendering"},
+	DEBUG_CHANNEL_END
+};
+
 class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
@@ -203,6 +225,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Macromedia Director (C) 1990-1995 Macromedia";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;

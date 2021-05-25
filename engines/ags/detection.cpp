@@ -164,6 +164,15 @@ bool AGSOptionsWidget::save() {
 
 } // namespace AGS3
 
+const DebugChannelDef AGSMetaEngineDetection::debugFlagList[] = {
+	{AGS::kDebugGraphics, "Graphics", "Graphics debug level"},
+	{AGS::kDebugPath, "Path", "Pathfinding debug level"},
+	{AGS::kDebugFilePath, "FilePath", "File path debug level"},
+	{AGS::kDebugScan, "Scan", "Scan for unrecognised games"},
+	{AGS::kDebugScript, "Script", "Enable debug script dump"},
+	DEBUG_CHANNEL_END
+};
+
 AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS,
 	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
 }

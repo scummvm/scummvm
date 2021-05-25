@@ -85,7 +85,7 @@ bool PrinceEngine::loadSample(uint32 sampleSlot, const Common::String &streamNam
 		delete sampleStream;
 		error("Can't load sample %s to slot %d", normalizedPath.c_str(), sampleSlot);
 	}
-	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream->readStream(sampleStream->size()), DisposeAfterUse::YES);
 	delete sampleStream;
 	return true;
 }
@@ -141,7 +141,7 @@ bool PrinceEngine::loadVoice(uint32 slot, uint32 sampleSlot, const Common::Strin
 
 	debugEngine("SetVoice slot %d time %04x", slot, id);
 	sampleStream->seek(SEEK_SET);
-	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream, DisposeAfterUse::NO);
+	_audioStream[sampleSlot] = Audio::makeWAVStream(sampleStream->readStream(sampleStream->size()), DisposeAfterUse::YES);
 	delete sampleStream;
 	return true;
 }

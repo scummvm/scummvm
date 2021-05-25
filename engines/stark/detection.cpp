@@ -24,11 +24,23 @@
 
 #include "common/translation.h"
 
+#include "stark/debug.h"
+
 namespace Stark {
 
 static const PlainGameDescriptor starkGames[] = {
 	{ "tlj", "The Longest Journey" },
 	{ nullptr, nullptr }
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{kDebugArchive, "Archive", "Debug the archive loading"},
+	{kDebugXMG, "XMG", "Debug the loading of XMG images"},
+	{kDebugXRC, "XRC", "Debug the loading of XRC resource trees"},
+	{kDebugModding, "Modding", "Debug the loading of modded assets"},
+	{kDebugAnimation, "Animation", "Debug the animation changes"},
+	{kDebugUnknown, "Unknown", "Debug unknown values on the data"},
+	DEBUG_CHANNEL_END
 };
 
 static const ADGameDescription gameDescriptions[] = {
@@ -390,6 +402,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "(C) Funcom";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

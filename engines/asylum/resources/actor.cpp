@@ -2202,8 +2202,8 @@ void Actor::updateStatusEnabled() {
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 
 	if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
-		// All actors except Crow
-		if (strcmp((char *)&_name, "Crow")) {
+		// All actors except Crow and Armed Max
+		if (strcmp((char *)&_name, "Crow") && strcmp((char *)_name, "Armed Max")) {
 			if (_vm->getRandom(100) < 50
 			 && (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			 && isDefaultDirection(10))

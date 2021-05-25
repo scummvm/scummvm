@@ -102,20 +102,6 @@ struct dbgChannelDesc {
 };
 
 
-// Debug channel lookup table for Debugger console
-static const dbgChannelDesc debugChannels[] = {
-	{"SCRIPTS", "Track script execution", DEBUG_SCRIPTS},
-	{"OPCODES", "Track opcode execution", DEBUG_OPCODES},
-	{"IMUSE", "Track iMUSE events", DEBUG_IMUSE},
-	{"RESOURCE", "Track resource loading/management", DEBUG_RESOURCE},
-	{"VARS", "Track variable changes", DEBUG_VARS},
-	{"ACTORS", "Actor-related debug", DEBUG_ACTORS},
-	{"SOUND", "Sound related debug", DEBUG_SOUND},
-	{"INSANE", "Track INSANE", DEBUG_INSANE},
-	{"SMUSH", "Track SMUSH", DEBUG_SMUSH},
-	{"MOONBASEAI", "Track Moonbase AI", DEBUG_MOONBASE_AI}
-};
-
 ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	: Engine(syst),
 	  _game(dr.game),
@@ -618,10 +604,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
 	}
-
-	// Add debug levels
-	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
-		DebugMan.addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
@@ -1675,7 +1657,7 @@ void ScummEngine::resetScumm() {
 		delete _townsScreen;
 		_scrollRequest = _scrollDeltaAdjust = 0;
 		_scrollDestOffset = _scrollTimer = 0;
-		_townsScreen = new TownsScreen(_system, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, _outputPixelFormat);
+		_townsScreen = new TownsScreen(_system);
 		_townsScreen->setupLayer(0, 512, _screenHeight, _textSurfaceMultiplier, _textSurfaceMultiplier, (_outputPixelFormat.bytesPerPixel == 2) ? 32767 : 256);
 		_townsScreen->setupLayer(1, _screenWidth * _textSurfaceMultiplier, _screenHeight * _textSurfaceMultiplier, 1, 1, 16, _textPalette);
 	}

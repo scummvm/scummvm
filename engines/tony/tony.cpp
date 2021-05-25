@@ -45,10 +45,6 @@ TonyEngine::TonyEngine(OSystem *syst, const TonyGameDescription *gameDesc) : Eng
 
 	// Set the up the debugger
 	setDebugger(new Debugger());
-	DebugMan.addDebugChannel(kTonyDebugAnimations, "animations", "Animations debugging");
-	DebugMan.addDebugChannel(kTonyDebugActions, "actions", "Actions debugging");
-	DebugMan.addDebugChannel(kTonyDebugSound, "sound", "Sound debugging");
-	DebugMan.addDebugChannel(kTonyDebugMusic, "music", "Music debugging");
 
 	// Add folders to the search directory list
 	const Common::FSNode gameDataDir(ConfMan.get("path"));

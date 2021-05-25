@@ -90,7 +90,7 @@ void Sound::playMusic(ResourceId resourceId, int32 volume) {
 
 	// Check if music is already playing
 	if (_mixer->isSoundHandleActive(_musicHandle))
-		return;
+		stopMusic();
 
 	if (!isValidSoundResource(resourceId))
 		return;

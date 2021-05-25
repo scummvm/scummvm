@@ -57,16 +57,6 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_screenStates(nullptr), _numStates(0), _score(0), _maxscore(0), _lastTime(0), _curTime(0), _episode(nullptr)
 {
 	_system = syst;
-	DebugMan.addDebugChannel(kDebugSchedule, "Schedule", "Script Schedule debug level");
-	DebugMan.addDebugChannel(kDebugEngine, "Engine", "Engine debug level");
-	DebugMan.addDebugChannel(kDebugDisplay, "Display", "Display debug level");
-	DebugMan.addDebugChannel(kDebugMouse, "Mouse", "Mouse debug level");
-	DebugMan.addDebugChannel(kDebugParser, "Parser", "Parser debug level");
-	DebugMan.addDebugChannel(kDebugFile, "File", "File IO debug level");
-	DebugMan.addDebugChannel(kDebugRoute, "Route", "Route debug level");
-	DebugMan.addDebugChannel(kDebugInventory, "Inventory", "Inventory debug level");
-	DebugMan.addDebugChannel(kDebugObject, "Object", "Object debug level");
-	DebugMan.addDebugChannel(kDebugMusic, "Music", "Music debug level");
 
 	setDebugger(new HugoConsole(this));
 	_rnd = 0;

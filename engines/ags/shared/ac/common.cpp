@@ -38,7 +38,7 @@ void quitprintf(const char *fmt, ...) {
 	// WORKAROUND: In ScummVM we have to make this an error, because
 	// too many places calling it presume it doesn't return,
 	// and will throw a wobbly if does
-	error(text);
+	error("%s", (const char *)text);
 }
 
 } // namespace AGS3

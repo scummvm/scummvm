@@ -22,6 +22,14 @@
 
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+#include "private/private.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Private::kPrivateDebugFunction, "functions", "Function execution debug channel"},
+	{Private::kPrivateDebugCode, "code", "Code execution debug channel"},
+	{Private::kPrivateDebugScript, "script", "Script execution debug channel"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Private {
 static const PlainGameDescriptor privateGames[] = {
@@ -178,6 +186,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Copyright (C) Brooklyn Multimedia";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 };
 

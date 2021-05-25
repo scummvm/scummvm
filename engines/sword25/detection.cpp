@@ -26,10 +26,17 @@
 
 #include "sword25/detection.h"
 #include "sword25/detection_tables.h"
+#include "sword25/sword25.h"
 
 static const PlainGameDescriptor sword25Game[] = {
 	{"sword25", "Broken Sword 2.5"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Sword25::kDebugScript, "Script", "Script debug level"},
+	{Sword25::kDebugSound, "Sound", "Sound debug level"},
+	DEBUG_CHANNEL_END
 };
 
 static const char *directoryGlobs[] = {
@@ -62,6 +69,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Broken Sword 2.5 (C) Malte Thiesen, Daniel Queteschiner and Michael Elsdorfer";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;

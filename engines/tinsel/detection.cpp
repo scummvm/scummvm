@@ -27,12 +27,21 @@
 #include "common/md5.h"
 
 #include "tinsel/detection.h"
+#include "tinsel/tinsel.h"
 
 static const PlainGameDescriptor tinselGames[] = {
 	{"dw", "Discworld"},
 	{"dw2", "Discworld 2: Missing Presumed ...!?"},
 	{"noir", "Discworld Noir"},
 	{0, 0}
+};
+
+static const DebugChannelDef debugFlagList[] = {
+	{Tinsel::kTinselDebugAnimations, "animations", "Animations debugging"},
+	{Tinsel::kTinselDebugActions, "actions", "Actions debugging"},
+	{Tinsel::kTinselDebugSound, "sound", "Sound debugging"},
+	{Tinsel::kTinselDebugMusic, "music", "Music debugging"},
+	DEBUG_CHANNEL_END
 };
 
 #include "tinsel/detection_tables.h"
@@ -52,6 +61,10 @@ public:
 
 	const char *getOriginalCopyright() const override {
 		return "Tinsel (C) Psygnosis";
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;

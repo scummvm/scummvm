@@ -628,19 +628,14 @@ void Cast::loadSoundCasts() {
 
 		Common::SeekableReadStreamEndian *sndData = NULL;
 
-		switch (tag) {
-		case MKTAG('S', 'N', 'D', ' '):
-			if (_castArchive->hasResource(MKTAG('S', 'N', 'D', ' '), sndId)) {
-				debugC(2, kDebugLoading, "****** Loading 'SND ' id: %d", sndId);
-				sndData = _castArchive->getResource(MKTAG('S', 'N', 'D', ' '), sndId);
-			}
-			break;
-		case MKTAG('s', 'n', 'd', ' '):
-			if (_castArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId)) {
-				debugC(2, kDebugLoading, "****** Loading 'snd ' id: %d", sndId);
-				sndData = _castArchive->getResource(MKTAG('s', 'n', 'd', ' '), sndId);
-			}
-			break;
+		if (!_castArchive->hasResource(tag, sndId)) {
+			if (_castArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId))
+				tag = MKTAG('s', 'n', 'd', ' ');
+		}
+
+		if (_castArchive->hasResource(tag, sndId)) {
+			debugC(2, kDebugLoading, "****** Loading '%s' id: %d", tag2str(tag), sndId);
+			sndData = _castArchive->getResource(tag, sndId);
 		}
 
 		if (sndData != NULL) {
@@ -1199,7 +1194,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	}
 
 	// For SoundCastMember, read the flags in the CastInfo
-	if ((_vm->getVersion() < 500) && (member->_type == kCastSound)) {
+	if (_vm->getVersion() >= 400 && _vm->getVersion() < 500 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
 	}
 

@@ -99,7 +99,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 		_MSPart = 0;
 
 	_improved = ConfMan.getBool("improved");
-	DebugMan.addDebugChannel(kDebugGeneral, "general", "Supernova general debug channel");
 }
 
 SupernovaEngine::~SupernovaEngine() {

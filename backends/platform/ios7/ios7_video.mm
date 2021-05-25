@@ -193,9 +193,6 @@ uint getSizeNextPOT(uint size) {
 - (void)createOverlaySurface {
 	uint overlayWidth = (uint) MAX(_renderBufferWidth, _renderBufferHeight);
 	uint overlayHeight = (uint) MIN(_renderBufferWidth, _renderBufferHeight);
-	float hdpi_scaler = [UIScreen mainScreen].scale;
-	overlayWidth = (uint)(overlayWidth / hdpi_scaler);
-	overlayHeight = (uint)(overlayHeight / hdpi_scaler);
 
 	_videoContext.overlayWidth = overlayWidth;
 	_videoContext.overlayHeight = overlayHeight;

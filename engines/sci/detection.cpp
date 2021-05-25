@@ -33,6 +33,37 @@
 
 #include "sci/detection.h"
 #include "sci/graphics/helpers_detection_enums.h"
+#include "sci/sci.h"
+
+static const DebugChannelDef debugFlagList[] = {
+	{Sci::kDebugLevelError, "Error", "Script error debugging"},
+	{Sci::kDebugLevelNodes, "Lists", "Lists and nodes debugging"},
+	{Sci::kDebugLevelGraphics, "Graphics", "Graphics debugging"},
+	{Sci::kDebugLevelStrings, "Strings", "Strings debugging"},
+	{Sci::kDebugLevelMemory, "Memory", "Memory debugging"},
+	{Sci::kDebugLevelFuncCheck, "Func", "Function parameter debugging"},
+	{Sci::kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging"},
+	{Sci::kDebugLevelSound, "Sound", "Sound debugging"},
+	{Sci::kDebugLevelBaseSetter, "Base", "Base Setter debugging"},
+	{Sci::kDebugLevelParser, "Parser", "Parser debugging"},
+	{Sci::kDebugLevelSaid, "Said", "Said specs debugging"},
+	{Sci::kDebugLevelFile, "File", "File I/O debugging"},
+	{Sci::kDebugLevelTime, "Time", "Time debugging"},
+	{Sci::kDebugLevelRoom, "Room", "Room number debugging"},
+	{Sci::kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging"},
+	{Sci::kDebugLevelDclInflate, "DCL", "DCL inflate debugging"},
+	{Sci::kDebugLevelVM, "VM", "VM debugging"},
+	{Sci::kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded"},
+	{Sci::kDebugLevelPatcher, "Patcher", "Notifies when scripts or resources are patched"},
+	{Sci::kDebugLevelWorkarounds, "Workarounds", "Notifies when workarounds are triggered"},
+	{Sci::kDebugLevelVideo, "Video", "Video (SEQ, VMD, RBT) debugging"},
+	{Sci::kDebugLevelGame, "Game", "Debug calls from game scripts"},
+	{Sci::kDebugLevelGC, "GC", "Garbage Collector debugging"},
+	{Sci::kDebugLevelResMan, "ResMan", "Resource manager debugging"},
+	{Sci::kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game"},
+	{Sci::kDebugLevelDebugMode, "DebugMode", "Enable game debug mode at start of game"},
+	DEBUG_CHANNEL_END
+};
 
 namespace Sci {
 
@@ -432,6 +463,10 @@ public:
 		_maxScanDepth = 3;
 		_directoryGlobs = directoryGlobs;
 		_matchFullPaths = true;
+	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
 	}
 
 	const char *getEngineId() const override {
