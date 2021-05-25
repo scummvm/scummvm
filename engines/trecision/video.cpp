@@ -152,7 +152,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 	bool skipVideo = false;
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
-	_vm->_drawText.text.clear();
+	_vm->_drawText._text.clear();
 
 	smkDecoder->start();
 
@@ -212,7 +212,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 		return;
 
 	_vm->_dialogMgr->dialogHandler(frameNum);
-	if (_vm->_drawText.text.empty())
+	if (_vm->_drawText._text.empty())
 		return;
 
 	// Subtitles can be placed in different coordinates in the video,
@@ -220,7 +220,7 @@ void AnimManager::drawFrameSubtitles(Graphics::Surface *surface, int frameNum) {
 	// fixed coordinates
 	_vm->_drawText._rect = Common::Rect(20, 380 - TOP, MAXX - 40 + 20, _vm->_drawText.calcHeight(_vm) + (380 - TOP));
 	_vm->_drawText._subtitleRect = Common::Rect(MAXX, MAXY);
-	_vm->_drawText.scol = MASKCOL;
+	_vm->_drawText._shadowCol = MASKCOL;
 	_vm->_drawText.draw(_vm, surface);
 }
 

@@ -135,26 +135,18 @@ struct SScript {
 	uint8 _flag;         // 0 - BREAKABLE - If it may be stopped by a mouse click
 };                       // 1 - DIALOGEXITNOANIM - If the script is launched from a dialogue at the last choice it exits the dialogue without link anim and by default
 
-struct StackText {
-	uint16 x;
-	uint16 y;
-	uint16 tcol, scol;
-	char text[256];
-	bool clear;
-};
-
 class TrecisionEngine;
 
 struct SDText {
 	Common::Rect _rect;
 	Common::Rect _subtitleRect;
-	uint16 tcol;
-	uint16 scol;
-	Common::String text;
+	uint16 _textCol;
+	uint16 _shadowCol;
+	Common::String _text;
 	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 
 	void set(SDText org);
-	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 tcol, uint16 scol, const Common::String &pText);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text);
 
 	void draw(TrecisionEngine *vm, Graphics::Surface *externalSurface = nullptr);
 	uint16 calcHeight(TrecisionEngine *vm);
