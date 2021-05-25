@@ -31,10 +31,10 @@ struct SDObj {
 private:
 	TrecisionEngine *_vm;
 public:
-	Common::Rect rect;
-	Common::Rect l;
-	int objIndex;
-	bool drawMask;
+	Common::Rect _rect;
+	Common::Rect _objRect;
+	int _objIndex;
+	bool _drawMask;
 
 	void draw();
 	void erase();
