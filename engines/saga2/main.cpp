@@ -81,10 +81,10 @@ extern char             commandLineHelp[];
  * ===================================================================== */
 
 // command line options
-bool cliWriteStatusF    = FALSE;
-bool cliScriptDebug     = FALSE;
-bool cliSpeechText      = FALSE;
-bool cliDrawInv         = FALSE;
+bool cliWriteStatusF    = false;
+bool cliScriptDebug     = false;
+bool cliSpeechText      = false;
+bool cliDrawInv         = false;
 uint32 cliMemory        = 0;
 
 //  User-interface variables
@@ -96,14 +96,13 @@ gMousePointer           pointer(mainPort);   // the actual pointer
 BackWindow              *mainWindow;            // main window...
 
 //  Memory allocation heap
-RHeapPtr                gameHeap;
 long                    memorySize = 8000000L;
 
 //  Global game state
-bool                    gameRunning = TRUE;     // true while game running
-bool                    allPlayerActorsDead = FALSE;
-//bool                  graphicsInit = FALSE;   // TRUE if graphics init OK
-bool                    checkExit = FALSE;      // true while game running
+bool                    gameRunning = true;     // true while game running
+bool                    allPlayerActorsDead = false;
+//bool                  graphicsInit = false;   // true if graphics init OK
+bool                    checkExit = false;      // true while game running
 int                     gameKiller = 0;         // will contain the exception that ends the game
 
 //  Resource files
@@ -126,10 +125,10 @@ uint16      writeStatusFY = 354;
  * ===================================================================== */
 
 // game states
-static bool             cleanExit = TRUE;
-bool                    gameInitialized = FALSE;        // true when game initialized
-bool                    fullInitialized = FALSE;
-bool                    delayReDraw = FALSE;
+static bool             cleanExit = true;
+bool                    gameInitialized = false;        // true when game initialized
+bool                    fullInitialized = false;
+bool                    delayReDraw = false;
 
 // main heap
 static uint8            *heapMemory;
@@ -205,7 +204,7 @@ void updateMouse(void);
 void WriteStatusF2(int16 line, char *msg, ...);
 bool initUserDialog(void);
 void cleanupUserDialog(void);
-int16 OptionsDialog(bool disableSaveResume = FALSE);
+int16 OptionsDialog(bool disableSaveResume = false);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]);
 void displayUpdate(void);
@@ -221,13 +220,7 @@ void updatePerfStats(void);
 void termFaultHandler(void);
 
 MAIN_RETURN_TYPE main_saga2() {
-	gameInitialized = FALSE;
-
-#if DEBUG
-	SureLogMessager slm = SureLogMessager("Timing", "TIMING.LOG", (int16) 0, (SureLogMessager::logOpenFlags)(SureLogMessager::logOpenAppend | SureLogMessager::logTimeStamp));
-	slm("Program Entry");
-#endif
-
+	gameInitialized = false;
 
 	mainDisable();
 	initCleanup();
@@ -240,40 +233,18 @@ MAIN_RETURN_TYPE main_saga2() {
 	gameInitialized = initializeGame();
 	cleanExit = gameInitialized;
 
-#if DEBUG
-	slm("Initialization Complete");
-#endif
 	if (gameInitialized) {
-
-		// Fault handling wrapper
-#if DEBUG
-#else
 		OSExceptBlk {
-#endif
-
-
-		mainLoop(cleanExit, 0, NULL);
-
-
-#if DEBUG
-#else
+			mainLoop(cleanExit, 0, NULL);
+		}
+		OSExcepTrap {
+			cleanExit = false;
+			OSExceptHnd;
+		}
 	}
-	OSExcepTrap {
-		cleanExit = FALSE;
-		OSExceptHnd;
-	}
-#endif
-	}
-#if DEBUG
-	slm("Shutting Down");
-#endif
 
 	shutdownGame();
-	gameInitialized = FALSE;
-
-#if DEBUG
-	slm("Program Exit");
-#endif
+	gameInitialized = false;
 
 	if (cleanExit)
 		exitMain;
@@ -292,8 +263,8 @@ static void mainLoop(bool &cleanExit, int argc, char *argv[]) {
 	if (displayEnabled())
 		displayUpdate();
 	checkRestartGame(exeFile);
-	fullInitialized = TRUE;
-	EventLoop(gameRunning, FALSE);
+	fullInitialized = true;
+	EventLoop(gameRunning, false);
 }
 
 /********************************************************************/
@@ -332,7 +303,7 @@ void cleanupGame(void) {
 /*                                                                  */
 /********************************************************************/
 
-void processEventLoop(bool updateScreen = TRUE);
+void processEventLoop(bool updateScreen = true);
 
 //-----------------------------------------------------------------------
 //	Main loop
@@ -357,7 +328,7 @@ void processEventLoop(bool updateScreen) {
 
 	statusshow("checking for exceptions");
 	if (FatalErrorFlag()) {
-		//gameRunning=FALSE;
+		//gameRunning=false;
 		endGame();
 		return;
 	}
@@ -365,7 +336,7 @@ void processEventLoop(bool updateScreen) {
 	statusshow("checking user abort");
 	breakEventLoop();
 	if (checkExit && verifyUserExit()) { //( SystemError::SystemErrorRetry(cpUserAbort,"")!=0 ) )
-		//gameRunning=FALSE;
+		//gameRunning=false;
 		endGame();
 		return;
 	}
@@ -407,14 +378,9 @@ void processEventLoop(bool updateScreen) {
 	}
 
 	if (allPlayerActorsDead) {
-		allPlayerActorsDead = FALSE;
+		allPlayerActorsDead = false;
 		setLostroMode();
 	}
-
-#if DEBUG
-	statusshow("mem integrity update");
-	RMemIntegrity();
-#endif
 }
 
 void displayUpdate(void) {
@@ -506,7 +472,7 @@ bool readCommandLine(int argc, char *argv[]) {
 	//SystemError::useHandler(&cmdLineFatal);
 	parseCommandLine(argc, argv);
 
-	return TRUE;
+	return true;
 
 	//SystemError::useHandler(NULL);
 }
@@ -689,7 +655,7 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 	}
 
 	//  Allocate the buffer
-	buffer = (uint8 *)RNewPtr(size, NULL, desc);
+	buffer = (uint8 *)malloc(size);
 	con->read(buffer, size);
 	con->rest();
 
@@ -749,9 +715,9 @@ static bool openResource(
 
 	if (hr == NULL || !hr->_valid) {
 		error("openResource: %s: %d", fileName, errID);
-//		return FALSE;
+//		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -781,9 +747,9 @@ bool openResources(void) {
 	    openResource(soundResFile,      globalConfig.soundResfilePath,
 	                 "..\\sound\\",    SOUND_RESFILE,
 	                 "Sound resource file",   cpResFileMissing)) {
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 
 }
 
@@ -844,14 +810,14 @@ struct GlobalsArchive {
 void initGlobals(void) {
 	objectIndex = 0;
 	actorIndex = 0;
-	brotherBandingEnabled = TRUE;
-	centerActorIndicatorEnabled = FALSE;
-	interruptableMotionsPaused = FALSE;
-	objectStatesPaused = FALSE;
-	actorStatesPaused = FALSE;
-	actorTasksPaused = FALSE;
-	combatBehaviorEnabled = FALSE;
-	backgroundSimulationPaused = FALSE;
+	brotherBandingEnabled = true;
+	centerActorIndicatorEnabled = false;
+	interruptableMotionsPaused = false;
+	objectStatesPaused = false;
+	actorStatesPaused = false;
+	actorTasksPaused = false;
+	combatBehaviorEnabled = false;
+	backgroundSimulationPaused = false;
 }
 
 //-----------------------------------------------------------------------
@@ -908,10 +874,10 @@ void loadGlobals(SaveFileReader &saveGame) {
 
 bool verifyUserExit(void) {
 	if (!gameRunning)
-		return TRUE;
+		return true;
 	if (SystemError::SystemErrorRetry(cpUserAbort, "") != 0)
-		return TRUE;
-	return FALSE;
+		return true;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -932,29 +898,13 @@ bool initGUIMessagers(void) {
 		sprintf(debItem, "Status%1.1d", i);
 		Status[i] = NEW_MSGR StatusLineMessager(debItem, i, &mainPort);
 		if (Status[i] == NULL)
-			return FALSE;
+			return false;
 		sprintf(debItem, "Status%2.2d", i + 10);
 		Status2[i] = NEW_MSGR StatusLineMessager(debItem, i, &mainPort, 468, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
 		ratemess[j] = NEW_MSGR StatusLineMessager("FrameRates", j, &mainPort, 5, 450 + (11 * j), 500);
-#if DEBUG
-	startLogging();
-
-	//  REM: At this point we can show error messages on-screen
-
-	WriteStatusF(0, "-0-");
-	WriteStatusF(1, "-1-");
-	WriteStatusF(2, "-2-");
-	WriteStatusF(3, "-3-");
-	WriteStatusF(4, "-4-");
-	WriteStatusF(5, "-5-");
-	WriteStatusF(6, "-6-");
-	WriteStatusF(7, "-7-");
-	WriteStatusF(8, "-8-");
-	WriteStatusF(9, "-9-");
-#endif
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -969,9 +919,6 @@ void cleanupMessagers(void) {
 //	cleanup visual messagers
 
 void cleanupGUIMessagers(void) {
-#if DEBUG
-	stopLogging();
-#endif
 	for (int i = 0; i < 10; i++) {
 		if (Status[i]) delete Status[i];
 		Status[i] = NULL;
@@ -1058,7 +1005,7 @@ void memoryFatal(char *msg, ...) {
 	if (wdm) delete wdm;
 	if (mm) delete mm;
 	RShowMem();
-	//gameRunning=FALSE;
+	//gameRunning=false;
 	endGame();
 }
 
@@ -1116,20 +1063,8 @@ void oldUpdatePerfStats(void) {
 			lastL = l;
 		}
 	}
-
-#if DEBUG
-	if (gameHeap->free != prevMem) {
-		prevMem = gameHeap->free;
-		WriteStatusF(0, "Mem Free: %8.8d", gameHeap->free);
-	}
-#endif
 	eloopsPerSecond = int(l);
 	framesPerSecond = int(f);
-#if DEBUG
-	WriteStatusF2(0, "Loops /Sec: %4.2f", l);
-	WriteStatusF2(1, "Frames/Sec: %4.2f", f);
-#endif
-
 }
 
 
@@ -1185,10 +1120,9 @@ bool initMemPool(void) {
 	uint32 take = pickHeapSize(memorySize);
 	memorySize = take;
 	if (NULL == (heapMemory = (uint8 *)malloc(take)))
-		return FALSE;
-	gameHeap = RNewHeap(heapMemory, take);
+		return false;
 	//initMemHandler();
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -1196,9 +1130,10 @@ bool initMemPool(void) {
 
 void cleanupMemPool(void) {
 	//clearMemHandler();
-	if (gameHeap) RDisposeHeap(gameHeap);
-	if (heapMemory) free(heapMemory);
-	heapMemory = NULL;
+	if (heapMemory) {
+		free(heapMemory);
+		heapMemory = nullptr;
+	}	
 }
 
 //-----------------------------------------------------------------------
@@ -1207,7 +1142,7 @@ void cleanupMemPool(void) {
 void *mustAlloc(uint32 size, const char desc[]) {
 	void            *ptr;
 
-	ptr = RNewPtr(size, gameHeap, desc);
+	ptr = malloc(size);
 	//  REM: Before we give up completely, try unloading some things...
 	if (ptr == NULL)
 		error("Local heap allocation size %d bytes failed.", size);
@@ -1220,24 +1155,13 @@ void *mustAlloc(uint32 size, const char desc[]) {
 RHANDLE mustAllocHandle(uint32 size, const char desc[]) {
 	void            **ptr;
 
-	ptr = RNewHandle(size, gameHeap, desc);
+	ptr = (void **)malloc(size);
 	//  REM: Before we give up completely, try unloading some things...
 	if (ptr == NULL)
 		error("Local handle allocation size %d bytes failed.", size);
 	return ptr;
 }
 
-//-----------------------------------------------------------------------
-//	throws an exception if passed a NULL pointer. Used for testing
-//	memory allocations.
-
-#if 0
-void checkAlloc(void *ptr) {
-	//  REM: Before we give up completely, try unloading some things...
-	if (ptr == NULL)
-		error("Object allocation failed.");
-}
-#endif
 
 /********************************************************************/
 /*                                                                  */
@@ -1250,7 +1174,7 @@ extern "C" {
 	void breakEventKludge(void) {
 		if (verifyUserExit())
 			endGame();
-		//gameRunning=FALSE;
+		//gameRunning=false;
 	}
 
 }
