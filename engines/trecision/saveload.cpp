@@ -132,7 +132,6 @@ bool TrecisionEngine::dataSave() {
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
-	_animQueue.initQueue();
 	_characterQueue.initQueue();
 
 	freeKey();
@@ -326,7 +325,6 @@ bool TrecisionEngine::dataLoad() {
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
 	_gameQueue.initQueue();
-	_animQueue.initQueue();
 	_characterQueue.initQueue();
 
 	freeKey();

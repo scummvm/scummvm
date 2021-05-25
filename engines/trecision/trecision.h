@@ -267,11 +267,9 @@ public:
 	// Message system
 	Message _gameMsg[MAXMESSAGE];
 	Message _characterMsg[MAXMESSAGE];
-	Message _animMsg[MAXMESSAGE];
 	Message _idleMsg;
 	Message *_curMessage;
 	MessageQueue _gameQueue;
-	MessageQueue _animQueue;
 	MessageQueue _characterQueue;
 	// Snake management
 	Message _snake52;

@@ -33,7 +33,6 @@ private:
 	TrecisionEngine *_vm;
 	int8 _maxMessageGame;
 	int8 _maxMessageCharacter;
-	int8 _maxMessageAnim;
 	uint8 _token;
 	uint8 _counter;
 

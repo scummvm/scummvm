@@ -3877,7 +3877,6 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_oldRoom = _vm->_curRoom;
 	_vm->_curRoom = room;
 	_vm->_gameQueue.initQueue();
-	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	_vm->_inventoryStatus = INV_OFF;
 	_vm->_lightIcon = 0xFF;

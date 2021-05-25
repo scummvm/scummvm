@@ -292,12 +292,10 @@ void TrecisionEngine::initMain() {
 
 	_curRoom = kRoomIntro;
 	_gameQueue.initQueue();
-	_animQueue.initQueue();
 	_characterQueue.initQueue();
 	for (uint8 i = 0; i < MAXMESSAGE; i++) {
 		_gameQueue._event[i] = &_gameMsg[i];
 		_characterQueue._event[i] = &_characterMsg[i];
-		_animQueue._event[i] = &_animMsg[i];
 	}
 
 	loadAll();

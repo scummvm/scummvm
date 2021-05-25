@@ -28,7 +28,6 @@ namespace Trecision {
 Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 	_maxMessageGame = 0;
 	_maxMessageCharacter = 0;
-	_maxMessageAnim = 0;
 
 	_token = CLASS_CHAR;
 	_counter = 0;
@@ -46,19 +45,13 @@ void Scheduler::process() {
 		case CLASS_GAME:
 			if (_counter <= 30) {
 				++_counter;
-				_token = CLASS_ANIM;
+				_token = CLASS_CHAR;
 				if (_vm->_gameQueue.getMessage(&_vm->_curMessage))
 					_vm->_curMessage = &_vm->_idleMsg;
 			} else {
 				_counter = 0;
 				_vm->_curMessage = &_vm->_idleMsg;
 			}
-			break;
-
-		case CLASS_ANIM:
-			_token = CLASS_CHAR;
-			if (_vm->_animQueue.getMessage(&_vm->_curMessage))
-				retry = true;
 			break;
 
 		case CLASS_CHAR:
@@ -80,8 +73,6 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 
 	if (cls <= CLASS_GAME)
 		lq = &_vm->_gameQueue;
-	else if (cls <= CLASS_ANIM)
-		lq = &_vm->_animQueue;
 	else
 		lq = &_vm->_characterQueue;
 
@@ -105,8 +96,6 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 
 	if (lq == &_vm->_gameQueue && lq->_len > _maxMessageGame)
 		_maxMessageGame = lq->_len;
-	else if (lq == &_vm->_animQueue && lq->_len > _maxMessageAnim)
-		_maxMessageAnim = lq->_len;
 	else if (lq == &_vm->_characterQueue && lq->_len > _maxMessageCharacter)
 		_maxMessageCharacter = lq->_len;
 
