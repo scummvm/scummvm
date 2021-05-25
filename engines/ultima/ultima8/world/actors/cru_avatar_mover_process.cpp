@@ -439,7 +439,7 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			end[2] = z;
 			avatar->setLocation(origpt.x, origpt.y, origpt.z);
 			currentmap->sweepTest(start, end, dims, avatar->getShapeInfo()->_flags,
-								  avatar->getObjId(),false, &collisions);
+								  avatar->getObjId(), true, &collisions);
 			for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
 				 it != collisions.end(); it++) {
 				if (!it->_touching && it->_blocking) {
