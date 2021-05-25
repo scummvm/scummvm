@@ -299,15 +299,15 @@ int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
  * SDText
  ************************************************/
 void SDText::set(SDText org) {
-	set(org._rect, org._subtitleRect, org.tcol, org.scol, org.text);
+	set(org._rect, org._subtitleRect, org._textCol, org._shadowCol, org._text);
 }
 
-void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uint16 pscol, const Common::String &pText) {
+void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text) {
 	_rect = rect;
 	_subtitleRect = subtitleRect;
-	tcol = ptcol;
-	scol = pscol;
-	text = pText;
+	_textCol = textCol;
+	_shadowCol = shadowCol;
+	_text = text;
 
 	// Clean output buffer
 	for (int i = 0; i < MAXDTEXTLINES; ++i) {
@@ -320,12 +320,12 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 ptcol, uin
  *   calcHeight - Computes and returns the dy of the current text
  */
 uint16 SDText::calcHeight(TrecisionEngine *vm) {
-	if (text.empty())
+	if (_text.empty())
 		return 0;
 
 	uint8 curLine = 0;
-	if (vm->textLength(text) <= _rect.width()) {
-		strcpy((char *)_drawTextLines[curLine], text.c_str());
+	if (vm->textLength(_text) <= _rect.width()) {
+		strcpy((char *)_drawTextLines[curLine], _text.c_str());
 		return CARHEI;
 	}
 
@@ -334,15 +334,15 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	uint16 lastSpace = 0;
 	uint16 curInit = 0;
 
-	while (a < text.size()) {
+	while (a < _text.size()) {
 		++a;
-		if (a < text.size() && text[a] == ' ') {
-			if (vm->textLength(text, curInit, a) <= _rect.width())
+		if (a < _text.size() && _text[a] == ' ') {
+			if (vm->textLength(_text, curInit, a) <= _rect.width())
 				lastSpace = a;
-			else if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
+			else if (vm->textLength(_text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; ++b)
-					_drawTextLines[curLine][b - curInit] = text[b];
+					_drawTextLines[curLine][b - curInit] = _text[b];
 
 				_drawTextLines[curLine][b - curInit] = '\0';
 				++curLine;
@@ -353,11 +353,11 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 				a = curInit;
 			} else
 				return 0;
-		} else if (a == text.size()) {
-			if (vm->textLength(text, curInit, a) <= _rect.width()) {
+		} else if (a == _text.size()) {
+			if (vm->textLength(_text, curInit, a) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < a; ++b)
-					_drawTextLines[curLine][b - curInit] = text[b];
+					_drawTextLines[curLine][b - curInit] = _text[b];
 				_drawTextLines[curLine][b - curInit] = '\0';
 
 				tmpDy += CARHEI;
@@ -365,10 +365,10 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 				return tmpDy;
 			}
 
-			if (vm->textLength(text, curInit, lastSpace) <= _rect.width()) {
+			if (vm->textLength(_text, curInit, lastSpace) <= _rect.width()) {
 				uint16 b;
 				for (b = curInit; b < lastSpace; ++b)
-					_drawTextLines[curLine][b - curInit] = text[b];
+					_drawTextLines[curLine][b - curInit] = _text[b];
 
 				_drawTextLines[curLine][b - curInit] = '\0';
 				++curLine;
@@ -376,9 +376,9 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 				curInit = lastSpace + 1;
 				tmpDy += CARHEI;
 
-				if (curInit < text.size()) {
-					for (b = curInit; b < text.size(); ++b)
-						_drawTextLines[curLine][b - curInit] = text[b];
+				if (curInit < _text.size()) {
+					for (b = curInit; b < _text.size(); ++b)
+						_drawTextLines[curLine][b - curInit] = _text[b];
 
 					_drawTextLines[curLine][b - curInit] = '\0';
 
@@ -393,13 +393,13 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 }
 
 void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
-	uint16 tmpTCol = tcol;
-	uint16 tmpSCol = scol;
-	vm->_graphicsMgr->updatePixelFormat(&tmpTCol, 1);
-	if (scol != MASKCOL)
-		vm->_graphicsMgr->updatePixelFormat(&tmpSCol, 1);
+	uint16 tmpTextCol = _textCol;
+	uint16 tmpShadowCol = _shadowCol;
+	vm->_graphicsMgr->updatePixelFormat(&tmpTextCol, 1);
+	if (_shadowCol != MASKCOL)
+		vm->_graphicsMgr->updatePixelFormat(&tmpShadowCol, 1);
 
-	if (text.empty())
+	if (_text.empty())
 		return;
 
 	const uint16 curDy = calcHeight(vm);
@@ -416,9 +416,9 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 			const byte curChar = curText[index];
 
 			if (index == curText.size() - 1 && vm->_blinkLastDTextChar != MASKCOL)
-				tmpTCol = vm->_blinkLastDTextChar;
+				tmpTextCol = vm->_blinkLastDTextChar;
 
-			vm->_graphicsMgr->drawChar(curChar, tmpSCol, tmpTCol, line, _rect, _subtitleRect, inc, externalSurface);
+			vm->_graphicsMgr->drawChar(curChar, tmpShadowCol, tmpTextCol, line, _rect, _subtitleRect, inc, externalSurface);
 
 			inc += vm->_graphicsMgr->getCharWidth(curChar);
 		}

@@ -374,51 +374,51 @@ void TextManager::characterSayInAction(uint16 ss) {
 	characterContinueTalk();
 }
 
-void TextManager::addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol) {
+void TextManager::addText(uint16 x, uint16 y, const char *text, uint16 textCol, uint16 shadowCol) {
 	StackText t;
-	t.x = x;
-	t.y = y;
-	t.tcol = tcol;
-	t.scol = scol;
-	t.clear = false;
-	strcpy(t.text, text);
+	t._x = x;
+	t._y = y;
+	t._textCol = textCol;
+	t._shadowCol = shadowCol;
+	t._clear = false;
+	strcpy(t._text, text);
 
 	_textStack.push_back(t);
 }
 
 void TextManager::clearLastText() {
 	if (!_textStack.empty()) {
-		if (!_textStack.back().clear)
+		if (!_textStack.back()._clear)
 			// The last entry is a string to be shown, remove it
 			_textStack.pop_back();
 	} else {
 		StackText t;
-		t.clear = true;
+		t._clear = true;
 		_textStack.push_back(t);
 	}
 }
 
 void TextManager::drawText(StackText text) {
-	_curString._rect.left = text.x;
-	_curString._rect.top = text.y;
-	_curString._rect.setWidth(_vm->textLength(text.text));
+	_curString._rect.left = text._x;
+	_curString._rect.top = text._y;
+	_curString._rect.setWidth(_vm->textLength(text._text));
 	int16 w = _curString._rect.width();
 
-	if (text.y == MAXY - CARHEI && w > 600)
+	if (text._y == MAXY - CARHEI && w > 600)
 		w = w * 3 / 5;
-	else if (text.y != MAXY - CARHEI && w > 960)
+	else if (text._y != MAXY - CARHEI && w > 960)
 		w = w * 2 / 5;
-	else if (text.y != MAXY - CARHEI && w > 320)
+	else if (text._y != MAXY - CARHEI && w > 320)
 		w = w * 3 / 5;
 
 	_curString._rect.setWidth(w);
 
-	_curString.text = text.text;
+	_curString._text = text._text;
 	uint16 height = _curString.calcHeight(_vm);
 	_curString._subtitleRect = Common::Rect(_curString._rect.width(), height);
 	_curString._rect.setHeight(height);
-	_curString.tcol = text.tcol;
-	_curString.scol = text.scol;
+	_curString._textCol = text._textCol;
+	_curString._shadowCol = text._shadowCol;
 
 	if (_curString._rect.top <= height)
 		_curString._rect.top += height;
@@ -432,9 +432,9 @@ void TextManager::drawText(StackText text) {
 }
 
 void TextManager::clearText() {
-	if (_oldString.text.empty() && !_curString.text.empty()) {
+	if (_oldString._text.empty() && !_curString._text.empty()) {
 		_oldString.set(_curString);
-		_curString.text.clear();
+		_curString._text.clear();
 
 		_vm->_textStatus |= TEXT_DEL;
 	}
@@ -442,7 +442,7 @@ void TextManager::clearText() {
 
 void TextManager::drawTexts() {
 	for (Common::List<StackText>::iterator i = _textStack.begin(); i != _textStack.end(); ++i) {
-		if (i->clear)
+		if (i->_clear)
 			clearText();
 		else
 			drawText(*i);
@@ -474,7 +474,7 @@ Common::Rect TextManager::getOldTextRect() const {
 }
 
 void TextManager::clearOldText() {
-	_oldString.text.clear();
+	_oldString._text.clear();
 }
 
 } // End of namespace Trecision

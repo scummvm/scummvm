@@ -440,14 +440,14 @@ uint16 GraphicsManager::getCharWidth(byte character) {
 	return _font[character * 3 + 2];
 }
 
-void GraphicsManager::drawChar(byte curChar, uint16 sColor, uint16 tColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface) {
+void GraphicsManager::drawChar(byte curChar, uint16 shadowCol, uint16 textCol, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface) {
 	const uint16 charOffset = _font[curChar * 3] + (uint16)(_font[curChar * 3 + 1] << 8);
 	uint16 fontDataOffset = 768;
 	const uint16 charWidth = getCharWidth(curChar);
 
 	for (uint16 y = line * CARHEI; y < (line + 1) * CARHEI; ++y) {
 		uint16 curPos = 0;
-		uint16 curColor = sColor;
+		uint16 curColor = shadowCol;
 
 		while (curPos <= charWidth - 1) {
 			if (y >= subtitleRect.top && y < subtitleRect.bottom) {
@@ -469,12 +469,12 @@ void GraphicsManager::drawChar(byte curChar, uint16 sColor, uint16 tColor, uint1
 			curPos += _font[charOffset + fontDataOffset];
 			++fontDataOffset;
 
-			if (curColor == sColor)
+			if (curColor == shadowCol)
 				curColor = 0;
 			else if (curColor == 0)
-				curColor = tColor;
-			else if (curColor == tColor)
-				curColor = sColor;
+				curColor = textCol;
+			else if (curColor == textCol)
+				curColor = shadowCol;
 		}
 	}
 }

@@ -32,6 +32,14 @@ namespace Trecision {
 
 class TrecisionEngine;
 
+struct StackText {
+	uint16 _x;
+	uint16 _y;
+	uint16 _textCol, _shadowCol;
+	char _text[256];
+	bool _clear;
+};
+
 class TextManager {
 	TrecisionEngine *_vm;
 
@@ -70,7 +78,7 @@ public:
 	void characterSay(uint16 i);
 	void characterSayInAction(uint16 ss);
 
-	void addText(uint16 x, uint16 y, const char *text, uint16 tcol, uint16 scol);
+	void addText(uint16 x, uint16 y, const char *text, uint16 textCol, uint16 shadowCol);
 	void clearLastText();
 	void drawText(StackText text);
 	void clearText();

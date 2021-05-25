@@ -95,7 +95,7 @@ public:
 	void dissolve(uint8 val);
 
 	uint16 getCharWidth(byte character);
-	void drawChar(byte curChar, uint16 sColor, uint16 tColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);
+	void drawChar(byte curChar, uint16 shadowCol, uint16 textCol, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);
 
 	bool isCursorVisible();
 	void showCursor();
