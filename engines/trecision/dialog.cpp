@@ -163,8 +163,8 @@ bool DialogManager::isChoiceVisible(uint16 choice) const {
 	return !(_choice[choice]._flag & DLGCHOICE_HIDE);
 }
 
-bool DialogManager::isChoiceAvailable(uint16 choice) const {
-	return !(_choice[choice]._flag & kObjFlagDone);
+bool DialogManager::isDialogFinished(uint16 choice) const {
+	return _choice[choice]._flag & kObjFlagDone;
 }
 
 void DialogManager::afterChoice() {
@@ -280,7 +280,7 @@ void DialogManager::afterChoice() {
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
-			if ((isChoiceAvailable(61)) && (isChoiceAvailable(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if ((isDialogFinished(61)) && (isDialogFinished(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			break;
 
@@ -484,7 +484,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dC581:
-			if (!(isChoiceAvailable(886)) && (isChoiceAvailable(258))) {
+			if (!(isDialogFinished(886)) && (isDialogFinished(258))) {
 				_vm->_pathFind->setPosition(1);
 				playDialog(dF581);
 			}
