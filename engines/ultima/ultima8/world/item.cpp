@@ -3487,7 +3487,7 @@ uint32 Item::I_move(const uint8 *args, unsigned int /*argsize*/) {
 uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_ITEM_FROM_PTR(item);
 	ARG_WORLDPOINT(point);
-	ARG_UINT16(force); // 0/1
+	ARG_UINT16(move_if_blocked); // 0/1
 	ARG_UINT16(unknown2); // always 0
 
 	int32 x = point.getX();
@@ -3501,10 +3501,34 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 
 	if (!item)
 		return 0;
-	//! What should this do to ethereal items?
-	if (item->collideMove(x, y, z, false, force == 1) == 0x4000)
-		return 1;
-	return 0;
+
+	//
+	// Return true when there are no blockers.
+	// If there are blockers, only move if move_if_blocked is set.
+	//
+	int retval = 1;
+	Std::list<CurrentMap::SweepItem> collisions;
+	int32 start[3], end[3], dims[3];
+	end[0] = x;
+	end[1] = y;
+	end[2] = z;
+	item->getLocation(start[0], start[1], start[2]);
+	item->getFootpadWorld(dims[0], dims[1], dims[2]);
+	CurrentMap *map = World::get_instance()->getCurrentMap();
+	map->sweepTest(start, end, dims, item->getShapeInfo()->_flags,
+				   item->getObjId(), true, &collisions);
+	for (Std::list<CurrentMap::SweepItem>::iterator it = collisions.begin();
+		 it != collisions.end(); it++) {
+		if (it->_blocking && !it->_touching && it->_endTime > 0) {
+			if (!move_if_blocked)
+				return 0;
+			retval = 0;
+			break;
+		}
+	}
+
+	item->collideMove(x, y, z, false, false);
+	return retval;
 }
 
 uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/) {
