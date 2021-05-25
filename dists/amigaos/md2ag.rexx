@@ -42,9 +42,9 @@ END
 /*
 Convert README.md to ASCII to get rid of non-displayable characters.
 */
-ADDRESS COMMAND 'iconv -f UTF-8 -t ASCII//TRANSLIT 'p_readme' > README.conv'
+ADDRESS COMMAND 'iconv -f UTF-8 -t ASCII//TRANSLIT 'p_readme' >README.conv'
 
-CALL OPEN read_md,'README.conv'
+CALL OPEN read_md,'README.conv','R'
 
 IF READCH(read_md,18)~='# [ScummVM README]' THEN DO
 	CALL CLOSE read_md
@@ -153,6 +153,7 @@ CALL CLOSE write_guide
 Install finished README.guide to installation path and delete README.guide.
 */
 ADDRESS COMMAND 'copy README.guide 'p_instpath
-ADDRESS COMMAND 'delete quiet README.guide README.conv'
+ADDRESS COMMAND 'delete quiet README.guide'
+ADDRESS COMMAND 'delete quiet README.conv'
 
 EXIT

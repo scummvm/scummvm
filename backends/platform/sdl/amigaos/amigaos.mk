@@ -20,8 +20,9 @@ ifdef DIST_FILES_DOCS
 	cp ${srcdir}/README.md README.tmp
 	# AmigaOS AREXX will error with a "Program not found" message
 	# if srcdir is '.'. Copy the script to cwd instead.
-	cp ${srcdir}/dists/amigaos/md2ag.rexx ${srcdir}
-	rx md2ag.rexx README.tmp $(AMIGAOSPATH)/doc/
+	cp ${srcdir}/dists/amigaos/md2ag.rexx .
+	# LC_ALL is here to workaround Debian bug #973647
+	LC_ALL=C rx md2ag.rexx README.tmp $(AMIGAOSPATH)/doc/
 	rm -f md2ag.rexx README.tmp
 endif
 	# Copy mandatory installation files.
