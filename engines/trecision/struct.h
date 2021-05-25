@@ -160,13 +160,6 @@ struct SDText {
 	uint16 calcHeight(TrecisionEngine *vm);
 };
 
-struct SDObj {
-	Common::Rect rect;
-	Common::Rect l;
-	int objIndex;
-	bool drawMask;
-};
-
 struct ElevatorAction {
 	uint16 dialog;
 	uint16 choice;

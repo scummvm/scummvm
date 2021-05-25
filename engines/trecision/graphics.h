@@ -56,6 +56,8 @@ class GraphicsManager {
 	void initCursor();
 	void copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y);
 
+	friend struct SDObj;
+
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
@@ -84,9 +86,6 @@ public:
 	void pixelAliasing(uint16 x, uint16 y);
 
 	void dissolve(uint8 val);
-
-	void drawObj(SDObj d);
-	void eraseObj(SDObj d);
 
 	uint16 getCharWidth(byte character);
 	void drawChar(byte curChar, uint16 sColor, uint16 tColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);

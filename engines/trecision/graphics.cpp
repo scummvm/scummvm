@@ -378,59 +378,6 @@ void GraphicsManager::dissolve(uint8 val) {
 	clearScreen();
 }
 
-void GraphicsManager::drawObj(SDObj d) {
-	if (d.l.left > MAXX || d.l.top > MAXX || d.l.right > MAXX || d.l.bottom > MAXX)
-		return;
-
-	// If we have a valid object, draw it, otherwise erase it
-	// by using the background buffer
-	const uint16 *buf = d.objIndex >= 0 ? _vm->_objPointers[d.objIndex] : (uint16 *)_smkBackground.getPixels();
-	if (d.drawMask && d.objIndex >= 0) {
-		uint8 *mask = _vm->_maskPointers[d.objIndex];
-
-		for (uint16 b = d.rect.top; b < d.rect.bottom; ++b) {
-			uint16 sco = 0;
-			uint16 c = 0;
-			while (sco < d.rect.width()) {
-				if (c == 0) { // jump
-					sco += *mask;
-					++mask;
-
-					c = 1;
-				} else { // copy
-					const uint16 maskOffset = *mask;
-
-					if (maskOffset != 0 && b >= d.rect.top + d.l.top && b < d.rect.top + d.l.bottom) {
-						if (sco >= d.l.left && sco + maskOffset < d.l.right)
-							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, maskOffset * 2);
-
-						else if (sco < d.l.left && sco + maskOffset < d.l.right && sco + maskOffset >= d.l.left)
-							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (maskOffset + sco - d.l.left) * 2);
-
-						else if (sco >= d.l.left && sco + maskOffset >= d.l.right && sco < d.l.right)
-							memcpy(_screenBuffer.getBasePtr(sco + d.rect.left, b), buf, (d.l.right - sco) * 2);
-
-						else if (sco < d.l.left && sco + maskOffset >= d.l.right)
-							memcpy(_screenBuffer.getBasePtr(d.l.left + d.rect.left, b), buf + d.l.left - sco, (d.l.right - d.l.left) * 2);
-					}
-					sco += *mask;
-					buf += *mask++;
-					c = 0;
-				}
-			}
-		}
-	} else {
-		for (uint16 b = d.l.top; b < d.l.bottom; ++b) {
-			memcpy(_screenBuffer.getBasePtr(d.rect.left + d.l.left, d.rect.top + b),
-				   buf + (b * d.rect.width()) + d.l.left, d.l.width() * 2);
-		}
-	}
-}
-
-void GraphicsManager::eraseObj(SDObj d) {
-	_screenBuffer.fillRect(Common::Rect(d.l.left, d.l.top + TOP, d.l.right, d.l.bottom + TOP), 0);
-}
-
 uint16 GraphicsManager::getCharWidth(byte character) {
 	return _font[character * 3 + 2];
 }
