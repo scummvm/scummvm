@@ -89,10 +89,8 @@ enum AnimationTypes {
 #define ATFSETROOMF			26
 
 // Dialogs
-#define DLGCHOICE_ACTIVATE      1
 #define DLGCHOICE_EXITNOW   	2
 #define DLGCHOICE_ONETIME       4
-#define DLGCHOICE_DEACTIVATE    8
 #define DLGCHOICE_FRAUD    		16
 #define DLGCHOICE_EXITDLG		32
 #define DLGCHOICE_HIDE		  	64
