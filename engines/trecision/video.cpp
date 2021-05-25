@@ -39,19 +39,19 @@
 namespace Trecision {
 
 bool NightlongSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
-	if (SmackerDecoder::loadStream(stream)) {
-		// Map audio tracks to sound types
-		for (uint32 i = 0; i < 8; i++) {
-			Track *t = getTrack(i);
-			if (t && t->getTrackType() == Track::kTrackTypeAudio) {
-				AudioTrack *audio = (AudioTrack *)t;
-				audio->setMute(false);
-				audio->setSoundType(i == 7 ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType);
-			}
+	if (!SmackerDecoder::loadStream(stream))
+		return false;
+
+	// Map audio tracks to sound types
+	for (uint32 i = 0; i < 8; i++) {
+		Track *t = getTrack(i);
+		if (t && t->getTrackType() == Track::kTrackTypeAudio) {
+			AudioTrack *audio = (AudioTrack *)t;
+			audio->setMute(false);
+			audio->setSoundType(i == 7 ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType);
 		}
-		return true;
 	}
-	return false;
+	return true;
 }
 
 void NightlongSmackerDecoder::muteTrack(uint track, bool mute) {
@@ -441,15 +441,16 @@ void AnimManager::refreshSmkAnim(uint16 animation) {
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
-	if (_smkAnims[slot]->endOfVideo()) {
-		if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
-			smkStop(slot);
-			_vm->_flagPaintCharacter = true;
-		} else {
-			_smkAnims[slot]->rewind();
-			_vm->_animTypeMgr->init(animation, 0);
-			_bgAnimRestarted = true;
-		}
+	if (!_smkAnims[slot]->endOfVideo())
+		return;
+	
+	if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {
+		smkStop(slot);
+		_vm->_flagPaintCharacter = true;
+	} else {
+		_smkAnims[slot]->rewind();
+		_vm->_animTypeMgr->init(animation, 0);
+		_bgAnimRestarted = true;
 	}
 }
 
