@@ -90,7 +90,7 @@ public:
 	void toggleChoice(uint16 choice, bool enable);
 	void clearExitFlag(uint16 choice);
 	bool isChoiceVisible(uint16 choice) const;
-	bool isChoiceAvailable(uint16 choice) const;
+	bool isDialogFinished(uint16 choice) const;
 	void afterChoice();
 	void dialogHandler(int numFrame);
 	void doDialog();
