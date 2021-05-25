@@ -1033,7 +1033,6 @@ bool CurrentMap::scanForValidPosition(int32 x, int32 y, int32 z, const Item *ite
 // dims is the bounding box size.
 // item is the item that we are checking to move
 // blocking_only forces us to check against blocking items only.
-// skip will skip all items until item num skip is reached
 // Returns item hit or 0 if no hit.
 // end is set to the colision point
 bool CurrentMap::sweepTest(const int32 start[3], const int32 end[3],
