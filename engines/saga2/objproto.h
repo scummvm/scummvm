@@ -1056,8 +1056,8 @@ public:
 
 class ProjectileProto : public WeaponProto {
 public:
-	ProjectileProto(ResourceObjectPrototype &proto) :
-		WeaponProto(proto) {}
+	ProjectileProto(ResourceObjectPrototype &proto) : WeaponProto(proto) {}
+	virtual ~ProjectileProto() {}
 
 	//  return the address of the sprite when held in hand
 	virtual Sprite *getOrientedSprite(GameObject *obj, int16 offset);
@@ -1085,6 +1085,7 @@ public:
 class ArrowProto : public ProjectileProto {
 public:
 	ArrowProto(ResourceObjectPrototype &proto) : ProjectileProto(proto) {}
+	virtual ~ArrowProto() {}
 
 	virtual bool useOnAction(ObjectID dObj, ObjectID enactor, ObjectID item);
 	virtual bool strikeAction(
@@ -1111,6 +1112,7 @@ public:
 class ArmorProto : public InventoryProto {
 public:
 	ArmorProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~ArmorProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -1137,6 +1139,7 @@ public:
 class ShieldProto : public InventoryProto {
 public:
 	ShieldProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~ShieldProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -1192,6 +1195,7 @@ public:
 class ToolProto : public InventoryProto {
 public:
 	ToolProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~ToolProto() {}
 
 	//  Set up targeting cursor
 	virtual bool setUseCursor(ObjectID dObj);
@@ -1210,6 +1214,7 @@ public:
 class DocumentProto     :   public  InventoryProto {
 public:
 	DocumentProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~DocumentProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -1232,6 +1237,7 @@ public:
 class BookProto     :   public  DocumentProto {
 public:
 	BookProto(ResourceObjectPrototype &proto) : DocumentProto(proto) {}
+	virtual ~BookProto() {}
 	//Read It
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1247,6 +1253,7 @@ public:
 class ScrollProto       :   public  DocumentProto {
 public:
 	ScrollProto(ResourceObjectPrototype &proto) : DocumentProto(proto) {}
+	virtual ~ScrollProto() {}
 
 	//Read It
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
@@ -1263,6 +1270,7 @@ public:
 class AutoMapProto  :   public  InventoryProto {
 public:
 	AutoMapProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~AutoMapProto() {}
 
 	//Shows Auto Map Display
 	virtual bool openAction(ObjectID dObj, ObjectID enactor);
@@ -1279,6 +1287,7 @@ public:
 class IntangibleObjProto : public ProtoObj {
 public:
 	IntangibleObjProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
+	virtual ~IntangibleObjProto() {}
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1320,6 +1329,7 @@ public:
 class IdeaProto :   public  IntangibleObjProto {
 public:
 	IdeaProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
+	virtual ~IdeaProto() {}
 
 	//Talk To A Person
 	uint16 containmentSet(void);
@@ -1336,6 +1346,7 @@ public:
 class MemoryProto   :   public  IntangibleObjProto {
 public:
 	MemoryProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
+	virtual ~MemoryProto() {}
 
 	//Get Info On Person Your Talking To
 	uint16 containmentSet(void);
@@ -1352,6 +1363,7 @@ public:
 class PsychProto    :   public  IntangibleObjProto {
 public:
 	PsychProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
+	virtual ~PsychProto() {}
 
 	//Get Explanation Of Icon
 	uint16 containmentSet(void);
@@ -1370,6 +1382,7 @@ public:
 class SkillProto    :   public  IntangibleObjProto {
 public:
 	SkillProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
+	virtual ~SkillProto() {}
 
 	//Perform A Skill or Cast a spell
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
@@ -1418,6 +1431,7 @@ public:
 class IntangibleContainerProto : public ProtoObj {
 public:
 	IntangibleContainerProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
+	virtual ~IntangibleContainerProto() {}
 
 	virtual bool canContain(ObjectID dObj, ObjectID item);
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
@@ -1440,6 +1454,7 @@ public:
 class IdeaContainerProto : public IntangibleContainerProto {
 public:
 	IdeaContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {}
+	virtual ~IdeaContainerProto() {}
 
 	//Holding Idea Objects
 //	bool use( ObjectID dObj, ObjectID enactor );
@@ -1456,6 +1471,7 @@ public:
 class MemoryContainerProto : public IntangibleContainerProto {
 public:
 	MemoryContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {}
+	virtual ~MemoryContainerProto() {}
 
 	//Holding Memories Of People You Met
 //	bool use( ObjectID dObj, ObjectID enactor );
@@ -1471,9 +1487,8 @@ public:
 
 class PsychContainerProto : public IntangibleContainerProto {
 public:
-	PsychContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {
-
-	}
+	PsychContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {}
+	virtual ~PsychContainerProto() {}
 
 	//Holding Psychological Objects
 //	bool use( ObjectID dObj, ObjectID enactor );
@@ -1490,6 +1505,7 @@ public:
 class SkillContainerProto : public IntangibleContainerProto {
 public:
 	SkillContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {}
+	virtual ~SkillContainerProto() {}
 
 	//Holding Skills And Spells
 //	bool use( ObjectID dObj, ObjectID enactor );
@@ -1506,6 +1522,7 @@ public:
 class MindContainerProto : public IntangibleContainerProto {
 public:
 	MindContainerProto(ResourceObjectPrototype &proto) : IntangibleContainerProto(proto) {}
+	virtual ~MindContainerProto() {}
 
 	//Contains Skill Psych Memory And Idea Containers
 //	virtual bool use( ObjectID dObj, ObjectID enactor );
@@ -1522,6 +1539,7 @@ public:
 class EnchantmentProto : public ProtoObj {
 public:
 	EnchantmentProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
+	virtual ~EnchantmentProto() {}
 
 	//  Do the background processing, if needed, for this object.
 	void doBackgroundUpdate(GameObject *obj);
@@ -1539,6 +1557,7 @@ public:
 class GeneratorProto : public ProtoObj {
 public:
 	GeneratorProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
+	virtual ~GeneratorProto() {}
 
 	//Base class for monster, encounter, and mission generators
 
@@ -1555,6 +1574,7 @@ public:
 class MonsterGeneratorProto : public GeneratorProto {
 public:
 	MonsterGeneratorProto(ResourceObjectPrototype &proto) : GeneratorProto(proto) {}
+	virtual ~MonsterGeneratorProto() {}
 
 	//Monster generators
 	//  REM: We don't want to generate monsters as a background activity, since
@@ -1572,6 +1592,7 @@ public:
 class EncounterGeneratorProto : public GeneratorProto {
 public:
 	EncounterGeneratorProto(ResourceObjectPrototype &proto) : GeneratorProto(proto) {}
+	virtual ~EncounterGeneratorProto() {}
 
 	//Encounter generator
 
@@ -1589,6 +1610,7 @@ public:
 class MissionGeneratorProto : public GeneratorProto {
 public:
 	MissionGeneratorProto(ResourceObjectPrototype &proto) : GeneratorProto(proto) {}
+	virtual ~MissionGeneratorProto() {}
 
 	//  Check every 10 seconds to see if we want to generate a mission.
 	void doBackgroundUpdate(GameObject *obj);
