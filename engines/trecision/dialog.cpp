@@ -591,7 +591,7 @@ void DialogManager::playChoice(uint16 i) {
 
 	choice->_flag |= kObjFlagDone;
 
-	// se era one time la disabilita
+	// if it was 'one time', disable it
 	if (choice->_flag & DLGCHOICE_ONETIME)
 		choice->_flag |= DLGCHOICE_HIDE;
 
