@@ -23,6 +23,7 @@
 #ifndef TRECISION_GRAPHICS_H
 #define TRECISION_GRAPHICS_H
 
+#include "common/rect.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
@@ -30,8 +31,8 @@ namespace Common {
 class SeekableReadStream;
 }
 
+
 namespace Trecision {
-struct SDObj;
 class TrecisionEngine;
 
 class GraphicsManager {
@@ -56,11 +57,17 @@ class GraphicsManager {
 	void initCursor();
 	void copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y);
 
-	friend struct SDObj;
-
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
+
+	Common::Rect _drawRect;
+	Common::Rect _drawObjRect;
+	int _drawObjIndex;
+	bool _drawMask;
+
+	void drawObj();
+	void eraseObj();
 
 	bool init();
 	void clearScreen();

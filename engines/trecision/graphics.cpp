@@ -33,9 +33,67 @@
 
 namespace Trecision {
 
+void GraphicsManager::drawObj() {
+	if (_drawObjRect.left > MAXX || _drawObjRect.top > MAXX || _drawObjRect.right > MAXX || _drawObjRect.bottom > MAXX)
+		return;
+
+	// If we have a valid object, draw it, otherwise erase it
+	// by using the background buffer
+	const uint16 *buf = _drawObjIndex >= 0 ? _vm->_objPointers[_drawObjIndex] : (uint16 *)_smkBackground.getPixels();
+	if (_drawMask && _drawObjIndex >= 0) {
+		uint8 *mask = _vm->_maskPointers[_drawObjIndex];
+
+		for (uint16 b = _drawRect.top; b < _drawRect.bottom; ++b) {
+			uint16 sco = 0;
+			uint16 c = 0;
+			while (sco < _drawRect.width()) {
+				if (c == 0) { // jump
+					sco += *mask;
+					++mask;
+
+					c = 1;
+				} else { // copy
+					const uint16 maskOffset = *mask;
+
+					if (maskOffset != 0 && b >= _drawRect.top + _drawObjRect.top && b < _drawRect.top + _drawObjRect.bottom) {
+						if (sco >= _drawObjRect.left && sco + maskOffset < _drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, b), buf, maskOffset * 2);
+
+						else if (sco < _drawObjRect.left && sco + maskOffset < _drawObjRect.right && sco + maskOffset >= _drawObjRect.left)
+							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, b), buf + _drawObjRect.left - sco, (maskOffset + sco - _drawObjRect.left) * 2);
+
+						else if (sco >= _drawObjRect.left && sco + maskOffset >= _drawObjRect.right && sco < _drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, b), buf, (_drawObjRect.right - sco) * 2);
+
+						else if (sco < _drawObjRect.left && sco + maskOffset >= _drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, b), buf + _drawObjRect.left - sco, (_drawObjRect.right - _drawObjRect.left) * 2);
+					}
+					sco += *mask;
+					buf += *mask++;
+					c = 0;
+				}
+			}
+		}
+	} else {
+		for (uint16 b = _drawObjRect.top; b < _drawObjRect.bottom; ++b) {
+			memcpy(_screenBuffer.getBasePtr(_drawRect.left + _drawObjRect.left, _drawRect.top + b),
+				   buf + (b * _drawRect.width()) + _drawObjRect.left, _drawObjRect.width() * 2);
+		}
+	}
+}
+
+void GraphicsManager::eraseObj() {
+	_screenBuffer.fillRect(Common::Rect(_drawObjRect.left, _drawObjRect.top + TOP, _drawObjRect.right, _drawObjRect.bottom + TOP), 0);
+}
+
+
 const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm), _font(nullptr) {
+	_drawRect = Common::Rect(0, 0, 0, 0);
+	_drawObjRect = Common::Rect(0, 0, 0, 0);
+	_drawObjIndex = -1;
+	_drawMask = false;
 }
 
 GraphicsManager::~GraphicsManager() {
