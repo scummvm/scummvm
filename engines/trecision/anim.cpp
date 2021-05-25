@@ -21,7 +21,6 @@
  */
 
 #include "trecision/anim.h"
-
 #include "trecision/logic.h"
 #include "trecision/3d.h"
 #include "trecision/dialog.h"
@@ -358,11 +357,11 @@ void AnimTypeManager::handler(int type) {
 	for (int32 a = 0; a < MAXATFRAME; ++a) {
 		// if it's time to run this AtFrame
 		if ((anim->_atFrame[a]._numFrame > h->_lastFrame) && (anim->_atFrame[a]._numFrame <= h->_curFrame) && (anim->_atFrame[a]._numFrame != 0)) {
-			if (anim->_atFrame[a]._child == 0 ||
-				(anim->_atFrame[a]._child == 1 && !(flag & SMKANIM_OFF1)) ||
-				(anim->_atFrame[a]._child == 2 && !(flag & SMKANIM_OFF2)) ||
-				(anim->_atFrame[a]._child == 3 && !(flag & SMKANIM_OFF3)) ||
-				(anim->_atFrame[a]._child == 4 && !(flag & SMKANIM_OFF4)))
+			const uint8 child = anim->_atFrame[a]._child;
+
+			if (child == 0 || (child == 1 && !(flag & SMKANIM_OFF1))
+			|| (child == 2 && !(flag & SMKANIM_OFF2)) || (child == 3 && !(flag & SMKANIM_OFF3))
+			|| (child == 4 && !(flag & SMKANIM_OFF4)))
 				processAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
