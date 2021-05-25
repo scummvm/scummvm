@@ -2428,7 +2428,7 @@ Management of "Use with"
 *************************************************************************/
 
 #define CLASS_GAME 63 //   0- 63 --> code GAME
-#define CLASS_ANIM 127 //  64-127 --> code ANIM
+// 64-127 --> code ANIM (removed)
 #define CLASS_CHAR 255 // 128-255 --> code CHAR
 
 /*************************************************************************

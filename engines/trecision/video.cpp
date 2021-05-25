@@ -379,7 +379,6 @@ void AnimManager::startFullMotion() {
 	_vm->_graphicsMgr->clearScreen();
 
 	_vm->_gameQueue.initQueue();
-	_vm->_animQueue.initQueue();
 	_vm->_characterQueue.initQueue();
 	_vm->_actor->actorStop();
 	_vm->_graphicsMgr->hideCursor();
