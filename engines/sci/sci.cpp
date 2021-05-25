@@ -476,28 +476,19 @@ bool SciEngine::gameHasFanMadePatch() {
 		// TODO: The bugs in SQ6 can't be tested till SCI2.1 support is finished
 		//{ GID_SQ6,        380,  16308,  15042,  0x0C },	// English
 		//{ GID_SQ6,        380,  11652,      0,  0x00 },	// German - patched file is the same size as the original
-		// ** End marker ***************************
-		{ GID_FANMADE,      0,      0,      0,  0x00 }
 	};
 
-	int curEntry = 0;
+	for (int i = 0; i < ARRAYSIZE(patchInfo); ++i) {
+		if (patchInfo[i].gameID == getGameId()) {
+			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[i].targetScript), 0);
 
-	while (true) {
-		if (patchInfo[curEntry].targetSize == 0)
-			break;
-
-		if (patchInfo[curEntry].gameID == getGameId()) {
-			Resource *targetScript = _resMan->findResource(ResourceId(kResourceTypeScript, patchInfo[curEntry].targetScript), 0);
-
-			if (targetScript && targetScript->size() + 2 == patchInfo[curEntry].targetSize) {
-				if (patchInfo[curEntry].patchedByteOffset == 0)
+			if (targetScript && targetScript->size() + 2 == patchInfo[i].targetSize) {
+				if (patchInfo[i].patchedByteOffset == 0)
 					return true;
-				else if (targetScript->getUint8At(patchInfo[curEntry].patchedByteOffset - 2) == patchInfo[curEntry].patchedByte)
+				else if (targetScript->getUint8At(patchInfo[i].patchedByteOffset - 2) == patchInfo[i].patchedByte)
 					return true;
 			}
 		}
-
-		curEntry++;
 	}
 
 	return false;
