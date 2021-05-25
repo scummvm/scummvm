@@ -1,6 +1,7 @@
 /*
 $VER: md2ag.rexx 0.1 (25.05.2021) README(.md) to (amiga).guide converter.
-Converts README.md to a basic hypertext AmigaGuide and installs it.
+Converts a given markdown README file to a basic hypertext Amiga guide file
+and installs it to a given location.
 */
 
 PARSE ARG p_readme p_instpath
@@ -38,7 +39,12 @@ ELSE DO
 	p_instpath=COMPRESS(p_instpath,'"')
 END
 
-CALL OPEN read_md,p_readme,'R'
+/*
+Convert README.md to ASCII to get rid of non-displayable characters.
+*/
+ADDRESS COMMAND 'iconv -f UTF-8 -t ASCII//TRANSLIT 'p_readme' > README.conv'
+
+CALL OPEN read_md,'README.conv'
 
 IF READCH(read_md,18)~='# [ScummVM README]' THEN DO
 	CALL CLOSE read_md
@@ -47,16 +53,14 @@ IF READCH(read_md,18)~='# [ScummVM README]' THEN DO
 END
 ELSE
 	/*
-	Skip the first "Build Status" line for now.
-	TODO:
-	Will be reviewed once AmigaGuide gets support for embedded images.
+	Skip the first "Build Status" line.
 	*/
 	CALL READLN read_md
 
 CALL OPEN write_guide,'README.guide','W'
 
 /*
-Prepare AmigaGuide, add intro and fixed text.
+Prepare Amiga guide, add intro and fixed text.
 */
 CALL WRITELN write_guide,'@DATABASE ScummVM README.guide'
 CALL WRITELN write_guide,'@$VER: ScummVM Readme 2.3.0git'
@@ -72,7 +76,7 @@ DO WHILE ~EOF(read_md)
 	v_line=READLN(read_md)
 
 	/*
-	Handle one "rolled over" line that cuts a weblink.
+	Handle one rolled over line that cuts a weblink.
 	Lines 11, 12 and 13 in the original .md file hold a weblink which is cut short.
 	Rejoin lines 12 and 13 to fix the otherwise cut link.
 	Lines are:
@@ -96,7 +100,7 @@ DO WHILE ~EOF(read_md)
 	END
 
 	/*
-	Change http(s) markdown links to AmigaGuide ones.
+	Change html markdown links to AmigaGuide ones.
 	*/
 	IF POS('http',v_line)>0 THEN DO
 		v_protocol=UPPER(SUBSTR(v_line,POS('http',v_line),POS('://',v_line)-POS('http',v_line)))
@@ -109,7 +113,7 @@ DO WHILE ~EOF(read_md)
 		ELSE DO
 			v_weblink=SUBSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('/>',v_line)-LASTPOS('<',v_line)-1)
 			v_line=DELSTR(v_line,LASTPOS('<',v_line)+1,LASTPOS('>',v_line)-LASTPOS('<',v_line)-1)
-			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_protocol' 'v_weblink'"}',v_line,LASTPOS('>',v_line)-1)
+			v_line=INSERT('@{"'v_weblink'" System "URLOpen 'v_weblink'"}',v_line,LASTPOS('>',v_line)-1)
 		END
 	END
 
@@ -122,7 +126,7 @@ DO WHILE ~EOF(read_md)
 	END
 
 	/*
-	Handle the one long line with two weblinks.
+	There is one long line with two weblinks.
 	*/
 	IF POS('[Supported Games]',v_line)>0 THEN DO
 		v_protocol=UPPER(SUBSTR(v_line,LASTPOS('http',v_line),LASTPOS('://',v_line)-LASTPOS('http',v_line)))
@@ -146,9 +150,9 @@ CALL CLOSE read_md
 CALL CLOSE write_guide
 
 /*
-Install the guide and delete it.
+Install finished README.guide to installation path and delete README.guide.
 */
 ADDRESS COMMAND 'copy README.guide 'p_instpath
-ADDRESS COMMAND 'delete README.guide'
+ADDRESS COMMAND 'delete quiet README.guide README.conv'
 
 EXIT
