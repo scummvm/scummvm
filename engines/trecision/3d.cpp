@@ -77,6 +77,67 @@ const int16 _shadowFaces[SHADOWFACESNUM][3] = {
 	{2, 19, 13}, {3, 9, 12}
 };
 
+void SDObj::init(TrecisionEngine *vm) {
+	rect = Common::Rect(0, 0, 0, 0);
+	l = Common::Rect(0, 0, 0, 0);
+	objIndex = -1;
+	drawMask = false;
+	_vm = vm;
+}
+
+void SDObj::draw() {
+	if (l.left > MAXX || l.top > MAXX || l.right > MAXX || l.bottom > MAXX)
+		return;
+
+	// If we have a valid object, draw it, otherwise erase it
+	// by using the background buffer
+	const uint16 *buf = objIndex >= 0 ? _vm->_objPointers[objIndex] : (uint16 *)_vm->_graphicsMgr->_smkBackground.getPixels();
+	if (drawMask && objIndex >= 0) {
+		uint8 *mask = _vm->_maskPointers[objIndex];
+
+		for (uint16 b = rect.top; b < rect.bottom; ++b) {
+			uint16 sco = 0;
+			uint16 c = 0;
+			while (sco < rect.width()) {
+				if (c == 0) { // jump
+					sco += *mask;
+					++mask;
+
+					c = 1;
+				} else { // copy
+					const uint16 maskOffset = *mask;
+
+					if (maskOffset != 0 && b >= rect.top + l.top && b < rect.top + l.bottom) {
+						if (sco >= l.left && sco + maskOffset < l.right)
+							memcpy(_vm->_graphicsMgr->_screenBuffer.getBasePtr(sco + rect.left, b), buf, maskOffset * 2);
+
+						else if (sco < l.left && sco + maskOffset < l.right && sco + maskOffset >= l.left)
+							memcpy(_vm->_graphicsMgr->_screenBuffer.getBasePtr(l.left + rect.left, b), buf + l.left - sco, (maskOffset + sco - l.left) * 2);
+
+						else if (sco >= l.left && sco + maskOffset >= l.right && sco < l.right)
+							memcpy(_vm->_graphicsMgr->_screenBuffer.getBasePtr(sco + rect.left, b), buf, (l.right - sco) * 2);
+
+						else if (sco < l.left && sco + maskOffset >= l.right)
+							memcpy(_vm->_graphicsMgr->_screenBuffer.getBasePtr(l.left + rect.left, b), buf + l.left - sco, (l.right - l.left) * 2);
+					}
+					sco += *mask;
+					buf += *mask++;
+					c = 0;
+				}
+			}
+		}
+	} else {
+		for (uint16 b = l.top; b < l.bottom; ++b) {
+			memcpy(_vm->_graphicsMgr->_screenBuffer.getBasePtr(rect.left + l.left, rect.top + b),
+				   buf + (b * rect.width()) + l.left, l.width() * 2);
+		}
+	}
+}
+
+void SDObj::erase() {
+	_vm->_graphicsMgr->_screenBuffer.fillRect(Common::Rect(l.left, l.top + TOP, l.right, l.bottom + TOP), 0);
+}
+
 Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
 	_zBuffer = new int16[ZBUFFERSIZE / 2];
 
@@ -112,8 +173,7 @@ Renderer3D::Renderer3D(TrecisionEngine *vm) : _vm(vm) {
 		_shVertex[i].clear();
 	}
 
-	drawObj.rect = Common::Rect(0, 0, 0, 0);
-	drawObj.l = Common::Rect(0, 0, 0, 0);
+	_drawObj.init(vm);
 }
 
 Renderer3D::~Renderer3D() {
@@ -838,41 +898,41 @@ void Renderer3D::paintScreen(bool flag) {
 
 	// erase character
 	if (_vm->_flagShowCharacter && x2 > x1 && y2 > y1) { // if a description exists
-		drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-		drawObj.l = Common::Rect(x1, y1, x2, y2);
-		drawObj.objIndex = -1;
-		drawObj.drawMask = false;
-		_vm->_graphicsMgr->drawObj(drawObj);
+		_drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		_drawObj.l = Common::Rect(x1, y1, x2, y2);
+		_drawObj.objIndex = -1;
+		_drawObj.drawMask = false;
+		_drawObj.draw();
 
-		_vm->addDirtyRect(drawObj.l);
+		_vm->addDirtyRect(_drawObj.l);
 		_vm->_actorRect = &_vm->_dirtyRects.back();
 	} else if (_vm->_animMgr->_animRect.left != MAXX) {
-		drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-		drawObj.l = _vm->_animMgr->_animRect;
-		drawObj.objIndex = -1;
-		drawObj.drawMask = false;
-		_vm->_graphicsMgr->drawObj(drawObj);
+		_drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		_drawObj.l = _vm->_animMgr->_animRect;
+		_drawObj.objIndex = -1;
+		_drawObj.drawMask = false;
+		_drawObj.draw();
 
-		_vm->addDirtyRect(drawObj.l);
+		_vm->addDirtyRect(_drawObj.l);
 		_vm->_actorRect = &_vm->_dirtyRects.back();
 	}
 
 	// If there's text to remove
 	if (_vm->_textStatus & TEXT_DEL) {
 		// remove text
-		drawObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
-		drawObj.l = _vm->_textMgr->getOldTextRect();
-		drawObj.l.translate(0, -TOP);
-		drawObj.objIndex = -1;
-		drawObj.drawMask = false;
+		_drawObj.rect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
+		_drawObj.l = _vm->_textMgr->getOldTextRect();
+		_drawObj.l.translate(0, -TOP);
+		_drawObj.objIndex = -1;
+		_drawObj.drawMask = false;
 
-		if (drawObj.l.top >= 0 && drawObj.l.bottom < AREA) {
-			_vm->_graphicsMgr->drawObj(drawObj);
+		if (_drawObj.l.top >= 0 && _drawObj.l.bottom < AREA) {
+			_drawObj.draw();
 		} else {
-			_vm->_graphicsMgr->eraseObj(drawObj);
+			_drawObj.erase();
 		}
 		_vm->_textMgr->clearOldText();
-		_vm->addDirtyRect(drawObj.l);
+		_vm->addDirtyRect(_drawObj.l);
 
 		if (!(_vm->_textStatus & TEXT_DRAW)) // if there's no new text
 			_vm->_textStatus = TEXT_OFF;     // stop updating text
@@ -881,13 +941,13 @@ void Renderer3D::paintScreen(bool flag) {
 	// Suppress all the objects you removed
 	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
 		if (i->_remove) {
-			drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+			_drawObj.rect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 
-			drawObj.l = _vm->_obj[i->_objectId]._rect;
-			drawObj.objIndex = -1;
-			drawObj.drawMask = false;
-			_vm->_graphicsMgr->drawObj(drawObj);
-			_vm->addDirtyRect(drawObj.l);
+			_drawObj.l = _vm->_obj[i->_objectId]._rect;
+			_drawObj.objIndex = -1;
+			_drawObj.drawMask = false;
+			_drawObj.draw();
+			_vm->addDirtyRect(_drawObj.l);
 		}
 	}
 
@@ -941,13 +1001,13 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 		if (!i->_remove && _vm->_obj[i->_objectId]._nbox == curBox) {
 			// the bitmap object at the desired level
 			SObject obj = _vm->_obj[i->_objectId];
-			drawObj.rect = obj._rect;
-			drawObj.rect.translate(0, TOP);
-			drawObj.l = Common::Rect(drawObj.rect.width(), drawObj.rect.height());
-			drawObj.objIndex = _vm->getRoomObjectIndex(i->_objectId);
-			drawObj.drawMask = obj._mode & OBJMODE_MASK;
-			_vm->_graphicsMgr->drawObj(drawObj);
-			_vm->_dirtyRects.push_back(drawObj.rect);
+			_drawObj.rect = obj._rect;
+			_drawObj.rect.translate(0, TOP);
+			_drawObj.l = Common::Rect(_drawObj.rect.width(), _drawObj.rect.height());
+			_drawObj.objIndex = _vm->getRoomObjectIndex(i->_objectId);
+			_drawObj.drawMask = obj._mode & OBJMODE_MASK;
+			_drawObj.draw();
+			_vm->_dirtyRects.push_back(_drawObj.rect);
 		}
 	}
 
@@ -970,8 +1030,8 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 				++r2.right;
 
 				if (r.intersects(r2)) {
-					drawObj.rect = obj._rect;
-					drawObj.rect.translate(0, TOP);
+					_drawObj.rect = obj._rect;
+					_drawObj.rect.translate(0, TOP);
 
 					// Restore the bottom right of the rect
 					--r2.bottom;
@@ -982,11 +1042,10 @@ void Renderer3D::paintObjAnm(uint16 curBox) {
 					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
 					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
-					drawObj.l = Common::Rect(xr1, yr1, xr2, yr2);
-					drawObj.objIndex = b;
-					drawObj.drawMask = obj._mode & OBJMODE_MASK;
-
-					_vm->_graphicsMgr->drawObj(drawObj);
+					_drawObj.l = Common::Rect(xr1, yr1, xr2, yr2);
+					_drawObj.objIndex = b;
+					_drawObj.drawMask = obj._mode & OBJMODE_MASK;
+					_drawObj.draw();
 				}
 			}
 		}

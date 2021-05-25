@@ -27,6 +27,20 @@
 #include "common/serializer.h"
 
 namespace Trecision {
+struct SDObj {
+private:
+	TrecisionEngine *_vm;
+public:
+	Common::Rect rect;
+	Common::Rect l;
+	int objIndex;
+	bool drawMask;
+
+	void draw();
+	void erase();
+	void init(TrecisionEngine *vm);
+};
+
 struct SVVertex {
 	int32 _x, _y, _z;
 	int32 _angle;
@@ -129,7 +143,7 @@ private:
 	uint16 _lTextY[480];
 	uint16 _rTextY[480];
 
-	SDObj drawObj;
+	SDObj _drawObj;
 
 	void setZBufferRegion(int16 sx, int16 sy, int16 dx);
 	int8 clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int16 y3);
