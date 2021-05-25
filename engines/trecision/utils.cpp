@@ -29,7 +29,6 @@
 #include "trecision/graphics.h"
 #include "trecision/trecision.h"
 #include "trecision/struct.h"
-#include "trecision/video.h"
 
 namespace Trecision {
 
