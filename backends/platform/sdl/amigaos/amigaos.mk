@@ -13,16 +13,17 @@ amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
 	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
-	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
+	cp -r ${srcdir}/doc/ $(AMIGAOSPATH)
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc
-	# Prepare README.md for AmigaGuide conversion.
-	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amigaos/convertRM.sed > README.conv
+	# README.md must be in the current working directory
+	# when building out of tree.
+	cp ${srcdir}/README.md README.tmp
 	# AmigaOS AREXX will error with a "Program not found" message
 	# if srcdir is '.'. Copy the script to cwd instead.
-	cp ${srcdir}/dists/amigaos/RM2AG.rexx .
-	rx RM2AG.rexx README.conv $(AMIGAOSPATH)/doc/
-	rm -f README.conv
-	rm -f RM2AG.rexx
+	cp ${srcdir}/dists/amigaos/md2ag.rexx .
+	# LC_ALL is here to workaround Debian bug #973647
+	LC_ALL=C rx md2ag.rexx README.tmp $(AMIGAOSPATH)/doc/
+	rm -f md2ag.rexx README.tmp
 endif
 	# Copy mandatory installation files.
 	makedir all $(AMIGAOSPATH)/extras
