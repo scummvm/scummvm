@@ -13,18 +13,19 @@ amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
 	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
-	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
+	cp -r ${srcdir}/doc/ $(AMIGAOSPATH)
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc
-	# README.md needs to be in current working directory
-	# when building out of tree it needs to be here
+	# README.md must be in the current working directory
+	# when building out of tree.
 	# Convert README.md to ASCII encoding
 	# LC_ALL is here to workaround Debian bug #973647
-	cat ${srcdir}/README.md | LC_ALL=C iconv -f 'UTF-8' -t 'ASCII//TRANSLIT' > README.conv
+	cp ${srcdir}/README.md README.tmp
+	LC_ALL=C iconv -f 'UTF-8' -t 'ASCII//TRANSLIT' README.tmp > README.conv
 	# AmigaOS AREXX will error with a "Program not found" message
 	# if srcdir is '.'. Copy the script to cwd instead.
-	cp ${srcdir}/dists/amigaos/md2ag.rexx .
-	rx md2ag.rexx README.conv "$(AMIGAOSPATH)/doc/"
-	rm -f md2ag.rexx README.conv
+	cp ${srcdir}/dists/amigaos/md2ag.rexx ${srcdir}
+	rx md2ag.rexx README.conv $(AMIGAOSPATH)/doc/
+	rm -f md2ag.rexx README.conv README.tmp
 endif
 	# Copy mandatory installation files.
 	makedir all $(AMIGAOSPATH)/extras
