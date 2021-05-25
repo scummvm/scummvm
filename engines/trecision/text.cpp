@@ -233,27 +233,13 @@ void TextManager::doString() {
 		}
 		break;
 
-	case ME_SOMEONEWAIT2SPEAK:
-		if (!_vm->_curMessage->_u16Param1)
-			someoneContinueTalk();
-		else
-			_vm->reEvent();
-		break;
-
-	case ME_SOMEONEWAIT2MUTE:
-		if (!_vm->_curMessage->_u16Param1)
-			someoneMute();
-		else
-			_vm->reEvent();
-		break;
-
 	case ME_SOMEONESPEAKING:
 		if (_vm->_flagSomeoneSpeaks) {
 			if (_vm->_flagSkipTalk || (_vm->_curTime >= (_talkTime + _someoneSpeakTime))) {
 				if (_subStringAgain)
 					someoneContinueTalk();
 				else {
-					_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2MUTE, MP_DEFAULT, 0, 0, 0, 0);
+					someoneMute();
 				}
 			} else
 				_vm->reEvent();
@@ -356,8 +342,7 @@ void TextManager::someoneSay(uint16 sentence, uint16 person) {
 	_curSubString = 0;
 
 	formattingSuperString();
-
-	_vm->_scheduler->doEvent(MC_STRING, ME_SOMEONEWAIT2SPEAK, MP_DEFAULT, 0, 0, 0, 0);
+	someoneContinueTalk();
 }
 
 void TextManager::characterSay(uint16 i) {

@@ -2453,8 +2453,6 @@ Management of "Use with"
 
 #define ME_CHARACTERSPEAKING 3 // (someone,)
 #define ME_SOMEONESPEAKING 5   // (...)
-#define ME_SOMEONEWAIT2SPEAK 7
-#define ME_SOMEONEWAIT2MUTE 8
 
 
 /*************************************************************************
