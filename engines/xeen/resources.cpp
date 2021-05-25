@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "xeen/resources.h"
 #include "xeen/files.h"
@@ -61,8 +60,8 @@ Resources::Resources() {
 }
 
 void Resources::loadData() {
-	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
-	ResFile file(_buffer, lang);
+	Common::Language lang = g_vm->getLanguage();
+	ResFile file("CONSTANTS_", _buffer, lang);
 	file.syncString(CLOUDS_CREDITS);
 	file.syncString(DARK_SIDE_CREDITS);
 	file.syncString(SWORDS_CREDITS1);
@@ -420,6 +419,32 @@ void Resources::loadData() {
 	file.syncString(DARKSIDE_ENDING2);
 	file.syncString(PHAROAH_ENDING_TEXT1);
 	file.syncString(PHAROAH_ENDING_TEXT2);
+
+	ResFile keys("CONSTKEYS_", _buffer, lang);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_ITEM);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_QUICK);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CHAR_INFO.KEY_EXCHANGE);
+
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD);
+
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ROLL);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_CREATE);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK);
+
+
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_ADVENTURER);
+	keys.syncNumber(KEY_CONSTANTS.DIALOGS_DIFFICULTY.KEY_WARRIOR);
 }
 
 } // End of namespace Xeen

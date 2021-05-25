@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_control_panel.h"
 #include "xeen/dialogs/dialogs_query.h"
 #include "xeen/party.h"
@@ -84,176 +83,72 @@ int ControlPanel::execute() {
 				return 0;
 		} while (!_buttonValue && events.timeElapsed() < 2);
 
-		if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-			switch (_buttonValue) {
-			// В ({В}ыход)
-			case Common::KEYCODE_d:	// russian key В
-				if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
-					g_vm->_gameMode = GMODE_QUIT;
-					result = 1;
-				}
-				break;
-
-			// П ({П}омощь)
-			case Common::KEYCODE_g:	// russian key П
-				debugCtr = 1;	// Goober cheat sequence
-
-				if (Confirm::show(g_vm, Res.MR_WIZARD)) {
-					w.close();
-					if (!windows[2]._enabled) {
-						sound.playFX(51);
-
-						if (g_vm->getGameID() == GType_WorldOfXeen) {
-							map._loadCcNum = 0;
-							map.load(28);
-							party._mazeDirection = DIR_EAST;
-						} else {
-							map._loadCcNum = 1;
-							map.load(29);
-							party._mazeDirection = DIR_SOUTH;
-						}
-						party.moveToRunLocation();
-					}
-
-					party._gems = 0;
-					result = 2;
-				}
-				break;
-
-			// З ({З}агрузить)
-			case Common::KEYCODE_p:	// russian key З
-				if (_vm->_mode == MODE_COMBAT) {
-					ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
-				} else {
-					// Close dialog and show loading dialog
-					result = 3;
-				}
-				break;
-
-			// С ({С}охранить)
-			case Common::KEYCODE_c:	// russian key С
-				if (_vm->_mode == MODE_COMBAT) {
-					ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
-				} else {
-					// Close dialog and show saving dialog
-					result = 4;
-				}
-				break;
-
-			// У (Зв{у}к)
-			case Common::KEYCODE_e:	// russian key У
-				sound.setFxOn(!sound._fxOn);
-				break;
-
-			// М ({М}узыка)
-			case Common::KEYCODE_v:	// russian key М
-				sound.setMusicOn(!sound._musicOn);
-				break;
-
-			case Common::KEYCODE_ESCAPE:
+		if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT == _buttonValue) {
+			if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
+				g_vm->_gameMode = GMODE_QUIT;
 				result = 1;
-				break;
-
-			// Goober cheat sequence
-			case Common::KEYCODE_o:
-				debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
-				break;
-			case Common::KEYCODE_b:
-				debugCtr = (debugCtr == 2) ? 3 : 0;
-				break;
-			case Common::KEYCODE_r:
-				if (debugCtr == 3)
-					_debugFlag = true;
-				else
-					debugCtr = 0;
-				break;
-
-			default:
-				break;
 			}
-		} else {
-			switch (_buttonValue) {
-			case Common::KEYCODE_q:
-				if (Confirm::show(g_vm, Res.CONFIRM_QUIT)) {
-					g_vm->_gameMode = GMODE_QUIT;
-					result = 1;
-				}
-				break;
 
-			case Common::KEYCODE_w:
-				if (Confirm::show(g_vm, Res.MR_WIZARD)) {
-					w.close();
-					if (!windows[2]._enabled) {
-						sound.playFX(51);
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD == _buttonValue) {
+			if (Confirm::show(g_vm, Res.MR_WIZARD)) {
+				w.close();
+				if (!windows[2]._enabled) {
+					sound.playFX(51);
 
-						if (g_vm->getGameID() == GType_WorldOfXeen) {
-							map._loadCcNum = 0;
-							map.load(28);
-							party._mazeDirection = DIR_EAST;
-						} else {
-							map._loadCcNum = 1;
-							map.load(29);
-							party._mazeDirection = DIR_SOUTH;
-						}
-						party.moveToRunLocation();
+					if (g_vm->getGameID() == GType_WorldOfXeen) {
+						map._loadCcNum = 0;
+						map.load(28);
+						party._mazeDirection = DIR_EAST;
+					} else {
+						map._loadCcNum = 1;
+						map.load(29);
+						party._mazeDirection = DIR_SOUTH;
 					}
-
-					party._gems = 0;
-					result = 2;
+					party.moveToRunLocation();
 				}
-				break;
 
-			case Common::KEYCODE_l:
-				if (_vm->_mode == MODE_COMBAT) {
-					ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
-				} else {
-					// Close dialog and show loading dialog
-					result = 3;
-				}
-				break;
-
-			case Common::KEYCODE_s:
-				if (_vm->_mode == MODE_COMBAT) {
-					ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
-				} else {
-					// Close dialog and show saving dialog
-					result = 4;
-				}
-				break;
-
-			case Common::KEYCODE_e:
-				sound.setFxOn(!sound._fxOn);
-				break;
-
-			case Common::KEYCODE_m:
-				sound.setMusicOn(!sound._musicOn);
-				break;
-
-			case Common::KEYCODE_ESCAPE:
-				result = 1;
-				break;
-
-			// Goober cheat sequence
-			case Common::KEYCODE_g:
-				debugCtr = 1;
-				break;
-			case Common::KEYCODE_o:
-				debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
-				break;
-			case Common::KEYCODE_b:
-				debugCtr = (debugCtr == 2) ? 3 : 0;
-				break;
-			case Common::KEYCODE_r:
-				if (debugCtr == 3)
-					_debugFlag = true;
-				else
-					debugCtr = 0;
-				break;
-
-			default:
-				break;
+				party._gems = 0;
+				result = 2;
 			}
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD == _buttonValue) {
+			if (_vm->_mode == MODE_COMBAT) {
+				ErrorScroll::show(_vm, Res.NO_LOADING_IN_COMBAT);
+			} else {
+				// Close dialog and show loading dialog
+				result = 3;
+			}
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE == _buttonValue) {
+			if (_vm->_mode == MODE_COMBAT) {
+				ErrorScroll::show(_vm, Res.NO_SAVING_IN_COMBAT);
+			} else {
+				// Close dialog and show saving dialog
+				result = 4;
+			}
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON == _buttonValue) {
+			sound.setFxOn(!sound._fxOn);
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON == _buttonValue) {
+			sound.setMusicOn(!sound._musicOn);
+
+		} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
+			result = 1;
+
+		} else if (Common::KEYCODE_g == _buttonValue) { // Goober cheat sequence
+			debugCtr = 1;
+		} else if (Common::KEYCODE_o == _buttonValue) {
+			debugCtr = (debugCtr == 1 || debugCtr == 2) ? 2 : 0;
+		} else if (Common::KEYCODE_b == _buttonValue) {
+			debugCtr = (debugCtr == 2) ? 3 : 0;
+		} else if (Common::KEYCODE_r == _buttonValue) {
+			if (debugCtr == 3)
+				_debugFlag = true;
+			else
+				debugCtr = 0;
 		}
+
 	} while (!result);
 
 	w.close();
@@ -271,27 +166,17 @@ int ControlPanel::execute() {
 
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-		addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);		// russian key У
-		addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_v, 0, &_iconSprites);		// russian key М
-		addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_p, 0, &_iconSprites);		// russian key З
-		addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_c, 0, &_iconSprites);		// russian key С
-		addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_d, 0, &_iconSprites);	// russian key В
-		addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_g, 0, &_iconSprites);	// russian key П
-	} else {
+	addButton(Common::Rect(214, 56, 244, 69), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_FXON, 0, &_iconSprites);
+	addButton(Common::Rect(214, 75, 244, 88), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MUSICON, 0, &_iconSprites);
+	addButton(Common::Rect(135, 56, 165, 69), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_LOAD, 0, &_iconSprites);
+	addButton(Common::Rect(135, 75, 165, 88), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_SAVE, 0, &_iconSprites);
 
-		addButton(Common::Rect(214, 56, 244, 69), Common::KEYCODE_e, 0, &_iconSprites);
-		addButton(Common::Rect(214, 75, 244, 88), Common::KEYCODE_m, 0, &_iconSprites);
-		addButton(Common::Rect(135, 56, 165, 69), Common::KEYCODE_l, 0, &_iconSprites);
-		addButton(Common::Rect(135, 75, 165, 88), Common::KEYCODE_s, 0, &_iconSprites);
+	// For ScummVM we've merged both Save and Save As into a single
+	// save item, so we don't need this one
+	addButton(Common::Rect(), 0);
 
-		// For ScummVM we've merged both Save and Save As into a single
-		// save item, so we don't need this one
-		addButton(Common::Rect(), 0);
-
-		addButton(Common::Rect(135, 94, 165, 107), Common::KEYCODE_q, 0, &_iconSprites);
-		addButton(Common::Rect(175, 113, 205, 126), Common::KEYCODE_w, 0, &_iconSprites);
-	}
+	addButton(Common::Rect(135, 94, 165, 107), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_QUIT, 0, &_iconSprites);
+	addButton(Common::Rect(175, 113, 205, 126), Res.KEY_CONSTANTS.DIALOGS_CONTROL_PANEL.KEY_MRWIZARD, 0, &_iconSprites);
 }
 
 Common::String ControlPanel::getButtonText() {

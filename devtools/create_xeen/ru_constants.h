@@ -1994,4 +1994,74 @@ public:
 			   "c\t000\v180Press a Key!\x3"
 			   "l\fd";
 	}
+
+	class RU_KeyConstants : public KeyConstants {
+	public:
+		class RU_DialogsCharInfo : public DialogsCharInfo {
+		public:
+			const int KEY_ITEM()     { return Common::KEYCODE_d; }
+			const int KEY_QUICK()    { return Common::KEYCODE_COMMA; }
+			const int KEY_EXCHANGE() { return Common::KEYCODE_c; }
+		};
+		RU_DialogsCharInfo *DIALOGS_CHAR_INFO() {
+			if (!_dci) _dci = new RU_DialogsCharInfo();
+			return _dci;
+		}
+
+		class RU_DialogsControlPanel : public DialogsControlPanel {
+		public:
+			const int KEY_FXON()     { return Common::KEYCODE_e; }
+			const int KEY_MUSICON()  { return Common::KEYCODE_v; }
+			const int KEY_LOAD()     { return Common::KEYCODE_p; }
+			const int KEY_SAVE()     { return Common::KEYCODE_c; }
+			const int KEY_QUIT()     { return Common::KEYCODE_d; }
+			const int KEY_MRWIZARD() { return Common::KEYCODE_g; }
+		};
+		RU_DialogsControlPanel *DIALOGS_CONTROL_PANEL() {
+			if (!_dcp) _dcp = new RU_DialogsControlPanel();
+			return _dcp;
+		}
+
+		class RU_DialogsCreateChar : public DialogsCreateChar {
+		public:
+			const int KEY_ROLL()   { return Common::KEYCODE_COMMA; }
+			const int KEY_CREATE() { return Common::KEYCODE_c; }
+			const int KEY_MGT()    { return Common::KEYCODE_k; }
+			const int KEY_INT()    { return Common::KEYCODE_b; }
+			const int KEY_PER()    { return Common::KEYCODE_l; }
+			const int KEY_END()    { return Common::KEYCODE_SEMICOLON; }
+			const int KEY_SPD()    { return Common::KEYCODE_r; }
+			const int KEY_ACY()    { return Common::KEYCODE_v; }
+			const int KEY_LCK()    { return Common::KEYCODE_e; }
+		};
+		RU_DialogsCreateChar *DIALOGS_CREATE_CHAR() {
+			if (!_dcc) _dcc = new RU_DialogsCreateChar();
+			return _dcc;
+		}
+
+		class RU_DialogsDifficulty : public DialogsDifficulty {
+		public:
+			const int KEY_ADVENTURER() { return Common::KEYCODE_f; }
+			const int KEY_WARRIOR()    { return Common::KEYCODE_d; }
+		};
+		RU_DialogsDifficulty *DIALOGS_DIFFICULTY() {
+			if (!_dd) _dd = new RU_DialogsDifficulty();
+			return _dd;
+		}
+
+	private:
+		RU_DialogsCharInfo     *_dci = NULL;
+		RU_DialogsControlPanel *_dcp = NULL;
+		RU_DialogsCreateChar   *_dcc = NULL;
+		RU_DialogsDifficulty *_dd = NULL;
+
+	};
+
+	RU_KeyConstants *KEY_CONSTANTS() {
+		if (!_kc) _kc = new RU_KeyConstants();
+		return _kc;
+	}
+
+private:
+	RU_KeyConstants *_kc = NULL;
 };

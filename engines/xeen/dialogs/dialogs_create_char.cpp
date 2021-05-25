@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "xeen/dialogs/dialogs_create_char.h"
 #include "xeen/dialogs/dialogs_input.h"
 #include "xeen/xeen.h"
@@ -131,198 +130,88 @@ void CreateCharacterDialog::execute() {
 		// Handling for different actions
 		if (_buttonValue == Common::KEYCODE_ESCAPE)
 			break;
-		if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-			switch (_buttonValue) {
-			case Common::KEYCODE_UP:
-				if (charIndex == 0)
-					continue;
 
+		
+		if (Common::KEYCODE_UP == _buttonValue) {
+			if (charIndex == 0)
+				continue;
+
+			--charIndex;
+			race = (Race)((freeCharList[charIndex] / 4) % 5);
+			sex = (Sex)(freeCharList[charIndex] & 1);
+
+		} else if (Common::KEYCODE_DOWN == _buttonValue) {
+			if (++charIndex == (int)freeCharList.size()) {
 				--charIndex;
+				continue;
+			} else {
 				race = (Race)((freeCharList[charIndex] / 4) % 5);
 				sex = (Sex)(freeCharList[charIndex] & 1);
-				break;
-
-			case Common::KEYCODE_DOWN:
-				if (++charIndex == (int)freeCharList.size()) {
-					--charIndex;
-					continue;
-				} else {
-					race = (Race)((freeCharList[charIndex] / 4) % 5);
-					sex = (Sex)(freeCharList[charIndex] & 1);
-				}
-				break;
-
-			case Common::KEYCODE_PAGEUP:
-				for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
-					if (_allowedClasses[tempClass]) {
-						selectedClass = tempClass;
-						break;
-					}
-				}
-
-				printSelectionArrow(selectedClass);
-				continue;
-
-			case Common::KEYCODE_PAGEDOWN:
-				break;
-
-			// Л (Си{л})
-			case Common::KEYCODE_k:			// russian key Л
-			// И ({И}нт)
-			case Common::KEYCODE_b:			// russian key И
-			// Д ({Д}ух)
-			case Common::KEYCODE_l:			// russian key Д
-			// Ж (Сл{ж})
-			case Common::KEYCODE_SEMICOLON:	// russian key Ж
-			// К (С{к}р)
-			case Common::KEYCODE_r:			// russian key К
-			// М ({М}тк)
-			case Common::KEYCODE_v:			// russian key М
-			// У ({У}дч)
-			case Common::KEYCODE_e:			// russian key У
-				if (swapAttributes(_buttonValue)) {
-					checkClass();
-					classId = -1;
-					selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
-				}
-				break;
-
-			case 1000:
-			case 1001:
-			case 1002:
-			case 1003:
-			case 1004:
-			case 1005:
-			case 1006:
-			case 1007:
-			case 1008:
-			case 1009:
-				if (_allowedClasses[_buttonValue - 1000]) {
-					selectedClass = classId = _buttonValue - 1000;
-				}
-				break;
-
-			// С ({С}озд)
-			case Common::KEYCODE_c:	// russian key С
-			{
-				_vm->_mode = MODE_FF;
-				bool result = saveCharacter(party._roster[freeCharList[charIndex]],
-											classId, race, sex);
-				_vm->_mode = MODE_4;
-
-				if (result)
-					restartFlag = true;
-				continue;
 			}
 
-			case Common::KEYCODE_RETURN:
-				classId = selectedClass;
-				break;
+		} else if (Common::KEYCODE_PAGEUP == _buttonValue) {
+			for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
+				if (_allowedClasses[tempClass]) {
+					selectedClass = tempClass;
+					break;
+				}
+			}
 
-			// Б ({Б}росок)
-			case Common::KEYCODE_COMMA:	// russian key Б
-			case Common::KEYCODE_SPACE:
-				// Re-roll the attributes
-				rollAttributes();
+			printSelectionArrow(selectedClass);
+			continue;
+
+		} else if (Common::KEYCODE_PAGEDOWN == _buttonValue) {
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK == _buttonValue) {
+			if (swapAttributes(_buttonValue)) {
+				checkClass();
 				classId = -1;
-				break;
-
-			default:
-				// For all other keypresses, skip the code below the switch
-				// statement, and go to wait for the next key
-				continue;
+				selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
 			}
+
+		} else if (1000 == _buttonValue ||
+				   1001 == _buttonValue ||
+				   1002 == _buttonValue ||
+				   1003 == _buttonValue ||
+				   1004 == _buttonValue ||
+				   1005 == _buttonValue ||
+				   1006 == _buttonValue ||
+				   1007 == _buttonValue ||
+				   1008 == _buttonValue ||
+				   1009 == _buttonValue) {
+			if (_allowedClasses[_buttonValue - 1000]) {
+				selectedClass = classId = _buttonValue - 1000;
+			}
+
+		} else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_CREATE == _buttonValue) {
+			_vm->_mode = MODE_FF;
+			bool result = saveCharacter(party._roster[freeCharList[charIndex]],
+										classId, race, sex);
+			_vm->_mode = MODE_4;
+
+			if (result)
+				restartFlag = true;
+			continue;
+
+		} else if (Common::KEYCODE_RETURN == _buttonValue) {
+			classId = selectedClass;
+
+		} else if (Common::KEYCODE_SPACE == _buttonValue ||
+				   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ROLL == _buttonValue) {
+			// Re-roll the attributes
+			rollAttributes();
+			classId = -1;
+
 		} else {
-			switch (_buttonValue) {
-			case Common::KEYCODE_UP:
-				if (charIndex == 0)
-					continue;
-
-				--charIndex;
-				race = (Race)((freeCharList[charIndex] / 4) % 5);
-				sex = (Sex)(freeCharList[charIndex] & 1);
-				break;
-
-			case Common::KEYCODE_DOWN:
-				if (++charIndex == (int)freeCharList.size()) {
-					--charIndex;
-					continue;
-				} else {
-					race = (Race)((freeCharList[charIndex] / 4) % 5);
-					sex = (Sex)(freeCharList[charIndex] & 1);
-				}
-				break;
-
-			case Common::KEYCODE_PAGEUP:
-				for (int tempClass = selectedClass - 1; tempClass >= 0; --tempClass) {
-					if (_allowedClasses[tempClass]) {
-						selectedClass = tempClass;
-						break;
-					}
-				}
-
-				printSelectionArrow(selectedClass);
-				continue;
-
-			case Common::KEYCODE_PAGEDOWN:
-				break;
-
-			case Common::KEYCODE_m:
-			case Common::KEYCODE_i:
-			case Common::KEYCODE_p:
-			case Common::KEYCODE_e:
-			case Common::KEYCODE_s:
-			case Common::KEYCODE_a:
-			case Common::KEYCODE_l:
-				if (swapAttributes(_buttonValue)) {
-					checkClass();
-					classId = -1;
-					selectedClass = newCharDetails(race, sex, classId, selectedClass, msg);
-				}
-				break;
-
-			case 1000:
-			case 1001:
-			case 1002:
-			case 1003:
-			case 1004:
-			case 1005:
-			case 1006:
-			case 1007:
-			case 1008:
-			case 1009:
-				if (_allowedClasses[_buttonValue - 1000]) {
-					selectedClass = classId = _buttonValue - 1000;
-				}
-				break;
-
-			case Common::KEYCODE_c: {
-				_vm->_mode = MODE_FF;
-				bool result = saveCharacter(party._roster[freeCharList[charIndex]],
-											classId, race, sex);
-				_vm->_mode = MODE_4;
-
-				if (result)
-					restartFlag = true;
-				continue;
-			}
-
-			case Common::KEYCODE_RETURN:
-				classId = selectedClass;
-				break;
-
-			case Common::KEYCODE_SPACE:
-			case Common::KEYCODE_r:
-				// Re-roll the attributes
-				rollAttributes();
-				classId = -1;
-				break;
-
-			default:
-				// For all other keypresses, skip the code below the switch
-				// statement, and go to wait for the next key
-				continue;
-			}
+			// For all other keypresses, skip the code below the switch
+			// statement, and go to wait for the next key
+			continue;
 		}
 
 		if (_buttonValue != Common::KEYCODE_PAGEDOWN) {
@@ -360,27 +249,16 @@ void CreateCharacterDialog::loadButtons() {
 	_icons.load("create.icn");
 
 	// Add buttons
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-		addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_COMMA, &_icons);		// russian key Б
-		addButton(Common::Rect(132, 128, 156, 148), Common::KEYCODE_c, &_icons);		// russian key С
-		addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_k, nullptr);			// russian key Л
-		addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_b, nullptr);			// russian key И
-		addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_l, nullptr);			// russian key Д
-		addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_SEMICOLON, nullptr);	// russian key Ж
-		addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_r, nullptr);		// russian key К
-		addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_v, nullptr);		// russian key М
-		addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_e, nullptr);		// russian key У
-	} else {
-		addButton(Common::Rect(132, 98, 156, 118), Common::KEYCODE_r, &_icons);
-		addButton(Common::Rect(132, 128, 156, 148), Common::KEYCODE_c, &_icons);
-		addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_n, nullptr);
-		addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i, nullptr);
-		addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p, nullptr);
-		addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e, nullptr);
-		addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s, nullptr);
-		addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a, nullptr);
-		addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l, nullptr);
-	}
+	addButton(Common::Rect(132, 98, 156, 118), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ROLL, &_icons);
+	addButton(Common::Rect(132, 128, 156, 148), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_CREATE, &_icons);
+	addButton(Common::Rect(168, 19, 192, 39), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT, nullptr);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT, nullptr);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER, nullptr);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END, nullptr);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD, nullptr);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY, nullptr);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK, nullptr);
+
 	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
 	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
 	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
@@ -585,52 +463,22 @@ void CreateCharacterDialog::drawDice() {
 }
 
 int CreateCharacterDialog::getAttribFromKeycode(int keycode) const {
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-		switch (keycode) {
-		// л (Си{л})
-		case Common::KEYCODE_k:			// russian key Л
-			return MIGHT;
-		// и ({И}нт)
-		case Common::KEYCODE_b:         // russian key И
-			return INTELLECT;
-		// д({Д}ух)
-		case Common::KEYCODE_l:         // russian key Д
-			return PERSONALITY;
-		// ж(Сл{ж})
-		case Common::KEYCODE_SEMICOLON: // russian key Ж
-			return ENDURANCE;
-		// к(С{к}р)
-		case Common::KEYCODE_r:         // russian key К
-			return SPEED;
-		// м({М}тк)
-		case Common::KEYCODE_v:			// russian key М
-			return ACCURACY;
-		// у({У}дч) 
-		case Common::KEYCODE_e:			// russian key У
-			return LUCK;
-		default:
-			return -1;
-		}
-	} else {
-		switch (keycode) {
-		case Common::KEYCODE_m:
-			return MIGHT;
-		case Common::KEYCODE_i:
-			return INTELLECT;
-		case Common::KEYCODE_p:
-			return PERSONALITY;
-		case Common::KEYCODE_e:
-			return ENDURANCE;
-		case Common::KEYCODE_s:
-			return SPEED;
-		case Common::KEYCODE_a:
-			return ACCURACY;
-		case Common::KEYCODE_l:
-			return LUCK;
-		default:
-			return -1;
-		}
-	}
+	if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT == keycode)
+		return MIGHT;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT == keycode)
+		return INTELLECT;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER == keycode)
+		return PERSONALITY;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END == keycode)
+		return ENDURANCE;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD == keycode)
+		return SPEED;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY == keycode)
+		return ACCURACY;
+	else if (Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK == keycode)
+		return LUCK;
+	else
+		return -1;
 }
 
 bool CreateCharacterDialog::swapAttributes(int keycode) {
@@ -671,25 +519,16 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 	icons.load("create2.icn");
 
 	saveButtons();
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
-		addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
-		addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_k);			// russian key Л
-		addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_b);			// russian key И
-		addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_l);			// russian key Д
-		addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_SEMICOLON);	// russian key Ж
-		addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_r);			// russian key К
-		addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_v);			// russian key М
-		addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_e);			// russian key У
-	} else {
-		addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
-		addButton(Common::Rect(168, 19, 192, 39), Common::KEYCODE_m);
-		addButton(Common::Rect(168, 43, 192, 63), Common::KEYCODE_i);
-		addButton(Common::Rect(168, 67, 192, 87), Common::KEYCODE_p);
-		addButton(Common::Rect(168, 91, 192, 111), Common::KEYCODE_e);
-		addButton(Common::Rect(168, 115, 192, 135), Common::KEYCODE_s);
-		addButton(Common::Rect(168, 139, 192, 159), Common::KEYCODE_a);
-		addButton(Common::Rect(168, 163, 192, 183), Common::KEYCODE_l);
-	}
+
+	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(168, 19, 192, 39),   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_MGT);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_INT);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_PER);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_END);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_SPD);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_ACY);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KEY_CONSTANTS.DIALOGS_CREATE_CHAR.KEY_LCK);
+
 	Window &w = windows[26];
 	w.open();
 	w.writeString(Common::String::format(Res.EXCHANGE_ATTR_WITH, Res.STAT_NAMES[srcAttr]));

@@ -48,7 +48,7 @@ class Resources {
 		char *_buffer;
 		char *_buffStart;
 	public:
-		ResFile(char *buffer, int num) : File("CONSTANTS_" + Common::String::format("%i", num)), _buffer(buffer), _buffStart(buffer) {}
+		ResFile(const char* type, char *buffer, int num) : File(type + Common::String::format("%i", num)), _buffer(buffer), _buffStart(buffer) {}
 
 		void syncString(const char *&str) {
 			str = _buffer;
@@ -473,6 +473,45 @@ public:
 	const char *DARKSIDE_ENDING2;
 	const char *PHAROAH_ENDING_TEXT1;
 	const char *PHAROAH_ENDING_TEXT2;
+
+	struct {
+
+		struct {
+			int KEY_ITEM;
+			int KEY_QUICK;
+			int KEY_EXCHANGE;
+			int KEY_ESCAPE;
+		} DIALOGS_CHAR_INFO;
+
+		struct {
+			int KEY_FXON;
+			int KEY_MUSICON;
+			int KEY_LOAD;
+			int KEY_SAVE;
+			int KEY_QUIT;
+			int KEY_MRWIZARD;
+		} DIALOGS_CONTROL_PANEL;
+
+		struct {
+			int KEY_ROLL;
+			int KEY_CREATE;
+			int KEY_MGT;
+			int KEY_INT;
+			int KEY_PER;
+			int KEY_END;
+			int KEY_SPD;
+			int KEY_ACY;
+			int KEY_LCK;
+		} DIALOGS_CREATE_CHAR;
+
+		struct {
+			int KEY_ADVENTURER;
+			int KEY_WARRIOR;
+		} DIALOGS_DIFFICULTY;
+
+	} KEY_CONSTANTS;
+
+
 public:
 	/**
 	 * Constructor

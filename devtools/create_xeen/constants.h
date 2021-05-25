@@ -1245,6 +1245,50 @@ public:
 	virtual const char *PHAROAH_ENDING_TEXT2() = 0;
 
 	void writeConstants(Common::String num, CCArchive &cc);
+
+	class KeyConstants {
+	public:
+		class DialogsCharInfo {
+		public:
+			virtual const int KEY_ITEM() = 0;
+			virtual const int KEY_QUICK() = 0;
+			virtual const int KEY_EXCHANGE() = 0;
+		};
+		virtual DialogsCharInfo *DIALOGS_CHAR_INFO() = 0;
+
+		class DialogsControlPanel {
+		public:
+			virtual const int KEY_FXON() = 0;
+			virtual const int KEY_MUSICON() = 0;
+			virtual const int KEY_LOAD() = 0;
+			virtual const int KEY_SAVE() = 0;
+			virtual const int KEY_QUIT() = 0;
+			virtual const int KEY_MRWIZARD() = 0;
+		};
+		virtual DialogsControlPanel *DIALOGS_CONTROL_PANEL() = 0;
+
+		class DialogsCreateChar {
+		public:
+			virtual const int KEY_ROLL() = 0;
+			virtual const int KEY_CREATE() = 0;
+			virtual const int KEY_MGT() = 0;
+			virtual const int KEY_INT() = 0;
+			virtual const int KEY_PER() = 0;
+			virtual const int KEY_END() = 0;
+			virtual const int KEY_SPD() = 0;
+			virtual const int KEY_ACY() = 0;
+			virtual const int KEY_LCK() = 0;
+		};
+		virtual DialogsCreateChar *DIALOGS_CREATE_CHAR() = 0;
+
+		class DialogsDifficulty {
+		public:
+			virtual const int KEY_ADVENTURER() = 0;
+			virtual const int KEY_WARRIOR() = 0;
+		};
+		virtual DialogsDifficulty *DIALOGS_DIFFICULTY() = 0;
+	};
+	virtual KeyConstants *KEY_CONSTANTS() = 0;
 };
 
 extern void writeConstants(CCArchive &cc);

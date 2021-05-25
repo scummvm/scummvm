@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/endian.h"
 #include "xeen/font.h"
 #include "xeen/resources.h"
@@ -39,7 +38,7 @@ FontSurface::FontSurface() : XSurface(), _msgWraps(false), _displayString(nullpt
 		_writePos(*FontData::_fontWritePos) {
 	setTextColor(0);
 
-	lang = Common::parseLanguage(ConfMan.get("language"));
+	lang = g_vm->getLanguage();
 	if (Common::RU_RUS == lang) {
 		_fntEnOffset            = 0x0000;
 		_fntNonEnOffset         = 0x0800;
@@ -62,7 +61,7 @@ FontSurface::FontSurface(int wv, int hv) : XSurface(wv, hv),
 	create(w, h);
 	setTextColor(0);
 
-	lang = Common::parseLanguage(ConfMan.get("language"));
+	lang = g_vm->getLanguage();
 	if (Common::RU_RUS == lang) {
 		_fntEnOffset            = 0x0000;
 		_fntNonEnOffset         = 0x0800;

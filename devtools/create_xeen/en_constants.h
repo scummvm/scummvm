@@ -23,6 +23,7 @@
 #pragma once
 
 #include "constants.h"
+#include "../scummvm/common/keyboard.h"
 
 class EN : public LangConstants {
 public:
@@ -1987,4 +1988,76 @@ public:
 			   "c\t000\v180Press a Key!\x3"
 			   "l\fd";
 	}
+
+	class EN_KeyConstants : public KeyConstants {
+	public:
+		class EN_DialogsCharInfo : public DialogsCharInfo {
+		public:
+			const int KEY_ITEM()     { return Common::KEYCODE_i; }
+			const int KEY_QUICK()    { return Common::KEYCODE_q; }
+			const int KEY_EXCHANGE() { return Common::KEYCODE_e; }
+		};
+		EN_DialogsCharInfo *DIALOGS_CHAR_INFO() {
+			if (!_dci)_dci = new EN_DialogsCharInfo();
+			return _dci;
+		}
+
+		class EN_DialogsControlPanel : public DialogsControlPanel {
+		public:
+			const int KEY_FXON()     { return Common::KEYCODE_e; }
+			const int KEY_MUSICON()  { return Common::KEYCODE_m; }
+			const int KEY_LOAD()     { return Common::KEYCODE_l; }
+			const int KEY_SAVE()     { return Common::KEYCODE_s; }
+			const int KEY_QUIT()     { return Common::KEYCODE_q; }
+			const int KEY_MRWIZARD() { return Common::KEYCODE_w; }
+		};
+		EN_DialogsControlPanel *DIALOGS_CONTROL_PANEL() {
+			if (!_dcp) _dcp = new EN_DialogsControlPanel();
+			return _dcp;
+		}
+
+		class EN_DialogsCreateChar : public DialogsCreateChar {
+		public:
+			const int KEY_ROLL()   { return Common::KEYCODE_r; }
+			const int KEY_CREATE() { return Common::KEYCODE_c; }
+			const int KEY_MGT()    { return Common::KEYCODE_m; }
+			const int KEY_INT()    { return Common::KEYCODE_i; }
+			const int KEY_PER()    { return Common::KEYCODE_p; }
+			const int KEY_END()    { return Common::KEYCODE_e; }
+			const int KEY_SPD()    { return Common::KEYCODE_s; }
+			const int KEY_ACY()    { return Common::KEYCODE_a; }
+			const int KEY_LCK()    { return Common::KEYCODE_l; }
+		};
+		EN_DialogsCreateChar *DIALOGS_CREATE_CHAR() {
+			if (!_dcc) _dcc = new EN_DialogsCreateChar();
+			return _dcc;
+		}
+
+		class EN_DialogsDifficulty : public DialogsDifficulty {
+		public:
+			const int KEY_ADVENTURER() { return Common::KEYCODE_a; }
+			const int KEY_WARRIOR()    { return Common::KEYCODE_w; }
+		};
+		EN_DialogsDifficulty *DIALOGS_DIFFICULTY() {
+			if (!_dd)
+				_dd = new EN_DialogsDifficulty();
+			return _dd;
+		}
+
+	private:
+		EN_DialogsCharInfo     *_dci = NULL;
+		EN_DialogsControlPanel *_dcp = NULL;
+		EN_DialogsCreateChar   *_dcc = NULL;
+		EN_DialogsDifficulty   *_dd = NULL;
+	};
+
+	EN_KeyConstants *KEY_CONSTANTS() {
+		if (!_kc)_kc = new EN_KeyConstants();
+		return _kc;
+	}
+
+private:
+	EN_KeyConstants *_kc = NULL;
 };
+
+

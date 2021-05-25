@@ -20,7 +20,6 @@
  *
  */
 
-#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "common/algorithm.h"
 #include "xeen/party.h"
@@ -822,7 +821,7 @@ bool Party::arePacksFull() const {
 }
 
 const char *Party::getFoundForm(const Character &c) {
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+	if (Common::RU_RUS == g_vm->getLanguage()) {
 		switch (c._sex) {
 		case MALE:
 			return Res.FOUND[0];
@@ -1484,7 +1483,7 @@ bool Party::giveTake(int takeMode, uint takeVal, int giveMode, uint giveVal, int
 }
 
 const char *Party::getPickLockForm(const Character &c) {
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+	if (Common::RU_RUS == g_vm->getLanguage()) {
 		switch (c._sex) {
 		case MALE:
 			return Res.PICK_FORM[0];
@@ -1496,7 +1495,7 @@ const char *Party::getPickLockForm(const Character &c) {
 }
 
 const char *Party::getUnablePickLockForm(const Character &c) {
-	if (Common::RU_RUS == Common::parseLanguage(ConfMan.get("language"))) {
+	if (Common::RU_RUS == g_vm->getLanguage()) {
 		switch (c._sex) {
 		case MALE:
 			return Res.UNABLE_TO_PICK_FORM[0];
