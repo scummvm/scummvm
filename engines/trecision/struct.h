@@ -160,13 +160,6 @@ struct SDText {
 	uint16 calcHeight(TrecisionEngine *vm);
 };
 
-struct ElevatorAction {
-	uint16 dialog;
-	uint16 choice;
-	uint16 action;
-	uint16 newRoom;
-};
-
 struct Message {
 	uint8 _class;    // message class
 	uint8 _event;    // message name
