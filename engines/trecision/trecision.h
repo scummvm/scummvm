@@ -78,6 +78,13 @@ enum TrecisionMessageIds {
 
 typedef Common::List<Common::Rect>::iterator DirtyRectsIterator;
 
+struct ElevatorAction {
+	uint16 dialog;
+	uint16 choice;
+	uint16 action;
+	uint16 newRoom;
+};
+
 class TrecisionEngine : public Engine {
 	void initMain();
 	void loadAll();
