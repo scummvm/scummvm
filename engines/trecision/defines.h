@@ -61,6 +61,7 @@ enum AnimationTypes {
 	kAnimTypeIcon = 2
 };
 
+#define ATFNONE				0
 #define ATFTEXT				1
 #define ATFSND				2
 #define ATFTEXTACT			3
