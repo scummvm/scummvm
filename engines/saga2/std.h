@@ -31,6 +31,9 @@
 
 #include "saga2/rmemfta.h"
 
+#define ASSERT assert   // FIXME
+#define VERIFY assert   // FIXME
+
 #define FTA
 
 // #define LEAVE        goto exitit         // bail out of function

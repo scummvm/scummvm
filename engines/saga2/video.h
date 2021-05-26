@@ -37,8 +37,6 @@
 #define USE_MOV 0
 
 
-#include "saga2/errclass.h"
-
 namespace Saga2 {
 
 typedef int HDIGDRIVER;

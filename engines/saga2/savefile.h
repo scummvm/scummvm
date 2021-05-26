@@ -28,7 +28,6 @@
 #define SAGA2_SAVEFILE_H
 
 #include "saga2/iff.h"
-#include "saga2/errclass.h"
 
 namespace Saga2 {
 
@@ -44,29 +43,6 @@ const ChunkID   gameID = MKTAG('F', 'T', 'A', '2');
 #else
 const ChunkID   gameID = MKTAG('D', 'I', 'N', 'O');
 #endif
-
-/* ===================================================================== *
-   SaveFileWriteError class
- * ===================================================================== */
-
-//	This is an exception class for detecting write errors.  This will allow
-//	a graceful recovery from a failed save attempt.
-
-class SaveFileWriteError : public gError {
-public:
-	SaveFileWriteError(char *msg, ...);
-};
-
-/* ===================================================================== *
-   SaveFileWriteError class
- * ===================================================================== */
-
-//	The is an exception class for detecting read errors.
-
-class SaveFileReadError : public gError {
-public:
-	SaveFileReadError(char *msg, ...);
-};
 
 /* ===================================================================== *
    SaveFileHeader class

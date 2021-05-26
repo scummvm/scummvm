@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/display.h"
-#include "saga2/nice_err.h"
 #include "saga2/floating.h"
 #include "saga2/intrface.h"
 #include "saga2/loadmsg.h"
@@ -85,7 +84,6 @@ void resumeProcessResources(void);
 #endif
 static void switchOn(void);
 static void switchOff(void);
-void shutdownSave(void);
 
 
 /* ===================================================================== *
@@ -141,10 +139,6 @@ void resumeGame(void) {
 // end game (normally)
 
 void endGame(void) {
-	shutdownSave();
-#ifdef _WIN32
-	localCursorOff();
-#endif
 	blackOut();
 	displayDisable(GameEnded);
 	gameRunning = FALSE;
@@ -251,19 +245,11 @@ void mainDisable(void) {
 // On/Off hooks
 
 static void switchOn(void) {
-	SetFatalMode(fhmGUI);
-#ifdef _WIN32
-	resumeDDGraphics();
-#endif
 	enableUserControls();
 }
 
 static void switchOff(void) {
 	disableUserControls();
-#ifdef _WIN32
-	suspendDDGraphics();
-#endif
-	SetFatalMode(fhmHold);
 }
 
 /* ===================================================================== *

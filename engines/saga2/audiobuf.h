@@ -292,7 +292,6 @@ public:
 	void setVolume(int8 val);         // internal : set buffer to fill & play
 
 	void setLoopCount(int16 loops) {
-		VERIFY(audioSet);
 		loopCount = loops;
 	}
 	int16 getLoopCount(void) {

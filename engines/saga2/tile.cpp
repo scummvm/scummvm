@@ -4713,8 +4713,7 @@ extern int32            gameTime;
     }
 
     tclock1 = gameTime;
-    debugf( "Time = %d\n",
-            tclock1 - tclock0 );
+    debug( "Time = %d", tclock1 - tclock0 );
 */
 
 

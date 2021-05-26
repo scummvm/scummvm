@@ -111,7 +111,7 @@ void initializeSkill(SkillProto *oNo, SpellID sNo) {
 			error("Duplicate prototype for spell %d", sNo);
 		spellBook[sNo].setProto(oNo);
 	} else
-		gError::warn("Spell prototype has invalid spell ID %d (lockType)", sNo);
+		warning("Spell prototype has invalid spell ID %d (lockType)", sNo);
 }
 
 //-----------------------------------------------------------------------

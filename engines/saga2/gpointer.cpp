@@ -30,7 +30,6 @@
 #include "saga2/vdraw.h"
 #include "saga2/gpointer.h"
 #include "saga2/input.h"
-#include "saga2/errclass.h"
 
 namespace Saga2 {
 

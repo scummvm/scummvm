@@ -271,7 +271,7 @@ public:
 	    uint16              r,
 	    bool                trackFlag = FALSE) :
 		ActorAssignment(indefinitely) {
-		ASSERT(isActor(a) && a != getActor());
+		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), r, trackFlag);
 	}
 
@@ -282,7 +282,7 @@ public:
 	    uint16              r,
 	    bool                trackFlag = FALSE) :
 		ActorAssignment(until) {
-		ASSERT(isActor(a) && a != getActor());
+		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), r, trackFlag);
 	}
 
@@ -354,7 +354,7 @@ public:
 	//  Construct with no time limit and specific actor
 	HuntToKillAssignment(Actor *a, bool trackFlag = FALSE) :
 		ActorAssignment(indefinitely) {
-		ASSERT(isActor(a) && a != getActor());
+		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), trackFlag, TRUE);
 	}
 
@@ -364,7 +364,7 @@ public:
 	    Actor               *a,
 	    bool                trackFlag = FALSE) :
 		ActorAssignment(until) {
-		ASSERT(isActor(a) && a != getActor());
+		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), trackFlag, TRUE);
 	}
 

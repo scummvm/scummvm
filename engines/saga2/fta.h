@@ -32,12 +32,10 @@
 #include "saga2/vpal.h"
 #include "saga2/gpointer.h"
 #include "saga2/fontlib.h"
-#include "saga2/errclass.h"
 #include "saga2/rmem.h"
 #include "saga2/hresmgr.h"
 #include "saga2/savefile.h"
 #include "saga2/config.h"
-#include "saga2/nice_err.h"
 
 namespace Saga2 {
 /* ===================================================================== *
@@ -199,25 +197,7 @@ void restoreProgramDir(void);                // chdir() to program directory
 void  *mustAlloc(uint32 size, const char desc[]);                // alloc 'size' bytes or fail
 RHANDLE mustAllocHandle(uint32 size, const char desc[]);         // as above, but relocatable
 //void   checkAlloc( void *ptr );               // check allocation
-#define checkAlloc(ptr) assertAlloc(ptr)
-
-//  Debugging routines
-
-
-//  We've replaced the old error-handling routines with an exception class,
-//  but not all source has been updated.
-#if 1
-#ifndef WIN32
-#define fatal       throw gError
-#else
-void fatal(char *msg, ...);
-#endif
-#else
-#define fatal       systemConfigError
-#endif
-#define debugf      gError::warn
-
-extern void TBlit(gPixelMap *d, gPixelMap *s, int32 x, int32 y);
+#define checkAlloc(ptr) (ptr)
 
 // Returns Random Number
 

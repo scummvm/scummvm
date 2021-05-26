@@ -119,27 +119,21 @@ class EffectDisplayPrototype {
 #pragma off (unreferenced) ;
 #endif
 	static SPELLLOCATIONFUNCTION(nullLocation) {
-		VERIFY(0);
 		return TilePoint(0, 0, 0);
 	}
 	static SPELLSPRITATIONFUNCTION(nullSpritation) {
-		VERIFY(0);
 		return 0;
 	}
 	static SPELLSTATUSFUNCTION(nullStatus) {
-		VERIFY(0);
 		return effectronDead;
 	}
 	static SPELLHEIGHTFUNCTION(nullHeight) {
-		VERIFY(0);
 		return 0;
 	}
 	static SPELLBREADTHFUNCTION(nullBreadth) {
-		VERIFY(0);
 		return 0;
 	}
 	static SPELLINITFUNCTION(nullInit) {
-		VERIFY(0);
 	}
 #ifdef __WATCOMC__
 #pragma on (unreferenced) ;

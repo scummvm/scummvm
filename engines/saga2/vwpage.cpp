@@ -29,7 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/vwpage.h"
 #include "saga2/display.h"
-#include "saga2/errclass.h"
 
 namespace Saga2 {
 

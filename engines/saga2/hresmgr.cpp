@@ -29,7 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/saga2.h"
 #include "saga2/rmemfta.h"
-#include "saga2/errclass.h"
 #include "saga2/hresmgr.h"
 #include "saga2/fta.h"
 #include "common/debug.h"
@@ -415,7 +414,7 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	strncpy(_externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
 	debugC(kDebugResources, "Opening resource: %s", resname);
-	_file.open(resname);	
+	_file.open(resname);
 
 	readResource(origin);
 	if (origin.id != HRES_ID)

@@ -23,10 +23,6 @@ MODULE_OBJS := \
 	document.o \
 	effects.o \
 	enchant.o \
-	errbase.o \
-	errclass.o \
-	errlist.o \
-	errors.o \
 	exit.o \
 	floating.o \
 	gamemode.o \
@@ -61,7 +57,6 @@ MODULE_OBJS := \
 	msgbox.o \
 	noise.o \
 	mouseimg.o \
-	nice_err.o \
 	objects.o \
 	objproto.o \
 	osexcept.o \

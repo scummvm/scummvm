@@ -48,7 +48,6 @@
 #include "saga2/intrface.h"
 #include "saga2/palette.h"
 #include "saga2/contain.h"
-#include "saga2/nice_err.h"
 
 namespace Saga2 {
 

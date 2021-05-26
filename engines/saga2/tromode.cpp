@@ -34,7 +34,6 @@
 #include "saga2/videos.h"
 #include "saga2/player.h"
 #include "saga2/tromode.h"
-#include "saga2/nice_err.h"
 #include "saga2/messager.h"
 #include "saga2/config.h"
 #include "saga2/display.h"
@@ -248,10 +247,6 @@ void waitForVideoFile(char *fileName) {     // file name & extension
 	strcat(filespec, fileName);
 
 	fe = fileExists(filespec);
-
-	while (!fe && retryConfigError(cpVidDiskMissing, "Trying to open a video")) {
-		fe = fileExists(filespec);
-	}
 
 	if (!fe) {
 		abortFlag = TRUE;

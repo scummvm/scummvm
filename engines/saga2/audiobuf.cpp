@@ -28,8 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/audio.h"
-#include "saga2/audioerr.h"
-#include "saga2/errclass.h"
 
 namespace Saga2 {
 
