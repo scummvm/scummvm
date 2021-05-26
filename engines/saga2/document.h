@@ -41,7 +41,7 @@ int16 openParchment(uint16);
 
 
 // constants
-const uint32    bookGroupID     = RES_ID('B', 'O', 'O', 'K');
+const uint32    bookGroupID     = MKTAG('B', 'O', 'O', 'K');
 
 const int maxVisiblePages = 2;
 

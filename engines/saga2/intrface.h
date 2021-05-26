@@ -99,8 +99,8 @@ void cleanupUIState(void);
 void StatusMsg(char *msg, ...);      // frametime def
 
 
-const uint32    faceGroupID     = RES_ID('F', 'A', 'C', 'E');
-const uint32    mentGroupID     = RES_ID('C', 'O', 'N', 'T');
+const uint32    faceGroupID     = MKTAG('F', 'A', 'C', 'E');
+const uint32    mentGroupID     = MKTAG('C', 'O', 'N', 'T');
 
 
 /* ===================================================================== *

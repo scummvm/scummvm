@@ -86,7 +86,7 @@ gCompImage::gCompImage(gPanelList &list,
 
 	for (i = 0, rNum = resNum; i < numImages; i++, rNum++) {
 		compImages[ i ] = LoadResource(resContext,
-		                               RES_ID(a, b, c, rNum),
+		                               MKTAG(a, b, c, rNum),
 		                               " gCompImage ");
 	}
 
@@ -391,17 +391,17 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResID contextID, 
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
-	loadImages(con, RES_ID(a, b, c, butNum_1), RES_ID(a, b, c, butNum_2));
+	loadImages(con, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResID contextID, char a, char b, char c, int16 butNum_1, int16 butNum_2, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
-	loadImages(contextID, RES_ID(a, b, c, butNum_1), RES_ID(a, b, c, butNum_2));
+	loadImages(contextID, MKTAG(a, b, c, butNum_1), MKTAG(a, b, c, butNum_2));
 }
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, int16 butNum, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd), extent(box) {
-	loadImages(con, RES_ID('B', 'T', 'N', butNum), RES_ID('B', 'T', 'N', butNum + 1));
+	loadImages(con, MKTAG('B', 'T', 'N', butNum), MKTAG('B', 'T', 'N', butNum + 1));
 }
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, uint16 ident,
@@ -617,7 +617,7 @@ gToggleCompButton::gToggleCompButton(gPanelList &list, const Rect16 &box, void *
 
 bool gToggleCompButton::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
-//		playSound( RES_ID('C','B','T',3) );
+//		playSound( MKTAG('C','B','T',3) );
 
 		selected = !selected;
 		window.update(extent);
@@ -690,7 +690,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 	images = (void **) TALLOC(sizeof(void *)*numRes, memInterface);
 
 	for (i = 0, k = resStart; i < numRes; i++, k++) {
-		images[ i ] = LoadResource(con, RES_ID(a, b, c, k), "Multi btn image");
+		images[ i ] = LoadResource(con, MKTAG(a, b, c, k), "Multi btn image");
 
 		checkAlloc(images[ i ]);
 	}
@@ -774,7 +774,7 @@ bool gMultCompButton::activate(gEventType why) {
 		gPanel::deactivate();
 		notify(gEventNewValue, current);     // notify App of successful hit
 		playMemSound(1);
-//		playSound( RES_ID('C','B','T',5) );
+//		playSound( MKTAG('C','B','T',5) );
 	}
 	return FALSE;
 }

@@ -79,8 +79,8 @@ CDocumentAppearance scrollAppearance(
     Rect16(184, 206,  44,  42),                  //  Close button rect
     scrollDecorations,
     elementsof(scrollDecorations),
-    RES_ID('S', 'C', 'R', 'L'),
-    RES_ID('S', 'R', 'L', 0)
+    MKTAG('S', 'C', 'R', 'L'),
+    MKTAG('S', 'R', 'L', 0)
 );
 
 /* ===================================================================== *
@@ -106,8 +106,8 @@ CDocumentAppearance bookAppearance(
     Rect16(231, 217,  34,  27),                  //  Close button rect
     bookDecorations,
     elementsof(bookDecorations),
-    RES_ID('B', 'O', 'O', 'K'),
-    RES_ID('B', 'K', 'D', 0)
+    MKTAG('B', 'O', 'O', 'K'),
+    MKTAG('B', 'K', 'D', 0)
 );
 
 /* ===================================================================== *
@@ -128,8 +128,8 @@ CDocumentAppearance parchAppearance(
     Rect16(164, 229,  20,  20),                  //  Close button rect
     parchDecorations,
     elementsof(parchDecorations),
-    RES_ID('P', 'A', 'R', 'C'),
-    RES_ID('P', 'C', 'H', 0)
+    MKTAG('P', 'A', 'R', 'C'),
+    MKTAG('P', 'C', 'H', 0)
 );
 
 // deliminator defines
@@ -566,7 +566,7 @@ bool CDocument::checkForImage(char      *string,
 		if (illustrationCon) resFile->disposeContext(illustrationCon);
 
 		// resource handle
-		illustrationCon = resFile->newContext(RES_ID(argv[0], argv[1], argv[2], argv[3]),
+		illustrationCon = resFile->newContext(MKTAG(argv[0], argv[1], argv[2], argv[3]),
 		                                      "book internal resources");
 		// set image for next page
 		if (offPageIndex < maxPages) {
@@ -580,7 +580,7 @@ bool CDocument::checkForImage(char      *string,
 				if (!images[ offPageIndex ]) {
 					// get the image
 					images[ offPageIndex ] = LoadResource(illustrationCon,
-					                                      RES_ID(argv[4], argv[5], argv[6], num),
+					                                      MKTAG(argv[4], argv[5], argv[6], num),
 					                                      "book internal image");
 				}
 
@@ -588,7 +588,7 @@ bool CDocument::checkForImage(char      *string,
 				numEat = 9;
 			} else {
 				images[ offPageIndex ] = LoadResource(illustrationCon,
-				                                      RES_ID(argv[4], argv[5], argv[6], argv[7]),
+				                                      MKTAG(argv[4], argv[5], argv[6], argv[7]),
 				                                      "book internal image");
 				numEat = 8;
 			}
@@ -919,7 +919,7 @@ int16 openScroll(uint16 textScript) {
 	hResContext     *decRes;
 
 	// init the resource context handle
-	decRes = resFile->newContext(RES_ID('S', 'C', 'R', 'L'), "book resources");
+	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// get the graphics associated with the buttons
 	checkAlloc(closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages));

@@ -30,7 +30,7 @@
 namespace Saga2 {
 
 // constants
-const uint32    dialogGroupID   = RES_ID('D', 'I', 'A', 'L');
+const uint32    dialogGroupID   = MKTAG('D', 'I', 'A', 'L');
 
 // this should eventually point to the script that contains the credits
 const uint16 creditsScriptNum          = 0;    // this has a scripts now

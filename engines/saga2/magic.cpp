@@ -286,7 +286,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 		bool r = a->takeMana(ami, sProto.getManaAmt());
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
-			Saga2::playSoundAt(RES_ID('S', 'P', 'L', spellFailSound), cal);
+			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
 			return FALSE;
 		}
 		PlayerActorID       playerID;
@@ -326,7 +326,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		bool r = a->takeMana(ami, sProto.getManaAmt());
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
-			Saga2::playSoundAt(RES_ID('S', 'P', 'L', spellFailSound), cal);
+			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
 			return FALSE;
 		}
 		PlayerActorID       playerID;
@@ -364,7 +364,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 		bool r = a->takeMana(ami, sProto.getManaAmt());
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
-			Saga2::playSoundAt(RES_ID('S', 'P', 'L', spellFailSound), cal);
+			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
 			return FALSE;
 		}
 		PlayerActorID       playerID;

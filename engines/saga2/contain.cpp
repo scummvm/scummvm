@@ -45,7 +45,7 @@ namespace Saga2 {
 uint8 weight = 0;
 uint8 encum  = 0;
 
-const hResID containerGroupID = RES_ID('C', 'O', 'N', 'T');
+const hResID containerGroupID = MKTAG('C', 'O', 'N', 'T');
 
 const int           maxOpenDistance = 32;
 // selector image pointer
@@ -120,10 +120,10 @@ ContainerAppearanceDef  physicalContainerAppearance(
     Rect16(13 + 8 + 44, 37, 44, 42),         //  scroll button rectangle
     Rect16(13 + 118, 50, 36, 36),            //  icon rectangle
     Rect16(13 + 139, 37, 88, 43),            //  massBulk rectangle
-    RES_ID('P', 'C', 'L', 0),                //  CloseBox normal image
-    RES_ID('P', 'C', 'L', 1),                //  CloseBox selected image
-    RES_ID('P', 'S', 'L', 0),                //  Scroll button normal image
-    RES_ID('P', 'S', 'L', 1),                //  Scroll button selected image
+    MKTAG('P', 'C', 'L', 0),                //  CloseBox normal image
+    MKTAG('P', 'C', 'L', 1),                //  CloseBox selected image
+    MKTAG('P', 'S', 'L', 0),                //  Scroll button normal image
+    MKTAG('P', 'S', 'L', 1),                //  Scroll button selected image
     Point16(13, 8),                          //  Icon origin
     Point16(22, 22),                         //  Icon spacing
     0, 0,                                   //  Visible rows and columns (filled in later)
@@ -164,10 +164,10 @@ ContainerAppearanceDef  deathContainerAppearance(
     Rect16(120 + 18, 24, 44, 42),            //  scroll button rectangle
     Rect16(0, 0, 0, 0),                      //  icon rectangle
     Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    RES_ID('D', 'C', 'L', 0),                //  CloseBox normal image
-    RES_ID('D', 'C', 'L', 1),                //  CloseBox selected image
-    RES_ID('D', 'S', 'L', 0),                //  Scroll button normal image
-    RES_ID('D', 'S', 'L', 1),                //  Scroll button selected image
+    MKTAG('D', 'C', 'L', 0),                //  CloseBox normal image
+    MKTAG('D', 'C', 'L', 1),                //  CloseBox selected image
+    MKTAG('D', 'S', 'L', 0),                //  Scroll button normal image
+    MKTAG('D', 'S', 'L', 1),                //  Scroll button selected image
     Point16(27, -4),                         //  Icon origin
     Point16(22, 22),                         //  Icon spacing
     0, 0,                                   //  Visible rows and columns (filled in later)
@@ -208,10 +208,10 @@ ContainerAppearanceDef  mentalContainerAppearance(
     Rect16(103, 40 - 18 - 4, 44, 44),        //  scroll button rectangle
     Rect16(0, 0, 0, 0),                      //  icon rectangle
     Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    RES_ID('C', 'L', 'S', 0),                //  CloseBox normal image
-    RES_ID('C', 'L', 'S', 1),                //  CloseBox selected image
-    RES_ID('S', 'E', 'L', 0),                //  Scroll button normal image
-    RES_ID('S', 'E', 'L', 1),                //  Scroll button selected image
+    MKTAG('C', 'L', 'S', 0),                //  CloseBox normal image
+    MKTAG('C', 'L', 'S', 1),                //  CloseBox selected image
+    MKTAG('S', 'E', 'L', 0),                //  Scroll button normal image
+    MKTAG('S', 'E', 'L', 1),                //  Scroll button selected image
     Point16(3, 0),                       //  Icon origin
     Point16(4, 4),                       //  Icon spacing
     4, 4,                                   //  Visible rows and columns
@@ -231,10 +231,10 @@ ContainerAppearanceDef  enchantmentContainerAppearance(
     Rect16(57, 50, 44, 43),                  //  scroll button rectangle
     Rect16(38, 7, 32, 32),               //  icon rectangle
     Rect16(0, 0, 0, 0),                      //  massBulk rectangle
-    RES_ID('A', 'A', 'A', 0),                //  CloseBox normal image
-    RES_ID('A', 'A', 'A', 0),                //  CloseBox selected image
-    RES_ID('A', 'A', 'A', 0),                //  Scroll button normal image
-    RES_ID('A', 'A', 'A', 0),                //  Scroll button selected image
+    MKTAG('A', 'A', 'A', 0),                //  CloseBox normal image
+    MKTAG('A', 'A', 'A', 0),                //  CloseBox selected image
+    MKTAG('A', 'A', 'A', 0),                //  Scroll button normal image
+    MKTAG('A', 'A', 'A', 0),                //  Scroll button selected image
     Point16(12, 98),                         //  Icon origin
     Point16(16, 13),                         //  Icon spacing
     2, 2,                                   //  Visible rows and columns
@@ -1764,10 +1764,10 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 
 void initContainers(void) {
 	if (containerRes == NULL)
-		containerRes = resFile->newContext(RES_ID('C', 'O', 'N', 'T'), "cont.resources");
+		containerRes = resFile->newContext(MKTAG('C', 'O', 'N', 'T'), "cont.resources");
 	checkAlloc(containerRes);
 
-	checkAlloc(selImage = ImageCache.requestImage(imageRes, RES_ID('A', 'M', 'N', 'T')));
+	checkAlloc(selImage = ImageCache.requestImage(imageRes, MKTAG('A', 'M', 'N', 'T')));
 }
 
 void cleanupContainers(void) {
