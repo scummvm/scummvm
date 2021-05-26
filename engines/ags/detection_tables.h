@@ -197,6 +197,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "samaritan", "The Samaritan Paradox" },
 	{ "shardlight", "Shardlight" },
 	{ "shivah", "Shivah" },
+	{ "strangeland", "Strangeland" },
 	{ "sumatra", "Sumatra: Fate of Yandi" },
 	{ "superjazzman", "Super Jazz Man" },
 	{ "tales", "Tales" },
@@ -394,7 +395,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "beyondreality", "Beyond Reality" },
 	{ "beyondterror", "BEYOND TERROR" },
 	{ "beyondthehorizon", "Beyond the horizon" },
-	{ "bicschristmastale", "Bic's Chstimas Tale" },
+	{ "bicschristmastale", "Bic's Christmas Tale" },
 	{ "bigbadwolf3lilpiggies", "Big Bad Wolf & 3 Lil' Piggies" },
 	{ "bigblue", "Big Blue World Domination" },
 	{ "bigglesonmars", "Biggles On Mars" },
@@ -1295,7 +1296,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "sword", "Sword" },
 	{ "sydneyfindsemployment", "Sydney Finds Employment" },
 	{ "sydneytreadsthecatwalk", "Sydney Treads the Catwalk" },
-	{ "symploke1", "Symploke. La Leyenda de Gustavo Bueno. Capitulo 1" },
+	{ "symploke1", "Symploke. Legend of Gustavo Bueno (Chapter 1)" },
 	{ "symploke2", "Symploke: Legend of Gustavo Bueno (Chapter 2)" },
 	{ "symploke3", "Symploke: Legend of Gustavo Bueno (Chapter 3)" },
 	{ "taleofalegacy", "A Tale of a Legacy" },
@@ -1886,6 +1887,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("shivah", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
 	GAME_ENTRY("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
 	GAME_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
+	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1),
 	GAME_ENTRY("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886), // Steam
 	GAME_ENTRY("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701),
