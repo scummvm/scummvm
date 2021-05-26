@@ -119,12 +119,7 @@ INITIALIZER(programInit) {
 		if (r) {
 			setInitState(initializationState + 1);
 		} else {
-			SystemError se = SystemError(
-			                     tower[tLevel].onFail,
-			                     "Tower Initialization Step %d Failed (record %d)",
-			                     initializationState,
-			                     tLevel);
-			se.notify();
+			error("Tower Initialization Step %d Failed (record %d)", initializationState, tLevel);
 			return FALSE;
 		}
 	}
@@ -160,8 +155,7 @@ TERMINATOR(termTowerBase) {
 // This pair should be the first thing in the tower list
 
 INITIALIZER(initErrorManagers) {
-	//initErrorHandlers();
-	return SetFatalMode(fhmSimple);
+	return true;
 }
 
 // defining VERIFY_EXIT will give you a message box when the program has
@@ -173,35 +167,26 @@ INITIALIZER(initErrorManagers) {
 #endif
 
 TERMINATOR(termErrorManagers) {
-#ifdef VERIFY_EXIT
-	extern HWND hWndMain;
-#endif
-	SetFatalMode(fhmNone);
-#ifdef VERIFY_EXIT
-	MessageBox(hWndMain, "Cleanup complete", PROGRAM_FULL_NAME, MB_APPLMODAL | MB_OK);
-#endif
 }
 
 // ------------------------------------------------------------------------
 // This pair should be used before the display is initialized
 
 INITIALIZER(initDelayedErrors) {
-	return SetFatalMode(fhmHold);
+	return true;
 }
 
 TERMINATOR(termDelayedErrors) {
-	SetFatalMode(fhmSimple);
 }
 
 // ------------------------------------------------------------------------
 // This pair should be used once everything is working
 
 INITIALIZER(initActiveErrors) {
-	return SetFatalMode(fhmGUI);
+	return true;
 }
 
 TERMINATOR(termActiveErrors) {
-	SetFatalMode(fhmHold);
 }
 
 

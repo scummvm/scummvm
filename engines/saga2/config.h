@@ -27,7 +27,6 @@
 #ifndef SAGA2_CONFIG_H
 #define SAGA2_CONFIG_H
 
-#include "saga2/nice_err.h"
 #include "saga2/winini.h"
 
 namespace Saga2 {
@@ -73,4 +72,3 @@ extern configuration globalConfig;
 } // end of namespace Saga2
 
 #endif  // CONFIG_H
-

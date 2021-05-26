@@ -45,36 +45,6 @@ void getSaveFileName(int16 saveNo, char *fileName) {
 }
 
 /* ===================================================================== *
-   SaveFileWriteError member functions
- * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Constructor
-
-SaveFileWriteError::SaveFileWriteError(char *msg, ...) {
-	va_list argptr;
-
-	va_start(argptr, msg);
-	append(msg, argptr);
-	va_end(argptr);
-}
-
-/* ===================================================================== *
-   SaveFileReadError member functions
- * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Constructor
-
-SaveFileReadError::SaveFileReadError(char *msg, ...) {
-	va_list argptr;
-
-	va_start(argptr, msg);
-	append(msg, argptr);
-	va_end(argptr);
-}
-
-/* ===================================================================== *
    SaveFileConstructor member functions
  * ===================================================================== */
 

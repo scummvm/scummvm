@@ -27,8 +27,6 @@
 #ifndef SAGA2_IOERRORS_H
 #define SAGA2_IOERRORS_H
 
-#include "saga2/nice_err.h"
-
 namespace Saga2 {
 
 #ifdef _WIN32

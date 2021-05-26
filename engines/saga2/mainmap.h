@@ -110,7 +110,6 @@ void displayEventLoop(void);
 
 // major parts of main that are actually in main.cpp
 void cleanupGame(void);                  // auto-cleanup function
-void errDumper(char *s);
 bool setupGame(void);
 void cleanupPalettes(void);
 

@@ -33,7 +33,6 @@
 #include "saga2/audiores.h"
 #include "saga2/tcoords.h"
 #include "saga2/button.h"
-#include "saga2/nice_err.h"
 #include "saga2/annoy.h"
 #include "saga2/objproto.h"
 #include "saga2/player.h"

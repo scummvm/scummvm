@@ -85,27 +85,15 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]) {
 
 int16 hResSeek(Buffer &sb, soundSample &ss, hResContext *hrc, bool Cheksize) {
 	if (hrc->seek(ss.curSeg) == FALSE) {
-#if DEBUG
-		char msg[80];
-		sprintf(msg, "Audio: %s is an invalid res ID\n", IDName(ss.curSeg));
-		audioLog(msg);
-		if (debugResource) {
-			WriteStatusF(6, msg);
-		}
-#endif
-		return serrOpenFailed;
+		warning("Audio: %d is an invalid res ID", ss.curSeg);
+		return 1;
 	}
 	if (Cheksize && sb.wSize < hrc->bytesleft()) {
 		int bufferSize = sb.wSize;
 		int soundSize = hrc->bytesleft();
-#if DEBUG
-		if (debugResource) {
-			char msg[80];
-			sprintf(msg, "Buffer too small %d sample: %d", bufferSize, soundSize);
-			audioLog(msg);
-		}
-#endif
-		return serrBufferSizeTooSmall;
+
+		warning("Buffer too small %d sample: %d", bufferSize, soundSize);
+		return 1;
 	}
 	ss.channels = soundSample::channelMono;
 	ss.speed = soundRate22K;
@@ -162,7 +150,8 @@ int16 hResFlush(Buffer &sb, soundSample &ss, hResContext *hrc) {
 
 int16 bufSeek(Buffer &sb, soundSample &ss) {
 	if (ss.curSeg >= maxClicks) {
-		return serrOpenFailed;
+		warning("bufSeek: open failed");
+		return 1;
 	}
 	ss.channels = soundSample::channelMono;
 	ss.speed = soundRate22K;

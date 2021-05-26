@@ -41,6 +41,7 @@
 #include "saga2/messager.h"
 #include "saga2/intrface.h"
 #include "saga2/script.h"
+#include "saga2/localize.h"
 #include "saga2/mainmap.h"
 #include "saga2/display.h"
 #include "saga2/tower.h"
@@ -49,7 +50,7 @@
 #include "saga2/ioerrors.h"
 #include "saga2/loadsave.h"
 #include "saga2/gamerate.h"
-
+#include "saga2/msgbox.h"
 
 namespace Saga2 {
 
@@ -176,7 +177,6 @@ frameCounter irate(TICKSPERSECOND, gameTime);
  * ===================================================================== */
 
 bool readCommandLine(int argc, char *argv[]);
-void errDumper(char *s);
 void findProgramDir(char *argv);     // save program home directory
 
 APPFUNC(cmdWindowFunc);                      // main window event handler
@@ -329,16 +329,9 @@ void processEventLoop(bool updateScreen) {
 	statusshow("starting event loop");
 	irate.updateFrameCount();
 
-	statusshow("checking for exceptions");
-	if (FatalErrorFlag()) {
-		//gameRunning=false;
-		endGame();
-		return;
-	}
-
 	statusshow("checking user abort");
 	breakEventLoop();
-	if (checkExit && verifyUserExit()) { //( SystemError::SystemErrorRetry(cpUserAbort,"")!=0 ) )
+	if (checkExit && verifyUserExit()) {
 		//gameRunning=false;
 		endGame();
 		return;
@@ -470,14 +463,9 @@ char *getExeFromCommandLine(int argc, char *argv[]) {
 // Adds error handling to command line parsing
 
 bool readCommandLine(int argc, char *argv[]) {
-	SimpleErrorMessager cmdLineFatal;
-
-	//SystemError::useHandler(&cmdLineFatal);
 	parseCommandLine(argc, argv);
 
 	return true;
-
-	//SystemError::useHandler(NULL);
 }
 
 /********************************************************************/
@@ -703,21 +691,20 @@ static bool openResource(
     char *basePath,      // path to data file
     char *defaultPath,   // backup path
     char *fileName,      // file name & extension
-    char *description,   // description of this resource
-    configProblem errID) { // in case something goes wrong
+    char *description) {
 	if (hr) delete hr;
 	hr = NULL;
 
 	hr = NEW_PRES hResource(fileName, defaultPath, description);
 
-	while ((hr == NULL || !hr->_valid) && retryConfigError(cpResDiskMissing, description)) {
+	while (hr == NULL || !hr->_valid) {
 		if (hr) delete hr;
 		hr = NULL;
 		hr = NEW_PRES hResource(fileName, defaultPath, description);
 	}
 
 	if (hr == NULL || !hr->_valid) {
-		error("openResource: %s: %d", fileName, errID);
+		error("openResource: Cannot open resource: %s, %s", fileName, description);
 //		return false;
 	}
 	return true;
@@ -731,25 +718,25 @@ bool openResources(void) {
 	if (
 	    openResource(resFile,           globalConfig.imageResfilePath,
 	                 "..\\resfile\\",  IMAGE_RESFILE,
-	                 "Imagery resource file",  cpResFileMissing)      &&
+	                 "Imagery resource file")      &&
 
 	    openResource(objResFile,        globalConfig.mainResfilePath,
 	                 "..\\resfile\\",  OBJECT_RESFILE,
-	                 "Object resource file",   cpResFileMissing)      &&
+	                 "Object resource file")      &&
 
 	    openResource(auxResFile,        globalConfig.dataResfilePath,
 	                 "..\\resfile\\",  AUX_RESFILE,
-	                 "Data resource file",     cpResFileMissing)      &&
+	                 "Data resource file")      &&
 
 	    openResource(scriptResFile,     globalConfig.scriptResfilePath,
 	                 "..\\scripts\\",  SCRIPT_RESFILE,
-	                 "Script resource file",   cpResFileMissing)      &&
+	                 "Script resource file")      &&
 	    openResource(voiceResFile,      globalConfig.voiceResfilePath,
 	                 "..\\sound\\",    VOICE_RESFILE,
-	                 "Voice resource file",   cpResFileMissing)       &&
+	                 "Voice resource file")       &&
 	    openResource(soundResFile,      globalConfig.soundResfilePath,
 	                 "..\\sound\\",    SOUND_RESFILE,
-	                 "Sound resource file",   cpResFileMissing)) {
+	                 "Sound resource file")) {
 		return true;
 	}
 	return false;
@@ -893,7 +880,7 @@ void loadGlobals(SaveFileReader &saveGame) {
 bool verifyUserExit(void) {
 	if (!gameRunning)
 		return true;
-	if (SystemError::SystemErrorRetry(cpUserAbort, "") != 0)
+	if (FTAMessageBox("Are you sure you want to exit", ERROR_YE_BUTTON, ERROR_NO_BUTTON) != 0)
 		return true;
 	return false;
 }
@@ -980,17 +967,6 @@ void WriteStatusF2(int16 line, char *msg, ...) {
 void WriteStatusF(int16, char *, ...) {}
 void WriteStatusF2(int16, char *, ...) {}
 #endif
-
-//---------------------------------------------------------
-//
-// Assorted kludgy messaging routines
-//
-//
-
-void errDumper(char *s) {
-	SystemError::SystemErrorNotify(s);
-}
-
 
 void logStr(bool onOff, bool newLn, char *st);
 
@@ -1151,7 +1127,7 @@ void cleanupMemPool(void) {
 	if (heapMemory) {
 		free(heapMemory);
 		heapMemory = nullptr;
-	}	
+	}
 }
 
 //-----------------------------------------------------------------------

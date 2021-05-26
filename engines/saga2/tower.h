@@ -27,8 +27,6 @@
 #ifndef SAGA2_TOWER_H
 #define SAGA2_TOWER_H
 
-#include "saga2/nice_err.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *
@@ -59,7 +57,6 @@ struct TowerLayer {
 	int                     ord;
 	pPROGRAM_INITIALIZER    init;
 	pPROGRAM_TERMINATOR     term;
-	configProblem           onFail;
 };
 
 /* ===================================================================== *

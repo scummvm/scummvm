@@ -73,11 +73,13 @@ int32 AIL_sample_volume(HSAMPLE S);
 int32 AIL_sequence_volume(HSEQUENCE S);
 void AIL_set_sequence_volume(HSEQUENCE S, int32 volume, int32 milliseconds);
 
+inline void audioFatal(char *msg) {
+	error("Sound error %s", msg);
+}
+
 #include "saga2/rect.h"
-#include "saga2/errclass.h"
 #include "saga2/audiotmr.h"
 #include "saga2/audiomem.h"
-#include "saga2/audioerr.h"
 #include "saga2/queues.h"
 #include "saga2/audiobuf.h"
 #include "saga2/audiodec.h"
