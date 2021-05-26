@@ -91,8 +91,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oEXIT21]._position = 11;
 
 			// if we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isDialogFinished(436)) || (_vm->_dialogMgr->isDialogFinished(466))))
-				|| ((_vm->_dialogMgr->isDialogFinished(451)) || (_vm->_dialogMgr->isDialogFinished(481)))) {
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466)))
+				|| (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481))) {
 				_vm->_obj[od21TO23]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO23]._flag &= ~kObjFlagExamine;
 			} else {
@@ -124,8 +124,8 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectVisible(oEXIT21, true);
 
 			// If we can go beyond
-			if (((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isDialogFinished(436)) || (_vm->_dialogMgr->isDialogFinished(466))))
-				|| ((_vm->_dialogMgr->isDialogFinished(451)) || (_vm->_dialogMgr->isDialogFinished(481)))) {
+			if (((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466)))
+				|| (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481))) {
 				_vm->_obj[od21TO22]._flag |= kObjFlagRoomOut;
 				_vm->_obj[od21TO22]._flag &= ~kObjFlagExamine;
 			} else {
@@ -1028,9 +1028,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_obj[ocTRAMP17]._action = 1462;
 			_vm->_textMgr->characterSay(_vm->_obj[ocTRAMP17]._action);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!(_vm->_dialogMgr->isDialogFinished(78)) || ((_vm->_dialogMgr->isDialogFinished(79)) || ((_vm->_dialogMgr->isDialogFinished(83)) && !(_vm->_dialogMgr->isDialogFinished(92)))))) {
+		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!_vm->_dialogMgr->isDialogFinished(78) || (_vm->_dialogMgr->isDialogFinished(79) || (_vm->_dialogMgr->isDialogFinished(83) && !_vm->_dialogMgr->isDialogFinished(92))))) {
 			_vm->_dialogMgr->toggleChoice(78, true);
-			if ((_vm->_dialogMgr->isDialogFinished(79)) || (_vm->_dialogMgr->isDialogFinished(83))) {
+			if (_vm->_dialogMgr->isDialogFinished(79) || _vm->_dialogMgr->isDialogFinished(83)) {
 				_vm->_dialogMgr->toggleChoice(92, true);
 				if (_vm->_dialogMgr->isDialogFinished(80))
 					_vm->_dialogMgr->toggleChoice(121, true);
@@ -1044,7 +1044,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
 			_vm->_obj[ocPOLIZIOTTO16]._flag |= kObjFlagExtra;
 			_vm->_textMgr->characterSay(1461);
-			if ((_vm->_dialogMgr->isDialogFinished(61)) && (_vm->_dialogMgr->isDialogFinished(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if (_vm->_dialogMgr->isDialogFinished(61) && _vm->_dialogMgr->isDialogFinished(62) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
@@ -1098,7 +1098,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemWineBottle:
 		if (_vm->_useWith[WITH] == ocTRAMP17) {
-			if ((_vm->_dialogMgr->isDialogFinished(79)) || (_vm->_dialogMgr->isDialogFinished(83))) {
+			if (_vm->_dialogMgr->isDialogFinished(79) || _vm->_dialogMgr->isDialogFinished(83)) {
 				_vm->_dialogMgr->toggleChoice(80, true);
 				if (_vm->_dialogMgr->isDialogFinished(81)) {
 					_vm->_dialogMgr->toggleChoice(81, true);
@@ -1110,7 +1110,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				*printSentence = false;
 			} else {
 				_vm->_dialogMgr->toggleChoice(83, true);
-				if (!(_vm->_dialogMgr->isDialogFinished(78))) {
+				if (!_vm->_dialogMgr->isDialogFinished(78)) {
 					_vm->_dialogMgr->toggleChoice(106, true);
 					_vm->_obj[ocTRAMP17]._action = 213;
 				} else {
@@ -1248,7 +1248,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemFaultyBulb:
-		if ((_vm->_useWith[WITH] == oPORTALAMPADE2B) && !(_vm->_obj[_vm->_useWith[WITH]]._anim)) {
+		if ((_vm->_useWith[WITH] == oPORTALAMPADE2B) && !_vm->_obj[_vm->_useWith[WITH]]._anim) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B6METTELAMPADINA, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
 		}
@@ -1445,7 +1445,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == oTRIPLA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a355ATTPROIETTORETRIPLAEPRESA, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oRIBELLEA35)) {
+		} else if (_vm->_useWith[WITH] == oRIBELLEA35) {
 			*printSentence = false;
 			_vm->_textMgr->characterSay(1578);
 		}
@@ -1455,7 +1455,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oPRESA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a352ATTPROIETTOREETRIPLAPRESA, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oRIBELLEA35)) {
+		} else if (_vm->_useWith[WITH] == oRIBELLEA35) {
 			*printSentence = false;
 			_vm->_textMgr->characterSay(1590);
 		}
@@ -1807,17 +1807,17 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == oDOOR57C55) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, kRoom57, 17, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (!(_vm->_dialogMgr->isDialogFinished(871)) || (_vm->_dialogMgr->isDialogFinished(901)))) {
+		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (!_vm->_dialogMgr->isDialogFinished(871) || _vm->_dialogMgr->isDialogFinished(901))) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a552, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (_vm->_dialogMgr->isDialogFinished(871))) {
+		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && _vm->_dialogMgr->isDialogFinished(871)) {
 			_vm->_textMgr->characterSay(1287);
 			*printSentence = false;
 		}
 		break;
 
 	case kItemVideoRecorder:
-		if ((_vm->_useWith[WITH] == oKEYBOARD56) && (_vm->_dialogMgr->isDialogFinished(260)) && !(_vm->_dialogMgr->isDialogFinished(262)) && (_vm->_inventoryObj[kItemVideoRecorder]._examine != 1752)) {
+		if ((_vm->_useWith[WITH] == oKEYBOARD56) && _vm->_dialogMgr->isDialogFinished(260) && !_vm->_dialogMgr->isDialogFinished(262) && (_vm->_inventoryObj[kItemVideoRecorder]._examine != 1752)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a566, 0, 0, _vm->_useWith[WITH]);
 			_vm->_dialogMgr->toggleChoice(262, true);
 			_vm->_inventoryObj[kItemVideoRecorder]._examine = 1752;
@@ -1830,7 +1830,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemTester:
-		if ((_vm->_useWith[WITH] == oPANNELLOA) && (_vm->_dialogMgr->isDialogFinished(856))) {
+		if ((_vm->_useWith[WITH] == oPANNELLOA) && _vm->_dialogMgr->isDialogFinished(856)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a569, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oPANNELLOA]._flag |= kObjFlagExtra;
 			*printSentence = false;
@@ -1860,13 +1860,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemFloatingPoisonSyringe:
-		if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->isDialogFinished(871)) && !(_vm->_dialogMgr->isDialogFinished(286))) {
+		if ((_vm->_useWith[WITH] == oWINDOWA5A) && _vm->_dialogMgr->isDialogFinished(871) && !_vm->_dialogMgr->isDialogFinished(286)) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dC5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
 			*printSentence = false;
 			_vm->_room[kRoom5A]._flag |= kObjFlagExtra;
-		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && (_vm->_dialogMgr->isDialogFinished(871))) {
+		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && _vm->_dialogMgr->isDialogFinished(871)) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dF5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
@@ -2100,7 +2100,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oTESSERA1A:
-		if (((_vm->_dialogMgr->isDialogFinished(151)) || (_vm->_dialogMgr->isDialogFinished(152))) && !(_vm->_dialogMgr->isDialogFinished(183)))
+		if ((_vm->_dialogMgr->isDialogFinished(151) || _vm->_dialogMgr->isDialogFinished(152)) && !_vm->_dialogMgr->isDialogFinished(183))
 			_vm->_dialogMgr->toggleChoice(183, true);
 		_vm->_obj[oTESSERA1A]._flag |= kObjFlagExtra;
 		retVal = true;
@@ -2489,13 +2489,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCHAIN21:
-		if ((_vm->iconPos(kItemMagneticBar) != -1) && ((_vm->_dialogMgr->isDialogFinished(436)) || (_vm->_dialogMgr->isDialogFinished(466)))) {
+		if ((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466))) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212);                             // 436
 			else                                                 // Go left
 				_vm->_dialogMgr->playDialog(dF213);                             // 466
 			retVal = false;
-		} else if ((_vm->_dialogMgr->isDialogFinished(451)) || (_vm->_dialogMgr->isDialogFinished(481))) {
+		} else if (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481)) {
 			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
 				_vm->_dialogMgr->playDialog(dF212B);                            // 451
 			else                                                 // Go left
@@ -2725,7 +2725,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCOMPUTER36:
-		if (!(_vm->_dialogMgr->isDialogFinished(646))) {
+		if (!_vm->_dialogMgr->isDialogFinished(646)) {
 			_vm->_dialogMgr->playDialog(dF361);
 			_vm->_obj[oCOMPUTER36]._action = 2004;
 			retVal = false;
@@ -2928,7 +2928,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 		}
 	case oDOORC4A:
-		if (!(_vm->_dialogMgr->isDialogFinished(245)) && !(_vm->_dialogMgr->isDialogFinished(766))) {
+		if (!_vm->_dialogMgr->isDialogFinished(245) && !_vm->_dialogMgr->isDialogFinished(766)) {
 			_vm->_dialogMgr->toggleChoice(245, true);
 			_vm->_dialogMgr->playDialog(dC4A1);
 			_vm->_pathFind->setPosition(14);
@@ -2942,7 +2942,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oPULSANTE4A:
 		if (_vm->_obj[curObj]._anim)
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
-		else if (!(_vm->_dialogMgr->isDialogFinished(244))) {
+		else if (!_vm->_dialogMgr->isDialogFinished(244)) {
 			_vm->_dialogMgr->toggleChoice(244, true);
 			_vm->_dialogMgr->playDialog(dC4A1);
 			_vm->_obj[oPULSANTE4A]._examine = 1108;
@@ -2981,7 +2981,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oDOORC54:
-		if (!(_vm->_dialogMgr->isDialogFinished(826))) {
+		if (!_vm->_dialogMgr->isDialogFinished(826)) {
 			_vm->_dialogMgr->playDialog(dF541);
 			retVal = false;
 		} else
@@ -2989,7 +2989,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oLAVATRICEL54:
-		if ((_vm->_obj[curObj]._anim) && (_vm->_obj[oSECCHIOS54]._flag & kObjFlagExtra) && _vm->isObjectVisible(oGRATAC54) && !(_vm->_dialogMgr->isDialogFinished(841)))
+		if (_vm->_obj[curObj]._anim && (_vm->_obj[oSECCHIOS54]._flag & kObjFlagExtra) && _vm->isObjectVisible(oGRATAC54) && !_vm->_dialogMgr->isDialogFinished(841))
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		else
 			retVal = true;
@@ -3039,7 +3039,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oWINDOWA5A:
-		if ((_vm->_dialogMgr->isDialogFinished(871)) && !(_vm->_dialogMgr->isDialogFinished(286))) {
+		if (_vm->_dialogMgr->isDialogFinished(871) && !_vm->_dialogMgr->isDialogFinished(286)) {
 			_vm->_dialogMgr->playDialog(dC5A1);
 			retVal = false;
 		} else
@@ -3047,7 +3047,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oWINDOWB5A:
-		if (!(_vm->_dialogMgr->isDialogFinished(256))) {
+		if (!_vm->_dialogMgr->isDialogFinished(256)) {
 			_vm->_textMgr->characterSay(1999);
 			retVal = false;
 		} else
@@ -3149,7 +3149,7 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 
 	switch (curObj) {
 	case oTICKETOFFICE16:
-		if ((_vm->_obj[oFINGERPADP16]._flag & kObjFlagRoomOut) && (_vm->_dialogMgr->isDialogFinished(50))) {
+		if ((_vm->_obj[oFINGERPADP16]._flag & kObjFlagRoomOut) && _vm->_dialogMgr->isDialogFinished(50)) {
 			_vm->_textMgr->characterSay(147);
 			retVal = false;
 			break;
@@ -3435,9 +3435,9 @@ bool LogicManager::operateInventory() {
 
 	switch (_vm->_curInventory) {
 	case kItemMinicom:
-		if ((_vm->_dialogMgr->isDialogFinished(166)) && (_vm->_curRoom == kRoom17 || _vm->_curRoom == kRoom1B || _vm->_curRoom == kRoom1C || _vm->_curRoom == kRoom1D)) {
+		if (_vm->_dialogMgr->isDialogFinished(166) && (_vm->_curRoom == kRoom17 || _vm->_curRoom == kRoom1B || _vm->_curRoom == kRoom1C || _vm->_curRoom == kRoom1D)) {
 			if (_vm->isObjectVisible(oNUMERO17)) {
-				if (!(_vm->_dialogMgr->isDialogFinished(196))) {
+				if (!_vm->_dialogMgr->isDialogFinished(196)) {
 					if (_vm->_curRoom == kRoom17) {
 						if (_vm->_dialogMgr->isDialogFinished(198)) {
 							_vm->_inventoryObj[kItemMinicom]._action = 1787;
@@ -3462,7 +3462,7 @@ bool LogicManager::operateInventory() {
 						}
 					}
 				} else {
-					if ((_vm->_dialogMgr->isDialogFinished(198)) || (_vm->_dialogMgr->isDialogFinished(199))) {
+					if (_vm->_dialogMgr->isDialogFinished(198) || _vm->_dialogMgr->isDialogFinished(199)) {
 						_vm->_inventoryObj[kItemMinicom]._action = 1787;
 						printSentence = true;
 					} else if (_vm->_curRoom == kRoom17) {

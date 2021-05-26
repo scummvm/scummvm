@@ -484,7 +484,7 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dC581:
-			if (!(isDialogFinished(886)) && (isDialogFinished(258))) {
+			if (!isDialogFinished(886) && isDialogFinished(258)) {
 				_vm->_pathFind->setPosition(1);
 				playDialog(dF581);
 			}
