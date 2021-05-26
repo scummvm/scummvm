@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	audio.o \
 	audiobuf.o \
 	audiores.o \
-	audiotmr.o \
 	automap.o \
 	band.o \
 	beegee.o \
