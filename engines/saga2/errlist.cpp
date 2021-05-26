@@ -24,41 +24,20 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-/* ===================================================================== *
-   Includes
- * ===================================================================== */
-
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/errlist.h"
 
 namespace Saga2 {
 
-/* ===================================================================== *
-   SequentialErrorList implementation
- * ===================================================================== */
-
-// ------------------------------------------------------------------
-//
-
-SequentialErrorList::SequentialErrorList(ErrType et, uint32 ec, char *es[]) :
-	ErrorList(et, ec) {
+SequentialErrorList::SequentialErrorList(ErrType et, uint32 ec, char *es[]) : ErrorList(et, ec) {
 	for (int i = 0; i < eLimit(); i++)
 		setEntry(i, i, es[i]);
 }
 
-// ------------------------------------------------------------------
-//
-
-SequentialErrorList::SequentialErrorList(ErrType et, const char *es[]) :
-	ErrorList(et, stringCount(es)) {
+SequentialErrorList::SequentialErrorList(ErrType et, const char *es[]) : ErrorList(et, stringCount(es)) {
 	for (int i = 0; i < eLimit(); i++)
 		setEntry(i, i, es[i]);
 }
-
-// ------------------------------------------------------------------
-//
 
 uint32 SequentialErrorList::stringCount(const char *es[]) {
 	uint32 rv = 0;
@@ -68,9 +47,6 @@ uint32 SequentialErrorList::stringCount(const char *es[]) {
 	return rv;
 }
 
-// ------------------------------------------------------------------
-//
-
 uint32 SequentialErrorList::lookupMessage(ErrorID id) {
 	if (id >= 0 && id < eLimit()) {
 		return id;
@@ -78,37 +54,15 @@ uint32 SequentialErrorList::lookupMessage(ErrorID id) {
 	return unkError;
 }
 
-
-
-/* ===================================================================== *
-   SparseErrorList implementation
- * ===================================================================== */
-
-// ------------------------------------------------------------------
-//
-
-SparseErrorList::SparseErrorList(ErrType et,
-                                 uint32 ec,
-                                 ErrorID ei[],
-                                 const char *es[]):
-	ErrorList(et, ec) {
+SparseErrorList::SparseErrorList(ErrType et, uint32 ec, ErrorID ei[], const char *es[]) : ErrorList(et, ec) {
 	for (int i = 0; i < eLimit(); i++)
 		setEntry(i, ei[i], es[i]);
 }
 
-// ------------------------------------------------------------------
-//
-
-SparseErrorList::SparseErrorList(ErrType et,
-                                 uint32 ec,
-                                 ErrorRec er[]):
-	ErrorList(et, ec) {
+SparseErrorList::SparseErrorList(ErrType et, uint32 ec, ErrorRec er[]) : ErrorList(et, ec) {
 	for (int i = 0; i < eLimit(); i++)
 		setEntry(i, er[i].ID, er[i].text);
 }
-
-// ------------------------------------------------------------------
-//
 
 uint32 SparseErrorList::lookupMessage(ErrorID id) {
 	for (int i = 0; i < eLimit(); i++) {
