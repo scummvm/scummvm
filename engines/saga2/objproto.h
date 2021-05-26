@@ -304,8 +304,8 @@ public:
 
 	//  A constructor which takes the data loaded from the file
 	//  and loads it into the various fields...
-	ProtoObj(ResourceObjectPrototype &proto) :
-		ResourceObjectPrototype(proto) {}
+	ProtoObj(ResourceObjectPrototype &proto) : ResourceObjectPrototype(proto) {}
+	virtual ~ProtoObj() {}
 
 	// returns the containment type flags for this object
 	virtual uint16 containmentSet(void);
@@ -342,9 +342,6 @@ public:
 	                      ObjectID        enactor,
 	                      ObjectID        indirectObj,
 	                      int16           value);
-
-	//  Create A Container Window
-//	virtual ContainerWindow *makeWindow( GameObject *Obj );
 
 	//  generic actions
 	//  Use this object
@@ -642,6 +639,7 @@ public:
 class InventoryProto : public ProtoObj {
 public:
 	InventoryProto(ResourceObjectPrototype &proto) : ProtoObj(proto) {}
+	virtual ~InventoryProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -686,7 +684,6 @@ public:
 
 //  Prototype class for physical object container
 class PhysicalContainerProto : public InventoryProto {
-
 private:
 	enum {
 		ViewableRows    = 4,
@@ -696,8 +693,8 @@ private:
 	};
 
 public:
-	PhysicalContainerProto(ResourceObjectPrototype &proto) :
-		InventoryProto(proto) {}
+	PhysicalContainerProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~PhysicalContainerProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -739,9 +736,6 @@ public:
 	    const TilePoint &where,
 	    int16           num = 1);
 
-//	virtual ContainerWindow *makeWindow( GameObject *Obj );
-
-
 public:
 	virtual uint16 getViewableRows(void) {
 		return ViewableRows;
@@ -774,6 +768,7 @@ public:
 class KeyProto : public InventoryProto {
 public:
 	KeyProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~KeyProto() {}
 
 	//  Set up targeting cursor
 	virtual bool setUseCursor(ObjectID dObj);
@@ -792,9 +787,10 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, BottleProto
 
-class BottleProto   :   public  InventoryProto {
+class BottleProto : public InventoryProto {
 public:
 	BottleProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~BottleProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -810,9 +806,10 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, FoodProto
 
-class FoodProto :   public  InventoryProto {
+class FoodProto : public InventoryProto {
 public:
 	FoodProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~FoodProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -828,9 +825,10 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, WearbleProto
 
-class WearableProto :   public  InventoryProto {
+class WearableProto : public InventoryProto {
 public:
 	WearableProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~WearableProto() {}
 
 	virtual uint16 containmentSet(void);
 };
@@ -851,6 +849,7 @@ protected:
 
 public:
 	WeaponProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
+	virtual ~WeaponProto() {}
 
 	virtual uint16 containmentSet(void);
 
@@ -877,8 +876,8 @@ public:
 
 class MeleeWeaponProto : public WeaponProto {
 public:
-	MeleeWeaponProto(ResourceObjectPrototype &proto) :
-		WeaponProto(proto) {}
+	MeleeWeaponProto(ResourceObjectPrototype &proto) : WeaponProto(proto) {}
+	virtual ~MeleeWeaponProto() {}
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 	virtual bool useOnAction(ObjectID dObj, ObjectID enactor, ObjectID item);
@@ -944,8 +943,8 @@ public:
 
 class BludgeoningWeaponProto : public MeleeWeaponProto {
 public:
-	BludgeoningWeaponProto(ResourceObjectPrototype &proto) :
-		MeleeWeaponProto(proto) {}
+	BludgeoningWeaponProto(ResourceObjectPrototype &proto) : MeleeWeaponProto(proto) {}
+	virtual ~BludgeoningWeaponProto() {}
 
 	//  Get the value of the wielder's skill which applies to this
 	//  weapon
@@ -965,8 +964,8 @@ public:
 
 class SlashingWeaponProto : public MeleeWeaponProto {
 public:
-	SlashingWeaponProto(ResourceObjectPrototype &proto) :
-		MeleeWeaponProto(proto) {}
+	SlashingWeaponProto(ResourceObjectPrototype &proto) : MeleeWeaponProto(proto) {}
+	virtual ~SlashingWeaponProto() {}
 
 	//  Get the value of the wielder's skill which applies to this
 	//  weapon
@@ -985,8 +984,8 @@ public:
 
 class BowProto : public WeaponProto {
 public:
-	BowProto(ResourceObjectPrototype &proto) :
-		WeaponProto(proto) {}
+	BowProto(ResourceObjectPrototype &proto) : WeaponProto(proto) {}
+	virtual ~BowProto() {}
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1022,8 +1021,8 @@ public:
 
 class WeaponWandProto : public WeaponProto {
 public:
-	WeaponWandProto(ResourceObjectPrototype &proto) :
-		WeaponProto(proto) {}
+	WeaponWandProto(ResourceObjectPrototype &proto) : WeaponProto(proto) {}
+	virtual ~WeaponWandProto() {}
 
 	virtual bool useAction(ObjectID dObj, ObjectID enactor);
 
@@ -1211,7 +1210,7 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, DocumentProto
 
-class DocumentProto     :   public  InventoryProto {
+class DocumentProto : public InventoryProto {
 public:
 	DocumentProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~DocumentProto() {}
@@ -1234,7 +1233,7 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, DocumentProto, BookProto
 
-class BookProto     :   public  DocumentProto {
+class BookProto : public DocumentProto {
 public:
 	BookProto(ResourceObjectPrototype &proto) : DocumentProto(proto) {}
 	virtual ~BookProto() {}
@@ -1250,7 +1249,7 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, DocumentProto, ScrollProto
 
-class ScrollProto       :   public  DocumentProto {
+class ScrollProto : public DocumentProto {
 public:
 	ScrollProto(ResourceObjectPrototype &proto) : DocumentProto(proto) {}
 	virtual ~ScrollProto() {}
@@ -1267,7 +1266,7 @@ public:
 //	hierarchy:
 //		ProtoObj, InventoryProto, AutoMapProto
 
-class AutoMapProto  :   public  InventoryProto {
+class AutoMapProto : public InventoryProto {
 public:
 	AutoMapProto(ResourceObjectPrototype &proto) : InventoryProto(proto) {}
 	virtual ~AutoMapProto() {}
@@ -1326,7 +1325,7 @@ public:
 //	hierarchy:
 //		ProtoObj, IntangibleObjProto, IdeaProto
 
-class IdeaProto :   public  IntangibleObjProto {
+class IdeaProto : public IntangibleObjProto {
 public:
 	IdeaProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
 	virtual ~IdeaProto() {}
@@ -1343,7 +1342,7 @@ public:
 //	hierarchy:
 //		ProtoObj, IntangibleObjProto, MemoryProto
 
-class MemoryProto   :   public  IntangibleObjProto {
+class MemoryProto : public IntangibleObjProto {
 public:
 	MemoryProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
 	virtual ~MemoryProto() {}
@@ -1360,7 +1359,7 @@ public:
 //	hierarchy:
 //		ProtoObj, IntangibleObjProto, PsychProto
 
-class PsychProto    :   public  IntangibleObjProto {
+class PsychProto : public IntangibleObjProto {
 public:
 	PsychProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
 	virtual ~PsychProto() {}
@@ -1379,7 +1378,7 @@ public:
 //	hierarchy:
 //		ProtoObj, IntagibleObjProto, SkillProto
 
-class SkillProto    :   public  IntangibleObjProto {
+class SkillProto : public IntangibleObjProto {
 public:
 	SkillProto(ResourceObjectPrototype &proto) : IntangibleObjProto(proto) {}
 	virtual ~SkillProto() {}

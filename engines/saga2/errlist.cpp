@@ -51,7 +51,7 @@ SequentialErrorList::SequentialErrorList(ErrType et, uint32 ec, char *es[]) :
 // ------------------------------------------------------------------
 //
 
-SequentialErrorList::SequentialErrorList(ErrType et, char *es[]) :
+SequentialErrorList::SequentialErrorList(ErrType et, const char *es[]) :
 	ErrorList(et, stringCount(es)) {
 	for (int i = 0; i < eLimit(); i++)
 		setEntry(i, i, es[i]);
@@ -60,7 +60,7 @@ SequentialErrorList::SequentialErrorList(ErrType et, char *es[]) :
 // ------------------------------------------------------------------
 //
 
-uint32 SequentialErrorList::stringCount(char *es[]) {
+uint32 SequentialErrorList::stringCount(const char *es[]) {
 	uint32 rv = 0;
 	if (es == NULL)
 		return 0;
