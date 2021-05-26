@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-25 16:34+0000\n"
-"PO-Revision-Date: 2021-04-20 20:19+0000\n"
-"Last-Translator: Xiao Zheng <welcometoromezx@hotmail.com>\n"
+"PO-Revision-Date: 2021-05-26 15:02+0000\n"
+"Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -501,76 +501,76 @@ msgstr "混响效果"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr ""
+msgstr "激活"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr ""
+msgstr "房间："
 
 #: gui/fluidsynth-dialog.cpp:80
 msgid "Damp:"
-msgstr ""
+msgstr "湿气："
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr ""
+msgstr "宽度："
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr ""
+msgstr "等级："
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr ""
+msgstr "合唱"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
-msgstr ""
+msgstr "N："
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr ""
+msgstr "速度："
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr ""
+msgstr "深度："
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr ""
+msgstr "类型："
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr ""
+msgstr "正弦"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:47 engines/dragons/metaengine.cpp:193
 msgid "Triangle"
-msgstr ""
+msgstr "三角形"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1905
 msgid "Misc"
-msgstr ""
+msgstr "杂项"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
-msgstr ""
+msgstr "插值："
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr ""
+msgstr "无（最快的）"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr ""
+msgstr "线性"
 
 #: gui/fluidsynth-dialog.cpp:146
 msgid "Fourth-order"
-msgstr ""
+msgstr "四阶"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr ""
+msgstr "七阶"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
@@ -660,7 +660,7 @@ msgstr "向右"
 #: engines/wintermute/keymapper_tables.h:1504
 #: engines/wintermute/keymapper_tables.h:1562
 msgid "???"
-msgstr ""
+msgstr "？？？"
 
 #: gui/launcher.cpp:141 engines/dialogs.cpp:95
 msgid "~Q~uit"
@@ -704,7 +704,7 @@ msgstr "为选定的游戏载入存档"
 
 #: gui/launcher.cpp:150
 msgid "Record..."
-msgstr ""
+msgstr "记录..."
 
 #: gui/launcher.cpp:157
 msgid "~A~dd Game..."
@@ -716,7 +716,7 @@ msgstr "添加一个游戏到列表"
 
 #: gui/launcher.cpp:158
 msgid "Mass Add..."
-msgstr ""
+msgstr "批量添加..."
 
 #: gui/launcher.cpp:162
 msgid "~E~dit Game..."
@@ -742,7 +742,7 @@ msgstr "添加游戏(A)..."
 #: gui/launcher.cpp:168
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr ""
+msgstr "批量添加..."
 
 #: gui/launcher.cpp:172
 #, fuzzy
@@ -828,7 +828,7 @@ msgstr "扫描完成！"
 #: gui/massadd.cpp:260
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
+msgstr "找到了%d个新游戏，忽略了%d个之前添加的游戏。"
 
 #: gui/massadd.cpp:264
 #, c-format
@@ -838,7 +838,7 @@ msgstr "扫描了 %d 目录..."
 #: gui/massadd.cpp:267
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr ""
+msgstr "找到了%d个新游戏，忽略了%d个之前添加的游戏..."
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2258
 msgid "Open URL"
@@ -850,12 +850,11 @@ msgstr "停止"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "编辑记录描述"
 
 #: gui/onscreendialog.cpp:108
-#, fuzzy
 msgid "Switch to Game"
-msgstr "編輯遊戲(E)..."
+msgstr "切换到游戏"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
@@ -863,43 +862,43 @@ msgstr "快速回放"
 
 #: gui/options.cpp:130 common/updates.cpp:56
 msgid "Never"
-msgstr ""
+msgstr "从不"
 
 #: gui/options.cpp:130
 msgid "Every 5 mins"
-msgstr ""
+msgstr "每5分钟"
 
 #: gui/options.cpp:130
 msgid "Every 10 mins"
-msgstr ""
+msgstr "每10分钟"
 
 #: gui/options.cpp:130
 msgid "Every 15 mins"
-msgstr ""
+msgstr "每15分钟"
 
 #: gui/options.cpp:130
 msgid "Every 30 mins"
-msgstr ""
+msgstr "每30分钟"
 
 #. I18N: Automatic GUI scaling
 #: gui/options.cpp:135
 msgid "Auto"
-msgstr ""
+msgstr "自动"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:137
 msgid "Large"
-msgstr ""
+msgstr "大的"
 
 #. I18N: Medium GUI scale
 #: gui/options.cpp:139 engines/nancy/dialogs.cpp:120
 msgid "Medium"
-msgstr ""
+msgstr "中等的"
 
 #. I18N: Small GUI scale
 #: gui/options.cpp:141
 msgid "Small"
-msgstr ""
+msgstr "小的"
 
 #: gui/options.cpp:429 gui/options.cpp:817 gui/options.cpp:955
 #: gui/options.cpp:1066 gui/options.cpp:1459
@@ -941,86 +940,84 @@ msgstr "触摸板鼠标模式"
 
 #: gui/options.cpp:1153
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "交换菜单和返回按钮"
 
 #: gui/options.cpp:1158
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "指针速度："
 
 #: gui/options.cpp:1158 gui/options.cpp:1160 gui/options.cpp:1161
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "键盘/Joystick 鼠标指针速度"
 
 #: gui/options.cpp:1160
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "指针速度："
 
 #: gui/options.cpp:1171
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy 死区："
 
 #: gui/options.cpp:1171 gui/options.cpp:1173 gui/options.cpp:1174
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "模拟Joystick死区"
 
 #: gui/options.cpp:1173
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joy死区："
 
 #: gui/options.cpp:1247
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d个剩余的隐藏成就"
 
 #: gui/options.cpp:1252
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "成就解锁：%d/%d"
 
 #: gui/options.cpp:1271
-#, fuzzy
 msgid "HW Shader:"
-msgstr "着色器"
+msgstr "着色器："
 
 #: gui/options.cpp:1271 gui/options.cpp:1273
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "不同的硬件着色器提供不同的视觉效果"
 
 #: gui/options.cpp:1273
-#, fuzzy
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr "着色器"
+msgstr "着色器："
 
 #: gui/options.cpp:1274
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "不同的硬件着色器提供不同的视觉效果"
 
 #: gui/options.cpp:1294
 msgid "Graphics mode:"
-msgstr ""
+msgstr "图像模式："
 
 #: gui/options.cpp:1308
 msgid "Render mode:"
-msgstr ""
+msgstr "渲染模式："
 
 #: gui/options.cpp:1308 gui/options.cpp:1309
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "一些游戏支持的特殊抖动模式"
 
 #: gui/options.cpp:1321
 msgid "Stretch mode:"
-msgstr ""
+msgstr "伸展模式："
 
 #: gui/options.cpp:1332 backends/graphics/sdl/sdl-graphics.cpp:399
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "全屏模式"
 
 #: gui/options.cpp:1334
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "3D游戏中的垂直同步"
 
 #: gui/options.cpp:1334
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
