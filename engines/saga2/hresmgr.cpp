@@ -92,8 +92,8 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 	_numEntries = entry->resSize() / sizeof * entry;
 
-	_base = (hResEntry *)((uint8 *)_res->groups +
-	                     (entry->offset - _res->firstGroupOffset));
+	_base = (hResEntry *)((uint8 *)_res->_groups +
+	                     (entry->offset - _res->_firstGroupOffset));
 
 	_data = (RHANDLE *)malloc(_numEntries * sizeof(RHANDLE));
 	if (_data == nullptr)
@@ -123,12 +123,16 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	_bytepos = 0;
 	if (!_valid) return nullptr;
 
+	debugC(kDebugResources, "findEntry: looking for %d (%s)", id, tag2str(id));
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
+		debugC(kDebugResources, "%d: Trying ID: %d (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
 			if (capture) *capture = &_data[ i ];
+			debugC(kDebugResources, "findEntry: found %d (%s)", entry->id, tag2str(entry->id));
 			return entry;
 		}
 	}
+	debugC(kDebugResources, "findEntry: No entry found");
 
 	return nullptr;
 }
@@ -136,9 +140,11 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 uint32 hResContext::size(hResID id) {
 	hResEntry   *entry;
 
-	if (!_valid) return 0;
+	if (!_valid)
+		return 0;
 
-	if ((entry = findEntry(id)) == nullptr) return 0;
+	if ((entry = findEntry(id)) == nullptr)
+		return 0;
 
 	return entry->resSize();
 }
@@ -172,7 +178,7 @@ Common::File *hResContext::openExternal(Common::File *fh) {
 
 	_bytecount = 0;
 	_bytepos = 0;
-	strcpy(name, _res->externalPath);
+	strcpy(name, _res->_externalPath);
 	len = strlen(name);
 	size = fh->readUint32LE();
 	fh->read(&name, sizeof(name));
@@ -195,8 +201,7 @@ bool hResContext::seek(hResID id) {
 	_bytecount = entry->resSize();
 	_bytepos = entry->resOffset();
 
-	if (HR_SEEK(_res->_handle, _bytepos, SEEK_SET) != 0)
-		error("Error seeking resource file:\n");
+	_res->_handle->seek(_bytepos, SEEK_SET);
 
 	if (entry->isExternal()) {
 		// resource _data is actually a path name
@@ -387,10 +392,11 @@ void hResContext::release(RHANDLE p) {
  * ===================================================================== */
 
 void hResource::readResource(hResEntry &element) {
-	element.id = _file.readUint32LE();
+	element.id = _file.readUint32BE();
 	element.offset = _file.readUint32LE();
 	element.size = _file.readUint32LE();
 	uint32 id = element.id;
+
 	debugC(kDebugResources, "%s, offset: %d, size: %d", tag2str(id), element.offset, element.size);
 }
 
@@ -404,27 +410,34 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	_data = nullptr;
 	_numEntries = 0;
 
-	strncpy(externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
+	strncpy(_externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
+	debugC(kDebugResources, "Opening resource: %s", resname);
 	_file.open(resname);	
 
 	readResource(origin);
-	if (origin.id != HRES_ID) return;
+	if (origin.id != HRES_ID)
+		return;
 
 	_file.seek(origin.offset - sizeof(uint32), SEEK_SET);
-	firstGroupOffset = _file.readUint32LE();
+	_firstGroupOffset = _file.readUint32LE();
 
-	// allocate buffers for root, groups and _data
+	// allocate buffers for root, groups and data
 
 	_base = (hResEntry *)malloc(origin.resSize());
-	size = origin.offset - firstGroupOffset - sizeof(uint32);
-	groups = (hResEntry *)malloc(size);
+	size = origin.offset - _firstGroupOffset - sizeof(uint32);
+	_groups = (hResEntry *)malloc(size);
 
-	if (_base == nullptr || groups == nullptr) return;
+	if (_base == nullptr || _groups == nullptr) return;
 
 	readResource(*_base);
-	_file.seek(firstGroupOffset, SEEK_SET);
-	readResource(*groups);
+	_numEntries = origin.resSize() / sizeof origin;
+
+	debugC(kDebugResources, "Reading %d categories:", _numEntries);
+	_file.seek(_firstGroupOffset, SEEK_SET);
+	for (int i = 0; i < _numEntries; ++i) {
+		readResource(_groups[i]);
+	}
 
 	_res = this;
 	_numEntries = origin.resSize() / sizeof origin;
@@ -433,7 +446,7 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 
 hResource::~hResource() {
 	if (_base) free(_base);
-	if (groups) free(groups);
+	if (_groups) free(_groups);
 	if (_handle) free(_handle);
 }
 

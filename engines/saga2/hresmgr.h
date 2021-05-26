@@ -179,9 +179,9 @@ class hResource : public hResContext {
 
 	friend class hResContext;
 
-	uint32      firstGroupOffset;
-	char        externalPath[EXTERNAL_PATH_SIZE];
-	hResEntry   *groups;
+	uint32      _firstGroupOffset;
+	char        _externalPath[EXTERNAL_PATH_SIZE];
+	hResEntry   *_groups;
 
 public:
 	hResource(char *resname, char *extname, const char []);
@@ -206,7 +206,7 @@ inline hResID RES_ID(uint8 a, uint8 b, uint8 c, uint8 d) {
 }
 #endif
 
-#define HRES_ID         RES_ID('H','R','E','S')
+#define HRES_ID         MKTAG('H','R','E','S')
 
 
 //  Handle-washing function.

@@ -39,6 +39,7 @@
 
 namespace Saga2 {
 
+void openImageTest();
 bool openResources();
 void main_saga2();
 
@@ -70,7 +71,9 @@ Common::Error Saga2Engine::run() {
 	// Additional setup.
 	debug("Saga2Engine::init");
 
-	openResources();
+	if (openResources()) {	
+		openImageTest();
+	}
 
 	// Your main even loop should be (invoked from) here.
 	debug("Saga2Engine::go: Hello, World!");
