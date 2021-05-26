@@ -58,6 +58,7 @@ MODULE_OBJS := \
 	modal.o \
 	mono.o \
 	motion.o \
+	msgbox.o \
 	noise.o \
 	mouseimg.o \
 	nice_err.o \
