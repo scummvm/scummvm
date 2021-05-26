@@ -27,7 +27,6 @@
 #ifndef SAGA2_CALENDER_H
 #define SAGA2_CALENDER_H
 
-#include "saga2/std.h"
 #include "saga2/savefile.h"
 
 namespace Saga2 {

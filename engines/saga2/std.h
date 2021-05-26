@@ -27,9 +27,6 @@
 #ifndef SAGA2_STD_H
 #define SAGA2_STD_H
 
-// FIXME. Remove this
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "common/system.h"
 
 #include "saga2/rmemfta.h"
