@@ -50,6 +50,11 @@
 
 namespace Wage {
 
+// Original files sit in engines/wage/guiborders
+// to print out similar pictures, use
+//   bmpDecoder.getSurface()->debugPrint(0, 0, 0, 0, 0, 1);
+// in MacWindowBorder::loadBorder()
+
 static const char *wage_border_inact_title[] = {
 "......................................  ..  ..  ......................................",
 "..                                    ..      ..                                    ..",
