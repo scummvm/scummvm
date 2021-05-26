@@ -100,7 +100,7 @@ public:
 	virtual void gave(size_t dSize);              // notify amount written
 	virtual void took(size_t dSize);             // notify amount read
 	virtual void fill(void);                      // convince buffer it is full
-	virtual void abort(void);                     // kill sound & return buffer to its heap
+	virtual void abortsound(void);                     // kill sound & return buffer to its heap
 	virtual void release(void);               // return buffer to its heap
 	virtual void setVolume(int8 val);         // internal : set buffer to fill & play
 
@@ -140,7 +140,7 @@ public:
 	void gave(size_t dSize);              // notify amount written
 	void took(size_t dSize);               // notify amount read
 	void fill(void);                      // convince buffer it is full
-	void abort(void);                    // kill sound & return buffer to its heap
+	void abortsound(void);                    // kill sound & return buffer to its heap
 	void release(void);               // return buffer to its heap
 	void setVolume(int8 val);         // internal : set buffer to fill & play
 
@@ -169,7 +169,7 @@ public:
 	int16 ID(void) {
 		return bufID;    // for buffer Manager
 	}
-	void abort(void);                 // abort playback
+	void abortsound(void);                 // abort playback
 
 	doubleBuffer(size_t newSize, audioInterface *sd, int16 newID);
 	~doubleBuffer(void);
@@ -235,7 +235,7 @@ public:
 	void took(size_t dSize);               // notify amount read
 	void fill(void);                      // convince buffer it is full
 	void replay(void);                   // kill sound & return buffer to its heap
-	void abort(void);                    // kill sound & return buffer to its heap
+	void abortsound(void);                    // kill sound & return buffer to its heap
 	void release(void);               // return buffer to its heap
 	void setVolume(int8 val);         // internal : set buffer to fill & play
 
@@ -287,7 +287,7 @@ public:
 	void gave(size_t dSize);              // notify amount written
 	void took(size_t dSize);               // notify amount read
 	void fill(void);                      // convince buffer it is full
-	void abort(void);                    // kill sound & return buffer to its heap
+	void abortsound(void);                    // kill sound & return buffer to its heap
 	void release(void);               // return buffer to its heap
 	void setVolume(int8 val);         // internal : set buffer to fill & play
 
@@ -336,7 +336,7 @@ public:
 	void gave(size_t dSize);              // notify amount written
 	void took(size_t dSize);               // notify amount read
 	void fill(void);                      // convince buffer it is full
-	void abort(void);                    // kill sound & return buffer to its heap
+	void abortsound(void);                    // kill sound & return buffer to its heap
 	void release(void);               // return buffer to its heap
 	void setVolume(int8 val);         // internal : set buffer to fill & play
 

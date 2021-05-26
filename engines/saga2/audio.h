@@ -78,7 +78,6 @@ inline void audioFatal(char *msg) {
 }
 
 #include "saga2/rect.h"
-#include "saga2/audiotmr.h"
 #include "saga2/audiomem.h"
 #include "saga2/queues.h"
 #include "saga2/audiobuf.h"

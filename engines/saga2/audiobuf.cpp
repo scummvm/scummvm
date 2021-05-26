@@ -602,13 +602,13 @@ void cacheBuffer::fill(void) {
 /*                                                                 */
 /* When a buffer is no longer needed this call resets it.          */
 
-void Buffer::abort(void) {
+void Buffer::abortsound(void) {
 }
 
 void Buffer::release(void) {
 }
 
-void workBuffer::abort(void) {
+void workBuffer::abortsound(void) {
 	if (rSize)
 		took(rSize);
 	release();
@@ -617,7 +617,7 @@ void workBuffer::abort(void) {
 void workBuffer::release(void) {
 }
 
-void doubleBuffer::abort(void) {
+void doubleBuffer::abortsound(void) {
 	if (rSize)
 		took(rSize);
 	release();
@@ -642,7 +642,7 @@ void doubleBuffer::release(void) {
 	VERIFY(AILLOCated == -1);
 }
 
-void singleBuffer::abort(void) {
+void singleBuffer::abortsound(void) {
 	AIL_end_sample(ailSampleHandle);
 	if (rSize)
 		took(rSize);
@@ -657,7 +657,7 @@ void singleBuffer::release(void) {
 	VERIFY(AILLOCated == -1);
 }
 
-void musicBuffer::abort(void) {
+void musicBuffer::abortsound(void) {
 	if (rSize)
 		took(rSize);
 	release();
@@ -670,7 +670,7 @@ void musicBuffer::release(void) {
 	audioSet = 0;
 }
 
-void cacheBuffer::abort(void) {
+void cacheBuffer::abortsound(void) {
 }
 
 void cacheBuffer::release(void) {
