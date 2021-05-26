@@ -62,12 +62,13 @@ namespace Saga2 {
    Constants
  * ===================================================================== */
 
-const   uint32  gameTimeID  = RES_ID('T', 'I', 'M', 'E');
+const   uint32  gameTimeID  = MKTAG('T', 'I', 'M', 'E');
 
 /* ===================================================================== *
    Imports
  * ===================================================================== */
 
+extern WindowDecoration autoMapDecorations[];
 extern gToolBase        G_BASE;
 extern configuration    globalConfig;
 extern char             *gameTimeStr;
@@ -751,6 +752,21 @@ bool openResources(void) {
 	}
 	return false;
 
+}
+
+void openImageTest() {
+		hResContext     *decRes;
+
+		decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
+		//checkAlloc(summaryData = LoadResource(decRes,
+		//									  MKTAG('S', 'U', 'M', currentMapNum),
+		//									  "summary data"));
+
+		WindowDecoration *dec = &autoMapDecorations[0];
+		dec->image = LoadResource(decRes, MKTAG('M', 'A', 'P', 0), "MAP0");
+		//dec->image = ImageCache.requestImage(decRes, MKTAG('M', 'A', 'P', 0) | MKTAG('B', 'R', 'D', dec->imageNumber));
+		Point16 pos(0, 0);
+		//drawCompressedImage(mainPort, pos, dec->image);
 }
 
 //-----------------------------------------------------------------------
