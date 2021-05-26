@@ -766,7 +766,7 @@ void openImageTest() {
 		dec->image = LoadResource(decRes, MKTAG('M', 'A', 'P', 0), "MAP0");
 		//dec->image = ImageCache.requestImage(decRes, MKTAG('M', 'A', 'P', 0) | MKTAG('B', 'R', 'D', dec->imageNumber));
 		Point16 pos(0, 0);
-		//drawCompressedImage(mainPort, pos, dec->image);
+		drawCompressedImage(mainPort, pos, dec->image);
 }
 
 //-----------------------------------------------------------------------

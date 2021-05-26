@@ -333,9 +333,8 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	map.size = hdr->size;
 
 	if (hdr->compress) {
-		map.data = (uint8 *)RNewPtr(map.bytes(), NULL, "sprite decompression map");
+		map.data = (uint8 *)malloc(map.bytes());
 		if (map.data == NULL) return;
-
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
 	} else map.data = (uint8 *)hdr->data;
 
@@ -344,7 +343,7 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	               pos.x, pos.y,
 	               map.size.x, map.size.y);
 
-	if (hdr->compress) RDisposePtr(map.data);
+	if (hdr->compress) free(map.data);
 }
 
 void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
