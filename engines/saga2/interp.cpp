@@ -41,9 +41,9 @@ namespace Saga2 {
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8))
 #define BRANCH(w)       pc = *codeSeg + (w)
 
-const uint32        sagaID      = RES_ID('S', 'A', 'G', 'A'),
-                    dataSegID   = RES_ID('_', '_', 'D', 'A'),
-                    exportSegID = RES_ID('_', 'E', 'X', 'P');
+const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
+                    dataSegID   = MKTAG('_', '_', 'D', 'A'),
+                    exportSegID = MKTAG('_', 'E', 'X', 'P');
 
 const int           initialStackFrameSize = 10;
 

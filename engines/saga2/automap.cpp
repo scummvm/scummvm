@@ -194,10 +194,10 @@ void CAutoMap::locateRegion(void) {
 	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
 	int             i;
 
-	areaRes = auxResFile->newContext(RES_ID('A', 'M', 'A', 'P'), "AreaList");
+	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
 	VERIFY(areaRes != NULL);
 
-	trRes = (uint16 *)LoadResource(areaRes, RES_ID('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
+	trRes = (uint16 *)LoadResource(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
 	VERIFY(trRes != NULL);
 	regionCount = *trRes;
 
@@ -538,11 +538,11 @@ int16 openAutoMap() {
 	updateMapFeatures(currentMapNum);
 
 	// init the resource context handle
-	decRes = resFile->newContext(RES_ID('A', 'M', 'A', 'P'), "Automap Resources");
+	decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
 
 	// debug
 	checkAlloc(summaryData = LoadResource(decRes,
-	                                      RES_ID('S', 'U', 'M', currentMapNum),
+	                                      MKTAG('S', 'U', 'M', currentMapNum),
 	                                      "summary data"));
 
 	// get the graphics associated with the buttons

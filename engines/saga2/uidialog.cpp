@@ -1552,7 +1552,7 @@ void placardWindow(int8 type, char *text) {
 	hResContext     *resContext;
 
 	// init the resource context handle
-	resContext = resFile->newContext(RES_ID('I', 'M', 'A', 'G'), "Placard resources");
+	resContext = resFile->newContext(MKTAG('I', 'M', 'A', 'G'), "Placard resources");
 
 
 	// do type related assignments

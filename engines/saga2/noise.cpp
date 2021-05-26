@@ -47,11 +47,11 @@ Point32 VeryFarAway = Point32(32767, 32766);
 const uint32 fullVolumeDist = 75;
 const uint32 offVolumeDist = 200;
 
-const uint32        baseMusicID     = RES_ID('M', 'I', 'L', 'O'),
-                    goodMusicID     = RES_ID('M', 'I', 'H', 'I'),
-                    soundID         = RES_ID('L', 'O', 'U', 'D'),
-                    loopedID        = RES_ID('L', 'O', 'O', 'P'),
-                    voiceID         = RES_ID('T', 'A', 'L', 'K');
+const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
+                    goodMusicID     = MKTAG('M', 'I', 'H', 'I'),
+                    soundID         = MKTAG('L', 'O', 'U', 'D'),
+                    loopedID        = MKTAG('L', 'O', 'O', 'P'),
+                    voiceID         = MKTAG('T', 'A', 'L', 'K');
 
 /* ===================================================================== *
    Imports
@@ -308,11 +308,11 @@ void startAudio(void) {
 	if (audio->activeDIG()) {
 		// kludgy in memory click sounds
 		clickSizes[0] = 0;
-		clickSizes[1] = soundRes->size(RES_ID('C', 'L', 'K', 1));
-		clickSizes[2] = soundRes->size(RES_ID('C', 'L', 'K', 2));
+		clickSizes[1] = soundRes->size(MKTAG('C', 'L', 'K', 1));
+		clickSizes[2] = soundRes->size(MKTAG('C', 'L', 'K', 2));
 		clickData[0] = NULL;
-		clickData[1] = (uint8 *) LoadResource(soundRes, RES_ID('C', 'L', 'K', 1), "Click 1");
-		clickData[2] = (uint8 *) LoadResource(soundRes, RES_ID('C', 'L', 'K', 2), "Click 2");
+		clickData[1] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 1), "Click 1");
+		clickData[2] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 	}
 
 	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
@@ -360,11 +360,11 @@ void audioEventLoop(void) {
  * ===================================================================== */
 
 void makeCombatSound(uint8 cs, Location l) {
-	playSoundAt(RES_ID('C', 'B', 'T', cs), l);
+	playSoundAt(MKTAG('C', 'B', 'T', cs), l);
 }
 
 void makeGruntSound(uint8 cs, Location l) {
-	playSoundAt(RES_ID('G', 'N', 'T', cs), l);
+	playSoundAt(MKTAG('G', 'N', 'T', cs), l);
 }
 
 
@@ -690,13 +690,13 @@ uint32 parse_res_id(char IDstr[]) {
 		for (i = 0, j = 0; i < strlen(IDstr); i++) {
 			if (IDstr[i] == ':') {
 				a2 = atoi(IDstr + i + 1);
-				return RES_ID(a[0], a[1], a[2], a2);
+				return MKTAG(a[0], a[1], a[2], a2);
 			} else {
 				a[j++] = IDstr[i];
 			}
 		}
 	}
-	return RES_ID(a[0], a[1], a[2], a[3]);
+	return MKTAG(a[0], a[1], a[2], a[3]);
 }
 
 //-----------------------------------------------------------------------
@@ -761,14 +761,14 @@ void PlayMusic(char IDstr[]) {
 
 int annoyingTestSound(int32 sampID) {
 	if (debugStatuses) {
-		WriteStatusF(6, "Queued sound : %X ", RES_ID('T', 'S', 'T', sampID));
+		WriteStatusF(6, "Queued sound : %X ", MKTAG('T', 'S', 'T', sampID));
 	}
-	playSound(RES_ID('S', 'F', 'X', sampID));
+	playSound(MKTAG('S', 'F', 'X', sampID));
 	return 0;
 }
 
 int annoyingTestSound2(int32 sampID) {
-	playSound(RES_ID('T', 'S', 'T', sampID));
+	playSound(MKTAG('T', 'S', 'T', sampID));
 	return 0;
 }
 
@@ -777,7 +777,7 @@ int annoyingTestSound2(int32 sampID) {
 //-----------------------------------------------------------------------
 
 int annoyingTestVoice(int32 sampID) {
-	playVoice(RES_ID('T', 'S', 'T', sampID));
+	playVoice(MKTAG('T', 'S', 'T', sampID));
 	return 0;
 }
 
@@ -787,9 +787,9 @@ int annoyingTestVoice(int32 sampID) {
 
 int annoyingTestMusic(int32 sampID) {
 #if defined(_WIN32) && !defined(USE_REAL_WAIL)
-	playMusic(RES_ID('M', 'I', 'D', sampID));
+	playMusic(MKTAG('M', 'I', 'D', sampID));
 #else
-	playMusic(RES_ID('X', 'M', 'I', sampID));
+	playMusic(MKTAG('X', 'M', 'I', sampID));
 #endif
 	return 0;
 }
@@ -798,7 +798,7 @@ static char convBuf[5];
 
 inline uint32 extendID(int16 smallID) {
 	sprintf(convBuf, "%4.4d", smallID);
-	return smallID ? RES_ID(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
+	return smallID ? MKTAG(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
 }
 
 int16 aResponse[20] = {
@@ -829,13 +829,13 @@ void voiceTest2(void) {
 		PlayLoop(":0");
 		break;
 	case 5:
-		playLoop(RES_ID('T', 'E', 'R', 2));
+		playLoop(MKTAG('T', 'E', 'R', 2));
 		break;
 	case 6:
-		playLoop(RES_ID('T', 'E', 'R', 3));
+		playLoop(MKTAG('T', 'E', 'R', 3));
 		break;
 	case 7:
-		playLoop(RES_ID('T', 'E', 'R', 8));
+		playLoop(MKTAG('T', 'E', 'R', 8));
 		break;
 	}
 }
@@ -847,13 +847,13 @@ void soundTest1(void) {
 		playSound(0);
 		break;
 	case 1:
-		playSound(RES_ID('S', 'F', 'X', 5));
+		playSound(MKTAG('S', 'F', 'X', 5));
 		break;
 	case 2:
-		playSound(RES_ID('S', 'F', 'X', 8));
+		playSound(MKTAG('S', 'F', 'X', 8));
 		break;
 	case 3:
-		playSound(RES_ID('S', 'F', 'X', 20));
+		playSound(MKTAG('S', 'F', 'X', 20));
 		break;
 	case 4:
 		PlaySound("SFX:11");
@@ -862,10 +862,10 @@ void soundTest1(void) {
 		PlaySound("SFX:15");
 		break;
 	case 6:
-		playSound(RES_ID('S', 'F', 'X', 3));
+		playSound(MKTAG('S', 'F', 'X', 3));
 		break;
 	case 7:
-		playSound(RES_ID('B', 'A', 'D', 47)); // put down a card
+		playSound(MKTAG('B', 'A', 'D', 47)); // put down a card
 	}
 }
 
@@ -879,13 +879,13 @@ void soundTest2(void) {
 		PlayMusic(":0");
 		break;
 	case 2:
-		playMusic(RES_ID('X', 'M', 'I', 1));
+		playMusic(MKTAG('X', 'M', 'I', 1));
 		break;
 	case 3:
-		playMusic(RES_ID('X', 'M', 'I', 2));
+		playMusic(MKTAG('X', 'M', 'I', 2));
 		break;
 	case 4:
-		playMusic(RES_ID('X', 'M', 'I', 3));
+		playMusic(MKTAG('X', 'M', 'I', 3));
 		break;
 	case 5:
 		PlayMusic("XMI:1");

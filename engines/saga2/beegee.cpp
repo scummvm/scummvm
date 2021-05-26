@@ -114,14 +114,14 @@ int16 themeCount[MaxThemes];
    Prototypes
  * ===================================================================== */
 
-#define musicResID(i) RES_ID('X','M','I',i)
+#define musicResID(i) MKTAG('X','M','I',i)
 
 inline metaTileNoise getSound(MetaTilePtr mt) {
 	int hmm = mt->HeavyMetaMusic();
 	return (hmm >= 0 && hmm < MaxThemes) ? hmm : 0;
 }
 inline uint32 metaNoiseID(metaTileNoise mtnID) {
-	return mtnID ? RES_ID('T', 'E', 'R', mtnID) : 0;
+	return mtnID ? MKTAG('T', 'E', 'R', mtnID) : 0;
 }
 
 void _playLoop(uint32 s);

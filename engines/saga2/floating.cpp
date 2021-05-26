@@ -135,7 +135,7 @@ void DecoratedWindow::setDecorations(
 		// request an image pointer from the imageCache
 
 		dec->image = ImageCache.requestImage(con,
-		                                     RES_ID('B', 'R', 'D', dec->imageNumber));
+		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
 	}
 }
 
@@ -154,7 +154,7 @@ void DecoratedWindow::setDecorations(
 	for (i = 0; i < numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
 		dec->image = ImageCache.requestImage(con,
-		                                     id | RES_ID(0, 0, 0, dec->imageNumber));
+		                                     id | MKTAG(0, 0, 0, dec->imageNumber));
 	}
 }
 
@@ -163,7 +163,7 @@ void DecoratedWindow::setDecorations(
     int16           count,
     hResContext     *con,
     char a, char b, char c) {
-	setDecorations(dec, count, con, RES_ID(a, b, c, 0));
+	setDecorations(dec, count, con, MKTAG(a, b, c, 0));
 }
 
 //  Free the decorations from the memory pool

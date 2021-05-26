@@ -360,7 +360,7 @@ ResName broNames[] = { { 'J', 'U', 'L', 0 },
 	{ 'K', 'E', 'V', 0 }
 };
 
-const uint32 containerGroupID = RES_ID('C', 'O', 'N', 'T');
+const uint32 containerGroupID = MKTAG('C', 'O', 'N', 'T');
 
 
 // button position views
@@ -818,12 +818,12 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// setup mass/bulk indicator imagery
 	if (death) {
-		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, RES_ID('D', 'J', 'B', massBulkResNum)));
+		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, MKTAG('D', 'J', 'B', massBulkResNum)));
 
 		checkAlloc(pieIndImag       = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J'));
 	} else {
 
-		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, RES_ID('G', 'J', 'B', massBulkResNum)));
+		checkAlloc(massBulkImag     = ImageCache.requestImage(containerRes, MKTAG('G', 'J', 'B', massBulkResNum)));
 
 		checkAlloc(pieIndImag       = loadImageRes(containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J'));
 	}
@@ -951,7 +951,7 @@ CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
 	ASSERT(resFile);
 
 	// init the resource handle with the mana resource group
-	resContext  = resFile->newContext(RES_ID('M', 'A', 'N', 'A'),
+	resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'),
 	                                  "mana context");
 
 	// load star images
@@ -966,9 +966,9 @@ CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
 	                                     numRings,
 	                                     'R', 'N', 'G'));
 
-	checkAlloc(backImage = ImageCache.requestImage(resContext, RES_ID('B', 'A', 'C', 'K')));
+	checkAlloc(backImage = ImageCache.requestImage(resContext, MKTAG('B', 'A', 'C', 'K')));
 
-	checkAlloc(wellImage = ImageCache.requestImage(resContext, RES_ID('W', 'E', 'L', 'L')));
+	checkAlloc(wellImage = ImageCache.requestImage(resContext, MKTAG('W', 'E', 'L', 'L')));
 
 	// hmm this could be cleaner...
 	starRingEndPos[ 0 ] = Point16(redEndX,    redEndY);
@@ -1338,7 +1338,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	checkAlloc(starImag = loadButtonRes(healthRes, starStart, starNum, 'S', 'T', 'A'));
 
 	// load in the health star border
-	checkAlloc(starFrameImag    = ImageCache.requestImage(healthRes, RES_ID('B', 'T', 'N', starFrameResNum)));
+	checkAlloc(starFrameImag    = ImageCache.requestImage(healthRes, MKTAG('B', 'T', 'N', starFrameResNum)));
 
 	// set the image indexes to nominal startup values
 	for (i = 0; i < numControls + 1; i++) {
@@ -1596,7 +1596,7 @@ void **loadButtonRes(hResContext *con, int16 resID, int16 numRes) {
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
 		// get an image from the image cache
-		images[ i ] = ImageCache.requestImage(con, RES_ID('B', 'T', 'N', k));
+		images[ i ] = ImageCache.requestImage(con, MKTAG('B', 'T', 'N', k));
 	}
 
 	return images;
@@ -1612,7 +1612,7 @@ void **loadButtonRes(hResContext *con, int16 resID, int16 numRes, char a, char b
 	void **images = (void **) TALLOC(sizeof(void *)*numRes, memInterface);
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
-		images[ i ] = ImageCache.requestImage(con, RES_ID(a, b, c, k));
+		images[ i ] = ImageCache.requestImage(con, MKTAG(a, b, c, k));
 	}
 
 	return images;
@@ -1673,17 +1673,17 @@ void SetupUserControls(void) {
 	checkAlloc(julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages));
 	checkAlloc(phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages));
 	checkAlloc(kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages));
-	checkAlloc(broBtnFrameImag  = ImageCache.requestImage(imageRes, RES_ID('F', 'R', 'A', 'M')));
+	checkAlloc(broBtnFrameImag  = ImageCache.requestImage(imageRes, MKTAG('F', 'R', 'A', 'M')));
 
 
 	// set up the portrait name plates
 	for (n = 0; n < kNumViews; n++) {
-		checkAlloc(namePlateImages[ n ] = ImageCache.requestImage(imageRes, RES_ID('B', 'T', 'N', namePlateResNum[ n ])));
+		checkAlloc(namePlateImages[ n ] = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', namePlateResNum[ n ])));
 	}
 
 	// get the frame image
-	checkAlloc(namePlateFrameImag = ImageCache.requestImage(imageRes, RES_ID('B', 'T', 'N', 15)));
-	checkAlloc(armorImag = ImageCache.requestImage(imageRes, RES_ID('B', 'T', 'N', 34)));
+	checkAlloc(namePlateFrameImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 15)));
+	checkAlloc(armorImag = ImageCache.requestImage(imageRes, MKTAG('B', 'T', 'N', 34)));
 
 	// clean out the old context
 	if (imageRes) resFile->disposeContext(imageRes);

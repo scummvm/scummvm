@@ -57,7 +57,7 @@ namespace Saga2 {
 // this is currently set to an arbitrary value for testing purposes.
 const uint16 defaultReach = 24;
 
-const uint32 actorListID = RES_ID('A', 'C', 'T', 'O');
+const uint32 actorListID = MKTAG('A', 'C', 'T', 'O');
 
 /* ===================================================================== *
    Externals
