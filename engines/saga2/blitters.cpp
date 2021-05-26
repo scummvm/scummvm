@@ -470,9 +470,9 @@ void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 		compressedBuffer[i] = srcData[i];
 
 	if (!decodeBGImage(compressedBuffer, outputBuffer, w, h, false)) {
-		error("Could not unpack sprite");
+		error("Could not unpack image");
 	}
-	debugC(kDebugResources, "hello");
+	debugC(kDebugResources, "Successfully unpacked image: w:%d, h:%d", *w, *h);
 	map->data = outputBuffer.getBuffer();
 }
 
