@@ -307,6 +307,7 @@ public:
 	 */
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
+	void setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets);
 	void disableBorder();
 	void loadWin95Border(const Common::String &filename, uint32 flags);
 	/**

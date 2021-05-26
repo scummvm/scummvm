@@ -316,6 +316,10 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, Borde
 	_macBorder.loadBorder(file, flags, offsets);
 }
 
+void MacWindow::setBorder(Graphics::TransparentSurface *surface, uint32 flags, BorderOffsets offsets) {
+	_macBorder.setBorder(surface, flags, offsets);
+}
+
 void MacWindow::resizeBorderSurface() {
 	updateOuterDims();
 	_borderSurface.free();
