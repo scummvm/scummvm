@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	dialog.o \
 	entities.o \
 	gui.o \
+	guiborders.o \
 	metaengine.o \
 	randomhat.o \
 	saveload.o \

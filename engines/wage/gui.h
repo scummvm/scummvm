@@ -150,7 +150,7 @@ private:
 	const Graphics::Font *getTitleFont();
 
 	void loadBorders();
-	void loadBorder(Graphics::MacWindow *target, Common::String filename, uint32 flags, int titlePos = 0);
+	void loadBorder(Graphics::MacWindow *target, const char *border[], uint height, uint32 flags, int titlePos = 0);
 
 public:
 	Graphics::ManagedSurface _screen;
