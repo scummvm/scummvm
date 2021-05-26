@@ -125,12 +125,12 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	_bytepos = 0;
 	if (!_valid) return nullptr;
 
-	debugC(kDebugResources, "findEntry: looking for %d (%s)", id, tag2str(id));
+	debugC(kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
-		debugC(kDebugResources, "%d: Trying ID: %d (%s)", i, entry->id, tag2str(entry->id));
+		debugC(kDebugResources, "%x: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
 			if (capture) *capture = &_data[ i ];
-			debugC(kDebugResources, "findEntry: found %d (%s)", entry->id, tag2str(entry->id));
+			debugC(kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
 			return entry;
 		}
 	}
@@ -221,7 +221,7 @@ void hResContext::rest(void) {
 	_bytecount = 0;
 	_bytepos = 0;
 	if (_valid && _handle && _handle != _res->_handle) {
-		HR_CLOSE(_handle);
+		_handle->close();
 		_handle = nullptr;
 	}
 }
@@ -230,7 +230,7 @@ bool hResContext::read(void *buffer, int32 size) {
 	if (!_valid) return false;
 	_bytecount = 0;
 	_bytepos = 0;
-	return (HR_READ(buffer, size, 1, _handle) == 1);
+	return _handle->read(buffer, size);
 }
 
 bool hResContext::eor(void) {
@@ -399,7 +399,7 @@ void hResource::readResource(hResEntry &element) {
 	element.size = _file.readUint32LE();
 	uint32 id = element.id;
 
-	debugC(kDebugResources, "%s, offset: %d, size: %d", tag2str(id), element.offset, element.size);
+	debugC(kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
 }
 
 hResource::hResource(char *resname, char *extname, const char desc[]) {
