@@ -25,9 +25,420 @@
  */
 
 #include "saga2/std.h"
+#include "saga2/saga2.h"
+#include "common/memstream.h"
+#include "common/debug.h"
 
 namespace Saga2 {
 
+class ByteArray : public Common::Array<byte> {
+public:
+	/**
+	 * Return a pointer to the start of the buffer underlying this byte array,
+	 * or NULL if the buffer is empty.
+	 */
+	byte *getBuffer() {
+		return empty() ? NULL : &front();
+	}
+
+	const byte *getBuffer() const {
+		return empty() ? NULL : &front();
+	}
+
+	void assign(const ByteArray &src) {
+		resize(src.size());
+		if (!empty()) {
+			memcpy(&front(), &src.front(), size());
+		}
+	}
+};
+
+typedef struct {
+	int width;
+	int height;
+} ImgHeader;
+
+static int granulate(int value, int granularity) {
+	int remainder;
+
+	if (value == 0)
+		return 0;
+
+	if (granularity == 0)
+		return 0;
+
+	remainder = value % granularity;
+
+	if (remainder == 0) {
+		return value;
+	} else {
+		return (granularity - remainder + value);
+	}
+}
+
+bool decodeBGImage(ByteArray imageData, ByteArray outputBuffer, int *w, int *h, bool flip);
+bool decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf);
+void flipImage(byte *imageBuffer, int columns, int scanlines);
+void unbankBGImage(byte *dst_buf, const byte *src_buf, int columns, int scanlines);
+
+bool decodeBGImage(ByteArray imageData, ByteArray outputBuffer, int *w, int *h, bool flip) {
+	ImgHeader hdr;
+	int modex_height;
+	const byte *RLE_data_ptr;
+	size_t RLE_data_len;
+	ByteArray decodeBuffer;
+
+	const int32 SAGA_IMAGE_DATA_OFFSET = 776;
+
+	if (imageData.size() <= SAGA_IMAGE_DATA_OFFSET) {
+		error("decodeBGImage() Image size is way too small (%d)", (int)imageData.size());
+	}
+
+	Common::MemoryReadStream readS(imageData.getBuffer(), imageData.size());
+
+	hdr.width = readS.readUint16LE();
+	hdr.height = readS.readUint16LE();
+	// The next four bytes of the image header aren't used.
+	readS.readUint16LE();
+	readS.readUint16LE();
+
+	RLE_data_ptr = &imageData.front() + SAGA_IMAGE_DATA_OFFSET;
+	RLE_data_len = imageData.size() - SAGA_IMAGE_DATA_OFFSET;
+
+	modex_height = granulate(hdr.height, 4);
+
+	decodeBuffer.resize(hdr.width * modex_height);
+
+	outputBuffer.resize(hdr.width * hdr.height);
+
+	if (!decodeBGImageRLE(RLE_data_ptr, RLE_data_len, decodeBuffer)) {
+		return false;
+	}
+
+	unbankBGImage(outputBuffer.getBuffer(), decodeBuffer.getBuffer(), hdr.width, hdr.height);
+
+	*w = hdr.width;
+	*h = hdr.height;
+
+	return true;
+}
+
+bool decodeBGImageRLE(const byte *inbuf, size_t inbuf_len, ByteArray &outbuf) {
+	const byte *inbuf_ptr;
+	byte *outbuf_ptr;
+	byte *outbuf_start;
+	uint32 inbuf_remain;
+
+	const byte *inbuf_end;
+	byte *outbuf_end;
+	uint32 outbuf_remain;
+
+	byte mark_byte;
+	int test_byte;
+
+	uint32 runcount;
+
+	byte bitfield;
+	byte bitfield_byte1;
+	byte bitfield_byte2;
+
+	byte *backtrack_ptr;
+	int backtrack_amount;
+
+	uint16 c, b;
+
+	int decode_err = 0;
+
+	inbuf_ptr = inbuf;
+	inbuf_remain = inbuf_len;
+
+	outbuf_start = outbuf_ptr = outbuf.getBuffer();
+	outbuf_remain = outbuf.size();
+	outbuf_end = (outbuf_start + outbuf_remain) - 1;
+	memset(outbuf_start, 0, outbuf_remain);
+
+	inbuf_end = (inbuf + inbuf_len) - 1;
+
+
+	while ((inbuf_remain > 1) && (outbuf_remain > 0) && !decode_err) {
+
+		if ((inbuf_ptr > inbuf_end) || (outbuf_ptr > outbuf_end)) {
+			return false;
+		}
+
+		mark_byte = *inbuf_ptr++;
+		inbuf_remain--;
+
+		test_byte = mark_byte & 0xC0; // Mask all but two high order bits
+
+		switch (test_byte) {
+		case 0xC0: // 1100 0000
+			// Uncompressed run follows: Max runlength 63
+			runcount = mark_byte & 0x3f;
+			if ((inbuf_remain < runcount) || (outbuf_remain < runcount)) {
+				return false;
+			}
+
+			for (c = 0; c < runcount; c++) {
+				*outbuf_ptr++ = *inbuf_ptr++;
+			}
+
+			inbuf_remain -= runcount;
+			outbuf_remain -= runcount;
+			continue;
+			break;
+		case 0x80: // 1000 0000
+			// Compressed run follows: Max runlength 63
+			runcount = (mark_byte & 0x3f) + 3;
+			if (!inbuf_remain || (outbuf_remain < runcount)) {
+				return false;
+			}
+
+			for (c = 0; c < runcount; c++) {
+				*outbuf_ptr++ = *inbuf_ptr;
+			}
+
+			inbuf_ptr++;
+			inbuf_remain--;
+			outbuf_remain -= runcount;
+			continue;
+
+			break;
+
+		case 0x40: // 0100 0000
+			// Repeat decoded sequence from output stream:
+			// Max runlength 10
+
+			runcount = ((mark_byte >> 3) & 0x07U) + 3;
+			backtrack_amount = *inbuf_ptr;
+
+			if (!inbuf_remain || (backtrack_amount > (outbuf_ptr - outbuf_start)) || (runcount > outbuf_remain)) {
+				return false;
+			}
+
+			inbuf_ptr++;
+			inbuf_remain--;
+
+			backtrack_ptr = outbuf_ptr - backtrack_amount;
+
+			for (c = 0; c < runcount; c++) {
+				*outbuf_ptr++ = *backtrack_ptr++;
+			}
+
+			outbuf_remain -= runcount;
+			continue;
+			break;
+		default: // 0000 0000
+			break;
+		}
+
+		// Mask all but the third and fourth highest order bits
+		test_byte = mark_byte & 0x30;
+
+		switch (test_byte) {
+
+		case 0x30: // 0011 0000
+			// Bitfield compression
+			runcount = (mark_byte & 0x0F) + 1;
+
+			if ((inbuf_remain < (runcount + 2)) || (outbuf_remain < (runcount * 8))) {
+				return false;
+			}
+
+			bitfield_byte1 = *inbuf_ptr++;
+			bitfield_byte2 = *inbuf_ptr++;
+
+			for (c = 0; c < runcount; c++) {
+				bitfield = *inbuf_ptr;
+				for (b = 0; b < 8; b++) {
+					if (bitfield & 0x80) {
+						*outbuf_ptr = bitfield_byte2;
+					} else {
+						*outbuf_ptr = bitfield_byte1;
+					}
+					bitfield <<= 1;
+					outbuf_ptr++;
+				}
+				inbuf_ptr++;
+			}
+
+			inbuf_remain -= (runcount + 2);
+			outbuf_remain -= (runcount * 8);
+			continue;
+			break;
+		case 0x20: // 0010 0000
+			// Uncompressed run follows
+			runcount = ((mark_byte & 0x0F) << 8) + *inbuf_ptr;
+			if ((inbuf_remain < (runcount + 1)) || (outbuf_remain < runcount)) {
+				return false;
+			}
+
+			inbuf_ptr++;
+
+			for (c = 0; c < runcount; c++) {
+				*outbuf_ptr++ = *inbuf_ptr++;
+			}
+
+			inbuf_remain -= (runcount + 1);
+			outbuf_remain -= runcount;
+			continue;
+
+			break;
+
+		case 0x10: // 0001 0000
+			// Repeat decoded sequence from output stream
+			backtrack_amount = ((mark_byte & 0x0F) << 8) + *inbuf_ptr;
+			if (inbuf_remain < 2) {
+				return false;
+			}
+
+			inbuf_ptr++;
+			runcount = *inbuf_ptr++;
+
+			if ((backtrack_amount > (outbuf_ptr - outbuf_start)) || (outbuf_remain < runcount)) {
+				return false;
+			}
+
+			backtrack_ptr = outbuf_ptr - backtrack_amount;
+
+			for (c = 0; c < runcount; c++) {
+				*outbuf_ptr++ = *backtrack_ptr++;
+			}
+
+			inbuf_remain -= 2;
+			outbuf_remain -= runcount;
+			continue;
+			break;
+		default:
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void flipImage(byte *imageBuffer, int columns, int scanlines) {
+	int line;
+	ByteArray tmp_scan;
+
+	byte *flip_p1;
+	byte *flip_p2;
+	byte *flip_tmp;
+
+	int flipcount = scanlines / 2;
+
+	tmp_scan.resize(columns);
+	flip_tmp = tmp_scan.getBuffer();
+	if (flip_tmp == NULL) {
+		return;
+	}
+
+	flip_p1 = imageBuffer;
+	flip_p2 = imageBuffer + (columns * (scanlines - 1));
+
+	for (line = 0; line < flipcount; line++) {
+		memcpy(flip_tmp, flip_p1, columns);
+		memcpy(flip_p1, flip_p2, columns);
+		memcpy(flip_p2, flip_tmp, columns);
+		flip_p1 += columns;
+		flip_p2 -= columns;
+	}
+}
+
+void unbankBGImage(byte *dst_buf, const byte *src_buf, int columns, int scanlines) {
+	int x, y;
+	int temp;
+	int quadruple_rows;
+	int remain_rows;
+	int rowjump_src;
+	int rowjump_dest;
+	const byte *src_p;
+	const byte *srcptr1, *srcptr2, *srcptr3, *srcptr4;
+	byte *dstptr1, *dstptr2, *dstptr3, *dstptr4;
+
+	quadruple_rows = scanlines - (scanlines % 4);
+	remain_rows = scanlines - quadruple_rows;
+
+	assert(scanlines > 0);
+
+	src_p = src_buf;
+
+	srcptr1 = src_p;
+	srcptr2 = src_p + 1;
+	srcptr3 = src_p + 2;
+	srcptr4 = src_p + 3;
+
+	dstptr1 = dst_buf;
+	dstptr2 = dst_buf + columns;
+	dstptr3 = dst_buf + columns * 2;
+	dstptr4 = dst_buf + columns * 3;
+
+	rowjump_src = columns * 4;
+	rowjump_dest = columns * 4;
+
+	// Unbank groups of 4 first
+	for (y = 0; y < quadruple_rows; y += 4) {
+		for (x = 0; x < columns; x++) {
+			temp = x * 4;
+			dstptr1[x] = srcptr1[temp];
+			dstptr2[x] = srcptr2[temp];
+			dstptr3[x] = srcptr3[temp];
+			dstptr4[x] = srcptr4[temp];
+		}
+
+		// This is to avoid generating invalid pointers -
+		// usually innocuous, but undefined
+		if (y < quadruple_rows - 4) {
+			dstptr1 += rowjump_dest;
+			dstptr2 += rowjump_dest;
+			dstptr3 += rowjump_dest;
+			dstptr4 += rowjump_dest;
+			srcptr1 += rowjump_src;
+			srcptr2 += rowjump_src;
+			srcptr3 += rowjump_src;
+			srcptr4 += rowjump_src;
+		}
+	}
+
+	// Unbank rows remaining
+	switch (remain_rows) {
+	case 1:
+		dstptr1 += rowjump_dest;
+		srcptr1 += rowjump_src;
+		for (x = 0; x < columns; x++) {
+			temp = x * 4;
+			dstptr1[x] = srcptr1[temp];
+		}
+		break;
+	case 2:
+		dstptr1 += rowjump_dest;
+		dstptr2 += rowjump_dest;
+		srcptr1 += rowjump_src;
+		srcptr2 += rowjump_src;
+		for (x = 0; x < columns; x++) {
+			temp = x * 4;
+			dstptr1[x] = srcptr1[temp];
+			dstptr2[x] = srcptr2[temp];
+		}
+		break;
+	case 3:
+		dstptr1 += rowjump_dest;
+		dstptr2 += rowjump_dest;
+		dstptr3 += rowjump_dest;
+		srcptr1 += rowjump_src;
+		srcptr2 += rowjump_src;
+		srcptr3 += rowjump_src;
+		for (x = 0; x < columns; x++) {
+			temp = x * 4;
+			dstptr1[x] = srcptr1[temp];
+			dstptr2[x] = srcptr2[temp];
+			dstptr3[x] = srcptr3[temp];
+		}
+		break;
+	default:
+		break;
+	}
+}
 
 void _BltPixels(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height) {
 	warning("STUB: _BltPixels()");
@@ -47,6 +458,20 @@ void _HLine(uint8 *dstPtr, uint32 width, uint32 color) {
 
 void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 	warning("STUB: unpackImage()");
+	ByteArray compressedBuffer;
+	ByteArray outputBuffer;
+	int *w = nullptr;
+	int *h = nullptr;
+
+	compressedBuffer.resize(map->bytes());
+	for (int i = 0; i < map->bytes(); ++i)
+		compressedBuffer[i] = srcData[i];
+
+	if (!decodeBGImage(compressedBuffer, outputBuffer, w, h, false)) {
+		error("Could not unpack sprite");
+	}
+	debugC(kDebugResources, "hello");
+	map->data = outputBuffer.getBuffer();
 }
 
 void unpackSprite(gPixelMap *map, uint8 *sprData) {
@@ -82,7 +507,8 @@ void _LoadPalette(uint8 *rgbArray, uint32 startColor, uint32 numColors) {
 }
 
 bool initGraphics(void) {
-	warning("STUB: initGraphics");
+	warning("STUB: initGraphics()");
+	return false;
 }
 
 bool initProcessResources(void) {
