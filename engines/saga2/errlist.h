@@ -27,41 +27,27 @@
 #ifndef SAGA2_ERRLIST_H
 #define SAGA2_ERRLIST_H
 
-/* ===================================================================== *
-   Includes
- * ===================================================================== */
-
 #include "saga2/errbase.h"
 
 namespace Saga2 {
 
-/* ===================================================================== *
-   Class definitions
- * ===================================================================== */
-
-// ------------------------------------------------------------------
-//
-
-class SequentialErrorList: public ErrorList {
-	static uint32 stringCount(char *es[]);
+class SequentialErrorList : public ErrorList {
+	static uint32 stringCount(const char *es[]);
 protected:
 	virtual uint32 lookupMessage(ErrorID id);
 public:
 	SequentialErrorList(ErrType et, uint32 ec, char *es[]);
-	SequentialErrorList(ErrType et, char *es[]);
-
+	SequentialErrorList(ErrType et, const char *es[]);
+	virtual ~SequentialErrorList() {}
 };
 
-// ------------------------------------------------------------------
-//
-
-class SparseErrorList: public ErrorList {
+class SparseErrorList : public ErrorList {
 protected:
 	virtual uint32 lookupMessage(ErrorID id);
 public:
 	SparseErrorList(ErrType et, uint32 ec, ErrorID ei[], const char *es[]);
 	SparseErrorList(ErrType et, uint32 ec, ErrorRec er[]);
-
+	virtual ~SparseErrorList() {}
 };
 
 }
