@@ -2395,8 +2395,8 @@ bool Scene::drawScene() {
 
 	_vm->screen()->clearGraphicsInQueue();
 
-	if (getSharedData()->getFlag(kFlagRedraw)) {
-		_vm->screen()->clear();
+	if (getSharedData()->getFlag(kFlagSkipDrawScene)) {
+		_vm->screen()->fillRect(0, 0, 640, 480, 0);
 		return false;
 	}
 
