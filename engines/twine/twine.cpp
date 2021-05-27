@@ -1148,18 +1148,7 @@ const char *TwinEEngine::getGameId() const {
 }
 
 bool TwinEEngine::unlockAchievement(const Common::String &id) {
-	const MetaEngine *meta = getMetaEngine();
-	const Common::AchievementsInfo &achievementsInfo = meta->getAchievementsInfo(ConfMan.getActiveDomainName());
-
-	Common::String msg = id;
-	for (uint32 i = 0; i < achievementsInfo.descriptions.size(); i++) {
-		if (id == achievementsInfo.descriptions[i].id) {
-			msg = achievementsInfo.descriptions[i].title;
-			break;
-		}
-	}
-
-	return AchMan.setAchievement(id, msg);
+	return AchMan.setAchievement(id);
 }
 
 Common::Rect TwinEEngine::centerOnScreen(int32 w, int32 h) const {
