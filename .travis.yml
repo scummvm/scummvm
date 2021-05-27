@@ -68,6 +68,6 @@ script:
 notifications:
   irc:
     channels:
-      - "chat.freenode.net#scummvm"
+      - "irc.libera.chat#scummvm"
     on_success: change
     on_failure: always
