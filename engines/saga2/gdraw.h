@@ -189,7 +189,15 @@ public:
 
 	//  Constructor
 	gPort(void) {
-		memset(&map, 0, sizeof(gPort));
+		map = nullptr;
+		baseRow = nullptr;
+
+		rowMod = 0;
+		penMap = nullptr;
+		drawMode = drawModeMatte;
+		font = nullptr;
+		textSpacing = 0;
+		textStyles = 0;
 	}
 
 	virtual ~gPort() {}
