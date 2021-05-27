@@ -156,7 +156,7 @@ public:
 
 //  Debugging status
 
-void WriteStatusF(int16 lin, char *msg, ...);
+void WriteStatusF(int16 lin, const char *msg, ...);
 
 //  Mouse polling
 

@@ -128,7 +128,7 @@ public:
 	// Fakes out the gButton into thinking there's no image.
 	gPhantomButton(gPanelList &list,
 	               const Rect16 &box, uint16 ident, AppFunc *cmd = NULL) :
-		gButton(list, box, *((gPixelMap *)NULL), ident, cmd) {};
+		gButton(list, box, NULL, ident, cmd) {};
 	virtual void draw(void) {};     // Overrides draw() member of parent, since
 	// in this case there's nothing to draw.
 
@@ -144,32 +144,13 @@ protected:
 	            *deselImage;
 
 public:
-	gImageButton(gPanelList &list,
-	             const Rect16 &box,
-	             gPixelMap &img1,
-	             gPixelMap &img2,
-	             uint16 ident,
-	             AppFunc *cmd = NULL) :
-		gButton(list,
-		        box,
-		        *((gPixelMap *)NULL),
-		        ident,
-		        cmd) {
+	gImageButton(gPanelList &list, const Rect16 &box, gPixelMap &img1, gPixelMap &img2, uint16 ident, AppFunc *cmd = NULL) :
+		gButton(list, box, NULL, ident, cmd) {
 		selImage = &img1;
 		deselImage = &img2;
 	}
-	gImageButton(gPanelList &list,
-	             const Rect16 &box,
-	             gPixelMap &img1,
-	             gPixelMap &img2,
-	             char *title,
-	             uint16 ident,
-	             AppFunc *cmd = NULL) :
-		gButton(list,
-		        box,
-		        title,
-		        ident,
-		        cmd) {
+	gImageButton(gPanelList &list, const Rect16 &box, gPixelMap &img1, gPixelMap &img2, char *title, uint16 ident, AppFunc *cmd = NULL) :
+		gButton(list, box, title, ident, cmd) {
 		selImage = &img1;
 		deselImage = &img2;
 	}
@@ -183,18 +164,8 @@ public:
 
 class gToggleButton : public gImageButton {
 public:
-	gToggleButton(gPanelList &list,
-	              const Rect16 &box,
-	              gPixelMap &img1,
-	              gPixelMap &img2,
-	              uint16 ident,
-	              AppFunc *cmd) :
-		gImageButton(list,
-		             box,
-		             img1,
-		             img2,
-		             ident,
-		             cmd) {}
+	gToggleButton(gPanelList &list, const Rect16 &box, gPixelMap &img1, gPixelMap &img2, uint16 ident, AppFunc *cmd) :
+		gImageButton(list, box, img1, img2, ident, cmd) {}
 
 private:
 	bool activate(gEventType why);       // activate the control

@@ -29,7 +29,7 @@
 
 namespace Saga2 {
 
-size_t Messager::va(char *format, va_list argptr) {
+size_t Messager::va(const char *format, va_list argptr) {
 	if (enabled) {
 		char tempBuf[ 256 ];
 		size_t size;

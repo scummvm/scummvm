@@ -480,20 +480,21 @@ public:
 	bool            mouseHintSet;           // true if mouse hint is up.
 
 private:
-	void setMsgQ(gPanelMessage &msg, gPanel *panel) {
-		if (panel == &panel->window) msg.pickPos = pickPos;
+	void setMsgQ(gPanelMessage &msg_, gPanel *panel) {
+		if (panel == &panel->window)
+			msg_.pickPos = pickPos;
 		else {
-			msg.pickPos.x   = (int16)(pickPos.x - panel->extent.x);
-			msg.pickPos.y   = (int16)(pickPos.y - panel->extent.y);
+			msg.pickPos.x = (int16)(pickPos.x - panel->extent.x);
+			msg.pickPos.y = (int16)(pickPos.y - panel->extent.y);
 		}
 	}
 
-	void setMsg(gPanelMessage &msg, gPanel *panel) {
-		setMsgQ(msg, panel);
-		msg.inPanel = (msg.pickPos.x >= 0
-		               && msg.pickPos.y >= 0
-		               && msg.pickPos.x < panel->extent.width
-		               && msg.pickPos.y < panel->extent.height);
+	void setMsg(gPanelMessage &msg_, gPanel *panel) {
+		setMsgQ(msg_, panel);
+		msg.inPanel = (msg_.pickPos.x >= 0
+		               && msg_.pickPos.y >= 0
+		               && msg_.pickPos.x < panel->extent.width
+		               && msg_.pickPos.y < panel->extent.height);
 		//          panel->extent.ptInside( pickPos );
 	}
 
