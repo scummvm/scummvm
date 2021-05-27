@@ -32,18 +32,13 @@
 
 namespace Wintermute {
 
-void SetAchievement(const char *id) {
-	Common::AchievementsInfo info = getAchievementsInfo();
-	AchMan.setActiveDomain(Common::STEAM_ACHIEVEMENTS, info.appId);
-	AchMan.setAchievement(id, getAchievementMessage(info, id));
-}
-
 void SceneAchievements(const char *sceneFilename) {
 	for (const AchievementsList *i = achievementsList; i->gameId; i++) {
 		if (BaseEngine::instance().getGameId() == i->gameId) {
 			for (const Achievement *it = i->mapping; it->sceneFilename; it++) {
 				if (strcmp(sceneFilename, it->sceneFilename) == 0) {
-					SetAchievement(it->id);
+					AchMan.setActiveDomain(getAchievementsInfo());
+					AchMan.setAchievement(it->id);
 					return;
 				}
 			}
