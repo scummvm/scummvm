@@ -336,7 +336,7 @@ void AnimManager::toggleMuteBgAnim(uint16 animation) {
 		decoder->muteTrack(1, true);
 	else if (animation == aBKG28 && (animFlag & SMKANIM_OFF4))
 		decoder->muteTrack(1, true);
-	else if (animation == aBKG37 && (!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra)))
+	else if (animation == aBKG37 && !_vm->_room[_vm->_curRoom].hasExtra())
 		decoder->muteTrack(1, true);
 	else if (animation == aBKG2E && (animFlag & SMKANIM_OFF2))
 		decoder->muteTrack(2, true);
@@ -401,7 +401,7 @@ void AnimManager::stopFullMotion() {
 	if (!((curDialog == dSHOPKEEPER1A) && _vm->_dialogMgr->getCurChoice() == 185)) {
 		if ((curDialog == dF582) || (curDialog == dFLOG) || (curDialog == dINTRO) || (curDialog == dF362) || (curDialog == dC381) || (curDialog == dF381) ||
 		    (curDialog == dF491) || ((curDialog == dC581) && !_vm->_dialogMgr->isDialogFinished(886) && _vm->_dialogMgr->isDialogFinished(258)) ||
-		    ((curDialog == dC5A1) && (_vm->_room[kRoom5A]._flag & kObjFlagExtra)))
+		    ((curDialog == dC5A1) && _vm->_room[kRoom5A].hasExtra()))
 			_vm->_flagShowCharacter = false;
 		else
 			_vm->redrawRoom();

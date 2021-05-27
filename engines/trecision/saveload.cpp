@@ -453,13 +453,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	_actor->syncGameStream(ser);
 	_pathFind->syncGameStream(ser);
 
-	for (int a = 0; a < MAXROOMS; a++) {
-		ser.syncBytes((byte *)_room[a]._baseName, 4);
-		for (int i = 0; i < MAXACTIONINROOM; i++)
-			ser.syncAsUint16LE(_room[a]._actions[i]);
-		ser.syncAsByte(_room[a]._flag);
-		ser.syncAsUint16LE(_room[a]._bkgAnim);
-	}
+	for (int a = 0; a < MAXROOMS; a++)
+		_room[a].syncGameStream(ser);
 
 	for (int a = 0; a < MAXOBJ; a++) {
 		ser.syncAsUint16LE(_obj[a]._lim.left);

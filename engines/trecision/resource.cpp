@@ -54,18 +54,8 @@ void TrecisionEngine::loadAll() {
 	if (!dataNl.open("DATA.NL"))
 		error("loadAll : Couldn't open DATA.NL");
 
-	for (int i = 0; i < MAXROOMS; ++i) {
-		dataNl.read(&_room[i]._baseName, 4);
-		_room[i]._flag = dataNl.readByte();
-		dataNl.readByte(); // Padding
-		_room[i]._bkgAnim = dataNl.readUint16LE();
-		for (int j = 0; j < MAXOBJINROOM; ++j)
-			_room[i]._object[j] = dataNl.readUint16LE();
-		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
-			_room[i]._sounds[j] = dataNl.readUint16LE();
-		for (int j = 0; j < MAXACTIONINROOM; ++j)
-			_room[i]._actions[j] = dataNl.readUint16LE();
-	}
+	for (int i = 0; i < MAXROOMS; ++i)
+		_room[i].loadRoom(&dataNl);
 
 	for (int i = 0; i < MAXOBJ; ++i) {
 		uint16 w = dataNl.readUint16LE();
