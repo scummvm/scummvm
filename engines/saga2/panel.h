@@ -131,7 +131,7 @@ class gPanel : public DNode {
 protected:
 	gWindow         &window;                // window this belongs to
 	Rect16          extent;                 // rectangular bounds of the control
-	char            *title;                 // title of the panel
+	const char      *title;                 // title of the panel
 	int             enabled : 1,            // allows disabling the panel
 	                selected : 1,           // some panels have a selected state
 	                imageLabel : 1,         // button label is image, not text
@@ -146,7 +146,7 @@ public:
 	void            *userData;              // data for this panel
 
 	// constructor
-	gPanel(gPanelList &, const Rect16 &, char *, uint16, AppFunc *cmd = NULL);
+	gPanel(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 	gPanel(gPanelList &, const Rect16 &, gPixelMap &, uint16, AppFunc *cmd = NULL);
 	virtual ~gPanel();                      // destructor
 
@@ -398,7 +398,7 @@ class gControl : public gPanel {
 public:
 	uint8               accelKey;
 
-	gControl(gPanelList &, const Rect16 &, char *, uint16, AppFunc *cmd = NULL);
+	gControl(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 	gControl(gPanelList &, const Rect16 &, gPixelMap &, uint16, AppFunc *cmd = NULL);
 	~gControl();                            // destructor
 

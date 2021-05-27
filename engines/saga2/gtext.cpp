@@ -604,7 +604,7 @@ endall:
 */
 
 void gPort::drawStringChars(
-    char            *str,                   // string to draw
+    const char      *str,                   // string to draw
     int16           len,                    // length of string
     gPixelMap       &dest,
     int             xpos,                   // x position to draw it
@@ -720,7 +720,7 @@ void gPort::drawStringChars(
 //  we would probably do this differently...
 
 int16 gPort::drawClippedString(
-    char            *s,                     // string to draw
+    const char      *s,                     // string to draw
     int16           len,                    // length of string
     int             xpos,                   // x position to draw it
     int             ypos) {                 // y position to draw it
@@ -934,7 +934,7 @@ int16 gPort::drawClippedString(
 **********************************************************************
 */
 void gPort::drawText(
-    char            *str,                   /* string to draw               */
+    const char      *str,                   /* string to draw               */
     int16           length) {
 	if (length < 0) length = strlen(str);
 
@@ -994,7 +994,7 @@ void gPort::drawText(
 **********************************************************************
 */
 void gPort::drawTextInBox(
-    char            *str,
+    const char      *str,
     int16           length,
     const Rect16    &r,
     int16           pos,
@@ -1071,7 +1071,7 @@ void gPort::drawTextInBox(
 *
 **********************************************************************
 */
-int16 TextWidth(gFont *font, char *s, int16 length, int16 styles) {
+int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles) {
 	int16           count = 0;
 
 	if (length < 0) length = strlen(s);

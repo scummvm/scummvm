@@ -403,7 +403,7 @@ LabeledButton::LabeledButton(gPanelList &list,
 	             buttonLabel,
 	             ident,
 	             cmd) {
-	char    *underscore;
+	const char *underscore;
 
 	if ((underscore = strchr(title, '_')) != NULL)
 		accelKey = toupper(underscore[ 1 ]);

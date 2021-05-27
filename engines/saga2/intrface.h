@@ -203,7 +203,7 @@ protected:
 
 public:
 
-	CPlaqText(gPanelList &, const Rect16 &, char *, gFont *,
+	CPlaqText(gPanelList &, const Rect16 &, const char *, gFont *,
 	          int16, textPallete &, int16, AppFunc *cmd = NULL);
 
 	void enable(bool);
