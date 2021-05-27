@@ -1054,7 +1054,7 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 
 	if (_selectedText.endY != -1 && _active)
-		drawSelection();
+		drawSelection(offset.x, offset.y);
 
 	return true;
 }
@@ -1103,13 +1103,13 @@ uint getNewlinesInString(const Common::U32String &str) {
 	return newLines;
 }
 
-void MacText::drawSelection() {
+void MacText::drawSelection(int xoff, int yoff) {
 	if (_selectedText.endY == -1)
 		return;
 
 	// we check if the selection size is 0, then we don't draw it anymore
 	// it's a small optimize, but can bring us correct behavior
-	if (_selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY) {
+	if (!_inTextSelection && _selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY) {
 		_selectedText.startY = _selectedText.endY = -1;
 		return;
 	}
@@ -1142,6 +1142,9 @@ void MacText::drawSelection() {
 	int numLines = 0;
 	int x1 = 0, x2 = 0;
 
+	start = MIN<int>(start + yoff, getDimensions().height());
+	end = MIN<int>(end + yoff, getDimensions().height());
+
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
@@ -1155,6 +1158,8 @@ void MacText::drawSelection() {
 				numLines = getLineHeight(s.endRow);
 				x2 = s.endX;
 			}
+			x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
+			x2 = MIN<int>(x2 + xoff, getDimensions().width() - 1);
 		} else {
 			numLines--;
 		}

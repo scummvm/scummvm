@@ -252,7 +252,7 @@ private:
 
 	void scroll(int delta);
 
-	void drawSelection();
+	void drawSelection(int xoff, int yoff);
 	void updateCursorPos();
 
 	void startMarking(int x, int y);
