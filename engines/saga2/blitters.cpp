@@ -64,8 +64,7 @@ void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData) {
 				k += p;
 				while (p--)
 					*dest++ = *srcData++;
-			}
-			else {
+			} else {
 				p = 1 - p;
 				k += p;
 				while (p--)
