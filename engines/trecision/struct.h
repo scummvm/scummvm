@@ -45,26 +45,8 @@ struct SRoom {
 	void setExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
 	void setDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
 
-	void syncGameStream(Common::Serializer &ser) {
-		ser.syncBytes((byte *)_baseName, 4);
-		for (int i = 0; i < MAXACTIONINROOM; i++)
-			ser.syncAsUint16LE(_actions[i]);
-		ser.syncAsByte(_flag);
-		ser.syncAsUint16LE(_bkgAnim);
-	}
-
-	void loadRoom(Common::File *file) {
-		file->read(&_baseName, 4);
-		_flag = file->readByte();
-		file->readByte(); // Padding
-		_bkgAnim = file->readUint16LE();
-		for (int j = 0; j < MAXOBJINROOM; ++j)
-			_object[j] = file->readUint16LE();
-		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
-			_sounds[j] = file->readUint16LE();
-		for (int j = 0; j < MAXACTIONINROOM; ++j)
-			_actions[j] = file->readUint16LE();
-	}
+	void syncGameStream(Common::Serializer &ser);
+	void loadRoom(Common::File *file);
 
 private:
 	uint8 _flag = 0; // Room visited or not, extra or not
