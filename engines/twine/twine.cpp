@@ -227,6 +227,9 @@ Common::Error TwinEEngine::run() {
 	ConfMan.registerDefault("usehighres", false);
 	ConfMan.registerDefault("wallcollision", false);
 
+	Common::String gameTarget = ConfMan.getActiveDomainName();
+	AchMan.setActiveDomain(getMetaEngine()->getAchievementsInfo(gameTarget));
+
 	syncSoundSettings();
 	int32 w = ORIGINAL_WIDTH;
 	int32 h = ORIGINAL_HEIGHT;
