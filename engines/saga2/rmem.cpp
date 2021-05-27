@@ -46,24 +46,14 @@ namespace Saga2 {
 /*   DGI Library calls                                                   */
 /*     STD.H                                                             */
 /*   Others                                                              */
-/*     logBreak();                                                       */
 /*     VMM_Lock() or LocalLock() (DOS/WIN)                               */
 /*     VMM_Unlock() or LocalUnlock() (DOS/WIN)                           */
-/*     memoryWarning(char*,...)                                          */
-/*     memoryFatal(char*,...)                                            */
 /*     initRMemLogging() (in RMEMLOG.CPP)                                */
 /*                                                                       */
 /* ===================================================================== */
 
 #define SysAlloc    malloc
 #define SysFree( m,s ) free( m )
-
-// Breakpoint call
-void logBreak(void);
-// Warning message
-void memoryWarning(char *msg, ...);
-// fatal error
-void memoryFatal(char *msg, ...);
 
 /* ===================================================================== *
    Debugging variables which control the heap integrity checking
@@ -220,7 +210,7 @@ void VMM_Lock_Mem(void *ptr, size_t size) {
 	warning("STUB: VMM_Lock_Mem()");
 #if 0
 	if (!VMM_lock(ptr, size))
-		memoryFatal("VMM Locking failed");
+		error("VMM Locking failed");
 #endif
 }
 
@@ -228,7 +218,7 @@ void VMM_Unlock_Mem(void *ptr, size_t size) {
 	warning("STUB: VMM_Unlock_mem");
 #if 0
 	if (!VMM_unlock(ptr, size))
-		memoryFatal("VMM Locking failed");
+		error("VMM Locking failed");
 #endif
 }
 
@@ -247,7 +237,7 @@ RHeapPtr _RNewHeap(uint8 *memory, int32 size) {
 
 	heap = (RHeapPtr) SysAlloc(sizeof * heap);
 	if (heap == NULL)
-		memoryFatal("Memory allocation (%ld bytes) failed\n", sizeof * heap);
+		error("Memory allocation (%ld bytes) failed", sizeof * heap);
 
 	heap->next = heapList;
 	heapList = heap;
@@ -442,10 +432,10 @@ static void DisposePtrHeap(void *ptr, RHeapPtr heap) {
 	uint8 *cptr;
 #endif
 	if (whichHeap(ptr) == NULL) {
-		memoryFatal("Cannot dispose pointers in global heap");
+		error("Cannot dispose pointers in global heap");
 	}
 	if (heap != whichHeap(ptr)) {
-		memoryFatal("bad heap specified on dispose");
+		error("bad heap specified on dispose");
 	}
 #endif
 	if (ptr) {                              // if pointer is non-null
@@ -456,14 +446,14 @@ static void DisposePtrHeap(void *ptr, RHeapPtr heap) {
 		if (pr->size < sizeof * pr + wallSize * 2 ||
 		        pr->magic != RMEM_MAGIC_ID) {
 			if (pr->magic == RMEM_FREED_ID)
-				memoryFatal("Double deletion detected");
+				error("Double deletion detected");
 			else if (pr->magic == RMEM_LEAK_ID) {
 				char tDesc[20];
 				strncpy(tDesc, pr->description, 16);
 				tDesc[16] = '\0';
-				memoryWarning("Block '%s' deleted after heap cleanup.\n", tDesc);
+				warning("Block '%s' deleted after heap cleanup.", tDesc);
 			} else
-				memoryFatal("Invalid Memory Prefix");
+				error("Invalid Memory Prefix");
 		} else {
 			pr->magic = RMEM_FREED_ID;
 			strncpy(pr->description, "freed", 16);
@@ -485,13 +475,13 @@ void _RCheckPtr(void *ptr) {
 		// get memory prefix address
 		RMemPrefix      *pr;
 		if (whichHeap(ptr) == NULL) {
-			memoryFatal("Cannot check pointers in global heap");
+			error("Cannot check pointers in global heap");
 		}
 		pr = PrefixBaseAddr(ptr);
 		// debugging check
 		if (pr->size < sizeof * pr + wallSize * 2 ||
 		        pr->magic != RMEM_MAGIC_ID) {
-			memoryFatal("Invalid Memory Prefix");
+			error("Invalid Memory Prefix");
 		}
 		//checkWalls( (uint8 *)(pr + 1), pr->size - sizeof *pr );
 	}
@@ -565,9 +555,6 @@ static void *RAllocBlockHeap(RHeapPtr heap, int32 size, bool high, const char de
 		strcat(pr->description, "->");
 	} else {
 		strncpy(pr->description, desc, 16);
-	}
-	if (strlen(desc) == 0) {
-		logBreak();
 	}
 #if WIPE_ALLOC
 	ptr = (uint8 *)pr + prefixOffset;
@@ -719,7 +706,7 @@ static void CompactHeap(RHeapPtr heap, uint32 needed) {
 				//  Check to see if size field is too large or too small
 				if (pr->size > next_free - alloc
 				        || alloc < sizeof * pr + wallSize * 2) {
-					memoryFatal("Invalid Memory prefix");
+					error("Invalid Memory prefix");
 				}
 
 				//  Check memory wall integrity
@@ -1242,7 +1229,7 @@ void _RUnlockHandle(RHANDLE handle) {
 
 	if (handle && hb->data) {
 		if (whichHeap(hb->data) == NULL)
-			memoryFatal("Handle has invalid data pointer");
+			error("Handle has invalid data pointer");
 		pr = PrefixBaseAddr(hb->data);
 		pr->lockNestCount--;
 
@@ -1324,7 +1311,7 @@ bool _RHandleLoading(RHANDLE handle) {
 //  This function is called whenever a wall corruption is detected.
 //  Probably should be set as a breakpoint in the debugger.
 void wallHit(void) {
-	memoryFatal("Wall Hit");
+	error("Wall Hit");
 }
 
 //  Checks to see if the memory cookie is still in place around each allocation.
@@ -1335,16 +1322,13 @@ void checkWalls(uint8 *begin, uint32 length) {
 	RHeapPtr            heap = whichHeap(begin);            // pointer to new heap
 
 	if (heap == NULL) {
-		logBreak();
-		memoryFatal("invalid wall size");
+		error("invalid wall size");
 	}
 	if (length > heap->size) {
-		logBreak();
-		memoryFatal("invalid wall size");
+		error("invalid wall size");
 	}
 	if (whichHeap(end - 1) != heap) {
-		logBreak();
-		memoryFatal("invalid wall size");
+		error("invalid wall size");
 	}
 	for (i = 0; i < wallSize; i++) {
 		--end;
@@ -1364,8 +1348,7 @@ void setWalls(uint8 *begin, uint32 length) {
 	int             i;
 
 	if (heap == NULL || length > heap->size || whichHeap(end - 1) != heap) {
-		logBreak();
-		memoryFatal("invalid wallocation");
+		error("invalid wallocation");
 	}
 	for (i = 0; i < wallSize; i++) {
 		*begin++ = RMEM_WALL_ID;
@@ -1378,7 +1361,7 @@ void setWalls(uint8 *begin, uint32 length) {
 void heapCheck(void) {
 	if (heapList->firstFree
 	        && (uint8 *)heapList->firstFree < (uint8 *)heapList->memory) {
-		memoryFatal("HeapFailed: %d %d\n", heapList->size, heapList->free);
+		error("HeapFailed: %d %d\n", heapList->size, heapList->free);
 	}
 }
 
@@ -1418,7 +1401,7 @@ bool _RMemIntegrity(void) {
 				if (pr->size > bytesToNext
 				        || pr->size < sizeof * pr + wallSize * 2) {
 
-					memoryFatal("Bad prefix size %d : %s\n", pr->size,
+					error("Bad prefix size %d : %s", pr->size,
 #if DEBUG
 					            pr->description
 #else

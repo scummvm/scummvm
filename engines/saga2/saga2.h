@@ -36,6 +36,10 @@ class Console;
 
 enum {
 	kDebugResources = 1 << 0,
+	kDebugActors    = 1 << 1,
+	kDebugScripts   = 1 << 2,
+	kDebugEventLoop = 1 << 3,
+	kDebugInit      = 1 << 4
 };
 
 class Saga2Engine : public Engine {

@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 
 #include "saga2/rmemfta.h"
@@ -150,14 +152,6 @@ static uint32           lastGameTime = 0;
 // message handlers
 static pMessager Status[10];
 static pMessager Status2[10];
-static pMessager Dump;
-
-#if DEBUG_LOOP
-MonoMessager    elmm = MonoMessager("EventLoop");
-#define statusshow(s) elmm(s)
-#else
-#define statusshow(s) ((void)0)
-#endif
 
 pMessager ratemess[3];
 
@@ -326,10 +320,10 @@ void processEventLoop(bool updateScreen) {
 
 	int         key, qual;
 
-	statusshow("starting event loop");
+	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
 	irate.updateFrameCount();
 
-	statusshow("checking user abort");
+	debugC(1, kDebugEventLoop, "EventLoop: checking user abort");
 	breakEventLoop();
 	if (checkExit && verifyUserExit()) {
 		//gameRunning=false;
@@ -337,38 +331,38 @@ void processEventLoop(bool updateScreen) {
 		return;
 	}
 
-	statusshow("handle win messages");
+	debugC(1, kDebugEventLoop, "EventLoop: handle win messages");
 	if (handlingMessages())
 		return;
 
-	statusshow("check for game suspend");
+	debugC(1, kDebugEventLoop, "EventLoop: check for game suspend");
 	if (gameSuspended())
 		return;
 
-	statusshow("audio event loop");
+	debugC(1, kDebugEventLoop, "EventLoop: audio event loop");
 	audioEventLoop();
 
-	statusshow("game mode update");
+	debugC(1, kDebugEventLoop, "EventLoop: game mode update");
 	if (GameMode::newmodeFlag)
 		GameMode::update();
 
-	statusshow("mouse update");
+	debugC(1, kDebugEventLoop, "EventLoop: mouse update");
 	updateMouse();
 
-	statusshow("keyboard update");
+	debugC(1, kDebugEventLoop, "EventLoop: keyboard update");
 	if (ReadKeyboard(key, qual)) {
 		G_BASE.handleKeyStroke(key, qual);
 	}
 
 	//if(!running) return; // This Is No Tasks Are Done After Saving Game
 
-	statusshow("timer update");
+	debugC(1, kDebugEventLoop, "EventLoop: timer update");
 	//  Handle the timer events
 	//  REM: Causing code corruption in windows for some reason...
 	G_BASE.handleTimerTick(gameTime >> 2);
 
 	//  Handle updating of the display.
-	statusshow("display update");
+	debugC(1, kDebugEventLoop, "EventLoop: display update");
 	if (!checkVideo()) {
 		displayUpdate();
 	}
@@ -381,9 +375,9 @@ void processEventLoop(bool updateScreen) {
 
 void displayUpdate(void) {
 	if (displayEnabled()) { //updateScreen)
-		//statusshow("daytime transition update loop");
+		//debugC(1, kDebugEventLoop, "EventLoop: daytime transition update loop");
 		dayNightUpdate();
-		//statusshow("Game mode handle task");
+		//debugC(1, kDebugEventLoop, "EventLoop: Game mode handle task");
 		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
 		lrate.updateFrameCount();
 		loops++;
@@ -391,25 +385,25 @@ void displayUpdate(void) {
 		lastGameTime = gameTime;
 
 
-		statusshow("Interface indicator updates");
+		debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
 		updateIndicators();
 
-		statusshow("OS specific display routines");
+		debugC(1, kDebugEventLoop, "EventLoop: OS specific display routines");
 		displayEventLoop();
 		if (delayReDraw)
 			reDrawScreen();
 		//  Call asynchronous resource loader
-		statusshow("resource update");
+		debugC(1, kDebugEventLoop, "EventLoop: resource update");
 		loadAsyncResources();
 
 		audioEventLoop();
 
 		//  Call the asynchronous path finder
-		statusshow("pathfinder update");
+		debugC(1, kDebugEventLoop, "EventLoop: pathfinder update");
 		runPathFinder();
 
 		//  Hows the game running?
-		statusshow("updating stats");
+		debugC(1, kDebugEventLoop, "EventLoop: updating stats");
 		updatePerfStats();
 
 	}
@@ -886,14 +880,6 @@ bool verifyUserExit(void) {
 }
 
 //-----------------------------------------------------------------------
-//	Allocate text messagers
-
-bool initMessagers(void) {
-	Dump = new BufferedTextMessager(8000);
-	return (Dump != NULL);
-}
-
-//-----------------------------------------------------------------------
 //	Allocate visual messagers
 
 bool initGUIMessagers(void) {
@@ -910,14 +896,6 @@ bool initGUIMessagers(void) {
 	for (int j = 0; j < 3; j++)
 		ratemess[j] = NEW_MSGR StatusLineMessager("FrameRates", j, &mainPort, 5, 450 + (11 * j), 500);
 	return true;
-}
-
-//-----------------------------------------------------------------------
-//	cleanup text messagers
-
-void cleanupMessagers(void) {
-	if (Dump) delete Dump;
-	Dump = NULL;
 }
 
 //-----------------------------------------------------------------------
@@ -967,41 +945,6 @@ void WriteStatusF2(int16 line, char *msg, ...) {
 void WriteStatusF(int16, char *, ...) {}
 void WriteStatusF2(int16, char *, ...) {}
 #endif
-
-void logStr(bool onOff, bool newLn, char *st);
-
-void memoryWarning(char *msg, ...) {
-	va_list         argptr;
-	SureLogMessager *slm = NEW_MSGR SureLogMessager("ERRORS.LOG", (int16) 0, SureLogMessager::logOpenAppend);
-	DebuggerMessager *wdm = NEW_MSGR DebuggerMessager() ;
-	TeeMessager t = TeeMessager(Dump, slm, wdm);
-
-	va_start(argptr, msg);
-	t.va(msg, argptr);
-	va_end(argptr);
-
-	if (slm) delete slm;
-	if (wdm) delete wdm;
-}
-
-void memoryFatal(char *msg, ...) {
-	va_list         argptr;
-	SureLogMessager *slm = NEW_MSGR SureLogMessager("ERRORS.LOG", (int16) 0, SureLogMessager::logOpenAppend);
-	DebuggerMessager *wdm = NEW_MSGR DebuggerMessager() ;
-	DialogMessager *mm = NEW_MSGR DialogMessager("FATAL ERROR");
-	TeeMessager t = TeeMessager(Dump, slm, wdm, mm);
-
-	va_start(argptr, msg);
-	t.va(msg, argptr);
-	va_end(argptr);
-
-	if (slm) delete slm;
-	if (wdm) delete wdm;
-	if (mm) delete mm;
-	RShowMem();
-	//gameRunning=false;
-	endGame();
-}
 
 //---------------------------------------------------------
 // Game performance can be used as a gauge of how much

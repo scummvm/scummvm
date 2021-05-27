@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/tower.h"
 #include "saga2/osexcept.h"
@@ -198,22 +200,11 @@ int initState(void) {
 }
 
 void setInitState(int i) {
-#if DEBUG_INIT
-	MonoMessager mm = MonoMessager("GameInit");
-#else
-	NullMessager mm;
-#endif
-
 	initializationState = i;
 
-#if DEBUG_INIT
-	WriteStatusF(12, "Init State %d", i);
-	mm("Init state %d", i);
-	if (i == maxInitState) {
-		WriteStatusF(13, "INITIALIZATION COMPLETE");
-		mm("INITIALIZATION COMPLETE");
-	}
-#endif
+	debugC(1, kDebugInit, "Init state %d", i);
+	if (i == maxInitState)
+		debugC(1, kDebugInit, "INITIALIZATION COMPLETE");
 }
 
 } // end of namespace Saga2

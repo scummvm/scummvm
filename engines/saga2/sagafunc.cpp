@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/script.h"
@@ -59,24 +61,8 @@ void drawMainDisplay(void);
 #pragma off (unreferenced);
 #endif
 
-#if DEBUG
-//extern bool           cliScriptDebug;     // script debugging flag
-#define cliScriptDebug  1
-
-#include "saga2/messager.h"
-
-//MonoMessager scriptDebugOut( "Scripts" );
-
-//extern pMessager Status[10];
-//#define scriptDebugOut    (*Status[ 1 ])
-extern MonoMessager scriptDebugOut;
-
-#define MONOLOG( s ) {if (cliScriptDebug) scriptDebugOut( "cfunc: " #s );}
-#define OBJLOG( s ) {if (cliScriptDebug) scriptDebugOut( "cfunc: [%s]." #s , ((GameObject *)thisThread->thisObject)->objName() );}
-#else
-#define MONOLOG( s )
-#define OBJLOG(s)
-#endif
+#define MONOLOG(s) {debugC(2, kDebugScripts, "cfunc: " #s );}
+#define OBJLOG(s) {debugC(2, kDebugScripts, "cfunc: [%s]." #s , ((GameObject *)thisThread->thisObject)->objName() );}
 
 namespace Saga2 {
 
