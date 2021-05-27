@@ -1191,7 +1191,7 @@ void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &
 
 void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
 	Common::String achDomainId = ConfMan.get("achievements", _domain);
-	AchMan.setActiveDomain(info.platform, info.appId);
+	AchMan.setActiveDomain(info);
 
 	GUI::ScrollContainerWidget *scrollContainer;
 	scrollContainer = new GUI::ScrollContainerWidget(boss, prefix + "Container", "");
