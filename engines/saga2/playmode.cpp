@@ -44,6 +44,7 @@
 #include "saga2/testmap.h"
 #include "saga2/cmisc.h"
 #include "saga2/button.h"
+#include "graphics/surface.h"
 
 namespace Saga2 {
 
@@ -338,6 +339,12 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 		map.data = (uint8 *)malloc(map.bytes());
 		if (map.data == NULL) return;
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
+
+		Graphics::Surface sur;
+		sur.create(map.size.x, map.size.y, Graphics::PixelFormat::createFormatCLUT8());
+		sur.setPixels(map.data);
+		sur.debugPrint();
+		g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
 	} else map.data = (uint8 *)hdr->data;
 
 	port.setMode(drawModeMatte);

@@ -77,16 +77,16 @@ Common::Error Saga2Engine::run() {
 	// Additional setup.
 	debug("Saga2Engine::init");
 
-	if (openResources()) {
-		openImageTest();
-	}
-
 	// Your main even loop should be (invoked from) here.
 	debug("Saga2Engine::go: Hello, World!");
 
 	loadExeResources();
 
 	loadingScreen();
+
+	if (openResources()) {
+		openImageTest();
+	}
 
 	// Simple main event loop
 	Common::Event evt;
