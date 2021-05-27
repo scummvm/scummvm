@@ -65,7 +65,7 @@ void writePlaqText(gPort            &port,
                    int16           textPos,
                    textPallete     &pal,
                    bool            hiLite,
-                   char            *msg, ...);
+                   const char      *msg, ...);
 
 inline Rect16 butBox(int n, int i) {
 	return (n > 1 ? mbButtonRects[i] : mbOneBtnRect);
@@ -76,7 +76,7 @@ inline Rect16 butBox(int n, int i) {
  * ===================================================================== */
 
 bool userDialogAvailable(void);
-int16 userDialog(char *title, char *msg, char *btnMsg1,
+int16 userDialog(const char *title, char *msg, char *btnMsg1,
                  char *btnMsg2,
                  char *btnMsg3);
 
@@ -287,7 +287,7 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
                                         int16           textPos,
                                         textPallete     &pal,
                                         bool            hiLite,
-                                        char            *msg, ...) {
+                                        const char      *msg, ...) {
 	char            textBuf[ 256 ];
 	char            lineBuf[ 128 ];
 	va_list         argptr;

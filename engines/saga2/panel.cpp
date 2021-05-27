@@ -68,7 +68,7 @@ gPanel::gPanel(gWindow &win, const Rect16 &box, AppFunc *cmd)
 }
 
 gPanel::gPanel(gPanelList &list, const Rect16 &box,
-               char *newTitle, uint16 ident, AppFunc *cmd)
+               const char *newTitle, uint16 ident, AppFunc *cmd)
 	: window(list.window) {
 	title = newTitle;
 	extent = box;
@@ -608,7 +608,7 @@ void gWindow::setPointer( gPixelMap &map, int x, int y )
    gControl class: The basis for buttons and other controls.
  * ===================================================================== */
 
-gControl::gControl(gPanelList &list, const Rect16 &box, char *title, uint16 ident,
+gControl::gControl(gPanelList &list, const Rect16 &box, const char *title, uint16 ident,
                    AppFunc *cmd) : gPanel(list, box, title, ident, cmd) {
 	accelKey = 0;
 

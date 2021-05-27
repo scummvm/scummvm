@@ -1074,7 +1074,7 @@ void cleanupUserDialog(void) {
 
 }
 
-int16 userDialog(char *title, char *msg, char *bMsg1,
+int16 userDialog(const char *title, char *msg, char *bMsg1,
                  char *bMsg2,
                  char *bMsg3) {
 	const   maxBtns = 3;
@@ -1167,7 +1167,7 @@ bool userDialogAvailable(void) {
 }
 void cleanupUserDialog(void) {}
 
-int16 userDialog(char *title, char *msg, char *bMsg1,
+int16 userDialog(const char *title, char *msg, char *bMsg1,
                  char *bMsg2,
                  char *bMsg3) {
 	const   int maxBtns = 3;

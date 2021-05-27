@@ -404,7 +404,7 @@ void writePlaqText(gPort            &port,
                    int16           textPos,
                    textPallete     &pal,
                    bool            hiLite,
-                   char            *msg, ...);
+                   const char      *msg, ...);
 
 
 void writePlaqTextPos(gPort         &port,
@@ -413,7 +413,7 @@ void writePlaqTextPos(gPort         &port,
                       int16            textPos,
                       textPallete      &pal,
                       bool             hiLite,
-                      char             *msg, ...);
+                      const char       *msg, ...);
 
 } // end of namespace Saga2
 

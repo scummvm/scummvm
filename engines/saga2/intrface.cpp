@@ -441,7 +441,7 @@ void playMemSound(uint32 s); // play click # s
 
 CPlaqText::CPlaqText(gPanelList     &list,
                      const Rect16  &box,
-                     char          *msg,
+                     const char    *msg,
                      gFont         *font,
                      int16         textPos,
                      textPallete   &pal,
@@ -1470,7 +1470,7 @@ void writePlaqText(gPort            &port,
                    int16           textPos,
                    textPallete     &pal,
                    bool            hiLite,
-                   char            *msg, ...) {
+                   const char      *msg, ...) {
 	char            lineBuf[ 128 ];
 	va_list         argptr;
 	int16           cnt;
@@ -1522,7 +1522,7 @@ void writePlaqTextPos(gPort         &port,
                       int16            /*textPos*/,
                       textPallete      &pal,
                       bool             hiLite,
-                      char             *msg, ...) {
+                      const char       *msg, ...) {
 	char            lineBuf[ 128 ];
 	va_list         argptr;
 	int16           cnt;

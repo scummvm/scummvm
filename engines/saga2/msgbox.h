@@ -71,7 +71,7 @@ public:
 	                                 int16           textPos,
 	                                 textPallete     &pal,
 	                                 bool            hiLite,
-	                                 char            *msg, ...);
+	                                 const char      *msg, ...);
 
 };
 

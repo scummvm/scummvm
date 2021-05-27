@@ -116,7 +116,7 @@ struct gFont {
 
 gFont *LoadFont(char *fontname);
 void DisposeFont(gFont *font);
-int16 TextWidth(gFont *font, char *s, int16 length, int16 styles);
+int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles);
 int16 WhichChar(gFont *font, uint8 *s, int16 length, int16 maxLen);
 int16 WhichIChar(gFont *font, uint8 *s, int16 length, int16 maxLen);
 int32 GTextWrap(gFont *font, char *mark, uint16 &count, uint16 width, int16 styles);
@@ -383,16 +383,16 @@ public:
 
 private:
 	//  Unclipped text rendering
-	void drawStringChars(char *, int16, gPixelMap &, int, int);
+	void drawStringChars(const char *, int16, gPixelMap &, int, int);
 	//  Clipped but still low-level
-	int16 drawClippedString(char *str, int16 len, int xpos, int ypos);
+	int16 drawClippedString(const char *str, int16 len, int xpos, int ypos);
 public:
 
 	//  Draw a text string with the current settings at the
 	//  current pen position. If the length is < 0, then use the
 	//  natural string length.
-	void drawText(char *str, int16 length = -1);
-	void drawTextInBox(char *str, int16 length,
+	void drawText(const char *str, int16 length = -1);
+	void drawTextInBox(const char *str, int16 length,
 	                   const Rect16 &r, int16 pos,
 	                   Point16 borders);
 };

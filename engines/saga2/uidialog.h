@@ -57,7 +57,7 @@ int16 OptionsDialog(bool disableSaveResume = FALSE);
 void initFileFields(char **fieldStrings);
 char **destroyFileFields(void);
 bool getSaveName(int8 saveNo, SaveFileHeader &header);
-int16 userDialog(char *title, char *msg, char *btnMsg1,
+int16 userDialog(const char *title, char *msg, char *btnMsg1,
                  char *btnMsg2,
                  char *btnMsg3);
 

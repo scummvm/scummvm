@@ -29,11 +29,6 @@
 
 namespace Saga2 {
 
-int16 userDialog(char *title, char *msg, char *btnMsg1,
-                 char *btnMsg2,
-                 char *btnMsg3);
-
-
 size_t Messager::va(char *format, va_list argptr) {
 	if (enabled) {
 		char tempBuf[ 256 ];
