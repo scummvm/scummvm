@@ -309,6 +309,7 @@ struct MetaTile;
 
 class MetaTileProperty {
 public:
+	virtual ~MetaTileProperty() {}
 	virtual bool operator()(
 	    MetaTile *mt,
 	    int16 mapNum,
@@ -328,6 +329,8 @@ public:
 	SimpleMetaTileProperty(bool (*func)(MetaTile *, int16, const TilePoint &)) :
 		propertyFunc(func) {
 	}
+
+	virtual ~SimpleMetaTileProperty() {}
 
 	bool operator()(
 	    MetaTile *mt,
