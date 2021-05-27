@@ -207,7 +207,6 @@ public:
 	void checkSystem();
 	bool dataSave();
 	bool dataLoad();
-	void addDirtyRect(Common::Rect rect);
 	void reEvent();
 
 	// Objects
@@ -239,8 +238,6 @@ public:
 	SObject _obj[MAXOBJ];
 
 	SDText _drawText;
-	Common::List<Common::Rect> _dirtyRects;
-	Common::Rect *_actorRect;
 
 	// Inventory
 	uint16 _curInventory;

@@ -50,12 +50,16 @@ class GraphicsManager {
 	uint16 _bitMask[3];
 	uint8 *_font;
 
+	Common::List<Common::Rect> _dirtyRects;
+	Common::Rect *_actorRect;
+
 	static const Graphics::PixelFormat kImageFormat;
 
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 	void drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface = nullptr);
 	void initCursor();
 	void copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y);
+	void paintObjAnm(uint16 curBox);
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
@@ -75,6 +79,7 @@ public:
 	void copyToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette);
 	void blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg);
 	uint16 *getScreenBufferPtr();
+	void paintScreen(bool flag);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBuffer();
 	void clearScreenBufferTop();
@@ -91,8 +96,9 @@ public:
 
 	void shadow(uint16 x, uint16 y, uint8 num);
 	void pixelAliasing(uint16 x, uint16 y);
-
 	void dissolve(uint8 val);
+
+	void addDirtyRect(Common::Rect rect, bool translateRect, bool updateActorRect = false);
 
 	uint16 getCharWidth(byte character);
 	void drawChar(byte curChar, uint16 shadowCol, uint16 textCol, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);

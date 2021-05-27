@@ -110,7 +110,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_pathFind = nullptr;
 	_textMgr = nullptr;
 	_animTypeMgr = nullptr;
-	_actorRect = nullptr;
 	_nextRefresh = 0;
 
 	_curKey = Common::KEYCODE_INVALID;
@@ -347,11 +346,6 @@ bool TrecisionEngine::canPlayerInteract() {
 			!_animMgr->_playingAnims[kSmackerAction]);
 }
 
-void TrecisionEngine::addDirtyRect(Common::Rect rect) {
-	rect.translate(0, TOP);
-	_dirtyRects.push_back(rect);
-}
-
 void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 	if (visible)
 		_obj[objectId]._mode |= OBJMODE_OBJSTATUS;
@@ -467,14 +461,14 @@ void TrecisionEngine::redrawRoom() {
 	if (_curRoom == kRoom4P && curDialog == dF4PI)
 		_animMgr->smkGoto(kSmackerBackground, 21);
 
-	_renderer->paintScreen(true);
+	_graphicsMgr->paintScreen(true);
 }
 
 void TrecisionEngine::tendIn() {
 	_textStatus = TEXT_OFF;
 
 	_flagPaintCharacter = true;
-	_renderer->paintScreen(true);
+	_graphicsMgr->paintScreen(true);
 
 	_graphicsMgr->copyToScreen(0, 0, MAXX, MAXY);
 }

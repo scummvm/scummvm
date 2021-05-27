@@ -466,7 +466,7 @@ void TextManager::clearTextStack() {
 
 void TextManager::drawCurString() {
 	_curString.draw(_vm);
-	_vm->_dirtyRects.push_back(_curString._rect);
+	_vm->_graphicsMgr->addDirtyRect(_curString._rect, false);
 }
 
 Common::Rect TextManager::getOldTextRect() const {

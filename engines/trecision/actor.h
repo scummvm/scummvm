@@ -78,6 +78,7 @@ public:
 	void actorStop();
 	void read3D(Common::SeekableReadStream *ff);
 	float frameCenter(SVertex *v);
+	void updateStepSound();
 };
 
 } // End of namespace Trecision
