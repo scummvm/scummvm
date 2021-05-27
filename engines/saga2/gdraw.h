@@ -189,8 +189,7 @@ public:
 
 	//  Constructor
 	gPort(void) {
-		memset(&map, 0,
-		       offsetof(gPort, textStyles) - offsetof(gPort, map) + sizeof(textStyles));
+		memset(&map, 0, sizeof(gPort));
 	}
 
 	virtual ~gPort() {}
@@ -216,8 +215,8 @@ public:
 
 	//  Indirect colors
 
-	void setPenMap(gPen *map)              {
-		penMap = map;
+	void setPenMap(gPen *pmap)              {
+		penMap = pmap;
 	}
 	void setIndirectColor(uint8 color) {
 		fgPen = penMap[ color ];

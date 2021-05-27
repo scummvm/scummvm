@@ -204,7 +204,7 @@ public:
 	//  Return an integer representing the type of this task
 	virtual int16 getType(void) const = 0;
 
-	virtual void abort(void) = 0;
+	virtual void abortTask(void) = 0;
 	virtual TaskResult evaluate(void) = 0;
 	virtual TaskResult update(void) = 0;
 
@@ -244,7 +244,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort();
+	void abortTask();
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -323,7 +323,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort(void);
+	void abortTask(void);
 
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
@@ -367,7 +367,7 @@ public:
 	void mark(void);
 #endif
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -664,7 +664,7 @@ public:
 	void mark(void);
 #endif
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -788,7 +788,7 @@ public:
 	void mark(void);
 #endif
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -804,7 +804,7 @@ protected:
 	virtual TilePoint currentTargetLoc(void) = 0;
 
 	virtual bool atTarget(void) = 0;
-	virtual void atTargetAbort(void) = 0;
+	virtual void atTargetabortTask(void) = 0;
 	virtual TaskResult atTargetEvaluate(void) = 0;
 	virtual TaskResult atTargetUpdate(void) = 0;
 };
@@ -887,7 +887,7 @@ protected:
 
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 
@@ -978,7 +978,7 @@ protected:
 
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 
@@ -1031,7 +1031,7 @@ protected:
 	void evaluateTarget(void);
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 };
@@ -1147,7 +1147,7 @@ protected:
 
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 
@@ -1204,14 +1204,14 @@ public:
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult update(void);
 
 protected:
 	void evaluateTarget(void);
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 
@@ -1264,7 +1264,7 @@ protected:
 	void evaluateTarget(void);
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 };
@@ -1399,7 +1399,7 @@ protected:
 
 	bool atTarget(void);
 
-	void atTargetAbort(void);
+	void atTargetabortTask(void);
 	TaskResult atTargetEvaluate(void);
 	TaskResult atTargetUpdate(void);
 
@@ -1514,7 +1514,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -1560,7 +1560,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -1605,7 +1605,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -1650,7 +1650,7 @@ public:
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
 
-	void abort(void);
+	void abortTask(void);
 	TaskResult evaluate(void);
 	TaskResult update(void);
 
@@ -1732,7 +1732,7 @@ public:
 	}
 
 	//  Abort all tasks in stack
-	void abort(void);
+	void abortTask(void);
 	//  Re-evaluate tasks in stack
 	TaskResult evaluate(void);
 	//  Update the state of the tasks in stack
