@@ -34,7 +34,7 @@ namespace Saga2{
     Memory alloc/free
  * ===================================================================== */
 
-void *audioAlloc(size_t s, char []);
+void *audioAlloc(size_t s, const char[]);
 void audioFree(void *mem);
 
 #define audionew( s ) (( s* )audioAlloc( sizeof( s )))

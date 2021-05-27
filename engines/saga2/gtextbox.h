@@ -159,7 +159,7 @@ protected:
 
 public:
 
-	gTextBox(gPanelList    &list,            // window
+	gTextBox(gPanelList   &list,            // window
 	         const Rect16 &box,          // rectangle
 	         gFont       *font,          // font specified for this box
 	         int8        height,         // height of the font
@@ -168,8 +168,8 @@ public:
 	         int8        HLColor,        // hilite color of font
 	         int8        BGHLColor,      // back ground hilite color
 	         int8        CRColor,        // cusor color
-	         char        *title,         // title bar
-	         char        *buffer,        // buffer to edit
+	         const char  *title,         // title bar
+	         const char  *buffer,        // buffer to edit
 	         char        **stringBufs,
 	         uint16      length,         // length of buffer
 	         uint16      flg,            // various flags

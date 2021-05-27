@@ -37,11 +37,9 @@ void cleanupAudio() {
 	warning("STUB: cleanupAudio()");
 }
 
-void *audioAlloc(size_t s, char desc[])
-{
+void *audioAlloc(size_t s, const char desc[]) {
 	warning("STUB: audioAlloc()");
-	return nullptr;
-	//return malloc(s);
+	return malloc(s);
 }
 
 void audioFree(void *mem)

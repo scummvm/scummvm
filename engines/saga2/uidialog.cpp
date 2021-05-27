@@ -283,7 +283,7 @@ const   int pushButtonWidth     =   121;
 const   int pushButtonHeight    =   30;
 
 const   int sliderWidth         =   168;
-const   int sliderHeight        =   15;
+//const   int sliderHeight        =   15;
 const   int imageHeight         =   17;
 
 const   int textPixelLen        =   175;
@@ -630,13 +630,13 @@ bool getSaveName(int8 saveNo, SaveFileHeader &header) {
  * ===================================================================== */
 
 int16 FileDialog(int16 fileProcess) {
-	const   int strLen              = editLen;
+	//const   int strLen              = editLen;
 	char    **fieldStrings;
 	uint16  stringIndex;
 	bool    displayOnly;
 	void    **arrowUpIm = NULL, **arrowDnIm = NULL, **pushBtnIm = NULL;
 
-	AppFunc *fileCommands[ 2 ]  = { { cmdFileSave }, { cmdFileLoad } };
+	AppFunc *fileCommands[2]  = { cmdFileSave, cmdFileLoad };
 
 	// text for dialog
 	const char    *saveTextStrings[numSaveLoadTexts]    = { SAVE_DIALOG_NAME };
@@ -1166,7 +1166,7 @@ void cleanupUserDialog(void) {}
 int16 userDialog(const char *title, const char *msg, const char *bMsg1,
                  const char *bMsg2,
                  const char *bMsg3) {
-	const   int maxBtns = 3;
+	//const   int maxBtns = 3;
 	uint8   numBtns = 0;
 
 	char k1, k2, k3;
@@ -1314,7 +1314,7 @@ void CPlacardWindow::positionText(
 		int16   fontHeight = textFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, windowText);
+		sprintf(titleBuf, "%s", windowText);
 
 		//  break up the title text string
 		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
@@ -1425,7 +1425,7 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		int16   fontHeight = buttonFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, windowText);
+		sprintf(titleBuf, "%s", windowText);
 
 		//  break up the title text string
 		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
