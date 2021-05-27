@@ -410,7 +410,7 @@ void toggleMusic(void) {
 //	hook used by videos
 
 HDIGDRIVER &digitalAudioDriver(void) {
-	VERIFY(audio);
+	assert(audio);
 	return audio->dig;
 }
 
@@ -691,7 +691,7 @@ uint32 parse_res_id(char IDstr[]) {
 	uint32 a[5] = {0, 0, 0, 0, 0};
 	uint32 a2, res = 0;
 	uint32 i, j;
-	VERIFY(IDstr != NULL);
+	assert(IDstr != NULL);
 	if (strlen(IDstr)) {
 		for (i = 0, j = 0; i < strlen(IDstr); i++) {
 			if (IDstr[i] == ':') {

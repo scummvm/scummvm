@@ -331,7 +331,7 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 void HuntToBeNearLocationAssignment::initialize(
     const Target    &targ,
     uint16          r) {
-	ASSERT(targ.size() <= sizeof(targetMem));
+	assert(targ.size() <= sizeof(targetMem));
 	//  Make a copy of the target
 	targ.clone(targetMem);
 
@@ -418,7 +418,7 @@ void HuntToBeNearActorAssignment::initialize(
     const ActorTarget   &at,
     uint16              r,
     bool                trackFlag) {
-	ASSERT(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(targetMem));
 
 	//  Copy the target
 	at.clone(targetMem);
@@ -524,7 +524,7 @@ void HuntToKillAssignment::initialize(
     const ActorTarget   &at,
     bool                trackFlag,
     bool                specificActorFlag) {
-	ASSERT(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(targetMem));
 
 	//  Copy the target
 	at.clone(targetMem);

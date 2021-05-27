@@ -581,22 +581,22 @@ void DisplayNode::drawObject(void) {
 			                             a->currentFacing,
 			                             a->currentPose);
 
-			ASSERT(anim->start[ 0 ] >= 0);
-			ASSERT(anim->start[ 0 ] <  10000);
-			ASSERT(anim->start[ 1 ] >= 0);
-			ASSERT(anim->start[ 1 ] <  10000);
-			ASSERT(anim->start[ 2 ] >= 0);
-			ASSERT(anim->start[ 2 ] <  10000);
+			assert(anim->start[ 0 ] >= 0);
+			assert(anim->start[ 0 ] <  10000);
+			assert(anim->start[ 1 ] >= 0);
+			assert(anim->start[ 1 ] <  10000);
+			assert(anim->start[ 2 ] >= 0);
+			assert(anim->start[ 2 ] <  10000);
 
-			ASSERT(pose->rightObjectOffset.x < 1000);
-			ASSERT(pose->rightObjectOffset.x > -1000);
-			ASSERT(pose->rightObjectOffset.y < 1000);
-			ASSERT(pose->rightObjectOffset.y > -1000);
+			assert(pose->rightObjectOffset.x < 1000);
+			assert(pose->rightObjectOffset.x > -1000);
+			assert(pose->rightObjectOffset.y < 1000);
+			assert(pose->rightObjectOffset.y > -1000);
 
-			ASSERT(pose->leftObjectOffset.x < 1000);
-			ASSERT(pose->leftObjectOffset.x > -1000);
-			ASSERT(pose->leftObjectOffset.y < 1000);
-			ASSERT(pose->leftObjectOffset.y > -1000);
+			assert(pose->leftObjectOffset.x < 1000);
+			assert(pose->leftObjectOffset.x > -1000);
+			assert(pose->leftObjectOffset.y < 1000);
+			assert(pose->leftObjectOffset.y > -1000);
 
 			//          washHandle( aa->spriteBanks[ pose->actorFrameBank ] );
 
@@ -699,7 +699,7 @@ void DisplayNode::drawObject(void) {
 
 			//  Fill in the SpriteComponent structure for body
 			sc = &scList[ bodyIndex ];
-			ASSERT(a->poseInfo.actorFrameIndex < ss->count);
+			assert(a->poseInfo.actorFrameIndex < ss->count);
 			sc->sp = ss->sprite(a->poseInfo.actorFrameIndex);
 			sc->offset.x = sc->offset.y = 0;
 			//  Color remapping info
@@ -707,11 +707,11 @@ void DisplayNode::drawObject(void) {
 			//          sc->colorTable = aa->schemeList ? mainColors : identityColors;
 			sc->flipped = (poseFlags & ActorPose::actorFlipped);
 
-			ASSERT(sc->sp != NULL);
-			ASSERT(sc->sp->size.x > 0);
-			ASSERT(sc->sp->size.y > 0);
-			ASSERT(sc->sp->size.x < 255);
-			ASSERT(sc->sp->size.y < 255);
+			assert(sc->sp != NULL);
+			assert(sc->sp->size.x > 0);
+			assert(sc->sp->size.y > 0);
+			assert(sc->sp->size.x < 255);
+			assert(sc->sp->size.y < 255);
 
 			//  If we were carrying something in the left hand,
 			//  then fill in the component structure for it.
@@ -728,12 +728,12 @@ void DisplayNode::drawObject(void) {
 				sc->sp =    proto->getOrientedSprite(
 				                obj,
 				                a->poseInfo.leftObjectIndex);
-				ASSERT(sc->sp != NULL);
+				assert(sc->sp != NULL);
 				sc->offset = a->poseInfo.leftObjectOffset;
-				ASSERT(sc->offset.x < 1000);
-				ASSERT(sc->offset.x > -1000);
-				ASSERT(sc->offset.y < 1000);
-				ASSERT(sc->offset.y > -1000);
+				assert(sc->offset.x < 1000);
+				assert(sc->offset.x > -1000);
+				assert(sc->offset.y < 1000);
+				assert(sc->offset.y > -1000);
 				sc->colorTable = leftColors;
 				sc->flipped = (poseFlags & ActorPose::leftObjectFlipped);
 			}
@@ -753,16 +753,16 @@ void DisplayNode::drawObject(void) {
 				sc->sp =    proto->getOrientedSprite(
 				                obj,
 				                a->poseInfo.rightObjectIndex);
-				ASSERT(sc->sp != NULL);
-				ASSERT(sc->sp->size.x > 0);
-				ASSERT(sc->sp->size.y > 0);
-				ASSERT(sc->sp->size.x < 255);
-				ASSERT(sc->sp->size.y < 255);
+				assert(sc->sp != NULL);
+				assert(sc->sp->size.x > 0);
+				assert(sc->sp->size.y > 0);
+				assert(sc->sp->size.x < 255);
+				assert(sc->sp->size.y < 255);
 				sc->offset = a->poseInfo.rightObjectOffset;
-				ASSERT(sc->offset.x < 1000);
-				ASSERT(sc->offset.x > -1000);
-				ASSERT(sc->offset.y < 1000);
-				ASSERT(sc->offset.y > -1000);
+				assert(sc->offset.x < 1000);
+				assert(sc->offset.x > -1000);
+				assert(sc->offset.y < 1000);
+				assert(sc->offset.y > -1000);
 				sc->colorTable = rightColors;
 				sc->flipped = (poseFlags & ActorPose::rightObjectFlipped);
 			}

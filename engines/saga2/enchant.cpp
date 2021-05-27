@@ -58,8 +58,8 @@ ObjectID EnchantObject(
 	ProtoObj        *enchProto;
 	TilePoint       slot;
 
-	VERIFY(enchantmentProto >= 0);
-	VERIFY(enchantmentProto <  objectProtoCount);
+	assert(enchantmentProto >= 0);
+	assert(enchantmentProto <  objectProtoCount);
 
 	enchProto = &objectProtos[ enchantmentProto ];
 
@@ -86,8 +86,8 @@ ObjectID EnchantObject(
 
 	//  Now, change the object base on enchantments
 	obj->evalEnchantments();
-	VERIFY(enchProto->containmentSet() & ProtoObj::isEnchantment);
-	VERIFY((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::isEnchantment);
+	assert(enchProto->containmentSet() & ProtoObj::isEnchantment);
+	assert((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::isEnchantment);
 	return ench->thisID();
 }
 

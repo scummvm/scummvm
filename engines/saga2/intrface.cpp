@@ -513,11 +513,11 @@ CPortrait::CPortrait(gMultCompButton **portraits,
                      const uint16 numPorts,
                      uint16 numBrothers) {     // numBrothers = post 1
 	// do some checking
-	ASSERT(portraits);
-	ASSERT(indivPort);
+	assert(portraits);
+	assert(indivPort);
 
 	for (uint16 i = 0; i < numBrothers; i++) {
-		ASSERT(portraits[ i ]);
+		assert(portraits[ i ]);
 	};
 
 	buttons     = portraits;    // set the pointer for class
@@ -532,7 +532,7 @@ CPortrait::CPortrait(gMultCompButton **portraits,
 }
 
 void CPortrait::setPortrait(uint16 brotherID) {
-	ASSERT(brotherID < _numViews + 1);
+	assert(brotherID < _numViews + 1);
 
 	// tell button to select and display new image
 	if (brotherID == uiIndiv) {
@@ -553,7 +553,7 @@ void CPortrait::set(uint16 brotherID, PortraitType type) {
 }
 
 void CPortrait::ORset(uint16 brotherID, PortraitType type) { // brotherID = post 0
-	ASSERT(brotherID < _numViews + 1);
+	assert(brotherID < _numViews + 1);
 
 	if (type == currentState[ brotherID ]) {
 		currentState[ brotherID ] = normal;
@@ -723,7 +723,7 @@ CStatusLine::CStatusLine(gPanelList         &list,
 
 CStatusLine::~CStatusLine(void) {
 	while (queueTail != queueHead) {
-		ASSERT(lineQueue[ queueTail ].text != NULL);
+		assert(lineQueue[ queueTail ].text != NULL);
 
 		RDisposePtr(lineQueue[ queueTail ].text);
 		queueTail = bump(queueTail);
@@ -950,7 +950,7 @@ CManaIndicator::CManaIndicator(gPanelList &list) : gCompImage(list,
 	        NULL,
 	        0,
 	        cmdManaInd) {
-	ASSERT(resFile);
+	assert(resFile);
 
 	// init the resource handle with the mana resource group
 	resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'),
@@ -1218,7 +1218,7 @@ void CManaIndicator::drawClipped(gPort &port,
 }
 
 bool CManaIndicator::needUpdate(PlayerActor *player) {
-	ASSERT(player);
+	assert(player);
 
 	// get the ability scores for this character
 	ActorAttributes *stats          = player->getEffStats();
@@ -1245,7 +1245,7 @@ bool CManaIndicator::needUpdate(PlayerActor *player) {
 
 
 bool CManaIndicator::update(PlayerActor *player) {
-	ASSERT(player);
+	assert(player);
 
 	// get the ability scores for this character
 	ActorAttributes *stats          = player->getEffStats();
@@ -1422,7 +1422,7 @@ CHealthIndicator::~CHealthIndicator(void) {
 //  Recalculate and update the health star for a particular brother
 
 void CHealthIndicator::updateStar(gCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality) {
-	ASSERT(baseVitality >= 0);
+	assert(baseVitality >= 0);
 
 	int16 maxStar, imageIndex;
 
@@ -1909,7 +1909,7 @@ inline T GetRatio(T curUnits, T maxUnits, T ratio) {
 }
 
 uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = TRUE) {
-	ASSERT(isObject(obj) || isActor(obj));
+	assert(isObject(obj) || isActor(obj));
 
 	uint16 weight;
 	uint16 maxWeight;
@@ -1933,7 +1933,7 @@ uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = 
 
 
 uint16 getBulkRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = TRUE) {
-	ASSERT(isObject(obj) || isActor(obj));
+	assert(isObject(obj) || isActor(obj));
 
 	uint16 maxBulk;
 	uint16 bulk;

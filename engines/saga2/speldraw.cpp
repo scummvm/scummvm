@@ -83,7 +83,7 @@ EffectDisplayPrototypeList::EffectDisplayPrototypeList(int32 c) {
 	effects = (pEffectDisplayPrototype *) TALLOC(sizeof(pEffectDisplayPrototype) * c, memSpells);
 	for (int i = 0; i < c; i++)
 		effects[i] = NULL;
-	VERIFY(effects);
+	assert(effects);
 	if (effects) maxCount = c;
 }
 
@@ -101,7 +101,7 @@ EffectDisplayPrototypeList::~EffectDisplayPrototypeList() {
 }
 
 int32 EffectDisplayPrototypeList::add(EffectDisplayPrototype *edp) {
-	VERIFY(count < maxCount);
+	assert(count < maxCount);
 	edp->setID(count);
 	effects[count++] = edp;
 	return count - 1;
@@ -118,14 +118,14 @@ void EffectDisplayPrototypeList::cleanup(void) {
 }
 
 void EffectDisplayPrototypeList::append(EffectDisplayPrototype *nedp, int32 acount) {
-	VERIFY(acount < maxCount);
+	assert(acount < maxCount);
 	EffectDisplayPrototype *edp = effects[acount];
 	while (edp->next) edp = edp->next;
 	edp->next = nedp;
 }
 
 EffectDisplayPrototype *EffectDisplayPrototypeList::operator[](EffectID e) {
-	VERIFY(e >= 0 && e < maxCount);
+	assert(e >= 0 && e < maxCount);
 	return effects[e];
 }
 
@@ -155,7 +155,7 @@ SpellDisplayPrototype::SpellDisplayPrototype(
 }
 
 SpellDisplayPrototype *SpellDisplayPrototypeList::operator[](SpellID s) {
-	VERIFY(s >= 0 && s < count);
+	assert(s >= 0 && s < count);
 	return spells[s];
 }
 
@@ -195,7 +195,7 @@ SpellDisplayPrototypeList::SpellDisplayPrototypeList(uint16 s) {
 	spells = (pSpellDisplayPrototype *) TALLOC(sizeof(pSpellDisplayPrototype) * s, memSpells);
 	for (int i = 0; i < s; i++)
 		spells[i] = NULL;
-	VERIFY(spells);
+	assert(spells);
 	if (spells) maxCount = s;
 }
 
@@ -212,7 +212,7 @@ SpellDisplayPrototypeList::~SpellDisplayPrototypeList() {
 }
 
 int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
-	VERIFY(count < maxCount);
+	assert(count < maxCount);
 	sdp->setID((SpellID) count);
 	spells[count++] = sdp;
 	return count;
@@ -253,7 +253,7 @@ void SpellDisplayList::cleanup(void) {
 }
 
 void SpellDisplayList::add(SpellInstance *newSpell) {
-	VERIFY(newSpell);
+	assert(newSpell);
 	if (count < maxCount)
 		spells[count++] = newSpell;
 }
@@ -273,7 +273,7 @@ void SpellDisplayList::updateStates(int32 deltaTime) {
 }
 
 void SpellDisplayList::tidyKill(uint16 spellNo) {
-	VERIFY(count);
+	assert(count);
 	if (spells[spellNo]) {
 		delete spells[spellNo];
 		spells[spellNo] = NULL;

@@ -54,7 +54,7 @@ inline TilePoint rightVector(TilePoint tp, bool which = 0) {
 
 inline void setMagnitude(TilePoint &tp, int32 newMag) {
 #if DEBUG
-	VERIFY(tp.magnitude());
+	assert(tp.magnitude());
 #else
 	if (tp.magnitude() == 0)
 		tp = TilePoint(1, 1, 0);

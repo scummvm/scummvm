@@ -718,7 +718,7 @@ public:
 
 	//  Allocate the assignment buffer for a new assignment
 	void *allocAssignment(size_t sz) {
-		ASSERT(sz <= sizeof(assignmentBuf));
+		assert(sz <= sizeof(assignmentBuf));
 		if (!(flags & hasAssignment)) {
 			flags |= hasAssignment;
 			return &assignmentBuf;
@@ -915,7 +915,7 @@ public:
 	void disband(void);
 
 	bool inBandingRange(void) {
-		ASSERT(leader != NULL);
+		assert(leader != NULL);
 
 		return      leader->IDParent() == IDParent()
 		            && (leader->getLocation() - getLocation()).quickHDistance()

@@ -147,7 +147,7 @@ void SpellStuff::killEffects(void) {
 //	implement a spell - general target type
 
 void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
-	VERIFY(target);
+	assert(target);
 	switch (target->getType()) {
 	case SpellTarget::spellTargetPoint:
 		implement(enactor, Location(target->getPoint(), Nothing));
@@ -581,8 +581,8 @@ void SpellStuff::show(GameObject *, SpellTarget &) {}
 // ctor
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, SpellID spellNo) {
-	VERIFY(newCaster);
-	VERIFY(newTarget);
+	assert(newCaster);
+	assert(newTarget);
 	caster = newCaster;
 	target = NEW_SPEL SpellTarget(*newTarget);
 	world = newCaster->world();
@@ -594,7 +594,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, Spe
 // ctor
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, SpellID spellNo) {
-	VERIFY(newCaster);
+	assert(newCaster);
 	target = NEW_SPEL SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
@@ -606,8 +606,8 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, Spel
 // ctor
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, SpellID spellNo) {
-	VERIFY(newCaster);
-	VERIFY(newTarget);
+	assert(newCaster);
+	assert(newTarget);
 	target = NEW_SPEL SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
@@ -619,7 +619,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, Spel
 // ctor
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, SpellID spellNo) {
-	VERIFY(newCaster);
+	assert(newCaster);
 	target = NEW_SPEL SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
@@ -655,7 +655,7 @@ void SpellInstance::init(void) {
 	age = 0;
 	implementAge = 0;
 	effSeq = 0;
-	VERIFY(dProto);
+	assert(dProto);
 	if (!dProto)   return;
 	effect = EffectDisplayPrototypeList::edpList[dProto->effect];
 	implementAge = dProto->implementAge;

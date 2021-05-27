@@ -127,7 +127,7 @@ void CVideoBox::draw(void) {         // redraw the window
 
 
 void CVideoBox::init(void) {
-	ASSERT(resFile);
+	assert(resFile);
 
 	// set the result info to nominal startup values
 	rInfo.result    = -1;

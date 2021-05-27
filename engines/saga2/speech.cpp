@@ -1049,7 +1049,7 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 	//  Restore the speeches
 	for (i = 0; i < count; i++) {
 		Speech      *sp = (Speech *)free.remHead();
-		ASSERT(sp != NULL);
+		assert(sp != NULL);
 
 		nonActiveList.addTail(*sp);
 		bufferPtr = sp->restore(bufferPtr);

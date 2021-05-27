@@ -99,7 +99,6 @@ MODULE_OBJS := \
 	tromode.o \
 	uidialog.o \
 	vbacksav.o \
-	verify.o \
 	video.o \
 	videobox.o \
 	videomem.o \

@@ -241,18 +241,18 @@ BankBits LoadedBanks;                // what banks are loaded?
 #if DEBUG
 ActiveItemID::ActiveItemID(int16 m, int16 i) :
 	val((m << activeItemMapShift) | (i & activeItemIndexMask)) {
-	VERIFY(m < 0x8);
-	VERIFY((uint16)i <= activeItemIndexNullID);
+	assert(m < 0x8);
+	assert((uint16)i <= activeItemIndexNullID);
 }
 
 void ActiveItemID::setMapNum(int16 m) {
-	VERIFY(m < 0x8);
+	assert(m < 0x8);
 	val &= ~activeItemMapMask;
 	val |= (m << activeItemMapShift);
 }
 
 void ActiveItemID::setIndexNum(int16 i) {
-	VERIFY((uint16)i <= activeItemIndexNullID);
+	assert((uint16)i <= activeItemIndexNullID);
 	val &= ~activeItemIndexMask;
 	val |= i & activeItemIndexMask;
 }
@@ -359,7 +359,7 @@ int16 ActiveItem::getMapNum(void) {
 
 ObjectID ActiveItem::getInstanceContext(void) {
 	int16 mn = getMapNum();
-	ASSERT(mn >= 0 && mn < 3);
+	assert(mn >= 0 && mn < 3);
 	if (mn < 0 || mn > 2)
 		return Nothing;
 	WorldMapData &map = mapList[mn];        //  master map data array
@@ -543,7 +543,7 @@ bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 //	trigger() function for ActiveItem group
 
 bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
-	ASSERT(objID != Nothing);
+	assert(objID != Nothing);
 
 	GameObject      *obj = GameObject::objectAddress(objID);
 	GameWorld       *world = (GameWorld *)GameObject::objectAddress(
@@ -655,7 +655,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 //	release() function for ActiveItem group
 
 bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
-	ASSERT(objID != Nothing);
+	assert(objID != Nothing);
 
 	GameObject      *obj = GameObject::objectAddress(objID);
 	GameWorld       *world = (GameWorld *)GameObject::objectAddress(
@@ -771,7 +771,7 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 //-----------------------------------------------------------------------
 
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
-	ASSERT(TAI->itemType == activeTypeInstance);
+	assert(TAI->itemType == activeTypeInstance);
 
 	TilePoint       objLoc = obj->getLocation(),
 	                TAILoc;
@@ -1738,7 +1738,7 @@ void loadAutoMap(SaveFileReader &saveGame) {
 		mapData = map->mapData;
 
 		for (mapIndex = 0; mapIndex < mapSize; mapIndex++) {
-			ASSERT((totalMapIndex >> 3) < archiveBufSize);
+			assert((totalMapIndex >> 3) < archiveBufSize);
 
 			//  If the bit is set in the archive buffer, set the visited
 			//  bit in the map data
@@ -2213,8 +2213,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	uint16              plIndex = stack[ layer ];
 	PlatformCacheEntry  *pce;
 
-	ASSERT(layer >= 0);
-	ASSERT(this >= *mapList[ mapNum ].metaList
+	assert(layer >= 0);
+	assert(this >= *mapList[ mapNum ].metaList
 	       &&  this <  & (*mapList[ mapNum ].metaList)[
 	           mapList[ mapNum ].metaCount ]);
 
@@ -2225,14 +2225,14 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	else if (plIndex & cacheFlag) {
 		plIndex &= ~cacheFlag;
 
-		ASSERT(plIndex < platformCacheSize);
+		assert(plIndex < platformCacheSize);
 
 		//  Get the address of the pce from the cache
 		pce = &platformCache[ plIndex ];
 
-		ASSERT(pce->platformNum >= 0);
-		ASSERT(pce->metaID != NoMetaTile);
-		ASSERT(pce->metaID == thisID(mapNum));
+		assert(pce->platformNum >= 0);
+		assert(pce->metaID != NoMetaTile);
+		assert(pce->metaID == thisID(mapNum));
 
 		//  Move to the end of the LRU
 		pce->remove();
@@ -2254,8 +2254,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 		//  Compute the layer of this entry in the cache
 		cacheIndex = pce - platformCache;
-		ASSERT(cacheIndex < platformCacheSize);
-		ASSERT(cacheIndex >= 0);
+		assert(cacheIndex < platformCacheSize);
+		assert(cacheIndex >= 0);
 
 		//  Now, flush the old mt from the cache.
 		//  This assumes that all metatiles from all worlds are loaded.
@@ -2263,8 +2263,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		if (pce->metaID != NoMetaTile) {
 			MetaTile    *oldMeta = metaTileAddress(pce->metaID);
 
-			ASSERT(pce->layerNum < maxPlatforms);
-			ASSERT(oldMeta->stack[ pce->layerNum ] == (cacheFlag | cacheIndex));
+			assert(pce->layerNum < maxPlatforms);
+			assert(oldMeta->stack[ pce->layerNum ] == (cacheFlag | cacheIndex));
 			oldMeta->stack[ pce->layerNum ] = pce->platformNum;
 		}
 
@@ -2274,8 +2274,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		pce->metaID = thisID(mapNum);
 		stack[ layer ] = (cacheFlag | cacheIndex);
 
-		ASSERT(plIndex >= 0);
-		ASSERT(plIndex * sizeof(Platform) < tileRes->size(platformID + RES_ID(0, 0, 0, mapNum)));
+		assert(plIndex >= 0);
+		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + RES_ID(0, 0, 0, mapNum)));
 
 		// Now, load the actual metatile data...
 		if (tileRes->seek(platformID + RES_ID(0, 0, 0, mapNum))) {
@@ -2379,8 +2379,8 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 
 #endif
 
-	ASSERT(mtile < metaCount);
-	ASSERT(mtile >= 0);
+	assert(mtile < metaCount);
+	assert(mtile >= 0);
 
 	return &(*metaList)[ mtile ];
 }
@@ -3929,7 +3929,7 @@ bool pointOnHiddenSurface(
     const TilePoint &tileCoords,
     const TilePoint &pickCoords,
     SurfaceType     surfaceType) {
-	ASSERT(surfaceType == surfaceVertU || surfaceType == surfaceVertV);
+	assert(surfaceType == surfaceVertU || surfaceType == surfaceVertV);
 
 	WorldMapData    *curMap = &mapList[ currentMapNum ];
 
@@ -3956,11 +3956,11 @@ bool pointOnHiddenSurface(
 	//  Determine the tile coordinates of adjacent tile and the mask
 	//  of the subtile to test on that tile.
 	if (surfaceType == surfaceVertV) {
-		ASSERT(testCoords.u == 0);
+		assert(testCoords.u == 0);
 		adjTCoords.u--;
 		adjSubMask = 0x1000 << (testCoords.v >> subTileShift);
 	} else {
-		ASSERT(testCoords.v == 0);
+		assert(testCoords.v == 0);
 		adjTCoords.v--;
 		adjSubMask = 0x0008 << (testCoords.u & ~subTileMask);
 	}
@@ -4356,7 +4356,7 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 
 	initTileCyclingStates();
 
-	ASSERT(saveGame.getChunkSize() == sizeof(TileCycleArchive) * cycleCount);
+	assert(saveGame.getChunkSize() == sizeof(TileCycleArchive) * cycleCount);
 
 	archiveBuffer = (TileCycleArchive *)RNewPtr(
 	                    sizeof(TileCycleArchive) * cycleCount,
@@ -4527,13 +4527,13 @@ void updateMainDisplay(void) {
 
 	int32           deltaTime = gameTime - lastUpdateTime;
 
-	ASSERT(isActor(viewCenterObject));
+	assert(isActor(viewCenterObject));
 
 	Actor           *viewActor = (Actor *)GameObject::objectAddress(
 	                                 viewCenterObject);
 	TilePoint       viewDiff;
 
-	ASSERT(isWorld(viewActor->IDParent()));
+	assert(isWorld(viewActor->IDParent()));
 
 	GameWorld       *viewWorld = (GameWorld *)viewActor->parent();
 

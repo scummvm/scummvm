@@ -160,14 +160,6 @@ INITIALIZER(initErrorManagers) {
 	return true;
 }
 
-// defining VERIFY_EXIT will give you a message box when the program has
-//    been sucessfully cleaned up
-
-
-#ifdef VERIFY_EXIT
-#include "saga2/program.h"
-#endif
-
 TERMINATOR(termErrorManagers) {
 }
 

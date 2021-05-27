@@ -130,9 +130,9 @@ void initMagic(void) {
 	loadMagicData();
 
 	spellSprites = (SpriteSet **) spriteRes->load(spellSpriteID, "spell sprites");
-	VERIFY(spellSprites);
+	assert(spellSprites);
 	spellSchemes = (ColorScheme **)schemeRes->load(spellSpriteID, "scheme list");
-	VERIFY(spellSchemes);
+	assert(spellSchemes);
 	loadedColorMaps = schemeRes->size(spellSpriteID) / sizeof(ColorScheme);
 }
 
@@ -222,7 +222,7 @@ static void loadMagicData(void) {
 		RDisposePtr(rsi);
 		i++;
 	}
-	VERIFY(i > 1);
+	assert(i > 1);
 
 	// get spell effects
 	i = 0;
@@ -243,7 +243,7 @@ static void loadMagicData(void) {
 		RDisposePtr(rse);
 		i++;
 	}
-	VERIFY(i > 1);
+	assert(i > 1);
 
 
 	// get spell color maps

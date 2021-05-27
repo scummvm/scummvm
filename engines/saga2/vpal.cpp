@@ -244,7 +244,7 @@ void createPalette(
     gPalettePtr dstP,
     int32       elapsedTime,
     int32       totalTime) {
-	ASSERT(totalTime != 0);
+	assert(totalTime != 0);
 
 	int             i;
 	uint32          fadeProgress = (elapsedTime << 8) / totalTime;

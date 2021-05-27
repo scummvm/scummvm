@@ -350,7 +350,7 @@ inline bool file_exists(const char f[]) {
 
 void nameHook(char *targ, const char *bpath, const char *, const char *fname) {
 	char filename[260] = "";
-	VERIFY(targ);
+	assert(targ);
 
 	if (strcmp(bpath, ".\\")) {   //if env var set
 		strcpy(filename, bpath);

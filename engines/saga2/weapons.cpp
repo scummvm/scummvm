@@ -170,7 +170,7 @@ WeaponStuff &getWeapon(weaponID i) {
 //-----------------------------------------------------------------------
 
 GameObject *getShieldItem(GameObject *defender) {
-	VERIFY(isActor(defender));
+	assert(isActor(defender));
 	Actor       *a = (Actor *) defender;
 	GameObject  *obj;
 
@@ -206,9 +206,9 @@ void WeaponStrikeEffect::implement(
     GameObject  *target,
     GameObject  *strikingObj,
     uint8       strength) {
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(target) || isActor(target));
-	ASSERT(isObject(strikingObj) || isActor(strikingObj));
+	assert(isActor(enactor));
+	assert(isObject(target) || isActor(target));
+	assert(isObject(strikingObj) || isActor(strikingObj));
 
 	int8        totalDice,
 	            totalBase;
@@ -270,8 +270,8 @@ void WeaponStuff::addEffect(WeaponEffect *we) {
 
 void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 	WeaponEffect *we;
-	VERIFY(rie);
-	VERIFY(rie && rie->item == master);
+	assert(rie);
+	assert(rie && rie->item == master);
 
 	if (rie->effectGroup == effectStrike) {
 		we = NEW_EFCT   WeaponStrikeEffect(
@@ -344,7 +344,7 @@ static void loadWeaponData(void) {
 		i++;
 	}
 	loadedWeapons = i;
-	VERIFY(i > 1);
+	assert(i > 1);
 
 	auxResFile->disposeContext(spellRes);
 }

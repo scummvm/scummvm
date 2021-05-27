@@ -744,21 +744,21 @@ void initSprites(void) {
 		error("Error accessing sprite resource group.");
 
 	frameRes = resFile->newContext(frameGroupID, "frame resources");
-	VERIFY(frameRes && frameRes->_valid);
+	assert(frameRes && frameRes->_valid);
 
 	poseRes = resFile->newContext(poseGroupID, "pose resources");
-	VERIFY(poseRes && poseRes->_valid);
+	assert(poseRes && poseRes->_valid);
 
 	schemeRes = resFile->newContext(schemeGroupID, "scheme resources");
-	VERIFY(schemeRes && schemeRes->_valid);
+	assert(schemeRes && schemeRes->_valid);
 
 	// object sprites
 	objectSprites = (SpriteSet **)spriteRes->load(objectSpriteID, "object sprites");
-	VERIFY(objectSprites);
+	assert(objectSprites);
 
 	// intagible object sprites
 	mentalSprites = (SpriteSet **)spriteRes->load(mentalSpriteID, "mental sprites");
-	VERIFY(mentalSprites);
+	assert(mentalSprites);
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
 		hResID      weaponSpriteID;

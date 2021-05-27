@@ -459,10 +459,10 @@ public:
 	//  Constructors -- initial construction
 	SpecificObjectTarget(ObjectID id) :
 		obj(id) {
-		ASSERT(isObject(obj));
+		assert(isObject(obj));
 	}
 	SpecificObjectTarget(GameObject *ptr) :
-		obj((ASSERT(isObject(ptr)), ptr->thisID())) {
+		obj((assert(isObject(ptr)), ptr->thisID())) {
 	}
 
 	//  Constructor -- reconstruct from archive buffer

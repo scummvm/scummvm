@@ -93,7 +93,7 @@ void PatrolRouteList::setRouteData(PatrolRouteData *data) {
 	        currentRoute =
 	            (PatrolRoute *) & (*currentRoute)[ currentRoute->vertices() ]) {
 #if DEBUG
-		VERIFY(currentRoute->vertices() > 1);
+		assert(currentRoute->vertices() > 1);
 #endif
 		warning("STUB: PatrolRouteList::setRouteData: unsafe arithmetics");
 		offsetArray[ i ] = 0; // FIXME: It was "currentRoute - routeData";

@@ -808,8 +808,8 @@ void ContainerView::dropPhysical(
     GameObject      *mObj,
     GameObject      *cObj,
     int16           num) {
-	ASSERT(mouseInfo.getObject() == mObj);
-	ASSERT(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mouseInfo.getObject() == mObj);
+	assert(mObj->containmentSet() & ProtoObj::isTangible);
 
 	//  Place object back where it came from, temporarily
 	mouseInfo.replaceObject();
@@ -839,8 +839,8 @@ void ContainerView::usePhysical(
     gPanelMessage   &msg,
     GameObject      *mObj,
     GameObject      *cObj) {
-	ASSERT(mouseInfo.getObject() == mObj);
-	ASSERT(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mouseInfo.getObject() == mObj);
+	assert(mObj->containmentSet() & ProtoObj::isTangible);
 
 	if (cObj == NULL) {
 		dropPhysical(msg, mObj, cObj);
@@ -856,8 +856,8 @@ void ContainerView::useConcept(
     gPanelMessage   &msg,
     GameObject      *mObj,
     GameObject      *cObj) {
-	ASSERT(mouseInfo.getObject() == mObj);
-	ASSERT(mObj->containmentSet() & ProtoObj::isIntangible);
+	assert(mouseInfo.getObject() == mObj);
+	assert(mObj->containmentSet() & ProtoObj::isIntangible);
 
 	mouseInfo.replaceObject();
 
@@ -939,7 +939,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 //  Functions do not appear to be called
 
 void ContainerView::setCursorText(GameObject *obj) {
-	ASSERT(obj);
+	assert(obj);
 
 	const   bufSize = 40;
 	char cursorText[ bufSize ];
@@ -1219,8 +1219,8 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	ASSERT(view != NULL);
-	ASSERT(scrollCompButton != NULL);
+	assert(view != NULL);
+	assert(scrollCompButton != NULL);
 }
 
 /* ===================================================================== *
@@ -1231,8 +1231,8 @@ TangibleContainerWindow::TangibleContainerWindow(
     ContainerNode &nd, ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "ObjectWindow") {
 #if DEBUG
-	ASSERT(view->containerObject);
-	ASSERT(view->containerObject->proto());
+	assert(view->containerObject);
+	assert(view->containerObject->proto());
 #endif
 
 	const int weightIndicatorType = 2;
@@ -1255,7 +1255,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		                                      };
 		uint16      bgndType = view->containerObject->proto()->appearanceType;
 
-		ASSERT(bgndType < 4);
+		assert(bgndType < 4);
 
 		setContainerSprite();               // show at the top of the box
 
@@ -1342,7 +1342,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 	                             0,
 	                             cmdMindContainerFunc);          // mind app func
 
-	ASSERT(mindSelectorCompButton != NULL);
+	assert(mindSelectorCompButton != NULL);
 
 	mindSelectorCompButton->setResponse(FALSE);
 
@@ -1373,8 +1373,8 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
-	ASSERT(view != NULL);
-	ASSERT(scrollCompButton != NULL);
+	assert(view != NULL);
+	assert(scrollCompButton != NULL);
 }
 
 /* ===================================================================== *
@@ -1499,7 +1499,7 @@ void ContainerNode::hide(void) {
 void ContainerNode::show(void) {
 	ProtoObj        *proto = GameObject::protoAddress(object);
 
-	ASSERT(proto);
+	assert(proto);
 
 	//  open the window; Object should already be "open"
 	if (window == NULL) {
@@ -1796,7 +1796,7 @@ void initContainerNodes(void) {
 		}
 	}
 
-	ASSERT(onlyReady);
+	assert(onlyReady);
 #endif
 }
 
@@ -1896,7 +1896,7 @@ void loadContainerNodes(SaveFileReader &saveGame) {
 		globalContainerList.add(*node);
 	}
 
-	ASSERT(tempList.empty());
+	assert(tempList.empty());
 
 	//  Free the archive buffer
 	RDisposePtr(archiveBuffer);
@@ -1934,8 +1934,8 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 	GameObject      *newContainer = NULL;
 	ObjectID        id;
 
-	ASSERT(index >= 0);
-	ASSERT(index < elementsof(classTable));
+	assert(index >= 0);
+	assert(index < elementsof(classTable));
 
 	int             containerClass = classTable[ index ];
 

@@ -528,7 +528,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 	nameBuf[ size - 1 ] = NULL;
 
 
-	ASSERT(strlen(objName()) < size - addTextSize);
+	assert(strlen(objName()) < size - addTextSize);
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
@@ -600,7 +600,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 			if (actorIDToPlayerID(aID, pID)) {
 				PlayerActor *player = getPlayerActorAddress(pID);
-				ASSERT(player);
+				assert(player);
 
 				int16           manaAmount;
 				int16           baseManaAmount;
@@ -834,7 +834,7 @@ void GameObject::move(const Location &location, int16 num) {
 
 
 int16 GameObject::getChargeType(void) {
-	ASSERT(prototype);
+	assert(prototype);
 
 	return prototype->getChargeType();
 }
@@ -846,7 +846,7 @@ void GameObject::recharge(void) {
 	// it's charges to maximum
 	if (getChargeType()) {
 		ProtoObj *po = GameObject::protoAddress(thisID());
-		VERIFY(po);
+		assert(po);
 		bParam = po->maxCharges;
 	}
 }
@@ -854,7 +854,7 @@ void GameObject::recharge(void) {
 // take a charge
 bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 	ProtoObj *po = GameObject::protoAddress(thisID());
-	VERIFY(po);
+	assert(po);
 
 	// if this is not a chargeable item, then return FALSE
 	if (!getChargeType()) {
@@ -887,7 +887,7 @@ bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 
 bool GameObject::hasCharge(ActorManaID manaID, uint16 manaCost) {
 	ProtoObj *po = GameObject::protoAddress(thisID());
-	VERIFY(po);
+	assert(po);
 
 	// if this is not a chargeable item, then return FALSE
 	if (!getChargeType()) {
@@ -1016,7 +1016,7 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 			}
 
 			// massCount should never go negitive
-			ASSERT(massCount >= 0);
+			assert(massCount >= 0);
 		} else
 			return Nothing;
 	} else {
@@ -1049,7 +1049,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 			}
 
 			// massCount should never go negitive
-			ASSERT(massCount >= 0);
+			assert(massCount >= 0);
 		} else
 			return NULL;
 	} else {
@@ -1277,7 +1277,7 @@ void GameObject::deleteObjectRecursive(void) {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
-		ASSERT((prototype->containmentSet() & ProtoObj::isTangible) != 0);
+		assert((prototype->containmentSet() & ProtoObj::isTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
 		if (isWorld(parentID))
@@ -1539,9 +1539,9 @@ bool GameObject::getAvailableSlot(
     TilePoint       *tp,
     bool            canMerge,
     GameObject      **mergeObj) {
-	ASSERT(isObject(obj));
-	ASSERT(tp != NULL);
-	ASSERT(!canMerge || mergeObj != NULL);
+	assert(isObject(obj));
+	assert(tp != NULL);
+	assert(!canMerge || mergeObj != NULL);
 
 	if (prototype == NULL) return FALSE;
 
@@ -1553,7 +1553,7 @@ bool GameObject::getAvailableSlot(
 	if ((objProto->containmentSet()
 	        & (ProtoObj::isContainer | ProtoObj::isIntangible))
 	        == (ProtoObj::isContainer | ProtoObj::isIntangible)) {
-//		ASSERT( isActor( obj ) );
+//		assert( isActor( obj ) );
 
 		//  Set intangible container locations to -1, -1.
 		tp->u = -1;
@@ -1601,8 +1601,8 @@ bool GameObject::placeObject(
     ObjectID    objID,
     bool        canMerge,
     int16       num) {
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(objID));
+	assert(isActor(enactor));
+	assert(isObject(objID));
 
 	TilePoint       slot;
 	GameObject      *obj = GameObject::objectAddress(objID),
@@ -1622,7 +1622,7 @@ bool GameObject::placeObject(
 //	Drop the specified object on the ground in a semi-random location
 
 void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
-	ASSERT(isWorld(parentID));
+	assert(isWorld(parentID));
 
 	int16           dist;
 	int16           mapNum = getMapNum();
@@ -1802,14 +1802,14 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 		return FALSE;
 	}
 
-	ASSERT(timerList->getObject() == this);
+	assert(timerList->getObject() == this);
 
 	//  Search the list to see if there is already a timer with same
 	//  ID as the new timer.  If so, remove it and delete it.
 	for (timerInList = (Timer *)timerList->first();
 	        timerInList != NULL;
 	        timerInList = (Timer *)timerInList->next()) {
-		ASSERT(timerInList->getObject() == this);
+		assert(timerInList->getObject() == this);
 
 		if (newTimer->thisID() == timerInList->thisID()) {
 			timerInList->remove();
@@ -1896,14 +1896,14 @@ bool GameObject::addSensor(Sensor *newSensor) {
 	        && (sensorList = new SensorList(this)) == NULL)
 		return FALSE;
 
-	ASSERT(sensorList->getObject() == this);
+	assert(sensorList->getObject() == this);
 
 	//  Search the list to see if there is already a sensor with same
 	//  ID as the new sensor.  If so, remove it and delete it.
 	for (sensorInList = (Sensor *)sensorList->first();
 	        sensorInList != NULL;
 	        sensorInList = (Sensor *)sensorInList->next()) {
-		ASSERT(sensorInList->getObject() == this);
+		assert(sensorInList->getObject() == this);
 
 		if (newSensor->thisID() == sensorInList->thisID()) {
 			sensorInList->remove();
@@ -3156,7 +3156,7 @@ void Sector::activate(void) {
 //	actors in sector if activation count has reached zero.
 
 void Sector::deactivate(void) {
-	ASSERT(activationCount != 0);
+	assert(activationCount != 0);
 
 	activationCount--;
 }
@@ -3331,8 +3331,8 @@ void loadActiveRegions(SaveFileReader &saveGame) {
 
 SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
 	searchWorld(world) {
-	ASSERT(searchWorld != NULL);
-	ASSERT(isWorld(searchWorld));
+	assert(searchWorld != NULL);
+	assert(isWorld(searchWorld));
 
 	minSector = TilePoint(0, 0, 0);
 	maxSector = searchWorld->sectorSize();
@@ -3372,10 +3372,10 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 //	Return the next object found
 
 ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
-	ASSERT(sectorCoords.u >= minSector.u);
-	ASSERT(sectorCoords.v >= minSector.v);
-	ASSERT(sectorCoords.u < maxSector.u);
-	ASSERT(sectorCoords.v < maxSector.v);
+	assert(sectorCoords.u >= minSector.u);
+	assert(sectorCoords.v >= minSector.v);
+	assert(sectorCoords.u < maxSector.u);
+	assert(sectorCoords.v < maxSector.v);
 
 	ObjectID        currentObjectID;
 
@@ -3818,7 +3818,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 
 					if (!(sectorBitMask & sectorBit)) {
 						currentRegionSectors--;
-						ASSERT(currentRegionSectors >= 0);
+						assert(currentRegionSectors >= 0);
 
 						//  Set the bit in the bit mask indicating that this
 						//  sector overlaps with a previouse active region
@@ -3904,7 +3904,7 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 		                    sectorCoords.u,
 		                    sectorCoords.v);
 
-		ASSERT(currentSector != NULL);
+		assert(currentSector != NULL);
 
 		currentObjectID = currentSector->childID;
 		currentObject = currentObjectID != Nothing
@@ -3918,7 +3918,7 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 			                    sectorCoords.u,
 			                    sectorCoords.v);
 
-			ASSERT(currentSector != NULL);
+			assert(currentSector != NULL);
 
 			currentObjectID = currentSector->childID;
 			currentObject = currentObjectID != Nothing
@@ -3935,8 +3935,8 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 //	Return the next object within the specified region
 
 ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
-	ASSERT(activeRegionIndex >= 0);
-	ASSERT(activeRegionIndex < elementsof(activeRegionList));
+	assert(activeRegionIndex >= 0);
+	assert(activeRegionIndex < elementsof(activeRegionList));
 
 	ObjectID        currentObjectID;
 
@@ -3954,7 +3954,7 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 		                    sectorCoords.u,
 		                    sectorCoords.v);
 
-		ASSERT(currentSector != NULL);
+		assert(currentSector != NULL);
 
 		currentObjectID = currentSector->childID;
 		currentObject = currentObjectID != Nothing
@@ -4032,7 +4032,7 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 
 		if (currentObj->IDChild()) {
 			subIter = NEW_ITER RecursiveContainerIterator(currentObj);
-			VERIFY(subIter);
+			assert(subIter);
 			return subIter->first(obj);
 		}
 	}
@@ -4299,7 +4299,7 @@ int16 openMindType;
 APPFUNC(cmdBrain) {
 	int16       part = clamp(0, ev.mouse.x * 3 / ev.panel->getExtent().width, 2);
 
-	//ASSERT( indivControls->getEnabled() );
+	//assert( indivControls->getEnabled() );
 	if (!indivControls->getEnabled())
 		return;
 
@@ -4312,7 +4312,7 @@ APPFUNC(cmdBrain) {
 
 		openMindType = part;
 
-		ASSERT(container == indivCviewBot->containerObject);
+		assert(container == indivCviewBot->containerObject);
 
 		//  Get the actor's mind container
 		while (iter.next(&item) != Nothing) {
@@ -4498,21 +4498,21 @@ void doBackgroundSimulation(void) {
 	        childID != Nothing;
 	        childID = GameObject::objectAddress(childID)->IDNext())
 		count++;
-	VERIFY(objectLimboCount == count);
+	assert(objectLimboCount == count);
 
 	count = 0;
 	for (childID = GameObject::objectAddress(ActorLimbo)->IDChild();
 	        childID != Nothing;
 	        childID = GameObject::objectAddress(childID)->IDNext())
 		count++;
-	VERIFY(actorLimboCount == count);
+	assert(actorLimboCount == count);
 
 	count = 0;
 	for (childID = GameObject::objectAddress(ImportantLimbo)->IDChild();
 	        childID != Nothing;
 	        childID = GameObject::objectAddress(childID)->IDNext())
 		count++;
-	VERIFY(importantLimboCount == count);
+	assert(importantLimboCount == count);
 #endif
 
 	int32           objectUpdateCount,
@@ -4535,7 +4535,7 @@ void doBackgroundSimulation(void) {
 		//  If object is not deleted, then tell that object to do
 		//  a background update
 		if (obj->IDParent() > ImportantLimbo) {
-			ASSERT(obj->proto());
+			assert(obj->proto());
 
 			//  If an object has been abandoned by the player,
 			//  and is not sitting inside a container,
@@ -4566,7 +4566,7 @@ void doBackgroundSimulation(void) {
 		//  If actor is not deleted, then tell that actor to do
 		//  a background update
 		if (a->IDParent() > ImportantLimbo) {
-			ASSERT(a->proto());
+			assert(a->proto());
 
 			a->proto()->doBackgroundUpdate(a);
 		}

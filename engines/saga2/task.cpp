@@ -164,7 +164,7 @@ public:
 
 	//  Return a pointer to a TaskStack given a TaskStackID
 	TaskStack *getTaskStackAddress(TaskStackID id) {
-		ASSERT(id >= 0 && id < numTaskStacks);
+		assert(id >= 0 && id < numTaskStacks);
 		return array[ id ].getTaskStack();
 	}
 
@@ -193,7 +193,7 @@ TaskStackList::TaskStackList(void) {
 //	TaskStackList destructor
 
 TaskStackList::~TaskStackList(void) {
-	ASSERT(!lazyDelete);
+	assert(!lazyDelete);
 
 	TaskStackPlaceHolder    *tsp;
 	TaskStackPlaceHolder    *nextTsp;
@@ -308,7 +308,7 @@ void *TaskStackList::newTaskStack(void) {
 //	Place a specific TaskStack into the active list and return its address
 
 void *TaskStackList::newTaskStack(TaskStackID id) {
-	ASSERT(id >= 0 && id < elementsof(array));
+	assert(id >= 0 && id < elementsof(array));
 
 	TaskStackPlaceHolder    *tsp;
 
@@ -371,7 +371,7 @@ void TaskStackList::updateTaskStacks(void) {
 		//  Update the task stack and delete it if it is done
 		if ((result = ts->update()) != taskNotDone) {
 			Actor *a = ts->getActor();
-			ASSERT(a != NULL);
+			assert(a != NULL);
 
 			a->handleTaskCompletion(result);
 		}
@@ -526,7 +526,7 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 	new (&stackList) TaskStackList;
 	bufferPtr = stackList.restore(bufferPtr);
 
-	ASSERT(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -611,7 +611,7 @@ public:
 
 	//  Return a pointer to a Task given a TaskID
 	Task *getTaskAddress(TaskID id) {
-		ASSERT(id >= 0 && id < numTasks);
+		assert(id >= 0 && id < numTasks);
 		return array[ id ].getTask();
 	}
 
@@ -666,7 +666,7 @@ TaskList::~TaskList(void) {
 //	Reconstruct from an archive buffer
 
 void *TaskList::restore(void *buf) {
-	ASSERT(list.first() == NULL);
+	assert(list.first() == NULL);
 
 	int16               i,
 	                    taskCount;
@@ -782,7 +782,7 @@ void *TaskList::newTask(char *file, int line, TaskID id)
 void *TaskList::newTask(TaskID id)
 #endif
 {
-	ASSERT(id >= 0 && id < elementsof(array));
+	assert(id >= 0 && id < elementsof(array));
 
 	TaskPlaceHolder     *tp;
 
@@ -944,7 +944,7 @@ void saveTasks(SaveFileConstructor &saveGame) {
 
 	bufferPtr = taskList.archive(bufferPtr);
 
-	ASSERT((uint8 *)bufferPtr - (uint8 *)archiveBuffer == archiveBufSize);
+	assert((uint8 *)bufferPtr - (uint8 *)archiveBuffer == archiveBufSize);
 
 	saveGame.writeChunk(
 	    MakeID('T', 'A', 'S', 'K'),
@@ -982,7 +982,7 @@ void loadTasks(SaveFileReader &saveGame) {
 	new (&taskList) TaskList;
 	bufferPtr = taskList.restore(bufferPtr);
 
-	ASSERT(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -1183,12 +1183,12 @@ void *Task::archive(void *buf) const {
 
 #if DEBUG
 void *Task::operator new (size_t sz, char *file, int line) {
-	ASSERT(sz <= maxTaskSize);
+	assert(sz <= maxTaskSize);
 	return newTask(file, line);
 }
 
 void *Task::operator new (size_t sz, char *file, int line, TaskID id) {
-	ASSERT(sz <= maxTaskSize);
+	assert(sz <= maxTaskSize);
 	return newTask(file, line, id);
 }
 #endif
@@ -2431,7 +2431,7 @@ GoAwayFromActorTask::GoAwayFromActorTask(
     const ActorTarget   &at,
     bool                runFlag) :
 	GoAwayFromTask(ts, runFlag) {
-	ASSERT(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(targetMem));
 	//  Copy the target to the target buffer
 	at.clone(targetMem);
 }
@@ -2703,7 +2703,7 @@ void HuntTask::removeGotoTask(void) {
 HuntLocationTask::HuntLocationTask(TaskStack *ts, const Target &t) :
 	HuntTask(ts),
 	currentTarget(Nowhere) {
-	ASSERT(t.size() <= sizeof(targetMem));
+	assert(t.size() <= sizeof(targetMem));
 	//  Copy the target to the target buffer
 	t.clone(targetMem);
 }
@@ -2892,7 +2892,7 @@ TaskResult HuntToBeNearLocationTask::atTargetUpdate(void) {
 HuntObjectTask::HuntObjectTask(TaskStack *ts, const ObjectTarget &ot) :
 	HuntTask(ts),
 	currentTarget(NULL) {
-	ASSERT(ot.size() <= sizeof(targetMem));
+	assert(ot.size() <= sizeof(targetMem));
 	//  Copy the target to the target buffer
 	ot.clone(targetMem);
 }
@@ -3270,7 +3270,7 @@ HuntActorTask::HuntActorTask(
 	HuntTask(ts),
 	flags(trackFlag ? track : 0),
 	currentTarget(NULL) {
-	ASSERT(at.size() <= sizeof(targetMem));
+	assert(at.size() <= sizeof(targetMem));
 	//  Copy the target to the target buffer
 	at.clone(targetMem);
 }
@@ -3899,7 +3899,7 @@ TaskResult HuntToKillTask::atTargetEvaluate(void) {
 //----------------------------------------------------------------------
 
 TaskResult HuntToKillTask::atTargetUpdate(void) {
-	ASSERT(isActor(currentTarget));
+	assert(isActor(currentTarget));
 
 	Actor   *a = stack->getActor();
 
@@ -4093,7 +4093,7 @@ TaskResult HuntToGiveTask::atTargetUpdate(void) {
 bool BandTask::BandingRepulsorIterator::first(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	ASSERT(a->leader != NULL && a->leader->followers != NULL);
+	assert(a->leader != NULL && a->leader->followers != NULL);
 
 	band = a->leader->followers;
 	bandIndex = 0;
@@ -4119,9 +4119,9 @@ bool BandTask::BandingRepulsorIterator::first(
 bool BandTask::BandingRepulsorIterator::next(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	ASSERT(a->leader != NULL && a->leader->followers != NULL);
-	ASSERT(band == a->leader->followers);
-	ASSERT(bandIndex < band->size());
+	assert(a->leader != NULL && a->leader->followers != NULL);
+	assert(band == a->leader->followers);
+	assert(bandIndex < band->size());
 
 	bandIndex++;
 	while (bandIndex < band->size()) {
@@ -4420,7 +4420,7 @@ BandTask::RepulsorIterator *BandTask::getNewRepulsorIterator(void) {
 bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	ASSERT(iteratingThruEnemies);
+	assert(iteratingThruEnemies);
 
 	int16                   actorDistArray[ elementsof(actorArray) ];
 	TargetActorArray        taa(elementsof(actorArray), actorArray, actorDistArray);
@@ -4428,7 +4428,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 
 	numActors = target.actor(a->world(), a->getLocation(), taa);
 
-	ASSERT(numActors == taa.actors);
+	assert(numActors == taa.actors);
 
 	actorIndex = 0;
 
@@ -4449,7 +4449,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 bool BandTask::BandAndAvoidEnemiesRepulsorIterator::nextEnemyRepulsor(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	ASSERT(iteratingThruEnemies);
+	assert(iteratingThruEnemies);
 
 	actorIndex++;
 
@@ -5154,7 +5154,7 @@ TaskResult ParryTask::update(void) {
 			return taskNotDone;
 	}
 
-	ASSERT(defenderMotion != NULL);
+	assert(defenderMotion != NULL);
 
 	//  If the blow is about to strike, start the actual block
 	if (!(flags & blockStarted)
@@ -5249,7 +5249,7 @@ void TaskStack::mark(void) {
 //	Set the bottom task of this task stack
 
 void TaskStack::setTask(Task *t) {
-	ASSERT(stackBottomID == NoTask);
+	assert(stackBottomID == NoTask);
 
 	if (t->stack == this) {
 		TaskID      id = getTaskID(t);

@@ -729,8 +729,8 @@ int16 tileSlopeHeight(
     GameObject          *obj,
     StandingTileInfo    *stiResult,
     uint8               *platformResult) {
-	VERIFY(obj);
-	VERIFY(obj->proto());
+	assert(obj);
+	assert(obj->proto());
 	return  tileSlopeHeight(
 	            pt,
 	            obj->getMapNum(),
@@ -746,8 +746,8 @@ int16 tileSlopeHeight(
     GameObject          *obj,
     StandingTileInfo    *stiResult,
     uint8               *platformResult) {
-	VERIFY(obj);
-	VERIFY(obj->proto());
+	assert(obj);
+	assert(obj->proto());
 	return  tileSlopeHeight(
 	            pt,
 	            mapNum,

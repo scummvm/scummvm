@@ -131,8 +131,8 @@ bool nonUsable(SkillProto *spell) {
 //-----------------------------------------------------------------------
 // test a target for viability in a given spell
 bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, SkillProto *skill) {
-	VERIFY(enactor != NULL);
-	VERIFY(skill != NULL);
+	assert(enactor != NULL);
+	assert(skill != NULL);
 	SpellStuff &sp = spellBook[skill->getSpellID()];
 	int32 range = sp.getRange();
 	if (target != NULL && target->thisID() != Nothing) {
@@ -196,7 +196,7 @@ bool canCast(GameObject *enactor, SkillProto *spell) {
 #if NPC_MANA_CHECK
 	if (isActor(enactor)) {
 		Actor *a = (Actor *) enactor;
-		VERIFY(ami >= manaIDRed && ami <= manaIDViolet);
+		assert(ami >= manaIDRed && ami <= manaIDViolet);
 		if ((&a->effectiveStats.redMana)[ami] < amt)
 			return FALSE;
 		return TRUE;
@@ -279,7 +279,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 	SpellID s = spell->getSpellID();
 	SpellStuff &sProto = spellBook[s];
 
-	VERIFY(sProto.shouldTarget(spellApplyLocation));
+	assert(sProto.shouldTarget(spellApplyLocation));
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 
@@ -318,8 +318,8 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 	if (sProto.shouldTarget(spellApplyLocation)) {
 		return implementSpell(enactor, l, spell);
 	}
-	VERIFY(sProto.shouldTarget(spellApplyTAG));
-	VERIFY(target->itemType == activeTypeInstance);
+	assert(sProto.shouldTarget(spellApplyTAG));
+	assert(target->itemType == activeTypeInstance);
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 
@@ -357,7 +357,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 	Location l = Location(target->getWorldLocation(), enactor->world()->thisID());
 	if (sProto.shouldTarget(spellApplyLocation))
 		return implementSpell(enactor, l, spell);
-	VERIFY(sProto.shouldTarget(spellApplyObject));
+	assert(sProto.shouldTarget(spellApplyObject));
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 

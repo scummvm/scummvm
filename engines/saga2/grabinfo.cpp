@@ -88,7 +88,7 @@ void GrabInfo::grabObject(ObjectID objid,  Intent in, int16 count) {
 void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
 	char        objText[ bufSize ];
 
-	ASSERT(!obj->isMoving());
+	assert(!obj->isMoving());
 
 	// set the number of items
 	setMoveCount(count);
@@ -177,12 +177,12 @@ uint8 GrabInfo::setIntent(uint8 in) {
 
 //	Make the object given into the mouse pointer
 void GrabInfo::setIcon(void) {
-	ASSERT(
+	assert(
 	    pointerMap.size.x == 0
 	    &&  pointerMap.size.y == 0
 	    &&  pointerMap.data == NULL);
 
-	ASSERT(grabObj != NULL && isObject(grabObj));
+	assert(grabObj != NULL && isObject(grabObj));
 
 	Sprite          *spr;
 	ProtoObj        *proto;
@@ -219,7 +219,7 @@ void GrabInfo::setIcon(void) {
 }
 
 void GrabInfo::clearIcon(void) {
-	ASSERT(grabObj == NULL);
+	assert(grabObj == NULL);
 
 	if (pointerMap.data != NULL) {
 		RDisposePtr(pointerMap.data);

@@ -131,8 +131,8 @@ void createStackedImage(
     gPixelMap   **imageArray,
     int         *imageCenterArray,
     int         images) {
-	ASSERT(images != 0);
-	ASSERT(newImage->data == NULL);
+	assert(images != 0);
+	assert(newImage->data == NULL);
 
 	int         i;
 	int         newImageBytes,
@@ -184,7 +184,7 @@ void createStackedImage(
 //	Dispose of an image created with createStackedImage
 
 inline void disposeStackedImage(gPixelMap *image) {
-	ASSERT(image->data != NULL);
+	assert(image->data != NULL);
 
 	delete [] image->data;
 	image->data = NULL;
@@ -363,8 +363,8 @@ void setMouseTextF(char *format, ...) {
 //	gauge on if necessary ).
 
 void setMouseGauge(int numerator, int denominator) {
-	ASSERT(denominator != 0);
-	ASSERT(numerator <= denominator);
+	assert(denominator != 0);
+	assert(numerator <= denominator);
 
 	if (showGauge
 	        &&  numerator == gaugeNumerator

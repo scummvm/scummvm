@@ -96,7 +96,7 @@ void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
 
 void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	ProtoEffect *pe;
-	VERIFY(rse && rse->spell == master);
+	assert(rse && rse->spell == master);
 	switch (rse->effectGroup) {
 	case effectNone     :
 		return;
@@ -305,7 +305,7 @@ SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
 	caster = GameObject::objectAddress(ssi.caster);
 	target = NEW_SPEL SpellTarget(ssi.target);
 	GameObject *go = GameObject::objectAddress(ssi.world);
-	VERIFY(isWorld(go));
+	assert(isWorld(go));
 	world = (GameWorld *) go;
 	age = ssi.age;
 	spell = ssi.spell;
@@ -353,7 +353,7 @@ void SpellDisplayList::load(SaveFileReader &saveGame) {
 	uint16 tCount;
 
 	saveGame.read(&tCount, sizeof(tCount));
-	VERIFY(tCount < maxCount);
+	assert(tCount < maxCount);
 	if (tCount) {
 		for (int i = 0; i < tCount; i++) {
 			SpellInstance *si;
@@ -364,7 +364,7 @@ void SpellDisplayList::load(SaveFileReader &saveGame) {
 			si->loadEffect(saveGame, ssi.eListSize);
 		}
 	}
-	VERIFY(tCount == count);
+	assert(tCount == count);
 }
 
 void SpellDisplayList::wipe(void) {
@@ -375,7 +375,7 @@ void SpellDisplayList::wipe(void) {
 			count--;
 		}
 
-	ASSERT(count == 0);
+	assert(count == 0);
 }
 
 size_t SpellInstance::saveSize(void) {
@@ -397,7 +397,7 @@ void SpellInstance::saveEffect(SaveFileConstructor &saveGame) {
 }
 
 void SpellInstance::loadEffect(SaveFileReader &saveGame, uint16 eListSize) {
-	VERIFY(eListSize == effect->nodeCount);
+	assert(eListSize == effect->nodeCount);
 	eList.count = effect->nodeCount; //sdp->effCount;
 	if (eList.count)
 		for (int32 i = 0; i < eList.count; i++) {

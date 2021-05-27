@@ -111,7 +111,7 @@ public:
 		vitalityMemory(0) {
 		int     i;
 
-		ASSERT(ActorAttributes::skillFracPointsPerLevel > 0);    // this is used in a divide
+		assert(ActorAttributes::skillFracPointsPerLevel > 0);    // this is used in a divide
 
 		memset(&baseStats, 0, sizeof(baseStats));
 

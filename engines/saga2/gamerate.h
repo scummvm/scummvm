@@ -221,7 +221,7 @@ public:
 
 frameSmoother::frameSmoother(int32 fps, uint32 perSec, uint32 now)
 	: frameCounter(perSec, now) {
-	ASSERT(fps);
+	assert(fps);
 	desiredFPS = fps;
 	historySize = fps * 5;
 	frameHistory = new float[historySize];
