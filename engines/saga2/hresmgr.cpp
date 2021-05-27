@@ -124,16 +124,16 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	_bytepos = 0;
 	if (!_valid) return nullptr;
 
-	debugC(kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
+	debugC(2, kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
 		debugC(kDebugResources, "%x: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
 			if (capture) *capture = &_data[ i ];
-			debugC(kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
+			debugC(2, kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
 			return entry;
 		}
 	}
-	debugC(kDebugResources, "findEntry: No entry found");
+	debugC(2, kDebugResources, "findEntry: No entry found");
 
 	return nullptr;
 }
@@ -398,7 +398,7 @@ void hResource::readResource(hResEntry &element) {
 	element.size = _file.readUint32LE();
 	uint32 id = element.id;
 
-	debugC(kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
+	debugC(3, kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
 }
 
 hResource::hResource(char *resname, char *extname, const char desc[]) {
@@ -413,7 +413,7 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 
 	strncpy(_externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
-	debugC(kDebugResources, "Opening resource: %s", resname);
+	debugC(1, kDebugResources, "Opening resource: %s", resname);
 	_file.open(resname);
 
 	readResource(origin);
