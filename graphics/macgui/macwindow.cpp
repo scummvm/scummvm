@@ -424,7 +424,7 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		if (_wm->_mouseDown && _wm->_hoveredWidget && !_wm->_hoveredWidget->_dims.contains(_dims.left - event.mouse.x, _dims.top - event.mouse.y)) {
+		if (_wm->_mouseDown && _wm->_hoveredWidget && !_wm->_hoveredWidget->_dims.contains(event.mouse.x - _dims.left, event.mouse.y - _dims.top)) {
 			_wm->_hoveredWidget->setActive(false);
 			_wm->_hoveredWidget = nullptr;
 		}
