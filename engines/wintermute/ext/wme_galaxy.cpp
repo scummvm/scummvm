@@ -52,14 +52,7 @@ SXWMEGalaxyAPI::SXWMEGalaxyAPI(BaseGame *inGame, ScStack *stack) : BaseScriptabl
 void SXWMEGalaxyAPI::init() {
 	const MetaEngine *meta = g_engine->getMetaEngine();
 	const Common::String target = BaseEngine::instance().getGameTargetName();
-	_achievementsInfo = meta->getAchievementsInfo(target);
-
-	if (!_achievementsInfo.appId.empty()) {
-		AchMan.setActiveDomain(Common::GALAXY_ACHIEVEMENTS, _achievementsInfo.appId);
-	} else {
-		warning("Unknown game accessing WMEGalaxyAPI. All achievements will be ignored.");
-		AchMan.unsetActiveDomain();
-	}
+	AchMan.setActiveDomain(meta->getAchievementsInfo(target));
 }
 
 
@@ -96,15 +89,7 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 		stack->correctParams(1);
 		const char *id = stack->pop()->getString();
 
-		Common::String msg = id;
-		for (uint32 i = 0; i < _achievementsInfo.descriptions.size(); i++) {
-			if (strcmp(_achievementsInfo.descriptions[i].id, id) == 0) {
-				msg = _achievementsInfo.descriptions[i].title;
-				break;
-			}
-		}
-
-		stack->pushBool(AchMan.setAchievement(id, msg));
+		stack->pushBool(AchMan.setAchievement(id));
 		return STATUS_OK;
 	}
 

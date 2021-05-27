@@ -46,8 +46,6 @@ public:
 
 private:
 	void init();
-
-	Common::AchievementsInfo _achievementsInfo;
 };
 
 } // End of namespace Wintermute
