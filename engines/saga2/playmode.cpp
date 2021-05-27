@@ -337,7 +337,9 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 
 	if (hdr->compress) {
 		map.data = (uint8 *)malloc(map.bytes());
-		if (map.data == NULL) return;
+		if (map.data == NULL)
+			return;
+
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
 
 		Graphics::Surface sur;
@@ -345,14 +347,16 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 		sur.setPixels(map.data);
 		sur.debugPrint();
 		g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
-	} else map.data = (uint8 *)hdr->data;
+	} else
+		map.data = (uint8 *)hdr->data;
 
 	port.setMode(drawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
 	               map.size.x, map.size.y);
 
-	if (hdr->compress) free(map.data);
+	if (hdr->compress)
+		free(map.data);
 }
 
 void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
