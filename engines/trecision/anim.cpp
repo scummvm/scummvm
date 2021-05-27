@@ -63,7 +63,7 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->setObjectAnim(obj, 0);
 		break;
 	case fCREPACCIO:
-		if (_vm->_room[kRoom2E]._flag & kObjFlagExtra)
+		if (_vm->_room[kRoom2E].hasExtra())
 			_vm->_obj[oCRACK2E]._position = 7;
 		else
 			_vm->_obj[oCRACK2E]._position = 6;
@@ -246,13 +246,13 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 		case 1: {
 			const Common::String filename = Common::String::format("%s.3d", _vm->_room[_vm->_curRoom]._baseName);
 			_vm->read3D(filename);
-			_vm->_room[_vm->_curRoom]._flag &= ~kObjFlagExtra;
+			_vm->_room[_vm->_curRoom].setExtra(false);
 			}
 			break;
 		case 2: {
 			const Common::String filename = Common::String::format("%s2.3d", _vm->_room[_vm->_curRoom]._baseName);
 			_vm->read3D(filename);
-			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
+			_vm->_room[_vm->_curRoom].setExtra(true);
 			if (_vm->_curRoom == kRoom37)
 				_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 			} break;
@@ -263,7 +263,7 @@ void AnimTypeManager::processAtFrame(ATFHandle *h, int type, int atf) {
 	case ATFONESPEAK:
 		switch (index) {
 		case 1:	// Storekeeper's wife
-			if (_vm->_room[kRoom1D]._flag & kObjFlagExtra)
+			if (_vm->_room[kRoom1D].hasExtra())
 				break;
 
 			// Quotes spoken by the storekeeper's wife while she is in the cellar

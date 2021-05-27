@@ -307,7 +307,7 @@ void TextManager::showObjName(uint16 obj, bool show) {
 		if (obj == _vm->_lastObj)
 			return;
 		if (!(_vm->_obj[obj]._flag & kObjFlagExamine)) {
-			if ((_vm->_obj[obj]._flag & kObjFlagDone) || (_vm->_room[_vm->_obj[obj]._goRoom]._flag & kObjFlagDone)) {
+			if ((_vm->_obj[obj]._flag & kObjFlagDone) || _vm->_room[_vm->_obj[obj]._goRoom].isDone()) {
 				desc = _vm->_sysText[kMessageGoto];
 				if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					desc += dunno;

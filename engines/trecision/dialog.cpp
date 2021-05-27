@@ -327,8 +327,8 @@ void DialogManager::afterChoice() {
 			_vm->_obj[oDOORUA17]._action = 193;
 			_vm->_obj[oDOORUB17]._action = 197;
 			_vm->setObjectVisible(oFINGERPAD17, false);
-			_vm->_room[kRoom17]._flag &= ~kObjFlagDone;
-			_vm->_room[kRoom17]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom17].setDone(false);
+			_vm->_room[kRoom17].setExtra(true);
 			break;
 
 		case dF1C1:
@@ -497,7 +497,7 @@ void DialogManager::afterChoice() {
 
 		case dC5A1:
 			_vm->_obj[oWINDOWA5A]._action = 1402;
-			if (_vm->_room[kRoom5A]._flag & kObjFlagExtra)
+			if (_vm->_room[kRoom5A].hasExtra())
 				playDialog(dF5A1);
 			break;
 

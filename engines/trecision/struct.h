@@ -23,8 +23,10 @@
 #ifndef TRECISION_STRUCT_H
 #define TRECISION_STRUCT_H
 
+#include "common/file.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
+#include "common/serializer.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
 #include "trecision/defines.h"
@@ -33,11 +35,39 @@ namespace Trecision {
 
 struct SRoom {
 	char  _baseName[4];                     // Room name
-	uint8 _flag;							// Room visited or not
 	uint16 _bkgAnim;                        // Background animation
 	uint16 _object[MAXOBJINROOM];           // Objects in the room
 	uint16 _sounds[MAXSOUNDSINROOM];        // Sounds of the room
 	uint16 _actions[MAXACTIONINROOM];       // Character actions in the room
+
+	bool hasExtra() { return _flag & kObjFlagExtra; }
+	bool isDone() { return _flag & kObjFlagDone; }
+	void setExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
+	void setDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
+
+	void syncGameStream(Common::Serializer &ser) {
+		ser.syncBytes((byte *)_baseName, 4);
+		for (int i = 0; i < MAXACTIONINROOM; i++)
+			ser.syncAsUint16LE(_actions[i]);
+		ser.syncAsByte(_flag);
+		ser.syncAsUint16LE(_bkgAnim);
+	}
+
+	void loadRoom(Common::File *file) {
+		file->read(&_baseName, 4);
+		_flag = file->readByte();
+		file->readByte(); // Padding
+		_bkgAnim = file->readUint16LE();
+		for (int j = 0; j < MAXOBJINROOM; ++j)
+			_object[j] = file->readUint16LE();
+		for (int j = 0; j < MAXSOUNDSINROOM; ++j)
+			_sounds[j] = file->readUint16LE();
+		for (int j = 0; j < MAXACTIONINROOM; ++j)
+			_actions[j] = file->readUint16LE();
+	}
+
+private:
+	uint8 _flag = 0; // Room visited or not, extra or not
 };
 
 struct SObject {

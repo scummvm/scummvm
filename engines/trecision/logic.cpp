@@ -85,7 +85,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	case kRoom21:
 		if (!altRoomFl) {
 			_vm->read3D("21.3d");
-			_vm->_room[kRoom21]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom21].setExtra(false);
 			_vm->_pathFind->setPosition(14);
 			_vm->_obj[oCHAIN21]._position = 5;
 			_vm->_obj[oEXIT21]._position = 11;
@@ -113,7 +113,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->setObjectVisible(oBILLBOARD21, true);
 		} else {
 			_vm->read3D("212.3d");
-			_vm->_room[kRoom21]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom21].setExtra(true);
 			_vm->_pathFind->setPosition(15);
 			_vm->_obj[oCHAIN21]._position = 6;
 			_vm->_obj[oEXIT21]._position = 21;
@@ -145,14 +145,14 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	case kRoom24:
 		if (!altRoomFl) {
 			_vm->read3D("24.3d");
-			_vm->_room[kRoom24]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom24].setExtra(false);
 			_vm->_obj[oPASSAGE24]._position = 3;
 			_vm->_obj[oRUINS24]._position = 3;
 			_vm->setObjectVisible(oDUMMY24, false);
 			_vm->setObjectVisible(oDUMMY24A, true);
 		} else {
 			_vm->read3D("242.3d");
-			_vm->_room[kRoom24]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom24].setExtra(true);
 			_vm->setObjectVisible(od24TO26, true);
 			_vm->_obj[oPASSAGE24]._position = 4;
 			_vm->_obj[oRUINS24]._position = 4;
@@ -164,12 +164,12 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	case kRoom2A:
 		if (!altRoomFl) {
 			_vm->read3D("2A.3d");
-			_vm->_room[kRoom2A]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom2A].setExtra(false);
 			_vm->setObjectVisible(oDUMMY2A2, true);
 			_vm->setObjectVisible(oDUMMY2A, false);
 		} else {
 			_vm->read3D("2A2.3d");
-			_vm->_room[kRoom2A]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom2A].setExtra(true);
 			_vm->setObjectVisible(oDUMMY2A, true);
 			_vm->setObjectVisible(oDUMMY2A2, false);
 		}
@@ -177,12 +177,12 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 	case kRoom2B:
 		if (!altRoomFl) {
 			_vm->read3D("2B.3d");
-			_vm->_room[kRoom2B]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom2B].setExtra(false);
 			_vm->setObjectVisible(oDOOR2B, true);
 			_vm->setObjectVisible(od2BTO28, false);
 		} else {
 			_vm->read3D("2B2.3d");
-			_vm->_room[kRoom2B]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom2B].setExtra(true);
 			_vm->setObjectVisible(oDOOR2B, false);
 			_vm->setObjectVisible(od2BTO28, true);
 		}
@@ -193,7 +193,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oCATWALKA2E]._position = 2;
 			_vm->setObjectAnim(oCATWALKA2E, a2E2PRIMAPALLONTANANDO);
 			_vm->read3D("2E.3d");
-			_vm->_room[kRoom2E]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom2E].setExtra(false);
 			_vm->setObjectVisible(oDUMMY2E, false);
 			_vm->_obj[oENTRANCE2E]._flag &= ~kObjFlagExamine;
 			_vm->setObjectVisible(oCATWALKB2E, false);
@@ -204,7 +204,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oCATWALKA2E]._position = 3;
 			_vm->setObjectAnim(oCATWALKA2E, a2E3FIRSTAPPROACH);
 			_vm->read3D("2E2.3d");
-			_vm->_room[kRoom2E]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom2E].setExtra(true);
 			_vm->setObjectVisible(oDUMMY2E, true);
 			_vm->setObjectVisible(oENTRANCE2E, true);
 			_vm->_obj[oENTRANCE2E]._flag |= kObjFlagExamine;
@@ -220,7 +220,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oVIADUCT2GV]._position = 7;
 			_vm->setObjectAnim(oVIADUCT2GV, a2G7CROSSBRIDGE);
 			_vm->read3D("2GV.3d");
-			_vm->_room[kRoom2GV]._flag &= ~kObjFlagExtra;
+			_vm->_room[kRoom2GV].setExtra(false);
 			_vm->setObjectVisible(oDUMMY2GV, false);
 			_vm->setObjectVisible(oGIRLS2GV, false);
 			_vm->setObjectVisible(oCROCODILE2GV, false);
@@ -298,9 +298,9 @@ void LogicManager::startCharacterAnimations() {
 		++i;
 	} while (characterAnimations[i]._curRoom != 0);
 
-	if (_vm->_curRoom == kRoom18 && _vm->_oldRoom == kRoom17 && !(_vm->_room[kRoom18]._flag & kObjFlagDone)) {
+	if (_vm->_curRoom == kRoom18 && _vm->_oldRoom == kRoom17 && !_vm->_room[kRoom18].isDone()) {
 		_vm->startCharacterAction(a186GUARDAPIAZZA, 0, 0, 0);
-	} else if (_vm->_curRoom == kRoom1A && _vm->_oldRoom == kRoom18 && (_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
+	} else if (_vm->_curRoom == kRoom1A && _vm->_oldRoom == kRoom18 && _vm->_room[kRoom1A].isDone()) {
 		_vm->startCharacterAction(a1A5ENTRA, 0, 0, 0);
 		_vm->_animMgr->_animTab[aBKG1A]._flag |= SMKANIM_OFF1;
 	} else if (_vm->_curRoom == kRoom1D && _vm->_oldRoom == kRoom1B) {
@@ -312,7 +312,7 @@ void LogicManager::startCharacterAnimations() {
 		_vm->startCharacterAction(a1B12SCAPPATOPO, 0, 0, 0);
 	else if (_vm->_curRoom == kRoom2B && (_vm->_oldRoom == kRoom2A))
 		_vm->startCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
-	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && (_vm->_room[kRoom23A]._flag & kObjFlagDone))
+	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && _vm->_room[kRoom23A].isDone())
 		_vm->startCharacterAction(aWALKIN, 0, 0, 0);
 	else if (_vm->_curRoom == kRoom33 && _vm->_oldRoom == kRoom32) {
 		const uint16 roofAction = _vm->isObjectVisible(oBRUCIATURA33) ? a3311SALESCALE : a3313CHIUDEBOTOLA;
@@ -340,10 +340,10 @@ bool LogicManager::startPlayDialog() {
 		_vm->_dialogMgr->playDialog(dF291);
 	} else if (_vm->_curRoom == kRoom2GV && (_vm->_oldRoom == kRoom2G)) {
 		_vm->_dialogMgr->playDialog(dF2G2);
-	} else if (_vm->_curRoom == kRoom31 && (_vm->_oldRoom == kRoom32) && (_vm->_room[kRoom32]._flag & kObjFlagExtra)) {
+	} else if (_vm->_curRoom == kRoom31 && (_vm->_oldRoom == kRoom32) && _vm->_room[kRoom32].hasExtra()) {
 		_vm->_dialogMgr->playDialog(dF321);
 		_vm->_flagShowCharacter = false;
-		_vm->_room[kRoom32]._flag &= ~kObjFlagExtra;
+		_vm->_room[kRoom32].setExtra(false);
 	} else if (_vm->_curRoom == kRoom46 && (_vm->_oldRoom == kRoom43) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
 		_vm->_dialogMgr->playDialog(dF431);
 	} else if (_vm->_curRoom == kRoom45S && (_vm->_oldRoom == kRoom45) && !(_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
@@ -354,14 +354,14 @@ bool LogicManager::startPlayDialog() {
 		if (_vm->_curRoom == kRoom41D)
 			_vm->readExtraObj41D();
 		_vm->_dialogMgr->playDialog(dC4A1);
-	} else if (_vm->_curRoom == kRoom4P && (_vm->_oldRoom == kRoom4O) && !(_vm->_room[kRoom4P]._flag & kObjFlagDone)) {
+	} else if (_vm->_curRoom == kRoom4P && (_vm->_oldRoom == kRoom4O) && !_vm->_room[kRoom4P].isDone()) {
 		_vm->_dialogMgr->playDialog(dF4PI);
 		_vm->_flagShowCharacter = false;
 	} else if (_vm->_curRoom == kRoom51 && (_vm->_oldRoom == kRoom4CT)) {
 		_vm->_dialogMgr->playDialog(dF4C1);
 		_vm->_flagShowCharacter = false;
 	} else if (_vm->_curRoom == kRoom1A && (_vm->_oldRoom == kRoom18)) {
-		if (!(_vm->_room[kRoom1A]._flag & kObjFlagDone)) {
+		if (!_vm->_room[kRoom1A].isDone()) {
 			_vm->_dialogMgr->playDialog(dF1A1);
 			_vm->_obj[oTOPO1C]._flag |= kObjFlagTake;
 			_vm->setObjectAnim(oTOPO1C, a1C3RACCOGLIETOPO);
@@ -441,9 +441,9 @@ void LogicManager::endChangeRoom() {
 	} else if (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P) { // Screens with inventory
 		_vm->_flagShowCharacter = false;
 		_vm->_flagCharacterExists = false;
-	} else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && (!(_vm->_room[kRoom23A]._flag & kObjFlagDone)))
+	} else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone())
 		_vm->_flagShowCharacter = false;
-	else if (_vm->_curRoom == kRoom31 && !(_vm->_room[kRoom31]._flag & kObjFlagDone))
+	else if (_vm->_curRoom == kRoom31 && !_vm->_room[kRoom31].isDone())
 		_vm->_pathFind->setPosition(14);
 	else if ((_vm->_oldRoom == kRoom41D) && (_vm->_inventoryObj[kItemPositioner]._flag & kObjFlagExtra)) {
 		_vm->_pathFind->setPosition(30);
@@ -453,7 +453,7 @@ void LogicManager::endChangeRoom() {
 	// FullMotion
 	const bool dialogHandled = startPlayDialog();
 
-	if (_vm->_curRoom == kRoom19 && !(_vm->_room[kRoom19]._flag & kObjFlagDone)) {
+	if (_vm->_curRoom == kRoom19 && !_vm->_room[kRoom19].isDone()) {
 		_vm->playScript(s19EVA);
 		_vm->_flagNoPaintScreen = false;
 		_vm->_textMgr->clearLastText();
@@ -466,21 +466,21 @@ void LogicManager::endChangeRoom() {
 	}
 
 	//	Sentence
-	if (_vm->_curRoom == kRoom17 && (_vm->_oldRoom == kRoom18) && !(_vm->_room[kRoom17]._flag & kObjFlagDone) && _vm->isObjectVisible(oRETE17))
+	if (_vm->_curRoom == kRoom17 && (_vm->_oldRoom == kRoom18) && !_vm->_room[kRoom17].isDone() && _vm->isObjectVisible(oRETE17))
 		_vm->_textMgr->characterSay(189);
 
 	if ((_vm->_curRoom == kRoom12CU || _vm->_curRoom == kRoom13CU) && _closeUpObj && _vm->_obj[_closeUpObj]._examine)
 		_vm->_textMgr->characterSay(_vm->_obj[_closeUpObj]._examine);
-	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !(_vm->_room[kRoom23A]._flag & kObjFlagDone)) {
+	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone()) {
 		_vm->_flagShowCharacter = true;
 		_vm->startCharacterAction(aWALKIN, 0, 0, 361);
-	} else if (_vm->_curRoom == kRoom24 && !(_vm->_room[kRoom24]._flag & kObjFlagDone))
+	} else if (_vm->_curRoom == kRoom24 && !_vm->_room[kRoom24].isDone())
 		_vm->_textMgr->characterSay(381);
-	else if (_vm->_curRoom == kRoom2G && !(_vm->_room[kRoom2G]._flag & kObjFlagDone))
+	else if (_vm->_curRoom == kRoom2G && !_vm->_room[kRoom2G].isDone())
 		_vm->_textMgr->characterSay(688);
 	else if (_vm->_curRoom == kRoom4C && (_vm->_oldRoom == kRoom4CT))
 		_vm->_textMgr->characterSay(1163);
-	else if (_vm->_curRoom == kRoom41 && (_vm->_oldRoom == kRoom36) && !(_vm->_room[kRoom41]._flag & kObjFlagDone))
+	else if (_vm->_curRoom == kRoom41 && (_vm->_oldRoom == kRoom36) && !_vm->_room[kRoom41].isDone())
 		_vm->_textMgr->characterSay(900);
 	else if (_vm->_curRoom == kRoom58 && _vm->isObjectVisible(oGUARDIA58) && (_vm->_obj[oGUARDIA58]._anim)) {
 		_vm->_curObj = oGUARDIA58;
@@ -489,7 +489,7 @@ void LogicManager::endChangeRoom() {
 		_vm->_textMgr->characterSay(1394);
 	else if (_vm->_curRoom == kRoom58 && (_vm->_oldRoom == kRoom58T))
 		_vm->_textMgr->characterSay(1368);
-	else if (_vm->_curRoom == kRoom5A && !(_vm->_room[kRoom5A]._flag & kObjFlagDone))
+	else if (_vm->_curRoom == kRoom5A && !_vm->_room[kRoom5A].isDone())
 		_vm->_textMgr->characterSay(1408);
 	else if (_vm->_curRoom == kRoomControlPanel && (_vm->_oldRoom == kRoomControlPanel))
 		_vm->_logicMgr->doSys(o00LOAD);
@@ -811,7 +811,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 	case kItemLetter:
 		if (_vm->_useWith[WITH] == oPENPADA13) {
-			if (_vm->_room[kRoom14]._flag & kObjFlagDone)
+			if (_vm->_room[kRoom14].isDone())
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, kRoom14, 14, _vm->_useWith[WITH]);
 			else {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a135METTELETTERA, 0, 0, _vm->_useWith[WITH]);
@@ -872,7 +872,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		*printSentence = false;
 		if (((_vm->_useWith[WITH] == oPENPADA13) || (_vm->_useWith[WITH] == oLETTERA13)) && _vm->isObjectVisible(oLETTERA13))
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a137RICALCAFIRMA, kRoom14, 14, _vm->_useWith[WITH]);
-		else if ((_vm->_useWith[WITH] == oPENPADA13) && (_vm->_room[kRoom14]._flag & kObjFlagDone))
+		else if ((_vm->_useWith[WITH] == oPENPADA13) && _vm->_room[kRoom14].isDone())
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, kRoom14, 14, _vm->_useWith[WITH]);
 		else if (_vm->_useWith[WITH] == oPENPADA13) {
 			if (!_vm->isObjectVisible(oBOX12)) {
@@ -1163,14 +1163,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->removeIcon(kItemRatOnSkate);
 			_vm->read3D("1d2.3d"); // after skate
 			_vm->setObjectVisible(oDONNA1D, false);
-			_vm->_room[_vm->_curRoom]._flag |= kObjFlagExtra;
+			_vm->_room[_vm->_curRoom].setExtra(true);
 			_vm->_animMgr->_animTab[aBKG1D]._flag |= SMKANIM_OFF1;
 			*printSentence = false;
 		}
 		break;
 
 	case kItemPistol:
-		if ((_vm->_useWith[WITH] == oDOORC21) && !(_vm->_room[kRoom21]._flag & kObjFlagExtra)) {
+		if ((_vm->_useWith[WITH] == oDOORC21) && !(_vm->_room[kRoom21].hasExtra())) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a211, 0, 0, _vm->_useWith[WITH]);
 			_vm->_inventoryObj[kItemPistol]._examine = 1472;
 			_vm->_inventoryObj[kItemPistol]._action = 1473;
@@ -1350,7 +1350,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemPincers:
 	case kItemMagneticBar:
 		if (_vm->_useWith[WITH] == oCHAIN21) {
-			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
+			if (_vm->_room[_vm->_curRoom].hasExtra()) {
 				if (_vm->_useWith[USED] == kItemPincers)
 					_vm->_dialogMgr->playDialog(dF212B);
 				else
@@ -1431,7 +1431,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oMONTACARICHI31, true);
 			_vm->setObjectVisible(oPANNELLO31, false);
 			_vm->setObjectVisible(oPANNELLON31, false);
-			_vm->_room[kRoom32]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom32].setExtra(true);
 			_vm->changeRoom(kRoom31, 0, 11);
 
 			*printSentence = false;
@@ -1656,7 +1656,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oLICANTROPO4P, false);
 			_vm->setObjectVisible(oLICANTROPOM4P, true);
 			_vm->setObjectVisible(oSANGUE4P, true);
-			_vm->_room[kRoom4P]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom4P].setExtra(true);
 			_vm->read3D("4p2.3d"); // after werewolf
 			_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			_vm->_dialogMgr->playDialog(dF4P2);
@@ -1865,7 +1865,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_dialogMgr->playDialog(dC5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
 			*printSentence = false;
-			_vm->_room[kRoom5A]._flag |= kObjFlagExtra;
+			_vm->_room[kRoom5A].setExtra(true);
 		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && _vm->_dialogMgr->isDialogFinished(871)) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dF5A1);
@@ -2188,7 +2188,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oCRACK2E:
-		if (_vm->_room[kRoom2E]._flag & kObjFlagExtra)
+		if (_vm->_room[kRoom2E].hasExtra())
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E7GUARDACREPACCIODILA, 0, 0, curObj);
 		else
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2E6GUARDACREPACCIODIQUA, 0, 0, curObj);
@@ -2246,7 +2246,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oSCAFFALE35:
-		if (_vm->_room[kRoom35]._flag & kObjFlagExtra)
+		if (_vm->_room[kRoom35].hasExtra())
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517ESAMINACIANFRUSAGLIE, 0, 0, curObj);
 		else
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3517AESAMINACIANFRUSAGLIE, 0, 0, curObj);
@@ -2254,7 +2254,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 		break;
 
 	case oGIORNALE35:
-		if (_vm->_room[kRoom35]._flag & kObjFlagExtra) {
+		if (_vm->_room[kRoom35].hasExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3521LEGGEGIORNALE, 0, 0, curObj);
 			retVal = false;
 		}
@@ -2398,7 +2398,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oDOORA13:
-		if (_vm->_room[kRoom14]._flag & kObjFlagDone) {
+		if (_vm->_room[kRoom14].isDone()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, kRoom14, 14, _vm->_useWith[WITH]);
 			retVal = false;
 		} else
@@ -2490,13 +2490,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oCHAIN21:
 		if ((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466))) {
-			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
+			if (_vm->_room[_vm->_curRoom].hasExtra()) // Go right
 				_vm->_dialogMgr->playDialog(dF212);                             // 436
 			else                                                 // Go left
 				_vm->_dialogMgr->playDialog(dF213);                             // 466
 			retVal = false;
 		} else if (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481)) {
-			if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) // Go right
+			if (_vm->_room[_vm->_curRoom].hasExtra()) // Go right
 				_vm->_dialogMgr->playDialog(dF212B);                            // 451
 			else                                                 // Go left
 				_vm->_dialogMgr->playDialog(dF213B);                            // 481
@@ -2554,7 +2554,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPASSAGE24:
-		if (_vm->_room[kRoom24]._flag & kObjFlagExtra) {
+		if (_vm->_room[kRoom24].hasExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a244, 0, 14, curObj);
 			_vm->_logicMgr->setupAltRoom(kRoom24, false);
 			retVal = false;
@@ -2700,7 +2700,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPROIETTORE35:
-		_vm->_room[kRoom35]._flag |= kObjFlagExtra;
+		_vm->_room[kRoom35].setExtra(true);
 		_vm->read3D("352.3d"); // After the shock
 
 		_vm->setObjectVisible(oRIBELLEA35, false);
@@ -3017,7 +3017,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oLIBRIEG2B:
-		if (_vm->_room[kRoom2C]._flag & kObjFlagDone) { // If room 2C has been visited before, take the book
+		if (_vm->_room[kRoom2C].isDone()) { // If room 2C has been visited before, take the book
 			retVal = false;
 			if (_vm->_obj[curObj]._anim)
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B4TAKEBOOK, 0, 0, curObj);
@@ -3203,18 +3203,18 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 
 bool LogicManager::mouseClick(uint16 curObj) {
 	bool retVal;
-	if (_vm->_curRoom == kRoom1D && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (curObj != oSCALA1D)) {
+	if (_vm->_curRoom == kRoom1D && !_vm->_room[kRoom1D].hasExtra() && (curObj != oSCALA1D)) {
 		_vm->_curObj = oDONNA1D;
 		_vm->_pathFind->goToPosition(_vm->_obj[oDONNA1D]._position);
 		retVal = true;
-	} else if (_vm->_curRoom == kRoom2B && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (curObj != oCARTELLO2B) && (curObj != od2BTO28)) {
+	} else if (_vm->_curRoom == kRoom2B && _vm->_room[kRoom2B].hasExtra() && (curObj != oCARTELLO2B) && (curObj != od2BTO28)) {
 		_vm->_curObj = oDOOR2B;
 		_vm->_pathFind->goToPosition(_vm->_obj[oCARTELLO2B]._position);
 		retVal = true;
 	} else {
 		switch (curObj) {
 		case oDOORA13:
-			if (_vm->_mouseRightBtn && (_vm->_room[kRoom14]._flag & kObjFlagDone)) {
+			if (_vm->_mouseRightBtn && _vm->_room[kRoom14].isDone()) {
 				if (_vm->_pathFind->_characterGoToPosition != 4)
 					_vm->_pathFind->goToPosition(4);
 				_vm->_mouseRightBtn = false;
@@ -3413,7 +3413,7 @@ bool LogicManager::mouseClick(uint16 curObj) {
 			break;
 		}
 
-		if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
+		if (_vm->_room[_vm->_curRoom].hasExtra()) {
 			if ((curObj == oTUBO21) || (curObj == oBILLBOARD21) || (curObj == oESSE21)
 			|| (curObj == oRAMPINO21) || (curObj == oCATENA21) || (curObj == od21TO22)
 			|| (curObj == oDOORC21) || (curObj == oDOORA21) || (curObj == oCUNICLE21) || (curObj == od24TO23) || (curObj == od2ETO2C) || (curObj == od2GVTO26)) {
@@ -3737,9 +3737,9 @@ void LogicManager::doMouseLeftRight() {
 		_vm->_characterQueue.initQueue();
 
 		if (_vm->checkMask(_vm->_mousePos) && !_vm->_flagDialogActive) {
-			if (_vm->_curRoom == kRoom1D && !(_vm->_room[kRoom1D]._flag & kObjFlagExtra) && (_vm->_curObj != oSCALA1D))
+			if (_vm->_curRoom == kRoom1D && !_vm->_room[kRoom1D].hasExtra() && (_vm->_curObj != oSCALA1D))
 				_vm->_curObj = oDONNA1D;
-			else if (_vm->_curRoom == kRoom2B && (_vm->_room[kRoom2B]._flag & kObjFlagExtra) && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BTO28)) {
+			else if (_vm->_curRoom == kRoom2B && _vm->_room[kRoom2B].hasExtra() && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BTO28)) {
 				_vm->_textMgr->clearLastText();
 				_vm->_curObj = oDOOR2B;
 				_vm->startCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
@@ -3758,9 +3758,10 @@ void LogicManager::doMouseLeftRight() {
 					_vm->_textMgr->clearLastText();
 				}
 				return;
-			} else if (_vm->_curRoom == kRoom35 && !(_vm->_room[kRoom35]._flag & kObjFlagExtra) && ((_vm->_curObj == oFRONTOFFICEC35)
-				|| (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35)
-				|| (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
+			} else if (_vm->_curRoom == kRoom35 && !_vm->_room[kRoom35].hasExtra()
+					&& ((_vm->_curObj == oFRONTOFFICEC35)
+			            || (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35)
+			            || (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
 				_vm->_curObj = oLASTLEV5;
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 				if (_vm->_flagUseWithStarted) {
@@ -3779,8 +3780,8 @@ void LogicManager::doMouseLeftRight() {
 				}
 				return;
 			} else if ((_vm->_curMessage->_event == ME_MLEFT) &&
-					   ((!(_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine)))) ||
-						((_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine)) || (_vm->_curObj == od2GVTO26))))) {
+					   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine)))) ||
+						(_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine)) || (_vm->_curObj == od2GVTO26))))) {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 				return;
 			}
@@ -3802,7 +3803,7 @@ void LogicManager::doMouseLeftRight() {
 					_vm->_pathFind->_characterGoToPosition = -1;
 					_vm->_actor->actorStop();
 					_vm->_pathFind->nextStep();
-					_vm->_scheduler->mouseOperate((uint16)_vm->_curObj);
+					_vm->_scheduler->mouseOperate(_vm->_curObj);
 				} else
 					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 			} else
@@ -3892,7 +3893,7 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_pathFind->nextStep();
 
 	// Handle exit velocity in dual rooms level 2
-	if (_vm->_room[_vm->_oldRoom]._flag & kObjFlagExtra) {
+	if (_vm->_room[_vm->_oldRoom].hasExtra()) {
 		switch (_vm->_curObj) {
 		case od2ETO2C:
 			_vm->_logicMgr->setupAltRoom(kRoom2E, false);
@@ -3943,9 +3944,8 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 		_vm->_logicMgr->setupAltRoom(kRoom2A, _vm->_oldRoom == kRoom25);
 	} else if (_vm->_curRoom == kRoom2B) {
 		_vm->_logicMgr->setupAltRoom(kRoom2B, _vm->_oldRoom == kRoom28);
-	}
-	//			for save/load
-	else if (_vm->_room[_vm->_curRoom]._flag & kObjFlagExtra) {
+	} else if (_vm->_room[_vm->_curRoom].hasExtra()) {
+		// for save/load
 		switch (_vm->_curRoom) {
 		case kRoom15: _vm->read3D("152.3d"); break;
 		case kRoom17: _vm->read3D("172.3d"); break;

@@ -382,8 +382,8 @@ void TrecisionEngine::changeRoom(uint16 room, uint16 action, byte position) {
 
 	_logicMgr->endChangeRoom();
 
-	_room[_curRoom]._flag |= kObjFlagDone; // Visited
-	_renderer->drawCharacter(CALCPOINTS);                         // for right _actorPos entrance
+	_room[_curRoom].setDone(true);            // Visited
+	_renderer->drawCharacter(CALCPOINTS);    // for right _actorPos entrance
 }
 
 void TrecisionEngine::doIdle() {

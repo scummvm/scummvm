@@ -393,7 +393,7 @@ void TrecisionEngine::reEvent() {
 }
 
 void TrecisionEngine::readLoc() {
-	if (_curRoom == kRoom11 && !(_room[kRoom11]._flag & kObjFlagDone))
+	if (_curRoom == kRoom11 && !_room[kRoom11].isDone())
 		_flagShowCharacter = true;
 
 	_soundMgr->stopAllExceptMusic();
