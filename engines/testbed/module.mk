@@ -1,6 +1,7 @@
 MODULE := engines/testbed
 
 MODULE_OBJS := \
+	achievements.o \
 	config.o \
 	config-params.o \
 	events.o \

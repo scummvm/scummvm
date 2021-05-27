@@ -20,37 +20,16 @@
  *
  */
 
-#include "base/plugins.h"
+#ifndef TESTBED_ACHIEVEMENTS_H
+#define TESTBED_ACHIEVEMENTS_H
+ 
+#include "common/achievements.h"
 
-#include "common/system.h"
+namespace Testbed {
 
-#include "engines/advancedDetector.h"
+const Common::AchievementsInfo getAchievementsInfo(const Common::String &target);
 
-#include "testbed/achievements.h"
-#include "testbed/testbed.h"
+} // End of namespace Testbed
 
-class TestbedMetaEngine : public AdvancedMetaEngine {
-public:
-	const char *getName() const override {
-		return "testbed";
-	}
+#endif // TESTBED_ACHIEVEMENTS_H 
 
-	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription * /* desc */) const override {
-		*engine = new Testbed::TestbedEngine(syst);
-		return Common::kNoError;
-	}
-
-	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
-		return Testbed::getAchievementsInfo(target);
-	}
-
-	bool hasFeature(MetaEngineFeature f) const override {
-		return false;
-	}
-};
-
-#if PLUGIN_ENABLED_DYNAMIC(TESTBED)
-	REGISTER_PLUGIN_DYNAMIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
-#else
-	REGISTER_PLUGIN_STATIC(TESTBED, PLUGIN_TYPE_ENGINE, TestbedMetaEngine);
-#endif
