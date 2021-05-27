@@ -29,7 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/config.h"
-#include "saga2/winini.h"
 #include "saga2/program.h"
 
 namespace Saga2 {
@@ -88,6 +87,7 @@ static void defaultConfig(configuration &config) {
 //	saves settings to INI file
 
 void writeConfig(void) {
+#if 0
 	WritePrivateProfileInt("Sound", "MusicVolume", globalConfig.musicVolume, iniFile);
 	WritePrivateProfileInt("Sound", "SoundVolume", globalConfig.soundVolume, iniFile);
 	WritePrivateProfileInt("Sound", "VoiceVolume", globalConfig.voiceVolume, iniFile);
@@ -95,6 +95,8 @@ void writeConfig(void) {
 	WritePrivateProfileInt("Options", "AutoWeapon", globalConfig.autoWeapon, iniFile);
 	WritePrivateProfileInt("Options", "SpeechText", globalConfig.speechText, iniFile);
 	WritePrivateProfileInt("Options", "Night", globalConfig.showNight, iniFile);
+#endif
+	warning("STUB: writeConfig()");
 }
 
 /* ===================================================================== *

@@ -39,7 +39,6 @@
 #include "saga2/calender.h"
 #include "saga2/itevideo.h"
 #include "saga2/tile.h"
-#include "saga2/winini.h"
 #include "saga2/messager.h"
 #include "saga2/intrface.h"
 #include "saga2/script.h"

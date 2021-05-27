@@ -27,8 +27,6 @@
 #ifndef SAGA2_CONFIG_H
 #define SAGA2_CONFIG_H
 
-#include "saga2/winini.h"
-
 namespace Saga2 {
 
 // under WIN95 paths can get BIG
