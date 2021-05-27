@@ -547,7 +547,7 @@ static void evalMouseState(void) {
 					//  intention to walk to the actor, else
 					//  set the intention to pick up the object
 					if (isActor(pickedObject)) {
-						Actor       *a = (Actor *)obj;
+						a = (Actor *)obj;
 
 						mouseInfo.setIntent(
 						    !a->isDead()
@@ -580,7 +580,7 @@ static void evalMouseState(void) {
 	if (mousePressed
 	        &&  !clickActionDone
 	        &&  mouseInfo.getObject() == NULL) {
-		Actor       *a = getCenterActor();
+		a = getCenterActor();
 
 		//  Since the mouse is being dragged, initiate
 		//  the effects of the mouse drag
@@ -670,24 +670,15 @@ void loadTileModeState(SaveFileReader &saveGame) {
 //	Initialize the Tile mode
 
 void TileModeSetup(void) {
-
-	GameObject      *viewActor;
-
 	//  Load in decorative panels for the main window (for this mode)
-	mainWindow->setDecorations(mainWindowDecorations,
-	                           elementsof(mainWindowDecorations),
-	                           imageRes);
+	mainWindow->setDecorations(mainWindowDecorations, elementsof(mainWindowDecorations), imageRes);
 
 	//  Test to draw borders.
 	//  REM: We should actually have a routine to refresh the window...
 	mainWindow->draw();
 
 	//  Create a control covering the map area.
-	tileMapControl = new gStickyDragControl(*playControls,
-	                                        tileRect,
-	                                        0,
-	                                        cmdClickTileMap);
-	checkAlloc(tileMapControl);
+	tileMapControl = new gStickyDragControl(*playControls, tileRect, 0, cmdClickTileMap);
 
 	//Enable Tile Mode Specific Controls
 	tileControls->enable(TRUE);
@@ -886,12 +877,8 @@ void TileModeHandleTask(void) {
 
 					mouseInfo.setText(cursorText);
 					if (isActor(pickedObject)) {
-						Actor       *a;
-
 						a = (Actor *)GameObject::objectAddress(pickedObject);
-						mouseInfo.setGauge(
-						    a->getStats()->vitality,
-						    a->getBaseStats()->vitality);
+						mouseInfo.setGauge(a->getStats()->vitality, a->getBaseStats()->vitality);
 					} else {
 						mouseInfo.clearGauge();
 					}
@@ -953,7 +940,7 @@ void TileModeHandleKey(int16 key, int16 qual) {
 	Actor   *a = getCenterActor();
 	Location l(a->getLocation(), a->IDParent());
 
-	GameObject *object = (GameObject *)getCenterActor();
+	//GameObject *object = (GameObject *)getCenterActor();
 
 	lastUnusedKey = '\0';
 	//This is for moving center actor in cardinal directions
@@ -1269,7 +1256,7 @@ static APPFUNC(cmdClickTileMap) {
 					}
 				}
 			} else if (pickedObject != Nothing) {
-				GameObject      *obj = GameObject::objectAddress(pickedObject);
+				//GameObject      *obj = GameObject::objectAddress(pickedObject);
 
 				if (mouseInfo.getDoable()) {
 					PlayerActorID   pID;
@@ -1403,13 +1390,16 @@ static APPFUNC(cmdClickTileMap) {
 			mousePressed = TRUE;
 		}
 		break;
+
+	default:
+		break;
 	}
 }
 
 //-----------------------------------------------------------------------
 //	Sets up a motion task for the main character.
 
-void navigateDirect(TilePoint pick, bool runFlag) {
+void navigateDirect(TilePoint pick, bool runFlag_) {
 	Actor   *a = getCenterActor();          // addr of actor we control
 
 	if (a) {
@@ -1417,7 +1407,7 @@ void navigateDirect(TilePoint pick, bool runFlag) {
 
 		//  REM: Do running here...
 
-		MotionTask::walkToDirect(*a, pick, runFlag, FALSE);
+		MotionTask::walkToDirect(*a, pick, runFlag_, FALSE);
 	}
 }
 

@@ -325,7 +325,7 @@ void GrabInfo::replaceObject(void) {
 //  This function is called to request a new mouse text string.  If there
 //  is currently no grabbed object the text will be displayed, else the
 //  text pointer will simply be saved.
-void GrabInfo::setText(char *txt) {
+void GrabInfo::setText(const char *txt) {
 	if ((txt != NULL) && strlen(txt)) {
 		strncpy(textBuf, txt, bufSize);
 		textBuf[ bufSize - 1 ] = '\0';
