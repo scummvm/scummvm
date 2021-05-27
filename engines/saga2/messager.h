@@ -77,7 +77,7 @@ public:
 	virtual ~Messager() {}
 
 	size_t operator()(char *format, ...);
-	size_t va(char *format, va_list argptr);
+	size_t va(const char *format, va_list argptr);
 
 	void enable() {
 		enabled = TRUE;

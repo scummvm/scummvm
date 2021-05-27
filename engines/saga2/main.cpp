@@ -197,7 +197,7 @@ void RShowMem(void);
 void parseCommandLine(int argc, char *argv[]);
 char *getExeFromCommandLine(int argc, char *argv[]);
 void updateMouse(void);
-void WriteStatusF2(int16 line, char *msg, ...);
+void WriteStatusF2(int16 line, const char *msg, ...);
 bool initUserDialog(void);
 void cleanupUserDialog(void);
 int16 OptionsDialog(bool disableSaveResume = false);
@@ -914,7 +914,7 @@ void cleanupGUIMessagers(void) {
 //	Debugging status functions
 
 #ifdef  WriteStatus
-void WriteStatusF(int16 line, char *msg, ...) {
+void WriteStatusF(int16 line, const char *msg, ...) {
 	va_list         argptr;
 	int             cnt;
 	if (displayEnabled()) {
@@ -930,7 +930,7 @@ void WriteStatusF(int16 line, char *msg, ...) {
 	}
 }
 
-void WriteStatusF2(int16 line, char *msg, ...) {
+void WriteStatusF2(int16 line, const char *msg, ...) {
 	va_list         argptr;
 	int             cnt;
 	if (displayEnabled()) {
@@ -941,8 +941,8 @@ void WriteStatusF2(int16 line, char *msg, ...) {
 	}
 }
 #else
-void WriteStatusF(int16, char *, ...) {}
-void WriteStatusF2(int16, char *, ...) {}
+void WriteStatusF(int16, const char *, ...) {}
+void WriteStatusF2(int16, const char *, ...) {}
 #endif
 
 //---------------------------------------------------------
