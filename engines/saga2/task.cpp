@@ -1319,7 +1319,7 @@ void WanderTask::pause(void) {
 	abortTask();
 
 	paused = TRUE;
-	counter = (rand() % 64 + rand() % 64) / 2;
+	counter = (g_vm->_rnd->getRandomNumber(63) + g_vm->_rnd->getRandomNumber(63)) / 2;
 }
 
 //----------------------------------------------------------------------
@@ -1327,7 +1327,7 @@ void WanderTask::pause(void) {
 
 void WanderTask::wander(void) {
 	paused = FALSE;
-	counter = (rand() % 256 + rand() % 256) / 2;
+	counter = (g_vm->_rnd->getRandomNumber(255) + g_vm->_rnd->getRandomNumber(255)) / 2;
 }
 
 /* ===================================================================== *
@@ -3904,7 +3904,7 @@ TaskResult HuntToKillTask::atTargetUpdate(void) {
 	Actor   *a = stack->getActor();
 
 	//  If we're ready to attack, attack
-	if (a->isInterruptable() && (rand() & 0x7) == 0) {
+	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(6) == 0) {
 		a->attack(currentTarget);
 		flags |= evalWeapon;
 	}
@@ -4711,7 +4711,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 
 		//  We are at a way point so randomly determine if we should
 		//  pause for a while.
-		if (rand() % 4 == 0) {
+		if (g_vm->_rnd->getRandomNumber(3) == 0) {
 			pause();
 			return taskNotDone;
 		}
@@ -4750,7 +4750,7 @@ TaskResult FollowPatrolRouteTask::handlePaused(void) {
 
 void FollowPatrolRouteTask::pause(void) {
 	paused = TRUE;
-	counter = (rand() % 64 + rand() % 64) / 2;
+	counter = (g_vm->_rnd->getRandomNumber(63) + g_vm->_rnd->getRandomNumber(63)) / 2;
 }
 
 /* ===================================================================== *

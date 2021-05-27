@@ -39,9 +39,6 @@ enum {
 };
 
 class Saga2Engine : public Engine {
-private:
-	// We need random numbers
-	Common::RandomSource *_rnd;
 public:
 	Saga2Engine(OSystem *syst);
 	~Saga2Engine();
@@ -56,7 +53,13 @@ public:
 
 	void loadExeResources();
 	void freeExeResources();
+
+public:
+	// We need random numbers
+	Common::RandomSource *_rnd;
 };
+
+extern Saga2Engine *g_vm;
 
 } // End of namespace Saga2
 

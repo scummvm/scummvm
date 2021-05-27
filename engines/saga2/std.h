@@ -30,6 +30,7 @@
 #include "common/system.h"
 
 #include "saga2/rmemfta.h"
+#include "saga2/saga2.h"
 
 #define ASSERT assert   // FIXME
 #define VERIFY assert   // FIXME

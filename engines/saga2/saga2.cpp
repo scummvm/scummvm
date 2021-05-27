@@ -45,12 +45,16 @@ void openImageTest();
 bool openResources();
 void main_saga2();
 
+Saga2Engine *g_vm;
+
 Saga2Engine::Saga2Engine(OSystem *syst)
 	: Engine(syst) {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("saga2");
+
+	g_vm = this;
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 
@@ -73,7 +77,7 @@ Common::Error Saga2Engine::run() {
 	// Additional setup.
 	debug("Saga2Engine::init");
 
-	if (openResources()) {	
+	if (openResources()) {
 		openImageTest();
 	}
 

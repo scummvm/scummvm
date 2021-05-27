@@ -30,7 +30,7 @@
 namespace Saga2 {
 
 inline int32 RANDOM(int32 minV, int32 maxV) {
-	return (maxV - minV + 1) ? (rand() % abs(maxV - minV + 1)) + minV : 0;
+	return (maxV - minV + 1) ? g_vm->_rnd->getRandomNumber(abs(maxV - minV)) + minV : 0;
 }
 
 inline int32 diceRoll(int dice, int sides, int perDieMod, int base) {
