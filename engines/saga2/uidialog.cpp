@@ -634,25 +634,19 @@ int16 FileDialog(int16 fileProcess) {
 	char    **fieldStrings;
 	uint16  stringIndex;
 	bool    displayOnly;
-	void    **arrowUpIm = NULL,
-	          **arrowDnIm = NULL,
-	            **pushBtnIm = NULL;
+	void    **arrowUpIm = NULL, **arrowDnIm = NULL, **pushBtnIm = NULL;
 
 	AppFunc *fileCommands[ 2 ]  = { { cmdFileSave }, { cmdFileLoad } };
 
 	// text for dialog
-	char    *saveTextStrings[ numSaveLoadTexts ]    = { { SAVE_DIALOG_NAME    } };
-	char    *saveBtnStrings[ numSaveLoadBtns ]      = { { SAVE_DIALOG_BUTTON1 },
-		{ SAVE_DIALOG_BUTTON2 }
-	};
+	const char    *saveTextStrings[numSaveLoadTexts]    = { SAVE_DIALOG_NAME };
+	const char    *saveBtnStrings[numSaveLoadBtns]      = { SAVE_DIALOG_BUTTON1, SAVE_DIALOG_BUTTON2 };
 
-	char    *loadTextStrings[ numSaveLoadTexts ]    = { { LOAD_DIALOG_NAME    } };
-	char    *loadBtnStrings[ numSaveLoadBtns ]      = { { LOAD_DIALOG_BUTTON1 },
-		{ LOAD_DIALOG_BUTTON2 }
-	};
+	const char    *loadTextStrings[numSaveLoadTexts]    = { LOAD_DIALOG_NAME };
+	const char    *loadBtnStrings[numSaveLoadBtns]      = { LOAD_DIALOG_BUTTON1, LOAD_DIALOG_BUTTON2 };
 
-	char    **textStrings[] = { saveTextStrings, loadTextStrings };
-	char    **btnStrings[]  = { saveBtnStrings, loadBtnStrings };
+	const char    **textStrings[] = { saveTextStrings, loadTextStrings };
+	const char    **btnStrings[]  = { saveBtnStrings, loadBtnStrings };
 
 
 	// make the text coloring object
@@ -803,26 +797,28 @@ void updateAllUserControls(void);
 
 int16 OptionsDialog(bool disableSaveResume) {
 	// text for dialog
-	const char    *btnStrings[ numOptionsBtns ]   = { { OPTN_DIALOG_BUTTON1 },
-		{ OPTN_DIALOG_BUTTON2 },
-		{ OPTN_DIALOG_BUTTON3 },
-		{ OPTN_DIALOG_BUTTON4 },
-		{ OPTN_DIALOG_BUTTON5 }
+	const char  *btnStrings[numOptionsBtns] = {
+		OPTN_DIALOG_BUTTON1,
+		OPTN_DIALOG_BUTTON2,
+		OPTN_DIALOG_BUTTON3,
+		OPTN_DIALOG_BUTTON4,
+		OPTN_DIALOG_BUTTON5
 	};
 
 
-	const char    *textStrings[ numOptionsTexts ] = { { OPTN_DIALOG_NAME   },
-		{ OPTN_DIALOG_SLIDE1 },
-		{ OPTN_DIALOG_SLIDE2 },
-		{ OPTN_DIALOG_SLIDE3 },
-		{ OPTN_DIALOG_CHECK1 },
-		{ OPTN_DIALOG_CHECK2 },
-		{ OPTN_DIALOG_CHECK3 },
-		{ OPTN_DIALOG_CHECK4 }
+	const char *textStrings[numOptionsTexts] = {
+		OPTN_DIALOG_NAME,
+		OPTN_DIALOG_SLIDE1,
+		OPTN_DIALOG_SLIDE2,
+		OPTN_DIALOG_SLIDE3,
+		OPTN_DIALOG_CHECK1,
+		OPTN_DIALOG_CHECK2,
+		OPTN_DIALOG_CHECK3,
+		OPTN_DIALOG_CHECK4
 	};
 
 	// make the text coloring object
-	textPallete     pal(33 + 9, 36 + 9, 41 + 9, 34 + 9, 40 + 9, 43 + 9);
+	textPallete pal(33 + 9, 36 + 9, 41 + 9, 34 + 9, 40 + 9, 43 + 9);
 
 	// requester info struct
 	requestInfo     rInfo;
@@ -1597,7 +1593,7 @@ void placardWindow(int8 type, char *text) {
 		break;
 
 	default:
-		// no code
+		error("Unhandled placard type %d", type);
 		break;
 	}
 
