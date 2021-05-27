@@ -84,9 +84,8 @@ Common::Error Saga2Engine::run() {
 
 	loadingScreen();
 
-	if (openResources()) {
+	if (openResources())
 		openImageTest();
-	}
 
 	// Simple main event loop
 	Common::Event evt;

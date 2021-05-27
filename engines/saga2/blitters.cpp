@@ -49,33 +49,33 @@ void _HLine(uint8 *dstPtr, uint32 width, uint32 color) {
 }
 
 void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData) {
-	int8			*dest = (int8 *)map.data;
-	int16			bytecount = (width + 1) & ~1;
-	int16			rowMod = map.size.x - bytecount;
+	int8  *dest     = (int8 *)map.data;
+	int16 bytecount = (width + 1) & ~1;
+	int16 rowMod    = map.size.x - bytecount;
 
-	while (rowCount--)
-	{
-		for (int16 k = 0; k < bytecount;)
-		{
-			int16	p = *srcData++;
+	while (rowCount--) {
+		for (int16 k = 0; k < bytecount;) {
+			int16 p = *srcData++;
 
-			if (p == -128) ;
-			else if (p >= 0)
-			{
+			if (p == -128)
+				continue;
+			else if (p >= 0) {
 				p++;
 				k += p;
-				while (p--) *dest++ = *srcData++;
+				while (p--)
+					*dest++ = *srcData++;
 			}
-			else
-			{
+			else {
 				p = 1 - p;
 				k += p;
-				while (p--) *dest++ = *srcData;
+				while (p--)
+					*dest++ = *srcData;
 				srcData++;
 			}
 		}
 
-		if (bytecount & 1) srcData++;
+		if (bytecount & 1)
+			srcData++;
 		dest += rowMod;
 	}
 }
