@@ -136,7 +136,6 @@ private:
 	void textureScanEdge(int32 x1, int32 y1, int32 z1, int32 c1, int32 tx1, int32 ty1, int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2);
 	void shadowTriangle(int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 cv, int32 zv);
 	void shadowScanEdge(int32 x1, int32 y1, int32 x2, int32 y2);
-	void paintObjAnm(uint16 curBox);
 
 public:
 	Renderer3D(TrecisionEngine *vm);
@@ -146,8 +145,6 @@ public:
 	void resetZBuffer(int x1, int y1, int x2, int y2);
 	void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawCharacter(uint8 flag);
-	void paintScreen(bool flag);
-
 };
 
 class PathFinding3D {

@@ -435,7 +435,7 @@ void AnimManager::refreshSmkAnim(uint16 animation) {
 
 	for (int32 a = 0; a < MAXCHILD; a++) {
 		if (!(_animTab[animation]._flag & (SMKANIM_OFF1 << a)) && (_animTab[animation]._lim[a].bottom != 0)) {
-			_vm->addDirtyRect(_animTab[animation]._lim[a]);
+			_vm->_graphicsMgr->addDirtyRect(_animTab[animation]._lim[a], true);
 		}
 	}
 }
@@ -538,8 +538,7 @@ void AnimManager::drawSmkActionFrame() {
 	if (_animRect.width() > 0 && _animRect.height() > 0) {
 		Graphics::Surface anim = frame->getSubArea(_animRect);
 		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animRect.left, _animRect.top + TOP, palette, false);
-		_vm->addDirtyRect(_animRect);
-		_vm->_actorRect = &_vm->_dirtyRects.back();
+		_vm->_graphicsMgr->addDirtyRect(_animRect, true, true);
 	}
 }
 

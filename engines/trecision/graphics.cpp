@@ -27,11 +27,87 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
+#include "trecision/3d.h"
+#include "trecision/actor.h"
+#include "trecision/anim.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
+#include "trecision/text.h"
 #include "trecision/trecision.h"
+#include "trecision/video.h"
 
 namespace Trecision {
+
+const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
+
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm), _font(nullptr) {
+	_drawRect = Common::Rect(0, 0, 0, 0);
+	_drawObjRect = Common::Rect(0, 0, 0, 0);
+	_drawObjIndex = -1;
+	_drawMask = false;
+	_actorRect = nullptr;
+}
+
+GraphicsManager::~GraphicsManager() {
+	_screenBuffer.free();
+	_background.free();
+	_smkBackground.free();
+	_leftInventoryArrow.free();
+	_rightInventoryArrow.free();
+	_inventoryIcons.free();
+	_saveSlotThumbnails.free();
+	delete[] _font;
+}
+
+bool GraphicsManager::init() {
+	const Graphics::PixelFormat *bestFormat = &kImageFormat;
+
+	// Find a 16-bit format, currently we don't support other color depths
+	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
+	bool found = false;
+	for (Common::List<Graphics::PixelFormat>::const_iterator i = formats.begin(); i != formats.end(); ++i) {
+		if (i->bytesPerPixel == 2) {
+			bestFormat = &*i;
+			found = true;
+			break;
+		}
+	}
+
+	if (!found)
+		return false;
+
+	initGraphics(MAXX, MAXY, bestFormat);
+
+	_screenFormat = g_system->getScreenFormat();
+	if (_screenFormat.bytesPerPixel != 2)
+		return false;
+	_bitMask[0] = _screenFormat.rMax() << _screenFormat.rShift;
+	_bitMask[1] = _screenFormat.gMax() << _screenFormat.gShift;
+	_bitMask[2] = _screenFormat.bMax() << _screenFormat.bShift;
+
+	clearScreen();
+
+	_screenBuffer.create(MAXX, MAXY, _screenFormat);
+	_background.create(MAXX, MAXY, _screenFormat);
+	_smkBackground.create(MAXX, AREA, _screenFormat);
+	_saveSlotThumbnails.create(READICON * ICONDX, ICONDY, _screenFormat);
+
+	loadData();
+	initCursor();
+	hideCursor();
+
+	return true;
+}
+
+void GraphicsManager::addDirtyRect(Common::Rect rect, bool translateRect, bool updateActorRect) {
+	if (translateRect)
+		rect.translate(0, TOP);
+
+	_dirtyRects.push_back(rect);
+
+	if (updateActorRect)
+		_actorRect = &_dirtyRects.back();
+}
 
 void GraphicsManager::drawObj() {
 	if (_drawObjRect.left > MAXX || _drawObjRect.top > MAXX || _drawObjRect.right > MAXX || _drawObjRect.bottom > MAXX)
@@ -84,67 +160,6 @@ void GraphicsManager::drawObj() {
 
 void GraphicsManager::eraseObj() {
 	_screenBuffer.fillRect(Common::Rect(_drawObjRect.left, _drawObjRect.top + TOP, _drawObjRect.right, _drawObjRect.bottom + TOP), 0);
-}
-
-
-const Graphics::PixelFormat GraphicsManager::kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0); // RGB555
-
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm), _font(nullptr) {
-	_drawRect = Common::Rect(0, 0, 0, 0);
-	_drawObjRect = Common::Rect(0, 0, 0, 0);
-	_drawObjIndex = -1;
-	_drawMask = false;
-}
-
-GraphicsManager::~GraphicsManager() {
-	_screenBuffer.free();
-	_background.free();
-	_smkBackground.free();
-	_leftInventoryArrow.free();
-	_rightInventoryArrow.free();
-	_inventoryIcons.free();
-	_saveSlotThumbnails.free();
-	delete[] _font;
-}
-
-bool GraphicsManager::init() {
-	const Graphics::PixelFormat *bestFormat = &kImageFormat;
-
-	// Find a 16-bit format, currently we don't support other color depths
-	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
-	bool found = false;
-	for (Common::List<Graphics::PixelFormat>::const_iterator i = formats.begin(); i != formats.end(); ++i) {
-		if (i->bytesPerPixel == 2) {
-			bestFormat = &*i;
-			found = true;
-			break;
-		}
-	}
-
-	if (!found)
-		return false;
-
-	initGraphics(MAXX, MAXY, bestFormat);
-
-	_screenFormat = g_system->getScreenFormat();
-	if (_screenFormat.bytesPerPixel != 2)
-		return false;
-	_bitMask[0] = _screenFormat.rMax() << _screenFormat.rShift;
-	_bitMask[1] = _screenFormat.gMax() << _screenFormat.gShift;
-	_bitMask[2] = _screenFormat.bMax() << _screenFormat.bShift;
-
-	clearScreen();
-
-	_screenBuffer.create(MAXX, MAXY, _screenFormat);
-	_background.create(MAXX, MAXY, _screenFormat);
-	_smkBackground.create(MAXX, AREA, _screenFormat);
-	_saveSlotThumbnails.create(READICON * ICONDX, ICONDY, _screenFormat);
-
-	loadData();
-	initCursor();
-	hideCursor();
-
-	return true;
 }
 
 void GraphicsManager::clearScreen() {
@@ -434,6 +449,194 @@ void GraphicsManager::dissolve(uint8 val) {
 	}
 
 	clearScreen();
+}
+
+void GraphicsManager::paintScreen(bool flag) {
+	_vm->_animTypeMgr->next();
+
+	_actorRect = nullptr;
+	_dirtyRects.clear();
+	_vm->_flagPaintCharacter = true; // always redraws the character
+
+	int x1 = _vm->_actor->_lim[0];
+	int y1 = _vm->_actor->_lim[2] - TOP;
+	int x2 = _vm->_actor->_lim[1];
+	int y2 = _vm->_actor->_lim[3] - TOP;
+
+	// erase character
+	if (_vm->_flagShowCharacter && x2 > x1 && y2 > y1) { // if a description exists
+		_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		_drawObjRect = Common::Rect(x1, y1, x2, y2);
+		_drawObjIndex = -1;
+		_drawMask = false;
+		drawObj();
+
+		addDirtyRect(_drawObjRect, true, true);
+	} else if (_vm->_animMgr->_animRect.left != MAXX) {
+		_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+		_drawObjRect = _vm->_animMgr->_animRect;
+		_drawObjIndex = -1;
+		_drawMask = false;
+		drawObj();
+
+		addDirtyRect(_drawObjRect, true, true);
+	}
+
+	// If there's text to remove
+	if (_vm->_textStatus & TEXT_DEL) {
+		// remove text
+		_drawRect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
+		_drawObjRect = _vm->_textMgr->getOldTextRect();
+		_drawObjRect.translate(0, -TOP);
+		_drawObjIndex = -1;
+		_drawMask = false;
+
+		if (_drawObjRect.top >= 0 && _drawObjRect.bottom < AREA) {
+			drawObj();
+		} else {
+			eraseObj();
+		}
+		_vm->_textMgr->clearOldText();
+		addDirtyRect(_drawObjRect, true);
+
+		if (!(_vm->_textStatus & TEXT_DRAW)) // if there's no new text
+			_vm->_textStatus = TEXT_OFF;     // stop updating text
+	}
+
+	// Suppress all the objects you removed
+	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
+		if (i->_remove) {
+			_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
+			_drawObjRect = _vm->_obj[i->_objectId]._rect;
+			_drawObjIndex = -1;
+			_drawMask = false;
+			drawObj();
+			addDirtyRect(_drawObjRect, true);
+		}
+	}
+
+	// Find the position of the character
+	_vm->_pathFind->actorOrder();
+
+	// For every box from the horizon forward...
+	// Copy per level
+	for (int liv = _vm->_pathFind->_numSortPanel; liv >= 0; --liv) {
+		uint16 curBox = _vm->_pathFind->_sortPan[liv]._num;
+
+		// draws all objects and animations that intersect the boundaries and refer to the current box
+		paintObjAnm(curBox);
+	}
+
+	if (_vm->_textStatus & TEXT_DRAW) {
+		_vm->_textMgr->drawCurString();
+		_vm->_textStatus = TEXT_DRAW; // Activate text update
+	}
+
+	_vm->_actor->updateStepSound();
+	
+	if (!flag && !_vm->_flagDialogActive) {
+		copyToScreen(0, 0, MAXX, MAXY);
+	}
+
+	_vm->_sortTable.clear();
+
+	_vm->_flagPaintCharacter = false;
+	_vm->_flagWaitRegen = false;
+
+	// Handle papaverine delayed action
+	if ((_vm->_curRoom == kRoom4A) && (_vm->_obj[oCHOCOLATES4A]._flag & kObjFlagExtra)) {
+		if (_vm->_animMgr->smkCurFrame(kSmackerBackground) > 480) {
+			_vm->playScript(s4AHELLEN);
+			_vm->_obj[oCHOCOLATES4A]._flag &= ~kObjFlagExtra;
+		}
+	}
+	//
+}
+
+/**
+ *    Draw all objects and animations that intersect
+ *        boundaries belonging to curbox
+ */
+void GraphicsManager::paintObjAnm(uint16 curBox) {
+	_vm->_animMgr->refreshAnim(curBox);
+
+	// draws new cards belonging to the current box
+	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
+		if (!i->_remove && _vm->_obj[i->_objectId]._nbox == curBox) {
+			// the bitmap object at the desired level
+			SObject obj = _vm->_obj[i->_objectId];
+			_drawRect = obj._rect;
+			_drawRect.translate(0, TOP);
+			_drawObjRect = Common::Rect(_drawRect.width(), _drawRect.height());
+			_drawObjIndex = _vm->getRoomObjectIndex(i->_objectId);
+			_drawMask = obj._mode & OBJMODE_MASK;
+			drawObj();
+			_dirtyRects.push_back(_drawRect);
+		}
+	}
+
+	for (DirtyRectsIterator d = _dirtyRects.begin(); d != _dirtyRects.end(); ++d) {
+		for (int b = 0; b < MAXOBJINROOM; ++b) {
+			const uint16 curObject = _vm->_room[_vm->_curRoom]._object[b];
+			if (!curObject)
+				break;
+
+			SObject obj = _vm->_obj[curObject];
+
+			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) && _vm->isObjectVisible(curObject) && (obj._nbox == curBox)) {
+				Common::Rect r = *d;
+				Common::Rect r2 = obj._rect;
+
+				r2.translate(0, TOP);
+
+				// Include the bottom right of the rect in the intersects() check
+				++r2.bottom;
+				++r2.right;
+
+				if (r.intersects(r2)) {
+					_drawRect = obj._rect;
+					_drawRect.translate(0, TOP);
+
+					// Restore the bottom right of the rect
+					--r2.bottom;
+					--r2.right;
+
+					// TODO: Simplify this?
+					const int16 xr1 = (r2.left > r.left) ? 0 : r.left - r2.left;
+					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
+					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
+					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
+					_drawObjRect = Common::Rect(xr1, yr1, xr2, yr2);
+					_drawObjIndex = b;
+					_drawMask = obj._mode & OBJMODE_MASK;
+					drawObj();
+				}
+			}
+		}
+	}
+
+	if (_vm->_actorPos == curBox && _vm->_flagShowCharacter && _vm->_flagCharacterExists) {
+		_vm->_renderer->drawCharacter(CALCPOINTS);
+
+		int x1 = _vm->_actor->_lim[0];
+		int y1 = _vm->_actor->_lim[2];
+		int x2 = _vm->_actor->_lim[1];
+		int y2 = _vm->_actor->_lim[3];
+
+		if (x2 > x1 && y2 > y1) {
+			// enlarge the rectangle of the character
+			Common::Rect l(x1, y1, x2, y2);
+			if (_actorRect)
+				_actorRect->extend(l);
+
+			_vm->_renderer->resetZBuffer(x1, y1, x2, y2);
+		}
+
+		_vm->_renderer->drawCharacter(DRAWFACES);
+
+	} else if (_vm->_actorPos == curBox && !_vm->_flagDialogActive) {
+		_vm->_animMgr->refreshSmkAnim(_vm->_animMgr->_playingAnims[kSmackerAction]);
+	}
 }
 
 uint16 GraphicsManager::getCharWidth(byte character) {

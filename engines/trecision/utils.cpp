@@ -209,7 +209,7 @@ void TrecisionEngine::processTime() {
 			_lightIconOld = _lightIcon;
 		}
 
-		_renderer->paintScreen(false);
+		_graphicsMgr->paintScreen(false);
 		_textMgr->clearTextStack();
 
 		uint32 paintTime = readTime();

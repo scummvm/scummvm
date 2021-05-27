@@ -26,6 +26,7 @@
 #include "trecision/scheduler.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
+#include "trecision/sound.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {
@@ -111,6 +112,10 @@ void Actor::initTextures() {
 	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
 
 	_texture = (STexture *)&_textureArea[0];
+}
+
+void Actor::updateStepSound() {
+	_vm->_soundMgr->soundStep((_lim[1] + _lim[0]) / 2, (_lim[5] + _lim[4]) / 2, _curAction, _curFrame);
 }
 
 static const float _vertsCorr[104][3] = {
