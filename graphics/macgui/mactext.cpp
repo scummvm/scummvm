@@ -1293,8 +1293,7 @@ Common::U32String MacText::cutSelection() {
 
 	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
 
-	// TODO: Remove the actual text
-
+	deleteSelection();
 	clearSelection();
 
 	return selection;
@@ -1313,6 +1312,12 @@ bool MacText::processEvent(Common::Event &event) {
 
 		switch (event.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
+			// if we have the selectedText, then we delete it
+			if (_selectedText.endY != -1) {
+				cutSelection();
+				_contentIsDirty = true;
+				return true;
+			}
 			if (_cursorRow > 0 || _cursorCol > 0) {
 				deletePreviousChar(&_cursorRow, &_cursorCol);
 				updateCursorPos();
@@ -1719,10 +1724,42 @@ void MacText::insertChar(byte c, int *row, int *col) {
 	D(9, "**insertChar cursor row %d col %d", _cursorRow, _cursorCol);
 }
 
-void MacText::deletePreviousChar(int *row, int *col) {
-	if (*col == 0 && *row == 0) // nothing to do
+void MacText::deleteSelection() {
+	// TODO: maybe we need to implement an individual delete part for mactext
+	if (_selectedText.endY == -1 || (_selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY))
 		return;
+	if (_selectedText.startRow == -1 || _selectedText.startCol == -1 || _selectedText.endRow == -1 || _selectedText.endCol == -1)
+		error("deleting non-existing selected area");
 
+	SelectedText s = _selectedText;
+	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
+		SWAP(s.startX, s.endX);
+		SWAP(s.startY, s.endY);
+		SWAP(s.startRow, s.endRow);
+		SWAP(s.startCol, s.endCol);
+	}
+
+	int row = s.endRow, col = s.endCol;
+
+	while (row != s.startRow || col != s.startCol) {
+		if (row == 0 && col == 0)
+			break;
+		deletePreviousCharInternal(&row, &col);
+	}
+
+	reshuffleParagraph(&row, &col);
+
+	_fullRefresh = true;
+	recalcDims();
+	render();
+
+	// update cursor position
+	_cursorRow = row;
+	_cursorCol = col;
+	updateCursorPos();
+}
+
+void MacText::deletePreviousCharInternal(int *row, int *col) {
 	if (*col == 0) { // Need to glue the lines
 		*col = getLineCharWidth(*row - 1);
 		(*row)--;
@@ -1755,6 +1792,12 @@ void MacText::deletePreviousChar(int *row, int *col) {
 	}
 
 	_textLines[*row].width = -1; // flush the cache
+}
+
+void MacText::deletePreviousChar(int *row, int *col) {
+	if (*col == 0 && *row == 0) // nothing to do
+		return;
+	deletePreviousCharInternal(row, col);
 
 	for (int i = 0; i < (int)_textLines.size(); i++) {
 		D(9, "**deleteChar line %d", i);
