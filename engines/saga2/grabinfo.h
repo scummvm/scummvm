@@ -141,7 +141,7 @@ public:
 	void replaceObject(void);
 
 	//  request a change to the mouse cursor text
-	void setText(char *txt);
+	void setText(const char *txt);
 
 	//  request a change to the mouse gauge
 	void setGauge(int16 numerator, int16 denominator);
