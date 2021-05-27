@@ -51,7 +51,6 @@ MODULE_OBJS := \
 	metaengine.o \
 	mission.o \
 	modal.o \
-	mono.o \
 	motion.o \
 	msgbox.o \
 	noise.o \

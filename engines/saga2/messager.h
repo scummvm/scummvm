@@ -29,7 +29,6 @@
 
 #include "saga2/vdraw.h"
 #include "saga2/grequest.h"
-#include "saga2/mono.h"
 
 namespace Saga2 {
 
