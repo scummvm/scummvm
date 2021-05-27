@@ -40,6 +40,17 @@ AchievementsManager::AchievementsManager() {
 AchievementsManager::~AchievementsManager() {
 }
 
+bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
+	if (info.appId.empty()) {
+		unsetActiveDomain();
+		return false;
+	}
+
+	_descriptions = info.descriptions;
+
+	return setActiveDomain(info.platform, info.appId);
+}
+
 bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const String &appId) {
 	String prefix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId :
 					platform == GALAXY_ACHIEVEMENTS ? "galaxy-" + appId :
@@ -70,9 +81,30 @@ bool AchievementsManager::unsetActiveDomain() {
 	delete _iniFile;
 	_iniFile = nullptr;
 
+	_descriptions.clear();
+
 	return true;
 }
 
+
+bool AchievementsManager::setAchievement(const String &id) {
+	if (!isReady()) {
+		return false;
+	}
+	if (isAchieved(id)) {
+		return true;
+	}
+
+	String displayedMessage = id;
+	for (uint32 i = 0; i < _descriptions.size(); i++) {
+		if (strcmp(_descriptions[i].id, id.c_str()) == 0) {
+			displayedMessage = _descriptions[i].title;
+			break;
+		}
+	}
+
+	return setAchievement(id, displayedMessage);
+}
 
 bool AchievementsManager::setAchievement(const String &id, const String &displayedMessage) {
 	if (!isReady()) {
