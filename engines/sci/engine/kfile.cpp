@@ -875,6 +875,15 @@ reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
 			exists = true;
 	}
 
+	// GK1 easter egg at the Voodoo Hounfour in script 805. In this easter
+	// egg, Gabriel draws a doodle of Jane Jensen in the whiteboard, if the
+	// player uses the operate action below the whiteboard's eraser. This
+	// easter egg looks for a file named "buster" to be present, so that it
+	// is enabled. We always report that this file exists, to unlock the
+	// easter egg.
+	if (!exists && name == "buster")
+		exists = true;
+	
 	// Special case for non-English versions of LSL5: The English version of
 	// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
 	// memory.drv exists (which is where the game's password is stored). If
