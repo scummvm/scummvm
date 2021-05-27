@@ -1049,7 +1049,8 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->frameRect(borderRect, 0);
 	}
 
-	if (_cursorState)
+	// if we are drawing the selection text, then we don't draw the cursor
+	if (_cursorState && !(_selectedText.endY != -1 && _active))
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 
 	if (_selectedText.endY != -1 && _active)
@@ -1105,6 +1106,13 @@ uint getNewlinesInString(const Common::U32String &str) {
 void MacText::drawSelection() {
 	if (_selectedText.endY == -1)
 		return;
+
+	// we check if the selection size is 0, then we don't draw it anymore
+	// it's a small optimize, but can bring us correct behavior
+	if (_selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY) {
+		_selectedText.startY = _selectedText.endY = -1;
+		return;
+	}
 
 	SelectedText s = _selectedText;
 
