@@ -1368,7 +1368,7 @@ void Actor::deleteActor(void) {
 
 	//  Kill task
 	if (curTask != NULL) {
-		curTask->abort();
+		curTask->abortTask();
 		delete curTask;
 		curTask = NULL;
 	}
@@ -1432,7 +1432,7 @@ void Actor::die(void) {
 
 	//  Kill task
 	if (curTask != NULL) {
-		curTask->abort();
+		curTask->abortTask();
 		delete curTask;
 		curTask = NULL;
 	}
@@ -1533,7 +1533,7 @@ void Actor::deactivateActor(void) {
 #endif
 	//  Kill task
 	if (curTask != NULL) {
-		curTask->abort();
+		curTask->abortTask();
 		delete curTask;
 		curTask = NULL;
 	}
@@ -1588,7 +1588,7 @@ void Actor::lobotomize(void) {
 
 	//  Kill task
 	if (curTask != NULL) {
-		curTask->abort();
+		curTask->abortTask();
 		delete curTask;
 		curTask = NULL;
 	}
@@ -2275,7 +2275,7 @@ bool Actor::SetAvailableAction(int16 flags, ...) {
 void Actor::setGoal(uint8 newGoal) {
 	if (currentGoal != newGoal) {
 		if (curTask != NULL) {
-			curTask->abort();
+			curTask->abortTask();
 			delete curTask;
 			curTask = NULL;
 		}

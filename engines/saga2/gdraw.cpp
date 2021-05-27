@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
 #include "saga2/gblitter.h"
@@ -35,10 +33,6 @@ namespace Saga2 {
 #define TempAlloc       malloc
 #define TempFree        free
 
-
-/* ===================================================================== *
-                    Member functions for gPort
- * ===================================================================== */
 
 void gPort::setMap(gPixelMap *newmap, bool inverted) {
 	map = newmap;

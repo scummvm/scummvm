@@ -33,14 +33,6 @@
 
 namespace Saga2 {
 
-#ifdef _WIN32   //  Set structure alignment packing value to 1 byte
-#pragma pack( push, 1 )
-#endif
-
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
 class ActorAssignment;
 class Band;
 class MotionTask;
@@ -138,15 +130,15 @@ struct ActorAttributes {
 
 		};
 
-		uint8   allSkills[ numSkills ]; // number of skills
+		uint8   allSkills[numSkills]; // number of skills
 	};
 
 
 	//  Pad byte for alignment
-	int8        pad;
+	int8 pad;
 
 	//  Hit-points
-	int16       vitality;
+	int16 vitality;
 
 	//  Magic energy
 	union {
@@ -159,14 +151,14 @@ struct ActorAttributes {
 			            violetMana;
 		};
 
-		int16 allManas[ numManas ];
+		int16 allManas[numManas];
 	};
 
 	uint8 &skill(int16 id) {
-		return allSkills[ id ];
+		return allSkills[id];
 	}
 	int16 &mana(int16 id) {
-		return allManas[ id ];
+		return allManas[id];
 	}
 
 	uint8 getSkillLevel(int16 id) {
@@ -175,8 +167,8 @@ struct ActorAttributes {
 };  // 28 bytes
 
 
-const int   baseCarryingCapacity = 100;
-const int   carryingCapacityBonusPerBrawn = 200 / ActorAttributes::skillLevels;
+const int baseCarryingCapacity = 100;
+const int carryingCapacityBonusPerBrawn = 200 / ActorAttributes::skillLevels;
 
 /* ===================================================================== *
    ResourceActorProtoExtension structure
@@ -512,13 +504,13 @@ struct ResourceActor : public ResourceGameObject {
 	                rightHandObject;        // object held in right hand.
 
 	//  Knowledge packets
-	uint16          knowledge[ 16 ];
+	uint16          knowledge[16];
 
 	//  Schedule script ID
 	uint16          schedule;
 
 	//  Pad bytes
-	uint8           reserved[ 18 ];
+	uint8           reserved[18];
 
 };
 
@@ -561,14 +553,14 @@ public:
 	                rightHandObject;        // object held in right hand.
 
 	//  Knowledge packets
-	uint16          knowledge[ 16 ];
+	uint16          knowledge[16];
 
 	//  Schedule script ID
 	uint16          schedule;
 
 	//  Run-time fields
 
-	uint8           conversationMemory[ 4 ];// last things talked about
+	uint8           conversationMemory[4];// last things talked about
 
 	//  Sprite animation variables
 	uint8           currentAnimation,       // current action sequence
@@ -613,7 +605,7 @@ public:
 	uint8           deactivationCounter;
 
 	//  Assignment
-	uint8           assignmentBuf[ 24 ];    // memory reserved for actor
+	uint8           assignmentBuf[24];    // memory reserved for actor
 	// assignments
 
 	//  Current effective stats
@@ -636,11 +628,11 @@ public:
 	Actor           *leader;                // This actor's leader
 	Band            *followers;             // This actor's band of followers
 
-	ObjectID        armorObjects[ ARMOR_COUNT ];    //  armor objects being worn
+	ObjectID        armorObjects[ARMOR_COUNT];    //  armor objects being worn
 
 	GameObject      *currentTarget;
 
-	int16           scriptVar[ actorScriptVars ];   //  scratch variables for scripter use
+	int16           scriptVar[actorScriptVars];   //  scratch variables for scripter use
 
 	//  Member functions
 
@@ -1077,58 +1069,6 @@ void loadFactionTallies(SaveFileReader &saveGame);
 
 //  Cleanup the faction tally table
 inline void cleanupFactionTallies(void) { /* Nothing to do */ }
-
-/* ============================================================================ *
-   Magic: Actor Enchantment bits
- * ============================================================================ */
-
-//  These are are all the enchantment effects that can be represented
-//  as a single bit.
-
-
-
-//    THESE ARE NO LONGER VALID SEE EFFECTS.H
-
-#if 0
-enum enchantmentEffects {
-	actorFlamingAura        = (1 << 0),     // surrounded by damaging aura
-	actorImmunePhysical     = (1 << 1),     // immune to physical weapons
-	actorImmuneProjectile   = (1 << 2),     // immune to projectiles
-	actorImmuneHandToHand   = (1 << 3),     // immune to non-projectiles
-	actorImmuneMagicMissile = (1 << 4),     // immune to magical projectiles
-	actorImmuneFire         = (1 << 5),     // immune to fire
-	actorImmuneFireMagic    = (1 << 6),     // immune to magical fire
-	actorImmuneLava         = (1 << 7),     // immune to hot terrain
-	actorImmuneCold         = (1 << 8),     // immune to cold
-	actorImmuneMental       = (1 << 9),     // immune to mental attack
-	actorImmuneDirectMagic  = (1 << 10),    // immune to direct magic
-	actorImmuneLifeDrain    = (1 << 11),    // immune to Life Drain
-	actorLandWalking        = (1 << 12),    // can walk on land
-	actorDesolidified       = (1 << 13),    // can walk through walls
-	actorFloating           = (1 << 14),    // actor is floating
-	actorFallSlowly         = (1 << 15),    // protected against falling
-	actorLevitating         = (1 << 16),    // actor is levitating
-	actorWaterWalking       = (1 << 17),    // can walk on water
-	actorFlying             = (1 << 18),    // flying spell
-	actorBlind              = (1 << 19),    // actor is blind
-	actorPanic              = (1 << 20),    // actor runs away from danger
-	actorParalyzed          = (1 << 21),    // actor can not move
-	actorMoveFast           = (1 << 22),    // move faster than normal
-	actorMoveSlow           = (1 << 23),    // move slower than normal
-	actorAttackFast         = (1 << 24),    // attack faster than normal
-	actorAttackSlow         = (1 << 25),    // attack slower than normal
-	actorAsleep             = (1 << 26),    // actor goes to sleep
-	actorSoulSight          = (1 << 27),    // can see invisible
-	actorClairvoyant        = (1 << 28),    // player can scroll view
-	actorDetectPoison       = (1 << 29),    // poison objects highlighted
-	actorInvisible          = (1 << 30),    // no-one can see this actor
-	actorHasNoSmell         = (1 << 31),    // can't be tracked
-};
-#endif
-
-#ifdef _WIN32   //  Reset old structure alignment
-#pragma pack( pop )
-#endif
 
 } // end of namespace Saga2
 

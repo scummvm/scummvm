@@ -62,7 +62,7 @@ ActorAssignment::~ActorAssignment(void) {
 	if (a->currentGoal == actorGoalFollowAssignment
 	        &&  a->curTask != NULL) {
 		//  If so, abort it
-		a->curTask->abort();
+		a->curTask->abortTask();
 		delete a->curTask;
 		a->curTask = NULL;
 	}

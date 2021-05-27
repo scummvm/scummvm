@@ -1261,7 +1261,7 @@ int16 WanderTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void WanderTask::abort(void) {
+void WanderTask::abortTask(void) {
 	//  if the actor has a wander motion, abort it
 	MotionTask *actorMotion = stack->getActor()->moveTask;
 
@@ -1316,7 +1316,7 @@ TaskResult WanderTask::handleWander(void) {
 
 void WanderTask::pause(void) {
 	//  Call abort to stop the wandering motion
-	abort();
+	abortTask();
 
 	paused = TRUE;
 	counter = (rand() % 64 + rand() % 64) / 2;
@@ -1424,9 +1424,9 @@ int16 TetheredWanderTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void TetheredWanderTask::abort(void) {
+void TetheredWanderTask::abortTask(void) {
 	if (gotoTether != NULL) {
-		gotoTether->abort();
+		gotoTether->abortTask();
 		delete gotoTether;
 		gotoTether = NULL;
 	} else {
@@ -1467,7 +1467,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 		}
 	} else {
 		if (gotoTether != NULL) {
-			gotoTether->abort();
+			gotoTether->abortTask();
 			delete gotoTether;
 			gotoTether = NULL;
 		}
@@ -1590,10 +1590,10 @@ void GotoTask::mark(void) {
 
 //----------------------------------------------------------------------
 
-void GotoTask::abort(void) {
+void GotoTask::abortTask(void) {
 	//  If there is a wander subtask, delete it.
 	if (wander) {
-		wander->abort();
+		wander->abortTask();
 		delete wander;
 		wander = NULL;
 	} else {
@@ -1608,7 +1608,7 @@ void GotoTask::abort(void) {
 TaskResult GotoTask::evaluate(void) {
 	//  Determine if we have reach the target.
 	if (stack->getActor()->getLocation() == destination()) {
-		abort();
+		abortTask();
 		return taskSucceeded;
 	}
 
@@ -2274,9 +2274,9 @@ void GoAwayFromTask::mark(void) {
 //----------------------------------------------------------------------
 //	Abort this task
 
-void GoAwayFromTask::abort(void) {
+void GoAwayFromTask::abortTask(void) {
 	if (goTask != NULL) {
-		goTask->abort();
+		goTask->abortTask();
 		delete goTask;
 		goTask = NULL;
 	}
@@ -2597,14 +2597,14 @@ void HuntTask::mark(void) {
 
 //----------------------------------------------------------------------
 
-void HuntTask::abort(void) {
+void HuntTask::abortTask(void) {
 	if (huntFlags & (huntWander | huntGoto)) {
-		subTask->abort();
+		subTask->abortTask();
 		delete subTask;
 	}
 
-	//  If we've reached the target call the atTargetAbort() function
-	if (atTarget()) atTargetAbort();
+	//  If we've reached the target call the atTargetabortTask() function
+	if (atTarget()) atTargetabortTask();
 }
 
 //----------------------------------------------------------------------
@@ -2680,7 +2680,7 @@ TaskResult HuntTask::update(void) {
 //----------------------------------------------------------------------
 
 void HuntTask::removeWanderTask(void) {
-	subTask->abort();
+	subTask->abortTask();
 	delete subTask;
 	huntFlags &= ~huntWander;
 }
@@ -2688,7 +2688,7 @@ void HuntTask::removeWanderTask(void) {
 //----------------------------------------------------------------------
 
 void HuntTask::removeGotoTask(void) {
-	subTask->abort();
+	subTask->abortTask();
 	delete subTask;
 	huntFlags &= ~huntGoto;
 }
@@ -2866,7 +2866,7 @@ bool HuntToBeNearLocationTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearLocationTask::atTargetAbort(void) {}
+void HuntToBeNearLocationTask::atTargetabortTask(void) {}
 
 //----------------------------------------------------------------------
 
@@ -3099,7 +3099,7 @@ bool HuntToBeNearObjectTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearObjectTask::atTargetAbort(void) {}
+void HuntToBeNearObjectTask::atTargetabortTask(void) {}
 
 //----------------------------------------------------------------------
 
@@ -3238,7 +3238,7 @@ bool HuntToPossessTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToPossessTask::atTargetAbort(void) {}
+void HuntToPossessTask::atTargetabortTask(void) {}
 
 //----------------------------------------------------------------------
 
@@ -3512,7 +3512,7 @@ void HuntToBeNearActorTask::evaluateTarget(void) {
 			            maxSenseRange,
 			            actorArray[ i ])) {
 				if (currentTarget != actorArray[ i ]) {
-					if (atTarget()) atTargetAbort();
+					if (atTarget()) atTargetabortTask();
 					currentTarget = actorArray[ i ];
 				}
 
@@ -3539,7 +3539,7 @@ bool HuntToBeNearActorTask::atTarget(void) {
 		return TRUE;
 	else {
 		if (goAway != NULL) {
-			goAway->abort();
+			goAway->abortTask();
 			delete goAway;
 			goAway = NULL;
 		}
@@ -3550,9 +3550,9 @@ bool HuntToBeNearActorTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToBeNearActorTask::atTargetAbort(void) {
+void HuntToBeNearActorTask::atTargetabortTask(void) {
 	if (goAway != NULL) {
-		goAway->abort();
+		goAway->abortTask();
 		delete goAway;
 		goAway = NULL;
 	}
@@ -3568,7 +3568,7 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate(void) {
 		return taskNotDone;
 
 	if (goAway != NULL) {
-		goAway->abort();
+		goAway->abortTask();
 		delete goAway;
 		goAway = NULL;
 	}
@@ -3596,7 +3596,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate(void) {
 
 	//  Delete the go away task if it exists
 	if (goAway != NULL) {
-		goAway->abort();
+		goAway->abortTask();
 		delete goAway;
 		goAway = NULL;
 	}
@@ -3689,8 +3689,8 @@ bool HuntToKillTask::operator == (const Task &t) const {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::abort(void) {
-	HuntActorTask::abort();
+void HuntToKillTask::abortTask(void) {
+	HuntActorTask::abortTask();
 
 	Actor       *a = stack->getActor();
 
@@ -3858,7 +3858,7 @@ void HuntToKillTask::evaluateTarget(void) {
 		if (bestTarget != currentTarget) {
 			//  If the current target has changed, abort any
 			//  action currently taking place
-			if (atTarget()) atTargetAbort();
+			if (atTarget()) atTargetabortTask();
 			currentTarget = bestTarget;
 			a->currentTarget = currentTarget;
 		}
@@ -3883,7 +3883,7 @@ bool HuntToKillTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToKillTask::atTargetAbort(void) {
+void HuntToKillTask::atTargetabortTask(void) {
 	//  If the task is aborted while at the target actor, abort any
 	//  attack currently taking place
 	stack->getActor()->stopAttack(currentTarget);
@@ -4070,7 +4070,7 @@ bool HuntToGiveTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void HuntToGiveTask::atTargetAbort(void) {}
+void HuntToGiveTask::atTargetabortTask(void) {}
 
 //----------------------------------------------------------------------
 
@@ -4355,7 +4355,7 @@ bool BandTask::atTarget(void) {
 	if ((actorLoc - currentTarget).quickHDistance() > 6
 	        ||  abs(actorLoc.z - currentTarget.z) > maxStepHeight) {
 		if (attend != NULL) {
-			attend->abort();
+			attend->abortTask();
 			delete attend;
 			attend = NULL;
 		}
@@ -4368,9 +4368,9 @@ bool BandTask::atTarget(void) {
 
 //----------------------------------------------------------------------
 
-void BandTask::atTargetAbort(void) {
+void BandTask::atTargetabortTask(void) {
 	if (attend != NULL) {
-		attend->abort();
+		attend->abortTask();
 		delete attend;
 		attend = NULL;
 	}
@@ -4641,10 +4641,10 @@ int16 FollowPatrolRouteTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void FollowPatrolRouteTask::abort(void) {
+void FollowPatrolRouteTask::abortTask(void) {
 	//  If there is a subtask, get rid of it
 	if (gotoWayPoint) {
-		gotoWayPoint->abort();
+		gotoWayPoint->abortTask();
 		delete gotoWayPoint;
 		gotoWayPoint = NULL;
 	}
@@ -4693,7 +4693,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 	        &&  abs(actorLoc.z - currentWayPoint.z) <= maxStepHeight) {
 		//  Delete the gotoWayPoint task
 		if (gotoWayPoint != NULL) {
-			gotoWayPoint->abort();
+			gotoWayPoint->abortTask();
 			delete gotoWayPoint;
 			gotoWayPoint = NULL;
 		}
@@ -4808,7 +4808,7 @@ int16 AttendTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void AttendTask::abort(void) {
+void AttendTask::abortTask(void) {
 	MotionTask  *actorMotion = stack->getActor()->moveTask;
 
 	//  Determine if we need to abort the actor motion
@@ -4939,10 +4939,10 @@ int16 DefendTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void DefendTask::abort(void) {
+void DefendTask::abortTask(void) {
 	//  If we have a sub-task, kill it
 	if (subTask != NULL) {
-		subTask->abort();
+		subTask->abortTask();
 		delete subTask;
 		subTask = NULL;
 	}
@@ -5101,7 +5101,7 @@ int16 ParryTask::getType(void) const {
 
 //----------------------------------------------------------------------
 
-void ParryTask::abort(void) {
+void ParryTask::abortTask(void) {
 	MotionTask      *actorMotion = stack->getActor()->moveTask;
 
 	//  Kill the defense motion, if there is one
@@ -5261,11 +5261,11 @@ void TaskStack::setTask(Task *t) {
 //----------------------------------------------------------------------
 //  Abort all tasks in stack
 
-void TaskStack::abort(void) {
+void TaskStack::abortTask(void) {
 	if (stackBottomID != NoTask) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
-		stackBottom->abort();
+		stackBottom->abortTask();
 		delete stackBottom;
 	}
 }

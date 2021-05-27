@@ -580,7 +580,7 @@ void setCenterActor(PlayerActorID newCenter) {
 	setEnchantmentDisplay();
 
 	if (a->curTask != NULL) {
-		a->curTask->abort();
+		a->curTask->abortTask();
 		delete a->curTask;
 		a->curTask = NULL;
 	}
