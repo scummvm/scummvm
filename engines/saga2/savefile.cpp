@@ -92,7 +92,7 @@ bool SaveFileConstructor::newChunk(ChunkID id, int32 size) {
 	//  Determine if file position is at end of previous chunk
 	if (posInChunk < chunkSize) return FALSE;
 
-	ASSERT(posInChunk == chunkSize);
+	assert(posInChunk == chunkSize);
 
 	SaveFileChunkInfo   chunkHeader;
 
@@ -137,7 +137,7 @@ bool SaveFileConstructor::writeChunk(ChunkID id, void *buf, int32 size) {
 	//  Determine if file position is at end of previous chunk
 	if (posInChunk < chunkSize) return FALSE;
 
-	ASSERT(posInChunk == chunkSize);
+	assert(posInChunk == chunkSize);
 
 	SaveFileChunkInfo   chunkHeader;
 
@@ -224,7 +224,7 @@ bool SaveFileReader::firstChunk(ChunkID &chunk, int32 &size) {
 //	Make the next chunk the current chunk
 
 bool SaveFileReader::nextChunk(ChunkID &chunk, int32 &size) {
-	ASSERT(posInChunk <= chunkSize);
+	assert(posInChunk <= chunkSize);
 
 	//  If not already at the beginning of the next chunk header, seek
 	//  the next chunk

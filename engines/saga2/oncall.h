@@ -69,7 +69,7 @@ public:
 	}
 
 	RESTYPE operator[](uint32 ind) {
-//		ASSERT (ind<handles);
+//		assert (ind<handles);
 		if (!locked[ind]) handle[ind] = rLoad(ind, FALSE);
 		return handle[ind];
 	}

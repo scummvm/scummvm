@@ -197,10 +197,10 @@ void CAutoMap::locateRegion(void) {
 	int             i;
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
-	VERIFY(areaRes != NULL);
+	assert(areaRes != NULL);
 
 	trRes = (uint16 *)LoadResource(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
-	VERIFY(trRes != NULL);
+	assert(trRes != NULL);
 	regionCount = *trRes;
 
 	centerCoords = trackPos >> (tileUVShift + platShift);

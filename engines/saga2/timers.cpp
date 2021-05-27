@@ -238,7 +238,7 @@ void saveTimers(SaveFileConstructor &saveGame) {
 	        timerHolder = (TimerHolder *)timerHolder->next())
 		bufferPtr = timerHolder->getTimer()->archive(bufferPtr);
 
-	ASSERT(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
 
 	//  Write the data to the save file
 	saveGame.writeChunk(
@@ -286,18 +286,18 @@ void loadTimers(SaveFileReader &saveGame) {
 
 		timer = new Timer(&bufferPtr);
 
-		ASSERT(timer != NULL);
+		assert(timer != NULL);
 
 		//  Get the objects's timer list
 		timerList = fetchTimerList(timer->getObject());
 
-		ASSERT(timerList != NULL);
+		assert(timerList != NULL);
 
 		//  Append this timer to the objects's timer list
 		timerList->addTail(*timer);
 	}
 
-	ASSERT(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -340,7 +340,7 @@ void cleanupTimers(void) {
 TimerList::TimerList(void **buf) {
 	ObjectID        *bufferPtr = (ObjectID *)*buf;
 
-	ASSERT(isObject(*bufferPtr) || isActor(*bufferPtr));
+	assert(isObject(*bufferPtr) || isActor(*bufferPtr));
 
 	//  Restore the object pointer
 	obj = GameObject::objectAddress(*bufferPtr++);
@@ -369,7 +369,7 @@ void *TimerList::archive(void *buf) {
 Timer::Timer(void **buf) {
 	void        *bufferPtr = *buf;
 
-	ASSERT(isObject(*((ObjectID *)bufferPtr))
+	assert(isObject(*((ObjectID *)bufferPtr))
 	       ||  isActor(*((ObjectID *)bufferPtr)));
 
 	//  Restore the object pointer

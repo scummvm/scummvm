@@ -93,7 +93,7 @@ void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage)
 		ObjectID pID = cst->possessor();
 		if (pID != Nothing) {
 			Actor *p = (Actor *) GameObject::objectAddress(pID);
-			VERIFY(isActor(p));
+			assert(isActor(p));
 			if (totalDice > 0 && trg->getObject() && isActor(trg->getObject()))
 				offensiveNotification(p, (Actor *) trg->getObject());
 		}
@@ -101,7 +101,7 @@ void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage)
 
 	totalBase -= deltaDamage;
 
-	VERIFY(trg->getType() == SpellTarget::spellTargetObject);
+	assert(trg->getType() == SpellTarget::spellTargetObject);
 	if (self)
 		cst->acceptDamage(cst->thisID(), totalBase, type, totalDice, sides);
 	else
@@ -174,7 +174,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 		ObjectID pID = cst->possessor();
 		if (pID != Nothing) {
 			Actor *p = (Actor *) GameObject::objectAddress(pID);
-			VERIFY(isActor(p));
+			assert(isActor(p));
 			if (totalDice > 0 && trg->getObject() && isActor(trg->getObject()))
 				offensiveNotification(p, (Actor *) trg->getObject());
 		}
@@ -222,7 +222,7 @@ void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 				ObjectID pID = cst->possessor();
 				if (pID != Nothing) {
 					Actor *p = (Actor *) GameObject::objectAddress(pID);
-					VERIFY(isActor(p));
+					assert(isActor(p));
 					offensiveNotification(p, (Actor *) trg->getObject());
 				}
 			}
@@ -246,7 +246,7 @@ void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 
 void ProtoTAGEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
 	ActiveItem *tag = trg->getTAG();
-	VERIFY(tag);
+	assert(tag);
 	if (affectBit == settagLocked) {
 		//if ( tag->builtInBehavior()==ActiveItem::builtInDoor )
 		if (tag->isLocked() != onOff)
@@ -261,7 +261,7 @@ void ProtoTAGEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
 
 void ProtoObjectEffect::implement(GameObject *, SpellTarget *trg, int8) {
 	GameObject *go = trg->getObject();
-	VERIFY(go);
+	assert(go);
 	if (!isActor(go))
 		EnchantObject(go->thisID(), affectBit, dice.roll());
 }
@@ -278,7 +278,7 @@ void ProtoLocationEffect::implement(GameObject *, SpellTarget *, int8) {
 // use a special spell on something
 
 void ProtoSpecialEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
-	VERIFY(handler);
+	assert(handler);
 	(*handler)(cst, trg);
 }
 
@@ -322,8 +322,8 @@ bool ProtoObjectEffect::applicable(SpellTarget &trg) {
 #endif
 
 void createSpellCallFrame(GameObject *go, SpellTarget *trg, scriptCallFrame &scf) {
-	VERIFY(go);
-	VERIFY(trg);
+	assert(go);
+	assert(trg);
 	scf.invokedObject = Nothing;
 	scf.enactor       = go->thisID();
 	scf.directObject  = Nothing;
@@ -426,7 +426,7 @@ SPECIALSPELL(DeathSpell) {
 			ObjectID pID = cst->possessor();
 			if (pID != Nothing) {
 				Actor *p = (Actor *) GameObject::objectAddress(pID);
-				VERIFY(isActor(p));
+				assert(isActor(p));
 				offensiveNotification(p, (Actor *) trg->getObject());
 			}
 		}
@@ -475,7 +475,7 @@ SPECIALSPELL(DispellProtections) {
 			ObjectID pID = cst->possessor();
 			if (pID != Nothing) {
 				Actor *p = (Actor *) GameObject::objectAddress(pID);
-				VERIFY(isActor(p));
+				assert(isActor(p));
 				offensiveNotification(p, (Actor *) trg->getObject());
 			}
 		}

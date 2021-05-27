@@ -121,7 +121,7 @@ int16 hResRead(Buffer &sb, soundSample &ss, hResContext *hrc) {
 	bread = hrc->readbytes(sb.wData, count);
 	sb.gave(bread);
 
-	VERIFY(bread <= count);
+	assert(bread <= count);
 
 #if ASYNCH_AUDIO
 	if (partial)
@@ -171,7 +171,7 @@ int16 bufRead(Buffer &sb, soundSample &ss) {
 	memcpy(sb.wData, clickData[ss.curSeg], count);
 	sb.gave(bread);
 
-	VERIFY(bread <= count);
+	assert(bread <= count);
 
 	if (bread == count)
 		rVal |= msgBufferFull;

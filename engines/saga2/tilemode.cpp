@@ -449,7 +449,7 @@ static void evalMouseState(void) {
 		//  and if so, wether the other object is within the
 		//  use range of the center actor
 		if (mouseInfo.getIntent() == GrabInfo::Use) {
-			ASSERT(obj != NULL);
+			assert(obj != NULL);
 
 			if (mObj->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 				GameObject  *tob = pickedObject != Nothing ? obj : NULL;
@@ -610,7 +610,7 @@ static void evalMouseState(void) {
 //	Initialize the tile mode state
 
 void initTileModeState(void) {
-	ASSERT(uiKeysEnabled);
+	assert(uiKeysEnabled);
 
 	aggressiveActFlag = FALSE;
 	inCombat = FALSE;
@@ -623,7 +623,7 @@ void initTileModeState(void) {
 void saveTileModeState(SaveFileConstructor &saveGame) {
 	int32       size = 0;
 
-	ASSERT(uiKeysEnabled);
+	assert(uiKeysEnabled);
 
 	//  Compute the number of bytes needed
 	size +=     sizeof(aggressiveActFlag)
@@ -648,7 +648,7 @@ void saveTileModeState(SaveFileConstructor &saveGame) {
 //	Load the tile mode state from a save file
 
 void loadTileModeState(SaveFileReader &saveGame) {
-	ASSERT(uiKeysEnabled);
+	assert(uiKeysEnabled);
 
 	//  Simply read in the data
 	saveGame.read(&aggressiveActFlag, sizeof(aggressiveActFlag));

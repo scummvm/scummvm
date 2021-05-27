@@ -122,7 +122,7 @@ public:
 	}
 
 	void remove(int index) {
-		ASSERT(index < memberCount);
+		assert(index < memberCount);
 
 		int     i;
 

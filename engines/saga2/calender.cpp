@@ -55,7 +55,7 @@ const uint16 GAME_START_HOUR = 5;
  * ===================================================================== */
 
 void CalenderTime::update(void) {
-	char        *text = NULL;
+	const char *text = NULL;
 
 	if (++frameInHour >= framesPerHour) {
 		frameInHour = 0;
@@ -97,7 +97,8 @@ void CalenderTime::update(void) {
 			break;
 		}
 
-		if (text) StatusMsg(CALENDAR_STATUS, text, dayInWeek + 1, weeks + 1);
+		if (text)
+			StatusMsg(CALENDAR_STATUS, text, dayInWeek + 1, weeks + 1);
 	}
 }
 
@@ -239,8 +240,7 @@ void saveCalender(SaveFileConstructor &saveGame) {
 //	the correct chunk.
 
 void loadCalender(SaveFileReader &saveGame) {
-	ASSERT(saveGame.getChunkSize()
-	       ==  sizeof(calenderPaused) + sizeof(calender));
+	assert(saveGame.getChunkSize() ==  sizeof(calenderPaused) + sizeof(calender));
 
 	saveGame.read(&calenderPaused, sizeof(calenderPaused));
 	saveGame.read(&calender, sizeof(calender));

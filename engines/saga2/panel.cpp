@@ -1103,7 +1103,7 @@ void LockUI(bool state) {
 		lockUINest++;
 	} else {
 		lockUINest--;
-		ASSERT(lockUINest >= 0);
+		assert(lockUINest >= 0);
 		if (lockUINest <= 0) {
 			enableUIKeys(TRUE);
 			pointer.show();

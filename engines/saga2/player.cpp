@@ -366,7 +366,7 @@ void PlayerActor::vitalityAdvance(uint8 points) {
 		}
 	}
 
-	ASSERT(baseStats.vitality < ActorAttributes::vitalityLimit);
+	assert(baseStats.vitality < ActorAttributes::vitalityLimit);
 }
 
 // this function will return a value of 0 - 4 to indicate
@@ -492,7 +492,7 @@ ActorAttributes *PlayerActor::getEffStats(void) {
 	ActorAttributes *effStats = &actor->effectiveStats;
 
 	// valid?
-	ASSERT(effStats);
+	assert(effStats);
 
 	// return current stats for this player actor
 	return effStats;
@@ -516,7 +516,7 @@ void PlayerActor::handleAttacked(void) {
 //	Return a pointer to a PlayerActor given it's ID
 
 PlayerActor *getPlayerActorAddress(PlayerActorID id) {
-	ASSERT(id >= 0 && id < elementsof(playerList));
+	assert(id >= 0 && id < elementsof(playerList));
 
 	return &playerList[ id ];
 }
@@ -555,7 +555,7 @@ PlayerActorID getCenterActorPlayerID(void) {
 void setCenterActor(PlayerActorID newCenter) {
 	extern void setEnchantmentDisplay(void);
 
-	ASSERT(newCenter < playerActors);
+	assert(newCenter < playerActors);
 
 	Actor                       *a = playerList[ newCenter ].getActor();
 	PlayerActorIterator         iter;
@@ -601,7 +601,7 @@ void setCenterActor(PlayerActorID newCenter) {
 //	Set a new center actor based upon an Actor address
 
 void setCenterActor(Actor *newCenter) {
-	ASSERT(newCenter->disposition >= dispositionPlayer);
+	assert(newCenter->disposition >= dispositionPlayer);
 	setCenterActor(newCenter->disposition - dispositionPlayer);
 }
 
@@ -609,7 +609,7 @@ void setCenterActor(Actor *newCenter) {
 //	Set a new center actor based upon a PlayerActor address
 
 void setCenterActor(PlayerActor *newCenter) {
-	ASSERT(newCenter >= playerList && newCenter < &playerList[ playerActors ]);
+	assert(newCenter >= playerList && newCenter < &playerList[ playerActors ]);
 	setCenterActor(newCenter - playerList);
 }
 
@@ -628,7 +628,7 @@ TilePoint centerActorCoords(void) {
 //	Set or clear a player's aggressive state
 
 void setAggression(PlayerActorID player, bool aggression) {
-	ASSERT(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < playerActors);
 
 	Actor       *a = playerList[ player ].getActor();
 
@@ -651,7 +651,7 @@ void setAggression(PlayerActorID player, bool aggression) {
 //	Determine if player actor is in an aggressive state
 
 bool isAggressive(PlayerActorID player) {
-	ASSERT(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < playerActors);
 	return playerList[ player ].isAggressive();
 }
 
@@ -703,7 +703,7 @@ void autoAdjustAggression(void) {
 //	Set a player actor's banding
 
 void setBanded(PlayerActorID player, bool banded) {
-	ASSERT(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < playerActors);
 
 	if (playerList[ player ].getActor()->isDead()) return;
 
@@ -721,7 +721,7 @@ void setBanded(PlayerActorID player, bool banded) {
 //	Determine if a player actor is banded
 
 bool isBanded(PlayerActorID player) {
-	ASSERT(player >= 0 && player < playerActors);
+	assert(player >= 0 && player < playerActors);
 	return playerList[ player ].isBanded();
 }
 
@@ -791,7 +791,7 @@ bool actorIDToPlayerID(ObjectID id, PlayerActorID &result) {
 }
 
 void handlePlayerActorDeath(PlayerActorID id) {
-	ASSERT(id >= 0 && id < playerActors);
+	assert(id >= 0 && id < playerActors);
 
 	if (getCenterActor()->isDead()) {
 		PlayerActor                 *newCenter;
@@ -818,7 +818,7 @@ void handlePlayerActorDeath(PlayerActorID id) {
 //	to the center actor
 
 void transportCenterBand(const Location &loc) {
-	ASSERT(isWorld(loc.context));
+	assert(isWorld(loc.context));
 
 	fadeDown();
 

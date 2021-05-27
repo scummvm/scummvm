@@ -232,7 +232,7 @@ inline int16 spinRight(int16 dir, int16 amt = 1) {
 //  happens due to the point-sampled nature of the environment.
 
 bool unstickObject(GameObject *obj) {
-	ASSERT(isObject(obj) || isActor(obj));
+	assert(isObject(obj) || isActor(obj));
 
 	TilePoint       pos;
 	int             height,
@@ -402,7 +402,7 @@ MotionTaskList::MotionTaskList(void **buf) {
 		//  active list
 		mt = (MotionTask *)free.remHead();
 #if DEBUG
-		VERIFY(mt != NULL);
+		assert(mt != NULL);
 #endif
 		list.addTail(*mt);
 
@@ -1296,7 +1296,7 @@ void MotionTask::calcVelocity(const TilePoint &vector,  int16 turns) {
 //	This initiates a motion task for turning an actor
 
 void MotionTask::turn(Actor &obj, Direction dir) {
-	ASSERT(dir >= 0 && dir < 8);
+	assert(dir >= 0 && dir < 8);
 
 	MotionTask      *mt;
 
@@ -1879,7 +1879,7 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, ActiveItem &target) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != type) {
 			Location loc;
-			VERIFY(target.itemType == activeTypeInstance);
+			assert(target.itemType == activeTypeInstance);
 			mt->motionType = type;
 			mt->spellObj = &spell;
 			mt->targetTAG = &target;
@@ -2543,7 +2543,7 @@ void MotionTask::walkAction(void) {
 	                moveTaskDone = FALSE;
 	WalkType        walkType = walkNormal;
 
-	ASSERT(isActor(object));
+	assert(isActor(object));
 	a = (Actor *)object;
 	aa = a->appearance;
 
@@ -3558,7 +3558,7 @@ GameObject *MotionTask::blockingObject(Actor *thisAttacker) {
 void MotionTask::fireBowAction(void) {
 	Actor       *a = (Actor *)object;
 
-	ASSERT(a->leftHandObject != Nothing);
+	assert(a->leftHandObject != Nothing);
 
 	//  Initialize the bow firing motion
 	if (flags & reset) {
@@ -3695,7 +3695,7 @@ void MotionTask::castSpellAction(void) {
 		if (actionCounter == 0) {
 			if (spellObj) {
 				if (flags & TAGTarg) {
-					VERIFY(targetTAG->itemType == activeTypeInstance);
+					assert(targetTAG->itemType == activeTypeInstance);
 					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetTAG->thisID());
 				} else if (flags & LocTarg) {
 					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetLoc);
@@ -4113,7 +4113,7 @@ void MotionTask::useMagicWeaponAction(void) {
 				spell = GameObject::objectAddress(magicWeapon->IDChild());
 				spellProto = (SkillProto *)spell->proto();
 
-				ASSERT(spellProto->containmentSet() & ProtoObj::isSkill);
+				assert(spellProto->containmentSet() & ProtoObj::isSkill);
 
 				//  use the spell
 				spellProto->implementAction(

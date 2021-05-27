@@ -61,7 +61,7 @@ extern audioInterface *audio;
 /*******************************************************************/
 
 Buffer::Buffer(size_t newSize) {
-	VERIFY(newSize > 0);
+	assert(newSize > 0);
 
 	internallyAllocated = TRUE;
 	size = newSize;
@@ -77,7 +77,7 @@ Buffer::Buffer(size_t newSize) {
 
 Buffer::~Buffer(void) {
 	if (internallyAllocated) {
-		VERIFY(data[0]);
+		assert(data[0]);
 		audio_unlock(data[0], size);
 		audioFree(data[0]);  //delete [] data[0];
 		data[0] = NULL;
@@ -113,8 +113,8 @@ cacheBuffer::~cacheBuffer(void) {
 doubleBuffer::doubleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 	: Buffer(newSize) {
 	if (sd && sd->enabled(volVoice)) {
-		VERIFY(sd);
-		//VERIFY( sd->dig );
+		assert(sd);
+		//assert( sd->dig );
 
 		bufID = newID;
 		fillBuffer = 0;
@@ -134,7 +134,7 @@ doubleBuffer::doubleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 }
 
 doubleBuffer::~doubleBuffer(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (data[1]) {
 		audio_unlock(data[1], size);
 		audioFree(data[1]);  //delete [] data[1];
@@ -152,8 +152,8 @@ doubleBuffer::~doubleBuffer(void) {
 singleBuffer::singleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 	: Buffer(newSize) {
 	if (sd && sd->enabled(volSound)) {
-		VERIFY(sd);
-		VERIFY(sd->dig);
+		assert(sd);
+		assert(sd->dig);
 
 		bufID = newID;
 		fillBuffer = 0;
@@ -170,7 +170,7 @@ singleBuffer::singleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 }
 
 singleBuffer::~singleBuffer(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (ailSampleHandle) {
 		AIL_release_sample_handle(ailSampleHandle);
 	}
@@ -183,8 +183,8 @@ singleBuffer::~singleBuffer(void) {
 musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 	: Buffer(newSize) {
 	if (sd && sd->enabled(volMusic)) {
-		VERIFY(sd);
-		VERIFY(sd->mid);
+		assert(sd);
+		assert(sd->mid);
 
 		bufID = newID;
 		fillBuffer = 0;
@@ -198,7 +198,7 @@ musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 }
 
 musicBuffer::~musicBuffer(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (ailSampleHandle) {
 		AIL_release_sequence_handle(ailSampleHandle);
 	}
@@ -213,14 +213,14 @@ musicBuffer::~musicBuffer(void) {
 void workBuffer::shiftdown(int16 bufNo) {
 	long dif = size - (wSize + rSize);
 
-	VERIFY(bufNo == 0);
-	VERIFY(dif >= 0);
-	VERIFY(dif <= (size - (rSize + wSize)));
-	VERIFY(((char *)(data[bufNo]) + rSize) < ((char *) rData));
-	VERIFY(dif > rSize);
-	VERIFY(dif > wSize);
-	VERIFY(data[bufNo]);
-	VERIFY(rData);
+	assert(bufNo == 0);
+	assert(dif >= 0);
+	assert(dif <= (size - (rSize + wSize)));
+	assert(((char *)(data[bufNo]) + rSize) < ((char *) rData));
+	assert(dif > rSize);
+	assert(dif > wSize);
+	assert(data[bufNo]);
+	assert(rData);
 
 	if (dif > 0 && rSize > 0) {
 		char *tbuf = (char *) audioAlloc(rSize, "audio work buffer"); //new char[rSize];
@@ -258,7 +258,7 @@ void cacheBuffer::format(soundSample *) {
 
 void doubleBuffer::format(soundSample *ss) {
 	if (audioSet == 0) {
-		VERIFY(ailSampleHandle);
+		assert(ailSampleHandle);
 		AIL_init_sample(ailSampleHandle);
 		AIL_set_sample_type(ailSampleHandle, ss->format(), ss->flags());
 		AIL_set_sample_playback_rate(ailSampleHandle, ss->speed);
@@ -270,7 +270,7 @@ void doubleBuffer::format(soundSample *ss) {
 }
 
 void singleBuffer::format(soundSample *ss) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	AIL_init_sample(ailSampleHandle);
 	AIL_set_sample_type(ailSampleHandle, ss->format(), ss->flags());
 	AIL_set_sample_playback_rate(ailSampleHandle, ss->speed);
@@ -304,7 +304,7 @@ bool workBuffer::laden(void) {
 // sound buffers need to find out from AIL whether a buffer is free
 
 bool doubleBuffer::laden(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (-1 == washed())
 		return TRUE;
 	else if (targetSated)
@@ -313,7 +313,7 @@ bool doubleBuffer::laden(void) {
 }
 
 bool singleBuffer::laden(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (targetSated)
 		activate(0);
 	return (FALSE);
@@ -347,7 +347,7 @@ uint32 workBuffer::sample_status(void) {
 
 
 uint32 doubleBuffer::sample_status(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 #if 0
 	int32 newPos = AIL_sample_position(ailSampleHandle);
 	if (targetPos == 0 || newPos >= targetPos) { //( newPos==lastPos && lastPos==distPos)
@@ -360,7 +360,7 @@ uint32 doubleBuffer::sample_status(void) {
 }
 
 uint32 singleBuffer::sample_status(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	return (AIL_sample_status(ailSampleHandle));
 }
 
@@ -402,7 +402,7 @@ int16 workBuffer::washed(void) {
 }
 
 int16 doubleBuffer::washed(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (AILLOCated > -1) return AILLOCated;
 	AILLOCated = AIL_sample_buffer_ready(ailSampleHandle);
 	return AILLOCated;
@@ -428,7 +428,7 @@ int16 cacheBuffer::washed(void) {
 /*                                                                 */
 
 void Buffer::gave(size_t dSize) {
-	VERIFY(dSize <= wSize);
+	assert(dSize <= wSize);
 	wSize -= dSize;
 	rSize += dSize;
 	if (wSize)
@@ -437,7 +437,7 @@ void Buffer::gave(size_t dSize) {
 }
 
 void workBuffer::gave(size_t dSize) {
-	VERIFY(dSize <= wSize);
+	assert(dSize <= wSize);
 	wSize -= dSize;
 	rSize += dSize;
 	if (wSize) {
@@ -449,22 +449,22 @@ void workBuffer::gave(size_t dSize) {
 // when sound buffers get full they automatically trigger AIL
 
 void doubleBuffer::gave(size_t dSize) {
-	VERIFY(ailSampleHandle);
-	VERIFY(dSize <= wSize);
+	assert(ailSampleHandle);
+	assert(dSize <= wSize);
 	wSize -= dSize;
 	rSize += dSize;
 	if (wSize) {
 		wData = (void *)(((char *) data[fillBuffer]) + (size - wSize));
 	} else {
-		VERIFY(AILLOCated >= 0);
+		assert(AILLOCated >= 0);
 		play(AILLOCated);
 		activate(1 - fillBuffer);
 	}
 }
 
 void singleBuffer::gave(size_t dSize) {
-	VERIFY(ailSampleHandle);
-	VERIFY(dSize <= wSize);
+	assert(ailSampleHandle);
+	assert(dSize <= wSize);
 	lastRSize = rSize;
 	wSize -= dSize;
 	rSize += dSize;
@@ -476,8 +476,8 @@ void singleBuffer::gave(size_t dSize) {
 }
 
 void musicBuffer::gave(size_t dSize) {
-	VERIFY(ailSampleHandle);
-	VERIFY(dSize <= wSize);
+	assert(ailSampleHandle);
+	assert(dSize <= wSize);
 	wSize -= dSize;
 	rSize += dSize;
 	if (wSize) {
@@ -489,7 +489,7 @@ void musicBuffer::gave(size_t dSize) {
 }
 
 void cacheBuffer::gave(size_t dSize) {
-	VERIFY(dSize <= wSize);
+	assert(dSize <= wSize);
 	wSize -= dSize;
 	rSize += dSize;
 	if (wSize) {
@@ -501,7 +501,7 @@ void cacheBuffer::gave(size_t dSize) {
 // when work buffers get fully drained they reset themselves
 
 void Buffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 	rSize -= dSize;
 	if (rSize > 0)
 		rData = (void *)(((char *) rData) + dSize);
@@ -510,7 +510,7 @@ void Buffer::took(size_t dSize) {
 }
 
 void workBuffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 	rSize -= dSize;
 	if (rSize > 0) {
 		rData = (void *)(((char *) rData) + dSize);
@@ -521,14 +521,14 @@ void workBuffer::took(size_t dSize) {
 }
 
 void doubleBuffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 	rSize -= dSize;
 	if (rSize > 0)
 		rData = (void *)(((char *) rData) + dSize);
 }
 
 void singleBuffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 	lastRSize = rSize;
 	rSize -= dSize;
 	if (rSize > 0)
@@ -536,14 +536,14 @@ void singleBuffer::took(size_t dSize) {
 }
 
 void musicBuffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 	rSize -= dSize;
 	if (rSize > 0)
 		rData = (void *)(((char *) rData) + dSize);
 }
 
 void cacheBuffer::took(size_t dSize) {
-	VERIFY(dSize <= rSize);
+	assert(dSize <= rSize);
 }
 
 /*******************************************************************/
@@ -570,8 +570,8 @@ void workBuffer::fill(void) {
 // sound buffers pass what they have to AIL
 
 void doubleBuffer::fill(void) {
-	VERIFY(ailSampleHandle);
-	VERIFY(AILLOCated >= 0);
+	assert(ailSampleHandle);
+	assert(AILLOCated >= 0);
 	if (rSize) {
 		play(AILLOCated);
 		activate(1 - fillBuffer);
@@ -581,14 +581,14 @@ void doubleBuffer::fill(void) {
 }
 
 void singleBuffer::fill(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	if (rSize) {
 		play(0);
 	}
 }
 
 void musicBuffer::fill(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	play(0);
 }
 
@@ -625,8 +625,8 @@ void doubleBuffer::abortsound(void) {
 }
 
 void doubleBuffer::release(void) {
-	VERIFY(ailSampleHandle);
-	VERIFY(rSize == 0);
+	assert(ailSampleHandle);
+	assert(rSize == 0);
 
 	if (washed() <= -1) {
 		if (sample_status() != SMP_STOPPED)
@@ -639,7 +639,7 @@ void doubleBuffer::release(void) {
 	AIL_end_sample(ailSampleHandle);
 	audioSet = 0;
 	audio->resetState((audioInterface::BufferRequest) ID());
-	VERIFY(AILLOCated == -1);
+	assert(AILLOCated == -1);
 }
 
 void singleBuffer::abortsound(void) {
@@ -650,11 +650,11 @@ void singleBuffer::abortsound(void) {
 }
 
 void singleBuffer::release(void) {
-	VERIFY(ailSampleHandle);
-	VERIFY(rSize == 0);
+	assert(ailSampleHandle);
+	assert(rSize == 0);
 //	AIL_end_sample( ailSampleHandle );
 	audioSet = 0;
-	VERIFY(AILLOCated == -1);
+	assert(AILLOCated == -1);
 }
 
 void musicBuffer::abortsound(void) {
@@ -664,7 +664,7 @@ void musicBuffer::abortsound(void) {
 }
 
 void musicBuffer::release(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 // new
 	AIL_end_sequence(ailSampleHandle);
 	audioSet = 0;
@@ -686,13 +686,13 @@ void Buffer::play(int16) {
 }
 
 void workBuffer::play(int16 bufNo) {
-	VERIFY(bufNo == 0);
+	assert(bufNo == 0);
 	took(rSize);
 }
 
 void doubleBuffer::play(int16 bufNo) {
-	VERIFY(bufNo >= 0 && bufNo <= 1);
-	VERIFY(ailSampleHandle);
+	assert(bufNo >= 0 && bufNo <= 1);
+	assert(ailSampleHandle);
 	targetPos = (int32)((char *) rData - (char *)data[AILLOCated]) + rSize;
 	AIL_load_sample_buffer(ailSampleHandle, AILLOCated, rData, rSize);
 	took(rSize);
@@ -700,8 +700,8 @@ void doubleBuffer::play(int16 bufNo) {
 }
 
 void singleBuffer::play(int16 bufNo) {
-	VERIFY(bufNo == 0);
-	VERIFY(ailSampleHandle);
+	assert(bufNo == 0);
+	assert(ailSampleHandle);
 	AIL_set_sample_address(ailSampleHandle, rData, rSize);
 	AIL_set_sample_loop_count(ailSampleHandle, loopCount);
 	AIL_start_sample(ailSampleHandle);
@@ -709,18 +709,18 @@ void singleBuffer::play(int16 bufNo) {
 }
 
 void singleBuffer::replay(void) {
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	rSize = lastRSize; //((uint8 *)rData)-((uint8 *)data[0]) ;
 	rData = data[0];
-	VERIFY(rSize);
+	assert(rSize);
 	AIL_set_sample_address(ailSampleHandle, rData, rSize);
 	AIL_set_sample_loop_count(ailSampleHandle, loopCount);
 	AIL_start_sample(ailSampleHandle);
 }
 
 void musicBuffer::play(int16 bufNo) {
-	VERIFY(bufNo == 0);
-	VERIFY(ailSampleHandle);
+	assert(bufNo == 0);
+	assert(ailSampleHandle);
 	if (AIL_init_sequence(ailSampleHandle, rData, 0) <= 0) {
 		error("musicBuffer::play");
 	}
@@ -748,8 +748,8 @@ void Buffer::activate(int16) {
 }
 
 void workBuffer::activate(int16 bufNo) {
-	VERIFY(bufNo == 0);
-	VERIFY(rSize == 0);
+	assert(bufNo == 0);
+	assert(rSize == 0);
 	if (washed() > -1) {
 		fillBuffer = 0;
 		wSize = size;
@@ -761,7 +761,7 @@ void workBuffer::activate(int16 bufNo) {
 
 void doubleBuffer::activate(int16 bufNo) {
 	int32 n;
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	n = bufNo;
 	if (washed() > -1) {
 		targetSated = FALSE;
@@ -782,7 +782,7 @@ void doubleBuffer::activate(int16 bufNo) {
 
 void singleBuffer::activate(int16 bufNo) {
 	int32 n;
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	n = bufNo;
 	targetSated = FALSE;
 	fillBuffer = 0;
@@ -794,7 +794,7 @@ void singleBuffer::activate(int16 bufNo) {
 
 void musicBuffer::activate(int16 bufNo) {
 	int32 n;
-	VERIFY(ailSampleHandle);
+	assert(ailSampleHandle);
 	n = bufNo;
 	audioSet = 0;
 	if (washed() > -1) {
@@ -815,7 +815,7 @@ void musicBuffer::activate(int16 bufNo) {
 }
 
 void cacheBuffer::activate(int16 bufNo) {
-	VERIFY(bufNo == 0);
+	assert(bufNo == 0);
 }
 
 /*******************************************************************/
@@ -830,19 +830,19 @@ void Buffer::reset(void) {
 
 void workBuffer::reset(void) {
 	if (rSize) took(rSize);
-	VERIFY(rSize == 0);
+	assert(rSize == 0);
 	activate(0);
 }
 
 void doubleBuffer::reset(void) {
-	VERIFY(AILLOCated == -1);
+	assert(AILLOCated == -1);
 	AIL_init_sample(ailSampleHandle);
 	audioSet = 0;
 	targetPos = 0;
 }
 
 void singleBuffer::reset(void) {
-//	VERIFY( AILLOCated==-1 );
+//	assert( AILLOCated==-1 );
 	AIL_init_sample(ailSampleHandle);
 	audioSet = 0;
 }
@@ -854,7 +854,7 @@ void musicBuffer::reset(void) {
 }
 
 void cacheBuffer::reset(void) {
-	VERIFY(rSize == 0);
+	assert(rSize == 0);
 	activate(0);
 }
 

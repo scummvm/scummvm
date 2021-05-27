@@ -232,7 +232,7 @@ void gMousePointer::restore(void) {
 **********************************************************************
 */
 void gMousePointer::show(void) {
-	ASSERT(hideCount > 0);
+	assert(hideCount > 0);
 
 	if (--hideCount == 0) {
 #if     defined( USEWINDOWS )

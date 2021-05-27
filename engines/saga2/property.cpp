@@ -181,7 +181,7 @@ CompoundMetaTileProperty::CompoundMetaTileProperty(
 	//  Allocate memory for a copy of the array
 	propertyArray = (MetaTileProperty **)malloc(arrayBytes);
 #if DEBUG
-	VERIFY(propertyArray);
+	assert(propertyArray);
 #endif
 	//  Copy the array
 	memcpy(propertyArray, array, arrayBytes);

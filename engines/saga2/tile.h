@@ -456,7 +456,7 @@ public:
 
 	//  Return a pointer to this TAI's group
 	ActiveItem *getGroup(void) {
-		ASSERT(itemType == activeTypeInstance);
+		assert(itemType == activeTypeInstance);
 		return  activeItemAddress(
 		            ActiveItemID(getMapNum(), instance.groupID));
 	}

@@ -121,7 +121,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 		return (uint8 *)ActiveItem::activeItemAddress(index);
 
 	case builtinAbstract:
-		ASSERT(index > 0);
+		assert(index > 0);
 		if (lookupExport(index, segNum, segOff) == FALSE)
 			error("SAGA: Cannot take address of abtract class");
 
@@ -195,7 +195,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		error("SAGA Failure: Attempt to call member function of invalid builtin type.\n");
 	}
 
-//	ASSERT( script > 0 );
+//	assert( script > 0 );
 
 	//  Look up the vtable in the export table.
 	if (script != 0 && lookupExport(script, vtSeg, vtOffset)) {
@@ -455,9 +455,9 @@ uint8 *Thread::strAddress(int strNum) {
 	uint16          *codeBase = (uint16 *)*codeSeg;
 	uint8           *strSeg = segmentAddress(codeBase[ 1 ], codeBase[ 2 ]);
 
-	ASSERT(strNum >= 0);
-	ASSERT(codeBase);
-	ASSERT(strSeg);
+	assert(strNum >= 0);
+	assert(codeBase);
+	assert(strSeg);
 
 	return strSeg + ((uint16 *)strSeg)[ strNum ];
 }
@@ -1161,7 +1161,7 @@ public:
 
 	//  Return a pointer to a thread, given an ID
 	Thread *getThreadAddress(ThreadID id) {
-		ASSERT(id >= 0 && id < elementsof(array));
+		assert(id >= 0 && id < elementsof(array));
 		return array[ id ].getThread();
 	}
 
@@ -1296,7 +1296,7 @@ void *ThreadList::newThread(void) {
 //	Place a new thread into the active list and return its pointer
 
 void *ThreadList::newThread(ThreadID id) {
-	ASSERT(id >= 0 && id < elementsof(array));
+	assert(id >= 0 && id < elementsof(array));
 
 	ThreadPlaceHolder   *tp;
 
@@ -1427,7 +1427,7 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	new (&threadList) ThreadList;
 	bufferPtr = threadList.restore(bufferPtr);
 
-	ASSERT((char *)bufferPtr == (char *)archiveBuffer
+	assert((char *)bufferPtr == (char *)archiveBuffer
 	       +   saveGame.getChunkSize());
 
 	RDisposePtr(archiveBuffer);
@@ -1502,7 +1502,7 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 
 	if ((*codeSeg)[ programCounter.offset ] != op_enter)
 		error("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
-//	VERIFY ((*codeSeg)[ programCounter.offset ] == op_enter);
+//	assert ((*codeSeg)[ programCounter.offset ] == op_enter);
 }
 
 //-----------------------------------------------------------------------
@@ -1754,7 +1754,7 @@ void initScripts(void) {
 	dataSegSize = RPtrSize(*dataSegment);
 
 	exportSegment = (UByteHandle)scriptRes->load(exportSegID, "saga export segmant");
-	ASSERT(exportSegment != NULL);
+	assert(exportSegment != NULL);
 
 	exportCount = (scriptRes->size(exportSegID) / sizeof(uint32)) + 1;
 }
@@ -1804,8 +1804,8 @@ static bool lookupExport(
 	uint32          segRef,
 	                *exportBase = (uint32 *)(*exportSegment - 2);
 
-	ASSERT(entry > 0);
-	ASSERT(entry <= exportCount);
+	assert(entry > 0);
+	assert(entry <= exportCount);
 
 	segRef = exportBase[ entry ];
 	segOff = segRef >> 16,
@@ -1832,7 +1832,7 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	if (exportEntryNum < 0)
 		error("SAGA failure: Attempt to run script with invalid export ID %d.", exportEntryNum);
 
-	ASSERT(exportEntryNum > 0);
+	assert(exportEntryNum > 0);
 	lookupExport(exportEntryNum, segNum, segOff);
 
 	//  Create a new thread
@@ -1894,8 +1894,8 @@ scriptResult runMethod(
 			C_Call  *cfunc;
 
 			//  Make sure the C function number is OK
-			ASSERT(funcNum >= 0);
-			ASSERT(funcNum < globalCFuncs.numEntries);
+			assert(funcNum >= 0);
+			assert(funcNum < globalCFuncs.numEntries);
 			cfunc = globalCFuncs.table[ funcNum ];
 
 			//  Build a temporary dummy thread
@@ -1935,7 +1935,7 @@ scriptResult runObjectMethod(
     scriptCallFrame &args) {
 	GameObject      *obj;
 
-	VERIFY(obj = GameObject::objectAddress(id));
+	assert(obj = GameObject::objectAddress(id));
 
 	return runMethod(obj->scriptClass(),
 	                 builtinTypeObject,
@@ -1953,7 +1953,7 @@ scriptResult runTagMethod(
     scriptCallFrame &args) {
 	ActiveItemPtr   aItem;
 
-	VERIFY(aItem = ActiveItem::activeItemAddress(index));
+	assert(aItem = ActiveItem::activeItemAddress(index));
 	if (!aItem->scriptClassID)
 		return scriptResultNoScript;
 

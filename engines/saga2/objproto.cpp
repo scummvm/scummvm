@@ -103,7 +103,7 @@ bool ProtoObj::isMissile(void) {
 
 //  Simple use command
 bool ProtoObj::use(ObjectID dObj, ObjectID enactor) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16   scriptResult;
 
@@ -132,8 +132,8 @@ bool ProtoObj::useAction(ObjectID dObj, ObjectID enactor) {
 
 //  UseOn object command
 bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ObjectID item) {
-	ASSERT(dObj != Nothing);
-	ASSERT(item != Nothing);
+	assert(dObj != Nothing);
+	assert(item != Nothing);
 
 	int16   scriptResult;
 
@@ -156,8 +156,8 @@ bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID item) {
 
 //  UseOn active item command
 bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
-	ASSERT(dObj != Nothing);
-	ASSERT(item != NULL);
+	assert(dObj != Nothing);
+	assert(item != NULL);
 
 	int16   scrResult;
 
@@ -193,8 +193,8 @@ bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
 
 //  UseOn location command
 bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, const Location &loc) {
-	ASSERT(dObj != Nothing);
-	ASSERT(loc != Nowhere && loc.context != Nothing);
+	assert(dObj != Nothing);
+	assert(loc != Nowhere && loc.context != Nothing);
 
 	/*  int16   scrResult;
 
@@ -256,7 +256,7 @@ bool ProtoObj::useSlotAvailable(GameObject *, Actor *) {
 
 //  Open this object
 bool ProtoObj::open(ObjectID dObj, ObjectID enactor) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16   scriptResult;
 
@@ -284,7 +284,7 @@ bool ProtoObj::openAction(ObjectID, ObjectID) {
 
 //  Close this object
 bool ProtoObj::close(ObjectID dObj, ObjectID enactor) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16           scriptResult;
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
@@ -308,8 +308,8 @@ bool ProtoObj::closeAction(ObjectID, ObjectID) {
 
 //  Take this object
 bool ProtoObj::take(ObjectID dObj, ObjectID enactor, int16 num) {
-	ASSERT(dObj != Nothing);
-	ASSERT(mouseInfo.getObjectId() == Nothing);
+	assert(dObj != Nothing);
+	assert(mouseInfo.getObjectId() == Nothing);
 
 	// >>> this needs to be dynamic!
 	if (mass > 200 || bulk > 200) return FALSE;
@@ -339,7 +339,7 @@ bool ProtoObj::takeAction(ObjectID, ObjectID, int16 num) {
 
 //  Drop this object at the specified location
 bool ProtoObj::drop(ObjectID dObj, ObjectID enactor, const Location &loc, int16 num) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	if (!canDropAt(dObj, enactor, loc)) return FALSE;
 
@@ -379,7 +379,7 @@ bool ProtoObj::dropAction(ObjectID, ObjectID, const Location &, int16) {
 
 //  drop an object onto another object and handle the result.
 bool ProtoObj::dropOn(ObjectID dObj, ObjectID enactor, ObjectID target, int16 count) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	// this prevents objects from being dropped on themselves
 	if (target == dObj) return TRUE;
@@ -416,9 +416,9 @@ bool ProtoObj::dropOn(
     ActiveItem      *target,
     const Location  &loc,
     int16           num) {
-	ASSERT(dObj != Nothing);
-	ASSERT(target != NULL);
-	ASSERT(isWorld(loc.context));
+	assert(dObj != Nothing);
+	assert(target != NULL);
+	assert(isWorld(loc.context));
 
 	int16       scriptResult;
 	/*
@@ -444,8 +444,8 @@ bool ProtoObj::dropOnAction(
 
 //  Strike another object with this object
 bool ProtoObj::strike(ObjectID dObj, ObjectID enactor, ObjectID item) {
-	ASSERT(isObject(dObj) || isActor(dObj));
-	ASSERT(isObject(item) || isActor(item));
+	assert(isObject(dObj) || isActor(dObj));
+	assert(isObject(item) || isActor(item));
 
 	int16   scriptResult;
 
@@ -466,8 +466,8 @@ bool ProtoObj::strikeAction(ObjectID, ObjectID, ObjectID) {
 
 //  Damage another object with this object
 bool ProtoObj::damage(ObjectID dObj, ObjectID enactor, ObjectID target) {
-	ASSERT(isObject(dObj) || isActor(dObj));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isObject(dObj) || isActor(dObj));
+	assert(isObject(target) || isActor(target));
 
 	int16   scriptResult;
 
@@ -487,7 +487,7 @@ bool ProtoObj::damageAction(ObjectID, ObjectID, ObjectID) {
 
 //  Eat this object
 bool ProtoObj::eat(ObjectID dObj, ObjectID enactor) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16           scriptResult;
 
@@ -508,8 +508,8 @@ bool ProtoObj::eatAction(ObjectID, ObjectID) {
 
 //  Insert this object into another object
 bool ProtoObj::insert(ObjectID dObj, ObjectID enactor, ObjectID item) {
-	ASSERT(dObj != Nothing);
-	ASSERT(item != Nothing);
+	assert(dObj != Nothing);
+	assert(item != Nothing);
 
 	int16   scriptResult;
 
@@ -530,7 +530,7 @@ bool ProtoObj::insertAction(ObjectID, ObjectID, ObjectID) {
 
 //  Remove this object from the object it is in
 bool ProtoObj::remove(ObjectID dObj, ObjectID enactor) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16           scriptResult;
 
@@ -555,8 +555,8 @@ bool ProtoObj::acceptDrop(
     ObjectID enactor,
     ObjectID droppedObj,
     int count) {
-	ASSERT(dObj != Nothing);
-	ASSERT(droppedObj != Nothing);
+	assert(dObj != Nothing);
+	assert(droppedObj != Nothing);
 
 	int16   scriptResult;
 
@@ -626,7 +626,7 @@ bool ProtoObj::acceptHealing(
 	int8 pdm = perDieMod;
 	int16 damage = 0;
 	int16           scriptResult;
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 	damage = absDamage;
 	if (dice)
 		for (int d = 0; d < abs(dice); d++)
@@ -654,8 +654,8 @@ bool ProtoObj::acceptStrike(
     ObjectID            enactor,
     ObjectID            strikingObj,
     uint8               skillIndex) {
-	ASSERT(dObj != Nothing);
-	ASSERT(strikingObj != Nothing);
+	assert(dObj != Nothing);
+	assert(strikingObj != Nothing);
 
 	int16   scriptResult;
 
@@ -687,7 +687,7 @@ bool ProtoObj::acceptLockToggle(
     ObjectID    dObj,
     ObjectID    enactor,
     uint8       keyCode) {
-	ASSERT(dObj != Nothing);
+	assert(dObj != Nothing);
 
 	int16       scriptResult;
 
@@ -715,8 +715,8 @@ bool ProtoObj::acceptLockToggleAction(ObjectID, ObjectID, uint8) {
 
 //  Mix this object with another.
 bool ProtoObj::acceptMix(ObjectID dObj, ObjectID enactor, ObjectID mixObj) {
-	ASSERT(dObj != Nothing);
-	ASSERT(mixObj != Nothing);
+	assert(dObj != Nothing);
+	assert(mixObj != Nothing);
 
 	int16   scriptResult;
 
@@ -741,8 +741,8 @@ bool ProtoObj::acceptInsertion(
     ObjectID enactor,
     ObjectID item,
     int16 count) {
-	ASSERT(dObj != Nothing);
-	ASSERT(item != Nothing);
+	assert(dObj != Nothing);
+	assert(item != Nothing);
 
 	if (!canContain(dObj, item)) return FALSE;
 
@@ -770,8 +770,8 @@ bool ProtoObj::acceptInsertionAt(
     ObjectID        item,
     const TilePoint &where,
     int16           num) {
-	ASSERT(dObj != Nothing);
-	ASSERT(item != Nothing);
+	assert(dObj != Nothing);
+	assert(item != Nothing);
 
 	if (!canContainAt(dObj, item, where)) return FALSE;
 
@@ -1022,7 +1022,7 @@ bool InventoryProto::canDropAt(
     ObjectID,
     ObjectID        enactor,
     const Location  &loc) {
-	ASSERT(enactor != Nothing);
+	assert(enactor != Nothing);
 
 	//  If we're not dropping it onto a world, we're okay
 	if (!isWorld(loc.context)) return TRUE;
@@ -1045,9 +1045,9 @@ bool InventoryProto::dropAction(
     ObjectID        enactor,
     const Location  &loc,
     int16           num) {
-	ASSERT(loc.context != Nothing);
-	ASSERT(dObj != Nothing);
-	ASSERT(enactor != Nothing);
+	assert(loc.context != Nothing);
+	assert(dObj != Nothing);
+	assert(enactor != Nothing);
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
@@ -1147,9 +1147,9 @@ bool InventoryProto::dropOnAction(
     ActiveItem      *target,
     const Location  &loc,
     int16           num) {
-	ASSERT(dObj != Nothing);
-	ASSERT(target != NULL);
-	ASSERT(isWorld(loc.context));
+	assert(dObj != Nothing);
+	assert(target != NULL);
+	assert(isWorld(loc.context));
 
 	if (drop(dObj, enactor, loc, num)) {
 		GameObject  *dObjPtr = GameObject::objectAddress(dObj);
@@ -1188,9 +1188,9 @@ bool InventoryProto::acceptStrikeAction(
     ObjectID            enactor,
     ObjectID            strikingObj,
     uint8) {
-	ASSERT(isObject(dObj) || isActor(dObj));
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(strikingObj) || isActor(strikingObj));
+	assert(isObject(dObj) || isActor(dObj));
+	assert(isActor(enactor));
+	assert(isObject(strikingObj) || isActor(strikingObj));
 
 	GameObject      *weapon = GameObject::objectAddress(strikingObj);
 
@@ -1259,7 +1259,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
-	ASSERT(!dObjPtr->isOpen() && !dObjPtr->isLocked());
+	assert(!dObjPtr->isOpen() && !dObjPtr->isLocked());
 
 	cn = CreateContainerNode(dObj, FALSE);
 	cn->markForShow();                                      //  Deferred open
@@ -1272,8 +1272,8 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::physicalType);
 
-	ASSERT(dObjPtr->isOpen());
-	ASSERT(cn);
+	assert(dObjPtr->isOpen());
+	assert(cn);
 
 	//  Delete the container (lazy delete)
 	cn->markForDelete();
@@ -1312,8 +1312,8 @@ bool PhysicalContainerProto::acceptInsertionAction(
     ObjectID enactor,
     ObjectID item,
     int16 num) {
-	ASSERT(isObject(dObj));
-	ASSERT(isObject(item));
+	assert(isObject(dObj));
+	assert(isObject(item));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	GameObject  *itemPtr = GameObject::objectAddress(item);
@@ -1346,8 +1346,8 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
     ObjectID        item,
     const TilePoint &where,
     int16           num) {
-	ASSERT(isObject(dObj));
-	ASSERT(isObject(item));
+	assert(isObject(dObj));
+	assert(isObject(item));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	GameObject  *itemPtr = GameObject::objectAddress(item);
@@ -1442,7 +1442,7 @@ uint16 PhysicalContainerProto::bulkCapacity(GameObject *) {
 
 //  Put key into mouse with intention to use
 bool KeyProto::setUseCursor(ObjectID dObj) {
-	ASSERT(mouseInfo.getObjectId() == Nothing);
+	assert(mouseInfo.getObjectId() == Nothing);
 	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
 	return TRUE;
 }
@@ -1549,8 +1549,8 @@ bool WeaponProto::isObjectBeingUsed(GameObject *obj) {
 
 //  Place weapon into right hand
 bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
@@ -1593,9 +1593,9 @@ bool MeleeWeaponProto::strikeAction(
     ObjectID dObj,
     ObjectID enactor,
     ObjectID item) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(item) || isActor(item));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
+	assert(isObject(item) || isActor(item));
 
 	GameObject      *itemPtr = GameObject::objectAddress(item);
 	ObjectSoundFXs  *soundFXs;
@@ -1615,9 +1615,9 @@ bool MeleeWeaponProto::damageAction(
     ObjectID dObj,
     ObjectID enactor,
     ObjectID target) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
+	assert(isObject(target) || isActor(target));
 
 	Actor           *a = (Actor *)GameObject::objectAddress(enactor);
 	ActorAttributes *effStats = a->getStats();
@@ -1655,7 +1655,7 @@ bool MeleeWeaponProto::acceptDamageAction(
 //  Determine if this type of weapon must be wielded with two hands
 //  for the specified actor
 bool MeleeWeaponProto::isTwoHanded(ObjectID attackerID) {
-	ASSERT(isActor(attackerID));
+	assert(isActor(attackerID));
 
 	Actor       *attackerPtr = (Actor *)GameObject::objectAddress(attackerID);
 	ActorProto  *attackerProto = (ActorProto *)attackerPtr->proto();
@@ -1669,8 +1669,8 @@ bool MeleeWeaponProto::isTwoHanded(ObjectID attackerID) {
 
 //  Initiate a melee weapon attack motion
 void MeleeWeaponProto::initiateAttack(ObjectID attacker, ObjectID target) {
-	ASSERT(isActor(attacker));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isActor(attacker));
+	assert(isObject(target) || isActor(target));
 
 	Actor       *attackerPtr = (Actor *)GameObject::objectAddress(attacker);
 	GameObject  *targetPtr = GameObject::objectAddress(target);
@@ -1687,9 +1687,9 @@ void MeleeWeaponProto::initiateDefense(
     ObjectID defensiveObj,
     ObjectID defender,
     ObjectID attacker) {
-	ASSERT(isObject(defensiveObj));
-	ASSERT(isActor(defender));
-	ASSERT(isActor(attacker));
+	assert(isObject(defensiveObj));
+	assert(isActor(defender));
+	assert(isActor(attacker));
 
 	GameObject  *weapon = GameObject::objectAddress(defensiveObj);
 	Actor       *defenderPtr = (Actor *)GameObject::objectAddress(defender),
@@ -1719,8 +1719,8 @@ uint8 MeleeWeaponProto::weaponRating(
     ObjectID weaponID,
     ObjectID wielderID,
     ObjectID targetID) {
-	ASSERT(isActor(wielderID));
-	ASSERT(isObject(targetID) || isActor(targetID));
+	assert(isActor(wielderID));
+	assert(isObject(targetID) || isActor(targetID));
 
 	Actor       *wielder = (Actor *)GameObject::objectAddress(wielderID);
 
@@ -1761,12 +1761,12 @@ uint8 MeleeWeaponProto::getDamageSound(const ObjectSoundFXs &soundFXs) {
 //	specified actor
 
 bool MeleeWeaponProto::useSlotAvailable(GameObject *obj, Actor *a) {
-	ASSERT(isObject(obj) && obj->proto() == this);
-	ASSERT(isActor(a));
+	assert(isObject(obj) && obj->proto() == this);
+	assert(isActor(a));
 
 	if (a->rightHandObject == Nothing) {
 		if (a->leftHandObject != Nothing) {
-			ASSERT(isObject(a->leftHandObject));
+			assert(isObject(a->leftHandObject));
 
 			GameObject      *leftHandObjectPtr;
 
@@ -1776,7 +1776,7 @@ bool MeleeWeaponProto::useSlotAvailable(GameObject *obj, Actor *a) {
 		}
 		return TRUE;
 	}
-	ASSERT(isObject(a->rightHandObject));
+	assert(isObject(a->rightHandObject));
 
 	return FALSE;
 }
@@ -1789,7 +1789,7 @@ bool MeleeWeaponProto::useSlotAvailable(GameObject *obj, Actor *a) {
 //	Get the value of the wielder's skill which applies to this weapon
 
 uint8 BludgeoningWeaponProto::getSkillValue(ObjectID enactor) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	Actor               *a;
 	ActorAttributes     *effStats;
@@ -1804,7 +1804,7 @@ uint8 BludgeoningWeaponProto::getSkillValue(ObjectID enactor) {
 //	Cause the user's associated skill to grow
 
 void BludgeoningWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	PlayerActorID       playerID;
 
@@ -1826,7 +1826,7 @@ void BludgeoningWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 //	Get the value of the wielder's skill which applies to this weapon
 
 uint8 SlashingWeaponProto::getSkillValue(ObjectID enactor) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	Actor               *a;
 	ActorAttributes     *effStats;
@@ -1841,7 +1841,7 @@ uint8 SlashingWeaponProto::getSkillValue(ObjectID enactor) {
 //	Cause the user's associated skill to grow
 
 void SlashingWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	PlayerActorID       playerID;
 
@@ -1860,8 +1860,8 @@ void SlashingWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
  * ==================================================================== */
 
 bool BowProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
@@ -1887,8 +1887,8 @@ bool BowProto::isTwoHanded(ObjectID) {
 
 //  Initiate the bow firing motion
 void BowProto::initiateAttack(ObjectID attacker, ObjectID target) {
-	ASSERT(isActor(attacker));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isActor(attacker));
+	assert(isObject(target) || isActor(target));
 
 	Actor       *attackerPtr = (Actor *)GameObject::objectAddress(attacker);
 	GameObject  *targetPtr = GameObject::objectAddress(target);
@@ -1898,8 +1898,8 @@ void BowProto::initiateAttack(ObjectID attacker, ObjectID target) {
 
 //  Grab an arrow from the actor's inventory
 GameObject *BowProto::getProjectile(ObjectID weapon, ObjectID enactor) {
-	ASSERT(isObject(weapon));
-	ASSERT(isActor(enactor));
+	assert(isObject(weapon));
+	assert(isActor(enactor));
 
 	GameObject          *obj,
 	                    *arrow = NULL;
@@ -1929,8 +1929,8 @@ GameObject *BowProto::getProjectile(ObjectID weapon, ObjectID enactor) {
 //	specified actor
 
 bool BowProto::useSlotAvailable(GameObject *obj, Actor *a) {
-	ASSERT(isObject(obj) && obj->proto() == this);
-	ASSERT(isActor(a));
+	assert(isObject(obj) && obj->proto() == this);
+	assert(isActor(a));
 
 	return a->leftHandObject == Nothing && a->rightHandObject == Nothing;
 }
@@ -1942,8 +1942,8 @@ uint8 BowProto::weaponRating(
     ObjectID weaponID,
     ObjectID wielderID,
     ObjectID targetID) {
-	ASSERT(isActor(wielderID));
-	ASSERT(isObject(targetID) || isActor(targetID));
+	assert(isActor(wielderID));
+	assert(isObject(targetID) || isActor(targetID));
 
 	if (getProjectile(weaponID, wielderID) == NULL) return 0;
 
@@ -1978,8 +1978,8 @@ int16 BowProto::fightStanceAction(ObjectID actor) {
  * ==================================================================== */
 
 bool WeaponWandProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
@@ -2005,8 +2005,8 @@ bool WeaponWandProto::isTwoHanded(ObjectID) {
 
 //  Initiate the use wand motion
 void WeaponWandProto::initiateAttack(ObjectID attacker, ObjectID target) {
-	ASSERT(isActor(attacker));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isActor(attacker));
+	assert(isObject(target) || isActor(target));
 
 	Actor       *attackerPtr = (Actor *)GameObject::objectAddress(attacker);
 	GameObject  *targetPtr = GameObject::objectAddress(target);
@@ -2019,8 +2019,8 @@ void WeaponWandProto::initiateAttack(ObjectID attacker, ObjectID target) {
 //	specified actor
 
 bool WeaponWandProto::useSlotAvailable(GameObject *obj, Actor *a) {
-	ASSERT(isObject(obj) && obj->proto() == this);
-	ASSERT(isActor(a));
+	assert(isObject(obj) && obj->proto() == this);
+	assert(isActor(a));
 
 	return a->leftHandObject == Nothing && a->rightHandObject == Nothing;
 }
@@ -2032,9 +2032,9 @@ uint8 WeaponWandProto::weaponRating(
     ObjectID weaponID,
     ObjectID wielderID,
     ObjectID targetID) {
-	ASSERT(isObject(weaponID) || isActor(weaponID));
-	ASSERT(isActor(wielderID));
-	ASSERT(isObject(targetID) || isActor(targetID));
+	assert(isObject(weaponID) || isActor(weaponID));
+	assert(isActor(wielderID));
+	assert(isObject(targetID) || isActor(targetID));
 
 	Actor       *wielder = (Actor *)GameObject::objectAddress(wielderID);
 
@@ -2121,9 +2121,9 @@ bool ArrowProto::strikeAction(
     ObjectID dObj,
     ObjectID enactor,
     ObjectID item) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(item) || isActor(item));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
+	assert(isObject(item) || isActor(item));
 
 	Actor           *a = (Actor *)GameObject::objectAddress(enactor);
 	GameObject      *itemPtr = GameObject::objectAddress(item);
@@ -2138,9 +2138,9 @@ bool ArrowProto::damageAction(
     ObjectID dObj,
     ObjectID enactor,
     ObjectID target) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
+	assert(isObject(target) || isActor(target));
 
 	Actor           *a = (Actor *)GameObject::objectAddress(enactor);
 	ActorAttributes *effStats = a->getStats();
@@ -2168,7 +2168,7 @@ bool ArrowProto::damageAction(
 //	Cause the user's associated skill to grow
 
 void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	PlayerActorID       playerID;
 
@@ -2226,8 +2226,8 @@ bool ArmorProto::isObjectBeingUsed(GameObject *obj) {
 //	specified actor
 
 bool ArmorProto::useSlotAvailable(GameObject *obj, Actor *a) {
-	ASSERT(isObject(obj) || obj->proto() == this);
-	ASSERT(isActor(a));
+	assert(isObject(obj) || obj->proto() == this);
+	assert(isActor(a));
 
 	return a->armorObjects[ whereWearable ] == Nothing;
 }
@@ -2236,14 +2236,14 @@ bool ArmorProto::useSlotAvailable(GameObject *obj, Actor *a) {
 //	"Wear" a piece of armor.
 
 bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
 	PlayerActorID   pID;
 
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 	GameObject  *obj = GameObject::objectAddress(dObj);
 
-	ASSERT(obj->proto() == this);
+	assert(obj->proto() == this);
 
 	if (enactor != obj->IDParent()) return FALSE;
 
@@ -2269,8 +2269,8 @@ uint16 ShieldProto::containmentSet(void) {
 
 //  Place shield into left hand
 bool ShieldProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
-	ASSERT(isActor(enactor));
+	assert(isObject(dObj));
+	assert(isActor(enactor));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
@@ -2278,7 +2278,7 @@ bool ShieldProto::useAction(ObjectID dObj, ObjectID enactor) {
 	if (enactor != dObjPtr->IDParent()) return FALSE;
 
 	if (a->rightHandObject != Nothing) {
-		ASSERT(isObject(a->rightHandObject));
+		assert(isObject(a->rightHandObject));
 		GameObject  *rightHandObjectPtr =
 		    GameObject::objectAddress(a->rightHandObject);
 
@@ -2311,9 +2311,9 @@ void ShieldProto::initiateDefense(
     ObjectID defensiveObj,
     ObjectID defender,
     ObjectID attacker) {
-	ASSERT(isObject(defensiveObj));
-	ASSERT(isActor(defender));
-	ASSERT(isActor(attacker));
+	assert(isObject(defensiveObj));
+	assert(isActor(defender));
+	assert(isActor(attacker));
 
 	GameObject  *shield = GameObject::objectAddress(defensiveObj);
 	Actor       *defenderPtr = (Actor *)GameObject::objectAddress(defender),
@@ -2355,12 +2355,12 @@ bool ShieldProto::isObjectBeingUsed(GameObject *obj) {
 //	specified actor
 
 bool ShieldProto::useSlotAvailable(GameObject *obj, Actor *a) {
-	ASSERT(isObject(obj) || obj->proto() == this);
-	ASSERT(isActor(a));
+	assert(isObject(obj) || obj->proto() == this);
+	assert(isActor(a));
 
 	if (a->leftHandObject == Nothing) {
 		if (a->rightHandObject != Nothing) {
-			ASSERT(isObject(a->rightHandObject));
+			assert(isObject(a->rightHandObject));
 
 			GameObject      *rightHandObjectPtr;
 
@@ -2378,7 +2378,7 @@ bool ShieldProto::useSlotAvailable(GameObject *obj, Actor *a) {
 //	Get the value of the user's skill which applies to this object
 
 uint8 ShieldProto::getSkillValue(ObjectID enactor) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	Actor               *a;
 	ActorAttributes     *effStats;
@@ -2393,7 +2393,7 @@ uint8 ShieldProto::getSkillValue(ObjectID enactor) {
 //	Cause the user's associated skill to grow
 
 void ShieldProto::applySkillGrowth(ObjectID enactor, uint8 points) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	PlayerActorID       playerID;
 
@@ -2421,7 +2421,7 @@ uint8 ShieldProto::getDamageSound(const ObjectSoundFXs &soundFXs) {
 
 //  Put tool into mouse with intention to use
 bool ToolProto::setUseCursor(ObjectID dObj) {
-	ASSERT(mouseInfo.getObjectId() == Nothing);
+	assert(mouseInfo.getObjectId() == Nothing);
 	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
 	return TRUE;
 }
@@ -2490,7 +2490,7 @@ uint16 IntangibleObjProto::containmentSet(void) {
 }
 
 bool IntangibleObjProto::useAction(ObjectID dObj, ObjectID enactor) {
-	ASSERT(isObject(dObj));
+	assert(isObject(dObj));
 
 	/*  GameObject *obj = GameObject::objectAddress(dObj);
 
@@ -2501,8 +2501,8 @@ bool IntangibleObjProto::useAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleObjProto::takeAction(ObjectID dObj, ObjectID enactor, int16) {
-	ASSERT(isObject(dObj));
-	ASSERT(mouseInfo.getObjectId() == Nothing);
+	assert(isObject(dObj));
+	assert(mouseInfo.getObjectId() == Nothing);
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 
@@ -2527,9 +2527,9 @@ bool IntangibleObjProto::dropAction(
     ObjectID        enactor,
     const Location  &loc,
     int16) {
-	ASSERT(isObject(dObj));
-	ASSERT(loc.context != Nothing);
-	ASSERT(!isWorld(loc.context));
+	assert(isObject(dObj));
+	assert(loc.context != Nothing);
+	assert(!isWorld(loc.context));
 
 	GameObject  *container = GameObject::objectAddress(loc.context);
 
@@ -2553,7 +2553,7 @@ bool IntangibleObjProto::acceptDropAction(
     ObjectID enactor,
     ObjectID droppedObj,
     int) {
-	ASSERT(isObject(dObj));
+	assert(isObject(dObj));
 
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 
@@ -2685,7 +2685,7 @@ bool SkillProto::canDropAt(ObjectID, ObjectID, const Location &) {
 }
 
 bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &loc, int16 num) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	if (isWorld(loc.context)) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
@@ -2700,8 +2700,8 @@ bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &lo
 }
 
 bool SkillProto::dropOnAction(ObjectID dObj, ObjectID enactor, ObjectID target, int count) {
-	ASSERT(isActor(enactor));
-	ASSERT(isObject(target) || isActor(target));
+	assert(isActor(enactor));
+	assert(isObject(target) || isActor(target));
 
 	GameObject      *targetPtr = GameObject::objectAddress(target);
 
@@ -2721,7 +2721,7 @@ bool SkillProto::dropOnAction(
     ActiveItem      *target,
     const Location  &loc,
     int16           num) {
-	ASSERT(isActor(enactor));
+	assert(isActor(enactor));
 
 	if (target != NULL) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
@@ -2768,7 +2768,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 	int16       hitPoints   = obj->getHitPoints();  // get hitpoints of enchant
 	GameObject  *parentObj  = obj->parent();        // get parent of enchantment
 
-	ASSERT(parentObj);
+	assert(parentObj);
 
 	// if this is a poison enchantment
 	// then hurt the victim
@@ -2975,7 +2975,7 @@ void MissionGeneratorProto::doBackgroundUpdate(GameObject *obj) {
  * ==================================================================== */
 
 bool IntangibleContainerProto::canContain(ObjectID dObj, ObjectID item) {
-	ASSERT(isObject(item));
+	assert(isObject(item));
 
 	GameObject      *itemPtr = GameObject::objectAddress(item);
 
@@ -3019,7 +3019,7 @@ bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 	ContainerNode   *cn = globalContainerList.find(dObj, ContainerNode::mentalType);
 
-	ASSERT(cn);
+	assert(cn);
 
 	//  Mark container for lazy deletion
 	cn->markForDelete();

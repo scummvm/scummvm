@@ -91,7 +91,7 @@ public:
 
 	//  Return a pointer to a Band given a BandID
 	Band *getBandAddress(BandID id) {
-		ASSERT(id >= 0 && id < numBands);
+		assert(id >= 0 && id < numBands);
 		return array[ id ].getBand();
 	}
 };
@@ -220,7 +220,7 @@ void *BandList::newBand(void) {
 //	Place a specific Band into the active list and return its address
 
 void *BandList::newBand(BandID id) {
-	ASSERT(id >= 0 && id < elementsof(array));
+	assert(id >= 0 && id < elementsof(array));
 
 	BandPlaceHolder     *bp;
 
@@ -388,18 +388,18 @@ Band::Band(void **buf) {
 	int16       i;
 
 	//  Restore the leader pointer
-	ASSERT(isActor(*((ObjectID *)bufferPtr)));
+	assert(isActor(*((ObjectID *)bufferPtr)));
 	leader = (Actor *)GameObject::objectAddress(*((ObjectID *)bufferPtr));
 	bufferPtr = (ObjectID *)bufferPtr + 1;
 
 	//  Restore the member count
-	ASSERT(*((int16 *)bufferPtr) < elementsof(members));
+	assert(*((int16 *)bufferPtr) < elementsof(members));
 	memberCount = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	//  Restore the member pointers
 	for (i = 0; i < memberCount; i++) {
-		ASSERT(isActor(*((ObjectID *)bufferPtr)));
+		assert(isActor(*((ObjectID *)bufferPtr)));
 		members[ i ] = (Actor *)GameObject::objectAddress(
 		                   *((ObjectID *)bufferPtr));
 		bufferPtr = (ObjectID *)bufferPtr + 1;

@@ -318,9 +318,9 @@ enum effectSpecialTypes {
 //
 
 inline uint16 makeEnchantmentID(uint16 type, uint16 damtyp, int16 damamt) {
-	VERIFY(type < 8);
-	VERIFY(damtyp < 32);
-	VERIFY(damamt < 128 && damamt > -128);
+	assert(type < 8);
+	assert(damtyp < 32);
+	assert(damamt < 128 && damamt > -128);
 	return (type << 13) | (damtyp << 8) + (damamt + 128);
 }
 

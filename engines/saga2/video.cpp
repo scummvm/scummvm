@@ -211,7 +211,7 @@ bool VideoPlayer::StartPlay(char *filespec,
 		res = FALSE;
 		break;
 	default:
-		ASSERT(0);
+		assert(0);
 		res = FALSE;
 	}
 	mouseHook(TRUE);
@@ -251,7 +251,7 @@ bool VideoPlayer::CheckPlay(void) {
 		case VideoNone:
 			break;
 		default:
-			ASSERT(0);
+			assert(0);
 		}
 		autoEnd = FALSE;
 		mouseHook(TRUE);
@@ -282,7 +282,7 @@ void VideoPlayer::EndPlay(void) {
 		break;
 #endif
 	default:
-		ASSERT(0);
+		assert(0);
 	}
 	mouseHook(TRUE);
 	setType(VideoNone);

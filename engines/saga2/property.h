@@ -120,7 +120,7 @@ CompoundProperty< T >::CompoundProperty(
 	//  Allocate memory to copy the array.
 	propertyArray = (Property< T > **)TALLOC(arrayBytes, memPropList);
 #if DEBUG
-	VERIFY(propertyArray);
+	assert(propertyArray);
 #endif
 	//  Copy the array
 	memcpy(propertyArray, array, arrayBytes);

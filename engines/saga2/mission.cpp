@@ -80,8 +80,8 @@ int ActiveMission::findMission(ObjectID genID) {
 }
 
 ActiveMission *ActiveMission::missionAddress(int index) {
-	ASSERT(index >= 0);
-	ASSERT(index < elementsof(activeMissions));
+	assert(index >= 0);
+	assert(index < elementsof(activeMissions));
 
 	return &activeMissions[ index ];
 }

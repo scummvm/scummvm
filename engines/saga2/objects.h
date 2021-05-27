@@ -793,7 +793,7 @@ public:
 	}
 
 	static uint32 IDtoMapNum(ObjectID id) {
-		VERIFY(isWorld(id));
+		assert(isWorld(id));
 		return ((GameWorld *)GameObject::objectAddress(id))->mapNum;
 	}
 };
@@ -918,8 +918,8 @@ public:
 		searchWorld(world),
 		minSector(sectorRegion.min),
 		maxSector(sectorRegion.max) {
-		ASSERT(searchWorld != NULL);
-		ASSERT(isWorld(searchWorld));
+		assert(searchWorld != NULL);
+		assert(isWorld(searchWorld));
 	}
 
 protected:

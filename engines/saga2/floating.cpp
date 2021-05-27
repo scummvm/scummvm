@@ -448,7 +448,7 @@ void LabeledButton::drawClipped(
 
 FloatingWindow::FloatingWindow(const Rect16 &r, uint16 ident, const char saveas[], AppFunc *cmd)
 	: DecoratedWindow(r, ident, saveas, cmd) {
-	VERIFY(db = NEW_UI DragBar(*this, Rect16(0, 0, r.width, r.height)));
+	assert(db = NEW_UI DragBar(*this, Rect16(0, 0, r.width, r.height)));
 
 	origPos.x = r.x;
 	origPos.y = r.y;

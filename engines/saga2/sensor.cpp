@@ -191,12 +191,12 @@ void *constructSensor(int16 ctr, void *buf) {
 		break;
 	}
 
-	ASSERT(sensor != NULL);
+	assert(sensor != NULL);
 
 	//  Get the sensor list
 	sensorList = fetchSensorList(sensor->getObject());
 
-	ASSERT(sensorList != NULL);
+	assert(sensorList != NULL);
 
 	//  Append this Sensor to the sensor list
 	sensorList->addTail(*sensor);
@@ -209,7 +209,7 @@ void *constructSensor(int16 ctr, void *buf) {
 //	an archive buffer
 
 int32 sensorArchiveSize(Sensor *sensor) {
-	ASSERT(sensor != NULL);
+	assert(sensor != NULL);
 
 	return      sizeof(int16)                //  Type
 	            +   sensor->archiveSize();
@@ -219,7 +219,7 @@ int32 sensorArchiveSize(Sensor *sensor) {
 //	Archive the specified Sensor in an archive buffer
 
 void *archiveSensor(Sensor *sensor, void *buf) {
-	ASSERT(sensor != NULL);
+	assert(sensor != NULL);
 
 	//  Store the sensor type
 	*((int16 *)buf) = sensor->getType();
@@ -243,7 +243,7 @@ void checkSensors(void) {
 		nextSensorHolder = (SensorHolder *)sensorHolder->next();
 
 		if (--sensorHolder->checkCtr <= 0) {
-			ASSERT(sensorHolder->checkCtr == 0);
+			assert(sensorHolder->checkCtr == 0);
 
 			Sensor      *sensor = sensorHolder->getSensor();
 			SenseInfo   info;
@@ -256,8 +256,8 @@ void checkSensors(void) {
 
 
 			if (sensor->check(info, sFlags)) {
-				ASSERT(info.sensedObject != NULL);
-				ASSERT(isObject(info.sensedObject)
+				assert(info.sensedObject != NULL);
+				assert(isObject(info.sensedObject)
 				       ||  isActor(info.sensedObject));
 
 				sensor->getObject()->senseObject(
@@ -273,8 +273,8 @@ void checkSensors(void) {
 //----------------------------------------------------------------------
 
 void assertEvent(const GameEvent &ev) {
-	ASSERT(ev.directObject != NULL);
-	ASSERT(isObject(ev.directObject) || isActor(ev.directObject));
+	assert(ev.directObject != NULL);
+	assert(isObject(ev.directObject) || isActor(ev.directObject));
 
 	SensorHolder    *sensorHolder,
 	                *nextSensorHolder;
@@ -303,12 +303,12 @@ void assertEvent(const GameEvent &ev) {
 
 void initSensors(void) {
 	//  Nothing to do
-	ASSERT(sizeof(ProtaganistSensor) <= maxSensorSize);
-	ASSERT(sizeof(SpecificObjectSensor) <= maxSensorSize);
-	ASSERT(sizeof(ObjectPropertySensor) <= maxSensorSize);
-	ASSERT(sizeof(SpecificActorSensor) <= maxSensorSize);
-	ASSERT(sizeof(ActorPropertySensor) <= maxSensorSize);
-	ASSERT(sizeof(EventSensor) <= maxSensorSize);
+	assert(sizeof(ProtaganistSensor) <= maxSensorSize);
+	assert(sizeof(SpecificObjectSensor) <= maxSensorSize);
+	assert(sizeof(ObjectPropertySensor) <= maxSensorSize);
+	assert(sizeof(SpecificActorSensor) <= maxSensorSize);
+	assert(sizeof(ActorPropertySensor) <= maxSensorSize);
+	assert(sizeof(EventSensor) <= maxSensorSize);
 }
 
 //----------------------------------------------------------------------
@@ -374,7 +374,7 @@ void saveSensors(SaveFileConstructor &saveGame) {
 		bufferPtr = archiveSensor(sensorHolder->getSensor(), bufferPtr);
 	}
 
-	ASSERT(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
 
 	//  Write the data to the save file
 	saveGame.writeChunk(
@@ -425,7 +425,7 @@ void loadSensors(SaveFileReader &saveGame) {
 		bufferPtr = constructSensor(ctr, bufferPtr);
 	}
 
-	ASSERT(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -484,7 +484,7 @@ SensorList *fetchSensorList(GameObject *obj) {
 SensorList::SensorList(void **buf) {
 	ObjectID        *bufferPtr = (ObjectID *)*buf;
 
-	ASSERT(isObject(*bufferPtr) || isActor(*bufferPtr));
+	assert(isObject(*bufferPtr) || isActor(*bufferPtr));
 
 	obj = GameObject::objectAddress(*bufferPtr);
 
@@ -511,7 +511,7 @@ void *SensorList::archive(void *buf) {
 Sensor::Sensor(void **buf) {
 	void        *bufferPtr = *buf;
 
-	ASSERT(isObject(*((ObjectID *)bufferPtr))
+	assert(isObject(*((ObjectID *)bufferPtr))
 	       ||  isActor(*((ObjectID *)bufferPtr)));
 
 	//  Restore the object pointer
@@ -559,13 +559,13 @@ void *Sensor::archive(void *buf) {
 
 #if DEBUG
 void *Sensor::operator new (size_t sz) {
-	ASSERT(sz <= maxSensorSize);
+	assert(sz <= maxSensorSize);
 
 	return newSensor();
 }
 
 void *Sensor::operator new (size_t sz, int16 ctr) {
-	ASSERT(sz <= maxSensorSize);
+	assert(sz <= maxSensorSize);
 
 	return newSensor(ctr);
 }
@@ -599,7 +599,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		Actor   *protag =
 		    getPlayerActorAddress(playerActorIDs[ i ])->getActor();
 
-		ASSERT(isActor(protag));
+		assert(isActor(protag));
 
 		//  Skip this protaganist if they're dead
 		if (protag->isDead())
@@ -755,8 +755,8 @@ int16 SpecificObjectSensor::getType(void) {
 //	Determine if the object can sense what it's looking for
 
 bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
-	ASSERT(soughtObjID != Nothing);
-	ASSERT(isObject(soughtObjID) || isActor(soughtObjID));
+	assert(soughtObjID != Nothing);
+	assert(isObject(soughtObjID) || isActor(soughtObjID));
 
 	GameObject      *soughtObject = GameObject::objectAddress(soughtObjID);
 	bool            objIsActor = isActor(getObject());
@@ -793,9 +793,9 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 //	Determine if an object meets the search criteria
 
 bool SpecificObjectSensor::isObjectSought(GameObject *obj) {
-	ASSERT(isObject(obj) || isActor(obj));
-	ASSERT(soughtObjID != Nothing);
-	ASSERT(isObject(soughtObjID) || isActor(soughtObjID));
+	assert(isObject(obj) || isActor(obj));
+	assert(soughtObjID != Nothing);
+	assert(isObject(soughtObjID) || isActor(soughtObjID));
 
 	return obj == GameObject::objectAddress(soughtObjID);
 }
@@ -849,7 +849,7 @@ int16 ObjectPropertySensor::getType(void) {
 //	Determine if an object meets the search criteria
 
 bool ObjectPropertySensor::isObjectSought(GameObject *obj) {
-	ASSERT(isObject(obj) || isActor(obj));
+	assert(isObject(obj) || isActor(obj));
 
 	return obj->hasProperty(*getObjProp(objectProperty));
 }
@@ -862,7 +862,7 @@ bool ObjectPropertySensor::isObjectSought(GameObject *obj) {
 //	Determine if an object meets the search criteria
 
 bool ActorSensor::isObjectSought(GameObject *obj) {
-	ASSERT(isObject(obj) || isActor(obj));
+	assert(isObject(obj) || isActor(obj));
 
 	//  Only actors need apply
 	return isActor(obj) && isActorSought((Actor *)obj);
@@ -878,7 +878,7 @@ bool ActorSensor::isObjectSought(GameObject *obj) {
 SpecificActorSensor::SpecificActorSensor(void **buf) : ActorSensor(buf) {
 	ObjectID        *bufferPtr = (ObjectID *)*buf;
 
-	ASSERT(isActor(*bufferPtr));
+	assert(isActor(*bufferPtr));
 
 	//  Restore the sought actor pointer
 	soughtActor = (Actor *)GameObject::objectAddress(*bufferPtr++);
@@ -918,7 +918,7 @@ int16 SpecificActorSensor::getType(void) {
 //	Determine if the object can sense what it's looking for
 
 bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
-	ASSERT(isActor(soughtActor));
+	assert(isActor(soughtActor));
 	bool        objIsActor = isActor(getObject());
 
 	if (senseFlags & (1 << actorBlind))

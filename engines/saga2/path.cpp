@@ -178,8 +178,8 @@ public:
 
 	void fetchTileSection(const TilePoint &org, const TilePoint &a);
 	PathTilePosInfo *tilePos(const TilePoint &pos) {
-		ASSERT(pos.u >= origin.u && (pos.u - origin.u) < area.u);
-		ASSERT(pos.v >= origin.v && (pos.v - origin.v) < area.v);
+		assert(pos.u >= origin.u && (pos.u - origin.u) < area.u);
+		assert(pos.v >= origin.v && (pos.v - origin.v) < area.v);
 		return &array[(pos.u - origin.u) * area.v + pos.v - origin.v ];
 	}
 };
@@ -331,8 +331,8 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 		tileReg.min.v = (tileReg.min.v + origin.v) & platMask;
 		tileReg.max.v = tileReg.min.v + offset.v;
 
-		ASSERT(tileReg.max.u <= platformWidth);
-		ASSERT(tileReg.max.v <= platformWidth);
+		assert(tileReg.max.u <= platformWidth);
+		assert(tileReg.max.v <= platformWidth);
 
 		//  Compute the offset of base tile in metatile to origin
 		offset.u = ((subMeta.u >> 1) << platShift) - origin.u;
@@ -353,14 +353,14 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 			for (u = tileReg.min.u; u < tileReg.max.u; u++) {
 				PathTilePosInfo *arrRow = &array[(u + offset.u) * area.v ];
 
-				ASSERT(u >= 0);
-				ASSERT(u < platformWidth);
+				assert(u >= 0);
+				assert(u < platformWidth);
 
 				for (v = tileReg.min.v; v < tileReg.max.v; v++) {
 					int16   flagIndex = ((u & subMetaMask) << subMetaShift) | (v & subMetaMask);
 
-					ASSERT(v >= 0);
-					ASSERT(v < platformWidth);
+					assert(v >= 0);
+					assert(v < platformWidth);
 
 					if (!(tpFlags & (1 << flagIndex))) {
 						tpFlags |= (1 << flagIndex);
@@ -378,7 +378,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							TileRegion  subMetaTag;
 							TileRef     *stateData;
 
-							ASSERT((uint16)tr->tile <= activeItemIndexNullID);
+							assert((uint16)tr->tile <= activeItemIndexNullID);
 							groupItem = ActiveItem::activeItemAddress(
 							                ActiveItemID(mapNum, tr->tile));
 
@@ -537,10 +537,10 @@ PathArray::~PathArray(void) {
 //  be TRUE.  If it fails to allocate a new cell it will throw
 //  a CellAllocationFailure.
 PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
-	ASSERT(plat >= 0 && plat < maxPlatforms);
-	ASSERT(uCoord >= 0 && uCoord < searchDiameter);
-	ASSERT(vCoord >= 0 && vCoord < searchDiameter);
-	ASSERT(newCell != NULL);
+	assert(plat >= 0 && plat < maxPlatforms);
+	assert(uCoord >= 0 && uCoord < searchDiameter);
+	assert(vCoord >= 0 && vCoord < searchDiameter);
+	assert(newCell != NULL);
 
 	//  Compute the chunk coords
 	int             chunkUCoord = uCoord >> 2,
@@ -585,9 +585,9 @@ PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
 //  Get a pointer to an existing cell.  If the specified cell has
 //  not been created, it will return NULL.
 PathCell *PathArray::getCell(int plat, int uCoord, int vCoord) {
-	ASSERT(plat >= 0 && plat < maxPlatforms);
-	ASSERT(uCoord >= 0 && uCoord < searchDiameter);
-	ASSERT(vCoord >= 0 && vCoord < searchDiameter);
+	assert(plat >= 0 && plat < maxPlatforms);
+	assert(uCoord >= 0 && uCoord < searchDiameter);
+	assert(vCoord >= 0 && vCoord < searchDiameter);
 
 	//  Compute the chunk coords
 	int             chunkUCoord = uCoord >> 2,
@@ -612,9 +612,9 @@ PathCell *PathArray::getCell(int plat, int uCoord, int vCoord) {
 }
 
 void PathArray::deleteCell(int plat, int uCoord, int vCoord) {
-	ASSERT(plat >= 0 && plat < maxPlatforms);
-	ASSERT(uCoord >= 0 && uCoord < searchDiameter);
-	ASSERT(vCoord >= 0 && vCoord < searchDiameter);
+	assert(plat >= 0 && plat < maxPlatforms);
+	assert(uCoord >= 0 && uCoord < searchDiameter);
+	assert(vCoord >= 0 && vCoord < searchDiameter);
 
 	//  Compute the chunk coords
 	int             chunkUCoord = uCoord >> 2,
@@ -1354,7 +1354,7 @@ static void push(
     int     cost,
     int     direction,
     int8    platformDelta) {
-	ASSERT(cellArray != NULL);
+	assert(cellArray != NULL);
 
 	PathCell        *cellPtr;
 	bool            newCell;
@@ -1367,7 +1367,7 @@ static void push(
 
 	cellPtr = cellArray->makeCell(platform, tp.u, tp.v, &newCell);
 
-	ASSERT(cellPtr != NULL);
+	assert(cellPtr != NULL);
 
 	//  If the cell is already visited, only
 	//  update it if it was less cost to get here.
@@ -1542,12 +1542,12 @@ void PathRequest::initialize(void) {
 		for (curTileRegU = minTileRegU;
 		        curTileRegU < maxTileRegU;
 		        curTileRegU++) {
-			ASSERT(curTileRegU >= 0 && curTileRegU < searchDiameter);
+			assert(curTileRegU >= 0 && curTileRegU < searchDiameter);
 
 			for (curTileRegV = minTileRegV;
 			        curTileRegV < maxTileRegV;
 			        curTileRegV++) {
-				ASSERT(curTileRegV >= 0 && curTileRegV < searchDiameter);
+				assert(curTileRegV >= 0 && curTileRegV < searchDiameter);
 
 				VolumeLookupNode    *node;
 				VolumeLookupNode    **tablePtrPtr;
@@ -1641,7 +1641,7 @@ void PathRequest::finish(void) {
 
 	if (bestLoc != Nowhere) {
 		cell = cellArray->getCell(bestPlatform, bestLoc.u, bestLoc.v);
-		ASSERT(cell != NULL);
+		assert(cell != NULL);
 
 		if (cell->direction != dirInvalid) {
 			res = &tempResult[ elementsof(tempResult) ];
@@ -1652,7 +1652,7 @@ void PathRequest::finish(void) {
 				int16       reverseDir;
 
 				cell = cellArray->getCell(bestPlatform, bestLoc.u, bestLoc.v);
-				ASSERT(cell != NULL);
+				assert(cell != NULL);
 
 				if (cell->direction != dirInvalid) {
 					if (cell->direction != prevDir
@@ -1676,10 +1676,10 @@ void PathRequest::finish(void) {
 
 					reverseDir = (cell->direction + 4) & 0x07;
 					bestLoc += tDirTable2[ reverseDir ];
-					ASSERT(bestLoc.u >= 0 && bestLoc.u < searchDiameter);
-					ASSERT(bestLoc.v >= 0 && bestLoc.v < searchDiameter);
+					assert(bestLoc.u >= 0 && bestLoc.u < searchDiameter);
+					assert(bestLoc.v >= 0 && bestLoc.v < searchDiameter);
 					bestPlatform -= cell->platformDelta;
-					ASSERT(bestPlatform >= 0 && bestPlatform < maxPlatforms);
+					assert(bestPlatform >= 0 && bestPlatform < maxPlatforms);
 				} else
 					break;
 			}
@@ -1717,7 +1717,7 @@ void PathRequest::abort(void) {
 static uint32 severePathFinderOverruns = 0;
 
 PathResult PathRequest::findPath(void) {
-	ASSERT(cellArray != NULL);
+	assert(cellArray != NULL);
 
 	static const uint8 costTable[] =
 	{ 4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0 };
@@ -1732,9 +1732,9 @@ PathResult PathRequest::findPath(void) {
 	lastTick = gameTime;
 
 	while (queue.remove(qi)) {
-		ASSERT(cellArray->getCell(qi.platform, qi.u, qi.v) != NULL);
-		ASSERT(qi.u >= 1 && qi.u < searchDiameter - 1);
-		ASSERT(qi.v >= 1 && qi.v < searchDiameter - 1);
+		assert(cellArray->getCell(qi.platform, qi.u, qi.v) != NULL);
+		assert(qi.u >= 1 && qi.u < searchDiameter - 1);
+		assert(qi.v >= 1 && qi.v < searchDiameter - 1);
 
 		TilePoint   centerTileCoords;
 		TilePoint   *tDir;
@@ -2049,7 +2049,7 @@ PathResult PathRequest::findPath(void) {
 			    cost,
 			    dir,
 			    testPlatform - centerPlatform);
-			ASSERT(cellArray->getCell(centerPlatform, qi.u, qi.v) != NULL);
+			assert(cellArray->getCell(centerPlatform, qi.u, qi.v) != NULL);
 
 big_continue:
 			;
@@ -2493,7 +2493,7 @@ TilePoint selectNearbySite(
     int32           minDist,
     int32           maxDist,
     bool            offScreenOnly) {        // TRUE if we want it off-screen
-	ASSERT(isWorld(worldID));
+	assert(isWorld(worldID));
 
 	TilePoint       baseCoords,
 	                baseTileCoords,

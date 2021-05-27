@@ -187,7 +187,7 @@ bool VideoPlayer::StartSMK(char *filespec,
 
 bool VideoPlayer::CheckSMK(void) {
 #if 0
-	VERIFY(smk);
+	assert(smk);
 	if (abort)
 		i = smk->Frames + 1;
 	if (i > smk->Frames) {

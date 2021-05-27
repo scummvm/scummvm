@@ -3230,7 +3230,7 @@ bool Actor::takeMana(ActorManaID i, int8 dMana) {
 	if (!isPlayerActor(this))
 		return TRUE;
 #endif
-	VERIFY(i >= manaIDRed && i <= manaIDViolet);
+	assert(i >= manaIDRed && i <= manaIDViolet);
 	if ((&effectiveStats.redMana)[i] < dMana)
 		return FALSE;
 	(&effectiveStats.redMana)[i] -= dMana;
@@ -3243,7 +3243,7 @@ bool Actor::hasMana(ActorManaID i, int8 dMana) {
 	if (!isPlayerActor(this))
 		return TRUE;
 #endif
-	VERIFY(i >= manaIDRed && i <= manaIDViolet);
+	assert(i >= manaIDRed && i <= manaIDViolet);
 	if ((&effectiveStats.redMana)[i] < dMana)
 		return FALSE;
 	return TRUE;
