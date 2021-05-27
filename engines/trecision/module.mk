@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	saveload.o \
 	scheduler.o \
 	script.o \
+	struct.o \
 	text.o \
 	trecision.o \
 	utils.o \
