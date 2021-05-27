@@ -66,6 +66,10 @@ void unpackImage(gPixelMap *map,
                                   int32 rowCount,
                                   int8 *srcData);
 
+void unpackImage(gPixelMap &map,
+                                  int16 width,
+                                  int16 rowCount,
+                                  int8 *srcData);
 /* ===================================================================== *
                     SPRDRAW.ASM
  * ===================================================================== */
