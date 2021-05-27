@@ -637,7 +637,6 @@ int16 FileDialog(int16 fileProcess) {
 	void    **arrowUpIm = NULL,
 	          **arrowDnIm = NULL,
 	            **pushBtnIm = NULL;
-	int16   lastGame;
 
 	AppFunc *fileCommands[ 2 ]  = { { cmdFileSave }, { cmdFileLoad } };
 
@@ -749,8 +748,6 @@ int16 FileDialog(int16 fileProcess) {
 	                    elementsof(saveWindowDecorations),
 	                    decRes, 'S', 'L', 'D');
 
-	lastGame = GetPrivateProfileInt("Options", "LastGame", 0, iniFile);
-
 	win->userData = &rInfo;
 	win->open();
 
@@ -758,7 +755,6 @@ int16 FileDialog(int16 fileProcess) {
 		GameMode::update();
 
 	win->invalidate();
-	textBox->choose(lastGame);
 	//win->draw();
 	//G_BASE.setActive(textBox);
 
@@ -973,7 +969,6 @@ int16 OptionsDialog(bool disableSaveResume) {
 			loadRestartGame();
 		else {
 			loadSavedGameState(deferredLoadID);
-			WritePrivateProfileInt("Options", "LastGame", deferredLoadID, iniFile);
 		}
 		if (GameMode::newmodeFlag)
 			GameMode::update();
@@ -990,7 +985,6 @@ int16 OptionsDialog(bool disableSaveResume) {
 		if (deferredSaveFlag) {
 #ifdef IMMEDIATE_SAVE
 			saveGameState(deferredLoadID, deferredSaveName);
-			WritePrivateProfileInt("Options", "LastGame", deferredLoadID, iniFile);
 #endif
 		}
 		mainWindow->invalidate(optionsWindowRect);
@@ -1685,7 +1679,6 @@ APPFUNC(cmdFileSave) {
 #ifndef IMMEDIATE_SAVE
 		// save game
 		saveGameState(saveIndex, textBox->getLine(saveIndex));
-		WritePrivateProfileInt("Options", "LastGame", saveIndex, iniFile);
 #else
 		deferredLoadID = saveIndex;
 		deferredSaveFlag = TRUE;

@@ -233,11 +233,13 @@ void startAudio(void) {
 	            (uint32) 400000    // sound buffer size
 	        );
 
+#if 0
 	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
 	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
 	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
 	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
-
+#endif
+	warning("STUB: startAudio, sync sound settings");
 
 	assert(audio);
 	if (audio->active()) {
@@ -316,10 +318,13 @@ void startAudio(void) {
 		clickData[2] = (uint8 *) LoadResource(soundRes, MKTAG('C', 'L', 'K', 2), "Click 2");
 	}
 
+#if 0
 	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
 	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
 	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
 	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
+#endif
+	warning("STUB: startAudio, sync sound settings");
 
 #if DEBUG
 	if (debugStatuses) {

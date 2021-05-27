@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/config-manager.h"
+
 #include "saga2/std.h"
 #include "saga2/cmisc.h"
 #include "saga2/input.h"
@@ -235,7 +237,7 @@ void waitForVideoFile(char *fileName) {     // file name & extension
 
 	abortFlag = FALSE;
 
-	if (!GetPrivateProfileInt("Options", "Videos", 1, iniFile)) {
+	if (ConfMan.getBool("disable_videos")) {
 		abortFlag = TRUE;
 		return;
 	}

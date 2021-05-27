@@ -109,8 +109,7 @@ MODULE_OBJS := \
 	vpal.o \
 	vwdraw.o \
 	vwpage.o \
-	weapons.o \
-	winini.o
+	weapons.o
 
 MODULE_DIRS += \
 	engines/saga2
