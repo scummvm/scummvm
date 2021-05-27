@@ -101,7 +101,7 @@ gCompImage::gCompImage(gPanelList &list,
 	resContext = NULL;
 }
 
-gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, char *text, textPallete &pal, uint16 ident,
+gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const char *text, textPallete &pal, uint16 ident,
                        AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
 	// setup a single image configuration
 	init();
@@ -150,7 +150,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
 }
 
 gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
-                       int16 numRes, int16 initial, char *text, textPallete &pal,
+                       int16 numRes, int16 initial, const char *text, textPallete &pal,
                        uint16 ident, AppFunc *cmd) : gControl(list, box, text, ident, cmd) {
 	init();
 
@@ -423,7 +423,7 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 	extent          = box;
 }
 
-gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, char *text, textPallete &pal, uint16 ident,
+gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
 	if (images[ 0 ] && images[ 1 ] && numRes == 2) {
 		forImage    = images[ 0 ];

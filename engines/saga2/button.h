@@ -102,14 +102,14 @@ public:
 
 	gCompImage(gPanelList &, const Rect16 &, void *, uint16, AppFunc *cmd = NULL);
 
-	gCompImage(gPanelList &, const Rect16 &, void *, char *,
+	gCompImage(gPanelList &, const Rect16 &, void *, const char *,
 	           textPallete &, uint16, AppFunc *cmd = NULL);
 
 	gCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
 	           uint16, AppFunc *cmd = NULL);
 
 	gCompImage(gPanelList &, const Rect16 &, void **, int16, int16,
-	           char *, textPallete &, uint16, AppFunc *cmd = NULL);
+	           const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
 	gCompImage(gPanelList &list,
 	           const Rect16 &box,
@@ -209,7 +209,7 @@ public:
 	            uint16, AppFunc *cmd = NULL);
 
 	gCompButton(gPanelList &, const Rect16 &, void **, int16,
-	            char *, textPallete &, uint16, AppFunc *cmd = NULL);
+	            const char *, textPallete &, uint16, AppFunc *cmd = NULL);
 
 	gCompButton(gPanelList &, const Rect16 &, void **, int16, void *, bool,
 	            uint16, AppFunc *cmd = NULL);

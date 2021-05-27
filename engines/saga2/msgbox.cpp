@@ -76,9 +76,7 @@ inline Rect16 butBox(int n, int i) {
  * ===================================================================== */
 
 bool userDialogAvailable(void);
-int16 userDialog(const char *title, char *msg, char *btnMsg1,
-                 char *btnMsg2,
-                 char *btnMsg3);
+int16 userDialog(const char *title, const char *msg, const char *btnMsg1, const char *btnMsg2, const char *btnMsg3);
 
 // ------------------------------------------------------------------------
 // Wrapper to avoid errors

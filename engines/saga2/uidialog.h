@@ -57,9 +57,9 @@ int16 OptionsDialog(bool disableSaveResume = FALSE);
 void initFileFields(char **fieldStrings);
 char **destroyFileFields(void);
 bool getSaveName(int8 saveNo, SaveFileHeader &header);
-int16 userDialog(const char *title, char *msg, char *btnMsg1,
-                 char *btnMsg2,
-                 char *btnMsg3);
+int16 userDialog(const char *title, const char *msg, const char *btnMsg1,
+                 const char *btnMsg2,
+                 const char *btnMsg3);
 
 void placardWindow(int8 type, char *text);
 
@@ -126,9 +126,7 @@ class CPlacardPanel : public CPlaqText {
 	char    *titleStrings[ maxLines ];
 	char    titleBuf[ maxText ];
 
-	void positionText(
-	    char *windowText,
-	    const Rect16 &textArea);
+	void positionText(const char *windowText, const Rect16 &textArea);
 
 	int16 SplitString(
 	    char *text,
@@ -136,7 +134,7 @@ class CPlacardPanel : public CPlaqText {
 	    int16 maxStrings,
 	    char delimiter);
 public:
-	CPlacardPanel(gPanelList &, const Rect16 &, char *, gFont *,
+	CPlacardPanel(gPanelList &, const Rect16 &, const char *, gFont *,
 	              int16, textPallete &, int16, AppFunc *cmd = NULL);
 
 	void drawClipped(gPort &,

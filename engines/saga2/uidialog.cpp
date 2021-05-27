@@ -803,7 +803,7 @@ void updateAllUserControls(void);
 
 int16 OptionsDialog(bool disableSaveResume) {
 	// text for dialog
-	char    *btnStrings[ numOptionsBtns ]   = { { OPTN_DIALOG_BUTTON1 },
+	const char    *btnStrings[ numOptionsBtns ]   = { { OPTN_DIALOG_BUTTON1 },
 		{ OPTN_DIALOG_BUTTON2 },
 		{ OPTN_DIALOG_BUTTON3 },
 		{ OPTN_DIALOG_BUTTON4 },
@@ -811,7 +811,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	};
 
 
-	char    *textStrings[ numOptionsTexts ] = { { OPTN_DIALOG_NAME   },
+	const char    *textStrings[ numOptionsTexts ] = { { OPTN_DIALOG_NAME   },
 		{ OPTN_DIALOG_SLIDE1 },
 		{ OPTN_DIALOG_SLIDE2 },
 		{ OPTN_DIALOG_SLIDE3 },
@@ -998,7 +998,7 @@ int16 OptionsDialog(bool disableSaveResume) {
    message dialog box
  * ===================================================================== */
 
-char stripAccel(char *t, char *s) {
+char stripAccel(char *t, const char *s) {
 	char accel = '\0';
 	char    *underscore;
 
@@ -1074,9 +1074,9 @@ void cleanupUserDialog(void) {
 
 }
 
-int16 userDialog(const char *title, char *msg, char *bMsg1,
-                 char *bMsg2,
-                 char *bMsg3) {
+int16 userDialog(const char *title, const char *msg, const char *bMsg1,
+                 const char *bMsg2,
+                 const char *bMsg3) {
 	const   maxBtns = 3;
 	uint8   numBtns = 0;
 
@@ -1167,9 +1167,9 @@ bool userDialogAvailable(void) {
 }
 void cleanupUserDialog(void) {}
 
-int16 userDialog(const char *title, char *msg, char *bMsg1,
-                 char *bMsg2,
-                 char *bMsg3) {
+int16 userDialog(const char *title, const char *msg, const char *bMsg1,
+                 const char *bMsg2,
+                 const char *bMsg3) {
 	const   int maxBtns = 3;
 	uint8   numBtns = 0;
 
@@ -1411,7 +1411,7 @@ void CPlacardWindow::drawClipped(
 	}
 }
 
-CPlacardPanel::CPlacardPanel(gPanelList &gpl, const Rect16 &r, char *t, gFont *f,
+CPlacardPanel::CPlacardPanel(gPanelList &gpl, const Rect16 &r, const char *t, gFont *f,
                              int16 i, textPallete &p, int16 i2, AppFunc *cmd) :
 	CPlaqText(gpl, r, t, f, i, p, i2, cmd) {
 
@@ -1420,9 +1420,7 @@ CPlacardPanel::CPlacardPanel(gPanelList &gpl, const Rect16 &r, char *t, gFont *f
 
 
 
-void CPlacardPanel::positionText(
-    char *windowText,
-    const Rect16 &textArea) {
+void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea) {
 	if (windowText) {
 		int16   i,
 		        yPos,
