@@ -421,6 +421,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "blacksect1", "Black Sect Remake" },
 	{ "blacksect2", "Black Sect 2: The Cursed Crypt" },
 	{ "blackuddertodoubloonornottodoubloon", "Blackudder: To Doubloon or not to Doubloon" },
+	{ "blindtosiberia", "Blind to Siberia" },
 	{ "bluemoon", "Blue Moon" },
 	{ "boardquest", "Board Quest" },
 	{ "bob", "BOB" },
@@ -429,6 +430,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bobgoeshomedeluxe", "Bob Goes Home Deluxe" },
 	{ "bobsquest1", "Bob's Quest 1" },
 	{ "bogsadventure", "Bog's Adventure" },
+	{ "boogiebum", "Boogie Bum's Roger Quest" },
 	{ "boom", "Boom" },
 	{ "bowserquirkquest", "Bowser Quirk Quest" },
 	{ "box", "Box" },
@@ -439,6 +441,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "breakdownbyonedollar", "Breakdown by OneDollar" },
 	{ "brokenwindows1", "Broken Windows - Chapter 1" },
 	{ "brotherswreckers", "Brothers & Wreckers" },
+	{ "brucequest", "Bruce Quest: The Secrets of the Outback" },
 	{ "bsg78unexpectedattherisingstar", "BSG78 - Unexpected at the Rising Star" },
 	{ "btd", "BTD" },
 	{ "bttf3", "Back to the Future Part III - Timeline Of Monkey Island" },
@@ -453,7 +456,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "bustinthebastille", "Bustin' the Bastille" },
 	{ "butcherstanys", "Butcher Stanys" },
 	{ "bytheswordconspiracy", "By the Sword: Conspiracy" },
+	{ "cabbagequest", "Cabbage Quest" },
 	{ "calebsdrunkenadventure", "CALEB'S DRUNKEN ADVENTURE" },
+	{ "callmegeorge1", "Call Me George, Chapter 1: Prophecy" },
 	{ "calsoon2", "Calsoon 2" },
 	{ "camp1", "Camp 1" },
 	{ "capricorn", "CAPRICORN" },
@@ -1443,6 +1448,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "twelvethirteenepisode3", "Twelve Thirteen, episode 3" },
 	{ "twentiesflappersvsthemummy", "Twenties Flappers vs The Mummy" },
 	{ "twoofakind", "Two of a Kind" },
+	{ "ucom", "Bob Smith and the Unsolved Case of Mystery" },
 	{ "uglyfiles", "Ugly Files" },
 	{ "ulitsadimitrova", "Ulitsa Dimitrova" },
 	{ "unbound", "Unbound" },
@@ -1700,6 +1706,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// the stand-alone AGS 3.5 interpreter, it hangs just like in ScummVM
 	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773), // Steam
 	UNSUPPORTED_GAME_ENTRY("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
+	// Strangeland isn't yet supported becuase the executable is >2Gb.
+	UNSUPPORTED_GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1),
 
 	// AGDI games. They get their own grouping because they're just that awesome
 	GAME_ENTRY("kq1agdi", "kqvga.exe", "73f87b30f84e9c34ab09ec8dd7ae109d", 34298679),  // 1.0
@@ -1887,7 +1895,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("shivah", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
 	GAME_ENTRY("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
 	GAME_ENTRY("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
-	GAME_ENTRY("strangeland", "Strangeland.exe", "c5978d50a9b7ee1c8a50a731847d8504", -1),
 	GAME_ENTRY("sumatra", "sumatra fate of yandi.exe", "57c868b1a81c0335ab60970292cd79d8", 170088886), // Steam
 	GAME_ENTRY("superjazzman", "sjm.exe", "0710e2ec71042617f565c01824f0cf3c", 10841689), // Official website
 	GAME_ENTRY("tales", "tales.exe", "4f6c7ec127e8b0ce077abb357903612f", 112930701),
@@ -2226,6 +2233,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("blacksect2", "BS2-TCC.ags", "37ffa36feb915ed44cc94e2cec5b67ed", 19706314),
 	GAME_ENTRY("blacksect2", "BS2-TCC.exe", "b96aaa8eae38a02f0c8c5262ec0a5057", 22765022),
 	GAME_ENTRY("blackuddertodoubloonornottodoubloon", "blackudder.exe", "338fa79960d40689063af31c671b8729", 87695958),
+	GAME_ENTRY("blindtosiberia", "blindtosiberia.exe", "e8985d9ffbfa1eda77f2eb8d1331944a", 5899304),
 	GAME_ENTRY("bluemoon", "blue moon.exe", "95dcf736be87cf7d40bf64d5b078c4b7", 14845997),
 	GAME_ENTRY("boardquest", "board quest.exe", "465f972675db2da6040518221af5b0ba", 3930325),
 	GAME_ENTRY("bob", "bob.exe", "0b7529a76f38283d6e850b8d56526fc1", 2874144),
@@ -2234,6 +2242,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("bobgoeshomedeluxe", "bobdeluxe.exe", "0710e2ec71042617f565c01824f0cf3c", 1555913),
 	GAME_ENTRY("bobsquest1", "bq19.exe", "97d700529f5cc826f230c27acf81adfd", 2767487),
 	GAME_ENTRY("bogsadventure", "bogsadventure.exe", "25f919423520b921a041ec854e3a0217", 58789948),
+	GAME_ENTRY("boogiebum", "BoogieBum.exe", "2ca80bd50763378b72cd1e1cf25afac3", 4882195),
 	GAME_ENTRY("boom", "boom.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 934966),
 	GAME_ENTRY("bowserquirkquest", "bowser quirk quest.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3046623),
 	GAME_ENTRY("box", "box.exe", "0b7529a76f38283d6e850b8d56526fc1", 748638),
@@ -2243,6 +2252,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("breakage", "Breakage.exe", "973f6b65820ca1f4e19704a49be99d76", 727818639),
 	GAME_ENTRY("breakdownbyonedollar", "breakdown.exe", "710ac163c281a5a539ffe2386264b990", 5273352),
 	GAME_ENTRY("brokenwindows1", "Police.exe", "7ddb9e776648faed5a51170d087074e9", 16971333),
+	GAME_ENTRY("brucequest", "bruce.exe", "f18443f98fd61d2c655e76a17f7da905", 30055288),
 	GAME_ENTRY("bsg78unexpectedattherisingstar", "bsg-e01.exe", "cf1ff01dfb8261f791ac95a7f5f05c1c", 401029955),
 	GAME_ENTRY("btd", "btd.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 6450527),
 	GAME_ENTRY("bttf3", "tfg - bttf iii - timeline of mi.exe", "7ddb9e776648faed5a51170d087074e9", 157518001),
@@ -2256,7 +2266,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("burymeinthesand", "buryme.exe", "f10516e88ec858700804ee69d041aead", 24252498),
 	GAME_ENTRY("bustinthebastille", "Bastille.exe", "42f8802095baac3b5ed134635673cead", 722888946), // 1.05
 	GAME_ENTRY("butcherstanys", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1404933),
+	GAME_ENTRY("cabbagequest", "Cabbagequest.exe", "06a03fe35791b0578068ab1873455463", 4916170),
 	GAME_ENTRY("calebsdrunkenadventure", "calebdru.exe", "0b7529a76f38283d6e850b8d56526fc1", 15484923),
+	GAME_ENTRY("callmegeorge1", "Call Me George.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 3872581),
 	GAME_ENTRY("calsoon2", "looncalsoon.exe", "97d700529f5cc826f230c27acf81adfd", 18981033),
 	GAME_ENTRY("capricorn", "capricorn.exe", "06a03fe35791b0578068ab1873455463", 4817076),
 	GAME_ENTRY("camp1", "Camp1.exe", "d0c1d3be980d97e592ffe16b71a3b9f9", 34131784),
@@ -3278,6 +3290,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("twelvethirteenepisode3", "1213_ep3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 3246117), // From SE
 	GAME_ENTRY("twentiesflappersvsthemummy", "Twenties Flappers vs The Mummy.exe", "a524cbb1c51589903c4043b98917f1d9", 15042196),
 	GAME_ENTRY("twoofakind", "toak.exe", "465f972675db2da6040518221af5b0ba", 24644765),
+	GAME_ENTRY("ucom", "UCOM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 1593175),
 	GAME_ENTRY("uglyfiles", "ugly.exe", "0394af1c29e1060fcdbacf2a3dd9b231", 4169486),
 	GAME_ENTRY("ulitsadimitrova", "ulitsa.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 291828379),
 	GAME_ENTRY("unavowed", "ac2game.dat", "b1ff7d96667707daf4266975cea2bf90", 1755457364), // Steam, Mac
