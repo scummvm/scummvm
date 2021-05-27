@@ -510,7 +510,7 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 			if (isActor(obj))((Actor *)obj)->moveTask = mt;
 		}
 	}
-	obj->objectFlags |= GameObject::objectMoving;
+	obj->objectFlags |= objectMoving;
 	return mt;
 }
 
@@ -1213,11 +1213,11 @@ void MotionTask::remove(int16 returnVal) {
 	if (nextMT == this)
 		nextMT = (MotionTask *)next();
 
-	object->objectFlags &= ~GameObject::objectMoving;
+	object->objectFlags &= ~objectMoving;
 	if (objObscured(object))
-		object->objectFlags |= GameObject::objectObscured;
+		object->objectFlags |= objectObscured;
 	else
-		object->objectFlags &= ~GameObject::objectObscured;
+		object->objectFlags &= ~objectObscured;
 
 	if (isActor(object)) {
 		Actor   *a = (Actor *)object;
@@ -4709,7 +4709,7 @@ bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 
 	tHeight = tileSlopeHeight(newPos, object, &sti);
 
-	if (object->objectFlags & GameObject::objectFloating) return FALSE;
+	if (object->objectFlags & objectFloating) return FALSE;
 
 	velocity.u = (newPos.u - object->location.u) * 2 / 3;
 	velocity.v = (newPos.v - object->location.v) * 2 / 3;

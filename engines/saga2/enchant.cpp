@@ -241,11 +241,11 @@ void evalObjectEnchantments(GameObject *obj) {
 	//  have to do this a bit differently...
 
 	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectInvisible, TRUE)))
-		obj->setFlags((uint8) - 1, GameObject::objectInvisible);
+		obj->setFlags((uint8) - 1, objectInvisible);
 	else
-		obj->setFlags(0, GameObject::objectInvisible);
+		obj->setFlags(0, objectInvisible);
 	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectLocked, FALSE)))
-		obj->setFlags((uint8) - 1, GameObject::objectLocked);
+		obj->setFlags((uint8) - 1, objectLocked);
 }
 
 //-------------------------------------------------------------------
