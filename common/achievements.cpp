@@ -52,11 +52,11 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 }
 
 bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const String &appId) {
-	String prefix = platform == STEAM_ACHIEVEMENTS ? "steam-" + appId :
-					platform == GALAXY_ACHIEVEMENTS ? "galaxy-" + appId :
-					appId;
+	const char* prefix = platform == STEAM_ACHIEVEMENTS ? "steam" :
+					platform == GALAXY_ACHIEVEMENTS ? "galaxy" :
+					"achman";
 
-	String iniFileName = prefix + ".dat";
+	String iniFileName = String::format("%s-%s.dat", prefix, appId.c_str());
 
 	if (_iniFileName == iniFileName) {
 		return true;
@@ -114,7 +114,7 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 		return true;
 	}
 
-	debug("AchievementsManager::setAchievement('%s'): Achievement unlocked!", id.c_str());
+	debug("AchievementsManager::setAchievement('%s'): %s", id.c_str(), displayedMessage.c_str());
 
 	_iniFile->setKey(id, "achievements", "true");
 	_iniFile->saveToSaveFile(_iniFileName);
