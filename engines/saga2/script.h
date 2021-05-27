@@ -195,9 +195,8 @@ class Thread {
 
 	friend void wakeUpThread(ThreadID, int16);
 
-	SegmentRef      programCounter;         // current PC location
-
 public:
+	SegmentRef      programCounter;         // current PC location
 
 	uint8           *stackPtr;              // current stack location
 	UByteHandle     codeSeg;                // base of current data segment

@@ -34,9 +34,6 @@ namespace Saga2 {
 INITIALIZER(initErrorLoggers);
 TERMINATOR(termErrorLoggers);
 
-INITIALIZER(initSysMessagers);
-TERMINATOR(termSysMessagers);
-
 INITIALIZER(initCtlBreakTrap);
 TERMINATOR(termCtlBreakTrap);
 

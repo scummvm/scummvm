@@ -63,7 +63,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ errHandlersInitialized,    &initErrorManagers,    &termErrorManagers },
 	{ delayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
 	{ activeErrInitialized,      &initActiveErrors,     &termActiveErrors },
-	{ messagersInitialized,      &initSysMessagers,     &termSysMessagers },
 	{ errLoggersInitialized,     &initErrorLoggers,     &termErrorLoggers },
 	{ breakHandlerInitialized,   &initCtlBreakTrap,     &termCtlBreakTrap },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
@@ -103,7 +102,6 @@ TowerLayer tower[fullyInitialized] = {
  * ===================================================================== */
 
 //#include "saga2/loadmsg.h"
-bool initMessagers(void);
 bool initGUIMessagers(void);
 void cleanupMessagers(void);
 void cleanupGUIMessagers(void);
@@ -146,18 +144,6 @@ INITIALIZER(initErrorLoggers) {
 
 TERMINATOR(termErrorLoggers) {
 	cleanupErrorHandlers();
-}
-
-
-// ------------------------------------------------------------------------
-
-INITIALIZER(initSysMessagers) {
-	initMessagers();
-	return TRUE;
-}
-
-TERMINATOR(termSysMessagers) {
-	cleanupMessagers();
 }
 
 

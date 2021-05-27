@@ -26,7 +26,11 @@
 #include "engines/advancedDetector.h"
 
 static const DebugChannelDef debugFlagList[] = {
-	{Saga2::kDebugResources, "Resources", "Debug the resources"},
+	{Saga2::kDebugResources, "resources", "Debug the resources"},
+	{Saga2::kDebugActors,    "actors",    "Debug the actors"},
+	{Saga2::kDebugScripts,   "scripts",   "Debug the scripts"},
+	{Saga2::kDebugEventLoop, "eventloop", "Debug the event loop"},
+	{Saga2::kDebugInit,      "init",      "Debug the initialization process"},
 	DEBUG_CHANNEL_END
 };
 

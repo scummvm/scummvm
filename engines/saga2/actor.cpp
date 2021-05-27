@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
@@ -1294,9 +1296,6 @@ void *Actor::archive(void *buf) {
 	return buf;
 }
 
-#if 0
-MonoMessager amm;
-#endif
 //-----------------------------------------------------------------------
 //	Return a newly created actor
 
@@ -1345,9 +1344,7 @@ Actor *Actor::newActor(
 
 	if (a->flags & temporary) {
 		incTempActorCount(protoNum);
-#if 0
-		amm("Created temp actor %d new count:%d", a->thisID() - 32768, getTempActorCount(protoNum));
-#endif
+		debugC(1, kDebugActors, "Actors: Created temp actor %d new count:%d", a->thisID() - 32768, getTempActorCount(protoNum));
 	}
 
 	return a;
@@ -1361,9 +1358,7 @@ void Actor::deleteActor(void) {
 		uint16      protoNum = (ActorProto *)prototype - actorProtos;
 
 		decTempActorCount(protoNum);
-#if 0
-		amm("Deleting temp actor %d new count:%d", thisID() - 32768, getTempActorCount(protoNum));
-#endif
+		debugC(1, kDebugActors, "Actors: Deleting temp actor %d new count:%d", thisID() - 32768, getTempActorCount(protoNum));
 	}
 
 	//  Kill task
@@ -1516,10 +1511,8 @@ void Actor::vitalityUpdate(void) {
 //	Perform actor specific activation tasks
 
 void Actor::activateActor(void) {
-#if 0
 	if (thisID() > 32768)
-		amm("Activated %d ", thisID() - 32768);
-#endif
+		debugC(1, kDebugActors, "Actors: Activated %d ", thisID() - 32768);
 	evaluateNeeds();
 }
 
@@ -1527,10 +1520,9 @@ void Actor::activateActor(void) {
 //	Perfrom actor specific deactivation tasks
 
 void Actor::deactivateActor(void) {
-#if 0
 	if (thisID() > 32768)
-		amm("De-activated %d ", thisID() - 32768);
-#endif
+		debugC(1, kDebugActors, "Actors: De-activated %d ", thisID() - 32768);
+
 	//  Kill task
 	if (curTask != NULL) {
 		curTask->abortTask();

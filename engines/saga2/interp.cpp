@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/script.h"
@@ -84,9 +86,7 @@ long                    exportCount;            // number of exported syms
 //  An extended script is running -- suspend all background processing.
 int16                   extendedThreadLevel;
 
-#if DEBUG
 int16                   lastExport;
-#endif
 
 /* ============================================================================ *
                                    Externals
@@ -96,19 +96,6 @@ int16                   lastExport;
 
 extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
-
-#if DEBUG
-//extern bool           cliScriptDebug;     // script debugging flag
-#define cliScriptDebug  1
-
-#include "messager.h"
-
-MonoMessager scriptDebugOut("Scripts");
-
-//extern pMessager Status[10];
-//#define scriptDebugOut    (*Status[ 1 ])
-
-#endif
 
 /* ============================================================================ *
                                    Functions
@@ -137,7 +124,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 		ASSERT(index > 0);
 		if (lookupExport(index, segNum, segOff) == FALSE)
 			error("SAGA: Cannot take address of abtract class");
-//debugf( "index = %d, segNum = %d, segOff = %d\n", index, segNum, segOff );
+
 		return segmentAddress(segNum, segOff);
 
 	case builtinTypeMission:
@@ -173,38 +160,35 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		obj = (GameObject *)addr;
 		script = obj->scriptClass();
 		*callTab = &actorCFuncs;
-#if DEBUG
+
 		if (script <= 0)
 			error("SAGA failure: GameObject %d (%s) has no script.\n", obj->thisID(), obj->proto() ? obj->objName() : "Unknown");
-#endif
+
 		break;
 
 	case builtinTypeTAG:
 		aItem = (ActiveItem *)addr;
 		script = aItem->scriptClassID;
 		*callTab = &tagCFuncs;
-#if DEBUG
-		if (script <= 0) error("SAGA failure: TAG has no script.\n");
-#endif
+
+		if (script <= 0)
+			error("SAGA failure: TAG has no script.\n");
+
 		break;
 
 	case builtinTypeMission:
 		aMission = (ActiveMission *)addr;
 		script = aMission->getScript();
 		*callTab = &missionCFuncs;
-#if DEBUG
-		if (script <= 0) error("SAGA failure: Mission Object has no script.\n");
-#endif
+
+		if (script <= 0)
+			error("SAGA failure: Mission Object has no script.\n");
+
 		break;
 
 	case builtinAbstract:
 		*callTab = NULL;
-//{
-//uint16    *p;
-//
-//p = (uint16 *)addr;
-//debugf( "p[-1]=%d, p[0]=%d, p[1]=%d, p[2]=%d, p[3]=%d\n", p[-1], p[0], p[1], p[2], p[3] );
-//}
+
 		return (uint16 *)addr;
 
 	default:
@@ -522,26 +506,26 @@ int16 RRandom(int16 c, int16 s, int16 id) {
                                 Main interpreter
  * ============================================================================ */
 
-#if DEBUG
 void print_script_name(uint8 *codePtr, char *descr = NULL) {
-	if (cliScriptDebug) {
-		char    scriptName[ 32 ];
-		uint8   *sym = codePtr - 1;
-		uint8   length = min(*sym, sizeof scriptName - 1);
+	char    scriptName[ 32 ];
+	uint8   *sym = codePtr - 1;
+	uint8   length = MIN<uint>(*sym, sizeof scriptName - 1);
 
-		memcpy(scriptName, sym - *sym, length);
-		scriptName[ length ] = '\0';
+	memcpy(scriptName, sym - *sym, length);
+	scriptName[ length ] = '\0';
 
-		if (descr) scriptDebugOut("op_enter: [%s].%s ", descr, scriptName);
-		else scriptDebugOut("op_enter: ::%s ", scriptName);
-	}
+	if (descr)
+		debugC(1, kDebugScripts, "Scripts: op_enter: [%s].%s ", descr, scriptName);
+	else
+		debugC(1, kDebugScripts, "Scripts: op_enter: ::%s ", scriptName);
 }
 
 char *objectName(int16 segNum, uint16 segOff) {
 	//static        nameBuf[ 64 ];
 
 	uint8       *objAddr;
-	if (segNum >= 0) return "SagaObject";
+	if (segNum >= 0)
+		return "SagaObject";
 
 	objAddr = builtinObjectAddress(segNum, segOff);
 
@@ -560,7 +544,6 @@ char *objectName(int16 segNum, uint16 segOff) {
 	}
 	return "???";
 }
-#endif
 
 bool Thread::interpret(void) {
 	uint8               *pc,
@@ -684,9 +667,7 @@ bool Thread::interpret(void) {
 			returnVal = *stack++;
 		case op_return_v:                   // return with void
 
-#if DEBUG
-			if (cliScriptDebug) scriptDebugOut("op_return");
-#endif
+		debugC(1, kDebugScripts, "Scripts: op_return");
 
 // REM: When we implement dynamic strings we'll want to clean up first.
 
@@ -732,9 +713,7 @@ bool Thread::interpret(void) {
 
 			pc = *codeSeg + w;              // calculate PC address
 
-#if DEBUG
 			print_script_name(pc);
-#endif
 			break;
 
 		case op_call_far:                   // call function in other seg
@@ -756,9 +735,7 @@ bool Thread::interpret(void) {
 			programCounter.offset = w;      // store into pc
 
 			pc = *codeSeg + w;              // calculate PC address
-#if DEBUG
 			print_script_name(pc);
-#endif
 			break;
 
 		case op_ccall:                      // call C function
@@ -809,7 +786,6 @@ bool Thread::interpret(void) {
 				//  Handle the case of a builtin object which computes the
 				//  vtable address in a different way.
 
-//debugf( "seg = %d, offset = %d\n", seg, offset );
 				if ((int16)seg < 0) {
 					vtable = builtinVTableAddress((int16)seg, addr, &callTab);
 				} else {
@@ -818,8 +794,6 @@ bool Thread::interpret(void) {
 				}
 
 				vtableEntry = vtable + (w * 2);
-
-//debugf( "vtable=%x, entry[ 0 ]=%d, entry[ 1 ]=%d\n", vtable, vtableEntry[ 0 ], vtableEntry[ 1 ] );
 
 				if (vtable == NULL) {
 					//  Do nothing...
@@ -849,9 +823,7 @@ bool Thread::interpret(void) {
 
 					// calculate PC address
 					pc = (*codeSeg) + programCounter.offset;
-#if DEBUG
 					print_script_name(pc, objectName(seg, offset));
-#endif
 					break;
 				} else if (vtableEntry[ 1 ] != 0xffff) { // It's a C func
 					//  Save the ID of the invoked object
@@ -1528,10 +1500,8 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	((uint16 *)stackPtr)[ 2 ] = 0;          // dummy return address
 	framePtr = stackSize;
 
-#if DEBUG
 	if ((*codeSeg)[ programCounter.offset ] != op_enter)
 		error("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
-#endif
 //	VERIFY ((*codeSeg)[ programCounter.offset ] == op_enter);
 }
 
@@ -1634,7 +1604,6 @@ void Thread::dispatch(void) {
 	Thread              *th,
 	                    *nextThread;
 
-#if DEBUG
 	int                 numThreads = 0,
 	                    numExecute = 0,
 	                    numWaitDelay = 0,
@@ -1642,9 +1611,8 @@ void Thread::dispatch(void) {
 	                    numWaitSemi = 0,
 	                    numWaitOther = 0;
 
-	for (th = threadList.first();
-	        th;
-	        th = threadList.next(th)) {
+#if DEBUG
+	for (th = threadList.first(); th; th = threadList.next(th)) {
 		if (th->flags & waiting) {
 			switch (th->waitType) {
 
@@ -1668,9 +1636,7 @@ void Thread::dispatch(void) {
 	WriteStatusF(17, "Threads:%d X:%d D:%d F:%d T:%d O:%d", numThreads, numExecute, numWaitDelay, numWaitFrames, numWaitSemi, numWaitOther);
 #endif
 
-	for (th = threadList.first();
-	        th;
-	        th = nextThread) {
+	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
 
 		if (th->flags & (finished | aborted)) {
@@ -1845,11 +1811,10 @@ static bool lookupExport(
 	segOff = segRef >> 16,
 	segNum = segRef & 0x0000ffff;
 
-#if DEBUG
 	lastExport = entry;
 	if (segNum > 1000)
-		error("SAGA failure: Bad data in export table entry #%d (see scripts.r)\n", entry);
-#endif
+		error("SAGA failure: Bad data in export table entry #%d (see scripts.r)", entry);
+
 	return TRUE;
 }
 
@@ -1864,21 +1829,16 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	Thread          *saveThread = thisThread;
 
 	//  Lookup function entry point in export table
-#if DEBUG
 	if (exportEntryNum < 0)
-		error("SAGA failure: Attempt to run script with invalid export ID %d.\n", exportEntryNum);
-#endif
+		error("SAGA failure: Attempt to run script with invalid export ID %d.", exportEntryNum);
+
 	ASSERT(exportEntryNum > 0);
 	lookupExport(exportEntryNum, segNum, segOff);
 
 	//  Create a new thread
 	th = new Thread(segNum, segOff, args);
 	thisThread = th;
-#if DEBUG
-	print_script_name(
-	    (*th->codeSeg) + th->programCounter.offset,
-	    objectName(segNum, segOff));
-#endif
+	print_script_name((*th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
 
 	//  Run the thread to completion
 	result = th->run();
@@ -1913,11 +1873,9 @@ scriptResult runMethod(
 	if (bType == builtinAbstract) index = scriptClassID;
 
 	//  Lookup class function table in export table
-#if DEBUG
 	if (scriptClassID < 0)
 		error("SAGA failure: Attempt to run object script with invalid export ID %d.\n", scriptClassID);
-#endif
-//	ASSERT( scriptClassID > 0 );
+
 	lookupExport(scriptClassID, segNum, segOff);
 
 	//  Get address of class function table
@@ -1951,9 +1909,7 @@ scriptResult runMethod(
 		//  Create a new thread
 		th = new Thread(segNum, segOff, args);
 		thisThread = th;
-#if DEBUG
 		print_script_name((*th->codeSeg) + th->programCounter.offset, objectName(bType, index));
-#endif
 
 		//  Put the object segment and ID onto the dummy stack frame
 		((uint16 *)th->stackPtr)[ 3 ] = bType;
