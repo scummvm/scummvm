@@ -116,7 +116,7 @@ public:
 	bool setAchievement(const String &id);
 
 	/**
-	 * Set an achievement as achieved.
+	 * Check if an achievement as achieved.
 	 *
 	 * @param[in] id Internal ID of the achievement.
 	 */
