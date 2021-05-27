@@ -69,27 +69,6 @@ private:
 	static const char *AGS_GetPluginName();
 	static void AGS_EngineStartup(IAGSEngine *engine);
 
-	static void IsAchievementAchieved(ScriptMethodParams &params);
-	static void SetAchievementAchieved(ScriptMethodParams &params);
-	static void ResetAchievement(ScriptMethodParams &params);
-	static void GetIntStat(ScriptMethodParams &params);
-	static void GetFloatStat(ScriptMethodParams &params);
-	static void GetAverageRateStat(ScriptMethodParams &params);
-	static void SetIntStat(ScriptMethodParams &params);
-	static void SetFloatStat(ScriptMethodParams &params);
-	static void UpdateAverageRateStat(ScriptMethodParams &params);
-	static void ResetStatsAndAchievements(ScriptMethodParams &params);
-	static void get_Initialized(ScriptMethodParams &params);
-	static void get_CurrentLeaderboardName(ScriptMethodParams &params);
-	static void RequestLeaderboard(ScriptMethodParams &params);
-	static void UploadScore(ScriptMethodParams &params);
-	static void geti_LeaderboardNames(ScriptMethodParams &params);
-	static void geti_LeaderboardScores(ScriptMethodParams &params);
-	static void get_LeaderboardCount(ScriptMethodParams &params);
-	static void GetUserName(ScriptMethodParams &params);
-	static void GetCurrentGameLanguage(ScriptMethodParams &params);
-	static void Initialize(ScriptMethodParams &params);
-
 public:
 	AGSGalaxy();
 };
@@ -100,27 +79,6 @@ private:
 
 protected:
 	static void AGS_EngineStartup(IAGSEngine *engine);
-
-	static void IsAchievementAchieved(ScriptMethodParams &params);
-	static void SetAchievementAchieved(ScriptMethodParams &params);
-	static void ResetAchievement(ScriptMethodParams &params);
-	static void GetIntStat(ScriptMethodParams &params);
-	static void GetFloatStat(ScriptMethodParams &params);
-	static void GetAverageRateStat(ScriptMethodParams &params);
-	static void SetIntStat(ScriptMethodParams &params);
-	static void SetFloatStat(ScriptMethodParams &params);
-	static void UpdateAverageRateStat(ScriptMethodParams &params);
-	static void ResetStatsAndAchievements(ScriptMethodParams &params);
-	static void get_Initialized(ScriptMethodParams &params);
-	static void get_CurrentLeaderboardName(ScriptMethodParams &params);
-	static void RequestLeaderboard(ScriptMethodParams &params);
-	static void UploadScore(ScriptMethodParams &params);
-	static void geti_LeaderboardNames(ScriptMethodParams &params);
-	static void geti_LeaderboardScores(ScriptMethodParams &params);
-	static void get_LeaderboardCount(ScriptMethodParams &params);
-	static void GetUserName(ScriptMethodParams &params);
-	static void GetCurrentGameLanguage(ScriptMethodParams &params);
-	static void FindLeaderboard(ScriptMethodParams &params);
 
 public:
 	AGSSteam();
