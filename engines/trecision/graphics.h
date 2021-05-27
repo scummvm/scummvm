@@ -52,6 +52,10 @@ class GraphicsManager {
 
 	Common::List<Common::Rect> _dirtyRects;
 	Common::Rect *_actorRect;
+	Common::Rect _drawRect;
+	Common::Rect _drawObjRect;
+	int _drawObjIndex;
+	bool _drawMask;
 
 	static const Graphics::PixelFormat kImageFormat;
 
@@ -60,18 +64,12 @@ class GraphicsManager {
 	void initCursor();
 	void copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y);
 	void paintObjAnm(uint16 curBox);
+	void drawObj();
+	void eraseObj();
 
 public:
 	GraphicsManager(TrecisionEngine *vm);
 	~GraphicsManager();
-
-	Common::Rect _drawRect;
-	Common::Rect _drawObjRect;
-	int _drawObjIndex;
-	bool _drawMask;
-
-	void drawObj();
-	void eraseObj();
 
 	bool init();
 	void clearScreen();
