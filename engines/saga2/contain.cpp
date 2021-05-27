@@ -1645,7 +1645,7 @@ void ContainerList::doDeferredActions(void) {
 			if (obj->world() != world
 			        || (obj->getWorldLocation() - tp).quickHDistance() > maxOpenDistance) {
 				//  Close object image and window (silently)
-				obj->setFlags(0, GameObject::objectOpen);
+				obj->setFlags(0, objectOpen);
 				delete n;
 				continue;
 			}

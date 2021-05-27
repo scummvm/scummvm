@@ -253,16 +253,6 @@ enum effectDrainsTypes {
 
 
 //
-// Object Effects - effects that apply only to non-actor objects
-//
-
-enum effectObjectTypes {
-	objectLocked        = 1 << 1,
-	objectInvisible     = 1 << 4,
-};
-
-
-//
 // TAG Effects - effects that apply when a TAG is the target
 //
 
@@ -278,6 +268,24 @@ enum effectTAGTypes {
 
 enum effectLocationTypes {
 	locateDummy         = 1,
+};
+
+enum objectFlags {
+	objectOpen          = (1 << 0),     // object is in the "open" state
+	objectLocked        = (1 << 1),     // object cannot be opened
+	objectImportant     = (1 << 2),     // object must be recycled when trashed
+	objectGhosted       = (1 << 3),     // object drawn translucent
+	objectInvisible     = (1 << 4),     // object cannot be seen
+	objectObscured      = (1 << 5),     // object obscured by terrain
+	objectMoving        = (1 << 6),     // object has attached motion task
+	objectScavengable   = (1 << 7),     // object can be deleted
+	objectFloating      = (1 << 8),     // object not affected by Gravity
+	objectNoRecycle     = (1 << 9),     // object is referred to by script, don't delete
+	objectActivated     = (1 << 10),    // object is activated
+	objectAlias         = (1 << 11),    // object is not real, just a copy of another object
+	objectTriggeringTAG = (1 << 12),    // object has triggerred TAG upon which it rests
+	objectOnScreen      = (1 << 13),    // object is on display list
+	objectSightedByCenter = (1 << 14),  // there is a line of sight to center actor
 };
 
 
@@ -333,7 +341,7 @@ inline uint16 makeEnchantmentID(effectOthersTypes othtyp, bool damamt) {
 	return (effectOthers << 13) | (othtyp << 8) + (damamt + 128);
 }
 
-inline uint16 makeEnchantmentID(effectObjectTypes othtyp, bool damamt) {
+inline uint16 makeEnchantmentID(objectFlags othtyp, bool damamt) {
 	return (effectNonActor << 13) | (othtyp << 8) + (damamt + 128);
 }
 

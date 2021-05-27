@@ -2212,11 +2212,11 @@ void GameObject::evalEnchantments(void) {
 	}
 }
 
-#define noMergeFlags    (GameObject::objectImportant|\
-                         GameObject::objectGhosted|\
-                         GameObject::objectInvisible|\
-                         GameObject::objectFloating|\
-                         GameObject::objectNoRecycle)
+#define noMergeFlags    (objectImportant|\
+                         objectGhosted|\
+                         objectInvisible|\
+                         objectFloating|\
+                         objectNoRecycle)
 
 int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 	int32       cSet = dropObj->proto()->containmentSet();

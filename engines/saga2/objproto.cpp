@@ -1238,7 +1238,7 @@ bool PhysicalContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->objectFlags & GameObject::objectOpen)
+	if (dObjPtr->objectFlags & objectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -1263,7 +1263,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, FALSE);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->objectFlags |= GameObject::objectOpen;         //  Set open bit;
+	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
 	return TRUE;
 }
@@ -1279,7 +1279,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->objectFlags &= ~GameObject::objectOpen;
+	dObjPtr->objectFlags &= ~objectOpen;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
 	return TRUE;
 }
@@ -1301,7 +1301,7 @@ bool PhysicalContainerProto::acceptLockToggleAction(
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Toggle locked bit
-	dObjPtr->objectFlags ^= GameObject::objectLocked;
+	dObjPtr->objectFlags ^= objectLocked;
 
 	return TRUE;
 }
@@ -1319,7 +1319,7 @@ bool PhysicalContainerProto::acceptInsertionAction(
 	GameObject  *itemPtr = GameObject::objectAddress(item);
 
 	//  Place the object in the container (if possible)
-	if ((dObjPtr->objectFlags & GameObject::objectLocked)
+	if ((dObjPtr->objectFlags & objectLocked)
 	        ||  !dObjPtr->placeObject(enactor, item, TRUE, num)) {
 		if (isWorld(dObjPtr->IDParent()))
 			dObjPtr->dropInventoryObject(itemPtr, num);
@@ -2986,7 +2986,7 @@ bool IntangibleContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->objectFlags & GameObject::objectOpen)
+	if (dObjPtr->objectFlags & objectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);

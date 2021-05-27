@@ -645,7 +645,7 @@ int16 scriptActorSetImportant(int16 *args) {
 	OBJLOG(SetImportant);
 	((GameObject *)thisThread->thisObject)->setFlags(
 	    args[0 ] ? (int16) 0xffff : (int16) 0,
-	    GameObject::objectImportant);
+	    objectImportant);
 	return 0;
 }
 
@@ -653,7 +653,7 @@ int16 scriptActorSetScavengable(int16 *args) {
 	OBJLOG(SetScavengable);
 	((GameObject *)thisThread->thisObject)->setFlags(
 	    args[0 ] ? (int16) 0xffff : (int16) 0,
-	    GameObject::objectScavengable);
+	    objectScavengable);
 	return 0;
 }
 

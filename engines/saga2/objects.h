@@ -96,7 +96,6 @@ void     initActors(void);
 void     saveActors(SaveFileConstructor &);
 void     loadActors(SaveFileReader &);
 void     cleanupActors(void);
-
 class GameObject {
 
 	friend void     initWorlds(void);
@@ -179,30 +178,6 @@ public:
 	uint8           sightCtr;               // Line of sight counter
 
 	uint8           reserved[ 2 ];
-
-	//  32 bytes
-	//  If we had to add anything, it would be:
-	//      thisID              <-- id of this object
-	//      prevSiblingID       <-- id of previous sibling
-
-
-	enum objectFlags {
-		objectOpen          = (1 << 0),     // object is in the "open" state
-		objectLocked        = (1 << 1),     // object cannot be opened
-		objectImportant     = (1 << 2),     // object must be recycled when trashed
-		objectGhosted       = (1 << 3),     // object drawn translucent
-		objectInvisible     = (1 << 4),     // object cannot be seen
-		objectObscured      = (1 << 5),     // object obscured by terrain
-		objectMoving        = (1 << 6),     // object has attached motion task
-		objectScavengable   = (1 << 7),     // object can be deleted
-		objectFloating      = (1 << 8),     // object not affected by Gravity
-		objectNoRecycle     = (1 << 9),     // object is referred to by script, don't delete
-		objectActivated     = (1 << 10),    // object is activated
-		objectAlias         = (1 << 11),    // object is not real, just a copy of another object
-		objectTriggeringTAG = (1 << 12),    // object has triggerred TAG upon which it rests
-		objectOnScreen      = (1 << 13),    // object is on display list
-		objectSightedByCenter = (1 << 14),  // there is a line of sight to center actor
-	};
 
 	//  Default constructor
 	GameObject(void);

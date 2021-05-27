@@ -194,7 +194,7 @@ bool ActorProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, FALSE, openMindType);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->objectFlags |= GameObject::objectOpen;         //  Set open bit;
+	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
 	return TRUE;
 }
 
@@ -214,7 +214,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->objectFlags &= ~GameObject::objectOpen;
+	dObjPtr->objectFlags &= ~objectOpen;
 	return TRUE;
 }
 
