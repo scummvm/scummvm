@@ -425,8 +425,9 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	tableSize = origin.offset - _firstGroupOffset - sizeof(uint32);
 	_table = new hResEntry[tableSize / resourceSize]();
 
+	if (_base == nullptr || _table == nullptr)
+		return;
 
-	if (_base == nullptr || _table == nullptr) return;
 
 	debugC(kDebugResources, "Reading %d categories:", _numEntries);
 	for (int i = 0; i < _numEntries; ++i)
@@ -443,8 +444,10 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 }
 
 hResource::~hResource() {
-	if (_base) delete[] _base;
-	if (_table) delete[] _table;
+	if (_base)
+		delete[] _base;
+	if (_table)
+		delete[] _table;
 	//if (_handle) free(_handle);
 }
 
