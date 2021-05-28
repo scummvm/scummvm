@@ -95,7 +95,7 @@ private:
 	int connect_to_server(const char* hostname, const char* tcp_port);
 
 	/* send command to the server; printf-like; returns reply string */
-	char *timidity_ctl_command(const char *fmt, ...) GCC_PRINTF(2, 3);
+	char *timidity_ctl_command(MSVC_PRINTF const char *fmt, ...) GCC_PRINTF(2, 3);
 
 	/* timidity data socket-related stuff */
 	void timidity_meta_seq(int p1, int p2, int p3);

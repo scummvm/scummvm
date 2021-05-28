@@ -208,7 +208,7 @@ static const char HELP_STRING[] =
 
 static const char *s_appName = "scummvm";
 
-static void NORETURN_PRE usage(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
+static void NORETURN_PRE usage(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 static void usage(const char *s, ...) {
 	char buf[STRINGBUFLEN];

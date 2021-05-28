@@ -349,6 +349,14 @@
 	#endif
 #endif
 
+#ifndef MSVC_PRINTF
+	#if _MSC_VER > 1400
+		#define MSVC_PRINTF _Printf_format_string_
+	#else
+		#define MSVC_PRINTF
+	#endif
+#endif
+
 #ifndef PACKED_STRUCT
 	#if defined(__GNUC__) || defined(__INTEL_COMPILER)
 		#define PACKED_STRUCT __attribute__((__packed__))
