@@ -68,11 +68,13 @@ void NightlongSmackerDecoder::setMute(bool mute) {
 	}
 }
 
-bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
+void NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
+	const uint seekFrame = MAX<uint>(frame - 10, 0);
+
 	if (!isVideoLoaded())
 		return true;
 
-	if (frame >= getFrameCount())
+	if (seekFrame >= getFrameCount())
 		return false;
 
 	if (!rewind())
@@ -81,7 +83,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 	uint32 start = _fileStream->pos();
 	uint32 offset = 0;
-	for (uint32 i = 0; i < frame; i++) {
+	for (uint32 i = 0; i < seekFrame; i++) {
 		videoTrack->increaseCurFrame();
 		// Frames with palette data contain palette entries which use
 		// the previous palette as their base. Therefore, we need to
@@ -93,14 +95,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		offset += _frameSizes[i] & ~3;
 	}
 
-	_lastTimeChange = videoTrack->getFrameTime(frame);
-	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
-
-	return _fileStream->seek(start + offset, SEEK_SET);
-}
-
-void NightlongSmackerDecoder::forceSkip(uint frame) {
-	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
+	_fileStream->seek(start + offset, SEEK_SET);
 
 	while (getCurFrame() < (int)frame) {
 		decodeNextFrame();
@@ -108,10 +103,6 @@ void NightlongSmackerDecoder::forceSkip(uint frame) {
 
 	_lastTimeChange = videoTrack->getFrameTime(frame);
 	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
-}
-
-bool NightlongSmackerDecoder::endOfVideo() const {
-	return getCurFrame() >= (int32)getFrameCount() - 1;
 }
 
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
@@ -184,12 +175,7 @@ void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startF
 
 	// If choices are attached
 	if (startFrame > 0 && startFrame > smkDecoder->getCurFrame()) {
-		int seekFrame = MAX(startFrame - 10, 0);
-
-		smkDecoder->forceSeekToFrame(seekFrame);
-		if (seekFrame != startFrame) {
-			smkDecoder->forceSkip(startFrame);
-		}
+		smkDecoder->forceSeekToFrame(startFrame);
 	}
 }
 
@@ -562,7 +548,6 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 			ser.syncAsUint16LE(cur->_lim[i].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
-		ser.skip(1, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
 		for (uint8 i = 0; i < MAXATFRAME; ++i) {
 			ser.syncAsByte(cur->_atFrame[i]._type);
 			ser.syncAsByte(cur->_atFrame[i]._child);
