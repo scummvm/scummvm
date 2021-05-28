@@ -81,11 +81,11 @@ void setErrorHandler(ErrorHandler handler);
 /**
  * Print an error message to the text console and then terminate the process.
  */
-void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
+void NORETURN_PRE error(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void warning(const char *s, ...) {}
+inline void warning(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) {}
 
 #else
 
@@ -95,7 +95,7 @@ inline void warning(const char *s, ...) {}
  * Automatically prepends the text "WARNING: " and appends
  * an exclamation mark and a newline.
  */
-void warning(const char *s, ...) GCC_PRINTF(1, 2);
+void warning(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2);
 
 #endif
 /** @} */
