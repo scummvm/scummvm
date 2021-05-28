@@ -470,6 +470,11 @@ public:
 // Helper class for FM-Towns output (required for specific hardware effects like switching graphics layers on and off).
 class TownsScreen {
 public:
+	enum {
+		kDirtyRectsMax = 20,
+		kFullRedraw = (kDirtyRectsMax + 1)
+	};
+public:
 	TownsScreen(OSystem *system);
 	~TownsScreen();
 

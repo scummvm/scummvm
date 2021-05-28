@@ -185,7 +185,19 @@ void ScummEngine::towns_updateGfx() {
 	if (!_townsScreen)
 		return;
 
+	// Determine whether the smooth scrolling is likely to fall behind and needs to catch up (becoming more sloppy than smooth). It depends
+	// monstly on the hardware and the filter settings. Calls to _system->updateScreen() can be very expensive with the "wrong" filter setting.
+	// We simply check whether the average screen update duration would fit into a 60 Hz tick. If catchup mode is triggered once, it stays on
+	// permanently. Otherwise the scrolling can become very jerky when the engine keeps jumping between the settings (usually triggering it shortly
+	// after the start of a scrolling, resulting in a very visible jerk, and then falling back to non-catchup after the scrolling is done).
 	uint32 cur = _system->getMillis();
+	if (!_refreshNeedCatchUp) {
+		int dur = 0;
+		for (int i = 0; i < ARRAYSIZE(_refreshDuration); ++i)
+			dur += _refreshDuration[i];
+		_refreshNeedCatchUp = (dur / ARRAYSIZE(_refreshDuration)) > (1000 / 60);
+	}
+	
 	while (_scrollTimer <= cur) {
 		if (!_scrollTimer)
 			_scrollTimer = cur;
@@ -194,6 +206,8 @@ void ScummEngine::towns_updateGfx() {
 		if (_townsScreen->isScrolling(0))
 			_scrollDeltaAdjust++;
 		_scrollRequest = 0;
+		if (!_refreshNeedCatchUp)
+			break;
 	}
 
 	_townsScreen->update();
@@ -315,9 +329,6 @@ const uint8 ScummEngine::_townsLayer2Mask[] = {
 	0x0F, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#define FMTOWNS_DIRTY_RECTS_MAX 20
-#define FMTOWNS_FULL_REDRAW (FMTOWNS_DIRTY_RECTS_MAX + 1)
-
 TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(0), _pitch(0), _pixelFormat(system->getScreenFormat()), _scrollOffset(0), _scrollRemainder(0), _numDirtyRects(0) {
 	memset(&_layers[0], 0, sizeof(TownsScreenLayer));
 	memset(&_layers[1], 0, sizeof(TownsScreenLayer));
@@ -388,7 +399,7 @@ void TownsScreen::clearLayer(int layer) {
 
 	memset(l->pixels, 0, l->pitch * l->height);
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
-	_numDirtyRects = FMTOWNS_FULL_REDRAW;
+	_numDirtyRects = kFullRedraw;
 }
 
 
@@ -431,10 +442,10 @@ uint8 *TownsScreen::getLayerPixels(int layer, int x, int y) const {
 }
 
 void TownsScreen::addDirtyRect(int x, int y, int w, int h) {
-	if (w <= 0 || h <= 0 || _numDirtyRects > FMTOWNS_DIRTY_RECTS_MAX)
+	if (w <= 0 || h <= 0 || _numDirtyRects > kDirtyRectsMax)
 		return;
 
-	if (_numDirtyRects == FMTOWNS_DIRTY_RECTS_MAX) {
+	if (_numDirtyRects == kDirtyRectsMax) {
 		// full redraw
 		_dirtyRects.clear();
 		_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
@@ -501,7 +512,7 @@ void TownsScreen::toggleLayers(int flags) {
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
-	_numDirtyRects = FMTOWNS_FULL_REDRAW;
+	_numDirtyRects = kFullRedraw;
 
 	Graphics::Surface *s = _system->lockScreen();
 	assert(s);
@@ -524,7 +535,7 @@ void TownsScreen::scrollLayers(int flags, int offset) {
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(_width - 1, _height - 1));
-	_numDirtyRects = FMTOWNS_FULL_REDRAW;
+	_numDirtyRects = kFullRedraw;
 
 	for (int i = 0; i < 2; ++i) {
 		if (!(flags & (1 << i)))
@@ -703,9 +714,6 @@ template void TownsScreen::updateScreenBuffer<uint16>();
 #else
 template void TownsScreen::updateScreenBuffer<uint8>();
 #endif
-
-#undef FMTOWNS_DIRTY_RECTS_MAX
-#undef FMTOWNS_FULL_REDRAW
 
 } // End of namespace Scumm
 
