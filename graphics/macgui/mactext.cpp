@@ -1408,8 +1408,25 @@ bool MacText::processEvent(Common::Event &event) {
 			return true;
 
 		case Common::KEYCODE_DELETE:
-			// TODO
-			warning("MacText::processEvent(): Delete is not yet implemented");
+			// first try to delete the selected text
+			if (_selectedText.endY != -1) {
+				cutSelection();
+				_contentIsDirty = true;
+				return true;
+			}
+			// move cursor to next one and delete previous char
+			if (_cursorCol >= getLineCharWidth(_cursorRow)) {
+				if (_cursorRow == getLineCount() - 1) {
+					return true;
+				}
+				_cursorRow++;
+				_cursorCol = 0;
+			} else {
+				_cursorCol++;
+			}
+			deletePreviousChar(&_cursorRow, &_cursorCol);
+			updateCursorPos();
+			_contentIsDirty = true;
 			return true;
 
 		default:
