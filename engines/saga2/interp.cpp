@@ -76,8 +76,8 @@ int16                    moduleBaseResource,
                          moduleCount;
 
 uint16                  dataSegIndex;           // saved index of data seg
-UByteHandle             dataSegment,            // loaded in data
-                        exportSegment;          // export table from SAGA
+byte                   *dataSegment,            // loaded in data
+                       *exportSegment;          // export table from SAGA
 
 int32                   dataSegSize;            // bytes in data segment
 
@@ -248,7 +248,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 	case addr_data:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
-		return *dataSegment + offset;
+		return &dataSegment[offset];
 
 	case addr_near:
 		IMMED_WORD(offset);
@@ -283,7 +283,8 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		*pcPtr = pc;
-		if (arg[ 0 ] == dataSegIndex) return *dataSegment + arg[ 1 ] + offset;
+		if (arg[ 0 ] == dataSegIndex)
+			return &dataSegment[arg[ 1 ] + offset];
 		return segmentArrayAddress(arg[ 0 ],
 		                           arg[ 1 ]) + offset;
 
@@ -331,7 +332,7 @@ uint8 *objectAddress(
 	case addr_data:
 		IMMED_WORD(index);
 		seg = dataSegIndex;
-		addr = *dataSegment + index;
+		addr = &dataSegment[index];
 		break;
 
 	case addr_far:
@@ -352,7 +353,8 @@ uint8 *objectAddress(
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		seg = arg[ 0 ];
 		index = arg[ 1 ];
-		if (seg == dataSegIndex) return *dataSegment + index + offset;
+		if (seg == dataSegIndex)
+			return &dataSegment[index + offset];
 		addr = segmentArrayAddress(seg, index) + offset;
 		break;
 
@@ -398,7 +400,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		return *dataSegment + (offset >> 3);
+		return &dataSegment[(offset >> 3)];
 
 	case addr_near:
 		IMMED_WORD(offset);
@@ -1744,15 +1746,19 @@ void initScripts(void) {
 		error("Unable to open script resource file!\n");
 
 	//  Load the data segment
-	dataSegment = (UByteHandle)scriptRes->loadResource(dataSegID, scriptResFile->_filename, "saga data segment");
+	dataSegment = scriptRes->loadResource(dataSegID, scriptResFile->_filename, "saga data segment");
 
 	if (dataSegment == NULL)
 		error("Unable to load the SAGA data segment");
 
 	dataSegSize = scriptRes->getSize(dataSegID, "saga data segment");
 
-	exportSegment = (UByteHandle)scriptRes->loadResource(exportSegID, scriptResFile->_filename, "saga export segment");
+//	Common::hexdump(dataSegment, dataSegSize);
+
+	exportSegment = scriptRes->loadResource(exportSegID, scriptResFile->_filename, "saga export segment");
 	assert(exportSegment != NULL);
+
+//	Common::hexdump(exportSegment, scriptRes->getSize(exportSegID, "saga export segment"));
 
 	exportCount = (scriptRes->getSize(exportSegID, "saga export segment") / sizeof(uint32)) + 1;
 }
@@ -1775,7 +1781,7 @@ void cleanupScripts(void) {
 void initSAGADataSeg(void) {
 	//  Load the data segment
 	scriptRes->seek(dataSegID);
-	scriptRes->read(*dataSegment, dataSegSize);
+	scriptRes->read(dataSegment, dataSegSize);
 }
 
 //-----------------------------------------------------------------------
@@ -1784,7 +1790,7 @@ void initSAGADataSeg(void) {
 void saveSAGADataSeg(SaveFileConstructor &saveGame) {
 	saveGame.writeChunk(
 	    MakeID('S', 'D', 'T', 'A'),
-	    *dataSegment,
+	    dataSegment,
 	    dataSegSize);
 }
 
@@ -1792,7 +1798,7 @@ void saveSAGADataSeg(SaveFileConstructor &saveGame) {
 //	Load the SAGA data segment from a save file
 
 void loadSAGADataSeg(SaveFileReader &saveGame) {
-	saveGame.read(*dataSegment, dataSegSize);
+	saveGame.read(dataSegment, dataSegSize);
 }
 
 //-----------------------------------------------------------------------
