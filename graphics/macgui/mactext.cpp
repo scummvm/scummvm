@@ -1040,7 +1040,7 @@ bool MacText::draw(bool forceRedraw) {
 
 	Common::Point offset(calculateOffset());
 
-	if (_selectedText.endY != -1 && _active)
+	if (_selectedText.endY != -1)
 		_composeSurface->clear(_bgcolor);
 
 	if (!_cursorState)
