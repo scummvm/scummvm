@@ -156,11 +156,6 @@ struct SScriptFrame {
 	bool isEmptyEvent() const { return _class == 0 && _event == 0;  }
 };
 
-struct SScript {
-	uint16 _firstFrame;
-	uint8 _flag;         // 0 - BREAKABLE - If it may be stopped by a mouse click
-};                       // 1 - DIALOGEXITNOANIM - If the script is launched from a dialogue at the last choice it exits the dialogue without link anim and by default
-
 class TrecisionEngine;
 
 struct SDText {

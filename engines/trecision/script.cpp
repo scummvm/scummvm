@@ -54,7 +54,7 @@ void TrecisionEngine::playScript(uint16 id) {
 	++_curStack;
 	_flagScriptActive = true;
 	_graphicsMgr->hideCursor();
-	_curScriptFrame[_curStack] = _script[id]._firstFrame;
+	_curScriptFrame[_curStack] = _scriptFirstFrame[id];
 
 	processScriptFrame();
 }
