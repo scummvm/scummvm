@@ -122,21 +122,22 @@ public:
 class hResContext {
 
 protected:
-	uint16        _numEntries;
-	hResource     *_res;
-	hResContext   *_parent;
-	hResEntry     *_base;
-	RHANDLE       *_data; // allocated array of handles
-	Common::File   _file;
-	Common::File  *_handle;
-	uint32         _bytecount;
-	uint32         _bytepos;
+	uint16         _numEntries;
+	hResource      *_res;
+	hResContext    *_parent;
+	hResEntry      *_base;
+	RHANDLE        *_data; // allocated array of handles
+	Common::File    _file;
+	Common::File   *_handle;
+	uint32          _bytecount;
+	uint32          _bytepos;
 
-	hResEntry   *findEntry(hResID id, RHANDLE **capture = NULL);
-	Common::File     *openExternal(Common::File *fh);
+	hResEntry      *findEntry(hResID id, RHANDLE **capture = NULL);
+	Common::File   *openExternal(Common::File *fh);
 
 public:
-	bool        _valid;
+	bool            _valid;
+	Common::String  _filename;
 
 	hResContext();
 	hResContext(hResContext *sire, hResID id, const char []);
@@ -161,7 +162,7 @@ public:
 	bool        get(hResID id, void *buffer, uint32 size);
 	uint32       getSize(hResID id, const char desc[]);
 	RHANDLE     load(hResID id, const char [], bool async = false, bool cacheable = true);
-	byte        *loadResource(hResID id, const char desc[]);
+	byte        *loadResource(hResID id, Common::String filename, const char desc[]);
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
 	void        release(RHANDLE p);
 	Common::File     *resFileHandle(void) {
@@ -181,9 +182,9 @@ class hResource : public hResContext {
 
 	friend class hResContext;
 
-	uint32      _firstGroupOffset;
-	char        _externalPath[EXTERNAL_PATH_SIZE];
-	hResEntry   *_table;
+	uint32          _firstGroupOffset;
+	char            _externalPath[EXTERNAL_PATH_SIZE];
+	hResEntry      *_table;
 
 public:
 	hResource(char *resname, char *extname, const char []);
@@ -191,7 +192,7 @@ public:
 
 	hResContext *newContext(hResID id, const char []);
 	void        disposeContext(hResContext *con);
-	void readResource(hResEntry &element);
+	void        readResource(hResEntry &element);
 };
 
 /* ===================================================================== *

@@ -87,7 +87,7 @@ Common::Error Saga2Engine::run() {
 
 	if (openResources()) {
 		openImageTest();
-		//initScripts(); // crashes currently
+		initScripts();
 	}
 
 	// Simple main event loop
