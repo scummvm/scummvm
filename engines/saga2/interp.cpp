@@ -1810,13 +1810,12 @@ static bool lookupExport(
     uint16          entry,
     uint16          &segNum,
     uint16          &segOff) {
-	uint32          segRef,
-	                *exportBase = (uint32 *)(exportSegment - 2);
+	uint32          segRef;
 
 	assert(entry > 0);
 	assert(entry <= exportCount);
 
-	segRef = exportBase[ entry ];
+	segRef = READ_LE_INT32(exportSegment + 4 * entry - 2);
 	segOff = segRef >> 16,
 	segNum = segRef & 0x0000ffff;
 
