@@ -1434,6 +1434,11 @@ bool MacText::processEvent(Common::Event &event) {
 				return false;
 
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
+				// if we have selected text, then we delete it, then we try to insert char
+				if (_selectedText.endY != -1) {
+					cutSelection();
+					_contentIsDirty = true;
+				}
 				insertChar((byte)event.kbd.ascii, &_cursorRow, &_cursorCol);
 				updateCursorPos();
 				_contentIsDirty = true;
