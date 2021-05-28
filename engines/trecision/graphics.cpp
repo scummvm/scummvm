@@ -544,10 +544,10 @@ void GraphicsManager::paintScreen(bool flag) {
 	_vm->_flagWaitRegen = false;
 
 	// Handle papaverine delayed action
-	if ((_vm->_curRoom == kRoom4A) && (_vm->_obj[oCHOCOLATES4A]._flag & kObjFlagExtra)) {
+	if (_vm->_curRoom == kRoom4A && _vm->_obj[oCHOCOLATES4A].isExtra()) {
 		if (_vm->_animMgr->smkCurFrame(kSmackerBackground) > 480) {
 			_vm->playScript(s4AHELLEN);
-			_vm->_obj[oCHOCOLATES4A]._flag &= ~kObjFlagExtra;
+			_vm->_obj[oCHOCOLATES4A].setExtra(false);
 		}
 	}
 	//

@@ -147,7 +147,7 @@ void TrecisionEngine::doAction() {
 			_obj[_curObj]._mode &= ~OBJMODE_HIDDEN;
 
 		if (_flagUseWithStarted) {
-			if ((_obj[_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(_obj[_curObj]._flag & kObjFlagExamine))
+			if ((_obj[_curObj].isRoomOut() || _obj[_curObj].isRoomIn()) && !_obj[_curObj].isExamine())
 				return;
 			_flagUseWithStarted = false;
 			_flagInventoryLocked = false;
@@ -155,7 +155,7 @@ void TrecisionEngine::doAction() {
 			_useWithInv[WITH] = false;
 			_lightIcon = 0xFF;
 
-			if (!_useWithInv[USED] && (_curObj == _useWith[USED])) {
+			if (!_useWithInv[USED] && _curObj == _useWith[USED]) {
 				_useWith[USED] = 0;
 				_useWith[WITH] = 0;
 				_useWithInv[USED] = false;
@@ -168,7 +168,7 @@ void TrecisionEngine::doAction() {
 			return;
 		}
 
-		if (_curMessage->_event == ME_MOUSEOPERATE && (_obj[_curObj]._flag & kObjFlagUseWith)) {
+		if (_curMessage->_event == ME_MOUSEOPERATE && _obj[_curObj].isUseWith()) {
 			_flagUseWithStarted = true;
 			_flagInventoryLocked = true;
 			_useWith[USED] = _curObj;
@@ -182,26 +182,26 @@ void TrecisionEngine::doAction() {
 
 	switch (_curMessage->_event) {
 	case ME_MOUSEOPERATE:
-		if (_obj[_curObj]._flag & kObjFlagRoomIn)
+		if (_obj[_curObj].isRoomIn())
 			doRoomIn(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagPerson)
+		else if (_obj[_curObj].isPerson())
 			doMouseTalk(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagRoomOut)
+		else if (_obj[_curObj].isRoomOut())
 			doRoomOut(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagTake)
+		else if (_obj[_curObj].isTake())
 			doMouseTake(_curObj);
 		else
 			doMouseOperate(_curObj);
 		break;
 
 	case ME_MOUSEEXAMINE:
-		if (_obj[_curObj]._flag & kObjFlagExamine)
+		if (_obj[_curObj].isExamine())
 			doMouseExamine(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagRoomIn)
+		else if (_obj[_curObj].isRoomIn())
 			doRoomIn(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagPerson)
+		else if (_obj[_curObj].isPerson())
 			doMouseExamine(_curObj);
-		else if (_obj[_curObj]._flag & kObjFlagRoomOut)
+		else if (_obj[_curObj].isRoomOut())
 			doRoomOut(_curObj);
 		else
 			doMouseExamine(_curObj);
@@ -477,7 +477,7 @@ void TrecisionEngine::doRoomIn(uint16 curObj) {
 
 	changeRoom(_obj[curObj]._goRoom, curAction, curPos);
 
-	_obj[curObj]._flag |= kObjFlagDone;
+	_obj[curObj].setDone(true);
 }
 
 void TrecisionEngine::doRoomOut(uint16 curObj) {
@@ -489,7 +489,7 @@ void TrecisionEngine::doRoomOut(uint16 curObj) {
 	if (curAction)
 		_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, curAction, _obj[curObj]._goRoom, curPos, curObj);
 
-	_obj[curObj]._flag |= kObjFlagDone;
+	_obj[curObj].setDone(true);
 }
 
 void TrecisionEngine::doMouseExamine(uint16 curObj) {

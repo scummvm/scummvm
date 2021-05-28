@@ -312,7 +312,7 @@ void AnimManager::toggleMuteBgAnim(uint16 animation) {
 		decoder->muteTrack(1, true);
 	else if (animation == aBKG14 && (animFlag & SMKANIM_OFF1))
 		decoder->muteTrack(1, true);
-	else if (animation == aBKG1C && (_vm->_obj[oFAX17]._flag & kObjFlagExtra)) {
+	else if (animation == aBKG1C && _vm->_obj[oFAX17].isExtra()) {
 		_animTab[animation]._flag |= SMKANIM_OFF1;
 		decoder->muteTrack(1, true);
 	} else if (animation == aBKG1D && (animFlag & SMKANIM_OFF1))

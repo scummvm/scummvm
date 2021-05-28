@@ -57,32 +57,8 @@ void TrecisionEngine::loadAll() {
 	for (int i = 0; i < MAXROOMS; ++i)
 		_room[i].loadRoom(&dataNl);
 
-	for (int i = 0; i < MAXOBJ; ++i) {
-		uint16 w = dataNl.readUint16LE();
-		uint16 h = dataNl.readUint16LE();
-		_obj[i]._rect.left = dataNl.readUint16LE();
-		_obj[i]._rect.top = dataNl.readUint16LE();
-		_obj[i]._rect.setWidth(w);
-		_obj[i]._rect.setHeight(h);
-
-		_obj[i]._lim.left = dataNl.readUint16LE();
-		_obj[i]._lim.top = dataNl.readUint16LE();
-		_obj[i]._lim.right = dataNl.readUint16LE();
-		_obj[i]._lim.bottom = dataNl.readUint16LE();
-
-		_obj[i]._position = dataNl.readSByte();
-		dataNl.readByte(); // Padding
-		_obj[i]._name = dataNl.readUint16LE();
-		_obj[i]._examine = dataNl.readUint16LE();
-		_obj[i]._action = dataNl.readUint16LE();
-		_obj[i]._goRoom = dataNl.readByte();
-		_obj[i]._nbox = dataNl.readByte();
-		_obj[i]._ninv = dataNl.readByte();
-		_obj[i]._mode = dataNl.readByte();
-		_obj[i]._flag = dataNl.readByte();
-		dataNl.readByte(); // Padding
-		_obj[i]._anim = dataNl.readUint16LE();
-	}
+	for (int i = 0; i < MAXOBJ; ++i)
+		_obj[i].loadObj(&dataNl);
 
 	for (int i = 0; i < MAXINVENTORY; ++i) {
 		_inventoryObj[i]._name = dataNl.readUint16LE();

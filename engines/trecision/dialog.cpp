@@ -177,31 +177,31 @@ void DialogManager::afterChoice() {
 	case dTRAMP171:
 		if (_curChoice == 80) {
 			_vm->_obj[ocTRAMP17]._action = 213;
-			_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(false);
 		} else if (_curChoice == 77) {
 			_vm->_obj[ocTRAMP17]._action = 211;
-			_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(false);
 		}
 		break;
 
 	case dTRAMP1714:
 		if (_curChoice == 106) {
 			_vm->_obj[ocTRAMP17]._action = 213;
-			_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(false);
 		}
 		break;
 
 	case dTRAMP1713:
 		if (_curChoice == 91) {
 			_vm->_obj[ocTRAMP17]._action = 212;
-			_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(false);
 		}
 		break;
 
 	case dTRAMP1716:
 		if (_curChoice == 122) {
 			_vm->_obj[ocTRAMP17]._action = 212;
-			_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(false);
 		}
 		break;
 
@@ -212,7 +212,7 @@ void DialogManager::afterChoice() {
 			_vm->_room[kRoom17]._bkgAnim = aBKG17B;
 			_vm->addIcon(kItemSkate);
 		} else if (_curChoice == 137) {
-			_vm->_obj[ocTRAMP17]._flag |= kObjFlagPerson;
+			_vm->_obj[ocTRAMP17].setPerson(true);
 		}
 		break;
 
@@ -220,13 +220,13 @@ void DialogManager::afterChoice() {
 		if ((_curChoice == 151) || (_curChoice == 152)) {
 			_vm->_inventoryObj[kItemRubysPhoto]._action = 1465;
 			_vm->_obj[oTESSERA1A]._action = 238;
-			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra) {
+			if (_vm->_obj[oTESSERA1A].isExtra()) {
 				toggleChoice(154, true);
 				toggleChoice(153, false);
 			} else
 				toggleChoice(153, true);
 		} else if (_curChoice == 154) {
-			if (_vm->_obj[oTESSERA1A]._flag & kObjFlagExtra)
+			if (_vm->_obj[oTESSERA1A].isExtra())
 				toggleChoice(183, true);
 		} else if (_curChoice == 155)
 			_vm->_obj[ocGUARD18]._action = 228;
@@ -280,14 +280,14 @@ void DialogManager::afterChoice() {
 
 		switch (_curDialog) {
 		case dPOLIZIOTTO16:
-			if ((isDialogFinished(61)) && (isDialogFinished(62)) && (_vm->_obj[ocPOLIZIOTTO16]._flag & kObjFlagExtra))
+			if ((isDialogFinished(61)) && (isDialogFinished(62)) && _vm->_obj[ocPOLIZIOTTO16].isExtra())
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			break;
 
 		case dTRAMP171:
 			if (_curChoice == 77) {
 				_vm->_obj[ocTRAMP17]._action = 211;
-				_vm->_obj[ocTRAMP17]._flag &= ~kObjFlagPerson;
+				_vm->_obj[ocTRAMP17].setPerson(false);
 			} else if (_curChoice == 80)
 				_vm->_obj[ocTRAMP17]._action = 213;
 			else if (_curChoice == 122)
@@ -302,16 +302,16 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dEVA19:
-			_vm->_obj[oDOORC18]._flag &= ~kObjFlagRoomOut;
+			_vm->_obj[oDOORC18].setRoomOut(false);
 			_vm->_obj[oDOORC18]._action = 221;
 			_vm->_obj[ocEVA19]._action = 1999;
-			_vm->_obj[ocEVA19]._flag &= ~kObjFlagPerson;
+			_vm->_obj[ocEVA19].setPerson(false);
 			break;
 
 		case dSHOPKEEPER1A:
 			if (_curChoice == 185) {
 				_vm->changeRoom(kRoom18, a1810ENTRADALNEGOZIO, 10);
-				_vm->_obj[oDOORN18]._flag &= ~kObjFlagRoomOut;
+				_vm->_obj[oDOORN18].setRoomOut(false);
 				_vm->_obj[oDOORN18]._action = 218;
 				_vm->setObjectAnim(oDOORN18, 0);
 			} else if (_curChoice == 183)

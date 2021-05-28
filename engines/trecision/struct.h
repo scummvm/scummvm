@@ -68,24 +68,40 @@ struct SObject {
 												3- objStatus
 												6- center when click !
 												7- inventory referenceable */
-	uint8 _flag;							/*  Examine = 0
-												Direction = 1
-												Person = 2
-												Carried = 3
-												2- Take
-												3- Open
-												4- Close
-												5- Use
-												6- Extra
-												7- Operated     */
 	uint16 _anim;
+	
+	void readRect(Common::SeekableReadStream *stream);
+	void setDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
+	void setExamine(bool on) { if (on) _flag |= kObjFlagExamine; else _flag &= ~kObjFlagExamine; }
+	void setExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
+	void setPerson(bool on) { if (on) _flag |= kObjFlagPerson; else _flag &= ~kObjFlagPerson; }
+	void setRoomOut(bool on) { if (on) _flag |= kObjFlagRoomOut; else _flag &= ~kObjFlagRoomOut; }
+	void setRoomIn(bool on) { if (on) _flag |= kObjFlagRoomIn; else _flag &= ~kObjFlagRoomIn; }
+	void setTake(bool on) { if (on) _flag |= kObjFlagTake; else _flag &= ~kObjFlagTake; }
 
-	void readRect(Common::SeekableReadStream *stream) {
-		_rect.left = stream->readUint16LE();
-		_rect.top = stream->readUint16LE();
-		_rect.setWidth(stream->readUint16LE());
-		_rect.setHeight(stream->readUint16LE());
-	}
+	bool isDone() { return _flag & kObjFlagDone; }
+	bool isExamine() { return _flag & kObjFlagExamine; }
+	bool isExtra() { return _flag & kObjFlagExtra; }
+	bool isPerson() { return _flag & kObjFlagPerson; }
+	bool isRoomIn() { return _flag & kObjFlagRoomIn; }
+	bool isRoomOut() { return _flag & kObjFlagRoomOut; }
+	bool isTake() { return _flag & kObjFlagTake; }
+	bool isUseWith() { return _flag & kObjFlagUseWith; }
+
+	void syncGameStream(Common::Serializer &ser);
+	void loadObj(Common::File *file);
+
+private:
+	uint8 _flag = 0; /*  Examine = 0
+					     Direction = 1
+						 Person = 2
+						 Carried = 3
+						 2- Take
+						 3- Open
+						 4- Close
+						 5- Use
+						 6- Extra
+						 7- Operated     */
 };
 
 struct SInvObject {
