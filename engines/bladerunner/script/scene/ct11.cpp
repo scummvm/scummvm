@@ -80,7 +80,15 @@ void SceneScriptCT11::SceneLoaded() {
 		}
 
 		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
+#if BLADERUNNER_ORIGINAL_BUGS
 			Scene_2D_Region_Add(1, 412, 258, 552, 358);
+#else
+			// expand region 1 a bit and add two more
+			// as auxilliary in order to better cover the car area
+			Scene_2D_Region_Add(1, 365, 258, 552, 358);
+			Scene_2D_Region_Add(3, 267, 330, 365, 377);
+			Scene_2D_Region_Add(4, 365, 358, 454, 377);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		}
 	} else {
 		if (Game_Flag_Query(kFlagCT11DogWrapperAvailable)) {
@@ -199,7 +207,12 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 		return true;
 	}
 
-	if (region == 1) {
+	if (region == 1
+#if !BLADERUNNER_ORIGINAL_BUGS
+	    || region == 3
+	    || region == 4
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+	) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			int cluesFound = 0;
@@ -230,6 +243,11 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 				Actor_Voice_Over(540, kActorVoiceOver);
 				Actor_Clue_Acquire(kActorMcCoy, kClueCar, false, -1);
 				Scene_2D_Region_Remove(1);
+#if !BLADERUNNER_ORIGINAL_BUGS
+				Scene_2D_Region_Remove(3);
+				Scene_2D_Region_Remove(4);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+
 			} else {
 				Actor_Says(kActorMcCoy, 8525, 12);
 			}
