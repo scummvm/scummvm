@@ -55,7 +55,6 @@ MODULE_OBJS := \
 	mouseimg.o \
 	objects.o \
 	objproto.o \
-	osexcept.o \
 	panel.o \
 	path.o \
 	patrol.o \

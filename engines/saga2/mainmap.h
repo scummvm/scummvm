@@ -27,8 +27,6 @@
 #ifndef SAGA2_MAINMAP_H
 #define SAGA2_MAINMAP_H 1
 
-#include "saga2/osexcept.h"
-
 namespace Saga2 {
 
 void main_saga2();

@@ -30,7 +30,6 @@
 
 #include "saga2/std.h"
 #include "saga2/tower.h"
-#include "saga2/osexcept.h"
 #include "saga2/messager.h"
 
 namespace Saga2 {
@@ -69,41 +68,15 @@ static int32 getTowerLayer(int is) {
 static bool initTowerLayer(int is) {
 	bool r;
 
-#if !DEBUG
-	OSExceptBlk {
-#endif
-
-		r = tower[is].init();
-
-#if !DEBUG
-	}
-	OSExcepTrap {
-		r = FALSE;
-		OSExceptHnd;
-	}
-#endif
-
+	r = tower[is].init();
 
 	return r;
-
 }
 
 static bool cleanupErr = FALSE;
 
 static void termTowerLayer(int is) {
-#if !DEBUG
-	OSExceptBlk {
-#endif
-
-		tower[is].term();
-
-#if !DEBUG
-	}
-	OSExcepTrap {
-		cleanupErr = TRUE;
-		OSExceptHnd;
-	}
-#endif
+	tower[is].term();
 }
 
 
