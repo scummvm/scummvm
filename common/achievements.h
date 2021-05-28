@@ -81,14 +81,6 @@ public:
 	~AchievementsManager();
 
 	/**
-	 * (DEPRECATED) Set a platform and application ID as active domain.
-	 *
-	 * @param[in] platform Achievements platform.
-	 * @param[in] appId	Achievements application ID of the given platform.
-	 */
-	bool setActiveDomain(AchievementsPlatform platform, const String &appId);
-
-	/**
 	 * Set a platform and application ID as active domain, store messages texts.
 	 *
 	 * @param[in] info Achievements platform, application ID and messages information.
@@ -101,13 +93,6 @@ public:
 	 * @name Methods for manipulating individual achievements
 	 * @{
 	 */
-
-	/** (DEPRECATED) Set an achievement.
-	 *
-	 * @param[in] id			   Internal ID of the achievement.
-	 * @param[in] displayedMessage Message displayed when the achievement is achieved.
-	 */
-	bool setAchievement(const String &id, const String &displayedMessage);
 
 	/** Set an achievement. Message is automatically displayed with text from active domain.
 	 *
