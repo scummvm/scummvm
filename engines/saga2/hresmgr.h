@@ -156,11 +156,11 @@ public:
 	inline size_t   bytesleft(void) {
 		return _bytecount;
 	}
-	bool        read(void *buffer, int32 size);
-	bool        skip(int32 amount);
-	bool        get(hResID id, void *buffer, int32 size);
-	RHANDLE     load(hResID id, const char [], bool async = FALSE, bool cacheable = TRUE);
-	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = TRUE);
+	bool        read(void *buffer, uint32 size);
+	bool        skip(uint32 amount);
+	bool        get(hResID id, void *buffer, uint32 size);
+	RHANDLE     load(hResID id, const char [], bool async = false, bool cacheable = true);
+	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
 	void        release(RHANDLE p);
 	Common::File     *resFileHandle(void) {
 		return _handle;
@@ -181,7 +181,7 @@ class hResource : public hResContext {
 
 	uint32      _firstGroupOffset;
 	char        _externalPath[EXTERNAL_PATH_SIZE];
-	hResEntry   *_groups;
+	hResEntry   *_table;
 
 public:
 	hResource(char *resname, char *extname, const char []);

@@ -75,6 +75,7 @@ hResContext::hResContext() {
 
 hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	hResEntry   *entry;
+	const uint32 resourceSize = 12;
 
 	_valid = false;
 	_res = sire->_res;
@@ -91,12 +92,11 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 	if ((entry = _parent->findEntry(id)) == nullptr)
 		return;
 
-	_numEntries = entry->resSize() / sizeof * entry;
+	_numEntries = entry->size / resourceSize;
 
-	_base = (hResEntry *)((uint8 *)_res->_groups +
-	                     (entry->offset - _res->_firstGroupOffset));
+	_base = &_res->_table[entry->offset - _res->_firstGroupOffset];
 
-	_data = (RHANDLE *)malloc(_numEntries * sizeof(RHANDLE));
+	_data = new RHANDLE[_numEntries]();
 	if (_data == nullptr)
 		return;
 
@@ -105,13 +105,7 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 hResContext::~hResContext() {
 	if (_data) {
-		if (_valid) {
-			for (int i = 0; i < _numEntries; i++) {
-				free(_data[ i ]);
-				_data[i] = nullptr;
-			}
-		}
-		free(_data);
+		delete[] _data;
 		_data = nullptr;
 	}
 }
@@ -126,7 +120,7 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 
 	debugC(2, kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
-		debugC(kDebugResources, "%x: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
+		debugC(2, kDebugResources, "%d: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
 			if (capture) *capture = &_data[ i ];
 			debugC(2, kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
@@ -147,7 +141,7 @@ uint32 hResContext::size(hResID id) {
 	if ((entry = findEntry(id)) == nullptr)
 		return 0;
 
-	return entry->resSize();
+	return entry->size;
 }
 
 uint32 hResContext::count(void) {
@@ -199,7 +193,7 @@ bool hResContext::seek(hResID id) {
 
 	if ((entry = findEntry(id)) == nullptr) return false;
 
-	_bytecount = entry->resSize();
+	_bytecount = entry->size;
 	_bytepos = entry->resOffset();
 
 	_res->_handle->seek(_bytepos, SEEK_SET);
@@ -225,11 +219,12 @@ void hResContext::rest(void) {
 	}
 }
 
-bool hResContext::read(void *buffer, int32 size) {
+bool hResContext::read(void *buffer, uint32 size) {
+	assert(_handle);
 	if (!_valid) return false;
 	_bytecount = 0;
 	_bytepos = 0;
-	return _handle->read(buffer, size);
+	return (_handle->read(buffer, size) != 0);
 }
 
 bool hResContext::eor(void) {
@@ -240,24 +235,23 @@ uint32 hResContext::readbytes(void *buffer, uint32 size) {
 	int32 bytesRead;
 	if (!_valid || _bytecount < 1) return 0;
 
-	if (HR_SEEK(_res->_handle, _bytepos, SEEK_SET) != 0)
-		error("Error seeking resource file:");
-	bytesRead = HR_READ(buffer, 1, MIN(size, _bytecount), _handle);
+	_res->_handle->seek(_bytepos, SEEK_SET);
+	bytesRead = _handle->read(buffer, MIN(size, _bytecount));
 	_bytecount -= bytesRead;
 	_bytepos += bytesRead;
 	return bytesRead;
 }
 
-bool hResContext::skip(int32 amount) {
+bool hResContext::skip(uint32 amount) {
 	if (!_valid) return false;
 
-	HR_SEEK(_res->_handle, amount, SEEK_CUR);
+	_res->_handle->seek(amount, SEEK_CUR);
 	_bytecount -= amount;
 	_bytepos -= amount;
 	return true;
 }
 
-bool hResContext::get(hResID id, void *buffer, int32 size) {
+bool hResContext::get(hResID id, void *buffer, uint32 size) {
 	bool    result = false;
 
 	if (!_valid) return false;
@@ -269,7 +263,7 @@ bool hResContext::get(hResID id, void *buffer, int32 size) {
 
 		if ((entry = findEntry(id)) == nullptr) return false;
 
-		size = entry->resSize();
+		size = entry->size;
 	}
 
 	if (seek(id)) {
@@ -297,7 +291,7 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 		entry->use();
 	} else {
 		if (*capture == nullptr)
-			*capture = (RHANDLE)malloc(entry->resSize());
+			*capture = (RHANDLE)malloc(entry->size);
 
 		if (*capture == nullptr) return nullptr;
 
@@ -307,7 +301,7 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 		async = false;
 #endif
 		if (entry->isExternal() || async == false) {
-			if (seek(id) && read(**capture, entry->resSize())) {
+			if (seek(id) && read(**capture, entry->size)) {
 				entry->use();
 			} else {
 				free(*capture);
@@ -317,10 +311,9 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 			rest();
 		} else {
 #ifndef WINKLUDGE
-			RequestResource(
-			    *capture,
-			    entry->resOffset(),
-			    entry->resSize());
+			RequestResource(*capture,
+							entry->offset,
+							entry->size);
 #endif
 			entry->use();
 		}
@@ -345,13 +338,13 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 		entry->use();
 	} else {
 		if (*capture == nullptr)
-			*capture = (RHANDLE)malloc(entry->resSize());
+			*capture = (RHANDLE)malloc(entry->size);
 
 		if (*capture == nullptr) return nullptr;
 
 		_res->_handle->seek(entry->resOffset(), SEEK_SET);
 
-		if (read(**capture, entry->resSize()) == false) {
+		if (read(**capture, entry->size) == false) {
 			free(*capture);
 			*capture = nullptr;
 		}
@@ -403,7 +396,8 @@ void hResource::readResource(hResEntry &element) {
 
 hResource::hResource(char *resname, char *extname, const char desc[]) {
 	hResEntry   origin;
-	uint32      size;
+	int32      tableSize;
+	const int32 resourceSize = 4 + 4 + 4; // id, offset, size
 
 	_valid = false;
 	_base = nullptr;
@@ -425,30 +419,33 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 
 	// allocate buffers for root, groups and data
 
-	_base = (hResEntry *)malloc(origin.resSize());
-	size = origin.offset - _firstGroupOffset - sizeof(uint32);
-	_groups = (hResEntry *)malloc(size);
+	_numEntries = origin.size;
 
-	if (_base == nullptr || _groups == nullptr) return;
+	_base = new hResEntry[_numEntries]();
+	tableSize = origin.offset - _firstGroupOffset - sizeof(uint32);
+	_table = new hResEntry[tableSize / resourceSize]();
 
-	readResource(*_base);
-	_numEntries = origin.resSize() / sizeof origin;
+
+	if (_base == nullptr || _table == nullptr) return;
 
 	debugC(kDebugResources, "Reading %d categories:", _numEntries);
+	for (int i = 0; i < _numEntries; ++i)
+		readResource(_base[i]);
+
+	debugC(kDebugResources, "Reading %d groups:", tableSize / resourceSize);
 	_file.seek(_firstGroupOffset, SEEK_SET);
-	for (int i = 0; i < _numEntries; ++i) {
-		readResource(_groups[i]);
+	for (int i = 0; i < tableSize / resourceSize; ++i) {
+		readResource(_table[i]);
 	}
 
 	_res = this;
-	_numEntries = origin.resSize() / sizeof origin;
 	_valid = true;
 }
 
 hResource::~hResource() {
-	if (_base) free(_base);
-	if (_groups) free(_groups);
-	if (_handle) free(_handle);
+	if (_base) delete[] _base;
+	if (_table) delete[] _table;
+	//if (_handle) free(_handle);
 }
 
 hResContext *hResource::newContext(hResID id, const char desc[]) {
