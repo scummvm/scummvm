@@ -46,17 +46,11 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 		return false;
 	}
 
-	_descriptions = info.descriptions;
-
-	return setActiveDomain(info.platform, info.appId);
-}
-
-bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const String &appId) {
-	const char* prefix = platform == STEAM_ACHIEVEMENTS ? "steam" :
-					platform == GALAXY_ACHIEVEMENTS ? "galaxy" :
+	const char* prefix = info.platform == STEAM_ACHIEVEMENTS ? "steam" :
+					info.platform == GALAXY_ACHIEVEMENTS ? "galaxy" :
 					"achman";
 
-	String iniFileName = String::format("%s-%s.dat", prefix, appId.c_str());
+	String iniFileName = String::format("%s-%s.dat", prefix, info.appId.c_str());
 
 	if (_iniFileName == iniFileName) {
 		return true;
@@ -70,6 +64,8 @@ bool AchievementsManager::setActiveDomain(AchievementsPlatform platform, const S
 
 	_iniFile = new Common::INIFile();
 	_iniFile->loadFromSaveFile(_iniFileName); // missing file is OK
+
+	_descriptions = info.descriptions;
 
 	return true;
 }
@@ -101,17 +97,6 @@ bool AchievementsManager::setAchievement(const String &id) {
 			displayedMessage = _descriptions[i].title;
 			break;
 		}
-	}
-
-	return setAchievement(id, displayedMessage);
-}
-
-bool AchievementsManager::setAchievement(const String &id, const String &displayedMessage) {
-	if (!isReady()) {
-		return false;
-	}
-	if (isAchieved(id)) {
-		return true;
 	}
 
 	debug("AchievementsManager::setAchievement('%s'): %s", id.c_str(), displayedMessage.c_str());
