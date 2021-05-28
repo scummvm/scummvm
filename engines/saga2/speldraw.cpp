@@ -45,7 +45,6 @@ namespace Saga2 {
    Imports
  * ===================================================================== */
 
-extern uint8        ColorMapRanges[][ 8 ];
 extern ColorScheme  **spellSchemes;
 
 extern ColorTable   spellColorMaps[];
