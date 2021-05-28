@@ -106,15 +106,18 @@ struct SInvObject {
 	uint16 _name;                            // Object name in the inventory
 	uint16 _examine;                         // Sentence if examined
 	uint16 _action;
-	uint8 _flag;                              /* 0-
-												1-
-												2-
-												3- Open
-												4- Close
-												5- Use      (SET=use OFF & notSET open and close = use with)
-												6- Extra
-												7- Operated  */
 	uint16 _anim;
+
+	void setFlagExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
+
+	bool isFlagExtra() { return _flag & kObjFlagExtra; }
+	bool isUseWith() { return _flag & kObjFlagUseWith; }
+
+	void syncGameStream(Common::Serializer &ser);
+	void loadObj(Common::File *file);
+
+	private:
+	uint8 _flag = 0;
 };
 
 struct SAtFrame {

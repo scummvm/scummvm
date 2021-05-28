@@ -163,7 +163,7 @@ void TrecisionEngine::useItem() {
 			showInventoryName(_curInventory, true);
 			_lightIcon = _curInventory;
 		}
-	} else if (_inventoryObj[_curInventory]._flag & kObjFlagUseWith) {
+	} else if (_inventoryObj[_curInventory].isUseWith()) {
 		if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
 			_textMgr->characterSay(1565);
 			return;
