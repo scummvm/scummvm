@@ -165,11 +165,11 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 		g_system->delayMillis(10);
 	}
 
+	delete smkDecoder;
+
 	_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
 	_vm->freeKey();
 	_vm->_dialogMgr->afterChoice();
-
-	delete smkDecoder;
 }
 
 void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame) {
@@ -551,6 +551,7 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 			ser.syncAsUint16LE(cur->_lim[i].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
+		ser.skip(1, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
 		for (uint8 i = 0; i < MAXATFRAME; ++i) {
 			ser.syncAsByte(cur->_atFrame[i]._type);
 			ser.syncAsByte(cur->_atFrame[i]._child);
