@@ -78,7 +78,7 @@ private:
 	void prevItem();
 	void nextItem();
 	void buyItem();
-	void updateAmmoButtons();
+	void updateForAmmoMode();
 	void checkClose();
 	void completePurchase();
 	void abortPurchase();

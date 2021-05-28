@@ -273,7 +273,17 @@ void WeaselGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) 
 bool WeaselGump::OnKeyDown(int key, int mod) {
 	if (Gump::OnKeyDown(key, mod)) return true;
 
-	// TODO: support keyboard input
+	// TODO: support more keyboard input
+	switch (key) {
+		case Common::KEYCODE_LEFT:
+			if (_state == kWeaselBrowsing)
+				prevItem();
+			break;
+		case Common::KEYCODE_RIGHT:
+			if (_state == kWeaselBrowsing)
+				nextItem();
+			break;
+	}
 
 	return true;
 }
@@ -293,11 +303,11 @@ void WeaselGump::onButtonClick(int entry) {
 	switch (entry) {
 	case kBtnWeapons:
 		_ammoMode = false;
-		updateAmmoButtons();
+		updateForAmmoMode();
 		break;
 	case kBtnAmmo:
 		_ammoMode = true;
-		updateAmmoButtons();
+		updateForAmmoMode();
 		break;
 	case kBtnLeft:
 		prevItem();
@@ -329,31 +339,32 @@ void WeaselGump::onButtonClick(int entry) {
 	}
 }
 
-void WeaselGump::updateAmmoButtons() {
-	_ammoMode = !_ammoMode;
+void WeaselGump::updateForAmmoMode() {
 	Gump *ammobtn = _ui->FindGump(&FindByIndex<kBtnAmmo>);
 	Gump *wpnbtn = _ui->FindGump(&FindByIndex<kBtnWeapons>);
 	assert(ammobtn && wpnbtn);
-	ammobtn->SetVisibility(_ammoMode);
-	wpnbtn->SetVisibility(!_ammoMode);
+	ammobtn->SetVisibility(!_ammoMode);
+	wpnbtn->SetVisibility(_ammoMode);
 	_curItem = 0;
+
+	_weaselDat = GameData::get_instance()->getWeaselDat(_ammoMode ? 1 : _level);
+	if (!_weaselDat || _weaselDat->getNumItems() == 0)
+		Close();
+
 	updateItemDisplay();
 }
 
+
 void WeaselGump::prevItem() {
-	WeaselDat::WeaselType curtype = _ammoMode ? WeaselDat::kItem : WeaselDat::kWeapon;
-	int itemcount = _weaselDat->getNumOfType(curtype);
 	_curItem--;
 	if (_curItem < 0)
-		_curItem = itemcount - 1;
+		_curItem = _weaselDat->getNumItems() - 1;
 	updateItemDisplay();
 }
 
 void WeaselGump::nextItem() {
-	WeaselDat::WeaselType curtype = _ammoMode ? WeaselDat::kItem : WeaselDat::kWeapon;
-	int itemcount = _weaselDat->getNumOfType(curtype);
 	_curItem++;
-	if (_curItem >= itemcount)
+	if (_curItem >= _weaselDat->getNumItems())
 		_curItem = 0;
 	updateItemDisplay();
 }
@@ -413,7 +424,7 @@ void WeaselGump::setYesNoQuestion(const Std::string &msg) {
 void WeaselGump::browsingMode(bool browsing) {
 	_ui->UnhideGump();
 
-	updateAmmoButtons();
+	updateForAmmoMode();
 	updateItemDisplay();
 
 	// Note: all these searches are not super effieient but it's
@@ -442,8 +453,8 @@ void WeaselGump::browsingMode(bool browsing) {
 		qtxt->SetVisibility(!browsing);
 
 	buybtn->SetVisibility(browsing);
-	wpnbtn->SetVisibility(browsing && !_ammoMode);
-	ammobtn->SetVisibility(browsing && _ammoMode);
+	wpnbtn->SetVisibility(browsing && _ammoMode);
+	ammobtn->SetVisibility(browsing && !_ammoMode);
 	exitbtn->SetVisibility(browsing);
 	blankbtn->SetVisibility(browsing);
 	leftbtn->SetVisibility(browsing);
@@ -473,25 +484,13 @@ int WeaselGump::purchasedCount(uint16 shape) const {
 }
 
 void WeaselGump::updateItemDisplay() {
-	WeaselDat::WeaselType curtype = _ammoMode ? WeaselDat::kItem : WeaselDat::kWeapon;
 	const Std::vector<WeaselDat::WeaselEntry> &items = _weaselDat->getItems();
-	Std::vector<WeaselDat::WeaselEntry>::const_iterator iter = items.begin();
 
-	int i = 0;
-	for (; iter != items.end(); iter++) {
-		if (iter->_type == curtype) {
-			if (i == _curItem)
-				break;
-			else
-				i++;
-		}
-	}
+	// should always have the item..
+	assert(_curItem < (int)items.size());
 
-	// should always find the item..
-	assert(iter != items.end());
-
-	_curItemCost = iter->_cost;
-	_curItemShape = iter->_shapeNo;
+	_curItemCost = items[_curItem]._cost;
+	_curItemShape = items[_curItem]._shapeNo;
 
 	const ShapeInfo *shapeinfo = GameData::get_instance()->getMainShapes()->getShapeInfo(_curItemShape);
 	if (!shapeinfo || !shapeinfo->_weaponInfo) {

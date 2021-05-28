@@ -56,7 +56,8 @@ WeaselDat::WeaselDat(Common::ReadStream *rs) {
 		else
 			entry._type = kUnknown;
 
-		_items.push_back(entry);
+		if (entry._shapeNo)
+			_items.push_back(entry);
 	}
 
 	const uint skip = (BLOCKS - numentries) * 16;
