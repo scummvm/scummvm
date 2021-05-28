@@ -287,8 +287,8 @@ public:
 
 	bool _flagScriptActive;
 	SScriptFrame _scriptFrame[MAXSCRIPTFRAME];
-	SScript _script[MAXSCRIPT];
-
+	uint16 _scriptFirstFrame[MAXSCRIPT];
+	
 	AnimManager *_animMgr;
 	GraphicsManager *_graphicsMgr;
 	DialogManager *_dialogMgr;

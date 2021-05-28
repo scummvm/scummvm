@@ -83,8 +83,8 @@ void TrecisionEngine::loadAll() {
 	}
 
 	for (int i = 0; i < MAXSCRIPT; ++i) {
-		_script[i]._firstFrame = dataNl.readUint16LE();
-		_script[i]._flag = dataNl.readByte();
+		_scriptFirstFrame[i] = dataNl.readUint16LE();
+		dataNl.readByte(); // unused field
 		dataNl.readByte(); // Padding
 	}
 
