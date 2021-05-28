@@ -55,8 +55,16 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 		if (version >= SAVE_VERSION_ORIGINAL_MIN && version <= SAVE_VERSION_ORIGINAL_MAX) {
 			// Original saved game, convert
 			Common::String saveName;
-			for (int j = 0; j < 40; j++)
-				saveName += saveFile->readByte();
+			int j = 0;
+			for (; j < 40; j++) {
+				byte c = saveFile->readByte();
+				if (c == 0) {
+					break;
+				} else {
+					saveName += c;
+				}
+			}
+			saveFile->skip(40 - j + 1);
 			saveNames.push_back(saveName);
 
 			_inventory.push_back(EMPTYSLOT + i + 1);
