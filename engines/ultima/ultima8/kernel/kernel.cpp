@@ -173,7 +173,7 @@ void Kernel::runProcesses() {
 			// we can work out what it is avoid the game totally hanging at this
 			// point.
 			//
-			if (num_run > 500) {
+			if (num_run > 1000 && !p->is_terminated()) {
 				warning("Seem to be stuck in process loop - killing current process");
 				p->fail();
 			}
