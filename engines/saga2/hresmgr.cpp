@@ -274,6 +274,25 @@ bool hResContext::get(hResID id, void *buffer, uint32 size) {
 	return result;
 }
 
+uint32 hResContext::getSize(hResID id) {
+	hResEntry *entry;
+	if ((entry = findEntry(id)) == nullptr)
+		return 0;
+
+	return entry->size;
+}
+
+byte *hResContext::loadResource(hResID id, const char desc[]) {
+	hResEntry *entry;
+	if ((entry = findEntry(id)) == nullptr)
+		return nullptr;
+
+	byte *res = (byte*)malloc(entry->size);
+	_file.seek(entry->offset, SEEK_SET);
+	_file.read(res, entry->size);
+
+	return res;
+}
 
 RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheable) {
 	hResEntry   *entry;
