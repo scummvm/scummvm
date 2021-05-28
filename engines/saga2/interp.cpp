@@ -214,7 +214,7 @@ uint8 *segmentAddress(uint16 segment, uint16 offset) {
 	segHandle = scriptRes->dataHandle(segment);
 	if (segHandle == NULL || *segHandle == NULL) {
 		segHandle = scriptRes->loadIndex(segment, "object segment");
-		RUnlockHandle(segHandle);
+		//RUnlockHandle(segHandle);
 	}
 	return ((uint8 *)(*segHandle) + offset);
 }
@@ -227,7 +227,7 @@ uint8 *segmentArrayAddress(uint16 segment, uint16 index) {
 	segHandle = scriptRes->dataHandle(segment);
 	if (segHandle == NULL || *segHandle == NULL) {
 		segHandle = scriptRes->loadIndex(segment, "object array segment");
-		RUnlockHandle(segHandle);
+		//RUnlockHandle(segHandle);
 	}
 
 	return (uint8 *)(*segHandle) + sizeof(uint16)
@@ -686,7 +686,7 @@ bool Thread::interpret(void) {
 				programCounter.segment = *stack++;
 				programCounter.offset = *stack++;
 
-				RUnlockHandle((RHANDLE)codeSeg);
+				//RUnlockHandle((RHANDLE)codeSeg);
 				codeSeg = scriptRes->loadIndexResource(programCounter.segment,
 						                               "saga code segment",
 													   scriptRes->_filename);
@@ -732,7 +732,7 @@ bool Thread::interpret(void) {
 
 			IMMED_WORD(w);               // pick up segment number
 			programCounter.segment = w;     // set current segment
-			RUnlockHandle((RHANDLE)codeSeg);
+			//RUnlockHandle((RHANDLE)codeSeg);
 			codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
 			IMMED_WORD(w);               // pick up segment offset
 			programCounter.offset = w;      // store into pc
@@ -818,7 +818,7 @@ bool Thread::interpret(void) {
 					//  into thread).
 					w = vtableEntry[ 0 ];
 					programCounter.segment = w;
-					RUnlockHandle((RHANDLE)codeSeg);
+					//RUnlockHandle((RHANDLE)codeSeg);
 					codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
 
 					// store pc-offset into pc
@@ -1204,7 +1204,7 @@ void *ThreadList::restore(void *buf) {
 		id = *((ThreadID *)buf);
 		buf = (ThreadID *)buf + 1;
 
-		new (id) Thread(&buf);
+		new Thread(&buf);
 	}
 
 	return buf;
@@ -1378,7 +1378,7 @@ static ThreadList &threadList = *((ThreadList *)threadListBuffer);
 
 void initSAGAThreads(void) {
 	//  Simply call the Thread List default constructor
-	new (&threadList) ThreadList;
+	new ThreadList;
 }
 
 //-------------------------------------------------------------------
@@ -1410,7 +1410,7 @@ void saveSAGAThreads(SaveFileConstructor &saveGame) {
 void loadSAGAThreads(SaveFileReader &saveGame) {
 	//  If there is no saved data, simply call the default constructor
 	if (saveGame.getChunkSize() == 0) {
-		new (&threadList) ThreadList;
+		new ThreadList;
 		return;
 	}
 
@@ -1427,7 +1427,7 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	bufferPtr = archiveBuffer;
 
 	//  Reconstruct stackList from archived data
-	new (&threadList) ThreadList;
+	new ThreadList;
 	bufferPtr = threadList.restore(bufferPtr);
 
 	assert((char *)bufferPtr == (char *)archiveBuffer
@@ -1552,7 +1552,7 @@ Thread::~Thread() {
 	clearExtended();
 
 	//  Free the thread's code segment
-	RUnlockHandle((RHANDLE)codeSeg);
+	//RUnlockHandle((RHANDLE)codeSeg);
 
 	//  Deallocate the thread stack
 	free(stackBase);
@@ -1811,7 +1811,7 @@ static bool lookupExport(
     uint16          &segNum,
     uint16          &segOff) {
 	uint32          segRef,
-	                *exportBase = (uint32 *)(*exportSegment - 2);
+	                *exportBase = (uint32 *)(exportSegment - 2);
 
 	assert(entry > 0);
 	assert(entry <= exportCount);

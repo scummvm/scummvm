@@ -55,6 +55,8 @@ void DList::addTail(DNode &d) {
 
 DNode *DList::remHead(void) {
 	DNode       *n = head;
+	if (n == nullptr)
+		return nullptr;
 
 	if (n->succ) {
 		head = n->succ;

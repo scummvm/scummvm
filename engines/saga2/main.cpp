@@ -754,8 +754,7 @@ void openImageTest() {
 
 void testScripts() {
 	scriptCallFrame scf;
-	Thread th(0,0,scf);
-	th.interpret();
+	runScript(1, scf);
 }
 
 //-----------------------------------------------------------------------
