@@ -45,7 +45,6 @@ MODULE_OBJS := \
 	main.o \
 	mainmap.o \
 	mapfeatr.o \
-	maprange.o \
 	messager.o \
 	metaengine.o \
 	mission.o \

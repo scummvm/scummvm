@@ -80,7 +80,7 @@ extern gPixelMap    tileDrawMap;
 extern Point16      fineScroll;             // current scroll pos
 
 //  Color map ranges
-extern uint8        ColorMapRanges[][8];
+extern uint8        *ColorMapRanges;
 
 extern gPort        backPort;
 
@@ -571,7 +571,8 @@ void buildColorTable(
 	dst = (uint32 *)(colorTable + sizeof fixedColors);
 
 	while (numOptions--) {
-		src = (uint32 *)ColorMapRanges[*colorOptions++];
+		src = (uint32 *)ColorMapRanges[*colorOptions * 8];
+		colorOptions++;
 		*dst++ = *src++;
 		*dst++ = *src++;
 	}
