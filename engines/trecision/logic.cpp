@@ -93,18 +93,18 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			// if we can go beyond
 			if (((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466)))
 				|| (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481))) {
-				_vm->_obj[od21TO23].setRoomOut(true);
-				_vm->_obj[od21TO23].setExamine(false);
+				_vm->_obj[od21TO23].setFlagRoomOut(true);
+				_vm->_obj[od21TO23].setFlagExamine(false);
 			} else {
-				_vm->_obj[od21TO23].setRoomOut(false);
-				_vm->_obj[od21TO23].setExamine(true);
+				_vm->_obj[od21TO23].setFlagRoomOut(false);
+				_vm->_obj[od21TO23].setFlagExamine(true);
 			}
 
 			_vm->setObjectAnim(od21TO23, 0);
 			_vm->setObjectVisible(oEXIT21, true);
 
-			_vm->_obj[od21TO22].setRoomOut(true);
-			_vm->_obj[od21TO22].setExamine(false);
+			_vm->_obj[od21TO22].setFlagRoomOut(true);
+			_vm->_obj[od21TO22].setFlagExamine(false);
 			_vm->setObjectAnim(od21TO22, aWALKOUT);
 			_vm->setObjectAnim(oDOORA21, a212);
 			_vm->setObjectAnim(oDOORC21, a219);
@@ -118,19 +118,19 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_obj[oCHAIN21]._position = 6;
 			_vm->_obj[oEXIT21]._position = 21;
 
-			_vm->_obj[od21TO23].setRoomOut(true);
-			_vm->_obj[od21TO23].setExamine(false);
+			_vm->_obj[od21TO23].setFlagRoomOut(true);
+			_vm->_obj[od21TO23].setFlagExamine(false);
 			_vm->setObjectAnim(od21TO23, aWALKOUT);
 			_vm->setObjectVisible(oEXIT21, true);
 
 			// If we can go beyond
 			if (((_vm->iconPos(kItemMagneticBar) != -1) && (_vm->_dialogMgr->isDialogFinished(436) || _vm->_dialogMgr->isDialogFinished(466)))
 				|| (_vm->_dialogMgr->isDialogFinished(451) || _vm->_dialogMgr->isDialogFinished(481))) {
-				_vm->_obj[od21TO22].setRoomOut(true);
-				_vm->_obj[od21TO22].setExamine(false);
+				_vm->_obj[od21TO22].setFlagRoomOut(true);
+				_vm->_obj[od21TO22].setFlagExamine(false);
 			} else {
-				_vm->_obj[od21TO22].setRoomOut(false);
-				_vm->_obj[od21TO22].setExamine(true);
+				_vm->_obj[od21TO22].setFlagRoomOut(false);
+				_vm->_obj[od21TO22].setFlagExamine(true);
 			}
 			_vm->setObjectAnim(od21TO22, 0);
 			_vm->_obj[od21TO22]._examine = 335;
@@ -195,7 +195,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->read3D("2E.3d");
 			_vm->_room[kRoom2E].setExtra(false);
 			_vm->setObjectVisible(oDUMMY2E, false);
-			_vm->_obj[oENTRANCE2E].setExamine(false);
+			_vm->_obj[oENTRANCE2E].setFlagExamine(false);
 			_vm->setObjectVisible(oCATWALKB2E, false);
 			_vm->setObjectVisible(oCRATER2E, false);
 			_vm->setObjectVisible(oSHRUBS2E, false);
@@ -207,7 +207,7 @@ void LogicManager::setupAltRoom(uint16 room, bool altRoomFl) {
 			_vm->_room[kRoom2E].setExtra(true);
 			_vm->setObjectVisible(oDUMMY2E, true);
 			_vm->setObjectVisible(oENTRANCE2E, true);
-			_vm->_obj[oENTRANCE2E].setExamine(true);
+			_vm->_obj[oENTRANCE2E].setFlagExamine(true);
 			_vm->setObjectVisible(oCATWALKB2E, true);
 			_vm->setObjectVisible(oCRATER2E, true);
 			_vm->setObjectVisible(oSHRUBS2E, true);
@@ -363,7 +363,7 @@ bool LogicManager::startPlayDialog() {
 	} else if (_vm->_curRoom == kRoom1A && (_vm->_oldRoom == kRoom18)) {
 		if (!_vm->_room[kRoom1A].isDone()) {
 			_vm->_dialogMgr->playDialog(dF1A1);
-			_vm->_obj[oTOPO1C].setTake(true);
+			_vm->_obj[oTOPO1C].setFlagTake(true);
 			_vm->setObjectAnim(oTOPO1C, a1C3RACCOGLIETOPO);
 		} else {
 			_vm->tendIn();
@@ -784,16 +784,16 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	switch (_vm->_useWith[USED]) {
 	case kItemBankNote:
-		if (_vm->_useWith[WITH] == oDISTRIBUTORE13 && !_vm->_obj[oDISTRIBUTORE13].isExtra()) {
+		if (_vm->_useWith[WITH] == oDISTRIBUTORE13 && !_vm->_obj[oDISTRIBUTORE13].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a131USABANCONOTA, 0, 0, _vm->_useWith[WITH]);
 			*printSentence = false;
-			_vm->_obj[oDISTRIBUTORE13].setExtra(true);
-		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isExtra() && _vm->isObjectVisible(oLATTINA13)) {
+			_vm->_obj[oDISTRIBUTORE13].setFlagExtra(true);
+		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isFlagExtra() && _vm->isObjectVisible(oLATTINA13)) {
 			_vm->_textMgr->characterSay(1410);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isExtra()) {
-			if (!_vm->_obj[oSCOMPARTO13].isExtra()) {
-				_vm->_obj[oSCOMPARTO13].setExtra(true);
+		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isFlagExtra()) {
+			if (!_vm->_obj[oSCOMPARTO13].isFlagExtra()) {
+				_vm->_obj[oSCOMPARTO13].setFlagExtra(true);
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1311DABOTTADISTRIBUTORE, 0, 0, _vm->_useWith[WITH]);
 			} else
 				_vm->_textMgr->characterSay(1411);
@@ -836,9 +836,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 	case kItemLetterboxKey:
 		if (_vm->_useWith[WITH] == oBOXES12) {
-			if (!_vm->_obj[oBOXES12].isExtra()) {
+			if (!_vm->_obj[oBOXES12].isFlagExtra()) {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim121TryOpenLetterboxes, 0, 0, _vm->_useWith[WITH]);
-				_vm->_obj[oBOXES12].setExtra(true);
+				_vm->_obj[oBOXES12].setFlagExtra(true);
 				*printSentence = false;
 			} else {
 				_vm->_textMgr->characterSay(1426);
@@ -860,8 +860,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oSLOT12 || _vm->_useWith[WITH] == oSLOT13 || _vm->_useWith[WITH] == oSLOT16) {
 			*printSentence = false;
 			_vm->_inventoryObj[kItemLiftCard]._flag |= kObjFlagExtra;
-			_vm->_obj[oSLOT12].setPerson(true);
-			_vm->_obj[oLIFTA12].setPerson(true);
+			_vm->_obj[oSLOT12].setFlagPerson(true);
+			_vm->_obj[oLIFTA12].setFlagPerson(true);
 			_vm->doMouseTalk(_vm->_useWith[WITH]);
 		} else if ((_vm->_useWith[WITH] == oTICKETOFFICE16) || (_vm->_useWith[WITH] == oSLOT23) || (_vm->_useWith[WITH] == oFRONTOFFICEA35) || (_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
 			*printSentence = false;
@@ -965,7 +965,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, _vm->_useWith[WITH]);
 			_vm->removeIcon(kItemBar);
 			*printSentence = false;
-		} else if (_vm->_obj[_vm->_useWith[WITH]].isPerson()) {
+		} else if (_vm->_obj[_vm->_useWith[WITH]].isFlagPerson()) {
 			_vm->_textMgr->characterSay(1436);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTAKE12) || (_vm->_useWith[WITH] == oSTRONGBOXC15) || (_vm->_useWith[WITH] == oDOOR18) || (_vm->_useWith[WITH] == oPADLOCK1B) || (_vm->_useWith[WITH] == oDOORC21) || (_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOOR2B)) {
@@ -975,7 +975,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemSubwayCard:
-		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && _vm->_obj[oMAPPA16].isExtra()) {
+		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && _vm->_obj[oMAPPA16].isFlagExtra()) {
 			if (_vm->_dialogMgr->isDialogFinished(49)) {
 				_vm->_textMgr->characterSay(1457);
 				*printSentence = false;
@@ -997,7 +997,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemFiveCreditCoin:
-		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && _vm->_obj[oMAPPA16].isExtra()) {
+		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && _vm->_obj[oMAPPA16].isFlagExtra()) {
 			_vm->_dialogMgr->toggleChoice(46, false);
 			_vm->_dialogMgr->toggleChoice(47, false);
 			_vm->_dialogMgr->toggleChoice(48, false);
@@ -1005,7 +1005,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->playScript(S16MONEY);
 			*printSentence = false;
 			_vm->removeIcon(kItemFiveCreditCoin);
-			_vm->_obj[oFINGERPADP16].setRoomOut(true);
+			_vm->_obj[oFINGERPADP16].setFlagRoomOut(true);
 		} else if (_vm->_useWith[WITH] == oTICKETOFFICE16) {
 			_vm->_textMgr->characterSay(146);
 			*printSentence = false;
@@ -1042,9 +1042,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			*updateInventory = false;
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
-			_vm->_obj[ocPOLIZIOTTO16].setExtra(true);
+			_vm->_obj[ocPOLIZIOTTO16].setFlagExtra(true);
 			_vm->_textMgr->characterSay(1461);
-			if (_vm->_dialogMgr->isDialogFinished(61) && _vm->_dialogMgr->isDialogFinished(62) && _vm->_obj[ocPOLIZIOTTO16].isExtra())
+			if (_vm->_dialogMgr->isDialogFinished(61) && _vm->_dialogMgr->isDialogFinished(62) && _vm->_obj[ocPOLIZIOTTO16].isFlagExtra())
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
@@ -1147,8 +1147,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_dialogMgr->toggleChoice(155, true);
 			_vm->_dialogMgr->playDialog(dGUARDIAN18);
 			*updateInventory = false;
-			_vm->_obj[ocGUARD18].setPerson(false);
-			_vm->_obj[oDOORC18].setRoomOut(true);
+			_vm->_obj[ocGUARD18].setFlagPerson(false);
+			_vm->_obj[oDOORC18].setFlagRoomOut(true);
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
 			_vm->_textMgr->characterSay(1494);
@@ -1196,7 +1196,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->setObjectAnim(oPANNELLOM31, 0);
 				_vm->_obj[oPANNELLOM31]._examine = 715;
 				_vm->_obj[oPANNELLOM31]._action = 716;
-				_vm->_obj[oPANNELLOM31].setRoomOut(false);
+				_vm->_obj[oPANNELLOM31].setFlagRoomOut(false);
 			}
 			_vm->_soundMgr->play(wCOVER31);
 			*printSentence = false;
@@ -1387,7 +1387,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemEmptyBeerCan:
-		if ((_vm->_useWith[WITH] == oBRACIERES28) && _vm->_obj[oBRACIERES28].isExtra()) {
+		if ((_vm->_useWith[WITH] == oBRACIERES28) && _vm->_obj[oBRACIERES28].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a286, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oBRACIERES28]._examine = 456;
 			*printSentence = false;
@@ -1503,11 +1503,11 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemSecurityCard:
-		if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && !_vm->_obj[oFRONTOFFICEA35].isExtra()) {
+		if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && !_vm->_obj[oFRONTOFFICEA35].isFlagExtra()) {
 			_vm->changeRoom(kRoom35P, 0, 10);
 			_vm->removeIcon(kItemSecurityCard);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && _vm->_obj[oFRONTOFFICEA35].isExtra()) {
+		} else if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && _vm->_obj[oFRONTOFFICEA35].isFlagExtra()) {
 			_vm->_textMgr->characterSay(1844);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
@@ -1536,8 +1536,8 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			*printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCAMPANA4U) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U3, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oCAMPANA4U].setExtra(true);
-			if (_vm->_obj[oCAMPANA4U].isExtra() && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra)) {
+			_vm->_obj[oCAMPANA4U].setFlagExtra(true);
+			if (_vm->_obj[oCAMPANA4U].isFlagExtra() && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra)) {
 				_vm->_obj[oCAMPANA4U]._examine = 1202;
 				_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
@@ -1547,9 +1547,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemHammer:
-		if ((_vm->_useWith[WITH] == oRAGNO41) && !_vm->_obj[oRAGNO41].isExtra()) {
+		if ((_vm->_useWith[WITH] == oRAGNO41) && !_vm->_obj[oRAGNO41].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a416, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oRAGNO41].setExtra(true);
+			_vm->_obj[oRAGNO41].setFlagExtra(true);
 			_vm->setObjectAnim(oRAGNO41, 0);
 			if (_vm->_obj[oSLOT41]._anim == a414)
 				_vm->setObjectAnim(oSLOT41, a417);
@@ -1581,9 +1581,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		break;
 
 	case kItemClub:
-		if ((_vm->_useWith[WITH] == oTAMBURO43) && !_vm->_obj[oTAMBURO43].isExtra()) {
+		if ((_vm->_useWith[WITH] == oTAMBURO43) && !_vm->_obj[oTAMBURO43].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a435, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oTAMBURO43].setExtra(true);
+			_vm->_obj[oTAMBURO43].setFlagExtra(true);
 			*printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOORC4B) || (_vm->_useWith[WITH] == oSERRATURA4B) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
 			*printSentence = false;
@@ -1603,7 +1603,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oMANOPOLAR45) {
 			_vm->changeRoom(kRoom45S, 0, 2);
 			*printSentence = false;
-		} else if ((_vm->_useWith[WITH] == oCAMPANA4U) && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra) && _vm->_obj[oCAMPANA4U].isExtra()) {
+		} else if ((_vm->_useWith[WITH] == oCAMPANA4U) && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra) && _vm->_obj[oCAMPANA4U].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U5, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oCAMPANA4U]._examine = 1204;
 			_vm->_obj[oCAMPANA4U]._action = 1205;
@@ -1694,7 +1694,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->removeIcon(_vm->_useWith[USED]);
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U4, 0, 0, _vm->_useWith[WITH]);
 			_vm->_inventoryObj[kItemIronBullet1]._flag |= kObjFlagExtra;
-			if (_vm->_obj[oCAMPANA4U].isExtra() && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra)) {
+			if (_vm->_obj[oCAMPANA4U].isFlagExtra() && (_vm->_inventoryObj[kItemIronBullet1]._flag & kObjFlagExtra)) {
 				_vm->_obj[oCAMPANA4U]._examine = 1202;
 				_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
@@ -1711,7 +1711,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		} else if (_vm->_useWith[WITH] == oCHOCOLATES4A) {
 			_vm->setObjectAnim(oPULSANTE4A, a4A3);
 			*printSentence = false;
-			_vm->_obj[oCHOCOLATES4A].setExtra(true);
+			_vm->_obj[oCHOCOLATES4A].setFlagExtra(true);
 		}
 		break;
 
@@ -1832,13 +1832,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemTester:
 		if ((_vm->_useWith[WITH] == oPANNELLOA) && _vm->_dialogMgr->isDialogFinished(856)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a569, 0, 0, _vm->_useWith[WITH]);
-			_vm->_obj[oPANNELLOA].setExtra(true);
+			_vm->_obj[oPANNELLOA].setFlagExtra(true);
 			*printSentence = false;
 		}
 		break;
 
 	case kItemParallelCutter:
-		if ((_vm->_useWith[WITH] == oPANNELLOA) && _vm->_obj[oPANNELLOA].isExtra()) {
+		if ((_vm->_useWith[WITH] == oPANNELLOA) && _vm->_obj[oPANNELLOA].isFlagExtra()) {
 			_vm->_dialogMgr->playDialog(dF562);
 			_vm->setObjectVisible(oPANNELLOA, false);
 			_vm->setObjectVisible(oCAVOTAGLIATO56, true);
@@ -1936,7 +1936,7 @@ bool LogicManager::useScreenWithScreen() {
 			_vm->setObjectAnim(oPANNELLOM31, a314APREPANNELLO);
 			_vm->_obj[oPANNELLOM31]._examine = 713;
 			_vm->_obj[oPANNELLOM31]._action = 714;
-			_vm->_obj[oPANNELLOM31].setRoomOut(true);
+			_vm->_obj[oPANNELLOM31].setFlagRoomOut(true);
 			_vm->setObjectVisible(oPANNELLON31, true);
 
 			_vm->setObjectVisible(oMANOMETROC34, true);
@@ -2075,7 +2075,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 
 	case oMAPPA16:
 		if (_vm->iconPos(kItemNoteRotmall17) != -1)
-			_vm->_obj[oMAPPA16].setExtra(true);
+			_vm->_obj[oMAPPA16].setFlagExtra(true);
 		retVal = true;
 		break;
 
@@ -2102,7 +2102,7 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 	case oTESSERA1A:
 		if ((_vm->_dialogMgr->isDialogFinished(151) || _vm->_dialogMgr->isDialogFinished(152)) && !_vm->_dialogMgr->isDialogFinished(183))
 			_vm->_dialogMgr->toggleChoice(183, true);
-		_vm->_obj[oTESSERA1A].setExtra(true);
+		_vm->_obj[oTESSERA1A].setFlagExtra(true);
 		retVal = true;
 		break;
 
@@ -2354,8 +2354,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case ocPOLIZIOTTO16:
 	case oSCALA16:
-		if (!_vm->_obj[oSCALA16].isExtra()) {
-			_vm->_obj[oSCALA16].setExtra(true);
+		if (!_vm->_obj[oSCALA16].isFlagExtra()) {
+			_vm->_obj[oSCALA16].setFlagExtra(true);
 			_vm->_dialogMgr->toggleChoice(61, true);
 			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
 			_vm->_obj[oSCALA16]._action = 166;
@@ -2365,13 +2365,13 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPANNELLOC12:
-		if (_vm->_obj[oPANNELLOC12].isExtra()) {
+		if (_vm->_obj[oPANNELLOC12].isFlagExtra()) {
 			if (_vm->isObjectVisible(oASCENSOREC12))
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a128RIUSABOTTONE, 0, 0, curObj);
 			else
 				_vm->_textMgr->characterSay(24);
 		} else {
-			_vm->_obj[oPANNELLOC12].setExtra(true);
+			_vm->_obj[oPANNELLOC12].setFlagExtra(true);
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		}
 		break;
@@ -2420,7 +2420,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->_textMgr->characterSay(_vm->_obj[oTASTOB15]._action);
 			retVal = false;
 		} else {
-			if (!_vm->_obj[oNASTRO15].isExtra())
+			if (!_vm->_obj[oNASTRO15].isFlagExtra())
 				_vm->setObjectVisible(oNASTRO15, true);
 			if (_vm->_obj[curObj]._anim)
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
@@ -2445,11 +2445,11 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oDOORC18:
-		if (_vm->_obj[ocGUARD18].isPerson()) {
+		if (_vm->_obj[ocGUARD18].isFlagPerson()) {
 			_vm->_dialogMgr->toggleChoice(151, false);
 			_vm->_dialogMgr->toggleChoice(152, true);
 			_vm->_dialogMgr->playDialog(dGUARDIAN18);
-			_vm->_obj[ocGUARD18].setPerson(false);
+			_vm->_obj[ocGUARD18].setFlagPerson(false);
 			_vm->_obj[ocGUARD18]._action = 227;
 			_vm->_obj[oDOORC18]._action = 220;
 		} else
@@ -2457,7 +2457,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oGRATA1C:
-		if (_vm->_obj[oFAX17].isExtra())
+		if (_vm->_obj[oFAX17].isFlagExtra())
 			_vm->changeRoom(kRoom21, 0, 10);
 		else
 			retVal = true;
@@ -2521,9 +2521,9 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		else if (_vm->isObjectVisible(oLAMPADINAS29)) {
 			_vm->changeRoom(kRoom29L);
 			retVal = false;
-		} else if (!_vm->_obj[_vm->_curObj].isExtra()) {
+		} else if (!_vm->_obj[_vm->_curObj].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a291USAINTERRUTTORELUCE, 0, 0, curObj);
-			_vm->_obj[_vm->_curObj].setExtra(true);
+			_vm->_obj[_vm->_curObj].setFlagExtra(true);
 			retVal = false;
 		} else
 			retVal = true;
@@ -2574,7 +2574,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		if (_vm->_obj[curObj]._anim) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 			_vm->_obj[oBRACIERES28]._examine = 455;
-			_vm->_obj[oBRACIERES28].setExtra(true);
+			_vm->_obj[oBRACIERES28].setFlagExtra(true);
 		} else
 			retVal = true;
 		break;
@@ -2598,7 +2598,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPANELM2G:
-		if (!_vm->_obj[oPANELM2G].isExtra()) {
+		if (!_vm->_obj[oPANELM2G].isFlagExtra()) {
 			_vm->_dialogMgr->playDialog(dF2G1);
 			_vm->setObjectVisible(oCOPERCHIO2G, false);
 			_vm->setObjectVisible(oSERBATOIOC2G, false);
@@ -2606,7 +2606,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->setObjectVisible(oRAGAZZOS2G, true);
 			_vm->setObjectVisible(oSERBATOIOA2G, true);
 			_vm->setObjectVisible(oPANNELLOE2G, true);
-			_vm->_obj[oPANELM2G].setExtra(true);
+			_vm->_obj[oPANELM2G].setFlagExtra(true);
 			_vm->_animMgr->_animTab[aBKG2G]._flag |= SMKANIM_OFF1;
 			retVal = false;
 		} else
@@ -2642,10 +2642,10 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oCATWALKA2E:
-		if (!_vm->_obj[oCATWALKA2E].isExtra()) {
+		if (!_vm->_obj[oCATWALKA2E].isFlagExtra()) {
 			_vm->_dialogMgr->playDialog(dF2E1);
 			_vm->setObjectVisible(oDINOSAURO2E, true);
-			_vm->_obj[oCATWALKA2E].setExtra(true);
+			_vm->_obj[oCATWALKA2E].setFlagExtra(true);
 			_vm->_animMgr->_animTab[aBKG2E]._flag &= ~SMKANIM_OFF2;
 			retVal = false;
 		} else if (_vm->_obj[curObj]._anim) {
@@ -2685,7 +2685,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->setObjectAnim(oPANNELLOM31, 0);
 			_vm->_obj[oPANNELLOM31]._examine = 715;
 			_vm->_obj[oPANNELLOM31]._action = 716;
-			_vm->_obj[oPANNELLOM31].setRoomOut(false);
+			_vm->_obj[oPANNELLOM31].setFlagRoomOut(false);
 			_vm->changeRoom(kRoom31, a3118CHIUDEPANNELLO, 3);
 		} else
 			retVal = true;
@@ -2716,7 +2716,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->setObjectVisible(omPIANO35, true);
 
 		_vm->setObjectAnim(oFRONTOFFICEC35, a356PROVASPORTELLO);
-		_vm->_obj[oASCENSORE35].setRoomOut(true);
+		_vm->_obj[oASCENSORE35].setFlagRoomOut(true);
 		_vm->setObjectAnim(oASCENSORE35, a3514ENTRAASCENSORE);
 
 		_vm->_animMgr->_animTab[aBKG35]._flag |= SMKANIM_OFF1;
@@ -2763,8 +2763,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 				_vm->setObjectAnim(oFRONTOFFICEA35, 0);
 				_vm->_obj[oFRONTOFFICEA35]._action = 1844;
-				_vm->_obj[oFRONTOFFICEA35].setExtra(true);
-				_vm->_obj[oDOORMC36].setRoomOut(true);
+				_vm->_obj[oFRONTOFFICEA35].setFlagExtra(true);
+				_vm->_obj[oDOORMC36].setFlagRoomOut(true);
 				_vm->setObjectAnim(oDOORMC36, a3610APREPORTA);
 				_vm->setObjectAnim(oSCAFFALE36, a3615APRENDESCAFFALE);
 
@@ -2989,7 +2989,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oLAVATRICEL54:
-		if (_vm->_obj[curObj]._anim && _vm->_obj[oSECCHIOS54].isExtra() && _vm->isObjectVisible(oGRATAC54) && !_vm->_dialogMgr->isDialogFinished(841))
+		if (_vm->_obj[curObj]._anim && _vm->_obj[oSECCHIOS54].isFlagExtra() && _vm->isObjectVisible(oGRATAC54) && !_vm->_dialogMgr->isDialogFinished(841))
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, _vm->_obj[curObj]._anim, 0, 0, curObj);
 		else
 			retVal = true;
@@ -3114,7 +3114,7 @@ bool LogicManager::mouseTake(uint16 curObj) {
 		retVal = false;
 		break;
 	case oNASTRO15:
-		_vm->_obj[oNASTRO15].setExtra(true);
+		_vm->_obj[oNASTRO15].setFlagExtra(true);
 		retVal = false;
 		break;
 	case oMONETA13:
@@ -3123,7 +3123,7 @@ bool LogicManager::mouseTake(uint16 curObj) {
 		retVal = true;
 		break;
 	case oFOGLIETTO14:
-		_vm->_obj[oFOGLIETTO14].setExtra(true);
+		_vm->_obj[oFOGLIETTO14].setFlagExtra(true);
 		_vm->_obj[oMAPPA16]._examine = 152;
 		retVal = false;
 		break;
@@ -3149,17 +3149,17 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 
 	switch (curObj) {
 	case oTICKETOFFICE16:
-		if (_vm->_obj[oFINGERPADP16].isRoomOut() && _vm->_dialogMgr->isDialogFinished(50)) {
+		if (_vm->_obj[oFINGERPADP16].isFlagRoomOut() && _vm->_dialogMgr->isDialogFinished(50)) {
 			_vm->_textMgr->characterSay(147);
 			retVal = false;
 			break;
 		}
 
 		if (!_vm->_dialogMgr->isChoiceVisible(49) && !_vm->_dialogMgr->isChoiceVisible(50)) {
-			if (_vm->_obj[oMAPPA16].isExtra()) {
+			if (_vm->_obj[oMAPPA16].isFlagExtra()) {
 				_vm->_dialogMgr->toggleChoice(46, true);
 				_vm->_dialogMgr->toggleChoice(48, true);
-				_vm->_obj[oTICKETOFFICE16].setExtra(true);
+				_vm->_obj[oTICKETOFFICE16].setFlagExtra(true);
 			} else {
 				if (_vm->_dialogMgr->isDialogFinished(46)) {
 					_vm->_textMgr->characterSay(_vm->_obj[oTICKETOFFICE16]._action);
@@ -3174,7 +3174,7 @@ bool LogicManager::mouseTalk(uint16 curObj) {
 		break;
 
 	case ocGUARD18:
-		_vm->_obj[ocGUARD18].setPerson(false);
+		_vm->_obj[ocGUARD18].setFlagPerson(false);
 		_vm->_obj[ocGUARD18]._action = 227;
 		_vm->_obj[oDOORC18]._action = 220;
 		break;
@@ -3696,7 +3696,7 @@ void LogicManager::doMouseLeftRight() {
 				// right combination
 				if ((_wheelPos[0] == 7) && (_wheelPos[1] == 5) && (_wheelPos[2] == 11)) {
 					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, _vm->_curObj);
-					_vm->_obj[oSFINGE2C].setPerson(false);
+					_vm->_obj[oSFINGE2C].setFlagPerson(false);
 				} else
 					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, _vm->_curObj);
 
@@ -3779,26 +3779,26 @@ void LogicManager::doMouseLeftRight() {
 				}
 				return;
 			} else if ((_vm->_curMessage->_event == ME_MLEFT) &&
-					   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !_vm->_obj[_vm->_curObj].isExamine()))) ||
-						(_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !_vm->_obj[_vm->_curObj].isExamine()) || (_vm->_curObj == od2GVTO26))))) {
+					   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !_vm->_obj[_vm->_curObj].isFlagExamine()))) ||
+						(_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !_vm->_obj[_vm->_curObj].isFlagExamine()) || (_vm->_curObj == od2GVTO26))))) {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 				return;
 			}
 
 			if (_vm->_curMessage->_event == ME_MRIGHT) {
-				if (!_vm->_obj[_vm->_curObj].isExamine() && (_vm->_curObj != 0)) {
+				if (!_vm->_obj[_vm->_curObj].isFlagExamine() && (_vm->_curObj != 0)) {
 					if (_vm->_flagUseWithStarted) {
 						_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 						return;
 					}
-					if (_vm->_obj[_vm->_curObj].isRoomIn())
+					if (_vm->_obj[_vm->_curObj].isFlagRoomIn())
 						_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, _vm->_obj[_vm->_curObj]._anim, _vm->_obj[_vm->_curObj]._ninv);
-					else if (_vm->_obj[_vm->_curObj].isRoomOut())
+					else if (_vm->_obj[_vm->_curObj].isFlagRoomOut())
 						_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv);
 					_vm->_actor->actorStop();
 					_vm->_pathFind->nextStep();
-					_vm->_obj[_vm->_curObj].setDone(true);
-				} else if (_vm->_obj[_vm->_curObj].isUseWith()) {
+					_vm->_obj[_vm->_curObj].setFlagDone(true);
+				} else if (_vm->_obj[_vm->_curObj].isFlagUseWith()) {
 					_vm->_pathFind->_characterGoToPosition = -1;
 					_vm->_actor->actorStop();
 					_vm->_pathFind->nextStep();

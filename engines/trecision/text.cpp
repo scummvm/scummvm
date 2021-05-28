@@ -269,21 +269,21 @@ void TextManager::showObjName(uint16 obj, bool show) {
 			return;
 		}
 
-		if ((_vm->_obj[_vm->_curObj].isRoomOut() || _vm->_obj[_vm->_curObj].isRoomIn()) && !_vm->_obj[_vm->_curObj].isExamine())
+		if ((_vm->_obj[_vm->_curObj].isFlagRoomOut() || _vm->_obj[_vm->_curObj].isFlagRoomIn()) && !_vm->_obj[_vm->_curObj].isFlagExamine())
 			return;
 
 		desc = _vm->_sysText[kMessageUse];
 	
 		if (_vm->_useWithInv[USED])
 			desc += _vm->_objName[_vm->_inventoryObj[_vm->_useWith[USED]]._name];
-		else if (_vm->_obj[_vm->_useWith[USED]]._mode & OBJMODE_HIDDEN)
+		else if (_vm->_obj[_vm->_useWith[USED]].isModeHidden())
 			desc += dunno;
 		else
 			desc += _vm->_objName[_vm->_obj[_vm->_useWith[USED]]._name];
 
 		desc += _vm->_sysText[kMessageWith];
 		if (obj && (_vm->_useWithInv[USED] || (obj != _vm->_useWith[USED]))) {
-			if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+			if (_vm->_obj[obj].isModeHidden())
 				desc += dunno;
 			else
 				desc += _vm->_objName[_vm->_obj[obj]._name];
@@ -306,16 +306,16 @@ void TextManager::showObjName(uint16 obj, bool show) {
 
 		if (obj == _vm->_lastObj)
 			return;
-		if (!_vm->_obj[obj].isExamine()) {
-			if (_vm->_obj[obj].isDone() || _vm->_room[_vm->_obj[obj]._goRoom].isDone()) {
+		if (!_vm->_obj[obj].isFlagExamine()) {
+			if (_vm->_obj[obj].isFlagDone() || _vm->_room[_vm->_obj[obj]._goRoom].isDone()) {
 				desc = _vm->_sysText[kMessageGoto];
-				if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+				if (_vm->_obj[obj].isModeHidden())
 					desc += dunno;
 				else
 					desc += _vm->_objName[_vm->_obj[obj]._name];
 			} else
 				desc = _vm->_sysText[kMessageGoto2];
-		} else if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
+		} else if (_vm->_obj[obj].isModeHidden())
 			desc = dunno;
 		else
 			desc = _vm->_objName[_vm->_obj[obj]._name];

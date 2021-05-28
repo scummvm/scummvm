@@ -212,7 +212,7 @@ public:
 	// Objects
 	void setObjectVisible(uint16 objectId, bool visible);
 	void refreshObject(uint16 objectId);
-	bool isObjectVisible(uint16 objectId) const;
+	bool isObjectVisible(uint16 objectId);
 	void setObjectAnim(uint16 objectId, uint16 animId);
 	void redrawRoom();
 	void readLoc();

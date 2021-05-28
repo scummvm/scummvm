@@ -213,7 +213,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			if (obj && (_inventoryObj[_useWith[USED]]._name != _inventoryObj[obj]._name))
 				desc += _objName[_inventoryObj[obj]._name];
 		} else {
-			if (_obj[_useWith[USED]]._mode & OBJMODE_HIDDEN)
+			if (_obj[_useWith[USED]].isModeHidden())
 				desc += "?";	// dunno
 			else
 				desc += _objName[_obj[_useWith[USED]]._name];
