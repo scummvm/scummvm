@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-27 19:31+0000\n"
+"POT-Creation-Date: 2021-05-28 18:07+0000\n"
 "PO-Revision-Date: 2021-05-18 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -1977,7 +1977,7 @@ msgstr "ゲームを実行のエラー："
 msgid "Could not find any engine capable of running the selected game"
 msgstr "選択されたゲームに対応するエンジンが見つかりません"
 
-#: common/achievements.cpp:93
+#: common/achievements.cpp:110
 msgid "Achievement unlocked!"
 msgstr "実績がアンロックされました!"
 
