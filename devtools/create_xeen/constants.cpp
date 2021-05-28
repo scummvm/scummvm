@@ -493,12 +493,14 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_ITEM());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_QUICK());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CHAR_INFO()->KEY_EXCHANGE());
+
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_FXON());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_MUSICON());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_LOAD());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_SAVE());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_QUIT());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CONTROL_PANEL()->KEY_MRWIZARD());
+
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_ROLL());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_CREATE());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_MGT());
@@ -508,8 +510,26 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_SPD());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_ACY());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_CREATE_CHAR()->KEY_LCK());
+
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_DIFFICULTY()->KEY_ADVENTURER());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_DIFFICULTY()->KEY_WARRIOR());
+
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_WEAPONS());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_ARMOR());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_ACCESSORY());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_MISC());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_ENCHANT());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_USE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_BUY());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_SELL());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_IDENTIFY());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_FIX());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_EQUIP());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_REM());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_DISC());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_QUEST());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_RECHRG());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_GOLD());
 
 	cc.add("CONSTKEYS" + num, keys);
 }

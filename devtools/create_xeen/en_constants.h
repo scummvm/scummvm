@@ -2039,9 +2039,32 @@ public:
 			const int KEY_WARRIOR()    { return Common::KEYCODE_w; }
 		};
 		EN_DialogsDifficulty *DIALOGS_DIFFICULTY() {
-			if (!_dd)
-				_dd = new EN_DialogsDifficulty();
+			if (!_dd) _dd = new EN_DialogsDifficulty();
 			return _dd;
+		}
+
+		class EN_DialogsItems : public DialogsItems {
+		public:
+			const int KEY_WEAPONS()   { return Common::KEYCODE_w; }
+			const int KEY_ARMOR()     { return Common::KEYCODE_a; }
+			const int KEY_ACCESSORY() { return Common::KEYCODE_c; }
+			const int KEY_MISC()      { return Common::KEYCODE_m; }
+			const int KEY_ENCHANT()   { return Common::KEYCODE_e; }
+			const int KEY_USE()       { return Common::KEYCODE_u; }
+			const int KEY_BUY()       { return Common::KEYCODE_b; }
+			const int KEY_SELL()      { return Common::KEYCODE_s; }
+			const int KEY_IDENTIFY()  { return Common::KEYCODE_i; }
+			const int KEY_FIX()       { return Common::KEYCODE_f; }
+			const int KEY_EQUIP()     { return Common::KEYCODE_e; }
+			const int KEY_REM()       { return Common::KEYCODE_r; }
+			const int KEY_DISC()      { return Common::KEYCODE_d; }
+			const int KEY_QUEST()     { return Common::KEYCODE_q; }
+			const int KEY_RECHRG()    { return Common::KEYCODE_r; }
+			const int KEY_GOLD()      { return Common::KEYCODE_g; }
+		};
+		EN_DialogsItems *DIALOGS_ITEMS() {
+			if (!_di) _di = new EN_DialogsItems();
+			return _di;
 		}
 
 	private:
@@ -2049,6 +2072,7 @@ public:
 		EN_DialogsControlPanel *_dcp = NULL;
 		EN_DialogsCreateChar   *_dcc = NULL;
 		EN_DialogsDifficulty   *_dd = NULL;
+		EN_DialogsItems        *_di = NULL;
 	};
 
 	EN_KeyConstants *KEY_CONSTANTS() {

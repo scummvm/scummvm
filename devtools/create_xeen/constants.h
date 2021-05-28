@@ -1287,6 +1287,27 @@ public:
 			virtual const int KEY_WARRIOR() = 0;
 		};
 		virtual DialogsDifficulty *DIALOGS_DIFFICULTY() = 0;
+
+		class DialogsItems {
+		public:
+			virtual const int KEY_WEAPONS() = 0;
+			virtual const int KEY_ARMOR() = 0;
+			virtual const int KEY_ACCESSORY() = 0;
+			virtual const int KEY_MISC() = 0;
+			virtual const int KEY_ENCHANT() = 0;
+			virtual const int KEY_USE() = 0;
+			virtual const int KEY_BUY() = 0;
+			virtual const int KEY_SELL() = 0;
+			virtual const int KEY_IDENTIFY() = 0;
+			virtual const int KEY_FIX() = 0;
+			virtual const int KEY_EQUIP() = 0;
+			virtual const int KEY_REM() = 0;
+			virtual const int KEY_DISC() = 0;
+			virtual const int KEY_QUEST() = 0;
+			virtual const int KEY_RECHRG() = 0;
+			virtual const int KEY_GOLD() = 0;
+		};
+		virtual DialogsItems *DIALOGS_ITEMS() = 0;
 	};
 	virtual KeyConstants *KEY_CONSTANTS() = 0;
 };
