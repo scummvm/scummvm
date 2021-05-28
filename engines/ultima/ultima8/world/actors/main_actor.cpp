@@ -233,14 +233,14 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 					plusenergy = 0x9c4;
 				}
 			} else if (shapeno == 0x3a4) {
-				if (oldbattery < FusionBattery) {
-					setBatteryType(FusionBattery);
+				if (oldbattery < FissionBattery) {
+					setBatteryType(FissionBattery);
 				} else {
 					plusenergy = 5000;
 				}
 			} else if (shapeno == 0x3a3) {
-				if (oldbattery < FissionBattery) {
-					setBatteryType(FissionBattery);
+				if (oldbattery < FusionBattery) {
+					setBatteryType(FusionBattery);
 				} else {
 					plusenergy = 10000;
 				}
