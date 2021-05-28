@@ -147,7 +147,7 @@ void TrecisionEngine::read3D(const Common::String &filename) {
 void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
 	SObject *obj = &_obj[objectId];
 
-	if (obj->_mode & OBJMODE_FULL) {
+	if (obj->isModeFull()) {
 		obj->readRect(stream);
 
 		uint32 size = obj->_rect.width() * obj->_rect.height();
@@ -159,7 +159,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
 	}
 
-	if (obj->_mode & OBJMODE_MASK) {
+	if (obj->isModeMask()) {
 		obj->readRect(stream);
 
 		uint32 size = stream->readUint32LE();

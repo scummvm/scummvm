@@ -127,12 +127,12 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 		if (checkedObj && isObjectVisible(checkedObj)) {
 			if (lim.contains(pos)) {
 
-				if ((_obj[checkedObj]._mode & OBJMODE_FULL) || (_obj[checkedObj]._mode & OBJMODE_LIM)) {
+				if (_obj[checkedObj].isModeFull() || _obj[checkedObj].isModeLim()) {
 					_curObj = checkedObj;
 					return true;
 				}
 
-				if (_obj[checkedObj]._mode & OBJMODE_MASK) {
+				if (_obj[checkedObj].isModeMask()) {
 					uint8 *mask = _maskPointers[a];
 					int16 d = _obj[checkedObj]._rect.left;
 					uint16 max = _obj[checkedObj]._rect.bottom;

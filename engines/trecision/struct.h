@@ -62,46 +62,44 @@ struct SObject {
 	uint8 _goRoom;                          // If direction room num - if person num dialog
 	uint8 _nbox;                            // Which 3d box the object is associated with
 	uint8 _ninv;                            // ptr inventory
-	uint8 _mode;                              /* 0- full
-												1- mask
-												2- limits
-												3- objStatus
-												6- center when click !
-												7- inventory referenceable */
 	uint16 _anim;
 	
 	void readRect(Common::SeekableReadStream *stream);
-	void setDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
-	void setExamine(bool on) { if (on) _flag |= kObjFlagExamine; else _flag &= ~kObjFlagExamine; }
-	void setExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
-	void setPerson(bool on) { if (on) _flag |= kObjFlagPerson; else _flag &= ~kObjFlagPerson; }
-	void setRoomOut(bool on) { if (on) _flag |= kObjFlagRoomOut; else _flag &= ~kObjFlagRoomOut; }
-	void setRoomIn(bool on) { if (on) _flag |= kObjFlagRoomIn; else _flag &= ~kObjFlagRoomIn; }
-	void setTake(bool on) { if (on) _flag |= kObjFlagTake; else _flag &= ~kObjFlagTake; }
+	void setFlagDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
+	void setFlagExamine(bool on) { if (on) _flag |= kObjFlagExamine; else _flag &= ~kObjFlagExamine; }
+	void setFlagExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
+	void setFlagPerson(bool on) { if (on) _flag |= kObjFlagPerson; else _flag &= ~kObjFlagPerson; }
+	void setFlagRoomOut(bool on) { if (on) _flag |= kObjFlagRoomOut; else _flag &= ~kObjFlagRoomOut; }
+	void setFlagRoomIn(bool on) { if (on) _flag |= kObjFlagRoomIn; else _flag &= ~kObjFlagRoomIn; }
+	void setFlagTake(bool on) { if (on) _flag |= kObjFlagTake; else _flag &= ~kObjFlagTake; }
 
-	bool isDone() { return _flag & kObjFlagDone; }
-	bool isExamine() { return _flag & kObjFlagExamine; }
-	bool isExtra() { return _flag & kObjFlagExtra; }
-	bool isPerson() { return _flag & kObjFlagPerson; }
-	bool isRoomIn() { return _flag & kObjFlagRoomIn; }
-	bool isRoomOut() { return _flag & kObjFlagRoomOut; }
-	bool isTake() { return _flag & kObjFlagTake; }
-	bool isUseWith() { return _flag & kObjFlagUseWith; }
+	bool isFlagDone() { return _flag & kObjFlagDone; }
+	bool isFlagExamine() { return _flag & kObjFlagExamine; }
+	bool isFlagExtra() { return _flag & kObjFlagExtra; }
+	bool isFlagPerson() { return _flag & kObjFlagPerson; }
+	bool isFlagRoomIn() { return _flag & kObjFlagRoomIn; }
+	bool isFlagRoomOut() { return _flag & kObjFlagRoomOut; }
+	bool isFlagTake() { return _flag & kObjFlagTake; }
+	bool isFlagUseWith() { return _flag & kObjFlagUseWith; }
 
+	bool isModeHidden() { return _mode & OBJMODE_HIDDEN; }
+	bool isModeFull() { return _mode & OBJMODE_FULL; }
+	bool isModeMask() { return _mode & OBJMODE_MASK; }
+	bool isModeLim() { return _mode & OBJMODE_LIM; }
+	bool isModeStatus() { return _mode & OBJMODE_OBJSTATUS; }
+
+	void setModeHidden(bool on) { if (on) _flag |= OBJMODE_HIDDEN; else _flag &= ~OBJMODE_HIDDEN; }
+	void setModeFull(bool on) { if (on) _flag |= OBJMODE_FULL; else _flag &= ~OBJMODE_FULL; }
+	void setModeMask(bool on) { if (on) _flag |= OBJMODE_MASK; else _flag &= ~OBJMODE_MASK; }
+	void setModeLim(bool on) { if (on) _flag |= OBJMODE_LIM; else _flag &= ~OBJMODE_LIM; }
+	void setModeStatus(bool on) { if (on) _flag |= OBJMODE_OBJSTATUS; else _flag &= ~OBJMODE_OBJSTATUS; }
+	
 	void syncGameStream(Common::Serializer &ser);
 	void loadObj(Common::File *file);
 
 private:
-	uint8 _flag = 0; /*  Examine = 0
-					     Direction = 1
-						 Person = 2
-						 Carried = 3
-						 2- Take
-						 3- Open
-						 4- Close
-						 5- Use
-						 6- Extra
-						 7- Operated     */
+	uint8 _flag = 0;
+	uint8 _mode = 0;
 };
 
 struct SInvObject {

@@ -544,10 +544,10 @@ void GraphicsManager::paintScreen(bool flag) {
 	_vm->_flagWaitRegen = false;
 
 	// Handle papaverine delayed action
-	if (_vm->_curRoom == kRoom4A && _vm->_obj[oCHOCOLATES4A].isExtra()) {
+	if (_vm->_curRoom == kRoom4A && _vm->_obj[oCHOCOLATES4A].isFlagExtra()) {
 		if (_vm->_animMgr->smkCurFrame(kSmackerBackground) > 480) {
 			_vm->playScript(s4AHELLEN);
-			_vm->_obj[oCHOCOLATES4A].setExtra(false);
+			_vm->_obj[oCHOCOLATES4A].setFlagExtra(false);
 		}
 	}
 	//
@@ -569,7 +569,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 			_drawRect.translate(0, TOP);
 			_drawObjRect = Common::Rect(_drawRect.width(), _drawRect.height());
 			_drawObjIndex = _vm->getRoomObjectIndex(i->_objectId);
-			_drawMask = obj._mode & OBJMODE_MASK;
+			_drawMask = obj.isModeMask();
 			drawObj();
 			_dirtyRects.push_back(_drawRect);
 		}
@@ -583,7 +583,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 
 			SObject obj = _vm->_obj[curObject];
 
-			if ((obj._mode & (OBJMODE_FULL | OBJMODE_MASK)) && _vm->isObjectVisible(curObject) && (obj._nbox == curBox)) {
+			if ((obj.isModeFull() || obj.isModeMask()) && _vm->isObjectVisible(curObject) && (obj._nbox == curBox)) {
 				Common::Rect r = *d;
 				Common::Rect r2 = obj._rect;
 
@@ -608,7 +608,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
 					_drawObjRect = Common::Rect(xr1, yr1, xr2, yr2);
 					_drawObjIndex = b;
-					_drawMask = obj._mode & OBJMODE_MASK;
+					_drawMask = obj.isModeMask();
 					drawObj();
 				}
 			}

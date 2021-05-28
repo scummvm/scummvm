@@ -347,16 +347,12 @@ bool TrecisionEngine::canPlayerInteract() {
 }
 
 void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
-	if (visible)
-		_obj[objectId]._mode |= OBJMODE_OBJSTATUS;
-	else
-		_obj[objectId]._mode &= ~OBJMODE_OBJSTATUS;
-
+	_obj[objectId].setModeStatus(visible);
 	refreshObject(objectId);
 }
 
 void TrecisionEngine::refreshObject(uint16 objectId) {
-	if (_obj[objectId]._mode & (OBJMODE_MASK | OBJMODE_FULL)) {
+	if (_obj[objectId].isModeMask() || _obj[objectId].isModeFull()) {
 		SSortTable entry;
 		entry._objectId = objectId;
 		entry._remove = !isObjectVisible(objectId);
@@ -374,8 +370,8 @@ void TrecisionEngine::refreshObject(uint16 objectId) {
 	}
 }
 
-bool TrecisionEngine::isObjectVisible(uint16 objectId) const {
-	return _obj[objectId]._mode & OBJMODE_OBJSTATUS;
+bool TrecisionEngine::isObjectVisible(uint16 objectId) {
+	return _obj[objectId].isModeStatus();
 }
 
 void TrecisionEngine::setObjectAnim(uint16 objectId, uint16 animId) {
