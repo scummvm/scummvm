@@ -231,13 +231,7 @@ MAIN_RETURN_TYPE main_saga2() {
 	cleanExit = gameInitialized;
 
 	if (gameInitialized) {
-		OSExceptBlk {
-			mainLoop(cleanExit, 0, NULL);
-		}
-		OSExcepTrap {
-			cleanExit = false;
-			OSExceptHnd;
-		}
+		mainLoop(cleanExit, 0, NULL);
 	}
 
 	shutdownGame();
