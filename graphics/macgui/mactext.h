@@ -191,6 +191,7 @@ public:
 private:
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
 	void deletePreviousCharInternal(int *row, int *col);
+	void insertTextFromClipboard();
 
 public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
