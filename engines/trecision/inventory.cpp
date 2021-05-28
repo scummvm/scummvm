@@ -45,7 +45,7 @@ void TrecisionEngine::refreshInventory(uint8 startIcon, uint8 startLine) {
 		if (iconIndex == _lightIcon)
 			continue;
 
-		if (iconIndex < EMPTYSLOT)
+		if (iconIndex <= EMPTYSLOT)
 			_graphicsMgr->drawInventoryIcon(iconIndex - 1, iconSlot, startLine);
 		else
 			_graphicsMgr->drawSaveSlotThumbnail(iconIndex - EMPTYSLOT - 1, iconSlot, startLine);
