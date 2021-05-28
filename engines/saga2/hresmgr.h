@@ -122,18 +122,17 @@ public:
 class hResContext {
 
 protected:
-	uint16      _numEntries;
-	hResource   *_res;
-	hResContext *_parent;
-	hResEntry   *_base;
-	RHANDLE     *_data; // allocated array of handles
-	Common::File _file;
-	Common::File     *_handle;
-	uint32      _bytecount;
-	uint32      _bytepos;
+	uint16        _numEntries;
+	hResource     *_res;
+	hResContext   *_parent;
+	hResEntry     *_base;
+	RHANDLE       *_data; // allocated array of handles
+	Common::File   _file;
+	Common::File  *_handle;
+	uint32         _bytecount;
+	uint32         _bytepos;
 
 	hResEntry   *findEntry(hResID id, RHANDLE **capture = NULL);
-	hResEntry   *findResEntry(hResID id);
 	Common::File     *openExternal(Common::File *fh);
 
 public:
@@ -160,7 +159,7 @@ public:
 	bool        read(void *buffer, uint32 size);
 	bool        skip(uint32 amount);
 	bool        get(hResID id, void *buffer, uint32 size);
-	uint32       getSize(hResID id);
+	uint32       getSize(hResID id, const char desc[]);
 	RHANDLE     load(hResID id, const char [], bool async = false, bool cacheable = true);
 	byte        *loadResource(hResID id, const char desc[]);
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
