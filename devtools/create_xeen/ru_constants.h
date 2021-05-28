@@ -2049,12 +2049,36 @@ public:
 			return _dd;
 		}
 
+		class RU_DialogsItems : public DialogsItems {
+		public:
+			const int KEY_WEAPONS()   { return Common::KEYCODE_SEMICOLON; }
+			const int KEY_ARMOR()     { return Common::KEYCODE_COMMA; }
+			const int KEY_ACCESSORY() { return Common::KEYCODE_e; }
+			const int KEY_MISC()      { return Common::KEYCODE_h; }
+			const int KEY_ENCHANT()   { return Common::KEYCODE_p; }
+			const int KEY_USE()       { return Common::KEYCODE_b; }
+			const int KEY_BUY()       { return Common::KEYCODE_r; }
+			const int KEY_SELL()      { return Common::KEYCODE_g; }
+			const int KEY_IDENTIFY()  { return Common::KEYCODE_j; }
+			const int KEY_FIX()       { return Common::KEYCODE_x; }
+			const int KEY_EQUIP()     { return Common::KEYCODE_y; }
+			const int KEY_REM()       { return Common::KEYCODE_c; }
+			const int KEY_DISC()      { return Common::KEYCODE_d; }
+			const int KEY_QUEST()     { return Common::KEYCODE_p; }
+			const int KEY_RECHRG()    { return Common::KEYCODE_g; }
+			const int KEY_GOLD()      { return Common::KEYCODE_p; }
+		};
+		RU_DialogsItems *DIALOGS_ITEMS() {
+			if (!_di) _di = new RU_DialogsItems();
+			return _di;
+		}
+
 	private:
 		RU_DialogsCharInfo     *_dci = NULL;
 		RU_DialogsControlPanel *_dcp = NULL;
 		RU_DialogsCreateChar   *_dcc = NULL;
-		RU_DialogsDifficulty *_dd = NULL;
-
+		RU_DialogsDifficulty   *_dd = NULL;
+		RU_DialogsItems        *_di = NULL;
 	};
 
 	RU_KeyConstants *KEY_CONSTANTS() {
