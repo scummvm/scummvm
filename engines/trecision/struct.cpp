@@ -45,4 +45,57 @@ void SRoom::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsUint16LE(_bkgAnim);
 }
 
+/********************************************************************/
+
+void SObject::readRect(Common::SeekableReadStream *stream) {
+	_rect.left = stream->readUint16LE();
+	_rect.top = stream->readUint16LE();
+	_rect.setWidth(stream->readUint16LE());
+	_rect.setHeight(stream->readUint16LE());
+}
+
+void SObject::syncGameStream(Common::Serializer &ser) {
+	ser.syncAsUint16LE(_lim.left);
+	ser.syncAsUint16LE(_lim.top);
+	ser.syncAsUint16LE(_lim.right);
+	ser.syncAsUint16LE(_lim.bottom);
+	ser.syncAsUint16LE(_name);
+	ser.syncAsUint16LE(_examine);
+	ser.syncAsUint16LE(_action);
+	ser.syncAsUint16LE(_anim);
+	ser.syncAsByte(_mode);
+	ser.syncAsByte(_flag);
+	ser.syncAsByte(_goRoom);
+	ser.syncAsByte(_nbox);
+	ser.syncAsByte(_ninv);
+	ser.syncAsSByte(_position);
+}
+
+void SObject::loadObj(Common::File *file) {
+	uint16 w = file->readUint16LE();
+	uint16 h = file->readUint16LE();
+	_rect.left = file->readUint16LE();
+	_rect.top = file->readUint16LE();
+	_rect.setWidth(w);
+	_rect.setHeight(h);
+
+	_lim.left = file->readUint16LE();
+	_lim.top = file->readUint16LE();
+	_lim.right = file->readUint16LE();
+	_lim.bottom = file->readUint16LE();
+
+	_position = file->readSByte();
+	file->readByte(); // Padding
+	_name = file->readUint16LE();
+	_examine = file->readUint16LE();
+	_action = file->readUint16LE();
+	_goRoom = file->readByte();
+	_nbox = file->readByte();
+	_ninv = file->readByte();
+	_mode = file->readByte();
+	_flag = file->readByte();
+	file->readByte(); // Padding
+	_anim = file->readUint16LE();
+}
+
 } // namespace Trecision

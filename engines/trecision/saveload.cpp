@@ -464,22 +464,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	for (int a = 0; a < MAXROOMS; a++)
 		_room[a].syncGameStream(ser);
 
-	for (int a = 0; a < MAXOBJ; a++) {
-		ser.syncAsUint16LE(_obj[a]._lim.left);
-		ser.syncAsUint16LE(_obj[a]._lim.top);
-		ser.syncAsUint16LE(_obj[a]._lim.right);
-		ser.syncAsUint16LE(_obj[a]._lim.bottom);
-		ser.syncAsUint16LE(_obj[a]._name);
-		ser.syncAsUint16LE(_obj[a]._examine);
-		ser.syncAsUint16LE(_obj[a]._action);
-		ser.syncAsUint16LE(_obj[a]._anim);
-		ser.syncAsByte(_obj[a]._mode);
-		ser.syncAsByte(_obj[a]._flag);
-		ser.syncAsByte(_obj[a]._goRoom);
-		ser.syncAsByte(_obj[a]._nbox);
-		ser.syncAsByte(_obj[a]._ninv);
-		ser.syncAsSByte(_obj[a]._position);
-	}
+	for (int a = 0; a < MAXOBJ; a++)
+		_obj[a].syncGameStream(ser);
 
 	for (int a = 0; a < MAXINVENTORY; a++) {
 		ser.syncAsUint16LE(_inventoryObj[a]._name);

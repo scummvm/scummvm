@@ -116,10 +116,10 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->_forcedActorPos = BOX_NORMAL;
 		break;
 	case fSETEXTRA:
-		_vm->_obj[obj]._flag |= kObjFlagExtra;
+		_vm->_obj[obj].setExtra(true);
 		break;
 	case fCLREXTRA:
-		_vm->_obj[obj]._flag &= ~kObjFlagExtra;
+		_vm->_obj[obj].setExtra(false);
 		break;
 
 	case fANIMOFF1:

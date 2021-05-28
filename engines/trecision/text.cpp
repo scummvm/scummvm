@@ -269,7 +269,7 @@ void TextManager::showObjName(uint16 obj, bool show) {
 			return;
 		}
 
-		if ((_vm->_obj[_vm->_curObj]._flag & (kObjFlagRoomOut | kObjFlagRoomIn)) && !(_vm->_obj[_vm->_curObj]._flag & kObjFlagExamine))
+		if ((_vm->_obj[_vm->_curObj].isRoomOut() || _vm->_obj[_vm->_curObj].isRoomIn()) && !_vm->_obj[_vm->_curObj].isExamine())
 			return;
 
 		desc = _vm->_sysText[kMessageUse];
@@ -306,8 +306,8 @@ void TextManager::showObjName(uint16 obj, bool show) {
 
 		if (obj == _vm->_lastObj)
 			return;
-		if (!(_vm->_obj[obj]._flag & kObjFlagExamine)) {
-			if ((_vm->_obj[obj]._flag & kObjFlagDone) || _vm->_room[_vm->_obj[obj]._goRoom].isDone()) {
+		if (!_vm->_obj[obj].isExamine()) {
+			if (_vm->_obj[obj].isDone() || _vm->_room[_vm->_obj[obj]._goRoom].isDone()) {
 				desc = _vm->_sysText[kMessageGoto];
 				if (_vm->_obj[obj]._mode & OBJMODE_HIDDEN)
 					desc += dunno;
