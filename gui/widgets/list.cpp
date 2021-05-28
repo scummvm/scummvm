@@ -633,7 +633,7 @@ void ListWidget::checkBounds() {
 
 void ListWidget::scrollToCurrent() {
 	// Only do something if the current item is not in our view port
-	if (_selectedItem < _currentPos) {
+	if (_selectedItem != -1 && _selectedItem < _currentPos) {
 		// it's above our view
 		_currentPos = _selectedItem;
 	} else if (_selectedItem >= _currentPos + _entriesPerPage ) {
