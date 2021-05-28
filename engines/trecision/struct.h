@@ -88,11 +88,11 @@ struct SObject {
 	bool isModeLim() { return _mode & OBJMODE_LIM; }
 	bool isModeStatus() { return _mode & OBJMODE_OBJSTATUS; }
 
-	void setModeHidden(bool on) { if (on) _flag |= OBJMODE_HIDDEN; else _flag &= ~OBJMODE_HIDDEN; }
-	void setModeFull(bool on) { if (on) _flag |= OBJMODE_FULL; else _flag &= ~OBJMODE_FULL; }
-	void setModeMask(bool on) { if (on) _flag |= OBJMODE_MASK; else _flag &= ~OBJMODE_MASK; }
-	void setModeLim(bool on) { if (on) _flag |= OBJMODE_LIM; else _flag &= ~OBJMODE_LIM; }
-	void setModeStatus(bool on) { if (on) _flag |= OBJMODE_OBJSTATUS; else _flag &= ~OBJMODE_OBJSTATUS; }
+	void setModeHidden(bool on) { if (on) _mode |= OBJMODE_HIDDEN; else _mode &= ~OBJMODE_HIDDEN; }
+	void setModeFull(bool on) { if (on) _mode |= OBJMODE_FULL; else _mode &= ~OBJMODE_FULL; }
+	void setModeMask(bool on) { if (on) _mode |= OBJMODE_MASK; else _mode &= ~OBJMODE_MASK; }
+	void setModeLim(bool on) { if (on) _mode |= OBJMODE_LIM; else _mode &= ~OBJMODE_LIM; }
+	void setModeStatus(bool on) { if (on) _mode |= OBJMODE_OBJSTATUS; else _mode &= ~OBJMODE_OBJSTATUS; }
 	
 	void syncGameStream(Common::Serializer &ser);
 	void loadObj(Common::File *file);
