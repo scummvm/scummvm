@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-28 18:07+0000\n"
+"POT-Creation-Date: 2021-05-28 18:28+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -164,8 +164,8 @@ msgstr "לא ניתן ליצור תיקיה להורדה - קובץ באותו �
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1326 engines/scumm/scumm.cpp:1348
-#: engines/scumm/scumm.cpp:2023 engines/sky/compact.cpp:142
+#: engines/scumm/scumm.cpp:1329 engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:2026 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
@@ -2731,27 +2731,27 @@ msgid "Resolution: %dx%d"
 msgstr "רזולוציה: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2478
 msgid "Enabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2484
 msgid "Disabled aspect ratio correction"
 msgstr "תיקון יחס גובה-רוחב מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Filtering enabled"
 msgstr "סינון מופעל"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2488
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
 msgid "Filtering disabled"
 msgstr "הסינון מושבת"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Stretch mode"
 msgstr "מצב מתיחה"
 
@@ -2760,7 +2760,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "רגיל (ללא קנה מידה)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
 msgid "Active graphics filter:"
 msgstr "פילטר גרפי פעיל:"
 
@@ -3826,7 +3826,7 @@ msgstr "לשחזר"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2591
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2604
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3837,7 +3837,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2581
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2594
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3848,7 +3848,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2604
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2617
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6768,7 +6768,7 @@ msgstr "תכונות שנבנו:"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "תכונות שנבנו:"
 
-#: engines/scumm/scumm.cpp:536
+#: engines/scumm/scumm.cpp:539
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6776,7 +6776,7 @@ msgid ""
 "320x200, under 'engine' tab."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1325
+#: engines/scumm/scumm.cpp:1328
 #, fuzzy
 #| msgid ""
 #| "Could not find the 'Loom' Macintosh executable to read the\n"
@@ -6788,7 +6788,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'נול' לקריאת ה-\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:1347
+#: engines/scumm/scumm.cpp:1350
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -6796,7 +6796,7 @@ msgstr ""
 "לא ניתן למצוא את ההפעלה מקינטוש 'אי הקופים' כדי לקרוא את\n"
 "מכשירים מ. המוסיקה תושבת."
 
-#: engines/scumm/scumm.cpp:2021
+#: engines/scumm/scumm.cpp:2024
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6805,7 +6805,7 @@ msgstr ""
 "תמיכת MIDI מקומית דורשת את שדרוג הרולנד מ- LucasArts,\n"
 "אבל %s חסר. במקום זאת משתמשים ב- AdLib."
 
-#: engines/scumm/scumm.cpp:2889
+#: engines/scumm/scumm.cpp:2902
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "

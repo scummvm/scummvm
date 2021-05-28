@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-28 18:07+0000\n"
+"POT-Creation-Date: 2021-05-28 18:28+0000\n"
 "PO-Revision-Date: 2021-05-20 02:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -167,8 +167,8 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:182
-#: engines/scumm/scumm.cpp:1326 engines/scumm/scumm.cpp:1348
-#: engines/scumm/scumm.cpp:2023 engines/sky/compact.cpp:142
+#: engines/scumm/scumm.cpp:1329 engines/scumm/scumm.cpp:1351
+#: engines/scumm/scumm.cpp:2026 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
 #: engines/sword1/control.cpp:889 engines/sword1/logic.cpp:1635
@@ -2789,27 +2789,27 @@ msgid "Resolution: %dx%d"
 msgstr "Résolution : %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:669
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2464
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2478
 msgid "Enabled aspect ratio correction"
 msgstr "Activer la correction du rapport d'aspect"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:671
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2484
 msgid "Disabled aspect ratio correction"
 msgstr "Désactiver la correction du rapport d'aspect"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:692
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2486
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Filtering enabled"
 msgstr "Filtrage Activé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:694
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2488
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
 msgid "Filtering disabled"
 msgstr "Filtrage Désactivé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:723
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2515
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Stretch mode"
 msgstr "Mode d'étirement"
 
@@ -2818,7 +2818,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2429
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2443
 msgid "Active graphics filter:"
 msgstr "Mode graphique actif :"
 
@@ -3865,7 +3865,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "Le chargement ou sauvegarde rapide du jeu n'est pas possible à cet endroit"
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2591
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2604
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3876,7 +3876,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2581
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2594
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3887,7 +3887,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2604
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2617
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -6845,7 +6845,7 @@ msgstr "La prise en charge de HE V71+ n'est pas incluse"
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "La prise en charge de SCUMM V7-8 n'est pas incluse"
 
-#: engines/scumm/scumm.cpp:536
+#: engines/scumm/scumm.cpp:539
 msgid ""
 "You have enabled 'aspect ratio correction'. However, FM-TOWNS' natural "
 "resolution is 320x240, which doesn't allow aspect ratio correction.\n"
@@ -6858,7 +6858,7 @@ msgstr ""
 "La correction du rapport d'aspect peut être obtenue en rognant la résolution "
 "à 320x200, sous l'onglet \"moteur\"."
 
-#: engines/scumm/scumm.cpp:1325
+#: engines/scumm/scumm.cpp:1328
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
@@ -6866,7 +6866,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Loom' n'a pas été trouvé. La musique ainsi que\n"
 "les versions haute résolution des polices et du curseur seront désactivées."
 
-#: engines/scumm/scumm.cpp:1347
+#: engines/scumm/scumm.cpp:1350
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
@@ -6874,7 +6874,7 @@ msgstr ""
 "L'exécutable Macintosh de 'Monkey Island' n'a pas été trouvé pour\n"
 "y lire les instruments. La musique sera désactivée."
 
-#: engines/scumm/scumm.cpp:2021
+#: engines/scumm/scumm.cpp:2024
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6883,7 +6883,7 @@ msgstr ""
 "Support MIDI natif requiert la mise à jour Roland de LucasArts,\n"
 "mais %s manque. Utilise AdLib à la place."
 
-#: engines/scumm/scumm.cpp:2889
+#: engines/scumm/scumm.cpp:2902
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
