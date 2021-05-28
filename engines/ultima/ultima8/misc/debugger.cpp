@@ -393,16 +393,21 @@ bool Debugger::cmdMaxStats(int argc, const char **argv) {
 	}
 	MainActor *mainActor = getMainActor();
 
-	// constants!!
-	mainActor->setStr(25);
-	mainActor->setDex(25);
-	mainActor->setInt(25);
-	mainActor->setHP(mainActor->getMaxHP());
-	mainActor->setMana(mainActor->getMaxMana());
+	if (GAME_IS_CRUSADER) {
+		mainActor->setHP(mainActor->getMaxHP());
+		mainActor->setMana(mainActor->getMaxMana());
+	} else {
+		// constants!!
+		mainActor->setStr(25);
+		mainActor->setDex(25);
+		mainActor->setInt(25);
+		mainActor->setHP(mainActor->getMaxHP());
+		mainActor->setMana(mainActor->getMaxMana());
 
-	AudioProcess *audioproc = AudioProcess::get_instance();
-	if (audioproc)
-		audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
+		AudioProcess *audioproc = AudioProcess::get_instance();
+		if (audioproc)
+			audioproc->playSFX(0x36, 0x60, 1, 0); //constants!!
+	}
 	return false;
 }
 
