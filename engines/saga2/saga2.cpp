@@ -41,6 +41,7 @@
 
 namespace Saga2 {
 
+void testScripts();
 void initScripts();
 void openImageTest();
 bool openResources();
@@ -88,6 +89,7 @@ Common::Error Saga2Engine::run() {
 	if (openResources()) {
 		openImageTest();
 		initScripts();
+		testScripts();
 	}
 
 	// Simple main event loop

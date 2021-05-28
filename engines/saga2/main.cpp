@@ -52,6 +52,7 @@
 #include "saga2/loadsave.h"
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
+#include "saga2/script.h"
 
 namespace Saga2 {
 
@@ -749,6 +750,12 @@ void openImageTest() {
 		//dec->image = ImageCache.requestImage(decRes, MKTAG('M', 'A', 'P', 0) | MKTAG('B', 'R', 'D', dec->imageNumber));
 		Point16 pos(0, 0);
 		drawCompressedImage(mainPort, pos, dec->image);
+}
+
+void testScripts() {
+	scriptCallFrame scf;
+	Thread th(0,0,scf);
+	th.interpret();
 }
 
 //-----------------------------------------------------------------------

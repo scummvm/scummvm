@@ -43,7 +43,7 @@ namespace Saga2 {
  * ============================================================================ */
 
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8))
-#define BRANCH(w)       pc = *codeSeg + (w)
+#define BRANCH(w)       pc = codeSeg + (w)
 
 const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
                     dataSegID   = MKTAG('_', '_', 'D', 'A'),
@@ -253,7 +253,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 	case addr_near:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
-		return *th->codeSeg + offset;
+		return th->codeSeg + offset;
 
 	case addr_far:
 		IMMED_WORD(seg);
@@ -406,7 +406,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		return *th->codeSeg + (offset >> 3);
+		return th->codeSeg + (offset >> 3);
 
 	case addr_far:
 		IMMED_WORD(seg);
@@ -454,7 +454,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 //  Returns the address of a string
 
 uint8 *Thread::strAddress(int strNum) {
-	uint16          *codeBase = (uint16 *)*codeSeg;
+	uint16          *codeBase = (uint16 *)codeSeg;
 	uint8           *strSeg = segmentAddress(codeBase[ 1 ], codeBase[ 2 ]);
 
 	assert(strNum >= 0);
@@ -557,7 +557,7 @@ bool Thread::interpret(void) {
 	                    n;
 	C_Call              *cfunc;
 
-	pc = (*codeSeg) + programCounter.offset;
+	pc = (codeSeg) + programCounter.offset;
 
 	thisThread = this;                          // set current thread address
 
@@ -567,7 +567,7 @@ bool Thread::interpret(void) {
 		switch (op = *pc++) {
 
 //		case op_nextblock:
-//			n = (pc-1-(*codeSeg)) / 1024;      // calculate address of this block
+//			n = (pc-1-(codeSeg)) / 1024;      // calculate address of this block
 //			BRANCH((n + 1) * 1024);                // jump to next block
 //			break;
 
@@ -678,7 +678,7 @@ bool Thread::interpret(void) {
 
 			if (stack >= (int16 *)(stackBase + stackSize - initialStackFrameSize)) {
 				//  Halt the thread here, wait for death
-				programCounter.offset = (pc - (*codeSeg));
+				programCounter.offset = (pc - (codeSeg));
 				stackPtr = (uint8 *)stack;
 				flags |= finished;
 				return TRUE;
@@ -687,9 +687,10 @@ bool Thread::interpret(void) {
 				programCounter.offset = *stack++;
 
 				RUnlockHandle((RHANDLE)codeSeg);
-				codeSeg = (UByteHandle)
-				          scriptRes->loadIndex(programCounter.segment, "saga code segment");
-				pc = (*codeSeg) + programCounter.offset;
+				codeSeg = scriptRes->loadIndexResource(programCounter.segment,
+						                               "saga code segment",
+													   scriptRes->_filename);
+				pc = (codeSeg) + programCounter.offset;
 
 				n = *stack++;               // get argument count from call
 				stack += n;                 // pop that many args
@@ -703,7 +704,7 @@ bool Thread::interpret(void) {
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 2 - *codeSeg);
+			programCounter.offset = (pc + 2 - codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
@@ -713,7 +714,7 @@ bool Thread::interpret(void) {
 			IMMED_WORD(w);               // pick up segment offset
 			programCounter.offset = w;      // store into pc
 
-			pc = *codeSeg + w;              // calculate PC address
+			pc = codeSeg + w;              // calculate PC address
 
 			print_script_name(pc);
 			break;
@@ -722,7 +723,7 @@ bool Thread::interpret(void) {
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 4 - *codeSeg);
+			programCounter.offset = (pc + 4 - codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
@@ -732,11 +733,11 @@ bool Thread::interpret(void) {
 			IMMED_WORD(w);               // pick up segment number
 			programCounter.segment = w;     // set current segment
 			RUnlockHandle((RHANDLE)codeSeg);
-			codeSeg = (UByteHandle)scriptRes->loadIndex(w, "saga code segment");
+			codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
 			IMMED_WORD(w);               // pick up segment offset
 			programCounter.offset = w;      // store into pc
 
-			pc = *codeSeg + w;              // calculate PC address
+			pc = codeSeg + w;              // calculate PC address
 			print_script_name(pc);
 			break;
 
@@ -800,7 +801,7 @@ bool Thread::interpret(void) {
 				if (vtable == NULL) {
 					//  Do nothing...
 				} else if (vtableEntry[ 0 ] != 0xffff) { // It's a SAGA func
-					programCounter.offset = (pc - *codeSeg);
+					programCounter.offset = (pc - codeSeg);
 
 					//  Push the address of the object
 					*--stack = offset;
@@ -818,13 +819,13 @@ bool Thread::interpret(void) {
 					w = vtableEntry[ 0 ];
 					programCounter.segment = w;
 					RUnlockHandle((RHANDLE)codeSeg);
-					codeSeg = (UByteHandle)scriptRes->loadIndex(w, "saga code segment");
+					codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
 
 					// store pc-offset into pc
 					programCounter.offset = vtableEntry[ 1 ];
 
 					// calculate PC address
-					pc = (*codeSeg) + programCounter.offset;
+					pc = (codeSeg) + programCounter.offset;
 					print_script_name(pc, objectName(seg, offset));
 					break;
 				} else if (vtableEntry[ 1 ] != 0xffff) { // It's a C func
@@ -1101,7 +1102,7 @@ bool Thread::interpret(void) {
 		}
 	}
 
-	programCounter.offset = (pc - (*codeSeg));
+	programCounter.offset = (pc - (codeSeg));
 	stackPtr = (uint8 *)stack;
 
 	return FALSE;
@@ -1389,7 +1390,7 @@ void saveSAGAThreads(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = threadList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate SAGA thread archive buffer");
 
@@ -1400,7 +1401,7 @@ void saveSAGAThreads(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -1416,8 +1417,8 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	void    *archiveBuffer;
 	void    *bufferPtr;
 
-	archiveBuffer = RNewPtr(saveGame.getChunkSize(), NULL, "archive buffer");
-	if (archiveBuffer == NULL)
+	archiveBuffer = malloc(saveGame.getChunkSize());
+	if (archiveBuffer == nullptr)
 		error("Unable to allocate SAGA thread archive buffer");
 
 	//  Read the archived thread data
@@ -1432,7 +1433,7 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	assert((char *)bufferPtr == (char *)archiveBuffer
 	       +   saveGame.getChunkSize());
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -1486,7 +1487,7 @@ Thread *getThreadAddress(ThreadID id) {
 //	Thread constructor
 
 Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
-	codeSeg = (UByteHandle)scriptRes->loadIndex(segNum, "saga code segment");
+	codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment", scriptRes->_filename);
 
 	//  initialize the thread
 	stackSize = kStackSize;
@@ -1495,16 +1496,16 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	programCounter.segment = segNum;
 	programCounter.offset = segOff;
 	threadArgs = args;
-	stackBase = (UBytePtr)RNewPtr(stackSize, NULL, "saga stack");
+	stackBase = (UBytePtr)malloc(stackSize);
 	stackPtr = stackBase + stackSize - initialStackFrameSize;
 	((uint16 *)stackPtr)[ 0 ] = 0;          // 0 args
 	((uint16 *)stackPtr)[ 1 ] = 0;          // dummy return address
 	((uint16 *)stackPtr)[ 2 ] = 0;          // dummy return address
 	framePtr = stackSize;
 
-	if ((*codeSeg)[ programCounter.offset ] != op_enter)
+	if ((codeSeg)[ programCounter.offset ] != op_enter)
 		error("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
-//	assert ((*codeSeg)[ programCounter.offset ] == op_enter);
+//	assert ((codeSeg)[ programCounter.offset ] == op_enter);
 }
 
 //-----------------------------------------------------------------------
@@ -1530,10 +1531,11 @@ Thread::Thread(void **buf) {
 	stackOffset = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
-	codeSeg = (UByteHandle)scriptRes->loadIndex(
-	              programCounter.segment, "saga code segment");
+	codeSeg = scriptRes->loadIndexResource(programCounter.segment,
+			                               "saga code segment",
+										   scriptRes->_filename);
 
-	stackBase = (UBytePtr)RNewPtr(stackSize, NULL, "saga stack");
+	stackBase = (UBytePtr)malloc(stackSize);
 	stackPtr = stackBase + stackSize - stackOffset;
 
 	memcpy(stackPtr, bufferPtr, stackOffset);
@@ -1553,7 +1555,7 @@ Thread::~Thread() {
 	RUnlockHandle((RHANDLE)codeSeg);
 
 	//  Deallocate the thread stack
-	RDisposePtr(stackBase);
+	free(stackBase);
 }
 
 //-----------------------------------------------------------------------
@@ -1845,7 +1847,7 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	//  Create a new thread
 	th = new Thread(segNum, segOff, args);
 	thisThread = th;
-	print_script_name((*th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
+	print_script_name((th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
 
 	//  Run the thread to completion
 	result = th->run();
@@ -1916,7 +1918,7 @@ scriptResult runMethod(
 		//  Create a new thread
 		th = new Thread(segNum, segOff, args);
 		thisThread = th;
-		print_script_name((*th->codeSeg) + th->programCounter.offset, objectName(bType, index));
+		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
 
 		//  Put the object segment and ID onto the dummy stack frame
 		((uint16 *)th->stackPtr)[ 3 ] = bType;

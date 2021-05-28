@@ -199,7 +199,7 @@ public:
 	SegmentRef      programCounter;         // current PC location
 
 	uint8           *stackPtr;              // current stack location
-	UByteHandle     codeSeg;                // base of current data segment
+	byte            *codeSeg;                // base of current data segment
 //					*stringBase;         // base of string resource
 
 	uint8           *stackBase;             // base of module stack
@@ -297,10 +297,10 @@ public:
 	void setExtended(void);
 	void clearExtended(void);
 
+	bool interpret(void);
 private:
 	uint8 *strAddress(int strNum);
 
-	bool interpret(void);
 };
 
 const int               maxTimeSlice = 16,  // max instructions per call

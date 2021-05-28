@@ -350,6 +350,24 @@ RHANDLE hResContext::load(hResID id, const char desc[], bool async, bool cacheab
 	return (*capture);
 }
 
+byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::String filename) {
+	hResEntry *entry;
+	entry = &_base[index];
+
+	if (!_valid || entry == nullptr)
+		return nullptr;
+
+	byte *res = (byte*)malloc(entry->size);
+
+	if (!_file.isOpen())
+		_file.open(filename);
+
+	_file.seek(entry->offset, SEEK_SET);
+	_file.read(res, entry->size);
+
+	return res;
+}
+
 RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 	hResEntry   *entry;
 	RHANDLE     *capture; //, _handle;
