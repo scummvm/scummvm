@@ -267,19 +267,6 @@ public:
 	//  Create an archive of this thread in an archive buffer
 	void *archive(void *buf);
 
-	//  Overloaded new operator functions
-	void *operator new (size_t) {
-		return newThread();
-	}
-	void *operator new (size_t, ThreadID id) {
-		return newThread(id);
-	}
-
-	//  Overloaded delete operator function
-	void operator delete (void *p) {
-		deleteThread(p);
-	}
-
 	//  Dispatch all asynchronous threads
 	static void dispatch(void);
 
