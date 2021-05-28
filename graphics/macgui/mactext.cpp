@@ -1704,8 +1704,54 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	return res;
 }
 
+// this is refer to how we deal U32String in splitString
+// maybe we can optimize this specifically
+int getU32StringLen(const Common::U32String &str) {
+	int res = 0;
+	// calc the size of str
+	const Common::U32String::value_type *l = str.c_str();
+	while (*l) {
+		if (*l == '\r') {
+			l++;
+		} else if (*l == '\n') {
+			l++;
+		} else if (*l == '\001') {
+			l++;
+			// if there are two \001, then we regard it as one character
+			if (*l == '\001') {
+				res++;
+				l++;
+			}
+		} else if (*l == '\015') {	// binary format
+			l++;
+			uint16 fontId = *l++; fontId = (fontId << 8) | *l++;
+			l++;
+			uint16 fontSize = *l++; fontSize = (fontSize << 8) | *l++;
+			uint16 palinfo1 = *l++; palinfo1 = (palinfo1 << 8) | *l++;
+			uint16 palinfo2 = *l++; palinfo2 = (palinfo2 << 8) | *l++;
+			uint16 palinfo3 = *l++; palinfo3 = (palinfo3 << 8) | *l++;
+		} else if (*l == '\016') {	// human-readable format
+			l++;
+			uint16 fontId, textSlant, fontSize, palinfo1, palinfo2, palinfo3;
+			l = readHex(&fontId, l, 4);
+			l = readHex(&textSlant, l, 2);
+			l = readHex(&fontSize, l, 4);
+			l = readHex(&palinfo1, l, 4);
+			l = readHex(&palinfo2, l, 4);
+			l = readHex(&palinfo3, l, 4);
+		} else {
+			res++;
+			l++;
+		}
+	}
+	return res;
+}
+
+// mostly, we refering reshuffleParagraph to implement this function
 void MacText::insertTextFromClipboard() {
 	Common::U32String str = g_system->getTextFromClipboard();
+	int ppos = getU32StringLen(str);
+
 	if (_textLines.empty()) {
 		splitString(str, 0);
 	} else {
@@ -1717,6 +1763,10 @@ void MacText::insertTextFromClipboard() {
 		while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd)
 			end++;
 
+		for (int i = start; i < _cursorRow; i++)
+			ppos += getLineCharWidth(i);
+		ppos += _cursorCol;
+
 		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, false);
 		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, false);
 
@@ -1726,8 +1776,17 @@ void MacText::insertTextFromClipboard() {
 		}
 		Common::U32String res = pre_str + str + sub_str;
 		splitString(pre_str + str + sub_str, start);
+
+		_cursorRow = start;
 	}
+
+	while (ppos > getLineCharWidth(_cursorRow, true)) {
+		ppos -= getLineCharWidth(_cursorRow, true);
+		_cursorRow++;
+	}
+	_cursorCol = ppos;
 	recalcDims();
+	updateCursorPos();
 	render();
 	_fullRefresh = true;
 }
