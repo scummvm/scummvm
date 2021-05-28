@@ -20,7 +20,7 @@
  *
  */
 
-#include "Trecision/struct.h"
+#include "trecision/struct.h"
 
 namespace Trecision {
 
