@@ -2288,7 +2288,7 @@ void Menu::keySaveGame(const AsylumEvent &evt) {
 
 	switch (evt.kbd.keycode) {
 	default:
-		if (evt.kbd.ascii > 255 || !Common::isAlnum(evt.kbd.ascii))
+		if (evt.kbd.ascii > 255 || !Common::isPrint(evt.kbd.ascii))
 			break;
 
 		if (getSaveLoad()->getName()->size() < 44) {
