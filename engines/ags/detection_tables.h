@@ -1681,6 +1681,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 #define GAME_ENTRY_PLUGIN_STEAM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
 		GAME_ENTRY_PLUGIN_LANG_PLATFORM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR, Common::UNK_LANG, "Steam")
 
+#define GAME_ENTRY_PLUGIN_GOG(ID, FILENAME, MD5, SIZE, PLUGIN_ARR) \
+		GAME_ENTRY_PLUGIN_LANG_PLATFORM(ID, FILENAME, MD5, SIZE, PLUGIN_ARR, Common::UNK_LANG, "GOG")
+
 static const PluginVersion AGSTEAM_WADJETEYE[] = { { "agsteam", kWadjetEye }, { nullptr, 0 } };
 static const PluginVersion AGS_FLASHLIGHT[] = { { "agsflashlight", 0 }, { nullptr, 0 } };
 static const PluginVersion AGSSPRITEFONT_CLIFFTOP[] = { { "agsspritefont", kClifftopGames }, { nullptr, 0 } };
@@ -1954,7 +1957,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("justignorethem", "justignorethem.exe", "7a3096ac0237cb6aa8e1718e28caf039", 98544330),
 	GAME_ENTRY("justignorethemremake", "justignorethemremake.exe", "7a0b9391c01ad13e5107b7763084a993", 187186542), // Steam
 	GAME_ENTRY_PLUGIN_STEAM("kathyrain", "kathyrain.exe", "434e24a12ba3cfb07d7b4b2f0e0bb1bf", 197487159, AGSSPRITEFONT_CLIFFTOP),
-	GAME_ENTRY_PLUGIN("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, AGSSPRITEFONT_CLIFFTOP), // GOG
+	GAME_ENTRY_PLUGIN_GOG("kathyrain", "kathyrain.exe", "d2b1ba151c3d209b50331127032f96f6", 197489719, AGSSPRITEFONT_CLIFFTOP),
 	GAME_ENTRY("killyourself", "ky.exe", "4e0d0aca04563b21a47e8a0cc56605fc", 18567658), // Steam
 	GAME_ENTRY("lamplightcity", "lamplight city.exe", "0cb636e2235e2b7cff4ece5898653e18", 981897178), // GoG, Version 1.10
 	GAME_ENTRY("lamplightcity", "lamplight city.ags", "70a52d0ba7e5975df40aef460142f770", 979393622), // Linux, GOG
@@ -2027,7 +2030,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
 	GAME_ENTRY("welcometosunnymunarvagir", "alpha4.ags", "392dbdd0697ae32af4cfe5212f9213c5", 23000263),
 	GAME_ENTRY_PLUGIN_STEAM("whispersofamachine", "whispers.exe", "b4962a0a9c9c33954e185a137125f527", 159084291, AGSSPRITEFONT_CLIFFTOP),
-	GAME_ENTRY_PLUGIN("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP), // GOG
+	GAME_ENTRY_PLUGIN_GOG("whispersofamachine", "whispers.exe", "b8416ff5242d6540980f922f03a01a5f", 159085573, AGSSPRITEFONT_CLIFFTOP),
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100036465), // Steam
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004), // Steam
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100010235),
