@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-27 19:31+0000\n"
-"PO-Revision-Date: 2021-05-26 15:02+0000\n"
+"PO-Revision-Date: 2021-05-28 18:25+0000\n"
 "Last-Translator: Crane yang <1173886760@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -1021,127 +1021,127 @@ msgstr "3D游戏中的垂直同步"
 
 #: gui/options.cpp:1334
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "等待垂直同步来刷新3D渲染器中的屏幕"
 
 #: gui/options.cpp:1337
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "游戏3D渲染器："
 
 #: gui/options.cpp:1339
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "游戏3D渲染器："
 
 #: gui/options.cpp:1352
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "3D消除混叠："
 
 #: gui/options.cpp:1356 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
-msgstr ""
+msgstr "关闭"
 
 #: gui/options.cpp:1368
 msgid "Filter graphics"
-msgstr ""
+msgstr "过滤图形"
 
 #: gui/options.cpp:1368
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "缩放图形时使用线性过滤"
 
 #: gui/options.cpp:1371
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "纵横比校正"
 
 #: gui/options.cpp:1371
 msgid "Correct aspect ratio for games"
-msgstr ""
+msgstr "为游戏矫正纵横比"
 
 #: gui/options.cpp:1379
 msgid "Preferred device:"
-msgstr ""
+msgstr "首选设备："
 
 #: gui/options.cpp:1379
 msgid "Music device:"
-msgstr ""
+msgstr "音乐设备："
 
 #: gui/options.cpp:1379 gui/options.cpp:1381
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr ""
+msgstr "指定首选的声音设备或声卡仿真器"
 
 #: gui/options.cpp:1379 gui/options.cpp:1381 gui/options.cpp:1382
 msgid "Specifies output sound device or sound card emulator"
-msgstr ""
+msgstr "指定输出声音设备或声卡仿真器"
 
 #: gui/options.cpp:1381
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr ""
+msgstr "首选开发："
 
 #: gui/options.cpp:1381
 msgctxt "lowres"
 msgid "Music device:"
-msgstr ""
+msgstr "音乐设备："
 
 #: gui/options.cpp:1408
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "AdLib模拟器："
 
 #: gui/options.cpp:1408 gui/options.cpp:1409
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib在很多游戏中用于音乐"
 
 #: gui/options.cpp:1422
 msgid "GM device:"
-msgstr ""
+msgstr "GM设备："
 
 #: gui/options.cpp:1422
 msgid "Specifies default sound device for General MIDI output"
-msgstr ""
+msgstr "指定常规MIDI输出的默认声音设备"
 
 #: gui/options.cpp:1433
 msgid "Don't use General MIDI music"
-msgstr ""
+msgstr "不使用常规MIDI声音设备"
 
 #: gui/options.cpp:1444 gui/options.cpp:1506
 msgid "Use first available device"
-msgstr ""
+msgstr "用第一个有效的设备"
 
 #: gui/options.cpp:1456
 msgid "SoundFont:"
-msgstr ""
+msgstr "声音字体："
 
 #: gui/options.cpp:1456 gui/options.cpp:1458 gui/options.cpp:1459
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
-msgstr ""
+msgstr "一些声卡、FluidSync和Timbity支持声音字体"
 
 #: gui/options.cpp:1458
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr ""
+msgstr "声音字体："
 
 #: gui/options.cpp:1464
 msgid "Mixed AdLib/MIDI mode"
-msgstr ""
+msgstr "混合AdLib/MIDI模式"
 
 #: gui/options.cpp:1464
 msgid "Use both MIDI and AdLib sound generation"
-msgstr ""
+msgstr "使用MIDI和AdLib生成声音"
 
 #: gui/options.cpp:1467
 msgid "MIDI gain:"
-msgstr ""
+msgstr "MIDI增益："
 
 #: gui/options.cpp:1477
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "MT-32装置："
 
 #: gui/options.cpp:1477
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr ""
+msgstr "为Roland MT-32/LAPC1/CM32l/CM64输出指定默认声音设备"
 
 #: gui/options.cpp:1482
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr ""
+msgstr "真Roland MT-32(关闭GM模拟)"
 
 #: gui/options.cpp:1482 gui/options.cpp:1484
 msgid ""
