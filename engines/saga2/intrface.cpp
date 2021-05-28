@@ -59,7 +59,6 @@ extern const uint32         imageGroupID;
 extern gPanelList           *tileControls;
 extern BackWindow           *mainWindow;
 extern uint8                fixedColors[ 16 ];
-extern uint8                ColorMapRanges[][ 8 ];
 
 
 /* ===================================================================== *

@@ -80,7 +80,7 @@ extern gPixelMap    tileDrawMap;
 extern Point16      fineScroll;             // current scroll pos
 
 //  Color map ranges
-extern uint8        ColorMapRanges[][ 8 ];
+extern uint8        ColorMapRanges[][8];
 
 extern gPort        backPort;
 
@@ -101,7 +101,7 @@ extern uint8 fixedColors[] = {
 
 SpriteSet           **objectSprites,    // object sprites
                     * *mentalSprites,   // intangible object sprites
-                    * *weaponSprites[ maxWeaponSpriteSets ], // weapon sprites
+                    * *weaponSprites[maxWeaponSpriteSets], // weapon sprites
                     * *missileSprites;  // missile sprites
 
 hResContext         *spriteRes,         // sprite resource handle
@@ -110,7 +110,7 @@ hResContext         *spriteRes,         // sprite resource handle
                     *schemeRes;         // schemelist resource handle
 
 //  An array of 32 actor appearances
-static ActorAppearance appearanceTable[ 32 ];
+static ActorAppearance appearanceTable[32];
 
 //  A least-recently-used list of actor appearances
 static DList        appearanceLRU;
@@ -297,7 +297,7 @@ void DrawCompositeMaskedSprite(
 
 			visiblePixels = 0;
 			for (i = 0; i < compMapBytes; i++) {
-				if (compMap.data[ i ] != 0) {
+				if (compMap.data[i] != 0) {
 					visiblePixels++;
 					if (visiblePixels > 10) break;
 				}
@@ -320,9 +320,9 @@ void DrawCompositeMaskedSprite(
 		uint8   *submergedArea = &compMap.data[(-loc.z < compMap.size.y ?
 		                                        (compMap.size.y + loc.z)
 		                                        * compMap.size.x :
-		                                        0) ];
+		                                        0)];
 
-		uint16  submergedSize = &compMap.data[ compMap.bytes() ] -
+		uint16  submergedSize = &compMap.data[compMap.bytes()] -
 		                        submergedArea;
 
 		memset(submergedArea, 0, submergedSize);
@@ -461,10 +461,10 @@ uint8 GetSpritePixel(
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
-		result = sprMap.data[ testPoint.y * sprMap.size.x
-		                                  + sprMap.size.x - testPoint.x ];
+		result = sprMap.data[testPoint.y * sprMap.size.x
+		                                  + sprMap.size.x - testPoint.x];
 	} else {
-		result = sprMap.data[ testPoint.y * sprMap.size.x + testPoint.x ];
+		result = sprMap.data[testPoint.y * sprMap.size.x + testPoint.x];
 	}
 	freeQuickMem(sprMap.data);
 
@@ -543,7 +543,7 @@ uint16 visiblePixelsInSprite(
 
 	//  count the visible pixels in the composite map
 	for (i = 0, visiblePixels = 0; i < compBytes; i++)
-		if (compMap.data[ i ]) visiblePixels++;
+		if (compMap.data[i]) visiblePixels++;
 
 #if DEBUG*0
 	WriteStatusF(8, "Visible pixels = %u", visiblePixels);
@@ -571,7 +571,7 @@ void buildColorTable(
 	dst = (uint32 *)(colorTable + sizeof fixedColors);
 
 	while (numOptions--) {
-		src = (uint32 *)ColorMapRanges[ *colorOptions++ ];
+		src = (uint32 *)ColorMapRanges[*colorOptions++];
 		*dst++ = *src++;
 		*dst++ = *src++;
 	}
@@ -583,17 +583,17 @@ void buildColorTable(
 
 #if DEBUG
 char *idname(long s) {
-	static char     t[ 8 ];
+	static char     t[8];
 	char            *p = (char *)&s;
 
-	t[ 0 ] = *p++;
-	t[ 1 ] = *p++;
-	t[ 2 ] = *p++;
+	t[0] = *p++;
+	t[1] = *p++;
+	t[2] = *p++;
 	if (*p > ' ') {
-		t[ 3 ] = *p;
-		t[ 4 ] = 0;
+		t[3] = *p;
+		t[4] = 0;
 	} else {
-		sprintf(&t[ 3 ], ":%d", *p);
+		sprintf(&t[3], ":%d", *p);
 	}
 	return t;
 }
@@ -612,30 +612,14 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	for (bank = 0; bank < elementsof(spriteBanks); bank++) {
 		//  Wash the sprite banks...i.e. clear out dead handles
 		//  which have been purged.
-		washHandle((RHANDLE &)(spriteBanks[ bank ]));
+		washHandle((RHANDLE &)(spriteBanks[bank]));
 
 		//  Load the sprite handle...
-		if (spriteBanks[ bank ] == NULL
-		        && (banksNeeded & (1 << bank))) {
-			spriteBanks[ bank ] =
-			    (SpriteSet **)spriteRes->load(id + RES_ID(0, 0, 0, bank), "sprite bank",
-
-
-//
-//  THIS WAS TRUE BUT THE SPRITE CORRUPTION GOES AWAY IF IT ISNT
-//
-//
-
-
-			                                  FALSE);
-
-
-
-
-
+		if (spriteBanks[bank] == NULL && (banksNeeded & (1 << bank))) {
+			spriteBanks[bank] = (SpriteSet **)spriteRes->load(id + RES_ID(0, 0, 0, bank), "sprite bank", FALSE);
 
 #if DEBUG
-			if (spriteBanks[ bank ] == NULL)
+			if (spriteBanks[bank] == NULL)
 				fatal("Sprite '%s' bank %d failed to load!\n",
 				      idname(id),
 				      bank);
@@ -643,7 +627,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 
 			//  Since the sprites are so big, we'll keep them unlocked
 			//  so that they can be purged as needed.
-			RUnlockHandle((RHANDLE) spriteBanks[ bank ]);
+			RUnlockHandle((RHANDLE) spriteBanks[bank]);
 		}
 	}
 }
@@ -689,9 +673,9 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  Dump the sprites being stored
 	for (bank = 0; bank < elementsof(aa->spriteBanks); bank++) {
-		if (aa->spriteBanks[ bank ])
-			spriteRes->release((RHANDLE) aa->spriteBanks[ bank ]);
-		aa->spriteBanks[ bank ] = NULL;
+		if (aa->spriteBanks[bank])
+			spriteRes->release((RHANDLE) aa->spriteBanks[bank]);
+		aa->spriteBanks[bank] = NULL;
 	}
 
 	if (aa->poseList)  poseRes->release((RHANDLE) aa->poseList);
@@ -766,11 +750,11 @@ void initSprites(void) {
 		weaponSpriteID = weaponSpriteBaseID + RES_ID(0, 0, 0, i);
 
 		if (spriteRes->size(weaponSpriteID) == 0) {
-			weaponSprites[ i ] = NULL;
+			weaponSprites[i] = NULL;
 			continue;
 		}
 
-		weaponSprites[ i ] = (SpriteSet **)spriteRes->load(
+		weaponSprites[i] = (SpriteSet **)spriteRes->load(
 		                         weaponSpriteID,
 		                         "weapon sprite set");
 	}
@@ -781,7 +765,7 @@ void initSprites(void) {
 
 	//  Initialize actor appearance table
 	for (i = 0; i < elementsof(appearanceTable); i++) {
-		ActorAppearance *aa = &appearanceTable[ i ];
+		ActorAppearance *aa = &appearanceTable[i];
 
 		aa->useCount = 0;
 		appearanceLRU.addHead(*aa);
@@ -800,9 +784,9 @@ void cleanupSprites(void) {
 	mentalSprites = NULL;
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
-		if (weaponSprites[ i ]) {
-			spriteRes->release((RHANDLE) weaponSprites[ i ]);
-			weaponSprites[ i ] = NULL;
+		if (weaponSprites[i]) {
+			spriteRes->release((RHANDLE) weaponSprites[i]);
+			weaponSprites[i] = NULL;
 		}
 	}
 
