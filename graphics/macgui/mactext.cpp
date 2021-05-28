@@ -1028,20 +1028,22 @@ bool MacText::draw(bool forceRedraw) {
 		return false;
 	}
 
-	// TODO: Clear surface fully when background colour changes.
-	_contentIsDirty = false;
-	_cursorDirty = false;
-
 	// if we are drawing the selection, then we better clear the surface
 	// let me explain here, sometimes, when we are render the text in _surface, we may not render the whole line
 	// such as, a line only contains \n, thus, we may only render part of this line
 	// when we are drawing the selection, it will reverse all the pixels in selected area. And when you only render part of a line in selected area
 	// drawSelection will reverse that not rendered part again and again, and which will lead to blinking
 
-	Common::Point offset(calculateOffset());
-
-	if (_selectedText.endY != -1)
+	// we need to find out a way to judge whether we need to clear the surface
+	// currently, we just use the _contentIsDirty
+	if (_selectedText.endY != -1 || _contentIsDirty)
 		_composeSurface->clear(_bgcolor);
+
+	// TODO: Clear surface fully when background colour changes.
+	_contentIsDirty = false;
+	_cursorDirty = false;
+
+	Common::Point offset(calculateOffset());
 
 	if (!_cursorState)
 		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));

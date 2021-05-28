@@ -493,6 +493,12 @@ bool MacWindow::processEvent(Common::Event &event) {
 
 		return false;
 
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+		if (_wm->getActiveWidget() && _wm->getActiveWidget()->processEvent(event))
+			return true;
+		return false;
+
 	default:
 		return false;
 	}
