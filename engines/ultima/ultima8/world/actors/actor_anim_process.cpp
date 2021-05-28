@@ -355,7 +355,7 @@ void ActorAnimProcess::run() {
 
 	if (_repeatCounter == _tracker->getAnimAction()->getFrameRepeat()) {
 		if (_tracker->isUnsupported()) {
-			_animAborted = true;
+			_animAborted = !_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE);
 
 #ifdef WATCHACTOR
 			if (_itemNum == watchactor) {
