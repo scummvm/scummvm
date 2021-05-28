@@ -69,19 +69,14 @@ void SceneScriptCT11::SceneLoaded() {
 
 		if (_vm->_cutContent
 		    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
-			&& (Game_Flag_Query(kFlagDektoraIsReplicant)
-				    || !Game_Flag_Query(kFlagGordoIsReplicant))
+		    && (Game_Flag_Query(kFlagDektoraIsReplicant)
+		        || !Game_Flag_Query(kFlagGordoIsReplicant))
 		) {
 			// The car is only bought by Reps from CrazyLegs
 			// if Dektora is a Replicant
 			// or if Dektora  is human and Gordo is also human
-			//
-			// Set the note as invisible too, so as not to appear odd or overlap with lichendog wrapper.
-			// The user should "spot" it at the same hot spot region (passenger seat glovebox spot).
-			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 640.21f, 30.0f, 470.0f, 512, 12, 12, false, false, false, true);
-			if (Game_Flag_Query(kFlagCT11DogWrapperTaken)) {
-				Scene_2D_Region_Add(0, 505, 316, 513, 321);
-			}
+			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 641.21f, 26.0f, 472.0f, 304, 12, 12, false, true, false, true);
+			Scene_2D_Region_Add(2, 505, 321, 519, 332);
 		}
 
 		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
@@ -183,29 +178,23 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 #if !BLADERUNNER_ORIGINAL_BUGS
 			// in the original game the hotspot would not be removed
 			// after picking up the lichendog Wrapper
-			if (!_vm->_cutContent
-			    || (!Game_Flag_Query(kFlagDektoraIsReplicant)
-			        && Game_Flag_Query(kFlagGordoIsReplicant))) {
-				// - We are not in cutContent
-				// - or we are in cutContent but no Grigorian's note due to other conditions
-				Scene_2D_Region_Remove(0);
-			}
+			Scene_2D_Region_Remove(0);
 #endif // !BLADERUNNER_ORIGINAL_BUGS
 		}
 		return true;
 	}
 
 	if (_vm->_cutContent
-	    && region == 0
+	    && region == 2
 	    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
 	) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
 			Actor_Face_Heading(kActorMcCoy, 47, false);
 			Item_Remove_From_World(kItemNote);
 			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansNote, false, -1);
-			Item_Pickup_Spin_Effect(kModelAnimationGrigoriansNote, 510, 319);
+			Item_Pickup_Spin_Effect(kModelAnimationGrigoriansNote, 512, 326);
 			Actor_Voice_Over(8840, kActorMcCoy);
-			Scene_2D_Region_Remove(0);
+			Scene_2D_Region_Remove(2);
 		}
 		return true;
 	}
