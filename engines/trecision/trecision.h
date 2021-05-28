@@ -176,6 +176,7 @@ public:
 	void replaceIcon(uint8 oldIcon, uint8 newIcon);
 	void openInventory();
 	void closeInventory();
+	void closeInventoryImmediately();
 	void useItem();
 	void examineItem();
 

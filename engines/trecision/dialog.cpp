@@ -114,6 +114,8 @@ void DialogManager::selectChoice(int16 dmx, int16 dmy) {
 }
 
 void DialogManager::playDialog(uint16 i) {
+	_vm->closeInventoryImmediately();
+
 	_curDialog = i;
 	_curChoice = 0;
 	_curSubTitle = 0;
