@@ -274,18 +274,22 @@ bool hResContext::get(hResID id, void *buffer, uint32 size) {
 	return result;
 }
 
-uint32 hResContext::getSize(hResID id) {
+uint32 hResContext::getSize(hResID id, const char desc[]) {
 	hResEntry *entry;
-	if ((entry = findEntry(id)) == nullptr)
+	if ((entry = findEntry(id)) == nullptr) {
+		warning("Resource %d, %s not found", id, desc);
 		return 0;
+	}
 
 	return entry->size;
 }
 
 byte *hResContext::loadResource(hResID id, const char desc[]) {
 	hResEntry *entry;
-	if ((entry = findEntry(id)) == nullptr)
+	if ((entry = findEntry(id)) == nullptr) {
+		warning("Resource %d, %s not found", id, desc);
 		return nullptr;
+	}
 
 	byte *res = (byte*)malloc(entry->size);
 	_file.seek(entry->offset, SEEK_SET);
