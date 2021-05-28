@@ -562,6 +562,7 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 			ser.syncAsUint16LE(cur->_lim[i].bottom);
 		}
 		ser.syncAsByte(cur->_nbox);
+		ser.skip(1, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX);
 		for (uint8 i = 0; i < MAXATFRAME; ++i) {
 			ser.syncAsByte(cur->_atFrame[i]._type);
 			ser.syncAsByte(cur->_atFrame[i]._child);
