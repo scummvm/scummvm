@@ -138,7 +138,8 @@ SurfaceSdlGraphicsManager::SurfaceSdlGraphicsManager(SdlEventSource *sdlEventSou
 	_enableFocusRectDebugCode(false), _enableFocusRect(false), _focusRect(),
 #endif
 	_transactionMode(kTransactionNone),
-	_scalerPlugins(ScalerMan.getPlugins()) {
+	_scalerPlugins(ScalerMan.getPlugins()),
+	_needRestoreAfterOverlay(false) {
 
 	// allocate palette storage
 	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
@@ -1148,12 +1149,24 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	}
 
 	int oldScaleFactor;
+
 	if (!_overlayVisible) {
+		if (_needRestoreAfterOverlay) {
+			// This is needed for the Edge scaler which seems to be the only scaler to use the "_useOldSrc" feature.
+			// Otherwise the screen will not be properly restored after removing the overlay. We need to trigger a
+			// regeneration of SourceScaler::_bufferedOutput. The call to _scalerPlugin->setFactor() down below could
+			// do that in theory, but it won't unless the factor actually changes (which it doesn't). Now, the code
+			// in SourceScaler::setSource() looks a bit fishy, e. g. the *src argument isn't even used. But otherwise
+			// it does what we want here at least...
+			_scalerPlugin->setSource(0, _tmpscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight, _maxExtraPixels);
+		}
+
 		origSurf = _screen;
 		srcSurf = _tmpscreen;
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
 		oldScaleFactor = scale1 = _videoMode.scaleFactor;
+		_needRestoreAfterOverlay = false;
 	} else {
 		origSurf = _overlayscreen;
 		srcSurf = _tmpscreen2;
@@ -1161,6 +1174,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		height = _videoMode.overlayHeight;
 		scale1 = 1;
 		oldScaleFactor = _scalerPlugin->setFactor(1);
+		_needRestoreAfterOverlay = _useOldSrc;
 	}
 
 	// Add the area covered by the mouse cursor to the list of dirty rects if
