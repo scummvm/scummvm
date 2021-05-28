@@ -27,7 +27,6 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/stream.h"
 #include "graphics/surface.h"
 #include "trecision/defines.h"
 
