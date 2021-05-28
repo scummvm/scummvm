@@ -1300,7 +1300,7 @@ Common::U32String MacText::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, false, false);
+	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, false);
 
 	deleteSelection();
 	clearSelection();
@@ -1316,6 +1316,23 @@ bool MacText::processEvent(Common::Event &event) {
 		setActive(true);
 
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_x:
+				g_system->setTextInClipboard(cutSelection());
+				return true;
+			case Common::KEYCODE_c:
+				g_system->setTextInClipboard(getSelection(true, false));
+				return true;
+			case Common::KEYCODE_v:
+				if (g_system->hasTextInClipboard()) {
+					if (_selectedText.endY != -1)
+						cutSelection();
+					insertTextFromClipboard();
+				}
+				return true;
+			default:
+				break;
+			}
 			return false;
 		}
 
@@ -1685,6 +1702,34 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	}
 
 	return res;
+}
+
+void MacText::insertTextFromClipboard() {
+	Common::U32String str = g_system->getTextFromClipboard();
+	if (_textLines.empty()) {
+		splitString(str, 0);
+	} else {
+		int start = _cursorRow, end = _cursorRow;
+
+		while (start && !_textLines[start - 1].paragraphEnd)
+			start--;
+
+		while (end < (int)_textLines.size() - 1 && !_textLines[end].paragraphEnd)
+			end++;
+
+		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, false);
+		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, false);
+
+		// Remove it from the text
+		for (int i = start; i <= end; i++) {
+			_textLines.remove_at(start);
+		}
+		Common::U32String res = pre_str + str + sub_str;
+		splitString(pre_str + str + sub_str, start);
+	}
+	recalcDims();
+	render();
+	_fullRefresh = true;
 }
 
 //////////////////
