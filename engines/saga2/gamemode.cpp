@@ -36,7 +36,6 @@
 #include "saga2/images.h"
 #include "saga2/setup.h"
 #include "saga2/palette.h"
-#include "saga2/iff.h"
 #include "saga2/transit.h"
 #include "saga2/mouseimg.h"
 #include "saga2/player.h"

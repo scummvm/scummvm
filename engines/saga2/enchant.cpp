@@ -32,7 +32,6 @@
 #include "saga2/cmisc.h"
 #include "saga2/contain.h"
 #include "saga2/script.h"
-#include "saga2/iff.h"
 #include "saga2/player.h"
 #include "saga2/target.h"
 #include "saga2/enchant.h"
