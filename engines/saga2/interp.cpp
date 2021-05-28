@@ -1744,27 +1744,28 @@ void initScripts(void) {
 		error("Unable to open script resource file!\n");
 
 	//  Load the data segment
-	dataSegment = (UByteHandle)scriptRes->load(
-	                  dataSegID,
-	                  "saga data segment");
+	dataSegment = (UByteHandle)scriptRes->loadResource(dataSegID, scriptResFile->_filename, "saga data segment");
 
 	if (dataSegment == NULL)
 		error("Unable to load the SAGA data segment");
 
-	dataSegSize = RPtrSize(*dataSegment);
+	dataSegSize = scriptRes->getSize(dataSegID, "saga data segment");
 
-	exportSegment = (UByteHandle)scriptRes->load(exportSegID, "saga export segmant");
+	exportSegment = (UByteHandle)scriptRes->loadResource(exportSegID, scriptResFile->_filename, "saga export segment");
 	assert(exportSegment != NULL);
 
-	exportCount = (scriptRes->size(exportSegID) / sizeof(uint32)) + 1;
+	exportCount = (scriptRes->getSize(exportSegID, "saga export segment") / sizeof(uint32)) + 1;
 }
 
 void cleanupScripts(void) {
-	if (exportSegment) scriptRes->release((RHANDLE)exportSegment);
+	if (exportSegment)
+		free(exportSegment);
 
-	if (dataSegment) scriptRes->release((RHANDLE)dataSegment);
+	if (dataSegment)
+		free(dataSegment);
 
-	if (scriptRes) scriptResFile->disposeContext(scriptRes);
+	if (scriptRes)
+		scriptResFile->disposeContext(scriptRes);
 	scriptRes = NULL;
 }
 

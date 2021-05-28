@@ -284,14 +284,19 @@ uint32 hResContext::getSize(hResID id, const char desc[]) {
 	return entry->size;
 }
 
-byte *hResContext::loadResource(hResID id, const char desc[]) {
+byte *hResContext::loadResource(hResID id, Common::String filename, const char desc[]) {
 	hResEntry *entry;
+
 	if ((entry = findEntry(id)) == nullptr) {
 		warning("Resource %d, %s not found", id, desc);
 		return nullptr;
 	}
 
 	byte *res = (byte*)malloc(entry->size);
+
+	if (!_file.isOpen())
+		_file.open(filename);
+
 	_file.seek(entry->offset, SEEK_SET);
 	_file.read(res, entry->size);
 
@@ -427,11 +432,13 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	_parent = nullptr;
 	_data = nullptr;
 	_numEntries = 0;
+	_filename = resname;
 
 	strncpy(_externalPath, extname ? extname : "", EXTERNAL_PATH_SIZE);
 
 	debugC(1, kDebugResources, "Opening resource: %s", resname);
-	_file.open(resname);
+	if (!_file.open(resname))
+		warning("Unable to open file %s", resname);
 
 	readResource(origin);
 	if (origin.id != HRES_ID)
