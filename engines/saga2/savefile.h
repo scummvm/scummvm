@@ -27,8 +27,6 @@
 #ifndef SAGA2_SAVEFILE_H
 #define SAGA2_SAVEFILE_H
 
-#include "saga2/iff.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

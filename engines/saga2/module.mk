@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	gtext.o \
 	gtextbox.o \
 	hresmgr.o \
-	iff.o \
 	imagcach.o \
 	images.o \
 	input.o \

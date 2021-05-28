@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/fta.h"
-#include "saga2/iff.h"
 #include "saga2/palette.h"
 #include "saga2/transit.h"
 #include "saga2/cmisc.h"
