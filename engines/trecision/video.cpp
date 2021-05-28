@@ -68,7 +68,7 @@ void NightlongSmackerDecoder::setMute(bool mute) {
 	}
 }
 
-void NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
+bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	const uint seekFrame = MAX<uint>(frame - 10, 0);
 
 	if (!isVideoLoaded())
@@ -95,7 +95,8 @@ void NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 		offset += _frameSizes[i] & ~3;
 	}
 
-	_fileStream->seek(start + offset, SEEK_SET);
+	if (!_fileStream->seek(start + offset, SEEK_SET))
+		return false;
 
 	while (getCurFrame() < (int)frame) {
 		decodeNextFrame();
@@ -103,6 +104,8 @@ void NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 
 	_lastTimeChange = videoTrack->getFrameTime(frame);
 	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
+
+	return true;
 }
 
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
