@@ -60,14 +60,8 @@ void TrecisionEngine::loadAll() {
 	for (int i = 0; i < MAXOBJ; ++i)
 		_obj[i].loadObj(&dataNl);
 
-	for (int i = 0; i < MAXINVENTORY; ++i) {
-		_inventoryObj[i]._name = dataNl.readUint16LE();
-		_inventoryObj[i]._examine = dataNl.readUint16LE();
-		_inventoryObj[i]._action = dataNl.readUint16LE();
-		_inventoryObj[i]._flag = dataNl.readByte();
-		dataNl.readByte(); // Padding
-		_inventoryObj[i]._anim = dataNl.readUint16LE();
-	}
+	for (int i = 0; i < MAXINVENTORY; ++i)
+		_inventoryObj[i].loadObj(&dataNl);
 
 	_soundMgr->loadSamples(&dataNl);
 

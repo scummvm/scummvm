@@ -98,4 +98,23 @@ void SObject::loadObj(Common::File *file) {
 	_anim = file->readUint16LE();
 }
 
+/********************************************************************/
+
+void SInvObject::syncGameStream(Common::Serializer &ser) {
+	ser.syncAsUint16LE(_name);
+	ser.syncAsUint16LE(_examine);
+	ser.syncAsUint16LE(_action);
+	ser.syncAsUint16LE(_anim);
+	ser.syncAsByte(_flag);
+}
+
+void SInvObject::loadObj(Common::File *file) {
+	_name = file->readUint16LE();
+	_examine = file->readUint16LE();
+	_action = file->readUint16LE();
+	_flag = file->readByte();
+	file->readByte(); // Padding
+	_anim = file->readUint16LE();
+}
+
 } // namespace Trecision

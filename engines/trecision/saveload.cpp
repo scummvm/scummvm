@@ -467,13 +467,8 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	for (int a = 0; a < MAXOBJ; a++)
 		_obj[a].syncGameStream(ser);
 
-	for (int a = 0; a < MAXINVENTORY; a++) {
-		ser.syncAsUint16LE(_inventoryObj[a]._name);
-		ser.syncAsUint16LE(_inventoryObj[a]._examine);
-		ser.syncAsUint16LE(_inventoryObj[a]._action);
-		ser.syncAsUint16LE(_inventoryObj[a]._anim);
-		ser.syncAsByte(_inventoryObj[a]._flag);
-	}
+	for (int a = 0; a < MAXINVENTORY; a++)
+		_inventoryObj[a].syncGameStream(ser);
 
 	_animMgr->syncGameStream(ser);
 	ser.skip(NUMSAMPLES * 2, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // SoundManager::syncGameStream()
