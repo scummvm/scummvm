@@ -113,6 +113,16 @@ void TrecisionEngine::closeInventory() {
 	}
 }
 
+void TrecisionEngine::closeInventoryImmediately() {
+	_inventoryStatus = INV_OFF;
+	_lightIcon = 0xFF;
+	_flagInventoryLocked = false;
+	_inventoryRefreshStartLine = INVENTORY_HIDE;
+	_inventoryCounter = INVENTORY_HIDE;
+	setInventoryStart(_inventoryRefreshStartIcon, INVENTORY_HIDE);
+	refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
+}
+
 void TrecisionEngine::examineItem() {
 	_curInventory = whatIcon(_mousePos);
 	_actor->actorStop();

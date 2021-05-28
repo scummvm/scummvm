@@ -3871,12 +3871,9 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_curRoom = room;
 	_vm->_gameQueue.initQueue();
 	_vm->_characterQueue.initQueue();
-	_vm->_inventoryStatus = INV_OFF;
-	_vm->_lightIcon = 0xFF;
-	_vm->_flagInventoryLocked = false;
-	_vm->_inventoryRefreshStartLine = INVENTORY_HIDE;
-	_vm->_inventoryCounter = INVENTORY_HIDE;
-	_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
+
+	_vm->closeInventoryImmediately();
+
 	_vm->_flagCharacterExists = true;
 	_vm->_flagShowCharacter = true;
 	_vm->_animMgr->smkStop(kSmackerIcon);
