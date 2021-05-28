@@ -150,6 +150,8 @@ uint32 loadingWindowHeight = 480;
 uint8 *loadingWindowPalette;
 uint8 *loadingWindowData;
 
+uint8 *ColorMapRanges;
+
 
 static void loadFont(Common::File &file, gFont *font, uint32 offset) {
 	file.seek(offset);
@@ -195,6 +197,10 @@ void Saga2Engine::loadExeResources() {
 	loadingWindowData = (uint8 *)malloc(307200);
 	exe.seek(0x004A2A00 - offset);
 	exe.read(loadingWindowData, 307200);
+
+	ColorMapRanges = (uint8 *)malloc(1584);
+	exe.seek(0x004EDC20 - offset);
+	exe.read(ColorMapRanges, 1584);
 
 	exe.close();
 }
