@@ -2726,7 +2726,7 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueEarlyInterviewB1, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueEarlyInterviewB2, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueCrazylegsInterview3, kClueTypeAudioRecording);
-	CDB_Set_Clue_Asset_Type(kClueCrazylegGgrovels, kClueTypeAudioRecording);
+	CDB_Set_Clue_Asset_Type(kClueCrazylegGrovels, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueFolder, kClueTypeObject);
 }
 

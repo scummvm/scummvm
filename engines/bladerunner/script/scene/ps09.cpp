@@ -123,6 +123,7 @@ bool SceneScriptPS09::ClickedOnActor(int actorId) {
 				return true;
 			}
 
+			// TODO Missing kClueGrigorianInterviewB2 for this?
 			if (Game_Flag_Query(kFlagPS09GrigorianDialogue)
 			 && Game_Flag_Query(kFlagPS09GrigorianTalk1)
 			 && (Actor_Clue_Query(kActorMcCoy, kClueGrigorianInterviewA)
@@ -510,9 +511,14 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		Actor_Says(kActorMcCoy, 4385, 19);
 		Actor_Says(kActorGrigorian, 370, 13);
 		Actor_Says(kActorMcCoy, 4390, 19);
-		Actor_Says(kActorMcCoy, 4395, 18);
+		// TODO McCoy needs to have the Registration Clues (1 or 3)
+		//      and probably have talked at least once with CrazyLegs
+		//      for this next quote to make sense
+		Actor_Says(kActorMcCoy, 4395, 18);    // How was Crazylegs supposed to help them?
 		Actor_Says(kActorGrigorian, 380, 14);
-		Actor_Says(kActorGrigorian, 390, 12);
+#if BLADERUNNER_ORIGINAL_BUGS
+		Actor_Says(kActorGrigorian, 390, 12); // boop placeholder
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Modify_Friendliness_To_Other(kActorGrigorian, kActorMcCoy, -5);
 		break;
 

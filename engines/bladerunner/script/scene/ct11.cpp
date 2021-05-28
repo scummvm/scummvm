@@ -66,6 +66,24 @@ void SceneScriptCT11::SceneLoaded() {
 			Scene_2D_Region_Add(0, 505, 316, 513, 321);
 			Game_Flag_Set(kFlagCT11DogWrapperAvailable);
 		}
+
+		if (_vm->_cutContent
+		    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+			&& (Game_Flag_Query(kFlagDektoraIsReplicant)
+				    || !Game_Flag_Query(kFlagGordoIsReplicant))
+		) {
+			// The car is only bought by Reps from CrazyLegs
+			// if Dektora is a Replicant
+			// or if Dektora  is human and Gordo is also human
+			//
+			// Set the note as invisible too, so as not to appear odd or overlap with lichendog wrapper.
+			// The user should "spot" it at the same hot spot region (passenger seat glovebox spot).
+			Item_Add_To_World(kItemNote, kModelAnimationGrigoriansNote, kSetCT11, 640.21f, 30.0f, 470.0f, 512, 12, 12, false, false, false, true);
+			if (Game_Flag_Query(kFlagCT11DogWrapperTaken)) {
+				Scene_2D_Region_Add(0, 505, 316, 513, 321);
+			}
+		}
+
 		if (!Actor_Clue_Query(kActorMcCoy, kClueCar)) {
 			Scene_2D_Region_Add(1, 412, 258, 552, 358);
 		}
@@ -75,6 +93,15 @@ void SceneScriptCT11::SceneLoaded() {
 			Game_Flag_Reset(kFlagCT11DogWrapperAvailable);
 			Game_Flag_Set(kFlagCT11DogWrapperTaken);
 		}
+		// Check if Grigorian's note is still in the world after Act 3
+		// and remove it (in cut content)
+		if (_vm->_cutContent
+		    && Game_Flag_Query(kFlagCT11GrigorianNotePlaced)
+		    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)) {
+			Item_Remove_From_World(kItemNote);
+			Game_Flag_Reset(kFlagCT11GrigorianNotePlaced);
+		}
+
 		Unobstacle_Object("BRIDGE SUPPORT", true);
 		Unobstacle_Object("BODY", true);
 		Unobstacle_Object("HEADLIGHTS", true);
@@ -153,6 +180,32 @@ bool SceneScriptCT11::ClickedOn2DRegion(int region) {
 			Actor_Voice_Over(560, kActorVoiceOver);
 			Actor_Voice_Over(570, kActorVoiceOver);
 			Actor_Voice_Over(580, kActorVoiceOver);
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// in the original game the hotspot would not be removed
+			// after picking up the lichendog Wrapper
+			if (!_vm->_cutContent
+			    || (!Game_Flag_Query(kFlagDektoraIsReplicant)
+			        && Game_Flag_Query(kFlagGordoIsReplicant))) {
+				// - We are not in cutContent
+				// - or we are in cutContent but no Grigorian's note due to other conditions
+				Scene_2D_Region_Remove(0);
+			}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+		}
+		return true;
+	}
+
+	if (_vm->_cutContent
+	    && region == 0
+	    && !Actor_Clue_Query(kActorMcCoy, kClueGrigoriansNote)
+	) {
+		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 686.0f, 0.0f, 658.0f, 12, true, false, false)) {
+			Actor_Face_Heading(kActorMcCoy, 47, false);
+			Item_Remove_From_World(kItemNote);
+			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansNote, false, -1);
+			Item_Pickup_Spin_Effect(kModelAnimationGrigoriansNote, 510, 319);
+			Actor_Voice_Over(8840, kActorMcCoy);
+			Scene_2D_Region_Remove(0);
 		}
 		return true;
 	}

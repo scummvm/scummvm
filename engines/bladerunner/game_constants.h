@@ -332,16 +332,16 @@ enum Clues {
 	kClueMcCoyRetiredSadik                 = 226,
 	kClueMcCoyShotZubenInTheBack           = 227,
 	kClueMcCoyRetiredLutherLance           = 228,
-	kClueMcCoyBetrayal                     = 229,
+	kClueMcCoyBetrayal                     = 229, // Unobtained - never checked
 	kClueMcCoyKilledRunciter2              = 230,
 	kClueClovisOrdersMcCoysDeath           = 231,
 	kClueEarlyAttemptedToSeduceLucy        = 232,
-	kClueCarWasStolen                      = 233,
-	kClueGrigoriansResponse1               = 234,
-	kClueGrigoriansResponse2               = 235,
-	kClueCrazysInvolvement                 = 236,
-	kClueGrigoriansResources               = 237,
-	kClueMcCoyPulledAGun                   = 238,
+	kClueCarWasStolen                      = 233, // Unused
+	kClueGrigoriansResponse1               = 234, // Unused
+	kClueGrigoriansResponse2               = 235, // Unused
+	kClueCrazysInvolvement                 = 236, // Unobtained - has weight for Crazylegs - never checked
+	kClueGrigoriansResources               = 237, // Unobtained - checked for Crazylegs dialogue
+	kClueMcCoyPulledAGun                   = 238, // Unused
 	kClueMcCoyIsStupid                     = 239,
 	kClueMcCoyIsAnnoying                   = 240,
 	kClueMcCoyIsKind                       = 241,
@@ -390,7 +390,7 @@ enum Clues {
 	kClueEarlyInterviewB1                  = 284,
 	kClueEarlyInterviewB2                  = 285,
 	kClueCrazylegsInterview3               = 286,
-	kClueCrazylegGgrovels                  = 287
+	kClueCrazylegGrovels                   = 287 // Unobtained - never checked
 };
 
 enum ClueTypes {
@@ -1106,7 +1106,7 @@ enum Flags {
 	kFlagUG07PoliceLeave                      = 664,
 	kFlagUG19Available                        = 665,
 	kFlagMcCoyFreedOfAccusations              = 666,
-	// 667 is never used
+	kFlagCT11GrigorianNotePlaced              = 667, // Re-purposed. Original: 667 is never used
 	kFlagUG13OriginalRequisitionFormPlaced    = 668, // Re-purposed. Original: 668 is never used
 	kFlagKP02DispatchOnToxicKipple            = 669, // Re-purposed. Original: 669 is never used
 	kFlagCallWithGuzza                        = 670,
@@ -1657,7 +1657,7 @@ enum GameItems {
 	kItemGordosLighterReplicant =  89,
 	kItemGordosLighterHuman     =  90,
 	kItemBriefcase              =  91,
-	// 92 is never used
+	kItemNote                   =  92, // original: 92 is never used
 	// 93 is never used
 	// 94 is never used
 	// 95 is never used
