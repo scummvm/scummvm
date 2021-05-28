@@ -2041,7 +2041,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004),
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100010235),
 	// Commerical Italian games
-	GAME_ENTRY_LANG_PLATFORM("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA, nullptr),
+	GAME_ENTRY_LANG("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA),
 
 	// Post-2.5 games that are likely supported by the AGS engine
 	DEMO_ENTRY("3geeks", "3GEEKS_Demo.exe", "7ddb9e776648faed5a51170d087074e9", 512546851), // itch.io
@@ -3010,7 +3010,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmmhw8", "racoon.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 11664995),
 	GAME_ENTRY("mmmhw9", "TMMCMFH.exe", "c8daf8ef2bc83ea8b0f310cfce209401", 31905464),
 	GAME_ENTRY("mmmhw10", "Bernard_272.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 9775462),
-	GAME_ENTRY("mmmhw11", "Bad and Mad.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6895237), GAME_ENTRY("moncul", "moncul.exe", "0710e2ec71042617f565c01824f0cf3c", 1493822),
+	GAME_ENTRY("mmmhw11", "Bad and Mad.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 6895237),
+	GAME_ENTRY("moncul", "moncul.exe", "0710e2ec71042617f565c01824f0cf3c", 1493822),
 	GAME_ENTRY("monkeystothemoon", "Monkeys to the Moon.exe", "77d91b65ff03c1f3a8381e39c7f693cb", 8720439),
 	GAME_ENTRY("monkeywrench", "monkeywrench.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 27454116),
 	GAME_ENTRY("monsterfromthehountedhill", "Monster.exe", "465f972675db2da6040518221af5b0ba", 6197451),
@@ -3605,7 +3606,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	//////////
 
 	// RuCOMM #1. The Best Man
-	GAME_ENTRY_LANG("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251, Common::RU_RUS),  // Demo
+	DEMO_ENTRY_LANG("tbdiy", "tbdiy.exe", "27343924ddad3be0b97bdcaa71858b1b", 4020251, Common::RU_RUS),
 	GAME_ENTRY_LANG("goodman", "goodman.exe", "465f972675db2da6040518221af5b0ba", 2699578,Common::RU_RUS),
 	GAME_ENTRY_LANG("evildead4", "evil dead.exe", "465f972675db2da6040518221af5b0ba", 2141432,Common::RU_RUS),
 
