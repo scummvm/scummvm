@@ -453,14 +453,15 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 //  Returns the address of a string
 
 uint8 *Thread::strAddress(int strNum) {
-	uint16          *codeBase = (uint16 *)codeSeg;
-	uint8           *strSeg = segmentAddress(codeBase[ 1 ], codeBase[ 2 ]);
+	uint16 seg    = READ_LE_INT16(codeSeg + 2);
+	uint16 offset = READ_LE_INT16(codeSeg + 4);
+	uint8 *strSeg = segmentAddress(seg, offset);
 
 	assert(strNum >= 0);
-	assert(codeBase);
+	assert(codeSeg);
 	assert(strSeg);
 
-	return strSeg + ((uint16 *)strSeg)[ strNum ];
+	return strSeg + READ_LE_INT16(strSeg + 2 * strNum);
 }
 
 //-----------------------------------------------------------------------
@@ -516,9 +517,9 @@ void print_script_name(uint8 *codePtr, char *descr = NULL) {
 	scriptName[ length ] = '\0';
 
 	if (descr)
-		debugC(1, kDebugScripts, "Scripts: op_enter: [%s].%s ", descr, scriptName);
+		debugC(1, kDebugScripts, "Scripts: %d op_enter: [%s].%s ", lastExport, descr, scriptName);
 	else
-		debugC(1, kDebugScripts, "Scripts: op_enter: ::%s ", scriptName);
+		debugC(1, kDebugScripts, "Scripts: %d op_enter: ::%s ", lastExport, scriptName);
 }
 
 char *objectName(int16 segNum, uint16 segOff) {
@@ -1500,9 +1501,12 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	((uint16 *)stackPtr)[ 1 ] = 0;          // dummy return address
 	((uint16 *)stackPtr)[ 2 ] = 0;          // dummy return address
 	framePtr = stackSize;
+	_valid = true;
 
-	if ((codeSeg)[ programCounter.offset ] != op_enter)
-		error("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
+	if ((codeSeg)[ programCounter.offset ] != op_enter) {
+		//warning("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
+		_valid = false;
+	}
 //	assert ((codeSeg)[ programCounter.offset ] == op_enter);
 }
 
@@ -1846,6 +1850,14 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	//  Create a new thread
 	th = new Thread(segNum, segOff, args);
 	thisThread = th;
+	// FIXME: We should probably just use an error(), but this will work for mass debugging
+	if (th == nullptr) {
+		debugC(4, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
+		return scriptResultNoScript;
+	} else if (!th->_valid) {
+		debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
+		return scriptResultNoScript;
+	}
 	print_script_name((th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
 
 	//  Run the thread to completion
@@ -1909,6 +1921,10 @@ scriptResult runMethod(
 			//  Build a temporary dummy thread
 			th = new Thread(0, 0, args);
 			thisThread = th;
+			if (th == nullptr)
+				return scriptResultNoScript;
+			else if (!th->_valid)
+				return scriptResultNoScript;
 
 			result = (scriptResult)cfunc(stack);   // call the function
 			delete th;
@@ -1917,6 +1933,13 @@ scriptResult runMethod(
 		//  Create a new thread
 		th = new Thread(segNum, segOff, args);
 		thisThread = th;
+		if (th == nullptr) {
+			debugC(4, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
+			return scriptResultNoScript;
+		} else if (!th->_valid) {
+			debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
+			return scriptResultNoScript;
+		}
 		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
 
 		//  Put the object segment and ID onto the dummy stack frame

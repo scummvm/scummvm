@@ -351,6 +351,8 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 	hResEntry *entry;
 	entry = &_base[index];
 
+	debugC(5, kDebugResources, "Loading indexed resource: %d (%s)", index, desc);
+
 	if (!_valid || entry == nullptr)
 		return nullptr;
 
@@ -359,10 +361,13 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 
 	byte *res = (byte*)malloc(entry->size);
 
-	if (res) {
-		debugC(4, kDebugResources, "_indexData: pushing (%d, %p)", index, (void*)res);
-		_indexData.setVal(index, res);
+	if (res == nullptr) {
+		debugC(5, kDebugResources, "Could not allocate resources");
+		return nullptr;
 	}
+
+	debugC(5, kDebugResources, "_indexData: pushing (%d, %p)", index, (void*)res);
+	_indexData.setVal(index, res);
 
 	if (filename.equalsIgnoreCase(""))
 		filename = _filename;
