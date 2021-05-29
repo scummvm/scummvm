@@ -27,6 +27,7 @@
 #define MAXSUBSTRING 16
 
 #include "common/scummsys.h"
+#include "trecision/struct.h"
 
 namespace Trecision {
 
