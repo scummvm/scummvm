@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/vdraw.h"
 #include "saga2/gpointer.h"
@@ -33,26 +31,6 @@
 
 namespace Saga2 {
 
-/* ======================================================================= *
-   gMousePointer class
- * ======================================================================= */
-
-//  The mouse pointer constructor
-
-/********* gpointer.cpp/gMousePointer::gMousePointer *****************
-*
-*       NAME gMousePointer::gMousePointer
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 gMousePointer::gMousePointer(gDisplayPort &port) {
 	hideCount = 0;                          // pointer not hidden
 
@@ -74,67 +52,17 @@ gMousePointer::gMousePointer(gDisplayPort &port) {
 	pointerImage = NULL;
 }
 
-//  The destructor
-
-/********* gpointer.cpp/gMousePointer::~gMousePointer ****************
-*
-*       NAME gMousePointer::~gMousePointer
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 gMousePointer::~gMousePointer(void) {
-	//  Free memory we got earlier
-
-	if (saveMap.data)     free(saveMap.data);
+	if (saveMap.data)
+		free(saveMap.data);
 }
 
 //  Init & status check
-
-/********* gpointer.cpp/gMousePointer::~gMousePointer ****************
-*
-*       NAME gMousePointer::~gMousePointer
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 bool gMousePointer::init(Point16 pointerLimits) {
-#ifndef _WIN32
-	return (errNoMouse != InitMouse(pointerLimits.x, pointerLimits.y));
-#else
 	return TRUE;
-#endif
 }
-//  Private routine to draw the mouse pointer image
 
-/********* gpointer.cpp/gMousePointer::draw **************************
-*
-*       NAME gMousePointer::draw
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
+//  Private routine to draw the mouse pointer image
 void gMousePointer::draw(void) {
 #if     defined( USEWINDOWS )
 	if (useWinCursor)
@@ -179,21 +107,6 @@ void gMousePointer::draw(void) {
 }
 
 //  Private routine to restore the mouse pointer image
-
-/********* gpointer.cpp/gMousePointer::restore ***********************
-*
-*       NAME gMousePointer::restore
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::restore(void) {
 #if     defined( USEWINDOWS )
 	if (useWinCursor)
@@ -216,21 +129,6 @@ void gMousePointer::restore(void) {
 }
 
 //  Makes the mouse pointer visible
-
-/********* gpointer.cpp/gMousePointer::show **************************
-*
-*       NAME gMousePointer::show
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::show(void) {
 	assert(hideCount > 0);
 
@@ -244,21 +142,6 @@ void gMousePointer::show(void) {
 }
 
 //  Makes the mouse pointer invisible
-
-/********* gpointer.cpp/gMousePointer::hide **************************
-*
-*       NAME gMousePointer::hide
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::hide(void) {
 	if (hideCount++ == 0) {
 #if     defined( USEWINDOWS )
@@ -269,21 +152,6 @@ void gMousePointer::hide(void) {
 }
 
 //  Makes the mouse pointer visible
-
-/********* gpointer.cpp/gMousePointer::show **************************
-*
-*       NAME gMousePointer::show
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::show(gPort &port, Rect16 r) {
 	Point16         org = port.getOrigin();
 
@@ -302,22 +170,8 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 		if (--hideCount == 0) draw();
 	}
 }
-//  Makes the mouse pointer visible
 
-/********* gpointer.cpp/gMousePointer::manditoryShow **************************
-*
-*       NAME gMousePointer::manditoryShow
-*
-*   SYNOPSIS Forces display of mouse pointer (for error handlers & such)
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
+//  Makes the mouse pointer visible
 int gMousePointer::manditoryShow(void) {
 	int rv = 0;
 	while (hideCount > 0) {
@@ -334,21 +188,6 @@ int gMousePointer::manditoryShow(void) {
 
 
 //  Makes the mouse pointer invisible
-
-/********* gpointer.cpp/gMousePointer::hide **************************
-*
-*       NAME gMousePointer::hide
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::hide(gPort &port, Rect16 r) {
 	Point16         org = port.getOrigin();
 
@@ -369,21 +208,6 @@ void gMousePointer::hide(gPort &port, Rect16 r) {
 }
 
 //  Moves the mouse pointer to a new position
-
-/********* gpointer.cpp/gMousePointer::move **************************
-*
-*       NAME gMousePointer::move
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::move(Point16 pos) {
 	Point16         offsetPos = pos + offsetPosition;
 
@@ -395,21 +219,6 @@ void gMousePointer::move(Point16 pos) {
 }
 
 //  Sets the mouse pointer imagery
-
-/********* gpointer.cpp/gMousePointer::setImage **********************
-*
-*       NAME gMousePointer::setImage
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gMousePointer::setImage(
     gPixelMap       &img,
     int             x,
