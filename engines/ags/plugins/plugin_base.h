@@ -35,6 +35,18 @@ namespace Plugins {
 #define SCRIPT_METHOD(NAME) registerFunction(engine, #NAME, &NAME)
 #define SCRIPT_METHOD_EXT(NAME, PROC) registerFunction(engine, #NAME, &(PROC))
 
+inline float PARAM_TO_FLOAT(int32 xi) {
+	float x;
+	memcpy(&x, &xi, sizeof(float));
+	return x;
+}
+
+inline int32 PARAM_FROM_FLOAT(float x) {
+	int32 xi;
+	memcpy(&xi, &x, sizeof(float));
+	return xi;
+}
+
 #define PARAMS1(T1, N1) \
 	T1 N1 = (T1)params[0]
 #define PARAMS2(T1, N1, T2, N2) \
