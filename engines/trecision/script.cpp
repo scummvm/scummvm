@@ -464,9 +464,6 @@ void TrecisionEngine::doIdle() {
 		doScrollInventory(_mousePos);
 		_inventoryScrollTime = _curTime;
 	}
-
-	if (shouldQuit() && !_flagDialogActive && !_flagDialogMenuActive)
-		quitGame();
 }
 
 void TrecisionEngine::doRoomIn(uint16 curObj) {
