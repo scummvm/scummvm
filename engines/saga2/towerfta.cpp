@@ -67,7 +67,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ breakHandlerInitialized,   &initCtlBreakTrap,     &termCtlBreakTrap },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
 	{ memoryInitialized,         &initMemPool,          &termMemPool },
-	{ graphicsSystemInitialized, &initGraphicsSystem,   &termGraphicsSystem },
 	{ videoInitialized,          &initVideoPlayer,      &termVideoPlayer },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
@@ -173,15 +172,6 @@ extern INITIALIZER(initMemPool);
 
 TERMINATOR(termMemPool) {
 	cleanupMemPool();                       // deallocate memory buffers
-}
-
-
-// ------------------------------------------------------------------------
-
-extern INITIALIZER(initGraphicsSystem);
-
-TERMINATOR(termGraphicsSystem) {
-	cleanupGraphicsSystem();
 }
 
 

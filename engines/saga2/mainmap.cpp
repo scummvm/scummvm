@@ -63,18 +63,6 @@ void shutdownGame() {
 	warning("STUB: shutdownGame");
 }
 
-bool initGraphicsSystem() {
-	warning("STUB: initGraphicsSystem()");
-	return false;
-}
-void cleanupGraphicsSystem() {
-	warning("STUB: cleanupGraphicsSystem()");
-}
-
-void cleanupGraphics() {
-	warning("STUB: cleanupGraphics()");
-}
-
 bool initSystemTimer() {
 	warning("STUB: initSystemTimer()");
 	return false;

@@ -90,11 +90,6 @@ void cleanupErrorHandlers(void);
 bool initializeGame(void);
 void shutdownGame(void);
 
-bool initGraphicsSystem(void);
-void cleanupGraphicsSystem(void);
-
-void cleanupGraphics(void);
-
 bool initSystemTimer(void);
 void cleanupSystemTimer(void);
 
