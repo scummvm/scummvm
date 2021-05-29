@@ -31,6 +31,8 @@ Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 
 	_token = CLASS_CHAR;
 	_counter = 0;
+
+	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
 }
 
 Scheduler::~Scheduler() {
@@ -46,17 +48,17 @@ void Scheduler::process() {
 			if (_counter <= 30) {
 				++_counter;
 				_token = CLASS_CHAR;
-				if (_vm->_gameQueue.getMessage(&_vm->_curMessage))
-					_vm->_curMessage = &_vm->_idleMsg;
+				if (_gameQueue.getMessage(&_vm->_curMessage))
+					_vm->_curMessage = &_idleMsg;
 			} else {
 				_counter = 0;
-				_vm->_curMessage = &_vm->_idleMsg;
+				_vm->_curMessage = &_idleMsg;
 			}
 			break;
 
 		case CLASS_CHAR:
 			_token = CLASS_GAME;
-			if (_vm->_flagPaintCharacter || _vm->_characterQueue.getMessage(&_vm->_curMessage))
+			if (_vm->_flagPaintCharacter || _characterQueue.getMessage(&_vm->_curMessage))
 				retry = true;
 			break;
 
@@ -72,9 +74,9 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	MessageQueue *lq;
 
 	if (cls <= CLASS_GAME)
-		lq = &_vm->_gameQueue;
+		lq = &_gameQueue;
 	else
-		lq = &_vm->_characterQueue;
+		lq = &_characterQueue;
 
 	if (lq->_len >= MAXMESSAGE)
 		return;
@@ -94,9 +96,9 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 		lq->_tail = 0;
 	++lq->_len;
 
-	if (lq == &_vm->_gameQueue && lq->_len > _maxMessageGame)
+	if (lq == &_gameQueue && lq->_len > _maxMessageGame)
 		_maxMessageGame = lq->_len;
-	else if (lq == &_vm->_characterQueue && lq->_len > _maxMessageCharacter)
+	else if (lq == &_characterQueue && lq->_len > _maxMessageCharacter)
 		_maxMessageCharacter = lq->_len;
 
 	lq->orderEvents();
@@ -116,6 +118,27 @@ void Scheduler::mouseExamine(uint16 object) {
 
 void Scheduler::mouseOperate(uint16 object) {
 	doEvent(MC_ACTION, ME_MOUSEOPERATE, MP_DEFAULT, 0, 0, 0, object);
+}
+
+void Scheduler::init() {
+	resetQueues();
+	for (uint8 i = 0; i < MAXMESSAGE; i++) {
+		_gameQueue._event[i] = &_gameMsg[i];
+		_characterQueue._event[i] = &_characterMsg[i];
+	}
+}
+
+void Scheduler::resetQueues() {
+	_gameQueue.initQueue();
+	_characterQueue.initQueue();
+}
+
+void Scheduler::initCharacterQueue() {
+	_characterQueue.initQueue();
+}
+
+bool Scheduler::testEmptyQueues() {
+	return _characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueues(MC_DIALOG);
 }
 
 uint8 MessageQueue::predEvent(uint8 i) {
@@ -150,7 +173,7 @@ void MessageQueue::orderEvents() {
 	}
 }
 
-bool MessageQueue::testEmptyQueue(uint8 cls) {
+bool MessageQueue::testEmptyQueues(uint8 cls) {
 	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
 		if (_event[pos]->_class != cls)
 			return false;

@@ -3733,7 +3733,7 @@ void LogicManager::doMouseLeftRight() {
 			_vm->_pathFind->whereIs(pmousex, pmousey);
 			_vm->_pathFind->findPath();
 		}
-		_vm->_characterQueue.initQueue();
+		_vm->_scheduler->initCharacterQueue();
 
 		if (_vm->checkMask(_vm->_mousePos) && !_vm->_flagDialogActive) {
 			if (_vm->_curRoom == kRoom1D && !_vm->_room[kRoom1D].hasExtra() && (_vm->_curObj != oSCALA1D))
@@ -3815,7 +3815,7 @@ void LogicManager::doMouseLeftRight() {
 			return;
 
 		if (_vm->isIconArea(_vm->_mousePos) && _vm->whatIcon(_vm->_mousePos) && (_vm->_inventoryStatus == INV_INACTION)) {
-			_vm->_characterQueue.initQueue();
+			_vm->_scheduler->initCharacterQueue();
 			_vm->_actor->actorStop();
 			_vm->_pathFind->nextStep();
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
@@ -3869,8 +3869,7 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 
 	_vm->_oldRoom = _vm->_curRoom;
 	_vm->_curRoom = room;
-	_vm->_gameQueue.initQueue();
-	_vm->_characterQueue.initQueue();
+	_vm->_scheduler->resetQueues();
 
 	_vm->closeInventoryImmediately();
 

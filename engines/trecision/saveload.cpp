@@ -139,8 +139,7 @@ bool TrecisionEngine::dataSave() {
 	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
-	_gameQueue.initQueue();
-	_characterQueue.initQueue();
+	_scheduler->resetQueues();
 
 	freeKey();
 
@@ -332,8 +331,7 @@ bool TrecisionEngine::dataLoad() {
 	_graphicsMgr->clearScreenBufferInventory();
 	_graphicsMgr->copyToScreen(0, TOP + AREA, MAXX, TOP);
 
-	_gameQueue.initQueue();
-	_characterQueue.initQueue();
+	_scheduler->resetQueues();
 
 	freeKey();
 
