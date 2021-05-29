@@ -26,9 +26,6 @@
 namespace Trecision {
 
 Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
-	_maxMessageGame = 0;
-	_maxMessageCharacter = 0;
-
 	_token = CLASS_CHAR;
 	_counter = 0;
 
@@ -48,8 +45,13 @@ void Scheduler::process() {
 			if (_counter <= 30) {
 				++_counter;
 				_token = CLASS_CHAR;
-				if (_gameQueue.getMessage(&_vm->_curMessage))
+				if (!_gameQueue.empty()) {
+					_msg = _gameQueue.front();
+					_vm->_curMessage = &_msg;
+					_gameQueue.pop_front();
+				} else {
 					_vm->_curMessage = &_idleMsg;
+				}
 			} else {
 				_counter = 0;
 				_vm->_curMessage = &_idleMsg;
@@ -58,8 +60,13 @@ void Scheduler::process() {
 
 		case CLASS_CHAR:
 			_token = CLASS_GAME;
-			if (_vm->_flagPaintCharacter || _characterQueue.getMessage(&_vm->_curMessage))
+			if (_vm->_flagPaintCharacter || _characterQueue.empty()) {
 				retry = true;
+			} else {
+				_msg = _characterQueue.front();
+				_vm->_curMessage = &_msg;
+				_characterQueue.pop_front();
+			}
 			break;
 
 		default:
@@ -68,40 +75,33 @@ void Scheduler::process() {
 	}
 }
 
+struct MessageComparator {
+	bool operator()(const Message &x, const Message &y) const {
+		return x._priority < y._priority;
+	}
+};
+
 void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 						uint16 u16Param1, uint16 u16Param2,
 						uint8 u8Param, uint32 u32Param) {
-	MessageQueue *lq;
+	Message m;
 
-	if (cls <= CLASS_GAME)
-		lq = &_gameQueue;
-	else
-		lq = &_characterQueue;
+	m._class = cls;
+	m._event = event;
+	m._priority = priority;
+	m._u16Param1 = u16Param1;
+	m._u16Param2 = u16Param2;
+	m._u8Param = u8Param;
+	m._u32Param = u32Param;
+	m._timestamp = _vm->_curTime;
 
-	if (lq->_len >= MAXMESSAGE)
-		return;
-
-	Message *lm = lq->_event[lq->_tail++];
-
-	lm->_class = cls;
-	lm->_event = event;
-	lm->_priority = priority;
-	lm->_u16Param1 = u16Param1;
-	lm->_u16Param2 = u16Param2;
-	lm->_u8Param = u8Param;
-	lm->_u32Param = u32Param;
-	lm->_timestamp = _vm->_curTime;
-
-	if (lq->_tail == MAXMESSAGE)
-		lq->_tail = 0;
-	++lq->_len;
-
-	if (lq == &_gameQueue && lq->_len > _maxMessageGame)
-		_maxMessageGame = lq->_len;
-	else if (lq == &_characterQueue && lq->_len > _maxMessageCharacter)
-		_maxMessageCharacter = lq->_len;
-
-	lq->orderEvents();
+	if (cls <= CLASS_GAME) {
+		_gameQueue.push_back(m);
+		Common::sort(_gameQueue.begin(), _gameQueue.end(), MessageComparator());
+	} else {
+		_characterQueue.push_back(m);
+		Common::sort(_characterQueue.begin(), _characterQueue.end(), MessageComparator());
+	}
 }
 
 void Scheduler::leftClick(uint16 x, uint16 y) {
@@ -122,80 +122,44 @@ void Scheduler::mouseOperate(uint16 object) {
 
 void Scheduler::init() {
 	resetQueues();
-	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		_gameQueue._event[i] = &_gameMsg[i];
-		_characterQueue._event[i] = &_characterMsg[i];
-	}
+
+	_vm->_curMessage = &_idleMsg;
 }
 
 void Scheduler::resetQueues() {
-	_gameQueue.initQueue();
-	_characterQueue.initQueue();
+	_gameQueue.clear();
+	_characterQueue.clear();
 }
 
 void Scheduler::initCharacterQueue() {
-	_characterQueue.initQueue();
+	_characterQueue.clear();
 }
 
 bool Scheduler::testEmptyQueues() {
-	return _characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueues(MC_DIALOG);
-}
+	bool onlyDialogEventsInGameQueue = true;
+	bool noActionInProgress = true;
 
-uint8 MessageQueue::predEvent(uint8 i) {
-	return i == 0 ? MAXMESSAGE - 1 : i - 1;
-}
-
-bool MessageQueue::getMessage(Message **msg) {
-	if (!_len)
-		return true;
-
-	*msg = _event[_head++];
-	if (_head == MAXMESSAGE)
-		_head = 0;
-	--_len;
-
-	return false;
-}
-
-void MessageQueue::initQueue() {
-	_head = 0;
-	_tail = 0;
-	_len = 0;
-}
-
-void MessageQueue::orderEvents() {
-	for (uint8 pos = predEvent(_tail); pos != _head; pos = predEvent(pos)) {
-		if (_event[pos]->_priority > _event[predEvent(pos)]->_priority) {
-			if (_event[pos]->_priority < MP_HIGH)
-				++_event[pos]->_priority;
-			SWAP(_event[pos], _event[predEvent(pos)]);
+	for (Common::List<Message>::iterator it = _gameQueue.begin(); it != _gameQueue.end(); ++it) {
+		if (it->_class != MC_DIALOG) {
+			onlyDialogEventsInGameQueue = false;
+			break;
 		}
 	}
-}
 
-bool MessageQueue::testEmptyQueues(uint8 cls) {
-	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
-		if (_event[pos]->_class != cls)
-			return false;
+	for (Common::List<Message>::iterator it = _characterQueue.begin(); it != _characterQueue.end(); ++it) {
+		if (it->_class == MC_CHARACTER) {
+			if (it->_event == ME_CHARACTERACTION ||
+				it->_event == ME_CHARACTERGOTO ||
+				it->_event == ME_CHARACTERGOTOACTION ||
+				it->_event == ME_CHARACTERGOTOEXAMINE ||
+				it->_event == ME_CHARACTERCONTINUEACTION) {
+				noActionInProgress = false;
+				break;
+			}
+		}
 	}
 
-	return true;
-}
-
-bool MessageQueue::testEmptyCharacterQueue4Script() {
-	for (uint8 pos = _head; pos != _tail; pos = (pos + 1) % MAXMESSAGE) {
-		if (_event[pos]->_class != MC_CHARACTER)
-			continue;
-
-		if (_event[pos]->_event == ME_CHARACTERACTION || _event[pos]->_event == ME_CHARACTERGOTO || _event[pos]->_event == ME_CHARACTERGOTOACTION || _event[pos]->_event == ME_CHARACTERGOTOEXAMINE || _event[pos]->_event == ME_CHARACTERCONTINUEACTION)
-			return false;
-	}
-
-	//	true when:
-	//	1) the queue is empty
-	//	2) or there's a particular action in progress
-
-	return true;
+	return noActionInProgress && onlyDialogEventsInGameQueue;
 }
 
 } // End of namespace Trecision
