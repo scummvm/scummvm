@@ -32,11 +32,10 @@ class BrowserDialog;
 class CommandSender;
 class ListWidget;
 class ContainerWidget;
-class GameContainerWidget;
-class GridContainerWidget;
+class EntryContainerWidget;
+class GridWidget;
 class ButtonWidget;
 class PicButtonWidget;
-class GameThumbButton;
 class GraphicsWidget;
 class StaticTextWidget;
 class EditTextWidget;
@@ -63,7 +62,7 @@ public:
 	Common::String getGameConfig(int item, Common::String key);
 protected:
 	EditTextWidget  *_searchWidget;
-	GridContainerWidget	*_grid;
+	GridWidget	*_grid;
 	ListWidget		*_list;
 	Widget			*_startButton;
 	ButtonWidget	*_loadButton;
@@ -132,11 +131,11 @@ protected:
 	void selectTarget(const String &target);
 private:
 	struct GameEntry {
-		GameEntry() : container(nullptr), button(nullptr), title(nullptr), language(nullptr), platform(nullptr) {}
-		GameEntry(GameContainerWidget *c, GameThumbButton *b, StaticTextWidget *t, StaticTextWidget *l, GraphicsWidget *p) : container(c), button(b), title(t), language(l), platform(p) {}
+		GameEntry() : container(nullptr), thumb(nullptr), title(nullptr), language(nullptr), platform(nullptr) {}
+		GameEntry(EntryContainerWidget *c, GraphicsWidget *b, StaticTextWidget *t, StaticTextWidget *l, GraphicsWidget *p) : container(c), thumb(b), title(t), language(l), platform(p) {}
 
-		GameContainerWidget  *container;
-		GameThumbButton  *button;
+		EntryContainerWidget  *container;
+		GraphicsWidget  *thumb;
 		StaticTextWidget *title;
 		StaticTextWidget *language;
 		GraphicsWidget 	 *platform;

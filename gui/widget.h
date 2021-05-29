@@ -38,6 +38,7 @@
 namespace GUI {
 
 class ScrollContainerWidget;
+class ScrollBarWidget;
 
 enum {
 	WIDGET_ENABLED		= 1 <<  0,
@@ -460,31 +461,104 @@ protected:
 	ThemeEngine::WidgetBackground _backgroundType;
 };
 
-/* GameThumbButton */
-class GameThumbButton : public PicButtonWidget {
-public:
-	GameThumbButton(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0): PicButtonWidget(boss, x, y, w, h, tooltip, cmd, hotkey) {};
-	GameThumbButton(GuiObject *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0): PicButtonWidget(boss, name, tooltip, cmd, hotkey) {};
+struct LauncherEntry {
+	Common::String key;
+	Common::String description;
+	const Common::ConfigManager::Domain *domain;
+
+	LauncherEntry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
+		key = k; description = d, domain = v;
+	}
+};
+
+struct LauncherEntryComparator {
+	bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
+			return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
+	}
+};
+
+class EntryContainerWidget;
+
+/* GridWidget */
+class GridWidget : public ContainerWidget {
+private:
+	Common::Array<Graphics::ManagedSurface *> _platformIcons;
+	Common::Array<EntryContainerWidget *> _entries;
+	Common::Array<LauncherEntry> _allEntries;
+	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
+	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
 	
-	void setGfx(const Graphics::ManagedSurface *gfx, int statenum = kPicButtonStateEnabled, bool scale = true);
-	void setGfxFromTheme(const char *name, int statenum = kPicButtonStateEnabled, bool scale = true);
-	void drawWidget(void);
+	ScrollBarWidget *_scrollBar;
+	ContainerWidget *_visibleWindow;
+
+	uint16 _scrollWindowHeight, _scrollWindowWidth, _scrollSpeed;
+	uint16 _innerHeight, _innerWidth;
+	uint16 _thumbnailHeight, _thumbnailWidth;
+	int _scrollPos;
+	int _entriesPerRow;
+	int _entriesOnScreen;
+	int _totalEntries;
+	bool _titlesVisible;
+
+public:
+
+	enum Platform {
+		kPlatformDOS,
+		kPlatformAmiga,
+		kPlatformApple2,
+		kPlatformUnknown = -1
+	};
+
+	GridWidget(GuiObject *boss, int x, int y, int w, int h);
+	GridWidget(GuiObject *boss, const Common::String &name);
+
+	Graphics::ManagedSurface * filenameToSurface(Common::String &name);
+	Graphics::ManagedSurface * platformToSurface(Platform platformCode);
+
+	Common::Array<Common::String> visibleEntries(void);
+
+	void loadPlatformIcons();
+	void updateEntries(void);
+	void gridFromGameList(Common::Array<LauncherEntry> *list);
+	int getLoadedNumber(void) {return _loadedSurfaces.size();}
+	void reloadThumbnails();
+	void handleMouseWheel(int x, int y, int direction) override;
+
+
+	int selectedEntry;
 };
 
-/* GameContainerWidget */
-class GameContainerWidget : public ContainerWidget {
-public:
-	GameContainerWidget(GuiObject *boss, int x, int y, int w, int h) : ContainerWidget(boss, x, y, w, h) {};
+enum {
+	kThumbnailWidth = 192,
+	kThumbnailHeight = 128
 };
 
-/* GridContainerWidget */
-class GridContainerWidget : public ContainerWidget {
+/* EntryContainerWidget */
+class EntryContainerWidget : public ContainerWidget {
 public:
-	GridContainerWidget(GuiObject *boss, int x, int y, int w, int h) : ContainerWidget(boss, x, y, w, h) {};
-	GridContainerWidget(GuiObject *boss, const Common::String &name) : ContainerWidget(boss, name) {};
+	GraphicsWidget *_thumb;
+	GraphicsWidget *_plat;
+	StaticTextWidget *_lang;
+	StaticTextWidget *_title;
+	GridWidget *_grid;
 
-	int selectedGame;
-	Common::Array<GameContainerWidget> _entries;
+	Common::Array<LauncherEntry> _installations;
+	LauncherEntry *_activeInstall;
+
+	bool isHighlighted;
+	void setActiveInstallation(LauncherEntry &install);
+
+public:
+	EntryContainerWidget(GridWidget *boss, int x, int y, int w, int h);
+	EntryContainerWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t);
+	
+	void addInstallation(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
+	void addInstallation(LauncherEntry &install);
+	void addInstallations(Common::Array<LauncherEntry> installs);
+	void setActiveInstallation(int i) {setActiveInstallation(_installations[i]);};
+	void updateEntry();
+	void drawWidget() override;
+
 };
 
 /* OptionsContainerWidget */

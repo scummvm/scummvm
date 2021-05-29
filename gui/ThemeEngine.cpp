@@ -121,7 +121,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDDefaultBackground,            "default_bg",           kDrawLayerBackground,   kDDNone},
 	{kDDTextSelectionBackground,      "text_selection",       kDrawLayerForeground,  kDDNone},
 	{kDDTextSelectionFocusBackground, "text_selection_focus", kDrawLayerForeground,  kDDNone},
-	{kDDThumbnailBackground,    	  "thumb_bg",   		  kDrawLayerBackground,   kDDNone},
+	{kDDThumbnailBackground,    	  "thumb_bg",   		  kDrawLayerForeground,   kDDNone},
 
 	{kDDWidgetBackgroundDefault,    "widget_default",   kDrawLayerBackground,   kDDNone},
 	{kDDWidgetBackgroundSmall,      "widget_small",     kDrawLayerBackground,   kDDNone},
