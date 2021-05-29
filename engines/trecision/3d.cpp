@@ -481,10 +481,10 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		actor->_vertex = &actor->_characterArea[cfp * actor->_vertexNum];
 	}
 
-	SCamera *_curCamera = actor->_camera;
-	SLight *_curLight = actor->_light;
-	STexture *_curTexture = actor->_texture;
-	SFace *_curFace = actor->_face;
+	SCamera *camera = actor->_camera;
+	SLight *light = actor->_light;
+	STexture *textures = actor->_textures;
+	SFace *face = actor->_face;
 
 	int vertexNum = actor->_vertexNum;
 
@@ -493,17 +493,17 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		_totalShadowVerts = 0;
 
 		// camera matrix
-		float e10 = _curCamera->_e1[0];
-		float e11 = _curCamera->_e1[1];
-		float e12 = _curCamera->_e1[2];
+		float e10 = camera->_e1[0];
+		float e11 = camera->_e1[1];
+		float e12 = camera->_e1[2];
 
-		float e20 = _curCamera->_e2[0];
-		float e21 = _curCamera->_e2[1];
-		float e22 = _curCamera->_e2[2];
+		float e20 = camera->_e2[0];
+		float e21 = camera->_e2[1];
+		float e22 = camera->_e2[2];
 
-		float e30 = _curCamera->_e3[0];
-		float e31 = _curCamera->_e3[1];
-		float e32 = _curCamera->_e3[2];
+		float e30 = camera->_e3[0];
+		float e31 = camera->_e3[1];
+		float e32 = camera->_e3[2];
 
 		// Light directions
 		float l0 = 0.0f;
@@ -535,20 +535,20 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			// if off                lint == 0
 			// if it has a shadow    lint & 0x80
 
-			int lint = _curLight->_inten & 0x7F;
+			int lint = light->_inten & 0x7F;
 			if (lint) {                                       // if it's not turned off
-				tx = _curLight->_x - actor->_px - actor->_dx; // computes direction vector
-				tz = _curLight->_z - actor->_pz - actor->_dz; // between light and actor
-				ty = _curLight->_y;
+				tx = light->_x - actor->_px - actor->_dx; // computes direction vector
+				tz = light->_z - actor->_pz - actor->_dz; // between light and actor
+				ty = light->_y;
 
-				if (_curLight->_position) {                   // if it's attenuated
+				if (light->_position) {                   // if it's attenuated
 					dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
 
 					// adjust light intensity due to the distance
-					if (_vm->floatComp(dist, _curLight->_outr) == 1) // if it's out of range it's off
+					if (_vm->floatComp(dist, light->_outr) == 1) // if it's out of range it's off
 						lint = 0;
-					else if (_vm->floatComp(dist, _curLight->_inr) == 1) // if it's inside the circle it's decreased
-						lint = (int)((float)lint * (_curLight->_outr - dist) / (_curLight->_outr - _curLight->_inr));
+					else if (_vm->floatComp(dist, light->_inr) == 1) // if it's inside the circle it's decreased
+						lint = (int)((float)lint * (light->_outr - dist) / (light->_outr - light->_inr));
 				}
 			}
 
@@ -563,13 +563,13 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				l2 /= t;
 
 				// Adjust light intensity according to the spot
-				tx = (float)_curLight->_fallOff;
-				if (_curLight->_fallOff) { // for light spot only
-					ty = (float)_curLight->_hotspot;
+				tx = (float)light->_fallOff;
+				if (light->_fallOff) { // for light spot only
+					ty = (float)light->_hotspot;
 
-					pa0 = _curLight->_dx * cost - _curLight->_dz * sint;
-					pa1 = _curLight->_dy;
-					pa2 = _curLight->_dx * sint + _curLight->_dz * cost;
+					pa0 = light->_dx * cost - light->_dz * sint;
+					pa1 = light->_dy;
+					pa2 = light->_dx * sint + light->_dz * cost;
 
 					t = sqrt(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
 					pa0 /= t;
@@ -595,7 +595,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				}
 			}
 
-			if ((_curLight->_inten & 0x80) && lint) { // if it's shadowed and still on
+			if ((light->_inten & 0x80) && lint) { // if it's shadowed and still on
 
 				// casts shadow vertices
 				for (int a = 0; a < SHADOWVERTSNUM; ++a) {
@@ -636,7 +636,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 				}
 			}
 
-			++_curLight;
+			++light;
 		}
 
 		// rearranged light values so they can be viewed
@@ -644,9 +644,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
 
 		// Calculate the distance of the character from the room
-		tx = _curCamera->_ex - actor->_px;
-		ty = _curCamera->_ey;
-		tz = _curCamera->_ez - actor->_pz;
+		tx = camera->_ex - actor->_px;
+		ty = camera->_ey;
+		tz = camera->_ez - actor->_pz;
 
 		dist = tx * e30 + ty * e31 + tz * e32;
 
@@ -670,8 +670,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
 			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
 
-			int x2d = _vm->_cx + (int)((l0 * _curCamera->_fovX) / l2);
-			int y2d = _vm->_cy + (int)((l1 * _curCamera->_fovY) / l2);
+			int x2d = _vm->_cx + (int)((l0 * camera->_fovX) / l2);
+			int y2d = _vm->_cy + (int)((l1 * camera->_fovY) / l2);
 
 			_vVertex[a]._x = x2d;
 			_vVertex[a]._y = y2d;
@@ -744,9 +744,9 @@ void Renderer3D::drawCharacter(uint8 flag) {
 		}
 
 		for (uint a = 0; a < actor->_faceNum; ++a) {
-			int p0 = _curFace->_a;
-			int p1 = _curFace->_b;
-			int p2 = _curFace->_c;
+			int p0 = face->_a;
+			int p1 = face->_b;
+			int p2 = face->_c;
 
 			int px0 = _vVertex[p0]._x;
 			int py0 = _vVertex[p0]._y;
@@ -756,16 +756,16 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			int py2 = _vVertex[p2]._y;
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-				uint16 b = _curFace->_mat;
-				if (_curTexture[b].isActive()) {
+				uint16 b = face->_mat;
+				if (b < MAXMAT && textures[b].isActive()) {
 					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[a][0][0], actor->_textureCoord[a][0][1],
 									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[a][1][0], actor->_textureCoord[a][1][1],
 									px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[a][2][0], actor->_textureCoord[a][2][1],
-									&_curTexture[b]);
+									&textures[b]);
 				}
 			}
 
-			++_curFace;
+			++face;
 		}
 
 		int p0 = 0;

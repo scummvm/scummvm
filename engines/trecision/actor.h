@@ -55,7 +55,7 @@ public:
 	SFace *_face;
 	SLight *_light;
 	SCamera *_camera;
-	STexture *_texture;
+	STexture *_textures;
 
 	uint16 _textureMat[256][91];
 	int16  _textureCoord[MAXFACE][3][2];
