@@ -117,4 +117,32 @@ void SInvObject::loadObj(Common::File *file) {
 	_anim = file->readUint16LE();
 }
 
+/********************************************************************/
+
+void SVertex::clear() {
+	_x = _y = _z = 0.0f;
+	_nx = _ny = _nz = 0.0f;
+}
+
+/********************************************************************/
+
+void SLight::clear() {
+	_x = _y = _z = 0.0f;
+	_dx = _dy = _dz = 0.0f;
+	_inr = _outr = 0.0f;
+	_hotspot = 0;
+	_fallOff = 0;
+	_inten = 0;
+	_position = 0;
+}
+
+/********************************************************************/
+
+void SCamera::clear() {
+	_ex = _ey = _ez = 0.0f;
+	_fovX = _fovY = 0.0f;
+	for (uint8 i = 0; i < 3; ++i)
+		_e1[i] = _e2[i] = _e3[i] = 0.0f;
+}
+
 } // namespace Trecision
