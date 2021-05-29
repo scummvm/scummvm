@@ -179,7 +179,7 @@ struct STexture {
 	int16 _dx, _dy, _angle;
 	uint8 *_texture;
 
-	void init();
+	void clear();
 	void set(int16 x, int16 y, uint8 *buffer);
 	bool isActive() { return _active; };
 

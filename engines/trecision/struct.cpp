@@ -119,7 +119,7 @@ void SInvObject::loadObj(Common::File *file) {
 
 /********************************************************************/
 
-void STexture::init() {
+void STexture::clear() {
 	_dx = _dy = _angle = 0;
 	_texture = nullptr;
 	_active = false;

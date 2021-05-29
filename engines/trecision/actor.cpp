@@ -89,7 +89,7 @@ Actor::~Actor() {
 
 void Actor::initTextures() {
 	for (int i = 0; i < MAXMAT; ++i)
-		_textureArea[i].init();
+		_textureArea[i].clear();
 
 	// head
 	_textureArea[0].set(300 / 2, 208 / 2, _textureData);
