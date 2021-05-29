@@ -178,7 +178,13 @@ struct SDText {
 struct STexture {
 	int16 _dx, _dy, _angle;
 	uint8 *_texture;
-	uint8 _flag;
+
+	void init();
+	void set(int16 x, int16 y, uint8 *buffer);
+	bool isActive() { return _active; };
+
+private:
+	bool _active = false;
 };
 
 struct SVertex {

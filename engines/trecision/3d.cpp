@@ -757,7 +757,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
 				uint16 b = _curFace->_mat;
-				if (_curTexture[b]._flag & TEXTUREACTIVE) {
+				if (_curTexture[b].isActive()) {
 					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[a][0][0], actor->_textureCoord[a][0][1],
 									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[a][1][0], actor->_textureCoord[a][1][1],
 									px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[a][2][0], actor->_textureCoord[a][2][1],

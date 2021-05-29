@@ -88,29 +88,17 @@ Actor::~Actor() {
 }
 
 void Actor::initTextures() {
+	for (int i = 0; i < MAXMAT; ++i)
+		_textureArea[i].init();
+
 	// head
-	uint8 idx = 0;
-	_textureArea[idx]._dx = 300 / 2;
-	_textureArea[idx]._dy = 208 / 2;
-	_textureArea[idx]._angle = 0;
-	_textureArea[idx]._texture = _textureData;
-	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	_textureArea[0].set(300 / 2, 208 / 2, _textureData);
 
 	// body
-	idx = 1;
-	_textureArea[idx]._dx = 300;
-	_textureArea[idx]._dy = 300;
-	_textureArea[idx]._angle = 0;
-	_textureArea[idx]._texture = _textureArea[0]._texture + (300 * 208) / 4;
-	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	_textureArea[1].set(300, 300, _textureData + (300 * 208 / 4));
 
 	// arms
-	idx = 2;
-	_textureArea[idx]._dx = 300;
-	_textureArea[idx]._dy = 150;
-	_textureArea[idx]._angle = 0;
-	_textureArea[idx]._texture = _textureArea[1]._texture + 300 * 300;
-	_textureArea[idx]._flag = TEXTUREACTIVE + TEXTURECYLIND;
+	_textureArea[2].set(300, 150, _textureData + (300 * 208 / 4) + (300 * 300));
 
 	_texture = (STexture *)&_textureArea[0];
 }
