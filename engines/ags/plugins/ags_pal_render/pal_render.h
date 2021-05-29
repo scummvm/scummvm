@@ -31,18 +31,6 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSPalRender {
 
-inline float PARAM_TO_FLOAT(int32 xi) {
-	float x;
-	memcpy(&x, &xi, sizeof(float));
-	return x;
-}
-
-inline int32 PARAM_FROM_FLOAT(float x) {
-	int32 xi;
-	memcpy(&xi, &x, sizeof(float));
-	return xi;
-}
-
 struct PALSTRUCT {
 	byte r;
 	byte b;
