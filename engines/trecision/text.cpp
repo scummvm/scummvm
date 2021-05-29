@@ -119,7 +119,7 @@ void TextManager::characterTalk(const char *s) {
 
 	characterContinueTalk();
 
-	_vm->_characterQueue.initQueue();
+	_vm->_scheduler->initCharacterQueue();
 	_vm->_actor->actorStop();
 }
 

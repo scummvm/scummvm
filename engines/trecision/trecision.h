@@ -34,6 +34,7 @@
 #include "trecision/defines.h"
 #include "trecision/fastfile.h"
 #include "trecision/struct.h"
+#include "trecision/scheduler.h"
 
 namespace Trecision {
 class AnimManager;
@@ -270,12 +271,7 @@ public:
 	const char *_sysText[MAXSYSTEXT];
 
 	// Message system
-	Message _gameMsg[MAXMESSAGE];
-	Message _characterMsg[MAXMESSAGE];
-	Message _idleMsg;
 	Message *_curMessage;
-	MessageQueue _gameQueue;
-	MessageQueue _characterQueue;
 	// Snake management
 	Message _snake52;
 

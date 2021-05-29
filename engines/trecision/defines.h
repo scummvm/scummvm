@@ -2392,8 +2392,6 @@ Management of "Use with"
 #define USED 0
 #define WITH 1
 
-#define MAXMESSAGE 128
-
 
 #define PI 3.1415927f
 #define PI2 6.2831853f

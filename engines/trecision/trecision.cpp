@@ -66,7 +66,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
 	_inventoryRefreshStartIconOld = 0xFF;
-	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
 	_curObj = 1;
 	_inventoryRefreshStartLine = INVENTORY_HIDE;
 	_inventoryRefreshStartLineOld = 0xFF;
@@ -290,12 +289,7 @@ void TrecisionEngine::initMain() {
 		_obj[c]._position = -1;
 
 	_curRoom = kRoomIntro;
-	_gameQueue.initQueue();
-	_characterQueue.initQueue();
-	for (uint8 i = 0; i < MAXMESSAGE; i++) {
-		_gameQueue._event[i] = &_gameMsg[i];
-		_characterQueue._event[i] = &_characterMsg[i];
-	}
+	_scheduler->init();
 
 	loadAll();
 	processTime();
@@ -312,7 +306,7 @@ void TrecisionEngine::checkSystem() {
 }
 
 void TrecisionEngine::startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 sent) {
-	_characterQueue.initQueue();
+	_scheduler->initCharacterQueue();
 
 	_flagInventoryLocked = false;
 	if (action > hLAST) {

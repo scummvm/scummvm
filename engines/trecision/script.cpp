@@ -60,7 +60,7 @@ void TrecisionEngine::playScript(uint16 id) {
 }
 
 void TrecisionEngine::evalScript() {
-	if (_characterQueue.testEmptyCharacterQueue4Script() && _gameQueue.testEmptyQueue(MC_DIALOG)) {
+	if (_scheduler->testEmptyQueues()) {
 		++_curScriptFrame[_curStack];
 		_graphicsMgr->hideCursor();
 
@@ -317,7 +317,7 @@ void TrecisionEngine::doCharacter() {
 	case ME_CHARACTERACTION:
 		if (_flagWaitRegen)
 			reEvent();
-		_characterQueue.initQueue();
+		_scheduler->initCharacterQueue();
 		_inventoryRefreshStartLine = INVENTORY_HIDE;
 		refreshInventory(_inventoryRefreshStartIcon, INVENTORY_HIDE);
 		_inventoryStatus = INV_OFF;
@@ -340,7 +340,7 @@ void TrecisionEngine::doCharacter() {
 			_graphicsMgr->showCursor();
 			_flagShowCharacter = true;
 			_pathFind->_characterInMovement = false;
-			_characterQueue.initQueue();
+			_scheduler->initCharacterQueue();
 			_animTypeMgr->end(kAnimTypeCharacter);
 			_flagWaitRegen = true;
 			_lastObj = 0;
