@@ -29,6 +29,7 @@
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -111,36 +112,9 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 	if (!IsModeSupported(mode))
 		return false;
 
-	if (sys_get_window() == nullptr) {
-#ifdef TODO
-		SDL_Window *window = sys_window_create("", mode.Width, mode.Height, mode.Windowed);
-
-		_hasGamma = SDL_GetWindowGammaRamp(window, _defaultGammaRed, _defaultGammaGreen, _defaultGammaBlue) == 0;
-
-		uint32 rendererFlags = SDL_RENDERER_ACCELERATED;
-		if (mode.Vsync) {
-			rendererFlags |= SDL_RENDERER_PRESENTVSYNC;
-		}
-		_renderer = SDL_CreateRenderer(window, -1, rendererFlags);
-
-		SDL_RendererInfo rinfo{};
-		if (SDL_GetRendererInfo(_renderer, &rinfo) == 0) {
-			Debug::Printf("Created Renderer: %s", rinfo.name);
-			Debug::Printf("Available texture formats:");
-			for (int i = 0; i < rinfo.num_texture_formats; i++) {
-				Debug::Printf("\t- %s", SDL_GetPixelFormatName(rinfo.texture_formats[i]));
-			}
-		}
-#endif
-	} else {
-		sys_window_set_style(mode.Windowed);
-		if (mode.Windowed)
-			sys_window_set_size(mode.Width, mode.Height, true);
-	}
-
-#if AGS_PLATFORM_OS_ANDROID
-	SDL_RenderSetLogicalSize(_renderer, mode.Width, mode.Height);
-#endif
+	const int driver = mode.Windowed ? GFX_SCUMMVM : GFX_SCUMMVM_FULLSCREEN;
+	if (set_gfx_mode(driver, mode.Width, mode.Height, 0, 0) != 0)
+		return false;
 
 	OnInit();
 	OnModeSet(mode);
@@ -436,44 +410,14 @@ void ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch
 }
 
 void ScummVMRendererGraphicsDriver::BlitToTexture() {
-#ifdef TODO
-	void *pixels = nullptr;
-	int pitch = 0;
-	auto res = SDL_LockTexture(_screenTex, NULL, &pixels, &pitch);
-	if (res != 0) {
-		return;
-	}
-
-	// Because the virtual screen may be of any color depth,
-	// we wrap texture pixels in a fake bitmap here and call
-	// standard blit operation, for simplicity sake.
-	const int vwidth = virtualScreen->GetWidth();
-	const int vheight = virtualScreen->GetHeight();
-	if ((_lastTexPixels != pixels) || (_lastTexPitch != pitch)) {
-		_fakeTexBitmap->dat = pixels;
-		auto p = (unsigned char *)pixels;
-		for (int i = 0; i < vheight; i++) {
-			_fakeTexBitmap->line[i] = p;
-			p += pitch;
-		}
-		_lastTexPixels = (unsigned char *)pixels;
-		_lastTexPitch = pitch;
-	}
-
-	blit(virtualScreen->GetAllegroBitmap(), _fakeTexBitmap, 0, 0, 0, 0, vwidth, vheight);
-
-	SDL_UnlockTexture(_screenTex);
-#endif
+	::AGS::g_vm->_screen->getSurface().blitFrom(
+		virtualScreen->GetAllegroBitmap()->getSurface());
 }
 
 void ScummVMRendererGraphicsDriver::Present() {
-#ifdef TODO
-	if (!_renderer) {
-		return;
-	}
-
 	BlitToTexture();
 
+#if DEPRECATED
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(_renderer, nullptr);
@@ -490,25 +434,23 @@ void ScummVMRendererGraphicsDriver::Present() {
 }
 
 void ScummVMRendererGraphicsDriver::Render(int /*xoff*/, int /*yoff*/, GlobalFlipType flip) {
-#ifdef TODO
 	switch (flip) {
 	case kFlip_Both:
-		_renderFlip = (SDL_RendererFlip)(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+		_renderFlip = (RendererFlip)(FLIP_HORIZONTAL | FLIP_VERTICAL);
 		break;
 	case kFlip_Horizontal:
-		_renderFlip = SDL_FLIP_HORIZONTAL;
+		_renderFlip = FLIP_HORIZONTAL;
 		break;
 	case kFlip_Vertical:
-		_renderFlip = SDL_FLIP_VERTICAL;
+		_renderFlip = FLIP_VERTICAL;
 		break;
 	default:
-		_renderFlip = SDL_FLIP_NONE;
+		_renderFlip = FLIP_NONE;
 		break;
 	}
 
 	RenderToBackBuffer();
 	Present();
-#endif
 }
 
 void ScummVMRendererGraphicsDriver::Render() {

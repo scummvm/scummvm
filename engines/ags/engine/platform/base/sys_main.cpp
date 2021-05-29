@@ -54,10 +54,8 @@ const int DEFAULT_DISPLAY_INDEX = 0; // TODO: is this always right?
 int sys_get_desktop_resolution(int &width, int &height) {
 	// TODO: ScummVM has a hardcoded dummy desktop resolution. See if there's any
 	// need to change the values, given we're hardcoded for pretend full-screen
-	if (width)
-		width = 640;
-	if (height)
-		height = 480;
+	width = 1000;
+	height = 1000;
 
 	return 0;
 }

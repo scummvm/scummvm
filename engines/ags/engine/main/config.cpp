@@ -225,7 +225,7 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 		_GP(usetup).override_upscale = true; // run low-res game in high-res mode
 	}
 
-	_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "misc", "windowed") > 0;
+	_GP(usetup).Screen.DisplayMode.Windowed = true; // INIreadint(cfg, "misc", "windowed") > 0;
 	_GP(usetup).Screen.DriverID = INIreadstring(cfg, "misc", "gfxdriver", _GP(usetup).Screen.DriverID);
 
 	{
@@ -324,7 +324,7 @@ void apply_config(const ConfigTree &cfg) {
 		// Graphics mode
 		_GP(usetup).Screen.DriverID = INIreadstring(cfg, "graphics", "driver", _GP(usetup).Screen.DriverID);
 
-		_GP(usetup).Screen.DisplayMode.Windowed = INIreadint(cfg, "graphics", "windowed") > 0;
+		_GP(usetup).Screen.DisplayMode.Windowed = true; // INIreadint(cfg, "graphics", "windowed") > 0;
 		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = _GP(usetup).Screen.DisplayMode.Windowed ? kScreenDef_ByGameScaling : kScreenDef_MaxDisplay;
 		_GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef = parse_screendef(INIreadstring(cfg, "graphics", "screen_def"),
 		        _GP(usetup).Screen.DisplayMode.ScreenSize.SizeDef);

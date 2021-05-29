@@ -271,7 +271,7 @@ static void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 static void ReadOverlays_Aligned(Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < _G(numscreenover); ++i) {
-		_GP(screenover)[i].ReadFromFile(&align_s, 0);
+		_G(screenover)[i].ReadFromFile(&align_s, 0);
 		align_s.Reset();
 	}
 }
@@ -280,8 +280,8 @@ static void restore_game_overlays(Stream *in) {
 	_G(numscreenover) = in->ReadInt32();
 	ReadOverlays_Aligned(in);
 	for (int bb = 0; bb < _G(numscreenover); bb++) {
-		if (_GP(screenover)[bb].hasSerializedBitmap)
-			_GP(screenover)[bb].pic = read_serialized_bitmap(in);
+		if (_G(screenover)[bb].hasSerializedBitmap)
+			_G(screenover)[bb].pic = read_serialized_bitmap(in);
 	}
 }
 

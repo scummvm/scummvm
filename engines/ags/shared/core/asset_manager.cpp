@@ -85,11 +85,8 @@ AssetManager::AssetManager() {
 
 void AssetManager::SetSearchPriority(AssetSearchPriority priority) {
 	_libsByPriority.Priority = kAssetPriorityDir;
-#ifdef TODO
+
 	std::sort(_activeLibs.begin(), _activeLibs.end(), _libsByPriority);
-#else
-	error("TODO: std::sort");
-#endif
 }
 
 AssetSearchPriority AssetManager::GetSearchPriority() const {
@@ -109,7 +106,7 @@ AssetError AssetManager::AddLibrary(const String &path, const String &filters, c
 			// already present, only assign new filters
 			lib->Filters = filters.Split(',');
 			if (out_lib)
-				*out_lib = lib.get();
+				*out_lib = lib;
 			return kAssetNoError;
 		}
 	}
@@ -142,6 +139,9 @@ void AssetManager::RemoveLibrary(const String &path) {
 }
 
 void AssetManager::RemoveAllLibraries() {
+	for (uint i = 0; i < _libs.size(); ++i)
+		delete _libs[i];
+
 	_libs.clear();
 	_activeLibs.clear();
 }
@@ -151,7 +151,7 @@ size_t AssetManager::GetLibraryCount() const {
 }
 
 const AssetLibInfo *AssetManager::GetLibraryInfo(size_t index) const {
-	return index < _libs.size() ? _libs[index].get() : nullptr;
+	return index < _libs.size() ? _libs[index] : nullptr;
 }
 
 bool AssetManager::DoesAssetExist(const String &asset_name, const String &filter) const {
@@ -194,12 +194,9 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 		lib->LibFileNames[0] = lib->BaseFileName;
 	}
 
-	out_lib = lib.get();
-#ifdef TODO
-	_libs.push_back(std::move(lib));
-#else
-	error("TODO: std::move");
-#endif
+	out_lib = lib.release();
+	_libs.push_back(out_lib);
+
 	return kAssetNoError;
 }
 

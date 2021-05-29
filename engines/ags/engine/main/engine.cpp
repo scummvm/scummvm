@@ -413,22 +413,6 @@ void engine_init_debug() {
 	}
 }
 
-void atexit_handler() {
-	if (_G(proper_exit) == 0) {
-		_G(platform)->DisplayAlert("Error: the program has exited without requesting it.\n"
-		                           "Program pointer: %+03d  (write this number down), ACI version %s\n"
-		                           "If you see a list of numbers above, please write them down and contact\n"
-		                           "developers. Otherwise, note down any other information displayed.",
-		                           _G(our_eip), _G(EngineVersion).LongString.GetCStr());
-	}
-}
-
-void engine_init_exit_handler() {
-	Debug::Printf(kDbgMsg_Info, "Install exit handler");
-
-	atexit(atexit_handler);
-}
-
 void engine_init_rand() {
 	_GP(play).randseed = g_system->getMillis();
 	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
@@ -500,7 +484,9 @@ extern char android_base_directory[256];
 
 // TODO: remake/remove this nonsense
 int check_write_access() {
-
+#if AGS_PLATFORM_SCUMMVM
+	return true;
+#else
 	if (_G(platform)->GetDiskFreeSpaceMB() < 2)
 		return 0;
 
@@ -538,6 +524,7 @@ int check_write_access() {
 		return 0;
 
 	return 1;
+#endif
 }
 
 int engine_check_disk_space() {
@@ -1205,8 +1192,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	engine_init_debug();
 
 	_G(our_eip) = -10;
-
-	engine_init_exit_handler();
 
 	engine_init_rand();
 

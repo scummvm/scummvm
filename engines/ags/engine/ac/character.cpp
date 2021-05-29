@@ -717,7 +717,7 @@ ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 	scOver->borderWidth = 0;
 	scOver->isBackgroundSpeech = 1;
 	int handl = ccRegisterManagedObject(scOver, scOver);
-	_GP(screenover)[ovri].associatedOverlayHandle = handl;
+	_G(screenover)[ovri].associatedOverlayHandle = handl;
 
 	return scOver;
 }
@@ -2268,8 +2268,8 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 	if (_GP(play).bgspeech_stay_on_display == 0) {
 		// remove any background speech
 		for (aa = 0; aa < _G(numscreenover); aa++) {
-			if (_GP(screenover)[aa].timeout > 0) {
-				remove_screen_overlay(_GP(screenover)[aa].type);
+			if (_G(screenover)[aa].timeout > 0) {
+				remove_screen_overlay(_G(screenover)[aa].type);
 				aa--;
 			}
 		}

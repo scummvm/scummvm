@@ -24,6 +24,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/core/platform.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -66,12 +67,14 @@ void WaitForNextFrame() {
 		_G(next_frame_timestamp) = now;
 	}
 
-	auto frame_time_remaining = _G(next_frame_timestamp) - now;
-	if (frame_time_remaining > std::chrono::milliseconds::zero()) {
+	if (_G(next_frame_timestamp) > now) {
+		auto frame_time_remaining = _G(next_frame_timestamp) - now;
 		std::this_thread::sleep_for(frame_time_remaining);
 	}
 
 	_G(next_frame_timestamp) += frameDuration;
+
+	::AGS::g_vm->_rawScreen->update();
 }
 
 void skipMissedTicks() {

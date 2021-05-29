@@ -76,7 +76,9 @@ struct AssetLocation {
 class AssetManager {
 public:
 	AssetManager();
-	~AssetManager() {}
+	~AssetManager() {
+		RemoveAllLibraries();
+	}
 
 	// Test if given file is main data file
 	static bool         IsDataFile(const String &data_file);
@@ -126,12 +128,13 @@ private:
 	bool        GetAssetFromLib(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) const;
 	bool        GetAssetFromDir(const AssetLibInfo *lib, const String &asset_name, AssetLocation *loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) const;
 
-	std::vector<std::unique_ptr<AssetLibEx>> _libs;
+	std::vector<AssetLibEx *> _libs;
 	std::vector<AssetLibEx *> _activeLibs;
 
-	struct LibsByPriority : public std::binary_function<const AssetLibInfo *, const AssetLibInfo *, bool> {
+	struct LibsByPriority {
 		AssetSearchPriority Priority = kAssetPriorityDir;
-		bool operator()(const AssetLibInfo *, const AssetLibInfo *) const;
+
+		bool operator()(const AssetLibInfo *x, const AssetLibInfo *y) const;
 	} _libsByPriority;
 };
 

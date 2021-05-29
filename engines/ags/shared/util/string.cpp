@@ -362,11 +362,11 @@ String String::Section(char separator, size_t first, size_t last,
 
 std::vector<String> String::Split(char separator) const {
 	std::vector<String> result;
-	if (!_cstr || !separator)
+	if (!separator)
 		return result;
 
 	const char *ptr = _cstr;
-	while (*ptr) {
+	while (ptr && *ptr) {
 		const char *found_cstr = strchr(ptr, separator);
 		if (!found_cstr) break;
 		result.push_back(String(ptr, found_cstr - ptr));

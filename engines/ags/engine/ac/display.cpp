@@ -238,7 +238,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	// we should not delete text_window_ds here, because it is now owned by Overlay
 
 	if (disp_type >= DISPLAYTEXT_NORMALOVERLAY) {
-		return _GP(screenover)[nse].type;
+		return _G(screenover)[nse].type;
 	}
 
 	//
@@ -316,10 +316,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			_GP(play).messagetime = 2;
 
 		if (!overlayPositionFixed) {
-			_GP(screenover)[nse].positionRelativeToScreen = false;
-			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_GP(screenover)[nse].x, _GP(screenover)[nse].y, false);
-			_GP(screenover)[nse].x = vpt.first.X;
-			_GP(screenover)[nse].y = vpt.first.Y;
+			_G(screenover)[nse].positionRelativeToScreen = false;
+			VpPoint vpt = _GP(play).GetRoomViewport(0)->ScreenToRoom(_G(screenover)[nse].x, _G(screenover)[nse].y, false);
+			_G(screenover)[nse].x = vpt.first.X;
+			_G(screenover)[nse].y = vpt.first.Y;
 		}
 
 		GameLoopUntilNoOverlay();

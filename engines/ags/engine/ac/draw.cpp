@@ -1870,12 +1870,12 @@ void draw_gui_and_overlays() {
 	// draw overlays, except text boxes and portraits
 	for (gg = 0; gg < _G(numscreenover); gg++) {
 		// complete overlay draw in non-transparent mode
-		if (_GP(screenover)[gg].type == OVER_COMPLETE)
-			add_thing_to_draw(_GP(screenover)[gg].bmp, _GP(screenover)[gg].x, _GP(screenover)[gg].y, TRANS_OPAQUE, false);
-		else if (_GP(screenover)[gg].type != OVER_TEXTMSG && _GP(screenover)[gg].type != OVER_PICTURE) {
+		if (_G(screenover)[gg].type == OVER_COMPLETE)
+			add_thing_to_draw(_G(screenover)[gg].bmp, _G(screenover)[gg].x, _G(screenover)[gg].y, TRANS_OPAQUE, false);
+		else if (_G(screenover)[gg].type != OVER_TEXTMSG && _G(screenover)[gg].type != OVER_PICTURE) {
 			int tdxp, tdyp;
-			get_overlay_position(_GP(screenover)[gg], &tdxp, &tdyp);
-			add_thing_to_draw(_GP(screenover)[gg].bmp, tdxp, tdyp, 0, _GP(screenover)[gg].hasAlphaChannel);
+			get_overlay_position(_G(screenover)[gg], &tdxp, &tdyp);
+			add_thing_to_draw(_G(screenover)[gg].bmp, tdxp, tdyp, 0, _G(screenover)[gg].hasAlphaChannel);
 		}
 	}
 
@@ -1953,10 +1953,10 @@ void draw_gui_and_overlays() {
 
 	// draw speech and portraits (so that they appear over GUIs)
 	for (gg = 0; gg < _G(numscreenover); gg++) {
-		if (_GP(screenover)[gg].type == OVER_TEXTMSG || _GP(screenover)[gg].type == OVER_PICTURE) {
+		if (_G(screenover)[gg].type == OVER_TEXTMSG || _G(screenover)[gg].type == OVER_PICTURE) {
 			int tdxp, tdyp;
-			get_overlay_position(_GP(screenover)[gg], &tdxp, &tdyp);
-			add_thing_to_draw(_GP(screenover)[gg].bmp, tdxp, tdyp, 0, false);
+			get_overlay_position(_G(screenover)[gg], &tdxp, &tdyp);
+			add_thing_to_draw(_G(screenover)[gg].bmp, tdxp, tdyp, 0, false);
 		}
 	}
 

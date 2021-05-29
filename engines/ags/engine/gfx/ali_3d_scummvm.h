@@ -52,6 +52,12 @@ class ScummVMRendererGraphicsDriver;
 class ScummVMRendererGfxFilter;
 using AGS::Shared::Bitmap;
 
+enum RendererFlip {
+	FLIP_NONE = 0x00000000,       /**< Do not flip */
+	FLIP_HORIZONTAL = 0x00000001, /**< flip horizontally */
+	FLIP_VERTICAL = 0x00000002    /**< flip vertically */
+};
+
 class ALSoftwareBitmap : public IDriverDependantBitmap {
 public:
 	// NOTE by CJ:
@@ -234,8 +240,8 @@ private:
 	uint16 _defaultGammaGreen[256] {};
 	uint16 _defaultGammaBlue[256] {};
 
-	/*    SDL_RendererFlip _renderFlip = SDL_FLIP_NONE;
-	    SDL_Renderer *_renderer = nullptr;
+	RendererFlip _renderFlip = FLIP_NONE;
+	/*  SDL_Renderer *_renderer = nullptr;
 	    SDL_Texture *_screenTex = nullptr; */
 	// BITMAP struct for wrapping screen texture locked pixels, so that we may use blit()
 	BITMAP *_fakeTexBitmap = nullptr;
