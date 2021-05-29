@@ -41,8 +41,6 @@
 
 namespace Saga2 {
 
-uint32 performanceBufferSize = 512 * 1024;
-
 #define VIDEO_EXT ".SMK"
 
 /* ===================================================================== *
@@ -98,11 +96,7 @@ void startVideo(char *fileName, int x, int y, bool erase, int16, int16) {
 	strncpy(file, fileName, 260);
 	nameCheck(file, VIDEO_EXT);
 
-	vp->StartPlay(file, x, y,
-#if USE_SMK
-	              performanceBufferSize, TRUE,
-#endif
-	              VideoSMK, erase);
+	vp->StartPlay(file, x, y,VideoSMK, erase);
 }
 
 //-----------------------------------------------------------------------
@@ -395,26 +389,5 @@ void setPaletteHook(
 	_LoadPalette((uint8 *)paletteMinusFour, 0, 256);
 #endif
 }
-
-
-bool InVideo(void) {
-#if USE_SMK && defined(_WIN32)
-	if (NULL != vp->getSmack())
-		return TRUE;
-#endif
-	return FALSE;
-}
-
-#ifdef _WIN32
-
-LRESULT VideoOnPaletteChanged(HWND win_handle, WORD wparam, LONG lparam) {
-	return vp->OnPaletteChanged(win_handle, wparam, lparam);
-}
-
-LRESULT VideoOnQueryNewPalette(HWND win_handle, WORD wparam, LONG lparam) {
-	return vp->OnQueryNewPalette(win_handle, wparam, lparam);
-}
-
-#endif
 
 } // end of namespace Saga2

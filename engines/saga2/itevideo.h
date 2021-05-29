@@ -43,14 +43,6 @@ bool checkVideo(void);
 void endVideo(void);
 
 //-----------------------------------------------------------------------
-//	Windows hooks for smacker
-
-#ifdef _WIN32
-LRESULT VideoOnPaletteChanged(HWND win_handle, WORD wparam, LONG lparam);
-LRESULT VideoOnQueryNewPalette(HWND win_handle, WORD wparam, LONG lparam);
-#endif
-
-//-----------------------------------------------------------------------
 //	Player configuration & other obsolete calls
 
 void setVideoVolume(uint8 v);
@@ -58,8 +50,6 @@ void drawVideoMousePointer(Rect16 showZone, char *buffer,  int bufferWidth);
 
 void playVideo(char *fileName, int x, int y); //, int16 from=0, int16 to=0 );
 bool abortVideo(void);
-
-bool InVideo(void);
 
 } // end of namespace Saga2
 
