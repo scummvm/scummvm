@@ -276,23 +276,29 @@ bool hResContext::get(hResID id, void *buffer, uint32 size) {
 
 uint32 hResContext::getSize(hResID id, const char desc[]) {
 	hResEntry *entry;
+
 	if ((entry = findEntry(id)) == nullptr) {
 		warning("Resource %d, %s not found", id, desc);
 		return 0;
 	}
+	debugC(3, kDebugResources, "Size for %x (%s): %d", id, desc, entry->size);
 
 	return entry->size;
 }
 
-byte *hResContext::loadResource(hResID id, Common::String filename, const char desc[]) {
+byte *hResContext::loadResource(hResID id, const char desc[], Common::String filename) {
 	hResEntry *entry;
 
+	debugC(3, kDebugResources, "Loading resource %x (%s)", id, desc);
 	if ((entry = findEntry(id)) == nullptr) {
 		warning("Resource %d, %s not found", id, desc);
 		return nullptr;
 	}
 
 	byte *res = (byte*)malloc(entry->size);
+
+	if (filename.equalsIgnoreCase(""))
+		filename = _filename;
 
 	if (!_file.isOpen())
 		_file.open(filename);
@@ -358,6 +364,9 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 		return nullptr;
 
 	byte *res = (byte*)malloc(entry->size);
+
+	if (filename.equalsIgnoreCase(""))
+		filename = _filename;
 
 	if (!_file.isOpen())
 		_file.open(filename);
