@@ -61,6 +61,7 @@ namespace Saga2 {
  * ===================================================================== */
 
 typedef uint32          hResID;
+typedef Common::HashMap<int16, byte*> DataMap;
 
 #define BAD_ID          ((hResID)0xFFFFFFFFL)
 #define NATURAL_SIZE    ((hResID)0xFFFFFFFFL)
@@ -126,7 +127,7 @@ protected:
 	hResource      *_res;
 	hResContext    *_parent;
 	hResEntry      *_base;
-	RHANDLE        *_data; // allocated array of handles
+	DataMap        _indexData; // allocated array of handles
 	Common::File    _file;
 	Common::File   *_handle;
 	uint32          _bytecount;
@@ -166,12 +167,9 @@ public:
 	byte       *loadIndexResource(int16 index, const char desc[], Common::String filename = "");
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
 	void        release(RHANDLE p);
+	void        releaseIndexData();
 	Common::File     *resFileHandle(void) {
 		return _handle;
-	}
-
-	RHANDLE     dataHandle(int16 index) {
-		return _data[ index ];
 	}
 };
 

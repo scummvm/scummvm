@@ -207,33 +207,30 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 }
 
 uint8 *segmentAddress(uint16 segment, uint16 offset) {
-	RHANDLE     segHandle;
+	byte  *segHandle = nullptr;
 
 	//  A segment number of less than zero means that this is
 	//  a "builtin" object, in other words the game engine itself
 	if ((int16)segment < 0) return builtinObjectAddress(segment, offset);
 
-	segHandle = scriptRes->dataHandle(segment);
-	if (segHandle == NULL || *segHandle == NULL) {
-		segHandle = scriptRes->loadIndex(segment, "object segment");
-		//RUnlockHandle(segHandle);
-	}
-	return ((uint8 *)(*segHandle) + offset);
+	segHandle = scriptRes->loadIndexResource(segment, "object segment");
+	if (segHandle == nullptr)
+		return nullptr;
+
+	return segHandle + offset;
 }
 
 uint8 *segmentArrayAddress(uint16 segment, uint16 index) {
-	RHANDLE     segHandle;
+	byte  *segHandle = nullptr;
 
 	if ((int16)segment < 0) return builtinObjectAddress(segment, index);
 
-	segHandle = scriptRes->dataHandle(segment);
-	if (segHandle == NULL || *segHandle == NULL) {
-		segHandle = scriptRes->loadIndex(segment, "object array segment");
-		//RUnlockHandle(segHandle);
-	}
+	segHandle = scriptRes->loadIndexResource(segment, "object array segment");
+	if (segHandle == nullptr)
+		return nullptr;
 
-	return (uint8 *)(*segHandle) + sizeof(uint16)
-	       + (index * *(uint16 *)(*segHandle));
+	return segHandle + sizeof(uint16)
+	       + (index * READ_LE_INT16(segHandle));
 }
 
 //  Returns the address of a byte given an addressing mode
@@ -1754,7 +1751,7 @@ void initScripts(void) {
 		error("Unable to load the SAGA data segment");
 
 	dataSegSize = scriptRes->getSize(dataSegID, "saga data segment");
-	debugC(2, kDebugScripts, "dataSegment loaded at 0x%08x: size: %d", dataSegment, dataSegSize);
+	debugC(2, kDebugScripts, "dataSegment loaded at %p: size: %d", (void*)dataSegment, dataSegSize);
 
 //	Common::hexdump(dataSegment, dataSegSize);
 
@@ -1764,8 +1761,8 @@ void initScripts(void) {
 //	Common::hexdump(exportSegment, scriptRes->getSize(exportSegID, "saga export segment"));
 
 	exportCount = (scriptRes->getSize(exportSegID, "saga export segment") / sizeof(uint32)) + 1;
-	debugC(2, kDebugScripts, "exportSegment loaded at 0x%08x: size: %d, exportCount: %d",
-		                     exportSegment, scriptRes->getSize(exportSegID, "saga export segment"), exportCount);
+	debugC(2, kDebugScripts, "exportSegment loaded at %p: size: %d, exportCount: %ld",
+	       (void*)exportSegment, scriptRes->getSize(exportSegID, "saga export segment"), exportCount);
 }
 
 void cleanupScripts(void) {

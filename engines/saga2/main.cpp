@@ -748,7 +748,7 @@ void openImageTest() {
 
 void testScripts() {
 	scriptCallFrame scf;
-	runScript(1, scf);
+	runScript(3, scf);
 }
 
 //-----------------------------------------------------------------------

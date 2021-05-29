@@ -68,7 +68,6 @@ hResContext::hResContext() {
 	_valid = false;
 	_base = nullptr;
 	_parent = nullptr;
-	_data = nullptr;
 	_numEntries = 0;
 	_handle = &_file;
 }
@@ -96,18 +95,11 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 	_base = &_res->_table[entry->offset - _res->_firstGroupOffset];
 
-	_data = new RHANDLE[_numEntries]();
-	if (_data == nullptr)
-		return;
-
 	_valid = true;
 }
 
 hResContext::~hResContext() {
-	if (_data) {
-		delete[] _data;
-		_data = nullptr;
-	}
+	releaseIndexData();
 }
 
 hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
@@ -122,7 +114,6 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
 		debugC(2, kDebugResources, "%d: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
-			if (capture) *capture = &_data[ i ];
 			debugC(2, kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
 			return entry;
 		}
@@ -363,7 +354,15 @@ byte *hResContext::loadIndexResource(int16 index, const char desc[], Common::Str
 	if (!_valid || entry == nullptr)
 		return nullptr;
 
+	if (_indexData.contains(index))
+		return _indexData.getVal(index);
+
 	byte *res = (byte*)malloc(entry->size);
+
+	if (res) {
+		debugC(4, kDebugResources, "_indexData: pushing (%d, %p)", index, (void*)res);
+		_indexData.setVal(index, res);
+	}
 
 	if (filename.equalsIgnoreCase(""))
 		filename = _filename;
@@ -387,7 +386,6 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 	_bytepos = 0;
 
 	entry = &_base[ index ];
-	capture = &_data[ index ];
 
 	if (*capture != nullptr && **capture != nullptr) {
 		entry->use();
@@ -418,7 +416,6 @@ void hResContext::release(RHANDLE p) {
 
 	if (_valid && p != nullptr) {
 		entry = _base;
-		d = _data;
 
 		while (entry->id != BAD_ID) {
 			if ((RHANDLE)p == *d) {
@@ -432,6 +429,18 @@ void hResContext::release(RHANDLE p) {
 			}
 			entry++;
 			d++;
+		}
+	}
+}
+
+void hResContext::releaseIndexData() {
+	debugC(4, kDebugResources, "releaseIndexData():");
+	for (DataMap::iterator i = _indexData.begin(); i != _indexData.end(); ++i) {
+		debugC(4, kDebugResources, "... %d, %p", i->_key, (void*)i->_value);
+		if (i->_value) {
+			free(i->_value);
+			i->_value = nullptr;
+			_indexData.erase(i);
 		}
 	}
 }
@@ -457,7 +466,6 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 	_valid = false;
 	_base = nullptr;
 	_parent = nullptr;
-	_data = nullptr;
 	_numEntries = 0;
 	_filename = resname;
 
