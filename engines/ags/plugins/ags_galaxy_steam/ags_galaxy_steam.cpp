@@ -77,7 +77,8 @@ void AGS2Client::ResetAchievement(ScriptMethodParams &params) {
 }
 
 void AGS2Client::GetIntStat(ScriptMethodParams &params) {
-	params._result = 0;
+	PARAMS1(char *, id);
+	params._result = AchMan.getStatInt(id);
 }
 
 void AGS2Client::GetFloatStat(ScriptMethodParams &params) {
@@ -89,7 +90,8 @@ void AGS2Client::GetAverageRateStat(ScriptMethodParams &params) {
 }
 
 void AGS2Client::SetIntStat(ScriptMethodParams &params) {
-	params._result = 0;
+	PARAMS2(char *, id, int, value);
+	params._result = AchMan.setStatInt(id, value);
 }
 
 void AGS2Client::SetFloatStat(ScriptMethodParams &params) {
