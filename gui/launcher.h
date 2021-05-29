@@ -130,23 +130,6 @@ protected:
 	 */
 	void selectTarget(const String &target);
 private:
-	struct GameEntry {
-		GameEntry() : container(nullptr), thumb(nullptr), title(nullptr), language(nullptr), platform(nullptr) {}
-		GameEntry(EntryContainerWidget *c, GraphicsWidget *b, StaticTextWidget *t, StaticTextWidget *l, GraphicsWidget *p) : container(c), thumb(b), title(t), language(l), platform(p) {}
-
-		EntryContainerWidget  *container;
-		GraphicsWidget  *thumb;
-		StaticTextWidget *title;
-		StaticTextWidget *language;
-		GraphicsWidget 	 *platform;
-
-		void setVisible(bool state);
-	};
-	typedef Common::Array<GameEntry> EntryArray;
-	EntryArray _entries;
-
-	void destroyButtons();
-	void hideButtons();
 
 	bool checkModifier(int modifier);
 };
