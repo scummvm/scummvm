@@ -57,7 +57,16 @@ public:
 	//! Find the roof above the camera.
 	//! \param factor Interpolation factor for this frame
 	//! \return 0 if no roof found, objid of roof if found
-	uint16 FindRoof(int32 factor);
+	uint16 findRoof(int32 factor);
+
+	/**
+	 * Move the existing camera process to a new location.  If the current process is focused on
+	 * an item, remove that focus.
+	 *
+	 * This is not the same as setting a new process, because execution order will not change,
+	 * so other pending events will all happen before the fast area is updated
+	 */
+	void moveToLocation(int32 x, int32 y, int32 z);
 
 	INTRINSIC(I_setCenterOn);
 	INTRINSIC(I_moveTo);
@@ -72,7 +81,13 @@ public:
 	static CameraProcess   *GetCameraProcess() {
 		return _camera;
 	}
-	static uint16           SetCameraProcess(CameraProcess *);  // Set the current camera process. Adds process. Return PID
+
+	/**
+	 * Set the current camera process. Adds process and returns PID.
+	 * The new process will go on the front of the process queue, so the fast area
+	 * will be updated before any other pending actions occur.
+	 */
+	static uint16           SetCameraProcess(CameraProcess *);
 	static void             ResetCameraProcess();
 
 	static void             SetEarthquake(int32 e) {
@@ -80,7 +95,8 @@ public:
 		if (!e)  _eqX = _eqY = 0;
 	}
 
-	void                    ItemMoved();
+	/** Notify the Camera that the target item has moved */
+	void itemMoved();
 
 	void terminate() override;   // Terminate NOW!
 

@@ -63,6 +63,20 @@ void CameraProcess::ResetCameraProcess() {
 	_camera = nullptr;
 }
 
+void CameraProcess::moveToLocation(int32 x, int32 y, int32 z) {
+	if (_itemNum) {
+		Item *item = getItem(_itemNum);
+		if (item) item->clearExtFlag(Item::EXT_CAMERA);
+	}
+
+	_sx = _sy = _sz = _time = _elapsed = _lastFrameNum = _itemNum = 0;
+	_eqX = _eqY = _earthquake = 0;
+	_ex = x;
+	_ey = y;
+	_ez = z;
+	GetCameraLocation(_sx, _sy, _sz);
+}
+
 void CameraProcess::GetCameraLocation(int32 &x, int32 &y, int32 &z) {
 	if (!_camera) {
 		World *world = World::get_instance();
@@ -157,7 +171,7 @@ void CameraProcess::run() {
 	_elapsed++;
 }
 
-void CameraProcess::ItemMoved() {
+void CameraProcess::itemMoved() {
 	if (!_itemNum)
 		return;
 
@@ -260,7 +274,7 @@ void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool n
 	}
 }
 
-uint16 CameraProcess::FindRoof(int32 factor) {
+uint16 CameraProcess::findRoof(int32 factor) {
 	int32 x, y, z;
 	int32 earthquake_old = _earthquake;
 	_earthquake = 0;

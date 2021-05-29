@@ -232,7 +232,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	if (!dest_fast && (_flags & Item::FLG_FASTAREA)) {
 		_extendedFlags |= EXT_LERP_NOPREV;
 		if (_extendedFlags & EXT_CAMERA)
-			CameraProcess::GetCameraProcess()->ItemMoved();
+			CameraProcess::GetCameraProcess()->itemMoved();
 		else
 			leaveFastArea();
 
@@ -247,7 +247,7 @@ void Item::move(int32 X, int32 Y, int32 Z) {
 	// If we are being followed, notify the camera that we moved
 	// Note that we don't need to
 	if (_extendedFlags & EXT_CAMERA)
-		CameraProcess::GetCameraProcess()->ItemMoved();
+		CameraProcess::GetCameraProcess()->itemMoved();
 
 	if (_extendedFlags & EXT_TARGET)
 		TargetReticleProcess::get_instance()->itemMoved(this);

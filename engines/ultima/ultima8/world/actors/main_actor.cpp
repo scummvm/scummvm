@@ -352,6 +352,8 @@ const ShapeInfo *MainActor::getShapeInfoFromGameInstance() const {
 void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 	World *world = World::get_instance();
 
+	uint16 oldmap = getMapNum();
+
 	// (attempt to) load the new map
 	if (!world->switchMap(mapNum)) {
 		perr << "MainActor::teleport(): switchMap(" << mapNum << ") failed!" << Std::endl;
@@ -360,9 +362,9 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 
 	Actor::teleport(mapNum, x, y, z);
 
-	if (GAME_IS_CRUSADER && (x || y)) {
+	if (GAME_IS_CRUSADER && (x || y) && oldmap == mapNum) {
 		// Keep the camera on the avatar (the snap process will update on next move)
-		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+		CameraProcess::GetCameraProcess()->moveToLocation(x, y, z);
 	}
 
 	_justTeleported = true;
@@ -405,12 +407,14 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	pout << "Found destination: " << xv << "," << yv << "," << zv << Std::endl;
 	egg->dumpInfo();
 
-	Actor::teleport(mapNum, xv, yv, zv);
-
 	if (GAME_IS_CRUSADER) {
 		// Keep the camera on the avatar (the snap process will update on next move)
-		CameraProcess::SetCameraProcess(new CameraProcess(xv, yv, zv));
+		// We don't add a new camera process here, as that would update the fast area
+		// before the cachein calls above have run.
+		CameraProcess::GetCameraProcess()->moveToLocation(xv, yv, zv);
 	}
+
+	Actor::teleport(mapNum, xv, yv, zv);
 
 	_justTeleported = true;
 }

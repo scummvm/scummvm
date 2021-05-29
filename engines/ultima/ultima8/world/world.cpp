@@ -110,10 +110,9 @@ bool World::switchMap(uint32 newmap) {
 
 	// Map switching procedure:
 
-	// get rid of camera
 	// stop all sound effects (except speech, such as Guardian barks)
 	// notify all gumps of a map change
-	// delete any _ethereal objects
+	// delete any ethereal objects
 	// write back CurrentMap to the old map, which
 	//   deletes all disposable items
 	//   deletes the EggHatcher
@@ -126,11 +125,7 @@ bool World::switchMap(uint32 newmap) {
 	//   assigns objIDs to nonfixed items
 	//   creates an EggHatcher and notifies it of all eggs
 	//   sets up all NPCs in the new map
-	// reset camera
-
-
-	// kill camera
-	CameraProcess::ResetCameraProcess();
+	// update camera if needed
 
 	AudioProcess *ap = AudioProcess::get_instance();
 	if (ap) ap->stopAllExceptSpeech();
@@ -174,9 +169,16 @@ bool World::switchMap(uint32 newmap) {
 
 	_currentMap->loadMap(_maps[newmap]);
 
-	// reset camera
-	CameraProcess::SetCameraProcess(new CameraProcess(1));
-	CameraProcess::SetEarthquake(0);
+	// update camera if needed (u8 only)
+	// TODO: This may not even be needed, but do it just in case the
+	// camera was looking at something else during teleport.
+	if (GAME_IS_U8) {
+		CameraProcess *camera = CameraProcess::GetCameraProcess();
+		if (camera && camera->getItemNum() != 1) {
+			CameraProcess::SetCameraProcess(new CameraProcess(1));
+		}
+		CameraProcess::SetEarthquake(0);
+	}
 
 	return true;
 }

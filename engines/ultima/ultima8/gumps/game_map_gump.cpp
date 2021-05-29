@@ -100,7 +100,7 @@ void GameMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		av->getFootpadWorld(axd, ayd, azd);
 		map->isValidPosition(ax, ay, az, 32, 32, 8, 0, 1, 0, &roofid);
 	} else
-		roofid = camera->FindRoof(lerp_factor);
+		roofid = camera->findRoof(lerp_factor);
 
 	const Item *roof = getItem(roofid);
 	if (roof) {
