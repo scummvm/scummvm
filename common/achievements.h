@@ -151,6 +151,23 @@ public:
 	 */
 	bool setStatFloat(const String &id, float value);
 
+	/**
+	 * Get an average rate statistic (float).
+	 * Calcucated by devision the sum of count by the sum of times.
+	 *
+	 * @param[in] id	Internal ID of the achievement.
+	 */
+	float getAverageRateStatFloat(const String &id);
+
+	/**
+	 * Update an average rate statistic (float). 
+	 *
+	 * @param[in] id	Internal ID of the achievement.
+	 * @param[in] count Value to which the statistic count is increased.
+	 * @param[in] times Value to which the statistic times is increased.
+	 */
+	bool updateAverageRateStatFloat(const String &id, float count, float times);
+
 	/** @} */
 
 	/**
@@ -163,6 +180,9 @@ public:
 	/** @} */
 
 private:
+	float getStatFloatEx(const String &id, const String &section);
+	bool setStatFloatEx(const String &id, float value, const String &section);
+
 	INIFile *_iniFile;
 	String _iniFileName;
 	Common::Array<AchievementDescription> _descriptions;
