@@ -302,29 +302,6 @@ void LauncherDialog::close() {
 	Dialog::close();
 }
 
-void LauncherDialog::destroyButtons() {
-
-	for (EntryArray::iterator i = _entries.begin(), end = _entries.end(); i != end; ++i) {
-		removeWidget(i->container);
-		removeWidget(i->thumb);
-		delete i->container;
-		delete i->thumb;
-	}
-
-	_entries.clear();
-}
-
-void LauncherDialog::hideButtons() {
-	for (EntryArray::iterator i = _entries.begin(), end = _entries.end(); i != end; ++i) {
-		i->thumb->setGfx((Graphics::ManagedSurface *)nullptr);
-		i->setVisible(false);
-	}
-}
-
-void LauncherDialog::GameEntry::setVisible(bool state) {
-	container->setVisible(state);
-}
-
 void LauncherDialog::updateListing() {
 	U32StringArray l;
 	ListWidget::ColorList colors;
@@ -367,24 +344,6 @@ void LauncherDialog::updateListing() {
 			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
 	}
 
-	// destroyButtons();
-	// _entries.reserve(domainList.size());
-	// testPath = Common::String("adl-hires2.png");
-	// warning("%p", (void *)(_grid->filenameToSurface(testPath)));
-
-	// for (int i = 0; i < domainList.size(); ++i) {
-	// 	EntryContainerWidget *container = new EntryContainerWidget(_grid, 50 + i*(192+40), 50, 192, 128);
-	// 	GraphicsWidget *button = new GraphicsWidget(container, 0,0, 192, 128);
-	// 	button->setGfx(_grid->filenameToSurface(testPath));
-	// 	StaticTextWidget *title = new StaticTextWidget(container, 0, 128, 192, 160-128, Common::U32String("Title") , Graphics::kTextAlignLeft);
-	// 	StaticTextWidget *language = new StaticTextWidget(button, container->getWidth()-32, 0, 32, 32, Common::U32String("UNK") , Graphics::kTextAlignRight);
-	// 	GraphicsWidget *platform = new GraphicsWidget(button, container->getWidth()-32, 128-32, 32, 32);
-	// 	container->setVisible(false);
-	// 	_entries.push_back(GameEntry(container, button, title, language, platform));
-	// }
-	
-	// hideButtons();
-
 	// Now sort the list in dictionary order
 	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
@@ -393,55 +352,6 @@ void LauncherDialog::updateListing() {
 	GraphicsWidget *testWidget = new GraphicsWidget(this, 0, 0, 192, 128);
 	Common::String testPath("adl-hires2.png");
 	testWidget->setGfx(_grid->filenameToSurface(testPath));
-	// // Populate Grid
-	// int row = 0, col = 0, i = 0;
-	// int entriesPerRow = 6;
-	// for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
-	// 	i = entriesPerRow*row + col;
-	// 	String language = iter->domain->getValOrDefault("language");
-	// 	language.toUppercase();
-	// 	String platform = iter->domain->getValOrDefault("platform");
-	// 	platform.toLowercase();
-	// 	String engineid(iter->domain->getVal("engineid"));
-	// 	String gameid(iter->domain->getVal("gameid"));
-
-
-	// 	if (language.empty())
-	// 			language = "UNK";
-	// 	if (platform.empty())
-	// 			platform = "UNK";
-	// 	if (engineid.empty())
-	// 			engineid = iter->key;
-	// 	if (gameid.empty())
-	// 			gameid = iter->key;
-		
-	// 	warning("%s %s %s %s", engineid.c_str(), gameid.c_str(), language.c_str(), platform.c_str());
-
-	// 	GameEntry &curEntry = _entries[i];
-	// 	curEntry.setVisible(true);
-
-	// 	Common::String thumbName = engineid + "-" + gameid + ".png";
-	// 	warning(thumbName.c_str());
-	// 	curEntry.container->setPos(50 + col*(192+40), 50 + row*(160+20));
-	// 	// curEntry.thumb->setGfxFromTheme(thumbName.c_str());
-	// 	curEntry.language->setLabel(language);
-	// 	// char *newTit = (char *)iter->description.c_str();
-	// 	// newTit[5] = '\n';
-	// 	// curEntry.title->setLabel(Common::String(newTit));
-	// 	curEntry.title->setLabel(iter->description);
-	// 	if (platform == "pc") 
-	// 		curEntry.platform->setGfxFromTheme("dos.png");
-	// 	else if (platform == "amiga")
-	// 		curEntry.platform->setGfxFromTheme("amiga.png");
-	// 	else if (platform == "apple2")
-	// 		curEntry.platform->setGfxFromTheme("apple2.png");
-	// 	else
-	// 		{}
-
-	// 	col++;
-	// 	if (col >= entriesPerRow) { row ++; col = 0;}
-	// 	// if (i > 4) { break; }
-	// }
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
