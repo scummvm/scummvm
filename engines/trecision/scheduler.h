@@ -24,6 +24,7 @@
 #define TRECISION_SCHEDULER_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 #define MAXMESSAGE 128
 
@@ -54,34 +55,16 @@ struct Message {
 	}
 };
 
-struct MessageQueue {
-	uint8 _head, _tail, _len;
-	Message *_event[MAXMESSAGE];
-
-	void orderEvents();
-	bool testEmptyQueues(uint8 cls);
-	bool testEmptyCharacterQueue4Script();
-	bool getMessage(Message **msg);
-	void initQueue();
-
-private:
-	uint8 predEvent(uint8 i);
-};
-
 class Scheduler {
-private:
 	TrecisionEngine *_vm;
-	int8 _maxMessageGame;
-	int8 _maxMessageCharacter;
 	uint8 _token;
 	uint8 _counter;
 
 	// Message system
-	Message _gameMsg[MAXMESSAGE];
-	Message _characterMsg[MAXMESSAGE];
 	Message _idleMsg;
-	MessageQueue _gameQueue;
-	MessageQueue _characterQueue;
+	Message _msg;
+	Common::List<Message> _gameQueue;
+	Common::List<Message> _characterQueue;
 
 public:
 	Scheduler(TrecisionEngine *vm);
