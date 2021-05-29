@@ -49,18 +49,18 @@ AnimTypeManager::~AnimTypeManager() {
 
 }
 
-void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
+void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, uint16 objectId) {
 	SAnim *anim = &_vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim];
 
 	switch (doit) {
 	case fCLROBJSTATUS:
-		_vm->setObjectVisible(obj, false);
+		_vm->setObjectVisible(objectId, false);
 		break;
 	case fSETOBJSTATUS:
-		_vm->setObjectVisible(obj, true);
+		_vm->setObjectVisible(objectId, true);
 		break;
 	case fONETIME:
-		_vm->setObjectAnim(obj, 0);
+		_vm->setObjectAnim(objectId, 0);
 		break;
 	case fCREPACCIO:
 		if (_vm->_room[kRoom2E].hasExtra())
@@ -116,20 +116,25 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 		_vm->_forcedActorPos = BOX_NORMAL;
 		break;
 	case fSETEXTRA:
-		_vm->_obj[obj].setFlagExtra(true);
+		_vm->_obj[objectId].setFlagExtra(true);
 		break;
 	case fCLREXTRA:
-		_vm->_obj[obj].setFlagExtra(false);
+		_vm->_obj[objectId].setFlagExtra(false);
 		break;
 
 	case fANIMOFF1:
 		anim->_flag |= SMKANIM_OFF1;
-		if ((_vm->_curRoom == kRoom11) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P))
+		if (_vm->_curRoom == kRoom11 ||
+			_vm->_curRoom == kRoom1D ||
+			_vm->_curRoom == kRoom14 ||
+			_vm->_curRoom == kRoom22 ||
+			_vm->_curRoom == kRoom48 ||
+			_vm->_curRoom == kRoom4P)
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, false);
 		break;
 	case fANIMOFF2:
 		anim->_flag |= SMKANIM_OFF2;
-		if ((_vm->_curRoom == kRoom2E))
+		if (_vm->_curRoom == kRoom2E)
 			_vm->_animMgr->smkToggleTrackAudio(0, 2, false);
 		break;
 	case fANIMOFF3:
@@ -143,7 +148,7 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, int obj) {
 
 	case fANIMON1:
 		anim->_flag &= ~SMKANIM_OFF1;
-		if ((_vm->_curRoom == kRoom14) || (_vm->_curRoom == kRoom1D) || (_vm->_curRoom == kRoom22) || (_vm->_curRoom == kRoom48) || (_vm->_curRoom == kRoom4P)) {
+		if (_vm->_curRoom == kRoom14 || _vm->_curRoom == kRoom1D || _vm->_curRoom == kRoom22 || _vm->_curRoom == kRoom48 || _vm->_curRoom == kRoom4P) {
 			_vm->_animMgr->smkToggleTrackAudio(0, 1, true);
 		}
 		break;
@@ -330,9 +335,11 @@ void AnimTypeManager::end(int type) {
 		// if it's time to run this AtFrame
 		if (anim->_atFrame[a]._numFrame == 0 && anim->_atFrame[a]._type) {
 			const uint8 child = anim->_atFrame[a]._child;
-			if (child == 0 || (child == 1 && !(flag & SMKANIM_OFF1))
-			|| (child == 2 && !(flag & SMKANIM_OFF2)) || (child == 3 && !(flag & SMKANIM_OFF3))
-			|| (child == 4 && !(flag & SMKANIM_OFF4)))
+			if ( child == 0 ||
+				(child == 1 && !(flag & SMKANIM_OFF1)) ||
+				(child == 2 && !(flag & SMKANIM_OFF2)) ||
+				(child == 3 && !(flag & SMKANIM_OFF3)) ||
+				(child == 4 && !(flag & SMKANIM_OFF4)))
 				processAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
@@ -352,16 +359,19 @@ void AnimTypeManager::handler(int type) {
 	if (h->_curFrame <= h->_lastFrame)
 		return;
 
-	uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
+	const uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
 
 	for (int32 a = 0; a < MAXATFRAME; ++a) {
 		// if it's time to run this AtFrame
-		if ((anim->_atFrame[a]._numFrame > h->_lastFrame) && (anim->_atFrame[a]._numFrame <= h->_curFrame) && (anim->_atFrame[a]._numFrame != 0)) {
+		if (anim->_atFrame[a]._numFrame > h->_lastFrame &&
+			anim->_atFrame[a]._numFrame <= h->_curFrame &&
+			anim->_atFrame[a]._numFrame != 0) {
 			const uint8 child = anim->_atFrame[a]._child;
-
-			if (child == 0 || (child == 1 && !(flag & SMKANIM_OFF1))
-			|| (child == 2 && !(flag & SMKANIM_OFF2)) || (child == 3 && !(flag & SMKANIM_OFF3))
-			|| (child == 4 && !(flag & SMKANIM_OFF4)))
+			if ( child == 0 ||
+				(child == 1 && !(flag & SMKANIM_OFF1)) ||
+				(child == 2 && !(flag & SMKANIM_OFF2)) ||
+				(child == 3 && !(flag & SMKANIM_OFF3)) ||
+				(child == 4 && !(flag & SMKANIM_OFF4)))
 				processAtFrame(h, anim->_atFrame[a]._type, a);
 		}
 	}
