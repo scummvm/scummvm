@@ -361,9 +361,10 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		// for the last time. We also need to reset any scaling here.
 		requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
-		requestedWidth  = requestedWidth / requestedHeight;
-		requestedHeight = requestedWidth / requestedHeight;
-
+		if ((requestedWidth > 0) && (requestedHeight > 0)) {
+			requestedWidth  = requestedWidth / requestedHeight;
+			requestedHeight = requestedWidth / requestedHeight;
+		}
 	} else if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
 		// Restore previously stored window dimensions.
 		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
