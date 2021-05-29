@@ -137,27 +137,65 @@ bool AchievementsManager::clearAchievement(const String &id) {
 }
 
 
-bool AchievementsManager::setStatFloat(const String &id, float value) {
+bool AchievementsManager::setStatFloatEx(const String &id, float value, const String &section) {
 	if (!isReady()) {
 		return false;
 	}
 
 	String tmp = Common::String::format("%8.8f", value);
-	_iniFile->setKey(id, "statistics", tmp);
+	_iniFile->setKey(id, section, tmp);
 	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
 
 
-float AchievementsManager::getStatFloat(const String &id) {
+float AchievementsManager::getStatFloatEx(const String &id, const String &section) {
 	if (!isReady()) {
 		return 0.0;
 	}
 
 	String tmp;
-	_iniFile->getKey(id, "statistics", tmp);
+	_iniFile->getKey(id, section, tmp);
 	return (float)atof(tmp.c_str());
 }
+
+
+bool AchievementsManager::setStatFloat(const String &id, float value) {
+	return setStatFloatEx(id, value, "statistics");
+}
+
+
+float AchievementsManager::getStatFloat(const String &id) {
+	return getStatFloatEx(id, "statistics");
+}
+
+
+bool AchievementsManager::updateAverageRateStatFloat(const String &id, float count, float times) {
+	if (!isReady()) {
+		return false;
+	}
+
+	float old_count = getStatFloatEx(id + "_count", "rates");
+	float old_times = getStatFloatEx(id + "_times", "rates");
+
+	setStatFloatEx(id + "_count", old_count + count, "rates");
+	setStatFloatEx(id + "_times", old_times + times, "rates");
+
+	return 0;
+}
+
+
+float AchievementsManager::getAverageRateStatFloat(const String &id) {
+	if (!isReady()) {
+		return 0.0;
+	}
+
+	float count = getStatFloatEx(id + "_count", "rates");
+	float times = getStatFloatEx(id + "_times", "rates");
+
+	return (times != 0) ? (count / times) : 0.0;
+}
+
 
 bool AchievementsManager::setStatInt(String const &id, int value) {
 	if (!isReady()) {
@@ -199,6 +237,7 @@ bool AchievementsManager::resetAllStats() {
 	}
 
 	_iniFile->removeSection("statistics");
+	_iniFile->removeSection("rates");
 	_iniFile->saveToSaveFile(_iniFileName);
 	return 0;
 }
