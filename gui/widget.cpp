@@ -39,8 +39,6 @@
 #include "image/bmp.h"
 #include "image/png.h"
 
-#include "backends/fs/posix/posix-fs.h"
-
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip)
@@ -1099,8 +1097,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 	if (name.hasSuffix(".png")) {
 #ifdef USE_PNG
 		Image::PNGDecoder decoder;
-		POSIXFilesystemNode posixfs(name);
-		Common::SeekableReadStream * stream = posixfs.createReadStream();
+		Common::FSNode fileNode(name);
+		Common::SeekableReadStream * stream = fileNode.createReadStream();
 		if (stream) {
 			if (!decoder.loadStream(*stream))
 				warning("Error decoding PNG");
@@ -1151,7 +1149,7 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 	reloadThumbnails();
 	Common::HashMap<Common::String, EntryContainerWidget *> entryById;
 	int row = 0, col = 0;
-	int entriesPerRow = 3;
+	int entriesPerRow = 6;
 	int k = 0;
 	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
 		k = row * entriesPerRow + col;
