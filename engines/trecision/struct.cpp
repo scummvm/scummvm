@@ -119,6 +119,23 @@ void SInvObject::loadObj(Common::File *file) {
 
 /********************************************************************/
 
+void STexture::init() {
+	_dx = _dy = _angle = 0;
+	_texture = nullptr;
+	_active = false;
+}
+
+void STexture::set(int16 x, int16 y, uint8 *buffer) {
+	_dx = x;
+	_dy = y;
+	_angle = 0;
+
+	_active = true;
+	_texture = buffer;
+}
+
+/********************************************************************/
+
 void SVertex::clear() {
 	_x = _y = _z = 0.0f;
 	_nx = _ny = _nz = 0.0f;
