@@ -36,6 +36,11 @@
 #include "gui/widgets/popup.h"
 #include "gui/widgets/scrollcontainer.h"
 
+#include "image/bmp.h"
+#include "image/png.h"
+
+#include "backends/fs/posix/posix-fs.h"
+
 namespace GUI {
 
 Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip)
@@ -673,70 +678,6 @@ void PicButtonWidget::drawWidget() {
 
 #pragma mark -
 
-void GameThumbButton::setGfx(const Graphics::ManagedSurface *gfx, int statenum, bool scale) {
-	_gfx[statenum].free();
-
-	if (!gfx || !gfx->getPixels())
-		return;
-
-	if (gfx->format.bytesPerPixel == 1) {
-		warning("GameThumbButton::setGfx got paletted surface passed");
-		return;
-	}
-
-	float sf = g_gui.getScaleFactor();
-	if (scale && sf != 1.0) {
-		float scalingFactor = (float)gfx->w / _w;
-		Graphics::Surface *tmp4 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
-		Graphics::Surface *tmp2 = tmp4->scale(_w, (uint16)(gfx->h / scalingFactor), false);
-		Graphics::Surface tmp3 = tmp2->getSubArea(Common::Rect(0,(tmp2->h -_h)/2, tmp2->w, (tmp2->h + _h)/2));
-		_gfx[statenum].copyFrom(tmp3);
-		tmp4->free();
-		delete tmp4;
-		tmp2->free();
-		delete tmp2;
-	} else {
-		_gfx[statenum].copyFrom(*gfx);
-	}
-}
-
-void GameThumbButton::setGfxFromTheme(const char *name, int statenum, bool scale) {
-	const Graphics::ManagedSurface *gfx = g_gui.theme()->getImageSurface(name);
-
-	setGfx(gfx, statenum, scale);
-
-	return;
-}
-
-void GameThumbButton::drawWidget() {
-	if (_showButton)
-		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), Common::U32String(), _state, getFlags());
-
-	Graphics::ManagedSurface *gfx;
-
-	if (_state == ThemeEngine::kStateHighlight)
-		gfx = &_gfx[kPicButtonHighlight];
-	else if (_state == ThemeEngine::kStateDisabled)
-		gfx = &_gfx[kPicButtonStateDisabled];
-	else if (_state == ThemeEngine::kStatePressed)
-		gfx = &_gfx[kPicButtonStatePressed];
-	else
-		gfx = &_gfx[kPicButtonStateEnabled];
-
-	if (!gfx->getPixels())
-		gfx = &_gfx[kPicButtonStateEnabled];
-
-	if (gfx->getPixels()) {
-		const int x = _x + (_w - gfx->w) / 2;
-		const int y = _y + (_h - gfx->h) / 2;
-
-		g_gui.theme()->drawWidgetBackground(Common::Rect(x, y, x+_w, y+_h),ThemeEngine::WidgetBackground::kThumbnailBackground);
-		g_gui.theme()->drawSurface(Common::Point(x, y), *gfx, _transparency);
-	}
-}
-
-#pragma mark -
-
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
@@ -1068,6 +1009,249 @@ void ContainerWidget::setBackgroundType(ThemeEngine::WidgetBackground background
 
 void ContainerWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), _backgroundType);
+}
+
+#pragma mark -
+
+EntryContainerWidget::EntryContainerWidget(GridWidget *boss, int x, int y, int w, int h) :
+		ContainerWidget(boss, x, y, w, h) {
+	_thumb = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
+	_plat = new GraphicsWidget(_thumb, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
+	_lang = new StaticTextWidget(_thumb, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
+	_title = new StaticTextWidget(this, 0, kThumbnailHeight, w , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
+	_activeInstall = nullptr;
+	_grid = boss;
+	// setBackgroundType(ThemeEngine::kThumbnailBackground);
+}
+EntryContainerWidget::EntryContainerWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
+			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {}
+
+void EntryContainerWidget::addInstallation(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
+	_installations.push_back(LauncherEntry(key, description, domain));
+}
+
+void EntryContainerWidget::addInstallation(LauncherEntry &install) {
+	_installations.push_back(install);
+}
+
+void EntryContainerWidget::addInstallations(Common::Array<LauncherEntry> installs) {
+	_installations.push_back(installs);
+}
+
+void EntryContainerWidget::setActiveInstallation(LauncherEntry &install) {
+	_activeInstall = &install;
+}
+
+void EntryContainerWidget::updateEntry() {
+	if ((!_activeInstall) && (!_installations.empty())) {
+		_activeInstall = _installations.begin();
+	}
+	if (_activeInstall) {
+		warning("%s, %s - Install", _activeInstall->key.c_str(), _activeInstall->description.c_str());
+		Common::String gameid = _activeInstall->domain->getVal("gameid");
+		Common::String engineid = _activeInstall->domain->getVal("engineid");
+		Common::String language = "XX";
+		Common::String platform = "UNK";
+		_activeInstall->domain->tryGetVal("language",language);
+		_activeInstall->domain->tryGetVal("platform", platform);
+		language.toUppercase();
+		warning("Fields populated");
+		warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
+		Common::String thumbPath = Common::String::format("%s-%s.png",engineid.c_str(),gameid.c_str());
+		warning("I will be loading: %s", thumbPath.c_str());
+		warning("%d thumbs loaded", _grid->getLoadedNumber());
+		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(thumbPath);
+		warning("Got some surface");
+		_thumb->setGfx(gfx);
+
+		_lang->setLabel(language);
+		_title->setLabel(_activeInstall->description);
+		
+		if (platform == "pc")
+			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformDOS));
+		else if (platform == "amiga")
+			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformAmiga));
+		else if (platform == "apple2")
+			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformApple2));
+		else
+			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformUnknown));
+	}
+	markAsDirty();
+}
+
+void EntryContainerWidget::drawWidget() {
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
+}
+
+#pragma mark -
+
+Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
+	Graphics::ManagedSurface *surf = nullptr;
+	const Graphics::Surface *srcSurface = nullptr;
+	if (name.hasSuffix(".png")) {
+#ifdef USE_PNG
+		Image::PNGDecoder decoder;
+		POSIXFilesystemNode posixfs(name);
+		Common::SeekableReadStream * stream = posixfs.createReadStream();
+		if (stream) {
+			if (!decoder.loadStream(*stream))
+				warning("Error decoding PNG");
+			
+			srcSurface = decoder.getSurface();
+			delete stream;
+			if (!srcSurface) {
+				warning("Failed to load surface : %s", name.c_str());
+			}
+			else {
+				warning("Loaded thumb : %s", name.c_str());
+			}
+			if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
+				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
+				warning("Converting : %s", name.c_str());
+			}
+				
+		} else {
+			warning("No such file : %s", name.c_str());
+		}
+#else
+		error("No PNG support compiled");
+#endif
+	} 
+	else {
+
+	}
+	warning("%p", (void *)surf);
+	return surf;
+}
+
+#pragma mark -
+
+GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) : 
+		ContainerWidget(boss, x, y, w, h) {
+	loadPlatformIcons();
+}
+
+GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
+		ContainerWidget(boss, name) {
+	loadPlatformIcons();
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 100);
+	_scrollBar->setTarget(this);
+	_scrollPos = 0;
+	_scrollWindowHeight = 500;
+	_scrollWindowWidth = 500;
+}
+
+void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
+	_allEntries = Common::Array<LauncherEntry>(*list);
+	reloadThumbnails();
+	warning("Thumbnails loaded");
+	Common::HashMap<Common::String, EntryContainerWidget *> entryById;
+	int row = 0, col = 0;
+	int entriesPerRow = 3;
+	int k = 0;
+	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
+		k = row * entriesPerRow + col;
+		EntryContainerWidget *newEntry = entryById[i->key];
+		if (!newEntry) { 
+			newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+			_entries.push_back(newEntry);
+		}
+		newEntry->addInstallation(*i);
+		warning("Installation added");
+		newEntry->updateEntry();
+		warning("Entry updated");
+		entryById[i->key] = newEntry;
+		if (++col >= entriesPerRow) {
+			++row;
+			col = 0;
+		}
+		++k;
+	}
+	_innerHeight = 100 + (row * (kThumbnailHeight + 80));
+	_innerWidth = 100 + (col * (kThumbnailWidth + 50));
+	// warning("%d %d", _innerWidth, _innerHeight);
+}
+
+void GridWidget::loadPlatformIcons() {
+	for (auto iter = _platformIcons.begin(); iter != _platformIcons.end(); ++iter) {
+		delete *iter;
+	}
+	_platformIcons.clear();
+	Common::String pathPrefix("./icons/");
+	Common::Array<Common::String> iconFilenames;
+	iconFilenames.push_back(Common::String("dos.png"));
+	iconFilenames.push_back(Common::String("amiga.png"));
+	iconFilenames.push_back(Common::String("apple2.png"));
+
+	for (int i = 0; i < iconFilenames.size(); ++i) {
+		Common::String fullPath = pathPrefix + iconFilenames[i];
+		_platformIcons.push_back(loadSurfaceFromFile(fullPath));
+	}
+}
+
+Common::Array<Common::String> GridWidget::visibleEntries() {
+	Common::Array<Common::String> placeholder;
+	Common::Array<Common::String> thumbList;
+	Common::String pathPrefix("./icons/");
+	for (auto iter = _allEntries.begin(); iter != _allEntries.end(); ++iter) {
+		Common::String gameid = iter->domain->getVal("gameid");
+		Common::String engineid = iter->domain->getVal("engineid");
+		thumbList.push_back(pathPrefix + Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str()));
+	}
+	return thumbList;
+}
+
+void GridWidget::reloadThumbnails() {
+	Graphics::ManagedSurface *surf = nullptr;
+	_loadedSurfaces.clear(true);
+	warning("cleanerd");
+	Common::Array<Common::String> titleList = visibleEntries();
+	warning("got array");
+	for (Common::Array<Common::String>::iterator iter = titleList.begin(); iter != titleList.end(); ++iter) {
+		if (_loadedSurfaces.contains(*iter)) {
+			warning("Thumbnail already loaded, skipping...");
+		}
+		else {
+			surf = loadSurfaceFromFile(*iter);
+			_loadedSurfaces[*iter] = surf;
+		}
+	}
+}
+
+Graphics::ManagedSurface * GridWidget::filenameToSurface(Common::String &name) {
+	Common::String path = Common::String("./icons/")+name;
+	warning("Passing surface for : %s", path.c_str());
+	auto list = visibleEntries();
+	for (auto l = list.begin(); l!=list.end(); ++l) {
+		if (*l == path) {
+			warning("%p", (void *)_loadedSurfaces[path]);
+			return _loadedSurfaces[path];
+		}
+	}
+	return nullptr;
+}
+
+Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) {
+	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
+		warning("Unknown Platform");
+	}
+	else {
+		return _platformIcons[platformCode];
+	}
+}
+
+void GridWidget::handleMouseWheel(int x, int y, int direction) {
+	// warning("Wheel : %d %d %d", x, y, direction);
+	_scrollPos = direction*10;
+	for (Common::Array<EntryContainerWidget *>::iterator iter = _entries.begin(); iter != _entries.end(); ++iter) {
+		(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY()  - _scrollPos);
+		if ((*iter)->getRelY()< -kThumbnailHeight) {
+			(*iter)->setVisible(false);
+		} else {
+			(*iter)->setVisible(true);
+		}
+	}
+	markAsDirty();
 }
 
 #pragma mark -
