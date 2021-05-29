@@ -222,6 +222,8 @@ public:
 	                framePtr,               // pointer to call frame
 	                returnVal;              // return value from ccalls
 
+	bool            _valid;
+
 	//  Various signals that a script can wait upon
 	enum WaitTypes {
 		waitNone = 0,                       // waiting for nothing

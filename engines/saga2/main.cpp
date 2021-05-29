@@ -748,7 +748,8 @@ void openImageTest() {
 
 void testScripts() {
 	scriptCallFrame scf;
-	runScript(3, scf);
+	for (int i = 1; i < 500; ++i)
+		runScript(i, scf);
 }
 
 //-----------------------------------------------------------------------
