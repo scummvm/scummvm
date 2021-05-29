@@ -886,7 +886,7 @@ bool Debugger::cmdVariable(int argc, const char **argv) {
 
 bool Debugger::cmdClue(int argc, const char **argv) {
 	if (argc != 3 && argc != 4) {
-		debugPrintf("Get or changes clue for an actor.\n");
+		debugPrintf("Gets or changes clue for an actor.\n");
 		debugPrintf("Usage: %s <actorId> <clueId> [<value>]\n", argv[0]);
 		return true;
 	}
@@ -922,7 +922,7 @@ bool Debugger::cmdClue(int argc, const char **argv) {
 
 bool Debugger::cmdTimer(int argc, const char **argv) {
 	if (argc != 2 && argc != 4) {
-		debugPrintf("Get or changes timers for an actor.\n");
+		debugPrintf("Gets or changes timers for an actor.\n");
 		debugPrintf("Usage: %s <actorId> [<timer> <value>]\n", argv[0]);
 		return true;
 	}
@@ -964,7 +964,7 @@ bool Debugger::cmdTimer(int argc, const char **argv) {
 
 bool Debugger::cmdFriend(int argc, const char **argv) {
 	if (argc != 3 && argc != 4) {
-		debugPrintf("Get or changes friendliness for an actor towards another actor.\n");
+		debugPrintf("Gets or changes friendliness for an actor towards another actor.\n");
 		debugPrintf("Usage: %s <actorId> <otherActorId> [<value>]\n", argv[0]);
 		return true;
 	}
