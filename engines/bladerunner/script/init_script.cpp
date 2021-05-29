@@ -2728,6 +2728,14 @@ void InitScript::Init_CDB() {
 	CDB_Set_Clue_Asset_Type(kClueCrazylegsInterview3, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueCrazylegGrovels, kClueTypeAudioRecording);
 	CDB_Set_Clue_Asset_Type(kClueFolder, kClueTypeObject);
+	if (_vm->_cutContent) {
+		// These clues had no asset type assigned, so they defaulted to "Intangible"
+		// and therefore they would not appear in McCoy's KIA
+		CDB_Set_Clue_Asset_Type(kClueGuzzasCash, kClueTypeAudioRecording);
+		CDB_Set_Clue_Asset_Type(kClueDragonflyCollection, kClueTypeAudioRecording);
+		CDB_Set_Clue_Asset_Type(kClueDragonflyBelt, kClueTypeObject);
+		CDB_Set_Clue_Asset_Type(kClueEarlyQInterview, kClueTypeAudioRecording);
+	}
 }
 
 void InitScript::Init_Spinner() {

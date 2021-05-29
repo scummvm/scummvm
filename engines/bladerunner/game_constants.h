@@ -185,7 +185,7 @@ enum Clues {
 	kCluePurchasedScorpions                =  79, // Audio Recording
 	kClueWeaponsOrderForm                  =  80, // Object
 	kClueShippingForm                      =  81, // Object
-	kClueGuzzasCash                        =  82, // (Intangible)
+	kClueGuzzasCash                        =  82, // Restored Content: Audio Recording. Original: (Intangible)
 	kCluePoliceIssueWeapons                =  83, // (Intangible) - Can be acquired - Not checked in KIA - TODO?
 	kClueHysteriaToken                     =  84, // Object
 	kClueRagDoll                           =  85, // Object
@@ -193,9 +193,9 @@ enum Clues {
 	kClueCheese                            =  87, // Object
 	kClueDektorasDressingRoom              =  88, // Photograph
 	kClueEarlyQsClub                       =  89, // Video Clip
-	kClueDragonflyCollection               =  90, // (Intangible) - From Peruvian Lady
-	kClueDragonflyBelt                     =  91, // (Intangible)
-	kClueEarlyQInterview                   =  92, // (Intangible) - Identity Reveal for Dektora
+	kClueDragonflyCollection               =  90, // Restored Content: Audio Recording. Original: (Intangible) - From Peruvian Lady
+	kClueDragonflyBelt                     =  91, // Restored Content: Object. Original: (Intangible)
+	kClueEarlyQInterview                   =  92, // Restored Content: Audio Recording. Original: (Intangible) - Identity Reveal for Dektora
 	kClueStrangeScale1                     =  93, // Object
 	kClueDektoraInterview1                 =  94, // Audio Recording
 	kClueSuspectDektora                    =  95, // (Intangible) - UNOBTAINED - Not checked in KIA - added to many actors DBs
