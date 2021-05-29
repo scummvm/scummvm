@@ -690,8 +690,7 @@ bool Thread::interpret(void) {
 
 				//RUnlockHandle((RHANDLE)codeSeg);
 				codeSeg = scriptRes->loadIndexResource(programCounter.segment,
-						                               "saga code segment",
-													   scriptRes->_filename);
+				                                       "saga code segment");
 				pc = (codeSeg) + programCounter.offset;
 
 				n = *stack++;               // get argument count from call
@@ -735,7 +734,7 @@ bool Thread::interpret(void) {
 			IMMED_WORD(w);               // pick up segment number
 			programCounter.segment = w;     // set current segment
 			//RUnlockHandle((RHANDLE)codeSeg);
-			codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
+			codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 			IMMED_WORD(w);               // pick up segment offset
 			programCounter.offset = w;      // store into pc
 
@@ -821,7 +820,7 @@ bool Thread::interpret(void) {
 					w = vtableEntry[ 0 ];
 					programCounter.segment = w;
 					//RUnlockHandle((RHANDLE)codeSeg);
-					codeSeg = scriptRes->loadIndexResource(w, "saga code segment", scriptRes->_filename);
+					codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 
 					// store pc-offset into pc
 					programCounter.offset = vtableEntry[ 1 ];
@@ -1489,7 +1488,7 @@ Thread *getThreadAddress(ThreadID id) {
 //	Thread constructor
 
 Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
-	codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment", scriptRes->_filename);
+	codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment");
 
 	//  initialize the thread
 	stackSize = kStackSize;
@@ -1534,8 +1533,7 @@ Thread::Thread(void **buf) {
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	codeSeg = scriptRes->loadIndexResource(programCounter.segment,
-			                               "saga code segment",
-										   scriptRes->_filename);
+	                                       "saga code segment");
 
 	stackBase = (UBytePtr)malloc(stackSize);
 	stackPtr = stackBase + stackSize - stackOffset;
@@ -1750,21 +1748,24 @@ void initScripts(void) {
 		error("Unable to open script resource file!\n");
 
 	//  Load the data segment
-	dataSegment = scriptRes->loadResource(dataSegID, scriptResFile->_filename, "saga data segment");
+	dataSegment = scriptRes->loadResource(dataSegID, "saga data segment", scriptResFile->_filename);
 
 	if (dataSegment == NULL)
 		error("Unable to load the SAGA data segment");
 
 	dataSegSize = scriptRes->getSize(dataSegID, "saga data segment");
+	debugC(2, kDebugScripts, "dataSegment loaded at 0x%08x: size: %d", dataSegment, dataSegSize);
 
 //	Common::hexdump(dataSegment, dataSegSize);
 
-	exportSegment = scriptRes->loadResource(exportSegID, scriptResFile->_filename, "saga export segment");
+	exportSegment = scriptRes->loadResource(exportSegID, "saga export segment", scriptResFile->_filename);
 	assert(exportSegment != NULL);
 
 //	Common::hexdump(exportSegment, scriptRes->getSize(exportSegID, "saga export segment"));
 
 	exportCount = (scriptRes->getSize(exportSegID, "saga export segment") / sizeof(uint32)) + 1;
+	debugC(2, kDebugScripts, "exportSegment loaded at 0x%08x: size: %d, exportCount: %d",
+		                     exportSegment, scriptRes->getSize(exportSegID, "saga export segment"), exportCount);
 }
 
 void cleanupScripts(void) {
