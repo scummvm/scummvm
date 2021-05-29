@@ -37,7 +37,7 @@ try:
 		game_id           = game_rows[idx + 0].text.strip()
 		game_type         = game_rows[idx + 1].text.strip()
 		game_name         = game_rows[idx + 2].text.strip()
-		game_last_changed = game_rows[idx + 3].attrs["title"].strip()
+		game_last_changed = game_rows[idx + 3].attrs["data-time"].strip()
 		if not args.all and game_name != args.name:
 			if args.verbose:
 				sys.stderr.write('found {0} - no match for {1}\n'.format(game_name, args.name))
