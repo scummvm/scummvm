@@ -231,9 +231,11 @@ void SceneScriptRC04::dialogueWithBulletBob() {
 			Actor_Says(kActorMcCoy, 5080, 11);
 			Actor_Says(kActorBulletBob, 730, 37);
 #if BLADERUNNER_ORIGINAL_BUGS
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);  // A bug? Shouldn't the last argument be -1 or kActorBulletBob here?
-#else
-			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorBulletBob);
+			// Last argument should be -1 or kActorBulletBob here
+			// However, this clue is acquired for asking about Izo, when Izo is Replicant
+			// (see also the KIA entry for it, which references the audio recording from that discussion)
+			// It should not be acquired here.
+			Actor_Clue_Acquire(kActorMcCoy, kClueBobInterview1, true, kActorMcCoy);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			Actor_Says(kActorBulletBob, 560, 37);

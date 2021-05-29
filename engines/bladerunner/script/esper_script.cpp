@@ -265,10 +265,10 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 	case 3:
 		if (region == 9) {
 			Actor_Voice_Over(4230, kActorVoiceOver);
-			if (!Actor_Clue_Query(kActorMcCoy, kClueClovisflowers)) {
+			if (!Actor_Clue_Query(kActorMcCoy, kClueClovisFlowers)) {
 				Actor_Says(kActorMcCoy, 6945, 3);
 				Sound_Play(kSfxBR034_1A, 50, 0, 0, 50);
-				Actor_Clue_Acquire(kActorMcCoy, kClueClovisflowers, true, -1);
+				Actor_Clue_Acquire(kActorMcCoy, kClueClovisFlowers, true, -1);
 			}
 			retValue = true;
 		} else if (region == 10) {

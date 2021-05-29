@@ -39,13 +39,13 @@ class ActorClues {
 		int clueId;
 		int weight;
 		int fromActorId;
-		int field3;
-		int field4;
-		int field5;
-		int field6;
-		int field7;
-		int field8;
-		byte flags;
+		int field3; // unused (but stored/restored)
+		int field4; // unused (but stored/restored)
+		int field5; // unused (but stored/restored)
+		int field6; // unused (but stored/restored)
+		int field7; // unused (but stored/restored)
+		int field8; // unused (but stored/restored)
+		byte flags; // bit 0 (acquired), bit 1 (unknown), bit 2 (viewed), bit 3 (private)
 	};
 
 	BladeRunnerEngine *_vm;

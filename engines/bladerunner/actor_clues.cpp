@@ -248,6 +248,16 @@ int ActorClues::getFromActorId(int clueId) const {
 	return _clues[clueIndex].fromActorId;
 }
 
+/**
+ * @brief returns if flag2 for specified clue is set.
+ *
+ * Bit flag "flag2" seems to affect one modifier when sharing / spreading clues
+ * (based on Honesty, friendliness and some seemingly *complicated* algorithm).
+ * It seems that it increases the overall modifier value for a clue, making it more likely to be shared with another actor.
+ *
+ * @param clueId
+ * @return true if this bit flag is set, false otherwise
+*/
 bool ActorClues::isFlag2(int clueId) const {
 	int clueIndex = findClueIndex(clueId);
 	if (clueIndex == -1) {
@@ -358,12 +368,12 @@ void ActorClues::remove(int index) {
 	_clues[index].flags       = 0;
 	_clues[index].fromActorId = -1;
 
-	_clues[index].field3 = -1;
-	_clues[index].field4 = 0;
-	_clues[index].field5 = -1;
-	_clues[index].field6 = 0;
-	_clues[index].field7 = -1;
-	_clues[index].field8 = 0;
+	_clues[index].field3 = -1; // unused (but stored/restored)
+	_clues[index].field4 = 0;  // unused (but stored/restored)
+	_clues[index].field5 = -1; // unused (but stored/restored)
+	_clues[index].field6 = 0;  // unused (but stored/restored)
+	_clues[index].field7 = -1; // unused (but stored/restored)
+	_clues[index].field8 = 0;  // unused (but stored/restored)
 }
 
 void ActorClues::save(SaveFileWriteStream &f) {
