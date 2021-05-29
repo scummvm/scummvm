@@ -1153,7 +1153,7 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 	int k = 0;
 	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
 		k = row * entriesPerRow + col;
-		EntryContainerWidget *newEntry = entryById[i->key];
+		EntryContainerWidget *newEntry = entryById[i->domain->getVal("gameid")];
 		if (!newEntry) { 
 			GraphicsWidget *th = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
 			GraphicsWidget *p = new GraphicsWidget(this, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
@@ -1171,15 +1171,15 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
 			_entries.push_back(newEntry);
+			if (++col >= entriesPerRow) {
+				++row;
+				col = 0;
+			}
+			++k;
 		}
 		newEntry->addInstallation(*i);
 		newEntry->updateEntry();
-		entryById[i->key] = newEntry;
-		if (++col >= entriesPerRow) {
-			++row;
-			col = 0;
-		}
-		++k;
+		entryById[i->domain->getVal("gameid")] = newEntry;
 	}
 	_innerHeight = 100 + (row * (kThumbnailHeight + 80));
 	_innerWidth = 100 + (col * (kThumbnailWidth + 50));
