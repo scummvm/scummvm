@@ -57,7 +57,7 @@ class GraphicsManager {
 	int _drawObjIndex;
 	bool _drawMask;
 
-	static const Graphics::PixelFormat kImageFormat;
+	const Graphics::PixelFormat kImageFormat;
 
 	uint16 aliasing(uint32 val1, uint32 val2, uint8 num);
 	void drawCharPixel(uint16 y, uint16 charLeft, uint16 charRight, Common::Rect rect, Common::Rect subtitleRect, uint16 color, Graphics::Surface *externalSurface = nullptr);
