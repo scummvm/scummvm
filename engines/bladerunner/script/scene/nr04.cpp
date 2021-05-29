@@ -250,7 +250,7 @@ void SceneScriptNR04::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 			Actor_Change_Animation_Mode(kActorEarlyQ, 85);
 			Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 			Actor_Set_Goal_Number(kActorEarlyQ, kGoalEarlyQNR04ScorpionsCheck);
-			// The quotes corresponding to this quote are from kGoalEarlyQNR04McCoyPulledGun (previous goal of EarlyQ)
+			// The quotes corresponding to this clue are from kGoalEarlyQNR04McCoyPulledGun (previous goal of EarlyQ)
 			// That goal leads to this one (if McCoy does not shoot Early Q that is)
 			// TODO maybe move acquiring the clue to the kGoalEarlyQNR04McCoyPulledGun?
 			Actor_Clue_Acquire(kActorMcCoy, kClueEarlyQInterview, false, kActorEarlyQ);
