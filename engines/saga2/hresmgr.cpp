@@ -467,7 +467,7 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 
 	// allocate buffers for root, groups and data
 
-	_numEntries = origin.size;
+	_numEntries = origin.size / resourceSize;
 
 	_base = new hResEntry[_numEntries]();
 	tableSize = origin.offset - _firstGroupOffset - sizeof(uint32);
