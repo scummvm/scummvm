@@ -37,7 +37,7 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_face = nullptr;
 	_light = nullptr;
 	_camera = nullptr;
-	_texture = nullptr;
+	_textures = nullptr;
 	_textureData = nullptr;
 
 	_vertexNum = 0;
@@ -100,7 +100,7 @@ void Actor::initTextures() {
 	// arms
 	_textureArea[2].set(300, 150, _textureData + (300 * 208 / 4) + (300 * 300));
 
-	_texture = (STexture *)&_textureArea[0];
+	_textures = (STexture *)&_textureArea[0];
 }
 
 void Actor::updateStepSound() {
