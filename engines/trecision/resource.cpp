@@ -21,13 +21,8 @@
  */
 
 #include "common/scummsys.h"
-#include "common/error.h"
 #include "common/system.h"
-#include "common/events.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
 #include "common/file.h"
-#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/translation.h"
