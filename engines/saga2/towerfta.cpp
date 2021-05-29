@@ -33,7 +33,6 @@
 #include "saga2/fta.h"
 #include "saga2/mainmap.h"
 #include "saga2/config.h"
-#include "saga2/itevideo.h"
 #include "saga2/tromode.h"
 #include "saga2/audio.h"
 #include "saga2/annoy.h"
@@ -67,7 +66,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ breakHandlerInitialized,   &initCtlBreakTrap,     &termCtlBreakTrap },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
 	{ memoryInitialized,         &initMemPool,          &termMemPool },
-	{ videoInitialized,          &initVideoPlayer,      &termVideoPlayer },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
 	{ timerInitialized,          &initSystemTimer,      &termSystemTimer },
 	{ resourcesInitialized,      &initResourceFiles,    &termResourceFiles },
@@ -172,18 +170,6 @@ extern INITIALIZER(initMemPool);
 
 TERMINATOR(termMemPool) {
 	cleanupMemPool();                       // deallocate memory buffers
-}
-
-
-// ------------------------------------------------------------------------
-
-INITIALIZER(initVideoPlayer) {
-	initVideo();
-	return TRUE;
-}
-
-TERMINATOR(termVideoPlayer) {
-	cleanupVideo();
 }
 
 

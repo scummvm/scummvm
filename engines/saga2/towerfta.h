@@ -46,9 +46,6 @@ TERMINATOR(termMemPool);
 INITIALIZER(initGraphicsSystem);
 TERMINATOR(termGraphicsSystem);
 
-INITIALIZER(initVideoPlayer);
-TERMINATOR(termVideoPlayer);
-
 INITIALIZER(initPlayIntro);
 TERMINATOR(termPlayOutro);
 
