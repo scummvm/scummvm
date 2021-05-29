@@ -339,7 +339,7 @@ void LauncherDialog::updateListing() {
 		// Strip platform language from the title.
 		int extraPos = description.rfind("(");
 		description.replace((char *)(description.c_str())+extraPos, description.end(), Common::String(""));
-		warning("%s",iter->_key.c_str());
+		// warning("%s",iter->_key.c_str());
 		if (!description.empty())
 			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
 	}

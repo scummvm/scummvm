@@ -489,11 +489,12 @@ private:
 	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
 	
 	ScrollBarWidget *_scrollBar;
-	ContainerWidget *_visibleWindow;
 
 	uint16 _scrollWindowHeight, _scrollWindowWidth, _scrollSpeed;
 	uint16 _innerHeight, _innerWidth;
 	uint16 _thumbnailHeight, _thumbnailWidth;
+	uint16 _entryHeight, _entryWidth;
+	
 	int _scrollPos;
 	int _entriesPerRow;
 	int _entriesOnScreen;
@@ -558,6 +559,7 @@ public:
 	void setActiveInstallation(int i) {setActiveInstallation(_installations[i]);};
 	void updateEntry();
 	void drawWidget() override;
+	void setVisible2(bool e);
 
 };
 

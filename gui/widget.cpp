@@ -1014,17 +1014,20 @@ void ContainerWidget::drawWidget() {
 #pragma mark -
 
 EntryContainerWidget::EntryContainerWidget(GridWidget *boss, int x, int y, int w, int h) :
-		ContainerWidget(boss, x, y, w, h) {
-	_thumb = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
-	_plat = new GraphicsWidget(_thumb, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
-	_lang = new StaticTextWidget(_thumb, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
-	_title = new StaticTextWidget(this, 0, kThumbnailHeight, w , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
+ContainerWidget(boss, x, y, w, h) {
+	_thumb = new GraphicsWidget(boss, 0, 0 , kThumbnailWidth, kThumbnailHeight);
+	_plat = new GraphicsWidget(boss, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
+	_lang = new StaticTextWidget(boss, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
+	_title = new StaticTextWidget(boss, 0, kThumbnailHeight, w , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
 	_activeInstall = nullptr;
 	_grid = boss;
 	// setBackgroundType(ThemeEngine::kThumbnailBackground);
 }
 EntryContainerWidget::EntryContainerWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
-			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {}
+			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {
+	_activeInstall = nullptr;
+	_grid = boss;
+			}
 
 void EntryContainerWidget::addInstallation(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
 	_installations.push_back(LauncherEntry(key, description, domain));
@@ -1047,7 +1050,7 @@ void EntryContainerWidget::updateEntry() {
 		_activeInstall = _installations.begin();
 	}
 	if (_activeInstall) {
-		warning("%s, %s - Install", _activeInstall->key.c_str(), _activeInstall->description.c_str());
+		// warning("%s, %s - Install", _activeInstall->key.c_str(), _activeInstall->description.c_str());
 		Common::String gameid = _activeInstall->domain->getVal("gameid");
 		Common::String engineid = _activeInstall->domain->getVal("engineid");
 		Common::String language = "XX";
@@ -1055,13 +1058,10 @@ void EntryContainerWidget::updateEntry() {
 		_activeInstall->domain->tryGetVal("language",language);
 		_activeInstall->domain->tryGetVal("platform", platform);
 		language.toUppercase();
-		warning("Fields populated");
-		warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
+		// warning("Fields populated");
+		// warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
 		Common::String thumbPath = Common::String::format("%s-%s.png",engineid.c_str(),gameid.c_str());
-		warning("I will be loading: %s", thumbPath.c_str());
-		warning("%d thumbs loaded", _grid->getLoadedNumber());
 		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(thumbPath);
-		warning("Got some surface");
 		_thumb->setGfx(gfx);
 
 		_lang->setLabel(language);
@@ -1083,6 +1083,14 @@ void EntryContainerWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
 }
 
+void EntryContainerWidget::setVisible2(bool e) {
+	setVisible(e);
+	_thumb->setVisible(e);
+	_plat->setVisible(e);
+	_title->setVisible(e);
+	_lang->setVisible(e);
+}
+
 #pragma mark -
 
 Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
@@ -1102,12 +1110,8 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 			if (!srcSurface) {
 				warning("Failed to load surface : %s", name.c_str());
 			}
-			else {
-				warning("Loaded thumb : %s", name.c_str());
-			}
 			if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
-				warning("Converting : %s", name.c_str());
 			}
 				
 		} else {
@@ -1120,7 +1124,6 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 	else {
 
 	}
-	warning("%p", (void *)surf);
 	return surf;
 }
 
@@ -1134,6 +1137,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) :
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
 		ContainerWidget(boss, name) {
 	loadPlatformIcons();
+	_entryHeight = kThumbnailHeight + (2*kLineHeight);
+	_entryWidth = kThumbnailWidth;
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 100);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
@@ -1144,7 +1149,6 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 	_allEntries = Common::Array<LauncherEntry>(*list);
 	reloadThumbnails();
-	warning("Thumbnails loaded");
 	Common::HashMap<Common::String, EntryContainerWidget *> entryById;
 	int row = 0, col = 0;
 	int entriesPerRow = 3;
@@ -1153,13 +1157,25 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 		k = row * entriesPerRow + col;
 		EntryContainerWidget *newEntry = entryById[i->key];
 		if (!newEntry) { 
-			newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+			GraphicsWidget *th = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
+			GraphicsWidget *p = new GraphicsWidget(this, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
+			StaticTextWidget *l = new StaticTextWidget(this, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
+			StaticTextWidget *t = new StaticTextWidget(this, 0, kThumbnailHeight, kThumbnailWidth , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
+			
+			th->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
+			p->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
+			l->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
+			t->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
+
+			newEntry = new EntryContainerWidget(this, th, p, l, t);
+			newEntry->setSize(kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+			newEntry->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
+			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+
 			_entries.push_back(newEntry);
 		}
 		newEntry->addInstallation(*i);
-		warning("Installation added");
 		newEntry->updateEntry();
-		warning("Entry updated");
 		entryById[i->key] = newEntry;
 		if (++col >= entriesPerRow) {
 			++row;
@@ -1204,9 +1220,7 @@ Common::Array<Common::String> GridWidget::visibleEntries() {
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	_loadedSurfaces.clear(true);
-	warning("cleanerd");
 	Common::Array<Common::String> titleList = visibleEntries();
-	warning("got array");
 	for (Common::Array<Common::String>::iterator iter = titleList.begin(); iter != titleList.end(); ++iter) {
 		if (_loadedSurfaces.contains(*iter)) {
 			warning("Thumbnail already loaded, skipping...");
@@ -1220,11 +1234,9 @@ void GridWidget::reloadThumbnails() {
 
 Graphics::ManagedSurface * GridWidget::filenameToSurface(Common::String &name) {
 	Common::String path = Common::String("./icons/")+name;
-	warning("Passing surface for : %s", path.c_str());
 	auto list = visibleEntries();
 	for (auto l = list.begin(); l!=list.end(); ++l) {
 		if (*l == path) {
-			warning("%p", (void *)_loadedSurfaces[path]);
 			return _loadedSurfaces[path];
 		}
 	}
@@ -1242,14 +1254,21 @@ Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) 
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	// warning("Wheel : %d %d %d", x, y, direction);
-	_scrollPos = direction*10;
+	_scrollPos = direction*40;
 	for (Common::Array<EntryContainerWidget *>::iterator iter = _entries.begin(); iter != _entries.end(); ++iter) {
 		(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY()  - _scrollPos);
-		if ((*iter)->getRelY()< -kThumbnailHeight) {
-			(*iter)->setVisible(false);
-		} else {
-			(*iter)->setVisible(true);
+		(*iter)->_thumb->setPos((*iter)->_thumb->getRelX(), (*iter)->_thumb->getRelY()  - _scrollPos);
+		(*iter)->_plat->setPos((*iter)->_plat->getRelX(), (*iter)->_plat->getRelY()  - _scrollPos);
+		(*iter)->_title->setPos((*iter)->_title->getRelX(), (*iter)->_title->getRelY()  - _scrollPos);
+		(*iter)->_lang->setPos((*iter)->_lang->getRelX(), (*iter)->_lang->getRelY()  - _scrollPos);
+
+		if (((*iter)->getRelY() < -_entryHeight - 50) || ((*iter)->getRelY() > _h + 50)) {
+			(*iter)->setVisible2(false);
 		}
+		else {
+			(*iter)->setVisible2(true);
+		}
+
 	}
 	markAsDirty();
 }
