@@ -251,7 +251,7 @@ void updateMapFeatures(int16 cWorld) {
 	extern GameWorld            *currentWorld;
 	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
 
-	uint16          *mapData = (*wMap->map)->mapData;
+	uint16          *mapData = wMap->map->mapData;
 
 	for (int i = 0; i < mapFeatureCount; i++) {
 		if (mapFeatures[i]->getWorld() == cWorld) {

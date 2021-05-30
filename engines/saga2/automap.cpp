@@ -426,7 +426,7 @@ void CAutoMap::createSmallMap(void) {
 	gPort           &port = window.windowPort;
 	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
 
-	uint16          *mapData = (*wMap->map)->mapData;
+	uint16          *mapData = wMap->map->mapData;
 	uint16          *mapRow;
 
 	//  Info about region being drawn
