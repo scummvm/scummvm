@@ -142,6 +142,7 @@ public:
 
 	bool loadVideo(Common::String path);
 	void startVideo(Channel *channel);
+	void stopVideo(Channel *channel);
 
 	uint getMovieCurrentTime();
 	uint getMovieTotalTime();

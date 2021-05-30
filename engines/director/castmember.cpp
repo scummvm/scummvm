@@ -366,6 +366,12 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_duration = getMovieTotalTime();
 }
 
+void DigitalVideoCastMember::stopVideo(Channel *channel) {
+	_video->stop();
+
+	debugC(2, kDebugImages, "STOPPING VIDEO %s", _filename.c_str());
+}
+
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
