@@ -641,7 +641,7 @@ void Renderer3D::drawCharacter(uint8 flag) {
 
 		// rearranged light values so they can be viewed
 		for (int a = 0; a < vertexNum; ++a)
-			_vVertex[a]._angle = CLIP(_vVertex[a]._angle, 0, 180);
+			_vVertex[a]._angle = CLIP<int32>(_vVertex[a]._angle, 0, 180);
 
 		// Calculate the distance of the character from the room
 		tx = camera->_ex - actor->_px;
@@ -682,8 +682,8 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			actor->_lim[2] = MIN(y2d, actor->_lim[2]);
 			actor->_lim[3] = MAX(y2d, actor->_lim[3]);
 
-			actor->_lim[4] = MIN(_vVertex[a]._z, actor->_lim[4]);
-			actor->_lim[5] = MAX(_vVertex[a]._z, actor->_lim[5]);
+			actor->_lim[4] = MIN<int32>(_vVertex[a]._z, actor->_lim[4]);
+			actor->_lim[5] = MAX<int32>(_vVertex[a]._z, actor->_lim[5]);
 
 			++curVertex;
 		}
