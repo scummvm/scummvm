@@ -52,8 +52,10 @@ TextManager::TextManager(TrecisionEngine *vm) : _vm(vm) {
 TextManager::~TextManager() {
 }
 
-void TextManager::positionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl) {
+Common::Point TextManager::positionString(uint16 x, uint16 y, const char *string, bool characterFl) {
 	uint16 lenText = _vm->textLength(string);
+	Common::Point pos;
+
 	if (lenText > 960)
 		lenText = (lenText * 2 / 5);
 	else if (lenText > 320)
@@ -64,12 +66,14 @@ void TextManager::positionString(uint16 x, uint16 y, const char *string, uint16 
 	else
 		x = 0;
 
-	*posx = CLIP<uint16>(x, 5, MAXX - lenText - 5);
+	pos.x = CLIP<uint16>(x, 5, MAXX - lenText - 5);
 
-	*posy = characterFl ? 0 : VIDEOTOP;
-	*posy += y - 1; //15
-	if (*posy <= VIDEOTOP)
-		*posy = VIDEOTOP + 1;
+	pos.y = characterFl ? 0 : VIDEOTOP;
+	pos.y += y - 1; //15
+	if (pos.y <= VIDEOTOP)
+		pos.y = VIDEOTOP + 1;
+
+	return pos;
 }
 
 void TextManager::formattingSuperString() {
@@ -124,21 +128,21 @@ void TextManager::characterTalk(const char *s) {
 }
 
 void TextManager::characterContinueTalk() {
-	uint16 posx, posy;
+	Common::Point pos;
 
 	_vm->_flagSkipTalk = false;
 	_vm->_characterSpeakTime = _vm->_curTime;
 
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
-	if (_vm->_flagCharacterExists)
-		positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
+	if (_vm->_flagShowCharacter || _vm->_animMgr->_playingAnims[kSmackerAction])
+		pos = positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], true);
 	else
-		positionString(MAXX / 2, 30, _subString[_curSubString], &posx, &posy, false);
+		pos = positionString(MAXX / 2, 30, _subString[_curSubString], false);
 
 	clearLastText();
 	if (ConfMan.getBool("subtitles"))
-		addText(posx, posy, _subString[_curSubString], COLOR_OBJECT, MASKCOL);
+		addText(pos, _subString[_curSubString], COLOR_OBJECT, MASKCOL);
 
 	if (!_vm->_flagDialogActive) {
 		if (_curSubString)
@@ -179,15 +183,15 @@ void TextManager::someoneContinueTalk() {
 
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
-	uint16 posx, posy;
+	Common::Point pos;
 	if (_talkingPersonId)
-		positionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], &posx, &posy, false);
+		pos = positionString(_vm->_obj[_talkingPersonId]._lim.left, _vm->_obj[_talkingPersonId]._lim.top, _subString[_curSubString], false);
 	else
-		positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], &posx, &posy, true);
+		pos = positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], true);
 
 	clearLastText();
 	if (ConfMan.getBool("subtitles"))
-		addText(posx, posy, _subString[_curSubString], HYELLOW, MASKCOL);
+		addText(pos, _subString[_curSubString], HYELLOW, MASKCOL);
 
 	if (_curSubString)
 		_lastFilename = Common::String::format("s%04d%c.wav", _curSentenceId, _curSubString + 'a');
@@ -291,12 +295,11 @@ void TextManager::showObjName(uint16 obj, bool show) {
 
 		_vm->_lastObj = (obj | 0x8000);
 		const uint16 lenText = _vm->textLength(desc);
-		const uint16 posx = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
-		const uint16 posy = MAXY - CARHEI;
+		const Common::Point pos(CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText), MAXY - CARHEI);
 
 		if (_vm->_lastObj)
 			clearLastText();
-		addText(posx, posy, desc.c_str(), COLOR_INVENTORY, MASKCOL);
+		addText(pos, desc.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (!obj || !show) {
 			clearLastText();
@@ -320,14 +323,14 @@ void TextManager::showObjName(uint16 obj, bool show) {
 		else
 			desc = _vm->_objName[_vm->_obj[obj]._name];
 
-		uint16 posx = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
-		uint16 posy = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
+		const uint16 x = (_vm->_obj[obj]._lim.left + _vm->_obj[obj]._lim.right) / 2;
+		const uint16 y = (obj == oWHEELS2C) ? 187 : _vm->_obj[obj]._lim.top;
+		Common::Point pos = positionString(x, y, desc.c_str(), false);
 
-		positionString(posx, posy, desc.c_str(), &posx, &posy, false);
 		if (_vm->_lastObj)
 			clearLastText();
 		_vm->_lastObj = obj;
-		addText(posx, posy, desc.c_str(), COLOR_OBJECT, MASKCOL);
+		addText(pos, desc.c_str(), COLOR_OBJECT, MASKCOL);
 	}
 }
 
@@ -374,10 +377,10 @@ void TextManager::characterSayInAction(uint16 ss) {
 	characterContinueTalk();
 }
 
-void TextManager::addText(uint16 x, uint16 y, const char *text, uint16 textCol, uint16 shadowCol) {
+void TextManager::addText(Common::Point pos, const char *text, uint16 textCol, uint16 shadowCol) {
 	StackText t;
-	t._x = x;
-	t._y = y;
+	t._x = pos.x;
+	t._y = pos.y;
 	t._textCol = textCol;
 	t._shadowCol = shadowCol;
 	t._clear = false;

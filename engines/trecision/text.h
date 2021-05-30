@@ -60,7 +60,7 @@ class TextManager {
 
 	Common::List<StackText> _textStack;
 
-	void positionString(uint16 x, uint16 y, const char *string, uint16 *posx, uint16 *posy, bool characterFl);
+	Common::Point positionString(uint16 x, uint16 y, const char *string, bool characterFl);
 	void formattingSuperString();
 	void formattingOneString();
 	void characterTalk(const char *s);
@@ -79,7 +79,7 @@ public:
 	void characterSay(uint16 i);
 	void characterSayInAction(uint16 ss);
 
-	void addText(uint16 x, uint16 y, const char *text, uint16 textCol, uint16 shadowCol);
+	void addText(Common::Point pos, const char *text, uint16 textCol, uint16 shadowCol);
 	void clearLastText();
 	void drawText(StackText text);
 	void clearText();

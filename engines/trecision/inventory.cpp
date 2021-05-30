@@ -241,13 +241,12 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		}
 
 		const uint16 lenText = textLength(desc);
-		const uint16 posX = CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText);
-		const uint16 posY = MAXY - CARHEI;
+		Common::Point pos(CLIP(320 - (lenText / 2), 2, MAXX - 2 - lenText), MAXY - CARHEI);
 
 		_lastInv = (obj | 0x8000);
 		if (_lastInv)
 			_textMgr->clearLastText();
-		_textMgr->addText(posX, posY, desc.c_str(), COLOR_INVENTORY, MASKCOL);
+		_textMgr->addText(pos, desc.c_str(), COLOR_INVENTORY, MASKCOL);
 	} else {
 		if (obj == _lastInv)
 			return;
@@ -261,7 +260,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		const uint16 lenText = textLength(_objName[_inventoryObj[obj]._name]);
 		uint16 posX = ICONMARGSX + ((iconPos(_curInventory) - _iconBase) * (ICONDX)) + ICONDX / 2;
 		posX = CLIP(posX - (lenText / 2), 2, MAXX - 2 - lenText);
-		const uint16 posY = MAXY - CARHEI;
+		Common::Point pos(posX, MAXY - CARHEI);
 		
 		_lastInv = obj;
 
@@ -269,7 +268,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			_textMgr->clearLastText();
 
 		if (_inventoryObj[obj]._name)
-			_textMgr->addText(posX, posY, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			_textMgr->addText(pos, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
 	}
 }
 
