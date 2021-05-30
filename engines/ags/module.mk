@@ -270,7 +270,6 @@ MODULE_OBJS = \
 	engine/media/audio/clip_my_midi.o \
 	engine/media/audio/queued_audio_item.o \
 	engine/media/audio/sound.o \
-	engine/media/audio/sound_cache.o \
 	engine/media/audio/sound_clip.o \
 	engine/media/video/video.o \
 	engine/platform/base/ags_platform_driver.o \

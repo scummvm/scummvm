@@ -28,8 +28,6 @@
 
 #include "ags/engine/media/audio/audio.h"
 
-#include "ags/engine/media/audio/sound_cache.h"
-
 #include "ags/engine/media/audio/sound_clip.h"
 #include "ags/engine/media/audio/sound.h"
 

@@ -276,6 +276,17 @@ Stream *AssetManager::OpenAsset(const String &asset_name, const String &filter, 
 	return nullptr;
 }
 
+Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name) const {
+	return OpenAssetStream(asset_name, "");
+}
+
+Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name, const String &filter) const {
+	Stream *stream = OpenAsset(asset_name, filter);
+	if (!stream)
+		return nullptr;
+
+	return new ScummVMReadStream(stream);
+}
 
 String GetAssetErrorText(AssetError err) {
 	switch (err) {

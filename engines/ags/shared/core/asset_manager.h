@@ -36,9 +36,11 @@
 // TODO: return stream as smart pointer.
 //
 //=============================================================================
+
 #ifndef AGS_SHARED_CORE_ASSET_MANAGER_H
 #define AGS_SHARED_CORE_ASSET_MANAGER_H
 
+#include "common/stream.h"
 #include "ags/lib/std/functional.h"
 #include "ags/lib/std/memory.h"
 #include "ags/shared/core/asset.h"
@@ -114,6 +116,11 @@ public:
 	Stream *OpenAsset(const String &asset_name, const String &filter, soff_t *asset_size = nullptr,
 					  FileOpenMode open_mode = kFile_Open,
 					  FileWorkMode work_mode = kFile_Read) const;
+	// Open asset stream in the given work mode; returns null if asset is not found or cannot be opened
+	// This method only searches in libraries that do not have any defined filters
+	Common::SeekableReadStream *OpenAssetStream(const String &asset_name) const;
+	// Open asset stream, providing a single filter to search in matching libraries
+	Common::SeekableReadStream *OpenAssetStream(const String &asset_name, const String &filter) const;
 
 private:
 	struct AssetLibEx : AssetLibInfo {
