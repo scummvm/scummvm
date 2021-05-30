@@ -96,9 +96,9 @@ private:
 extern int16        speechButtonCount;      // count of speech buttons
 extern void         abortSpeech(void);
 
-const uint32            tileGroupID = RES_ID('T', 'I', 'L', 'E');
+const uint32            tileGroupID = MKTAG('T', 'I', 'L', 'E');
 
-extern const uint32 imageGroupID = RES_ID('I', 'M', 'A', 'G');
+extern const uint32 imageGroupID = MKTAG('I', 'M', 'A', 'G');
 
 extern hResContext          *tileRes;       // tile resource handle
 extern CycleHandle          cycleList;      // list of tile cycling info
