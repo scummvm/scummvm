@@ -451,302 +451,277 @@ int8 Renderer3D::clockWise(int16 x1, int16 y1, int16 x2, int16 y2, int16 x3, int
 	return 0;
 }
 
-/**
- *	Draw the character
- */
-void Renderer3D::drawCharacter(uint8 flag) {
-	if (!_vm->_flagShowCharacter)
-		return;
-
+void Renderer3D::calcCharacterPoints() {
 	Actor *actor = _vm->_actor;
-
-	// Compute pointer to frame
-	if (flag & CALCPOINTS) {
-		if (actor->_curAction > hLAST)
-			error("Error in drawCharacter() - _curAction > hLAST");
-
-		int cfp = 0;
-		int cur = 0;
-		while (cur < actor->_curAction)
-			cfp += _vm->_defActionLen[cur++];
-
-		if (actor->_curAction == hWALKOUT)
-			cfp = 1;
-
-		cfp += actor->_curFrame;
-
-		if (actor->_curAction == hLAST)
-			cfp = 0;
-
-		actor->_vertex = &actor->_characterArea[cfp * actor->_vertexNum];
-	}
-
 	SCamera *camera = actor->_camera;
 	SLight *light = actor->_light;
-	STexture *textures = actor->_textures;
-	SFace *face = actor->_face;
-
 	int vertexNum = actor->_vertexNum;
 
-	if (flag & CALCPOINTS) {
-		_shadowLightNum = 0;
-		_totalShadowVerts = 0;
+	if (actor->_curAction > hLAST)
+		error("Error in drawCharacter() - _curAction > hLAST");
 
-		// camera matrix
-		float e10 = camera->_e1[0];
-		float e11 = camera->_e1[1];
-		float e12 = camera->_e1[2];
+	int cfp = 0;
+	int cur = 0;
+	while (cur < actor->_curAction)
+		cfp += _vm->_defActionLen[cur++];
 
-		float e20 = camera->_e2[0];
-		float e21 = camera->_e2[1];
-		float e22 = camera->_e2[2];
+	if (actor->_curAction == hWALKOUT)
+		cfp = 1;
 
-		float e30 = camera->_e3[0];
-		float e31 = camera->_e3[1];
-		float e32 = camera->_e3[2];
+	cfp += actor->_curFrame;
 
-		// Light directions
-		float l0 = 0.0f;
-		float l1 = 0.0f;
-		float l2 = 0.0f;
+	if (actor->_curAction == hLAST)
+		cfp = 0;
 
-		actor->_lim[0] = 32000;
-		actor->_lim[1] = -32000;
-		actor->_lim[2] = 32000;
-		actor->_lim[3] = -32000;
-		actor->_lim[4] = 32000;
-		actor->_lim[5] = -32000;
+	actor->_vertex = &actor->_characterArea[cfp * actor->_vertexNum];
 
-		float t = (actor->_theta * PI2) / 360.0;
-		float cost = cos(t);
-		float sint = sin(t);
+	_shadowLightNum = 0;
+	_totalShadowVerts = 0;
 
-		// Put all vertices in dark color
-		for (int i = 0; i < MAXVERTEX; ++i)
-			_vVertex[i]._angle = 180;
+	// camera matrix
+	float e10 = camera->_e1[0];
+	float e11 = camera->_e1[1];
+	float e12 = camera->_e1[2];
 
-		float dist;
-		float tx = 0.0f;
-		float ty = 0.0f;
-		float tz = 0.0f;
-		float pa0, pa1, pa2;
+	float e20 = camera->_e2[0];
+	float e21 = camera->_e2[1];
+	float e22 = camera->_e2[2];
 
-		for (uint32 b = 0; b < actor->_lightNum; ++b) {
-			// if off                lint == 0
-			// if it has a shadow    lint & 0x80
+	float e30 = camera->_e3[0];
+	float e31 = camera->_e3[1];
+	float e32 = camera->_e3[2];
 
-			int lint = light->_inten & 0x7F;
-			if (lint) {                                       // if it's not turned off
-				tx = light->_x - actor->_px - actor->_dx; // computes direction vector
-				tz = light->_z - actor->_pz - actor->_dz; // between light and actor
-				ty = light->_y;
+	// Light directions
+	float l0 = 0.0f;
+	float l1 = 0.0f;
+	float l2 = 0.0f;
 
-				if (light->_position) {                   // if it's attenuated
-					dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
+	actor->_lim[0] = 32000;
+	actor->_lim[1] = -32000;
+	actor->_lim[2] = 32000;
+	actor->_lim[3] = -32000;
+	actor->_lim[4] = 32000;
+	actor->_lim[5] = -32000;
 
-					// adjust light intensity due to the distance
-					if (_vm->floatComp(dist, light->_outr) == 1) // if it's out of range it's off
-						lint = 0;
-					else if (_vm->floatComp(dist, light->_inr) == 1) // if it's inside the circle it's decreased
-						lint = (int)((float)lint * (light->_outr - dist) / (light->_outr - light->_inr));
+	float t = (actor->_theta * PI2) / 360.0;
+	float cost = cos(t);
+	float sint = sin(t);
+
+	// Put all vertices in dark color
+	for (int i = 0; i < MAXVERTEX; ++i)
+		_vVertex[i]._angle = 180;
+
+	float dist;
+	float tx = 0.0f;
+	float ty = 0.0f;
+	float tz = 0.0f;
+	float pa0, pa1, pa2;
+
+	for (uint32 b = 0; b < actor->_lightNum; ++b) {
+		// if off                lint == 0
+		// if it has a shadow    lint & 0x80
+
+		int lint = light->_inten & 0x7F;
+		if (lint) {                                   // if it's not turned off
+			tx = light->_x - actor->_px - actor->_dx; // computes direction vector
+			tz = light->_z - actor->_pz - actor->_dz; // between light and actor
+			ty = light->_y;
+
+			if (light->_position) {                       // if it's attenuated
+				dist = sqrt(tx * tx + ty * ty + tz * tz); // Distance light <--> actor
+
+				// adjust light intensity due to the distance
+				if (_vm->floatComp(dist, light->_outr) == 1) // if it's out of range it's off
+					lint = 0;
+				else if (_vm->floatComp(dist, light->_inr) == 1) // if it's inside the circle it's decreased
+					lint = (int)((float)lint * (light->_outr - dist) / (light->_outr - light->_inr));
+			}
+		}
+
+		if (lint) { // If it's still on
+			// Light rotates around the actor
+			l0 = tx * cost - tz * sint;
+			l2 = tx * sint + tz * cost;
+			l1 = ty;
+			t = sqrt(l0 * l0 + l1 * l1 + l2 * l2);
+			l0 /= t;
+			l1 /= t;
+			l2 /= t;
+
+			// Adjust light intensity according to the spot
+			tx = (float)light->_fallOff;
+			if (light->_fallOff) { // for light spot only
+				ty = (float)light->_hotspot;
+
+				pa0 = light->_dx * cost - light->_dz * sint;
+				pa1 = light->_dy;
+				pa2 = light->_dx * sint + light->_dz * cost;
+
+				t = sqrt(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
+				pa0 /= t;
+				pa1 /= t;
+				pa2 /= t;
+
+				tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / PI2;
+				tz = CLIP(tz, 0.f, 180.f);
+
+				// tx falloff
+				// ty hotspot
+				// tz current angle
+
+				_shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
+
+				if (_vm->floatComp(tz, tx) == 1) { // tz > tx - if it's out of the falloff
+					lint = 0;
+					_shadowIntens[_shadowLightNum] = 0;
+				} else if (_vm->floatComp(tz, ty) == 1) { // tz > ty - if it's between the falloff and the hotspot
+					lint = (int)((float)lint * (tx - tz) / (tx - ty));
+					_shadowIntens[_shadowLightNum] = (int)((float)_shadowIntens[_shadowLightNum] * (tx - tz) / (tx - ty));
 				}
 			}
+		}
 
-			if (lint) { // If it's still on
-				// Light rotates around the actor
-				l0 = tx * cost - tz * sint;
-				l2 = tx * sint + tz * cost;
-				l1 = ty;
-				t = sqrt(l0 * l0 + l1 * l1 + l2 * l2);
-				l0 /= t;
-				l1 /= t;
-				l2 /= t;
+		if ((light->_inten & 0x80) && lint) { // if it's shadowed and still on
 
-				// Adjust light intensity according to the spot
-				tx = (float)light->_fallOff;
-				if (light->_fallOff) { // for light spot only
-					ty = (float)light->_hotspot;
+			// casts shadow vertices
+			for (int a = 0; a < SHADOWVERTSNUM; ++a) {
+				pa0 = actor->_vertex[_shadowVerts[a]]._x;
+				pa1 = actor->_vertex[_shadowVerts[a]]._y;
+				pa2 = actor->_vertex[_shadowVerts[a]]._z;
 
-					pa0 = light->_dx * cost - light->_dz * sint;
-					pa1 = light->_dy;
-					pa2 = light->_dx * sint + light->_dz * cost;
-
-					t = sqrt(pa0 * pa0 + pa1 * pa1 + pa2 * pa2);
-					pa0 /= t;
-					pa1 /= t;
-					pa2 /= t;
-
-					tz = acos((pa0 * l0) + (pa1 * l1) + (pa2 * l2)) * 360.0 / PI2;
-					tz = CLIP(tz, 0.f, 180.f);
-
-					// tx falloff
-					// ty hotspot
-					// tz current angle
-
-					_shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
-
-					if (_vm->floatComp(tz, tx) == 1) { // tz > tx - if it's out of the falloff
-						lint = 0;
-						_shadowIntens[_shadowLightNum] = 0;
-					} else if (_vm->floatComp(tz, ty) == 1) { // tz > ty - if it's between the falloff and the hotspot
-						lint = (int)((float)lint * (tx - tz) / (tx - ty));
-						_shadowIntens[_shadowLightNum] = (int)((float)_shadowIntens[_shadowLightNum] * (tx - tz) / (tx - ty));
-					}
-				}
+				_shVertex[vertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
+				_shVertex[vertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
+				_shVertex[vertexNum + _totalShadowVerts + a]._y = 0;
 			}
 
-			if ((light->_inten & 0x80) && lint) { // if it's shadowed and still on
+			// per default all shadows are equally faint
+			// _shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
 
-				// casts shadow vertices
-				for (int a = 0; a < SHADOWVERTSNUM; ++a) {
-					pa0 = actor->_vertex[_shadowVerts[a]]._x;
-					pa1 = actor->_vertex[_shadowVerts[a]]._y;
-					pa2 = actor->_vertex[_shadowVerts[a]]._z;
+			++_shadowLightNum;
+			_totalShadowVerts += SHADOWVERTSNUM;
+		}
 
-					_shVertex[vertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
-					_shVertex[vertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
-					_shVertex[vertexNum + _totalShadowVerts + a]._y = 0;
-				}
+		if (lint) { // if still on
+			// adapts the light vector o its intensity
+			t = (float)(lint) / 127.0;
+			l0 = l0 * t;
+			l1 = l1 * t;
+			l2 = l2 * t;
 
-				// per default all shadows are equally faint
-				// _shadowIntens[_shadowLightNum] = SHADOWAMBIENT;
+			SVertex *curVertex = actor->_vertex;
+			for (int a = 0; a < vertexNum; ++a) {
+				pa0 = curVertex->_nx;
+				pa1 = curVertex->_ny;
+				pa2 = curVertex->_nz;
 
-				++_shadowLightNum;
-				_totalShadowVerts += SHADOWVERTSNUM;
+				lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
+				lint = CLIP(lint, 0, 180);
+
+				_vVertex[a]._angle -= (180 - lint);
+				++curVertex;
 			}
-
-			if (lint) { // if still on
-				// adapts the light vector o its intensity
-				t = (float)(lint) / 127.0;
-				l0 = l0 * t;
-				l1 = l1 * t;
-				l2 = l2 * t;
-
-				SVertex *curVertex = actor->_vertex;
-				for (int a = 0; a < vertexNum; ++a) {
-					pa0 = curVertex->_nx;
-					pa1 = curVertex->_ny;
-					pa2 = curVertex->_nz;
-
-					lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
-					lint = CLIP(lint, 0, 180);
-
-					_vVertex[a]._angle -= (180 - lint);
-					++curVertex;
-				}
-			}
-
-			++light;
 		}
 
-		// rearranged light values so they can be viewed
-		for (int a = 0; a < vertexNum; ++a)
-			_vVertex[a]._angle = CLIP<int32>(_vVertex[a]._angle, 0, 180);
-
-		// Calculate the distance of the character from the room
-		tx = camera->_ex - actor->_px;
-		ty = camera->_ey;
-		tz = camera->_ez - actor->_pz;
-
-		dist = tx * e30 + ty * e31 + tz * e32;
-
-		SVertex *curVertex = actor->_vertex;
-	
-		for (int a = 0; a < vertexNum + _totalShadowVerts; ++a) {
-			if (a < vertexNum) {
-				l0 = curVertex->_x;
-				l1 = curVertex->_z;
-				pa1 = ty - curVertex->_y;
-			} else {
-				l0 = _shVertex[a]._x;
-				l1 = _shVertex[a]._z;
-				pa1 = ty - _shVertex[a]._y;
-			}
-
-			pa0 = tx - (l0 * cost + l1 * sint); // rotate _curVertex
-			pa2 = tz - (-l0 * sint + l1 * cost);
-
-			l0 = pa0 * e10 + pa1 * e11 + pa2 * e12; // project _curVertex
-			l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
-			l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
-
-			int x2d = _vm->_cx + (int)((l0 * camera->_fovX) / l2);
-			int y2d = _vm->_cy + (int)((l1 * camera->_fovY) / l2);
-
-			_vVertex[a]._x = x2d;
-			_vVertex[a]._y = y2d;
-			_vVertex[a]._z = (int32)((dist - l2) * 128.0);
-
-			actor->_lim[0] = MIN(x2d, actor->_lim[0]);
-			actor->_lim[1] = MAX(x2d, actor->_lim[1]);
-			actor->_lim[2] = MIN(y2d, actor->_lim[2]);
-			actor->_lim[3] = MAX(y2d, actor->_lim[3]);
-
-			actor->_lim[4] = MIN<int32>(_vVertex[a]._z, actor->_lim[4]);
-			actor->_lim[5] = MAX<int32>(_vVertex[a]._z, actor->_lim[5]);
-
-			++curVertex;
-		}
-		actor->_lim[4] = (int)dist;
-		actor->_lim[5] = (int)dist;
-
-		// vertex clipping
-		if (actor->_lim[0] <= _minXClip + 1) {
-			actor->_lim[0] = _minXClip;
-		} else {
-			--actor->_lim[0];
-		}
-
-		if (actor->_lim[1] >= _maxXClip - 1) {
-			actor->_lim[1] = _maxXClip;
-		} else {
-			++actor->_lim[1];
-		}
-
-		if (actor->_lim[2] <= _minYClip + 1) {
-			actor->_lim[2] = _minYClip;
-		} else {
-			--actor->_lim[2];
-		}
-
-		if (actor->_lim[3] >= _maxYClip - 1) {
-			actor->_lim[3] = _maxYClip;
-		} else {
-			++actor->_lim[3];
-		}
-
-		if (actor->_curAction == hLAST) // exit displacer
-			actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _vm->_defActionLen[hLAST]);
-
-		// set zbuffer vars
-		setZBufferRegion(actor->_lim[0], actor->_lim[2], actor->_lim[1] - actor->_lim[0]);
+		++light;
 	}
 
-	if (flag & DRAWFACES) {
-		if (actor->_curAction == hLAST)
-			setClipping(0, actor->_lim[2], MAXX, actor->_lim[3]);
+	// rearranged light values so they can be viewed
+	for (int a = 0; a < vertexNum; ++a)
+		_vVertex[a]._angle = CLIP<int32>(_vVertex[a]._angle, 0, 180);
 
-		for (int b = 0; b < _shadowLightNum; ++b) {
-			for (int a = 0; a < SHADOWFACESNUM; ++a) {
-				int p0 = _shadowFaces[a][0] + vertexNum + b * SHADOWVERTSNUM;
-				int p1 = _shadowFaces[a][1] + vertexNum + b * SHADOWVERTSNUM;
-				int p2 = _shadowFaces[a][2] + vertexNum + b * SHADOWVERTSNUM;
+	// Calculate the distance of the character from the room
+	tx = camera->_ex - actor->_px;
+	ty = camera->_ey;
+	tz = camera->_ez - actor->_pz;
 
-				int px0 = _vVertex[p0]._x;
-				int py0 = _vVertex[p0]._y;
-				int px1 = _vVertex[p1]._x;
-				int py1 = _vVertex[p1]._y;
-				int px2 = _vVertex[p2]._x;
-				int py2 = _vVertex[p2]._y;
+	dist = tx * e30 + ty * e31 + tz * e32;
 
-				shadowTriangle(px0, py0, px1, py1, px2, py2, 127 - _shadowIntens[b], (int16)(0x7FF0 + b));
-			}
+	SVertex *curVertex = actor->_vertex;
+
+	for (int a = 0; a < vertexNum + _totalShadowVerts; ++a) {
+		if (a < vertexNum) {
+			l0 = curVertex->_x;
+			l1 = curVertex->_z;
+			pa1 = ty - curVertex->_y;
+		} else {
+			l0 = _shVertex[a]._x;
+			l1 = _shVertex[a]._z;
+			pa1 = ty - _shVertex[a]._y;
 		}
 
-		for (uint a = 0; a < actor->_faceNum; ++a) {
-			int p0 = face->_a;
-			int p1 = face->_b;
-			int p2 = face->_c;
+		pa0 = tx - (l0 * cost + l1 * sint); // rotate _curVertex
+		pa2 = tz - (-l0 * sint + l1 * cost);
+
+		l0 = pa0 * e10 + pa1 * e11 + pa2 * e12; // project _curVertex
+		l1 = pa0 * e20 + pa1 * e21 + pa2 * e22;
+		l2 = pa0 * e30 + pa1 * e31 + pa2 * e32;
+
+		int x2d = _vm->_cx + (int)((l0 * camera->_fovX) / l2);
+		int y2d = _vm->_cy + (int)((l1 * camera->_fovY) / l2);
+
+		_vVertex[a]._x = x2d;
+		_vVertex[a]._y = y2d;
+		_vVertex[a]._z = (int32)((dist - l2) * 128.0);
+
+		actor->_lim[0] = MIN(x2d, actor->_lim[0]);
+		actor->_lim[1] = MAX(x2d, actor->_lim[1]);
+		actor->_lim[2] = MIN(y2d, actor->_lim[2]);
+		actor->_lim[3] = MAX(y2d, actor->_lim[3]);
+
+		actor->_lim[4] = MIN<int32>(_vVertex[a]._z, actor->_lim[4]);
+		actor->_lim[5] = MAX<int32>(_vVertex[a]._z, actor->_lim[5]);
+
+		++curVertex;
+	}
+	actor->_lim[4] = (int)dist;
+	actor->_lim[5] = (int)dist;
+
+	// vertex clipping
+	if (actor->_lim[0] <= _minXClip + 1) {
+		actor->_lim[0] = _minXClip;
+	} else {
+		--actor->_lim[0];
+	}
+
+	if (actor->_lim[1] >= _maxXClip - 1) {
+		actor->_lim[1] = _maxXClip;
+	} else {
+		++actor->_lim[1];
+	}
+
+	if (actor->_lim[2] <= _minYClip + 1) {
+		actor->_lim[2] = _minYClip;
+	} else {
+		--actor->_lim[2];
+	}
+
+	if (actor->_lim[3] >= _maxYClip - 1) {
+		actor->_lim[3] = _maxYClip;
+	} else {
+		++actor->_lim[3];
+	}
+
+	if (actor->_curAction == hLAST) // exit displacer
+		actor->_lim[2] = actor->_lim[3] - (((actor->_lim[3] - actor->_lim[2]) * actor->_curFrame) / _vm->_defActionLen[hLAST]);
+
+	// set zbuffer vars
+	setZBufferRegion(actor->_lim[0], actor->_lim[2], actor->_lim[1] - actor->_lim[0]);
+}
+
+void Renderer3D::drawCharacterFaces() {
+	Actor *actor = _vm->_actor;
+	STexture *textures = actor->_textures;
+	SFace *face = actor->_face;
+	int vertexNum = actor->_vertexNum;
+
+	if (actor->_curAction == hLAST)
+		setClipping(0, actor->_lim[2], MAXX, actor->_lim[3]);
+
+	for (int b = 0; b < _shadowLightNum; ++b) {
+		for (int a = 0; a < SHADOWFACESNUM; ++a) {
+			int p0 = _shadowFaces[a][0] + vertexNum + b * SHADOWVERTSNUM;
+			int p1 = _shadowFaces[a][1] + vertexNum + b * SHADOWVERTSNUM;
+			int p2 = _shadowFaces[a][2] + vertexNum + b * SHADOWVERTSNUM;
 
 			int px0 = _vVertex[p0]._x;
 			int py0 = _vVertex[p0]._y;
@@ -755,70 +730,100 @@ void Renderer3D::drawCharacter(uint8 flag) {
 			int px2 = _vVertex[p2]._x;
 			int py2 = _vVertex[p2]._y;
 
-			if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-				uint16 b = face->_mat;
-				if (b < MAXMAT && textures[b].isActive()) {
-					textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[a][0][0], actor->_textureCoord[a][0][1],
-									px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[a][1][0], actor->_textureCoord[a][1][1],
-									px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[a][2][0], actor->_textureCoord[a][2][1],
-									&textures[b]);
-				}
-			}
-
-			++face;
+			shadowTriangle(px0, py0, px1, py1, px2, py2, 127 - _shadowIntens[b], (int16)(0x7FF0 + b));
 		}
-
-		int p0 = 0;
-		for (int b = _zBufStartY; b < actor->_lim[3]; ++b) {
-			for (int a = 1; a < _zBufWid; ++a) {
-				int py1 = (_zBuffer[p0]   >= 0x7FF0) * 0x8000;
-				int py2 = (_zBuffer[p0 + 1] >= 0x7FF0) * 0x8000;
-
-				int p1 = _zBuffer[p0] < 0x7FFF;
-				int p2 = _zBuffer[p0 + 1] < 0x7FFF;
-
-				if (p1 != p2) {
-					_vm->_graphicsMgr->pixelAliasing(a + _zBufStartX, b);
-
-					// if the first is the character
-					if (p1)
-						_zBuffer[p0] = 0x00BF | py1;
-					else
-						_zBuffer[p0] = 0x003F | py2;
-
-					if (a + 1 < _zBufWid) {
-						++p0;
-						++a;
-
-						// if the second is the character
-						if (p2)
-							_zBuffer[p0] = 0x00BF | py2;
-						else
-							_zBuffer[p0] = 0x003F | py1;
-					}
-				} else {
-					// set value alpha max
-					if (p1)
-						_zBuffer[p0] = 0x00FF | py1;
-					else
-						_zBuffer[p0] = 0x0000 | py1;
-				}
-
-				++p0;
-
-				// if it's the last of the line
-				if (a == _zBufWid - 1) {
-					if (p2)
-						_zBuffer[p0] = 0x00FF | py2;
-					else
-						_zBuffer[p0] = 0x0000 | py2;
-				}
-			}
-			++p0;
-		}
-		if (actor->_curAction == hLAST)
-			setClipping(0, TOP, MAXX, AREA + TOP);
 	}
+
+	for (uint a = 0; a < actor->_faceNum; ++a) {
+		int p0 = face->_a;
+		int p1 = face->_b;
+		int p2 = face->_c;
+
+		int px0 = _vVertex[p0]._x;
+		int py0 = _vVertex[p0]._y;
+		int px1 = _vVertex[p1]._x;
+		int py1 = _vVertex[p1]._y;
+		int px2 = _vVertex[p2]._x;
+		int py2 = _vVertex[p2]._y;
+
+		if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
+			uint16 b = face->_mat;
+			if (b < MAXMAT && textures[b].isActive()) {
+				textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[a][0][0], actor->_textureCoord[a][0][1],
+								px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[a][1][0], actor->_textureCoord[a][1][1],
+								px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[a][2][0], actor->_textureCoord[a][2][1],
+								&textures[b]);
+			}
+		}
+
+		++face;
+	}
+
+	int p0 = 0;
+	for (int b = _zBufStartY; b < actor->_lim[3]; ++b) {
+		for (int a = 1; a < _zBufWid; ++a) {
+			int py1 = (_zBuffer[p0] >= 0x7FF0) * 0x8000;
+			int py2 = (_zBuffer[p0 + 1] >= 0x7FF0) * 0x8000;
+
+			int p1 = _zBuffer[p0] < 0x7FFF;
+			int p2 = _zBuffer[p0 + 1] < 0x7FFF;
+
+			if (p1 != p2) {
+				_vm->_graphicsMgr->pixelAliasing(a + _zBufStartX, b);
+
+				// if the first is the character
+				if (p1)
+					_zBuffer[p0] = 0x00BF | py1;
+				else
+					_zBuffer[p0] = 0x003F | py2;
+
+				if (a + 1 < _zBufWid) {
+					++p0;
+					++a;
+
+					// if the second is the character
+					if (p2)
+						_zBuffer[p0] = 0x00BF | py2;
+					else
+						_zBuffer[p0] = 0x003F | py1;
+				}
+			} else {
+				// set value alpha max
+				if (p1)
+					_zBuffer[p0] = 0x00FF | py1;
+				else
+					_zBuffer[p0] = 0x0000 | py1;
+			}
+
+			++p0;
+
+			// if it's the last of the line
+			if (a == _zBufWid - 1) {
+				if (p2)
+					_zBuffer[p0] = 0x00FF | py2;
+				else
+					_zBuffer[p0] = 0x0000 | py2;
+			}
+		}
+		++p0;
+	}
+	if (actor->_curAction == hLAST)
+		setClipping(0, TOP, MAXX, AREA + TOP);
+}
+
+/**
+ *	Draw the character
+ */
+void Renderer3D::drawCharacter(uint8 flag) {
+	if (!_vm->_flagShowCharacter)
+		return;
+
+	// Compute pointer to frame
+	if (flag & CALCPOINTS)
+		calcCharacterPoints();
+
+	if (flag & DRAWFACES)
+		drawCharacterFaces();
 }
 
 // Path Finding
