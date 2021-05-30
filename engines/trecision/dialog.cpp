@@ -429,7 +429,6 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dC4A1:
-			_vm->_flagCharacterExists = true;
 			_vm->_flagShowCharacter = true;
 			_vm->_actor->actorStop();
 			_vm->_pathFind->nextStep();

@@ -311,7 +311,6 @@ public:
 	bool _flagSomeoneSpeaks;
 	bool _flagCharacterSpeak;
 	bool _flagUseWithStarted;
-	bool _flagCharacterExists;
 	bool _flagNoPaintScreen;
 	bool _flagWaitRegen;
 

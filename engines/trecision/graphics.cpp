@@ -649,7 +649,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 		}
 	}
 
-	if (_vm->_actorPos == curBox && _vm->_flagShowCharacter && _vm->_flagCharacterExists) {
+	if (_vm->_actorPos == curBox && _vm->_flagShowCharacter) {
 		_vm->_renderer->drawCharacter(CALCPOINTS);
 
 		int x1 = _vm->_actor->_lim[0];

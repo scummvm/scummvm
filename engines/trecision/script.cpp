@@ -408,7 +408,6 @@ void TrecisionEngine::doIdle() {
 			_obj[o00EXIT]._goRoom = _curRoom;
 			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
-			_flagCharacterExists = false;
 		}
 		break;
 
@@ -422,7 +421,6 @@ void TrecisionEngine::doIdle() {
 			_obj[o00EXIT]._goRoom = _curRoom;
 			changeRoom(kRoomControlPanel);
 			_flagShowCharacter = false;
-			_flagCharacterExists = false;
 		}
 		break;
 

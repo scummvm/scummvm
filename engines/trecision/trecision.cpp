@@ -137,7 +137,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_flagSomeoneSpeaks = false;
 	_flagCharacterSpeak = false;
 	_flagUseWithStarted = false;
-	_flagCharacterExists = true;
 	_flagNoPaintScreen = false;
 	_flagWaitRegen = false;
 

@@ -436,11 +436,9 @@ void LogicManager::endChangeRoom() {
 
 	if (isCloseupOrControlRoom()) { // Screens without inventory
 		_vm->_flagShowCharacter = false;
-		_vm->_flagCharacterExists = false;
 		_vm->_flagInventoryLocked = true;
 	} else if (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P) { // Screens with inventory
 		_vm->_flagShowCharacter = false;
-		_vm->_flagCharacterExists = false;
 	} else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone())
 		_vm->_flagShowCharacter = false;
 	else if (_vm->_curRoom == kRoom31 && !_vm->_room[kRoom31].isDone())
@@ -2858,7 +2856,7 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 			_vm->setObjectVisible(oSUNDIAL49, false);
 			_vm->_obj[oAGENDA49]._examine = 1099;
 			_vm->_obj[oAGENDA49]._action = 1100;
-			_vm->_flagCharacterExists = true;
+			_vm->_flagShowCharacter = true;
 			_vm->_curObj = oAGENDA49;
 			_vm->playScript(s49SUNDIAL);
 		}
@@ -2915,14 +2913,14 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 				_vm->setObjectVisible(oAST14C + a, false);
 			}
 			_vm->changeRoom(kRoom51, 0, 1);
-			_vm->_flagCharacterExists = true;
+			_vm->_flagShowCharacter = true;
 		} else {
 			for (a = 0; a < 6; ++a) {
 				_comb4CT[a] = 0;
 				_vm->setObjectVisible(oAST14C + a, false);
 			}
 			_vm->changeRoom(kRoom4C, 0, 4);
-			_vm->_flagCharacterExists = true;
+			_vm->_flagShowCharacter = true;
 		}
 		retVal = false;
 		break;
@@ -3597,7 +3595,7 @@ void LogicManager::doMouseGame() {
 
 // Returns true when it's in a room without a character, such as the map
 bool LogicManager::doMouseInventory() {
-	return !_vm->_flagCharacterExists && _vm->_curRoom != kRoom31P && _vm->_curRoom != kRoom35P;
+	return !_vm->_flagShowCharacter && _vm->_curRoom != kRoom31P && _vm->_curRoom != kRoom35P;
 }
 
 void LogicManager::handleClickSphinxPuzzle() {
@@ -3793,7 +3791,7 @@ void LogicManager::doMouseLeftRight() {
 		handleClickSphinxPuzzle();
 	} else if (_vm->_curRoom == kRoomControlPanel) {
 		handleClickControlPanel(_vm->_curObj);
-	} else if (!_vm->_flagCharacterExists) {
+	} else if (!_vm->_flagShowCharacter) {
 		handleClickCloseup();
 	} else if (_vm->isGameArea(_vm->_mousePos) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
 		if (_vm->_curRoom == kRoom52)
@@ -3848,7 +3846,6 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->clearUseWith();
 	_vm->closeInventoryImmediately();
 
-	_vm->_flagCharacterExists = true;
 	_vm->_flagShowCharacter = true;
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSomeoneSpeaks = false;

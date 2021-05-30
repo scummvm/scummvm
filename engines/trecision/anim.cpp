@@ -101,10 +101,10 @@ void AnimTypeManager::executeAtFrameDoit(ATFHandle *h, int doit, uint16 objectId
 		break;
 
 	case fCHARACTEROFF:
-		_vm->_flagCharacterExists = false;
+		_vm->_flagShowCharacter = false;
 		break;
 	case fCHARACTERON:
-		_vm->_flagCharacterExists = true;
+		_vm->_flagShowCharacter = true;
 		break;
 	case fCHARACTERFOREGROUND:
 		_vm->_forcedActorPos = BOX_FOREGROUND;

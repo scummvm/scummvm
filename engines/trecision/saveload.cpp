@@ -453,7 +453,7 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSint16LE(_flagUseWithStarted);
 	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagMousePolling
 	ser.syncAsSint16LE(unused, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // _flagDialogSolitaire
-	ser.syncAsSint16LE(_flagCharacterExists);
+	ser.syncAsSint16LE(unused);	// _flagCharacterExists
 
 	syncInventory(ser);
 	_actor->syncGameStream(ser);
