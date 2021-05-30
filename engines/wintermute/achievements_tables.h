@@ -38,7 +38,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"juliastars",
 		Common::GALAXY_ACHIEVEMENTS,
-		"48891696681534931",
+		"1457085654",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_LAND", "Good morning Xenophon!", "You've managed to land on a planet."),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_MIND", "Observant player", "You've obtained your first Mind'o'Matic."),
