@@ -188,7 +188,7 @@ private:
 	};
 
 	class SmackerEmptyTrack : public Track {
-		TrackType getTrackType() const { return TrackType::kTrackTypeNone; }
+		VideoDecoder::Track::TrackType getTrackType() const { return VideoDecoder::Track::kTrackTypeNone; }
 
 		bool endOfTrack() const { return true; }
 
