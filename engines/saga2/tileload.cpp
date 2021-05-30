@@ -81,7 +81,7 @@ void sprintBA(char buf[], BitArray *x);
 
 static byte *tileResLoad(hResID i, bool asynch = FALSE) {
 	if (tileRes)
-		return tileRes->loadResource(i, "tile image bank", objResFile->_filename);
+		return tileRes->loadResource(i, "tile image bank");
 	else
 		return nullptr;
 }
