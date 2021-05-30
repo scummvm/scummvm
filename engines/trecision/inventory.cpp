@@ -127,18 +127,7 @@ void TrecisionEngine::examineItem() {
 	_actor->actorStop();
 	_pathFind->nextStep();
 	if (_flagUseWithStarted) {
-		_flagInventoryLocked = false;
-		_flagUseWithStarted = false;
-		_useWith[WITH] = _curInventory;
-		_useWithInv[WITH] = true;
-		if (_useWith[USED] != _curInventory) {
-			doUseWith();
-			_lightIcon = 0xFF;
-		} else {
-			_animMgr->smkStop(kSmackerIcon);
-			showInventoryName(_curInventory, true);
-			_lightIcon = _curInventory;
-		}
+		endUseWith();
 	} else
 		doInvExamine();
 }
@@ -149,19 +138,7 @@ void TrecisionEngine::useItem() {
 		return;
 
 	if (_flagUseWithStarted) {
-		_flagInventoryLocked = false;
-		_flagUseWithStarted = false;
-		_useWith[WITH] = _curInventory;
-		_useWithInv[WITH] = true;
-
-		if (_useWith[USED] != _curInventory) {
-			doUseWith();
-			_lightIcon = 0xFF;
-		} else {
-			_animMgr->smkStop(kSmackerIcon);
-			showInventoryName(_curInventory, true);
-			_lightIcon = _curInventory;
-		}
+		endUseWith();
 	} else if (_inventoryObj[_curInventory].isUseWith()) {
 		if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
 			_textMgr->characterSay(1565);
@@ -177,6 +154,38 @@ void TrecisionEngine::useItem() {
 		showInventoryName(_curInventory, true);
 	} else
 		doInvOperate();
+}
+
+void TrecisionEngine::endUseWith() {
+	_flagInventoryLocked = false;
+	_flagUseWithStarted = false;
+	_useWith[WITH] = _curInventory;
+	_useWithInv[WITH] = true;
+	if (_useWith[USED] != _curInventory) {
+		doUseWith();
+		_lightIcon = 0xFF;
+	} else {
+		_animMgr->smkStop(kSmackerIcon);
+		showInventoryName(_curInventory, true);
+		_lightIcon = _curInventory;
+	}
+}
+
+void TrecisionEngine::clearUseWith() {
+	if (_flagUseWithStarted) {
+		if (_useWithInv[USED]) {
+			_lightIcon = 0xFF;
+			_animMgr->smkStop(kSmackerIcon);
+			setInventoryStart(_inventoryRefreshStartIcon, INVENTORY_HIDE);
+			_flagInventoryLocked = false;
+		}
+		_useWith[USED] = 0;
+		_useWith[WITH] = 0;
+		_useWithInv[USED] = false;
+		_useWithInv[WITH] = false;
+		_flagUseWithStarted = false;
+		_textMgr->clearLastText();
+	}
 }
 
 uint8 TrecisionEngine::whatIcon(Common::Point pos) {

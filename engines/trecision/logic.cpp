@@ -3742,20 +3742,7 @@ void LogicManager::doMouseLeftRight() {
 				_vm->_textMgr->clearLastText();
 				_vm->_curObj = oDOOR2B;
 				_vm->startCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
-				if (_vm->_flagUseWithStarted) {
-					if (_vm->_useWithInv[USED]) {
-						_vm->_lightIcon = 0xFF;
-						_vm->_animMgr->smkStop(kSmackerIcon);
-						_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
-						_vm->_flagInventoryLocked = false;
-					}
-					_vm->_useWith[USED] = 0;
-					_vm->_useWith[WITH] = 0;
-					_vm->_useWithInv[USED] = false;
-					_vm->_useWithInv[WITH] = false;
-					_vm->_flagUseWithStarted = false;
-					_vm->_textMgr->clearLastText();
-				}
+				_vm->clearUseWith();
 				return;
 			} else if (_vm->_curRoom == kRoom35 && !_vm->_room[kRoom35].hasExtra()
 					&& ((_vm->_curObj == oFRONTOFFICEC35)
@@ -3763,20 +3750,7 @@ void LogicManager::doMouseLeftRight() {
 			            || (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
 				_vm->_curObj = oLASTLEV5;
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
-				if (_vm->_flagUseWithStarted) {
-					if (_vm->_useWithInv[USED]) {
-						_vm->_lightIcon = 0xFF;
-						_vm->_animMgr->smkStop(kSmackerIcon);
-						_vm->setInventoryStart(_vm->_inventoryRefreshStartIcon, INVENTORY_HIDE);
-						_vm->_flagInventoryLocked = false;
-					}
-					_vm->_useWith[USED] = 0;
-					_vm->_useWith[WITH] = 0;
-					_vm->_useWithInv[USED] = false;
-					_vm->_useWithInv[WITH] = false;
-					_vm->_flagUseWithStarted = false;
-					_vm->_textMgr->clearLastText();
-				}
+				_vm->clearUseWith();
 				return;
 			} else if ((_vm->_curMessage->_event == ME_MLEFT) &&
 					   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !_vm->_obj[_vm->_curObj].isFlagExamine()))) ||
@@ -3872,16 +3846,10 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_scheduler->resetQueues();
 
 	_vm->closeInventoryImmediately();
+	_vm->clearUseWith();
 
 	_vm->_flagCharacterExists = true;
 	_vm->_flagShowCharacter = true;
-	_vm->_animMgr->smkStop(kSmackerIcon);
-	_vm->_useWith[USED] = 0;
-	_vm->_useWith[WITH] = 0;
-	_vm->_useWithInv[USED] = false;
-	_vm->_useWithInv[WITH] = false;
-	_vm->_flagUseWithStarted = false;
-	_vm->_lightIcon = 0xFF;
 	_vm->_flagCharacterSpeak = false;
 	_vm->_flagSomeoneSpeaks = false;
 	_vm->_actor->actorStop();

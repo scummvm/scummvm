@@ -101,6 +101,7 @@ class TrecisionEngine : public Engine {
 	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
 	void doScrollInventory(Common::Point pos);
+	void endUseWith();
 
 	// Script
 	void endScript();
@@ -180,6 +181,7 @@ public:
 	void closeInventoryImmediately();
 	void useItem();
 	void examineItem();
+	void clearUseWith();
 
 	// Script
 	void playScript(uint16 id);
