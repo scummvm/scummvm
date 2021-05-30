@@ -55,16 +55,16 @@ extern void writeLog(char *str);
    Constants
  * ===================================================================== */
 
-const uint32        tileTerrainID   = RES_ID('T', 'E', 'R',  0),
-                    tileImageID     = RES_ID('T', 'I', 'L',  0),
-                    platformID      = RES_ID('P', 'L', 'T',  0),
-                    metaID          = RES_ID('M', 'E', 'T',  0),
-                    mapID           = RES_ID('M', 'A', 'P',  0),
-                    tagID           = RES_ID('T', 'A', 'G',  0),
-                    tagDataID       = RES_ID('T', 'G', 'D',  0),
-                    tagStateID      = RES_ID('T', 'S', 'T',  0),
-                    assocID         = RES_ID('A', 'S', 'C',  0),
-                    cycleID         = RES_ID('C', 'Y', 'C', 'L');
+const uint32        tileTerrainID   = MKTAG('T', 'E', 'R',  0),
+                    tileImageID     = MKTAG('T', 'I', 'L',  0),
+                    platformID      = MKTAG('P', 'L', 'T',  0),
+                    metaID          = MKTAG('M', 'E', 'T',  0),
+                    mapID           = MKTAG('M', 'A', 'P',  0),
+                    tagID           = MKTAG('T', 'A', 'G',  0),
+                    tagDataID       = MKTAG('T', 'G', 'D',  0),
+                    tagStateID      = MKTAG('T', 'S', 'T',  0),
+                    assocID         = MKTAG('A', 'S', 'C',  0),
+                    cycleID         = MKTAG('C', 'Y', 'C', 'L');
 
 //  Scrolling Speed constants
 
@@ -99,7 +99,7 @@ void setAreaSound(const TilePoint &baseCoords);
  * ===================================================================== */
 
 TileBankPtr tileBanks[ maxBanks ];
-extern LoadOnCall<UByteHandle> tileImageBanks;
+extern byte* tileImageBanks[];
 
 void tileFault(int bank, int num);
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
@@ -320,7 +320,7 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 	}
 
 	if (ti != NULL) {
-		if ((tibh = tileImageBanks[ tileBank ]) != NULL)
+		if ((tibh = tileImageBanks[tileBank]) != NULL)
 			* imageData = &(*tibh)[ ti->offset ];
 		else
 			*imageData = NULL;
@@ -476,7 +476,7 @@ bool ActiveItem::inRange(const TilePoint &loc, int16 range) {
 //	TAG noise player
 
 void ActiveItem::playTAGNoise(ActiveItem *ai, int16 tagNoiseID) {
-	playSoundAt(RES_ID('T', 'A', 'G', tagNoiseID), ai->getInstanceLocation());
+	playSoundAt(MKTAG('T', 'A', 'G', tagNoiseID), ai->getInstanceLocation());
 }
 
 //-----------------------------------------------------------------------
@@ -816,7 +816,7 @@ void initActiveItemStates(void) {
 	for (i = 0; i < worldCount; i++) {
 		stateArray[ i ] = (UByteHandle)LoadResourceToHandle(
 		                      tileRes,
-		                      tagStateID + RES_ID(0, 0, 0, uint8(i)),
+		                      tagStateID + MKTAG(0, 0, 0, uint8(i)),
 		                      "active item state array");
 
 		if (stateArray[ i ] == NULL)
@@ -1426,11 +1426,11 @@ void initMaps(void) {
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		if (tileRes->seek(tileTerrainID + RES_ID(0, 0, 0, (uint8)i))) {
+		if (tileRes->seek(tileTerrainID + MKTAG(0, 0, 0, (uint8)i))) {
 			tileBanks[ i ] =
 			    (TileBankPtr)LoadResource(
 			        tileRes,
-			        tileTerrainID + RES_ID(0, 0, 0, (uint8)i),
+			        tileTerrainID + MKTAG(0, 0, 0, (uint8)i),
 			        "tile terrain bank");
 		} else
 			tileBanks[ i ] = NULL;
@@ -1438,7 +1438,7 @@ void initMaps(void) {
 
 	//  Count the worlds by seeking the map data
 	for (worldCount = 0;
-	        tileRes->seek(mapID + RES_ID(0, 0, 0, (uint8)worldCount));
+	        tileRes->seek(mapID + MKTAG(0, 0, 0, (uint8)worldCount));
 	        worldCount++) ;
 
 	//  Allocate the map data array
@@ -1460,7 +1460,7 @@ void initMaps(void) {
 		//  Load the map
 		mapData->map = (MapHandle)LoadResourceToHandle(
 		                   tileRes,
-		                   mapID + RES_ID(0, 0, 0, (uint8)i),
+		                   mapID + MKTAG(0, 0, 0, (uint8)i),
 		                   "world map");
 		if (mapData->map == NULL)
 			error("Unable to load map");
@@ -1468,17 +1468,17 @@ void initMaps(void) {
 		//  Load the meta tile list
 		mapData->metaList = (MetaTileHandle)LoadResourceToHandle(
 		                        tileRes,
-		                        metaID + RES_ID(0, 0, 0, (uint8)i),
+		                        metaID + MKTAG(0, 0, 0, (uint8)i),
 		                        "meta tile list");
 		if (mapData->metaList == NULL)
 			error("Unable to load meta tile list");
 
 		//  If there is tag data, load it
-		if (tileRes->size(tagDataID + RES_ID(0, 0, 0, (uint8)i)) > 0) {
+		if (tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->activeItemData =
 			    (TileRefHandle)LoadResourceToHandle(
 			        tileRes,
-			        tagDataID + RES_ID(0, 0, 0, (uint8)i),
+			        tagDataID + MKTAG(0, 0, 0, (uint8)i),
 			        "active item data");
 			if (mapData->activeItemData == NULL)
 				error("Unable to load active item data");
@@ -1486,11 +1486,11 @@ void initMaps(void) {
 			mapData->activeItemData = NULL;
 
 		//  If there is an association list, load it
-		if (tileRes->size(assocID + RES_ID(0, 0, 0, (uint8)i)) > 0) {
+		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->assocList =
 			    (UWordHandle)LoadResourceToHandle(
 			        tileRes,
-			        assocID + RES_ID(0, 0, 0, (uint8)i),
+			        assocID + MKTAG(0, 0, 0, (uint8)i),
 			        "association list");
 			if (mapData->assocList == NULL)
 				error("Unable to load association list");
@@ -1498,11 +1498,11 @@ void initMaps(void) {
 			mapData->assocList = NULL;
 
 		//  If there is an active item list, load it
-		if (tileRes->size(tagID + RES_ID(0, 0, 0, (uint8)i)) > 0) {
+		if (tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->activeItemList =
 			    (ActiveItemPtr)LoadResource(
 			        tileRes,
-			        tagID + RES_ID(0, 0, 0, (uint8)i),
+			        tagID + MKTAG(0, 0, 0, (uint8)i),
 			        "active item list");
 			if (mapData->activeItemList == NULL)
 				error("Unable to load active item list");
@@ -2275,10 +2275,10 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		stack[ layer ] = (cacheFlag | cacheIndex);
 
 		assert(plIndex >= 0);
-		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + RES_ID(0, 0, 0, mapNum)));
+		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
 
 		// Now, load the actual metatile data...
-		if (tileRes->seek(platformID + RES_ID(0, 0, 0, mapNum))) {
+		if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
 			if (tileRes->skip(plIndex * sizeof(Platform))) {
 				if (tileRes->read(&pce->pl, sizeof(Platform)));
 				{

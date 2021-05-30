@@ -255,27 +255,27 @@ TERMINATOR(termAudioChannels) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initResourceHandles) {
-	tileRes = resFile->newContext(RES_ID('T', 'I', 'L', 'E'), "tile resources");
+	tileRes = resFile->newContext(MKTAG('T', 'I', 'L', 'E'), "tile resources");
 	if (!tileRes->_valid)
-		return FALSE;
-	listRes = objResFile->newContext(RES_ID('L', 'I', 'S', 'T'), "list resources");
+		return false;
+	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
 	if (!listRes->_valid)
-		return FALSE;
-	resImports = (ResImportTable *)LoadResource(listRes, RES_ID('I', 'M', 'P', 'O'), "res imports");
+		return false;
+	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
 	if (!resImports)
-		return FALSE;
-	return TRUE;
+		return false;
+	return true;
 }
 
 TERMINATOR(termResourceHandles) {
 	if (resImports) {
-		RDisposePtr(resImports);
-		resImports = NULL;
+		free(resImports);
+		resImports = nullptr;
 	}
 	if (listRes) objResFile->disposeContext(listRes);
-	listRes = NULL;
+	listRes = nullptr;
 	if (tileRes) resFile->disposeContext(tileRes);
-	tileRes = NULL;
+	tileRes = nullptr;
 }
 
 

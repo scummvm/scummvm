@@ -39,7 +39,7 @@ namespace Saga2 {
 
 const uint16 tileBankCount = 25;
 
-const uint32            tileImageID     = RES_ID('T', 'I', 'L',  0);
+const uint32            tileImageID     = MKTAG('T', 'I', 'L',  0);
 
 /* ===================================================================== *
    Prototypes
@@ -60,6 +60,8 @@ extern gPixelMap            tileDrawMap;
 
 extern int16                currentMapNum;
 
+extern hResource           *objResFile;
+
 /* ===================================================================== *
    Tile structure management
  * ===================================================================== */
@@ -77,11 +79,11 @@ void sprintBA(char buf[], BitArray *x);
  * ===================================================================== */
 
 
-static RHANDLE tileResLoad(hResID i, bool asynch = FALSE) {
+static void *tileResLoad(hResID i, bool asynch = FALSE) {
 	if (tileRes)
-		return tileRes->load(i, "tile image bank", asynch);
+		return tileRes->loadResource(i, "tile image bank", objResFile->_filename);
 	else
-		return NULL;;
+		return nullptr;
 }
 
 
