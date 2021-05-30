@@ -1459,7 +1459,7 @@ void initMaps(void) {
 			error("Unable to load map");
 
 		//  Load the meta tile list
-		mapData->metaList = (MetaTileHandle)LoadResourceToHandle(tileRes,
+		mapData->metaList = (MetaTilePtr)LoadResource(tileRes,
 		                     metaID + MKTAG(0, 0, 0, (uint8)i),
 		                     "meta tile list");
 		if (mapData->metaList == nullptr)
@@ -1467,7 +1467,7 @@ void initMaps(void) {
 
 		//  If there is tag data, load it
 		if (tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			mapData->activeItemData = (TileRefHandle)LoadResourceToHandle(tileRes,
+			mapData->activeItemData = (TileRefPtr)LoadResource(tileRes,
 			                           tagDataID + MKTAG(0, 0, 0, (uint8)i),
 			                           "active item data");
 			if (mapData->activeItemData == nullptr)
@@ -1478,7 +1478,7 @@ void initMaps(void) {
 		//  If there is an association list, load it
 		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->assocList =
-			    (UWordHandle)LoadResourceToHandle(tileRes,
+			    (UWordPtr)LoadResource(tileRes,
 			        assocID + MKTAG(0, 0, 0, (uint8)i),
 			        "association list");
 			if (mapData->assocList == nullptr)
@@ -1498,12 +1498,12 @@ void initMaps(void) {
 			mapData->activeItemList = nullptr;
 
 		//  Compute the number of meta tiles in list
-		mapData->metaCount     =        RPtrSize(*mapData->metaList)
-		                                /   sizeof(MetaTile);
+		mapData->metaCount     =        tileRes->size(metaID + MKTAG(0, 0, 0, (uint8)i))
+		                                /   sizeof(MetaTile); // 2 + 8 + 2 + 4 = 16
 
 		//  Compute the number of active items in list
-		mapData->activeCount   =        RPtrSize(mapData->activeItemList)
-		                                /   sizeof(ActiveItem);
+		mapData->activeCount   =        tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i))
+		                                /   sizeof(ActiveItem); // Not portable?
 
 		/*          //  Initialize the state index for the each active item
 		            //  instance.  NOTE:  This code will need to be removed when
@@ -1519,14 +1519,13 @@ void initMaps(void) {
 		        }
 		*/
 		//  Allocate an object ripping table ID list
-		mapData->ripTableIDList =
-		    (RipTableIDHandle)malloc(sizeof(RipTableID) * mapData->metaCount);
+		mapData->ripTableIDList = new RipTableID[mapData->metaCount];
 		if (mapData->ripTableIDList == nullptr)
 			error("Unable to allocate rip table ID list");
 
 		//  Initialize the object ripping ID list
 		for (j = 0; j < mapData->metaCount; j++)
-			(*mapData->ripTableIDList)[ j ] = -1;
+			(mapData->ripTableIDList)[j] = -1;
 
 		//  Get the size of the map in meta tiles
 		mapData->mapSize = mapData->map->size;
@@ -1558,22 +1557,22 @@ void cleanupMaps(void) {
 		free(mapData->map);
 
 		//  Dump the meta tile list
-		RDisposeHandle((RHANDLE)mapData->metaList);
+		free(mapData->metaList);
 
 		//  If there is active item data, dump it
 		if (mapData->activeItemData != nullptr)
-			RDisposeHandle((RHANDLE)mapData->activeItemData);
+			free(mapData->activeItemData);
 
 		//  If there is an association list, dump it
 		if (mapData->assocList != nullptr)
-			RDisposeHandle((RHANDLE)mapData->assocList);
+			free(mapData->assocList);
 
 		//  If there is an active item list, dump it
 		if (mapData->activeItemList != nullptr)
-			RDisposePtr(mapData->activeItemList);
+			free(mapData->activeItemList);
 
 		//  Dump the object ripping table ID list
-		free(mapData->ripTableIDList);
+		delete mapData->ripTableIDList;
 	}
 
 	//  Dump the map data list
@@ -1582,8 +1581,8 @@ void cleanupMaps(void) {
 
 	//  Dump all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		if (tileBanks[ i ] != nullptr)
-			free(tileBanks[ i ]);
+		if (tileBanks[i] != nullptr)
+			free(tileBanks[i]);
 	}
 }
 
@@ -1878,7 +1877,7 @@ TileInfo *Platform::fetchTile(
 			state = instanceItem->getInstanceState(mapNum);
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(*mapList[ mapNum ].activeItemData)[
+			tr = &(mapList[mapNum].activeItemData)[
 			         groupItem->group.grDataOffset
 			         +   state * groupItem->group.animArea
 			         +   relPos.u * groupItem->group.vSize
@@ -1960,7 +1959,7 @@ TileInfo *Platform::fetchTAGInstance(
 			sti.surfaceTAG = instanceItem;
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(*mapList[ mapNum ].activeItemData)[
+			tr = &(mapList[mapNum].activeItemData)[
 			         groupItem->group.grDataOffset
 			         +   state * groupItem->group.animArea
 			         +   relPos.u * groupItem->group.vSize
@@ -2035,7 +2034,7 @@ TileInfo *Platform::fetchTile(
 			state = instanceItem->getInstanceState(mapNum);
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(*mapList[ mapNum ].activeItemData)[
+			tr = &(mapList[mapNum].activeItemData)[
 			         groupItem->group.grDataOffset
 			         +   state * groupItem->group.animArea
 			         +   relPos.u * groupItem->group.vSize
@@ -2118,7 +2117,7 @@ TileInfo *Platform::fetchTAGInstance(
 			sti.surfaceTAG = instanceItem;
 
 			//  Get the tile to be drawn from the tile group
-			tr = &(*mapList[ mapNum ].activeItemData)[
+			tr = &(mapList[mapNum].activeItemData)[
 			         groupItem->group.grDataOffset
 			         +   state * groupItem->group.animArea
 			         +   relPos.u * groupItem->group.vSize
@@ -2172,15 +2171,15 @@ RipTableID RipTable::thisID(void) {
 
 MetaTile *MetaTile::metaTileAddress(MetaTileID id) {
 	return  id.map != nullID && id.index != nullID
-	        ?   &(*mapList[ id.map ].metaList)[ id.index ]
-	        :   NULL;
+	        ?   &(mapList[id.map].metaList)[ id.index ]
+	        :   nullptr;
 }
 
 //-----------------------------------------------------------------------
 //	Return this meta tile's ID
 
 MetaTileID MetaTile::thisID(int16 mapNum) {
-	return MetaTileID(mapNum, this - *mapList[ mapNum ].metaList);
+	return MetaTileID(mapNum, this - mapList[mapNum].metaList);
 }
 
 //-----------------------------------------------------------------------
@@ -2200,8 +2199,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	PlatformCacheEntry  *pce;
 
 	assert(layer >= 0);
-	assert(this >= *mapList[ mapNum ].metaList
-	       &&  this <  & (*mapList[ mapNum ].metaList)[
+	assert(this >= mapList[mapNum].metaList
+	       &&  this <  & (mapList[ mapNum ].metaList)[
 	           mapList[ mapNum ].metaCount ]);
 
 	if (plIndex == nullID) {
@@ -2287,9 +2286,9 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 RipTable *MetaTile::ripTable(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[ mapNum ];
 
-	return RipTable::ripTableAddress((*mapData->ripTableIDList)[
+	return RipTable::ripTableAddress((mapData->ripTableIDList)[
 	                                  this
-	                                  -   *mapData->metaList ]);
+	                                  -   mapData->metaList ]);
 }
 
 //-----------------------------------------------------------------------
@@ -2298,7 +2297,7 @@ RipTable *MetaTile::ripTable(int16 mapNum) {
 RipTableID &MetaTile::ripTableID(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[ mapNum ];
 
-	return (*mapData->ripTableIDList)[ this - *mapData->metaList ];
+	return (mapData->ripTableIDList)[ this - mapData->metaList ];
 }
 
 /* ====================================================================== *
@@ -2368,7 +2367,8 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 	assert(mtile < metaCount);
 	assert(mtile >= 0);
 
-	return &(*metaList)[ mtile ];
+	return &metaList[mtile];
+
 }
 
 //-----------------------------------------------------------------------
@@ -2587,7 +2587,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	                mapEdgeType = curMap->map->edgeType;
 	uint16          *mapData = curMap->map->mapData;
 
-	MetaTilePtr     metaArray = *curMap->metaList;
+	MetaTilePtr     metaArray = curMap->metaList;
 
 	int16           layerLimit;
 
@@ -3223,7 +3223,7 @@ void maskMetaRow(
 	                mapEdgeType = curMap->map->edgeType;
 	uint16          *mapData = curMap->map->mapData;
 
-	MetaTilePtr     metaArray = *curMap->metaList;
+	MetaTilePtr     metaArray = curMap->metaList;
 
 	int16           layerLimit;
 
