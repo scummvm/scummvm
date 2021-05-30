@@ -31,6 +31,7 @@
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/usecode/uc_machine.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/widgets/text_widget.h"
@@ -300,7 +301,7 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 }
 
 uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_ITEM_FROM_PTR(item);
+	ARG_ITEM_FROM_PTR(item); // TODO: Unused? Center on this first?
 	ARG_STRING(name);
 	ARG_UINT16(x);
 	ARG_UINT16(y);
@@ -310,11 +311,10 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 	if (!y)
 		y = 480;
 
-	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey");
+	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey (%s, %d)",
+			name.c_str(), item ? item->getObjId() : 0);
 
-	if (item) {
-		CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
-	}
+	CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
 
 	return 0;
 }
