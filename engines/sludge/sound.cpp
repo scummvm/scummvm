@@ -224,7 +224,15 @@ bool SoundManager::playMOD(int f, int a, int fromTrack) {
 	if (memImage->size() != (int)length || readStream->err()) {
 		return fatal("Sound reading failed");
 	}
-	Audio::LoopingAudioStream *stream = new Audio::LoopingAudioStream(Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack), 0, DisposeAfterUse::YES, false);
+	Audio::RewindableAudioStream *mod = Audio::makeModXmS3mStream(memImage, DisposeAfterUse::NO, fromTrack);
+
+	if (!mod) {
+		warning("Could not load MOD file");
+		g_sludge->_resMan->finishAccess();
+		return false;
+	}
+
+	Audio::LoopingAudioStream *stream = new Audio::LoopingAudioStream(mod, 0, DisposeAfterUse::YES, false);
 
 	if (stream) {
 		// play sound
