@@ -505,17 +505,21 @@ void LogicManager::initInventory() {
 	_vm->_inventory.push_back(kItemLetterboxKey);
 }
 
-void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printSentence) {
-	*updateInventory = true;
-	*printSentence = true;
+void LogicManager::useInventoryWithInventory() {
+	bool itemUsed = false;
 
+	if (!_vm->_useWith[USED] || !_vm->_useWith[WITH])
+		warning("useInventoryWithInventory - _useWith not set properly");
+
+	_vm->_animMgr->smkStop(kSmackerIcon);
+	
 	switch (_vm->_useWith[USED]) {
 	case kItemFoilPaper:
 		if (_vm->_useWith[WITH] == kItemBurnedFuse) {
 			_vm->removeIcon(kItemFoilPaper);
 			_vm->replaceIcon(kItemBurnedFuse, kItemRepairedFuse);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1441);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -524,7 +528,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemFoilPaper);
 			_vm->replaceIcon(kItemBurnedFuse, kItemRepairedFuse);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1441);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -534,7 +538,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemDeadRat);
 			_vm->addIcon(kItemRatOnSkate);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1497);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -544,7 +548,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemDeadRat);
 			_vm->addIcon(kItemRatOnSkate);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1497);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -553,7 +557,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemBar);
 			_vm->replaceIcon(kItemMagnet, kItemMagneticBar);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1438);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -562,7 +566,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemBar);
 			_vm->replaceIcon(kItemMagnet, kItemMagneticBar);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1533);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -571,7 +575,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemBroom);
 			_vm->replaceIcon(kItemMatch, kItemMakeshiftTorch);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1575);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -580,7 +584,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemBroom);
 			_vm->replaceIcon(kItemMatch, kItemMakeshiftTorch);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1546);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -589,7 +593,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemThreeWayAdapter);
 			_vm->replaceIcon(kItemProjector, kItemProjector2);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 0);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -598,7 +602,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemThreeWayAdapter);
 			_vm->replaceIcon(kItemProjector, kItemProjector2);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 0);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -628,7 +632,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			if ((_vm->_useWith[USED] >= kItemCharcoalSaltpetrePowder) || (_vm->_useWith[WITH] >= kItemCharcoalSaltpetrePowder))
 				_vm->addIcon(kItemGunpowder);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1663);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -637,12 +641,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->replaceIcon(kItemGunpowder, kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1676);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemLeftoverGunpowder) {
 			_vm->removeIcon(kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1700);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -651,7 +655,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->replaceIcon(kItemGunpowder, kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1676);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -660,7 +664,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemLeftoverGunpowder);
 			_vm->replaceIcon(kItemPiratePistol, kItemPistolWithGunpowder);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1700);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -671,13 +675,13 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->replaceIcon(kItemPistolWithGunpowder, kItemLoadedPistol);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1683);
 			_vm->_inventoryObj[kItemPistolWithGunpowder].setFlagExtra(true);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemPistolWithGunpowder) {
 			_vm->_textMgr->characterSay(1688);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemPiratePistol) {
 			_vm->_textMgr->characterSay(2009);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -687,10 +691,10 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->replaceIcon(kItemPistolWithGunpowder, kItemLoadedPistol);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1718);
 			_vm->_inventoryObj[kItemLoadedPistol].setFlagExtra(true);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemPiratePistol) {
 			_vm->_textMgr->characterSay(2011);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -699,7 +703,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemEmptySyringe);
 			_vm->replaceIcon(kItemTubes, kItemPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -708,7 +712,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemEmptySyringe);
 			_vm->replaceIcon(kItemTubes, kItemPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -717,12 +721,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemInflatedGlovesWithFloss);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemPoisonSyringe) {
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemPoisonSyringe, kItemPoisonSyringeWithFloss);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -731,12 +735,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemInflatedGlovesWithFloss);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemPoisonSyringeWithFloss) {
 			_vm->removeIcon(kItemPoisonSyringeWithFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemFloatingPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -745,12 +749,12 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemDentalFloss);
 			_vm->replaceIcon(kItemPoisonSyringe, kItemPoisonSyringeWithFloss);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		} else if (_vm->_useWith[WITH] == kItemInflatedGlovesWithFloss) {
 			_vm->removeIcon(kItemPoisonSyringe);
 			_vm->replaceIcon(kItemInflatedGlovesWithFloss, kItemFloatingPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -759,7 +763,7 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemPoisonSyringe);
 			_vm->replaceIcon(kItemInflatedGlovesWithFloss, kItemFloatingPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
@@ -768,29 +772,40 @@ void LogicManager::useInventoryWithInventory(bool *updateInventory, bool *printS
 			_vm->removeIcon(kItemPoisonSyringeWithFloss);
 			_vm->replaceIcon(kItemInflatedGloves, kItemFloatingPoisonSyringe);
 			_vm->startCharacterAction(hUSEGG, 0, 0, 1756);
-			*printSentence = false;
+			itemUsed = true;
 		}
 		break;
 
 	default:
-		*updateInventory = false;
 		break;
 	}
+
+	if (itemUsed)
+		_vm->_textMgr->characterSay(_vm->_inventoryObj[_vm->_useWith[USED]]._action);
+	else
+		_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
 }
 
-void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSentence) {
-	*updateInventory = true;
-	*printSentence = true;
+void LogicManager::useInventoryWithScreen() {
+	bool updateInventory = true;
+	bool printSentence = true;
+
+	if (!_vm->_useWith[USED] || !_vm->_useWith[WITH])
+		warning("useInventoryWithScreen - _useWith not set properly");
+
+	_vm->_animMgr->smkStop(kSmackerIcon);
+	if (_vm->_pathFind->_characterInMovement)
+		return;
 
 	switch (_vm->_useWith[USED]) {
 	case kItemBankNote:
 		if (_vm->_useWith[WITH] == oDISTRIBUTORE13 && !_vm->_obj[oDISTRIBUTORE13].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a131USABANCONOTA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 			_vm->_obj[oDISTRIBUTORE13].setFlagExtra(true);
 		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isFlagExtra() && _vm->isObjectVisible(oLATTINA13)) {
 			_vm->_textMgr->characterSay(1410);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDISTRIBUTORE13) && _vm->_obj[oDISTRIBUTORE13].isFlagExtra()) {
 			if (!_vm->_obj[oSCOMPARTO13].isFlagExtra()) {
 				_vm->_obj[oSCOMPARTO13].setFlagExtra(true);
@@ -798,15 +813,15 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			} else
 				_vm->_textMgr->characterSay(1411);
 
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oTICKETOFFICE16) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a165USABANCONOTA, 0, 0, _vm->_useWith[WITH]);
 			_vm->_inventoryObj[kItemBankNote].setFlagExtra(true);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocPOLIZIOTTO16) && _vm->_inventoryObj[kItemBankNote].isFlagExtra()) {
 			_vm->_dialogMgr->toggleChoice(62, true);
 			_vm->_dialogMgr->playDialog(dPOLIZIOTTO16);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 	case kItemLetter:
@@ -819,19 +834,19 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_inventoryObj[kItemLetter].setFlagExtra(true);
 				_vm->removeIcon(kItemLetter);
 			}
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 	case kItemRepairedFuse:
 		if (_vm->_useWith[WITH] == oPANELA12) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a127USEWRAPPEDFUSED, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 	case kItemBurnedFuse:
 		if (_vm->_useWith[WITH] == oPANELA12) {
 			_vm->_textMgr->characterSay(62);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 	case kItemLetterboxKey:
@@ -839,56 +854,56 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			if (!_vm->_obj[oBOXES12].isFlagExtra()) {
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim121TryOpenLetterboxes, 0, 0, _vm->_useWith[WITH]);
 				_vm->_obj[oBOXES12].setFlagExtra(true);
-				*printSentence = false;
+				printSentence = false;
 			} else {
 				_vm->_textMgr->characterSay(1426);
-				*printSentence = false;
+				printSentence = false;
 			}
 		} else if (_vm->_useWith[WITH] == oBOX12 && !_vm->_inventoryObj[kItemLetter].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim122OpenLetterbox17, 0, 0, oBOX12);
 			_vm->_inventoryObj[kItemLetter].setFlagExtra(true);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oBOX12) && _vm->_inventoryObj[kItemLetter].isFlagExtra()) {
 			_vm->_textMgr->characterSay(1429);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oCARA11) || (_vm->_useWith[WITH] == oCARB11) || (_vm->_useWith[WITH] == oTAKE12) || (_vm->_useWith[WITH] == oSTRONGBOXC15) || (_vm->_useWith[WITH] == oDOOR18) || (_vm->_useWith[WITH] == oPADLOCK1B) || (_vm->_useWith[WITH] == oDOORC21) || (_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOORC33) || (_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1426);
 		}
 		break;
 	case kItemLiftCard:
 		if (_vm->_useWith[WITH] == oSLOT12 || _vm->_useWith[WITH] == oSLOT13 || _vm->_useWith[WITH] == oSLOT16) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_inventoryObj[kItemLiftCard].setFlagExtra(true);
 			_vm->_obj[oSLOT12].setFlagPerson(true);
 			_vm->_obj[oLIFTA12].setFlagPerson(true);
 			_vm->doMouseTalk(_vm->_useWith[WITH]);
 		} else if ((_vm->_useWith[WITH] == oTICKETOFFICE16) || (_vm->_useWith[WITH] == oSLOT23) || (_vm->_useWith[WITH] == oFRONTOFFICEA35) || (_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1419);
 		}
 		break;
 	case kItemPen:
-		*printSentence = false;
+		printSentence = false;
 		if (((_vm->_useWith[WITH] == oPENPADA13) || (_vm->_useWith[WITH] == oLETTERA13)) && _vm->isObjectVisible(oLETTERA13))
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a137RICALCAFIRMA, kRoom14, 14, _vm->_useWith[WITH]);
 		else if ((_vm->_useWith[WITH] == oPENPADA13) && _vm->_room[kRoom14].isDone())
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1312METTELETTERARICALCA, kRoom14, 14, _vm->_useWith[WITH]);
 		else if (_vm->_useWith[WITH] == oPENPADA13) {
 			if (!_vm->isObjectVisible(oBOX12)) {
-				*printSentence = false;
+				printSentence = false;
 				_vm->_textMgr->characterSay(2005);
 			} else
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a134USAMAGNETICPEN, 0, 0, _vm->_useWith[WITH]);
 		} else
-			*printSentence = true;
+			printSentence = true;
 		break;
 
 	case kItemTubeOfAcidFull:
 		if (_vm->_useWith[WITH] == oBAR11) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim113UseVial, 0, 0, _vm->_useWith[WITH]);
 			_vm->replaceIcon(kItemTubeOfAcidFull, kItemTubeOfAcidHalfFull);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPADLOCK1B) {
 			if (_vm->isObjectVisible(oTOMBINOA1B))
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2AVERSAACIDO, 0, 0, _vm->_useWith[WITH]);
@@ -897,9 +912,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectAnim(oBOTOLAC1B, a1B3APREBOTOLA);
 			_vm->replaceIcon(kItemTubeOfAcidFull, kItemTubeOfAcidHalfFull);
 			_vm->_animMgr->_animTab[kAnim113UseVial]._atFrame[0]._index = 1483;
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocGUARD18) || (_vm->_useWith[WITH] == oMANHOLEC1B)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1476);
 		}
 		break;
@@ -909,7 +924,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_animMgr->_animTab[kAnim113UseVial]._atFrame[0]._index = 1483;
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, kAnim113UseVial, 0, 0, _vm->_useWith[WITH]);
 			_vm->removeIcon(kItemTubeOfAcidHalfFull);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPADLOCK1B) {
 			_vm->_animMgr->_animTab[a1B2AVERSAACIDO]._atFrame[2]._index = 1483;
 			_vm->_animMgr->_animTab[a1B2VERSAACIDO]._atFrame[2]._index = 1483;
@@ -919,9 +934,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B2VERSAACIDO, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oBOTOLAC1B, a1B3APREBOTOLA);
 			_vm->removeIcon(kItemTubeOfAcidHalfFull);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOOR2B)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1508);
 		}
 		break;
@@ -941,11 +956,11 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->addIcon(kItemTubeOfAcidFull);
 				_vm->addIcon(kItemRubysReport);
 				_vm->removeIcon(kItemRubysSafeboxKey);
-				*printSentence = false;
-				*updateInventory = false;
+				printSentence = false;
+				updateInventory = false;
 			}
 		} else if ((_vm->_useWith[WITH] == oCARA11) || (_vm->_useWith[WITH] == oCARB11) || (_vm->_useWith[WITH] == oTAKE12) || (_vm->_useWith[WITH] == oBOX12) || (_vm->_useWith[WITH] == oDOOR18) || (_vm->_useWith[WITH] == oPADLOCK1B) || (_vm->_useWith[WITH] == oDOORC21) || (_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOORC33) || (_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1469);
 		}
 		break;
@@ -954,22 +969,22 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oMANHOLEC1B) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a1B1USASBARRA, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oBOTOLAA1B, a1B6ASCENDEBOTOLA);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCHAIN21) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a216, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oALTOPARLANTE25) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a251, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oDOORC33) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, _vm->_useWith[WITH]);
 			_vm->removeIcon(kItemBar);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_obj[_vm->_useWith[WITH]].isFlagPerson()) {
 			_vm->_textMgr->characterSay(1436);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTAKE12) || (_vm->_useWith[WITH] == oSTRONGBOXC15) || (_vm->_useWith[WITH] == oDOOR18) || (_vm->_useWith[WITH] == oPADLOCK1B) || (_vm->_useWith[WITH] == oDOORC21) || (_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOOR2A) || (_vm->_useWith[WITH] == oDOOR2B)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1435);
 		}
 		break;
@@ -978,20 +993,20 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oTICKETOFFICE16) && _vm->_obj[oMAPPA16].isFlagExtra()) {
 			if (_vm->_dialogMgr->isDialogFinished(49)) {
 				_vm->_textMgr->characterSay(1457);
-				*printSentence = false;
+				printSentence = false;
 			} else {
 				_vm->_dialogMgr->toggleChoice(46, false);
 				_vm->_dialogMgr->toggleChoice(47, false);
 				_vm->_dialogMgr->toggleChoice(48, false);
 				_vm->_dialogMgr->toggleChoice(49, true);
 				_vm->playScript(s16CARD);
-				*printSentence = false;
+				printSentence = false;
 			}
 		} else if (_vm->_useWith[WITH] == oSLOT23) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2311, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSLOT12) || (_vm->_useWith[WITH] == oSLOT13) || (_vm->_useWith[WITH] == oSLOT16) || (_vm->_useWith[WITH] == oFRONTOFFICEA35) || (_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1419);
 		}
 		break;
@@ -1003,12 +1018,12 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_dialogMgr->toggleChoice(48, false);
 			_vm->_dialogMgr->toggleChoice(50, true);
 			_vm->playScript(S16MONEY);
-			*printSentence = false;
+			printSentence = false;
 			_vm->removeIcon(kItemFiveCreditCoin);
 			_vm->_obj[oFINGERPADP16].setFlagRoomOut(true);
 		} else if (_vm->_useWith[WITH] == oTICKETOFFICE16) {
 			_vm->_textMgr->characterSay(146);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1016,18 +1031,18 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oTELEFAXF17) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a172USAPLASTICA, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oTELEFAXF17]._examine = 1486;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemRubysPhoto:
 		if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->isDialogFinished(81))) {
 			_vm->_textMgr->characterSay(1463);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (_vm->_dialogMgr->isDialogFinished(91))) {
 			_vm->_obj[ocTRAMP17]._action = 1462;
 			_vm->_textMgr->characterSay(_vm->_obj[ocTRAMP17]._action);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == ocTRAMP17) && (!_vm->_dialogMgr->isDialogFinished(78) || (_vm->_dialogMgr->isDialogFinished(79) || (_vm->_dialogMgr->isDialogFinished(83) && !_vm->_dialogMgr->isDialogFinished(92))))) {
 			_vm->_dialogMgr->toggleChoice(78, true);
 			if (_vm->_dialogMgr->isDialogFinished(79) || _vm->_dialogMgr->isDialogFinished(83)) {
@@ -1039,26 +1054,26 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			} else
 				_vm->_dialogMgr->toggleChoice(91, true);
 			_vm->_dialogMgr->playDialog(dTRAMP171);
-			*updateInventory = false;
-			*printSentence = false;
+			updateInventory = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocPOLIZIOTTO16) {
 			_vm->_obj[ocPOLIZIOTTO16].setFlagExtra(true);
 			_vm->_textMgr->characterSay(1461);
 			if (_vm->_dialogMgr->isDialogFinished(61) && _vm->_dialogMgr->isDialogFinished(62) && _vm->_obj[ocPOLIZIOTTO16].isFlagExtra())
 				_vm->setObjectVisible(ocPOLIZIOTTO16, false);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
 			if (_vm->_dialogMgr->isDialogFinished(152))
 				_vm->_textMgr->characterSay(1465);
 			else
 				_vm->_textMgr->characterSay(1464);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocNEGOZIANTE1A) {
 			_vm->_textMgr->characterSay(1466);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocEVA19) {
 			_vm->_textMgr->characterSay(1465);
-			*printSentence = false;
+			printSentence = false;
 		}
 
 		break;
@@ -1072,9 +1087,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->clearExitFlag(80);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
-				*updateInventory = false;
+				updateInventory = false;
 				_vm->removeIcon(kItemBeerCan);
-				*printSentence = false;
+				printSentence = false;
 			} else {
 				_vm->_dialogMgr->toggleChoice(79, true);
 				if (!_vm->_dialogMgr->isDialogFinished(78)) {
@@ -1088,9 +1103,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 						_vm->_dialogMgr->toggleChoice(122, true);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
-				*updateInventory = false;
+				updateInventory = false;
 				_vm->removeIcon(kItemBeerCan);
-				*printSentence = false;
+				printSentence = false;
 			}
 		}
 
@@ -1105,9 +1120,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->clearExitFlag(80);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
-				*updateInventory = false;
+				updateInventory = false;
 				_vm->removeIcon(kItemWineBottle);
-				*printSentence = false;
+				printSentence = false;
 			} else {
 				_vm->_dialogMgr->toggleChoice(83, true);
 				if (!_vm->_dialogMgr->isDialogFinished(78)) {
@@ -1121,9 +1136,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 						_vm->_dialogMgr->toggleChoice(122, true);
 				}
 				_vm->_dialogMgr->playDialog(dTRAMP171);
-				*updateInventory = false;
+				updateInventory = false;
 				_vm->removeIcon(kItemWineBottle);
-				*printSentence = false;
+				printSentence = false;
 			}
 		}
 
@@ -1131,11 +1146,11 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemBottleOfChateau:
 		if (_vm->_useWith[WITH] == ocNEGOZIANTE1A) {
-			*printSentence = false;
+			printSentence = false;
 			if (_vm->_dialogMgr->isDialogFinished(183)) {
 				_vm->_dialogMgr->toggleChoice(185, true);
 				_vm->_dialogMgr->playDialog(dSHOPKEEPER1A);
-				*updateInventory = false;
+				updateInventory = false;
 				_vm->replaceIcon(kItemBottleOfChateau, kItemMembershipCard);
 			} else
 				_vm->_textMgr->characterSay(2006);
@@ -1146,26 +1161,26 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == ocGUARD18) && !(_vm->_dialogMgr->isDialogFinished(155))) {
 			_vm->_dialogMgr->toggleChoice(155, true);
 			_vm->_dialogMgr->playDialog(dGUARDIAN18);
-			*updateInventory = false;
+			updateInventory = false;
 			_vm->_obj[ocGUARD18].setFlagPerson(false);
 			_vm->_obj[oDOORC18].setFlagRoomOut(true);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == ocGUARD18) {
 			_vm->_textMgr->characterSay(1494);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemRatOnSkate:
 		if ((_vm->_useWith[WITH] == oDONNA1D) && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.left && (_vm->_mousePos.x >= _vm->_obj[oDONNA1D]._lim.top + TOP) && (_vm->_mousePos.x <= _vm->_obj[oDONNA1D]._lim.right) && (_vm->_mousePos.y <= _vm->_obj[oDONNA1D]._lim.bottom + TOP))) {
 			_vm->_dialogMgr->playDialog(dF1D1);
-			*updateInventory = false;
+			updateInventory = false;
 			_vm->removeIcon(kItemRatOnSkate);
 			_vm->read3D("1d2.3d"); // after skate
 			_vm->setObjectVisible(oDONNA1D, false);
 			_vm->_room[_vm->_curRoom].setExtra(true);
 			_vm->_animMgr->_animTab[aBKG1D]._flag |= SMKANIM_OFF1;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1174,19 +1189,19 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a211, 0, 0, _vm->_useWith[WITH]);
 			_vm->_inventoryObj[kItemPistol]._examine = 1472;
 			_vm->_inventoryObj[kItemPistol]._action = 1473;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemScrewdriver:
 		if (_vm->_useWith[WITH] == oESSE21) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a213, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCOPERCHIOC31) {
 			_vm->_soundMgr->play(wCOVER31);
 			_vm->setObjectVisible(oCOPERCHIOC31, false);
 			_vm->setObjectVisible(oCOPERCHIOA31, true);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCOPERCHIOA31) {
 			_vm->setObjectVisible(oCOPERCHIOA31, false);
 			_vm->setObjectVisible(oCOPERCHIOC31, true);
@@ -1199,16 +1214,16 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oPANNELLOM31].setFlagRoomOut(false);
 			}
 			_vm->_soundMgr->play(wCOVER31);
-			*printSentence = false;
+			printSentence = false;
 			_vm->changeRoom(kRoom31, a3118CHIUDEPANNELLO, 3);
 		} else if (_vm->_useWith[WITH] == oPANNELLO55) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a5512, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPANNELLOC56) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a568, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSLOT23) || (_vm->_useWith[WITH] == oPRESA35) || (_vm->_useWith[WITH] == oSERRATURA33)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1520);
 		}
 		break;
@@ -1216,7 +1231,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemMetallicS:
 		if (_vm->_useWith[WITH] == oCATENA21) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a214, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1232,7 +1247,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->removeIcon(kItemEmptyTinCan);
 				_vm->replaceIcon(kItemCanWithFuel, kItemLargeCans);
 			}
-			*printSentence = false;
+			printSentence = false;
 			// FIXME: is fallthrough intended here?
 		} else
 			break;
@@ -1240,9 +1255,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemBookstoreKey:
 		if (_vm->_useWith[WITH] == oDOOR2A) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2A2USEKEY, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oPANELC23) || (_vm->_useWith[WITH] == oDOORC33) || (_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1512);
 		}
 		break;
@@ -1250,16 +1265,16 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemFaultyBulb:
 		if ((_vm->_useWith[WITH] == oPORTALAMPADE2B) && !_vm->_obj[_vm->_useWith[WITH]]._anim) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2B6METTELAMPADINA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemSocketSpanner:
 		if (_vm->_useWith[WITH] == oPANELC23) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a233, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOORC33) || (_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1525);
 		}
 		break;
@@ -1267,10 +1282,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemCopperLeads:
 		if ((_vm->_useWith[WITH] == oCONTATTI23) && _vm->isObjectVisible(oLEVAS23)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a236, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oLEVAG23) {
 			_vm->_textMgr->characterSay(2015);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1283,15 +1298,15 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oCARTELLONE2H, false);
 			_vm->setObjectVisible(oPASSERELLA24, false);
 			_vm->setObjectVisible(oRUINS24, false);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTUBOT34) && _vm->isObjectVisible(oVALVOLAC34)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a341USAPINZE, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oTUBOT34) && _vm->isObjectVisible(oVALVOLA34)) {
 			_vm->_textMgr->characterSay(2007);
-			*printSentence = false;
+			printSentence = false;
 		} else
-			*printSentence = true;
+			printSentence = true;
 		break;
 
 	case kItemCanWithFuel:
@@ -1310,7 +1325,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oSERBATOIOA2G]._examine = 667;
 				_vm->_obj[oSERBATOIOA2G]._action = 669;
 			}
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1325,7 +1340,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oSERBATOIOA2G]._examine = 668;
 				_vm->_obj[oSERBATOIOA2G]._action = 669;
 			}
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1333,7 +1348,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oSERBATOIOA2G) && _vm->_inventoryObj[kItemGasCylinder].isFlagExtra() && _vm->_inventoryObj[kItemCanWithFuel].isFlagExtra()) {
 			_vm->changeRoom(kRoom2GV);
 			_vm->removeIcon(kItemFlare);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1343,7 +1358,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oDINOSAURO2E, false);
 			_vm->setObjectAnim(oCATWALKA2E, a2E2PRIMAPALLONTANANDO);
 			_vm->_animMgr->_animTab[aBKG2E]._flag |= SMKANIM_OFF2;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1355,34 +1370,34 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 					_vm->_dialogMgr->playDialog(dF212B);
 				else
 					_vm->_dialogMgr->playDialog(dF212);
-				*printSentence = false;
+				printSentence = false;
 			} else {
 				if (_vm->_useWith[USED] == kItemPincers)
 					_vm->_dialogMgr->playDialog(dF213B);
 				else
 					_vm->_dialogMgr->playDialog(dF213);
-				*printSentence = false;
+				printSentence = false;
 			}
 		} else if ((_vm->_useWith[WITH] == oDOORC33) && (_vm->_useWith[USED] == kItemMagneticBar)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a333LOSEBAR, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSNAKEU52) && (_vm->_useWith[USED] == kItemPincers)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a527, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oSCAVO51, a516);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSERPENTEA52) && (_vm->_useWith[USED] == kItemPincers)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a528, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSERPENTEB52) && (_vm->_useWith[USED] == kItemPincers) && (_vm->iconPos(kItemSnakeHead) == -1)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a523, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemWorkingBulb:
 		if (_vm->_useWith[WITH] == oPORTALAMPADE29) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a293AVVITALAMPADINA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1390,9 +1405,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oBRACIERES28) && _vm->_obj[oBRACIERES28].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a286, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oBRACIERES28]._examine = 456;
-			*printSentence = false;
+			printSentence = false;
 		} else
-			*printSentence = true;
+			printSentence = true;
 		break;
 
 	case kItemElevatorRemoteControl:
@@ -1408,14 +1423,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_inventoryObj[kItemElevatorRemoteControl].setFlagExtra(true);
 				_vm->setObjectAnim(oBIDONE2F, a2F5FRUGABIDONE);
 			}
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemDamagedMinicom:
 		if (_vm->_useWith[WITH] == oSERRATURA33) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a338POSASAM, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1434,19 +1449,19 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_room[kRoom32].setExtra(true);
 			_vm->changeRoom(kRoom31, 0, 11);
 
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemProjector:
 		if (_vm->_useWith[WITH] == oPRESA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a351PROVAPROIETTOREPRESA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oTRIPLA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a355ATTPROIETTORETRIPLAEPRESA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oRIBELLEA35) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1578);
 		}
 		break;
@@ -1454,9 +1469,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemProjector2:
 		if (_vm->_useWith[WITH] == oPRESA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a352ATTPROIETTOREETRIPLAPRESA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oRIBELLEA35) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1590);
 		}
 		break;
@@ -1464,23 +1479,23 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemThreeWayAdapter:
 		if (_vm->_useWith[WITH] == oPRESA35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a353ATTACCATRIPLAPRESA, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemLaserGun:
 		if (_vm->_useWith[WITH] == oFRONTOFFICEC35) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a3511APRESPORTELLO, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oSNAKEU52) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a522, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oSCAVO51, a516);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oLUCCHETTO53) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a532, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOORMC36) || (_vm->_useWith[WITH] == oPORTALC36) || (_vm->_useWith[WITH] == oSCANNERMA36) || (_vm->_useWith[WITH] == oSCANNERLA36) || (_vm->_useWith[WITH] == oCASSETTOC36) || (_vm->_useWith[WITH] == oRETE52) || (_vm->_useWith[WITH] == oTELECAMERA52) || (_vm->_useWith[WITH] == oSERPENTET52) || (_vm->_useWith[WITH] == oLAGO53)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1597);
 		}
 		break;
@@ -1488,9 +1503,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemDeskKey:
 		if (_vm->_useWith[WITH] == oCASSETTOC36) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a364APRECASSETTO, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFRONTOFFICEC35) || (_vm->_useWith[WITH] == oDOORC54) || (_vm->_useWith[WITH] == oDOOR57C55) || (_vm->_useWith[WITH] == oDOOR58C55) || (_vm->_useWith[WITH] == oDOORS56) || (_vm->_useWith[WITH] == oDOORS57)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1594);
 		}
 		break;
@@ -1498,7 +1513,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemStethoscope:
 		if (_vm->_useWith[WITH] == oPORTALC36) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a368USASTETOSCOPIO, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1506,12 +1521,12 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && !_vm->_obj[oFRONTOFFICEA35].isFlagExtra()) {
 			_vm->changeRoom(kRoom35P, 0, 10);
 			_vm->removeIcon(kItemSecurityCard);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFRONTOFFICEA35) && _vm->_obj[oFRONTOFFICEA35].isFlagExtra()) {
 			_vm->_textMgr->characterSay(1844);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSLOTA58) || (_vm->_useWith[WITH] == oSLOTB58)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1602);
 		}
 		break;
@@ -1527,13 +1542,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			else
 				_vm->_textMgr->characterSay(2015);
 			++_slotMachine41Counter;
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oFESSURA41) && ((_vm->_obj[oFUCILE42]._anim == 0) || (_vm->_obj[oFUCILE42]._anim == a428) || (_vm->_obj[oFUCILE42]._anim == a429))) {
 			_vm->_textMgr->characterSay(2010);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oFESSURA42) {
 			_vm->_textMgr->characterSay(924);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCAMPANA4U) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U3, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oCAMPANA4U].setFlagExtra(true);
@@ -1542,7 +1557,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
 				_vm->_obj[oCAMPANA4U]._examine = 1200;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1553,9 +1568,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectAnim(oRAGNO41, 0);
 			if (_vm->_obj[oSLOT41]._anim == a414)
 				_vm->setObjectAnim(oSLOT41, a417);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSLOT41) || (_vm->_useWith[WITH] == oVETRINETTA42) || (_vm->_useWith[WITH] == oTAMBURO43) || (_vm->_useWith[WITH] == oSFIATO45) || (_vm->_useWith[WITH] == oDOORC4A) || (_vm->_useWith[WITH] == oDOORC4B) || (_vm->_useWith[WITH] == oSERRATURA4B) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1619);
 		}
 		break;
@@ -1567,7 +1582,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->setObjectAnim(oFUCILE42, a429);
 			else
 				_vm->setObjectAnim(oFUCILE42, a428);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1576,7 +1591,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a423, 0, 0, _vm->_useWith[WITH]);
 			if (_vm->_obj[oFUCILE42]._anim != a427)
 				_vm->setObjectAnim(oFUCILE42, a429);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1584,9 +1599,9 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oTAMBURO43) && !_vm->_obj[oTAMBURO43].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a435, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oTAMBURO43].setFlagExtra(true);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOORC4B) || (_vm->_useWith[WITH] == oSERRATURA4B) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1679);
 		}
 		break;
@@ -1595,24 +1610,24 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oCASSETTOAA44) {
 			_vm->replaceIcon(kItemPuppet, kItemPuppetRemoteControl);
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a442, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemAsbestosCloth:
 		if (_vm->_useWith[WITH] == oMANOPOLAR45) {
 			_vm->changeRoom(kRoom45S, 0, 2);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oCAMPANA4U) && _vm->_inventoryObj[kItemIronBullet1].isFlagExtra() && _vm->_obj[oCAMPANA4U].isFlagExtra()) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U5, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oCAMPANA4U]._examine = 1204;
 			_vm->_obj[oCAMPANA4U]._action = 1205;
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCAMPANA4U) {
 			_vm->_textMgr->characterSay(1713);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSPIDER46) || (_vm->_useWith[WITH] == oLICANTROPO4P)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1711);
 		}
 		break;
@@ -1620,16 +1635,16 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemSkull:
 		if (_vm->_useWith[WITH] == oTILE48) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4810, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemTorch:
 		if (_vm->_useWith[WITH] == oSKULL48) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4811, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oBOILERS45) || (_vm->_useWith[WITH] == oSPIDER46)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1640);
 		}
 		break;
@@ -1638,7 +1653,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oTORCHS48) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4812, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oTORCHS48]._lim = Common::Rect(0, 0, 0, 0);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1646,7 +1661,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oSUNDIAL49) {
 			_vm->removeIcon(kItemShaft);
 			_vm->startCharacterAction(a491, kRoom49M, 1, 0);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1660,13 +1675,13 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->read3D("4p2.3d"); // after werewolf
 			_vm->_animMgr->_animTab[aBKG4P]._flag |= SMKANIM_OFF1;
 			_vm->_dialogMgr->playDialog(dF4P2);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oLICANTROPO4P) {
 			_vm->replaceIcon(kItemLoadedPistol, kItemPiratePistol);
 			_vm->_dialogMgr->playDialog(dF4P1);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oSPIDER46) || (_vm->_useWith[WITH] == oDOORC4B) || (_vm->_useWith[WITH] == oSERRATURA4B)) {
-			*printSentence = false;
+			printSentence = false;
 			_vm->_textMgr->characterSay(1706);
 		}
 		break;
@@ -1674,14 +1689,14 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemEmptyGlassJar:
 		if ((_vm->_useWith[WITH] == oSANGUE4P) || (_vm->_useWith[WITH] == oLICANTROPOM4P)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4P7, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemBell:
 		if (_vm->_useWith[WITH] == oPOZZA4U) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U2, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1689,7 +1704,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemIronBullet2:
 		if ((_vm->_useWith[WITH] == oCAMPANA4U) && _vm->_inventoryObj[kItemIronBullet1].isFlagExtra()) {
 			_vm->_textMgr->characterSay(1684);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCAMPANA4U) {
 			_vm->removeIcon(_vm->_useWith[USED]);
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4U4, 0, 0, _vm->_useWith[WITH]);
@@ -1699,7 +1714,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 				_vm->_obj[oCAMPANA4U]._action = 1203;
 			} else
 				_vm->_obj[oCAMPANA4U]._examine = 1201;
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1707,10 +1722,10 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oCHOCOLATES4A) && (_vm->_animMgr->smkCurFrame(kSmackerBackground) < 370 || _vm->_animMgr->smkCurFrame(kSmackerBackground) > 480)) {
 			_vm->playScript(s4AHELLEN);
 			_vm->setObjectAnim(oPULSANTE4A, a4A3);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oCHOCOLATES4A) {
 			_vm->setObjectAnim(oPULSANTE4A, a4A3);
-			*printSentence = false;
+			printSentence = false;
 			_vm->_obj[oCHOCOLATES4A].setFlagExtra(true);
 		}
 		break;
@@ -1719,7 +1734,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oSERRATURA4B) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B4, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oDOORC4B, a4B5);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1727,7 +1742,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oPROIETTORE4B) && (_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6A, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oPROIETTORE4B, a4B9A);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1735,7 +1750,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if ((_vm->_useWith[WITH] == oPROIETTORE4B) && (_vm->_obj[oPROIETTORE4B]._anim < a4B9A)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6B, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oPROIETTORE4B, a4B9B);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1744,20 +1759,20 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			//
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a4B6C, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oPROIETTORE4B, a4B9C);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemTurtleEgg:
 		if ((_vm->_useWith[WITH] == oRETE52) || (_vm->_useWith[WITH] == oSERPENTET52)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a521, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemSnakeHead:
 		if (_vm->_useWith[WITH] == oLAGO53) {
-			*printSentence = false;
+			printSentence = false;
 			if (!_vm->isObjectVisible(oLUCCHETTO53)) {
 				_vm->startCharacterAction(a533, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
@@ -1772,7 +1787,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 
 	case kItemSnakeTail:
 		if (_vm->_useWith[WITH] == oLAGO53) {
-			*printSentence = false;
+			printSentence = false;
 			if (!_vm->isObjectVisible(oLUCCHETTO53)) {
 				_vm->startCharacterAction(a533C, kRoom54, 11, 0);
 				_vm->removeIcon(_vm->_useWith[USED]);
@@ -1788,7 +1803,7 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 	case kItemSoapPowder:
 		if (_vm->_useWith[WITH] == oSECCHIOA54) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a543, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1796,23 +1811,23 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 		if (_vm->_useWith[WITH] == oLAVATRICEF54) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a546, 0, 0, _vm->_useWith[WITH]);
 			_vm->setObjectAnim(oLAVATRICEL54, a547);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemGuardKeys:
 		if (_vm->_useWith[WITH] == oDOORS56) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a563, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oDOOR57C55) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a551, kRoom57, 17, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && (!_vm->_dialogMgr->isDialogFinished(871) || _vm->_dialogMgr->isDialogFinished(901))) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a552, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oDOOR58C55) && _vm->_dialogMgr->isDialogFinished(871)) {
 			_vm->_textMgr->characterSay(1287);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1821,19 +1836,19 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a566, 0, 0, _vm->_useWith[WITH]);
 			_vm->_dialogMgr->toggleChoice(262, true);
 			_vm->_inventoryObj[kItemVideoRecorder]._examine = 1752;
-			*printSentence = false;
+			printSentence = false;
 		} else if ((_vm->_useWith[WITH] == oKEYBOARD56) && (_vm->_inventoryObj[kItemVideoRecorder]._examine == 1752)) {
 			_vm->_textMgr->characterSay(1753);
-			*printSentence = false;
+			printSentence = false;
 		} else
-			*printSentence = true;
+			printSentence = true;
 		break;
 
 	case kItemTester:
 		if ((_vm->_useWith[WITH] == oPANNELLOA) && _vm->_dialogMgr->isDialogFinished(856)) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a569, 0, 0, _vm->_useWith[WITH]);
 			_vm->_obj[oPANNELLOA].setFlagExtra(true);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1845,17 +1860,17 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->setObjectVisible(oDOOR58C55, true);
 			_vm->_pathFind->setPosition(6);
 			_vm->removeIcon(kItemParallelCutter);
-			*printSentence = false;
+			printSentence = false;
 		} else if (_vm->_useWith[WITH] == oPANNELLOA) {
 			_vm->_textMgr->characterSay(2012);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	case kItemSurgicalGloves:
 		if (_vm->_useWith[WITH] == oBOMBOLA57) {
 			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a575, 0, 0, _vm->_useWith[WITH]);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
@@ -1864,20 +1879,26 @@ void LogicManager::useInventoryWithScreen(bool *updateInventory, bool *printSent
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dC5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
-			*printSentence = false;
+			printSentence = false;
 			_vm->_room[kRoom5A].setExtra(true);
 		} else if ((_vm->_useWith[WITH] == oWINDOWA5A) && _vm->_dialogMgr->isDialogFinished(871)) {
 			_vm->removeIcon(kItemFloatingPoisonSyringe);
 			_vm->_dialogMgr->playDialog(dF5A1);
 			_vm->setObjectAnim(oWINDOWA58, a587);
-			*printSentence = false;
+			printSentence = false;
 		}
 		break;
 
 	default:
-		*updateInventory = false;
+		updateInventory = false;
 		break;
 	}
+
+	if (printSentence)
+		_vm->_textMgr->characterSay(_vm->_inventoryObj[_vm->_useWith[USED]]._action);
+
+	if (updateInventory)
+		_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
 }
 
 bool LogicManager::useScreenWithScreen() {

@@ -302,39 +302,6 @@ void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
 		_inventory[pos] = newIcon;
 }
 
-void TrecisionEngine::doInventoryUseWithInventory() {
-	if (!_useWith[USED] || !_useWith[WITH])
-		warning("doInventoryUseWithInventory - _useWith not set properly");
-
-	_animMgr->smkStop(kSmackerIcon);
-
-	bool refreshInventory, printSentence;
-	_logicMgr->useInventoryWithInventory(&refreshInventory, &printSentence);
-
-	if (printSentence)
-		_textMgr->characterSay(_inventoryObj[_useWith[USED]]._action);
-	if (refreshInventory)
-		setInventoryStart(_iconBase, INVENTORY_SHOW);
-}
-
-void TrecisionEngine::doInventoryUseWithScreen() {
-	if (!_useWith[USED] || !_useWith[WITH])
-		warning("doInventoryUseWithScreen - _useWith not set properly");
-
-	_animMgr->smkStop(kSmackerIcon);
-	if (_pathFind->_characterInMovement)
-		return;
-
-	bool refreshInventory, printSentence;
-	_logicMgr->useInventoryWithScreen(&refreshInventory, &printSentence);
-
-	if (printSentence)
-		_textMgr->characterSay(_inventoryObj[_useWith[USED]]._action);
-
-	if (refreshInventory)
-		setInventoryStart(_iconBase, INVENTORY_SHOW);
-}
-
 void TrecisionEngine::rollInventory(uint8 status) {
 	if (status == INV_PAINT) {
 		_inventoryCounter -= _inventorySpeed[_inventorySpeedIndex++];

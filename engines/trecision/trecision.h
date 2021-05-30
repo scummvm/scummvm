@@ -97,8 +97,6 @@ class TrecisionEngine : public Engine {
 	void moveInventoryLeft();
 	void moveInventoryRight();
 	void syncInventory(Common::Serializer &ser);
-	void doInventoryUseWithInventory();
-	void doInventoryUseWithScreen();
 	void rollInventory(uint8 status);
 	void doScrollInventory(Common::Point pos);
 	void endUseWith();

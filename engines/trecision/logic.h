@@ -64,8 +64,8 @@ public:
 	void setupAltRoom(uint16 room, bool altRoomFl);
 	void endChangeRoom();
 
-	void useInventoryWithInventory(bool *updateInv, bool *printSentence);
-	void useInventoryWithScreen(bool *updateInv, bool *printSentence);
+	void useInventoryWithInventory();
+	void useInventoryWithScreen();
 	bool useScreenWithScreen();
 	void roomOut(uint16 curObj, uint16 *action, uint16 *pos);
 	bool mouseExamine(uint16 curObj);

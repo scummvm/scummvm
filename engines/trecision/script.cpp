@@ -555,9 +555,9 @@ void TrecisionEngine::doUseWith() {
 
 	if (_useWithInv[USED]) {
 		if (_useWithInv[WITH])
-			doInventoryUseWithInventory();
+			_logicMgr->useInventoryWithInventory();
 		else
-			doInventoryUseWithScreen();
+			_logicMgr->useInventoryWithScreen();
 	} else
 		doScreenUseWithScreen();
 
