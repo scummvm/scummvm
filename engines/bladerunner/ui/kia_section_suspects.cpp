@@ -443,11 +443,20 @@ void KIASectionSuspects::populateVisibleClues() {
 
 				if (showClue) {
 					int flags = 0x30;
+#if BLADERUNNER_ORIGINAL_BUGS
 					if (_clues->isPrivate(clueId)) {
 						flags = 0x08;
 					} else if (_clues->isViewed(clueId)) {
 						flags = 0x10;
 					}
+#else
+					if (_clues->isPrivate(clueId)) {
+						flags |= 0x08;
+					}
+					if (_clues->isViewed(clueId)) {
+						flags &= ~0x20;
+					}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 					_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(clueId), clueId, flags);
 				}
 			}
