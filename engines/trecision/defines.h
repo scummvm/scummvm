@@ -245,6 +245,20 @@ enum RoomId {
 	kRoomControlPanel = 96
 };
 
+enum SentenceId {
+	kSentenceMapZoo = 334,	// According to the map, the zoo should be along the passageway, ...
+	kSentenceGoodDeterrent = 621,	// Damn! Mechanical or not, that's a pretty good deterrent
+	kSentenceHopeDidntWasteTheKid = 659,	// Damn! I hope I didn't waste the kid
+	kSentenceItWorked = 1502,	// Jeez, it worked
+	kSentenceWastedCritter = 1561,	// OK I wasted the critter but I used all the charges in the gun
+	kSentenceOnlyGotOne = 1565,	// I'd better not. I've only got one, and I don't want to waste it here
+	kSentenceItDidntWork = 1707,	// Damn! It didn't work
+	kSentenceTakeThatWolfman = 1708,	// Take that wolfman! I kicked his virtual ass
+	kSentenceTheSpiderHasEscaped = 1712,	// The spider has escaped
+	kSentenceSecretPassage = 1997,	// Interesting, there's a secret passage in the warehouse
+	kSentencePutHimOutOfAction = 2003	// I've got to put him out of action first
+};
+
 /*-------------------------------------------------------------------------*/
 /*                                 OBJECTS           					   */
 /*-------------------------------------------------------------------------*/

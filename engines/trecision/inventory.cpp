@@ -140,8 +140,8 @@ void TrecisionEngine::useItem() {
 	if (_flagUseWithStarted) {
 		endUseWith();
 	} else if (_inventoryObj[_curInventory].isUseWith()) {
-		if ((_curInventory == kItemFlare) && (_curRoom == kRoom29)) {
-			_textMgr->characterSay(1565);
+		if (_curInventory == kItemFlare && _curRoom == kRoom29) {
+			_textMgr->characterSay(kSentenceOnlyGotOne);
 			return;
 		}
 		_animMgr->startSmkAnim(_inventoryObj[_curInventory]._anim);

@@ -138,7 +138,7 @@ void TrecisionEngine::doAction() {
 		// Action in the game area
 		_curObj = _curMessage->_u32Param;
 		if (_curObj == oLASTLEV5)
-			_textMgr->characterSay(2003);
+			_textMgr->characterSay(kSentencePutHimOutOfAction);
 
 		if (!_curObj || !isObjectVisible(_curObj))
 			return;

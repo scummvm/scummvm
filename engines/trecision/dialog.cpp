@@ -334,20 +334,20 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF1C1:
-			_vm->_textMgr->characterSay(334);
+			_vm->_textMgr->characterSay(kSentenceMapZoo);
 			break;
 
 		case dF1D1:
-			_vm->_textMgr->characterSay(1502);
+			_vm->_textMgr->characterSay(kSentenceItWorked);
 			break;
 
 		case dF2E1:
-			_vm->_textMgr->characterSay(621);
+			_vm->_textMgr->characterSay(kSentenceGoodDeterrent);
 			_vm->_obj[oCATWALKA2E]._action = 622;
 			break;
 
 		case dF2E2:
-			_vm->_textMgr->characterSay(1561);
+			_vm->_textMgr->characterSay(kSentenceWastedCritter);
 			_vm->_inventoryObj[kItemMicrowaveGun]._examine = 1562;
 			break;
 
@@ -366,7 +366,7 @@ void DialogManager::afterChoice() {
 
 		case dF2G1:
 			_vm->_obj[oPANELM2G]._action = 660;
-			_vm->_textMgr->characterSay(659);
+			_vm->_textMgr->characterSay(kSentenceHopeDidntWasteTheKid);
 			break;
 
 		case dF2G2:
@@ -380,7 +380,7 @@ void DialogManager::afterChoice() {
 
 		case dF331:
 			_vm->_obj[oTUBET33]._lim = Common::Rect(0, 0, 0, 0);
-			_vm->_textMgr->characterSay(1997);
+			_vm->_textMgr->characterSay(kSentenceSecretPassage);
 			break;
 
 		case dF362:
@@ -411,7 +411,7 @@ void DialogManager::afterChoice() {
 
 		case dF451:
 			_vm->_obj[od44TO45]._goRoom = kRoom45S;
-			_vm->_textMgr->characterSay(1712);
+			_vm->_textMgr->characterSay(kSentenceTheSpiderHasEscaped);
 			break;
 
 		case dF491:
@@ -461,11 +461,11 @@ void DialogManager::afterChoice() {
 			break;
 
 		case dF4P1:
-			_vm->_textMgr->characterSay(1707);
+			_vm->_textMgr->characterSay(kSentenceItDidntWork);
 			break;
 
 		case dF4P2:
-			_vm->_textMgr->characterSay(1708);
+			_vm->_textMgr->characterSay(kSentenceTakeThatWolfman);
 			break;
 
 		case dF562:
