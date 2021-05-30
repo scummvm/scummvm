@@ -595,16 +595,16 @@ void TrecisionEngine::doInvOperate() {
 	if (!_curInventory)
 		warning("doInvOperate - _curInventory not set properly");
 
-	bool printSentence = _logicMgr->operateInventory();
+	const bool printSentence = _logicMgr->operateInventory();
 	if (_inventoryObj[_curInventory]._action && printSentence)
 		_textMgr->characterSay(_inventoryObj[_curInventory]._action);
 }
 
 void TrecisionEngine::doScript() {
 	Message *message = _curMessage;
-	uint16 index = message->_u16Param1;
-	uint16 index2 = message->_u16Param2;
-	uint32 value = message->_u32Param;
+	const uint16 index = message->_u16Param1;
+	const uint16 index2 = message->_u16Param2;
+	const uint32 value = message->_u32Param;
 
 	switch (message->_event) {
 	case ME_CHANGER:
