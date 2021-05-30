@@ -404,6 +404,8 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 }
 
 void GraphicsManager::dissolve() {
+	// FIXME: This is writing OOB. Disabled for now
+#if 0
 	const uint16 val = 30;
 	uint16 centerX = MAXX / 2;
 	uint16 centerY = MAXY / 2;
@@ -477,6 +479,8 @@ void GraphicsManager::dissolve() {
 		copyToScreen(0, 0, MAXX, MAXY);
 		cv = _vm->readTime();
 	}
+
+#endif
 
 	clearScreen();
 }
