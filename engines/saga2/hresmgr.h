@@ -191,6 +191,7 @@ public:
 
 	hResContext *newContext(hResID id, const char []);
 	void        disposeContext(hResContext *con);
+	void        readEntry(hResEntry &element);
 	void        readResource(hResEntry &element);
 };
 
