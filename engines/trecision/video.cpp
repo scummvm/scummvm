@@ -121,8 +121,6 @@ AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 
 	_curCD = 1;
 	swapCD(_curCD);
-
-	_bgAnimRestarted = false;
 }
 
 AnimManager::~AnimManager() {
@@ -291,8 +289,6 @@ void AnimManager::startSmkAnim(uint16 animation) {
 	// choose how to open
 	if (slot == kSmackerBackground) {
 		openSmkAnim(kSmackerBackground, _animTab[animation]._name);
-		_bgAnimRestarted = false;
-
 		toggleMuteBgAnim(animation);
 	} else if (slot == kSmackerIcon) {
 		openSmkAnim(kSmackerIcon, _animTab[animation]._name);
@@ -438,7 +434,6 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 	} else {
 		_smkAnims[slot]->rewind();
 		_vm->_animTypeMgr->init(animation, 0);
-		_bgAnimRestarted = true;
 	}
 }
 
@@ -451,27 +446,23 @@ void AnimManager::drawSmkBackgroundFrame(int animation) {
 	const Common::Rect *lastRect = smkDecoder->getNextDirtyRect();
 	const byte *palette = smkDecoder->getPalette();
 
-	if (smkDecoder->getCurFrame() == 0 && !_bgAnimRestarted) {
-		_vm->_graphicsMgr->blitToScreenBuffer(frame, 0, TOP, palette, true);
-	} else {
-		while (lastRect) {
-			bool intersects = false;
-			for (int32 a = 0; a < MAXCHILD; a++) {
-				if (_animTab[animation]._flag & (SMKANIM_OFF1 << a)) {
-					if (_animTab[animation]._lim[a].intersects(*lastRect)) {
-						intersects = true;
-						break;
-					}
+	while (lastRect) {
+		bool intersects = false;
+		for (int32 i = 0; i < MAXCHILD; i++) {
+			if (_animTab[animation]._flag & (SMKANIM_OFF1 << i)) {
+				if (_animTab[animation]._lim[i].intersects(*lastRect)) {
+					intersects = true;
+					break;
 				}
 			}
-
-			if (smkDecoder->getCurFrame() > 0 && !intersects) {
-				Graphics::Surface anim = frame->getSubArea(*lastRect);
-				_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
-			}
-
-			lastRect = smkDecoder->getNextDirtyRect();
 		}
+
+		if (!intersects) {
+			Graphics::Surface anim = frame->getSubArea(*lastRect);
+			_vm->_graphicsMgr->blitToScreenBuffer(&anim, lastRect->left, lastRect->top + TOP, palette, true);
+		}
+
+		lastRect = smkDecoder->getNextDirtyRect();
 	}
 }
 

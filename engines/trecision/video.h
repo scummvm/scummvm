@@ -73,7 +73,6 @@ private:
 
 	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2 / nlanim.cd3
 	int _curCD;
-	bool _bgAnimRestarted;
 
 	void openSmk(int slot, Common::SeekableReadStream *stream);
 	void openSmkAnim(int slot, const Common::String &name);
