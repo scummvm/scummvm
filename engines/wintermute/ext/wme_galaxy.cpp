@@ -77,7 +77,9 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 		stack->correctParams(2);
 		const char *clientId = stack->pop()->getString();
 		const char *clientSecret = stack->pop()->getString();
-		_gameRef->LOG(0, "InitGalaxy(%s, %s)", clientId, clientSecret);
+
+		AchMan.setSpecialString("clientId", clientId);
+		AchMan.setSpecialString("clientSecret", clientSecret);
 
 		stack->pushNULL();
 		return STATUS_OK;
