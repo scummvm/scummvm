@@ -121,7 +121,7 @@ void PrivateEngine::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.addDirectory(gamePath.getPath(), gamePath, 0, 10);
 }
 
-Common::Error PrivateEngine::run() {
+Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	Common::File *test = new Common::File();
 	Common::SeekableReadStream *file = NULL;
@@ -131,7 +131,7 @@ Common::Error PrivateEngine::run() {
 	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
 		file = (Common::SeekableReadStream *) test;
 	} else {
-
+		delete test;
 		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
 		// if the full game is used
 		if (!isDemo()) {
@@ -140,7 +140,7 @@ Common::Error PrivateEngine::run() {
 			else if (_installerArchive.hasFile("GAME.WIN")) 
 				file = _installerArchive.createReadStreamForMember("GAME.WIN");
 			else
-				debug("unknown version");
+				error("Unknown version");
 		} else {
 			// if the demo from archive.org is used
 			if (_installerArchive.hasFile("GAME.TXT"))
@@ -152,12 +152,19 @@ Common::Error PrivateEngine::run() {
 			else if (_installerArchive.hasFile("DEMOGAME.WIN"))
 					file = _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
 			else {
-				debug("unknown version");
+				error("Unknown version");
 			}
 		}
 	}	
-	// Read assets file
 	assert(file != NULL);
+	return file;
+
+}
+
+Common::Error PrivateEngine::run() {
+
+	Common::SeekableReadStream *file = loadAssets();
+	// Read assets file
 	const uint32 fileSize = file->size();
 	char *buf = (char *)malloc(fileSize + 1);
 	file->read(buf, fileSize);
@@ -167,7 +174,7 @@ Common::Error PrivateEngine::run() {
 	free(buf);
 
 	buf = (char*) decomp.getResult().c_str();
-	//debug("%s", buf);
+	debug("%s", buf);
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
@@ -200,16 +207,12 @@ Common::Error PrivateEngine::run() {
 	Common::Event event;
 	Common::Point mousePos;
 	_videoDecoder = nullptr;
-
+	_language = ConfMan.get("language");
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
 	} else {
-		if (Private::Settings::g_setts->_map.contains("kGoIntro"))
-			_nextSetting = "kGoIntro";
-		else {
-			_nextSetting = "k1";
-		}
+		_nextSetting = getGoIntroSetting();
 	}
 
 	while (!shouldQuit()) {
@@ -279,7 +282,7 @@ Common::Error PrivateEngine::run() {
 			continue;
 		}
 
-		if (!_nextVS.empty() && _currentSetting == "kMainDesktop") {
+		if (!_nextVS.empty() && (_currentSetting == getMainDesktopSetting())) {
 			loadImage(_nextVS, 160, 120);
 			drawScreen();
 		}
@@ -492,6 +495,37 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 	return false;
 }
 
+Common::String PrivateEngine::getPauseMovieSetting() {
+	if (_language == "us")
+		return "kPauseMovie";
+
+	if (isDemo())
+		return "k3";
+	else
+		error("TODO: getPauseMovieSetting");
+}
+
+Common::String PrivateEngine::getGoIntroSetting() {
+	if (_language == "us")
+		return "kGoIntro";
+
+	return "k1";
+}
+
+Common::String getStartGameSetting() {
+	return "kStartGame";
+}
+
+Common::String PrivateEngine::getMainDesktopSetting() {
+	if (_language == "us")
+		return "kMainDesktop";
+
+	if (isDemo())
+		return "k45";
+
+	return "k183";
+}
+
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 	if (_mode == 1) {
 		uint32 tol = 15;
@@ -503,7 +537,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 				else
 					_pausedSetting = _currentSetting;
 
-				_nextSetting = "kPauseMovie";
+				_nextSetting = getPauseMovieSetting(); 
 				if (_videoDecoder) {
 					_videoDecoder->pauseVideo(true);
 				}
@@ -869,9 +903,9 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	}
 
 	if (_pausedSetting.empty())
-		_nextSetting = "kStartGame";
+		_nextSetting = getMainDesktopSetting();
 	else
-		_nextSetting = "kPauseMovie";
+		_nextSetting = getPauseMovieSetting();
 
 	return Common::kNoError;
 }

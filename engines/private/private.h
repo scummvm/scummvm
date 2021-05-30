@@ -145,6 +145,7 @@ public:
 
 	const ADGameDescription *_gameDescription;
 	bool isDemo() const;
+	Common::String _language;
 
 	SymbolMaps maps;
 
@@ -157,6 +158,7 @@ public:
 	void restartGame();
 	void clearAreas();
 	void initializePath(const Common::FSNode &gamePath) override;
+	Common::SeekableReadStream *loadAssets();
 
 	// Functions
 
@@ -218,7 +220,9 @@ public:
 	Common::String _nextSetting;
 	Common::String _pausedSetting;
 	Common::String _currentSetting;
-
+	Common::String getPauseMovieSetting();
+	Common::String getGoIntroSetting();
+	Common::String getMainDesktopSetting();
 	// movies
 	Common::String _nextMovie;
 	Common::String _currentMovie;
