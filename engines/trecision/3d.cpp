@@ -1020,36 +1020,36 @@ void PathFinding3D::findPath() {
 					if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 										  _panel[_panel[b]._col1 & 0x7F]._x2, _panel[_panel[b]._col1 & 0x7F]._z2,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
-										  _curX, _curZ))
+										  _curX, _curZ)) {
 						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
 							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							++inters;
-				} else {
-					if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
-										  _panel[_panel[b]._col1 & 0x7F]._x1, _panel[_panel[b]._col1 & 0x7F]._z1,
-										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
-										  _curX, _curZ))
-						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
-							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
-							++inters;
+					}
+				} else if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
+											 _panel[_panel[b]._col1 & 0x7F]._x1, _panel[_panel[b]._col1 & 0x7F]._z1,
+											 _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
+											 _curX, _curZ)) {
+					if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+						_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
+						++inters;
 				}
 
 				if (_panel[b]._col2 & 0x80) {
 					if (intersectLineLine(_panel[b]._x2, _panel[b]._z2,
 										  _panel[_panel[b]._col2 & 0x7F]._x2, _panel[_panel[b]._col2 & 0x7F]._z2,
 										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
-										  _curX, _curZ))
+										  _curX, _curZ)) {
 						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
 							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
 							++inters;
-				} else {
-					if (intersectLineLine(_panel[b]._x2, _panel[b]._z2,
-										  _panel[_panel[b]._col2 & 0x7F]._x1, _panel[_panel[b]._col2 & 0x7F]._z1,
-										  _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
-										  _curX, _curZ))
-						if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
-							_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
-							++inters;
+					}
+				} else if (intersectLineLine(_panel[b]._x2, _panel[b]._z2,
+											 _panel[_panel[b]._col2 & 0x7F]._x1, _panel[_panel[b]._col2 & 0x7F]._z1,
+											 _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z,
+											 _curX, _curZ)) {
+					if (_vm->dist2D(_x3d, _z3d, _pathNode[_numPathNodes - 1]._x, _pathNode[_numPathNodes - 1]._z) > EPSILON &&
+						_vm->dist2D(_x3d, _z3d, _curX, _curZ) > EPSILON)
+						++inters;
 				}
 			}
 
@@ -1475,80 +1475,73 @@ bool PathFinding3D::pointInside(int pan, float x, float z) const {
 void PathFinding3D::setPosition(int num) {
 	SLight *curLight = _vm->_actor->_light;
 
-	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a) {
-		// If it's off
-		if (curLight->_inten == 0) {
-			// If it's the required position
-			if (curLight->_position == num) {
-				_vm->_actor->_px = curLight->_x;
-				_vm->_actor->_pz = curLight->_z;
-				_vm->_actor->_dx = 0.0f;
-				_vm->_actor->_dz = 0.0f;
+	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a, ++curLight) {
+		if (curLight->_inten != 0 || curLight->_position != num)
+			continue;
 
-				float ox = curLight->_dx;
-				float oz = curLight->_dz;
+		// If it's off and If it's the required position
 
-				// If it's a null light
-				if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0) // ox == 0.0f && oz == 0.0f
-					warning("setPosition: Unknown error : null light");
+		_vm->_actor->_px = curLight->_x;
+		_vm->_actor->_pz = curLight->_z;
+		_vm->_actor->_dx = 0.0f;
+		_vm->_actor->_dz = 0.0f;
 
-				float t = sqrt(ox * ox + oz * oz);
-				ox /= t;
-				oz /= t;
+		float ox = curLight->_dx;
+		float oz = curLight->_dz;
 
-				float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
-				if (_vm->floatComp(theta, 360.0f) >= 0) // theta >= 360.0f
-					theta -= 360.0f;
-				if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
-					theta += 360.0f;
+		// If it's a null light
+		if (_vm->floatComp(ox, 0.0f) == 0 && _vm->floatComp(oz, 0.0f) == 0) // ox == 0.0f && oz == 0.0f
+			warning("setPosition: Unknown error : null light");
 
-				_vm->_actor->_theta = theta;
+		float t = sqrt(ox * ox + oz * oz);
+		ox /= t;
+		oz /= t;
 
-				_curStep = 0;
-				_lastStep = 0;
-				_curPanel = -1;
-				_oldPanel = -1;
+		float theta = _vm->sinCosAngle(ox, oz) * 180.0f / PI;
+		if (_vm->floatComp(theta, 360.0f) >= 0) // theta >= 360.0f
+			theta -= 360.0f;
+		if (_vm->floatComp(theta, 0.0f) == -1) // theta < 0.0f
+			theta += 360.0f;
 
-				reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
+		_vm->_actor->_theta = theta;
 
-				_characterGoToPosition = num;
-				return;
-			}
-		}
+		_curStep = 0;
+		_lastStep = 0;
+		_curPanel = -1;
+		_oldPanel = -1;
 
-		++curLight;
+		reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
+
+		_characterGoToPosition = num;
+		return;
 	}
 }
 
 void PathFinding3D::goToPosition(int num) {
 	SLight *curLight = _vm->_actor->_light;
 
-	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a) {
-		// If it's off and if it's a position
-		if (curLight->_inten == 0) {
-			// If it's the right position
-			if (curLight->_position == num) {
-				_curX = curLight->_x;
-				_curZ = curLight->_z;
-				_lookX = _curX - curLight->_dx;
-				_lookZ = _curZ - curLight->_dz;
+	for (uint32 a = 0; a < _vm->_actor->_lightNum; ++a, ++curLight) {
+		if (curLight->_inten != 0 || curLight->_position != num)
+			continue;
 
-				_curStep = 0;
-				_lastStep = 0;
+		// If it's off and if it's the right position
+		_curX = curLight->_x;
+		_curZ = curLight->_z;
+		_lookX = _curX - curLight->_dx;
+		_lookZ = _curZ - curLight->_dz;
 
-				reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
+		_curStep = 0;
+		_lastStep = 0;
 
-				_oldPanel = _curPanel;
-				_curPanel = -1;
+		reset(0, _vm->_actor->_px + _vm->_actor->_dx, _vm->_actor->_pz + _vm->_actor->_dz, _vm->_actor->_theta);
 
-				findPath();
+		_oldPanel = _curPanel;
+		_curPanel = -1;
 
-				_characterGoToPosition = num;
-				break;
-			}
-		}
+		findPath();
 
-		++curLight;
+		_characterGoToPosition = num;
+		break;
 	}
 }
 
@@ -1615,14 +1608,12 @@ void PathFinding3D::buildFramelist() {
 	for (int a = 1; a < _numPathNodes; ++a) {
 		for (int c = 0; c < _panelNum; ++c) {
 			// it must never intersect narrow panel
-			if (!(_panel[c]._flags & 0x80000000)) {
-				if (intersectLineLine(_panel[c]._x1, _panel[c]._z1,
-									  _panel[c]._x2, _panel[c]._z2,
-									  _pathNode[a - 1]._x, _pathNode[a - 1]._z,
-									  _pathNode[a]._x, _pathNode[a]._z)) {
-					_numPathNodes = a;
-					break;
-				}
+			if (!(_panel[c]._flags & 0x80000000) && intersectLineLine(_panel[c]._x1, _panel[c]._z1,
+																	  _panel[c]._x2, _panel[c]._z2,
+																	  _pathNode[a - 1]._x, _pathNode[a - 1]._z,
+																	  _pathNode[a]._x, _pathNode[a]._z)) {
+				_numPathNodes = a;
+				break;
 			}
 		}
 	}

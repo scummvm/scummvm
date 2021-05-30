@@ -192,7 +192,7 @@ void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, 
 
 	for (int curY = 0; curY < surface->h; ++curY) {
 		// NOTE: We use surface width for the pitch so that memcpy works
-		// correcly with surfaces from getSubArea()
+		// correctly with surfaces from getSubArea()
 		memcpy(_screenBuffer.getBasePtr(x, y + curY), surface->getBasePtr(0, curY), surface->w * 2);
 	}
 }
