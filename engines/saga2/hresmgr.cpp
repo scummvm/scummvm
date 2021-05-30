@@ -110,15 +110,15 @@ hResEntry *hResContext::findEntry(hResID id, RHANDLE **capture) {
 	_bytepos = 0;
 	if (!_valid) return nullptr;
 
-	debugC(2, kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
+	debugC(3, kDebugResources, "findEntry: looking for %x (%s)", id, tag2str(id));
 	for (i = 0, entry = _base; i < _numEntries; i++, entry++) {
-		debugC(2, kDebugResources, "%d: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
+		debugC(3, kDebugResources, "%d: Trying ID: %x (%s)", i, entry->id, tag2str(entry->id));
 		if (entry->id == id) {
-			debugC(2, kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
+			debugC(3, kDebugResources, "findEntry: found %x (%s)", entry->id, tag2str(entry->id));
 			return entry;
 		}
 	}
-	debugC(2, kDebugResources, "findEntry: No entry found");
+	debugC(3, kDebugResources, "findEntry: No entry found");
 
 	return nullptr;
 }
@@ -454,6 +454,15 @@ void hResContext::releaseIndexData() {
    Resource file
  * ===================================================================== */
 
+void hResource::readEntry(hResEntry &element) {
+	element.id = _file.readUint32BE();
+	element.offset = _file.readUint32LE();
+	element.size = _file.readUint32LE();
+	uint32 id = element.id;
+
+	debugC(2, kDebugResources, "%s, offset: %x, size: %d", tag2str(id), element.offset, element.size);
+}
+
 void hResource::readResource(hResEntry &element) {
 	element.id = _file.readUint32BE();
 	element.offset = _file.readUint32LE();
@@ -499,11 +508,11 @@ hResource::hResource(char *resname, char *extname, const char desc[]) {
 		return;
 
 
-	debugC(kDebugResources, "Reading %d categories:", _numEntries);
+	debugC(1, kDebugResources, "Reading %d entries:", _numEntries);
 	for (int i = 0; i < _numEntries; ++i)
-		readResource(_base[i]);
+		readEntry(_base[i]);
 
-	debugC(kDebugResources, "Reading %d groups:", tableSize / resourceSize);
+	debugC(1, kDebugResources, "Reading %d groups:", tableSize / resourceSize);
 	_file.seek(_firstGroupOffset, SEEK_SET);
 	for (int i = 0; i < tableSize / resourceSize; ++i) {
 		readResource(_table[i]);
