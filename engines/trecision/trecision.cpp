@@ -336,7 +336,7 @@ bool TrecisionEngine::canPlayerInteract() {
 			(_actor->_curAction < hWALKIN) &&
 			!_flagUseWithStarted &&
 			_flagShowCharacter &&
-			!_animMgr->_playingAnims[kSmackerAction]);
+			!_animMgr->isActionActive());
 }
 
 void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {

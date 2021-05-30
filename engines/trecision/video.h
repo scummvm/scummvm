@@ -70,6 +70,7 @@ private:
 	TrecisionEngine *_vm;
 
 	NightlongSmackerDecoder *_smkAnims[MAXSMACK];
+	uint16 _playingAnims[MAXSMACK];
 
 	FastFile _animFile[MAXSMACK]; // nlanim.cd1 / nlanim.cd2 / nlanim.cd3
 	int _curCD;
@@ -81,6 +82,7 @@ private:
 	void drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen);
 	void drawFrameSubtitles(Graphics::Surface *surface, int frameNum);
 	void setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame);
+	void refreshSmkAnim(uint16 animation);
 	void handleEndOfVideo(int animation, int slot);
 
 	void drawSmkBackgroundFrame(int animation);
@@ -89,7 +91,6 @@ private:
 	void swapCD(int cd);
 
 public:
-	uint16 _playingAnims[MAXSMACK];
 	Common::Rect _animRect;
 	SAnim _animTab[MAXANIM];
 
@@ -98,13 +99,13 @@ public:
 	void smkToggleTrackAudio(int slot, int track, bool on);
 	int16 smkCurFrame(int slot);
 	void smkStop(uint16 slot);
-
+	void refreshActionAnimation() { refreshSmkAnim(_playingAnims[kSmackerAction]); }
+	bool isActionActive() const { return _playingAnims[kSmackerAction] != 0; }
 	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1);
 	void startFullMotion();
 	void stopFullMotion();
 
 	void refreshAnim(int box);
-	void refreshSmkAnim(uint16 animation);
 	void startSmkAnim(uint16 animation);
 	void stopAllSmkAnims();
 

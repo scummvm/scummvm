@@ -225,7 +225,7 @@ void TrecisionEngine::processMouseMovement() {
 			return;
 		if ((_flagSomeoneSpeaks && !_flagCharacterSpeak) || _flagDialogMenuActive || _flagDialogActive)
 			return;
-		if (_animMgr->_playingAnims[kSmackerAction])
+		if (_animMgr->isActionActive())
 			return;
 
 		if (_inventoryStatus == INV_OFF)
@@ -336,7 +336,7 @@ void TrecisionEngine::doCharacter() {
 		_flagShowCharacter = false;
 		_animTypeMgr->handler(kAnimTypeCharacter);
 		//	If the animation is over
-		if (!_animMgr->_playingAnims[kSmackerAction]) {
+		if (!_animMgr->isActionActive()) {
 			_graphicsMgr->showCursor();
 			_flagShowCharacter = true;
 			_pathFind->_characterInMovement = false;

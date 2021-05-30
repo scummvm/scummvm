@@ -677,7 +677,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 		_vm->_renderer->drawCharacter(DRAWFACES);
 
 	} else if (_vm->_actorPos == curBox && !_vm->_flagDialogActive) {
-		_vm->_animMgr->refreshSmkAnim(_vm->_animMgr->_playingAnims[kSmackerAction]);
+		_vm->_animMgr->refreshActionAnimation();
 	}
 }
 

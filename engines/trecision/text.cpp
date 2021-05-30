@@ -135,7 +135,7 @@ void TextManager::characterContinueTalk() {
 
 	_subStringAgain = (_curSubString < (_subStringUsed - 1));
 
-	if (_vm->_flagShowCharacter || _vm->_animMgr->_playingAnims[kSmackerAction])
+	if (_vm->_flagShowCharacter || _vm->_animMgr->isActionActive())
 		pos = positionString(_vm->_actor->_lim[0], _vm->_actor->_lim[2], _subString[_curSubString], true);
 	else
 		pos = positionString(MAXX / 2, 30, _subString[_curSubString], false);
@@ -352,7 +352,7 @@ void TextManager::characterSay(uint16 i) {
 	_curSentenceId = i;
 
 	//	if he took some action
-	if (_vm->_sentence[i][0] == '*' && !_vm->_animMgr->_playingAnims[kSmackerAction])
+	if (_vm->_sentence[i][0] == '*' && !_vm->_animMgr->isActionActive())
 		_vm->startCharacterAction(hBOH, 0, 0, 0);
 	else
 		characterTalk(_vm->_sentence[i]);

@@ -3780,7 +3780,7 @@ void LogicManager::handleClickGameArea() {
 }
 
 void LogicManager::handleClickInventoryArea() {
-	if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
+	if (_vm->_animMgr->isActionActive() || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
 		return;
 
 	if (_vm->isIconArea(_vm->_mousePos) && _vm->whatIcon(_vm->_mousePos) && (_vm->_inventoryStatus == INV_INACTION)) {
@@ -3808,7 +3808,7 @@ void LogicManager::doMouseLeftRight() {
 		handleClickControlPanel(_vm->_curObj);
 	} else if (!_vm->_flagShowCharacter) {
 		handleClickCloseup();
-	} else if (_vm->isGameArea(_vm->_mousePos) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
+	} else if (_vm->isGameArea(_vm->_mousePos) && !_vm->_animMgr->isActionActive()) {
 		if (_vm->_curRoom == kRoom52)
 			handleClickSnakeEscape();
 
