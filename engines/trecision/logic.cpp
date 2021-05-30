@@ -3839,7 +3839,7 @@ void LogicManager::initControlPanel() {
 
 void LogicManager::doSystemChangeRoom(uint16 room) {
 	if (_vm->_curRoom == kRoom41D && _vm->_oldRoom != room)
-		_vm->_graphicsMgr->dissolve(30);
+		_vm->_graphicsMgr->dissolve();
 
 	_vm->_oldRoom = _vm->_curRoom;
 	_vm->_curRoom = room;

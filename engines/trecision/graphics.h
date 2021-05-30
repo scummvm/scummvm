@@ -94,7 +94,7 @@ public:
 
 	void shadow(uint16 x, uint16 y, uint8 num);
 	void pixelAliasing(uint16 x, uint16 y);
-	void dissolve(uint8 val);
+	void dissolve();
 
 	void addDirtyRect(Common::Rect rect, bool translateRect, bool updateActorRect = false);
 
