@@ -298,7 +298,7 @@ TileInfo *TileInfo::tileAddress(TileID id) {
 TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 	TileInfo        *ti;
 	TileBankPtr     tbh;
-	UByteHandle     tibh;
+	byte            *tibh;
 	int16           tileBank,
 	                tileNum;
 
@@ -311,17 +311,17 @@ TileInfo *TileInfo::tileAddress(TileID id, uint8 **imageData) {
 	if (ti->attrs.cycleRange > 0) {
 		TileCycleData   &tcd = (*cycleList)[ ti->attrs.cycleRange - 1 ];
 
-		TileID2Bank(tcd.cycleList[ tcd.currentState ],
+		TileID2Bank(tcd.cycleList[tcd.currentState],
 		            tileBank,
 		            tileNum);
 
-		if ((tbh = tileBanks[ tileBank ]) == NULL) return NULL;
+		if ((tbh = tileBanks[tileBank]) == NULL) return NULL;
 		ti = tbh->tile(tileNum);
 	}
 
 	if (ti != NULL) {
 		if ((tibh = tileImageBanks[tileBank]) != NULL)
-			* imageData = &(*tibh)[ ti->offset ];
+			*imageData = &tibh[ti->offset];
 		else
 			*imageData = NULL;
 	} else

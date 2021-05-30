@@ -35,6 +35,34 @@ namespace Saga2 {
 
 #define isValidPtr(p) ((p!=NULL)&&(p!=(void *)0xCDCDCDCD))
 
+class HandleArray {
+private:
+	Common::Array<byte*> _handles;
+	uint32 _tileID;
+	byte*(*_loader)(hResID, bool);
+public:
+	HandleArray(uint16 size, byte*(*loadfunction)(hResID, bool), uint32 newID) {
+		_handles.resize(size);
+		_loader = loadfunction;
+		_tileID = newID;
+	}
+
+	void flush() {
+		for (int i = 0; i < _handles.size(); ++i) {
+			if (_handles[i]) {
+				free(_handles[i]);
+				_handles[i] = nullptr;
+			}
+		}
+	}
+
+	byte *operator[](uint32 ind) {
+		if (_handles[ind])
+			return _handles[ind];
+
+		return _handles[ind] = _loader(_tileID + MKTAG(0, 0, 0, ind), false);
+	}
+};
 
 template <class RESTYPE> class LoadOnCall {
 	BitArray        wanted;

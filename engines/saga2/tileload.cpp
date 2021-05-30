@@ -79,7 +79,7 @@ void sprintBA(char buf[], BitArray *x);
  * ===================================================================== */
 
 
-static void *tileResLoad(hResID i, bool asynch = FALSE) {
+static byte *tileResLoad(hResID i, bool asynch = FALSE) {
 	if (tileRes)
 		return tileRes->loadResource(i, "tile image bank", objResFile->_filename);
 	else
@@ -87,7 +87,8 @@ static void *tileResLoad(hResID i, bool asynch = FALSE) {
 }
 
 
-LoadOnCall<UByteHandle> tileImageBanks(64, tileResLoad, tileImageID);
+//LoadOnCall<UByteHandle> tileImageBanks(64, tileResLoad, tileImageID);
+HandleArray tileImageBanks(64, tileResLoad, tileImageID);
 
 /* ===================================================================== *
    Debugging displays
@@ -116,7 +117,7 @@ void sprintBA(char buf[], BitArray *x) {
  * ===================================================================== */
 
 void initTileBank(int16 bankNum) {
-	UByteHandle th;
+	byte *th;
 	th = tileImageBanks[bankNum];
 }
 
