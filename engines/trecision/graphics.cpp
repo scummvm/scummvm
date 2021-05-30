@@ -404,8 +404,6 @@ uint16 GraphicsManager::aliasing(uint32 val1, uint32 val2, uint8 num) {
 }
 
 void GraphicsManager::dissolve() {
-	// FIXME: This is writing OOB. Disabled for now
-#if 0
 	const uint16 val = 30;
 	uint16 centerX = MAXX / 2;
 	uint16 centerY = MAXY / 2;
@@ -444,14 +442,20 @@ void GraphicsManager::dissolve() {
 			x += 1.0f;
 
 			int rightX = centerX + (int)x;
+			int maxY = centerY + (int)y;
+			int minY = centerY - (int)y;
 			if (rightX < MAXX) {
-				memset(_screenBuffer.getBasePtr(rightX, centerY + (int)y), 0, (MAXX - rightX) * 2);
-				memset(_screenBuffer.getBasePtr(rightX, centerY - (int)y), 0, (MAXX - rightX) * 2);
+				if (maxY < MAXY)
+					memset(_screenBuffer.getBasePtr(rightX, maxY), 0, (MAXX - rightX) * 2);
+				if (minY >= 0)
+					memset(_screenBuffer.getBasePtr(rightX, minY), 0, (MAXX - rightX) * 2);
 			}
 			int leftX = centerX - (int)x;
 			if (leftX > 0) {
-				memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, leftX * 2);
-				memset(_screenBuffer.getBasePtr(0, centerY - (int)y), 0, leftX * 2);
+				if (maxY < MAXY)
+					memset(_screenBuffer.getBasePtr(0, maxY), 0, leftX * 2);
+				if (minY >= 0)
+					memset(_screenBuffer.getBasePtr(0, minY), 0, leftX * 2);
 			}
 		}
 
@@ -465,22 +469,26 @@ void GraphicsManager::dissolve() {
 			y -= 1.0f;
 
 			int rightX = centerX + (int)x;
+			int maxY = centerY + (int)y;
+			int minY = centerY - (int)y;
 			if (rightX < MAXX) {
-				memset(_screenBuffer.getBasePtr(rightX, centerY + (int)y), 0, (MAXX - rightX) * 2);
-				memset(_screenBuffer.getBasePtr(rightX, centerY - (int)y), 0, (MAXX - rightX) * 2);
+				if (maxY < MAXY)
+					memset(_screenBuffer.getBasePtr(rightX, maxY), 0, (MAXX - rightX) * 2);
+				if (minY >= 0)
+					memset(_screenBuffer.getBasePtr(rightX, minY), 0, (MAXX - rightX) * 2);
 			}
 			int leftX = centerX - (int)x;
 			if (leftX > 0) {
-				memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, leftX * 2);
-				memset(_screenBuffer.getBasePtr(0, centerY - (int)y), 0, leftX * 2);
+				if (maxY < MAXY)
+					memset(_screenBuffer.getBasePtr(0, maxY), 0, leftX * 2);
+				if (minY >= 0)
+					memset(_screenBuffer.getBasePtr(0, minY), 0, leftX * 2);
 			}
 		}
 
 		copyToScreen(0, 0, MAXX, MAXY);
 		cv = _vm->readTime();
 	}
-
-#endif
 
 	clearScreen();
 }
