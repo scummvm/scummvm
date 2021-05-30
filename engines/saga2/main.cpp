@@ -731,7 +731,7 @@ bool openResources(void) {
 
 }
 
-void openImageTest() {
+void testOpenImage() {
 		hResContext     *decRes;
 
 		decRes = resFile->newContext(MKTAG('A', 'M', 'A', 'P'), "Automap Resources");
@@ -751,6 +751,10 @@ void testScripts() {
 	//for (int i = 1; i < 100; ++i)
 	//	runScript(i, scf);
 	runScript(1, scf);
+}
+
+void testTileRendering() {
+
 }
 
 //-----------------------------------------------------------------------

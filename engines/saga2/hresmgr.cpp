@@ -537,6 +537,7 @@ hResContext *hResource::newContext(hResID id, const char desc[]) {
 	if (result == nullptr || !result->_valid) {
 		error("Error accessing resource group.");
 	}
+	result->_filename = _filename;
 	return result;
 }
 

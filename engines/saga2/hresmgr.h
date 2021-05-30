@@ -163,7 +163,7 @@ public:
 	bool        get(hResID id, void *buffer, uint32 size);
 	uint32       getSize(hResID id, const char desc[]);
 	RHANDLE     load(hResID id, const char [], bool async = false, bool cacheable = true);
-	byte       *loadResource(hResID id, const char desc[], Common::String filename);
+	byte       *loadResource(hResID id, const char desc[], Common::String filename = "");
 	byte       *loadIndexResource(int16 index, const char desc[], Common::String filename = "");
 	RHANDLE     loadIndex(int16 index, const char[], bool cacheable = true);
 	void        release(RHANDLE p);

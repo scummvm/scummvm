@@ -1749,7 +1749,7 @@ void initScripts(void) {
 		error("Unable to open script resource file!\n");
 
 	//  Load the data segment
-	dataSegment = scriptRes->loadResource(dataSegID, "saga data segment", scriptResFile->_filename);
+	dataSegment = scriptRes->loadResource(dataSegID, "saga data segment");
 
 	if (dataSegment == NULL)
 		error("Unable to load the SAGA data segment");
@@ -1759,7 +1759,7 @@ void initScripts(void) {
 
 //	Common::hexdump(dataSegment, dataSegSize);
 
-	exportSegment = scriptRes->loadResource(exportSegID, "saga export segment", scriptResFile->_filename);
+	exportSegment = scriptRes->loadResource(exportSegID, "saga export segment");
 	assert(exportSegment != NULL);
 
 //	Common::hexdump(exportSegment, scriptRes->getSize(exportSegID, "saga export segment"));
