@@ -53,6 +53,9 @@ class VQAPlayer {
 	Audio::QueuingAudioStream   *_audioStream;
 	Graphics::Surface           *_surface;
 
+	static const uint32  kVqaFrameTimeDiff        = 4000; // 60 * 1000 / 15
+	static const int     kMaxAudioPreloadedFrames = 15;
+
 	int _frame;
 	int _frameNext;
 	int _frameBegin;
@@ -62,6 +65,8 @@ class VQAPlayer {
 
 	int _repeatsCountQueued;
 	int _frameEndQueued;
+
+	int _lastAudioFrameSuccessfullyQueued;
 
 	int _loopInitial;
 	int _repeatsCountInitial;
@@ -91,6 +96,7 @@ public:
 		  _repeatsCount(-1),
 		  _repeatsCountQueued(-1),
 		  _frameEndQueued(-1),
+		  _lastAudioFrameSuccessfullyQueued(-1),
 		  _loopInitial(-1),
 		  _repeatsCountInitial(-1),
 		  _frameNextTime(0),
@@ -120,7 +126,9 @@ public:
 	int getLoopBeginFrame(int loop);
 	int getLoopEndFrame(int loop);
 
-	int getFrameCount();
+	int getFrameCount() const;
+
+	int getQueuedAudioFrames() const;
 
 private:
 	void queueAudioFrame(Audio::AudioStream *audioStream);

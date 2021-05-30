@@ -79,8 +79,9 @@ public:
 	void adjustVolume(int channel, int newVolume, uint32 time);
 	void adjustPan(int channel, int newPan, uint32 time);
 
-	void resume(int channel, uint32 delay);
-	void pause(int channel, uint32 delay);
+	// TODO Are these completely unused?
+//	void resume(int channel, uint32 delay);
+//	void pause(int channel, uint32 delay);
 
 private:
 	int playInChannel(int channel, Audio::Mixer::SoundType type, Audio::RewindableAudioStream *stream, int priority, bool loop, int volume, int pan, void(*endCallback)(int, void *), void *callbackData, uint32 trackDurationMs);

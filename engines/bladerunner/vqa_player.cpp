@@ -67,13 +67,14 @@ bool VQAPlayer::open() {
 	_hasAudio = _decoder.hasAudio();
 	if (_hasAudio) {
 		_audioStream = Audio::makeQueuingAudioStream(_decoder.frequency(), false);
+		_lastAudioFrameSuccessfullyQueued = 1;
 	}
 
 	_repeatsCount = 0;
 	_loop = -1;
 	_frame = -1;
 	_frameBegin = -1;
-	_frameEnd = _decoder.numFrames() - 1;
+	_frameEnd = getFrameCount() - 1;
 	_frameEndQueued = -1;
 	_repeatsCountQueued = -1;
 
@@ -132,41 +133,75 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		result = -3;
 		// _repeatsCount == 0, so return here at the end of the video, to release the resource
 		return result;
-	} else if (useTime && (now < _frameNextTime)) {
+	} else if (useTime && (now - (_frameNextTime - kVqaFrameTimeDiff) < kVqaFrameTimeDiff)) {
+		// Not yet time to move to next frame.
+		// Note, we use unsigned difference to avoid potential time overflow issues
 		result = -1;
 	} else if (advanceFrame) {
 		_frame = _frameNext;
 		_decoder.readFrame(_frameNext, kVQAReadVideo);
 		_decoder.decodeVideoFrame(customSurface != nullptr ? customSurface : _surface, _frameNext);
 
+		int maxAllowedAudioPreloadedFrames = kMaxAudioPreloadedFrames;
+		if (_frameEnd - _frameNext < kMaxAudioPreloadedFrames - 1) {
+			maxAllowedAudioPreloadedFrames = _frameEnd - _frameNext + 1;
+		}
+
 		if (_hasAudio) {
-			int audioPreloadFrames = 14;
 			if (!_audioStarted) {
-				for (int i = 0; i < audioPreloadFrames; ++i) {
+				// start with preloading up to (kMaxAudioPreloadedFrames - 1) frames at most, before reaching the _frameEnd frame
+				for (int i = 0; i < kMaxAudioPreloadedFrames - 1; ++i) {
 					if (_frameNext + i < _frameEnd) {
 						_decoder.readFrame(_frameNext + i, kVQAReadAudio);
 						queueAudioFrame(_decoder.decodeAudioFrame());
+						_lastAudioFrameSuccessfullyQueued = _frameNext + i;
 					}
 				}
 				if (_vm->_mixer->isReady()) {
 					// Use speech sound type as in original engine
+					// Audio stream starts playing, consuming queued "audio frames"
+					// Note: On its own, the audio will not re-synch with video;
+					// It plays independently so it can get ahead!
 					_vm->_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, _audioStream);
 				}
 				_audioStarted = true;
 			}
-			if (_frameNext + audioPreloadFrames < _frameEnd) {
-				_decoder.readFrame(_frameNext + audioPreloadFrames, kVQAReadAudio);
-				queueAudioFrame(_decoder.decodeAudioFrame());
+
+			// Due to our audio stream being queuable, the queued audio frames will play,
+			// even if the game is "paused" eg. by moving the ScummVM window.
+			// However, the video will stop playing immediately in that case.
+			// That would result in a audio video desynch, with audio being ahead of video.
+			// When the video resumes, we need to catch up to the audio "frame" of the queue that was last played,
+			// without queuing more audio, and then start queuing audio again.
+
+			// The following still covers the case of adding the final 15th audio frame to the queue
+			// when first starting the audio stream.
+			int tmpCurrentQueuedAudioFrames = getQueuedAudioFrames();
+			if (_lastAudioFrameSuccessfullyQueued != _frameEnd) {
+				// if video is behind audio, then resynch,
+				// which here means: don't queue and don't play audio until video catches up.
+			    if (_lastAudioFrameSuccessfullyQueued - tmpCurrentQueuedAudioFrames < _frameNext) {
+					int addToQueueRep = 0;
+					while (addToQueueRep < (maxAllowedAudioPreloadedFrames - tmpCurrentQueuedAudioFrames)
+					       && _lastAudioFrameSuccessfullyQueued + 1 <= _frameEnd) {
+						_decoder.readFrame(_lastAudioFrameSuccessfullyQueued + 1, kVQAReadAudio);
+						queueAudioFrame(_decoder.decodeAudioFrame());
+						++_lastAudioFrameSuccessfullyQueued;
+						++addToQueueRep;
+					}
+				}
 			}
 		}
+
 		if (useTime) {
-			_frameNextTime += 60000 / 15;
+			_frameNextTime += kVqaFrameTimeDiff;
 
 			// In some cases (as overlay paused by kia or game window is moved) new time might be still in the past.
 			// This can cause rapid playback of video where every refresh renders different frame of the video.
 			// Can be avoided by setting next time to the future.
-			if (_frameNextTime < now) {
-				_frameNextTime = now + 60000 / 15;
+			// Note, we use unsigned difference to avoid time overflow issues
+			if (now - (_frameNextTime - kVqaFrameTimeDiff) > kVqaFrameTimeDiff) {
+				_frameNextTime = now + kVqaFrameTimeDiff;
 			}
 		}
 		++_frameNext;
@@ -279,14 +314,26 @@ int VQAPlayer::getLoopEndFrame(int loop) {
 	return end;
 }
 
-int VQAPlayer::getFrameCount() {
+int VQAPlayer::getFrameCount() const {
 	return _decoder.numFrames();
 }
 
+int VQAPlayer::getQueuedAudioFrames() const {
+	return _audioStream->numQueuedStreams();
+}
+
+// Adds another audio "frame" to the queue of the audio stream
 void VQAPlayer::queueAudioFrame(Audio::AudioStream *audioStream) {
+	if (audioStream == nullptr) {
+		return;
+	}
+
 	int n = _audioStream->numQueuedStreams();
-	if (n == 0)
+	// TODO Maybe remove this warning or make it a debug-only message?
+	if (n == 0) {
 		warning("numQueuedStreams: %d", n);
+	}
+
 	_audioStream->queueAudioStream(audioStream, DisposeAfterUse::YES);
 }
 

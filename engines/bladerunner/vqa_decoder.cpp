@@ -920,7 +920,14 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 }
 
 VQADecoder::VQAAudioTrack::VQAAudioTrack(VQADecoder *vqaDecoder) {
-	_frequency = vqaDecoder->_header.freq;
+	if (vqaDecoder != nullptr) {
+		_frequency = vqaDecoder->_header.freq;
+	} else {
+		warning("VQADecoder::VQAAudioTrack::VQAAudioTrack: null pointer for vqaDecoder parameter");
+		// TODO use some typical value?
+		_frequency = 0;
+	}
+	memset(_compressedAudioFrame, 0, sizeof(uint8));
 }
 
 VQADecoder::VQAAudioTrack::~VQAAudioTrack() {
@@ -928,13 +935,18 @@ VQADecoder::VQAAudioTrack::~VQAAudioTrack() {
 
 Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
 	int16 *audioFrame = (int16 *)malloc(4 * 735);
-	memset(audioFrame, 0, 4 * 735);
+	if (audioFrame != nullptr) {
+		memset(audioFrame, 0, 4 * 735);
 
-	_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame, true);
+		_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame, true);
 
-	uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
+		uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
-	return Audio::makeRawStream((byte *)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
+		return Audio::makeRawStream((byte *)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
+	} else {
+		warning("VQADecoder::VQAAudioTrack::decodeAudioFrame: Insufficient memory to allocate for audio frame");
+		return nullptr;
+	}
 }
 
 bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size) {
