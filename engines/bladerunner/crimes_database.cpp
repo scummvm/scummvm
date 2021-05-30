@@ -26,6 +26,7 @@
 
 #include "bladerunner/savefile.h"
 #include "bladerunner/text_resource.h"
+#include "bladerunner/game_constants.h"
 
 namespace BladeRunner {
 
@@ -42,8 +43,8 @@ CrimesDatabase::CrimesDatabase(BladeRunnerEngine *vm, const Common::String &clue
 	}
 
 	for (int i = 0; i != _crimeCount; ++i) {
-		_crimes[i] = -1;
-		_assetTypes[i] = -1;
+		_crimes[i]     = -1;
+		_assetTypes[i] = kClueTypeIntangible;
 	}
 }
 

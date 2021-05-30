@@ -146,7 +146,7 @@ void KIASectionClues::draw(Graphics::Surface &surface) {
 		_vm->_mainFont->drawString(&surface, text, 490, 442, surface.w, surface.format.RGBToColor(136, 168, 255));
 
 		int assetType = _vm->_crimesDatabase->getAssetType(clueId);
-		if (assetType != -1) {
+		if (assetType != kClueTypeIntangible) {
 			text = _vm->_textClueTypes->getText(assetType);
 		} else {
 			text.clear();
@@ -287,7 +287,7 @@ void KIASectionClues::populateFilters() {
 		if (_clues->isAcquired(clueId)) {
 			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
 			int crimeId = _vm->_crimesDatabase->getCrime(clueId);
-			if (_debugIntangible || assetType != -1) {
+			if (_debugIntangible || assetType != kClueTypeIntangible) {
 				availableFilters[getLineIdForAssetType(assetType)] = true;
 				availableFilters[getLineIdForCrimeId(crimeId)] = true;
 			}
@@ -387,7 +387,7 @@ void KIASectionClues::populateClues() {
 		if (_clues->isAcquired(clueId)) {
 			int assetType = _vm->_crimesDatabase->getAssetType(clueId);
 			int crimeId = _vm->_crimesDatabase->getCrime(clueId);
-			if (assetType != -1 || _debugIntangible) {
+			if (assetType != kClueTypeIntangible || _debugIntangible) {
 				if (_filters[getLineIdForAssetType(assetType)] && _filters[getLineIdForCrimeId(crimeId)]) {
 					int flags = 0x30;
 #if BLADERUNNER_ORIGINAL_BUGS

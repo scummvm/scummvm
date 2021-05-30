@@ -424,7 +424,7 @@ void KIASectionSuspects::populateVisibleClues() {
 		for (int i = 0; i < _acquiredClueCount; ++i) {
 			int clueId = _acquiredClues[i].clueId;
 
-			if (_vm->_crimesDatabase->getAssetType(clueId) != -1) {
+			if (_vm->_crimesDatabase->getAssetType(clueId) != kClueTypeIntangible) {
 				SuspectDatabaseEntry *suspect = _vm->_suspectsDatabase->get(_suspectSelected);
 
 				bool showClue = false;

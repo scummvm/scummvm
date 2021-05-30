@@ -28,6 +28,7 @@
 #include "bladerunner/audio_speech.h"
 #include "bladerunner/bladerunner.h"
 #include "bladerunner/boundingbox.h"
+#include "bladerunner/crimes_database.h"
 #include "bladerunner/game_info.h"
 #include "bladerunner/items.h"
 #include "bladerunner/mouse.h"
@@ -1377,12 +1378,21 @@ bool Actor::hasClue(int clueId) const {
 	return _clues->isAcquired(clueId);
 }
 
+// This method is used exclusively for transfers from and to Mainframe
+// see: ScriptBase::Actor_Clues_Transfer_New_From_Mainframe()
+//      ScriptBase::Actor_Clues_Transfer_New_To_Mainframe()
+// In Restored Content it will skip transfering clues that are Intangible (default clue type)
+// since those clues do not actually show up in McCoy's KIA
 bool Actor::copyClues(int actorId) {
 	bool newCluesAcquired = false;
 	Actor *otherActor = _vm->_actors[actorId];
 	for (int i = 0; i < (int)_vm->_gameInfo->getClueCount(); ++i) {
 		int clueId = i;
-		if (hasClue(clueId) && !_clues->isPrivate(clueId) && otherActor->canAcquireClue(clueId) && !otherActor->hasClue(clueId)) {
+		if (hasClue(clueId)
+		    && !_clues->isPrivate(clueId)
+		    && (!_vm->_cutContent || _vm->_crimesDatabase->getAssetType(clueId) != kClueTypeIntangible)
+		    && otherActor->canAcquireClue(clueId)
+		    && !otherActor->hasClue(clueId)) {
 			int fromActorId = _id;
 			if (_id == BladeRunnerEngine::kActorVoiceOver) {
 				fromActorId = _clues->getFromActorId(clueId);

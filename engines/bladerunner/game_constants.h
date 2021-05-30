@@ -369,7 +369,7 @@ enum Clues {
 	kClueKingstonKitchenBox2               = 263, // Photograph - ESPER hard-copy
 	kClueCrystalsCigarette                 = 264, // Object
 	kClueSpinnerKeys                       = 265, // Object
-	kClueAct2Ended                         = 266, // (Intangible) - Acquired by McCoy - Identity Reveal for Clovis and Sadik
+	kClueAct2Ended                         = 266, // (Intangible) - Acquired by McCoy - Not checked in KIA - Identity Reveal for Clovis and Sadik
 	kClueAct3Ended                         = 267, // UNUSED
 	kClueAct4Ended                         = 268, // UNUSED
 	kClueExpertBomber                      = 269, // Audio Recording - When Sadik is Replicant

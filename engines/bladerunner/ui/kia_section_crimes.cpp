@@ -376,7 +376,7 @@ void KIASectionCrimes::populateVisibleClues() {
 	if (_crimeSelected != -1) {
 		for (int i = 0; i < kClueCount; ++i) {
 			int clueId = i;
-			if (_vm->_crimesDatabase->getAssetType(clueId) != -1
+			if (_vm->_crimesDatabase->getAssetType(clueId) != kClueTypeIntangible
 			 && _vm->_crimesDatabase->getCrime(clueId) == _crimeSelected
 			 && _clues->isAcquired(clueId)
 			) {
