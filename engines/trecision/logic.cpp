@@ -3505,16 +3505,16 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case kItemEgyptologyBook:
-		_vm->changeRoom(kRoom2BL);
 		_vm->_obj[oEXIT2BL]._goRoom = _vm->_curRoom;
+		_vm->changeRoom(kRoom2BL);
 		_vm->_actor->actorStop();
 		_vm->_pathFind->nextStep();
 		printSentence = false;
 		break;
 
 	case kItemSecuritySystemSequence:
-		_vm->changeRoom(kRoom36F);
 		_vm->_obj[oEXIT36F]._goRoom = _vm->_curRoom;
+		_vm->changeRoom(kRoom36F);
 		_vm->_actor->actorStop();
 		_vm->_pathFind->nextStep();
 		printSentence = false;
@@ -3523,8 +3523,8 @@ bool LogicManager::operateInventory() {
 	case kItemPositioner:
 		for (int a = oROOM41; a <= oROOM45B; ++a)
 			_vm->setObjectVisible(a, false);
-		_vm->changeRoom(kRoom41D);
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
+		_vm->changeRoom(kRoom41D);
 		_vm->_inventoryObj[kItemPositioner].setFlagExtra(false);
 		_vm->_actor->actorStop();
 		_vm->_pathFind->nextStep();
@@ -3845,8 +3845,8 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_curRoom = room;
 	_vm->_scheduler->resetQueues();
 
-	_vm->closeInventoryImmediately();
 	_vm->clearUseWith();
+	_vm->closeInventoryImmediately();
 
 	_vm->_flagCharacterExists = true;
 	_vm->_flagShowCharacter = true;

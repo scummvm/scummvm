@@ -669,7 +669,7 @@ enum RoomId {
 #define oSCRIVANIA2B			419
 #define oPORTALAMPADE2B			420
 #define omLAMPADINA2B			421
-#define oEXIT2BL				422
+#define oEXIT2BL				422	// Exit from Egyptology book
 #define oUEPOIS					423
 #define oHATOR					424
 #define oNUT					425
@@ -973,7 +973,7 @@ enum RoomId {
 #define oSCATOLONE36			723
 #define omCARTACCE36			724
 #define omSCATOLONEA36			725
-#define oEXIT36F				726
+#define oEXIT36F				726	// Exit from security system sequence
 #define oSIMON37				727
 #define oSPORTELLOA37			728
 #define oSPORTELLOI37			729
@@ -1436,7 +1436,7 @@ enum RoomId {
 #define omWINDOW5A	        1200
 #define oPIANTE5A		        1201
 #define oEXIT58T		        1202
-#define oEXIT41D				1203
+#define oEXIT41D				1203	// Exit from positioner
 #define oPULSANTECD				1205
 #define oPULSANTE1AD			1247
 #define oPULSANTE33AD			1279
