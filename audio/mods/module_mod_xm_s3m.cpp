@@ -235,8 +235,7 @@ bool ModuleModXmS3m::loadMod(Common::SeekableReadStream &st) {
 		sample.name[22] = '\0';
 		sample.length = 2 * st.readUint16BE();
 
-		sample.finetune = st.readByte();
-		assert(sample.finetune < 0x10);
+		sample.finetune = st.readByte() & 0xF;
 
 		sample.volume = st.readByte();
 		sample.loopStart = 2 * st.readUint16BE();
