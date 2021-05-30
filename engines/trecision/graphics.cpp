@@ -152,7 +152,7 @@ void GraphicsManager::drawObj() {
 	} else {
 		const uint16 x = _drawRect.left + _drawObjRect.left;
 
-		if (x + _drawObjRect.width() >= MAXX || _drawObjRect.top + _drawObjRect.height() >= MAXY) {
+		if (x + _drawObjRect.width() > MAXX || _drawObjRect.top + _drawObjRect.height() > MAXY) {
 			warning("drawObj: Invalid surface, skipping");
 			return;
 		}
@@ -185,7 +185,7 @@ void GraphicsManager::copyToScreenBuffer(const Graphics::Surface *surface, int x
 }
 
 void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y) {
-	if (x + surface->w >= MAXX || y + surface->h >= MAXY) {
+	if (x + surface->w > MAXX || y + surface->h > MAXY) {
 		warning("copyToScreenBufferInner: Invalid surface, skipping");
 		return;
 	}
@@ -198,7 +198,7 @@ void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, 
 }
 
 void GraphicsManager::blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg) {
-	if (x + surface->w >= MAXX || y + surface->h >= MAXY) {
+	if (x + surface->w > MAXX || y + surface->h > MAXY) {
 		warning("blitToScreenBuffer: Invalid surface, skipping");
 		return;
 	}
@@ -358,7 +358,7 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
  *				(dark) 0..8 (light)
  */
 void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
-	if (x >= MAXX || y >= MAXY) {
+	if (x > MAXX || y > MAXY) {
 		warning("shadow: Invalid pixel, skipping");
 		return;
 	}
@@ -372,7 +372,7 @@ void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
 }
 
 void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
-	if (x >= MAXX || y >= MAXY) {
+	if (x > MAXX || y > MAXY) {
 		warning("pixelAliasing: Invalid pixel, skipping");
 		return;
 	}
