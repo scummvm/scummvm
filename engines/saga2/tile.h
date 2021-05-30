@@ -872,7 +872,7 @@ const uint16            metaTileVisited = (1 << 15);
 struct WorldMapData {
 	ObjectID            worldID;            //  The number of this map
 
-	MapHandle           map;                //  Map data
+	MapPtr              map;                //  Map data
 	MetaTileHandle      metaList;           //  MetaTile list
 	TileRefHandle       activeItemData;     //  ActiveItem tileRefs
 	ActiveItemPtr       activeItemList;     //  ActiveItem list

@@ -1427,13 +1427,11 @@ void initMaps(void) {
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
 		if (tileRes->seek(tileTerrainID + MKTAG(0, 0, 0, (uint8)i))) {
-			tileBanks[ i ] =
-			    (TileBankPtr)LoadResource(
-			        tileRes,
-			        tileTerrainID + MKTAG(0, 0, 0, (uint8)i),
-			        "tile terrain bank");
+			tileBanks[i] = (TileBankPtr)LoadResource(tileRes,
+			                tileTerrainID + MKTAG(0, 0, 0, (uint8)i),
+			                "tile terrain bank");
 		} else
-			tileBanks[ i ] = NULL;
+			tileBanks[i] = nullptr;
 	}
 
 	//  Count the worlds by seeking the map data
@@ -1442,11 +1440,8 @@ void initMaps(void) {
 	        worldCount++) ;
 
 	//  Allocate the map data array
-	mapList = (WorldMapData *)RNewPtr(
-	              sizeof(WorldMapData) * worldCount,
-	              NULL,
-	              "map data array");
-	if (mapList == NULL)
+	mapList = new WorldMapData[worldCount];
+	if (mapList == nullptr)
 		error("Unable to allocate map data array");
 
 	//  Iterate through the map data list initializing each element
@@ -1458,56 +1453,49 @@ void initMaps(void) {
 		mapData->worldID = WorldBaseID + i;
 
 		//  Load the map
-		mapData->map = (MapHandle)LoadResourceToHandle(
-		                   tileRes,
-		                   mapID + MKTAG(0, 0, 0, (uint8)i),
-		                   "world map");
-		if (mapData->map == NULL)
+		mapData->map = (MapPtr)LoadResource(tileRes,
+		                mapID + MKTAG(0, 0, 0, (uint8)i), "world map");
+		if (mapData->map == nullptr)
 			error("Unable to load map");
 
 		//  Load the meta tile list
-		mapData->metaList = (MetaTileHandle)LoadResourceToHandle(
-		                        tileRes,
-		                        metaID + MKTAG(0, 0, 0, (uint8)i),
-		                        "meta tile list");
-		if (mapData->metaList == NULL)
+		mapData->metaList = (MetaTileHandle)LoadResourceToHandle(tileRes,
+		                     metaID + MKTAG(0, 0, 0, (uint8)i),
+		                     "meta tile list");
+		if (mapData->metaList == nullptr)
 			error("Unable to load meta tile list");
 
 		//  If there is tag data, load it
 		if (tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			mapData->activeItemData =
-			    (TileRefHandle)LoadResourceToHandle(
-			        tileRes,
-			        tagDataID + MKTAG(0, 0, 0, (uint8)i),
-			        "active item data");
-			if (mapData->activeItemData == NULL)
+			mapData->activeItemData = (TileRefHandle)LoadResourceToHandle(tileRes,
+			                           tagDataID + MKTAG(0, 0, 0, (uint8)i),
+			                           "active item data");
+			if (mapData->activeItemData == nullptr)
 				error("Unable to load active item data");
 		} else
-			mapData->activeItemData = NULL;
+			mapData->activeItemData = nullptr;
 
 		//  If there is an association list, load it
 		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->assocList =
-			    (UWordHandle)LoadResourceToHandle(
-			        tileRes,
+			    (UWordHandle)LoadResourceToHandle(tileRes,
 			        assocID + MKTAG(0, 0, 0, (uint8)i),
 			        "association list");
-			if (mapData->assocList == NULL)
+			if (mapData->assocList == nullptr)
 				error("Unable to load association list");
 		} else
-			mapData->assocList = NULL;
+			mapData->assocList = nullptr;
 
 		//  If there is an active item list, load it
 		if (tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			mapData->activeItemList =
-			    (ActiveItemPtr)LoadResource(
-			        tileRes,
+			    (ActiveItemPtr)LoadResource(tileRes,
 			        tagID + MKTAG(0, 0, 0, (uint8)i),
 			        "active item list");
-			if (mapData->activeItemList == NULL)
+			if (mapData->activeItemList == nullptr)
 				error("Unable to load active item list");
 		} else
-			mapData->activeItemList = NULL;
+			mapData->activeItemList = nullptr;
 
 		//  Compute the number of meta tiles in list
 		mapData->metaCount     =        RPtrSize(*mapData->metaList)
@@ -1532,11 +1520,8 @@ void initMaps(void) {
 		*/
 		//  Allocate an object ripping table ID list
 		mapData->ripTableIDList =
-		    (RipTableIDHandle)RNewHandle(
-		        sizeof(RipTableID) * mapData->metaCount,
-		        NULL,
-		        "rip table ID list");
-		if (mapData->ripTableIDList == NULL)
+		    (RipTableIDHandle)malloc(sizeof(RipTableID) * mapData->metaCount);
+		if (mapData->ripTableIDList == nullptr)
 			error("Unable to allocate rip table ID list");
 
 		//  Initialize the object ripping ID list
@@ -1544,7 +1529,7 @@ void initMaps(void) {
 			(*mapData->ripTableIDList)[ j ] = -1;
 
 		//  Get the size of the map in meta tiles
-		mapData->mapSize = (*mapData->map)->size;
+		mapData->mapSize = mapData->map->size;
 
 		//  Compute the height of the map in pixels
 		mapData->mapHeight = mapData->mapSize * metaTileHeight;
@@ -1570,34 +1555,35 @@ void cleanupMaps(void) {
 		WorldMapData    *mapData = &mapList[ i ];
 
 		//  Dump the map
-		RDisposeHandle((RHANDLE)mapData->map);
+		free(mapData->map);
 
 		//  Dump the meta tile list
 		RDisposeHandle((RHANDLE)mapData->metaList);
 
 		//  If there is active item data, dump it
-		if (mapData->activeItemData != NULL)
+		if (mapData->activeItemData != nullptr)
 			RDisposeHandle((RHANDLE)mapData->activeItemData);
 
 		//  If there is an association list, dump it
-		if (mapData->assocList != NULL)
+		if (mapData->assocList != nullptr)
 			RDisposeHandle((RHANDLE)mapData->assocList);
 
 		//  If there is an active item list, dump it
-		if (mapData->activeItemList != NULL)
+		if (mapData->activeItemList != nullptr)
 			RDisposePtr(mapData->activeItemList);
 
 		//  Dump the object ripping table ID list
-		RDisposeHandle((RHANDLE)mapData->ripTableIDList);
+		free(mapData->ripTableIDList);
 	}
 
 	//  Dump the map data list
-	RDisposePtr(mapList);
+	//RDisposePtr(mapList);
+	delete[] mapList;
 
 	//  Dump all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		if (tileBanks[ i ] != NULL)
-			RDisposePtr(tileBanks[ i ]);
+		if (tileBanks[ i ] != nullptr)
+			free(tileBanks[ i ]);
 	}
 }
 
@@ -1633,7 +1619,7 @@ void initAutoMap(void) {
 		                mapIndex;
 		uint16          *mapData;
 
-		map = *mapList[ i ].map;
+		map = mapList[i].map;
 		mapSize = map->size;
 		mapSize *= mapSize;
 		mapData = map->mapData;
@@ -1659,7 +1645,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 		MapHeader       *map;
 		int32           mapSize;
 
-		map = *mapList[ i ].map;
+		map = mapList[i].map;
 		mapSize = map->size;
 		mapSize *= mapSize;
 
@@ -1680,7 +1666,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 		                mapIndex;
 		uint16          *mapData;
 
-		map = *mapList[ i ].map;
+		map = mapList[i].map;
 		mapSize = map->size;
 		mapSize *= mapSize;
 		mapData = map->mapData;
@@ -1732,7 +1718,7 @@ void loadAutoMap(SaveFileReader &saveGame) {
 		                mapIndex;
 		uint16          *mapData;
 
-		map = *mapList[ i ].map;
+		map = mapList[i].map;
 		mapSize = map->size;
 		mapSize *= mapSize;
 		mapData = map->mapData;
@@ -2323,7 +2309,7 @@ RipTableID &MetaTile::ripTableID(int16 mapNum) {
 //	Return a pointer to the specified meta tile on this map
 
 MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
-	uint16          *mapData = (*map)->mapData;
+	uint16          *mapData = map->mapData;
 	int16           mtile;
 
 #if 0
@@ -2598,8 +2584,8 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	                **put = drawList;
 
 	int16           mapSizeMask = curMap->mapSize - 1,
-	                mapEdgeType = (*curMap->map)->edgeType;
-	uint16          *mapData = (*curMap->map)->mapData;
+	                mapEdgeType = curMap->map->edgeType;
+	uint16          *mapData = curMap->map->mapData;
 
 	MetaTilePtr     metaArray = *curMap->metaList;
 
@@ -3234,8 +3220,8 @@ void maskMetaRow(
 	                **put = drawList;
 
 	int16           mapSizeMask = curMap->mapSize - 1,
-	                mapEdgeType = (*curMap->map)->edgeType;
-	uint16          *mapData = (*curMap->map)->mapData;
+	                mapEdgeType = curMap->map->edgeType;
+	uint16          *mapData = curMap->map->mapData;
 
 	MetaTilePtr     metaArray = *curMap->metaList;
 
@@ -4763,7 +4749,7 @@ void markMetaAsVisited(const TilePoint &pt) {
 	//  If (they have cartography)
 	{
 		WorldMapData    *curMap = &mapList[ currentMapNum ];
-		uint16          *mapData = (*curMap->map)->mapData;
+		uint16          *mapData = curMap->map->mapData;
 
 		TilePoint       metaCoords = pt >> (tileUVShift + platShift);
 		int32           minU = MAX(metaCoords.u - mappingRadius, 0),
