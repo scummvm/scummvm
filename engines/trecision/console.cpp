@@ -24,8 +24,9 @@
 #include "gui/debugger.h"
 
 #include "trecision/console.h"
-#include "trecision/scheduler.h"
 #include "trecision/dialog.h"
+#include "trecision/scheduler.h"
+#include "trecision/text.h"
 #include "trecision/trecision.h"
 
 namespace Trecision {
@@ -35,6 +36,7 @@ Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
 	registerCmd("item",			WRAP_METHOD(Console, Cmd_Item));
+	registerCmd("say",			WRAP_METHOD(Console, Cmd_Say));
 }
 
 Console::~Console() {
@@ -98,6 +100,18 @@ bool Console::Cmd_Item(int argc, const char **argv) {
 	} else {
 		_vm->addIcon(itemId);
 	}
+
+	return false;
+}
+
+bool Console::Cmd_Say(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use %s <sentenceId> to hear a sentence from Joshua\n", argv[0]);
+		return true;
+	}
+
+	const uint16 sentenceId = (uint16)atoi(argv[1]);
+	_vm->_textMgr->characterSay(sentenceId);
 
 	return false;
 }

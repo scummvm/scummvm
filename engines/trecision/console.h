@@ -41,6 +41,7 @@ private:
 	bool Cmd_DumpFile(int argc, const char **argv);
 	bool Cmd_Dialog(int argc, const char **argv);
 	bool Cmd_Item(int argc, const char **argv);
+	bool Cmd_Say(int argc, const char **argv);
 };
 
 } // End of namespace Trecision
