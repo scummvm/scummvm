@@ -79,8 +79,8 @@ extern configuration    globalConfig;
 extern char             *gameTimeStr;
 extern bool             underground;
 extern char             commandLineHelp[];
-//extern hResContext        *tileRes;       // tile resource handle
-//extern hResContext        *listRes;
+extern hResContext        *tileRes;       // tile resource handle
+extern hResContext        *listRes;
 
 /* ===================================================================== *
    Globals
@@ -754,7 +754,21 @@ void testScripts() {
 }
 
 void testTileRendering() {
+	tileRes = resFile->newContext(MKTAG('T', 'I', 'L', 'E'), "tile resources");
+	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
+	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
 
+	initMaps();
+
+	//uint8 *img = nullptr;
+	//TileInfo *ti;
+	//for (int i = 0; i < 65535; ++i) {
+	//	ti = TileInfo::tileAddress(i, &img);
+	//	if (ti) {
+	//		debug("height: %d", ti->attrs.height);
+	//		Common::hexdump(img, ti->attrs.height);
+	//	}
+	//}
 }
 
 //-----------------------------------------------------------------------

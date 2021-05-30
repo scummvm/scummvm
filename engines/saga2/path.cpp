@@ -410,7 +410,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							instanceItem = map->findHashedInstance(absPos, tr->tile);
 							if (instanceItem) state = instanceItem->getInstanceState(mapNum);
 
-							stateData = &(*map->activeItemData)[
+							stateData = &(map->activeItemData)[
 							                groupItem->group.grDataOffset
 							                +   state * groupItem->group.animArea ];
 

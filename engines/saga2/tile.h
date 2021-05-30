@@ -797,7 +797,8 @@ struct RipTable {
 };
 
 typedef RipTable    *RipTablePtr;
-typedef RipTableID  **RipTableIDHandle;
+typedef RipTableID  *RipTableIDPtr,
+                    **RipTableIDHandle;
 
 typedef uint16 metaTileNoise;
 
@@ -873,11 +874,11 @@ struct WorldMapData {
 	ObjectID            worldID;            //  The number of this map
 
 	MapPtr              map;                //  Map data
-	MetaTileHandle      metaList;           //  MetaTile list
-	TileRefHandle       activeItemData;     //  ActiveItem tileRefs
+	MetaTilePtr         metaList;           //  MetaTile list
+	TileRefPtr          activeItemData;     //  ActiveItem tileRefs
 	ActiveItemPtr       activeItemList;     //  ActiveItem list
-	UWordHandle         assocList;          //  Associations
-	RipTableIDHandle    ripTableIDList;     //  MetaTile object ripping
+	UWordPtr            assocList;          //  Associations
+	RipTableIDPtr       ripTableIDList;     //  MetaTile object ripping
 
 	ActiveItem          *instHash[ 513 ];   //  ActiveItem hash table
 

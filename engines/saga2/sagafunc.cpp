@@ -2411,7 +2411,7 @@ int16 scriptTagAssoc(int16 *args) {
 	assert(mapNum >= 0);
 	assert(mapNum < 8);
 
-	return (*mapList[ mapNum ].assocList)[ ai->associationOffset + args[ 0 ] ];
+	return (mapList[mapNum].assocList)[ai->associationOffset + args[0]];
 }
 
 //-----------------------------------------------------------------------
