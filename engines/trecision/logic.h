@@ -53,9 +53,6 @@ class LogicManager {
 	uint16 _wheel;
 	uint16 _wheelPos[3];
 
-	// CloseUp12 and 13
-	uint16 _closeUpObj;
-
 	void initInventory();
 
 public:

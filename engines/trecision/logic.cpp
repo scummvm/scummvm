@@ -57,8 +57,6 @@ LogicManager::LogicManager(TrecisionEngine *vm) : _vm(vm) {
 
 	_slotMachine41Counter = 0;
 
-	_closeUpObj = 0;
-
 	initInventory();
 }
 LogicManager::~LogicManager() {}
@@ -467,9 +465,13 @@ void LogicManager::endChangeRoom() {
 	if (_vm->_curRoom == kRoom17 && (_vm->_oldRoom == kRoom18) && !_vm->_room[kRoom17].isDone() && _vm->isObjectVisible(oRETE17))
 		_vm->_textMgr->characterSay(189);
 
-	if ((_vm->_curRoom == kRoom12CU || _vm->_curRoom == kRoom13CU) && _closeUpObj && _vm->_obj[_closeUpObj]._examine)
-		_vm->_textMgr->characterSay(_vm->_obj[_closeUpObj]._examine);
-	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone()) {
+	if (_vm->_curRoom == kRoom12CU) {
+		const uint16 closeupObjectId = _vm->isObjectVisible(oFUSIBILE12) ? oFUSIBILE12 : oPANELA12;
+		_vm->_textMgr->characterSay(_vm->_obj[closeupObjectId]._examine);
+	} else if (_vm->_curRoom == kRoom13CU) {
+		const uint16 closeupObjectId = _vm->isObjectVisible(oLETTERA13) ? oLETTERA13 : oPENPADA13;
+		_vm->_textMgr->characterSay(_vm->_obj[closeupObjectId]._examine);
+	}  else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone()) {
 		_vm->_flagShowCharacter = true;
 		_vm->startCharacterAction(aWALKIN, 0, 0, 361);
 	} else if (_vm->_curRoom == kRoom24 && !_vm->_room[kRoom24].isDone())
@@ -2003,22 +2005,14 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 
 	case oPANELA12:
 	case oFUSIBILE12:
-		if (_vm->isObjectVisible(oFUSIBILE12))
-			_vm->setObjectVisible(oFUSE12CU, true);
-		else
-			_vm->setObjectVisible(oFUSE12CU, false);
+		_vm->setObjectVisible(oFUSE12CU, _vm->isObjectVisible(oFUSIBILE12));
 		_vm->changeRoom(kRoom12CU);
-		_closeUpObj = curObj;
 		break;
 
 	case oLETTERA13:
 	case oPENPADA13:
-		if (_vm->isObjectVisible(oLETTERA13))
-			_vm->setObjectVisible(oLETTER13CU, true);
-		else
-			_vm->setObjectVisible(oLETTER13CU, false);
+		_vm->setObjectVisible(oLETTER13CU, _vm->isObjectVisible(oLETTERA13));
 		_vm->changeRoom(kRoom13CU);
-		_closeUpObj = curObj;
 		break;
 
 	case oCUCININO14:
