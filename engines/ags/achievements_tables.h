@@ -41,7 +41,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"detectivegallo",
 		Common::GALAXY_ACHIEVEMENTS,
-		"50086217303942317",
+		"1745746005",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("Achiev_01", "Vigilante", "That taxi driver picked up his last fare\xe2\x80\xa6"),
 			ACHIEVEMENT_SIMPLE_ENTRY("Achiev_02", "Alcoholic", "Cocktails go to my head."),
@@ -75,7 +75,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"guardduty",
 		Common::GALAXY_ACHIEVEMENTS,
-		"53208190275284474",
+		"1455980545",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_KICKED_OUT", "Airborne", "Get kicked out of the Castle"),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_FROG_KISS", "Pucker Up", "Girtrude finds a new friend"),
@@ -104,7 +104,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"kathyrain",
 		Common::GALAXY_ACHIEVEMENTS,
-		"49013395759351343",
+		"1460710709",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayOne", "Get on the Katmobile", "Finished day one"),
 			ACHIEVEMENT_SIMPLE_ENTRY("FinishDayTwo", "Wow, they're hypnotic...", "Finished day two"),
@@ -133,7 +133,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"mage",
 		Common::GALAXY_ACHIEVEMENTS,
-		"51907450760339722",
+		"1469845437",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("DABBLING", "Dabbling", "Earn your first spells from the Sphere of Knowledge."),
 			ACHIEVEMENT_SIMPLE_ENTRY("BACK_OFF_BACKERS", "Back Off Backers", "Beat both Mage sparring partners."),
@@ -186,7 +186,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"oott",
 		Common::GALAXY_ACHIEVEMENTS,
-		"48480489121931650",
+		"1444830704",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("tkc_TwoGirls", "He is Gnomor'", "The girls, Snow and Red, tried to save the gnome but alas, they failed."),
 			ACHIEVEMENT_SIMPLE_ENTRY("tkc_HighPriest", "High Priest", "The high priest hightailed it out of the Faerie Realm."),
@@ -208,7 +208,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"whispersofamachine",
 		Common::GALAXY_ACHIEVEMENTS,
-		"51996409849683928",
+		"1845001352",
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("CaseClosed", "Case Closed", "Finished the game"),
 			ACHIEVEMENT_SIMPLE_ENTRY("PathOfTyr", "Path of Tyr", "Finished the game assertively"),
