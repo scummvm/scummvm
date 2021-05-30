@@ -46,11 +46,11 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 		return false;
 	}
 
-	const char* prefix = info.platform == STEAM_ACHIEVEMENTS ? "steam" :
+	const char* platform = info.platform == STEAM_ACHIEVEMENTS ? "steam" :
 					info.platform == GALAXY_ACHIEVEMENTS ? "galaxy" :
 					"achman";
 
-	String iniFileName = String::format("%s-%s.dat", prefix, info.appId.c_str());
+	String iniFileName = String::format("%s-%s.dat", platform, info.appId.c_str());
 
 	if (_iniFileName == iniFileName) {
 		return true;
@@ -66,6 +66,9 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 	_iniFile->loadFromSaveFile(_iniFileName); // missing file is OK
 
 	_descriptions = info.descriptions;
+
+	setSpecialString("platform", platform);
+	setSpecialString("gameId", info.appId);
 
 	return true;
 }
@@ -217,6 +220,17 @@ int AchievementsManager::getStatInt(String const &id) {
 	String tmp;
 	_iniFile->getKey(id, "statistics", tmp);
 	return (int)atol(tmp.c_str());
+}
+
+
+bool AchievementsManager::setSpecialString(String const &id, String const &value) {
+	if (!isReady()) {
+		return false;
+	}
+
+	_iniFile->setKey(id, "special", value);
+	_iniFile->saveToSaveFile(_iniFileName);
+	return 0;
 }
 
 

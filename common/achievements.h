@@ -179,6 +179,22 @@ public:
 
 	/** @} */
 
+	/**
+	 * @name Methods for storing platform-specific data
+	 * @{
+	 */
+
+	/**
+	 * Store provided key and value pair in additional section.
+	 * May be useful for posting achievements to original platform.
+	 *
+	 * @param[in] id	Internal ID of the achievement.
+	 * @param[in] value Value to which the statistic is set.
+	 */
+	bool setSpecialString(const String &id, const String &value);
+
+	/** @} */
+
 private:
 	float getStatFloatEx(const String &id, const String &section);
 	bool setStatFloatEx(const String &id, float value, const String &section);
