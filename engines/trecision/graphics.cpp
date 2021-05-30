@@ -118,7 +118,7 @@ void GraphicsManager::drawObj() {
 	if (_drawMask && _drawObjIndex >= 0) {
 		uint8 *mask = _vm->_maskPointers[_drawObjIndex];
 
-		for (uint16 b = _drawRect.top; b < _drawRect.bottom; ++b) {
+		for (uint16 y = _drawRect.top; y < _drawRect.bottom; ++y) {
 			uint16 sco = 0;
 			uint16 c = 0;
 			while (sco < _drawRect.width()) {
@@ -130,18 +130,18 @@ void GraphicsManager::drawObj() {
 				} else { // copy
 					const uint16 maskOffset = *mask;
 
-					if (maskOffset != 0 && b >= _drawRect.top + _drawObjRect.top && b < _drawRect.top + _drawObjRect.bottom) {
+					if (maskOffset != 0 && y >= _drawRect.top + _drawObjRect.top && y < _drawRect.top + _drawObjRect.bottom) {
 						if (sco >= _drawObjRect.left && sco + maskOffset < _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, b), buf, maskOffset * 2);
+							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, y), buf, maskOffset * 2);
 
 						else if (sco < _drawObjRect.left && sco + maskOffset < _drawObjRect.right && sco + maskOffset >= _drawObjRect.left)
-							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, b), buf + _drawObjRect.left - sco, (maskOffset + sco - _drawObjRect.left) * 2);
+							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, y), buf + _drawObjRect.left - sco, (maskOffset + sco - _drawObjRect.left) * 2);
 
 						else if (sco >= _drawObjRect.left && sco + maskOffset >= _drawObjRect.right && sco < _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, b), buf, (_drawObjRect.right - sco) * 2);
+							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, y), buf, (_drawObjRect.right - sco) * 2);
 
 						else if (sco < _drawObjRect.left && sco + maskOffset >= _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, b), buf + _drawObjRect.left - sco, (_drawObjRect.right - _drawObjRect.left) * 2);
+							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, y), buf + _drawObjRect.left - sco, (_drawObjRect.right - _drawObjRect.left) * 2);
 					}
 					sco += *mask;
 					buf += *mask++;
@@ -150,15 +150,25 @@ void GraphicsManager::drawObj() {
 			}
 		}
 	} else {
-		for (uint16 b = _drawObjRect.top; b < _drawObjRect.bottom; ++b) {
-			memcpy(_screenBuffer.getBasePtr(_drawRect.left + _drawObjRect.left, _drawRect.top + b),
-				   buf + (b * _drawRect.width()) + _drawObjRect.left, _drawObjRect.width() * 2);
+		const uint16 x = _drawRect.left + _drawObjRect.left;
+
+		if (x + _drawObjRect.width() >= MAXX || _drawObjRect.top + _drawObjRect.height() >= MAXY) {
+			warning("drawObj: Invalid surface, skipping");
+			return;
+		}
+		
+		for (uint16 y = _drawObjRect.top; y < _drawObjRect.bottom; ++y) {
+			memcpy(_screenBuffer.getBasePtr(x, _drawRect.top + y),
+				   buf + (y * _drawRect.width()) + _drawObjRect.left, _drawObjRect.width() * 2);
 		}
 	}
 }
 
 void GraphicsManager::eraseObj() {
-	_screenBuffer.fillRect(Common::Rect(_drawObjRect.left, _drawObjRect.top + TOP, _drawObjRect.right, _drawObjRect.bottom + TOP), 0);
+	Common::Rect eraseRect = _drawObjRect;
+	eraseRect.translate(0, TOP);
+	if (eraseRect.isValidRect())
+		_screenBuffer.fillRect(eraseRect, 0);
 }
 
 void GraphicsManager::clearScreen() {
@@ -175,6 +185,11 @@ void GraphicsManager::copyToScreenBuffer(const Graphics::Surface *surface, int x
 }
 
 void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, int x, int y) {
+	if (x + surface->w >= MAXX || y + surface->h >= MAXY) {
+		warning("copyToScreenBufferInner: Invalid surface, skipping");
+		return;
+	}
+
 	for (int curY = 0; curY < surface->h; ++curY) {
 		// NOTE: We use surface width for the pitch so that memcpy works
 		// correcly with surfaces from getSubArea()
@@ -183,6 +198,11 @@ void GraphicsManager::copyToScreenBufferInner(const Graphics::Surface *surface, 
 }
 
 void GraphicsManager::blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg) {
+	if (x + surface->w >= MAXX || y + surface->h >= MAXY) {
+		warning("blitToScreenBuffer: Invalid surface, skipping");
+		return;
+	}
+
 	const uint16 mask = (uint16)_screenFormat.RGBToColor(palette[0], palette[1], palette[2]);
 	Graphics::Surface *surface16 = surface->convertTo(_screenFormat, palette);
 
@@ -338,7 +358,12 @@ void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
  *				(dark) 0..8 (light)
  */
 void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
-	const uint16 val = _screenBuffer.getPixel(x, y);
+	if (x >= MAXX || y >= MAXY) {
+		warning("shadow: Invalid pixel, skipping");
+		return;
+	}
+
+	const uint16 val = (uint16)_screenBuffer.getPixel(x, y);
 	const uint16 shadow =
 			((((val & _bitMask[2]) * num >> 7) & _bitMask[2]) |
 			(((val & _bitMask[1]) * num >> 7) & _bitMask[1]) |
@@ -347,6 +372,11 @@ void GraphicsManager::shadow(uint16 x, uint16 y, uint8 num) {
 }
 
 void GraphicsManager::pixelAliasing(uint16 x, uint16 y) {
+	if (x >= MAXX || y >= MAXY) {
+		warning("pixelAliasing: Invalid pixel, skipping");
+		return;
+	}
+
 	int px1 = _screenBuffer.getPixel(x - 1, y);
 	int px2 = _screenBuffer.getPixel(x, y);
 
@@ -397,7 +427,7 @@ void GraphicsManager::dissolve(uint8 val) {
 
 		if (centerY - (int)y > TOP)
 			memset(_screenBuffer.getBasePtr(0, TOP), 0, (centerY - (int)y - TOP) * MAXX * 2);
-		if ((AREA + TOP) > centerY + (int)y)
+		if (AREA + TOP > centerY + (int)y)
 			memset(_screenBuffer.getBasePtr(0, centerY + (int)y), 0, (AREA + TOP - (centerY + (int)y)) * MAXX * 2);
 
 		float d1 = b * b - a * a * b + a * a / 4.0f;
