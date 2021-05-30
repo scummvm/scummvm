@@ -492,7 +492,7 @@ void LogicManager::endChangeRoom() {
 	else if (_vm->_curRoom == kRoom5A && !_vm->_room[kRoom5A].isDone())
 		_vm->_textMgr->characterSay(1408);
 	else if (_vm->_curRoom == kRoomControlPanel && (_vm->_oldRoom == kRoomControlPanel))
-		_vm->_logicMgr->doSys(o00LOAD);
+		_vm->_logicMgr->handleClickControlPanel(o00LOAD);
 	_vm->_inventoryObj[kItemPositioner].setFlagExtra(false);
 }
 
@@ -3600,199 +3600,89 @@ bool LogicManager::doMouseInventory() {
 	return !_vm->_flagCharacterExists && _vm->_curRoom != kRoom31P && _vm->_curRoom != kRoom35P;
 }
 
-void LogicManager::doMouseLeftRight() {
-	//  for the displacer
-	if ((_vm->_curObj >= oPULSANTE1AD) && (_vm->_curObj <= oPULSANTE33AD)) {
-		if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44TO45]._goRoom == kRoom45S) &&
-			(_vm->_obj[oEXIT41D]._goRoom == kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT))
-			_vm->_scheduler->mouseOperate(_vm->_curObj);
-		else if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44TO45]._goRoom == kRoom45S) &&
-				 (_vm->_obj[oEXIT41D]._goRoom != kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT)) {
-			_vm->_obj[oEXIT41D]._goRoom = kRoom45S;
-			_vm->_inventoryObj[kItemPositioner].setFlagExtra(true);
-			_vm->changeRoom(kRoom45S);
-		} else if (_vm->_obj[oEXIT41D]._goRoom != _vm->_obj[_vm->_curObj]._goRoom && (_vm->_curMessage->_event == ME_MRIGHT)) {
-			_vm->_obj[oEXIT41D]._goRoom = _vm->_obj[_vm->_curObj]._goRoom;
-			_vm->_inventoryObj[kItemPositioner].setFlagExtra(true);
-			_vm->changeRoom(_vm->_obj[oEXIT41D]._goRoom);
-		} else if ((_vm->_curMessage->_event == ME_MLEFT) && _vm->_curObj)
-			_vm->_scheduler->mouseExamine(_vm->_curObj);
-		else if ((_vm->_curMessage->_event == ME_MRIGHT) && _vm->_curObj)
-			_vm->_scheduler->mouseOperate(_vm->_curObj);
-		return;
-	}
-	// end of displacer
-
-	if (_vm->_curRoom == kRoom52) {
-		// snake escape 52
-		if (_vm->isObjectVisible(oSNAKEU52)) {
-			if (_vm->isGameArea(_vm->_mousePos) && !_vm->_flagUseWithStarted && (_vm->_curObj != oSNAKEU52)) {
-				_vm->startCharacterAction(a526, 0, 1, 0);
-				_vm->setObjectAnim(oSCAVO51, a516);
-				_vm->_snake52.set(_vm->_curMessage);
+void LogicManager::handleClickSphinxPuzzle() {
+	if (_vm->checkMask(_vm->_mousePos)) {
+		if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
+			_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
+		else if (_vm->_curObj == oPULSANTE2C) {
+			if (_vm->_curMessage->_event == ME_MLEFT) {
+				_vm->_scheduler->mouseExamine(_vm->_curObj);
 				return;
 			}
-		}
-	} else if (_vm->_curRoom == kRoomControlPanel) {
-		// Sys
-		_vm->checkMask(_vm->_mousePos);
-		doSys(_vm->_curObj);
-		return;
-	}
+			_vm->_animMgr->_animTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
+			_vm->setObjectVisible(oBASEWHEELS2C, false);
+			_vm->setObjectVisible(omWHEELS2C, false);
+			_vm->setObjectVisible(oPULSANTE2C, false);
+			_vm->setObjectVisible(_wheelPos[0] * 3 + 0 + oWHEEL1A2C, false);
+			_vm->setObjectVisible(_wheelPos[1] * 3 + 1 + oWHEEL1A2C, false);
+			_vm->setObjectVisible(_wheelPos[2] * 3 + 2 + oWHEEL1A2C, false);
+			_vm->setObjectVisible(oCAMPO2C, true);
+			_vm->setObjectVisible(oTEMPIO2C, true);
+			_vm->setObjectVisible(oLEONE2C, true);
+			_vm->setObjectVisible(oSFINGE2C, true);
+			_vm->setObjectVisible(oSTATUA2C, true);
+			_vm->setObjectVisible(od2CTO2E, true);
+			_vm->setObjectVisible(oCARTELLOA2C, true);
+			_vm->setObjectVisible(od2CTO26, true);
+			_vm->setObjectVisible(oWHEELS2C, true);
+			_vm->_flagShowCharacter = true;
+			_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
 
-	// If it's in a room without a character, like a map or a book
-	if (!_vm->_flagCharacterExists) {
-		if (_vm->isInventoryArea(_vm->_mousePos) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
-			if (_vm->isIconArea(_vm->_mousePos) && _vm->whatIcon(_vm->_mousePos) && (_vm->_inventoryStatus == INV_INACTION)) {
-				_vm->_useWith[WITH] = 0;
-				_vm->_curObj = 0;
-				_vm->_lightIcon = 0xFF;
-				_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
-				if (_vm->_curMessage->_event == ME_MRIGHT || _vm->_flagUseWithStarted)
-					_vm->useItem();
-				else
-					_vm->examineItem();
-			}
+			// right combination
+			if ((_wheelPos[0] == 7) && (_wheelPos[1] == 5) && (_wheelPos[2] == 11)) {
+				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, _vm->_curObj);
+				_vm->_obj[oSFINGE2C].setFlagPerson(false);
+			} else
+				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, _vm->_curObj);
+
 			return;
-		}
-
-		if ((_vm->_curMessage->_event == ME_MLEFT) && _vm->_curObj)
-			_vm->_scheduler->mouseExamine(_vm->_curObj);
-		else if ((_vm->_curMessage->_event == ME_MRIGHT) && _vm->_curObj)
-			_vm->_scheduler->mouseOperate(_vm->_curObj);
-
-		return;
-	}
-
-	// Special management for 2C wheels
-	if (_vm->isObjectVisible(oBASEWHEELS2C) && _vm->_curRoom == kRoom2C) {
-		if (_vm->checkMask(_vm->_mousePos)) {
-			if ((_vm->_curObj >= oWHEEL1A2C) && (_vm->_curObj <= oWHEEL12C2C))
-				_wheel = (_vm->_curObj - oWHEEL1A2C) % 3;
-			else if (_vm->_curObj == oPULSANTE2C) {
-				if (_vm->_curMessage->_event == ME_MLEFT) {
-					_vm->_scheduler->mouseExamine(_vm->_curObj);
-					return;
-				}
-				_vm->_animMgr->_animTab[aBKG2C]._flag &= ~SMKANIM_OFF1;
-				_vm->setObjectVisible(oBASEWHEELS2C, false);
-				_vm->setObjectVisible(omWHEELS2C, false);
-				_vm->setObjectVisible(oPULSANTE2C, false);
-				_vm->setObjectVisible(_wheelPos[0] * 3 + 0 + oWHEEL1A2C, false);
-				_vm->setObjectVisible(_wheelPos[1] * 3 + 1 + oWHEEL1A2C, false);
-				_vm->setObjectVisible(_wheelPos[2] * 3 + 2 + oWHEEL1A2C, false);
-				_vm->setObjectVisible(oCAMPO2C, true);
-				_vm->setObjectVisible(oTEMPIO2C, true);
-				_vm->setObjectVisible(oLEONE2C, true);
-				_vm->setObjectVisible(oSFINGE2C, true);
-				_vm->setObjectVisible(oSTATUA2C, true);
-				_vm->setObjectVisible(od2CTO2E, true);
-				_vm->setObjectVisible(oCARTELLOA2C, true);
-				_vm->setObjectVisible(od2CTO26, true);
-				_vm->setObjectVisible(oWHEELS2C, true);
-				_vm->_flagShowCharacter = true;
-				_vm->_animMgr->startSmkAnim(_vm->_room[_vm->_curRoom]._bkgAnim);
-
-				// right combination
-				if ((_wheelPos[0] == 7) && (_wheelPos[1] == 5) && (_wheelPos[2] == 11)) {
-					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTEAPERTURA, 0, 0, _vm->_curObj);
-					_vm->_obj[oSFINGE2C].setFlagPerson(false);
-				} else
-					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERACTION, MP_DEFAULT, a2C6PREMEPULSANTE, 0, 0, _vm->_curObj);
-
-				return;
-			} else
-				return;
-
-			if (_vm->_curMessage->_event == ME_MLEFT)
-				_wheelPos[_wheel] = (_wheelPos[_wheel] > 10) ? 0 : _wheelPos[_wheel] + 1;
-			if (_vm->_curMessage->_event == ME_MRIGHT)
-				_wheelPos[_wheel] = (_wheelPos[_wheel] < 1) ? 11 : _wheelPos[_wheel] - 1;
-
-			_vm->_soundMgr->play(wWHEELS2C);
-			_vm->setObjectVisible(_vm->_curObj, false);
-			_vm->setObjectVisible(_wheelPos[_wheel] * 3 + _wheel + oWHEEL1A2C, true);
-		}
-		return;
-	}
-
-	//	Game area
-	if (_vm->isGameArea(_vm->_mousePos) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
-		if (_vm->_flagScriptActive)
-			_vm->_curObj = _vm->_curMessage->_u32Param;
-
-		int pmousex = _vm->_curMessage->_u16Param1;
-		int pmousey = _vm->_curMessage->_u16Param2;
-		if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
-			if (_vm->checkMask(_vm->_mousePos)) {
-				if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
-					pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
-					pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
-				}
-			}
-			_vm->_pathFind->whereIs(pmousex, pmousey);
-			_vm->_pathFind->findPath();
-		}
-		_vm->_scheduler->initCharacterQueue();
-
-		if (_vm->checkMask(_vm->_mousePos) && !_vm->_flagDialogActive) {
-			if (_vm->_curRoom == kRoom1D && !_vm->_room[kRoom1D].hasExtra() && (_vm->_curObj != oSCALA1D))
-				_vm->_curObj = oDONNA1D;
-			else if (_vm->_curRoom == kRoom2B && _vm->_room[kRoom2B].hasExtra() && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BTO28)) {
-				_vm->_textMgr->clearLastText();
-				_vm->_curObj = oDOOR2B;
-				_vm->startCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
-				_vm->clearUseWith();
-				return;
-			} else if (_vm->_curRoom == kRoom35 && !_vm->_room[kRoom35].hasExtra()
-					&& ((_vm->_curObj == oFRONTOFFICEC35)
-			            || (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35)
-			            || (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
-				_vm->_curObj = oLASTLEV5;
-				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
-				_vm->clearUseWith();
-				return;
-			} else if ((_vm->_curMessage->_event == ME_MLEFT) &&
-					   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !_vm->_obj[_vm->_curObj].isFlagExamine()))) ||
-						(_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !_vm->_obj[_vm->_curObj].isFlagExamine()) || (_vm->_curObj == od2GVTO26))))) {
-				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
-				return;
-			}
-
-			if (_vm->_curMessage->_event == ME_MRIGHT) {
-				if (!_vm->_obj[_vm->_curObj].isFlagExamine() && (_vm->_curObj != 0)) {
-					if (_vm->_flagUseWithStarted) {
-						_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
-						return;
-					}
-					if (_vm->_obj[_vm->_curObj].isFlagRoomIn())
-						_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, _vm->_obj[_vm->_curObj]._anim, _vm->_obj[_vm->_curObj]._ninv);
-					else if (_vm->_obj[_vm->_curObj].isFlagRoomOut())
-						_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv);
-					_vm->_actor->actorStop();
-					_vm->_pathFind->nextStep();
-					_vm->_obj[_vm->_curObj].setFlagDone(true);
-				} else if (_vm->_obj[_vm->_curObj].isFlagUseWith()) {
-					_vm->_pathFind->_characterGoToPosition = -1;
-					_vm->_actor->actorStop();
-					_vm->_pathFind->nextStep();
-					_vm->_scheduler->mouseOperate(_vm->_curObj);
-				} else
-					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
-			} else
-				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
 		} else
-			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
-	} else if (_vm->isInventoryArea(_vm->_mousePos)) {
-		// Inventory area
-		if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
 			return;
 
+		if (_vm->_curMessage->_event == ME_MLEFT)
+			_wheelPos[_wheel] = (_wheelPos[_wheel] > 10) ? 0 : _wheelPos[_wheel] + 1;
+		if (_vm->_curMessage->_event == ME_MRIGHT)
+			_wheelPos[_wheel] = (_wheelPos[_wheel] < 1) ? 11 : _wheelPos[_wheel] - 1;
+
+		_vm->_soundMgr->play(wWHEELS2C);
+		_vm->setObjectVisible(_vm->_curObj, false);
+		_vm->setObjectVisible(_wheelPos[_wheel] * 3 + _wheel + oWHEEL1A2C, true);
+	}
+}
+
+void LogicManager::handleClickPositioner() {
+	if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44TO45]._goRoom == kRoom45S) &&
+		(_vm->_obj[oEXIT41D]._goRoom == kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT))
+		_vm->_scheduler->mouseOperate(_vm->_curObj);
+	else if ((_vm->_obj[_vm->_curObj]._goRoom == kRoom45) && (_vm->_obj[od44TO45]._goRoom == kRoom45S) &&
+			 (_vm->_obj[oEXIT41D]._goRoom != kRoom45S) && (_vm->_curMessage->_event == ME_MRIGHT)) {
+		_vm->_obj[oEXIT41D]._goRoom = kRoom45S;
+		_vm->_inventoryObj[kItemPositioner].setFlagExtra(true);
+		_vm->changeRoom(kRoom45S);
+	} else if (_vm->_obj[oEXIT41D]._goRoom != _vm->_obj[_vm->_curObj]._goRoom && (_vm->_curMessage->_event == ME_MRIGHT)) {
+		_vm->_obj[oEXIT41D]._goRoom = _vm->_obj[_vm->_curObj]._goRoom;
+		_vm->_inventoryObj[kItemPositioner].setFlagExtra(true);
+		_vm->changeRoom(_vm->_obj[oEXIT41D]._goRoom);
+	} else if ((_vm->_curMessage->_event == ME_MLEFT) && _vm->_curObj)
+		_vm->_scheduler->mouseExamine(_vm->_curObj);
+	else if ((_vm->_curMessage->_event == ME_MRIGHT) && _vm->_curObj)
+		_vm->_scheduler->mouseOperate(_vm->_curObj);
+}
+
+void LogicManager::handleClickSnakeEscape() {
+	if (_vm->isObjectVisible(oSNAKEU52)) {
+		if (_vm->isGameArea(_vm->_mousePos) && !_vm->_flagUseWithStarted && _vm->_curObj != oSNAKEU52) {
+			_vm->startCharacterAction(a526, 0, 1, 0);
+			_vm->setObjectAnim(oSCAVO51, a516);
+			_vm->_snake52.set(_vm->_curMessage);
+		}
+	}
+}
+
+// Handles rooms without a character, like maps or books
+void LogicManager::handleClickCloseup() {
+	if (_vm->isInventoryArea(_vm->_mousePos) && (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P)) {
 		if (_vm->isIconArea(_vm->_mousePos) && _vm->whatIcon(_vm->_mousePos) && (_vm->_inventoryStatus == INV_INACTION)) {
-			_vm->_scheduler->initCharacterQueue();
-			_vm->_actor->actorStop();
-			_vm->_pathFind->nextStep();
-			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
 			_vm->_useWith[WITH] = 0;
 			_vm->_curObj = 0;
 			_vm->_lightIcon = 0xFF;
@@ -3802,6 +3692,116 @@ void LogicManager::doMouseLeftRight() {
 			else
 				_vm->examineItem();
 		}
+		return;
+	}
+
+	if ((_vm->_curMessage->_event == ME_MLEFT) && _vm->_curObj)
+		_vm->_scheduler->mouseExamine(_vm->_curObj);
+	else if ((_vm->_curMessage->_event == ME_MRIGHT) && _vm->_curObj)
+		_vm->_scheduler->mouseOperate(_vm->_curObj);
+}
+
+void LogicManager::handleClickGameArea() {
+	if (_vm->_flagScriptActive)
+		_vm->_curObj = _vm->_curMessage->_u32Param;
+
+	int pmousex = _vm->_curMessage->_u16Param1;
+	int pmousey = _vm->_curMessage->_u16Param2;
+	if (!_vm->_logicMgr->mouseClick(_vm->_curObj)) {
+		if (_vm->checkMask(_vm->_mousePos)) {
+			if ((_vm->_obj[_vm->_curObj]._lim.right - _vm->_obj[_vm->_curObj]._lim.left) < MAXX / 7) {
+				pmousex = (_vm->_obj[_vm->_curObj]._lim.left + _vm->_obj[_vm->_curObj]._lim.right) / 2;
+				pmousey = ((_vm->_obj[_vm->_curObj]._lim.top + _vm->_obj[_vm->_curObj]._lim.bottom) / 2) + TOP;
+			}
+		}
+		_vm->_pathFind->whereIs(pmousex, pmousey);
+		_vm->_pathFind->findPath();
+	}
+	_vm->_scheduler->initCharacterQueue();
+
+	if (_vm->checkMask(_vm->_mousePos) && !_vm->_flagDialogActive) {
+		if (_vm->_curRoom == kRoom1D && !_vm->_room[kRoom1D].hasExtra() && (_vm->_curObj != oSCALA1D))
+			_vm->_curObj = oDONNA1D;
+		else if (_vm->_curRoom == kRoom2B && _vm->_room[kRoom2B].hasExtra() && (_vm->_curObj != oCARTELLO2B) && (_vm->_curObj != od2BTO28)) {
+			_vm->_textMgr->clearLastText();
+			_vm->_curObj = oDOOR2B;
+			_vm->startCharacterAction(a2B1PROVAAPRIREPORTA, 0, 0, 0);
+			_vm->clearUseWith();
+			return;
+		} else if (_vm->_curRoom == kRoom35 && !_vm->_room[kRoom35].hasExtra() && ((_vm->_curObj == oFRONTOFFICEC35) || (_vm->_curObj == oFRONTOFFICEA35) || (_vm->_curObj == oASCENSORE35) || (_vm->_curObj == oMONITOR35) || (_vm->_curObj == oSEDIA35) || (_vm->_curObj == oRIBELLEA35) || (_vm->_curObj == oCOMPUTER35) || (_vm->_curObj == oGIORNALE35))) {
+			_vm->_curObj = oLASTLEV5;
+			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
+			_vm->clearUseWith();
+			return;
+		} else if ((_vm->_curMessage->_event == ME_MLEFT) &&
+				   ((!_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == oENTRANCE2E) || (_vm->_curObj == od24TO26) || (_vm->_curObj == od21TO23 && !_vm->_obj[_vm->_curObj].isFlagExamine()))) ||
+					(_vm->_room[_vm->_curRoom].hasExtra() && ((_vm->_curObj == od2ETO2C) || (_vm->_curObj == od24TO23) || (_vm->_curObj == od21TO22 && !_vm->_obj[_vm->_curObj].isFlagExamine()) || (_vm->_curObj == od2GVTO26))))) {
+			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+			return;
+		}
+
+		if (_vm->_curMessage->_event == ME_MRIGHT) {
+			if (!_vm->_obj[_vm->_curObj].isFlagExamine() && (_vm->_curObj != 0)) {
+				if (_vm->_flagUseWithStarted) {
+					_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+					return;
+				}
+				if (_vm->_obj[_vm->_curObj].isFlagRoomIn())
+					_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, _vm->_obj[_vm->_curObj]._anim, _vm->_obj[_vm->_curObj]._ninv);
+				else if (_vm->_obj[_vm->_curObj].isFlagRoomOut())
+					_vm->changeRoom(_vm->_obj[_vm->_curObj]._goRoom, 0, _vm->_obj[_vm->_curObj]._ninv);
+				_vm->_actor->actorStop();
+				_vm->_pathFind->nextStep();
+				_vm->_obj[_vm->_curObj].setFlagDone(true);
+			} else if (_vm->_obj[_vm->_curObj].isFlagUseWith()) {
+				_vm->_pathFind->_characterGoToPosition = -1;
+				_vm->_actor->actorStop();
+				_vm->_pathFind->nextStep();
+				_vm->_scheduler->mouseOperate(_vm->_curObj);
+			} else
+				_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
+		} else
+			_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOEXAMINE, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, _vm->_curObj);
+	} else
+		_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTO, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+}
+
+void LogicManager::handleClickInventoryArea() {
+	if (_vm->_animMgr->_playingAnims[kSmackerAction] || _vm->_flagDialogActive || _vm->_curRoom == kRoomControlPanel)
+		return;
+
+	if (_vm->isIconArea(_vm->_mousePos) && _vm->whatIcon(_vm->_mousePos) && (_vm->_inventoryStatus == INV_INACTION)) {
+		_vm->_scheduler->initCharacterQueue();
+		_vm->_actor->actorStop();
+		_vm->_pathFind->nextStep();
+		_vm->_scheduler->doEvent(MC_CHARACTER, ME_CHARACTERGOTOACTION, MP_DEFAULT, _vm->_curMessage->_u16Param1, _vm->_curMessage->_u16Param2, 0, 0);
+		_vm->_useWith[WITH] = 0;
+		_vm->_curObj = 0;
+		_vm->_lightIcon = 0xFF;
+		_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
+		if (_vm->_curMessage->_event == ME_MRIGHT || _vm->_flagUseWithStarted)
+			_vm->useItem();
+		else
+			_vm->examineItem();
+	}
+}
+
+void LogicManager::doMouseLeftRight() {
+	if (_vm->_curObj >= oPULSANTE1AD && _vm->_curObj <= oPULSANTE33AD) {
+		handleClickPositioner();
+	} else if (_vm->isObjectVisible(oBASEWHEELS2C) && _vm->_curRoom == kRoom2C) {
+		handleClickSphinxPuzzle();
+	} else if (_vm->_curRoom == kRoomControlPanel) {
+		handleClickControlPanel(_vm->_curObj);
+	} else if (!_vm->_flagCharacterExists) {
+		handleClickCloseup();
+	} else if (_vm->isGameArea(_vm->_mousePos) && !_vm->_animMgr->_playingAnims[kSmackerAction]) {
+		if (_vm->_curRoom == kRoom52)
+			handleClickSnakeEscape();
+
+		handleClickGameArea();
+	} else if (_vm->isInventoryArea(_vm->_mousePos)) {
+		handleClickInventoryArea();
 	}
 }
 
@@ -3929,7 +3929,9 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	}
 }
 
-void LogicManager::doSys(uint16 curObj) {
+void LogicManager::handleClickControlPanel(uint16 curObj) {
+	_vm->checkMask(_vm->_mousePos);
+
 	switch (curObj) {
 	case o00QUIT:
 		if (_vm->quitPrompt())

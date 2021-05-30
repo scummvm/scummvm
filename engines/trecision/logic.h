@@ -90,7 +90,14 @@ private:
 	void startCharacterAnimations();
 	bool startPlayDialog();
 	void initControlPanel();
-	void doSys(uint16 curObj);
+
+	void handleClickControlPanel(uint16 curObj);
+	void handleClickSphinxPuzzle();
+	void handleClickPositioner();
+	void handleClickSnakeEscape();
+	void handleClickCloseup();
+	void handleClickGameArea();
+	void handleClickInventoryArea();
 };
 // end of class
 
