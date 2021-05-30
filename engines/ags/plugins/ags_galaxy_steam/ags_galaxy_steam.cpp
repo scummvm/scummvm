@@ -146,6 +146,9 @@ void AGS2Client::FindLeaderboard(ScriptMethodParams &params) {
 }
 
 void AGS2Client::Initialize(ScriptMethodParams &params) {
+	PARAMS2(char *, clientId, char *, clientSecret);
+	AchMan.setSpecialString("clientId", clientId);
+	AchMan.setSpecialString("clientSecret", clientSecret);
 	params._result = 0;
 }
 
