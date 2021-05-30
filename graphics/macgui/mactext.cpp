@@ -1153,9 +1153,6 @@ void MacText::drawSelection(int xoff, int yoff) {
 	int numLines = 0;
 	int x1 = 0, x2 = 0;
 
-	start = MIN<int>(start + yoff, getDimensions().height());
-	end = MIN<int>(end + yoff, getDimensions().height());
-
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
@@ -1175,7 +1172,7 @@ void MacText::drawSelection(int xoff, int yoff) {
 			numLines--;
 		}
 
-		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, y);
+		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height() - 1));
 
 		for (int x = x1; x < x2; x++, ptr++)
 			if (*ptr == _fgcolor)
