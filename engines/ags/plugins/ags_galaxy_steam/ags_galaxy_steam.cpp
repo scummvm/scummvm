@@ -125,33 +125,48 @@ void AGS2Client::get_Initialized(ScriptMethodParams &params) {
 }
 
 void AGS2Client::get_CurrentLeaderboardName(ScriptMethodParams &params) {
+	warning("AGS2Client::get_CurrentLeaderboardName() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::RequestLeaderboard(ScriptMethodParams &params) {
+	warning("AGS2Client::RequestLeaderboard() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::UploadScore(ScriptMethodParams &params) {
+	warning("AGS2Client::UploadScore() is not implemented");
 	params._result = 0;
 }
 
 void AGS2Client::geti_LeaderboardNames(ScriptMethodParams &params) {
+	warning("AGS2Client::geti_LeaderboardNames() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::geti_LeaderboardScores(ScriptMethodParams &params) {
+	warning("AGS2Client::geti_LeaderboardScores() is not implemented");
 	params._result = 0;
 }
 
 void AGS2Client::get_LeaderboardCount(ScriptMethodParams &params) {
+	warning("AGS2Client::get_LeaderboardCount() is not implemented");
 	params._result = 0;
 }
 
 void AGS2Client::GetUserName(ScriptMethodParams &params) {
+	warning("AGS2Client::GetUserName() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::GetCurrentGameLanguage(ScriptMethodParams &params) {
+	warning("AGS2Client::GetCurrentGameLanguage() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::FindLeaderboard(ScriptMethodParams &params) {
+	warning("AGS2Client::FindLeaderboard() is not implemented");
+	params._result = 0;
 }
 
 void AGS2Client::Initialize(ScriptMethodParams &params) {

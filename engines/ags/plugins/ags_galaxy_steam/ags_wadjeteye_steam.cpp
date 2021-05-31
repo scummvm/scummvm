@@ -31,10 +31,12 @@ AGSWadjetEyeSteam::AGSWadjetEyeSteam() : AGSSteam() {
 }
 
 void AGSWadjetEyeSteam::AddAchievement(ScriptMethodParams &params) {
+	warning("AGSWadjetEyeSteam::AddAchievement() is not implemented");
 	params._result = 0;
 }
 
 void AGSWadjetEyeSteam::AddStat(ScriptMethodParams &params) {
+	warning("AGSWadjetEyeSteam::AddStat() is not implemented");
 	params._result = 0;
 }
 
