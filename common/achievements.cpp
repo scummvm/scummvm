@@ -229,6 +229,17 @@ int AchievementsManager::getStatInt(String const &id) {
 }
 
 
+String AchievementsManager::getStatRaw(String const &id) {
+	if (!isReady()) {
+		return "";
+	}
+
+	String tmp;
+	_iniFile->getKey(id, "statistics", tmp);
+	return tmp;
+}
+
+
 bool AchievementsManager::setSpecialString(String const &id, String const &value) {
 	if (!isReady()) {
 		return false;

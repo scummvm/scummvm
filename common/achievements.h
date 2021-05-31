@@ -162,6 +162,13 @@ public:
 	bool setStatFloat(const String &id, float value);
 
 	/**
+	 * Get a statistic (raw string).
+	 *
+	 * @param[in] id	Internal ID of the achievement.
+	 */
+	String getStatRaw(const String &id);
+
+	/**
 	 * Get an average rate statistic (float).
 	 * Calcucated by devision the sum of count by the sum of times.
 	 *
