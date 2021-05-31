@@ -28,8 +28,6 @@
 #define SAGA2_ACTOR_H
 
 #include "saga2/objects.h"
-#include "saga2/tile.h"
-#include "saga2/effects.h"
 
 namespace Saga2 {
 

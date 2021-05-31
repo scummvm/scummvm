@@ -29,6 +29,7 @@
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/tilemode.h"
+#include "saga2/calender.h"
 
 #include "saga2/tile.h"
 #include "saga2/setup.h"

@@ -31,17 +31,13 @@
    Includes
  * ===================================================================== */
 
-#include "saga2/actor.h"
-#include "saga2/task.h"
-#include "saga2/calender.h"
+#include "saga2/target.h"
 
 namespace Saga2 {
 
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-const uint16 indefinitely = CalenderTime::framesPerDay;
+class Actor;
+class Task;
+class TaskStack;
 
 //  Constants representing the non-virtual ActorAssignment classes
 enum AssignmentTypes {
@@ -63,10 +59,7 @@ class ActorAssignment {
 
 public:
 	//  Constructor
-	ActorAssignment(uint16 until) :
-		startFrame(calender.frameInDay()),
-		endFrame(until) {
-	}
+	ActorAssignment(uint16 until);
 
 	//  Constructor -- reconstruct from archive buffer
 	ActorAssignment(void **buf);
@@ -99,11 +92,7 @@ public:
 	virtual bool isValid(void);
 
 	//  Return a pointer to the actor to which this assignment belongs
-	Actor *getActor(void) const {
-		// FIXME: This is utterly evil
-		warning("getActor(): dangerous pointer arithmetic, this will not work");
-		return (Actor *)(this - offsetof(Actor, assignmentBuf));
-	}
+	Actor *getActor(void) const;
 
 	//  Return an integer representing the class of this assignment
 	virtual int16 type(void) const = 0;
@@ -189,10 +178,7 @@ public:
 	//  Constructors -- initial assignment construction
 
 	//  Construct with no time limit and a specific TilePoint
-	HuntToBeNearLocationAssignment(const TilePoint &tp, uint16 r) :
-		ActorAssignment(indefinitely) {
-		initialize(LocationTarget(tp), r);
-	}
+	HuntToBeNearLocationAssignment(const TilePoint &tp, uint16 r);
 
 	//  Construct with time limit and a specific TilePoint
 	HuntToBeNearLocationAssignment(
@@ -204,10 +190,7 @@ public:
 	}
 
 	//  Construct with no time limit and an abstract target
-	HuntToBeNearLocationAssignment(const Target &targ, uint16 r) :
-		ActorAssignment(indefinitely) {
-		initialize(targ, r);
-	}
+	HuntToBeNearLocationAssignment(const Target &targ, uint16 r);
 
 	//  Construct with time limit and an abstract target
 	HuntToBeNearLocationAssignment(
@@ -269,11 +252,7 @@ public:
 	HuntToBeNearActorAssignment(
 	    Actor               *a,
 	    uint16              r,
-	    bool                trackFlag = FALSE) :
-		ActorAssignment(indefinitely) {
-		assert(isActor(a) && a != getActor());
-		initialize(SpecificActorTarget(a), r, trackFlag);
-	}
+	    bool                trackFlag = FALSE);
 
 	//  Construct with time limit and specific actor
 	HuntToBeNearActorAssignment(
@@ -290,10 +269,7 @@ public:
 	HuntToBeNearActorAssignment(
 	    const ActorTarget   &at,
 	    uint16              r,
-	    bool                trackFlag = FALSE) :
-		ActorAssignment(indefinitely) {
-		initialize(at, r, trackFlag);
-	}
+	    bool                trackFlag = FALSE);
 
 	//  Construct with time limit and abstract actor target
 	HuntToBeNearActorAssignment(
@@ -352,11 +328,7 @@ public:
 	//  Constructors -- initial assignment construction
 
 	//  Construct with no time limit and specific actor
-	HuntToKillAssignment(Actor *a, bool trackFlag = FALSE) :
-		ActorAssignment(indefinitely) {
-		assert(isActor(a) && a != getActor());
-		initialize(SpecificActorTarget(a), trackFlag, TRUE);
-	}
+	HuntToKillAssignment(Actor *a, bool trackFlag = FALSE);
 
 	//  Construct with time limit and specific actor
 	HuntToKillAssignment(
@@ -371,10 +343,7 @@ public:
 	//  Construct with no time limit and abstract actor target
 	HuntToKillAssignment(
 	    const ActorTarget   &at,
-	    bool                trackFlag = FALSE) :
-		ActorAssignment(indefinitely) {
-		initialize(at, trackFlag, FALSE);
-	}
+	    bool                trackFlag = FALSE);
 
 	//  Construct with time limit and abstract actor target
 	HuntToKillAssignment(

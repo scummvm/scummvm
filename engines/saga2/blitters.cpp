@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/saga2.h"
+#include "saga2/blitters.h"
 #include "common/debug.h"
 
 namespace Saga2 {

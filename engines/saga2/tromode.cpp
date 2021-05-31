@@ -32,38 +32,40 @@
 #include "saga2/cmisc.h"
 #include "saga2/input.h"
 #include "saga2/fta.h"
-#include "saga2/videos.h"
 #include "saga2/player.h"
 #include "saga2/tromode.h"
-#include "saga2/messager.h"
-#include "saga2/config.h"
 #include "saga2/display.h"
 
 #include "saga2/mainmap.h"
 
 namespace Saga2 {
 
+#define VIDEO_EXTENSION ".SMK"
+
+#define INTRO_VID1  "TRIMARK" VIDEO_EXTENSION
+#define INTRO_VID2  "INTRO" VIDEO_EXTENSION
+
+#define WIN_VID_1   "END_1" VIDEO_EXTENSION
+#define WIN_VID_2   "END_2" VIDEO_EXTENSION
+#define WIN_VID_3   "END_3A" VIDEO_EXTENSION
+#define WIN_VID_4   "END_3B" VIDEO_EXTENSION
+
+#define LOSE_VID    "END_4" VIDEO_EXTENSION
+
+
 #define ERASE_BETWEEN TRUE
 #define VIDEO_X 0
 #define VIDEO_Y 0
 
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
-
-extern bool gameRunning;        // true while game running
+extern bool gameRunning;
 extern gMouseState  prevState;
-extern gMousePointer    pointer;    // the actual pointer
+extern gMousePointer    pointer;
 extern MouseExtState mouseQueue[];
 extern configuration    globalConfig;
 extern bool allPlayerActorsDead;
 
 extern int16        queueIn,
        queueOut;
-
-/* ===================================================================== *
-   External Prototypes
- * ===================================================================== */
 
 int16 OptionsDialog(bool disableSaveResume = FALSE);
 void SystemEventLoop(void);
@@ -80,35 +82,21 @@ void suspendWinTimer(void);
 void resumeWinTimer(void);
 #endif
 
-/* ===================================================================== *
-   Local Prototypes
- * ===================================================================== */
-
 static void doIntro(void);
 static void doWintro(int16 whichOne);
 static void doLostro(void);
 
-void waitForVideoFile(char *fileName);
-static void waitForTimer(uint32 tenthsOfSecond);
 static void waitForVideo(void);
 void waitForInput(void);
 
 static void TroModeSetup(void);
 static void TroModeCleanup(void);
 
-/* ===================================================================== *
-   Locals
- * ===================================================================== */
-
 static bool abortFlag = FALSE;
 #ifndef NO_LOAD_AFTER_WIN
 //DO_OUTRO_IN_CLEANUP
 static int whichOutro = -1;
 #endif
-
-/* ===================================================================== *
-   Main entry points
- * ===================================================================== */
 
 // ------------------------------------------------------------------------
 // Play intro video
@@ -136,7 +124,6 @@ extern GameWorld            *currentWorld;          // pointer to the current wo
 
 void setWintroMode(int16 whichOne) {
 #ifdef NO_LOAD_AFTER_WIN
-	waitForVideoFile("INTRO.SMK");
 	if (!abortFlag) {
 		freeAllTileBanks();
 		currentWorld = NULL;
@@ -159,7 +146,6 @@ void fadeUp();
 void dumpGBASE(char *msg);
 
 void setLostroMode(void) {
-	waitForVideoFile("INTRO.SMK");
 	allPlayerActorsDead = FALSE;
 	if (GameMode::newmodeFlag)
 		GameMode::update();
@@ -226,55 +212,6 @@ static void TroModeCleanup(void) {
    Wait for Event type routines
  * ===================================================================== */
 
-//-----------------------------------------------------------------------
-//	Wait till file exists
-
-void waitForVideoFile(char *fileName) {     // file name & extension
-	char filespec[260];
-	bool fe;
-
-	abortFlag = FALSE;
-
-	if (ConfMan.getBool("disable_videos")) {
-		abortFlag = TRUE;
-		return;
-	}
-
-	strncpy(filespec, globalConfig.videoFilePath, 260);
-	if (filespec[strlen(filespec) - 1] != '\\')
-		strcat(filespec, "\\");
-
-	strcat(filespec, fileName);
-
-	fe = fileExists(filespec);
-
-	if (!fe) {
-		abortFlag = TRUE;
-		return;
-	}
-
-	if (!fileReadable(filespec)) {
-		//systemConfigError( cpResFileLocked, filespec);
-		abortFlag = TRUE;
-		return;
-	}
-
-	return;
-}
-
-// ------------------------------------------------------------------------
-// Wait a certain amount of time
-
-static void waitForTimer(uint32 tenthsOfSecond) {
-	uint32 start = gameTime;
-	uint32 target = start + (TICKSPERSECOND * tenthsOfSecond / 10);
-	while (gameTime < target) {
-		SystemEventLoop();
-		if (abortFlag)
-			return;
-	}
-}
-
 // ------------------------------------------------------------------------
 // Wait till a video completes
 
@@ -283,6 +220,8 @@ static void waitForVideo(void) {
 		SystemEventLoop();
 		if (abortFlag)
 			return;
+
+		g_system->delayMillis(10);
 	}
 }
 
@@ -295,6 +234,9 @@ void waitForInput(void) {
 		SystemEventLoop();
 		if (abortFlag)
 			return;
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
 	}
 }
 
@@ -302,7 +244,7 @@ void waitForInput(void) {
    Video playback
  * ===================================================================== */
 
-static void playAVideo(char *fileName, int x, int y) { //, int16 from, int16 to )
+static void playAVideo(const char *fileName, int x, int y) { //, int16 from, int16 to )
 	g_vm->startVideo(fileName, x, y);
 	if (!g_vm->checkVideo()) {
 		g_vm->endVideo();
