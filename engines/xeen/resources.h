@@ -527,6 +527,41 @@ public:
 			int KEY_RECHRG;
 			int KEY_GOLD;
 		} DIALOGS_ITEMS;
+
+		struct {
+			int KEY_DELETE;
+			int KEY_REMOVE;
+			int KEY_CREATE;
+			int KEY_EXIT;
+		} DIALOGS_PARTY;
+
+		struct {
+			int KEY_QUEST_ITEMS;
+			int KEY_CURRENT_QUESTS;
+			int KEY_AUTO_NOTES;
+		} DIALOGS_QUESTS;
+
+		struct {
+			int KEY_NEXT;
+		} DIALOGS_QUICK_FIGHT;
+
+		struct {
+			int KEY_CAST;
+			int KEY_NEW;
+			int KEY_FIRE;
+			int KEY_ELEC;
+			int KEY_COLD;
+			int KEY_ACID;
+			int KEY_SET;
+			int KEY_RETURN;
+		} DIALOGS_SPELLS;
+
+		struct {
+			int KEY_DEP;
+			int KEY_WITH;
+			int KEY_GOLD;
+			int KEY_GEMS;
+		} LOCATIONS;
 	} KEY_CONSTANTS;
 
 

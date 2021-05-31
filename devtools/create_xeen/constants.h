@@ -1308,6 +1308,51 @@ public:
 			virtual const int KEY_GOLD() = 0;
 		};
 		virtual DialogsItems *DIALOGS_ITEMS() = 0;
+
+		class DialogsParty {
+		public:
+			virtual const int KEY_DELETE() = 0;
+			virtual const int KEY_REMOVE() = 0;
+			virtual const int KEY_CREATE() = 0;
+			virtual const int KEY_EXIT() = 0;
+		};
+		virtual DialogsParty *DIALOGS_PARTY() = 0;
+
+		class DialogsQuests {
+		public:
+			virtual const int KEY_QUEST_ITEMS() = 0;
+			virtual const int KEY_CURRENT_QUESTS() = 0;
+			virtual const int KEY_AUTO_NOTES() = 0;
+		};
+		virtual DialogsQuests *DIALOGS_QUESTS() = 0;
+
+		class DialogsQuickFight {
+		public:
+			virtual const int KEY_NEXT() = 0;
+		};
+		virtual DialogsQuickFight *DIALOGS_QUICK_FIGHT() = 0;
+
+		class DialogsSpells {
+		public:
+			virtual const int KEY_CAST() = 0;
+			virtual const int KEY_NEW() = 0;
+			virtual const int KEY_FIRE() = 0;
+			virtual const int KEY_ELEC() = 0;
+			virtual const int KEY_COLD() = 0;
+			virtual const int KEY_ACID() = 0;
+			virtual const int KEY_SET() = 0;
+			virtual const int KEY_RETURN() = 0;
+		};
+		virtual DialogsSpells *DIALOGS_SPELLS() = 0;
+
+		class Locations {
+		public:
+			virtual const int KEY_DEP() = 0;
+			virtual const int KEY_WITH() = 0;
+			virtual const int KEY_GOLD() = 0;
+			virtual const int KEY_GEMS() = 0;
+		};
+		virtual Locations *LOCATIONS() = 0;
 	};
 	virtual KeyConstants *KEY_CONSTANTS() = 0;
 };
