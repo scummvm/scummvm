@@ -67,6 +67,12 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 
 	_descriptions = info.descriptions;
 
+	for (uint32 i = 0; i < info.stats.size(); i++) {
+		if (!(_iniFile->hasKey(info.stats[i].id, "statistics"))) {
+			_iniFile->setKey(info.stats[i].id, "statistics", info.stats[i].start);
+		}
+	}
+
 	setSpecialString("platform", platform);
 	setSpecialString("gameId", info.appId);
 

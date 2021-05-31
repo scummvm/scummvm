@@ -50,6 +50,15 @@ enum AchievementsPlatform {
 };
 
 /**
+ * Information structure for game-specific statistics.
+ */
+struct StatDescription {
+	const char *id;      //!< Stat internal ID, such as "ITEMS_THROWN".
+	const char *comment; //!< Optional stat comment, such as "Items Thrown".
+	const char *start;   //!< Stat default value, such as "0".
+};
+
+/**
  * Information structure for game-specific achievements.
  */
 struct AchievementDescription {
@@ -65,6 +74,7 @@ struct AchievementDescription {
 struct AchievementsInfo {
 	Common::AchievementsPlatform platform;              //!< Achievements platform, such as "STEAM_ACHIEVEMENTS".
 	Common::String appId;                               //!< Achievements application ID of the given platform.
+	Common::Array<StatDescription> stats;               //!< Descriptions of all game stats.
 	Common::Array<AchievementDescription> descriptions; //!< Descriptions of all game achievements.
 
 	AchievementsInfo() { platform = Common::UNK_ACHIEVEMENTS; }
