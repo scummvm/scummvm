@@ -29,6 +29,9 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
+namespace Video {
+class SmackerDecoder;
+};
 
 namespace Saga2 {
 
@@ -62,7 +65,7 @@ public:
 	void freeExeResources();
 
 	// itevideo.cpp
-	void startVideo(char *fileName, int x, int y);
+	void startVideo(const char *fileName, int x, int y);
 	bool checkVideo(void);
 	void endVideo(void);
 	void abortVideo(void);
@@ -70,6 +73,10 @@ public:
 public:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
+private:
+	Video::SmackerDecoder *_smkDecoder;
+	int _videoX, _videoY;
 };
 
 extern Saga2Engine *g_vm;

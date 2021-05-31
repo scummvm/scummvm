@@ -24,6 +24,9 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "graphics/palette.h"
+#include "video/smk_decoder.h"
+
 #include "saga2/std.h"
 
 namespace Saga2 {
@@ -34,29 +37,62 @@ static bool nameCheck(char name[], const char ext[]) {
 	size_t l = strlen(name);
 	if (l < 5 || 0 != scumm_stricmp(name + (l - strlen(ext)), ext))
 		strcat(name, ext);
-	return true; //fileExists(name);
+	return true;
 }
 
-void Saga2Engine::startVideo(char *fileName, int x, int y) {
+void Saga2Engine::startVideo(const char *fileName, int x, int y) {
 	char file[260];
-	strncpy(file, fileName, 260);
+	strcpy(file, "video/");
+	strncat(file, fileName, 260);
 	nameCheck(file, VIDEO_EXT);
 
-	//vp->StartPlay(file, x, y,VideoSMK);
+	if (!_smkDecoder)
+		_smkDecoder = new Video::SmackerDecoder();
+
+	if (!_smkDecoder->loadFile(file)) {
+		warning("startVideo: Cannot open file %s", file);
+
+		return;
+	}
+
+	_videoX = x;
+	_videoY = y;
+
+	_smkDecoder->start();
 }
 
 bool Saga2Engine::checkVideo(void) {
+	if (!_smkDecoder)
+		return false;
+
+	if (_smkDecoder->endOfVideo())
+		return false;
+
+	if (_smkDecoder->needsUpdate()) {
+		const Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+		if (frame) {
+			g_system->copyRectToScreen(frame->getPixels(), frame->pitch, _videoX, _videoY, frame->w, frame->h);
+
+			if (_smkDecoder->hasDirtyPalette())
+				g_system->getPaletteManager()->setPalette(_smkDecoder->getPalette(), 0, 256);
+
+			g_system->updateScreen();
+		}
+	}
+
 	return true;
-	//return vp->CheckPlay();
 }
 
 void Saga2Engine::abortVideo(void) {
-	//endVideo();
+	endVideo();
 }
 
 void Saga2Engine::endVideo() {
-	//if (vp)
-	//	vp->EndPlay();
+	if (_smkDecoder)
+		_smkDecoder->stop();
+
+	delete _smkDecoder;
+	_smkDecoder = nullptr;
 }
 
 } // end of namespace Saga2

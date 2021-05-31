@@ -59,6 +59,9 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	g_vm = this;
 
+	_smkDecoder = nullptr;
+	_videoX = _videoY = 0;
+
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 
 	debug("Saga2Engine::Saga2Engine");
@@ -85,7 +88,12 @@ Common::Error Saga2Engine::run() {
 
 	loadExeResources();
 
-	loadingScreen();
+	startVideo("INTRO", 0, 0);
+	while (!shouldQuit() && checkVideo()) {
+		Common::Event event;
+		g_system->getEventManager()->pollEvent(event);
+		g_system->delayMillis(10);
+	}
 
 	if (openResources()) {
 		testOpenImage();
