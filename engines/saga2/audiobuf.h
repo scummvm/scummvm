@@ -78,13 +78,6 @@ public:
 	uint32          rSize;                       // virtual remaining read size
 	void            *rData;                      // virtual read data buffer
 
-	// Note that buffers do not follow canonical form
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio buffer mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 	Buffer(size_t newSize);
 	virtual ~Buffer(void);
 
@@ -125,12 +118,6 @@ public:
 
 	workBuffer(size_t newSize, int16 newID);
 	~workBuffer(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio wk bfr mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	uint32 sample_status(void);           // gives the status of the buffer as a whole
 	void reset(void);                    // initialize buffer
@@ -173,12 +160,6 @@ public:
 
 	doubleBuffer(size_t newSize, audioInterface *sd, int16 newID);
 	~doubleBuffer(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud dble buf mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	uint32 sample_status(void);           // gives the status of the buffer as a whole
 	void reset(void);                    // initialize buffer
@@ -219,12 +200,6 @@ public:
 
 	singleBuffer(size_t newSize, audioInterface *sd, int16 newID);
 	~singleBuffer(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud sgl buf mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	uint32 sample_status(void);           // gives the status of the buffer as a whole
 	void reset(void);                    // initialize buffer
@@ -272,12 +247,6 @@ public:
 
 	musicBuffer(size_t newSize, audioInterface *sd, int16 newID);
 	~musicBuffer(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud music buf mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	uint32 sample_status(void);           // gives the status of the buffer as a whole
 	void reset(void);                    // initialize buffer
@@ -321,12 +290,6 @@ public:
 
 	cacheBuffer(size_t newSize, int16 newID);
 	~cacheBuffer(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud cache buf mgr");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	uint32 sample_status(void);           // gives the status of the buffer as a whole
 	void reset(void);                    // initialize buffer

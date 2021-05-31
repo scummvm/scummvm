@@ -27,10 +27,9 @@
 #ifndef SAGA2_COMBAT_H
 #define SAGA2_COMBAT_H
 
-#include "saga2/annoy.h"
-
 namespace Saga2 {
-//-----------------------------------------------------------------------
+
+class Location;
 
 enum weaponHitType {
 	hitMiss     = 0,

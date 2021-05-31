@@ -31,6 +31,8 @@
 #include "saga2/tile.h"
 #include "saga2/property.h"
 
+#include "saga2/pclass.r"
+
 namespace Saga2 {
 
 //  Determine if this object is just an object

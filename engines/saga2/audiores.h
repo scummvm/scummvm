@@ -29,6 +29,9 @@
 
 namespace Saga2 {
 
+class Buffer;
+class soundSample;
+
 int16 hResSeek(Buffer &sb, soundSample &ss, hResContext *hrc, bool Cheksize);
 int16 hResRead(Buffer &sb, soundSample &ss, hResContext *hrc);
 int16 hResFlush(Buffer &sb, soundSample &ss, hResContext *hrc);

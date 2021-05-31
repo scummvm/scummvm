@@ -31,6 +31,9 @@
 
 namespace Saga2 {
 
+class Actor;
+class GameObject;
+
 // ------------------------------------------------------------------
 // Effects of spells and other things
 

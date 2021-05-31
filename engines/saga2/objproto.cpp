@@ -42,7 +42,9 @@
 #include "saga2/magic.h"
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
+
 #include "saga2/methods.r"
+#include "saga2/pclass.r"
 
 namespace Saga2 {
 

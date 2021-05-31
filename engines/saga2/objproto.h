@@ -29,15 +29,15 @@
 
 #include "saga2/idtypes.h"
 #include "saga2/sprite.h"
-#include "saga2/property.h"
-#include "saga2/savefile.h"
 #include "saga2/spells.h"
 #include "saga2/effects.h"
 #include "saga2/combat.h"
-
-#include "saga2/pclass.r"
+#include "saga2/tcoords.h"
 
 namespace Saga2 {
+
+class Actor;
+class gameObject;
 
 /* ===================================================================== *
    Exports

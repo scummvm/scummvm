@@ -27,8 +27,6 @@
 #ifndef SAGA2_AUDIOFNC_H
 #define SAGA2_AUDIOFNC_H
 
-#include "saga2/audiobuf.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

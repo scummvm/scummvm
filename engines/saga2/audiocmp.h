@@ -27,8 +27,6 @@
 #ifndef SAGA2_AUDIOCMP_H
 #define SAGA2_AUDIOCMP_H
 
-#include "saga2/audiogvc.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

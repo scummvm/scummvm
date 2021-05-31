@@ -40,6 +40,12 @@
 #include "saga2/loadsave.h"
 #include "saga2/script.h"
 #include "saga2/audio.h"
+
+#include "saga2/queues.h"
+#include "saga2/audiosmp.h"
+#include "saga2/audqueue.h"
+#include "saga2/audiosys.h"
+
 #include "saga2/annoy.h"
 #include "saga2/uidialog.h"
 #include "saga2/document.h"

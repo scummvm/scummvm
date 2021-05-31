@@ -217,6 +217,8 @@ typedef int16 SensorID;
 typedef int16   BandID;
 const BandID    NoBand = -1;
 
+typedef uint32 soundSegment;
+
 } // end of namespace Saga2
 
 #endif

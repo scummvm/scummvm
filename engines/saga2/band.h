@@ -27,10 +27,11 @@
 #ifndef SAGA2_BAND_H
 #define SAGA2_BAND_H
 
-#include "saga2/actor.h"
+#include "saga2/idtypes.h"
 
 namespace Saga2 {
 
+class Actor;
 class Band;
 const int       maxBandMembers = 32;
 

@@ -41,6 +41,8 @@
 #include "saga2/spellbuk.h"
 #include "saga2/imagcach.h"
 
+#include "saga2/pclass.r"
+
 namespace Saga2 {
 
 // debug

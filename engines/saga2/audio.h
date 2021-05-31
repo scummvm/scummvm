@@ -77,14 +77,4 @@ inline void audioFatal(char *msg) {
 	error("Sound error %s", msg);
 }
 
-#include "saga2/rect.h"
-#include "saga2/audiomem.h"
-#include "saga2/queues.h"
-#include "saga2/audiobuf.h"
-#include "saga2/audiodec.h"
-#include "saga2/audiosmp.h"
-#include "saga2/audqueue.h"
-#include "saga2/audiosys.h"
-#include "saga2/audiofnc.h"
-
 #endif

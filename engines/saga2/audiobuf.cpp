@@ -29,6 +29,15 @@
 #include "saga2/std.h"
 #include "saga2/audio.h"
 
+#include "saga2/rect.h"
+#include "saga2/queues.h"
+#include "saga2/idtypes.h"
+#include "saga2/audiosmp.h"
+#include "saga2/audqueue.h"
+#include "saga2/audiosys.h"
+
+#include "saga2/audiobuf.h"
+
 namespace Saga2 {
 
 extern audioInterface *audio;
@@ -65,8 +74,7 @@ Buffer::Buffer(size_t newSize) {
 
 	internallyAllocated = TRUE;
 	size = newSize;
-	data[0] = audioAlloc(newSize, "Audio data buffer"); //( void * ) new char[newSize];
-	audio_lock(data[0], size);   //musicRes->size( s ));
+	data[0] = malloc(newSize);
 	data[1] = NULL;
 
 	wData = data[0];
@@ -78,8 +86,7 @@ Buffer::Buffer(size_t newSize) {
 Buffer::~Buffer(void) {
 	if (internallyAllocated) {
 		assert(data[0]);
-		audio_unlock(data[0], size);
-		audioFree(data[0]);  //delete [] data[0];
+		free(data[0]);
 		data[0] = NULL;
 	}
 }
@@ -122,13 +129,12 @@ doubleBuffer::doubleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		targetSated = FALSE;
 		ailSampleHandle = AIL_allocate_sample_handle(sd->dig);
 		if (ailSampleHandle == NULL)
-			audioFatal("Unable to allocate audio handle");
+			error("Unable to allocate audio handle");
 		AIL_init_sample(ailSampleHandle);
 		AILLOCated = -1;
 		audioSet = 0;
 
-		data[1] = audioAlloc(newSize, "audio double buffer"); // ( void * ) new char[newSize];
-		audio_lock(data[1], newSize);   //musicRes->size( s ));
+		data[1] = (void *)malloc(newSize);
 		//drain( 1 );
 	}
 }
@@ -136,8 +142,7 @@ doubleBuffer::doubleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 doubleBuffer::~doubleBuffer(void) {
 	assert(ailSampleHandle);
 	if (data[1]) {
-		audio_unlock(data[1], size);
-		audioFree(data[1]);  //delete [] data[1];
+		free(data[1]);
 		data[1] = NULL;
 	}
 	if (ailSampleHandle) {
@@ -223,13 +228,13 @@ void workBuffer::shiftdown(int16 bufNo) {
 	assert(rData);
 
 	if (dif > 0 && rSize > 0) {
-		char *tbuf = (char *) audioAlloc(rSize, "audio work buffer"); //new char[rSize];
+		char *tbuf = (char *)malloc(rSize);
 		memcpy(tbuf, rData, rSize);
 		memcpy(data[bufNo], tbuf, rSize);
 		rData = data[bufNo];
 		wSize += dif;
 		wData = (void *)(((char *) data[bufNo]) + (size - wSize));
-		audioFree(tbuf);
+		free(tbuf);
 	}
 
 }
