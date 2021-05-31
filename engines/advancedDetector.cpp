@@ -335,6 +335,9 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 	FileMap allFiles;
 	composeFileHashMap(allFiles, files, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
+	// Clear md5 cache before each detection starts, just in case.
+	MD5Man.clear();
+
 	// Run the detector on this
 	ADDetectedGames matches = detectGame(files.begin()->getParent(), allFiles, language, platform, extra);
 
