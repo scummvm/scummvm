@@ -23,6 +23,7 @@
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/flood.h"
+#include "ags/lib/allegro/rotate.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
 #include "common/textconsole.h"
@@ -170,11 +171,11 @@ void draw_sprite_vh_flip(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 }
 
 void rotate_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, fixed angle) {
-	error("TODO: rotate_sprite");
+	pivot_scaled_sprite(bmp, sprite, (x<<16) + (sprite->w * 0x10000) / 2, (y<<16) + (sprite->h * 0x10000) / 2, sprite->w << 15, sprite->h << 15, angle, 0x10000);
 }
 
 void pivot_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int cx, int cy, fixed angle) {
-	error("TODO: pivot_sprite");
+	pivot_scaled_sprite(bmp, sprite, x<<16, y<<16, cx<<16, cy<<16, angle, 0x10000);
 }
 
 
@@ -277,7 +278,7 @@ void _putpixel32(BITMAP *bmp, int x, int y, int color) {
 	*((uint32 *)p) = color;
 }
 
-int getpixel(BITMAP *bmp, int x, int y) {
+int getpixel(const BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
 
 	// Allegro returns -1 if the pixel lies outside the bitmap
@@ -300,7 +301,7 @@ int getpixel(BITMAP *bmp, int x, int y) {
 	error("Unsupported bpp");
 }
 
-int _getpixel(BITMAP *bmp, int x, int y) {
+int _getpixel(const BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
 	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
 		return -1;
@@ -308,11 +309,11 @@ int _getpixel(BITMAP *bmp, int x, int y) {
 	return *((uint8 *)p);
 }
 
-int _getpixel15(BITMAP *bmp, int x, int y) {
+int _getpixel15(const BITMAP *bmp, int x, int y) {
 	error("Unsupported bpp");
 }
 
-int _getpixel16(BITMAP *bmp, int x, int y) {
+int _getpixel16(const BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
 	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
 		return -1;
@@ -320,11 +321,11 @@ int _getpixel16(BITMAP *bmp, int x, int y) {
 	return *((uint16 *)p);
 }
 
-int _getpixel24(BITMAP *bmp, int x, int y) {
+int _getpixel24(const BITMAP *bmp, int x, int y) {
 	error("Unsupported bpp");
 }
 
-int _getpixel32(BITMAP *bmp, int x, int y) {
+int _getpixel32(const BITMAP *bmp, int x, int y) {
 	Graphics::ManagedSurface &surf = **bmp;
 	if (x < 0 || y < 0 || x >= surf.w || y >= surf.h)
 		return -1;
