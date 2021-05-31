@@ -218,7 +218,7 @@ public:
 	volatile int _sys_mouse_x = 0; // mouse x position
 	volatile int _sys_mouse_y = 0; // mouse y position
 	volatile int _sys_mouse_z = 0; // mouse wheel position
-	volatile int _freeze_mouse_flag;
+	volatile int _freeze_mouse_flag = 0;
 
 	int _mouse_button_state = 0;
 	int _mouse_accum_button_state = 0;
@@ -429,7 +429,7 @@ public:
 	bool _facetalk_qfg4_override_placement_y = false;
 
 	// lip-sync speech settings
-	int _loops_per_character, _text_lips_offset, _char_speaking = -1;
+	int _loops_per_character = 0, _text_lips_offset = 0, _char_speaking = -1;
 	int _char_thinking = -1;
 	const char *_text_lips_text = nullptr;
 	SpeechLipSyncLine *_splipsync = nullptr;
@@ -508,7 +508,7 @@ public:
 	 * @{
 	 */
 
-	DialogTopic *_dialog;
+	DialogTopic *_dialog = nullptr;
 	ScriptDialogOptionsRendering *_ccDialogOptionsRendering;
 	ScriptDrawingSurface *_dialogOptionsRenderingSurface = nullptr;
 
@@ -729,7 +729,7 @@ public:
 	bool _abort_engine = false;
 	AGSPlatformDriver *_platform = nullptr;
 
-	RoomObject *_objs;
+	RoomObject *_objs = nullptr;
 	RoomStatus *_croom = nullptr;
 
 	volatile int _switching_away_from_game = 0;

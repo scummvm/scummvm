@@ -230,17 +230,17 @@ struct SpriteInfo {
 // multiple lines, and similar cases.
 struct FontInfo {
 	// General font's loading and rendering flags
-	uint32_t      Flags;
+	uint32_t      Flags = 0;
 	// Font size, in points (basically means pixels in AGS)
-	int           SizePt;
+	int           SizePt = 0;
 	// Factor to multiply base font size by
-	int           SizeMultiplier;
+	int           SizeMultiplier = 0;
 	// Outlining font index, or auto-outline flag
-	char          Outline;
+	char          Outline = 0;
 	// Custom vertical render offset, used mainly for fixing broken fonts
-	int           YOffset;
+	int           YOffset = 0;
 	// custom line spacing between two lines of text (0 = use font height)
-	int           LineSpacing;
+	int           LineSpacing = 0;
 
 	FontInfo();
 };

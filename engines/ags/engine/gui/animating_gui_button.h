@@ -37,10 +37,10 @@ using namespace AGS; // FIXME later
 
 struct AnimatingGUIButton {
 	// index into _GP(guibuts) array, GUI, button
-	short buttonid, ongui, onguibut;
+	short buttonid = 0, ongui = 0, onguibut = 0;
 	// current animation status
-	short view, loop, frame;
-	short speed, repeat, wait;
+	short view = 0, loop = 0, frame = 0;
+	short speed = 0, repeat = 0, wait = 0;
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);

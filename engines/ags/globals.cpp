@@ -102,6 +102,11 @@ Globals *g_globals;
 Globals::Globals() {
 	g_globals = this;
 
+	// Allegro globals
+	Common::fill((byte *)&_black_palette, (byte *)&_black_palette + PAL_SIZE, 0);
+	Common::fill((byte *)&_current_palette, (byte *)&_current_palette + PAL_SIZE, 0);
+	Common::fill((byte *)&_prev_current_palette, (byte *)&_prev_current_palette + PAL_SIZE, 0);
+
 	// ags_plugin.cpp globals
 	_glVirtualScreenWrap = new AGS::Shared::Bitmap();
 
@@ -333,7 +338,7 @@ Globals::Globals() {
 	Common::fill(_walkBehindRight, _walkBehindRight + MAX_WALK_BEHINDS, 0);
 	Common::fill(_walkBehindBottom, _walkBehindBottom + MAX_WALK_BEHINDS, 0);
 	Common::fill(_walkBehindBitmap, _walkBehindBitmap + MAX_WALK_BEHINDS,
-	             (AGS::Engine::IDriverDependantBitmap *)nullptr);
+		(AGS::Engine::IDriverDependantBitmap *)nullptr);
 }
 
 Globals::~Globals() {

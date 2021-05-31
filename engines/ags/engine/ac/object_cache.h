@@ -27,10 +27,11 @@ namespace AGS3 {
 
 // stores cached object info
 struct ObjectCache {
-	Shared::Bitmap *image;
-	int   sppic;
-	short tintredwas, tintgrnwas, tintbluwas, tintamntwas, tintlightwas;
-	short lightlevwas, mirroredWas, zoomWas;
+	Shared::Bitmap *image = nullptr;
+	int   sppic = 0;
+	short tintredwas = 0, tintgrnwas = 0, tintbluwas = 0;
+	short tintamntwas = 0, tintlightwas = 0;
+	short lightlevwas = 0, mirroredWas = 0, zoomWas = 0;
 	// The following are used to determine if the character has moved
 	int   xwas, ywas;
 };

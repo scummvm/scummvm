@@ -43,12 +43,12 @@ using AGS::Shared::Interaction;
 // This struct is saved in the save games - it contains everything about
 // a room that could change
 struct RoomStatus {
-	int   beenhere;
-	int   numobj;
+	int   beenhere = 0;
+	int   numobj = 0;
 	RoomObject obj[MAX_ROOM_OBJECTS];
 	short flagstates[MAX_FLAGS];
-	int   tsdatasize;
-	char *tsdata;
+	int   tsdatasize = 0;
+	char *tsdata = nullptr;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
 	Interaction intrObject[MAX_ROOM_OBJECTS];
 	Interaction intrRegion[MAX_ROOM_REGIONS];
