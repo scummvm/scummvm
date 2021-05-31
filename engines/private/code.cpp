@@ -82,7 +82,7 @@ void SettingMaps::save(const char *name) {
 }
 
 void SettingMaps::load(const Common::String &name) {
-	debug("loading: %s", name.c_str());
+	//debug("loading: %s", name.c_str());
 	assert(_map.contains(name));
 	_setting = _map.getVal(name);
 
