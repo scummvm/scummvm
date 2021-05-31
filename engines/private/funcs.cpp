@@ -38,7 +38,7 @@ static void fChgMode(ArgArray args) {
 	if (args.size() == 2)
 		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s)", args[0].u.val, args[1].u.sym->name->c_str());
 	else if (args.size() == 3)
-		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.str, args[2].u.sym->name->c_str());
+		debugC(1, kPrivateDebugScript, "ChgMode(%d, %s, %s)", args[0].u.val, args[1].u.sym->name->c_str(), args[2].u.sym->name->c_str());
 	else
 		assert(0);
 
@@ -187,7 +187,7 @@ static void fPoliceBust(ArgArray args) {
 		if (args[1].u.val == 2) {
 			// Unclear what it means
 		} else if (args[1].u.val == 3) {
-			g_private->_nextSetting = "kMainDesktop";
+			g_private->_nextSetting = g_private->getMainDesktopSetting();
 			g_private->_mode = 0;
 			g_private->_origin = Common::Point(kOriginZero[0], kOriginZero[1]);
 		} else
@@ -200,8 +200,8 @@ static void fPoliceBust(ArgArray args) {
 static void fBustMovie(ArgArray args) {
 	// assert types
 	assert (args.size() == 1);
-	debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.str);
-	uint policeIndex = g_private->maps.variables.getVal("kPoliceIndex")->u.val;
+	debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.sym->name->c_str());
+	uint policeIndex = g_private->maps.variables.getVal(g_private->getPoliceIndexVariable())->u.val;
 	int videoIndex = policeIndex/2 - 1;
 	if (videoIndex < 0)
 		videoIndex = 0;
@@ -216,7 +216,7 @@ static void fBustMovie(ArgArray args) {
 	}
 
 	g_private->_nextMovie = pv;
-	g_private->_nextSetting = args[0].u.str;
+	g_private->_nextSetting = args[0].u.sym->name->c_str();
 }
 
 static void fDossierAdd(ArgArray args) {
@@ -278,7 +278,7 @@ static void fDossierPrevSuspect(ArgArray args) {
 	int y = args[2].u.val;
 
 	m.surf = g_private->loadMask(s, x, y, true);
-	m.cursor = "kExit";
+	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
 	m.flag1 = NULL;
 	m.flag2 = NULL;
@@ -295,7 +295,7 @@ static void fDossierNextSuspect(ArgArray args) {
 	int y = args[2].u.val;
 
 	m.surf = g_private->loadMask(s, x, y, true);
-	m.cursor = "kExit";
+	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
 	m.flag1 = NULL;
 	m.flag2 = NULL;
@@ -358,7 +358,7 @@ static void fInventory(ArgArray args) {
 		else
 			m.nextSetting = e.u.sym->name->c_str();
 
-		m.cursor = "kInventory";
+		m.cursor = g_private->getInventoryCursor();
 		m.point = Common::Point(0,0);
 
 		if (v1.type == NAME) {

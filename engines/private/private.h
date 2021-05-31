@@ -201,7 +201,10 @@ public:
 	void loadImage(const Common::String &file, int x, int y);
 	void drawScreenFrame();
 
+	// Cursors
 	void changeCursor(const Common::String &);
+	Common::String getInventoryCursor();
+	Common::String getExitCursor();
 
 	// Rendering
 	Graphics::ManagedSurface *_compositeSurface;
@@ -223,6 +226,11 @@ public:
 	Common::String getPauseMovieSetting();
 	Common::String getGoIntroSetting();
 	Common::String getMainDesktopSetting();
+	Common::String getPOGoBustMovieSetting();
+	Common::String getPoliceBustFromMOSetting();
+	Common::String getAlternateGameVariable();
+	Common::String getPoliceIndexVariable();
+
 	// movies
 	Common::String _nextMovie;
 	Common::String _currentMovie;
