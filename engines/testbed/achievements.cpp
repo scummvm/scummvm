@@ -42,6 +42,9 @@ const Common::AchievementsInfo getAchievementsInfo(const Common::String &target)
 		delete (*i);
 	}
 
+	Common::StatDescription testsRun = {"NUM_TESTS", "Number of tests run", "0"};
+	result.stats.push_back(testsRun);
+
 	return result;
 }
 
