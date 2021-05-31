@@ -23,7 +23,7 @@
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
 
-#include "asylum/detection_table.h"
+#include "asylum/detection_tables.h"
 #include "asylum/console.h"
 
 static const DebugChannelDef debugFlagList[] = {
