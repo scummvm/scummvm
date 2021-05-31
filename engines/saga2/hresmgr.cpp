@@ -88,12 +88,17 @@ hResContext::hResContext(hResContext *sire, hResID id, const char desc[]) {
 
 	_parent = sire;
 
-	if ((entry = _parent->findEntry(id)) == nullptr)
+	debugC(3, kDebugResources, "Creating context %x (%s)", id, tag2str(id));
+	if ((entry = _parent->findEntry(id)) == nullptr) {
+		debugC(3, kDebugResources, "Could not create context");
 		return;
+	}
 
 	_numEntries = entry->size / resourceSize;
 
-	_base = &_res->_table[entry->offset - _res->_firstGroupOffset];
+	_base = (hResEntry *)((uint8*)_res->_table + entry->offset - _res->_firstGroupOffset);
+	debugC(3, kDebugResources, "- _numEntries = %d, _base = %p, entry->offset = %d",
+	                            _numEntries, _base, entry->offset);
 
 	_valid = true;
 }
