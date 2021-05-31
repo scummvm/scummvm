@@ -31,15 +31,23 @@ def cleanup_text(text):
 try:
 	session = HTMLSession()
 	response = session.get(statsurl)
-	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
 	game = response.html.xpath("//h1[@itemprop='name']/text()")
+
+	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
 	achievements_columns = 3 # id, text, img
-	entries = int(len(achievements_rows) / achievements_columns)
-	if entries == 0:
+	achievements_entries = int(len(achievements_rows) / achievements_columns)
+	if achievements_entries == 0:
 		sys.exit(127)
 
 	if args.verbose:
-		sys.stderr.write('found {0} achievements\n'.format(entries))
+		sys.stderr.write('found {0} achievements\n'.format(achievements_entries))
+
+	stats_rows = response.html.xpath("//tr[starts-with(@id, 'stat-')]/td")
+	stats_columns = 3 # id, text, default value, your value
+	stats_entries = int(len(stats_rows) / stats_columns)
+
+	if args.verbose:
+		sys.stderr.write('found {0} stats\n'.format(stats_entries))
 
 	scummvm_game_id = args.gameid
 	if not scummvm_game_id:
@@ -47,8 +55,23 @@ try:
 		if args.verbose:
 			sys.stderr.write('missing scummvm game id - assuming {0}\n'.format(scummvm_game_id))
 
-	print("\t{\n\t\t\"%s\",\n\t\tCommon::STEAM_ACHIEVEMENTS,\n\t\t\"%s\",\n\t\t{" % (scummvm_game_id, args.steamid))
-	for i in range(entries):
+	print("\t{\n\t\t\"%s\",\n\t\tCommon::STEAM_ACHIEVEMENTS,\n\t\t\"%s\"," % (scummvm_game_id, args.steamid))
+	if stats_entries:
+		print("\t\t{")
+		for i in range(stats_entries):
+			idx       = stats_columns * i
+			stat_id    = stats_rows[idx + 0].text.strip()
+			stat_desc  = stats_rows[idx + 1].text.strip()
+			stat_default = stats_rows[idx + 2].text.strip()
+			if  stat_desc == "no name":
+				print("\t\t\tSTATS_NODESC_ENTRY(\"%s\", \"%s\")," % (stat_id, stat_default))
+			else:
+				print("\t\t\tSTATS_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (stat_id, stat_desc, stat_default))
+		print("\t\t\tSTATS_LISTEND\n\t\t},")
+	else:
+		print("\t\tNOSTATS,")
+	print("\t\t{")
+	for i in range(achievements_entries):
 		idx       = achievements_columns * i
 		ach_id    = achievements_rows[idx + 0].text.strip()
 		ach_text  = achievements_rows[idx + 1].text.strip()
@@ -56,6 +79,8 @@ try:
 		ach_desc  = cleanup_text(ach_text.split('\n')[1])
 		if ach_desc == "Hidden.":
 			print("\t\t\tACHIEVEMENT_HIDDEN_ENTRY(\"%s\", \"%s\")," % (ach_id, ach_title))
+		elif ach_desc == "No description.":
+			print("\t\t\tACHIEVEMENT_NODESC_ENTRY(\"%s\", \"%s\")," % (ach_id, ach_title))
 		else:
 			print("\t\t\tACHIEVEMENT_SIMPLE_ENTRY(\"%s\", \"%s\", \"%s\")," % (ach_id, ach_title, ach_desc))
 
