@@ -39,7 +39,6 @@
 #include "saga2/gtextbox.h"
 #include "saga2/loadsave.h"
 #include "saga2/script.h"
-#include "saga2/itevideo.h"
 #include "saga2/audio.h"
 #include "saga2/annoy.h"
 #include "saga2/uidialog.h"

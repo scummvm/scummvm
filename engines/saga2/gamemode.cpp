@@ -41,7 +41,6 @@
 #include "saga2/player.h"
 #include "saga2/cmisc.h"
 #include "saga2/annoy.h"
-#include "saga2/itevideo.h"
 
 
 namespace Saga2 {

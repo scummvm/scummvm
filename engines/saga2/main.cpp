@@ -37,7 +37,6 @@
 #include "saga2/transit.h"
 #include "saga2/player.h"
 #include "saga2/calender.h"
-#include "saga2/itevideo.h"
 #include "saga2/tile.h"
 #include "saga2/messager.h"
 #include "saga2/intrface.h"
@@ -357,7 +356,7 @@ void processEventLoop(bool updateScreen) {
 
 	//  Handle updating of the display.
 	debugC(1, kDebugEventLoop, "EventLoop: display update");
-	if (!checkVideo()) {
+	if (!g_vm->checkVideo()) {
 		displayUpdate();
 	}
 
