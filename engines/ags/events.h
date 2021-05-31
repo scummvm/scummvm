@@ -97,6 +97,11 @@ public:
 	 */
 	bool isKeyPressed(AGS3::eAGSKeyCode key);
 
+	void clearEvents() {
+		_pendingEvents.clear();
+		_pendingKeys.clear();
+	}
+
 	/**
 	 * Returns the bitset of currently pressed modifier keys
 	 */

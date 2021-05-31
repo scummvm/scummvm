@@ -561,6 +561,10 @@ static void game_loop_check_controls(bool checkControls) {
 		int numevents_was = _G(numevents);
 		check_controls();
 		check_room_edges(numevents_was);
+
+		if (_G(abort_engine))
+			return;
+
 		// If an inventory interaction changed the room
 		if (inRoom != _G(displayed_room))
 			check_new_room();
@@ -628,7 +632,7 @@ static void game_loop_update_events() {
 		setevent(EV_FADEIN, 0, 0, 0);
 	_G(in_new_room) = 0;
 	update_events();
-	if ((_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
+	if (!_G(abort_engine) && (_G(new_room_was) > 0) && (_G(in_new_room) == 0)) {
 		// if in a new room, and the room wasn't just changed again in update_events,
 		// then queue the Enters Screen scripts
 		// run these next time round, when it's faded in
@@ -736,6 +740,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 
 	game_loop_check_controls(checkControls);
 
+	if (_G(abort_engine))
+		return;
+
 	_G(our_eip) = 2;
 
 	game_loop_do_update();
@@ -751,6 +758,9 @@ void UpdateGameOnce(bool checkControls, IDriverDependantBitmap *extraBitmap, int
 	_G(our_eip) = 6;
 
 	game_loop_update_events();
+
+	if (_G(abort_engine))
+		return;
 
 	_G(our_eip) = 7;
 
@@ -871,6 +881,10 @@ static int GameTick() {
 		quit("!A blocking function was called before the first room has been loaded");
 
 	UpdateGameOnce(true);
+
+	if (_G(abort_engine))
+		return -1;
+
 	UpdateMouseOverLocation();
 
 	_G(our_eip) = 76;
@@ -912,7 +926,7 @@ static void GameLoopUntilEvent(int untilwhat, const void *daaa) {
 	auto cached_user_disabled_for = _G(user_disabled_for);
 
 	SetupLoopParameters(untilwhat, daaa);
-	while (GameTick() == 0);
+	while (GameTick() == 0 && !_G(abort_engine)) {}
 
 	_G(our_eip) = 78;
 

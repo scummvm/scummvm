@@ -64,6 +64,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -84,6 +85,9 @@ int Dialog_DisplayOptions(ScriptDialog *sd, int sayChosenOption) {
 		quit("!Dialog.DisplayOptions: invalid parameter passed");
 
 	int chose = show_dialog_options(sd->id, sayChosenOption, (_GP(game).options[OPT_RUNGAMEDLGOPTS] != 0));
+	if (SHOULD_QUIT)
+		return -1;
+
 	if (chose != CHOSE_TEXTPARSER) {
 		chose++;
 	}
@@ -590,7 +594,7 @@ void DialogOptions::Show() {
 	update_polled_stuff_if_runtime();
 
 	Redraw();
-	while (Run());
+	while (Run() && !SHOULD_QUIT) {}
 
 	if (!_GP(play).mouse_cursor_hidden)
 		ags_domouse(DOMOUSE_DISABLE);

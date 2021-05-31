@@ -346,6 +346,9 @@ int ccInstance::CallScriptFunction(const char *funcname, int32_t numargs, const 
 	pc = 0;
 	_G(current_instance) = currentInstanceWas;
 
+	if (_G(abort_engine))
+		return -1;
+
 	// NOTE that if proper multithreading is added this will need
 	// to be reconsidered, since the GC could be run in the middle
 	// of a RET from a function or something where there is an
@@ -420,6 +423,8 @@ int ccInstance::Run(int32_t curpc) {
 	FunctionCallStack func_callstack;
 
 	while (1) {
+		if (_G(abort_engine))
+			return -1;
 
 		/*
 		if (!codeInst->ReadOperation(codeOp, pc))
@@ -1014,7 +1019,7 @@ int ccInstance::Run(int32_t curpc) {
 				cc_error("invalid pointer type for function call: %d", reg1.Type);
 			}
 
-			if (_G(ccError)) {
+			if (_G(ccError) || _G(abort_engine)) {
 				return -1;
 			}
 

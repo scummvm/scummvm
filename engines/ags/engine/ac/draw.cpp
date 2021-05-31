@@ -70,6 +70,7 @@
 #include "ags/engine/gfx/blender.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/ac/game.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -2237,7 +2238,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	construct_game_screen_overlay(true);
 	render_to_screen();
 
-	if (!_GP(play).screen_is_faded_out) {
+	if (!SHOULD_QUIT && !_GP(play).screen_is_faded_out) {
 		// always update the _G(palette), regardless of whether the plugin
 		// vetos the screen update
 		if (_G(bg_just_changed)) {

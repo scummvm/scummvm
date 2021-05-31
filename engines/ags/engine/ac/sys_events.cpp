@@ -32,6 +32,7 @@
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/main/engine.h"
+#include "ags/ags.h"
 #include "ags/events.h"
 #include "ags/globals.h"
 
@@ -133,10 +134,10 @@ static int sdl_button_to_mask(int button) {
 static int mouse_button_poll() {
 #ifdef TODO
 	auto now = AGS_Clock::now();
-	int result = mouse_button_state | mouse_accum_button_state;
-	if (now >= mouse_clear_at_time) {
-		mouse_accum_button_state = 0;
-		mouse_clear_at_time = now + std::chrono::milliseconds(50);
+	int result = _G(mouse_button_state) | _G(mouse_accum_button_state);
+	if (now >= _G(mouse_clear_at_time)) {
+		_G(mouse_accum_button_state) = 0;
+		_G(mouse_clear_at_time) = now + std::chrono::milliseconds(50);
 	}
 	return result;
 #else
@@ -157,10 +158,10 @@ static void on_sdl_mouse_button(const SDL_MouseButtonEvent &event) {
 	_G(sys_mouse_y) = _G(event).y;
 
 	if (_G(event).type == SDL_MOUSEBUTTONDOWN) {
-		mouse_button_state |= sdl_button_to_mask(_G(event).button);
-		mouse_accum_button_state |= sdl_button_to_mask(_G(event).button);
+		_G(mouse_button_state) |= sdl_button_to_mask(_G(event).button);
+		_G(mouse_accum_button_state) |= sdl_button_to_mask(_G(event).button);
 	} else {
-		mouse_button_state &= ~sdl_button_to_mask(_G(event).button);
+		_G(mouse_button_state) &= ~sdl_button_to_mask(_G(event).button);
 	}
 }
 
@@ -255,14 +256,12 @@ int ags_check_mouse_wheel() {
 
 
 void ags_clear_input_buffer() {
-#ifdef TODO
-	g_keyEvtQueue.clear();
-	mouse_button_state = 0;
-	mouse_accum_button_state = 0;
-	mouse_clear_at_time = AGS_Clock::now() + std::chrono::milliseconds(50);
+	::AGS::g_events->clearEvents();
 	_G(mouse_accum_relx) = 0;
 	_G(mouse_accum_rely) = 0;
-#endif
+	_G(mouse_button_state) = 0;
+	_G(mouse_accum_button_state) = 0;
+	_G(mouse_clear_at_time) = AGS_Clock::now() + std::chrono::milliseconds(50);
 }
 
 // TODO: this is an awful function that should be removed eventually.
@@ -271,7 +270,7 @@ void ags_wait_until_keypress() {
 	do {
 		sys_evt_process_pending();
 		_G(platform)->YieldCPU();
-	} while (!ags_keyevent_ready());
+	} while (!SHOULD_QUIT && !ags_keyevent_ready());
 	ags_clear_input_buffer();
 }
 

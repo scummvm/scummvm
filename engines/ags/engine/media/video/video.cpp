@@ -82,7 +82,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 	}
 
 	update_polled_stuff_if_runtime();
-
+	 
 	decoder->start();
 	while (!SHOULD_QUIT && !decoder->endOfVideo()) {
 		if (decoder->needsUpdate()) {

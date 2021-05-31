@@ -41,6 +41,7 @@
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -125,7 +126,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 
 	prepare_gui_screen(_G(win_x), _G(win_y), _G(win_width), _G(win_height), true);
 
-	while (1) {
+	while (!SHOULD_QUIT) {
 		sys_evt_process_pending();
 
 		update_audio_system_on_game_loop();
