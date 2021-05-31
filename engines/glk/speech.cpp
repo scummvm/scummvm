@@ -76,7 +76,6 @@ SpeechManager::SpeechManager() :
 		return;
 	_ttsMan = g_system->getTextToSpeechManager();
 	if (_ttsMan != nullptr) {
-		_ttsMan->pushState();
 		// Language
 		_ttsMan->setLanguage(ConfMan.get("language"));
 		// Volume
@@ -101,10 +100,6 @@ SpeechManager::SpeechManager() :
 SpeechManager::~SpeechManager() {
 #if defined(USE_TTS)
 	debugC(kDebugSpeech, "Destroy Glk::SpeechManager");
-	if (_ttsMan != nullptr) {
-		_ttsMan->popState();
-		_ttsMan = nullptr;
-	}
 #endif
 }
 
