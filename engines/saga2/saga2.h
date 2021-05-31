@@ -39,7 +39,8 @@ enum {
 	kDebugActors    = 1 << 1,
 	kDebugScripts   = 1 << 2,
 	kDebugEventLoop = 1 << 3,
-	kDebugInit      = 1 << 4
+	kDebugInit      = 1 << 4,
+	kDebugTiles     = 1 << 5
 };
 
 class Saga2Engine : public Engine {
