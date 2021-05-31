@@ -85,6 +85,10 @@ void TrecisionEngine::loadAll() {
 
 	data->skip(620);	// actions (unused)
 
+	// TODO: Amiga hack
+	if (isAmiga())
+		dataNl.seek(0x3DB62);
+
 	int numFileRef = data->readSint32();
 	data->skip(numFileRef * (12 + 4));	// fileRef name + offset
 
@@ -137,7 +141,7 @@ void TrecisionEngine::read3D(const Common::String &filename) {
 	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
 }
 
-void TrecisionEngine::readObject(Common::SeekableReadStreamEndian *stream, uint16 objIndex, uint16 objectId) {
+void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
 	SObject *obj = &_obj[objectId];
 
 	if (obj->isModeFull()) {
@@ -147,7 +151,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStreamEndian *stream, uint1
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16();
+			_objPointers[objIndex][i] = stream->readUint16LE();
 
 		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
 	}
@@ -155,15 +159,15 @@ void TrecisionEngine::readObject(Common::SeekableReadStreamEndian *stream, uint1
 	if (obj->isModeMask()) {
 		obj->readRect(stream);
 
-		uint32 size = stream->readUint32();
+		uint32 size = stream->readUint32LE();
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16();
+			_objPointers[objIndex][i] = stream->readUint16LE();
 
 		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
 
-		size = stream->readUint32();
+		size = stream->readUint32LE();
 		delete[] _maskPointers[objIndex];
 		_maskPointers[objIndex] = new uint8[size];
 		for (uint32 i = 0; i < size; ++i)
@@ -173,7 +177,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStreamEndian *stream, uint1
 	refreshObject(objectId);
 }
 
-void TrecisionEngine::readObj(Common::SeekableReadStreamEndian *stream) {
+void TrecisionEngine::readObj(Common::SeekableReadStream *stream) {
 	if (!_room[_curRoom]._object[0])
 		return;
 
@@ -196,7 +200,7 @@ void TrecisionEngine::readExtraObj2C() {
 	if (!_room[_curRoom]._object[32])
 		return;
 
-	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember("2c2.bm"));
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("2c2.bm");
 
 	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
 		const uint16 objectId = _room[_curRoom]._object[objIndex];
@@ -213,7 +217,7 @@ void TrecisionEngine::readExtraObj41D() {
 	if (!_room[_curRoom]._object[32])
 		return;
 
-	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember("41d2.bm"));
+	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("41d2.bm");
 	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
 		const uint16 objectId = _room[_curRoom]._object[objIndex];
 		if (!objectId)

@@ -24,6 +24,7 @@
 #include "common/str.h"
 #include "common/substream.h"
 #include "common/memstream.h"
+#include "common/file.h"
 #include "trecision/trecision.h"
 #include "trecision/fastfile.h"
 #include "trecision/video.h"
@@ -93,13 +94,28 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	if (!_stream)
 		return nullptr;
 
+	Common::SeekableReadStream *stream = nullptr;
 	const FileEntry *entry = getEntry(name);
 	if (entry) {
 		uint32 size = (entry + 1)->offset - entry->offset;
-		return new Common::SeekableSubReadStream(_stream, entry->offset, entry->offset + size);
+		if (entry->offset + size < _stream->size()) {
+			// Load data from fast file
+			stream = new Common::SeekableSubReadStream(_stream, entry->offset, entry->offset + size);
+		}
 	}
-
-	return nullptr;
+	if (!stream) {
+		// Load data from external file
+		Common::File *file = new Common::File();
+		if (file->open(name)) {
+			stream = file;
+		} else {
+			delete file;
+		}
+	}
+	if (!stream) {
+		warning("FastFile - %s not found", name.c_str());
+	}
+	return stream;
 }
 
 void FastFile::decompress(const unsigned char *src, uint32 srcSize, unsigned char *dst, uint32 decompSize) {

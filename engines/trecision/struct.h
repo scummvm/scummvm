@@ -63,7 +63,7 @@ struct SObject {
 	uint8 _ninv;                            // ptr inventory
 	uint16 _anim;
 	
-	void readRect(Common::SeekableReadStreamEndian *stream);
+	void readRect(Common::SeekableReadStream *stream);
 	void setFlagDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
 	void setFlagExamine(bool on) { if (on) _flag |= kObjFlagExamine; else _flag &= ~kObjFlagExamine; }
 	void setFlagExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }

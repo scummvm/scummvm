@@ -54,6 +54,12 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	SearchMan.addSubDirectoryMatching(gameDataDir, "AUTORUN");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "DATA");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FMV");
+	// Amiga version loads data files from directories
+	if (isAmiga()) {
+		SearchMan.addSubDirectoryMatching(gameDataDir, "NLDATA.CD0");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "NLSPEECH.CD0");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "NLANIM.CDX");
+	}
 
 	_curRoom = 0;
 	_oldRoom = 0;
@@ -376,8 +382,15 @@ void TrecisionEngine::readLoc() {
 
 	_graphicsMgr->clearScreenBufferTop();
 
-	Common::String filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
-	Common::SeekableReadStreamEndian *picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
+	Common::String filename;
+	Common::SeekableReadStreamEndian *picFile;
+	if (isAmiga()) {
+		filename = Common::String::format("%s.bm", _room[_curRoom]._baseName);
+		picFile = readEndian(_dataFile.createReadStreamForMember(filename));
+	} else {
+		filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
+		picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
+	}
 
 	SObject bgInfo;
 	bgInfo.readRect(picFile);
@@ -427,8 +440,15 @@ void TrecisionEngine::redrawRoom() {
 		}
 	}
 
-	Common::String filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
-	Common::SeekableReadStreamEndian *picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
+	Common::String filename;
+	Common::SeekableReadStreamEndian *picFile;
+	if (isAmiga()) {
+		filename = Common::String::format("%s.bm", _room[_curRoom]._baseName);
+		picFile = readEndian(_dataFile.createReadStreamForMember(filename));
+	} else {
+		filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
+		picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
+	}
 
 	SObject bgInfo;
 	bgInfo.readRect(picFile);

@@ -47,11 +47,11 @@ void SRoom::syncGameStream(Common::Serializer &ser) {
 
 /********************************************************************/
 
-void SObject::readRect(Common::SeekableReadStreamEndian *stream) {
-	_rect.left = stream->readUint16();
-	_rect.top = stream->readUint16();
-	_rect.setWidth(stream->readUint16());
-	_rect.setHeight(stream->readUint16());
+void SObject::readRect(Common::SeekableReadStream *stream) {
+	_rect.left = stream->readUint16LE();
+	_rect.top = stream->readUint16LE();
+	_rect.setWidth(stream->readUint16LE());
+	_rect.setHeight(stream->readUint16LE());
 }
 
 void SObject::syncGameStream(Common::Serializer &ser) {

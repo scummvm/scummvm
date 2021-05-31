@@ -135,8 +135,8 @@ class TrecisionEngine : public Engine {
 	bool canPlayerInteract();
 
 	// Objects
-	void readObj(Common::SeekableReadStreamEndian *stream);
-	void readObject(Common::SeekableReadStreamEndian *stream, uint16 objIndex, uint16 objectId);
+	void readObj(Common::SeekableReadStream *stream);
+	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
 
 	char *_textArea;
 	uint16 _curScriptFrame[10];
