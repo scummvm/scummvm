@@ -20,10 +20,11 @@
  *
  */
 
-#include "saga2/saga2.h"
-#include "saga2/detection.h"
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
+
+#include "saga2/saga2.h"
+#include "saga2/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{Saga2::kDebugResources, "resources", "Debug the resources"},

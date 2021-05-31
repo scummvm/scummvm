@@ -23,8 +23,6 @@
 #ifndef SAGA2_DETECTION_H
 #define SAGA2_DETECTION_H
 
-#include "advancedDetector.h"
-
 namespace Saga2 {
 
 enum GameIds {

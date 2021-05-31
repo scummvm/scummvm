@@ -32,6 +32,8 @@
 #include "saga2/dispnode.h"
 #include "saga2/tile.h"
 #include "saga2/actor.h"
+#include "saga2/spells.h"
+#include "saga2/spelshow.h"
 #include "saga2/spellbuk.h"
 #include "saga2/images.h"
 #include "saga2/player.h"

@@ -31,6 +31,7 @@
 #include "saga2/dispnode.h"
 #include "saga2/spells.h"
 #include "saga2/spellbuk.h"
+#include "saga2/spelshow.h"
 
 namespace Saga2 {
 

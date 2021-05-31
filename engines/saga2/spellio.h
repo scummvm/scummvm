@@ -27,9 +27,6 @@
 #ifndef SAGA2_SPELLIO_H
 #define SAGA2_SPELLIO_H
 
-#include "saga2/tile.h"
-#include "saga2/objects.h"
-
 namespace Saga2 {
 
 class SpellTarget;

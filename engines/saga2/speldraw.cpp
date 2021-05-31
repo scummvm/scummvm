@@ -30,6 +30,7 @@
 #include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
 #include "saga2/spellbuk.h"
+#include "saga2/spelshow.h"
 
 namespace Saga2 {
 
