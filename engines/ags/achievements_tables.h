@@ -592,7 +592,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 			ACHIEVEMENT_SIMPLE_ENTRY("LISTEN_CLOSELY", "Listen Closely, Now", "Finish the game in commentary mode"),
 			ACHIEVEMENT_SIMPLE_ENTRY("BULLET_DODGER", "Bullet Dodger", "Escape the yacht with only getting shot once"),
 			ACHIEVEMENT_SIMPLE_ENTRY("GHOSTS_OF_THE_PAST", "Ghosts of the Past", "Find all the references to previous games in Rosa's apartment"),
-			ACHIEVEMENT_SIMPLE_ENTRY("BLOWEYMALLONE", "Blowey Mallone", "Use Joey's breath ability on at least 10 people"),
+			ACHIEVEMENT_SIMPLE_ENTRY("BLOWEY_MALLONE", "Blowey Mallone", "Use Joey's breath ability on at least 10 people"),
 			ACHIEVEMENTS_LISTEND
 		}
 	},
