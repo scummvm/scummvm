@@ -2304,4 +2304,9 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 #undef ACHIEVEMENT_HIDDEN_ENTRY
 #undef ACHIEVEMENTS_LISTEND
 
+#undef STATS_SIMPLE_ENTRY
+#undef STATS_NODESC_ENTRY
+#undef STATS_LISTEND
+#undef NOSTATS
+
 #endif /* AGS_ACHIEVEMENTS_H */
