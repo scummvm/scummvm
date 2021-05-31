@@ -300,8 +300,9 @@ char *getMapFeaturesText(TileRegion viewRegion,
 
 void termMapFeatures(void) {
 	for (int i = 0; i < MAX_MAP_FEATURES; i++) {
-		if (mapFeatures[i]) delete mapFeatures[i];
-		mapFeatures[i] = NULL;
+		if (mapFeatures[i])
+			delete mapFeatures[i];
+		mapFeatures[i] = nullptr;
 	}
 }
 

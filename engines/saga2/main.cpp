@@ -627,6 +627,7 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 
 	idString[ 0 ] = id;
 	idString[ 1 ] = 0;
+	debugC(3, kDebugResources, "Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
@@ -769,6 +770,8 @@ void testTileRendering() {
 	//		Common::hexdump(img, ti->attrs.height);
 	//	}
 	//}
+
+	cleanupMaps();
 }
 
 //-----------------------------------------------------------------------
