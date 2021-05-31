@@ -93,7 +93,6 @@ void waitForVideoFile(char *fileName);
 static void waitForTimer(uint32 tenthsOfSecond);
 static void waitForVideo(void);
 void waitForInput(void);
-static void playVideo(char *fileName, int x, int y, int16 from, int16 to);
 
 static void TroModeSetup(void);
 static void TroModeCleanup(void);
@@ -326,7 +325,6 @@ static void doIntro(void) {
 	playAVideo(INTRO_VID1, 0, 0);
 	abortFlag = FALSE;
 	playAVideo(INTRO_VID2, 0, 0);
-	//  playVideo(INTRO_VID,VIDEO_X,VIDEO_Y,0,0); //if (abortFlag) { resumeAudio(); return; }
 }
 
 // ------------------------------------------------------------------------
@@ -355,81 +353,5 @@ static void doWintro(int16 whichOne) {
 static void doLostro(void) {
 	playAVideo(LOSE_VID, 0, 0);
 }
-
-
-
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-// ------------------------------------------------------------------------
-
-
-
-#if 0
-// ------------------------------------------------------------------------
-// I didn't end up using GameModes
-
-GameMode        TroMode = {
-	NULL,                                   // no previous mode
-	FALSE,                                  // mode is not nestable
-	TroModeSetup,
-	TroModeCleanup,
-	TroModeHandleTask,
-	SystemKeyHandler,
-};
-
-static GameMode *prevModeStackPtr[ Max_Modes ];
-static int      prevModeStackCtr;
-
-// ------------------------------------------------------------------------
-// dummy code (originally for game mode)
-
-static void TroModeHandleTask(void) {
-
-}
-
-static void goTroMode(void) {
-	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
-	GameMode::SetStack(&TroMode, End_List);
-}
-
-static void noTroMode(void) {
-	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);
-}
-
-
-// ------------------------------------------------------------------------
-// I didn't end up using partial playback either
-
-
-void doVideo(char *fileName, int x, int y, int16 from, int16 to) {
-	beginVideo(fileName, x, y, ERASE_BETWEEN, from, to);
-	if (!checkVideo()) {
-		endVideo();
-		abortFlag = TRUE;
-		return;
-	}
-	waitForVideo();
-}
-
-void contVideo(int16 from, int16 to) {
-	resumeVideo(from, to);
-	if (!checkVideo()) {
-		endVideo();
-		abortFlag = TRUE;
-		return;
-	}
-	waitForVideo();
-}
-
-void lastVideo(int16 from, int16 to) {
-	finaleVideo(from, to);
-	if (!checkVideo()) {
-		endVideo();
-		abortFlag = TRUE;
-		return;
-	}
-	//waitForVideo();
-}
-#endif
 
 } // end of namespace Saga2

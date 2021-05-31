@@ -96,11 +96,7 @@ MODULE_OBJS := \
 	tromode.o \
 	uidialog.o \
 	vbacksav.o \
-	video.o \
 	videobox.o \
-	videomem.o \
-	vidhook.o \
-	vidsmk.o \
 	vpal.o \
 	vwdraw.o \
 	vwpage.o \

@@ -27,10 +27,9 @@
 #ifndef SAGA2_ITEVIDEO_H
 #define SAGA2_ITEVIDEO_H
 
-#include "saga2/video.h"
-#include "saga2/fta.h"
-
 namespace Saga2 {
+
+#define TICKSPERSECOND          (728L/10L)
 
 void initVideo(void);
 void cleanupVideo(void);
@@ -38,7 +37,7 @@ void cleanupVideo(void);
 //-----------------------------------------------------------------------
 //	Calls for individual videos
 
-void startVideo(char *fileName, int x, int y, bool erase = TRUE, int16 from = 0, int16 to = 0);
+void startVideo(char *fileName, int x, int y);
 bool checkVideo(void);
 void endVideo(void);
 
@@ -46,9 +45,7 @@ void endVideo(void);
 //	Player configuration & other obsolete calls
 
 void setVideoVolume(uint8 v);
-void drawVideoMousePointer(Rect16 showZone, char *buffer,  int bufferWidth);
 
-void playVideo(char *fileName, int x, int y); //, int16 from=0, int16 to=0 );
 bool abortVideo(void);
 
 } // end of namespace Saga2
