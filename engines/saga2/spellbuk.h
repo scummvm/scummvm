@@ -27,13 +27,10 @@
 #ifndef SAGA2_SPELLBUK_H
 #define SAGA2_SPELLBUK_H
 
-#include "saga2/spelshow.h"
-#include "saga2/spells.h"
-#include "saga2/dice.h"
-#include "saga2/effects.h"
-#include "saga2/actor.h"
-
 namespace Saga2 {
+
+struct ResourceSpellEffect;
+struct ResourceSpellItem;
 
 // Mana IDs as spells see them
 

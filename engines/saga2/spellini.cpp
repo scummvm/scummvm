@@ -27,7 +27,10 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/spells.h"
+#include "saga2/objects.h"
 #include "saga2/spellbuk.h"
+#include "saga2/spelshow.h"
 #include "saga2/spelvals.h"
 #include "saga2/tilevect.h"
 

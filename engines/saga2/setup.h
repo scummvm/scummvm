@@ -27,9 +27,9 @@
 #ifndef SAGA2_SETUP_H
 #define SAGA2_SETUP_H
 
-#include "saga2/floating.h"
-
 namespace Saga2 {
+
+struct WindowDecoration;
 
 //If Defined Then It Will Print Status
 #define         WriteStatus
