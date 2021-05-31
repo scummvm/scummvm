@@ -60,6 +60,8 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 		unsetActiveDomain();
 	}
 
+	debug("AchievementsManager::setActiveDomain(): '%s'", iniFileName.c_str());
+
 	_iniFileName = iniFileName;
 
 	_iniFile = new Common::INIFile();
@@ -81,6 +83,8 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 
 
 bool AchievementsManager::unsetActiveDomain() {
+	debug("AchievementsManager::unsetActiveDomain()");
+
 	_iniFileName = "";
 
 	delete _iniFile;
@@ -94,6 +98,7 @@ bool AchievementsManager::unsetActiveDomain() {
 
 bool AchievementsManager::setAchievement(const String &id) {
 	if (!isReady()) {
+		warning("AchievementsManager::setAchievement('%s'): AchMan not ready, did you forget to call setActiveDomain()?", id.c_str());
 		return false;
 	}
 	if (isAchieved(id)) {
@@ -108,7 +113,7 @@ bool AchievementsManager::setAchievement(const String &id) {
 		}
 	}
 
-	debug("AchievementsManager::setAchievement('%s'): %s", id.c_str(), displayedMessage.c_str());
+	debug("AchievementsManager::setAchievement('%s'): '%s'", id.c_str(), displayedMessage.c_str());
 
 	_iniFile->setKey(id, "achievements", "true");
 	_iniFile->saveToSaveFile(_iniFileName);
