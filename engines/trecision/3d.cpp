@@ -1725,9 +1725,6 @@ void PathFinding3D::buildFramelist() {
 		curLen = oz + _vm->_actor->frameCenter(v) - firstFrame;
 	}
 
-	if (!a)
-		warning("buildFramelist - Unknown error: step number = 0");
-
 	// After the destination, add the stop frame
 
 	// if he was walking

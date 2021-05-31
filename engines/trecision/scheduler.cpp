@@ -29,7 +29,7 @@ Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 	_token = CLASS_CHAR;
 	_counter = 0;
 
-	_idleMsg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0, 0};
+	_idleMsg = { MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0 };
 }
 
 Scheduler::~Scheduler() {
@@ -93,7 +93,6 @@ void Scheduler::doEvent(uint8 cls, uint8 event, uint8 priority,
 	m._u16Param2 = u16Param2;
 	m._u8Param = u8Param;
 	m._u32Param = u32Param;
-	m._timestamp = _vm->_curTime;
 
 	if (cls <= CLASS_GAME) {
 		_gameQueue.push_back(m);
