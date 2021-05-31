@@ -385,7 +385,7 @@ void PrivateEngine::clearAreas() {
 
 void PrivateEngine::startPoliceBust() {
 	// This logic was extracted from the binary
-	int policeIndex = maps.variables.getVal("kPoliceIndex")->u.val;
+	int policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
 	int r = _rnd->getRandomNumber(0xc);
 	if (policeIndex > 0x14) {
 		policeIndex = 0x15;
@@ -412,12 +412,12 @@ void PrivateEngine::checkPoliceBust() {
 	}
 
 	if (_numberClicks == _maxNumberClicks+1) {
-		uint policeIndex = maps.variables.getVal("kPoliceIndex")->u.val;
+		uint policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
 		_policeBustSetting = _currentSetting;
 		if (policeIndex <= 13) {
-			_nextSetting = "kPOGoBustMovie";
+			_nextSetting = getPOGoBustMovieSetting();
 		} else {
-			_nextSetting = "kPoliceBustFromMO";
+			_nextSetting = getPoliceBustFromMOSetting();
 		}
 		clearAreas();
 		_policeBustEnabled = false;
@@ -499,10 +499,7 @@ Common::String PrivateEngine::getPauseMovieSetting() {
 	if (_language == "us")
 		return "kPauseMovie";
 
-	if (isDemo())
-		return "k3";
-	else
-		error("TODO: getPauseMovieSetting");
+	return "k3";
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
@@ -512,8 +509,11 @@ Common::String PrivateEngine::getGoIntroSetting() {
 	return "k1";
 }
 
-Common::String getStartGameSetting() {
-	return "kStartGame";
+Common::String PrivateEngine::getAlternateGameVariable() {
+	if (_language == "us")
+		return "kAlternateGame";
+
+	return "k2";
 }
 
 Common::String PrivateEngine::getMainDesktopSetting() {
@@ -524,6 +524,43 @@ Common::String PrivateEngine::getMainDesktopSetting() {
 		return "k45";
 
 	return "k183";
+}
+
+Common::String PrivateEngine::getPoliceIndexVariable() {
+	if (_language == "us")
+		return "kPoliceIndex";
+
+	return "k0";
+}
+
+
+Common::String PrivateEngine::getPOGoBustMovieSetting() {
+	if (_language == "us")
+		return "kPOGoBustMovie";
+
+	return "k7";
+}
+
+Common::String PrivateEngine::getPoliceBustFromMOSetting() {
+	if (_language == "us")
+		return "kPoliceBustFromMO";
+
+	return "k6";
+}
+
+Common::String PrivateEngine::getExitCursor() {
+	if (_language == "us")
+		return "kExit";
+
+	return "k5";
+}
+
+
+Common::String PrivateEngine::getInventoryCursor() {
+	if (_language == "us")
+		return "kInventory";
+
+	return "k7";
 }
 
 void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
@@ -779,7 +816,7 @@ void PrivateEngine::restartGame() {
 
 	for (NameList::iterator it = maps.variableList.begin(); it != maps.variableList.end(); ++it) {
 		Private::Symbol *sym = maps.variables.getVal(*it);
-		if (*(sym->name) != "kAlternateGame")
+		if (*(sym->name) != getAlternateGameVariable())
 			sym->u.val = 0;
 	}
 
