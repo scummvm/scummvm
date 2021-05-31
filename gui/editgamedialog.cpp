@@ -361,7 +361,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
 	//
-	// 9) The Achievements tab
+	// 9) The Achievements & The Statistics tabs
 	//
 	if (enginePlugin) {
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
@@ -369,6 +369,10 @@ EditGameDialog::EditGameDialog(const String &domain)
 		if (achievementsInfo.descriptions.size() > 0) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");
 			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+		}
+		if (achievementsInfo.stats.size() > 0) {
+			tab->addTab(_("Statistics"), "GameOptions_Achievements");
+			addStatisticsControls(tab, "GameOptions_Achievements.", achievementsInfo);
 		}
 	}
 
