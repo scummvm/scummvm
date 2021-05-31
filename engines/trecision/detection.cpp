@@ -120,6 +120,51 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO,
 		GUIO0()
 	},
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("2bfc3f5cc1ee5c7e80058db853296416", 436807),
+		Common::EN_ANY,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("2bfc3f5cc1ee5c7e80058db853296416", 457508),
+		Common::DE_DEU,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("2bfc3f5cc1ee5c7e80058db853296416", 436842),
+		Common::ES_ESP,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("2bfc3f5cc1ee5c7e80058db853296416", 456354),
+		Common::FR_FRA,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("2bfc3f5cc1ee5c7e80058db853296416", 446779),
+		Common::IT_ITA,
+		Common::kPlatformAmiga,
+		ADGF_UNSTABLE,
+		GUIO0()
+	},
 
 	AD_TABLE_END_MARKER
 };
