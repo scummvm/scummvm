@@ -79,6 +79,7 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -226,7 +227,12 @@ String get_save_game_filename(int slotNum) {
 }
 
 String get_save_game_path(int slotNum) {
+#if AGS_PLATFORM_SCUMMVM
+	return Common::String::format("%s%s", SAVE_FOLDER_PREFIX,
+		::AGS::g_vm->getSaveStateName(slotNum).c_str());
+#else
 	return Path::ConcatPaths(_G(saveGameDirectory), get_save_game_filename(slotNum));
+#endif
 }
 
 // Convert a path possibly containing path tags into acceptable save path
@@ -280,6 +286,9 @@ bool SetCustomSaveParent(const String &path) {
 }
 
 bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
+#if AGS_PLATFORM_SCUMMVM
+	return false;
+#else
 	if (!newFolder || newFolder[0] == 0)
 		newFolder = ".";
 	String newSaveGameDir;
@@ -320,6 +329,7 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 
 	_G(saveGameDirectory) = newSaveGameDir;
 	return true;
+#endif
 }
 
 int Game_SetSaveGameDirectory(const char *newFolder) {
