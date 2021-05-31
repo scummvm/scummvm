@@ -27,8 +27,6 @@
 #ifndef SAGA2_MODAL_H
 #define SAGA2_MODAL_H
 
-#include "saga2/floating.h"
-
 namespace Saga2 {
 
 void ModalModeSetup(void);

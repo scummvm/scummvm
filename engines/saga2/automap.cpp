@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/automap.h"
+#include "saga2/blitters.h"
 #include "saga2/tile.h"
 #include "saga2/objects.h"
 #include "saga2/player.h"

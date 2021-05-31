@@ -28,7 +28,6 @@
 #define SAGA2_OBJPROTO_H
 
 #include "saga2/idtypes.h"
-#include "saga2/tcoords.h"
 #include "saga2/sprite.h"
 #include "saga2/property.h"
 #include "saga2/savefile.h"

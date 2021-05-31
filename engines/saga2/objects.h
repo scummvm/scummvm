@@ -27,17 +27,8 @@
 #ifndef SAGA2_OBJECTS_H
 #define SAGA2_OBJECTS_H
 
-#include "saga2/idtypes.h"
-#include "saga2/tcoords.h"
-#include "saga2/sprite.h"
 #include "saga2/property.h"
-#include "saga2/savefile.h"
-#include "saga2/spells.h"
-#include "saga2/effects.h"
-#include "saga2/combat.h"
 #include "saga2/tilevect.h"
-//  Include list of prototype classes created by MicrosoftAccess script
-#include "saga2/pclass.r"
 #include "saga2/objproto.h"
 
 namespace Saga2 {

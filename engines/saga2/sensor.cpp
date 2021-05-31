@@ -30,6 +30,7 @@
 #include "saga2/sensor.h"
 #include "saga2/pool.h"
 #include "saga2/player.h"
+#include "saga2/tile.h"
 
 namespace Saga2 {
 

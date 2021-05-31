@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/blitters.h"
 #include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
 #include "saga2/tile.h"

@@ -32,7 +32,6 @@
 typedef uint32      ChunkID;
 #define MakeID(a,b,c,d) ((d<<24L)|(c<<16L)|(b<<8L)|a)
 
-#include "saga2/rmemfta.h"
 #include "saga2/saga2.h"
 
 #define FTA
@@ -68,7 +67,5 @@ typedef bool BOOL;
 #define maxint32 0x7fffffff
 #define maxuint32 0xffffffffu
 #define minuint32 0u
-
-#include "saga2/blitters.h"
 
 #endif  //SAGA2_STD_H

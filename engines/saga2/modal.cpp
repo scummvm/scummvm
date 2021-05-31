@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/fta.h"
+#include "saga2/floating.h"
 #include "saga2/modal.h"
 #include "saga2/setup.h"
 #include "saga2/speech.h"

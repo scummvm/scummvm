@@ -27,6 +27,7 @@
 #ifndef SAGA2_DOCUMENT_H
 #define SAGA2_DOCUMENT_H
 
+#include "saga2/floating.h"
 #include "saga2/modal.h"
 
 namespace Saga2 {

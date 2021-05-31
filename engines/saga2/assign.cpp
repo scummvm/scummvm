@@ -31,14 +31,25 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/actor.h"
 #include "saga2/assign.h"
+#include "saga2/calender.h"
 #include "saga2/patrol.h"
+#include "saga2/task.h"
 
 namespace Saga2 {
+
+const uint16 indefinitely = CalenderTime::framesPerDay;
 
 /* ===================================================================== *
    ActorAssignment member functions
  * ===================================================================== */
+
+//  Constructor
+ActorAssignment::ActorAssignment(uint16 until) :
+	startFrame(calender.frameInDay()),
+	endFrame(until) {
+}
 
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
@@ -137,6 +148,13 @@ TaskStack *ActorAssignment::createTask(void) {
 
 	return ts;
 }
+
+Actor *ActorAssignment::getActor(void) const {
+	// FIXME: This is utterly evil
+	warning("getActor(): dangerous pointer arithmetic, this will not work");
+	return (Actor *)(this - offsetof(Actor, assignmentBuf));
+}
+
 
 //----------------------------------------------------------------------
 //	This function is called to notify the assignment of the completion
@@ -324,6 +342,17 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
    HuntToBeNearLocationAssignment member functions
  * ===================================================================== */
 
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(const TilePoint &tp, uint16 r) :
+	ActorAssignment(indefinitely) {
+	initialize(LocationTarget(tp), r);
+}
+
+//  Construct with no time limit and an abstract target
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(const Target &targ, uint16 r) :
+	ActorAssignment(indefinitely) {
+	initialize(targ, r);
+}
+
 //----------------------------------------------------------------------
 //	An initialization function which provides a common ground for
 //	the initial constructors.
@@ -409,6 +438,25 @@ Task *HuntToBeNearLocationAssignment::getTask(TaskStack *ts) {
 /* ===================================================================== *
    HuntToBeNearActorAssignment member functions
  * ===================================================================== */
+
+//  Construct with no time limit and specific actor
+HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
+	Actor               *a,
+	uint16              r,
+	bool                trackFlag) :
+	ActorAssignment(indefinitely) {
+	assert(isActor(a) && a != getActor());
+	initialize(SpecificActorTarget(a), r, trackFlag);
+}
+
+//  Construct with no time limit and abstract actor target
+HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
+	const ActorTarget   &at,
+	uint16              r,
+	bool                trackFlag) :
+	ActorAssignment(indefinitely) {
+	initialize(at, r, trackFlag);
+}
 
 //----------------------------------------------------------------------
 //	An initialization function which provides a common ground for the
@@ -515,6 +563,22 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 /* ===================================================================== *
    HuntToKillAssignment member functions
  * ===================================================================== */
+
+//  Construct with no time limit and specific actor
+HuntToKillAssignment::HuntToKillAssignment(Actor *a, bool trackFlag) :
+	ActorAssignment(indefinitely) {
+	assert(isActor(a) && a != getActor());
+	initialize(SpecificActorTarget(a), trackFlag, TRUE);
+}
+
+//  Construct with no time limit and abstract actor target
+HuntToKillAssignment::HuntToKillAssignment(
+	const ActorTarget   &at,
+	bool                trackFlag) :
+	ActorAssignment(indefinitely) {
+	initialize(at, trackFlag, FALSE);
+}
+
 
 //----------------------------------------------------------------------
 //	An initialization function which provides a common ground for the
