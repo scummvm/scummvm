@@ -1190,7 +1190,6 @@ void OptionsDialog::addKeyMapperControls(GuiObject *boss, const Common::String &
 }
 
 void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
-	Common::String achDomainId = ConfMan.get("achievements", _domain);
 	AchMan.setActiveDomain(info);
 
 	GUI::ScrollContainerWidget *scrollContainer;
@@ -1262,7 +1261,6 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 }
 
 void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
-	Common::String achDomainId = ConfMan.get("achievements", _domain);
 	AchMan.setActiveDomain(info);
 
 	GUI::ScrollContainerWidget *scrollContainer;
