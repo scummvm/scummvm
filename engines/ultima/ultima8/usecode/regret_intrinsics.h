@@ -87,7 +87,7 @@ Intrinsic RegretIntrinsics[] = {
 	Actor::I_destroyContents, // Intrinsic032()
 	0, // Intrinsic033() Item::I_SetVolumeForItemSFX
 	Item::I_getDirToItem, // Intrinsic034()
-	0, // Intrinsic035()
+	AudioProcess::I_isSFXPlayingForObject, // Intrinsic035()
 	Item::I_getRangeIfVisible, // Intrinsic036()
 	AudioProcess::I_playSFXCru, // Intrinsic037() TODO: Not exactly the same.
 	Item::I_andStatus, // Intrinsic038()
