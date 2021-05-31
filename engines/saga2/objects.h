@@ -27,8 +27,6 @@
 #ifndef SAGA2_OBJECTS_H
 #define SAGA2_OBJECTS_H
 
-#include "saga2/property.h"
-#include "saga2/tilevect.h"
 #include "saga2/objproto.h"
 
 namespace Saga2 {
@@ -1111,24 +1109,6 @@ class RectangularObjectIterator : public RegionalObjectIterator {
 	          coords3,
 	          coords4;
 
-	//  Calculate the sector region to pass to the ObjectIterator
-	//  constructor
-	static TilePoint computeMinPoint(
-	    const TilePoint &c1,
-	    const TilePoint &c2,
-	    const TilePoint &c3,
-	    const TilePoint &c4) {
-		return MinTilePoint(c1, c2, c3, c4);
-	}
-
-	static TilePoint computeMaxPoint(
-	    const TilePoint &c1,
-	    const TilePoint &c2,
-	    const TilePoint &c3,
-	    const TilePoint &c4) {
-		return MaxTilePoint(c1, c2, c3, c4);
-	}
-
 	//  Test to see if the specified point is within the region
 	bool inRegion(const TilePoint &tp);
 
@@ -1138,17 +1118,7 @@ public:
 	    GameWorld *world,
 	    const TilePoint &c,
 	    const TilePoint &cdelta1,
-	    const TilePoint &cdelta2) :
-		RegionalObjectIterator(
-		    world,
-		    computeMinPoint(c, c + cdelta1, c + cdelta2, c + cdelta1 + cdelta2),
-		    computeMaxPoint(c, c + cdelta1, c + cdelta2, c + cdelta1 + cdelta2)),
-		coords1(c),
-		coords2(c + cdelta1),
-		coords3(c + cdelta1 + cdelta2),
-		coords4(c + cdelta2),
-		center((c + (cdelta1 + cdelta2) / 2)) {
-	}
+	    const TilePoint &cdelta2);
 
 	virtual ObjectID first(GameObject **obj);
 	virtual ObjectID next(GameObject **obj);
@@ -1167,22 +1137,6 @@ class TriangularObjectIterator : public RegionalObjectIterator {
 	                coords2,
 	                coords3;
 
-	//  Calculate the sector region to pass to the ObjectIterator
-	//  constructor
-	static TilePoint computeMinPoint(
-	    const TilePoint &c1,
-	    const TilePoint &c2,
-	    const TilePoint &c3) {
-		return MinTilePoint(c1, c2, c3);
-	}
-
-	static TilePoint computeMaxPoint(
-	    const TilePoint &c1,
-	    const TilePoint &c2,
-	    const TilePoint &c3) {
-		return MaxTilePoint(c1, c2, c3);
-	}
-
 	//  Test to see if the specified point is within the region
 	bool inRegion(const TilePoint &tp);
 
@@ -1192,15 +1146,7 @@ public:
 	    GameWorld *world,
 	    const TilePoint &c1,
 	    const TilePoint &c2,
-	    const TilePoint &c3) :
-		RegionalObjectIterator(
-		    world,
-		    computeMinPoint(c1, c2, c3),
-		    computeMaxPoint(c1, c2, c3)),
-		coords1(c1),
-		coords2(c2),
-		coords3(c3) {
-	}
+	    const TilePoint &c3);
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
