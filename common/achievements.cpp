@@ -234,7 +234,7 @@ int AchievementsManager::getStatInt(String const &id) {
 }
 
 
-String AchievementsManager::getStatRaw(String const &id) {
+const String AchievementsManager::getStatRaw(String const &id) {
 	if (!isReady()) {
 		return "";
 	}

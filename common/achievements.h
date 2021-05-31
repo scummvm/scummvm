@@ -166,7 +166,7 @@ public:
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 */
-	String getStatRaw(const String &id);
+	const String getStatRaw(const String &id);
 
 	/**
 	 * Get an average rate statistic (float).
