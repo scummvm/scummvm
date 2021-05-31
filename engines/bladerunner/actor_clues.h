@@ -40,7 +40,7 @@ class ActorClues {
 		int weight;
 		int fromActorId;
 		int field3; // unused (but stored/restored)
-		int field4; // unused (but stored/restored)
+		int field4; // Used in Restored Content. Original: unused (but stored/restored)
 		int field5; // unused (but stored/restored)
 		int field6; // unused (but stored/restored)
 		int field7; // unused (but stored/restored)
@@ -85,6 +85,11 @@ public:
 
 	bool isPrivate(int clueId) const;
 	void setPrivate(int clueId, bool value);
+
+	// Restored Content method - Checks whether a clue, that McCoy has, was shared with Mainframe
+	bool isSharedWithMainframe(int clueId) const;
+	// Restored Content method - Marks a clue, that McCoy has, as shared with Mainframe
+	void setSharedWithMainframe(int clueId, bool value);
 
 	int getCount() const;
 	int getClueIdByIndex(int index) const;

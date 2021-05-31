@@ -605,12 +605,19 @@ void UIScrollBox::draw(Graphics::Surface &surface) {
 
 			if (_lines[i]->flags & 0x08) { // has background rectangle
 				int colorBackground = 0;
-				if (_style == 2) {
-					colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r / 8, kTextBackgroundColors[colorIndex].g / 8, kTextBackgroundColors[colorIndex].b / 8);
-				} else if (_style > 0) {
-					colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r, kTextBackgroundColors[colorIndex].g, kTextBackgroundColors[colorIndex].b);
+				if (_vm->_cutContent && (_lines[i]->flags & 0x40)) {
+					// A KIA clue marked as hidden/private, but already shared with Mainframe
+					// Note, proper hidden clues will not have this mark and will get colorBackground
+					// from below (case _style > 0)
+					colorBackground = surface.format.RGBToColor(80, 46, 22);
 				} else {
-					colorBackground = surface.format.RGBToColor(80, 56, 32);
+					if (_style == 2) {
+						colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r / 8, kTextBackgroundColors[colorIndex].g / 8, kTextBackgroundColors[colorIndex].b / 8);
+					} else if (_style > 0) {
+						colorBackground = surface.format.RGBToColor(kTextBackgroundColors[colorIndex].r, kTextBackgroundColors[colorIndex].g, kTextBackgroundColors[colorIndex].b);
+					} else {
+						colorBackground = surface.format.RGBToColor(80, 56, 32);
+					}
 				}
 
 				if (_style == 2) {

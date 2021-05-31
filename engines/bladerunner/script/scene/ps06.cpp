@@ -85,31 +85,42 @@ bool SceneScriptPS06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
 			if (_vm->_cutContent) {
 				Actor_Clues_Transfer_New_From_Mainframe(kActorKlein);
+				// also play "new clues added" cue, since McCoy gets the registrations clues
+				Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);
 			}
 			return true;
 		} else {
-			bool transferedClues = Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
-			if (_vm->_cutContent && !transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
-			} else {
+			bool uploadedClues = Actor_Clues_Transfer_New_To_Mainframe(kActorMcCoy);
+			if (!_vm->_cutContent || uploadedClues) {
 				if (_vm->_cutContent) {
 					Actor_Clues_Transfer_New_From_Mainframe(kActorKlein);
 				}
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
-				Delay(2000);
+				if (_vm->_cutContent) {
+					Delay(800); // shorten delay in Restored Content mode
+				} else {
+					Delay(2000);
+				}
 			}
-			Actor_Says(kActorAnsweringMachine, 340,  kAnimationModeTalk);     // downloading clues
-			transferedClues = Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
-			if (_vm->_cutContent && !transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
-			} else {
+			Actor_Says(kActorAnsweringMachine, 340,  kAnimationModeTalk);         // downloading clues
+			bool downloadedClues = Actor_Clues_Transfer_New_From_Mainframe(kActorMcCoy);
+			if (!_vm->_cutContent || downloadedClues) {
 				Ambient_Sounds_Play_Sound(kSfxDATALOAD, 50, 0, 0, 99);
-				Delay(2000);
+				if (_vm->_cutContent) {
+					Delay(800); // shorten delay in Restored Content mode
+				} else {
+					Delay(2000);
+				}
 			}
 			Ambient_Sounds_Play_Sound(kSfxBEEPNEAT, 80, 0, 0, 99);
 			Actor_Says(kActorAnsweringMachine, 350, kAnimationModeTalk);          // db transfer complete
-			if (_vm->_cutContent && transferedClues) {
-				Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);      // new clues added
+			if (_vm->_cutContent) {
+				if (downloadedClues) {
+					Actor_Says(kActorAnsweringMachine, 360, kAnimationModeTalk);  // new clues added
+				} else if (!uploadedClues && !downloadedClues) {
+					// Play the "No clues transfered" if overall no clues were exchanged
+					Actor_Says(kActorAnsweringMachine, 370,  kAnimationModeTalk); // no clues transfered
+				}
 			}
 			return true;
 		}

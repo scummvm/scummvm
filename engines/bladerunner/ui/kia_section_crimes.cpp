@@ -394,6 +394,9 @@ void KIASectionCrimes::populateVisibleClues() {
 				if (_clues->isViewed(clueId)) {
 					flags &= ~0x20;
 				}
+				if (_vm->_cutContent && _clues->isSharedWithMainframe(clueId)) {
+					flags |= 0x40;
+				}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 				_cluesScrollBox->addLine(_vm->_crimesDatabase->getClueText(clueId), clueId, flags);
 			}
