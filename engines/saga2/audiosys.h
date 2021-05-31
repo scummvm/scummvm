@@ -27,9 +27,12 @@
 #ifndef SAGA2_AUDIOSYS_H
 #define SAGA2_AUDIOSYS_H
 
-#include "saga2/audiobuf.h"
-
 namespace Saga2 {
+
+class Buffer;
+class musicBuffer;
+class soundQueue;
+class decoderSet;
 
 /*******************************************************************/
 /* DRIVERS subdirectory                                            */
@@ -114,12 +117,7 @@ struct audioInterfaceSettings {
 		soundBufferSize = sbs;
 		loopBufferSize = lbs;
 	}
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio settings");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
+
 private:
 	audioInterfaceSettings();
 };
@@ -232,13 +230,6 @@ private:
 #endif
 
 public:
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio interface");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
-
 	// ctor, dtor, initialization
 	audioInterface(const char *driver_path = DRIVER_PATH, const char *undriver_path = UNDRIVER_PATH);
 	~audioInterface();

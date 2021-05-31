@@ -29,10 +29,8 @@
 
 namespace Saga2 {
 
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
+class TilePoint;
+struct TileRegion;
 
 // these control the rate of drowning damage
 // the first two determine the chances of doing damage on a

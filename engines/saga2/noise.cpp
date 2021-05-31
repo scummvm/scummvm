@@ -31,11 +31,18 @@
 #include "saga2/fta.h"
 #include "saga2/audio.h"
 #include "saga2/audiores.h"
+#include "saga2/audiodec.h"
+#include "saga2/audiofnc.h"
 #include "saga2/tcoords.h"
 #include "saga2/button.h"
 #include "saga2/annoy.h"
 #include "saga2/objproto.h"
 #include "saga2/player.h"
+
+#include "saga2/queues.h"
+#include "saga2/audiosmp.h"
+#include "saga2/audqueue.h"
+#include "saga2/audiosys.h"
 
 namespace Saga2 {
 

@@ -29,6 +29,13 @@
 
 namespace Saga2 {
 
+class Buffer;
+class audioInterface;
+class soundDecoder;
+class soundSample;
+class workBuffer;
+class soundQueue;
+
 /* ===================================================================== *
 
    Sound Sample Decoders
@@ -75,12 +82,7 @@ union soundServer {
 	INPLACEDECODER  *pDec;
 	BUFFERDECODER   *bDec;
 	BUFFERLOADER    *lDec;
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud snd server");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
+
 	soundServer() {
 		pDec = NULL;
 	}
@@ -149,12 +151,6 @@ public:
 	soundDecoder(BUFFERLOADER, BUFFERLOADER, BUFFERLOADER);
 #endif
 	~soundDecoder(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio decoder");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 	soundDecoder &operator=(const soundDecoder &src);
 	soundDecoder(const soundDecoder &src);
 	bool operator==(const soundDecoder &src2) const;
@@ -194,12 +190,7 @@ public:
 		if (decode) delete decode;
 		decode = NULL;
 	}
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio decdr set");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
+
 	void addDecoder(soundDecoder *sodec);
 
 #if DEBUG_AUDIO

@@ -27,8 +27,6 @@
 #ifndef SAGA2_TCOORDS_H
 #define SAGA2_TCOORDS_H
 
-#include "saga2/rect.h"
-
 namespace Saga2 {
 
 enum facingDirections {

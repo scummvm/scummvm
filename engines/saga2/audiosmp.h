@@ -28,6 +28,9 @@
 #define SAGA2_AUDIOSMP_H
 
 namespace Saga2 {
+
+class decoderSet;
+
 /* ===================================================================== *
 
    Sound Sample Attributes
@@ -47,7 +50,6 @@ namespace Saga2 {
 #define ENDSAMP 0xFFFFFFFF
 
 typedef uint32 soundSampleID;
-typedef uint32 soundSegment;
 typedef soundSegment *segmentArray;
 typedef int8 Volume;
 typedef Point32 sampleLocation;
@@ -115,12 +117,6 @@ public:
 	soundSample(soundSegment sa[]);  //, sampleLocation pos=Point32( 0, 0 ));
 	soundSample(soundSegment seg);  //, sampleLocation pos=Point32( 0, 0 ));
 	virtual ~soundSample();
-	void *operator new (size_t s) {
-		return audioAlloc(s, "audio sample");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	soundSample &operator=(const soundSample &src);
 	soundSample(const soundSample &src);
@@ -194,12 +190,7 @@ public:
 	movingSample(soundSegment sa[], sampleLocation pos, sampleVelocity vel, sampleAcceleration acc);
 	movingSample(soundSegment seg, sampleLocation pos, sampleVelocity vel, sampleAcceleration acc);
 	~movingSample() {};
-	void *operator new (size_t s) {
-		return audioAlloc(s, "moving sample");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
+
 	Volume getVolume(void);
 };
 

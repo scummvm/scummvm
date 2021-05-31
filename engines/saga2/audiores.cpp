@@ -30,7 +30,13 @@
 #include "saga2/audio.h"
 #include "saga2/hresmgr.h"
 #include "saga2/audiores.h"
+#include "saga2/audiodec.h"
 #include "saga2/fta.h"
+
+#include "saga2/queues.h"
+#include "saga2/idtypes.h"
+#include "saga2/audiosmp.h"
+#include "saga2/audiobuf.h"
 
 namespace Saga2 {
 

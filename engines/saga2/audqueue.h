@@ -42,12 +42,6 @@ public:
 		tip = NULL;
 	}
 	~soundQueue(void);
-	void *operator new (size_t s) {
-		return audioAlloc(s, "aud smpl queue");
-	}
-	void operator delete (void *m) {
-		audioFree(m);
-	}
 
 	positionedSample *firstSample(void);
 	positionedSample *nextSample(void);

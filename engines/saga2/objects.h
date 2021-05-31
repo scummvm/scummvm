@@ -28,6 +28,7 @@
 #define SAGA2_OBJECTS_H
 
 #include "saga2/objproto.h"
+#include "saga2/property.h"
 
 namespace Saga2 {
 
