@@ -197,6 +197,9 @@ const Common::AchievementsInfo TwinEMetaEngine::getAchievementsInfo(const Common
 		if (i->gameId == gameId && i->platform == platform) {
 			result.platform = i->platform;
 			result.appId = i->appId;
+			for (const Common::StatDescription *it = i->stats; it->id; ++it) {
+				result.stats.push_back(*it);
+			}
 			for (const Common::AchievementDescription *it = i->descriptions; it->id; ++it) {
 				result.descriptions.push_back(*it);
 			}

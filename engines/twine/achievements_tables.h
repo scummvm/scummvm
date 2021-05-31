@@ -31,6 +31,7 @@ struct AchievementDescriptionList {
 	const char *gameId;
 	Common::AchievementsPlatform platform;
 	const char *appId;
+	const Common::StatDescription stats[64];
 	const Common::AchievementDescription descriptions[64];
 };
 
@@ -43,12 +44,22 @@ struct AchievementDescriptionList {
 #define ACHIEVEMENTS_LISTEND \
 	{ 0, 0, 0, 0 }
 
+#define STATS_SIMPLE_ENTRY(id, comment, default) \
+	{id, comment, default}
+#define STATS_NODESC_ENTRY(id, default) \
+	{id, "", default}
+#define STATS_LISTEND \
+	{0, 0, 0}
+#define NOSTATS \
+	{STATS_LISTEND}
+
 static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		// https://steamdb.info/app/397330/stats/
 		"lba",
 		Common::STEAM_ACHIEVEMENTS,
 		"397330",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("LBA_ACH_001", "Victory!", "Finish the game."),
 			ACHIEVEMENT_SIMPLE_ENTRY("LBA_ACH_002", "Heavily armed", "Get the magic saber."),
@@ -66,7 +77,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		}
 	},
 
-	{0, Common::UNK_ACHIEVEMENTS, 0, {ACHIEVEMENTS_LISTEND}}};
+	{0, Common::UNK_ACHIEVEMENTS, 0, {STATS_LISTEND}, {ACHIEVEMENTS_LISTEND}}};
 
 } // namespace TwinE
 
@@ -74,5 +85,10 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 #undef ACHIEVEMENT_NODESC_ENTRY
 #undef ACHIEVEMENT_HIDDEN_ENTRY
 #undef ACHIEVEMENTS_LISTEND
+
+#undef STATS_SIMPLE_ENTRY
+#undef STATS_NODESC_ENTRY
+#undef STATS_LISTEND
+#undef NOSTATS
 
 #endif // TWINE_ACHIEVEMENTS_H
