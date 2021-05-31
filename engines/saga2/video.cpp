@@ -30,14 +30,14 @@ namespace Saga2 {
 
 #define VIDEO_EXT ".SMK"
 
-static bool nameCheck(char name[], char ext[]) {
+static bool nameCheck(char name[], const char ext[]) {
 	size_t l = strlen(name);
 	if (l < 5 || 0 != scumm_stricmp(name + (l - strlen(ext)), ext))
 		strcat(name, ext);
 	return true; //fileExists(name);
 }
 
-void startVideo(char *fileName, int x, int y) {
+void Saga2Engine::startVideo(char *fileName, int x, int y) {
 	char file[260];
 	strncpy(file, fileName, 260);
 	nameCheck(file, VIDEO_EXT);
@@ -45,16 +45,16 @@ void startVideo(char *fileName, int x, int y) {
 	//vp->StartPlay(file, x, y,VideoSMK);
 }
 
-bool checkVideo(void) {
+bool Saga2Engine::checkVideo(void) {
 	return true;
 	//return vp->CheckPlay();
 }
 
-void abortVideo(void) {
+void Saga2Engine::abortVideo(void) {
 	//endVideo();
 }
 
-void endVideo() {
+void Saga2Engine::endVideo() {
 	//if (vp)
 	//	vp->EndPlay();
 }

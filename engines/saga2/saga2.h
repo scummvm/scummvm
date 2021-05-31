@@ -43,6 +43,8 @@ enum {
 	kDebugTiles     = 1 << 5
 };
 
+#define TICKSPERSECOND (728L/10L)
+
 class Saga2Engine : public Engine {
 public:
 	Saga2Engine(OSystem *syst);
@@ -58,6 +60,12 @@ public:
 
 	void loadExeResources();
 	void freeExeResources();
+
+	// itevideo.cpp
+	void startVideo(char *fileName, int x, int y);
+	bool checkVideo(void);
+	void endVideo(void);
+	void abortVideo(void);
 
 public:
 	// We need random numbers

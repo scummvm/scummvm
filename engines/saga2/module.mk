@@ -37,7 +37,6 @@ MODULE_OBJS := \
 	input.o \
 	interp.o \
 	intrface.o \
-	itevideo.o \
 	keybored.o \
 	loadmsg.o \
 	loadsave.o \
@@ -96,6 +95,7 @@ MODULE_OBJS := \
 	tromode.o \
 	uidialog.o \
 	vbacksav.o \
+	video.o \
 	videobox.o \
 	vpal.o \
 	vwdraw.o \

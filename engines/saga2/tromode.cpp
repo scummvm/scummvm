@@ -32,7 +32,6 @@
 #include "saga2/cmisc.h"
 #include "saga2/input.h"
 #include "saga2/fta.h"
-#include "saga2/itevideo.h"
 #include "saga2/videos.h"
 #include "saga2/player.h"
 #include "saga2/tromode.h"
@@ -209,7 +208,7 @@ static void TroModeSetup(void) {
 // Exit
 
 static void TroModeCleanup(void) {
-	endVideo();
+	g_vm->endVideo();
 	popVidState();
 	displayEnable(PlayingVideo);
 	blackOut();
@@ -280,7 +279,7 @@ static void waitForTimer(uint32 tenthsOfSecond) {
 // Wait till a video completes
 
 static void waitForVideo(void) {
-	while (checkVideo()) {
+	while (g_vm->checkVideo()) {
 		SystemEventLoop();
 		if (abortFlag)
 			return;
@@ -304,9 +303,9 @@ void waitForInput(void) {
  * ===================================================================== */
 
 static void playAVideo(char *fileName, int x, int y) { //, int16 from, int16 to )
-	startVideo(fileName, x, y); //, ERASE_BETWEEN, 0,0 );
-	if (!checkVideo()) {
-		endVideo();
+	g_vm->startVideo(fileName, x, y);
+	if (!g_vm->checkVideo()) {
+		g_vm->endVideo();
 		abortFlag = TRUE;
 		return;
 	}

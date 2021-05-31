@@ -29,7 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/videobox.h"
-#include "saga2/itevideo.h"
 
 namespace Saga2 {
 
@@ -58,11 +57,12 @@ CVideoBox::CVideoBox(const Rect16 &box,
 
 CVideoBox::~CVideoBox(void) {
 	// remove the resource handle
-	if (decRes) resFile->disposeContext(decRes);
+	if (decRes)
+		resFile->disposeContext(decRes);
 	decRes = NULL;
 
 	// stop video if not done
-	abortVideo();
+	g_vm->abortVideo();
 }
 
 void CVideoBox::deactivate(void) {
@@ -156,13 +156,13 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	ModalWindow::open();
 
 	// start the video playback
-	startVideo(fileName, x + borderWidth, y + borderWidth);
+	g_vm->startVideo(fileName, x + borderWidth, y + borderWidth);
 
 	// run this modal event loop
 	//EventLoop( rInfo.running, TRUE );
-	rInfo.running = checkVideo();
+	rInfo.running = g_vm->checkVideo();
 	while (rInfo.running)
-		rInfo.running = checkVideo();
+		rInfo.running = g_vm->checkVideo();
 
 	// get the result
 	return rInfo.result;
