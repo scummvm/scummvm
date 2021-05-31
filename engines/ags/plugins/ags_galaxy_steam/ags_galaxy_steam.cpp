@@ -112,7 +112,16 @@ void AGS2Client::ResetStatsAndAchievements(ScriptMethodParams &params) {
 }
 
 void AGS2Client::get_Initialized(ScriptMethodParams &params) {
-	params._result = 0;
+	// TODO: remove this after GetCurrentGameLanguage() is implemented
+	if (ConfMan.get("gameid") == "heroinesquest" ||
+		ConfMan.get("gameid") == "killyourself"
+	) {
+		warning("AGS2Client::get_Initialized() is returning fake value to avoid calling GetCurrentGameLanguage() by game");
+		params._result = 0;
+		return;
+	}
+
+	params._result = AchMan.isReady();
 }
 
 void AGS2Client::get_CurrentLeaderboardName(ScriptMethodParams &params) {
