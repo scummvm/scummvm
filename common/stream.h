@@ -643,8 +643,9 @@ public:
 	 * the terminating character.
 	 *
 	 * @param terminator	The terminating character to use.
+	 * @param len			The maximum length to read (includes terminator).
 	 */
-	String readString(char terminator = 0);
+	String readString(char terminator = 0, size_t len = String::npos);
 
 	/**
 	 * Read a string in Pascal format, that is, one byte is

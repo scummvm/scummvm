@@ -52,12 +52,20 @@ SeekableReadStream *ReadStream::readStream(uint32 dataSize) {
 	return new MemoryReadStream((byte *)buf, dataSize, DisposeAfterUse::YES);
 }
 
-Common::String ReadStream::readString(char terminator) {
+Common::String ReadStream::readString(char terminator, size_t len) {
 	Common::String result;
 	char c;
 
-	while ((c = (char)readByte()) != terminator && !eos())
+	while ((c = (char)readByte()) != terminator && result.size() < len && !eos())
 		result += c;
+
+	// If the string terminated early, skip the remaining bytes
+	if (!eos() && len != Common::String::npos && result.size() < len - 1) {
+		size_t skipBytes = len - result.size() - 1; // skip terminator
+		for (size_t i = 0; i < skipBytes; i++) {
+			readByte();
+		}
+	}
 
 	return result;
 }
