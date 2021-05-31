@@ -208,6 +208,8 @@ void displayUpdate(void);
 void updatePerfStats(void);
 //EO//#endif
 
+void testTiles();
+
 /********************************************************************/
 /*                                                                  */
 /* MAIN FUNCTION                                                    */
@@ -758,21 +760,7 @@ void testTileRendering() {
 	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
 	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
 
-	initMaps();
-	initTileCyclingStates();
-
-//	uint8 *img = nullptr;
-//	TileInfo *ti;
-//	for (int i = 0; i <= 65535; ++i) {
-//		ti = TileInfo::tileAddress(i, &img);
-//		if (ti) {
-//			debugC(3, kDebugTiles, "terrainHeight = %d, height = %d", ti->attrs.terrainHeight, ti->attrs.height);
-//			Common::hexdump(img, ti->attrs.height);
-//		}
-//	}
-
-	cleanupTileCyclingStates();
-	cleanupMaps();
+	testTiles();
 }
 
 //-----------------------------------------------------------------------
