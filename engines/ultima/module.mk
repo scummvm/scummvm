@@ -511,6 +511,7 @@ MODULE_OBJS := \
 	ultima8/usecode/uc_stack.o \
 	ultima8/usecode/usecode.o \
 	ultima8/usecode/usecode_flex.o \
+	ultima8/world/bobo_boomer_process.o \
 	ultima8/world/camera_process.o \
 	ultima8/world/container.o \
 	ultima8/world/create_item_process.o \
@@ -571,6 +572,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/pathfinder_process.o \
 	ultima8/world/actors/quick_avatar_mover_process.o \
 	ultima8/world/actors/resurrection_process.o \
+	ultima8/world/actors/rolling_thunder_process.o \
 	ultima8/world/actors/scheduler_process.o \
 	ultima8/world/actors/surrender_process.o \
 	ultima8/world/actors/targeted_anim_process.o \

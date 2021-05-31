@@ -45,6 +45,8 @@
 #include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
 #include "ultima/ultima8/world/actors/surrender_process.h"
+#include "ultima/ultima8/world/actors/rolling_thunder_process.h"
+#include "ultima/ultima8/world/bobo_boomer_process.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/sprite_process.h"
@@ -797,8 +799,8 @@ uint16 Actor::setActivityCru(int activity) {
 		return 0;
 	case 0xd:
 		// Only in No Regret
-		perr << "Actor::setActivityCru: TODO: RollingThunderProcess (" << activity << ")";
-		return doAnim(Animation::stand, dir_current);
+		setActorFlag(ACT_INCOMBAT);
+		return Kernel::get_instance()->addProcess(new RollingThunderProcess(this));
 	case 0x70:
 		return setActivity(getDefaultActivity(0));
 	case 0x71:
@@ -1026,8 +1028,15 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	}
 }
 
+#define RAND_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
+
 void Actor::tookHitCru() {
+	AudioProcess *audio = AudioProcess::get_instance();
 	Animation::Sequence lastanim = getLastAnim();
+	bool isfemale = hasExtFlags(EXT_FEMALE);
+	if (!audio)
+		return;
+
 	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunLargeWeapon) {
 		Actor *controlled = getActor(World::get_instance()->getControlledNPCNum());
 		bool canseecontrolled = controlled && (getRangeIfVisible(*controlled) > 0);
@@ -1037,45 +1046,97 @@ void Actor::tookHitCru() {
 			else
 				setActivity(10);
 		}
-	} else {
+	} else if (GAME_IS_REMORSE) {
 		uint32 shape = getShape();
-		if (shape != 0x576) { // 0x576 = flaming guy
-			if (shape < 0x577) {
-				if (shape == 0x385 || shape == 0x4e6) {
-				   explode(2, 0);
-				   clearFlag(FLG_IN_NPC_LIST);
-				   clearFlag(FLG_GUMP_OPEN);
-			   }
-			   return;
-		   }
-		   if (shape != 0x596) {
-			   return;
-		   }
-		}
-
-		bool violence = true; // Game::I_isViolenceEnabled
-		if (!violence)
-			return;
-
-		static const uint16 FEMALE_SCREAMS[] = {0xb, 0xa};
-		static const uint16 MALE_SCREAMS[] = {0x65, 0x66, 0x67};
-		int nsounds;
-		const uint16 *sounds;
-		if (hasExtFlags(EXT_FEMALE)) {
-			nsounds = ARRAYSIZE(FEMALE_SCREAMS);
-			sounds = FEMALE_SCREAMS;
-		} else {
-			nsounds = ARRAYSIZE(MALE_SCREAMS);
-			sounds = MALE_SCREAMS;
-		}
-		AudioProcess *audio = AudioProcess::get_instance();
-		if (!audio)
-			return;
-		for (int i = 0; i < nsounds; i++) {
-			if (audio->isSFXPlayingForObject(sounds[i], _objId))
+		if (shape == 0x385 || shape == 0x4e6) {
+			explode(2, 0);
+			clearFlag(FLG_IN_NPC_LIST | FLG_GUMP_OPEN);
+		} else if (shape == 0x576 || shape == 0x596) {
+			bool violence = true; // Game::I_isViolenceEnabled
+			if (!violence)
 				return;
+
+			static const uint16 FEMALE_SFX[] = {0xb, 0xa};
+			static const uint16 MALE_SFX[] = {0x65, 0x66, 0x67};
+			int nsounds = isfemale ? ARRAYSIZE(FEMALE_SFX) : ARRAYSIZE(MALE_SFX);
+			const uint16 *sounds = isfemale ? FEMALE_SFX : MALE_SFX;
+
+			for (int i = 0; i < nsounds; i++) {
+				if (audio->isSFXPlayingForObject(sounds[i], _objId))
+					return;
+			}
+
+			audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
 		}
-		audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
+	} else if (GAME_IS_REGRET) {
+		switch (getShape()) {
+		case 0x596: {
+			static const uint16 FEMALE_SFX[] = {0x212, 0x211};
+			static const uint16 MALE_SFX[] = {0x213, 0x214};
+			int sfxno = isfemale ? RAND_ELEM(FEMALE_SFX) : RAND_ELEM(MALE_SFX);
+			audio->playSFX(sfxno, 0x80, _objId, 1);
+			break;
+		}
+		case 0x576: {
+			static const uint16 FEMALE_SFX[] = {0x3D, 0x77, 0x210};
+			static const uint16 MALE_SFX[] = {0x24F, 0x250, 0x201, 0x200};
+			bool violence = true; // Game::I_isViolenceEnabled
+			if (!violence)
+				return;
+
+			int nsounds = isfemale ? ARRAYSIZE(FEMALE_SFX) : ARRAYSIZE(MALE_SFX);
+			const uint16 *sounds = isfemale ? FEMALE_SFX : MALE_SFX;
+
+			for (int i = 0; i < nsounds; i++) {
+				if (audio->isSFXPlayingForObject(sounds[i], _objId))
+					return;
+			}
+
+			audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
+			return;
+		}
+		case 0x385:
+		case 0x4e6: {
+			explode(2, false);
+			clearFlag(FLG_GUMP_OPEN | FLG_IN_NPC_LIST);
+			break;
+		}
+		case 0x5d6: {
+			static const uint16 MALE_SFX[] = {0x21B, 0x21A, 0x21C};
+			static const uint16 FEMALE_SFX[] = {0x21D, 0x215};
+			int sfxno = isfemale ? RAND_ELEM(FEMALE_SFX) : RAND_ELEM(MALE_SFX);
+			audio->playSFX(sfxno, 0x80, _objId, 1);
+			break;
+		}
+		case 0x62d: {
+			static const uint16 MALE_SFX[] = {0x217, 0x218};
+			static const uint16 FEMALE_SFX[] = {0x219, 0x216};
+			int sfxno = isfemale ? RAND_ELEM(FEMALE_SFX) : RAND_ELEM(MALE_SFX);
+			audio->playSFX(sfxno, 0x80, _objId, 1);
+			break;
+		}
+		case 0x656:
+		case 0x278: {
+			static const uint16 MALE_SFX[] = {0x20B, 0x20C, 0x20D};
+			static const uint16 FEMALE_SFX[] = {0x20E, 0x20F};
+			int sfxno = isfemale ? RAND_ELEM(FEMALE_SFX) : RAND_ELEM(MALE_SFX);
+			audio->playSFX(sfxno, 0x80, _objId, 1);
+			break;
+		}
+		case 0x5b1: {
+			Process *proc = new BoboBoomerProcess(this);
+			Kernel::get_instance()->addProcess(proc);
+			break;
+		}
+		case 0x58f:
+		case 0x59c: {
+			static const uint16 SOUNDS[] = {0xD9, 0xDA};
+			audio->playSFX(RAND_ELEM(SOUNDS), 0x80, _objId, 1);
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }
 

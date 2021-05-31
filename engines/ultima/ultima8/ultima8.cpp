@@ -83,6 +83,8 @@
 #include "ultima/ultima8/world/actors/attack_process.h"
 #include "ultima/ultima8/world/actors/auto_firer_process.h"
 #include "ultima/ultima8/world/actors/pace_process.h"
+#include "ultima/ultima8/world/actors/rolling_thunder_process.h"
+#include "ultima/ultima8/world/bobo_boomer_process.h"
 #include "ultima/ultima8/world/super_sprite_process.h"
 #include "ultima/ultima8/world/destroy_item_process.h"
 #include "ultima/ultima8/world/actors/ambush_process.h"
@@ -303,6 +305,10 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<AttackProcess>::load);
 	_kernel->addProcessLoader("AutoFirerProcess",
 		ProcessLoader<AutoFirerProcess>::load);
+	_kernel->addProcessLoader("BoboBoomerProcess",
+		ProcessLoader<BoboBoomerProcess>::load);
+	_kernel->addProcessLoader("RollingThunderProcess",
+		ProcessLoader<RollingThunderProcess>::load);
 
 	_objectManager = new ObjectManager();
 	_mouse = new Mouse();
