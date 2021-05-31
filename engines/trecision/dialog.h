@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
-#include "common/file.h"
+#include "common/stream.h"
 
 namespace Trecision {
 class TrecisionEngine;
@@ -99,7 +99,7 @@ public:
 	uint16 getCurDialog() const { return _curDialog; }
 	uint16 getCurChoice() const { return _curChoice; }
 	void syncGameStream(Common::Serializer &ser);
-	void loadData(Common::File *file);
+	void loadData(Common::SeekableReadStreamEndian *stream);
 };
 // end of class
 

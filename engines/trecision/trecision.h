@@ -27,6 +27,7 @@
 #include "common/keyboard.h"
 #include "common/str.h"
 #include "common/serializer.h"
+#include "common/stream.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/surface.h"
@@ -134,8 +135,8 @@ class TrecisionEngine : public Engine {
 	bool canPlayerInteract();
 
 	// Objects
-	void readObj(Common::SeekableReadStream *stream);
-	void readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId);
+	void readObj(Common::SeekableReadStreamEndian *stream);
+	void readObject(Common::SeekableReadStreamEndian *stream, uint16 objIndex, uint16 objectId);
 
 	char *_textArea;
 	uint16 _curScriptFrame[10];
@@ -154,7 +155,7 @@ public:
 
 	// ScummVM
 	Common::Error run() override;
-	bool isDemo() const;
+	bool isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
 	bool canSaveGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
@@ -163,6 +164,7 @@ public:
 	bool syncGameStream(Common::Serializer &ser);
 
 	// Data files
+	Common::SeekableReadStreamEndian *readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::YES);
 	void read3D(const Common::String &c);
 
 	// Inventory

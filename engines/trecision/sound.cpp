@@ -266,13 +266,13 @@ void SoundManager::loadRoomSounds() {
 	}
 }
 
-void SoundManager::loadSamples(Common::File *file) {
+void SoundManager::loadSamples(Common::SeekableReadStreamEndian *stream) {
 	for (int i = 0; i < NUMSAMPLES; ++i) {
 		for (int j = 0; j < 14; j++)
-			_gSample[i]._name += file->readByte();
-		_gSample[i]._volume = file->readByte();
-		_gSample[i]._flag = file->readByte();
-		_gSample[i]._panning = file->readSByte();
+			_gSample[i]._name += stream->readByte();
+		_gSample[i]._volume = stream->readByte();
+		_gSample[i]._flag = stream->readByte();
+		_gSample[i]._panning = stream->readSByte();
 	}
 }
 

@@ -24,17 +24,17 @@
 
 namespace Trecision {
 
-void SRoom::loadRoom(Common::File *file) {
-	file->read(&_baseName, 4);
-	_flag = file->readByte();
-	file->readByte(); // Padding
-	_bkgAnim = file->readUint16LE();
+void SRoom::loadRoom(Common::SeekableReadStreamEndian *stream) {
+	stream->read(&_baseName, 4);
+	_flag = stream->readByte();
+	stream->readByte(); // Padding
+	_bkgAnim = stream->readUint16();
 	for (int j = 0; j < MAXOBJINROOM; ++j)
-		_object[j] = file->readUint16LE();
+		_object[j] = stream->readUint16();
 	for (int j = 0; j < MAXSOUNDSINROOM; ++j)
-		_sounds[j] = file->readUint16LE();
+		_sounds[j] = stream->readUint16();
 	for (int j = 0; j < MAXACTIONINROOM; ++j)
-		_actions[j] = file->readUint16LE();
+		_actions[j] = stream->readUint16();
 }
 
 void SRoom::syncGameStream(Common::Serializer &ser) {
@@ -47,11 +47,11 @@ void SRoom::syncGameStream(Common::Serializer &ser) {
 
 /********************************************************************/
 
-void SObject::readRect(Common::SeekableReadStream *stream) {
-	_rect.left = stream->readUint16LE();
-	_rect.top = stream->readUint16LE();
-	_rect.setWidth(stream->readUint16LE());
-	_rect.setHeight(stream->readUint16LE());
+void SObject::readRect(Common::SeekableReadStreamEndian *stream) {
+	_rect.left = stream->readUint16();
+	_rect.top = stream->readUint16();
+	_rect.setWidth(stream->readUint16());
+	_rect.setHeight(stream->readUint16());
 }
 
 void SObject::syncGameStream(Common::Serializer &ser) {
@@ -71,31 +71,31 @@ void SObject::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsSByte(_position);
 }
 
-void SObject::loadObj(Common::File *file) {
-	uint16 w = file->readUint16LE();
-	uint16 h = file->readUint16LE();
-	_rect.left = file->readUint16LE();
-	_rect.top = file->readUint16LE();
+void SObject::loadObj(Common::SeekableReadStreamEndian *stream) {
+	uint16 w = stream->readUint16();
+	uint16 h = stream->readUint16();
+	_rect.left = stream->readUint16();
+	_rect.top = stream->readUint16();
 	_rect.setWidth(w);
 	_rect.setHeight(h);
 
-	_lim.left = file->readUint16LE();
-	_lim.top = file->readUint16LE();
-	_lim.right = file->readUint16LE();
-	_lim.bottom = file->readUint16LE();
+	_lim.left = stream->readUint16();
+	_lim.top = stream->readUint16();
+	_lim.right = stream->readUint16();
+	_lim.bottom = stream->readUint16();
 
-	_position = file->readSByte();
-	file->readByte(); // Padding
-	_name = file->readUint16LE();
-	_examine = file->readUint16LE();
-	_action = file->readUint16LE();
-	_goRoom = file->readByte();
-	_nbox = file->readByte();
-	_ninv = file->readByte();
-	_mode = file->readByte();
-	_flag = file->readByte();
-	file->readByte(); // Padding
-	_anim = file->readUint16LE();
+	_position = stream->readSByte();
+	stream->readByte(); // Padding
+	_name = stream->readUint16();
+	_examine = stream->readUint16();
+	_action = stream->readUint16();
+	_goRoom = stream->readByte();
+	_nbox = stream->readByte();
+	_ninv = stream->readByte();
+	_mode = stream->readByte();
+	_flag = stream->readByte();
+	stream->readByte(); // Padding
+	_anim = stream->readUint16();
 }
 
 /********************************************************************/
@@ -108,13 +108,13 @@ void SInvObject::syncGameStream(Common::Serializer &ser) {
 	ser.syncAsByte(_flag);
 }
 
-void SInvObject::loadObj(Common::File *file) {
-	_name = file->readUint16LE();
-	_examine = file->readUint16LE();
-	_action = file->readUint16LE();
-	_flag = file->readByte();
-	file->readByte(); // Padding
-	_anim = file->readUint16LE();
+void SInvObject::loadObj(Common::SeekableReadStreamEndian *stream) {
+	_name = stream->readUint16();
+	_examine = stream->readUint16();
+	_action = stream->readUint16();
+	_flag = stream->readByte();
+	stream->readByte(); // Padding
+	_anim = stream->readUint16();
 }
 
 /********************************************************************/

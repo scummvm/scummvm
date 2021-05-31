@@ -551,27 +551,27 @@ void AnimManager::syncGameStream(Common::Serializer &ser) {
 	}
 }
 
-void AnimManager::loadAnimTab(Common::File *file) {
+void AnimManager::loadAnimTab(Common::SeekableReadStreamEndian *stream) {
 	for (uint16 i = 0; i < MAXANIM; ++i) {
-		file->read(&_animTab[i]._name, 14);
+		stream->read(&_animTab[i]._name, 14);
 
-		_animTab[i]._flag = file->readUint16LE();
+		_animTab[i]._flag = stream->readUint16();
 
 		for (uint8 j = 0; j < MAXCHILD; ++j) {
-			_animTab[i]._lim[j].left = file->readUint16LE();
-			_animTab[i]._lim[j].top = file->readUint16LE();
-			_animTab[i]._lim[j].right = file->readUint16LE();
-			_animTab[i]._lim[j].bottom = file->readUint16LE();
+			_animTab[i]._lim[j].left = stream->readUint16();
+			_animTab[i]._lim[j].top = stream->readUint16();
+			_animTab[i]._lim[j].right = stream->readUint16();
+			_animTab[i]._lim[j].bottom = stream->readUint16();
 		}
 
-		_animTab[i]._nbox = file->readByte();
-		file->readByte(); // Padding
+		_animTab[i]._nbox = stream->readByte();
+		stream->readByte(); // Padding
 
 		for (uint8 j = 0; j < MAXATFRAME; ++j) {
-			_animTab[i]._atFrame[j]._type = file->readByte();
-			_animTab[i]._atFrame[j]._child = file->readByte();
-			_animTab[i]._atFrame[j]._numFrame = file->readUint16LE();
-			_animTab[i]._atFrame[j]._index = file->readUint16LE();
+			_animTab[i]._atFrame[j]._type = stream->readByte();
+			_animTab[i]._atFrame[j]._child = stream->readByte();
+			_animTab[i]._atFrame[j]._numFrame = stream->readUint16();
+			_animTab[i]._atFrame[j]._index = stream->readUint16();
 		}
 	}
 }

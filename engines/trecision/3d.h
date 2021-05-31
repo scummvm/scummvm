@@ -196,7 +196,7 @@ public:
 	void goToPosition(int num);
 	int nextStep();
 	void initSortPan();
-	void read3D(Common::SeekableReadStream *ff);
+	void read3D(Common::SeekableReadStreamEndian *ff);
 	void reset(uint16 idx, float px, float pz, float theta);
 	void whereIs(int px, int py);
 	void actorOrder();

@@ -698,50 +698,50 @@ void DialogManager::syncGameStream(Common::Serializer &ser) {
 	}
 }
 
-void DialogManager::loadData(Common::File *file) {
+void DialogManager::loadData(Common::SeekableReadStreamEndian *stream) {
 	for (int i = 0; i < MAXDIALOG; ++i) {
 		Dialog *dialog = &_dialog[i];
 
-		dialog->_flag = file->readUint16LE();
-		dialog->_interlocutor = file->readUint16LE();
+		dialog->_flag = stream->readUint16();
+		dialog->_interlocutor = stream->readUint16();
 
-		file->read(&dialog->_startAnim, 14);
+		stream->read(&dialog->_startAnim, 14);
 
-		dialog->_startLen = file->readUint16LE();
-		dialog->_firstChoice = file->readUint16LE();
-		dialog->_choiceNumb = file->readUint16LE();
+		dialog->_startLen = stream->readUint16();
+		dialog->_firstChoice = stream->readUint16();
+		dialog->_choiceNumb = stream->readUint16();
 
 		for (int j = 0; j < MAXNEWSMKPAL; ++j)
-			dialog->_newPal[j] = file->readUint16LE();
+			dialog->_newPal[j] = stream->readUint16();
 	}
 
 	for (int i = 0; i < MAXCHOICE; ++i) {
 		DialogChoice *choice = &_choice[i];
 
-		choice->_flag = file->readUint16LE();
-		choice->_sentenceIndex = file->readUint16LE();
-		choice->_firstSubTitle = file->readUint16LE();
-		choice->_subTitleNumb = file->readUint16LE();
+		choice->_flag = stream->readUint16();
+		choice->_sentenceIndex = stream->readUint16();
+		choice->_firstSubTitle = stream->readUint16();
+		choice->_subTitleNumb = stream->readUint16();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			choice->_on[j] = file->readUint16LE();
+			choice->_on[j] = stream->readUint16();
 
 		for (int j = 0; j < MAXDISPCHOICES; ++j)
-			choice->_off[j] = file->readUint16LE();
+			choice->_off[j] = stream->readUint16();
 
-		choice->_startFrame = file->readUint16LE();
-		choice->_nextDialog = file->readUint16LE();
+		choice->_startFrame = stream->readUint16();
+		choice->_nextDialog = stream->readUint16();
 	}
 
 	for (int i = 0; i < MAXSUBTITLES; ++i) {
 		DialogSubTitle *subTitle = &_subTitles[i];
 
-		subTitle->_sentence = file->readUint16LE();
-		subTitle->_x = file->readUint16LE();
-		subTitle->_y = file->readUint16LE();
-		subTitle->_color = file->readUint16LE();
-		subTitle->_startFrame = file->readUint16LE();
-		subTitle->_length = file->readUint16LE();
+		subTitle->_sentence = stream->readUint16();
+		subTitle->_x = stream->readUint16();
+		subTitle->_y = stream->readUint16();
+		subTitle->_color = stream->readUint16();
+		subTitle->_startFrame = stream->readUint16();
+		subTitle->_length = stream->readUint16();
 	}
 
 	if (_vm->isDemo()) {

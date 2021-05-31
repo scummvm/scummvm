@@ -233,10 +233,6 @@ Common::Error TrecisionEngine::run() {
 	return Common::kNoError;
 }
 
-bool TrecisionEngine::isDemo() const {
-	return _gameDescription->flags & ADGF_DEMO;
-}
-
 void TrecisionEngine::eventLoop() {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -381,7 +377,7 @@ void TrecisionEngine::readLoc() {
 	_graphicsMgr->clearScreenBufferTop();
 
 	Common::String filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
-	Common::SeekableReadStream *picFile = _dataFile.createReadStreamForCompressedMember(filename);
+	Common::SeekableReadStreamEndian *picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
 
 	SObject bgInfo;
 	bgInfo.readRect(picFile);
@@ -432,7 +428,7 @@ void TrecisionEngine::redrawRoom() {
 	}
 
 	Common::String filename = Common::String::format("%s.cr", _room[_curRoom]._baseName);
-	Common::SeekableReadStream *picFile = _dataFile.createReadStreamForCompressedMember(filename);
+	Common::SeekableReadStreamEndian *picFile = readEndian(_dataFile.createReadStreamForCompressedMember(filename));
 
 	SObject bgInfo;
 	bgInfo.readRect(picFile);

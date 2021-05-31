@@ -309,50 +309,50 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 }
 
 void Actor::readModel(const char *filename) {
-	Common::SeekableReadStream *ff = _vm->_dataFile.createReadStreamForMember(filename);
+	Common::SeekableReadStreamEndian *ff = _vm->readEndian(_vm->_dataFile.createReadStreamForMember(filename));
 	if (ff == nullptr)
 		error("readModel - Error opening file %s", filename);
 
-	uint32 actionNum = ff->readUint32LE();
-	_vertexNum = ff->readUint32LE();
+	uint32 actionNum = ff->readUint32();
+	_vertexNum = ff->readUint32();
 
 	_characterArea = new SVertex[_vertexNum * actionNum];
 	for (uint i = 0; i < _vertexNum * actionNum; ++i) {
-		_characterArea[i]._x = ff->readFloatLE();
-		_characterArea[i]._y = ff->readFloatLE();
-		_characterArea[i]._z = ff->readFloatLE();
-		_characterArea[i]._nx = ff->readFloatLE();
-		_characterArea[i]._ny = ff->readFloatLE();
-		_characterArea[i]._nz = ff->readFloatLE();
+		_characterArea[i]._x = ff->readFloat();
+		_characterArea[i]._y = ff->readFloat();
+		_characterArea[i]._z = ff->readFloat();
+		_characterArea[i]._nx = ff->readFloat();
+		_characterArea[i]._ny = ff->readFloat();
+		_characterArea[i]._nz = ff->readFloat();
 	}
 	_vertex = _characterArea;
-	_faceNum = ff->readUint32LE();
+	_faceNum = ff->readUint32();
 	delete ff;
 
-	ff = _vm->_dataFile.createReadStreamForMember("mat.tex");
+	ff = _vm->readEndian(_vm->_dataFile.createReadStreamForMember("mat.tex"));
 	if (ff == nullptr)
 		error("readModel - Error opening file mat.tex");
 
 	for (uint16 i = 0; i < 256; ++i) {
 		for (uint16 j = 0; j < 91; ++j)
-			_textureMat[i][j] = ff->readUint16LE();
+			_textureMat[i][j] = ff->readUint16();
 	}
 
 	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
 
 	for (uint16 i = 0; i < MAXFACE; ++i) {
 		for (uint16 j = 0; j < 3; ++j) {
-			_textureCoord[i][j][0] = ff->readSint16LE();
-			_textureCoord[i][j][1] = ff->readSint16LE();
+			_textureCoord[i][j][0] = ff->readSint16();
+			_textureCoord[i][j][1] = ff->readSint16();
 		}
 	}
 
 	_face = new SFace[_faceNum];
 	for (uint i = 0; i < _faceNum; ++i) {
-		_face[i]._a = ff->readUint16LE();
-		_face[i]._b = ff->readUint16LE();
-		_face[i]._c = ff->readUint16LE();
-		_face[i]._mat = ff->readUint16LE();
+		_face[i]._a = ff->readUint16();
+		_face[i]._b = ff->readUint16();
+		_face[i]._c = ff->readUint16();
+		_face[i]._mat = ff->readUint16();
 	}
 
 	delete ff;
@@ -444,34 +444,34 @@ void Actor::actorStop() {
 	_vm->_pathFind->_lastStep = 0;
 }
 
-void Actor::read3D(Common::SeekableReadStream *ff) {
+void Actor::read3D(Common::SeekableReadStreamEndian *ff) {
 	// read rooms and lights
 	SCamera *cam = _camera;
-	cam->_ex = ff->readFloatLE();
-	cam->_ey = ff->readFloatLE();
-	cam->_ez = ff->readFloatLE();
+	cam->_ex = ff->readFloat();
+	cam->_ey = ff->readFloat();
+	cam->_ez = ff->readFloat();
 	for (int i = 0; i < 3; ++i)
-		cam->_e1[i] = ff->readFloatLE();
+		cam->_e1[i] = ff->readFloat();
 	for (int i = 0; i < 3; ++i)
-		cam->_e2[i] = ff->readFloatLE();
+		cam->_e2[i] = ff->readFloat();
 	for (int i = 0; i < 3; ++i)
-		cam->_e3[i] = ff->readFloatLE();
-	cam->_fovX = ff->readFloatLE();
-	cam->_fovY = ff->readFloatLE();
+		cam->_e3[i] = ff->readFloat();
+	cam->_fovX = ff->readFloat();
+	cam->_fovY = ff->readFloat();
 
-	_lightNum = ff->readUint32LE();
+	_lightNum = ff->readUint32();
 	if (_lightNum > MAXLIGHT)
 		error("read3D(): Too many lights");
 
 	for (uint32 i = 0; i < _lightNum; ++i) {
-		_light[i]._x = ff->readFloatLE();
-		_light[i]._y = ff->readFloatLE();
-		_light[i]._z = ff->readFloatLE();
-		_light[i]._dx = ff->readFloatLE();
-		_light[i]._dy = ff->readFloatLE();
-		_light[i]._dz = ff->readFloatLE();
-		_light[i]._inr = ff->readFloatLE();
-		_light[i]._outr = ff->readFloatLE();
+		_light[i]._x = ff->readFloat();
+		_light[i]._y = ff->readFloat();
+		_light[i]._z = ff->readFloat();
+		_light[i]._dx = ff->readFloat();
+		_light[i]._dy = ff->readFloat();
+		_light[i]._dz = ff->readFloat();
+		_light[i]._inr = ff->readFloat();
+		_light[i]._outr = ff->readFloat();
 		_light[i]._hotspot = ff->readByte();
 		_light[i]._fallOff = ff->readByte();
 		_light[i]._inten = ff->readSByte();

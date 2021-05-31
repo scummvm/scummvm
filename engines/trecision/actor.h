@@ -76,7 +76,7 @@ public:
 	void syncGameStream(Common::Serializer &ser);
 	void actorDoAction(int action);
 	void actorStop();
-	void read3D(Common::SeekableReadStream *ff);
+	void read3D(Common::SeekableReadStreamEndian *ff);
 	float frameCenter(SVertex *v);
 	void updateStepSound();
 };

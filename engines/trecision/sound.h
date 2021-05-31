@@ -24,7 +24,7 @@
 #define TRECISION_SOUND_H
 
 #include "trecision/fastfile.h"
-#include "common/file.h"
+#include "common/stream.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 
@@ -80,7 +80,7 @@ public:
 	int32 talkStart(const Common::String &name);
 	void loadRoomSounds();
 
-	void loadSamples(Common::File *file);
+	void loadSamples(Common::SeekableReadStreamEndian *stream);
 };
 
 

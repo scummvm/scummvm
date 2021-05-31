@@ -2073,19 +2073,19 @@ void PathFinding3D::initSortPan() {
 	}
 }
 
-void PathFinding3D::read3D(Common::SeekableReadStream *ff) {
+void PathFinding3D::read3D(Common::SeekableReadStreamEndian *ff) {
 	// read panels
-	_panelNum = ff->readSint32LE();
+	_panelNum = ff->readSint32();
 	if (_panelNum > MAXPANELSINROOM)
 		error("read3D(): Too many panels");
 
 	for (int i = 0; i < _panelNum; ++i) {
-		_panel[i]._x1 = ff->readFloatLE();
-		_panel[i]._z1 = ff->readFloatLE();
-		_panel[i]._x2 = ff->readFloatLE();
-		_panel[i]._z2 = ff->readFloatLE();
-		_panel[i]._h = ff->readFloatLE();
-		_panel[i]._flags = ff->readUint32LE();
+		_panel[i]._x1 = ff->readFloat();
+		_panel[i]._z1 = ff->readFloat();
+		_panel[i]._x2 = ff->readFloat();
+		_panel[i]._z2 = ff->readFloat();
+		_panel[i]._h = ff->readFloat();
+		_panel[i]._flags = ff->readUint32();
 
 		// Note : Despite the panels are stored in an int16 with a MAXPANELSINROOM set to 400,
 		// _panelNum is stored in a int32 and nearPanel1 and 2 were stored in an int8

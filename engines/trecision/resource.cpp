@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/translation.h"
+#include "common/substream.h"
 #include "gui/saveload.h"
 
 #include "trecision/trecision.h"
@@ -38,55 +39,63 @@
 #include "trecision/video.h"
 #include "trecision/sound.h"
 
-namespace Common {
-class File;
-}
-
 namespace Trecision {
+
+Common::SeekableReadStreamEndian *TrecisionEngine::readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) {
+	return new Common::SeekableSubReadStreamEndian(
+		stream,
+		0,
+		stream->size(),
+		_gameDescription->platform == Common::kPlatformAmiga,
+		dispose
+	);
+}
 
 void TrecisionEngine::loadAll() {
 	Common::File dataNl;
+
 	if (!dataNl.open("DATA.NL"))
 		error("loadAll : Couldn't open DATA.NL");
+	Common::SeekableReadStreamEndian *data = readEndian(&dataNl, DisposeAfterUse::NO);
 
 	for (int i = 0; i < MAXROOMS; ++i)
-		_room[i].loadRoom(&dataNl);
+		_room[i].loadRoom(data);
 
 	for (int i = 0; i < MAXOBJ; ++i)
-		_obj[i].loadObj(&dataNl);
+		_obj[i].loadObj(data);
 
 	for (int i = 0; i < MAXINVENTORY; ++i)
-		_inventoryObj[i].loadObj(&dataNl);
+		_inventoryObj[i].loadObj(data);
 
-	_soundMgr->loadSamples(&dataNl);
+	_soundMgr->loadSamples(data);
 
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
-		_scriptFrame[i]._class = dataNl.readByte();
-		_scriptFrame[i]._event = dataNl.readByte();
-		_scriptFrame[i]._u8Param = dataNl.readByte();
-		dataNl.readByte(); // Padding
-		_scriptFrame[i]._u16Param1 = dataNl.readUint16LE();
-		_scriptFrame[i]._u16Param2 = dataNl.readUint16LE();
-		_scriptFrame[i]._u32Param = dataNl.readUint16LE();
-		_scriptFrame[i]._noWait = !(dataNl.readSint16LE() == 0);
+		_scriptFrame[i]._class = data->readByte();
+		_scriptFrame[i]._event = data->readByte();
+		_scriptFrame[i]._u8Param = data->readByte();
+		data->readByte(); // Padding
+		_scriptFrame[i]._u16Param1 = data->readUint16();
+		_scriptFrame[i]._u16Param2 = data->readUint16();
+		_scriptFrame[i]._u32Param = data->readUint16();
+		_scriptFrame[i]._noWait = !(data->readSint16() == 0);
 	}
 
 	for (int i = 0; i < MAXSCRIPT; ++i) {
-		_scriptFirstFrame[i] = dataNl.readUint16LE();
-		dataNl.readByte(); // unused field
-		dataNl.readByte(); // Padding
+		_scriptFirstFrame[i] = data->readUint16();
+		data->readByte(); // unused field
+		data->readByte(); // Padding
 	}
 
-	_animMgr->loadAnimTab(&dataNl);
-	_dialogMgr->loadData(&dataNl);
+	_animMgr->loadAnimTab(data);
+	_dialogMgr->loadData(data);
 
-	dataNl.skip(620);	// actions (unused)
+	data->skip(620);	// actions (unused)
 
-	int numFileRef = dataNl.readSint32LE();
-	dataNl.skip(numFileRef * (12 + 4));	// fileRef name + offset
+	int numFileRef = data->readSint32();
+	data->skip(numFileRef * (12 + 4));	// fileRef name + offset
 
 	_textArea = new char[MAXTEXTAREA];
-	dataNl.read(_textArea, MAXTEXTAREA);
+	data->read(_textArea, MAXTEXTAREA);
 
 	_textPtr = _textArea;
 
@@ -99,6 +108,7 @@ void TrecisionEngine::loadAll() {
 	for (int a = 0; a < MAXSYSTEXT; a++)
 		_sysText[a] = getNextSentence();
 
+	delete data;
 	dataNl.close();
 }
 
@@ -115,7 +125,7 @@ byte *TrecisionEngine::readData(const Common::String &fileName) {
 }
 
 void TrecisionEngine::read3D(const Common::String &filename) {
-	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember(filename);
+	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember(filename));
 	if (ff == nullptr)
 		error("read3D: Can't open 3D file %s", filename.c_str());
 
@@ -133,7 +143,7 @@ void TrecisionEngine::read3D(const Common::String &filename) {
 	_renderer->setClipping(0, TOP, MAXX, AREA + TOP);
 }
 
-void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objIndex, uint16 objectId) {
+void TrecisionEngine::readObject(Common::SeekableReadStreamEndian *stream, uint16 objIndex, uint16 objectId) {
 	SObject *obj = &_obj[objectId];
 
 	if (obj->isModeFull()) {
@@ -143,7 +153,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16LE();
+			_objPointers[objIndex][i] = stream->readUint16();
 
 		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
 	}
@@ -151,15 +161,15 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 	if (obj->isModeMask()) {
 		obj->readRect(stream);
 
-		uint32 size = stream->readUint32LE();
+		uint32 size = stream->readUint32();
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16LE();
+			_objPointers[objIndex][i] = stream->readUint16();
 
 		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
 
-		size = stream->readUint32LE();
+		size = stream->readUint32();
 		delete[] _maskPointers[objIndex];
 		_maskPointers[objIndex] = new uint8[size];
 		for (uint32 i = 0; i < size; ++i)
@@ -169,7 +179,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 	refreshObject(objectId);
 }
 
-void TrecisionEngine::readObj(Common::SeekableReadStream *stream) {
+void TrecisionEngine::readObj(Common::SeekableReadStreamEndian *stream) {
 	if (!_room[_curRoom]._object[0])
 		return;
 
@@ -192,7 +202,7 @@ void TrecisionEngine::readExtraObj2C() {
 	if (!_room[_curRoom]._object[32])
 		return;
 
-	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("2c2.bm");
+	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember("2c2.bm"));
 
 	for (uint16 objIndex = PATCHOBJ_ROOM2C; objIndex < MAXOBJINROOM; objIndex++) {
 		const uint16 objectId = _room[_curRoom]._object[objIndex];
@@ -209,7 +219,7 @@ void TrecisionEngine::readExtraObj41D() {
 	if (!_room[_curRoom]._object[32])
 		return;
 
-	Common::SeekableReadStream *ff = _dataFile.createReadStreamForMember("41d2.bm");
+	Common::SeekableReadStreamEndian *ff = readEndian(_dataFile.createReadStreamForMember("41d2.bm"));
 	for (uint16 objIndex = PATCHOBJ_ROOM41D; objIndex < MAXOBJINROOM; objIndex++) {
 		const uint16 objectId = _room[_curRoom]._object[objIndex];
 		if (!objectId)

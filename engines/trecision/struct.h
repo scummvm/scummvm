@@ -23,7 +23,7 @@
 #ifndef TRECISION_STRUCT_H
 #define TRECISION_STRUCT_H
 
-#include "common/file.h"
+#include "common/stream.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -45,7 +45,7 @@ struct SRoom {
 	void setDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
 
 	void syncGameStream(Common::Serializer &ser);
-	void loadRoom(Common::File *file);
+	void loadRoom(Common::SeekableReadStreamEndian *stream);
 
 private:
 	uint8 _flag = 0; // Room visited or not, extra or not
@@ -63,7 +63,7 @@ struct SObject {
 	uint8 _ninv;                            // ptr inventory
 	uint16 _anim;
 	
-	void readRect(Common::SeekableReadStream *stream);
+	void readRect(Common::SeekableReadStreamEndian *stream);
 	void setFlagDone(bool on) { if (on) _flag |= kObjFlagDone; else _flag &= ~kObjFlagDone; }
 	void setFlagExamine(bool on) { if (on) _flag |= kObjFlagExamine; else _flag &= ~kObjFlagExamine; }
 	void setFlagExtra(bool on) { if (on) _flag |= kObjFlagExtra; else _flag &= ~kObjFlagExtra; }
@@ -94,7 +94,7 @@ struct SObject {
 	void setModeStatus(bool on) { if (on) _mode |= OBJMODE_OBJSTATUS; else _mode &= ~OBJMODE_OBJSTATUS; }
 	
 	void syncGameStream(Common::Serializer &ser);
-	void loadObj(Common::File *file);
+	void loadObj(Common::SeekableReadStreamEndian *stream);
 
 private:
 	uint8 _flag = 0;
@@ -113,7 +113,7 @@ struct SInvObject {
 	bool isUseWith() { return _flag & kObjFlagUseWith; }
 
 	void syncGameStream(Common::Serializer &ser);
-	void loadObj(Common::File *file);
+	void loadObj(Common::SeekableReadStreamEndian *stream);
 
 private:
 	uint8 _flag = 0;

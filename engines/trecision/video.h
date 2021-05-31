@@ -23,7 +23,7 @@
 #ifndef TRECISION_VIDEO_H
 #define TRECISION_VIDEO_H
 
-#include "common/file.h"
+#include "common/stream.h"
 #include "common/serializer.h"
 #include "video/smk_decoder.h"
 
@@ -110,7 +110,7 @@ public:
 	void stopAllSmkAnims();
 
 	void syncGameStream(Common::Serializer &ser);
-	void loadAnimTab(Common::File *file);
+	void loadAnimTab(Common::SeekableReadStreamEndian *stream);
 };
 } // End of namespace Trecision
 #endif
