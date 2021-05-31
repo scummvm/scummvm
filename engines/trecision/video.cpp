@@ -525,7 +525,7 @@ void AnimManager::swapCD(int cd) {
 	Common::String animFileName = Common::String::format("nlanim.cd%d", cd);
 	for (uint8 i = 0; i < MAXSMACK; ++i) {
 		_animFile[i].close();
-		_animFile[i].open(animFileName);
+		_animFile[i].open(_vm, animFileName);
 	}
 }
 

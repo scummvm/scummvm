@@ -29,6 +29,8 @@
 
 namespace Trecision {
 
+class TrecisionEngine;
+
 struct FileEntry {
 	Common::String name;
 	uint32 offset;
@@ -39,7 +41,7 @@ public:
 	FastFile();
 	~FastFile() override;
 
-	bool open(const Common::String &filename);
+	bool open(TrecisionEngine *vm, const Common::String &filename);
 	void close();
 	bool isOpen() const { return _stream != 0; }
 	Common::SeekableReadStream *createReadStreamForCompressedMember(const Common::String &name);
@@ -51,7 +53,7 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override;
 
 private:
-	Common::SeekableReadStream *_stream;
+	Common::SeekableReadStreamEndian *_stream;
 	Common::SeekableReadStream *_compStream;
 	Common::Array<FileEntry> _fileEntries;
 

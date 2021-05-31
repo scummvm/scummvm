@@ -190,7 +190,7 @@ TrecisionEngine::~TrecisionEngine() {
 Common::Error TrecisionEngine::run() {
 	syncSoundSettings();
 
-	if (!_dataFile.open("nldata.cd0"))
+	if (!_dataFile.open(this, "nldata.cd0"))
 		error("Error opening nldata.cd0");
 
 	_graphicsMgr = new GraphicsManager(this);

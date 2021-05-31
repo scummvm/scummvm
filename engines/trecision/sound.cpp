@@ -34,7 +34,7 @@
 namespace Trecision {
 
 SoundManager::SoundManager(TrecisionEngine *vm) : _vm(vm) {
-	if (!_speechFile.open("nlspeech.cd0"))
+	if (!_speechFile.open(_vm, "nlspeech.cd0"))
 		warning("SoundManager - nlspeech.cd0 is missing - skipping");
 
 	_stepLeftStream = nullptr;

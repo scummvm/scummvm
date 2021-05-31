@@ -46,20 +46,19 @@ const FileEntry *FastFile::getEntry(const Common::String &name) const {
 	return nullptr;
 }
 
-bool FastFile::open(const Common::String &name) {
+bool FastFile::open(TrecisionEngine *vm, const Common::String &name) {
 	close();
 
-	_stream = SearchMan.createReadStreamForMember(name);
+	_stream = vm->readEndian(SearchMan.createReadStreamForMember(name));
 	if (!_stream)
 		return false;
 
-	int numFiles = _stream->readUint32LE();
+	int numFiles = _stream->readUint32();
 	_fileEntries.resize(numFiles);
 	for (int i = 0; i < numFiles; ++i) {
 		FileEntry *entry = &_fileEntries[i];
-		for (int j = 0; j < 12; ++j)
-			entry->name += _stream->readByte();
-		entry->offset = _stream->readUint32LE();
+		entry->name = _stream->readString(0, 12);
+		entry->offset = _stream->readUint32();
 	}
 
 	return true;
