@@ -72,6 +72,7 @@ private:
 	Audio::SeekableAudioStream *_stepRightStream;
 
 public:
+	Audio::SeekableAudioStream *loadWAV(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
 	void play(int soundId);
 	void stopSoundType(SoundType type);
 	void stopAll();

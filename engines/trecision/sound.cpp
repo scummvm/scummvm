@@ -23,6 +23,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/raw.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -44,6 +45,14 @@ SoundManager::~SoundManager() {
 	g_system->getMixer()->stopAll();
 	_speechFile.close();
 	stopAll();
+}
+
+Audio::SeekableAudioStream *SoundManager::loadWAV(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
+	if (_vm->isAmiga()) {
+		return Audio::makeRawStream(stream, 11025, 0, disposeAfterUse);
+	} else {
+		return Audio::makeWAVStream(stream, disposeAfterUse);
+	}
 }
 
 void SoundManager::play(int soundId) {
@@ -77,9 +86,9 @@ void SoundManager::play(int soundId) {
 			Audio::AudioStream *stream = nullptr;
 
 			if (_gSample[soundId]._flag & kSoundFlagSoundLoop)
-				stream = Audio::makeLoopingAudioStream(Audio::makeWAVStream(memStream, DisposeAfterUse::YES), 0);
+				stream = Audio::makeLoopingAudioStream(loadWAV(memStream), 0);
 			else
-				stream = Audio::makeWAVStream(memStream, DisposeAfterUse::YES);
+				stream = loadWAV(memStream);
 
 			g_system->getMixer()->playStream(
 				type,
@@ -181,7 +190,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 		if (stepRight && (_gSample[soundId]._flag & kSoundFlagStepRight)) {
 			if (!_stepRightStream) {
 				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
-				_stepRightStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::YES);
+				_stepRightStream = loadWAV(soundFileStream);
 			}
 			break;
 		}
@@ -189,7 +198,7 @@ void SoundManager::soundStep(int midx, int midz, int act, int frame) {
 		if (stepLeft && (_gSample[soundId]._flag & kSoundFlagStepLeft)) {
 			if (!_stepLeftStream) {
 				Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
-				_stepLeftStream = Audio::makeWAVStream(soundFileStream, DisposeAfterUse::YES);
+				_stepLeftStream = loadWAV(soundFileStream);
 			}
 			break;
 		}
@@ -231,7 +240,7 @@ int32 SoundManager::talkStart(const Common::String &name) {
 	if (!stream)
 		return 0;
 
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = loadWAV(stream);
 
 	g_system->getMixer()->playStream(
 		Audio::Mixer::kSpeechSoundType,

@@ -42,13 +42,7 @@
 namespace Trecision {
 
 Common::SeekableReadStreamEndian *TrecisionEngine::readEndian(Common::SeekableReadStream *stream, DisposeAfterUse::Flag dispose) {
-	return new Common::SeekableSubReadStreamEndian(
-		stream,
-		0,
-		stream->size(),
-		_gameDescription->platform == Common::kPlatformAmiga,
-		dispose
-	);
+	return new Common::SeekableSubReadStreamEndian(stream, 0, stream->size(), isAmiga(), dispose);
 }
 
 void TrecisionEngine::loadAll() {

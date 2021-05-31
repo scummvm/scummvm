@@ -156,6 +156,7 @@ public:
 	// ScummVM
 	Common::Error run() override;
 	bool isDemo() const { return _gameDescription->flags & ADGF_DEMO; }
+	bool isAmiga() const { return _gameDescription->platform == Common::kPlatformAmiga; }
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
 	bool canSaveGameStateCurrently() override { return canPlayerInteract() && _curRoom != kRoomIntro; }
