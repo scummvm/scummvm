@@ -1261,6 +1261,38 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 	}
 }
 
+void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info) {
+	Common::String achDomainId = ConfMan.get("achievements", _domain);
+	AchMan.setActiveDomain(info);
+
+	GUI::ScrollContainerWidget *scrollContainer;
+	scrollContainer = new GUI::ScrollContainerWidget(boss, prefix + "Container", "");
+	scrollContainer->setBackgroundType(GUI::ThemeEngine::kWidgetBackgroundNo);
+
+	uint16 nMax = info.stats.size();
+
+	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
+	uint16 yStep = lineHeight;
+	uint16 ySmallStep = yStep/3;
+	uint16 yPos = lineHeight;
+	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
+
+	for (uint16 idx = 0; idx < nMax ; idx++) {
+		Common::String key = info.stats[idx].id;
+		if (info.stats[idx].comment) {
+			key = info.stats[idx].comment;
+		}
+
+		Common::String value = AchMan.getStatRaw(info.stats[idx].id);
+
+		Common::U32String str = Common::U32String::format(_("%s: %s"), key.c_str(), value.c_str());
+		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, str, Graphics::kTextAlignStart);
+
+		yPos += yStep;
+		yPos += ySmallStep;
+	}
+}
+
 void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
 	Common::String context;
 	if (g_system->getOverlayWidth() <= 320)

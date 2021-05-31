@@ -92,6 +92,7 @@ protected:
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::Array<Common::Keymap *> &keymaps, const Common::String &domain);
 	void addAchievementsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info);
+	void addStatisticsControls(GuiObject *boss, const Common::String &prefix, const Common::AchievementsInfo &info);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
 	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
