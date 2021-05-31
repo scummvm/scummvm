@@ -1202,8 +1202,8 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 
 	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
 	uint16 yStep = lineHeight;
-	uint16 ySmallStep = yStep/3;
-	uint16 yPos = lineHeight + yStep*3;
+	uint16 ySmallStep = yStep / 3;
+	uint16 yPos = lineHeight + yStep * 3;
 	uint16 progressBarWidth = 240;
 	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
 	uint16 descrDelta = g_system->getOverlayWidth() <= 320 ? 25 : 30;
@@ -1271,7 +1271,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 
 	uint16 lineHeight = g_gui.xmlEval()->getVar("Globals.Line.Height");
 	uint16 yStep = lineHeight;
-	uint16 ySmallStep = yStep/3;
+	uint16 ySmallStep = yStep / 3;
 	uint16 yPos = lineHeight;
 	uint16 width = g_system->getOverlayWidth() <= 320 ? 240 : 410;
 
