@@ -834,6 +834,32 @@ public:
 	FORCEINLINE int64 readSint64() {
 		return (int64)readUint64();
 	}
+
+	/**
+	 * Read a 32-bit floating point value using the stream endianness
+	 * and return it in native endianness.
+	 */
+	FORCEINLINE float readFloat() {
+		uint32 n = readUint32();
+		float f;
+
+		memcpy(&f, &n, 4);
+
+		return f;
+	}
+
+	/**
+	 * Read a 64-bit floating point value using the stream endianness
+	 * and return it in native endianness.
+	 */
+	FORCEINLINE double readDouble() {
+		uint64 n = readUint64();
+		double d;
+
+		memcpy(&d, &n, 8);
+
+		return d;
+	}
 };
 
 /**
