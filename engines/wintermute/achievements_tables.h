@@ -26,6 +26,7 @@ struct AchievementDescriptionList {
 	const char *gameId;
 	Common::AchievementsPlatform platform;
 	const char *appId;
+	const Common::StatDescription stats[64];
 	const Common::AchievementDescription descriptions[64];
 };
 
@@ -34,11 +35,17 @@ struct AchievementDescriptionList {
 #define ACHIEVEMENT_HIDDEN_ENTRY(id, title) {id, true, title, ""}
 #define ACHIEVEMENTS_LISTEND {0,0,0,0}
 
+#define STATS_SIMPLE_ENTRY(id, comment, default) {id, comment, default}
+#define STATS_NODESC_ENTRY(id, default) {id, "", default}
+#define STATS_LISTEND {0,0,0}
+#define NOSTATS {STATS_LISTEND}
+
 static const AchievementDescriptionList achievementDescriptionList[] = {
 	{
 		"juliastars",
 		Common::GALAXY_ACHIEVEMENTS,
 		"1457085654",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_LAND", "Good morning Xenophon!", "You've managed to land on a planet."),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_MIND", "Observant player", "You've obtained your first Mind'o'Matic."),
@@ -88,6 +95,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"juliastars",
 		Common::STEAM_ACHIEVEMENTS,
 		"257690",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_LAND", "Good morning Xenophon!", "You've managed to land on a planet."),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHI_MIND", "Observant player", "You've obtained your first Mind'o'Matic."),
@@ -137,6 +145,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"reversion1",
 		Common::STEAM_ACHIEVEMENTS,
 		"270570",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHIEVEMENT_INTRODUCCION", "Introduction", "Start a new game"),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHIEVEMENT_HABLAR_CON_CHICA_ANTES_DE_DARLE_LA_FOTO", "Lady Killer", "Talk to the girl"),
@@ -162,6 +171,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"reversion2",
 		Common::STEAM_ACHIEVEMENTS,
 		"281060",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACHIEVEMENT_INTRODUCCION2", "Introduction", "Start a new game"),
 			ACHIEVEMENT_HIDDEN_ENTRY("ACHIEVEMENT_PABLO", "Mystery man"),
@@ -196,6 +206,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"reversion3",
 		Common::STEAM_ACHIEVEMENTS,
 		"281080",
+		NOSTATS,
 		{
 			ACHIEVEMENT_HIDDEN_ENTRY("ACHIEVEMENT_INTRODUCCION3", "Introduction"),
 			ACHIEVEMENT_HIDDEN_ENTRY("ACHIEVEMENT_HISTORIA_VICTORIA", "The orphan"),
@@ -241,6 +252,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"oknytt",
 		Common::STEAM_ACHIEVEMENTS,
 		"286320",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ach_chapter_1", "Awakening", "Finish chapter 1"),
 			ACHIEVEMENT_SIMPLE_ENTRY("ach_chapter_2", "An extended hand", "Finish chapter 2"),
@@ -260,6 +272,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"sotv1",
 		Common::STEAM_ACHIEVEMENTS,
 		"286360",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_ZENMASTER", "Zen Master", "Survive a conversation with Anna Marano"),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LOOK_BIDET", "Italian memories", "Find a widespread sign of modern civilization"),
@@ -289,6 +302,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"sotv2",
 		Common::STEAM_ACHIEVEMENTS,
 		"378630",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_FARMER", "Very appropriate, you fight like a priest", "Get rid of James by using no wrong answers."),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_LAZYKILLER", "Lazy Killer", "Open the car trunk as lazy people do."),
@@ -319,6 +333,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"thelostcrowngha",
 		Common::STEAM_ACHIEVEMENTS,
 		"291710",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_HEDGE_WYTCH", "Hedge Wych", "Pick all available plants and flowers in the country lane."),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_GOOD_LISTENER", "Good Listener", "Listen to the story on the Harbour Cottage telephone every day or night."),
@@ -362,6 +377,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"carolreed10",
 		Common::STEAM_ACHIEVEMENTS,
 		"337130",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("STIERN_HOUSE", "The Stierngranat family's house", "You've unlocked the Stierngranat Family's House."),
 			ACHIEVEMENT_SIMPLE_ENTRY("BLOOD_FALLS", "The Blood Falls", "You've unlocked the Blood Falls."),
@@ -384,6 +400,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"carolreed11",
 		Common::STEAM_ACHIEVEMENTS,
 		"340370",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("BOTTLE", "Mysterious bottle.", "You found the mysterious bottle!"),
 			ACHIEVEMENT_SIMPLE_ENTRY("PIPE", "The last pipe.", "You found the last pipe!"),
@@ -403,6 +420,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"corrosion",
 		Common::STEAM_ACHIEVEMENTS,
 		"349140",
+		NOSTATS,
 		{
 			ACHIEVEMENT_NODESC_ENTRY("corrosion_achievement_0", "Cadet"),
 			ACHIEVEMENT_NODESC_ENTRY("corrosion_achievement_1", "Recruit Officer"),
@@ -430,6 +448,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"alphapolaris",
 		Common::STEAM_ACHIEVEMENTS,
 		"405780",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_POLARBEAR", "Vetenarian", "Treat a polar bear"),
 			ACHIEVEMENT_SIMPLE_ENTRY("ACH_DAY1", "A Day in the Arctic", "Survive the first day"),
@@ -457,6 +476,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"drdoylemotch",
 		Common::STEAM_ACHIEVEMENTS,
 		"574420",
+		NOSTATS,
 		{
 			ACHIEVEMENT_NODESC_ENTRY("ACT_1", "Act 1 Completed"),
 			ACHIEVEMENT_NODESC_ENTRY("ACT_2", "Act 2 Completed"),
@@ -501,6 +521,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		"erinmyers",
 		Common::STEAM_ACHIEVEMENTS,
 		"1064660",
+		NOSTATS,
 		{
 			ACHIEVEMENT_SIMPLE_ENTRY("erin_myers_achieve_art", "Not An Art Lover", "More important things to be doing."),
 			ACHIEVEMENT_SIMPLE_ENTRY("erin_myers_achieve_chalk", "Chalk It Up To Experience", "A strange obsession with the chalkboard."),
@@ -511,7 +532,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 		}
 	},
 
-	{0, Common::UNK_ACHIEVEMENTS, 0, {ACHIEVEMENTS_LISTEND}}
+	{0, Common::UNK_ACHIEVEMENTS, 0, {STATS_LISTEND}, {ACHIEVEMENTS_LISTEND}}
 };
 
 } // End of namespace Wintermute
@@ -520,3 +541,8 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 #undef ACHIEVEMENT_NODESC_ENTRY
 #undef ACHIEVEMENT_HIDDEN_ENTRY
 #undef ACHIEVEMENTS_LISTEND
+
+#undef STATS_SIMPLE_ENTRY
+#undef STATS_NODESC_ENTRY
+#undef STATS_LISTEND
+#undef NOSTATS
