@@ -3622,6 +3622,23 @@ ObjectID RegionalObjectIterator::next(GameObject **obj) {
    RectangularObjectIterator member functions
  * ======================================================================= */
 
+//  Constructor
+RectangularObjectIterator::RectangularObjectIterator(
+	GameWorld *world,
+	const TilePoint &c,
+	const TilePoint &cdelta1,
+	const TilePoint &cdelta2) :
+	RegionalObjectIterator(
+		world,
+		MinTilePoint(c, c + cdelta1, c + cdelta2, c + cdelta1 + cdelta2),
+		MaxTilePoint(c, c + cdelta1, c + cdelta2, c + cdelta1 + cdelta2)),
+	coords1(c),
+	coords2(c + cdelta1),
+	coords3(c + cdelta1 + cdelta2),
+	coords4(c + cdelta2),
+	center((c + (cdelta1 + cdelta2) / 2)) {
+}
+
 //------------------------------------------------------------------------
 //	Determine if the specified point is within the region
 
@@ -3670,6 +3687,21 @@ ObjectID RectangularObjectIterator::next(GameObject **obj) {
 /* ======================================================================= *
    TriangularObjectIterator member functions
  * ======================================================================= */
+
+//  Constructor
+TriangularObjectIterator::TriangularObjectIterator(
+	GameWorld *world,
+	const TilePoint &c1,
+	const TilePoint &c2,
+	const TilePoint &c3) :
+	RegionalObjectIterator(
+		world,
+		MinTilePoint(c1, c2, c3),
+		MaxTilePoint(c1, c2, c3)),
+	coords1(c1),
+	coords2(c2),
+	coords3(c3) {
+}
 
 //------------------------------------------------------------------------
 //	Determine if the specified point is within the region
