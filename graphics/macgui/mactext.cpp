@@ -1795,7 +1795,6 @@ void MacText::insertTextFromClipboard() {
 		for (int i = start; i <= end; i++) {
 			_textLines.remove_at(start);
 		}
-		Common::U32String res = pre_str + str + sub_str;
 		splitString(pre_str + str + sub_str, start);
 
 		_cursorRow = start;
