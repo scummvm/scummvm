@@ -112,14 +112,14 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupRect(Common::String *n) {
-	debug("looking rect up %s", n->c_str());
+	//debug("looking rect up %s", n->c_str());
 
 	assert(rects.contains(*n));
 	return lookup(*n, rects);
 }
 
 Symbol *SymbolMaps::lookupVariable(Common::String *n) {
-	debug("looking variable up %s", n->c_str());
+	//debug("looking variable up %s", n->c_str());
 
 	assert(variables.contains(*n));
 	return lookup(*n, variables);
@@ -136,29 +136,6 @@ Symbol *SymbolMaps::lookupName(const char *n) {
 	s->u.val = 0;
 
 	return s;
-	/*debug("looking up %s", n);
-	Common::String s(n);
-
-	if (settings.contains(s))
-		return lookup(s, settings);
-
-	else if (variables.contains(s))
-		return lookup(s, variables);
-
-	else if (cursors.contains(s))
-		return lookup(s, cursors);
-
-	else if (locations.contains(s))
-		return lookup(s, locations);
-
-	else if (rects.contains(s))
-		return lookup(s, rects);
-
-	else {
-		debugC(1, kPrivateDebugCode, "WARNING: %s not defined", n);
-		return constant(STRING, 0, n);
-	}*/
-
 }
 
 void SymbolMaps::installAll(const char *n) {
@@ -170,7 +147,7 @@ void SymbolMaps::installAll(const char *n) {
 
 		//debug("name %s", s.c_str());
 		if (strcmp(n, "settings") == 0) {
-			debug("new setting %s", n);
+			//debug("new setting %s", n);
 			assert(r == NULL);
 			install(s, NAME, 0, s.c_str(), r, &settings);
 		} else if (strcmp(n, "variables") == 0) {

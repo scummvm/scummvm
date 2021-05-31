@@ -174,7 +174,7 @@ Common::Error PrivateEngine::run() {
 	free(buf);
 
 	buf = (char*) decomp.getResult().c_str();
-	debug("%s", buf);
+	//debug("%s", buf);
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
@@ -303,7 +303,7 @@ Common::Error PrivateEngine::run() {
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
-			debug("Executing %s", _nextSetting.c_str());
+			//debug("Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
 			Settings::g_setts->load(_nextSetting);

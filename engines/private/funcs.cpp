@@ -255,7 +255,7 @@ static void fDossierChgSheet(ArgArray args) {
 	int y = args[3].u.val;
 
 	m.surf = g_private->loadMask(s, x, y, true);
-	m.cursor = "kExit";
+	m.cursor = g_private->getExitCursor();
 	m.nextSetting = "";
 	m.flag1 = NULL;
 	m.flag2 = NULL;
