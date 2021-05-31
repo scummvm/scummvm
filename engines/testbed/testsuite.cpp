@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/achievements.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/stream.h"
@@ -318,6 +319,7 @@ void Testsuite::execute() {
 			_numTestsExecuted++;
 			logPrintf("Result: Failed\n");
 		}
+		AchMan.setStatInt("NUM_TESTS", AchMan.getStatInt("NUM_TESTS") + 1);
 
 		updateStats("Test", ((*i)->featureName).c_str(), count, numEnabledTests, pt);
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or return to launcher
