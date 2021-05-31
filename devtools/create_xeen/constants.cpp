@@ -531,6 +531,31 @@ void LangConstants::writeConstants(Common::String num, CCArchive &cc) {
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_RECHRG());
 	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_ITEMS()->KEY_GOLD());
 
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_PARTY()->KEY_DELETE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_PARTY()->KEY_REMOVE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_PARTY()->KEY_CREATE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_PARTY()->KEY_EXIT());
+
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_QUESTS()->KEY_QUEST_ITEMS());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_QUESTS()->KEY_CURRENT_QUESTS());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_QUESTS()->KEY_QUEST_ITEMS());
+
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_QUICK_FIGHT()->KEY_NEXT());
+
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_CAST());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_NEW());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_FIRE());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_ELEC());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_COLD());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_ACID());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_SET());
+	keys.syncNumber(KEY_CONSTANTS()->DIALOGS_SPELLS()->KEY_RETURN());
+
+	keys.syncNumber(KEY_CONSTANTS()->LOCATIONS()->KEY_DEP());
+	keys.syncNumber(KEY_CONSTANTS()->LOCATIONS()->KEY_WITH());
+	keys.syncNumber(KEY_CONSTANTS()->LOCATIONS()->KEY_GOLD());
+	keys.syncNumber(KEY_CONSTANTS()->LOCATIONS()->KEY_GEMS());
+
 	cc.add("CONSTKEYS" + num, keys);
 }
 
