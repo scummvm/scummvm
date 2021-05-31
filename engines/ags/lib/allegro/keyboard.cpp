@@ -68,8 +68,4 @@ bool keypressed() {
 	return ::AGS::g_events->keypressed();
 }
 
-int readkey() {
-	return ::AGS::g_events->readKey();
-}
-
 } // namespace AGS3

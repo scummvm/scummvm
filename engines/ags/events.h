@@ -24,6 +24,7 @@
 #define AGS_EVENTS_H
 
 #include "lib/allegro/keyboard.h"
+#include "shared/ac/keycode.h"
 #include "common/array.h"
 #include "common/queue.h"
 #include "common/events.h"
@@ -33,7 +34,7 @@ namespace AGS {
 class EventsManager {
 private:
 	Common::Queue<Common::Event> _pendingEvents;
-	Common::Queue<Common::KeyState> _pendingKeys;
+	Common::Queue<Common::Event> _pendingKeys;
 	Common::Array<bool> _keys;
 	Common::Point _mousePos;
 	int16 _joystickAxis[32];
@@ -41,9 +42,19 @@ private:
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
 	bool isExtendedKey(const Common::KeyCode &keycode) const;
-	int getScancode(Common::KeyCode keycode) const;
 
-	void updateKeys(const Common::KeyState &keyState, bool isDown);
+	void updateKeys(const Common::Event &event, bool isDown);
+public:
+	/**
+	 * Converts ags key to ScummVM scancode
+	 */
+	static bool ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&kc)[3]);
+
+	/*
+	 * Converts a ScummVM event to the ags keycode
+	 */
+	static AGS3::eAGSKeyCode ags_keycode_from_scummvm(const Common::Event &event);
+
 public:
 	EventsManager();
 	~EventsManager();
@@ -59,9 +70,17 @@ public:
 	bool keypressed();
 
 	/**
-	 * Returns the next keypress, if any is pending
+	 * Returns the next keyboard event, if any is pending
 	 */
-	int readKey();
+	Common::Event readKey();
+
+	/**
+	 * Pushes a keydown event into the keypresses queue,
+	 * without updating the key down flag array
+	 */
+	void pushKeyboardEvent(const Common::Event &evt) {
+		_pendingKeys.push(evt);
+	}
 
 	/**
 	 * Returns the next event, if any
@@ -76,7 +95,7 @@ public:
 	/**
 	 * Returns true if a given key is pressed
 	 */
-	bool isKeyPressed(AGS3::AllegroKbdKeycode keycode) const;
+	bool isKeyPressed(AGS3::eAGSKeyCode key);
 
 	/**
 	 * Returns the bitset of currently pressed modifier keys

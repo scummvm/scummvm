@@ -173,7 +173,6 @@ static void lock_mouse_on_click() {
 		_GP(mouse).TryLockToWindow();
 }
 
-#ifdef DEPRECATED
 static void toggle_mouse_lock() {
 	if (_GP(scsystem).windowed) {
 		if (_GP(mouse).IsLockedToWindow())
@@ -182,7 +181,6 @@ static void toggle_mouse_lock() {
 			_GP(mouse).TryLockToWindow();
 	}
 }
-#endif
 
 // Runs default mouse button handling
 static void check_mouse_controls() {
@@ -248,11 +246,11 @@ int old_key_mod = 0; // for saving previous key mods
 // Runs service key controls, returns false if service key combinations were handled
 // and no more processing required, otherwise returns true and provides current keycode and key shifts.
 bool run_service_key_controls(int &out_key) {
-#ifdef TODO
 	bool handled = false;
 	const bool key_valid = ags_keyevent_ready();
-	const SDL_Event key_evt = key_valid ? ags_get_next_keyevent() : SDL_Event();
-	const bool is_only_mod_key = key_evt.type == SDL_KEYDOWN ? is_mod_key(key_evt.key.keysym) : false;
+	const Common::Event key_evt = key_valid ? ags_get_next_keyevent() : Common::Event();
+	const bool is_only_mod_key = key_evt.type == Common::EVENT_KEYDOWN ?
+		is_mod_key(key_evt.kbd.keycode) : false;
 
 	// Following section is for testing for pushed and released mod-keys.
 	// A bit of explanation: some service actions may require combination of
@@ -270,7 +268,7 @@ bool run_service_key_controls(int &out_key) {
 	// TODO: maybe split this mod handling into sep procedure and make it easier to use (not that it's used alot)?
 
 	// First, check mods
-	const int cur_mod = make_merged_mod(SDL_GetModState());
+	const int cur_mod = make_merged_mod(key_evt.kbd.flags);
 
 	// If shifts combination have already triggered an action, then do nothing
 	// until new shifts are empty, in which case reset saved shifts
@@ -292,7 +290,7 @@ bool run_service_key_controls(int &out_key) {
 		// and set KEY_MODS_FIRED flag to prevent multiple execution
 		else if (old_key_mod) {
 			// Toggle mouse lock on Ctrl + Alt
-			if (old_key_mod == (KMOD_CTRL | KMOD_ALT)) {
+			if (old_key_mod == (Common::KBD_CTRL | Common::KBD_ALT)) {
 				toggle_mouse_lock();
 				handled = true;
 			}
@@ -307,12 +305,12 @@ bool run_service_key_controls(int &out_key) {
 		return false; // rest of engine currently does not use pressed mod keys
 	// change this when it's no longer true (but be mindful about key-skipping!)
 
-	int agskey = ags_keycode_from_sdl(key_evt);
+	int agskey = ::AGS::EventsManager::ags_keycode_from_scummvm(key_evt);
 	if (agskey == eAGSKeyCodeNone)
 		return false; // should skip this key event
 
 	// LAlt or RAlt + Enter/Return
-	if ((cur_mod == KMOD_ALT) && agskey == eAGSKeyCodeReturn) {
+	if ((cur_mod == Common::KBD_ALT) && agskey == eAGSKeyCodeReturn) {
 		engine_try_switch_windowed_gfxmode();
 		return false;
 	}
@@ -381,7 +379,7 @@ bool run_service_key_controls(int &out_key) {
 		return false;
 	}
 
-	if (((agskey == eAGSKeyCodeCtrlV) && (cur_key_mods & KMOD_ALT) != 0)
+	if (((agskey == eAGSKeyCodeCtrlV) && (cur_key_mods & Common::KBD_ALT) != 0)
 	        && (_GP(play).wait_counter < 1) && (_G(is_text_overlay) == 0) && (_G(restrict_until) == 0)) {
 		// make sure we can't interrupt a Wait()
 		// and desync the music to cutscene
@@ -393,7 +391,6 @@ bool run_service_key_controls(int &out_key) {
 
 	// No service operation triggered? return active keypress and mods to caller
 	out_key = agskey;
-#endif
 	return true;
 }
 

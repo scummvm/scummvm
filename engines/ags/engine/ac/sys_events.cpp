@@ -32,6 +32,7 @@
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/main/engine.h"
+#include "ags/events.h"
 #include "ags/globals.h"
 
 // TODO: Replace me
@@ -58,335 +59,38 @@ static void(*_on_quit_callback)(void) = nullptr;
 static void(*_on_switchin_callback)(void) = nullptr;
 static void(*_on_switchout_callback)(void) = nullptr;
 
-
-// Converts SDL scan and key codes to the ags keycode
-eAGSKeyCode ags_keycode_from_sdl(const SDL_Event &event) {
-#ifdef TODO
-	// Printable ASCII characters are returned only from SDL_TEXTINPUT event,
-	// as it has key presses + mods correctly converted using current system locale already,
-	// so no need to do that manually.
-	// NOTE: keycodes such as SDLK_EXCLAIM ('!') could be misleading, as they are NOT
-	// received when user presses for example Shift + 1 on regular keyboard, but only on
-	// systems where single keypress can produce that symbol.
-	// NOTE: following will not work for Unicode, will need to reimplement whole thing
-	if (_G(event).type == SDL_TEXTINPUT) {
-		unsigned char textch = _G(event).text.text[0];
-		if (textch >= 32 && textch <= 255) {
-			return static_cast<eAGSKeyCode>(textch);
-		}
-		return eAGSKeyCodeNone;
-	}
-
-	if (_G(event).type != SDL_KEYDOWN)
-		return eAGSKeyCodeNone;
-
-	const SDL_Keysym key = _G(event).key.keysym;
-	const SDL_Keycode sym = key.sym;
-	const Uint16 mod = key.mod;
-	// Ctrl and Alt combinations realign the letter code to certain offset
-	if (sym >= SDLK_a && sym <= SDLK_z) {
-		if ((mod & KMOD_CTRL) != 0) // align letters to code 1
-			return static_cast<eAGSKeyCode>(0 + (sym - SDLK_a) + 1);
-		else if ((mod & KMOD_ALT) != 0) // align letters to code 301
-			return static_cast<eAGSKeyCode>(AGS_EXT_KEY_SHIFT + (sym - SDLK_a) + 1);
-	}
-
-	// Remaining codes may match or not, but we use a big table anyway.
-	// TODO: this is code by [sonneveld],
-	// double check that we must use scan codes here, maybe can use sdl key (sym) too?
-	switch (key.scancode) {
-	case SDL_SCANCODE_BACKSPACE:
-		return eAGSKeyCodeBackspace;
-	case SDL_SCANCODE_TAB:
-	case SDL_SCANCODE_KP_TAB:
-		return eAGSKeyCodeTab;
-	case SDL_SCANCODE_RETURN:
-	case SDL_SCANCODE_RETURN2:
-	case SDL_SCANCODE_KP_ENTER:
-		return eAGSKeyCodeReturn;
-	case SDL_SCANCODE_ESCAPE:
-		return eAGSKeyCodeEscape;
-
-	case SDL_SCANCODE_F1:
-		return eAGSKeyCodeF1;
-	case SDL_SCANCODE_F2:
-		return eAGSKeyCodeF2;
-	case SDL_SCANCODE_F3:
-		return eAGSKeyCodeF3;
-	case SDL_SCANCODE_F4:
-		return eAGSKeyCodeF4;
-	case SDL_SCANCODE_F5:
-		return eAGSKeyCodeF5;
-	case SDL_SCANCODE_F6:
-		return eAGSKeyCodeF6;
-	case SDL_SCANCODE_F7:
-		return eAGSKeyCodeF7;
-	case SDL_SCANCODE_F8:
-		return eAGSKeyCodeF8;
-	case SDL_SCANCODE_F9:
-		return eAGSKeyCodeF9;
-	case SDL_SCANCODE_F10:
-		return eAGSKeyCodeF10;
-	case SDL_SCANCODE_F11:
-		return eAGSKeyCodeF11;
-	case SDL_SCANCODE_F12:
-		return eAGSKeyCodeF12;
-
-	case SDL_SCANCODE_KP_7:
-	case SDL_SCANCODE_HOME:
-		return eAGSKeyCodeHome;
-	case SDL_SCANCODE_KP_8:
-	case SDL_SCANCODE_UP:
-		return eAGSKeyCodeUpArrow;
-	case SDL_SCANCODE_KP_9:
-	case SDL_SCANCODE_PAGEUP:
-		return eAGSKeyCodePageUp;
-	case SDL_SCANCODE_KP_4:
-	case SDL_SCANCODE_LEFT:
-		return eAGSKeyCodeLeftArrow;
-	case SDL_SCANCODE_KP_5:
-		return eAGSKeyCodeNumPad5;
-	case SDL_SCANCODE_KP_6:
-	case SDL_SCANCODE_RIGHT:
-		return eAGSKeyCodeRightArrow;
-	case SDL_SCANCODE_KP_1:
-	case SDL_SCANCODE_END:
-		return eAGSKeyCodeEnd;
-	case SDL_SCANCODE_KP_2:
-	case SDL_SCANCODE_DOWN:
-		return eAGSKeyCodeDownArrow;
-	case SDL_SCANCODE_KP_3:
-	case SDL_SCANCODE_PAGEDOWN:
-		return eAGSKeyCodePageDown;
-	case SDL_SCANCODE_KP_0:
-	case SDL_SCANCODE_INSERT:
-		return eAGSKeyCodeInsert;
-	case SDL_SCANCODE_KP_PERIOD:
-	case SDL_SCANCODE_DELETE:
-		return eAGSKeyCodeDelete;
-
-	default:
-		return eAGSKeyCodeNone;
-	}
-#else
-	error("TODO: ags_keycode_from_sdl");
-#endif
-	return eAGSKeyCodeNone;
-}
-
-// Converts ags key to SDL key scans (up to 3 values, because this is not a 1:1 match);
-// NOTE: will ignore Ctrl+ or Alt+ script keys.
-// TODO: double check and ammend later if anything is missing
-bool ags_key_to_sdl_scan(eAGSKeyCode key, SDL_Scancode(&scan)[3]) {
-#ifdef TODO
-	scan[0] = SDL_SCANCODE_UNKNOWN;
-	scan[1] = SDL_SCANCODE_UNKNOWN;
-	scan[2] = SDL_SCANCODE_UNKNOWN;
-	SDL_Keycode sym = SDLK_UNKNOWN;
-
-	// SDL sym codes happen to match small ASCII letters, so lowercase ours if necessary
-	if (key >= eAGSKeyCodeA && key <= eAGSKeyCodeZ) {
-		sym = static_cast<SDL_Keycode>(key - eAGSKeyCodeA + SDLK_a);
-	}
-	// Rest of the printable characters seem to match (and match ascii codes)
-	else if (key >= eAGSKeyCodeSpace && key <= eAGSKeyCodeBackquote) {
-		sym = static_cast<SDL_Keycode>(key);
-	}
-
-	// If we have got key sym, convert it to SDL scancode using library's function
-	if (sym != SDLK_UNKNOWN) {
-		scan[0] = SDL_GetScancodeFromKey(sym);
-		return true;
-	}
-
-	// Other keys are mapped directly to scancode (based on [sonneveld]'s code)
-	switch (key) {
-	case eAGSKeyCodeBackspace:
-		scan[0] = SDL_SCANCODE_BACKSPACE;
-		scan[1] = SDL_SCANCODE_KP_BACKSPACE;
-		return true;
-	case eAGSKeyCodeTab:
-		scan[0] = SDL_SCANCODE_TAB;
-		scan[1] = SDL_SCANCODE_KP_TAB;
-		return true;
-	case eAGSKeyCodeReturn:
-		scan[0] = SDL_SCANCODE_RETURN;
-		scan[1] = SDL_SCANCODE_RETURN2;
-		scan[2] = SDL_SCANCODE_KP_ENTER;
-		return true;
-	case eAGSKeyCodeEscape:
-		scan[0] = SDL_SCANCODE_ESCAPE;
-		return true;
-
-	case eAGSKeyCodeF1:
-		scan[0] = SDL_SCANCODE_F1;
-		return true;
-	case eAGSKeyCodeF2:
-		scan[0] = SDL_SCANCODE_F2;
-		return true;
-	case eAGSKeyCodeF3:
-		scan[0] = SDL_SCANCODE_F3;
-		return true;
-	case eAGSKeyCodeF4:
-		scan[0] = SDL_SCANCODE_F4;
-		return true;
-	case eAGSKeyCodeF5:
-		scan[0] = SDL_SCANCODE_F5;
-		return true;
-	case eAGSKeyCodeF6:
-		scan[0] = SDL_SCANCODE_F6;
-		return true;
-	case eAGSKeyCodeF7:
-		scan[0] = SDL_SCANCODE_F7;
-		return true;
-	case eAGSKeyCodeF8:
-		scan[0] = SDL_SCANCODE_F8;
-		return true;
-	case eAGSKeyCodeF9:
-		scan[0] = SDL_SCANCODE_F9;
-		return true;
-	case eAGSKeyCodeF10:
-		scan[0] = SDL_SCANCODE_F10;
-		return true;
-	case eAGSKeyCodeF11:
-		scan[0] = SDL_SCANCODE_F11;
-		return true;
-	case eAGSKeyCodeF12:
-		scan[0] = SDL_SCANCODE_F12;
-		return true;
-
-	case eAGSKeyCodeHome:
-		scan[0] = SDL_SCANCODE_KP_7;
-		scan[1] = SDL_SCANCODE_HOME;
-		return true;
-	case eAGSKeyCodeUpArrow:
-		scan[0] = SDL_SCANCODE_KP_8;
-		scan[1] = SDL_SCANCODE_UP;
-		return true;
-	case eAGSKeyCodePageUp:
-		scan[0] = SDL_SCANCODE_KP_9;
-		scan[1] = SDL_SCANCODE_PAGEUP;
-		return true;
-	case eAGSKeyCodeLeftArrow:
-		scan[0] = SDL_SCANCODE_KP_4;
-		scan[1] = SDL_SCANCODE_LEFT;
-		return true;
-	case eAGSKeyCodeNumPad5:
-		scan[0] = SDL_SCANCODE_KP_5;
-		return true;
-	case eAGSKeyCodeRightArrow:
-		scan[0] = SDL_SCANCODE_KP_6;
-		scan[1] = SDL_SCANCODE_RIGHT;
-		return true;
-	case eAGSKeyCodeEnd:
-		scan[0] = SDL_SCANCODE_KP_1;
-		scan[1] = SDL_SCANCODE_END;
-		return true;
-	case eAGSKeyCodeDownArrow:
-		scan[0] = SDL_SCANCODE_KP_2;
-		scan[1] = SDL_SCANCODE_DOWN;
-		return true;
-	case eAGSKeyCodePageDown:
-		scan[0] = SDL_SCANCODE_KP_3;
-		scan[1] = SDL_SCANCODE_PAGEDOWN;
-		return true;
-	case eAGSKeyCodeInsert:
-		scan[0] = SDL_SCANCODE_KP_0;
-		scan[1] = SDL_SCANCODE_INSERT;
-		return true;
-	case eAGSKeyCodeDelete:
-		scan[0] = SDL_SCANCODE_KP_PERIOD;
-		scan[1] = SDL_SCANCODE_DELETE;
-		return true;
-
-	case eAGSKeyCodeLShift:
-		scan[0] = SDL_SCANCODE_LSHIFT;
-		return true;
-	case eAGSKeyCodeRShift:
-		scan[0] = SDL_SCANCODE_RSHIFT;
-		return true;
-	case eAGSKeyCodeLCtrl:
-		scan[0] = SDL_SCANCODE_LCTRL;
-		return true;
-	case eAGSKeyCodeRCtrl:
-		scan[0] = SDL_SCANCODE_RCTRL;
-		return true;
-	case eAGSKeyCodeLAlt:
-		scan[0] = SDL_SCANCODE_LALT;
-		return true;
-	case eAGSKeyCodeRAlt:
-		scan[0] = SDL_SCANCODE_RALT;
-		return true;
-
-	default:
-		return false;
-	}
-#else
-	error("TODO: ags_key_to_sdl_scan");
-#endif
-	return false;
-}
-
-
 // ----------------------------------------------------------------------------
 // KEYBOARD INPUT
 // ----------------------------------------------------------------------------
 
-#ifdef TODO
-// Because our game engine still uses input polling, we have to accumulate
-// key events for our internal use whenever engine have to query key input.
-static Common::Queue<Common::Event> g_keyEvtQueue;
-#endif
-
 bool ags_keyevent_ready() {
-#ifdef TODO
-	return g_keyEvtQueue.size() > 0;
-#else
-	return false;
-#endif
+	return ::AGS::g_events->keypressed();
 }
 
-#ifdef TODO
-SDL_Event ags_get_next_keyevent() {
-	if (g_keyEvtQueue.size() > 0) {
-		auto evt = g_keyEvtQueue.front();
-		g_keyEvtQueue.pop_front();
-		return evt;
-	}
-	SDL_Event empty = {};
-	return empty;
+Common::Event ags_get_next_keyevent() {
+	return ::AGS::g_events->readKey();
 }
-#endif
 
 int ags_iskeydown(eAGSKeyCode ags_key) {
-#ifdef TODO
-	SDL_PumpEvents();
-	const Uint8 *state = SDL_GetKeyboardState(NULL);
-	SDL_Scancode scan[3];
-	if (!ags_key_to_sdl_scan(ags_key, scan))
-		return -1;
-	return (state[scan[0]] || state[scan[1]] || state[scan[2]]);
-#else
-	return 0;
-#endif
+	return ::AGS::g_events->isKeyPressed(ags_key);
 }
 
 void ags_simulate_keypress(eAGSKeyCode ags_key) {
-#ifdef TODO
-	SDL_Scancode scan[3];
-	if (!ags_key_to_sdl_scan(ags_key, scan))
+	Common::KeyCode keycode[3];
+	if (!::AGS::EventsManager::ags_key_to_scancode(ags_key, keycode))
 		return;
+
 	// Push a key event to the event queue; note that this won't affect the key states array
-	SDL_Event sdlevent = {};
-	sdl_G(event).type = SDL_KEYDOWN;
-	sdl_G(event).key.keysym.sym = SDL_GetKeyFromScancode(scan[0]);
-	sdl_G(event).key.keysym.scancode = scan[0];
-	SDL_PushEvent(&sdlevent);
-#endif
+	Common::Event e;
+	e.type = Common::EVENT_KEYDOWN;
+	e.kbd.keycode = keycode[0];
+	e.kbd.ascii = (e.kbd.keycode >= 32 && e.kbd.keycode <= 127) ? e.kbd.keycode : 0;
+
+	::AGS::g_events->pushKeyboardEvent(e);
 }
 
 #ifdef TODO
-static void on_sdl_key_down(const SDL_Event &event) {
+static void on_sdl_key_down(const Common::Event &event) {
 	// Engine is not structured very well yet, and we cannot pass this event where it's needed;
 	// instead we save it in the queue where it will be ready whenever any component asks for one.
 	g_keyEvtQueue.push_back(event);
@@ -394,7 +98,7 @@ static void on_sdl_key_down(const SDL_Event &event) {
 #endif
 
 #ifdef TODO
-static void on_sdl_textinput(const SDL_Event &event) {
+static void on_sdl_textinput(const Common::Event &event) {
 	// We also push text input events to the same queue, as this is only valid way to get proper
 	// text interpretation of the pressed key combination based on current system locale.
 	g_keyEvtQueue.push_back(event);
@@ -586,7 +290,7 @@ void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void)
 }
 
 #ifdef TODO
-void sys_evt_process_one(const SDL_Event &event) {
+void sys_evt_process_one(const Common::Event &event) {
 	switch (_G(event).type) {
 	// GENERAL
 	case SDL_QUIT:
@@ -635,7 +339,7 @@ void sys_evt_process_one(const SDL_Event &event) {
 
 void sys_evt_process_pending(void) {
 #ifdef TODO
-	SDL_Event event;
+	Common::Event event;
 	while (SDL_PollEvent(&event)) {
 		sys_evt_process_one(event);
 	}

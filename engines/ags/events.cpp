@@ -67,16 +67,13 @@ void EventsManager::pollEvents() {
 			break;
 
 		case Common::EVENT_KEYDOWN:
-			updateKeys(e.kbd, true);
-
-			if (!isModifierKey(e.kbd.keycode)) {
-				// Add keypresses to the pending key list
-				_pendingKeys.push(e.kbd);
-			}
+			updateKeys(e, true);
+			_pendingKeys.push(e);
 			break;
 
 		case Common::EVENT_KEYUP:
-			updateKeys(e.kbd, false);
+			updateKeys(e, false);
+			_pendingKeys.push(e);
 			break;
 
 		default:
@@ -103,24 +100,9 @@ bool EventsManager::keypressed() {
 
 #define EXTENDED_KEY_CODE ('\0')
 
-int EventsManager::readKey() {
+Common::Event EventsManager::readKey() {
 	pollEvents();
-	if (_pendingKeys.empty())
-		return 0;
-
-	Common::KeyState keyState = _pendingKeys.pop();
-
-	int scancode = getScancode(keyState.keycode);
-	int code = scancode << 8;
-
-	if (isExtendedKey(keyState.keycode))
-		code |= EXTENDED_KEY_CODE;
-	else if ((keyState.flags & (Common::KBD_CTRL | Common::KBD_ALT)) == 0)
-		code |= keyState.ascii;
-	else
-		code |= scancode;
-
-	return code;
+	return _pendingKeys.empty() ? Common::Event() : _pendingKeys.pop();
 }
 
 Common::Event EventsManager::readEvent() {
@@ -168,121 +150,19 @@ bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
 	return false;
 }
 
-int EventsManager::getScancode(Common::KeyCode keycode) const {
-	if (keycode >= Common::KEYCODE_a && keycode <= Common::KEYCODE_z)
-		return (int)keycode - Common::KEYCODE_a + AGS3::__allegro_KEY_A;
-	if (keycode >= Common::KEYCODE_0 && keycode <= Common::KEYCODE_9)
-		return (int)keycode - Common::KEYCODE_0 + AGS3::__allegro_KEY_0;
-	if (keycode >= Common::KEYCODE_KP0 && keycode <= Common::KEYCODE_KP9)
-		return (int)keycode - Common::KEYCODE_KP0 + AGS3::__allegro_KEY_0_PAD;
-	if (keycode >= Common::KEYCODE_F1 && keycode <= Common::KEYCODE_F12)
-		return (int)keycode - Common::KEYCODE_F1 + AGS3::__allegro_KEY_F1;
-
-	switch (keycode) {
-	case Common::KEYCODE_ESCAPE:
-		return AGS3::__allegro_KEY_ESC;
-	case Common::KEYCODE_TILDE:
-		return AGS3::__allegro_KEY_TILDE;
-	case Common::KEYCODE_MINUS:
-		return AGS3::__allegro_KEY_MINUS;
-	case Common::KEYCODE_EQUALS:
-		return AGS3::__allegro_KEY_EQUALS;
-	case Common::KEYCODE_BACKSPACE:
-		return AGS3::__allegro_KEY_BACKSPACE;
-	case Common::KEYCODE_TAB:
-		return AGS3::__allegro_KEY_TAB;
-	case Common::KEYCODE_LEFTBRACKET:
-		return AGS3::__allegro_KEY_OPENBRACE;
-	case Common::KEYCODE_RIGHTBRACKET:
-		return AGS3::__allegro_KEY_CLOSEBRACE;
-	case Common::KEYCODE_RETURN:
-		return AGS3::__allegro_KEY_ENTER;
-	case Common::KEYCODE_COLON:
-		return AGS3::__allegro_KEY_COLON;
-	case Common::KEYCODE_QUOTE:
-		return AGS3::__allegro_KEY_QUOTE;
-	case Common::KEYCODE_BACKSLASH:
-		return AGS3::__allegro_KEY_BACKSLASH;
-	case Common::KEYCODE_COMMA:
-		return AGS3::__allegro_KEY_COMMA;
-	case Common::KEYCODE_SLASH:
-		return AGS3::__allegro_KEY_SLASH;
-	case Common::KEYCODE_SPACE:
-		return AGS3::__allegro_KEY_SPACE;
-	case Common::KEYCODE_INSERT:
-		return AGS3::__allegro_KEY_INSERT;
-	case Common::KEYCODE_DELETE:
-		return AGS3::__allegro_KEY_DEL;
-	case Common::KEYCODE_HOME:
-		return AGS3::__allegro_KEY_HOME;
-	case Common::KEYCODE_END:
-		return AGS3::__allegro_KEY_END;
-	case Common::KEYCODE_PAGEUP:
-		return AGS3::__allegro_KEY_PGUP;
-	case Common::KEYCODE_PAGEDOWN:
-		return AGS3::__allegro_KEY_PGDN;
-	case Common::KEYCODE_LEFT:
-		return AGS3::__allegro_KEY_LEFT;
-	case Common::KEYCODE_RIGHT:
-		return AGS3::__allegro_KEY_RIGHT;
-	case Common::KEYCODE_UP:
-		return AGS3::__allegro_KEY_UP;
-	case Common::KEYCODE_DOWN:
-		return AGS3::__allegro_KEY_DOWN;
-	case Common::KEYCODE_KP_DIVIDE:
-		return AGS3::__allegro_KEY_SLASH_PAD;
-	case Common::KEYCODE_ASTERISK:
-		return AGS3::__allegro_KEY_ASTERISK;
-	case Common::KEYCODE_KP_MINUS:
-		return AGS3::__allegro_KEY_MINUS_PAD;
-	case Common::KEYCODE_KP_PLUS:
-		return AGS3::__allegro_KEY_PLUS_PAD;
-	case Common::KEYCODE_KP_PERIOD:
-		return AGS3::__allegro_KEY_DEL_PAD;
-	case Common::KEYCODE_KP_ENTER:
-		return AGS3::__allegro_KEY_ENTER_PAD;
-	case Common::KEYCODE_PRINT:
-		return AGS3::__allegro_KEY_PRTSCR;
-	case Common::KEYCODE_PAUSE:
-		return AGS3::__allegro_KEY_PAUSE;
-	case Common::KEYCODE_SEMICOLON:
-		return AGS3::__allegro_KEY_SEMICOLON;
-
-	case Common::KEYCODE_LSHIFT:
-		return AGS3::__allegro_KEY_LSHIFT;
-	case Common::KEYCODE_RSHIFT:
-		return AGS3::__allegro_KEY_RSHIFT;
-	case Common::KEYCODE_LCTRL:
-		return AGS3::__allegro_KEY_LCONTROL;
-	case Common::KEYCODE_RCTRL:
-		return AGS3::__allegro_KEY_RCONTROL;
-	case Common::KEYCODE_LALT:
-		return AGS3::__allegro_KEY_ALT;
-	case Common::KEYCODE_RALT:
-		return AGS3::__allegro_KEY_ALT;
-	case Common::KEYCODE_SCROLLOCK:
-		return AGS3::__allegro_KEY_SCRLOCK;
-	case Common::KEYCODE_NUMLOCK:
-		return AGS3::__allegro_KEY_NUMLOCK;
-	case Common::KEYCODE_CAPSLOCK:
-		return AGS3::__allegro_KEY_CAPSLOCK;
-	default:
-		return 0;
-	}
-}
-
-void EventsManager::updateKeys(const Common::KeyState &keyState, bool isDown) {
+void EventsManager::updateKeys(const Common::Event &event, bool isDown) {
 	// Update the keys array with whether the key is pressed
-	int scancode = getScancode(keyState.keycode);
-	if (scancode != 0)
-		_keys[scancode] = isDown;
+	
+	AGS3::eAGSKeyCode key = ags_keycode_from_scummvm(event);
+	if (key != 0)
+		_keys[key] = isDown;
 }
 
 uint EventsManager::getModifierFlags() const {
 	if (_pendingKeys.empty())
 		return 0;
 
-	byte flags = _pendingKeys.front().flags;
+	byte flags = _pendingKeys.front().kbd.flags;
 	uint keyFlags = 0;
 	if (flags & Common::KBD_SHIFT)
 		keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
@@ -302,8 +182,248 @@ uint EventsManager::getModifierFlags() const {
 	return keyFlags;
 }
 
-bool EventsManager::isKeyPressed(AGS3::AllegroKbdKeycode keycode) const {
-	return _keys[keycode];
+bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key) {
+	pollEvents();
+	return _keys[key];
+}
+
+bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&kc)[3]) {
+	kc[0] = Common::KEYCODE_INVALID;
+	kc[1] = Common::KEYCODE_INVALID;
+	kc[2] = Common::KEYCODE_INVALID;
+	Common::KeyCode sym = Common::KEYCODE_INVALID;
+
+	// SDL sym codes happen to match small ASCII letters, so lowercase ours if necessary
+	if (key >= AGS3::eAGSKeyCodeA && key <= AGS3::eAGSKeyCodeZ) {
+		sym = static_cast<Common::KeyCode>(key - AGS3::eAGSKeyCodeA + Common::KEYCODE_a);
+	}
+	// Rest of the printable characters seem to match (and match ascii codes)
+	else if (key >= AGS3::eAGSKeyCodeSpace && key <= AGS3::eAGSKeyCodeBackquote) {
+		sym = static_cast<Common::KeyCode>(key);
+	}
+
+	if (sym != Common::KEYCODE_INVALID) {
+		kc[0] = sym;
+		return true;
+	}
+
+	// Other keys are mapped directly to scancode (based on [sonneveld]'s code)
+	switch (key) {
+	case AGS3::eAGSKeyCodeBackspace:
+		kc[0] = Common::KEYCODE_BACKSPACE;
+		return true;
+	case AGS3::eAGSKeyCodeTab:
+		kc[0] = Common::KEYCODE_TAB;
+		return true;
+	case AGS3::eAGSKeyCodeReturn:
+		kc[0] = Common::KEYCODE_RETURN;
+		kc[1] = Common::KEYCODE_KP_ENTER;
+		return true;
+	case AGS3::eAGSKeyCodeEscape:
+		kc[0] = Common::KEYCODE_ESCAPE;
+		return true;
+
+	case AGS3::eAGSKeyCodeF1:
+		kc[0] = Common::KEYCODE_F1;
+		return true;
+	case AGS3::eAGSKeyCodeF2:
+		kc[0] = Common::KEYCODE_F2;
+		return true;
+	case AGS3::eAGSKeyCodeF3:
+		kc[0] = Common::KEYCODE_F3;
+		return true;
+	case AGS3::eAGSKeyCodeF4:
+		kc[0] = Common::KEYCODE_F4;
+		return true;
+	case AGS3::eAGSKeyCodeF5:
+		kc[0] = Common::KEYCODE_F5;
+		return true;
+	case AGS3::eAGSKeyCodeF6:
+		kc[0] = Common::KEYCODE_F6;
+		return true;
+	case AGS3::eAGSKeyCodeF7:
+		kc[0] = Common::KEYCODE_F7;
+		return true;
+	case AGS3::eAGSKeyCodeF8:
+		kc[0] = Common::KEYCODE_F8;
+		return true;
+	case AGS3::eAGSKeyCodeF9:
+		kc[0] = Common::KEYCODE_F9;
+		return true;
+	case AGS3::eAGSKeyCodeF10:
+		kc[0] = Common::KEYCODE_F10;
+		return true;
+	case AGS3::eAGSKeyCodeF11:
+		kc[0] = Common::KEYCODE_F11;
+		return true;
+	case AGS3::eAGSKeyCodeF12:
+		kc[0] = Common::KEYCODE_F12;
+		return true;
+
+	case AGS3::eAGSKeyCodeHome:
+		kc[0] = Common::KEYCODE_KP7;
+		kc[1] = Common::KEYCODE_HOME;
+		return true;
+	case AGS3::eAGSKeyCodeUpArrow:
+		kc[0] = Common::KEYCODE_KP8;
+		kc[1] = Common::KEYCODE_UP;
+		return true;
+	case AGS3::eAGSKeyCodePageUp:
+		kc[0] = Common::KEYCODE_KP9;
+		kc[1] = Common::KEYCODE_PAGEUP;
+		return true;
+	case AGS3::eAGSKeyCodeLeftArrow:
+		kc[0] = Common::KEYCODE_KP4;
+		kc[1] = Common::KEYCODE_LEFT;
+		return true;
+	case AGS3::eAGSKeyCodeNumPad5:
+		kc[0] = Common::KEYCODE_KP5;
+		return true;
+	case AGS3::eAGSKeyCodeRightArrow:
+		kc[0] = Common::KEYCODE_KP6;
+		kc[1] = Common::KEYCODE_RIGHT;
+		return true;
+	case AGS3::eAGSKeyCodeEnd:
+		kc[0] = Common::KEYCODE_KP1;
+		kc[1] = Common::KEYCODE_END;
+		return true;
+	case AGS3::eAGSKeyCodeDownArrow:
+		kc[0] = Common::KEYCODE_KP2;
+		kc[1] = Common::KEYCODE_DOWN;
+		return true;
+	case AGS3::eAGSKeyCodePageDown:
+		kc[0] = Common::KEYCODE_KP3;
+		kc[1] = Common::KEYCODE_PAGEDOWN;
+		return true;
+	case AGS3::eAGSKeyCodeInsert:
+		kc[0] = Common::KEYCODE_KP0;
+		kc[1] = Common::KEYCODE_INSERT;
+		return true;
+	case AGS3::eAGSKeyCodeDelete:
+		kc[0] = Common::KEYCODE_KP_PERIOD;
+		kc[1] = Common::KEYCODE_DELETE;
+		return true;
+
+	case AGS3::eAGSKeyCodeLShift:
+		kc[0] = Common::KEYCODE_LSHIFT;
+		return true;
+	case AGS3::eAGSKeyCodeRShift:
+		kc[0] = Common::KEYCODE_RSHIFT;
+		return true;
+	case AGS3::eAGSKeyCodeLCtrl:
+		kc[0] = Common::KEYCODE_LCTRL;
+		return true;
+	case AGS3::eAGSKeyCodeRCtrl:
+		kc[0] = Common::KEYCODE_RCTRL;
+		return true;
+	case AGS3::eAGSKeyCodeLAlt:
+		kc[0] = Common::KEYCODE_LALT;
+		return true;
+	case AGS3::eAGSKeyCodeRAlt:
+		kc[0] = Common::KEYCODE_RALT;
+		return true;
+
+	default:
+		return false;
+	}
+	return false;
+}
+
+AGS3::eAGSKeyCode EventsManager::ags_keycode_from_scummvm(const Common::Event &event) {
+	if (event.type != Common::EVENT_KEYDOWN)
+		return AGS3::eAGSKeyCodeNone;
+
+	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
+		return static_cast<AGS3::eAGSKeyCode>(event.kbd.ascii);
+
+	const Common::KeyCode sym = event.kbd.keycode;
+	const uint16 mod = event.kbd.flags;
+
+	// Ctrl and Alt combinations realign the letter code to certain offset
+	if (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) {
+		if ((mod & Common::KBD_CTRL) != 0) // align letters to code 1
+			return static_cast<AGS3::eAGSKeyCode>(0 + (sym - Common::KEYCODE_a) + 1);
+		else if ((mod & Common::KBD_ALT) != 0) // align letters to code 301
+			return static_cast<AGS3::eAGSKeyCode>(AGS_EXT_KEY_SHIFT + (sym - Common::KEYCODE_a) + 1);
+	}
+
+	// Remaining codes may match or not, but we use a big table anyway.
+	// TODO: this is code by [sonneveld],
+	// double check that we must use scan codes here, maybe can use sdl key (sym) too?
+	switch (sym) {
+	case Common::KEYCODE_BACKSPACE:
+		return AGS3::eAGSKeyCodeBackspace;
+	case Common::KEYCODE_TAB:
+		return AGS3::eAGSKeyCodeTab;
+	case Common::KEYCODE_RETURN:
+	case Common::KEYCODE_KP_ENTER:
+		return AGS3::eAGSKeyCodeReturn;
+	case Common::KEYCODE_ESCAPE:
+		return AGS3::eAGSKeyCodeEscape;
+
+	case Common::KEYCODE_F1:
+		return AGS3::eAGSKeyCodeF1;
+	case Common::KEYCODE_F2:
+		return AGS3::eAGSKeyCodeF2;
+	case Common::KEYCODE_F3:
+		return AGS3::eAGSKeyCodeF3;
+	case Common::KEYCODE_F4:
+		return AGS3::eAGSKeyCodeF4;
+	case Common::KEYCODE_F5:
+		return AGS3::eAGSKeyCodeF5;
+	case Common::KEYCODE_F6:
+		return AGS3::eAGSKeyCodeF6;
+	case Common::KEYCODE_F7:
+		return AGS3::eAGSKeyCodeF7;
+	case Common::KEYCODE_F8:
+		return AGS3::eAGSKeyCodeF8;
+	case Common::KEYCODE_F9:
+		return AGS3::eAGSKeyCodeF9;
+	case Common::KEYCODE_F10:
+		return AGS3::eAGSKeyCodeF10;
+	case Common::KEYCODE_F11:
+		return AGS3::eAGSKeyCodeF11;
+	case Common::KEYCODE_F12:
+		return AGS3::eAGSKeyCodeF12;
+
+	case Common::KEYCODE_KP7:
+	case Common::KEYCODE_HOME:
+		return AGS3::eAGSKeyCodeHome;
+	case Common::KEYCODE_KP8:
+	case Common::KEYCODE_UP:
+		return AGS3::eAGSKeyCodeUpArrow;
+	case Common::KEYCODE_KP9:
+	case Common::KEYCODE_PAGEUP:
+		return AGS3::eAGSKeyCodePageUp;
+	case Common::KEYCODE_KP4:
+	case Common::KEYCODE_LEFT:
+		return AGS3::eAGSKeyCodeLeftArrow;
+	case Common::KEYCODE_KP5:
+		return AGS3::eAGSKeyCodeNumPad5;
+	case Common::KEYCODE_KP6:
+	case Common::KEYCODE_RIGHT:
+		return AGS3::eAGSKeyCodeRightArrow;
+	case Common::KEYCODE_KP1:
+	case Common::KEYCODE_END:
+		return AGS3::eAGSKeyCodeEnd;
+	case Common::KEYCODE_KP2:
+	case Common::KEYCODE_DOWN:
+		return AGS3::eAGSKeyCodeDownArrow;
+	case Common::KEYCODE_KP3:
+	case Common::KEYCODE_PAGEDOWN:
+		return AGS3::eAGSKeyCodePageDown;
+	case Common::KEYCODE_KP0:
+	case Common::KEYCODE_INSERT:
+		return AGS3::eAGSKeyCodeInsert;
+	case Common::KEYCODE_KP_PERIOD:
+	case Common::KEYCODE_DELETE:
+		return AGS3::eAGSKeyCodeDelete;
+
+	default:
+		return AGS3::eAGSKeyCodeNone;
+	}
+
+	return AGS3::eAGSKeyCodeNone;
 }
 
 } // namespace AGS

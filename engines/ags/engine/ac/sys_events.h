@@ -77,7 +77,7 @@ inline int make_merged_mod(int mod) {
 // Tells if there are any buffered key events
 bool ags_keyevent_ready();
 // Queries for the next key event in buffer; returns uninitialized data if none was queued
-SDL_Event ags_get_next_keyevent();
+Common::Event ags_get_next_keyevent();
 // Tells if the key is currently down, provided AGS key;
 // Returns positive value if it's down, 0 if it's not, negative value if the key code is not supported.
 // NOTE: for particular script codes this function returns positive if either of two keys are down.
