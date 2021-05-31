@@ -536,6 +536,9 @@ int Actor::actorWalkStep() {
 			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
+		// The next two lines fix bug #12278. I limit this to <= SCUMM3 for now, since I have only checked disasms of ZAK FM-TOWNS, ZAK DOS V1, LOOM DOS.
+		if (_vm->_game.version <= 3)
+			return 1;
 	}
 
 	if (_walkbox != _walkdata.curbox && _vm->checkXYInBoxBounds(_walkdata.curbox, _pos.x, _pos.y)) {
@@ -1116,7 +1119,7 @@ void Actor_v2::walkActor() {
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
 		if (_facing != new_dir) {
-			setDirection(new_dir);
+			setDirection(new_dir); 
 		} else {
 			_moving = 0;
 		}
