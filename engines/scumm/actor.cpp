@@ -1379,21 +1379,26 @@ int Actor::updateActorDirection(bool is_walking) {
 	dir &= 1023;
 
 	if (shouldInterpolate) {
-		int to = toSimpleDir(dirType, dir);
-		int num = dirType ? 8 : 4;
+		if (_vm->_game.version <= 3) {
+			static const uint8 tbl[] = { 0, 2, 2, 3, 2, 1, 2, 3, 0, 1, 2, 1, 0, 1, 0, 3 };
+			dir = oldDirToNewDir(tbl[newDirToOldDir(dir) | (newDirToOldDir(_facing) << 2)]);
+		} else {
+			int to = toSimpleDir(dirType, dir);
+			int num = dirType ? 8 : 4;
 
-		// Turn left or right, depending on which is shorter.
-		int diff = to - from;
-		if (ABS(diff) > (num >> 1))
-			diff = -diff;
+			// Turn left or right, depending on which is shorter.
+			int diff = to - from;
+			if (ABS(diff) > (num >> 1))
+				diff = -diff;
 
-		if (diff > 0) {
-			to = from + 1;
-		} else if (diff < 0){
-			to = from - 1;
+			if (diff > 0) {
+				to = from + 1;
+			} else if (diff < 0) {
+				to = from - 1;
+			}
+
+			dir = fromSimpleDir(dirType, (to + num) % num);
 		}
-
-		dir = fromSimpleDir(dirType, (to + num) % num);
 	}
 
 	return dir;
