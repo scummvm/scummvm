@@ -417,6 +417,8 @@ void ScummVMRendererGraphicsDriver::BlitToTexture() {
 void ScummVMRendererGraphicsDriver::Present() {
 	BlitToTexture();
 
+	::AGS::g_vm->_rawScreen->update();
+
 #if DEPRECATED
 	SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_NONE);
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);

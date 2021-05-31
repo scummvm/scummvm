@@ -214,6 +214,9 @@ Size set_game_frame_after_screen_size(const Size &game_size, const Size screen_s
 }
 
 Size precalc_screen_size(const Size &game_size, const DisplayModeSetup &dm_setup, const GameFrameSetup &frame_setup) {
+#if AGS_PLATFORM_SCUMMVM
+	return game_size;
+#else
 	Size screen_size, frame_size;
 	Size device_size = get_max_display_size(dm_setup.Windowed);
 
@@ -246,6 +249,7 @@ Size precalc_screen_size(const Size &game_size, const DisplayModeSetup &dm_setup
 		break;
 	}
 	return screen_size;
+#endif
 }
 
 // Find closest possible compatible display mode and initialize it

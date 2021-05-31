@@ -73,8 +73,6 @@ void WaitForNextFrame() {
 	}
 
 	_G(next_frame_timestamp) += frameDuration;
-
-	::AGS::g_vm->_rawScreen->update();
 }
 
 void skipMissedTicks() {
