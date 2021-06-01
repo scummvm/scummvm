@@ -237,6 +237,8 @@ public:
 	};
 
 	class VQAAudioTrack {
+		static const uint     kSizeInShortsAllocatedToAudioFrame = 2940; // 4 * 735
+		static const uint     kSizeInBytesOfCompressedAudioFrame = 735;
 	public:
 		VQAAudioTrack(VQADecoder *vqaDecoder);
 		~VQAAudioTrack();
@@ -250,7 +252,7 @@ public:
 	private:
 		uint16               _frequency;
 		ADPCMWestwoodDecoder _adpcmDecoder;
-		uint8                _compressedAudioFrame[735];
+		uint8                _compressedAudioFrame[kSizeInBytesOfCompressedAudioFrame];
 	};
 };
 

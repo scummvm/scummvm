@@ -140,8 +140,8 @@ VQADecoder::VQADecoder() {
 }
 
 VQADecoder::~VQADecoder() {
-	for (uint i = 0; i < _codebooks.size(); ++i) {
-		delete[] _codebooks[i].data;
+	for (uint i = _codebooks.size(); i != 0; --i) {
+		delete[] _codebooks[i - 1].data;
 	}
 	delete _audioTrack;
 	delete _videoTrack;
@@ -376,7 +376,7 @@ bool VQADecoder::readMSCI(Common::SeekableReadStream *s, uint32 size) {
 	if (chd.id != kMSCT || chd.size != count * 0x10)
 		return false;
 
-	for (uint32 i = 0; i < count; ++i) {
+	for (uint32 i = count; i != 0; --i) {
 		uint32 tag, max_size;
 		tag  = s->readUint32BE();
 		max_size = s->readUint32LE();
@@ -421,11 +421,11 @@ bool VQADecoder::readLINF(Common::SeekableReadStream *s, uint32 size) {
 		return false;
 
 	_loopInfo.loops = new Loop[_loopInfo.loopCount];
-	for (int i = 0; i != _loopInfo.loopCount; ++i) {
-		_loopInfo.loops[i].begin = s->readUint16LE();
-		_loopInfo.loops[i].end   = s->readUint16LE();
+	for (uint16 i = _loopInfo.loopCount; i != 0; --i) {
+		_loopInfo.loops[_loopInfo.loopCount - i].begin = s->readUint16LE();
+		_loopInfo.loops[_loopInfo.loopCount - i].end   = s->readUint16LE();
 
-		// debug("Loop %d: %04x %04x", i, _loopInfo.loops[i].begin, _loopInfo.loops[i].end);
+		// debug("Loop %d: %04x %04x", _loopInfo.loopCount - i, _loopInfo.loops[_loopInfo.loopCount - i].begin, _loopInfo.loops[_loopInfo.loopCount - i].end);
 	}
 
 	return true;
@@ -437,9 +437,10 @@ VQADecoder::CodebookInfo &VQADecoder::codebookInfoForFrame(int frame) {
 
 	CodebookInfo *ci = nullptr;
 	uint count = _codebooks.size();
-	for (uint i = 0; i != count; ++i) {
-		if (frame >= _codebooks[count - i - 1].frame) {
-			return _codebooks[count - i - 1];
+
+	for (uint i = count; i != 0; --i) {
+		if (frame >= _codebooks[i - 1].frame) {
+			return _codebooks[i - 1];
 		}
 	}
 
@@ -463,14 +464,14 @@ bool VQADecoder::readCINF(Common::SeekableReadStream *s, uint32 size) {
 	if (chd.id != kCIND || chd.size != 6u * codebookCount)
 		return false;
 
-	for (int i = 0; i != codebookCount; ++i) {
-		_codebooks[i].frame = s->readUint16LE();
-		_codebooks[i].size  = s->readUint32LE();
-		_codebooks[i].data  = nullptr;
+	for (uint16 i = codebookCount; i != 0; --i) {
+		_codebooks[codebookCount - i].frame = s->readUint16LE();
+		_codebooks[codebookCount - i].size  = s->readUint32LE();
+		_codebooks[codebookCount - i].data  = nullptr;
 
-		// debug("Codebook %2d: %4d %8d", i, _codebooks[i].frame, _codebooks[i].size);
+		// debug("Codebook %2u: %4d %8d", codebookCount - i, _codebooks[codebookCount - i].frame, _codebooks[codebookCount - i].size);
 
-		assert(_codebooks[i].frame < numFrames());
+		assert(_codebooks[codebookCount - i].frame < numFrames());
 	}
 
 	return true;
@@ -482,8 +483,8 @@ bool VQADecoder::readFINF(Common::SeekableReadStream *s, uint32 size) {
 
 	_frameInfo = new uint32[_header.numFrames];
 
-	for (uint32 i = 0; i != _header.numFrames; ++i)
-		_frameInfo[i] = s->readUint32LE();
+	for (uint16 i =  _header.numFrames; i != 0; --i)
+		_frameInfo[ _header.numFrames - i] = s->readUint32LE();
 
 	// if (false) {
 	// 	uint32 last = 0;
@@ -527,8 +528,8 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 		return false;
 
 	uint32 *loopNameOffsets = (uint32 *)malloc(loopNamesCount * sizeof(uint32));
-	for (int i = 0; i != loopNamesCount; ++i) {
-		loopNameOffsets[i] = s->readUint32LE();
+	for (uint16 i = loopNamesCount; i != 0; --i) {
+		loopNameOffsets[loopNamesCount - i] = s->readUint32LE();
 	}
 
 	readIFFChunkHeader(_s, &chd);
@@ -540,13 +541,13 @@ bool VQADecoder::readLNIN(Common::SeekableReadStream *s, uint32 size) {
 	char *names = (char *)malloc(roundup(chd.size));
 	s->read(names, roundup(chd.size));
 
-	for (int i = 0; i != loopNamesCount; ++i) {
-		char   *begin = names + loopNameOffsets[i];
-		uint32  len   = ((i == loopNamesCount - 1) ? chd.size : loopNameOffsets[i+1]) - loopNameOffsets[i];
+	for (uint16 i = loopNamesCount; i != 0; --i) {
+		char   *begin = names + loopNameOffsets[loopNamesCount - i];
+		uint32  len   = ((i == 1) ? chd.size : loopNameOffsets[loopNamesCount - i + 1]) - loopNameOffsets[loopNamesCount - i];
 
-		_loopInfo.loops[i].name = Common::String(begin, len);
+		_loopInfo.loops[loopNamesCount - i].name = Common::String(begin, len);
 
-		// debug("%2d: %s", i, _loopInfo.loops[i].name.c_str());
+		// debug("%2u: %s", loopNamesCount - i, _loopInfo.loops[loopNamesCount - i].name.c_str());
 	}
 
 	free(loopNameOffsets);
@@ -820,26 +821,30 @@ bool VQADecoder::VQAVideoTrack::readVPTR(Common::SeekableReadStream *s, uint32 s
 void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsigned int dstBlock, unsigned int srcBlock, int count, bool alpha) {
 	const uint8 *const block_src = &_codebook[2 * srcBlock * _blockW * _blockH];
 
-	int blocks_per_line = _width / _blockW;
+	uint16 blocks_per_line = _width / _blockW;
 
-	for (int i = 0; i < count; ++i) {
-		uint32 dst_x = (dstBlock + i) % blocks_per_line * _blockW + _offsetX;
-		uint32 dst_y = (dstBlock + i) / blocks_per_line * _blockH + _offsetY;
+	uint32 dst_x = 0;
+	uint32 dst_y = 0;
+	uint16 vqaColor = 0;
+	uint8 a, r, g, b;
+
+	for (uint i = count; i != 0; --i) {
+		dst_x = (dstBlock + count - i) % blocks_per_line * _blockW + _offsetX;
+		dst_y = (dstBlock + count - i) / blocks_per_line * _blockH + _offsetY;
 
 		const uint8 *src_p = block_src;
 
-		for (int y = 0; y != _blockH; ++y) {
-			for (int x = 0; x != _blockW; ++x) {
-				uint16 vqaColor = READ_LE_UINT16(src_p);
+		for (uint y = _blockH; y != 0; --y) {
+			for (uint x = _blockW; x != 0; --x) {
+				vqaColor = READ_LE_UINT16(src_p);
 				src_p += 2;
 
-				uint8 a, r, g, b;
 				getGameDataColor(vqaColor, a, r, g, b);
 
 				if (!(alpha && a)) {
 					// clip is too slow and it is not needed
 					// void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
-					void* dstPtr = surface->getBasePtr(dst_x + x, dst_y + y);
+					void* dstPtr = surface->getBasePtr(dst_x + _blockW - x, dst_y + _blockH - y);
 					// Ignore the alpha in the output as it is inversed in the input
 					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
 				}
@@ -889,7 +894,7 @@ bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
 			VPTRWriteBlock(surface, dstBlock, srcBlock, 1);
 			++dstBlock;
 
-			for (int i = 0; i < count; ++i) {
+			for (uint16 i = count; i != 0; --i) {
 				srcBlock = *src++;
 				VPTRWriteBlock(surface, dstBlock, srcBlock, 1);
 				++dstBlock;
@@ -934,15 +939,15 @@ VQADecoder::VQAAudioTrack::~VQAAudioTrack() {
 }
 
 Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
-	int16 *audioFrame = (int16 *)malloc(4 * 735);
+	int16 *audioFrame = (int16 *)malloc(kSizeInShortsAllocatedToAudioFrame);
 	if (audioFrame != nullptr) {
-		memset(audioFrame, 0, 4 * 735);
+		memset(audioFrame, 0, kSizeInShortsAllocatedToAudioFrame);
 
-		_adpcmDecoder.decode(_compressedAudioFrame, 735, audioFrame, true);
+		_adpcmDecoder.decode(_compressedAudioFrame, kSizeInBytesOfCompressedAudioFrame, audioFrame, true);
 
 		uint flags = Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN;
 
-		return Audio::makeRawStream((byte *)audioFrame, 4 * 735, _frequency, flags, DisposeAfterUse::YES);
+		return Audio::makeRawStream((byte *)audioFrame, kSizeInShortsAllocatedToAudioFrame, _frequency, flags, DisposeAfterUse::YES);
 	} else {
 		warning("VQADecoder::VQAAudioTrack::decodeAudioFrame: Insufficient memory to allocate for audio frame");
 		return nullptr;
@@ -950,7 +955,7 @@ Audio::SeekableAudioStream *VQADecoder::VQAAudioTrack::decodeAudioFrame() {
 }
 
 bool VQADecoder::VQAAudioTrack::readSND2(Common::SeekableReadStream *s, uint32 size) {
-	if (size != 735) {
+	if (size != kSizeInBytesOfCompressedAudioFrame) {
 		warning("audio frame size: %d", size);
 		return false;
 	}
