@@ -38,6 +38,7 @@
 #include "saga2/script.h"
 #include "saga2/program.h"
 #include "saga2/version.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

@@ -37,6 +37,7 @@
 #include "saga2/annoy.h"
 #include "saga2/tileline.h"
 #include "saga2/tilevect.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

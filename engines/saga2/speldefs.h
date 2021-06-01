@@ -29,10 +29,16 @@
 
 #include "saga2/tile.h"
 #include "saga2/objects.h"
-#include "saga2/spellio.h"
-#include "saga2/spells.h"
 
 namespace Saga2 {
+
+class StorageSpellTarget;
+class SpellInstance;
+class StorageEffectron;
+class SpellDisplayPrototype;
+class EffectDisplayPrototype;
+class ResourceSpellItem;
+class StorageSpellInstance;
 
 /* ===================================================================== *
    Constants

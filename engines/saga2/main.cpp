@@ -52,6 +52,9 @@
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
 #include "saga2/script.h"
+#include "saga2/config.h"
+#include "saga2/hresmgr.h"
+
 
 namespace Saga2 {
 

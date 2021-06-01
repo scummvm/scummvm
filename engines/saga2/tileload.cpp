@@ -33,6 +33,7 @@
 #include "saga2/tile.h"
 #include "saga2/objects.h"
 #include "saga2/tileload.h"
+#include "saga2/hresmgr.h"
 #include "saga2/oncall.h"
 #include "common/debug.h"
 

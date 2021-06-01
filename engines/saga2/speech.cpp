@@ -39,6 +39,8 @@
 #include "saga2/annoy.h"
 #include "saga2/savefile.h"
 #include "saga2/cmisc.h"
+#include "saga2/config.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

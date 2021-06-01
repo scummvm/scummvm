@@ -50,6 +50,7 @@
 #include "saga2/display.h"
 #include "saga2/automap.h"
 #include "saga2/images.h"
+#include "saga2/config.h"
 
 namespace Saga2 {
 

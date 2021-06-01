@@ -35,6 +35,7 @@
 #include "saga2/grequest.h"
 #include "saga2/mapfeatr.h"
 #include "saga2/grabinfo.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

@@ -33,11 +33,14 @@
 #include "saga2/gpointer.h"
 #include "saga2/fontlib.h"
 #include "saga2/rmem.h"
-#include "saga2/hresmgr.h"
-#include "saga2/savefile.h"
-#include "saga2/config.h"
 
 namespace Saga2 {
+
+class SaveFileConstructor;
+class SaveFileReader;
+class hResContext;
+class hResource;
+
 /* ===================================================================== *
    Constants
  * ===================================================================== */

@@ -33,6 +33,8 @@
 #include "saga2/spells.h"
 #include "saga2/spellbuk.h"
 #include "saga2/spelshow.h"
+#include "saga2/spellio.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

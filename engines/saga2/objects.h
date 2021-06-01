@@ -41,6 +41,8 @@ namespace Saga2 {
  * ======================================================================= */
 
 class GameWorld;
+class SaveFileConstructor;
+class SaveFileReader;
 
 const uint16 unlimitedCapacity = maxuint16;
 

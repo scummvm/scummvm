@@ -31,6 +31,7 @@
 #include "saga2/fta.h"
 #include "saga2/dlist.h"
 #include "saga2/imagcach.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

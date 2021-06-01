@@ -32,6 +32,8 @@
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
 #include "saga2/actor.h"
+#include "saga2/spellio.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

@@ -30,6 +30,7 @@
 #include "saga2/floating.h"
 #include "saga2/rmemfta.h"
 #include "saga2/videobox.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 
