@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/input.h"
 #include "saga2/cmisc.h"
@@ -35,7 +37,6 @@
 #include "saga2/tileload.h"
 #include "saga2/hresmgr.h"
 #include "saga2/oncall.h"
-#include "common/debug.h"
 
 namespace Saga2 {
 
