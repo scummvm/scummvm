@@ -276,6 +276,7 @@ void PlayModeCleanup(void) {
 	if (playControls) {
 		delete playControls;
 		playControls = nullptr;
+		delete StatusLine;
 		StatusLine = nullptr;
 	}
 	if (speakButtonControls) {

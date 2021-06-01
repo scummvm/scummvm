@@ -183,11 +183,15 @@ void niceScreenStartup(void) {
 // backbuffer startup
 
 void initBackPanel(void) {
-	mainWindow = NEW_UI BackWindow(
+	if (mainWindow)
+		return;
+
+	mainWindow = new BackWindow(
 	                 Rect16(0, 0, screenWidth, screenHeight),
 	                 0,
 	                 cmdWindowFunc);
-	checkAlloc(mainWindow);
+	if (mainWindow == nullptr)
+		error("Error initializing the back panel");
 }
 
 /* ===================================================================== *

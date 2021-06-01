@@ -75,11 +75,12 @@ const   uint32  gameTimeID  = MKTAG('T', 'I', 'M', 'E');
 extern WindowDecoration autoMapDecorations[];
 extern gToolBase        G_BASE;
 extern configuration    globalConfig;
-extern char             *gameTimeStr;
+extern char            *gameTimeStr;
 extern bool             underground;
 extern char             commandLineHelp[];
-extern hResContext        *tileRes;       // tile resource handle
-extern hResContext        *listRes;
+extern hResContext     *tileRes;       // tile resource handle
+extern hResContext     *listRes;
+extern vDisplayPage     protoPage;
 
 /* ===================================================================== *
    Globals
@@ -209,6 +210,12 @@ void updatePerfStats(void);
 //EO//#endif
 
 void testTiles();
+
+bool initResourceHandles();
+bool initDisplayPort();
+bool initPanelSystem();
+bool initDisplay();
+bool initGameMaps();
 
 /********************************************************************/
 /*                                                                  */
@@ -760,6 +767,12 @@ void testTileRendering() {
 	listRes = objResFile->newContext(MKTAG('L', 'I', 'S', 'T'), "list resources");
 	resImports = (ResImportTable *)LoadResource(listRes, MKTAG('I', 'M', 'P', 'O'), "res imports");
 
+	initResourceHandles();
+	mainPort.setDisplayPage(&protoPage);
+	initPanelSystem();
+	initDisplayPort();
+	initDisplay();
+	initGameMaps();
 	testTiles();
 }
 
