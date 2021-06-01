@@ -564,6 +564,9 @@ get_system_exe_extension() {
 	mingw* | *os2-emx)
 		_exeext=".exe"
 		;;
+	emscripten)
+		_exeext=".html"	
+		;;
 	*)
 		_exeext=""
 		;;
@@ -1707,6 +1710,12 @@ switch)
 	# Switch SDK has C++11 constructs so we must enable it
 	_use_cxx11=yes
 	;;
+wasm32-*)
+	_endian=little # the endian check below fails, but emscripten is always little endian anyway
+	_host_os=emscripten
+	_host_cpu=wasm32
+	CXX="em++"
+	;;
 wii)
 	_host_os=wii
 	_host_cpu=powerpc
@@ -1790,6 +1799,12 @@ android)
 dreamcast)
 	if test -z "$RONINDIR"; then
 		echo "Please set RONINDIR in your environment. export RONINDIR=<path to libronin>"
+		exit 1
+	fi
+	;;
+emscripten)
+	if test -z "$EMSDK"; then
+		echo "Please set EMSDK in your environment. export EMSDK=<path to emscripten sdk>"
 		exit 1
 	fi
 	;;
@@ -2557,6 +2572,9 @@ case $_host_cpu in
 	amd64 | x86_64)
 		echo "x86_64"
 		;;
+	wasm32)
+		echo "wasm32"
+		;;
 	*)
 		echo "unknown ($_host_cpu)"
 		;;
@@ -2880,6 +2898,25 @@ EOF
 		append_var LIBS "-lmm9"
 		append_var LIBS "-lnds9"
 		;;
+	emscripten)
+		add_line_to_config_mk 'EMSCRIPTEN = 1'
+		# mandatory emscripten flags
+		append_var LDFLAGS "-s MAX_WEBGL_VERSION=2 -s WEBGL2_BACKWARDS_COMPATIBILITY_EMULATION=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1 -s ALLOW_MEMORY_GROWTH=1"
+		# enable emscripten-ports and set up paths accordingly
+		append_var LDFLAGS "-s USE_SDL=2 -s USE_SDL_MIXER=2  -s USE_OGG=1 -s USE_VORBIS=1  -s USE_LIBJPEG=1  -s USE_FREETYPE=1 -s USE_ZLIB"
+		_sdlpath="$EMSDK/upstream/emscripten/system/bin/"
+		_pngpath="$EMSDK/upstream/emscripten/cache/"
+		_freetypepath="$EMSDK/upstream/emscripten/cache/ports-builds/freetype/"
+		VORBIS_CFLAGS="-I$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/include"
+		VORBIS_LIBS="-L$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/lib"
+		FREETYPE2_CFLAGS="-I$_freetypepath/include"
+		_freetype_found="true"
+		if test "$_debug_build" = no; then
+			_optimization_level=-O3 -g4 
+		else
+			_optimization_level=-O2
+		fi
+	;;	
 	freebsd* | openbsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
@@ -3215,6 +3252,15 @@ if test -n "$_host"; then
 			# Force disable seq on dingux, no way to use it and it would get enabled by default with configure
 			_seq_midi=no
 			_port_mk="backends/platform/dingux/dingux.mk"
+			;;
+		wasm*-emscripten)
+			_backend="sdl"
+			HOSTEXEPRE=
+			HOSTEXEEXT=.html
+			_ar="emar cru"
+			_ranlib="emranlib"
+			_opengl_mode=gles2
+			_opengl_game_es2=yes
 			;;
 		raspberrypi)
 			_libcurlpath=$RPI_ROOT/usr/bin
@@ -3909,6 +3955,9 @@ case $_host_os in
 	os2-emx*)
 		_posix=yes	# FIXME: Really???
 		;;
+	emscripten)
+		_posix=yes	
+		;;
 	*)
 		# given this is a shell script, we might assume some type of posix.
 		# However, the host system might be a totally different one, so
@@ -3929,7 +3978,7 @@ if test "$_posix" = yes ; then
 #include <spawn.h>
 int main(void) { return posix_spawn(0, 0, 0, 0, 0, 0); }
 EOF
-	cc_check && _has_posix_spawn=yes
+	cc_check && test "$_host_os" != "emscripten" && _has_posix_spawn=yes
 	echo $_has_posix_spawn
 	if test "$_has_posix_spawn" = yes ; then
 		append_var DEFINES "-DHAS_POSIX_SPAWN"
@@ -3976,6 +4025,18 @@ _mak_plugins=
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
+	emscripten)
+		_plugin_prefix="lib"
+		_plugin_suffix=".wasm"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS ""
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s EXPORT_ALL=1
+PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
+POST_OBJS_FLAGS :=
+'
+		;;
 	3ds)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"

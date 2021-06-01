@@ -1117,6 +1117,10 @@ void GrimEngine::mainLoop() {
 			g_imuseState = -1;
 		}
 
+		#if defined(EMSCRIPTEN)
+		// We need to yield regularly to unblock the main thread
+		g_system->delayMillis(10);
+		#endif
 		uint32 endTime = g_system->getMillis();
 		if (startTime > endTime)
 			continue;
