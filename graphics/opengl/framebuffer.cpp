@@ -158,12 +158,20 @@ void FrameBuffer::init() {
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	} else {
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[0]);
+		#if defined(EMSCRIPTEN)
+		// See https://www.khronos.org/registry/webgl/specs/latest/1.0/#FBO_ATTACHMENTS
+		#define GL_DEPTH_STENCIL 0x84F9
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_STENCIL, _texWidth, _texHeight);
+		#define GL_DEPTH_STENCIL_ATTACHMENT 0x821A
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
+		#else
 		glRenderbufferStorage(GL_RENDERBUFFER, useDepthComponent24() ? GL_DEPTH_COMPONENT24 : GL_DEPTH_COMPONENT16, _texWidth, _texHeight);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[0]);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, _renderBuffers[1]);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_STENCIL_INDEX8, _texWidth, _texHeight);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _renderBuffers[1]);
+		#endif
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	}
 

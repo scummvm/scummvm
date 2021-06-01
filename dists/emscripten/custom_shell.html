@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Emscripten-Generated Code</title>
+
+  <style>
+    .emscripten {
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+
+    textarea.emscripten {
+      font-family: monospace;
+      width: 80%;
+    }
+
+    div.emscripten {
+      text-align: center;
+    }
+
+    div.emscripten_border {
+      border: 1px solid black;
+    }
+
+    /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+    canvas.emscripten {
+      border: 0px none;
+      background-color: black;
+    }
+
+    .spinner {
+      height: 50px;
+      width: 50px;
+      margin: 0px auto;
+      -webkit-animation: rotation .8s linear infinite;
+      -moz-animation: rotation .8s linear infinite;
+      -o-animation: rotation .8s linear infinite;
+      animation: rotation 0.8s linear infinite;
+      border-left: 10px solid rgb(0, 150, 240);
+      border-right: 10px solid rgb(0, 150, 240);
+      border-bottom: 10px solid rgb(0, 150, 240);
+      border-top: 10px solid rgb(100, 0, 200);
+      border-radius: 100%;
+      background-color: rgb(200, 100, 250);
+    }
+
+    @-webkit-keyframes rotation {
+      from {
+        -webkit-transform: rotate(0deg);
+      }
+
+      to {
+        -webkit-transform: rotate(360deg);
+      }
+    }
+
+    @-moz-keyframes rotation {
+      from {
+        -moz-transform: rotate(0deg);
+      }
+
+      to {
+        -moz-transform: rotate(360deg);
+      }
+    }
+
+    @-o-keyframes rotation {
+      from {
+        -o-transform: rotate(0deg);
+      }
+
+      to {
+        -o-transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotation {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <hr />
+  <figure style="overflow:visible;" id="spinner">
+    <div class="spinner"></div>
+    <center style="margin-top:0.5em"><strong>emscripten</strong></center>
+  </figure>
+  <div class="emscripten" id="status">Downloading...</div>
+  <div class="emscripten">
+    <progress value="0" max="100" id="progress" hidden=1></progress>
+  </div>
+  <div class="emscripten_border">
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+  </div>
+  <hr />
+  <div class="emscripten">
+    <input type="checkbox" id="resize">Resize canvas
+    <input type="checkbox" id="pointerLock" checked>Lock/hide mouse pointer
+    &nbsp;&nbsp;&nbsp;
+    <input type="button" value="Fullscreen"
+      onclick="Module.requestFullscreen(document.getElementById('pointerLock').checked, 
+                                                                                document.getElementById('resize').checked)">
+  </div>
+
+  <hr />
+  <textarea class="emscripten" id="output" rows="8"></textarea>
+  <hr>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js"
+    integrity="sha512-mz0EI+Ay1uIJP7rZEX8C/JlTAcHRIQ8Sny4vxmmj8MSzDJgG9NxxY2pUmOGv1lO7imFIFMyjjCzEXEywNgaUdQ=="
+    crossorigin="anonymous"></script>
+  <script type='text/javascript'>
+    var statusElement = document.getElementById('status');
+    var progressElement = document.getElementById('progress');
+    var spinnerElement = document.getElementById('spinner');
+
+    function setupBrowserFS() {
+
+      addRunDependency('browserfs-setup');
+      // default values, created by running scummvm with --add --recursive --path=/data/games
+      defaultlocalStorage = {
+        "/": "ABAAAP9BAHAF4Eqbd0IAcAXgSpt3QgBwBeBKm3dCYjNkYTY3NTQtNjRjMC00MGYwLTkyYWQtODNiNmNhNmZmZWM5",
+        "70879b79-8d58-400c-8143-332242320b34": "aQ8AALaBABDvg0Kcd0IAkEVfPZ13QgAQ74NCnHdCMWI0YTk3ZDEtNGNlMC00MTdmLTk4NWMtZTBmMjJjYTIxYWVm",
+        "b3da6754-64c0-40f0-92ad-83b6ca6ffec9": "eyJzY3VtbXZtLmluaSI6IjcwODc5Yjc5LThkNTgtNDAwYy04MTQzLTMzMjI0MjMyMGIzNCJ9",
+        "1b4a97d1-4ce0-417f-985c-e0f22ca21aef": "W3NjdW1tdm1dCmZpbHRlcmluZz1mYWxzZQp2c3luYz1mYWxzZQptdXRlPWZhbHNlCnNwZWVjaF92b2x1bWU9MTkyCm5hdGl2ZV9tdDMyPWZhbHNlCm1pZGlfZ2Fpbj0xMDAKZW5hYmxlX2dzPWZhbHNlCmFzcGVjdF9yYXRpbz1mYWxzZQp0YWxrc3BlZWQ9NjAKY29uZmlybV9leGl0PWZhbHNlCm10MzJfZGV2aWNlPW51bGwKZ3VpX2Jhc2U9MApndWlfcmV0dXJuX3RvX2xhdW5jaGVyX2F0X2V4aXQ9ZmFsc2UKc3VidGl0bGVzPWZhbHNlCm11bHRpX21pZGk9ZmFsc2UKZnVsbHNjcmVlbj1mYWxzZQpndWlfYnJvd3Nlcl9zaG93X2hpZGRlbj1mYWxzZQpicm93c2VyX2xhc3RwYXRoPS9kYXRhL2dhbWVzL3Rlc3RiZWQKZ21fZGV2aWNlPW51bGwKc2Z4X3ZvbHVtZT0xOTIKbXVzaWNfdm9sdW1lPTE5MgpzcGVlY2hfbXV0ZT1mYWxzZQpsYXN0c2VsZWN0ZWRnYW1lPWRyYXNjdWxhCm11c2ljX2RyaXZlcj1hdXRvCmFudGlhbGlhc2luZz0wCm9wbF9kcml2ZXI9YXV0bwpndWlfdXNlX2dhbWVfbGFuZ3VhZ2U9ZmFsc2UKdmVyc2lvbmluZm89Mi4zLjBnaXQxNzU3MC1nNGJjZTJhMzI2NS1kaXJ0eQphdXRvc2F2ZV9wZXJpb2Q9MzAwCnJlbmRlcmVyPW9wZW5nbF9zaGFkZXJzCgpbdGVzdGJlZF0KZGVzY3JpcHRpb249VGVzdGJlZDogVGhlIEJhY2tlbmQgVGVzdGluZyBGcmFtZXdvcmsgKERPUy9FbmdsaXNoKQpwYXRoPS9kYXRhL2dhbWVzL3Rlc3RiZWQKZW5naW5laWQ9dGVzdGJlZApnYW1laWQ9dGVzdGJlZApsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPWxhdW5jaE5vTG9hZCBsYW5nX0VuZ2xpc2gKCltza3ldCmRlc2NyaXB0aW9uPUJlbmVhdGggYSBTdGVlbCBTa3kgKHYwLjAzNDggZmxvcHB5KQpleHRyYT12MC4wMzQ4IGZsb3BweQpwYXRoPS9kYXRhL2dhbWVzL2Jhc3MtZmxvcHB5CmVuZ2luZWlkPXNreQpnYW1laWQ9c2t5Cmd1aW9wdGlvbnM9c25kTm9TcGVlY2gKCltjb21pLWRlbW9dCmRlc2NyaXB0aW9uPVRoZSBDdXJzZSBvZiBNb25rZXkgSXNsYW5kIChEZW1vL1dpbmRvd3MpCmV4dHJhPURlbW8KcGF0aD0vZGF0YS9nYW1lcy9jb21pLXdpbi1sYXJnZS1kZW1vLWVuCmVuZ2luZWlkPXNjdW1tCmdhbWVpZD1jb21pCnBsYXRmb3JtPXdpbmRvd3MKZ3Vpb3B0aW9ucz1zbmROb01JREkgbm9Bc3BlY3QKCltkcmFzY3VsYV0KZGVzY3JpcHRpb249RHJhc2N1bGE6IFRoZSBWYW1waXJlIFN0cmlrZXMgQmFjayAoRE9TL0VuZ2xpc2gpCnBhdGg9L2RhdGEvZ2FtZXMvZHJhc2N1bGEKZW5naW5laWQ9ZHJhc2N1bGEKZ2FtZWlkPWRyYXNjdWxhCmxhbmd1YWdlPWVuCnBsYXRmb3JtPXBjCmd1aW9wdGlvbnM9c25kTm9NSURJIHNuZExpbmtTcGVlY2hUb1NmeCBsYW5nX0VuZ2xpc2gKClttb25rZXk0LWRlbW8td2luXQpkZXNjcmlwdGlvbj1Fc2NhcGUgRnJvbSBNb25rZXkgSXNsYW5kIChEZW1vL1dpbmRvd3MvRW5nbGlzaCkKZXh0cmE9RGVtbwpjaGVja19nYW1lZGF0YT1mYWxzZQpkYXRhdXNyX2xvYWQ9ZmFsc2UKcGF0aD0vZGF0YS9nYW1lcy9lbWktd2luLWRlbW8tZW4KZW5naW5laWQ9Z3JpbQpnYW1laWQ9bW9ua2V5NApsYW5ndWFnZT1lbgpzaG93X2Zwcz10cnVlCnBsYXRmb3JtPXdpbmRvd3MKZ3Vpb3B0aW9ucz1zbmROb01JREkgZ2FtZU9wdGlvbjEgZ2FtZU9wdGlvbjIgbGFuZ19FbmdsaXNoCgpbZmVlYmxlLWRlbW9dCmRlc2NyaXB0aW9uPVRoZSBGZWVibGUgRmlsZXMgKERlbW8vRE9TL0VuZ2xpc2gpCmV4dHJhPURlbW8KcGF0aD0vZGF0YS9nYW1lcy9mZWVibGUtZG9zLW5pLWRlbW8tZW4KZW5naW5laWQ9YWdvcwpnYW1laWQ9ZmVlYmxlCmxhbmd1YWdlPWVuCnBsYXRmb3JtPXBjCmd1aW9wdGlvbnM9c25kTm9TdWJzIHNuZE5vTXVzaWMgbGF1bmNoTm9Mb2FkIG5vQXNwZWN0IGxhbmdfRW5nbGlzaAoKW3F1ZWVuXQpkZXNjcmlwdGlvbj1GbGlnaHQgb2YgdGhlIEFtYXpvbiBRdWVlbiAoRmxvcHB5L0RPUy9FbmdsaXNoKQpleHRyYT1GbG9wcHkKcGF0aD0vZGF0YS9nYW1lcy9mb3RhcS1mbG9wcHkvRk9UQVFfRmxvcHB5CmVuZ2luZWlkPXF1ZWVuCmdhbWVpZD1xdWVlbgpsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vU3BlZWNoIGxhbmdfRW5nbGlzaAoKW2Z0LWRlbW9dCmRpbXVzZV90ZW1wbz0xMApkZXNjcmlwdGlvbj1GdWxsIFRocm90dGxlIChEZW1vL0RPUy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvZnQtZG9zLWRlbW8tZW4KZW5naW5laWQ9c2N1bW0KZ2FtZWlkPWZ0Cmxhbmd1YWdlPWVuCnBsYXRmb3JtPXBjCmd1aW9wdGlvbnM9c25kTm9NSURJIGxhbmdfRW5nbGlzaAoKW2xzbDctZGVtb10KZGVzY3JpcHRpb249TGVpc3VyZSBTdWl0IExhcnJ5IDc6IExvdmUgZm9yIFNhaWwhIChEZW1vL0RPUy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvbHNsNy1kb3MtZGVtby1lbgplbmdpbmVpZD1zY2kKZ2FtZWlkPWxzbDcKbGFuZ3VhZ2U9ZW4KcGxhdGZvcm09cGMKZ3Vpb3B0aW9ucz1zbmROb01JREkgbGF1bmNoTm9Mb2FkIG5vQXNwZWN0IGdhbWVPcHRpb25DIGxhbmdfRW5nbGlzaAoKW2x1cmVdCmRlc2NyaXB0aW9uPUx1cmUgb2YgdGhlIFRlbXB0cmVzcyAoVkdBL0RPUy9FbmdsaXNoKQpleHRyYT1WR0EKcGF0aD0vZGF0YS9nYW1lcy9sdXJlL2x1cmUKZW5naW5laWQ9bHVyZQpnYW1laWQ9bHVyZQpsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vU3BlZWNoIGxhbmdfRW5nbGlzaAoKW215c3QtZGVtby13aW5dCmRlc2NyaXB0aW9uPU15c3QgKERlbW8vV2luZG93cy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvbXlzdC13aW4tZGVtby1lbi9NWVNUCmVuZ2luZWlkPW1vaGF3awpnYW1laWQ9bXlzdApsYW5ndWFnZT1lbgpwbGF0Zm9ybT13aW5kb3dzCmd1aW9wdGlvbnM9c25kTm9TdWJzIHNuZE5vTUlESSBsYXVuY2hOb0xvYWQgbm9Bc3BlY3QgZ2FtZU9wdGlvbjMgbGFuZ19FbmdsaXNoCgpbcGhhbnRhc21hZ29yaWEtZGVtb10KZGVzY3JpcHRpb249UGhhbnRhc21hZ29yaWEgKERlbW8vRE9TL0VuZ2xpc2gpCmV4dHJhPURlbW8KcGF0aD0vZGF0YS9nYW1lcy9waGFudGFzbWFnb3JpYS1kb3Mtd2luLWRlbW8tZW4KZW5naW5laWQ9c2NpCmdhbWVpZD1waGFudGFzbWFnb3JpYQpsYW5ndWFnZT1lbgpwbGF0Zm9ybT1wYwpndWlvcHRpb25zPXNuZE5vU3VicyBzbmRMaW5rU3BlZWNoVG9TZnggbGF1bmNoTm9Mb2FkIG5vQXNwZWN0IGdhbWVPcHRpb245IGdhbWVPcHRpb25BIGxhbmdfRW5nbGlzaAoKW3JpdmVuLWRlbW9dCmRlc2NyaXB0aW9uPVJpdmVuOiBUaGUgU2VxdWVsIHRvIE15c3QgKERlbW8vV2luZG93cy9FbmdsaXNoKQpleHRyYT1EZW1vCnBhdGg9L2RhdGEvZ2FtZXMvcml2ZW4td2luLWRlbW8tZW4KZW5naW5laWQ9bW9oYXdrCmdhbWVpZD1yaXZlbgpsYW5ndWFnZT1lbgpwbGF0Zm9ybT13aW5kb3dzCmd1aW9wdGlvbnM9c25kTm9TdWJzIHNuZE5vU3BlZWNoIHNuZE5vTUlESSBsYXVuY2hOb0xvYWQgbm9Bc3BlY3QgZ2FtZU9wdGlvbjMgbGFuZ19FbmdsaXNoCgpbc3dvcmQyZGVtb10KZGVzY3JpcHRpb249QnJva2VuIFN3b3JkIElJOiBUaGUgU21va2luZyBNaXJyb3IgKERlbW8pCnBhdGg9L2RhdGEvZ2FtZXMvc3dvcmQyLXdpbi1kZW1vLWVuCmVuZ2luZWlkPXN3b3JkMgpnYW1laWQ9c3dvcmQyZGVtbwpndWlvcHRpb25zPXNuZE5vTUlESSBub0FzcGVjdAoKW2dyaW0tZGVtby13aW4tMV0KZGVzY3JpcHRpb249R3JpbSBGYW5kYW5nbyAoRGVtby9XaW5kb3dzL0VuZ2xpc2gpCmV4dHJhPURlbW8KZGF0YXVzcl9sb2FkPWZhbHNlCnBhdGg9L2RhdGEvZ2FtZXMvZ3JpbS13aW4tZGVtbzItZW4KZW5naW5laWQ9Z3JpbQpnYW1laWQ9Z3JpbQpsYW5ndWFnZT1lbgpzaG93X2Zwcz1mYWxzZQpwbGF0Zm9ybT13aW5kb3dzCmd1aW9wdGlvbnM9c25kTm9NSURJIGdhbWVPcHRpb24xIGdhbWVPcHRpb24yIGxhbmdfRW5nbGlzaAoK"
+      }
+      if (localStorage.getItem("/") === null) {
+        for (key in defaultlocalStorage) {
+          localStorage.setItem(key, defaultlocalStorage[key]);
+        }
+      }
+      BrowserFS.FileSystem.HTTPRequest.Create({
+        index: "/games/index.json",
+        baseUrl: "/games/"
+      }, function (e, xhrfs) {
+        BrowserFS.FileSystem.LocalStorage.Create(function (e, lsfs) {
+          BrowserFS.FileSystem.MountableFileSystem.Create({
+            '/games': xhrfs,
+            '/local': lsfs
+          }, function (e, mfs) {
+            BrowserFS.initialize(mfs);
+            // BFS is now ready to use!
+
+            var BFS = new BrowserFS.EmscriptenFS();
+            // Mount the file system into Emscripten.
+            FS.mkdir('/data');
+            FS.mount(BFS, { root: '/' }, '/data');
+            removeRunDependency('browserfs-setup');
+          });
+        });
+      });
+
+
+    }
+    var Module = {
+      preRun: [setupBrowserFS],
+      postRun: [],
+      print: (function () {
+        var element = document.getElementById('output');
+        if (element) element.value = ''; // clear browser cache
+        return function (text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          // These replacements are necessary if you render to raw HTML
+          //text = text.replace(/&/g, "&amp;");
+          //text = text.replace(/</g, "&lt;");
+          //text = text.replace(/>/g, "&gt;");
+          //text = text.replace('\n', '<br>', 'g');
+          console.log(text);
+          if (element) {
+            element.value += text + "\n";
+            element.scrollTop = element.scrollHeight; // focus on bottom
+          }
+        };
+      })(),
+      printErr: function (text) {
+        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+        console.error(text);
+      },
+      canvas: (function () {
+        var canvas = document.getElementById('canvas');
+
+        // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+        // application robust, you may want to override this behavior before shipping!
+        // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+        canvas.addEventListener("webglcontextlost", function (e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+        return canvas;
+      })(),
+      setStatus: function (text) {
+        if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+        if (text === Module.setStatus.last.text) return;
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+        Module.setStatus.last.time = now;
+        Module.setStatus.last.text = text;
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2]) * 100;
+          progressElement.max = parseInt(m[4]) * 100;
+          progressElement.hidden = false;
+          spinnerElement.hidden = false;
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+          if (!text) spinnerElement.hidden = true;
+        }
+        statusElement.innerHTML = text;
+      },
+      totalDependencies: 0,
+      monitorRunDependencies: function (left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+      }
+    };
+    Module.setStatus('Downloading...');
+    window.onerror = function () {
+      Module.setStatus('Exception thrown, see JavaScript console');
+      spinnerElement.style.display = 'none';
+      Module.setStatus = function (text) {
+        if (text) Module.printErr('[post-exception status] ' + text);
+      };
+    };
+  </script>
+
+  <script async type="text/javascript" src="files.js"></script>
+  {{{ SCRIPT }}}
+</body>
+
+</html>
