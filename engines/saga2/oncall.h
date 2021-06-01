@@ -42,7 +42,8 @@ private:
 	byte*(*_loader)(hResID, bool);
 public:
 	HandleArray(uint16 size, byte*(*loadfunction)(hResID, bool), uint32 newID) {
-		_handles.resize(size);
+		for (int i = 0; i < size; ++i)
+			_handles.push_back(nullptr);
 		_loader = loadfunction;
 		_tileID = newID;
 	}

@@ -105,7 +105,7 @@ void setAreaSound(const TilePoint &baseCoords);
  * ===================================================================== */
 
 TileBankPtr tileBanks[maxBanks];
-extern byte* tileImageBanks[];
+extern HandleArray tileImageBanks;
 
 void tileFault(int bank, int num);
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
@@ -4642,7 +4642,7 @@ void testTiles() {
 	sur.create(size.x, size.y, Graphics::PixelFormat::createFormatCLUT8());
 	sur.setPixels(img);
 	sur.debugPrint();
-	//g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 112, sur.w, sur.h);
+	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
 
 	//  Draw sprites onto back buffer
 	//drawDisplayList();
