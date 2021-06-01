@@ -346,6 +346,11 @@ bool DigitalVideoCastMember::isModified() {
 void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_channel = channel;
 
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::startVideo: No video decoder");
+		return;
+	}
+
 	if (_pausedAtStart) {
 		_getFirstFrame = true;
 	} else {
@@ -367,6 +372,11 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 }
 
 void DigitalVideoCastMember::stopVideo(Channel *channel) {
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::stopVideo: No video decoder");
+		return;
+	}
+
 	_video->stop();
 
 	debugC(2, kDebugImages, "STOPPING VIDEO %s", _filename.c_str());
