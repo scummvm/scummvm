@@ -73,7 +73,7 @@ public:
 	String(const Common::String &s);
 	~String();
 
-	static const uint32 npos = 0xffffffff;
+	static const size_t npos = (size_t)-1;
 
 	// TODO: get rid of condition in GetCStr! either make it nullable and test for consequences in engine code,
 	// or make sure it points to "" literal when string is not assigned; also check if GetNullableCStr may be removed.

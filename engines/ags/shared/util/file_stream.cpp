@@ -191,6 +191,7 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		}
 
 	} else {
+
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
 			_outSave = g_system->getSavefileManager()->openForSaving(
 			               file_name + strlen(SAVE_FOLDER_PREFIX), false);
