@@ -614,7 +614,7 @@ void Encounter::choose(int32 index) {
 		_value1 = (_item->keywords[index] & KEYWORD_MASK);
 		setVariable(1, _value1);
 
-		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, 3681 + index))))
+		if (strcmp("Goodbye", getText()->get(MAKE_RESOURCE(kResourcePackText, 3681 + _value1))))
 			if (_index != 79)
 				BYTE1(_item->keywords[index]) |= kKeywordOptionsDisabled;
 
