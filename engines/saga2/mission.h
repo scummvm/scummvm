@@ -28,8 +28,6 @@
 #define SAGA2_MISSION_H
 
 #include "saga2/objects.h"
-#include "saga2/actor.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 

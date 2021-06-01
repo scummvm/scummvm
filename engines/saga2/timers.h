@@ -27,10 +27,14 @@
 #ifndef SAGA2_TIMERS_H
 #define SAGA2_TIMERS_H
 
-#include "saga2/objects.h"
+#include "saga2/idtypes.h"
+#include "saga2/dlist.h"
 #include "saga2/calender.h"
 
 namespace Saga2 {
+
+class GameObject;
+class TimerList;
 
 //  Allocate an new TimerList
 void *newTimerList(void);

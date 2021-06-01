@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/mission.h"
+#include "saga2/actor.h"
 
 namespace Saga2 {
 

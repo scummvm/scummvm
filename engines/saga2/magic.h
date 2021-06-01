@@ -27,11 +27,17 @@
 #ifndef SAGA2_MAGIC_H
 #define SAGA2_MAGIC_H
 
-#include "saga2/tile.h"
-#include "saga2/objects.h"
 #include "saga2/spells.h"
 
 namespace Saga2 {
+
+class ActiveItem;
+class Location;
+class SkillProto;
+class GameObject;
+
+class SaveFileConstructor;
+class SaveFileReader;
 
 // ------------------------------------------------------------------
 // This is an include file for the spellcasting interface. This file

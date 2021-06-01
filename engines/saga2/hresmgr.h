@@ -30,7 +30,6 @@
 #include "common/file.h"
 
 #include "saga2/rmem.h"
-#include "saga2/ioerrors.h"
 
 namespace Saga2 {
 

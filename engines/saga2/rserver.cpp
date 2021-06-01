@@ -30,6 +30,8 @@
 #include "saga2/rmemfta.h"
 #include "saga2/dlist.h"
 #include "saga2/fta.h"
+#include "saga2/ioerrors.h"
+
 
 namespace Saga2 {
 

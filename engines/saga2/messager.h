@@ -27,10 +27,9 @@
 #ifndef SAGA2_MESSAGER_H
 #define SAGA2_MESSAGER_H
 
-#include "saga2/vdraw.h"
-#include "saga2/grequest.h"
-
 namespace Saga2 {
+
+class gDisplayPort;
 
 // max filename length
 #define MAX_LOG_NAME_LENGTH 260
