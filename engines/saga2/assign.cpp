@@ -36,6 +36,7 @@
 #include "saga2/calender.h"
 #include "saga2/patrol.h"
 #include "saga2/task.h"
+#include "saga2/tile.h"
 
 namespace Saga2 {
 

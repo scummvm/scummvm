@@ -29,6 +29,8 @@
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/patrol.h"
+#include "saga2/cmisc.h"
+#include "saga2/tcoords.h"
 
 namespace Saga2 {
 
@@ -45,6 +47,13 @@ PatrolRouteList         *patrolRouteList = NULL;    //  Global patrol route arra
  * ===================================================================== */
 
 static PatrolRouteData  **patrolRouteData;      //  Data for patrol routes
+
+
+//  Returns a const reference to a specified way point
+const TilePoint &PatrolRoute::operator [](int16 index) const {
+	return *((TilePoint *)&this[ 1 ] + index);
+}
+
 
 /* ===================================================================== *
    PatrolRouteList member functions

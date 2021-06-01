@@ -75,11 +75,6 @@ const int           tileWidth = 64,         // width of tile
 
 const int           maxTileHeight = 160;    // tallest possible tile
 
-//  Plaftorm metrics
-const int           platformWidth = 8,      // width and height of platform
-                    platMask = platformWidth - 1,
-                    platShift = 3;
-
 const int           platUVSize = tileUVSize * platformWidth;
 
 //  Metatile metrics

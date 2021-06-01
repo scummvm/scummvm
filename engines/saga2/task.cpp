@@ -28,8 +28,8 @@
 
 #include "saga2/std.h"
 #include "saga2/cmisc.h"
-#include "saga2/task.h"
 #include "saga2/actor.h"
+#include "saga2/task.h"
 #include "saga2/motion.h"
 #include "saga2/band.h"
 #include "saga2/sensor.h"
