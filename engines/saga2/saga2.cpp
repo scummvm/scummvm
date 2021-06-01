@@ -39,6 +39,7 @@
 #include "saga2/std.h"
 #include "saga2/blitters.h"
 #include "saga2/loadmsg.h"
+#include "saga2/gdraw.h"
 
 namespace Saga2 {
 

@@ -27,9 +27,6 @@
 #ifndef SAGA2_PALETTE_H
 #define SAGA2_PALETTE_H
 
-#include "saga2/vpal.h"
-#include "saga2/savefile.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/vwpage.h"
+#include "saga2/vdraw.h"
 
 namespace Saga2 {
 

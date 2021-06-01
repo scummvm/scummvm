@@ -27,10 +27,15 @@
 #ifndef SAGA2_DISPNODE_H
 #define SAGA2_DISPNODE_H
 
-#include "saga2/objects.h"
-#include "saga2/speldefs.h"
+#include "saga2/idtypes.h"
+#include "saga2/rect.h"
 
 namespace Saga2 {
+
+class GameObject;
+class TilePoint;
+
+class Effectron;
 
 enum nodeType {
 	nodeTypeObject = 0,
@@ -66,18 +71,7 @@ public:
 	void drawEffect(void);
 	void updateObject(const int32 deltaTime);
 	void updateEffect(const int32 deltaTime);
-	TilePoint SpellPos(void) {
-		if (efx) return efx->current;
-		return Nowhere;
-	}
-
-	void *operator new (size_t s) {
-		return RNewPtr(s, NULL, "Display Node");
-	}
-	void operator delete (void *m) {
-		RDisposePtr(m);
-	}
-
+	TilePoint SpellPos(void);
 };
 
 /* ============================================================================ *
@@ -98,17 +92,17 @@ public:
 	static DisplayNode  *head;              // head of list
 
 	DisplayNodeList(uint16 newSize) {
-		displayList = (DisplayNode *)TALLOC(sizeof(DisplayNode) * newSize, memDispNode);
+		displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * newSize);
 		init(newSize);
 		count = 0;
 	}
 	DisplayNodeList() {
-		displayList = (DisplayNode *)TALLOC(sizeof(DisplayNode) * maxDisplayed, memDispNode);
+		displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * maxDisplayed);
 		init(maxDisplayed);
 		count = 0;
 	}
 	~DisplayNodeList() {
-		delete [] displayList;
+		free(displayList);
 	}
 
 	void reset(void) {
@@ -126,12 +120,6 @@ public:
 
 private:
 	int16           sortDepth;              // for sorting by depth
-	void *operator new (size_t s) {
-		return RNewPtr(s, NULL, "Display List");
-	}
-	void operator delete (void *m) {
-		RDisposePtr(m);
-	}
 };
 
 /* ============================================================================ *

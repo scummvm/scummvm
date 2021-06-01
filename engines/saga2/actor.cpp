@@ -46,7 +46,7 @@
 #include "saga2/messager.h"
 #include "saga2/weapons.h"
 #include "saga2/localize.h"
-
+#include "saga2/intrface.h"
 
 //  Include files needed for SAGA script dispatch
 #include "saga2/script.h"

@@ -27,12 +27,7 @@
 #ifndef SAGA2_AUTOMAP_H
 #define SAGA2_AUTOMAP_H
 
-#include "saga2/idtypes.h"
-#include "saga2/contain.h"
-#include "saga2/cmisc.h"
-#include "saga2/button.h"
 #include "saga2/intrface.h"
-#include "saga2/floating.h"
 
 namespace Saga2 {
 

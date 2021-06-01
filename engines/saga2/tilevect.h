@@ -27,9 +27,6 @@
 #ifndef SAGA2_TILEVECT_H
 #define SAGA2_TILEVECT_H
 
-#include "saga2/tcoords.h"
-#include "saga2/dice.h"
-
 namespace Saga2 {
 
 // This routine returns a random vector between two bounding vectors

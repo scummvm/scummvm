@@ -27,9 +27,9 @@
 #ifndef SAGA2_VWPAGE_H
 #define SAGA2_VWPAGE_H
 
-#include "vdraw.h"
-
 namespace Saga2 {
+
+class gDisplayPort;
 
 #define CDDWindow void
 

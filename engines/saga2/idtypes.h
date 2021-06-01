@@ -219,6 +219,10 @@ const BandID    NoBand = -1;
 
 typedef uint32 soundSegment;
 
+typedef uint8       gPen;               // a pen index number
+
+typedef uint16 weaponID;
+
 } // end of namespace Saga2
 
 #endif

@@ -28,7 +28,6 @@
 #define SAGA2_INPUT_H
 
 #include "saga2/rect.h"
-#include "saga2/errors.h"
 
 namespace Saga2 {
 
@@ -113,7 +112,7 @@ struct gMouseState {
 
 typedef uint32      gTimeStamp;
 
-errorCode InitMouse(int16 width, int16 height);
+void InitMouse(int16 width, int16 height);
 void CleanupMouse(void);
 void ReadMouse(gMouseState &st);
 uint16 ReadQualifiers(void);

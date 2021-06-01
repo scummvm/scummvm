@@ -28,13 +28,10 @@
 #define SAGA2_WEAPONS_H
 
 #include "saga2/spelshow.h"
-#include "saga2/spells.h"
-#include "saga2/dice.h"
-#include "saga2/effects.h"
-#include "saga2/actor.h"
-#include "saga2/spellbuk.h"
 
 namespace Saga2 {
+
+struct ResourceItemEffect;
 
 ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie);
 
