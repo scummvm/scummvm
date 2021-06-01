@@ -151,7 +151,7 @@ bool AchievementsManager::clearAchievement(const String &id) {
 }
 
 
-bool AchievementsManager::setStatFloatEx(const String &id, float value, const String &section) {
+bool AchievementsManager::setStatFloatEx(const String &id, float value, const String &section) const {
 	if (!isReady()) {
 		return false;
 	}
@@ -163,7 +163,7 @@ bool AchievementsManager::setStatFloatEx(const String &id, float value, const St
 }
 
 
-float AchievementsManager::getStatFloatEx(const String &id, const String &section) {
+float AchievementsManager::getStatFloatEx(const String &id, const String &section) const {
 	if (!isReady()) {
 		return 0.0;
 	}
@@ -179,7 +179,7 @@ bool AchievementsManager::setStatFloat(const String &id, float value) {
 }
 
 
-float AchievementsManager::getStatFloat(const String &id) {
+float AchievementsManager::getStatFloat(const String &id) const {
 	return getStatFloatEx(id, "statistics");
 }
 
@@ -199,7 +199,7 @@ bool AchievementsManager::updateAverageRateStatFloat(const String &id, float cou
 }
 
 
-float AchievementsManager::getAverageRateStatFloat(const String &id) {
+float AchievementsManager::getAverageRateStatFloat(const String &id) const {
 	if (!isReady()) {
 		return 0.0;
 	}
@@ -223,7 +223,7 @@ bool AchievementsManager::setStatInt(String const &id, int value) {
 }
 
 
-int AchievementsManager::getStatInt(String const &id) {
+int AchievementsManager::getStatInt(String const &id) const {
 	if (!isReady()) {
 		return 0;
 	}
@@ -234,7 +234,7 @@ int AchievementsManager::getStatInt(String const &id) {
 }
 
 
-const String AchievementsManager::getStatRaw(String const &id) {
+const String AchievementsManager::getStatRaw(String const &id) const {
 	if (!isReady()) {
 		return "";
 	}
