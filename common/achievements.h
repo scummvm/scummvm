@@ -136,7 +136,7 @@ public:
 	 *
 	 * @param[in] id Internal ID of the achievement.
 	 */
-	int getStatInt(const String &id);
+	int getStatInt(const String &id) const;
 
 	/**
 	 * Set a statistic to an integer number.
@@ -151,7 +151,7 @@ public:
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 */
-	float getStatFloat(const String &id);
+	float getStatFloat(const String &id) const;
 
 	/**
 	 * Set a statistic to a float number.
@@ -166,7 +166,7 @@ public:
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 */
-	const String getStatRaw(const String &id);
+	const String getStatRaw(const String &id) const;
 
 	/**
 	 * Get an average rate statistic (float).
@@ -174,7 +174,7 @@ public:
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 */
-	float getAverageRateStatFloat(const String &id);
+	float getAverageRateStatFloat(const String &id) const;
 
 	/**
 	 * Update an average rate statistic (float). 
@@ -213,8 +213,8 @@ public:
 	/** @} */
 
 private:
-	float getStatFloatEx(const String &id, const String &section);
-	bool setStatFloatEx(const String &id, float value, const String &section);
+	float getStatFloatEx(const String &id, const String &section) const;
+	bool setStatFloatEx(const String &id, float value, const String &section) const;
 
 	INIFile *_iniFile;
 	String _iniFileName;
