@@ -27,8 +27,6 @@
 #ifndef SAGA2_IMAGES_H
 #define SAGA2_IMAGES_H
 
-#include "saga2/gdraw.h"
-
 namespace Saga2 {
 
 //  unselected button image

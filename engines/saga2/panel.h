@@ -28,11 +28,8 @@
 #define SAGA2_PANEL_H
 
 #include "saga2/dlist.h"
-#include "saga2/gdraw.h"
-#include "saga2/errors.h"
-#include "saga2/gbevel.h"
 #include "saga2/input.h"
-#include "saga2/vwpage.h"
+#include "saga2/vdraw.h"
 
 namespace Saga2 {
 //  Fix problem with DOS's encroachment on name space that should

@@ -34,6 +34,7 @@
 #include "saga2/floating.h"
 #include "saga2/fta.h"
 #include "saga2/display.h"
+#include "saga2/gbevel.h"
 
 namespace Saga2 {
 

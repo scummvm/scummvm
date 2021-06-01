@@ -27,6 +27,8 @@
 #ifndef SAGA2_VPAL_H
 #define SAGA2_VPAL_H
 
+#include "saga2/idtypes.h"
+
 namespace Saga2 {
 
 //  Stores an RGB value

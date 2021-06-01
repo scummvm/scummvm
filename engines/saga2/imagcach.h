@@ -27,8 +27,6 @@
 #ifndef SAGA2_IMAGCACH_H
 #define SAGA2_IMAGCACH_H
 
-#include "saga2/dlist.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

@@ -27,7 +27,6 @@
 #include "common/serializer.h"
 #include "common/system.h"
 #include "engines/engine.h"
-#include "gui/debugger.h"
 
 namespace Video {
 class SmackerDecoder;

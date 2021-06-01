@@ -31,6 +31,7 @@
 #include "saga2/localize.h"
 #include "saga2/msgbox.h"
 #include "saga2/floating.h"
+#include "saga2/gbevel.h"
 
 namespace  Saga2 {
 

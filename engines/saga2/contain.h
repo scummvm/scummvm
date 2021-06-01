@@ -27,12 +27,7 @@
 #ifndef SAGA2_CONTAIN_H
 #define SAGA2_CONTAIN_H
 
-#include "saga2/fta.h"
-#include "saga2/panel.h"
 #include "saga2/floating.h"
-#include "saga2/images.h"
-#include "saga2/button.h"
-#include "saga2/intrface.h"
 
 namespace Saga2 {
 
@@ -53,6 +48,14 @@ class ContainerNode;
 //DList
 class ContainerList;
 struct ContainerAppearanceDef;
+
+class CMassWeightIndicator;
+class ProtoObj;
+
+class gCompButton;
+class gCompImage;
+class gMultCompButton;
+class TilePoint;
 
 /* ===================================================================== *
    Class definitions

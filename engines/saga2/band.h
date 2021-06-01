@@ -27,8 +27,6 @@
 #ifndef SAGA2_BAND_H
 #define SAGA2_BAND_H
 
-#include "saga2/idtypes.h"
-
 namespace Saga2 {
 
 class Actor;

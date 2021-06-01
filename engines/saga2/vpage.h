@@ -27,9 +27,6 @@
 #ifndef SAGA2_VPAGE_H
 #define SAGA2_VPAGE_H
 
-#include "saga2/rect.h"
-#include "saga2/errors.h"
-
 namespace Saga2 {
 
 class vDisplayPage {

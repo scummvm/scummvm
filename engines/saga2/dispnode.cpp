@@ -142,6 +142,13 @@ DisplayNode::DisplayNode() {
 	efx = NULL;
 }
 
+TilePoint DisplayNode::SpellPos(void) {
+	if (efx)
+		return efx->current;
+	return Nowhere;
+}
+
+
 inline void DisplayNode::updateEffect(const int32 deltaTime) {
 	if (efx)   efx->updateEffect(deltaTime);
 }

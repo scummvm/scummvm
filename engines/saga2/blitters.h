@@ -27,9 +27,9 @@
 #ifndef SAGA2_BLITTERS_H
 #define SAGA2_BLITTERS_H
 
-#include "saga2/gdraw.h"
-
 namespace Saga2 {
+
+class gPixelMap;
 
 // VWPAGE.CPP , GDRAW.CPP
 

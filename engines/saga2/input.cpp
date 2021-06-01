@@ -31,9 +31,8 @@
 
 namespace Saga2 {
 
-errorCode InitMouse(int16 width, int16 height) {
+void InitMouse(int16 width, int16 height) {
 	warning("STUB: InitMouse()");
-	return errUnknown;
 }
 
 void CleanupMouse(void) {

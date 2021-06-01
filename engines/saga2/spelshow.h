@@ -29,9 +29,6 @@
 
 #include "saga2/dispnode.h"
 #include "saga2/speldefs.h"
-#include "saga2/spells.h"
-#include "saga2/dice.h"
-#include "saga2/tilevect.h"
 
 namespace Saga2 {
 

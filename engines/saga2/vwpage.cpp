@@ -27,8 +27,11 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/rect.h"
+#include "saga2/vdraw.h"
 #include "saga2/vwpage.h"
 #include "saga2/display.h"
+#include "saga2/vpage.h"
 
 namespace Saga2 {
 

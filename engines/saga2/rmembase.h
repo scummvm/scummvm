@@ -27,8 +27,6 @@
 #ifndef SAGA2_RMEMBASE_H
 #define SAGA2_RMEMBASE_H
 
-#include "saga2/rmem.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

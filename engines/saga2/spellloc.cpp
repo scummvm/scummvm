@@ -31,7 +31,7 @@
 #include "saga2/spellbuk.h"
 #include "saga2/spelshow.h"
 #include "saga2/spelvals.h"
-
+#include "saga2/tilevect.h"
 
 namespace Saga2 {
 
