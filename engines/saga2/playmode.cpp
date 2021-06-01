@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "graphics/surface.h"
+
 #include "saga2/std.h"
 #include "saga2/blitters.h"
 #include "saga2/rmemfta.h"
@@ -45,7 +47,6 @@
 #include "saga2/testmap.h"
 #include "saga2/cmisc.h"
 #include "saga2/button.h"
-#include "graphics/surface.h"
 #include "saga2/hresmgr.h"
 
 namespace Saga2 {
