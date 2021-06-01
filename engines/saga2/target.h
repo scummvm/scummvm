@@ -27,11 +27,9 @@
 #ifndef SAGA2_TARGET_H
 #define SAGA2_TARGET_H
 
-#include "saga2/property.h"
-#include "saga2/objects.h"
-#include "saga2/tile.h"
-
 namespace Saga2 {
+
+struct StandingTileInfo;
 
 const   int     maxObjDist = platformWidth * tileUVSize * 8;
 const   int     maxTileDist = platformWidth * tileUVSize * 2;

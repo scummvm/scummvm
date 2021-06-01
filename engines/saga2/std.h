@@ -68,4 +68,10 @@ typedef bool BOOL;
 #define maxuint32 0xffffffffu
 #define minuint32 0u
 
+//  Plaftorm metrics
+const int           platformWidth = 8,      // width and height of platform
+                    platMask = platformWidth - 1,
+                    platShift = 3;
+
+
 #endif  //SAGA2_STD_H

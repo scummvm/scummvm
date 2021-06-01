@@ -27,11 +27,8 @@
 #ifndef SAGA2_TASK_H
 #define SAGA2_TASK_H
 
-#include "saga2/tcoords.h"
 #include "saga2/target.h"
 #include "saga2/patrol.h"
-#include "saga2/actor.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 

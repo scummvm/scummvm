@@ -27,11 +27,9 @@
 #ifndef SAGA2_PATROL_H
 #define SAGA2_PATROL_H
 
-#include "saga2/cmisc.h"
-#include "saga2/tcoords.h"
-
 namespace Saga2 {
 
+class TilePoint;
 class  PatrolRouteList;
 extern PatrolRouteList  *patrolRouteList;   //  Global patrol route array
 
@@ -54,9 +52,7 @@ public:
 	}
 
 	//  Returns a const reference to a specified way point
-	const TilePoint &operator [](int16 index) const {
-		return *((TilePoint *)&this[ 1 ] + index);
-	}
+	const TilePoint &operator [](int16 index) const;
 };
 
 /* ===================================================================== *

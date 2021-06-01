@@ -28,8 +28,10 @@
 
 #include "saga2/std.h"
 #include "saga2/cmisc.h"
+#include "saga2/objects.h"
 #include "saga2/target.h"
 #include "saga2/actor.h"
+#include "saga2/tile.h"
 
 namespace Saga2 {
 
