@@ -1066,7 +1066,6 @@ void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palett
 
 void TwinEEngine::flip() {
 	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, 0, 0, frontVideoBuffer.w, frontVideoBuffer.h);
-	g_system->updateScreen();
 }
 
 void TwinEEngine::copyBlockPhys(const Common::Rect &rect, bool updateScreen) {
