@@ -33,6 +33,7 @@
 #include "saga2/rmem.h"
 #include "saga2/objects.h"
 #include "saga2/grabinfo.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

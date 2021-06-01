@@ -27,9 +27,6 @@
 #ifndef SAGA2_PROPERTY_H
 #define SAGA2_PROPERTY_H
 
-#include "saga2/fta.h"
-#include "saga2/tcoords.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

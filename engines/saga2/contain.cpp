@@ -40,6 +40,7 @@
 #include "saga2/magic.h"
 #include "saga2/spellbuk.h"
 #include "saga2/imagcach.h"
+#include "saga2/hresmgr.h"
 
 #include "saga2/pclass.r"
 

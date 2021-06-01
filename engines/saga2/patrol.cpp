@@ -31,6 +31,7 @@
 #include "saga2/patrol.h"
 #include "saga2/cmisc.h"
 #include "saga2/tcoords.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

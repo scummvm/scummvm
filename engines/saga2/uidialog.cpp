@@ -57,6 +57,9 @@
 #include "saga2/program.h"
 #include "saga2/version.h"
 
+#include "saga2/config.h"
+#include "saga2/hresmgr.h"
+
 namespace Saga2 {
 
 #define PROGRAM_ABOUT   PROGRAM_FULL_NAME "\r\n\r\n"\

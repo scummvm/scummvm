@@ -34,6 +34,7 @@
 #include "saga2/calender.h"
 #include "saga2/player.h"
 #include "saga2/display.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

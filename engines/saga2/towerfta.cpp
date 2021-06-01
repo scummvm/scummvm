@@ -49,6 +49,7 @@
 #include "saga2/display.h"
 #include "saga2/transit.h"
 #include "saga2/tile.h"
+#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

@@ -37,6 +37,7 @@
 #include "saga2/display.h"
 
 #include "saga2/mainmap.h"
+#include "saga2/config.h"
 
 namespace Saga2 {
 

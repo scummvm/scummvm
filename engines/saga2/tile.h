@@ -28,12 +28,12 @@
 #define SAGA2_TILE_H
 
 #include "saga2/fta.h"
-#include "saga2/idtypes.h"
 #include "saga2/tileload.h"
 #include "saga2/annoy.h"
 #include "saga2/terrain.h"
 #include "saga2/dlist.h"
 #include "saga2/property.h"
+#include "saga2/tcoords.h"
 
 #ifdef _WIN32   //  Set structure alignment packing value to 1 byte
 #pragma pack( push, 1 )
