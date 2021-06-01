@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-31 23:21+0000\n"
-"PO-Revision-Date: 2021-05-18 20:25+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2021-06-01 19:36+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -428,7 +428,7 @@ msgstr "Saavutukset"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "Tilastot"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:502
 #: gui/editgamedialog.cpp:568 gui/editgamedialog.cpp:629 gui/options.cpp:2009
@@ -987,7 +987,7 @@ msgstr "Saavutuksia avattu: %d/%d"
 #: gui/options.cpp:1286
 #, c-format
 msgid "%s: %s"
-msgstr ""
+msgstr "%s: %s"
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
