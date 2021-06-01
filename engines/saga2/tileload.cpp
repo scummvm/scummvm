@@ -34,6 +34,7 @@
 #include "saga2/objects.h"
 #include "saga2/tileload.h"
 #include "saga2/oncall.h"
+#include "common/debug.h"
 
 namespace Saga2 {
 
@@ -176,6 +177,9 @@ void drawPlatform(
 
 	u = platformWidth - 1;
 	v = platformWidth - 1;
+
+	debugC(3, kDebugTiles, "drawPlatform: right = %d, bottom = %d, x = %d, x2 = %d, origin = %d,%d, tilePos.y=%d, u,v = %d,%d", right, bottom, x, x2, origin.u, origin.v,
+	       tilePos.y, u, v);
 
 	for (int row = 0; row < 15; row++) {
 		if (tilePos.y > 0) {

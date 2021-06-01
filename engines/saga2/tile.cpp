@@ -52,6 +52,8 @@
 namespace Saga2 {
 
 extern void writeLog(char *str);
+void PlayModeSetup();
+void initBackPanel();
 
 #define TATLOG  0
 
@@ -4616,26 +4618,31 @@ void updateMainDisplay(void) {
 }
 
 void testTiles() {
-	initMaps();
+	//initBackPanel();
+	//initMaps();
 	initTileCyclingStates();
+
+	setCurrentMap(0);
+	PlayModeSetup();
 
 	//buildRoofTable();
 	//buildDisplayList();
-	//setCurrentMap(0);
 
 	// draws tiles to tileDrawMap.data
-	//drawMetaTiles();
+	drawMetaTiles();
 
-	uint8 *img = (uint8*)mapList[0].map->mapData;
-	int16 size = mapList[0].map->size;
-	debugC(3, kDebugTiles, "img = %p, size = %d", (void *)img, size);
+	//uint8 *img = (uint8*)mapList[0].map->mapData;
+	//int16 size = mapList[0].map->size;
+	uint8 *img = tileDrawMap.data;
+	Point16 size = tileDrawMap.size;
+	debugC(3, kDebugTiles, "img = %p, size = %d,%d", (void *)img, size.x, size.y);
 	//Common::hexdump(img, size*size);
 
 	Graphics::Surface sur;
-	sur.create(size, size, Graphics::PixelFormat::createFormatCLUT8());
+	sur.create(size.x, size.y, Graphics::PixelFormat::createFormatCLUT8());
 	sur.setPixels(img);
 	sur.debugPrint();
-	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 112, sur.w, sur.h);
+	//g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 112, sur.w, sur.h);
 
 	//  Draw sprites onto back buffer
 	//drawDisplayList();

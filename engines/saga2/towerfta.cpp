@@ -300,7 +300,7 @@ INITIALIZER(initDisplayPort) {
 
 TERMINATOR(termDisplayPort) {
 	if (mainWindow) delete mainWindow;
-	mainWindow = NULL;
+	mainWindow = nullptr;
 }
 
 
@@ -358,19 +358,19 @@ INITIALIZER(initDisplay) {
 
 	//  Create a panelList to contain the controls which are
 	//  only active when all three brothers are shown
-	if ((trioControls = NEW_UI gPanelList(*mainWindow)) == NULL)
-		return FALSE;
+	if ((trioControls = new gPanelList(*mainWindow)) == nullptr)
+		return false;
 
 	//  Create a panelList to contain the controls which are
 	//  only active when a single brother is shown
-	if ((indivControls = NEW_UI gPanelList(*mainWindow)) == NULL)
-		return FALSE;
+	if ((indivControls = new gPanelList(*mainWindow)) == nullptr)
+		return false;
 
 	//  Since we start in "trio" mode, turn off the "individual"
 	//  controls...
-	indivControls->enable(FALSE);
+	indivControls->enable(false);
 
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termDisplay) {
