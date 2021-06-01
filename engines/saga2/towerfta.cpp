@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/towerwin.h"
 #include "saga2/towerfta.h"
 #include "saga2/fta.h"

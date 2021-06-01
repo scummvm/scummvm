@@ -34,7 +34,6 @@
 #include "saga2/band.h"
 #include "saga2/sensor.h"
 #include "saga2/tilemode.h"
-#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 
@@ -4408,7 +4407,7 @@ int16 BandTask::getRunThreshold(void) {
 //----------------------------------------------------------------------
 
 BandTask::RepulsorIterator *BandTask::getNewRepulsorIterator(void) {
-	return NEW_ITER BandingRepulsorIterator(stack->getActor());
+	return new BandingRepulsorIterator(stack->getActor());
 }
 
 /* ===================================================================== *
@@ -4520,7 +4519,7 @@ int16 BandAndAvoidEnemiesTask::getRunThreshold(void) {
 //----------------------------------------------------------------------
 
 BandTask::RepulsorIterator *BandAndAvoidEnemiesTask::getNewRepulsorIterator(void) {
-	return NEW_ITER BandAndAvoidEnemiesRepulsorIterator(stack->getActor());
+	return new BandAndAvoidEnemiesRepulsorIterator(stack->getActor());
 }
 
 /* ===================================================================== *

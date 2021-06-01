@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/cmisc.h"
 #include "saga2/hresmgr.h"
 #include "saga2/button.h"
@@ -64,7 +63,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 
 	init();
 
 	if (image) {
-		compImages = (void **) TALLOC(sizeof(pVOID) * 1, memInterface); // allocate room for one pointer
+		compImages = (void **)malloc(sizeof(pVOID) * 1); // allocate room for one pointer
 		compImages[ 0 ] = image;
 		internalAlloc   = FALSE;
 		numPtrAlloc     = 1;
@@ -86,7 +85,7 @@ gCompImage::gCompImage(gPanelList &list,
 	hResContext *resContext = resFile->newContext(contextID, "container window resource");
 
 	// setup for a numImages image configuration
-	compImages = (void **) TALLOC(sizeof(void *)*numImages, memInterface);  // allocate room for numImages pointers
+	compImages = (void **)malloc(sizeof(void *)*numImages);  // allocate room for numImages pointers
 
 	for (i = 0, rNum = resNum; i < numImages; i++, rNum++) {
 		compImages[ i ] = LoadResource(resContext,
@@ -110,7 +109,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const c
 
 	if (!image) return;
 
-	compImages = (void **) TALLOC(sizeof(void *) * 1, memInterface); // allocate room for one pointer
+compImages = (void **)malloc(sizeof(void *) * 1); // allocate room for one pointer
 
 	compImages[ 0 ] = image;
 	max             = 0;
@@ -691,7 +690,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 	int16   i, k;
 
 
-	images = (void **) TALLOC(sizeof(void *)*numRes, memInterface);
+	images = (void **)malloc(sizeof(void *)*numRes);
 
 	for (i = 0, k = resStart; i < numRes; i++, k++) {
 		images[ i ] = LoadResource(con, MKTAG(a, b, c, k), "Multi btn image");

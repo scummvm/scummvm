@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/fta.h"
 #include "saga2/panel.h"
 #include "saga2/images.h"
@@ -448,7 +447,7 @@ void LabeledButton::drawClipped(
 
 FloatingWindow::FloatingWindow(const Rect16 &r, uint16 ident, const char saveas[], AppFunc *cmd)
 	: DecoratedWindow(r, ident, saveas, cmd) {
-	assert(db = NEW_UI DragBar(*this, Rect16(0, 0, r.width, r.height)));
+	assert(db = new DragBar(*this, Rect16(0, 0, r.width, r.height)));
 
 	origPos.x = r.x;
 	origPos.y = r.y;

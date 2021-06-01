@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/magic.h"
 #include "saga2/idtypes.h"
 #include "saga2/speldefs.h"
@@ -248,7 +247,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -267,7 +266,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -286,7 +285,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -298,7 +297,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -309,7 +308,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -320,7 +319,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -338,7 +337,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -356,7 +355,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		GameObject *go;
 		it.first(&go);
 		while (go) {
-			addTarget(NEW_SPEL SpellTarget(go));
+			addTarget(new SpellTarget(go));
 			it.next(&go);
 		}
 		break;
@@ -589,7 +588,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, Spe
 	assert(newCaster);
 	assert(newTarget);
 	caster = newCaster;
-	target = NEW_SPEL SpellTarget(*newTarget);
+	target = new SpellTarget(*newTarget);
 	world = newCaster->world();
 	spell = spellNo;
 	init();
@@ -600,7 +599,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, Spe
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = NEW_SPEL SpellTarget(newTarget);
+	target = new SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
 	spell = spellNo;
@@ -613,7 +612,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, Spel
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, SpellID spellNo) {
 	assert(newCaster);
 	assert(newTarget);
-	target = NEW_SPEL SpellTarget(newTarget);
+	target = new SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
 	spell = spellNo;
@@ -625,7 +624,7 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, Spel
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = NEW_SPEL SpellTarget(newTarget);
+	target = new SpellTarget(newTarget);
 	caster = newCaster;
 	world = newCaster->world();
 	spell = spellNo;
@@ -692,7 +691,7 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 	eList.count = effect->nodeCount; //sdp->effCount;
 	if (eList.count)
 		for (int32 i = 0; i < eList.count; i++) {
-			Effectron *e = NEW_SPEL Effectron(0, i);
+			Effectron *e = new Effectron(0, i);
 			eList.displayList[i].efx = e;
 			e->parent = this;
 			e->start = startpoint;

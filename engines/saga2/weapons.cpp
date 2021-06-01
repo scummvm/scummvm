@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/idtypes.h"
-#include "saga2/rmemfta.h"
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
 #include "saga2/actor.h"
@@ -78,7 +77,7 @@ ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 		return NULL;
 
 	case effectAttrib   :
-		pe = NEW_EFCT   ProtoEnchantment(
+		pe = new   ProtoEnchantment(
 		         makeEnchantmentID(
 		             rie->effectGroup,
 		             rie->effectType,
@@ -90,7 +89,7 @@ ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 	case effectImmune   :
 	case effectOthers   :
 	case effectNonActor :
-		pe = NEW_EFCT   ProtoEnchantment(
+		pe = new   ProtoEnchantment(
 		         makeEnchantmentID(
 		             rie->effectGroup,
 		             rie->effectType,
@@ -99,7 +98,7 @@ ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 		         rie->reserved1);
 		break;
 	case effectDamage   :
-		pe = NEW_EFCT   ProtoDamage(
+		pe = new   ProtoDamage(
 		         rie->baseDice,
 		         rie->diceSides ? rie->diceSides : 6,
 		         rie->skillDice,
@@ -110,7 +109,7 @@ ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 		         rie->skillDamage);
 		break;
 	case effectDrains   :
-		pe = NEW_EFCT   ProtoDrainage(
+		pe = new   ProtoDrainage(
 		         rie->baseDice,
 		         rie->diceSides ? rie->diceSides : 6,
 		         rie->skillDice,
@@ -121,24 +120,24 @@ ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 		break;
 
 	case effectPoison   :
-		pe = NEW_EFCT   ProtoEnchantment(
+		pe = new   ProtoEnchantment(
 		         makeEnchantmentID(rie->baseDamage),      // poison
 		         rie->reserved0,
 		         rie->reserved1);
 
 	case effectTAG      :
-		pe = NEW_EFCT   ProtoTAGEffect(
+		pe = new   ProtoTAGEffect(
 		         (effectTAGTypes) rie->effectType,
 		         rie->skillDamage,
 		         rie->baseDamage);
 		break;
 	case effectLocation :
-		pe = NEW_EFCT   ProtoLocationEffect(
+		pe = new   ProtoLocationEffect(
 		         (effectLocationTypes) rie->effectType,
 		         rie->baseDamage);
 		break;
 	case effectSpecial  :
-		pe = NEW_EFCT   ProtoSpecialEffect(
+		pe = new   ProtoSpecialEffect(
 		         SagaSpellCall,
 		         rie->baseDamage);
 		break;
@@ -279,7 +278,7 @@ void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 	assert(rie && rie->item == master);
 
 	if (rie->effectGroup == effectStrike) {
-		we = NEW_EFCT   WeaponStrikeEffect(
+		we = new   WeaponStrikeEffect(
 		         (effectDamageTypes)rie->effectType,
 		         rie->baseDice,
 		         rie->diceSides != 0 ? rie->diceSides : 6,
@@ -287,7 +286,7 @@ void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 		         rie->baseDamage,
 		         rie->skillDamage);
 	} else
-		we = NEW_EFCT   WeaponProtoEffect(rie);
+		we = new   WeaponProtoEffect(rie);
 
 	if (we == NULL)
 		error("failed to alloc weapon effect");

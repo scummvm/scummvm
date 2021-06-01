@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
 #include "saga2/objproto.h"
 #include "saga2/spells.h"
@@ -159,9 +158,9 @@ void cleanupMagic(void) {
 // the macros make things more legible than the entire call
 
 // Set up a display effect shape
-#define ADD_EFFECT( n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.add( NEW_SPEL EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i )))
+#define ADD_EFFECT( n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.add( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i )))
 // Chain another effect when done
-#define SECOND_EFFECT( e, n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.append( NEW_SPEL EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i ),e))
+#define SECOND_EFFECT( e, n, p, s, f, h, b, i ) ( EffectDisplayPrototypeList::edpList.append( new EffectDisplayPrototype(n,&p,&s,&f,&h,&b,&i ),e))
 
 //-----------------------------------------------------------------------
 
@@ -189,7 +188,7 @@ static void defineEffects(void) {
 }
 
 //-----------------------------------------------------------------------
-#define ADD_SHOW( e, a, b, c, d, f, g, m, i, s, n ) ( SpellDisplayPrototypeList::sdpList.add( NEW_SPEL SpellDisplayPrototype( e, a, b, c, d, f, g, m, i, s, n )))
+#define ADD_SHOW( e, a, b, c, d, f, g, m, i, s, n ) ( SpellDisplayPrototypeList::sdpList.add( new SpellDisplayPrototype( e, a, b, c, d, f, g, m, i, s, n )))
 
 //-----------------------------------------------------------------------
 // loadMagicData : reads magic related data from the resource file
@@ -221,7 +220,7 @@ static void loadMagicData(void) {
 			error("Unable to load data for spell %d", i);
 
 		spellBook[rsi->spell].setupFromResource(rsi);
-		SpellDisplayPrototypeList::sdpList.add(NEW_SPEL SpellDisplayPrototype(rsi));
+		SpellDisplayPrototypeList::sdpList.add(new SpellDisplayPrototype(rsi));
 
 		RDisposePtr(rsi);
 		i++;

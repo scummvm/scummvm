@@ -36,7 +36,6 @@
 #include "saga2/grequest.h"
 #include "saga2/mapfeatr.h"
 #include "saga2/grabinfo.h"
-#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 
@@ -554,12 +553,12 @@ int16 openAutoMap() {
 	checkAlloc(closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages));
 	checkAlloc(scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2));
 
-	pAutoMap = NEW_UI CAutoMap(autoMapRect, (uint8 *)summaryData, 0, NULL);
+	pAutoMap = new CAutoMap(autoMapRect, (uint8 *)summaryData, 0, NULL);
 
-	checkAlloc(closeAutoMap = NEW_UI gCompButton(*pAutoMap, closeAutoMapBtnRect,
+	checkAlloc(closeAutoMap = new gCompButton(*pAutoMap, closeAutoMapBtnRect,
 	                          closeBtnImage, numBtnImages, 0, cmdAutoMapQuit));
 
-	checkAlloc(scrollBtn        = NEW_UI gCompButton(*pAutoMap, scrollBtnRect,
+	checkAlloc(scrollBtn        = new gCompButton(*pAutoMap, scrollBtnRect,
 	                              scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll));
 
 	pAutoMap->setDecorations(autoMapDecorations,

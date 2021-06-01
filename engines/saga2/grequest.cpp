@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/floating.h"
-#include "saga2/rmemfta.h"
 #include "saga2/grequest.h"
 #include "saga2/modal.h"
 #include "saga2/images.h"
@@ -296,7 +295,7 @@ ModalRequestWindow::ModalRequestWindow(
 
 		width += extra;
 
-		NEW_UI LabeledButton(*this,
+		new LabeledButton(*this,
 		                     Rect16(xPos,
 		                            r.height - fontHeight - 8,
 		                            width,
@@ -357,7 +356,7 @@ int16 GameDialogA(
 	rInfo.result = -1;
 	rInfo.running = TRUE;
 
-	win = NEW_UI ModalRequestWindow(
+	win = new ModalRequestWindow(
 	          Rect16((drawPage->size.x - 200) / 2,
 	                 (drawPage->size.y - 100) / 3,
 	                 200,
@@ -410,7 +409,7 @@ int16 GameDisplayA(
 	rInfo.result = -1;
 	rInfo.running = TRUE;
 
-	win = NEW_UI ModalDisplayWindow(
+	win = new ModalDisplayWindow(
 	          Rect16((drawPage->size.x - 200) / 2,
 	                 (drawPage->size.y - 100) / 3,
 	                 200,

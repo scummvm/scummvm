@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/objects.h"
 #include "saga2/actor.h"
 #include "saga2/tile.h"
@@ -4385,7 +4384,7 @@ void readyContainerSetup(void) {
 	for (i = 0; i < kNumViews && i < playerActors ; i++) {
 		playerList[ i ].readyNode = CreateReadyContainerNode(i);
 
-		TrioCviews[ i ] = NEW_UI ReadyContainerView(
+		TrioCviews[ i ] = new ReadyContainerView(
 		                      *trioControls,
 		                      Rect16(trioReadyContInfo[ i ].xPos,
 		                             trioReadyContInfo[ i ].yPos + 8,
@@ -4402,7 +4401,7 @@ void readyContainerSetup(void) {
 		TrioCviews[ i ]->draw();
 	}
 
-	indivCviewTop   = NEW_UI ReadyContainerView(*indivControls,
+	indivCviewTop   = new ReadyContainerView(*indivControls,
 	                  Rect16(indivReadyContInfoTop.xPos,
 	                         indivReadyContInfoTop.yPos + 8,
 	                         iconOriginX * 2 + iconWidth * indivReadyContInfoTop.cols + iconSpacingY * (indivReadyContInfoTop.cols - 1),
@@ -4417,7 +4416,7 @@ void readyContainerSetup(void) {
 
 	indivCviewTop->draw();
 
-	indivCviewBot   = NEW_UI ReadyContainerView(*indivControls,
+	indivCviewBot   = new ReadyContainerView(*indivControls,
 	                  Rect16(indivReadyContInfoBot.xPos,
 	                         indivReadyContInfoBot.yPos + 8,
 	                         iconOriginX * 2 + iconWidth * indivReadyContInfoBot.cols + iconSpacingY * (indivReadyContInfoBot.cols - 1),

@@ -29,7 +29,6 @@
 #include "common/debug.h"
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
 #include "saga2/tile.h"
 #include "saga2/motion.h"
@@ -47,7 +46,7 @@
 #include "saga2/weapons.h"
 #include "saga2/localize.h"
 #include "saga2/intrface.h"
-#include "saga2/hresmgr.cpp"
+#include "saga2/hresmgr.h"
 
 //  Include files needed for SAGA script dispatch
 #include "saga2/script.h"

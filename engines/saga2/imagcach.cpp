@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/fta.h"
 #include "saga2/dlist.h"
 #include "saga2/imagcach.h"
@@ -178,7 +177,7 @@ void *CImageCache::requestImage(hResContext *con, uint32 resID) {
 	// if no previously allocated image node then make one and return the
 	// ptr to the new image resource
 	// creates node and loads in the resource
-	imageNode = NEW_UI CImageNode(con, resID);
+	imageNode = new CImageNode(con, resID);
 	checkAlloc(imageNode);
 
 	// add this node to the list

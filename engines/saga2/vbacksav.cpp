@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/vbacksav.h"
-#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 
@@ -44,7 +43,7 @@ gBackSave::gBackSave(const Rect16 &extent) {
 	savedPixels.size.x = savedRegion.width;
 	savedPixels.size.y = savedRegion.height;
 //	savedPixels.data = (uint8 *)malloc( savedPixels.bytes() );
-	savedPixels.data = (uint8 *) TALLOC(savedPixels.bytes(), memTempAlloc);
+	savedPixels.data = (uint8 *)malloc(savedPixels.bytes());
 
 	//  Initialize the graphics port
 

@@ -30,7 +30,6 @@
 
 #include "saga2/std.h"
 
-#include "saga2/rmemfta.h"
 #include "saga2/fta.h"
 
 #include "saga2/setup.h"
@@ -695,12 +694,12 @@ static bool openResource(
 	if (hr) delete hr;
 	hr = NULL;
 
-	hr = NEW_PRES hResource(fileName, defaultPath, description);
+	hr = new hResource(fileName, defaultPath, description);
 
 	while (hr == NULL || !hr->_valid) {
 		if (hr) delete hr;
 		hr = NULL;
-		hr = NEW_PRES hResource(fileName, defaultPath, description);
+		hr = new hResource(fileName, defaultPath, description);
 	}
 
 	if (hr == NULL || !hr->_valid) {
@@ -914,14 +913,14 @@ bool initGUIMessagers(void) {
 	for (int i = 0; i < 10; i++) {
 		char debItem[16];
 		sprintf(debItem, "Status%1.1d", i);
-		Status[i] = NEW_MSGR StatusLineMessager(debItem, i, &mainPort);
+		Status[i] = new StatusLineMessager(debItem, i, &mainPort);
 		if (Status[i] == NULL)
 			return false;
 		sprintf(debItem, "Status%2.2d", i + 10);
-		Status2[i] = NEW_MSGR StatusLineMessager(debItem, i, &mainPort, 468, 21 + (11 * i));
+		Status2[i] = new StatusLineMessager(debItem, i, &mainPort, 468, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
-		ratemess[j] = NEW_MSGR StatusLineMessager("FrameRates", j, &mainPort, 5, 450 + (11 * j), 500);
+		ratemess[j] = new StatusLineMessager("FrameRates", j, &mainPort, 5, 450 + (11 * j), 500);
 	return true;
 }
 

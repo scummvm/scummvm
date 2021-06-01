@@ -32,7 +32,6 @@
 #include "saga2/intrface.h"
 #include "saga2/loadmsg.h"
 #include "saga2/grabinfo.h"
-#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 
