@@ -49,8 +49,8 @@
 
 namespace Saga2 {
 
-const uint32            imageGroupID = RES_ID('I', 'M', 'A', 'G'),
-                        borderID    = RES_ID('B', 'R', 'D',  0);
+const uint32            imageGroupID = MKTAG('I', 'M', 'A', 'G'),
+                        borderID    = MKTAG('B', 'R', 'D',  0);
 
 const int defaultStatusWait = 15;
 
@@ -113,13 +113,13 @@ void PlayModeCleanup(void);
 //  The Mode object for the main "play" mode.
 
 GameMode            PlayMode = {
-	NULL,                                   // no previous mode
-	FALSE,                                  // mode is not nestable
+	nullptr,                                   // no previous mode
+	false,                                  // mode is not nestable
 	PlayModeSetup,
 	PlayModeCleanup,
-	NULL,
-	NULL,
-	NULL,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 /* ===================================================================== *
@@ -163,29 +163,29 @@ extern bool gameRunning;
 //	Initialize the Play mode
 
 bool checkTileAreaPort(void) {
-	if (gameRunning && tileDrawMap.data == NULL) {
+	if (gameRunning && tileDrawMap.data == nullptr) {
 		//  Allocate back buffer for tile rendering
 		tileDrawMap.size.x = (tileRect.width + tileWidth - 1) & ~tileDXMask;
 		tileDrawMap.size.y = (tileRect.height + tileWidth - 1) & ~tileDXMask;
-		tileDrawMap.data = (uint8 *)RNewPtr(tileDrawMap.bytes(), NULL, "tile display map");
+		tileDrawMap.data = new uint8[tileDrawMap.bytes()];
 	}
-	return tileDrawMap.data != NULL;
 
+	return tileDrawMap.data != nullptr;
 }
 
 void clearTileAreaPort(void) {
-	if (gameRunning && tileDrawMap.data != NULL) {
+	if (gameRunning && tileDrawMap.data != nullptr) {
 		_FillRect(tileDrawMap.data, tileDrawMap.size.x, tileDrawMap.size.x, tileDrawMap.size.y, 0);
 	}
+
 	Rect16 rect(0, 0, 640, 480);
 	mainWindow->invalidate(rect);
-
 }
 
 
 void PlayModeSetup(void) {
 	//  Init resources for images
-	if (imageRes == NULL)
+	if (imageRes == nullptr)
 		imageRes = resFile->newContext(imageGroupID, "image resources");
 
 	//  Init resources needed by containers.
@@ -200,54 +200,54 @@ void PlayModeSetup(void) {
 
 	//  Allocate bitmap for drag & drop mouse pointer
 	objPointerMap.size.x = objPointerMap.size.y = 32;
-	objPointerMap.data = (uint8 *)RNewPtr(objPointerMap.bytes(), NULL, "mouse display map");
+	objPointerMap.data = new uint8[objPointerMap.bytes()];
 
 	//  Create a panelList to contain all controls created
 	//  for tile mode.
 	//  NOTE: Make sure these are allocated first, so that they
 	//  can over-ride other controls.
-	assert(speakButtonControls = NEW_UI gPanelList(*mainWindow));
+	assert(speakButtonControls = new gPanelList(*mainWindow));
 
 	//  Create a control covering the map area.
-	speakButtonPanel = NEW_UI gGenericControl(*speakButtonControls,
+	speakButtonPanel = new gGenericControl(*speakButtonControls,
 	                   Rect16(0, 0, screenWidth, screenHeight),
 	                   0,
 	                   cmdClickSpeech);
-	speakButtonControls->enable(FALSE);
+	speakButtonControls->enable(false);
 
 	//  Create a panelList to contain all controls created
 	//  for play mode.
-	assert(playControls = NEW_UI gPanelList(*mainWindow));
+	assert(playControls = new gPanelList(*mainWindow));
 
 	//  Create a panelList to contain all controls created
 	//  for tile mode.
-	assert(tileControls = NEW_UI gPanelList(*mainWindow));
+	assert(tileControls = new gPanelList(*mainWindow));
 
 	//  Create a panelList to contain all controls created
 	//  for stage mode.
 
-	tileControls->enable(FALSE);
+	tileControls->enable(false);
 
 	// activate the status line
 	// this will get deleted by parent panel
-	checkAlloc(StatusLine = NEW_UI CStatusLine(*playControls,
+	StatusLine = new CStatusLine(*playControls,
 	                        statusLineArea,
 	                        "",
 	                        &Script10Font,
-	                        NULL,
+	                        0,
 	                        genericTextPal,
 	                        defaultStatusWait,    // in frames
 	                        0,
-	                        NULL));
+	                        (void (*)(gEvent&))nullptr);
 
 	// placement configurations
 	Point16 massWeightIndicator = Point16(531, 265);
 
 	// activate the indiv mode character mass and weight indicator
-	checkAlloc(MassWeightIndicator = NEW_UI CMassWeightIndicator(indivControls, massWeightIndicator));
+	MassWeightIndicator = new CMassWeightIndicator(indivControls, massWeightIndicator);
 
 	// activate the plyaer health indicator
-	checkAlloc(HealthIndicator      = NEW_UI CHealthIndicator(cmdHealthStar));
+	HealthIndicator = new CHealthIndicator(cmdHealthStar);
 
 
 	SetupUserControls();
@@ -275,12 +275,12 @@ void PlayModeCleanup(void) {
 	closeAllFloatingWindows();
 	if (playControls) {
 		delete playControls;
-		playControls = NULL;
-		StatusLine = NULL;
+		playControls = nullptr;
+		StatusLine = nullptr;
 	}
 	if (speakButtonControls) {
 		delete speakButtonControls;
-		speakButtonControls = NULL;
+		speakButtonControls = nullptr;
 	}
 
 	// delete standalone indicators
@@ -294,19 +294,20 @@ void PlayModeCleanup(void) {
 
 	//  Deallocate back buffer for tile rendering
 	if (tileDrawMap.data) {
-		RDisposePtr(tileDrawMap.data);
-		tileDrawMap.data = NULL;
+		delete[] tileDrawMap.data;
+		tileDrawMap.data = nullptr;
 	}
 
 	if (objPointerMap.data) {
-		RDisposePtr(objPointerMap.data);
-		objPointerMap.data = NULL;
+		delete[] objPointerMap.data;
+		objPointerMap.data = nullptr;
 	}
 
 	mainWindow->removeDecorations();
 
-	if (imageRes) resFile->disposeContext(imageRes);
-	imageRes = NULL;
+	if (imageRes)
+		resFile->disposeContext(imageRes);
+	imageRes = nullptr;
 
 	cleanupContainers();
 }
@@ -337,8 +338,8 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	map.size = hdr->size;
 
 	if (hdr->compress) {
-		map.data = (uint8 *)malloc(map.bytes());
-		if (map.data == NULL)
+		map.data = new uint8[map.bytes()];
+		if (map.data == nullptr)
 			return;
 
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
@@ -357,7 +358,7 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	               map.size.x, map.size.y);
 
 	if (hdr->compress)
-		free(map.data);
+		delete[] map.data;
 }
 
 void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
@@ -368,8 +369,9 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 
 	map.size = hdr->size;
 
-	map.data = (uint8 *)RNewPtr(map.bytes(), NULL, "sprite decompression map");
-	if (map.data == NULL) return;
+	map.data = new uint8[map.bytes()];
+	if (map.data == nullptr)
+		return;
 
 	if (hdr->compress)
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
@@ -385,7 +387,7 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 	               pos.x, pos.y,
 	               map.size.x, map.size.y);
 
-	RDisposePtr(map.data);
+	delete[] map.data;
 }
 
 void drawCompressedImageToMap(gPixelMap &map, void *image) {
@@ -399,7 +401,8 @@ void drawCompressedImageToMap(gPixelMap &map, void *image) {
 	if (hdr->compress) {
 		// if it is then upack it to spec'ed coords.
 		unpackImage(&map, map.size.x, map.size.y, hdr->data);
-	} else map.data = (uint8 *)hdr->data;
+	} else
+		map.data = (uint8 *)hdr->data;
 }
 
 
