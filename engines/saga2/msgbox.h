@@ -27,12 +27,11 @@
 #ifndef SAGA2_MSGBOX_H
 #define SAGA2_MSGBOX_H
 
-#include "saga2/fta.h"
-#include "saga2/floating.h"
 #include "saga2/grequest.h"
-#include "saga2/button.h"
 
 namespace Saga2 {
+
+struct textPallete;
 
 void ModalModeSetup(void);
 void ModalModeCleanup(void);

@@ -32,6 +32,9 @@ namespace Saga2 {
 struct ResourceSpellEffect;
 struct ResourceSpellItem;
 
+class SpellTarget;
+class ProtoEffect;
+
 // Mana IDs as spells see them
 
 enum SpellManaID {

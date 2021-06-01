@@ -26,6 +26,7 @@
 
 #include "saga2/std.h"
 #include "saga2/messager.h"
+#include "saga2/vdraw.h"
 
 namespace Saga2 {
 
