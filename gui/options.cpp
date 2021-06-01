@@ -1283,7 +1283,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 
 		Common::String value = AchMan.getStatRaw(info.stats[idx].id);
 
-		Common::U32String str = Common::U32String::format(_("%s: %s"), key.c_str(), value.c_str());
+		Common::U32String str = Common::U32String::format("%s: %s", key.c_str(), value.c_str());
 		new StaticTextWidget(scrollContainer, lineHeight, yPos, width, yStep, str, Graphics::kTextAlignStart);
 
 		yPos += yStep;
