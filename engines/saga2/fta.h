@@ -27,11 +27,7 @@
 #ifndef SAGA2_FTA_H
 #define SAGA2_FTA_H
 
-#include "saga2/rmemfta.h"
-#include "saga2/vwpage.h"
-#include "saga2/vpal.h"
 #include "saga2/gpointer.h"
-#include "saga2/fontlib.h"
 #include "saga2/rmem.h"
 
 namespace Saga2 {

@@ -32,6 +32,7 @@
 #include "saga2/input.h"
 #include "saga2/cmisc.h"
 #include "saga2/tcoords.h"
+#include "saga2/idtypes.h"
 #include "saga2/tile.h"
 #include "saga2/objects.h"
 #include "saga2/tileload.h"

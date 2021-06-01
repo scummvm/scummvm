@@ -48,6 +48,7 @@
 #include "saga2/cmisc.h"
 #include "saga2/button.h"
 #include "saga2/hresmgr.h"
+#include "saga2/fontlib.h"
 
 namespace Saga2 {
 

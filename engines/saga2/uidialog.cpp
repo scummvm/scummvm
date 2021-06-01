@@ -52,6 +52,7 @@
 #include "saga2/tilemode.h"
 #include "saga2/display.h"
 #include "saga2/uitext.h"
+#include "saga2/vpal.h"
 #include "saga2/palette.h"
 #include "saga2/display.h"
 #include "saga2/program.h"
@@ -59,6 +60,7 @@
 
 #include "saga2/config.h"
 #include "saga2/hresmgr.h"
+#include "saga2/fontlib.h"
 
 namespace Saga2 {
 

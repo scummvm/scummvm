@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/hresmgr.h"
 #include "saga2/automap.h"
 #include "saga2/blitters.h"
 #include "saga2/tile.h"
@@ -35,7 +36,7 @@
 #include "saga2/grequest.h"
 #include "saga2/mapfeatr.h"
 #include "saga2/grabinfo.h"
-#include "saga2/hresmgr.h"
+#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 

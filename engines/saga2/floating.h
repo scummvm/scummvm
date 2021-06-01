@@ -28,6 +28,7 @@
 #define SAGA2_FLOATING_H
 
 #include "saga2/fta.h"
+#include "saga2/hresmgr.h"
 #include "saga2/panel.h"
 
 namespace Saga2 {

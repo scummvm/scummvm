@@ -29,6 +29,7 @@
 #include "saga2/std.h"
 #include "saga2/rmemfta.h"
 #include "saga2/magic.h"
+#include "saga2/idtypes.h"
 #include "saga2/speldefs.h"
 #include "saga2/spellbuk.h"
 #include "saga2/spelshow.h"

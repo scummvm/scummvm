@@ -28,6 +28,7 @@
 
 #include "saga2/std.h"
 #include "saga2/tcoords.h"
+#include "saga2/idtypes.h"
 #include "saga2/tile.h"
 #include "saga2/terrain.h"
 #include "saga2/objects.h"

@@ -28,6 +28,7 @@
 #define SAGA2_BUTTON_H
 
 #include "saga2/fta.h"
+#include "saga2/hresmgr.h"
 #include "saga2/panel.h"
 #include "saga2/cmisc.h"
 #include "saga2/sprite.h"
