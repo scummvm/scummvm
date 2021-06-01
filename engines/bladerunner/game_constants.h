@@ -219,7 +219,7 @@ enum Clues {
 	kClueCarRegistration1                  = 113, // Audio Recording - Dektora bought the car
 	kClueCarRegistration2                  = 114, // Audio Recording - Gavin Kelly bought the car
 	kClueCarRegistration3                  = 115, // Audio Recording - Blake Williams bought the car
-	kClueCrazylegsInterview1               = 116, // Audio Recording - Acquired after bug fix. Original: Unobtained - Checked in KIA
+	kClueCrazylegsInterview1               = 116, // Audio Recording - Acquired after bug fix. Original: Unobtained - Checked in KIA - When Dektora bought the car - Enables WOMAN dialogue option
 	kClueCrazylegsInterview2               = 117, // Audio Recording - UNOBTAINED - Not checked in KIA - added to many actors DBs - TODO?
 	kClueLichenDogWrapper                  = 118, // Object
 	kClueRequisitionForm                   = 119, // Object - UNOBTAINED - Checked in KIA - TODO?
@@ -237,7 +237,7 @@ enum Clues {
 	kClueFlaskOfAbsinthe                   = 131, // Object
 	kClueGuzzaAgreesToMeet                 = 132, // UNUSED
 	kClueDektoraConfession                 = 133, // Audio Recording - UNOBTAINED - Not checked in KIA - added to many actors DBs - TODO?
-	kClueRunciterConfession1               = 134, // Audio Recording - UNOBTAINED - Not checked in KIA - added to many actors DBs - TODO? Why in addition to 280, 281, 282?
+	kClueRunciterConfession1               = 134, // Audio Recording - UNOBTAINED - Not checked in KIA - added to many actors DBs - TODO? Why in addition to 280, 281, 282? - Requires Zuben's Motive and Lucy to be Replicant
 	kClueRunciterConfession2               = 135, // Audio Recording - UNOBTAINED - Not checked in KIA - added to many actors DBs - TODO? Why in addition to 280, 281, 282?
 	kClueLutherLanceInterview              = 136, // Audio Recording
 	kClueMoonbus2                          = 137, // Photograph - UNOBTAINED - Not checked in KIA
