@@ -298,7 +298,10 @@ public:
 	virtual int open(MidiDriver *driver, bool nativeMT32);
 	void close() override;
 	bool isOpen() const override { return _isOpen; }
-	bool isReady() override { return _sysExQueue.empty(); }
+	bool isReady() override {
+		Common::StackLock lock(_sysExQueueMutex);
+		return _sysExQueue.empty();
+	}
 	uint32 property(int prop, uint32 param) override;
 
 	using MidiDriver_BASE::send;
