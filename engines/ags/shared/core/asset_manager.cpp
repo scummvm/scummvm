@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/utility.h"
 #include "ags/shared/core/platform.h"
@@ -285,7 +286,13 @@ Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_na
 	if (!stream)
 		return nullptr;
 
-	return new ScummVMReadStream(stream);
+	// Get the contents of the asset
+	size_t dataSize = stream->GetLength();
+	byte *data = (byte *)malloc(dataSize);
+	stream->Read(data, dataSize);
+	delete stream;
+
+	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
 }
 
 String GetAssetErrorText(AssetError err) {

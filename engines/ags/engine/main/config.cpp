@@ -423,6 +423,8 @@ void post_config() {
 }
 
 void save_config_file() {
+	// ScummVM doesn't write out any configuration changes
+#if !AGS_PLATFORM_SCUMMVM
 	ConfigTree cfg;
 
 	// Last display mode
@@ -457,6 +459,7 @@ void save_config_file() {
 	String cfg_file = PreparePathForWriting(GetGameUserConfigDir(), DefaultConfigFileName);
 	if (!cfg_file.IsEmpty())
 		IniUtil::Merge(cfg_file, cfg);
+#endif
 }
 
 } // namespace AGS3

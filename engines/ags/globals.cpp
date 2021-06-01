@@ -357,7 +357,7 @@ Globals::~Globals() {
 	// audio.cpp globals
 	delete _audioChannels;
 	delete _ambient;
-	delete _scrAudioChannel;
+	delete[] _scrAudioChannel;
 
 	// button.cpp globals
 	delete[] _animbuts;
@@ -513,7 +513,7 @@ Globals::~Globals() {
 	delete _rgb_table;
 
 	// route_finder_impl.cpp globals
-	delete _navpoints;
+	delete[] _navpoints;
 	delete _nav;
 
 	// screen.cpp globals
