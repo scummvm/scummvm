@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-05-31 23:21+0000\n"
-"PO-Revision-Date: 2021-05-17 17:34+0000\n"
+"PO-Revision-Date: 2021-06-01 19:36+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -432,7 +432,7 @@ msgstr "Errungenschaften"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "Statistiken"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:502
 #: gui/editgamedialog.cpp:568 gui/editgamedialog.cpp:629 gui/options.cpp:2009
@@ -993,7 +993,7 @@ msgstr "Errungenschaften freigeschaltet: %d/%d"
 #: gui/options.cpp:1286
 #, c-format
 msgid "%s: %s"
-msgstr ""
+msgstr "%s: %s"
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
