@@ -30,7 +30,6 @@
 
 #include "saga2/std.h"
 #include "saga2/blitters.h"
-#include "saga2/rmemfta.h"
 #include "saga2/tcoords.h"
 #include "saga2/objects.h"
 #include "saga2/sprite.h"

@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/idtypes.h"
-#include "saga2/rmemfta.h"
 #include "saga2/magic.h"
 #include "saga2/effects.h"
 #include "saga2/spellbuk.h"
@@ -107,7 +106,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	case effectNone     :
 		return;
 	case effectAttrib   :
-		pe = NEW_EFCT ProtoEnchantment(
+		pe = new ProtoEnchantment(
 		         makeEnchantmentID(
 		             rse->effectGroup,
 		             rse->effectType,
@@ -119,7 +118,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	case effectImmune   :
 	case effectOthers   :
 	case effectNonActor :
-		pe = NEW_EFCT ProtoEnchantment(
+		pe = new ProtoEnchantment(
 		         makeEnchantmentID(
 		             rse->effectGroup,
 		             rse->effectType,
@@ -128,7 +127,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         rse->enchTimeHi);
 		break;
 	case effectDamage   :
-		pe = NEW_EFCT ProtoDamage(
+		pe = new ProtoDamage(
 		         rse->baseDice,
 		         rse->diceSides ? rse->diceSides : 6,
 		         rse->skillDice,
@@ -138,7 +137,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         rse->targeting & spellTargCaster);
 		break;
 	case effectDrains   :
-		pe = NEW_EFCT ProtoDrainage(
+		pe = new ProtoDrainage(
 		         rse->baseDice,
 		         rse->diceSides ? rse->diceSides : 6,
 		         rse->skillDice,
@@ -148,53 +147,53 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         rse->targeting & spellTargCaster);
 		break;
 	case effectTAG      :
-		pe = NEW_EFCT ProtoTAGEffect(
+		pe = new ProtoTAGEffect(
 		         (effectTAGTypes) rse->effectType,
 		         rse->flagSet,
 		         rse->attribModifier);
 		break;
 	case effectLocation :
-		pe = NEW_EFCT ProtoLocationEffect(
+		pe = new ProtoLocationEffect(
 		         (effectLocationTypes) rse->effectType,
 		         rse->attribModifier);
 		break;
 	case effectSpecial  : {
 		switch (rse->effectType) {
 		case    specialDispellHelpfulEnch :   // clears helpful enchantments
-			pe = NEW_EFCT ProtoSpecialEffect(DispellProtections, rse->attribModifier);
+			pe = new ProtoSpecialEffect(DispellProtections, rse->attribModifier);
 			break;
 		case    specialDispellHarmfulEnch :   // clears harmful enchantments
-			pe = NEW_EFCT ProtoSpecialEffect(DispellCurses,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(DispellCurses,      rse->attribModifier);
 			break;
 		case    specialKill               :   // death spell
-			pe = NEW_EFCT ProtoSpecialEffect(DeathSpell,         rse->attribModifier);
+			pe = new ProtoSpecialEffect(DeathSpell,         rse->attribModifier);
 			break;
 		case    specialRessurect          :   // raise dead spell
-			pe = NEW_EFCT ProtoSpecialEffect(Resurrect,          rse->attribModifier);
+			pe = new ProtoSpecialEffect(Resurrect,          rse->attribModifier);
 			break;
 		case    specialTeleport           :   // Teleportation
-			pe = NEW_EFCT ProtoSpecialEffect(TeleportToLocation, rse->attribModifier);
+			pe = new ProtoSpecialEffect(TeleportToLocation, rse->attribModifier);
 			break;
 		case    specialCreateActor        :   // Create an actor or wall
-			pe = NEW_EFCT ProtoSpecialEffect(CreateWraith,       rse->attribModifier);
+			pe = new ProtoSpecialEffect(CreateWraith,       rse->attribModifier);
 			break;
 		case    specialSagaFunc           :    // calls a saga function
-			pe = NEW_EFCT ProtoSpecialEffect(SagaSpellCall,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(SagaSpellCall,      rse->attribModifier);
 			break;
 		case    specialRejoin        :   // Create an actor or wall
-			pe = NEW_EFCT ProtoSpecialEffect(Rejoin,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(Rejoin,      rse->attribModifier);
 			break;
 		case    specialCreateWWisp  :  // calls a saga function
-			pe = NEW_EFCT ProtoSpecialEffect(CreateWWisp,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(CreateWWisp,      rse->attribModifier);
 			break;
 		case    specialCreateFWisp  :   // calls a saga function
-			pe = NEW_EFCT ProtoSpecialEffect(CreateFWisp,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(CreateFWisp,      rse->attribModifier);
 			break;
 		case    specialCreateWraith :   // calls a saga function
-			pe = NEW_EFCT ProtoSpecialEffect(CreateWraith,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(CreateWraith,      rse->attribModifier);
 			break;
 		case    specialCreateFood   :   // calls a saga function
-			pe = NEW_EFCT ProtoSpecialEffect(CreateFood,      rse->attribModifier);
+			pe = new ProtoSpecialEffect(CreateFood,      rse->attribModifier);
 			break;
 		}
 		break;
@@ -309,7 +308,7 @@ SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
 	implementAge = ssi.implementAge; // age at which to implement the spell effects
 	dProto = SpellDisplayPrototypeList::sdpList[ssi.dProto];
 	caster = GameObject::objectAddress(ssi.caster);
-	target = NEW_SPEL SpellTarget(ssi.target);
+	target = new SpellTarget(ssi.target);
 	GameObject *go = GameObject::objectAddress(ssi.world);
 	assert(isWorld(go));
 	world = (GameWorld *) go;
@@ -365,7 +364,7 @@ void SpellDisplayList::load(SaveFileReader &saveGame) {
 			SpellInstance *si;
 			StorageSpellInstance ssi;
 			saveGame.read(&ssi, sizeof(ssi));
-			si = NEW_SPEL SpellInstance(ssi);
+			si = new SpellInstance(ssi);
 			add(si);
 			si->loadEffect(saveGame, ssi.eListSize);
 		}
@@ -409,7 +408,7 @@ void SpellInstance::loadEffect(SaveFileReader &saveGame, uint16 eListSize) {
 		for (int32 i = 0; i < eList.count; i++) {
 			StorageEffectron se;
 			saveGame.read(&se, sizeof(se));
-			Effectron *e = NEW_SPEL Effectron(se, this);
+			Effectron *e = new Effectron(se, this);
 			eList.displayList[i].efx = e;
 		}
 }

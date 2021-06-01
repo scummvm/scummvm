@@ -42,7 +42,6 @@
 #include "saga2/imagcach.h"
 #include "saga2/hresmgr.h"
 #include "saga2/fontlib.h"
-#include "saga2/rmemfta.h"
 
 #include "saga2/pclass.r"
 
@@ -1188,7 +1187,7 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 	view = NULL;
 
 	// create the close button for this window
-	closeCompButton = NEW_UI gCompButton(
+	closeCompButton = new gCompButton(
 	                      *this,
 	                      app.closeRect,              // rect for button
 	                      containerRes,               // resource context
@@ -1212,10 +1211,10 @@ ContainerView &ContainerWindow::getView(void) {
 ScrollableContainerWindow::ScrollableContainerWindow(
     ContainerNode &nd, ContainerAppearanceDef &app, const char saveas[])
 	: ContainerWindow(nd, app, saveas) {
-	view = NEW_UI ContainerView(*this, app.viewRect, nd, app);
+	view = new ContainerView(*this, app.viewRect, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = NEW_UI gCompButton(
+	scrollCompButton = new gCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1273,7 +1272,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		// through an appfunc.
 		this->userData = view->containerObject;
 
-		massWeightIndicator = NEW_UI CMassWeightIndicator(
+		massWeightIndicator = new CMassWeightIndicator(
 		                          this,
 		                          Point16(app.massRect.x, app.massRect.y),
 		                          weightIndicatorType,
@@ -1301,7 +1300,7 @@ void TangibleContainerWindow::setContainerSprite(void) {
 	sprPos.x = objRect.x - (spr->size.x >> 1);  //objRect.x + ( spr->size.x >> 1 );
 	sprPos.y = objRect.y - (spr->size.y >> 1);
 
-	containerSpriteImg = NEW_UI gSpriteImage(
+	containerSpriteImg = new gSpriteImage(
 	                         *this,
 	                         Rect16(sprPos.x,
 	                                sprPos.y,
@@ -1339,7 +1338,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
     ContainerNode &nd, ContainerAppearanceDef &app)
 	: ScrollableContainerWindow(nd, app, "MentalWindow") {
 	// make the button conected to this window
-	mindSelectorCompButton = NEW_UI gMultCompButton(
+	mindSelectorCompButton = new gMultCompButton(
 	                             *this,
 	                             Rect16(49, 15 - 13, 52, 67),
 	                             containerRes,
@@ -1366,10 +1365,10 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 EnchantmentContainerWindow::EnchantmentContainerWindow(
     ContainerNode &nd, ContainerAppearanceDef &app)
 	: ContainerWindow(nd, app, "EnchantmentWindow") {
-	view = NEW_UI EnchantmentContainerView(*this, nd, app);
+	view = new EnchantmentContainerView(*this, nd, app);
 
 	// make the button conected to this window
-	scrollCompButton = NEW_UI gCompButton(
+	scrollCompButton = new gCompButton(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
@@ -1516,22 +1515,22 @@ void ContainerNode::show(void) {
 			physicalContainerAppearance.rows    = proto->getViewableRows();
 			physicalContainerAppearance.cols    = proto->getViewableCols();
 			physicalContainerAppearance.totRows = proto->getMaxRows();
-			window = NEW_UI TangibleContainerWindow(*this, physicalContainerAppearance);
+			window = new TangibleContainerWindow(*this, physicalContainerAppearance);
 			break;
 
 		case deadType:
 			deathContainerAppearance.rows       = proto->getViewableRows();
 			deathContainerAppearance.cols       = proto->getViewableCols();
 			deathContainerAppearance.totRows    = proto->getMaxRows();
-			window = NEW_UI TangibleContainerWindow(*this, deathContainerAppearance);
+			window = new TangibleContainerWindow(*this, deathContainerAppearance);
 			break;
 
 		case mentalType:
-			window = NEW_UI IntangibleContainerWindow(*this, mentalContainerAppearance);
+			window = new IntangibleContainerWindow(*this, mentalContainerAppearance);
 			break;
 
 		case enchantType:
-			window = NEW_UI EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
+			window = new EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
 			break;
 		}
 	}
@@ -1703,11 +1702,11 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 		if (((Actor *)obj)->isDead()) {
 			//  Open dead container for dead actor
 			if (!(cn = globalContainerList.find(owner, ContainerNode::deadType)))
-				cn = NEW_UI ContainerNode(globalContainerList, id, ContainerNode::deadType);
+				cn = new ContainerNode(globalContainerList, id, ContainerNode::deadType);
 		} else if (owner != ContainerNode::nobody) {
 			//  Open mental container for living player actor.
 //			if (!(cn = globalContainerList.find( owner, ContainerNode::mentalType )))
-//				cn = NEW_UI ContainerNode( globalContainerList, id, ContainerNode::mentalType );
+//				cn = new ContainerNode( globalContainerList, id, ContainerNode::mentalType );
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
 		}
 #if DEBUG
@@ -1718,7 +1717,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 			owner = ContainerNode::nobody;
 
 		if (!(cn = globalContainerList.find(id, ContainerNode::physicalType)))
-			cn = NEW_UI ContainerNode(globalContainerList, id, ContainerNode::physicalType);
+			cn = new ContainerNode(globalContainerList, id, ContainerNode::physicalType);
 	}
 
 	//  If node was successfull created, and we wanted it open, and the owner
@@ -1733,7 +1732,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 }
 
 ContainerNode *CreateReadyContainerNode(PlayerActorID player) {
-	return NEW_UI ContainerNode(globalContainerList,
+	return new ContainerNode(globalContainerList,
 	                            getPlayerActorAddress(player)->getActorID(),
 	                            ContainerNode::readyType);
 }
@@ -1743,7 +1742,7 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	ObjectID        id = getPlayerActorAddress(player)->getActorID();
 
 	if (!(cn = globalContainerList.find(id, ContainerNode::mentalType))) {
-		cn = NEW_UI ContainerNode(globalContainerList, id, ContainerNode::mentalType);
+		cn = new ContainerNode(globalContainerList, id, ContainerNode::mentalType);
 		cn->mindType = type;
 
 		//  If node was successfull created, and we wanted it open, and the owner
@@ -1871,7 +1870,7 @@ void loadContainerNodes(SaveFileReader &saveGame) {
 
 	for (i = 0; i < numNodes; i++) {
 		//  Allocate a new uninitialized ContainerNode
-		node = NEW_UI ContainerNode;
+		node = new ContainerNode;
 		if (node == NULL)
 			error("Unable to allocate ContainerNode");
 

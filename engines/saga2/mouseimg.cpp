@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/blitters.h"
-#include "saga2/rmemfta.h"
 #include "saga2/fta.h"
 #include "saga2/mouseimg.h"
 #include "saga2/images.h"
@@ -163,7 +162,7 @@ void createStackedImage(
 	newImage->size.y += images - 1;
 	newImageBytes = newImage->bytes();
 
-	newImage->data = (uint8 *) TALLOC(newImageBytes, memPrgOutput) ;
+	newImage->data = (uint8 *)malloc(newImageBytes) ;
 
 	memset(newImage->data, 0, newImageBytes);
 
@@ -292,7 +291,7 @@ void setNewText(char *text) {
 
 	//  Allocate a new buffer for the text image bitmap
 	textImageBytes = textImage.bytes();
-	textImage.data = (uint8 *) TALLOC(textImageBytes, memPrgOutput);
+	textImage.data = (uint8 *)malloc(textImageBytes);
 	memset(textImage.data, 0, textImageBytes);
 
 	gPort   textImagePort;  //  gPort used to draw text onto bitmap

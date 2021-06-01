@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/rmemfta.h"
 #include "saga2/dispnode.h"
 #include "saga2/objproto.h"
 #include "saga2/spellbuk.h"
@@ -81,7 +80,7 @@ EffectDisplayPrototype::EffectDisplayPrototype(
 EffectDisplayPrototypeList::EffectDisplayPrototypeList(int32 c) {
 	count = 0;
 	maxCount = 0;
-	effects = (pEffectDisplayPrototype *) TALLOC(sizeof(pEffectDisplayPrototype) * c, memSpells);
+	effects = (pEffectDisplayPrototype *)malloc(sizeof(pEffectDisplayPrototype) * c);
 	for (int i = 0; i < c; i++)
 		effects[i] = NULL;
 	assert(effects);
@@ -193,7 +192,7 @@ void SpellDisplayPrototypeList::cleanup(void) {
 SpellDisplayPrototypeList::SpellDisplayPrototypeList(uint16 s) {
 	count = 0;
 	maxCount = 0;
-	spells = (pSpellDisplayPrototype *) TALLOC(sizeof(pSpellDisplayPrototype) * s, memSpells);
+	spells = (pSpellDisplayPrototype *)malloc(sizeof(pSpellDisplayPrototype) * s);
 	for (int i = 0; i < s; i++)
 		spells[i] = NULL;
 	assert(spells);
@@ -226,7 +225,7 @@ int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
 SpellDisplayList::SpellDisplayList(uint16 s) {
 	count = 0;
 	maxCount = 0;
-	spells = (pSpellInstance *) TALLOC(sizeof(pSpellInstance) * s, memSpells);
+	spells = (pSpellInstance *)malloc(sizeof(pSpellInstance) * s);
 	for (int i = 0; i < s; i++)
 		spells[i] = NULL;
 	if (spells) maxCount = s;

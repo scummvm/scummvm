@@ -49,9 +49,9 @@ MODULE_OBJS := \
 	mission.o \
 	modal.o \
 	motion.o \
+	mouseimg.o \
 	msgbox.o \
 	noise.o \
-	mouseimg.o \
 	objects.o \
 	objproto.o \
 	panel.o \

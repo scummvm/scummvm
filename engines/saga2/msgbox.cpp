@@ -33,7 +33,6 @@
 #include "saga2/floating.h"
 #include "saga2/gbevel.h"
 #include "saga2/fontlib.h"
-#include "saga2/rmemfta.h"
 
 namespace  Saga2 {
 
@@ -110,7 +109,7 @@ int16 FTAMessageBox(char *msg,
 int16 MsgBox(char *msg,
              char *btnMsg1,
              char *btnMsg2) {
-	ErrorWindow *win = NEW_MSGR ErrorWindow(msg, btnMsg1, btnMsg2);
+	ErrorWindow *win = new ErrorWindow(msg, btnMsg1, btnMsg2);
 	int16 res = win->getResult();
 	delete win;
 	return res;
