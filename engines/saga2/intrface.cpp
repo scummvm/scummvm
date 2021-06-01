@@ -45,6 +45,7 @@
 #include "saga2/display.h"
 #include "saga2/localize.h"
 #include "saga2/imagcach.h"
+#include "saga2/fontlib.h"
 
 namespace Saga2 {
 
@@ -1596,7 +1597,7 @@ void writePlaqTextPos(gPort         &port,
 void **loadButtonRes(hResContext *con, int16 resID, int16 numRes) {
 	int16   i, k;
 
-	void **images = (void **) TALLOC(sizeof(void *)*numRes, memInterface);
+	void **images = (void **)malloc(sizeof(void *)*numRes);
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
 		// get an image from the image cache
@@ -1613,7 +1614,7 @@ void **loadButtonRes(hResContext *con, int16 resID, int16 numRes, char a, char b
 	int16   i, k;
 
 
-	void **images = (void **) TALLOC(sizeof(void *)*numRes, memInterface);
+	void **images = (void **)malloc(sizeof(void *)*numRes);
 
 	for (i = 0, k = resID; i < numRes; i++, k++) {
 		images[i] = ImageCache.requestImage(con, MKTAG(a, b, c, k));

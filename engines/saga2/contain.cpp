@@ -41,6 +41,8 @@
 #include "saga2/spellbuk.h"
 #include "saga2/imagcach.h"
 #include "saga2/hresmgr.h"
+#include "saga2/fontlib.h"
+#include "saga2/rmemfta.h"
 
 #include "saga2/pclass.r"
 

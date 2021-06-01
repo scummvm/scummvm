@@ -39,6 +39,7 @@
 #include "saga2/program.h"
 #include "saga2/version.h"
 #include "saga2/hresmgr.h"
+#include "saga2/fontlib.h"
 
 namespace Saga2 {
 

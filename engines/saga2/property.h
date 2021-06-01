@@ -26,7 +26,6 @@
 
 #ifndef SAGA2_PROPERTY_H
 #define SAGA2_PROPERTY_H
-
 namespace Saga2 {
 
 /* ===================================================================== *
@@ -115,7 +114,7 @@ CompoundProperty< T >::CompoundProperty(
 	uint16  arrayBytes = sizeof(Property< T > *) * size;
 
 	//  Allocate memory to copy the array.
-	propertyArray = (Property< T > **)TALLOC(arrayBytes, memPropList);
+	propertyArray = (Property< T > **)malloc(arrayBytes);
 #if DEBUG
 	assert(propertyArray);
 #endif

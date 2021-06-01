@@ -32,6 +32,8 @@
 #include "saga2/msgbox.h"
 #include "saga2/floating.h"
 #include "saga2/gbevel.h"
+#include "saga2/fontlib.h"
+#include "saga2/rmemfta.h"
 
 namespace  Saga2 {
 

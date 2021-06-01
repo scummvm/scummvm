@@ -85,7 +85,7 @@ public:
 		wanted.resize(newSize);
 		locked.resize(newSize);
 		recent.resize(newSize);
-		handle = (RESTYPE *) TALLOC(sizeof(RESTYPE) * newSize, memPrgResMan);
+		handle = (RESTYPE *)malloc(sizeof(RESTYPE) * newSize);
 		handles = newSize;
 		loader = loadfunction;
 		for (uint16 i = 0; i < newSize; i++)

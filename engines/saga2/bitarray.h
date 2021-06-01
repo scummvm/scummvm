@@ -41,7 +41,7 @@ private:
 public:
 
 	BitArray(uint16 newSize = 0) {
-		if (newSize) b = (uint32 *) TALLOC(sizeof(uint32) * (newSize / 32 + 1), memBitArray);
+		if (newSize) b = (uint32 *)malloc(sizeof(uint32) * (newSize / 32 + 1));
 		size = newSize;
 		clear(newSize);
 	}
@@ -53,7 +53,7 @@ public:
 	void resize(uint16 newSize) {
 		uint32  *t = b;
 		if (newSize) {
-			b = (uint32 *) TALLOC(sizeof(uint32) * (newSize / 32 + 1), memBitArray);
+			b = (uint32 *)malloc(sizeof(uint32) * (newSize / 32 + 1));
 			clear(newSize);
 			if (size)  for (int i = 0; i < MIN(size, newSize) / 32 + 1; i++)  b[i] = t[i];
 		}

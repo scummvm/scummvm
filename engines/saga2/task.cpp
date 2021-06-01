@@ -34,6 +34,7 @@
 #include "saga2/band.h"
 #include "saga2/sensor.h"
 #include "saga2/tilemode.h"
+#include "saga2/rmemfta.h"
 
 namespace Saga2 {
 

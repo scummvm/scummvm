@@ -46,6 +46,7 @@
 #include "saga2/tilemode.h"
 #include "saga2/magic.h"
 #include "saga2/intrface.h"
+#include "saga2/vpal.h"
 #include "saga2/palette.h"
 #include "saga2/contain.h"
 #include "saga2/ioerrors.h"

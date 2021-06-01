@@ -37,6 +37,7 @@
 #include "saga2/audio.h"
 #include "saga2/annoy.h"
 #include "saga2/script.h"
+#include "saga2/vpal.h"
 #include "saga2/palette.h"
 #include "saga2/intrface.h"
 #include "saga2/mouseimg.h"
