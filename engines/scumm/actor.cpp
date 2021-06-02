@@ -2774,8 +2774,11 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	playSpeech((byte *)_lastStringTag);
 
 	if (_game.id == GID_DIG || _game.id == GID_CMI) {
-		if (VAR(VAR_HAVE_MSG))
+		if (VAR(VAR_HAVE_MSG)) {
+			if (_game.id == GID_DIG && _roomResource == 58 && msg[0] == ' ' && !msg[1])
+				return;
 			stopTalk();
+		}
 	} else {
 		if (!_keepText)
 			stopTalk();
