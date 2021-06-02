@@ -86,6 +86,13 @@ bool confirmWindowsVersion(int majorVersion, int minorVersion) {
 	return VerifyVersionInfoFunc(&versionInfo, VER_MAJORVERSION | VER_MINORVERSION, conditionMask);
 }
 
+bool isDriveCD(char driveLetter) {
+	TCHAR drivePath[] = TEXT("x:\\");
+	drivePath[0] = (TCHAR)driveLetter;
+
+	return (GetDriveType(drivePath) == DRIVE_CDROM);
+}
+
 wchar_t *ansiToUnicode(const char *s) {
 #ifndef UNICODE
 	uint codePage = CP_ACP;
