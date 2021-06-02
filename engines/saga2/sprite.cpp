@@ -39,14 +39,14 @@ namespace Saga2 {
 
 const int           maxWeaponSpriteSets = 40;
 
-const uint32        spriteGroupID   = RES_ID('S', 'P', 'R', 'I'),
-                    frameGroupID    = RES_ID('F', 'R', 'M', 'L'),
-                    poseGroupID     = RES_ID('P', 'O', 'S', 'E'),
-                    schemeGroupID   = RES_ID('S', 'C', 'H', 'M'),
-                    objectSpriteID  = RES_ID('O', 'B', 'J', 'S'),
-                    mentalSpriteID  = RES_ID('M', 'E', 'N', 'T'),
-                    weaponSpriteBaseID  = RES_ID('W', 'P', 'N', 0),
-                    missileSpriteID = RES_ID('M', 'I', 'S', 'S');
+const uint32        spriteGroupID   = MKTAG('S', 'P', 'R', 'I'),
+                    frameGroupID    = MKTAG('F', 'R', 'M', 'L'),
+                    poseGroupID     = MKTAG('P', 'O', 'S', 'E'),
+                    schemeGroupID   = MKTAG('S', 'C', 'H', 'M'),
+                    objectSpriteID  = MKTAG('O', 'B', 'J', 'S'),
+                    mentalSpriteID  = MKTAG('M', 'E', 'N', 'T'),
+                    weaponSpriteBaseID  = MKTAG('W', 'P', 'N', 0),
+                    missileSpriteID = MKTAG('M', 'I', 'S', 'S');
 
 /* ===================================================================== *
    Prototypes
@@ -620,7 +620,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 
 		//  Load the sprite handle...
 		if (spriteBanks[bank] == NULL && (banksNeeded & (1 << bank))) {
-			spriteBanks[bank] = (SpriteSet **)spriteRes->load(id + RES_ID(0, 0, 0, bank), "sprite bank", FALSE);
+			spriteBanks[bank] = (SpriteSet **)spriteRes->load(id + MKTAG(0, 0, 0, bank), "sprite bank", FALSE);
 
 #if DEBUG
 			if (spriteBanks[bank] == NULL)
@@ -751,7 +751,7 @@ void initSprites(void) {
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
 		hResID      weaponSpriteID;
 
-		weaponSpriteID = weaponSpriteBaseID + RES_ID(0, 0, 0, i);
+		weaponSpriteID = weaponSpriteBaseID + MKTAG(0, 0, 0, i);
 
 		if (spriteRes->size(weaponSpriteID) == 0) {
 			weaponSprites[i] = NULL;

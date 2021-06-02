@@ -135,7 +135,7 @@ void CVideoBox::init(void) {
 	rInfo.running   = TRUE;
 
 	// init the resource context handle
-	decRes = resFile->newContext(RES_ID('V', 'I', 'D', 'O'),
+	decRes = resFile->newContext(MKTAG('V', 'I', 'D', 'O'),
 	                             "Video border resources");
 
 

@@ -52,7 +52,7 @@ namespace Saga2 {
    Constants
  * ===================================================================== */
 
-const uint32                    spellSpriteID = RES_ID('S', 'P', 'F', 'X');
+const uint32                    spellSpriteID = MKTAG('S', 'P', 'F', 'X');
 
 const int32 maxSpells = totalSpellBookPages;
 const int32 maxSpellPrototypes = totalSpellBookPages;
@@ -199,21 +199,21 @@ static void loadMagicData(void) {
 
 	//  Get spell definitions
 	spellRes =  auxResFile->newContext(
-	                RES_ID('S', 'P', 'E', 'L'),
+	                MKTAG('S', 'P', 'E', 'L'),
 	                "spell resources");
 	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing spell resource group.\n");
 	i = 1;
-	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, RES_ID('S', 'T', 'A', 0), 23, 24);
+	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
 
 	spellBook[0].setManaType(sManaIDSkill);
 
 	while (spellRes->size(
-	            RES_ID('I', 'N', 'F', i)) > 0) {
+	            MKTAG('I', 'N', 'F', i)) > 0) {
 		ResourceSpellItem *rsi =
 		    (ResourceSpellItem *)LoadResource(
 		        spellRes,
-		        RES_ID('I', 'N', 'F', i),
+		        MKTAG('I', 'N', 'F', i),
 		        "spell");
 
 		if (rsi == NULL)
@@ -230,11 +230,11 @@ static void loadMagicData(void) {
 	// get spell effects
 	i = 0;
 	while (spellRes->size(
-	            RES_ID('E', 'F', 'F', i)) > 0) {
+	            MKTAG('E', 'F', 'F', i)) > 0) {
 		ResourceSpellEffect *rse =
 		    (ResourceSpellEffect *)LoadResource(
 		        spellRes,
-		        RES_ID('E', 'F', 'F', i),
+		        MKTAG('E', 'F', 'F', i),
 		        "spell effect");
 
 		if (rse == NULL)

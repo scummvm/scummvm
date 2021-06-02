@@ -62,11 +62,11 @@ APPFUNC(cmdControl);
    Resource ID constants
  * ===================================================================== */
 
-const uint32        nameListID  = RES_ID('N', 'A', 'M', 'E'),
-                    objListID   = RES_ID('O', 'B', 'J', 'E'),
-                    worldListID = RES_ID('W', 'R', 'L', 'D'),
-                    objProtoID  = RES_ID('P', 'R', 'O',  0),
-                    actorProtoID = RES_ID('P', 'R', 'O',  1);
+const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
+                    objListID   = MKTAG('O', 'B', 'J', 'E'),
+                    worldListID = MKTAG('W', 'R', 'L', 'D'),
+                    objProtoID  = MKTAG('P', 'R', 'O',  0),
+                    actorProtoID = MKTAG('P', 'R', 'O',  1);
 
 /* ===================================================================== *
    Locals
@@ -151,7 +151,7 @@ extern SpellStuff   spellBook[];
 extern DisplayNodeList      mainDisplayList;
 extern ObjectID     pickedObject;
 
-const uint32    imageGroupID = RES_ID('I', 'M', 'A', 'G');
+const uint32    imageGroupID = MKTAG('I', 'M', 'A', 'G');
 
 extern TilePoint    incDirTable[];
 
@@ -2366,7 +2366,7 @@ uint16 GameObject::totalContainedBulk(void) {
 //	Initial constructor
 
 GameWorld::GameWorld(int16 map) {
-	if (tileRes->seek(RES_ID('M', 'A', 'P', (char)map))) {
+	if (tileRes->seek(MKTAG('M', 'A', 'P', (char)map))) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
 		tileRes->read(&mapSize, sizeof(mapSize));
@@ -2679,7 +2679,7 @@ void initObjectSoundFXTable(void) {
 	hResContext     *itemRes;
 
 	itemRes =   auxResFile->newContext(
-	                RES_ID('I', 'T', 'E', 'M'),
+	                MKTAG('I', 'T', 'E', 'M'),
 	                "item resources");
 	if (itemRes == NULL || !itemRes->_valid)
 		error("Error accessing item resource group.\n");
@@ -2687,7 +2687,7 @@ void initObjectSoundFXTable(void) {
 	objectSoundFXTable =
 	    (ObjectSoundFXs *)LoadResource(
 	        itemRes,
-	        RES_ID('S', 'N', 'D', 'T'),
+	        MKTAG('S', 'N', 'D', 'T'),
 	        "object sound effect table");
 
 	if (objectSoundFXTable == NULL)

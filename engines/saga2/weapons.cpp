@@ -322,7 +322,7 @@ static void loadWeaponData(void) {
 
 	//  Get spell definitions
 	spellRes =  auxResFile->newContext(
-	                RES_ID('I', 'T', 'E', 'M'),
+	                MKTAG('I', 'T', 'E', 'M'),
 	                "weapon resources");
 	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing weapon resource group.");
@@ -330,11 +330,11 @@ static void loadWeaponData(void) {
 	// get spell effects
 	i = 0;
 	while (spellRes->size(
-	            RES_ID('E', 'F', 'F', i)) > 0) {
+	            MKTAG('E', 'F', 'F', i)) > 0) {
 		ResourceItemEffect *rie =
 		    (ResourceItemEffect *)LoadResource(
 		        spellRes,
-		        RES_ID('E', 'F', 'F', i),
+		        MKTAG('E', 'F', 'F', i),
 		        "weapon effect");
 
 		if (rie == NULL)

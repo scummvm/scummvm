@@ -138,8 +138,8 @@ template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asy
 		return NULL;
 	}
 
-	//t = (RESTYPE) tileRes->load( tileID + RES_ID( 0,0,0,bankNum ) );
-	t = (RESTYPE) loader(tileID + RES_ID(0, 0, 0, ind), asynch);
+	//t = (RESTYPE) tileRes->load( tileID + MKTAG( 0,0,0,bankNum ) );
+	t = (RESTYPE) loader(tileID + MKTAG(0, 0, 0, ind), asynch);
 
 	locked.Bit(ind, !asynch);
 	wanted.Bit(ind, asynch);
@@ -168,7 +168,7 @@ template <class RESTYPE> void LoadOnCall<RESTYPE>::rFree(uint16 ind) {
 template <class RESTYPE> void LoadOnCall<RESTYPE>::rInit(uint16 ind) {
 	RESTYPE t;
 	if (!isValidPtr(handle[ ind ])) {
-		t = (RESTYPE) loader(tileID + RES_ID(0, 0, 0, ind), FALSE);
+		t = (RESTYPE) loader(tileID + MKTAG(0, 0, 0, ind), FALSE);
 		handle[ ind ] = t;
 		locked.Bit(ind, TRUE);
 		RUnlockHandle((RHANDLE) handle[ ind ]);
