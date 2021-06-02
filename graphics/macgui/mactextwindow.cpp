@@ -394,16 +394,16 @@ bool MacTextWindow::processEvent(Common::Event &event) {
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_x:
-				g_system->setTextInClipboard(cutSelection());
+				_wm->setTextInClipboard(cutSelection());
 				return true;
 			case Common::KEYCODE_c:
-				g_system->setTextInClipboard(getSelection(true, false));
+				_wm->setTextInClipboard(getSelection(true, false));
 				return true;
 			case Common::KEYCODE_v:
 				if (g_system->hasTextInClipboard()) {
 					if (_selectedText.endY != -1)
 						cutSelection();
-					appendInput(g_system->getTextFromClipboard());
+					appendInput(_wm->getTextFromClipboard());
 					_inputIsDirty = true;
 				}
 				return true;
