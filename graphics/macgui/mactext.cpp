@@ -1307,6 +1307,54 @@ Common::U32String MacText::cutSelection() {
 	return selection;
 }
 
+// this is refer to how we deal U32String in splitString
+// maybe we can optimize this specifically
+Common::U32String stripFormat(const Common::U32String &str) {
+	Common::U32String res;
+	// calc the size of str
+	const Common::U32String::value_type *l = str.c_str();
+	while (*l) {
+		if (*l == '\r') {
+			l++;
+		} else if (*l == '\n') {
+			l++;
+		} else if (*l == '\001') {
+			l++;
+			// if there are two \001, then we regard it as one character
+			if (*l == '\001') {
+				res += *l++;
+			}
+		} else if (*l == '\015') {	// binary format
+			// 12 for total
+			// we are skipping the formatting stuffs
+			l++;
+			l += 2;
+			l++;
+			l += 2;
+			l += 2;
+			l += 2;
+			l += 2;
+		} else if (*l == '\016') {	// human-readable format
+			// 23 for total, should we replace it with l += 23;
+			l++;
+			l += 4;
+			l += 2;
+			l += 4;
+			l += 4;
+			l += 4;
+			l += 4;
+		} else {
+			res += *l++;
+		}
+	}
+	return res;
+}
+
+void MacText::setTextInClipboard(const Common::U32String &str) {
+	_wm->_clipboard = str;
+	g_system->setTextInClipboard(stripFormat(str));
+}
+
 bool MacText::processEvent(Common::Event &event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		if (!_editable)
@@ -1317,10 +1365,10 @@ bool MacText::processEvent(Common::Event &event) {
 		if (event.kbd.flags & (Common::KBD_ALT | Common::KBD_CTRL | Common::KBD_META)) {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_x:
-				g_system->setTextInClipboard(cutSelection());
+				setTextInClipboard(cutSelection());
 				return true;
 			case Common::KEYCODE_c:
-				g_system->setTextInClipboard(getSelection(true, false));
+				setTextInClipboard(getSelection(true, false));
 				return true;
 			case Common::KEYCODE_v:
 				if (g_system->hasTextInClipboard()) {
@@ -1725,73 +1773,34 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 	return res;
 }
 
-// this is refer to how we deal U32String in splitString
-// maybe we can optimize this specifically
-Common::U32String stripFormat(const Common::U32String &str) {
-	Common::U32String res;
-	// calc the size of str
-	const Common::U32String::value_type *l = str.c_str();
-	while (*l) {
-		if (*l == '\r') {
-			l++;
-		} else if (*l == '\n') {
-			l++;
-		} else if (*l == '\001') {
-			l++;
-			// if there are two \001, then we regard it as one character
-			if (*l == '\001') {
-				res += *l++;
-			}
-		} else if (*l == '\015') {	// binary format
-			// 12 for total
-			// we are skipping the formatting stuffs
-			l++;
-			l += 2;
-			l++;
-			l += 2;
-			l += 2;
-			l += 2;
-			l += 2;
-		} else if (*l == '\016') {	// human-readable format
-			// 23 for total, should we replace it with l += 23;
-			l++;
-			l += 4;
-			l += 2;
-			l += 4;
-			l += 4;
-			l += 4;
-			l += 4;
-		} else {
-			res += *l++;
-		}
-	}
-	return res;
-}
-
-// mostly, we refering reshuffleParagraph to implement this function
-void MacText::insertTextFromClipboard() {
-	// this part is for get the text from clipboard, we may wrap it into a function like getTextFromClipboard where we can call from wm
+Common::U32String MacText::getTextFromClipboard(int &size) {
 	Common::U32String global_str = g_system->getTextFromClipboard();
 	Common::U32String wm_str = _wm->_clipboard;
 	// str is what we need
 	Common::U32String str;
-	int ppos = 0;
 	if (wm_str.empty()) {
 		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
 		str = global_str;
-		ppos = str.size();
+		size = str.size();
 	} else {
 		Common::U32String tmp = stripFormat(_wm->_clipboard);
 		if (tmp == global_str) {
 			// if the text is equal, then we use wm one which contains the format
 			str = wm_str;
-			ppos = tmp.size();
+			size = tmp.size();
 		} else {
 			// otherwise, we prefer the global one
 			str = global_str;
-			ppos = str.size();
+			size = str.size();
 		}
 	}
+	return str;
+}
+
+// mostly, we refering reshuffleParagraph to implement this function
+void MacText::insertTextFromClipboard() {
+	int ppos = 0;
+	Common::U32String str = getTextFromClipboard(ppos);
 
 	if (_textLines.empty()) {
 		splitString(str, 0);
