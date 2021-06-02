@@ -155,8 +155,8 @@ public:
 
 
 	~frameSmoother() {
-		if (frameHistory) delete frameHistory;
-		frameHistory = NULL;
+		if (frameHistory) delete[] frameHistory;
+		frameHistory = nullptr;
 	}
 
 	virtual void updateFrameCount(void) {
