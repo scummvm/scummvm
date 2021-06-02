@@ -29,13 +29,9 @@
 #include "common/debug.h"
 
 #include "saga2/std.h"
-
-#include "saga2/fta.h"
-
 #include "saga2/setup.h"
 #include "saga2/transit.h"
 #include "saga2/player.h"
-#include "saga2/calender.h"
 #include "saga2/tile.h"
 #include "saga2/messager.h"
 #include "saga2/intrface.h"
@@ -45,14 +41,10 @@
 #include "saga2/display.h"
 #include "saga2/tower.h"
 #include "saga2/tromode.h"
-#include "saga2/loadmsg.h"
-#include "saga2/ioerrors.h"
 #include "saga2/loadsave.h"
 #include "saga2/gamerate.h"
 #include "saga2/msgbox.h"
-#include "saga2/script.h"
 #include "saga2/config.h"
-#include "saga2/hresmgr.h"
 #include "saga2/savefile.h"
 
 namespace Saga2 {

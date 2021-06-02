@@ -27,13 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/objects.h"
-#include "saga2/button.h"
-#include "saga2/contain.h"
-#include "saga2/modal.h"
 #include "saga2/intrface.h"
-#include "saga2/player.h"
-#include "saga2/hresmgr.h"
 #include "saga2/grequest.h"
 #include "saga2/gtextbox.h"
 #include "saga2/loadsave.h"
@@ -45,7 +39,6 @@
 #include "saga2/audqueue.h"
 #include "saga2/audiosys.h"
 
-#include "saga2/annoy.h"
 #include "saga2/uidialog.h"
 #include "saga2/document.h"
 #include "saga2/tilemode.h"
@@ -53,12 +46,8 @@
 #include "saga2/uitext.h"
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
-#include "saga2/display.h"
-#include "saga2/program.h"
-#include "saga2/version.h"
 
 #include "saga2/config.h"
-#include "saga2/hresmgr.h"
 #include "saga2/fontlib.h"
 #include "saga2/savefile.h"
 

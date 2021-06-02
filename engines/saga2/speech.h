@@ -154,7 +154,7 @@ public:
 	bool longEnough(void);
 
 	//  Abort the current speech.
-	void abort(void);
+	void abortSpeech(void);
 };
 
 class SpeechTaskList {

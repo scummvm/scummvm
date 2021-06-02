@@ -24,22 +24,15 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
-#include "saga2/sprite.h"
 #include "saga2/objects.h"
-#include "saga2/actor.h"
 #include "saga2/grabinfo.h"
 #include "saga2/contain.h"
 #include "saga2/motion.h"
-#include "saga2/setup.h"
 #include "saga2/player.h"
 #include "saga2/script.h"
-#include "saga2/intrface.h"
 #include "saga2/document.h"
-#include "saga2/stimtype.h"
 #include "saga2/magic.h"
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
@@ -634,7 +627,7 @@ bool ProtoObj::acceptHealing(
 	damage = absDamage;
 	if (dice)
 		for (int d = 0; d < abs(dice); d++)
-			damage += ((rand() % sides) + pdm + 1) * (dice > 0 ? 1 : -1);
+			damage += (g_vm->_rnd->getRandomNumber(sides - 1) + pdm + 1) * (dice > 0 ? 1 : -1);
 #if 0
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptDamage,
@@ -811,7 +804,7 @@ uint16  ProtoObj::containmentSet(void) {
 
 //  return the sprite data
 ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int16 count) {
-	ObjectSpriteInfo    sprInfo = { NULL, static_cast<bool>(flags & objPropFlipped != 0) };
+	ObjectSpriteInfo    sprInfo = { NULL, static_cast<bool>((flags & objPropFlipped) != 0) };
 	int16               openOffset = ((flags & objPropVisOpen) && obj->isOpen()) ? 1 : 0;
 
 	switch (spr) {
@@ -1817,7 +1810,7 @@ void BludgeoningWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDBludgeon, points);
 
-		if (rand() & 1)
+		if (g_vm->_rnd->getRandomNumber(65534) & 1)
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -1854,7 +1847,7 @@ void SlashingWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDSwordcraft, points);
 
-		if (rand() & 1)
+		if (g_vm->_rnd->getRandomNumber(65534) & 1)
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2181,7 +2174,7 @@ void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDArchery, points);
 
-		if (rand() & 1)
+		if (g_vm->_rnd->getRandomNumber(65534) & 1)
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2406,7 +2399,7 @@ void ShieldProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 
 		player->skillAdvance(skillIDShieldcraft, points);
 
-		if (rand() & 1)
+		if (g_vm->_rnd->getRandomNumber(65534) & 1)
 			player->skillAdvance(skillIDBrawn, points);
 	}
 }
@@ -2945,7 +2938,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 
 			//  Now, roll to see if we got an encounter!
 
-			if (rand() & 0x0000ffff < prob) {
+			if ((g_vm->_rnd->getRandomNumber(65534) & 0x0000ffff) < prob) {
 				scriptCallFrame scf;
 
 #if DEBUG
