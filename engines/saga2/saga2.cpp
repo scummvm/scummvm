@@ -90,13 +90,9 @@ Common::Error Saga2Engine::run() {
 
 	loadExeResources();
 
-	startVideo("INTRO", 0, 0);
-	while (!shouldQuit() && checkVideo()) {
-		Common::Event event;
-		g_system->getEventManager()->pollEvent(event);
-		g_system->delayMillis(10);
-	}
+	main_saga2();
 
+#if 0
 	if (openResources()) {
 		testOpenImage();
 		initScripts();
@@ -112,8 +108,7 @@ Common::Error Saga2Engine::run() {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
-
-	main_saga2();
+#endif
 
 	return Common::kNoError;
 }
