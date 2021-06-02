@@ -5456,7 +5456,12 @@ void EdenGame::choseSubtitleOption() {
 		return;
 	if (lang > 5)
 		return;
+	
 	_globals->_prefLanguage = lang;
+	// save the new preferred language in the config
+	ConfMan.setInt("PrefLang", lang);
+	ConfMan.flushToDisk();
+	
 	_graphics->langbuftopanel();
 	displayLanguage();
 }
@@ -7828,7 +7833,16 @@ void EdenGame::enginePC() {
 }
 
 void EdenGame::LostEdenMac_InitPrefs() {
-	_globals->_prefLanguage = 1;
+	// Keep track of the preferred language previously selected in the option menu
+	int pref = ConfMan.getInt("PrefLang");
+	if (pref < 1 || pref > 5) {
+		pref = 1;
+		ConfMan.setInt("PrefLang", 1);
+		ConfMan.flushToDisk();
+	}
+
+	_globals->_prefLanguage = pref;
+	
 	_globals->_prefMusicVol[0] = 192;
 	_globals->_prefMusicVol[1] = 192;
 	_globals->_prefVoiceVol[0] = 255;
