@@ -1325,24 +1325,11 @@ Common::U32String stripFormat(const Common::U32String &str) {
 				res += *l++;
 			}
 		} else if (*l == '\015') {	// binary format
-			// 12 for total
 			// we are skipping the formatting stuffs
-			l++;
-			l += 2;
-			l++;
-			l += 2;
-			l += 2;
-			l += 2;
-			l += 2;
+			// this number 12, and the number 23, is the size of our format
+			l += 12;
 		} else if (*l == '\016') {	// human-readable format
-			// 23 for total, should we replace it with l += 23;
-			l++;
-			l += 4;
-			l += 2;
-			l += 4;
-			l += 4;
-			l += 4;
-			l += 4;
+			l += 23;
 		} else {
 			res += *l++;
 		}
