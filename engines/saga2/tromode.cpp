@@ -24,19 +24,12 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "common/config-manager.h"
 
 #include "saga2/std.h"
-#include "saga2/cmisc.h"
-#include "saga2/input.h"
 #include "saga2/fta.h"
 #include "saga2/player.h"
-#include "saga2/tromode.h"
 #include "saga2/display.h"
-
-#include "saga2/mainmap.h"
 #include "saga2/config.h"
 #include "saga2/panel.h"
 

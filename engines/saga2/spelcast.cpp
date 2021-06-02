@@ -24,20 +24,13 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
-#include "saga2/magic.h"
 #include "saga2/idtypes.h"
 #include "saga2/speldefs.h"
 #include "saga2/spellbuk.h"
 #include "saga2/spelshow.h"
-#include "saga2/motion.h"
 #include "saga2/spelvals.h"
-#include "saga2/annoy.h"
-#include "saga2/tileline.h"
 #include "saga2/tilevect.h"
-#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 
@@ -754,7 +747,7 @@ int32 scatterer(int32 i, int32 m, int32 s) {
 		return (i * s) % m;
 	case 5:
 	default:
-		return rand() % m;
+		return g_vm->_rnd->getRandomNumber(m - 1);
 	}
 }
 
@@ -982,13 +975,13 @@ int16 tileNopeHeight(
 				if (supportHeight <= pt.z + obj->hgtCall()
 				        &&  supportHeight >= highestSupportHeight
 				        && (ti->combinedTerrainMask() &
-				            terrainSurface | terrainRaised)) {
+				            (terrainSurface | terrainRaised))) {
 					highestTile = sti;
 					highestSupportHeight = supportHeight;
 				} else if (highestTile.surfaceTile == NULL &&
 				           supportHeight <= lowestSupportHeight &&
 				           (ti->combinedTerrainMask() &
-				            terrainSurface | terrainRaised)) {
+				            (terrainSurface | terrainRaised))) {
 					lowestTile = sti;
 					lowestSupportHeight = supportHeight;
 				}

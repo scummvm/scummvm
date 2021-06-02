@@ -24,16 +24,10 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
-#include "saga2/tcoords.h"
 #include "saga2/idtypes.h"
 #include "saga2/tile.h"
-#include "saga2/terrain.h"
-#include "saga2/objects.h"
 #include "saga2/actor.h"
-#include "saga2/cmisc.h"
 
 namespace Saga2 {
 
@@ -55,7 +49,7 @@ void drown(GameObject *obj) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
 		if (!a->hasEffect(actorWaterBreathe)) {
-			if (rand() % (drowningDamageOddsYes + drowningDamageOddsNo) > drowningDamageOddsNo - 1) {
+			if (g_vm->_rnd->getRandomNumber(drowningDamageOddsYes + drowningDamageOddsNo - 1) > drowningDamageOddsNo - 1) {
 				a->acceptDamage(a->thisID(), drowningDamagePerFrame);
 			}
 		}
@@ -69,7 +63,7 @@ void lavaDamage(GameObject *obj) {
 		if (a->resists(resistHeat))
 			return;
 	}
-	if (rand() % (heatDamageOddsYes + heatDamageOddsNo) > heatDamageOddsNo - 1) {
+	if (g_vm->_rnd->getRandomNumber(heatDamageOddsYes + heatDamageOddsNo - 1) > heatDamageOddsNo - 1) {
 		obj->acceptDamage(obj->thisID(), heatDamagePerFrame, damageHeat, heatDamageDicePerFrame, 6);
 	}
 }
@@ -80,19 +74,19 @@ void coldDamage(GameObject *obj) {
 		if (a->resists(resistCold))
 			return;
 	}
-	if (rand() % (coldDamageOddsYes + coldDamageOddsNo) > coldDamageOddsNo - 1) {
+	if (g_vm->_rnd->getRandomNumber(coldDamageOddsYes + coldDamageOddsNo - 1) > coldDamageOddsNo - 1) {
 		obj->acceptDamage(obj->thisID(), coldDamagePerFrame, damageCold, coldDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageSlash(GameObject *obj) {
-	if (rand() % (terrainDamageOddsYes + terrainDamageOddsNo) > terrainDamageOddsNo - 1) {
+	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
 		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, damageSlash, terrainDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageBash(GameObject *obj) {
-	if (rand() % (terrainDamageOddsYes + terrainDamageOddsNo) > terrainDamageOddsNo - 1) {
+	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
 		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, damageImpact, terrainDamageDicePerFrame, 6);
 	}
 }
@@ -687,14 +681,14 @@ int16 tileSlopeHeight(
 					if (tileBase < pt.z + objectHeight
 					        &&  supportHeight >= highestSupportHeight
 					        && (ti->combinedTerrainMask() &
-					            terrainSurface | terrainRaised)) {
+					            (terrainSurface | terrainRaised))) {
 						highestTile = sti;
 						highestSupportHeight = supportHeight;
 						highestSupportPlatform = i;
 					} else if (highestTile.surfaceTile == NULL &&
 					           supportHeight <= lowestSupportHeight &&
 					           (ti->combinedTerrainMask() &
-					            terrainSurface | terrainRaised)) {
+					            (terrainSurface | terrainRaised))) {
 						lowestTile = sti;
 						lowestSupportHeight = supportHeight;
 						lowestSupportPlatform = i;

@@ -29,8 +29,6 @@
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/fontlib.h"
-#include "saga2/objects.h"
-#include "saga2/actor.h"
 #include "saga2/speech.h"
 #include "saga2/motion.h"
 #include "saga2/panel.h"
@@ -40,7 +38,6 @@
 #include "saga2/savefile.h"
 #include "saga2/cmisc.h"
 #include "saga2/config.h"
-#include "saga2/hresmgr.h"
 
 namespace Saga2 {
 

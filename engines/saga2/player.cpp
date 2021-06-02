@@ -27,12 +27,9 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/cmisc.h"
-#include "saga2/player.h"
 #include "saga2/intrface.h"
 #include "saga2/contain.h"
 #include "saga2/task.h"
-#include "saga2/tromode.h"
 #include "saga2/motion.h"
 #include "saga2/transit.h"
 #include "saga2/localize.h"
