@@ -32,21 +32,15 @@
 #include "saga2/dispnode.h"
 #include "saga2/tile.h"
 #include "saga2/motion.h"
-#include "saga2/grabinfo.h"
 #include "saga2/task.h"
-#include "saga2/actor.h"
-#include "saga2/player.h"
 #include "saga2/assign.h"
 #include "saga2/setup.h"
 #include "saga2/stimtype.h"
 #include "saga2/band.h"
 #include "saga2/sensor.h"
-#include "saga2/tromode.h"
-#include "saga2/messager.h"
 #include "saga2/weapons.h"
 #include "saga2/localize.h"
 #include "saga2/intrface.h"
-#include "saga2/hresmgr.h"
 #include "saga2/contain.h"
 #include "saga2/savefile.h"
 #include "saga2/combat.h"
@@ -2493,8 +2487,7 @@ void Actor::updateState(void) {
 
 			if (curTask == NULL) {
 				if ((curTask = new TaskStack(this)) != NULL) {
-					Task    *task = NEW_TASK
-					                GoAwayFromActorTask(
+					Task    *task = new GoAwayFromActorTask(
 					                    curTask,
 					                    ActorPropertyTarget(
 					                        disposition == dispositionEnemy
@@ -2520,7 +2513,7 @@ void Actor::updateState(void) {
 					                ?   leader->disposition
 					                :   disposition;
 
-					Task    *task = NEW_TASK    HuntToKillTask(
+					Task    *task = new    HuntToKillTask(
 					                    curTask,
 					                    ActorPropertyTarget(
 					                        disp == dispositionEnemy
@@ -2554,7 +2547,7 @@ void Actor::updateState(void) {
 
 			if (curTask == NULL) {
 				if ((curTask = new TaskStack(this)) != NULL) {
-					Task    *task = NEW_TASK BandAndAvoidEnemiesTask(curTask);
+					Task    *task = new BandAndAvoidEnemiesTask(curTask);
 
 					if (task != NULL)
 						curTask->setTask(task);
@@ -2963,7 +2956,7 @@ TaskStack *Actor::createFollowerTask(Actor *bandMember) {
 	TaskStack   *ts = NULL;
 
 	if ((ts = new TaskStack(bandMember)) != NULL) {
-		Task    *task = NEW_TASK BandTask(ts);
+		Task    *task = new BandTask(ts);
 
 		if (task != NULL)
 			ts->setTask(task);
