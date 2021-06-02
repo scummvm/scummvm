@@ -27,17 +27,15 @@
 #ifndef SAGA2_MAPFEATR_H
 #define SAGA2_MAPFEATR_H
 
-#include "saga2/idtypes.h"
-#include "saga2/contain.h"
-#include "saga2/cmisc.h"
-#include "saga2/button.h"
-#include "saga2/intrface.h"
-#include "saga2/floating.h"
+#include "saga2/rect.h"
+#include "saga2/tcoords.h"
 
 namespace Saga2 {
 
-#define MAX_MAP_FEATURE_NAME_LENGTH 32
+class gPort;
+class gPixelMap;
 
+#define MAX_MAP_FEATURE_NAME_LENGTH 32
 
 /* ===================================================================== *
    Types

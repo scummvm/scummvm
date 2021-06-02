@@ -27,8 +27,6 @@
 #ifndef SAGA2_TILELINE_H
 #define SAGA2_TILELINE_H
 
-#include "saga2/tcoords.h"
-
 namespace Saga2 {
 
 #if DEBUG

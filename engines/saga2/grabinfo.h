@@ -27,11 +27,6 @@
 #ifndef SAGA2_GRABINFO_H
 #define SAGA2_GRABINFO_H
 
-#include "saga2/objects.h"
-#include "saga2/contain.h"
-#include "saga2/uimetrcs.h"
-
-
 namespace Saga2 {
 /* ===================================================================== *
    class  GrabInfo

@@ -30,6 +30,7 @@
 #include "saga2/tilemode.h"
 #include "saga2/calender.h"
 
+#include "saga2/objects.h"
 #include "saga2/tile.h"
 #include "saga2/setup.h"
 #include "saga2/grabinfo.h"

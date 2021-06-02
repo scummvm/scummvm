@@ -32,13 +32,13 @@
 
 namespace Saga2 {
 
-class StorageSpellTarget;
+struct StorageSpellTarget;
 class SpellInstance;
-class StorageEffectron;
+struct StorageEffectron;
 class SpellDisplayPrototype;
 class EffectDisplayPrototype;
-class ResourceSpellItem;
-class StorageSpellInstance;
+struct ResourceSpellItem;
+struct StorageSpellInstance;
 
 /* ===================================================================== *
    Constants

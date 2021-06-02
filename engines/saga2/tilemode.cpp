@@ -30,6 +30,7 @@
 #include "saga2/tilemode.h"
 #include "saga2/tile.h"
 #include "saga2/setup.h"
+#include "saga2/objects.h"
 #include "saga2/grabinfo.h"
 #include "saga2/mouseimg.h"
 #include "saga2/motion.h"
@@ -51,6 +52,7 @@
 #include "saga2/automap.h"
 #include "saga2/images.h"
 #include "saga2/config.h"
+#include "saga2/contain.h"
 
 namespace Saga2 {
 
