@@ -416,10 +416,10 @@ void WindowsTextToSpeechManager::createVoice(void *cpVoiceToken) {
 }
 
 Common::String WindowsTextToSpeechManager::lcidToLocale(LCID locale) {
-	int nchars = GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, NULL, 0);
-	char *languageCode = new char[nchars];
-	GetLocaleInfoA(locale, LOCALE_SISO639LANGNAME, languageCode, nchars);
-	Common::String result = languageCode;
+	int nchars = GetLocaleInfo(locale, LOCALE_SISO639LANGNAME, NULL, 0);
+	TCHAR *languageCode = new TCHAR[nchars];
+	GetLocaleInfo(locale, LOCALE_SISO639LANGNAME, languageCode, nchars);
+	Common::String result = Win32::tcharToString(languageCode);
 	delete[] languageCode;
 	return result;
 }
