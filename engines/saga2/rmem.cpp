@@ -29,7 +29,6 @@
 #define NO_LOCAL_MEMORY_OVERRIDES 1
 #include "saga2/rmem.h"
 #include "saga2/rmembase.h"
-#include "saga2/errors.h"
 
 namespace Saga2 {
 

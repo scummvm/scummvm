@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/objproto.h"
 #include "saga2/spellbuk.h"
@@ -43,11 +41,11 @@ namespace Saga2 {
 
 // random sprite from primary range
 #define PRIMARY   (effectron->parent->dProto->primarySpriteNo?\
-                   (effectron->parent->dProto->primarySpriteID + rand()%effectron->parent->dProto->primarySpriteNo):\
+                   (effectron->parent->dProto->primarySpriteID + g_vm->_rnd->getRandomNumber(effectron->parent->dProto->primarySpriteNo - 1)):\
                    effectron->parent->dProto->primarySpriteID)
 // random sprite from secondary range
 #define SECONDARY (effectron->parent->dProto->secondarySpriteNo?\
-                   (effectron->parent->dProto->secondarySpriteID + rand()%effectron->parent->dProto->secondarySpriteNo):\
+                   (effectron->parent->dProto->secondarySpriteID + g_vm->_rnd->getRandomNumber(effectron->parent->dProto->secondarySpriteNo - 1)):\
                    effectron->parent->dProto->secondarySpriteID)
 // ordered sprite from primary range
 #define SEQUENTIAL (effectron->parent->dProto->primarySpriteNo?\
@@ -170,11 +168,11 @@ SPELLSPRITATIONFUNCTION(stormSprites) {
 //-----------------------------------------------------------------------
 
 SPELLSPRITATIONFUNCTION(RandomFacing) {
-	return (rand() % 256);
+	return g_vm->_rnd->getRandomNumber(255);
 }
 
 SPELLSPRITATIONFUNCTION(FaceOut) {
-	return (rand() % 256);
+	return g_vm->_rnd->getRandomNumber(255);
 }
 
 } // end of namespace Saga2

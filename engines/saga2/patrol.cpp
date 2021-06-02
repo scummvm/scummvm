@@ -24,8 +24,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/patrol.h"
@@ -123,7 +121,7 @@ PatrolRouteIterator::PatrolRouteIterator(uint8 map, int16 rte, uint8 type) :
 	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	if (flags & patrolRouteRandom)
-		vertexNo = rand() % route.vertices();
+		vertexNo = g_vm->_rnd->getRandomNumber(route.vertices() - 1);
 	else {
 		if (flags & patrolRouteReverse)
 			vertexNo = route.vertices() - 1;
@@ -250,7 +248,7 @@ const PatrolRouteIterator &PatrolRouteIterator::operator ++ (void) {
 					altIncrement();
 			}
 		} else {
-			vertexNo = rand() % route.vertices();
+			vertexNo = g_vm->_rnd->getRandomNumber(route.vertices() - 1);
 		}
 	}
 

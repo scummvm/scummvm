@@ -24,14 +24,10 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/dispnode.h"
-#include "saga2/tcoords.h"
 #include "saga2/tile.h"
 #include "saga2/motion.h"
-#include "saga2/actor.h"
 #include "saga2/player.h"
 #include "saga2/pool.h"
 #include "saga2/cmisc.h"
@@ -1150,7 +1146,7 @@ public:
 
 	virtual void initialize(void);
 	virtual void finish(void);           // completion method
-	virtual void abort(void);                // abnormal termination method
+	virtual void abortReq(void);                // abnormal termination method
 
 	PathResult findPath(void);
 
@@ -1702,7 +1698,7 @@ void PathRequest::finish(void) {
 	}
 }
 
-void PathRequest::abort(void) {
+void PathRequest::abortReq(void) {
 	if (mTask->pathFindTask == this)
 		mTask->pathFindTask = nullptr;
 }
@@ -2328,7 +2324,7 @@ void runPathFinder(void) {
 			if (result == pathDone)
 				currentRequest->finish();
 			else
-				currentRequest->abort();
+				currentRequest->abortReq();
 
 			delete currentRequest;
 			currentRequest = nullptr;
@@ -2714,7 +2710,7 @@ TilePoint selectNearbySite(
 			spush(TilePoint(qi.u + tDir->u,
 			                qi.v + tDir->v,
 			                testPt.z),
-			      qi.cost + (rand() & 3),
+			      qi.cost + (g_vm->_rnd->getRandomNumber(65534) & 3),
 			      dir);
 		}
 	}

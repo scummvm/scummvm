@@ -37,6 +37,7 @@
 #include "saga2/audiosys.h"
 
 #include "saga2/savefile.h"
+
 namespace Saga2 {
 
 /* ====================================================================== *

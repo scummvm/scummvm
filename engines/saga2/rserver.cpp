@@ -28,7 +28,6 @@
 
 #include "saga2/std.h"
 #include "saga2/dlist.h"
-#include "saga2/fta.h"
 #include "saga2/ioerrors.h"
 #include "saga2/hresmgr.h"
 
