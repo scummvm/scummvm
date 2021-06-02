@@ -38,6 +38,7 @@
 
 #include "saga2/mainmap.h"
 #include "saga2/config.h"
+#include "saga2/panel.h"
 
 namespace Saga2 {
 

@@ -27,10 +27,14 @@
 #ifndef SAGA2_SPRITE_H
 #define SAGA2_SPRITE_H
 
-#include "saga2/fta.h"
+#include "saga2/rect.h"
 #include "saga2/dlist.h"
+#include "saga2/rmem.h"
 
 namespace Saga2 {
+
+class gPort;
+class gPixelMap;
 
 #ifdef _WIN32   //  Set structure alignment packing value to 1 byte
 #pragma pack( push, 1 )

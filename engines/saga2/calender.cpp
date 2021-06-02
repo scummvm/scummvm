@@ -32,6 +32,7 @@
 #include "saga2/intrface.h"
 #include "saga2/config.h"
 #include "saga2/localize.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

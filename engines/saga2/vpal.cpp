@@ -36,6 +36,7 @@
 #include "saga2/player.h"
 #include "saga2/display.h"
 #include "saga2/hresmgr.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

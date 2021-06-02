@@ -33,6 +33,7 @@
 #include "saga2/actor.h"
 #include "saga2/spellio.h"
 #include "saga2/hresmgr.h"
+#include "saga2/combat.h"
 
 namespace Saga2 {
 

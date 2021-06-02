@@ -27,10 +27,7 @@
 #ifndef SAGA2_PLAYER_H
 #define SAGA2_PLAYER_H
 
-#include "saga2/idtypes.h"
 #include "saga2/actor.h"
-#include "saga2/panel.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 

@@ -36,6 +36,7 @@
 #include "saga2/motion.h"
 #include "saga2/transit.h"
 #include "saga2/localize.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

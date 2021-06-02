@@ -28,12 +28,11 @@
 #define SAGA2_MOTION_H
 
 #include "saga2/actor.h"
-#include "saga2/tile.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 
 class PathRequest;
+struct StandingTileInfo;
 
 extern TilePoint dirTable[];
 

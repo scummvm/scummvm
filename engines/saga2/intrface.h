@@ -28,8 +28,6 @@
 #define SAGA2_INTRFACE_H
 
 #include "saga2/button.h"
-#include "saga2/setup.h"
-#include "saga2/uimetrcs.h"
 #include "saga2/modal.h"
 #include "saga2/player.h"
 

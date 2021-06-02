@@ -29,7 +29,6 @@
 
 #include "saga2/objects.h"
 #include "saga2/calender.h"
-#include "saga2/savefile.h"
 
 namespace Saga2 {
 

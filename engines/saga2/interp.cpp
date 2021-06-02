@@ -38,6 +38,7 @@
 #include "saga2/tile.h"
 #include "saga2/mission.h"
 #include "saga2/hresmgr.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

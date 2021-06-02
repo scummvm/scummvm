@@ -46,6 +46,7 @@
 #include "saga2/localize.h"
 #include "saga2/imagcach.h"
 #include "saga2/fontlib.h"
+#include "saga2/uimetrcs.h"
 
 namespace Saga2 {
 

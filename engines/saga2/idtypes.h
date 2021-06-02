@@ -225,6 +225,12 @@ typedef uint16 weaponID;
 
 typedef uint32 hResID;
 
+typedef uint8       ColorTable[ 256 ];
+
+// number of containers
+const int   kNumViews    = 3;
+
+
 } // end of namespace Saga2
 
 #endif

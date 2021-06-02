@@ -44,9 +44,6 @@ struct WindowDecoration;
 
 //If No Ready Containers Then Following Const's not needed
 
-// number of containers
-const int   kNumViews    = 3;
-
 // enum for the three levels in the trio view
 enum trioViews {
 	top,

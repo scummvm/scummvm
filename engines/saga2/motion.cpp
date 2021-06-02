@@ -41,6 +41,7 @@
 #include "saga2/player.h"
 #include "saga2/contain.h"
 #include "saga2/intrface.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 
