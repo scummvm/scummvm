@@ -321,7 +321,7 @@ public:
 	 * @param size will change to the length of real text in clipboard
 	 * @return the text in clipboard, which may contained the format
 	 */
-	Common::U32String getTextFromClipboard(int *size = nullptr);
+	Common::U32String getTextFromClipboard(const Common::U32String &format = Common::U32String(), int *size = nullptr);
 
 public:
 	MacFontManager *_fontMan;
