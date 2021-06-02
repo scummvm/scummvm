@@ -395,6 +395,68 @@ void MacWindowManager::disableScreenCopy() {
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
 
+// this is refer to how we deal U32String in splitString in mactext
+// maybe we can optimize this specifically
+Common::U32String stripFormat(const Common::U32String &str) {
+	Common::U32String res;
+	// calc the size of str
+	const Common::U32String::value_type *l = str.c_str();
+	while (*l) {
+		if (*l == '\r') {
+			l++;
+		} else if (*l == '\n') {
+			l++;
+		} else if (*l == '\001') {
+			l++;
+			// if there are two \001, then we regard it as one character
+			if (*l == '\001') {
+				res += *l++;
+			}
+		} else if (*l == '\015') {	// binary format
+			// we are skipping the formatting stuffs
+			// this number 12, and the number 23, is the size of our format
+			l += 12;
+		} else if (*l == '\016') {	// human-readable format
+			l += 23;
+		} else {
+			res += *l++;
+		}
+	}
+	return res;
+}
+
+void MacWindowManager::setTextInClipboard(const Common::U32String &str) {
+	_clipboard = str;
+	g_system->setTextInClipboard(stripFormat(str));
+}
+
+Common::U32String MacWindowManager::getTextFromClipboard(int *size) {
+	Common::U32String global_str = g_system->getTextFromClipboard();
+	Common::U32String wm_str = _clipboard;
+	// str is what we need
+	Common::U32String str;
+	if (wm_str.empty()) {
+		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
+		str = global_str;
+		if (size)
+			*size = str.size();
+	} else {
+		Common::U32String tmp = stripFormat(_clipboard);
+		if (tmp == global_str) {
+			// if the text is equal, then we use wm one which contains the format
+			str = wm_str;
+			if (size)
+				*size = tmp.size();
+		} else {
+			// otherwise, we prefer the global one
+			str = global_str;
+			if (size)
+				*size = str.size();
+		}
+	}
+	return str;
+}
+
 bool MacWindowManager::isMenuActive() {
 	if (!_menu)
 		return false;

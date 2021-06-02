@@ -315,6 +315,14 @@ public:
 	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
 
+	void setTextInClipboard(const Common::U32String &str);
+	/**
+	 * get text from WM clipboard or the global clipboard
+	 * @param size will change to the length of real text in clipboard
+	 * @return the text in clipboard, which may contained the format
+	 */
+	Common::U32String getTextFromClipboard(int *size = nullptr);
+
 public:
 	MacFontManager *_fontMan;
 	uint32 _mode;
@@ -329,8 +337,6 @@ public:
 	uint32 _colorBlack, _colorGray80, _colorGray88, _colorGrayEE, _colorWhite, _colorGreen, _colorGreen2;
 
 	MacWidget *_hoveredWidget;
-
-	Common::U32String _clipboard;
 
 private:
 	void loadDesktop();
@@ -388,6 +394,8 @@ private:
 	Common::HashMap<uint32, uint> _colorHash;
 
 	Common::Archive *_dataBundle;
+
+	Common::U32String _clipboard;
 };
 
 } // End of namespace Graphics
