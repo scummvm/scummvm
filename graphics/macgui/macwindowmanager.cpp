@@ -432,10 +432,9 @@ void MacWindowManager::setTextInClipboard(const Common::U32String &str) {
 
 Common::U32String MacWindowManager::getTextFromClipboard(int *size) {
 	Common::U32String global_str = g_system->getTextFromClipboard();
-	Common::U32String wm_str = _clipboard;
 	// str is what we need
 	Common::U32String str;
-	if (wm_str.empty()) {
+	if (_clipboard.empty()) {
 		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
 		str = global_str;
 		if (size)
@@ -444,7 +443,7 @@ Common::U32String MacWindowManager::getTextFromClipboard(int *size) {
 		Common::U32String tmp = stripFormat(_clipboard);
 		if (tmp == global_str) {
 			// if the text is equal, then we use wm one which contains the format
-			str = wm_str;
+			str = _clipboard;
 			if (size)
 				*size = tmp.size();
 		} else {
