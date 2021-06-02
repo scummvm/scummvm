@@ -34,7 +34,6 @@
 #include "saga2/actor.h"
 #include "saga2/assign.h"
 #include "saga2/calender.h"
-#include "saga2/patrol.h"
 #include "saga2/task.h"
 #include "saga2/tile.h"
 
@@ -335,8 +334,8 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 
 	//  Construct a FollowPatrolRouteTask
 	return  endingWayPoint != -1
-	        ?   NEW_TASK FollowPatrolRouteTask(ts, iter, endingWayPoint)
-	        :   NEW_TASK FollowPatrolRouteTask(ts, iter);
+	        ?   new FollowPatrolRouteTask(ts, iter, endingWayPoint)
+	        :   new FollowPatrolRouteTask(ts, iter);
 }
 
 /* ===================================================================== *
@@ -433,7 +432,7 @@ bool HuntToBeNearLocationAssignment::taskNeeded(void) {
 //	Construct a Task for this assignment
 
 Task *HuntToBeNearLocationAssignment::getTask(TaskStack *ts) {
-	return NEW_TASK HuntToBeNearLocationTask(ts, *getTarget(), range);
+	return new HuntToBeNearLocationTask(ts, *getTarget(), range);
 }
 
 /* ===================================================================== *
@@ -554,7 +553,7 @@ bool HuntToBeNearActorAssignment::taskNeeded(void) {
 //	Construct a Task for this assignment
 
 Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
-	return NEW_TASK HuntToBeNearActorTask(
+	return new HuntToBeNearActorTask(
 	           ts,
 	           *getTarget(),
 	           range,
@@ -688,7 +687,7 @@ bool HuntToKillAssignment::taskNeeded(void) {
 //	Construct a Task for this assignment
 
 Task *HuntToKillAssignment::getTask(TaskStack *ts) {
-	return NEW_TASK HuntToKillTask(
+	return new HuntToKillTask(
 	           ts,
 	           *getTarget(),
 	           (flags & track) != FALSE);
@@ -769,7 +768,7 @@ int16 TetheredWanderAssignment::type(void) const {
 //	Construct a Task for this assignment
 
 Task *TetheredWanderAssignment::getTask(TaskStack *ts) {
-	return NEW_TASK TetheredWanderTask(ts, minU, minV, maxU, maxV);
+	return new TetheredWanderTask(ts, minU, minV, maxU, maxV);
 }
 
 /* ===================================================================== *
@@ -840,7 +839,7 @@ int16 AttendAssignment::type(void) const {
 //	Construct a Task for this assignment
 
 Task *AttendAssignment::getTask(TaskStack *ts) {
-	return NEW_TASK AttendTask(ts, obj);
+	return new AttendTask(ts, obj);
 }
 
 /* ===================================================================== *

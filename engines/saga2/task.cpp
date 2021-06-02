@@ -1011,84 +1011,84 @@ void *constructTask(TaskID id, void *buf) {
 	//  Reconstruct the Task based upon the type
 	switch (type) {
 	case wanderTask:
-		NEW_TASK_ID(id) WanderTask(&buf);
+		new(id) WanderTask(&buf);
 		break;
 
 	case tetheredWanderTask:
-		NEW_TASK_ID(id) TetheredWanderTask(&buf);
+		new(id) TetheredWanderTask(&buf);
 		break;
 
 	case gotoLocationTask:
-		NEW_TASK_ID(id) GotoLocationTask(&buf);
+		new(id) GotoLocationTask(&buf);
 		break;
 
 	case gotoRegionTask:
-		NEW_TASK_ID(id) GotoRegionTask(&buf);
+		new(id) GotoRegionTask(&buf);
 		break;
 
 	case gotoObjectTask:
-		NEW_TASK_ID(id) GotoObjectTask(&buf);
+		new(id) GotoObjectTask(&buf);
 		break;
 
 	case gotoActorTask:
-		NEW_TASK_ID(id) GotoActorTask(&buf);
+		new(id) GotoActorTask(&buf);
 		break;
 
 	case goAwayFromObjectTask:
-		NEW_TASK_ID(id) GoAwayFromObjectTask(&buf);
+		new(id) GoAwayFromObjectTask(&buf);
 		break;
 
 	case goAwayFromActorTask:
-		NEW_TASK_ID(id) GoAwayFromActorTask(&buf);
+		new(id) GoAwayFromActorTask(&buf);
 		break;
 
 	case huntToBeNearLocationTask:
-		NEW_TASK_ID(id) HuntToBeNearLocationTask(&buf);
+		new(id) HuntToBeNearLocationTask(&buf);
 		break;
 
 	case huntToBeNearObjectTask:
-		NEW_TASK_ID(id) HuntToBeNearObjectTask(&buf);
+		new(id) HuntToBeNearObjectTask(&buf);
 		break;
 
 	case huntToPossessTask:
-		NEW_TASK_ID(id) HuntToPossessTask(&buf);
+		new(id) HuntToPossessTask(&buf);
 		break;
 
 	case huntToBeNearActorTask:
-		NEW_TASK_ID(id) HuntToBeNearActorTask(&buf);
+		new(id) HuntToBeNearActorTask(&buf);
 		break;
 
 	case huntToKillTask:
-		NEW_TASK_ID(id) HuntToKillTask(&buf);
+		new(id) HuntToKillTask(&buf);
 		break;
 
 	case huntToGiveTask:
-		NEW_TASK_ID(id) HuntToGiveTask(&buf);
+		new(id) HuntToGiveTask(&buf);
 		break;
 
 	case bandTask:
-		NEW_TASK_ID(id) BandTask(&buf);
+		new(id) BandTask(&buf);
 		break;
 
 	case bandAndAvoidEnemiesTask:
-		NEW_TASK_ID(id) BandAndAvoidEnemiesTask(&buf);
+		new(id) BandAndAvoidEnemiesTask(&buf);
 		break;
 
 	case followPatrolRouteTask:
-		NEW_TASK_ID(id) FollowPatrolRouteTask(&buf);
+		new(id) FollowPatrolRouteTask(&buf);
 		break;
 
 	case attendTask:
-		NEW_TASK_ID(id) AttendTask(&buf);
+		new(id) AttendTask(&buf);
 		break;
 
 #if 0
 	case defendTask:
-		NEW_TASK_ID(id) DefendTask(&buf);
+		new(id) DefendTask(&buf);
 		break;
 
 	case parryTask:
-		NEW_TASK_ID(id) ParryTask(&buf);
+		new(id) ParryTask(&buf);
 		break;
 #endif
 	}
@@ -1465,7 +1465,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 		if (gotoTether != NULL)
 			gotoTether->update();
 		else {
-			gotoTether = NEW_TASK GotoRegionTask(stack, minU, minV, maxU, maxV);
+			gotoTether = new GotoRegionTask(stack, minU, minV, maxU, maxV);
 			if (gotoTether != NULL) gotoTether->update();
 		}
 	} else {
@@ -1689,7 +1689,7 @@ TaskResult GotoTask::update(void) {
 		if (wander != NULL)
 			wander->update();
 		else {
-			wander = NEW_TASK WanderTask(stack);
+			wander = new WanderTask(stack);
 			if (wander != NULL) wander->update();
 		}
 
@@ -2330,8 +2330,8 @@ TaskResult GoAwayFromTask::update(void) {
 		goTask->update();
 	} else {
 		if ((goTask =   flags & run
-		                ?   NEW_TASK GotoLocationTask(stack, dest, 0)
-		                :   NEW_TASK GotoLocationTask(stack, dest))
+		                ?   new GotoLocationTask(stack, dest, 0)
+		                :   new GotoLocationTask(stack, dest))
 		        !=  NULL)
 			goTask->update();
 	}
@@ -2665,7 +2665,7 @@ TaskResult HuntTask::update(void) {
 			} else {
 				//  If we couldn't setup a goto task, setup a wander task
 				if (!(huntFlags & huntWander)) {
-					if ((subTask = NEW_TASK WanderTask(stack)) != NULL)
+					if ((subTask = new WanderTask(stack)) != NULL)
 						huntFlags |= huntWander;
 				}
 			}
@@ -2764,7 +2764,7 @@ bool HuntLocationTask::targetHasChanged(GotoTask *gotoTarget) {
 GotoTask *HuntLocationTask::setupGoto(void) {
 	//  If there is somewhere to go, setup a goto task, else return NULL
 	return  currentTarget != Nowhere
-	        ?   NEW_TASK GotoLocationTask(stack, currentTarget)
+	        ?   new GotoLocationTask(stack, currentTarget)
 	        :   NULL;
 }
 
@@ -2967,7 +2967,7 @@ GotoTask *HuntObjectTask::setupGoto(void) {
 	//  If there is an object to goto, setup a GotoObjectTask, else
 	//  return NULL
 	return  currentTarget
-	        ?   NEW_TASK GotoObjectTask(stack, currentTarget)
+	        ?   new GotoObjectTask(stack, currentTarget)
 	        :   NULL;
 }
 
@@ -3354,11 +3354,11 @@ GotoTask *HuntActorTask::setupGoto(void) {
 	//  If there is an actor to goto, setup a GotoActorTask, else
 	//  return NULL
 	/*  return  currentTarget
-	            ?   NEW_TASK GotoActorTask( stack, currentTarget, flags & track )
+	            ?   new GotoActorTask( stack, currentTarget, flags & track )
 	            :   NULL;
 	*/
 	if (currentTarget != NULL) {
-		return NEW_TASK GotoActorTask(
+		return new GotoActorTask(
 		           stack,
 		           currentTarget,
 		           flags & track);
@@ -3589,7 +3589,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate(void) {
 	if (a->inRange(targetLoc, tooClose)) {
 		//  Setup a go away task if necessary and update it
 		if (goAway == NULL) {
-			goAway = NEW_TASK GoAwayFromObjectTask(stack, currentTarget);
+			goAway = new GoAwayFromObjectTask(stack, currentTarget);
 			if (goAway != NULL) goAway->update();
 		} else
 			goAway->update();
@@ -4341,7 +4341,7 @@ bool BandTask::targetHasChanged(GotoTask *gotoTarget) {
 //----------------------------------------------------------------------
 
 GotoTask *BandTask::setupGoto(void) {
-	return NEW_TASK GotoLocationTask(stack, currentTarget, getRunThreshold());
+	return new GotoLocationTask(stack, currentTarget, getRunThreshold());
 }
 
 //----------------------------------------------------------------------
@@ -4393,7 +4393,7 @@ TaskResult BandTask::atTargetUpdate(void) {
 	if (attend != NULL)
 		attend->update();
 	else {
-		attend = NEW_TASK AttendTask(stack, a->leader);
+		attend = new AttendTask(stack, a->leader);
 		if (attend != NULL)
 			attend->update();
 	}
@@ -4725,7 +4725,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 	if (gotoWayPoint != NULL)
 		gotoWayPoint->update();
 	else {
-		gotoWayPoint = NEW_TASK GotoLocationTask(stack, currentWayPoint);
+		gotoWayPoint = new GotoLocationTask(stack, currentWayPoint);
 		if (gotoWayPoint != NULL) gotoWayPoint->update();
 	}
 
@@ -4983,7 +4983,7 @@ TaskResult DefendTask::update(void) {
 			         &   0x7;
 
 			if (relDir == 7 || relDir <= 1)
-				subTask = NEW_TASK ParryTask(stack, attacker, defensiveObj);
+				subTask = new ParryTask(stack, attacker, defensiveObj);
 			else
 				return taskFailed;
 		}
