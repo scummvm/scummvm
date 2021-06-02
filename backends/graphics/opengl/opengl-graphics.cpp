@@ -241,6 +241,7 @@ namespace {
 const OSystem::GraphicsMode glStretchModes[] = {
 	{"center", _s("Center"), STRETCH_CENTER},
 	{"pixel-perfect", _s("Pixel-perfect scaling"), STRETCH_INTEGRAL},
+	{"even-pixels", _s("Even pixels scaling"), STRETCH_INTEGRAL_AR},
 	{"fit", _s("Fit to window"), STRETCH_FIT},
 	{"stretch", _s("Stretch to window"), STRETCH_STRETCH},
 	{"fit_force_aspect", _s("Fit to window (4:3)"), STRETCH_FIT_FORCE_ASPECT},
