@@ -70,7 +70,7 @@ EffectDisplayPrototype::EffectDisplayPrototype(
 	height  = newHeight;
 	breadth = newBreadth;
 	init    = newInit;
-	next = NULL;
+	next = nullptr;
 }
 
 /* ===================================================================== *
@@ -80,24 +80,18 @@ EffectDisplayPrototype::EffectDisplayPrototype(
 EffectDisplayPrototypeList::EffectDisplayPrototypeList(int32 c) {
 	count = 0;
 	maxCount = 0;
-	effects = (pEffectDisplayPrototype *)malloc(sizeof(pEffectDisplayPrototype) * c);
+	effects = new pEffectDisplayPrototype[c]();
 	for (int i = 0; i < c; i++)
-		effects[i] = NULL;
+		effects[i] = nullptr;
 	assert(effects);
 	if (effects) maxCount = c;
 }
 
 EffectDisplayPrototypeList::~EffectDisplayPrototypeList() {
 	if (maxCount && effects)
-		for (int i = 0; i < maxCount; i++)
-			if (effects[i]) {
-				delete effects[i];
-				effects[i] = NULL;
-			}
+		delete[] effects;
 	maxCount = 0;
-	if (effects)
-		delete effects;
-	effects = NULL;
+	effects = nullptr;
 }
 
 int32 EffectDisplayPrototypeList::add(EffectDisplayPrototype *edp) {
@@ -112,7 +106,7 @@ void EffectDisplayPrototypeList::cleanup(void) {
 		for (int i = 0; i < maxCount; i++)
 			if (effects[i]) {
 				delete effects[i];
-				effects[i] = NULL;
+				effects[i] = nullptr;
 			}
 	maxCount = 0;
 }
@@ -163,7 +157,7 @@ void SpellDisplayPrototype::getColorTranslation(ColorTable map, Effectron *e) {
 	int32 i = colorMap[whichColorMap(effect, e)];
 	i = MAX(0, MIN(loadedColorMaps, i));
 	buildColorTable(map,
-	                (*spellSchemes)[ i ].bank,
+	                (*spellSchemes)[i].bank,
 	                11);
 }
 
@@ -181,10 +175,10 @@ void SpellDisplayPrototypeList::cleanup(void) {
 		for (int i = 0; i < maxCount; i++)
 			if (spells[i]) {
 				delete spells[i];
-				spells[i] = NULL;
+				spells[i] = nullptr;
 			}
 		delete spells;
-		spells = NULL;
+		spells = nullptr;
 		maxCount = 0;
 	}
 }
@@ -192,23 +186,17 @@ void SpellDisplayPrototypeList::cleanup(void) {
 SpellDisplayPrototypeList::SpellDisplayPrototypeList(uint16 s) {
 	count = 0;
 	maxCount = 0;
-	spells = (pSpellDisplayPrototype *)malloc(sizeof(pSpellDisplayPrototype) * s);
+	spells = new pSpellDisplayPrototype[s]();
 	for (int i = 0; i < s; i++)
-		spells[i] = NULL;
+		spells[i] = nullptr;
 	assert(spells);
 	if (spells) maxCount = s;
 }
 
 SpellDisplayPrototypeList::~SpellDisplayPrototypeList() {
 	if (maxCount && spells)
-		for (int i = 0; i < maxCount; i++)
-			if (spells[i]) {
-				delete spells[i];
-				spells[i] = NULL;
-			}
-	if (spells)
-		delete spells;
-	spells = NULL;
+		delete[] spells;
+	spells = nullptr;
 }
 
 int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
@@ -225,9 +213,9 @@ int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
 SpellDisplayList::SpellDisplayList(uint16 s) {
 	count = 0;
 	maxCount = 0;
-	spells = (pSpellInstance *)malloc(sizeof(pSpellInstance) * s);
+	spells = new pSpellInstance[s]();
 	for (int i = 0; i < s; i++)
-		spells[i] = NULL;
+		spells[i] = nullptr;
 	if (spells) maxCount = s;
 	init();
 }
@@ -242,14 +230,8 @@ void SpellDisplayList::init(void) {
 
 void SpellDisplayList::cleanup(void) {
 	if (maxCount && spells)
-		for (int i = 0; i < maxCount; i++)
-			if (spells[i]) {
-				delete spells[i];
-				spells[i] = NULL;
-			}
-	if (spells)
-		delete spells;
-	spells = NULL;
+		delete[] spells;
+	spells = nullptr;
 }
 
 void SpellDisplayList::add(SpellInstance *newSpell) {
@@ -276,12 +258,12 @@ void SpellDisplayList::tidyKill(uint16 spellNo) {
 	assert(count);
 	if (spells[spellNo]) {
 		delete spells[spellNo];
-		spells[spellNo] = NULL;
+		spells[spellNo] = nullptr;
 	}
 	if (spellNo < count--) {
 		for (uint16 i = spellNo; i <= count; i++)
 			spells[i] = spells[i + 1];
-		spells[count + 1] = NULL;
+		spells[count + 1] = nullptr;
 	}
 }
 
