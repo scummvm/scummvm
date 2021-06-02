@@ -34,14 +34,13 @@ namespace Saga2 {
  * ===================================================================== */
 
 typedef gPalette        *gPalettePtr;
-typedef gPalette        **gPaletteHandle;
 
 /* ===================================================================== *
    Exports
  * ===================================================================== */
 
 //  Global palette resource handles
-extern gPaletteHandle   midnightPalette,
+extern gPalettePtr   midnightPalette,
        noonPalette,
        darkPalette;
 

@@ -40,7 +40,7 @@
 
 namespace Saga2 {
 
-const uint32            paletteID   = RES_ID('P', 'A', 'L',  0);
+const uint32            paletteID   = MKTAG('P', 'A', 'L',  0);
 
 /* ===================================================================== *
    Imports
@@ -67,8 +67,8 @@ struct PaletteStateArchive {
 
 void lightsOut(void);
 
-gPaletteHandle          midnightPalette,
-                        noonPalette = NULL,
+gPalettePtr             midnightPalette,
+                        noonPalette = nullptr,
                         darkPalette;
 
 /* ===================================================================== *
@@ -111,57 +111,48 @@ void loadPalettes(void) {
 	int     i;
 
 	//  Create a black palette for fades
-	darkPalette = (gPaletteHandle)RNewHandle(
-	                  sizeof(gPalette),
-	                  NULL,
-	                  "dark palette");
-	memset(*darkPalette, 0, sizeof(gPalette));
+	darkPalette = new gPalette;
+	memset(darkPalette, 0, sizeof(gPalette));
 
 
 	//  Load standard palette
-	noonPalette = (gPaletteHandle)LoadResourceToHandle(
-	                  tileRes,
-	                  paletteID,
-	                  "noon palette");
+	noonPalette = (gPalettePtr)LoadResource(tileRes, paletteID, "noon palette");
 
 	//  Create a midnight palette for night time effect
-	midnightPalette = (gPaletteHandle)RNewHandle(
-	                      sizeof(gPalette),
-	                      NULL,
-	                      "midnight palette");
+	midnightPalette = new gPalette;
 
-	gPalette    *dayPal = *noonPalette;
-	gPalette    *nightPal = *midnightPalette;
+	gPalette    *dayPal = noonPalette;
+	gPalette    *nightPal = midnightPalette;
 
 	// these colors darkened
 	for (i = 10; i < 240; i++) {
-//		nightPal->entry[ i ].r = dayPal->entry[ i ].r / 2;
-//		nightPal->entry[ i ].g = dayPal->entry[ i ].g * 2 / 3;
-//		nightPal->entry[ i ].b = dayPal->entry[ i ].b;
+//		nightPal->entry[i].r = dayPal->entry[i].r / 2;
+//		nightPal->entry[i].g = dayPal->entry[i].g * 2 / 3;
+//		nightPal->entry[i].b = dayPal->entry[i].b;
 
-		nightPal->entry[ i ].r = dayPal->entry[ i ].r / 3;
-		nightPal->entry[ i ].g = dayPal->entry[ i ].g / 2;
-		nightPal->entry[ i ].b = bscale(dayPal->entry[ i ].b);
+		nightPal->entry[i].r = dayPal->entry[i].r / 3;
+		nightPal->entry[i].g = dayPal->entry[i].g / 2;
+		nightPal->entry[i].b = bscale(dayPal->entry[i].b);
 	}
 
 	// these colors are not
 	for (i = 0; i < 10; i++) {
-		nightPal->entry[ i ].r = dayPal->entry[ i ].r;
-		nightPal->entry[ i ].g = dayPal->entry[ i ].g;
-		nightPal->entry[ i ].b = dayPal->entry[ i ].b;
+		nightPal->entry[i].r = dayPal->entry[i].r;
+		nightPal->entry[i].g = dayPal->entry[i].g;
+		nightPal->entry[i].b = dayPal->entry[i].b;
 	}
 
 	// and these colors are not
 	for (i = 240; i < 256; i++) {
-		nightPal->entry[ i ].r = dayPal->entry[ i ].r;
-		nightPal->entry[ i ].g = dayPal->entry[ i ].g;
-		nightPal->entry[ i ].b = dayPal->entry[ i ].b;
+		nightPal->entry[i].r = dayPal->entry[i].r;
+		nightPal->entry[i].g = dayPal->entry[i].g;
+		nightPal->entry[i].b = dayPal->entry[i].b;
 	}
 
 	// single color additions to palette shift
-	nightPal->entry[ 244 ].r = dayPal->entry[ 244 ].r / 3;
-	nightPal->entry[ 244 ].g = dayPal->entry[ 244 ].g / 2;
-	nightPal->entry[ 244 ].b = bscale(dayPal->entry[ 244 ].b);
+	nightPal->entry[244].r = dayPal->entry[244].r / 3;
+	nightPal->entry[244].g = dayPal->entry[244].g / 2;
+	nightPal->entry[244].b = bscale(dayPal->entry[244].b);
 }
 
 //----------------------------------------------------------------------
@@ -170,17 +161,17 @@ void loadPalettes(void) {
 void cleanupPalettes(void) {
 	if (noonPalette) {
 		RDisposeHandle((RHANDLE) noonPalette);
-		noonPalette = NULL;
+		noonPalette = nullptr;
 	}
 
 	if (darkPalette) {
-		RDisposeHandle((RHANDLE) darkPalette);
-		darkPalette = NULL;
+		delete darkPalette;
+		darkPalette = nullptr;
 	}
 
 	if (midnightPalette) {
-		RDisposeHandle((RHANDLE) midnightPalette);
-		midnightPalette = NULL;
+		delete midnightPalette;
+		midnightPalette = nullptr;
 	}
 }
 
@@ -206,14 +197,14 @@ bool updatePalette() {
 
 	elapsedTime = gameTime - startTime;
 	if (totalTime == 0)
-		return FALSE;
+		return false;
 
 	if (elapsedTime >= totalTime) {
 		//  Fade is completed
 		totalTime = 0;
 		memcpy(&currentPalette, &destPalette, sizeof(gPalette));
 		assertCurrentPalette();
-		return FALSE;
+		return false;
 	} else {
 		gPalette        tempPalette;
 
@@ -233,7 +224,7 @@ bool updatePalette() {
 			assertCurrentPalette();
 
 		}
-		return TRUE;
+		return true;
 	}
 }
 
@@ -252,9 +243,9 @@ void createPalette(
 	uint32          fadeProgress = (elapsedTime << 8) / totalTime;
 
 	for (i = 0; i < elementsof(newP->entry); i++) {
-		gPaletteEntry   *srcPal = &srcP->entry[ i ];
-		gPaletteEntry   *dstPal = &dstP->entry[ i ];
-		gPaletteEntry   *curPal = &newP->entry[ i ];
+		gPaletteEntry   *srcPal = &srcP->entry[i];
+		gPaletteEntry   *dstPal = &dstP->entry[i];
+		gPaletteEntry   *curPal = &newP->entry[i];
 
 		//  Linearly interpolate between the source and end palette.
 		curPal->r = srcPal->r + (((dstPal->r - srcPal->r) * fadeProgress) >> 8);
@@ -281,7 +272,7 @@ void getCurrentPalette(gPalettePtr pal) {
 //----------------------------------------------------------------------
 
 void setPaletteToBlack(void) {
-	setCurrentPalette(*darkPalette);
+	setCurrentPalette(darkPalette);
 }
 
 
@@ -302,7 +293,7 @@ void lightsOut(void) {
 }
 
 void lightsOn(void) {
-	setCurrentPalette(*noonPalette);
+	setCurrentPalette(noonPalette);
 	totalTime = startTime = 0;
 	assertCurrentPalette();
 }

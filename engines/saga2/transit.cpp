@@ -89,8 +89,8 @@ void dayNightUpdate(void) {
 
 		createPalette(
 		    &newPalette,
-		    *midnightPalette,
-		    *noonPalette,
+		    midnightPalette,
+		    noonPalette,
 		    lightLevel,
 		    MAX_LIGHT);
 
@@ -102,7 +102,7 @@ void dayNightUpdate(void) {
 		gPalettePtr     neededPalette;
 		gPalette        currentPalette;
 
-		neededPalette = currentMapNum == 0 ? &newPalette : *noonPalette;
+		neededPalette = currentMapNum == 0 ? &newPalette : noonPalette;
 		getCurrentPalette(&currentPalette);
 		if (memcmp(&currentPalette, neededPalette, sizeof(gPalette)) != 0)
 			setCurrentPalette(neededPalette);
@@ -128,7 +128,7 @@ void enableUserControls(void);
 
 void fadeDown(void) {
 	if (fadeDepth++ == 0) {
-		beginFade(*darkPalette, 20);
+		beginFade(darkPalette, 20);
 		while (updatePalette());
 		clearTileAreaPort();
 		blackOut();
@@ -146,7 +146,7 @@ void fadeUp(void) {
 		drawMainDisplay();
 		reDrawScreen();
 		enablePaletteChanges();
-		beginFade(currentMapNum != 0 ? *noonPalette : &newPalette, 20);
+		beginFade(currentMapNum != 0 ? noonPalette : &newPalette, 20);
 		while (updatePalette()) ;
 	}
 }
