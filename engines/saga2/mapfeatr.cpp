@@ -315,7 +315,7 @@ void termMapFeatures(void) {
 
 
 
-CMapFeature::CMapFeature(TilePoint where, int16 inWorld, char *desc) {
+CMapFeature::CMapFeature(TilePoint where, int16 inWorld, const char *desc) {
 	visible = FALSE;
 	featureCoords = where;
 	world = inWorld;
@@ -398,7 +398,7 @@ bool CMapFeature::hitCheck(TileRegion viewRegion,
    CStaticMapFeatute class implementation
  * ===================================================================== */
 
-CStaticMapFeature::CStaticMapFeature(TilePoint where, int16 inWorld, char *desc, int16 bColor)
+CStaticMapFeature::CStaticMapFeature(TilePoint where, int16 inWorld, const char *desc, int16 bColor)
 	: CMapFeature(where, inWorld, desc) {
 	color = bColor;
 }
