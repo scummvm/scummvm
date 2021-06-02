@@ -40,6 +40,7 @@ namespace Saga2 {
 //extern vDisplayPage   *drawPage;
 extern gMousePointer pointer;           // the actual pointer
 extern char iniFile[];
+extern vDisplayPage protoPage;
 
 //  Function to enable/disable user interface keys
 extern bool enableUIKeys(bool enabled);
@@ -1076,6 +1077,7 @@ void EventLoop( bool &running )
  * ===================================================================== */
 
 void initPanels(gDisplayPort &port) {
+	port.setDisplayPage(&protoPage);
 	globalPort = &port;
 	InitMouse(gDisplaySize.x, gDisplaySize.y);
 	mainFont = &Helv11Font;
