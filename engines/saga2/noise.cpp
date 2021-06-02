@@ -242,13 +242,12 @@ void startAudio(void) {
 	            (uint32) 400000    // sound buffer size
 	        );
 
+	warning("STUB: startAudio, sync sound settings");
 #if 0
 	disMusic = !GetPrivateProfileInt("Sound", "Music", 1, iniFile);
 	disVoice = !GetPrivateProfileInt("Sound", "Voice", 1, iniFile);
 	disLoops = !GetPrivateProfileInt("Sound", "Loops", 1, iniFile);
 	disSound = !GetPrivateProfileInt("Sound", "Sound", 1, iniFile);
-#endif
-	warning("STUB: startAudio, sync sound settings");
 
 	assert(audio);
 	if (audio->active()) {
@@ -350,6 +349,7 @@ void startAudio(void) {
 		audio->disable(volLoops);
 	if (disSound)
 		audio->disable(volSound);
+#endif
 }
 
 //-----------------------------------------------------------------------
