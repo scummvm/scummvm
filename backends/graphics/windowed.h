@@ -33,9 +33,10 @@
 enum {
 	STRETCH_CENTER = 0,
 	STRETCH_INTEGRAL = 1,
-	STRETCH_FIT = 2,
-	STRETCH_STRETCH = 3,
-	STRETCH_FIT_FORCE_ASPECT = 4
+	STRETCH_INTEGRAL_AR = 2,
+	STRETCH_FIT = 3,
+	STRETCH_STRETCH = 4,
+	STRETCH_FIT_FORCE_ASPECT = 5
 };
 
 class WindowedGraphicsManager : virtual public GraphicsManager {
@@ -194,11 +195,11 @@ protected:
 			return;
 		}
 
-		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(), getWidth() * getGameRenderScale(), _gameDrawRect);
+		populateDisplayAreaDrawRect(getDesiredGameAspectRatio(), getWidth() * getGameRenderScale(), getHeight() * getGameRenderScale(), _gameDrawRect);
 
 		if (getOverlayHeight()) {
 			const frac_t overlayAspect = intToFrac(getOverlayWidth()) / getOverlayHeight();
-			populateDisplayAreaDrawRect(overlayAspect, getOverlayWidth(), _overlayDrawRect);
+			populateDisplayAreaDrawRect(overlayAspect, getOverlayWidth(), getOverlayHeight(), _overlayDrawRect);
 		}
 
 		if (_overlayVisible) {
@@ -363,7 +364,7 @@ protected:
 	int _cursorX, _cursorY;
 
 private:
-	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, Common::Rect &drawRect) const {
+	void populateDisplayAreaDrawRect(const frac_t displayAspect, int originalWidth, int originalHeight, Common::Rect &drawRect) const {
 		int mode = getStretchMode();
 		// Mode Center   = use original size, or divide by an integral amount if window is smaller than game surface
 		// Mode Integral = scale by an integral amount.
@@ -372,7 +373,7 @@ private:
 		// Mode Fit Force Aspect = scale to fit the window while forcing a 4:3 aspect ratio
 
 		int width = 0, height = 0;
-		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL) {
+		if (mode == STRETCH_CENTER || mode == STRETCH_INTEGRAL || mode == STRETCH_INTEGRAL_AR) {
 			width = originalWidth;
 			height = intToFrac(width) / displayAspect;
 			if (width > _windowWidth || height > _windowHeight) {
@@ -383,6 +384,17 @@ private:
 				int fac = MIN(_windowWidth / width, _windowHeight / height);
 				width *= fac;
 				height *= fac;
+			}  else if (mode == STRETCH_INTEGRAL_AR) {
+				int targetHeight = height;
+				int horizontalFac = _windowWidth / width;
+				do {
+					width = originalWidth * horizontalFac;
+					int verticalFac = (targetHeight * horizontalFac + originalHeight / 2) / originalHeight;
+					height = originalHeight * verticalFac;
+					--horizontalFac;
+				} while (horizontalFac > 0 && height > _windowHeight);
+				if (height > _windowHeight)
+					height = targetHeight;
 			}
 		} else {
 			frac_t windowAspect = intToFrac(_windowWidth) / _windowHeight;
