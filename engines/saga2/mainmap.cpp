@@ -65,7 +65,7 @@ void shutdownGame() {
 
 bool initSystemTimer() {
 	warning("STUB: initSystemTimer()");
-	return false;
+	return true;
 }
 void cleanupSystemTimer() {
 	warning("STUB: cleanupSystemTimer()");
