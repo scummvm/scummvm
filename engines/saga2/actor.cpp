@@ -47,6 +47,7 @@
 #include "saga2/localize.h"
 #include "saga2/intrface.h"
 #include "saga2/hresmgr.h"
+#include "saga2/contain.h"
 
 //  Include files needed for SAGA script dispatch
 #include "saga2/script.h"

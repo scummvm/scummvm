@@ -27,9 +27,6 @@
 #ifndef SAGA2_GBEVEL_H
 #define SAGA2_GBEVEL_H
 
-#include "saga2/gdraw.h"
-#include "saga2/errors.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

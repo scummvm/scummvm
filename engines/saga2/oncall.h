@@ -28,8 +28,6 @@
 #define SAGA2_ONCALL_H
 
 #include "saga2/bitarray.h"
-#include "saga2/rmem.h"
-#include "saga2/localize.h"
 
 namespace Saga2 {
 

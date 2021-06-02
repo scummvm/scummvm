@@ -27,8 +27,6 @@
 #ifndef SAGA2_POOL_H
 #define SAGA2_POOL_H
 
-#include "saga2/dlist.h"
-
 namespace Saga2 {
 
 /* ===================================================================== *

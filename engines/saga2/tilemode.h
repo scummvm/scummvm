@@ -27,10 +27,12 @@
 #ifndef SAGA2_TILEMODE_H
 #define SAGA2_TILEMODE_H
 
-#include "saga2/fta.h"
 #include "saga2/idtypes.h"
 
 namespace Saga2 {
+
+class SaveFileConstructor;
+class SaveFileReader;
 
 //  Function to enable/disable user interface keys
 bool enableUIKeys(bool enabled);

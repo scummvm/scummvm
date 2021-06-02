@@ -27,8 +27,6 @@
 #ifndef SAGA2_MOUSEIMG_H
 #define SAGA2_MOUSEIMG_H
 
-#include "saga2/gdraw.h"
-
 namespace Saga2 {
 
 //  Set a new image for the mouse pointer
