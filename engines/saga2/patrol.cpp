@@ -35,13 +35,15 @@
 
 namespace Saga2 {
 
+typedef PatrolRouteData *PatrolRouteDataPtr;
+
 extern int16    worldCount;             //  Number of worlds
 
 /* ===================================================================== *
    Exports
  * ===================================================================== */
 
-PatrolRouteList         *patrolRouteList = NULL;    //  Global patrol route array
+PatrolRouteList         *patrolRouteList = nullptr;    //  Global patrol route array
 
 /* ===================================================================== *
    Globals
@@ -52,7 +54,7 @@ static PatrolRouteData  **patrolRouteData;      //  Data for patrol routes
 
 //  Returns a const reference to a specified way point
 const TilePoint &PatrolRoute::operator [](int16 index) const {
-	return *((TilePoint *)&this[ 1 ] + index);
+	return *((TilePoint *)&this[1] + index);
 }
 
 
@@ -66,11 +68,11 @@ const TilePoint &PatrolRoute::operator [](int16 index) const {
 void PatrolRouteList::clearRouteData(void) {
 	//  If there is an offset array deallocated it.
 	if (offsetArray) {
-		RDisposePtr(offsetArray);
-		offsetArray = NULL;
+		delete[] offsetArray;
+		offsetArray = nullptr;
 	}
 
-	routeData = NULL;
+	routeData = nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -81,32 +83,29 @@ void PatrolRouteList::setRouteData(PatrolRouteData *data) {
 	            noRoutes = data->routes;
 	PatrolRoute *currentRoute;
 
-	//  If routeData is NULL simply return
-	if ((routeData = data) == NULL) {
-		offsetArray = NULL;
+	//  If routeData is nullptr simply return
+	if ((routeData = data) == nullptr) {
+		offsetArray = nullptr;
 		return;
 	}
 
 	//  Allocate a new offsetArray
-	offsetArray = (int32 *)RNewPtr(
-	                  noRoutes * sizeof(int32),
-	                  NULL,
-	                  "patrol route offset array");
+	offsetArray = new int32[noRoutes]();
 
-	if (offsetArray == NULL)
+	if (offsetArray == nullptr)
 		error("Cannot allocate patrol route list offset array.");
 
 	//  Iterate through each patrol route a compute its offset
-	for (i = 0, currentRoute = (PatrolRoute *)&routeData[ 1 ];
+	for (i = 0, currentRoute = (PatrolRoute *)&routeData[1];
 	        i < noRoutes;
 	        i++,
 	        currentRoute =
-	            (PatrolRoute *) & (*currentRoute)[ currentRoute->vertices() ]) {
+	            (PatrolRoute *) & (*currentRoute)[currentRoute->vertices()]) {
 #if DEBUG
 		assert(currentRoute->vertices() > 1);
 #endif
 		warning("STUB: PatrolRouteList::setRouteData: unsafe arithmetics");
-		offsetArray[ i ] = 0; // FIXME: It was "currentRoute - routeData";
+		offsetArray[i] = 0; // FIXME: It was "currentRoute - routeData";
 	}
 }
 
@@ -121,7 +120,7 @@ PatrolRouteIterator::PatrolRouteIterator(uint8 map, int16 rte, uint8 type) :
 	mapNum(map),
 	routeNo(rte),
 	flags(type & 0xF) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	if (flags & patrolRouteRandom)
 		vertexNo = rand() % route.vertices();
@@ -141,7 +140,7 @@ PatrolRouteIterator::PatrolRouteIterator(
 	mapNum(map),
 	routeNo(rte),
 	flags(type & 0xF) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	vertexNo = clamp(0, startingPoint, route.vertices() - 1);
 }
@@ -150,7 +149,7 @@ PatrolRouteIterator::PatrolRouteIterator(
 //	Increment the waypoint index
 
 void PatrolRouteIterator::increment(void) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	vertexNo++;
 
@@ -170,7 +169,7 @@ void PatrolRouteIterator::increment(void) {
 //	Decrement the waypoint index
 
 void PatrolRouteIterator::decrement(void) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	vertexNo--;
 
@@ -190,7 +189,7 @@ void PatrolRouteIterator::decrement(void) {
 //	Increment the waypoint index in the alternate direction
 
 void PatrolRouteIterator::altIncrement(void) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	vertexNo++;
 
@@ -207,7 +206,7 @@ void PatrolRouteIterator::altIncrement(void) {
 //	Decrement the waypoint index in the alternate direction
 
 void PatrolRouteIterator::altDecrement(void) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	vertexNo--;
 
@@ -224,10 +223,10 @@ void PatrolRouteIterator::altDecrement(void) {
 //	Return the coordinates of the current waypoint
 
 const TilePoint &PatrolRouteIterator::operator * (void) const {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	return  vertexNo >= 0 && vertexNo < route.vertices()
-	        ?   route[ vertexNo ]
+	        ?   route[vertexNo]
 	        :   Nowhere;
 }
 
@@ -235,7 +234,7 @@ const TilePoint &PatrolRouteIterator::operator * (void) const {
 //	Iterate
 
 const PatrolRouteIterator &PatrolRouteIterator::operator ++ (void) {
-	const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	if (vertexNo >= 0 & vertexNo < route.vertices()) {
 		if (!(flags & patrolRouteRandom)) {
@@ -273,50 +272,43 @@ void initPatrolRoutes(void) {
 	patrolRouteRes =    auxResFile->newContext(
 	                        MKTAG('P', 'T', 'R', 'L'),
 	                        "patrol route resource");
-	if (patrolRouteRes == NULL || !patrolRouteRes->_valid)
+	if (patrolRouteRes == nullptr || !patrolRouteRes->_valid)
 		error("Error accessing patrol route resource group.");
 
 	//  Allocate the patrol route list array
 	patrolRouteList =
-	    (PatrolRouteList *)RNewPtr(
-	        sizeof(PatrolRouteList) * worldCount,
-	        NULL,
-	        "patrol route list");
+	    new PatrolRouteList[worldCount];
 
-	if (patrolRouteList == NULL)
+	if (patrolRouteList == nullptr)
 		error("Unable to allocate the patrol route list");
 
 	//  Allocate the patrol route data pointer array
-	patrolRouteData =
-	    (PatrolRouteData **)RNewPtr(
-	        sizeof(PatrolRouteData *) * worldCount,
-	        NULL,
-	        "patrol route data pointers");
+	patrolRouteData = new PatrolRouteDataPtr[worldCount];
 
-	if (patrolRouteData == NULL)
+	if (patrolRouteData == nullptr)
 		error("Unable to allocate the patrol route data pointers");
 
 	for (i = 0; i < worldCount; i++) {
 		//  Initialize the patrol route data members
-		patrolRouteList[ i ].routeData = NULL;
-		patrolRouteList[ i ].offsetArray = NULL;
+		patrolRouteList[i].routeData = nullptr;
+		patrolRouteList[i].offsetArray = nullptr;
 
 		//  Load this worlds's patrol routes
 		if (patrolRouteRes->size(
 		            MKTAG('R', 'T', 'E', i)) > 0) {
-			patrolRouteData[ i ] =
+			patrolRouteData[i] =
 			    (PatrolRouteData *)LoadResource(
 			        patrolRouteRes,
 			        MKTAG('R', 'T', 'E', i),
 			        "patrol route data");
 
-			if (patrolRouteData[ i ] == NULL)
+			if (patrolRouteData[i] == nullptr)
 				error("Unable to load the patrol route data");
 
 			//  Initialize the PatrolRouteList with the resource data
-			patrolRouteList[ i ].setRouteData(patrolRouteData[ i ]);
+			patrolRouteList[i].setRouteData(patrolRouteData[i]);
 		} else
-			patrolRouteData[ i ] = NULL;
+			patrolRouteData[i] = nullptr;
 	}
 
 	//  Dispose of the patrol route resource context
@@ -331,15 +323,16 @@ void cleanupPatrolRoutes(void) {
 
 	//  Cleanup the patrol route list
 	for (i = 0; i < worldCount; i++) {
-		patrolRouteList[ i ].clearRouteData();
-		RDisposePtr(patrolRouteData[ i ]);
+		patrolRouteList[i].clearRouteData();
+		if (patrolRouteData[i])
+			free(patrolRouteData[i]);
 	}
 
 	//  Deallocate the patrol route data pointer list
-	RDisposePtr(patrolRouteData);
+	delete[] patrolRouteData;
 
 	//  Deallocate the patrol route list
-	RDisposePtr(patrolRouteList);
+	delete[] patrolRouteList;
 }
 
 } // end of namespace Saga2
