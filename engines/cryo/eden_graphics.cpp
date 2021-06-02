@@ -1177,7 +1177,7 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 		return;
 	}
 
-	int16 j;
+	int16 j = 0;
 	color_t palette16[256];
 	byte *palette = new byte[256 * 3];
 	CLPalette_GetLastPalette(palette16);
