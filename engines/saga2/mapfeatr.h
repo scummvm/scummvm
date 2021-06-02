@@ -52,7 +52,7 @@ class CMapFeature {
 
 
 public:
-	CMapFeature(TilePoint where, int16 inWorld, char *desc);
+	CMapFeature(TilePoint where, int16 inWorld, const char *desc);
 	virtual ~CMapFeature() {}
 
 	void expose(bool canSee = TRUE) {
@@ -89,7 +89,7 @@ class CStaticMapFeature : public CMapFeature {
 	int16 color;
 
 public:
-	CStaticMapFeature(TilePoint where, int16 inWorld, char *desc, int16 bColor);
+	CStaticMapFeature(TilePoint where, int16 inWorld, const char *desc, int16 bColor);
 	virtual void blit(gPort &tp, int32 x, int32 y);
 	virtual void update(void) {}
 	virtual bool isHit(TilePoint disp, TilePoint mouse);
