@@ -43,6 +43,9 @@ bool Polygon::contains(const Common::Point &point) {
 
 	yflag0 = (vtx0->y > point.y);
 	for (uint32 pt = 0; pt < count(); pt++, vtx1++) {
+		if (point == *vtx1)
+			return true;
+
 		yflag1 = (vtx1->y > point.y);
 		if (yflag0 != yflag1) {
 			if (((vtx1->y - point.y) * (vtx0->x - vtx1->x) > (vtx1->x - point.x) * (vtx0->y - vtx1->y)) == yflag1) {
