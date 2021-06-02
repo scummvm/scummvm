@@ -52,6 +52,7 @@
 #include "audio/audiostream.h"
 #include "backends/audiocd/audiocd-stream.h"
 #include "backends/audiocd/default/default-audiocd.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #include "common/array.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -197,7 +198,9 @@ bool Win32AudioCDManager::openCD(int drive) {
 
 	// Construct the drive path and try to open it
 	Common::String drivePath = Common::String::format("\\\\.\\%c:", drives[drive]);
-	_driveHandle = CreateFileA(drivePath.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	TCHAR *tDrivePath = Win32::stringToTchar(drivePath);
+	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	free(tDrivePath);
 	if (_driveHandle == INVALID_HANDLE_VALUE) {
 		warning("Failed to open drive %c:\\, error %d", drives[drive], (int)GetLastError());
 		return false;
@@ -228,7 +231,9 @@ bool Win32AudioCDManager::openCD(const Common::String &drive) {
 
 	// Construct the drive path and try to open it
 	Common::String drivePath = Common::String::format("\\\\.\\%c:", drives[0]);
-	_driveHandle = CreateFileA(drivePath.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	TCHAR *tDrivePath = Win32::stringToTchar(drivePath);
+	_driveHandle = CreateFile(tDrivePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+	free(tDrivePath);
 	if (_driveHandle == INVALID_HANDLE_VALUE) {
 		warning("Failed to open drive %c:\\, error %d", drives[0], (int)GetLastError());
 		return false;
@@ -355,8 +360,10 @@ Win32AudioCDManager::DriveList Win32AudioCDManager::detectDrives() {
 	char gameDrive = 0;
 	if (ConfMan.hasKey("path")) {
 		Common::String gamePath = ConfMan.get("path");
-		char fullPath[MAX_PATH];
-		DWORD result = GetFullPathNameA(gamePath.c_str(), sizeof(fullPath), fullPath, 0);
+		TCHAR *tGamePath = Win32::stringToTchar(gamePath);
+		TCHAR fullPath[MAX_PATH];
+		DWORD result = GetFullPathName(tGamePath, MAX_PATH, fullPath, 0);
+		free(tGamePath);
 
 		if (result > 0 && result < sizeof(fullPath) && Common::isAlpha(fullPath[0]) && fullPath[1] == ':' && tryAddDrive(toupper(fullPath[0]), drives))
 			gameDrive = drives[0];
@@ -371,11 +378,9 @@ Win32AudioCDManager::DriveList Win32AudioCDManager::detectDrives() {
 }
 
 bool Win32AudioCDManager::tryAddDrive(char drive, DriveList &drives) {
-	Common::String drivePath = Common::String::format("%c:\\", drive);
-
-	// Ensure it's an actual CD drive
-	if (GetDriveTypeA(drivePath.c_str()) != DRIVE_CDROM)
+	if (!Win32::isDriveCD(drive)) {
 		return false;
+	}
 
 	debug(2, "Detected drive %c:\\ as a CD drive", drive);
 	drives.push_back(drive);

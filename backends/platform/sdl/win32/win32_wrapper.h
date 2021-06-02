@@ -39,6 +39,14 @@ namespace Win32 {
  * @param minorVersion The minor version number (0.x)
  */
 bool confirmWindowsVersion(int majorVersion, int minorVersion);
+
+/**
+ * Returns true if the drive letter is a CDROM
+ *
+ * @param driveLetter The drive letter to test
+ */
+bool isDriveCD(char driveLetter);
+
 /**
  * Converts a C string into a Windows wide-character string.
  * Used to interact with Win32 Unicode APIs with no ANSI fallback.

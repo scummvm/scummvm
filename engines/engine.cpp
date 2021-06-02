@@ -20,12 +20,10 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_getcwd
-
 #if defined(WIN32) && !defined(__SYMBIAN32__)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <direct.h>
+#include "backends/platform/sdl/win32/win32_wrapper.h"
 #endif
 
 #include "engines/engine.h"
@@ -483,26 +481,21 @@ void Engine::checkCD() {
 
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
-	char buffer[MAX_PATH];
-	int i;
-
+	char driveLetter;
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-
-	if (gameDataDir.getPath().empty()) {
+	if (!gameDataDir.getPath().empty()) {
+		driveLetter = gameDataDir.getPath()[0];
+	} else {
 		// That's it! I give up!
-		if (getcwd(buffer, MAX_PATH) == NULL)
+		Common::FSNode currentDir(".");
+		if (!currentDir.getPath().empty()) {
+			driveLetter = currentDir.getPath()[0];
+		} else {
 			return;
-	} else
-		Common::strlcpy(buffer, gameDataDir.getPath().c_str(), sizeof(buffer));
-
-	for (i = 0; i < MAX_PATH - 1; i++) {
-		if (buffer[i] == '\\')
-			break;
+		}
 	}
 
-	buffer[i + 1] = 0;
-
-	if (GetDriveType(buffer) == DRIVE_CDROM) {
+	if (Win32::isDriveCD(driveLetter)) {
 		GUI::MessageDialog dialog(
 			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
