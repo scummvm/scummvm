@@ -31,17 +31,6 @@ namespace Saga2 {
 
 void main_saga2();
 
-#ifndef _WIN32
-typedef void MAIN_RETURN_TYPE;
-#define abortMain   failExit()
-#define exitMain    normalExit()
-#else   // _WIN32
-typedef int MAIN_RETURN_TYPE;
-#define abortMain   return -1
-#define exitMain    return 0
-#endif  // _WIN32
-
-
 /* ===================================================================== *
    Multitasking control
  * ===================================================================== */

@@ -24,16 +24,11 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
+//#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
-#include "saga2/objects.h"
-#include "saga2/actor.h"
 #include "saga2/cmisc.h"
-#include "saga2/contain.h"
-#include "saga2/script.h"
 #include "saga2/player.h"
-#include "saga2/target.h"
 #include "saga2/enchant.h"
 
 namespace Saga2 {

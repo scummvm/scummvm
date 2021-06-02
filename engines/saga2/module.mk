@@ -22,7 +22,6 @@ MODULE_OBJS := \
 	document.o \
 	effects.o \
 	enchant.o \
-	exit.o \
 	floating.o \
 	gamemode.o \
 	gdraw.o \

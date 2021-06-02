@@ -226,7 +226,7 @@ bool initGameMaps();
 /********************************************************************/
 void termFaultHandler(void);
 
-MAIN_RETURN_TYPE main_saga2() {
+void main_saga2() {
 	gameInitialized = false;
 
 	mainDisable();
@@ -246,11 +246,6 @@ MAIN_RETURN_TYPE main_saga2() {
 
 	shutdownGame();
 	gameInitialized = false;
-
-	if (cleanExit)
-		exitMain;
-	else
-		abortMain;
 }
 
 // ------------------------------------------------------------------------
