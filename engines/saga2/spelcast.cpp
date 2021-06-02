@@ -133,7 +133,7 @@ void SpellStuff::addEffect(ProtoEffect *pe) {
 void SpellStuff::playSound(GameObject *go) {
 	if (sound) {
 		Location cal = go->notGetWorldLocation(); //Location(go->getLocation(),go->IDParent());
-		Saga2::playSoundAt(RES_ID('S', 'P', 'L', sound), cal);
+		Saga2::playSoundAt(MKTAG('S', 'P', 'L', sound), cal);
 	}
 }
 

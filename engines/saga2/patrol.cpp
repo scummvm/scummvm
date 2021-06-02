@@ -271,7 +271,7 @@ void initPatrolRoutes(void) {
 
 	//  Get patrol route resource context
 	patrolRouteRes =    auxResFile->newContext(
-	                        RES_ID('P', 'T', 'R', 'L'),
+	                        MKTAG('P', 'T', 'R', 'L'),
 	                        "patrol route resource");
 	if (patrolRouteRes == NULL || !patrolRouteRes->_valid)
 		error("Error accessing patrol route resource group.");
@@ -303,11 +303,11 @@ void initPatrolRoutes(void) {
 
 		//  Load this worlds's patrol routes
 		if (patrolRouteRes->size(
-		            RES_ID('R', 'T', 'E', i)) > 0) {
+		            MKTAG('R', 'T', 'E', i)) > 0) {
 			patrolRouteData[ i ] =
 			    (PatrolRouteData *)LoadResource(
 			        patrolRouteRes,
-			        RES_ID('R', 'T', 'E', i),
+			        MKTAG('R', 'T', 'E', i),
 			        "patrol route data");
 
 			if (patrolRouteData[ i ] == NULL)

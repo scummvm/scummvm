@@ -149,7 +149,7 @@ static char convBuf[5];
 
 inline uint32 extendID(int16 smallID) {
 	sprintf(convBuf, "%4.4d", smallID);
-	return smallID ? RES_ID(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
+	return smallID ? MKTAG(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
 }
 
 /* ===================================================================== *
