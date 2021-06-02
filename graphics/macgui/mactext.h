@@ -192,13 +192,6 @@ private:
 	void appendText_(const Common::U32String &strWithFont, uint oldLen);
 	void deletePreviousCharInternal(int *row, int *col);
 	void insertTextFromClipboard();
-	void setTextInClipboard(const Common::U32String &str);
-	/**
-	 * get text from WM clipboard or the global clipboard
-	 * @param size will change to the length of real text in clipboard
-	 * @return the text in clipboard, which may contained the format
-	 */
-	Common::U32String getTextFromClipboard(int &size);
 
 public:
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
