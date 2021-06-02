@@ -1728,7 +1728,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 // mostly, we refering reshuffleParagraph to implement this function
 void MacText::insertTextFromClipboard() {
 	int ppos = 0;
-	Common::U32String str = _wm->getTextFromClipboard(&ppos);
+	Common::U32String str = _wm->getTextFromClipboard(Common::U32String(_defaultFormatting.toString()), &ppos);
 
 	if (_textLines.empty()) {
 		splitString(str, 0);
