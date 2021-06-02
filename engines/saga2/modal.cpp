@@ -24,13 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
-#include "saga2/fta.h"
-#include "saga2/floating.h"
 #include "saga2/modal.h"
-#include "saga2/setup.h"
 #include "saga2/speech.h"
 #include "saga2/grabinfo.h"
 

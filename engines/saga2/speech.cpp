@@ -610,7 +610,7 @@ bool Speech::longEnough(void) {
 
 //  Gets rid of the current speech
 
-void Speech::abort(void) {
+void Speech::abortSpeech(void) {
 	//  Start by displaying first frame straight off, no delay
 	speechFinished.set(0);
 	if (speechFlags & spHasVoice) {
@@ -619,7 +619,7 @@ void Speech::abort(void) {
 }
 
 void abortSpeech(void) {
-	if (speechList.currentActive()) speechList.currentActive()->abort();
+	if (speechList.currentActive()) speechList.currentActive()->abortSpeech();
 }
 
 
