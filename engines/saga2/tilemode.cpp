@@ -53,6 +53,7 @@
 #include "saga2/images.h"
 #include "saga2/config.h"
 #include "saga2/contain.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

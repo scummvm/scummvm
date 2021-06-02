@@ -32,6 +32,7 @@
 #include "saga2/pool.h"
 #include "saga2/player.h"
 #include "saga2/tile.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

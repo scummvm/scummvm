@@ -45,6 +45,7 @@
 #include "saga2/tagnoise.h"
 #include "saga2/player.h"
 #include "saga2/mapfeatr.h"
+#include "saga2/savefile.h"
 
 //  Include files needed for SAGA script dispatch
 #include "saga2/script.h"

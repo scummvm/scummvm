@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "saga2/std.h"
+#include "saga2/gdraw.h"
 #include "saga2/sprite.h"
 #include "saga2/objects.h"
 #include "saga2/actor.h"
@@ -42,6 +43,7 @@
 #include "saga2/magic.h"
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
+#include "saga2/combat.h"
 
 #include "saga2/methods.r"
 #include "saga2/pclass.r"

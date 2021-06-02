@@ -60,6 +60,7 @@
 #include "saga2/config.h"
 #include "saga2/hresmgr.h"
 #include "saga2/fontlib.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

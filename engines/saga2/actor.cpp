@@ -48,6 +48,8 @@
 #include "saga2/intrface.h"
 #include "saga2/hresmgr.h"
 #include "saga2/contain.h"
+#include "saga2/savefile.h"
+#include "saga2/combat.h"
 
 //  Include files needed for SAGA script dispatch
 #include "saga2/script.h"

@@ -42,6 +42,7 @@
 #include "saga2/imagcach.h"
 #include "saga2/hresmgr.h"
 #include "saga2/fontlib.h"
+#include "saga2/savefile.h"
 
 #include "saga2/pclass.r"
 

@@ -54,6 +54,7 @@
 #include "saga2/display.h"
 #include "saga2/transit.h"
 #include "saga2/contain.h"
+#include "saga2/tile.h"
 
 void drawMainDisplay(void);
 

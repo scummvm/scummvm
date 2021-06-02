@@ -53,7 +53,7 @@
 #include "saga2/script.h"
 #include "saga2/config.h"
 #include "saga2/hresmgr.h"
-
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 

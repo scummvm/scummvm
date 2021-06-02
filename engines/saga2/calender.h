@@ -27,9 +27,10 @@
 #ifndef SAGA2_CALENDER_H
 #define SAGA2_CALENDER_H
 
-#include "saga2/savefile.h"
-
 namespace Saga2 {
+
+class SaveFileConstructor;
+class SaveFileReader;
 
 /* ===================================================================== *
    CalenderTime class

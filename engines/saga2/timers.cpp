@@ -30,6 +30,7 @@
 #include "saga2/timers.h"
 #include "saga2/pool.h"
 #include "saga2/objects.h"
+#include "saga2/savefile.h"
 
 namespace Saga2 {
 
