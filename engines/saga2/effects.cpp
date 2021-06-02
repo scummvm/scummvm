@@ -24,14 +24,9 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/cmisc.h"
-#include "saga2/spells.h"
 #include "saga2/spelshow.h"
-#include "saga2/spellbuk.h"
-#include "saga2/idtypes.h"
 #include "saga2/script.h"
 #include "saga2/actor.h"
 
@@ -210,7 +205,7 @@ bool ProtoEnchantment::realSavingThrow(Actor *a) {
 	power *= power;
 	int32 saveSpace = absoluteMaximumVitality;
 	saveSpace *= saveSpace;
-	return ((rand() % saveSpace) < power);
+	return (g_vm->_rnd->getRandomNumber(saveSpace - 1) < power);
 
 }
 

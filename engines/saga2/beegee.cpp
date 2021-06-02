@@ -24,19 +24,10 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/idtypes.h"
-#include "saga2/fta.h"
 #include "saga2/tile.h"
-#include "saga2/annoy.h"
-#include "saga2/audio.h"
-#include "saga2/beegee.h"
-#include "saga2/actor.h"
 #include "saga2/music.h"
-#include "saga2/messager.h"
-#include "saga2/tileline.h"
 #include "saga2/player.h"
 
 #include "saga2/audtweak.h"
@@ -302,7 +293,7 @@ void audioEnvironmentCheck(void) {
 				totalProb += iar.soundOdds[i];
 			if (totalProb <= iar.noSoundOdds)
 				return;
-			int32 pval = rand() % totalProb;
+			int32 pval = g_vm->_rnd->getRandomNumber(totalProb - 1);
 			if (pval < iar.noSoundOdds)
 				return;
 			pval -= iar.noSoundOdds;
@@ -350,7 +341,7 @@ void Deejay::select(void) {
 	//else if ( !day )
 	//  choice=4;
 		else if (current != 4 && (current > 2 || current < 1)) {
-			choice = 1 + (rand() % 3);
+			choice = 1 + g_vm->_rnd->getRandomNumber(2);
 			if (choice == 3) choice++;
 		} else
 			choice = current;

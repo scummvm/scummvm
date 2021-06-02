@@ -24,11 +24,10 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 
 #include "graphics/palette.h"
+
 namespace Saga2 {
 
 extern uint32 loadingWindowWidth;

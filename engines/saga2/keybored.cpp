@@ -24,26 +24,15 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/tilemode.h"
 #include "saga2/calender.h"
 
-#include "saga2/objects.h"
 #include "saga2/tile.h"
-#include "saga2/setup.h"
-#include "saga2/grabinfo.h"
 #include "saga2/motion.h"
-#include "saga2/actor.h"
 #include "saga2/modal.h"
 #include "saga2/transit.h"
 #include "saga2/player.h"
-#include "saga2/annoy.h"
-#include "saga2/intrface.h"
-
-#include "saga2/cmisc.h"
-#include "saga2/button.h"
 
 #define TEST1           1           //  enable test code
 #define TEST2           1
@@ -53,11 +42,6 @@
 #if TEST3
 #include "saga2/loadsave.h"
 #endif
-
-#include "saga2/imagcach.h"
-
-
-#include "saga2/assign.h"
 
 #ifdef ALEXS
 #include "saga2/automap.h"

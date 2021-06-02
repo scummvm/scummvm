@@ -35,11 +35,6 @@ int32 clamp(int32 lowerLimit, int32 num, int32 upperLimit);
 //  Converts x/y point to angle + distance
 int16 ptToAngle(int16 dx, int16 dy, int16 *dist = NULL);
 
-//  Standardized "program exit" functions which can be
-//  replaced for Windows or MPGNet programs.
-void normalExit(void);
-void failExit(void);
-
 //  Byte-swap a 16-bit integer
 inline int16 swap16(uint16 w) {
 	return (w >>  8) | (w <<  8);

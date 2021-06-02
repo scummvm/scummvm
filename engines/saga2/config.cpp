@@ -24,15 +24,12 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/config.h"
-#include "saga2/program.h"
 
 namespace Saga2 {
 
-char iniFile[] = PROGRAM_CONFIG_FILE;
+char iniFile[] = "FTA2.INI";
 configuration globalConfig;
 
 static char   originalDir[ PATH_STR_SIZE ];

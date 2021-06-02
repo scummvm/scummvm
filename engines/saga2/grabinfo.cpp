@@ -24,17 +24,13 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
 #include "saga2/images.h"
-#include "saga2/sprite.h"
 #include "saga2/objects.h"
 #include "saga2/contain.h"
 #include "saga2/mouseimg.h"
 #include "saga2/grabinfo.h"
-#include "saga2/methods.r"
 
 namespace Saga2 {
 
