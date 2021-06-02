@@ -330,6 +330,8 @@ public:
 
 	MacWidget *_hoveredWidget;
 
+	Common::U32String _clipboard;
+
 private:
 	void loadDesktop();
 	void drawDesktop();
