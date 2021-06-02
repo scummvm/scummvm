@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-31 23:21+0000\n"
+"POT-Creation-Date: 2021-06-01 22:21+0000\n"
 "PO-Revision-Date: 2021-06-01 09:32+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -987,11 +987,6 @@ msgstr "Quedan %d logro(s) oculto(s)"
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Logros desbloqueados: %d/%d"
-
-#: gui/options.cpp:1286
-#, c-format
-msgid "%s: %s"
-msgstr "%s: %s"
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
@@ -8267,6 +8262,9 @@ msgstr ""
 "Necesitarás todas las fuentes del paquete que prefieras, por ejemplo, "
 "LiberationMono, LiberationSans y LiberationSerif, o FreeMono, FreeSans y "
 "FreeSerif respectivamente."
+
+#~ msgid "%s: %s"
+#~ msgstr "%s: %s"
 
 #~ msgid ""
 #~ "You added the game incorrectly. The game data is in ISO image GAME.DAT."

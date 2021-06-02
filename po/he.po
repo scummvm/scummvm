@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-31 23:21+0000\n"
+"POT-Creation-Date: 2021-06-01 22:21+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -976,11 +976,6 @@ msgstr "%d הישגים נסתרים שנותרו"
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "הישגים שנפתחו: %d/%d"
-
-#: gui/options.cpp:1286
-#, c-format
-msgid "%s: %s"
-msgstr ""
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-31 23:21+0000\n"
+"POT-Creation-Date: 2021-06-01 22:21+0000\n"
 "PO-Revision-Date: 2021-06-01 19:36+0000\n"
 "Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -983,11 +983,6 @@ msgstr "%d piilotettua saavutusta jäljellä"
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Saavutuksia avattu: %d/%d"
-
-#: gui/options.cpp:1286
-#, c-format
-msgid "%s: %s"
-msgstr "%s: %s"
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
@@ -8190,6 +8185,9 @@ msgstr ""
 "ladata Liberation Fonts -paketin tai GNU FreeFont -paketin. Tarvitset kaikki "
 "fontit paketista jonka valitset, i.e. LiberationMono, LiberationSans ja "
 "LiberationSerif, tai FreeMono, FreeSans ja FreeSerif riippuen valinnastasi."
+
+#~ msgid "%s: %s"
+#~ msgstr "%s: %s"
 
 #~ msgid ""
 #~ "You added the game incorrectly. The game data is in ISO image GAME.DAT."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-31 23:21+0000\n"
+"POT-Creation-Date: 2021-06-01 22:21+0000\n"
 "PO-Revision-Date: 2021-06-01 19:36+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -989,11 +989,6 @@ msgstr "%d versteckte Errungeschaften übrig"
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Errungenschaften freigeschaltet: %d/%d"
-
-#: gui/options.cpp:1286
-#, c-format
-msgid "%s: %s"
-msgstr "%s: %s"
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
@@ -8286,6 +8281,9 @@ msgstr ""
 "FreeFont-Paket herunterladen. Sie benötigen jeweils alle Schriftarten des "
 "gewählten Paketes, beispielsweise LiberationMono, LiberationSans und "
 "LiberationSerif oder FreeMono, FreeSans und FreeSerif."
+
+#~ msgid "%s: %s"
+#~ msgstr "%s: %s"
 
 #~ msgid ""
 #~ "You added the game incorrectly. The game data is in ISO image GAME.DAT."

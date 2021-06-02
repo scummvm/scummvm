@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-05-31 23:21+0000\n"
+"POT-Creation-Date: 2021-06-01 22:21+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -996,11 +996,6 @@ msgstr "%d gizli başarımlar kaldı"
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Kilidi çözülen başarımlar: %d/%d"
-
-#: gui/options.cpp:1286
-#, c-format
-msgid "%s: %s"
-msgstr ""
 
 #: gui/options.cpp:1301
 msgid "HW Shader:"
