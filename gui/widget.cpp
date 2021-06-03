@@ -1270,6 +1270,32 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	markAsDirty();
 }
 
+void GridWidget::reflowLayout() {
+	Widget::reflowLayout();
+	int row = 0, col = 0;
+	int entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 0);
+	int k = 0;
+	for (Common::Array<EntryContainerWidget *>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
+		k = row * entriesPerRow + col;
+		if (*i) { 			
+			(*i)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+			(*i)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
+			(*i)->_lang->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+			(*i)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
+
+			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+
+			if (++col >= entriesPerRow) {
+				++row;
+				col = 0;
+			}
+			++k;
+		}
+	}
+	markAsDirty();
+}
+
 #pragma mark -
 
 OptionsContainerWidget::OptionsContainerWidget(GuiObject *boss, const Common::String &name, const Common::String &dialogLayout,

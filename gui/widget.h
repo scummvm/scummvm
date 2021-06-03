@@ -524,6 +524,7 @@ public:
 	int getLoadedNumber(void) {return _loadedSurfaces.size();}
 	void reloadThumbnails();
 	void handleMouseWheel(int x, int y, int direction) override;
+	void reflowLayout() override;
 
 
 	int selectedEntry;
