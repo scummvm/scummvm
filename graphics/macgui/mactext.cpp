@@ -845,7 +845,14 @@ void MacText::setActive(bool active) {
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	if (_active) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
+	} else {
+		// clear the selection and cursor
+		_selectedText.endY = -1;
+		_cursorState = false;
 	}
+
+	// after we change the status of active, we need to do a refresh to clear the stuff we don't need
+	_contentIsDirty = true;
 
 	if (!_cursorOff && _cursorState == true)
 		undrawCursor();
