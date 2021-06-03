@@ -343,26 +343,26 @@ void FlaMovies::playGIFMovie(const char *flaName) {
 void FlaMovies::playFlaMovie(const char *flaName) {
 	_engine->_sound->stopSamples();
 
-	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAGIF) {
-		playGIFMovie(flaName);
-		return;
-	}
-
-	_engine->_music->stopMusic();
-
 	Common::String fileNamePath = Common::String::format("%s", flaName);
 	const size_t n = fileNamePath.findLastOf(".");
 	if (n != Common::String::npos) {
 		fileNamePath.erase(n);
 	}
-	fileNamePath += FLA_EXT;
+
+	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAGIF) {
+		playGIFMovie(fileNamePath.c_str());
+		return;
+	}
+
+	_engine->_music->stopMusic();
 
 	_fadeOut = -1;
 	_fadeOutFrames = 0;
 
 	_file.close();
-	if (!_file.open(fileNamePath)) {
+	if (!_file.open(fileNamePath + FLA_EXT)) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
+		playGIFMovie(fileNamePath.c_str());
 		return;
 	}
 
