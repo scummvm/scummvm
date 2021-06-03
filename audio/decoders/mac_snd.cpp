@@ -101,7 +101,7 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 
 	Common::SeekableReadStream *dataStream = new Common::SeekableSubReadStream(stream, stream->pos(), stream->pos() + size, disposeAfterUse);
 
-	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
+	// Since we allocated our own stream for the data, we must specify DisposeAfterUse::YES.
 	return makeRawStream(dataStream, rate, Audio::FLAG_UNSIGNED);
 }
 
