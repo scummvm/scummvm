@@ -29,7 +29,7 @@
 #include "common/streamdebug.h"
 
 /**
- * \namespace Math.
+ * \namespace Math
  * This namespace contains some useful classes dealing with math and geometry.
  *
  * The most important classes are Matrix and its base classes.
