@@ -66,23 +66,23 @@ const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
    Locals
  * ===================================================================== */
 
-uint16               **nameList;             // handle to list of names
+uint16               *nameList;             // handle to list of names
 uint32              nameListCount;
 
-ProtoObj            *objectProtos = NULL;   // object prototypes
-ActorProto          *actorProtos = NULL;    // actor prototypes
-uint16              *tempActorCount = NULL; // array of temporary actor counts
+ProtoObj            *objectProtos = nullptr;   // object prototypes
+ActorProto          *actorProtos = nullptr;    // actor prototypes
+uint16              *tempActorCount = nullptr; // array of temporary actor counts
 
 int16               objectProtoCount,       // object prototype count
                     actorProtoCount;        // actor prototype count
 
-GameObject          *objectList = NULL;     // list of all objects
+GameObject          *objectList = nullptr;     // list of all objects
 int16               objectCount;            // count of objects
 
-Actor               *actorList = NULL;      // list of all actors
+Actor               *actorList = nullptr;      // list of all actors
 int16               actorCount;
 
-GameWorld           *worldList = NULL;      // list of all worlds
+GameWorld           *worldList = nullptr;      // list of all worlds
 int16               worldCount;             // number of worlds
 
 int32               objectListSize,
@@ -100,7 +100,7 @@ uint8               *ProtoObj::nextAvailObj;
 
 
 // trio ready container consts
-const ContainerInfo trioReadyContInfo[ kNumViews ] = { { 476, 105 + 0, 1, 3 },
+const ContainerInfo trioReadyContInfo[kNumViews] = { { 476, 105 + 0, 1, 3 },
 	{ 476, 105 + 150, 1, 3 },
 	{ 476, 105 + 300, 1, 3 }
 };
@@ -109,9 +109,9 @@ const ContainerInfo indivReadyContInfoTop = { 476, 105 + 0, 1, 3 };
 const ContainerInfo indivReadyContInfoBot = { 476, 105 + 57, 2, 3 };
 
 // view controls
-ReadyContainerView      *TrioCviews[ kNumViews ] = { NULL, NULL, NULL };
-ReadyContainerView      *indivCviewTop = NULL,
-                         *indivCviewBot = NULL;
+ReadyContainerView      *TrioCviews[kNumViews] = { nullptr, nullptr, nullptr };
+ReadyContainerView      *indivCviewTop = nullptr,
+                         *indivCviewBot = nullptr;
 ContainerNode           *indivReadyNode;
 
 // array of image pointers for ready container backgrounds
@@ -194,7 +194,7 @@ struct GameObjectArchive {
 //	Default constructor
 
 GameObject::GameObject(void) {
-	prototype   = NULL;
+	prototype   = nullptr;
 	location    = Nowhere;
 	nameIndex   = 0;
 	parentID    = Nothing;
@@ -215,7 +215,7 @@ GameObject::GameObject(void) {
 //	Constructor -- initial object construction
 
 GameObject::GameObject(const ResourceGameObject &res) {
-	prototype           = &objectProtos[ res.protoIndex ];
+	prototype           = &objectProtos[res.protoIndex];
 	location            = res.location;
 	nameIndex           = res.nameIndex;
 	parentID            = res.parentID;
@@ -240,8 +240,8 @@ GameObject::GameObject(void **buf) {
 
 	//  Convert the protoype index into an object proto pointer
 	prototype       =   a->protoIndex != -1
-	                    ?   &objectProtos[ a->protoIndex ]
-	                    :   NULL;
+	                    ?   &objectProtos[a->protoIndex]
+	                    :   nullptr;
 
 	location        = a->location;
 	nameIndex       = a->nameIndex;
@@ -258,7 +258,7 @@ GameObject::GameObject(void **buf) {
 	sightCtr        = a->sightCtr;
 	memset(&reserved, 0, sizeof(reserved));
 
-	*buf = &a[ 1 ];
+	*buf = &a[1];
 }
 
 //-----------------------------------------------------------------------
@@ -276,7 +276,7 @@ void *GameObject::archive(void *buf) {
 	GameObjectArchive   *a = (GameObjectArchive *)buf;
 
 	//  Convert the prototype pointer to a prototype index
-	a->protoIndex   = prototype != NULL ? prototype - objectProtos : -1;
+	a->protoIndex   = prototype != nullptr ? prototype - objectProtos : -1;
 
 	a->location     = location;
 	a->nameIndex    = nameIndex;
@@ -292,7 +292,7 @@ void *GameObject::archive(void *buf) {
 	a->currentTAG   = currentTAG;
 	a->sightCtr     = sightCtr;
 
-	return &a[ 1 ];
+	return &a[1];
 }
 
 //  Same as above but use object addresses instead of ID's
@@ -320,26 +320,26 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 		if (id >= objectCount)
 			error("Invalid object ID: %d", id);
 
-		return objectList != NULL ? &objectList[ id ] : NULL;
+		return objectList != nullptr ? &objectList[id] : nullptr;
 	}
 
 	if (isWorld(id)) {
 		if (id - WorldBaseID >= worldCount)
 			error("Invalid object ID: %d", id);
 
-		return worldList != NULL ? &worldList[ id - WorldBaseID ] : NULL;
+		return worldList != nullptr ? &worldList[id - WorldBaseID] : nullptr;
 	}
 
 	if (id - ActorBaseID >= actorCount)
 		error("Invalid object ID: %d!", id);
 
-	return actorList != NULL ? &actorList[ id - ActorBaseID ] : NULL;
+	return actorList != nullptr ? &actorList[id - ActorBaseID] : nullptr;
 }
 
 ProtoObj *GameObject::protoAddress(ObjectID id) {
 	GameObject      *obj = objectAddress(id);
 
-	return obj ? obj->prototype : NULL ;
+	return obj ? obj->prototype : nullptr ;
 }
 
 
@@ -380,8 +380,8 @@ ObjectID *GameObject::getHeadPtr(ObjectID parentID, TilePoint &l) {
 		int16       u = clamp(0, l.u / sectorSize, sectors.u - 1),
 		            v = clamp(0, l.v / sectorSize, sectors.v - 1);
 
-		return  &(*world->sectorArray)[
-		     v * world->sectorArraySize + u ].childID;
+		return  &(world->sectorArray)[
+		     v * world->sectorArraySize + u].childID;
 	} else return &parentObj->childID;
 }
 
@@ -522,7 +522,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 	// put the object name into the buffer as a default value
 	strncpy(nameBuf, objName(), size - 1);
-	nameBuf[ size - 1 ] = NULL;
+	nameBuf[size - 1] = 0;
 
 
 	assert(strlen(objName()) < size - addTextSize);
@@ -567,8 +567,8 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			SkillProto *sProto = skillProtoFromID(thisID());
 
 			// determine if this is a skill icon
-			manaColor = spellBook[ sProto->getSpellID() ].getManaType();
-			manaCost  = spellBook[ sProto->getSpellID() ].getManaAmt();
+			manaColor = spellBook[sProto->getSpellID()].getManaType();
+			manaCost  = spellBook[sProto->getSpellID()].getManaAmt();
 		}
 
 		if (manaColor == sManaIDSkill) {     //  It's a skill
@@ -584,7 +584,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			        brotherID == ActorBaseID + FTA_PHILIP  ||
 			        brotherID == ActorBaseID + FTA_KEVIN) {
 				// get base 0 level
-				level = playerList[ brotherID - ActorBaseID ].getSkillLevel(sProto);
+				level = playerList[brotherID - ActorBaseID].getSkillLevel(sProto);
 
 				// normalize and output
 				sprintf(nameBuf, "%s-%d", objName(), ++level);
@@ -618,7 +618,7 @@ bool GameObject::isTrueSkill(void) {
 		SkillProto *sProto = skillProtoFromID(thisID());
 
 		// determine if this is a skill icon
-		if (spellBook[ sProto->getSpellID() ].getManaType() == sManaIDSkill) {
+		if (spellBook[sProto->getSpellID()].getManaType() == sManaIDSkill) {
 			return TRUE;
 		}
 	}
@@ -654,8 +654,8 @@ GameWorld *GameObject::world(void) {
 
 	for (;;) {
 		id = obj->parentID;
-		if (isWorld(id)) return &worldList[ id - WorldBaseID ];
-		else if (id == Nothing) return NULL;
+		if (isWorld(id)) return &worldList[id - WorldBaseID];
+		else if (id == Nothing) return nullptr;
 
 		obj = objectAddress(id);
 	}
@@ -701,8 +701,8 @@ int32 GameObject::getSprOffset(int16 num) {
 //  Remove an object from a stack of objects
 bool GameObject::unstack(void) {
 	GameObject  *item,
-	            *base = NULL,
-	             *zero = NULL;
+	            *base = nullptr,
+	             *zero = nullptr;
 	int16       count = 0;
 
 	//  If this is a world, or it's parent object is a world, or it is
@@ -712,7 +712,7 @@ bool GameObject::unstack(void) {
 	        ||  isWorld(parent())
 	        ||  IDParent() == Nothing
 	        ||  location.z == 1
-	        ||  prototype == NULL
+	        ||  prototype == nullptr
 	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return FALSE;
 
 	ContainerIterator   iter(parent());
@@ -736,9 +736,9 @@ bool GameObject::unstack(void) {
 	//
 	//  Else if this item is not the base item, then decrement the base
 	//  item's count by setting it to all but one of the count of items.
-	if (this == base && zero != NULL)
+	if (this == base && zero != nullptr)
 		zero->location.z = count - 1;
-	else if (base != NULL) base->location.z = count - 1;
+	else if (base != nullptr) base->location.z = count - 1;
 
 	//  Set this item's count to 1
 	location.z = 1;
@@ -948,7 +948,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 			a->rightHandObject = Nothing;
 
 		for (i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[ i ] == id) {
+			if (a->armorObjects[i] == id) {
 				a->wear(Nothing, i);
 				break;
 			}
@@ -1048,10 +1048,10 @@ GameObject *GameObject::extractMerged(int16 num) {
 			// massCount should never go negitive
 			assert(massCount >= 0);
 		} else
-			return NULL;
+			return nullptr;
 	} else {
 		// not a mergable object return unsuccess
-		return NULL;
+		return nullptr;
 	}
 
 	return GameObject::objectAddress(extractedID);
@@ -1072,7 +1072,7 @@ void GameObject::moveRandom(const TilePoint &minLoc, const TilePoint &maxLoc) {
 		newLoc.v = GetRandomBetween(minLoc.v, maxLoc.v);
 		newLoc.z = location.z; //For Now Keep Z Coord Same
 		//If Flags == Collision Check
-		if (objectCollision(this, world(), newLoc) == NULL) { //If No Collision
+		if (objectCollision(this, world(), newLoc) == nullptr) { //If No Collision
 			move(newLoc);//Move It Else Try Again
 			break;
 		}
@@ -1095,7 +1095,7 @@ ObjectID GameObject::copy(const Location &l) {
 
 		error("Actor copying not yet implemented.\n");
 	} else {
-		if ((newObj = newObject()) == NULL) return Nothing;
+		if ((newObj = newObject()) == nullptr) return Nothing;
 
 		newObj->prototype   = prototype;
 		newObj->nameIndex   = nameIndex;
@@ -1127,7 +1127,7 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 
 		error("Actor copying not yet implemented.");
 	} else {
-		if ((newObj = newObject()) == NULL) return Nothing;
+		if ((newObj = newObject()) == nullptr) return Nothing;
 
 
 		newObj->prototype   = prototype;
@@ -1141,7 +1141,7 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 		// this did occur before any of the assignments
 		// but that caused a crash when the it tried to update
 		// the image during the move and tried to access the prototype
-		// pointer field, which is set to NULL after a newObject()
+		// pointer field, which is set to nullptr after a newObject()
 		newObj->move(l);
 	}
 
@@ -1172,7 +1172,7 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 
 		//  Search object list for the first scavengable object we can find
 		for (i = ImportantLimbo + 1; i < objectCount; i++) {
-			obj = &objectList[ i ];
+			obj = &objectList[i];
 
 			if (obj->isScavengable()
 			        &&  !obj->isActivated()
@@ -1183,14 +1183,14 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 		//  REM: If things start getting really tight, we can
 		//  start recycling common objects...
 
-		if (i >= objectCount) return NULL;
+		if (i >= objectCount) return nullptr;
 	} else {
 		objectLimboCount--;
 		obj = limbo->child();
 	}
 
 	obj->remove();
-	obj->prototype      = NULL;
+	obj->prototype      = nullptr;
 	obj->nameIndex      = 0;
 	obj->script         = 0;
 	obj->objectFlags    = 0;
@@ -1229,7 +1229,7 @@ void GameObject::deleteObject(void) {
 	removeAllSensors();
 
 	//  Delete any container nodes for this object
-	while ((cn = globalContainerList.find(dObj)) != NULL)
+	while ((cn = globalContainerList.find(dObj)) != nullptr)
 		delete cn;
 
 	if (isActor(parentID)) {
@@ -1241,7 +1241,7 @@ void GameObject::deleteObject(void) {
 		if (a->rightHandObject == id) a->rightHandObject = Nothing;
 
 		for (i = 0; i < elementsof(a->armorObjects); i++)
-			if (a->armorObjects[ i ] == id)
+			if (a->armorObjects[i] == id)
 				a->wear(Nothing, i);
 	}
 
@@ -1309,11 +1309,11 @@ void GameObject::deleteObjectRecursive(void) {
 			                    *nextChildObj;
 
 			for (childObj = objectAddress(childID);
-			        childObj != NULL;
+			        childObj != nullptr;
 			        childObj = nextChildObj) {
 				nextChildObj =  childObj->siblingID != Nothing
 				                ?   objectAddress(childObj->siblingID)
-				                :   NULL;
+				                :   nullptr;
 				childObj->deleteObjectRecursive();
 			}
 		}
@@ -1421,7 +1421,7 @@ void GameObject::updateState(void) {
 
 
 	int32 subTileTerrain =
-	    sti.surfaceTile != NULL
+	    sti.surfaceTile != nullptr
 	    ?   sti.surfaceTile->attrs.testTerrain(calcSubTileMask(subTile.u,
 	            subTile.v))
 	    :   0;
@@ -1461,11 +1461,11 @@ void GameObject::updateState(void) {
  * ======================================================================= */
 
 char *GameObject::nameText(uint16 index) {
-	uint16           offset = (*nameList)[ index ];
+	uint16           offset = nameList[index];
 
 	if (index < 0 || index >= nameListCount) return "Bad Name Index";
 
-	return (char *)(*nameList) + offset;
+	return (char *)nameList + offset;
 }
 
 #define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
@@ -1488,7 +1488,7 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ContainerIterator   iter(this);
 
 	//This Is The Largest The Row Column Can Be
-	static bool     slotTable[ maxRow ][ maxCol ];
+	static bool     slotTable[maxRow][maxCol];
 
 	memset(&slotTable, '\0', sizeof(slotTable));    //Initialize Table To FALSE
 
@@ -1508,14 +1508,14 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 
 		//Verify Not Writing Outside Array
 		if (temp.u >= 0 && temp.v >= 0 && temp.u < numRows && temp.v < numCols) {
-			slotTable[ temp.u ][ temp.v ] = TRUE;
+			slotTable[temp.u][temp.v] = TRUE;
 		}
 	}
 
 	//Go Through Table Until Find A FALSE and Return That Value
 	for (int16 u = 0; u < numRows; u++) {
 		for (int16 v = 0; v < numCols; v++) {
-			if (!slotTable[ u ][ v ]) {
+			if (!slotTable[u][v]) {
 				newLoc.v = v;
 				newLoc.u = u;
 				newLoc.z = 1;
@@ -1537,14 +1537,14 @@ bool GameObject::getAvailableSlot(
     bool            canMerge,
     GameObject      **mergeObj) {
 	assert(isObject(obj));
-	assert(tp != NULL);
-	assert(!canMerge || mergeObj != NULL);
+	assert(tp != nullptr);
+	assert(!canMerge || mergeObj != nullptr);
 
-	if (prototype == NULL) return FALSE;
+	if (prototype == nullptr) return FALSE;
 
 	ProtoObj        *objProto = obj->proto();
 
-	if (canMerge) *mergeObj = NULL;
+	if (canMerge) *mergeObj = nullptr;
 
 	//  Determine if the specified object is an intagible container
 	if ((objProto->containmentSet()
@@ -1606,7 +1606,7 @@ bool GameObject::placeObject(
 	                 *mergeObj;
 
 	if (getAvailableSlot(obj, &slot, canMerge, &mergeObj)) {
-		if (canMerge && mergeObj != NULL)
+		if (canMerge && mergeObj != nullptr)
 			return obj->dropOn(enactor, mergeObj->thisID(), num);
 		else
 			return obj->drop(enactor, Location(slot, thisID()), num);
@@ -1638,7 +1638,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			StandingTileInfo    sti;
 
 			//  Compute a location to place the object
-			probeLoc = location + incDirTable[ dir ] * dist;
+			probeLoc = location + incDirTable[dir] * dist;
 			probeLoc.u += (rand() & 0x3) - 2;
 			probeLoc.v += (rand() & 0x3) - 2;
 			probeLoc.z = tileSlopeHeight(probeLoc, mapNum, obj, &sti);
@@ -1647,7 +1647,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			if (checkBlocked(obj, mapNum, probeLoc) == blockageNone) {
 				//  If we're dropping the object on a TAI, make sure
 				//  we call the correct drop function
-				if (sti.surfaceTAG == NULL) {
+				if (sti.surfaceTAG == nullptr) {
 					obj->drop(
 					    thisID(),
 					    Location(probeLoc, parentID),
@@ -1676,7 +1676,7 @@ void GameObject::protoAddressToOffset() {
 	ProtoObj    *actorBase = &actorProtos[0];
 	int32 newProto, size = sizeof(ResourceObjectPrototype) + 4;//Add 4 for jump Table
 
-	if (prototype == NULL) return;
+	if (prototype == nullptr) return;
 
 	warning("STUB: GameObject::protoAddressToOffset(): unsafe pointer arithmetics");
 
@@ -1702,7 +1702,7 @@ GameObject *GameObject::getIntangibleContainer(int containerType) {
 
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -1788,13 +1788,13 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 	            *timerInList;
 
 	//  Create the new timer
-	if ((newTimer = new Timer(this, id, frameInterval)) == NULL)
+	if ((newTimer = new Timer(this, id, frameInterval)) == nullptr)
 		return FALSE;
 
 	//  Fetch the existing timer list for this object or create a
 	//  new one
-	if ((timerList = fetchTimerList(this)) == NULL
-	        && (timerList = new TimerList(this)) == NULL) {
+	if ((timerList = fetchTimerList(this)) == nullptr
+	        && (timerList = new TimerList(this)) == nullptr) {
 		delete newTimer;
 		return FALSE;
 	}
@@ -1804,7 +1804,7 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 	//  Search the list to see if there is already a timer with same
 	//  ID as the new timer.  If so, remove it and delete it.
 	for (timerInList = (Timer *)timerList->first();
-	        timerInList != NULL;
+	        timerInList != nullptr;
 	        timerInList = (Timer *)timerInList->next()) {
 		assert(timerInList->getObject() == this);
 
@@ -1829,12 +1829,12 @@ void GameObject::removeTimer(TimerID id) {
 	TimerList       *timerList;
 
 	//  Get this object's timer list
-	if ((timerList = fetchTimerList(this)) != NULL) {
+	if ((timerList = fetchTimerList(this)) != nullptr) {
 		Timer       *timer;
 
 		//  Search the timer list for a timer with the specified ID
 		for (timer = (Timer *)timerList->first();
-		        timer != NULL;
+		        timer != nullptr;
 		        timer = (Timer *)timer->next()) {
 			if (timer->thisID() == id) {
 				//  Remove the timer, then delete it
@@ -1857,13 +1857,13 @@ void GameObject::removeAllTimers(void) {
 	TimerList       *timerList;
 
 	//  Get this object's timer list
-	if ((timerList = fetchTimerList(this)) != NULL) {
+	if ((timerList = fetchTimerList(this)) != nullptr) {
 		Timer       *timer,
 		            *nextTimer;
 
 		//  Iterate through the timers
 		for (timer = (Timer *)timerList->first();
-		        timer != NULL;
+		        timer != nullptr;
 		        timer = nextTimer) {
 			//  Save the pointer to the next timer
 			nextTimer = (Timer *)timer->next();
@@ -1889,8 +1889,8 @@ bool GameObject::addSensor(Sensor *newSensor) {
 
 	//  Fetch the existing sensor list for this object or allocate a
 	//  new one
-	if ((sensorList = fetchSensorList(this)) == NULL
-	        && (sensorList = new SensorList(this)) == NULL)
+	if ((sensorList = fetchSensorList(this)) == nullptr
+	        && (sensorList = new SensorList(this)) == nullptr)
 		return FALSE;
 
 	assert(sensorList->getObject() == this);
@@ -1898,7 +1898,7 @@ bool GameObject::addSensor(Sensor *newSensor) {
 	//  Search the list to see if there is already a sensor with same
 	//  ID as the new sensor.  If so, remove it and delete it.
 	for (sensorInList = (Sensor *)sensorList->first();
-	        sensorInList != NULL;
+	        sensorInList != nullptr;
 	        sensorInList = (Sensor *)sensorInList->next()) {
 		assert(sensorInList->getObject() == this);
 
@@ -1924,7 +1924,7 @@ bool GameObject::addProtaganistSensor(SensorID id, int16 range) {
 	bool                sensorAdded;
 
 	newSensor = new ProtaganistSensor(this, id, range);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1940,7 +1940,7 @@ bool GameObject::addSpecificActorSensor(SensorID id, int16 range, Actor *a) {
 	bool                sensorAdded;
 
 	newSensor = new SpecificActorSensor(this, id, range, a);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1959,7 +1959,7 @@ bool GameObject::addSpecificObjectSensor(
 	bool                    sensorAdded;
 
 	newSensor = new SpecificObjectSensor(this, id, range, obj);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1978,7 +1978,7 @@ bool GameObject::addActorPropertySensor(
 	bool                sensorAdded;
 
 	newSensor = new ActorPropertySensor(this, id, range, prop);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1997,7 +1997,7 @@ bool GameObject::addObjectPropertySensor(
 	bool                    sensorAdded;
 
 	newSensor = new ObjectPropertySensor(this, id, range, prop);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -2016,7 +2016,7 @@ bool GameObject::addEventSensor(
 	bool            sensorAdded;
 
 	newSensor = new EventSensor(this, id, range, eventType);
-	if (newSensor == NULL) return FALSE;
+	if (newSensor == nullptr) return FALSE;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -2031,12 +2031,12 @@ void GameObject::removeSensor(SensorID id) {
 	SensorList      *sensorList;
 
 	//  Get this object's sensor list
-	if ((sensorList = fetchSensorList(this)) != NULL) {
+	if ((sensorList = fetchSensorList(this)) != nullptr) {
 		Sensor          *sensor;
 
 		//  Search the sensor list for a sensor with the specified ID
 		for (sensor = (Sensor *)sensorList->first();
-		        sensor != NULL;
+		        sensor != nullptr;
 		        sensor = (Sensor *)sensor->next()) {
 			if (sensor->thisID() == id) {
 				//  Remove the sensor, then delete it
@@ -2059,13 +2059,13 @@ void GameObject::removeAllSensors(void) {
 	SensorList      *sensorList;
 
 	//  Get this object's sensor list
-	if ((sensorList = fetchSensorList(this)) != NULL) {
+	if ((sensorList = fetchSensorList(this)) != nullptr) {
 		Sensor          *sensor,
 		                *nextSensor;
 
 		//  Iterate through the sensors
 		for (sensor = (Sensor *)sensorList->first();
-		        sensor != NULL;
+		        sensor != nullptr;
 		        sensor = nextSensor) {
 			//  Save the pointer to the next sensor
 			nextSensor = (Sensor *)sensor->next();
@@ -2176,12 +2176,12 @@ int32 GameObject::getProtoNum(void) {
 
 void GameObject::setProtoNum(int32 nProto) {
 	if (isActor(this))
-		prototype = &actorProtos[ nProto ];
+		prototype = &actorProtos[nProto];
 	else {
 		ObjectID    oldParentID = parentID;
 		bool        wasStacked = unstack(); //  Unstack if it was in a stack
 
-		prototype = &objectProtos[ nProto ];
+		prototype = &objectProtos[nProto];
 
 		if (wasStacked) {
 			ObjectID    pos = possessor();
@@ -2368,18 +2368,16 @@ GameWorld::GameWorld(int16 map) {
 		size.v = size.u;
 
 		sectorArraySize = size.u / Saga2::sectorSize;
-		sectorArray = (Sector **)RNewClearHandle(
-		                  sectorArraySize * sectorArraySize * sizeof(Sector),
-		                  NULL, "sector array");
+		sectorArray = new Sector[sectorArraySize * sectorArraySize]();
 
-		if (sectorArray == NULL)
+		if (sectorArray == nullptr)
 			error("Unable to allocate world %d sector array", map);
 
 		mapNum = map;
 	} else {
 		size.u = size.v = 0;
 		sectorArraySize = 0;
-		sectorArray = NULL;
+		sectorArray = nullptr;
 
 		mapNum = -1;
 	}
@@ -2400,20 +2398,17 @@ GameWorld::GameWorld(void **buf) {
 		sectorArraySize = size.u / Saga2::sectorSize;
 		sectorArrayBytes =
 		    sectorArraySize * sectorArraySize * sizeof(Sector),
-		    sectorArray = (Sector **)RNewHandle(
-		                      sectorArrayBytes,
-		                      NULL,
-		                      "sector array");
+		    sectorArray = new Sector[sectorArrayBytes]();
 
-		if (sectorArray == NULL)
+		if (sectorArray == nullptr)
 			error("Unable to allocate world %d sector array", mapNum);
 
-		memcpy(*sectorArray, bufferPtr, sectorArrayBytes);
+		memcpy(sectorArray, bufferPtr, sectorArrayBytes);
 
 		bufferPtr = (int16 *)((int8 *)bufferPtr + sectorArrayBytes);
 	} else {
 		sectorArraySize = 0;
-		sectorArray = NULL;
+		sectorArray = nullptr;
 	}
 
 	*buf = bufferPtr;
@@ -2442,7 +2437,7 @@ void *GameWorld::archive(void *buf) {
 
 	*bufferPtr++ = size.u;
 	*bufferPtr++ = mapNum;
-	memcpy(bufferPtr, *sectorArray, sectorArrayBytes);
+	memcpy(bufferPtr, sectorArray, sectorArrayBytes);
 
 	warning("FIXME: Unsafe pointer arithmetics in GameWorld::archive()");
 	return (void *)(bufferPtr + sectorArrayBytes);
@@ -2452,9 +2447,9 @@ void *GameWorld::archive(void *buf) {
 //	Cleanup
 
 void GameWorld::cleanup(void) {
-	if (sectorArray != NULL) {
-		RDisposeHandle((RHANDLE)sectorArray);
-		sectorArray = NULL;
+	if (sectorArray != nullptr) {
+		delete[] sectorArray;
+		sectorArray = nullptr;
 	}
 }
 
@@ -2470,8 +2465,8 @@ extern int enchantmentProto;
 void initPrototypes(void) {
 	int             i;
 
-	nameList = (uint16 **)listRes->load(nameListID, "name list");
-	nameListCount = listRes->size(nameListID) / sizeof nameList[ 0 ];
+	nameList = (uint16 *)listRes->loadResource(nameListID, "name list");
+	nameListCount = listRes->size(nameListID) / sizeof nameList[0];
 
 	//  Load the Object prototype table
 
@@ -2481,10 +2476,7 @@ void initPrototypes(void) {
 	if (objectProtoCount < 1)
 		error("Unable to load Object Prototypes");
 
-	objectProtos = (ProtoObj *)RNewPtr(
-	                   objectProtoCount * sizeof(ProtoObj),
-	                   NULL,
-	                   "object prototypes");
+	objectProtos = (ProtoObj *)malloc(objectProtoCount * sizeof (ProtoObj));
 
 	if (listRes->seek(objProtoID) == 0)
 		error("Unable to load Object Prototypes");
@@ -2494,7 +2486,7 @@ void initPrototypes(void) {
 
 	for (i = 0; i < objectProtoCount; i++) {
 		ResourceObjectPrototype ro;
-		ProtoObj    *pr = &objectProtos[ i ];
+		ProtoObj    *pr = &objectProtos[i];
 
 		listRes->read(&ro, sizeof(ResourceObjectPrototype));
 
@@ -2631,17 +2623,14 @@ void initPrototypes(void) {
 	if (actorProtoCount < 1)
 		error("Unable to load Actor Prototypes");
 
-	actorProtos = (ActorProto *)RNewPtr(
-	                  actorProtoCount * sizeof(ActorProto),
-	                  NULL,
-	                  "actor prototypes");
+	actorProtos = (ActorProto *)malloc(actorProtoCount * sizeof(ActorProto));
 
 	if (listRes->seek(actorProtoID) == 0)
 		error("Unable to load Actor Prototypes");
 
 	for (i = 0; i < actorProtoCount; i++) {
 		ResourceActorPrototype  ra;
-		ActorProto              *pr = &actorProtos[ i ];
+		ActorProto              *pr = &actorProtos[i];
 
 		listRes->read(&ra, sizeof(ResourceActorPrototype));
 
@@ -2655,14 +2644,14 @@ void initPrototypes(void) {
 //	Cleanup the prototype lists
 
 void cleanupPrototypes(void) {
-	if (actorProtos != NULL) {
-		RDisposePtr(actorProtos);
-		actorProtos = NULL;
+	if (actorProtos != nullptr) {
+		free(actorProtos);
+		actorProtos = nullptr;
 	}
 
-	if (objectProtos != NULL) {
-		RDisposePtr(objectProtos);
-		objectProtos = NULL;
+	if (objectProtos != nullptr) {
+		free(objectProtos);
+		objectProtos = nullptr;
 	}
 }
 
@@ -2675,7 +2664,7 @@ void initObjectSoundFXTable(void) {
 	itemRes =   auxResFile->newContext(
 	                MKTAG('I', 'T', 'E', 'M'),
 	                "item resources");
-	if (itemRes == NULL || !itemRes->_valid)
+	if (itemRes == nullptr || !itemRes->_valid)
 		error("Error accessing item resource group.\n");
 
 	objectSoundFXTable =
@@ -2684,7 +2673,7 @@ void initObjectSoundFXTable(void) {
 	        MKTAG('S', 'N', 'D', 'T'),
 	        "object sound effect table");
 
-	if (objectSoundFXTable == NULL)
+	if (objectSoundFXTable == nullptr)
 		error("Unable to load object sound effects table");
 
 	auxResFile->disposeContext(itemRes);
@@ -2694,9 +2683,9 @@ void initObjectSoundFXTable(void) {
 //	Cleanup the sound effects table
 
 void cleanupObjectSoundFXTable(void) {
-	if (objectSoundFXTable != NULL) {
-		RDisposePtr(objectSoundFXTable);
-		objectSoundFXTable = NULL;
+	if (objectSoundFXTable != nullptr) {
+		free(objectSoundFXTable);
+		objectSoundFXTable = nullptr;
 	}
 }
 
@@ -2707,12 +2696,9 @@ void initTempActorCount(void) {
 	uint16          i;
 
 	//  Allocate and initialize the temp actor count array
-	tempActorCount = (uint16 *)RNewPtr(
-	                     actorProtoCount * sizeof(uint16),
-	                     NULL,
-	                     "temp actor count array");
+	tempActorCount = new uint16[actorProtoCount];
 	for (i = 0; i < actorProtoCount; i++)
-		tempActorCount[ i ] = 0;
+		tempActorCount[i] = 0;
 }
 
 //-------------------------------------------------------------------
@@ -2728,10 +2714,7 @@ void saveTempActorCount(SaveFileConstructor &saveGame) {
 //	Load the array of temp actor counts
 
 void loadTempActorCount(SaveFileReader &saveGame) {
-	tempActorCount = (uint16 *)RNewPtr(
-	                     saveGame.getChunkSize(),
-	                     NULL,
-	                     "temp actor count array");
+	tempActorCount = new uint16[saveGame.getChunkSize()];
 	saveGame.read(tempActorCount, saveGame.getChunkSize());
 }
 
@@ -2739,9 +2722,9 @@ void loadTempActorCount(SaveFileReader &saveGame) {
 //	Cleanup the array to temp actor counts
 
 void cleanupTempActorCount(void) {
-	if (tempActorCount != NULL) {
-		RDisposePtr(tempActorCount);
-		tempActorCount = NULL;
+	if (tempActorCount != nullptr) {
+		delete[] tempActorCount;
+		tempActorCount = nullptr;
 	}
 }
 
@@ -2749,21 +2732,21 @@ void cleanupTempActorCount(void) {
 //	Increment the temporary actor count for the specified prototype
 
 void incTempActorCount(uint16 protoNum) {
-	tempActorCount[ protoNum ]++;
+	tempActorCount[protoNum]++;
 }
 
 //-------------------------------------------------------------------
 //	Decrement the temporary actor count for the specified prototype
 
 void decTempActorCount(uint16 protoNum) {
-	tempActorCount[ protoNum ]--;
+	tempActorCount[protoNum]--;
 }
 
 //-------------------------------------------------------------------
 //	Return the number of temporary actors for the specified prototype
 
 uint16 getTempActorCount(uint16 protoNum) {
-	return tempActorCount[ protoNum ];
+	return tempActorCount[protoNum];
 }
 
 //-------------------------------------------------------------------
@@ -2775,17 +2758,17 @@ void initWorlds(void) {
 	//  worldCount must be set by the map data initialization
 	worldListSize = worldCount * sizeof(GameWorld);
 
-	worldList = (GameWorld *)RNewPtr(worldListSize, NULL, "world list");
-	if (worldList == NULL)
+	worldList = new GameWorld[worldListSize]();
+	if (worldList == nullptr)
 		error("Unable to allocate world list");
 
 	for (i = 0; i < worldCount; i++) {
-		GameWorld   *gw = &worldList[ i ];
+		GameWorld   *gw = &worldList[i];
 
 		new (gw) GameWorld(i);
 	}
 
-	currentWorld = &worldList[ 0 ];
+	currentWorld = &worldList[0];
 	setCurrentMap(currentWorld->mapNum);
 }
 
@@ -2804,10 +2787,10 @@ void saveWorlds(SaveFileConstructor &saveGame) {
 	archiveBufSize += sizeof(ObjectID);
 
 	for (i = 0; i < worldCount; i++)
-		archiveBufSize += worldList[ i ].archiveSize();
+		archiveBufSize += worldList[i].archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
-	if (archiveBuffer == NULL)
+	archiveBuffer = malloc(archiveBufSize);
+	if (archiveBuffer == nullptr)
 		error("Unable to allocate world archive buffer");
 
 	bufferPtr = archiveBuffer;
@@ -2818,7 +2801,7 @@ void saveWorlds(SaveFileConstructor &saveGame) {
 
 	//  Store the world data in the archive buffer
 	for (i = 0; i < worldCount; i++)
-		bufferPtr = worldList[ i ].archive(bufferPtr);
+		bufferPtr = worldList[i].archive(bufferPtr);
 
 	//  Write the archive buffer to the save file
 	saveGame.writeChunk(
@@ -2826,7 +2809,7 @@ void saveWorlds(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -2841,15 +2824,12 @@ void loadWorlds(SaveFileReader &saveGame) {
 	//  worldCount must be set by the map data initialization
 	worldListSize = worldCount * sizeof(GameWorld);
 
-	worldList = (GameWorld *)RNewPtr(worldListSize, NULL, "world list");
-	if (worldList == NULL)
+	worldList = new GameWorld[worldListSize]();
+	if (worldList == nullptr)
 		error("Unable to allocate world list");
 
-	archiveBuffer = RNewPtr(
-	                    saveGame.getChunkSize(),
-	                    NULL,
-	                    "archive buffer");
-	if (archiveBuffer == NULL)
+	archiveBuffer = malloc(saveGame.getChunkSize());
+	if (archiveBuffer == nullptr)
 		error("Unable to allocate world data buffer");
 
 	saveGame.read(archiveBuffer, saveGame.getChunkSize());
@@ -2865,9 +2845,9 @@ void loadWorlds(SaveFileReader &saveGame) {
 	        i < worldCount;
 	        i++)
 		//  Restore the world's data
-		new (&worldList[ i ]) GameWorld(&bufferPtr);
+		new (&worldList[i]) GameWorld(&bufferPtr);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 
 	//  Reset the current world
 	currentWorld = (GameWorld *)GameObject::objectAddress(currentWorldID);
@@ -2879,12 +2859,12 @@ void loadWorlds(SaveFileReader &saveGame) {
 
 void cleanupWorlds(void) {
 	for (int i = 0; i < worldCount; i++) {
-		GameWorld   *gw = &worldList[ i ];
+		GameWorld   *gw = &worldList[i];
 
 		gw->cleanup();
 	}
 
-	if (worldList != NULL) RDisposePtr(worldList);
+	if (worldList != nullptr) delete[] worldList;
 }
 
 //-------------------------------------------------------------------
@@ -2912,21 +2892,15 @@ void initObjects(void) {
 
 	//  Allocate memory for the object list
 	objectListSize = objectCount * sizeof(GameObject);
-	objectList = (GameObject *)RNewClearPtr(
-	                 objectListSize,
-	                 NULL,
-	                 "object list");
+	objectList = new GameObject[objectCount]();
 
-	if (objectList == NULL)
+	if (objectList == nullptr)
 		error("Unable to load Objects");
 
 	//  Allocate memory for the resource objects
-	resourceObjectList = (ResourceGameObject *)RNewClearPtr(
-	                         resourceObjectCount
-	                         *   sizeof(ResourceGameObject),
-	                         NULL, "res object list");
+	resourceObjectList = new ResourceGameObject[resourceObjectCount]();
 
-	if (resourceObjectList == NULL || listRes->seek(objListID) == 0)
+	if (resourceObjectList == nullptr || listRes->seek(objListID) == 0)
 		error("Unable to load Objects");
 
 	//  Read the resource Objects
@@ -2934,7 +2908,7 @@ void initObjects(void) {
 	              sizeof(ResourceGameObject) * resourceObjectCount);
 
 	for (i = 0; i < resourceObjectCount; i++) {
-		GameObject  *obj = &objectList[ i ];
+		GameObject  *obj = &objectList[i];
 
 		if (i < 4)
 			//  First four object are limbos, so use the default
@@ -2942,23 +2916,23 @@ void initObjects(void) {
 			new (obj) GameObject;
 		else
 			//  Initialize the objects with the resource data
-			new (obj) GameObject(resourceObjectList[ i ]);
+			new (obj) GameObject(resourceObjectList[i]);
 	}
 
 	for (; i < objectCount; i++) {
-		GameObject  *obj = &objectList[ i ];
+		GameObject  *obj = &objectList[i];
 
 		//  Use the default constructor for the extra actors
 		new (obj) GameObject;
 	}
 
-	RDisposePtr(resourceObjectList);
+	delete[] resourceObjectList;
 
 	//  Go through the object list and initialize all objects.
 
 	//Add Object To World
 	for (i = 0; i < resourceObjectCount; i++) {
-		GameObject  *obj = &objectList[ i ],
+		GameObject  *obj = &objectList[i],
 		             *parent;
 		TilePoint   slot;
 
@@ -2985,7 +2959,7 @@ void initObjects(void) {
 	}
 
 	for (; i < objectCount; i++) {
-		GameObject  *obj = &objectList[ i ];
+		GameObject  *obj = &objectList[i];
 
 		obj->siblingID = obj->childID = Nothing;
 		obj->append(ObjectLimbo);
@@ -2996,7 +2970,7 @@ void initObjects(void) {
 	//  Make a pass over the actor list appending each actor to their
 	//  parent's child list
 	for (i = 0; i < actorCount; i++) {
-		Actor       *a = &actorList[ i ];
+		Actor       *a = &actorList[i];
 
 		if (a->parentID == Nothing) {
 			a->append(ActorLimbo);
@@ -3025,8 +2999,8 @@ void saveObjects(SaveFileConstructor &saveGame) {
 	                        +   sizeof(importantLimboCount)
 	                        +   objectListSize;
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
-	if (archiveBuffer == NULL)
+	archiveBuffer = malloc(archiveBufSize);
+	if (archiveBuffer == nullptr)
 		error("Cannot allocate object list archive buffer");
 
 	bufferPtr = archiveBuffer;
@@ -3045,7 +3019,7 @@ void saveObjects(SaveFileConstructor &saveGame) {
 	        i < objectCount;
 	        i++, currentObj++) {
 		*((int16 *)&currentObj->prototype) =
-		    currentObj->prototype != NULL
+		    currentObj->prototype != nullptr
 		    ?   currentObj->prototype - objectProtos
 		    :   -1;
 	}
@@ -3055,7 +3029,7 @@ void saveObjects(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -3074,8 +3048,8 @@ void loadObjects(SaveFileReader &saveGame) {
 	objectListSize = saveGame.bytesLeftInChunk();
 	objectCount = objectListSize / sizeof(GameObject);
 
-	objectList = (GameObject *)RNewPtr(objectListSize, NULL, "object list");
-	if (objectList == NULL)
+	objectList = new GameObject[objectCount]();
+	if (objectList == nullptr)
 		error("Unable to load Objects");
 
 	saveGame.read(objectList, objectListSize);
@@ -3086,8 +3060,8 @@ void loadObjects(SaveFileReader &saveGame) {
 		//  convert prototype ID number to actual prototype address
 		obj->prototype =
 		    *((int16 *)&obj->prototype) != -1
-		    ?   &objectProtos[ *((int16 *)&obj->prototype) ]
-		    :   NULL;
+		    ?   &objectProtos[*((int16 *)&obj->prototype)]
+		    :   nullptr;
 	}
 }
 
@@ -3095,7 +3069,8 @@ void loadObjects(SaveFileReader &saveGame) {
 //	Cleanup object list
 
 void cleanupObjects(void) {
-	if (objectList != NULL) RDisposePtr(objectList);
+	if (objectList != nullptr)
+		delete[] objectList;
 	mainDisplayList.reset();
 }
 
@@ -3124,7 +3099,7 @@ void getViewTrackPos(TilePoint &tp) {
 GameObject *getViewCenterObject(void) {
 	return  viewCenterObject != Nothing
 	        ?   GameObject::objectAddress(viewCenterObject)
-	        :   NULL;
+	        :   nullptr;
 }
 
 /* ======================================================================= *
@@ -3262,7 +3237,7 @@ void ActiveRegion::update(void) {
 
 //	Global active region array
 
-static ActiveRegion activeRegionList[ playerActors ];
+static ActiveRegion activeRegionList[playerActors];
 
 //-------------------------------------------------------------------
 //	Iterate through the active regions, updating each
@@ -3271,28 +3246,28 @@ void updateActiveRegions(void) {
 	int16   i;
 
 	for (i = 0; i < elementsof(activeRegionList); i++)
-		activeRegionList[ i ].update();
+		activeRegionList[i].update();
 }
 
 //-------------------------------------------------------------------
 //	Return a pointer to an active region given its PlayerActor's ID
 
 ActiveRegion *getActiveRegion(PlayerActorID id) {
-	return &activeRegionList[ id ];
+	return &activeRegionList[id];
 }
 
 //-------------------------------------------------------------------
 //	Initialize the state of the active regions
 
 void initActiveRegions(void) {
-	static PlayerActorID    playerIDArray[ playerActors ] =
+	static PlayerActorID    playerIDArray[playerActors] =
 	{ FTA_JULIAN, FTA_PHILIP, FTA_KEVIN };
 
 	int16   i;
 
 	for (i = 0; i < playerActors; i++) {
-		ActiveRegion    *reg = &activeRegionList[ i ];
-		ObjectID        actorID = getPlayerActorAddress(playerIDArray[ i ])->getActorID();
+		ActiveRegion    *reg = &activeRegionList[i];
+		ObjectID        actorID = getPlayerActorAddress(playerIDArray[i])->getActorID();
 
 		reg->anchor = actorID;
 		reg->anchorLoc = Nowhere;
@@ -3328,7 +3303,7 @@ void loadActiveRegions(SaveFileReader &saveGame) {
 
 SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
 	searchWorld(world) {
-	assert(searchWorld != NULL);
+	assert(searchWorld != nullptr);
 	assert(isWorld(searchWorld));
 
 	minSector = TilePoint(0, 0, 0);
@@ -3341,7 +3316,7 @@ SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
 ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 	Sector      *currentSector;
 
-	currentObject = NULL;
+	currentObject = nullptr;
 
 	sectorCoords = minSector;
 	currentSector = searchWorld->getSector(sectorCoords.u, sectorCoords.v);
@@ -3349,7 +3324,7 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 		if (++sectorCoords.v >= maxSector.v) {
 			sectorCoords.v = minSector.v;
 			if (++sectorCoords.u >= maxSector.u) {
-				if (obj != NULL) *obj = NULL;
+				if (obj != nullptr) *obj = nullptr;
 				return Nothing;
 			}
 		}
@@ -3361,7 +3336,7 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 
 	currentObject = GameObject::objectAddress(currentSector->childID);
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentSector->childID;
 }
 
@@ -3385,7 +3360,7 @@ ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
 			if (++sectorCoords.v >= maxSector.v) {
 				sectorCoords.v = minSector.v;
 				if (++sectorCoords.u >= maxSector.u) {
-					if (obj != NULL) *obj = NULL;
+					if (obj != nullptr) *obj = nullptr;
 					return Nothing;
 				}
 			}
@@ -3401,7 +3376,7 @@ ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
 
 	currentObject = GameObject::objectAddress(currentObjectID);
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3455,8 +3430,8 @@ ObjectID RadialObjectIterator::first(GameObject **obj, int16 *dist) {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	}
 
-	if (dist != NULL) *dist = currentDist;
-	if (obj != NULL) *obj = currentObject;
+	if (dist != nullptr) *dist = currentDist;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3475,8 +3450,8 @@ ObjectID RadialObjectIterator::next(GameObject **obj, int16 *dist) {
 	                 computeDist(currentObject->getLocation()))
 	         >   radius);
 
-	if (dist != NULL) *dist = currentDist;
-	if (obj != NULL) *obj = currentObject;
+	if (dist != nullptr) *dist = currentDist;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3506,7 +3481,7 @@ ObjectID RingObjectIterator::first(GameObject **obj) {
 		currentObjectID = CircularObjectIterator::next(&currentObject);
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 
 }
@@ -3520,7 +3495,7 @@ ObjectID RingObjectIterator::next(GameObject **obj) {
 	} while (currentObjectID != Nothing
 	         &&  computeDist(currentObject->getLocation()) < innerDist);
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3596,7 +3571,7 @@ ObjectID RegionalObjectIterator::first(GameObject **obj) {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3612,7 +3587,7 @@ ObjectID RegionalObjectIterator::next(GameObject **obj) {
 	} while (currentObjectID != Nothing
 	         &&  !inRegion(currentObject->getLocation()));
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3660,7 +3635,7 @@ ObjectID RectangularObjectIterator::first(GameObject **obj) {
 		currentObjectID = RegionalObjectIterator::next(&currentObject);
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3676,7 +3651,7 @@ ObjectID RectangularObjectIterator::next(GameObject **obj) {
 	} while (currentObjectID != Nothing
 	         &&  !inRegion(currentObject->getLocation()));
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3723,7 +3698,7 @@ ObjectID TriangularObjectIterator::first(GameObject **obj) {
 		currentObjectID = RegionalObjectIterator::next(&currentObject);
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3739,7 +3714,7 @@ ObjectID TriangularObjectIterator::next(GameObject **obj) {
 	} while (currentObjectID != Nothing
 	         &&  !inRegion(currentObject->getLocation()));
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3790,7 +3765,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 
 		int16               prevRegionIndex;
 
-		currentRegion = &activeRegionList[ activeRegionIndex ];
+		currentRegion = &activeRegionList[activeRegionIndex];
 
 		sectorBitMask = 0;
 		currentRegionSize.u =       currentRegion->region.max.u
@@ -3804,7 +3779,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 		        prevRegionIndex++) {
 			ActiveRegion    *prevRegion;
 
-			prevRegion = &activeRegionList[ prevRegionIndex ];
+			prevRegion = &activeRegionList[prevRegionIndex];
 
 			//  Determine if the current region and the previous region
 			//  overlap.
@@ -3924,7 +3899,7 @@ bool ActiveRegionObjectIterator::nextSector(void) {
 ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 	ObjectID        currentObjectID = Nothing;
 
-	currentObject = NULL;
+	currentObject = nullptr;
 
 	if (firstSector()) {
 		Sector      *currentSector;
@@ -3933,12 +3908,12 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 		                    sectorCoords.u,
 		                    sectorCoords.v);
 
-		assert(currentSector != NULL);
+		assert(currentSector != nullptr);
 
 		currentObjectID = currentSector->childID;
 		currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
-		                :   NULL;
+		                :   nullptr;
 
 		while (currentObjectID == Nothing) {
 			if (!nextSector()) break;
@@ -3947,16 +3922,16 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 			                    sectorCoords.u,
 			                    sectorCoords.v);
 
-			assert(currentSector != NULL);
+			assert(currentSector != nullptr);
 
 			currentObjectID = currentSector->childID;
 			currentObject = currentObjectID != Nothing
 			                ?   GameObject::objectAddress(currentObjectID)
-			                :   NULL;
+			                :   nullptr;
 		}
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -3972,7 +3947,7 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 	currentObjectID = currentObject->IDNext();
 	currentObject = currentObjectID != Nothing
 	                ?   GameObject::objectAddress(currentObjectID)
-	                :   NULL;
+	                :   nullptr;
 
 	while (currentObjectID == Nothing) {
 		Sector      *currentSector;
@@ -3983,15 +3958,15 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 		                    sectorCoords.u,
 		                    sectorCoords.v);
 
-		assert(currentSector != NULL);
+		assert(currentSector != nullptr);
 
 		currentObjectID = currentSector->childID;
 		currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
-		                :   NULL;
+		                :   nullptr;
 	}
 
-	if (obj != NULL) *obj = currentObject;
+	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
 }
 
@@ -4004,7 +3979,7 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 ContainerIterator::ContainerIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
 	nextID = &container->childID;
-	object = NULL;
+	object = nullptr;
 }
 
 ObjectID ContainerIterator::next(GameObject **obj) {
@@ -4027,17 +4002,17 @@ ObjectID ContainerIterator::next(GameObject **obj) {
 //  This class iterates through every object within a container
 
 RecursiveContainerIterator::~RecursiveContainerIterator(void) {
-	if (subIter != NULL) delete subIter;
+	if (subIter != nullptr) delete subIter;
 }
 
 ObjectID RecursiveContainerIterator::first(GameObject **obj) {
-	if (subIter != NULL) delete subIter;
+	if (subIter != nullptr) delete subIter;
 
 	id(container->IDChild()),
 
 
-	if (obj != NULL)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : NULL;
+	if (obj != nullptr)
+		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
 
 	return id;
 }
@@ -4054,7 +4029,7 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 		}
 
 		delete subIter;
-		subIter = NULL;
+		subIter = nullptr;
 		currentObj = GameObject::objectAddress(id);
 	} else {
 		currentObj = GameObject::objectAddress(id);
@@ -4067,8 +4042,8 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 	}
 	id = currentObj->IDNext();
 
-	if (obj != NULL)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : NULL;
+	if (obj != nullptr)
+		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
 	return id;
 }
 #endif
@@ -4084,8 +4059,8 @@ ObjectID RecursiveContainerIterator::first(GameObject **obj) {
 
 	id = rootObj->IDChild();
 
-	if (obj != NULL)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : NULL;
+	if (obj != nullptr)
+		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
 
 	return id;
 }
@@ -4095,14 +4070,14 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 
 	//  If this object has a child, then the next object (id) is the child.
 	//  If it has no child, then check for sibling.
-	if ((id = currentObj->IDChild()) == NULL) {
+	if ((id = currentObj->IDChild()) == 0) {
 		//  If this object has a sibling, then the next object (id) is the sibling.
 		//  If it has no sibling, then check for parent.
-		while ((id = currentObj->IDNext()) == NULL) {
+		while ((id = currentObj->IDNext()) == 0) {
 			//  If this object has a parent, then the get the parent.
-			if ((id = currentObj->IDParent()) != NULL) {
+			if ((id = currentObj->IDParent()) != 0) {
 				//  If the parent is the root, then we're done.
-				if (id == Nothing || id == root) return NULL;
+				if (id == Nothing || id == root) return 0;
 
 				//  Set the current object to the parent, and then
 				//  Go around the loop once again and get the sibling of the parent.
@@ -4114,8 +4089,8 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 		}
 	}
 
-	if (obj != NULL)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : NULL;
+	if (obj != nullptr)
+		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
 
 	return id;
 }
@@ -4143,7 +4118,7 @@ GameObject *objectCollision(GameObject *obj, GameWorld *world, const TilePoint &
 	CircularObjectIterator  iter(world, loc, proto->crossSection + 32);
 
 	for (iter.first(&obstacle);
-	        obstacle != NULL;
+	        obstacle != nullptr;
 	        iter.next(&obstacle)) {
 		TilePoint   tp = obstacle->getLocation();
 		ProtoObj    *proto = obstacle->proto();
@@ -4162,7 +4137,7 @@ GameObject *objectCollision(GameObject *obj, GameWorld *world, const TilePoint &
 			return obstacle;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /* ======================================================================= *
@@ -4354,7 +4329,7 @@ APPFUNC(cmdBrain) {
 		}
 	} else if (ev.eventType == gEventMouseMove) {
 		if (ev.value == gCompImage::leave) {
-			mouseInfo.setText(NULL);
+			mouseInfo.setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor
 			if (part == 0)      mouseInfo.setText(IDEAS_INVENT);
@@ -4377,23 +4352,23 @@ void readyContainerSetup(void) {
 	indivReadyNode = CreateReadyContainerNode(0);
 
 	for (i = 0; i < kNumViews && i < playerActors ; i++) {
-		playerList[ i ].readyNode = CreateReadyContainerNode(i);
+		playerList[i].readyNode = CreateReadyContainerNode(i);
 
-		TrioCviews[ i ] = new ReadyContainerView(
+		TrioCviews[i] = new ReadyContainerView(
 		                      *trioControls,
-		                      Rect16(trioReadyContInfo[ i ].xPos,
-		                             trioReadyContInfo[ i ].yPos + 8,
-		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[ i ].cols + iconSpacingY * (trioReadyContInfo[ i ].cols - 1),
-		                             iconOriginY + (iconOriginY * trioReadyContInfo[ i ].rows) + (trioReadyContInfo[ i ].rows * iconHeight) - 23),
-		                      *playerList[ i ].readyNode,
+		                      Rect16(trioReadyContInfo[i].xPos,
+		                             trioReadyContInfo[i].yPos + 8,
+		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[i].cols + iconSpacingY * (trioReadyContInfo[i].cols - 1),
+		                             iconOriginY + (iconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * iconHeight) - 23),
+		                      *playerList[i].readyNode,
 		                      backImages,
 		                      numReadyContRes,
-		                      trioReadyContInfo[ i ].rows,
-		                      trioReadyContInfo[ i ].cols,
-		                      trioReadyContInfo[ i ].rows,
+		                      trioReadyContInfo[i].rows,
+		                      trioReadyContInfo[i].cols,
+		                      trioReadyContInfo[i].rows,
 		                      0);
 
-		TrioCviews[ i ]->draw();
+		TrioCviews[i]->draw();
 	}
 
 	indivCviewTop   = new ReadyContainerView(*indivControls,
@@ -4444,27 +4419,27 @@ void cleanupReadyContainers(void) {
 
 		for (i = 0; i < kNumViews && i < playerActors ; i++) {
 			delete TrioCviews[i];
-			TrioCviews[ i ] = NULL;
+			TrioCviews[i] = nullptr;
 
-			delete playerList[ i ].readyNode;
-			playerList[ i ].readyNode = NULL;
+			delete playerList[i].readyNode;
+			playerList[i].readyNode = nullptr;
 		}
 		delete indivReadyNode;
 	}
 
 	if (indivCviewTop) {
 		delete indivCviewTop;
-		indivCviewTop = NULL;
+		indivCviewTop = nullptr;
 	}
 
 	if (indivCviewBot) {
 		delete indivCviewBot;
-		indivCviewBot = NULL;
+		indivCviewBot = nullptr;
 	}
 
 	//
 	if (imageRes) resFile->disposeContext(imageRes);
-	imageRes = NULL;
+	imageRes = nullptr;
 }
 
 #endif
@@ -4556,7 +4531,7 @@ void doBackgroundSimulation(void) {
 	while (objectUpdateCount--) {
 		GameObject      *obj;
 
-		obj = &objectList[ objectIndex++ ];
+		obj = &objectList[objectIndex++];
 
 		//  Wrap the counter around to the beginning if needed
 		if (objectIndex >= objectCount) objectIndex = 0;
@@ -4587,7 +4562,7 @@ void doBackgroundSimulation(void) {
 	while (actorUpdateCount--) {
 		Actor           *a;
 
-		a = &actorList[ actorIndex++ ];
+		a = &actorList[actorIndex++];
 
 		//  Wrap the counter around to the beginning if needed
 		if (actorIndex >= actorCount) actorIndex = 0;
@@ -4622,15 +4597,15 @@ void updateObjectStates(void) {
 	if (objectStatesPaused) return;
 
 	GameObject          *obj,
-	                    *last = &objectList[ objectCount ];
+	                    *last = &objectList[objectCount];
 
 	static int16        baseIndex = 0;
 
 //	baseIndex = (baseIndex + 1) & ~3;
 	baseIndex = 0;
 
-//	for (    obj = &objectList[ baseIndex ]; obj < last; obj += 4 )
-	for (obj = &objectList[ baseIndex ]; obj < last; obj++) {
+//	for (    obj = &objectList[baseIndex]; obj < last; obj += 4 )
+	for (obj = &objectList[baseIndex]; obj < last; obj++) {
 		if (isWorld(obj->IDParent()) && obj->isActivated())
 			obj->updateState();
 	}
