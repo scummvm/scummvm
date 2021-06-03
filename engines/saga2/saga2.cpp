@@ -176,6 +176,17 @@ static void loadFont(Common::File &file, gFont *font, uint32 offset) {
 	file.read(font->fontdata, size);
 }
 
+struct dataChunks {
+	uint8 **ptr;
+	uint32 offset;
+	uint32 size;
+} chunks[] = {
+	{ &loadingWindowPalette,0x004A2600, 1024 },
+	{ &loadingWindowData,	0x004A2A00, 307200 },
+	{ &ColorMapRanges,		0x004EDC20, 1584 },
+	{ NULL,					0,			0 }
+};
+
 void Saga2Engine::loadExeResources() {
 	Common::File exe;
 	const uint32 offset = 0x4F6D90 - 0xF4990;
@@ -193,17 +204,11 @@ void Saga2Engine::loadExeResources() {
 	loadFont(exe, &ThinFix8Font, 0x004FC210 - offset);
 	loadFont(exe, &Script10Font, 0x004FCD18 - offset);
 
-	loadingWindowPalette = (uint8 *)malloc(1024);
-	exe.seek(0x004A2600 - offset);
-	exe.read(loadingWindowPalette, 1024);
-
-	loadingWindowData = (uint8 *)malloc(307200);
-	exe.seek(0x004A2A00 - offset);
-	exe.read(loadingWindowData, 307200);
-
-	ColorMapRanges = (uint8 *)malloc(1584);
-	exe.seek(0x004EDC20 - offset);
-	exe.read(ColorMapRanges, 1584);
+	for (int i = 0; chunks[i].ptr; i++) {
+		*chunks[i].ptr = (uint8 *)malloc(chunks[i].size);
+		exe.seek(chunks[i].offset - offset);
+		exe.read(*chunks[i].ptr, chunks[i].size);
+	}
 
 	exe.close();
 }
