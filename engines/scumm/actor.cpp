@@ -515,8 +515,9 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	_walkdata.xfrac = 0;
 	_walkdata.yfrac = 0;
 
-	if (_vm->_game.version <= 2)
-		_targetFacing = getAngleFromPos(V12_X_MULTIPLIER*deltaXFactor, V12_Y_MULTIPLIER*deltaYFactor, false);
+	if (_vm->_game.version <= 3)
+		// The x/y distance ratio which determines whether to face up/down instead of left/right is different for SCUMM1/2 and SCUMM3.
+		_targetFacing = oldDirToNewDir(((ABS(diffY) * (_vm->_game.version == 3 ? 3 : 1)) > ABS(diffX)) ? 3 - (diffY >= 0 ? 1 : 0) : (diffX >= 0 ? 1 : 0));
 	else
 		_targetFacing = getAngleFromPos(deltaXFactor, deltaYFactor, (_vm->_game.id == GID_DIG || _vm->_game.id == GID_CMI));
 
