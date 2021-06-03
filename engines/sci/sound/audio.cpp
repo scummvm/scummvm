@@ -426,7 +426,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 	} else {
 		// Original source file
-		if ((audioRes->getUint8At(0) & 0x7f) == kResourceTypeAudio && audioRes->getUint32BEAt(2) == MKTAG('S','O','L',0)) {
+		if (audioRes->size() > 6 &&
+			(audioRes->getUint8At(0) & 0x7f) == kResourceTypeAudio &&
+			audioRes->getUint32BEAt(2) == MKTAG('S','O','L',0)) {
 			// SCI1.1
 			delete memoryStream;
 			const uint8 headerSize = audioRes->getUint8At(1);
@@ -483,13 +485,11 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		*sampleLen = (audioSeekStream->getLength().msecs() * 60) / 1000; // we translate msecs to ticks
 		audioStream = audioSeekStream;
 	}
+
 	// We have to make sure that we don't depend on resource manager pointers
 	// after this point, because the actual audio resource may get unloaded by
 	// resource manager at any time.
-	if (audioStream)
-		return audioStream;
-
-	return NULL;
+	return audioStream;
 }
 
 int AudioPlayer::audioCdPlay(int track, int start, int duration) {
