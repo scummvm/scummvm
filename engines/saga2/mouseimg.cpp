@@ -28,7 +28,6 @@
 #include "saga2/blitters.h"
 #include "saga2/fta.h"
 #include "saga2/mouseimg.h"
-#include "saga2/images.h"
 #include "saga2/panel.h"
 
 namespace Saga2 {
@@ -39,11 +38,23 @@ const int           gaugeWidth = 46,
                     gaugeOneThird = gaugeWidth / 3,
                     gaugeTwoThirds = gaugeWidth * 2 / 3;
 
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
-
 extern gFont        *mainFont;
+
+extern uint8 *closeBx1ImageData;
+extern uint8 *closeBx2ImageData;
+extern uint8 *usePtrImageData;
+extern uint8 *xPointerImageData;
+extern uint8 *arrowImageData;
+extern uint8 *grabPtrImageData;
+extern uint8 *attakPtrImageData;
+extern uint8 *centerActorIndicatorImageData;
+extern uint8 *pgUpImageData;
+extern uint8 *pgDownImageData;
+extern uint8 *pgLeftImageData;
+extern uint8 *pgRightImageData;
+extern uint8 *autoWalkImageData;
+extern uint8 *gaugeImageData;
+
 
 /* ===================================================================== *
    Globals
@@ -55,7 +66,7 @@ static char         mouseText[ maxMouseTextLen ] = { "" };  //  Current mouse te
 
 static Point16      mouseImageOffset;           //  Hotspot on mouse image
 
-static gPixelMap    *mouseImage = &ArrowImage;  //  Current mouse cursor image
+static gPixelMap    *mouseImage = mouseCursors[kMouseArrowImage];  //  Current mouse cursor image
 
 static gStaticImage textImage(0, 0, NULL),   //  Current mouse text image
        combinedImage(0, 0, NULL);  //   Combine mouse text
@@ -77,42 +88,31 @@ static uint8        gaugeColorMapArray[ 3 ][ 7 ] = {
 	{ 0x00, 0x18, 0x83, 0x81, 0x86, 0x72, 0x39 },   //  Red
 };
 
-static uint8        gaugeImageData[ gaugeImageWidth * gaugeImageHeight ] = {
-	0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // Row 0
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
-
-
-	0x01, 0x04, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, // Row 1
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x01,
-
-
-	0x01, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, // Row 2
-	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03,
-	0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x06, 0x02, 0x01,
-
-
-	0x01, 0x05, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, // Row 3
-	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04,
-	0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x01,
-
-
-	0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, // Row 4
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01,
-	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x00,
+static struct MouseCurosrs {
+	uint8 **data;
+	int w;
+	int h;
+} mouseCursorData[] = {
+	{ &closeBx1ImageData,	12, 12 },
+	{ &closeBx2ImageData,	12, 12 },
+	{ &usePtrImageData,		15, 15 },
+	{ &xPointerImageData,	15, 15 },
+	{ &arrowImageData,		11, 17 },
+	{ &grabPtrImageData,	16, 13 },
+	{ &attakPtrImageData,	23, 23 },
+	{ &centerActorIndicatorImageData, 9, 9 },
+	{ &pgUpImageData,		16, 16 },
+	{ &pgDownImageData,		16, 16 },
+	{ &pgLeftImageData,		16, 16 },
+	{ &pgRightImageData,	16, 16 },
+	{ &autoWalkImageData,	15, 15 },
+	{ &gaugeImageData,		gaugeImageWidth, gaugeImageHeight }
 };
 
+gStaticImage *mouseCursors[kMouseMax];
+
 static uint8        gaugeImageBuffer[ gaugeImageWidth * gaugeImageHeight ];
-static gStaticImage gaugeImage(
-    gaugeImageWidth,
-    gaugeImageHeight,
-    gaugeImageBuffer);
+static gStaticImage gaugeImage(gaugeImageWidth, gaugeImageHeight, gaugeImageBuffer);
 
 static bool         showGauge = FALSE;
 
@@ -122,6 +122,17 @@ static bool         showGauge = FALSE;
 
 //-----------------------------------------------------------------------
 //	Create a new bitmap of several images stacked on top of each other
+
+void initCursors() {
+	for (int i = 0; i < kMouseMax; i++)
+		mouseCursors[i] = new gStaticImage(mouseCursorData[i].w, mouseCursorData[i].h, *mouseCursorData[i].data);
+}
+
+void freeCursors() {
+	for (int i = 0; i < kMouseMax; i++)
+		delete mouseCursors[i];
+}
+
 
 void createStackedImage(
     gPixelMap   *newImage,
@@ -194,7 +205,8 @@ inline void disposeStackedImage(gPixelMap *image) {
 //	image.
 
 void cleanupMousePointer(void) {
-	if (combinedImage.data != NULL) disposeStackedImage(&combinedImage);
+	if (combinedImage.data != NULL)
+		disposeStackedImage(&combinedImage);
 }
 
 void setupMousePointer(void) {
@@ -241,6 +253,10 @@ void setupMousePointer(void) {
 
 //-----------------------------------------------------------------------
 //	Setup a new mouse cursor image
+
+void setMouseImage(int id, int16 x, int16 y) {
+	setMouseImage(*mouseCursors[id], x, y);
+}
 
 void setMouseImage(gPixelMap &img, int16 x, int16 y) {
 	if (mouseImage != &img
@@ -393,7 +409,7 @@ void setMouseGauge(int numerator, int denominator) {
 			gaugeMap = x < gaugePos + 1 ? gaugeColorMap : gaugeGrayMap;
 
 			gaugeImageBuffer[ gaugeImageIndex ] =
-			    gaugeMap[ gaugeImageData[ gaugeImageIndex ] ];
+			    gaugeMap[mouseCursors[kMouseGaugeImage]->data[gaugeImageIndex] ];
 
 			gaugeImageIndex++;
 		}

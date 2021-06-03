@@ -29,7 +29,6 @@
 #include "saga2/script.h"
 #include "saga2/intrface.h"
 #include "saga2/grequest.h"
-#include "saga2/images.h"
 #include "saga2/mouseimg.h"
 #include "saga2/version.h"
 #include "saga2/fontlib.h"
@@ -289,15 +288,15 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 	if (msg.inPanel && Rect16(0, 0, extent.width, extent.height).ptInside(pos)) {
 		if (app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < extent.height / 2)   setMouseImage(PgUpImage,   -7, -7);
-			else                            setMouseImage(PgDownImage, -7, -7);
+			if (pos.y < extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
+			else                            setMouseImage(kMousePgDownImage, -7, -7);
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < extent.width / 2)    setMouseImage(PgLeftImage,  -7, -7);
-			else                            setMouseImage(PgRightImage, -7, -7);
+			if (pos.x < extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
+			else                            setMouseImage(kMousePgRightImage, -7, -7);
 		}
 	} else if (msg.pointerLeave) {
-		setMouseImage(ArrowImage, 0, 0);
+		setMouseImage(kMouseArrowImage, 0, 0);
 	}
 
 	notify(gEventMouseMove, 0);
@@ -335,7 +334,7 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 			ri->running = 0;
 			ri->result  = id;
 
-			setMouseImage(ArrowImage, 0, 0);
+			setMouseImage(kMouseArrowImage, 0, 0);
 		}
 	}
 

@@ -27,9 +27,9 @@
 #include "saga2/std.h"
 #include "saga2/blitters.h"
 #include "saga2/spelshow.h"
-#include "saga2/images.h"
 #include "saga2/player.h"
 #include "saga2/sensor.h"
+#include "saga2/mouseimg.h"
 
 namespace Saga2 {
 
@@ -808,7 +808,7 @@ void DisplayNode::drawObject(void) {
 
 	if (flags & displayIndicator) {
 		Point16     indicatorCoords;
-		gPixelMap   &indicator = CenterActorIndicatorImage;
+		gPixelMap   &indicator = *mouseCursors[kMouseCenterActorIndicatorImage];
 
 		indicatorCoords.x = hitBox.x + fineScroll.x + (hitBox.width - indicator.size.x) / 2;
 		indicatorCoords.y = hitBox.y + fineScroll.y - indicator.size.y - 2;

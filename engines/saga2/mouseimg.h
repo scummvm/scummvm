@@ -29,6 +29,29 @@
 
 namespace Saga2 {
 
+enum {
+	kMouseCloseBx1Image = 0,
+	kMouseCloseBx2Image,
+	kMouseUsePtrImage,
+	kMouseXPointerImage,
+	kMouseArrowImage,
+	kMouseGrabPtrImage,
+	kMouseAttakPtrImage,
+	kMouseCenterActorIndicatorImage,
+	kMousePgUpImage,
+	kMousePgDownImage,
+	kMousePgLeftImage,
+	kMousePgRightImage,
+	kMouseAutoWalkImage,
+	kMouseGaugeImage,
+	kMouseMax
+};
+
+extern gStaticImage *mouseCursors[kMouseMax];
+
+//  Set a new image for the mouse pointer
+void setMouseImage(int id, int16 x, int16 y);
+
 //  Set a new image for the mouse pointer
 void setMouseImage(gPixelMap &img, int16 x, int16 y);
 
@@ -41,6 +64,9 @@ void setMouseGauge(int numerator, int denominator);
 
 //  Turn off the gauge on the mouse pointer
 void clearMouseGauge(void);
+
+void initCursors();
+void freeCursors();
 
 } // end of namespace Saga2
 

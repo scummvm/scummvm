@@ -26,7 +26,6 @@
 
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
-#include "saga2/images.h"
 #include "saga2/objects.h"
 #include "saga2/contain.h"
 #include "saga2/mouseimg.h"
@@ -235,30 +234,30 @@ void GrabInfo::setCursor(void) {
 			//  pointer has already been hidden.
 			break;
 		case WalkTo:
-			setMouseImage(ArrowImage, 0, 0);
+			setMouseImage(kMouseArrowImage, 0, 0);
 			break;
 		case Open:
-			setMouseImage(ArrowImage, 0, 0);
+			setMouseImage(kMouseArrowImage, 0, 0);
 			break;
 		case PickUp:
-			setMouseImage(GrabPtrImage, -7, -7);
+			setMouseImage(kMouseGrabPtrImage, -7, -7);
 			break;
 		case Drop:
 			setMouseImage(pointerMap, pointerOffset.x, pointerOffset.y);
 			break;
 		case Use:
-			setMouseImage(UsePtrImage, -7, -7);
+			setMouseImage(kMouseUsePtrImage, -7, -7);
 			break;
 		case Attack:
-			setMouseImage(AttakPtrImage, -11, -11);
+			setMouseImage(kMouseAttakPtrImage, -11, -11);
 			break;
 		case Cast:
-			setMouseImage(AttakPtrImage, -11, -11);
+			setMouseImage(kMouseAttakPtrImage, -11, -11);
 			break;
 		}
 	} else {
 		//  indicate current intention is not doable
-		setMouseImage(XPointerImage, -7, -7);
+		setMouseImage(kMouseXPointerImage, -7, -7);
 	}
 }
 
