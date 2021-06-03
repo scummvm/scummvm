@@ -494,6 +494,10 @@ public:
 
 SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, uint32 knownSize) {
 	if (toBeWrapped) {
+		if (toBeWrapped->eos() || toBeWrapped->err() || toBeWrapped->size() < 2) {
+			delete toBeWrapped;
+			return NULL;
+		}
 		uint16 header = toBeWrapped->readUint16BE();
 		bool isCompressed = (header == 0x1F8B ||
 				     ((header & 0x0F00) == 0x0800 &&
