@@ -665,7 +665,7 @@ DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
 	return action->getDirCount() == 8 ? dirmode_8dirs : dirmode_16dirs;
 }
 
-uint16 Actor::turnTowardDir(Direction targetdir) {
+uint16 Actor::turnTowardDir(Direction targetdir, ProcId prevpid /* = 0 */) {
 	bool combatRun = hasActorFlags(Actor::ACT_COMBATRUN);
 	Direction curdir = getDir();
 	bool combat = isInCombat() && !combatRun;
@@ -694,7 +694,6 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	}
 
 	ProcId animpid = 0;
-	ProcId prevpid = 0;
 
 	// Create a sequence of turn animations from
 	// our current direction to the new one

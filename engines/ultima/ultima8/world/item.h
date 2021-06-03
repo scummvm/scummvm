@@ -395,7 +395,7 @@ public:
 
 	//! get the distance (in map tiles) if we were to fire in this direction to "other"
 	//! and could hit, otherwise return 0.
-	uint16 fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff);
+	uint16 fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) const;
 
 	//! get damage points, used in Crusader for item damage.
 	uint8 getDamagePoints() const {
@@ -406,6 +406,10 @@ public:
 	void setDamagePoints(uint8 points) {
 		_damagePoints = points;
 	}
+
+	//! Get the right Z which an attacker should aim for, given the attacker's z.
+	//! (Crusader only)
+	int32 getTargetZRelativeToAttackerZ(int32 attackerz) const;
 
 	//! count nearby objects of a given shape
 	unsigned int countNearby(uint32 shape, uint16 range);
@@ -660,10 +664,6 @@ private:
 
 	//! The Crusader version of receiveHit
 	void receiveHitCru(ObjId other, Direction dir, int damage, uint16 type);
-
-	//! Get the right Z which an attacker should aim for, given the attacker's z.
-	//! (Crusader only)
-	int32 getTargetZRelativeToAttackerZ(int32 attackerz) const;
 
 public:
 	enum statusflags {

@@ -21,20 +21,33 @@
  */
 
 #include "ultima/ultima8/world/actors/rolling_thunder_process.h"
+#include "ultima/ultima8/world/world.h"
+#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/loop_script.h"
+#include "ultima/ultima8/world/current_map.h"
 #include "ultima/ultima8/world/actors/actor.h"
+#include "ultima/ultima8/world/actors/pathfinder.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
+#include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/main_shape_archive.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/kernel/delay_process.h"
-#include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/usecode/uc_list.h"
+#include "ultima/ultima8/misc/direction_util.h"
 
 namespace Ultima {
 namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(RollingThunderProcess)
 
-RollingThunderProcess::RollingThunderProcess() : Process() {
+static const uint16 CRUSPID = 0x584;
+static const uint16 BULLET_SPLASH_SHAPE = 0x1d9;
+
+RollingThunderProcess::RollingThunderProcess() : Process(), _target(0), _timer(0) {
 }
 
-RollingThunderProcess::RollingThunderProcess(Actor *actor) {
+RollingThunderProcess::RollingThunderProcess(Actor *actor) : _target(0), _timer(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 
@@ -51,22 +64,288 @@ void RollingThunderProcess::run() {
 	}
 
 	if (actor->isBusy()) {
-		Process *wait = new DelayProcess(60);
-		Kernel::get_instance()->addProcess(wait);
-		waitFor(wait);
+		sleepFor60Ticks();
 		return;
 	}
 
-	warning("TODO: Implement rolling thunder");
-	terminate();
+	uint16 controllednpc = World::get_instance()->getControlledNPCNum();
+	const Item *target = getItem(_target);
+
+	// Target the controlled npc, unless our current target is a spider bomb
+	if (_target != controllednpc && (!target || target->getShape() != CRUSPID)) {
+		_target = controllednpc ? controllednpc : 1;
+		target = getItem(_target);
+	}
+
+	const Actor *targeta = dynamic_cast<const Actor *>(target);
+	if (targeta && targeta->isDead()) {
+		_target = controllednpc;
+		sleepFor60Ticks();
+		return;
+	}
+
+	if (!actor->isPartlyOnScreen()) {
+		sleepFor60Ticks();
+		return;
+	}
+
+	Animation::Sequence anim = (getRandom() % 2) ? Animation::combatRollLeft : Animation::combatRollRight;
+
+	Direction actordir = actor->getDir();
+	Direction outdir = actordir;
+	bool canroll = checkDir(anim, outdir);
+
+	if (!canroll) {
+		// try the other way
+		if (anim == Animation::combatRollLeft)
+			anim = Animation::combatRollRight;
+		else
+			anim = Animation::combatRollLeft;
+
+		canroll = checkDir(anim, outdir);
+	}
+
+	if (!canroll) {
+		int32 x, y, z, tx, ty, tz;
+		actor->getLocation(x, y, z);
+		target->getLocation(tx, ty, tz);
+		Direction dirtotarget = Direction_GetWorldDir(ty - y, tx - x, dirmode_16dirs);
+
+		if (dirtotarget == actordir) {
+			uint32 now = Kernel::get_instance()->getTickNum();
+			if (now - actor->getLastTimeWasHit() >= 120) {
+				if (actor->fireDistance(target, dirtotarget, 0, 0, 0)) {
+					actor->doAnim(Animation::attack, dir_current);
+					return;
+				}
+			}
+			checkForSpiderBomb();
+		} else {
+			uint16 turnproc = actor->turnTowardDir(dirtotarget);
+			waitFor(turnproc);
+		}
+	} else {
+		uint16 animpid = actor->doAnim(anim, dir_current);
+		if (outdir != actordir) {
+			animpid = actor->turnTowardDir(outdir, animpid);
+		}
+		int attackcount = (getRandom() % 3) + 1;
+		for (int i = 0; i < attackcount; i++) {
+			animpid = actor->doAnimAfter(Animation::attack, outdir, animpid);
+		}
+		Animation::Sequence rollback;
+		if (anim == Animation::combatRollLeft) {
+			rollback = Animation::combatRollRight;
+		} else {
+			rollback = Animation::combatRollLeft;
+		}
+		animpid = actor->doAnimAfter(rollback, dir_current, animpid);
+		waitFor(animpid);
+	}
+}
+
+
+bool RollingThunderProcess::checkDir(Animation::Sequence anim, Direction &outdir) const {
+	Actor *actor = getActor(_itemNum);
+	Direction curdir = actor->getDir();
+	if (!actor->isPartlyOnScreen())
+		return false;
+
+	const Item *target = getItem(_target);
+	if (!target)
+		return false;
+
+	PathfindingState state;
+	state.load(actor);
+
+	// Check if the anim is blocked or would take the actor off-screen.
+	Animation::Result animresult = actor->tryAnim(anim, dir_current, 0, &state);
+
+	if (animresult == Animation::FAILURE || !actor->isPartlyOnScreen())
+		return false;
+
+	// check if the dir to the target is within 2 direction steps of the current dir
+	int32 tx, ty, tz;
+	target->getLocation(tx, ty, tz);
+	Direction dirtotarget = Direction_GetWorldDir(ty - state._y, tx - state._x, dirmode_16dirs);
+
+	static const int DIROFFSETS[] = {0, -1, 1, -2, 2};
+
+	outdir = dirtotarget;
+
+	// Check that the target is in a nearby direction
+	bool nearby = false;
+	for (int i = 0; i < ARRAYSIZE(DIROFFSETS); i++) {
+		Direction dir = Direction_TurnByDelta(dirtotarget, DIROFFSETS[i], dirmode_16dirs);
+		if (curdir == dir) {
+			nearby = true;
+			break;
+		}
+	}
+	if (!nearby)
+		return false;
+
+	// Check whether we can fire in that direction and hit the target
+	for (int i = 0; i < ARRAYSIZE(DIROFFSETS); i++) {
+		Direction dir = Direction_TurnByDelta(dirtotarget, DIROFFSETS[i], dirmode_16dirs);
+		if (fireDistance(dir, state._x, state._y, state._z))
+			return true;
+	}
+
+	return false;
+}
+
+
+//
+// This is practically a copy of Item::fireDistance, but with some changes
+// to measure from the hypothetical position of the actor after rolling.
+//
+// Ideally it would be refactored, but for now copy it with changes just like
+// the game does.
+//
+bool RollingThunderProcess::fireDistance(Direction dir, int32 x, int32 y, int32 z) const {
+	int32 xoff = 0;
+	int32 yoff = 0;
+	int32 zoff = 0;
+	int32 xoff2 = 0;
+	int32 yoff2 = 0;
+	int32 zoff2 = 0;
+
+	const Actor *actor = getActor(_itemNum);
+	const Item *target = getItem(_target);
+
+	if (!actor || !target)
+		return 0;
+
+	int32 tx, ty, tz;
+	target->getLocation(tx, ty, tz);
+
+	uint16 shapeno = actor->getShape();
+	uint32 actionno = AnimDat::getActionNumberForSequence(Animation::attack, actor);
+	const AnimAction *animaction = GameData::get_instance()->getMainShapes()->getAnim(shapeno, actionno);
+
+	CurrentMap *cm = World::get_instance()->getCurrentMap();
+
+	bool other_offsets = false;
+	bool first_offsets = false;
+	int nframes = animaction->getSize();
+	for (int frameno = 0; frameno < nframes; frameno++) {
+		const AnimFrame &frame = animaction->getFrame(dir, frameno);
+		if (frame.is_cruattack()) {
+			if (!first_offsets) {
+				xoff = frame.cru_attackx();
+				yoff = frame.cru_attacky();
+				zoff = frame.cru_attackz();
+				first_offsets = true;
+			} else {
+				xoff2 = frame.cru_attackx();
+				yoff2 = frame.cru_attacky();
+				zoff2 = frame.cru_attackz();
+				other_offsets = true;
+				break;
+			}
+		}
+	}
+
+	if (!first_offsets)
+		return 0;
+
+	int dist = 0;
+	for (int i = 0; i < (other_offsets ? 2 : 1) && dist == 0; i++) {
+		int32 cx = x + (i == 0 ? xoff : xoff2);
+		int32 cy = y + (i == 0 ? yoff : yoff2);
+		int32 cz = z + (i == 0 ? zoff : zoff2);
+
+		const Item *blocker = nullptr;
+		bool valid = cm->isValidPosition(cx, cy, cz, BULLET_SPLASH_SHAPE,
+									   _itemNum, nullptr, nullptr, &blocker);
+		if (!valid) {
+			if (blocker->getObjId() == target->getObjId())
+				dist = MAX(abs(x - tx), abs(y - ty));
+		} else {
+			int32 ocx, ocy, ocz;
+			target->getCentre(ocx, ocy, ocz);
+			ocz = target->getTargetZRelativeToAttackerZ(z);
+			const int32 start[3] = {cx, cy, cz};
+			const int32 end[3] = {ocx, ocy, ocz};
+			const int32 dims[3] = {2, 2, 2};
+
+			Std::list<CurrentMap::SweepItem> collisions;
+			Std::list<CurrentMap::SweepItem>::iterator it;
+			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
+						 _itemNum, false, &collisions);
+			for (it = collisions.begin(); it != collisions.end(); it++) {
+				if (it->_item == _itemNum)
+					continue;
+				if (it->_item != target->getObjId())
+					break;
+				int32 out[3];
+				it->GetInterpolatedCoords(out, start, end);
+				dist = MAX(abs(x - out[0]), abs(y - out[1]));
+				break;
+			}
+		}
+	}
+	return dist;
+}
+
+bool RollingThunderProcess::checkForSpiderBomb() {
+	const Item *target = getItem(_target);
+	const Actor *actor = getActor(_itemNum);
+
+	if (target && target->getShape() == CRUSPID)
+		return false;
+	if (!checkTimer())
+		return false;
+
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	UCList spiderlist(2);
+	LOOPSCRIPT(script, LS_SHAPE_EQUAL(CRUSPID));
+	currentmap->areaSearch(&spiderlist, script, sizeof(script), actor, 800, false);
+
+	for (unsigned int i = 0; i < spiderlist.getSize(); ++i) {
+		int32 x, y, z, sx, sy, sz;
+		const Item *spider = getItem(spiderlist.getuint16(i));
+		if (!spider)
+			continue;
+		actor->getLocation(x, y, z);
+		spider->getLocation(sx, sy, sz);
+		Direction dirtospider = Direction_GetWorldDir(sy - y, sx - x, dirmode_16dirs);
+		uint16 dist = actor->fireDistance(spider, dirtospider, 0, 0, 0);
+		if (dist > 0) {
+			_target = spider->getObjId();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool RollingThunderProcess::checkTimer() {
+	uint32 ticksnow = Kernel::get_instance()->getTickNum();
+	if (ticksnow > _timer + 90) {
+		_timer = ticksnow;
+		return true;
+	}
+	return false;
+}
+
+void RollingThunderProcess::sleepFor60Ticks() {
+	Process *wait = new DelayProcess(60);
+	Kernel::get_instance()->addProcess(wait);
+	waitFor(wait);
 }
 
 void RollingThunderProcess::saveData(Common::WriteStream *ws) {
 	Process::saveData(ws);
+	ws->writeUint16LE(_target);
+	ws->writeUint32LE(_timer);
 }
 
 bool RollingThunderProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
+	_target = rs->readUint16LE();
+	_timer = rs->readUint32LE();
 	return true;
 }
 

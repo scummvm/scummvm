@@ -1317,7 +1317,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	return spriteprocpid;
 }
 
-uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) {
+uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) const {
 	if (!other)
 		return 0;
 
@@ -1335,13 +1335,13 @@ uint16 Item::fireDistance(const Item *other, Direction dir, int16 xoff, int16 yo
 	int16 yoff2 = 0;
 	int16 zoff2 = 0;
 	bool other_offsets = false;
-	Actor *a = dynamic_cast<Actor *>(this);
+	const Actor *a = dynamic_cast<const Actor *>(this);
 	if (a) {
 		Animation::Sequence anim;
 		bool kneeling = a->isKneeling();
 		bool smallwpn = true;
-		MainActor *ma = dynamic_cast<MainActor *>(this);
-		Item *wpn = getItem(a->getActiveWeapon());
+		const MainActor *ma = dynamic_cast<const MainActor *>(this);
+		const Item *wpn = getItem(a->getActiveWeapon());
 		if (wpn && wpn->getShapeInfo()->_weaponInfo) {
 			smallwpn = wpn->getShapeInfo()->_weaponInfo->_small;
 		}

@@ -270,7 +270,8 @@ public:
 
 	//! Turn one step toward the given direction. If the current direction is already the same,
 	//! do nothing. Returns an anim process or 0 if no move needed.
-	uint16 turnTowardDir(Direction dir);
+	//! If a previous pid is specified, wait for that process.
+	uint16 turnTowardDir(Direction dir, ProcId prevpid = 0);
 
 	//! create an actor, assign objid, make it ethereal and load monster stats.
 	static Actor *createActor(uint32 shape, uint32 frame);
@@ -309,6 +310,7 @@ public:
 	void tookHitCru();
 
 	//! Add the x/y/z fire offsets given the current state of the actor
+	//! Return whether or not a "fire" frame was found.
 	void addFireAnimOffsets(int32 &x, int32 &y, int32 &z);
 
 	uint32 getAttackMoveTimeoutFinish() const {

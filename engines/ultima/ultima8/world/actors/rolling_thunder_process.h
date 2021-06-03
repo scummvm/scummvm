@@ -24,6 +24,8 @@
 #define WORLD_ACTORS_ROLLINGTHUNDERPROCESS_H
 
 #include "ultima/ultima8/kernel/process.h"
+#include "ultima/ultima8/misc/direction.h"
+#include "ultima/ultima8/world/actors/animation.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -46,6 +48,19 @@ public:
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
+private:
+	void sleepFor60Ticks();
+
+	bool checkForSpiderBomb();
+
+	bool checkTimer();
+
+	bool fireDistance(Direction dir, int32 x, int32 y, int32 z) const;
+
+	bool checkDir(Animation::Sequence anim, Direction &outdir) const;
+
+	uint16 _target;
+	uint32 _timer;
 };
 
 } // End of namespace Ultima8
