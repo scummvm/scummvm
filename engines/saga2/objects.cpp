@@ -483,11 +483,11 @@ bool GameObject::getWorldLocation(Location &loc) {
 			loc = obj->location;
 			loc.z += (obj->prototype->height - objHeight) / 2;
 			loc.context = id;
-			return TRUE;
+			return true;
 		} else if (id == Nothing) {
 			loc = Nowhere;
 			loc.context = Nothing;
-			return FALSE;
+			return false;
 		}
 
 		obj = objectAddress(id);
@@ -619,11 +619,11 @@ bool GameObject::isTrueSkill(void) {
 
 		// determine if this is a skill icon
 		if (spellBook[sProto->getSpellID()].getManaType() == sManaIDSkill) {
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //  Returns the location of an object within the world
@@ -713,7 +713,7 @@ bool GameObject::unstack(void) {
 	        ||  IDParent() == Nothing
 	        ||  location.z == 1
 	        ||  prototype == nullptr
-	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return FALSE;
+	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return false;
 
 	ContainerIterator   iter(parent());
 
@@ -742,7 +742,7 @@ bool GameObject::unstack(void) {
 
 	//  Set this item's count to 1
 	location.z = 1;
-	return TRUE;
+	return true;
 }
 
 //  Move the object to a new location, and change context if needed.
@@ -853,13 +853,13 @@ bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 	ProtoObj *po = GameObject::protoAddress(thisID());
 	assert(po);
 
-	// if this is not a chargeable item, then return FALSE
+	// if this is not a chargeable item, then return false
 	if (!getChargeType()) {
-		return FALSE;
+		return false;
 	}
 
 	if (po->maxCharges == Permanent || bParam == Permanent) {
-		return TRUE;
+		return true;
 	}
 
 	if (po->maxCharges == 0) {
@@ -872,27 +872,27 @@ bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 
 	if (bParam == 0) {
 		// not enough mana to use item
-		return FALSE;
+		return false;
 	}
 
 	if (bParam > 0 && bParam < Permanent) {
 		bParam--;
 	}
 
-	return TRUE;
+	return true;
 }
 
 bool GameObject::hasCharge(ActorManaID manaID, uint16 manaCost) {
 	ProtoObj *po = GameObject::protoAddress(thisID());
 	assert(po);
 
-	// if this is not a chargeable item, then return FALSE
+	// if this is not a chargeable item, then return false
 	if (!getChargeType()) {
-		return FALSE;
+		return false;
 	}
 
 	if (bParam == Permanent) {
-		return TRUE;
+		return true;
 	}
 
 	if (po->maxCharges == 0) {
@@ -905,9 +905,9 @@ bool GameObject::hasCharge(ActorManaID manaID, uint16 manaCost) {
 
 	if (bParam == 0) {
 		// not enough mana to use item
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -985,9 +985,9 @@ void GameObject::updateImage(ObjectID oldParentID) {
 bool GameObject::moveMerged(const Location &loc, int16 num) {
 	if (num < massCount
 	        &&  !extractMerged(Location(location, parentID), massCount - num))
-		return FALSE;
+		return false;
 	move(loc);
-	return TRUE;
+	return true;
 }
 
 
@@ -1378,13 +1378,13 @@ bool GameObject::isContaining(GameObject *item) {
 	GameObject          *containedObj;
 
 	while (iter.next(&containedObj) != Nothing) {
-		if (containedObj == item) return TRUE;
+		if (containedObj == item) return true;
 
 		if (containedObj->childID != Nothing)
-			if (containedObj->isContaining(item)) return TRUE;
+			if (containedObj->isContaining(item)) return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //  Determine if an instance of the specified target is contained in this
@@ -1394,13 +1394,13 @@ bool GameObject::isContaining(ObjectTarget *objTarget) {
 	GameObject          *containedObj;
 
 	while (iter.next(&containedObj) != Nothing) {
-		if (objTarget->isTarget(containedObj)) return TRUE;
+		if (objTarget->isTarget(containedObj)) return true;
 
 		if (containedObj->childID != Nothing)
-			if (containedObj->isContaining(objTarget)) return TRUE;
+			if (containedObj->isContaining(objTarget)) return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 const int32 harmfulTerrain = terrainHot | terrainCold | terrainIce | terrainSlash | terrainBash;
@@ -1490,7 +1490,7 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	//This Is The Largest The Row Column Can Be
 	static bool     slotTable[maxRow][maxCol];
 
-	memset(&slotTable, '\0', sizeof(slotTable));    //Initialize Table To FALSE
+	memset(&slotTable, '\0', sizeof(slotTable));    //Initialize Table To false
 
 	//  Iterate through all the objects in the container.
 	//  Set The Filled Spots To True In Table
@@ -1508,11 +1508,11 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 
 		//Verify Not Writing Outside Array
 		if (temp.u >= 0 && temp.v >= 0 && temp.u < numRows && temp.v < numCols) {
-			slotTable[temp.u][temp.v] = TRUE;
+			slotTable[temp.u][temp.v] = true;
 		}
 	}
 
-	//Go Through Table Until Find A FALSE and Return That Value
+	//Go Through Table Until Find A false and Return That Value
 	for (int16 u = 0; u < numRows; u++) {
 		for (int16 v = 0; v < numCols; v++) {
 			if (!slotTable[u][v]) {
@@ -1540,7 +1540,7 @@ bool GameObject::getAvailableSlot(
 	assert(tp != nullptr);
 	assert(!canMerge || mergeObj != nullptr);
 
-	if (prototype == nullptr) return FALSE;
+	if (prototype == nullptr) return false;
 
 	ProtoObj        *objProto = obj->proto();
 
@@ -1555,7 +1555,7 @@ bool GameObject::getAvailableSlot(
 		//  Set intangible container locations to -1, -1.
 		tp->u = -1;
 		tp->v = -1;
-		return TRUE;
+		return true;
 	}
 
 	//  Only actors or containers may contain other objects
@@ -1573,7 +1573,7 @@ bool GameObject::getAvailableSlot(
 				        !=  cannotStackOrMerge) {
 					*tp = inventoryObj->getLocation();
 					*mergeObj = inventoryObj;
-					return TRUE;
+					return true;
 				}
 			}
 		}
@@ -1581,11 +1581,11 @@ bool GameObject::getAvailableSlot(
 		//  Nothing to merge with, so get an empty slot
 		if ((firstEmptySlot = getFirstEmptySlot(obj)) != Nowhere) {
 			*tp = firstEmptySlot;
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1612,7 +1612,7 @@ bool GameObject::placeObject(
 			return obj->drop(enactor, Location(slot, thisID()), num);
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1789,14 +1789,14 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 
 	//  Create the new timer
 	if ((newTimer = new Timer(this, id, frameInterval)) == nullptr)
-		return FALSE;
+		return false;
 
 	//  Fetch the existing timer list for this object or create a
 	//  new one
 	if ((timerList = fetchTimerList(this)) == nullptr
 	        && (timerList = new TimerList(this)) == nullptr) {
 		delete newTimer;
-		return FALSE;
+		return false;
 	}
 
 	assert(timerList->getObject() == this);
@@ -1819,7 +1819,7 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 	//  Put the new timer into the list
 	timerList->addTail(*newTimer);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -1891,7 +1891,7 @@ bool GameObject::addSensor(Sensor *newSensor) {
 	//  new one
 	if ((sensorList = fetchSensorList(this)) == nullptr
 	        && (sensorList = new SensorList(this)) == nullptr)
-		return FALSE;
+		return false;
 
 	assert(sensorList->getObject() == this);
 
@@ -1913,7 +1913,7 @@ bool GameObject::addSensor(Sensor *newSensor) {
 	//  Put the new sensor into the list
 	sensorList->addTail(*newSensor);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -1924,7 +1924,7 @@ bool GameObject::addProtaganistSensor(SensorID id, int16 range) {
 	bool                sensorAdded;
 
 	newSensor = new ProtaganistSensor(this, id, range);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1940,7 +1940,7 @@ bool GameObject::addSpecificActorSensor(SensorID id, int16 range, Actor *a) {
 	bool                sensorAdded;
 
 	newSensor = new SpecificActorSensor(this, id, range, a);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1959,7 +1959,7 @@ bool GameObject::addSpecificObjectSensor(
 	bool                    sensorAdded;
 
 	newSensor = new SpecificObjectSensor(this, id, range, obj);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1978,7 +1978,7 @@ bool GameObject::addActorPropertySensor(
 	bool                sensorAdded;
 
 	newSensor = new ActorPropertySensor(this, id, range, prop);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -1997,7 +1997,7 @@ bool GameObject::addObjectPropertySensor(
 	bool                    sensorAdded;
 
 	newSensor = new ObjectPropertySensor(this, id, range, prop);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -2016,7 +2016,7 @@ bool GameObject::addEventSensor(
 	bool            sensorAdded;
 
 	newSensor = new EventSensor(this, id, range, eventType);
-	if (newSensor == nullptr) return FALSE;
+	if (newSensor == nullptr) return false;
 
 	sensorAdded = addSensor(newSensor);
 	if (!sensorAdded) delete newSensor;
@@ -2276,10 +2276,10 @@ bool GameObject::merge(ObjectID enactor, ObjectID objToMergeID, int16 count) {
 	if (objToMerge->drop(enactor, loc, count)) {
 		if (!objToMerge->isMoving())
 			mergeWith(objToMerge, this, count);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
@@ -2297,10 +2297,10 @@ bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
 			globalContainerList.setUpdate(IDParent());
 		}
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-------------------------------------------------------------------
@@ -3761,7 +3761,7 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 
 	do {
 		if (++activeRegionIndex >= elementsof(activeRegionList))
-			return FALSE;
+			return false;
 
 		int16               prevRegionIndex;
 
@@ -3846,24 +3846,24 @@ bool ActiveRegionObjectIterator::nextActiveRegion(void) {
 	currentWorld = (GameWorld *)GameObject::objectAddress(
 	                   currentRegion->worldID);
 
-	return TRUE;
+	return true;
 }
 
 //------------------------------------------------------------------------
 
 bool ActiveRegionObjectIterator::firstSector(void) {
 	if (!firstActiveRegion())
-		return FALSE;
+		return false;
 
 	sectorCoords.u = baseSectorCoords.u;
 	sectorCoords.v = baseSectorCoords.v;
 
 	if (sectorBitMask & 1) {
 		if (!nextSector())
-			return FALSE;
+			return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 //------------------------------------------------------------------------
@@ -3879,7 +3879,7 @@ bool ActiveRegionObjectIterator::nextSector(void) {
 			sectorCoords.u++;
 
 			if (sectorCoords.u >= baseSectorCoords.u + size.u) {
-				if (!nextActiveRegion()) return FALSE;
+				if (!nextActiveRegion()) return false;
 
 				sectorCoords.u = baseSectorCoords.u;
 				sectorCoords.v = baseSectorCoords.v;
@@ -3890,7 +3890,7 @@ bool ActiveRegionObjectIterator::nextSector(void) {
 		v = sectorCoords.v - baseSectorCoords.v;
 	} while (sectorBitMask & (1 << (u * size.v + v)));
 
-	return TRUE;
+	return true;
 }
 
 //------------------------------------------------------------------------
@@ -4171,17 +4171,17 @@ bool lineOfSight(GameObject *obj1, GameObject *obj2, uint32 terrainMask) {
 
 	//  If the two objects are not in the same world, there is no line
 	//  of sight
-	if ((world = obj1->world()) != obj2->world()) return FALSE;
+	if ((world = obj1->world()) != obj2->world()) return false;
 #if 0
 	if (isActor(obj1)) {
 		Actor *a1 = (Actor *) obj1;
 		if (!a1->hasEffect(actorSeeInvis)) {
 			if (!isActor(obj2) && obj2->isInvisible())
-				return FALSE;
+				return false;
 			else if (isActor(obj2)) {
 				Actor *a2 = (Actor *) obj2;
 				if (a2->hasEffect(actorInvisible))
-					return FALSE;
+					return false;
 			}
 		}
 	}
@@ -4256,7 +4256,7 @@ bool lineOfSight(
 
 bool objObscured(GameObject *testObj) {
 
-	bool        obscured = FALSE;
+	bool        obscured = false;
 
 	if (isObject(testObj)) {
 		Point16             drawPos,
@@ -4280,7 +4280,7 @@ bool objObscured(GameObject *testObj) {
 		                          drawPos,
 		                          testObj->getLocation(),
 		                          objRoofID(testObj)) <= 5)
-			obscured = TRUE;
+			obscured = true;
 	}
 
 	return obscured;
@@ -4580,13 +4580,13 @@ void doBackgroundSimulation(void) {
 // ------------------------------------------------------------------------
 
 void pauseBackgroundSimulation(void) {
-	backgroundSimulationPaused = TRUE;
+	backgroundSimulationPaused = true;
 }
 
 // ------------------------------------------------------------------------
 
 void resumeBackgroundSimulation(void) {
-	backgroundSimulationPaused = FALSE;
+	backgroundSimulationPaused = false;
 }
 
 //-------------------------------------------------------------------
@@ -4614,13 +4614,13 @@ void updateObjectStates(void) {
 //-------------------------------------------------------------------
 
 void pauseObjectStates(void) {
-	objectStatesPaused = TRUE;
+	objectStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
 void resumeObjectStates(void) {
-	objectStatesPaused = FALSE;
+	objectStatesPaused = false;
 }
 
 } // end of namespace Saga2
