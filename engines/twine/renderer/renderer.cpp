@@ -488,7 +488,8 @@ void Renderer::computePolygons(int16 polyRenderType, const Vertex *vertices, int
 	}
 }
 
-void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsCopper(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -529,7 +530,8 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, uint8 col
 	}
 }
 
-void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsBopper(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -560,7 +562,8 @@ void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, uint8 col
 	}
 }
 
-void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsFlat(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -589,7 +592,8 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, uint8 color
 	}
 }
 
-void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTele(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	int bx = (uint16)color << 16;
 	const int screenWidth = _engine->width();
@@ -666,7 +670,8 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, uint8 color
 }
 
 // FIXME: buggy
-void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTras(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int screenWidth = _engine->width();
 	const int screenHeight = _engine->height();
@@ -702,7 +707,8 @@ void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, uint8 color
 }
 
 // FIXME: buggy
-void Renderer::renderPolygonsTrame(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsTrame(int vtop, int32 vsize, uint8 color) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	unsigned char bh = 0;
 	const int screenWidth = _engine->width();
@@ -746,7 +752,8 @@ void Renderer::renderPolygonsTrame(uint8 *out, int vtop, int32 vsize, uint8 colo
 	}
 }
 
-void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize) const {
+void Renderer::renderPolygonsGouraud(int vtop, int32 vsize) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -845,7 +852,8 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const {
+void Renderer::renderPolygonsDither(int vtop, int32 vsize) const {
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int16 *ptr1 = &_polyTab[vtop];
 	const int16 *ptr2 = &_polyTab2[vtop];
 	const int screenWidth = _engine->width();
@@ -977,42 +985,41 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize) const {
 	}
 }
 
-void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, uint8 color) const {
+void Renderer::renderPolygonsMarble(int vtop, int32 vsize, uint8 color) const {
 }
 
 void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom) {
 	computePolygons(polygon.renderType, vertices, polygon.numVertices);
 
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int32 vsize = vbottom - vtop + 1;
 
 	switch (polygon.renderType) {
 	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsFlat(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_COPPER:
-		renderPolygonsCopper(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsCopper(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_BOPPER:
-		renderPolygonsBopper(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsBopper(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TELE:
-		renderPolygonsTele(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsTele(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TRAS:
-		renderPolygonsTras(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsTras(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_TRAME:
-		renderPolygonsTrame(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsTrame(vtop, vsize, polygon.colorIndex);
 		break;
 	case POLYGONTYPE_GOURAUD:
-		renderPolygonsGouraud(out, vtop, vsize);
+		renderPolygonsGouraud(vtop, vsize);
 		break;
 	case POLYGONTYPE_DITHER:
-		renderPolygonsDither(out, vtop, vsize);
+		renderPolygonsDither(vtop, vsize);
 		break;
 	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(out, vtop, vsize, polygon.colorIndex);
+		renderPolygonsMarble(vtop, vsize, polygon.colorIndex);
 		break;
 	default:
 		warning("RENDER WARNING: Unsupported render type %d", polygon.renderType);
