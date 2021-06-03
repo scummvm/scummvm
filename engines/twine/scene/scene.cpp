@@ -558,7 +558,6 @@ void Scene::changeScene() {
 	_engine->_movements->heroMoved = true;
 	_engine->_grid->useCellingGrid = -1;
 	_engine->_grid->cellingGridIdx = -1;
-	_engine->_redraw->reqBgRedraw = true;
 	_engine->_screens->lockPalette = false;
 
 	needChangeScene = -1;
