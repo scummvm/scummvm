@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-01 22:21+0000\n"
+"POT-Creation-Date: 2021-06-03 13:24+0000\n"
 "PO-Revision-Date: 2021-05-27 09:25+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4940,24 +4940,24 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Eye of the Beholder ondersteuning is niet mee gecompileerd"
 
-#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:473
 #: engines/ultima/ultima4/meta_engine.cpp:225
 #: engines/ultima/ultima8/meta_engine.cpp:198
 msgid "Interact via Left Click"
 msgstr "Bestuur met Linker Klik"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:471
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:474
 #: engines/ultima/ultima4/meta_engine.cpp:231
 #: engines/ultima/ultima8/meta_engine.cpp:204
 msgid "Interact via Right Click"
 msgstr "Bestuur met Rechter Klik"
 
-#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:476
+#: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:481
 #: engines/twine/metaengine.cpp:374
 msgid "Move Forward"
 msgstr "Beweeg Vooruit"
 
-#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:477
+#: engines/kyra/engine/eobcommon.cpp:371 engines/kyra/engine/lol.cpp:482
 msgid "Move Back"
 msgstr "Beweeg Terug"
 
@@ -4969,13 +4969,13 @@ msgstr "Verplaats naar links"
 msgid "Move Right"
 msgstr "Verplaats naar rechts"
 
-#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:485
 #: engines/pegasus/pegasus.cpp:2728 engines/twine/metaengine.cpp:395
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Draai Linksom"
 
-#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
+#: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:486
 #: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:388
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
@@ -5021,39 +5021,39 @@ msgstr "Spreuk Niveau 5"
 msgid "Spell Level 6"
 msgstr "Spreuk Niveau 6"
 
-#: engines/kyra/engine/lol.cpp:472
+#: engines/kyra/engine/lol.cpp:477
 msgid "Attack 1"
 msgstr "Aanval 1"
 
-#: engines/kyra/engine/lol.cpp:473
+#: engines/kyra/engine/lol.cpp:478
 msgid "Attack 2"
 msgstr "Aanval 2"
 
-#: engines/kyra/engine/lol.cpp:474
+#: engines/kyra/engine/lol.cpp:479
 msgid "Attack 3"
 msgstr "Aanval 3"
 
-#: engines/kyra/engine/lol.cpp:475
+#: engines/kyra/engine/lol.cpp:480
 msgid "Show Map"
 msgstr "~T~oon Map"
 
-#: engines/kyra/engine/lol.cpp:478
+#: engines/kyra/engine/lol.cpp:483
 msgid "Slide Left"
 msgstr "Schuif Links"
 
-#: engines/kyra/engine/lol.cpp:479
+#: engines/kyra/engine/lol.cpp:484
 msgid "Slide Right"
 msgstr "Schuif Rechts"
 
-#: engines/kyra/engine/lol.cpp:482
+#: engines/kyra/engine/lol.cpp:487
 msgid "Rest"
 msgstr "Rust"
 
-#: engines/kyra/engine/lol.cpp:483
+#: engines/kyra/engine/lol.cpp:488
 msgid "Options"
 msgstr "Opties"
 
-#: engines/kyra/engine/lol.cpp:484
+#: engines/kyra/engine/lol.cpp:489
 msgid "Choose Spell"
 msgstr "Kies Spreuk"
 
