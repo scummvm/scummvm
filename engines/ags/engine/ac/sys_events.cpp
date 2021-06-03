@@ -90,49 +90,36 @@ void ags_simulate_keypress(eAGSKeyCode ags_key) {
 	::AGS::g_events->pushKeyboardEvent(e);
 }
 
+static void on_key_down(const Common::Event &event) {
 #ifdef TODO
-static void on_sdl_key_down(const Common::Event &event) {
 	// Engine is not structured very well yet, and we cannot pass this event where it's needed;
 	// instead we save it in the queue where it will be ready whenever any component asks for one.
 	g_keyEvtQueue.push_back(event);
-}
 #endif
-
-#ifdef TODO
-static void on_sdl_textinput(const Common::Event &event) {
-	// We also push text input events to the same queue, as this is only valid way to get proper
-	// text interpretation of the pressed key combination based on current system locale.
-	g_keyEvtQueue.push_back(event);
 }
-#endif
-
 
 // ----------------------------------------------------------------------------
 // MOUSE INPUT
 // ----------------------------------------------------------------------------
 
-#ifdef TODO
-static int sdl_button_to_mask(int button) {
-	switch (button) {
-	case SDL_BUTTON_LEFT:
+static int scummvm_button_to_mask(Common::EventType type) {
+	switch (type) {
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
 		return MouseBitLeft;
-	case SDL_BUTTON_RIGHT:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_RBUTTONUP:
 		return MouseBitRight;
-	case SDL_BUTTON_MIDDLE:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_MBUTTONUP:
 		return MouseBitMiddle;
-	case SDL_BUTTON_X1:
-		return MouseBitX1;
-	case SDL_BUTTON_X2:
-		return MouseBitX2;
+	default:
+		return 0;
 	}
-
-	return 0;
 }
-#endif
 
 // Returns accumulated mouse button state and clears internal cache by timer
 static int mouse_button_poll() {
-#ifdef TODO
 	auto now = AGS_Clock::now();
 	int result = _G(mouse_button_state) | _G(mouse_accum_button_state);
 	if (now >= _G(mouse_clear_at_time)) {
@@ -140,38 +127,37 @@ static int mouse_button_poll() {
 		_G(mouse_clear_at_time) = now + std::chrono::milliseconds(50);
 	}
 	return result;
-#else
-	return 0;
-#endif
 }
 
-#ifdef TODO
-static void on_sdl_mouse_motion(const SDL_MouseMotionEvent &event) {
-	_G(sys_mouse_x) = _G(event).x;
-	_G(sys_mouse_y) = _G(event).y;
-	_G(mouse_accum_relx) += _G(event).xrel;
-	_G(mouse_accum_rely) += _G(event).yrel;
+static void on_mouse_motion(const Common::Event &event) {
+	_G(sys_mouse_x) = event.mouse.x;
+	_G(sys_mouse_y) = event.mouse.y;
+	_G(mouse_accum_relx) += event.relMouse.x;
+	_G(mouse_accum_rely) += event.relMouse.y;
 }
 
-static void on_sdl_mouse_button(const SDL_MouseButtonEvent &event) {
-	_G(sys_mouse_x) = _G(event).x;
-	_G(sys_mouse_y) = _G(event).y;
+static void on_mouse_button(const Common::Event &event) {
+	_G(sys_mouse_x) = event.mouse.x;
+	_G(sys_mouse_y) = event.mouse.y;
 
-	if (_G(event).type == SDL_MOUSEBUTTONDOWN) {
-		_G(mouse_button_state) |= sdl_button_to_mask(_G(event).button);
-		_G(mouse_accum_button_state) |= sdl_button_to_mask(_G(event).button);
+	if (event.type == Common::EVENT_LBUTTONDOWN ||
+			event.type == Common::EVENT_RBUTTONDOWN ||
+			event.type == Common::EVENT_MBUTTONDOWN) {
+		_G(mouse_button_state) |= scummvm_button_to_mask(event.type);
+		_G(mouse_accum_button_state) |= scummvm_button_to_mask(event.type);
 	} else {
-		_G(mouse_button_state) &= ~sdl_button_to_mask(_G(event).button);
+		_G(mouse_button_state) &= ~scummvm_button_to_mask(event.type);
 	}
 }
 
-static void on_sdl_mouse_wheel(const SDL_MouseWheelEvent &event) {
-	_G(sys_mouse_z) += _G(event).y;
+static void on_mouse_wheel(const Common::Event &event) {
+	if (event.type == Common::EVENT_WHEELDOWN)
+		_G(sys_mouse_z)++;
+	else
+		_G(sys_mouse_z)--;
 }
-#endif
 
 int mgetbutton() {
-#ifdef TODO
 	int toret = MouseNone;
 	int butis = mouse_button_poll();
 
@@ -198,7 +184,6 @@ int mgetbutton() {
 		toret = RIGHT;
 	}
 #endif
-#endif
 	return 0;
 }
 
@@ -207,7 +192,6 @@ bool ags_misbuttondown(int but) {
 }
 
 int ags_mgetbutton() {
-#ifdef TODO
 	int result;
 
 	if (_G(pluginSimulatedClick) > MouseNone) {
@@ -217,8 +201,6 @@ int ags_mgetbutton() {
 		result = mgetbutton();
 	}
 	return result;
-#endif
-	return 0;
 }
 
 void ags_mouse_get_relxy(int &x, int &y) {
@@ -288,61 +270,40 @@ void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void)
 	_on_switchout_callback = switch_out;
 }
 
-#ifdef TODO
-void sys_evt_process_one(const Common::Event &event) {
-	switch (_G(event).type) {
-	// GENERAL
-	case SDL_QUIT:
-		if (_on_quit_callback) {
-			_on_quit_callback();
-		}
+static void sys_process_event(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		on_key_down(event);
 		break;
-	// WINDOW
-	case SDL_WINDOWEVENT:
-		switch (_G(event).window.event) {
-		case SDL_WINDOWEVENT_FOCUS_GAINED:
-			if (_on_switchin_callback) {
-				_on_switchin_callback();
-			}
-			break;
-		case SDL_WINDOWEVENT_FOCUS_LOST:
-			if (_on_switchout_callback) {
-				_on_switchout_callback();
-			}
-			break;
-		case SDL_WINDOWEVENT_SIZE_CHANGED:
-			engine_on_window_changed(Size(_G(event).window.data1, _G(event).window.data2));
-			break;
-		}
+	case Common::EVENT_MOUSEMOVE:
+		on_mouse_motion(event);
 		break;
-	// INPUT
-	case SDL_KEYDOWN:
-		on_sdl_key_down(event);
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONUP:
+		on_mouse_button(event);
 		break;
-	case SDL_TEXTINPUT:
-		on_sdl_textinput(event);
+	case Common::EVENT_WHEELDOWN:
+	case Common::EVENT_WHEELUP:
+		on_mouse_wheel(event);
 		break;
-	case SDL_MOUSEMOTION:
-		on_sdl_mouse_motion(_G(event).motion);
-		break;
-	case SDL_MOUSEBUTTONDOWN:
-	case SDL_MOUSEBUTTONUP:
-		on_sdl_mouse_button(_G(event).button);
-		break;
-	case SDL_MOUSEWHEEL:
-		on_sdl_mouse_wheel(_G(event).wheel);
+	default:
 		break;
 	}
 }
-#endif
 
 void sys_evt_process_pending(void) {
-#ifdef TODO
-	Common::Event event;
-	while (SDL_PollEvent(&event)) {
-		sys_evt_process_one(event);
-	}
-#endif
+	::AGS::g_events->pollEvents();
+	Common::Event e;
+
+	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID)
+		sys_process_event(e);
+
+	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID)
+		sys_process_event(e);
 }
 
 } // namespace AGS3
