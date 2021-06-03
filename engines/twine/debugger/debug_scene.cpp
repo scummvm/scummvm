@@ -228,18 +228,14 @@ bool DebugScene::displayZones() {
 }
 
 void DebugScene::renderDebugView() {
-	bool dirty = false;
 	if (showingZones) {
-		dirty |= displayZones();
+		displayZones();
 	}
 	if (showingActors) {
-		dirty |= displayActors();
+		displayActors();
 	}
 	if (showingTracks) {
-		dirty |= displayTracks();
-	}
-	if (dirty) {
-		_engine->flip();
+		displayTracks();
 	}
 }
 

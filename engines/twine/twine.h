@@ -31,6 +31,7 @@
 
 #include "engines/metaengine.h"
 #include "graphics/managed_surface.h"
+#include "graphics/screen.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "twine/detection.h"
@@ -267,6 +268,8 @@ public:
 	 * Contains all the data used in the engine to configurated the game in particulary ways. */
 	ConfigFile cfgfile;
 
+	int32 frameCounter = 0;
+
 	int width() const;
 	int height() const;
 	Common::Rect rect() const;
@@ -288,7 +291,7 @@ public:
 	/** Work video buffer */
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */
-	Graphics::ManagedSurface frontVideoBuffer;
+	Graphics::Screen frontVideoBuffer;
 
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;

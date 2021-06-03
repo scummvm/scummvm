@@ -409,8 +409,8 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 					_engine->_screens->fadeIn(_engine->_screens->paletteRGBACustom);
 				} else {
 					_engine->setPalette(_engine->_screens->paletteRGBACustom);
+					_engine->flip();
 				}
-				_engine->flip();
 			}
 
 			// TRICKY: fade in tricky

@@ -72,6 +72,7 @@ void Screen::addDirtyRect(const Common::Rect &r) {
 }
 
 void Screen::makeAllDirty() {
+	_dirtyRects.clear();
 	addDirtyRect(Common::Rect(0, 0, this->w, this->h));
 }
 

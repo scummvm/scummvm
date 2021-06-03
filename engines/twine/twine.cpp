@@ -95,10 +95,11 @@ ScopedCursor::~ScopedCursor() {
 
 FrameMarker::FrameMarker(TwinEEngine *engine, uint32 fps) : _engine(engine), _fps(fps) {
 	_start = g_system->getMillis();
+	++_engine->frameCounter;
 }
 
 FrameMarker::~FrameMarker() {
-	g_system->updateScreen();
+	_engine->frontVideoBuffer.update();
 	if (_fps == 0) {
 		return;
 	}
@@ -1060,11 +1061,11 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 }
 
 void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palette) {
-	g_system->getPaletteManager()->setPalette(palette, startColor, numColors);
+	frontVideoBuffer.setPalette(palette, startColor, numColors);
 }
 
 void TwinEEngine::flip() {
-	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, 0, 0, frontVideoBuffer.w, frontVideoBuffer.h);
+	frontVideoBuffer.makeAllDirty();
 }
 
 void TwinEEngine::copyBlockPhys(const Common::Rect &rect, bool updateScreen) {
@@ -1085,9 +1086,9 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 	if (width <= 0 || height <= 0) {
 		return;
 	}
-	g_system->copyRectToScreen(frontVideoBuffer.getBasePtr(left, top), frontVideoBuffer.pitch, left, top, width, height);
+	frontVideoBuffer.addDirtyRect(Common::Rect(left, top, right, bottom));
 	if (updateScreen) {
-		g_system->updateScreen();
+		frontVideoBuffer.update();
 	}
 }
 

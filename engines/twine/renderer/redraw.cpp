@@ -766,11 +766,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 	renderRect.bottom = spriteHeight + renderRect.top - 1;
 
 	_engine->_interface->setClip(renderRect);
-
-	if (_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr)) {
-		_engine->copyBlockPhys(renderRect, true);
-	}
-
+	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	_engine->_interface->resetClip();
 }
 

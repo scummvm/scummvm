@@ -22,6 +22,7 @@
 
 #include "twine/menu/interface.h"
 #include "graphics/managed_surface.h"
+#include "graphics/primitives.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -106,6 +107,7 @@ bool Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
+	_engine->frontVideoBuffer.addDirtyRect(Common::Rect(startWidth, startHeight, startWidth + endWidth, startHeight + endHeight));
 
 	if (endWidth < endHeight) { // significant slope
 		SWAP(endWidth, endHeight);
@@ -168,6 +170,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 		}
 		pos += _engine->frontVideoBuffer.pitch;
 	}
+	_engine->frontVideoBuffer.addDirtyRect(r);
 }
 
 void Interface::drawFilledRect(const Common::Rect &rect, uint8 colorIndex) {

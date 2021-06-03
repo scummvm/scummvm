@@ -413,7 +413,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 	// if we are running the game already, the buttons are just rendered on top of the scene
 	if (_engine->_scene->isGameRunning()) {
 		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-		_engine->flip();
 	} else {
 		_engine->_screens->loadMenuImage(false);
 	}
