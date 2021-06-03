@@ -824,9 +824,9 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 				sprInfo.flipped = TRUE;
 			}
 
-			sprInfo.sp = (*missileSprites)->sprite(sprIndex);
+			sprInfo.sp = missileSprites->sprite(sprIndex);
 		} else {
-			sprInfo.sp = (*objectSprites)->sprite(groundSprite + openOffset + obj->getSprOffset(count));
+			sprInfo.sp = objectSprites->sprite(groundSprite + openOffset + obj->getSprOffset(count));
 			sprInfo.flipped =
 			    (flags & ResourceObjectPrototype::objPropFlipped) != 0;
 		}
@@ -836,7 +836,7 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 	case objInContainerView:
 	case objAsMousePtr:
 
-		sprInfo.sp = (*objectSprites)->sprite(iconSprite + openOffset + obj->getSprOffset(count));
+		sprInfo.sp = objectSprites->sprite(iconSprite + openOffset + obj->getSprOffset(count));
 		sprInfo.flipped =
 		    (flags & ResourceObjectPrototype::objPropFlipped) != 0;
 		break;
@@ -1521,7 +1521,7 @@ uint16 WeaponProto::containmentSet(void) {
 
 //  return the address of the sprite when held in hand
 Sprite *WeaponProto::getOrientedSprite(GameObject *obj, int16 offset) {
-	return (*weaponSprites[ heldSpriteBase ])->sprite(offset);
+	return weaponSprites[ heldSpriteBase ]->sprite(offset);
 }
 
 //-----------------------------------------------------------------------
@@ -2300,7 +2300,7 @@ bool ShieldProto::acceptDamageAction(
 }
 
 Sprite *ShieldProto::getOrientedSprite(GameObject *obj, int16 offset) {
-	return (*weaponSprites[ heldSpriteBase ])->sprite(offset);
+	return weaponSprites[heldSpriteBase]->sprite(offset);
 }
 
 //  Initiate a shield parrying motion
@@ -2592,12 +2592,12 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
 
 	switch (spr) {
 	case objOnGround:
-		sprInfo.sp = (*mentalSprites)->sprite(groundSprite);
+		sprInfo.sp = mentalSprites->sprite(groundSprite);
 		break;
 
 	case objInContainerView:
 	case objAsMousePtr:
-		sprInfo.sp = (*mentalSprites)->sprite(iconSprite);
+		sprInfo.sp = mentalSprites->sprite(iconSprite);
 	}
 	return sprInfo;
 }

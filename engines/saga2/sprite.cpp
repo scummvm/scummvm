@@ -98,10 +98,10 @@ extern uint8 fixedColors[] = {
 	101, 104, 130, 132, 197, 199, 228, 230
 };
 
-SpriteSet           **objectSprites,    // object sprites
-                    * *mentalSprites,   // intangible object sprites
-                    * *weaponSprites[maxWeaponSpriteSets], // weapon sprites
-                    * *missileSprites;  // missile sprites
+SpriteSet           *objectSprites,    // object sprites
+                    *mentalSprites,   // intangible object sprites
+                    *weaponSprites[maxWeaponSpriteSets], // weapon sprites
+                    *missileSprites;  // missile sprites
 
 hResContext         *spriteRes,         // sprite resource handle
                     *frameRes,          // framelist resource handle
@@ -124,15 +124,17 @@ static uint8        *quickMemBase,
 int32               quickMemSize;
 
 void initQuickMem(int32 size) {
-	quickMemBase = (uint8 *)RNewPtr(size, NULL, "Quickmem heap");
-	if (quickMemBase == NULL)
+	quickMemBase = new uint8[size]();
+	if (quickMemBase == nullptr)
 		error("Error: Memory allocation size %d failed!", size);
 	quickMemSize = size;
 	quickMemPtr = quickMemBase;
 }
 
 void cleanupQuickMem(void) {
-	RDisposePtr(quickMemBase);
+	if (quickMemBase)
+		delete[] quickMemBase;
+	quickMemBase = nullptr;
 }
 
 void *getQuickMem(int32 size) {
@@ -308,7 +310,7 @@ void DrawCompositeMaskedSprite(
 				effects |= sprFXGhosted;
 			}
 
-			if (obscured != NULL) *obscured = isObscured;
+			if (obscured != nullptr) *obscured = isObscured;
 
 			freeQuickMem(tempMap.data);
 		}
@@ -615,11 +617,11 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 		washHandle((RHANDLE &)(spriteBanks[bank]));
 
 		//  Load the sprite handle...
-		if (spriteBanks[bank] == NULL && (banksNeeded & (1 << bank))) {
+		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
 			spriteBanks[bank] = (SpriteSet **)spriteRes->load(id + MKTAG(0, 0, 0, bank), "sprite bank", FALSE);
 
 #if DEBUG
-			if (spriteBanks[bank] == NULL)
+			if (spriteBanks[bank] == nullptr)
 				fatal("Sprite '%s' bank %d failed to load!\n",
 				      idname(id),
 				      bank);
@@ -643,10 +645,10 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
 	for (aa = (ActorAppearance *)appearanceLRU.first();
-	        aa != NULL;
+	        aa != nullptr;
 	        aa = (ActorAppearance *)aa->next()) {
 		if (aa->id == id                    // If has same ID
-		        && aa->poseList != NULL) {      // and frames not dumped
+		        && aa->poseList != nullptr) {      // and frames not dumped
 			// then use this one!
 			aa->useCount++;
 			aa->loadSpriteBanks(banksNeeded);
@@ -656,17 +658,17 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  If we couldn't find an extact match, search for an
 	//  empty one.
-	if (aa == NULL) {
+	if (aa == nullptr) {
 		//  Search from LRU end of list.
 		for (aa = (ActorAppearance *)appearanceLRU.first();
-		        aa != NULL;
+		        aa != nullptr;
 		        aa = (ActorAppearance *)aa->next()) {
 			if (aa->useCount == 0)              // If not in use
 				break;                          // then use this one!
 		}
 
 		//  If none available, that's fatal...
-		if (aa == NULL) {
+		if (aa == nullptr) {
 			error("All ActorAppearance records are in use!");
 		}
 	}
@@ -675,14 +677,14 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	for (bank = 0; bank < elementsof(aa->spriteBanks); bank++) {
 		if (aa->spriteBanks[bank])
 			spriteRes->release((RHANDLE) aa->spriteBanks[bank]);
-		aa->spriteBanks[bank] = NULL;
+		aa->spriteBanks[bank] = nullptr;
 	}
 
 	if (aa->poseList)  poseRes->release((RHANDLE) aa->poseList);
-	aa->poseList = NULL;
+	aa->poseList = nullptr;
 
 	if (aa->schemeList)  schemeRes->release((RHANDLE) aa->schemeList);
-	aa->schemeList = NULL;
+	aa->schemeList = nullptr;
 
 	//  Set ID and use count
 	aa->id = id;
@@ -694,7 +696,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 // I just added these - dispnode may have to lock & unlock the handle now - EO
 	if (aa->poseList)  RUnlockHandle((RHANDLE) aa->poseList);
 #if DEBUG
-	if (aa->poseList == NULL)
+	if (aa->poseList == nullptr)
 		fatal("PoseList '%s' failed to load!\n", idname(id));
 #endif
 	//  REM: It's OK if schemelist fails to load...
@@ -737,11 +739,11 @@ void initSprites(void) {
 	assert(schemeRes && schemeRes->_valid);
 
 	// object sprites
-	objectSprites = (SpriteSet **)spriteRes->load(objectSpriteID, "object sprites");
+	objectSprites = (SpriteSet *)spriteRes->loadResource(objectSpriteID, "object sprites");
 	assert(objectSprites);
 
 	// intagible object sprites
-	mentalSprites = (SpriteSet **)spriteRes->load(mentalSpriteID, "mental sprites");
+	mentalSprites = (SpriteSet *)spriteRes->loadResource(mentalSpriteID, "mental sprites");
 	assert(mentalSprites);
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
@@ -750,16 +752,16 @@ void initSprites(void) {
 		weaponSpriteID = weaponSpriteBaseID + MKTAG(0, 0, 0, i);
 
 		if (spriteRes->size(weaponSpriteID) == 0) {
-			weaponSprites[i] = NULL;
+			weaponSprites[i] = nullptr;
 			continue;
 		}
 
-		weaponSprites[i] = (SpriteSet **)spriteRes->load(
+		weaponSprites[i] = (SpriteSet *)spriteRes->loadResource(
 		                         weaponSpriteID,
 		                         "weapon sprite set");
 	}
 
-	missileSprites = (SpriteSet **)spriteRes->load(missileSpriteID, "missle sprites");
+	missileSprites = (SpriteSet *)spriteRes->loadResource(missileSpriteID, "missle sprites");
 
 	initQuickMem(0x10000);
 
@@ -777,30 +779,32 @@ void cleanupSprites(void) {
 
 	cleanupQuickMem();
 
-	if (objectSprites) spriteRes->release((RHANDLE) objectSprites);
-	objectSprites = NULL;
+	if (objectSprites)
+		free(objectSprites);
+	objectSprites = nullptr;
 
-	if (mentalSprites) spriteRes->release((RHANDLE) mentalSprites);
-	mentalSprites = NULL;
+	if (mentalSprites)
+		free(mentalSprites);
+	mentalSprites = nullptr;
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
 		if (weaponSprites[i]) {
-			spriteRes->release((RHANDLE) weaponSprites[i]);
-			weaponSprites[i] = NULL;
+			free(weaponSprites[i]);
+			weaponSprites[i] = nullptr;
 		}
 	}
 
 	if (schemeRes) resFile->disposeContext(schemeRes);
-	schemeRes = NULL;
+	schemeRes = nullptr;
 
 	if (poseRes) resFile->disposeContext(poseRes);
-	poseRes = NULL;
+	poseRes = nullptr;
 
 	if (frameRes) resFile->disposeContext(frameRes);
-	frameRes = NULL;
+	frameRes = nullptr;
 
 	if (spriteRes) resFile->disposeContext(spriteRes);
-	spriteRes = NULL;
+	spriteRes = nullptr;
 }
 
 } // end of namespace Saga2

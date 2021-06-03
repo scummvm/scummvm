@@ -2802,7 +2802,7 @@ void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, con
 
 	for (int i = 0; i < iconCount; i++) {
 		if (iconFlags[i]) {
-			Sprite      *sp = (*mentalSprites)->sprite(i + 162);
+			Sprite      *sp = mentalSprites->sprite(i + 162);
 
 			pos.x -= sp->size.x + 2;
 			DrawSprite(port, pos, sp);
@@ -2821,7 +2821,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 
 		for (int i = 0; i < iconCount; i++) {
 			if (iconFlags[i]) {
-				Sprite      *sp = (*mentalSprites)->sprite(i + 162);
+				Sprite      *sp = mentalSprites->sprite(i + 162);
 
 				x -= sp->size.x + 2;
 				if (msg.pickPos.x >= x) {
