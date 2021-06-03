@@ -50,7 +50,7 @@ extern Rect16       tileRect;
 extern gPixelMap    tileDrawMap;
 extern gPort        tileDrawPort;
 extern BackWindow   *mainWindow;
-extern SpriteSet    **objectSprites;        // object sprites
+extern SpriteSet    *objectSprites;        // object sprites
 extern gToolBase    G_BASE;
 
 extern char         ***nameList;            // handle to list of names

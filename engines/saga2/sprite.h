@@ -73,10 +73,10 @@ struct SpriteSet {
 
 };
 
-extern SpriteSet    **objectSprites,    // object sprites
-       * *mentalSprites,   // intagible object sprites
-       * *weaponSprites[], // weapon sprites
-       * *missileSprites;  // missile sprites
+extern SpriteSet    *objectSprites,    // object sprites
+       *mentalSprites,   // intagible object sprites
+       *weaponSprites[], // weapon sprites
+       *missileSprites;  // missile sprites
 
 /* ===================================================================== *
    Describes the facing directions of actor sprites

@@ -59,7 +59,7 @@ extern Rect16       tileRect;
 extern Point16      fineScroll;
 extern gPort        backPort;
 
-extern SpriteSet    **objectSprites,        // object sprites
+extern SpriteSet    *objectSprites,        // object sprites
        * *spellSprites;        // spell effect sprites
 
 ActorAppearance     *tempAppearance;        // test structure
@@ -168,7 +168,7 @@ void DisplayNodeList::draw(void) {
 	SpriteSet       *objectSet,
 	                *spellSet;
 
-	objectSet = (SpriteSet *)lockResource((RHANDLE) objectSprites);
+	objectSet = objectSprites;
 	if (objectSet == NULL)
 		error("Object sprites have been dumped!\n");
 	spellSet = (SpriteSet *)lockResource((RHANDLE) spellSprites);
@@ -181,9 +181,6 @@ void DisplayNodeList::draw(void) {
 		else
 			dn->drawObject();
 	}
-
-	unlockResource((RHANDLE) objectSprites);
-	unlockResource((RHANDLE) spellSprites);
 }
 
 //-----------------------------------------------------------------------
@@ -831,7 +828,7 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 	int32           dist = maxint32;
 	SpriteSet       *objectSet;
 
-	objectSet = (SpriteSet *)lockResource((RHANDLE) objectSprites);
+	objectSet = objectSprites;
 	if (objectSet == NULL)
 		error("Object sprites have been dumped!");
 
@@ -912,8 +909,6 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 			}
 		}
 	}
-
-	unlockResource((RHANDLE) objectSprites);
 
 	return result;
 }
