@@ -35,7 +35,6 @@
 #include "saga2/palette.h"
 #include "saga2/intrface.h"
 #include "saga2/mouseimg.h"
-#include "saga2/images.h"
 #include "saga2/patrol.h"
 #include "saga2/weapons.h"
 #include "saga2/loadsave.h"
@@ -332,7 +331,7 @@ TERMINATOR(termGUIMessagers) {
 
 INITIALIZER(initMousePointer) {
 	//pointer.hide();
-	setMouseImage(ArrowImage, 0, 0);
+	setMouseImage(kMouseArrowImage, 0, 0);
 	return pointer.init(640, 480);
 }
 

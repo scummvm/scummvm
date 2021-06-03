@@ -27,7 +27,7 @@
 #include "saga2/std.h"
 #include "saga2/grequest.h"
 #include "saga2/modal.h"
-#include "saga2/images.h"
+#include "saga2/mouseimg.h"
 
 namespace Saga2 {
 
@@ -297,8 +297,8 @@ ModalRequestWindow::ModalRequestWindow(
 		                            r.height - fontHeight - 8,
 		                            width,
 		                            fontHeight + 6),
-		                     CloseBx2Image,
-		                     CloseBx1Image,
+		                     *mouseCursors[kMouseCloseBx2Image],
+		                     *mouseCursors[kMouseCloseBx1Image],
 		                     buttonStrings[ i ],
 		                     i,
 		                     handleRequestEvent);

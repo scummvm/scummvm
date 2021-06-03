@@ -42,7 +42,6 @@
 #include "saga2/intrface.h"
 #include "saga2/dispnode.h"
 #include "saga2/uidialog.h"
-#include "saga2/images.h"
 #include "saga2/config.h"
 #include "saga2/contain.h"
 #include "saga2/savefile.h"
@@ -503,7 +502,8 @@ static void evalMouseState(void) {
 					//  the intention to walk to the mouse pointer
 					if (interruptable) {
 						mouseInfo.setIntent(GrabInfo::WalkTo);
-						if (tileMapControl->isSticky()) setMouseImage(AutoWalkImage, -8, -8);
+						if (tileMapControl->isSticky())
+							setMouseImage(kMouseAutoWalkImage, -8, -8);
 						walkToPos = tilePickPos;
 					}
 				}
@@ -513,7 +513,8 @@ static void evalMouseState(void) {
 				//  Set the intention to walk to the mouse
 				//  pointer
 				mouseInfo.setIntent(GrabInfo::WalkTo);
-				if (tileMapControl->isSticky()) setMouseImage(AutoWalkImage, -8, -8);
+				if (tileMapControl->isSticky())
+					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
 			}
 		} else
@@ -568,7 +569,8 @@ static void evalMouseState(void) {
 				//  Simply set the intention to walk to the mouse
 				//  pointer
 				mouseInfo.setIntent(GrabInfo::WalkTo);
-				if (tileMapControl->isSticky()) setMouseImage(AutoWalkImage, -8, -8);
+				if (tileMapControl->isSticky())
+					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
 			}
 		}
@@ -965,7 +967,7 @@ void TileModeHandleKey(int16 key, int16 qual) {
 			if (tileMapControl->isSticky()) {
 				tileMapControl->setSticky(FALSE);
 				mousePressed = FALSE;
-				setMouseImage(ArrowImage, 0, 0);
+				setMouseImage(kMouseArrowImage, 0, 0);
 				evalMouseState();
 			}
 			MotionTask::wait(*a);
@@ -1383,7 +1385,7 @@ static APPFUNC(cmdClickTileMap) {
 				MotionTask::useTAI(*a, *pickedTAI);
 		} else {
 			tileMapControl->setSticky(TRUE);
-			setMouseImage(AutoWalkImage, -8, -8);
+			setMouseImage(kMouseAutoWalkImage, -8, -8);
 			mousePressed = TRUE;
 		}
 		break;
@@ -1506,7 +1508,7 @@ gStickyDragControl::gStickyDragControl(gPanelList &list, const Rect16 &box,
 }
 
 void gStickyDragControl::deactivate(void) {
-	if (sticky) setMouseImage(ArrowImage, 0, 0);
+	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
 	sticky = FALSE;
 	gGenericControl::deactivate();
 }
@@ -1517,7 +1519,7 @@ void gStickyDragControl::deactivate(void) {
 //}
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {
-	if (sticky) setMouseImage(ArrowImage, 0, 0);
+	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
 	sticky = FALSE;
 	return gGenericControl::pointerHit(msg);
 }

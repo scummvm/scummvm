@@ -36,6 +36,7 @@
 
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
+#include "saga2/mouseimg.h"
 
 namespace Saga2 {
 
@@ -155,6 +156,20 @@ uint8 *loadingWindowData;
 
 uint8 *ColorMapRanges;
 
+uint8 *closeBx1ImageData;
+uint8 *closeBx2ImageData;
+uint8 *usePtrImageData;
+uint8 *xPointerImageData;
+uint8 *arrowImageData;
+uint8 *grabPtrImageData;
+uint8 *attakPtrImageData;
+uint8 *centerActorIndicatorImageData;
+uint8 *pgUpImageData;
+uint8 *pgDownImageData;
+uint8 *pgLeftImageData;
+uint8 *pgRightImageData;
+uint8 *autoWalkImageData;
+uint8 *gaugeImageData;
 
 static void loadFont(Common::File &file, gFont *font, uint32 offset) {
 	file.seek(offset);
@@ -181,10 +196,30 @@ struct dataChunks {
 	uint32 offset;
 	uint32 size;
 } chunks[] = {
-	{ &loadingWindowPalette,0x004A2600, 1024 },
-	{ &loadingWindowData,	0x004A2A00, 307200 },
-	{ &ColorMapRanges,		0x004EDC20, 1584 },
-	{ NULL,					0,			0 }
+	{ (uint8 **)&Onyx10Font,	0x004F7258, 0 },
+	{ (uint8 **)&Plate18Font,	0x004F7EE0, 0 },
+	{ (uint8 **)&Helv11Font,	0x004F9F30, 0 },
+	{ (uint8 **)&Amber13Font,	0x004FAC60, 0 },
+	{ (uint8 **)&ThinFix8Font,	0x004FC210, 0 },
+	{ (uint8 **)&Script10Font,	0x004FCD18, 0 },
+	{ &loadingWindowPalette,	0x004A2600, 1024 },
+	{ &loadingWindowData,		0x004A2A00, 307200 },
+	{ &ColorMapRanges,			0x004EDC20, 1584 },
+	{ &closeBx1ImageData,		0x004EE2B8, 144 },
+	{ &closeBx2ImageData,		0x004EE348, 144 },
+	{ &usePtrImageData,			0x004EE3D8, 232 },
+	{ &xPointerImageData,		0x004EE4C0, 232 },
+	{ &arrowImageData,			0x004EE5A8, 192 },
+	{ &grabPtrImageData,		0x004EE668, 208 },
+	{ &attakPtrImageData,		0x004EE738, 536 },
+	{ &centerActorIndicatorImageData,0x004EE950, 96 },
+	{ &pgUpImageData,			0x004EE9B0, 256 },
+	{ &pgDownImageData,			0x004EEAB0, 256 },
+	{ &pgLeftImageData,			0x004EEBB0, 256 },
+	{ &pgRightImageData,		0x004EECB0, 256 },
+	{ &autoWalkImageData,		0x004EEDB0, 228 },
+	{ &gaugeImageData,			0x004EF257, 241 },
+	{ NULL,						0,			0 }
 };
 
 void Saga2Engine::loadExeResources() {
@@ -197,32 +232,29 @@ void Saga2Engine::loadExeResources() {
 	if (exe.size() != 1093120)
 		error("Incorrect FTA2WIN.EXE file size. Expected is 1093120");
 
-	loadFont(exe, &Onyx10Font, 0x004F7258 - offset);
-	loadFont(exe, &Plate18Font, 0x004F7EE0 - offset);
-	loadFont(exe, &Helv11Font, 0x004F9F30 - offset);
-	loadFont(exe, &Amber13Font, 0x004FAC60 - offset);
-	loadFont(exe, &ThinFix8Font, 0x004FC210 - offset);
-	loadFont(exe, &Script10Font, 0x004FCD18 - offset);
-
 	for (int i = 0; chunks[i].ptr; i++) {
-		*chunks[i].ptr = (uint8 *)malloc(chunks[i].size);
-		exe.seek(chunks[i].offset - offset);
-		exe.read(*chunks[i].ptr, chunks[i].size);
+		if (chunks[i].size == 0) { // Font
+			loadFont(exe, (gFont *)chunks[i].ptr, chunks[i].offset - offset);
+		} else {
+			*chunks[i].ptr = (uint8 *)malloc(chunks[i].size);
+			exe.seek(chunks[i].offset - offset);
+			exe.read(*chunks[i].ptr, chunks[i].size);
+		}
 	}
+
+	initCursors();
 
 	exe.close();
 }
 
 void Saga2Engine::freeExeResources() {
-	free(Onyx10Font.fontdata);
-	free(Plate18Font.fontdata);
-	free(Helv11Font.fontdata);
-	free(Amber13Font.fontdata);
-	free(ThinFix8Font.fontdata);
-	free(Script10Font.fontdata);
+	for (int i = 0; chunks[i].ptr; i++)
+		if (chunks[i].size == 0) // Font
+			free(((gFont *)chunks[i].ptr)->fontdata);
+		else
+			free(*chunks[i].ptr);
 
-	free(loadingWindowPalette);
-	free(loadingWindowData);
+	freeCursors();
 }
 
 } // End of namespace Saga2
