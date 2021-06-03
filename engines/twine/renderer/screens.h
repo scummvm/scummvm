@@ -106,13 +106,13 @@ public:
 	 * Fade image in
 	 * @param palette current palette to fade in
 	 */
-	void fadeIn(uint32 *palette);
+	void fadeIn(const uint32 *palette);
 
 	/**
 	 * Fade image out
 	 * @param palette current palette to fade out
 	 */
-	void fadeOut(uint32 *palette);
+	void fadeOut(const uint32 *palette);
 
 	/**
 	 * Calculate a new color component according with an intensity

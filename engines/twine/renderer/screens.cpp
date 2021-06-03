@@ -95,7 +95,7 @@ bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
 	return false;
 }
 
-void Screens::fadeIn(uint32 *pal) {
+void Screens::fadeIn(const uint32 *pal) {
 	if (_engine->cfgfile.CrossFade) {
 		_engine->crossFade(_engine->frontVideoBuffer, pal);
 	} else {
@@ -106,7 +106,7 @@ void Screens::fadeIn(uint32 *pal) {
 	_engine->flip();
 }
 
-void Screens::fadeOut(uint32 *pal) {
+void Screens::fadeOut(const uint32 *pal) {
 	/*if(cfgfile.CrossFade)
 		crossFade(frontVideoBuffer, pal);
 	else
