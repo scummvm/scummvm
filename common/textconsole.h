@@ -85,7 +85,7 @@ void NORETURN_PRE error(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETUR
 
 #ifdef DISABLE_TEXT_CONSOLE
 
-inline void warning(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) {}
+inline void GCC_PRINTF(1, 2) warning(MSVC_PRINTF const char *s, ...) {}
 
 #else
 
