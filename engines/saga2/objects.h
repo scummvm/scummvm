@@ -758,7 +758,7 @@ class GameWorld : public GameObject {
 
 	TilePoint       size;                   // size of world in U/V coords
 	int16           sectorArraySize;        // size of sector array
-	Sector          **sectorArray;          // array of sectors
+	Sector          *sectorArray;          // array of sectors
 public:
 	int16           mapNum;                 // map number for this world.
 
@@ -777,7 +777,7 @@ public:
 	void cleanup(void);
 
 	Sector *getSector(int16 u, int16 v) {
-		return &(*sectorArray)[ v * sectorArraySize + u ];
+		return &(sectorArray)[ v * sectorArraySize + u ];
 	}
 
 	TilePoint sectorSize(void) {         // size of map in sectors
