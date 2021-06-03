@@ -1149,10 +1149,10 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 	reloadThumbnails();
 	Common::HashMap<Common::String, EntryContainerWidget *> entryById;
 	int row = 0, col = 0;
-	int entriesPerRow = 6;
+	_entriesPerRow = 6;
 	int k = 0;
 	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
-		k = row * entriesPerRow + col;
+		k = row * _entriesPerRow + col;
 		EntryContainerWidget *newEntry = entryById[i->domain->getVal("gameid")];
 		if (!newEntry) { 
 			GraphicsWidget *th = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
@@ -1171,7 +1171,7 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
 			_entries.push_back(newEntry);
-			if (++col >= entriesPerRow) {
+			if (++col >= _entriesPerRow) {
 				++row;
 				col = 0;
 			}
@@ -1251,13 +1251,17 @@ Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) 
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	// warning("Wheel : %d %d %d", x, y, direction);
-	_scrollPos = direction*40;
+	_scrollPos -= direction*40;
+	int row = 0, col = 0;
+	int k = 0;
 	for (Common::Array<EntryContainerWidget *>::iterator iter = _entries.begin(); iter != _entries.end(); ++iter) {
-		(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY()  - _scrollPos);
-		(*iter)->_thumb->setPos((*iter)->_thumb->getRelX(), (*iter)->_thumb->getRelY()  - _scrollPos);
-		(*iter)->_plat->setPos((*iter)->_plat->getRelX(), (*iter)->_plat->getRelY()  - _scrollPos);
-		(*iter)->_title->setPos((*iter)->_title->getRelX(), (*iter)->_title->getRelY()  - _scrollPos);
-		(*iter)->_lang->setPos((*iter)->_lang->getRelX(), (*iter)->_lang->getRelY()  - _scrollPos);
+		k = row * _entriesPerRow + col;
+		(*iter)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+		(*iter)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
+		(*iter)->_lang->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+		(*iter)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
+
+		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 
 		if (((*iter)->getRelY() < -_entryHeight - 50) || ((*iter)->getRelY() > _h + 50)) {
 			(*iter)->setVisible2(false);
@@ -1265,7 +1269,11 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		else {
 			(*iter)->setVisible2(true);
 		}
-
+		if (++col >= _entriesPerRow) {
+			++row;
+			col = 0;
+		}
+		++k;
 	}
 	markAsDirty();
 }
@@ -1273,10 +1281,10 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	int row = 0, col = 0;
-	int entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 0);
+	_entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 0);
 	int k = 0;
 	for (Common::Array<EntryContainerWidget *>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
-		k = row * entriesPerRow + col;
+		k = row * _entriesPerRow + col;
 		if (*i) { 			
 			(*i)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 			(*i)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
@@ -1286,7 +1294,7 @@ void GridWidget::reflowLayout() {
 			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
-			if (++col >= entriesPerRow) {
+			if (++col >= _entriesPerRow) {
 				++row;
 				col = 0;
 			}
