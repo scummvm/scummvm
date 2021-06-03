@@ -1197,8 +1197,8 @@ void GridWidget::loadPlatformIcons() {
 	iconFilenames.push_back(Common::String("amiga.png"));
 	iconFilenames.push_back(Common::String("apple2.png"));
 
-	for (int i = 0; i < iconFilenames.size(); ++i) {
-		Common::String fullPath = pathPrefix + iconFilenames[i];
+	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
+		Common::String fullPath = pathPrefix + (*i);
 		_platformIcons.push_back(loadSurfaceFromFile(fullPath));
 	}
 }
@@ -1244,10 +1244,9 @@ Graphics::ManagedSurface * GridWidget::filenameToSurface(Common::String &name) {
 Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) {
 	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
 		warning("Unknown Platform");
+		return nullptr;
 	}
-	else {
-		return _platformIcons[platformCode];
-	}
+	return _platformIcons[platformCode];
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
