@@ -2233,6 +2233,9 @@ int GUI_LoL::runMenu(Menu &menu) {
 	uint8 hasSpecialButtons = 0;
 	_saveSlotsListUpdateNeeded = true;
 
+	Common::Keymap *const lolKeyboardKeymap = _vm->_eventMan->getKeymapper()->getKeymap(LoLEngine::kKeyboardKeymapName);
+	assert(lolKeyboardKeymap);
+
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
@@ -2397,6 +2400,12 @@ int GUI_LoL::runMenu(Menu &menu) {
 			f = _screen->setFont(f);
 			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - (_vm->gameFlags().use16ColorMode ? 2 : 1), d->unk8, 0);
 			_screen->setCurPage(pg);
+
+			// Disable keyboard keymap during text input (save menu)
+			lolKeyboardKeymap->setEnabled(false);
+		} else if (_lastMenu == &_savenameMenu) {
+			// Restore keyboard keymap after text input (save menu)
+			lolKeyboardKeymap->setEnabled(true);
 		}
 
 		while (!_newMenu && _displayMenu) {
@@ -2558,11 +2567,6 @@ int GUI_LoL::getInput() {
 	if (!_displayMenu)
 		return 0;
 
-	// Disable the keymap during text input
-	Common::Keymapper *const mapper = _vm->_eventMan->getKeymapper();
-	Common::Keymap *const lolKeymap = mapper->getKeymap(LoLEngine::kKeymapName);
-	lolKeymap->setEnabled(false);
-
 	Common::Point p = _vm->getMousePos();
 	_vm->_mouseX = p.x;
 	_vm->_mouseY = p.y;
@@ -2599,8 +2603,6 @@ int GUI_LoL::getInput() {
 		_displayMenu = false;
 
 	_vm->delay(8);
-
-	lolKeymap->setEnabled(true);
 
 	return inputFlag & 0x8000 ? 1 : 0;
 }

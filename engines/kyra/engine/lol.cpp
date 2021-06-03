@@ -42,7 +42,8 @@
 
 namespace Kyra {
 
-const char *const LoLEngine::kKeymapName = "lol";
+const char *const LoLEngine::kMouseKeymapName = "lolmouse";
+const char *const LoLEngine::kKeyboardKeymapName = "lolkeyb";
 
 LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(system, flags) {
 	_screen = 0;
@@ -465,25 +466,30 @@ Common::Error LoLEngine::init() {
 }
 
 Common::KeymapArray LoLEngine::initKeymaps() {
-	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeymapName, "Lands of Lore");
+	Common::Keymap *keyMap1 = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kMouseKeymapName, "Lands of Lore - Mouse");
+	Common::Keymap *keyMap2 = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kKeyboardKeymapName, "Lands of Lore - Keyboard");
+	Common::KeymapArray res;
 
-	addKeymapAction(keyMap, Common::kStandardActionLeftClick, _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
-	addKeymapAction(keyMap, Common::kStandardActionRightClick, _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
-	addKeymapAction(keyMap, "AT1", _("Attack 1"), Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1", "JOY_X");
-	addKeymapAction(keyMap, "AT2", _("Attack 2"), Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2), "F2", "JOY_Y");
-	addKeymapAction(keyMap, "AT3", _("Attack 3"), Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "F3", "JOY_LEFT_SHOULDER");
-	addKeymapAction(keyMap, "MAP", _("Show Map"), Common::KeyState(Common::KEYCODE_m, 'm'), "m", "");
-	addKeymapAction(keyMap, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
-	addKeymapAction(keyMap, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
-	addKeymapAction(keyMap, "SLL", _("Slide Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
-	addKeymapAction(keyMap, "SLR", _("Slide Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
-	addKeymapAction(keyMap, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
-	addKeymapAction(keyMap, "TR", _("Turn Right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
-	addKeymapAction(keyMap, "RST", _("Rest"), Common::KeyState(Common::KEYCODE_r, 'r'), "r", "");
-	addKeymapAction(keyMap, "OPT", _("Options"), Common::KeyState(Common::KEYCODE_o, 'o'), "o", "");
-	addKeymapAction(keyMap, "SPL", _("Choose Spell"), Common::KeyState(Common::KEYCODE_SLASH, '/'), "SLASH", "");
+	addKeymapAction(keyMap1, Common::kStandardActionLeftClick, _("Interact via Left Click"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_A");
+	addKeymapAction(keyMap1, Common::kStandardActionRightClick, _("Interact via Right Click"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_B");
+	res.push_back(keyMap1);
 
-	return Common::Keymap::arrayOf(keyMap);
+	addKeymapAction(keyMap2, "AT1", _("Attack 1"), Common::KeyState(Common::KEYCODE_F1, Common::ASCII_F1), "F1", "JOY_X");
+	addKeymapAction(keyMap2, "AT2", _("Attack 2"), Common::KeyState(Common::KEYCODE_F2, Common::ASCII_F2), "F2", "JOY_Y");
+	addKeymapAction(keyMap2, "AT3", _("Attack 3"), Common::KeyState(Common::KEYCODE_F3, Common::ASCII_F3), "F3", "JOY_LEFT_SHOULDER");
+	addKeymapAction(keyMap2, "MAP", _("Show Map"), Common::KeyState(Common::KEYCODE_m, 'm'), "m", "");
+	addKeymapAction(keyMap2, "MVF", _("Move Forward"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
+	addKeymapAction(keyMap2, "MVB", _("Move Back"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
+	addKeymapAction(keyMap2, "SLL", _("Slide Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT_TRIGGER");
+	addKeymapAction(keyMap2, "SLR", _("Slide Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT_TRIGGER");
+	addKeymapAction(keyMap2, "TL", _("Turn Left"), Common::KeyState(Common::KEYCODE_HOME), "HOME", "JOY_LEFT");
+	addKeymapAction(keyMap2, "TR", _("Turn Right"), Common::KeyState(Common::KEYCODE_PAGEUP), "PAGEUP", "JOY_RIGHT");
+	addKeymapAction(keyMap2, "RST", _("Rest"), Common::KeyState(Common::KEYCODE_r, 'r'), "r", "");
+	addKeymapAction(keyMap2, "OPT", _("Options"), Common::KeyState(Common::KEYCODE_o, 'o'), "o", "");
+	addKeymapAction(keyMap2, "SPL", _("Choose Spell"), Common::KeyState(Common::KEYCODE_SLASH, '/'), "SLASH", "");
+	res.push_back(keyMap2);
+
+	return res;
 }
 
 void LoLEngine::pauseEngineIntern(bool pause) {

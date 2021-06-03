@@ -302,7 +302,8 @@ private:
 	void writeSettings() override;
 	void readSettings() override;
 
-	static const char *const kKeymapName;
+	static const char *const kMouseKeymapName;
+	static const char *const kKeyboardKeymapName;
 
 	const char *const *_pakFileList;
 	int _pakFileListSize;
