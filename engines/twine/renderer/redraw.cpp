@@ -334,8 +334,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	addRedrawArea(_engine->_interface->textWindow);
 
-	// show clipping area
-	//drawBox(_engine->_renderer->renderRect.left, _engine->_renderer->renderRect.top, _engine->_renderer->renderRect.right, _engine->_renderer->renderRect.bottom);
+	_engine->_debugScene->drawClip(renderRect);
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
@@ -451,8 +450,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 
-		// show clipping area
-		//_engine->_debugScene->drawClip(renderRect);
+		_engine->_debugScene->drawClip(renderRect);
 	}
 }
 
