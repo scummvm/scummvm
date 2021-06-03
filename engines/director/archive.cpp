@@ -444,49 +444,62 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 
 	uint32 sz = endianStream.readUint32(); // size
 
-	// If it is an embedded file, dump it if requested
+	// If it is an embedded file, dump it if requested.
+	// Start by copying the movie data to a new buffer.
+	byte *dumpData = nullptr;
+	Common::SeekableMemoryWriteStream *dumpStream = nullptr;
 	if (ConfMan.getBool("dump_scripts") && startOffset) {
+		dumpData = (byte *)malloc(sz);
+		dumpStream = new Common::SeekableMemoryWriteStream(dumpData, sz);
+		stream->seek(startOffset);
+		stream->read(dumpData, sz);
+		stream->seek(startOffset + 8);
+	}
+
+	_rifxType = endianStream.readUint32();
+	warning("RIFX: type: %s", tag2str(_rifxType));
+
+	// Now read the memory map.
+	// At the same time, we will patch the offsets in the dump data.
+	bool readMapSuccess = false;
+	switch (_rifxType) {
+	case MKTAG('M', 'V', '9', '3'):
+	case MKTAG('M', 'C', '9', '5'):
+		readMapSuccess = readMemoryMap(endianStream, moreOffset, dumpStream, startOffset);
+		break;
+	case MKTAG('A', 'P', 'P', 'L'):
+		readMapSuccess = readMemoryMap(endianStream, moreOffset, dumpStream, startOffset);
+		break;
+	case MKTAG('F', 'G', 'D', 'M'):
+	case MKTAG('F', 'G', 'D', 'C'):
+		readMapSuccess = readAfterburnerMap(endianStream, moreOffset);
+		break;
+	default:
+		break;
+	}
+
+	// Now that the dump data has been patched, actually dump it.
+	if (dumpData) {
 		Common::DumpFile out;
 
 		char buf[256];
 		sprintf(buf, "./dumps/%s-%08x", g_director->getEXEName().c_str(), startOffset);
 
 		if (out.open(buf, true)) {
-			byte *data = (byte *)malloc(sz);
-
-			stream->seek(startOffset);
-			stream->read(data, sz);
-			out.write(data, sz);
+			out.write(dumpData, sz);
 			out.flush();
 			out.close();
-
-			free(data);
-
-			stream->seek(startOffset + 8);
 		} else {
 			warning("RIFXArchive::openStream(): Can not open dump file %s", buf);
 		}
+
+		free(dumpData);
+		delete dumpStream;
 	}
 
-	_rifxType = endianStream.readUint32();
-	warning("RIFX: type: %s", tag2str(_rifxType));
-
-	switch (_rifxType) {
-	case MKTAG('M', 'V', '9', '3'):
-	case MKTAG('M', 'C', '9', '5'):
-		if (!readMemoryMap(endianStream, moreOffset))
-			return false;
-		break;
-	case MKTAG('A', 'P', 'P', 'L'):
-		return readMemoryMap(endianStream, moreOffset);
-	case MKTAG('F', 'G', 'D', 'M'):
-	case MKTAG('F', 'G', 'D', 'C'):
-		if (!readAfterburnerMap(endianStream, moreOffset))
-			return false;
-		break;
-	default:
+	// If we couldn't read the map, we can't do anything past this point.
+	if (!readMapSuccess)
 		return false;
-	}
 
 	if (ConfMan.getBool("dump_scripts")) {
 		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
@@ -552,13 +565,22 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	return true;
 }
 
-bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset) {
+bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset) {
 	if (stream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
 		return false;
 
 	stream.readUint32(); // imap length
 	stream.readUint32(); // unknown
+	uint32 mmapOffsetPos = stream.pos();
 	uint32 mmapOffset = stream.readUint32() + moreOffset;
+	if (dumpStream) {
+		// If we're dumping the movie, patch this offset in the dump data.
+		dumpStream->seek(mmapOffsetPos - movieStartOffset);
+		if (stream.isBE())
+			dumpStream->writeUint32BE(mmapOffset - movieStartOffset);
+		else
+			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
+	}
 	uint32 version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
 	warning("mmap: version: %x", version);
 
@@ -583,7 +605,15 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 tag = stream.readUint32();
 		uint32 size = stream.readUint32();
+		uint32 offsetPos = stream.pos();
 		int32 offset = stream.readUint32() + moreOffset;
+		if (dumpStream) {
+			dumpStream->seek(offsetPos - movieStartOffset);
+			if (stream.isBE())
+				dumpStream->writeUint32BE(offset - movieStartOffset);
+			else
+				dumpStream->writeUint32LE(offset - movieStartOffset);
+		}
 		uint16 flags = stream.readUint16();
 		uint16 unk1 = stream.readUint16();
 		uint32 nextFreeResourceId = stream.readUint32(); // for free resources, the next id, flag like for imap and mmap resources

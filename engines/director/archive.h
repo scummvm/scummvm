@@ -25,6 +25,7 @@
 
 namespace Common {
 class MacResManager;
+class SeekableMemoryWriteStream;
 class SeekableReadStreamEndian;
 class SeekableReadStream;
 }
@@ -124,7 +125,7 @@ public:
 	Resource getResourceDetail(uint32 tag, uint16 id) override;
 
 private:
-	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
+	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
 	void readCast(Common::SeekableReadStreamEndian &casStream);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
