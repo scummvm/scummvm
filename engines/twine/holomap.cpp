@@ -306,7 +306,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
-		ScopedFPS scopedFps;
+		FrameMarker frame(_engine);
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			break;
@@ -494,8 +494,7 @@ void Holomap::processHolomap() {
 	bool fadeInPalette = true;
 	_engine->_input->enableKeyMap(holomapKeyMapId);
 	for (;;) {
-		FrameMarker frame;
-		ScopedFPS scopedFps;
+		FrameMarker frame(_engine);
 		_engine->_input->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			break;

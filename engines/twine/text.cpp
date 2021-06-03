@@ -597,8 +597,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 		ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 		ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 		for (;;) {
-			FrameMarker frame;
-			ScopedFPS scopedFps(66);
+			FrameMarker frame(_engine, 66);
 			_engine->readKeys();
 			if (textState == ProgressiveTextState::ContinueRunning) {
 				textState = updateProgressiveText();
@@ -637,8 +636,7 @@ bool Text::displayText(TextId index, bool showText, bool playVox, bool loop) {
 		}
 	}
 	while (playVox && playVoxSimple(currDialTextEntry)) {
-		FrameMarker frame;
-		ScopedFPS scopedFps;
+		FrameMarker frame(_engine);
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			stopVox(currDialTextEntry);

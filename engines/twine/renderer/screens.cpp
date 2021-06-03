@@ -162,8 +162,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 	const uint8 *pal2p = (const uint8 *)pal2;
 	uint8 *paletteOut = (uint8 *)pal;
 	do {
-		FrameMarker frame;
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		counter = 0;
 
 		uint8 *newR = &paletteOut[counter];
@@ -197,7 +196,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 	}
 
 	for (int32 i = 100; i >= 0; i -= 3) {
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		adjustPalette(0, 0, 0, pal, i);
 		_engine->flip();
 	}
@@ -207,8 +206,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 
 void Screens::fadeToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 3) {
-		FrameMarker frame;
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		adjustPalette(0, 0, 0, pal, i);
 		_engine->flip();
 	}
@@ -242,8 +240,7 @@ void Screens::setBackPal() {
 
 void Screens::fadePalRed(const uint32 *pal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
-		FrameMarker frame;
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->flip();
 	}
@@ -251,8 +248,7 @@ void Screens::fadePalRed(const uint32 *pal) {
 
 void Screens::fadeRedPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 2) {
-		FrameMarker frame;
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->flip();
 	}

@@ -166,17 +166,13 @@ struct ScopedCursor {
 	~ScopedCursor();
 };
 
-class ScopedFPS {
+class FrameMarker {
 private:
+	TwinEEngine *_engine;
 	uint32 _fps;
 	uint32 _start;
 public:
-	ScopedFPS(uint32 fps = DEFAULT_FRAMES_PER_SECOND);
-	~ScopedFPS();
-};
-
-class FrameMarker {
-public:
+	FrameMarker(TwinEEngine *engine, uint32 fps = DEFAULT_FRAMES_PER_SECOND);
 	~FrameMarker();
 };
 

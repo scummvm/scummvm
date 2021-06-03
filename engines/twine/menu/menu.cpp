@@ -419,8 +419,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 	}
 	uint32 startMillis = _engine->_system->getMillis();
 	do {
-		FrameMarker frame;
-		ScopedFPS scopedFps;
+		FrameMarker frame(_engine);
 		const uint32 loopMillis = _engine->_system->getMillis();
 		_engine->readKeys();
 
@@ -762,8 +761,7 @@ bool Menu::init() {
 }
 
 EngineState Menu::run() {
-	FrameMarker frame;
-	ScopedFPS scopedFps;
+	FrameMarker frame(_engine);
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -814,8 +812,7 @@ int32 Menu::giveupMenu() {
 
 	int32 menuId;
 	do {
-		FrameMarker frame;
-		ScopedFPS scopedFps;
+		FrameMarker frame(_engine);
 		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
@@ -1073,8 +1070,7 @@ void Menu::processBehaviourMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
-		FrameMarker frame;
-		ScopedFPS scopedFps(50);
+		FrameMarker frame(_engine, 50);
 		_engine->readKeys();
 
 #if 0
@@ -1210,8 +1206,7 @@ void Menu::processInventoryMenu() {
 	//ScopedCursor scopedCursor(_engine);
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
-		FrameMarker frame;
-		ScopedFPS fps(66);
+		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 

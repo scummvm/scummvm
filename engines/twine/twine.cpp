@@ -93,23 +93,24 @@ ScopedCursor::~ScopedCursor() {
 	_engine->popMouseCursorVisible();
 }
 
-ScopedFPS::ScopedFPS(uint32 fps) : _fps(fps) {
+FrameMarker::FrameMarker(TwinEEngine *engine, uint32 fps) : _engine(engine), _fps(fps) {
 	_start = g_system->getMillis();
-}
-
-ScopedFPS::~ScopedFPS() {
-	const uint32 end = g_system->getMillis();
-	const uint32 frameTime = end - _start;
-	const uint32 maxDelay = 1000 / _fps;
-	if (frameTime > maxDelay) {
-		return;
-	}
-	const uint32 waitMillis = maxDelay - frameTime;
-	g_system->delayMillis(waitMillis);
 }
 
 FrameMarker::~FrameMarker() {
 	g_system->updateScreen();
+	if (_fps == 0) {
+		return;
+	}
+	const uint32 end = g_system->getMillis();
+	const uint32 frameTime = end - _start;
+	const uint32 maxDelay = 1000 / _fps;
+	if (frameTime > maxDelay) {
+		debug("Frame took longer than the max allowed time: %u (max is %u)", frameTime, maxDelay);
+		return;
+	}
+	const uint32 waitMillis = maxDelay - frameTime;
+	g_system->delayMillis(waitMillis);
 }
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
@@ -691,7 +692,7 @@ void TwinEEngine::processOptionsMenu() {
 }
 
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
-	FrameMarker frame;
+	FrameMarker frame(this, 0);
 	_input->enableKeyMap(mainKeyMapId);
 
 	readKeys();
@@ -826,8 +827,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				copyBlockPhys(5, bottom, 5 + width, bottom + _text->lineHeight);
 			}
 			do {
-				FrameMarker frameWait;
-				ScopedFPS scopedFps;
+				FrameMarker frameWait(this);
 				readKeys();
 				if (shouldQuit()) {
 					break;
@@ -1031,8 +1031,7 @@ bool TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
 	do {
-		FrameMarker frame;
-		ScopedFPS scopedFps;
+		FrameMarker frame(this);
 		readKeys();
 		if (_input->toggleAbortAction()) {
 			return true;

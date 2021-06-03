@@ -389,8 +389,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 		_flaPaletteVar = true;
 		do {
-			FrameMarker frame;
-			ScopedFPS scopedFps(_flaHeaderData.speed);
+			FrameMarker frame(_engine, _flaHeaderData.speed);
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
