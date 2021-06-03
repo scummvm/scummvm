@@ -504,7 +504,8 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 		return false;
 	}
 
-	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), Common::Point(left, top));
+	const Common::Point pos(left, top);
+	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), pos);
 	return true;
 }
 
@@ -584,6 +585,10 @@ bool Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 			x = left;
 		}
 	}
+
+	Common::Rect rect(left, top, right, bottom);
+	_engine->frontVideoBuffer.addDirtyRect(rect);
+
 	return true;
 }
 

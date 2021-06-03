@@ -177,6 +177,17 @@ public:
 	~FrameMarker();
 };
 
+class TwineScreen : public Graphics::Screen {
+private:
+	using Super = Graphics::Screen;
+	TwinEEngine *_engine;
+
+public:
+	TwineScreen(TwinEEngine *engine);
+
+	void update() override;
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 _isTimeFreezed = 0;
@@ -291,7 +302,7 @@ public:
 	/** Work video buffer */
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */
-	Graphics::Screen frontVideoBuffer;
+	TwineScreen frontVideoBuffer;
 
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;
@@ -330,19 +341,15 @@ public:
 	 */
 	void setPalette(uint startColor, uint numColors, const byte *palette);
 
-	/** Blit surface in the screen */
-	void flip();
-
 	/**
 	 * Blit surface in the screen in a determinate area
 	 * @param left left position to start copy
 	 * @param top top position to start copy
 	 * @param right right position to start copy
 	 * @param bottom bottom position to start copy
-	 * @param updateScreen Perform blitting to screen if @c true, otherwise just prepare the blit
 	 */
-	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen = false);
-	void copyBlockPhys(const Common::Rect &rect, bool updateScreen = false);
+	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
+	void copyBlockPhys(const Common::Rect &rect);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer

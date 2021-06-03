@@ -58,7 +58,6 @@ void Resources::initPalettes() {
 
 	_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBA);
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-	_engine->flip();
 }
 
 void Resources::preloadSprites() {

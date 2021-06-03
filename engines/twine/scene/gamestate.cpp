@@ -333,7 +333,6 @@ void GameState::processFoundItem(InventoryItems item) {
 	const int32 itemZ = (_engine->_scene->sceneHero->pos.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
-	_engine->flip();
 
 	_engine->_renderer->projectPositionOnScreen(bodyX, bodyY, bodyZ);
 	_engine->_renderer->projPos.y -= 150;
@@ -487,7 +486,6 @@ void GameState::processGameoverAnimation() {
 
 	// TODO: inSceneryView
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-	_engine->flip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	BodyData gameOverPtr;
 	if (!gameOverPtr.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL)) {
@@ -529,7 +527,6 @@ void GameState::processGameoverAnimation() {
 
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	initEngineProjections();
 
 	_engine->lbaTime = tmpLbaTime;

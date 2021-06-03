@@ -114,8 +114,15 @@ FrameMarker::~FrameMarker() {
 	g_system->delayMillis(waitMillis);
 }
 
+TwineScreen::TwineScreen(TwinEEngine *engine) : _engine(engine) {
+}
+
+void TwineScreen::update() {
+	Super::update();
+}
+
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
-	: Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
+	: Engine(system), _gameType(gameType), _gameLang(language), frontVideoBuffer(this), _gameFlags(flags), _rnd("twine") {
 	// Add default file directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
@@ -578,7 +585,6 @@ void TwinEEngine::processBookOfBu() {
 	_screens->fadeToBlack(_screens->paletteRGBACustom);
 	_screens->clearScreen();
 	setPalette(_screens->paletteRGBA);
-	flip();
 	_screens->lockPalette = true;
 }
 
@@ -1064,15 +1070,11 @@ void TwinEEngine::setPalette(uint startColor, uint numColors, const byte *palett
 	frontVideoBuffer.setPalette(palette, startColor, numColors);
 }
 
-void TwinEEngine::flip() {
-	frontVideoBuffer.makeAllDirty();
+void TwinEEngine::copyBlockPhys(const Common::Rect &rect) {
+	copyBlockPhys(rect.left, rect.top, rect.right, rect.bottom);
 }
 
-void TwinEEngine::copyBlockPhys(const Common::Rect &rect, bool updateScreen) {
-	copyBlockPhys(rect.left, rect.top, rect.right, rect.bottom, updateScreen);
-}
-
-void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom, bool updateScreen) {
+void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
 	assert(left <= right);
 	assert(top <= bottom);
 	int32 width = right - left + 1;
@@ -1087,9 +1089,6 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 		return;
 	}
 	frontVideoBuffer.addDirtyRect(Common::Rect(left, top, right, bottom));
-	if (updateScreen) {
-		frontVideoBuffer.update();
-	}
 }
 
 void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette) {
@@ -1113,12 +1112,10 @@ void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32
 		surfaceTable.blitFrom(backupSurface);
 		surfaceTable.transBlitFrom(newSurface, 0, false, 0, i * NUMOFCOLORS / 8);
 		frontVideoBuffer.blitFrom(surfaceTable);
-		flip();
 		delaySkip(50);
 	}
 
 	frontVideoBuffer.blitFrom(newSurface);
-	flip();
 
 	backupSurface.free();
 	newSurface.free();

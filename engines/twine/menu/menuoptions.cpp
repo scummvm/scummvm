@@ -78,7 +78,6 @@ void MenuOptions::newGame() {
 
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 	_engine->_screens->clearScreen();
-	_engine->flip();
 
 	if (!aborted) {
 		// _engine->_music->playMidiMusic(1);
@@ -93,7 +92,6 @@ void MenuOptions::newGame() {
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-	_engine->flip();
 }
 
 void MenuOptions::showCredits() {
@@ -112,7 +110,6 @@ void MenuOptions::showCredits() {
 	_engine->cfgfile.ShadowMode = tmpShadowMode;
 
 	_engine->_screens->clearScreen();
-	_engine->flip();
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
 }
@@ -122,7 +119,6 @@ void MenuOptions::showEndSequence() {
 
 	_engine->_screens->clearScreen();
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-	_engine->flip();
 }
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
@@ -258,7 +254,6 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 	const int halfScreenWidth = (_engine->width() / 2);
 	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
 	_engine->copyBlockPhys(0, 0, _engine->width() - 1, 99);
-	_engine->flip();
 
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);
 	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
@@ -354,7 +349,6 @@ bool MenuOptions::enterText(TextId textIdx, char *textTargetBuf, size_t bufSize)
 
 bool MenuOptions::newGameMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	if (!enterText(TextId::kEnterYourName, saveGameName, sizeof(saveGameName))) {
 		return false;
 	}
@@ -407,7 +401,6 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 
 bool MenuOptions::continueGameMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
 		debug("Load slot %i", slot);
@@ -424,7 +417,6 @@ bool MenuOptions::continueGameMenu() {
 
 bool MenuOptions::deleteSaveMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	const int slot = chooseSave(TextId::kDeleteSaveGame);
 	if (slot >= 0) {
 		_engine->wipeSaveSlot(slot);
@@ -435,7 +427,6 @@ bool MenuOptions::deleteSaveMenu() {
 
 bool MenuOptions::saveGameMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	const int slot = chooseSave(TextId::kCreateSaveGame, true);
 	if (slot >= 0) {
 		// TODO: enter description

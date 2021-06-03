@@ -585,7 +585,6 @@ static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_flaMovies->playFlaMovie(movie);
 	engine->setPalette(engine->_screens->paletteRGBA);
 	engine->_screens->clearScreen();
-	engine->flip();
 	return 0;
 }
 

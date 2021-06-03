@@ -717,7 +717,6 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 	}
 
 	if (bgRedraw) {
-		_engine->flip();
 		moveNextAreas();
 		_engine->unfreezeTime();
 	} else {

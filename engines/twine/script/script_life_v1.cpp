@@ -1209,7 +1209,6 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_flaMovies->playFlaMovie(movie);
 	engine->setPalette(engine->_screens->paletteRGBA);
 	engine->_screens->clearScreen();
-	engine->flip();
 
 	return 0;
 }
@@ -1563,7 +1562,6 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	if (!engine->_screens->lockPalette) {
 		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 		engine->setPalette(engine->_screens->paletteRGBA);
-		engine->flip();
 	}
 	engine->_screens->useAlternatePalette = true;
 	return 0;
@@ -1577,7 +1575,6 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->useAlternatePalette = false;
 	if (!engine->_screens->lockPalette) {
 		engine->setPalette(engine->_screens->mainPaletteRGBA);
-		engine->flip();
 	}
 	return 0;
 }
@@ -1602,7 +1599,6 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->paletteRGBA);
-	engine->flip();
 	return 0;
 }
 
@@ -1692,7 +1688,6 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	// TODO: only used for credits scene? If not, then move the credits related code into the menu->showCredits method
 	engine->_screens->copyScreen(engine->frontVideoBuffer, engine->workVideoBuffer);
-	engine->flip();
 	engine->_scene->enableGridTileRendering = false;
 
 	engine->_renderer->setCameraPosition(engine->width() / 2, engine->height() / 2, 128, 1024, 1024);

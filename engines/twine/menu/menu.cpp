@@ -612,7 +612,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings, bool showCredits) {
 
 int32 Menu::advoptionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -637,7 +636,6 @@ int32 Menu::advoptionsMenu() {
 
 int32 Menu::savemanageMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -663,7 +661,6 @@ int32 Menu::savemanageMenu() {
 
 int32 Menu::volumeMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 
 	ScopedCursor scoped(_engine);
 	for (;;) {
@@ -696,7 +693,6 @@ void Menu::inGameOptionsMenu() {
 
 int32 Menu::optionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 
 	_engine->_sound->stopSamples();
 	_engine->_music->playTrackMusic(9); // LBA's Theme
