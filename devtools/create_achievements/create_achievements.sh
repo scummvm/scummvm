@@ -1,5 +1,9 @@
 #!/bin/sh
 
+set -e
+
+trap "echo FAILURE: $0 failed to create achievements.dat" ERR
+
 #AGS games:
 python steam_achievements.py -v --steamid 80310
 python steam_achievements.py -v --steamid 80330
@@ -85,3 +89,6 @@ python steam_achievements.py -v --steamid 1064660
 
 zip -9j achievements.dat gen/* static/*
 mv -vf achievements.dat ../../dists/engine-data
+
+echo SUCCESS
+exit 0
