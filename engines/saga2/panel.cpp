@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/events.h"
+
 #include "saga2/std.h"
 #include "saga2/panel.h"
 #include "saga2/fontlib.h"
@@ -726,7 +728,7 @@ void gToolBase::setActive(gPanel *ctl) {
 	if (ctl == NULL || ctl->activate(gEventNone)) activePanel = ctl;
 }
 
-void gToolBase::handleMouse(gMouseState &ms, int32 time) {
+void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 	gWindow         *w = activeWindow;
 	gPanel          *ctl,
 	                *pickPanel = NULL;
@@ -734,53 +736,78 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 	static int32    lastClickTime = 0x8000;
 	static Point16  lastClickPos;
 
+
+	// Emulate mouse state for now
+	switch (event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+		_curMouseState.left = true;
+		break;
+	case Common::EVENT_RBUTTONDOWN:
+		_curMouseState.right = true;
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_curMouseState.left = false;
+		break;
+	case Common::EVENT_RBUTTONUP:
+		_curMouseState.right = false;
+		break;
+	case Common::EVENT_MOUSEMOVE:
+		_curMouseState.pos.x = event.mouse.x;
+		_curMouseState.pos.y = event.mouse.y;
+		break;
+	default:
+		break;
+	}
+
 	//  Do nothing if UI locked.
-	if (lockUINest > 0) return;
+	if (lockUINest > 0)
+		return;
 
 #if CURSOR_CYCLING
-	if (ms.right) {
+	if (_curMouseState.right) {
 		cycleCursor();
 		return;
 	}
 #endif
 
 	//  Code for "Tool tip delay"
-	if (prevState.pos != ms.pos
-	        &&  prevState.left != ms.left
-	        &&  prevState.right != ms.right) {
+	if (prevState.pos != _curMouseState.pos
+	        &&  prevState.left != _curMouseState.left
+	        &&  prevState.right != _curMouseState.right) {
 		lastMouseMoveTime = msg.timeStamp;
-		if (mouseHintSet) setMouseTextF(NULL);
+		if (mouseHintSet)
+			setMouseTextF(NULL);
 	}
 
 	//  If there is no active window, then do nothing.
 
 	if (w == NULL) {
-		prevState = ms;
+		prevState = _curMouseState;
 		return;
 	}
 
 	//  Set up the pick position relative to the window
 
 	if (activePanel) {
-		pickPos.x = ms.pos.x - activePanel->window.extent.x;
-		pickPos.y = ms.pos.y - activePanel->window.extent.y;
+		pickPos.x = _curMouseState.pos.x - activePanel->window.extent.x;
+		pickPos.y = _curMouseState.pos.y - activePanel->window.extent.y;
 	} else {
-		pickPos.x = ms.pos.x - w->extent.x;
-		pickPos.y = ms.pos.y - w->extent.y;
+		pickPos.x = _curMouseState.pos.x - w->extent.x;
+		pickPos.y = _curMouseState.pos.y - w->extent.y;
 	}
 
 	//  Fill in the message to be sent to the various panels
 
 	msg.pickAbsPos  = pickPos;
-	msg.leftButton  = ms.left ? 1 : 0;
-	msg.rightButton = ms.right ? 1 : 0;
+	msg.leftButton  = _curMouseState.left ? 1 : 0;
+	msg.rightButton = _curMouseState.right ? 1 : 0;
 	msg.pointerEnter = 0;
 	msg.pointerLeave = 0;
 	msg.doubleClick = 0;
 	msg.timeStamp = time;
 
-	if (((ms.left  && !leftDrag)            // if left button hit
-	        || (ms.right && !rightDrag))      // or right button hit
+	if (((_curMouseState.left  && !leftDrag)            // if left button hit
+	        || (_curMouseState.right && !rightDrag))      // or right button hit
 	        && activePanel != NULL) {           // and a panel is active
 		//  Then we have a button hit event. If the button hit
 		//  is occuring outside the panel, then it should be
@@ -790,7 +817,7 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 			activePanel->deactivate();
 	}
 
-	if (prevState.pos == ms.pos) ;          // don't do anything if same pos
+	if (prevState.pos == _curMouseState.pos) ;          // don't do anything if same pos
 	else if (activePanel) {                 // if control active
 		mousePanel = activePanel;           // assume mouse over active panel
 
@@ -809,11 +836,11 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 		for (w = (gWindow *)windowList.first();
 		        w;
 		        w = (gWindow *)w->next()) {
-			if (w->extent.ptInside(ms.pos) || w->isModal()) {
+			if (w->extent.ptInside(_curMouseState.pos) || w->isModal()) {
 				//  Set up the pick position relative to the window
 
-				pickPos.x = ms.pos.x - w->extent.x;
-				pickPos.y = ms.pos.y - w->extent.y;
+				pickPos.x = _curMouseState.pos.x - w->extent.x;
+				pickPos.y = _curMouseState.pos.y - w->extent.y;
 
 				if ((ctl = w->hitTest(pickPos)) != NULL)
 					pickPanel = ctl;
@@ -825,7 +852,7 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 		}
 
 		if (w == NULL) {
-			prevState = ms;
+			prevState = _curMouseState;
 			return;
 		}
 
@@ -837,13 +864,13 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 			if (&mousePanel->window != w) {
 				//  Temporarily adjust pickPos to be relative to the old panel's window
 				//  instead of the new panel's window.
-				pickPos.x = ms.pos.x - mousePanel->window.extent.x;
-				pickPos.y = ms.pos.y - mousePanel->window.extent.y;
+				pickPos.x = _curMouseState.pos.x - mousePanel->window.extent.x;
+				pickPos.y = _curMouseState.pos.y - mousePanel->window.extent.y;
 
 				setMsgQ(msg, mousePanel);        // set up gPanelMessage
 
-				pickPos.x = ms.pos.x - w->extent.x;
-				pickPos.y = ms.pos.y - w->extent.y;
+				pickPos.x = _curMouseState.pos.x - w->extent.x;
+				pickPos.y = _curMouseState.pos.y - w->extent.y;
 			} else {
 				setMsgQ(msg, mousePanel);        // set up gPanelMessage
 			}
@@ -864,14 +891,15 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 			setMsg(msg, pickPanel);          // set up gPanelMessage
 //			msg.pickPos.x  = pickPos.x - pickPanel->extent.x;
 //			msg.pickPos.y  = pickPos.y - pickPanel->extent.y;
-			msg.leftButton  = ms.left ? 1 : 0;
+			msg.leftButton  = _curMouseState.left ? 1 : 0;
 //			msg.inPanel        = pickPanel->extent.ptInside(pickPos);
 			msg.pointerEnter = (mousePanel == pickPanel) ? 0 : 1;
 			msg.pointerLeave = 0;
 
 			mousePanel = pickPanel;
 			mousePanel->pointerMove(msg);
-		} else mousePanel = NULL;
+		} else
+			mousePanel = NULL;
 	}
 
 	//  Fix up flags because earlier code may have changed them
@@ -881,8 +909,8 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 
 	//  Send appropriate button-press messages to the panels
 
-	if (prevState.left  != ms.left         // if buttons changed state
-	        || prevState.right != ms.right) {
+	if (prevState.left  != _curMouseState.left         // if buttons changed state
+	        || prevState.right != _curMouseState.right) {
 
 		//  If both buttons were previously up, then a mouse
 		//  hit must have occured.
@@ -896,9 +924,9 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 
 			if (((uint32)(msg.timeStamp - lastClickTime)
 			        < (ticksPerSecond * 2 / 3))
-			        ||  ms.left > 1
-			        ||  ms.right > 1) {
-				Point16 diff = lastClickPos - ms.pos;
+			        ||  _curMouseState.left > 1
+			        ||  _curMouseState.right > 1) {
+				Point16 diff = lastClickPos - _curMouseState.pos;
 
 				if (abs(diff.x) + abs(diff.y) < 6)
 					msg.doubleClick = 1;
@@ -908,7 +936,7 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 			//  future double-click checks.
 
 			lastClickTime = msg.timeStamp;
-			lastClickPos = ms.pos;
+			lastClickPos = _curMouseState.pos;
 
 			if (mousePanel) {               // if over a control
 				setMsgQ(msg, mousePanel);        // set up gPanelMessage
@@ -930,12 +958,14 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 				// send it a hit message
 				if (mousePanel->pointerHit(msg)) {
 					activePanel = mousePanel;
-					if (ms.left) leftDrag = TRUE;
-					else rightDrag = TRUE;
+					if (_curMouseState.left)
+						leftDrag = TRUE;
+					else
+						rightDrag = TRUE;
 				}
 			}
-		} else if ((leftDrag && ms.left == FALSE)  // check for release
-		           || (rightDrag && ms.right == FALSE)) {
+		} else if ((leftDrag && _curMouseState.left == FALSE)  // check for release
+		           || (rightDrag && _curMouseState.right == FALSE)) {
 			if (activePanel && mousePanel) {            // if a control is active
 				setMsg(msg, mousePanel);    // send it a release message
 				mousePanel->pointerRelease(msg);
@@ -944,7 +974,7 @@ void gToolBase::handleMouse(gMouseState &ms, int32 time) {
 		}
 	}
 
-	prevState = ms;
+	prevState = _curMouseState;
 }
 
 void gToolBase::leavePanel(void) {
@@ -962,22 +992,33 @@ void gToolBase::leavePanel(void) {
 	if (activePanel) activePanel->deactivate();
 }
 
-void gToolBase::handleKeyStroke(uint16 key, uint16 qual) {
+void gToolBase::handleKeyStroke(Common::Event &event) {
 	gWindow         *w = activeWindow;
 	gControl        *ctl;
 
+	uint16 key = event.kbd.ascii; // FIXME
+	uint16 qualifier = 0;
+
+	if (event.kbd.flags & Common::KBD_SHIFT)
+		qualifier |= qualifierShift;
+
+	if (event.kbd.flags & Common::KBD_CTRL)
+		qualifier |= qualifierControl;
+
+	if (event.kbd.flags & Common::KBD_ALT)
+		qualifier |= qualifierAlt;
+
 	msg.pickAbsPos  = pickPos;
-//	msg.leftButton   = ms.left ? 1 : 0;
-//	msg.rightButton = ms.right ? 1 : 0;
 	msg.pointerEnter = 0;
 	msg.pointerLeave = 0;
 	msg.key = ((key & 0xFF) != 0) ? key & 0xff : (key >> 8) + 0x80;
-	msg.qualifier = qual;
+	msg.qualifier = qualifier;
 	msg.timeStamp = ReadTimer();
 
 	if (activePanel) {                      // send keystroke to active panel
 		setMsg(msg, activePanel);            // set up gPanelMessage
-		if (activePanel->keyStroke(msg)) return;
+		if (activePanel->keyStroke(msg))
+			return;
 	}
 
 	//  Now, search the contents of the window for a control with
@@ -1006,8 +1047,9 @@ void gToolBase::handleKeyStroke(uint16 key, uint16 qual) {
 
 		// else send the message to the app.
 
-		if (key & 0xff) key &= 0xff;
-		w->notify(gEventKeyDown, (qual << 16) | key);
+		if (key & 0xff)
+			key &= 0xff;
+		w->notify(gEventKeyDown, (qualifier << 16) | key);
 	}
 }
 
@@ -1039,34 +1081,6 @@ void HandleTimerTick(long tick) {
 		G_BASE.handleTimerTick(tick);
 	}
 }
-
-/*
-void EventLoop( bool &running )
-{
-    static gMouseState  mouseState;
-    extern void ApplicationTask( void );
-
-        //  Our typical main loop
-
-    while( running )
-    {
-        int         key, qual;
-
-            //  Poll user input
-
-        ReadMouse( mouseState );
-        pointer.move( mouseState.pos );
-        G_BASE.handleMouse( mouseState );
-        HandleTimerTick( ReadTimer() );
-        if (ReadKeyboard( key, qual ))
-            G_BASE.handleKeyStroke( key, qual );
-
-//      if (mouseState.right) running = FALSE;
-
-        ApplicationTask();
-    }
-}
-*/
 
 /* ===================================================================== *
    Code to initialize the panel system

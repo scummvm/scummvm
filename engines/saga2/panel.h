@@ -31,6 +31,10 @@
 #include "saga2/input.h"
 #include "saga2/vdraw.h"
 
+namespace Common {
+struct Event;
+}
+
 namespace Saga2 {
 //  Fix problem with DOS's encroachment on name space that should
 //  rightfully belong to the application programmer.
@@ -473,6 +477,9 @@ class gToolBase {
 	gPanelMessage   msg;                    // message that we send out
 
 	int32           lastMouseMoveTime;      // time of last mouse move
+
+	gMouseState _curMouseState;
+
 public:
 	bool            mouseHintSet;           // true if mouse hint is up.
 
@@ -499,8 +506,8 @@ public:
 	void setActive(gPanel *newActive);
 	void leavePanel(void);               // we're changing windows
 public:
-	void handleMouse(gMouseState &ms, int32 time);
-	void handleKeyStroke(uint16 key, uint16 qual);
+	void handleMouse(Common::Event &event, uint32 time);
+	void handleKeyStroke(Common::Event &event);
 	void handleTimerTick(int32 tick);
 	gWindow *topWindow(void) {
 		return (gWindow *)windowList.first();

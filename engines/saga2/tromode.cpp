@@ -66,7 +66,6 @@ int16 OptionsDialog(bool disableSaveResume = FALSE);
 void SystemEventLoop(void);
 void ClearMessageQueue(void);
 void freeAllTileBanks(void);
-void PollMouse(void);
 void resetInputDevices(void);
 void blackOut(void);
 void quickSavePalette(void);
