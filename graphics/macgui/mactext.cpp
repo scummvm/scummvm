@@ -1122,9 +1122,12 @@ void MacText::drawSelection(int xoff, int yoff) {
 	if (_selectedText.endY == -1)
 		return;
 
-	// we check if the selection size is 0, then we don't draw it anymore
+	// we check if the selection size is 0, then we don't draw it anymore, and we set the cursor here
 	// it's a small optimize, but can bring us correct behavior
 	if (!_inTextSelection && _selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY) {
+		_cursorRow = _selectedText.startRow;
+		_cursorCol = _selectedText.startCol;
+		updateCursorPos();
 		_selectedText.startY = _selectedText.endY = -1;
 		return;
 	}
