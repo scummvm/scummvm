@@ -114,7 +114,8 @@ bool Sprite::respondsToMouse() {
 }
 
 bool Sprite::isActive() {
-	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr;
+	return _movie->getScriptContext(kScoreScript, _scriptId) != nullptr
+			|| _movie->getScriptContext(kCastScript, _castId) != nullptr;
 }
 
 bool Sprite::shouldHilite() {
