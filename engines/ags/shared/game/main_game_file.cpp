@@ -131,7 +131,7 @@ bool IsMainGameLibrary(const String &filename) {
 // - ac2game.dat is a legacy file name for very old games,
 // - *.exe is a MS Win executable; it is included to this case because
 //   users often run AGS ports with Windows versions of games.
-String FindGameData(const String &path, std::function<bool(const String &)> fn_testfile) {
+String FindGameData(const String &path, bool(*fn_testfile)(const String &)) {
 	Common::FSNode folder(path.GetCStr());
 	Common::FSList files;
 	if (folder.getChildren(files, Common::FSNode::kListFilesOnly)) {

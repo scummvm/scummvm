@@ -55,9 +55,11 @@ bool File::TestWriteFile(const String &filename) {
 bool File::TestCreateFile(const String &filename) {
 	if (filename.IsEmpty())
 		return false;
-	Common::DumpFile df;
-	bool result = df.open(getFSNode(filename.GetNullableCStr()));
-	df.close();
+
+	Common::OutSaveFile *sf = g_system->getSavefileManager()->openForSaving(filename);
+	bool result = sf != nullptr;
+	delete sf;
+
 	return result;
 }
 

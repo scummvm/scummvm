@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/audio_clip_type.h"
 #include "ags/engine/ac/file.h"
@@ -48,6 +49,7 @@
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
 #include "ags/engine/ac/dynobj/script_string.h"
+#include "ags/ags.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -302,18 +304,10 @@ FSLocation GetGameUserDataDir() {
 }
 
 bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath &rp) {
+	debugC(::AGS::kDebugFilePath, "ResolveScriptPath(%s)", orig_sc_path.GetCStr());
 	rp = ResolvedPath();
 
-	// File tokens (they must be the only thing in script path)
-	if (orig_sc_path.Compare(UserConfigFileToken) == 0) {
-		auto loc = GetGameUserConfigDir();
-		rp.FullPath = Path::ConcatPaths(loc.FullDir, DefaultConfigFileName);
-		rp.BaseDir = loc.BaseDir;
-		return true;
-	}
-
-	// Test absolute paths
-	bool is_absolute = !Path::IsRelativePath(orig_sc_path);
+	bool is_absolute = !is_relative_filename(orig_sc_path);
 	if (is_absolute && !read_only) {
 		debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", orig_sc_path.GetCStr());
 		return false;
@@ -321,55 +315,91 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 
 	if (is_absolute) {
 		rp.FullPath = orig_sc_path;
+		debugC(::AGS::kDebugFilePath, "Full path detected");
 		return true;
 	}
-
-	// Resolve location tokens
+	/*
+	if (read_only) {
+		// For reading files, first try as a save file, then fall back
+		// in the game folder. This handles cases where some games like
+		// The Blackwell Legacy write to files in the game folder
+		rp.BaseDir = SAVE_FOLDER_PREFIX;
+		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
+			orig_sc_path.GetNullableCStr());
+		rp.AltPath = orig_sc_path;
+	} else {
+		// For writing files, always use as save files
+		rp.BaseDir = SAVE_FOLDER_PREFIX;
+		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
+			orig_sc_path.GetNullableCStr());
+	}
+	*/
 	String sc_path = FixSlashAfterToken(orig_sc_path);
 	FSLocation parent_dir;
 	String child_path;
 	String alt_path;
-	if (sc_path.CompareLeft(GameInstallRootToken, GameInstallRootToken.GetLength()) == 0) {
+	if (sc_path.CompareLeft(GameInstallRootToken) == 0) {
 		if (!read_only) {
 			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory)",
-			                  sc_path.GetCStr());
+				sc_path.GetCStr());
 			return false;
 		}
 		parent_dir = FSLocation(_GP(ResPaths).DataDir);
 		child_path = sc_path.Mid(GameInstallRootToken.GetLength());
-	} else if (sc_path.CompareLeft(GameSavedgamesDirToken, GameSavedgamesDirToken.GetLength()) == 0) {
-		parent_dir = FSLocation(get_save_game_directory()); // FIXME: get FSLocation of save dir
-		child_path = sc_path.Mid(GameSavedgamesDirToken.GetLength());
-	} else if (sc_path.CompareLeft(GameDataDirToken, GameDataDirToken.GetLength()) == 0) {
+	} else if (sc_path.CompareLeft(GameSavedgamesDirToken) == 0) {
+		parent_dir = get_save_game_directory();
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+#if AGS_PLATFORM_SCUMMVM
+		// Remap "agsgame.*"
+		const char *agsSavePrefix = "/agssave.";
+		if (child_path.CompareLeft(agsSavePrefix) == 0) {
+			debugC(::AGS::kDebugFilePath, "Remapping agssave.* to ScummVM savegame files");
+			String suffix = child_path.Mid(strlen(agsSavePrefix));
+			if (suffix.CompareLeft("*") == 0) {
+				Common::String file_name = ::AGS::g_vm->getSaveStateName(999);
+				Common::replace(file_name, "999", "*");
+				child_path = file_name;
+			} else {
+				int slotNum = suffix.ToInt();
+				child_path = ::AGS::g_vm->getSaveStateName(slotNum);
+			}
+		}
+#endif
+	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
 		parent_dir = GetGameAppDataDir();
 		child_path = sc_path.Mid(GameDataDirToken.GetLength());
 	} else {
 		child_path = sc_path;
 
-		// For games which were made without having safe paths in mind,
-		// provide two paths: a path to the local directory and a path to
-		// AppData directory.
-		// This is done in case game writes a file by local path, and would
-		// like to read it back later. Since AppData path has higher priority,
-		// game will first check the AppData location and find a previously
-		// written file.
-		// If no file was written yet, but game is trying to read a pre-created
-		// file in the installation directory, then such file will be found
-		// following the 'alt_path'.
-		parent_dir = GetGameAppDataDir();
-		// Set alternate non-remapped "unsafe" path for read-only operations
-		if (read_only)
-			alt_path = Path::ConcatPaths(_GP(ResPaths).DataDir, sc_path);
+		// For cases where a file is trying to write to a game path, always remap
+		// it to write to a savefile. For normal reading, we thus need to give
+		// preference to any save file with a given name before looking in the
+		// game folder. This for example fixes an issue with The Blackwell Legacy,
+		// which wants to create a new prog.bwl in the game folder
+		parent_dir = FSLocation(SAVE_FOLDER_PREFIX);
 
-		// For games made in the safe-path-aware versions of AGS, report a warning
-		// if the unsafe path is used for write operation
-		if (!read_only && _GP(game).options[OPT_SAFEFILEPATHS]) {
-			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory);\nPath will be remapped to the app data directory: '%s'",
-			                  sc_path.GetCStr(), parent_dir.FullDir.GetCStr());
+		if (read_only) {
+			alt_path = sc_path;
 		}
 	}
 
-	String full_path = Path::ConcatPaths(parent_dir.FullDir, child_path);
+	// Sometimes we have multiple consecutive slashes or backslashes.
+	// Remove all of them at the start of the child path.
+	while (!child_path.IsEmpty() && (child_path[0u] == '\\' || child_path[0u] == '/'))
+		child_path.ClipLeft(1);
+
+#if AGS_PLATFORM_SCUMMVM
+	// For files on savepath, always ensure it starts with the game target prefix to avoid
+	// conflicts (as we usually have the same save dir for all games).
+	if (parent_dir.BaseDir == SAVE_FOLDER_PREFIX) {
+		debugC(::AGS::kDebugFilePath, "Adding ScummVM game target prefix");
+		String gameTarget = ConfMan.getActiveDomainName();
+		if (child_path.CompareLeft(gameTarget) != 0)
+			child_path = String::FromFormat("%s-%s", gameTarget.GetCStr(), child_path.GetCStr());
+	}
+#endif
+
+	String full_path = String::FromFormat("%s%s", parent_dir.BaseDir.GetCStr(), child_path.GetCStr());
 	// don't allow write operations for relative paths outside game dir
 	if (!read_only) {
 		if (!Path::IsSameOrSubDir(parent_dir.FullDir, full_path)) {
@@ -377,9 +407,15 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 			return false;
 		}
 	}
+
 	rp.BaseDir = parent_dir.BaseDir;
 	rp.FullPath = full_path;
 	rp.AltPath = alt_path;
+
+	debugC(::AGS::kDebugFilePath, "Resolved path: %s", full_path.GetCStr());
+	if (!alt_path.IsEmpty())
+		debugC(::AGS::kDebugFilePath, "Alternative path: %s", alt_path.GetCStr());
+
 	return true;
 }
 

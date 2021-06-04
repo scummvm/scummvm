@@ -222,9 +222,11 @@ void set_save_game_suffix(const String &suffix) {
 	_G(saveGameSuffix) = suffix;
 }
 
+#if !AGS_PLATFORM_SCUMMVM
 String get_save_game_filename(int slotNum) {
 	return String::FromFormat("agssave.%03d%s", slotNum, _G(saveGameSuffix).GetCStr());
 }
+#endif
 
 String get_save_game_path(int slotNum) {
 #if AGS_PLATFORM_SCUMMVM
@@ -930,9 +932,6 @@ void save_game(int slotn, const char *descript) {
 	}
 }
 
-int gameHasBeenRestored = 0;
-int oldeip;
-
 bool read_savedgame_description(const String &savedgame, String &description) {
 	SavegameDescription desc;
 	HSaveError err = OpenSavegame(savedgame, desc, kSvgDesc_UserText);
@@ -979,12 +978,16 @@ bool test_game_guid(const String &filepath, const String &guid, int legacy_id) {
 	return legacy_id == g.uniqueid;
 }
 
-HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten) {
-#ifdef TODO
-	data_overwritten = false;
-	gameHasBeenRestored++;
+static const SavegameDescription *loadDesc;
+static bool TestGame(const String &filepath) {
+	return test_game_guid(filepath, loadDesc->GameGuid, loadDesc->LegacyID);
+}
 
-	oldeip = _G(our_eip);
+HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten) {
+	data_overwritten = false;
+	_G(gameHasBeenRestored)++;
+
+	_G(oldeip) = _G(our_eip);
 	_G(our_eip) = 2050;
 
 	HSaveError err;
@@ -1004,10 +1007,9 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	if (!desc.GameGuid.IsEmpty() || desc.LegacyID != 0) {
 		if (desc.GameGuid.Compare(_GP(game).guid) != 0 && desc.LegacyID != _GP(game).uniqueid) {
 			// Try to find wanted game's data using game id
-			String gamefile = FindGameData(_GP(ResPaths).DataDir,
-			[&desc](const String & filepath) {
-				return test_game_guid(filepath, desc.GameGuid, desc.LegacyID);
-			});
+			loadDesc = &desc;
+			String gamefile = FindGameData(_GP(ResPaths).DataDir, TestGame);
+
 			if (Shared::File::TestReadFile(gamefile)) {
 				RunAGSGame(desc.MainDataFilename, 0, 0);
 				_G(load_new_game_restore) = slotNumber;
@@ -1036,16 +1038,13 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 	if (!err)
 		return err;
 	src.InputStream.reset();
-	_G(our_eip) = oldeip;
+	_G(our_eip) = _G(oldeip);
 
 	// ensure keyboard buffer is clean
 	ags_clear_input_buffer();
 	// call "After Restore" event callback
 	run_on_event(GE_RESTORE_GAME, RuntimeScriptValue().SetInt32(slotNumber));
 	return HSaveError::None();
-#else
-	error("TODO: load_game");
-#endif
 }
 
 bool try_restore_save(int slot) {
