@@ -26,6 +26,8 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "graphics/palette.h"
+
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/vpal.h"
@@ -91,7 +93,7 @@ static PaletteStateArchive  archive;        //  Used for loading and saving
 
 void assertCurrentPalette(void) {
 	if (paletteChangesEnabled())
-		_LoadPalette((uint8 *)&currentPalette, 0, 256);
+		g_system->getPaletteManager()->setPalette((uint8 *)&currentPalette, 0, 256);
 }
 
 

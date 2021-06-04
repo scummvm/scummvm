@@ -83,11 +83,6 @@ void loadPaletteState(SaveFileReader &saveGame);
 //  Cleanup the palette
 inline void cleanupPaletteState(void) { /* do nothing */ }
 
-//  Assembly-language function to copy pixel to SVGA
-
-extern void _LoadPalette(uint8 *rgbArray,
-                                   uint32 startColor,
-                                   uint32 numColors);
 void dialogSavePalette(void);
 void dialogRestorePalette(void);
 
