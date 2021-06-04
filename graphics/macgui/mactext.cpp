@@ -871,11 +871,7 @@ void MacText::setEditable(bool editable) {
 	_editable = editable;
 	_cursorOff = !editable;
 
-	setActive(editable);
-	_active = editable;
-	if (editable) {
-		_wm->setActiveWidget(this);
-	} else {
+	if (!editable) {
 		undrawCursor();
 	}
 }
