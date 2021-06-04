@@ -695,10 +695,11 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		((Graphics::MacText *)widget)->_selectable = _editable;
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
-		Graphics::MacWidget *activeWidget;
-		activeWidget = g_director->_wm->getActiveWidget();
-		if (activeWidget == nullptr || !activeWidget->isEditable())
-			g_director->_wm->setActiveWidget(widget);
+		if (_editable) {
+			Graphics::MacWidget *activeWidget = g_director->_wm->getActiveWidget();
+			if (activeWidget == nullptr || !activeWidget->isEditable())
+				g_director->_wm->setActiveWidget(widget);
+		}
 		break;
 
 	case kCastButton:
