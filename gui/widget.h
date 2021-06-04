@@ -487,7 +487,9 @@ private:
 	Common::Array<LauncherEntry> _allEntries;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
 	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
-	
+
+	Common::Array<Common::Array<EntryContainerWidget *>> _grid;
+
 	ScrollBarWidget *_scrollBar;
 
 	uint16 _scrollWindowHeight, _scrollWindowWidth, _scrollSpeed;
@@ -532,7 +534,7 @@ public:
 
 enum {
 	kThumbnailWidth = 192,
-	kThumbnailHeight = 128
+	kThumbnailHeight = 192
 };
 
 /* EntryContainerWidget */

@@ -901,18 +901,16 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 
 	float sf = g_gui.getScaleFactor();
 	if (scale && sf != 1.0) {
-		// _w = gfx->w * sf;
-		// _h = gfx->h * sf;
+		_w = gfx->w * sf;
+		_h = gfx->h * sf;
 	} else {
-		// _w = gfx->w;
-		// _h = gfx->h;
+		_w = gfx->w;
+		_h = gfx->h;
 	}
 
 	if ((_w != gfx->w || _h != gfx->h) && _w && _h) {
-		float scalingFactor = (float)gfx->w / _w;
-		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, (uint16)(gfx->h / scalingFactor), false);
-		Graphics::Surface tmp3 = tmp2->getSubArea(Common::Rect(0,(tmp2->h -_h)/2, tmp2->w, (tmp2->h + _h)/2)); // scale(_w, _h, false);
-		_gfx.copyFrom(tmp3);
+		Graphics::Surface *tmp2 = gfx->rawSurface().scale(_w, _h, false);
+		_gfx.copyFrom(*tmp2);
 		tmp2->free();
 		delete tmp2;
 	} else {
@@ -1060,19 +1058,33 @@ void EntryContainerWidget::updateEntry() {
 		// warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
 		Common::String thumbPath = Common::String::format("%s-%s.png",engineid.c_str(),gameid.c_str());
 		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(thumbPath);
-		_thumb->setGfx(gfx);
+
+		if (gfx) {
+			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
+			_thumb->setGfx(scGfx);
+		}
+		else
+			_thumb->setGfx(gfx);
 
 		_lang->setLabel(language);
 		_title->setLabel(_activeInstall->description);
 		
 		if (platform == "pc")
-			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformDOS));
+			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformDOS);
 		else if (platform == "amiga")
-			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformAmiga));
+			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformAmiga);
 		else if (platform == "apple2")
-			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformApple2));
+			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformApple2);
 		else
-			_plat->setGfx(_grid->platformToSurface(GridWidget::Platform::kPlatformUnknown));
+			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformUnknown);
+		
+		if (gfx) {
+			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
+			_plat->setGfx(scGfx);
+		}
+		else
+			_plat->setGfx(gfx);
+
 	}
 	markAsDirty();
 }
@@ -1155,15 +1167,10 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 		k = row * _entriesPerRow + col;
 		EntryContainerWidget *newEntry = entryById[i->domain->getVal("gameid")];
 		if (!newEntry) { 
-			GraphicsWidget *th = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
+			StaticTextWidget *l = new StaticTextWidget(this, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignCenter);
 			GraphicsWidget *p = new GraphicsWidget(this, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
-			StaticTextWidget *l = new StaticTextWidget(this, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
+			GraphicsWidget *th = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
 			StaticTextWidget *t = new StaticTextWidget(this, 0, kThumbnailHeight, kThumbnailWidth , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
-			
-			th->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
-			p->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
-			l->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
-			t->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
 
 			newEntry = new EntryContainerWidget(this, th, p, l, t);
 			newEntry->setSize(kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
