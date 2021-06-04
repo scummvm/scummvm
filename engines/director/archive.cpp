@@ -501,9 +501,19 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	if (!readMapSuccess)
 		return false;
 
-	// If this is a projector, readMemoryMap read the embedded movie. Nothing more to do.
-	if (_rifxType == MKTAG('A', 'P', 'P', 'L'))
-		return true;
+	if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
+		if (hasResource(MKTAG('F', 'i', 'l', 'e'), -1)) {
+			// Replace this archive with the embedded archive.
+			uint32 fileId = getResourceIDList(MKTAG('F', 'i', 'l', 'e'))[0];
+			int32 fileOffset = _resources[fileId]->offset;
+			_types.clear();
+			_resources.clear();
+			return openStream(_stream, fileOffset);
+		} else {
+			warning("No 'File' resource present in APPL archive");
+			return false;
+		}
+	}
 
 	if (ConfMan.getBool("dump_scripts")) {
 		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
@@ -603,8 +613,7 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 	stream.skip(8); // all 0xFF
 	stream.readUint32(); // id of the first free resource, -1 if none.
 
-	if (_rifxType != MKTAG('A', 'P', 'P', 'L'))
-		_resources.reserve(resCount);
+	_resources.reserve(resCount);
 
 	for (uint32 i = 0; i < resCount; i++) {
 		uint32 tag = stream.readUint32();
@@ -624,24 +633,13 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 
 		debug(3, "Found RIFX resource index %d: '%s', %d bytes @ 0x%08x (%d), flags: %x unk1: %x nextFreeResourceId: %d",
 			i, tag2str(tag), size, offset, offset, flags, unk1, nextFreeResourceId);
-		// APPL is a special case; it has an embedded "normal" archive
-		if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
-			if (tag == MKTAG('F', 'i', 'l', 'e'))
-				return openStream(_stream, offset);
-		} else {
-			Resource &res = _types[tag][i];
-			res.index = i;
-			res.offset = offset;
-			res.size = size;
-			res.tag = tag;
-			_resources.push_back(&res);
-		}
-	}
 
-	// We need to have found the 'File' resource already
-	if (_rifxType == MKTAG('A', 'P', 'P', 'L')) {
-		warning("No 'File' resource present in APPL archive");
-		return false;
+		Resource &res = _types[tag][i];
+		res.index = i;
+		res.offset = offset;
+		res.size = size;
+		res.tag = tag;
+		_resources.push_back(&res);
 	}
 
 	return true;
