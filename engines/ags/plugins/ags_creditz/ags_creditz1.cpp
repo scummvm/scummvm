@@ -165,6 +165,7 @@ void AGSCreditz1::PauseScroll(ScriptMethodParams &params) {
 
 void AGSCreditz1::ScrollReset(ScriptMethodParams &params) {
 	_state->_credits[0].clear();
+	_state->_creditsRunning = false;
 }
 
 void AGSCreditz1::SetEmptyLineHeight(ScriptMethodParams &params) {

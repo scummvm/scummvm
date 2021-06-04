@@ -35,7 +35,6 @@
 #include "ags/lib/allegro/fixed.h"
 #include "ags/lib/allegro/fmaths.h"
 #include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/keyboard.h"
 #include "ags/lib/allegro/mouse.h"
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/unicode.h"

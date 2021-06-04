@@ -66,53 +66,56 @@ inline int make_merged_mod(int mod) {
 	return m_mod;
 }
 
+extern eAGSKeyCode ags_keycode_from_ScummVM(const Common::Event &event);
+extern bool ags_key_to_scummvm_keycode(eAGSKeyCode key, Common::KeyCode(&scan)[3]);
+
 // Tells if there are any buffered key events
-bool ags_keyevent_ready();
+extern bool ags_keyevent_ready();
 // Queries for the next key event in buffer; returns uninitialized data if none was queued
-Common::Event ags_get_next_keyevent();
+extern Common::Event ags_get_next_keyevent();
 // Tells if the key is currently down, provided AGS key;
 // Returns positive value if it's down, 0 if it's not, negative value if the key code is not supported.
 // NOTE: for particular script codes this function returns positive if either of two keys are down.
-int ags_iskeydown(eAGSKeyCode ags_key);
+extern int ags_iskeydown(eAGSKeyCode ags_key);
 // Simulates key press with the given AGS key
-void ags_simulate_keypress(eAGSKeyCode ags_key);
+extern void ags_simulate_keypress(eAGSKeyCode ags_key);
 
 
 // Mouse input handling
 //
 // Tells if the mouse button is currently down
-bool ags_misbuttondown(int but);
+extern bool ags_misbuttondown(int but);
 // Returns mouse button code
-int  ags_mgetbutton();
+extern int  ags_mgetbutton();
 // Returns recent relative mouse movement
-void ags_mouse_get_relxy(int &x, int &y);
+extern void ags_mouse_get_relxy(int &x, int &y);
 // Updates mouse cursor position in game
-void ags_domouse(int what);
+extern void ags_domouse(int what);
 // Returns -1 for wheel down and +1 for wheel up
 // TODO: introduce constants for this
-int  ags_check_mouse_wheel();
+extern int  ags_check_mouse_wheel();
 
 // Other input utilities
 //
 // Clears buffered keypresses and mouse clicks, if any
-void ags_clear_input_buffer();
+extern void ags_clear_input_buffer();
 // Halts execution until any user input
 // TODO: seriously not a good design, replace with event listening
-void ags_wait_until_keypress();
+extern void ags_wait_until_keypress();
 
 
 // Events.
 //
-union SDL_Event;
+
 // Set engine callback for when quit event is received by the backend.
-void sys_evt_set_quit_callback(void(*proc)(void));
+extern void sys_evt_set_quit_callback(void(*proc)(void));
 // Set engine callback for when input focus is received or lost by the window.
-void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void));
+extern void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void));
 
 // Process single event.
-void sys_evt_process_one(const SDL_Event &event);
+//extern void sys_evt_process_one(const Common::Event &event);
 // Process all events in the backend's queue.
-void sys_evt_process_pending(void);
+extern void sys_evt_process_pending(void);
 
 } // namespace AGS3
 

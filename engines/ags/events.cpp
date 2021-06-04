@@ -30,7 +30,7 @@ EventsManager *g_events;
 
 EventsManager::EventsManager() {
 	g_events = this;
-	_keys.resize(AGS3::__allegro_KEY_MAX);
+	_keys.resize(Common::KEYCODE_LAST);
 	Common::fill(&_joystickAxis[0], &_joystickAxis[32], 0);
 	Common::fill(&_joystickButton[0], &_joystickButton[32], 0);
 }
@@ -68,12 +68,11 @@ void EventsManager::pollEvents() {
 
 		case Common::EVENT_KEYDOWN:
 			updateKeys(e, true);
-			_pendingKeys.push(e);
+			_keyEvents.push(e);
 			break;
 
 		case Common::EVENT_KEYUP:
 			updateKeys(e, false);
-			_pendingKeys.push(e);
 			break;
 
 		default:
@@ -93,6 +92,7 @@ void EventsManager::pollEvents() {
 	}
 }
 
+#if 0
 bool EventsManager::keypressed() {
 	pollEvents();
 	return !_pendingKeys.empty();
@@ -104,6 +104,7 @@ Common::Event EventsManager::readKey() {
 	pollEvents();
 	return _pendingKeys.empty() ? Common::Event() : _pendingKeys.pop();
 }
+#endif
 
 Common::Event EventsManager::readEvent() {
 	pollEvents();
@@ -151,40 +152,21 @@ bool EventsManager::isExtendedKey(const Common::KeyCode &keycode) const {
 }
 
 void EventsManager::updateKeys(const Common::Event &event, bool isDown) {
-	// Update the keys array with whether the key is pressed
-	
-	AGS3::eAGSKeyCode key = ags_keycode_from_scummvm(event);
-	if (key != 0)
-		_keys[key] = isDown;
-}
+	_keyModifierFlags = event.kbd.flags;
 
-uint EventsManager::getModifierFlags() const {
-	if (_pendingKeys.empty())
-		return 0;
-
-	byte flags = _pendingKeys.front().kbd.flags;
-	uint keyFlags = 0;
-	if (flags & Common::KBD_SHIFT)
-		keyFlags |= AGS3::__allegro_KB_SHIFT_FLAG;
-	if (flags & Common::KBD_CTRL)
-		keyFlags |= AGS3::__allegro_KB_CTRL_FLAG;
-	if (flags & Common::KBD_ALT)
-		keyFlags |= AGS3::__allegro_KB_ALT_FLAG;
-	if (flags & Common::KBD_META)
-		keyFlags |= AGS3::__allegro_KB_COMMAND_FLAG;
-	if (flags & Common::KBD_SCRL)
-		keyFlags |= AGS3::__allegro_KB_SCROLOCK_FLAG;
-	if (flags & Common::KBD_NUM)
-		keyFlags |= AGS3::__allegro_KB_NUMLOCK_FLAG;
-	if (flags & Common::KBD_CAPS)
-		keyFlags |= AGS3::__allegro_KB_CAPSLOCK_FLAG;
-
-	return keyFlags;
+	_keys[event.kbd.keycode] = isDown;
 }
 
 bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key) {
 	pollEvents();
-	return _keys[key];
+
+	Common::KeyCode kc[3];
+	if (!ags_key_to_scancode(key, kc))
+		return false;
+
+	return (kc[0] != Common::KEYCODE_INVALID && _keys[kc[0]]) ||
+		(kc[1] != Common::KEYCODE_INVALID && _keys[kc[1]]) ||
+		(kc[2] != Common::KEYCODE_INVALID && _keys[kc[2]]);
 }
 
 bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&kc)[3]) {

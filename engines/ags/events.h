@@ -23,7 +23,6 @@
 #ifndef AGS_EVENTS_H
 #define AGS_EVENTS_H
 
-#include "lib/allegro/keyboard.h"
 #include "shared/ac/keycode.h"
 #include "common/array.h"
 #include "common/queue.h"
@@ -34,11 +33,12 @@ namespace AGS {
 class EventsManager {
 private:
 	Common::Queue<Common::Event> _pendingEvents;
-	Common::Queue<Common::Event> _pendingKeys;
+	Common::Queue<Common::Event> _keyEvents;
 	Common::Array<bool> _keys;
 	Common::Point _mousePos;
 	int16 _joystickAxis[32];
 	bool _joystickButton[32];
+	byte _keyModifierFlags = 0;
 
 	bool isModifierKey(const Common::KeyCode &keycode) const;
 	bool isExtendedKey(const Common::KeyCode &keycode) const;
@@ -65,21 +65,32 @@ public:
 	void pollEvents();
 
 	/**
-	 * Returns true if a keypress is pending
+	 * Returns true if any unprocessed keyboard events are pending
 	 */
-	bool keypressed();
+	bool keyEventPending() const {
+		return !_keyEvents.empty();
+	}
 
 	/**
-	 * Returns the next keyboard event, if any is pending
+	 * Returns the next pending unprocessed keyboard event
 	 */
-	Common::Event readKey();
+	Common::Event getPendingKeyEvent() {
+		return _keyEvents.pop();
+	}
+
+	/**
+	 * Returns the bitset of currently pressed modifier keys
+	 */
+	uint getModifierFlags() const {
+		return _keyModifierFlags;
+	}
 
 	/**
 	 * Pushes a keydown event into the keypresses queue,
 	 * without updating the key down flag array
 	 */
 	void pushKeyboardEvent(const Common::Event &evt) {
-		_pendingKeys.push(evt);
+		_keyEvents.push(evt);
 	}
 
 	/**
@@ -99,13 +110,8 @@ public:
 
 	void clearEvents() {
 		_pendingEvents.clear();
-		_pendingKeys.clear();
+		_keyEvents.clear();
 	}
-
-	/**
-	 * Returns the bitset of currently pressed modifier keys
-	 */
-	uint getModifierFlags() const;
 
 	/**
 	 * Get the current mouse position

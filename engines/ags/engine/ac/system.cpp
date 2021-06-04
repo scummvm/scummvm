@@ -106,15 +106,15 @@ int System_GetHardwareAcceleration() {
 }
 
 int System_GetNumLock() {
-	return (::AGS::g_events->getModifierFlags() & __allegro_KB_NUMLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & Common::KBD_NUM) ? 1 : 0;
 }
 
 int System_GetCapsLock() {
-	return (::AGS::g_events->getModifierFlags() & __allegro_KB_CAPSLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & Common::KBD_CAPS) ? 1 : 0;
 }
 
 int System_GetScrollLock() {
-	return (::AGS::g_events->getModifierFlags() & __allegro_KB_SCROLOCK_FLAG) ? 1 : 0;
+	return (::AGS::g_events->getModifierFlags() & Common::KBD_SCRL) ? 1 : 0;
 }
 
 int System_GetVsync() {

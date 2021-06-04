@@ -21,7 +21,6 @@ MODULE_OBJS = \
 	lib/allegro/flood.o \
 	lib/allegro/gfx.o \
 	lib/allegro/graphics.o \
-	lib/allegro/keyboard.o \
 	lib/allegro/math.o \
 	lib/allegro/mouse.o \
 	lib/allegro/rotate.o \

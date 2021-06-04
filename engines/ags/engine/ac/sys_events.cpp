@@ -65,11 +65,11 @@ static void(*_on_switchout_callback)(void) = nullptr;
 // ----------------------------------------------------------------------------
 
 bool ags_keyevent_ready() {
-	return ::AGS::g_events->keypressed();
+	return ::AGS::g_events->keyEventPending();
 }
 
 Common::Event ags_get_next_keyevent() {
-	return ::AGS::g_events->readKey();
+	return ::AGS::g_events->getPendingKeyEvent();
 }
 
 int ags_iskeydown(eAGSKeyCode ags_key) {
@@ -88,14 +88,6 @@ void ags_simulate_keypress(eAGSKeyCode ags_key) {
 	e.kbd.ascii = (e.kbd.keycode >= 32 && e.kbd.keycode <= 127) ? e.kbd.keycode : 0;
 
 	::AGS::g_events->pushKeyboardEvent(e);
-}
-
-static void on_key_down(const Common::Event &event) {
-#ifdef TODO
-	// Engine is not structured very well yet, and we cannot pass this event where it's needed;
-	// instead we save it in the queue where it will be ready whenever any component asks for one.
-	g_keyEvtQueue.push_back(event);
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -272,9 +264,6 @@ void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void)
 
 static void sys_process_event(const Common::Event &event) {
 	switch (event.type) {
-	case Common::EVENT_KEYDOWN:
-		on_key_down(event);
-		break;
 	case Common::EVENT_MOUSEMOVE:
 		on_mouse_motion(event);
 		break;
@@ -298,9 +287,6 @@ static void sys_process_event(const Common::Event &event) {
 void sys_evt_process_pending(void) {
 	::AGS::g_events->pollEvents();
 	Common::Event e;
-
-	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID)
-		sys_process_event(e);
 
 	while ((e = ::AGS::g_events->readEvent()).type != Common::EVENT_INVALID)
 		sys_process_event(e);
