@@ -97,8 +97,4 @@ void cleanupBreakHandler() {
 	warning("STUB: cleanupBreakHandler()");
 }
 
-void breakEventLoop() {
-	warning("STUB: breakEventLoop()");
-}
-
 } // end of namespace Saga2

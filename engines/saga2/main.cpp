@@ -312,8 +312,6 @@ void processEventLoop(bool updateScreen) {
 	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
 	irate.updateFrameCount();
 
-	debugC(1, kDebugEventLoop, "EventLoop: checking user abort");
-	breakEventLoop();
 	if (checkExit && verifyUserExit()) {
 		//gameRunning=false;
 		endGame();
@@ -349,7 +347,8 @@ void processEventLoop(bool updateScreen) {
 			G_BASE.handleKeyStroke(event);
 			break;
 		case Common::EVENT_QUIT:
-			gameRunning = false;
+			if (verifyUserExit())
+				endGame();
 			break;
 		default:
 			break;
@@ -417,8 +416,6 @@ void displayUpdate(void) {
 void SystemEventLoop(void) {
 	int         key, qual;
 
-	//make sure the user hasn't quit on us
-	breakEventLoop();
 	if (
 #ifdef DO_OUTRO_IN_CLEANUP
 	    whichOutro == -1 &&
@@ -1037,23 +1034,6 @@ RHANDLE mustAllocHandle(uint32 size, const char desc[]) {
 	if (ptr == NULL)
 		error("Local handle allocation size %d bytes failed.", size);
 	return ptr;
-}
-
-
-/********************************************************************/
-/*                                                                  */
-/* HOOK FOR CTRL-BREAK HANDLER                                      */
-/*                                                                  */
-/********************************************************************/
-
-extern "C" {
-
-	void breakEventKludge(void) {
-		if (verifyUserExit())
-			endGame();
-		//gameRunning=false;
-	}
-
 }
 
 } // end of namespace Saga2
