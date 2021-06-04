@@ -24,6 +24,7 @@ scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 residualvm.zip         FILE    "gui/themes/residualvm.zip"
+achievements.dat       FILE    "dists/engine-data/achievements.dat"
 encoding.dat           FILE    "dists/engine-data/encoding.dat"
 
 // Engine or feature specific resources
