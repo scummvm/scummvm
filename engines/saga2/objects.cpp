@@ -2943,10 +2943,24 @@ void cleanupWorlds(void) {
 //-------------------------------------------------------------------
 //	Initialize the Objects list
 
+static void readGameObject(hResContext *con, ResourceGameObject &obj) {
+	obj.protoIndex = con->readS16LE();
+	obj.location.u = con->readS16LE();
+	obj.location.v = con->readS16LE();
+	obj.location.z = con->readS16LE();
+	obj.nameIndex = con->readU16LE();
+	obj.parentID = con->readU16LE();
+	obj.script = con->readU16LE();
+	obj.objectFlags = con->readU16LE();
+	obj.hitPoints = con->readByte();
+	obj.misc = con->readU16LE();
+}
+
 void initObjects(void) {
 	int16               i,
 	                    resourceObjectCount;
 	ResourceGameObject  *resourceObjectList;
+	const int resourceGameObjSize = 19;
 
 	//  Initialize the limbo counts
 	objectLimboCount = 0;
@@ -2954,7 +2968,7 @@ void initObjects(void) {
 	importantLimboCount = 0;
 
 	resourceObjectCount = listRes->size(objListID)
-	                      / sizeof(ResourceGameObject);
+	                      / resourceGameObjSize;
 
 	if (resourceObjectCount < 4)
 		error("Unable to load Objects");
@@ -2977,8 +2991,8 @@ void initObjects(void) {
 		error("Unable to load Objects");
 
 	//  Read the resource Objects
-	listRes->read(resourceObjectList,
-	              sizeof(ResourceGameObject) * resourceObjectCount);
+	for (int k = 0; k < resourceObjectCount; ++k)
+		readGameObject(listRes, resourceObjectList[k]);
 
 	for (i = 0; i < resourceObjectCount; i++) {
 		GameObject  *obj = &objectList[i];
