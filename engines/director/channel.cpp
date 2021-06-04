@@ -328,9 +328,11 @@ void Channel::setEditable(bool editable) {
 			((Graphics::MacText *)_widget)->setEditable(editable);
 			((Graphics::MacText *)_widget)->_selectable = editable;
 			// we only set the first editable text member in score active
-			Graphics::MacWidget *activewidget = g_director->_wm->getActiveWidget();
-			if (activewidget == nullptr || !activewidget->isEditable())
-				g_director->_wm->setActiveWidget(_widget);
+			if (editable) {
+				Graphics::MacWidget *activewidget = g_director->_wm->getActiveWidget();
+				if (activewidget == nullptr || !activewidget->isEditable())
+					g_director->_wm->setActiveWidget(_widget);
+			}
 		}
 	}
 }
