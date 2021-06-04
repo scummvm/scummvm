@@ -291,16 +291,6 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 			}
 		}
 
-		// If the previous sprite in this channel was a video, but the new sprite is different,
-		// stop the playback.
-		// TODO: In D4 *any* channels playing the same cast member across a frame change seems
-		// to be enough to keep the same playback going, but the behaviour seems too glitchy
-		// to be reliable? Hopefully nothing relies on this.
-		if (_sprite && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo &&
-				_sprite->_castId != nextSprite->_castId) {
-			((DigitalVideoCastMember *)_sprite->_cast)->stopVideo(this);
-		}
-
 		if (_sprite->_puppet || partial) {
 			// Updating scripts, etc. does not require a full re-render
 			_sprite->_scriptId = nextSprite->_scriptId;

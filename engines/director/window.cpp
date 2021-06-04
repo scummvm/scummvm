@@ -105,7 +105,7 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 		blitTo->clear(_stageColor);
 		markAllDirty();
 	} else {
-		if (_dirtyRects.size() == 0)
+		if (_dirtyRects.size() == 0 && _currentMovie->_videoPlayback == false)
 			return false;
 
 		mergeDirtyRects();
