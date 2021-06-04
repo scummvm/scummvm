@@ -31,7 +31,8 @@ namespace Saga2 {
 
 const uint32 nonActorSenseFlags = actorSeeInvis;
 
-const size_t maxSensorSize = 24;
+//const size_t maxSensorSize = 24;
+const size_t maxSensorSize = 48;
 
 //  This constant represents the maximum sense range for an object.
 //  Zero means an infinite range.
