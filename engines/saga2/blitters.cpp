@@ -315,10 +315,6 @@ void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32
 	warning("STUB: compositePixelsRvs()");
 }
 
-void _LoadPalette(uint8 *rgbArray, uint32 startColor, uint32 numColors) {
-	warning("STUB: _LoadPalette()");
-}
-
 bool initGraphics(void) {
 	warning("STUB: initGraphics()");
 	return false;
