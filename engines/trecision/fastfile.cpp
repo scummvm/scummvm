@@ -50,9 +50,10 @@ const FileEntry *FastFile::getEntry(const Common::String &name) const {
 bool FastFile::open(TrecisionEngine *vm, const Common::String &name) {
 	close();
 
-	_stream = vm->readEndian(SearchMan.createReadStreamForMember(name));
-	if (!_stream)
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
+	if (!stream)
 		return false;
+	_stream = vm->readEndian(stream);
 
 	int numFiles = _stream->readUint32();
 	_fileEntries.resize(numFiles);

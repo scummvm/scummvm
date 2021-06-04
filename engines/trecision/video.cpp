@@ -138,6 +138,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 
 	if (!smkDecoder->loadFile(filename)) {
 		warning("playMovie: File %s not found", filename.c_str());
+		delete smkDecoder;
 		_vm->_dialogMgr->afterChoice();
 		return;
 	}
@@ -306,6 +307,8 @@ void AnimManager::startSmkAnim(uint16 animation) {
 void AnimManager::toggleMuteBgAnim(uint16 animation) {
 	uint16 animFlag = _animTab[animation]._flag;
 	NightlongSmackerDecoder *decoder = _smkAnims[kSmackerBackground];
+	if (decoder == nullptr)
+		return;
 
 	// Turns off when not needed
 	if (animation == aBKG11 && (animFlag & SMKANIM_OFF1))
@@ -429,6 +432,10 @@ void AnimManager::refreshSmkAnim(uint16 animation) {
 }
 
 void AnimManager::handleEndOfVideo(int animation, int slot) {
+	if (_smkAnims[slot] == nullptr) {
+		smkStop(slot);
+		return;
+	}
 	if (!_smkAnims[slot]->endOfVideo())
 		return;
 	
@@ -444,6 +451,8 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 
 void AnimManager::drawSmkBackgroundFrame(int animation) {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerBackground];
+	if (smkDecoder == nullptr)
+		return;
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 	if (!frame)
 		return;
@@ -504,6 +513,8 @@ void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 
 void AnimManager::drawSmkActionFrame() {
 	NightlongSmackerDecoder *smkDecoder = _smkAnims[kSmackerAction];
+	if (smkDecoder == nullptr)
+		return;
 	const Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 	if (!frame)
 		return;
