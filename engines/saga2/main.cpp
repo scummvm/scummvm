@@ -174,10 +174,6 @@ APPFUNC(cmdWindowFunc);                      // main window event handler
 void EventLoop(bool &running, bool modal);           // handles input and distributes
 void SystemEventLoop(void);
 
-void ClearMessageQueue(void);
-void waitForVideoFile(char *fileName);
-
-void memtest(void);
 void runPathFinder(void);
 
 bool setupGame(void);
@@ -318,10 +314,6 @@ void processEventLoop(bool updateScreen) {
 		return;
 	}
 
-	debugC(1, kDebugEventLoop, "EventLoop: handle win messages");
-	if (handlingMessages())
-		return;
-
 	debugC(1, kDebugEventLoop, "EventLoop: check for game suspend");
 	if (gameSuspended())
 		return;
@@ -388,8 +380,8 @@ void displayUpdate(void) {
 		debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
 		updateIndicators();
 
-		debugC(1, kDebugEventLoop, "EventLoop: OS specific display routines");
-		displayEventLoop();
+		g_system->updateScreen();
+
 		if (delayReDraw)
 			reDrawScreen();
 		//  Call asynchronous resource loader
@@ -423,10 +415,6 @@ void SystemEventLoop(void) {
 	    !gameRunning)
 		TroModeExternEvent();
 
-	// check for messages
-	if (handlingMessages())
-		return;
-
 	Common::Event event;
 	while (g_vm->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
@@ -441,7 +429,7 @@ void SystemEventLoop(void) {
 		}
 	}
 
-	displayEventLoop();
+	g_system->updateScreen();
 }
 
 /********************************************************************/
@@ -485,16 +473,9 @@ inline int BUMP(int x) {
 	return (x + 1) & 63;
 }
 
-void ClearMessageQueue(void) {
-	while (handlingMessages());
-}
-
 // ------------------------------------------------------------------------
 // clears any queued input (mouse AND keyboard)
 void resetInputDevices(void) {
-	int         key, qual;
-	ClearMessageQueue();
-
 	Common::Event event;
 	while (g_vm->getEventManager()->pollEvent(event));
 }
