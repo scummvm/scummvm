@@ -97,7 +97,6 @@ void cleanupPalettes(void);
 
 void initBreakHandler(void);
 void cleanupBreakHandler(void);
-void breakEventLoop(void);
 
 } // end of namespace Saga2
 
