@@ -365,14 +365,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 	//
 	if (enginePlugin) {
 		const MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
-		Common::AchievementsInfo achievementsInfo = metaEngine.getAchievementsInfo(domain);
-		if (achievementsInfo.descriptions.size() > 0) {
+		AchMan.setActiveDomain(metaEngine.getAchievementsInfo(domain));
+		if (AchMan.getAchievementCount()) {
 			tab->addTab(_("Achievements"), "GameOptions_Achievements");
-			addAchievementsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+			addAchievementsControls(tab, "GameOptions_Achievements.");
 		}
-		if (achievementsInfo.stats.size() > 0) {
+		if (AchMan.getStatCount()) {
 			tab->addTab(_("Statistics"), "GameOptions_Achievements");
-			addStatisticsControls(tab, "GameOptions_Achievements.", achievementsInfo);
+			addStatisticsControls(tab, "GameOptions_Achievements.");
 		}
 	}
 
