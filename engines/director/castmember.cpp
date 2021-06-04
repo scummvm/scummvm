@@ -334,7 +334,7 @@ bool DigitalVideoCastMember::isModified() {
 	if (!_video || !_video->isVideoLoaded())
 		return true;
 
-	if (_video->isPlaying())
+	if (_getFirstFrame)
 		return true;
 
 	if (_channel->_movieRate == 0.0)
