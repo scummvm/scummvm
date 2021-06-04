@@ -501,6 +501,10 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 	if (!readMapSuccess)
 		return false;
 
+	// If this is a projector, readMemoryMap read the embedded movie. Nothing more to do.
+	if (_rifxType == MKTAG('A', 'P', 'P', 'L'))
+		return true;
+
 	if (ConfMan.getBool("dump_scripts")) {
 		debug("RIFXArchive::openStream(): Dumping %d resources", _resources.size());
 
