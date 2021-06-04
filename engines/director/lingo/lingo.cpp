@@ -170,6 +170,9 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
 
+	_selStart = -1;
+	_selEnd = -1;
+
 	_localvars = NULL;
 
 	//kTheEntities

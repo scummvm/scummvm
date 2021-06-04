@@ -219,10 +219,17 @@ public:
 	Common::U32String cutSelection();
 	const SelectedText *getSelectedText() { return &_selectedText; }
 
+	/**
+	 * set the selection of mactext
+	 * @param pos pos of selection, 0 represent first, -1 represent the end of text
+	 * @param start selection start or selection end
+	 */
 	void setSelection(int pos, bool start);
 
 	Common::U32String getEditedString();
 	Common::U32String getText() { return _str; }
+
+	void setSelRange(int selStart, int selEnd) { _selStart = selStart, _selEnd = selEnd; }
 
 private:
 	void init();
@@ -284,6 +291,9 @@ protected:
 	int _maxWidth;
 	int _interLinear;
 	int _textShadow;
+
+	int _selEnd;
+	int _selStart;
 
 	int _textMaxWidth;
 	int _textMaxHeight;
