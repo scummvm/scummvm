@@ -36,6 +36,7 @@
 
 #include "common/system.h"
 #include "common/config-manager.h"
+
 #include "griffon/griffon.h"
 
 #include "common/text-to-speech.h"
@@ -46,7 +47,6 @@ namespace Griffon {
 #define MAXCURSEL 16
 #define SY 25
 #define PI 3.141593
-
 
 void GriffonEngine::title(int mode) {
 	const char *optionTitles[4] = {
@@ -90,7 +90,6 @@ void GriffonEngine::title(int mode) {
 	bool ldstop = false;
 
 	float ld = 0;
-
 	do {
 		Common::Rect rc;
 
@@ -305,9 +304,9 @@ void GriffonEngine::configMenu() {
 	Graphics::TransparentSurface *configwindow = loadImage("art/configwindow.bmp", true);
 	configwindow->setAlpha(160, true);
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-
 	int ticks1 = _ticks;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
@@ -473,7 +472,7 @@ void GriffonEngine::configMenu() {
 					break;
 
 				case kGriffonDown:
-					cursel++;
+					++cursel;
 					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
 					speakMenuItem(curselMapTitles[cursel], curselMapValues[cursel], optionTitles, optionValues);
@@ -687,7 +686,6 @@ void GriffonEngine::saveLoadNew() {
 				_itemTicks = _ticks + 220;
 
 				if (_event.customType == kGriffonConfirm) {
-
 					if (curRow == 0) {
 						if (curCol == 0) {
 							// NEW GAME
@@ -875,5 +873,6 @@ void GriffonEngine::saveLoadNew() {
 	} while (!_shouldQuit);
 
 }
+
 
 } // end of namespace Griffon

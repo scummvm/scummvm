@@ -35,6 +35,7 @@
  */
 
 #include "common/system.h"
+
 #include "griffon/griffon.h"
 
 #include "common/config-manager.h"
