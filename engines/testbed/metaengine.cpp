@@ -26,7 +26,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "testbed/achievements.h"
 #include "testbed/testbed.h"
 
 class TestbedMetaEngine : public AdvancedMetaEngine {
@@ -41,7 +40,10 @@ public:
 	}
 
 	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
-		return Testbed::getAchievementsInfo(target);
+		Common::AchievementsInfo result;
+		result.platform = Common::UNK_ACHIEVEMENTS;
+		result.appId = "testbed";
+		return result;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
