@@ -1353,7 +1353,7 @@ void saveTileTasks(SaveFileConstructor &saveGame) {
 
 	archiveBufSize = aTaskList.archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, nullptr, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate tile activity task archive buffer");
 
@@ -1364,7 +1364,7 @@ void saveTileTasks(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -1380,10 +1380,7 @@ void loadTileTasks(SaveFileReader &saveGame) {
 	void    *archiveBuffer;
 	void    *bufferPtr;
 
-	archiveBuffer = RNewPtr(
-	                    saveGame.getChunkSize(),
-	                    nullptr,
-	                    "archive buffer");
+	archiveBuffer = malloc(saveGame.getChunkSize());
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate tile activity task archive buffer");
 
@@ -1395,7 +1392,7 @@ void loadTileTasks(SaveFileReader &saveGame) {
 	//  Reconstruct aTaskList from archived data
 	new (&aTaskList) TileActivityTaskList(&bufferPtr);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 
@@ -1634,7 +1631,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 	//  for each map metatile slot
 	archiveBufSize = (totalMapSize + 7) >> 3;
 
-	archiveBuffer = (uint8 *)RNewPtr(archiveBufSize, nullptr, "archive buffer");
+	archiveBuffer = (uint8 *)malloc(archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate auto map archive buffer");
 
@@ -1669,7 +1666,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -1684,7 +1681,7 @@ void loadAutoMap(SaveFileReader &saveGame) {
 
 	archiveBufSize = saveGame.getChunkSize();
 
-	archiveBuffer = (uint8 *)RNewPtr(archiveBufSize, nullptr, "archive buffer");
+	archiveBuffer = (uint8 *)malloc(archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate auto map archive buffer");
 
@@ -1716,7 +1713,7 @@ void loadAutoMap(SaveFileReader &saveGame) {
 		}
 	}
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 /* ===================================================================== *
@@ -4293,10 +4290,7 @@ void saveTileCyclingStates(SaveFileConstructor &saveGame) {
 	TileCycleArchive        *archiveBuffer;
 	int16                   i;
 
-	archiveBuffer = (TileCycleArchive *)RNewPtr(
-	                    sizeof(TileCycleArchive) * cycleCount,
-	                    nullptr,
-	                    "archive buffer");
+	archiveBuffer = new TileCycleArchive[cycleCount]();
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate tile cycle data archive buffer");
 
@@ -4310,7 +4304,7 @@ void saveTileCyclingStates(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    sizeof(TileCycleArchive) * cycleCount);
 
-	RDisposePtr(archiveBuffer);
+	delete[] archiveBuffer;
 }
 
 //-----------------------------------------------------------------------
@@ -4324,10 +4318,7 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 
 	assert(saveGame.getChunkSize() == sizeof(TileCycleArchive) * cycleCount);
 
-	archiveBuffer = (TileCycleArchive *)RNewPtr(
-	                    sizeof(TileCycleArchive) * cycleCount,
-	                    nullptr,
-	                    "archive buffer");
+	archiveBuffer = new TileCycleArchive[cycleCount]();
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate tile cycle data archive buffer");
 
@@ -4338,7 +4329,7 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 		cycleList[i].currentState = archiveBuffer[i].currentState;
 	}
 
-	RDisposePtr(archiveBuffer);
+	delete[] archiveBuffer;
 }
 
 //-----------------------------------------------------------------------
