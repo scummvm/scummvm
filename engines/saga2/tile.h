@@ -391,7 +391,7 @@ enum ActiveItemTypes {
 };
 
 //  A pointer to the array of active item state arrays
-extern UByteHandle *stateArray;
+extern byte **stateArray;
 
 class ActiveItem {
 public:
@@ -465,12 +465,12 @@ public:
 
 	//  Return the state number of this active item instance
 	uint8 getInstanceState(int16 mapNum) {
-		return (*stateArray[ mapNum ])[ instance.stateIndex ];
+		return stateArray[mapNum][instance.stateIndex];
 	}
 
 	//  Set the state number of this active item instance
 	void setInstanceState(int16 mapNum, uint8 state) {
-		(*stateArray[ mapNum ])[ instance.stateIndex ] = state;
+		stateArray[mapNum][instance.stateIndex] = state;
 	}
 
 	uint8 builtInBehavior(void) {

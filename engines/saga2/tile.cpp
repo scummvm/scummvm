@@ -195,7 +195,7 @@ static RipTable         ripTableList[25];
 
 WorldMapData            *mapList;           //  master map data array
 
-UByteHandle             *stateArray;        //  Array of active item instance
+byte                   **stateArray;        //  Array of active item instance
 //  state arrays
 
 CyclePtr                cycleList;          // list of tile cycling info
@@ -811,19 +811,14 @@ TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
 void initActiveItemStates(void) {
 	int16       i;
 
-	stateArray = (UByteHandle *)RNewPtr(
-	                 worldCount * sizeof(UByteHandle),
-	                 nullptr,
-	                 "active item state array array");
+	stateArray = new byte *[worldCount]();
 
 	if (stateArray == nullptr)
 		error("Unable to allocate the active item state array array");
 
 	for (i = 0; i < worldCount; i++) {
-		stateArray[i] = (UByteHandle)LoadResourceToHandle(
-		                      tileRes,
-		                      tagStateID + MKTAG(0, 0, 0, uint8(i)),
-		                      "active item state array");
+		stateArray[i] = (byte *)LoadResource(tileRes, tagStateID + MKTAG(0, 0, 0, uint8(i)),
+		                             "active item state array");
 
 		if (stateArray[i] == nullptr)
 			error("Unable to load active item state array");
@@ -841,12 +836,13 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 	void    *bufferPtr;
 
 	for (i = 0; i < worldCount; i++) {
+		int32 size = tileRes->size(tagStateID + MKTAG(0, 0, 0, uint8(i)));
 		archiveBufSize += sizeof(int16);
 		if (stateArray[i] != nullptr)
-			archiveBufSize += RPtrSize(*stateArray[i]);
+			archiveBufSize += size;
 	}
 
-	archiveBuffer = RNewPtr(archiveBufSize, nullptr, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate a state array archive buffer");
 
@@ -858,7 +854,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 			ActiveItemPtr       activeItemList = mapData->activeItemList;
 			int16               activeItemCount = mapData->activeCount,
 			                    j;
-			int32               arraySize = RPtrSize(*stateArray[i]);
+			int32               arraySize = tileRes->size(tagStateID + MKTAG(0, 0, 0, uint8(i)));
 			uint8               *bufferedStateArray;
 
 			//  Save the size of the state array
@@ -866,7 +862,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 			bufferPtr = (int16 *)bufferPtr + 1;
 
 			//  Copy the state data to the archive buffer
-			memcpy(bufferPtr, *stateArray[i], arraySize);
+			memcpy(bufferPtr, stateArray[i], arraySize);
 			//  Save a pointer to the buffered data
 			bufferedStateArray = (uint8 *)bufferPtr;
 			bufferPtr = (uint8 *)bufferPtr + arraySize;
@@ -901,7 +897,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -913,18 +909,12 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 	void        *archiveBuffer;
 	void        *bufferPtr;
 
-	stateArray = (UByteHandle *)RNewPtr(
-	                 worldCount * sizeof(UByteHandle),
-	                 nullptr,
-	                 "active item state array array");
+	stateArray = new byte *[worldCount]();
 
 	if (stateArray == nullptr)
 		error("Unable to allocate the active item state array array");
 
-	archiveBuffer = RNewPtr(
-	                    saveGame.getChunkSize(),
-	                    nullptr,
-	                    "archive buffer");
+	archiveBuffer = malloc(saveGame.getChunkSize());
 
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate state array archive buffer");
@@ -966,20 +956,17 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 				*statePtr &= ~(1 << 7);
 			}
 
-			stateArray[i] = (UByteHandle)RNewHandle(
-			                      arraySize,
-			                      nullptr,
-			                      "active item state array");
+			stateArray[i] = (byte *)malloc(arraySize);
 			if (stateArray[i] == nullptr)
 				error("Unable to allocate active item state array");
 
-			memcpy(*stateArray[i], bufferPtr, arraySize);
+			memcpy(stateArray[i], bufferPtr, arraySize);
 			bufferPtr = (uint8 *)bufferPtr + arraySize;
 		} else
 			stateArray[i] = nullptr;
 	}
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -990,10 +977,10 @@ void cleanupActiveItemStates(void) {
 
 	for (i = 0; i < worldCount; i++) {
 		if (stateArray[i] != nullptr)
-			RDisposeHandle((RHANDLE)stateArray[i]);
+			free(stateArray[i]);
 	}
 
-	RDisposePtr(stateArray);
+	delete[] stateArray;
 }
 
 /* ===================================================================== *
