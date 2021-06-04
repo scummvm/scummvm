@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "common/debug.h"
+#include "common/events.h"
 
 #include "saga2/std.h"
 #include "saga2/setup.h"
@@ -174,8 +175,6 @@ void EventLoop(bool &running, bool modal);           // handles input and distri
 void SystemEventLoop(void);
 
 void ClearMessageQueue(void);
-void SystemMouseHandler(void);
-void SystemKeyHandler(short, short);
 void waitForVideoFile(char *fileName);
 
 void memtest(void);
@@ -191,7 +190,6 @@ void cleanupGame(void);                  // auto-cleanup function
 void RShowMem(void);
 void parseCommandLine(int argc, char *argv[]);
 char *getExeFromCommandLine(int argc, char *argv[]);
-void updateMouse(void);
 void WriteStatusF2(int16 line, const char *msg, ...);
 bool initUserDialog(void);
 void cleanupUserDialog(void);
@@ -337,14 +335,26 @@ void processEventLoop(bool updateScreen) {
 	if (GameMode::newmodeFlag)
 		GameMode::update();
 
-	debugC(1, kDebugEventLoop, "EventLoop: mouse update");
-	updateMouse();
-
-	debugC(1, kDebugEventLoop, "EventLoop: keyboard update");
-	if (ReadKeyboard(key, qual)) {
-		G_BASE.handleKeyStroke(key, qual);
+	Common::Event event;
+	while (g_vm->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_LBUTTONDOWN:
+		case Common::EVENT_RBUTTONDOWN:
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_MOUSEMOVE:
+			G_BASE.handleMouse(event, g_system->getMillis());
+			break;
+		case Common::EVENT_KEYDOWN:
+			G_BASE.handleKeyStroke(event);
+			break;
+		case Common::EVENT_QUIT:
+			gameRunning = false;
+			break;
+		default:
+			break;
+		}
 	}
-
 	//if(!running) return; // This Is No Tasks Are Done After Saving Game
 
 	debugC(1, kDebugEventLoop, "EventLoop: timer update");
@@ -420,12 +430,18 @@ void SystemEventLoop(void) {
 	if (handlingMessages())
 		return;
 
-	// check mouse
-	SystemMouseHandler();
-
-	// check keyboard
-	if (ReadKeyboard(key, qual)) {
-		SystemKeyHandler(key, qual);
+	Common::Event event;
+	while (g_vm->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_LBUTTONUP:
+		case Common::EVENT_RBUTTONUP:
+		case Common::EVENT_KEYDOWN:
+		case Common::EVENT_QUIT:
+			TroModeExternEvent();
+			break;
+		default:
+			break;
+		}
 	}
 
 	displayEventLoop();
@@ -478,102 +494,13 @@ void ClearMessageQueue(void) {
 
 // ------------------------------------------------------------------------
 // clears any queued input (mouse AND keyboard)
-
 void resetInputDevices(void) {
 	int         key, qual;
 	ClearMessageQueue();
-	while (ReadKeyboard(key, qual)) ;
-	PollMouse();
-	Forbid();                       // shut of tasking while we check the queue
-	while (queueOut != queueIn)
-		queueOut = BUMP(queueOut);
-	Permit();                       // turn on tasking again
+
+	Common::Event event;
+	while (g_vm->getEventManager()->pollEvent(event));
 }
-
-//-----------------------------------------------------------------------
-
-void updateMouse(void) {
-	Point16 moveto = Point16(-1, -1);
-
-	PollMouse();
-
-	//  Empty the mouse queue of mouse events, and feed them
-	//  to the panel system.
-	Forbid();                       // shut of tasking while we check the queue
-	while (queueOut != queueIn) {
-		int16   queueIndex = queueOut;
-
-		queueOut = BUMP(queueOut);
-		Permit();                   // turn on tasking while handling message
-		moveto = mouseQueue[ queueIndex ].st.pos;
-		G_BASE.handleMouse(mouseQueue[ queueIndex ].st, mouseQueue[ queueIndex ].time);
-		Forbid();                   // turn off tasking again
-	}
-	Permit();                       // turn on tasking again
-	//if ( moveto.x>-1 )
-	//  pointer.move( moveto );
-}
-
-
-//-----------------------------------------------------------------------
-//	Function to poll the mouse pointer when engine is busy, so that
-//	we can properly detect a double-click.
-
-void PollMouse(void) {
-	mousePoll();
-}
-
-void AddMouseEvent(const gMouseState &mouseState) {
-	//  Read the current mouse position.
-	if (memcmp(&mouseState, &prevState, sizeof mouseState) == 0)
-		return;
-
-	if (displayEnabled())
-		pointer.move(mouseState.pos);
-	//else
-	//  TroModeExternEvent();
-
-	//  only add a new entry into the queue if the mouse buttons
-	//  changed state.
-
-	Forbid();                           //  Turn off tasking while adding event
-	if (BUMP(queueIn) != queueOut) {
-		prevState = mouseState;
-		mouseQueue[ queueIn ].st = mouseState;
-		mouseQueue[ queueIn ].time = ReadTimer();
-		queueIn = BUMP(queueIn);
-	}
-	Permit();                           //  Re-enable tasking
-}
-
-// ------------------------------------------------------------------------
-// keystroke code
-
-void SystemKeyHandler(short, short) {
-	TroModeExternEvent();
-}
-
-// ------------------------------------------------------------------------
-// abbreviated mouse handler
-
-
-void SystemMouseHandler(void) {
-	PollMouse();
-
-	//  Empty the mouse queue of mouse events, and feed them
-	//  to the panel system.
-	Forbid();                       // shut of tasking while we check the queue
-	while (queueOut != queueIn) {
-		int16   queueIndex = queueOut;
-
-		queueOut = BUMP(queueOut);
-		gMouseState &gms = mouseQueue[ queueIndex ].st;
-		if (gms.left || gms.right)
-			TroModeExternEvent();
-	}
-	Permit();                       // turn on tasking again
-}
-
 
 /********************************************************************/
 /*                                                                  */

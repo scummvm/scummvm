@@ -157,10 +157,6 @@ public:
 
 void WriteStatusF(int16 lin, const char *msg, ...);
 
-//  Mouse polling
-
-void PollMouse(void);
-
 //  File loading
 
 void  *LoadFile(char *filename);             // load file into buffer

@@ -2569,7 +2569,8 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	int16           layerLimit;
 
 	//  Poll the mouse so that we can detect double-clicks
-	PollMouse();
+	//PollMouse();
+	warning("STUB: Check if we need to poll mouse here");
 
 
 	for (;

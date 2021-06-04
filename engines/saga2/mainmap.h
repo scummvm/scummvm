@@ -99,13 +99,6 @@ void initBreakHandler(void);
 void cleanupBreakHandler(void);
 void breakEventLoop(void);
 
-/* ===================================================================== *
-   other prototypes
- * ===================================================================== */
-
-void AddKeyEvent(int16 keyVal);
-void AddMouseEvent(const gMouseState &mouseState);
-
 } // end of namespace Saga2
 
 #endif
