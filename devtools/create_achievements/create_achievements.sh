@@ -102,7 +102,8 @@ add_steam 1064660
 
 #TODO: check for 7zip, since it produces smaller files
 
-zip -9j achievements.dat gen/* static/*
+touch --date="2000-01-01 00:00:00" gen/* static/*
+zip -9jX achievements.dat gen/* static/*
 mv -vf achievements.dat ../../dists/engine-data
 
 echo SUCCESS
