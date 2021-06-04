@@ -1411,8 +1411,20 @@ void cleanupTileTasks(void) {
 //-----------------------------------------------------------------------
 //	Initialize map data
 
+static void readMetaTile(hResContext *con, MetaTile &til) {
+	til.highestPixel = con->readU16LE();
+	til.banksNeeded.b[0] = con->readU32LE();
+	til.banksNeeded.b[1] = con->readU32LE();
+
+	for (int i = 0; i < maxPlatforms; ++i)
+		til.stack[i] = con->readU16LE();
+
+	til.properties = con->readU32LE();
+}
+
 void initMaps(void) {
 	int16       i;
+	const int metaTileSize = 30;
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
@@ -1449,10 +1461,11 @@ void initMaps(void) {
 			error("Unable to load map");
 		debugC(3, kDebugTiles, "map: size = %d, mapData = %p", mapData->map->size, (void*)mapData->map->mapData);
 
-		//  Load the meta tile list
-		mapData->metaList = (MetaTilePtr)LoadResource(tileRes,
-		                     metaID + MKTAG(0, 0, 0, (uint8)i),
-		                     "meta tile list");
+		int metaTileCount = tileRes->size(metaID + MKTAG(0, 0, 0, (uint8)i)) / metaTileSize;
+		mapData->metaList = new MetaTile[metaTileCount]();
+		for (int k = 0; k < metaTileCount; ++k)
+			readMetaTile(tileRes, mapData->metaList[k]);
+
 		if (mapData->metaList == nullptr)
 			error("Unable to load meta tile list");
 
@@ -1534,7 +1547,7 @@ void cleanupMaps(void) {
 		free(mapData->map);
 
 		//  Dump the meta tile list
-		free(mapData->metaList);
+		delete[] mapData->metaList;
 
 		//  If there is active item data, dump it
 		if (mapData->activeItemData != nullptr)
@@ -2249,9 +2262,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		}
 
 		error("Unable to read Platform %d of map %d", plIndex, mapNum);
-#ifdef _WIN32
 		return nullptr;
-#endif
 	}
 }
 

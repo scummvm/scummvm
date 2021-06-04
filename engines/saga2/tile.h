@@ -806,7 +806,7 @@ typedef uint16 metaTileNoise;
 struct MetaTile {
 	uint16          highestPixel;           // more drawing optimization
 	BankBits        banksNeeded;            // which banks are needed
-	uint16          stack[ maxPlatforms ];  // pointer to platforms
+	uint16          stack[maxPlatforms];    // pointer to platforms
 	uint32          properties;             // more drawing optimization
 
 	//  Return a pointer to a meta tile given its ID
