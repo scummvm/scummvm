@@ -212,6 +212,76 @@ void hResContext::rest(void) {
 	}
 }
 
+uint8 hResContext::readByte() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readByte();
+}
+
+int8 hResContext::readSByte() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readSByte();
+}
+
+uint16 hResContext::readU16LE() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readUint16LE();
+}
+
+int16 hResContext::readS16LE() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readSint16LE();
+}
+
+uint32 hResContext::readU32LE() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readUint32LE();
+}
+
+int32 hResContext::readS32LE() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readSint32LE();
+}
+
+int32 hResContext::readS32BE() {
+	if (!_handle)
+		return 0;
+
+	if (!_handle->isOpen())
+		return 0;
+
+	return _handle->readSint32BE();
+}
+
 bool hResContext::read(void *buffer, uint32 size) {
 	assert(_handle);
 	if (!_valid) return false;
