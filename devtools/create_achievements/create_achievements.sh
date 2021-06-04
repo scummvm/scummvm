@@ -14,6 +14,8 @@ add_steamlike_gog() {
     echo -----------------------------------------
 }
 
+rm -f gen/*
+
 #AGS games:
 add_steam 80310
 add_steam 80310
