@@ -4,88 +4,99 @@ set -e
 
 trap "echo FAILURE: $0 failed to create achievements.dat" ERR
 
+add_steam() {
+    python steam_achievements.py -v --steamid "$1"
+    echo -----------------------------------------
+}
+
+add_steamlike_gog() {
+    python steam_achievements.py -v --steamid "$1" --saveasgalaxyid "$2"
+    echo -----------------------------------------
+}
+
 #AGS games:
-python steam_achievements.py -v --steamid 80310
-python steam_achievements.py -v --steamid 80330
-python steam_achievements.py -v --steamid 80340
-python steam_achievements.py -v --steamid 80350
-python steam_achievements.py -v --steamid 80360
-python steam_achievements.py -v --steamid 212050
-python steam_achievements.py -v --steamid 227000
-python steam_achievements.py -v --steamid 236930
-python steam_achievements.py -v --steamid 252370
-python steam_achievements.py -v --steamid 253110
-python steam_achievements.py -v --steamid 264560
-python steam_achievements.py -v --steamid 270610
-python steam_achievements.py -v --steamid 270610 --saveasgalaxyid 1469845437
-python steam_achievements.py -v --steamid 279260
-python steam_achievements.py -v --steamid 283180
-python steam_achievements.py -v --steamid 283880
-python steam_achievements.py -v --steamid 288930
-python steam_achievements.py -v --steamid 296850
-python steam_achievements.py -v --steamid 302690
-python steam_achievements.py -v --steamid 307570
-python steam_achievements.py -v --steamid 307580
-python steam_achievements.py -v --steamid 336130
-python steam_achievements.py -v --steamid 336140
-python steam_achievements.py -v --steamid 338420
-python steam_achievements.py -v --steamid 357490
-python steam_achievements.py -v --steamid 364350
-python steam_achievements.py -v --steamid 364390
-python steam_achievements.py -v --steamid 367110
-python steam_achievements.py -v --steamid 370910
-python steam_achievements.py -v --steamid 370910 --saveasgalaxyid 1460710709
-python steam_achievements.py -v --steamid 396090
-python steam_achievements.py -v --steamid 420180
-python steam_achievements.py -v --steamid 425600
-python steam_achievements.py -v --steamid 425600 --saveasgalaxyid 1444830704
-python steam_achievements.py -v --steamid 439310
-python steam_achievements.py -v --steamid 468530
-python steam_achievements.py -v --steamid 509920
-python steam_achievements.py -v --steamid 551840
-python steam_achievements.py -v --steamid 556060
-python steam_achievements.py -v --steamid 556060 --saveasgalaxyid 1745746005
-python steam_achievements.py -v --steamid 561770
-python steam_achievements.py -v --steamid 595560
-python steam_achievements.py -v --steamid 603870
-python steam_achievements.py -v --steamid 610900
-python steam_achievements.py -v --steamid 631570
-python steam_achievements.py -v --steamid 631570 --saveasgalaxyid 1845001352
-python steam_achievements.py -v --steamid 654550
-python steam_achievements.py -v --steamid 673850
-python steam_achievements.py -v --steamid 761460
-python steam_achievements.py -v --steamid 782280
-python steam_achievements.py -v --steamid 872750
-python steam_achievements.py -v --steamid 872750 --saveasgalaxyid 1455980545
-python steam_achievements.py -v --steamid 904750
-python steam_achievements.py -v --steamid 1028740
-python steam_achievements.py -v --steamid 1133950
-python steam_achievements.py -v --steamid 1142230
-python steam_achievements.py -v --steamid 1147030
-python steam_achievements.py -v --steamid 1181570
-python steam_achievements.py -v --steamid 1220930
-python steam_achievements.py -v --steamid 1251910
-python steam_achievements.py -v --steamid 1270590
+add_steam 80310
+add_steam 80310
+add_steam 80330
+add_steam 80340
+add_steam 80350
+add_steam 80360
+add_steam 212050
+add_steam 227000
+add_steam 236930
+add_steam 252370
+add_steam 253110
+add_steam 264560
+add_steam 270610
+add_steamlike_gog 270610 1469845437
+add_steam 279260
+add_steam 283180
+add_steam 283880
+add_steam 288930
+add_steam 296850
+add_steam 302690
+add_steam 307570
+add_steam 307580
+add_steam 336130
+add_steam 336140
+add_steam 338420
+add_steam 357490
+add_steam 364350
+add_steam 364390
+add_steam 367110
+add_steam 370910
+add_steamlike_gog 370910 1460710709
+add_steam 396090
+add_steam 420180
+add_steam 425600
+add_steamlike_gog 425600 1444830704
+add_steam 439310
+add_steam 468530
+add_steam 509920
+add_steam 551840
+add_steam 556060
+add_steamlike_gog 556060 1745746005
+add_steam 561770
+add_steam 595560
+add_steam 603870
+add_steam 610900
+add_steam 631570
+add_steamlike_gog 631570 1845001352
+add_steam 654550
+add_steam 673850
+add_steam 761460
+add_steam 782280
+add_steam 872750
+add_steamlike_gog 872750 1455980545
+add_steam 904750
+add_steam 1028740
+add_steam 1133950
+add_steam 1142230
+add_steam 1147030
+add_steam 1181570
+add_steam 1220930
+add_steam 1251910
+add_steam 1270590
 
 #TWINE games:
-python steam_achievements.py -v --steamid 397330
+add_steam 397330
 
 #WME games:
-python steam_achievements.py -v --steamid 257690
-python steam_achievements.py -v --steamid 257690 --saveasgalaxyid 1457085654
-python steam_achievements.py -v --steamid 270570
-python steam_achievements.py -v --steamid 281060
-python steam_achievements.py -v --steamid 281080
-python steam_achievements.py -v --steamid 286320
-python steam_achievements.py -v --steamid 286360
-python steam_achievements.py -v --steamid 378630
-python steam_achievements.py -v --steamid 291710
-python steam_achievements.py -v --steamid 337130
-python steam_achievements.py -v --steamid 340370
-python steam_achievements.py -v --steamid 349140
-python steam_achievements.py -v --steamid 405780
-python steam_achievements.py -v --steamid 574420
-python steam_achievements.py -v --steamid 1064660
+add_steam 257690
+add_steamlike_gog 257690 1457085654
+add_steam 270570
+add_steam 281060
+add_steam 281080
+add_steam 286320
+add_steam 286360
+add_steam 378630
+add_steam 291710
+add_steam 337130
+add_steam 340370
+add_steam 349140
+add_steam 405780
+add_steam 574420
+add_steam 1064660
 
 zip -9j achievements.dat gen/* static/*
 mv -vf achievements.dat ../../dists/engine-data
