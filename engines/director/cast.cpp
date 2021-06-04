@@ -1198,6 +1198,9 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
 	}
 
+	if (_vm->getVersion() >= 300) {
+		ci->autoHilite = castInfo.flags & 2;
+	}
 	ci->scriptId = castInfo.scriptId;
 	if (ci->scriptId != 0)
 		_castsScriptIds[ci->scriptId] = id;

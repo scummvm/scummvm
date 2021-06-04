@@ -41,7 +41,6 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_cast = cast;
 	_castId = castId;
 	_hilite = false;
-	_autoHilite = false;
 	_purgePriority = 3;
 	_size = stream.size();
 	_flags1 = 0;
@@ -75,8 +74,6 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 	if (version < 400) {
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
-		if (_flags1 >> 4 == 0x0)
-			_autoHilite = true;
 
 		_bytes = stream.readUint16();
 		_initialRect = Movie::readRect(stream);
@@ -127,8 +124,6 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		if (_bitsPerPixel == 1)
 			_pitch *= 8;
-
-		_autoHilite = (_flags2 % 4 != 0);
 
 		int tail = 0;
 		byte buf[256];

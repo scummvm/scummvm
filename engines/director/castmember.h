@@ -95,7 +95,6 @@ public:
 
 	bool _modified;
 	bool _hilite;
-	bool _autoHilite;
 	int _purgePriority;
 	uint32 _size;
 	uint8 _flags1;
@@ -283,6 +282,7 @@ struct EditInfo {
 };
 
 struct CastMemberInfo {
+	bool autoHilite;
 	uint32 scriptId;
 	Common::String script;
 	Common::String name;
