@@ -459,14 +459,16 @@ void Cast::loadConfig(Common::SeekableReadStreamEndian &stream) {
 		}
 	}
 
+	// FIXME: We should avoid screwing with the global VM version since
+	// there can be movies in other windows or external casts from different versions.
+	// Each movie/cast should probably have its own version field.
 	if (humanDirectorVersion > _vm->getVersion()) {
 		if (_vm->getVersion() > 0)
 			warning("Movie is from later version v%d", humanDirectorVersion);
 		_vm->setVersion(humanDirectorVersion);
 	} else if (humanDirectorVersion < _vm->getVersion()) {
 		warning("Movie is from earlier version v%d", humanDirectorVersion);
-		// Don't change version in case there are other movies, factories,
-		// etc., which need features from the later version
+		_vm->setVersion(humanDirectorVersion);
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, ver: %d, framerate: %d, light: %d, unk: %d, font: %d, size: %d"
