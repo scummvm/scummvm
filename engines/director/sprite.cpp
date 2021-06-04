@@ -125,8 +125,8 @@ bool Sprite::shouldHilite() {
 	if (g_director->getVersion() < 400 && _moveable)
 		return false;
 
-	if (g_director->getVersion() < 300)
-		return _ink == kInkTypeMatte;
+	if (g_director->getVersion() < 400 && _ink == kInkTypeMatte)
+		return true;
 
 	if (_cast) {
 		CastMemberInfo *castInfo = _cast->getInfo();
