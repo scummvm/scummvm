@@ -214,6 +214,9 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
+	_selEnd = -1;
+	_selStart = -1;
+
 	_defaultFormatting.wm = _wm;
 	// try to set fgcolor as default color in chunks
 	if (_wm->_mode & kWMModeWin95) {
@@ -845,6 +848,9 @@ void MacText::setActive(bool active) {
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	if (_active) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
+		// inactive -> active, we reset the selection
+		setSelection(_selStart, true);
+		setSelection(_selEnd, false);
 	} else {
 		// clear the selection and cursor
 		_selectedText.endY = -1;
@@ -868,11 +874,6 @@ void MacText::setEditable(bool editable) {
 	setActive(editable);
 	_active = editable;
 	if (editable) {
-		// TODO: Select whole region. This is done every time the text is set from
-		// uneditable to editable.
-		setSelection(0, true);
-		setSelection(-1, false);
-
 		_wm->setActiveWidget(this);
 	} else {
 		undrawCursor();
@@ -1229,6 +1230,9 @@ uint MacText::getSelectionIndex(bool start) {
 }
 
 void MacText::setSelection(int pos, bool start) {
+	// -1 for start represent the begining of text, i.e. 0
+	if (pos == -1 && start)
+		pos = 0;
 	int row = 0, col = 0;
 	int colX = 0;
 
@@ -1260,6 +1264,8 @@ void MacText::setSelection(int pos, bool start) {
 				break;
 			}
 		}
+	} else if (pos == 0) {
+		colX = col = row = 0;
 	} else {
 		row = _textLines.size() - 1;
 		colX = _surface->w;
@@ -1470,9 +1476,12 @@ bool MacText::processEvent(Common::Event &event) {
 		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		bool active = _active;
 		_wm->setActiveWidget(this);
-
-		startMarking(event.mouse.x, event.mouse.y);
+		if (active == true) {
+			// inactive -> active switching, we don't start marking the selection, because we have initial selection
+			startMarking(event.mouse.x, event.mouse.y);
+		}
 
 		return true;
 	} else if (event.type == Common::EVENT_LBUTTONUP) {
