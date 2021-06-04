@@ -54,11 +54,6 @@ Actor::Actor(TrecisionEngine *vm) : _vm(vm) {
 	_curFrame = 0;
 	_curAction = 0;
 
-	for (uint16 i = 0; i < 256; ++i) {
-		for (int j = 0; j < 91; ++j)
-			_textureMat[i][j] = 0;
-	}
-
 	for (uint16 i = 0; i < MAXFACE; ++i) {
 		for (uint8 j = 0; j < 3; ++j) {
 			_textureCoord[i][j][0] = 0;
@@ -85,6 +80,7 @@ Actor::~Actor() {
 	delete[] _characterArea;
 	delete[] _face;
 	delete[] _textureData;
+	_textureMat.free();
 }
 
 void Actor::initTextures() {
@@ -333,12 +329,7 @@ void Actor::readModel(const char *filename) {
 	if (ff == nullptr)
 		error("readModel - Error opening file mat.tex");
 
-	for (uint16 i = 0; i < 256; ++i) {
-		for (uint16 j = 0; j < 91; ++j)
-			_textureMat[i][j] = ff->readUint16();
-	}
-
-	_vm->_graphicsMgr->updatePixelFormat((uint16 *)_textureMat, 91 * 256);
+	_vm->_graphicsMgr->readSurface(ff, &_textureMat, 91, 256);
 
 	for (uint16 i = 0; i < MAXFACE; ++i) {
 		for (uint16 j = 0; j < 3; ++j) {

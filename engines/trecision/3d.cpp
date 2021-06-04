@@ -201,7 +201,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			while (dx) {
 				sl = zl >> 16;
 				if (*z > sl) {
-					*screenPtr = (uint16)(_vm->_actor->_textureMat[texture[(olx >> 16) + t->_dx * (oly >> 16)]][cl >> 9]);
+					*screenPtr = (uint16)_vm->_actor->_textureMat.getPixel(cl >> 9, texture[(olx >> 16) + t->_dx * (oly >> 16)]);
 					*z = (int16)sl;
 				}
 				++screenPtr; // increase screen x
