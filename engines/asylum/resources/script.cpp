@@ -142,15 +142,15 @@ ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	ADD_OPCODE(JumpIfActionTalk);
 	ADD_OPCODE(SetActionTalk);
 	ADD_OPCODE(ClearActionTalk);
-	ADD_OPCODE(AddReactionHive);
-	ADD_OPCODE(RemoveReactionHive);
-	ADD_OPCODE(HasMoreReaction);
+	ADD_OPCODE(AddToInventory);
+	ADD_OPCODE(RemoveFromInventory);
+	ADD_OPCODE(JumpIfInventoryOmits);
 	ADD_OPCODE(RunEncounter);
 	ADD_OPCODE(JumpIfAction16);
 	ADD_OPCODE(SetAction16);
 	ADD_OPCODE(ClearAction16);
-	ADD_OPCODE(SetActorField638);
-	ADD_OPCODE(JumpIfActorField638);
+	ADD_OPCODE(SelectInventoryItem);
+	ADD_OPCODE(JumpIfInventoryItemNotSelected);
 	ADD_OPCODE(ChangeScene);
 	ADD_OPCODE(UpdateActor);
 	ADD_OPCODE(PlayMovie);
@@ -853,26 +853,26 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x22
-IMPLEMENT_OPCODE(AddReactionHive)
+IMPLEMENT_OPCODE(AddToInventory)
 	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry->actorIndex);
 
-	actor->addReactionHive(cmd->param1, cmd->param2);
+	actor->inventory.add(cmd->param1, cmd->param2);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x23
-IMPLEMENT_OPCODE(RemoveReactionHive)
+IMPLEMENT_OPCODE(RemoveFromInventory)
 	Actor *actor = getScene()->getActor(cmd->param3 ? cmd->param3 : _currentQueueEntry->actorIndex);
 
-	actor->removeReactionHive(cmd->param1, cmd->param2);
+	actor->inventory.remove(cmd->param1, cmd->param2);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x24
-IMPLEMENT_OPCODE(HasMoreReaction)
+IMPLEMENT_OPCODE(JumpIfInventoryOmits)
 	Actor *actor = getScene()->getActor(cmd->param4 ? cmd->param4 : _currentQueueEntry->actorIndex);
 
-	if (!actor->hasMoreReactions(cmd->param1, cmd->param3))
+	if (!actor->inventory.contains(cmd->param1, cmd->param3))
 		_currentQueueEntry->currentLine = cmd->param2;
 END_OPCODE
 
@@ -916,18 +916,18 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x29
-IMPLEMENT_OPCODE(SetActorField638)
+IMPLEMENT_OPCODE(SelectInventoryItem)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	actor->setField638(cmd->param2);
+	actor->inventory.selectItem(cmd->param2);
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2A
-IMPLEMENT_OPCODE(JumpIfActorField638)
+IMPLEMENT_OPCODE(JumpIfInventoryItemNotSelected)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->getField638() != cmd->param2)
+	if (actor->inventory.getSelectedItem() != cmd->param2)
 		_currentQueueEntry->currentLine = cmd->param3;
 END_OPCODE
 

@@ -124,7 +124,10 @@ public:
 	// ActorData is stored in each actor instance
 	uint32 numScripts;
 	uint32 numPolygons;
-	ResourceId cursorResourcesAlternate[64];
+	ResourceId inventoryIconsActive[16];
+	ResourceId inventoryIconsNormal[16];
+	ResourceId inventoryCursorsNormal[16];
+	ResourceId inventoryCursorsBlinking[16];
 	Common::Array<ActionArea*> actions;  // maxsize 400
 	int32 field_E848C;
 	int32 field_E8490;

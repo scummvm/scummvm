@@ -49,7 +49,7 @@ PuzzleWritings::~PuzzleWritings() {
 // Event Handling
 //////////////////////////////////////////////////////////////////////////
 bool PuzzleWritings::init(const AsylumEvent &)  {
-	if (getScene()->getActor()->getField638() == 3)
+	if (getScene()->getActor()->inventory.getSelectedItem() == 3)
 		_hasGlassMagnifier = true;
 	else
 		_hasGlassMagnifier = false;

@@ -475,7 +475,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			Actor *player = getScene()->getActor();
 
 			if (_vm->isGameFlagSet(kGameFlag1021)) {
-				if (player->getReactionValue(0)) {
+				if (player->inventory[0]) {
 
 					if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 2));
@@ -494,9 +494,9 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 			}
 
 			if (_vm->isGameFlagSet(kGameFlag1023)) {
-				if (player->getField638()) {
-					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(player->getField638() == 3 ? 2447 : 2448)]->scriptIndex,
-					                         getSharedData()->getPlayerIndex());
+				if (player->inventory.getSelectedItem()) {
+					int32 areaIndex = getWorld()->getActionAreaIndexById(player->inventory.getSelectedItem() == 3 ? 2447 : 2448);
+					getScript()->queueScript(getWorld()->actions[areaIndex]->scriptIndex, getSharedData()->getPlayerIndex());
 					_vm->clearGameFlag(kGameFlag1023);
 				} else if (player->getStatus() != kActorStatusShowingInventory) {
 					_vm->clearGameFlag(kGameFlag1023);
@@ -572,7 +572,7 @@ void Special::chapter8(Object *object, ActorIndex actorIndex) {
 
 			if (object->getFrameIndex() == 23) {
 				if (_vm->isGameFlagNotSet(kGameFlag815))
-					actor0->addReactionHive(1, 0);
+					actor0->inventory.add(1, 0);
 
 				_vm->setGameFlag(kGameFlag815);
 			}
@@ -747,9 +747,9 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 
 			if (_vm->isGameFlagNotSet(kGameFlag1099)) {
 				_vm->setGameFlag(kGameFlag1099);
-				getScene()->getActor(9)->setReaction(0, 1);
-				getScene()->getActor(9)->setReaction(1, 2);
-				getScene()->getActor(9)->setReaction(2, 3);
+				getScene()->getActor(9)->inventory[0] = 1;
+				getScene()->getActor(9)->inventory[1] = 2;
+				getScene()->getActor(9)->inventory[2] = 3;
 			}
 
 			if (_vm->isGameFlagSet(kGameFlag561) && _vm->isGameFlagNotSet(kGameFlag562)) {

@@ -25,7 +25,6 @@
 #include "asylum/resources/encounters.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
-#include "asylum/resources/reaction.h"
 #include "asylum/resources/special.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/worldstats.h"
@@ -46,7 +45,7 @@ namespace Asylum {
 
 #define DIR(val) (ActorDirection)((val) & 7)
 
-Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index) {
+Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index), inventory(engine, _numberValue01) {
  	// Init all variables
  	_resourceId = kResourceNone;
  	_objectIndex = 0;
@@ -65,8 +64,6 @@ Actor::Actor(AsylumEngine *engine, ActorIndex index) : _vm(engine), _index(index
  	_field_60 = 0;
  	_actionIdx3 = 0;
  	// TODO field_68 till field_617
- 	memset(&_reaction, 0, sizeof(_reaction));
- 	_field_638 = 0;
  	_walkingSound1 = 0;
  	_walkingSound2 = 0;
  	_walkingSound3 = 0;
@@ -152,10 +149,7 @@ void Actor::load(Common::SeekableReadStream *stream) {
 	// TODO skip field_68 till field_617
 	stream->skip(0x5B0);
 
-	for (int32 i = 0; i < 8; i++)
-		_reaction[i] = stream->readSint32LE();
-
-	_field_638     = stream->readSint32LE();
+	inventory.load(stream);
 	_walkingSound1 = stream->readSint32LE();
 	_walkingSound2 = stream->readSint32LE();
 	_walkingSound3 = stream->readSint32LE();
@@ -244,10 +238,8 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	// TODO skip field_68 till field_617
 	s.skip(0x5B0);
 
-	for (int32 i = 0; i < 8; i++)
-		s.syncAsSint32LE(_reaction[i]);
+	inventory.saveLoadWithSerializer(s);
 
-	s.syncAsSint32LE(_field_638);
 	s.syncAsSint32LE(_walkingSound1);
 	s.syncAsSint32LE(_walkingSound2);
 	s.syncAsSint32LE(_walkingSound3);
@@ -1823,74 +1815,6 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	}
 }
 
-void Actor::addReactionHive(int32 reactionIndex, int32 numberValue01Add) {
-	if (reactionIndex > 16)
-		return;
-
-	uint32 i;
-	for (i = 0; i < 8; i++)
-		if (!_reaction[i])
-			break;
-
-	if (i == 8)
-		return;
-
-	if (!hasMoreReactions(reactionIndex, 0))
-		_reaction[i] = reactionIndex;
-
-	if (numberValue01Add)
-		_numberValue01 += numberValue01Add;
-
-	getSound()->playSound(MAKE_RESOURCE(kResourcePackHive, 0));
-}
-
-void Actor::removeReactionHive(int32 reactionIndex, int32 numberValue01Substract) {
-	if (reactionIndex > 16)
-		return;
-
-	if (numberValue01Substract) {
-		_numberValue01 -= numberValue01Substract;
-		if (_numberValue01 < 0)
-			_numberValue01 = 0;
-	}
-
-	if (!numberValue01Substract || !_numberValue01) {
-
-		uint32 i = 0;
-		for (i = 0; i < 8; i++)
-			if (_reaction[i] == reactionIndex)
-				break;
-
-		if (i == 8)
-			return;
-
-		if (i == 7) {
-			_reaction[7] = 0;
-		} else {
-			memmove(&_reaction[i], &_reaction[i + 1], 32 - 4 * i);
-			_reaction[7] = 0;
-		}
-	}
-}
-
-bool Actor::hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const {
-	if (reactionIndex > 16)
-		return false;
-
-	uint32 i;
-	for (i = 0; i < 8; i++)
-		if (_reaction[i] == reactionIndex)
-			break;
-
-	if (i == 8)
-		return false;
-
-	if (testNumberValue01)
-		return _numberValue01 >= testNumberValue01;
-
-	return true;
-}
-
 bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 	int32 dist = getAbsoluteDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
@@ -1986,27 +1910,22 @@ bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
 	return true;
 }
 
-void Actor::updateAndDraw() {
+void Actor::drawInventory() {
 	Actor *player = getScene()->getActor();
 	Common::Point mouse = getCursor()->position();
 	bool keepField = false;
 
-	// Get reaction count
-	uint32 count = 0;
-	for (int i = 0; i < 8; i++)
-		if (_reaction[i])
-			count++;
-
+	uint count = inventory.find();
 	for (uint32 i = 0; i < count; i++) {
 		// Compute points
 		Common::Point coords;
 		adjustCoordinates(&coords);
 
-		Common::Point ringPoint = _vm->getInventoryRingPoint(count, i);
+		Common::Point ringPoint = Inventory::getInventoryRingPoint(_vm, count, i);
 		Common::Point point = coords + Common::Point(player->getPoint2()->x + ringPoint.x, player->getPoint2()->y / 2 - ringPoint.y);
 
 		if (mouse.x < point.x || mouse.x > (point.x + 40) || mouse.y < point.y || mouse.y > (point.y + 40)) {
-			getScreen()->addGraphicToQueue(getWorld()->cursorResourcesAlternate[_reaction[i] + 15],
+			getScreen()->addGraphicToQueue(getWorld()->inventoryIconsNormal[inventory[i] - 1],
 			                               0,
 			                               point,
 			                               kDrawFlagNone,
@@ -2015,13 +1934,13 @@ void Actor::updateAndDraw() {
 		} else {
 			if (getWorld()->field_120 != (int32)(i + 1)) {
 				getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 3));
-				getReaction()->run(_reaction[i] - 1);
+				Inventory::describe(_vm, inventory[i] - 1);
 			}
 
 			getWorld()->field_120 = i + 1;
 			keepField = true;
 
-			getScreen()->addGraphicToQueue(getWorld()->cursorResourcesAlternate[_reaction[i] - 1],
+			getScreen()->addGraphicToQueue(getWorld()->inventoryIconsActive[inventory[i] - 1],
 			                               0,
 			                               point,
 			                               kDrawFlagNone,
@@ -2030,7 +1949,7 @@ void Actor::updateAndDraw() {
 		}
 
 		if (getWorld()->chapter == kChapter4)
-			updateNumbers(_reaction[i] - 1, point);
+			updateNumbers(inventory[i] - 1, point);
 	}
 
 	if (!keepField)
@@ -3335,8 +3254,8 @@ void Actor::resetActors() {
 	getWorld()->tickCount1 = _vm->getTick() + 3000;
 }
 
-void Actor::updateNumbers(int32 reaction, const Common::Point &point) {
-	if (reaction != 1)
+void Actor::updateNumbers(uint item, const Common::Point &point) {
+	if (item != 1)
 		return;
 
 	_numberPoint.x = point.x;

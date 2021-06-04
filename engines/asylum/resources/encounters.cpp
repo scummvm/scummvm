@@ -64,10 +64,10 @@ const char *opcodeNames[] = {
 	"SetVariable",
 	"IncrementScriptVariable",
 	"ProcessVariable3",
-	"AddRemoveReactionHive",
+	"AddRemoveInventoryItem",
 	"UNUSED (19)",
 	"UNUSED (20)",
-	"SetCounterFromActorReactions",
+	"SetCounterIfInventoryOmits",
 	"UNUSED (22)",
 	"PrepareMovie",
 	"SetClearGameFlag",
@@ -1631,15 +1631,15 @@ void Encounter::runScript() {
 			}
 			break;
 
-		case kOpcodeAddRemoveReactionHive:
+		case kOpcodeAddRemoveInventoryItem:
 			if (entry.param1)
-				getScene()->getActor()->removeReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
+				getScene()->getActor()->inventory.remove(getVariableInv(entry.param2), _scriptData.vars[1]);
 			else
-				getScene()->getActor()->addReactionHive(getVariableInv(entry.param2), _scriptData.vars[1]);
+				getScene()->getActor()->inventory.add(getVariableInv(entry.param2), _scriptData.vars[1]);
 			break;
 
-		case kOpcodeSetCounterFromActorReactions:
-			_scriptData.counter = getScene()->getActor()->hasMoreReactions(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
+		case kOpcodeSetCounterIfInventoryOmits:
+			_scriptData.counter = getScene()->getActor()->inventory.contains(getVariableInv(entry.param2), _scriptData.vars[1]) ? 0 : 1;
 			break;
 
 		case kOpcodePrepareMovie:

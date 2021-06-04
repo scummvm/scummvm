@@ -286,8 +286,8 @@ private:
 		kOpcodeSetVariable                      = 15,
 		kOpcodeIncrementScriptVariable          = 16,
 		kOpcodeProcessVariable3                 = 17,
-		kOpcodeAddRemoveReactionHive            = 18,
-		kOpcodeSetCounterFromActorReactions     = 21,
+		kOpcodeAddRemoveInventoryItem           = 18,
+		kOpcodeSetCounterIfInventoryOmits       = 21,
 		kOpcodePrepareMovie                     = 23,
 		kOpcodeSetClearGameFlag                 = 24,
 		kOpcodeSetCounterFromGameFlag           = 25

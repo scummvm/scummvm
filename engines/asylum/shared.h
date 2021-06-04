@@ -375,15 +375,15 @@ enum OpcodeType {
 	kOpcodeJumpIfActionTalk,
 	kOpcodeSetActionTalk,
 	kOpcodeClearActionTalk,
-	kOpcodeAddReactionHive,
-	kOpcodeRemoveReactionHive,                  // 35
-	kOpcodeHasMoreReactions,
+	kOpcodeAddToInventory,
+	kOpcodeRemoveFromInventory,                 // 35
+	kOpcodeJumpIfInventoryOmits,
 	kOpcodeRunEncounter,
 	kOpcodeJumpIfAction16,
 	kOpcodeSetAction16,
 	kOpcodeClearAction16,                       // 40
-	kOpcodeSetActorField638,
-	kOpcodeJumpIfActorField638,
+	kOpcodeSelectInventoryItem,
+	kOpcodeJumpIfInventoryItemNotSelected,
 	kOpcodeChangeScene,
 	kOpcodeUpdateActor,
 	kOpcodePlayMovie,                           // 45

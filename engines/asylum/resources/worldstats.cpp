@@ -75,7 +75,10 @@ WorldStats::WorldStats(AsylumEngine *engine) : _vm(engine) {
 	musicStatusExt = 0;
 	numScripts = 0;
 	numPolygons = 0;
-	memset(&cursorResourcesAlternate, kResourceNone, sizeof(cursorResourcesAlternate));
+	memset(&inventoryIconsActive, kResourceNone, sizeof(inventoryIconsActive));
+	memset(&inventoryIconsNormal, kResourceNone, sizeof(inventoryIconsNormal));
+	memset(&inventoryCursorsNormal, kResourceNone, sizeof(inventoryCursorsNormal));
+	memset(&inventoryCursorsBlinking, kResourceNone, sizeof(inventoryCursorsBlinking));
 
 	field_E848C = 0;
 	field_E8490 = 0;
@@ -227,9 +230,15 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	numScripts  = stream->readUint32LE();
 	numPolygons = stream->readUint32LE();
 
-	// Load the alternate cursor resources
-	for (uint32 i = 0; i < ARRAYSIZE(cursorResourcesAlternate); i++)
-		cursorResourcesAlternate[i] = (ResourceId)stream->readSint32LE();
+	// Load inventory resources
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryIconsActive); i++)
+		inventoryIconsActive[i] = (ResourceId)stream->readSint32LE();
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryIconsNormal); i++)
+		inventoryIconsNormal[i] = (ResourceId)stream->readSint32LE();
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryCursorsNormal); i++)
+		inventoryCursorsNormal[i] = (ResourceId)stream->readSint32LE();
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryCursorsBlinking); i++)
+		inventoryCursorsBlinking[i] = (ResourceId)stream->readSint32LE();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read actions
@@ -401,9 +410,15 @@ void WorldStats::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(numScripts);
 	s.syncAsUint32LE(numPolygons);
 
-	// Alternate cursor resources
-	for (int32 i = 0; i < ARRAYSIZE(cursorResourcesAlternate); i++)
-		s.syncAsSint32LE(cursorResourcesAlternate[i]);
+	// Inventory resources
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryIconsActive); i++)
+		s.syncAsSint32LE(inventoryIconsActive[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryIconsNormal); i++)
+		s.syncAsSint32LE(inventoryIconsNormal[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryCursorsNormal); i++)
+		s.syncAsSint32LE(inventoryCursorsNormal[i]);
+	for (uint32 i = 0; i < ARRAYSIZE(inventoryCursorsBlinking); i++)
+		s.syncAsSint32LE(inventoryCursorsBlinking[i]);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Read actions

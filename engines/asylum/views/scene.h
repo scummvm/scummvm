@@ -401,10 +401,7 @@ private:
 	 */
 	void handleHit(int32 index, HitType type);
 
-	/**
-	 * Handle player reaction
-	 */
-	void playerReaction();
+	void clickInventory();
 
 	void hitAreaChapter2(int32 id);
 	bool _isCTRLPressed;

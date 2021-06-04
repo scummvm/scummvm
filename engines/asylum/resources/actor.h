@@ -30,6 +30,8 @@
 
 #include "asylum/shared.h"
 
+#include "asylum/resources/inventory.h"
+
 namespace Asylum {
 
 class AsylumEngine;
@@ -92,7 +94,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	int32 flags;
 	int32 actionType; // ActionType enum value
-
+	Inventory inventory;
 
 	void setActionIndex2(int32 index) { _actionIdx2 = index; }
 	void setObjectIndex(int32 index) { _objectIndex = index; }
@@ -102,14 +104,12 @@ public:
 	void setLastScreenUpdate(int32 tick) { _lastScreenUpdate = tick; }
 	void setNumberFlag01(int32 number) { _numberFlag01 = number; }
 	void setPriority(int32 priority) { _priority = priority; }
-	void setReaction(int32 index, int32 val) { _reaction[index] = val; }
 	void setResourceId(ResourceId id) { _resourceId = id; }
 	void setSoundResourceId(ResourceId id) { _soundResourceId = id; }
 	void setStatus(ActorStatus status) { _status = status; }
 	void setTransparency(int32 val) { _transparency = val; }
 	void setTickCount(int32 tickCount) { _tickCount = tickCount; }
 
-	void setField638(int32 val) { _field_638 = val; }
 	void setField934(int32 val) { _field_934 = val; }
 	void setField938(int32 val) { _field_938 = val; }
 	void setField944(int32 val) { _field_944 = val; }
@@ -126,7 +126,6 @@ public:
 	Common::Point *getPoint1() { return &_point1; }
 	Common::Point *getPoint2() { return &_point2; }
 	int32          getPriority() { return _priority; }
-	int32          getReactionValue(uint32 index) { return _reaction[index]; }
 	ResourceId     getResourceId() { return _resourceId; }
 	ResourceId     getResourcesId(uint32 index) { return _graphicResourceIds[index]; }
 	int32          getScriptIndex() { return _scriptIndex; }
@@ -135,7 +134,6 @@ public:
 	ActorStatus    getStatus()    { return _status; }
 	int32          getTickCount() { return _tickCount; }
 
-	int32          getField638() { return _field_638; }
 	int32          getField934() { return _field_934; }
 	int32          getField944() { return _field_944; }
 	int32          getField948() { return _field_948; }
@@ -294,11 +292,8 @@ public:
 	bool canInteract(Common::Point *point, int32* param);
 	bool canMove(Common::Point *point, ActorDirection direction, uint32 count, bool hasDelta);
 	void move(ActorDirection dir, uint32 distance);
-	void addReactionHive(int32 reactionIndex, int32 numberValue01Add);
-	void removeReactionHive(int32 reactionIndex, int32 numberValue01Substract);
-	bool hasMoreReactions(int32 reactionIndex, int32 testNumberValue01) const;
 	bool canMoveCheckActors(Common::Point *point, ActorDirection direction);
-	void updateAndDraw();
+	void drawInventory();
 	void update_409230();
 
 	/**
@@ -374,8 +369,6 @@ private:
 	int32  _field_60;
 	int32  _actionIdx3;
 	// TODO field_68 till field_617
-	int32  _reaction[8];
-	int32  _field_638;
 	ResourceId _walkingSound1;
 	ResourceId _walkingSound2;
 	ResourceId _walkingSound3;
@@ -511,12 +504,12 @@ private:
 	void resetActors();
 
 	/**
-	 * Updates the actor "number" data if the reaction is "1".
+	 * Updates the actor "number" data if the item is "1".
 	 *
-	 * @param reaction The reaction.
+	 * @param item     The item.
 	 * @param point    The coordinates
 	 */
-	void updateNumbers(int32 reaction, const Common::Point &point);
+	void updateNumbers(uint item, const Common::Point &point);
 
 	/**
 	 * Determine if the supplied point is in the action area

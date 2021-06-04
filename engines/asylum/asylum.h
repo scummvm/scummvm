@@ -63,7 +63,6 @@ class Cursor;
 class Encounter;
 class Menu;
 class Puzzles;
-class Reaction;
 class ResourceManager;
 class Savegame;
 class Scene;
@@ -142,7 +141,6 @@ public:
 	Cursor          *cursor()    { return _cursor; }
 	Encounter       *encounter() { return _encounter; }
 	Menu            *menu()      { return _menu; }
-	Reaction        *reaction()  { return _reaction; }
 	ResourceManager *resource()  { return _resource; }
 	Savegame        *savegame()  { return _savegame; }
 	Scene           *scene()     { return _scene; }
@@ -190,16 +188,6 @@ public:
 	 */
 	void updateReverseStereo();
 
-	/**
-	 * Gets an inventory ring point
-	 *
-	 * @param nPoints Number of Points
-	 * @param index   Point index
-	 *
-	 * @return        Inventory ring point
-	 */
-	Common::Point getInventoryRingPoint(uint32 nPoints, uint32 index) const;
-
 	// Serializable
 	void saveLoadWithSerializer(Common::Serializer &s);
 
@@ -214,7 +202,6 @@ private:
 	Cursor          *_cursor;
 	Encounter       *_encounter;
 	Menu            *_menu;
-	Reaction        *_reaction;
 	ResourceManager *_resource;
 	Savegame        *_savegame;
 	Scene           *_scene;

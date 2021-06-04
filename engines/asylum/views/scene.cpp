@@ -24,6 +24,7 @@
 
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
+#include "asylum/resources/inventory.h"
 #include "asylum/resources/object.h"
 #include "asylum/resources/polygons.h"
 #include "asylum/resources/script.h"
@@ -542,9 +543,9 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 		if (player->getStatus() == kActorStatusDisabled)
 			break;
 
-		if (player->getField638()) {
+		if (player->inventory.getSelectedItem()) {
 			if (hitTestPlayer()) {
-				player->setField638(0);
+				player->inventory.selectItem(0);
 				return true;
 			}
 
@@ -559,9 +560,9 @@ bool Scene::clickDown(const AsylumEvent &evt) {
 			return true;
 		}
 
-		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->getReactionValue(0)) {
+		if (!hitTestPlayer() || player->getStatus() >= kActorStatus11 || !player->inventory[0]) {
 			if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10) {
-				playerReaction();
+				clickInventory();
 			} else {
 				HitType type = kHitNone;
 				int32 res = hitTest(type);
@@ -1152,20 +1153,20 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 		return;
 	}
 
-	if (player->getField638()) {
+	if (player->inventory.getSelectedItem()) {
 		if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
 
-			ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
+			ResourceId id = _ws->inventoryCursorsNormal[player->inventory.getSelectedItem() - 1];
 			if (getCursor()->getResourceId() != id)
 				getCursor()->set(id, 0, kCursorAnimationNone);
 
 		} else {
 			if (hitTestScene(type) == -1) {
-				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 31];
+				ResourceId id = _ws->inventoryCursorsNormal[player->inventory.getSelectedItem() - 1];
 				if (getCursor()->getResourceId() != id)
 					getCursor()->set(id, 0, kCursorAnimationNone);
 			} else {
-				ResourceId id = _ws->cursorResourcesAlternate[player->getField638() + 47];
+				ResourceId id = _ws->inventoryCursorsBlinking[player->inventory.getSelectedItem() - 1];
 				uint32 frameCount = GraphicResource::getFrameCount(_vm, id);
 				if (getCursor()->getResourceId() != id)
 					getCursor()->set(id, 0, (frameCount <= 1) ? kCursorAnimationNone : kCursorAnimationMirror);
@@ -1176,7 +1177,7 @@ void Scene::updateCursor(ActorDirection direction, const Common::Rect &rect) {
 	}
 
 	if (mouse.x >= rect.left && mouse.x <= rightLimit && mouse.y >= rect.top  && mouse.y <= rect.bottom && hitTestPlayer()) {
-		if (player->getReactionValue(0)) {
+		if (player->inventory[0]) {
 			if (getCursor()->getResourceId() != _ws->cursorResources[kCursorResourceGrabPointer])
 				getCursor()->set(_ws->cursorResources[kCursorResourceGrabPointer]);
 
@@ -1649,35 +1650,30 @@ void Scene::handleHit(int32 index, HitType type) {
 	}
 }
 
-void Scene::playerReaction() {
+void Scene::clickInventory() {
 	const Common::Point mouse = getCursor()->position();
 	Common::Point point;
 	Actor *player = getActor();
 
 	player->adjustCoordinates(&point);
 
-	uint32 count;
-	for (count = 0; count < 8; count++) {
-		if (!player->getReactionValue(count))
-			break;
-	}
+	uint count = player->inventory.find();
 
-	player->setField638(0);
+	player->inventory.selectItem(0);
 
 	if (count > 0) {
 		for (uint32 i = 0; i < count; i++) {
-			Common::Point ringPoint = _vm->getInventoryRingPoint(count, i);
+			Common::Point ringPoint = Inventory::getInventoryRingPoint(_vm, count, i);
 			int32 x = point.x + player->getPoint2()->x + ringPoint.x;
 			int32 y = point.y + player->getPoint2()->y / 2 - ringPoint.y;
 
 			if (mouse.x >= x && mouse.x <= (x + 40) && mouse.y >= y && mouse.y <= (y + 40)) {
-				// Handle reaction
 				getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 4));
 
 				if (_ws->chapter == kChapter9) {
 					switch (i) {
 					default:
-						player->setField638(player->getReactionValue(i));
+						player->inventory.selectItem(player->inventory[i]);
 						break;
 
 					case 0:
@@ -1693,7 +1689,7 @@ void Scene::playerReaction() {
 						break;
 					}
 				} else {
-					player->setField638(player->getReactionValue(i));
+					player->inventory.selectItem(player->inventory[i]);
 				}
 				break;
 			}
@@ -1706,7 +1702,7 @@ void Scene::playerReaction() {
 
 void Scene::hitAreaChapter2(int32 id) {
 	if (id == 783)
-		getActor()->setField638(6);
+		getActor()->inventory.selectItem(6);
 }
 
 void Scene::hitAreaChapter7(int32 id) {
@@ -2358,8 +2354,7 @@ void Scene::changePlayerUpdate(ActorIndex index) {
 	actor->setPosition(player->getPoint1()->x + player->getPoint2()->x, player->getPoint1()->y + player->getPoint2()->y, player->getDirection(), 0);
 	player->hide();
 
-	for (uint i = 0; i < 8; i++)
-		actor->setReaction(i, player->getReactionValue(i));
+	actor->inventory.copyFrom(player->inventory);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2419,7 +2414,7 @@ bool Scene::drawScene() {
 
 	Actor *player = getActor();
 	if (player->getStatus() == kActorStatusShowingInventory || player->getStatus() == kActorStatus10)
-		player->updateAndDraw();
+		player->drawInventory();
 	else
 		player->setNumberFlag01(0);
 

@@ -23,8 +23,8 @@ MODULE_OBJS := \
 	resources/data.o \
 	resources/object.o \
 	resources/encounters.o \
+	resources/inventory.o \
 	resources/polygons.o \
-	resources/reaction.o \
 	resources/script.o \
 	resources/special.o \
 	resources/worldstats.o \

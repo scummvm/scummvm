@@ -31,7 +31,6 @@
 
 #include "asylum/resources/actor.h"
 #include "asylum/resources/encounters.h"
-#include "asylum/resources/reaction.h"
 #include "asylum/resources/script.h"
 #include "asylum/resources/special.h"
 #include "asylum/resources/worldstats.h"
@@ -52,23 +51,8 @@
 
 namespace Asylum {
 
-// inventory ring is a circle of radius 80 centered at (-20, 20)
-static const int16 inventoryRingPoints[36][2] = {
-	{ -20,  100},
-	{ -20,  100}, { -20,  -60},
-	{ -20,  100}, { -89,  -20}, {  49,  -20},
-	{ -20,  100}, {-100,   20}, { -20,  -60}, {  60,   20},
-	{ -20,  100}, { -96,   45}, { -67,  -45}, {  27,  -45}, {  56,   45},
-	{ -20,  100}, { -89,   60}, { -89,  -20}, { -20,  -60}, {  49,  -20}, {  49,   60},
-	{ -20,  100}, { -82,   70}, { -98,    3}, { -56,  -51}, {  13,  -53}, {  57,   -1}, {  45,   67},
-	{ -20,  100}, { -77,   77}, {-100,   20}, { -77,  -37}, { -20,  -60}, {  37,  -37}, {  60,   20}, {  37,   77}
-};
-
-// first 8 triangular numbers
-static const uint32 inventoryRingOffsets[8] = {0, 1, 3, 6, 10, 15, 21, 28};
-
 AsylumEngine::AsylumEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), _gameDescription(gd),
-	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _reaction(NULL), _resource(NULL), _savegame(NULL),
+	_console(NULL), _cursor(NULL), _encounter(NULL), _menu(NULL), _resource(NULL), _savegame(NULL),
 	_scene(NULL), _screen(NULL), _script(NULL), _special(NULL), _speech(NULL), _sound(NULL), _text(NULL),
 	_video(NULL), _handler(NULL), _puzzles(NULL) {
 
@@ -102,7 +86,6 @@ AsylumEngine::~AsylumEngine() {
 	delete _scene;
 	delete _encounter;
 	delete _puzzles;
-	delete _reaction;
 	delete _savegame;
 	delete _screen;
 	delete _script;
@@ -142,7 +125,6 @@ Common::Error AsylumEngine::run() {
 	_encounter = new Encounter(this);
 	_cursor    = new Cursor(this);
 	_puzzles   = new Puzzles(this);
-	_reaction  = new Reaction(this);
 	_savegame  = new Savegame(this);
 	_screen    = new Screen(this);
 	_script    = new ScriptManager(this);
@@ -514,19 +496,6 @@ void AsylumEngine::notify(AsylumEventType type, int32 param1, int32 param2) {
 
 	AsylumEvent evt(type, param1, param2);
 	_handler->handleEvent(evt);
-}
-
-Common::Point AsylumEngine::getInventoryRingPoint(uint32 nPoints, uint32 index) const {
-	if (!_scene)
-		error("[AsylumEngine::getInventoryRingPoint] Subsystems not initialized properly!");
-
-	const int16 (*pointPtr)[2];
-	if (_scene->worldstats()->chapter == kChapter11)
-		pointPtr = &inventoryRingPoints[inventoryRingOffsets[7] + index + 3];
-	else
-		pointPtr = &inventoryRingPoints[inventoryRingOffsets[nPoints - 1] + index];
-
-	return Common::Point((*pointPtr)[0], (*pointPtr)[1]);
 }
 
 void AsylumEngine::updateReverseStereo() {
