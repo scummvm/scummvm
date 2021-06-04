@@ -611,26 +611,10 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	appearanceLRU.addTail(*this);
 
 	//  Load in additional sprite banks if requested...
-	for (bank = 0; bank < elementsof(spriteBanks); bank++) {
-		//  Wash the sprite banks...i.e. clear out dead handles
-		//  which have been purged.
-		washHandle((RHANDLE &)(spriteBanks[bank]));
-
+	for (bank = 0; bank < (long)elementsof(spriteBanks); bank++) {
 		//  Load the sprite handle...
-		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
-			spriteBanks[bank] = (SpriteSet **)spriteRes->load(id + MKTAG(0, 0, 0, bank), "sprite bank", FALSE);
-
-#if DEBUG
-			if (spriteBanks[bank] == nullptr)
-				fatal("Sprite '%s' bank %d failed to load!\n",
-				      idname(id),
-				      bank);
-#endif
-
-			//  Since the sprites are so big, we'll keep them unlocked
-			//  so that they can be purged as needed.
-			RUnlockHandle((RHANDLE) spriteBanks[bank]);
-		}
+		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank)))
+			spriteBanks[bank] = (SpriteSet **)spriteRes->loadResource(id + MKTAG(0, 0, 0, bank), "sprite bank");
 	}
 }
 
@@ -674,16 +658,18 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	}
 
 	//  Dump the sprites being stored
-	for (bank = 0; bank < elementsof(aa->spriteBanks); bank++) {
+	for (bank = 0; bank < (long)elementsof(aa->spriteBanks); bank++) {
 		if (aa->spriteBanks[bank])
-			spriteRes->release((RHANDLE) aa->spriteBanks[bank]);
+			free(aa->spriteBanks[bank]);
 		aa->spriteBanks[bank] = nullptr;
 	}
 
-	if (aa->poseList)  poseRes->release((RHANDLE) aa->poseList);
+	if (aa->poseList)
+		free(aa->poseList);
 	aa->poseList = nullptr;
 
-	if (aa->schemeList)  schemeRes->release((RHANDLE) aa->schemeList);
+	if (aa->schemeList)
+		free(aa->schemeList);
 	aa->schemeList = nullptr;
 
 	//  Set ID and use count
@@ -692,17 +678,8 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
-	aa->poseList    = (ActorAnimSet **)poseRes->load(id, "pose list", FALSE, FALSE);
-// I just added these - dispnode may have to lock & unlock the handle now - EO
-	if (aa->poseList)  RUnlockHandle((RHANDLE) aa->poseList);
-#if DEBUG
-	if (aa->poseList == nullptr)
-		fatal("PoseList '%s' failed to load!\n", idname(id));
-#endif
-	//  REM: It's OK if schemelist fails to load...
-	aa->schemeList  = (ColorScheme **)schemeRes->load(id, "scheme list", FALSE, FALSE);
-// I just added these - dispnode may have to lock & unlock the handle now - EO
-	if (aa->schemeList)  RUnlockHandle((RHANDLE) aa->schemeList);
+	aa->poseList    = (ActorAnimSet **)poseRes->loadResource(id, "pose list");
+	aa->schemeList  = (ColorScheme **)schemeRes->loadResource(id, "scheme list");
 
 	return aa;
 }
