@@ -211,6 +211,41 @@ public:
 
 	/** @} */
 
+	/**
+	 * @name Methods for getting achievements and statistics descriptions
+	 * @{
+	 */
+
+	/**
+	 * Get number of achivement descriptions available.
+	 *
+	 */
+	uint16 getAchievementCount() const;
+
+	/**
+	 * Get achivement description by index.
+	 *
+	 * @param[in] index	Internal index of the achievement, counted from 0 to (getAchievementCount() - 1)
+	 *
+	 */
+	const AchievementDescription *getAchievementDescription(uint16 index) const;
+
+	/**
+	 * Get number of stat descriptions available.
+	 *
+	 */
+	uint16 getStatCount() const;
+
+	/**
+	 * Get stat description by index.
+	 *
+	 * @param[in] index	Internal index of the stat, counted from 0 to (getStatCount() - 1)
+	 *
+	 */
+	const StatDescription *getStatDescription(uint16 index) const;
+
+	/** @} */
+
 private:
 	bool loadAchievementsData(const char *platform, const char *appId);
 

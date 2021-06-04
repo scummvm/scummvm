@@ -344,4 +344,48 @@ bool AchievementsManager::resetAllStats() {
 }
 
 
+uint16 AchievementsManager::getAchievementCount() const {
+	if (!isReady()) {
+		return 0;
+	}
+
+	return _descriptions.size();
+}
+
+
+const AchievementDescription *AchievementsManager::getAchievementDescription(uint16 index) const {
+	if (!isReady()) {
+		return nullptr;
+	}
+
+	if (index >= _descriptions.size()) {
+		return nullptr;
+	}
+
+	return &(_descriptions[index]);
+}
+
+
+uint16 AchievementsManager::getStatCount() const {
+	if (!isReady()) {
+		return 0;
+	}
+
+	return _stats.size();
+}
+
+
+const StatDescription *AchievementsManager::getStatDescription(uint16 index) const {
+	if (!isReady()) {
+		return nullptr;
+	}
+
+	if (index >= _stats.size()) {
+		return nullptr;
+	}
+
+	return &(_stats[index]);
+}
+
+
 } // End of namespace Common
