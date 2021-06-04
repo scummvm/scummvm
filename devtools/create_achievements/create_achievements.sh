@@ -100,6 +100,8 @@ add_steam 405780
 add_steam 574420
 add_steam 1064660
 
+#TODO: check for 7zip, since it produces smaller files
+
 zip -9j achievements.dat gen/* static/*
 mv -vf achievements.dat ../../dists/engine-data
 
