@@ -63,6 +63,11 @@ void TrecisionEngine::loadAll() {
 
 	_soundMgr->loadSamples(data);
 
+	// TODO: Unused Amiga data?
+	if (isAmiga()) {
+		data->skip(12 * 12 + 1);
+	}
+
 	for (int i = 0; i < MAXSCRIPTFRAME; ++i) {
 		_scriptFrame[i]._class = data->readByte();
 		_scriptFrame[i]._event = data->readByte();
@@ -84,10 +89,6 @@ void TrecisionEngine::loadAll() {
 	_dialogMgr->loadData(data);
 
 	data->skip(620);	// actions (unused)
-
-	// TODO: Amiga hack
-	if (isAmiga())
-		dataNl.seek(0x3DB62);
 
 	int numFileRef = data->readSint32();
 	data->skip(numFileRef * (12 + 4));	// fileRef name + offset
