@@ -134,11 +134,6 @@ public:
 	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override {
 		Common::String gameId = ConfMan.get("gameid", target);
 
-		// HACK: "juliauntold" is a DLC of "juliastars", they share the same achievements list
-		if (gameId == "juliauntold") {
-			gameId = "juliastars";
-		}
-
 		Common::AchievementsPlatform platform = Common::STEAM_ACHIEVEMENTS;
 		if (ConfMan.get("extra", target).contains("GOG")) {
 			platform = Common::GALAXY_ACHIEVEMENTS;
@@ -150,12 +145,6 @@ public:
 			if (i->gameId == gameId && i->platform == platform) {
 				result.platform = i->platform;
 				result.appId = i->appId;
-				for (const Common::StatDescription *it = i->stats; it->id; it++) {
-					result.stats.push_back(*it);
-				}
-				for (const Common::AchievementDescription *it = i->descriptions; it->id; it++) {
-					result.descriptions.push_back(*it);
-				}
 				break;
 			}
 		}
