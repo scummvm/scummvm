@@ -136,16 +136,16 @@ const char *story2[27] = {
 };
 
 #ifdef USE_TTS
-int textToSpeech(int nextparagraph, const char *story[], int arraysize) {
+int textToSpeech(int nextparagraph, const char *storyVariable[], int arraysize) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && story[nextparagraph][0] != 0) {
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && storyVariable[nextparagraph][0] != 0) {
 		Common::String paragraph;
-		while (nextparagraph < arraysize && story[nextparagraph][0] != ' ') {
+		while (nextparagraph < arraysize && storyVariable[nextparagraph][0] != ' ') {
 			if (!paragraph.empty())
 				paragraph += " ";
-			paragraph += story[nextparagraph++];
+			paragraph += storyVariable[nextparagraph++];
 		}
-		while (nextparagraph < arraysize && story[nextparagraph][0] == ' ') {
+		while (nextparagraph < arraysize && storyVariable[nextparagraph][0] == ' ') {
 			nextparagraph += 1;
 		}
 		ttsMan->say(paragraph, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
@@ -272,9 +272,8 @@ void GriffonEngine::intro() {
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
 			if (yy < 10 && i == ARRAYSIZE(story) - 1) {
-				if (ttsMan != nullptr)
-					if (ttsMan->isSpeaking() == false)
-						return;
+				if (ttsMan == nullptr || ttsMan->isSpeaking() == false)
+					return;
 			}
 		}
 
@@ -422,9 +421,8 @@ void GriffonEngine::endOfGame() {
 			}
 
 			if (yy < 10 && i == ARRAYSIZE(story2)-1) {
-				if (ttsMan != nullptr)
-					if (ttsMan->isSpeaking() == false)
-						break;
+				if (ttsMan == nullptr || ttsMan->isSpeaking() == false)
+					return;
 			}
 		}
 

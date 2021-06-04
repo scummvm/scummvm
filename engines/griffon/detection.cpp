@@ -37,7 +37,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	{
 		GAMEOPTION_TTS_NARRATOR,
 		{
-			_s("tts_enabled"),
+			_s("Enable Text to Speech"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_enabled",
 			false
@@ -89,5 +89,6 @@ public:
 		return "The Griffon Legend (c) 2005 Syn9 (Daniel Kennedy)";
 	}
 };
+
 
 REGISTER_PLUGIN_STATIC(GRIFFON_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GriffonMetaEngineDetection);

@@ -47,11 +47,13 @@ namespace Griffon {
 #define SY 25
 #define PI 3.141593
 
+
 void GriffonEngine::title(int mode) {
-	const char *optionTitles[3] = {
+	const char *optionTitles[4] = {
 		"new game/save/load",
 		"options",
-		"quit game"
+		"quit game",
+		"return"
 	};
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
@@ -124,7 +126,7 @@ void GriffonEngine::title(int mode) {
 		drawString(_videoBuffer, optionTitles[2], x, y + 32, 4);
 
 		if (mode == 1)
-			drawString(_videoBuffer, "return", x, y + 48, 4);
+			drawString(_videoBuffer, optionTitles[3], x, y + 48, 4);
 		else
 			drawString(_videoBuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
@@ -246,6 +248,19 @@ static Common::String formatPercent(int val) {
 	return Common::String::format("%d percent", val - val % 10);
 }
 
+static void speakMenuItem(int mapTitles, int mapValues, const char *mapTitleText[], const char *mapValueText[]) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		Common::TextToSpeechManager::Action valueAction = Common::TextToSpeechManager::INTERRUPT;
+		if (mapTitles != 0) {
+			ttsMan->say(mapTitleText[mapTitles]);
+			valueAction = Common::TextToSpeechManager::QUEUE;
+		}
+		if (mapValues != 0)
+			ttsMan->say(mapValueText[mapValues], valueAction);
+	}
+}
+
 void GriffonEngine::configMenu() {
 	static const char *optionTitles[25] = {
 		"", "",
@@ -273,12 +288,13 @@ void GriffonEngine::configMenu() {
 		0, 0, 0, 0, 0,
 		0, 0, 9, 9, 12,
 		12, 15, 15, 18, 20,
+		0, 0
 	};
-	static const int curselMapValues[25] = {
+	static const int curselMapValues[MAXCURSEL+1] = {
 		0, 0, 0, 0, 0,
 		0, 0, 9, 10, 12,
 		13, 15, 16, 0, 0,
-		22, 24,
+		22, 24
 	};
 
 	int cursel = MINCURSEL;
@@ -453,20 +469,14 @@ void GriffonEngine::configMenu() {
 					cursel--;
 					if (cursel < MINCURSEL)
 						cursel = MAXCURSEL;
-					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-						ttsMan -> say(optionTitles[curselMapTitles[cursel]]);
-						ttsMan -> say(optionValues[curselMapValues[cursel]], Common::TextToSpeechManager::QUEUE);
-					}
+					speakMenuItem(curselMapTitles[cursel], curselMapValues[cursel], optionTitles, optionValues);
 					break;
 
 				case kGriffonDown:
-					++cursel;
+					cursel++;
 					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
-					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-						ttsMan -> say(optionTitles[curselMapTitles[cursel]]);
-						ttsMan -> say(optionValues[curselMapValues[cursel]], Common::TextToSpeechManager::QUEUE);
-					}
+					speakMenuItem(curselMapTitles[cursel], curselMapValues[cursel], optionTitles, optionValues);
 					break;
 
 				case kGriffonConfirm:
@@ -506,10 +516,10 @@ void GriffonEngine::configMenu() {
 							ConfMan.setBool("tts_enabled", false);
 						}
 						break;
-					case 16:
+					case 15:
 						saveConfig();
 						// fall through
-					case 17:
+					case 16:
 						if (ttsMan != nullptr)
 							ttsMan->stop();
 						exitMenu = true;
