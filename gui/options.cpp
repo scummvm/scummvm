@@ -1275,7 +1275,7 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 	for (uint16 idx = 0; idx < nMax ; idx++) {
 		const Common::StatDescription *descr = AchMan.getStatDescription(idx);
 
-		Common::String key = descr->comment.empty() ? descr->id : descr->comment;
+		const Common::String &key = descr->comment.empty() ? descr->id : descr->comment;
 		Common::String value = AchMan.getStatRaw(descr->id);
 
 		Common::U32String str = Common::U32String::format("%s: %s", key.c_str(), value.c_str());
