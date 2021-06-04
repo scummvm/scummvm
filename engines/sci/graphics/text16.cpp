@@ -44,6 +44,8 @@ GfxText16::GfxText16(GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxS
 }
 
 GfxText16::~GfxText16() {
+	delete[] _codeFonts;
+	delete[] _codeColors;
 }
 
 void GfxText16::init() {
@@ -768,7 +770,7 @@ void GfxText16::kernelTextSize(const char *text, uint16 languageSplitter, int16 
 void GfxText16::kernelTextFonts(int argc, reg_t *argv) {
 	int i;
 
-	delete _codeFonts;
+	delete[] _codeFonts;
 	_codeFontsCount = argc;
 	_codeFonts = new GuiResourceId[argc];
 	for (i = 0; i < argc; i++) {
@@ -780,7 +782,7 @@ void GfxText16::kernelTextFonts(int argc, reg_t *argv) {
 void GfxText16::kernelTextColors(int argc, reg_t *argv) {
 	int i;
 
-	delete _codeColors;
+	delete[] _codeColors;
 	_codeColorsCount = argc;
 	_codeColors = new uint16[argc];
 	for (i = 0; i < argc; i++) {
