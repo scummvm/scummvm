@@ -3331,15 +3331,49 @@ void setCombatBehavior(bool enabled) {
 //-------------------------------------------------------------------
 //	Initialize the actor list
 
+static void readResourceActor(hResContext *con, ResourceActor &resourceActor) {
+	resourceActor.protoIndex = con->readS16LE();
+	resourceActor.location.u = con->readS16LE();
+	resourceActor.location.v = con->readS16LE();
+	resourceActor.location.z = con->readS16LE();
+	resourceActor.nameIndex = con->readU16LE();
+	resourceActor.parentID = con->readU16LE();
+	resourceActor.script = con->readU16LE();
+	resourceActor.objectFlags = con->readU16LE();
+	resourceActor.hitPoints = con->readByte();
+	resourceActor.misc = con->readU16LE();
+
+	resourceActor.faction = con->readByte();
+	resourceActor.colorScheme = con->readByte();
+	resourceActor.appearanceID = con->readS32BE();
+	resourceActor.attitude = con->readSByte();
+	resourceActor.mood = con->readSByte();
+	resourceActor.disposition = con->readByte();
+	resourceActor.currentFacing = con->readByte();
+	resourceActor.tetherLocU = con->readS16LE();
+	resourceActor.tetherLocV = con->readS16LE();
+	resourceActor.tetherDist = con->readS16LE();
+	resourceActor.leftHandObject = con->readU16LE();
+	resourceActor.rightHandObject = con->readU16LE();
+	for (int i = 0; i < 16; ++i) {
+		resourceActor.knowledge[i] = con->readU16LE();
+	}
+	resourceActor.schedule = con->readU16LE();
+	for (int i = 0; i < 18; ++i) { // padding bytes = not neccessary?
+		resourceActor.reserved[i] = con->readByte();
+	}
+}
+
 void initActors(void) {
 	//  Load actors
 
 	int             i,
 	                resourceActorCount;
 	ResourceActor   *resourceActorList;
+	const int resourceActorSize = 92;
 
 	resourceActorCount = listRes->size(actorListID)
-	                     / sizeof(ResourceActor);
+	                     / resourceActorSize;
 
 	if (resourceActorCount < 1)
 		error("Unable to load Actors");
@@ -3349,23 +3383,20 @@ void initActors(void) {
 
 	//  Allocate memory for the actor list
 	actorListSize = actorCount * sizeof(Actor);
-	actorList = (Actor *)RNewClearPtr(actorListSize, NULL, "actor list");
+	actorList = new Actor[actorCount]();
 
 	if (!actorList)
 		error("Unable to load Actors");
 
 	//  Allocate memory for the resource actors
-	resourceActorList =
-	    (ResourceActor *)RNewClearPtr(resourceActorCount
-	                                  *   sizeof(ResourceActor),
-	                                  NULL, "res actor list");
+	resourceActorList = new ResourceActor[resourceActorCount]();
 
 	if (!resourceActorList || listRes->seek(actorListID) == 0)
 		error("Unable to load Actors");
 
 	//  Read the resource actors
-	listRes->read(resourceActorList,
-	              sizeof(ResourceActor) * resourceActorCount);
+	for (int k = 0; k < resourceActorCount; ++k)
+		readResourceActor(listRes, resourceActorList[k]);
 
 	for (i = 0; i < resourceActorCount; i++) {
 		Actor       *a = &actorList[ i ];
@@ -3389,7 +3420,7 @@ void initActors(void) {
 	//  Wait for the object initialization to append the actors to their
 	//  parents' child lists
 
-	RDisposePtr(resourceActorList);
+	delete[] resourceActorList;
 }
 
 //-------------------------------------------------------------------
@@ -3409,7 +3440,7 @@ void saveActors(SaveFileConstructor &saveGame) {
 	for (i = 0; i < actorCount; i++)
 		archiveBufSize += actorList[ i ].archiveSize();
 
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to allocate actor archive buffer");
 
@@ -3428,7 +3459,7 @@ void saveActors(SaveFileConstructor &saveGame) {
 	    archiveBuffer,
 	    archiveBufSize);
 
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -3445,13 +3476,13 @@ void loadActors(SaveFileReader &saveGame) {
 
 	//  Allocate the actor array
 	actorListSize = actorCount * sizeof(Actor);
-	actorList = (Actor *)RNewPtr(actorListSize, NULL, "actor list");
+	actorList = new Actor[actorCount]();
 	if (actorList == NULL)
 		error("Unable to load Actors");
 
 	//  Allocate memory for the archive buffer
 	archiveBufSize = saveGame.bytesLeftInChunk();
-	archiveBuffer = RNewPtr(archiveBufSize, NULL, "archive buffer");
+	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
 		error("Unable to load Actors");
 
@@ -3466,7 +3497,7 @@ void loadActors(SaveFileReader &saveGame) {
 	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
 
 	//  Deallocate the archive buffer
-	RDisposePtr(archiveBuffer);
+	free(archiveBuffer);
 }
 
 //-------------------------------------------------------------------
@@ -3479,7 +3510,7 @@ void cleanupActors(void) {
 		for (i = 0; i < actorCount; i++)
 			actorList[ i ].~Actor();
 
-		RDisposePtr(actorList);
+		delete[] actorList;
 		actorList = NULL;
 	}
 }
