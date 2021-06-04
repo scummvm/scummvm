@@ -33,7 +33,7 @@ fi
 # Activate Emscripten
 if [[ ! -d "$DIST_FOLDER/emsdk-$EMSDK_VERSION" ]]; then
   echo "$DIST_FOLDER/emsdk-$EMSDK_VERSION not found. Installing Emscripten"
-  cd $DIST_FOLDER
+  cd "$DIST_FOLDER"
   wget --content-disposition "https://github.com/emscripten-core/emsdk/archive/${EMSDK_VERSION}.tar.gz"
   tar xzvf "emsdk-${EMSDK_VERSION}.tar.gz"
   cd "emsdk-${EMSDK_VERSION}"
@@ -43,7 +43,6 @@ fi
 source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
 
 # Download + Install Libraries
-echo $LIBS_FOLDER
 mkdir -p "$LIBS_FOLDER"
 if [[ ! -d "$LIBS_FOLDER/build" ]]; then
   echo "$LIBS_FOLDER/build/ not found. Building plugins..."
@@ -183,7 +182,7 @@ if [[ "$1" =~ ^(data|all)$ ]]; then
   fi
 
   cd "${ROOT_FOLDER}//build-emscripten/games/"
-  NODE_DIR=$(dirname $EMSDK_NODE)
+  NODE_DIR=$(dirname "$EMSDK_NODE")
   "$NODE_DIR/npx" -p browserfs make_xhrfs_index >index.json
 fi
 
@@ -192,7 +191,7 @@ if [[ "$1" =~ ^(make|all)$ ]]; then
   emmake make
   emmake make dist-generic
   # preload data
-  $EMSDK_PYTHON $EMSDK/upstream/emscripten/tools/file_packager.py files.data --preload ./dist-generic/scummvm/data@/ --use-preload-cache --js-output=files.js
+  "$EMSDK_PYTHON" "$EMSDK/upstream/emscripten/tools/file_packager.py" files.data --preload ./dist-generic/scummvm/data@/ --use-preload-cache --js-output=files.js
   rm -rf dist-generic/
 fi
 
