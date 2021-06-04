@@ -3370,7 +3370,7 @@ void initActors(void) {
 	int             i,
 	                resourceActorCount;
 	ResourceActor   *resourceActorList;
-	const int resourceActorSize = 92;
+	const int resourceActorSize = 91; // size of the packed struct
 
 	resourceActorCount = listRes->size(actorListID)
 	                     / resourceActorSize;
