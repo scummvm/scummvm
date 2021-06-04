@@ -36,6 +36,7 @@ try:
 	achievements_columns = 3 # id, text, img
 	achievements_entries = int(len(achievements_rows) / achievements_columns)
 	if achievements_entries == 0:
+		sys.stderr.write("found NO achievements\n".format(achievements_entries))
 		sys.exit(127)
 
 	if args.verbose:
@@ -62,8 +63,14 @@ try:
 	for i in range(achievements_entries):
 		idx   = achievements_columns * i
 		id    = achievements_rows[idx + 0].text.strip()
-		title = achievements_rows[idx + 1].text.strip().split("\n")[0]
-		descr = achievements_rows[idx + 1].text.strip().split("\n")[1]
+		texts = achievements_rows[idx + 1].text.strip().split("\n")
+
+		if len(texts) != 2:
+			sys.stderr.write("Unexpected description format: %s\n".format(repr(texts)))
+			sys.exit(127)
+
+		title = texts[0]
+		descr = texts[1]
 		hide  = descr == "Hidden."
 		if descr in ["No description.", "Hidden."]:
 			descr = ""
@@ -97,3 +104,4 @@ try:
 
 except requests.exceptions.RequestException as e:
 	print(e)
+	sys.exit(127)
