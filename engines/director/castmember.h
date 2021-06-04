@@ -55,6 +55,7 @@ class VideoDecoder;
 namespace Director {
 
 class AudioDecoder;
+struct CastMemberInfo;
 class Channel;
 struct Resource;
 class Stxt;
@@ -66,6 +67,7 @@ public:
 
 	Cast *getCast() { return _cast; }
 	uint16 getID() { return _castId; }
+	CastMemberInfo *getInfo();
 
 	virtual bool isEditable() { return false; }
 	virtual void setEditable(bool editable) {}

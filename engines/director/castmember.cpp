@@ -25,6 +25,7 @@
 #include "video/qt_decoder.h"
 
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember.h"
 #include "director/cursor.h"
 #include "director/channel.h"
@@ -48,6 +49,10 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 	_modified = true;
 
 	_objType = kCastMemberObj;
+}
+
+CastMemberInfo *CastMember::getInfo() {
+	return _cast->getCastMemberInfo(_castId);
 }
 
 
