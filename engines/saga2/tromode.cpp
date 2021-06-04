@@ -64,7 +64,6 @@ extern int16        queueIn,
 
 int16 OptionsDialog(bool disableSaveResume = FALSE);
 void SystemEventLoop(void);
-void ClearMessageQueue(void);
 void freeAllTileBanks(void);
 void resetInputDevices(void);
 void blackOut(void);
@@ -179,7 +178,6 @@ static void TroModeSetup(void) {
 	blackOut();
 	displayDisable(PlayingVideo);
 	pushVidState();
-	ClearMessageQueue();
 	resetInputDevices();
 	abortFlag = FALSE;
 }

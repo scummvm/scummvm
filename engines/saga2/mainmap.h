@@ -85,11 +85,6 @@ void cleanupSystemTimer(void);
 void cleanupSystemTasks(void);
 void cleanupPaletteData(void);
 
-// message handling
-void mousePoll(void);
-bool handlingMessages(void);
-void displayEventLoop(void);
-
 // major parts of main that are actually in main.cpp
 void cleanupGame(void);                  // auto-cleanup function
 bool setupGame(void);

@@ -76,19 +76,6 @@ void cleanupPaletteData() {
 	warning("STUB: cleanupPaletteData()");
 }
 
-void mousePoll() {
-	warning("STUB: mousePoll()");
-}
-
-bool handlingMessages() {
-	warning("STUB: handlingMessages()");
-	return false;
-}
-
-void displayEventLoop() {
-	warning("STUB: displayEventLoop()");
-}
-
 void initBreakHandler() {
 	warning("STUB: initBreakHandler()");
 }
