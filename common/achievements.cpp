@@ -23,8 +23,10 @@
 
 #include "common/achievements.h"
 #include "common/debug.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/unzip.h"
 
 namespace Common {
 
@@ -67,17 +69,79 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 	_iniFile = new Common::INIFile();
 	_iniFile->loadFromSaveFile(_iniFileName); // missing file is OK
 
-	_descriptions = info.descriptions;
+	loadAchievementsData(platform, info.appId.c_str());
 
-	for (uint32 i = 0; i < info.stats.size(); i++) {
-		if (!(_iniFile->hasKey(info.stats[i].id, "statistics"))) {
-			_iniFile->setKey(info.stats[i].id, "statistics", info.stats[i].start);
+	for (uint32 i = 0; i < _stats.size(); i++) {
+		if (!(_iniFile->hasKey(_stats[i].id, "statistics"))) {
+			_iniFile->setKey(_stats[i].id, "statistics", _stats[i].start);
 		}
 	}
 
 	setSpecialString("platform", platform);
 	setSpecialString("gameId", info.appId);
 
+	return true;
+}
+
+
+bool AchievementsManager::loadAchievementsData(const char *platform, const char *appId) {
+	Archive *cfgZip = Common::makeZipArchive("achievements.dat");
+	if (!cfgZip) {
+		warning("achievements.dat is not found. Achievements messages are unavailable");
+		return false;
+	}
+
+	String cfgFileName = String::format("%s-%s.ini", platform, appId);
+	SeekableReadStream *stream = cfgZip->createReadStreamForMember(cfgFileName);
+	if (!stream) {
+		delete cfgZip;
+		warning("%s is not found in achievements.dat. Achievements messages are unavailable", cfgFileName.c_str());
+		return false;
+	}
+	
+	INIFile cfgFile;
+	if (!cfgFile.loadFromStream(*stream)) {
+		delete stream;
+		delete cfgZip;
+		warning("%s is corrupted in achievements.dat. Achievements messages are unavailable", cfgFileName.c_str());
+		return false;
+	}
+
+	_descriptions.clear();
+	for (int i = 0; i < 256; i++) {
+		String prefix = String::format("item_%d", i);
+
+		String id, title, comment, hidden;
+		cfgFile.getKey(prefix + "_id", "achievements:en", id);
+		cfgFile.getKey(prefix + "_title", "achievements:en", title);
+		cfgFile.getKey(prefix + "_comment", "achievements:en", comment);
+		cfgFile.getKey(prefix + "_hidden", "achievements:en", hidden);
+
+		if (id.empty()) {
+			break;
+		} else {
+			_descriptions.push_back({id, title, comment, !hidden.empty()});
+		}
+	}
+
+	_stats.clear();
+	for (int i = 0; i < 256; i++) {
+		String prefix = String::format("item_%d", i);
+
+		String id, comment, start;
+		cfgFile.getKey(prefix + "_id", "stats:en", id);
+		cfgFile.getKey(prefix + "_comment", "stats:en", comment);
+		cfgFile.getKey(prefix + "_start", "stats:en", start);
+
+		if (id.empty()) {
+			break;
+		} else {
+			_stats.push_back({id, comment, start});
+		}
+	}
+
+	delete stream;
+	delete cfgZip;
 	return true;
 }
 
@@ -91,6 +155,7 @@ bool AchievementsManager::unsetActiveDomain() {
 	_iniFile = nullptr;
 
 	_descriptions.clear();
+	_stats.clear();
 
 	return true;
 }
@@ -107,7 +172,7 @@ bool AchievementsManager::setAchievement(const String &id) {
 
 	String displayedMessage = id;
 	for (uint32 i = 0; i < _descriptions.size(); i++) {
-		if (strcmp(_descriptions[i].id, id.c_str()) == 0) {
+		if (_descriptions[i].id == id) {
 			displayedMessage = _descriptions[i].title;
 			break;
 		}
