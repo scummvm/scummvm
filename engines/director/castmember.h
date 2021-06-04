@@ -294,6 +294,8 @@ struct CastMemberInfo {
 	EditInfo textEditInfo;
 	Common::String modifiedBy;
 	Common::String comments;
+
+	CastMemberInfo() : autoHilite(false), scriptId(0) {}
 };
 
 struct Label {
