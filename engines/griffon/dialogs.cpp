@@ -429,6 +429,7 @@ void GriffonEngine::configMenu() {
 							ttsMan->say(formatPercent(config.musicVol));
 					} else if (cursel == 14) {
 						config.effectsVol = CLIP(config.effectsVol - 25, 0, 255);
+
 						setChannelVolume(-1, config.effectsVol);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
@@ -692,6 +693,7 @@ void GriffonEngine::saveLoadNew() {
 							if (ttsMan != nullptr)
 								ttsMan->stop();
 							_gameMode = kGameModeNewGame;
+
 							return;
 						} else if (curCol == 1) {
 							// SAVE GAME
