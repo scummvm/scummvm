@@ -4,17 +4,44 @@ set -e
 
 trap "echo FAILURE: $0 failed to create achievements.dat" ERR
 
+usage() {
+    echo "Usage: $0 [OPTION]..."
+    echo "    -f, --force    Forced regeneration of all files"
+    echo "    -h, --help     Show usage text"
+    echo "    -v, --verbose  Verbose output"
+    exit 42
+}
+
 add_steam() {
-    python steam_achievements.py -v --steamid "$1"
-    echo -----------------------------------------
+    if [[ "$FORCE" == "1" || ! -f "gen/steam-$1.ini" ]]; then
+        python steam_achievements.py $VERBOSE --steamid "$1"
+        echo -----------------------------------------
+    fi
 }
 
 add_steamlike_gog() {
-    python steam_achievements.py -v --steamid "$1" --saveasgalaxyid "$2"
-    echo -----------------------------------------
+    if [[ "$FORCE" == "1" || ! -f "gen/galaxy-$2.ini" ]]; then
+        python steam_achievements.py $VERBOSE --steamid "$1" --saveasgalaxyid "$2"
+        echo -----------------------------------------
+    fi
 }
 
-rm -f gen/*
+FORCE=0
+VERBOSE=""
+
+while [ -n "$1" ]; do
+    case "$1" in
+        -f|--force)   FORCE=1 ;;
+        -h|--help)    usage ;;
+        -v|--verbose) VERBOSE="-v" ;;
+        *) echo "$1 is invalid option"; usage ;;
+    esac
+    shift
+done
+
+if [[ "$FORCE" == "1" ]]; then
+    rm -f gen/*
+fi
 
 #AGS games:
 add_steam 80310
@@ -103,8 +130,12 @@ add_steam 1064660
 #TODO: check for 7zip, since it produces smaller files
 
 touch --date="2000-01-01 00:00:00" gen/* static/*
-zip -9jX achievements.dat gen/* static/*
-mv -vf achievements.dat ../../dists/engine-data
+if [[ "$VERBOSE" == "-v" ]]; then
+    zip -9jX achievements.dat gen/* static/*
+else
+    zip -9jX achievements.dat gen/* static/* >/dev/null
+fi
+mv $VERBOSE -f achievements.dat ../../dists/engine-data
 
 git add gen/* ../../dists/engine-data/achievements.dat
 
