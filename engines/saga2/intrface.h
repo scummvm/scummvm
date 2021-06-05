@@ -94,7 +94,7 @@ void loadUIState(SaveFileReader &saveGame);
 void cleanupUIState(void);
 
 //  Varargs function to write to the status line.
-void StatusMsg(char *msg, ...);      // frametime def
+void StatusMsg(const char *msg, ...);      // frametime def
 
 
 const uint32    faceGroupID     = MKTAG('F', 'A', 'C', 'E');

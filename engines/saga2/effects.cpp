@@ -134,23 +134,27 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 	case drainsManaYellow:
 	case drainsManaGreen:
 	case drainsManaBlue:
-	case drainsManaViolet: {
-		ActorManaID aType = (ActorManaID)(edt + (manaIDRed - drainsManaRed));
-		(&a->effectiveStats.redMana)[aType] =
-		    clamp(
-		        0,
-		        (&a->effectiveStats.redMana)[aType] - amt,
-		        (&(a->getBaseStats())->redMana)[aType]);
-	}
-	break;
-	case drainsLifeLevel: {
-		int16 &maxVit = (a->getBaseStats())->vitality;
-		maxVit = clamp(0, maxVit - amt, absoluteMaximumVitality);
-		a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, damageOther);
-	}
-	break;
+	case drainsManaViolet:
+		{
+			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - drainsManaRed));
+			(&a->effectiveStats.redMana)[aType] =
+				clamp(
+					0,
+					(&a->effectiveStats.redMana)[aType] - amt,
+					(&(a->getBaseStats())->redMana)[aType]);
+		}
+		break;
+	case drainsLifeLevel:
+		{
+			int16 &maxVit = (a->getBaseStats())->vitality;
+			maxVit = clamp(0, maxVit - amt, absoluteMaximumVitality);
+			a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, damageOther);
+		}
+		break;
 	case drainsVitality:
 		a->acceptDamage(cst->thisID(), amt, damageOther);
+		break;
+	default:
 		break;
 	}
 	updateIndicators();

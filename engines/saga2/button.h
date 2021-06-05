@@ -35,7 +35,7 @@
 
 namespace Saga2 {
 
-class Sprite;
+struct Sprite;
 class hResContext;
 
 /* ======================================================================= *

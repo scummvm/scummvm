@@ -289,11 +289,11 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 
 	for (i = 0; i < sortCount; i++) {
 		DisplayNode *dn = &displayList[ i ];
-		GameObject  *obj = sortList[ i ];
+		GameObject  *ob = sortList[ i ];
 		DisplayNode **search;
-		TilePoint oLoc = obj->getLocation();
+		TilePoint oLoc = ob->getLocation();
 		dn->nextDisplayed = NULL;
-		dn->object = obj;
+		dn->object = ob;
 
 		dn->type = nodeTypeObject;
 
@@ -715,17 +715,17 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the left hand,
 			//  then fill in the component structure for it.
 			if (leftIndex >= 0) {
-				GameObject          *obj;
+				GameObject          *ob;
 				ProtoObj            *proto;
 
-				obj = GameObject::objectAddress(a->leftHandObject);
-				proto = obj->proto();
+				ob = GameObject::objectAddress(a->leftHandObject);
+				proto = ob->proto();
 
-				obj->getColorTranslation(leftColors);
+				ob->getColorTranslation(leftColors);
 
 				sc = &scList[ leftIndex ];
 				sc->sp =    proto->getOrientedSprite(
-				                obj,
+				                ob,
 				                a->poseInfo.leftObjectIndex);
 				assert(sc->sp != NULL);
 				sc->offset = a->poseInfo.leftObjectOffset;
@@ -740,17 +740,17 @@ void DisplayNode::drawObject(void) {
 			//  If we were carrying something in the right hand,
 			//  then fill in the component structure for it.
 			if (rightIndex >= 0) {
-				GameObject          *obj;
+				GameObject          *ob;
 				ProtoObj            *proto;
 
-				obj = GameObject::objectAddress(a->rightHandObject);
-				proto = obj->proto();
+				ob = GameObject::objectAddress(a->rightHandObject);
+				proto = ob->proto();
 
-				obj->getColorTranslation(rightColors);
+				ob->getColorTranslation(rightColors);
 
 				sc = &scList[ rightIndex ];
 				sc->sp =    proto->getOrientedSprite(
-				                obj,
+				                ob,
 				                a->poseInfo.rightObjectIndex);
 				assert(sc->sp != NULL);
 				assert(sc->sp->size.x > 0);
