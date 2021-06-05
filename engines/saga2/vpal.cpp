@@ -78,8 +78,7 @@ static gPalette         currentPalette;     //  Currently loaded palette
 //  Fade up/down data
 static gPalette         oldPalette,         //  Palette at start of fade
        destPalette,        //  Destination palette of fade
-       quickPalette,
-       dialogPalette;      //  Temporary mem for quick save/restore
+       quickPalette;
 static int32            startTime,          //  Time index of start of fade
        totalTime;          //  Total fade duration
 
@@ -234,11 +233,11 @@ void createPalette(
     gPalettePtr srcP,
     gPalettePtr dstP,
     int32       elapsedTime,
-    int32       totalTime) {
-	assert(totalTime != 0);
+    int32       totalTime_) {
+	assert(totalTime_ != 0);
 
 	int             i;
-	uint32          fadeProgress = (elapsedTime << 8) / totalTime;
+	uint32          fadeProgress = (elapsedTime << 8) / totalTime_;
 
 	for (i = 0; i < elementsof(newP->entry); i++) {
 		gPaletteEntry   *srcPal = &srcP->entry[i];
@@ -312,18 +311,6 @@ void quickSavePalette(void) {
 void quickRestorePalette(void) {
 	memcpy(&currentPalette, &quickPalette, sizeof(gPalette));
 	assertCurrentPalette();
-}
-
-
-//----------------------------------------------------------------------
-// routines to suspend & restore a palette state (during videos)
-
-static int dpalSaves = 0;
-
-void dialogSavePalette(void) {
-}
-
-void dialogRestorePalette(void) {
 }
 
 

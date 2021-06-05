@@ -265,7 +265,7 @@ enum PortraitType {
 	sick,
 	wounded,
 	asleep,
-	dead,
+	dead
 };
 
 class CPortrait {

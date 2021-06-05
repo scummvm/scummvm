@@ -29,7 +29,7 @@
 
 namespace Saga2 {
 
-class SaveFileHeader;
+struct SaveFileHeader;
 
 // constants
 const uint32    dialogGroupID   = MKTAG('D', 'I', 'A', 'L');
