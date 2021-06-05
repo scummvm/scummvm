@@ -272,12 +272,9 @@ void GraphicsManager::loadData() {
 	_font = _vm->readData("nlfont.fnt");
 }
 
-void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thumbnail) {
-	thumbnail->convertToInPlace(_screenFormat);
+void GraphicsManager::setSaveSlotThumbnail(byte iconSlot, const Graphics::Surface *thumbnail) {
 	Graphics::Surface *scaled = thumbnail->scale(ICONDX, ICONDY);
-
-	thumbnail->free();
-	delete thumbnail;
+	scaled->convertToInPlace(_screenFormat);
 
 	for (uint16 y = 0; y < ICONDY; ++y) {
 		memcpy(_saveSlotThumbnails.getBasePtr(ICONDX * iconSlot, y), scaled->getBasePtr(0, y), ICONDX * 2);

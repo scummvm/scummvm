@@ -4071,7 +4071,7 @@ void LogicManager::handleClickControlPanel(uint16 curObj) {
 		break;
 	}
 
-	g_engine->syncSoundSettings();
+	_vm->syncSoundSettings();
 	ConfMan.flushToDisk();
 }
 

@@ -37,48 +37,16 @@
 namespace Trecision {
 
 void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
 	for (uint i = 0; i < ICONSHOWN; ++i) {
-		Common::String saveFileName = getSaveStateName(i + 1);
-		Common::InSaveFile *saveFile = saveFileMan->openForLoading(saveFileName);
-		ExtendedSavegameHeader header;
-
-		if (!saveFile) {
+		SaveStateDescriptor saveState = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), i + 1);
+		if (saveState.getSaveSlot() == -1) {
 			saveNames.push_back(_sysText[kMessageEmptySpot]);
 			_inventory.push_back(EMPTYSLOT);
-			continue;
-		}
-
-		const byte version = saveFile->readByte();
-
-		if (version >= SAVE_VERSION_ORIGINAL_MIN && version <= SAVE_VERSION_ORIGINAL_MAX) {
-			// Original saved game, convert
-			Common::String saveName = saveFile->readString(0, 40);
-			saveNames.push_back(saveName);
-
-			_inventory.push_back(EMPTYSLOT + i + 1);
-
-			// This is freed inside setSaveSlotThumbnail()
-			Graphics::Surface *thumbnail = new Graphics::Surface();
-			_graphicsMgr->readSurface(saveFile, thumbnail, ICONDX, ICONDY);
-			_graphicsMgr->setSaveSlotThumbnail(i, thumbnail);
-		} else if (version >= SAVE_VERSION_SCUMMVM_MIN) {
-			const bool headerRead = MetaEngine::readSavegameHeader(saveFile, &header, false);
-			if (headerRead) {
-				saveNames.push_back(header.description);
-				_inventory.push_back(EMPTYSLOT + i + 1);
-				_graphicsMgr->setSaveSlotThumbnail(i, header.thumbnail);
-			} else {
-				saveNames.push_back(_sysText[kMessageEmptySpot]);
-				_inventory.push_back(EMPTYSLOT);
-			}
 		} else {
-			saveNames.push_back(_sysText[kMessageEmptySpot]);
-			_inventory.push_back(EMPTYSLOT);
+			saveNames.push_back(saveState.getDescription());
+			_inventory.push_back(EMPTYSLOT + i + 1);
+			_graphicsMgr->setSaveSlotThumbnail(i, saveState.getThumbnail());
 		}
-
-		delete saveFile;
 	}
 
 	_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;

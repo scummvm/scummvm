@@ -23,6 +23,8 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 #include "graphics/surface.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 #include "trecision/trecision.h"
 
@@ -33,6 +35,7 @@ class TrecisionMetaEngine : public AdvancedMetaEngine {
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
 Common::Error TrecisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -45,6 +48,39 @@ void TrecisionMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 	// method is only used while the engine is running.
 	// TODO: Is there a better way to do this?
 	thumb.copyFrom(((Trecision::TrecisionEngine *)g_engine)->_thumbnail);
+}
+
+SaveStateDescriptor TrecisionMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::ScopedPtr<Common::InSaveFile> saveFile(g_system->getSavefileManager()->openForLoading(
+		getSavegameFile(slot, target)));
+
+	if (saveFile) {
+		const byte version = saveFile->readByte();
+
+		if (version >= SAVE_VERSION_ORIGINAL_MIN && version <= SAVE_VERSION_ORIGINAL_MAX) {
+			// Original saved game, convert
+			Common::String saveName = saveFile->readString(0, 40);
+
+			SaveStateDescriptor desc(slot, saveName);
+			desc.setAutosave(false);
+			if (slot == getAutosaveSlot())
+				desc.setWriteProtectedFlag(true);
+
+			// This is freed inside SaveStateDescriptor
+			const Graphics::PixelFormat kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+			Graphics::Surface *thumbnail = new Graphics::Surface();
+			thumbnail->create(ICONDX, ICONDY, kImageFormat);
+			saveFile->read(thumbnail->getPixels(), ICONDX * ICONDY * kImageFormat.bytesPerPixel);
+			desc.setThumbnail(thumbnail);
+
+			return desc;
+		} else if (version >= SAVE_VERSION_SCUMMVM_MIN) {
+			saveFile->seek(0);
+			return MetaEngine::querySaveMetaInfos(target, slot);
+		}
+	}
+
+	return SaveStateDescriptor();
 }
 
 bool Trecision::TrecisionEngine::hasFeature(EngineFeature f) const {

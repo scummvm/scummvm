@@ -87,7 +87,7 @@ public:
 	void drawRightInventoryArrow(byte startLine);
 	void drawInventoryIcon(byte iconIndex, byte iconSlot, byte startLine);
 	void drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte startLine);
-	void setSaveSlotThumbnail(byte iconSlot, Graphics::Surface *thumbnail);
+	void setSaveSlotThumbnail(byte iconSlot, const Graphics::Surface *thumbnail);
 	void readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count = 1);
 
 	void updatePixelFormat(uint16 *p, uint32 len) const;
