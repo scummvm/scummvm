@@ -1122,7 +1122,7 @@ void Actor_v2::walkActor() {
 		if (_facing != new_dir) {
 			setDirection(new_dir); 
 		} else {
-			_moving = 0;
+			_moving &= ~MF_TURN;
 		}
 		return;
 	}
@@ -1484,11 +1484,12 @@ void Actor::turnToDirection(int newdir) {
 	if (_vm->_game.version <= 6) {
 		_targetFacing = newdir;
 
-		if (_vm->_game.version == 0) {
+		if (_vm->_game.version == 0)
 			setDirection(newdir);
-			return;
-		}
-		_moving = MF_TURN;
+		else if (_vm->_game.version <= 2)
+			_moving |= MF_TURN;
+		else
+			_moving = MF_TURN;
 
 	} else {
 		_moving &= ~MF_TURN;
