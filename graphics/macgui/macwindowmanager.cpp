@@ -448,6 +448,18 @@ void MacWindowManager::setTextInClipboard(const Common::U32String &str) {
 	g_system->setTextInClipboard(stripFormat(str));
 }
 
+// get the text size ignoring \n
+int getPureTextSize(const Common::U32String &str) {
+	const Common::U32String::value_type *l = str.c_str();
+	int res = 0;
+	while (*l) {
+		if (*l != '\n')
+			res++;
+		l++;
+	}
+	return res;
+}
+
 Common::U32String MacWindowManager::getTextFromClipboard(const Common::U32String &format, int *size) {
 	Common::U32String global_str = g_system->getTextFromClipboard();
 	// str is what we need
@@ -456,19 +468,19 @@ Common::U32String MacWindowManager::getTextFromClipboard(const Common::U32String
 		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
 		str = format + global_str;
 		if (size)
-			*size = str.size();
+			*size = getPureTextSize(global_str);
 	} else {
 		Common::U32String tmp = stripFormat(_clipboard);
 		if (tmp == global_str) {
 			// if the text is equal, then we use wm one which contains the format
 			str = _clipboard;
 			if (size)
-				*size = tmp.size();
+				*size = getPureTextSize(tmp);
 		} else {
 			// otherwise, we prefer the global one
 			str = format + global_str;
 			if (size)
-				*size = str.size();
+				*size = getPureTextSize(global_str);
 		}
 	}
 	return str;
