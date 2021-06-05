@@ -1311,7 +1311,7 @@ Common::U32String MacText::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, false);
+	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
 
 	deleteSelection();
 	clearSelection();
@@ -1332,7 +1332,7 @@ bool MacText::processEvent(Common::Event &event) {
 				_wm->setTextInClipboard(cutSelection());
 				return true;
 			case Common::KEYCODE_c:
-				_wm->setTextInClipboard(getSelection(true, false));
+				_wm->setTextInClipboard(getSelection(true, true));
 				return true;
 			case Common::KEYCODE_v:
 				if (g_system->hasTextInClipboard()) {
@@ -1702,7 +1702,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
 			}
-			if (newlines)
+			if (newlines && _textLines[i].paragraphEnd)
 				res += '\n';
 		// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
@@ -1732,7 +1732,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += _textLines[i].chunks[chunk].text;
 			}
 
-			if (newlines)
+			if (newlines && _textLines[i].paragraphEnd)
 				res += '\n';
 		}
 	}
@@ -1760,8 +1760,8 @@ void MacText::insertTextFromClipboard() {
 			ppos += getLineCharWidth(i);
 		ppos += _cursorCol;
 
-		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, false);
-		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, false);
+		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
+		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, true);
 
 		// Remove it from the text
 		for (int i = start; i <= end; i++) {
