@@ -436,7 +436,7 @@ void TextManager::drawText(StackText text) {
 
 void TextManager::clearText() {
 	if (_oldString._text.empty() && !_curString._text.empty()) {
-		_oldString.set(_curString);
+		_oldString.set(&_curString);
 		_curString._text.clear();
 
 		_vm->_textStatus |= TEXT_DEL;

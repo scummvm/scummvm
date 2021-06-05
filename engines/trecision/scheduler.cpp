@@ -30,6 +30,7 @@ Scheduler::Scheduler(TrecisionEngine *vm) : _vm(vm) {
 	_counter = 0;
 
 	_idleMsg = { MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0 };
+	_msg = {MC_IDLE, 0, MP_DEFAULT, 0, 0, 0, 0};
 }
 
 Scheduler::~Scheduler() {

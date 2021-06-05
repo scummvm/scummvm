@@ -154,6 +154,7 @@ struct SScriptFrame {
 
 	bool  _noWait;
 
+	void clear();
 	void sendFrame(Scheduler *scheduler);
 	bool isEmptyEvent() const { return _class == 0 && _event == 0;  }
 };
@@ -168,7 +169,7 @@ struct SDText {
 	Common::String _text;
 	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
 
-	void set(SDText org);
+	void set(SDText *org);
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text);
 
 	void draw(TrecisionEngine *vm, Graphics::Surface *externalSurface = nullptr);

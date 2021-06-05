@@ -37,6 +37,16 @@
 
 namespace Trecision {
 
+void SScriptFrame::clear() {
+	_class = MC_IDLE;
+	_event = ME_MOUSEOPERATE;
+	_u8Param = 0;
+	_u16Param1 = _u16Param2 = 0;
+	_u32Param = 0;
+
+	_noWait = false;
+}
+
 void SScriptFrame::sendFrame(Scheduler *scheduler) {
 	scheduler->doEvent(_class, _event, MP_DEFAULT, _u16Param1, _u16Param2, _u8Param, _u32Param);
 }

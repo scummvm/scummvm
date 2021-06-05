@@ -79,9 +79,8 @@ uint16 TrecisionEngine::getKey() {
 	case Common::KEYCODE_F6:
 		return 0x3B + key - Common::KEYCODE_F1;
 	default:
-		if (ascii) {
+		if (ascii)
 			return ascii;
-		}
 
 		return 0;
 	}
@@ -297,8 +296,8 @@ int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
 /************************************************
  * SDText
  ************************************************/
-void SDText::set(SDText org) {
-	set(org._rect, org._subtitleRect, org._textCol, org._shadowCol, org._text);
+void SDText::set(SDText *org) {
+	set(org->_rect, org->_subtitleRect, org->_textCol, org->_shadowCol, org->_text);
 }
 
 void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text) {
