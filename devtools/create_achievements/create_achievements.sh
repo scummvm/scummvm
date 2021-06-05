@@ -106,5 +106,10 @@ touch --date="2000-01-01 00:00:00" gen/* static/*
 zip -9jX achievements.dat gen/* static/*
 mv -vf achievements.dat ../../dists/engine-data
 
+git add gen/* ../../dists/engine-data/achievements.dat
+
 echo SUCCESS
+echo Please run:
+echo "    git commit -m 'ACHIEVEMENTS: Generated description files'"
+
 exit 0
