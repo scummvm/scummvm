@@ -398,29 +398,47 @@ void MacWindowManager::disableScreenCopy() {
 // this is refer to how we deal U32String in splitString in mactext
 // maybe we can optimize this specifically
 Common::U32String stripFormat(const Common::U32String &str) {
-	Common::U32String res;
+	Common::U32String res, paragraph, tmp;
 	// calc the size of str
 	const Common::U32String::value_type *l = str.c_str();
 	while (*l) {
-		if (*l == '\r') {
-			l++;
-		} else if (*l == '\n') {
-			l++;
-		} else if (*l == '\001') {
-			l++;
-			// if there are two \001, then we regard it as one character
-			if (*l == '\001') {
-				res += *l++;
+		// split paragraph first
+		paragraph.clear();
+		while (*l) {
+			if (*l == '\r') {
+				l++;
+				if (*l == '\n')
+					l++;
+				break;
 			}
-		} else if (*l == '\015') {	// binary format
-			// we are skipping the formatting stuffs
-			// this number 12, and the number 23, is the size of our format
-			l += 12;
-		} else if (*l == '\016') {	// human-readable format
-			l += 23;
-		} else {
-			res += *l++;
+			if (*l == '\n') {
+				l++;
+				break;
+			}
+			paragraph += *l++;
 		}
+		const Common::U32String::value_type *s = paragraph.c_str();
+		tmp.clear();
+		while (*s) {
+			if (*s == '\001') {
+				s++;
+				// if there are two \001, then we regard it as one character
+				if (*s == '\001') {
+					tmp += *s++;
+				}
+			} else if (*s == '\015') {	// binary format
+				// we are skipping the formatting stuffs
+				// this number 12, and the number 23, is the size of our format
+				s += 12;
+			} else if (*s == '\016') {	// human-readable format
+				s += 23;
+			} else {
+				tmp += *s++;
+			}
+		}
+		res += tmp;
+		if (*l)
+			res += '\n';
 	}
 	return res;
 }
