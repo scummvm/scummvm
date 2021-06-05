@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-05 05:25+0000\n"
+"POT-Creation-Date: 2021-06-05 13:17+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2717,16 +2717,22 @@ msgid "Pixel-perfect scaling"
 msgstr "קנה מידה מושלם לפיקסלים"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
+#, fuzzy
+#| msgid "Pixel-perfect scaling"
+msgid "Even pixels scaling"
+msgstr "קנה מידה מושלם לפיקסלים"
+
+#: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Fit to window"
 msgstr "התאם לחלון"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/opengl/opengl-graphics.cpp:246
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Stretch to window"
 msgstr "מתחים לחלון"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window (4:3)"
 msgstr "מתאים לחלון (4: 3)"

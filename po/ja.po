@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-05 05:25+0000\n"
+"POT-Creation-Date: 2021-06-05 13:17+0000\n"
 "PO-Revision-Date: 2021-05-18 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -2723,16 +2723,22 @@ msgid "Pixel-perfect scaling"
 msgstr "ピクセルパーフェクト"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
+#, fuzzy
+#| msgid "Pixel-perfect scaling"
+msgid "Even pixels scaling"
+msgstr "ピクセルパーフェクト"
+
+#: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Fit to window"
 msgstr "ウィンドウに合わせる"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/opengl/opengl-graphics.cpp:246
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Stretch to window"
 msgstr "ウィンドウに合わせて拡大"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window (4:3)"
 msgstr "ウィンドウに合わせる(4:3)"

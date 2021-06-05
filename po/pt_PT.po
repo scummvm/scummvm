@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-05 05:25+0000\n"
+"POT-Creation-Date: 2021-06-05 13:17+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2768,16 +2768,22 @@ msgid "Pixel-perfect scaling"
 msgstr "Pixel-perfeito"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
+#, fuzzy
+#| msgid "Pixel-perfect scaling"
+msgid "Even pixels scaling"
+msgstr "Pixel-perfeito"
+
+#: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
 msgid "Fit to window"
 msgstr "Ajustar à janela"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:245
+#: backends/graphics/opengl/opengl-graphics.cpp:246
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:74
 msgid "Stretch to window"
 msgstr "Preencher janela"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:246
+#: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:75
 msgid "Fit to window (4:3)"
 msgstr "Ajustar à janela (4:3)"
