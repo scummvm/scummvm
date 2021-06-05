@@ -134,7 +134,7 @@ enum enchantmentIcons {
 	iconCount
 };
 
-char *enchantmentNames[] = {
+const char *enchantmentNames[] = {
 	"Invisible",
 	"Detect Poison",
 	"Soul Sight",
@@ -3108,7 +3108,7 @@ bool isBrotherDead(PlayerActorID brotherID) {
 	return (getPlayerActorAddress(brotherID)->getActor()->isDead());
 }
 
-void StatusMsg(char *msg, ...) { // frametime def
+void StatusMsg(const char *msg, ...) { // frametime def
 	va_list         argptr;
 	char            buffer[128];
 
