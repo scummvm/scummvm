@@ -927,7 +927,7 @@ END_OPCODE
 IMPLEMENT_OPCODE(JumpIfInventoryItemNotSelected)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
-	if (actor->inventory.getSelectedItem() != cmd->param2)
+	if ((int32)actor->inventory.getSelectedItem() != cmd->param2)
 		_currentQueueEntry->currentLine = cmd->param3;
 END_OPCODE
 

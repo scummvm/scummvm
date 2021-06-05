@@ -64,7 +64,7 @@ static const int inventoryDescriptionIndices[12][11] = {
 
 Inventory::Inventory(AsylumEngine *vm, int32 &multiple) : _vm(vm), _selectedItem(0), _multiple(multiple) {
 	memset(_items, 0, sizeof(_items));
-};
+}
 
 void Inventory::load(Common::SeekableReadStream *stream) {
 	for (int i = 0; i < 8; i++)
@@ -112,7 +112,7 @@ void Inventory::remove(uint item, uint multipleDecr) {
 	if (item > 16)
 		return;
 
-	_multiple = _multiple >= multipleDecr ? _multiple - multipleDecr : 0;
+	_multiple = (_multiple >= (int32)multipleDecr) ? _multiple - multipleDecr : 0;
 
 	if (!multipleDecr || !_multiple) {
 		int i = find(item);
@@ -137,7 +137,7 @@ bool Inventory::contains(uint item, uint multiple) const {
 		return false;
 
 	if (multiple)
-		return _multiple >= multiple;
+		return (_multiple >= (int32)multiple);
 
 	return true;
 }
