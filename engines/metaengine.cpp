@@ -278,21 +278,8 @@ SaveStateList MetaEngine::listSaves(const char *target) const {
 		int slotNum = atoi(file->c_str() + file->size() - 2);
 
 		if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
-			Common::ScopedPtr<Common::InSaveFile> in(saveFileMan->openForLoading(*file));
-			if (in) {
-				ExtendedSavegameHeader header;
-				if (!readSavegameHeader(in.get(), &header)) {
-					continue;
-				}
-
-				SaveStateDescriptor desc;
-
-				parseSavegameHeader(&header, &desc);
-
-				desc.setSaveSlot(slotNum);
-				if (slotNum == getAutosaveSlot())
-					desc.setWriteProtectedFlag(true);
-
+			SaveStateDescriptor desc = querySaveMetaInfos(target, slotNum);
+			if (desc.getSaveSlot() != -1) {
 				saveList.push_back(desc);
 			}
 		}
