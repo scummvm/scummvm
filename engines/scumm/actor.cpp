@@ -1188,10 +1188,19 @@ void Actor_v3::walkActor() {
 
 		if (_moving & MF_TURN) {
 			new_dir = updateActorDirection(false);
-			if (_facing != new_dir)
+			if (_facing != new_dir) {
 				setDirection(new_dir);
-			else
+			} else {
+				// WORKAROUND for bug #4594 ("SCUMM: Zak McKracken - Zak keeps walk animation without moving")
+				// This bug also happens with the original SCUMM3 (ZAK FM-TOWNS) interpreter (unlike SCUMM1/2
+				// where the actors are apparently supposed to continue walking after being turned). We have
+				// to stop the walking animation here...
+				// This also fixes bug #4601 ("SCUMM: Zak McKracken (FM-Towns) - shopkeeper keeps walking"),
+				// although that one does not happen with the original interpreter.
+				if (_vm->_game.id == GID_ZAK && _moving == MF_TURN)
+					startAnimActor(_standFrame);
 				_moving = 0;
+			}
 			return;
 		}
 
