@@ -83,9 +83,6 @@ void loadPaletteState(SaveFileReader &saveGame);
 //  Cleanup the palette
 inline void cleanupPaletteState(void) { /* do nothing */ }
 
-void dialogSavePalette(void);
-void dialogRestorePalette(void);
-
 } // end of namespace Saga2
 
 #endif

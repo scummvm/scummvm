@@ -1098,8 +1098,6 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	udrInfo.result  = -1;
 	udrInfo.running = TRUE;
 
-	dialogSavePalette();
-
 	gCompButton *t;
 
 	// button one
@@ -1144,7 +1142,6 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	mainWindow->invalidate(messageWindowRect);
 
 	// return the result code
-	dialogRestorePalette();
 	return (udrInfo.result % 10);
 }
 
@@ -1205,9 +1202,8 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	rInfo.result    = -1;
 	rInfo.running   = TRUE;
 
-	if (!fullInitialized) return -1;
-
-	dialogSavePalette();
+	if (!fullInitialized)
+		return -1;
 
 	// init the resource context handle
 	decRes = resFile->newContext(dialogGroupID, "dialog resources");
@@ -1278,7 +1274,6 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	mainWindow->invalidate(messageWindowRect);
 
 	// return the result code
-	dialogRestorePalette();
 	return rInfo.result % 10;
 }
 
