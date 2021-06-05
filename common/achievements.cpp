@@ -91,6 +91,22 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 		return false;
 	}
 
+	SeekableReadStream *verStream = cfgZip->createReadStreamForMember("VERSION");
+	if (!verStream) {
+		delete cfgZip;
+		warning("VERSION file is not found in achievements.dat. Achievements messages are unavailable");
+		return false;
+	}
+
+	String version = verStream->readLine();
+	delete verStream;
+
+	if (version != "1") {
+		delete cfgZip;
+		warning("Incompatible VERSION file in achievements.dat. Achievements messages are unavailable");
+		return false;
+	}
+
 	String cfgFileName = String::format("%s-%s.ini", platform, appId);
 	SeekableReadStream *stream = cfgZip->createReadStreamForMember(cfgFileName);
 	if (!stream) {
