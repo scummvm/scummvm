@@ -303,7 +303,7 @@ Common::Error PrivateEngine::run() {
 
 		if (!_nextSetting.empty()) {
 			removeTimer();
-			//debug("Executing %s", _nextSetting.c_str());
+			debugC(1, kPrivateDebugFunction, "Executing %s", _nextSetting.c_str());
 			clearAreas();
 			_currentSetting = _nextSetting;
 			Settings::g_setts->load(_nextSetting);
