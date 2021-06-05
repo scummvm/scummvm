@@ -823,14 +823,16 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 
 	uint16 blocks_per_line = _width / _blockW;
 
+	uint32 intermDiv = 0;
 	uint32 dst_x = 0;
 	uint32 dst_y = 0;
 	uint16 vqaColor = 0;
 	uint8 a, r, g, b;
 
 	for (uint i = count; i != 0; --i) {
-		dst_x = (dstBlock + count - i) % blocks_per_line * _blockW + _offsetX;
-		dst_y = (dstBlock + count - i) / blocks_per_line * _blockH + _offsetY;
+		intermDiv = (dstBlock + count - i) / blocks_per_line;
+		dst_x = ((dstBlock + count - i) - intermDiv * blocks_per_line) * _blockW + _offsetX;
+		dst_y = intermDiv * _blockH + _offsetY;
 
 		const uint8 *src_p = block_src;
 
