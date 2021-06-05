@@ -367,17 +367,17 @@ static inline const Graphics::PixelFormat screenPixelFormat() {
 
 static inline void drawPixel(Graphics::Surface &surface, void* dst, uint32 value) {
 	switch (surface.format.bytesPerPixel) {
-		case 1:
-			*(uint8*)dst = (uint8)value;
-			break;
-		case 2:
-			*(uint16*)dst = (uint16)value;
-			break;
-		case 4:
-			*(uint32*)dst = (uint32)value;
-			break;
-		default:
-			break;
+	case 1:
+		*(uint8*)dst = (uint8)value;
+		break;
+	case 2:
+		*(uint16*)dst = (uint16)value;
+		break;
+	case 4:
+		*(uint32*)dst = (uint32)value;
+		break;
+	default:
+		break;
 	}
 }
 
