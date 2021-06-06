@@ -1585,11 +1585,18 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	y = CLIP(y, 0, _textMaxHeight);
 
-	// FIXME: We should use bsearch() here
-	nrow = _textLines.size() - 1;
-
-	while (nrow && _textLines[nrow].y > y)
-		(nrow)--;
+	nrow = _textLines.size();
+	// use [lb, ub) bsearch here, final anser would we lb
+	int lb = 0, ub = nrow;
+	while (ub - lb > 1) {
+		int mid = (ub + lb) / 2;
+		if (_textLines[mid].y <= y) {
+			lb = mid;
+		} else {
+			ub = mid;
+		}
+	}
+	nrow = lb;
 
 	nsy = _textLines[nrow].y;
 
