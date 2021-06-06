@@ -1721,7 +1721,8 @@ msgstr "Sélectionner le répertoire des plugins"
 
 #: gui/options.cpp:2632
 msgid "Select directory for Files Manager /root/"
-msgstr "Sélectionner le répertoire pour la /racine/ du Gestionnaire de Fichiers"
+msgstr ""
+"Sélectionner le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 
 #: gui/options.cpp:2744
 msgid ""
