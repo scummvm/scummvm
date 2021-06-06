@@ -41,7 +41,7 @@ public:
 		return "Sanitarium (c) ASC Games";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const;
+	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
