@@ -282,17 +282,17 @@ Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_na
 }
 
 Common::SeekableReadStream *AssetManager::OpenAssetStream(const String &asset_name, const String &filter) const {
-	Stream *stream = OpenAsset(asset_name, filter);
+	soff_t assetSize;
+	Stream *stream = OpenAsset(asset_name, filter, &assetSize);
 	if (!stream)
 		return nullptr;
 
 	// Get the contents of the asset
-	size_t dataSize = stream->GetLength();
-	byte *data = (byte *)malloc(dataSize);
-	stream->Read(data, dataSize);
+	byte *data = (byte *)malloc(assetSize);
+	stream->Read(data, assetSize);
 	delete stream;
 
-	return new Common::MemoryReadStream(data, dataSize, DisposeAfterUse::YES);
+	return new Common::MemoryReadStream(data, assetSize, DisposeAfterUse::YES);
 }
 
 String GetAssetErrorText(AssetError err) {
