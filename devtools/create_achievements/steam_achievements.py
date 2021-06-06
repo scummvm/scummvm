@@ -17,6 +17,21 @@ import argparse
 import requests
 from requests_html import HTMLSession
 
+# For Stats only English strings exists on Steam side.
+#   - stats info is collected from SteamDB, we collect lists of <id, [comment], initial value>
+
+# For Achievements some games have only English strings, and some games have additional translations on Steam side.
+# This script is currently using various sources of information for Steam achievements:
+#   - achievements info collection starts from SteamDB, we collect lists of <id, title, [comment], hidden flag>
+#   - if there are hidden achievements, we look up their English "comment" values on 3rd party site (achievementstats.com)
+#   - there is an additional call to SteamDB to collect list of achivements translations
+#   - if there are no hidden achievements, we use Global Statistics at steamcommunity.com to collect non-English strings
+#   - if there are hidden achievements, we use User Statistics at steamcommunity.com to collect non-English strings
+
+# Hidden achievement descriptions are available only at user accounts for those users who have them completed
+
+STEAM_USERNAME = "lb_ii"
+
 # Format is: <SteamDB language name>: (<Steam API language code>, <unixLocale>)
 # For <SteamDB language name>, see verbose output of this tool
 # For <Steam API language code>, see https://partner.steamgames.com/doc/store/localization
@@ -259,16 +274,15 @@ try:
 	if args.verbose:
 		sys.stderr.write("found langs: {0}\n".format(langs))
 	
-	if hidden_achievements and len(langs) > 1:
-		print("WARNING: game {0} expects translation of hidden achievements, which is not supported. Dropping all the translations!".format(args.steamid))
-		langs = ["English"]
-
 	translations = {"English":{}}
 	if len(langs) > 1:
 		for l in langs:
 			steam_lang = LANGUAGES[l][0]
 			lang_id = LANGUAGES[l][1]
-			TRANSLATION_URL = "https://steamcommunity.com/stats/{0}/achievements?l={1}".format(args.steamid, steam_lang)
+			if hidden_achievements and len(langs) > 1:
+				TRANSLATION_URL = "https://steamcommunity.com/id/{0}/stats/{1}/?l={2}".format(STEAM_USERNAME, args.steamid, steam_lang)
+			else:
+				TRANSLATION_URL = "https://steamcommunity.com/stats/{0}/achievements?l={1}".format(args.steamid, steam_lang)
 			if args.verbose:
 				sys.stderr.write("query {0}\n".format(TRANSLATION_URL))
 			translations[l] = parse_steamcommunity_stats(TRANSLATION_URL)
