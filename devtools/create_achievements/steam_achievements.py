@@ -23,8 +23,37 @@ parser.add_argument("--saveasgalaxyid", type=int, help="GOG Galaxy game id")
 parser.add_argument("-v", "--verbose", action="store_true")
 args = parser.parse_args()
 
-def parse_steamdb(statsurl):
-	response = HTMLSession().get(statsurl)
+def parse_steamdb_info(url):
+	response = HTMLSession().get(url)
+
+	info_rows = response.html.xpath("//div[@id='info']/table/tbody/tr/td")
+	info_columns = 2 # id, text,
+	info_entries = int(len(info_rows) / info_columns)
+	if info_entries == 0:
+		sys.stderr.write("found NO information data\n")
+		sys.exit(127)
+
+	FORMAT_CHECKER_STRING = "Store Release Date"
+	is_format_ok = False
+
+	langs = "English"
+	for i in range(info_entries):
+		idx        = info_columns * i
+		info_key   = info_rows[idx + 0].text.strip()
+		info_value = info_rows[idx + 1].text.strip()
+		if info_key == FORMAT_CHECKER_STRING:
+			is_format_ok = True
+		if info_key == "Achievement Languages":
+			langs = info_value
+
+	if not is_format_ok:
+		sys.stderr.write("found NO {0}\nEntries: {1}".format(FORMAT_CHECKER_STRING, [i.text for i in info_rows][::2]))
+		sys.exit(127)
+
+	return langs.split(", ")
+
+def parse_steamdb_stats(url):
+	response = HTMLSession().get(url)
 
 	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
 	achievements_columns = 3 # name, text, img
@@ -54,7 +83,7 @@ def parse_steamdb(statsurl):
 		texts = achievements_rows[idx + 1].text.strip().split("\n")
 
 		if len(texts) != 2:
-			sys.stderr.write("Unexpected description format: {0}\n".format(repr(texts)))
+			sys.stderr.write("Unexpected description format: {0}\n".format(texts))
 			sys.exit(127)
 
 		title = texts[0]
@@ -65,6 +94,11 @@ def parse_steamdb(statsurl):
 		achievements_en[i] = (name, title, descr, hide)
 
 	return achievements_en, stats_en
+
+def join_achievements_translation(achievements_en, translations):
+	achievements = {"en": achievements_en}
+
+	return achievements
 
 def write_ini(fname, achievements, stats):
 	with codecs.open(fname, "w", encoding="utf-8") as out:
@@ -90,10 +124,23 @@ try:
 	if args.verbose:
 		sys.stderr.write("query {0}\n".format(STATS_URL))
 
-	achievements_en, stats_en = parse_steamdb(STATS_URL)
+	achievements_en, stats_en = parse_steamdb_stats(STATS_URL)
 	if args.verbose:
 		sys.stderr.write("found {0} achievements\n".format(len(achievements_en)))
 		sys.stderr.write("found {0} stats\n".format(len(stats_en)))
+
+	INFO_URL = "https://steamdb.info/app/{0}/info/".format(args.steamid)
+	if args.verbose:
+		sys.stderr.write("query {0}\n".format(INFO_URL))
+	langs = parse_steamdb_info(INFO_URL)
+
+	if args.verbose:
+		sys.stderr.write("found langs: {0}\n".format(langs))
+	
+	translations = {"English":{}}
+
+	achievements = join_achievements_translation(achievements_en, translations)
+	stats = {"en": stats_en} if stats_en else {}
 
 	if args.saveasgalaxyid:
 		FNAME = "galaxy-{0}.ini".format(args.saveasgalaxyid)
@@ -101,9 +148,6 @@ try:
 		FNAME = "steam-{0}.ini".format(args.steamid)
 	if args.verbose:
 		sys.stderr.write("writing: {0}\n".format(FNAME))
-
-	achievements = {"en": achievements_en}
-	stats = {"en": stats_en} if stats_en else {}
 	write_ini(os.path.join("gen", FNAME), achievements, stats)
 
 except requests.exceptions.RequestException as e:
