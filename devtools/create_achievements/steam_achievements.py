@@ -17,6 +17,26 @@ import argparse
 import requests
 from requests_html import HTMLSession
 
+# Format is: <SteamDB language name>: (<Steam API language code>, <unixLocale>)
+# For <SteamDB language name>, see verbose output of this tool
+# For <Steam API language code>, see https://partner.steamgames.com/doc/store/localization
+# For <unixLocale>, see "common/language.cpp"
+
+LANGUAGES = {
+	"English":             ("english",    "en"),
+	"Dutch":               ("dutch",      "nl_NL"),
+	"German":              ("german",     "de_DE"),
+	"French":              ("french",     "fr_FR"),
+	"Hungarian":           ("hungarian",  "hu_HU"),
+	"Italian":             ("italian",    "it_IT"),
+	"Polish":              ("polish",     "pl_PL"),
+	"Portuguese":          ("portuguese", "pt_PT"),
+	"Portuguese - Brazil": ("brazilian",  "pt_BR"),
+	"Russian":             ("russian",    "ru_RU"),
+	"Spanish - Spain":     ("spanish",    "es_ES"),
+	"Simplified Chinese":  ("schinese",   "zh_CN"),
+}
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--steamid", required=True, default="631570", type=int, help="Steam game id")
 parser.add_argument("--saveasgalaxyid", type=int, help="GOG Galaxy game id")
@@ -95,8 +115,63 @@ def parse_steamdb_stats(url):
 
 	return achievements_en, stats_en
 
+def parse_steamcommunity_stats(url):
+	response = HTMLSession().get(url)
+
+	achievements_rows = response.html.xpath("//div[@class='achieveRow']")
+	achievements_entries = len(achievements_rows)
+	if achievements_entries == 0:
+		sys.stderr.write("found NO achievements\n")
+		sys.exit(127)
+
+	translation = {}
+	for idx in range(achievements_entries):
+		imgs  = achievements_rows[idx].xpath("//img/@src")
+		titles = achievements_rows[idx].xpath(".//div[@class='achieveTxt']/h3/text()")
+		descrs = achievements_rows[idx].xpath(".//div[@class='achieveTxt']/h5/text()")
+
+		if len(imgs) != 1:
+			sys.stderr.write("Unexpected xpath result: expected exactly one img tag per achievement\n")
+			sys.exit(127)
+		if len(titles) != 1:
+			sys.stderr.write("Unexpected xpath result: expected exactly one h3 tag per achievement\n")
+			sys.exit(127)
+		if len(descrs) > 1:
+			sys.stderr.write("Unexpected xpath result: expected zero or one h5 tag per achievement\n")
+			sys.exit(127)
+
+		translation[imgs[0]] = (titles[0].strip(), descrs[0].strip() if descrs else None)
+
+	return translation
+
 def join_achievements_translation(achievements_en, translations):
 	achievements = {"en": achievements_en}
+
+	entitle2img = {}
+	for img, (title, descr) in translations["English"].items():
+		entitle2img[title] = img
+
+	for l in translations.keys():
+		lang_id = LANGUAGES[l][1]
+		if lang_id == "en":
+			continue
+
+		achievements[lang_id] = {}
+		for i, (name, title, descr, hide) in achievements_en.items():
+			if  not title in entitle2img:
+				sys.stderr.write("Can't find '{0}' at {1}\n".format(title, entitle2img))
+				sys.exit(127)
+
+			t = translations[l][entitle2img[title]]
+			achievements[lang_id][i] = (name, t[0], t[1] if t[1] else descr, hide)
+
+		completely_same = True
+		for i, it in achievements_en.items():
+			if achievements[lang_id][i] != it:
+				completely_same = False
+				break
+		if completely_same:
+			del achievements[lang_id]
 
 	return achievements
 
@@ -138,6 +213,14 @@ try:
 		sys.stderr.write("found langs: {0}\n".format(langs))
 	
 	translations = {"English":{}}
+	if len(langs) > 1:
+		for l in langs:
+			steam_lang = LANGUAGES[l][0]
+			lang_id = LANGUAGES[l][1]
+			TRANSLATION_URL = "https://steamcommunity.com/stats/{0}/achievements?l={1}".format(args.steamid, steam_lang)
+			if args.verbose:
+				sys.stderr.write("query {0}\n".format(TRANSLATION_URL))
+			translations[l] = parse_steamcommunity_stats(TRANSLATION_URL)
 
 	achievements = join_achievements_translation(achievements_en, translations)
 	stats = {"en": stats_en} if stats_en else {}
