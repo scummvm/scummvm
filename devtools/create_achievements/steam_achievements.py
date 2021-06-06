@@ -259,6 +259,10 @@ try:
 	if args.verbose:
 		sys.stderr.write("found langs: {0}\n".format(langs))
 	
+	if hidden_achievements and len(langs) > 1:
+		print("WARNING: game {0} expects translation of hidden achievements, which is not supported. Dropping all the translations!".format(args.steamid))
+		langs = ["English"]
+
 	translations = {"English":{}}
 	if len(langs) > 1:
 		for l in langs:
