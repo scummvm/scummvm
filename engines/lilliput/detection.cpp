@@ -118,6 +118,10 @@ public:
 	const char *getOriginalCopyright() const override {
 		return "Lilliput (C) S.L.Grand, Brainware, 1991-1992";
 	}
+
+	const DebugChannelDef *getDebugChannels() const override {
+		return debugFlagList;
+	}
 };
 
 } // End of namespace Lilliput
