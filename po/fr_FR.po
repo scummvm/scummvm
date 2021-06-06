@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-05 13:17+0000\n"
-"PO-Revision-Date: 2021-06-01 07:17+0000\n"
+"PO-Revision-Date: 2021-06-06 22:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1074,11 +1074,11 @@ msgstr "Corrige le rapport d'aspect pour les jeux"
 
 #: gui/options.cpp:1409
 msgid "Preferred device:"
-msgstr "Sortie préférée :"
+msgstr "Périphérique préféré :"
 
 #: gui/options.cpp:1409
 msgid "Music device:"
-msgstr "Sortie audio :"
+msgstr "Périphérique audio :"
 
 #: gui/options.cpp:1409 gui/options.cpp:1411
 msgid "Specifies preferred sound device or sound card emulator"
@@ -1093,12 +1093,12 @@ msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte aud
 #: gui/options.cpp:1411
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr "Sortie préférée :"
+msgstr "Périph. préféré :"
 
 #: gui/options.cpp:1411
 msgctxt "lowres"
 msgid "Music device:"
-msgstr "Sortie audio :"
+msgstr "Périph. audio :"
 
 #: gui/options.cpp:1438
 msgid "AdLib emulator:"
@@ -1110,7 +1110,7 @@ msgstr "AdLib est utilisé pour la musique dans de nombreux jeux"
 
 #: gui/options.cpp:1452
 msgid "GM device:"
-msgstr "Sortie GM :"
+msgstr "Périphérique GM :"
 
 #: gui/options.cpp:1452
 msgid "Specifies default sound device for General MIDI output"
@@ -1153,7 +1153,7 @@ msgstr "Gain MIDI :"
 
 #: gui/options.cpp:1507
 msgid "MT-32 Device:"
-msgstr "Sortie MT-32 :"
+msgstr "Périphérique MT-32 :"
 
 #: gui/options.cpp:1507
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
@@ -1180,7 +1180,7 @@ msgstr "Roland MT-32 exacte (pas d'ému GM)"
 
 #: gui/options.cpp:1517
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr "Roland GS (active le mappage MT-32)"
+msgstr "Périph. Roland GS (active le mappage MT-32)"
 
 #: gui/options.cpp:1517
 msgid ""
@@ -1287,12 +1287,12 @@ msgstr "Divers"
 
 #: gui/options.cpp:1949
 msgid "Cloud"
-msgstr "Nuage"
+msgstr "Cloud"
 
 #: gui/options.cpp:1951
 msgctxt "lowres"
 msgid "Cloud"
-msgstr "Nuage"
+msgstr "Cloud"
 
 #: gui/options.cpp:1965
 msgid "LAN"
@@ -1379,7 +1379,7 @@ msgstr "Sauvegarde auto :"
 #: gui/options.cpp:2152
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Sauvegarde :"
+msgstr "Sauv. auto :"
 
 #: gui/options.cpp:2161
 msgid "Always return to the launcher when leaving a game"
@@ -1420,8 +1420,10 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"La langue de l'interface de ScummVM s'adapte à celle du jeu courant, par "
-"exemple pour les écrans de sauvegarde et de chargement."
+"Au démarrage d'un jeu, remplace la langue de l'interface graphique de "
+"ScummVM par celle du jeu. De cette façon, si un jeu utilise les boîtes de "
+"dialogue de sauvegarde et de chargement de ScummVM, elles sont dans la même "
+"langue que le jeu."
 
 #: gui/options.cpp:2217
 msgid "Use native system file browser"
@@ -1432,28 +1434,28 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Utiliser le navigateur de fichiers du système au lieu de celui de ScummVM "
+"Utilise le navigateur de fichiers du système au lieu de celui de ScummVM "
 "pour sélectionner des fichiers ou répertoires."
 
 #: gui/options.cpp:2225 gui/updates-dialog.cpp:86
 msgid "Update check:"
-msgstr "Vérif. mises à jour :"
+msgstr "Recherche de mises à jour :"
 
 #: gui/options.cpp:2225
 msgid "How often to check ScummVM updates"
-msgstr "Fréquence des vérifications"
+msgstr "Fréquence des recherches de mise à jour de ScummVM"
 
 #: gui/options.cpp:2236
 msgid "Check now"
-msgstr "Maintenant"
+msgstr "Chercher maintenant"
 
 #: gui/options.cpp:2243
 msgid "Active storage:"
-msgstr "Service actif :"
+msgstr "Stockage actif :"
 
 #: gui/options.cpp:2243
 msgid "Active cloud storage"
-msgstr "Service de stockage actif"
+msgstr "Stockage cloud actif"
 
 #: gui/options.cpp:2252
 msgctxt "lowres"
@@ -1532,14 +1534,14 @@ msgstr "Commence la synchronisation des sauvegardes"
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Vous pouvez télécharger des fichiers de jeu à partir de votre dossier "
-"ScummVM dans le nuage :"
+"Vous pouvez télécharger des fichiers de jeu à partir de votre dossier cloud "
+"ScummVM :"
 
 #: gui/options.cpp:2274
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
-"Vous pouvez télécharger des fichiers de jeu à partir de votre dossier "
-"ScummVM dans le nuage :"
+"Vous pouvez télécharger des fichiers de jeu à partir de votre dossier cloud "
+"ScummVM :"
 
 #: gui/options.cpp:2275
 msgid "Download game files"
@@ -1547,7 +1549,7 @@ msgstr "Télécharger des fichiers de jeu"
 
 #: gui/options.cpp:2275
 msgid "Open downloads manager dialog"
-msgstr "Ouvrir le gestionnaire de téléchargement"
+msgstr "Ouvre le gestionnaire de téléchargement"
 
 #: gui/options.cpp:2278
 msgctxt "lowres"
@@ -1564,7 +1566,7 @@ msgstr "Se déconnecter"
 
 #: gui/options.cpp:2281
 msgid "Stop using this storage on this device"
-msgstr "Cesser d'utiliser ce stockage sur cet appareil"
+msgstr "Cesse d'utiliser ce stockage sur cet appareil"
 
 #: gui/options.cpp:2284
 msgctxt "lowres"
@@ -1582,11 +1584,11 @@ msgstr "1. Ouvrir ce lien :"
 #: gui/options.cpp:2290
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
-msgstr "2. Obtenez le code et entrez-le ici :"
+msgstr "2. Récupérer le code et l'entrer ici :"
 
 #: gui/options.cpp:2292
 msgid "2. Get the code and enter it here:"
-msgstr "2. Obtenez le code et entrez-le ici :"
+msgstr "2. Récupérer le code et l'entrer ici :"
 
 #: gui/options.cpp:2294
 msgid "Paste"
@@ -1594,7 +1596,7 @@ msgstr "Coller"
 
 #: gui/options.cpp:2294
 msgid "Paste code from clipboard"
-msgstr "Coller le code depuis le presse-papiers"
+msgstr "Colle le code depuis le presse-papiers"
 
 #: gui/options.cpp:2295
 msgid "3. Connect"
@@ -1602,7 +1604,7 @@ msgstr "3. Se connecter"
 
 #: gui/options.cpp:2295
 msgid "Connect your cloud storage account"
-msgstr "Se connecte à votre compte de stockage dans le nuage"
+msgstr "Se connecte à votre compte de stockage cloud"
 
 #: gui/options.cpp:2304
 msgid "Run server"
@@ -1619,11 +1621,13 @@ msgstr "Arrêté"
 #: gui/options.cpp:2309
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "/racine/ :"
+msgstr "Chemin /racine/ :"
 
 #: gui/options.cpp:2309 gui/options.cpp:2311 gui/options.cpp:2312
 msgid "Select which directory will be shown as /root/ in the Files Manager"
-msgstr "Indique le répertoire auquel le gestionnaire de fichier peut accéder"
+msgstr ""
+"Sélectionne le répertoire qui sera affiché comme /racine/ dans le "
+"gestionnaire de fichiers"
 
 #: gui/options.cpp:2311
 msgid "/root/ Path:"
@@ -1631,7 +1635,7 @@ msgstr "Chemin /racine/ :"
 
 #: gui/options.cpp:2317
 msgid "Server's port:"
-msgstr "Port :"
+msgstr "Port du serveur :"
 
 #: gui/options.cpp:2317
 msgid "Port for server to use"
@@ -1647,17 +1651,19 @@ msgstr ""
 #: gui/options.cpp:2323
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr "La fermeture du dialogue d'option entrainera l'arrêt du serveur."
+msgstr ""
+"La fermeture de la boite de dialogue Options entrainera l'arrêt du serveur."
 
 #: gui/options.cpp:2325
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
-"Démarre le serveur pour gérer les fichiers avec un navigateur (en réseau "
+"Démarrer le serveur pour gérer les fichiers avec un navigateur (en réseau "
 "local)."
 
 #: gui/options.cpp:2326
 msgid "Closing options dialog will stop the server."
-msgstr "La fermeture du dialogue d'option entrainera l'arrêt du serveur."
+msgstr ""
+"La fermeture de la boite de dialogue Options entrainera l'arrêt du serveur."
 
 #: gui/options.cpp:2338
 msgid "Use Text to speech"
@@ -1673,11 +1679,11 @@ msgstr "Aucune"
 
 #: gui/options.cpp:2431
 msgid "Failed to change cloud storage!"
-msgstr "Échec du changement de service de stockage !"
+msgstr "Échec du changement de service de stockage cloud !"
 
 #: gui/options.cpp:2434
 msgid "Another cloud storage is already active."
-msgstr "Un autre service de stockage est déjà actif."
+msgstr "Un autre service de stockage cloud est déjà actif."
 
 #: gui/options.cpp:2517
 msgid "Theme does not support selected language!"
@@ -1715,7 +1721,7 @@ msgstr "Sélectionner le répertoire des plugins"
 
 #: gui/options.cpp:2632
 msgid "Select directory for Files Manager /root/"
-msgstr "Indique le répertoire pour la /racine/ du Gestionnaire de Fichiers"
+msgstr "Sélectionner le répertoire pour la /racine/ du Gestionnaire de Fichiers"
 
 #: gui/options.cpp:2744
 msgid ""
@@ -1752,7 +1758,7 @@ msgstr "Arrêter serveur"
 
 #: gui/options.cpp:3110
 msgid "Stop local webserver"
-msgstr "Arrêter le serveur"
+msgstr "Arrête le serveur web local"
 
 #: gui/options.cpp:3162
 msgid "Storage connected."
@@ -1777,7 +1783,7 @@ msgstr ""
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:102
 msgid "#  next"
-msgstr "# suivant"
+msgstr "#  suivant"
 
 #: gui/predictivedialog.cpp:103
 msgid "add"
@@ -1794,21 +1800,21 @@ msgstr "<"
 #. I18N: Pre means 'Predictive', leave '*' as is
 #: gui/predictivedialog.cpp:115 gui/predictivedialog.cpp:602
 msgid "*  Pre"
-msgstr "* Pré"
+msgstr "*  Pré"
 
 #. I18N: 'Num' means Numbers
 #: gui/predictivedialog.cpp:605
 msgid "*  Num"
-msgstr "* 123"
+msgstr "*  123"
 
 #. I18N: 'Abc' means Latin alphabet input
 #: gui/predictivedialog.cpp:608
 msgid "*  Abc"
-msgstr "* Abc"
+msgstr "*  Abc"
 
 #: gui/recorderdialog.cpp:62
 msgid "Recorder or Playback Gameplay"
-msgstr "Enregistreur ou Joueur de Gameplay"
+msgstr "Enregistreur ou Lecteur de Gameplay"
 
 #: gui/recorderdialog.cpp:67 gui/recorderdialog.cpp:155
 #: gui/saveload-dialog.cpp:400 gui/saveload-dialog.cpp:469
@@ -1957,7 +1963,7 @@ msgstr "Ajouter quand même"
 
 #: gui/unknown-game-dialog.cpp:58
 msgid "Copy to clipboard"
-msgstr "Copier Informations"
+msgstr "Copier dans le presse-papiers"
 
 #: gui/unknown-game-dialog.cpp:64
 msgid "Report game"
@@ -2032,7 +2038,7 @@ msgstr "Pas d'erreur"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "Fichier de données introuvable"
+msgstr "Données de jeu introuvables"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
@@ -2064,7 +2070,7 @@ msgstr "Le chemin n'est pas un répertoire"
 
 #: common/error.cpp:58
 msgid "Path not a file"
-msgstr "Chemin n'est pas un fichier"
+msgstr "Le chemin n'est pas un fichier"
 
 #: common/error.cpp:61
 msgid "Cannot create file"
@@ -2199,7 +2205,7 @@ msgstr "~C~harger"
 
 #: engines/dialogs.cpp:75 backends/platform/3ds/options-dialog.cpp:46
 msgid "~S~ave"
-msgstr "~S~auver"
+msgstr "~S~auvegarder"
 
 #: engines/dialogs.cpp:79
 msgid "~O~ptions"
@@ -2239,7 +2245,7 @@ msgstr "Retour au ~L~anceur"
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
-msgstr "Sauvegarde :"
+msgstr "Sauvegarder :"
 
 #: engines/dialogs.cpp:99 engines/engine.cpp:827 engines/agi/saveload.cpp:768
 #: engines/avalanche/parser.cpp:1919 engines/buried/saveload.cpp:534
@@ -2260,7 +2266,7 @@ msgstr "Sauvegarde :"
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
-msgstr "Sauver"
+msgstr "Sauvegarder"
 
 #: engines/dialogs.cpp:129
 msgid ""
@@ -2391,7 +2397,7 @@ msgstr ""
 
 #: engines/engine.cpp:648 engines/wintermute/wintermute.cpp:202
 msgid "Start anyway"
-msgstr "Je comprends"
+msgstr "Lancer quand même"
 
 #: engines/engine.cpp:655
 msgid "This game is not supported."
@@ -2430,7 +2436,7 @@ msgstr ""
 #: engines/game.cpp:175
 #, c-format
 msgid "Matched game IDs for the %s engine:"
-msgstr "Jeux possibles pour le moteur %s :"
+msgstr "IDs de jeu trouvés pour le moteur %s :"
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
@@ -2460,7 +2466,7 @@ msgstr "Clic Droit"
 #: engines/sky/metaengine.cpp:113 engines/twine/metaengine.cpp:235
 #: engines/wintermute/keymapper_tables.h:1261
 msgid "Pause"
-msgstr "Mettre en pause"
+msgstr "Pause"
 
 #: engines/metaengine.cpp:81 engines/parallaction/metaengine.cpp:130
 msgid "Game menu"
@@ -2772,13 +2778,11 @@ msgstr "Centrer"
 #: backends/graphics/opengl/opengl-graphics.cpp:243
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:72
 msgid "Pixel-perfect scaling"
-msgstr "Mise à l'échelle des pixels"
+msgstr "Mise à l'échelle Pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "Mise à l'échelle des pixels"
+msgstr "Mise à l'échelle des pixels pairs"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
@@ -2803,22 +2807,22 @@ msgstr "Résolution : %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:670
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2478
 msgid "Enabled aspect ratio correction"
-msgstr "Activer la correction du rapport d'aspect"
+msgstr "Correction du rapport d'aspect activée"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:672
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2484
 msgid "Disabled aspect ratio correction"
-msgstr "Désactiver la correction du rapport d'aspect"
+msgstr "Correction du rapport d'aspect désactivée"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:693
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Filtering enabled"
-msgstr "Filtrage Activé"
+msgstr "Filtrage activé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:695
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2502
 msgid "Filtering disabled"
-msgstr "Filtrage Désactivé"
+msgstr "Filtrage désactivé"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:724
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
@@ -2857,7 +2861,7 @@ msgstr "Capturer/Libérer la souris"
 #: engines/wintermute/keymapper_tables.h:1425
 #: engines/wintermute/keymapper_tables.h:1456
 msgid "Save screenshot"
-msgstr "Capture d'écran"
+msgstr "Sauver capture d'écran"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:430
 msgid "Toggle aspect ratio correction"
@@ -3224,7 +3228,7 @@ msgstr "Échec de l'envoi du fichier !"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr "Aucun fichier n'a été spécifié !"
+msgstr "Aucun fichier n'a été transféré !"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
