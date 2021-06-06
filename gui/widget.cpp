@@ -1044,8 +1044,6 @@ void EntryContainerWidget::setActiveInstallation(LauncherEntry &install) {
 void EntryContainerWidget::updateEntry() {
 	if ((!_activeInstall) && (!_installations.empty())) {
 		_activeInstall = _installations.begin();
-	}
-	if (_activeInstall) {
 		// warning("%s, %s - Install", _activeInstall->key.c_str(), _activeInstall->description.c_str());
 		Common::String gameid = _activeInstall->domain->getVal("gameid");
 		Common::String engineid = _activeInstall->domain->getVal("engineid");
@@ -1093,7 +1091,12 @@ void EntryContainerWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
 }
 
-void EntryContainerWidget::setVisible2(bool e) {
+void EntryContainerWidget::setEnabled(bool e) {
+	// Widget::setEnabled(e);
+	// _thumb->setEnabled(e);
+	// _plat->setEnabled(e);
+	// _title->setEnabled(e);
+	// _lang->setEnabled(e);
 	setVisible(e);
 	_thumb->setVisible(e);
 	_plat->setVisible(e);
@@ -1271,10 +1274,10 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 
 		if (((*iter)->getRelY() < -_entryHeight - 50) || ((*iter)->getRelY() > _h + 50)) {
-			(*iter)->setVisible2(false);
+			(*iter)->setEnabled(false);
 		}
 		else {
-			(*iter)->setVisible2(true);
+			(*iter)->setEnabled(true);
 		}
 		if (++col >= _entriesPerRow) {
 			++row;
@@ -1287,6 +1290,8 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
+	_scrollWindowHeight = _h;
+	_scrollWindowWidth = _w;
 	int row = 0, col = 0;
 	_entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 0);
 	int k = 0;
@@ -1299,6 +1304,12 @@ void GridWidget::reflowLayout() {
 			(*i)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
 
 			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+			if (((*i)->getRelY() < -_entryHeight - 50) || ((*i)->getRelY() > _h + 50)) {
+			(*i)->setEnabled(false);
+			}
+			else {
+				(*i)->setEnabled(true);
+			}
 			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
 			if (++col >= _entriesPerRow) {
