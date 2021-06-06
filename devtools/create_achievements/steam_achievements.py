@@ -58,15 +58,25 @@ parser.add_argument("--saveasgalaxyid", type=int, help="GOG Galaxy game id")
 parser.add_argument("-v", "--verbose", action="store_true")
 args = parser.parse_args()
 
+def log(msg):
+	global args
+	if args.verbose:
+		sys.stderr.write(msg + "\n")
+
+def err(msg):
+	sys.stderr.write(msg + "\n")
+	sys.exit(127)
+
 def parse_steamdb_info(url):
+	log("query {0}".format(url))
 	response = HTMLSession().get(url)
 
 	info_rows = response.html.xpath("//div[@id='info']/table/tbody/tr/td")
 	info_columns = 2 # id, text,
 	info_entries = int(len(info_rows) / info_columns)
 	if info_entries == 0:
-		sys.stderr.write("found NO information data\n")
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("found NO information data")
 
 	FORMAT_CHECKER_STRING = "Store Release Date"
 	is_format_ok = False
@@ -82,20 +92,21 @@ def parse_steamdb_info(url):
 			langs = info_value
 
 	if not is_format_ok:
-		sys.stderr.write("found NO {0}\nEntries: {1}".format(FORMAT_CHECKER_STRING, [i.text for i in info_rows][::2]))
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("found NO {0}\nEntries: {1}".format(FORMAT_CHECKER_STRING, [i.text for i in info_rows][::2]))
 
 	return langs.split(", ")
 
 def parse_steamdb_stats(url):
+	log("query {0}".format(url))
 	response = HTMLSession().get(url)
 
 	achievements_rows = response.html.xpath("//tr[starts-with(@id, 'achievement-')]/td")
 	achievements_columns = 3 # name, text, img
 	achievements_entries = int(len(achievements_rows) / achievements_columns)
 	if achievements_entries == 0:
-		sys.stderr.write("found NO achievements\n")
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("found NO achievements")
 
 	stats_rows = response.html.xpath("//tr[starts-with(@id, 'stat-')]/td")
 	stats_columns = 3 # name, text, default value
@@ -118,8 +129,8 @@ def parse_steamdb_stats(url):
 		texts = achievements_rows[idx + 1].text.strip().split("\n")
 
 		if len(texts) != 2:
-			sys.stderr.write("Unexpected description format: {0}\n".format(texts))
-			sys.exit(127)
+			log(repr(response.html.raw_html))
+			err("Unexpected description format: {0}".format(texts))
 
 		title = texts[0]
 		descr = texts[1]
@@ -131,13 +142,14 @@ def parse_steamdb_stats(url):
 	return achievements_en, stats_en
 
 def parse_steamcommunity_stats(url):
+	log("query {0}".format(url))
 	response = HTMLSession().get(url)
 
 	achievements_rows = response.html.xpath("//div[@class='achieveRow']")
 	achievements_entries = len(achievements_rows)
 	if achievements_entries == 0:
-		sys.stderr.write("found NO achievements\n")
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("found NO achievements")
 
 	translation = {}
 	for idx in range(achievements_entries):
@@ -146,34 +158,34 @@ def parse_steamcommunity_stats(url):
 		descrs = achievements_rows[idx].xpath(".//div[@class='achieveTxt']/h5/text()")
 
 		if len(imgs) != 1:
-			sys.stderr.write("Unexpected xpath result: expected exactly one img tag per achievement\n")
-			sys.exit(127)
+			log(repr(response.html.raw_html))
+			err("Unexpected xpath result: expected exactly one img tag per achievement")
 		if len(titles) != 1:
-			sys.stderr.write("Unexpected xpath result: expected exactly one h3 tag per achievement\n")
-			sys.exit(127)
+			log(repr(response.html.raw_html))
+			err("Unexpected xpath result: expected exactly one h3 tag per achievement")
 		if len(descrs) > 1:
-			sys.stderr.write("Unexpected xpath result: expected zero or one h5 tag per achievement\n")
-			sys.exit(127)
+			log(repr(response.html.raw_html))
+			err("Unexpected xpath result: expected zero or one h5 tag per achievement")
 
 		translation[imgs[0]] = (titles[0].strip(), descrs[0].strip() if descrs else None)
 
 	return translation
 
 def parse_achievementstats_stats(url):
+	log("query {0}".format(url))
 	response = HTMLSession().get(url)
 
 	tables = response.html.xpath("//table")
 	if len(tables) != 1:
-		sys.stderr.write("Unexpected xpath result: expected exactly one table tag on page\n")
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("Unexpected xpath result: expected exactly one table tag on page")
 
 	achievements_rows = response.html.xpath("//tbody/tr/td")
 	achievements_columns = 6 # icon, name, text, date, point, report
 	achievements_entries = int(len(achievements_rows) / achievements_columns)
 	if achievements_entries == 0:
-		print( response.html.raw_html )
-		sys.stderr.write("found NO achievements\n")
-		sys.exit(127)
+		log(repr(response.html.raw_html))
+		err("found NO achievements")
 
 	result = {}
 	for i in range(achievements_entries):
@@ -198,8 +210,7 @@ def join_achievements_translation(achievements_en, translations):
 		achievements[lang_id] = {}
 		for i, (name, title, descr, hide) in achievements_en.items():
 			if  not title in entitle2img:
-				sys.stderr.write("Can't find '{0}' at {1}\n".format(title, entitle2img))
-				sys.exit(127)
+				err("Can't find '{0}' at {1}".format(title, entitle2img))
 
 			t = translations[l][entitle2img[title]]
 			achievements[lang_id][i] = (name, t[0], t[1] if t[1] else descr, hide)
@@ -219,12 +230,12 @@ def join_achievements_descr(achievements_en, descs):
 	for i, (name, title, descr, hide) in achievements_en.items():
 		ext_descr = descrs[title]
 		if descr and descr != ext_descr:
-			sys.stderr.write("Unexpected difference between {0} and {1} for {2}\n".format(descr, ext_descr, title))
-			sys.exit(127)
+			err("Unexpected difference between {0} and {1} for {2}".format(descr, ext_descr, title))
 		result[i] = (name, title, descr if descr else ext_descr, hide)
 	return result
 
 def write_ini(fname, achievements, stats):
+	log("writing: {0}".format(fname))
 	with codecs.open(fname, "w", encoding="utf-8") as out:
 		for lang, it in stats.items():
 			out.write("[stats:{0}]\n".format(lang))
@@ -245,34 +256,21 @@ def write_ini(fname, achievements, stats):
 
 try:
 	STATS_URL = "https://steamdb.info/app/{0}/stats/".format(args.steamid)
-	if args.verbose:
-		sys.stderr.write("query {0}\n".format(STATS_URL))
-
 	achievements_en, stats_en = parse_steamdb_stats(STATS_URL)
-	if args.verbose:
-		sys.stderr.write("found {0} achievements\n".format(len(achievements_en)))
-		sys.stderr.write("found {0} stats\n".format(len(stats_en)))
+	log("found {0} achievements".format(len(achievements_en)))
+	log("found {0} stats".format(len(stats_en)))
 
 	hidden_achievements = [it for it in achievements_en.values() if it[3]]
-	if args.verbose:
-		sys.stderr.write("found {0} hidden achievements\n".format(len(hidden_achievements)))
+	log("found {0} hidden achievements".format(len(hidden_achievements)))
 
 	if hidden_achievements:
 		HIDDEN_STATS_URL = "https://www.achievementstats.com/index.php?action=games&gameId={0}".format(args.steamid)
-		if args.verbose:
-			sys.stderr.write("query {0}\n".format(HIDDEN_STATS_URL))
-
 		descrs = parse_achievementstats_stats(HIDDEN_STATS_URL)
 		achievements_en = join_achievements_descr(achievements_en, descrs)
-		
 
 	INFO_URL = "https://steamdb.info/app/{0}/info/".format(args.steamid)
-	if args.verbose:
-		sys.stderr.write("query {0}\n".format(INFO_URL))
 	langs = parse_steamdb_info(INFO_URL)
-
-	if args.verbose:
-		sys.stderr.write("found langs: {0}\n".format(langs))
+	log("found langs: {0}".format(langs))
 	
 	translations = {"English":{}}
 	if len(langs) > 1:
@@ -294,8 +292,6 @@ try:
 		FNAME = "galaxy-{0}.ini".format(args.saveasgalaxyid)
 	else:
 		FNAME = "steam-{0}.ini".format(args.steamid)
-	if args.verbose:
-		sys.stderr.write("writing: {0}\n".format(FNAME))
 	write_ini(os.path.join("gen", FNAME), achievements, stats)
 
 except requests.exceptions.RequestException as e:
