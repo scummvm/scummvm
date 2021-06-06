@@ -35,7 +35,6 @@
 #include "ags/lib/allegro/fixed.h"
 #include "ags/lib/allegro/fmaths.h"
 #include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/mouse.h"
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/unicode.h"
 
@@ -44,6 +43,7 @@ namespace AGS3 {
 inline int install_allegro() {
 	return 0;
 }
+
 inline void allegro_exit() {}
 
 } // namespace AGS3
