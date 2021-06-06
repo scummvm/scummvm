@@ -665,7 +665,7 @@ void Scene::processActorZones(int32 actorIdx) {
 	int32 currentZ = actor->pos.z;
 
 	actor->zone = -1;
-	int32 tmpCellingGrid = 0;
+	bool tmpCellingGrid = false;
 
 	if (IS_HERO(actorIdx)) {
 		currentActorInZone = false;
@@ -704,7 +704,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case ZoneType::kGrid:
 				if (currentlyFollowedActor == actorIdx) {
-					tmpCellingGrid = 1;
+					tmpCellingGrid = true;
 					if (_engine->_grid->useCellingGrid != zone->infoData.CeillingGrid.newGrid) {
 						if (zone->infoData.CeillingGrid.newGrid != -1) {
 							_engine->_grid->createGridMap();
