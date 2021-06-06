@@ -761,6 +761,7 @@ socks	Pajama Sam's Sock Works
 	19263586f749a560c1adf8b3393a9593	-1	ru	Windows	HE 85	-	-	sev
 	4bfa4a43684bcb437f7fb47f457a0aa5	-1	nl	All	HE 99	-	-	daniel9
 	8de13897f0121c79d29a2377159f9ad0	-1	en	Windows	HE 99	Updated	-	Aziraphale Jasra
+	b2bc1df014ca9a563396cce691e9f23a	13668	fr	Windows	HE 99	-	-	sev
 
 puttrace	Putt-Putt Enters the Race
 	981e1e1891f2be7e25a01f50ae55a5af	-1	us	All	HE 98	-	-	Kirben
