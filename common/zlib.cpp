@@ -496,7 +496,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
 	if (toBeWrapped) {
 		if (toBeWrapped->eos() || toBeWrapped->err() || toBeWrapped->size() < 2) {
 			delete toBeWrapped;
-			return NULL;
+			return nullptr;
 		}
 		uint16 header = toBeWrapped->readUint16BE();
 		bool isCompressed = (header == 0x1F8B ||
@@ -508,7 +508,7 @@ SeekableReadStream *wrapCompressedReadStream(SeekableReadStream *toBeWrapped, ui
 			return new GZipReadStream(toBeWrapped, knownSize);
 #else
 			delete toBeWrapped;
-			return NULL;
+			return nullptr;
 #endif
 		}
 	}
