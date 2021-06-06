@@ -726,6 +726,7 @@ void Scene::processActorZones(int32 actorIdx) {
 			case ZoneType::kText:
 				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->freezeTime();
+					_engine->exitSceneryView();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
 					_engine->_text->drawTextProgressive(zone->infoData.DisplayText.textIdx);
