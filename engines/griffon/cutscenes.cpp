@@ -418,7 +418,7 @@ void GriffonEngine::endOfGame() {
 
 			if (yy < 10 && i == ARRAYSIZE(story2)-1) {
 				if (ttsMan == nullptr || ttsMan->isSpeaking() == false)
-					return;
+					break;
 			}
 		}
 
