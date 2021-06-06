@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/ini-file.h"
+#include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
 
@@ -247,6 +248,7 @@ public:
 	/** @} */
 
 private:
+	String getCurrentLang() const;
 	bool loadAchievementsData(const char *platform, const char *appId);
 
 	float getStatFloatEx(const String &id, const String &section) const;
@@ -255,7 +257,7 @@ private:
 	INIFile *_iniFile;
 	String _iniFileName;
 	Common::Array<StatDescription> _stats;
-	Common::Array<AchievementDescription> _descriptions;
+	Common::HashMap<String, Common::Array<AchievementDescription> > _achievements;
 };
 
 /** Shortcut for accessing the Achievements Manager. */
