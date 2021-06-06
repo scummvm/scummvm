@@ -1160,9 +1160,37 @@ void MacText::drawSelection(int xoff, int yoff) {
 	end = MIN((int)getDimensions().height(), end);
 
 	int numLines = 0;
-	int x1 = 0, x2 = 0;
+	int x1 = 0, x2 = getDimensions().width() - 1;
 	int row = s.startRow;
 	int alignOffset = 0;
+
+	// we may draw part of the selection, so we need to calc the height of first line
+	if (s.startY < _scrollPos) {
+		int start_row = 0;
+		getRowCol(s.startX, _scrollPos, nullptr, &numLines, &start_row, nullptr);
+		numLines = getLineHeight(start_row) - (_scrollPos - numLines);
+		if (start_row == s.startRow)
+			x1 = s.startX;
+		if (start_row == s.endRow)
+			x2 = s.endX;
+		// deal with the first line, which is not a complete line
+		if (numLines) {
+			if (_textAlignment == kTextAlignRight)
+				alignOffset = _textMaxWidth - getLineWidth(start_row);
+			else if (_textAlignment == kTextAlignCenter)
+				alignOffset = (_textMaxWidth / 2) - (getLineWidth(start_row) / 2);
+
+			if (swaped && start_row == s.startRow && s.startCol != 0) {
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			} else {
+				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			}
+
+			row = start_row + 1;
+		}
+	}
 
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
