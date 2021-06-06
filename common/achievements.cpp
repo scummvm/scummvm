@@ -84,6 +84,16 @@ bool AchievementsManager::setActiveDomain(const AchievementsInfo &info) {
 }
 
 
+String AchievementsManager::getCurrentLang() const {
+	String uiLang = TransMan.getCurrentLanguage().c_str();
+	if (_achievements.contains(uiLang)) {
+		return uiLang;
+	}
+
+	return "en";
+}
+
+
 bool AchievementsManager::loadAchievementsData(const char *platform, const char *appId) {
 	Archive *cfgZip = Common::makeZipArchive("achievements.dat");
 	if (!cfgZip) {
@@ -123,22 +133,30 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 		return false;
 	}
 
-	_descriptions.clear();
-	for (int i = 0; i < 256; i++) {
-		String prefix = String::format("item_%d", i);
-
-		String id, title, comment, hidden;
-		cfgFile.getKey(prefix + "_id", "achievements:en", id);
-		cfgFile.getKey(prefix + "_title", "achievements:en", title);
-		cfgFile.getKey(prefix + "_comment", "achievements:en", comment);
-		cfgFile.getKey(prefix + "_hidden", "achievements:en", hidden);
-
-		if (id.empty()) {
-			break;
-		} else {
-			_descriptions.push_back({id, title, comment, !hidden.empty()});
+	_achievements.clear();
+	INIFile::SectionList sections = cfgFile.getSections();
+	for (Common::INIFile::SectionList::const_iterator section = sections.begin(); section != sections.end(); section++) {
+		if (!(section->name.hasPrefix("achievements:"))) {
+			continue;
 		}
-	}
+
+		String lang = section->name.substr(strlen("achievements:"));
+
+		for (int i = 0; i < 256; i++) {
+			String prefix = String::format("item_%d", i);
+
+			String id      = section->getKey(prefix + "_id")      ? section->getKey(prefix + "_id")->value      : "";
+			String title   = section->getKey(prefix + "_title")   ? section->getKey(prefix + "_title")->value   : "";
+			String comment = section->getKey(prefix + "_comment") ? section->getKey(prefix + "_comment")->value : "";
+			String hidden  = section->getKey(prefix + "_hidden")  ? section->getKey(prefix + "_hidden")->value  : "";
+
+			if (id.empty()) {
+				break;
+			} else {
+				_achievements[lang].push_back({id, title, comment, !hidden.empty()});
+			}
+		}
+	} 
 
 	_stats.clear();
 	for (int i = 0; i < 256; i++) {
@@ -170,7 +188,7 @@ bool AchievementsManager::unsetActiveDomain() {
 	delete _iniFile;
 	_iniFile = nullptr;
 
-	_descriptions.clear();
+	_achievements.clear();
 	_stats.clear();
 
 	return true;
@@ -186,11 +204,15 @@ bool AchievementsManager::setAchievement(const String &id) {
 		return true;
 	}
 
+	const String &lang = getCurrentLang();
+
 	String displayedMessage = id;
-	for (uint32 i = 0; i < _descriptions.size(); i++) {
-		if (_descriptions[i].id == id) {
-			displayedMessage = _descriptions[i].title;
-			break;
+	if (_achievements.contains(lang)) {
+		for (uint32 i = 0; i < _achievements[lang].size(); i++) {
+			if (_achievements[lang][i].id == id) {
+				displayedMessage = _achievements[lang][i].title;
+				break;
+			}
 		}
 	}
 
@@ -365,7 +387,12 @@ uint16 AchievementsManager::getAchievementCount() const {
 		return 0;
 	}
 
-	return _descriptions.size();
+	const String &lang = getCurrentLang();
+	if (!_achievements.contains(lang)) {
+		return 0;
+	}
+
+	return _achievements[lang].size();
 }
 
 
@@ -374,11 +401,16 @@ const AchievementDescription *AchievementsManager::getAchievementDescription(uin
 		return nullptr;
 	}
 
-	if (index >= _descriptions.size()) {
+	const String &lang = getCurrentLang();
+	if (!_achievements.contains(lang)) {
 		return nullptr;
 	}
 
-	return &(_descriptions[index]);
+	if (index >= _achievements[lang].size()) {
+		return nullptr;
+	}
+
+	return &(_achievements[lang][index]);
 }
 
 
