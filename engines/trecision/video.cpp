@@ -490,7 +490,7 @@ void AnimManager::drawSmkIconFrame(uint16 startIcon, uint16 iconNum) {
 		return;
 
 	int stx = ICONMARGSX;
-	uint16 a;
+	uint a;
 	for (a = 0; a < ICONSHOWN; ++a) {
 		if (a + startIcon >= _vm->_inventory.size())
 			break;
