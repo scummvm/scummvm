@@ -144,6 +144,30 @@ def parse_steamcommunity_stats(url):
 
 	return translation
 
+def parse_achievementstats_stats(url):
+	response = HTMLSession().get(url)
+
+	tables = response.html.xpath("//table")
+	if len(tables) != 1:
+		sys.stderr.write("Unexpected xpath result: expected exactly one table tag on page\n")
+		sys.exit(127)
+
+	achievements_rows = response.html.xpath("//tbody/tr/td")
+	achievements_columns = 6 # icon, name, text, date, point, report
+	achievements_entries = int(len(achievements_rows) / achievements_columns)
+	if achievements_entries == 0:
+		print( response.html.raw_html )
+		sys.stderr.write("found NO achievements\n")
+		sys.exit(127)
+
+	result = {}
+	for i in range(achievements_entries):
+		idx   = achievements_columns * i
+		name  = achievements_rows[idx + 1].text.strip()
+		descr = achievements_rows[idx + 2].text.strip()
+		result[name] = descr
+	return result
+
 def join_achievements_translation(achievements_en, translations):
 	achievements = {"en": achievements_en}
 
@@ -175,6 +199,16 @@ def join_achievements_translation(achievements_en, translations):
 
 	return achievements
 
+def join_achievements_descr(achievements_en, descs):
+	result = {}
+	for i, (name, title, descr, hide) in achievements_en.items():
+		ext_descr = descrs[title]
+		if descr and descr != ext_descr:
+			sys.stderr.write("Unexpected difference between {0} and {1} for {2}\n".format(descr, ext_descr, title))
+			sys.exit(127)
+		result[i] = (name, title, descr if descr else ext_descr, hide)
+	return result
+
 def write_ini(fname, achievements, stats):
 	with codecs.open(fname, "w", encoding="utf-8") as out:
 		for lang, it in stats.items():
@@ -203,6 +237,19 @@ try:
 	if args.verbose:
 		sys.stderr.write("found {0} achievements\n".format(len(achievements_en)))
 		sys.stderr.write("found {0} stats\n".format(len(stats_en)))
+
+	hidden_achievements = [it for it in achievements_en.values() if it[3]]
+	if args.verbose:
+		sys.stderr.write("found {0} hidden achievements\n".format(len(hidden_achievements)))
+
+	if hidden_achievements:
+		HIDDEN_STATS_URL = "https://www.achievementstats.com/index.php?action=games&gameId={0}".format(args.steamid)
+		if args.verbose:
+			sys.stderr.write("query {0}\n".format(HIDDEN_STATS_URL))
+
+		descrs = parse_achievementstats_stats(HIDDEN_STATS_URL)
+		achievements_en = join_achievements_descr(achievements_en, descrs)
+		
 
 	INFO_URL = "https://steamdb.info/app/{0}/info/".format(args.steamid)
 	if args.verbose:
