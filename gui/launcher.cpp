@@ -349,10 +349,6 @@ void LauncherDialog::updateListing() {
 
 	_grid->gridFromGameList(&domainList);
 
-	GraphicsWidget *testWidget = new GraphicsWidget(this, 0, 0, 192, 128);
-	Common::String testPath("adl-hires2.png");
-	testWidget->setGfx(_grid->filenameToSurface(testPath));
-
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		color = ThemeEngine::kFontColorNormal;
