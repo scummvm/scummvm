@@ -59,7 +59,7 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"private-eye",  // EU release
+		"private-eye",  // EU release (UK)
 		0,
 		AD_ENTRY2s("pvteye.z", "d9ce391395701615e8b5d04bc4bf7ec3", 284699,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
@@ -67,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
-	},
+	},	
 	{
 		"private-eye", // Demo from the EU release
 		"Demo",
@@ -139,15 +139,27 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
-		"private-eye", // Demo from the EU release (UK)
-		"Demo",
-		AD_ENTRY2s("Private Eye Demo", "", 284129,
+		"private-eye", // EU release (DE)
+		0,
+		AD_ENTRY2s("pvteye.ex_", "5ca171c4e8d804c7277887277d049f03", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
-		Common::EN_GRB,
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"private-eye", // Demo from the EU release (DE)
+		"Demo",
+		AD_ENTRY2s("pvtdemo.ex_", "17156cbac7d14b08f4e351ac0e16a889", 599040,
+		    "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
+		Common::DE_DEU,
 		Common::kPlatformWindows,
 		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+
+
 	/*
 	{
 		"private-eye", // Demo from the EU release
