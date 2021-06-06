@@ -449,13 +449,25 @@ void MacWindowManager::setTextInClipboard(const Common::U32String &str) {
 }
 
 // get the text size ignoring \n
-int getPureTextSize(const Common::U32String &str) {
+int getPureTextSize(const Common::U32String &str, bool global) {
 	const Common::U32String::value_type *l = str.c_str();
 	int res = 0;
-	while (*l) {
-		if (*l != '\n')
-			res++;
-		l++;
+	if (global) {
+		// if we are in global, then we have no format in str. thus, we ignore all \r \n
+		while (*l) {
+			if (*l != '\n' && *l != '\r')
+				res++;
+			l++;
+		}
+	} else {
+		// if we are not in global, then we are using the wm clipboard, which use \n for new line
+		// i think that if statement can be optimized to, like if (*l != '\n' && (!global || *l != '\r'))
+		// but for the sake of readability, we keep codes here
+		while (*l) {
+			if (*l != '\n')
+				res++;
+			l++;
+		}
 	}
 	return res;
 }
@@ -468,19 +480,19 @@ Common::U32String MacWindowManager::getTextFromClipboard(const Common::U32String
 		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
 		str = format + global_str;
 		if (size)
-			*size = getPureTextSize(global_str);
+			*size = getPureTextSize(global_str, true);
 	} else {
 		Common::U32String tmp = stripFormat(_clipboard);
 		if (tmp == global_str) {
 			// if the text is equal, then we use wm one which contains the format
 			str = _clipboard;
 			if (size)
-				*size = getPureTextSize(tmp);
+				*size = getPureTextSize(tmp, false);
 		} else {
 			// otherwise, we prefer the global one
 			str = format + global_str;
 			if (size)
-				*size = getPureTextSize(global_str);
+				*size = getPureTextSize(global_str, true);
 		}
 	}
 	return str;
