@@ -92,8 +92,6 @@ private:
 extern int16        speechButtonCount;      // count of speech buttons
 extern void         abortSpeech(void);
 
-const uint32            tileGroupID = MKTAG('T', 'I', 'L', 'E');
-
 extern const uint32 imageGroupID = MKTAG('I', 'M', 'A', 'G');
 
 extern hResContext          *tileRes;       // tile resource handle
@@ -681,10 +679,6 @@ void TileModeSetup(void) {
 
 	//Enable Tile Mode Specific Controls
 	tileControls->enable(TRUE);
-
-//	tileRes = resFile->newContext( tileGroupID );
-
-//	initPalette();
 
 	initTileBanks();
 
