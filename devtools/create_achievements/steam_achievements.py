@@ -30,7 +30,17 @@ from requests_html import HTMLSession
 
 # Hidden achievement descriptions are available only at user accounts for those users who have them completed
 
-STEAM_USERNAME = "lb_ii"
+STEAM_USERS = {
+	"283880"  : "lb_ii",
+	"370910"  : "lb_ii",
+	"378630"  : "lb_ii",
+	"420180"  : "lb_ii",
+	"551840"  : "lb_ii",
+	"631570"  : "lb_ii",
+	"761460"  : "lb_ii",
+	"1251910" : "lb_ii",
+	"1270590" : "lb_ii",
+}
 
 # Format is: <SteamDB language name>: (<Steam API language code>, <unixLocale>)
 # For <SteamDB language name>, see verbose output of this tool
@@ -221,6 +231,7 @@ def join_achievements_translation(achievements_en, translations):
 				completely_same = False
 				break
 		if completely_same:
+			print("WARNING: Translation is available for {0}, but is completely the same as English for game {1}".format(l, args.steamid))
 			del achievements[lang_id]
 
 	return achievements
@@ -275,15 +286,14 @@ try:
 	translations = {"English":{}}
 	if len(langs) > 1:
 		for l in langs:
-			steam_lang = LANGUAGES[l][0]
-			lang_id = LANGUAGES[l][1]
-			if hidden_achievements and len(langs) > 1:
-				TRANSLATION_URL = "https://steamcommunity.com/id/{0}/stats/{1}/?l={2}".format(STEAM_USERNAME, args.steamid, steam_lang)
+			if not hidden_achievements or len(langs) == 1:
+				TRANSLATION_URL = "https://steamcommunity.com/stats/{0}/achievements?l={1}".format(args.steamid, LANGUAGES[l][0])
+				translations[l] = parse_steamcommunity_stats(TRANSLATION_URL)
+			elif str(args.steamid) in STEAM_USERS:
+				TRANSLATION_URL = "https://steamcommunity.com/id/{0}/stats/{1}/?l={2}".format(STEAM_USERS[str(args.steamid)], args.steamid, LANGUAGES[l][0])
+				translations[l] = parse_steamcommunity_stats(TRANSLATION_URL)
 			else:
-				TRANSLATION_URL = "https://steamcommunity.com/stats/{0}/achievements?l={1}".format(args.steamid, steam_lang)
-			if args.verbose:
-				sys.stderr.write("query {0}\n".format(TRANSLATION_URL))
-			translations[l] = parse_steamcommunity_stats(TRANSLATION_URL)
+				print("WARNING: ignoring {0} localization for game {1} since it has hidden achievements not listed at STEAM_USERS, please buy, complete and add this game!".format(l, args.steamid))
 
 	achievements = join_achievements_translation(achievements_en, translations)
 	stats = {"en": stats_en} if stats_en else {}
