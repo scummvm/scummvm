@@ -373,7 +373,7 @@ uint32 lineTerrain(
 
 	uint16      errorTerm = 0;
 
-	uint16      subTileMask = 0;
+	uint16      subTileMask_ = 0;
 
 	int16       tileStartZ,
 	            *minZ,
@@ -446,18 +446,18 @@ uint32 lineTerrain(
 				terrain |=  tileTerrain(
 				                mapNum,
 				                tilePt,
-				                subTileMask,
+				                subTileMask_,
 				                *minZ,
 				                *maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
 				tilePt.u = curSubTile.u >> tileSubShift;
 				tileStartZ = curSubTile.z;
-				subTileMask = 0;
+				subTileMask_ = 0;
 			}
 
-			subTileMask |= (uMask[curSubTile.u & subTileMask] &
-			                vMask[curSubTile.v & subTileMask]);
+			subTileMask_ |= (uMask[curSubTile.u & subTileMask_] &
+			                vMask[curSubTile.v & subTileMask_]);
 #if DEBUG && VISUAL2
 			tempPoint.u = curSubTile.u << tileSubShift;
 			tempPoint.v = curSubTile.v << tileSubShift;
@@ -477,18 +477,18 @@ uint32 lineTerrain(
 					terrain |=  tileTerrain(
 					                mapNum,
 					                tilePt,
-					                subTileMask,
+					                subTileMask_,
 					                *minZ,
 					                *maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
 					tilePt.v = curSubTile.v >> tileSubShift;
 					tileStartZ = curSubTile.z;
-					subTileMask = 0;
+					subTileMask_ = 0;
 				}
 
-				subTileMask |= (uMask[curSubTile.u & subTileMask] &
-				                vMask[curSubTile.v & subTileMask]);
+				subTileMask_ |= (uMask[curSubTile.u & subTileMask_] &
+				                vMask[curSubTile.v & subTileMask_]);
 #if DEBUG && VISUAL2
 				tempPoint.u = curSubTile.u << tileSubShift;
 				tempPoint.v = curSubTile.v << tileSubShift;
@@ -515,18 +515,18 @@ uint32 lineTerrain(
 				terrain |=  tileTerrain(
 				                mapNum,
 				                tilePt,
-				                subTileMask,
+				                subTileMask_,
 				                *minZ,
 				                *maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
 				tilePt.v = curSubTile.v >> tileSubShift;
 				tileStartZ = curSubTile.z;
-				subTileMask = 0;
+				subTileMask_ = 0;
 			}
 
-			subTileMask |= (uMask[curSubTile.u & subTileMask] &
-			                vMask[curSubTile.v & subTileMask]);
+			subTileMask_ |= (uMask[curSubTile.u & subTileMask_] &
+			                vMask[curSubTile.v & subTileMask_]);
 
 #if DEBUG && VISUAL2
 			tempPoint.u = curSubTile.u << tileSubShift;
@@ -547,18 +547,18 @@ uint32 lineTerrain(
 					terrain |=  tileTerrain(
 					                mapNum,
 					                tilePt,
-					                subTileMask,
+					                subTileMask_,
 					                *minZ,
 					                *maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
 					tilePt.u = curSubTile.u >> tileSubShift;
 					tileStartZ = curSubTile.z;
-					subTileMask = 0;
+					subTileMask_ = 0;
 				}
 
-				subTileMask |= (uMask[curSubTile.u & subTileMask] &
-				                vMask[curSubTile.v & subTileMask]);
+				subTileMask_ |= (uMask[curSubTile.u & subTileMask_] &
+				                vMask[curSubTile.v & subTileMask_]);
 #if DEBUG && VISUAL2
 				tempPoint.u = curSubTile.u << tileSubShift;
 				tempPoint.v = curSubTile.v << tileSubShift;
@@ -576,7 +576,7 @@ uint32 lineTerrain(
 	terrain |=  tileTerrain(
 	                mapNum,
 	                tilePt,
-	                subTileMask,
+	                subTileMask_,
 	                *minZ,
 	                *maxZ);
 
