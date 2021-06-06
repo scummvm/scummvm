@@ -129,8 +129,6 @@ public:
 	// space with null-terminators when needed.
 	void    WriteCount(Stream *out, size_t count) const;
 
-	static void WriteString(const char *cstr, Stream *out);
-
 	//-------------------------------------------------------------------------
 	// String analysis methods
 	//-------------------------------------------------------------------------

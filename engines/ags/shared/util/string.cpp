@@ -131,13 +131,6 @@ void String::WriteCount(Stream *out, size_t count) const {
 	}
 }
 
-/* static */ void String::WriteString(const char *cstr, Stream *out) {
-	if (out) {
-		cstr = cstr ? cstr : "";
-		out->Write(cstr, strlen(cstr) + 1);
-	}
-}
-
 int String::Compare(const char *cstr) const {
 	return strcmp(_cstr, cstr ? cstr : "");
 }
