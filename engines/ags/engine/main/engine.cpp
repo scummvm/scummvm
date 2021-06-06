@@ -520,7 +520,7 @@ int check_write_access() {
 
 	_G(our_eip) = -1897;
 
-	if (::remove(tempPath))
+	if (File::DeleteFile(tempPath))
 		return 0;
 
 	return 1;

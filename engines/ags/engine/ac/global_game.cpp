@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/savefile.h"
 #include "ags/lib/std/math.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/audio_clip_type.h"
@@ -110,19 +111,8 @@ void RestoreGameSlot(int slnum) {
 void DeleteSaveSlot(int slnum) {
 	String nametouse;
 	nametouse = get_save_game_path(slnum);
-	::remove(nametouse);
-	if ((slnum >= 1) && (slnum <= MAXSAVEGAMES)) {
-		String thisname;
-		for (int i = MAXSAVEGAMES; i > slnum; i--) {
-			thisname = get_save_game_path(i);
-			if (Shared::File::TestReadFile(thisname)) {
-				// Rename the highest save game to fill in the gap
-				rename(thisname, nametouse);
-				break;
-			}
-		}
 
-	}
+	g_system->getSavefileManager()->removeSavefile(nametouse);
 }
 
 void PauseGame() {

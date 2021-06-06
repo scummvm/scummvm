@@ -315,7 +315,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const RGB *pall) {
 
 	// Delete temp file
 	delete lz_temp_s;
-	::remove(lztempfnm);
+	File::DeleteFile(lztempfnm);
 
 	// Seek back to the end of the output stream
 	out->Seek(toret, kSeekBegin);
