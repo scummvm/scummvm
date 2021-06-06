@@ -1933,6 +1933,9 @@ void MacText::addNewLine(int *row, int *col) {
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 
+	// we have to inherit paragraphEnd from the origin line
+	newline.paragraphEnd = line->paragraphEnd;
+
 	newchunk.text = line->chunks[ch].text.substr(pos);
 	line->chunks[ch].text = line->chunks[ch].text.substr(0, pos);
 	line->paragraphEnd = true;
