@@ -1159,22 +1159,28 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	int numLines = 0;
 	int x1 = 0, x2 = 0;
+	int row = s.startRow;
+	int alignOffset = 0;
 
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
 			x2 = getDimensions().width() - 1;
 
-			if (y + _scrollPos == s.startY && s.startX > 0) {
-				numLines = getLineHeight(s.startRow);
+			if (_textAlignment == kTextAlignRight)
+				alignOffset = _textMaxWidth - getLineWidth(row);
+			else if (_textAlignment == kTextAlignCenter)
+				alignOffset = (_textMaxWidth / 2) - (getLineWidth(row) / 2);
+
+			numLines = getLineHeight(row);
+			if (y + _scrollPos == s.startY && s.startX > 0)
 				x1 = s.startX;
-			}
-			if (y + _scrollPos >= lastLineStart) {
-				numLines = getLineHeight(s.endRow);
+			if (y + _scrollPos >= lastLineStart)
 				x2 = s.endX;
-			}
+
 			x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
-			x2 = MIN<int>(x2 + xoff, getDimensions().width() - 1);
+			x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			row++;
 		} else {
 			numLines--;
 		}
