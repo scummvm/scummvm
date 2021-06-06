@@ -52,19 +52,19 @@ public:
 		_directoryGlobs = Asylum::directoryGlobs;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
 		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
 	}
 
-	const char *getEngineId() const {
+	const char *getEngineId() const override {
 		return "asylum";
 	}
 
-	const char *getName() const {
+	const char *getName() const override {
 		return "Sanitarium";
 	}
 
-	const char *getOriginalCopyright() const {
+	const char *getOriginalCopyright() const override {
 		return "Sanitarium (c) ASC Games";
 	}
 
