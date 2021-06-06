@@ -135,12 +135,12 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 
 	_achievements.clear();
 	INIFile::SectionList sections = cfgFile.getSections();
-	for (Common::INIFile::SectionList::const_iterator section = sections.begin(); section != sections.end(); section++) {
+	for (Common::INIFile::SectionList::const_iterator section = sections.begin(); section != sections.end(); ++section) {
 		if (!(section->name.hasPrefix("achievements:"))) {
 			continue;
 		}
 
-		String lang = section->name.substr(strlen("achievements:"));
+		String lang = section->name.substr(13); //strlen("achievements:")
 
 		for (int i = 0; i < 256; i++) {
 			String prefix = String::format("item_%d", i);
