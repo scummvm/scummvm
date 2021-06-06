@@ -81,7 +81,7 @@ public:
 
 	void addText(Common::Point pos, const char *text, uint16 textCol, uint16 shadowCol);
 	void clearLastText();
-	void drawText(StackText text);
+	void drawText(StackText *text);
 	void clearText();
 	void drawTexts();
 	void redrawString();
