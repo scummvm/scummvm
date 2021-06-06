@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
@@ -57,6 +58,7 @@
 #include "ags/engine/ac/dynobj/all_script_classes.h"
 #include "ags/engine/ac/dynobj/script_camera.h"
 #include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/font/fonts.h"
@@ -848,29 +850,24 @@ void skip_serialized_bitmap(Stream *in) {
 }
 
 long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
-	long fileSize = 0;
-	String tempFileName = String::FromFormat("%s""_tmpscht.bmp", _G(saveGameDirectory).GetCStr());
-
-	screenshot->SaveToFile(tempFileName, _G(palette));
+	// Save the screenshot to a memory stream so we can access the raw data
+	Common::MemoryWriteStreamDynamic bitmap(DisposeAfterUse::YES);
+	screenshot->SaveToFile(bitmap, _G(palette));
 
 	update_polled_stuff_if_runtime();
 
-	if (Path::IsFile(tempFileName)) {
-		fileSize = File::GetFileSize(tempFileName);
-		char *buffer = (char *)malloc(fileSize);
+	// Write the bitmap to the output stream
+	out->Write(bitmap.getData(), bitmap.size());
 
-		Stream *temp_in = Shared::File::OpenFileRead(tempFileName);
-		temp_in->Read(buffer, fileSize);
-		delete temp_in;
-		::remove(tempFileName);
-
-		out->Write(buffer, fileSize);
-		free(buffer);
-	}
-	return fileSize;
+	return bitmap.size();
 }
 
 Bitmap *create_savegame_screenshot() {
+	// Render the view without any UI elements
+	int old_flags = _G(debug_flags);
+	_G(debug_flags) |= DBG_NOIFACE;
+	construct_game_scene(true);
+
 	int usewid = data_to_game_coord(_GP(play).screenshot_width);
 	int usehit = data_to_game_coord(_GP(play).screenshot_height);
 	const Rect &viewport = _GP(play).GetMainViewport();
@@ -882,11 +879,17 @@ Bitmap *create_savegame_screenshot() {
 	if ((_GP(play).screenshot_width < 16) || (_GP(play).screenshot_height < 16))
 		quit("!Invalid _GP(game).screenshot_width/height, must be from 16x16 to screen res");
 
-	return CopyScreenIntoBitmap(usewid, usehit);
+	Bitmap *screenshot = CopyScreenIntoBitmap(usewid, usehit);
+	screenshot->GetAllegroBitmap()->makeOpaque();
+
+	// Restore original screen
+	_G(debug_flags) = old_flags;
+	construct_game_scene(true);
+
+	return screenshot;
 }
 
 void save_game(int slotn, const char *descript) {
-
 	// dont allow save in rep_exec_always, because we dont save
 	// the state of blocked scripts
 	can_run_delayed_command();
@@ -904,7 +907,10 @@ void save_game(int slotn, const char *descript) {
 	VALIDATE_STRING(descript);
 	String nametouse = get_save_game_path(slotn);
 	UBitmap screenShot;
-	if (_GP(game).options[OPT_SAVESCREENSHOT] != 0)
+
+	// WORKAROUND: AGS originally only creates savegames if the game flags
+	// that it supports it. But we want it all the time for ScummVM GMM
+	if (/*_GP(game).options[OPT_SAVESCREENSHOT] != 0*/ true)
 		screenShot.reset(create_savegame_screenshot());
 
 	Engine::UStream out(StartSavegame(nametouse, descript, screenShot.get()));
@@ -924,7 +930,6 @@ void save_game(int slotn, const char *descript) {
 
 		update_polled_stuff_if_runtime();
 
-		out.reset(Shared::File::OpenFile(nametouse, Shared::kFile_Open, Shared::kFile_ReadWrite));
 		out->Seek(12, kSeekBegin);
 		out->WriteInt32(screenShotOffset);
 		out->Seek(4);
