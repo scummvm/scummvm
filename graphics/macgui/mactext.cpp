@@ -1134,7 +1134,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 
 	SelectedText s = _selectedText;
 
+	bool swaped = false;
 	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
+		swaped = true;
 		SWAP(s.startX, s.endX);
 		SWAP(s.startY, s.endY);
 		SWAP(s.startRow, s.endRow);
@@ -1178,12 +1180,19 @@ void MacText::drawSelection(int xoff, int yoff) {
 			if (y + _scrollPos >= lastLineStart)
 				x2 = s.endX;
 
-			x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
-			x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			// if we are selecting text reversely, and we are at the first line but not the select from begining, then we add offset to x1
+			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
+			// otherwise, we draw selection from x1 + offset to x2 + offset
+			if (swaped && row == s.startRow && s.startCol != 0) {
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			} else {
+				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			}
 			row++;
-		} else {
-			numLines--;
 		}
+		numLines--;
 
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height() - 1));
 
@@ -1602,6 +1611,12 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	ncol = 0;
 
+	int alignOffset = 0;
+	if (_textAlignment == kTextAlignRight)
+		alignOffset = _textMaxWidth - getLineWidth(nrow);
+	else if (_textAlignment == kTextAlignCenter)
+		alignOffset = (_textMaxWidth / 2) - (getLineWidth(nrow) / 2);
+
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
 	uint chunk;
@@ -1613,7 +1628,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 			mcol += _textLines[nrow].chunks[chunk].text.size();
 		}
 
-		if (width > x)
+		if (width + alignOffset > x)
 			break;
 	}
 
@@ -1627,7 +1642,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	for (int i = str.size(); i >= 0; i--) {
 		int strw = _textLines[nrow].chunks[chunk].getFont()->getStringWidth(str);
-		if (strw + pwidth < x) {
+		if (strw + pwidth + alignOffset < x) {
 			ncol = pmcol + i;
 			nsx = strw + pwidth;
 			break;
