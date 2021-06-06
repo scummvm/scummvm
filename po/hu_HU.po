@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-05 13:17+0000\n"
-"PO-Revision-Date: 2021-05-18 10:25+0000\n"
+"PO-Revision-Date: 2021-06-06 05:54+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -427,7 +427,7 @@ msgstr "Teljesítmények"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "Statisztika"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:502
 #: gui/editgamedialog.cpp:568 gui/editgamedialog.cpp:629 gui/options.cpp:2009
@@ -2739,10 +2739,8 @@ msgid "Pixel-perfect scaling"
 msgstr "Pixel-tökéletes méretezés"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "Pixel-tökéletes méretezés"
+msgstr "Egyenletes pixel méretezés"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
