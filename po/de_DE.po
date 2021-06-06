@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-05 13:17+0000\n"
-"PO-Revision-Date: 2021-06-01 19:36+0000\n"
+"PO-Revision-Date: 2021-06-06 05:54+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2766,10 +2766,8 @@ msgid "Pixel-perfect scaling"
 msgstr "Pixelgenaue Skalierung"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "Pixelgenaue Skalierung"
+msgstr "Skalierung mit gleichmäßigen Pixeln"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
