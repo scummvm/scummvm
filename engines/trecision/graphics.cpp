@@ -38,13 +38,15 @@
 
 namespace Trecision {
 
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), // RGB555
-	_vm(vm), _font(nullptr) {	
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr), kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0) {	
+	// RGB555
 	_drawRect = Common::Rect(0, 0, 0, 0);
 	_drawObjRect = Common::Rect(0, 0, 0, 0);
 	_drawObjIndex = -1;
 	_drawMask = false;
 	_actorRect = nullptr;
+	for (int i = 0; i < 3; ++i)
+		_bitMask[i] = 0;
 }
 
 GraphicsManager::~GraphicsManager() {
