@@ -135,7 +135,7 @@ Stretch modes
 ----------------------
 
 
-There are five stretch modes:
+There are six stretch modes:
 
 - Center: centers the image in the window.
 - Pixel-perfect scaling: scales the image to the highest multiple of the game resolution that fits the window, or that fits the screen if in fullscreen mode. Any empty space is filled with black bars.
