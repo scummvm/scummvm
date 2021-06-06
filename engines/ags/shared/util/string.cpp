@@ -31,39 +31,39 @@ namespace AGS {
 namespace Shared {
 
 String::String()
-	: _cstr(nullptr)
+	: _cstr(const_cast<char*>(""))
 	, _len(0)
 	, _buf(nullptr) {
 }
 
 String::String(const String &str)
-	: _cstr(nullptr)
+	: _cstr(const_cast<char*>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	*this = str;
 }
 
 String::String(const char *cstr)
-	: _cstr(nullptr)
+	: _cstr(const_cast<char*>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	*this = cstr;
 }
 
 String::String(const Common::String &s) :
-	_cstr(nullptr), _len(0), _buf(nullptr) {
+	_cstr(const_cast<char*>("")), _len(0), _buf(nullptr) {
 	*this = s.c_str();
 }
 
 String::String(const char *cstr, size_t length)
-	: _cstr(nullptr)
+	: _cstr(const_cast<char*>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	SetString(cstr, length);
 }
 
 String::String(char c, size_t count)
-	: _cstr(nullptr)
+	: _cstr(const_cast<char*>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	FillString(c, count);
@@ -116,15 +116,15 @@ void String::ReadCount(Stream *in, size_t count) {
 
 void String::Write(Stream *out) const {
 	if (out) {
-		out->Write(GetCStr(), GetLength() + 1);
+		out->Write(_cstr, _len + 1);
 	}
 }
 
 void String::WriteCount(Stream *out, size_t count) const {
 	if (out) {
-		size_t str_out_len = Math::Min(count - 1, GetLength());
+		size_t str_out_len = Math::Min(count - 1, _len);
 		if (str_out_len > 0)
-			out->Write(GetCStr(), str_out_len);
+			out->Write(_cstr, str_out_len);
 		size_t null_out_len = count - str_out_len;
 		if (null_out_len > 0)
 			out->WriteByteCount(0, null_out_len);
@@ -139,47 +139,47 @@ void String::WriteCount(Stream *out, size_t count) const {
 }
 
 int String::Compare(const char *cstr) const {
-	return strcmp(GetCStr(), cstr ? cstr : "");
+	return strcmp(_cstr, cstr ? cstr : "");
 }
 
 int String::CompareNoCase(const char *cstr) const {
-	return ags_stricmp(GetCStr(), cstr ? cstr : "");
+	return ags_stricmp(_cstr, cstr ? cstr : "");
 }
 
 int String::CompareLeft(const char *cstr, size_t count) const {
 	cstr = cstr ? cstr : "";
-	return strncmp(GetCStr(), cstr, count != npos ? count : strlen(cstr));
+	return strncmp(_cstr, cstr, count != npos ? count : strlen(cstr));
 }
 
 int String::CompareLeftNoCase(const char *cstr, size_t count) const {
 	cstr = cstr ? cstr : "";
-	return ags_strnicmp(GetCStr(), cstr, count != npos ? count : strlen(cstr));
+	return ags_strnicmp(_cstr, cstr, count != npos ? count : strlen(cstr));
 }
 
 int String::CompareMid(const char *cstr, size_t from, size_t count) const {
 	cstr = cstr ? cstr : "";
-	from = Math::Min(from, GetLength());
-	return strncmp(GetCStr() + from, cstr, count != npos ? count : strlen(cstr));
+	from = Math::Min(from, _len);
+	return strncmp(_cstr + from, cstr, count != npos ? count : strlen(cstr));
 }
 
 int String::CompareMidNoCase(const char *cstr, size_t from, size_t count) const {
 	cstr = cstr ? cstr : "";
-	from = Math::Min(from, GetLength());
-	return ags_strnicmp(GetCStr() + from, cstr, count != npos ? count : strlen(cstr));
+	from = Math::Min(from, _len);
+	return ags_strnicmp(_cstr + from, cstr, count != npos ? count : strlen(cstr));
 }
 
 int String::CompareRight(const char *cstr, size_t count) const {
 	cstr = cstr ? cstr : "";
 	count = count != npos ? count : strlen(cstr);
-	size_t off = Math::Min(GetLength(), count);
-	return strncmp(GetCStr() + GetLength() - off, cstr, count);
+	size_t off = Math::Min(_len, count);
+	return strncmp(_cstr + _len - off, cstr, count);
 }
 
 int String::CompareRightNoCase(const char *cstr, size_t count) const {
 	cstr = cstr ? cstr : "";
 	count = count != npos ? count : strlen(cstr);
-	size_t off = Math::Min(GetLength(), count);
-	return ags_strnicmp(GetCStr() + GetLength() - off, cstr, count);
+	size_t off = Math::Min(_len, count);
+	return ags_strnicmp(_cstr + _len - off, cstr, count);
 }
 
 size_t String::FindChar(char c, size_t from) const {
@@ -191,7 +191,7 @@ size_t String::FindChar(char c, size_t from) const {
 }
 
 size_t String::FindCharReverse(char c, size_t from) const {
-	if (!_cstr || !c) {
+	if ((_len == 0) || !c) {
 		return npos;
 	}
 
@@ -216,7 +216,7 @@ size_t String::FindString(const char *cstr, size_t from) const {
 
 bool String::FindSection(char separator, size_t first, size_t last, bool exclude_first_sep, bool exclude_last_sep,
                          size_t &from, size_t &to) const {
-	if (!_cstr || !separator) {
+	if ((_len == 0) || !separator) {
 		return false;
 	}
 	if (first > last) {
@@ -259,7 +259,7 @@ bool String::FindSection(char separator, size_t first, size_t last, bool exclude
 }
 
 int String::ToInt() const {
-	return atoi(GetCStr());
+	return atoi(_cstr);
 }
 
 String String::Wrapper(const char *cstr) {
@@ -309,22 +309,22 @@ String String::Upper() const {
 }
 
 String String::Left(size_t count) const {
-	count = Math::Min(count, GetLength());
-	return count == GetLength() ? *this : String(GetCStr(), count);
+	count = Math::Min(count, _len);
+	return count == _len ? *this : String(_cstr, count);
 }
 
 String String::Mid(size_t from, size_t count) const {
-	Math::ClampLength(from, count, (size_t)0, GetLength());
-	return count == GetLength() ? *this : String(GetCStr() + from, count);
+	Math::ClampLength(from, count, (size_t)0, _len);
+	return count == _len ? *this : String(_cstr + from, count);
 }
 
 String String::Right(size_t count) const {
-	count = Math::Min(count, GetLength());
-	return count == GetLength() ? *this : String(GetCStr() + GetLength() - count, count);
+	count = Math::Min(count, _len);
+	return count == _len ? *this : String(_cstr + _len - count, count);
 }
 
 String String::LeftSection(char separator, bool exclude_separator) const {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindChar(separator);
 		if (slice_at != npos) {
 			slice_at = exclude_separator ? slice_at : slice_at + 1;
@@ -335,7 +335,7 @@ String String::LeftSection(char separator, bool exclude_separator) const {
 }
 
 String String::RightSection(char separator, bool exclude_separator) const {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindCharReverse(separator);
 		if (slice_at != npos) {
 			size_t count = exclude_separator ? _len - slice_at - 1 : _len - slice_at;
@@ -347,7 +347,7 @@ String String::RightSection(char separator, bool exclude_separator) const {
 
 String String::Section(char separator, size_t first, size_t last,
                        bool exclude_first_sep, bool exclude_last_sep) const {
-	if (!_cstr || !separator) {
+	if ((_len == 0) || !separator) {
 		return String();
 	}
 
@@ -390,7 +390,7 @@ void String::Reserve(size_t max_length) {
 }
 
 void String::ReserveMore(size_t more_length) {
-	Reserve(GetLength() + more_length);
+	Reserve(_len + more_length);
 }
 
 void String::Compact() {
@@ -420,7 +420,7 @@ void String::AppendChar(char c) {
 }
 
 void String::ClipLeft(size_t count) {
-	if (_len > 0 && count > 0) {
+	if (_len != 0 && count > 0) {
 		count = Math::Min(count, _len);
 		BecomeUnique();
 		_len -= count;
@@ -450,7 +450,7 @@ void String::ClipMid(size_t from, size_t count) {
 
 void String::ClipRight(size_t count) {
 	if (count > 0) {
-		count = Math::Min(count, GetLength());
+		count = Math::Min(count, _len);
 		BecomeUnique();
 		_len -= count;
 		_cstr[_len] = 0;
@@ -458,7 +458,7 @@ void String::ClipRight(size_t count) {
 }
 
 void String::ClipLeftSection(char separator, bool include_separator) {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindChar(separator);
 		if (slice_at != npos) {
 			ClipLeft(include_separator ? slice_at + 1 : slice_at);
@@ -468,7 +468,7 @@ void String::ClipLeftSection(char separator, bool include_separator) {
 }
 
 void String::ClipRightSection(char separator, bool include_separator) {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindCharReverse(separator);
 		if (slice_at != npos) {
 			ClipRight(include_separator ? _len - slice_at : _len - slice_at - 1);
@@ -479,7 +479,7 @@ void String::ClipRightSection(char separator, bool include_separator) {
 
 void String::ClipSection(char separator, size_t first, size_t last,
                          bool include_first_sep, bool include_last_sep) {
-	if (!_cstr || !separator) {
+	if ((_len == 0) || !separator) {
 		return;
 	}
 
@@ -492,13 +492,11 @@ void String::ClipSection(char separator, size_t first, size_t last,
 }
 
 void String::Empty() {
-	if (_cstr) {
-		if (IsShared()) {
-			Free();
-		} else {
-			_len = 0;
-			_cstr[0] = 0;
-		}
+	if (IsShared()) {
+		Free();
+	} else {
+		_len = 0;
+		_cstr[0] = 0;
 	}
 }
 
@@ -525,7 +523,7 @@ void String::FormatV(const char *fcstr, va_list argptr) {
 	va_list argptr_cpy;
 	va_copy(argptr_cpy, argptr);
 	size_t length = vsnprintf(nullptr, 0u, fcstr, argptr);
-	ReserveAndShift(false, Math::Surplus(length, GetLength()));
+	ReserveAndShift(false, Math::Surplus(length, _len));
 	vsprintf(_cstr, fcstr, argptr_cpy);
 	va_end(argptr_cpy);
 	_len = length;
@@ -541,26 +539,26 @@ void String::Free() {
 		}
 	}
 	_buf = nullptr;
-	_cstr = nullptr;
+	_cstr = const_cast<char *>("");
 	_len = 0;
 }
 
 void String::MakeLower() {
-	if (_cstr) {
+	if (_len != 0) {
 		BecomeUnique();
 		ags_strlwr(_cstr);
 	}
 }
 
 void String::MakeUpper() {
-	if (_cstr) {
+	if (_len != 0) {
 		BecomeUnique();
 		ags_strupr(_cstr);
 	}
 }
 
 void String::MergeSequences(char c) {
-	if (!_cstr || GetLength() <= 1)
+	if ((_len == 0) || _len <= 1)
 		return;
 	BecomeUnique();
 	char last = 0;
@@ -596,7 +594,7 @@ void String::PrependChar(char c) {
 }
 
 void String::Replace(char what, char with) {
-	if (_cstr && what && with && what != with) {
+	if ((_len != 0) && what && with && what != with) {
 		BecomeUnique();
 		char *rep_ptr = _cstr;
 		while (*rep_ptr) {
@@ -612,16 +610,16 @@ void String::ReplaceMid(size_t from, size_t count, const char *cstr) {
 	if (!cstr)
 		cstr = "";
 	size_t length = strlen(cstr);
-	Math::ClampLength(from, count, (size_t)0, GetLength());
+	Math::ClampLength(from, count, (size_t)0, _len);
 	ReserveAndShift(false, Math::Surplus(length, count));
-	memmove(_cstr + from + length, _cstr + from + count, GetLength() - (from + count) + 1);
+	memmove(_cstr + from + length, _cstr + from + count, _len - (from + count) + 1);
 	memcpy(_cstr + from, cstr, length);
 	_len += length - count;
 }
 
 void String::Reverse() {
-	if (!_cstr || GetLength() <= 1)
-		return;
+	if (_len <= 1)
+		return;	// nothing to reverse if 1 char or less
 	BecomeUnique();
 	for (char *fw = _cstr, *bw = _cstr + _len - 1;
 	        fw < bw; ++fw, --bw) {
@@ -630,7 +628,7 @@ void String::Reverse() {
 }
 
 void String::SetAt(size_t index, char c) {
-	if (_cstr && index < GetLength() && c) {
+	if (_cstr && index < _len && c) {
 		BecomeUnique();
 		_cstr[index] = c;
 	}
@@ -640,7 +638,7 @@ void String::SetString(const char *cstr, size_t length) {
 	if (cstr) {
 		length = Math::Min(length, strlen(cstr));
 		if (length > 0) {
-			ReserveAndShift(false, Math::Surplus(length, GetLength()));
+			ReserveAndShift(false, Math::Surplus(length, _len));
 			memcpy(_cstr, cstr, length);
 			_len = length;
 			_cstr[length] = 0;
@@ -658,7 +656,7 @@ void String::Trim(char c) {
 }
 
 void String::TrimLeft(char c) {
-	if (!_cstr || !_len) {
+	if ((_len == 0) || !_len) {
 		return;
 	}
 
@@ -685,7 +683,7 @@ void String::TrimLeft(char c) {
 }
 
 void String::TrimRight(char c) {
-	if (!_cstr || !_len) {
+	if ((_len == 0) || !_len) {
 		return;
 	}
 
@@ -712,7 +710,7 @@ void String::TrimRight(char c) {
 }
 
 void String::TruncateToLeft(size_t count) {
-	if (_cstr) {
+	if (_len != 0) {
 		count = Math::Min(count, _len);
 		if (count < _len) {
 			BecomeUnique();
@@ -723,7 +721,7 @@ void String::TruncateToLeft(size_t count) {
 }
 
 void String::TruncateToMid(size_t from, size_t count) {
-	if (_cstr) {
+	if (_len != 0) {
 		Math::ClampLength(from, count, (size_t)0, _len);
 		if (from > 0 || count < _len) {
 			BecomeUnique();
@@ -735,8 +733,8 @@ void String::TruncateToMid(size_t from, size_t count) {
 }
 
 void String::TruncateToRight(size_t count) {
-	if (_cstr) {
-		count = Math::Min(count, GetLength());
+	if (_len != 0) {
+		count = Math::Min(count, _len);
 		if (count < _len) {
 			BecomeUnique();
 			_cstr += _len - count;
@@ -746,7 +744,7 @@ void String::TruncateToRight(size_t count) {
 }
 
 void String::TruncateToLeftSection(char separator, bool exclude_separator) {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindChar(separator);
 		if (slice_at != npos) {
 			TruncateToLeft(exclude_separator ? slice_at : slice_at + 1);
@@ -755,7 +753,7 @@ void String::TruncateToLeftSection(char separator, bool exclude_separator) {
 }
 
 void String::TruncateToRightSection(char separator, bool exclude_separator) {
-	if (_cstr && separator) {
+	if ((_len != 0) && separator) {
 		size_t slice_at = FindCharReverse(separator);
 		if (slice_at != npos) {
 			TruncateToRight(exclude_separator ? _len - slice_at - 1 : _len - slice_at);
@@ -765,7 +763,7 @@ void String::TruncateToRightSection(char separator, bool exclude_separator) {
 
 void String::TruncateToSection(char separator, size_t first, size_t last,
                                bool exclude_first_sep, bool exclude_last_sep) {
-	if (!_cstr || !separator) {
+	if ((_len == 0) || !separator) {
 		return;
 	}
 
@@ -817,7 +815,7 @@ void String::Create(size_t max_length) {
 }
 
 void String::Copy(size_t max_length, size_t offset) {
-	if (!_cstr) {
+	if ((_len == 0)) {
 		return;
 	}
 
@@ -841,8 +839,10 @@ void String::Align(size_t offset) {
 	_cstr = cstr_head;
 }
 
-inline bool String::IsShared() const { // if it has a string, and have refcount > 1 or wraps an external char[]
-	return _cstr && ((_bufHead && _bufHead->RefCount > 1) || !_bufHead);
+inline bool String::IsShared() const {
+	// no allocated buffer == wrapping an external char[]
+	// has buffer and refcount > 1 == shared string buffer
+	return !_bufHead || (_bufHead->RefCount > 1);
 }
 
 void String::BecomeUnique() {

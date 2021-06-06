@@ -359,14 +359,14 @@ public:
 
 	// Tells if this object shares its string buffer with others
 	bool    IsShared() const;
-	// Ensure this string is a compact independent copy, with ref counter = 1
+	// Ensure this string is a writeable independent copy, with ref counter = 1
 	void    BecomeUnique();
 	// Ensure this string is independent, and there's enough space before
 	// or after the current string data
 	void    ReserveAndShift(bool left, size_t more_length);
 
-	char *_cstr;  // pointer to actual string data
-	size_t  _len;    // valid string length, in characters, excluding null-term
+	char *_cstr;  // pointer to actual string data; always valid, never null
+	size_t  _len; // valid string length, in characters, excluding null-term
 
 	// Header of a reference-counted buffer
 	struct BufHeader {
