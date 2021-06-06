@@ -1120,7 +1120,7 @@ void Actor_v2::walkActor() {
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
 		if (_facing != new_dir) {
-			setDirection(new_dir); 
+			setDirection(new_dir);
 		} else {
 			_moving &= ~MF_TURN;
 		}
