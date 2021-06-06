@@ -282,7 +282,7 @@ try:
 	INFO_URL = "https://steamdb.info/app/{0}/info/".format(args.steamid)
 	langs = parse_steamdb_info(INFO_URL)
 	log("found langs: {0}".format(langs))
-	
+
 	translations = {"English":{}}
 	if len(langs) > 1:
 		for l in langs:
