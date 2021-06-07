@@ -25,11 +25,14 @@
 #include "common/algorithm.h"
 #include "common/system.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 
 #include "engines/advancedDetector.h"
 
 #include "dreamweb/detection.h"
 #include "dreamweb/dreamweb.h"
+
+#define GAMEOPTION_TTS 	GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
@@ -64,6 +67,18 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			true
 		}
 	},
+
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false
+		}
+	},
+#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
