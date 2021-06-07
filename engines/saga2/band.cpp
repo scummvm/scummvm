@@ -37,14 +37,14 @@ namespace Saga2 {
    BandList class
  * ===================================================================== */
 
-const int       numBands = 32;
+const int numBands = 32;
 
 //  Manages the memory used for the Band's.  There will only be one
 //  global instantiation of this class
 class BandList {
 
 	struct BandPlaceHolder : public DNode {
-		uint8       buf[ sizeof(Band) ];
+		uint8 buf[sizeof(Band)];
 
 		Band *getBand(void) {
 			return (Band *)&buf;
@@ -54,7 +54,7 @@ class BandList {
 	DList                       list,       //  allocated Bands
 	                            free;       //  unallocated Bands
 
-	BandPlaceHolder             array[ numBands ];
+	BandPlaceHolder             array[numBands];
 
 public:
 	//  Constructor -- initial construction
@@ -85,16 +85,15 @@ public:
 	BandID getBandID(Band *b) {
 		BandPlaceHolder     *bp;
 
-		bp = ((BandPlaceHolder *)(
-		          (uint8 *)b
-		          -   offsetof(BandPlaceHolder, buf)));
+		warning("BandPlaceHolder: unsafe pointer arithmetics");
+		bp = ((BandPlaceHolder *)((uint8 *)b - offsetof(BandPlaceHolder, buf)));
 		return bp - array;
 	}
 
 	//  Return a pointer to a Band given a BandID
 	Band *getBandAddress(BandID id) {
 		assert(id >= 0 && id < numBands);
-		return array[ id ].getBand();
+		return array[id].getBand();
 	}
 };
 
@@ -106,7 +105,7 @@ BandList::BandList(void) {
 	int i;
 
 	for (i = 0; i < elementsof(array); i++)
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 }
 
 //----------------------------------------------------------------------
@@ -145,7 +144,7 @@ void *BandList::restore(void *buf) {
 		id = *((BandID *)buf);
 		buf = (BandID *)buf + 1;
 
-		new (id) Band(&buf);
+		new (id)Band(&buf);
 	}
 
 	return buf;
@@ -227,7 +226,7 @@ void *BandList::newBand(BandID id) {
 	BandPlaceHolder     *bp;
 
 	//  Grab the band place holder from the inactive list
-	bp = (BandPlaceHolder *)&array[ id ];
+	bp = (BandPlaceHolder *)&array[id];
 	bp->remove();
 
 	//  Place the place holder into the active list
@@ -243,11 +242,11 @@ void *BandList::newBand(BandID id) {
 void BandList::deleteBand(void *p) {
 	BandPlaceHolder     *bp;
 
+	warning("BandList: unsafe pointer arithmetics");
+
 	//  Convert the pointer to the Band to a pointer to the
 	//  BandPlaceHolder
-	bp = (BandPlaceHolder *)(
-	         (uint8 *)p
-	         -   offsetof(BandPlaceHolder, buf));
+	bp = (BandPlaceHolder *)((uint8 *)p - offsetof(BandPlaceHolder, buf));
 
 	//  Remove the band place holder from the active list
 	bp->remove();
@@ -268,7 +267,7 @@ void BandList::deleteBand(void *p) {
 //	pointer to the bandListBuffer in order to construct the BandList in
 //	place.
 
-static uint8 bandListBuffer[ sizeof(BandList) ];
+static uint8 bandListBuffer[sizeof(BandList)];
 
 static BandList &bandList = *((BandList *)bandListBuffer);
 
@@ -402,7 +401,7 @@ Band::Band(void **buf) {
 	//  Restore the member pointers
 	for (i = 0; i < memberCount; i++) {
 		assert(isActor(*((ObjectID *)bufferPtr)));
-		members[ i ] = (Actor *)GameObject::objectAddress(
+		members[i] = (Actor *)GameObject::objectAddress(
 		                   *((ObjectID *)bufferPtr));
 		bufferPtr = (ObjectID *)bufferPtr + 1;
 	}
@@ -436,7 +435,7 @@ void *Band::archive(void *buf) {
 
 	//  Store the members' ID's
 	for (i = 0; i < memberCount; i++) {
-		*((ObjectID *)buf) = members[ i ]->thisID();
+		*((ObjectID *)buf) = members[i]->thisID();
 		buf = (ObjectID *)buf + 1;
 	}
 
