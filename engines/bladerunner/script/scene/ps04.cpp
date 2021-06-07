@@ -330,7 +330,7 @@ void SceneScriptPS04::dialogueWithGuzza() {
 		            || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
 		           &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
 		           &&  Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) < 50
-		           && !Game_Flag_Query(kFlagPS04GuzzaTalk1)
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalkIsFurious)
 		) {
 			Actor_Says(kActorMcCoy, 3970, 18);
 			Actor_Says(kActorGuzza, 330, 30);
@@ -345,17 +345,20 @@ void SceneScriptPS04::dialogueWithGuzza() {
 			Actor_Says(kActorMcCoy, 3985, 18);
 			Actor_Says(kActorGuzza, 400, 34);
 			Actor_Says(kActorGuzza, 410, 31);
-			Game_Flag_Set(kFlagPS04GuzzaTalk1);
+			Game_Flag_Set(kFlagPS04GuzzaTalkIsFurious);
 		} else if ((Actor_Clue_Query(kActorMcCoy, kClueChopstickWrapper)
 		            || Actor_Clue_Query(kActorMcCoy, kClueSushiMenu))
 		           &&  Actor_Clue_Query(kActorMcCoy, kClueRunciterInterviewA)
-		           && !Game_Flag_Query(kFlagPS04GuzzaTalk2)
+		           && !Game_Flag_Query(kFlagPS04GuzzaTalkDumpToMainframe)
 		) {
+			// McCoy metions Bryant's "vacation",
+			// Guzza says about the procedure via Mainframe
 			Actor_Says(kActorMcCoy, 3920, 13);
 			Actor_Says(kActorGuzza, 570, 32);
 			Actor_Says(kActorMcCoy, 4070, 13);
-			Game_Flag_Set(kFlagPS04GuzzaTalk2);
+			Game_Flag_Set(kFlagPS04GuzzaTalkDumpToMainframe);
 		} else if (Actor_Query_Friendliness_To_Other(kActorGuzza, kActorMcCoy) >= 50) {
+			// Main check-in talk
 			Actor_Says(kActorMcCoy, 4020, 13);
 			Actor_Says(kActorGuzza, 580, 34);
 			Actor_Says(kActorMcCoy, 4075, 16);
