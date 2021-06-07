@@ -122,16 +122,16 @@ public:
 
 template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asynch) {
 	RESTYPE t;
-	if (isValidPtr(handle[ ind ]) && locked[ind]) {
-		RLockHandle((RHANDLE) handle[ ind ]);
+	if (isValidPtr(handle[ind]) && locked[ind]) {
+		RLockHandle((RHANDLE) handle[ind]);
 		locked.Bit(ind, TRUE);
 		wanted.Bit(ind, FALSE);
 		recent.Bit(ind, TRUE);
-		return handle[ ind ];
+		return handle[ind];
 	}
-	if (isValidPtr(handle[ ind ]) && wanted[ind]) {
+	if (isValidPtr(handle[ind]) && wanted[ind]) {
 		// wait for handle
-		RLockHandle((RHANDLE) handle[ ind ]);
+		RLockHandle((RHANDLE) handle[ind]);
 		locked.Bit(ind, TRUE);
 		wanted.Bit(ind, FALSE);
 		recent.Bit(ind, TRUE);
@@ -146,19 +146,19 @@ template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asy
 	recent.Bit(ind, TRUE);
 
 	if (asynch) {
-		handle[ ind ] = (RESTYPE) NULL;
+		handle[ind] = (RESTYPE) NULL;
 	} else {
 		if (t == NULL) {
 			error("Resource %d could not load (Tile bank)", ind);
 		}
-		handle[ ind ] = t;
+		handle[ind] = t;
 	}
 	return t;
 }
 
 template <class RESTYPE> void LoadOnCall<RESTYPE>::rFree(uint16 ind) {
-	if (isValidPtr(handle[ ind ])) {
-		RUnlockHandle((RHANDLE) handle[ ind ]);
+	if (isValidPtr(handle[ind])) {
+		RUnlockHandle((RHANDLE) handle[ind]);
 		locked.Bit(ind, FALSE);
 		//recent.Bit(ind,FALSE);
 //		washHandle(handle[ind]);
@@ -167,11 +167,11 @@ template <class RESTYPE> void LoadOnCall<RESTYPE>::rFree(uint16 ind) {
 
 template <class RESTYPE> void LoadOnCall<RESTYPE>::rInit(uint16 ind) {
 	RESTYPE t;
-	if (!isValidPtr(handle[ ind ])) {
+	if (!isValidPtr(handle[ind])) {
 		t = (RESTYPE) loader(tileID + MKTAG(0, 0, 0, ind), FALSE);
-		handle[ ind ] = t;
+		handle[ind] = t;
 		locked.Bit(ind, TRUE);
-		RUnlockHandle((RHANDLE) handle[ ind ]);
+		RUnlockHandle((RHANDLE) handle[ind]);
 		locked.Bit(ind, FALSE);
 		recent.Bit(ind, FALSE);
 	}

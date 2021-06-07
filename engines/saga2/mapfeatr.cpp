@@ -244,15 +244,15 @@ void initMapFeatures(void) {
 void updateMapFeatures(int16 cWorld) {
 	extern WorldMapData         *mapList;
 	extern GameWorld            *currentWorld;
-	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
+	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
 
 	uint16          *mapData = wMap->map->mapData;
 
 	for (int i = 0; i < mapFeatureCount; i++) {
 		if (mapFeatures[i]->getWorld() == cWorld) {
 			uint16   *mapRow;
-			mapRow = &mapData[(mapFeatures[i]->getU() >> (tileUVShift + platShift)) * wMap->mapSize ];
-			uint16   mtile = mapRow[(mapFeatures[i]->getV() >> (tileUVShift + platShift)) ];
+			mapRow = &mapData[(mapFeatures[i]->getU() >> (tileUVShift + platShift)) * wMap->mapSize];
+			uint16   mtile = mapRow[(mapFeatures[i]->getV() >> (tileUVShift + platShift))];
 			mapFeatures[i]->expose(mtile & metaTileVisited);
 		}
 	}

@@ -83,9 +83,9 @@ private:
 	};
 
 	int16   titleCount;
-	Point16 titlePos[ maxLines ];
-	char    *titleStrings[ maxLines ];
-	char    titleBuf[ maxText ];
+	Point16 titlePos[maxLines];
+	char    *titleStrings[maxLines];
+	char    titleBuf[maxText];
 
 	textPallete textPal;
 	gFont       *textFont;
@@ -124,9 +124,9 @@ class CPlacardPanel : public CPlaqText {
 	};
 
 	int16   titleCount;
-	Point16 titlePos[ maxLines ];
-	char    *titleStrings[ maxLines ];
-	char    titleBuf[ maxText ];
+	Point16 titlePos[maxLines];
+	char    *titleStrings[maxLines];
+	char    titleBuf[maxText];
 
 	void positionText(const char *windowText, const Rect16 &textArea);
 

@@ -49,7 +49,7 @@ void gCompImage::init(void) {
 	internalAlloc   = FALSE;
 	currentImage    = 0;
 	numPtrAlloc     = 0;
-//	imageText[ 0 ]   = NULL;
+//	imageText[0]   = NULL;
 }
 
 gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 ident,
@@ -60,7 +60,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 
 
 	if (image) {
 		compImages = (void **)malloc(sizeof(pVOID) * 1); // allocate room for one pointer
-		compImages[ 0 ] = image;
+		compImages[0] = image;
 		internalAlloc   = FALSE;
 		numPtrAlloc     = 1;
 	}
@@ -84,7 +84,7 @@ gCompImage::gCompImage(gPanelList &list,
 	compImages = (void **)malloc(sizeof(void *)*numImages);  // allocate room for numImages pointers
 
 	for (i = 0, rNum = resNum; i < numImages; i++, rNum++) {
-		compImages[ i ] = LoadResource(resContext,
+		compImages[i] = LoadResource(resContext,
 		                               MKTAG(a, b, c, rNum),
 		                               " gCompImage ");
 	}
@@ -107,7 +107,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, const c
 
 compImages = (void **)malloc(sizeof(void *) * 1); // allocate room for one pointer
 
-	compImages[ 0 ] = image;
+	compImages[0] = image;
 	max             = 0;
 	numPtrAlloc     = 1;
 	title           = text;
@@ -121,7 +121,7 @@ compImages = (void **)malloc(sizeof(void *) * 1); // allocate room for one point
 		strncpy(imageText, text, textSize);
 
 		// cap it, in case of overflow
-		imageText[ textSize - 1 ] = NULL;
+		imageText[textSize - 1] = NULL;
 
 		// setup the text pallete and font type
 		textPal     = pal;
@@ -170,7 +170,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void **images,
 		strncpy(imageText, text, textSize);
 
 		// cap it, in case of overflow
-		imageText[ textSize - 1 ] = NULL;
+		imageText[textSize - 1] = NULL;
 		textPal     = pal;
 		textFont    = &Onyx10Font;  // >>> this should be dynamic
 	} else {
@@ -189,7 +189,7 @@ gCompImage::~gCompImage(void) {
 	// if we LoadRes'ed image internally RDispose those
 	if (internalAlloc) {
 		for (int16 i = 0; i < numPtrAlloc; i++) {
-			RDisposePtr(compImages[ i ]);
+			RDisposePtr(compImages[i]);
 		}
 	}
 
@@ -228,7 +228,7 @@ void gCompImage::draw(void) {
 
 void *gCompImage::getCurrentCompImage(void) {
 	if (compImages) {
-		return compImages[ currentImage ];  // return the image pointed to by compImage
+		return compImages[currentImage];  // return the image pointed to by compImage
 	} else {
 		return NULL;
 	}
@@ -243,7 +243,7 @@ void gCompImage::setImages(void **images) {
 
 void gCompImage::setImage(void *image) {
 	if (image) {
-		compImages[ 0 ] = image;
+		compImages[0] = image;
 		max             = 0;
 		currentImage    = 0;
 	}
@@ -405,9 +405,9 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, hResContext *con, 
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd) {
-	if (images[ 0 ] && images[ 1 ] && numRes == 2) {
-		forImage    = images[ 0 ];
-		resImage    = images[ 1 ];
+	if (images[0] && images[1] && numRes == 2) {
+		forImage    = images[0];
+		resImage    = images[1];
 		dimImage    = NULL;
 	} else {
 		forImage    = NULL;
@@ -422,9 +422,9 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, const char *text, textPallete &pal, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, 0, 0, text, pal, ident, cmd) {
-	if (images[ 0 ] && images[ 1 ] && numRes == 2) {
-		forImage    = images[ 0 ];
-		resImage    = images[ 1 ];
+	if (images[0] && images[1] && numRes == 2) {
+		forImage    = images[0];
+		resImage    = images[1];
 		dimImage    = NULL;
 	} else {
 		forImage    = NULL;
@@ -439,9 +439,9 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 
 gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int16 numRes, void *newDimImage, bool dimNess, uint16 ident,
                          AppFunc *cmd) : gCompImage(list, box, NULL, ident, cmd) {
-	if (images[ 0 ] && images[ 1 ] && numRes == 2) {
-		forImage    = images[ 0 ];
-		resImage    = images[ 1 ];
+	if (images[0] && images[1] && numRes == 2) {
+		forImage    = images[0];
+		resImage    = images[1];
 	} else {
 		forImage    = NULL;
 		resImage    = NULL;
@@ -689,9 +689,9 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 	images = (void **)malloc(sizeof(void *)*numRes);
 
 	for (i = 0, k = resStart; i < numRes; i++, k++) {
-		images[ i ] = LoadResource(con, MKTAG(a, b, c, k), "Multi btn image");
+		images[i] = LoadResource(con, MKTAG(a, b, c, k), "Multi btn image");
 
-		checkAlloc(images[ i ]);
+		checkAlloc(images[i]);
 	}
 
 	response = TRUE;
@@ -751,8 +751,8 @@ gMultCompButton::~gMultCompButton(void) {
 
 	if (images && internalAlloc) {
 		for (i = 0; i <= max; i++) {
-			if (images[ i ]) {
-				RDisposePtr(images[ i ]);
+			if (images[i]) {
+				RDisposePtr(images[i]);
 			}
 		}
 
@@ -783,7 +783,7 @@ bool gMultCompButton::pointerHit(gPanelMessage &) {
 }
 
 void *gMultCompButton::getCurrentCompImage(void) {
-	return images[ current ];
+	return images[current];
 }
 
 /* ===================================================================== *
@@ -824,7 +824,7 @@ void *gSlider::getCurrentCompImage(void) {
 
 	index = clamp(0, index, max);
 
-	return images[ index ];
+	return images[index];
 }
 
 int16 gSlider::getSliderLenVal(void) {

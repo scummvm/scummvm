@@ -122,7 +122,7 @@ public:
 	static bool objTextAlarm;
 
 	// buffer for the mouse text
-	static char mouseText[ bufSize ];
+	static char mouseText[bufSize];
 
 	// determines if the cursor is in *A* container view
 	static bool mouseInView;
@@ -371,8 +371,8 @@ struct ContainerAppearanceDef {
 	                scrollRect,             //  position of scrolling button
 	                iconRect,               //  position of container icon
 	                massRect;               //  position of mass & bulk indicator
-	hResID          closeResID[ 2 ],        //  resource ID's for close box
-	                scrollResID[ 2 ];       //  resource ID's for scroll indicator
+	hResID          closeResID[2],        //  resource ID's for close box
+	                scrollResID[2];       //  resource ID's for scroll indicator
 	Point16         iconOrigin,
 	                iconSpacing;
 	uint16          rows,
@@ -406,10 +406,10 @@ struct ContainerAppearanceDef {
 		    rows(_rows),
 		    cols(_cols),
 		    totRows(_totRows) {
-		closeResID[ 0 ]     = _closeResID_0;
-		closeResID[ 1 ]     = _closeResID_1;
-		scrollResID[ 0 ]    = _scrollResID_0;
-		scrollResID[ 1 ]    = _scrollResID_1;
+		closeResID[0]     = _closeResID_0;
+		closeResID[1]     = _closeResID_1;
+		scrollResID[0]    = _scrollResID_0;
+		scrollResID[1]    = _scrollResID_1;
 	}
 };
 

@@ -35,7 +35,7 @@
 namespace Saga2 {
 
 struct TimerListHolder : public DNode {
-	uint8       timerListBuffer[ sizeof(TimerList) ];
+	uint8       timerListBuffer[sizeof(TimerList)];
 
 	TimerList *getTimerList(void) {
 		return (TimerList *)&timerListBuffer;
@@ -47,7 +47,7 @@ struct TimerListHolder : public DNode {
  * ===================================================================== */
 
 struct TimerHolder : public DNode {
-	uint8       timerBuffer[ sizeof(Timer) ];
+	uint8       timerBuffer[sizeof(Timer)];
 
 	Timer *getTimer(void) {
 		return (Timer *)&timerBuffer;
@@ -240,7 +240,7 @@ void saveTimers(SaveFileConstructor &saveGame) {
 	        timerHolder = (TimerHolder *)timerHolder->next())
 		bufferPtr = timerHolder->getTimer()->archive(bufferPtr);
 
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[archiveBufSize]);
 
 	//  Write the data to the save file
 	saveGame.writeChunk(
@@ -299,7 +299,7 @@ void loadTimers(SaveFileReader &saveGame) {
 		timerList->addTail(*timer);
 	}
 
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[saveGame.getChunkSize()]);
 
 	RDisposePtr(archiveBuffer);
 }

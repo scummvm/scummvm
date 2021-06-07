@@ -669,7 +669,7 @@ public:
 
 const size_t    targetBytes = sizeof(LocationTarget);
 
-typedef uint8 TargetPlaceHolder[ targetBytes ];
+typedef uint8 TargetPlaceHolder[targetBytes];
 
 } // end of namespace Saga2
 

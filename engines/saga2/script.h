@@ -344,7 +344,7 @@ scriptResult runTagMethod(
 
 struct ResImportTable {
 	int16           deadActorProto,
-	                reserved[ 2 ];
+	                reserved[2];
 	int16           EXP_spellEffect_CreateFireWisp,
 	                EXP_spellEffect_CreateWindWisp,
 	                EXP_spellEffect_CreateWraith,

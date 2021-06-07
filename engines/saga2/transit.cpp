@@ -55,7 +55,7 @@ bool isModalMode(void) {
 		// go through each stacked mode
 		// and if modal mode is one of them,
 		// then set the modal flag
-		if (GameMode::modeStackPtr[ i ] == &ModalMode) {
+		if (GameMode::modeStackPtr[i] == &ModalMode) {
 			modalFlag = TRUE;
 		}
 	}

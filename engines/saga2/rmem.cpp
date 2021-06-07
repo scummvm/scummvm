@@ -963,7 +963,7 @@ static RHandleBlock *NewHandleBlock(RHeapPtr heap, const char desc[]) {
 		//  Initialize each of the handles in the block.
 
 		for (i = 0; i < HANDLES_PER_BLOCK; i++) { // link each handle into chain
-			RHandle *rh = &hBlock->handles[ i ];
+			RHandle *rh = &hBlock->handles[i];
 
 //			rh->data = NULL;
 			RLinkHandle(rh, (RHandle *)&hBlock->freeHandles);
@@ -1022,8 +1022,8 @@ static void FreeHandle(RHeap *heap, RHandle *handle) {
 	//  Search for a handle in an existing block that's already free
 
 	for (hBlock = heap->handleBlocks; hBlock; hBlock = hBlock->next) {
-		if (handle >= &hBlock->handles[ 0 ]
-		        && handle <  &hBlock->handles[ HANDLES_PER_BLOCK ]) {
+		if (handle >= &hBlock->handles[0]
+		        && handle <  &hBlock->handles[HANDLES_PER_BLOCK]) {
 			RDelinkHandle(handle);
 
 			handle->data = NULL;

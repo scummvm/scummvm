@@ -157,7 +157,7 @@ bool PropertyAnd< T >::operator()(T *obj) const {
 	//  Iterate through each element in the array and if any evaluate to
 	//  FALSE, return FALSE immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[ i ])(obj) == FALSE) return FALSE;
+		if ((*propertyArray[i])(obj) == FALSE) return FALSE;
 #endif
 	warning("STUB: PropertyAnd");
 
@@ -191,7 +191,7 @@ bool PropertyOr< T >::operator()(T *obj) const {
 	//  Iterate through each element in the array and if any evaluate to
 	//  TRUE, return TRUE immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[ i ])(obj)) return TRUE;
+		if ((*propertyArray[i])(obj)) return TRUE;
 #endif
 	warning("STUB: PropertyOr");
 
@@ -224,10 +224,10 @@ enum {
 	objPropIDCount,
 };
 
-extern const ObjectProperty *objPropArray[ objPropIDCount ];
+extern const ObjectProperty *objPropArray[objPropIDCount];
 
 inline const ObjectProperty *getObjProp(ObjectPropertyID id) {
-	return objPropArray[ id ];
+	return objPropArray[id];
 }
 
 /* ===================================================================== *
@@ -254,10 +254,10 @@ enum {
 	actorPropIDCount,
 };
 
-extern const ActorProperty *actorPropArray[ actorPropIDCount ];
+extern const ActorProperty *actorPropArray[actorPropIDCount];
 
 inline const ActorProperty *getActorProp(ActorPropertyID id) {
-	return actorPropArray[ id ];
+	return actorPropArray[id];
 }
 
 /* ===================================================================== *
@@ -279,10 +279,10 @@ enum {
 	tilePropIDCount,
 };
 
-extern const TileProperty *tilePropArray[ tilePropIDCount ];
+extern const TileProperty *tilePropArray[tilePropIDCount];
 
 inline const TileProperty *getTileProp(TilePropertyID id) {
-	return tilePropArray[ id ];
+	return tilePropArray[id];
 }
 
 /* ===================================================================== *
@@ -394,10 +394,10 @@ enum {
 	metaTilePropIDCount,
 };
 
-extern const MetaTileProperty *metaTilePropArray[ metaTilePropIDCount ];
+extern const MetaTileProperty *metaTilePropArray[metaTilePropIDCount];
 
 inline const MetaTileProperty *getMetaTileProp(MetaTilePropertyID id) {
-	return metaTilePropArray[ id ];
+	return metaTilePropArray[id];
 }
 
 } // end of namespace Saga2

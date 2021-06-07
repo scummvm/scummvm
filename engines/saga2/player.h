@@ -84,13 +84,13 @@ public:
 	ContainerNode           *readyNode;
 
 	// mana 'experience' pool
-	int16   manaMemory[ numManas ];
+	int16   manaMemory[numManas];
 
 	// attrib recovery pools
-	uint8   attribRecPools[ numSkills ];
+	uint8   attribRecPools[numSkills];
 
 	// skills 'expericene' pool
-	uint8   attribMemPools[ numSkills ];
+	uint8   attribMemPools[numSkills];
 
 	// vitality pool
 	uint8 vitalityMemory;
@@ -113,11 +113,11 @@ public:
 		memset(&baseStats, 0, sizeof(baseStats));
 
 		for (i = 0; i < numManas; i++)
-			manaMemory[ i ] = 0;
+			manaMemory[i] = 0;
 
 		for (i = 0; i < numSkills; i++) {
-			attribRecPools[ i ] = 0;
-			attribMemPools[ i ] = 0;
+			attribRecPools[i] = 0;
+			attribMemPools[i] = 0;
 		}
 	}
 

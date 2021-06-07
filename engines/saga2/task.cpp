@@ -80,16 +80,16 @@ TilePoint computeRepulsionVector(
 		int16       repulsorWeight,
 		            repulsorDist;
 
-		repulsorDist =      repulsorVectorArray[ i ].quickHDistance()
-		                    +   abs(repulsorVectorArray[ i ].z);
+		repulsorDist =      repulsorVectorArray[i].quickHDistance()
+		                    +   abs(repulsorVectorArray[i].z);
 		repulsorWeight =
 		    repulsorDist != 0
 		    ?   64 * 64 / (repulsorDist * repulsorDist)
 		    :   64 * 64;
 
 		repulsionVector +=
-		    (-repulsorVectorArray[ i ]
-		     *   repulsorStrengthArray[ i ]
+		    (-repulsorVectorArray[i]
+		     *   repulsorStrengthArray[i]
 		     *   repulsorWeight)
 		    /   16;
 	}
@@ -111,7 +111,7 @@ class TaskStackList {
 #endif
 
 	struct TaskStackPlaceHolder : public DNode {
-		uint8                   buf[ sizeof(TaskStack) ];
+		uint8                   buf[sizeof(TaskStack)];
 
 		TaskStackPlaceHolder    *nextDeletion;  //  Pointer to next in lazy deletion list
 		bool                    deleted;        //  Deletion indicator
@@ -124,7 +124,7 @@ class TaskStackList {
 	DList                   list,       //  active TaskStacks
 	                        free;       //  inactive TaskStacks
 
-	TaskStackPlaceHolder    array[ numTaskStacks ];
+	TaskStackPlaceHolder    array[numTaskStacks];
 
 	bool                    lazyDelete;     //  Flag indicating lazy deletion mode
 	TaskStackPlaceHolder    *deletionList;  //  Singly linked list of all task stack
@@ -168,7 +168,7 @@ public:
 	//  Return a pointer to a TaskStack given a TaskStackID
 	TaskStack *getTaskStackAddress(TaskStackID id) {
 		assert(id >= 0 && id < numTaskStacks);
-		return array[ id ].getTaskStack();
+		return array[id].getTaskStack();
 	}
 
 	//  Run through the TaskStacks in the active list and update
@@ -184,8 +184,8 @@ TaskStackList::TaskStackList(void) {
 	int i;
 
 	for (i = 0; i < elementsof(array); i++) {
-		array[ i ].deleted = FALSE;
-		free.addTail(array[ i ]);
+		array[i].deleted = FALSE;
+		free.addTail(array[i]);
 	}
 
 	lazyDelete = FALSE;
@@ -316,7 +316,7 @@ void *TaskStackList::newTaskStack(TaskStackID id) {
 	TaskStackPlaceHolder    *tsp;
 
 	//  Grab the stack place holder from the inactive list
-	tsp = (TaskStackPlaceHolder *)&array[ id ];
+	tsp = (TaskStackPlaceHolder *)&array[id];
 	tsp->remove();
 
 	//  Place the stack place holder into the active list
@@ -411,7 +411,7 @@ void TaskStackList::updateTaskStacks(void) {
 //	call will simply return a pointer to the stackListBuffer in order
 //	to construct the TaskStackList in place.
 
-static uint8 stackListBuffer[ sizeof(TaskStackList) ];
+static uint8 stackListBuffer[sizeof(TaskStackList)];
 
 static TaskStackList &stackList = *((TaskStackList *)stackListBuffer);
 
@@ -529,7 +529,7 @@ void loadTaskStacks(SaveFileReader &saveGame) {
 	new (&stackList) TaskStackList;
 	bufferPtr = stackList.restore(bufferPtr);
 
-	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -558,7 +558,7 @@ class TaskList {
 		int         lineNo;
 		bool        marked;
 #endif
-		uint8       buf[ maxTaskSize ];
+		uint8       buf[maxTaskSize];
 
 		Task *getTask(void) {
 			return (Task *)&buf;
@@ -568,7 +568,7 @@ class TaskList {
 	DList                       list,       //  active Tasks
 	                            free;       //  inactive Tasks
 
-	TaskPlaceHolder             array[ numTasks ];
+	TaskPlaceHolder             array[numTasks];
 
 public:
 	//  Constructor -- initial construction
@@ -615,7 +615,7 @@ public:
 	//  Return a pointer to a Task given a TaskID
 	Task *getTaskAddress(TaskID id) {
 		assert(id >= 0 && id < numTasks);
-		return array[ id ].getTask();
+		return array[id].getTask();
 	}
 
 #if DEBUG
@@ -645,7 +645,7 @@ TaskList::TaskList(void) {
 	int i;
 
 	for (i = 0; i < elementsof(array); i++)
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 }
 
 //----------------------------------------------------------------------
@@ -790,7 +790,7 @@ void *TaskList::newTask(TaskID id)
 	TaskPlaceHolder     *tp;
 
 	//  Grab the task place holder from the inactive list
-	tp = (TaskPlaceHolder *)&array[ id ];
+	tp = (TaskPlaceHolder *)&array[id];
 	tp->remove();
 
 #if DEBUG
@@ -867,7 +867,7 @@ void TaskList::clearMarks(void) {
 //	pointer to the taskListBuffer in order to construct the TaskList in
 //	place.
 
-static uint8 taskListBuffer[ sizeof(TaskList) ];
+static uint8 taskListBuffer[sizeof(TaskList)];
 
 static TaskList &taskList = *((TaskList *)taskListBuffer);
 
@@ -985,7 +985,7 @@ void loadTasks(SaveFileReader &saveGame) {
 	new (&taskList) TaskList;
 	bufferPtr = taskList.restore(bufferPtr);
 
-	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -2321,7 +2321,7 @@ TaskResult GoAwayFromTask::update(void) {
 		dest.v = actorLoc.v + ((int32)repulsionVector.v * 64 / repulsionDist);
 		dest.z = actorLoc.z;
 	} else
-		dest = actorLoc + dirTable[ a->currentFacing ];
+		dest = actorLoc + dirTable[a->currentFacing];
 
 	if (goTask != NULL) {
 		if (goTask->getTarget() != dest)
@@ -2494,10 +2494,10 @@ TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
 	TilePoint           actorLoc = a->getLocation(),
 	                    repulsionVector;
 	int16               i;
-	TilePoint           locArray[ 6 ];
-	int16               strengthArray[ elementsof(locArray) ] =
+	TilePoint           locArray[6];
+	int16               strengthArray[elementsof(locArray)] =
 	{ 1, 1, 1, 1, 1, 1 };
-	int16               distArray[ elementsof(locArray) ];
+	int16               distArray[elementsof(locArray)];
 	TargetLocationArray tla(
 	    elementsof(locArray),
 	    locArray,
@@ -2508,13 +2508,13 @@ TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
 	if (tla.locs == 0) return TilePoint(0, 0, 0);
 
 	for (i = 0; i < tla.locs; i++)
-		locArray[ i ] -= actorLoc;
+		locArray[i] -= actorLoc;
 
 	repulsionVector = computeRepulsionVector(locArray, strengthArray, tla.locs);
 
 	return  repulsionVector.quickHDistance() > 0
 	        ?   repulsionVector
-	        :   -locArray[ 0 ];
+	        :   -locArray[0];
 }
 
 /* ===================================================================== *
@@ -3053,8 +3053,8 @@ void HuntToBeNearObjectTask::evaluateTarget(void) {
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
 		int16               i;
-		GameObject          *objArray[ 16 ];
-		int16               distArray[ elementsof(objArray) ];
+		GameObject          *objArray[16];
+		int16               distArray[elementsof(objArray)];
 		TargetObjectArray   toa(
 		    elementsof(objArray),
 		    objArray,
@@ -3067,7 +3067,7 @@ void HuntToBeNearObjectTask::evaluateTarget(void) {
 		//  Iterate through each object in the array and determine if
 		//  there is a line of sight to that object
 		for (i = 0; i < toa.objs; i++) {
-			ObjectID    objID = objArray[ i ]->thisID();
+			ObjectID    objID = objArray[i]->thisID();
 
 			if (a->canSenseSpecificObject(
 			            info,
@@ -3077,7 +3077,7 @@ void HuntToBeNearObjectTask::evaluateTarget(void) {
 			            info,
 			            maxSenseRange,
 			            objID)) {
-				currentTarget = objArray[ i ];
+				currentTarget = objArray[i];
 				break;
 			}
 		}
@@ -3192,8 +3192,8 @@ void HuntToPossessTask::evaluateTarget(void) {
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
 		int16               i;
-		GameObject          *objArray[ 16 ];
-		int16               distArray[ elementsof(objArray) ];
+		GameObject          *objArray[16];
+		int16               distArray[elementsof(objArray)];
 		TargetObjectArray   toa(
 		    elementsof(objArray),
 		    objArray,
@@ -3206,7 +3206,7 @@ void HuntToPossessTask::evaluateTarget(void) {
 		//  Iterate through each object in the array and determine if
 		//  there is a line of sight to that object
 		for (i = 0; i < toa.objs; i++) {
-			ObjectID    objID = objArray[ i ]->thisID();
+			ObjectID    objID = objArray[i]->thisID();
 
 			if (a->canSenseSpecificObject(
 			            info,
@@ -3216,7 +3216,7 @@ void HuntToPossessTask::evaluateTarget(void) {
 			            info,
 			            maxSenseRange,
 			            objID)) {
-				currentTarget = objArray[ i ];
+				currentTarget = objArray[i];
 				break;
 			}
 		}
@@ -3491,8 +3491,8 @@ void HuntToBeNearActorTask::evaluateTarget(void) {
 	if (targetEvaluateCtr == 0) {
 		Actor               *a = stack->getActor();
 		int16               i;
-		Actor               *actorArray[ 16 ];
-		int16               distArray[ elementsof(actorArray) ];
+		Actor               *actorArray[16];
+		int16               distArray[elementsof(actorArray)];
 		TargetActorArray    taa(
 		    elementsof(actorArray),
 		    actorArray,
@@ -3509,14 +3509,14 @@ void HuntToBeNearActorTask::evaluateTarget(void) {
 			        ||  a->canSenseSpecificActor(
 			            info,
 			            maxSenseRange,
-			            actorArray[ i ])
+			            actorArray[i])
 			        ||  a->canSenseSpecificActorIndirectly(
 			            info,
 			            maxSenseRange,
-			            actorArray[ i ])) {
-				if (currentTarget != actorArray[ i ]) {
+			            actorArray[i])) {
+				if (currentTarget != actorArray[i]) {
 					if (atTarget()) atTargetabortTask();
-					currentTarget = actorArray[ i ];
+					currentTarget = actorArray[i];
 				}
 
 				break;
@@ -3736,8 +3736,8 @@ void HuntToKillTask::evaluateTarget(void) {
 		Actor               *bestTarget = NULL;
 		ActorProto          *proto = (ActorProto *)a->proto();
 		int16               i;
-		Actor               *actorArray[ 16 ];
-		int16               distArray[ elementsof(actorArray) ];
+		Actor               *actorArray[16];
+		int16               distArray[elementsof(actorArray)];
 		TargetActorArray    taa(
 		    elementsof(actorArray),
 		    actorArray,
@@ -3752,18 +3752,18 @@ void HuntToKillTask::evaluateTarget(void) {
 			//  Iterate through each actor in the array and determine if
 			//  there is a line of sight to that actor
 			for (i = 0; i < taa.actors; i++) {
-				if (actorArray[ i ]->isDead()) continue;
+				if (actorArray[i]->isDead()) continue;
 
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])
+				            actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])) {
-					bestTarget = actorArray[ i ];
+				            actorArray[i])) {
+					bestTarget = actorArray[i];
 					break;
 				}
 			}
@@ -3773,25 +3773,25 @@ void HuntToKillTask::evaluateTarget(void) {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
-				if (actorArray[ i ]->isDead()) continue;
+				if (actorArray[i]->isDead()) continue;
 
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])
+				            actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])) {
+				            actorArray[i])) {
 					int16   score;
 
-					score =     closenessScore(distArray[ i ]) * 16
-					            /   actorArray[ i ]->defenseScore();
+					score =     closenessScore(distArray[i]) * 16
+					            /   actorArray[i]->defenseScore();
 
 					if (score > bestScore || bestTarget == NULL) {
 						bestScore = score;
-						bestTarget = actorArray[ i ];
+						bestTarget = actorArray[i];
 					}
 				}
 			}
@@ -3802,25 +3802,25 @@ void HuntToKillTask::evaluateTarget(void) {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
-				if (actorArray[ i ]->isDead()) continue;
+				if (actorArray[i]->isDead()) continue;
 
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])
+				            actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])) {
+				            actorArray[i])) {
 					int16   score;
 
-					score =     closenessScore(distArray[ i ])
-					            *   actorArray[ i ]->offenseScore();
+					score =     closenessScore(distArray[i])
+					            *   actorArray[i]->offenseScore();
 
 					if (score > bestScore || bestTarget == NULL) {
 						bestScore = score;
-						bestTarget = actorArray[ i ];
+						bestTarget = actorArray[i];
 					}
 				}
 			}
@@ -3831,26 +3831,26 @@ void HuntToKillTask::evaluateTarget(void) {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
-				if (actorArray[ i ]->isDead()) continue;
+				if (actorArray[i]->isDead()) continue;
 
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])
+				            actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
 				            maxSenseRange,
-				            actorArray[ i ])) {
+				            actorArray[i])) {
 					int16   score;
 
-					score =     closenessScore(distArray[ i ])
-					            *   actorArray[ i ]->offenseScore()
-					            /   actorArray[ i ]->defenseScore();
+					score =     closenessScore(distArray[i])
+					            *   actorArray[i]->offenseScore()
+					            /   actorArray[i]->defenseScore();
 
 					if (score > bestScore || bestTarget == NULL) {
 						bestScore = score;
-						bestTarget = actorArray[ i ];
+						bestTarget = actorArray[i];
 					}
 				}
 			}
@@ -4102,7 +4102,7 @@ bool BandTask::BandingRepulsorIterator::first(
 	bandIndex = 0;
 
 	while (bandIndex < band->size()) {
-		Actor       *bandMember = (*band)[ bandIndex ];
+		Actor       *bandMember = (*band)[bandIndex];
 
 		if (bandMember != a) {
 			repulsorVector = bandMember->getLocation() - a->getLocation();
@@ -4128,7 +4128,7 @@ bool BandTask::BandingRepulsorIterator::next(
 
 	bandIndex++;
 	while (bandIndex < band->size()) {
-		Actor       *bandMember = (*band)[ bandIndex ];
+		Actor       *bandMember = (*band)[bandIndex];
 
 		if (bandMember != a) {
 			repulsorVector = bandMember->getLocation() - a->getLocation();
@@ -4246,9 +4246,9 @@ void BandTask::evaluateTarget(void) {
 		                movementVector;
 		TilePoint       repulsorVector;
 		int16           repulsorStrength;
-		TilePoint       repulsorVectorArray[ 6 ];
-		int16           repulsorStrengthArray[ elementsof(repulsorVectorArray) ];
-		int16           repulsorDistArray[ elementsof(repulsorVectorArray) ];
+		TilePoint       repulsorVectorArray[6];
+		int16           repulsorStrengthArray[elementsof(repulsorVectorArray)];
+		int16           repulsorDistArray[elementsof(repulsorVectorArray)];
 		int16           repulsorCount;
 		bool            repulsorFlag;
 
@@ -4258,9 +4258,9 @@ void BandTask::evaluateTarget(void) {
 
 		//  Count the leader as two band members to double his
 		//  repulsion
-		repulsorVectorArray[ 0 ] = leader->getLocation() - actorLoc;
-		repulsorStrengthArray[ 0 ] = 3;
-		repulsorDistArray[ 0 ] = repulsorVectorArray[ 0 ].quickHDistance();
+		repulsorVectorArray[0] = leader->getLocation() - actorLoc;
+		repulsorStrengthArray[0] = 3;
+		repulsorDistArray[0] = repulsorVectorArray[0].quickHDistance();
 		repulsorCount = 1;
 
 		//  Iterate through the band members, adding their locations
@@ -4275,28 +4275,28 @@ void BandTask::evaluateTarget(void) {
 			int16           repulsorDist = repulsorVector.quickHDistance();
 			int16           j = repulsorCount;
 
-			if (repulsorDist < repulsorDistArray[ j - 1 ]) {
+			if (repulsorDist < repulsorDistArray[j - 1]) {
 				if (repulsorCount < elementsof(repulsorVectorArray)) {
-					repulsorDistArray[ j ] = repulsorDistArray[ j - 1 ];
-					repulsorVectorArray[ j ] = repulsorVectorArray[ j - 1 ];
-					repulsorStrengthArray[ j ] = repulsorStrengthArray[ j - 1 ];
+					repulsorDistArray[j] = repulsorDistArray[j - 1];
+					repulsorVectorArray[j] = repulsorVectorArray[j - 1];
+					repulsorStrengthArray[j] = repulsorStrengthArray[j - 1];
 				}
 				j--;
 			}
 
-			while (j > 0 && repulsorDist < repulsorDistArray[ j - 1 ]) {
-				repulsorDistArray[ j ] = repulsorDistArray[ j - 1 ];
-				repulsorVectorArray[ j ] = repulsorVectorArray[ j - 1 ];
-				repulsorStrengthArray[ j ] = repulsorStrengthArray[ j - 1 ];
+			while (j > 0 && repulsorDist < repulsorDistArray[j - 1]) {
+				repulsorDistArray[j] = repulsorDistArray[j - 1];
+				repulsorVectorArray[j] = repulsorVectorArray[j - 1];
+				repulsorStrengthArray[j] = repulsorStrengthArray[j - 1];
 				j--;
 			}
 
 			if (j < elementsof(repulsorVectorArray)) {
 				if (repulsorCount < elementsof(repulsorVectorArray))
 					repulsorCount++;
-				repulsorDistArray[ j ] = repulsorDist;
-				repulsorVectorArray[ j ] = repulsorVector;
-				repulsorStrengthArray[ j ] = repulsorStrength;
+				repulsorDistArray[j] = repulsorDist;
+				repulsorVectorArray[j] = repulsorVector;
+				repulsorStrengthArray[j] = repulsorStrength;
 			}
 		}
 
@@ -4425,7 +4425,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
     int16       &repulsorStrength) {
 	assert(iteratingThruEnemies);
 
-	int16                   actorDistArray[ elementsof(actorArray) ];
+	int16                   actorDistArray[elementsof(actorArray)];
 	TargetActorArray        taa(elementsof(actorArray), actorArray, actorDistArray);
 	ActorPropertyTarget     target(actorPropIDEnemy);
 
@@ -4437,7 +4437,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 
 	if (actorIndex < numActors) {
 		repulsorVector =
-		    actorArray[ actorIndex ]->getLocation() - a->getLocation();
+		    actorArray[actorIndex]->getLocation() - a->getLocation();
 		repulsorStrength = 6;
 
 		return TRUE;
@@ -4458,7 +4458,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::nextEnemyRepulsor(
 
 	if (actorIndex < numActors) {
 		repulsorVector =
-		    actorArray[ actorIndex ]->getLocation() - a->getLocation();
+		    actorArray[actorIndex]->getLocation() - a->getLocation();
 		repulsorStrength = 6;
 
 		return TRUE;

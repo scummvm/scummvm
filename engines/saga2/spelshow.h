@@ -256,7 +256,7 @@ public:
 	uint8               secondarySpriteNo;   // sprites available
 	//uint8             effCount;      // effectrons to allocate
 
-	uint8               colorMap[ 4 ];          // indirect color map
+	uint8               colorMap[4];          // indirect color map
 	// full init
 	SpellDisplayPrototype(
 	    EffectID, int32, int32, int32, int32, effectDirectionInit,

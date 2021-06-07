@@ -132,11 +132,11 @@ static void DrawChar(
 	//  point to the first byte of the first scanline of the
 	//  source char
 
-	chardata = (uint8 *)(font + 1) + font->charXOffset[ drawchar ];
+	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
 
 	//  get the width of the character in pixels
 
-	charwidth = font->charWidth[ drawchar ];
+	charwidth = font->charWidth[drawchar];
 
 	//  point to the first byte of where we want to place the character
 
@@ -292,10 +292,10 @@ void DrawChar3x3Outline(gFont *font, int drawchar, int xpos, uint8 *baseline,
 	unsigned short  txt1, txt2, txt3;
 
 	//  point to the first byte of the first scanline of the source char
-	chardata = (uint8 *)(font + 1) + font->charXOffset[ drawchar ];
+	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
 
 	//  get the width of the character in pixels
-	charwidth = font->charWidth[ drawchar ];
+	charwidth = font->charWidth[drawchar];
 
 	//  point to the first byte of where we want to place the character
 	baseline += xpos - 1;
@@ -349,13 +349,13 @@ void DrawChar5x5Outline(gFont *font, int drawchar, int xpos, uint8 *baseline,
 
 	uint8           *src, *dst;
 	unsigned short  s0, s1;
-	unsigned short  txt[ 5 ];
+	unsigned short  txt[5];
 
 	//  point to the first byte of the first scanline of the source char
-	chardata = (uint8 *)(font + 1) + font->charXOffset[ drawchar ];
+	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
 
 	//  get the width of the character in pixels
-	charwidth = font->charWidth[ drawchar ];
+	charwidth = font->charWidth[drawchar];
 
 	//  point to the first byte of where we want to place the character
 	baseline += xpos - 2;
@@ -367,19 +367,19 @@ void DrawChar5x5Outline(gFont *font, int drawchar, int xpos, uint8 *baseline,
 		src = chardata;
 		dst = baseline;
 
-		txt[ 0 ] = txt[ 1 ] = txt[ 2 ] = txt[ 3 ] = txt[ 4 ] = 0;
+		txt[0] = txt[1] = txt[2] = txt[3 ] = txt[ 4 ] = 0;
 
 		for (h = font->height + 4; h; h--) {
 			d = dst;
 
-			txt[ 4 ] = txt[ 3 ];
-			txt[ 3 ] = txt[ 2 ];
-			txt[ 2 ] = txt[ 1 ];
-			txt[ 1 ] = txt[ 0 ];
-			txt[ 0 ] = h > 4 ? *src : 0;
+			txt[4] = txt[3];
+			txt[3] = txt[2];
+			txt[2] = txt[1];
+			txt[1] = txt[0];
+			txt[0] = h > 4 ? *src : 0;
 
-			s0 = txt[ 1 ] | txt[ 2 ] | txt[ 3 ];
-			s1 = s0 | txt[ 0 ] | txt[ 4 ];
+			s0 = txt[1] | txt[2] | txt[3];
+			s1 = s0 | txt[0] | txt[4];
 
 			s0 = s0 | (s0 << 1) | (s0 << 2) | (s0 << 3) | (s0 << 4);
 			s0 |= (s1 << 1) | (s1 << 2) | (s1 << 3);
@@ -423,11 +423,11 @@ static void DrawChar3x3Outline(
 
 	//  point to the first byte of the first scanline of the source char
 
-	chardata = (uint8 *)(font + 1) + font->charXOffset[ drawchar ];
+	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
 
 	//  get the width of the character in pixels
 
-	charwidth = font->charWidth[ drawchar ];
+	charwidth = font->charWidth[drawchar];
 
 	//  point to the first byte of where we want to place the character
 
@@ -633,24 +633,24 @@ void gPort::drawStringChars(
 		if (textStyles & textStyleOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
-				x += font->charKern[ drawchar ];
+				x += font->charKern[drawchar];
 				DrawChar3x3Outline(font, drawchar, x, buffer, shPen, rowMod);
-				x += font->charSpace[ drawchar ] + textSpacing;
+				x += font->charSpace[drawchar] + textSpacing;
 			}
 		} else if (textStyles & textStyleThickOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;                // draw thick drop shadow
-				x += font->charKern[ drawchar ];
+				x += font->charKern[drawchar];
 				DrawChar5x5Outline(font, drawchar, x, buffer, shPen, rowMod);
-				x += font->charSpace[ drawchar ] + textSpacing;
+				x += font->charSpace[drawchar] + textSpacing;
 			}
 		} else {
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
-				x += font->charKern[ drawchar ];
+				x += font->charKern[drawchar];
 				DrawChar(font, drawchar, x, buffer + rowMod,
 				         shPen, rowMod);
-				x += font->charSpace[ drawchar ] + textSpacing;
+				x += font->charSpace[drawchar] + textSpacing;
 			}
 		}
 	}
@@ -663,10 +663,10 @@ void gPort::drawStringChars(
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw thick text
-			x += font->charKern[ drawchar ];
+			x += font->charKern[drawchar];
 			DrawChar3x3Outline(font, drawchar, x, buffer - rowMod,
 			                   olPen, rowMod);
-			x += font->charSpace[ drawchar ] + textSpacing;
+			x += font->charSpace[drawchar] + textSpacing;
 		}
 	} else if (textStyles & textStyleThickOutline) { // if thick outlining
 		x = xpos;
@@ -674,10 +674,10 @@ void gPort::drawStringChars(
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw extra thick text
-			x += font->charKern[ drawchar ];
+			x += font->charKern[drawchar];
 			DrawChar5x5Outline(font, drawchar, x, buffer - rowMod * 2,
 			                   olPen, rowMod);
-			x += font->charSpace[ drawchar ] + textSpacing;
+			x += font->charSpace[drawchar] + textSpacing;
 		}
 	}
 
@@ -698,9 +698,9 @@ void gPort::drawStringChars(
 			if (textStyles & textStyleUnderBar) underscore = TRUE;
 			if (textStyles & textStyleHiLiteBar) color = bgPen;
 		}
-		x += font->charKern[ drawchar ];
+		x += font->charKern[drawchar];
 		DrawChar(font, drawchar, x, buffer, color, rowMod);
-		x += font->charSpace[ drawchar ] + textSpacing;
+		x += font->charSpace[drawchar] + textSpacing;
 
 		if (underscore) {               // draw underscore
 			uint8   *put = uBuffer + last_x;
@@ -739,15 +739,15 @@ int16 gPort::drawClippedString(
 		            charwidth;
 
 		if (drawchar == '_' && underbar) {
-			drawchar = s[ 1 ];
-			charwidth   = font->charKern[ drawchar ]
-			              + font->charSpace[ drawchar ] + textSpacing;
+			drawchar = s[1];
+			charwidth   = font->charKern[drawchar]
+			              + font->charSpace[drawchar] + textSpacing;
 
 			if (xpos + charwidth >= clip.x) break;
 			s++;
 		} else {
-			charwidth   = font->charKern[ drawchar ]
-			              + font->charSpace[ drawchar ] + textSpacing;
+			charwidth   = font->charKern[drawchar]
+			              + font->charSpace[drawchar] + textSpacing;
 			if (xpos + charwidth >= clip.x) break;
 		}
 
@@ -763,20 +763,20 @@ int16 gPort::drawClippedString(
 	//  the right edge of the clip.
 
 	for (clipLen = 0; clipLen < len; clipLen++) {
-		int16       drawchar = s[ clipLen ];
+		int16       drawchar = s[clipLen];
 
 		if (drawchar == '_' && underbar) continue;
 
-		clipWidth += font->charKern[ drawchar ]
-		             + font->charSpace[ drawchar ] + textSpacing;
+		clipWidth += font->charKern[drawchar]
+		             + font->charSpace[drawchar] + textSpacing;
 
 		if (xpos > clip.x + clip.width) break;
 	}
 
 	//  Handle special case of negative kern value of 1st character
 
-	if (font->charKern[ s[ 0 ] ] < 0) {
-		int16       kern = - font->charKern[ s[ 0 ] ];
+	if (font->charKern[s[0]] < 0) {
+		int16       kern = - font->charKern[s[0]];
 
 		clipWidth += kern;              // increase size of map to render
 		xoff += kern;                   // offset text into map right
@@ -886,12 +886,12 @@ int16 gPort::drawClippedString(
 
 //	penMove += clipWidth;
 	for (clipLen = 0; clipLen < len; clipLen++) {
-		int16       drawchar = s[ clipLen ];
+		int16       drawchar = s[clipLen];
 
 		if (drawchar == '_' && underbar) continue;
 
-		penMove += font->charKern[ drawchar ]
-		           + font->charSpace[ drawchar ] + textSpacing;
+		penMove += font->charKern[drawchar]
+		           + font->charSpace[drawchar] + textSpacing;
 	}
 
 	return penMove;
@@ -1078,7 +1078,7 @@ int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles) {
 
 		if (chr == '_' && (styles & textStyleBar)) continue;
 
-		count += font->charKern[ chr ] + font->charSpace[ chr ];
+		count += font->charKern[chr] + font->charSpace[chr];
 	}
 
 	if (styles & textStyleItalics) {
@@ -1131,7 +1131,7 @@ int16 WhichChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 	for (count = 0; count < maxLen; count++) {
 		uint8       chr = *s++;
 
-		length -= font->charKern[ chr ] + font->charSpace[ chr ];
+		length -= font->charKern[chr] + font->charSpace[chr];
 		if (length < 0) break;
 	}
 	return count;
@@ -1181,7 +1181,7 @@ int16 WhichIChar(gFont *font, uint8 *s, int16 length, int16 maxLen) {
 		uint8       chr = *s++;
 		int16       width;
 
-		width = font->charKern[ chr ] + font->charSpace[ chr ];
+		width = font->charKern[chr] + font->charSpace[chr];
 
 		if (length < width / 2) break;
 		length -= width;
@@ -1292,7 +1292,7 @@ int16 X_TextWrap(
 	                    pixel_len,              // pixel length of line
 	                    line_count = 0;         // number of lines
 
-	lines[ line_count ] = text;
+	lines[line_count] = text;
 	last_space = -1;
 	line_start = 0;
 	pixel_len = 0;
@@ -1300,17 +1300,17 @@ int16 X_TextWrap(
 	//  For each character in the string, check for word wrap
 
 	for (i = 0; ; i++) {
-		uint8           c = text[ i ];
+		uint8           c = text[i];
 
 		if (c == '\n' || c == '\r' || c == '\0') {  // if deliberate end of line
-			line_chars[ line_count ] = i - line_start;  //
-			line_pixels[ line_count ] = pixel_len;
+			line_chars[line_count] = i - line_start;  //
+			line_pixels[line_count] = pixel_len;
 			line_start = i + 1;
 			if (c == '\0') {
 				line_count++;
 				break;
 			}
-			lines[ ++line_count ] = &text[ line_start ];
+			lines[++line_count] = &text[line_start];
 			last_space = -1;
 			pixel_len = 0;
 			continue;
@@ -1320,13 +1320,13 @@ int16 X_TextWrap(
 		}
 
 		pixel_len +=
-		    font->char_kern[ c ] + font->char_space[ c ];
+		    font->char_kern[c] + font->char_space[c];
 
 		if (pixel_len > width - 2 && last_space > 0) {
-			line_chars[ line_count ] = last_space - line_start;
-			line_pixels[ line_count ] = last_space_pixels;
+			line_chars[line_count] = last_space - line_start;
+			line_pixels[line_count] = last_space_pixels;
 			line_start = last_space + 1;
-			lines[ ++line_count ] = &text[ line_start ];
+			lines[++line_count] = &text[line_start];
 
 			last_space = -1;
 			pixel_len = 0;
@@ -1347,10 +1347,10 @@ void XS_DrawTextWrapped(
 	int16               i,                      // loop counter
 	                    line_count = 0;         // number of lines
 
-	char                *lines[ 10 ];           // pointer to each line
+	char                *lines[10];           // pointer to each line
 
-	int16               line_chars[ 10 ],       // # of chars in line
-	                    line_pixels[ 10 ],      // # of pixels in line
+	int16               line_chars[10],       // # of chars in line
+	                    line_pixels[10],      // # of pixels in line
 	                    ypos = box->Top,        // top of box
 	                    row_height;
 	int16               save_flags = x_DrawFlags;
@@ -1371,8 +1371,8 @@ void XS_DrawTextWrapped(
 
 	for (i = 0; i < line_count; i++) {
 		DrawFixedString(dest,
-		                lines[ i ], line_chars[ i ],
-		                box->Left + (box->Width - line_pixels[ i ]) / 2 + 1,
+		                lines[i], line_chars[i],
+		                box->Left + (box->Width - line_pixels[i]) / 2 + 1,
 		                ypos,
 		                text_color, outline_color, 0);
 
@@ -1391,10 +1391,10 @@ int16 X_WrappedTextHeight(
 ) {
 	int16               line_count = 0;         // number of lines
 
-	char                *lines[ 10 ];           // pointer to each line
+	char                *lines[10];           // pointer to each line
 
-	int16               line_chars[ 10 ],       // # of chars in line
-	                    line_pixels[ 10 ],      // # of pixels in line
+	int16               line_chars[10],       // # of chars in line
+	                    line_pixels[10],      // # of pixels in line
 	                    row_height;
 
 	line_count = X_TextWrap(lines, line_chars, line_pixels,

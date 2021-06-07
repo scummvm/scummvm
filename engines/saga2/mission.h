@@ -62,11 +62,11 @@ private:
 
 	//  Specific variables relating to the mission which can
 	//  be defined by the script writer.
-	uint8           missionVars[ 32 ];
+	uint8           missionVars[32];
 
 	//  Record what resources were created for this mission
-	ObjectID        missionObjectList[ 32 ];
-	KnowledgeID     missionKnowledgeList[ 32 ];
+	ObjectID        missionObjectList[32];
+	KnowledgeID     missionKnowledgeList[32];
 	uint16          numObjectIDs,
 	                numKnowledgeIDs;
 

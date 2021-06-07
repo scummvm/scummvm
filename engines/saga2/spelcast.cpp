@@ -918,7 +918,7 @@ int16 tileNopeHeight(
 
 	{
 		//  Look up the metatile on the map.
-		metaPtr = prevMeta = mapList[ mapNum ].lookupMeta(metaCoords);
+		metaPtr = prevMeta = mapList[mapNum].lookupMeta(metaCoords);
 		prevMapNum = mapNum;
 		prevCoords = metaCoords;
 	}

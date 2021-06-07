@@ -51,7 +51,7 @@ GrabInfo::GrabInfo() {
 	intentDoable = TRUE;
 	intention   = WalkTo;
 
-	textBuf[ 0 ] = '\0';
+	textBuf[0] = '\0';
 	displayGauge = FALSE;
 }
 
@@ -81,7 +81,7 @@ void GrabInfo::grabObject(ObjectID objid,  Intent in, int16 count) {
 
 //	Make the object pointer into the mouse pointer
 void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
-	char        objText[ bufSize ];
+	char        objText[bufSize];
 
 	assert(!obj->isMoving());
 
@@ -126,7 +126,7 @@ void GrabInfo::copyObject(ObjectID objid,  Intent in, int16 count) {
 //  it does not actually copy it
 //	Make the object pointer into the mouse pointer
 void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
-	char        objText[ bufSize ];
+	char        objText[bufSize];
 
 	// set the number of items
 	setMoveCount(count);
@@ -272,7 +272,7 @@ void GrabInfo::placeObject(const Location &loc) {
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[ 0 ] != '\0' ? textBuf : NULL);
+	setMouseText(textBuf[0] != '\0' ? textBuf : NULL);
 
 	//  Display the saved gauge data
 	if (displayGauge)
@@ -307,7 +307,7 @@ void GrabInfo::replaceObject(void) {
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[ 0 ] != '\0' ? textBuf : NULL);
+	setMouseText(textBuf[0] != '\0' ? textBuf : NULL);
 
 	//  Display the saved gauge data
 	if (displayGauge)
@@ -323,11 +323,11 @@ void GrabInfo::replaceObject(void) {
 void GrabInfo::setText(const char *txt) {
 	if ((txt != NULL) && strlen(txt)) {
 		strncpy(textBuf, txt, bufSize);
-		textBuf[ bufSize - 1 ] = '\0';
+		textBuf[bufSize - 1] = '\0';
 		if (grabObj == NULL)
 			setMouseText(textBuf);
 	} else {
-		textBuf[ 0 ] = '\0';
+		textBuf[0] = '\0';
 		if (grabObj == NULL)
 			setMouseText(NULL);
 	}

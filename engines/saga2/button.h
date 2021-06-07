@@ -91,7 +91,7 @@ protected:
 	uint16      max, min;           // min max of the index
 	textPallete textPal;            // contains info about coloring for multi-depth text rendering
 	gFont       *textFont;          // pointer to font for this button
-//	char     imageText[ textSize ];  // text to render on button
+//	char     imageText[textSize];  // text to render on button
 
 protected:
 	virtual void    *getCurrentCompImage(void);      // get the current image

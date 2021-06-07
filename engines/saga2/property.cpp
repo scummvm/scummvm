@@ -83,7 +83,7 @@ const SimpleObjectProperty objPropKey(objIsKey);
 const SimpleObjectProperty objPropPlayerActor(objIsPlayerActor);
 const SimpleObjectProperty objPropEnemy(objIsEnemy);
 
-const ObjectProperty *objPropArray[ objPropIDCount ] = {
+const ObjectProperty *objPropArray[objPropIDCount] = {
 	&objPropObject,
 	&objPropActor,
 	&objPropWorld,
@@ -127,7 +127,7 @@ const SimpleActorProperty actorPropCenterActor(actorIsCenterActor);
 const SimpleActorProperty actorPropPlayerActor(actorIsPlayerActor);
 const SimpleActorProperty actorPropEnemy(actorIsEnemy);
 
-const ActorProperty *actorPropArray[ actorPropIDCount ] = {
+const ActorProperty *actorPropArray[actorPropIDCount] = {
 #ifdef FTA
 	&actorPropDead,
 #endif
@@ -147,7 +147,7 @@ static bool tileHasWater(TileInfo *ti) {
 
 const SimpleTileProperty tilePropHasWater(tileHasWater);
 
-const TileProperty *tilePropArray[ tilePropIDCount ] = {
+const TileProperty *tilePropArray[tilePropIDCount] = {
 	&tilePropHasWater,
 };
 
@@ -205,7 +205,7 @@ bool MetaTilePropertyAnd::operator()(
 	//  Iterate through each element in the array and if any evaluate to
 	//  FALSE, return FALSE immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[ i ])(mt, mapNum, tp) == FALSE) return FALSE;
+		if ((*propertyArray[i])(mt, mapNum, tp) == FALSE) return FALSE;
 
 	return TRUE;
 }
@@ -223,7 +223,7 @@ bool MetaTilePropertyOr::operator()(
 	//  Iterate through each element in the array and if any evaluate to
 	//  TRUE, return TRUE immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[ i ])(mt, mapNum, tp)) return TRUE;
+		if ((*propertyArray[i])(mt, mapNum, tp)) return TRUE;
 
 	return FALSE;
 }
@@ -266,7 +266,7 @@ static bool metaTileHasWater(
 
 const SimpleMetaTileProperty metaTilePropHasWater(metaTileHasWater);
 
-const MetaTileProperty *metaTilePropArray[ metaTilePropIDCount ] = {
+const MetaTileProperty *metaTilePropArray[metaTilePropIDCount] = {
 	&metaTilePropHasWater,
 };
 

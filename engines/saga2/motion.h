@@ -135,7 +135,7 @@ class MotionTask : private DNode {
 	};
 
 	Direction       direction;              // direction of movement
-	TilePoint       pathList[ 16 ];         // intermediate motion targets
+	TilePoint       pathList[16];         // intermediate motion targets
 	int16           pathCount,              // number of points in path
 	                pathIndex,              // number of points so far
 	                runCount;               // used for run requests.
@@ -540,7 +540,7 @@ class MotionTaskList {
 
 	DList           list,
 	                free;
-	MotionTask      array[ 48 ];
+	MotionTask      array[48];
 
 public:
 	//  Default constructor

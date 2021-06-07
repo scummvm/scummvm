@@ -863,7 +863,7 @@ void TileModeHandleTask(void) {
 				//  object at which the mouse is pointing
 				if (dispObjNameAlarm.check()) {
 					const   int bufSize = 40;
-					char    cursorText[ bufSize ];
+					char    cursorText[bufSize];
 
 					// get the object text into the buffer
 					item->objCursorText(cursorText, bufSize);
@@ -1075,12 +1075,12 @@ void TileModeHandleKey(int16 key, int16 qual) {
 //  A debugging function to show the queue of recent mouse events.
 
 #if DEBUG
-static char mouseHistory[ 33 ];
+static char mouseHistory[33];
 
 void showMouseEvent(char eventType) {
 	memmove(mouseHistory + 1, mouseHistory, 31);
-	mouseHistory[ 0 ] = eventType;
-	mouseHistory[ 32 ] = '\0';
+	mouseHistory[0] = eventType;
+	mouseHistory[32] = '\0';
 	WriteStatusF(5, mouseHistory);
 }
 #endif

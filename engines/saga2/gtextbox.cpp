@@ -179,7 +179,7 @@ gTextBox::gTextBox(
 	index                   = 0;    // index into string array ( which string )
 	maxLen                  = length;
 	flags                   = flg;
-	currentLen[ index ]     = buffer ? strlen(buffer) : 0;
+	currentLen[index]     = buffer ? strlen(buffer) : 0;
 	cursorPos               = anchorPos = scrollPixels = 0;
 	undoBuffer              = (char *)malloc(sizeof(char) * (maxLen + 1));
 	textFont                = font;
@@ -213,7 +213,7 @@ gTextBox::gTextBox(
 	for (i = 0; i < numEditLines; i++) {
 		exists[i] = ((stringBufs[i][0] & 0x80) == 0);
 		stringBufs[i][0] &= 0x7F;
-		currentLen[ i ] = MIN<int>(editLen, strlen(stringBufs[ i ]));
+		currentLen[i] = MIN<int>(editLen, strlen(stringBufs[i]));
 	}
 
 	internalBuffer = FALSE;
@@ -222,7 +222,7 @@ gTextBox::gTextBox(
 	enSelect(0);
 	if (!displayOnly) {
 		cursorPos = 0;
-		anchorPos = currentLen[ index ];
+		anchorPos = currentLen[index];
 	}
 	fullRedraw = TRUE;
 }
@@ -273,28 +273,28 @@ bool gTextBox::insertText(char *newText, int length) {
 	//  If inserting the text would make the string too long,
 	//  then don't insert it.
 
-	if (currentLen[ index ] - selWidth + length >= maxLen) return FALSE;
+	if (currentLen[index] - selWidth + length >= maxLen) return FALSE;
 
 	//  Move the text after the selection to where it will be
 	//  after the insertion.
 
-	if (selEnd < currentLen[ index ]) {
-		memmove(fieldStrings[ index ] + selStart + length,
-		        fieldStrings[ index ] + selEnd,
-		        currentLen[ index ] - selEnd);
+	if (selEnd < currentLen[index]) {
+		memmove(fieldStrings[index] + selStart + length,
+		        fieldStrings[index] + selEnd,
+		        currentLen[index] - selEnd);
 	}
 
 	//  Move the inserted text, if any, to the opening
 
 	if (length > 0) {
-		memmove(fieldStrings[ index ] + selStart, newText, length);
+		memmove(fieldStrings[index] + selStart, newText, length);
 	}
 
 	//  Set the insertion point to the end of the new text.
 
 	cursorPos = anchorPos = selStart + length;
-	currentLen[ index ] += (length - selWidth);
-	fieldStrings[ index ][ currentLen[ index ] ] = '\0';
+	currentLen[index] += (length - selWidth);
+	fieldStrings[index][currentLen[index]] = '\0';
 
 	RMemIntegrity();
 
@@ -328,7 +328,7 @@ void gTextBox::setText(char *newText) {
 	int16       len = MIN((int)(strlen(newText)), (int)(maxLen - 1));
 
 	cursorPos = 0;
-	anchorPos = currentLen[ index ];
+	anchorPos = currentLen[index];
 
 	insertText(newText, len);
 	cursorPos = anchorPos = 0;
@@ -382,8 +382,8 @@ void gTextBox::deactivate(void) {
 
 void gTextBox::prepareEdit(int which) {
 	if (!displayOnly) {
-		if (undoBuffer) memcpy(undoBuffer, fieldStrings[ which ], currentLen[ which ] + 1);
-		undoLen = currentLen[ which ];
+		if (undoBuffer) memcpy(undoBuffer, fieldStrings[which], currentLen[which] + 1);
+		undoLen = currentLen[which];
 	}
 }
 
@@ -391,7 +391,7 @@ void gTextBox::prepareEdit(int which) {
 
 bool gTextBox::changed(void) {
 	if (undoBuffer && editing) {
-		return memcmp(undoBuffer, fieldStrings[ index ], currentLen[ index ] + 1);
+		return memcmp(undoBuffer, fieldStrings[index], currentLen[index] + 1);
 	}
 	return FALSE;
 }
@@ -400,9 +400,9 @@ bool gTextBox::changed(void) {
 
 void gTextBox::commitEdit(void) {
 	if (undoBuffer && changed()) {
-		memcpy(undoBuffer, fieldStrings[ index ], currentLen[ index ] + 1);
-		undoLen = currentLen[ index ];
-		cursorPos = anchorPos = currentLen[ index ];
+		memcpy(undoBuffer, fieldStrings[index], currentLen[index] + 1);
+		undoLen = currentLen[index];
+		cursorPos = anchorPos = currentLen[index];
 		notify(gEventNewValue, 1);       // tell app about new value
 	}
 }
@@ -412,8 +412,8 @@ void gTextBox::commitEdit(void) {
 
 void gTextBox::revertEdit(void) {
 	if (undoBuffer && changed()) {
-		cursorPos = anchorPos = currentLen[ index ] = undoLen;
-		memcpy(fieldStrings[ index ], undoBuffer, currentLen[ index ] + 1);
+		cursorPos = anchorPos = currentLen[index] = undoLen;
+		memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
 		notify(gEventNewValue, 0);         // tell app about new value
 	}
 }
@@ -490,7 +490,7 @@ void gTextBox::enSelect(int which) {
 		prepareEdit(which);
 		editing   = TRUE;
 		cursorPos = 0;
-		anchorPos = currentLen[ index ];
+		anchorPos = currentLen[index];
 	} else {
 		hilit = TRUE;
 	}
@@ -540,7 +540,7 @@ void gTextBox::selectionMove(int howMany) {
 	reSelect(newIndex);
 	if (!displayOnly) {
 		cursorPos = 0;
-		anchorPos = currentLen[ index ];
+		anchorPos = currentLen[index];
 	}
 
 	draw();
@@ -582,9 +582,9 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 			reSelect(newIndex);
 		if (editing) {
 			if (textFont) {
-				newPos = WhichIChar(textFont, (uint8 *)fieldStrings[ index ], msg.pickPos.x - 3, currentLen[ index ]);
+				newPos = WhichIChar(textFont, (uint8 *)fieldStrings[index], msg.pickPos.x - 3, currentLen[index]);
 			} else {
-				newPos = WhichIChar(mainFont, (uint8 *)fieldStrings[ index ], msg.pickPos.x - 3, currentLen[ index ]);
+				newPos = WhichIChar(mainFont, (uint8 *)fieldStrings[index], msg.pickPos.x - 3, currentLen[index]);
 			}
 			if (msg.leftButton) {
 				if (cursorPos != newPos || anchorPos != newPos) {
@@ -612,9 +612,9 @@ void gTextBox::pointerDrag(gPanelMessage &msg) {
 
 	if (msg.leftButton) {
 		if (textFont) {
-			newPos = WhichIChar(textFont, (uint8 *)fieldStrings[ index ], msg.pickPos.x - 3, currentLen[ index ]);
+			newPos = WhichIChar(textFont, (uint8 *)fieldStrings[index], msg.pickPos.x - 3, currentLen[index]);
 		} else {
-			newPos = WhichIChar(mainFont, (uint8 *)fieldStrings[ index ], msg.pickPos.x - 3, currentLen[ index ]);
+			newPos = WhichIChar(mainFont, (uint8 *)fieldStrings[index], msg.pickPos.x - 3, currentLen[index]);
 		}
 		inDrag = TRUE;
 		if (cursorPos != newPos) {
@@ -687,7 +687,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 		case SpecialKey(rightArrowKey):
 
-			if (anchorPos < currentLen[ index ]) anchorPos++;
+			if (anchorPos < currentLen[index]) anchorPos++;
 			if (!(msg.qualifier & qualifierShift)) cursorPos = anchorPos;
 			break;
 
@@ -697,33 +697,33 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			break;
 
 		case SpecialKey(endKey):
-			cursorPos = currentLen[ index ];
-			anchorPos = currentLen[ index ];
+			cursorPos = currentLen[index];
+			anchorPos = currentLen[index];
 			break;
 
 		case SpecialKey(deleteKey):                     // DELETE character
 
 			if (selWidth == 0) {            // if insertion point
 				// don't delete if at end
-				if (selStart >= currentLen[ index ]) return FALSE;
+				if (selStart >= currentLen[index]) return FALSE;
 				selWidth = 1;               // delete 1 char
 			}
 
 			//  Delete N chars
 
-			memmove(fieldStrings[ index ] + selStart,
-			        fieldStrings[ index ] + selStart + selWidth,
-			        currentLen[ index ] - (selStart + selWidth));
+			memmove(fieldStrings[index] + selStart,
+			        fieldStrings[index] + selStart + selWidth,
+			        currentLen[index] - (selStart + selWidth));
 			cursorPos = anchorPos = selStart;// adjust cursor pos
-			currentLen[ index ] -= selWidth;            // adjust str len
+			currentLen[index] -= selWidth;            // adjust str len
 			notify(gEventAltValue, 0);   // tell app about new value
 			break;
 
 		case SpecialKey(0x2c00):                        // Alt-Z
 
 			if (undoBuffer) {
-				cursorPos = anchorPos = currentLen[ index ] = undoLen;
-				memcpy(fieldStrings[ index ], undoBuffer, currentLen[ index ] + 1);
+				cursorPos = anchorPos = currentLen[index] = undoLen;
+				memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
 				notify(gEventAltValue, 0);  // tell app about new value
 			}
 			break;
@@ -772,32 +772,32 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 		//  Delete N chars
 
-		memmove(fieldStrings[ index ] + selStart,
-		        fieldStrings[ index ] + selStart + selWidth,
-		        currentLen[ index ] - (selStart + selWidth));
+		memmove(fieldStrings[index] + selStart,
+		        fieldStrings[index] + selStart + selWidth,
+		        currentLen[index] - (selStart + selWidth));
 		cursorPos = anchorPos = selStart;   // adjust cursor pos
-		currentLen[ index ] -= selWidth;                // adjust str len
+		currentLen[index] -= selWidth;                // adjust str len
 		notify(gEventAltValue, 0);       // tell app about new value
 	} else if (key == SpecialKey(deleteKey) && editing) { // DELETE character
 		if (selWidth == 0) {                // if insertion point
 			// don't delete if at end
-			if (selStart >= currentLen[ index ]) return FALSE;
+			if (selStart >= currentLen[index]) return FALSE;
 			selWidth = 1;                   // delete 1 char
 		}
 
 		//  Delete N chars
 
-		memmove(fieldStrings[ index ] + selStart,
-		        fieldStrings[ index ] + selStart + selWidth,
-		        currentLen[ index ] - (selStart + selWidth));
+		memmove(fieldStrings[index] + selStart,
+		        fieldStrings[index] + selStart + selWidth,
+		        currentLen[index] - (selStart + selWidth));
 		cursorPos = anchorPos = selStart;   // adjust cursor pos
-		currentLen[ index ] -= selWidth;    // adjust str len
+		currentLen[index] -= selWidth;    // adjust str len
 		notify(gEventAltValue, 0);       // tell app about new value
 	} else if (key == '\t' && editing) return FALSE;    // reprocess keystroke
 	else if (key == 26 && editing) {                    // control-z
 		if (undoBuffer) {
-			cursorPos = anchorPos = currentLen[ index ] = undoLen;
-			memcpy(fieldStrings[ index ], undoBuffer, currentLen[ index ] + 1);
+			cursorPos = anchorPos = currentLen[index] = undoLen;
+			memcpy(fieldStrings[index], undoBuffer, currentLen[index] + 1);
 			notify(gEventAltValue, 0);       // tell app about new value
 		}
 	} else if (editing) {
@@ -808,7 +808,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	}
 
 	if (editing) {
-		fieldStrings[ index ][ currentLen[ index ] ] = '\0';
+		fieldStrings[index][currentLen[index]] = '\0';
 
 		//  Now, redraw the contents.
 
@@ -839,14 +839,14 @@ bool gTextBox::tabSelect(void) {
 
 char *gTextBox::getLine(int8 stringIndex) {
 	// return the save name
-	return fieldStrings[ stringIndex ];
+	return fieldStrings[stringIndex];
 }
 
 //-----------------------------------------------------------------------
 
 char *gTextBox::selectedText(int &length) {
 	length = abs(cursorPos - anchorPos);
-	return fieldStrings[ index ] + MIN(cursorPos, anchorPos);
+	return fieldStrings[index] + MIN(cursorPos, anchorPos);
 }
 
 //-----------------------------------------------------------------------
@@ -931,19 +931,19 @@ void gTextBox::drawContents(void) {
 				if (cPos == aPos) {
 					//  If it's an insertion point, then make the cursor
 					//  1 pixel wide. (And blink it...)
-					cursorX = TextWidth(textFont, fieldStrings[ index ], cPos, 0);
+					cursorX = TextWidth(textFont, fieldStrings[index], cPos, 0);
 					anchorX = cursorX + 1;
 				} else {
 					if (cPos == 0) {
 						cursorX = 0;
 					} else {
-						cursorX = TextWidth(textFont, fieldStrings[ index ], cPos, 0) + 1;
+						cursorX = TextWidth(textFont, fieldStrings[index], cPos, 0) + 1;
 					}
 
 					if (aPos == 0) {
 						anchorX = 0;
 					} else {
-						anchorX = TextWidth(textFont, fieldStrings[ index ], aPos, 0) + 1;
+						anchorX = TextWidth(textFont, fieldStrings[index], aPos, 0) + 1;
 					}
 				}
 
@@ -966,8 +966,8 @@ void gTextBox::drawContents(void) {
 				//  the end in the highlight.
 
 				if (cPos != aPos) {
-					if (cPos == currentLen[ index ]) cursorX = editRect.width;
-					if (aPos == currentLen[ index ]) anchorX = editRect.width;
+					if (cPos == currentLen[index]) cursorX = editRect.width;
+					if (aPos == currentLen[index]) anchorX = editRect.width;
 				}
 #endif
 				hiliteX = MIN(cursorX, anchorX);
@@ -983,7 +983,7 @@ void gTextBox::drawContents(void) {
 		tPort.setColor(fontColorHilite);
 
 		tPort.moveTo(-scrollPixels, (editRect.height - textHeight + 1) / 2);
-		tPort.drawText(fieldStrings[ index ], currentLen[ index ]);
+		tPort.drawText(fieldStrings[index], currentLen[index]);
 
 		//  Blit the pixelmap to the main screen
 
@@ -1091,7 +1091,7 @@ void gTextBox::drawAll(gPort &port,
 				tempPort.setColor(((i != index) && exists[i]) ? fontColorFore : textDisable);
 
 				// draw the text
-				tempPort.drawText(fieldStrings[ i ]);
+				tempPort.drawText(fieldStrings[i]);
 
 				//increment the position
 				workRect.y += fontOffset;

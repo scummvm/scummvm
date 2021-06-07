@@ -52,7 +52,7 @@ void getSaveFileName(int16 saveNo, char *fileName) {
 //	Constructor
 
 SaveFileConstructor::SaveFileConstructor(int16 saveNo, char *saveName) {
-	char    fileName[ fileNameSize ];
+	char    fileName[fileNameSize];
 
 	//  Construct the file name string
 	getSaveFileName(saveNo, fileName);
@@ -169,7 +169,7 @@ bool SaveFileConstructor::writeChunk(ChunkID id, void *buf, int32 size) {
 //	Constructor
 
 SaveFileReader::SaveFileReader(int16 saveNo) {
-	char    fileName[ fileNameSize ];
+	char    fileName[fileNameSize];
 
 	//  Construct the file name based on the save number
 	getSaveFileName(saveNo, fileName);

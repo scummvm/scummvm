@@ -28,7 +28,7 @@
 
 namespace Saga2 {
 
-static int16 arcTanTable[ 257 ] = {
+static int16 arcTanTable[257] = {
 	0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2,
 	3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 5, 5, 5,
 	5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 7, 7, 7, 7, 7, 7,
@@ -48,7 +48,7 @@ static int16 arcTanTable[ 257 ] = {
 	32
 };
 
-static int16 invCosTable[ 257 ] = {
+static int16 invCosTable[257] = {
 	128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128,
 	128, 128, 128, 128, 128, 128, 128, 129, 129, 129, 129, 129, 129, 129, 129, 129,
 	129, 129, 129, 129, 129, 129, 129, 129, 130, 130, 130, 130, 130, 130, 130, 130,
@@ -134,18 +134,18 @@ int16 ptToAngle(int16 dx, int16 dy, int16 *dist) {
 	}
 
 	if (dx == dy) {
-		if (dist) *dist = (invCosTable[ 256 ] * dx) >> 7;
+		if (dist) *dist = (invCosTable[256] * dx) >> 7;
 		return angle + 32;  // avoids division by zero...
 	} else if (dx >= dy) {
 		int16 i = (dy << 8) / dx;
 
-		if (dist) *dist = (invCosTable[ i ] * dx) >> 7;
-		return angle + arcTanTable[ i ];
+		if (dist) *dist = (invCosTable[i] * dx) >> 7;
+		return angle + arcTanTable[i];
 	} else {
 		int16 i = (dx << 8) / dy;
 
-		if (dist) *dist = (invCosTable[ i ] * dy) >> 7;
-		return angle + 64 - arcTanTable[ i ];
+		if (dist) *dist = (invCosTable[i] * dy) >> 7;
+		return angle + 64 - arcTanTable[i];
 	}
 }
 

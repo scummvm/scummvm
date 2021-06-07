@@ -137,7 +137,7 @@ struct TileAttrs {
 	                bgdTerrain;
 
 	//  Reserved bytes
-	uint8           reserved0[ 8 ];         // auto-terrain data
+	uint8           reserved0[8];         // auto-terrain data
 
 	//  Masking information
 
@@ -146,7 +146,7 @@ struct TileAttrs {
 
 	//  Altitude information
 
-	uint8           cornerHeight[ 4 ];
+	uint8           cornerHeight[4];
 
 	//  Animation information
 
@@ -312,10 +312,10 @@ struct TileInfo {
 class TileBank {
 public:
 	uint32          numTiles;               // number of tiles in list
-	TileInfo        tileArray[ 1 ];         // variable-sized array
+	TileInfo        tileArray[1];         // variable-sized array
 
 	TileInfo *tile(uint16 index) {
-		return &tileArray[ index ];
+		return &tileArray[index];
 	}
 };
 
@@ -371,7 +371,7 @@ public:
 	                currentState,           // current state of animation
 	                cycleSpeed;             // speed of cycling (0=none)
 
-	TileID          cycleList[ 16 ];        // array of tiles
+	TileID          cycleList[16];        // array of tiles
 };
 
 typedef TileCycleData
@@ -397,7 +397,7 @@ class ActiveItem {
 public:
 	ActiveItem      *nextHash;              // next item in hash chain
 
-//	char         name[ 32 ];             // name of this group
+//	char         name[32];             // name of this group
 //	uint16           flags;                  // various flags
 //	TileGroupID      itemID;                 // unique # of this item
 
@@ -630,7 +630,7 @@ class TileActivityTaskList {
 
 	DList               list,
 	                    free;
-	TileActivityTask    array[ 32 ];
+	TileActivityTask    array[32];
 
 public:
 	//  Constructor -- initial construction
@@ -677,14 +677,14 @@ struct Platform {
 	uint16          height,                 // height above ground
 	                highestPixel;           // tallest tile upper extent
 	uint16          flags;                  // platform flags
-	TileRef         tiles[ platformWidth ][ platformWidth ];
+	TileRef         tiles[platformWidth][platformWidth];
 
 	TileRef &getTileRef(const TilePoint p) {
-		return tiles[ p.u ][ p.v ];
+		return tiles[p.u][p.v];
 	}
 
 	TileRef &getTileRef(int16 u, int16 v) {
-		return tiles[ u ][ v ];
+		return tiles[u][v];
 	}
 
 	//  fetch the REAL tile terrain info
@@ -779,7 +779,7 @@ typedef int16       RipTableID;
 struct RipTable {
 	MetaTileID  metaID;
 	uint16      ripID;
-	int16       zTable[ platformWidth ][ platformWidth ];
+	int16       zTable[platformWidth][platformWidth];
 
 	//  Constructor
 	RipTable(void) : metaID(NoMetaTile) {}
@@ -845,7 +845,7 @@ typedef MetaTile    *MetaTilePtr,
 struct MapHeader {
 	int16           size;                   // size of map
 	int16           edgeType;               // edge type of map
-	uint16          mapData[ 1 ];           // start of map array
+	uint16          mapData[1];           // start of map array
 };
 
 enum mapEdgeTypes {
@@ -875,7 +875,7 @@ struct WorldMapData {
 	UWordPtr            assocList;          //  Associations
 	RipTableIDPtr       ripTableIDList;     //  MetaTile object ripping
 
-	ActiveItem          *instHash[ 513 ];   //  ActiveItem hash table
+	ActiveItem          *instHash[513];   //  ActiveItem hash table
 
 	int16               metaCount,          //  Number of MetaTiles
 	                    activeCount;        //  Number of ActiveItems

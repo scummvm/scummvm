@@ -354,7 +354,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 		//writeStatusFX = 468;
 		//mapSizeU++;
 		//sumNum++;
-		playerList[ 0 ].skillAdvance(eBrawn, 200);
+		playerList[0].skillAdvance(eBrawn, 200);
 		break;
 
 	case '=':
@@ -363,7 +363,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 
 	case '`':
 		//StatusLine->setLine( "Goblins, and Ogres, and Giants, oh my!" );
-		playerList[ 0 ].skillAdvance(eBrawn, 1);
+		playerList[0].skillAdvance(eBrawn, 1);
 		break;
 
 
@@ -372,15 +372,15 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 		//( ( Actor * )GameObject::objectAddress( 32768 ) )->effectiveStats.redMana -= 10;
 		//( ( Actor * )GameObject::objectAddress( 32768 ) )->effectiveStats.vitality -= 10;
 		//( ( Actor * )GameObject::objectAddress( 32768 ) )->effectiveStats.brawn -= 10;
-		playerList[ 0 ].setTestBrawn();
+		playerList[0].setTestBrawn();
 		break;
 
 	case 'y':
-		playerList[ 0 ].recBrawnSome();
+		playerList[0].recBrawnSome();
 		break;
 
 	case 'c':
-		playerList[ 0 ].decBrawnSome();
+		playerList[0].decBrawnSome();
 		break;
 
 

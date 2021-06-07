@@ -316,7 +316,7 @@ extern void unpackImage(gPixelMap *map,
 typedef struct {
 	Point16     size;
 	int16       compress;
-	int8        data[ 2 ];
+	int8        data[2];
 } ImageHeader;
 
 void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
@@ -368,7 +368,7 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 		memcpy(map.data, hdr->data, map.bytes());
 
 	for (y = 0, row = map.data; y < map.size.y; y++, row += map.size.x) {
-		for (x = (y & 1); x < map.size.x; x += 2) row[ x ] = 0;
+		for (x = (y & 1); x < map.size.x; x += 2) row[x] = 0;
 	}
 
 	port.setMode(drawModeMatte);

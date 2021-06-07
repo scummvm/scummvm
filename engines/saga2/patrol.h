@@ -103,7 +103,7 @@ public:
 		// FIXME: This is evil
 		warning("PartolRoute[]: dangerous pointer arithmetic, this will not work");
 		return *((PatrolRoute *)(routeData
-		                         +   offsetArray[ index ]));
+		                         +   offsetArray[index]));
 	}
 };
 
@@ -146,10 +146,10 @@ public:
 	//  Copy constructor
 	PatrolRouteIterator(const PatrolRouteIterator &iter) {
 		//  Copy first four bytes
-		((int32 *)this)[ 0 ] = ((int32 *)&iter)[ 0 ];
+		((int32 *)this)[0] = ((int32 *)&iter)[0];
 		//  Copy next two bytes
-		*((int16 *) & ((int32 *)this)[ 1 ]) =
-		    *((int16 *) & ((int32 *)&iter)[ 1 ]);
+		*((int16 *) & ((int32 *)this)[1]) =
+		    *((int16 *) & ((int32 *)&iter)[1]);
 	}
 
 	//  Constructors
@@ -163,10 +163,10 @@ public:
 	//  Overloaded assignment operator
 	PatrolRouteIterator operator = (const PatrolRouteIterator &iter) {
 		//  Copy first four bytes
-		((int32 *)this)[ 0 ] = ((int32 *)&iter)[ 0 ];
+		((int32 *)this)[0] = ((int32 *)&iter)[0];
 		//  Copy next two bytes
-		*((int16 *) & ((int32 *)this)[ 1 ]) =
-		    *((int16 *) & ((int32 *)&iter)[ 1 ]);
+		*((int16 *) & ((int32 *)this)[1]) =
+		    *((int16 *) & ((int32 *)&iter)[1]);
 
 		return *this;
 	}

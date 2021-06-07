@@ -136,7 +136,7 @@ public:
 	}
 
 	bool isSet(int i) {
-		return b[ i >> 5 ] & ((uint32) 1 << (i & 31));
+		return b[i >> 5] & ((uint32) 1 << (i & 31));
 	}
 
 	void SetBit(int16 i) {
