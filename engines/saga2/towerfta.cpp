@@ -53,8 +53,6 @@ TowerLayer tower[fullyInitialized] = {
 	{ errHandlersInitialized,    &initErrorManagers,    &termErrorManagers },
 	{ delayedErrInitialized,     &initDelayedErrors,    &termDelayedErrors },
 	{ activeErrInitialized,      &initActiveErrors,     &termActiveErrors },
-	{ errLoggersInitialized,     &initErrorLoggers,     &termErrorLoggers },
-	{ breakHandlerInitialized,   &initCtlBreakTrap,     &termCtlBreakTrap },
 	{ configTestInitialized,     &initSystemConfig,     &termTowerBase },
 	{ memoryInitialized,         &initMemPool,          &termMemPool },
 	{ introInitialized,          &initPlayIntro,        &termPlayOutro },
@@ -121,30 +119,6 @@ extern gPanelList       *indivControls;
 /* ===================================================================== *
    Actual FTA initialization & cleanup pairs
  * ===================================================================== */
-
-
-// ------------------------------------------------------------------------
-
-INITIALIZER(initErrorLoggers) {
-	initErrorHandlers();
-	return TRUE;
-}
-
-TERMINATOR(termErrorLoggers) {
-	cleanupErrorHandlers();
-}
-
-
-// ------------------------------------------------------------------------
-
-INITIALIZER(initCtlBreakTrap) {
-	initBreakHandler();
-	return TRUE;
-}
-
-TERMINATOR(termCtlBreakTrap) {
-	cleanupBreakHandler();
-}
 
 
 // ------------------------------------------------------------------------

@@ -31,12 +31,6 @@
 
 namespace Saga2 {
 
-INITIALIZER(initErrorLoggers);
-TERMINATOR(termErrorLoggers);
-
-INITIALIZER(initCtlBreakTrap);
-TERMINATOR(termCtlBreakTrap);
-
 INITIALIZER(initSystemConfig);
 // uses null cleanup
 

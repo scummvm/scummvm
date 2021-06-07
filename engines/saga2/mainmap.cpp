@@ -43,14 +43,6 @@ uint32 pickHeapSize(uint32 minHeap) {
 void initCleanup() {
 	warning("STUB: initCleanup()");
 }
-bool initErrorHandlers() {
-	warning("STUB: initErrorHandlers()");
-	return false;
-}
-void cleanupErrorHandlers() {
-	warning("STUB: cleanupErrorHandlers()");
-}
-
 bool initializeGame() {
 	if (setupGame())
 		return TRUE;
@@ -74,14 +66,6 @@ void cleanupSystemTasks() {
 }
 void cleanupPaletteData() {
 	warning("STUB: cleanupPaletteData()");
-}
-
-void initBreakHandler() {
-	warning("STUB: initBreakHandler()");
-}
-
-void cleanupBreakHandler() {
-	warning("STUB: cleanupBreakHandler()");
 }
 
 } // end of namespace Saga2
