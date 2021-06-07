@@ -56,7 +56,7 @@ void EggHatcherProcess::run() {
 
 	// CONSTANTS!
 	const int range_mul = GAME_IS_U8 ? 32 : 64;
-	const int z_range = GAME_IS_U8 ? 48 : 96;
+	const int z_range = 48;
 
 	for (unsigned int i = 0; i < _eggs.size(); i++) {
 		uint16 eggid = _eggs[i];
