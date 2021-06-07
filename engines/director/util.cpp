@@ -693,4 +693,36 @@ Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &strea
 # endif
 }
 
+uint16 humanVersion(uint16 ver) {
+	if (ver >= kFileVer1201)
+		return 1201;
+	if (ver >= kFileVer1200)
+		return 1200;
+	if (ver >= kFileVer1150)
+		return 1150;
+	if (ver >= kFileVer1100)
+		return 1100;
+	if (ver >= kFileVer1000)
+		return 1000;
+	if (ver >= kFileVer850)
+		return 850;
+	if (ver >= kFileVer800)
+		return 800;
+	if (ver >= kFileVer700)
+		return 700;
+	if (ver >= kFileVer600)
+		return 600;
+	if (ver >= kFileVer500)
+		return 500;
+	if (ver >= kFileVer404)
+		return 404;
+	if (ver >= kFileVer400)
+		return 400;
+	if (ver >= kFileVer310)
+		return 310;
+	if (ver >= kFileVer300)
+		return 300;
+	return 200;
+}
+
 } // End of namespace Director

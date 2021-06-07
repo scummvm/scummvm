@@ -80,6 +80,8 @@ uint32 readVarInt(Common::SeekableReadStream &stream);
 
 Common::SeekableReadStreamEndian *readZlibData(Common::SeekableReadStream &stream, unsigned long len, unsigned long *outLen, bool bigEndian);
 
+uint16 humanVersion(uint16 ver);
+
 } // End of namespace Director
 
 #endif
