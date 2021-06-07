@@ -229,7 +229,8 @@ bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 
 	// Slight hack - resuming from savegame we want to restore the game
 	// track (not the menu track)
-	restoreTrackState();
+	if (_savedTrack)
+		restoreTrackState();
 
 	return true;
 }
