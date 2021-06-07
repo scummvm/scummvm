@@ -57,18 +57,18 @@ struct Sprite {
 
 struct SpriteSet {
 	uint32           count;                  // number of images in the range
-	uint32           offsets[ 1 ];           // offsets into sprite list
+	uint32           offsets[1];           // offsets into sprite list
 	// (variable-length array)
 	// sprite structures follow table
 
 	//  Member function to return a sprite from the set
 	Sprite *sprite(int16 index) {
-		return (Sprite *)((uint8 *)this + offsets[ index ]);
+		return (Sprite *)((uint8 *)this + offsets[index]);
 	}
 
 //  Sprite &operator[]( int32 index )
 //  {
-//      return (Sprite *)( (uint8 *)this + offsets[ index ] );
+//      return (Sprite *)( (uint8 *)this + offsets[index] );
 //  }
 
 };
@@ -138,8 +138,8 @@ struct ActorAnimation {
 	//  table of poses for that sequence, and the number of poses
 	//  in the sequence.
 
-	uint16          start[ numPoseFacings ],
-	                count[ numPoseFacings ];
+	uint16          start[numPoseFacings],
+	                count[numPoseFacings];
 };
 
 struct ActorAnimSet {
@@ -152,8 +152,8 @@ struct ActorAnimSet {
 	}
 
 	ActorPose *pose(ActorAnimation *anim, int dir, int num) {
-		if (num < 0 || num >= anim->count[ dir ]) num = 0;
-		num += anim->start[ dir ];
+		if (num < 0 || num >= anim->count[dir]) num = 0;
+		num += anim->start[dir];
 		return (ActorPose *)((uint8 *)this + poseOffset) + num;
 	}
 };
@@ -162,13 +162,13 @@ struct ActorAnimSet {
    Sprite color lookup tables
  * ===================================================================== */
 
-typedef uint8       ColorTable[ 256 ];
+typedef uint8       ColorTable[256];
 
 //  List of color schemes for sprites
 struct ColorScheme {
-	uint8           bank[ 11 ];
+	uint8           bank[11];
 	uint8           speechColor;
-	char            name[ 32 ];
+	char            name[32];
 };
 
 /* ===================================================================== *
@@ -264,7 +264,7 @@ public:
 	//  REM: How do we determine what frames are NEEDED in the
 	//  near future?
 
-	SpriteSet       *spriteBanks[ sprBankCount ];
+	SpriteSet       *spriteBanks[sprBankCount];
 
 //	Member functions:
 	void loadSpriteBanks(int16 banksNeeded);

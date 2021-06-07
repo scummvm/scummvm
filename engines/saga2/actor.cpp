@@ -92,7 +92,7 @@ extern bool     massAndBulkCount;
    Globals -- might as well stick it here as anywhere.
  * ===================================================================== */
 
-int16 factionTable[ maxFactions ][ factionNumColumns ];
+int16 factionTable[maxFactions][factionNumColumns];
 
 //  Indicates wether actor states should be paused
 bool actorStatesPaused;
@@ -234,7 +234,7 @@ bool ActorProto::strikeAction(
 	if (itemPtr->acceptStrike(enactor, dObj, effStats->getSkillLevel(skillIDBludgeon)))
 		return TRUE;
 
-	soundFXs = &objectSoundFXTable[ soundFXClass ];
+	soundFXs = &objectSoundFXTable[soundFXClass];
 
 	makeCombatSound(soundFXs->soundFXMissed, al);
 	return FALSE;
@@ -256,7 +256,7 @@ bool ActorProto::damageAction(
 	Location        al = Location(a->getLocation(), a->IDParent());
 
 	damageSoundID = targetPtr->proto()->getDamageSound(
-	                    objectSoundFXTable[ soundFXClass ]);
+	                    objectSoundFXTable[soundFXClass]);
 
 
 	if (damageSoundID != 0)
@@ -697,7 +697,7 @@ bool ActorProto::acceptInsertionAtAction(
 			inUseType = notInUse;
 
 			for (i = 0; i < ARMOR_COUNT; i++) {
-				if (a->armorObjects[ i ] == item) {
+				if (a->armorObjects[i] == item) {
 					inUseType = worn;
 					wornWhere = i;
 					break;
@@ -812,15 +812,15 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 
 			switch (actorID) {
 			case ActorBaseID + FTA_JULIAN:
-				playerList[ FTA_JULIAN ].recoveryUpdate();
+				playerList[FTA_JULIAN].recoveryUpdate();
 				break;
 
 			case ActorBaseID + FTA_PHILIP:
-				playerList[ FTA_PHILIP ].recoveryUpdate();
+				playerList[FTA_PHILIP].recoveryUpdate();
 				break;
 
 			case ActorBaseID + FTA_KEVIN:
-				playerList[ FTA_KEVIN ].recoveryUpdate();
+				playerList[FTA_KEVIN].recoveryUpdate();
 				break;
 
 			default:
@@ -944,9 +944,9 @@ struct ActorArchive {
 	int16               tetherDist;
 	ObjectID            leftHandObject,
 	                    rightHandObject;
-	uint16              knowledge[ 16 ];
+	uint16              knowledge[16];
 	uint16              schedule;
-	uint8               conversationMemory[ 4 ];
+	uint8               conversationMemory[4];
 	uint8               currentAnimation,
 	                    currentPose,
 	                    animationFlags;
@@ -965,9 +965,9 @@ struct ActorArchive {
 	int16               currentRecoveryPoints;
 	ObjectID            leaderID;
 	BandID              followersID;
-	ObjectID            armorObjects[ ARMOR_COUNT ];
+	ObjectID            armorObjects[ARMOR_COUNT];
 	ObjectID            currentTargetID;
-	int16               scriptVar[ actorScriptVars ];
+	int16               scriptVar[actorScriptVars];
 };
 
 /* ===================================================================== *
@@ -988,7 +988,7 @@ void Actor::init(
 	int         i;
 
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype           = (ProtoObj *)&actorProtos[ protoIndex ];
+	prototype           = (ProtoObj *)&actorProtos[protoIndex];
 
 	//  Initialize object fields
 //	nameIndex = 0;
@@ -1049,10 +1049,10 @@ void Actor::init(
 	leader              = NULL;
 	followers           = NULL;
 	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[ i ] = Nothing;
+		armorObjects[i] = Nothing;
 	currentTarget       = NULL;
 	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[ i ] = 0;
+		scriptVar[i] = 0;
 
 	evalActorEnchantments(this);
 }
@@ -1066,7 +1066,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != NULL
-	                ? (ProtoObj *)&actorProtos[ prototype - objectProtos ]
+	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
 	                :   NULL;
 
 	//  Copy the resource fields
@@ -1116,10 +1116,10 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	leader              = NULL;
 	followers           = NULL;
 	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[ i ] = Nothing;
+		armorObjects[i] = Nothing;
 	currentTarget       = NULL;
 	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[ i ] = 0;
+		scriptVar[i] = 0;
 
 	evalActorEnchantments(this);
 }
@@ -1133,7 +1133,7 @@ Actor::Actor(void **buf) : GameObject(buf) {
 
 	//  Fixup the prototype pointer to point to an actor prototype
 	prototype   =   prototype != NULL
-	                ? (ProtoObj *)&actorProtos[ prototype - objectProtos ]
+	                ? (ProtoObj *)&actorProtos[prototype - objectProtos]
 	                :   NULL;
 
 	ActorArchive    *a = (ActorArchive *)bufferPtr;
@@ -1177,14 +1177,14 @@ Actor::Actor(void **buf) : GameObject(buf) {
 	                        ?   getBandAddress(a->followersID)
 	                        :   NULL;
 	for (i = 0; i < ARMOR_COUNT; i++)
-		armorObjects[ i ] = a->armorObjects[ i ];
+		armorObjects[i] = a->armorObjects[i];
 	currentTarget       =   a->currentTargetID != Nothing
 	                        ?   GameObject::objectAddress(a->currentTargetID)
 	                        :   NULL;
 	for (i = 0; i < actorScriptVars; i++)
-		scriptVar[ i ] = a->scriptVar[ i ];
+		scriptVar[i] = a->scriptVar[i];
 
-	bufferPtr = &a[ 1 ];
+	bufferPtr = &a[1];
 
 	if (flags & hasAssignment) {
 		freeAssignment();
@@ -1235,7 +1235,7 @@ void *Actor::archive(void *buf) {
 	//  Modify the protoype temporarily so the GameObject::archive()
 	//  will store the index correctly
 	if (prototype != NULL)
-		prototype = &objectProtos[(ActorProto *)prototype - actorProtos ];
+		prototype = &objectProtos[(ActorProto *)prototype - actorProtos];
 
 	//  Let the base class archive its data
 	buf = GameObject::archive(buf);
@@ -1280,12 +1280,12 @@ void *Actor::archive(void *buf) {
 	a->leaderID         = leader != NULL ? leader->thisID() : Nothing;
 	a->followersID      = followers != NULL ? getBandID(followers) : NoBand;
 	for (i = 0; i < elementsof(a->armorObjects); i++)
-		a->armorObjects[ i ] = armorObjects[ i ];
+		a->armorObjects[i] = armorObjects[i];
 	a->currentTargetID  = currentTarget != NULL ? currentTarget->thisID() : Nothing;
 	for (i = 0; i < actorScriptVars; i++)
-		a->scriptVar[ i ] = scriptVar[ i ];
+		a->scriptVar[i] = scriptVar[i];
 
-	buf = &a[ 1 ];
+	buf = &a[1];
 
 	if (flags & hasAssignment)
 		buf = archiveAssignment(this, buf);
@@ -1312,7 +1312,7 @@ Actor *Actor::newActor(
 
 		//  Search actor list for first scavangable actor
 		for (i = playerActors; i < actorCount; i++) {
-			a = &actorList[ i ];
+			a = &actorList[i];
 
 			if ((a->flags & temporary)
 			        &&  !a->isActivated()
@@ -1378,7 +1378,7 @@ void Actor::deleteActor(void) {
 		int16       i;
 
 		for (i = 0; i < followers->size(); i++) {
-			Actor   *follower = (*followers)[ i ];
+			Actor   *follower = (*followers)[i];
 
 			follower->leader = NULL;
 			follower->evaluateNeeds();
@@ -1606,7 +1606,7 @@ ActorAttributes *Actor::getBaseStats(void) {
 	if (disposition < dispositionPlayer)
 		return &((ActorProto *)prototype)->baseStats;
 	else
-		return &playerList[ disposition - dispositionPlayer ].baseStats;
+		return &playerList[disposition - dispositionPlayer].baseStats;
 }
 
 //-----------------------------------------------------------------------
@@ -1772,8 +1772,8 @@ void Actor::totalArmorAttributes(ArmorAttributes &armorAttribs) {
 
 	//  Accumulate values for all armor objects
 	for (i = 0; i < ARMOR_COUNT; i++) {
-		if (armorObjects[ i ] != Nothing) {
-			ProtoObj    *armorProto = GameObject::protoAddress(armorObjects[ i ]);
+		if (armorObjects[i] != Nothing) {
+			ProtoObj    *armorProto = GameObject::protoAddress(armorObjects[i]);
 
 			assert(armorProto != NULL);
 
@@ -1905,7 +1905,7 @@ void Actor::getColorTranslation(ColorTable map) {
 	if (appearance
 	        &&  appearance->schemeList) {
 		buildColorTable(map,
-		                (appearance->schemeList)[ colorScheme ].bank,
+		                (appearance->schemeList)[colorScheme].bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }
@@ -1928,7 +1928,7 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 
 	//  If this animation has no frames, then return FALSE
 	anim = appearance->poseList->animation(newState);
-	numPoses = anim->count[ currentFacing ];
+	numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) return 0;
 
 	//  Set up the animation
@@ -1964,10 +1964,10 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 
 	if (anyDir) {
 		for (int i = 0; i < numPoseFacings; i++) {
-			if (anim->count[ i ] > 0) return TRUE;
+			if (anim->count[i] > 0) return TRUE;
 		}
 	} else {
-		if (anim->count[ currentFacing ] > 0) return TRUE;
+		if (anim->count[currentFacing] > 0) return TRUE;
 	}
 
 	return FALSE;
@@ -1984,7 +1984,7 @@ int16 Actor::animationFrames(int16 actionType, Direction dir) {
 
 	anim = appearance->poseList->animation(actionType);
 
-	return anim->count[ dir ];
+	return anim->count[dir];
 }
 
 //-----------------------------------------------------------------------
@@ -2013,7 +2013,7 @@ bool Actor::nextAnimationFrame(void) {
 
 	//  Get the number of frames in the animation
 	anim = appearance->poseList->animation(currentAnimation);
-	numPoses = anim->count[ currentFacing ];
+	numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) {
 		animationFlags |= animateFinished;
 		return TRUE;                    // no poses, return DONE
@@ -2141,7 +2141,7 @@ void Actor::wear(ObjectID objID, uint8 where) {
 	}
 #endif
 
-	armorObjects[ where ] = objID;
+	armorObjects[where] = objID;
 
 	if (isPlayerActor(this)) globalContainerList.setUpdate(thisID());
 	evalActorEnchantments(this);
@@ -2718,7 +2718,7 @@ void Actor::handleSuccessfulKill(Actor *target) {
 		player->vitalityAdvance(points / ratio);
 
 		aStr =  target->getNameIndex() == 0
-		        ?   strchr(vowels, toupper(monsterName[ 0 ])) == NULL
+		        ?   strchr(vowels, toupper(monsterName[0])) == NULL
 		        ?   "a "
 		        :   "an "
 		        :   "";
@@ -2737,7 +2737,7 @@ bool Actor::canBlockWith(GameObject *defenseObj, Direction relativeDir) {
 	//  Assuming that the actor may increment or decrement their facing
 	//  to block, these masks represent the possible relative facings
 	//  based upon the current relative facing
-	static uint8    dirMaskArray[ 8 ] = {
+	static uint8    dirMaskArray[8] = {
 		0x83,       //  10000011
 		0x07,       //  00000111
 		0x0E,       //  00001110
@@ -2749,7 +2749,7 @@ bool Actor::canBlockWith(GameObject *defenseObj, Direction relativeDir) {
 	};
 
 	return (defenseObj->proto()->defenseDirMask()
-	        &   dirMaskArray[ relativeDir ])
+	        &   dirMaskArray[relativeDir])
 	       !=  0;
 }
 
@@ -2831,18 +2831,18 @@ void Actor::bandWith(Actor *newLeader) {
 	} else {
 		int16       i,
 		            oldFollowerCount = followers->size();
-		Actor       **oldFollowers = new Actor * [ oldFollowerCount ];
+		Actor       **oldFollowers = new Actor * [oldFollowerCount];
 
 		if (oldFollowers != NULL) {
 			//  Copy the list followers
 			for (i = 0; i < oldFollowerCount; i++) {
-				oldFollowers[ i ] = (*followers)[ i ];
-				assert(oldFollowers[ i ]->leader == this);
+				oldFollowers[i] = (*followers)[i];
+				assert(oldFollowers[i]->leader == this);
 			}
 
 			//  Disband all of the old followers
 			for (i = 0; i < oldFollowerCount; i++)
-				oldFollowers[ i ]->disband();
+				oldFollowers[i]->disband();
 
 			assert(followers == NULL);
 
@@ -2852,7 +2852,7 @@ void Actor::bandWith(Actor *newLeader) {
 				leader = newLeader;
 
 				for (i = 0; i < oldFollowerCount; i++)
-					oldFollowers[ i ]->bandWith(newLeader);
+					oldFollowers[i]->bandWith(newLeader);
 			}
 
 			delete [] oldFollowers;
@@ -2875,7 +2875,7 @@ void Actor::disband(void) {
 		int16       i;
 
 		for (i = 0; i < followers->size(); i++) {
-			Actor   *follower = (*followers)[ i ];
+			Actor   *follower = (*followers)[i];
 
 			follower->leader = NULL;
 			follower->evaluateNeeds();
@@ -2922,7 +2922,7 @@ void Actor::removeFollower(Actor *bandMember) {
 			moraleBonus += ((1 << 16) - moraleBonus) >> 4;
 
 		for (i = 0; i < followers->size(); i++) {
-			Actor       *follower = (*followers)[ i ];
+			Actor       *follower = (*followers)[i];
 			ActorProto  *proto = (ActorProto *)follower->prototype;
 			uint8       combatBehavior = proto->combatBehavior;
 
@@ -2996,12 +2996,12 @@ void showObjectTerrain(GameObject *obj) {
 	StandingTileInfo    sti;
 	uint32 terrain = objectTerrain(obj, sti);
 	char    terrLetters[] = "NERWSHWFRSL0000";
-	char str[ 33 ];
+	char str[33];
 
 	for (int i = 0; i < 32; i++) {
-		str[ i ] = terrain & (1 << i) ? terrLetters[ i ] : '-';
+		str[i] = terrain & (1 << i) ? terrLetters[i] : '-';
 	}
-	str[ 32 ] = '\0';
+	str[32] = '\0';
 
 //  WriteStatusF( 4, str );
 }
@@ -3020,8 +3020,8 @@ bool Actor::pathFindState(void) {
 
 bool Actor::addKnowledge(uint16 kID) {
 	for (int i = 0; i < elementsof(knowledge); i++) {
-		if (knowledge[ i ] == 0) {
-			knowledge[ i ] = kID;
+		if (knowledge[i] == 0) {
+			knowledge[i] = kID;
 			return TRUE;
 		}
 	}
@@ -3033,8 +3033,8 @@ bool Actor::addKnowledge(uint16 kID) {
 
 bool Actor::removeKnowledge(uint16 kID) {
 	for (int i = 0; i < elementsof(knowledge); i++) {
-		if (knowledge[ i ] == kID) {
-			knowledge[ i ] = 0;
+		if (knowledge[i] == kID) {
+			knowledge[i] = 0;
 			return TRUE;
 		}
 	}
@@ -3046,7 +3046,7 @@ bool Actor::removeKnowledge(uint16 kID) {
 
 void Actor::clearKnowledge(void) {
 	for (int i = 0; i < elementsof(knowledge); i++) {
-		knowledge[ i ] = 0;
+		knowledge[i] = 0;
 	}
 }
 
@@ -3061,13 +3061,13 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 	//  First, search for the class with the best response
 
 	for (int i = 0; i < elementsof(knowledge); i++) {
-		if (knowledge[ i ]) {
+		if (knowledge[i]) {
 			scriptResult    res;
 
 			//  Run the script to eval the response of this
 			//  knowledge package
 
-			res = runMethod(knowledge[ i ],
+			res = runMethod(knowledge[i],
 			                builtinAbstract,
 			                0,
 			                Method_KnowledgePackage_evalResponse,
@@ -3089,7 +3089,7 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 
 					if (pri > bestResponsePri) {
 						bestResponsePri = pri;
-						bestResponseClass = knowledge[ i ];
+						bestResponseClass = knowledge[i];
 						bestResponseCode = response;
 					}
 				}
@@ -3124,7 +3124,7 @@ bool Actor::canSenseProtaganistIndirectly(SenseInfo &info, int16 range) {
 		int         i;
 
 		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[ i ]->canSenseProtaganist(info, range))
+			if ((*followers)[i]->canSenseProtaganist(info, range))
 				return TRUE;
 		}
 	}
@@ -3144,7 +3144,7 @@ bool Actor::canSenseSpecificActorIndirectly(
 		int         i;
 
 		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[ i ]->canSenseSpecificActor(info, range, a))
+			if ((*followers)[i]->canSenseSpecificActor(info, range, a))
 				return TRUE;
 		}
 	}
@@ -3164,7 +3164,7 @@ bool Actor::canSenseSpecificObjectIndirectly(
 		int         i;
 
 		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[ i ]->canSenseSpecificObject(info, range, obj))
+			if ((*followers)[i]->canSenseSpecificObject(info, range, obj))
 				return TRUE;
 		}
 	}
@@ -3184,7 +3184,7 @@ bool Actor::canSenseActorPropertyIndirectly(
 		int         i;
 
 		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[ i ]->canSenseActorProperty(info, range, prop))
+			if ((*followers)[i]->canSenseActorProperty(info, range, prop))
 				return TRUE;
 		}
 	}
@@ -3204,7 +3204,7 @@ bool Actor::canSenseObjectPropertyIndirectly(
 		int         i;
 
 		for (i = 0; i < followers->size(); i++) {
-			if ((*followers)[ i ]->canSenseObjectProperty(info, range, prop))
+			if ((*followers)[i]->canSenseObjectProperty(info, range, prop))
 				return TRUE;
 		}
 	}
@@ -3281,7 +3281,7 @@ void updateActorStates(void) {
 
 	actorIndex = baseActorIndex = (baseActorIndex + 1) & evalRateMask;
 	while (actorIndex < actorCount) {
-		Actor   *a = &actorList[ actorIndex ];
+		Actor   *a = &actorList[actorIndex];
 
 		if (isWorld(a->IDParent()))
 			a->evaluateNeeds();
@@ -3291,7 +3291,7 @@ void updateActorStates(void) {
 
 	updatesViaScript = 0;
 	for (actorIndex = 0; actorIndex < actorCount; actorIndex++) {
-		Actor   *a = &actorList[ actorIndex ];
+		Actor   *a = &actorList[actorIndex];
 
 		if (isWorld(a->IDParent()) && a->isActivated())
 			a->updateState();
@@ -3398,22 +3398,22 @@ void initActors(void) {
 		readResourceActor(listRes, resourceActorList[k]);
 
 	for (i = 0; i < resourceActorCount; i++) {
-		Actor       *a = &actorList[ i ];
+		Actor       *a = &actorList[i];
 
 		//  Initialize the actors with the resource data
-		new (a) Actor(resourceActorList[ i ]);
+		new (a) Actor(resourceActorList[i]);
 	}
 
 	//  Place all of the extra actors in actor limbo
 	for (; i < actorCount; i++) {
-		Actor       *a = &actorList[ i ];
+		Actor       *a = &actorList[i];
 
 		new (a) Actor;
 	}
 
-	actorList[ 0 ].disposition = dispositionPlayer + 0;
-	actorList[ 1 ].disposition = dispositionPlayer + 1;
-	actorList[ 2 ].disposition = dispositionPlayer + 2;
+	actorList[0].disposition = dispositionPlayer + 0;
+	actorList[1].disposition = dispositionPlayer + 1;
+	actorList[2].disposition = dispositionPlayer + 2;
 
 
 	//  Wait for the object initialization to append the actors to their
@@ -3437,7 +3437,7 @@ void saveActors(SaveFileConstructor &saveGame) {
 	archiveBufSize += sizeof(int16);
 
 	for (i = 0; i < actorCount; i++)
-		archiveBufSize += actorList[ i ].archiveSize();
+		archiveBufSize += actorList[i].archiveSize();
 
 	archiveBuffer = malloc(archiveBufSize);
 	if (archiveBuffer == NULL)
@@ -3450,7 +3450,7 @@ void saveActors(SaveFileConstructor &saveGame) {
 
 	//  Store the actor data in the archive buffer
 	for (i = 0; i < actorCount; i++)
-		bufferPtr = (int16 *)actorList[ i ].archive(bufferPtr);
+		bufferPtr = (int16 *)actorList[i].archive(bufferPtr);
 
 	//  Write the archive buffer to the save file
 	saveGame.writeChunk(
@@ -3491,9 +3491,9 @@ void loadActors(SaveFileReader &saveGame) {
 	        i < actorCount;
 	        i++)
 		//  Initilize actors with archive data
-		new (&actorList[ i ]) Actor(&bufferPtr);
+		new (&actorList[i]) Actor(&bufferPtr);
 
-	assert(bufferPtr == &((char *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((char *)archiveBuffer)[archiveBufSize]);
 
 	//  Deallocate the archive buffer
 	free(archiveBuffer);
@@ -3507,7 +3507,7 @@ void cleanupActors(void) {
 		int16       i;
 
 		for (i = 0; i < actorCount; i++)
-			actorList[ i ].~Actor();
+			actorList[i].~Actor();
 
 		delete[] actorList;
 		actorList = NULL;
@@ -3529,23 +3529,23 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 	/*
 	        //  If faction attitude counts get to big then down-scale all of them
 	        //  in proportion.
-	    if ( factionTable[ faction ][ act ] + amt > maxint16 )
+	    if ( factionTable[faction][act] + amt > maxint16 )
 	    {
 	        for (int i = 0; i < factionNumColumns; i++)
-	            factionTable[ faction ][ i ] >>= 1;
+	            factionTable[faction][i] >>= 1;
 	    }
 
 	        //  Otherwise, if it doesn;t underflow, then add it in.
-	    if ( factionTable[ faction ][ act ] + amt > minint16 )
+	    if ( factionTable[faction][act] + amt > minint16 )
 	    {
-	        factionTable[ faction ][ act ] += amt;
+	        factionTable[faction][act] += amt;
 	    }
 	*/
-	factionTable[ faction ][ act ] = clamp(minint16,
-	                                       factionTable[ faction ][ act ] + amt,
+	factionTable[faction][act] = clamp(minint16,
+	                                       factionTable[faction][act] + amt,
 	                                       maxint16);
 
-	return factionTable[ faction ][ act ];
+	return factionTable[faction][act];
 }
 
 //  Get the attitude a particular faction has for a char.
@@ -3558,7 +3558,7 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 	assert(act < factionNumColumns);
 #endif
 
-	return factionTable[ faction ][ act ];
+	return factionTable[faction][act];
 }
 
 //-------------------------------------------------------------------

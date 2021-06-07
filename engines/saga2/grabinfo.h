@@ -76,7 +76,7 @@ protected:
 
 	int16       moveCount;              // number of items being moved in cursor
 
-	char        textBuf[ bufSize ];
+	char        textBuf[bufSize];
 
 	// internal grab commonality
 	void setIcon(void);

@@ -51,9 +51,9 @@ const ChunkID   gameID = MKTAG('D', 'I', 'N', 'O');
 
 struct SaveFileHeader {
 	ChunkID     gameID;                     //  ID of game (FTA2 of DINO).
-	char        saveName[ saveNameSize ];   //  The long name of the saved
+	char        saveName[saveNameSize];   //  The long name of the saved
 	//  game state.
-	int8        reserved[ 84 ];             //  Room for expansion.
+	int8        reserved[84];             //  Room for expansion.
 };  //  128 bytes
 
 /* ===================================================================== *

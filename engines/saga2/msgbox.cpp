@@ -44,7 +44,7 @@ Rect16  mbWindowRect(70, 170, 500, 140);
 const Rect16    mbOkBtnRect(100, 100, 100, 25);
 const Rect16    mbCancelBtnRect(300, 100, 100, 25);
 const Rect16    mbOneBtnRect(200, 100, 100, 25);
-const Rect16    mbButtonRects[ numMessageBtns ] = { { mbOkBtnRect },
+const Rect16    mbButtonRects[numMessageBtns] = { { mbOkBtnRect },
 	{ mbCancelBtnRect }
 };
 static gFont    *mbButtonFont = &ThinFix8Font;
@@ -289,8 +289,8 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
                                         textPallete     &pal,
                                         bool            hiLite,
                                         const char      *msg, ...) {
-	char            textBuf[ 256 ];
-	char            lineBuf[ 128 ];
+	char            textBuf[256];
+	char            lineBuf[128];
 	va_list         argptr;
 	int16           tPos = 0;
 	Rect16          r2 = r;

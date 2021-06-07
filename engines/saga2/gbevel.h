@@ -68,47 +68,47 @@ enum bevelPens {
 extern gPen         mainPens[];         // the array of pens
 
 #if 0
-#define transpPen   mainPens[ 0 ]       // transparent pen for mouse
+#define transpPen   mainPens[0]       // transparent pen for mouse
 
 //  color pens
 
-#define blackPen    mainPens[ 1 ]       // black
-#define whitePen    mainPens[ 2 ]       // white
+#define blackPen    mainPens[1]       // black
+#define whitePen    mainPens[2]       // white
 
 //  Background pens
 
-#define backPen     mainPens[ 3 ]       // background fill
-#define backLtPen   mainPens[ 4 ]       // background highlight
-#define backDkPen   mainPens[ 5 ]       // background shadow
+#define backPen     mainPens[3]       // background fill
+#define backLtPen   mainPens[4]       // background highlight
+#define backDkPen   mainPens[5]       // background shadow
 
 //  Button pens
 
-#define buttonPen   mainPens[ 6 ]       // button fill color
-#define buttonLtPen mainPens[ 7 ]       // button highlight
-#define buttonDkPen mainPens[ 8 ]       // button shadow
+#define buttonPen   mainPens[6]       // button fill color
+#define buttonLtPen mainPens[7]       // button highlight
+#define buttonDkPen mainPens[8]       // button shadow
 
-#define transpPen   mainPens[ 0 ]       // transparent pen for mouse
+#define transpPen   mainPens[0]       // transparent pen for mouse
 
 //  color pens
 
-#define blackPen    mainPens[ 1 ]       // black
-#define whitePen    mainPens[ 2 ]       // white
+#define blackPen    mainPens[1]       // black
+#define whitePen    mainPens[2]       // white
 
 //  Background pens
 
-#define backPen     mainPens[ 3 ]       // background fill
-#define backLtPen   mainPens[ 4 ]       // background highlight
-#define backDkPen   mainPens[ 5 ]       // background shadow
+#define backPen     mainPens[3]       // background fill
+#define backLtPen   mainPens[4]       // background highlight
+#define backDkPen   mainPens[5]       // background shadow
 
 //  Button pens
 
-#define buttonPen   mainPens[ 6 ]       // button fill color
-#define buttonLtPen mainPens[ 7 ]       // button highlight
-#define buttonDkPen mainPens[ 8 ]       // button shadow
+#define buttonPen   mainPens[6]       // button fill color
+#define buttonLtPen mainPens[7]       // button highlight
+#define buttonDkPen mainPens[8]       // button shadow
 
 //  Text pens
 
-#define hilitePen   mainPens[ 9 ]       // text highlight color
+#define hilitePen   mainPens[9]       // text highlight color
 #endif
 
 /* ===================================================================== *

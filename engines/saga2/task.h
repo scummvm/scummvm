@@ -1312,7 +1312,7 @@ public:
 	//  even though it is explicitly declared protected and not private.
 	//  Watcom C++, however, works correctly.
 	class BandAndAvoidEnemiesRepulsorIterator : public BandingRepulsorIterator {
-		Actor       *actorArray[ 6 ];
+		Actor       *actorArray[6];
 		int         numActors,
 		            actorIndex;
 		bool        iteratingThruEnemies;
@@ -1401,7 +1401,7 @@ protected:
 	//  I had to move this nested class up to the BandTask class because
 	//  Visual C++ is lame.
 	/*  class BandAndAvoidEnemiesRepulsorIterator : public BandingRepulsorIterator {
-	        Actor       *actorArray[ 6 ];
+	        Actor       *actorArray[6];
 	        int         numActors,
 	                    actorIndex;
 	        bool        iteratingThruEnemies;

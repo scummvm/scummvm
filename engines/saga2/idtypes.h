@@ -225,7 +225,7 @@ typedef uint16 weaponID;
 
 typedef uint32 hResID;
 
-typedef uint8       ColorTable[ 256 ];
+typedef uint8       ColorTable[256];
 
 // number of containers
 const int   kNumViews    = 3;

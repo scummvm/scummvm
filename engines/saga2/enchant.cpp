@@ -55,7 +55,7 @@ ObjectID EnchantObject(
 	assert(enchantmentProto >= 0);
 	assert(enchantmentProto <  objectProtoCount);
 
-	enchProto = &objectProtos[ enchantmentProto ];
+	enchProto = &objectProtos[enchantmentProto];
 
 	ench = GameObject::newObject(); //Create Enchantment
 	if (ench == NULL) return Nothing;

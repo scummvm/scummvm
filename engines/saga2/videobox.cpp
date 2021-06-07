@@ -41,12 +41,12 @@ CVideoBox::CVideoBox(const Rect16 &box,
                      uint16 ident,
                      AppFunc *cmd) : ModalWindow(box, ident, cmd) {
 	// set the size of the window panes
-	vidPanRects[ 0 ] =  Rect16(x, y, xBrushSize, yBrushSize);
-	vidPanRects[ 1 ] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
+	vidPanRects[0] =  Rect16(x, y, xBrushSize, yBrushSize);
+	vidPanRects[1] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
 
 	// options dialog window decorations
-	vidDec[ 0 ].set(vidPanRects[ 0 ], vidPan1ResID);
-	vidDec[ 1 ].set(vidPanRects[ 1 ], vidPan2ResID);
+	vidDec[0].set(vidPanRects[0], vidPan1ResID);
+	vidDec[1].set(vidPanRects[1], vidPan2ResID);
 
 	// null out the decRes pointer
 	decRes = NULL;

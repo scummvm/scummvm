@@ -70,11 +70,11 @@ public:
 	Rect16  vidBoxRect;
 
 	// rect for the window panes
-	Rect16  vidPanRects[ numBrushes ];
+	Rect16  vidPanRects[numBrushes];
 
 public:
 	// decoration declarations
-	WindowDecoration vidDec[ numBrushes ];
+	WindowDecoration vidDec[numBrushes];
 
 
 protected:

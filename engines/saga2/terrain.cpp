@@ -113,7 +113,7 @@ uint32 tileTerrain(
     int16 mask,
     int16 minZ,
     int16 maxZ) {
-	WorldMapData    *map = &mapList[ mapNum ];
+	WorldMapData    *map = &mapList[mapNum];
 
 	TilePoint       metaCoords = pt >> platShift,
 	                origin = metaCoords << platShift,
@@ -211,10 +211,10 @@ uint32 tileTerrain(
    Function to get the terrain infor for a rectilinear volume
  * ===================================================================== */
 
-uint16          uMaxMasks[ 4 ] = { 0x0000, 0x000F, 0x00FF, 0x0FFF },
-                                 uMinMasks[ 4 ] = { 0xFFFF, 0xFFF0, 0xFF00, 0xF000 },
-                                         vMaxMasks[ 4 ] = { 0x0000, 0x1111, 0x3333, 0x7777 },
-                                                 vMinMasks[ 4 ] = { 0xFFFF, 0xEEEE, 0xCCCC, 0x8888 };
+uint16          uMaxMasks[4] = { 0x0000, 0x000F, 0x00FF, 0x0FFF },
+                                 uMinMasks[4] = { 0xFFFF, 0xFFF0, 0xFF00, 0xF000 },
+                                         vMaxMasks[4] = { 0x0000, 0x1111, 0x3333, 0x7777 },
+                                                 vMinMasks[4] = { 0xFFFF, 0xEEEE, 0xCCCC, 0x8888 };
 
 uint32 volumeTerrain(int16 mapNum, const TileRegion &vol) {
 	uint32      terrain = 0;            // accumulated terrain
@@ -251,10 +251,10 @@ uint32 volumeTerrain(int16 mapNum, const TileRegion &vol) {
 		uint16      vSectionMask = 0xFFFF;
 
 		if (tilePt.v == footprint.min.v)
-			vSectionMask &= vMinMasks[ subPos.min.v ];
+			vSectionMask &= vMinMasks[subPos.min.v];
 
 		if (tilePt.v == footprint.max.v)
-			vSectionMask &= vMaxMasks[ subPos.max.v ];
+			vSectionMask &= vMaxMasks[subPos.max.v];
 
 		for (tilePt.u = footprint.min.u;
 		        tilePt.u <= footprint.max.u;
@@ -262,10 +262,10 @@ uint32 volumeTerrain(int16 mapNum, const TileRegion &vol) {
 			uint16  uSectionMask = vSectionMask;
 
 			if (tilePt.u == footprint.min.u)
-				uSectionMask &= uMinMasks[ subPos.min.u ];
+				uSectionMask &= uMinMasks[subPos.min.u];
 
 			if (tilePt.u == footprint.max.u)
-				uSectionMask &= uMaxMasks[ subPos.max.u ];
+				uSectionMask &= uMaxMasks[subPos.max.u];
 
 			terrain |= tileTerrain(
 			               mapNum,
@@ -351,8 +351,8 @@ uint32 volumeTerrain(
    Function to get the terrain info for linear area
  * ===================================================================== */
 
-uint16  uMask[ 4 ] = { 0x000F, 0x00F0, 0x0F00, 0xF000 },
-                     vMask[ 4 ] = { 0x1111, 0x2222, 0x4444, 0x8888 };
+uint16  uMask[4] = { 0x000F, 0x00F0, 0x0F00, 0xF000 },
+                     vMask[4] = { 0x1111, 0x2222, 0x4444, 0x8888 };
 
 uint32 lineTerrain(
     int16           mapNum,
@@ -624,7 +624,7 @@ int16 tileSlopeHeight(
 	                lowestSupportPlatform = 0;
 
 	//  Look up the metatile on the map.
-	metaPtr = prevMeta = mapList[ mapNum ].lookupMeta(metaCoords);
+	metaPtr = prevMeta = mapList[mapNum].lookupMeta(metaCoords);
 	prevMapNum = mapNum;
 	prevCoords = metaCoords;
 
@@ -825,7 +825,7 @@ int16 checkBlocked(
 	}
 
 	//  See if object collided with an object
-	world = (GameWorld *)GameObject::objectAddress(mapList[ mapNum ].worldID);
+	world = (GameWorld *)GameObject::objectAddress(mapList[mapNum].worldID);
 	blockObj = objectCollision(obj, world, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;
@@ -907,7 +907,7 @@ int16 checkContact(
 		return blockageTerrain;
 
 	//  See if object collided with an object
-	world = (GameWorld *)GameObject::objectAddress(mapList[ mapNum ].worldID);
+	world = (GameWorld *)GameObject::objectAddress(mapList[mapNum].worldID);
 	blockObj = objectCollision(obj, world, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;

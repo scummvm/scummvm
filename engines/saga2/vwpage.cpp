@@ -84,7 +84,7 @@ static bool displayEnabled(void) {
     Globals
  * ===================================================================== */
 
-vWDisplayPage       displayPageList[ 2 ],
+vWDisplayPage       displayPageList[2],
                     *displayPage,
                     protoPage;
 
@@ -150,17 +150,17 @@ void initDDGraphics(gDisplayPort &mainPort, CDDWindow *displayWin) {
 	displayPageCount = 1;
 	currentDisplayPage = 0;
 
-	displayPageList[ 0 ] = displayPageList[ 1 ] = protoPage;
+	displayPageList[0] = displayPageList[1] = protoPage;
 
-	displayPage = &displayPageList[ 0 ];
+	displayPage = &displayPageList[0];
 	drawPage = (vDisplayPage *)displayPage;
 
 	//  Set the size of the display page in pixels
 
 //	gDisplaySize = Point16( mib->XResolution, mib->YResolution );
 	gDisplaySize = Point16(640, 480);
-	displayPageList[ 0 ].size = gDisplaySize;
-	displayPageList[ 1 ].size = gDisplaySize;
+	displayPageList[0].size = gDisplaySize;
+	displayPageList[1].size = gDisplaySize;
 
 	mainPort.setDisplayPage(drawPage);   // set up display page
 }
@@ -366,7 +366,7 @@ void vWDisplayPage::setPixel(int x, int y, uint8 color) {
 	}
 
 
-	dstptr [(y * ddWindow->lPitch) + x ] = color;
+	dstptr [(y * ddWindow->lPitch) + x] = color;
 
 	ddWindow->UnlockBackBuffer(dstptr);
 #endif
@@ -388,7 +388,7 @@ uint8 vWDisplayPage::getPixel(int x, int y) {
 		return 0;
 	}
 
-	retValue = dstPtr[(y * ddWindow->lPitch) + x ];
+	retValue = dstPtr[(y * ddWindow->lPitch) + x];
 	ddWindow->UnlockBackBuffer(dstPtr);
 
 	return retValue;

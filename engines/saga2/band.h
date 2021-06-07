@@ -66,7 +66,7 @@ class Band {
 	Actor       *leader;
 
 	int16       memberCount;
-	Actor       *members[ maxBandMembers ];
+	Actor       *members[maxBandMembers];
 
 public:
 	//  Constructor -- initial construction
@@ -99,7 +99,7 @@ public:
 
 	bool add(Actor *newMember) {
 		if (memberCount < elementsof(members)) {
-			members[ memberCount++ ] = newMember;
+			members[memberCount++] = newMember;
 			return TRUE;
 		} else
 			return FALSE;

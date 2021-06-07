@@ -281,10 +281,10 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		*pcPtr = pc;
-		if (arg[ 0 ] == dataSegIndex)
-			return &dataSegment[arg[ 1 ] + offset];
-		return segmentArrayAddress(arg[ 0 ],
-		                           arg[ 1 ]) + offset;
+		if (arg[0] == dataSegIndex)
+			return &dataSegment[arg[1] + offset];
+		return segmentArrayAddress(arg[0],
+		                           arg[1]) + offset;
 
 	case addr_deref:
 
@@ -349,8 +349,8 @@ uint8 *objectAddress(
 	case addr_this:
 		IMMED_WORD(offset);
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
-		seg = arg[ 0 ];
-		index = arg[ 1 ];
+		seg = arg[0];
+		index = arg[1];
 		if (seg == dataSegIndex)
 			return &dataSegment[index + offset];
 		addr = segmentArrayAddress(seg, index) + offset;
@@ -508,12 +508,12 @@ int16 RRandom(int16 c, int16 s, int16 id) {
  * ============================================================================ */
 
 void print_script_name(uint8 *codePtr, char *descr = NULL) {
-	char    scriptName[ 32 ];
+	char    scriptName[32];
 	uint8   *sym = codePtr - 1;
 	uint8   length = MIN<uint>(*sym, sizeof scriptName - 1);
 
 	memcpy(scriptName, sym - *sym, length);
-	scriptName[ length ] = '\0';
+	scriptName[length] = '\0';
 
 	if (descr)
 		debugC(1, kDebugScripts, "Scripts: %d op_enter: [%s].%s ", lastExport, descr, scriptName);
@@ -522,7 +522,7 @@ void print_script_name(uint8 *codePtr, char *descr = NULL) {
 }
 
 char *objectName(int16 segNum, uint16 segOff) {
-	//static        nameBuf[ 64 ];
+	//static        nameBuf[64];
 
 	uint8       *objAddr;
 	if (segNum >= 0)
@@ -571,7 +571,7 @@ bool Thread::interpret(void) {
 //			break;
 
 		case op_dup:
-			*--stack = stack[ 0 ];              // duplicate value on stack
+			*--stack = stack[0];              // duplicate value on stack
 			break;
 
 		case op_drop:                           // drop word on stack
@@ -747,7 +747,7 @@ bool Thread::interpret(void) {
 			if (w < 0 || w >= globalCFuncs.numEntries)
 				error("Invalid function number");
 
-			cfunc = globalCFuncs.table[ w ];
+			cfunc = globalCFuncs.table[w];
 			argCount = n;
 			returnVal = cfunc(stack);        // call the function
 
@@ -790,15 +790,15 @@ bool Thread::interpret(void) {
 				if ((int16)seg < 0) {
 					vtable = builtinVTableAddress((int16)seg, addr, &callTab);
 				} else {
-					vtable = (uint16 *)segmentAddress(((int16 *)addr)[ 0 ],
-					                                  ((int16 *)addr)[ 1 ]);
+					vtable = (uint16 *)segmentAddress(((int16 *)addr)[0],
+					                                  ((int16 *)addr)[1]);
 				}
 
 				vtableEntry = vtable + (w * 2);
 
 				if (vtable == NULL) {
 					//  Do nothing...
-				} else if (vtableEntry[ 0 ] != 0xffff) { // It's a SAGA func
+				} else if (vtableEntry[0] != 0xffff) { // It's a SAGA func
 					programCounter.offset = (pc - codeSeg);
 
 					//  Push the address of the object
@@ -814,24 +814,24 @@ bool Thread::interpret(void) {
 					//  Get the segment of the member function, and
 					//  determine it's real address (save segment number
 					//  into thread).
-					w = vtableEntry[ 0 ];
+					w = vtableEntry[0];
 					programCounter.segment = w;
 					//RUnlockHandle((RHANDLE)codeSeg);
 					codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 
 					// store pc-offset into pc
-					programCounter.offset = vtableEntry[ 1 ];
+					programCounter.offset = vtableEntry[1];
 
 					// calculate PC address
 					pc = (codeSeg) + programCounter.offset;
 					print_script_name(pc, objectName(seg, offset));
 					break;
-				} else if (vtableEntry[ 1 ] != 0xffff) { // It's a C func
+				} else if (vtableEntry[1] != 0xffff) { // It's a C func
 					//  Save the ID of the invoked object
 					ObjectID    saveID = threadArgs.invokedObject;
 
 					//  Get the function number
-					w = vtableEntry[ 1 ];
+					w = vtableEntry[1];
 					if (w < 0 || w >= callTab->numEntries)
 						error("Invalid member function number");
 
@@ -841,7 +841,7 @@ bool Thread::interpret(void) {
 					threadArgs.invokedObject = offset;
 
 					//  Get address of function and call it.
-					cfunc = callTab->table[ w ];
+					cfunc = callTab->table[w];
 					returnVal = cfunc(stack);        // call the function
 
 					//  Restore object ID from thread args
@@ -998,79 +998,79 @@ bool Thread::interpret(void) {
 		//  dropped variable.
 
 		case op_add:
-			w = (stack[ 1 ] +  stack [ 0 ]);
+			w = (stack[1] +  stack [0]);
 			*++stack = w;
 			break;
 		case op_sub:
-			w = (stack[ 1 ] -  stack [ 0 ]);
+			w = (stack[1] -  stack [0]);
 			*++stack = w;
 			break;
 		case op_mul:
-			w = (stack[ 1 ] *  stack [ 0 ]);
+			w = (stack[1] *  stack [0]);
 			*++stack = w;
 			break;
 		case op_div:
-			w = (stack[ 1 ] /  stack [ 0 ]);
+			w = (stack[1] /  stack [0]);
 			*++stack = w;
 			break;
 		case op_mod:
-			w = (stack[ 1 ] %  stack [ 0 ]);
+			w = (stack[1] %  stack [0]);
 			*++stack = w;
 			break;
 		case op_eq:
-			w = (stack[ 1 ] == stack [ 0 ]);
+			w = (stack[1] == stack [0]);
 			*++stack = w;
 			break;
 		case op_ne:
-			w = (stack[ 1 ] != stack [ 0 ]);
+			w = (stack[1] != stack [0]);
 			*++stack = w;
 			break;
 		case op_gt:
-			w = (stack[ 1 ] >  stack [ 0 ]);
+			w = (stack[1] >  stack [0]);
 			*++stack = w;
 			break;
 		case op_lt:
-			w = (stack[ 1 ] <  stack [ 0 ]);
+			w = (stack[1] <  stack [0]);
 			*++stack = w;
 			break;
 		case op_ge:
-			w = (stack[ 1 ] >= stack [ 0 ]);
+			w = (stack[1] >= stack [0]);
 			*++stack = w;
 			break;
 		case op_le:
-			w = (stack[ 1 ] <= stack [ 0 ]);
+			w = (stack[1] <= stack [0]);
 			*++stack = w;
 			break;
 		case op_rsh:
-			w = (stack[ 1 ] >> stack [ 0 ]);
+			w = (stack[1] >> stack [0]);
 			*++stack = w;
 			break;
 		case op_lsh:
-			w = (stack[ 1 ] << stack [ 0 ]);
+			w = (stack[1] << stack [0]);
 			*++stack = w;
 			break;
 		case op_and:
-			w = (stack[ 1 ] &  stack [ 0 ]);
+			w = (stack[1] &  stack [0]);
 			*++stack = w;
 			break;
 		case op_or:
-			w = (stack[ 1 ] |  stack [ 0 ]);
+			w = (stack[1] |  stack [0]);
 			*++stack = w;
 			break;
 		case op_xor:
-			w = (stack[ 1 ] ^  stack [ 0 ]);
+			w = (stack[1] ^  stack [0]);
 			*++stack = w;
 			break;
 		case op_land:
-			w = (stack[ 1 ] && stack [ 0 ]);
+			w = (stack[1] && stack [0]);
 			*++stack = w;
 			break;
 		case op_lor:
-			w = (stack[ 1 ] || stack [ 0 ]);
+			w = (stack[1] || stack [0]);
 			*++stack = w;
 			break;
 		case op_lxor:
-			w = (stack[ 1 ] && !stack [ 0 ]) || (!stack[ 1 ] && stack[ 0 ]);
+			w = (stack[1] && !stack [0]) || (!stack[1] && stack[0 ]);
 			*++stack = w;
 			break;
 
@@ -1113,7 +1113,7 @@ bool Thread::interpret(void) {
 class ThreadList {
 
 	struct ThreadPlaceHolder : public DNode {
-		uint8       buf[ sizeof(Thread) ];
+		uint8       buf[sizeof(Thread)];
 
 		Thread *getThread(void) {
 			return (Thread *)&buf;
@@ -1123,7 +1123,7 @@ class ThreadList {
 	DList               list,           //  List of active Threads
 	                    free;           //  List of available Threads
 
-	ThreadPlaceHolder   array[ 32 ];    //  Memory buffer for thread
+	ThreadPlaceHolder   array[32];    //  Memory buffer for thread
 	//  instantiation
 
 public:
@@ -1163,7 +1163,7 @@ public:
 	//  Return a pointer to a thread, given an ID
 	Thread *getThreadAddress(ThreadID id) {
 		assert(id >= 0 && id < elementsof(array));
-		return array[ id ].getThread();
+		return array[id].getThread();
 	}
 
 	//  Return a pointer to the first active thread
@@ -1180,7 +1180,7 @@ ThreadList::ThreadList(void) {
 	int i;
 
 	for (i = 0; i < elementsof(array); i++)
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 }
 
 //-------------------------------------------------------------------
@@ -1302,7 +1302,7 @@ void *ThreadList::newThread(ThreadID id) {
 	ThreadPlaceHolder   *tp;
 
 	//  Grab the thread place holder from the inactive list
-	tp = (ThreadPlaceHolder *)&array[ id ];
+	tp = (ThreadPlaceHolder *)&array[id];
 	tp->remove();
 
 	//  Place the place holder into the active list
@@ -1364,7 +1364,7 @@ Thread *ThreadList::next(Thread *thread) {
 //	constructor from being called until it is explicitly called with
 //	the overloaded new operator.
 
-static uint8 threadListBuffer[ sizeof(ThreadList) ];
+static uint8 threadListBuffer[sizeof(ThreadList)];
 static ThreadList &threadList = *((ThreadList *)threadListBuffer);
 
 /* ============================================================================ *
@@ -1496,17 +1496,17 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	threadArgs = args;
 	stackBase = (UBytePtr)malloc(stackSize);
 	stackPtr = stackBase + stackSize - initialStackFrameSize;
-	((uint16 *)stackPtr)[ 0 ] = 0;          // 0 args
-	((uint16 *)stackPtr)[ 1 ] = 0;          // dummy return address
-	((uint16 *)stackPtr)[ 2 ] = 0;          // dummy return address
+	((uint16 *)stackPtr)[0] = 0;          // 0 args
+	((uint16 *)stackPtr)[1] = 0;          // dummy return address
+	((uint16 *)stackPtr)[2] = 0;          // dummy return address
 	framePtr = stackSize;
 	_valid = true;
 
-	if ((codeSeg)[ programCounter.offset ] != op_enter) {
+	if ((codeSeg)[programCounter.offset] != op_enter) {
 		//warning("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
 		_valid = false;
 	}
-//	assert ((codeSeg)[ programCounter.offset ] == op_enter);
+//	assert ((codeSeg)[programCounter.offset] == op_enter);
 }
 
 //-----------------------------------------------------------------------
@@ -1901,21 +1901,21 @@ scriptResult runMethod(
 	vTable = (uint16 *)
 	         segmentAddress(segNum, segOff + methodNum * sizeof(uint32));
 
-	segNum = vTable[ 0 ];
-	segOff = vTable[ 1 ];
+	segNum = vTable[0];
+	segOff = vTable[1];
 
 	if (segNum == 0xffff) {                 // it's a CFUNC or NULL func
 		if (segOff == 0xffff) {             // it's a NULL function
 			return scriptResultNoScript;
 		} else {                            //  It's a C function
 			int16   funcNum = segOff;       // function number
-			int16   stack[ 1 ];             // dummy stack argument
+			int16   stack[1];             // dummy stack argument
 			C_Call  *cfunc;
 
 			//  Make sure the C function number is OK
 			assert(funcNum >= 0);
 			assert(funcNum < globalCFuncs.numEntries);
-			cfunc = globalCFuncs.table[ funcNum ];
+			cfunc = globalCFuncs.table[funcNum];
 
 			//  Build a temporary dummy thread
 			th = new Thread(0, 0, args);
@@ -1942,8 +1942,8 @@ scriptResult runMethod(
 		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
 
 		//  Put the object segment and ID onto the dummy stack frame
-		((uint16 *)th->stackPtr)[ 3 ] = bType;
-		((uint16 *)th->stackPtr)[ 4 ] = index;
+		((uint16 *)th->stackPtr)[3] = bType;
+		((uint16 *)th->stackPtr)[4] = index;
 
 		//  Run the thread to completion
 		result = th->run();

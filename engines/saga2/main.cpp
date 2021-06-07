@@ -464,7 +464,7 @@ bool readCommandLine(int argc, char *argv[]) {
 // Mouse handling
 
 gMouseState     prevState;
-MouseExtState   mouseQueue[ 64 ];
+MouseExtState   mouseQueue[64];
 
 int16           queueIn = 0,
                 queueOut = 0;
@@ -523,12 +523,12 @@ void *LoadFile(char *filename, const char desc[]) {
 //	Loads a resource into a buffer and returns a pointer
 
 void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
-	uint32          idString[ 2 ];
+	uint32          idString[2];
 	int32           size;
 	uint8           *buffer;                // allocated buffer
 
-	idString[ 0 ] = id;
-	idString[ 1 ] = 0;
+	idString[0] = id;
+	idString[1] = 0;
 	debugC(3, kDebugResources, "Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
@@ -548,12 +548,12 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 //	Loads a resource into a relocatable buffer and returns a handle
 
 RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]) {
-	uint32          idString[ 2 ];
+	uint32          idString[2];
 	int32           size;
 	RHANDLE         buffer;             // allocated buffer
 
-	idString[ 0 ] = id;
-	idString[ 1 ] = 0;
+	idString[0] = id;
+	idString[1] = 0;
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {

@@ -44,9 +44,9 @@ const int           maxBanks = 64;          // 64 banks maximum
 //  to render.
 /*
 struct BankBits {
-    uint32          b[ maxBanks / 32 ];
+    uint32          b[maxBanks / 32];
 
-    bool isSet( int i )  { return b[ i >> 5 ] & (1 << (i & 31)); }
+    bool isSet( int i )  { return b[i >> 5] & (1 << (i & 31)); }
 };
  */
 
@@ -108,7 +108,7 @@ public:
 	}
 
 	bool isSet(uint16 i) {
-		return (bool)(b[ i >> 5 ] & ((uint32) 1 << (i & 31)));
+		return (bool)(b[i >> 5] & ((uint32) 1 << (i & 31)));
 	}
 
 	void SetBit(int16 i) {
@@ -161,7 +161,7 @@ private:
 		return (1 << (n & 31));
 	}
 
-	uint32  b[ lWords ];
+	uint32  b[lWords];
 
 	void clear(void) {
 		memset(&b, 0, sizeof b);
@@ -198,7 +198,7 @@ public:
 		FixedBitArray   t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[ i ] = c.b[ i ] & d.b[ i ];
+			t.b[i] = c.b[i] & d.b[i];
 		return t;
 	}
 
@@ -206,19 +206,19 @@ public:
 		FixedBitArray t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[ i ] = c.b[ i ] | d.b[ i ];
+			t.b[i] = c.b[i] | d.b[i];
 		return t;
 	}
 
 	friend FixedBitArray &operator|= (FixedBitArray c, FixedBitArray d) {
 		for (uint16 i = 0; i < lWords; i++)
-			c.b[ i ] |= d.b[ i ];
+			c.b[i] |= d.b[i];
 		return c;
 	}
 
 	friend bool operator!= (FixedBitArray c, FixedBitArray d) {
 		for (uint16 i = 0; i < lWords; i++)
-			if (c.b[ i ] != d.b[ i ]) return TRUE;
+			if (c.b[i] != d.b[i]) return TRUE;
 		return FALSE;
 	}
 
@@ -226,7 +226,7 @@ public:
 		FixedBitArray t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[ i ] = c.b[ i ] ^ d.b[ i ];
+			t.b[i] = c.b[i] ^ d.b[i];
 		return t;
 	}
 
@@ -261,7 +261,7 @@ public:
 		return t;
 	}
 	bool isSet(int i) {
-		return b[ i >> 5 ] & ((uint32) 1 << (i & 31));
+		return b[i >> 5] & ((uint32) 1 << (i & 31));
 	}
 
 	void SetBit(int16 i) {
@@ -323,18 +323,18 @@ template <class RES> RES *loadOnCall<RES>::loadRes( uint16 i )
 {
     RES h;
 
-    if (handle[ i ])
+    if (handle[i])
     {
         loaded.SetBit(i);
-        RLockHandle( (RHANDLE) handle[ i ] );
-        return handle[ i ];
+        RLockHandle( (RHANDLE) handle[i] );
+        return handle[i];
     }
 
     h = (RES) tileRes->load( tileID + RES_ID( 0,0,0,i ) );
 
     loaded.SetBit(i);
 
-    handle[ i ] = h;
+    handle[i] = h;
     return h;
 }
 
@@ -342,20 +342,20 @@ template <class RES> RES *loadOnCall<RES>::initRes( uint16 i )
 {
     RES h;
 
-    if (!handle[ i ])
+    if (!handle[i])
     {
         h = (RES) tileRes->load( tileID + RES_ID( 0,0,0,i ) );
         loaded.SetBit(i);
-        handle[ i ] = h;
+        handle[i] = h;
         return h;
     }
 }
 
 template <class RES> void loadOnCall<RES>::freeRes( uint16 i )
 {
-    if (handle[ i ])
+    if (handle[i])
     {
-        RUnlockHandle((RHANDLE) handles[ i ]);
+        RUnlockHandle((RHANDLE) handles[i]);
         loaded.NotBit(i);
     }
 }

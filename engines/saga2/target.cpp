@@ -115,29 +115,29 @@ void insertLocation(
 	//  the first element
 	if (i == 0) {
 		tla.locs = 1;
-		tla.locArray[ 0 ] = tp;
-		tla.distArray[ 0 ] = dist;
+		tla.locArray[0] = tp;
+		tla.distArray[0] = dist;
 	} else {
 		//  Search for a position to place the location
-		if (dist < tla.distArray[ i - 1 ]) {
+		if (dist < tla.distArray[i - 1]) {
 			if (i < tla.size) {
-				tla.locArray[ i ] = tla.locArray[ i - 1 ];
-				tla.distArray[ i ] = tla.distArray[ i - 1 ];
+				tla.locArray[i] = tla.locArray[i - 1];
+				tla.distArray[i] = tla.distArray[i - 1];
 			}
 			i--;
 		}
 
-		while (i > 0 && dist < tla.distArray[ i - 1 ]) {
-			tla.locArray[ i ] = tla.locArray[ i - 1 ];
-			tla.distArray[ i ] = tla.distArray[ i - 1 ];
+		while (i > 0 && dist < tla.distArray[i - 1]) {
+			tla.locArray[i] = tla.locArray[i - 1];
+			tla.distArray[i] = tla.distArray[i - 1];
 			i--;
 		}
 
 		if (i < tla.size) {
 			//  Place the location in the array
 			if (tla.locs < tla.size) tla.locs++;
-			tla.locArray[ i ] = tp;
-			tla.distArray[ i ] = dist;
+			tla.locArray[i] = tp;
+			tla.distArray[i] = dist;
 		}
 	}
 }
@@ -166,7 +166,7 @@ LocationTarget::LocationTarget(void **buf) {
 	//  Restore the targe location
 	loc = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -229,8 +229,8 @@ int16 LocationTarget::where(
     TargetLocationArray &tla) const {
 	//  Place the target location in the first element of the
 	//  array
-	tla.locArray[ 0 ] = loc;
-	tla.distArray[ 0 ] = (tp - loc).quickHDistance();
+	tla.locArray[0] = loc;
+	tla.distArray[0] = (tp - loc).quickHDistance();
 	tla.locs = 1;
 	return 1;
 }
@@ -430,7 +430,7 @@ TilePropertyTarget::TilePropertyTarget(void **buf) {
 	//  Restore the TilePropertyID
 	tileProp = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -609,7 +609,7 @@ SpecificMetaTileTarget::SpecificMetaTileTarget(void **buf) {
 	meta.map = bufferPtr->map;
 	meta.index = bufferPtr->index;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -630,7 +630,7 @@ void *SpecificMetaTileTarget::archive(void *buf) const {
 	bufferPtr->map = meta.map;
 	bufferPtr->index = meta.index;
 
-	return &bufferPtr[ 1 ];
+	return &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -685,7 +685,7 @@ MetaTilePropertyTarget::MetaTilePropertyTarget(void **buf) {
 	//  Restore the MetaTilePropertyID
 	metaProp = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -764,29 +764,29 @@ void ObjectTarget::searchObject(
 		//  the first element
 		if (i == 0) {
 			toa.objs = 1;
-			toa.objArray[ 0 ] = objPtr;
-			toa.distArray[ 0 ] = dist;
+			toa.objArray[0] = objPtr;
+			toa.distArray[0] = dist;
 		} else {
 			//  Search for a position to place the object
-			if (dist < toa.distArray[ i - 1 ]) {
+			if (dist < toa.distArray[i - 1]) {
 				if (i < toa.size) {
-					toa.objArray[ i ] = toa.objArray[ i - 1 ];
-					toa.distArray[ i ] = toa.distArray[ i - 1 ];
+					toa.objArray[i] = toa.objArray[i - 1];
+					toa.distArray[i] = toa.distArray[i - 1];
 				}
 				i--;
 			}
 
-			while (i > 0 && dist < toa.distArray[ i - 1 ]) {
-				toa.objArray[ i ] = toa.objArray[ i - 1 ];
-				toa.distArray[ i ] = toa.distArray[ i - 1 ];
+			while (i > 0 && dist < toa.distArray[i - 1]) {
+				toa.objArray[i] = toa.objArray[i - 1];
+				toa.distArray[i] = toa.distArray[i - 1];
 				i--;
 			}
 
 			if (i < toa.size) {
 				//  Place the object in the array
 				if (toa.objs < toa.size) toa.objs++;
-				toa.objArray[ i ] = objPtr;
-				toa.distArray[ i ] = dist;
+				toa.objArray[i] = objPtr;
+				toa.distArray[i] = dist;
 			}
 		}
 	}
@@ -970,7 +970,7 @@ SpecificObjectTarget::SpecificObjectTarget(void **buf) {
 	//  Restore the ObjectID
 	obj = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -1066,8 +1066,8 @@ int16 SpecificObjectTarget::where(
 
 		if (dist < maxObjDist) {
 			tla.locs = 1;
-			tla.locArray[ 0 ] = objLoc;
-			tla.distArray[ 0 ] = dist;
+			tla.locArray[0] = objLoc;
+			tla.distArray[0] = dist;
 
 			return 1;
 		}
@@ -1108,8 +1108,8 @@ int16 SpecificObjectTarget::object(
 
 		if (dist < maxObjDist) {
 			toa.objs = 1;
-			toa.objArray[ 0 ] = o;
-			toa.distArray[ 0 ] = dist;
+			toa.objArray[0] = o;
+			toa.distArray[0] = dist;
 
 			return 1;
 		}
@@ -1131,7 +1131,7 @@ ObjectPropertyTarget::ObjectPropertyTarget(void **buf) {
 	//  Restore the ObjectPropertyID
 	objProp = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------
@@ -1334,8 +1334,8 @@ int16 SpecificActorTarget::where(
 
 		if (dist < maxObjDist) {
 			tla.locs = 1;
-			tla.locArray[ 0 ] = actorLoc;
-			tla.distArray[ 0 ] = dist;
+			tla.locArray[0] = actorLoc;
+			tla.distArray[0] = dist;
 
 			return 1;
 		}
@@ -1372,8 +1372,8 @@ int16 SpecificActorTarget::object(
 
 		if (dist < maxObjDist) {
 			toa.objs = 1;
-			toa.objArray[ 0 ] = a;
-			toa.distArray[ 0 ] = dist;
+			toa.objArray[0] = a;
+			toa.distArray[0] = dist;
 
 			return 1;
 		}
@@ -1410,8 +1410,8 @@ int16 SpecificActorTarget::actor(
 
 		if (dist < maxObjDist) {
 			taa.actors = 1;
-			taa.actorArray[ 0 ] = a;
-			taa.distArray[ 0 ] = dist;
+			taa.actorArray[0] = a;
+			taa.distArray[0] = dist;
 
 			return 1;
 		}
@@ -1433,7 +1433,7 @@ ActorPropertyTarget::ActorPropertyTarget(void **buf) {
 	//  Restore the ActorPropertyID
 	actorProp = *bufferPtr;
 
-	*buf = &bufferPtr[ 1 ];
+	*buf = &bufferPtr[1];
 }
 
 //----------------------------------------------------------------------

@@ -941,7 +941,7 @@ void mapImage(gPixelMap &from, gPixelMap &to, gPen map[]) {
 	uint8       *get = from.data,
 	             *put = to.data;
 
-	while (bytes--) *put++ = map[ *get++ ];
+	while (bytes--) *put++ = map[*get++];
 }
 
 void mapImage(gPort &from, gPort &to, gPen map[]) {

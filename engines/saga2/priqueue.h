@@ -32,7 +32,7 @@ namespace Saga2 {
 template <class ITEM, int size>
 class PriorityQueue {
 	int16           tail;                   // end index of queue
-	ITEM            queue[ size + 1 ];
+	ITEM            queue[size + 1];
 
 	static int16 parentIndex(int16 index) {
 		return index >> 1;
@@ -71,11 +71,11 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 
 	if (tail >= size + 1) return FALSE;
 
-	for (index = tail, qi = &queue[ index ];
+	for (index = tail, qi = &queue[index];
 	        index > 1;
 	        index = parentIndex, qi = parentItem) {
 		parentIndex = PriorityQueue::parentIndex(index);
-		parentItem = &queue[ parentIndex ];
+		parentItem = &queue[parentIndex];
 
 		if ((int)*parentItem <= newVal) break;
 		*qi = *parentItem;
@@ -90,7 +90,7 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 
 template <class ITEM, int size>
 bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
-	ITEM            *item = &queue[ 1 ],
+	ITEM            *item = &queue[1],
 	                 *child;
 	int16           itemNum = 1,
 	                childNum,
@@ -100,17 +100,17 @@ bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
 
 	result = *item;
 	tail--;
-	tailVal = (int)queue[ tail ];
+	tailVal = (int)queue[tail];
 
 	for (;;) {
 		childNum = child1Index(itemNum);
 		if (childNum >= tail) break;
 
-		child = &queue[ childNum ];
+		child = &queue[childNum];
 
 		//  Select the lowest of the two children
 		if (childNum + 1 < tail
-		        && (int)child[ 0 ] > (int)child[ 1 ]) {
+		        && (int)child[0] > (int)child[1]) {
 			childNum++;
 			child++;
 		}
@@ -122,7 +122,7 @@ bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
 	}
 
 	if (itemNum != tail) {
-		*item = queue[ tail ];
+		*item = queue[tail];
 	}
 	return TRUE;
 }

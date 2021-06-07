@@ -295,9 +295,9 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				}
 
 				if (drawMode == drawModeComplement) {
-					svgaWriteAddr[ offset ]
-					    = svgaReadAddr[ offset ] ^ fgPen;
-				} else svgaWriteAddr[ offset ] = fgPen;
+					svgaWriteAddr[offset]
+					    = svgaReadAddr[offset] ^ fgPen;
+				} else svgaWriteAddr[offset] = fgPen;
 
 				if (errTerm >= 0) {
 					y1 += yDir;
@@ -329,9 +329,9 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				}
 
 				if (drawMode == drawModeComplement) {
-					svgaWriteAddr[ offset ]
-					    = svgaReadAddr[ offset ] ^ fgPen;
-				} else svgaWriteAddr[ offset ] = fgPen;
+					svgaWriteAddr[offset]
+					    = svgaReadAddr[offset] ^ fgPen;
+				} else svgaWriteAddr[offset] = fgPen;
 
 				if (errTerm >= 0) {
 					x1 += xDir;
@@ -370,9 +370,9 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 			for (i = xAbs + 1; i > 0; i--) {
 				if (drawMode == drawModeComplement) {
-					svgaWriteAddr[ offset ]
-					    = svgaReadAddr[ offset ] ^ fgPen;
-				} else svgaWriteAddr[ offset ] = fgPen;
+					svgaWriteAddr[offset]
+					    = svgaReadAddr[offset] ^ fgPen;
+				} else svgaWriteAddr[offset] = fgPen;
 
 				if (errTerm >= 0) {
 					y1 += yDir;
@@ -401,9 +401,9 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 			for (i = yAbs + 1; i > 0; i--) {
 				if (drawMode == drawModeComplement) {
-					svgaWriteAddr[ offset ]
-					    = svgaReadAddr[ offset ] ^ fgPen;
-				} else svgaWriteAddr[ offset ] = fgPen;
+					svgaWriteAddr[offset]
+					    = svgaReadAddr[offset] ^ fgPen;
+				} else svgaWriteAddr[offset] = fgPen;
 
 				if (errTerm >= 0) {
 					x1 += xDir;

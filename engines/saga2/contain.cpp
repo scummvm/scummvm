@@ -59,7 +59,7 @@ static void         *selImage;
    Imports
  * ===================================================================== */
 
-extern ReadyContainerView   *TrioCviews[ kNumViews ];
+extern ReadyContainerView   *TrioCviews[kNumViews];
 extern ReadyContainerView   *indivCviewTop, *indivCviewBot;
 extern SpellStuff   spellBook[];
 extern SpriteSet    *objectSprites;        // object sprites
@@ -104,7 +104,7 @@ static bool alreadyDone;
 ObjectID    ContainerView::lastPickedObjectID = Nothing;
 int32       ContainerView::lastPickedObjectQuantity = - 1;
 bool        ContainerView::objTextAlarm = FALSE;
-char        ContainerView::mouseText[ ContainerView::bufSize ] = { "" };
+char        ContainerView::mouseText[ContainerView::bufSize] = { "" };
 bool        ContainerView::mouseInView = FALSE;
 uint16      ContainerView::numPicked = 1;
 GameObject  *ContainerView::objToGet;
@@ -475,7 +475,7 @@ void ContainerView::drawClipped(
 void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	const int bufSize = 20;
 
-	char buf[ bufSize ];
+	char buf[bufSize];
 	uint8   num;
 
 	SAVE_GPORT_STATE(port);
@@ -511,7 +511,7 @@ void ContainerView::drawQuantity(
 
 	if (quantity > 1) {
 		SAVE_GPORT_STATE(port);
-		char buf[ 8 ];
+		char buf[8];
 
 		// draw the number of items selected thus far
 		sprintf(buf, "%d", quantity);
@@ -617,7 +617,7 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 		lastPickedObjectID = Nothing;
 		lastPickedObjectQuantity = -1;
 		mouseInfo.setText(NULL);
-		mouseText[ 0 ] = NULL;
+		mouseText[0] = NULL;
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
@@ -764,7 +764,7 @@ void ContainerView::clickOn(
 				// activate multi-object get interface if a mergeable object
 				getMerged(cObj);
 				mouseInfo.setText(NULL);
-				mouseText[ 0 ] = NULL;
+				mouseText[0] = NULL;
 			}
 		} else {
 			//  just get the object into the cursor
@@ -899,7 +899,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 	if (slotID == Nothing) {
 		// clear out the mouse text
 		mouseInfo.setText(NULL);
-		mouseText[ 0 ] = NULL;
+		mouseText[0] = NULL;
 
 		// reset the last picked thingy
 		lastPickedObjectID          = Nothing;
@@ -923,7 +923,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 
 		// clear out the mouse text
 		mouseInfo.setText(NULL);
-		mouseText[ 0 ] = NULL;
+		mouseText[0] = NULL;
 
 		// reset the alarm flag
 		objTextAlarm = FALSE;
@@ -943,7 +943,7 @@ void ContainerView::setCursorText(GameObject *obj) {
 	assert(obj);
 
 	const   bufSize = 40;
-	char cursorText[ bufSize ];
+	char cursorText[bufSize];
 
 	// put the normalized text into cursorText
 	obj->objCursorText(cursorText, bufSize);
@@ -954,7 +954,7 @@ void ContainerView::setCursorText(GameObject *obj) {
 void ContainerView::setDelayedCursorText(GameObject *obj) {
 	// clear out the mouse text
 	mouseInfo.setText(NULL);
-	mouseText[ 0 ] = NULL;
+	mouseText[0] = NULL;
 
 	// reset the alarm flag
 	objTextAlarm = FALSE;
@@ -1078,8 +1078,8 @@ void ReadyContainerView::drawClipped(
 			        i++, col++, x += iconSpacing.x + iconWidth) {
 				Point16 pos(x, y);
 
-				if (isGhosted()) drawCompressedImageGhosted(port, pos, backImages[ i % numIm ]);
-				else drawCompressedImage(port, pos, backImages[ i % numIm ]);
+				if (isGhosted()) drawCompressedImageGhosted(port, pos, backImages[i % numIm]);
+				else drawCompressedImage(port, pos, backImages[i % numIm]);
 			}
 
 		}
@@ -1142,7 +1142,7 @@ void ReadyContainerView::drawClipped(
 			//  Draw the "in use" indicator.
 			if (backImages && proto->isObjectBeingUsed(item)) {
 				drawCompressedImage(port,
-				                    Point16(x - 4, y - 4), backImages[ 3 ]);
+				                    Point16(x - 4, y - 4), backImages[3]);
 			}
 
 			//  Build the color table.
@@ -1188,8 +1188,8 @@ ContainerWindow::ContainerWindow(ContainerNode &nd,
 	                      *this,
 	                      app.closeRect,              // rect for button
 	                      containerRes,               // resource context
-	                      app.closeResID[ 0 ],
-	                      app.closeResID[ 1 ],
+	                      app.closeResID[0],
+	                      app.closeResID[1],
 	                      0,
 	                      cmdCloseButtonFunc);        // mind app func
 }
@@ -1215,8 +1215,8 @@ ScrollableContainerWindow::ScrollableContainerWindow(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
-	                       app.scrollResID[ 0 ],           // resource handle name
-	                       app.scrollResID[ 1 ],
+	                       app.scrollResID[0],           // resource handle name
+	                       app.scrollResID[1],
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
@@ -1261,7 +1261,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 		setContainerSprite();               // show at the top of the box
 
 		// set the decorations for this window
-		setDecorations(winDecs[ bgndType ],
+		setDecorations(winDecs[bgndType],
 		               elementsof(brassDecorations),    // brass was arb, all should have same
 		               containerRes, 'F', 'R', 'M');
 
@@ -1369,8 +1369,8 @@ EnchantmentContainerWindow::EnchantmentContainerWindow(
 	                       *this,
 	                       app.scrollRect,                 // rect for button
 	                       containerRes,                   // resource context
-	                       app.scrollResID[ 0 ],           // resource handle name
-	                       app.scrollResID[ 1 ],
+	                       app.scrollResID[0],           // resource handle name
+	                       app.scrollResID[1],
 	                       0,
 	                       cmdScrollFunc);                 // mind app func
 
@@ -1467,7 +1467,7 @@ void *ContainerNode::restore(void *buf) {
 	//  If this container was shown, re-show it
 	if (a->shown) markForShow();
 
-	return &a[ 1 ];
+	return &a[1];
 }
 
 //  Store the state of this ContainerNode into archive buffer
@@ -1482,7 +1482,7 @@ void *ContainerNode::archive(void *buf) {
 	a->mindType = mindType;
 	a->shown    = window != NULL;
 
-	return &a[ 1 ];
+	return &a[1];
 }
 
 //  Close the container window, but leave the node.
@@ -1538,7 +1538,7 @@ void ContainerNode::show(void) {
 void ContainerNode::update(void) {
 	if (type == readyType) {
 		//  Update ready containers if they are enabled
-		if (TrioCviews[ owner ]->getEnabled())  TrioCviews[ owner ]->invalidate();
+		if (TrioCviews[owner]->getEnabled())  TrioCviews[owner]->invalidate();
 		if (indivCviewTop->getEnabled())        indivCviewTop->invalidate();
 		if (indivCviewBot->getEnabled())        indivCviewBot->invalidate();
 
@@ -1938,7 +1938,7 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 	assert(index >= 0);
 	assert(index < elementsof(classTable));
 
-	int             containerClass = classTable[ index ];
+	int             containerClass = classTable[index];
 
 	cw.mindSelectorCompButton->setCurrent(index);
 	cw.mindSelectorCompButton->invalidate();
@@ -1981,7 +1981,7 @@ APPFUNC(cmdMindContainerFunc) {
 
 
 			const int BUF_SIZE = 64;
-			char    textBuffer[ BUF_SIZE ];
+			char    textBuffer[BUF_SIZE];
 			int     mindType = -1;
 
 

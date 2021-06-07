@@ -192,7 +192,7 @@ protected:
 	};
 
 
-	char            lineBuf[ bufSize ]; // text to render on button
+	char            lineBuf[bufSize]; // text to render on button
 	textPallete     textFacePal;    // contains info about coloring for multi-depth text rendering
 	Rect16          textRect;       // rect for the text
 	int16           textPosition;
@@ -231,7 +231,7 @@ private:
 	struct {
 		char    *text;
 		uint32  frameTime;
-	} lineQueue[ 12 ];
+	} lineQueue[12];
 
 	uint8       queueHead,
 	            queueTail;
@@ -270,7 +270,7 @@ enum PortraitType {
 
 class CPortrait {
 private:
-	PortraitType    currentState[ kNumViews + 1 ];
+	PortraitType    currentState[kNumViews + 1];
 	uint16          numButtons;
 	uint16          _numViews;
 	gMultCompButton **buttons;
@@ -285,7 +285,7 @@ public:
 	void ORset(uint16, PortraitType type);
 	void set(uint16 brotherID, PortraitType type);
 	PortraitType getCurrentState(uint16 brotherID) {
-		return currentState[ brotherID ];
+		return currentState[brotherID];
 	}
 	void getStateString(char buf[], int8 size, uint16 brotherID);
 };
@@ -509,17 +509,17 @@ private:
 	gPixelMap   savedMap;
 
 	// array of manaLine infos for blitting
-	manaLineInfo manaLines[ numManaTypes ];
+	manaLineInfo manaLines[numManaTypes];
 
 	// array of ring and star end positions
 	// this is initialized via constructor
-	Point16 starRingEndPos[ numManaTypes ];
+	Point16 starRingEndPos[numManaTypes];
 
-	Point16 starSizes[ numStars ];
-	Point16 ringSizes[ numRings ];
+	Point16 starSizes[numStars];
+	Point16 ringSizes[numRings];
 
 	// these are checks against redundent updates
-	int32   currentMana[ numManaTypes ], currentBaseMana[ numManaTypes ];
+	int32   currentMana[numManaTypes], currentBaseMana[numManaTypes];
 protected:
 
 	// these do line and position calculations
@@ -590,7 +590,7 @@ private:
 	hResContext *healthRes;
 
 	// buttons
-	gCompImage          *starBtns[ numControls ];
+	gCompImage          *starBtns[numControls];
 	gCompImage          *indivStarBtn;
 
 	// array of pointer to the star imagery
@@ -602,8 +602,8 @@ private:
 	void updateStar(gCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality);
 
 public:
-	uint16  starIDs[ 3 ];
-	int16   imageIndexMemory[ 4 ];
+	uint16  starIDs[3];
+	int16   imageIndexMemory[4];
 
 public:
 

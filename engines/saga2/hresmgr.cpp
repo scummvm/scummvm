@@ -462,7 +462,7 @@ RHANDLE hResContext::loadIndex(int16 index, const char desc[], bool cacheable) {
 	_bytecount = 0;
 	_bytepos = 0;
 
-	entry = &_base[ index ];
+	entry = &_base[index];
 
 	if (*capture != nullptr && **capture != nullptr) {
 		entry->use();

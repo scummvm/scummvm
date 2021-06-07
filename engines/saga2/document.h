@@ -63,7 +63,7 @@ public:
 	int16           numPages;                   //  Number of visible pages
 	int16           orientation;                //  Orientation of pages
 	uint8           *textColors;                //  Text color array
-	Rect16          pageRect[ maxVisiblePages ];//  Array of visible page rects
+	Rect16          pageRect[maxVisiblePages];//  Array of visible page rects
 	Rect16          closeRect;                  //  Close-box rectangle
 	WindowDecoration *decoList;                 //  List of decorator panels
 	int16           numDecos;                   //  Number of decorator panels
@@ -91,8 +91,8 @@ public:
 		    numDecos(_numDecos),
 		    groupID(_groupID),
 		    decoID(_decoID) {
-		pageRect[ 0 ]       = _pageRect_0;
-		pageRect[ 1 ]       = _pageRect_1;
+		pageRect[0]       = _pageRect_0;
+		pageRect[1]       = _pageRect_1;
 	}
 };
 
@@ -114,13 +114,13 @@ private:
 	struct ImageHeader {
 		Point16     size;
 		int16       compress;
-		int8        data[ 2 ];
+		int8        data[2];
 	};
 
 	CDocumentAppearance &app;
 
 	// image poiner array
-	void            *images[ maxPages ];
+	void            *images[maxPages];
 
 	uint16          currentPage,
 	                lineWidth,
@@ -131,10 +131,10 @@ private:
 	gFont           *textFont;
 	uint16          textHeight;
 	uint16          pages;
-	uint16          numLines[ maxPages];
-	uint16          lineLen[ maxPages ][ maxLines ];
-	uint16          lineOffset[ maxPages ];
-	Extent16        imageSizes[ maxPages ];
+	uint16          numLines[maxPages];
+	uint16          lineLen[maxPages][maxLines];
+	uint16          lineOffset[maxPages];
+	Extent16        imageSizes[maxPages];
 	bool            pageBreakSet;
 
 	char            *scan;                  // for parsing book text.

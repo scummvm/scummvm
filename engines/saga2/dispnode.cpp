@@ -188,8 +188,8 @@ void DisplayNodeList::draw(void) {
 //	objects or actors which are closest to the center view point.
 
 void DisplayNodeList::buildObjects(bool fromScratch) {
-	GameObject      *sortList[ maxDisplayed + 1 ];
-	int16           distList[ maxDisplayed + 1 ];
+	GameObject      *sortList[maxDisplayed + 1];
+	int16           distList[maxDisplayed + 1];
 	int16           sortCount = 0;
 	int16           i;
 	int16           viewSize = tileRect.height;
@@ -202,7 +202,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 	//  view region.
 
 	for (i = 0; i < count; i++) {
-		DisplayNode *dn = &displayList[ i ];
+		DisplayNode *dn = &displayList[i];
 		GameObject  *obj = dn->object;
 		TilePoint   objLoc = obj->getLocation();
 		int16       dist;
@@ -268,15 +268,15 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 			//  An insertion sort which has been clamped
 			//  to a limited number of items.
 			for (i = sortCount; i > 0;) {
-				if (dist >= distList[ i - 1 ]) break;
+				if (dist >= distList[i - 1]) break;
 				i--;
-				distList[ i + 1 ] = distList[ i ];
-				sortList[ i + 1 ] = sortList[ i ];
+				distList[i + 1] = distList[i];
+				sortList[i + 1] = sortList[i];
 			}
 
 			if (i < maxDisplayed) {
-				distList[ i ] = dist;
-				sortList[ i ] = obj;
+				distList[i] = dist;
+				sortList[i] = obj;
 
 				if (sortCount < maxDisplayed) sortCount++;
 			}
@@ -288,8 +288,8 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 	count = sortCount;
 
 	for (i = 0; i < sortCount; i++) {
-		DisplayNode *dn = &displayList[ i ];
-		GameObject  *ob = sortList[ i ];
+		DisplayNode *dn = &displayList[i];
+		GameObject  *ob = sortList[i];
 		DisplayNode **search;
 		TilePoint oLoc = ob->getLocation();
 		dn->nextDisplayed = NULL;
@@ -360,7 +360,7 @@ void DisplayNode::drawObject(void) {
 	ColorTable      mainColors,             // colors for object
 	                leftColors,             // colors for left-hand object
 	                rightColors;            // colors for right-hand object
-	SpriteComponent scList[ 3 ],
+	SpriteComponent scList[3],
 	                *sc;
 	int16           bodyIndex,              // drawing order of body
 	                leftIndex,              // drawing order of left
@@ -388,9 +388,9 @@ void DisplayNode::drawObject(void) {
 	mCoords.z = 0;
 
 	//  Do not display objects that are on a ripped roof
-	if ((mt = mapList[ currentMapNum ].lookupMeta(mCoords)) != NULL) {
+	if ((mt = mapList[currentMapNum].lookupMeta(mCoords)) != NULL) {
 		if ((rt = mt->ripTable(currentMapNum)) != NULL) {
-			if (objCoords.z >= rt->zTable[ tCoords.u ][ tCoords.v ]) {
+			if (objCoords.z >= rt->zTable[tCoords.u][tCoords.v]) {
 				//  Disable hit-test on the object's box
 				hitBox.width = -1;
 				hitBox.height = -1;
@@ -462,7 +462,7 @@ void DisplayNode::drawObject(void) {
 		obj->getColorTranslation(mainColors);
 
 		//  Fill in the SpriteComponent structure
-		sc = &scList[ 0 ];
+		sc = &scList[0];
 		sc->sp = sprInfo.sp;
 		sc->offset.x = scList->offset.y = 0;
 		sc->colorTable = mainColors;
@@ -506,7 +506,7 @@ void DisplayNode::drawObject(void) {
 			if (a->kludgeCount < 0 || ++a->kludgeCount >= bubbleSpriteCount)
 				a->kludgeCount = 0;
 
-			sc = &scList[ 0 ];
+			sc = &scList[0];
 			sc->sp = (*spellSprites)->sprite(
 			             baseBubbleSpriteIndex + a->kludgeCount);
 			sc->offset.x = scList->offset.y = 0;
@@ -580,12 +580,12 @@ void DisplayNode::drawObject(void) {
 			                             a->currentFacing,
 			                             a->currentPose);
 
-			assert(anim->start[ 0 ] >= 0);
-			assert(anim->start[ 0 ] <  10000);
-			assert(anim->start[ 1 ] >= 0);
-			assert(anim->start[ 1 ] <  10000);
-			assert(anim->start[ 2 ] >= 0);
-			assert(anim->start[ 2 ] <  10000);
+			assert(anim->start[0] >= 0);
+			assert(anim->start[0] <  10000);
+			assert(anim->start[1] >= 0);
+			assert(anim->start[1] <  10000);
+			assert(anim->start[2] >= 0);
+			assert(anim->start[2] <  10000);
 
 			assert(pose->rightObjectOffset.x < 1000);
 			assert(pose->rightObjectOffset.x > -1000);
@@ -597,7 +597,7 @@ void DisplayNode::drawObject(void) {
 			assert(pose->leftObjectOffset.y < 1000);
 			assert(pose->leftObjectOffset.y > -1000);
 
-			//          washHandle( aa->spriteBanks[ pose->actorFrameBank ] );
+			//          washHandle( aa->spriteBanks[pose->actorFrameBank] );
 
 			//  If the new sprite is loaded, then we can go
 			//  ahead and show it. If it's not, then we can
@@ -612,7 +612,7 @@ void DisplayNode::drawObject(void) {
 
 				//  Initiate a load of the sprite bank needed.
 				/*  if (!RHandleLoading(
-				            (RHANDLE)(aa->spriteBanks[ pose->actorFrameBank ]) ))
+				            (RHANDLE)(aa->spriteBanks[pose->actorFrameBank]) ))
 				    {
 				        aa->loadSpriteBanks( (1<<pose->actorFrameBank) );
 				    } */
@@ -630,7 +630,7 @@ void DisplayNode::drawObject(void) {
 
 				//  Initiate a load of the sprite bank needed.
 				/*  if (!RHandleLoading(
-				            (RHANDLE)(aa->spriteBanks[ pose->actorFrameBank ]) ))
+				            (RHANDLE)(aa->spriteBanks[pose->actorFrameBank]) ))
 				    {
 				        aa->loadSpriteBanks( (1<<pose->actorFrameBank) );
 				    }
@@ -692,13 +692,13 @@ void DisplayNode::drawObject(void) {
 			//  REM: Locking bug...
 
 			//          ss = (SpriteSet *)RLockHandle( aa->sprites );
-			sprPtr = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
+			sprPtr = aa->spriteBanks[a->poseInfo.actorFrameBank];
 			ss = sprPtr;
 			if (ss == nullptr)
 				return;
 
 			//  Fill in the SpriteComponent structure for body
-			sc = &scList[ bodyIndex ];
+			sc = &scList[bodyIndex];
 			assert(a->poseInfo.actorFrameIndex < ss->count);
 			sc->sp = ss->sprite(a->poseInfo.actorFrameIndex);
 			sc->offset.x = sc->offset.y = 0;
@@ -724,7 +724,7 @@ void DisplayNode::drawObject(void) {
 
 				ob->getColorTranslation(leftColors);
 
-				sc = &scList[ leftIndex ];
+				sc = &scList[leftIndex];
 				sc->sp =    proto->getOrientedSprite(
 				                ob,
 				                a->poseInfo.leftObjectIndex);
@@ -749,7 +749,7 @@ void DisplayNode::drawObject(void) {
 
 				ob->getColorTranslation(rightColors);
 
-				sc = &scList[ rightIndex ];
+				sc = &scList[rightIndex];
 				sc->sp =    proto->getOrientedSprite(
 				                ob,
 				                a->poseInfo.rightObjectIndex);
@@ -797,9 +797,9 @@ void DisplayNode::drawObject(void) {
 	//  Record the extent box that the sprite was drawn
 	//  at, in order to facilitate mouse picking functions
 	//  later on in the event loop.
-	bodySprite = scList[ bodyIndex ].sp;
+	bodySprite = scList[bodyIndex].sp;
 	hitBox.x =      drawPos.x
-	                + (scList[ bodyIndex ].flipped
+	                + (scList[bodyIndex].flipped
 	                   ?   -bodySprite->size.x - bodySprite->offset.x
 	                   :   bodySprite->offset.x)
 	                -   fineScroll.x;
@@ -865,7 +865,7 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 
 						if (aa == NULL) continue;
 
-						sprPtr = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
+						sprPtr = aa->spriteBanks[a->poseInfo.actorFrameBank];
 						ss = sprPtr;
 						if (ss == nullptr)
 							continue;
@@ -973,7 +973,7 @@ void Effectron::drawEffect(void) {
 	bool obscured = FALSE;
 	Point16         drawPos;
 	TilePoint       objCoords = SpellPos();
-	SpriteComponent scList[ 3 ],
+	SpriteComponent scList[3],
 	                *sc;
 
 	if (isHidden() || isDead())
@@ -995,7 +995,7 @@ void Effectron::drawEffect(void) {
 
 	TileToScreenCoords(objCoords, screenCoords);
 
-	sc = &scList[ 0 ];
+	sc = &scList[0];
 	//sc->sp = (*spellSprites)->sprite( spriteID() );
 	sc->sp = (*spellSprites)->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
 	sc->offset.x = scList->offset.y = 0;

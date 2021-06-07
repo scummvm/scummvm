@@ -102,11 +102,11 @@ struct gFont {
 	uint16          baseLine;               // baseline of the font
 	uint16          rowMod;                 // row modulus for char data
 
-	uint16          charXOffset[ 256 ];     // offset of each char in data
+	uint16          charXOffset[256];     // offset of each char in data
 
-	int8            charWidth[ 256 ],       // width of character in pixels
-	                charKern[ 256 ],        // character kern value
-	                charSpace[ 256 ];       // character space value
+	int8            charWidth[256],       // width of character in pixels
+	                charKern[256],        // character kern value
+	                charSpace[256];       // character space value
 
 	// followed by (row_mod * height) bytes of character data
 	byte			*fontdata;
@@ -227,16 +227,16 @@ public:
 		penMap = pmap;
 	}
 	void setIndirectColor(uint8 color) {
-		fgPen = penMap[ color ];
+		fgPen = penMap[color];
 	}
 	void setIndirectBgColor(uint8 color)   {
-		bgPen = penMap[ color ];
+		bgPen = penMap[color];
 	}
 	void setIndirectShColor(uint8 color)   {
-		shPen = penMap[ color ];
+		shPen = penMap[color];
 	}
 	void setIndirectOLColor(uint8 color)   {
-		olPen = penMap[ color ];
+		olPen = penMap[color];
 	}
 
 	//  modes & styles
@@ -300,7 +300,7 @@ public:
 	virtual void setPixel(int16 x, int16 y, gPen color) {
 		if (x >= clip.x && x < clip.x + clip.width
 		        && y >= clip.y && y < clip.y + clip.height) {
-			baseRow[(y + origin.y) * rowMod + x + origin.x ] = color;
+			baseRow[(y + origin.y) * rowMod + x + origin.x] = color;
 		}
 	}
 	void setPixel(int16 x, int16 y) {
@@ -316,10 +316,10 @@ public:
 	//  pixel query functions
 
 	virtual gPen getPixel(int16 x, int16 y) {
-		return baseRow[(y + origin.y) * rowMod + x + origin.x ];
+		return baseRow[(y + origin.y) * rowMod + x + origin.x];
 	}
 	virtual gPen getPixel(Point16 p) {
-		return baseRow[(p.y + origin.y) * rowMod + p.x + origin.x ];
+		return baseRow[(p.y + origin.y) * rowMod + p.x + origin.x];
 	}
 
 	//  Rectangle fill functions

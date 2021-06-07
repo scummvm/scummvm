@@ -116,7 +116,7 @@ x           Single
     Motion Constants
  * ===================================================================== */
 
-TilePoint dirTable[ 8 ] = {
+TilePoint dirTable[8] = {
 	TilePoint(2, 2, 0),
 	TilePoint(0, 3, 0),
 	TilePoint(-2, 2, 0),
@@ -128,7 +128,7 @@ TilePoint dirTable[ 8 ] = {
 };
 
 //  Incremental direction table
-TilePoint incDirTable[ 8 ] = {
+TilePoint incDirTable[8] = {
 	TilePoint(1, 1, 0),
 	TilePoint(0, 1, 0),
 	TilePoint(-1, 1, 0),
@@ -139,10 +139,10 @@ TilePoint incDirTable[ 8 ] = {
 	TilePoint(1, 0, 0)
 };
 
-extern uint16   uMaxMasks[ 4 ],
-       uMinMasks[ 4 ],
-       vMaxMasks[ 4 ],
-       vMinMasks[ 4 ];
+extern uint16   uMaxMasks[4],
+       uMinMasks[4],
+       vMaxMasks[4],
+       vMinMasks[4];
 
 extern SpellStuff spellBook[];
 void fallingDamage(GameObject *obj, int16 speed);
@@ -316,7 +316,7 @@ bool unstickObject(GameObject *obj) {
 			height = 8 * (up ? level >> 1 : -1 - (level >> 1));
 
 			for (dir = 0; dir < 8; dir++) {
-				pos = obj->getLocation() + (dirTable[ dir ] * dist);
+				pos = obj->getLocation() + (dirTable[dir] * dist);
 				pos.z += height;
 
 				if (outside == (objRoofID(obj, mapNum, pos) == 0)
@@ -360,7 +360,7 @@ uint8 computeTurnFrames(Direction fromDir, Direction toDir) {
 //-----------------------------------------------------------------------
 //	The list of active motion tasks for all actors
 
-static uint8 mTaskListBuffer[ sizeof(MotionTaskList) ];
+static uint8 mTaskListBuffer[sizeof(MotionTaskList)];
 
 static MotionTaskList &mTaskList = *((MotionTaskList *)mTaskListBuffer);
 
@@ -369,7 +369,7 @@ static MotionTaskList &mTaskList = *((MotionTaskList *)mTaskListBuffer);
 
 MotionTaskList::MotionTaskList(void) {
 	for (int i = 0; i < elementsof(array); i++) {
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 	}
 }
 
@@ -383,7 +383,7 @@ MotionTaskList::MotionTaskList(void **buf) {
 	            motionTaskCount;
 
 	for (i = 0; i < elementsof(array); i++) {
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 	}
 
 	//  Retrieve the motion task count
@@ -581,7 +581,7 @@ void *MotionTask::restore(void *buf) {
 			int16   wayPointIndex = pathIndex;
 
 			while (wayPointIndex < pathCount) {
-				pathList[ wayPointIndex ] = *((TilePoint *)buf);
+				pathList[wayPointIndex] = *((TilePoint *)buf);
 				buf = (TilePoint *)buf + 1;
 
 				wayPointIndex++;
@@ -993,7 +993,7 @@ void *MotionTask::archive(void *buf) {
 			int16   wayPointIndex = pathIndex;
 
 			while (wayPointIndex < pathCount) {
-				*((TilePoint *)buf) = pathList[ wayPointIndex ];
+				*((TilePoint *)buf) = pathList[wayPointIndex];
 				buf = (TilePoint *)buf + 1;
 
 				wayPointIndex++;
@@ -1253,7 +1253,7 @@ TilePoint MotionTask::getImmediateTarget(void) {
 		dir = ((Actor *)object)->currentFacing;
 
 	return  object->location
-	        +   incDirTable[ dir ] * tileUVSize;
+	        +   incDirTable[dir] * tileUVSize;
 }
 
 //-----------------------------------------------------------------------
@@ -2147,7 +2147,7 @@ void MotionTask::finishWalk(void) {
 
 		            //  Simply set actor's target location to "here".
 		        finalTarget = immediateLocation = object->getLocation();
-		        pathList[ 0 ] = finalTarget;
+		        pathList[0] = finalTarget;
 		        flags = reset;
 		        pathCount = 0;
 		        pathIndex = 0;*/
@@ -2450,7 +2450,7 @@ bool MotionTask::nextWayPoint(void) {
 
 		if (wayPointVector.quickHDistance() == 0)
 			//  Next vertex in path polyline
-			immediateLocation = pathList[ pathIndex++ ];
+			immediateLocation = pathList[pathIndex++];
 		else
 			return FALSE;
 	} else {
@@ -2498,7 +2498,7 @@ bool MotionTask::checkWalk(
 	//  Check the terrain in various directions.
 	//  Check in the forward direction first, at various heights
 
-	newPos      = object->location + (dirTable[ direction ] * speed) / 2;
+	newPos      = object->location + (dirTable[direction] * speed) / 2;
 	newPos.z    = object->location.z + stepUp;
 
 	if (checkWalkable(object, newPos)) return FALSE;
@@ -2670,7 +2670,7 @@ void MotionTask::walkAction(void) {
 			TPLine(pt1, pt2);
 
 			curPt = wayPt;
-			wayPt = pathList[ ++i ];
+			wayPt = pathList[++i];
 		}
 
 		ShowObjectSection(a);
@@ -2906,11 +2906,11 @@ void MotionTask::walkAction(void) {
 
 				cornerHeight = sti.surfaceTile->attrs.cornerHeight;
 
-				if (cornerHeight[ 0 ] == 0 && cornerHeight[ 1 ] == 0)
+				if (cornerHeight[0] == 0 && cornerHeight[1] == 0)
 					stairsDir = 1;
-				else if (cornerHeight[ 1 ] == 0 && cornerHeight[ 2 ] == 0)
+				else if (cornerHeight[1] == 0 && cornerHeight[2] == 0)
 					stairsDir = 3;
-				else if (cornerHeight[ 2 ] == 0 && cornerHeight[ 3 ] == 0)
+				else if (cornerHeight[2] == 0 && cornerHeight[3] == 0)
 					stairsDir = 5;
 				else
 					stairsDir = 7;
@@ -3042,19 +3042,19 @@ void MotionTask::upLadderAction(void) {
 
 			if (actorSubTileReg.min.u >= subTileLoc.u)
 				footPrintMask &=
-				    uMinMasks[ actorSubTileReg.min.u - subTileLoc.u ];
+				    uMinMasks[actorSubTileReg.min.u - subTileLoc.u];
 
 			if (actorSubTileReg.min.v >= subTileLoc.v)
 				footPrintMask &=
-				    vMinMasks[ actorSubTileReg.min.v - subTileLoc.v ];
+				    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
 			if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
 				footPrintMask &=
-				    uMaxMasks[ actorSubTileReg.max.u - subTileLoc.u ];
+				    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
 			if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
 				footPrintMask &=
-				    vMaxMasks[ actorSubTileReg.max.v - subTileLoc.v ];
+				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
 			ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
 			                ?   ti->attrs.terrainMask
@@ -3069,14 +3069,14 @@ void MotionTask::upLadderAction(void) {
 
 		TilePoint   newLoc;
 
-		newLoc = loc + incDirTable[ a->currentFacing ] * crossSection * 2;
+		newLoc = loc + incDirTable[a->currentFacing] * crossSection * 2;
 		newLoc.z = tileSlopeHeight(newLoc, a);
 
 		if (!checkBlocked(a, newLoc))
 			a->move(newLoc);
 		else {
 			newLoc =    loc
-			            +       incDirTable[(a->currentFacing - 2) & 7 ]
+			            +       incDirTable[(a->currentFacing - 2) & 7]
 			            *   crossSection * 2;
 			newLoc.z = tileSlopeHeight(newLoc, a);
 
@@ -3084,7 +3084,7 @@ void MotionTask::upLadderAction(void) {
 				a->move(newLoc);
 			else {
 				newLoc =    loc
-				            +       incDirTable[(a->currentFacing + 2) & 7 ]
+				            +       incDirTable[(a->currentFacing + 2) & 7]
 				            *   crossSection * 2;
 				newLoc.z = tileSlopeHeight(newLoc, a);
 
@@ -3092,7 +3092,7 @@ void MotionTask::upLadderAction(void) {
 					a->move(newLoc);
 				else {
 					newLoc =    loc
-					            +       incDirTable[ a->currentFacing ]
+					            +       incDirTable[a->currentFacing]
 					            *   crossSection * 2;
 					newLoc.z = tileSlopeHeight(newLoc, a);
 					a->move(newLoc);
@@ -3164,19 +3164,19 @@ void MotionTask::downLadderAction(void) {
 
 			if (actorSubTileReg.min.u >= subTileLoc.u)
 				footPrintMask &=
-				    uMinMasks[ actorSubTileReg.min.u - subTileLoc.u ];
+				    uMinMasks[actorSubTileReg.min.u - subTileLoc.u];
 
 			if (actorSubTileReg.min.v >= subTileLoc.v)
 				footPrintMask &=
-				    vMinMasks[ actorSubTileReg.min.v - subTileLoc.v ];
+				    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
 			if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
 				footPrintMask &=
-				    uMaxMasks[ actorSubTileReg.max.u - subTileLoc.u ];
+				    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
 			if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
 				footPrintMask &=
-				    vMaxMasks[ actorSubTileReg.max.v - subTileLoc.v ];
+				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
 			ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
 			                ?   ti->attrs.terrainMask
@@ -3191,14 +3191,14 @@ void MotionTask::downLadderAction(void) {
 
 		TilePoint   newLoc;
 
-		newLoc = loc - incDirTable[ a->currentFacing ] * tileUVSize;
+		newLoc = loc - incDirTable[a->currentFacing] * tileUVSize;
 		newLoc.z = tileSlopeHeight(newLoc, a);
 
 		if (!checkBlocked(a, newLoc))
 			a->move(newLoc);
 		else {
 			newLoc =    loc
-			            -       incDirTable[(a->currentFacing - 2) & 7 ]
+			            -       incDirTable[(a->currentFacing - 2) & 7]
 			            *   tileUVSize;
 			newLoc.z = tileSlopeHeight(newLoc, a);
 
@@ -3206,7 +3206,7 @@ void MotionTask::downLadderAction(void) {
 				a->move(newLoc);
 			else {
 				newLoc =    loc
-				            -       incDirTable[(a->currentFacing + 2) & 7 ]
+				            -       incDirTable[(a->currentFacing + 2) & 7]
 				            *   tileUVSize;
 				newLoc.z = tileSlopeHeight(newLoc, a);
 
@@ -3214,7 +3214,7 @@ void MotionTask::downLadderAction(void) {
 					a->move(newLoc);
 				else {
 					newLoc =    loc
-					            -       incDirTable[ a->currentFacing ]
+					            -       incDirTable[a->currentFacing]
 					            *   tileUVSize;
 					newLoc.z = tileSlopeHeight(newLoc, a);
 					a->move(newLoc);
@@ -3272,7 +3272,7 @@ struct CombatMotionSet {
 
 	//  Select randome element from the array
 	uint8 selectRandom(void) const {
-		return list[ rand() % listSize ];
+		return list[rand() % listSize];
 	}
 };
 
@@ -3369,7 +3369,7 @@ void MotionTask::twoHandedSwingAction(void) {
 
 		//  Randomly select a combat motion type from the available set
 		combatMotionType = availableSet->selectRandom();
-		actorAnimation = animationTypeArray[ combatMotionType ];
+		actorAnimation = animationTypeArray[combatMotionType];
 
 		if (a->appearance != NULL
 		        &&  a->isActionAvailable(actorAnimation)) {
@@ -3486,7 +3486,7 @@ void MotionTask::oneHandedSwingAction(void) {
 		        }
 		        else*/
 		{
-			actorAnimation = animationTypeArray[ combatMotionType ];
+			actorAnimation = animationTypeArray[combatMotionType];
 			if (a->appearance != NULL
 			        &&  a->isActionAvailable(actorAnimation)) {
 				//  Compute the number of frames in the animation before the
@@ -3617,9 +3617,9 @@ void MotionTask::fireBowAction(void) {
 					            projCrossSection = proj->proto()->crossSection;
 					ObjectID    projID;
 
-					actorLoc.u +=       incDirTable[ a->currentFacing ].u
+					actorLoc.u +=       incDirTable[a->currentFacing].u
 					                    * (actorCrossSection + projCrossSection);
-					actorLoc.v +=       incDirTable[ a->currentFacing ].v
+					actorLoc.v +=       incDirTable[a->currentFacing].v
 					                    * (actorCrossSection + projCrossSection);
 					actorLoc.z += a->proto()->height * 7 / 8;
 
@@ -3955,7 +3955,7 @@ void MotionTask::acceptHitAction(void) {
 
 		if (rand() & 0x1) {
 			//  Calculate the new position to knock the actor back to
-			newLoc += dirTable[(a->currentFacing - 4) & 0x7 ];
+			newLoc += dirTable[(a->currentFacing - 4) & 0x7];
 
 			//  If the actor is not blocked, move him back
 			if (!checkBlocked(a, newLoc)) {
@@ -4015,7 +4015,7 @@ void MotionTask::fallDownAction(void) {
 
 		if (rand() & 0x1) {
 			//  Calculate the new position to knock the actor back to
-			newLoc += dirTable[(a->currentFacing - 4) & 0x7 ];
+			newLoc += dirTable[(a->currentFacing - 4) & 0x7];
 			newLoc.z = tileSlopeHeight(newLoc, a, &sti);
 
 			//  If the actor is not blocked, move him back
@@ -4887,19 +4887,19 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 
 		if (actorSubTileReg.min.u >= subTileLoc.u)
 			footPrintMask &=
-			    uMinMasks[ actorSubTileReg.min.u - subTileLoc.u ];
+			    uMinMasks[actorSubTileReg.min.u - subTileLoc.u];
 
 		if (actorSubTileReg.min.v >= subTileLoc.v)
 			footPrintMask &=
-			    vMinMasks[ actorSubTileReg.min.v - subTileLoc.v ];
+			    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
 		if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
 			footPrintMask &=
-			    uMaxMasks[ actorSubTileReg.max.u - subTileLoc.u ];
+			    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
 		if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
 			footPrintMask &=
-			    vMaxMasks[ actorSubTileReg.max.v - subTileLoc.v ];
+			    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
 		ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
 		                ?   ti->attrs.terrainMask

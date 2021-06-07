@@ -32,7 +32,7 @@ namespace Saga2 {
 char iniFile[] = "FTA2.INI";
 configuration globalConfig;
 
-static char   originalDir[ PATH_STR_SIZE ];
+static char   originalDir[PATH_STR_SIZE];
 
 //-----------------------------------------------------------------------
 //	This doesn't belong here, oh well...

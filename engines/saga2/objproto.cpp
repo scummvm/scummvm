@@ -1105,8 +1105,8 @@ bool InventoryProto::dropAction(
 				TilePoint       testPt;
 				Direction       testDir;
 
-				testDir = (vectorDir + dirOffsetTable[ i ]) & 0x7;
-				testPt = enactorLoc + incDirTable[ testDir ] * offsetDist;
+				testDir = (vectorDir + dirOffsetTable[i]) & 0x7;
+				testPt = enactorLoc + incDirTable[testDir] * offsetDist;
 				testPt.z += enactorProto->height >> 1;
 				if (checkBlocked(dObjPtr, mapNum, testPt) == blockageNone) {
 					startPt = testPt;
@@ -1521,7 +1521,7 @@ uint16 WeaponProto::containmentSet(void) {
 
 //  return the address of the sprite when held in hand
 Sprite *WeaponProto::getOrientedSprite(GameObject *obj, int16 offset) {
-	return weaponSprites[ heldSpriteBase ]->sprite(offset);
+	return weaponSprites[heldSpriteBase]->sprite(offset);
 }
 
 //-----------------------------------------------------------------------
@@ -1602,7 +1602,7 @@ bool MeleeWeaponProto::strikeAction(
 	if (itemPtr->acceptStrike(enactor, dObj, getSkillValue(enactor)))
 		return TRUE;
 
-	soundFXs = &objectSoundFXTable[ soundFXClass ];
+	soundFXs = &objectSoundFXTable[soundFXClass];
 
 	makeCombatSound(soundFXs->soundFXMissed, ol);
 	return FALSE;
@@ -1624,7 +1624,7 @@ bool MeleeWeaponProto::damageAction(
 	Location        ol = Location(a->getWorldLocation(), a->IDParent());
 
 	damageSoundID = targetPtr->proto()->getDamageSound(
-	                    objectSoundFXTable[ soundFXClass ]);
+	                    objectSoundFXTable[soundFXClass]);
 
 	if (damageSoundID != 0)
 		makeCombatSound(damageSoundID, ol);
@@ -2048,7 +2048,7 @@ uint8 WeaponWandProto::weaponRating(
 
 	if (weapon->IDChild() != Nothing) {
 		SkillProto  *spellProto = (SkillProto *)GameObject::protoAddress(weapon->IDChild());
-		SpellStuff  *spellStuff = &spellBook[ spellProto->getSpellID() ];
+		SpellStuff  *spellStuff = &spellBook[spellProto->getSpellID()];
 		ActorManaID manaType = (ActorManaID)spellStuff->getManaType();
 		uint16      manaAmount = spellStuff->getManaAmt();
 
@@ -2147,7 +2147,7 @@ bool ArrowProto::damageAction(
 	Location        al = Location(a->getLocation(), a->IDParent());
 
 	damageSoundID = targetPtr->proto()->getDamageSound(
-	                    objectSoundFXTable[ soundFXClass ]);
+	                    objectSoundFXTable[soundFXClass]);
 
 	if (damageSoundID != 0)
 		makeCombatSound(damageSoundID, al);
@@ -2212,7 +2212,7 @@ bool ArmorProto::isObjectBeingUsed(GameObject *obj) {
 		ObjectID    id = obj->thisID();
 
 		for (int i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[ i ] == id) return TRUE;
+			if (a->armorObjects[i] == id) return TRUE;
 		}
 	}
 	return FALSE;
@@ -2226,7 +2226,7 @@ bool ArmorProto::useSlotAvailable(GameObject *obj, Actor *a) {
 	assert(isObject(obj) || obj->proto() == this);
 	assert(isActor(a));
 
-	return a->armorObjects[ whereWearable ] == Nothing;
+	return a->armorObjects[whereWearable] == Nothing;
 }
 
 //-----------------------------------------------------------------------
@@ -2246,7 +2246,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	int16       slot = whereWearable;
 
-	if (a->armorObjects[ slot ] == dObj)
+	if (a->armorObjects[slot] == dObj)
 		a->wear(Nothing, slot);
 	else
 		a->wear(dObj, slot);
@@ -2578,7 +2578,7 @@ void IntangibleObjProto::getColorTranslation(ColorTable map) {
 	    uint8 color = 0;
 
 	    do {
-	        map[ color ] = color;
+	        map[color] = color;
 	    } while ( ++color != 0 );
 	*/
 }

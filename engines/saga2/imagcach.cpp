@@ -39,7 +39,7 @@ extern char *idname(long s);
 CImageNode::CImageNode(hResContext *con, uint32 resID) {
 	if (con) {
 #if DEBUG
-		char            descr[ 32 ];
+		char            descr[32];
 
 		sprintf(descr, "CImage '%s'", idname(resID));
 

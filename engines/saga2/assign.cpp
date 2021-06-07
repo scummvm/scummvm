@@ -305,11 +305,11 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 	if (startPoint == -1) {
 		int16               i;
 		uint16              bestDist = maxuint16;
-		const PatrolRoute   &route = patrolRouteList[ mapNum ][ routeNo ];
+		const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 		TilePoint           actorLoc = getActor()->getLocation();
 
 		for (i = 0; i < route.vertices(); i++) {
-			uint16  dist = lineDist(route[ i ], route[(i + 1) % route.vertices() ], actorLoc);
+			uint16  dist = lineDist(route[i], route[(i + 1) % route.vertices()], actorLoc);
 
 			if (dist < bestDist) {
 				bestDist = dist;

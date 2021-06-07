@@ -103,8 +103,8 @@ private:
 	ThreadID            thread;             // SAGA thread to wake up when done
 
 	int16               speechFlags;        // flags from speaking
-	uint32              sampleID[ MAX_SAMPLES ];// voice sound sample ID
-	char                speechBuffer[ 512 ];// longest possible speech
+	uint32              sampleID[MAX_SAMPLES];// voice sound sample ID
+	char                speechBuffer[512];// longest possible speech
 
 public:
 	int16               selectedButton;     // which button was hit
@@ -173,7 +173,7 @@ class SpeechTaskList {
 	DList           activeList,
 	                nonActiveList,
 	                free;
-	Speech          array[ MAX_SPEECH_PTRS ];
+	Speech          array[MAX_SPEECH_PTRS];
 
 	int8            lockFlag;
 

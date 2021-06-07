@@ -399,7 +399,7 @@ LabeledButton::LabeledButton(gPanelList &list,
 	const char *underscore;
 
 	if ((underscore = strchr(title, '_')) != NULL)
-		accelKey = toupper(underscore[ 1 ]);
+		accelKey = toupper(underscore[1]);
 }
 
 void LabeledButton::drawClipped(

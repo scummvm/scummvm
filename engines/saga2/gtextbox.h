@@ -71,8 +71,8 @@ private:
 
 	// editor values
 	uint16  maxLen,
-	        currentLen[ numEditLines ],
-	        exists[ numEditLines ],
+	        currentLen[numEditLines],
+	        exists[numEditLines],
 	        undoLen,
 	        cursorPos,
 	        anchorPos,

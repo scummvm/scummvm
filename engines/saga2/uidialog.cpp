@@ -210,28 +210,28 @@ Rect16  saveLoadWindowRect =    Rect16(SLDBoxX,
 
 // indirections
 
-Rect16  saveLoadPanelRects[ numSaveLoadPanels ] = { { SLTopPanel },
+Rect16  saveLoadPanelRects[numSaveLoadPanels] = { { SLTopPanel },
 	{ SLMidPanel },
 	{ SLBotPanel }
 };
 
-Rect16  saveLoadButtonRects[ numSaveLoadBtns ]  = { { SLQuitBtnRect },
+Rect16  saveLoadButtonRects[numSaveLoadBtns]  = { { SLQuitBtnRect },
 	{ SLBtnRect     },
 	{ SLUpArrowBtnRect },
 	{ SLDnArrowBtnRect }
 };
 
-Rect16  saveLoadTextRects[ numSaveLoadTexts ]   = { { SLTitleRect } };
+Rect16  saveLoadTextRects[numSaveLoadTexts]   = { { SLTitleRect } };
 
 
 
 // save/load dialog window decorations
 
-WindowDecoration saveWindowDecorations[ numSaveLoadPanels ] =
+WindowDecoration saveWindowDecorations[numSaveLoadPanels] =
 
-{	{ WindowDecoration(saveLoadPanelRects[ 0 ], SLTopPanelResID) },
-	{ WindowDecoration(saveLoadPanelRects[ 1 ], SLMidPanelResID) },
-	{ WindowDecoration(saveLoadPanelRects[ 2 ], SLBotPanelResID) }
+{	{ WindowDecoration(saveLoadPanelRects[0], SLTopPanelResID) },
+	{ WindowDecoration(saveLoadPanelRects[1], SLMidPanelResID) },
+	{ WindowDecoration(saveLoadPanelRects[2], SLBotPanelResID) }
 };
 
 
@@ -417,7 +417,7 @@ Rect16  optionsWindowRect =     Rect16(optBoxX,
 
 // indirections
 
-Rect16  optionsPanelRects[ numOptionsPanels ]       = { { optTopPanel },
+Rect16  optionsPanelRects[numOptionsPanels]       = { { optTopPanel },
 	{ optMidPanel },
 	{ optBotPanel }
 };
@@ -446,11 +446,11 @@ Rect16  optionsTextRects[]                          = { { optTitleText },
 
 // options dialog window decorations
 
-WindowDecoration optionsDecorations[ numOptionsPanels ] =
+WindowDecoration optionsDecorations[numOptionsPanels] =
 
-{	{ WindowDecoration(optionsPanelRects[ 0 ], optTopPanelResID) },
-	{ WindowDecoration(optionsPanelRects[ 1 ], optMidPanelResID) },
-	{ WindowDecoration(optionsPanelRects[ 2 ], optBotPanelResID) }
+{	{ WindowDecoration(optionsPanelRects[0], optTopPanelResID) },
+	{ WindowDecoration(optionsPanelRects[1], optMidPanelResID) },
+	{ WindowDecoration(optionsPanelRects[2], optBotPanelResID) }
 };
 
 
@@ -509,12 +509,12 @@ Rect16  messageRect(0,
 
 
 
-Rect16  messageTextRects[ numMessageTexts ]     = { { mesTitleRect },
+Rect16  messageTextRects[numMessageTexts]     = { { mesTitleRect },
 	{ messageRect }
 };
 
 
-Rect16  messageButtonRects[ numMessageBtns ]    = { { mesOkBtnRect },
+Rect16  messageButtonRects[numMessageBtns]    = { { mesOkBtnRect },
 	{ mesCancelBtnRect },
 	{ mesBtn3Rect     }
 };
@@ -531,7 +531,7 @@ Rect16  messageWindowRect = Rect16(mesBoxX,
 
 
 // message dialog window decorations
-WindowDecoration messageDecorations[ numMessagePanels ] =
+WindowDecoration messageDecorations[numMessagePanels] =
 
 { { WindowDecoration(messagePanel, mesPanelResID) } };
 
@@ -562,20 +562,20 @@ char **initFileFields(void) {
 	uint16              i;
 	SaveFileHeader      header;                 //  The save file header.
 
-	char **strings = new (char *[ numEditLines ]);
+	char **strings = new (char *[numEditLines]);
 
 	for (i = 0; i < numEditLines; i++) {
-		strings[ i ] = new char[ editLen + 1 ];
+		strings[i] = new char[editLen + 1];
 
 		if (getSaveName(i, header)) {
-			strncpy(strings[ i ], header.saveName, editLen);
+			strncpy(strings[i], header.saveName, editLen);
 		} else {
-			strncpy(strings[ i ], FILE_DIALOG_NONAME, editLen);
+			strncpy(strings[i], FILE_DIALOG_NONAME, editLen);
 			strings[i][0] |= 0x80;
 		}
 
 		// make sure this thing is caped
-		strings[ i ][ editLen ] = '\0';
+		strings[i][editLen] = '\0';
 	}
 
 	return strings;
@@ -593,7 +593,7 @@ void destroyFileFields(char **strings) {
 	uint16  i;
 
 	for (i = 0; i < numEditLines; i++) {
-		if (strings[i]) delete strings[ i ];
+		if (strings[i]) delete strings[i];
 		strings[i] = NULL;
 	}
 
@@ -602,7 +602,7 @@ void destroyFileFields(char **strings) {
 
 bool getSaveName(int8 saveNo, SaveFileHeader &header) {
 	FILE            *fileHandle;            //  A standard C file handle
-	char            fileName[ fileNameSize + 1 ];
+	char            fileName[fileNameSize + 1];
 
 	//  Construct the file name based on the save number
 	getSaveFileName(saveNo, fileName);
@@ -708,25 +708,25 @@ int16 FileDialog(int16 fileProcess) {
 
 	gCompButton *t;
 	// make the quit button
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[ 0 ],
-	                               pushBtnIm, numBtnImages, btnStrings[ stringIndex ][ 0 ], pal, 0, cmdDialogQuit));
+	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[0],
+	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit));
 	//t->accelKey=0x1B;
 
 	// make the Save/Load button
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[ 1 ],
-	                               pushBtnIm, numBtnImages, btnStrings[ stringIndex ][ 1 ], pal, fileProcess, fileCommands[ fileProcess ]));
+	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[1],
+	                               pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]));
 	//t->accelKey=0x0D;
 	// make the up arrow
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[ 2 ],
+	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[2],
 	                               arrowUpIm, numBtnImages, 0, cmdSaveDialogUp));
 	//t->accelKey=33+0x80;
 	// make the down arrow
-	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[ 3 ],
+	checkAlloc(t = new gCompButton(*win, saveLoadButtonRects[3],
 	                               arrowDnIm, numBtnImages, 0, cmdSaveDialogDown));
 	//t->accelKey=34+0x80;
 	// attach the title
-	checkAlloc(new CPlaqText(*win, saveLoadTextRects[ 0 ],
-	                         textStrings[ stringIndex ][ 0 ], &Plate18Font, NULL, pal, 0, NULL));
+	checkAlloc(new CPlaqText(*win, saveLoadTextRects[0],
+	                         textStrings[stringIndex][0], &Plate18Font, NULL, pal, 0, NULL));
 
 
 
@@ -864,44 +864,44 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	// buttons
 	if (!disableSaveResume) {
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 0 ],
-		                               dialogPushImag, numBtnImages, btnStrings[ 0 ], pal, 0, cmdDialogQuit));
+		checkAlloc(t = new gCompButton(*win, optionsButtonRects[0],
+		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit));
 		t->accelKey = 0x1B;
 
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 1 ],
-		                               dialogPushImag, numBtnImages, btnStrings[ 1 ], pal, 0, cmdOptionsSaveGame));    // make the quit button
+		checkAlloc(t = new gCompButton(*win, optionsButtonRects[1],
+		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame));    // make the quit button
 		t->accelKey = 'S';
 	} else {
-		checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 1 ],
+		checkAlloc(t = new gCompButton(*win, optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame));
 		t->accelKey = 'N';
 	}
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 2 ],
-	                               dialogPushImag, numBtnImages, btnStrings[ 2 ], pal, 0, cmdOptionsLoadGame));    // make the quit button
+	checkAlloc(t = new gCompButton(*win, optionsButtonRects[2],
+	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame));    // make the quit button
 	t->accelKey = 'L';
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 3 ],
-	                               dialogPushImag, numBtnImages, btnStrings[ 3 ], pal, 0, cmdQuitGame));
+	checkAlloc(t = new gCompButton(*win, optionsButtonRects[3],
+	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame));
 	t->accelKey = 'Q';
 
-	checkAlloc(t = new gCompButton(*win, optionsButtonRects[ 4 ],
-	                               dialogPushImag, numBtnImages, btnStrings[ 4 ], pal, 0, cmdCredits));
+	checkAlloc(t = new gCompButton(*win, optionsButtonRects[4],
+	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits));
 	t->accelKey = 'C';
 
-	checkAlloc(autoAggressBtn = new gOwnerSelCompButton(*win, optionsButtonRects[ 5 ],
+	checkAlloc(autoAggressBtn = new gOwnerSelCompButton(*win, optionsButtonRects[5],
 	        checkImag, numBtnImages, 0, cmdAutoAggression));
 	autoAggressBtn->select(isAutoAggressionSet());
 
-	checkAlloc(autoWeaponBtn = new gOwnerSelCompButton(*win, optionsButtonRects[ 6 ],
+	checkAlloc(autoWeaponBtn = new gOwnerSelCompButton(*win, optionsButtonRects[6],
 	        checkImag, numBtnImages, 0, cmdAutoWeapon));
 	autoWeaponBtn->select(isAutoWeaponSet());
 
-	checkAlloc(speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[ 7 ],
+	checkAlloc(speechTextBtn = new gOwnerSelCompButton(*win, optionsButtonRects[7],
 	        checkImag, numBtnImages, 0, cmdSpeechText));
 	speechTextBtn->select(globalConfig.speechText);
 
-	checkAlloc(nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[ 8 ],
+	checkAlloc(nightBtn = new gOwnerSelCompButton(*win, optionsButtonRects[8],
 	        checkImag, numBtnImages, 0, cmdNight));
 	nightBtn->select(globalConfig.showNight);
 
@@ -917,12 +917,12 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                       127, slideFaceImag, numSlideFace, globalConfig.musicVolume,
 	                       0, cmdSetMIDIVolume));
 
-	checkAlloc(new CPlaqText(*win, optionsTextRects[ 0 ],
-	                         textStrings[ 0 ], &Plate18Font, 0, pal, 0, NULL));
+	checkAlloc(new CPlaqText(*win, optionsTextRects[0],
+	                         textStrings[0], &Plate18Font, 0, pal, 0, NULL));
 
 	for (int i = 1; i < numOptionsTexts; i++) {
-		checkAlloc(new CPlaqText(*win, optionsTextRects[ i ],
-		                         textStrings[ i ], &SmallFont, textPosLeft, pal, 0, NULL));
+		checkAlloc(new CPlaqText(*win, optionsTextRects[i],
+		                         textStrings[i], &SmallFont, textPosLeft, pal, 0, NULL));
 	}
 
 	win->setDecorations(optionsDecorations,
@@ -1001,7 +1001,7 @@ char stripAccel(char *t, const char *s) {
 	strcpy(t, s);
 
 	if ((underscore = strchr(t, '_')) != NULL) {
-		accel = toupper(underscore[ 1 ]);
+		accel = toupper(underscore[1]);
 		strcpy(underscore, s + (underscore - t) + 1);
 	}
 	return accel;
@@ -1102,31 +1102,31 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// button one
 	if (numBtns >= 1) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[ 0 ],
+		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[0],
 		                               udDialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit));
 		t->accel = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[ 1 ],
+		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[1],
 		                               udDialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit));
 		t->accel = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[ 2 ],
+		checkAlloc(t = new gCompButton(*udWin, messageButtonRects[2],
 		                               udDialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit));
 		t->accel = k3;
 	}
 
 	// title for the box
-	checkAlloc(new CPlaqText(*udWin, messageTextRects[ 0 ],
+	checkAlloc(new CPlaqText(*udWin, messageTextRects[0],
 	                         title, &Plate18Font, NULL, pal, 0, NULL));
 
 	// message for box
-	checkAlloc(new CPlacardPanel(*udWin, messageTextRects[ 1 ],
+	checkAlloc(new CPlacardPanel(*udWin, messageTextRects[1],
 	                             msg, &Onyx10Font, NULL, pal, 0, NULL));
 
 
@@ -1221,31 +1221,31 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// button one
 	if (numBtns >= 1) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[ 0 ],
+		checkAlloc(t = new gCompButton(*win, messageButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit));
 		t->accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[ 1 ],
+		checkAlloc(t = new gCompButton(*win, messageButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit));
 		t->accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
-		checkAlloc(t = new gCompButton(*win, messageButtonRects[ 2 ],
+		checkAlloc(t = new gCompButton(*win, messageButtonRects[2],
 		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit));
 		t->accelKey = k3;
 	}
 
 	// title for the box
-	checkAlloc(new CPlaqText(*win, messageTextRects[ 0 ],
+	checkAlloc(new CPlaqText(*win, messageTextRects[0],
 	                         title, &Plate18Font, NULL, pal, 0, NULL));
 
 	// message for box
-	checkAlloc(new CPlacardPanel(*win, messageTextRects[ 1 ],
+	checkAlloc(new CPlacardPanel(*win, messageTextRects[1],
 	                             msg, &Onyx10Font, NULL, pal, 0, NULL));
 
 	win->setDecorations(messageDecorations,
@@ -1321,11 +1321,11 @@ void CPlacardWindow::positionText(
 
 		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[ i ].y = yPos;
-				titlePos[ i ].x =
+				titlePos[i].y = yPos;
+				titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(textFont, titleStrings[ i ], -1, 0))
+				      TextWidth(textFont, titleStrings[i], -1, 0))
 				     >> 1);
 			} else titleCount = i;
 		}
@@ -1340,7 +1340,7 @@ int16 CPlacardWindow:: SplitString(
 	int16           count;
 
 	for (count = 0; count < maxStrings;) {
-		textStart[ count++ ] = text;
+		textStart[count++] = text;
 		if ((text = strchr(text, delimiter)) == NULL) break;
 		*text++ = '\0';
 	}
@@ -1389,7 +1389,7 @@ void CPlacardWindow::drawClipped(
 	rect.height = extent.height;
 
 	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[ i ];
+		Point16 textPos     = origin + titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
@@ -1397,7 +1397,7 @@ void CPlacardWindow::drawClipped(
 		                 0,
 		                 textPal,
 		                 FALSE,
-		                 titleStrings[ i ]);
+		                 titleStrings[i]);
 	}
 }
 
@@ -1432,11 +1432,11 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 
 		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[ i ].y = yPos;
-				titlePos[ i ].x =
+				titlePos[i].y = yPos;
+				titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(buttonFont, titleStrings[ i ], -1, 0))
+				      TextWidth(buttonFont, titleStrings[i], -1, 0))
 				     >> 1);
 			} else titleCount = i;
 		}
@@ -1451,7 +1451,7 @@ int16 CPlacardPanel:: SplitString(
 	int16           count;
 
 	for (count = 0; count < maxStrings;) {
-		textStart[ count++ ] = text;
+		textStart[count++] = text;
 		if ((text = strchr(text, delimiter)) == NULL) break;
 		*text++ = '\0';
 	}
@@ -1480,7 +1480,7 @@ void CPlacardPanel::drawClipped(
 	rect.height = extent.height;
 
 	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[ i ];
+		Point16 textPos     = origin + titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
@@ -1488,7 +1488,7 @@ void CPlacardPanel::drawClipped(
 		                 0,
 		                 textFacePal,
 		                 FALSE,
-		                 titleStrings[ i ]);
+		                 titleStrings[i]);
 	}
 }
 
@@ -1511,13 +1511,13 @@ void placardWindow(int8 type, char *text) {
 	                              145);
 
 	// decoration information
-	WindowDecoration plaqDecWood[ 1 ] =
+	WindowDecoration plaqDecWood[1] =
 	{ { WindowDecoration(plaqRectWood, 0) } };
 
-	WindowDecoration plaqDecStone[ 1 ] =
+	WindowDecoration plaqDecStone[1] =
 	{ { WindowDecoration(plaqRectStone, 1) } };
 
-	WindowDecoration plaqDecBrass[ 2 ] =
+	WindowDecoration plaqDecBrass[2] =
 	{ { WindowDecoration(plaqRectBrass, 2) } };
 
 	// used to hold the coloration of the text for a give type
@@ -1796,7 +1796,7 @@ inline int16 quantizedVolume(uint16 trueVolume) {
 APPFUNC(cmdCredits) {
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		//reDrawScreen();
-		openBook(resImports->reserved[ 0 ]);
+		openBook(resImports->reserved[0]);
 	}
 }
 

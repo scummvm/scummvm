@@ -42,7 +42,7 @@ struct gPaletteEntry {
 //  An entire palette of 256 colors
 
 struct gPalette {
-	gPaletteEntry   entry[ 256 ];
+	gPaletteEntry   entry[256];
 };
 
 /* ===================================================================== *

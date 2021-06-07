@@ -169,7 +169,7 @@ public:
 	ActiveItemID    currentTAG;             // ActiveItem object is on
 	uint8           sightCtr;               // Line of sight counter
 
-	uint8           reserved[ 2 ];
+	uint8           reserved[2];
 
 	//  Default constructor
 	GameObject(void);
@@ -777,7 +777,7 @@ public:
 	void cleanup(void);
 
 	Sector *getSector(int16 u, int16 v) {
-		return &(sectorArray)[ v * sectorArraySize + u ];
+		return &(sectorArray)[v * sectorArraySize + u];
 	}
 
 	TilePoint sectorSize(void) {         // size of map in sectors

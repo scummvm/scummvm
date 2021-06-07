@@ -93,11 +93,11 @@ Alarm               speechFinished;
 
 
 //  The list of active and non-active speech tasks for all actors
-uint8 speechListBuffer[ sizeof(SpeechTaskList) ];
+uint8 speechListBuffer[sizeof(SpeechTaskList)];
 SpeechTaskList  &speechList = *((SpeechTaskList *)speechListBuffer);
 
-static TextSpan     speechLineList[ 64 ],   // list of speech lines
-       speechButtonList[ 64 ]; // list of speech buttons
+static TextSpan     speechLineList[64],   // list of speech lines
+       speechButtonList[64]; // list of speech buttons
 int16               speechLineCount,        // count of speech lines
                     speechButtonCount;      // count of speech buttons
 
@@ -187,14 +187,14 @@ void *Speech::restore(void *buf) {
 
 	//  Restore the sample ID's
 	for (i = 0; i < sampleCount; i++) {
-		sampleID[ i ] = *((uint32 *)buf);
+		sampleID[i] = *((uint32 *)buf);
 		buf = (uint32 *)buf + 1;
 	}
 
 	//  Restore the text
 	memcpy(speechBuffer, buf, charCount);
 	buf = (char *)buf + charCount;
-	speechBuffer[ charCount ] = '\0';
+	speechBuffer[charCount] = '\0';
 
 	//  Requeue the speech if needed
 	if (speechFlags & spQueued) {
@@ -256,7 +256,7 @@ void *Speech::archive(void *buf) {
 	buf = (int16 *)buf + 1;
 
 	for (i = 0; i < sampleCount; i++) {
-		*((uint32 *)buf) = sampleID[ i ];
+		*((uint32 *)buf) = sampleID[i];
 		buf = (uint32 *)buf + 1;
 	}
 
@@ -278,14 +278,14 @@ bool Speech::append(char *text, int32 sampID) {
 	        ||  sampleCount >= MAX_SAMPLES) return FALSE;
 
 	//  Copy text to end of text in buffer, including '\0'
-	memcpy(&speechBuffer[ charCount ], text, len + 1);
+	memcpy(&speechBuffer[charCount], text, len + 1);
 	charCount += len;
 
 	//  Append sample ID to list of samples.
 	//  REM: We should translate sample ID's from index to resource
 	//  number here.
 	if (sampID)
-		sampleID[ sampleCount++ ] = extendID(sampID);
+		sampleID[sampleCount++] = extendID(sampID);
 
 	return TRUE;
 }
@@ -372,13 +372,13 @@ bool Speech::setupActive(void) {
 	tempTextPort.setMap(&speechImage);
 
 	y = outlineWidth;                       // Plus 2 for Outlines
-	buttonChars = speechButtonList[ buttonNum ].charWidth;
+	buttonChars = speechButtonList[buttonNum].charWidth;
 
 	for (int i = 0; i < speechLineCount; i++) {
-		int16       lineChars = speechLineList[ i ].charWidth;
-		char        *lineText = speechLineList[ i ].text;
+		int16       lineChars = speechLineList[i].charWidth;
+		char        *lineText = speechLineList[i].text;
 
-		x   = (bounds.width - speechLineList[ i ].pixelWidth) / 2
+		x   = (bounds.width - speechLineList[i].pixelWidth) / 2
 		      + outlineWidth;
 
 		tempTextPort.moveTo(x, y);
@@ -396,7 +396,7 @@ bool Speech::setupActive(void) {
 				//  Fer death awaits with nasty, pointy teeth...!
 				if (buttonNum > speechButtonCount) break;
 
-				buttonChars = speechButtonList[ buttonNum ].charWidth;
+				buttonChars = speechButtonList[buttonNum].charWidth;
 				tempTextPort.setColor(1 + 9);
 
 				//  Blit the little bullet symbol
@@ -452,8 +452,8 @@ bool Speech::setupActive(void) {
 //This Function Sets Up Width And Height For A Speech
 
 void Speech::setWidth() {
-	TextSpan        speechLineList[ 32 ],   // list of speech lines
-	                speechButtonList[ 32 ]; // list of speech buttons
+	TextSpan        speechLineList[32],   // list of speech lines
+	                speechButtonList[32]; // list of speech buttons
 	int16           speechLineCount,        // count of speech lines
 	                speechButtonCount;      // count of speech buttons
 
@@ -483,7 +483,7 @@ void Speech::setWidth() {
 
 	bounds.width = 0;
 	for (int i = 0; i < speechLineCount; i++) {
-		bounds.width = MAX(bounds.width, speechLineList[ i ].pixelWidth);
+		bounds.width = MAX(bounds.width, speechLineList[i].pixelWidth);
 	}
 	bounds.width += outlineWidth * 2 + 4;       //  Some padding just in case.
 }
@@ -727,7 +727,7 @@ int16 TextWrap(
 	                pixel_len,              // pixel length of line
 	                line_count = 0;         // number of lines
 
-	lines[ line_count ] = text;
+	lines[line_count] = text;
 	last_space = -1;
 	line_start = 0;
 	pixel_len = 0;
@@ -735,20 +735,20 @@ int16 TextWrap(
 	//  For each character in the string, check for word wrap
 
 	for (i = 0; ; i++) {
-		uint8           c = text[ i ];
+		uint8           c = text[i];
 
 //			REM: Translate from foreign character set if needed...
 //		c = TranslationTable[c];
 
 		if (c == '\n' || c == '\r' || c == '\0') {  // if deliberate end of line
-			line_chars[ line_count ] = i - line_start;  //
-			line_pixels[ line_count ] = pixel_len;
+			line_chars[line_count] = i - line_start;  //
+			line_pixels[line_count] = pixel_len;
 			line_start = i + 1;
 			if (c == '\0') {
 				line_count++;
 				break;
 			}
-			lines[ ++line_count ] = &text[ line_start ];
+			lines[++line_count] = &text[line_start];
 			last_space = -1;
 			pixel_len = 0;
 			continue;
@@ -758,13 +758,13 @@ int16 TextWrap(
 		}
 
 		pixel_len +=
-		    tempTextPort.font->charKern[ c ] + tempTextPort.font->charSpace[ c ];
+		    tempTextPort.font->charKern[c] + tempTextPort.font->charSpace[c];
 
 		if (pixel_len > width - 2 && last_space > 0) {
-			line_chars[ line_count ] = last_space - line_start;
-			line_pixels[ line_count ] = last_space_pixels;
+			line_chars[line_count] = last_space - line_start;
+			line_pixels[line_count] = last_space_pixels;
 			line_start = last_space + 1;
-			lines[ ++line_count ] = &text[ line_start ];
+			lines[++line_count] = &text[line_start];
 
 			last_space = -1;
 			pixel_len = 0;
@@ -813,7 +813,7 @@ int16 buttonWrap(
 	//  For each character in the string, check for word wrap
 
 	for (i = 0; ; i++) {
-		uint8           c = text[ i ];
+		uint8           c = text[i];
 
 //			REM: Translate from foreign character set if needed...
 //		c = TranslationTable[c];
@@ -829,7 +829,7 @@ int16 buttonWrap(
 
 			if (c == '\0') break;
 
-			lineList->text = &text[ line_start ];
+			lineList->text = &text[line_start];
 
 			last_space = -1;
 			linePixels = 0;
@@ -847,8 +847,8 @@ int16 buttonWrap(
 
 			//  Add to pixel length
 			charPixels
-			    = tempTextPort.font->charKern[ c ]
-			      + tempTextPort.font->charSpace[ c ];
+			    = tempTextPort.font->charKern[c]
+			      + tempTextPort.font->charSpace[c];
 		}
 
 		linePixels += charPixels;
@@ -862,7 +862,7 @@ int16 buttonWrap(
 
 			line_start = last_space + 1;
 
-			lineList->text = &text[ line_start ];
+			lineList->text = &text[line_start];
 
 			last_space = -1;
 			linePixels = 0;
@@ -881,7 +881,7 @@ int16 buttonWrap(
 
 	for (int l = 0; l < lineCount; l++, lineList++) {
 		for (i = 0; i < lineList->charWidth; i++) {
-			uint8           c = lineList->text[ i ];
+			uint8           c = lineList->text[i];
 
 			// REM: Translate from foreign character set if needed...
 			// c = TranslationTable[c];
@@ -903,8 +903,8 @@ int16 buttonWrap(
 			} else { //  Any other character
 				//  Add to pixel length
 				charPixels
-				    = tempTextPort.font->charKern[ c ]
-				      + tempTextPort.font->charSpace[ c ];
+				    = tempTextPort.font->charKern[c]
+				      + tempTextPort.font->charSpace[c];
 			}
 
 			buttonPixels += charPixels;
@@ -960,22 +960,22 @@ int16 pickButton(
 	//  for centering.
 
 	for (int i = 0; i < pickLine; i++) {
-		pickPixels += lineList[ i ].pixelWidth;
+		pickPixels += lineList[i].pixelWidth;
 	}
 
-	centerWidth = (width - lineList[ pickLine ].pixelWidth) / 2;
+	centerWidth = (width - lineList[pickLine].pixelWidth) / 2;
 
 	//  Return 0 if mouse off left or right edge of text.
 	if (pt.x < centerWidth || pt.x > width - centerWidth) return 0;
 
-	pickPixels += pt.x - (width - lineList[ pickLine ].pixelWidth) / 2;
+	pickPixels += pt.x - (width - lineList[pickLine].pixelWidth) / 2;
 
 	//  Now, we lay all the buttons end to end in a similar fashion,
 	//  and determine which button the pick point fell into, in a
 	//  simple 1-d comparison.
 
 	for (int j = 0; j <= buttonCount; j++) {
-		pickPixels -= buttonList[ j ].pixelWidth;
+		pickPixels -= buttonList[j].pixelWidth;
 		if (pickPixels < 0) return j;
 	}
 
@@ -1021,7 +1021,7 @@ SpeechTaskList::SpeechTaskList(void) {
 	lockFlag = FALSE;
 
 	for (int i = 0; i < elementsof(array); i++) {
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 	}
 }
 
@@ -1038,7 +1038,7 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 
 	//  Initialize the free list
 	for (i = 0; i < elementsof(array); i++) {
-		free.addTail(array[ i ]);
+		free.addTail(array[i]);
 	}
 
 	//  Get the speech count

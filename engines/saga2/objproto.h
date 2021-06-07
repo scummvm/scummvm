@@ -168,7 +168,7 @@ struct ResourceObjectPrototype {
 	uint16          iconSprite,             // sprite # in inventory
 	                groundSprite;           // sprite # when on ground
 
-	uint8           colorMap[ 4 ];          // indirect color map
+	uint8           colorMap[4];          // indirect color map
 
 	//  Physical properties
 
@@ -240,7 +240,7 @@ struct ResourceObjectPrototype {
 
 	uint8           soundFXClass;           // index into sound effects table
 
-	uint8           reserved[ 7 ];
+	uint8           reserved[7];
 
 	//  Default constructor -- do nothing
 	ResourceObjectPrototype(void) {}

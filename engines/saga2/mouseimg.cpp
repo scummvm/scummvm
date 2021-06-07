@@ -62,7 +62,7 @@ extern uint8 *gaugeImageData;
 
 const  int maxMouseTextLen = 80;
 
-static char         mouseText[ maxMouseTextLen ] = { "" };  //  Current mouse text string
+static char         mouseText[maxMouseTextLen] = { "" };  //  Current mouse text string
 
 static Point16      mouseImageOffset;           //  Hotspot on mouse image
 
@@ -79,10 +79,10 @@ static int          textImageCenteredCol;       //  The pixel column in the text
 static int          gaugeNumerator,             //  Current mouse gauge values
        gaugeDenominator;
 
-static uint8        gaugeGrayMap[ 7 ] =
+static uint8        gaugeGrayMap[7] =
 { 0x00, 0x18, 0x14, 0x12, 0x16, 0x17, 0x0E };   //  Gray
 
-static uint8        gaugeColorMapArray[ 3 ][ 7 ] = {
+static uint8        gaugeColorMapArray[3][7] = {
 	{ 0x00, 0x18, 0xE2, 0xD1, 0xE5, 0xE7, 0xC9 },   //  Green
 	{ 0x00, 0x18, 0x5C, 0x5A, 0x5E, 0x60, 0x49 },   //  Yellow
 	{ 0x00, 0x18, 0x83, 0x81, 0x86, 0x72, 0x39 },   //  Red
@@ -111,7 +111,7 @@ static struct MouseCurosrs {
 
 gStaticImage *mouseCursors[kMouseMax];
 
-static uint8        gaugeImageBuffer[ gaugeImageWidth * gaugeImageHeight ];
+static uint8        gaugeImageBuffer[gaugeImageWidth * gaugeImageHeight];
 static gStaticImage gaugeImage(gaugeImageWidth, gaugeImageHeight, gaugeImageBuffer);
 
 static bool         showGauge = FALSE;
@@ -152,18 +152,18 @@ void createStackedImage(
 	*newImageCenter = 0;
 
 	for (i = 0; i < images; i++) {
-		if (imageCenterArray[ i ] > *newImageCenter)
-			*newImageCenter = imageCenterArray[ i ];
+		if (imageCenterArray[i] > *newImageCenter)
+			*newImageCenter = imageCenterArray[i];
 	}
 
 	for (i = 0; i < images; i++) {
 		int16           rightImageBoundary;
 
-		newImage->size.y += imageArray[ i ]->size.y;
+		newImage->size.y += imageArray[i]->size.y;
 
 		rightImageBoundary =    *newImageCenter
-		                        + (imageArray[ i ]->size.x
-		                           -   imageCenterArray[ i ]);
+		                        + (imageArray[i]->size.x
+		                           -   imageCenterArray[i]);
 		if (rightImageBoundary > newImage->size.x)
 			newImage->size.x = rightImageBoundary;
 	}
@@ -177,12 +177,12 @@ void createStackedImage(
 
 	newImageRow = 0;
 	for (i = 0; i < images; i++) {
-		gPixelMap       *currentImage = imageArray[ i ];
+		gPixelMap       *currentImage = imageArray[i];
 
 		TBlit(
 		    newImage,
 		    currentImage,
-		    *newImageCenter - imageCenterArray[ i ],
+		    *newImageCenter - imageCenterArray[i],
 		    newImageRow);
 
 		newImageRow += currentImage->size.y + 1;
@@ -211,21 +211,21 @@ void cleanupMousePointer(void) {
 
 void setupMousePointer(void) {
 	int         imageIndex = 1;
-	gPixelMap   *imageArray[ 3 ];
-	int         imageCenterArray[ 3 ];
+	gPixelMap   *imageArray[3];
+	int         imageCenterArray[3];
 	Point16     imageOffset;            //  mouse image offset
 	int         combinedImageCenter;
 
-	imageArray[ 0 ] = mouseImage;
-	imageCenterArray[ 0 ] = mouseImage->size.x / 2;
-	if (mouseText[ 0 ] != '\0') {
-		imageArray[ imageIndex ] = &textImage;
-		imageCenterArray[ imageIndex ] = textImageCenteredCol;
+	imageArray[0] = mouseImage;
+	imageCenterArray[0] = mouseImage->size.x / 2;
+	if (mouseText[0] != '\0') {
+		imageArray[imageIndex] = &textImage;
+		imageCenterArray[imageIndex] = textImageCenteredCol;
 		imageIndex++;
 	}
 	if (showGauge) {
-		imageArray[ imageIndex ] = &gaugeImage;
-		imageCenterArray[ imageIndex ] = gaugeImage.size.x / 2;
+		imageArray[imageIndex] = &gaugeImage;
+		imageCenterArray[imageIndex] = gaugeImage.size.x / 2;
 		imageIndex++;
 	}
 
@@ -274,7 +274,7 @@ void setMouseImage(gPixelMap &img, int16 x, int16 y) {
 //	Dispose of old text
 
 inline void disposeText(void) {
-	mouseText[ 0 ] = '\0';
+	mouseText[0] = '\0';
 
 	//  Free the memory previously allocated to hold the text image
 	//  bitmap
@@ -297,7 +297,7 @@ void setNewText(char *text) {
 	disposeText();
 
 	strncpy(mouseText, text, maxMouseTextLen - 1);
-	mouseText[ maxMouseTextLen - 1 ] = NULL;
+	mouseText[maxMouseTextLen - 1] = NULL;
 
 	//  Compute the size of the text bitmap
 	textImage.size.y = mainFont->height + 2;
@@ -345,7 +345,7 @@ void setMouseText(char *text) {
 
 		setNewText(text);
 		setupMousePointer();
-	} else if (mouseText[ 0 ] != NULL) {
+	} else if (mouseText[0] != NULL) {
 		disposeText();
 		setupMousePointer();
 	}
@@ -360,7 +360,7 @@ void setMouseTextF(char *format, ...) {
 		setMouseText(NULL);
 		G_BASE.mouseHintSet = TRUE;
 	} else {
-		char        lineBuf[ 128 ];
+		char        lineBuf[128];
 		va_list     argptr;
 
 		va_start(argptr, format);
@@ -396,11 +396,11 @@ void setMouseGauge(int numerator, int denominator) {
 	gaugePos = (numerator * gaugeWidth + denominator - 1) / denominator;
 
 	if (gaugePos <= gaugeOneThird)
-		gaugeColorMap = gaugeColorMapArray[ 2 ];
+		gaugeColorMap = gaugeColorMapArray[2];
 	else if (gaugePos <= gaugeTwoThirds)
-		gaugeColorMap = gaugeColorMapArray[ 1 ];
+		gaugeColorMap = gaugeColorMapArray[1];
 	else
-		gaugeColorMap = gaugeColorMapArray[ 0 ];
+		gaugeColorMap = gaugeColorMapArray[0];
 
 	for (y = 0; y < gaugeImageHeight; y++) {
 		for (x = 0; x < gaugeImageWidth; x++) {
@@ -408,8 +408,8 @@ void setMouseGauge(int numerator, int denominator) {
 
 			gaugeMap = x < gaugePos + 1 ? gaugeColorMap : gaugeGrayMap;
 
-			gaugeImageBuffer[ gaugeImageIndex ] =
-			    gaugeMap[mouseCursors[kMouseGaugeImage]->data[gaugeImageIndex] ];
+			gaugeImageBuffer[gaugeImageIndex] =
+			    gaugeMap[mouseCursors[kMouseGaugeImage]->data[gaugeImageIndex]];
 
 			gaugeImageIndex++;
 		}

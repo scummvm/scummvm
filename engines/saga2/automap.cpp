@@ -113,7 +113,7 @@ Rect16  autoMapBotPanelRect(autoMapBoxX,
                             autoMapBTHeight);
 
 
-Rect16  autoMapPanelRects[ numAutoMapPanels ]   = { { autoMapTopPanelRect },
+Rect16  autoMapPanelRects[numAutoMapPanels]   = { { autoMapTopPanelRect },
 	{ autoMapMidPanelRect },
 	{ autoMapBotPanelRect }
 };
@@ -127,10 +127,10 @@ Rect16  closeAutoMapBtnRect(-1,  276,  42, 41);
 Rect16  scrollBtnRect(493, 275, scrollBtnWidth, scrollBtnHeight);
 
 
-WindowDecoration autoMapDecorations[ numAutoMapPanels ] = {
-	{ WindowDecoration(autoMapPanelRects[ 0 ], autoMapTopPanelResID) },
-	{ WindowDecoration(autoMapPanelRects[ 1 ], autoMapMidPanelResID) },
-	{ WindowDecoration(autoMapPanelRects[ 2 ], autoMapBotPanelResID) }
+WindowDecoration autoMapDecorations[numAutoMapPanels] = {
+	{ WindowDecoration(autoMapPanelRects[0], autoMapTopPanelResID) },
+	{ WindowDecoration(autoMapPanelRects[1], autoMapMidPanelResID) },
+	{ WindowDecoration(autoMapPanelRects[2], autoMapBotPanelResID) }
 };
 
 
@@ -190,7 +190,7 @@ void CAutoMap::locateRegion(void) {
 	struct TileRect {
 		int16       uMin, vMin, uMax, vMax;
 	} *tr;
-	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
+	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
 	int             i;
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
@@ -420,7 +420,7 @@ void CAutoMap::draw(void) {          // redraw the window
 
 // create a summary map on the tPort gPixelMap buffer
 void CAutoMap::createSmallMap(void) {
-	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
+	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
 
 	uint16          *mapData = wMap->map->mapData;
 	uint16          *mapRow;
@@ -460,7 +460,7 @@ void CAutoMap::createSmallMap(void) {
 
 	xBase = (topPt.u - topPt.v) * tileSumWidthHalved + 261;
 	yBase = 255 - (topPt.u + topPt.v) * 2;
-	mapRow = &mapData[ viewRegion.max.u * wMap->mapSize ];
+	mapRow = &mapData[viewRegion.max.u * wMap->mapSize];
 
 	for (u = viewRegion.max.u, x0 = xBase, y0 = yBase;
 	        u >= viewRegion.min.u;
@@ -468,7 +468,7 @@ void CAutoMap::createSmallMap(void) {
 		for (v = viewRegion.max.v, x = x0, y = y0;
 		        v >= viewRegion.min.v;
 		        v--, x += tileSumWidthHalved, y += 2) {
-			uint16  mtile = mapRow[ v ];
+			uint16  mtile = mapRow[v];
 
 			if (mtile & metaTileVisited)
 				if (
@@ -477,7 +477,7 @@ void CAutoMap::createSmallMap(void) {
 #endif
 				    (mtile & metaTileVisited)) {
 					// get the tile data
-					map.data = &summaryData[(mtile & ~metaTileVisited) << 6 ];
+					map.data = &summaryData[(mtile & ~metaTileVisited) << 6];
 
 					// blit this tile onto the temp surface
 					TBlit(tPort.map,

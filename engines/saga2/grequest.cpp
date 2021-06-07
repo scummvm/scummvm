@@ -54,7 +54,7 @@ int16 SplitString(
 	int16           count;
 
 	for (count = 0; count < maxStrings;) {
-		textStart[ count++ ] = text;
+		textStart[count++] = text;
 		if ((text = strchr(text, delimiter)) == NULL) break;
 		*text++ = '\0';
 	}
@@ -84,9 +84,9 @@ static void handleRequestEvent(gEvent &ev) {
 class ModalDialogWindow : public ModalWindow {
 
 	int16   titleCount;
-	Point16 titlePos[ maxLines ];
-	char    *titleStrings[ maxLines ];
-	char    titleBuf[ maxText ];
+	Point16 titlePos[maxLines];
+	char    *titleStrings[maxLines];
+	char    titleBuf[maxText];
 
 	void positionText(
 	    char *windowText,
@@ -137,11 +137,11 @@ void ModalDialogWindow::positionText(
 
 		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[ i ].y = yPos;
-				titlePos[ i ].x =
+				titlePos[i].y = yPos;
+				titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(mainFont, titleStrings[ i ], -1, 0))
+				      TextWidth(mainFont, titleStrings[i], -1, 0))
 				     >> 1);
 			} else titleCount = i;
 		}
@@ -199,17 +199,17 @@ void ModalDialogWindow::drawClipped(
 
 	port.setFont(textFont);
 	for (i = 0; i < titleCount; i++) {
-		Point16 textPos = origin + titlePos[ i ];
+		Point16 textPos = origin + titlePos[i];
 
 		port.moveTo(textPos + Point16(-1, -1));
 		port.setColor(2);
-		port.drawText(titleStrings[ i ], -1);
+		port.drawText(titleStrings[i], -1);
 		port.moveTo(textPos + Point16(1, 1));
 		port.setColor(14);
-		port.drawText(titleStrings[ i ], -1);
+		port.drawText(titleStrings[i], -1);
 		port.moveTo(textPos);
 		port.setColor(8);
-		port.drawText(titleStrings[ i ], -1);
+		port.drawText(titleStrings[i], -1);
 	}
 
 	ModalWindow::drawClipped(port, offset, r);
@@ -220,7 +220,7 @@ void ModalDialogWindow::drawClipped(
  * ===================================================================== */
 
 class ModalRequestWindow : public ModalDialogWindow {
-	char    buttonBuf[ maxButtonText ];
+	char    buttonBuf[maxButtonText];
 
 	static Rect16 getTextArea(const Rect16 &r) {
 		return Rect16(2, 2, r.width - 4, r.height - mainFont->height - 12);
@@ -252,7 +252,7 @@ ModalRequestWindow::ModalRequestWindow(
 	        intervals;
 
 	int16   buttonCount;
-	char    *buttonStrings[ maxButtons ];
+	char    *buttonStrings[maxButtons];
 
 	int16   fontHeight = mainFont->height;
 
@@ -299,7 +299,7 @@ ModalRequestWindow::ModalRequestWindow(
 		                            fontHeight + 6),
 		                     *mouseCursors[kMouseCloseBx2Image],
 		                     *mouseCursors[kMouseCloseBx1Image],
-		                     buttonStrings[ i ],
+		                     buttonStrings[i],
 		                     i,
 		                     handleRequestEvent);
 

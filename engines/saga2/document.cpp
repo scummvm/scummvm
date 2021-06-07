@@ -160,22 +160,22 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 
 	// set the original text pointer
 	//origText = ( char * )RNewPtr( textSize + 1, NULL, "book original text buffer" );
-	origText = new char[ textSize + 1 ];
+	origText = new char[textSize + 1];
 
 	// and fill it
 	strcpy(origText, buffer);
 
 	// make a working buffer
 	//text = ( char * )RNewPtr( textSize + 1, NULL, "book work text buffer" );
-	text = new char[ textSize + 1 ];
+	text = new char[textSize + 1];
 
 	// and fill it
 	strcpy(text, origText);
 
 	textFont        = font;
 	textHeight      = (textFont ? textFont->height : 0);
-	lineWidth       = dApp.pageRect[ 0 ].width;
-	pageHeight      = dApp.pageRect[ 0 ].height;
+	lineWidth       = dApp.pageRect[0].width;
+	pageHeight      = dApp.pageRect[0].height;
 	currentPage     = 0;
 	totalLines      = 0;
 	totalPages      = 0;
@@ -183,7 +183,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 
 	// null out the image pointer array
 	for (int16 i = 0; i < maxPages; i++) {
-		images[ i ] = NULL;
+		images[i] = NULL;
 	}
 
 	makePages();
@@ -204,8 +204,8 @@ CDocument::~CDocument(void) {
 	int16   i;
 
 	for (i = 0; i < maxPages; i++) {
-		if (images[ i ]) {
-			RDisposePtr(images[ i ]);
+		if (images[i]) {
+			RDisposePtr(images[i]);
 		}
 	}
 
@@ -366,8 +366,8 @@ void CDocument::setText(char * /* string */) {
 		int16   i;
 
 		for (i = 0; i < maxPages; i++) {
-			if (images[ i ]) {
-				RDisposePtr(images[ i ]);
+			if (images[i]) {
+				RDisposePtr(images[i]);
 			}
 		}
 
@@ -398,7 +398,7 @@ void CDocument::setText(char * /* string */) {
 		strncpy(text, origText, textSize);
 
 		// make sure it's null terminated
-		text[ textSize ] = NULL;
+		text[textSize] = NULL;
 
 		// repage the book
 		makePages();
@@ -420,13 +420,13 @@ void CDocument::appendText(char * /* string */) {
 		int16   expandedLen;
 
 		for (i = 0; i < maxPages; i++) {
-			memset(lineLen[ i ], 0, maxLines);
+			memset(lineLen[i], 0, maxLines);
 		}
 
 		// free up the images
 		for (i = 0; i < maxPages; i++) {
-			if (images[ i ]) {
-				RDisposePtr(images[ i ]);
+			if (images[i]) {
+				RDisposePtr(images[i]);
 			}
 		}
 
@@ -453,8 +453,8 @@ void CDocument::appendText(char * /* string */) {
 
 		// make space for the old text
 		//expandedBuf   = ( char * )RNewPtr( expandedLen + 1, NULL, "book expaned text buffer" );
-		expandedBuf     = new char[ expandedLen + 1 ];
-		expandedTextBuf = new char[ expandedLen + 1 ];
+		expandedBuf     = new char[expandedLen + 1];
+		expandedTextBuf = new char[expandedLen + 1];
 
 		// save the old text
 		strcpy(expandedBuf, origText);
@@ -469,7 +469,7 @@ void CDocument::appendText(char * /* string */) {
 		    // copy the old text into the larger buffer
 		strcpy( origText, oldText );
 
-		origText[ oldTextLen + newTextLen ] = NULL;
+		origText[oldTextLen + newTextLen] = NULL;
 
 		    // add the appending text to the original text buffer replacment
 		strcat( origText, string );
@@ -486,7 +486,7 @@ void CDocument::appendText(char * /* string */) {
 		    // copy from the original text buffer to the working text buffer
 		strcpy( text, origText );
 
-		text[ oldTextLen + newTextLen ] = NULL;
+		text[oldTextLen + newTextLen] = NULL;
 		*/
 
 		// get rid of the old origText buffer
@@ -517,14 +517,14 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 	char    *strIndex       = string + index;
 
 	// page break detected
-	if (strIndex[ 1 ] == dPageBreak[ 0 ] &&
-	        strIndex[ 2 ] == dPageBreak[ 1 ]) {
+	if (strIndex[1] == dPageBreak[0] &&
+	        strIndex[2] == dPageBreak[1]) {
 		// eat the page breaks chars
 		// tie off the end
-		strIndex[ 0 ] = NULL;
+		strIndex[0] = NULL;
 
 		// string them together
-		strcat(&strIndex[ 0 ], &strIndex[ 2 + 1 ]);
+		strcat(&strIndex[0], &strIndex[2 + 1]);
 
 		// take the offset to the end of this line
 		offset = index;
@@ -553,10 +553,10 @@ bool CDocument::checkForImage(char      *string,
 
 
 	// image detected marker
-	if (strIndex[ 1 ] == dImage[ 0 ] &&
-	        strIndex[ 2 ] == dImage[ 1 ]) {
+	if (strIndex[1] == dImage[0] &&
+	        strIndex[2] == dImage[1]) {
 		int16   numEat;         // number of characters to eat
-		char    *argv = &strIndex[ 2 + 1 ];  // array to first element
+		char    *argv = &strIndex[2 + 1];  // array to first element
 
 		// delete context
 		if (illustrationCon) resFile->disposeContext(illustrationCon);
@@ -569,13 +569,13 @@ bool CDocument::checkForImage(char      *string,
 			// if the last entry is defined as a number
 			if (argv[7] == ':') {
 				// convert the text into a number
-				char    numSt[ 2 ]  = { argv[ 8 ], NULL };
+				char    numSt[2]  = { argv[8], NULL };
 				uint8   num         = atoi(numSt);
 
 
-				if (!images[ offPageIndex ]) {
+				if (!images[offPageIndex]) {
 					// get the image
-					images[ offPageIndex ] = LoadResource(illustrationCon,
+					images[offPageIndex] = LoadResource(illustrationCon,
 					                                      MKTAG(argv[4], argv[5], argv[6], num),
 					                                      "book internal image");
 				}
@@ -583,7 +583,7 @@ bool CDocument::checkForImage(char      *string,
 				// number of chars to eat
 				numEat = 9;
 			} else {
-				images[ offPageIndex ] = LoadResource(illustrationCon,
+				images[offPageIndex] = LoadResource(illustrationCon,
 				                                      MKTAG(argv[4], argv[5], argv[6], argv[7]),
 				                                      "book internal image");
 				numEat = 8;
@@ -591,21 +591,21 @@ bool CDocument::checkForImage(char      *string,
 		}
 
 		// get the size of the image
-		imageSizes[ offPageIndex ] =
-		    ((ImageHeader *)images[ offPageIndex ])->size;
+		imageSizes[offPageIndex] =
+		    ((ImageHeader *)images[offPageIndex])->size;
 
 		// tie off the end
-		strIndex[ 0 ] = NULL;
+		strIndex[0] = NULL;
 
 		// and string them together
-		strcat(&strIndex[ 0 ], &strIndex[ 2 + 1 + numEat ]);
+		strcat(&strIndex[0], &strIndex[2 + 1 + numEat]);
 
 		// set new line length
 		offset = index;
 
 		// set the line offset
-		lineOffset[ offPageIndex ] =
-		    imageSizes[ offPageIndex ].y / (textHeight + 1) +
+		lineOffset[offPageIndex] =
+		    imageSizes[offPageIndex].y / (textHeight + 1) +
 		    textPictureOffset;
 
 		// set the new page flag
@@ -640,7 +640,7 @@ void CDocument::makePages(void) {
 			// check for page breaks and images
 			for (i = 0; i <= offset; i++) {
 				// we hit a diliminator
-				if (str[ i ] == deliminator) {
+				if (str[i] == deliminator) {
 					// page break check
 					if (checkForPageBreak(str, i, offset)) {
 						// if a break did not just occur
@@ -666,7 +666,7 @@ void CDocument::makePages(void) {
 							pageBreakSet = FALSE;
 						}
 
-						lineIndex   = lineOffset[ pageIndex ];
+						lineIndex   = lineOffset[pageIndex];
 					}
 				}
 
@@ -677,10 +677,10 @@ void CDocument::makePages(void) {
 			// set the length of this line
 			if (offset >= 0) {
 				// number of characters on this line
-				lineLen[ pageIndex ][ lineIndex ] = offset;
+				lineLen[pageIndex][lineIndex] = offset;
 			} else {
 				// remaining number of characters in string
-				lineLen[ pageIndex ][ lineIndex ] = strlen(str);
+				lineLen[pageIndex][lineIndex] = strlen(str);
 			}
 
 
@@ -689,13 +689,13 @@ void CDocument::makePages(void) {
 			lineIndex++;
 		}
 
-		numLines[ pageIndex ] = lineIndex;
+		numLines[pageIndex] = lineIndex;
 		pageIndex++;
 		newPage     = FALSE;
 
 		/* debug
 		WriteStatusF( 5, "page#:%d", pageIndex );
-		char buf[ 80 ];
+		char buf[80];
 
 		strncpy( buf, str, 75 );
 
@@ -705,10 +705,10 @@ void CDocument::makePages(void) {
 		// check to see if there is an image; and make allowences if
 		// there is.
 		/*
-		if( images[ pageIndex ] )
+		if( images[pageIndex] )
 		{
 		        // set the next text line to the lineOffset
-		    lineIndex   = lineOffset[ pageIndex ];
+		    lineIndex   = lineOffset[pageIndex];
 		}
 		else
 		{
@@ -753,21 +753,21 @@ void CDocument::renderText(void) {
 
 		tPort.setFont(textFont);         // setup the string pointer
 		for (pageIndex = 0; pageIndex < currentPage; pageIndex++) {
-			if (images[ pageIndex ]) {
-				lineIndex = lineOffset[ pageIndex ];
+			if (images[pageIndex]) {
+				lineIndex = lineOffset[pageIndex];
 
 				assert(lineIndex < linesPerPage);
 			} else {
 				lineIndex = 0;
 			}
 
-			for (; lineIndex < numLines[ pageIndex ]; lineIndex++) {
-				int16   temp = lineLen[ pageIndex ][ lineIndex ];
+			for (; lineIndex < numLines[pageIndex]; lineIndex++) {
+				int16   temp = lineLen[pageIndex][lineIndex];
 
 				assert(pageIndex < maxPages);
 				assert(temp < 35);
 
-				str += lineLen[ pageIndex ][ lineIndex ];
+				str += lineLen[pageIndex][lineIndex];
 			}
 		}
 
@@ -775,35 +775,35 @@ void CDocument::renderText(void) {
 		for (pageIndex = currentPage;
 		        pageIndex - currentPage < app.numPages && pageIndex < pages;
 		        pageIndex++) {
-			Rect16  *pageRect = &app.pageRect[ pageIndex % app.numPages ];
+			Rect16  *pageRect = &app.pageRect[pageIndex % app.numPages];
 
 			// if there is an image on this page
-			if (images[ pageIndex ]) {
+			if (images[pageIndex]) {
 				Point16 pos;
 
-				pos.x = pageRect->x + (pageRect->width - imageSizes[ pageIndex ].x) / 2;
+				pos.x = pageRect->x + (pageRect->width - imageSizes[pageIndex].x) / 2;
 				pos.y = pageRect->y;
 
-				drawCompressedImage(tPort, pos, images[ pageIndex ]);
+				drawCompressedImage(tPort, pos, images[pageIndex]);
 
-				lineIndex = lineOffset[ pageIndex ];
+				lineIndex = lineOffset[pageIndex];
 			} else {
 				lineIndex = 0;
 			}
 
-			for (; lineIndex < numLines[ pageIndex ]; lineIndex++) {
+			for (; lineIndex < numLines[pageIndex]; lineIndex++) {
 				assert(pageIndex <= maxPages && pageIndex >= 0);
 
 				tPort.moveTo(pageRect->x, pageRect->y + (textHeight * lineIndex) + 1);
-				tPort.setColor(app.textColors[ lineIndex ]);
-				tPort.drawText(str, lineLen[ pageIndex ][ lineIndex ]);
+				tPort.setColor(app.textColors[lineIndex]);
+				tPort.drawText(str, lineLen[pageIndex][lineIndex]);
 
 				// grab the next text offset
-				int16 temp = lineLen[ pageIndex ][ lineIndex ];
+				int16 temp = lineLen[pageIndex][lineIndex];
 
 				assert(temp < 35);
 
-				str += lineLen[ pageIndex ][ lineIndex ];
+				str += lineLen[pageIndex][lineIndex];
 			}
 		}
 
@@ -856,12 +856,12 @@ void CDocument::draw(void) {         // redraw the window
  * ===================================================================== */
 
 const int       textSize = 4096;
-char            bookText[ textSize ] = { "" };
+char            bookText[textSize] = { "" };
 
 void appendBookText(char *string) {
 	if (string) {
 		strncat(bookText, string, textSize - 1);
-		bookText[ textSize - 1] = NULL;
+		bookText[textSize - 1] = NULL;
 	}
 }
 
@@ -874,7 +874,7 @@ void buildText(uint16 textScript) {
 		// clear out the scroll text
 		strcpy(bookText, "");
 
-		if (textScript == resImports->reserved[ 0 ]) {
+		if (textScript == resImports->reserved[0]) {
 			strcpy(bookText, PROGRAM_ABOUT);
 		}
 

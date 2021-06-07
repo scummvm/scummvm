@@ -37,7 +37,7 @@
 namespace Saga2 {
 
 struct SensorListHolder : public DNode {
-	uint8       sensorListBuffer[ sizeof(SensorList) ];
+	uint8       sensorListBuffer[sizeof(SensorList)];
 
 	SensorList *getSensorList(void) {
 		return (SensorList *)&sensorListBuffer;
@@ -50,7 +50,7 @@ struct SensorListHolder : public DNode {
 
 struct SensorHolder : public DNode {
 	int16       checkCtr;
-	uint8       sensorBuffer[ maxSensorSize ];
+	uint8       sensorBuffer[maxSensorSize];
 
 	Sensor *getSensor(void) {
 		return (Sensor *)&sensorBuffer;
@@ -377,7 +377,7 @@ void saveSensors(SaveFileConstructor &saveGame) {
 		bufferPtr = archiveSensor(sensorHolder->getSensor(), bufferPtr);
 	}
 
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[ archiveBufSize ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[archiveBufSize]);
 
 	//  Write the data to the save file
 	saveGame.writeChunk(
@@ -428,7 +428,7 @@ void loadSensors(SaveFileReader &saveGame) {
 		bufferPtr = constructSensor(ctr, bufferPtr);
 	}
 
-	assert(bufferPtr == &((uint8 *)archiveBuffer)[ saveGame.getChunkSize() ]);
+	assert(bufferPtr == &((uint8 *)archiveBuffer)[saveGame.getChunkSize()]);
 
 	RDisposePtr(archiveBuffer);
 }
@@ -600,7 +600,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 	for (i = 0; i < elementsof(playerActorIDs); i++) {
 		Actor   *protag =
-		    getPlayerActorAddress(playerActorIDs[ i ])->getActor();
+		    getPlayerActorAddress(playerActorIDs[i])->getActor();
 
 		assert(isActor(protag));
 

@@ -140,7 +140,7 @@ struct RHandleBlock {
 
 	uint16          freeHandleCount;        // number of handles in use
 	RHandle         *freeHandles;           // the first free handle in block
-	RHandle         handles[ HANDLES_PER_BLOCK ];   // array of handles
+	RHandle         handles[HANDLES_PER_BLOCK];   // array of handles
 };
 
 //  An "RMemFreeBlock" keeps track of which areas are unused.

@@ -48,7 +48,7 @@ extern GameMode     ModalMode;
 
 class SimpleWindow : public gWindow {
 
-	GameMode    *prevModeStackPtr[ Max_Modes ];
+	GameMode    *prevModeStackPtr[Max_Modes];
 	int         prevModeStackCtr;
 
 public:
