@@ -60,6 +60,7 @@ const PlatformDescription g_platforms[] = {
 	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
 	{ "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
 	{ "saturn", "saturn", "saturn", "Sega Saturn", kPlatformSaturn },
+	{ "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
 
 	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
 };
