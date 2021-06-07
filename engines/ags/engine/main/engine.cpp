@@ -207,7 +207,7 @@ static String find_game_data_in_config(const String &path) {
 		Debug::Printf("Found game config: %s", def_cfg_file.GetCStr());
 		Debug::Printf(" Cfg: data file: %s", data_file.GetCStr());
 		// Only accept if it's a relative path
-		if (!data_file.IsEmpty() && is_relative_filename(data_file))
+		if (!data_file.IsEmpty() && Path::IsRelativePath(data_file))
 			return Path::ConcatPaths(path, data_file);
 	}
 	return ""; // not found in config

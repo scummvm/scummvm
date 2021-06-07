@@ -23,9 +23,12 @@
 #ifndef AGS_SHARED_AC_COMMON_H
 #define AGS_SHARED_AC_COMMON_H
 
+#include "ags/shared/util/string.h"
+
 namespace AGS3 {
 
 // These are the project-dependent functions, they are defined both in Engine.App and AGS.Native.
+void quit(const AGS::Shared::String &str);
 void quit(const char *);
 void quitprintf(const char *fmt, ...);
 void update_polled_stuff_if_runtime();

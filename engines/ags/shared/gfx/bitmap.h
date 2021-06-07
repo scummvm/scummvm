@@ -30,6 +30,7 @@
 #define AGS_SHARED_GFX_BITMAP_H
 
 #include "ags/shared/util/geometry.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -70,6 +71,9 @@ Bitmap *CreateTransparentBitmap(int width, int height, int color_depth = 0);
 Bitmap *CreateSubBitmap(Bitmap *src, const Rect &rc);
 Bitmap *CreateBitmapCopy(Bitmap *src, int color_depth = 0);
 Bitmap *LoadFromFile(const char *filename);
+inline Bitmap *LoadFromFile(const String &filename) {
+	return LoadFromFile(filename.GetCStr());
+}
 
 // Stretches bitmap to the requested size. The new bitmap will have same
 // colour depth. Returns original bitmap if no changes are necessary.

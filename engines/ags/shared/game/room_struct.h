@@ -52,6 +52,7 @@
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/geometry.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -359,7 +360,7 @@ private:
 
 
 // Loads new room data into the given RoomStruct object
-void load_room(const char *filename, RoomStruct *room, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos);
+void load_room(const String &filename, RoomStruct *room, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos);
 // Checks if it's necessary and upscales low-res room backgrounds and masks for the high resolution game
 // NOTE: it does not upscale object coordinates, because that is usually done when the room is loaded
 void UpscaleRoomBackground(RoomStruct *room, bool game_is_hires);

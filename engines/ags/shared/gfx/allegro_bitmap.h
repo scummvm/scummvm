@@ -36,6 +36,7 @@
 #include "ags/lib/allegro.h" // BITMAP
 #include "ags/shared/core/types.h"
 #include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -64,7 +65,13 @@ public:
 	// Deallocate bitmap
 	void    Destroy();
 
+	bool    LoadFromFile(const String &filename) {
+		return LoadFromFile(filename.GetCStr());
+	}
 	bool    LoadFromFile(const char *filename);
+	bool    SaveToFile(const String &filename, const void *palette) {
+		return SaveToFile(filename.GetCStr(), palette);
+	}
 	bool    SaveToFile(Common::WriteStream &out, const void *palette);
 	bool    SaveToFile(const char *filename, const void *palette);
 

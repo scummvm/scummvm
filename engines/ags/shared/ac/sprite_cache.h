@@ -53,6 +53,7 @@ namespace AGS3 {
 
 namespace AGS {
 namespace Shared {
+class String;
 class Stream;
 class Bitmap;
 } // namespace AGS3
@@ -162,18 +163,18 @@ public:
 	void        SetMaxCacheSize(size_t size);
 
 	// Loads sprite reference information and inits sprite stream
-	HAGSError   InitFile(const char *filename, const char *sprindex_filename);
+	HAGSError   InitFile(const Shared::String &filename, const Shared::String &sprindex_filename);
 	// Tells if bitmaps in the file are compressed
 	bool        IsFileCompressed() const;
 	// Opens file stream
-	int         AttachFile(const char *filename);
+	int         AttachFile(const Shared::String &filename);
 	// Closes file stream
 	void        DetachFile();
 	// Saves all sprites to file; fills in index data for external use
 	// TODO: refactor to be able to save main file and index file separately (separate function for gather data?)
-	int         SaveToFile(const char *filename, bool compressOutput, SpriteFileIndex &index);
+	int         SaveToFile(const Shared::String &filename, bool compressOutput, SpriteFileIndex &index);
 	// Saves sprite index table in a separate file
-	int         SaveSpriteIndex(const char *filename, const SpriteFileIndex &index);
+	int         SaveSpriteIndex(const Shared::String &filename, const SpriteFileIndex &index);
 
 	// Loads (if it's not in cache yet) and returns bitmap by the sprite index
 	Shared::Bitmap *operator[](sprkey_t index);
@@ -235,7 +236,7 @@ private:
 	int _listend;
 
 	// Loads sprite index file
-	bool        LoadSpriteIndexFile(const char *filename, int expectedFileID, soff_t spr_initial_offs, sprkey_t topmost);
+	bool        LoadSpriteIndexFile(const Shared::String &filename, int expectedFileID, soff_t spr_initial_offs, sprkey_t topmost);
 	// Rebuilds sprite index from the main sprite file
 	HAGSError   RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers);
 	// Writes compressed sprite to the stream

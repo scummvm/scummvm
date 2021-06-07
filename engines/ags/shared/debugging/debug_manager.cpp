@@ -197,6 +197,18 @@ void DebugManager::SendMessage(OutputSlot &out, const DebugMessage &msg) {
 
 namespace Debug {
 
+void Printf(const String &text) {
+	_GP(DbgMgr).Print(kDbgGroup_Main, kDbgMsg_Default, text);
+}
+
+void Printf(MessageType mt, const String &text) {
+	_GP(DbgMgr).Print(kDbgGroup_Main, mt, text);
+}
+
+void Printf(DebugGroupID group, MessageType mt, const String &text) {
+	_GP(DbgMgr).Print(group, mt, text);
+}
+
 void Printf(const char *fmt, ...) {
 	va_list argptr;
 	va_start(argptr, fmt);

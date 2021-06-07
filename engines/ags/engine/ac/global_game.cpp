@@ -233,7 +233,7 @@ void GetGlobalString(int index, char *strval) {
 }
 
 // TODO: refactor this method, and use same shared procedure at both normal stop/startup and in RunAGSGame
-int RunAGSGame(const char *newgame, unsigned int mode, int data) {
+int RunAGSGame(const String &newgame, unsigned int mode, int data) {
 
 	can_run_delayed_command();
 

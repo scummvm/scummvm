@@ -96,8 +96,8 @@ int Game_GetDialogCount();
 bool SetCustomSaveParent(const Shared::String &path);
 // If explicit_path flag is false, the actual path will be constructed
 // as a relative to system's user saves directory
-bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path = false);
-int Game_SetSaveGameDirectory(const char *newFolder);
+bool SetSaveGameDirectoryPath(const Shared::String &newFolder, bool explicit_path = false);
+int Game_SetSaveGameDirectory(const Shared::String &newFolder);
 const char *Game_GetSaveSlotDescription(int slnum);
 
 const char *Game_GetGlobalStrings(int index);

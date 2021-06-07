@@ -152,6 +152,12 @@ namespace Debug {
 //
 // Debug output
 //
+// Output a plain message of default group and default type
+void Printf(const String &text);
+// Output a plain message of default group and given type
+void Printf(MessageType mt, const String &text);
+// Output a plain message of given group and type
+void Printf(DebugGroupID group_id, MessageType mt, const String &text);
 // Output formatted message of default group and default type
 void Printf(const char *fmt, ...);
 // Output formatted message of default group and given type
