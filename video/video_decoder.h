@@ -959,6 +959,7 @@ private:
 	// Default PixelFormat settings
 	Graphics::PixelFormat _defaultHighColorFormat;
 
+protected:
 	// Internal helper functions
 	void stopAudio();
 	void startAudio();
@@ -966,7 +967,6 @@ private:
 	bool hasFramesLeft() const;
 	bool hasAudio() const;
 
-protected:
 	Audio::Timestamp _lastTimeChange;
 	int32 _startTime;
 
