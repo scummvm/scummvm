@@ -80,7 +80,7 @@ void GUITextBox::OnKeyPress(int keycode) {
 
 	Text.AppendChar(keycode);
 	// if the new string is too long, remove the new character
-	if (wgettextwidth(Text, Font) > (Width - (6 + get_fixed_pixel_size(5))))
+	if (wgettextwidth(Text.GetCStr(), Font) > (Width - (6 + get_fixed_pixel_size(5))))
 		Text.ClipRight(1);
 }
 

@@ -73,10 +73,10 @@ int File_Delete(const char *fnmm) {
 	if (!ResolveScriptPath(fnmm, false, rp))
 		return 0;
 
-	if (::remove(rp.FullPath) == 0)
+	if (::remove(rp.FullPath.GetCStr()) == 0)
 		return 1;
 	if (_G(errnum) == AL_ENOENT && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-		return ::remove(rp.AltPath) == 0 ? 1 : 0;
+		return ::remove(rp.AltPath.GetCStr()) == 0 ? 1 : 0;
 	return 0;
 }
 
@@ -307,7 +307,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	debugC(::AGS::kDebugFilePath, "ResolveScriptPath(%s)", orig_sc_path.GetCStr());
 	rp = ResolvedPath();
 
-	bool is_absolute = !is_relative_filename(orig_sc_path);
+	bool is_absolute = !is_relative_filename(orig_sc_path.GetCStr());
 	if (is_absolute && !read_only) {
 		debug_script_warn("Attempt to access file '%s' denied (cannot write to absolute path)", orig_sc_path.GetCStr());
 		return false;
@@ -348,7 +348,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		child_path = sc_path.Mid(GameInstallRootToken.GetLength());
 	} else if (sc_path.CompareLeft(GameSavedgamesDirToken) == 0) {
 		parent_dir = get_save_game_directory();
-		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken.GetCStr()));
 #if AGS_PLATFORM_SCUMMVM
 		// Remap "agsgame.*"
 		const char *agsSavePrefix = "/agssave.";
@@ -522,12 +522,12 @@ bool DoesAssetExistInLib(const AssetPath &path) {
 }
 
 String find_assetlib(const String &filename) {
-	String libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir, filename));
+	String libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir.GetCStr(), filename.GetCStr()));
 	if (AssetManager::IsDataFile(libname))
 		return libname;
 	if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).DataDir2) != 0) {
 		// Hack for running in Debugger
-		libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir2, filename));
+		libname = cbuf_to_string_and_free(ci_find_file(_GP(ResPaths).DataDir2.GetCStr(), filename.GetCStr()));
 		if (AssetManager::IsDataFile(libname))
 			return libname;
 	}

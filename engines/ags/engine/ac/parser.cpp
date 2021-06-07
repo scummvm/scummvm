@@ -87,7 +87,7 @@ int find_word_in_dictionary(const char *lookfor) {
 		if ((lastletter == 's') || (lastletter == 'S') || (lastletter == '\'')) {
 			String singular = lookfor;
 			singular.ClipRight(1);
-			return find_word_in_dictionary(singular);
+			return find_word_in_dictionary(singular.GetCStr());
 		}
 	}
 	return -1;

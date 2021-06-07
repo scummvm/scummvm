@@ -322,7 +322,7 @@ void GUIButton::DrawText(Bitmap *ds, bool draw_disabled) {
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	if (draw_disabled)
 		text_color = ds->GetCompatibleColor(8);
-	GUI::DrawTextAligned(ds, _textToDraw, Font, text_color, frame, TextAlignment);
+	GUI::DrawTextAligned(ds, _textToDraw.GetCStr(), Font, text_color, frame, TextAlignment);
 }
 
 void GUIButton::DrawTextButton(Bitmap *ds, bool draw_disabled) {

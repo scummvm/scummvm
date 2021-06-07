@@ -98,7 +98,7 @@ int System_GetViewportWidth() {
 }
 
 const char *System_GetVersion() {
-	return CreateNewScriptString(_G(EngineVersion).LongString);
+	return CreateNewScriptString(_G(EngineVersion).LongString.GetCStr());
 }
 
 int System_GetHardwareAcceleration() {

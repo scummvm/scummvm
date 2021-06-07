@@ -95,7 +95,7 @@ void Hotspot_GetName(ScriptHotspot *hss, char *buffer) {
 }
 
 const char *Hotspot_GetName_New(ScriptHotspot *hss) {
-	return CreateNewScriptString(get_translation(_GP(thisroom).Hotspots[hss->id].Name));
+	return CreateNewScriptString(get_translation(_GP(thisroom).Hotspots[hss->id].Name.GetCStr()));
 }
 
 bool Hotspot_IsInteractionAvailable(ScriptHotspot *hhot, int mood) {

@@ -59,7 +59,7 @@ using namespace AGS::Engine;
 void quit_tell_editor_debugger(const String &qmsg, QuitReason qreason) {
 	if (_G(editor_debugging_initialized)) {
 		if (qreason & kQuitKind_GameException)
-			_G(handledErrorInEditor) = send_exception_to_editor(qmsg);
+			_G(handledErrorInEditor) = send_exception_to_editor(qmsg.GetCStr());
 		send_message_to_editor("EXIT");
 		_G(editor_debugger)->Shutdown();
 	}

@@ -328,7 +328,7 @@ MFLUtil::MFLError MFLUtil::ReadV30(AssetLibInfo &lib, Stream *in, MFLVersion /* 
 }
 
 void MFLUtil::WriteHeader(const AssetLibInfo &lib, MFLVersion lib_version, int lib_index, Stream *out) {
-	out->Write(MFLUtil::HeadSig, MFLUtil::HeadSig.GetLength());
+	out->Write(MFLUtil::HeadSig.GetCStr(), MFLUtil::HeadSig.GetLength());
 	out->WriteByte(lib_version);
 	out->WriteByte(lib_index);   // file number
 
@@ -361,7 +361,7 @@ void MFLUtil::WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out) {
 		out->WriteInt32((int32_t)lib_offset);
 	else
 		out->WriteInt64(lib_offset);
-	out->Write(TailSig, TailSig.GetLength());
+	out->Write(TailSig.GetCStr(), TailSig.GetLength());
 }
 
 void MFLUtil::DecryptText(char *text) {

@@ -269,7 +269,7 @@ const char *Object_GetName_New(ScriptObject *objj) {
 	if (!is_valid_object(objj->id))
 		quit("!Object.Name: invalid object number");
 
-	return CreateNewScriptString(get_translation(_GP(thisroom).Objects[objj->id].Name));
+	return CreateNewScriptString(get_translation(_GP(thisroom).Objects[objj->id].Name.GetCStr()));
 }
 
 bool Object_IsInteractionAvailable(ScriptObject *oobj, int mood) {

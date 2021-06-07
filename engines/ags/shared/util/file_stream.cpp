@@ -194,7 +194,7 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
 			_outSave = g_system->getSavefileManager()->openForSaving(
-			               file_name + strlen(SAVE_FOLDER_PREFIX), false);
+			               file_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX), false);
 		} else {
 			Common::String fname = file_name;
 			if (fname.hasPrefix("./"))

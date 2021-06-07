@@ -140,29 +140,29 @@ public:
 	int     CompareNoCase(const char *cstr) const;
 	// Compares the leftmost part of this string with given string
 	int     CompareLeft(const String &str, size_t count = -1) const {
-		return CompareLeft(str._cstr, count != -1 ? count : str._len);
+		return CompareLeft(str._cstr, count != npos ? count : str._len);
 	}
 	int     CompareLeft(const char *cstr, size_t count = -1) const;
 	int     CompareLeftNoCase(const String &str, size_t count = -1) const {
-		return CompareLeftNoCase(str._cstr, count != -1 ? count : str._len);
+		return CompareLeftNoCase(str._cstr, count != npos ? count : str._len);
 	}
 	int     CompareLeftNoCase(const char *cstr, size_t count = -1) const;
 	// Compares any part of this string with given string
 	int     CompareMid(const String &str, size_t from, size_t count = -1) const {
-		return CompareMid(str._cstr, from, count != -1 ? count : str._len);
+		return CompareMid(str._cstr, from, count != npos ? count : str._len);
 	}
 	int     CompareMid(const char *cstr, size_t from, size_t count = -1) const;
 	int     CompareMidNoCase(const String &str, size_t from, size_t count = -1) const {
-		return CompareMidNoCase(str._cstr, from, count != -1 ? count : str._len);
+		return CompareMidNoCase(str._cstr, from, count != npos ? count : str._len);
 	}
 	int     CompareMidNoCase(const char *cstr, size_t from, size_t count = -1) const;
 	// Compares the rightmost part of this string with given C-string
 	int     CompareRight(const String &str, size_t count = -1) const {
-		return CompareRight(str._cstr, count != -1 ? count : str._len);
+		return CompareRight(str._cstr, count != npos ? count : str._len);
 	}
 	int     CompareRight(const char *cstr, size_t count = -1) const;
 	int     CompareRightNoCase(const String &str, size_t count = -1) const {
-		return CompareRightNoCase(str._cstr, count != -1 ? count : str._len);
+		return CompareRightNoCase(str._cstr, count != npos ? count : str._len);
 	}
 	int     CompareRightNoCase(const char *cstr, size_t count = -1) const;
 	// Convenience aliases for Compare functions
@@ -379,9 +379,6 @@ public:
 	// Operators
 	//-------------------------------------------------------------------------
 
-	inline operator const char *() const {
-		return _cstr;
-	}
 	// Assign String by sharing data reference
 	String &operator=(const String &str);
 	// Move operator
@@ -413,6 +410,10 @@ public:
 	// Converts an AGS string to a ScummVM one
 	operator Common::String() const {
 		return Common::String(_cstr);
+	}
+	// Fixes compilation error in script_set
+	operator bool() const {
+		return !IsEmpty();
 	}
 
 private:

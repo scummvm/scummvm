@@ -146,7 +146,7 @@ Common::Error AGSEngine::run() {
 		return Common::kUnknownError;
 
 	if (_G(justDisplayVersion)) {
-		_G(platform)->WriteStdOut(AGS3::get_engine_string());
+		_G(platform)->WriteStdOut(AGS3::get_engine_string().GetCStr());
 		return Common::kNoError;
 	}
 

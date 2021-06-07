@@ -316,7 +316,7 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 	color_t text_color = ds->GetCompatibleColor(color);
 	data_to_game_coords((int *)&xx, (int *)&yy); // stupid! quick tweak
 	for (size_t i = 0; i < Lines.Count(); i++)
-		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, Lines[i]);
+		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, Lines[i].GetCStr());
 }
 
 Bitmap glVirtualScreenWrap;

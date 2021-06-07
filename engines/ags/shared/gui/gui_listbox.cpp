@@ -159,7 +159,7 @@ void GUIListBox::Draw(Shared::Bitmap *ds) {
 		int item_index = item + TopItem;
 		PrepareTextToDraw(Items[item_index]);
 
-		GUI::DrawTextAlignedHor(ds, _textToDraw, Font, text_color, X + 1 + pixel_size, right_hand_edge, at_y + 1,
+		GUI::DrawTextAlignedHor(ds, _textToDraw.GetCStr(), Font, text_color, X + 1 + pixel_size, right_hand_edge, at_y + 1,
 		                        (FrameAlignment)TextAlignment);
 	}
 

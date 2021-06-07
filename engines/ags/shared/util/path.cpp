@@ -71,11 +71,11 @@ bool IsFileOrDir(const String &filename) {
 }
 
 String GetFilename(const String &path) {
-	return get_filename(path);
+	return get_filename(path.GetCStr());
 }
 
 String GetFileExtension(const String &path) {
-	return get_extension(path);
+	return get_extension(path.GetCStr());
 }
 
 int ComparePaths(const String &path1, const String &path2) {
@@ -120,8 +120,8 @@ bool IsSameOrSubDir(const String &parent, const String &path) {
 	char can_path[MAX_PATH];
 	char relative[MAX_PATH];
 	// canonicalize_filename treats "." as "./." (file in working dir)
-	const char *use_parent = parent == "." ? "./" : parent;
-	const char *use_path = path == "." ? "./" : path;
+	const char *use_parent = parent == "." ? "./" : parent.GetCStr();
+	const char *use_path = path == "." ? "./" : path.GetCStr();
 	canonicalize_filename(can_parent, use_parent, MAX_PATH);
 	canonicalize_filename(can_path, use_path, MAX_PATH);
 	const char *pstr = make_relative_filename(relative, can_parent, can_path, MAX_PATH);
@@ -136,7 +136,7 @@ bool IsSameOrSubDir(const String &parent, const String &path) {
 }
 
 bool IsRelativePath(const String &path) {
-	return is_relative_filename(path);
+	return is_relative_filename(path.GetCStr()) != 0;
 }
 
 void FixupPath(String &path) {
@@ -185,7 +185,7 @@ String MakeAbsolutePath(const String &path) {
 	//}
 #endif
 	char buf[MAX_PATH];
-	canonicalize_filename(buf, abs_path, MAX_PATH);
+	canonicalize_filename(buf, abs_path.GetCStr(), MAX_PATH);
 	abs_path = buf;
 	FixupPath(abs_path);
 	return abs_path;
@@ -196,8 +196,8 @@ String MakeRelativePath(const String &base, const String &path) {
 	char can_path[MAX_PATH];
 	char relative[MAX_PATH];
 	// canonicalize_filename treats "." as "./." (file in working dir)
-	const char *use_parent = base == "." ? "./" : base;
-	const char *use_path = path == "." ? "./" : path; // FIXME?
+	const char *use_parent = base == "." ? "./" : base.GetCStr();
+	const char *use_path = path == "." ? "./" : path.GetCStr(); // FIXME?
 	canonicalize_filename(can_parent, use_parent, MAX_PATH);
 	canonicalize_filename(can_path, use_path, MAX_PATH);
 	String rel_path = make_relative_filename(relative, can_parent, can_path, MAX_PATH);
@@ -249,7 +249,7 @@ String FixupSharedFilename(const String &filename) {
 String GetPathInASCII(const String &path) {
 #if AGS_PLATFORM_OS_WINDOWS
 	char ascii_buffer[MAX_PATH];
-	if (GetShortPathNameA(path, ascii_buffer, MAX_PATH) == 0)
+	if (GetShortPathNameA(path.GetCStr(), ascii_buffer, MAX_PATH) == 0)
 		return "";
 	return ascii_buffer;
 #else

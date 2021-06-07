@@ -893,7 +893,7 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 		out->WriteInt8(room->MessageInfos[i].Flags);
 	}
 	for (size_t i = 0; i < room->MessageCount; ++i)
-		write_string_encrypt(out, room->Messages[i]);
+		write_string_encrypt(out, room->Messages[i].GetCStr());
 
 	out->WriteInt16(0); // legacy room animations
 

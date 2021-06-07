@@ -343,7 +343,7 @@ int Game_SetSaveGameDirectory(const String &newFolder) {
 const char *Game_GetSaveSlotDescription(int slnum) {
 	String description;
 	if (read_savedgame_description(get_save_game_path(slnum), description)) {
-		return CreateNewScriptString(description);
+		return CreateNewScriptString(description.GetCStr());
 	}
 	return nullptr;
 }
@@ -635,7 +635,7 @@ void Game_SetIgnoreUserInputAfterTextTimeoutMs(int newValueMs) {
 }
 
 const char *Game_GetFileName() {
-	return CreateNewScriptString(_GP(ResPaths).GamePak.Name);
+	return CreateNewScriptString(_GP(ResPaths).GamePak.Name.GetCStr());
 }
 
 const char *Game_GetName() {
@@ -1069,7 +1069,7 @@ bool try_restore_save(const Shared::String &path, int slot) {
 		if (data_overwritten)
 			quitprintf("%s", error.GetCStr());
 		else
-			Display(error);
+			Display(error.GetCStr());
 		return false;
 	}
 	return true;
@@ -1360,7 +1360,7 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 	}
 
 	buffer[0] = 0;
-	replace_tokens(get_translation(_GP(thisroom).Messages[msnum]), buffer, maxlen);
+	replace_tokens(get_translation(_GP(thisroom).Messages[msnum].GetCStr()), buffer, maxlen);
 }
 
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize) {

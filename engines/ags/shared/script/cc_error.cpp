@@ -48,11 +48,11 @@ void cc_error(const char *descr, ...) {
 
 	if (_G(currentline) > 0) {
 		// [IKM] Implementation is project-specific
-		std::pair<String, String> errinfo = cc_error_at_line(displbuf);
+		std::pair<String, String> errinfo = cc_error_at_line(displbuf.GetCStr());
 		_G(ccErrorString) = errinfo.first;
 		_G(ccErrorCallStack) = errinfo.second;
 	} else {
-		_G(ccErrorString) = cc_error_without_line(displbuf);
+		_G(ccErrorString) = cc_error_without_line(displbuf.GetCStr());
 		_G(ccErrorCallStack) = "";
 	}
 

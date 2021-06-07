@@ -61,7 +61,7 @@ bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const As
 
 
 /* static */ bool AssetManager::IsDataFile(const String &data_file) {
-	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
+	Stream *in = ci_fopen(data_file.GetCStr(), Shared::kFile_Open, Shared::kFile_Read);
 	if (in) {
 		MFLUtil::MFLError err = MFLUtil::TestIsMFL(in, true);
 		delete in;
@@ -71,7 +71,7 @@ bool AssetManager::LibsByPriority::operator()(const AssetLibInfo *lib1, const As
 }
 
 /* static */ AssetError AssetManager::ReadDataFileTOC(const String &data_file, AssetLibInfo &lib) {
-	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
+	Stream *in = ci_fopen(data_file.GetCStr(), Shared::kFile_Open, Shared::kFile_Read);
 	if (in) {
 		MFLUtil::MFLError err = MFLUtil::ReadHeader(lib, in);
 		delete in;
@@ -178,7 +178,7 @@ AssetError AssetManager::RegisterAssetLib(const String &path, AssetLibEx *&out_l
 	}
 	// ...else try open a data library
 	else {
-		Stream *in = ci_fopen(path, Shared::kFile_Open, Shared::kFile_Read);
+		Stream *in = ci_fopen(path.GetCStr(), Shared::kFile_Open, Shared::kFile_Read);
 		if (!in)
 			return kAssetErrNoLibFile; // can't be opened, return error code
 
@@ -234,7 +234,7 @@ bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_
 	if (asset == nullptr)
 		return false;
 
-	String libfile = cbuf_to_string_and_free(ci_find_file(lib->BaseDir, lib->LibFileNames[asset->LibUid]));
+	String libfile = cbuf_to_string_and_free(ci_find_file(lib->BaseDir.GetCStr(), lib->LibFileNames[asset->LibUid].GetCStr()));
 	if (libfile.IsEmpty())
 		return false;
 	if (loc) {
@@ -247,7 +247,7 @@ bool AssetManager::GetAssetFromLib(const AssetLibInfo *lib, const String &asset_
 
 bool AssetManager::GetAssetFromDir(const AssetLibInfo *lib, const String &file_name,
                                    AssetLocation *loc, FileOpenMode open_mode, FileWorkMode work_mode) const {
-	String found_file = cbuf_to_string_and_free(ci_find_file(lib->BaseDir, file_name));
+	String found_file = cbuf_to_string_and_free(ci_find_file(lib->BaseDir.GetCStr(), file_name.GetCStr()));
 	if (found_file.IsEmpty() || !Path::IsFile(found_file))
 		return false; // not found, or not a file
 

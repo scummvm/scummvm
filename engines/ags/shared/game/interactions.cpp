@@ -349,7 +349,7 @@ void InteractionVariable::Read(Stream *in) {
 }
 
 void InteractionVariable::Write(Shared::Stream *out) const {
-	out->Write(Name, INTER_VAR_NAME_LENGTH);
+	out->Write(Name.GetCStr(), INTER_VAR_NAME_LENGTH);
 	out->WriteInt8(Type);
 	out->WriteInt32(Value);
 }
