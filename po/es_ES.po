@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-07 10:39+0000\n"
-"PO-Revision-Date: 2021-06-01 09:32+0000\n"
+"PO-Revision-Date: 2021-06-07 16:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -2776,10 +2776,8 @@ msgid "Pixel-perfect scaling"
 msgstr "Escalado pixel-perfect"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "Escalado pixel-perfect"
+msgstr "Escalado pixel-perfect (sin corregir relación de aspecto)"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
