@@ -73,6 +73,7 @@ enum Platform {
 	kPlatformPocketPC,
 	kPlatformMegaDrive,
 	kPlatformSaturn,
+	kPlatformPippin,
 
 	kPlatformUnknown = -1
 };
