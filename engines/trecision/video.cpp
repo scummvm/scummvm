@@ -110,6 +110,12 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	return true;
 }
 
+// TODO: Background videos only loop smoothly like this,
+// possibly an audio track bug?
+bool NightlongSmackerDecoder::endOfFrames() const {
+	return getCurFrame() >= (int32)getFrameCount() - 1;
+}
+
 AnimManager::AnimManager(TrecisionEngine *vm) : _vm(vm) {
 	for (int i = 0; i < MAXSMACK; ++i) {
 		_smkAnims[i] = nullptr;
@@ -440,7 +446,7 @@ void AnimManager::handleEndOfVideo(int animation, int slot) {
 		smkStop(slot);
 		return;
 	}
-	if (!_smkAnims[slot]->endOfVideo())
+	if (!_smkAnims[slot]->endOfFrames())
 		return;
 	
 	if (!(_animTab[animation]._flag & SMKANIM_LOOP) && !(_animTab[animation]._flag & SMKANIM_BKG)) {

@@ -59,7 +59,7 @@ public:
 	void muteTrack(uint track, bool mute);
 	void setMute(bool mute);
 	bool forceSeekToFrame(uint frame);
-	bool endOfVideo() const override { return !hasFramesLeft(); }
+	bool endOfFrames() const;
 };
 
 class AnimManager {
