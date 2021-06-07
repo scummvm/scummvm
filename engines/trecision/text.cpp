@@ -384,7 +384,7 @@ void TextManager::addText(Common::Point pos, const char *text, uint16 textCol, u
 	t._textCol = textCol;
 	t._shadowCol = shadowCol;
 	t._clear = false;
-	strcpy(t._text, text);
+	t._text = text;
 
 	_textStack.push_back(t);
 }

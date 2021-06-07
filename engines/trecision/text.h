@@ -37,7 +37,7 @@ struct StackText {
 	uint16 _x;
 	uint16 _y;
 	uint16 _textCol, _shadowCol;
-	char _text[256];
+	Common::String _text;
 	bool _clear;
 };
 
