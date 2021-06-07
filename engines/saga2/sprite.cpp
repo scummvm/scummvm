@@ -618,13 +618,28 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	}
 }
 
+static void readActorAnimSet(hResContext *con, ActorAnimSet &ani) {
+	ani.numAnimations = con->readU32LE();
+	ani.poseOffset = con->readU32LE();
+}
+
+static void readColorScheme(hResContext *con, ColorScheme &col) {
+	for (int i = 0; i < 11; ++i)
+		col.bank[i] = con->readByte();
+
+	col.speechColor = con->readByte();
+
+	for (int i = 0; i < 32; ++i)
+		col.name[i] = con->readSByte();
+}
+
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	ActorAppearance *aa;
 	int16           bank;
-
-#if DEBUG
-	WriteStatusF(2, "Load App: %s", idname(id));
-#endif
+	const int actorAnimSetSize = 8;
+	const int colorSchemeSize = 44;
+	int poseListSize;
+	int schemeListSize;
 
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
@@ -665,11 +680,11 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	}
 
 	if (aa->poseList)
-		free(aa->poseList);
+		delete[] aa->poseList;
 	aa->poseList = nullptr;
 
 	if (aa->schemeList)
-		free(aa->schemeList);
+		delete[] aa->schemeList;
 	aa->schemeList = nullptr;
 
 	//  Set ID and use count
@@ -678,8 +693,22 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
-	aa->poseList    = (ActorAnimSet **)poseRes->loadResource(id, "pose list");
-	aa->schemeList  = (ColorScheme **)schemeRes->loadResource(id, "scheme list");
+
+	if(poseRes->seek(id) == 0)
+		error("Could not load pose list");
+
+	poseListSize = poseRes->size(id) / actorAnimSetSize;
+	aa->poseList = new ActorAnimSet[poseListSize];
+	for (int i = 0; i < poseListSize; ++i)
+		readActorAnimSet(poseRes, aa->poseList[i]);
+
+	if(schemeRes->seek(id) == 0)
+		error("Could not load scheme list");
+
+	schemeListSize = schemeRes->size(id) / colorSchemeSize;
+	aa->schemeList = new ColorScheme[schemeListSize];
+	for (int i = 0; i < schemeListSize; ++i)
+		readColorScheme(schemeRes, aa->schemeList[i]);
 
 	return aa;
 }
@@ -699,6 +728,11 @@ void ReleaseActorAppearance(ActorAppearance *aa) {
    Sprite initialization routines
  * ===================================================================== */
 
+static void readSpriteResource(hResContext *con, SpriteSet &spr) {
+	spr.count = con->readU32LE();
+	spr.offsets[0] = con->readU32LE();
+}
+
 void initSprites(void) {
 	int     i;
 
@@ -717,6 +751,10 @@ void initSprites(void) {
 
 	// object sprites
 	objectSprites = (SpriteSet *)spriteRes->loadResource(objectSpriteID, "object sprites");
+	//if (spriteRes->seek(objectSpriteID) == 0)
+	//	error("Unable to load object sprites");
+
+	//readSpriteResource(spriteRes, *objectSprites)
 	assert(objectSprites);
 
 	// intagible object sprites
