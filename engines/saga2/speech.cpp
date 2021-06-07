@@ -1192,10 +1192,9 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 		//  default color.
 		if (a == getCenterActor()) sp->penColor = 3 + 9 /* 1 */;
 		else if (a->appearance
-		         &&  a->appearance->schemeList
-		         &&  *a->appearance->schemeList) {
+		         &&  a->appearance->schemeList) {
 			sp->penColor =
-			    (*a->appearance->schemeList)[ a->colorScheme ].speechColor + 9;
+			    a->appearance->schemeList[a->colorScheme].speechColor + 9;
 		} else sp->penColor = 4 + 9;
 	} else {
 		sp->penColor = 4 + 9;

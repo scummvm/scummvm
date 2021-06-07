@@ -1903,10 +1903,9 @@ void Actor::getColorTranslation(ColorTable map) {
 	//  If actor has color table loaded, then calculate the
 	//  translation table.
 	if (appearance
-	        &&  appearance->schemeList
-	        &&  *appearance->schemeList) {
+	        &&  appearance->schemeList) {
 		buildColorTable(map,
-		                (*appearance->schemeList)[ colorScheme ].bank,
+		                (appearance->schemeList)[ colorScheme ].bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }
@@ -1928,7 +1927,7 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 	if (appearance == NULL) return 0;
 
 	//  If this animation has no frames, then return FALSE
-	anim = (*appearance->poseList)->animation(newState);
+	anim = appearance->poseList->animation(newState);
 	numPoses = anim->count[ currentFacing ];
 	if (numPoses <= 0) return 0;
 
@@ -1961,7 +1960,7 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 	if (appearance == NULL) return FALSE;
 
 	//  If this animation has no frames, then return FALSE
-	anim = (*appearance->poseList)->animation(newState);
+	anim = appearance->poseList->animation(newState);
 
 	if (anyDir) {
 		for (int i = 0; i < numPoseFacings; i++) {
@@ -1983,7 +1982,7 @@ int16 Actor::animationFrames(int16 actionType, Direction dir) {
 
 	ActorAnimation  *anim;
 
-	anim = (*appearance->poseList)->animation(actionType);
+	anim = appearance->poseList->animation(actionType);
 
 	return anim->count[ dir ];
 }
@@ -2013,7 +2012,7 @@ bool Actor::nextAnimationFrame(void) {
 	} else animationFlags &= ~animateOnHold;
 
 	//  Get the number of frames in the animation
-	anim = (*appearance->poseList)->animation(currentAnimation);
+	anim = appearance->poseList->animation(currentAnimation);
 	numPoses = anim->count[ currentFacing ];
 	if (numPoses <= 0) {
 		animationFlags |= animateFinished;

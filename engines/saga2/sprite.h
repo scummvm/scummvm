@@ -146,6 +146,7 @@ struct ActorAnimSet {
 	uint32          numAnimations,          // number of animations
 	                poseOffset;             // offset to poses table
 
+	// FIXME: Pointer Arithmetic
 	ActorAnimation *animation(int num) {
 		return (ActorAnimation *)(this + 1) + num;
 	}
@@ -255,8 +256,8 @@ public:
 	int16            useCount;               // how many actors using this
 	uint32           id;
 
-	ActorAnimSet    **poseList;             // list of action sequences
-	ColorScheme     **schemeList;           // color remapping info
+	ActorAnimSet    *poseList;             // list of action sequences
+	ColorScheme     *schemeList;           // color remapping info
 
 	//  Table of sprite sets. Each entry in the table
 	//  represents a different "bank" of sprites

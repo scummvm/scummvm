@@ -171,7 +171,7 @@ void DisplayNodeList::draw(void) {
 	objectSet = objectSprites;
 	if (objectSet == NULL)
 		error("Object sprites have been dumped!\n");
-	spellSet = (SpriteSet *)lockResource((RHANDLE) spellSprites);
+	spellSet = *spellSprites;
 	if (spellSet == NULL)
 		error("Spell sprites have been dumped!\n");
 
@@ -575,8 +575,8 @@ void DisplayNode::drawObject(void) {
 
 			//  Fetch the animation series, and determine which
 			//  pose in the series is the current one.
-			anim = (*aa->poseList)->animation(a->currentAnimation);
-			pose = (*aa->poseList)->pose(anim,
+			anim = aa->poseList->animation(a->currentAnimation);
+			pose = aa->poseList->pose(anim,
 			                             a->currentFacing,
 			                             a->currentPose);
 
