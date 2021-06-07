@@ -485,6 +485,11 @@ int Actor::calcMovementFactor(const Common::Point& next) {
 	diffY = next.y - _pos.y;
 	deltaYFactor = _speedy << 16;
 
+	// These two lines fix bug #1052 (INDY3: Hitler facing wrong directions in the Berlin scene).
+	// I can't see anything like this in the original SCUMM1/2 code, so I limit this to SCUMM3.
+	if (_vm->_game.version == 3 && (int)_speedx > ABS(diffX) && (int)_speedy > ABS(diffY))
+		return 0;
+
 	if (diffY < 0)
 		deltaYFactor = -deltaYFactor;
 
@@ -1418,11 +1423,6 @@ void Actor::setDirection(int direction) {
 	uint aMask;
 	int i;
 	uint16 vald;
-
-	// HACK to fix bug #774783
-	// If Hitler's direction is being set to anything other than 90, set it to 90
-	if ((_vm->_game.id == GID_INDY3) && _vm->_roomResource == 46 && _number == 9 && direction != 90)
-		direction = 90;
 
 	// Do nothing if actor is already facing in the given direction
 	if (_facing == direction)
