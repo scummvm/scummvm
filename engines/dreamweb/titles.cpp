@@ -23,6 +23,8 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 #include "engines/util.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 
 namespace DreamWeb {
 
@@ -99,6 +101,11 @@ void DreamWebEngine::gettingShot() {
 }
 
 void DreamWebEngine::bibleQuote() {
+	const char *story = "And I heard a great voice out of the temple saying to the seven angels. "
+						"Go your ways and pour out the vails of the wrath of god upon the earth. "
+						"Book of revelation Chapter 16 verse 7.";
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	initGraphics(640, 480);
 
 	showPCX("I00");
@@ -110,7 +117,15 @@ void DreamWebEngine::bibleQuote() {
 		return; // "biblequotearly"
 	}
 
-	hangOne(560);
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(story);
+		while (ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
+			hangOne(1);
+		ttsMan->stop();
+
+	} else
+		hangOne(560);
+
 	if (_lastHardKey == Common::KEYCODE_ESCAPE) {
 		_lastHardKey = Common::KEYCODE_INVALID;
 		return; // "biblequotearly"
