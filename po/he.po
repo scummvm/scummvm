@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-05 13:17+0000\n"
+"POT-Creation-Date: 2021-06-07 10:39+0000\n"
 "PO-Revision-Date: 2021-04-28 00:30+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2303,7 +2303,7 @@ msgstr ""
 "להזמין למוזיקה של המשחק.\n"
 "לפרטים, עיין בקובץ README."
 
-#: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
+#: engines/engine.cpp:547 engines/metaengine.cpp:312 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"

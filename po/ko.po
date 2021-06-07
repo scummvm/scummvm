@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-05 13:17+0000\n"
+"POT-Creation-Date: 2021-06-07 10:39+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2291,7 +2291,7 @@ msgstr ""
 "트랙을 추출해야 합니다.\n"
 "문서(CD Audio)에서 추가 정보를 확인해 주세요."
 
-#: engines/engine.cpp:547 engines/metaengine.cpp:325 engines/savestate.cpp:81
+#: engines/engine.cpp:547 engines/metaengine.cpp:312 engines/savestate.cpp:81
 #: backends/platform/ios7/ios7_osys_main.cpp:253 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
