@@ -1194,9 +1194,6 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	if (!GAME_IS_CRUSADER)
 		return 0;
 
-	if (GAME_IS_REGRET)
-		warning("Item::fireWeapon: TODO: Update for Regret (different firetypes)");
-
 	ix += x;
 	iy += y;
 	iz += z;
@@ -1229,7 +1226,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		return 0;
 	}
 
-	int spriteframe = 0; // fire types 1, 2, 0xb, 0xd
+	int spriteframe = 0; // fire types 1, 2, 7, 8, 0xb, 0xd
 	switch (firetype) {
 	case 3:
 	case 9:
@@ -1246,8 +1243,14 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		spriteframe = 0x47 + getRandom() % 5;
 		break;
 	case 0xf:
+	case 0x12: // No Regret only
+	case 0x13: // No Regret only
 		spriteframe = 0x4c;
 		break;
+	case 0x10: // No Regret only
+		spriteframe = dir + 0x50;
+	case 0x11: // No Regret only
+		spriteframe = dir * 6 + 0x78;
 	default:
 		break;
 	}
