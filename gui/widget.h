@@ -483,6 +483,8 @@ class EntryContainerWidget;
 class GridWidget : public ContainerWidget {
 private:
 	Common::Array<Graphics::ManagedSurface *> _platformIcons;
+	// _entries should be reserved to hold few more than visible entries
+	// Fixing it to 30 for now, 6 items * (4 rows + 1 extra row);
 	Common::Array<EntryContainerWidget *> _entries;
 	Common::Array<LauncherEntry> _allEntries;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
@@ -562,7 +564,7 @@ public:
 	void setActiveInstallation(int i) {setActiveInstallation(_installations[i]);};
 	void updateEntry();
 	void drawWidget() override;
-	void setVisible2(bool e);
+	void setEnabled(bool e);
 
 };
 

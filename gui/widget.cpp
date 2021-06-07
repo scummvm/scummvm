@@ -1191,7 +1191,7 @@ void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 		newEntry->updateEntry();
 		entryById[i->domain->getVal("gameid")] = newEntry;
 	}
-	_innerHeight = 100 + (row * (kThumbnailHeight + 80));
+	_innerHeight = 100 + ((row + 1) * (kThumbnailHeight + 80));
 	_innerWidth = 100 + (col * (kThumbnailWidth + 50));
 	// warning("%d %d", _innerWidth, _innerHeight);
 }
@@ -1262,6 +1262,10 @@ Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	// warning("Wheel : %d %d %d", x, y, direction);
 	_scrollPos -= direction*40;
+	if (_scrollPos > 0)
+		_scrollPos = 0;
+	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
+		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 	int row = 0, col = 0;
 	int k = 0;
 	for (Common::Array<EntryContainerWidget *>::iterator iter = _entries.begin(); iter != _entries.end(); ++iter) {
@@ -1293,7 +1297,12 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	int row = 0, col = 0;
-	_entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 0);
+	_entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 1);
+	int rows = _entries.size() / _entriesPerRow;
+	_innerHeight = 100 + ((rows + 1) * (kThumbnailHeight + 80));
+	_innerWidth = 100 + (_entriesPerRow * (kThumbnailWidth + 50));
+	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
+		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 	int k = 0;
 	for (Common::Array<EntryContainerWidget *>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
 		k = row * _entriesPerRow + col;
