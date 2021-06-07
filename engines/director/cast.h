@@ -56,7 +56,7 @@ public:
 	Archive *getArchive() const { return _castArchive; };
 	Common::String getMacName() const { return _macName; }
 
-	void loadConfig();
+	bool loadConfig();
 	void loadCast();
 	void loadCastDataVWCR(Common::SeekableReadStreamEndian &stream);
 	void loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res);

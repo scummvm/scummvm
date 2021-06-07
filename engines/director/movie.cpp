@@ -102,7 +102,9 @@ bool Movie::loadArchive() {
 	Common::SeekableReadStreamEndian *r = nullptr;
 
 	// Config
-	_cast->loadConfig();
+	if (!_cast->loadConfig())
+		return false;
+
 	_version = _cast->_version;
 	_movieRect = _cast->_movieRect;
 	// Wait to handle _stageColor until palette is loaded in loadCast...
