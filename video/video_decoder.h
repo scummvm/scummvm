@@ -238,7 +238,7 @@ public:
 	 * Returns if the video has reached the end or not.
 	 * @return true if the video has finished playing or if none is loaded, false otherwise
 	 */
-	virtual bool endOfVideo() const;
+	bool endOfVideo() const;
 
 	/**
 	 * Returns the current frame number of the video.
