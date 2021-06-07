@@ -101,7 +101,7 @@ void ScummEngine::setOwnerOf(int obj, int owner) {
 
 	// In Sam & Max this is necessary, or you won't get your stuff back
 	// from the Lost and Found tent after riding the Cone of Tragedy. But
-	// it probably applies to all V6+ games. See bugs #493153 and #907113.
+	// it probably applies to all V6+ games. See bugs #52 and #1507.
 	// FT disassembly is checked, behavior is correct. [sev]
 
 	int arg = (_game.version >= 6) ? obj : 0;
@@ -502,7 +502,7 @@ int ScummEngine::getObjActToObjActDist(int a, int b) {
 	// Perform adjustXYToBeInBox() *only* if the first item is an
 	// actor and the second is an object. This used to not check
 	// whether the second item is a non-actor, which caused bug
-	// #853874).
+	// #1320).
 	if (acta && !actb) {
 		AdjustBoxResult r = acta->adjustXYToBeInBox(x2, y2);
 		x2 = r.x;

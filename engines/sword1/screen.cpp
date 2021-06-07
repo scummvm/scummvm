@@ -604,7 +604,7 @@ void Screen::verticalMask(uint16 x, uint16 y, uint16 bWidth, uint16 bHeight) {
 
 	for (uint16 blkx = 0; blkx < bWidth; blkx++) {
 		// A sprite can be masked by several layers at the same time,
-		// so we have to check them all. See bug #917427.
+		// so we have to check them all. See bug #1536.
 		for (int16 level = _roomDefTable[_currentScreen].totalLayers - 2; level >= 0; level--) {
 			if (_layerGrid[level][gridX + blkx + gridY * lGridSizeX]) {
 				uint16 *grid = _layerGrid[level] + gridX + blkx + gridY * lGridSizeX;

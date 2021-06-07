@@ -399,7 +399,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	// Thus, we should probably not stop music when restoring from one of
 	// these saves. This change stops the Mole Man theme from going quiet in
 	// Sam & Max when Doug tells you about the Ball of Twine, as mentioned in
-	// patch #886058.
+	// patch #8316.
 	//
 	// If we don't have iMUSE at all we may as well stop the sounds. The previous
 	// default behavior here was to stopAllSounds on all state restores.
@@ -465,7 +465,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 	if (_screenTop < 0)
 		_screenTop = 0;
 
-	// WORKAROUND bug #795214: For unknown reasons, object 819 sometimes is in
+	// WORKAROUND bug #1191: For unknown reasons, object 819 sometimes is in
 	// state 1 in old save games, implying it should be drawn. This in turn
 	// results in a crash when entering the church, as object 819 is part of the
 	// exitof the church and there are no graphics assigned to it.
@@ -1484,7 +1484,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 		syncWithSerializer(s, info);
 		// If we are loading, and the music being loaded was supposed to loop
 		// forever, then resume playing it. This helps a lot when the audio CD
-		// is used to provide ambient music (see bug #788195).
+		// is used to provide ambient music (see bug #1150).
 		if (s.isLoading() && info.playing && info.numLoops < 0)
 			_sound->playCDTrackInternal(info.track, info.numLoops, info.start, info.duration);
 	}
@@ -1715,7 +1715,7 @@ void ScummEngine::loadResourceOLD(Common::Serializer &ser, ResType type, ResId i
 			}
 			if (type == rtObjectName && ser.getVersion() >= VER(25)) {
 				// Paranoia: We increased the possible number of new names
-				// to fix bugs #933610 and #936323. The savegame format
+				// to fix bugs #1591 and #1600. The savegame format
 				// didn't change, but at least during the transition
 				// period there is a slight chance that we try to load
 				// more names than we have allocated space for. If so,

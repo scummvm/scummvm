@@ -1228,7 +1228,7 @@ void ScummEngine_v2::stopScriptCommon(int script) {
 	}
 
 	if (_game.id == GID_MANIAC && _roomResource == 26 && vm.slot[_currentScript].number == 10001) {
-	// FIXME: Nasty hack for bug #915575
+	// FIXME: Nasty hack for bug #1529
 	// Don't let the exit script for room 26 stop the script (116), when
 	// switching to the dungeon (script 89)
 		if (script == MM_SCRIPT(111) && isScriptRunning(MM_SCRIPT(84)))

@@ -1036,7 +1036,7 @@ void ScummEngine::killScriptsAndResources() {
 				// no longer in use (i.e. not owned by anyone anymore); or if
 				// it is an object which is owned by a room.
 				if (owner == 0 || (_game.version < 7 && owner == OF_OWNER_ROOM)) {
-					// WORKAROUND for a problem mentioned in bug report #941275:
+					// WORKAROUND for a problem mentioned in bug report #1607:
 					// In FOA in the sentry room, in the chest plate of the statue,
 					// the pegs may be renamed to mouth: this custom name is lost
 					// when leaving the room; this hack prevents this).
@@ -1485,7 +1485,7 @@ int ScummEngine::resStrLen(const byte *src) {
 			chr = *src++;
 			num++;
 
-			// WORKAROUND for bug #985948, a script bug in Indy3. See also
+			// WORKAROUND for bug #1675, a script bug in Indy3. See also
 			// the corresponding code in ScummEngine::convertMessageToString().
 			if (_game.id == GID_INDY3 && chr == 0x2E) {
 				continue;

@@ -397,7 +397,7 @@ int ScummEngine_v6::readArray(int array, int idx, int base) {
 	if (!ah)
 		error("readArray: invalid array %d (%d)", array, readVar(array));
 
-	// WORKAROUND bug #645711. This is clearly a script bug, as this script
+	// WORKAROUND bug #600. This is clearly a script bug, as this script
 	// excerpt shows nicely:
 	// ...
 	// [03A7] (5D)         if (isAnyOf(array-447[localvar13][localvar14],[0,4])) {
@@ -755,7 +755,7 @@ void ScummEngine_v6::o6_startScript() {
 		_sound->soundKludge(list, 2);
 	}
 
-	// WORKAROUND bug #556558: At Dino Bungee National Memorial, the buttons for
+	// WORKAROUND bug #269: At Dino Bungee National Memorial, the buttons for
 	// the Wally and Rex dinosaurs will always restart their speech, instead of
 	// stopping and starting their speech. This was a script bug in the original
 	// game.
@@ -764,7 +764,7 @@ void ScummEngine_v6::o6_startScript() {
 		o6_breakHere();
 	}
 
-	// WORKAROUND bug #903223: In Puerto Pollo, if you have Guybrush examine
+	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
 	// the church clock, he'll read out the current time. Nice touch, only that
 	// it sounds crap in the german version (and maybe others, too). It seems
 	// the original engine of the german version played just a simple fixed
@@ -1153,7 +1153,7 @@ void ScummEngine_v6::o6_walkActorToObj() {
 	} else {
 		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
 		if (_game.id == GID_SAMNMAX && a2 == 0) {
-			// WORKAROUND bug #742676 SAM: Fish Farm. Note quite sure why it
+			// WORKAROUND bug #801 SAM: Fish Farm. Note quite sure why it
 			// happens, whether it's normal or due to a bug in the ScummVM code.
 			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
 			return;
@@ -1234,7 +1234,7 @@ void ScummEngine_v6::o6_animateActor() {
 	int act = pop();
 	if (_game.id == GID_TENTACLE && _roomResource == 57 &&
 		vm.slot[_currentScript].number == 19 && act == 593) {
-		// WORKAROUND bug #743363: This very odd case (animateActor(593,250))
+		// WORKAROUND bug #813: This very odd case (animateActor(593,250))
 		// occurs in DOTT, in the cutscene after George cuts down the "cherry
 		// tree" and the tree Laverne is trapped in vanishes...
 		// Not sure if this means animateActor somehow also must work for objects
@@ -2220,7 +2220,7 @@ void ScummEngine_v6::o6_wait() {
 			break;
 		return;
 	case 232:		// SO_WAIT_FOR_TURN
-		// WORKAROUND for bug #744441: An angle will often be received as the
+		// WORKAROUND for bug #819: An angle will often be received as the
 		// actor number due to script bugs in The Dig. In all cases where this
 		// occurs, _curActor is set just before it, so we can use it instead.
 		//
@@ -2355,7 +2355,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUND for bug #896489: see below for detailed description
+	// WORKAROUND for bug #1452: see below for detailed description
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2383,7 +2383,7 @@ void ScummEngine_v6::o6_talkActor() {
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);
 
-	// WORKAROUND for bug #896489: "DIG: Missing subtitles when talking to Brink"
+	// WORKAROUND for bug #1452: "DIG: Missing subtitles when talking to Brink"
 	// Original script does not have wait.waitForMessage() after several messages:
 	//
 	// [011A] (5D)   if (getActorCostume(VAR_EGO) == 1) {
@@ -2744,7 +2744,7 @@ void ScummEngine_v6::o6_kernelGetFunctions() {
 
 	switch (args[0]) {
 	case 113:
-		// WORKAROUND for bug #899249: The scripts used for screen savers
+		// WORKAROUND for bug #1465: The scripts used for screen savers
 		// in Sam & Max use hard coded values for the maximum height and width.
 		// This causes problems in rooms (ie. Credits) where their values are
 		// lower, so we set result to zero if out of bounds.

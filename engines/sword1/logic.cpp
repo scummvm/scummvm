@@ -98,7 +98,7 @@ void Logic::initialize() {
 void Logic::newScreen(uint32 screen) {
 	Object *compact = (Object *)_objMan->fetchObject(PLAYER);
 
-	// work around script bug #911508
+	// work around script bug #1520
 	if (((screen == 25) || (_scriptVars[SCREEN] == 25)) && (_scriptVars[SAND_FLAG] == 4)) {
 		Object *cpt = _objMan->fetchObject(SAND_25);
 		Object *george = _objMan->fetchObject(PLAYER);
@@ -1212,7 +1212,7 @@ int Logic::fnTheyDo(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param
 //send an instruction to mega we're talking to and wait
 //until it has finished before returning to script
 int Logic::fnTheyDoWeWait(Object *cpt, int32 id, int32 tar, int32 instruc, int32 param1, int32 param2, int32 param3, int32 x) {
-	// workaround for scriptbug #928791: Freeze at hospital
+	// workaround for script bug #1575: Freeze at hospital
 	// in at least one game version, a script forgets to set sam_returning back to zero
 	if ((tar == SAM) && (instruc == INS_talk) && (param2 == 2162856))
 		_scriptVars[SAM_RETURNING] = 0;

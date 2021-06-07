@@ -77,7 +77,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		stopCycle(0);
 
 	if (_game.id == GID_SAMNMAX) {
-		// WORKAROUND bug #85373 SAM: Overlapping music at Bigfoot convention
+		// WORKAROUND bug #1132 SAM: Overlapping music at Bigfoot convention
 		// Added sound queue processing between execution of exit
 		// script and entry script. In the case of this bug, the
 		// entry script required that the iMuse state be fully up
@@ -99,7 +99,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 
 	if (_game.version >= 7) {
 		// Set the shadow palette(s) to all black. This fixes
-		// bug #795940, and actually makes some sense (after all,
+		// bug #1196, and actually makes some sense (after all,
 		// shadows tend to be rather black, don't they? ;-)
 		memset(_shadowPalette, 0, NUM_SHADOW_PALETTE * 256);
 	} else {

@@ -437,7 +437,7 @@ bool Screen::endRenderCycle() {
 
 #ifdef LIMIT_FRAME_RATE
 	// Give the other threads some breathing space. This apparently helps
-	// against bug #875683, though I was never able to reproduce it for
+	// against bug #1386, though I was never able to reproduce it for
 	// myself.
 	_vm->_system->delayMillis(10);
 #endif
