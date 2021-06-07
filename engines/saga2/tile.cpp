@@ -1425,6 +1425,7 @@ static void readMetaTile(hResContext *con, MetaTile &til) {
 void initMaps(void) {
 	int16       i;
 	const int metaTileSize = 30;
+	const int tileRefSize = 4;
 	const int assocSize = 2;
 
 	//  Load all of the tile terrain banks
@@ -1472,18 +1473,23 @@ void initMaps(void) {
 
 		//  If there is tag data, load it
 		if (tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			mapData->activeItemData = (TileRefPtr)LoadResource(tileRes,
-			                           tagDataID + MKTAG(0, 0, 0, (uint8)i),
-			                           "active item data");
+			int tileRefCount = tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) / tileRefSize;
+			mapData->activeItemData = new TileRef[tileRefCount]();
 			if (mapData->activeItemData == nullptr)
 				error("Unable to load active item data");
+
+			for (int k = 0; k < tileRefCount; ++k) {
+				mapData->activeItemData[k].tile = tileRes->readU16LE();
+				mapData->activeItemData[k].flags = tileRes->readByte();
+				mapData->activeItemData[k].tileHeight = tileRes->readByte();
+			}
 		} else
 			mapData->activeItemData = nullptr;
 
 		//  If there is an association list, load it
 		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
 			int assocCount = tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) / assocSize;
-			mapData->assocList = new uint16[assocCount];
+			mapData->assocList = new uint16[assocCount]();
 			if (mapData->assocList == nullptr)
 				error("Unable to load association list");
 
@@ -1504,8 +1510,7 @@ void initMaps(void) {
 			mapData->activeItemList = nullptr;
 
 		//  Compute the number of meta tiles in list
-		mapData->metaCount     =        tileRes->size(metaID + MKTAG(0, 0, 0, (uint8)i))
-		                                /   sizeof(MetaTile); // 2 + 8 + 2 + 4 = 16
+		mapData->metaCount     = metaTileCount;
 
 		//  Compute the number of active items in list
 		mapData->activeCount   =        tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i))
@@ -1553,11 +1558,11 @@ void cleanupMaps(void) {
 
 		//  If there is active item data, dump it
 		if (mapData->activeItemData != nullptr)
-			free(mapData->activeItemData);
+			delete[] mapData->activeItemData;
 
 		//  If there is an association list, dump it
 		if (mapData->assocList != nullptr)
-			free(mapData->assocList);
+			delete[] mapData->assocList;
 
 		//  If there is an active item list, dump it
 		if (mapData->activeItemList != nullptr)
