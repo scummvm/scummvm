@@ -3860,6 +3860,7 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 
 	_vm->clearUseWith();
 	_vm->closeInventoryImmediately();
+	_vm->_mouseLeftBtn = _vm->_mouseRightBtn = false;
 
 	_vm->_flagShowCharacter = true;
 	_vm->_flagCharacterSpeak = false;
