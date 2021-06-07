@@ -372,8 +372,8 @@ void DisplayNode::drawObject(void) {
 	Point16     drawPos;
 	SpriteSet   *ss;
 	Sprite      *bodySprite;
-	ActorAppearance *aa = NULL;
-	SpriteSet   **sprHandle = NULL;
+	ActorAppearance *aa = nullptr;
+	SpriteSet   *sprPtr = nullptr;
 
 	TilePoint   objCoords = obj->getLocation(),
 	            tCoords,
@@ -692,9 +692,10 @@ void DisplayNode::drawObject(void) {
 			//  REM: Locking bug...
 
 			//          ss = (SpriteSet *)RLockHandle( aa->sprites );
-			sprHandle = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
-			ss = (SpriteSet *)lockResource((RHANDLE) sprHandle);
-			if (ss == NULL) return;
+			sprPtr = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
+			ss = sprPtr;
+			if (ss == nullptr)
+				return;
 
 			//  Fill in the SpriteComponent structure for body
 			sc = &scList[ bodyIndex ];
@@ -815,8 +816,6 @@ void DisplayNode::drawObject(void) {
 
 		TBlit(backPort.map, &indicator, indicatorCoords.x, indicatorCoords.y);
 	}
-
-	if (sprHandle) unlockResource((RHANDLE) sprHandle);
 }
 
 //-----------------------------------------------------------------------
@@ -844,9 +843,9 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 					Point16     testPoint;
 					SpriteSet   *ss;
 					Sprite      *spr;
-					ActorAppearance *aa = NULL;
-					SpriteSet   **sprHandle = NULL;
-					bool        flipped = TRUE;
+					ActorAppearance *aa = nullptr;
+					SpriteSet   *sprPtr = nullptr;
+					bool        flipped = true;
 
 					testPoint.x = mouse.x - dn->hitBox.x;
 					testPoint.y = mouse.y - dn->hitBox.y;
@@ -866,9 +865,10 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 
 						if (aa == NULL) continue;
 
-						sprHandle = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
-						ss = (SpriteSet *)lockResource((RHANDLE) sprHandle);
-						if (ss == NULL) continue;
+						sprPtr = aa->spriteBanks[ a->poseInfo.actorFrameBank ];
+						ss = sprPtr;
+						if (ss == nullptr)
+							continue;
 
 						spr = ss->sprite(a->poseInfo.actorFrameIndex);
 						flipped =
@@ -903,8 +903,6 @@ ObjectID pickObject(const Point16 &mouse, TilePoint &objPos) {
 							}
 						}
 					}
-
-					if (sprHandle) unlockResource((RHANDLE) sprHandle);
 				}
 			}
 		}
