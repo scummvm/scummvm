@@ -809,17 +809,26 @@ template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 blitKeyBitmap(const Graphics::ManagedSurface *source, const Common::Point &p, bool themeTrans) {
 	Common::Rect drawRect(p.x, p.y, p.x + source->w, p.y + source->h);
+	Common::Point np;
 	drawRect.clip(_clippingArea);
-	drawRect.moveTo(0, 0);
+	drawRect.translate(-p.x, -p.y);
 
 	if (drawRect.isEmpty()) {
 		return;
 	}
+	if (!_clippingArea.contains(p)) {
+		int16 nx = CLIP(p.x, _clippingArea.left, _clippingArea.right);
+		int16 ny = CLIP(p.y, _clippingArea.top, _clippingArea.bottom);
+		np = Common::Point(nx, ny);
+	}
+	else {
+		np = p;
+	}
 
 	if (themeTrans)
-		_activeSurface->transBlitFrom(*source, drawRect, p, _bitmapAlphaColor);
+		_activeSurface->transBlitFrom(*source, drawRect, np, _bitmapAlphaColor);
 	else
-		_activeSurface->blitFrom(*source, drawRect, p);
+		_activeSurface->blitFrom(*source, drawRect, np);
 }
 
 template<typename PixelType>
