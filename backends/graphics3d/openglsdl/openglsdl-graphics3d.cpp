@@ -179,8 +179,9 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 		// So check if the window needs to be recreated.
 
 		int currentSamples = 0;
-		#if defined(EMSCRIPTEN)
-		// SDL_GL_MULTISAMPLESAMPLES isn't available on the WebGL context (or not bridged in Emscripten?), let's just reset the windows every time
+		#if defined(__EMSCRIPTEN__)
+		// SDL_GL_MULTISAMPLESAMPLES isn't available on a  WebGL 1.0 context 
+		// (or not bridged in Emscripten?). This forces a windows reset.
 		currentSamples = -1;
 		#else
 		SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &currentSamples);

@@ -1117,10 +1117,13 @@ void GrimEngine::mainLoop() {
 			g_imuseState = -1;
 		}
 
-		#if defined(EMSCRIPTEN)
-		// We need to yield regularly to unblock the main thread
-		g_system->delayMillis(10);
+		#if defined(__EMSCRIPTEN__)
+		// If SDL_HINT_EMSCRIPTEN_ASYNCIFY is enabled, SDL pauses the application and gives 
+		// back control to the browser automatically by calling emscripten_sleep via SDL_Delay. 
+		// Without this the page would completely lock up. 
+		g_system->delayMillis(0);
 		#endif
+
 		uint32 endTime = g_system->getMillis();
 		if (startTime > endTime)
 			continue;
