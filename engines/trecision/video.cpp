@@ -80,6 +80,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 	if (!rewind())
 		return false;
 
+	stopAudio();
 	SmackerVideoTrack *videoTrack = (SmackerVideoTrack *)getTrack(0);
 	uint32 start = _fileStream->pos();
 	uint32 offset = 0;
@@ -104,6 +105,7 @@ bool NightlongSmackerDecoder::forceSeekToFrame(uint frame) {
 
 	_lastTimeChange = videoTrack->getFrameTime(frame);
 	_startTime = g_system->getMillis() - (_lastTimeChange.msecs() / getRate()).toInt();
+	startAudio();
 
 	return true;
 }
@@ -153,7 +155,7 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 
 	setVideoRange(smkDecoder, startFrame, endFrame);
 
-	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && smkDecoder->getCurFrame() < endFrame && !skipVideo) {
+	while (!_vm->shouldQuit() && startFrame != endFrame && !smkDecoder->endOfVideo() && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			drawFrame(smkDecoder, x, y, true);
 		}
@@ -174,13 +176,15 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 }
 
 void AnimManager::setVideoRange(NightlongSmackerDecoder *smkDecoder, int &startFrame, int &endFrame) {
-	startFrame = CLIP<int32>(startFrame, 0, smkDecoder->getFrameCount() - 1);
-	endFrame = CLIP<int32>(endFrame, 0, smkDecoder->getFrameCount() - 1);
+	// Trecision starts at 1 but ScummVM starts at 0
+	startFrame = CLIP<int32>(startFrame - 1, 0, smkDecoder->getFrameCount() - 1);
+	endFrame = CLIP<int32>(endFrame - 1, 0, smkDecoder->getFrameCount() - 1);
 
 	// If choices are attached
 	if (startFrame > 0 && startFrame > smkDecoder->getCurFrame()) {
-		smkDecoder->forceSeekToFrame(startFrame);
+		smkDecoder->forceSeekToFrame(startFrame - 1);
 	}
+	smkDecoder->setEndFrame(endFrame);
 }
 
 void AnimManager::drawFrame(NightlongSmackerDecoder *smkDecoder, uint16 x, uint16 y, bool updateScreen) {

@@ -125,23 +125,21 @@ void DialogManager::playDialog(uint16 i) {
 	
 	_vm->_animMgr->startFullMotion();
 
-	int skip = 0;
+	bool skip = false;
 	int curChoice = 0;
 	for (int c = _dialog[_curDialog]._firstChoice; c < _dialog[_curDialog]._firstChoice + _dialog[_curDialog]._choiceNumb; ++c) {
 		if (isChoiceVisible(c))
 			++curChoice;
 	}
 
-	if (_curDialog == dC581 && isChoiceVisible(262))
-		++skip;
-	if (_curDialog == dC581 && curChoice == 1)
-		++skip;
-	if (_curDialog == dSHOPKEEPER1A && curChoice == 1)
-		++skip;
+	if ((_curDialog == dC581 && isChoiceVisible(262)) ||
+		(_curDialog == dC581 && curChoice == 1) ||
+		(_curDialog == dSHOPKEEPER1A && curChoice == 1))
+		skip = true;
 	// if there's a pre-dialog
-	if (_dialog[i]._startLen > 0 && !skip)
-		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 0, _dialog[i]._startLen - 1);
-	else {
+	if (_dialog[i]._startLen > 0 && !skip) {
+		_vm->_animMgr->playMovie(_dialog[i]._startAnim, 1, _dialog[i]._startLen);
+	} else {
 		_vm->_animMgr->smkToggleAudio(1, false);
 		afterChoice();
 	}
@@ -534,7 +532,7 @@ void DialogManager::afterChoice() {
 
 		// If there is a pre-dialog
 		if (_dialog[_curDialog]._startLen > 0) {
-			_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 0, _dialog[_curDialog]._startLen - 1);
+			_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, 1, _dialog[_curDialog]._startLen);
 			return;
 		}
 	}
@@ -604,7 +602,7 @@ void DialogManager::playChoice(uint16 i) {
 	assert(i < MAXCHOICE);
 
 	DialogChoice *choice = &_choice[i];
-	const int startFrame = choice->_startFrame - 1;
+	const int startFrame = choice->_startFrame;
 	const int endSubTitle = choice->_firstSubTitle + choice->_subTitleNumb;
 	int totalLength = 0;
 
@@ -628,7 +626,7 @@ void DialogManager::playChoice(uint16 i) {
 	}
 
 	for (int c = _curSubTitle; c < endSubTitle; ++c)
-		totalLength += _subTitles[c]._length;
+		totalLength += _subTitles[c]._length - 1;
 
 	_vm->_graphicsMgr->hideCursor();
 	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1);
