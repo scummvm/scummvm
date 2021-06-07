@@ -44,12 +44,16 @@ struct Dialog {
 	uint16 _firstChoice;
 	uint16 _choiceNumb;
 	uint16 _newPal[MAXNEWSMKPAL];
+
+	void clear();
 };
 
 struct DialogSubTitle {
 	uint16 _sentence;
 	uint16 _x, _y, _color;       // you can compact this info using a bit field
 	uint16 _startFrame, _length; // Frame at which the subtitle starts and its length
+
+	void clear();
 };
 
 struct DialogChoice {
@@ -59,6 +63,8 @@ struct DialogChoice {
 	uint16 _on[MAXDISPCHOICES], _off[MAXDISPCHOICES];
 	uint16 _startFrame; // Starting frame of the choice
 	uint16 _nextDialog;
+
+	void clear();
 };
 
 class DialogManager {

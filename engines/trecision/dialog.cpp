@@ -31,6 +31,39 @@
 #include "trecision/video.h"
 
 namespace Trecision {
+inline void Dialog::clear() {
+	_flag = 0;
+	_interlocutor = 0;
+	memset(_startAnim, 0, 14);
+	_startLen = 0;
+	_firstChoice = 0;
+	_choiceNumb = 0;
+	for (uint16 i = 0; i < MAXNEWSMKPAL; ++i)
+		_newPal[i] = 0;
+}
+
+void DialogSubTitle::clear() {
+	_sentence = 0;
+	_x = _y = 0;
+	_color = 0;
+	_startFrame = 0;
+	_length = 0;
+}
+
+void DialogChoice::clear() {
+	_flag = 0;
+	_sentenceIndex = 0;
+	_firstSubTitle = _subTitleNumb = 0;
+	for (int i = 0; i < MAXDISPCHOICES; ++i) {
+		_on[i] = _off[i] = 0;
+	}
+	
+	_startFrame = 0;
+	_nextDialog = 0;
+}
+
+/**************************************************************/
+
 DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {
 	_curDialog = 0;
 	_curChoice = 0;
@@ -38,6 +71,18 @@ DialogManager::DialogManager(TrecisionEngine *vm) : _vm(vm) {
 	_curDispChoice = 0;
 	_curPos = -1;
 	_lastPos = -1;
+
+	for (int i = 0; i < MAXDIALOG; ++i)
+		_dialog[i].clear();
+
+	for (int i = 0; i < MAXCHOICE; ++i)
+		_choice[i].clear();
+
+	for (int i = 0; i < MAXSUBTITLES; ++i)
+		_subTitles[i].clear();
+
+	for (int i = 0; i < MAXDISPCHOICES; ++i)
+		_dispChoice[i] = 0;
 }
 
 DialogManager::~DialogManager() {}
