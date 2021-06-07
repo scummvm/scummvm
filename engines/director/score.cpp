@@ -304,30 +304,33 @@ void Score::update() {
 			_activeFade = 0;
 	}
 
-	if (_movie->_videoPlayback) {
-		renderFrame(_currentFrame);
-	}
-
 	if (!debugChannelSet(-1, kDebugFast)) {
+		bool keepWaiting = false;
+
 		if (_waitForChannel) {
-			if (_soundManager->isChannelActive(_waitForChannel))
-				return;
-
-			_waitForChannel = 0;
-		}
-
-		if (_waitForClick) {
+			if (_soundManager->isChannelActive(_waitForChannel)) {
+				keepWaiting = true; 
+			} else {
+				_waitForChannel = 0;
+			}
+		} else if (_waitForClick) {
 			if (g_system->getMillis() >= _nextFrameTime + 1000) {
 				_waitForClickCursor = !_waitForClickCursor;
 				_vm->setCursor(kCursorDefault);
 				_vm->setCursor(_waitForClickCursor ? kCursorMouseDown : kCursorMouseUp);
 				_nextFrameTime = g_system->getMillis();
 			}
-			return;
+			keepWaiting = true;
+		} else if (g_system->getMillis() < _nextFrameTime && !_nextFrame) {
+			keepWaiting = true;
 		}
 
-		if (g_system->getMillis() < _nextFrameTime && !_nextFrame)
+		if (keepWaiting) {
+			if (_movie->_videoPlayback) {
+				renderFrame(_currentFrame);
+			}
 			return;
+		}
 	}
 
 	// For previous frame
