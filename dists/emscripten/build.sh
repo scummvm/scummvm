@@ -104,7 +104,7 @@ cd "$ROOT_FOLDER"
 export LDFLAGS="-O2 -s ASSERTIONS=1 -s GL_ASSERTIONS=1 -s LLD_REPORT_UNDEFINED -s INITIAL_MEMORY=33554432"
 
 #debugging
-export LDFLAGS="${LDFLAGS}  -gsource-map   --source-map-base \"http://localhost:8080/\" "
+export LDFLAGS="${LDFLAGS} -g -gseparate-dwarf=scummvm.debug.wasm -s SEPARATE_DWARF_URL=\"http://localhost:8080/scummvm.debug.wasm\""
 
 # linker flags (bundle JS and default assets)
 export LDFLAGS_LINKER=" --pre-js ./dists/emscripten/pre.js --post-js ./dists/emscripten/post.js --shell-file ./dists/emscripten/custom_shell.html "
