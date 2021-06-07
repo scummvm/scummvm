@@ -581,13 +581,11 @@ void AttackProcess::genericAttack() {
 					}
 
 					if (randomOf(3) == 0) {
-						// TODO: this should be a random dir based on some
-						// NPC field and stuff.
-						a->turnTowardDir(Direction_TurnByDelta(curdir, getRandom() % 8, dirmode_8dirs));
+						a->turnTowardDir(Direction_TurnByDelta(curdir, randomOf(8), dirmode_8dirs));
 						return;
 					}
 
-					if (_target == 0)
+					if (!a->hasActorFlags(Actor::ACT_WEAPONREADY))
 						return;
 
 					if (curdir != a->getDirToItemCentre(*target))
@@ -602,7 +600,7 @@ void AttackProcess::genericAttack() {
 					_wpnField8 = wpnField8;
 					if (_wpnField8 < 3) {
 						_wpnField8 = 1;
-					} else if ((_doubleDelay && (getRandom() % 2 == 0)) || (getRandom() % 5 == 0)) {
+					} else if ((_doubleDelay && (randomOf(2) == 0)) || (randomOf(5) == 0)) {
 						a->setAttackAimFlag(true);
 						_wpnField8 *= 4;
 					}
@@ -637,8 +635,7 @@ void AttackProcess::genericAttack() {
 		target->getLocation(tpt);
 		const int32 dist = apt.maxDistXYZ(tpt);
 		const int32 zdiff = abs(a->getZ() - target->getZ());
-		// FIXME: is this the right function??
-		const bool onscreen = a->isOnScreen();
+		const bool onscreen = a->isPartlyOnScreen(); // note: original uses "isMajorityOnScreen", this is close enough.
 		if ((!_isActivity9orB && !onscreen) || (dist <= zdiff)) {
 			pathfindToItemInNPCData();
 			return;
@@ -658,16 +655,16 @@ void AttackProcess::genericAttack() {
 			_field96 = false;
 			bool ready;
 			if (now - a->getLastTimeWasHit() < 120)
-				ready = checkReady(now, targetdir);
-			else
 				ready = true;
+			else
+				ready = checkReady(now, targetdir);
 
 			if (_timer2set && (randomOf(5) == 0 || checkTimer2PlusDelayElapsed(now))) {
 				_timer2set = false;
 			}
 
 			if (!ready) {
-				if (_isActivity9orB == 0)
+				if (!_isActivity9orB)
 					pathfindToItemInNPCData();
 				else
 					sleep(0xf);
@@ -697,7 +694,9 @@ void AttackProcess::genericAttack() {
 					return;
 				}
 
-				if (wpn) {
+				if (!wpn) {
+					_wpnField8 = 1;
+				} else {
 					_wpnField8 = wpnField8;
 					if (_wpnField8 > 2 && ((_doubleDelay && randomOf(2) == 0) || randomOf(5) == 0)) {
 						a->setAttackAimFlag(true);
@@ -725,27 +724,27 @@ void AttackProcess::genericAttack() {
 				return;
 			}
 		} else {
-			bool local_1b;
+			bool ready;
 			if (!timer4and5Update(now) && !_field7f) {
 				if (standDirMode != dirmode_16dirs) {
 					targetdir = a->getDirToItemCentre(*target);
 				}
-				local_1b = a->fireDistance(target, targetdir, 0, 0, 0);
-				if (local_1b)
+				ready = a->fireDistance(target, targetdir, 0, 0, 0);
+				if (ready)
 					timeNowToTimerVal2(now);
 			} else {
 				timeNowToTimerVal2(now);
-				local_1b = true;
+				ready = true;
 				_field7f = false;
 			}
 
 			// 5a flag 1 set?
-			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY) && local_1b) {
+			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY) && ready) {
 				_timer4 = now;
 				a->doAnim(Animation::readyWeapon, dir_current); // ready SmallWpn
 				return;
 			}
-			if (local_1b || _isActivity9orB) {
+			if (ready || _isActivity9orB) {
 				a->turnTowardDir(targetdir);
 				return;
 			}
@@ -811,7 +810,7 @@ bool AttackProcess::checkTimer2PlusDelayElapsed(int now) {
 	int delay = 60;
 	if (_doubleDelay)
 		delay *= 2;
-	return (now > _timer2 + delay);
+	return (now >= _timer2 + delay);
 }
 
 void AttackProcess::setAttackData(uint16 off, uint16 val) {
