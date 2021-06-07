@@ -299,6 +299,9 @@ void MacText::setMaxWidth(int maxWidth) {
 	}
 	_cursorCol = ppos;
 
+	// after we set maxWidth, we reset the selection
+	_selectedText.endY = -1;
+
 	recalcDims();
 	updateCursorPos();
 
