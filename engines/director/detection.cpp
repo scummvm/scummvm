@@ -34,7 +34,72 @@
 static const char *directoryGlobs[] = {
 	"install",
 	"l_zone",
-	"win_data",	// L-ZONE
+	"win_data",					   // L-ZONE
+	"data",
+	"gadget",					   // Gadget
+	"vnc",						   // Virtual Nightclub
+	"program",					   // Arc Media products
+	"demodata",					   // Edmark demos
+	"media",					   // Gundam
+	"mvm",						   // Master of the Elements
+	"module_1",
+	"module_2",					   // Takeru
+	"simpsons",					   // Simpsons Cartoon Studio
+	"dane",						   // Polish Kontyngent '99 catalog
+	"datas",					   // O!KAY! subscription from Domino Verlag
+	"daten",					   // Bibi Blocksberg games (German)
+	"source",					   // Grand Prix 2006 directory
+	"data_k",
+	"data_1",
+	"data_2",					   // JumpStart World
+	"numbers",					   // JumpStart Learning Games
+	"files",					   // Babar
+	"swanlake",					   // Barbie Swan Lake
+	"assets",					   // Barbie Nail Designer
+	"fjpc",						   // Forestia Jr
+	"movies",					   // Mulle Meck (Gary Gadget) series
+	"demos",					   // Headbone samplers
+	"blender",					   // Blender CD-ROM magazines
+	"mausejagd mit ton",		   // Mäusejagd mit Ton (GGMD German)
+	"muizen in \'t hotel, geluid", // GGMD Dutch
+	"macos9",
+	"macosx",					   // Sethi 3
+	"kripos",
+	"strisser",
+	"polis",
+	"poliisi",					   // Polis
+	"fusion macintosh folder",	   // Fusion
+	"oslo",						   // Oslo's Tools & Gadgets
+	"stuff",					   // Abrapalabra
+	"tooned",					   // Stay Tooned
+	"disney",
+	"sampler",
+	"hd",
+	"demo",
+	"setup",
+	"buzz1g",
+	"us",					   	   // Disney Interactive Learning
+	"sam rupert",				   // Who Killed Sam Rupert?
+	"pcinst",					   // Gus and the CyberBuds series
+	"p2data",
+	"p2media",
+	"start",
+	"annat",					   // Pettson & Findus
+	"fct",					   	   // Felix the Cat
+	"95instal",					   // Fisher-Price Little People
+	"01",					   	   // Doing it in C++
+	"fsetup",					   // My First Reading Words (Eureka)
+	"english",
+	"deutsch",
+	"francais",						// Rename from Français
+	"italiano",
+	"virtual tourism paris (e)",
+	"virtual tourism paris (d)",
+	"virtual tourism paris (f)",
+	"virtual tourism paris (i)",	// Virtual Tourism Paris
+	"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
+	"_files_",						// The Gate
+	"popup",						// Pop Up Computer
 	0
 };
 
@@ -62,7 +127,7 @@ static const DebugChannelDef debugFlagList[] = {
 class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
-		_maxScanDepth = 2;
+		_maxScanDepth = 5;
 		_directoryGlobs = directoryGlobs;
 	}
 
