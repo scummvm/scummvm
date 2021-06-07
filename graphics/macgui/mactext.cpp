@@ -273,21 +273,37 @@ void MacText::setMaxWidth(int maxWidth) {
 	if (maxWidth == _maxWidth)
 		return;
 
-	if (!_str.empty())
-		warning("TODO: MacText::setMaxWidth() is incorrect.");
+	if (maxWidth < 0) {
+		warning("trying to set maxWidth to %d", maxWidth);
+		return;
+	}
 
-	// It does not take into account the edited string
-	// Actually, it should reshuffle all paragraphs
+	Common::U32String str = getTextChunk(0, 0, -1, -1, true, true);
+
+	// keep the cursor pos
+	int ppos = 0;
+	for (int i = 0; i < _cursorRow; i++)
+		ppos += getLineCharWidth(i);
+	ppos += _cursorCol;
 
 	_maxWidth = maxWidth;
-
 	_textLines.clear();
 
-	splitString(_str);
+	splitString(str);
+
+	// restore the cursor pos
+	_cursorRow = 0;
+	while (ppos > getLineCharWidth(_cursorRow, true)) {
+		ppos -= getLineCharWidth(_cursorRow, true);
+		_cursorRow++;
+	}
+	_cursorCol = ppos;
 
 	recalcDims();
+	updateCursorPos();
 
 	_fullRefresh = true;
+	_contentIsDirty = true;
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
