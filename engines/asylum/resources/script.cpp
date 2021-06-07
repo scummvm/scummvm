@@ -972,6 +972,10 @@ IMPLEMENT_OPCODE(UpdateActor)
 			_processNextEntry = true;
 			return;
 
+		case kActorStatusEnabled:
+		case kActorStatusEnabled2:
+			return;
+
 		case kActorStatusPickupItem:
 			actor->enable();
 			break;
