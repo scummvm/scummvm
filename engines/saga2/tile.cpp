@@ -1425,6 +1425,7 @@ static void readMetaTile(hResContext *con, MetaTile &til) {
 void initMaps(void) {
 	int16       i;
 	const int metaTileSize = 30;
+	const int assocSize = 2;
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
@@ -1481,12 +1482,13 @@ void initMaps(void) {
 
 		//  If there is an association list, load it
 		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			mapData->assocList =
-			    (UWordPtr)LoadResource(tileRes,
-			        assocID + MKTAG(0, 0, 0, (uint8)i),
-			        "association list");
+			int assocCount = tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) / assocSize;
+			mapData->assocList = new uint16[assocCount];
 			if (mapData->assocList == nullptr)
 				error("Unable to load association list");
+
+			for (int k = 0; k < assocCount; ++k)
+				mapData->assocList[k] = tileRes->readU16LE();
 		} else
 			mapData->assocList = nullptr;
 
