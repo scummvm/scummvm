@@ -314,6 +314,23 @@ enum ChunkType {
 	kChunkLine
 };
 
+enum FileVersion {
+	kFileVer300 = 0x404,
+	kFileVer310 = 0x405,
+	kFileVer400 = 0x45B,
+	kFileVer404 = 0x45D,
+	kFileVer500 = 0x4B1,
+	kFileVer600 = 0x4C2,
+	kFileVer700 = 0x4C8,
+	kFileVer800 = 0x582,
+	kFileVer850 = 0x6A4,
+	kFileVer1000 = 0x73B,
+	kFileVer1100 = 0x781,
+	kFileVer1150 = 0x782,
+	kFileVer1200 = 0x783,
+	kFileVer1201 = 0x79F
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;

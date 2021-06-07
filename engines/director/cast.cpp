@@ -364,33 +364,33 @@ bool Cast::loadArchive() {
 }
 
 uint16 humanVersion(uint16 ver) {
-	if (ver >= 0x79F)
+	if (ver >= kFileVer1201)
 		return 1201;
-	if (ver >= 0x783)
+	if (ver >= kFileVer1200)
 		return 1200;
-	if (ver >= 0x782)
+	if (ver >= kFileVer1150)
 		return 1150;
-	if (ver >= 0x781)
+	if (ver >= kFileVer1100)
 		return 1100;
-	if (ver >= 0x73B)
+	if (ver >= kFileVer1000)
 		return 1000;
-	if (ver >= 0x6A4)
+	if (ver >= kFileVer850)
 		return 850;
-	if (ver >= 0x582)
+	if (ver >= kFileVer800)
 		return 800;
-	if (ver >= 0x4C8)
+	if (ver >= kFileVer700)
 		return 700;
-	if (ver >= 0x4C2)
+	if (ver >= kFileVer600)
 		return 600;
-	if (ver >= 0x4B1)
+	if (ver >= kFileVer500)
 		return 500;
-	if (ver >= 0x45D)
+	if (ver >= kFileVer404)
 		return 404;
-	if (ver >= 0x45B)
+	if (ver >= kFileVer400)
 		return 400;
-	if (ver >= 0x405)
+	if (ver >= kFileVer310)
 		return 310;
-	if (ver >= 0x404)
+	if (ver >= kFileVer300)
 		return 300;
 	return 200;
 }
