@@ -281,7 +281,9 @@ uint16 CameraProcess::findRoof(int32 factor) {
 	GetLerped(x, y, z, factor);
 	_earthquake = earthquake_old;
 	Item *avatar = getItem(1);
-	assert(avatar);
+	if (!avatar) // avatar gone?
+		return 0;
+
 	int32 dx, dy, dz;
 	avatar->getFootpadWorld(dx, dy, dz);
 	uint16 roofid;
