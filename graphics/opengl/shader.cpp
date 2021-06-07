@@ -35,7 +35,6 @@ static const GLchar *readFile(const Common::String &filename) {
 
 	#if defined(EMSCRIPTEN)
 	// Since we need to bundle all files into data files on Emscripten, we keep all shaders in a different folder
-	SearchMan.addDirectory("ALL_SHADERS", "/", 0, 2);
 	#endif
 	// Allow load shaders from source code directory without install them
 	// It's used for development purpose
@@ -52,7 +51,6 @@ static const GLchar *readFile(const Common::String &filename) {
 	SearchMan.remove("STARK_SHADERS");
 	SearchMan.remove("WINTERMUTE_SHADERS");
 	#if defined(EMSCRIPTEN)
-	SearchMan.remove("ALL_SHADERS");
 	#endif
 
 	const int32 size = file.size();
