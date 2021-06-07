@@ -73,8 +73,6 @@ uint32 pickHeapSize(uint32 minHeap);
 
 // initialization & cleanup
 void initCleanup(void);
-bool initErrorHandlers(void);
-void cleanupErrorHandlers(void);
 
 bool initializeGame(void);
 void shutdownGame(void);
@@ -89,9 +87,6 @@ void cleanupPaletteData(void);
 void cleanupGame(void);                  // auto-cleanup function
 bool setupGame(void);
 void cleanupPalettes(void);
-
-void initBreakHandler(void);
-void cleanupBreakHandler(void);
 
 } // end of namespace Saga2
 
