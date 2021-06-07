@@ -31,39 +31,52 @@ namespace AGS {
 namespace Shared {
 
 String::String()
-	: _cstr(const_cast<char*>(""))
+	: _cstr(const_cast<char *>(""))
 	, _len(0)
 	, _buf(nullptr) {
 }
 
 String::String(const String &str)
-	: _cstr(const_cast<char*>(""))
+	: _cstr(const_cast<char *>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	*this = str;
 }
 
+String::String(String &&str) {
+	_cstr = str._cstr;
+	_len = str._len;
+	_buf = str._buf;
+	_bufHead = str._bufHead;
+	str._cstr = const_cast<char *>("");
+	str._len = 0;
+	str._buf = nullptr;
+	str._bufHead = nullptr;
+}
+
 String::String(const char *cstr)
-	: _cstr(const_cast<char*>(""))
+	: _cstr(const_cast<char *>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	*this = cstr;
 }
 
-String::String(const Common::String &s) :
-	_cstr(const_cast<char*>("")), _len(0), _buf(nullptr) {
+String::String(const Common::String &s)
+	: _cstr(nullptr),
+	_len(0),
+	_buf(nullptr) {
 	*this = s.c_str();
 }
 
 String::String(const char *cstr, size_t length)
-	: _cstr(const_cast<char*>(""))
+	: _cstr(const_cast<char *>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	SetString(cstr, length);
 }
 
 String::String(char c, size_t count)
-	: _cstr(const_cast<char*>(""))
+	: _cstr(const_cast<char *>(""))
 	, _len(0)
 	, _buf(nullptr) {
 	FillString(c, count);
@@ -71,6 +84,16 @@ String::String(char c, size_t count)
 
 String::~String() {
 	Free();
+}
+
+bool String::IsNullOrSpace() const {
+	if (_len == 0)
+		return true;
+	for (const char *ptr = _cstr; *ptr; ++ptr) {
+		if (!Common::isSpace(*ptr))
+			return false;
+	}
+	return true;
 }
 
 void String::Read(Stream *in, size_t max_chars, bool stop_at_limit) {
@@ -178,7 +201,7 @@ int String::CompareRightNoCase(const char *cstr, size_t count) const {
 size_t String::FindChar(char c, size_t from) const {
 	if (c && from < _len) {
 		const char *found_cstr = strchr(_cstr + from, c);
-		return found_cstr ? found_cstr - _cstr : -1;
+		return found_cstr ? found_cstr - _cstr : npos;
 	}
 	return npos;
 }
@@ -202,13 +225,13 @@ size_t String::FindCharReverse(char c, size_t from) const {
 size_t String::FindString(const char *cstr, size_t from) const {
 	if (cstr && from < _len) {
 		const char *found_cstr = strstr(_cstr + from, cstr);
-		return found_cstr ? found_cstr - _cstr : -1;
+		return found_cstr ? found_cstr - _cstr : npos;
 	}
 	return npos;
 }
 
 bool String::FindSection(char separator, size_t first, size_t last, bool exclude_first_sep, bool exclude_last_sep,
-                         size_t &from, size_t &to) const {
+	size_t &from, size_t &to) const {
 	if ((_len == 0) || !separator) {
 		return false;
 	}
@@ -257,7 +280,10 @@ int String::ToInt() const {
 
 String String::Wrapper(const char *cstr) {
 	String str;
-	str.Wrap(cstr);
+	// Note that String will NOT *modify* the const buffer.
+	// Any write operation on the buffer is preceded by a call to BecomeUnique.
+	str._cstr = const_cast<char *>(cstr ? cstr : "");
+	str._len = strlen(str._cstr);
 	return str;
 }
 
@@ -339,7 +365,7 @@ String String::RightSection(char separator, bool exclude_separator) const {
 }
 
 String String::Section(char separator, size_t first, size_t last,
-                       bool exclude_first_sep, bool exclude_last_sep) const {
+	bool exclude_first_sep, bool exclude_last_sep) const {
 	if ((_len == 0) || !separator) {
 		return String();
 	}
@@ -347,7 +373,7 @@ String String::Section(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, exclude_first_sep, exclude_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		return Mid(slice_from, slice_to - slice_from);
 	}
 	return String();
@@ -392,15 +418,13 @@ void String::Compact() {
 	}
 }
 
-void String::Append(const char *cstr) {
-	if (cstr) {
-		size_t length = strlen(cstr);
-		if (length > 0) {
-			ReserveAndShift(false, length);
-			memcpy(_cstr + _len, cstr, length);
-			_len += length;
-			_cstr[_len] = 0;
-		}
+void String::Append(const String &str) {
+	size_t length = str._len;
+	if (str._len > 0) {
+		ReserveAndShift(false, length);
+		memcpy(_cstr + _len, str._cstr, length);
+		_len += length;
+		_cstr[_len] = 0;
 	}
 }
 
@@ -413,7 +437,7 @@ void String::AppendChar(char c) {
 }
 
 void String::ClipLeft(size_t count) {
-	if (_len != 0 && count > 0) {
+	if ((_len != 0) && (count > 0)) {
 		count = Math::Min(count, _len);
 		BecomeUnique();
 		_len -= count;
@@ -471,7 +495,7 @@ void String::ClipRightSection(char separator, bool include_separator) {
 }
 
 void String::ClipSection(char separator, size_t first, size_t last,
-                         bool include_first_sep, bool include_last_sep) {
+	bool include_first_sep, bool include_last_sep) {
 	if ((_len == 0) || !separator) {
 		return;
 	}
@@ -479,7 +503,7 @@ void String::ClipSection(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, !include_first_sep, !include_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		ClipMid(slice_from, slice_to - slice_from);
 	}
 }
@@ -551,8 +575,8 @@ void String::MakeUpper() {
 }
 
 void String::MergeSequences(char c) {
-	if ((_len == 0) || _len <= 1)
-		return;
+	if (_len <= 1)
+		return; // no point merging if 1 char or less
 	BecomeUnique();
 	char last = 0;
 	char *wp = _cstr;
@@ -565,15 +589,13 @@ void String::MergeSequences(char c) {
 	_len = wp - _cstr;
 }
 
-void String::Prepend(const char *cstr) {
-	if (cstr) {
-		size_t length = strlen(cstr);
-		if (length > 0) {
-			ReserveAndShift(true, length);
-			memcpy(_cstr - length, cstr, length);
-			_len += length;
-			_cstr -= length;
-		}
+void String::Prepend(const String &str) {
+	size_t length = str._len;
+	if (length > 0) {
+		ReserveAndShift(true, length);
+		memcpy(_cstr - length, str._cstr, length);
+		_len += length;
+		_cstr -= length;
 	}
 }
 
@@ -587,41 +609,80 @@ void String::PrependChar(char c) {
 }
 
 void String::Replace(char what, char with) {
-	if ((_len != 0) && what && with && what != with) {
-		BecomeUnique();
-		char *rep_ptr = _cstr;
-		while (*rep_ptr) {
-			if (*rep_ptr == what) {
-				*rep_ptr = with;
+	if ((_len == 0) || !what || !with || (what == with))
+		return;
+	char *ptr = _cstr;
+	// Special case for calling BecomeUnique on the first find
+	if (IsShared()) {
+		for (; *ptr; ++ptr) {
+			if (*ptr == what) {
+				ptrdiff_t diff = ptr - _cstr;
+				BecomeUnique();
+				ptr = _cstr + diff; // BecomeUnique will realloc memory
+				break;
 			}
-			rep_ptr++;
 		}
+	}
+	// Do the full search & replace
+	for (; *ptr; ++ptr) {
+		if (*ptr == what)
+			*ptr = with;
 	}
 }
 
-void String::ReplaceMid(size_t from, size_t count, const char *cstr) {
-	if (!cstr)
-		cstr = "";
-	size_t length = strlen(cstr);
+void String::Replace(const String &what, const String &with) {
+	if ((what._len == 0) || (_len < what._len) || strcmp(what._cstr, with._cstr) == 0)
+		return;
+
+	const size_t len_src = what._len;
+	const size_t len_dst = with._len;
+	const size_t len_add = Math::Surplus(len_dst, len_src);
+	char *ptr = strstr(_cstr, what._cstr);
+	if (!ptr)
+		return; // pattern not found once, bail out early
+	// Special case for calling BecomeUnique on the first find
+	if (IsShared() && len_add == 0) {
+		ptrdiff_t diff = ptr - _cstr;
+		BecomeUnique(); // if same length make a unique copy once
+		ptr = _cstr + diff; // BecomeUnique will realloc memory
+	}
+	// Do the full search & replace
+	for (; ptr; ptr = strstr(ptr, what._cstr)) {
+		if (len_add > 0) {
+			ptrdiff_t diff = ptr - _cstr;
+			ReserveAndShift(false, len_add);
+			ptr = _cstr + diff; // ReserveAndShift may realloc memory
+		}
+		if (len_src != len_dst)
+			memmove(ptr + len_dst, ptr + len_src, _len - (ptr - _cstr + len_src) + 1);
+		memcpy(ptr, with._cstr, len_dst);
+		_len += len_dst - len_src;
+		ptr += len_dst;
+	}
+}
+
+void String::ReplaceMid(size_t from, size_t count, const String &str) {
+	size_t length = str._len;
 	Math::ClampLength(from, count, (size_t)0, _len);
 	ReserveAndShift(false, Math::Surplus(length, count));
-	memmove(_cstr + from + length, _cstr + from + count, _len - (from + count) + 1);
-	memcpy(_cstr + from, cstr, length);
+	if (count != str._len)
+		memmove(_cstr + from + length, _cstr + from + count, _len - (from + count) + 1);
+	memcpy(_cstr + from, str._cstr, length);
 	_len += length - count;
 }
 
 void String::Reverse() {
 	if (_len <= 1)
-		return;	// nothing to reverse if 1 char or less
+		return; // nothing to reverse if 1 char or less
 	BecomeUnique();
 	for (char *fw = _cstr, *bw = _cstr + _len - 1;
-	        fw < bw; ++fw, --bw) {
+		fw < bw; ++fw, --bw) {
 		SWAP(*fw, *bw);
 	}
 }
 
 void String::SetAt(size_t index, char c) {
-	if (_cstr && index < _len && c) {
+	if ((index < _len) && c) {
 		BecomeUnique();
 		_cstr[index] = c;
 	}
@@ -649,7 +710,7 @@ void String::Trim(char c) {
 }
 
 void String::TrimLeft(char c) {
-	if ((_len == 0) || !_len) {
+	if (_len == 0) {
 		return;
 	}
 
@@ -676,7 +737,7 @@ void String::TrimLeft(char c) {
 }
 
 void String::TrimRight(char c) {
-	if ((_len == 0) || !_len) {
+	if (_len == 0) {
 		return;
 	}
 
@@ -755,7 +816,7 @@ void String::TruncateToRightSection(char separator, bool exclude_separator) {
 }
 
 void String::TruncateToSection(char separator, size_t first, size_t last,
-                               bool exclude_first_sep, bool exclude_last_sep) {
+	bool exclude_first_sep, bool exclude_last_sep) {
 	if ((_len == 0) || !separator) {
 		return;
 	}
@@ -763,7 +824,7 @@ void String::TruncateToSection(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, exclude_first_sep, exclude_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		TruncateToMid(slice_from, slice_to - slice_from);
 	} else {
 		Empty();
@@ -773,11 +834,10 @@ void String::TruncateToSection(char separator, size_t first, size_t last,
 void String::Wrap(const char *cstr) {
 	Free();
 	_buf = nullptr;
-	// Note that String is NOT supposed to *modify* the const buffer.
-	// Any non-read operation on the buffer is preceded by a call to BecomeUnique,
-	// which in turn will allocate a reference-counted buffer copy.
-	_cstr = const_cast<char *>(cstr);
-	_len = strlen(cstr);
+	// Note that String will NOT *modify* the const buffer.
+	// Any write operation on the buffer is preceded by a call to BecomeUnique.
+	_cstr = const_cast<char *>(cstr ? cstr : "");
+	_len = strlen(_cstr);
 }
 
 String &String::operator=(const String &str) {
@@ -790,6 +850,19 @@ String &String::operator=(const String &str) {
 			_bufHead->RefCount++;
 		}
 	}
+	return *this;
+}
+
+String &String::operator=(String &&str) {
+	Free();
+	_cstr = str._cstr;
+	_len = str._len;
+	_buf = str._buf;
+	_bufHead = str._bufHead;
+	str._cstr = const_cast<char *>("");
+	str._len = 0;
+	str._buf = nullptr;
+	str._bufHead = nullptr;
 	return *this;
 }
 
@@ -808,10 +881,6 @@ void String::Create(size_t max_length) {
 }
 
 void String::Copy(size_t max_length, size_t offset) {
-	if ((_len == 0)) {
-		return;
-	}
-
 	char *new_data = new char[sizeof(String::BufHeader) + max_length + 1];
 	// remember, that _cstr may point to any address in buffer
 	char *cstr_head = new_data + sizeof(String::BufHeader) + offset;
@@ -857,12 +926,12 @@ void String::ReserveAndShift(bool left, size_t more_length) {
 			// make sure we make use of all of our space
 			const char *cstr_head = _buf + sizeof(String::BufHeader);
 			size_t free_space = left ?
-			                    _cstr - cstr_head :
-			                    (cstr_head + _bufHead->Capacity) - (_cstr + _len);
+				_cstr - cstr_head :
+				(cstr_head + _bufHead->Capacity) - (_cstr + _len);
 			if (free_space < more_length) {
 				Align((left ?
-				       _cstr + (more_length - free_space) :
-				       _cstr - (more_length - free_space)) - cstr_head);
+					_cstr + (more_length - free_space) :
+					_cstr - (more_length - free_space)) - cstr_head);
 			}
 		}
 	} else { // either empty string, or wrapping external char[] - create new buffer

@@ -325,13 +325,13 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		// The Blackwell Legacy write to files in the game folder
 		rp.BaseDir = SAVE_FOLDER_PREFIX;
 		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
-			orig_sc_path.GetNullableCStr());
+			orig_sc_path.GetCStr());
 		rp.AltPath = orig_sc_path;
 	} else {
 		// For writing files, always use as save files
 		rp.BaseDir = SAVE_FOLDER_PREFIX;
 		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
-			orig_sc_path.GetNullableCStr());
+			orig_sc_path.GetCStr());
 	}
 	*/
 	String sc_path = FixSlashAfterToken(orig_sc_path);

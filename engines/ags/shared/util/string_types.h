@@ -54,33 +54,33 @@ inline size_t Hash_LowerCase(const char *data, const size_t len) {
 namespace AGS3 {
 
 struct CaseSensitiveString_EqualTo {
-bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
-	return x.Compare(y) == 0;
-}
+	bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
+		return x.Compare(y) == 0;
+	}
 };
 
 struct CaseSensitiveString_Hash {
-uint operator()(const ::AGS3::AGS::Shared::String &x) const {
-	return Common::hashit(x.GetNullableCStr());
-}
+	uint operator()(const ::AGS3::AGS::Shared::String &x) const {
+		return Common::hashit(x.GetCStr());
+	}
 };
 
 struct IgnoreCase_EqualTo {
-bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
-	return x.CompareNoCase(y) == 0;
-}
+	bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
+		return x.CompareNoCase(y) == 0;
+	}
 };
 
 struct IgnoreCase_Hash {
-uint operator()(const ::AGS3::AGS::Shared::String &x) const {
-	return Common::hashit_lower(x.GetNullableCStr());
-}
+	uint operator()(const ::AGS3::AGS::Shared::String &x) const {
+		return Common::hashit_lower(x.GetCStr());
+	}
 };
 
 struct IgnoreCase_LessThan {
-bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
-	return x.CompareNoCase(y) < 0;
-}
+	bool operator()(const ::AGS3::AGS::Shared::String &x, const ::AGS3::AGS::Shared::String &y) const {
+		return x.CompareNoCase(y) < 0;
+	}
 };
 
 } // namespace AGS3
@@ -95,9 +95,9 @@ namespace Common {
 // hash anyway.
 template<>
 struct Hash<AGS3::AGS::Shared::String> {
-uint operator()(const AGS3::AGS::Shared::String &s) const {
-	return Common::hashit(s.GetNullableCStr());
-}
+	uint operator()(const AGS3::AGS::Shared::String &s) const {
+		return Common::hashit(s.GetCStr());
+	}
 };
 
 } // namespace Common

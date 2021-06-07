@@ -158,7 +158,7 @@ Common::Error AGSEngine::run() {
 	if (!_G(justTellInfo))
 		_G(platform)->SetGUIMode(true);
 	AGS3::init_debug(startup_opts, _G(justTellInfo));
-	AGS3::AGS::Shared::Debug::Printf("%s", AGS3::get_engine_string().GetNullableCStr());
+	AGS3::AGS::Shared::Debug::Printf("%s", AGS3::get_engine_string().GetCStr());
 
 	AGS3::main_set_gamedir(ARGC, ARGV);
 

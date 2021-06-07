@@ -43,7 +43,7 @@ soff_t File::GetFileSize(const String &filename) {
 bool File::TestReadFile(const String &filename) {
 	if (filename.IsEmpty())
 		return false;
-	return ags_file_exists(filename.GetNullableCStr());
+	return ags_file_exists(filename.GetCStr());
 }
 
 bool File::TestWriteFile(const String &filename) {

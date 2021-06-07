@@ -36,7 +36,7 @@ const char *SAVE_FOLDER_PREFIX = "/saves/";
 namespace Directory {
 
 bool CreateDirectory(const String &path) {
-	return Common::FSNode(path.GetNullableCStr()).createDirectory();
+	return Common::FSNode(path.GetCStr()).createDirectory();
 }
 
 bool CreateAllDirectories(const String &parent, const String &path) {
@@ -65,7 +65,7 @@ bool CreateAllDirectories(const String &parent, const String &path) {
 }
 
 String SetCurrentDirectory(const String &path) {
-	warning("TODO: SetCurrentDirectory: %s", path.GetNullableCStr());
+	warning("TODO: SetCurrentDirectory: %s", path.GetCStr());
 	//  chdir(path);
 	//  return GetCurrentDirectory();
 	return path;

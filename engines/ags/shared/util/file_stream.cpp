@@ -177,12 +177,12 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 	if (open_mode == kFile_Open) {
 		if (!file_name.CompareLeftNoCase(SAVE_FOLDER_PREFIX)) {
 			_file = g_system->getSavefileManager()->openForLoading(
-			            file_name.GetNullableCStr() + strlen(SAVE_FOLDER_PREFIX));
+			            file_name.GetCStr() + strlen(SAVE_FOLDER_PREFIX));
 
 		} else {
 			// First try to open file in game folder
 			Common::File *f = new Common::File();
-			if (!f->open(getFSNode(file_name.GetNullableCStr()))) {
+			if (!f->open(getFSNode(file_name.GetCStr()))) {
 				delete f;
 				_file = nullptr;
 			} else {
