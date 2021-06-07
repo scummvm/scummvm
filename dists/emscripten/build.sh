@@ -34,7 +34,7 @@ fi
 if [[ ! -d "$DIST_FOLDER/emsdk-$EMSDK_VERSION" ]]; then
   echo "$DIST_FOLDER/emsdk-$EMSDK_VERSION not found. Installing Emscripten"
   cd "$DIST_FOLDER"
-  wget --content-disposition "https://github.com/emscripten-core/emsdk/archive/${EMSDK_VERSION}.tar.gz"
+  wget -nc --content-disposition "https://github.com/emscripten-core/emsdk/archive/refs/tags/${EMSDK_VERSION}.tar.gz"
   tar xzvf "emsdk-${EMSDK_VERSION}.tar.gz"
   cd "emsdk-${EMSDK_VERSION}"
   ./emsdk install ${EMSDK_VERSION}
