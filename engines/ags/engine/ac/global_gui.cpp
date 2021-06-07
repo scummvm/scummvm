@@ -56,7 +56,7 @@ int FindGUIID(const char *GUIName) {
 	for (int ii = 0; ii < _GP(game).numgui; ii++) {
 		if (_GP(guis)[ii].Name.IsEmpty())
 			continue;
-		if (strcmp(_GP(guis)[ii].Name, GUIName) == 0)
+		if (_GP(guis)[ii].Name == GUIName)
 			return ii;
 		if ((_GP(guis)[ii].Name[0u] == 'g') && (ags_stricmp(_GP(guis)[ii].Name.GetCStr() + 1, GUIName) == 0))
 			return ii;

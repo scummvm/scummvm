@@ -43,7 +43,7 @@ void TextBox_GetText(GUITextBox *texbox, char *buffer) {
 }
 
 void TextBox_SetText(GUITextBox *texbox, const char *newtex) {
-	if (strcmp(texbox->Text, newtex)) {
+	if (texbox->Text != newtex) {
 		texbox->Text = newtex;
 		texbox->NotifyParentChanged();
 	}
