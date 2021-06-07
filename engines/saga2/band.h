@@ -109,11 +109,11 @@ public:
 		int     i;
 
 		for (i = 0; i < memberCount; i++) {
-			if (members[ i ] == member) {
+			if (members[i] == member) {
 				memberCount--;
 
 				for (; i < memberCount; i++)
-					members[ i ] = members[ i + 1 ];
+					members[i] = members[i + 1];
 
 				break;
 			}
@@ -128,14 +128,14 @@ public:
 		memberCount--;
 
 		for (i = index; i < memberCount; i++)
-			members[ i ] = members[ i + 1 ];
+			members[i] = members[i + 1];
 	}
 
 	int size(void) {
 		return memberCount;
 	}
 	Actor *const &operator [](int index) {
-		return members[ index ];
+		return members[index];
 	}
 };
 

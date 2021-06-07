@@ -164,7 +164,7 @@ CAutoMap::CAutoMap(const Rect16 box,
 	summaryData = summary;
 
 	// init the temporary blit surface port
-	if (!NewTempPort(tPort, sumMapArea.width, sumMapArea.height) == errOK) {
+	if (NewTempPort(tPort, sumMapArea.width, sumMapArea.height) != errOK) {
 		return;
 	}
 
@@ -420,7 +420,6 @@ void CAutoMap::draw(void) {          // redraw the window
 
 // create a summary map on the tPort gPixelMap buffer
 void CAutoMap::createSmallMap(void) {
-	gPort           &port = window.windowPort;
 	WorldMapData    *wMap = &mapList[ currentWorld->mapNum ];
 
 	uint16          *mapData = wMap->map->mapData;
@@ -530,7 +529,6 @@ int16 openAutoMap() {
 
 	uint16          closeButtonResID        = 0;
 	uint16          scrollButtonResID       = 2;
-	uint16          numBtnImages            = 2;
 
 	extern int16    currentMapNum;
 
