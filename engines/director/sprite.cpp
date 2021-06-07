@@ -122,7 +122,7 @@ bool Sprite::shouldHilite() {
 	if (!isActive())
 		return false;
 
-	if (g_director->getVersion() < 400 && _moveable)
+	if (_moveable)
 		return false;
 
 	if (g_director->getVersion() < 400 && _ink == kInkTypeMatte)
