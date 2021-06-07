@@ -875,7 +875,7 @@ PathFinding3D::~PathFinding3D() {
 }
 
 void PathFinding3D::findPath() {
-	int16 b;
+	int32 b;
 
 	Actor *actor = _vm->_actor;
 	actor->_px += actor->_dx;
@@ -921,7 +921,7 @@ void PathFinding3D::findPath() {
 				++_numPathNodes;
 
 				// CORNERS - lever intersections in corners
-				if ((b == _panel[_oldPanel]._nearPanel1) || (b == _panel[_oldPanel]._nearPanel2)) {
+				if (_oldPanel >= 0 && (b == _panel[_oldPanel]._nearPanel1 || b == _panel[_oldPanel]._nearPanel2)) {
 					// otherwise if it's near the starting panel
 					if ((_pathNode[_numPathNodes - 1]._dist < EPSILON) &&
 						(b != _oldPanel) && (b != _curPanel)) {

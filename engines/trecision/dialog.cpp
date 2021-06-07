@@ -31,7 +31,7 @@
 #include "trecision/video.h"
 
 namespace Trecision {
-inline void Dialog::clear() {
+void Dialog::clear() {
 	_flag = 0;
 	_interlocutor = 0;
 	memset(_startAnim, 0, 14);
