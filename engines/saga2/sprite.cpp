@@ -572,7 +572,7 @@ void buildColorTable(
 	dst = (uint32 *)(colorTable + sizeof fixedColors);
 
 	while (numOptions--) {
-		src = (uint32 *)ColorMapRanges[*colorOptions * 8];
+		src = (uint32 *)&ColorMapRanges[*colorOptions * 8];
 		colorOptions++;
 		*dst++ = *src++;
 		*dst++ = *src++;
@@ -614,7 +614,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	for (bank = 0; bank < (long)elementsof(spriteBanks); bank++) {
 		//  Load the sprite handle...
 		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank)))
-			spriteBanks[bank] = (SpriteSet **)spriteRes->loadResource(id + MKTAG(0, 0, 0, bank), "sprite bank");
+			spriteBanks[bank] = (SpriteSet *)spriteRes->loadResource(id + MKTAG(0, 0, 0, bank), "sprite bank");
 	}
 }
 

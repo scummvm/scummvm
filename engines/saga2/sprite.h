@@ -264,20 +264,20 @@ public:
 	//  REM: How do we determine what frames are NEEDED in the
 	//  near future?
 
-	SpriteSet       **spriteBanks[ sprBankCount ];
+	SpriteSet       *spriteBanks[ sprBankCount ];
 
 //	Member functions:
 	void loadSpriteBanks(int16 banksNeeded);
 
 	//  Determine if this bank is loaded
 	bool isBankLoaded(int16 bank) {
-		return RHandleLoaded((RHANDLE)(spriteBanks[ bank ]));
+		return spriteBanks[bank] != nullptr;
 	}
 
 	//  A request to load a bank.
 	void requestBank(int16 bank) {
 		//  Initiate a load of the sprite bank needed.
-		if (!RHandleLoading((RHANDLE)(spriteBanks[ bank ])))
+		if (!isBankLoaded(bank))
 			loadSpriteBanks((int16)(1 << bank));
 	}
 
