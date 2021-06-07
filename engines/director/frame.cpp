@@ -126,10 +126,10 @@ void Frame::readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset,
 	}
 }
 
-void Frame::readChannels(Common::ReadStreamEndian *stream) {
+void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 	byte unk[48];
 
-	if (_vm->getVersion() < 400) {
+	if (version < kFileVer400) {
 		// Sound/Tempo/Transition
 		_actionId = stream->readByte();
 		_soundType1 = stream->readByte(); // type: 0x17 for sounds (sound is cast id), 0x16 for MIDI (sound is cmd id)
@@ -192,7 +192,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 
 		if (_vm->getPlatform() == Common::kPlatformMacintosh)
 			stream->read(unk, 3);
-	} else if (_vm->getVersion() >= 400 && _vm->getVersion() < 500) {
+	} else if (version >= kFileVer400 && version < kFileVer500) {
 		// Sound/Tempo/Transition
 		int unk1 = stream->readByte();
 		if (unk1) {
@@ -248,7 +248,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 		stream->readByte();
 
 		debugC(8, kDebugLoading, "Frame::readChannels(): %d %d %d %d %d %d %d %d %d %d %d", _actionId, _soundType1, _transDuration, _transChunkSize, _tempo, _transType, _sound1, _skipFrameFlag, _blend, _sound2, _soundType2);
-	} else if (_vm->getVersion() >= 500 && _vm->getVersion() < 600) {
+	} else if (version >= kFileVer500 && version < kFileVer600) {
 		// Sound/Tempo/Transition channel
 		stream->read(unk, 24);
 
@@ -268,11 +268,11 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 
-		if (_vm->getVersion() < 500) {
+		if (version < kFileVer500) {
 			sprite._scriptId = stream->readByte();
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
-			if (_vm->getVersion() >= 400) {
+			if (version >= kFileVer400) {
 				sprite._foreColor = _vm->transformColor((uint8)stream->readByte());
 				sprite._backColor = _vm->transformColor((uint8)stream->readByte());
 			} else {
@@ -296,7 +296,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._height = (int16)stream->readUint16();
 			sprite._width = (int16)stream->readUint16();
 
-			if (_vm->getVersion() >= 400) {
+			if (version >= kFileVer400) {
 				sprite._scriptId = stream->readUint16();
 				// & 0x0f scorecolor
 				// 0x10 forecolor is rgb
@@ -306,7 +306,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 				sprite._colorcode = stream->readByte();
 				sprite._blendAmount = stream->readByte();
 			}
-		} else if (_vm->getVersion() >= 500 && _vm->getVersion() < 600) {
+		} else if (version >= kFileVer500 && version < kFileVer600) {
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._inkData = stream->readByte();
 
@@ -329,7 +329,7 @@ void Frame::readChannels(Common::ReadStreamEndian *stream) {
 			sprite._blendAmount = stream->readByte();
 			sprite._thickness = stream->readByte();
 			stream->readByte();	// unused
-		} else if (_vm->getVersion() >= 600 && _vm->getVersion() < 700) {
+		} else if (version >= kFileVer600 && version < kFileVer700) {
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._inkData = stream->readByte();
 

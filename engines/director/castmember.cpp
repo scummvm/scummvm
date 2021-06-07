@@ -72,7 +72,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_clut = kClutSystemMac;
 	_bitsPerPixel = 0;
 
-	if (version < 400) {
+	if (version < kFileVer400) {
 		_flags1 = flags1;	// region: 0 - auto, 1 - matte, 2 - disabled, 8 - no auto
 
 		_bytes = stream.readUint16();
@@ -93,7 +93,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		if (_pitch % 16)
 			_pitch += 16 - (_initialRect.width() % 16);
 
-	} else if (version >= 400 && version < 500) {
+	} else if (version >= kFileVer400 && version < kFileVer500) {
 		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
@@ -142,7 +142,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			debug("BitmapCastMember: tail");
 			Common::hexdump(buf, tail);
 		}
-	} else if (version >= 500) {
+	} else if (version >= kFileVer500) {
 		uint16 count = stream.readUint16();
 		for (uint16 cc = 0; cc < count; cc++)
 			stream.readUint32();
@@ -542,7 +542,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
 
-	if (version < 400) {
+	if (version < kFileVer400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
@@ -558,7 +558,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		uint16 pad4 = 0;
 		uint16 totalTextHeight;
 
-		if (version >= 200 && version < 300) {
+		if (version < kFileVer300) {
 			pad2 = stream.readUint16();
 			if (pad2 != 0) { // In D2 there are values
 				warning("TextCastMember: pad2: %x", pad2);
@@ -588,7 +588,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
-	} else if (version >= 400 && version < 500) {
+	} else if (version >= kFileVer400 && version < kFileVer500) {
 		_flags1 = flags1;
 		_borderSize = static_cast<SizeType>(stream.readByte());
 		_gutterSize = static_cast<SizeType>(stream.readByte());
@@ -638,7 +638,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	if (asButton) {
 		_type = kCastButton;
 
-		if (version < 500) {
+		if (version < kFileVer500) {
 			_buttonType = static_cast<ButtonType>(stream.readUint16BE() - 1);
 		} else {
 			warning("TextCastMember(): Attempting to initialize >D4 button castmember");
@@ -765,7 +765,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 	_ink = kInkTypeCopy;
 
-	if (version < 400) {
+	if (version < kFileVer400) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -777,7 +777,7 @@ ShapeCastMember::ShapeCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_ink = static_cast<InkType>(_fillType & 0x3f);
 		_lineThickness = stream.readByte();
 		_lineDirection = stream.readByte();
-	} else if (version >= 400 && version < 500) {
+	} else if (version >= kFileVer400 && version < kFileVer500) {
 		unk1 = stream.readByte();
 		_shapeType = static_cast<ShapeType>(stream.readByte());
 		_initialRect = Movie::readRect(stream);
@@ -821,9 +821,9 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	_type = kCastLingoScript;
 	_scriptType = kNoneScript;
 
-	if (version < 400) {
+	if (version < kFileVer400) {
 		error("Unhandled Script cast");
-	} else if (version >= 400 && version < 500) {
+	} else if (version >= kFileVer400 && version < kFileVer500) {
 		byte unk1 = stream.readByte();
 		byte type = stream.readByte();
 
@@ -842,7 +842,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		stream.readByte(); // There should be no more data
 		assert(stream.eos());
-	} else if (version >= 500) {
+	} else if (version >= kFileVer500) {
 		stream.readByte();
 		stream.readByte();
 

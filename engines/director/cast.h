@@ -51,12 +51,13 @@ public:
 	Cast(Movie *movie, bool shared = false);
 	~Cast();
 
-	bool loadArchive();
+	void loadArchive();
 	void setArchive(Archive *archive);
 	Archive *getArchive() const { return _castArchive; };
 	Common::String getMacName() const { return _macName; }
 
-	void loadConfig(Common::SeekableReadStreamEndian &stream);
+	void loadConfig();
+	void loadCast();
 	void loadCastDataVWCR(Common::SeekableReadStreamEndian &stream);
 	void loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res);
 	void loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id);
@@ -85,6 +86,8 @@ private:
 
 public:
 	Archive *_castArchive;
+	uint16 _version;
+
 	Common::HashMap<uint16, Common::String> _fontMap;
 
 	Common::HashMap<int, CastMember *> *_loadedCast;
@@ -93,6 +96,8 @@ public:
 	uint16 _castArrayStart;
 	uint16 _castArrayEnd;
 
+	Common::Rect _movieRect;
+	uint16 _stageColor;
 	int _defaultPalette;
 
 	uint16 _movieScriptCount;

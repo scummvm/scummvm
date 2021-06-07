@@ -102,7 +102,7 @@ public:
 	~Movie();
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
-	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream);
+	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
 
 	bool loadArchive();
 	void setArchive(Archive *archive);
@@ -146,6 +146,7 @@ private:
 
 public:
 	Archive *_movieArchive;
+	uint16 _version;
 	Common::Rect _movieRect;
 	uint16 _currentClickOnSpriteId;
 	uint16 _currentEditableTextChannel;

@@ -101,6 +101,12 @@ void Movie::setArchive(Archive *archive) {
 bool Movie::loadArchive() {
 	Common::SeekableReadStreamEndian *r = nullptr;
 
+	// Config
+	_cast->loadConfig();
+	_version = _cast->_version;
+	_movieRect = _cast->_movieRect;
+	// Wait to handle _stageColor until palette is loaded in loadCast...
+
 	// File Info
 	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
 		loadFileInfo(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I'))));
@@ -108,9 +114,8 @@ bool Movie::loadArchive() {
 	}
 
 	// Cast
-	_cast->loadArchive();
-
-	// _movieRect and _stageColor are in VWCF, which the cast handles
+	_cast->loadCast();
+	_stageColor = _vm->transformColor(_cast->_stageColor);
 
 	bool recenter = false;
 	// If the stage dimensions are different, delete it and start again.
@@ -142,7 +147,7 @@ bool Movie::loadArchive() {
 		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
 		return false;
 	}
-	_score->loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))));
+	_score->loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))), _version);
 	delete r;
 
 	// Action list
@@ -166,7 +171,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream) {
+InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	uint32 offset = stream.pos();
 	offset += stream.readUint32();
 
@@ -175,7 +180,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream) {
 	res.unk2 = stream.readUint32();
 	res.flags = stream.readUint32();
 
-	if (g_director->getVersion() >= 400)
+	if (version >= kFileVer400)
 		res.scriptId = stream.readUint32();
 
 	stream.seek(offset);
@@ -209,7 +214,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream) {
 void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {
 	debugC(2, kDebugLoading, "****** Loading FileInfo VWFI");
 
-	InfoEntries fileInfo = Movie::loadInfoEntries(stream);
+	InfoEntries fileInfo = Movie::loadInfoEntries(stream, _version);
 
 	_allowOutdatedLingo = (fileInfo.flags & kMovieFlagAllowOutdatedLingo) != 0;
 

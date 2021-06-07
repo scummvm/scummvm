@@ -228,7 +228,7 @@ struct LingoArchive {
 	Common::String getName(uint16 id);
 
 	void addCode(const char *code, ScriptType type, uint16 id, const char *scriptName = nullptr);
-	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName);
+	void addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version);
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };
 
@@ -247,7 +247,7 @@ public:
 
 	ScriptContext *compileAnonymous(const char *code);
 	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
-	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName);
+	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);

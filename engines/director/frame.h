@@ -84,7 +84,7 @@ public:
 
 	Score *getScore() const { return _score; }
 
-	void readChannels(Common::ReadStreamEndian *stream);
+	void readChannels(Common::ReadStreamEndian *stream, uint16 version);
 	void readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset, uint16 size);
 
 	void executeImmediateScripts();
