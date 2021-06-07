@@ -22,6 +22,9 @@
 /* This code is based on Nine Patch code by Matthew Leverton
    taken from https://github.com/konforce/Allegro-Nine-Patch
 
+   You may read more about the image format here:
+      https://radleymarx.com/2011/simple-guide-to-9-patch
+
    Copyright (C) 2011 Matthew Leverton
 
    Permission is hereby granted, free of charge, to any person obtaining a copy of
