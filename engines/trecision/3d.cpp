@@ -875,8 +875,6 @@ PathFinding3D::~PathFinding3D() {
 }
 
 void PathFinding3D::findPath() {
-	int32 b;
-
 	Actor *actor = _vm->_actor;
 	actor->_px += actor->_dx;
 	actor->_pz += actor->_dz;
@@ -885,28 +883,30 @@ void PathFinding3D::findPath() {
 	_numPathNodes = 0;
 
 	// if you have clicked behind the starting panel or the corner it's not possible to walk
-	if (_curPanel < 0 && _oldPanel >= 0 &&
+	if (_curPanel < 0 && _oldPanel >= 0) {
+		int16 b;
 		// behind the starting panel
-		(pointInside(b = _oldPanel, _curX, _curZ) ||
-		 // behind the panel corner1
-		 ((_vm->dist2D(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ))) ||
-		 // behind the panel corner2
-		 ((_vm->dist2D(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, actor->_px, actor->_pz) < EPSILON) &&
-		  (pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ))))) {
-		_curX = actor->_px;
-		_curZ = actor->_pz;
-		actor->_px -= actor->_dx;
-		actor->_pz -= actor->_dz;
-		_curPanel = b;
-		_numPathNodes = 0;
-		lookAt(_lookX, _lookZ);
-		return;
+		if (pointInside(b = _oldPanel, _curX, _curZ) ||
+			// behind the panel corner1
+			((_vm->dist2D(_panel[_oldPanel]._x1, _panel[_oldPanel]._z1, actor->_px, actor->_pz) < EPSILON) &&
+			 (pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ))) ||
+			// behind the panel corner2
+			((_vm->dist2D(_panel[_oldPanel]._x2, _panel[_oldPanel]._z2, actor->_px, actor->_pz) < EPSILON) &&
+			 (pointInside(b = _panel[_oldPanel]._nearPanel2, _curX, _curZ) || pointInside(b = _panel[_oldPanel]._nearPanel1, _curX, _curZ)))) {
+			_curX = actor->_px;
+			_curZ = actor->_pz;
+			actor->_px -= actor->_dx;
+			actor->_pz -= actor->_dz;
+			_curPanel = b;
+			_numPathNodes = 0;
+			lookAt(_lookX, _lookZ);
+			return;
+		}
 	}
 
 	float dist = _vm->dist2D(actor->_px, actor->_pz, _curX, _curZ);
 
-	for (b = 0; b < _panelNum; ++b) {
+	for (int b = 0; b < _panelNum; ++b) {
 		if (_panel[b]._flags & 0x80000000) { // it must be a wide panel
 			if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 								  _panel[b]._x2, _panel[b]._z2,
@@ -941,7 +941,7 @@ void PathFinding3D::findPath() {
 							return;
 						}
 					}
-				} else if (b == _panel[_curPanel]._nearPanel1 || b == _panel[_curPanel]._nearPanel2) {
+				} else if (_curPanel >= 0 && (b == _panel[_curPanel]._nearPanel1 || b == _panel[_curPanel]._nearPanel2)) {
 					// otherwise if it is near the finish panel
 					if (fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
 						// and the distance is very small to the intersection
@@ -1008,7 +1008,7 @@ void PathFinding3D::findPath() {
 
 		// Count the intersections with narrow panels
 		// and with the union of large panels and small panels
-		for (b = 0; b < _panelNum; ++b) {
+		for (int b = 0; b < _panelNum; ++b) {
 			if (!(_panel[b]._flags & 0x80000000)) {
 				if (intersectLineLine(_panel[b]._x1, _panel[b]._z1,
 									  _panel[b]._x2, _panel[b]._z2,
