@@ -40,7 +40,7 @@
 
 namespace AGS3 {
 
-SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, int loop) {
+SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		Audio::AudioStream *audioStream = Audio::makeWAVStream(data, DisposeAfterUse::YES);
@@ -86,16 +86,16 @@ SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll) {
 	return my_load_static_ogg(asset_name, voll, false);
 }
 
-SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool repeat) {
+SOUNDCLIP *my_load_midi(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
-		return new MYMIDI(data, repeat);
+		return new MYMIDI(data, loop);
 	} else {
 		return nullptr;
 	}
 }
 
-SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
+SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop) {
 	Common::SeekableReadStream *data = _GP(AssetMgr)->OpenAssetStream(asset_name.Name, asset_name.Filter);
 	if (data) {
 		// determine the file extension
@@ -126,7 +126,7 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool repeat) {
 			return nullptr;
 		}
 
-		return new SoundClipWave<MUS_MOD>(audioStream, 255, repeat);
+		return new SoundClipWave<MUS_MOD>(audioStream, 255, loop);
 	} else {
 		return nullptr;
 	}

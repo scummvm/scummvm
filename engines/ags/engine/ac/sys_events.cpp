@@ -180,7 +180,7 @@ int mgetbutton() {
 }
 
 bool ags_misbuttondown(int but) {
-	return mouse_button_poll() & MB_ARRAY[but];
+	return (mouse_button_poll() & MB_ARRAY[but]) != 0;
 }
 
 int ags_mgetbutton() {

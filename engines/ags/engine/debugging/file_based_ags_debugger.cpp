@@ -68,7 +68,7 @@ char *FileBasedAGSDebugger::GetNextMessage() {
 		// check again, because the editor might have deleted the file in the meantime
 		return nullptr;
 	}
-	int fileSize = in->GetLength();
+	soff_t fileSize = in->GetLength();
 	char *msg = (char *)malloc(fileSize + 1);
 	in->Read(msg, fileSize);
 	delete in;
