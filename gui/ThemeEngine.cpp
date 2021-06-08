@@ -2070,6 +2070,10 @@ Common::Rect ThemeEngine::swapClipRect(const Common::Rect &newRect) {
 	return oldRect;
 }
 
+Common::Rect ThemeEngine::getClipRect() {
+	return _clip;
+}
+
 void ThemeEngine::disableClipRect() {
 	_clip = Common::Rect(_screen.w, _screen.h);
 }
