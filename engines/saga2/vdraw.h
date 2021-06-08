@@ -35,6 +35,7 @@ class gDisplayPort : public gPort {
 public:
 	virtual ~gDisplayPort() {}
 
+	vDisplayPage protoPage;
 	vDisplayPage        *displayPage;           // page to draw to
 
 	virtual void setDisplayPage(vDisplayPage *dPage) {

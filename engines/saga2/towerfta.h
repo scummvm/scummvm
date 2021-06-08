@@ -37,9 +37,6 @@ INITIALIZER(initSystemConfig);
 INITIALIZER(initMemPool);
 TERMINATOR(termMemPool);
 
-INITIALIZER(initGraphicsSystem);
-TERMINATOR(termGraphicsSystem);
-
 INITIALIZER(initPlayIntro);
 TERMINATOR(termPlayOutro);
 
