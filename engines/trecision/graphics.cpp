@@ -413,8 +413,10 @@ void GraphicsManager::dissolve() {
 
 	while (sv + val > cv) {
 		_vm->checkSystem();
-		if (lastv + cv < sv + val)
+		if (lastv + cv < sv + val) {
+			cv = _vm->readTime();
 			continue;
+		}
 
 		lastv = (sv - cv) + val;
 
