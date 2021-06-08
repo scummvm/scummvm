@@ -679,8 +679,31 @@ void LC::cb_v4theentitypush() {
 			break;
 		case kTEAString:
 			{
-				/*Datum stringArg = */g_lingo->pop();
-				warning("cb_v4theentitypush: STUB: kTEAString");
+				Datum stringArg = g_lingo->pop();
+				ChunkType chunkType;
+				switch (entity) {
+				case kTheChars:
+					chunkType = kChunkChar;
+					break;
+				case kTheWords:
+					chunkType = kChunkWord;
+					break;
+				case kTheLines:
+					chunkType = kChunkLine;
+					break;
+				case kTheItems:
+					chunkType = kChunkItem;
+					break;
+				}
+				Datum chunkRef = LC::chunkRef(chunkType, 0, 0, stringArg); // get reference to last of chunk type
+				switch (field) {
+				case kTheLast:
+					result = chunkRef.eval();
+					break;
+				case kTheNumber:
+					result = chunkRef.u.cref->startChunk;
+					break;
+				}
 			}
 			break;
 		case kTEAMenuIdItemId:
