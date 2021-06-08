@@ -1714,7 +1714,7 @@ wasm32-*)
 	_endian=little # the endian check below fails, but emscripten is always little endian anyway
 	_host_os=emscripten
 	_host_cpu=wasm32
-	datadir='/'
+	datadir='/scummvm'
 	CXX="em++"
 	;;
 wii)
@@ -2908,7 +2908,7 @@ EOF
 		_pngpath="$EMSDK/upstream/emscripten/cache/"
 		_freetypepath="$EMSDK/upstream/emscripten/cache/ports-builds/freetype/"
 		VORBIS_CFLAGS="-I$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/include"
-		VORBIS_LIBS="-L$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/lib"
+		VORBIS_LIBS="-L$EMSDK/upstream/emscripten/cache/ports-builds/vorbis/lib"
 		FREETYPE2_CFLAGS="-I$_freetypepath/include"
 		_freetype_found="true"
 		if test "$_debug_build" = no; then
