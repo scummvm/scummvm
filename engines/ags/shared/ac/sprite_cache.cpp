@@ -690,7 +690,7 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 
 	_stream.reset(_GP(AssetMgr)->OpenAsset(filename));
 	if (_stream == nullptr)
-		return new Error(String::FromFormat("Failed to open _GP(spriteset) file '%s'.", filename));
+		return new Error(String::FromFormat("Failed to open spriteset file '%s'.", filename.GetCStr()));
 
 	spr_initial_offs = _stream->GetPosition();
 
