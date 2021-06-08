@@ -438,6 +438,7 @@ public:
 	 * @return The previous clipping rect
 	 */
 	Common::Rect swapClipRect(const Common::Rect &newRect);
+	Common::Rect getClipRect();
 
 	/**
 	 * Set the clipping rect to allow rendering on the whole surface.
