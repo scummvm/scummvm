@@ -26,6 +26,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
 #include "graphics/palette.h"
 
 #include "saga2/std.h"
@@ -176,7 +177,7 @@ void cleanupPalettes(void) {
 //	Begin fade up/down
 
 void beginFade(gPalettePtr newPalette, int32 fadeDuration) {
-	startTime = gameTime;
+	startTime = g_system->getMillis();
 	totalTime = fadeDuration;
 
 	//  Save the current palette for interpolation
@@ -192,7 +193,7 @@ void beginFade(gPalettePtr newPalette, int32 fadeDuration) {
 bool updatePalette() {
 	int32           elapsedTime;
 
-	elapsedTime = gameTime - startTime;
+	elapsedTime = g_system->getMillis() - startTime;
 	if (totalTime == 0)
 		return false;
 
@@ -205,7 +206,7 @@ bool updatePalette() {
 	} else {
 		gPalette        tempPalette;
 
-		WriteStatusF(1, "Fade: %d/%d", elapsedTime, totalTime);
+		debug(1, "Fade: %d/%d", elapsedTime, totalTime);
 
 		createPalette(
 		    &tempPalette,
@@ -215,7 +216,7 @@ bool updatePalette() {
 		    totalTime);
 
 		if (memcmp(&tempPalette, &currentPalette, sizeof(gPalette)) != 0) {
-			WriteStatusF(2, "Fade:*%d/%d", elapsedTime, totalTime);
+			debug(2, "Fade:*%d/%d", elapsedTime, totalTime);
 
 			memcpy(&currentPalette, &tempPalette, sizeof(gPalette));
 			assertCurrentPalette();
