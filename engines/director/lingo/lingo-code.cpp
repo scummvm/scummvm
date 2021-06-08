@@ -954,9 +954,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	return res;
 }
 
-void LC::c_of() {
-	// put char 5 of word 1 of line 2 into field "thing"
-	Datum src = g_lingo->pop();
+Datum LC::readChunkRef(const Datum &src) {
 	Datum lastLine = g_lingo->pop();
 	Datum firstLine = g_lingo->pop();
 	Datum lastItem = g_lingo->pop();
@@ -966,18 +964,22 @@ void LC::c_of() {
 	Datum lastChar = g_lingo->pop();
 	Datum firstChar = g_lingo->pop();
 
-	Datum res = src;
-
 	if (firstChar.asInt() > 0)
-		res = LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), src);
-	else if (firstWord.asInt() > 0)
-		res = LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), src);
-	else if (firstItem.asInt() > 0)
-		res = LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), src);
-	else if (lastLine.asInt() > 0)
-		res = LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), src);
+		return LC::chunkRef(kChunkChar, firstChar.asInt(), lastChar.asInt(), src);
+	if (firstWord.asInt() > 0)
+		return LC::chunkRef(kChunkWord, firstWord.asInt(), lastWord.asInt(), src);
+	if (firstItem.asInt() > 0)
+		return LC::chunkRef(kChunkItem, firstItem.asInt(), lastItem.asInt(), src);
+	if (lastLine.asInt() > 0)
+		return LC::chunkRef(kChunkLine, firstLine.asInt(), lastLine.asInt(), src);
 
-	g_lingo->push(res);
+	return src;
+}
+
+void LC::c_of() {
+	Datum src = g_lingo->pop();
+	Datum ref = readChunkRef(src);
+	g_lingo->push(ref.eval());
 }
 
 void LC::c_charOf() {
