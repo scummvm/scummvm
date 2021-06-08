@@ -206,7 +206,7 @@ bool updatePalette() {
 	} else {
 		gPalette        tempPalette;
 
-		debug(1, "Fade: %d/%d", elapsedTime, totalTime);
+		debugC(2, kDebugPalettes, "Fade: %d/%d", elapsedTime, totalTime);
 
 		createPalette(
 		    &tempPalette,
@@ -216,7 +216,7 @@ bool updatePalette() {
 		    totalTime);
 
 		if (memcmp(&tempPalette, &currentPalette, sizeof(gPalette)) != 0) {
-			debug(2, "Fade:*%d/%d", elapsedTime, totalTime);
+			debugC(2, kDebugPalettes, "Fade:*%d/%d", elapsedTime, totalTime);
 
 			memcpy(&currentPalette, &tempPalette, sizeof(gPalette));
 			assertCurrentPalette();

@@ -32,7 +32,8 @@ static const DebugChannelDef debugFlagList[] = {
 	{Saga2::kDebugScripts,   "scripts",   "Debug the scripts"},
 	{Saga2::kDebugEventLoop, "eventloop", "Debug the event loop"},
 	{Saga2::kDebugInit,      "init",      "Debug the initialization process"},
-	{Saga2::kDebugTiles,   "tiles",     "Debug the tiles"},
+	{Saga2::kDebugTiles,     "tiles",     "Debug the tiles"},
+	{Saga2::kDebugPalettes,  "palettes",  "Debug the palettes"},
 	DEBUG_CHANNEL_END
 };
 
