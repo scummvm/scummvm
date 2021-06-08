@@ -33,6 +33,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "director",			"Macromedia Director Game" },
 	{ "directortest",		"Macromedia Director Test Target" },
 	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
+	{ "workshop",			"Director Workshop Movies"},
 	{ "theapartment",		"The Apartment, Interactive demo" },
 
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart"},
@@ -265,6 +266,15 @@ const char *directoryGlobs[] = {
 	0
 };
 
+static const char *customTargetList[] = {
+	"d2-mac",
+	"d3-mac",
+	"d4-mac",
+	"d3-win",
+	"d4-win",
+	0
+};
+
 static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugCompile, "compile", "Lingo Compilation"},
 	{Director::kDebugCompileOnly, "compileonly", "Skip Lingo code execution"},
@@ -287,10 +297,19 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 class DirectorMetaEngineDetection : public AdvancedMetaEngineDetection {
+private:
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _customTarget;
+
 public:
 	DirectorMetaEngineDetection() : AdvancedMetaEngineDetection(Director::gameDescriptions, sizeof(Director::DirectorGameDescription), directorGames) {
 		_maxScanDepth = 5;
 		_directoryGlobs = Director::directoryGlobs;
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
+
+		// initialize customTarget hashmap here
+		for (int i = 0; customTargetList[i] != NULL; i++)
+			_customTarget[customTargetList[i]] = true;
 	}
 
 	const char *getEngineId() const override {
@@ -353,7 +372,7 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 		// first we check the custom target, check whether the filename is in the list of custom target
 		// then we read 4 string from it, targetID, gameName, platform and version
-		if (findCustomTarget(fileName)) {
+		if (_customTarget.contains(fileName)) {
 			Common::File f;
 			if (!f.open(*file))
 				continue;
@@ -362,9 +381,9 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			Common::String platform = f.readString('\n');
 			Common::String version = f.readString('\n');
 
-			strncpy(s_fallbackFileNameBuffer, fileName.c_str(), 50);
+			strncpy(s_fallbackFileNameBuffer, fileName.c_str(), sizeof(s_fallbackFileNameBuffer) - 1);
 			desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
-			strncpy(s_fallbackGameIDBuffer, targetID.c_str(), 20);
+			strncpy(s_fallbackGameIDBuffer, targetID.c_str(), sizeof(s_fallbackGameIDBuffer) - 1);
 			desc->desc.gameId = s_fallbackGameIDBuffer;
 			desc->version = atoi(version.c_str());
 			desc->desc.platform = Common::parsePlatform(platform);
