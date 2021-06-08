@@ -855,7 +855,7 @@ void Datum::reset() {
 #endif
 }
 
-Datum Datum::eval() {
+Datum Datum::eval() const {
 	if (type == VAR || type == FIELDREF || type == CHUNKREF) {
 		return g_lingo->varFetch(*this);
 	}
@@ -1272,7 +1272,7 @@ int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
-void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvars) {
+void Lingo::varAssign(const Datum &var, Datum &value, bool global, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
@@ -1325,7 +1325,7 @@ void Lingo::varAssign(Datum &var, Datum &value, bool global, DatumHash *localvar
 	}
 }
 
-Datum Lingo::varFetch(Datum &var, bool global, DatumHash *localvars, bool silent) {
+Datum Lingo::varFetch(const Datum &var, bool global, DatumHash *localvars, bool silent) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}

@@ -136,7 +136,7 @@ struct Datum {	/* interpreter stack type */
 		reset();
 	}
 
-	Datum eval();
+	Datum eval() const;
 	double asFloat() const;
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
@@ -295,8 +295,8 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	void varAssign(Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
-	Datum varFetch(Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
+	void varAssign(const Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
+	Datum varFetch(const Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
 	Datum findVarV4(int varType, const Datum &id);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
