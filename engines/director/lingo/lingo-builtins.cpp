@@ -2439,112 +2439,50 @@ void LB::b_window(int nargs) {
 
 void LB::b_numberofchars(int nargs) {
 	Datum d = g_lingo->pop();
-
-	int len = strlen(d.asString().c_str());
-
-	Datum res(len);
-	g_lingo->push(res);
+	Datum chunkRef = LC::chunkRef(kChunkChar, 0, 0, d); // get reference to last char
+	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberofitems(int nargs) {
 	Datum d = g_lingo->pop();
-
-	int numberofitems = 1;
-	Common::String contents = d.asString();
-	for (uint32 i = 0;  i < contents.size(); i++) {
-		if (contents[i] == g_lingo->_itemDelimiter)
-			numberofitems++;
-	}
-
-	Datum res(numberofitems);
-	g_lingo->push(res);
+	Datum chunkRef = LC::chunkRef(kChunkItem, 0, 0, d); // get reference to last item
+	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberoflines(int nargs) {
 	Datum d = g_lingo->pop();
-
-	int numberoflines = 1;
-	Common::String contents = d.asString();
-	for (uint32 i = 0; i < contents.size(); i++) {
-		if (contents[i] == '\n')
-			numberoflines++;
-	}
-
-	Datum res(numberoflines);
-	g_lingo->push(res);
+	Datum chunkRef = LC::chunkRef(kChunkLine, 0, 0, d); // get reference to last line
+	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
-
-	int numberofwords = 0;
-	Common::String contents = d.asString();
-	if (contents.empty()) {
-		g_lingo->push(Datum(0));
-		return;
-	}
-	for (uint32 i = 1; i < contents.size(); i++) {
-		if (Common::isSpace(contents[i]) && !Common::isSpace(contents[i - 1]))
-			numberofwords++;
-	}
-	// Count the last word
-	if (!Common::isSpace(contents[contents.size() - 1]))
-		numberofwords++;
-
-	Datum res(numberofwords);
-	g_lingo->push(res);
+	Datum chunkRef = LC::chunkRef(kChunkWord, 0, 0, d); // get reference to last word
+	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_lastcharof(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type != STRING) {
-		warning("LB::b_lastcharof(): Called with wrong data type: %s", d.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	Common::String contents = d.asString();
-	Common::String res;
-	if (contents.size() != 0)
-		res = contents.lastChar();
-	g_lingo->push(Datum(res));
+	Datum chunkRef = LC::chunkRef(kChunkChar, 0, 0, d); // get reference to last char
+	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastitemof(int nargs) {
 	Datum d = g_lingo->pop();
-	if (d.type != STRING) {
-		warning("LB::b_lastitemof(): Called with wrong data type: %s", d.type2str());
-		g_lingo->push(Datum(""));
-		return;
-	}
-
-	Common::String res;
-	Common::String chunkExpr = d.asString();
-	uint pos = chunkExpr.findLastOf(g_lingo->_itemDelimiter);
-	if (pos == Common::String::npos) {
-		res = chunkExpr;
-	} else {
-		pos++; // skip the item delimiter
-		res = chunkExpr.substr(pos , chunkExpr.size() - pos);
-	}
-
-	g_lingo->push(Datum(res));
+	Datum chunkRef = LC::chunkRef(kChunkItem, 0, 0, d); // get reference to last item
+	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastlineof(int nargs) {
 	Datum d = g_lingo->pop();
-
-	warning("STUB: b_lastlineof");
-
-	g_lingo->push(Datum(0));
+	Datum chunkRef = LC::chunkRef(kChunkLine, 0, 0, d); // get reference to last line
+	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastwordof(int nargs) {
 	Datum d = g_lingo->pop();
-
-	warning("STUB: b_lastwordof");
-
-	g_lingo->push(Datum(0));
+	Datum chunkRef = LC::chunkRef(kChunkWord, 0, 0, d); // get reference to last word
+	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_scummvmassert(int nargs) {
