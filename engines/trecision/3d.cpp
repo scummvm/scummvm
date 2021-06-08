@@ -187,11 +187,9 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			int32 mtx = ((int32)(_rTextX[y] - (olx = _lTextX[y])) << 16) / dx;
 			// slope dty/_dx
 			int32 mty = ((int32)(_rTextY[y] - (oly = _lTextY[y])) << 16) / dx;
-			// screen offset
-			int32 sl = el + MAXX * y;
 			// pointer to zbuffer
 			int16 *z = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
-			uint16 *screenPtr = _vm->_graphicsMgr->getScreenBufferPtr() + sl;
+			uint16 x = el;
 
 			zl <<= 16;
 			cl <<= 8;
@@ -199,12 +197,14 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			oly <<= 16;
 			// loop through every pixel in horizontal scanline
 			while (dx) {
-				sl = zl >> 16;
-				if (*z > sl) {
-					*screenPtr = (uint16)_vm->_actor->_textureMat.getPixel(cl >> 9, texture[(olx >> 16) + t->_dx * (oly >> 16)]);
-					*z = (int16)sl;
+				const int32 screenOffset = zl >> 16;
+				if (*z > screenOffset) {
+					const uint16 textureX = (uint16)(cl >> 9);
+					const uint16 textureY = texture[(olx >> 16) + t->_dx * (oly >> 16)];
+					_vm->_graphicsMgr->drawTexturePixel(textureX, textureY, x, y);
+					*z = (int16)screenOffset;
 				}
-				++screenPtr; // increase screen x
+				++x;         // increase screen x
 				++z;         // increase zbuffer
 				zl += mz;    // increase the zbuffer by _dz/_dx
 				cl += mc;    // increase the color by dc/_dx

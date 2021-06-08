@@ -80,7 +80,6 @@ Actor::~Actor() {
 	delete[] _characterArea;
 	delete[] _face;
 	delete[] _textureData;
-	_textureMat.free();
 }
 
 void Actor::initTextures() {
@@ -329,7 +328,7 @@ void Actor::readModel(const char *filename) {
 	if (ff == nullptr)
 		error("readModel - Error opening file mat.tex");
 
-	_vm->_graphicsMgr->readSurface(ff, &_textureMat, 91, 256);
+	_vm->_graphicsMgr->readTexture(ff);
 
 	for (uint16 i = 0; i < MAXFACE; ++i) {
 		for (uint16 j = 0; j < 3; ++j) {

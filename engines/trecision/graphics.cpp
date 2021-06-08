@@ -57,6 +57,8 @@ GraphicsManager::~GraphicsManager() {
 	_rightInventoryArrow.free();
 	_inventoryIcons.free();
 	_saveSlotThumbnails.free();
+	_textureMat.free();
+
 	delete[] _font;
 }
 
@@ -236,10 +238,6 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 	);
 }
 
-uint16 *GraphicsManager::getScreenBufferPtr() {
-	return (uint16 *)_screenBuffer.getPixels();
-}
-
 void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count) {
 	surface->create(width * count, height, kImageFormat);
 
@@ -251,6 +249,15 @@ void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::
 	}
 
 	surface->convertToInPlace(_screenFormat);
+}
+
+void GraphicsManager::readTexture(Common::SeekableReadStream *stream) {
+	readSurface(stream, &_textureMat, 91, 256);
+}
+
+void GraphicsManager::drawTexturePixel(uint16 textureX, uint16 textureY, uint16 screenX, uint16 screenY) {
+	const uint16 texturePixel = (uint16)_textureMat.getPixel(textureX, textureY);
+	_screenBuffer.setPixel(screenX, screenY, texturePixel);
 }
 
 void GraphicsManager::loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height) {

@@ -57,7 +57,6 @@ public:
 	SCamera *_camera;
 	STexture *_textures;
 
-	Graphics::Surface _textureMat;
 	int16  _textureCoord[MAXFACE][3][2];
 
 	uint32 _vertexNum;

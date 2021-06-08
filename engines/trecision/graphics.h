@@ -45,6 +45,7 @@ class GraphicsManager {
 	Graphics::Surface _rightInventoryArrow;
 	Graphics::Surface _inventoryIcons;
 	Graphics::Surface _saveSlotThumbnails;
+	Graphics::Surface _textureMat;
 
 	Graphics::PixelFormat _screenFormat;
 	uint16 _bitMask[3];
@@ -76,7 +77,6 @@ public:
 	void copyToScreen(int x, int y, int w, int h);
 	void copyToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette);
 	void blitToScreenBuffer(const Graphics::Surface *surface, int x, int y, const byte *palette, bool useSmkBg);
-	uint16 *getScreenBufferPtr();
 	void paintScreen(bool flag);
 	void loadBackground(Common::SeekableReadStream *stream, uint16 width, uint16 height);
 	void clearScreenBuffer();
@@ -89,6 +89,8 @@ public:
 	void drawSaveSlotThumbnail(byte iconIndex, byte iconSlot, byte startLine);
 	void setSaveSlotThumbnail(byte iconSlot, const Graphics::Surface *thumbnail);
 	void readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count = 1);
+	void readTexture(Common::SeekableReadStream *stream);
+	void drawTexturePixel(uint16 textureX, uint16 textureY, uint16 screenX, uint16 screenY);
 
 	uint16 convertToScreenFormat(uint16 color) const;
 
