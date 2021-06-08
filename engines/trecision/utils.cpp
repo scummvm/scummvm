@@ -297,13 +297,13 @@ int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
  * SDText
  ************************************************/
 void SDText::set(SDText *org) {
-	set(org->_rect, org->_subtitleRect, org->_textCol, org->_shadowCol, org->_text);
+	set(org->_rect, org->_subtitleRect, org->_textColor, org->_shadowCol, org->_text);
 }
 
 void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text) {
 	_rect = rect;
 	_subtitleRect = subtitleRect;
-	_textCol = textCol;
+	_textColor = textCol;
 	_shadowCol = shadowCol;
 	_text = text;
 
@@ -373,7 +373,7 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 }
 
 void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
-	uint16 tmpTextCol = _textCol;
+	uint16 tmpTextCol = _textColor;
 	uint16 tmpShadowCol = _shadowCol;
 	vm->_graphicsMgr->updatePixelFormat(&tmpTextCol, 1);
 	if (_shadowCol != MASKCOL)

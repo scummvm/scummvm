@@ -381,7 +381,7 @@ void TextManager::addText(Common::Point pos, const char *text, uint16 textCol, u
 	StackText t;
 	t._x = pos.x;
 	t._y = pos.y;
-	t._textCol = textCol;
+	t._textColor = textCol;
 	t._shadowCol = shadowCol;
 	t._clear = false;
 	t._text = text;
@@ -420,7 +420,7 @@ void TextManager::drawText(StackText *text) {
 	uint16 height = _curString.calcHeight(_vm);
 	_curString._subtitleRect = Common::Rect(_curString._rect.width(), height);
 	_curString._rect.setHeight(height);
-	_curString._textCol = text->_textCol;
+	_curString._textColor = text->_textColor;
 	_curString._shadowCol = text->_shadowCol;
 
 	if (_curString._rect.top <= height)

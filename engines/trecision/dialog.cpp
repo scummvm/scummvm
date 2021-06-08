@@ -637,7 +637,7 @@ void DialogManager::dialogHandler(int numFrame) {
 			++_curSubTitle;
 			_vm->_drawText._rect.left = _subTitles[i]._x;
 			_vm->_drawText._rect.top = _subTitles[i]._y;
-			_vm->_drawText._textCol = _subTitles[i]._color;
+			_vm->_drawText._textColor = _subTitles[i]._color;
 			_vm->_drawText._text = _vm->_sentence[_subTitles[i]._sentence];
 		}
 	}

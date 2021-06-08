@@ -164,7 +164,7 @@ class TrecisionEngine;
 struct SDText {
 	Common::Rect _rect;
 	Common::Rect _subtitleRect;
-	uint16 _textCol;
+	uint16 _textColor;
 	uint16 _shadowCol;
 	Common::String _text;
 	Common::String _drawTextLines[MAXDTEXTLINES];
