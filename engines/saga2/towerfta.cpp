@@ -318,6 +318,8 @@ TERMINATOR(termMousePointer) {
 
 INITIALIZER(initDisplay) {
 	mainPort.setColor(0);            //  fill screen with color
+	drawPage = &mainPort.protoPage;
+	mainPort.setDisplayPage(drawPage);
 	//lightsOut();
 	//mainPort.fillRect( Rect16( 0, 0, screenWidth, screenHeight ) );
 
@@ -448,7 +450,8 @@ TERMINATOR(termDynamicGameData) {
 // ------------------------------------------------------------------------
 
 INITIALIZER(initGameMode) {
-	GameMode::SetStack(&PlayMode, &TileMode, End_List);
+	GameMode *gameModes[] = {&PlayMode, &TileMode};
+	GameMode::SetStack(gameModes, 2);
 	if (GameMode::newmodeFlag)
 		GameMode::update();
 	return TRUE;
