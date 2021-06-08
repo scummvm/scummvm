@@ -150,10 +150,14 @@ struct Datum {	/* interpreter stack type */
 
 struct ChunkReference {
 	Datum source;
+	ChunkType type;
+	int startChunk;
+	int endChunk;
 	int start;
 	int end;
 
-	ChunkReference(const Datum &src, uint s, uint e) : source(src), start(s), end(e) {}
+	ChunkReference(const Datum &src, ChunkType t, int sc, int ec, int s, int e)
+		: source(src), type(t), startChunk(sc), endChunk(ec), start(s), end(e) {}
 };
 
 struct PCell {

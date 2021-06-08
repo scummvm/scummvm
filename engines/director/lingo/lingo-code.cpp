@@ -876,80 +876,128 @@ void LC::c_within() {
 
 Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &src) {
 	// A chunk expression is made up of 0 or more chunks within a source text.
-	// These chunks are called chars, words, items, or lines, but it's easier to think of them
-	// as a substring between 0 or more skip characters and a break character (or the end of the string).
 	// This function returns a reference to the source text, the start index of the first chunk,
 	// and the end index of the last chunk in the chunk expression.
+	// If startChunk < 1, return the last chunk.
 
-	if (startChunk < 1 || (0 > endChunk && endChunk < startChunk))
+	if (0 > endChunk && endChunk < startChunk)
 		return src;
 
 	if (endChunk < 1)
 		endChunk = startChunk;
 
-	Common::String skipChars;
-	Common::String breakChars;
+	Common::String str = src.eval().asString();
+
+	// these hold the bounds of the last chunk in the expression
+	int chunkNum = 0;
+	int chunkStartIdx = -1;
+	int chunkEndIdx = -1;
+
+	// these hold the bounds of the entire chunk expression
+	int exprStartIdx = -1;
+	int exprEndIdx = -1;
 
 	switch (type) {
 	case kChunkChar:
-		skipChars = "";
-		breakChars = "";
+		if (startChunk < 1) {
+			// last char was requested. set its bounds.
+			chunkNum = str.size();
+			chunkStartIdx = str.size() - 1;
+			chunkEndIdx = str.size();
+		} else if (str.size() > 0) {
+			exprStartIdx = MIN(startChunk, (int)str.size()) - 1;
+			exprEndIdx = MIN(endChunk, (int)str.size());
+		}
 		break;
 	case kChunkWord:
-		skipChars = "\t\n\r ";
-		breakChars = "\t\n\r ";
-		break;
-	case kChunkItem:
-		skipChars = "";
-		breakChars = g_lingo->_itemDelimiter;
-		break;
-	case kChunkLine:
-		skipChars = "";
-		breakChars = "\n\r";
-		break;
-	}
+		{
+			Common::String whitespace = "\t\n\r ";
 
-	Common::String str = src.asString();
-	int idx = 0;
-	int chunkNum = 0;
-
-	int startIdx = -1;
-	int endIdx = -1;
-
-	while (true) {
-		// each iteration processes one chunk
-
-		// find the start of the chunk
-		while (idx < (int)str.size() && skipChars.contains(str[idx])) {
-			idx++;
-		}
-		chunkNum++;
-		if (chunkNum == startChunk) {
-			startIdx = idx; // found start of chunk expression
-		}
-
-		// find the end of the chunk
-		if (!breakChars.empty()) {
-			while (idx < (int)str.size() && !breakChars.contains(str[idx])) {
+			int idx = 0;
+			while (idx < (int)str.size() && whitespace.contains(str[idx])) {
 				idx++;
 			}
-		} else if (idx < (int)str.size()) {
-			idx++;
-		}
-		if (chunkNum == endChunk || idx == (int)str.size()) {
-			endIdx = idx; // found end of chunk expression
-			break;
-		}
+			while (idx < (int)str.size()) {
+				// each loop processes one chunk
+				chunkNum++;
 
-		if (!breakChars.empty())
-			idx++; // skip break char
+				// start of chunk
+				chunkStartIdx = idx;
+				if (chunkNum == startChunk) {
+					exprStartIdx = chunkStartIdx;
+				}
+
+				while (idx < (int)str.size() && !whitespace.contains(str[idx])) {
+					idx++;
+				}
+
+				// end of chunk
+				chunkEndIdx = idx;
+
+				if (chunkNum == endChunk) {
+					exprEndIdx = chunkEndIdx;
+					break;
+				}
+
+				while (idx < (int)str.size() && whitespace.contains(str[idx])) {
+					idx++;
+				}
+			}
+		}
+		break;
+	case kChunkItem:
+	case kChunkLine:
+		{
+			char delimiter = (type == kChunkItem) ? g_lingo->_itemDelimiter : '\n';
+
+			int idx = 0;
+			while (true) {
+				// each loop processes one chunk
+				chunkNum++;
+
+				// start of chunk
+				chunkStartIdx = idx;
+				if (chunkNum == startChunk) {
+					exprStartIdx = chunkStartIdx;
+				}
+
+				while (idx < (int)str.size() && str[idx] != delimiter) {
+					idx++;
+				}
+
+				// end of chunk
+				chunkEndIdx = idx;
+				if (chunkNum == endChunk) {
+					exprEndIdx = chunkEndIdx;
+					break;
+				}
+
+				if (idx == (int)str.size())
+					break;
+				
+				idx++; // skip delimiter
+			}
+		}
+		break;
 	}
 
-	if (startIdx < 0)
-		startIdx = endIdx;
+	if (startChunk < 1) {
+		// return the last chunk we found
+		exprStartIdx = chunkStartIdx;
+		exprEndIdx = chunkEndIdx;
+	} else {
+		if (exprStartIdx < 0) {
+			// we never found the requested start chunk
+			exprStartIdx = -1;
+		}
+		if (exprEndIdx < 0) {
+			// we never found the requested end chunk
+			exprEndIdx = str.size();
+		}
+	}
 
 	Datum res;
-	res.u.cref = new ChunkReference(src, startIdx, endIdx);
+	res.u.cref = new ChunkReference(src, type, startChunk, endChunk, exprStartIdx, exprEndIdx);
 	res.type = CHUNKREF;
 	return res;
 }

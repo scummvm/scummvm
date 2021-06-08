@@ -992,8 +992,24 @@ Common::String Datum::asString(bool printonly) const {
 		break;
 	case CHUNKREF:
 		{
+			Common::String chunkType;
+			switch (u.cref->type) {
+			case kChunkChar:
+				chunkType = "char";
+				break;
+			case kChunkWord:
+				chunkType = "word";
+				break;
+			case kChunkItem:
+				chunkType = "item";
+				break;
+			case kChunkLine:
+				 chunkType = "line";
+				break;
+			}
 			Common::String src = u.cref->source.asString(true);
-			s = Common::String::format("chunk: char %d to %d of %s", u.cref->start, u.cref->end, src.c_str());
+			Common::String chunk = eval().asString(true);
+			s += Common::String::format("chunk: %s %d to %d of %s (%s)", chunkType.c_str(), u.cref->startChunk, u.cref->endChunk, src.c_str(), chunk.c_str());
 		}
 		break;
 	case POINT:
@@ -1379,7 +1395,11 @@ Datum Lingo::varFetch(const Datum &var, bool global, DatumHash *localvars, bool 
 	} else if (var.type == CHUNKREF) {
 		Common::String src = var.u.cref->source.eval().asString();
 		result.type = STRING;
-		result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
+		if (var.u.cref->start == -1) {
+			result.u.s = new Common::String("");
+		} else {
+			result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
+		}
 	} else {
 		warning("varFetch: fetch from non-variable");
 	}
