@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "common/rect.h"
+#include "graphics/surface.h"
 #include "saga2/std.h"
 #include "saga2/vdraw.h"
 #include "saga2/vwpage.h"
@@ -470,62 +472,26 @@ void vWDisplayPage::vLine(int16 x, int16 y, int16 height, uint8 color) {
 // -- we'll want to use this when we figure out why bltDDRect doesnt work here
 //#define USE_RECT
 
-#ifndef USE_RECT
-
-static bool easyblit = TRUE;
-
-void setBlitter(bool isEasy) {
-	easyblit = isEasy;
-}
-
-
 void vWDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-#if 0
-	if (easyblit) {
-		uint8       *dstPtr;
-
-		if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-			return;
-
-		dstPtr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-		if (!dstPtr) {
-			gError::warn("Failed buffer lock");
-			return;
-		}
-
-		_BltPixels(pixPtr, pixMod,
-		           dstPtr + (r.y * ddWindow->lPitch) + r.x, ddWindow->lPitch,
-		           r.width, r.height);
-
-		ddWindow->UnlockBackBuffer(dstPtr);
-	} else
-		BltDDRect(r, pixPtr, FALSE, pixMod, TRUE);
-#endif
-	warning("STUB: writePixels");
-}
-#else   // use rect
-void vWDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-	RECT                wRect;
-	uint8               *dstPtr;
-
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return;
+	Common::Rect          wRect;
 
 	wRect.left      = r.x;
 	wRect.top       = r.y;
 	wRect.right     = r.x + r.width;
 	wRect.bottom    = r.y + r.height;
 
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(&wRect);
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return;
-	}
+	// FIXME: Debug purposes-code for displaying things on the screen
+	// updateScreen should not be called here
+	warning("FIXME: writePixels");
+	Graphics::Surface sur;
+	sur.create(r.width, r.height, Graphics::PixelFormat::createFormatCLUT8());
+	sur.setPixels(pixPtr);
+	//sur.debugPrint();
+	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, r.x, r.y, sur.w, sur.h);
+	g_system->updateScreen();
 
-	_BltPixels(pixPtr, pixMod, dstPtr, ddWindow->lPitch, r.width, r.height);
-	ddWindow->UnlockBackBuffer(dstPtr);
+	//_BltPixels(pixPtr, pixMod, dstPtr, ddWindow->lPitch, r.width, r.height);
 }
-#endif
 
 #ifndef USE_RECT
 void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
