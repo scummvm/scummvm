@@ -185,7 +185,7 @@ void lightsOut(void);
 void cleanupGame(void);                  // auto-cleanup function
 void RShowMem(void);
 void parseCommandLine(int argc, char *argv[]);
-char *getExeFromCommandLine(int argc, char *argv[]);
+const char *getExeFromCommandLine(int argc, char *argv[]);
 void WriteStatusF2(int16 line, const char *msg, ...);
 bool initUserDialog(void);
 void cleanupUserDialog(void);
@@ -241,7 +241,7 @@ void main_saga2() {
 void updateActiveRegions(void);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]) {
-	char *exeFile = getExeFromCommandLine(argc, argv);
+	const char *exeFile = getExeFromCommandLine(argc, argv);
 	if (displayEnabled())
 		displayUpdate();
 	checkRestartGame(exeFile);
@@ -441,7 +441,9 @@ void SystemEventLoop(void) {
 // ------------------------------------------------------------------------
 // Determines the EXE file executed from command line info
 
-char *getExeFromCommandLine(int argc, char *argv[]) {
+const char *getExeFromCommandLine(int argc, char *argv[]) {
+	if (argv == nullptr)
+		return "scummvm";
 	return argv[0];
 }
 

@@ -41,7 +41,7 @@ void loadSavedGameState(int16 saveNo);
 //  Cleanup the game state
 void cleanupGameState(void);
 
-void checkRestartGame(char *exeName);
+void checkRestartGame(const char *exeName);
 void loadRestartGame(void);
 void getSaveFileName(int16 saveNo, char *fileName);
 

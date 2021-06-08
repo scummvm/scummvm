@@ -492,25 +492,16 @@ void cleanupGameState(void) {
 #include <time.h>
 #endif
 
-void checkRestartGame(char *exeName) {
-#ifdef DEBUG_FILETIME
-	int32 d1, d2;
-	char datebuf[64];
-#endif
+void checkRestartGame(const char *exeName) {
+#if 0
 	char saveRestart[260];
 	getSaveFileName(999, saveRestart);
-#ifdef DEBUG_FILETIME
-	d1 = getFileDate(exeName);
-	d2 = getFileDate(saveRestart);
-	strftime(datebuf, 64, "%c", localtime(&d1));
-	WriteStatusF(12, "Date:%s File %s", datebuf, exeName);
-	strftime(datebuf, 64, "%c", localtime(&d2));
-	WriteStatusF(13, "Date:%s File %s", datebuf, saveRestart);
-#endif
 	if (!fileExists(saveRestart) ||
 	        (getFileDate(exeName) > getFileDate(saveRestart)))
 		saveGameState(999, saveRestart);
+#endif
 
+	warning("STUB: checkRestartGame()");
 }
 
 
