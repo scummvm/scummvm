@@ -54,14 +54,20 @@ uint16 FireType::getRandomDamage() const {
 }
 
 
-// TODO: This is all hard coded values for No Remorse. These should probably
-// be moved into ini file settings so that it can be swapped out for No Regret.
+// The first 3 arrays are valid for No Remorse and No Regret.
 static const int16 FIRESOUND_1[] = { 0x26, 0x27, 0x41, 0x42, 0x45, 0x46 };
 static const int16 FIRESOUND_3[] = { 0x1c, 0x6c, 0x3e };
 static const int16 FIRESOUND_7[] = { 0x48, 0x5 };
+// These ones are No Regret only.
+static const int16 FIRESOUND_0x10_REG[] = { 0x8, 0x202 };
+static const int16 FIRESOUND_0xE_REG[] = { 0x205, 0x204 };
+static const int16 FIRESOUND_0x14_REG[] = { 0x207, 0x208 };
 
-static const int16 FIRESHAPE_3[] = { 0x326, 0x320, 0x321 };
-static const int16 FIRESHAPE_10[] = { 0x31c, 0x31f, 0x322 };
+// Shape arrays are very similar but slightly different between games
+static const int16 FIRESHAPE_3_REM[] = { 0x326, 0x320, 0x321 };
+static const int16 FIRESHAPE_3_REG[] = { 0x326, 0x320, 0x321, 0x323 };
+static const int16 FIRESHAPE_10_REM[] = { 0x31c, 0x31f, 0x322 };
+static const int16 FIRESHAPE_10_REG[] = { 0x31c, 0x31f, 0x321 };
 
 #define RANDOM_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
 
@@ -70,11 +76,6 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 	int16 shape = 0;
 
 	// First randomize the sprite and sound
-	if (GAME_IS_REGRET) {
-		// there are some differences which we need to implement.
-		warning("TODO: update FireType::makeBulletSplashShapeAndPlaySound for No Regret");
-	}
-
 	switch (_typeNo) {
 		case 1:
 		case 0xb:
@@ -83,36 +84,86 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 			break;
 		case 2:
 			shape = 0x1d8;
+			if (GAME_IS_REGRET && (getRandom() % 3 == 0)) {
+				sfxno = RANDOM_ELEM(FIRESOUND_1);
+			}
 			break;
 		case 3:
 		case 4:
-			shape = RANDOM_ELEM(FIRESHAPE_3);
+			if (GAME_IS_REMORSE)
+				shape = RANDOM_ELEM(FIRESHAPE_3_REM);
+			else
+				shape = RANDOM_ELEM(FIRESHAPE_3_REG);
 			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 5:
 			shape = 0x537;
+			if (GAME_IS_REGRET) {
+				if (getRandom() % 2)
+					sfxno = 0x164;
+				else
+					sfxno = 0x71;
+			}
 			break;
 		case 6:
 			shape = 0x578;
+			if (GAME_IS_REGRET)
+				sfxno = 0x206;
 			break;
 		case 7:
 			shape = 0x537;
 			sfxno = RANDOM_ELEM(FIRESOUND_7);
 			break;
 		case 10:
-			shape = RANDOM_ELEM(FIRESHAPE_10);
+			if (GAME_IS_REMORSE)
+				shape = RANDOM_ELEM(FIRESHAPE_10_REM);
+			else
+				shape = RANDOM_ELEM(FIRESHAPE_10_REG);
 			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 0xd:
 			shape = 0x1d8;
-			sfxno = RANDOM_ELEM(FIRESOUND_1);
+			if (GAME_IS_REMORSE || (getRandom() % 4 == 0))
+				sfxno = RANDOM_ELEM(FIRESOUND_1);
 			break;
 		case 0xe:
 			shape = 0x56b;
+			if (GAME_IS_REGRET)
+				sfxno = RANDOM_ELEM(FIRESOUND_0xE_REG);
 			break;
 		case 0xf:
 			shape = 0x59b;
 			sfxno = RANDOM_ELEM(FIRESOUND_7);
+			if (GAME_IS_REGRET)
+				sfxno = RANDOM_ELEM(FIRESOUND_7);
+			break;
+		case 0x10: // No Regret only
+			shape = 0x643;
+			sfxno = RANDOM_ELEM(FIRESOUND_0x10_REG);
+			break;
+		case 0x11: // No Regret only
+			shape = 0x642;
+			sfxno = 0x203;
+			break;
+		case 0x12: // No Regret only
+			shape = 0x59b;
+			sfxno = RANDOM_ELEM(FIRESOUND_0x10_REG);
+			break;
+		case 0x13: // No Regret only
+			shape = 0x59b;
+			sfxno = RANDOM_ELEM(FIRESOUND_7);
+			break;
+		case 0x14: // No Regret only
+			shape = 0x641;
+			sfxno = RANDOM_ELEM(FIRESOUND_0x14_REG);
+			break;
+		case 0x15: // No Regret only
+			shape = 0x641;
+			sfxno = 0x20a;
+			break;
+		case 0x16: // No Regret only
+			shape = 0x31f;
+			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 9:
 		default:
@@ -133,12 +184,17 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 		lastframe = 10;
 		break;
 	case 0x578:
+	case 0x642:
 		firstframe = (getRandom() % 3) * 5;
 		lastframe = firstframe + 4;
 		break;
 	case 0x59b:
 		firstframe = (getRandom() % 2) * 4;
 		lastframe = firstframe + 3;
+		break;
+	case 0x641: // No Regret only
+	case 0x643: // No Regret only
+		lastframe = 3;
 		break;
 	case 0x1d8: {
 		switch (getRandom() % 4) {
