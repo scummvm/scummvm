@@ -350,6 +350,9 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 		Common::String fileName = file->getName();
 		fileName.toLowercase();
+
+		// first we check the custom target, check whether the filename is in the list of custom target
+		// then we read 4 string from it, targetID, gameName, platform and version
 		if (findCustomTarget(fileName)) {
 			Common::File f;
 			if (!f.open(*file))
