@@ -2363,7 +2363,7 @@ GameWorld::GameWorld(int16 map) {
 	if (tileRes->seek(MKTAG('M', 'A', 'P', (char)map))) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
-		tileRes->read(&mapSize, sizeof(mapSize));
+		mapSize = tileRes->readU16LE();
 		size.u = (mapSize << platShift) << tileUVShift;
 		size.v = size.u;
 
