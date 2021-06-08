@@ -1757,7 +1757,12 @@ void PathFinding3D::buildFramelist() {
 	}
 
 	// how far is it from the destination?
-	float approx = (len - curLen - EPSILON) / (a - 2);
+	int divider = a - 2;
+	if (divider == 0)
+		// Safeguard, should never be useful... but if it is, it'll avoid a divide by 0 error.
+		divider = 1;
+	
+	float approx = (len - curLen - EPSILON) / (float)divider;
 	float theta = 0.0f;
 	// Adjust all the steps so it arrives exactly where clicked
 	for (b = 1; b < a; ++b) {
