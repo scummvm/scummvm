@@ -231,7 +231,7 @@ const TilePoint &PatrolRouteIterator::operator * (void) const {
 //-----------------------------------------------------------------------
 //	Iterate
 
-const PatrolRouteIterator &PatrolRouteIterator::operator ++ (void) {
+const PatrolRouteIterator &PatrolRouteIterator::operator++ (void) {
 	const PatrolRoute   &route = patrolRouteList[mapNum][routeNo];
 
 	if (vertexNo >= 0 & vertexNo < route.vertices()) {
@@ -267,15 +267,12 @@ void initPatrolRoutes(void) {
 	hResContext     *patrolRouteRes;
 
 	//  Get patrol route resource context
-	patrolRouteRes =    auxResFile->newContext(
-	                        MKTAG('P', 'T', 'R', 'L'),
-	                        "patrol route resource");
+	patrolRouteRes =    auxResFile->newContext(MKTAG('P', 'T', 'R', 'L'), "patrol route resource");
 	if (patrolRouteRes == nullptr || !patrolRouteRes->_valid)
 		error("Error accessing patrol route resource group.");
 
 	//  Allocate the patrol route list array
-	patrolRouteList =
-	    new PatrolRouteList[worldCount];
+	patrolRouteList = new PatrolRouteList[worldCount];
 
 	if (patrolRouteList == nullptr)
 		error("Unable to allocate the patrol route list");
@@ -292,13 +289,8 @@ void initPatrolRoutes(void) {
 		patrolRouteList[i].offsetArray = nullptr;
 
 		//  Load this worlds's patrol routes
-		if (patrolRouteRes->size(
-		            MKTAG('R', 'T', 'E', i)) > 0) {
-			patrolRouteData[i] =
-			    (PatrolRouteData *)LoadResource(
-			        patrolRouteRes,
-			        MKTAG('R', 'T', 'E', i),
-			        "patrol route data");
+		if (patrolRouteRes->size(MKTAG('R', 'T', 'E', i)) > 0) {
+			patrolRouteData[i] = (PatrolRouteData *)LoadResource(patrolRouteRes, MKTAG('R', 'T', 'E', i), "patrol route data");
 
 			if (patrolRouteData[i] == nullptr)
 				error("Unable to load the patrol route data");
@@ -317,7 +309,7 @@ void initPatrolRoutes(void) {
 //	Cleanup the patrol routes
 
 void cleanupPatrolRoutes(void) {
-	int16   i;
+	int16 i;
 
 	//  Cleanup the patrol route list
 	for (i = 0; i < worldCount; i++) {
