@@ -279,7 +279,6 @@ android_project
 .snap
 
 #Ignore emscripten build artifacts
-dists/emscripten/emsdk-*/
 dists/emscripten/libs/
 dists/emscripten/games/
 dists/emscripten/emsdk-*
