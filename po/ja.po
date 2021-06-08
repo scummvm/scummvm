@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-07 10:39+0000\n"
-"PO-Revision-Date: 2021-05-18 10:25+0000\n"
+"PO-Revision-Date: 2021-06-08 11:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -425,7 +425,7 @@ msgstr "実績"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:342
 msgid "Statistics"
-msgstr ""
+msgstr "統計"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:502
 #: gui/editgamedialog.cpp:568 gui/editgamedialog.cpp:629 gui/options.cpp:2009
@@ -2723,10 +2723,8 @@ msgid "Pixel-perfect scaling"
 msgstr "ピクセルパーフェクト"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
-#, fuzzy
-#| msgid "Pixel-perfect scaling"
 msgid "Even pixels scaling"
-msgstr "ピクセルパーフェクト"
+msgstr "ピクセル均一にスケーリング"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:245
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:73
