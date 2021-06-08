@@ -152,9 +152,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16LE();
-
-		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
+			_objPointers[objIndex][i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
 	}
 
 	if (obj->isModeMask()) {
@@ -164,9 +162,7 @@ void TrecisionEngine::readObject(Common::SeekableReadStream *stream, uint16 objI
 		delete[] _objPointers[objIndex];
 		_objPointers[objIndex] = new uint16[size];
 		for (uint32 i = 0; i < size; ++i)
-			_objPointers[objIndex][i] = stream->readUint16LE();
-
-		_graphicsMgr->updatePixelFormat(_objPointers[objIndex], size);
+			_objPointers[objIndex][i] = _graphicsMgr->convertToScreenFormat(stream->readUint16LE());
 
 		size = stream->readUint32LE();
 		delete[] _maskPointers[objIndex];

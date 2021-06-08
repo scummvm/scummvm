@@ -345,18 +345,6 @@ uint16 GraphicsManager::convertToScreenFormat(uint16 color) const {
 	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
-void GraphicsManager::updatePixelFormat(uint16 *p, uint32 len) const {
-	if (_screenFormat == kImageFormat)
-		return;
-
-	uint8 r, g, b;
-	for (uint32 a = 0; a < len; ++a) {
-		const uint16 t = p[a];
-		kImageFormat.colorToRGB(t, r, g, b);
-		p[a] = _screenFormat.RGBToColor(r, g, b);
-	}
-}
-
 /**
  *					Shadow Pixel
  *				(dark) 0..8 (light)

@@ -91,7 +91,6 @@ public:
 	void readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count = 1);
 
 	uint16 convertToScreenFormat(uint16 color) const;
-	void updatePixelFormat(uint16 *p, uint32 len) const;
 
 	void shadow(uint16 x, uint16 y, uint8 num);
 	void pixelAliasing(uint16 x, uint16 y);
