@@ -583,24 +583,6 @@ void buildColorTable(
    Load actor appearance
  * ===================================================================== */
 
-#if DEBUG
-char *idname(long s) {
-	static char     t[8];
-	char            *p = (char *)&s;
-
-	t[0] = *p++;
-	t[1] = *p++;
-	t[2] = *p++;
-	if (*p > ' ') {
-		t[3] = *p;
-		t[4] = 0;
-	} else {
-		sprintf(&t[3], ":%d", *p);
-	}
-	return t;
-}
-#endif
-
 void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	int16           bank;
 
