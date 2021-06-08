@@ -20,12 +20,10 @@
  *
  */
 
-#include "trecision/pathfinding3d.h"
-#include "trecision/anim.h"
-#include "trecision/sound.h"
-#include "trecision/text.h"
 #include "trecision/actor.h"
-#include "trecision/graphics.h"
+#include "trecision/anim.h"
+#include "trecision/pathfinding3d.h"
+#include "trecision/sound.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 

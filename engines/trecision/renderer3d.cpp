@@ -20,11 +20,10 @@
  *
  */
 
-#include "trecision/renderer3d.h"
-#include "trecision/anim.h"
-#include "trecision/text.h"
 #include "trecision/actor.h"
+#include "trecision/anim.h"
 #include "trecision/graphics.h"
+#include "trecision/renderer3d.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"
 
