@@ -323,7 +323,7 @@ Bitmap glVirtualScreenWrap;
 void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
 		debug_script_warn("SetVirtualScreen: this plugin requires software graphics driver to work correctly.");
-		// we let it continue since _G(gfxDriver) is supposed to ignore this request without throwing an exception
+		// we let it continue since gfxDriver is supposed to ignore this request without throwing an exception
 	}
 
 	if (bmp) {

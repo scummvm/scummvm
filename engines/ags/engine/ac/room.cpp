@@ -480,7 +480,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	// Make sure the room gfx and masks are matching game's native res
 	convert_room_background_to_game_res();
 
-	// _G(walkable_areas_temp) is used by the pathfinder to generate a
+	// walkable_areas_temp is used by the pathfinder to generate a
 	// copy of the walkable areas - allocate it here to save time later
 	delete _G(walkable_areas_temp);
 	_G(walkable_areas_temp) = BitmapHelper::CreateBitmap(_GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight(), 8);

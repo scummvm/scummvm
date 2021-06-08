@@ -546,7 +546,7 @@ RuntimeScriptValue Sc_GetInvGraphic(const RuntimeScriptValue *params, int32_t pa
 	API_SCALL_INT_PINT(GetInvGraphic);
 }
 
-// void (int indx,char*_G(buff))
+// void (int indx,char*buff)
 RuntimeScriptValue Sc_GetInvName(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT_POBJ(GetInvName, char);
 }

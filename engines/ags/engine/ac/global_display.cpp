@@ -59,7 +59,7 @@ void DisplaySimple(const char *text) {
 }
 
 void DisplayTopBar(int ypos, int ttexcol, int backcol, const char *title, const char *text) {
-	// FIXME: refactor _G(source_text_length) and get rid of this ugly hack!
+	// FIXME: refactor source_text_length and get rid of this ugly hack!
 	const int real_text_sourcelen = _G(source_text_length);
 	snprintf(_GP(topBar).text, sizeof(_GP(topBar).text), "%s", get_translation(title));
 	_G(source_text_length) = real_text_sourcelen;

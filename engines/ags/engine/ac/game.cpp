@@ -1439,7 +1439,7 @@ void game_sprite_deleted(int sprnum) {
 			_GP(guibuts)[i].NotifyParentChanged();
 		}
 	}
-	// _G(views)
+	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
 		for (size_t l = 0; l < (size_t)_G(views)[v].numLoops; ++l) {
 			for (size_t f = 0; f < (size_t)_G(views)[v].loops[l].numFrames; ++f) {

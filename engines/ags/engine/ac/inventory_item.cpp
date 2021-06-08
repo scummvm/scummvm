@@ -134,7 +134,7 @@ RuntimeScriptValue Sc_InventoryItem_CheckInteractionAvailable(void *self, const 
 	API_OBJCALL_INT_PINT(ScriptInvItem, InventoryItem_CheckInteractionAvailable);
 }
 
-// void (ScriptInvItem *iitem, char *_G(buff))
+// void (ScriptInvItem *iitem, char *buff)
 RuntimeScriptValue Sc_InventoryItem_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_POBJ(ScriptInvItem, InventoryItem_GetName, char);
 }

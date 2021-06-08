@@ -52,7 +52,7 @@ int run_claimable_event(const char *tsname, bool includeRoom, int numParams, con
 	*eventWasClaimed = true;
 	// Run the room script function, and if it is not claimed,
 	// then run the main one
-	// We need to remember the _G(eventClaimed) variable's state, in case
+	// We need to remember the eventClaimed variable's state, in case
 	// this is a nested event
 	int eventClaimedOldValue = _G(eventClaimed);
 	_G(eventClaimed) = EVENT_INPROGRESS;

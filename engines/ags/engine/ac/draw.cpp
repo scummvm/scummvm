@@ -151,7 +151,7 @@ Bitmap *convert_32_to_32bgr(Bitmap *tempbl) {
 // could copy them to texture without additional changes.
 // AGS own OpenGL renderer tries to sync its behavior with the former one.
 //
-// TODO: make _G(gfxDriver)->GetCompatibleBitmapFormat describe all necessary
+// TODO: make gfxDriver->GetCompatibleBitmapFormat describe all necessary
 // conversions, so that we did not have to guess.
 //
 Bitmap *AdjustBitmapForUseWithDisplayMode(Bitmap *bitmap, bool has_alpha) {
@@ -1067,7 +1067,7 @@ void get_local_tint(int xpp, int ypp, int nolight,
 
 
 
-// Applies the specified RGB Tint or Light Level to the _G(actsps)
+// Applies the specified RGB Tint or Light Level to the actsps
 // sprite indexed with actspsindex
 void apply_tint_or_light(int actspsindex, int light_level,
                          int tint_amount, int tint_red, int tint_green,
@@ -1133,9 +1133,9 @@ void apply_tint_or_light(int actspsindex, int light_level,
 
 }
 
-// Draws the specified 'sppic' sprite onto _G(actsps)[useindx] at the
+// Draws the specified 'sppic' sprite onto actsps[useindx] at the
 // specified width and height, and flips the sprite if necessary.
-// Returns 1 if something was drawn to _G(actsps); returns 0 if no
+// Returns 1 if something was drawn to actsps; returns 0 if no
 // scaling or stretching was required, in which case nothing was done
 int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
                           int sppic, int newwidth, int newheight,
@@ -1152,7 +1152,7 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 
 		_G(our_eip) = 334;
 
-		// Ensure that anti-aliasing routines have a _G(palette) to
+		// Ensure that anti-aliasing routines have a palette to
 		// use for mapping while faded out
 		if (_G(in_new_room))
 			select_palette(_G(palette));
@@ -1213,8 +1213,8 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 
 
 
-// create the _G(actsps)[aa] image with the object drawn correctly
-// returns 1 if nothing at all has changed and _G(actsps) is still
+// create the actsps[aa] image with the object drawn correctly
+// returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware) {
 	int useindx = aa;
@@ -1348,7 +1348,7 @@ int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysU
 		actspsUsed = scale_and_flip_sprite(useindx, coldept, zoom_level,
 		                                   _G(objs)[aa].num, sprwidth, sprheight, isMirrored);
 	} else {
-		// ensure _G(actsps) exists
+		// ensure actsps exists
 		_G(actsps)[useindx] = recycle_bitmap(_G(actsps)[useindx], coldept, _GP(game).SpriteInfos[_G(objs)[aa].num].Width, _GP(game).SpriteInfos[_G(objs)[aa].num].Height);
 	}
 
@@ -1603,7 +1603,7 @@ void prepare_characters_for_drawing() {
 		           (_G(gfxDriver)->HasAcceleratedTransform())) {
 			usingCachedImage = true;
 		} else if (_G(charcache)[aa].inUse) {
-			//destroy_bitmap (_G(charcache)[aa].image);
+			//destroy_bitmap (charcache[aa].image);
 			_G(charcache)[aa].inUse = 0;
 		}
 
@@ -1644,7 +1644,7 @@ void prepare_characters_for_drawing() {
 		// If cache needs to be re-drawn
 		if (!_G(charcache)[aa].inUse) {
 
-			// create the base sprite in _G(actsps)[useindx], which will
+			// create the base sprite in actsps[useindx], which will
 			// be scaled and/or flipped, as appropriate
 			int actspsUsed = 0;
 			if (!_G(gfxDriver)->HasAcceleratedTransform()) {
@@ -1652,7 +1652,7 @@ void prepare_characters_for_drawing() {
 				                 useindx, coldept, zoom_level, sppic,
 				                 newwidth, newheight, isMirrored);
 			} else {
-				// ensure _G(actsps) exists
+				// ensure actsps exists
 				_G(actsps)[useindx] = recycle_bitmap(_G(actsps)[useindx], coldept, _GP(game).SpriteInfos[sppic].Width, _GP(game).SpriteInfos[sppic].Height);
 			}
 
@@ -2239,7 +2239,7 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 	render_to_screen();
 
 	if (!SHOULD_QUIT && !_GP(play).screen_is_faded_out) {
-		// always update the _G(palette), regardless of whether the plugin
+		// always update the palette, regardless of whether the plugin
 		// vetos the screen update
 		if (_G(bg_just_changed)) {
 			setpal();

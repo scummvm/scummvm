@@ -338,12 +338,12 @@ int PrepareTextScript(ccInstance *sci, const char **tsname) {
 
 int RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params) {
 	int oldRestoreCount = _G(gameHasBeenRestored);
-	// First, save the current _G(ccError) state
+	// First, save the current ccError state
 	// This is necessary because we might be attempting
 	// to run Script B, while Script A is still running in the
 	// background.
 	// If CallInstance here has an error, it would otherwise
-	// also abort Script A because _G(ccError) is a global variable.
+	// also abort Script A because ccError is a global variable.
 	int cachedCcError = _G(ccError);
 	_G(ccError) = 0;
 

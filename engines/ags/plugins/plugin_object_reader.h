@@ -28,8 +28,8 @@ namespace AGS3 {
 class IAGSManagedObjectReader;
 
 struct PluginObjectReader {
-IAGSManagedObjectReader *reader;
-const char *type;
+	IAGSManagedObjectReader *reader;
+	const char *type;
 };
 
 } // namespace AGS3
