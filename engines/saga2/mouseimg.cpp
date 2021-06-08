@@ -193,10 +193,10 @@ void createStackedImage(
 //	Dispose of an image created with createStackedImage
 
 inline void disposeStackedImage(gPixelMap *image) {
-	assert(image->data != NULL);
+	assert(image->data != nullptr);
 
-	delete [] image->data;
-	image->data = NULL;
+	free(image->data);
+	image->data = nullptr;
 }
 
 //-----------------------------------------------------------------------
