@@ -191,7 +191,7 @@ if [[ "$1" =~ ^(make|all)$ ]]; then
   emmake make
   emmake make dist-generic
   # preload data
-  "$EMSDK_PYTHON" "$EMSDK/upstream/emscripten/tools/file_packager.py" files.data --preload ./dist-generic/scummvm/data@/ --use-preload-cache --js-output=files.js
+  "$EMSDK_PYTHON" "$EMSDK/upstream/emscripten/tools/file_packager.py" files.data --preload ./dist-generic/scummvm/data@/scummvm --use-preload-cache --js-output=files.js
   rm -rf dist-generic/
 fi
 
