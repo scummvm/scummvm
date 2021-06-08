@@ -39,14 +39,25 @@
 
 #include "griffon/griffon.h"
 
+#include "common/text-to-speech.h"
+
 namespace Griffon {
 
 #define MINCURSEL 7
-#define MAXCURSEL 14
-#define SY 22
+#define MAXCURSEL 16
+#define SY 25
 #define PI 3.141593
 
 void GriffonEngine::title(int mode) {
+	const char *optionTitles[4] = {
+		"new game/save/load",
+		"options",
+		"quit game",
+		"return"
+	};
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	float xofs = 0;
 	_itemyloc = 0;
 	bool exitTitle = false;
@@ -109,12 +120,12 @@ void GriffonEngine::title(int mode) {
 		int y = 172;
 		int x = 160 - 14 * 4;
 
-		drawString(_videoBuffer, "new game/save/load", x, y, 4);
-		drawString(_videoBuffer, "options", x, y + 16, 4);
-		drawString(_videoBuffer, "quit game", x, y + 32, 4);
+		drawString(_videoBuffer, optionTitles[0], x, y, 4);
+		drawString(_videoBuffer, optionTitles[1], x, y + 16, 4);
+		drawString(_videoBuffer, optionTitles[2], x, y + 32, 4);
 
 		if (mode == 1)
-			drawString(_videoBuffer, "return", x, y + 48, 4);
+			drawString(_videoBuffer, optionTitles[3], x, y + 48, 4);
 		else
 			drawString(_videoBuffer, "(c) 2005 by Daniel 'Syn9' Kennedy", 28, 224, 4);
 
@@ -164,6 +175,7 @@ void GriffonEngine::title(int mode) {
 				_shouldQuit = true;
 
 			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+
 				switch(_event.customType) {
 				case kGriffonMenu:
 					if (mode == 1)
@@ -173,13 +185,19 @@ void GriffonEngine::title(int mode) {
 					cursel--;
 					if (cursel < 0)
 						cursel = (mode == 1 ? 3 : 2);
+					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+						ttsMan->say(optionTitles[cursel]);
 					break;
 				case kGriffonDown:
 					cursel++;
 					if (cursel >= (mode == 1 ? 4 : 3))
 						cursel = 0;
+					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+						ttsMan->say(optionTitles[cursel]);
 					break;
 				case kGriffonConfirm:
+					if (ttsMan != nullptr)
+							ttsMan->stop();
 					switch(cursel) {
 					case 0:
 						_ticks = g_system->getMillis();
@@ -224,26 +242,58 @@ void GriffonEngine::title(int mode) {
 	}
 }
 
+static Common::String formatPercent(int val) {
+	val = val / 2.55;
+	return Common::String::format("%d percent", val - val % 10);
+}
+
+static void speakMenuItem(int mapTitles, int mapValues, const char *mapTitleText[], const char *mapValueText[]) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		Common::TextToSpeechManager::Action valueAction = Common::TextToSpeechManager::INTERRUPT;
+		if (mapTitles != 0) {
+			ttsMan->say(mapTitleText[mapTitles]);
+			valueAction = Common::TextToSpeechManager::QUEUE;
+		}
+		if (mapValues != 0)
+			ttsMan->say(mapValueText[mapValues], valueAction);
+	}
+}
+
 void GriffonEngine::configMenu() {
-	static const char *optionTitles[22] = {
+	static const char *optionTitles[25] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
 		"Music:", "", "",
 		"Sound Effects:", "", "",
+		"Text to Speech:", "", "",
 		"Music Volume:", "",
 		"Effects Volume:", "", "", "", ""
 	};
-	static const char *optionValues[22] = {
+	static const char *optionValues[25] = {
 		"", "",
 		"", "", "", "",
 		"", "", "",
+		"On", "Off", "",
 		"On", "Off", "",
 		"On", "Off", "",
 		"[----------]", "",
 		"[----------]", "",
 		"Exit + Save", "",
 		"Exit"
+	};
+	static const int curselMapTitles[MAXCURSEL+1] = {
+		0, 0, 0, 0, 0,
+		0, 0, 9, 9, 12,
+		12, 15, 15, 18, 20,
+		0, 0
+	};
+	static const int curselMapValues[MAXCURSEL+1] = {
+		0, 0, 0, 0, 0,
+		0, 0, 9, 10, 12,
+		13, 15, 16, 0, 0,
+		22, 24
 	};
 
 	int cursel = MINCURSEL;
@@ -256,6 +306,7 @@ void GriffonEngine::configMenu() {
 
 	int ticks1 = _ticks;
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	do {
 		_videoBuffer->fillRect(Common::Rect(0, 0, _videoBuffer->w, _videoBuffer->h), 0);
@@ -279,7 +330,7 @@ void GriffonEngine::configMenu() {
 
 		int sy = SY;
 
-		for (int i = 0; i <= 21; i++) {
+		for (int i = 0; i <= 24; i++) {
 			static char line[24];
 
 			int destColumn = 3;
@@ -291,14 +342,18 @@ void GriffonEngine::configMenu() {
 				destColumn = 0;
 			else if (i == 13 && !config.effects)
 				destColumn = 0;
-			else if (i == 15 || i == 17) {
-				int vol = (i == 15 ? config.musicVol : config.effectsVol) * 9 / 255;
+			else if (i == 15 && ConfMan.getBool("tts_enabled"))
+				destColumn = 0;
+			else if (i == 16 && !ConfMan.getBool("tts_enabled"))
+				destColumn = 0;
+			else if (i == 18|| i == 20) {
+				int vol = (i ==18 ? config.musicVol : config.effectsVol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
 				strcpy(line, "[----------]");
 				line[vol + 1] = 'X';
 				optionValues[i] = line;
-			} else if (i > 18)
+			} else if (i > 21)
 				destColumn = 0;
 
 			drawString(_videoBuffer, optionTitles[i], 156 - 8 * strlen(optionTitles[i]), sy + i * 8, 0);
@@ -310,11 +365,13 @@ void GriffonEngine::configMenu() {
 			curselt += 1;
 		if (cursel > 10)
 			curselt += 1;
-		if (cursel > 11)
-			curselt += 1;
 		if (cursel > 12)
 			curselt += 1;
 		if (cursel > 13)
+			curselt += 1;
+		if (cursel > 14)
+			curselt += 1;
+		if (cursel > 15)
 			curselt += 1;
 
 		Common::Rect rc;
@@ -364,15 +421,20 @@ void GriffonEngine::configMenu() {
 					break;
 
 				case kGriffonLeft:
-					if (cursel == 11) {
+					if (cursel == 13) {
 						config.musicVol = CLIP(config.musicVol - 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
-					} else if (cursel == 12) {
+						if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+							ttsMan->say(formatPercent(config.musicVol));
+					} else if (cursel == 14) {
 						config.effectsVol = CLIP(config.effectsVol - 25, 0, 255);
+
 						setChannelVolume(-1, config.effectsVol);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
+						if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+							ttsMan->say(formatPercent(config.effectsVol));
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
@@ -382,16 +444,19 @@ void GriffonEngine::configMenu() {
 					break;
 
 				case kGriffonRight:
-					if (cursel == 11) {
+					if (cursel == 13) {
 						config.musicVol = CLIP(config.musicVol + 25, 0, 255);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
-					} else if (cursel == 12) {
+						if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+							ttsMan->say(formatPercent(config.musicVol));
+					} else if (cursel == 14) {
 						config.effectsVol = CLIP(config.effectsVol + 25, 0, 255);
-
 						setChannelVolume(-1, config.effectsVol);
 						setChannelVolume(_musicChannel, config.musicVol);
 						setChannelVolume(_menuChannel, config.musicVol);
+						if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+							ttsMan->say(formatPercent(config.effectsVol));
 
 						if (config.effects) {
 							int snd = playSound(_sfx[kSndDoor]);
@@ -404,12 +469,14 @@ void GriffonEngine::configMenu() {
 					cursel--;
 					if (cursel < MINCURSEL)
 						cursel = MAXCURSEL;
+					speakMenuItem(curselMapTitles[cursel], curselMapValues[cursel], optionTitles, optionValues);
 					break;
 
 				case kGriffonDown:
 					++cursel;
 					if (cursel > MAXCURSEL)
 						cursel = MINCURSEL;
+					speakMenuItem(curselMapTitles[cursel], curselMapValues[cursel], optionTitles, optionValues);
 					break;
 
 				case kGriffonConfirm:
@@ -439,10 +506,22 @@ void GriffonEngine::configMenu() {
 						if (config.effects)
 							config.effects = false;
 						break;
-					case 13:
+					case 11:
+						if (!ConfMan.getBool("tts_enabled")) {
+							ConfMan.setBool("tts_enabled", true);
+						}
+						break;
+					case 12:
+						if (ConfMan.getBool("tts_enabled")) {
+							ConfMan.setBool("tts_enabled", false);
+						}
+						break;
+					case 15:
 						saveConfig();
 						// fall through
-					case 14:
+					case 16:
+						if (ttsMan != nullptr)
+							ttsMan->stop();
 						exitMenu = true;
 						break;
 					default:
@@ -545,6 +624,10 @@ void GriffonEngine::renderSaveStates() {
 }
 
 void GriffonEngine::saveLoadNew() {
+	const char *optionTitles[4] = {
+		"new game", "", "load", "return",
+	};
+
 	float y = 0.0;
 
 	_cloudAngle = 0;
@@ -569,6 +652,8 @@ void GriffonEngine::saveLoadNew() {
 		_saveLoadImg->fillRect(Common::Rect(125, 15, 160, 33), color);
 	}
 	_saveLoadImg->setAlpha(192, true);
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	// Main menu loop
 	do {
@@ -605,6 +690,8 @@ void GriffonEngine::saveLoadNew() {
 					if (curRow == 0) {
 						if (curCol == 0) {
 							// NEW GAME
+							if (ttsMan != nullptr)
+								ttsMan->stop();
 							_gameMode = kGameModeNewGame;
 
 							return;
@@ -619,6 +706,8 @@ void GriffonEngine::saveLoadNew() {
 							curRow = 1;
 							tickPause = _ticks + 125;
 						} else if (curCol == 3) {
+							if (ttsMan != nullptr)
+								ttsMan->stop();
 							// RETURN
 							return;
 						} else if (curCol == 4) {
@@ -681,6 +770,8 @@ void GriffonEngine::saveLoadNew() {
 
 						tickPause = _ticks + 125;
 					}
+					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+						ttsMan -> say(optionTitles[curCol]);
 					break;
 
 				case kGriffonRight:
@@ -694,6 +785,8 @@ void GriffonEngine::saveLoadNew() {
 
 						tickPause = _ticks + 125;
 					}
+					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled"))
+						ttsMan -> say(optionTitles[curCol]);
 					break;
 				default:
 					;

@@ -38,6 +38,9 @@
 
 #include "griffon/griffon.h"
 
+#include "common/config-manager.h"
+#include "common/text-to-speech.h"
+
 namespace Griffon {
 
 #define POLL_AND_CHECK_QUIT() 		if (g_system->getEventManager()->pollEvent(_event)) { \
@@ -133,6 +136,23 @@ const char *story2[27] = {
 	"and I am free to die as I please."
 };
 
+int textToSpeech(int nextparagraph, const char *storyVariable[], int arraysize) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && storyVariable[nextparagraph][0] != 0) {
+		Common::String paragraph;
+		while (nextparagraph < arraysize && storyVariable[nextparagraph][0] != ' ') {
+			if (!paragraph.empty())
+				paragraph += " ";
+			paragraph += storyVariable[nextparagraph++];
+		}
+		while (nextparagraph < arraysize && storyVariable[nextparagraph][0] == ' ') {
+			nextparagraph += 1;
+		}
+		ttsMan->say(paragraph, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	}
+	return nextparagraph;
+}
+
 void GriffonEngine::showLogos() {
 	_ticks = g_system->getMillis();
 	int ticks1 = _ticks;
@@ -202,11 +222,15 @@ void GriffonEngine::intro() {
 	_secsInGame = 0;
 	_secStart = 0;
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	bool ldStop = false;
 	bool speedUp = false;
 	int cnt = 0;
 	float xofs = 0.0;
 	float ld = 0.0;
+	int nextparagraph = 0;
+
 	do {
 		Common::Rect rc;
 
@@ -234,15 +258,21 @@ void GriffonEngine::intro() {
 			y--;
 		}
 
-		for (int i = 0; i <= 37; i++) {
+		for (int i = 0; i < ARRAYSIZE(story); i++) {
 			int yy = y + i * 10;
+
+			if (i == nextparagraph)
+				nextparagraph = textToSpeech(nextparagraph, story, ARRAYSIZE(story));
+
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story[i]) * 4;
 				drawString(_videoBuffer, story[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == 37)
-				return;
+			if (yy < 10 && i == ARRAYSIZE(story) - 1) {
+				if (ttsMan == nullptr || ttsMan->isSpeaking() == false)
+					return;
+			}
 		}
 
 		g_system->copyRectToScreen(_videoBuffer->getPixels(), _videoBuffer->pitch, 0, 0, _videoBuffer->w, _videoBuffer->h);
@@ -274,11 +304,15 @@ void GriffonEngine::intro() {
 					speedUp = true;
 					cnt = 6;
 				}
-				else if (_event.customType == kGriffonMenu)
+				else if (_event.customType == kGriffonMenu) {
+					if (ttsMan != nullptr)
+						ttsMan->stop();
 					return;
+				}
 			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
-				if (_event.customType == kGriffonCutsceneSpeedUp)
+				if (_event.customType == kGriffonCutsceneSpeedUp) {
 					speedUp = false;
+				}
 			}
 
 			CHECK_QUIT();
@@ -306,6 +340,9 @@ void GriffonEngine::endOfGame() {
 
 	float ld = 0;
 	bool ldstop = false; // CHECKME: Check if actually used
+	int nextparagraph = 0;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 
 	do {
 		ld += 4 * _fpsr;
@@ -367,15 +404,22 @@ void GriffonEngine::endOfGame() {
 		_titleImg->blit(*_videoBuffer, rc.left, rc.top);
 
 		y = y - spd * _fpsr;
-		for (int i = 0; i <= 26; i++) {
+
+		for (int i = 0; i < ARRAYSIZE(story2); i++) {
 			int yy = y + i * 10;
+
+			if (i == nextparagraph)
+				nextparagraph = textToSpeech(nextparagraph, story2, ARRAYSIZE(story2));
+
 			if (yy > -8 && yy < 240) {
 				int x = 160 - strlen(story2[i]) * 4;
 				drawString(_videoBuffer, story2[i], x, yy, 4);
 			}
 
-			if (yy < 10 && i == 25)
-				break;
+			if (yy < 10 && i == ARRAYSIZE(story2)-1) {
+				if (ttsMan == nullptr || ttsMan->isSpeaking() == false)
+					break;
+			}
 		}
 
 		ya = 255;
@@ -411,8 +455,11 @@ void GriffonEngine::endOfGame() {
 			if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
 				if (_event.customType == kGriffonCutsceneSpeedUp)
 					spd = 1.0f;
-				else if (_event.customType == kGriffonMenu)
+				else if (_event.customType == kGriffonMenu) {
+					if (ttsMan != nullptr)
+						ttsMan->stop();
 					break;
+				}
 			} else if (_event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 				if (_event.customType == kGriffonCutsceneSpeedUp)
 					spd = 0.2f;

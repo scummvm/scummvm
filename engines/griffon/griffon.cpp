@@ -43,6 +43,8 @@
 #include "common/translation.h"
 #include "graphics/pixelformat.h"
 
+#include "common/text-to-speech.h"
+
 #include "engines/util.h"
 
 #include "griffon/griffon.h"
@@ -129,6 +131,10 @@ void GriffonEngine::saveConfig() {
 }
 
 Common::Error GriffonEngine::run() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->setLanguage("en");
+
 	initGraphics(320, 240, new Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
 
 	_mixer = g_system->getMixer();
