@@ -33,7 +33,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "director",			"Macromedia Director Game" },
 	{ "directortest",		"Macromedia Director Test Target" },
 	{ "directortest-all",	"Macromedia Director All Movies Test Target" },
-	{ "workshop",			"Director Workshop Movies"},
 	{ "theapartment",		"The Apartment, Interactive demo" },
 
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart"},
@@ -272,6 +271,7 @@ static const char *customTargetList[] = {
 	"d4-mac",
 	"d3-win",
 	"d4-win",
+	"director-movie",
 	0
 };
 
@@ -383,8 +383,6 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 
 			strncpy(s_fallbackFileNameBuffer, fileName.c_str(), sizeof(s_fallbackFileNameBuffer) - 1);
 			desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
-			strncpy(s_fallbackGameIDBuffer, targetID.c_str(), sizeof(s_fallbackGameIDBuffer) - 1);
-			desc->desc.gameId = s_fallbackGameIDBuffer;
 			desc->version = atoi(version.c_str());
 			desc->desc.platform = Common::parsePlatform(platform);
 			Common::strlcpy(s_fallbackExtraBuf, gameName.c_str(), sizeof(s_fallbackExtraBuf) - 1);
