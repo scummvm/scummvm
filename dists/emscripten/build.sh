@@ -200,4 +200,8 @@ if [[ "$1" =~ ^(dist|all)$ ]]; then
   mkdir -p build-emscripten
   mv scummvm.* build-emscripten/
   mv files.* build-emscripten/
+  cp dists/emscripten/scummvm-512.png build-emscripten/
+  cp dists/emscripten/scummvm-192.png build-emscripten/
+  cp dists/emscripten/manifest.json build-emscripten/
+
 fi
