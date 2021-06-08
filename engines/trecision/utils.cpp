@@ -308,10 +308,8 @@ void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, u
 	_text = text;
 
 	// Clean output buffer
-	for (int i = 0; i < MAXDTEXTLINES; ++i) {
-		for (int j = 0; j < MAXDTEXTCHARS; ++j)
-			_drawTextLines[i][j] = '\0';
-	}
+	for (int i = 0; i < MAXDTEXTLINES; ++i)
+		_drawTextLines[i] = "";
 }
 
 /**
@@ -323,7 +321,7 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 
 	uint8 curLine = 0;
 	if (vm->textLength(_text) <= _rect.width()) {
-		strcpy((char *)_drawTextLines[curLine], _text.c_str());
+		_drawTextLines[curLine] = _text;
 		return CARHEI;
 	}
 
@@ -338,13 +336,9 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 			if (vm->textLength(_text, curInit, a) <= _rect.width())
 				lastSpace = a;
 			else if (vm->textLength(_text, curInit, lastSpace) <= _rect.width()) {
-				uint16 b;
-				for (b = curInit; b < lastSpace; ++b)
-					_drawTextLines[curLine][b - curInit] = _text[b];
+				_drawTextLines[curLine] = _text.substr(curInit, lastSpace - curInit);
 
-				_drawTextLines[curLine][b - curInit] = '\0';
 				++curLine;
-
 				curInit = lastSpace + 1;
 
 				tmpDy += CARHEI;
@@ -353,33 +347,21 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 				return 0;
 		} else if (a == _text.size()) {
 			if (vm->textLength(_text, curInit, a) <= _rect.width()) {
-				uint16 b;
-				for (b = curInit; b < a; ++b)
-					_drawTextLines[curLine][b - curInit] = _text[b];
-				_drawTextLines[curLine][b - curInit] = '\0';
+				_drawTextLines[curLine] = _text.substr(curInit, a - curInit);
 
 				tmpDy += CARHEI;
-
 				return tmpDy;
 			}
 
 			if (vm->textLength(_text, curInit, lastSpace) <= _rect.width()) {
-				uint16 b;
-				for (b = curInit; b < lastSpace; ++b)
-					_drawTextLines[curLine][b - curInit] = _text[b];
+				_drawTextLines[curLine] = _text.substr(curInit, lastSpace - curInit);
 
-				_drawTextLines[curLine][b - curInit] = '\0';
 				++curLine;
-
 				curInit = lastSpace + 1;
 				tmpDy += CARHEI;
 
 				if (curInit < _text.size()) {
-					for (b = curInit; b < _text.size(); ++b)
-						_drawTextLines[curLine][b - curInit] = _text[b];
-
-					_drawTextLines[curLine][b - curInit] = '\0';
-
+					_drawTextLines[curLine] = _text.substr(curInit);
 					tmpDy += CARHEI;
 				}
 				return tmpDy;

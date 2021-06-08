@@ -167,7 +167,7 @@ struct SDText {
 	uint16 _textCol;
 	uint16 _shadowCol;
 	Common::String _text;
-	char _drawTextLines[MAXDTEXTLINES][MAXDTEXTCHARS];
+	Common::String _drawTextLines[MAXDTEXTLINES];
 
 	void set(SDText *org);
 	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text);
