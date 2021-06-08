@@ -1249,8 +1249,10 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		break;
 	case 0x10: // No Regret only
 		spriteframe = dir + 0x50;
+		break;
 	case 0x11: // No Regret only
 		spriteframe = dir * 6 + 0x78;
+		break;
 	default:
 		break;
 	}
