@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-07 10:39+0000\n"
+"POT-Creation-Date: 2021-06-08 21:39+0000\n"
 "PO-Revision-Date: 2021-06-07 16:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -768,7 +768,7 @@ msgstr "Buscar:"
 
 #: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/trecision/saveload.cpp:260 engines/tsage/scenes.cpp:631
+#: engines/trecision/saveload.cpp:254 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Cargar juego:"
@@ -776,7 +776,7 @@ msgstr "Cargar juego:"
 #: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:260
+#: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:254
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
