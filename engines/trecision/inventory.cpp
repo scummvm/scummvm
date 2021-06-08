@@ -246,7 +246,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 		_lastInv = (obj | 0x8000);
 		if (_lastInv)
 			_textMgr->clearLastText();
-		_textMgr->addText(pos, desc.c_str(), COLOR_INVENTORY, MASKCOL);
+		_textMgr->addText(pos, desc.c_str(), COLOR_INVENTORY);
 	} else {
 		if (obj == _lastInv)
 			return;
@@ -268,7 +268,7 @@ void TrecisionEngine::showInventoryName(uint16 obj, bool showhide) {
 			_textMgr->clearLastText();
 
 		if (_inventoryObj[obj]._name)
-			_textMgr->addText(pos, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY, MASKCOL);
+			_textMgr->addText(pos, _objName[_inventoryObj[obj]._name], COLOR_INVENTORY);
 	}
 }
 

@@ -93,7 +93,6 @@ void DialogManager::dialogPrint(int x, int y, int c, const Common::String &txt) 
 		Common::Rect(x, y, _vm->textLength(txt) + x, y),
 		Common::Rect(0, 0, MAXX, MAXY),
 		c,
-		MASKCOL,
 		txt
 	);
 	curChoice.draw(_vm);

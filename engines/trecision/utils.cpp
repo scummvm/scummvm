@@ -297,14 +297,13 @@ int TrecisionEngine::getRoomObjectIndex(uint16 objectId) {
  * SDText
  ************************************************/
 void SDText::set(SDText *org) {
-	set(org->_rect, org->_subtitleRect, org->_textColor, org->_shadowCol, org->_text);
+	set(org->_rect, org->_subtitleRect, org->_textColor, org->_text);
 }
 
-void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text) {
+void SDText::set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, const Common::String &text) {
 	_rect = rect;
 	_subtitleRect = subtitleRect;
 	_textColor = textCol;
-	_shadowCol = shadowCol;
 	_text = text;
 
 	// Clean output buffer
@@ -372,13 +371,9 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 	return 0;
 }
 
-void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
-	uint16 tmpTextCol = _textColor;
-	uint16 tmpShadowCol = _shadowCol;
-	vm->_graphicsMgr->updatePixelFormat(&tmpTextCol, 1);
-	if (_shadowCol != MASKCOL)
-		vm->_graphicsMgr->updatePixelFormat(&tmpShadowCol, 1);
-
+void SDText::draw(TrecisionEngine *vm, bool hideLastChar, Graphics::Surface *externalSurface) {
+	uint16 textColor = vm->_graphicsMgr->convertToScreenFormat(_textColor);
+	
 	if (_text.empty())
 		return;
 
@@ -395,10 +390,10 @@ void SDText::draw(TrecisionEngine *vm, Graphics::Surface *externalSurface) {
 		for (uint index = 0; index < curText.size(); ++index) {
 			const byte curChar = curText[index];
 
-			if (index == curText.size() - 1 && vm->_blinkLastDTextChar != MASKCOL)
-				tmpTextCol = vm->_blinkLastDTextChar;
+			if (index == curText.size() - 1 && hideLastChar)
+				textColor = vm->_graphicsMgr->convertToScreenFormat(0);
 
-			vm->_graphicsMgr->drawChar(curChar, tmpShadowCol, tmpTextCol, line, _rect, _subtitleRect, inc, externalSurface);
+			vm->_graphicsMgr->drawChar(curChar, textColor, line, _rect, _subtitleRect, inc, externalSurface);
 
 			inc += vm->_graphicsMgr->getCharWidth(curChar);
 		}

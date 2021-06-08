@@ -318,7 +318,6 @@ public:
 	uint16 *_objPointers[MAXOBJINROOM];
 	uint8 *_maskPointers[MAXOBJINROOM];
 
-	uint16 _blinkLastDTextChar;
 	uint32 _curTime;
 	uint32 _characterSpeakTime;
 

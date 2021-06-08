@@ -107,7 +107,6 @@ bool TrecisionEngine::quitPrompt() {
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
-		MASKCOL,
 		_sysText[kMessageConfirmExit]
 	);
 	drawText.draw(this);
@@ -131,7 +130,6 @@ void TrecisionEngine::demoOver() {
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
-		MASKCOL,
 		_sysText[kMessageDemoOver]
 	);
 	drawText.draw(this);

@@ -165,14 +165,13 @@ struct SDText {
 	Common::Rect _rect;
 	Common::Rect _subtitleRect;
 	uint16 _textColor;
-	uint16 _shadowCol;
 	Common::String _text;
 	Common::String _drawTextLines[MAXDTEXTLINES];
 
 	void set(SDText *org);
-	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, uint16 shadowCol, const Common::String &text);
+	void set(Common::Rect rect, Common::Rect subtitleRect, uint16 textCol, const Common::String &text);
 
-	void draw(TrecisionEngine *vm, Graphics::Surface *externalSurface = nullptr);
+	void draw(TrecisionEngine *vm, bool hideLastChar = false, Graphics::Surface *externalSurface = nullptr);
 	uint16 calcHeight(TrecisionEngine *vm);
 };
 

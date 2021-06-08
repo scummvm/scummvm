@@ -36,7 +36,7 @@ class TrecisionEngine;
 struct StackText {
 	uint16 _x;
 	uint16 _y;
-	uint16 _textColor, _shadowCol;
+	uint16 _textColor;
 	Common::String _text;
 	bool _clear;
 };
@@ -79,7 +79,7 @@ public:
 	void characterSay(uint16 i);
 	void characterSayInAction(uint16 ss);
 
-	void addText(Common::Point pos, const char *text, uint16 textCol, uint16 shadowCol);
+	void addText(Common::Point pos, const char *text, uint16 textCol);
 	void clearLastText();
 	void drawText(StackText *text);
 	void clearText();

@@ -88,7 +88,6 @@ bool TrecisionEngine::dataSave() {
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
-		MASKCOL,
 		_sysText[kMessageSavePosition]);
 	drawText.draw(this);
 
@@ -138,7 +137,6 @@ insave:
 					Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
 					Common::Rect(0, 0, LenText, CARHEI),
 					MOUSECOL,
-					MASKCOL,
 					saveNames[CurPos].c_str());
 				drawText.draw(this);
 
@@ -209,14 +207,10 @@ insave:
 				Common::Rect(posx, FIRSTLINE + ICONDY + 10, LenText + posx, CARHEI + (FIRSTLINE + ICONDY + 10)),
 				Common::Rect(0, 0, LenText, CARHEI),
 				MOUSECOL,
-				MASKCOL,
 				saveNames[CurPos].c_str());
 
-			if ((readTime() / 8) & 1)
-				_blinkLastDTextChar = 0x0000;
-
-			drawText.draw(this);
-			_blinkLastDTextChar = MASKCOL;
+			const bool hideLastChar = (readTime() / 8) & 1;
+			drawText.draw(this, hideLastChar);
 
 			saveNames[CurPos].deleteLastChar(); // remove blinking cursor
 
@@ -280,7 +274,6 @@ bool TrecisionEngine::dataLoad() {
 		Common::Rect(0, TOP - 20, MAXX, CARHEI + (TOP - 20)),
 		Common::Rect(0, 0, MAXX, CARHEI),
 		MOUSECOL,
-		MASKCOL,
 		_sysText[kMessageLoadPosition]);
 	drawText.draw(this);
 
@@ -330,7 +323,6 @@ bool TrecisionEngine::dataLoad() {
 					Common::Rect(posX, FIRSTLINE + ICONDY + 10, lenText + posX, CARHEI + (FIRSTLINE + ICONDY + 10)),
 					Common::Rect(0, 0, lenText, CARHEI),
 					MOUSECOL,
-					MASKCOL,
 					saveNames[CurPos].c_str());
 				drawText.draw(this);
 

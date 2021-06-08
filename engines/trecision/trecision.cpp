@@ -151,7 +151,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 		_maskPointers[i] = nullptr;
 	}
 
-	_blinkLastDTextChar = MASKCOL;
 	_curTime = 0;
 	_characterSpeakTime = 0;
 
