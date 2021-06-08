@@ -21,9 +21,9 @@
  */
 
 #include "trecision/anim.h"
-#include "trecision/logic.h"
-#include "trecision/3d.h"
 #include "trecision/dialog.h"
+#include "trecision/logic.h"
+#include "trecision/pathfinding3d.h"
 #include "trecision/scheduler.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"

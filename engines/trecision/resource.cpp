@@ -29,15 +29,15 @@
 #include "common/substream.h"
 #include "gui/saveload.h"
 
-#include "trecision/trecision.h"
-#include "trecision/anim.h"
 #include "trecision/actor.h"
-#include "trecision/3d.h"
 #include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
-#include "trecision/video.h"
+#include "trecision/pathfinding3d.h"
+#include "trecision/renderer3d.h"
+#include "trecision/trecision.h"
 #include "trecision/sound.h"
+#include "trecision/video.h"
 
 namespace Trecision {
 

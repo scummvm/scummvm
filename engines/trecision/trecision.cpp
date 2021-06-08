@@ -29,19 +29,20 @@
 #include "common/fs.h"
 #include "common/str.h"
 
-#include "trecision/trecision.h"
 #include "trecision/anim.h"
-#include "trecision/scheduler.h"
 #include "trecision/actor.h"
-#include "trecision/3d.h"
-#include "trecision/defines.h"
 #include "trecision/console.h"
+#include "trecision/defines.h"
 #include "trecision/dialog.h"
 #include "trecision/graphics.h"
-#include "trecision/video.h"
+#include "trecision/pathfinding3d.h"
+#include "trecision/renderer3d.h"
 #include "trecision/logic.h"
-#include "trecision/text.h"
+#include "trecision/scheduler.h"
 #include "trecision/sound.h"
+#include "trecision/trecision.h"
+#include "trecision/text.h"
+#include "trecision/video.h"
 
 namespace Common {
 class File;

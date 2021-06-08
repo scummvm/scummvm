@@ -27,11 +27,12 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-#include "trecision/3d.h"
 #include "trecision/actor.h"
 #include "trecision/anim.h"
 #include "trecision/defines.h"
 #include "trecision/graphics.h"
+#include "trecision/pathfinding3d.h"
+#include "trecision/renderer3d.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"
 #include "trecision/video.h"

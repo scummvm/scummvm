@@ -10,6 +10,8 @@ MODULE_OBJS = \
 	inventory.o \
 	logic.o \
 	metaengine.o \
+	pathfinding3d.o \
+	renderer3d.o \
 	resource.o \
 	sound.o \
 	saveload.o \
@@ -19,7 +21,6 @@ MODULE_OBJS = \
 	text.o \
 	trecision.o \
 	utils.o \
-	3d.o \
 	video.o
 
 # This module can be built as a plugin
