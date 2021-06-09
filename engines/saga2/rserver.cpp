@@ -26,11 +26,12 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/debug.h"
+
 #include "saga2/std.h"
 #include "saga2/dlist.h"
 #include "saga2/ioerrors.h"
 #include "saga2/hresmgr.h"
-
 
 namespace Saga2 {
 
@@ -192,7 +193,7 @@ void cleanupServers(void) {
 }
 
 void loadAsyncResources(void) {
-	warning("STUB: loadAsyncResources()");
+	debug(3, "STUB: loadAsyncResources()");
 
 #if 0
 	resourceServer->service();
