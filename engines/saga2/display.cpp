@@ -215,11 +215,7 @@ void displayEnable(DisplayDisabledBecause reason, bool onOff) {
 // This is a check to see if blitting is enabled
 
 bool displayEnabled(uint32 mask) {
-#ifdef _WIN32
-	if (pWindow == NULL || (!pWindow->canBlit()))
-		return FALSE;
-#endif
-	return ((displayStatus & mask) == 0);
+	return true;
 }
 
 bool displayOkay(void) {
