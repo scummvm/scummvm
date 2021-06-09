@@ -48,7 +48,9 @@ void SetFrameSound(int vii, int loop, int frame, int sound) {
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", sound);
 
-		_G(views)[vii].loops[loop].frames[frame].sound = clip->id + (_GP(game).IsLegacyAudioSystem() ? 0x10000000 : 0);
+		_G(views)[vii].loops[loop].frames[frame].sound =
+			_GP(game).IsLegacyAudioSystem() ? sound : clip->id;
+		_G(views)[vii].loops[loop].frames[frame].audioclip = clip->id;
 	}
 }
 

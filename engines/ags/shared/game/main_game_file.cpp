@@ -482,7 +482,7 @@ void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 }
 
 // Convert audio data to the current version
-void UpgradeAudio(GameSetupStruct &game, GameDataVersion data_ver) {
+void UpgradeAudio(GameSetupStruct &game, LoadedGameEntities &ents, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_320)
 		return;
 
@@ -551,8 +551,7 @@ void UpgradeAudio(GameSetupStruct &game, GameDataVersion data_ver) {
 	_GP(game).audioClipTypes = audiocliptypes;
 	_GP(game).audioClips = audioclips;
 
-	// Setup sound clip played on score event
-	_GP(game).scoreClipID = -1;
+	RemapLegacySoundNums(game, ents.Views, data_ver);
 }
 
 // Convert character data to the current version
@@ -600,15 +599,26 @@ void UpgradeMouseCursors(GameSetupStruct &game, GameDataVersion data_ver) {
 }
 
 // Adjusts score clip id, depending on game data version
-void AdjustScoreSound(GameSetupStruct &game, GameDataVersion data_ver) {
-	if (data_ver < kGameVersion_320) {
-		_GP(game).scoreClipID = -1;
-		if (_GP(game).options[OPT_SCORESOUND] > 0) {
-			ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, _GP(game).options[OPT_SCORESOUND]);
-			if (clip)
-				_GP(game).scoreClipID = clip->id;
-			else
-				_GP(game).scoreClipID = -1;
+void RemapLegacySoundNums(GameSetupStruct &game, ViewStruct *&views, GameDataVersion data_ver) {
+	if (data_ver >= kGameVersion_320)
+		return;
+
+	// Setup sound clip played on score event
+	game.scoreClipID = -1;
+	if (game.options[OPT_SCORESOUND] > 0) {
+		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(game, false, game.options[OPT_SCORESOUND]);
+		if (clip)
+			game.scoreClipID = clip->id;
+	}
+
+	// Reset view frame clip refs
+	// NOTE: we do not map these to real clips right away,
+	// instead we do this at runtime whenever we find a non-mapped frame sound.
+	for (size_t v = 0; v < (size_t)game.numviews; ++v) {
+		for (size_t l = 0; l < (size_t)views[v].numLoops; ++l) {
+			for (size_t f = 0; f < (size_t)views[v].loops[l].numFrames; ++f) {
+				views[v].loops[l].frames[f].audioclip = -1;
+			}
 		}
 	}
 }
@@ -802,26 +812,25 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 	GameSetupStruct &game = ents.Game;
 	ApplySpriteData(game, ents, data_ver);
 	UpgradeFonts(game, data_ver);
-	UpgradeAudio(game, data_ver);
-	AdjustScoreSound(game, data_ver);
+	UpgradeAudio(game, ents, data_ver);
 	UpgradeCharacters(game, data_ver);
 	UpgradeMouseCursors(game, data_ver);
 	SetDefaultGlobalMessages(game);
 	// Global talking animation speed
 	if (data_ver < kGameVersion_312) {
 		// Fix animation speed for old formats
-		_GP(game).options[OPT_GLOBALTALKANIMSPD] = 5;
+		game.options[OPT_GLOBALTALKANIMSPD] = 5;
 	} else if (data_ver < kGameVersion_330) {
 		// Convert game option for 3.1.2 - 3.2 games
-		_GP(game).options[OPT_GLOBALTALKANIMSPD] = _GP(game).options[OPT_GLOBALTALKANIMSPD] != 0 ? 5 : (-5 - 1);
+		game.options[OPT_GLOBALTALKANIMSPD] = game.options[OPT_GLOBALTALKANIMSPD] != 0 ? 5 : (-5 - 1);
 	}
 	// Old dialog options API for pre-3.4.0.2 games
 	if (data_ver < kGameVersion_340_2) {
-		_GP(game).options[OPT_DIALOGOPTIONSAPI] = -1;
+		game.options[OPT_DIALOGOPTIONSAPI] = -1;
 	}
 	// Relative asset resolution in pre-3.5.0.8 (always enabled)
 	if (data_ver < kGameVersion_350) {
-		_GP(game).options[OPT_RELATIVEASSETRES] = 1;
+		game.options[OPT_RELATIVEASSETRES] = 1;
 	}
 	FixupSaveDirectory(game);
 	return HGameFileError::None();

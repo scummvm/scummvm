@@ -83,14 +83,16 @@ int ViewFrame_GetSound(ScriptViewFrame *svf) {
 
 void ViewFrame_SetSound(ScriptViewFrame *svf, int newSound) {
 	if (newSound < 1) {
-		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound = -1;
+		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = -1;
 	} else {
 		// convert sound number to audio clip
 		ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, newSound);
 		if (clip == nullptr)
 			quitprintf("!SetFrameSound: audio clip aSound%d not found", newSound);
 
-		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound = clip->id + (_GP(game).IsLegacyAudioSystem() ? 0x10000000 : 0);
+		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].sound =
+			_GP(game).IsLegacyAudioSystem() ? newSound : clip->id;
+		_G(views)[svf->view].loops[svf->loop].frames[svf->frame].audioclip = clip->id;
 	}
 }
 
@@ -127,17 +129,17 @@ void precache_view(int view) {
 void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 	ScriptAudioChannel *channel = nullptr;
 	if (_GP(game).IsLegacyAudioSystem()) {
-		if (_G(views)[view].loops[loop].frames[frame].sound > 0) {
-			if (_G(views)[view].loops[loop].frames[frame].sound < 0x10000000) {
-				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, _G(views)[view].loops[loop].frames[frame].sound);
-				if (clip)
-					_G(views)[view].loops[loop].frames[frame].sound = clip->id + 0x10000000;
-				else {
-					_G(views)[view].loops[loop].frames[frame].sound = 0;
+		// sound field contains legacy sound num, so we also need an actual clip index
+		const int sound = _G(views)[view].loops[loop].frames[frame].sound;
+		int &clip_id = _G(views)[view].loops[loop].frames[frame].audioclip;
+		if (sound > 0) {
+			if (clip_id < 0) {
+				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, sound);
+				if (!clip)
 					return;
-				}
+				clip_id = clip->id;
 			}
-			channel = play_audio_clip_by_index(_G(views)[view].loops[loop].frames[frame].sound - 0x10000000);
+			channel = play_audio_clip_by_index(clip_id);
 		}
 	} else {
 		if (_G(views)[view].loops[loop].frames[frame].sound >= 0) {
@@ -151,7 +153,6 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 		if (ch)
 			ch->set_volume_percent(ch->get_volume() * sound_volume / 100);
 	}
-
 }
 
 // draws a view frame, flipped if appropriate

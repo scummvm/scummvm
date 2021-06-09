@@ -161,6 +161,8 @@ void               PreReadGameData(GameSetupStruct &game, Stream *in, GameDataVe
 HGameFileError     UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver);
 // Ensures that the game saves directory path is valid
 void               FixupSaveDirectory(GameSetupStruct &game);
+// Maps legacy sound numbers to real audio clips
+void               RemapLegacySoundNums(GameSetupStruct &game, ViewStruct *&views, GameDataVersion data_ver);
 
 } // namespace Shared
 } // namespace AGS

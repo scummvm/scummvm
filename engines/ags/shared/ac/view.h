@@ -43,7 +43,10 @@ struct ViewFrame {
 	short speed;
 	int   flags;
 	int   sound;  // play sound when this frame comes round
-	int   reserved_for_future[2];
+	int   reserved_for_future[2]; // kept only for plugin api
+	// not saved, set at runtime only
+	int audioclip; // actual audio clip reference (in case sound is a legacy number)
+
 	ViewFrame();
 
 	void ReadFromFile(Shared::Stream *in);

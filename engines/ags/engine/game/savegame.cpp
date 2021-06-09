@@ -455,6 +455,9 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		_GP(play).new_music_queue[i].cachedClip = nullptr;
 	}
 
+	// Remap old sound nums in case we restored a save having a different list of audio clips
+	RemapLegacySoundNums(_GP(game), _G(views), _G(loaded_game_file_version));
+
 	// restore these to the ones retrieved from the save game
 	const size_t dynsurf_num = Math::Min((uint)MAX_DYNAMIC_SURFACES, r_data.DynamicSurfaces.size());
 	for (size_t i = 0; i < dynsurf_num; ++i) {
