@@ -1087,7 +1087,7 @@ bool MacText::draw(bool forceRedraw) {
 	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 
-	if (_selectedText.endY != -1 && _active)
+	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
 
 	return true;
