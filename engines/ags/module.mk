@@ -287,12 +287,14 @@ MODULE_OBJS = \
 	engine/script/systemimports.o \
 	plugins/agsplugin.o \
 	plugins/plugin_base.o \
+	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
 	plugins/ags_controller/ags_controller.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \
 	plugins/ags_creditz/drawing.o \
+	plugins/ags_fire/ags_fire.o \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_galaxy_steam/ags_wadjeteye_steam.o \
 	plugins/ags_galaxy_steam/ags_galaxy_steam.o \
