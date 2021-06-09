@@ -83,66 +83,6 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
 	}
 
-/*
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "install");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "main");							// Meet Mediaband
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "l_zone");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "win_data", 0, 2);					// L-ZONE
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "gadget");							// Gadget
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "vnc");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "vnc2");							// Virtual Nightclub
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "simpdata");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "simpsons");						// Simpsons Cartoon Studio
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "blender");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "files", 0, 2);						// Blender CD-ROM magazines
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "swanlake");						// Barbie Swan Lake
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "media");							// Rainbow Fish
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "macos9");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "macosx");							// Sethi 3
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "kripos");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "strisser");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "polis");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "poliisi");							// Polis
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "oslo");							// Oslo Tools & Gadgets
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "stuff");							// Abrapalabra
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "disney");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "sampler", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "demo", 0, 3);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "hd", 0, 3);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "hd", 0, 4);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "setup");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "buzz1g", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "us", 0, 3);						// Disney Interactive Learning
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "pcinst");							// Gus and the CyberBuds series
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "p2data");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "p2media");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "start", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "annat");							// Pettson & Findus
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "fct");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "fct_data");						// Felix the Cat
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "95instal");						// Fisher-Price Little People
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "dayfiles");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "xmasfun");							// Fisher-Price Xmas Fun
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "numbers");							// JumpStart Learning Games
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "fsetup");							// My First Reading Words (Eureka)
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "english");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "deutsch");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "francais");						// Rename from Français
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "italiano");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "virtual tourism paris (e)", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "virtual tourism paris (d)", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "virtual tourism paris (f)", 0, 2);
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "virtual tourism paris (i)", 0, 2);	// Virtual Tourism Paris
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "please copy to hd. g3"); 			// Rename from HDにｺﾋﾟｰして下さい。G3
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "_files_");							// The Gate
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "popup");							// Pop Up Computer
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "tokimeki memorial typing");		// Rename from ときめきメモリアルタイピング
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "popup");							// Tokimeki Memorial Typing
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "alpha");							// Interactive Alphabet
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "technik");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "exe1", 0, 2);						// Glasklar Technology Interactive
-*/
 	_colorDepth = 8;	// 256-color
 	_machineType = 9;	// Macintosh IIci
 	_playbackPaused = false;

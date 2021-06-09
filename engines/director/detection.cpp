@@ -35,78 +35,84 @@ namespace Director {
 	const char *directoryGlobs[] = {
 		"install",
 		"l_zone",
-		"win_data",					   // L-ZONE
+		"win_data",						// L-ZONE
 		"data",
-		"gadget",					   // Gadget
+		"gadget",						// Gadget
 		"vnc",
-		"vnc2",						   // Virtual Nightclub
-		"program",					   // Arc Media products
-		"demodata",					   // Edmark demos
-		"media",					   // Gundam
-		"mvm",						   // Master of the Elements
+		"vnc2",							// Virtual Nightclub
+		"program",						// Arc Media products
+		"demodata",						// Edmark demos
+		"media",						// Gundam
+		"mvm",							// Master of the Elements
 		"module_1",
-		"module_2",					   // Takeru
-		"simpsons",					   // Simpsons Cartoon Studio
-		"dane",						   // Polish Kontyngent '99 catalog
-		"datas",					   // O!KAY! subscription from Domino Verlag
-		"daten",					   // Bibi Blocksberg games (German)
-		"source",					   // Grand Prix 2006 directory
+		"module_2",						// Takeru
+		"simpdata",
+		"simpsons",						// Simpsons Cartoon Studio
+		"dane",							// Polish Kontyngent '99 catalog
+		"datas",						// O!KAY! subscription from Domino Verlag
+		"daten",						// Bibi Blocksberg games (German)
+		"source",						// Grand Prix 2006 directory
 		"data_k",
 		"data_1",
-		"data_2",					   // JumpStart World
-		"numbers",					   // JumpStart Learning Games
-		"files",					   // Babar
-		"swanlake",					   // Barbie Swan Lake
-		"assets",					   // Barbie Nail Designer
-		"fjpc",						   // Forestia Jr
-		"movies",					   // Mulle Meck (Gary Gadget) series
-		"demos",					   // Headbone samplers
-		"blender",					   // Blender CD-ROM magazines
-		"mausejagd mit ton",		   // Mäusejagd mit Ton (GGMD German)
-		"muizen in \'t hotel, geluid", // GGMD Dutch
+		"data_2",						// JumpStart World
+		"numbers",						// JumpStart Learning Games
+		"xtras",
+		"files",						// Babar
+		"swanlake",						// Barbie Swan Lake
+		"assets",						// Barbie Nail Designer
+		"fjpc",							// Forestia Jr
+		"movies",						// Mulle Meck (Gary Gadget) series
+		"demos",						// Headbone samplers
+		"blender",						// Blender CD-ROM magazines
+		"bilder",
+		"endsoung",
+		"gerhelp",
+		"gervideo",
+		"mausejagd mit ton",			// Rename from Mäusejagd mit Ton
+		"music",
+		"solos",
+		"sounds",
+		"startsnd",						// GGMD German
+		"duthelp",
+		"dutvideo",
+		"endsound",
+		"muizen in \'t hotel, geluid",	// GGMD Dutch
 		"macos9",
-		"macosx",					   // Sethi 3
+		"macosx",						// Sethi 3
 		"kripos",
 		"strisser",
 		"polis",
-		"poliisi",					   // Polis
-		"fusion macintosh folder",	   // Fusion
-		"oslo",						   // Oslo's Tools & Gadgets
-		"stuff",					   // Abrapalabra
-		"tooned",					   // Stay Tooned
-		"disney",
-		"sampler",
-		"hd",
-		"demo",
-		"setup",
-		"buzz1g",
-		"us",					   	   // Disney Interactive Learning
-		"sam rupert",				   // Who Killed Sam Rupert?
-		"pcinst",					   // Gus and the CyberBuds series
+		"poliisi",
+		"cd_data",						// Polis
+		"fusion macintosh folder",		// Fusion
+		"oslo",							// Oslo's Tools & Gadgets
+		"ojo2000",
+		"stuff",						// Abrapalabra
+		"tooned",						// Stay Tooned
+		"sam rupert",					// Who Killed Sam Rupert?
+		"content",
+		"pcinst",						// Gus and the CyberBuds series
 		"p2data",
 		"p2media",
-		"start",
-		"annat",					   // Pettson & Findus
-		"fct",					   	   // Felix the Cat
-		"95instal",					   // Fisher-Price Little People
-		"01",					   	   // Doing it in C++
-		"fsetup",					   // My First Reading Words (Eureka)
+		"p3media",
+		"annat",						// Pettson & Findus
+		"fctdata",
+		"fct",					   		// Felix the Cat
+		"dayfiles",
+		"xmasfun",						// Fisher-Price Xmas Fun
+		"95instal",						// Fisher-Price Little People
+		"01",					   		// Doing it in C++
+		"freading",
+		"fsetup",						// My First Reading Words (Eureka)
 		"english",
 		"deutsch",
 		"francais",						// Rename from Français
-		"italiano",
-		"virtual tourism paris (e)",
-		"virtual tourism paris (d)",
-		"virtual tourism paris (f)",
-		"virtual tourism paris (i)",	// Virtual Tourism Paris
+		"italiano",						// Virtual Tourism Paris
 		"please copy to hd. G3",		// Rename from HDにｺﾋﾟｰして下さい。G3
 		"_files_",						// The Gate
 		"popup",						// Pop Up Computer
-		"tokimeki memorial typing",		// Rename from ときめきメモリアルタイピング
-		"program files",				// Tokimeki Memorial Typing
 		"alpha",						// Interactive Alphabet
-		"technik",
-		"exe1",							// Glasklar Technology Interactive
+		"technik",						// Glasklar Technology Interactive
 		0
 	};
 }
