@@ -540,7 +540,9 @@ void updateWindowSection(const Rect16 &r) {
 	Point16         animOffset(tileRect.x - fineScroll.x, tileRect.y);
 
 	//  Detects that program is shutting down and aborts the blit
-	if (tileDrawMap.data == NULL) return;
+	if (tileDrawMap.data == nullptr)
+		return;
+
 	if (!checkTileAreaPort()) return;
 
 	//  Since the floating windows can be dragged partly offscreen
@@ -552,8 +554,10 @@ void updateWindowSection(const Rect16 &r) {
 
 	tempMap.size.x = clip.width;
 	tempMap.size.y = clip.height;
-	tempMap.data = (uint8 *)RNewClearPtr(tempMap.bytes(), NULL, "window section");
-	if (tempMap.data == NULL) return;
+	tempMap.data = new uint8[tempMap.bytes()]();
+	if (tempMap.data == nullptr)
+		return;
+
 	tempPort.setMap(&tempMap);
 	tempPort.setMode(drawModeReplace);
 
@@ -611,7 +615,7 @@ void updateWindowSection(const Rect16 &r) {
 	                   clip.x, clip.y, clip.width, clip.height);
 	pointer.show(mainPort, clip);
 	mainPort.setMode(drawModeMatte);
-	RDisposePtr(tempMap.data);
+	delete[] tempMap.data;
 }
 
 void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip) {
