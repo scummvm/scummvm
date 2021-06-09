@@ -278,9 +278,9 @@ inline void disposeText(void) {
 
 	//  Free the memory previously allocated to hold the text image
 	//  bitmap
-	if (textImage.data != NULL) {
-		delete [] textImage.data;
-		textImage.data = NULL;
+	if (textImage.data != nullptr) {
+		free(textImage.data);
+		textImage.data = nullptr;
 	}
 	textImage.size.x = textImage.size.y = 0;
 }
