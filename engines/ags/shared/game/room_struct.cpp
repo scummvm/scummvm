@@ -170,7 +170,7 @@ void RoomStruct::InitDefaults() {
 		if (i == 0)
 			Hotspots[i].Name = "No hotspot";
 		else
-			Hotspots[i].Name.Format("Hotspot %u", i);
+			Hotspots[i].Name.Format("Hotspot %zu", i);
 	}
 	for (size_t i = 0; i < (size_t)MAX_ROOM_OBJECTS; ++i)
 		Objects[i] = RoomObjectInfo();

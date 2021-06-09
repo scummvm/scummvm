@@ -1064,7 +1064,7 @@ static void engine_print_info(const std::set<String> &keys, ConfigTree *user_cfg
 		StringV drv;
 		AGS::Engine::GetGfxDriverFactoryNames(drv);
 		for (size_t i = 0; i < drv.size(); ++i) {
-			data["graphicdriver"][String::FromFormat("%u", i)] = drv[i];
+			data["graphicdriver"][String::FromFormat("%zu", i)] = drv[i];
 		}
 	}
 	if (all || keys.count("configpath") > 0) {

@@ -1095,7 +1095,7 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_NEWUSEROBJECT: {
 			const int32_t size = arg2.IValue;
 			if (size < 0) {
-				cc_error("Invalid size for user object; requested: %u (or %d), range: 0..%d", (uint32_t)size, size, INT_MAX);
+				cc_error("Invalid size for user object; requested: %d (or %d), range: 0..%d", (uint32_t)size, size, INT_MAX);
 				return -1;
 			}
 			ScriptUserObject *suo = ScriptUserObject::CreateManaged(size);

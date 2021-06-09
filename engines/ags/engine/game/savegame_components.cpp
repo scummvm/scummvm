@@ -1207,9 +1207,9 @@ HSaveError ReadAll(Stream *in, SavegameVersion svg_version, const PreservedParam
 		HSaveError err = ReadComponent(in, hlp, info);
 		if (!err) {
 			return new SavegameError(kSvgErr_ComponentUnserialization,
-			                         String::FromFormat("(#%d) %s, version %i, at offset %u.",
-			                                 idx, info.Name.IsEmpty() ? "unknown" : info.Name.GetCStr(), info.Version, info.Offset),
-			                         err);
+			    String::FromFormat("(#%d) %s, version %i, at offset %lld.",
+					idx, info.Name.IsEmpty() ? "unknown" : info.Name.GetCStr(), info.Version, info.Offset),
+				err);
 		}
 		update_polled_stuff_if_runtime();
 		idx++;

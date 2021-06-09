@@ -616,7 +616,7 @@ HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_v
 			                         String::FromFormat("Block: %s, expected to end at offset: %u, finished reading at %u.",
 			                                 ext_id.GetCStr(), block_end, cur_pos));
 		} else if (cur_pos < block_end) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %s expected to end at %u, finished reading at %u",
+			Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %s expected to end at %lld, finished reading at %lld",
 			              ext_id.GetCStr(), block_end, cur_pos);
 			in->Seek(block_end, Shared::kSeekBegin);
 		}
