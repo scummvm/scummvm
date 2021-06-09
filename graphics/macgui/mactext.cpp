@@ -1319,6 +1319,7 @@ void MacText::setSelection(int pos, bool start) {
 
 			row++;
 			if ((uint)row >= _textLines.size()) {
+				row = _textLines.size() - 1;
 				colX = _surface->w;
 				col = getLineCharWidth(row);
 
