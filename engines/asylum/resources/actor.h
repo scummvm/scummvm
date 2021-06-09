@@ -306,7 +306,7 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	// Static update methods
 	//////////////////////////////////////////////////////////////////////////
-	static void enableActorsChapter2(AsylumEngine *engine);
+	static void crowsReturn(AsylumEngine *engine);
 
 	/**
 	 * Updates the player appearance in chapter 9.
@@ -422,43 +422,43 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	// Update methods
 	//////////////////////////////////////////////////////////////////////////
-	void updateStatus3_19();
-	void updateStatus19_Player();
+	void updateStatusInteracting();
+	void checkPumpkinDeath();
 	void updatePumpkin(GameFlag flagToCheck, GameFlag flagToSet, ObjectId objectToUpdate, ObjectId objectToDisable);
 
 	void updateStatusEnabled();
 	void updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 counter, int16 setX, int16 setY);
 
-	void updateStatus9();
+	void updateStatusBored();
 
-	void updateStatus12_Chapter2();
-	void updateStatus12_Chapter2_Actor11();
-	void updateStatus12_Chapter11();
+	void CrowClosesIn();
+	void ScareCrowClosesIn();
+	void TentacleRises();
 
-	void updateStatus14();
-	void updateStatus14_Chapter2();
-	void updateStatus14_Chapter2_Helper();
-	void updateStatus14_Chapter11();
+	void updateStatusEnabled2();
+	void CrowHoveringBeforeKill();
+	void CrowStatusQuo();
+	void TentacleWigglesForSarah();
 
-	void updateStatus15_Chapter2();
-	void updateStatus15_Chapter2_Helper();
-	void updateStatus15_Chapter2_Player();
-	void updateStatus15_Chapter2_Player_Helper();
-	bool updateStatus15_isNoVisibleOrStatus17();
-	void updateStatus15_Chapter2_Actor11();
-	bool updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2);
-	void updateStatus15_Chapter11();
-	void updateStatus15_Chapter11_Player();
+	void CrowDives();
+	void MaxGetsHit();
+	void MaxAttacks();
+	void checkScareCrowDeath();
+	bool checkCrowDeath();
+	void ScareCrowAttacks();
+	bool actorsIntersect(ActorIndex actorIndex1, ActorIndex actorIndex2);
+	void TentacleWhips();
+	void SarahAttacks();
 
-	void updateStatus16_Chapter2();
-	void updateStatus16_Chapter11();
+	void MaxGetsSome();
+	void SarahGetsSome();
 
-	void updateStatus17_Chapter2();
+	void TentacleDies();
 
-	void updateStatus18_Chapter2();
-	void updateStatus18_Chapter2_Actor11();
+	void CrowSwoops();
+	void ScareCrowRetreats();
 
-	void updateStatus21();
+	void updateStatusMorphing();
 
 	void updateFinish();
 
@@ -490,18 +490,8 @@ private:
 	 */
 	void setVolume();
 
-	/**
-	 * Updates the coordinates.
-	 *
-	 * @param vec1 The first vector.
-	 * @param vec2 The second vector.
-	 */
-	void updateCoordinates(const Common::Point &vec1, Common::Point vec2);
-
-	/**
-	 * Hide Actor 0 and reset Actor 1 frame index
-	 */
-	void resetActors();
+	void TentacleBlocksSarah(const Common::Point &vec1, Common::Point vec2);
+	void SarahDies();
 
 	/**
 	 * Updates the actor "number" data if the item is "1".
@@ -585,7 +575,7 @@ private:
 	 * @param direction 	The direction.
 	 * @param point 		The point.
 	 */
-	static void rectFromDirection(Common::Rect *rect, ActorDirection direction, const Common::Point &point);
+	static void getCrowStrikeZone(Common::Rect *rect, ActorDirection direction, const Common::Point &point);
 
 	/**
 	 * Compares the angle between two vectors

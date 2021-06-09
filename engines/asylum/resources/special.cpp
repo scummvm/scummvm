@@ -177,7 +177,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 		case kObjectOpeningGate:
 			if (_vm->isGameFlagSet(kGameFlag1137)) {
 				_vm->clearGameFlag(kGameFlag1137);
-				Actor::enableActorsChapter2(_vm);
+				Actor::crowsReturn(_vm);
 			}
 
 			if (_vm->isGameFlagSet(kGameFlag1131) && !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
