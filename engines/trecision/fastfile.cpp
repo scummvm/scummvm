@@ -31,7 +31,7 @@
 
 namespace Trecision {
 
-FastFile::FastFile() : Common::Archive(), _stream(nullptr), _compBuffer(nullptr), _compStream(nullptr) {
+FastFile::FastFile() : Common::Archive(), _stream(nullptr), _compStream(nullptr), _compBuffer(nullptr) {
 }
 
 FastFile::~FastFile() {
@@ -119,7 +119,7 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	return stream;
 }
 
-void FastFile::decompress(const unsigned char *src, uint32 srcSize, unsigned char *dst, uint32 decompSize) {
+void FastFile::decompress(const uint8 *src, uint32 srcSize, uint8 *dst, uint32 decompSize) {
 	const uint16 *sw = (const uint16 *)(src + srcSize);
 	uint8 *d = dst;
 	uint32 bytesWritten = 0;
