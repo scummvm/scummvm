@@ -622,30 +622,17 @@ void gPort::bltPixels(
 		           + sect.x + origin.x;
 
 		if (drawMode == drawModeMatte) {        // Matte drawing mode
-			// Uses transparency
-			_BltPixelsT(src_line, src.size.x,
-			            dst_line, rowMod,
-			            sect.width, sect.height);
+			for (int h = sect.height; h > 0; h--, src_line += src.size.x, dst_line += rowMod) {
+				uint8   *src_ptr = src_line,
+				*dst_ptr = dst_line;
 
-			/*
-			            for (int h = sect.height;
-			                 h > 0;
-			                 h--,
-			                    src_line += src.size.x,
-			                    dst_line += rowMod )
-			            {
-			                uint8   *src_ptr = src_line,
-			                        *dst_ptr = dst_line;
-
-			                for (int w = sect.width;
-			                     w > 0;
-			                     w--)
-			                {
-			                    if (*src_ptr) *dst_ptr++ = *src_ptr++;
-			                    else dst_ptr++, src_ptr++;
-			                }
-			            }
-			*/
+				for (int w = sect.width; w > 0; w--) {
+					if (*src_ptr)
+						*dst_ptr++ = *src_ptr++;
+					else
+						dst_ptr++, src_ptr++;
+				}
+			}
 		} else if (drawMode == drawModeColor) { // Color drawing mode
 			// Draws single color, except where
 			for (int h = sect.height;           // src pixels are transparent
@@ -659,25 +646,16 @@ void gPort::bltPixels(
 				for (int w = sect.width;
 				        w > 0;
 				        w--) {
-					if (*src_ptr++) *dst_ptr++ = fgPen;
-					else dst_ptr++;
+					if (*src_ptr++)
+						*dst_ptr++ = fgPen;
+					else
+						dst_ptr++;
 				}
 			}
 		} else if (drawMode == drawModeReplace) { // Replacement drawing mode
-			// Does not use transparency
-			_BltPixels(src_line, src.size.x,
-			           dst_line, rowMod,
-			           sect.width, sect.height);
-			/*
-			            for (int h = sect.height;
-			                 h > 0;
-			                 h--,
-			                    src_line += src.size.x,
-			                    dst_line += rowMod)
-			            {
-			                memcpy( dst_line, src_line, sect.width );
-			            }
-			*/
+            for (int h = sect.height; h > 0; h--, src_line += src.size.x, dst_line += rowMod) {
+				memcpy(dst_line, src_line, sect.width);
+            }
 		} else if (drawMode == drawModeComplement) { // Complement drawing mode
 			// Inverts pixels, except where
 			for (int h = sect.height;           // src is transparent
