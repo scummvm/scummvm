@@ -685,10 +685,22 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
+	int w, h;
 
 	switch (_type) {
 	case kCastText:
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), bbox.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		// since mactext will add some offsets itself, then we calculate it first, to make sure the result size is the same as bbox
+		// formula comes from the ctor of macwidget and mactext
+		//	_dims.left = x;
+		//	_dims.right = x + w + (2 * border) + (2 * gutter) + shadow;
+		//	_dims.top = y;
+		//	_dims.bottom = y + h + (2 * border) + gutter + shadow;
+		// x, y, w + 2, h
+		w = bbox.right - bbox.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
+		h = bbox.bottom - bbox.top - 2 * _borderSize - _gutterSize - _boxShadow;
+		w -= 2;
+
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, w, h, g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), w, getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
