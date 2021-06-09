@@ -987,6 +987,8 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 
 	if (startChunk < 1) {
 		// return the last chunk we found
+		startChunk = chunkNum;
+		endChunk = chunkNum;
 		exprStartIdx = chunkStartIdx;
 		exprEndIdx = chunkEndIdx;
 	} else {
