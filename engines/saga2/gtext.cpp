@@ -83,7 +83,8 @@ void DrawChar(gFont *font, int drawchar, int xpos, uint8 *baseline, uint8 color,
 	*/
 
 	font_mod = font->rowMod;
-	src = font->fontdata + font->charXOffset[drawchar];
+	uint16 offset = font->charXOffset[drawchar];
+	src = &font->fontdata[offset];
 	dst = baseline + xpos;
 
 	for (w = font->charWidth[drawchar]; w > 0; w -= 8) {
@@ -292,7 +293,8 @@ void DrawChar3x3Outline(gFont *font, int drawchar, int xpos, uint8 *baseline,
 	unsigned short  txt1, txt2, txt3;
 
 	//  point to the first byte of the first scanline of the source char
-	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
+	uint16 offset = font->charXOffset[drawchar];
+	chardata = &font->fontdata[offset];
 
 	//  get the width of the character in pixels
 	charwidth = font->charWidth[drawchar];
@@ -352,7 +354,8 @@ void DrawChar5x5Outline(gFont *font, int drawchar, int xpos, uint8 *baseline,
 	unsigned short  txt[5];
 
 	//  point to the first byte of the first scanline of the source char
-	chardata = (uint8 *)(font + 1) + font->charXOffset[drawchar];
+	uint16 offset = font->charXOffset[drawchar];
+	chardata = &font->fontdata[offset];
 
 	//  get the width of the character in pixels
 	charwidth = font->charWidth[drawchar];
