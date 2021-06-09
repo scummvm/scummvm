@@ -470,7 +470,7 @@ void vWDisplayPage::vLine(int16 x, int16 y, int16 height, uint8 color) {
 
 #define USE_BLTDDRECT
 // -- we'll want to use this when we figure out why bltDDRect doesnt work here
-//#define USE_RECT
+#define USE_RECT
 
 void vWDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 	Common::Rect          wRect;
@@ -499,27 +499,11 @@ void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 }
 #else
 void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-	uint8       *dstPtr;
-	RECT        wRect;
-
 	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
 		return;
 
-	wRect.left      = r.x;
-	wRect.top       = r.y;
-	wRect.right     = r.x + r.width;
-	wRect.bottom    = r.y + r.height;
-
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(&wRect);
-
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return;
-	}
-
-	_BltPixelsT(pixPtr, pixMod, dstPtr, ddWindow->lPitch, r.width, r.height);
-
-	ddWindow->UnlockBackBuffer(dstPtr);
+	warning("STUB: writeTransPixels, transparency is ignored");
+	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
 }
 #endif
 
