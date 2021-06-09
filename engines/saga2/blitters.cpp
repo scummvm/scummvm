@@ -33,11 +33,30 @@
 namespace Saga2 {
 
 void _BltPixels(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height) {
-	warning("STUB: _BltPixels()");
+	uint8 *src, *dst;
+	for (uint y = 0; y < height; y++) {
+		src = srcPtr + srcMod * y;
+		dst = dstPtr + dstMod * y;
+		for (uint x = 0; x < width; x++) {
+			*dst++ = *src++;
+		}
+	}
 }
 
 void _BltPixelsT(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height) {
-	warning("STUB: _BltPixelsT()");
+	uint8 *src, *dst;
+	for (uint y = 0; y < height; y++) {
+		src = srcPtr + srcMod * y;
+		dst = dstPtr + dstMod * y;
+		for (uint x = 0; x < width; x++) {
+			byte c = *src++;
+
+			if (c == 0)
+				dst++;
+			else
+				*dst++ = c;
+		}
+	}
 }
 
 void _FillRect(uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height, uint32 color) {
