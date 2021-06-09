@@ -262,10 +262,11 @@ void PlayModeSetup(void) {
 void PlayModeCleanup(void) {
 	closeAllFloatingWindows();
 	if (playControls) {
+		if (StatusLine)
+			delete StatusLine;
+		StatusLine = nullptr;
 		delete playControls;
 		playControls = nullptr;
-		delete StatusLine;
-		StatusLine = nullptr;
 	}
 	if (speakButtonControls) {
 		delete speakButtonControls;
