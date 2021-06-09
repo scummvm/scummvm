@@ -310,20 +310,110 @@ void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	warning("STUB: maskTile()");
 }
 
-void TBlit(gPixelMap *d, gPixelMap *s, int32 x, int32 y) {
-	warning("STUB: TBlit()");
+void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int xpos, int ypos) {
+	byte			*srcPtr,
+					*dstPtr;
+	int16			srcMod,
+					dstMod;
+	int16			x, y, w, h;
+	int32			offset = 0;
+
+	w = srcMap->size.x;
+	h = srcMap->size.y;
+
+	if (ypos < 0) {
+		h += ypos;
+		offset -= (ypos * w);
+		ypos = 0;
+	}
+
+	if (xpos < 0) {
+		w += xpos;
+		offset -= xpos;
+		xpos = 0;
+	}
+
+	if (w > dstMap->size.x - xpos)
+		w = dstMap->size.x - xpos;
+	if (h > dstMap->size.y - ypos)
+		h = dstMap->size.y - ypos;
+	if (w < 0 || h < 0)
+		return;
+
+	dstMod = dstMap->size.x - w;
+	srcMod = srcMap->size.x - w;
+
+	srcPtr = srcMap->data + offset;
+	dstPtr = dstMap->data + xpos + ypos * dstMap->size.x;
+
+	for (y = 0; y < h; y++) {
+		for (x = 0; x < w; x++) {
+			byte c = *srcPtr++;
+
+			if (c == 0)
+				dstPtr++;
+			else
+				*dstPtr++ = c;
+		}
+		dstPtr += dstMod;
+		srcPtr += srcMod;
+	}
 }
 
 void TBlit4(gPixelMap *d, gPixelMap *s, int32 x, int32 y) {
-	warning("STUB: TBlit4()");
+	TBlit(d, s, x, y);
 }
 
-void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup) {
-	warning("STUB: compositePixels()");
+void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
+	byte			*srcPtr,
+					*dstPtr;
+	int16			rowMod;
+	int16			x, y;
+
+		//	Blit the temp map onto the composite map
+
+	srcPtr	= sprMap->data;
+	dstPtr	= compMap->data + xpos + ypos * compMap->size.x;
+	rowMod = compMap->size.x - sprMap->size.x;
+
+	for (y = 0; y < sprMap->size.y; y++) {
+		for (x = 0; x < sprMap->size.x; x++) {
+			byte c = *srcPtr++;
+
+			if (c == 0)
+				dstPtr++;
+			else
+				*dstPtr++ = lookup[ c ];
+		}
+		dstPtr += rowMod;
+	}
 }
 
-void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup) {
-	warning("STUB: compositePixelsRvs()");
+void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
+	byte			*srcPtr,
+					*dstPtr;
+	int16			rowMod;
+	int16			x, y;
+
+		//	Blit the temp map onto the composite map
+
+	srcPtr	= sprMap->data + sprMap->bytes();
+	dstPtr	= compMap->data	+ xpos + (ypos + sprMap->size.y) * compMap->size.x;
+
+	rowMod = compMap->size.x + sprMap->size.x;
+
+	for (y = 0; y < sprMap->size.y; y++) {
+		dstPtr -= rowMod;
+
+		for (x = 0; x < sprMap->size.x; x++) {
+			byte c = *--srcPtr;
+
+			if (c == 0)
+				dstPtr++;
+			else
+				*dstPtr++ = lookup[ c ];
+		}
+	}
 }
 
 bool initGraphics(void) {
