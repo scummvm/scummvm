@@ -904,7 +904,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 			chunkNum = str.size();
 			chunkStartIdx = str.size() - 1;
 			chunkEndIdx = str.size();
-		} else if (str.size() > 0) {
+		} else if (startChunk <= (int)str.size()) {
 			exprStartIdx = MIN(startChunk, (int)str.size()) - 1;
 			exprEndIdx = MIN(endChunk, (int)str.size());
 		}
