@@ -446,6 +446,12 @@ ScummVM Team
     Touche:
        Gregory Montoir                - (retired)
 
+    Trecision:
+       Daniel Albano
+       Arnaud Boutonne
+       Thomas Fach-Pedersen           - Smacker video support
+       Filippos Karapetis
+
     TsAGE:
        Arnaud Boutonne
        Paul Gilbert
@@ -794,7 +800,7 @@ Other contributions
        Marcel Souza Lemes
 
     Portuguese:
-       Daniel
+       Daniel Albano
 
     Russian:
        Eugene Sandulenko
@@ -1123,4 +1129,7 @@ Special thanks to
 
    Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily
    from.
+
+   Fabrizio Lagorio from Trecision S.p.A., for finding and providing the
+   source code of many of their games.
 

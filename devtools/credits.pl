@@ -1078,6 +1078,13 @@ begin_credits("Credits");
 				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
+			begin_section("Trecision");
+				add_person("Daniel Albano", "SupSuper", "");
+				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
+				add_person("Thomas Fach-Pedersen", "madmoose", "Smacker video support");
+				add_person("Filippos Karapetis", "bluegr", "");
+			end_section();
+
 			begin_section("TsAGE");
 				add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 				add_person("Paul Gilbert", "dreammaster", "");
@@ -1478,7 +1485,7 @@ begin_credits("Credits");
 					add_person("Marcel Souza Lemes", "marcosoutsider", "");
 				end_section();
 				begin_section("Portuguese");
-					add_person("Daniel", "SupSuper", "");
+					add_person("Daniel Albano", "SupSuper", "");
 				end_section();
 				begin_section("Russian");
 					add_person("Eugene Sandulenko", "sev", "");
@@ -1794,6 +1801,10 @@ begin_credits("Credits");
 
 		add_paragraph(
 			"Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.");
+
+		add_paragraph(
+			"Fabrizio Lagorio from Trecision S.p.A., for finding and providing the source code ".
+			"of many of their games.");
 	end_section();
 
 end_credits();

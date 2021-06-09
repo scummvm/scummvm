@@ -1122,6 +1122,21 @@ Touché
    * - Gregory Montoir
      - (retired)
 
+Trecision
+^^^^^^^^^
+
+.. list-table::
+   :widths: 35 65
+
+   * - Daniel Albano
+     -
+   * - Arnaud Boutonné
+     -
+   * - Thomas Fach-Pedersen
+     - Smacker video support
+   * - Filippos Karapetis
+     -
+
 TsAGE
 ^^^^^
 
@@ -1993,7 +2008,7 @@ Portuguese
 .. list-table::
    :widths: 35 65
 
-   * - Daniel
+   * - Daniel Albano
      -
 
 Russian
@@ -2489,4 +2504,6 @@ Tim Schafer, for obvious reasons, and everybody else who helped make Grim Fandan
 Bret Mogilefsky, for managing to create a SPUTM-style 3D LUA engine, and avoiding the horrible hack it could have been.
 
 Benjamin Haisch, for emimeshviewer, which our EMI code borrows heavily from.
+
+Fabrizio Lagorio from Trecision S.p.A., for finding and providing the source code of many of their games.
 
