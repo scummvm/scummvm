@@ -20,6 +20,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/lib/std/math.h"
 #include "ags/engine/ac/display.h"
 #include "ags/shared/ac/common.h"
@@ -163,7 +164,10 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	if (disp_type < DISPLAYTEXT_NORMALOVERLAY)
 		remove_screen_overlay(OVER_TEXTMSG); // remove any previous blocking texts
 
-	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap((wii > 0) ? wii : 2, disp.fulltxtheight + extraHeight, _GP(game).GetColorDepth());
+	const int bmp_width = std::max(2, wii);
+	const int bmp_height = std::max(2, disp.fulltxtheight + extraHeight);
+	Bitmap *text_window_ds = BitmapHelper::CreateTransparentBitmap(
+		bmp_width, bmp_height, _GP(game).GetColorDepth());
 
 	// inform draw_text_window to free the old bitmap
 	const bool wantFreeScreenop = true;
