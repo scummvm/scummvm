@@ -192,8 +192,6 @@ void TrecisionEngine::processTime() {
 	_curTime = readTime();
 
 	if (_curTime >= _nextRefresh) {
-		_textMgr->drawTexts();
-
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 			rollInventory(_inventoryStatus);
 
@@ -207,6 +205,7 @@ void TrecisionEngine::processTime() {
 			_lightIconOld = _lightIcon;
 		}
 
+		_textMgr->drawTexts();
 		_graphicsMgr->paintScreen(false);
 		_textMgr->clearTextStack();
 
