@@ -319,7 +319,8 @@ void processEventLoop(bool updateScreen) {
 		return;
 
 	debugC(1, kDebugEventLoop, "EventLoop: audio event loop");
-	audioEventLoop();
+	//FIXME: Disabled for debug purposes. Enable and implement later.
+	//audioEventLoop();
 
 	debugC(1, kDebugEventLoop, "EventLoop: game mode update");
 	if (GameMode::newmodeFlag)
@@ -373,8 +374,8 @@ void displayUpdate(void) {
 		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
 		lrate.updateFrameCount();
 		loops++;
-		elapsed += (gameTime - lastGameTime);
-		lastGameTime = gameTime;
+		elapsed += (g_system->getMillis() - lastGameTime);
+		lastGameTime = g_system->getMillis();
 
 
 		debugC(1, kDebugEventLoop, "EventLoop: Interface indicator updates");
@@ -388,7 +389,8 @@ void displayUpdate(void) {
 		debugC(1, kDebugEventLoop, "EventLoop: resource update");
 		loadAsyncResources();
 
-		audioEventLoop();
+		//FIXME: Disabled for debug purposes. Enable and implement later.
+		//audioEventLoop();
 
 		//  Call the asynchronous path finder
 		debugC(1, kDebugEventLoop, "EventLoop: pathfinder update");

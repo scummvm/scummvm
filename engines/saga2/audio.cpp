@@ -85,6 +85,7 @@ void audioInterface::resumeGameClock(void) {
 
 bool audioInterface::playFlag(void) {
 	warning("STUB: audioInterface::playFlag()");
+	return false;
 }
 void audioInterface::playMe(void) {
 	warning("STUB: audioInterface::PlayMe()");
