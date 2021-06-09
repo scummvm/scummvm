@@ -30,6 +30,7 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/math.h"
 #include "common/system.h"
@@ -2292,45 +2293,76 @@ uint16 Myst::rocketSliderGetSound(uint16 pos) {
 	return (uint16)(9530 + (pos - 216) * 35.0 / 61.0);
 }
 
+
+uint16 Myst::rocketCheckSolutionLogicHelper(uint16 sound1, uint16 sound2, uint16 logictype) {
+
+	debugN("helper: %i %i %i (diff:% 3i) ",sound1, sound2 , logictype, sound1-sound2);
+	if (logictype==0) {
+
+		if (sound1 != sound2) {
+			debugN("strict : false \n");
+			return false;
+		}
+
+	} else {
+
+	       if ( abs(sound1-sound2)>=5) {
+			debugN(" fuzzy : false \n");
+			return false;
+		}
+
+	}
+
+	debugN("either : true \n");
+	return true;
+
+}
+
 void Myst::rocketCheckSolution() {
 	_vm->_cursor->hideCursor();
 
 	uint16 soundId;
 	bool solved = true;
+	bool fuzzylogic = false;
+
+         if (ConfMan.getBool("fuzzy_logic")) {
+		fuzzylogic = true;
+	}
+
 
 	soundId = rocketSliderGetSound(_rocketSlider1->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider1->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9558)
+	if ( !rocketCheckSolutionLogicHelper(soundId,9558,fuzzylogic) )
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider2->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider2->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9546)
+	if ( !rocketCheckSolutionLogicHelper(soundId,9546,fuzzylogic) )
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider3->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider3->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9543)
+	if ( !rocketCheckSolutionLogicHelper(soundId,9543,fuzzylogic) )
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider4->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider4->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9553)
+	if ( !rocketCheckSolutionLogicHelper(soundId,9553,fuzzylogic) )
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider5->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9560)
+	if ( !rocketCheckSolutionLogicHelper(soundId,9560,fuzzylogic) )
 		solved = false;
 
 	_vm->_sound->stopEffect();

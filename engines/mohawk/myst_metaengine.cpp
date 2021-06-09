@@ -26,6 +26,7 @@ void Mohawk::MohawkMetaEngine_Myst::registerDefaultSettings() {
 	ConfMan.registerDefault("playmystflyby", false);
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("transition_mode", false);
+	ConfMan.registerDefault("fuzzy_logic", false);
 }
 
 const Mohawk::MystLanguage *Mohawk::MohawkMetaEngine_Myst::listLanguages() {

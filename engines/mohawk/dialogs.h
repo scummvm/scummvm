@@ -100,6 +100,8 @@ private:
 	GUI::CheckboxWidget *_zipModeCheckbox;
 	GUI::CheckboxWidget *_transitionsCheckbox;
 	GUI::CheckboxWidget *_mystFlyByCheckbox;
+	GUI::CheckboxWidget *_spaceshipFuzzyLogicCheckbox;
+
 	GUI::PopUpWidget *_languagePopUp;
 
 	GUI::ButtonWidget *_dropPageButton;
