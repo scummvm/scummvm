@@ -40,6 +40,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "afiles",				"The A-Files" },
 	{ "agapito",			"Agapito's Crazy Adventure" },
 	{ "alice",				"Alice: An Interactive Museum" },
+	{ "alphabet",			"The Interactive Alphabet" },
 	{ "amandastories",		"AmandaStories" },
 	{ "amber",				"AMBER: Journeys Beyond" },
 	{ "amertailmb",			"An American Tail Interactive MovieBook" },
@@ -303,6 +304,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart" },
 	{ "aamn",				"Anatomy & Anaesthesia of the Mandibular Nerve" },
 	{ "alankay",			"Alan Kay CD-ROM Pack" },
+	{ "alcohol101",			"Alcohol 101" },
 	{ "alice2ocean",		"From Alice to Ocean: Alone Across the Outback" },
 	{ "amnesty",			"Amnesty Interactive" },
 	{ "babylon5int",		"Babylon 5 Interactive" },
@@ -373,6 +375,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "supersonic",			"Supersonic: A Multimedia Guide to Modern Military Aircraft" },
 	{ "survive",			"How Would You Survive?" },
 	{ "take5",				"Take Five: Relaxation at Your Finger Tips" },
+	{ "technik",			"Technology Interactive" },
 	{ "toyota95",			"1995 Toyota Interactive" },
 	{ "trekborg",			"Star Trek: Borg" },
 	{ "trekguideds9",		"Star Trek: Deep Space Nine Episode Guide" },
@@ -383,6 +386,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual" },
 	{ "truthsfictions",		"Truths & Fictions: A Journey from Documentary to Digital Photography" },
 	{ "universe",			"Invisible Universe" },
+	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
 	{ "ushistory",			"The History of the United States for Young People" },
 	{ "vusic",				"Vusic: The Screen Raver" },
 	{ "warplanes", 			"Warplanes: Modern Fighting Aircraft" },
@@ -543,6 +547,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "zaibatsu",			"財閥銀行" },								  		// Zaibatsu Bank
 
 	// Japanese art and multimedia reference
+	{ "a5tours",			"A5 Tours: Special Data Library" },
 	{ "asylum300",			"Asylum 300" },
 	{ "eguchi",				"江口寿史 CG MUSEUM" },								// Hisashi Eguchi
 	{ "fototune",			"FotoTune Multimedia Show" },
@@ -645,6 +650,7 @@ static const PlainGameDescriptor directorGames[] = {
 	// Titles containing Director extras
 	{ "amgpremiere",		"The American Girls Premiere" },
 	{ "lbfamfun",			"Little Bear Family Fun" },
+	{ "scissorsnstones",	"Scissors N Stones On-Line Manual" },
 	{ "superbowltrivia",	"Super Bowl Trivia Game" },
 	{ "thinkinthingsdp",	"Dear Parents: About Thinkin' Things..." },
 	{ "ultrobotkit",		"Robotoid Assembly Toolkit" },
@@ -1154,7 +1160,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("exoticjapan", "Sampler", "Exotic Japan Sampler", "e59139ac60997f52af77d7f03275ab30", 1790832, 311),
 
-	WINDEMO1("explorapedia", "Demo", "XPLDM06.EXE", "d61e2e1e9f9d9907005adc992a451d02", 4724919, 311),
+	WINDEMO1("explorapedia", "Demo", "XPLDMO6.EXE", "d61e2e1e9f9d9907005adc992a451d02", 4724919, 311),
 
 	// All four languages on one disc. Original Mac file name is Parents’ Guide FFF
 	MACGAME1("fff",   "", "Friends",      "7f443f2e63fd497a9ad85b10dc880a91", 413963, 313),
@@ -1467,9 +1473,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("satohomosexual", "", "SATO&NAKAZAWA", "a03ae8a9bf211bcb26388b6b6da17c2b", 736532, 311),
 
 	MACGAME1_l("schoolworld", "Capture", "CAPTURE",			 "f5277c53bacd27936158dd3867e587e2", 1652464, Common::JA_JPN, 311),
+	MACGAME1_l("schoolworld", "Breed",	 "BREED",			 "f5277c53bacd27936158dd3867e587e2", 545280, Common::JA_JPN, 311),
 	MACDEMO1_l("schoolworld", "Demo",	 "SchoolWorld-DEMO", "f5277c53bacd27936158dd3867e587e2", 4046783, Common::JA_JPN, 311),
 	WINGAME1_l("schoolworld", "Capture", "CAPTURE.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375279, Common::JA_JPN, 310),
 	WINGAME1_l("schoolworld", "Breed",	 "BREED.EXE",		 "7c8230a804abf9353b05627a675b5ffb", 375277, Common::JA_JPN, 310),
+
+	// Manual only. Full game is made in VB3 and contains unsupported content
+	WINGAME1("scissorsnstones", "", "MANUAL.EXE", "12345", 12345, 310),
 
 	// Full game was never released
 	MACDEMO1("screamingmetal", "v1.0 Demo", "Screaming Metal Demo", "0a280df213c5bf3eca241f37151e1d56", 373190, 310),
@@ -1532,6 +1542,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1_l("ttw", "Demo", "T.T.W.Demo", "51e8b81db434a6dcae723f6b7724143d", 691332, Common::JA_JPN, 302),
 
+	// Full version is D4
 	MACDEMO2_l("ukiuki1", "Demo", "DEMO",		 "f5277c53bacd27936158dd3867e587e2", 392508,
 								  "Shared Cast", "1a784d62d7a97967da230f4e3c28d70e", 80517, Common::JA_JPN, 311),
 
@@ -1647,6 +1658,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("alice", "", "Alice", "3b61149c922f0fd815ca29686e4f554a", 304714, 400),
 	WINGAME1("alice", "", "ALICE.EXE", "c67ece9b657ee80355520ac37a25fe55", 684733, 400),
+
+	WINGAME1("alphabet", "", "ALPHA.EXE", "c89c8301db7ef0ebffedf435863b3ffc", 749092, 404),
 
 	WINGAME1("amnesty", "", "AMNESTY.EXE", "39b849bbba9eaf39c92ca25e0bb36a56", 736902, 404),
 
@@ -2489,6 +2502,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Demos from Big Top Productions: Felix the Cat, Hello Kitty, Keroppi & The Groove Thing
 	WINGAME1("ubt", "", "BTDEMO.EXE", "dbe72b7dc91c72db5b4597857aecf5c6", 696813, 404),
 
+	// YOBI.EXE is a projector for lower performance systems
+	WINGAME1_l("ukiuki1", "", "TENNGU.EXE", "f0bbb9938a7cb899b6fc93ef7f3e8150", 747145, Common::JA_JPN, 404),
+
 	MACGAME1("universe", "", "Invisible Universe", "78138a77207907642744d0960c14d9e5", 596766, 404),
 	WINGAME2("universe", "", "UNIVERSE.EXE", "77ddb6ca4c45b78cc501868afa55e166", 700157,
 							 "STARTUP.DIR",	 "f66999c161fd9bac1f70be4635abfcc2", 24958, 404),
@@ -2543,23 +2559,29 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
+	WINGAME1_l("a5tours", "", "A5TOURS.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1410246, Common::JA_JPN, 501),
+
 	// Run Windows installer (ASENNA.EXE) on Win9X extract 32-bit executable
 	MACGAME1_l("aapelin1", "", "Aapelin ABC, 7-9 v", "231d3041df162be4a0ddd36a74eb03b6", 719261, Common::FI_FIN, 501),
 	WINGAME1_l("aapelin1", "", "Aapeli32.exe", "3460ad87d2ba57104e2810a77b53c220", 1396675, Common::FI_FIN, 500),
 
+	// Installer is also Director
+	WINGAME2("alcohol101", "", "START95.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411661,
+							   "INTRO.DXR",	  "de5b5bbc9cc4659b3a6464efffd22fb9", 903418, 501),
+
 	WINDEMO1_l("almabril98", "Demo", "DEMO AA98 START.EXE", "3460ad87d2ba57104e2810a77b53c220", 4180353, Common::PT_BRA, 500),
 
 	WINGAME1("amber", "", "amber_jb.exe", "1a7acbba10a7246ba58c1d53fc7203f5", -1, 500),
+
+	// Original file names are ' ANKH2 ' and ' ANKH3 '
+	MACGAME1_l("ankh2", "", "ANKH2", "779a44f65837ded641cc3fbbebe5ace1", 721432, Common::JA_JPN, 501),
+	MACGAME1_l("ankh3", "", "ANKH3", "f715a3036c1b54ab1121e90388948018", 720456, Common::JA_JPN, 501),
 
 	WINGAME1("arad", "", "arad95nt.exe", "3460ad87d2ba57104e2810a77b53c220", 2623135, 500),
 
 	MACGAME1("arcmedia", "", "MAC.EXE", 	"231d3041df162be4a0ddd36a74eb03b6", 716997, 501),
 	WINGAME2("arcmedia", "", "WIN95.EXE", 	"1a7acbba10a7246ba58c1d53fc7203f5", 1411325,
 							 "000MAIN.DXR", "0fb364d9201b3b652f575282abb6ea16", 311662, 501),
-
-	// Original file names are ' ANKH2 ' and ' ANKH3 '
-	MACGAME1_l("ankh2", "", "ANKH2", "779a44f65837ded641cc3fbbebe5ace1", 721432, Common::JA_JPN, 501),
-	MACGAME1_l("ankh3", "", "ANKH3", "f715a3036c1b54ab1121e90388948018", 720456, Common::JA_JPN, 501),
 
 	// Installer is also Director
 	WINGAME1_l("backpacker2", "", "bp2new.exe", "842014a812b454620f64b860fd7211f0", 940821, Common::NB_NOR, 501),
@@ -2887,7 +2909,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 //////////////////////////////////////////////////
 
 	MACGAME1("10plus2", "", "10plus2 PPC", "22e2e91bed55f087b739983679e4a0ff", 114739, 600),
-	WINGAME1("10plus2", "", "START95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1508485, 600),
+	WINGAME2("10plus2", "", "START95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1508485,
+							"START.Dir",   "b9f7a692dce72c30e54325c4a957e582", 9290, 600),
 
 	WINGAME1("1stcdtoddler", "", "_dkilbbt.exe", "d62438566e44826960fc16c5c23dbe43", 2012554, 650),
 
@@ -3105,6 +3128,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("ssleepipes", "", "pipes",		"dc48a185cfddce0d48a199fd25e328ac", 94195, 650),
 	WINGAME1("ssleepipes", "", "pipes.exe", "a593079aecf5bd938ce75264cac24b2d", 1545446, 600),
+
+	WINGAME1("technik", "", "Techni00.exe", "1b8d78ddca650041b8997cac7af3184b", 1615559, 650),
 
 	WINGAME1("thesims", "", "maxis.exe", "d62438566e44826960fc16c5c23dbe43", 1915533, 650),
 
@@ -3449,6 +3474,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original Mac filename is ときメモタイピング
 	MACGAME1_l("tokimemotype1", "", "Tokimemo Typing", "80b8d1697b18f6f2d8a2813a594cead2", 255114, Common::JA_JPN, 851),
+	WINGAME1_l("tokimemotype1", "", "tkmktype.exe",	"d5069f2a24854aa78f8fbd01462ba37c", 2160344, Common::JA_JPN, 851),
 
 	MACGAME1("tkkg9", "", "TKKG-Start", "2c64a568bd26944452957a53af85b067", 197423, 800),
 	WINGAME1("tkkg9", "", "TKKG 9.exe", "70a7b053c1a60617d3baace061fcba54", 2329244, 800),
@@ -3456,6 +3482,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("tweeniesrtp", "", "BBC Tweenies Tour.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 5435024, 800),
 
 	WINGAME1_l("unlimitedcl", "", "CD-ROMs Educativos.exe", "0c81c84ca4966313ad27d47daba44537", 2366839, Common::ES_ESP, 851),
+
+	WINGAME2("unwrap", "", "Start.exe",	 "e24d4bab978b1a5c2326d2c56cf4d781", 3631198,
+						   "unwrap.dxr", "69dd7f79e76af5b0eab89d5ae589f836", 50599487, 800),
 
 	MACGAME1("vug2005", "", "VUGames.osx", "a171b7a952d1ac68ae3cd419d6dfc674", 262042, 850),
 	WINGAME1("vug2005", "", "VUG_2005.exe", "c163f36141579ee374f7b4b2bddee95a", 2823410, 850),
