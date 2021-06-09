@@ -1644,20 +1644,11 @@ void LC::c_procret() {
 }
 
 void LC::c_hilite() {
-	Datum first_char = g_lingo->pop();
-	Datum last_char = g_lingo->pop();
-	Datum first_word = g_lingo->pop();
-	Datum last_word = g_lingo->pop();
-	Datum first_item = g_lingo->pop();
-	Datum last_item = g_lingo->pop();
-	Datum first_line = g_lingo->pop();
-	Datum last_line = g_lingo->pop();
-	Datum cast_id = g_lingo->pop();
-
-	warning("STUB: LC::c_hilite(): %d %d %d %d %d %d %d %d %d",
-		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-		cast_id.u.i);
+	Datum fieldID = g_lingo->pop().asCastId();
+	fieldID.type = FIELDREF;
+	Datum chunkRef = readChunkRef(fieldID);
+	g_lingo->push(chunkRef);
+	LB::b_hilite(1);
 }
 
 void LC::c_asserterror() {

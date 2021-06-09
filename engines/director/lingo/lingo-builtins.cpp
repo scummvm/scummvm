@@ -27,6 +27,7 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -511,13 +512,33 @@ void LB::b_delete(int nargs) {
 }
 
 void LB::b_hilite(int nargs) {
-	Datum d = g_lingo->pop();
+	Datum d = g_lingo->pop(false);
 
-	Datum res(d.asInt());
+	int fieldId, start, end;
+	if (d.type == FIELDREF) {
+		fieldId = d.u.i;
+		start = -1;
+		end = -1;
+	} else if (d.type == CHUNKREF) {
+		TYPECHECK(d.u.cref->source, FIELDREF);
+		fieldId = d.u.cref->source.u.i;
+		start = d.u.cref->start;
+		end = d.u.cref->end;
+	} else {
+		warning("b_hilite: bad field type: %s", d.type2str());
+		return;
+	}
 
-	warning("STUB: b_hilite");
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint16 spriteId = score->getSpriteIdByMemberId(fieldId);
+	if (spriteId == 0)
+		return;
 
-	g_lingo->push(res);
+	Channel *channel = score->getChannelById(spriteId);
+	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastText && channel->_widget) {
+		((Graphics::MacText *)channel->_widget)->setSelection(start, true);
+		((Graphics::MacText *)channel->_widget)->setSelection(end, false);
+	}
 }
 
 void LB::b_length(int nargs) {
