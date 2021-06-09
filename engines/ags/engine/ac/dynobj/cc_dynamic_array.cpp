@@ -142,8 +142,12 @@ DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char
 	int32_t *slots = static_cast<int32_t *>(arr.second);
 	for (auto s : items) {
 		DynObjectRef str = _G(stringClassImpl)->CreateString(s);
+		// We must add reference count, because the string is going to be saved
+		// within another object (array), not returned to script directly
+		ccAddObjectReference(str.first);
 		*(slots++) = str.first;
 	}
+
 	return arr;
 }
 
