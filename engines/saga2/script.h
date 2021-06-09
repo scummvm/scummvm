@@ -155,13 +155,10 @@ void loadSAGAThreads(SaveFileReader &saveGame);
 //  Dispose of the active SAGA threads
 void cleanupSAGAThreads(void);
 
-
-//  Get a new SAGA thread from the global thread list
-void *newThread(void);
-
 //  Dispose of an active SAGA thread
-void deleteThread(void *p);
+void deleteThread(Thread *p);
 
+void newThread(Thread *p);
 
 //  Return the ID of the specified SAGA thread
 ThreadID getThreadID(Thread *thread);

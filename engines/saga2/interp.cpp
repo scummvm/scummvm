@@ -1111,24 +1111,18 @@ bool Thread::interpret(void) {
  * ============================================================================ */
 
 class ThreadList {
-
-	struct ThreadPlaceHolder : public DNode {
-		uint8       buf[sizeof(Thread)];
-
-		Thread *getThread(void) {
-			return (Thread *)&buf;
-		}
+	enum {
+		kNumThreads = 25
 	};
 
-	DList               list,           //  List of active Threads
-	                    free;           //  List of available Threads
-
-	ThreadPlaceHolder   array[32];    //  Memory buffer for thread
-	//  instantiation
+	Thread *_list[kNumThreads];
 
 public:
 	//  Constructor
-	ThreadList(void);
+	ThreadList(void) {
+		for (uint i = 0; i < kNumThreads; i++)
+			_list[i] = nullptr;
+	}
 
 	//  Reconstruct from archive buffer
 	void *restore(void *buf);
@@ -1143,53 +1137,41 @@ public:
 	//  Cleanup the active threads
 	void cleanup(void);
 
-	//  Place a new thread into the active list and return its pointer
-	void *newThread(void);
-
 	//  Place a thread back into the inactive list
-	void deleteThread(void *p);
+	void deleteThread(Thread *p);
+
+	void newThread(Thread *p);
 
 	//  Return the specified thread's ID
 	ThreadID getThreadID(Thread *thread) {
-		ThreadPlaceHolder   *tp;
+		for (uint i = 0; i < kNumThreads; i++) {
+			if (_list[i] == thread)
+				return i;
+		}
 
-		tp = ((ThreadPlaceHolder *)(
-		          (uint8 *)thread
-		          -   offsetof(ThreadPlaceHolder, buf)));
-		return tp - array;
+		error("Unknown thread address: %p", (void *)thread);
 	}
 
 	//  Return a pointer to a thread, given an ID
 	Thread *getThreadAddress(ThreadID id) {
-		assert(id >= 0 && id < elementsof(array));
-		return array[id].getThread();
+		return _list[id];
 	}
 
 	//  Return a pointer to the first active thread
 	Thread *first(void);
 
-	//  Return a pointer to the next active thread
 	Thread *next(Thread *thread);
 };
-
-//-------------------------------------------------------------------
-//	Constructor
-
-ThreadList::ThreadList(void) {
-	int i;
-
-	for (i = 0; i < elementsof(array); i++)
-		free.addTail(array[i]);
-}
 
 //-------------------------------------------------------------------
 //	Reconstruct from archive buffer
 
 void *ThreadList::restore(void *buf) {
+	warning("STUB: hreadList::restore()");
+
+#if 0
 	int16   i,
 	        threadCount;
-
-	assert(0);
 
 	//  Get the count of threads and increment the buffer pointer
 	threadCount = *((int16 *)buf);
@@ -1205,22 +1187,17 @@ void *ThreadList::restore(void *buf) {
 
 		new Thread(&buf);
 	}
-
+#endif
 	return buf;
 }
 
-//-------------------------------------------------------------------
-//	Return the number of bytes needed to archive this thead list
-//	in an archive buffer
-
 int32 ThreadList::archiveSize(void) {
-	int32               size = sizeof(int16);
-	ThreadPlaceHolder   *tp;
+	int32 size = sizeof(int16);
 
-	for (tp = (ThreadPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = (ThreadPlaceHolder *)tp->next())
-		size += sizeof(ThreadID) + tp->getThread()->archiveSize();
+	for (uint i = 0; i < kNumThreads; i++) {
+		if (_list[i])
+			size += sizeof(ThreadID) + _list[i]->archiveSize();
+	}
 
 	return size;
 }
@@ -1229,6 +1206,9 @@ int32 ThreadList::archiveSize(void) {
 //	Create an archive of this thread list in an archive buffer
 
 void *ThreadList::archive(void *buf) {
+	warning("STUB: hreadList::archive()");
+
+#if 0
 	int16               threadCount = 0;
 	ThreadPlaceHolder   *tp;
 
@@ -1254,6 +1234,7 @@ void *ThreadList::archive(void *buf) {
 
 		buf = thread->archive(buf);
 	}
+#endif
 
 	return buf;
 }
@@ -1262,82 +1243,62 @@ void *ThreadList::archive(void *buf) {
 //	Cleanup the active threads
 
 void ThreadList::cleanup(void) {
-	ThreadPlaceHolder       *tp;
-	ThreadPlaceHolder       *nextTP;
-
-	for (tp = (ThreadPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = nextTP) {
-		//  Save the address of the next in the list
-		nextTP = (ThreadPlaceHolder *)tp->next();
-
-		delete tp->getThread();
+	for (uint i = 0; i < kNumThreads; i++) {
+		delete _list[i];
+		_list[i] = nullptr;
 	}
-}
-
-//-------------------------------------------------------------------
-//	Place a new thread into the active list and return its pointer
-
-void *ThreadList::newThread(void) {
-	ThreadPlaceHolder   *tp;
-
-	//  Grab a thread place holder from the inactive list
-	tp = (ThreadPlaceHolder *)free.remHead();
-
-	if (tp != NULL) {
-		//  Place the place holder into the active list
-		list.addTail(*tp);
-
-		return tp->buf;
-	}
-
-	return NULL;
 }
 
 //-------------------------------------------------------------------
 //	Place a thread back into the inactive list
 
-void ThreadList::deleteThread(void *p) {
-	ThreadPlaceHolder       *tp;
+void ThreadList::deleteThread(Thread *p) {
+	for (uint i = 0; i < kNumThreads; i++) {
+		if (_list[i] == p) {
+			delete _list[i];
+			_list[i] = nullptr;
+		}
+	}
+}
 
-	//  Convert the pointer to the Thread to a pointer to the
-	//  ThreadPlaceHolder
-	tp = (ThreadPlaceHolder *)(
-	         (uint8 *)p
-	         -   offsetof(ThreadPlaceHolder, buf));
+void ThreadList::newThread(Thread *p) {
+	for (uint i = 0; i < kNumThreads; i++) {
+		if (!_list[i]) {
+			_list[i] = p;
+			return;
+		}
+	}
 
-	//  Remove the thread place holder from the active list
-	tp->remove();
-
-	//  Place it into the inactive list
-	free.addTail(*tp);
+	error("ThreadList::newThread(): Too many threads");
 }
 
 //-------------------------------------------------------------------
 //	Return a pointer to the first active thread
 
 Thread *ThreadList::first(void) {
-	ThreadPlaceHolder   *tp = (ThreadPlaceHolder *)list.first();
+	for (uint i = 0; i < kNumThreads; i++)
+		if (_list[i])
+			return _list[i];
 
-	return tp != NULL ? tp->getThread() : NULL;
+	return nullptr;
 }
-
-//-------------------------------------------------------------------
-//	Return a pointer to the next active thread
 
 Thread *ThreadList::next(Thread *thread) {
-	ThreadPlaceHolder   *tp;
+	uint i;
+	for (i = 0; i < kNumThreads; i++)
+		if (_list[i] == thread)
+			break;
 
-	//  Convert the pointer to the Thread to a pointer to the
-	//  ThreadPlaceHolder
-	tp = (ThreadPlaceHolder *)(
-	         (uint8 *)thread
-	         -   offsetof(ThreadPlaceHolder, buf));
+	if (i == kNumThreads)
+		return nullptr;
 
-	tp = (ThreadPlaceHolder *)tp->next();
+	for (; i < kNumThreads; i++)
+		if (_list[i])
+			return _list[i];
 
-	return tp != NULL ? tp->getThread() : NULL;
+	return nullptr;
 }
+
 
 /* ===================================================================== *
    Global thread list instantiation
@@ -1411,8 +1372,7 @@ void loadSAGAThreads(SaveFileReader &saveGame) {
 	new ThreadList;
 	bufferPtr = threadList.restore(bufferPtr);
 
-	assert((char *)bufferPtr == (char *)archiveBuffer
-	       +   saveGame.getChunkSize());
+	assert((char *)bufferPtr == (char *)archiveBuffer +   saveGame.getChunkSize());
 
 	free(archiveBuffer);
 }
@@ -1426,17 +1386,14 @@ void cleanupSAGAThreads(void) {
 }
 
 //-------------------------------------------------------------------
-//	Get a new SAGA thread from the global thread list
-
-void *newThread(void) {
-	return threadList.newThread();
-}
-
-//-------------------------------------------------------------------
 //	Dispose of an active SAGA thread
 
-void deleteThread(void *thread) {
+void deleteThread(Thread *thread) {
 	threadList.deleteThread(thread);
+}
+
+void newThread(Thread *thread) {
+	threadList.newThread(thread);
 }
 
 //-------------------------------------------------------------------
@@ -1482,6 +1439,8 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 		//warning("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
 		_valid = false;
 	}
+
+	newThread(this);
 //	assert ((codeSeg)[programCounter.offset] == op_enter);
 }
 
@@ -1518,6 +1477,8 @@ Thread::Thread(void **buf) {
 	bufferPtr = (uint8 *)bufferPtr + stackOffset;
 
 	*buf = bufferPtr;
+
+	newThread(this);
 }
 
 //-----------------------------------------------------------------------
@@ -1532,6 +1493,8 @@ Thread::~Thread() {
 
 	//  Deallocate the thread stack
 	free(stackBase);
+
+	deleteThread(this);
 }
 
 //-----------------------------------------------------------------------
