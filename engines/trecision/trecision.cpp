@@ -155,9 +155,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_curTime = 0;
 	_characterSpeakTime = 0;
 
-	_actorPos = 0;
-	_forcedActorPos = 0;
-
 	maskMouse = false;
 
 	_pauseStartTime = 0;

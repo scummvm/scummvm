@@ -659,7 +659,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 		}
 	}
 
-	if (_vm->_actorPos == curBox && _vm->_flagShowCharacter) {
+	if (_vm->_pathFind->getActorPos() == curBox && _vm->_flagShowCharacter) {
 		_vm->_renderer->drawCharacter(CALCPOINTS);
 
 		int x1 = _vm->_actor->_lim[0];
@@ -678,7 +678,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 
 		_vm->_renderer->drawCharacter(DRAWFACES);
 
-	} else if (_vm->_actorPos == curBox && !_vm->_flagDialogActive) {
+	} else if (_vm->_pathFind->getActorPos() == curBox && !_vm->_flagDialogActive) {
 		_vm->_animMgr->refreshActionAnimation();
 	}
 }

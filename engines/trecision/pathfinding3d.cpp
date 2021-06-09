@@ -38,13 +38,14 @@ PathFinding3D::PathFinding3D(TrecisionEngine *vm) : _vm(vm) {
 	_characterInMovement = false;
 	_characterGoToPosition = -1;
 
+	_actorPos = 0;
+	_forcedActorPos = 0;
 	_panelNum = 0;
+	_curPanel = -1;
+	_oldPanel = -1;
 
 	for (int i = 0; i < MAXPATHNODES; ++i)
 		_pathNode[i].clear();
-
-	_curPanel = -1;
-	_oldPanel = -1;
 
 	_numPathNodes = 0;
 	_numSortPanel = 0;
@@ -1659,8 +1660,8 @@ void PathFinding3D::actorOrder() {
 	const float largeValue = 15.0f; // 30 cm (max)
 	Actor *actor = _vm->_actor;
 
-	if (_vm->_forcedActorPos != BOX_NORMAL) {
-		_vm->_actorPos = _vm->_forcedActorPos;
+	if (_forcedActorPos != BOX_NORMAL) {
+		_actorPos = _forcedActorPos;
 		return;
 	}
 
@@ -1674,7 +1675,7 @@ void PathFinding3D::actorOrder() {
 	oz = actor->_pz + actor->_dz;
 
 	// It must be copied in front of the nearest box
-	_vm->_actorPos = _sortPan[1]._num;
+	_actorPos = _sortPan[1]._num;
 	// from closest to farthest
 	for (int b = 1; b < _numSortPanel; ++b) {
 		for (int a = 0; a < _panelNum; ++a) {
@@ -1683,7 +1684,7 @@ void PathFinding3D::actorOrder() {
 				// If it intersects the center of the character camera
 				if (intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox, oz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox + lx, oz + lz) || intersectLineLine(_panel[a]._x1, _panel[a]._z1, _panel[a]._x2, _panel[a]._z2, actor->_camera->_ex, actor->_camera->_ez, ox - lx, oz - lz)) {
 					// If it intersects it must be copied after the next box
-					_vm->_actorPos = _sortPan[b + 1]._num;
+					_actorPos = _sortPan[b + 1]._num;
 				}
 			}
 		}

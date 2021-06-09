@@ -98,6 +98,8 @@ class PathFinding3D {
 	float _lookX, _lookZ;
 	int32 _panelNum;
 	int16 _oldPanel;
+	int _actorPos;
+	int _forcedActorPos;
 
 	bool pointInside(int pan, float x, float z) const;
 	void sortPanel();
@@ -139,6 +141,8 @@ public:
 	void whereIs(int px, int py);
 	void actorOrder();
 	void syncGameStream(Common::Serializer &ser);
+	int getActorPos() const { return _actorPos; }
+	void setForcedActorPos(int actorPos) { _forcedActorPos = actorPos; }
 };
 
 } // End of namespace Trecision
