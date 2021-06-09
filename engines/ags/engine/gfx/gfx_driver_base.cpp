@@ -161,6 +161,13 @@ bool VideoMemoryGraphicsDriver::GetStageMatrixes(RenderMatrixes &rm) {
 	return true;
 }
 
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	IDriverDependantBitmap * ddb = CreateDDB(bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
+	if (ddb)
+		UpdateDDBFromBitmap(ddb, bitmap, hasAlpha);
+	return ddb;
+}
+
 PBitmap VideoMemoryGraphicsDriver::CreateStageScreen(size_t index, const Size &sz) {
 	if (_stageScreens.size() <= index)
 		_stageScreens.resize(index + 1);
