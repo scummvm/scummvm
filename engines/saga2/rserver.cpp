@@ -192,7 +192,11 @@ void cleanupServers(void) {
 }
 
 void loadAsyncResources(void) {
+	warning("STUB: loadAsyncResources()");
+
+#if 0
 	resourceServer->service();
+#endif
 }
 
 void syncResources(void) {
