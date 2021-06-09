@@ -915,10 +915,8 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 		break;
 	case kChunkWord:
 		{
-			Common::String whitespace = "\t\n\r ";
-
 			int idx = 0;
-			while (idx < (int)str.size() && whitespace.contains(str[idx])) {
+			while (idx < (int)str.size() && Common::isSpace(str[idx])) {
 				idx++;
 			}
 			while (idx < (int)str.size()) {
@@ -931,7 +929,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 					exprStartIdx = chunkStartIdx;
 				}
 
-				while (idx < (int)str.size() && !whitespace.contains(str[idx])) {
+				while (idx < (int)str.size() && !Common::isSpace(str[idx])) {
 					idx++;
 				}
 
@@ -943,7 +941,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 					break;
 				}
 
-				while (idx < (int)str.size() && whitespace.contains(str[idx])) {
+				while (idx < (int)str.size() && Common::isSpace(str[idx])) {
 					idx++;
 				}
 			}
