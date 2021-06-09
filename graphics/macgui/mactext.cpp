@@ -1069,7 +1069,7 @@ bool MacText::draw(bool forceRedraw) {
 	Common::Point offset(calculateOffset());
 
 	if (!_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
+		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY));
 
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
@@ -1085,7 +1085,7 @@ bool MacText::draw(bool forceRedraw) {
 
 	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
 	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
 
 	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
@@ -2114,7 +2114,7 @@ void MacText::updateCursorPos() {
 		else if (_textAlignment == kTextAlignCenter)
 			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
 
-		_cursorY = _textLines[_cursorRow].y + offset.y - 2 - _scrollPos;
+		_cursorY = _textLines[_cursorRow].y + offset.y - _scrollPos + 1;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
 	}
 
@@ -2135,7 +2135,7 @@ void MacText::undrawCursor() {
 	_cursorDirty = true;
 
 	Common::Point offset(calculateOffset());
-	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
+	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY));
 }
 
 } // End of namespace Graphics
