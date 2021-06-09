@@ -614,6 +614,14 @@ Common::List<Channel *> Score::getSpriteIntersections(const Common::Rect &r) {
 	return intersections;
 }
 
+uint16 Score::getSpriteIdByMemberId(uint16 id) {
+	for (uint i = 0; i < _channels.size(); i++)
+		if (_channels[i]->_sprite->_castId == id)
+			return i;
+
+	return 0;
+}
+
 Sprite *Score::getSpriteById(uint16 id) {
 	Channel *channel = getChannelById(id);
 
