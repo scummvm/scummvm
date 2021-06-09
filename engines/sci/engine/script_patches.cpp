@@ -19671,6 +19671,42 @@ static const uint16 sq1vgaPatchSpiderDroidTiming[] = {
 	PATCH_END
 };
 
+// In room 28, Orat's sounds are re-played on every game cycle and interrupt
+//  themselves, causing stuttering effects. There are two sounds that doit
+//  methods play depending on their actor's current cel: Orat growling and ego
+//  getting bounced. orat:doit and noticeEgo:doit attempt to only play their
+//  sounds once per cel change but they both use the same local variable to
+//  store the previous cel and overwrite each other's value on every cycle.
+//
+// We fix this by patching noticeEgo to use its register property instead of the
+//  local variable that orat also uses.
+//
+// Applies to: All versions
+// Responsible method: noticeEgo::doit
+static const uint16 sq1vgaSignatureOratSounds[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x07,                         // lsl 07
+	0x39, SIG_SELECTOR8(cel),           // pushi cel
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego cel? ]
+	0x1c,                               // ne?
+	SIG_ADDTOOFFSET(+177),
+	0x39, SIG_SELECTOR8(cel),           // pushi cel
+	0x76,                               // push0
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego cel? ]
+	0xa3, 0x07,                         // sal 07
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchOratSounds[] = {
+	0x67, 0x1a,                         // pTos register
+	PATCH_ADDTOOFFSET(+192),
+	0x65, 0x1a,                         // aTop register
+	PATCH_END
+};
+
 // The Russian version of SQ1VGA has mangled class names in its scripts. This
 //  isn't a problem in Sierra's interpreter since this is just metadata, but our
 //  feature detection code looks up several classes by name and requires them to
@@ -19691,6 +19727,7 @@ static const uint16 sq1vgaPatchRussianMotionName[] = {
 	0x6E, 0x00,
 	PATCH_END
 };
+
 static const uint16 sq1vgaSignatureRussianRmName[] = {
 	SIG_MAGICDWORD,
 	0x2a, 0x52, 0x6d, 0x00,             // *Rm
@@ -19715,6 +19752,7 @@ static const uint16 sq1vgaPatchRussianSoundName[] = {
 
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
+	{  true,    28, "orat sounds",                                 1, sq1vgaSignatureOratSounds,                  sq1vgaPatchOratSounds },
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
