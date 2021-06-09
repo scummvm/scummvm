@@ -41,6 +41,7 @@
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/system.h"
 #include "ags/engine/ac/timer.h"
+#include "ags/engine/debugging/debugger.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/device/mouse_w32.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -444,6 +445,10 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// If they didn't have the vox before, but now they do
 	else if ((pp.SpeechVOX >= 0) && (_GP(play).want_speech < 0))
 		_GP(play).want_speech = (-_GP(play).want_speech) - 1;
+
+	// Restore debug flags
+	if (_G(debug_flags) & DBG_DEBUGMODE)
+		_GP(play).debug_mode = 1;
 
 	// recache queued clips
 	for (int i = 0; i < _GP(play).new_music_queue_size; ++i) {
