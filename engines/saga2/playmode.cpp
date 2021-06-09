@@ -155,7 +155,7 @@ bool checkTileAreaPort(void) {
 		//  Allocate back buffer for tile rendering
 		tileDrawMap.size.x = (tileRect.width + tileWidth - 1) & ~tileDXMask;
 		tileDrawMap.size.y = (tileRect.height + tileWidth - 1) & ~tileDXMask;
-		tileDrawMap.data = new uint8[tileDrawMap.bytes()];
+		tileDrawMap.data = new uint8[tileDrawMap.bytes()]();
 	}
 
 	return tileDrawMap.data != nullptr;
