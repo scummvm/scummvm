@@ -1633,7 +1633,7 @@ void unloadImageRes(void **images, int16 numRes) {
 			ImageCache.releaseImage(images[i]);
 		}
 
-		delete images;
+		free(images);
 	}
 }
 

@@ -264,7 +264,7 @@ void gPanelList::removeControls(void) {
 	gControl        *ctl;
 
 	//  Delete all sub-panels.
-	while ((ctl = (gControl *)contents.first()) != NULL)
+	while ((ctl = (gControl *)contents.first()) != nullptr)
 		delete ctl;
 }
 
