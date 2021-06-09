@@ -81,6 +81,7 @@ MODULE_OBJS = \
 	shared/util/ini_util.o \
 	shared/util/lzw.o \
 	shared/util/misc.o \
+	shared/util/memory_stream.o \
 	shared/util/multi_file_lib.o \
 	shared/util/path.o \
 	shared/util/proxy_stream.o \
