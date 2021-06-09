@@ -280,8 +280,8 @@ void audioEnvironmentUseSet(int16 audioSet, int32 auxID, Point32 relPos) {
 
 void audioEnvironmentCheck(void) {
 
-	uint32 delta = gameTime - lastGameTime;
-	lastGameTime = gameTime;
+	uint32 delta = g_system->getMillis() - lastGameTime;
+	lastGameTime = g_system->getMillis();
 	if (currentTheme) {
 		elapsedGameTime += delta;
 		if (elapsedGameTime > checkGameTime) {

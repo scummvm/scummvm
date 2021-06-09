@@ -52,8 +52,8 @@ public:
 	~frameCounter() {}
 
 	virtual void updateFrameCount(void) {
-		int32 frameTime = gameTime - lastTime;
-		lastTime = gameTime;
+		int32 frameTime = g_system->getMillis() - lastTime;
+		lastTime = g_system->getMillis();
 		frames++;
 		instantFrameCount = frameTime ? ticksPerSecond / frameTime : 100;
 	}
