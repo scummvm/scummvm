@@ -255,6 +255,8 @@ public:
 	Common::String getText();
 
 private:
+	Common::Rect getTextOnlyDimensions(const Common::Rect &targetDims);
+
 	uint32 _bgcolor;
 	uint32 _fgcolor;
 };
