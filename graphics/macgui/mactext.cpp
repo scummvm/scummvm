@@ -1030,7 +1030,7 @@ void MacText::draw(ManagedSurface *g, int x, int y, int w, int h, int xoff, int 
 	render();
 
 	if (x + w < _surface->w || y + h < _surface->h)
-		g->fillRect(Common::Rect(x, y, x + w, y + h), _bgcolor);
+		g->fillRect(Common::Rect(x + xoff, y + yoff, x + w + xoff, y + h + yoff), _bgcolor);
 
 	g->blitFrom(*_surface, Common::Rect(MIN<int>(_surface->w, x), MIN<int>(_surface->h, y), MIN<int>(_surface->w, x + w), MIN<int>(_surface->h, y + h)), Common::Point(xoff, yoff));
 
@@ -1069,7 +1069,7 @@ bool MacText::draw(bool forceRedraw) {
 	Common::Point offset(calculateOffset());
 
 	if (!_cursorState)
-		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY));
+		_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x - 1, _cursorY + offset.y + 1));
 
 	draw(_composeSurface, 0, _scrollPos, _surface->w, _scrollPos + _surface->h, offset.x, offset.y);
 
@@ -1085,7 +1085,7 @@ bool MacText::draw(bool forceRedraw) {
 
 	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
 	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
-		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX + offset.x - 1, _cursorY + offset.y + 1));
 
 	if (_selectedText.endY != -1)
 		drawSelection(offset.x, offset.y);
@@ -1465,7 +1465,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow--;
 
-			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1476,7 +1476,7 @@ bool MacText::processEvent(Common::Event &event) {
 
 			_cursorRow++;
 
-			getRowCol(_cursorX + 1, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
+			getRowCol(_cursorX, _textLines[_cursorRow].y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 			updateCursorPos();
 
 			return true;
@@ -1558,8 +1558,9 @@ bool MacText::processEvent(Common::Event &event) {
 				if (_menu)
 					_menu->enableCommand("Edit", "Copy", false);
 
-				int x = event.mouse.x - getDimensions().left;
-				int y = event.mouse.y - getDimensions().top + _scrollPos;
+				Common::Point offset = calculateOffset();
+				int x = event.mouse.x - getDimensions().left - offset.x;
+				int y = event.mouse.y - getDimensions().top + _scrollPos - offset.y;
 
 				getRowCol(x, y, nullptr, nullptr, &_cursorRow, &_cursorCol);
 				updateCursorPos();
@@ -1605,8 +1606,9 @@ void MacText::startMarking(int x, int y) {
 	if (_textLines.size() == 0)
 		return;
 
-	x -= getDimensions().left - 2;
-	y -= getDimensions().top;
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
 
 	y += _scrollPos;
 
@@ -1618,8 +1620,9 @@ void MacText::startMarking(int x, int y) {
 }
 
 void MacText::updateTextSelection(int x, int y) {
-	x -= getDimensions().left - 2;
-	y -= getDimensions().top;
+	Common::Point offset = calculateOffset();
+	x -= getDimensions().left - offset.x;
+	y -= getDimensions().top - offset.y;
 
 	y += _scrollPos;
 
@@ -2106,16 +2109,14 @@ void MacText::updateCursorPos() {
 
 		_cursorRow = MIN<int>(_cursorRow, _textLines.size() - 1);
 
-		Common::Point offset(calculateOffset());
-
 		int alignOffset = 0;
 		if (_textAlignment == kTextAlignRight)
 			alignOffset = _textMaxWidth - getLineWidth(_cursorRow);
 		else if (_textAlignment == kTextAlignCenter)
 			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
 
-		_cursorY = _textLines[_cursorRow].y + offset.y - _scrollPos + 1;
-		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
+		_cursorY = _textLines[_cursorRow].y;
+		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
 	}
 
 	int cursorHeight = getLineHeight(_cursorRow);
@@ -2135,7 +2136,7 @@ void MacText::undrawCursor() {
 	_cursorDirty = true;
 
 	Common::Point offset(calculateOffset());
-	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX, _cursorY));
+	_composeSurface->blitFrom(*_cursorSurface2, *_cursorRect, Common::Point(_cursorX + offset.x - 1, _cursorY + offset.y + 1));
 }
 
 } // End of namespace Graphics
