@@ -119,12 +119,6 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 								 int32 x2, int32 y2, int32 z2, int32 c2, int32 tx2, int32 ty2,
 								 int32 x3, int32 y3, int32 z3, int32 c3, int32 tx3, int32 ty3,
 								 const STexture *t) {
-	int32 cl;  // color of left edge of horizontal scanline
-	int32 zl;  // zbuffer of left edge of horizontal scanline
-	int32 olx; // texture x of left edge of horizontal scanline
-	int32 oly; // texture y of left edge of horizontal scanline
-	int16 y;   // looping variable
-
 	if (y1 > _maxYClip)
 		y1 = _maxYClip;
 	if (y1 < _minYClip)
@@ -154,7 +148,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 			y3 = _maxYClip;
 		yTop = y3;
 	}
-	for (y = yBottom; y < yTop; ++y) {
+	for (int16 y = yBottom; y < yTop; ++y) {
 		_lEdge[y] = _maxXClip;
 		_rEdge[y] = _minXClip;
 	}
@@ -165,7 +159,7 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 	textureScanEdge(x3, y3, z3, c3, tx3, ty3, x1, y1, z1, c1, tx1, ty1);
 
 	// Gouraud fill the horizontal scanlines
-	for (y = yBottom; y < yTop; ++y) {
+	for (int16 y = yBottom; y < yTop; ++y) {
 		int32 el = _lEdge[y];
 		if (el < _minXClip)
 			el = _minXClip;
@@ -177,14 +171,22 @@ void Renderer3D::textureTriangle(int32 x1, int32 y1, int32 z1, int32 c1, int32 t
 		int16 dx = er - el;
 
 		if (dx > 0) {
+			// color of left edge of horizontal scanline
+			int32 cl = _lColor[y];
 			// slope dc/_dx
-			int32 mc = ((int16)(_rColor[y] - (cl = _lColor[y])) << 8) / dx;
+			int32 mc = ((int16)(_rColor[y] - cl) << 8) / dx;
+			// zbuffer of left edge of horizontal scanline
+			int32 zl = _lZ[y];
 			// slope _dz/_dx
-			int32 mz = ((int32)(_rZ[y] - (zl = _lZ[y])) << 16) / dx;
+			int32 mz = ((int32)(_rZ[y] - zl) << 16) / dx;
+			// texture x of left edge of horizontal scanline
+			int32 olx = _lTextX[y];
 			// slope dty/_dx
-			int32 mtx = ((int32)(_rTextX[y] - (olx = _lTextX[y])) << 16) / dx;
+			int32 mtx = ((int32)(_rTextX[y] - olx) << 16) / dx;
+			// texture y of left edge of horizontal scanline
+			int32 oly = _lTextY[y];
 			// slope dty/_dx
-			int32 mty = ((int32)(_rTextY[y] - (oly = _lTextY[y])) << 16) / dx;
+			int32 mty = ((int32)(_rTextY[y] - oly) << 16) / dx;
 			// pointer to zbuffer
 			int16 *z = _zBuffer + (y - _zBufStartY) * _zBufWid + (el - _zBufStartX);
 			uint16 x = el;
