@@ -517,7 +517,7 @@ void LB::b_hilite(int nargs) {
 	int fieldId, start, end;
 	if (d.type == FIELDREF) {
 		fieldId = d.u.i;
-		start = -1;
+		start = 0;
 		end = -1;
 	} else if (d.type == CHUNKREF) {
 		TYPECHECK(d.u.cref->source, FIELDREF);
@@ -528,6 +528,9 @@ void LB::b_hilite(int nargs) {
 		warning("b_hilite: bad field type: %s", d.type2str());
 		return;
 	}
+
+	if (start < 0)
+		return;
 
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint16 spriteId = score->getSpriteIdByMemberId(fieldId);
