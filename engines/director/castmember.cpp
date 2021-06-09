@@ -696,9 +696,12 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		//	_dims.top = y;
 		//	_dims.bottom = y + h + (2 * border) + gutter + shadow;
 		// x, y, w + 2, h
-		w = bbox.right - bbox.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
-		h = bbox.bottom - bbox.top - 2 * _borderSize - _gutterSize - _boxShadow;
-		w -= 2;
+		// use the initialRect for the dims just like CastButton
+		w = _initialRect.right - _initialRect.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
+		h = _initialRect.bottom - _initialRect.top - 2 * _borderSize - _gutterSize - _boxShadow;
+		h += 2;
+		// this number 2 is a little bit complex, i found the size of _initialRect and bbox are smaller than the parameter in original director
+		// offsets is 2, so we need add it back. i.e. w += 2, h += 2. And we have w + 2 at the same time, thus, we only need to do h += 2
 
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, w, h, g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), w, getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->draw();
