@@ -176,7 +176,6 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 	static const uint16 idx3 = 288;
 
 	double v1[3], v2[3], v[3], q[3], m1[3][3], m2[3][3];
-	int c, d, f;
 
 	v1[0] = _vertex[idx2]._x - _vertex[idx1]._x;
 	v1[1] = _vertex[idx2]._y - _vertex[idx1]._y;
@@ -262,6 +261,7 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 		v1[2] = _vertex[idx1]._z;
 
 		for (int e = 279; e < 383; ++e) {
+			int f;
 			for (f = 0; f < 84; ++f) {
 				if (_vertsCorrList[f] == e)
 					break;
@@ -276,15 +276,15 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 			q[0] = 0.0;
 			q[1] = 0.0;
 			q[2] = 0.0;
-			for (d = 0; d < 3; ++d) {
-				for (c = 0; c < 3; ++c)
+			for (int d = 0; d < 3; ++d) {
+				for (int c = 0; c < 3; ++c)
 					q[c] += m1[c][d] * v[d];
 			}
 			v[0] = 0.0;
 			v[1] = 0.0;
 			v[2] = 0.0;
-			for (d = 0; d < 3; ++d) {
-				for (c = 0; c < 3; ++c)
+			for (int d = 0; d < 3; ++d) {
+				for (int c = 0; c < 3; ++c)
 					v[c] += m2[d][c] * q[d];
 			}
 
