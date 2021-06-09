@@ -682,28 +682,33 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 }
 
+// calculate text dimensions in mactext
+// formula comes from the ctor of macwidget and mactext
+//	_dims.left = x;
+//	_dims.right = x + w + (2 * border) + (2 * gutter) + shadow;
+//	_dims.top = y;
+//	_dims.bottom = y + h + (2 * border) + gutter + shadow;
+// x, y, w + 2, h
+// this number 2 is a little bit complex. I found the size of _initialRect and bbox are smaller than the parameter in original director
+// offsets is 2, so we need add it back. i.e. w += 2, h += 2. And we have w + 2 at the same time, thus, we only need to do h += 2
+Common::Rect TextCastMember::getTextOnlyDimensions(const Common::Rect &targetDims) {
+	int w = targetDims.right - targetDims.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
+	int h = targetDims.bottom - targetDims.top - 2 * _borderSize - _gutterSize - _boxShadow;
+	h += 2;
+	return Common::Rect(w, h);
+}
+
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel) {
 	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
 	Graphics::MacWidget *widget = nullptr;
-	int w, h;
+	Common::Rect dims;
 
 	switch (_type) {
 	case kCastText:
 		// since mactext will add some offsets itself, then we calculate it first, to make sure the result size is the same as bbox
-		// formula comes from the ctor of macwidget and mactext
-		//	_dims.left = x;
-		//	_dims.right = x + w + (2 * border) + (2 * gutter) + shadow;
-		//	_dims.top = y;
-		//	_dims.bottom = y + h + (2 * border) + gutter + shadow;
-		// x, y, w + 2, h
 		// use the initialRect for the dims just like CastButton
-		w = _initialRect.right - _initialRect.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
-		h = _initialRect.bottom - _initialRect.top - 2 * _borderSize - _gutterSize - _boxShadow;
-		h += 2;
-		// this number 2 is a little bit complex, i found the size of _initialRect and bbox are smaller than the parameter in original director
-		// offsets is 2, so we need add it back. i.e. w += 2, h += 2. And we have w + 2 at the same time, thus, we only need to do h += 2
-
-		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, w, h, g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), w, getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		dims = getTextOnlyDimensions(_initialRect);
+		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), dims.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
