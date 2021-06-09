@@ -3683,12 +3683,10 @@ void LogicManager::handleClickPositioner() {
 }
 
 void LogicManager::handleClickSnakeEscape() {
-	if (_vm->isObjectVisible(oSNAKEU52)) {
-		if (_vm->isGameArea(_vm->_mousePos) && !_vm->_flagUseWithStarted && _vm->_curObj != oSNAKEU52) {
-			_vm->startCharacterAction(a526, 0, 1, 0);
-			_vm->setObjectAnim(oSCAVO51, a516);
-			_vm->_snake52.set(_vm->_curMessage);
-		}
+	if (_vm->isObjectVisible(oSNAKEU52) && _vm->isGameArea(_vm->_mousePos) && !_vm->_flagUseWithStarted && _vm->_curObj != oSNAKEU52) {
+		_vm->startCharacterAction(a526, 0, 1, 0);
+		_vm->setObjectAnim(oSCAVO51, a516);
+		_vm->_snake52.set(_vm->_curMessage);
 	}
 }
 
