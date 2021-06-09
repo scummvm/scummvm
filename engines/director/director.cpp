@@ -34,6 +34,7 @@
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
+#include "director/detection.h"
 
 namespace Director {
 
@@ -77,6 +78,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Meet Mediaband could have up to 5 levels of directories
 	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
 
+	for (uint i = 0; Director::directoryGlobs[i]; i++) {
+		Common::String directoryGlob = directoryGlobs[i];
+		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
+	}
+
+/*
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "install");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "main");							// Meet Mediaband
@@ -130,7 +137,12 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "please copy to hd. g3"); 			// Rename from HDにｺﾋﾟｰして下さい。G3
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "_files_");							// The Gate
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "popup");							// Pop Up Computer
-
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "tokimeki memorial typing");		// Rename from ときめきメモリアルタイピング
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "popup");							// Tokimeki Memorial Typing
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "alpha");							// Interactive Alphabet
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "technik");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "exe1", 0, 2);						// Glasklar Technology Interactive
+*/
 	_colorDepth = 8;	// 256-color
 	_machineType = 9;	// Macintosh IIci
 	_playbackPaused = false;
