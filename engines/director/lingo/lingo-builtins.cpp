@@ -2439,49 +2439,49 @@ void LB::b_window(int nargs) {
 
 void LB::b_numberofchars(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkChar, 0, 0, d); // get reference to last char
+	Datum chunkRef = LC::lastChunk(kChunkChar, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberofitems(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkItem, 0, 0, d); // get reference to last item
+	Datum chunkRef = LC::lastChunk(kChunkItem, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberoflines(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkLine, 0, 0, d); // get reference to last line
+	Datum chunkRef = LC::lastChunk(kChunkLine, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_numberofwords(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkWord, 0, 0, d); // get reference to last word
+	Datum chunkRef = LC::lastChunk(kChunkWord, d);
 	g_lingo->push(chunkRef.u.cref->startChunk);
 }
 
 void LB::b_lastcharof(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkChar, 0, 0, d); // get reference to last char
+	Datum chunkRef = LC::lastChunk(kChunkChar, d);
 	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastitemof(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkItem, 0, 0, d); // get reference to last item
+	Datum chunkRef = LC::lastChunk(kChunkItem, d);
 	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastlineof(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkLine, 0, 0, d); // get reference to last line
+	Datum chunkRef = LC::lastChunk(kChunkLine, d);
 	g_lingo->push(chunkRef.eval());
 }
 
 void LB::b_lastwordof(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum chunkRef = LC::chunkRef(kChunkWord, 0, 0, d); // get reference to last word
+	Datum chunkRef = LC::lastChunk(kChunkWord, d);
 	g_lingo->push(chunkRef.eval());
 }
 

@@ -695,7 +695,7 @@ void LC::cb_v4theentitypush() {
 					chunkType = kChunkItem;
 					break;
 				}
-				Datum chunkRef = LC::chunkRef(chunkType, 0, 0, stringArg); // get reference to last of chunk type
+				Datum chunkRef = LC::lastChunk(chunkType, stringArg);
 				switch (field) {
 				case kTheLast:
 					result = chunkRef.eval();
