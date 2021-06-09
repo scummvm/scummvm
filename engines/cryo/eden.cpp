@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
-#include "graphics/palette.h"
-#include "common/timer.h"
 #include "audio/mixer.h"
 
 #include "cryo/defs.h"

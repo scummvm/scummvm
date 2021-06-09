@@ -24,7 +24,6 @@
 #include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
-#include "cryo/sound.h"
 #include "cryo/eden_graphics.h"
 
 #include "graphics/conversion.h"

@@ -21,7 +21,6 @@
  */
 
 #include "common/scummsys.h"
-
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
@@ -30,7 +29,6 @@
 #include "graphics/screen.h"
 #include "graphics/palette.h"
 #include "common/system.h"
-
 #include "engines/util.h"
 
 #include "cryo/cryo.h"
