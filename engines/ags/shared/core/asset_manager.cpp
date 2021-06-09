@@ -85,7 +85,7 @@ AssetManager::AssetManager() {
 }
 
 void AssetManager::SetSearchPriority(AssetSearchPriority priority) {
-	_libsByPriority.Priority = kAssetPriorityDir;
+	_libsByPriority.Priority = priority;
 
 	std::sort(_activeLibs.begin(), _activeLibs.end(), _libsByPriority);
 }
