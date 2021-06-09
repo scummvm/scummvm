@@ -159,9 +159,6 @@ void cleanupSAGAThreads(void);
 //  Get a new SAGA thread from the global thread list
 void *newThread(void);
 
-//  Get a specific SAGA thread from the global thread list
-void *newThread(ThreadID id);
-
 //  Dispose of an active SAGA thread
 void deleteThread(void *p);
 

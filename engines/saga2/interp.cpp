@@ -1145,7 +1145,6 @@ public:
 
 	//  Place a new thread into the active list and return its pointer
 	void *newThread(void);
-	void *newThread(ThreadID id);
 
 	//  Place a thread back into the inactive list
 	void deleteThread(void *p);
@@ -1189,6 +1188,8 @@ ThreadList::ThreadList(void) {
 void *ThreadList::restore(void *buf) {
 	int16   i,
 	        threadCount;
+
+	assert(0);
 
 	//  Get the count of threads and increment the buffer pointer
 	threadCount = *((int16 *)buf);
@@ -1291,24 +1292,6 @@ void *ThreadList::newThread(void) {
 	}
 
 	return NULL;
-}
-
-//-------------------------------------------------------------------
-//	Place a new thread into the active list and return its pointer
-
-void *ThreadList::newThread(ThreadID id) {
-	assert(id >= 0 && id < elementsof(array));
-
-	ThreadPlaceHolder   *tp;
-
-	//  Grab the thread place holder from the inactive list
-	tp = (ThreadPlaceHolder *)&array[id];
-	tp->remove();
-
-	//  Place the place holder into the active list
-	list.addTail(*tp);
-
-	return tp->buf;
 }
 
 //-------------------------------------------------------------------
@@ -1447,13 +1430,6 @@ void cleanupSAGAThreads(void) {
 
 void *newThread(void) {
 	return threadList.newThread();
-}
-
-//-------------------------------------------------------------------
-//	Get a specific SAGA thread from the global thread list
-
-void *newThread(ThreadID id) {
-	return threadList.newThread(id);
 }
 
 //-------------------------------------------------------------------
