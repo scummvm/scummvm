@@ -2,7 +2,10 @@
 
 set -e
 
-trap "echo FAILURE: $0 failed to create achievements.dat" ERR
+err_handler () {
+    [ $? -eq 0 ] && exit
+    echo "FAILURE: $0 failed to create achievements.dat"
+}
 
 usage() {
     echo "Usage: $0 [OPTION]..."
@@ -13,18 +16,20 @@ usage() {
 }
 
 add_steam() {
-    if [[ "$FORCE" == "1" || ! -f "gen/steam-$1.ini" ]]; then
+    if ! test -f "gen/steam-$1.ini"; then
         python steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1"
         echo -----------------------------------------
     fi
 }
 
 add_steamlike_gog() {
-    if [[ "$FORCE" == "1" || ! -f "gen/galaxy-$2.ini" ]]; then
+    if ! test -f "gen/galaxy-$2.ini"; then
         python steam_achievements.py ${VERBOSE:+"-v"} --steamid "$1" --saveasgalaxyid "$2"
         echo -----------------------------------------
     fi
 }
+
+trap err_handler EXIT
 
 FORCE=0
 VERBOSE=""
@@ -39,7 +44,7 @@ while [ -n "$1" ]; do
     shift
 done
 
-if [[ "$FORCE" == "1" ]]; then
+if test "$FORCE" = "1"; then
     rm -f gen/*
 fi
 
@@ -130,7 +135,7 @@ add_steam 1064660
 #TODO: check for 7zip, since it produces smaller files
 
 touch --date="2000-01-01 00:00:00" gen/* static/*
-if [[ "$VERBOSE" == "-v" ]]; then
+if test "$VERBOSE" = "-v"; then
     zip -9jX achievements.dat gen/* static/*
 else
     zip -9jX achievements.dat gen/* static/* >/dev/null
