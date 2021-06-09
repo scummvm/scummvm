@@ -68,8 +68,8 @@ static Point16      mouseImageOffset;           //  Hotspot on mouse image
 
 static gPixelMap    *mouseImage = mouseCursors[kMouseArrowImage];  //  Current mouse cursor image
 
-static gStaticImage textImage(0, 0, NULL),   //  Current mouse text image
-       combinedImage(0, 0, NULL);  //   Combine mouse text
+static gStaticImage textImage(0, 0, nullptr),   //  Current mouse text image
+       combinedImage(0, 0, nullptr);  //   Combine mouse text
 //  and image
 
 static int          textImageCenteredCol;       //  The pixel column in the text
@@ -141,7 +141,7 @@ void createStackedImage(
     int         *imageCenterArray,
     int         images) {
 	assert(images != 0);
-	assert(newImage->data == NULL);
+	assert(newImage->data == nullptr);
 
 	int         i;
 	int         newImageBytes,
@@ -205,7 +205,7 @@ inline void disposeStackedImage(gPixelMap *image) {
 //	image.
 
 void cleanupMousePointer(void) {
-	if (combinedImage.data != NULL)
+	if (combinedImage.data != nullptr)
 		disposeStackedImage(&combinedImage);
 }
 
@@ -229,7 +229,7 @@ void setupMousePointer(void) {
 		imageIndex++;
 	}
 
-	if (combinedImage.data != NULL)
+	if (combinedImage.data != nullptr)
 		disposeStackedImage(&combinedImage);
 
 	createStackedImage(
@@ -297,7 +297,7 @@ void setNewText(char *text) {
 	disposeText();
 
 	strncpy(mouseText, text, maxMouseTextLen - 1);
-	mouseText[maxMouseTextLen - 1] = NULL;
+	mouseText[maxMouseTextLen - 1] = '\0';
 
 	//  Compute the size of the text bitmap
 	textImage.size.y = mainFont->height + 2;
@@ -340,12 +340,12 @@ void setNewText(char *text) {
 //  Setup a new text string to display on the mouse cursor
 
 void setMouseText(char *text) {
-	if (text != NULL) {
+	if (text != nullptr) {
 		if (strcmp(text, mouseText) == 0) return;
 
 		setNewText(text);
 		setupMousePointer();
-	} else if (mouseText[0] != NULL) {
+	} else if (mouseText[0] != '\0') {
 		disposeText();
 		setupMousePointer();
 	}
@@ -356,8 +356,8 @@ void setMouseText(char *text) {
 void setMouseTextF(char *format, ...) {
 	extern gToolBase    G_BASE;
 
-	if (format == NULL) {
-		setMouseText(NULL);
+	if (format == nullptr) {
+		setMouseText(nullptr);
 		G_BASE.mouseHintSet = TRUE;
 	} else {
 		char        lineBuf[128];
