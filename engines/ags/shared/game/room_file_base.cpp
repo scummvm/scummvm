@@ -22,6 +22,7 @@
 
 #include "ags/shared/game/room_file.h"
 #include "ags/shared/util/file.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -120,6 +121,44 @@ HRoomFileError OpenNextRoomBlock(Stream *in, RoomFileVersion data_ver, RoomFileB
 	} else { // new style block identified by a string id
 		ext_id = String::FromStreamCount(in, 16);
 		block_len = in->ReadInt64();
+	}
+	return HRoomFileError::None();
+}
+
+HRoomFileError ReadRoomData(PfnReadRoomBlock reader, Stream *in, RoomFileVersion data_ver) {
+	// Read list of data blocks. The block meta format is shared with the main game file extensions now.
+	//    - 1 byte - old format block ID, 0xFF indicates end of list.
+	//    - 16 bytes - new string ID of an extension. \0 at the first byte indicates end of list.
+	//    - 4 or 8 bytes - length of extension data, in bytes (depends on format version).
+	while (true) {
+		RoomFileBlock block_id;
+		String ext_id;
+		soff_t block_len;
+		HRoomFileError err = OpenNextRoomBlock(in, data_ver, block_id, ext_id, block_len);
+		if (!err)
+			return err;
+		if (ext_id.IsEmpty())
+			break; // end of list
+
+		soff_t block_end = in->GetPosition() + block_len;
+		bool read_next = true;
+		err = reader(in, block_id, ext_id, block_len, data_ver, read_next);
+		if (!err)
+			return err;
+
+		soff_t cur_pos = in->GetPosition();
+		if (cur_pos > block_end) {
+			return new RoomFileError(kRoomFileErr_BlockDataOverlapping,
+				String::FromFormat("Block: %s, expected to end at offset: %u, finished reading at %u.",
+					ext_id.GetCStr(), block_end, cur_pos));
+		} else if (cur_pos < block_end) {
+			Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %s expected to end at %u, finished reading at %u",
+				ext_id.GetCStr(), block_end, cur_pos);
+			in->Seek(block_end, Shared::kSeekBegin);
+		}
+
+		if (!read_next)
+			break;
 	}
 	return HRoomFileError::None();
 }

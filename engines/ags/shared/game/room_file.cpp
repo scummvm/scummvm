@@ -136,8 +136,8 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 	if (polypoint_areas > 0)
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Legacy poly-point areas are no longer supported.");
 	/* NOTE: implementation hidden in room_file_deprecated.cpp
-	    for (size_t i = 0; i < polypoint_areas; ++i)
-	        wallpoints[i].Read(in);
+		for (size_t i = 0; i < polypoint_areas; ++i)
+			wallpoints[i].Read(in);
 	*/
 
 	update_polled_stuff_if_runtime();
@@ -268,7 +268,7 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 		if (fullanim_count > 0)
 			return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Room animations are no longer supported.");
 		/* NOTE: implementation hidden in room_file_deprecated.cpp
-		    in->ReadArray(&fullanims[0], sizeof(FullAnimation), fullanim_count);
+			in->ReadArray(&fullanims[0], sizeof(FullAnimation), fullanim_count);
 		*/
 	}
 
@@ -277,7 +277,7 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 	if ((data_ver >= kRoomVersion_pre114_4) && (data_ver < kRoomVersion_250a)) {
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Pre-2.5 graphical scripts are no longer supported.");
 		/* NOTE: implementation hidden in room_file_deprecated.cpp
-		    ReadPre250Scripts(in);
+			ReadPre250Scripts(in);
 		*/
 	}
 
@@ -348,7 +348,7 @@ HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion d
 	size_t name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-		                         String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
@@ -364,7 +364,7 @@ HRoomFileError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion
 	size_t name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-		                         String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
@@ -415,7 +415,7 @@ HRoomFileError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion
 }
 
 HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, const String &ext_id,
-                             soff_t block_len, RoomFileVersion data_ver) {
+	soff_t block_len, RoomFileVersion data_ver) {
 	//
 	// First check classic block types, identified with a numeric id
 	//
@@ -438,12 +438,12 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 	case kRoomFblk_CompScript:
 	case kRoomFblk_CompScript2:
 		return new RoomFileError(kRoomFileErr_OldBlockNotSupported,
-		                         String::FromFormat("Type: %d.", block));
+			String::FromFormat("Type: %d.", block));
 	case kRoomFblk_None:
 		break; // continue to string ids
 	default:
 		return new RoomFileError(kRoomFileErr_UnknownBlockType,
-		                         String::FromFormat("Type: %d, known range: %d - %d.", block, kRoomFblk_Main, kRoomFblk_ObjectScNames));
+			String::FromFormat("Type: %d, known range: %d - %d.", block, kRoomFblk_Main, kRoomFblk_ObjectScNames));
 	}
 
 	// Add extensions here checking ext_id, which is an up to 16-chars name, for example:
@@ -452,44 +452,23 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 	//     // read new region properties
 	// }
 	return new RoomFileError(kRoomFileErr_UnknownBlockType,
-	                         String::FromFormat("Type: %s", ext_id.GetCStr()));
+		String::FromFormat("Type: %s", ext_id.GetCStr()));
+}
+
+// This reader will process all blocks inside ReadRoomBlock() function,
+// and read compatible data into the given RoomStruct
+static RoomStruct *reader_room;
+
+static HRoomFileError ReadRoomDataReader(Stream *in,
+		RoomFileBlock block_id, const String &ext_id,
+		soff_t block_len, RoomFileVersion data_ver, bool &read_next) {
+	return ReadRoomBlock(reader_room, in, block_id, ext_id, block_len, data_ver);
 }
 
 HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->DataVersion = data_ver;
-
-	// Read list of data blocks. The block meta format is shared with the main game file extensions now.
-	//    - 1 byte - old format block ID, 0xFF indicates end of list.
-	//    - 16 bytes - new string ID of an extension. \0 at the first byte indicates end of list.
-	//    - 4 or 8 bytes - length of extension data, in bytes (depends on format version).
-	while (true) {
-		update_polled_stuff_if_runtime();
-		RoomFileBlock block_id;
-		String ext_id;
-		soff_t block_len;
-		HRoomFileError err = OpenNextRoomBlock(in, data_ver, block_id, ext_id, block_len);
-		if (!err)
-			return err;
-		if (ext_id.IsEmpty())
-			break; // end of list
-
-		soff_t block_end = in->GetPosition() + block_len;
-		err = ReadRoomBlock(room, in, block_id, ext_id, block_len, data_ver);
-		if (!err)
-			return err;
-
-		soff_t cur_pos = in->GetPosition();
-		if (cur_pos > block_end) {
-			return new RoomFileError(kRoomFileErr_BlockDataOverlapping,
-			                         String::FromFormat("Block: %s, expected to end at offset: %u, finished reading at %u.",
-			                                 ext_id.GetCStr(), block_end, cur_pos));
-		} else if (cur_pos < block_end) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %s expected to end at %lld, finished reading at %lld",
-			              ext_id.GetCStr(), block_end, cur_pos);
-			in->Seek(block_end, Shared::kSeekBegin);
-		}
-	}
-	return HRoomFileError::None();
+	reader_room = room;
+	return ReadRoomData(ReadRoomDataReader, in, data_ver);
 }
 
 HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos) {
@@ -621,31 +600,33 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 	return HRoomFileError::None();
 }
 
-HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver) {
-	HRoomFileError err;
+// Reader for ExtractScripText
+static String *reader_script;
 
-	while (true) {
-		RoomFileBlock block_id;
-		String ext_id;
-		soff_t block_len;
-		err = OpenNextRoomBlock(in, data_ver, block_id, ext_id, block_len);
-		if (!err)
-			return err;
-		if (ext_id.IsEmpty())
-			break; // end of list
-
-		if (block_id == kRoomFblk_Script) {
-			char *buf = nullptr;
-			err = ReadScriptBlock(buf, in, data_ver);
-			if (err) {
-				script = buf;
-				delete buf;
-			}
-			return err;
+HRoomFileError ExtractScriptTextReader(Stream *in,
+		RoomFileBlock block_id, const String &ext_id, soff_t block_len,
+		RoomFileVersion data_ver, bool &read_next) {
+	if (block_id == kRoomFblk_Script) {
+		read_next = false;
+		char *buf = nullptr;
+		HRoomFileError err = ReadScriptBlock(buf, in, data_ver);
+		if (err) {
+			*reader_script = buf;
+			delete buf;
 		}
-		in->Seek(block_len); // skip block
-	};
-	return new RoomFileError(kRoomFileErr_BlockNotFound);
+		return err;
+	}
+	in->Seek(block_len); // skip block
+	return HRoomFileError::None();
+}
+
+HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver) {
+	// This reader would only process kRoomFblk_Script and exit as soon as one is found
+	reader_script = &script;
+	HRoomFileError err = ReadRoomData(ExtractScriptTextReader, in, data_ver);
+	if (err && script.IsEmpty())
+		new RoomFileError(kRoomFileErr_BlockNotFound);
+	return err;
 }
 
 void WriteInteractionScripts(const InteractionScripts *interactions, Stream *out) {
