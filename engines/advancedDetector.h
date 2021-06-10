@@ -164,8 +164,8 @@ struct ADGameDescription {
  * struct which saved extra information for detected games
  */
 struct ADDetectedGameExtraInfo {
-	const char *gameName;			/*!< Extra info which saved game name */
-	const char *targetID;			/*!< targetID which will be used on preferred target id */
+	Common::String gameName;			/*!< Extra info which saved game name */
+	Common::String targetID;			/*!< targetID which will be used on preferred target id */
 };
 
 /**
