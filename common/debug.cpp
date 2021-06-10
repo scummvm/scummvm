@@ -69,7 +69,15 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 	return true;
 }
 
-void DebugManager::clearAllDebugChannels() {
+void DebugManager::addAllDebugChannels(const DebugChannelDef *channels) {
+	removeAllDebugChannels();
+
+	if (channels) {
+		addDebugChannels(channels);
+	}
+}
+
+void DebugManager::removeAllDebugChannels() {
 	_debugChannelsEnabled = 0;
 	_debugChannels.clear();
 	addDebugChannels(gDebugChannels);
@@ -111,7 +119,7 @@ bool DebugManager::disableDebugChannel(uint32 channel) {
 	return true;
 }
 
-DebugManager::DebugChannelList DebugManager::listDebugChannels() {
+DebugManager::DebugChannelList DebugManager::getDebugChannels() {
 	DebugChannelList tmp;
 	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
 		tmp.push_back(i->_value);
@@ -136,14 +144,6 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 		return true;
 	else
 		return (_debugChannelsEnabled & channel) != 0;
-}
-
-void DebugManager::debugFlagsRegister(const DebugChannelDef *channels) {
-	clearAllDebugChannels();
-
-	if (channels) {
-		addDebugChannels(channels);
-	}
 }
 
 void DebugManager::addDebugChannels(const DebugChannelDef *channels) {

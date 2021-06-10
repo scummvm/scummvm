@@ -507,7 +507,7 @@ bool ScummDebugger::Cmd_Object(int argc, const char **argv) {
 }
 
 bool ScummDebugger::Cmd_Debug(int argc, const char **argv) {
-	const Common::DebugManager::DebugChannelList &lvls = DebugMan.listDebugChannels();
+	const Common::DebugManager::DebugChannelList &lvls = DebugMan.getDebugChannels();
 
 	// No parameters given: Print out a list of all channels and their status
 	if (argc <= 1) {

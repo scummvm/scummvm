@@ -134,7 +134,7 @@ static const Plugin *detectPlugin() {
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
 	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
-	DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
+	DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
 	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
 		warning("'%s' is an invalid game ID for the engine '%s'. Use the --list-games option to list supported game IDs", gameId.c_str(), engineId.c_str());
@@ -194,7 +194,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	}
 
 	// before we instantiate the engine, we register debug channels for it
-	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannels());
+	DebugMan.addAllDebugChannels(metaEngineDetection.getDebugChannels());
 
 	// Create the game's MetaEngine.
 	MetaEngine &metaEngine = enginePlugin->get<MetaEngine>();
@@ -219,7 +219,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 			ConfMan.removeGameDomain(target.c_str());
 		}
 
-		DebugMan.clearAllDebugChannels();
+		DebugMan.removeAllDebugChannels();
 		return err;
 	}
 
@@ -319,7 +319,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Free up memory
 	delete engine;
 
-	DebugMan.clearAllDebugChannels();
+	DebugMan.removeAllDebugChannels();
 
 	// Reset the file/directory mappings
 	SearchMan.clear();

@@ -733,7 +733,7 @@ bool Debugger::cmdDebugLevel(int argc, const char **argv) {
 }
 
 bool Debugger::cmdDebugFlagsList(int argc, const char **argv) {
-	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.listDebugChannels();
+	const Common::DebugManager::DebugChannelList &debugLevels = DebugMan.getDebugChannels();
 
 	debugPrintf("Engine debug levels:\n");
 	debugPrintf("--------------------\n");

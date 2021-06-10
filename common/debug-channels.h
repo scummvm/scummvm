@@ -85,9 +85,15 @@ public:
 	bool addDebugChannel(uint32 channel, const String &name, const String &description);
 
 	/**
-	 * Reset all engine-specific debug channels.
+	 * Add all the debug channels for an engine. This replaces any existing engine
+	 * debug channels and disables all channels.
 	 */
-	void clearAllDebugChannels();
+	void addAllDebugChannels(const DebugChannelDef *channels);
+
+	/**
+	 * Remove all engine debug channels and disable all global debug channels.
+	 */
+	void removeAllDebugChannels();
 
 	/**
 	 * Enable a debug channel.
@@ -124,11 +130,12 @@ public:
 	typedef List<DebugChannel> DebugChannelList;
 
 	/**
-	 * Lists all engine specific debug channels.
+	 * Lists all debug channels. This includes engine and global
+	 * debug channels.
 	 *
-	 * @return returns an array with all debug channels
+	 * @return List of all debug channels sorted by debug level.
 	 */
-	DebugChannelList listDebugChannels();
+	DebugChannelList getDebugChannels();
 
 	/**
 	 * Enable all debug channels.
@@ -145,11 +152,6 @@ public:
 	 */
 	bool isDebugChannelEnabled(uint32 channel, bool enforce = false);
 
-	/**
-	 * register engine specified flags
-	 */
-	void debugFlagsRegister(const DebugChannelDef *channels);
-
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
 
@@ -160,6 +162,9 @@ private:
 
 	DebugManager();
 
+	/**
+	 * Internal method for adding an array of debug channels.
+	 */
 	void addDebugChannels(const DebugChannelDef *channels);
 };
 
