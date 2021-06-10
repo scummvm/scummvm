@@ -86,6 +86,8 @@ static const char HELP_STRING[] =
 	"                           Use --path=PATH to specify a directory.\n"
 	"  --game=ID                In combination with --add or --detect only adds or attempts to\n"
 	"                           detect the game with id ID.\n"
+	"  --engine=ID              In combination with --list-games or --list-all-games only lists\n"
+	"                           games for this engine.\n"
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
@@ -791,6 +793,9 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("game")
 			END_OPTION
 
+			DO_LONG_OPTION("engine")
+			END_OPTION
+
 			DO_LONG_OPTION_BOOL("recursive")
 			END_OPTION
 
@@ -857,7 +862,9 @@ unknownOption:
 }
 
 /** List all available game IDs, i.e. all games which any loaded plugin supports. */
-static void listGames() {
+static void listGames(const Common::String &engineID) {
+	const bool all = engineID.empty();
+
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
@@ -869,25 +876,31 @@ static void listGames() {
 			continue;
 		}
 
-		PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
-		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+		if (all || (p->getEngineId() == engineID)) {
+			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
+			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
+				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+			}
 		}
 	}
 }
 
 /** List all known game IDs, i.e. all games which can be detected. */
-static void listAllGames() {
+static void listAllGames(const Common::String &engineID) {
+	const bool any = engineID.empty();
+
 	printf("Game ID                        Full Title                                                 \n"
 	       "------------------------------ -----------------------------------------------------------\n");
 
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		const MetaEngineDetection &metaengine = (*iter)->get<MetaEngineDetection>();
+		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		PlainGameList list = metaengine.getSupportedGames();
-		for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-			printf("%-30s %s\n", buildQualifiedGameName(metaengine.getEngineId(), v->gameId).c_str(), v->description);
+		if (any || (metaEngine.getEngineId() == engineID)) {
+			PlainGameList list = metaEngine.getSupportedGames();
+			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
+				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getEngineId(), v->gameId).c_str(), v->description);
+			}
 		}
 	}
 }
@@ -1487,10 +1500,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		listDebugFlags(settings["list-debugflags"]);
 		return true;
 	} else if (command == "list-games") {
-		listGames();
+		listGames(settings["engine"]);
 		return true;
 	} else if (command == "list-all-games") {
-		listAllGames();
+		listAllGames(settings["engine"]);
 		return true;
 	} else if (command == "list-engines") {
 		listEngines();
