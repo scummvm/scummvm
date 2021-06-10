@@ -70,6 +70,9 @@ Movie::Movie(Window *window) {
 	_cast = new Cast(this);
 	_sharedCast = nullptr;
 	_score = new Score(this);
+
+	_selEnd = -1;
+	_selStart = -1;
 }
 
 Movie::~Movie() {

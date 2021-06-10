@@ -169,6 +169,9 @@ public:
 	int _keyCode;
 	byte _keyFlags;
 
+	int _selStart;
+	int _selEnd;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;

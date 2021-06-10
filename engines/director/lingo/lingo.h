@@ -443,9 +443,6 @@ public:
 
 	Common::String _floatPrecisionFormat;
 
-	int _selStart;
-	int _selEnd;
-
 	bool _hadError;
 
 	bool _inCond;
