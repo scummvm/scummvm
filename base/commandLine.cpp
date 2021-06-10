@@ -966,7 +966,7 @@ static void printDebugFlags(const DebugChannelDef *debugChannels) {
 /** List debug flags*/
 static void listDebugFlags(const Common::String &engineID) {
 	if (engineID == "global")
-		printDebugFlags(globalDebugChannels);
+		printDebugFlags(gDebugChannels);
 	else {
 		const PluginList &plugins = EngineMan.getPlugins();
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {

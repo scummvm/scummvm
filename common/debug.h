@@ -166,7 +166,7 @@ enum GlobalDebugLevels {
 	kDebugLevelEventRec = 1 << 30
 };
 
-static const DebugChannelDef globalDebugChannels[] = {
+static const DebugChannelDef gDebugChannels[] = {
 	{kDebugLevelEventRec, "EventRec", "Event recorder debug level"},
 	{kDebugGlobalDetection, "Detection", "debug messages for advancedDetector"},
 	DEBUG_CHANNEL_END
