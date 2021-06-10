@@ -87,7 +87,6 @@ HadeschEngine::HadeschEngine(OSystem *system, const ADGameDescription *desc)
 
 HadeschEngine::~HadeschEngine() {
 	debug("HadeschEngine::dtor");
-	DebugMan.clearAllDebugChannels();
 	for (unsigned i = 0; i < _winCursors.size(); i++) {
 		delete _winCursors[i];
 		_winCursors[i] = nullptr;

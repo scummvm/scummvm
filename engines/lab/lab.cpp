@@ -136,9 +136,6 @@ LabEngine::LabEngine(OSystem *syst, const ADGameDescription *gameDesc)
 }
 
 LabEngine::~LabEngine() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-
 	freeMapData();
 	delete[] _rooms;
 	delete[] _inventory;

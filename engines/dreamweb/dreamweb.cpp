@@ -266,7 +266,6 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 }
 
 DreamWebEngine::~DreamWebEngine() {
-	DebugMan.clearAllDebugChannels();
 	delete _sound;
 }
 

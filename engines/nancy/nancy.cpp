@@ -73,7 +73,6 @@ NancyEngine::NancyEngine(OSystem *syst, const NancyGameDescription *gd) : Engine
 
 NancyEngine::~NancyEngine() {
 	clearBootChunks();
-	DebugMan.clearAllDebugChannels();
 	delete _randomSource;
 
 	delete _graphicsManager;

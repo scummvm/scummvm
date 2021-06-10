@@ -138,7 +138,6 @@ HugoEngine::~HugoEngine() {
 	delete _file;
 	delete _text;
 
-	DebugMan.clearAllDebugChannels();
 	delete _rnd;
 }
 

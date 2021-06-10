@@ -95,8 +95,6 @@ PrinceEngine::PrinceEngine(OSystem *syst, const PrinceGameDescription *gameDesc)
 }
 
 PrinceEngine::~PrinceEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	delete _rnd;
 	delete _cursor1;
 	delete _cursor3;

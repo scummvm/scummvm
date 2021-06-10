@@ -105,8 +105,6 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {
-	DebugMan.clearAllDebugChannels();
-
 	delete _gfx;
 	delete _video;
 	delete _sound;

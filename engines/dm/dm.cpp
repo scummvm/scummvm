@@ -204,8 +204,6 @@ DMEngine::~DMEngine() {
 	delete _saveThumbnail;
 
 	delete[] _savedScreenForOpenEntranceDoors;
-	// clear debug channels
-	DebugMan.clearAllDebugChannels();
 }
 
 bool DMEngine::hasFeature(EngineFeature f) const {

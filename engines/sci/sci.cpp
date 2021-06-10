@@ -200,9 +200,6 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 }
 
 SciEngine::~SciEngine() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-
 #ifdef ENABLE_SCI32
 	delete _gfxControls32;
 	delete _gfxPaint32;

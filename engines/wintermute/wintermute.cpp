@@ -81,9 +81,6 @@ WintermuteEngine::~WintermuteEngine() {
 	deinit();
 	delete _game;
 	//_debugger deleted by Engine
-
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
 }
 
 bool WintermuteEngine::hasFeature(EngineFeature f) const {

@@ -164,9 +164,6 @@ void CGEEngine::init() {
 }
 
 void CGEEngine::deinit() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-
 	// Delete engine objects
 	delete _vga;
 	delete _sys;

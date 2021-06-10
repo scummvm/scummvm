@@ -128,9 +128,6 @@ ZVision::~ZVision() {
 	delete _midiManager;
 
 	getTimerManager()->removeTimerProc(&fpsTimerCallback);
-
-	// Remove all of our debug levels
-	DebugMan.clearAllDebugChannels();
 }
 
 void ZVision::registerDefaultSettings() {

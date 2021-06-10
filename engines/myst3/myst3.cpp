@@ -107,8 +107,6 @@ Myst3Engine::Myst3Engine(OSystem *syst, const Myst3GameDescription *version) :
 }
 
 Myst3Engine::~Myst3Engine() {
-	DebugMan.clearAllDebugChannels();
-
 	closeArchives();
 
 	delete _menu;

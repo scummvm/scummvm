@@ -114,9 +114,6 @@ PrivateEngine::~PrivateEngine() {
 
 	delete Gen::g_vm;
 	delete Settings::g_setts;
-
-	// Remove all of our debug levels
-	DebugMan.clearAllDebugChannels();
 }
 
 void PrivateEngine::initializePath(const Common::FSNode &gamePath) {

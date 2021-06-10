@@ -54,8 +54,6 @@ CryoEngine::~CryoEngine() {
 	delete _rnd;
 	delete _game;
 	delete _screenView;
-
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error CryoEngine::run() {

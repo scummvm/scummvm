@@ -184,8 +184,6 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 }
 
 ToucheEngine::~ToucheEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	stopMusic();
 	delete _midiPlayer;
 }

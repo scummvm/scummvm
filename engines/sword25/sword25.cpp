@@ -69,7 +69,6 @@ Sword25Engine::Sword25Engine(OSystem *syst, const ADGameDescription *gameDesc):
 }
 
 Sword25Engine::~Sword25Engine() {
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error Sword25Engine::run() {

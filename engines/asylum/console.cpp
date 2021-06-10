@@ -219,7 +219,6 @@ Console::Console(AsylumEngine *engine) : _vm(engine) {
 }
 
 Console::~Console() {
-	DebugMan.clearAllDebugChannels();
 }
 
 //////////////////////////////////////////////////////////////////////////

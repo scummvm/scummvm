@@ -112,8 +112,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _scriptMan;
 	delete _inventory;
 	delete _rnd;
-
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error MohawkEngine_Riven::run() {

@@ -55,8 +55,6 @@ ComposerEngine::ComposerEngine(OSystem *syst, const ComposerGameDescription *gam
 }
 
 ComposerEngine::~ComposerEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	stopPipes();
 	for (Common::List<OldScript *>::iterator i = _oldScripts.begin(); i != _oldScripts.end(); i++)
 		delete *i;

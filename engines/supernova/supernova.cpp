@@ -102,8 +102,6 @@ SupernovaEngine::SupernovaEngine(OSystem *syst)
 }
 
 SupernovaEngine::~SupernovaEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	delete _sleepAutoSave;
 	delete _gm;
 	delete _sound;

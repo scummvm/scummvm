@@ -391,9 +391,6 @@ DraciEngine::~DraciEngine() {
 	delete _music;
 	delete _soundsArchive;
 	delete _dubbingArchive;
-
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error DraciEngine::run() {
