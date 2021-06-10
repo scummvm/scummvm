@@ -2296,7 +2296,7 @@ uint16 Myst::rocketSliderGetSound(uint16 pos) {
 
 uint16 Myst::rocketCheckSolutionLogicHelper(uint16 sound1, uint16 sound2, uint16 logictype) {
 
-	debugN("helper: %i %i %i (diff:% 3i) ",sound1, sound2 , logictype, sound1-sound2);
+	debugN("helper: %i %i %i (diff:% 3i)", sound1, sound2, logictype, sound1 - sound2);
 	if (logictype == 0) {
 
 		if (sound1 != sound2) {
