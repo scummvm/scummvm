@@ -43,8 +43,6 @@ public:
 		clip = Rect16(0, 0, dPage->size.x, dPage->size.y);
 	}
 
-	void setMap(gPixelMap *, bool = FALSE) {}
-
 	void setPixel(int16 x, int16 y, gPen color) {
 		if (x >= clip.x && x < clip.x + clip.width
 		        && y >= clip.y && y < clip.y + clip.height) {
