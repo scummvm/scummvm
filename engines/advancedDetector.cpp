@@ -255,11 +255,25 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 
 	if (!foundKnownGames) {
 		// Use fallback detector if there were no matches by other means
-		ADDetectedGame fallbackDetectionResult = fallbackDetect(allFiles, fslist);
+		ADDetectedGameExtraInfo *extraInfo = nullptr;
+		ADDetectedGame fallbackDetectionResult = fallbackDetect(allFiles, fslist, &extraInfo);
 
 		if (fallbackDetectionResult.desc) {
 			DetectedGame fallbackDetectedGame = toDetectedGame(fallbackDetectionResult);
 			fallbackDetectedGame.preferredTarget += "-fallback";
+
+			// if we have extraInfo here
+			if (extraInfo != nullptr) {
+				// if we have specified game name or targetID, then we replace the original one
+				// maybe we need to use generatePreferredTarget to generate it
+				if (!extraInfo->gameName.empty())
+					fallbackDetectedGame.description = extraInfo->gameName;
+				if (!extraInfo->targetID.empty())
+					fallbackDetectedGame.preferredTarget = extraInfo->targetID;
+
+				// then it's our duty to free it
+				delete extraInfo;
+			}
 
 			detectedGames.push_back(fallbackDetectedGame);
 		}
