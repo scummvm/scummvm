@@ -239,6 +239,7 @@ String get_save_game_path(int slotNum) {
 #endif
 }
 
+#if !AGS_PLATFORM_SCUMMVM
 // Convert a path possibly containing path tags into acceptable save path
 bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 	rp = ResolvedPath();
@@ -280,6 +281,7 @@ bool MakeSaveGameDir(const String &newFolder, ResolvedPath &rp) {
 	rp.FullPath = newSaveGameDir;
 	return true;
 }
+#endif
 
 bool SetCustomSaveParent(const String &path) {
 	if (SetSaveGameDirectoryPath(path, true)) {

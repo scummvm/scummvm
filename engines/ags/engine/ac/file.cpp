@@ -227,30 +227,6 @@ String PathFromInstallDir(const String &path) {
 	return path;
 }
 
-// Tests if there is a special path token in the beginning of the given path;
-// if there is and there is no slash between token and the rest of the string,
-// then assigns new string that has such slash.
-// Returns TRUE if the new string was created, and FALSE if the path was good.
-bool FixSlashAfterToken(const String &path, const String &token, String &new_path) {
-	if (path.CompareLeft(token) == 0 && path.GetLength() > token.GetLength() &&
-	        path[token.GetLength()] != '/') {
-		new_path = Path::ConcatPaths(token, path.Mid(token.GetLength()));
-		return true;
-	}
-	return false;
-}
-
-String FixSlashAfterToken(const String &path) {
-	String fixed_path = path;
-	Path::FixupPath(fixed_path);
-	if (FixSlashAfterToken(fixed_path, GameInstallRootToken, fixed_path) ||
-	        FixSlashAfterToken(fixed_path, UserSavedgamesRootToken, fixed_path) ||
-	        FixSlashAfterToken(fixed_path, GameSavedgamesDirToken, fixed_path) ||
-	        FixSlashAfterToken(fixed_path, GameDataDirToken, fixed_path))
-		return fixed_path;
-	return path;
-}
-
 String PreparePathForWriting(const FSLocation &fsloc, const String &filename) {
 	if (Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.FullDir))
 		return Path::ConcatPaths(fsloc.FullDir, filename);
@@ -318,23 +294,8 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		debugC(::AGS::kDebugFilePath, "Full path detected");
 		return true;
 	}
-	/*
-	if (read_only) {
-		// For reading files, first try as a save file, then fall back
-		// in the game folder. This handles cases where some games like
-		// The Blackwell Legacy write to files in the game folder
-		rp.BaseDir = SAVE_FOLDER_PREFIX;
-		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
-			orig_sc_path.GetCStr());
-		rp.AltPath = orig_sc_path;
-	} else {
-		// For writing files, always use as save files
-		rp.BaseDir = SAVE_FOLDER_PREFIX;
-		rp.FullPath = String::FromFormat("%s%s", SAVE_FOLDER_PREFIX,
-			orig_sc_path.GetCStr());
-	}
-	*/
-	String sc_path = FixSlashAfterToken(orig_sc_path);
+
+	String sc_path = orig_sc_path;
 	FSLocation parent_dir;
 	String child_path;
 	String alt_path;

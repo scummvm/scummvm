@@ -51,10 +51,6 @@ void FixupFilename(char *filename);
 // Tests the input path, if it's an absolute path then returns it unchanged;
 // if it's a relative path then resolves it into absolute, using install dir as a base.
 String PathFromInstallDir(const String &path);
-// Checks if there is a slash after special token in the beginning of the
-// file path, and adds one if it is missing. If no token is found, string is
-// returned unchanged.
-String FixSlashAfterToken(const String &path);
 
 // FSLocation describes a file system location defined by two parts:
 // a secure path that engine does not own, and sub-path that it owns.
