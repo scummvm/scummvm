@@ -22,9 +22,9 @@
 
 //=============================================================================
 //
-// This unit provides functions for reading main game file into appropriate
-// data structures. Main game file contains general game data, such as global
-// options, lists of static game entities and compiled scripts modules.
+// This unit provides functions for reading compiled room file (CRM)
+// into the RoomStruct structure, as well as extracting separate components,
+// such as room scripts.
 //
 //=============================================================================
 
