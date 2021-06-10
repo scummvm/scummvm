@@ -125,7 +125,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
@@ -145,7 +145,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 
 // This fallback detection looks identical to the one used for CGE. In fact, the difference resides
 // in the ResourceManager which handles a different archive format. The rest of the detection is identical.
-ADDetectedGame CGE2MetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame CGE2MetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	ADDetectedGame game = detectGameFilebased(allFiles, CGE2::fileBasedFallback);
 
 	if (!game.desc)

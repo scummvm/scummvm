@@ -496,10 +496,10 @@ public:
 		return "Flight of the Amazon Queen (C) John Passfield and Steve Stamatiadis";
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
-ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame QueenMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	static ADGameDescription desc;
 
 	// Iterate over all files in the given directory

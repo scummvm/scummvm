@@ -138,7 +138,7 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		return detectGameFilebased(allFiles, Touche::fileBasedFallback);
 	}
 

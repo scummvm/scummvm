@@ -487,7 +487,7 @@ public:
 		return "Sierra's Creative Interpreter (C) Sierra Online";
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 	void registerDefaultSettings(const Common::String &target) const override;
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
@@ -503,7 +503,7 @@ GUI::OptionsContainerWidget *SciMetaEngineDetection::buildEngineOptionsWidgetSta
 	return new OptionsWidget(boss, name, target);
 }
 
-ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	/**
 	 * Fallback detection for Sci heavily depends on engine resources, so it's not possible
 	 * to use them without the engine present in a clean way.

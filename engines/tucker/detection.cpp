@@ -134,7 +134,7 @@ public:
 		return "Bud Tucker in Double Trouble (C) Merit Studios";
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		for (Common::FSList::const_iterator d = fslist.begin(); d != fslist.end(); ++d) {
 			Common::FSList audiofslist;
 			if (d->isDirectory() && d->getName().equalsIgnoreCase("audio") && d->getChildren(audiofslist, Common::FSNode::kListFilesOnly)) {

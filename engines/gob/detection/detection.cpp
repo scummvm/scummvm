@@ -59,7 +59,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 
 private:
 	/**
@@ -74,7 +74,7 @@ GobMetaEngineDetection::GobMetaEngineDetection() :
 	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 }
 
-ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	ADDetectedGame detectedGame = detectGameFilebased(allFiles, Gob::fileBased);
 	if (!detectedGame.desc) {
 		return ADDetectedGame();

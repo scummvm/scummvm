@@ -67,7 +67,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
 };
 
 struct SizeMD5 {
@@ -82,7 +82,7 @@ typedef Common::Array<const ADGameDescription *> ADGameDescList;
  * Fallback detection scans the list of Discworld 2 targets to see if it can detect an installation
  * where the files haven't been renamed (i.e. don't have the '1' just before the extension)
  */
-ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist) const {
+ADDetectedGame TinselMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const {
 	Common::String extra;
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
