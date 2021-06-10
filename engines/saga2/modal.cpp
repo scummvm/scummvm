@@ -86,7 +86,9 @@ bool ModalWindow::open(void) {
 	mouseInfo.setIntent(GrabInfo::WalkTo);
 
 	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
-	GameMode::SetStack(&PlayMode, &TileMode, &ModalMode, End_List);
+
+	GameMode *gameModes[] = {&PlayMode, &TileMode, &ModalMode};
+	GameMode::SetStack(gameModes, 3);
 	current = this;
 
 

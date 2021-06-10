@@ -222,7 +222,9 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 #ifdef GENE
 	case '~':
 		WriteStatusF(2, "Switching to Trice");
-		GameMode::SetStack(&PlayMode, &TriceMode, End_List);
+
+		GameMode *gameModes[] = {&PlayMode, &TriceMode};
+		GameMode::SetStack(gameModes, 2);
 		GameMode::update();
 		break;
 #endif

@@ -229,7 +229,9 @@ SimpleWindow::SimpleWindow(const Rect16 &r,
                            AppFunc *cmd)
 	: gWindow(r, ident, "", cmd) {
 	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
-	GameMode::SetStack(&PlayMode, &TileMode, &SimpleMode, End_List);
+
+	GameMode *gameModes[] = {&PlayMode, &TileMode, &SimpleMode};
+	GameMode::SetStack(gameModes, 3);
 	title = stitle;
 }
 
