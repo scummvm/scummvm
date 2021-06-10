@@ -103,26 +103,10 @@ void start_game() {
 	first_room_initialization();
 }
 
-void do_start_game() {
-	// only start if replay playback hasn't loaded a game
-	if (_G(displayed_room) < 0)
-		start_game();
-}
-
 void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnStartup) {
 	//try { // BEGIN try for ALI3DEXception
 
 	set_cursor_mode(MODE_WALK);
-
-	if (_G(convert_16bit_bgr)) {
-		// Disable text as speech while displaying the warning message
-		// This happens if the user's graphics card does BGR order 16-bit colour
-		int oldalways = _GP(game).options[OPT_ALWAYSSPCH];
-		_GP(game).options[OPT_ALWAYSSPCH] = 0;
-		// PSP: This is normal. Don't show a warning.
-		//Display ("WARNING: AGS has detected that you have an incompatible graphics card for this _GP(game). You may experience colour problems during the _GP(game). Try running the game with \"--15bit\" command line parameter and see if that helps.[[Click the mouse to continue.");
-		_GP(game).options[OPT_ALWAYSSPCH] = oldalways;
-	}
 
 	::AGS::g_vm->setRandomNumberSeed(_GP(play).randseed);
 	if (override_start_room)
@@ -135,7 +119,9 @@ void initialize_start_and_play_game(int override_start_room, int loadSaveGameOnS
 
 	start_game_load_savegame_on_startup();
 
-	do_start_game();
+	// only start if not restored a save
+	if (_G(displayed_room) < 0)
+		start_game();
 
 	RunGameUntilAborted();
 
