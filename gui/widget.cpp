@@ -1012,48 +1012,48 @@ void ContainerWidget::drawWidget() {
 
 #pragma mark -
 
-EntryContainerWidget::EntryContainerWidget(GridWidget *boss, int x, int y, int w, int h) :
+GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h) :
 ContainerWidget(boss, x, y, w, h) {
 	_plat = new GraphicsWidget(this, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
 	_lang = new StaticTextWidget(this, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
 	_title = new StaticTextWidget(this, 0, kThumbnailHeight, w , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
 	_thumb = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
-	_activeInstall = nullptr;
+	_activeEntry = nullptr;
 	_grid = boss;
 	// setBackgroundType(ThemeEngine::kThumbnailBackground);
 }
-EntryContainerWidget::EntryContainerWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
+GridItemWidget::GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
 			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {
-	_activeInstall = nullptr;
+	_activeEntry = nullptr;
 	_grid = boss;
 			}
 
-void EntryContainerWidget::addInstallation(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
-	_installations.push_back(LauncherEntry(key, description, domain));
+void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
+	_attachedEntries.push_back(LauncherEntry(key, description, domain));
 }
 
-void EntryContainerWidget::addInstallation(LauncherEntry &install) {
-	_installations.push_back(install);
+void GridItemWidget::attachEntry(LauncherEntry &entry) {
+	_attachedEntries.push_back(entry);
 }
 
-void EntryContainerWidget::addInstallations(Common::Array<LauncherEntry> installs) {
-	_installations.push_back(installs);
+void GridItemWidget::attachEntries(Common::Array<LauncherEntry> entries) {
+	_attachedEntries.push_back(entries);
 }
 
-void EntryContainerWidget::setActiveInstallation(LauncherEntry &install) {
-	_activeInstall = &install;
+void GridItemWidget::setActiveEntry(LauncherEntry &entry) {
+	_activeEntry = &entry;
 }
 
-void EntryContainerWidget::updateEntry() {
-	if ((!_activeInstall) && (!_installations.empty())) {
-		_activeInstall = _installations.begin();
-		// warning("%s, %s - Install", _activeInstall->key.c_str(), _activeInstall->description.c_str());
-		Common::String gameid = _activeInstall->domain->getVal("gameid");
-		Common::String engineid = _activeInstall->domain->getVal("engineid");
+void GridItemWidget::update() {
+	if ((!_activeEntry) && (!_attachedEntries.empty())) {
+		_activeEntry = _attachedEntries.begin();
+		// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
+		Common::String gameid = _activeEntry->domain->getVal("gameid");
+		Common::String engineid = _activeEntry->domain->getVal("engineid");
 		Common::String language = "XX";
 		Common::String platform = "UNK";
-		_activeInstall->domain->tryGetVal("language",language);
-		_activeInstall->domain->tryGetVal("platform", platform);
+		_activeEntry->domain->tryGetVal("language",language);
+		_activeEntry->domain->tryGetVal("platform", platform);
 		language.toUppercase();
 		// warning("Fields populated");
 		// warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
@@ -1068,7 +1068,7 @@ void EntryContainerWidget::updateEntry() {
 			_thumb->setGfx(gfx);
 
 		_lang->setLabel(language);
-		_title->setLabel(_activeInstall->description);
+		_title->setLabel(_activeEntry->description);
 		
 		if (platform == "pc")
 			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformDOS);
@@ -1090,11 +1090,11 @@ void EntryContainerWidget::updateEntry() {
 	markAsDirty();
 }
 
-void EntryContainerWidget::drawWidget() {
+void GridItemWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
 }
 
-// void EntryContainerWidget::setEnabled(bool e) {
+// void GridItemWidget::setEnabled(bool e) {
 // 	// Widget::setEnabled(e);
 // 	// _thumb->setEnabled(e);
 // 	// _plat->setEnabled(e);
@@ -1153,8 +1153,8 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) :
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
 		ContainerWidget(boss, name) {
 	loadPlatformIcons();
-	_entryHeight = kThumbnailHeight + (2*kLineHeight);
-	_entryWidth = kThumbnailWidth;
+	_gridItemHeight = kThumbnailHeight + (2*kLineHeight);
+	_gridItemWidth = kThumbnailWidth;
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 100);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
@@ -1165,28 +1165,28 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
 	_allEntries = Common::Array<LauncherEntry>(*list);
 	reloadThumbnails();
-	Common::HashMap<Common::String, EntryContainerWidget *> entryById;
+	Common::HashMap<Common::String, GridItemWidget *> entryById;
 	int row = 0, col = 0;
-	_entriesPerRow = 6;
+	_itemsPerRow = 6;
 	int k = 0;
 	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
-		k = row * _entriesPerRow + col;
-		EntryContainerWidget *newEntry = entryById[i->domain->getVal("gameid")];
+		k = row * _itemsPerRow + col;
+		GridItemWidget *newEntry = entryById[i->domain->getVal("gameid")];
 		if (!newEntry) {
-			newEntry = new EntryContainerWidget(this, 0,0, kThumbnailWidth,kThumbnailHeight);
+			newEntry = new GridItemWidget(this, 0,0, kThumbnailWidth,kThumbnailHeight);
 			newEntry->setSize(kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 			newEntry->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
-			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
-			_entries.push_back(newEntry);
-			if (++col >= _entriesPerRow) {
+			_gridItems.push_back(newEntry);
+			if (++col >= _itemsPerRow) {
 				++row;
 				col = 0;
 			}
 			++k;
 		}
-		newEntry->addInstallation(*i);
-		newEntry->updateEntry();
+		newEntry->attachEntry(*i);
+		newEntry->update();
 		entryById[i->domain->getVal("gameid")] = newEntry;
 	}
 	_innerHeight = 100 + ((row + 1) * (kThumbnailHeight + 80));
@@ -1266,8 +1266,8 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 	int row = 0, col = 0;
 	int k = 0;
-	for (Common::Array<EntryContainerWidget *>::iterator iter = _entries.begin(); iter != _entries.end(); ++iter) {
-		k = row * _entriesPerRow + col;
+	for (Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin(); iter != _gridItems.end(); ++iter) {
+		k = row * _itemsPerRow + col;
 		// (*iter)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 		// (*iter)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
 		// (*iter)->_lang->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
@@ -1275,13 +1275,13 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 
-		if (((*iter)->getRelY() <= -_entryHeight) || ((*iter)->getRelY() >= _h)) {
+		if (((*iter)->getRelY() <= -_gridItemHeight) || ((*iter)->getRelY() >= _h)) {
 			(*iter)->setVisible(false);
 		}
 		else {
 			(*iter)->setVisible(true);
 		}
-		if (++col >= _entriesPerRow) {
+		if (++col >= _itemsPerRow) {
 			++row;
 			col = 0;
 		}
@@ -1295,15 +1295,15 @@ void GridWidget::reflowLayout() {
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	int row = 0, col = 0;
-	_entriesPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 1);
-	int rows = _entries.size() / _entriesPerRow;
+	_itemsPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 1);
+	int rows = _gridItems.size() / _itemsPerRow;
 	_innerHeight = 100 + ((rows + 1) * (kThumbnailHeight + 80));
-	_innerWidth = 100 + (_entriesPerRow * (kThumbnailWidth + 50));
+	_innerWidth = 100 + (_itemsPerRow * (kThumbnailWidth + 50));
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 	int k = 0;
-	for (Common::Array<EntryContainerWidget *>::iterator i = _entries.begin(); i != _entries.end(); ++i) {
-		k = row * _entriesPerRow + col;
+	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+		k = row * _itemsPerRow + col;
 		if (*i) { 			
 			// (*i)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 			// (*i)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
@@ -1311,15 +1311,15 @@ void GridWidget::reflowLayout() {
 			// (*i)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
 
 			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-			if (((*i)->getRelY() <= -_entryHeight) || ((*i)->getRelY() >= _h)) {
+			if (((*i)->getRelY() <= -_gridItemHeight) || ((*i)->getRelY() >= _h)) {
 				(*i)->setVisible(false);
 			}
 			else {
 				(*i)->setVisible(true);
 			}
-			// newEntry = new EntryContainerWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
-			if (++col >= _entriesPerRow) {
+			if (++col >= _itemsPerRow) {
 				++row;
 				col = 0;
 			}
