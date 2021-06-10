@@ -326,12 +326,12 @@ bool Console::Cmd_DumpText(int argc, const char **argv) {
 				line += "TX_" + (*i).key + ", ";
 				index++;
 				if (index % 5 == 0) {
-					debug(line.c_str());
+					debug("%s", line.c_str());
 					line = "";
 				}
 			}
 
-			debug(line.c_str());
+			debug("%s", line.c_str());
 
 			for (Common::List<MessageInfo>::const_iterator i = keys.begin(), end = keys.end(); i != end; ++i) {
 				debug("{ TX_%s, %d, 0 },", (*i).key.c_str(), (*i).pos);
