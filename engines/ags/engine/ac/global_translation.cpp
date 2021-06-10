@@ -26,7 +26,6 @@
 #include "ags/engine/ac/global_translation.h"
 #include "ags/engine/ac/string.h"
 #include "ags/engine/ac/translation.h"
-#include "ags/engine/ac/tree_map.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/plugins/ags_plugin.h"
 #include "ags/plugins/plugin_engine.h"
@@ -53,19 +52,17 @@ const char *get_translation(const char *text) {
 	}
 #endif
 
-	const auto *transtree = get_translation_tree();
-	if (transtree != nullptr) {
-		// translate the text using the translation file
-		const char *transl = transtree->findValue(text);
-		if (transl != nullptr)
-			return transl;
-	}
+	const auto &transtree = get_translation_tree();
+	const auto it = transtree.find(text);
+	if (it != transtree.end())
+		return it->_value.GetCStr();
+
 	// return the original text
 	return text;
 }
 
 int IsTranslationAvailable() {
-	if (get_translation_tree() != nullptr)
+	if (get_translation_tree().size() > 0)
 		return 1;
 	return 0;
 }

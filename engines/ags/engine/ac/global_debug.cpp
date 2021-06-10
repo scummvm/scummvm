@@ -35,7 +35,6 @@
 #include "ags/engine/ac/properties.h"
 #include "ags/engine/ac/sys_events.h"
 #include "ags/engine/ac/translation.h"
-#include "ags/engine/ac/tree_map.h"
 #include "ags/engine/ac/walkable_area.h"
 #include "ags/engine/gfx/gfxfilter.h"
 #include "ags/engine/gui/gui_dialog.h"
@@ -72,7 +71,7 @@ String GetRuntimeInfo() {
 		runtimeInfo.Append("[AUDIO.VOX enabled");
 	if (_GP(play).want_speech >= 1)
 		runtimeInfo.Append("[SPEECH.VOX enabled");
-	if (get_translation_tree() != nullptr) {
+	if (get_translation_tree().size() > 0) {
 		runtimeInfo.Append("[Using translation ");
 		runtimeInfo.Append(get_translation_name());
 	}

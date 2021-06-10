@@ -191,7 +191,6 @@ MODULE_OBJS = \
 	engine/ac/textbox.o \
 	engine/ac/timer.o \
 	engine/ac/translation.o \
-	engine/ac/tree_map.o \
 	engine/ac/view_frame.o \
 	engine/ac/viewport_script.o \
 	engine/ac/walkable_area.o \

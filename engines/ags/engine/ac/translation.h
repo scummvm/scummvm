@@ -24,11 +24,12 @@
 #define AGS_ENGINE_AC_TRANSLATION_H
 
 #include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 
 using AGS::Shared::String;
-struct TreeMap;
+using AGS::Shared::StringMap;
 
 void close_translation();
 bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error);
@@ -37,7 +38,7 @@ String get_translation_name();
 // Returns fill path to the translation file, or empty string if default translation is used
 String get_translation_path();
 // Returns translation map for reading only
-const TreeMap *get_translation_tree();
+const StringMap &get_translation_tree();
 
 } // namespace AGS3
 

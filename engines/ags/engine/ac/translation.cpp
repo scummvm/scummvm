@@ -29,7 +29,6 @@
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/translation.h"
-#include "ags/engine/ac/tree_map.h"
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/misc.h"
@@ -42,8 +41,7 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void close_translation() {
-	delete _G(transtree);
-	_G(transtree) = nullptr;
+	_GP(transtree).clear();
 	_G(trans_name) = "";
 	_G(trans_filename) = "";
 }
@@ -70,8 +68,7 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 		return false;
 	}
 
-	delete _G(transtree);
-	_G(transtree) = new TreeMap();
+	_GP(transtree).clear();
 
 	String parse_error;
 	bool result = parse_translation(language_file, parse_error);
@@ -104,8 +101,8 @@ String get_translation_path() {
 	return _G(trans_filename);
 }
 
-const TreeMap *get_translation_tree() {
-	return _G(transtree);
+const StringMap &get_translation_tree() {
+	return _GP(transtree);
 }
 
 bool parse_translation(Stream *language_file, String &parse_error) {
@@ -127,7 +124,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 					parse_error = "Translation file is corrupt";
 					return false;
 				}
-				_G(transtree)->addText(original, translation);
+				_GP(transtree).insert(std::make_pair(String(original), String(translation)));
 			}
 
 		} else if (blockType == 2) {
@@ -165,7 +162,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 		}
 	}
 
-	if (_G(transtree)->text == nullptr) {
+	if (_GP(transtree).size() == 0) {
 		parse_error = "The translation file was empty.";
 		return false;
 	}

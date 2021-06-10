@@ -25,6 +25,7 @@
 
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 #include "ags/shared/util/version.h"
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_script.h"
@@ -53,6 +54,7 @@ namespace AGS3 {
 
 using String = AGS::Shared::String;
 using Version = AGS::Shared::Version;
+using StringMap = AGS::Shared::StringMap;
 
 namespace AGS {
 namespace Shared {
@@ -162,7 +164,6 @@ struct StaticArray;
 struct StaticGame;
 struct SystemImports;
 struct TopBarSettings;
-struct TreeMap;
 struct ViewStruct;
 
 class Globals {
@@ -1310,7 +1311,7 @@ public:
 	 * @{
 	 */
 
-	TreeMap *_transtree = nullptr;
+	StringMap *_transtree = nullptr;
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;
 	char _transFileName[MAX_PATH] = { 0 };

@@ -332,6 +332,9 @@ Globals::Globals() {
 	_simp = new SystemImports();
 	_simp_for_plugin = new SystemImports();
 
+	// translation.cpp globals
+	_transtree = new StringMap();
+
 	// walk_behind.cpp globals
 	Common::fill(_walkBehindLeft, _walkBehindLeft + MAX_WALK_BEHINDS, 0);
 	Common::fill(_walkBehindTop, _walkBehindTop + MAX_WALK_BEHINDS, 0);
@@ -543,6 +546,9 @@ Globals::~Globals() {
 	// system_imports.cpp globals
 	delete _simp;
 	delete _simp_for_plugin;
+
+	// translation.cpp globals
+	delete _transtree;
 }
 
 } // namespace AGS3
