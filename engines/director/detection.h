@@ -40,8 +40,6 @@ struct DirectorGameDescription {
 	uint16 version;
 };
 
-extern const char *directoryGlobs[];
-
 } // End of namespace Director
 
 #endif // DIRECTOR_DETECTION_H
