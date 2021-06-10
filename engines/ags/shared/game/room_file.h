@@ -63,7 +63,31 @@ enum RoomFileErrorType {
 	kRoomFileErr_BlockNotFound
 };
 
+enum RoomFileBlock {
+	kRoomFblk_None = 0,
+	// Main room data
+	kRoomFblk_Main = 1,
+	// Room script text source (was present in older room formats)
+	kRoomFblk_Script = 2,
+	// Old versions of compiled script (no longer supported)
+	kRoomFblk_CompScript = 3,
+	kRoomFblk_CompScript2 = 4,
+	// Names of the room objects
+	kRoomFblk_ObjectNames = 5,
+	// Secondary room backgrounds
+	kRoomFblk_AnimBg = 6,
+	// Contemporary compiled script
+	kRoomFblk_CompScript3 = 7,
+	// Custom properties
+	kRoomFblk_Properties = 8,
+	// Script names of the room objects
+	kRoomFblk_ObjectScNames = 9,
+	// End of room data tag
+	kRoomFile_EOF = 0xFF
+};
+
 String GetRoomFileErrorText(RoomFileErrorType err);
+String GetRoomBlockName(RoomFileBlock id);
 
 typedef TypedCodeError<RoomFileErrorType, GetRoomFileErrorText> RoomFileError;
 typedef ErrorHandle<RoomFileError> HRoomFileError;
@@ -72,7 +96,6 @@ typedef std::shared_ptr<Stream> UStream;
 #else
 typedef std::unique_ptr<Stream> UStream;
 #endif
-
 
 
 // RoomDataSource defines a successfully opened room file
@@ -99,8 +122,20 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 // Extracts text script from the room file, if it's available.
 // Historically, text sources were kept inside packed room files before AGS 3.*.
 HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver);
-
+// Writes all room data to the stream
 HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersion data_ver);
+
+// Reads room data header using stream assigned to RoomDataSource;
+// tests and saves its format index if successful
+HRoomFileError ReadRoomHeader(RoomDataSource &src);
+// Opens next room block from the stream, fills in its identifier and length on success
+HRoomFileError OpenNextRoomBlock(Stream *in, RoomFileVersion data_ver, RoomFileBlock &block_id, String &ext_id, soff_t &block_len);
+// Type of function that writes single room block.
+typedef void(*PfnWriteRoomBlock)(const RoomStruct *room, Stream *out);
+// Writes room block with a new-style string id
+void WriteRoomBlock(const RoomStruct *room, const String &ext_id, PfnWriteRoomBlock writer, Stream *out);
+// Writes room block with a old-style numeric id
+void WriteRoomBlock(const RoomStruct *room, RoomFileBlock block, PfnWriteRoomBlock writer, Stream *out);
 
 } // namespace Shared
 } // namespace AGS
