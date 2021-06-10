@@ -38,6 +38,7 @@
 #include "engines/wintermute/wintermute.h"
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
+#include "common/unicode-bidi.h"
 #include "common/unzip.h"
 
 namespace Wintermute {
@@ -276,7 +277,11 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); ++it) {
-		_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
+		if (_gameRef->_textRTL) {
+			_font->drawString(surface, Common::convertBiDiU32String(*it), 0, heightOffset, width, useColor, alignment);
+		} else {
+			_font->drawString(surface, *it, 0, heightOffset, width, useColor, alignment);
+		}
 		heightOffset += (int)_lineHeight;
 	}
 
