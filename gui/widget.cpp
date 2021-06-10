@@ -1162,14 +1162,26 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	_scrollWindowWidth = 500;
 }
 
-void GridWidget::gridFromGameList(Common::Array<LauncherEntry> *list) {
+void GridWidget::setEntryList(Common::Array<LauncherEntry> *list) {
 	_allEntries = Common::Array<LauncherEntry>(*list);
+}
+
+void GridWidget::destroyItems() {
+	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(), end = _gridItems.end(); i != end; ++i) {
+		removeWidget((*i));
+		delete (*i);
+	}
+
+	_gridItems.clear();
+}
+
+void GridWidget::gridFromGameList() {
 	reloadThumbnails();
 	Common::HashMap<Common::String, GridItemWidget *> entryById;
 	int row = 0, col = 0;
 	_itemsPerRow = 6;
 	int k = 0;
-	for (Common::Array<LauncherEntry>::iterator i = list->begin(); i != list->end(); ++i) {
+	for (Common::Array<LauncherEntry>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
 		k = row * _itemsPerRow + col;
 		GridItemWidget *newEntry = entryById[i->domain->getVal("gameid")];
 		if (!newEntry) {
@@ -1268,11 +1280,6 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	int k = 0;
 	for (Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin(); iter != _gridItems.end(); ++iter) {
 		k = row * _itemsPerRow + col;
-		// (*iter)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-		// (*iter)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
-		// (*iter)->_lang->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-		// (*iter)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
-
 		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 
 		if (((*iter)->getRelY() <= -_gridItemHeight) || ((*iter)->getRelY() >= _h)) {
@@ -1292,6 +1299,8 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
+	destroyItems();
+	gridFromGameList();
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
 	int row = 0, col = 0;
@@ -1305,11 +1314,6 @@ void GridWidget::reflowLayout() {
 	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
 		k = row * _itemsPerRow + col;
 		if (*i) { 			
-			// (*i)->_thumb->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-			// (*i)->_plat->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80)+ kThumbnailHeight-32);
-			// (*i)->_lang->setPos(kThumbnailWidth + 50 - 32 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-			// (*i)->_title->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80) + kThumbnailHeight);
-
 			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
 			if (((*i)->getRelY() <= -_gridItemHeight) || ((*i)->getRelY() >= _h)) {
 				(*i)->setVisible(false);
