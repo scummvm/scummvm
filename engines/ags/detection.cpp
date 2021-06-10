@@ -224,7 +224,7 @@ DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) 
 	return detectedGames;
 }
 
-ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	// Set the default values for the fallback descriptor's ADGameDescription part.
 	AGS::g_fallbackDesc.desc.language = Common::UNK_LANG;
 	AGS::g_fallbackDesc.desc.platform = Common::kPlatformUnknown;

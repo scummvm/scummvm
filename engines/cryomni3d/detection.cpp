@@ -63,7 +63,7 @@ public:
 	}
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles,
-								  const Common::FSList &fslist) const override {
+								  const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		return detectGameFilebased(allFiles, fileBased);
 	}
 

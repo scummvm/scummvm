@@ -104,7 +104,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override {
 		/**
 		 * Fallback detection for Wintermute heavily depends on engine resources, so it's not possible
 		 * to use them without the engine present in a clean way.

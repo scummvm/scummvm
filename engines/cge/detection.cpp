@@ -135,7 +135,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
 static ADGameDescription s_fallbackDesc = {
@@ -153,7 +153,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 	{ 0, { 0 } }
 };
 
-ADDetectedGame CGEMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame CGEMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	ADDetectedGame game = detectGameFilebased(allFiles, CGE::fileBasedFallback);
 
 	if (!game.desc)
