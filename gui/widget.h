@@ -477,32 +477,31 @@ struct LauncherEntryComparator {
 	}
 };
 
-class EntryContainerWidget;
+class GridItemWidget;
 
 /* GridWidget */
 class GridWidget : public ContainerWidget {
 private:
 	Common::Array<Graphics::ManagedSurface *> _platformIcons;
-	// _entries should be reserved to hold few more than visible entries
+	// _gridItems should be reserved to hold few more than visible items
 	// Fixing it to 30 for now, 6 items * (4 rows + 1 extra row);
-	Common::Array<EntryContainerWidget *> _entries;
+	Common::Array<GridItemWidget *> _gridItems;
 	Common::Array<LauncherEntry> _allEntries;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
 	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
 
-	Common::Array<Common::Array<EntryContainerWidget *>> _grid;
+	Common::Array<Common::Array<GridItemWidget *>> _grid;
 
 	ScrollBarWidget *_scrollBar;
 
 	uint16 _scrollWindowHeight, _scrollWindowWidth, _scrollSpeed;
 	uint16 _innerHeight, _innerWidth;
 	uint16 _thumbnailHeight, _thumbnailWidth;
-	uint16 _entryHeight, _entryWidth;
+	uint16 _gridItemHeight, _gridItemWidth;
 	
 	int _scrollPos;
-	int _entriesPerRow;
-	int _entriesOnScreen;
-	int _totalEntries;
+	int _itemsPerRow;
+	int _itemsOnScreen;
 	bool _titlesVisible;
 
 public:
@@ -523,7 +522,7 @@ public:
 	Common::Array<Common::String> visibleEntries(void);
 
 	void loadPlatformIcons();
-	void updateEntries(void);
+	void updateGrid(void);
 	void gridFromGameList(Common::Array<LauncherEntry> *list);
 	int getLoadedNumber(void) {return _loadedSurfaces.size();}
 	void reloadThumbnails();
@@ -540,7 +539,7 @@ enum {
 };
 
 /* EntryContainerWidget */
-class EntryContainerWidget : public ContainerWidget {
+class GridItemWidget : public ContainerWidget {
 public:
 	GraphicsWidget *_thumb;
 	GraphicsWidget *_plat;
@@ -548,21 +547,21 @@ public:
 	StaticTextWidget *_title;
 	GridWidget *_grid;
 
-	Common::Array<LauncherEntry> _installations;
-	LauncherEntry *_activeInstall;
+	Common::Array<LauncherEntry> _attachedEntries;
+	LauncherEntry *_activeEntry;
 
 	bool isHighlighted;
-	void setActiveInstallation(LauncherEntry &install);
+	void setActiveEntry(LauncherEntry &entry);
 
 public:
-	EntryContainerWidget(GridWidget *boss, int x, int y, int w, int h);
-	EntryContainerWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t);
+	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
+	GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t);
 	
-	void addInstallation(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
-	void addInstallation(LauncherEntry &install);
-	void addInstallations(Common::Array<LauncherEntry> installs);
-	void setActiveInstallation(int i) {setActiveInstallation(_installations[i]);};
-	void updateEntry();
+	void attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
+	void attachEntry(LauncherEntry &entry);
+	void attachEntries(Common::Array<LauncherEntry> entry);
+	void setActiveEntry(int i) {setActiveEntry(_attachedEntries[i]);};
+	void update();
 	void drawWidget() override;
 	// void setEnabled(bool e);
 
