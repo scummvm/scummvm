@@ -2306,7 +2306,7 @@ uint16 Myst::rocketCheckSolutionLogicHelper(uint16 sound1, uint16 sound2, uint16
 
 	} else {
 
-	       if ( abs(sound1-sound2)>=5) {
+	       if (abs(sound1 - sound2) >= 5) {
 			debugN(" fuzzy : false \n");
 			return false;
 		}
