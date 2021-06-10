@@ -193,7 +193,7 @@ void cleanupServers(void) {
 }
 
 void loadAsyncResources(void) {
-	debug(3, "STUB: loadAsyncResources()");
+	debug(6, "STUB: loadAsyncResources()");
 
 #if 0
 	resourceServer->service();
