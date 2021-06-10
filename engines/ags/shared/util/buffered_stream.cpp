@@ -36,12 +36,17 @@ BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, 
 		if (FileStream::Seek(0, kSeekEnd) == false)
 			error("Error determining stream end.");
 
-		_end = FileStream::GetPosition();
-		if (_end == -1)
-			error("Error determining stream end.");
+		_end = -1;
+		if (FileStream::Seek(0, kSeekEnd)) {
+			_end = FileStream::GetPosition();
+			if (!FileStream::Seek(0, kSeekBegin))
+				_end = -1;
+		}
 
-		if (FileStream::Seek(0, kSeekBegin) == false)
+		if (_end == -1) {
+			FileStream::Close();
 			error("Error determining stream end.");
+		}
 	}
 
 	_buffer.resize(0);
