@@ -2302,9 +2302,9 @@ uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
 		fuzzylogic = true;
 	}
 
-	debugN("helper: %i %i %i (diff:% 3i)", sound1, sound2, fuzzylogic, sound1 - sound2);
+	debugN("helper: %i %i %i (diff:% 3i) ", sound1, sound2, fuzzylogic, sound1 - sound2);
 
-	if (fuzzylogic == 0) {
+	if (fuzzylogic == false) {
 
 		if (sound1 != sound2) {
 			debugN("strict : false \n");
