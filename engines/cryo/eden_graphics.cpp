@@ -55,7 +55,7 @@ EdenGraphics::EdenGraphics(EdenGame *game) : _game(game) {
 	_videoCanceledFlag = false;
 
 	for (int i = 0; i < 256; ++i) {
-		_globalPalette[i].a = _globalPalette[i].r = _globalPalette[i].b = _globalPalette[i].b = 0;
+		_globalPalette[i].a = _globalPalette[i].r = _globalPalette[i].g = _globalPalette[i].b = 0;
 		_oldPalette[i].a = _oldPalette[i].r = _oldPalette[i].g = _oldPalette[i].b = 0;
 		_newPalette[i].a = _newPalette[i].r = _newPalette[i].g = _newPalette[i].b = 0; 
 	}
