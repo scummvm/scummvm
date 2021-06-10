@@ -372,9 +372,12 @@ void LC::cb_unk2() {
 }
 
 void LC::cb_delete() {
-	g_lingo->readInt();
-	g_lingo->printSTUBWithArglist("cb_delete", 9);
-	g_lingo->dropStack(9);
+	int varType = g_lingo->readInt();
+	Datum varID = g_lingo->pop();
+	Datum var = g_lingo->findVarV4(varType, varID);
+	Datum chunkRef = readChunkRef(var);
+	g_lingo->push(chunkRef);
+	LB::b_delete(1);
 }
 
 void LC::cb_field() {
