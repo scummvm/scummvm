@@ -521,9 +521,11 @@ public:
 
 	Common::Array<Common::String> visibleEntries(void);
 
+	void setEntryList(Common::Array<LauncherEntry> *list);
+	void destroyItems();
 	void loadPlatformIcons();
 	void updateGrid(void);
-	void gridFromGameList(Common::Array<LauncherEntry> *list);
+	void gridFromGameList();
 	int getLoadedNumber(void) {return _loadedSurfaces.size();}
 	void reloadThumbnails();
 	void handleMouseWheel(int x, int y, int direction) override;

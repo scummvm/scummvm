@@ -347,7 +347,7 @@ void LauncherDialog::updateListing() {
 	// Now sort the list in dictionary order
 	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
-	_grid->gridFromGameList(&domainList);
+	_grid->setEntryList(&domainList);
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
