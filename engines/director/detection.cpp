@@ -328,7 +328,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
+	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override;
 };
 
 static Director::DirectorGameDescription s_fallbackDesc = {
@@ -348,7 +348,7 @@ static Director::DirectorGameDescription s_fallbackDesc = {
 static char s_fallbackFileNameBuffer[51];
 static char s_fallbackExtraBuf[256];
 
-ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
+ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const {
 	// TODO: Handle Mac fallback
 
 	// reset fallback description
@@ -385,8 +385,13 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			desc->desc.filesDescriptions[0].fileName = s_fallbackFileNameBuffer;
 			desc->version = atoi(version.c_str());
 			desc->desc.platform = Common::parsePlatform(platform);
-			Common::strlcpy(s_fallbackExtraBuf, gameName.c_str(), sizeof(s_fallbackExtraBuf) - 1);
-			desc->desc.extra = s_fallbackExtraBuf;
+
+			// if we have extra info slots
+			if (extraInfo != nullptr) {
+				*extraInfo = new ADDetectedGameExtraInfo;
+				(*extraInfo)->targetID = targetID;
+				(*extraInfo)->gameName = gameName;
+			}
 
 			ADDetectedGame game(&desc->desc);
 			return game;
