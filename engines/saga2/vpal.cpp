@@ -92,8 +92,15 @@ static PaletteStateArchive  archive;        //  Used for loading and saving
  * ===================================================================== */
 
 void assertCurrentPalette(void) {
-	if (paletteChangesEnabled())
-		g_system->getPaletteManager()->setPalette((uint8 *)&currentPalette, 0, 256);
+	if (paletteChangesEnabled()) {
+		byte palette[256 * 3];
+		for (int i = 0; i < 256; i++) {
+			palette[i * 3 + 0] = ((byte *)&currentPalette)[i * 3 + 0] << 2;
+			palette[i * 3 + 1] = ((byte *)&currentPalette)[i * 3 + 1] << 2;
+			palette[i * 3 + 2] = ((byte *)&currentPalette)[i * 3 + 2] << 2;
+		}
+		g_system->getPaletteManager()->setPalette(palette, 0, 256);
+	}
 }
 
 
