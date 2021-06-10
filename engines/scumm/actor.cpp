@@ -542,8 +542,8 @@ int Actor::actorWalkStep() {
 			startWalkAnim(1, nextFacing);
 		}
 		_moving |= MF_IN_LEG;
-		// The next two lines fix bug #12278. I limit this to <= SCUMM3 for now, since I have only checked disasms of ZAK FM-TOWNS, ZAK DOS V1, LOOM DOS.
-		if (_vm->_game.version <= 3)
+		// The next two lines fix bug #12278 for ZAK FM-TOWNS. Limited to SCUMM3.
+		if (_vm->_game.version == 3)
 			return 1;
 	}
 
