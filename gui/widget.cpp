@@ -1046,7 +1046,10 @@ void GridItemWidget::setActiveEntry(LauncherEntry &entry) {
 
 void GridItemWidget::update() {
 	if ((!_activeEntry) && (!_attachedEntries.empty())) {
-		_activeEntry = _attachedEntries.begin();
+		_activeEntry = _attachedEntries.begin(); 
+	}
+	
+	if (isVisible()) {
 		// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
 		Common::String gameid = _activeEntry->domain->getVal("gameid");
 		Common::String engineid = _activeEntry->domain->getVal("engineid");
@@ -1192,46 +1195,64 @@ void GridWidget::loadPlatformIcons() {
 	}
 }
 
-Common::Array<Common::String> GridWidget::visibleEntries() {
-	Common::Array<Common::String> thumbList;
-	Common::String pathPrefix("./icons/");
-	int startingEntry = 0;
-	int totalVisibleEntries = 0;
-	for (auto iter = _allEntries.begin(); iter != _allEntries.end(); ++iter) {
-		Common::String gameid = iter->domain->getVal("gameid");
-		Common::String engineid = iter->domain->getVal("engineid");
-		thumbList.push_back(pathPrefix + Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str()));
+bool GridWidget::calcVisibleEntries() {
+	warning("calcingVisible entries");
+	bool needsReload = false;
+
+	int nFirstVisibleItem = 0;
+	int nItemsOnScreen = 0;
+
+	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / _gridItemHeight);
+	nItemsOnScreen = ((_scrollWindowHeight / _gridItemHeight) + 1) * (_itemsPerRow);
+
+	if ((nFirstVisibleItem != _firstVisibleItem) || (nItemsOnScreen != _itemsOnScreen)) {
+		needsReload = true;
+		_firstVisibleItem = nFirstVisibleItem;
+		_itemsOnScreen = nItemsOnScreen;
+
+		_visibleEntries.clear();
+		for (int ind = _firstVisibleItem; ind < _firstVisibleItem + _itemsOnScreen; ++ind) {
+			LauncherEntry *iter = _allEntries.begin() + ind;
+			_visibleEntries.push_back(*iter);
+		}
 	}
-	return thumbList;
+
+	// warning("Visible entries : %d to %d", _firstVisibleItem, _itemsOnScreen);
+	return needsReload;
 }
 
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
 	_loadedSurfaces.clear(true);
-	Common::Array<Common::String> titleList = visibleEntries();
-	for (Common::Array<Common::String>::iterator iter = titleList.begin(); iter != titleList.end(); ++iter) {
-		if (_loadedSurfaces.contains(*iter)) {
+	for (Common::Array<LauncherEntry>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
+		Common::String gameid = iter->domain->getVal("gameid");
+		Common::String engineid = iter->domain->getVal("engineid");
+		Common::String path = Common::String("./icons/")+Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+		if (_loadedSurfaces.contains(path)) {
 			warning("Thumbnail already loaded, skipping...");
 		}
 		else {
-			surf = loadSurfaceFromFile(*iter);
-			_loadedSurfaces[*iter] = surf;
+			surf = loadSurfaceFromFile(path);
+			_loadedSurfaces[path] = surf;
 		}
 	}
 }
 
-Graphics::ManagedSurface * GridWidget::filenameToSurface(Common::String &name) {
+Graphics::ManagedSurface *GridWidget::filenameToSurface(Common::String &name) {
 	Common::String path = Common::String("./icons/")+name;
-	auto list = visibleEntries();
-	for (auto l = list.begin(); l!=list.end(); ++l) {
-		if (*l == path) {
+	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
+		Common::String gameid = l->domain->getVal("gameid");
+		Common::String engineid = l->domain->getVal("engineid");
+		Common::String lPath = Common::String("./icons/")+Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+		if (lPath == path) {
 			return _loadedSurfaces[path];
 		}
 	}
+	// warning("This image is not visible");
 	return nullptr;
 }
 
-Graphics::ManagedSurface * GridWidget::platformToSurface(Platform platformCode) {
+Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
 	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
 		warning("Unknown Platform");
 		return nullptr;
@@ -1248,6 +1269,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
 	int row = 0, col = 0;
 	int k = 0;
+
 	for (Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin(); iter != _gridItems.end(); ++iter) {
 		k = row * _itemsPerRow + col;
 		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
@@ -1264,6 +1286,12 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		}
 		++k;
 	}
+
+	if (calcVisibleEntries()) {
+		reloadThumbnails();
+		updateGrid();
+	}
+	
 	markAsDirty();
 }
 
@@ -1284,6 +1312,10 @@ void GridWidget::reflowLayout() {
 
 	int row = 0;
 	int col = 0;
+
+	if (calcVisibleEntries()) {
+		reloadThumbnails();
+	}
 
 	Common::HashMap<Common::String, GridItemWidget *> entryById;
 
@@ -1317,6 +1349,13 @@ void GridWidget::reflowLayout() {
 	}
 	markAsDirty();
 }
+
+void GridWidget::updateGrid() {
+	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+		(*i)->update();
+	}
+}
+
 
 #pragma mark -
 
