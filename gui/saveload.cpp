@@ -22,7 +22,6 @@
 
 #include "common/config-manager.h"
 #include "common/system.h"
-#include "common/debug-channels.h"
 
 #include "gui/saveload.h"
 #include "gui/saveload-dialog.h"
@@ -80,10 +79,6 @@ Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) con
 int SaveLoadChooser::runModalWithCurrentTarget() {
 	if (!g_engine)
 		error("No engine is currently active");
-
-	const MetaEngineDetection &metaEngineDetection = g_engine->getMetaEngineDetection();
-	DebugMan.debugFlagsClear();
-	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannels());
 
 	return runModalWithMetaEngineAndTarget(g_engine->getMetaEngine(), ConfMan.getActiveDomainName());
 }

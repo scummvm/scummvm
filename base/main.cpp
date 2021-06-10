@@ -155,7 +155,7 @@ void saveLastLaunchedTarget(const Common::String &target) {
 }
 
 // TODO: specify the possible return values here
-static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, OSystem &system, const Common::String &edebuglevels) {
+static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, OSystem &system, const Common::String &debugLevels) {
 	assert(plugin);
 	assert(enginePlugin);
 
@@ -271,7 +271,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 	// On creation the engine should have set up all debug levels so we can use
 	// the command line arguments here
-	Common::StringTokenizer tokenizer(edebuglevels, " ,");
+	Common::StringTokenizer tokenizer(debugLevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 		if (token.equalsIgnoreCase("all"))

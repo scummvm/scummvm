@@ -499,6 +499,11 @@ void LC::c_assign() {
 void LC::c_eval() {
 	LC::c_varpush();
 
+	// HACK: The grammar currently doesn't differentiate between cases
+	// when it should push a reference (e.g. delete char 2 of "abc")
+	// and cases when it should push the value (e.g. put char 2 of "abc")
+	// Until that's fixed, just push the reference, and it will be evaluated by pop.
+#if 0
 	Datum d;
 	d = g_lingo->pop(false);
 
@@ -510,6 +515,7 @@ void LC::c_eval() {
 	d = g_lingo->varFetch(d);
 
 	g_lingo->push(d);
+#endif
 }
 
 void LC::c_theentitypush() {
@@ -915,10 +921,8 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 		break;
 	case kChunkWord:
 		{
-			Common::String whitespace = "\t\n\r ";
-
 			int idx = 0;
-			while (idx < (int)str.size() && whitespace.contains(str[idx])) {
+			while (idx < (int)str.size() && Common::isSpace(str[idx])) {
 				idx++;
 			}
 			while (idx < (int)str.size()) {
@@ -931,7 +935,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 					exprStartIdx = chunkStartIdx;
 				}
 
-				while (idx < (int)str.size() && !whitespace.contains(str[idx])) {
+				while (idx < (int)str.size() && !Common::isSpace(str[idx])) {
 					idx++;
 				}
 
@@ -943,7 +947,7 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 					break;
 				}
 
-				while (idx < (int)str.size() && whitespace.contains(str[idx])) {
+				while (idx < (int)str.size() && Common::isSpace(str[idx])) {
 					idx++;
 				}
 			}
@@ -1644,20 +1648,11 @@ void LC::c_procret() {
 }
 
 void LC::c_hilite() {
-	Datum first_char = g_lingo->pop();
-	Datum last_char = g_lingo->pop();
-	Datum first_word = g_lingo->pop();
-	Datum last_word = g_lingo->pop();
-	Datum first_item = g_lingo->pop();
-	Datum last_item = g_lingo->pop();
-	Datum first_line = g_lingo->pop();
-	Datum last_line = g_lingo->pop();
-	Datum cast_id = g_lingo->pop();
-
-	warning("STUB: LC::c_hilite(): %d %d %d %d %d %d %d %d %d",
-		first_char.u.i, last_char.u.i, first_word.u.i, last_word.u.i,
-		first_item.u.i, last_item.u.i, first_line.u.i, last_line.u.i,
-		cast_id.u.i);
+	Datum fieldID = g_lingo->pop().asCastId();
+	fieldID.type = FIELDREF;
+	Datum chunkRef = readChunkRef(fieldID);
+	g_lingo->push(chunkRef);
+	LB::b_hilite(1);
 }
 
 void LC::c_asserterror() {

@@ -27,6 +27,7 @@
 
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/macgui/mactext.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -501,23 +502,83 @@ void LB::b_charToNum(int nargs) {
 }
 
 void LB::b_delete(int nargs) {
-	Datum d = g_lingo->pop();
+	Datum d = g_lingo->pop(false);
 
-	Datum res(d.asInt());
+	Datum field;
+	int start, end;
+	if (d.type == FIELDREF || d.type == VAR) {
+		field = d;
+		start = 0;
+		end = -1;
+	} else if (d.type == CHUNKREF) {
+		TYPECHECK2(d.u.cref->source, FIELDREF, VAR);
+		field = d.u.cref->source;
+		start = d.u.cref->start;
+		end = d.u.cref->end;
+	} else {
+		warning("b_delete: bad field type: %s", d.type2str());
+		return;
+	}
 
-	warning("STUB: b_delete");
+	if (start < 0)
+		return;
 
-	g_lingo->push(res);
+	Common::String text = g_lingo->varFetch(field).asString();
+	if (d.type == CHUNKREF) {
+		switch (d.u.cref->type) {
+		case kChunkChar:
+			break;
+		case kChunkWord:
+			while (end < (int)text.size() && Common::isSpace(text[end]))
+				end++;
+			break;
+		case kChunkItem:
+		case kChunkLine:
+			// last char of the first portion is the delimiter. skip it.
+			if (start > 0)
+				start--;
+			break;
+		}
+	}
+
+	Common::String res = text.substr(0, start) + text.substr(end);
+	Datum s;
+	s.u.s = new Common::String(res);
+	s.type = STRING;
+	g_lingo->varAssign(field, s);
 }
 
 void LB::b_hilite(int nargs) {
-	Datum d = g_lingo->pop();
+	Datum d = g_lingo->pop(false);
 
-	Datum res(d.asInt());
+	int fieldId, start, end;
+	if (d.type == FIELDREF) {
+		fieldId = d.u.i;
+		start = 0;
+		end = -1;
+	} else if (d.type == CHUNKREF) {
+		TYPECHECK(d.u.cref->source, FIELDREF);
+		fieldId = d.u.cref->source.u.i;
+		start = d.u.cref->start;
+		end = d.u.cref->end;
+	} else {
+		warning("b_hilite: bad field type: %s", d.type2str());
+		return;
+	}
 
-	warning("STUB: b_hilite");
+	if (start < 0)
+		return;
 
-	g_lingo->push(res);
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint16 spriteId = score->getSpriteIdByMemberId(fieldId);
+	if (spriteId == 0)
+		return;
+
+	Channel *channel = score->getChannelById(spriteId);
+	if (channel->_sprite->_cast && channel->_sprite->_cast->_type == kCastText && channel->_widget) {
+		((Graphics::MacText *)channel->_widget)->setSelection(start, true);
+		((Graphics::MacText *)channel->_widget)->setSelection(end, false);
+	}
 }
 
 void LB::b_length(int nargs) {
