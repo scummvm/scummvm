@@ -2325,7 +2325,7 @@ void Myst::rocketCheckSolution() {
 	bool solved = true;
 	bool fuzzylogic = false;
 
-         if (ConfMan.getBool("fuzzy_logic")) {
+  if (ConfMan.getBool("fuzzy_logic")) {
 		fuzzylogic = true;
 	}
 
