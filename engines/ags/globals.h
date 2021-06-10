@@ -68,6 +68,7 @@ class GUIListBox;
 class GUISlider;
 class GUITextBox;
 struct InteractionVariable;
+struct PlaneScaling;
 class RoomStruct;
 
 } // namespace Shared
@@ -81,7 +82,6 @@ class IGfxDriverFactory;
 class IGraphicsDriver;
 class LogFile;
 class MessageBuffer;
-struct PlaneScaling;
 
 } // namespace Engine
 } // namespace AGS
@@ -871,7 +871,7 @@ public:
 	// Current frame scaling setup
 	GameFrameSetup *_CurFrameSetup;
 	// The game-to-screen transformation
-	AGS::Engine::PlaneScaling *_GameScaling;
+	AGS::Shared::PlaneScaling *_GameScaling;
 
 	/**@}*/
 

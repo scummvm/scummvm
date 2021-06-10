@@ -32,7 +32,7 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/util/geometry.h"
-#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 
@@ -139,7 +139,7 @@ public:
 		return _position;
 	}
 	// Returns viewport's room-to-screen transformation
-	inline const AGS::Engine::PlaneScaling &GetTransform() const {
+	inline const AGS::Shared::PlaneScaling &GetTransform() const {
 		return _transform;
 	}
 	// Set viewport's rectangle on screen
@@ -210,7 +210,7 @@ private:
 	// Coordinate tranform between camera and viewport
 	// TODO: need to add rotate conversion to let script API support that;
 	// (maybe use full 3D matrix for that)
-	AGS::Engine::PlaneScaling _transform;
+	AGS::Shared::PlaneScaling _transform;
 	// Linked camera reference
 	CameraRef _camera;
 	bool _visible = true;

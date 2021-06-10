@@ -29,15 +29,15 @@
 //
 //=============================================================================
 
-#ifndef AGS_ENGINE_UTIL_SCALING_H
-#define AGS_ENGINE_UTIL_SCALING_H
+#ifndef AGS_SHARED_UTIL_SCALING_H
+#define AGS_SHARED_UTIL_SCALING_H
 
 #include "ags/shared/core/types.h"
 #include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 namespace AGS {
-namespace Engine {
+namespace Shared {
 
 class AxisScaling {
 public:
@@ -155,7 +155,7 @@ struct PlaneScaling {
 	}
 };
 
-} // namespace Engine
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

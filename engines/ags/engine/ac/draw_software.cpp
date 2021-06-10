@@ -49,7 +49,7 @@
 #include "ags/lib/std/vector.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/scaling.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -354,7 +354,7 @@ void update_invalid_region(Bitmap *ds, color_t fill_color, const DirtyRects &rec
 		const std::vector<IRRow> &dirtyRow = rects.DirtyRows;
 		const int surf_height = rects.SurfaceSize.Height;
 		{
-			const PlaneScaling &tf = rects.Room2Screen;
+			const AGS::Shared::PlaneScaling &tf = rects.Room2Screen;
 			for (int i = 0, rowsInOne = 1; i < surf_height; i += rowsInOne, rowsInOne = 1) {
 				// if there are rows with identical masks, do them all in one go
 				// TODO: what is this for? may this be done at the invalidate_rect merge step?

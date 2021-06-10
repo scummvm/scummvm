@@ -30,11 +30,13 @@
 #define AGS_ENGINE_GFX_SCALING_GFX_FILTER_H
 
 #include "ags/engine/gfx/gfxfilter.h"
-#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
+
+using AGS::Shared::PlaneScaling;
 
 class ScalingGfxFilter : public IGfxFilter {
 public:

@@ -245,7 +245,7 @@ Globals::Globals() {
 	_SavedFullscreenSetting = new ActiveDisplaySetting();
 	_SavedWindowedSetting = new ActiveDisplaySetting();
 	_CurFrameSetup = new GameFrameSetup();
-	_GameScaling = new AGS::Engine::PlaneScaling();
+	_GameScaling = new AGS::Shared::PlaneScaling();
 
 	// gui_button.cpp globals
 	_guibuts = new std::vector<AGS::Shared::GUIButton>();

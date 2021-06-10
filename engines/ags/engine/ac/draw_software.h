@@ -33,11 +33,11 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/shared/util/geometry.h"
-#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 
-using AGS::Engine::PlaneScaling;
+using AGS::Shared::PlaneScaling;
 
 // TODO: choose these values depending on game resolution?
 #define MAXDIRTYREGIONS 25

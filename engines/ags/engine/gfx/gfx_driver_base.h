@@ -32,13 +32,14 @@
 #include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/graphics_driver.h"
-#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
 using Shared::Bitmap;
+using Shared::PlaneScaling;
 
 // Sprite batch, defines viewport and an optional model transformation for the list of sprites
 struct SpriteBatchDesc {
