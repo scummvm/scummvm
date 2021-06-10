@@ -193,6 +193,7 @@ public:
 		baseRow = nullptr;
 
 		rowMod = 0;
+		origin = Point16(0, 0);
 		penMap = nullptr;
 		drawMode = drawModeMatte;
 		font = nullptr;
