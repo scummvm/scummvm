@@ -754,6 +754,7 @@ public:
 	char _gamefilenamebuf[200] = { 0 };
 	int _gameHasBeenRestored = 0;
 	int _oldeip = 0;
+	int _game_update_suspend = 0;
 
 	/**@}*/
 

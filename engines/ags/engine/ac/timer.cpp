@@ -23,6 +23,7 @@
 #include "ags/lib/std/thread.h"
 #include "ags/engine/ac/timer.h"
 #include "ags/shared/core/platform.h"
+#include "ags/engine/ac/sys_events.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/ags.h"
 #include "ags/globals.h"
@@ -59,6 +60,11 @@ void WaitForNextFrame() {
 	// early exit if we're trying to maximise framerate
 	if (frameDuration <= std::chrono::milliseconds::zero()) {
 		_G(next_frame_timestamp) = now;
+		// suspend while the game is being switched out
+		while (_G(game_update_suspend) > 0) {
+			sys_evt_process_pending();
+			_G(platform)->YieldCPU();
+		}
 		return;
 	}
 
@@ -73,6 +79,12 @@ void WaitForNextFrame() {
 	}
 
 	_G(next_frame_timestamp) += frameDuration;
+
+	// suspend while the game is being switched out
+	while (_G(game_update_suspend) > 0) {
+		sys_evt_process_pending();
+		_G(platform)->YieldCPU();
+	}
 }
 
 void skipMissedTicks() {

@@ -1231,9 +1231,9 @@ void display_switch_out() {
 
 // Called when game looses input focus and must pause until focus is returned
 void display_switch_out_suspend() {
-	display_switch_out();
-
 	_G(switching_away_from_game)++;
+	_G(game_update_suspend)++;
+	display_switch_out();
 
 	_G(platform)->PauseApplication();
 
@@ -1263,6 +1263,7 @@ void display_switch_in() {
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
 		_GP(mouse).TryLockToWindow();
+	_G(switched_away) = false;
 }
 
 // Called when game gets input focus and must resume after pause
@@ -1286,6 +1287,7 @@ void display_switch_in_resume() {
 	// TODO: find out if anything has to be done here for SDL backend
 
 	_G(platform)->ResumeApplication();
+	_G(game_update_suspend)--;
 }
 
 void replace_tokens(const char *srcmes, char *destm, int maxlen) {
