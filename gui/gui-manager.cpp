@@ -440,13 +440,29 @@ void GuiManager::runLoop() {
 				++it;
 		}
 
-		if (_lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
+		// Handle tooltip for the widget under the mouse cursor
+		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
+		if (_lastMousePosition.time + kTooltipDelay < systemMillisNowForTooltipCheck) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
 			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
-				Tooltip *tooltip = new Tooltip();
-				tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
-				tooltip->runModal();
-				delete tooltip;
+				Widget *focusedWdg = activeDialog->getFocusWidget();
+				if (focusedWdg && focusedWdg->getType() == kEditTextWidget) {
+					// If an EditText widget has the focus -- and presumably the user is typing in it,
+					// then don't display the tooltip for any widget (wdg)
+					// currently under the mouse cursor so as not to interfere with text typing.
+					// This applies whether the mouse-hovered widget (wdg) is the focused EditText widget
+					// or any other widget with tooltip.
+					// Also, force-update the time of last mouse position to the current time,
+					// to avoid the tooltip showing up / blinking
+					// as soon as the focus from the EditText widget is lost,
+					// while the mouse is still hovering over a tooltip-enabled widget.
+					_lastMousePosition.time = systemMillisNowForTooltipCheck;
+				} else {
+					Tooltip *tooltip = new Tooltip();
+					tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
+					tooltip->runModal();
+					delete tooltip;
+				}
 			}
 		}
 
