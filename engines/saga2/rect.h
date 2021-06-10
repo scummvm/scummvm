@@ -34,7 +34,7 @@ public:
 	int16               x, y;
 
 	// constructors
-	Point16() {}
+	Point16() { x = y = 0; }
 	Point16(int16 nx, int16 ny) {
 		x = nx;
 		y = ny;
@@ -138,7 +138,7 @@ public:
 	int32               x, y;
 
 	// constructors
-	Point32() {}
+	Point32() { x = y = 0; }
 	Point32(int32 nx, int32 ny) {
 		x = nx;
 		y = ny;
@@ -250,7 +250,7 @@ public:
 	                    width, height;
 
 	// constructors
-	Rect16() {}
+	Rect16() { x = y = width = height = 0; }
 	Rect16(int16 nx, int16 ny, int16 nw, int16 nh) {
 		x = nx;
 		y = ny;
@@ -371,7 +371,7 @@ public:
 	                    width, height;
 
 	// constructors
-	Rect32() {}
+	Rect32() { x = y = width = height = 0; }
 	Rect32(int32 nx, int32 ny, int32 nw, int32 nh) {
 		x = nx;
 		y = ny;
