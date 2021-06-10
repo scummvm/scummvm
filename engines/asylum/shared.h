@@ -438,7 +438,7 @@ enum OpcodeType {
 	kOpcodeClearActorFields,
 	kOpcodeSetObjectLastFrameIndex,             // 95
 	kOpcodeSetActionAreaFlags,
-	kOpcodeUpdatePlayerChapter9,
+	kOpcodeMorphActor,
 	kOpcodeShowMenu,
 	kOpcodeUpdateGlobalFlags
 };

@@ -433,7 +433,7 @@ void AsylumEngine::processDelayedEvents() {
 		_script->resetQueue();
 		_script->reset();
 		if (_scene)
-			_scene->getActor(0)->updateStatus(kActorStatusDisabled);
+			_scene->getActor(0)->changeStatus(kActorStatusDisabled);
 
 		// Fade screen to black
 		_screen->paletteFade(0, 75, 8);
