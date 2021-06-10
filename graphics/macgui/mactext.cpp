@@ -1303,18 +1303,18 @@ void MacText::setSelection(int pos, bool start) {
 				for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
 					if ((uint)pos < _textLines[row].chunks[i].text.size()) {
 						colX += _textLines[row].chunks[i].getFont()->getStringWidth(_textLines[row].chunks[i].text.substr(0, pos));
-						col += pos + 1;
+						col += pos;
 						pos = 0;
 						break;
 					} else {
 						colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text));
 						pos -= _textLines[row].chunks[i].text.size();
-						col += _textLines[row].chunks[i].text.size() + 1;
+						col += _textLines[row].chunks[i].text.size();
 					}
 				}
 				break;
 			} else {
-				pos -= getLineCharWidth(row) + 1; // (row ? 1 : 0);
+				pos -= getLineCharWidth(row); // (row ? 1 : 0);
 			}
 
 			row++;
