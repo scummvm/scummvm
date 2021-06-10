@@ -499,6 +499,11 @@ void LC::c_assign() {
 void LC::c_eval() {
 	LC::c_varpush();
 
+	// HACK: The grammar currently doesn't differentiate between cases
+	// when it should push a reference (e.g. delete char 2 of "abc")
+	// and cases when it should push the value (e.g. put char 2 of "abc")
+	// Until that's fixed, just push the reference, and it will be evaluated by pop.
+#if 0
 	Datum d;
 	d = g_lingo->pop(false);
 
@@ -510,6 +515,7 @@ void LC::c_eval() {
 	d = g_lingo->varFetch(d);
 
 	g_lingo->push(d);
+#endif
 }
 
 void LC::c_theentitypush() {
