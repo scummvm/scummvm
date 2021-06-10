@@ -24,6 +24,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "graphics/cursorman.h"
+
 #include "saga2/std.h"
 #include "saga2/gpointer.h"
 
@@ -131,10 +133,6 @@ void gMousePointer::show(void) {
 	assert(hideCount > 0);
 
 	if (--hideCount == 0) {
-#if     defined( USEWINDOWS )
-		WinResumeTransfer();
-#endif
-
 		draw();
 	}
 }
@@ -142,9 +140,6 @@ void gMousePointer::show(void) {
 //  Makes the mouse pointer invisible
 void gMousePointer::hide(void) {
 	if (hideCount++ == 0) {
-#if     defined( USEWINDOWS )
-		WinPauseTransfer();
-#endif
 		restore();
 	}
 }
@@ -156,16 +151,12 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 	r.x += org.x;
 	r.y += org.y;
 
-#if     defined( USEWINDOWS )
-	// KMY NOTE:
-	// In this case, (special), just in case saveExtent.overlap(r) is not always true in matching
-	// pairs, we pause/resume regardless.  Maybe I'm being anal, but it's safer and not really any
-	// performance hit.
-	WinResumeTransfer();
-#endif
-
 	if (saveExtent.overlap(r)) {
-		if (--hideCount == 0) draw();
+		if (--hideCount == 0) {
+			draw();
+			CursorMan.showMouse(true);
+		}
+
 	}
 }
 
@@ -180,7 +171,8 @@ int gMousePointer::manditoryShow(void) {
 		hide();
 		rv--;
 	}
-	if (!shown) draw();
+	if (!shown)
+		draw();
 	return rv;
 }
 
@@ -192,16 +184,11 @@ void gMousePointer::hide(gPort &port, Rect16 r) {
 	r.x += org.x;
 	r.y += org.y;
 
-#if     defined( USEWINDOWS )
-	// KMY NOTE:
-	// In this case, (special), just in case saveExtent.overlap(r) is not always true in matching
-	// pairs, we pause/resume regardless.  Maybe I'm being anal, but it's safer and not really any
-	// performance hit.
-	WinPauseTransfer();
-#endif
-
 	if (saveExtent.overlap(r)) {
-		if (hideCount++ == 0) restore();
+		if (hideCount++ == 0) {
+			restore();
+			CursorMan.showMouse(false);
+		}
 	}
 }
 
@@ -231,15 +218,15 @@ void gMousePointer::setImage(
 		offsetPosition.y = y;
 
 		hide();
-		if (saveMap.data) free(saveMap.data);
+		if (saveMap.data)
+			free(saveMap.data);
 		saveMap.size = img.size;
 		saveMap.data = (uint8 *)malloc(img.bytes());
 		pointerImage = &img;
 		currentPosition = pos + offsetPosition;
-#if     defined( USEWINDOWS )
-		if (useWinCursor)
-			SetWinCursor(img, x, y);
-#endif
+
+		CursorMan.replaceCursor(img.data, img.size.x, img.size.y, x, y, 0);
+		CursorMan.showMouse(true);
 		show();
 	}
 }
