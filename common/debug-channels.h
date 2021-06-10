@@ -160,11 +160,11 @@ public:
 private:
 	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
 
-	DebugChannelMap gDebugChannels;
-	uint32 gDebugChannelsEnabled;
+	DebugChannelMap _debugChannels;
+	uint32 _debugChannelsEnabled;
 
 	friend class Singleton<SingletonBaseType>;
-	DebugManager() : gDebugChannelsEnabled(0) {}
+	DebugManager() : _debugChannelsEnabled(0) {}
 };
 
 /** Shortcut for accessing the Debug Manager. */
