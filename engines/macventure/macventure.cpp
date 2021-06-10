@@ -86,8 +86,6 @@ MacVentureEngine::MacVentureEngine(OSystem *syst, const ADGameDescription *gameD
 MacVentureEngine::~MacVentureEngine() {
 	debug("MacVenture::~MacVentureEngine()");
 
-	DebugMan.clearAllDebugChannels();
-
 	if (_rnd)
 		delete _rnd;
 

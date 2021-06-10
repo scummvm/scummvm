@@ -58,8 +58,6 @@ Common::Error TSageEngine::init() {
 }
 
 TSageEngine::~TSageEngine() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
 }
 
 bool TSageEngine::hasFeature(EngineFeature f) const {

@@ -236,7 +236,6 @@ GrimEngine::~GrimEngine() {
 	delete _commentary;
 
 	ConfMan.flushToDisk();
-	DebugMan.clearAllDebugChannels();
 
 	g_grim = nullptr;
 }

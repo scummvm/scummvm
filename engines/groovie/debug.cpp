@@ -49,7 +49,6 @@ Debugger::Debugger(GroovieEngine *vm) :
 }
 
 Debugger::~Debugger() {
-	DebugMan.clearAllDebugChannels();
 }
 
 int Debugger::getNumber(const char *arg) {

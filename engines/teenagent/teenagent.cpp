@@ -82,8 +82,6 @@ TeenAgentEngine::~TeenAgentEngine() {
 	res = 0;
 
 	CursorMan.popCursor();
-
-	DebugMan.clearAllDebugChannels();
 }
 
 bool TeenAgentEngine::trySelectedObject() {

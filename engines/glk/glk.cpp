@@ -69,9 +69,6 @@ GlkEngine::~GlkEngine() {
 	delete _streams;
 	delete _windows;
 	delete _conf;
-
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
 }
 
 void GlkEngine::initialize() {

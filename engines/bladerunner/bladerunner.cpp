@@ -778,8 +778,6 @@ void BladeRunnerEngine::initChapterAndScene() {
 }
 
 void BladeRunnerEngine::shutdown() {
-	DebugMan.clearAllDebugChannels();
-
 	_mixer->stopAll();
 
 	// BLADE.INI as updated here

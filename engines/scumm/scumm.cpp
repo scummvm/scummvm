@@ -617,8 +617,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 
 ScummEngine::~ScummEngine() {
-	DebugMan.clearAllDebugChannels();
-
 	delete _musicEngine;
 
 	_mixer->stopAll();

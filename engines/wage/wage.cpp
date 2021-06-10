@@ -93,7 +93,6 @@ WageEngine::WageEngine(OSystem *syst, const ADGameDescription *desc) : Engine(sy
 WageEngine::~WageEngine() {
 	debug("WageEngine::~WageEngine()");
 
-	DebugMan.clearAllDebugChannels();
 	delete _world;
 	delete _resManager;
 	delete _gui;

@@ -94,9 +94,6 @@ SludgeEngine::~SludgeEngine() {
 	delete _rnd;
 	_rnd = nullptr;
 
-	// Remove debug levels
-	DebugMan.clearAllDebugChannels();
-
 	// Dispose pixel formats
 	delete _origFormat;
 	_origFormat = nullptr;

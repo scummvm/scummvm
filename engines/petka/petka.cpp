@@ -65,7 +65,6 @@ PetkaEngine::PetkaEngine(OSystem *system, const ADGameDescription *desc)
 
 PetkaEngine::~PetkaEngine() {
 	debug("PetkaEngine::dtor");
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error PetkaEngine::run() {

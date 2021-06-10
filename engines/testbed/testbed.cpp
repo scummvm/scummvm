@@ -170,8 +170,6 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 
 TestbedEngine::~TestbedEngine() {
 	ConfParams.deleteWriteStream();
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
 
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
 		delete (*i);

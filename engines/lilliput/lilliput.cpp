@@ -257,7 +257,6 @@ LilliputEngine::LilliputEngine(OSystem *syst, const LilliputGameDescription *gd)
 }
 
 LilliputEngine::~LilliputEngine() {
-	DebugMan.clearAllDebugChannels();
 	delete _soundHandler;
 	delete _scriptHandler;
 	delete _rnd;

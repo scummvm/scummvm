@@ -93,9 +93,6 @@ Common::Error LureEngine::init() {
 }
 
 LureEngine::~LureEngine() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-
 	if (_initialized) {
 		// Delete and deinitialize subsystems
 		Surface::deinitialize();

@@ -222,6 +222,7 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 			ConfMan.removeGameDomain(target.c_str());
 		}
 
+		DebugMan.clearAllDebugChannels();
 		return err;
 	}
 
@@ -321,7 +322,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 	// Free up memory
 	delete engine;
 
-	// We clear all debug levels again even though the engine should do it
 	DebugMan.clearAllDebugChannels();
 
 	// Reset the file/directory mappings

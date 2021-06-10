@@ -60,7 +60,6 @@ PinkEngine::~PinkEngine() {
 		delete _cursors[j];
 	}
 	delete _director;
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error PinkEngine::init() {

@@ -142,9 +142,6 @@ void CGE2Engine::init() {
 }
 
 void CGE2Engine::deinit() {
-	// Remove all of our debug levels here
-	DebugMan.clearAllDebugChannels();
-
 	delete _spare;
 	delete _resman;
 	delete _vga;

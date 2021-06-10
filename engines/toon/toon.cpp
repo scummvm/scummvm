@@ -1359,8 +1359,6 @@ ToonEngine::~ToonEngine() {
 	delete _gameState;
 
 	unloadToonDat();
-
-	DebugMan.clearAllDebugChannels();
 }
 
 void ToonEngine::flushPalette(bool deferFlushToNextRender) {

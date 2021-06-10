@@ -55,7 +55,6 @@ CryOmni3DEngine::CryOmni3DEngine(OSystem *syst,
 }
 
 CryOmni3DEngine::~CryOmni3DEngine() {
-	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error CryOmni3DEngine::run() {

@@ -70,8 +70,6 @@ CineEngine::~CineEngine() {
 	if (getGameType() == Cine::GType_OS) {
 		freeErrmessDat();
 	}
-
-	DebugMan.clearAllDebugChannels();
 }
 
 void CineEngine::syncSoundSettings() {
