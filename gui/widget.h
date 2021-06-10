@@ -487,6 +487,7 @@ private:
 	// Fixing it to 30 for now, 6 items * (4 rows + 1 extra row);
 	Common::Array<GridItemWidget *> _gridItems;
 	Common::Array<LauncherEntry> _allEntries;
+	Common::Array<LauncherEntry> _visibleEntries;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
 	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
 

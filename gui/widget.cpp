@@ -1158,12 +1158,12 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 100);
 	_scrollBar->setTarget(this);
 	_scrollPos = 0;
-	_scrollWindowHeight = 500;
-	_scrollWindowWidth = 500;
 }
 
 void GridWidget::setEntryList(Common::Array<LauncherEntry> *list) {
-	_allEntries = Common::Array<LauncherEntry>(*list);
+	for (auto entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
+		_allEntries.push_back(*entryIter);
+	}
 }
 
 void GridWidget::destroyItems() {
@@ -1173,37 +1173,6 @@ void GridWidget::destroyItems() {
 	}
 
 	_gridItems.clear();
-}
-
-void GridWidget::gridFromGameList() {
-	reloadThumbnails();
-	Common::HashMap<Common::String, GridItemWidget *> entryById;
-	int row = 0, col = 0;
-	_itemsPerRow = 6;
-	int k = 0;
-	for (Common::Array<LauncherEntry>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
-		k = row * _itemsPerRow + col;
-		GridItemWidget *newEntry = entryById[i->domain->getVal("gameid")];
-		if (!newEntry) {
-			newEntry = new GridItemWidget(this, 0,0, kThumbnailWidth,kThumbnailHeight);
-			newEntry->setSize(kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
-			newEntry->setPos(50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80));
-			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
-
-			_gridItems.push_back(newEntry);
-			if (++col >= _itemsPerRow) {
-				++row;
-				col = 0;
-			}
-			++k;
-		}
-		newEntry->attachEntry(*i);
-		newEntry->update();
-		entryById[i->domain->getVal("gameid")] = newEntry;
-	}
-	_innerHeight = 100 + ((row + 1) * (kThumbnailHeight + 80));
-	_innerWidth = 100 + (col * (kThumbnailWidth + 50));
-	// warning("%d %d", _innerWidth, _innerHeight);
 }
 
 void GridWidget::loadPlatformIcons() {
@@ -1224,9 +1193,10 @@ void GridWidget::loadPlatformIcons() {
 }
 
 Common::Array<Common::String> GridWidget::visibleEntries() {
-	Common::Array<Common::String> placeholder;
 	Common::Array<Common::String> thumbList;
 	Common::String pathPrefix("./icons/");
+	int startingEntry = 0;
+	int totalVisibleEntries = 0;
 	for (auto iter = _allEntries.begin(); iter != _allEntries.end(); ++iter) {
 		Common::String gameid = iter->domain->getVal("gameid");
 		Common::String engineid = iter->domain->getVal("engineid");
@@ -1300,35 +1270,50 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 void GridWidget::reflowLayout() {
 	Widget::reflowLayout();
 	destroyItems();
-	gridFromGameList();
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
-	int row = 0, col = 0;
-	_itemsPerRow = MAX((((int)_w-100) / kThumbnailWidth) -1 , 1);
-	int rows = _gridItems.size() / _itemsPerRow;
+	_itemsPerRow = MAX((((int)_scrollWindowWidth - 100) / kThumbnailWidth) - 1, 1);
+	
+	int rows = _allEntries.size() / _itemsPerRow; // change this to be calced using eindow sizes
+	
 	_innerHeight = 100 + ((rows + 1) * (kThumbnailHeight + 80));
 	_innerWidth = 100 + (_itemsPerRow * (kThumbnailWidth + 50));
+
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
-	int k = 0;
-	for (Common::Array<GridItemWidget *>::iterator i = _gridItems.begin(); i != _gridItems.end(); ++i) {
-		k = row * _itemsPerRow + col;
-		if (*i) { 			
-			(*i)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
-			if (((*i)->getRelY() <= -_gridItemHeight) || ((*i)->getRelY() >= _h)) {
-				(*i)->setVisible(false);
+
+	int row = 0;
+	int col = 0;
+
+	Common::HashMap<Common::String, GridItemWidget *> entryById;
+
+	for (Common::Array<LauncherEntry>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
+		GridItemWidget *newEntry = entryById[i->domain->getVal("gameid")];
+		if (!newEntry) {
+			newEntry = new GridItemWidget(this, 
+											50 + col * (kThumbnailWidth + 50), 
+											_scrollPos + 50 + row * (kThumbnailHeight + 80), 
+											kThumbnailWidth, 
+											kThumbnailHeight+kLineHeight*2);
+			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
+
+			_gridItems.push_back(newEntry);
+			
+			if ((newEntry->getRelY() <= -_gridItemHeight) || (newEntry->getRelY() >= _h)) {
+				newEntry->setVisible(false);
 			}
 			else {
-				(*i)->setVisible(true);
+				newEntry->setVisible(true);
 			}
-			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
 
 			if (++col >= _itemsPerRow) {
 				++row;
 				col = 0;
 			}
-			++k;
 		}
+		newEntry->attachEntry(*i);
+		newEntry->update();
+		entryById[i->domain->getVal("gameid")] = newEntry;
 	}
 	markAsDirty();
 }
