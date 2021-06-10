@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/ini-file.h"
+#include "common/hashmap.h"
 #include "common/singleton.h"
 #include "common/str.h"
 
@@ -53,19 +54,19 @@ enum AchievementsPlatform {
  * Information structure for game-specific statistics.
  */
 struct StatDescription {
-	const char *id;      //!< Stat internal ID, such as "ITEMS_THROWN".
-	const char *comment; //!< Optional stat comment, such as "Items Thrown".
-	const char *start;   //!< Stat default value, such as "0".
+	String id;      //!< Stat internal ID, such as "ITEMS_THROWN".
+	String comment; //!< Optional stat comment, such as "Items Thrown".
+	String start;   //!< Stat default value, such as "0".
 };
 
 /**
  * Information structure for game-specific achievements.
  */
 struct AchievementDescription {
-	const char *id;      //!< Achievement internal ID, such as "ACHIEVEMENT_TIMING".
-	bool isHidden;       //!< Whether the achievement is hidden.
-	const char *title;   //!< Achievement displayed text, such as "Marathon Runner".
-	const char *comment; //!< Optional achievement hint or comment, such as "Finish the game in less than 4 hours".
+	String id;      //!< Achievement internal ID, such as "ACHIEVEMENT_TIMING".
+	String title;   //!< Achievement displayed text, such as "Marathon Runner".
+	String comment; //!< Optional achievement hint or comment, such as "Finish the game in less than 4 hours".
+	bool isHidden;  //!< Whether the achievement is hidden.
 };
 
 /**
@@ -74,8 +75,6 @@ struct AchievementDescription {
 struct AchievementsInfo {
 	Common::AchievementsPlatform platform;              //!< Achievements platform, such as "STEAM_ACHIEVEMENTS".
 	Common::String appId;                               //!< Achievements application ID of the given platform.
-	Common::Array<StatDescription> stats;               //!< Descriptions of all game stats.
-	Common::Array<AchievementDescription> descriptions; //!< Descriptions of all game achievements.
 
 	AchievementsInfo() { platform = Common::UNK_ACHIEVEMENTS; }
 };
@@ -91,9 +90,10 @@ public:
 	~AchievementsManager();
 
 	/**
-	 * Set a platform and application ID as active domain, store messages texts.
+	 * Set a game targeted by platform type and application ID as active domain.
+	 * Automaticly loads messages texts from achievements.dat.
 	 *
-	 * @param[in] info Achievements platform, application ID and messages information.
+	 * @param[in] info Achievements platform type and application ID.
 	 */
 	bool setActiveDomain(const AchievementsInfo &info);
 	bool unsetActiveDomain();                            //!< Unset the current active domain.
@@ -212,13 +212,52 @@ public:
 
 	/** @} */
 
+	/**
+	 * @name Methods for getting achievements and statistics descriptions
+	 * @{
+	 */
+
+	/**
+	 * Get number of achivement descriptions available.
+	 *
+	 */
+	uint16 getAchievementCount() const;
+
+	/**
+	 * Get achivement description by index.
+	 *
+	 * @param[in] index	Internal index of the achievement, counted from 0 to (getAchievementCount() - 1)
+	 *
+	 */
+	const AchievementDescription *getAchievementDescription(uint16 index) const;
+
+	/**
+	 * Get number of stat descriptions available.
+	 *
+	 */
+	uint16 getStatCount() const;
+
+	/**
+	 * Get stat description by index.
+	 *
+	 * @param[in] index	Internal index of the stat, counted from 0 to (getStatCount() - 1)
+	 *
+	 */
+	const StatDescription *getStatDescription(uint16 index) const;
+
+	/** @} */
+
 private:
+	String getCurrentLang() const;
+	bool loadAchievementsData(const char *platform, const char *appId);
+
 	float getStatFloatEx(const String &id, const String &section) const;
 	bool setStatFloatEx(const String &id, float value, const String &section) const;
 
 	INIFile *_iniFile;
 	String _iniFileName;
-	Common::Array<AchievementDescription> _descriptions;
+	Common::Array<StatDescription> _stats;
+	Common::HashMap<String, Common::Array<AchievementDescription> > _achievements;
 };
 
 /** Shortcut for accessing the Achievements Manager. */

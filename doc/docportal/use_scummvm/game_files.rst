@@ -3,7 +3,7 @@
 Handling game files
 ===========================
 
-ScummVM needs access to the data files for each game. A list of required data files for each game is found on the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>` for that game. ScummVM can run the game data files from any directory it has access to, including external media.
+ScummVM needs access to the data files for each game. A list of required data files for each game is found on the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`__ for that game. ScummVM can run the game data files from any directory it has access to, including external media.
 
 .. note::
 
@@ -35,7 +35,7 @@ For macOS or Linux users without access to a Windows machine, you can get the da
 Multi-disc games
 ===================
 
-ScummVM needs access to all the data files, so it will not be able to run directly from a CD if the game has multiple discs. To add a multi-CD game, copy the required data files from the CD to a folder on your hard drive. For a list of required files, see the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>` for the game you're playing.
+ScummVM needs access to all the data files, so it will not be able to run directly from a CD if the game has multiple discs. To add a multi-CD game, copy the required data files from the CD to a folder on your hard drive. For a list of required files, see the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`__ for the game you're playing.
 
 As a general guideline, where there are duplicate, identical files (same name, same file size) on more than one disc, only one copy of the file is required. Where there are files that have the same name but are different on each disc, rename them. For example, where there is a ``music.clu`` on two discs, rename the file on the first disc to ``music1.clu`` and the file on the second disc to ``music2.clu``.
 

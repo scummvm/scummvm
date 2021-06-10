@@ -1923,7 +1923,7 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// Do some input verification and make sure the strip/strip offset
 	// are actually valid. Normally, this should never be a problem,
 	// but if e.g. a savegame gets corrupted, we can easily get into
-	// trouble here. See also bug #795214.
+	// trouble here. See also bug #1191.
 	int offset = -1, smapLen;
 	if (_vm->_game.features & GF_16COLOR) {
 		smapLen = READ_LE_UINT16(smap_ptr);

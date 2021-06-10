@@ -321,6 +321,13 @@ struct perso_t {
 	byte    _lastLoc;    // For party member this is mini sprite x offset
 	byte    _speed;      // num ticks per step
 	byte    _steps;      // current ticks
+
+	void clear() {
+		_roomNum = _actionId = _partyMask = 0;
+		_id = _flags = _roomBankId = _spriteBank = 0;
+		_items = _powers = 0;
+		_targetLoc = _lastLoc = _speed = _steps = 0;
+	}
 };
 
 namespace ObjectFlags {
@@ -338,6 +345,13 @@ struct object_t {
 	uint16  _itemMask;
 	uint16  _powerMask;          // object of power bitmask
 	int16  _count;
+
+	void clear() {
+		_id = _flags = 0;
+		_locations = 0;
+		_itemMask = _powerMask = 0;
+		_count = 0;
+	}
 };
 
 namespace DialogFlags {
@@ -466,6 +480,14 @@ struct Area {
 	byte   _placeNum;
 	Room  *_citadelRoomPtr;
 	int16  _visitCount;
+
+	void clear() {
+		_num = _type = 0;
+		_flags = _firstRoomIdx = 0;
+		_citadelLevel = _placeNum = 0;
+		_citadelRoomPtr = nullptr;
+		_visitCount = 0;
+	}
 };
 
 namespace ValleyNews {
@@ -757,6 +779,14 @@ struct Citadel {
 	int16 _id;
 	int16 _bank[8];
 	int16 _video[8];
+
+	void clear() {
+		_id = 0;
+		for (int i = 0; i < 8; ++i) {
+			_bank[i] = 0;
+			_video[i] = 0;
+		}
+	}
 };
 
 /*

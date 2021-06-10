@@ -1411,7 +1411,7 @@ bool Logic::fnDrawScreen(uint32 a, uint32 b, uint32 c) {
 	_skyScreen->fnDrawScreen(a, b);
 
 	if (Logic::_scriptVariables[SCREEN] == 32) {
-		/* workaround for script bug #786482
+		/* workaround for script bug #1140
 		    Under certain circumstances, which never got completely cleared,
 		    the gardener can get stuck in an animation, waiting for a sync
 		    signal from foster.

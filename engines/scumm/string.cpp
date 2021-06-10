@@ -99,7 +99,7 @@ void ScummEngine::debugMessage(const byte *msg) {
 		b = buffer[10] | (buffer[11] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
 
 		// Sam and Max uses a caching system, printing empty messages
-		// and setting VAR_V6_SOUNDMODE beforehand. See patch 609791.
+		// and setting VAR_V6_SOUNDMODE beforehand. See patch #8051.
 		if (_game.id == GID_SAMNMAX)
 			channel = VAR(VAR_V6_SOUNDMODE);
 
@@ -184,7 +184,7 @@ void ScummEngine_v6::drawBlastTexts() {
 			do {
 				c = *buf++;
 
-				// FIXME: This is a workaround for bugs #864030 and #2440:
+				// FIXME: This is a workaround for bugs #1347 and #2440:
 				// In COMI, some text contains ASCII character 11 = 0xB. It's
 				// not quite clear what it is good for; so for now we just ignore
 				// it, which seems to match the original engine (BTW, traditionally,
@@ -1235,7 +1235,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		if (chr == 0xFF) {
 			chr = src[num++];
 
-			// WORKAROUND for bug #985948, a script bug in Indy3. Apparently,
+			// WORKAROUND for bug #1675, a script bug in Indy3. Apparently,
 			// a german 'sz' was encoded incorrectly as 0xFF2E. We replace
 			// this by the correct encoding here. See also ScummEngine::resStrLen().
 			if (_game.id == GID_INDY3 && chr == 0x2E) {
@@ -1732,7 +1732,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 			while (*ptr == '\n' || *ptr == '\r')
 				*ptr++ = 0;
 
-			// Convert '\n' code to a newline. See also bug #902415.
+			// Convert '\n' code to a newline. See also bug #1487.
 			char *src, *dst;
 			src = dst = _languageBuffer + _languageIndex[i].offset;
 			while (*src) {

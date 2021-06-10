@@ -22,10 +22,8 @@
 
 #include "cryo/defs.h"
 #include "cryo/cryo.h"
-#include "cryo/platdefs.h"
 #include "cryo/cryolib.h"
 #include "cryo/eden.h"
-#include "cryo/sound.h"
 
 #include "common/substream.h"
 

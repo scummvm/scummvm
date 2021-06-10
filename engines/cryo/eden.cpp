@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "graphics/screen.h"
-#include "graphics/palette.h"
-#include "common/timer.h"
 #include "audio/mixer.h"
 
 #include "cryo/defs.h"
@@ -165,6 +163,18 @@ EdenGame::EdenGame(CryoEngine *vm) : _vm(vm), kMaxMusicSize(2200000) {
 	_glowIndex = 0;
 	_torchCurIndex = 0;
 	_cursCenter = 11;
+
+	for (int i = 0; i < 42; ++i)
+		_objects[i].clear();
+
+	for (int i = 0; i < 58; ++i)
+		_persons[i].clear();
+
+	for (int i = 0; i < 7; ++i)
+		_citadelList[i].clear();
+
+	for (int i = 0; i < 12; ++i)
+		_areasTable[i].clear();
 }
 
 EdenGame::~EdenGame() {

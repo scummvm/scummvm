@@ -363,7 +363,7 @@ void IMuseInternal::pause(bool paused) {
 	update_volumes();
 	_music_volume = vol;
 
-	// Fix for Bug #817871. The MT-32 apparently fails
+	// Fix for Bug #1263. The MT-32 apparently fails
 	// sometimes to respond to a channel volume message
 	// (or only uses it for subsequent note events).
 	// The result is hanging notes on pause. Reportedly
@@ -607,7 +607,7 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	// playing, otherwise the music may stop when Sam and Max are thrown
 	// out of Bumpusville, because entering the mansion sets up a trigger
 	// for a sound that isn't necessarily playing. This is somewhat related
-	// to bug #780918.
+	// to bug #1090.
 
 	int i;
 	ImTrigger *trigger = _snm_triggers;
@@ -633,8 +633,8 @@ bool IMuseInternal::startSound_internal(int sound, int offset) {
 	// iMuse messiness while upgrading the iMuse engine, but it
 	// is apparently necessary to deal with fade-and-restart
 	// race conditions that were observed in MI2. Reference
-	// Bug #590511 and Patch #607175 (which was reversed to fix
-	// an FOA regression: Bug #622606).
+	// Bug #385 and Patch #8038 (which was reversed to fix
+	// an FOA regression: Bug #488).
 	Player *player = findActivePlayer(sound);
 	if (!player) {
 		ptr = findStartOfSound(sound, IMuseInternal::kMDhd);
@@ -1255,7 +1255,7 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 			break;
 		// We used to only compare 'id' and 'sound' here, but at least
 		// at the Dino Bungie Memorial that causes the music to stop
-		// after getting the T-Rex tooth. See bug #888161.
+		// after getting the T-Rex tooth. See bug #1429.
 		if (trig->id == id && trig->sound == sound && trig->command[0] == a)
 			break;
 
@@ -1291,7 +1291,7 @@ int32 IMuseInternal::ImSetTrigger(int sound, int id, int a, int b, int c, int d,
 	// This fixes some carnival music problems.
 	// NOTE: We ONLY do this if the sound that will trigger the command is actually
 	// playing. Otherwise, there's a problem when exiting and re-entering the
-	// Bumpusville mansion. Ref Bug #780918.
+	// Bumpusville mansion. Ref Bug #1090.
 	if (trig->command[0] == 8 && getSoundStatus_internal(trig->command[1], true) && getSoundStatus_internal(sound, true))
 		stopSound_internal(trig->command[1]);
 	return 0;

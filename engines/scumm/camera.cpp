@@ -237,8 +237,8 @@ void ScummEngine_v7::setCameraAt(int pos_x, int pos_y) {
 
 		// Even though cameraMoved() is called automatically, we may
 		// need to know at once that the camera has moved, or text may
-		// be printed at the wrong coordinates. See bugs #795938 and
-		// #929242
+		// be printed at the wrong coordinates. See bugs #1195 and
+		// #1579
 		cameraMoved();
 	}
 }

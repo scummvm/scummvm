@@ -177,7 +177,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 		case kObjectOpeningGate:
 			if (_vm->isGameFlagSet(kGameFlag1137)) {
 				_vm->clearGameFlag(kGameFlag1137);
-				Actor::enableActorsChapter2(_vm);
+				Actor::crowsReturn(_vm);
 			}
 
 			if (_vm->isGameFlagSet(kGameFlag1131) && !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
@@ -235,7 +235,7 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 		}
 
 		for (int i = 13; i < 22; i++)
-			getScene()->getActor(i)->updateStatus(kActorStatusAttacking);
+			getScene()->getActor(i)->changeStatus(kActorStatusAttacking);
 	}
 
 	// Play chapter sound
@@ -257,13 +257,13 @@ void Special::chapter2(Object *object, ActorIndex actorIndex) {
 
 			if (counter >= 5) {
 				counter = 0;
-				actor->updateFromDirection((ActorDirection)((actor->getDirection() + 1) & 7));
+				actor->changeDirection((ActorDirection)((actor->getDirection() + 1) & 7));
 			}
 
 			getSharedData()->setChapter2Counter(getCounter(actorIndex), counter);
 
 		} else if (actor->getStatus() == kActorStatusEnabled) {
-			actor->updateStatus(kActorStatusWalking);
+			actor->changeStatus(kActorStatusWalking);
 		}
 		break;
 
@@ -482,7 +482,7 @@ void Special::chapter7(Object *object, ActorIndex actorIndex) {
 						player->enable();
 					} else {
 						getSound()->playSound(MAKE_RESOURCE(kResourcePackSound, 5));
-						player->updateStatus(kActorStatusShowingInventory);
+						player->changeStatus(kActorStatusShowingInventory);
 					}
 
 					_vm->setGameFlag(kGameFlag1023);
@@ -755,7 +755,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 			if (_vm->isGameFlagSet(kGameFlag561) && _vm->isGameFlagNotSet(kGameFlag562)) {
 				ActorStatus playerStatus = player->getStatus();
 				if (playerStatus != kActorStatusGettingHurt && playerStatus != kActorStatusRestarting && playerStatus != kActorStatusAttacking && playerStatus != kActorStatusWalkingTo2)
-					actor0->updateStatus(kActorStatusAttacking);
+					actor0->changeStatus(kActorStatusAttacking);
 				_vm->clearGameFlag(kGameFlag561);
 			}
 
@@ -764,7 +764,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				actor1->show();
 				actor1->getPoint1()->x = actor0->getPoint2()->x + actor0->getPoint1()->x - actor1->getPoint2()->x;
 				actor1->getPoint1()->y = actor0->getPoint2()->y + actor0->getPoint1()->y - actor1->getPoint2()->y;
-				actor1->updateStatus(kActorStatusWalking2);
+				actor1->changeStatus(kActorStatusWalking2);
 			}
 
 			tentacle(10, kGameFlag557, kGameFlag558, kGameFlag563, &actorRects[0]);
@@ -866,7 +866,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1591)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
-					actor0->updateStatus(kActorStatusGettingHurt);
+					actor0->changeStatus(kActorStatusGettingHurt);
 					getSpeech()->playPlayer(131);
 					++getWorld()->field_E848C;
 					getSound()->stop(getWorld()->soundResourceIds[3]);
@@ -894,7 +894,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1590)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
-					actor0->updateStatus(kActorStatusGettingHurt);
+					actor0->changeStatus(kActorStatusGettingHurt);
 					++getWorld()->field_E848C;
 					getSound()->stop(getWorld()->soundResourceIds[3]);
 					getSound()->stop(getWorld()->soundResourceIds[4]);
@@ -922,7 +922,7 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 			if (getScene()->polygons()->get(getWorld()->actions[getWorld()->getActionAreaIndexById(1589)]->polygonIndex).contains(sum)) {
 				ActorStatus playerStatus = getScene()->getActor(getSharedData()->getPlayerIndex())->getStatus();
 				if (playerStatus == kActorStatusWalking2 || playerStatus == kActorStatusAttacking || playerStatus == kActorStatusEnabled2) {
-					actor0->updateStatus(kActorStatusGettingHurt);
+					actor0->changeStatus(kActorStatusGettingHurt);
 					++getWorld()->field_E848C;
 					getSound()->stop(getWorld()->soundResourceIds[3]);
 					getSound()->stop(getWorld()->soundResourceIds[4]);
@@ -975,8 +975,8 @@ void Special::chapter11(Object *object, ActorIndex actorIndex) {
 				if (_vm->isGameFlagNotSet(kGameFlag560)) {
 					_vm->setGameFlag(kGameFlag560);
 					actor1->hide();
-					actor1->updateStatus(kActorStatusEnabled);
-					actor0->updateStatus(kActorStatusEnabled);
+					actor1->changeStatus(kActorStatusEnabled);
+					actor0->changeStatus(kActorStatusEnabled);
 					getWorld()->field_E848C = 0;
 					getScript()->queueScript(getWorld()->actions[getWorld()->getActionAreaIndexById(1574)]->scriptIndex, kActorSarah);
 				}
@@ -1405,14 +1405,14 @@ void Special::playSoundChapter3(Object *object, ActorIndex actorIndex) {
 
 		case 1:
 			if (actor->getStatus() == kActorStatusFidget
-			 && actor->isResourcePresent()
+			 && actor->checkBoredStatus()
 			 && actor->getFrameIndex() == 0)
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1861), 22, actorIndex);
 			break;
 
 		case 2:
 			if (actor->getStatus() == kActorStatusFidget
-			 && actor->isResourcePresent()
+			 && actor->checkBoredStatus()
 			 && actor->getFrameIndex() == 1)
 				playSoundPanning(MAKE_RESOURCE(kResourcePackSharedSound, 1892), 16, actorIndex);
 			break;
@@ -2020,7 +2020,7 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 		getWorld()->field_E8594[actorIndex] = actor->getPoint1()->y;
 		actor->getPoint1()->y -= 160;
 
-		actor->updateStatus(kActorStatusEnabled2);
+		actor->changeStatus(kActorStatusEnabled2);
 		getSound()->playSound(getWorld()->soundResourceIds[0], false, Config.sfxVolume - 10);
 		_vm->setGameFlag(flag3);
 		getScene()->getActor(actorIndex)->show();
@@ -2028,7 +2028,7 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 		if (_vm->isGameFlagNotSet(flag4)) {
 			_vm->setGameFlag(flag4);
 			actor->setFrameIndex(0);
-			actor->updateStatus(kActorStatusWalking2);
+			actor->changeStatus(kActorStatusWalking2);
 			if (actorIndex == 8 || actorIndex == 9)
 				actor->setField944(1);
 			actor->getPoint1()->y = 0;
@@ -2043,7 +2043,7 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 			} else {
 				actor->setField944(3);
 				getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
-				actor->updateStatus(kActorStatusAttacking);
+				actor->changeStatus(kActorStatusAttacking);
 				actor->setFrameIndex(4);
 
 				Common::Point sum = *actor->getPoint1() + *actor->getPoint2();
@@ -2053,7 +2053,7 @@ void Special::rock(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, GameFl
 				getSharedData()->vector2 = sum;
 
 				if (Actor::euclidianDistance(sum, playerSum) < 30) {
-					getScene()->getActor(0)->updateStatus(kActorStatusGettingHurt);
+					getScene()->getActor(0)->changeStatus(kActorStatusGettingHurt);
 					++getWorld()->field_E848C;
 					getSound()->stop(getWorld()->soundResourceIds[3]);
 					getSound()->stop(getWorld()->soundResourceIds[4]);
@@ -2085,7 +2085,7 @@ void Special::tentacle(ActorIndex actorIndex, GameFlag flag1, GameFlag flag2, Ga
 		if (Actor::euclidianDistance(sum, playerSum) > 40) {
 			getWorld()->tickValueArray[actorIndex + 10] = 0;
 			actor->show();
-			actor->updateStatus(kActorStatusWalking2);
+			actor->changeStatus(kActorStatusWalking2);
 			actor->setFrameIndex(0);
 			_vm->setGameFlag(flag2);
 		}

@@ -164,7 +164,7 @@ static Common::Point closestPtOnLine(const Common::Point &lineStart, const Commo
 }
 
 byte ScummEngine::getMaskFromBox(int box) {
-	// WORKAROUND for bug #740244 and #755863. This appears to have been a
+	// WORKAROUND for bug #791 and #897. This appears to have been a
 	// long standing bug in the original engine?
 	if (_game.version <= 3 && box == 255)
 		return 1;
@@ -173,7 +173,7 @@ byte ScummEngine::getMaskFromBox(int box) {
 	if (!ptr)
 		return 0;
 
-	// WORKAROUND for bug #847827: This is a bug in the data files, as it also
+	// WORKAROUND for bug #1315: This is a bug in the data files, as it also
 	// occurs with the original engine. We work around it here anyway.
 	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8)
 		return 0;
@@ -462,7 +462,7 @@ Box *ScummEngine::getBoxBaseAddr(int box) {
 
 	// WORKAROUND: In "pass to adventure", the loom demo, when bobbin enters
 	// the tent to the elders, box = 2, but ptr[0] = 2 -> errors out.
-	// Also happens in Indy3EGA (see bug #770351) and ZakEGA (see bug #771803).
+	// Also happens in Indy3EGA (see bug #1007) and ZakEGA (see bug #1037).
 	//
 	// This *might* mean that we have a bug in our box implementation
 	// OTOH, the original engine, unlike ScummVM, performed no bound
@@ -587,7 +587,7 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
 		box->lr.y = (short)FROM_LE_32(bp->v8.lry);
 
-		// WORKAROUND (see patch #684732): Some walkboxes in CMI appear
+		// WORKAROUND (see patch #8173): Some walkboxes in CMI appear
 		// to have been flipped, in the sense that for instance the
 		// lower boundary is above the upper one. We work around this
 		// by simply flipping them back.
@@ -757,7 +757,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 	// WORKAROUND #1: It seems that in some cases, the box matrix is corrupt
 	// (more precisely, is too short) in the datafiles already. In
 	// particular this seems to be the case in room 46 of Indy3 EGA (see
-	// also bug #770690). This didn't cause problems in the original
+	// also bug #1017). This didn't cause problems in the original
 	// engine, because there, the memory layout is different. After the
 	// walkbox would follow the rest of the room file, thus the program
 	// always behaved the same (and by chance, correct). Not so for us,
@@ -769,7 +769,7 @@ int ScummEngine::getNextBox(byte from, byte to) {
 
 	// WORKAROUND #2: In addition to the above, we have to add this special
 	// case to fix the scene in Indy3 where Indy meets Hitler in Berlin.
-	// See bug #770690 and also bug #774783.
+	// See bug #1017 and also bug #1052.
 	if ((_game.id == GID_INDY3) && _roomResource == 46 && from == 1 && to == 0)
 		return 0;
 

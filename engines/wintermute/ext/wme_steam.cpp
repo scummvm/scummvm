@@ -119,8 +119,9 @@ bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		uint32 index = (uint32) stack->pop()->getInt();
 
-		if (index < _achievementsInfo.descriptions.size()) {
-			stack->pushString(_achievementsInfo.descriptions[index].id);
+		const Common::AchievementDescription *descr = AchMan.getAchievementDescription(index);
+		if (descr) {
+			stack->pushString(descr->id.c_str());
 		} else {
 			stack->pushNULL();
 		}
@@ -212,7 +213,7 @@ ScValue *SXSteamAPI::scGetProperty(const Common::String &name) {
 	// NumAchievements (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumAchievements") {
-		_scValue->setInt(_achievementsInfo.descriptions.size());
+		_scValue->setInt(AchMan.getAchievementCount());
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////

@@ -345,9 +345,9 @@ void Actor::update() {
 
 	case kActorStatusGettingHurt:
 		if (getWorld()->chapter == kChapter2) {
-			updateStatus16_Chapter2();
+			MaxGetsSome();
 		} else if (getWorld()->chapter == kChapter11 && _index == getSharedData()->getPlayerIndex()) {
-			updateStatus16_Chapter11();
+			SarahGetsSome();
 		}
 		break;
 
@@ -378,13 +378,13 @@ void Actor::update() {
 						getSpeech()->playPlayer(453);
 						getScene()->getActor(11)->hide();
 
-						player->updateStatus(kActorStatusInteracting);
+						player->changeStatus(kActorStatusInteracting);
 						player->setResourceId(player->getResourcesId(35));
 						player->setDirection(kDirectionS);
 						player->setFrameCount(GraphicResource::getFrameCount(_vm, player->getResourceId()));
 
 						getCursor()->hide();
-						getScene()->getActor(0)->updateFromDirection(kDirectionS);
+						getScene()->getActor(0)->changeDirection(kDirectionS);
 
 						// Queue script
 						getScript()->queueScript(getWorld()->getActionAreaById(2696)->scriptIndex, getSharedData()->getPlayerIndex());
@@ -421,7 +421,7 @@ void Actor::update() {
 					++_frameIndex;
 				} else {
 					_vm->clearGameFlag(kGameFlag239);
-					getScene()->getActor(10)->updateStatus(kActorStatusEnabled2);
+					getScene()->getActor(10)->changeStatus(kActorStatusEnabled2);
 					hide();
 					_vm->setGameFlag(kGameFlag238);
 
@@ -435,41 +435,41 @@ void Actor::update() {
 				if (_frameIndex <= _frameCount - 1)
 					++_frameIndex;
 				else
-					resetActors();
+					SarahDies();
 			}
 
 			if (_index >= 10)
-				updateStatus17_Chapter2();
+				TentacleDies();
 		}
 		break;
 
 	case kActorStatusAttacking:
 		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12)
-				updateStatus15_Chapter2();
+				CrowDives();
 
 			if (_index == getSharedData()->getPlayerIndex())
-				updateStatus15_Chapter2_Player();
+				MaxAttacks();
 
 			if (_index == 11)
-				updateStatus15_Chapter2_Actor11();
+				ScareCrowAttacks();
 
 		} else if (getWorld()->chapter == kChapter11) {
 			if (_index >= 10 && _index < 16)
-				updateStatus15_Chapter11();
+				TentacleWhips();
 
 			if (_index == getSharedData()->getPlayerIndex())
-				updateStatus15_Chapter11_Player();
+				SarahAttacks();
 		}
 		break;
 
 	case kActorStatus18:
 		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12)
-				updateStatus18_Chapter2();
+				CrowSwoops();
 
 			if (_index == 11)
-				updateStatus18_Chapter2_Actor11();
+				ScareCrowRetreats();
 		}
 		break;
 
@@ -479,8 +479,8 @@ void Actor::update() {
 		if (_vm->screenUpdateCount - _lastScreenUpdate > 300) {
 			if (_vm->getRandom(100) < 50) {
 				if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId())) {
-					if (isDefaultDirection(10))
-						updateStatus(kActorStatusFidget);
+					if (canChangeStatus(10))
+						changeStatus(kActorStatusFidget);
 				}
 			}
 			_lastScreenUpdate = _vm->screenUpdateCount;
@@ -490,12 +490,12 @@ void Actor::update() {
 	case kActorStatusWalking2:
 		if (getWorld()->chapter == kChapter2) {
 			if (_index > 12) {
-				updateStatus12_Chapter2();
+				CrowClosesIn();
 				return;
 			}
 
 			if (_index == 11) {
-				updateStatus12_Chapter2_Actor11();
+				ScareCrowClosesIn();
 				return;
 			}
 		} else if (getWorld()->chapter == kChapter11) {
@@ -513,7 +513,7 @@ void Actor::update() {
 			case 13:
 			case 14:
 			case 15:
-				updateStatus12_Chapter11();
+				TentacleRises();
 				return;
 
 			case 2:
@@ -531,7 +531,7 @@ void Actor::update() {
 	case kActorStatusWalking: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		uint32 dist = (uint32)abs((double)getDistanceForFrame(_direction, index));
+		uint32 dist = (uint32)abs((double)getWalkIncrement(_direction, index));
 		Common::Point point = _point1 + _point2;
 
 		if (canMove(&point, _direction, dist, false)) {
@@ -553,10 +553,10 @@ void Actor::update() {
 		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 			getSpecial()->run(NULL, _index);
 
-		updateDirection();
+		updateReflectionData();
 
 		if (_field_944 != 5)
-			updateFinish();
+			actionAreaCheck();
 
 		}
 		break;
@@ -565,7 +565,7 @@ void Actor::update() {
 	case kActorStatusWalkingTo2: {
 		uint32 index = (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex;
 
-		int32 dist = (int32)abs((double)getDistanceForFrame(_direction, index));
+		int32 dist = (int32)abs((double)getWalkIncrement(_direction, index));
 
 		Common::Point point = _point1 + _point2;
 		Common::Point current = _data.points[_data.current];
@@ -577,7 +577,7 @@ void Actor::update() {
 			if (canMove(&point, _direction, (uint32)dist, false)) {
 				move(_direction, (uint32)dist);
 			} else {
-				update_409230();
+				stopWalking();
 			}
 		} else {
 			int32 area = getScene()->findActionArea(kActionAreaType1, current);
@@ -585,23 +585,23 @@ void Actor::update() {
 				area = 1;
 
 			if (area == -1 && _data.current >= (int32)(_data.count - 1)) {
-				update_409230();
+				stopWalking();
 			} else {
 				_frameIndex = (_frameIndex + 1) % _frameCount;
 
-				if (canMoveCheckActors(&current, _direction)) {
+				if (testActorCollision(&current, _direction)) {
 					_point1.x = current.x - _point2.x; 
 					_point1.y = current.y - _point2.y;
 
 					if (_data.current < (int32)(_data.count - 1)) {
 						_data.current++;
 
-						updateFromDirection(_data.directions[_data.current]);
+						changeDirection(_data.directions[_data.current]);
 					} else {
-						update_409230();
+						stopWalking();
 					}
 				} else {
-					update_409230();
+					stopWalking();
 				}
 			}
 		}
@@ -613,17 +613,17 @@ void Actor::update() {
 		if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 			getSpecial()->run(NULL, _index);
 
-		updateDirection();
+		updateReflectionData();
 
 		if (_field_944 != 5)
-			updateFinish();
+			actionAreaCheck();
 
 		}
 		break;
 
 	case kActorStatusInteracting:
 	case kActorStatusHittingPumpkin:
-		updateStatus3_19();
+		updateStatusInteracting();
 		break;
 
 	case kActorStatusPickupItem:
@@ -639,15 +639,15 @@ void Actor::update() {
 		break;
 
 	case kActorStatusEnabled2:
-		updateStatus14();
+		updateStatusEnabled2();
 		break;
 
 	case kActorStatusMorphingInto:
-		updateStatus21();
+		updateStatusMorphing();
 		break;
 
 	case kActorStatusFidget:
-		updateStatus9();
+		updateStatusBored();
 		break;
 
 	case kActorStatusShowingInventory:
@@ -673,14 +673,14 @@ void Actor::update() {
 	if (_index != getSharedData()->getPlayerIndex() && getWorld()->chapter != kChapter9)
 		getSpecial()->run(NULL, _index);
 
-	updateDirection();
+	updateReflectionData();
 
 	if (_field_944 != 5)
-		updateFinish();
+		actionAreaCheck();
 }
 
-void Actor::updateStatus(ActorStatus actorStatus) {
-	debugC(kDebugLevelActor, "[updateStatus] %d point1(%d:%d) point2(%d:%d)", actorStatus, _point1.x, _point1.y, _point2.x, _point2.y);
+void Actor::changeStatus(ActorStatus actorStatus) {
+	debugC(kDebugLevelActor, "[changeStatus] %d point1(%d:%d) point2(%d:%d)", actorStatus, _point1.x, _point1.y, _point2.x, _point2.y);
 
 	switch (actorStatus) {
 	default:
@@ -755,7 +755,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 		if (getSharedData()->getFlag(kFlagIsEncounterRunning))
 			return;
 
-		if (_vm->getRandomBit() == 1 && isDefaultDirection(15))
+		if (_vm->getRandomBit() == 1 && canChangeStatus(15))
 			updateGraphicData(15);
 		else
 			updateGraphicData(10);
@@ -800,7 +800,7 @@ void Actor::updateStatus(ActorStatus actorStatus) {
 // Direction & position
 //////////////////////////////////////////////////////////////////////////
 
-void Actor::updateDirection() {
+void Actor::updateReflectionData() {
 	if (!_processNewDirection)
 		return;
 
@@ -994,7 +994,7 @@ void Actor::updateDirection() {
 		index++;
 
 		if (index >= 55)
-			error("[Actor::updateDirection] Invalid resource id index");
+			error("[Actor::updateReflectionData] Invalid resource id index");
 	}
 
 	// Compute resource id and adjust frame count
@@ -1010,7 +1010,7 @@ void Actor::updateDirection() {
 	nextActor->setResourceId(resourceId);
 }
 
-void Actor::updateFromDirection(ActorDirection actorDirection) {
+void Actor::changeDirection(ActorDirection actorDirection) {
 	_direction = actorDirection;
 
 	if (_field_944 == 5)
@@ -1095,7 +1095,7 @@ void Actor::faceTarget(uint32 target, DirectionFrom from) {
 	}
 
 	Common::Point mid(_point1.x + _point2.x, _point1.y + _point2.y);
-	updateFromDirection(directionFromAngle(mid, point));
+	changeDirection(getAngle(mid, point));
 }
 
 void Actor::setPosition(int16 newX, int16 newY, ActorDirection newDirection, uint32 frame) {
@@ -1103,7 +1103,7 @@ void Actor::setPosition(int16 newX, int16 newY, ActorDirection newDirection, uin
 	_point1.y = newY - _point2.y;
 
 	if (_direction != kDirection8)
-		updateFromDirection(newDirection);
+		changeDirection(newDirection);
 
 	if (frame > 0)
 		_frameIndex = frame;
@@ -1160,7 +1160,7 @@ void Actor::clearFields() {
 	_field_9A0 = 0;
 }
 
-bool Actor::isResourcePresent() const {
+bool Actor::checkBoredStatus() const {
 	if (_status != kActorStatusFidget)
 		return false;
 
@@ -1173,7 +1173,7 @@ bool Actor::isResourcePresent() const {
 	return (index >= 15);
 }
 
-bool Actor::process(const Common::Point &point) {
+bool Actor::canReach(const Common::Point &point) {
 	// Compute point and delta
 	Common::Point sum(_point1.x + _point2.x, _point1.y + _point2.y);
 	Common::Point delta = point - sum;
@@ -1222,7 +1222,7 @@ bool Actor::process(const Common::Point &point) {
 			_data.current   = 0;
 			_data.count     = 1;
 
-			updateFromDirection(actorDir);
+			changeDirection(actorDir);
 
 			return true;
 		}
@@ -1238,7 +1238,7 @@ bool Actor::process(const Common::Point &point) {
 			_data.current   = 0;
 			_data.count     = 1;
 
-			updateFromDirection(actorDir);
+			changeDirection(actorDir);
 
 			return true;
 		}
@@ -1264,7 +1264,7 @@ bool Actor::process(const Common::Point &point) {
 
 			switch (a3) {
 			default:
-				error("[Actor::process] Invalid value for a3");
+				error("[Actor::canReach] Invalid value for a3");
 				break;
 
 			case 0:
@@ -1295,7 +1295,7 @@ bool Actor::process(const Common::Point &point) {
 
 			switch (a3) {
 			default:
-				error("[Actor::process] Invalid value for a3");
+				error("[Actor::canReach] Invalid value for a3");
 				break;
 
 			case 0:
@@ -1335,7 +1335,7 @@ bool Actor::process(const Common::Point &point) {
 			_data.current = 0;
 			_data.count = 2;
 
-			updateFromDirection(direction1);
+			changeDirection(direction1);
 
 			_data.directions[1] = direction2;
 
@@ -1349,7 +1349,7 @@ bool Actor::process(const Common::Point &point) {
 			_data.current = 0;
 			_data.count = 2;
 
-			updateFromDirection(direction2);
+			changeDirection(direction2);
 
 			_data.directions[1] = direction1;
 
@@ -1387,32 +1387,32 @@ bool Actor::process(const Common::Point &point) {
 
 		if (abs(sum.x - point.x) > abs(sum.y - point.y)) {
 			if (sum.x <= point.x) {
-				if (!processActionLeft(sum, point, &actions))
+				if (!findLeftPath(sum, point, &actions))
 					return false;
 			} else {
-				if (!processActionAll(sum, point, &actions))
+				if (!findRightPath(sum, point, &actions))
 					return false;
 			}
 
-			updateFromDirection(_data.directions[0]);
+			changeDirection(_data.directions[0]);
 
 			return true;
 		}
 
 		if (sum.y > point.y) {
-			if (!processActionTop(sum, point, &actions))
+			if (!findUpPath(sum, point, &actions))
 				return false;
 
-			updateFromDirection(_data.directions[0]);
+			changeDirection(_data.directions[0]);
 
 			return true;
 		}
 
 		// last case: sum.y < point.y
-		if (!processActionDown(sum, point, &actions))
+		if (!findDownPath(sum, point, &actions))
 			return false;
 
-		updateFromDirection(_data.directions[0]);
+		changeDirection(_data.directions[0]);
 
 		return true;
 	}
@@ -1448,23 +1448,23 @@ bool Actor::process(const Common::Point &point) {
 	_data.count     = 1;
 
 	// Update actor from direction
-	updateFromDirection(actorDir);
+	changeDirection(actorDir);
 
 	return true;
 }
 
-void Actor::processStatus(int16 actorX, int16 actorY, bool doSpeech) {
-	if (process(Common::Point(actorX, actorY))) {
+void Actor::forceTo(int16 actorX, int16 actorY, bool doSpeech) {
+	if (canReach(Common::Point(actorX, actorY))) {
 		if (_status <= kActorStatus11)
-			updateStatus(kActorStatusWalkingTo);
+			changeStatus(kActorStatusWalkingTo);
 		else
-			updateStatus(kActorStatusWalkingTo2);
+			changeStatus(kActorStatusWalkingTo2);
 	} else if (doSpeech) {
 		getSpeech()->playIndexed(1);
 	}
 }
 
-void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset) {
+void Actor::setupReflectionData(ActorIndex nextActor, int32 actionAreaId, ActorDirection nextDirection, const Common::Point &nextPosition, bool invertPriority, const Common::Point &nextPositionOffset) {
 	_nextActorIndex = nextActor;
 	_nextActionIndex = (actionAreaId != -1) ? getWorld()->getActionAreaIndexById(actionAreaId) : -1;
 	_nextDirection = nextDirection;
@@ -1562,10 +1562,10 @@ void Actor::processNext(ActorIndex nextActor, int32 actionAreaId, ActorDirection
 
 	_processNewDirection = true;
 
-	updateDirection();
+	updateReflectionData();
 }
 
-bool Actor::canInteract(Common::Point *point, int32* param) {
+bool Actor::aNicePlaceToTalk(Common::Point *point, int32* param) {
 	Actor *player = getScene()->getActor();
 
 	int16 offset = 65;
@@ -1670,7 +1670,7 @@ bool Actor::canInteract(Common::Point *point, int32* param) {
 		return false;
 
 processActor:
-	if (!player->process(pt))
+	if (!player->canReach(pt))
 		return false;
 
 	*point = pt;
@@ -1702,7 +1702,7 @@ bool Actor::canMove(Common::Point *point, ActorDirection direction, uint32 dista
 		if (y > rct.bottom)
 			return false;
 
-		if (!canMoveCheckActors(point, direction))
+		if (!testActorCollision(point, direction))
 			return false;
 	}
 
@@ -1742,7 +1742,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	case kActorStatusWalkingTo:
 	case kActorStatusWalking2:
 	case kActorStatusWalkingTo2:
-		updateCoordinatesForDirection(actorDir, (int16)dist, &_point1);
+		incPosition(actorDir, (int16)dist, &_point1);
 
 		_frameIndex = (_frameIndex + 1) % _frameCount;
 
@@ -1780,7 +1780,7 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 
 	case kActorStatus18:
 		if (getWorld()->chapter == kChapter2) {
-			updateCoordinatesForDirection(actorDir, (int16)dist, &_point1);
+			incPosition(actorDir, (int16)dist, &_point1);
 
 			if (_walkingSound1 == kResourceNone)
 				break;
@@ -1815,8 +1815,8 @@ void Actor::move(ActorDirection actorDir, uint32 dist) {
 	}
 }
 
-bool Actor::canMoveCheckActors(Common::Point *point, ActorDirection dir) {
-	int32 dist = getAbsoluteDistanceForFrame(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
+bool Actor::testActorCollision(Common::Point *point, ActorDirection dir) {
+	int32 dist = getStride(dir, (_frameIndex >= _frameCount) ? 2 * _frameCount - (_frameIndex + 1) : _frameIndex);
 
 	int32 x = point->x + deltaPointsArray[dir][0] * dist - (_field_948 + 10);
 	int32 y = point->y + deltaPointsArray[dir][1] * dist - (_field_94C + 10);
@@ -1956,15 +1956,15 @@ void Actor::drawInventory() {
 		getWorld()->field_120 = 0;
 }
 
-void Actor::update_409230() {
-	updateStatus(_status <= 11 ? kActorStatusEnabled : kActorStatusEnabled2);
+void Actor::stopWalking() {
+	changeStatus(_status <= 11 ? kActorStatusEnabled : kActorStatusEnabled2);
 	_data.current = 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Static update methods
 //////////////////////////////////////////////////////////////////////////
-void Actor::enableActorsChapter2(AsylumEngine *engine) {
+void Actor::crowsReturn(AsylumEngine *engine) {
 	engine->clearGameFlag(kGameFlag438);
 	engine->clearGameFlag(kGameFlag439);
 	engine->clearGameFlag(kGameFlag440);
@@ -1975,34 +1975,34 @@ void Actor::enableActorsChapter2(AsylumEngine *engine) {
 	engine->data()->resetChapter2Data();
 
 	engine->scene()->getActor(13)->enable();
-	engine->scene()->getActor(13)->processStatus(2300, 71, false);
+	engine->scene()->getActor(13)->forceTo(2300, 71, false);
 
 	engine->scene()->getActor(14)->enable();
-	engine->scene()->getActor(14)->processStatus(2600, 1300, false);
+	engine->scene()->getActor(14)->forceTo(2600, 1300, false);
 
 	engine->scene()->getActor(15)->enable();
-	engine->scene()->getActor(15)->processStatus(2742, 615, false);
+	engine->scene()->getActor(15)->forceTo(2742, 615, false);
 
 	engine->scene()->getActor(16)->enable();
-	engine->scene()->getActor(16)->processStatus(2700, 1200, false);
+	engine->scene()->getActor(16)->forceTo(2700, 1200, false);
 
 	engine->scene()->getActor(17)->enable();
-	engine->scene()->getActor(17)->processStatus(2751, 347, false);
+	engine->scene()->getActor(17)->forceTo(2751, 347, false);
 
 	engine->scene()->getActor(18)->enable();
-	engine->scene()->getActor(18)->processStatus(2420, 284, false);
+	engine->scene()->getActor(18)->forceTo(2420, 284, false);
 
 	engine->scene()->getActor(19)->enable();
-	engine->scene()->getActor(19)->processStatus(2800, 370, false);
+	engine->scene()->getActor(19)->forceTo(2800, 370, false);
 
 	engine->scene()->getActor(20)->enable();
-	engine->scene()->getActor(20)->processStatus(1973, 1, false);
+	engine->scene()->getActor(20)->forceTo(1973, 1, false);
 
 	engine->scene()->getActor(21)->enable();
-	engine->scene()->getActor(21)->processStatus(2541, 40, false);
+	engine->scene()->getActor(21)->forceTo(2541, 40, false);
 }
 
-void Actor::updatePlayerChapter9(AsylumEngine *engine, int nextPlayer) {
+void Actor::morphInto(AsylumEngine *engine, int nextPlayer) {
 	WorldStats *world = engine->scene()->worldstats();
 	if (world->chapter != kChapter9)
 		return;
@@ -2066,32 +2066,32 @@ void Actor::updatePlayerChapter9(AsylumEngine *engine, int nextPlayer) {
 		break;
 	}
 
-	player->updateStatus(kActorStatusMorphingInto);
+	player->changeStatus(kActorStatusMorphingInto);
 }
 
 //////////////////////////////////////////////////////////////////////////
 // Update methods
 //////////////////////////////////////////////////////////////////////////
 
-void Actor::updateStatus3_19() {
+void Actor::updateStatusInteracting() {
 	if (getWorld()->chapter != kChapter2 || _frameIndex != 6 || _status == kActorStatusInteracting) { /* Original check: _status  <= kActorStatus11 */
 		if (_frameIndex < _frameCount - 1) {
 			++_frameIndex;
 		} else {
 			if (_status == kActorStatusInteracting)
-				updateStatus(kActorStatusPickupItem);
+				changeStatus(kActorStatusPickupItem);
 			else
-				updateStatus(kActorStatus20);
+				changeStatus(kActorStatus20);
 		}
 	} else {
 		if (_index == getSharedData()->getPlayerIndex())
-			updateStatus19_Player();
+			checkPumpkinDeath();
 
 		++_frameIndex;
 	}
 }
 
-void Actor::updateStatus19_Player() {
+void Actor::checkPumpkinDeath() {
 	updatePumpkin(kGameFlag263, kGameFlag270, kObjectPumpkin2Dies, kObjectPumpkin2Loop);
 	updatePumpkin(kGameFlag264, kGameFlag271, kObjectPumpkin3Dies, kObjectPumpkin3Loop);
 	updatePumpkin(kGameFlag265, kGameFlag272, kObjectPumpkin4Dies, kObjectPumpkin4Loop);
@@ -2125,8 +2125,8 @@ void Actor::updateStatusEnabled() {
 		if (strcmp((char *)&_name, "Crow") && strcmp((char *)_name, "Armed Max")) {
 			if (_vm->getRandom(100) < 50
 			 && (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
-			 && isDefaultDirection(10))
-				updateStatus(kActorStatusFidget);
+			 && canChangeStatus(10))
+				changeStatus(kActorStatusFidget);
 
 			_lastScreenUpdate = _vm->screenUpdateCount;
 		}
@@ -2163,22 +2163,22 @@ void Actor::updateStatusEnabled() {
 
 			case 0:
 				setPosition(10, 1350, kDirectionN, 0);
-				processStatus(1460, -100, false);
+				forceTo(1460, -100, false);
 				break;
 
 			case 1:
 				setPosition(300, 0, kDirectionN, 0);
-				processStatus(1700, 1400, false);
+				forceTo(1700, 1400, false);
 				break;
 
 			case 2:
 				setPosition(1560, -100, kDirectionN, 0);
-				processStatus(-300, 1470, false);
+				forceTo(-300, 1470, false);
 				break;
 
 			case 3:
 				setPosition(1150, 1400, kDirectionN, 0);
-				processStatus(-250, 0, false);
+				forceTo(-250, 0, false);
 				break;
 			}
 		}
@@ -2190,7 +2190,7 @@ void Actor::updateStatusEnabled() {
 	if (getWorld()->chapter != kChapter2 || _index != 8) {
 		if (_field_944 == 4) {
 			Common::Rect frameRect = GraphicResource::getFrameRect(_vm, getWorld()->backgroundImage, 0);
-			processStatus((int16)rnd(frameRect.width() + 200) - 100, (int16)rnd(frameRect.height() + 200) - 100, false);
+			forceTo((int16)rnd(frameRect.width() + 200) - 100, (int16)rnd(frameRect.height() + 200) - 100, false);
 		} else {
 			// Actor: Crow
 			if (rnd(1000) < 5 || !strcmp(_name, "Crow")) {
@@ -2209,9 +2209,9 @@ void Actor::updateStatusEnabled() {
 						if (!getSharedData()->getFlag(kFlagActorUpdateEnabledCheck)) {
 							if (!isInActionArea(pt, area)) {
 								Common::Point polyPoint = poly.points[rnd(poly.count())];
-								processStatus(polyPoint.x, polyPoint.y, false);
+								forceTo(polyPoint.x, polyPoint.y, false);
 							} else {
-								processStatus(pt.x, pt.y, false);
+								forceTo(pt.x, pt.y, false);
 							}
 						}
 					}
@@ -2256,21 +2256,21 @@ void Actor::updateStatusEnabledProcessStatus(int16 testX, int16 testY, uint32 co
 
 	if (xsum != testX || ysum != testY) {
 		if (rnd(1000) < 5)
-			processStatus(testX, testY, false);
+			forceTo(testX, testY, false);
 	} else {
 		getSharedData()->setActorUpdateStatusEnabledCounter(counter);
 
 		if (rnd(1000) < 5)
-			processStatus(setX, setY, false);
+			forceTo(setX, setY, false);
 	}
 }
 
-void Actor::updateStatus9() {
+void Actor::updateStatusBored() {
 	if (_index == getSharedData()->getPlayerIndex()
 	 && getWorld()->chapter != kChapter9
 	 && getWorld()->actorType == 0
 	 && _frameIndex == 0
-	 && isResourcePresent()) {
+	 && checkBoredStatus()) {
 		if (!getSpeech()->getSoundResourceId() || !getSound()->isPlaying(getSpeech()->getSoundResourceId()))
 			getSpeech()->playPlayer(13);
 	}
@@ -2282,13 +2282,13 @@ void Actor::updateStatus9() {
 	}
 }
 
-void Actor::updateStatus12_Chapter2() {
+void Actor::CrowClosesIn() {
 	// Compute distance
 	uint32 frameIndex = _frameIndex;
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
-	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, frameIndex));
+	uint32 distance = (uint32)abs((double)getWalkIncrement(_direction, frameIndex));
 
 	// Face actor
 	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
@@ -2322,11 +2322,11 @@ void Actor::updateStatus12_Chapter2() {
 		getSharedData()->crowsData[2 * _index + 30] = player->getPoint1()->x - _point1.x;
 		getSharedData()->crowsData[2 * _index + 31] = player->getPoint1()->y - _point1.y;
 
-		updateStatus(kActorStatus18);
+		changeStatus(kActorStatus18);
 	}
 }
 
-void Actor::updateStatus12_Chapter2_Actor11() {
+void Actor::ScareCrowClosesIn() {
 	bool processEnd = true;
 	Actor *player = getScene()->getActor();
 	Common::Point sum = _point1 + _point2;
@@ -2337,11 +2337,11 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	if (_frameIndex >= _frameCount)
 		frameIndex = 2 * _frameCount - (_frameIndex + 1);
 
-	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, frameIndex));
+	uint32 distance = (uint32)abs((double)getWalkIncrement(_direction, frameIndex));
 
 	// Update status
 	if (player->getStatus() == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
-		updateStatus(kActorStatusEnabled);
+		changeStatus(kActorStatusEnabled);
 		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
@@ -2358,7 +2358,7 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 	 || getScene()->findActionArea(kActionAreaType1, point2) == -1) {
 		processEnd = false;
 
-		if (compareAngles(sum, sumPlayer) == false) {
+		if (determineLeftOrRight(sum, sumPlayer) == false) {
 			if (canMove(&sum, DIR(_direction + 1), distance, false)) {
 				move(DIR(_direction + 1), distance);
 			} else if (canMove(&sum, DIR(_direction + 2), distance, false)) {
@@ -2396,13 +2396,13 @@ void Actor::updateStatus12_Chapter2_Actor11() {
 			if (sqrt((double)((sum.y - sumPlayer.y) * (sum.y - sumPlayer.y) + (sum.x - sumPlayer.x) * (sum.x - sumPlayer.x))) < 80.0) {
 				_frameIndex = 0;
 				faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
-				updateStatus(kActorStatusAttacking);
+				changeStatus(kActorStatusAttacking);
 			}
 		}
 	}
 }
 
-void Actor::updateStatus12_Chapter11() {
+void Actor::TentacleRises() {
 	if (!_frameIndex)
 		getSound()->playSound(getWorld()->soundResourceIds[6]);
 
@@ -2410,7 +2410,7 @@ void Actor::updateStatus12_Chapter11() {
 
 	if (_frameIndex >= _frameCount) {
 		_frameIndex = 0;
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
 	}
 
@@ -2422,12 +2422,12 @@ void Actor::updateStatus12_Chapter11() {
 	getSharedData()->vector2.x = _point1.x + _point2.x;
 	getSharedData()->vector2.y = _point1.y + _point2.y;
 
-	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
+	TentacleBlocksSarah(getSharedData()->vector1, getSharedData()->vector2);
 }
 
-void Actor::updateStatus14() {
+void Actor::updateStatusEnabled2() {
 	if (_frameCount == 0)
-		error("[Actor::updateStatus14] Invalid frame count (cannot be 0)");
+		error("[Actor::updateStatusEnabled2] Invalid frame count (cannot be 0)");
 
 	_frameIndex = (_frameIndex + 1) % _frameCount;
 	_lastScreenUpdate = _vm->screenUpdateCount;
@@ -2438,33 +2438,33 @@ void Actor::updateStatus14() {
 
 	case kChapter2:
 		if (_index == 11)
-			updateStatus(kActorStatusWalking2);
+			changeStatus(kActorStatusWalking2);
 		else if (_index > 12)
-			updateStatus14_Chapter2_Helper();
+			CrowStatusQuo();
 		break;
 
 	case kChapter11:
 		if (_index >= 10 && _index < 16)
-			updateStatus14_Chapter11();
+			TentacleWigglesForSarah();
 		break;
 	}
 }
 
-void Actor::updateStatus14_Chapter2_Helper() {
+void Actor::CrowStatusQuo() {
 	if (getSharedData()->crowsData[_index + 61])
-		updateStatus14_Chapter2();
+		CrowHoveringBeforeKill();
 	else
-		updateStatus(kActorStatusWalking2);
+		changeStatus(kActorStatusWalking2);
 }
 
-void Actor::updateStatus14_Chapter2() {
-	// Original calls getDistanceForFrame but does not seem to do anything with the results
+void Actor::CrowHoveringBeforeKill() {
+	// Original calls getWalkIncrement but does not seem to do anything with the results
 
 	Actor *player = getScene()->getActor();
 	ActorStatus playerStatus = player->getStatus();
 
 	if (playerStatus == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
-		updateStatus(kActorStatusEnabled);
+		changeStatus(kActorStatusEnabled);
 		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
@@ -2478,7 +2478,7 @@ void Actor::updateStatus14_Chapter2() {
 		if (getSharedData()->crowsData[_index + 29] <= 1 || playerStatus == kActorStatusGettingHurt || playerStatus == kActorStatusRestarting) {
 			getSharedData()->crowsData[_index + 29]++;
 		} else {
-			updateStatus(kActorStatusAttacking);
+			changeStatus(kActorStatusAttacking);
 			_point1.y -= 54;
 			getSharedData()->crowsData[_index + 29] = 0;
 			getSharedData()->crowsData[_index - 2] += 54;
@@ -2499,7 +2499,7 @@ void Actor::updateStatus14_Chapter2() {
 		if (getSharedData()->crowsData[_index + 17] > 108) {
 			getSharedData()->crowsData[_index + 29] = 0;
 
-			updateStatus(kActorStatusEnabled);
+			changeStatus(kActorStatusEnabled);
 
 			switch (_index) {
 			default:
@@ -2507,42 +2507,42 @@ void Actor::updateStatus14_Chapter2() {
 				break;
 
 			case 13:
-				processStatus(2300, 671, false);
+				forceTo(2300, 671, false);
 				break;
 
 			case 14:
-				processStatus(2600, 1300, false);
+				forceTo(2600, 1300, false);
 				break;
 
 			case 15:
-				processStatus(2742, 615, false);
+				forceTo(2742, 615, false);
 				break;
 
 			case 16:
-				processStatus(2700, 1400, false);
+				forceTo(2700, 1400, false);
 				break;
 
 			case 17:
-				processStatus(2751, 347, false);
+				forceTo(2751, 347, false);
 				break;
 
 			case 18:
-				processStatus(2420, 284, false);
+				forceTo(2420, 284, false);
 				break;
 
 			case 19:
-				processStatus(2800, 370, false);
+				forceTo(2800, 370, false);
 				break;
 
 			case 20:
-				processStatus(1973, 1, false);
+				forceTo(1973, 1, false);
 				break;
 			}
 		}
 	}
 }
 
-void Actor::updateStatus14_Chapter11() {
+void Actor::TentacleWigglesForSarah() {
 	Actor *actor0 = getScene()->getActor(0);
 
 	getSharedData()->vector1.x = actor0->getPoint1()->x + actor0->getPoint2()->x;
@@ -2555,28 +2555,28 @@ void Actor::updateStatus14_Chapter11() {
 		getWorld()->tickValueArray[_index] = rnd(4000) + _vm->getTick();
 
 	faceTarget(kActorMax, kDirectionFromActor);
-	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
+	TentacleBlocksSarah(getSharedData()->vector1, getSharedData()->vector2);
 
 	if (getWorld()->tickValueArray[_index] < (int)_vm->getTick()) {
 		if (euclidianDistance(getSharedData()->vector1, getSharedData()->vector2) >= 75) {
 			getWorld()->tickValueArray[_index] = rnd(1000) + 2000 + _vm->getTick();
 		} else {
 			if (actor0->getStatus() == kActorStatusWalking2 || actor0->getStatus() == kActorStatusEnabled2 || actor0->getStatus() == kActorStatusAttacking)
-				updateStatus(kActorStatusAttacking);
+				changeStatus(kActorStatusAttacking);
 
 			getWorld()->tickValueArray[_index] = -666;
 		}
 	}
 }
 
-void Actor::updateStatus15_Chapter2() {
+void Actor::CrowDives() {
 	Actor *player = getScene()->getActor();
 
 	Common::Point sum = _point1 + _point2;
 	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
 
 	if (getScene()->getActor(10)->getStatus() == kActorStatusRestarting || !getScene()->getActor(10)->isVisible()) {
-		updateStatus(kActorStatusEnabled);
+		changeStatus(kActorStatusEnabled);
 		getSharedData()->crowsData[_index - 11] = 160;
 	}
 
@@ -2584,7 +2584,7 @@ void Actor::updateStatus15_Chapter2() {
 		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
 
 	if (player->getStatus() == kActorStatusRestarting && _frameIndex < 6)
-		updateStatus(kActorStatusEnabled);
+		changeStatus(kActorStatusEnabled);
 
 	uint32 dist = euclidianDistance(sumPlayer, sum);
 	int16 offset = (dist <= 10) ? 7 : 12;
@@ -2610,12 +2610,12 @@ void Actor::updateStatus15_Chapter2() {
 		if (player->getStatus() != kActorStatusGettingHurt && player->getStatus() != kActorStatusRestarting && player->getFrameIndex() < 6) {
 			_point1 = sumPlayer - _point2;
 
-			updateStatus15_Chapter2_Helper();
+			MaxGetsHit();
 			getSpeech()->playPlayer(51);
 			_vm->setGameFlag(kGameFlag219);
 
-			player->updateFromDirection(DIR(_direction + 4));
-			player->updateStatus(kActorStatusGettingHurt);
+			player->changeDirection(DIR(_direction + 4));
+			player->changeStatus(kActorStatusGettingHurt);
 
 			getSharedData()->crowsData[_index + 61] = 0;
 		}
@@ -2644,15 +2644,15 @@ void Actor::updateStatus15_Chapter2() {
 		_frameIndex = 0;
 
 		if (getSharedData()->getChapter2Counter(6) <= 2)
-			processStatus(sum.x, sum.y, false);
+			forceTo(sum.x, sum.y, false);
 		else
-			updateStatus(kActorStatusEnabled);
+			changeStatus(kActorStatusEnabled);
 
 		getSharedData()->crowsData[_index + 61] = 0;
 	}
 }
 
-void Actor::updateStatus15_Chapter2_Helper() {
+void Actor::MaxGetsHit() {
 	Actor *actor39 = getScene()->getActor(39);
 
 	actor39->setFrameIndex(0);
@@ -2695,7 +2695,7 @@ void Actor::updateStatus15_Chapter2_Helper() {
 
 	switch (getSharedData()->getChapter2Counter(6)) {
 	default:
-		enableActorsChapter2(_vm);
+		crowsReturn(_vm);
 		getCursor()->hide();
 		break;
 
@@ -2712,9 +2712,9 @@ void Actor::updateStatus15_Chapter2_Helper() {
 	}
 }
 
-void Actor::updateStatus15_Chapter2_Player() {
+void Actor::MaxAttacks() {
 	if (_index != getSharedData()->getPlayerIndex())
-		error("[Actor::updateStatus15_Chapter2_Player] Function is only available for the current player");
+		error("[Actor::MaxAttacks] Function is only available for the current player");
 
 	// Update frame index and process
 	_frameIndex++;
@@ -2751,71 +2751,71 @@ void Actor::updateStatus15_Chapter2_Player() {
 					break;
 
 				case 15:
-					if (getScene()->getActor(16)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(16)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag321);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 16:
-					if (getScene()->getActor(15)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(15)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag321);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 17:
-					if (getScene()->getActor(21)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(21)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag322);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 18:
-					if (getScene()->getActor(19)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(20)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(19)->checkCrowDeath() && getScene()->getActor(20)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag323);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 19:
-					if (getScene()->getActor(18)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(20)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(18)->checkCrowDeath() && getScene()->getActor(20)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag323);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 20:
-					if (getScene()->getActor(19)->updateStatus15_isNoVisibleOrStatus17() && getScene()->getActor(18)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(19)->checkCrowDeath() && getScene()->getActor(18)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag323);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 
 				case 21:
-					if (getScene()->getActor(17)->updateStatus15_isNoVisibleOrStatus17()) {
+					if (getScene()->getActor(17)->checkCrowDeath()) {
 						_vm->setGameFlag(kGameFlag322);
 						_vm->clearGameFlag(kGameFlag235);
 					}
 					break;
 				}
 
-				otherActor->updateStatus(kActorStatusRestarting);
+				otherActor->changeStatus(kActorStatusRestarting);
 				getSound()->playSound(getWorld()->soundResourceIds[2], false, Config.sfxVolume - 10);
 			}
 		}
 
 		if (actorIndex == 11)
-			updateStatus15_Chapter2_Player_Helper();
+			checkScareCrowDeath();
 	}
 
 	if (_frameIndex >= _frameCount) {
 		_frameIndex = 0;
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 	}
 }
 
-void Actor::updateStatus15_Chapter2_Player_Helper() {
+void Actor::checkScareCrowDeath() {
 	// we are the current player
 	Actor *actor11 = getScene()->getActor(11);
 	Actor *actor40 = getScene()->getActor(40);
@@ -2836,24 +2836,24 @@ void Actor::updateStatus15_Chapter2_Player_Helper() {
 		} else if (getSharedData()->getChapter2Counter(5) <= 6) {
 			getSound()->playSound(getWorld()->soundResourceIds[9], false, Config.sfxVolume - 10);
 		} else {
-			getScene()->getActor(11)->updateStatus(kActorStatusRestarting);
+			getScene()->getActor(11)->changeStatus(kActorStatusRestarting);
 			getSound()->playSound(getWorld()->soundResourceIds[10], false, Config.sfxVolume - 10);
 		}
 	}
 }
 
-bool Actor::updateStatus15_isNoVisibleOrStatus17() {
+bool Actor::checkCrowDeath() {
 	return (!isVisible() || _status == kActorStatusRestarting);
 }
 
-void Actor::updateStatus15_Chapter2_Actor11() {
+void Actor::ScareCrowAttacks() {
 	Actor *player = getScene()->getActor();
 
 	Common::Point sum = _point1 + _point2;
 	Common::Point sumPlayer = *player->getPoint1() + *player->getPoint2();
 
 	Common::Rect rect;
-	rectFromDirection(&rect, _direction, sum);
+	getCrowStrikeZone(&rect, _direction, sum);
 
 	switch (_frameIndex) {
 	default:
@@ -2879,12 +2879,12 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 	_frameIndex += getSharedData()->getChapter2FrameIndexOffset();
 
 	Common::Point actionPoint = sum;
-	actionPoint.x += compareX(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
-	actionPoint.y += compareY(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer);
+	actionPoint.x += pointInRectXAdjust(rect, sumPlayer);
+	actionPoint.y += pointInRectYAdjust(rect, sumPlayer);
 
 	if (getScene()->getActor(11)->getFrameIndex() < 8
 	 && getScene()->findActionArea(kActionAreaType2, actionPoint) != -1
-	 && !updateStatus15_Chapter2_Actor11_Helper(10, 11))
+	 && !actorsIntersect(10, 11))
 		 _point1 = actionPoint - _point2;
 
 	if (_frameIndex != 8 || _status == kActorStatusGettingHurt) { /* FIXME the status test seems useless */
@@ -2892,14 +2892,14 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 			_frameIndex = 0;
 
 			if (!getSharedData()->getFlag(kFlagActorUpdateStatus15Check)) {
-				updateStatus(kActorStatusWalking2);
+				changeStatus(kActorStatusWalking2);
 			} else {
 				getSharedData()->setFlag(kFlagActorUpdateStatus15Check, false);
-				getScene()->getActor(11)->updateStatus(kActorStatus18);
+				getScene()->getActor(11)->changeStatus(kActorStatus18);
 			}
 		}
 	} else {
-		if (compare(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom), sumPlayer)) {
+		if (rect.contains(sumPlayer)) {
 
 			_vm->clearGameFlag(kGameFlag263);
 			_vm->clearGameFlag(kGameFlag264);
@@ -2909,9 +2909,9 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 			_vm->clearGameFlag(kGameFlag268);
 			_vm->clearGameFlag(kGameFlag269);
 
-			player->update_409230();
-			player->updateStatus(kActorStatusGettingHurt);
-			updateStatus15_Chapter2_Helper();
+			player->stopWalking();
+			player->changeStatus(kActorStatusGettingHurt);
+			MaxGetsHit();
 
 			getSpeech()->playPlayer(52);
 
@@ -2926,7 +2926,7 @@ void Actor::updateStatus15_Chapter2_Actor11() {
 	}
 }
 
-bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, ActorIndex actorIndex2) {
+bool Actor::actorsIntersect(ActorIndex actorIndex1, ActorIndex actorIndex2) {
 	Actor *actor1 = getScene()->getActor(actorIndex1);
 	Actor *actor2 = getScene()->getActor(actorIndex2);
 
@@ -2947,7 +2947,7 @@ bool Actor::updateStatus15_Chapter2_Actor11_Helper(ActorIndex actorIndex1, Actor
 	return getScene()->rectIntersect(pt1.x, pt1.y, pt2.x, pt2.y, pt3.x, pt3.y, pt4.x, pt4.y);
 }
 
-void Actor::updateStatus15_Chapter11() {
+void Actor::TentacleWhips() {
 	Actor *actor0 = getScene()->getActor(0);
 
 	// Update vectors
@@ -2957,16 +2957,16 @@ void Actor::updateStatus15_Chapter11() {
 	getSharedData()->vector2.x = getPoint1()->x + getPoint2()->x;
 	getSharedData()->vector2.y = getPoint1()->y + getPoint2()->y;
 
-	updateCoordinates(getSharedData()->vector1, getSharedData()->vector2);
+	TentacleBlocksSarah(getSharedData()->vector1, getSharedData()->vector2);
 
 	++_frameIndex;
 	if (_frameIndex >= _frameCount)
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 
 	if (_frameIndex == 14) {
 		if (Actor::euclidianDistance(getSharedData()->vector1, getSharedData()->vector2) < 75) {
 
-			actor0->updateStatus(kActorStatusGettingHurt);
+			actor0->changeStatus(kActorStatusGettingHurt);
 			++getWorld()->field_E848C;
 
 			getSound()->stop(getWorld()->soundResourceIds[3]);
@@ -2978,7 +2978,7 @@ void Actor::updateStatus15_Chapter11() {
 	}
 }
 
-void Actor::updateStatus15_Chapter11_Player() {
+void Actor::SarahAttacks() {
 	_frameIndex++;
 
 	if (_frameIndex == 17) {
@@ -3022,7 +3022,7 @@ void Actor::updateStatus15_Chapter11_Player() {
 					break;
 				}
 
-				actor2->updateStatus(kActorStatusRestarting);
+				actor2->changeStatus(kActorStatusRestarting);
 			}
 		}
 	}
@@ -3031,11 +3031,11 @@ void Actor::updateStatus15_Chapter11_Player() {
 		getCursor()->show();
 		getSharedData()->setFlag(kFlag1, false);
 		_frameIndex = 0;
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 	}
 }
 
-void Actor::updateStatus16_Chapter2() {
+void Actor::MaxGetsSome() {
 	Actor *player = getScene()->getActor();
 
 	player->setFrameIndex(player->getFrameIndex() + 1);
@@ -3043,7 +3043,7 @@ void Actor::updateStatus16_Chapter2() {
 	if (player->getFrameIndex() > (player->getFrameCount() - 1)) {
 		if (getSharedData()->getChapter2Counter(6) <= 2) {
 			player->setFrameIndex(0);
-			player->updateStatus(kActorStatusEnabled2);
+			player->changeStatus(kActorStatusEnabled2);
 		} else {
 			_vm->clearGameFlag(kGameFlag438);
 			_vm->clearGameFlag(kGameFlag439);
@@ -3056,7 +3056,7 @@ void Actor::updateStatus16_Chapter2() {
 			_vm->setGameFlag(kGameFlag219);
 
 			player->setFrameIndex(0);
-			player->updateStatus(kActorStatusRestarting);
+			player->changeStatus(kActorStatusRestarting);
 
 			_vm->clearGameFlag(kGameFlag369);
 			_vm->clearGameFlag(kGameFlag370);
@@ -3071,14 +3071,14 @@ void Actor::updateStatus16_Chapter2() {
 				getSound()->stop(getWorld()->soundResourceIds[7]);
 
 			if (_vm->isGameFlagSet(kGameFlag235)) {
-				Actor::enableActorsChapter2(_vm);
+				Actor::crowsReturn(_vm);
 				_vm->clearGameFlag(kGameFlag235);
 			}
 		}
 	}
 }
 
-void Actor::updateStatus16_Chapter11() {
+void Actor::SarahGetsSome() {
 	// We are sure to be the current player
 	getCursor()->show();
 	getSharedData()->setFlag(kFlag1, false);
@@ -3090,20 +3090,20 @@ void Actor::updateStatus16_Chapter11() {
 		if (getWorld()->field_E848C >= 3) {
 			_frameIndex = 0;
 
-			getScene()->getActor(0)->updateStatus(kActorStatusRestarting);
+			getScene()->getActor(0)->changeStatus(kActorStatusRestarting);
 			getScene()->getActor(1)->setTickCount(_vm->getTick() + 2000);
 		} else {
-			getScene()->getActor(0)->updateStatus(kActorStatusEnabled2);
+			getScene()->getActor(0)->changeStatus(kActorStatusEnabled2);
 		}
 	}
 }
 
-void Actor::updateStatus17_Chapter2() {
+void Actor::TentacleDies() {
 	++_frameIndex;
 
 	if (_frameIndex >= _frameCount) {
 		_frameIndex = 0;
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 		hide();
 
 		if (_vm->getRandomBit() == 1) {
@@ -3113,7 +3113,7 @@ void Actor::updateStatus17_Chapter2() {
 	}
 }
 
-void Actor::updateStatus18_Chapter2() {
+void Actor::CrowSwoops() {
 	Actor *player = getScene()->getActor();
 
 	_point1.x = player->getPoint1()->x - (int16)getSharedData()->crowsData[2 * _index + 30];
@@ -3123,7 +3123,7 @@ void Actor::updateStatus18_Chapter2() {
 
 	if (_frameIndex > _frameCount - 1) {
 		getSharedData()->crowsData[_index + 61] = 1;
-		updateStatus(kActorStatusEnabled2);
+		changeStatus(kActorStatusEnabled2);
 
 		_point1.y += 54;
 		getSound()->playSound(getWorld()->soundResourceIds[1], false, Config.sfxVolume - 10);
@@ -3132,14 +3132,14 @@ void Actor::updateStatus18_Chapter2() {
 	}
 }
 
-void Actor::updateStatus18_Chapter2_Actor11() {
+void Actor::ScareCrowRetreats() {
 	int32 frameIndex = (int32)_frameIndex;
-	uint32 distance = (uint32)abs((double)getDistanceForFrame(_direction, (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - (_frameIndex + 1)));
+	uint32 distance = (uint32)abs((double)getWalkIncrement(_direction, (_frameIndex < _frameCount) ? _frameIndex : 2 * _frameCount - (_frameIndex + 1)));
 
 	getSharedData()->setChapter2Counter(7, getSharedData()->getChapter2Counter(7) + 1);
 	if (getSharedData()->getChapter2Counter(7) > 14) {
 		getSharedData()->setChapter2Counter(7, 0);
-		updateStatus(kActorStatusWalking2);
+		changeStatus(kActorStatusWalking2);
 	}
 
 	faceTarget((uint32)getSharedData()->getPlayerIndex(), kDirectionFromActor);
@@ -3168,7 +3168,7 @@ void Actor::updateStatus18_Chapter2_Actor11() {
 		_frameIndex = (uint32)frameIndex;
 }
 
-void Actor::updateStatus21() {
+void Actor::updateStatusMorphing() {
 	if (_resourceId == getWorld()->graphicResourceIds[3] || _resourceId == getWorld()->graphicResourceIds[4] || _resourceId == getWorld()->graphicResourceIds[5]) {
 		if (_frameIndex < _frameCount - 1) {
 			++_frameIndex;
@@ -3195,11 +3195,11 @@ void Actor::updateStatus21() {
 	}
 
 	getScene()->changePlayer(getWorld()->nextPlayer);
-	updateStatus(kActorStatusEnabled);
+	changeStatus(kActorStatusEnabled);
 	getWorld()->nextPlayer = kActorInvalid;
 }
 
-void Actor::updateFinish() {
+void Actor::actionAreaCheck() {
 	if (_field_944 == 4 || !isVisible())
 		return;
 
@@ -3229,7 +3229,7 @@ void Actor::updateFinish() {
 	}
 }
 
-void Actor::updateCoordinates(const Common::Point &vec1, Common::Point vec2) {
+void Actor::TentacleBlocksSarah(const Common::Point &vec1, Common::Point vec2) {
 	if (getScene()->getActor(1)->isVisible())
 		return;
 
@@ -3243,10 +3243,10 @@ void Actor::updateCoordinates(const Common::Point &vec1, Common::Point vec2) {
 	ActorDirection dir = (vec1.y > vec2.y) ? kDirectionS : kDirectionN;
 
 	if (canMove(&vec2, dir, diffY + 3, false))
-		updateCoordinatesForDirection(dir, (int16)(diffY - 1), &_point1);
+		incPosition(dir, (int16)(diffY - 1), &_point1);
 }
 
-void Actor::resetActors() {
+void Actor::SarahDies() {
 	getCursor()->hide();
 	getScene()->getActor(0)->hide();
 	getScene()->getActor(1)->setFrameIndex(0);
@@ -3269,7 +3269,7 @@ void Actor::updateNumbers(uint item, const Common::Point &point) {
 //////////////////////////////////////////////////////////////////////////
 // Path finding functions
 //////////////////////////////////////////////////////////////////////////
-bool Actor::processActionLeft(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::findLeftPath(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -3279,13 +3279,13 @@ bool Actor::processActionLeft(Common::Point source, const Common::Point &destina
 
 	for (uint32 i = 0; i < 60; i++) {
 
-		// Note: this is handled differently from other processAction functions
+		// Note: this is handled differently from other tryDirection functions
 		// as we break instead of checking the other actors
-		if (!processAction(source, actions, &src, kDirectionE,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionN,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionS,  destination, &flag))
+		if (!tryDirection(source, actions, &src, kDirectionE,  destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionNE, destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionSE, destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionN,  destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionS,  destination, &flag))
 			break;
 
 		// Update source point after all processing
@@ -3298,7 +3298,7 @@ bool Actor::processActionLeft(Common::Point source, const Common::Point &destina
 	return false;
 }
 
-bool Actor::processActionAll(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::findRightPath(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -3307,22 +3307,22 @@ bool Actor::processActionAll(Common::Point source, const Common::Point &destinat
 	Common::Point src = source;
 
 	for (uint32 i = 0; i < 60; i++) {
-		if (!processAction(source, actions, &src, kDirectionW,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionNW, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSW, destination, &flag)) {
+		if (!tryDirection(source, actions, &src, kDirectionW,  destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionNW, destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionSW, destination, &flag)) {
 			if (src.y <= destination.y) {
-				if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionN,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag))
+				if (!tryDirection(source, actions, &src, kDirectionS,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionN,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionSE, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionNE, destination, &flag))
 					continue;
 			} else {
-				if (!processAction(source, actions, &src, kDirectionN,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionS,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionSE, destination, &flag))
+				if (!tryDirection(source, actions, &src, kDirectionN,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionS,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionSE, destination, &flag))
 					continue;
 			}
 		}
@@ -3337,7 +3337,7 @@ bool Actor::processActionAll(Common::Point source, const Common::Point &destinat
 	return false;
 }
 
-bool Actor::processActionTop(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::findUpPath(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -3346,18 +3346,18 @@ bool Actor::processActionTop(Common::Point source, const Common::Point &destinat
 	Common::Point src = source;
 
 	for (uint32 i = 0; i < 60; i++) {
-		if (!processAction(source, actions, &src, kDirectionN, destination, &flag)) {
+		if (!tryDirection(source, actions, &src, kDirectionN, destination, &flag)) {
 			if (src.x >= destination.x) {
-				if (!processAction(source, actions, &src, kDirectionNW, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionW,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionNE, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag))
+				if (!tryDirection(source, actions, &src, kDirectionNW, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionW,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionE,  destination, &flag))
 					continue;
 			} else {
-				if (!processAction(source, actions, &src, kDirectionNE, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionNW, destination, &flag)
-				 && !processAction(source, actions, &src, kDirectionW,  destination, &flag))
+				if (!tryDirection(source, actions, &src, kDirectionNE, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionE,  destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionNW, destination, &flag)
+				 && !tryDirection(source, actions, &src, kDirectionW,  destination, &flag))
 					continue;
 			}
 		}
@@ -3372,7 +3372,7 @@ bool Actor::processActionTop(Common::Point source, const Common::Point &destinat
 	return false;
 }
 
-bool Actor::processActionDown(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
+bool Actor::findDownPath(Common::Point source, const Common::Point &destination, Common::Array<int> *actions) {
 	// Reset pathfinding data
 	_data.count = 0;
 	_data.current = 0;
@@ -3381,11 +3381,11 @@ bool Actor::processActionDown(Common::Point source, const Common::Point &destina
 	Common::Point src = source;
 
 	for (uint32 i = 0; i < 60; i++) {
-		if (!processAction(source, actions, &src, kDirectionS,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSE, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionSW, destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionE,  destination, &flag)
-		 && !processAction(source, actions, &src, kDirectionW,  destination, &flag))
+		if (!tryDirection(source, actions, &src, kDirectionS,  destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionSE, destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionSW, destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionE,  destination, &flag)
+		 && !tryDirection(source, actions, &src, kDirectionW,  destination, &flag))
 			continue;
 
 		// Update source point after all processing
@@ -3398,7 +3398,7 @@ bool Actor::processActionDown(Common::Point source, const Common::Point &destina
 	return false;
 }
 
-bool Actor::processAction(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
+bool Actor::tryDirection(const Common::Point &source, Common::Array<int> *actions, Common::Point *point, ActorDirection direction, const Common::Point &destination, bool *flag) {
 	Common::Point sign;
 	Common::Point src = source;
 	uint32 frameNumber = _frameNumber;
@@ -3445,18 +3445,18 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	}
 
 	for (int i = 0; i < 10; i++) {
-		if (!checkAllActions(src, actions))
+		if (!testPolyInLink(src, actions))
 			break;
 
-		int32 dist = getAbsoluteDistanceForFrame(direction, frameNumber);
+		int32 dist = getStride(direction, frameNumber);
 		src.x += (int16)(sign.x * dist);
 		src.y += (int16)(sign.y * dist);
 
-		if (abs(src.x - destination.x) >= getAbsoluteDistanceForFrame(kDirectionW, frameNumber)) {
-			if (abs(src.y - destination.y) < getAbsoluteDistanceForFrame(kDirectionN, frameNumber)) {
+		if (abs(src.x - destination.x) >= getStride(kDirectionW, frameNumber)) {
+			if (abs(src.y - destination.y) < getStride(kDirectionN, frameNumber)) {
 
 				if (src.x >= destination.x) {
-					if (checkPath(actions, src, kDirectionW, src.x - destination.x)) {
+					if (canGetToDest(actions, src, kDirectionW, src.x - destination.x)) {
 						*flag = true;
 						*point = src;
 
@@ -3471,7 +3471,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 						return true;
 					}
 				} else {
-					if (checkPath(actions, src, kDirectionE, destination.x - src.x)) {
+					if (canGetToDest(actions, src, kDirectionE, destination.x - src.x)) {
 						*flag = true;
 						*point = src;
 
@@ -3489,7 +3489,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 			}
 		} else {
 			if (src.y >= destination.y) {
-				if (checkPath(actions, src, kDirectionN, src.y - destination.y)) {
+				if (canGetToDest(actions, src, kDirectionN, src.y - destination.y)) {
 					*flag = true;
 					*point = src;
 
@@ -3504,7 +3504,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 					return true;
 				}
 			} else {
-				if (checkPath(actions, src, kDirectionS, destination.y - src.y)) {
+				if (canGetToDest(actions, src, kDirectionS, destination.y - src.y)) {
 					*flag = true;
 					*point = src;
 
@@ -3529,7 +3529,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	}
 
 	// Check if we need to process
-	int32 distance = getAbsoluteDistanceForFrame(direction, frameNumber);
+	int32 distance = getStride(direction, frameNumber);
 	if (source.x == (src.x - sign.x * distance) && source.y == (src.y - sign.y * distance))
 		return false;
 
@@ -3540,9 +3540,9 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	_frameNumber = frameNumber;
 
 	if (_frameNumber == 0)
-		distance = getAbsoluteDistanceForFrame(direction, _frameCount - 1);
+		distance = getStride(direction, _frameCount - 1);
 	else
-		distance = getAbsoluteDistanceForFrame(direction, _frameNumber - 1);
+		distance = getStride(direction, _frameNumber - 1);
 
 	src.x -= (int16)(sign.x * distance);
 	src.y -= (int16)(sign.y * distance);
@@ -3555,7 +3555,7 @@ bool Actor::processAction(const Common::Point &source, Common::Array<int> *actio
 	return true;
 }
 
-bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, int16 loopcount) {
+bool Actor::canGetToDest(Common::Array<int> *actions, const Common::Point &point, ActorDirection direction, int16 loopcount) {
 	if (loopcount <= 1)
 		return true;
 
@@ -3565,7 +3565,7 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 	Common::Rect  rect      = getWorld()->sceneRects[getWorld()->sceneRectIdx];
 
 	for (int16 i = 1; i < loopcount; i++) {
-		if (!checkAllActions(basePoint, actions))
+		if (!testPolyInLink(basePoint, actions))
 			return false;
 
 		if (!rect.contains(basePoint))
@@ -3577,7 +3577,7 @@ bool Actor::checkPath(Common::Array<int> *actions, const Common::Point &point, A
 	return true;
 }
 
-bool Actor::checkAllActions(const Common::Point &pt, Common::Array<int> *actions) {
+bool Actor::testPolyInLink(const Common::Point &pt, Common::Array<int> *actions) {
 	if (actions->size() == 0)
 		return false;
 
@@ -3658,7 +3658,7 @@ void Actor::setVolume() {
 // Helper methods
 //////////////////////////////////////////////////////////////////////////
 
-ActorDirection Actor::directionFromAngle(const Common::Point &vec1, const Common::Point &vec2) {
+ActorDirection Actor::getAngle(const Common::Point &vec1, const Common::Point &vec2) {
 	int32 diffX = (vec2.x << 16) - (vec1.x << 16);
 	int32 diffY = (vec1.y << 16) - (vec2.y << 16);
 	int32 adjust = 0;
@@ -3756,7 +3756,7 @@ void Actor::updateGraphicData(uint32 offset) {
 	_frameIndex = 0;
 }
 
-bool Actor::isDefaultDirection(int index) const {
+bool Actor::canChangeStatus(int index) const {
 	return _graphicResourceIds[index] != _graphicResourceIds[5];
 }
 
@@ -3782,13 +3782,13 @@ DrawFlags Actor::getGraphicsFlags() {
 	return kDrawFlagMirrorLeftRight;
 }
 
-int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+int32 Actor::getStride(ActorDirection dir, uint32 frameIndex) const {
 	if (frameIndex >= ARRAYSIZE(_distancesNS))
-		warning("[Actor::getAbsoluteDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+		debugC(kDebugLevelMain, "[Actor::getStride] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
 
 	switch (dir) {
 	default:
-		error("[Actor::getDistanceForFrame] Invalid direction");
+		error("[Actor::getStride] Invalid direction");
 
 	case kDirectionN:
 	case kDirectionS:
@@ -3807,13 +3807,13 @@ int32 Actor::getAbsoluteDistanceForFrame(ActorDirection dir, uint32 frameIndex) 
 	}
 }
 
-int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
+int32 Actor::getWalkIncrement(ActorDirection dir, uint32 frameIndex) const {
 	if (frameIndex >= ARRAYSIZE(_distancesNS))
-		error("[Actor::getDistanceForFrame] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
+		error("[Actor::getWalkIncrement] Invalid frame index (was: %d, max: %d)", _frameIndex, ARRAYSIZE(_distancesNS) - 1);
 
 	switch (dir) {
 	default:
-		error("[Actor::getDistanceForFrame] Invalid direction");
+		error("[Actor::getWalkIncrement] Invalid direction");
 
 	case kDirectionN:
 		return -_distancesNS[frameIndex];
@@ -3841,9 +3841,9 @@ int32 Actor::getDistanceForFrame(ActorDirection dir, uint32 frameIndex) const {
 	}
 }
 
-void Actor::updateCoordinatesForDirection(ActorDirection direction, int16 delta, Common::Point *point) {
+void Actor::incPosition(ActorDirection direction, int16 delta, Common::Point *point) {
 	if (!point)
-		error("[Actor::updateCoordinatesForDirection] Invalid point (NULL)!");
+		error("[Actor::incPosition] Invalid point (NULL)!");
 
 	switch (direction) {
 	default:
@@ -3887,11 +3887,11 @@ void Actor::updateCoordinatesForDirection(ActorDirection direction, int16 delta,
 	}
 }
 
-uint32 Actor::euclidianDistance(const Common::Point &vec1, const Common::Point &vec2) {
-	return (uint32)sqrt(pow((double)(vec2.y - vec1.y), 2) + pow((double)(vec2.x - vec1.x), 2));
+uint32 Actor::euclidianDistance(const Common::Point &point1, const Common::Point &point2) {
+	return (uint32)sqrt(pow((double)(point2.y - point1.y), 2) + pow((double)(point2.x - point1.x), 2));
 }
 
-int32 Actor::angleFromVectors(const Common::Point &vec1, const Common::Point &vec2) {
+int32 Actor::getAngleOfVector(const Common::Point &vec1, const Common::Point &vec2) {
 	int32 result = (int32)(((long)(180 - acos((double)(vec2.y - vec1.y) / euclidianDistance(vec1, vec2)) * 180 / -M_PI)) % 360);
 
 	if (vec1.x < vec2.x)
@@ -3900,7 +3900,7 @@ int32 Actor::angleFromVectors(const Common::Point &vec1, const Common::Point &ve
 	return result;
 }
 
-void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, const Common::Point &point) {
+void Actor::getCrowStrikeZone(Common::Rect *rect, ActorDirection direction, const Common::Point &point) {
 	if (!rect)
 		error("[Actor::rect] Invalid rect (NULL)!");
 
@@ -3957,10 +3957,10 @@ void Actor::rectFromDirection(Common::Rect *rect, ActorDirection direction, cons
 	rect->setHeight(40);
 }
 
-bool Actor::compareAngles(const Common::Point &vec1, const Common::Point &vec2) {
+bool Actor::determineLeftOrRight(const Common::Point &vec1, const Common::Point &vec2) {
 	Common::Point vec3(2289, 171);
 
-	int32 diff = angleFromVectors(vec1, vec3) - angleFromVectors(vec1, vec2);
+	int32 diff = getAngleOfVector(vec1, vec3) - getAngleOfVector(vec1, vec2);
 
 	if (diff < 0)
 		diff += 359;
@@ -3968,28 +3968,21 @@ bool Actor::compareAngles(const Common::Point &vec1, const Common::Point &vec2) 
 	return (diff > 180);
 }
 
-bool Actor::compare(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
-	if (vec.y >= vec1.y && vec.y <= vec2.y && vec.x >= vec1.x && vec.x <= vec2.x)
-		return true;
-
-	return false;
-}
-
-int16 Actor::compareX(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
-	if (vec.x > vec2.x)
+int16 Actor::pointInRectXAdjust(const Common::Rect &rect, const Common::Point &point) {
+	if (point.x > rect.right)
 		return 3;
 
-	if (vec.x < vec1.x)
+	if (point.x < rect.left)
 		return -3;
 	else
 		return 0;
 }
 
-int16 Actor::compareY(const Common::Point &vec1, const Common::Point &vec2, const Common::Point &vec) {
-	if (vec.y > vec2.y)
+int16 Actor::pointInRectYAdjust(const Common::Rect &rect, const Common::Point &point) {
+	if (point.y > rect.bottom)
 		return 3;
 
-	if (vec.y < vec1.y)
+	if (point.y < rect.top)
 		return -3;
 	else
 		return 0;

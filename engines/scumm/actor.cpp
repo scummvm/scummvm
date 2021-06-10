@@ -2080,7 +2080,7 @@ void ScummEngine::processActors() {
 	// 'optimization' wouldn't yield a useful gain anyway.
 	//
 	// In particular, changing this loop caused a number of bugs in the
-	// past, including bugs #758167, #775097, and #1864.
+	// past, including bugs #912, #1055, and #1864.
 	//
 	// Note that Sam & Max uses a stable sorting method. Older games don't
 	// and, according to cyx, neither do newer ones. At least not FT and
@@ -2461,7 +2461,7 @@ void Actor::startAnimActor(int f) {
 			_needRedraw = true;
 			_cost.animCounter = 0;
 			// V1 - V2 games don't seem to need a _cost.reset() at this point.
-			// Causes Zak to lose his body in several scenes, see bug #771508
+			// Causes Zak to lose his body in several scenes, see bug #1032
 			if (_vm->_game.version >= 3 && f == _initFrame) {
 				_cost.reset();
 				if (_vm->_game.heversion != 0) {
@@ -2844,7 +2844,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	// bug (#11480). It is not okay to skip the stopTalk() calls here.
 	// Instead, I have added two checks from LOOM DOS EGA disasm (one
 	// below and one in CHARSET_1()).
-	// WORKAROUND for bugs #770039 and #770049
+	// WORKAROUND for bugs #985 and #990
 	/*if (_game.id == GID_LOOM) {
 		if (!*_charsetBuffer)
 			return;
@@ -2858,7 +2858,7 @@ void ScummEngine::actorTalk(const byte *msg) {
 	} else {
 		int oldact;
 
-		// WORKAROUND bug #770724
+		// WORKAROUND bug #1025
 		if (_game.id == GID_LOOM && _roomResource == 23 &&
 			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
 			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?

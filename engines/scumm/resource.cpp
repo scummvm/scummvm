@@ -1178,7 +1178,7 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 	_numArray = 50;
 	_numVerbs = 100;
 	// Used to be 50, which wasn't enough for MI2 and FOA. See bugs
-	// #933610, #936323 and #941275.
+	// #1591, #1600 and #1607.
 	_numNewNames = 150;
 	_objectRoomTable = NULL;
 

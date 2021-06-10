@@ -969,6 +969,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		_vm->setVersion(d.asInt());
 		break;
 	case kTheSelEnd:
+		g_director->getCurrentMovie()->_selEnd = d.asInt();
 		if (movie->_currentEditableTextChannel != 0) {
 			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
@@ -977,6 +978,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		}
 		break;
 	case kTheSelStart:
+		g_director->getCurrentMovie()->_selStart = d.asInt();
 		if (movie->_currentEditableTextChannel != 0) {
 			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 

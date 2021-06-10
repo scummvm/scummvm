@@ -276,7 +276,7 @@ void Encounter::run(int32 encounterIndex, ObjectId objectId1, ObjectId objectId2
 		_wasPlayerDisabled = true;
 	} else {
 		_wasPlayerDisabled = false;
-		player->updateStatus(kActorStatusDisabled);
+		player->changeStatus(kActorStatusDisabled);
 	}
 
 	_shouldEnablePlayer = false;
@@ -307,7 +307,7 @@ void Encounter::exitEncounter() {
 		_shouldEnablePlayer = true;
 
 	if (getSharedData()->getFlag(kFlagEncounterDisablePlayerOnExit))
-		getScene()->getActor()->updateStatus(kActorStatusDisabled);
+		getScene()->getActor()->changeStatus(kActorStatusDisabled);
 
 	getSharedData()->setFlag(kFlagEncounterDisablePlayerOnExit, false);
 
@@ -1242,8 +1242,8 @@ void Encounter::setupEntities(bool type4) {
 	if (_actorIndex) {
 		Actor *actor = getScene()->getActor(_actorIndex);
 
-		if (actor->isDefaultDirection(20))
-			actor->updateStatus(type4 ? kActorStatusDisabled : kActorStatus8);
+		if (actor->canChangeStatus(20))
+			actor->changeStatus(type4 ? kActorStatusDisabled : kActorStatus8);
 
 		return;
 	}

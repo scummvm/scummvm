@@ -244,7 +244,7 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	uint32 numLines = 0;
 	_numLetters = 2;
 
-	// work around bug #778105 (line width exceeded)
+	// work around bug #1080 (line width exceeded)
 	char *tmpPtr = strstr(textPtr, "MUND-BEATMUNG!");
 	if (tmpPtr)
 		strcpy(tmpPtr, "MUND BEATMUNG!");

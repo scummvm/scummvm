@@ -321,10 +321,8 @@ public:
 	uint32 _curTime;
 	uint32 _characterSpeakTime;
 
-	int _actorPos;
 	int _cx, _cy;
 
-	int _forcedActorPos;
 	uint8 _textStatus;
 
 	uint32 _pauseStartTime;

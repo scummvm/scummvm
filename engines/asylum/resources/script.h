@@ -445,7 +445,7 @@ private:
 	DECLARE_OPCODE(ClearActorFields);
 	DECLARE_OPCODE(SetObjectLastFrameIndex);
 	DECLARE_OPCODE(SetActionAreaFlags);
-	DECLARE_OPCODE(UpdatePlayerChapter9);
+	DECLARE_OPCODE(MorphActor);
 	DECLARE_OPCODE(ShowMenu);
 	DECLARE_OPCODE(UpdateGlobalFlags);
 

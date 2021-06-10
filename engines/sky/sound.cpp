@@ -1238,7 +1238,7 @@ bool Sound::startSpeech(uint16 textNum) {
 
 	free(speechData);
 
-	// Workaround for BASS bug #897775 - some voice-overs are played at
+	// Workaround for BASS bug #1461 - some voice-overs are played at
 	// half speed in 0.0368 (the freeware CD version), in 0.0372 they sound
 	// just fine.
 

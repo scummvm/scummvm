@@ -2386,7 +2386,7 @@ void ScummEngine::scummLoop(int delta) {
 		oldEgo = VAR(VAR_EGO);
 
 	// In V1-V3 games, CHARSET_1 is called much earlier than in newer games.
-	// See also bug #770042 for a case were this makes a difference.
+	// See also bug #987 for a case were this makes a difference.
 	if (_game.version <= 3)
 		CHARSET_1();
 

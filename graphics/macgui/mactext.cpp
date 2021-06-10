@@ -214,6 +214,9 @@ void MacText::init() {
 	_textMaxHeight = 0;
 	_surface = nullptr;
 
+	_selEnd = -1;
+	_selStart = -1;
+
 	_defaultFormatting.wm = _wm;
 	// try to set fgcolor as default color in chunks
 	if (_wm->_mode & kWMModeWin95) {
@@ -270,21 +273,40 @@ void MacText::setMaxWidth(int maxWidth) {
 	if (maxWidth == _maxWidth)
 		return;
 
-	if (!_str.empty())
-		warning("TODO: MacText::setMaxWidth() is incorrect.");
+	if (maxWidth < 0) {
+		warning("trying to set maxWidth to %d", maxWidth);
+		return;
+	}
 
-	// It does not take into account the edited string
-	// Actually, it should reshuffle all paragraphs
+	Common::U32String str = getTextChunk(0, 0, -1, -1, true, true);
+
+	// keep the cursor pos
+	int ppos = 0;
+	for (int i = 0; i < _cursorRow; i++)
+		ppos += getLineCharWidth(i);
+	ppos += _cursorCol;
 
 	_maxWidth = maxWidth;
-
 	_textLines.clear();
 
-	splitString(_str);
+	splitString(str);
+
+	// restore the cursor pos
+	_cursorRow = 0;
+	while (ppos > getLineCharWidth(_cursorRow, true)) {
+		ppos -= getLineCharWidth(_cursorRow, true);
+		_cursorRow++;
+	}
+	_cursorCol = ppos;
+
+	// after we set maxWidth, we reset the selection
+	_selectedText.endY = -1;
 
 	recalcDims();
+	updateCursorPos();
 
 	_fullRefresh = true;
+	_contentIsDirty = true;
 }
 
 void MacText::setDefaultFormatting(uint16 fontId, byte textSlant, uint16 fontSize,
@@ -845,7 +867,17 @@ void MacText::setActive(bool active) {
 	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
 	if (_active) {
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "macEditableText");
+		// inactive -> active, we reset the selection
+		setSelection(_selStart, true);
+		setSelection(_selEnd, false);
+	} else {
+		// clear the selection and cursor
+		_selectedText.endY = -1;
+		_cursorState = false;
 	}
+
+	// after we change the status of active, we need to do a refresh to clear the stuff we don't need
+	_contentIsDirty = true;
 
 	if (!_cursorOff && _cursorState == true)
 		undrawCursor();
@@ -858,16 +890,7 @@ void MacText::setEditable(bool editable) {
 	_editable = editable;
 	_cursorOff = !editable;
 
-	setActive(editable);
-	_active = editable;
-	if (editable) {
-		// TODO: Select whole region. This is done every time the text is set from
-		// uneditable to editable.
-		setSelection(0, true);
-		setSelection(-1, false);
-
-		_wm->setActiveWidget(this);
-	} else {
+	if (!editable) {
 		undrawCursor();
 	}
 }
@@ -1060,8 +1083,8 @@ bool MacText::draw(bool forceRedraw) {
 		_composeSurface->frameRect(borderRect, 0);
 	}
 
-	// if we are drawing the selection text, then we don't draw the cursor
-	if (_cursorState && !(_selectedText.endY != -1 && _active))
+	// if we are drawing the selection text or we are selecting, then we don't draw the cursor
+	if (_cursorState && !((_inTextSelection || _selectedText.endY != -1) && _active))
 		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY + offset.y + 1));
 
 	if (_selectedText.endY != -1 && _active)
@@ -1118,16 +1141,21 @@ void MacText::drawSelection(int xoff, int yoff) {
 	if (_selectedText.endY == -1)
 		return;
 
-	// we check if the selection size is 0, then we don't draw it anymore
+	// we check if the selection size is 0, then we don't draw it anymore, and we set the cursor here
 	// it's a small optimize, but can bring us correct behavior
 	if (!_inTextSelection && _selectedText.startX == _selectedText.endX && _selectedText.startY == _selectedText.endY) {
+		_cursorRow = _selectedText.startRow;
+		_cursorCol = _selectedText.startCol;
+		updateCursorPos();
 		_selectedText.startY = _selectedText.endY = -1;
 		return;
 	}
 
 	SelectedText s = _selectedText;
 
+	bool swaped = false;
 	if (s.startY > s.endY || (s.startY == s.endY && s.startX > s.endX)) {
+		swaped = true;
 		SWAP(s.startX, s.endX);
 		SWAP(s.startY, s.endY);
 		SWAP(s.startRow, s.endRow);
@@ -1151,26 +1179,67 @@ void MacText::drawSelection(int xoff, int yoff) {
 	end = MIN((int)getDimensions().height(), end);
 
 	int numLines = 0;
-	int x1 = 0, x2 = 0;
+	int x1 = 0, x2 = getDimensions().width() - 1;
+	int row = s.startRow;
+	int alignOffset = 0;
+
+	// we may draw part of the selection, so we need to calc the height of first line
+	if (s.startY < _scrollPos) {
+		int start_row = 0;
+		getRowCol(s.startX, _scrollPos, nullptr, &numLines, &start_row, nullptr);
+		numLines = getLineHeight(start_row) - (_scrollPos - numLines);
+		if (start_row == s.startRow)
+			x1 = s.startX;
+		if (start_row == s.endRow)
+			x2 = s.endX;
+		// deal with the first line, which is not a complete line
+		if (numLines) {
+			if (_textAlignment == kTextAlignRight)
+				alignOffset = _textMaxWidth - getLineWidth(start_row);
+			else if (_textAlignment == kTextAlignCenter)
+				alignOffset = (_textMaxWidth / 2) - (getLineWidth(start_row) / 2);
+
+			if (swaped && start_row == s.startRow && s.startCol != 0) {
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			} else {
+				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			}
+
+			row = start_row + 1;
+		}
+	}
 
 	for (int y = start; y < end; y++) {
 		if (!numLines) {
 			x1 = 0;
 			x2 = getDimensions().width() - 1;
 
-			if (y + _scrollPos == s.startY && s.startX > 0) {
-				numLines = getLineHeight(s.startRow);
+			if (_textAlignment == kTextAlignRight)
+				alignOffset = _textMaxWidth - getLineWidth(row);
+			else if (_textAlignment == kTextAlignCenter)
+				alignOffset = (_textMaxWidth / 2) - (getLineWidth(row) / 2);
+
+			numLines = getLineHeight(row);
+			if (y + _scrollPos == s.startY && s.startX > 0)
 				x1 = s.startX;
-			}
-			if (y + _scrollPos >= lastLineStart) {
-				numLines = getLineHeight(s.endRow);
+			if (y + _scrollPos >= lastLineStart)
 				x2 = s.endX;
+
+			// if we are selecting text reversely, and we are at the first line but not the select from begining, then we add offset to x1
+			// the reason here is if we are not drawing the single line, then we draw selection from x1 to x2 + offset. i.e. we draw from begin
+			// otherwise, we draw selection from x1 + offset to x2 + offset
+			if (swaped && row == s.startRow && s.startCol != 0) {
+				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
+			} else {
+				x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
+				x2 = MIN<int>(x2 + xoff + alignOffset, getDimensions().width() - 1);
 			}
-			x1 = MIN<int>(x1 + xoff, getDimensions().width() - 1);
-			x2 = MIN<int>(x2 + xoff, getDimensions().width() - 1);
-		} else {
-			numLines--;
+			row++;
 		}
+		numLines--;
 
 		byte *ptr = (byte *)_composeSurface->getBasePtr(x1, MIN<int>(y + yoff, getDimensions().height() - 1));
 
@@ -1222,6 +1291,9 @@ uint MacText::getSelectionIndex(bool start) {
 }
 
 void MacText::setSelection(int pos, bool start) {
+	// -1 for start represent the begining of text, i.e. 0
+	if (pos == -1 && start)
+		pos = 0;
 	int row = 0, col = 0;
 	int colX = 0;
 
@@ -1231,18 +1303,18 @@ void MacText::setSelection(int pos, bool start) {
 				for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
 					if ((uint)pos < _textLines[row].chunks[i].text.size()) {
 						colX += _textLines[row].chunks[i].getFont()->getStringWidth(_textLines[row].chunks[i].text.substr(0, pos));
-						col += pos + 1;
+						col += pos;
 						pos = 0;
 						break;
 					} else {
 						colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text));
 						pos -= _textLines[row].chunks[i].text.size();
-						col += _textLines[row].chunks[i].text.size() + 1;
+						col += _textLines[row].chunks[i].text.size();
 					}
 				}
 				break;
 			} else {
-				pos -= getLineCharWidth(row) + 1; // (row ? 1 : 0);
+				pos -= getLineCharWidth(row); // (row ? 1 : 0);
 			}
 
 			row++;
@@ -1253,6 +1325,8 @@ void MacText::setSelection(int pos, bool start) {
 				break;
 			}
 		}
+	} else if (pos == 0) {
+		colX = col = row = 0;
 	} else {
 		row = _textLines.size() - 1;
 		colX = _surface->w;
@@ -1299,7 +1373,7 @@ Common::U32String MacText::cutSelection() {
 		SWAP(s.startCol, s.endCol);
 	}
 
-	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, false);
+	Common::U32String selection = MacText::getTextChunk(s.startRow, s.startCol, s.endRow, s.endCol, true, true);
 
 	deleteSelection();
 	clearSelection();
@@ -1320,7 +1394,7 @@ bool MacText::processEvent(Common::Event &event) {
 				_wm->setTextInClipboard(cutSelection());
 				return true;
 			case Common::KEYCODE_c:
-				_wm->setTextInClipboard(getSelection(true, false));
+				_wm->setTextInClipboard(getSelection(true, true));
 				return true;
 			case Common::KEYCODE_v:
 				if (g_system->hasTextInClipboard()) {
@@ -1463,9 +1537,12 @@ bool MacText::processEvent(Common::Event &event) {
 		return false;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
+		bool active = _active;
 		_wm->setActiveWidget(this);
-
-		startMarking(event.mouse.x, event.mouse.y);
+		if (active == true) {
+			// inactive -> active switching, we don't start marking the selection, because we have initial selection
+			startMarking(event.mouse.x, event.mouse.y);
+		}
 
 		return true;
 	} else if (event.type == Common::EVENT_LBUTTONUP) {
@@ -1564,15 +1641,28 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	y = CLIP(y, 0, _textMaxHeight);
 
-	// FIXME: We should use bsearch() here
-	nrow = _textLines.size() - 1;
-
-	while (nrow && _textLines[nrow].y > y)
-		(nrow)--;
+	nrow = _textLines.size();
+	// use [lb, ub) bsearch here, final anser would we lb
+	int lb = 0, ub = nrow;
+	while (ub - lb > 1) {
+		int mid = (ub + lb) / 2;
+		if (_textLines[mid].y <= y) {
+			lb = mid;
+		} else {
+			ub = mid;
+		}
+	}
+	nrow = lb;
 
 	nsy = _textLines[nrow].y;
 
 	ncol = 0;
+
+	int alignOffset = 0;
+	if (_textAlignment == kTextAlignRight)
+		alignOffset = _textMaxWidth - getLineWidth(nrow);
+	else if (_textAlignment == kTextAlignCenter)
+		alignOffset = (_textMaxWidth / 2) - (getLineWidth(nrow) / 2);
 
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
@@ -1585,7 +1675,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 			mcol += _textLines[nrow].chunks[chunk].text.size();
 		}
 
-		if (width > x)
+		if (width + alignOffset > x)
 			break;
 	}
 
@@ -1599,7 +1689,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	for (int i = str.size(); i >= 0; i--) {
 		int strw = _textLines[nrow].chunks[chunk].getFont()->getStringWidth(str);
-		if (strw + pwidth < x) {
+		if (strw + pwidth + alignOffset < x) {
 			ncol = pmcol + i;
 			nsx = strw + pwidth;
 			break;
@@ -1687,7 +1777,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
 			}
-			if (newlines)
+			if (newlines && _textLines[i].paragraphEnd)
 				res += '\n';
 		// We are at the end row, and it could be not completely requested
 		} else if (i == endRow) {
@@ -1717,7 +1807,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				res += _textLines[i].chunks[chunk].text;
 			}
 
-			if (newlines)
+			if (newlines && _textLines[i].paragraphEnd)
 				res += '\n';
 		}
 	}
@@ -1745,8 +1835,8 @@ void MacText::insertTextFromClipboard() {
 			ppos += getLineCharWidth(i);
 		ppos += _cursorCol;
 
-		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, false);
-		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, false);
+		Common::U32String pre_str = getTextChunk(start, 0, _cursorRow, _cursorCol, true, true);
+		Common::U32String sub_str = getTextChunk(_cursorRow, _cursorCol, end, getLineCharWidth(end, true), true, true);
 
 		// Remove it from the text
 		for (int i = start; i <= end; i++) {
@@ -1918,6 +2008,9 @@ void MacText::addNewLine(int *row, int *col) {
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 
+	// we have to inherit paragraphEnd from the origin line
+	newline.paragraphEnd = line->paragraphEnd;
+
 	newchunk.text = line->chunks[ch].text.substr(pos);
 	line->chunks[ch].text = line->chunks[ch].text.substr(0, pos);
 	line->paragraphEnd = true;
@@ -2020,7 +2113,7 @@ void MacText::updateCursorPos() {
 		else if (_textAlignment == kTextAlignCenter)
 			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
 
-		_cursorY = _textLines[_cursorRow].y + offset.y - 2;
+		_cursorY = _textLines[_cursorRow].y + offset.y - 2 - _scrollPos;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset + offset.x - 1;
 	}
 

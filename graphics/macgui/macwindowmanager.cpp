@@ -398,29 +398,47 @@ void MacWindowManager::disableScreenCopy() {
 // this is refer to how we deal U32String in splitString in mactext
 // maybe we can optimize this specifically
 Common::U32String stripFormat(const Common::U32String &str) {
-	Common::U32String res;
+	Common::U32String res, paragraph, tmp;
 	// calc the size of str
 	const Common::U32String::value_type *l = str.c_str();
 	while (*l) {
-		if (*l == '\r') {
-			l++;
-		} else if (*l == '\n') {
-			l++;
-		} else if (*l == '\001') {
-			l++;
-			// if there are two \001, then we regard it as one character
-			if (*l == '\001') {
-				res += *l++;
+		// split paragraph first
+		paragraph.clear();
+		while (*l) {
+			if (*l == '\r') {
+				l++;
+				if (*l == '\n')
+					l++;
+				break;
 			}
-		} else if (*l == '\015') {	// binary format
-			// we are skipping the formatting stuffs
-			// this number 12, and the number 23, is the size of our format
-			l += 12;
-		} else if (*l == '\016') {	// human-readable format
-			l += 23;
-		} else {
-			res += *l++;
+			if (*l == '\n') {
+				l++;
+				break;
+			}
+			paragraph += *l++;
 		}
+		const Common::U32String::value_type *s = paragraph.c_str();
+		tmp.clear();
+		while (*s) {
+			if (*s == '\001') {
+				s++;
+				// if there are two \001, then we regard it as one character
+				if (*s == '\001') {
+					tmp += *s++;
+				}
+			} else if (*s == '\015') {	// binary format
+				// we are skipping the formatting stuffs
+				// this number 12, and the number 23, is the size of our format
+				s += 12;
+			} else if (*s == '\016') {	// human-readable format
+				s += 23;
+			} else {
+				tmp += *s++;
+			}
+		}
+		res += tmp;
+		if (*l)
+			res += '\n';
 	}
 	return res;
 }
@@ -428,6 +446,30 @@ Common::U32String stripFormat(const Common::U32String &str) {
 void MacWindowManager::setTextInClipboard(const Common::U32String &str) {
 	_clipboard = str;
 	g_system->setTextInClipboard(stripFormat(str));
+}
+
+// get the text size ignoring \n
+int getPureTextSize(const Common::U32String &str, bool global) {
+	const Common::U32String::value_type *l = str.c_str();
+	int res = 0;
+	if (global) {
+		// if we are in global, then we have no format in str. thus, we ignore all \r \n
+		while (*l) {
+			if (*l != '\n' && *l != '\r')
+				res++;
+			l++;
+		}
+	} else {
+		// if we are not in global, then we are using the wm clipboard, which use \n for new line
+		// i think that if statement can be optimized to, like if (*l != '\n' && (!global || *l != '\r'))
+		// but for the sake of readability, we keep codes here
+		while (*l) {
+			if (*l != '\n')
+				res++;
+			l++;
+		}
+	}
+	return res;
 }
 
 Common::U32String MacWindowManager::getTextFromClipboard(const Common::U32String &format, int *size) {
@@ -438,19 +480,19 @@ Common::U32String MacWindowManager::getTextFromClipboard(const Common::U32String
 		// if wm clipboard is empty, then we use the global clipboard, which won't contain the format
 		str = format + global_str;
 		if (size)
-			*size = str.size();
+			*size = getPureTextSize(global_str, true);
 	} else {
 		Common::U32String tmp = stripFormat(_clipboard);
 		if (tmp == global_str) {
 			// if the text is equal, then we use wm one which contains the format
 			str = _clipboard;
 			if (size)
-				*size = tmp.size();
+				*size = getPureTextSize(tmp, false);
 		} else {
 			// otherwise, we prefer the global one
 			str = format + global_str;
 			if (size)
-				*size = str.size();
+				*size = getPureTextSize(global_str, true);
 		}
 	}
 	return str;
@@ -798,8 +840,7 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 		BaseMacWindow *w = *it;
 
 		if (w->hasAllFocus() || (w->isEditable() && event.type == Common::EVENT_KEYDOWN) ||
-				w->getDimensions().contains(event.mouse.x, event.mouse.y)
-				|| (_activeWidget && _activeWidget->isEditable())) {
+				w->getDimensions().contains(event.mouse.x, event.mouse.y)) {
 			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_LBUTTONUP)
 				setActiveWindow(w->getId());
 

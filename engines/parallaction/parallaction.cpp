@@ -655,7 +655,7 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (((ACTIONTYPE(z) == kZoneMerge) && (((x == z->u._mergeObj1) && (y == z->u._mergeObj2)) || ((x == z->u._mergeObj2) && (y == z->u._mergeObj1)))) ||
 		((ACTIONTYPE(z) == kZoneGet) && ((x == z->u._getIcon) || (y == z->u._getIcon)))) {
 
-		// WORKAROUND for bug 2070751: special zones are only used in NS, to allow the
+		// WORKAROUND for bug #3897: special zones are only used in NS, to allow the
 		// the EXAMINE/USE action to be applied on some particular item in the inventory.
 		// The usage a verb requires at least an item match, so type can't be 0, as it
 		// was in the original code. This bug has been here since the beginning, and was
