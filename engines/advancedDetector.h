@@ -440,7 +440,7 @@ protected:
 	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format. */
-	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
+	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo = nullptr) const;
 
 	/** Check for pirated games in the given detected games */
 	bool cleanupPirated(ADDetectedGames &matched) const;

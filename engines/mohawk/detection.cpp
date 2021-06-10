@@ -102,12 +102,12 @@ public:
 		return "Myst and Riven (C) Cyan Worlds\nMohawk OS (C) Ubisoft";
 	}
 
-	DetectedGame toDetectedGame(const ADDetectedGame &adGame) const override;
+	DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
 };
 
-DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame) const {
+DetectedGame MohawkMetaEngineDetection::toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo) const {
 	DetectedGame game = AdvancedMetaEngineDetection::toDetectedGame(adGame);
 
 	// The AdvancedDetector model only allows specifying a single supported
