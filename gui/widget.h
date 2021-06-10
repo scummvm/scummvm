@@ -153,7 +153,7 @@ public:
 	void lostFocus() { _hasFocus = false; lostFocusWidget(); }
 	virtual bool wantsFocus() { return false; }
 
-	uint32 getType() const {return _type;}
+	uint32 getType() const { return _type; }
 
 	void setFlags(int flags);
 	void clearFlags(int flags);
