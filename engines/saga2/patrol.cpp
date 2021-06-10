@@ -94,16 +94,11 @@ void PatrolRouteList::setRouteData(PatrolRouteData *data) {
 		error("Cannot allocate patrol route list offset array.");
 
 	//  Iterate through each patrol route a compute its offset
-	for (i = 0, currentRoute = (PatrolRoute *)&routeData[1];
-	        i < noRoutes;
-	        i++,
-	        currentRoute =
-	            (PatrolRoute *) & (*currentRoute)[currentRoute->vertices()]) {
-#if DEBUG
-		assert(currentRoute->vertices() > 1);
-#endif
+	for (i = 0, currentRoute = (PatrolRoute *)&routeData[1]; i < noRoutes; i++) {
 		warning("STUB: PatrolRouteList::setRouteData: unsafe arithmetics");
 		offsetArray[i] = 0; // FIXME: It was "currentRoute - routeData";
+
+		currentRoute = (PatrolRoute *)&(*currentRoute)[currentRoute->vertices()];
 	}
 }
 
@@ -191,8 +186,7 @@ void PatrolRouteIterator::altIncrement(void) {
 
 	vertexNo++;
 
-	if (vertexNo >= route.vertices()
-	        && (flags & patrolRouteRepeat)) {
+	if (vertexNo >= route.vertices() && (flags & patrolRouteRepeat)) {
 		//  If repeating, initialize for iteration in the standard
 		//  direction, and reset the waypoint index
 		flags &= ~patrolRouteInAlternate;
@@ -208,8 +202,7 @@ void PatrolRouteIterator::altDecrement(void) {
 
 	vertexNo--;
 
-	if (vertexNo < 0
-	        && (flags & patrolRouteRepeat)) {
+	if (vertexNo < 0 && (flags & patrolRouteRepeat)) {
 		//  If repeating, initialize for iteration in the standard
 		//  direction, and reset the waypoint index
 		flags &= ~patrolRouteInAlternate;
