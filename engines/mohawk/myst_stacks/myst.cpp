@@ -2355,7 +2355,7 @@ void Myst::rocketCheckSolution() {
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider4->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if ( !rocketCheckSolutionLogicHelper(soundId,9553,fuzzylogic) )
+	if (!rocketCheckSolutionLogicHelper(soundId, 9553, fuzzylogic))
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
