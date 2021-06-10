@@ -34,7 +34,8 @@
 #include "director/sound.h"
 #include "director/window.h"
 #include "director/lingo/lingo.h"
-#include "director/detection.h"
+
+#include "director/detection_paths.h"
 
 namespace Director {
 
@@ -78,7 +79,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Meet Mediaband could have up to 5 levels of directories
 	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
 
-	for (uint i = 0; Director::directoryGlobs[i]; i++) {
+	for (uint i = 0; directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
 		SearchMan.addSubDirectoryMatching(_gameDataDir, directoryGlob);
 	}
