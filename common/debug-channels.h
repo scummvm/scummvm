@@ -145,13 +145,6 @@ public:
 	 */
 	bool isDebugChannelEnabled(uint32 channel, bool enforce = false);
 
-
-	/**
-	 * clear all the engine specified flags
-	 * only left the global debug flags
-	 */
-	void debugFlagsClear();
-
 	/**
 	 * register engine specified flags
 	 */
@@ -164,7 +157,10 @@ private:
 	uint32 _debugChannelsEnabled;
 
 	friend class Singleton<SingletonBaseType>;
-	DebugManager() : _debugChannelsEnabled(0) {}
+
+	DebugManager();
+
+	void addDebugChannels(const DebugChannelDef *channels);
 };
 
 /** Shortcut for accessing the Debug Manager. */
