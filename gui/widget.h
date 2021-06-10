@@ -502,8 +502,11 @@ private:
 	
 	int _scrollPos;
 	int _itemsPerRow;
+	int _firstVisibleItem;
 	int _itemsOnScreen;
+	
 	bool _titlesVisible;
+
 
 public:
 
@@ -520,8 +523,8 @@ public:
 	Graphics::ManagedSurface * filenameToSurface(Common::String &name);
 	Graphics::ManagedSurface * platformToSurface(Platform platformCode);
 
-	Common::Array<Common::String> visibleEntries(void);
 
+	bool calcVisibleEntries(void);
 	void setEntryList(Common::Array<LauncherEntry> *list);
 	void destroyItems();
 	void loadPlatformIcons();
