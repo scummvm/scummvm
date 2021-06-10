@@ -46,6 +46,11 @@ struct DebugLevelComperator {
 
 } // end of anonymous namespace
 
+DebugManager::DebugManager() :
+	_debugChannelsEnabled(0) {
+	addDebugChannels(gDebugChannels);
+}
+
 bool DebugManager::addDebugChannel(uint32 channel, const String &name, const String &description) {
 	if (name.equalsIgnoreCase("all")) {
 		warning("Debug channel 'all' is reserved for internal use");
@@ -55,7 +60,7 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 	if (_debugChannels.contains(name))
 		warning("Duplicate declaration of engine debug channel '%s'", name.c_str());
 
-	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); i++)
+	for (DebugChannelMap::iterator i = _debugChannels.begin(); i != _debugChannels.end(); ++i)
 		if (i->_value.channel == channel)
 			error("Duplicate engine debug channel id '%d' for flag '%s'", channel, name.c_str());
 
@@ -67,6 +72,7 @@ bool DebugManager::addDebugChannel(uint32 channel, const String &name, const Str
 void DebugManager::clearAllDebugChannels() {
 	_debugChannelsEnabled = 0;
 	_debugChannels.clear();
+	addDebugChannels(gDebugChannels);
 }
 
 bool DebugManager::enableDebugChannel(const String &name) {
@@ -133,18 +139,17 @@ bool DebugManager::isDebugChannelEnabled(uint32 channel, bool enforce) {
 }
 
 void DebugManager::debugFlagsRegister(const DebugChannelDef *channels) {
-	if (!channels)
-		return;
-	for (uint i = 0; channels[i].channel != 0; i++) {
-		addDebugChannel(channels[i].channel, channels[i].name, channels[i].description);
+	clearAllDebugChannels();
+
+	if (channels) {
+		addDebugChannels(channels);
 	}
 }
 
-void DebugManager::debugFlagsClear() {
-	// first we clear all the debug channels
-	// then we add the global debug flags
-	clearAllDebugChannels();
-	debugFlagsRegister(gDebugChannels);
+void DebugManager::addDebugChannels(const DebugChannelDef *channels) {
+	for (uint i = 0; channels[i].channel != 0; ++i) {
+		addDebugChannel(channels[i].channel, channels[i].name, channels[i].description);
+	}
 }
 
 } // End of namespace Common

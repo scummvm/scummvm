@@ -134,7 +134,6 @@ static const Plugin *detectPlugin() {
 	// Query the plugin for the game descriptor
 	printf("   Looking for a plugin supporting this target... %s\n", plugin->getName());
 	const MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
-	DebugMan.debugFlagsClear();
 	DebugMan.debugFlagsRegister(metaEngine.getDebugChannels());
 	PlainGameDescriptor game = metaEngine.findGame(gameId.c_str());
 	if (!game.gameId) {
@@ -194,8 +193,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 		metaEngineDetection.registerDefaultSettings(target);
 	}
 
-	// clear the flag and add the global ones
-	DebugMan.debugFlagsClear();
 	// before we instantiate the engine, we register debug channels for it
 	DebugMan.debugFlagsRegister(metaEngineDetection.getDebugChannels());
 
@@ -518,8 +515,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	system.getAudioCDManager();
 	MusicManager::instance();
 	Common::DebugManager::instance();
-	// set the global debug flags as soon as we instantiate the debug mannager
-	DebugMan.debugFlagsClear();
 
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
