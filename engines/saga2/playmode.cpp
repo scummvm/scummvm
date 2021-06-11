@@ -337,23 +337,11 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 		map.data = (uint8 *)hdr->data;
 
 	port.setMode(drawModeMatte);
-	if (port.map == nullptr) {
-		gPixelMap *tmap = new gPixelMap;
-		tmap->size = map.size;
-		tmap->data = new uint8[map.bytes()];
-		port.setMap(tmap);
-	}
 
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
 	               map.size.x, map.size.y);
 
-	Graphics::Surface sur;
-	sur.create(port.map->size.x, port.map->size.y, Graphics::PixelFormat::createFormatCLUT8());
-	sur.setPixels(port.map->data);
-
-	//sur.debugPrint();
-	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
 
 	if (hdr->compress)
 		delete[] map.data;

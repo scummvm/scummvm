@@ -24,6 +24,7 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "graphics/surface.h"
 #include "saga2/std.h"
 #include "saga2/gdraw.h"
 #include "saga2/gblitter.h"
@@ -609,7 +610,6 @@ void gPort::bltPixels(
 	                sect;
 	uint8           *src_line,
 	                *dst_line;
-
 	sect = intersect(clip, r);
 
 	if (!sect.empty()) {                        // if result is non-empty
@@ -618,8 +618,8 @@ void gPort::bltPixels(
 
 		src_line = src.data + src_y   * src.size.x + src_x;
 		dst_line = baseRow
-		           + (sect.y + origin.y) * rowMod
-		           + sect.x + origin.x;
+		           + sect.y * rowMod
+		           + sect.x;
 
 		if (drawMode == drawModeMatte) {        // Matte drawing mode
 			for (int h = sect.height; h > 0; h--, src_line += src.size.x, dst_line += rowMod) {
@@ -675,6 +675,14 @@ void gPort::bltPixels(
 			}
 		}
 	}
+
+	//assert(map->size.x != 121 && map->size.y != 30);
+	//assert(map->size.x != 374 && map->size.y != 146);
+	Graphics::Surface sur;
+	sur.create(map->size.x, map->size.y, Graphics::PixelFormat::createFormatCLUT8());
+	sur.setPixels(map->data);
+	//sur.debugPrint();
+	g_system->copyRectToScreen(map->data, rowMod, origin.x, origin.y, map->size.x, map->size.y);
 }
 
 /****** gdraw.cpp/gPort::bltPixelMask ********************************
