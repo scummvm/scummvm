@@ -315,10 +315,10 @@ int PC98FMDriver::open() {
 }
 
 void PC98FMDriver::close() {
-	setTimerCallback(0, 0);
 	_isOpen = false;
 	delete _pc98a;
 	_pc98a = 0;
+	setTimerCallback(0, 0);
 }
 
 void PC98FMDriver::noteOn(uint8 part, uint8 note, uint8 velo) {
@@ -610,16 +610,17 @@ int PC98MidiDriver::open() {
 }
 
 void PC98MidiDriver::close() {
-	setTimerCallback(0, 0);
 	_isOpen = false;
-	if (!_drv)
-		return;
 
-	_drv->setTimerCallback(0, 0);
-	_mixer->stopAll();
-	_drv->close();
-	delete _drv;
-	_drv = 0;
+	if (_drv) {
+		_drv->setTimerCallback(0, 0);
+		_mixer->stopAll();
+		_drv->close();
+		delete _drv;
+		_drv = 0;
+	}
+
+	setTimerCallback(0, 0);
 }
 
 void PC98MidiDriver::timerCallback(void *obj) {
