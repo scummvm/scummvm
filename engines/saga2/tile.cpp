@@ -1782,6 +1782,12 @@ void TileToScreenCoords(const TilePoint &tp, Point16 &p) {
 	p.y = mapHeight - tileScroll.y - ((int32)tp.u + (int32)tp.v) - tp.z;
 }
 
+TilePoint::TilePoint(Common::SeekableReadStream *stream) {
+	u = stream->readSint16LE();
+	v = stream->readSint16LE();
+	z = stream->readSint16LE();
+}
+
 //-----------------------------------------------------------------------
 //	Converts a UV vector into a rough direction vector.
 
