@@ -42,13 +42,6 @@ using namespace AGS::Shared;
 // project-specific implementation
 extern bool ShouldAntiAliasText();
 
-ALFONT_FONT *tempttffnt;
-ALFONT_FONT *get_ttf_block(unsigned char *fontptr) {
-	memcpy(&tempttffnt, &fontptr[4], sizeof(tempttffnt));
-	return tempttffnt;
-}
-
-
 // ***** TTF RENDERER *****
 void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
 	// TTF fonts already have space at the top, so try to remove the gap
