@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-09 22:56+0000\n"
+"POT-Creation-Date: 2021-06-11 15:54+0000\n"
 "PO-Revision-Date: 2021-06-08 11:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -3858,7 +3858,7 @@ msgstr "カットシーンファイル'%s'が見つかりません!"
 msgid "AGOS 2 support is not compiled in"
 msgstr "AGOS 2のサポートはコンパイルされていません"
 
-#: engines/agos/midi.cpp:157 engines/kyra/sound/sound_pc_midi.cpp:76
+#: engines/agos/midi.cpp:158 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
 "You appear to be using a General MIDI device,\n"
 "but your game only supports Roland MT32 MIDI.\n"
