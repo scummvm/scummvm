@@ -910,17 +910,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 		400
 	},
 
-	// Generic D2 Mac entry
-	MACGAME1("director", "D2-mac", "D2-mac", 0, -1, 200),
-	// Generic D3 Mac entry
-	MACGAME1("director", "D3-mac", "D3-mac", 0, -1, 300),
-	// Generic D4 Mac entry
-	MACGAME1("director", "D4-mac", "D4-mac", 0, -1, 400),
-	// Generic D3 Win entry
-	WINGAME1("director", "D3-win", "D3-win", 0, -1, 300),
-	// Generic D4 Win entry
-	WINGAME1("director", "D4-win", "D4-win", 0, -1, 400),
-
 	// Original filename is "•Main Menu" for all
 	MACGAME1("theapartment", "D2", "Main Menu", "fc56c179cb8c6d4938e61ee61fd0032c", 48325, 200),
 	MACGAME1("theapartment", "D3", "Main Menu", "9e838fe1a6af7992d656ca325e38dee5", 47911, 300),
