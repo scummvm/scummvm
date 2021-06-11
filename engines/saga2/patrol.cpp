@@ -225,6 +225,8 @@ void initPatrolRoutes(void) {
 			Common::SeekableReadStream *stream = loadResourceToStream(patrolRouteRes, MKTAG('R', 'T', 'E', i), "patrol route data");
 
 			patrolRouteList[i] = new PatrolRouteList(stream);
+
+			delete stream;
 		}
 	}
 
