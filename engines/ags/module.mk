@@ -74,6 +74,7 @@ MODULE_OBJS = \
 	shared/util/aligned_stream.o \
 	shared/util/buffered_stream.o \
 	shared/util/compress.o \
+	shared/util/data_ext.o \
 	shared/util/data_stream.o \
 	shared/util/directory.o \
 	shared/util/file.o \
