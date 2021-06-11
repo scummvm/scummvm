@@ -2115,7 +2115,7 @@ void MacText::updateCursorPos() {
 		else if (_textAlignment == kTextAlignCenter)
 			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
 
-		_cursorY = _textLines[_cursorRow].y;
+		_cursorY = _textLines[_cursorRow].y - _scrollPos;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
 	}
 
