@@ -152,7 +152,7 @@ ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	ADD_OPCODE(SelectInventoryItem);
 	ADD_OPCODE(JumpIfInventoryItemNotSelected);
 	ADD_OPCODE(ChangeScene);
-	ADD_OPCODE(UpdateActor);
+	ADD_OPCODE(Interact);
 	ADD_OPCODE(PlayMovie);
 	ADD_OPCODE(StopAllObjectsSounds);
 	ADD_OPCODE(StopProcessing);
@@ -194,7 +194,7 @@ ScriptManager::ScriptManager(AsylumEngine *engine) : _vm(engine) {
 	ADD_OPCODE(SetActorField944);
 	ADD_OPCODE(SetScriptField1BB0);
 	ADD_OPCODE(OnScriptField1BB0);
-	ADD_OPCODE(Interact);
+	ADD_OPCODE(WalkToActor);
 	ADD_OPCODE(SetResourcePalette);
 	ADD_OPCODE(SetObjectFrameIndexAndFlags);
 	ADD_OPCODE(SetObjectFlags);
@@ -955,7 +955,7 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x2C
-IMPLEMENT_OPCODE(UpdateActor)
+IMPLEMENT_OPCODE(Interact)
 	Actor *player = getScene()->getActor();
 	Actor *actor = getScene()->getActor(_currentQueueEntry->actorIndex);
 	Common::Point playerPoint((int16)(player->getPoint1()->x + player->getPoint2()->x), (int16)(player->getPoint1()->y + player->getPoint2()->y));
@@ -976,7 +976,7 @@ IMPLEMENT_OPCODE(UpdateActor)
 		case kActorStatusEnabled2:
 			return;
 
-		case kActorStatusPickupItem:
+		case kActorStatusStoppedInteracting:
 			actor->enable();
 			break;
 
@@ -984,7 +984,7 @@ IMPLEMENT_OPCODE(UpdateActor)
 			// We want to continue processing and not go into the default case
 			break;
 
-		case kActorStatus20:
+		case kActorStatusStoppedHitting:
 			actor->changeStatus(kActorStatusEnabled2);
 		}
 
@@ -1719,7 +1719,7 @@ END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////
 // Opcode 0x56
-IMPLEMENT_OPCODE(Interact)
+IMPLEMENT_OPCODE(WalkToActor)
 	Actor *player = getScene()->getActor(), *actor = getScene()->getActor((ActorIndex)cmd->param1);
 
 	if (cmd->param2 == 2) {

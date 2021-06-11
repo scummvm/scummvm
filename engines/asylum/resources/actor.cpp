@@ -626,7 +626,7 @@ void Actor::update() {
 		updateStatusInteracting();
 		break;
 
-	case kActorStatusPickupItem:
+	case kActorStatusStoppedInteracting:
 		if (getSharedData()->actorEnableForStatus7) {
 			getSharedData()->actorEnableForStatus7 = false;
 			enable();
@@ -726,7 +726,7 @@ void Actor::changeStatus(ActorStatus actorStatus) {
 		getScreen()->setFlag(-1);
 		break;
 
-	case kActorStatusPickupItem:
+	case kActorStatusStoppedInteracting:
 		if (getWorld()->chapter == kChapter2 && _index == 10 && _vm->isGameFlagSet(kGameFlag279)) {
 			Actor *actor = getScene()->getActor(0);
 			actor->getPoint1()->x = _point2.x + _point1.x - actor->getPoint2()->x;
@@ -2079,9 +2079,9 @@ void Actor::updateStatusInteracting() {
 			++_frameIndex;
 		} else {
 			if (_status == kActorStatusInteracting)
-				changeStatus(kActorStatusPickupItem);
+				changeStatus(kActorStatusStoppedInteracting);
 			else
-				changeStatus(kActorStatus20);
+				changeStatus(kActorStatusStoppedHitting);
 		}
 	} else {
 		if (_index == getSharedData()->getPlayerIndex())

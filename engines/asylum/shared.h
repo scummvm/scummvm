@@ -385,7 +385,7 @@ enum OpcodeType {
 	kOpcodeSelectInventoryItem,
 	kOpcodeJumpIfInventoryItemNotSelected,
 	kOpcodeChangeScene,
-	kOpcodeUpdateActor,
+	kOpcodeInteract,
 	kOpcodePlayMovie,                           // 45
 	kOpcodeStopAllObjectsSounds,
 	kOpcodeStopProcessing,
@@ -427,7 +427,7 @@ enum OpcodeType {
 	kOpcodeSetPlayerField944,
 	kOpcodeSetScriptField1BB0,
 	kOpcodeOnScriptField1BB0,                   // 85
-	kOpcodeInteract,
+	kOpcodeWalkToActor,
 	kOpcodeSetResourcePalette,
 	kOpcodeSetObjectFrameIndexAndFlags,
 	kOpcodeSetObjectFlags,
@@ -466,7 +466,7 @@ enum ActorStatus {
 	kActorStatusEnabled,          // Standing Still
 	kActorStatusDisabled,         // 5
 	kActorStatusShowingInventory,
-	kActorStatusPickupItem,
+	kActorStatusStoppedInteracting,
 	kActorStatus8,
 	kActorStatusFidget,
 	kActorStatus10,
@@ -479,7 +479,7 @@ enum ActorStatus {
 	kActorStatusRestarting,
 	kActorStatus18,
 	kActorStatusHittingPumpkin,
-	kActorStatus20,
+	kActorStatusStoppedHitting,
 	kActorStatusMorphingInto
 };
 
