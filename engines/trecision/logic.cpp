@@ -3911,13 +3911,45 @@ void LogicManager::doSystemChangeRoom(uint16 room) {
 	_vm->_graphicsMgr->showCursor();
 
 	if (_vm->_curRoom == kRoom21) {
-		_vm->_logicMgr->setupAltRoom(kRoom21, _vm->_oldRoom == kRoom23A || _vm->_oldRoom == kRoom23B);
+		switch (_vm->_oldRoom) {
+		case kRoom22:
+			_vm->_logicMgr->setupAltRoom(kRoom21, false);
+			break;
+		case kRoom23A:
+		case kRoom23B:
+			_vm->_logicMgr->setupAltRoom(kRoom21, true);
+			break;
+		}
 	} else if (_vm->_curRoom == kRoom24) {
-		_vm->_logicMgr->setupAltRoom(kRoom24, _vm->_oldRoom == kRoom26);
+		switch (_vm->_oldRoom) {
+		case kRoom23A:
+		case kRoom23B:
+			_vm->_logicMgr->setupAltRoom(kRoom24, false);
+			break;
+		case kRoom26:
+			_vm->_logicMgr->setupAltRoom(kRoom24, true);
+			break;
+		}
 	} else if (_vm->_curRoom == kRoom2A) {
-		_vm->_logicMgr->setupAltRoom(kRoom2A, _vm->_oldRoom == kRoom25);
+		switch (_vm->_oldRoom) {
+		case kRoom25:
+			_vm->_logicMgr->setupAltRoom(kRoom2A, true);
+			break;
+		case kRoom2B:
+		case kRoom29:
+		case kRoom29L:
+			_vm->_logicMgr->setupAltRoom(kRoom2A, false);
+			break;
+		}
 	} else if (_vm->_curRoom == kRoom2B) {
-		_vm->_logicMgr->setupAltRoom(kRoom2B, _vm->_oldRoom == kRoom28);
+		switch (_vm->_oldRoom) {
+		case kRoom28:
+			_vm->_logicMgr->setupAltRoom(kRoom2B, true);
+			break;
+		case kRoom2A:
+			_vm->_logicMgr->setupAltRoom(kRoom2B, false);
+			break;
+		}
 	} else if (_vm->_room[_vm->_curRoom].hasExtra()) {
 		// for save/load
 		switch (_vm->_curRoom) {
