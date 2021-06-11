@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-11 15:54+0000\n"
+"POT-Creation-Date: 2021-06-11 20:20+0000\n"
 "PO-Revision-Date: 2021-05-15 04:25+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -760,7 +760,7 @@ msgstr "검색:"
 
 #: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/pegasus/pegasus.cpp:384
-#: engines/trecision/saveload.cpp:254 engines/tsage/scenes.cpp:631
+#: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:631
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "게임 불러오기:"
@@ -768,7 +768,7 @@ msgstr "게임 불러오기:"
 #: gui/launcher.cpp:211 engines/dialogs.cpp:98 engines/engine.cpp:798
 #: engines/buried/saveload.cpp:515 engines/parallaction/metaengine.cpp:118
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:384
-#: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:254
+#: engines/scumm/dialogs.cpp:178 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:631 engines/wage/saveload.cpp:742
 #: engines/xeen/saves.cpp:256
 msgid "Load"
@@ -2175,7 +2175,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/sci/engine/kfile.cpp:1084 engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3349
-#: engines/trecision/saveload.cpp:68 engines/tsage/scenes.cpp:629
+#: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49
 msgid "Save game:"
@@ -2196,7 +2196,7 @@ msgstr "게임 저장:"
 #: engines/sherlock/scalpel/scalpel.cpp:1250
 #: engines/sherlock/tattoo/widget_files.cpp:75 engines/startrek/saveload.cpp:43
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3349
-#: engines/trecision/saveload.cpp:68 engines/tsage/scenes.cpp:629
+#: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:629
 #: engines/wage/saveload.cpp:752 engines/xeen/saves.cpp:277
 #: engines/zvision/file/save_manager.cpp:49 engines/zvision/metaengine.cpp:194
 msgid "Save"
