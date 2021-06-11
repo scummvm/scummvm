@@ -151,9 +151,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_curTime = 0;
 	_characterSpeakTime = 0;
-
-	maskMouse = false;
-
 	_pauseStartTime = 0;
 	_textStatus = TEXT_OFF;
 

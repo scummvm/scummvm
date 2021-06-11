@@ -220,17 +220,13 @@ void TrecisionEngine::processMouse() {
 	if (!_graphicsMgr->isCursorVisible())
 		return;
 
-	if (_mouseLeftBtn && !maskMouse) {
+	if (_mouseLeftBtn) {
 		_scheduler->leftClick(mx, my);
-		maskMouse = true;
 		_mouseLeftBtn = false;
-	} else if (_mouseRightBtn && !maskMouse) {
+	} else if (_mouseRightBtn) {
 		_scheduler->rightClick(mx, my);
-		maskMouse = true;
 		_mouseRightBtn = false;
 	} else {
-		maskMouse = false;
-
 		if (!_flagScriptActive && _mouseMoved) {
 			processMouseMovement();
 			_mouseMoved = false;
