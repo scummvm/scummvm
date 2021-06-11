@@ -2296,32 +2296,17 @@ uint16 Myst::rocketSliderGetSound(uint16 pos) {
 
 uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
 
-	bool fuzzylogic = false;
+	debugN("rocketCheckIfSoundMatches: %i %i (diff:% 3i) ", sound1, sound2, sound1 - sound2);
 
-  	if (ConfMan.getBool("fuzzy_logic")) {
-		fuzzylogic = true;
-	}
+	if (!ConfMan.getBool("fuzzy_logic")) {
 
-	debugN("helper: %i %i %i (diff:% 3i) ", sound1, sound2, fuzzylogic, sound1 - sound2);
-
-	if (fuzzylogic == false) {
-
-		if (sound1 != sound2) {
-			debugN("strict : false \n");
-			return false;
-		}
-
-	} else {
-
-	       if (abs(sound1 - sound2) >= 5) {
-			debugN(" fuzzy : false \n");
-			return false;
-		}
-
-	}
-
-	debugN("either : true \n");
-	return true;
+		debugN("strict\n");
+		return sound1 == sound2; 
+		
+	} 
+		
+	debugN("fuzzy\n");
+	return abs(sound1 - sound2) < 5;
 
 }
 
