@@ -78,12 +78,6 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 	_inventoryStatus = INV_OFF;
 	_inventoryCounter = INVENTORY_HIDE;	
 	_flagInventoryLocked = false;
-	_inventorySpeed[0] = 20;
-	_inventorySpeed[1] = 10;
-	_inventorySpeed[2] = 5;
-	_inventorySpeed[3] = 3;
-	_inventorySpeed[4] = 2;
-	_inventorySpeed[5] = _inventorySpeed[6] = _inventorySpeed[7] = 0;
 	_inventorySpeedIndex = 0;
 	_inventoryScrollTime = 0;
 

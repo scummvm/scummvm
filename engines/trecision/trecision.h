@@ -254,7 +254,6 @@ public:
 	uint8 _inventoryRefreshStartLine;
 	int16 _inventoryCounter;
 	bool  _flagInventoryLocked;
-	int16 _inventorySpeed[8];
 	uint8 _inventorySpeedIndex;
 	uint32 _inventoryScrollTime;
 	uint16 _lastInv;

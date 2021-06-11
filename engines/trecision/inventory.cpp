@@ -303,8 +303,10 @@ void TrecisionEngine::replaceIcon(uint8 oldIcon, uint8 newIcon) {
 }
 
 void TrecisionEngine::rollInventory(uint8 status) {
+	static const int16 inventorySpeed[8] = { 20, 10, 5, 3, 2, 0, 0, 0 };
+
 	if (status == INV_PAINT) {
-		_inventoryCounter -= _inventorySpeed[_inventorySpeedIndex++];
+		_inventoryCounter -= inventorySpeed[_inventorySpeedIndex++];
 		if (_inventoryCounter <= INVENTORY_SHOW || _inventorySpeedIndex > 5) {
 			_inventorySpeedIndex = 0;
 			setInventoryStart(_iconBase, INVENTORY_SHOW);
@@ -316,7 +318,7 @@ void TrecisionEngine::rollInventory(uint8 status) {
 			return;
 		}
 	} else if (status == INV_DEPAINT) {
-		_inventoryCounter += _inventorySpeed[_inventorySpeedIndex++];
+		_inventoryCounter += inventorySpeed[_inventorySpeedIndex++];
 
 		if (_inventoryCounter > INVENTORY_HIDE || _inventorySpeedIndex > 5) {
 			_inventorySpeedIndex = 0;
