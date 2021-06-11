@@ -298,9 +298,9 @@ void ReadDialogs(DialogTopic *&dialog,
 			// which probably refered to this data used by old editor directly to edit dialogs
 			char *buffer = new char[script_text_len + 1];
 			in->Read(buffer, script_text_len);
-			buffer[script_text_len] = 0;
 			if (data_ver > kGameVersion_260)
-				decrypt_text(buffer);
+				decrypt_text(buffer, script_text_len);
+			buffer[script_text_len] = 0;
 			old_dialog_src[i] = buffer;
 			delete[] buffer;
 		} else {
@@ -360,8 +360,8 @@ void ReadDialogs(DialogTopic *&dialog,
 
 			newlen = Math::Min(newlen, sizeof(buffer) - 1);
 			in->Read(buffer, newlen);
+			decrypt_text(buffer, newlen);
 			buffer[newlen] = 0;
-			decrypt_text(buffer);
 			old_speech_lines.push_back(buffer);
 			i++;
 		}

@@ -92,10 +92,11 @@ int WordsDictionary::find_index(const char *wrem) {
 	return -1;
 }
 
-void decrypt_text(char *toenc) {
+void decrypt_text(char *toenc, size_t buf_sz) {
 	int adx = 0;
+	const char *p_end = toenc + buf_sz;
 
-	while (1) {
+	while (toenc < p_end) {
 		toenc[0] -= _G(passwencstring)[adx];
 		if (toenc[0] == 0)
 			break;
@@ -114,8 +115,8 @@ void read_string_decrypt(Stream *in, char *buf, size_t buf_sz) {
 	in->Read(buf, slen);
 	if (len > slen)
 		in->Seek(len - slen);
+	decrypt_text(buf, slen);
 	buf[slen] = 0;
-	decrypt_text(buf);
 }
 
 void read_dictionary(WordsDictionary *dict, Stream *out) {
