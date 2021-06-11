@@ -1029,18 +1029,24 @@ GridItemWidget::GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWid
 			}
 
 void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
-	_attachedEntries.push_back(LauncherEntry(key, description, domain));
+	Common::String gameid = domain->getVal("gameid");
+	Common::String engineid = domain->getVal("engineid");
+	Common::String language = "XX";
+	Common::String platform = "UNK";
+	domain->tryGetVal("language",language);
+	domain->tryGetVal("platform", platform);
+	_attachedEntries.push_back(GridItemInfo(gameid, engineid, description, language, platform));
 }
 
-void GridItemWidget::attachEntry(LauncherEntry &entry) {
+void GridItemWidget::attachEntry(GridItemInfo &entry) {
 	_attachedEntries.push_back(entry);
 }
 
-void GridItemWidget::attachEntries(Common::Array<LauncherEntry> entries) {
+void GridItemWidget::attachEntries(Common::Array<GridItemInfo> entries) {
 	_attachedEntries.push_back(entries);
 }
 
-void GridItemWidget::setActiveEntry(LauncherEntry &entry) {
+void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 	_activeEntry = &entry;
 }
 
@@ -1051,17 +1057,7 @@ void GridItemWidget::update() {
 	
 	if (isVisible()) {
 		// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
-		Common::String gameid = _activeEntry->domain->getVal("gameid");
-		Common::String engineid = _activeEntry->domain->getVal("engineid");
-		Common::String language = "XX";
-		Common::String platform = "UNK";
-		_activeEntry->domain->tryGetVal("language",language);
-		_activeEntry->domain->tryGetVal("platform", platform);
-		language.toUppercase();
-		// warning("Fields populated");
-		// warning("%s %s %s %s", gameid.c_str(), engineid.c_str(), language.c_str(), platform.c_str());
-		Common::String thumbPath = Common::String::format("%s-%s.png",engineid.c_str(),gameid.c_str());
-		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(thumbPath);
+		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 
 		if (gfx) {
 			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
@@ -1070,17 +1066,17 @@ void GridItemWidget::update() {
 		else
 			_thumb->setGfx(gfx);
 
-		_lang->setLabel(language);
-		_title->setLabel(_activeEntry->description);
+		_lang->setLabel(_activeEntry->language);
+		_title->setLabel(_activeEntry->title);
 		
-		if (platform == "pc")
-			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformDOS);
-		else if (platform == "amiga")
-			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformAmiga);
-		else if (platform == "apple2")
-			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformApple2);
+		if (_activeEntry->platform == "pc")
+			gfx = _grid->platformToSurface(kPlatformDOS);
+		else if (_activeEntry->platform == "amiga")
+			gfx = _grid->platformToSurface(kPlatformAmiga);
+		else if (_activeEntry->platform == "apple2")
+			gfx = _grid->platformToSurface(kPlatformApple2);
 		else
-			gfx = _grid->platformToSurface(GridWidget::Platform::kPlatformUnknown);
+			gfx = _grid->platformToSurface(kPlatformUnknown);
 		
 		if (gfx) {
 			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
@@ -1096,19 +1092,6 @@ void GridItemWidget::update() {
 void GridItemWidget::drawWidget() {
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
 }
-
-// void GridItemWidget::setEnabled(bool e) {
-// 	// Widget::setEnabled(e);
-// 	// _thumb->setEnabled(e);
-// 	// _plat->setEnabled(e);
-// 	// _title->setEnabled(e);
-// 	// _lang->setEnabled(e);
-// 	setVisible(e);
-// 	// _thumb->setVisible(e);
-// 	// _plat->setVisible(e);
-// 	// _title->setVisible(e);
-// 	// _lang->setVisible(e);
-// }
 
 #pragma mark -
 
@@ -1163,7 +1146,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	_scrollPos = 0;
 }
 
-void GridWidget::setEntryList(Common::Array<LauncherEntry> *list) {
+void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
 	for (auto entryIter = list->begin(); entryIter != list->end(); ++entryIter) {
 		_allEntries.push_back(*entryIter);
 	}
@@ -1196,23 +1179,25 @@ void GridWidget::loadPlatformIcons() {
 }
 
 bool GridWidget::calcVisibleEntries() {
-	warning("calcingVisible entries");
+	// warning("calcingVisible entries");
 	bool needsReload = false;
 
 	int nFirstVisibleItem = 0;
 	int nItemsOnScreen = 0;
 
-	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / _gridItemHeight);
-	nItemsOnScreen = ((_scrollWindowHeight / _gridItemHeight) + 1) * (_itemsPerRow);
+	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + kGridItemVPadding));
+	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + kGridItemVPadding))) * (_itemsPerRow);
 
 	if ((nFirstVisibleItem != _firstVisibleItem) || (nItemsOnScreen != _itemsOnScreen)) {
 		needsReload = true;
 		_firstVisibleItem = nFirstVisibleItem;
 		_itemsOnScreen = nItemsOnScreen;
 
+		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size()-1);
+		// warning("%d %d %d", _firstVisibleItem, _firstVisibleItem + _itemsOnScreen, (int)_gridItems.size());
 		_visibleEntries.clear();
-		for (int ind = _firstVisibleItem; ind < _firstVisibleItem + _itemsOnScreen; ++ind) {
-			LauncherEntry *iter = _allEntries.begin() + ind;
+		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
+			GridItemInfo *iter = _allEntries.begin() + ind;
 			_visibleEntries.push_back(*iter);
 		}
 	}
@@ -1223,13 +1208,13 @@ bool GridWidget::calcVisibleEntries() {
 
 void GridWidget::reloadThumbnails() {
 	Graphics::ManagedSurface *surf = nullptr;
-	_loadedSurfaces.clear(true);
-	for (Common::Array<LauncherEntry>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
-		Common::String gameid = iter->domain->getVal("gameid");
-		Common::String engineid = iter->domain->getVal("engineid");
-		Common::String path = Common::String("./icons/")+Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
+	Common::String gameid;
+	Common::String engineid;
+	Common::String path;
+	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
+		path = Common::String("./icons/")+iter->thumbPath;
 		if (_loadedSurfaces.contains(path)) {
-			warning("Thumbnail already loaded, skipping...");
+			// warning("Thumbnail already loaded, skipping...");
 		}
 		else {
 			surf = loadSurfaceFromFile(path);
@@ -1241,10 +1226,7 @@ void GridWidget::reloadThumbnails() {
 Graphics::ManagedSurface *GridWidget::filenameToSurface(Common::String &name) {
 	Common::String path = Common::String("./icons/")+name;
 	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
-		Common::String gameid = l->domain->getVal("gameid");
-		Common::String engineid = l->domain->getVal("engineid");
-		Common::String lPath = Common::String("./icons/")+Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
-		if (lPath == path) {
+		if (l->thumbPath == name) {
 			return _loadedSurfaces[path];
 		}
 	}
@@ -1254,7 +1236,7 @@ Graphics::ManagedSurface *GridWidget::filenameToSurface(Common::String &name) {
 
 Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
 	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
-		warning("Unknown Platform");
+		// warning("Unknown Platform");
 		return nullptr;
 	}
 	return _platformIcons[platformCode];
@@ -1317,10 +1299,11 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 	}
 
-	Common::HashMap<Common::String, GridItemWidget *> entryById;
+	// Common::HashMap<Common::String, GridItemWidget *> entryById;
 
-	for (Common::Array<LauncherEntry>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
-		GridItemWidget *newEntry = entryById[i->domain->getVal("gameid")];
+	for (Common::Array<GridItemInfo>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
+		// GridItemWidget *newEntry = entryById[i->gameid];
+		GridItemWidget *newEntry = nullptr;
 		if (!newEntry) {
 			newEntry = new GridItemWidget(this, 
 											50 + col * (kThumbnailWidth + 50), 
@@ -1345,7 +1328,7 @@ void GridWidget::reflowLayout() {
 		}
 		newEntry->attachEntry(*i);
 		newEntry->update();
-		entryById[i->domain->getVal("gameid")] = newEntry;
+		// entryById[i->domain->getVal("gameid")] = newEntry;
 	}
 	markAsDirty();
 }

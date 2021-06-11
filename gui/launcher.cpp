@@ -302,6 +302,22 @@ void LauncherDialog::close() {
 	Dialog::close();
 }
 
+struct LauncherEntry {
+	Common::String key;
+	Common::String description;
+	const Common::ConfigManager::Domain *domain;
+
+	LauncherEntry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
+		key = k; description = d, domain = v;
+	}
+};
+
+struct LauncherEntryComparator {
+	bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
+			return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
+	}
+};
+
 void LauncherDialog::updateListing() {
 	U32StringArray l;
 	ListWidget::ColorList colors;
@@ -347,7 +363,21 @@ void LauncherDialog::updateListing() {
 	// Now sort the list in dictionary order
 	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
-	_grid->setEntryList(&domainList);
+	Common::Array<GridItemInfo> gridList;
+
+	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
+		Common::String gameid = iter->domain->getVal("gameid");
+		Common::String engineid = iter->domain->getVal("engineid");
+		Common::String title = iter->description;
+		Common::String language = "XX";
+		Common::String platform = "UNK";
+		iter->domain->tryGetVal("language",language);
+		iter->domain->tryGetVal("platform", platform);
+		language.toUppercase();
+		gridList.push_back(GridItemInfo(engineid, gameid, title, language, platform));
+	}
+
+	_grid->setEntryList(&gridList);
 
 	// And fill out our structures
 	for (Common::Array<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
