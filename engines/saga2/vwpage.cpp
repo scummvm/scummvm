@@ -495,8 +495,11 @@ void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
 		return;
 
-	warning("STUB: writeTransPixels, transparency is ignored");
-	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
+	Graphics::Surface *surf = g_system->lockScreen();
+
+	_BltPixelsT(pixPtr, pixMod, (byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height );
+
+	g_system->unlockScreen();
 }
 #endif
 
