@@ -22,6 +22,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die spanische Version von Blue Force hinzugefügt.
    - Unterstützung für die spanische Version von Ringworld hinzugefügt.
    - Unterstützung für die spanische Version von Amazon: Guardians of Eden hinzugefügt.
+   - Unterstützung für Nightlong: Union City Conspiracy hinzugefügt.
 
  Neue Portierungen:
    - Die Version für den Nintendo DS wurde zu großen Teilen neu geschrieben.
@@ -105,6 +106,7 @@ Programmcodes finden Sie auf Englisch unter:
      Seitenverhältniskorrektur zu ermöglichen.
    - Audioprobleme in der PC-Engine-Version von Loom korrigiert.
    - Unterstützung für hochauflösende Schriftarten und Cursor-Darstellungen in der Macintosh-Version von Loom hinzugefügt.
+   - Unterstützung für die japanische Macintosh-Version von The Dig hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
