@@ -37,6 +37,8 @@
 #include "dreamweb/sound.h"
 #include "dreamweb/dreamweb.h"
 
+#include "common/text-to-speech.h"
+
 namespace DreamWeb {
 
 DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gameDesc) :
@@ -391,6 +393,27 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 }
 
 Common::Error DreamWebEngine::run() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		switch(getLanguage()) {
+		case Common::ES_ESP:
+			ttsMan->setLanguage("es");
+			break;
+		case Common::FR_FRA:
+			ttsMan->setLanguage("fr");
+			break;
+		case Common::IT_ITA:
+			ttsMan->setLanguage("it");
+			break;
+		case Common::DE_DEU:
+			ttsMan->setLanguage("de");
+			break;
+		default:
+			ttsMan->setLanguage("en");
+			break;
+		}
+	}
+
 	syncSoundSettings();
 	setDebugger(new DreamWebConsole(this));
 	_sound = new DreamWebSound(this);

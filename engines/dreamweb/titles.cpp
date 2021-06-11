@@ -101,10 +101,41 @@ void DreamWebEngine::gettingShot() {
 }
 
 void DreamWebEngine::bibleQuote() {
-	const char *story = "And I heard a great voice out of the temple saying to the seven angels. "
+	const char *enStory = "And I heard a great voice out of the temple saying to the seven angels. "
 						"Go your ways and pour out the vails of the wrath of god upon the earth. "
-						"Book of revelation Chapter 16 verse 7.";
+						"Book of revelation Chapter 16 verse 1.";
+	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges"
+						" «Allez verser sur la terre les sept coupes de la colère de Dieu.»"
+						"L'Apocalypse, chapitre 16, verset 1";
+	const char *esStory = "Oí una gran voz que decía desde el templo a los siete ángeles: "
+						"Id y derramad sobre la tierra las siete copas de la ira de Dios. "
+						"Apocalipsis, capítulo 16, versículo primero.";
+	const char *deStory = "Dann hörte ich, wie eine laute Stimme aus dem Tempel den sieben Engeln zurief: "
+						"Geht und gießt die sieben Schalen mit dem Zorn Gottes über die Erde. "
+						"Offenbarung des Johannes. Kapitel 16 Vers 1";
+	const char *itStory = "Udii poi una gran voce dal tempio che diceva ai sette angeli: "
+						"Andate e versate sulla terra le sette coppe dell'ira di Dio. "
+						"Dal libro dell'Apocalisse, capitolo uno, primo versetto";
+
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	const char *theStory;
+	switch(getLanguage()) {
+	case Common::ES_ESP:
+		theStory = esStory;
+		break;
+	case Common::FR_FRA:
+		theStory = frStory;
+		break;
+	case Common::IT_ITA:
+		theStory = itStory;
+		break;
+	case Common::DE_DEU:
+		theStory = deStory;
+		break;
+	default:
+		theStory = enStory;
+		break;
+	}
 
 	initGraphics(640, 480);
 
@@ -118,7 +149,7 @@ void DreamWebEngine::bibleQuote() {
 	}
 
 	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say(story);
+		ttsMan->say(theStory);
 		while (ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
 			hangOne(1);
 		ttsMan->stop();
