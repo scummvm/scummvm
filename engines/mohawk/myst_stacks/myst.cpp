@@ -2301,10 +2301,10 @@ uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
 	if (!ConfMan.getBool("fuzzy_logic")) {
 
 		debugN("strict\n");
-		return sound1 == sound2; 
+		return sound1 == sound2;
 		
-	} 
-		
+	}
+
 	debugN("fuzzy\n");
 	return abs(sound1 - sound2) < 5;
 
