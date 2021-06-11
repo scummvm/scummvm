@@ -30,6 +30,7 @@
 #include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/game/room_struct.h"
+#include "ags/shared/game/tra_file.h"
 #include "ags/shared/gui/gui_button.h"
 #include "ags/shared/gui/gui_inv.h"
 #include "ags/shared/gui/gui_label.h"
@@ -333,6 +334,7 @@ Globals::Globals() {
 	_simp_for_plugin = new SystemImports();
 
 	// translation.cpp globals
+	_trans = new AGS::Shared::Translation();
 	_transtree = new StringMap();
 
 	// walk_behind.cpp globals
@@ -548,6 +550,7 @@ Globals::~Globals() {
 	delete _simp_for_plugin;
 
 	// translation.cpp globals
+	delete _trans;
 	delete _transtree;
 }
 

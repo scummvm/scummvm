@@ -72,6 +72,7 @@ class GUITextBox;
 struct InteractionVariable;
 struct PlaneScaling;
 class RoomStruct;
+struct Translation;
 
 } // namespace Shared
 
@@ -1311,6 +1312,7 @@ public:
 	 * @{
 	 */
 
+	AGS::Shared::Translation *_trans;
 	StringMap *_transtree = nullptr;
 	String _trans_name, _trans_filename;
 	long _lang_offs_start = 0;

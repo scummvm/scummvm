@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/game_setup.h"
@@ -31,6 +30,7 @@
 #include "ags/engine/ac/translation.h"
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/shared/game/tra_file.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/asset_manager.h"
@@ -42,11 +42,10 @@ using namespace AGS::Shared;
 
 void close_translation() {
 	_GP(transtree).clear();
+	_GP(trans) = Translation();
 	_G(trans_name) = "";
 	_G(trans_filename) = "";
 }
-
-bool parse_translation(Stream *language_file, String &parse_error);
 
 bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error) {
 
@@ -54,34 +53,32 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 		return false;
 	_G(trans_filename) = String::FromFormat("%s.tra", lang.GetCStr());
 
-	Stream *language_file = _GP(AssetMgr)->OpenAsset(_G(trans_filename));
-	if (language_file == nullptr) {
+	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));
+	if (in == nullptr) {
 		Debug::Printf(kDbgMsg_Error, "Cannot open translation: %s", _G(trans_filename).GetCStr());
 		return false;
 	}
 
-	char transsig[16] = { 0 };
-	language_file->Read(transsig, 15);
-	if (strcmp(transsig, "AGSTranslation") != 0) {
-		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", _G(trans_filename).GetCStr());
-		delete language_file;
-		return false;
+	_GP(trans) = Translation();
+
+	// First test if the translation is meant for this game
+	HTraFileError err = TestTraGameID(_GP(game).uniqueid, _GP(game).gamename, in.get());
+	if (err) {
+		// If successful, then read translation data fully
+		in.reset(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));
+		err = ReadTraData(_GP(trans), in.get());
 	}
 
-	_GP(transtree).clear();
-
-	String parse_error;
-	bool result = parse_translation(language_file, parse_error);
-	delete language_file;
-
-	if (!result) {
-		parse_error.Prepend(String::FromFormat("Failed to read translation file: %s:\n", _G(trans_filename).GetCStr()));
+	// Process errors
+	if (!err) {
+		String err_msg = String::FromFormat("Failed to read translation file: %s:\n%s",
+			_G(trans_filename).GetCStr(),
+			err->FullMessage().GetCStr());
 		close_translation();
 		if (quit_on_error) {
-			parse_error.PrependChar('!');
-			quit(parse_error);
+			quitprintf("!%s", err_msg.GetCStr());
 		} else {
-			Debug::Printf(kDbgMsg_Error, parse_error);
+			Debug::Printf(kDbgMsg_Error, err_msg);
 			if (!fallback_lang.IsEmpty()) {
 				Debug::Printf("Fallback to translation: %s", fallback_lang.GetCStr());
 				init_translation(fallback_lang, "", false);
@@ -89,6 +86,21 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 			return false;
 		}
 	}
+
+	// Translation read successfully
+	// Configure new game settings
+	if (_GP(trans).NormalFont >= 0)
+		SetNormalFont(_GP(trans).NormalFont);
+	if (_GP(trans).SpeechFont >= 0)
+		SetSpeechFont(_GP(trans).SpeechFont);
+	if (_GP(trans).RightToLeft == 1) {
+		_GP(play).text_align = kHAlignLeft;
+		_GP(game).options[OPT_RIGHTLEFTWRITE] = 0;
+	} else if (_GP(trans).RightToLeft == 2) {
+		_GP(play).text_align = kHAlignRight;
+		_GP(game).options[OPT_RIGHTLEFTWRITE] = 1;
+	}
+
 	Debug::Printf("Translation initialized: %s", _G(trans_filename).GetCStr());
 	return true;
 }
@@ -102,72 +114,7 @@ String get_translation_path() {
 }
 
 const StringMap &get_translation_tree() {
-	return _GP(transtree);
-}
-
-bool parse_translation(Stream *language_file, String &parse_error) {
-	while (!language_file->EOS()) {
-		int blockType = language_file->ReadInt32();
-		if (blockType == -1)
-			break;
-		// MACPORT FIX 9/6/5: remove warning
-		/* int blockSize = */ language_file->ReadInt32();
-
-		if (blockType == 1) {
-			char original[STD_BUFFER_SIZE], translation[STD_BUFFER_SIZE];
-			while (1) {
-				read_string_decrypt(language_file, original, STD_BUFFER_SIZE);
-				read_string_decrypt(language_file, translation, STD_BUFFER_SIZE);
-				if ((strlen(original) < 1) && (strlen(translation) < 1))
-					break;
-				if (language_file->EOS()) {
-					parse_error = "Translation file is corrupt";
-					return false;
-				}
-				_GP(transtree).insert(std::make_pair(String(original), String(translation)));
-			}
-
-		} else if (blockType == 2) {
-			int uidfrom;
-			char wasgamename[100];
-			uidfrom = language_file->ReadInt32();
-			read_string_decrypt(language_file, wasgamename, sizeof(wasgamename));
-			if ((uidfrom != _GP(game).uniqueid) || (strcmp(wasgamename, _GP(game).gamename) != 0)) {
-				parse_error.Format("The translation file is not compatible with this _GP(game). The translation is designed for '%s'.",
-				                   wasgamename);
-				return false;
-			}
-		} else if (blockType == 3) {
-			// game settings
-			int temp = language_file->ReadInt32();
-			// normal font
-			if (temp >= 0)
-				SetNormalFont(temp);
-			temp = language_file->ReadInt32();
-			// speech font
-			if (temp >= 0)
-				SetSpeechFont(temp);
-			temp = language_file->ReadInt32();
-			// text direction
-			if (temp == 1) {
-				_GP(play).text_align = kHAlignLeft;
-				_GP(game).options[OPT_RIGHTLEFTWRITE] = 0;
-			} else if (temp == 2) {
-				_GP(play).text_align = kHAlignRight;
-				_GP(game).options[OPT_RIGHTLEFTWRITE] = 1;
-			}
-		} else {
-			parse_error.Format("Unknown block type in translation file (%d).", blockType);
-			return false;
-		}
-	}
-
-	if (_GP(transtree).size() == 0) {
-		parse_error = "The translation file was empty.";
-		return false;
-	}
-
-	return true;
+	return _GP(trans).Dict;
 }
 
 } // namespace AGS3

@@ -1,0 +1,92 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+ //=============================================================================
+ //
+ // This unit provides functions for reading compiled translation file.
+ //
+ //=============================================================================
+
+#ifndef AGS_SHARED_GAME_TRA_FILE_H
+#define AGS_SHARED_GAME_TRA_FILE_H
+
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_types.h"
+
+namespace AGS3 {
+namespace AGS {
+namespace Shared {
+
+enum TraFileErrorType {
+	kTraFileErr_NoError,
+	kTraFileErr_SignatureFailed,
+	kTraFileErr_FormatNotSupported,
+	kTraFileErr_GameIDMismatch,
+	kTraFileErr_UnexpectedEOF,
+	kTraFileErr_UnknownBlockType,
+	kTraFileErr_BlockDataOverlapping,
+};
+
+enum TraFileBlock {
+	kTraFblk_Dict = 1,
+	kTraFblk_GameID = 2,
+	kTraFblk_TextOpts = 3,
+	// End of data tag
+	kTraFile_EOF = -1
+};
+
+String GetTraFileErrorText(TraFileErrorType err);
+String GetTraBlockName(TraFileBlock id);
+
+typedef TypedCodeError<TraFileErrorType, GetTraFileErrorText> TraFileError;
+typedef ErrorHandle<TraFileError> HTraFileError;
+
+
+struct Translation {
+	// Game identifiers, for matching the translation file with the game
+	int GameUid;
+	String GameName;
+	// Translation dictionary in source/dest pairs
+	StringMap Dict;
+	// Localization parameters
+	int NormalFont = -1; // replacement for normal font, or -1 for default
+	int SpeechFont = -1; // replacement for speech font, or -1 for default
+	int RightToLeft = -1; // r2l text mode (0, 1), or -1 for default
+};
+
+
+// Parses translation data and tests whether it matches the given game
+HTraFileError TestTraGameID(int game_uid, const String &game_name, Stream *in);
+// Reads full translation data from the provided stream
+HTraFileError ReadTraData(Translation &tra, Stream *in);
+// Type of function that reads single trafile block and tells whether to continue reading
+typedef HTraFileError(*PfnReadTraBlock)(Stream *in, TraFileBlock block_id,
+	soff_t block_len, bool &read_next);
+// Parses tra file, passing each found block into callback; does not read any actual data itself
+HTraFileError ReadTraData(PfnReadTraBlock reader, Stream *in);
+
+} // namespace Common
+} // namespace AGS
+} // namespace AGS3
+
+#endif

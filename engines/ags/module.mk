@@ -56,6 +56,7 @@ MODULE_OBJS = \
 	shared/game/room_file_base.o \
 	shared/game/room_file_deprecated.o \
 	shared/game/room_struct.o \
+	shared/game/tra_file.o \
 	shared/gfx/allegro_bitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \
