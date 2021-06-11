@@ -31,7 +31,7 @@ namespace Saga2 {
 
 class TilePoint;
 class  PatrolRouteList;
-extern PatrolRouteList  *patrolRouteList;   //  Global patrol route array
+extern PatrolRouteList  *patrolRouteList;   // Global patrol route array
 
 /* ===================================================================== *
    PatrolRoute class
@@ -43,16 +43,16 @@ extern PatrolRouteList  *patrolRouteList;   //  Global patrol route array
 //	the coordinates of the patrol routes.
 
 class PatrolRoute {
-	int16       wayPoints;  //  The number of way points in this patrol route
+	int16 _wayPoints;	// The number of way points in this patrol route
 
 public:
-	//  Return the number of way points
+	// Return the number of way points
 	int16 vertices(void) const {
-		return wayPoints;
+		return _wayPoints;
 	}
 
-	//  Returns a const reference to a specified way point
-	const TilePoint &operator [](int16 index) const;
+	// Returns a const reference to a specified way point
+	const TilePoint &operator[](int16 index) const;
 };
 
 /* ===================================================================== *
@@ -64,7 +64,7 @@ public:
 //	the number of patrol routes, followed by the actual patrol route data.
 
 struct PatrolRouteData {
-	int16       routes;     //  The number of routes in this data
+	int16 routes;	// The number of routes in this data
 };
 
 /* ===================================================================== *
@@ -78,32 +78,30 @@ struct PatrolRouteData {
 //	beginning of the patrol route data.
 
 class PatrolRouteList {
-
 	friend void initPatrolRoutes(void);
 	friend void cleanupPatrolRoutes(void);
 
-	PatrolRouteData     *routeData;     //  A pointer to the raw patrol route
-	//  data.
-	int32               *offsetArray;   //  A pointer to a dynaically
-	//  allocated array of 32-bit offsets.
+	PatrolRouteData *_routeData;     // A pointer to the raw patrol route
+	// data.
+	int32 *_offsetArray;   // A pointer to a dynaically
+	// allocated array of 32-bit offsets.
 
 public:
-	//  Remove current patrol route data
+	// Remove current patrol route data
 	void clearRouteData(void);
-	//  Set up an initialize new patrol route data
+	// Set up an initialize new patrol route data
 	void setRouteData(PatrolRouteData *data);
 
-	//  Returns the number of patrol routes in the list
+	// Returns the number of patrol routes in the list
 	int16 routes(void) {
-		return routeData ? routeData->routes : 0;
+		return _routeData ? _routeData->routes : 0;
 	}
 
-	//  Returns a reference to the specified patrol route
+	// Returns a reference to the specified patrol route
 	PatrolRoute &operator [](int16 index) {
 		// FIXME: This is evil
 		warning("PartolRoute[]: dangerous pointer arithmetic, this will not work");
-		return *((PatrolRoute *)(routeData
-		                         +   offsetArray[index]));
+		return *((PatrolRoute *)(_routeData + _offsetArray[index]));
 	}
 };
 
@@ -117,87 +115,56 @@ public:
 
 enum PatrolRouteIteratorFlags {
 
-	//  These flags define the type of iterator, and are only initialized
-	//  when the iterator is constructed.
-	patrolRouteReverse      = (1 << 0), //  Iterate in reverse
-	patrolRouteAlternate    = (1 << 1), //  Iterate back and forth
-	patrolRouteRepeat       = (1 << 2), //  Iterate repeatedly
-	patrolRouteRandom       = (1 << 3), //  Iterate randomly
+	// These flags define the type of iterator, and are only initialized
+	// when the iterator is constructed.
+	patrolRouteReverse      = (1 << 0), // Iterate in reverse
+	patrolRouteAlternate    = (1 << 1), // Iterate back and forth
+	patrolRouteRepeat       = (1 << 2), // Iterate repeatedly
+	patrolRouteRandom       = (1 << 3), // Iterate randomly
 
-	//  These flags define the current state of the iterator.
-	patrolRouteInAlternate  = (1 << 4), //  Iterator is currently going in
-	//  the alternate direction
+	// These flags define the current state of the iterator.
+	patrolRouteInAlternate  = (1 << 4) // Iterator is currently going in
+	// the alternate direction
 };
 
 class PatrolRouteIterator {
-	int16           routeNo,            //  Index of the patrol route
-	                vertexNo;           //  Current waypoint index
-
-	uint8           mapNum;             //  Map in which this route exists
-
-	uint8           flags;              //  various flags
-
-	// 6 bytes
+	int16 _routeNo;		// Index of the patrol route
+	int16 _vertexNo;	// Current waypoint index
+	byte _mapNum;		// Map in which this route exists
+	byte _flags;		// various flags
 
 public:
-	//  Default constructor -- do nothing
-	PatrolRouteIterator(void) {}
-
-	//  Copy constructor
-	PatrolRouteIterator(const PatrolRouteIterator &iter) {
-		//  Copy first four bytes
-		((int32 *)this)[0] = ((int32 *)&iter)[0];
-		//  Copy next two bytes
-		*((int16 *) & ((int32 *)this)[1]) =
-		    *((int16 *) & ((int32 *)&iter)[1]);
-	}
-
-	//  Constructors
+	PatrolRouteIterator() { _routeNo = _vertexNo = 0; _mapNum = _flags = 0;}
 	PatrolRouteIterator(uint8 map, int16 rte, uint8 type);
-	PatrolRouteIterator(
-	    uint8 map,
-	    int16 rte,
-	    uint8 type,
-	    int16 startingPoint);
-
-	//  Overloaded assignment operator
-	PatrolRouteIterator operator = (const PatrolRouteIterator &iter) {
-		//  Copy first four bytes
-		((int32 *)this)[0] = ((int32 *)&iter)[0];
-		//  Copy next two bytes
-		*((int16 *) & ((int32 *)this)[1]) =
-		    *((int16 *) & ((int32 *)&iter)[1]);
-
-		return *this;
-	}
+	PatrolRouteIterator(uint8 map, int16 rte, uint8 type, int16 startingPoint);
 
 private:
-	void increment(void);        //  Increment waypoint index
-	void decrement(void);        //  Decrement waypoint index
-	void altIncrement(void);     //  Increment in alternate direction
-	void altDecrement(void);     //  Decrement in alternate direction
+	void increment(void);		// Increment waypoint index
+	void decrement(void);		// Decrement waypoint index
+	void altIncrement(void);	// Increment in alternate direction
+	void altDecrement(void);	// Decrement in alternate direction
 
 public:
-	//  Determine if the iterator will repeat infinitely
+	// Determine if the iterator will repeat infinitely
 	bool isRepeating(void) const {
-		return flags & (patrolRouteRepeat | patrolRouteRandom);
+		return _flags & (patrolRouteRepeat | patrolRouteRandom);
 	}
 
-	//  Return the current way point number
+	// Return the current way point number
 	int16 wayPointNum(void) const {
-		return vertexNo;
+		return _vertexNo;
 	}
 
-	//  Return the coordinates of the current waypoint
-	const TilePoint &operator * (void) const;
+	// Return the coordinates of the current waypoint
+	const TilePoint &operator*(void) const;
 
-	//  Iterate
-	const PatrolRouteIterator &operator ++ (void);
+	// Iterate
+	const PatrolRouteIterator &operator++(void);
 
-	//  Determine if this iterator is equivalent to the specified iterator
-	bool operator == (const PatrolRouteIterator &iter) const {
-		return      routeNo == iter.routeNo && vertexNo == iter.vertexNo
-		            &&  mapNum == iter.mapNum && flags == iter.flags;
+	// Determine if this iterator is equivalent to the specified iterator
+	bool operator==(const PatrolRouteIterator &iter) const {
+		return _routeNo == iter._routeNo && _vertexNo == iter._vertexNo
+				&& _mapNum == iter._mapNum && _flags == iter._flags;
 	}
 };
 
@@ -205,10 +172,10 @@ public:
    PatrolRoute list management function prototypes
  * ===================================================================== */
 
-//  Load the patrol routes from the resource file
+// Load the patrol routes from the resource file
 void initPatrolRoutes(void);
 
-//  Cleanup the patrol routes
+// Cleanup the patrol routes
 void cleanupPatrolRoutes(void);
 
 } // end of namespace Saga2
