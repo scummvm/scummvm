@@ -62,7 +62,7 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 	_GP(trans) = Translation();
 
 	// First test if the translation is meant for this game
-	HTraFileError err = TestTraGameID(_GP(game).uniqueid, _GP(game).gamename, in.get());
+	HError err = TestTraGameID(_GP(game).uniqueid, _GP(game).gamename, in.get());
 	if (err) {
 		// If successful, then read translation data fully
 		in.reset(_GP(AssetMgr)->OpenAsset(_G(trans_filename)));

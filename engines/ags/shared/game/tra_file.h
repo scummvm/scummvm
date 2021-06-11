@@ -59,7 +59,6 @@ String GetTraFileErrorText(TraFileErrorType err);
 String GetTraBlockName(TraFileBlock id);
 
 typedef TypedCodeError<TraFileErrorType, GetTraFileErrorText> TraFileError;
-typedef ErrorHandle<TraFileError> HTraFileError;
 
 
 struct Translation {
@@ -76,14 +75,11 @@ struct Translation {
 
 
 // Parses translation data and tests whether it matches the given game
-HTraFileError TestTraGameID(int game_uid, const String &game_name, Stream *in);
+HError TestTraGameID(int game_uid, const String &game_name, Stream *in);
 // Reads full translation data from the provided stream
-HTraFileError ReadTraData(Translation &tra, Stream *in);
-// Type of function that reads single trafile block and tells whether to continue reading
-typedef HTraFileError(*PfnReadTraBlock)(Stream *in, TraFileBlock block_id,
-	soff_t block_len, bool &read_next);
-// Parses tra file, passing each found block into callback; does not read any actual data itself
-HTraFileError ReadTraData(PfnReadTraBlock reader, Stream *in);
+HError ReadTraData(Translation &tra, Stream *in);
+// Writes all translation data to the stream
+void WriteTraData(const Translation &tra, Stream *out);
 
 } // namespace Common
 } // namespace AGS

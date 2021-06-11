@@ -67,6 +67,41 @@ StrUtil::ConversionError StrUtil::StringToInt(const String &s, int &val, int def
 	return StrUtil::kNoError;
 }
 
+String StrUtil::Unescape(const String &s) {
+	size_t at = s.FindChar('\\');
+	if (at == -1)
+		return s; // no unescaping necessary, return original string
+	char *buf = new char[s.GetLength()];
+	strncpy(buf, s.GetCStr(), at);
+	char *pb = buf + at;
+	for (const char *ptr = s.GetCStr() + at; *ptr; ++ptr) {
+		if (*ptr != '\\') {
+			*(pb++) = *ptr;
+			continue;
+		}
+
+		char next = *(++ptr);
+		switch (next) {
+		case 'a':  *(pb++) = '\a'; break;
+		case 'b':  *(pb++) = '\b'; break;
+		case 'f':  *(pb++) = '\f'; break;
+		case 'n':  *(pb++) = '\n'; break;
+		case 'r':  *(pb++) = '\r'; break;
+		case 't':  *(pb++) = '\t'; break;
+		case 'v':  *(pb++) = '\v'; break;
+		case '\\': *(pb++) = '\\'; break;
+		case '\'': *(pb++) = '\''; break;
+		case '\"': *(pb++) = '\"'; break;
+		case '\?': *(pb++) = '\?'; break;
+		default: *(pb++) = next; break;
+		}
+	}
+	*pb = 0;
+	String dst(buf);
+	delete buf;
+	return dst;
+}
+
 String StrUtil::ReadString(Stream *in) {
 	size_t len = in->ReadInt32();
 	if (len > 0)
@@ -114,6 +149,12 @@ void StrUtil::WriteString(const String &s, Stream *out) {
 
 void StrUtil::WriteString(const char *cstr, Stream *out) {
 	size_t len = strlen(cstr);
+	out->WriteInt32(len);
+	if (len > 0)
+		out->Write(cstr, len);
+}
+
+void StrUtil::WriteString(const char *cstr, size_t len, Stream *out) {
 	out->WriteInt32(len);
 	if (len > 0)
 		out->Write(cstr, len);

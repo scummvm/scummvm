@@ -62,6 +62,9 @@ int             StringToInt(const String &s, int def_val = 0);
 // def_val on failure
 ConversionError StringToInt(const String &s, int &val, int def_val);
 
+// A simple unescape string implementation, unescapes '\\x' into '\x'.
+String          Unescape(const String &s);
+
 // Serialize and unserialize unterminated string prefixed with 32-bit length;
 // length is presented as 32-bit integer integer
 String          ReadString(Stream *in);
@@ -71,6 +74,7 @@ void            ReadString(String &s, Stream *in);
 void            SkipString(Stream *in);
 void            WriteString(const String &s, Stream *out);
 void            WriteString(const char *cstr, Stream *out);
+void            WriteString(const char *cstr, size_t len, Stream *out);
 
 // Serialize and unserialize string as c-string (null-terminated sequence)
 void            ReadCStr(char *buf, Stream *in, size_t buf_limit);
