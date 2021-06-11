@@ -2302,7 +2302,7 @@ uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
 
 		debugN("strict\n");
 		return sound1 == sound2;
-		
+
 	}
 
 	debugN("fuzzy\n");
