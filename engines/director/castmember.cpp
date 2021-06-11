@@ -689,12 +689,10 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 //	_dims.top = y;
 //	_dims.bottom = y + h + (2 * border) + gutter + shadow;
 // x, y, w + 2, h
-// this number 2 is a little bit complex. I found the size of _initialRect and bbox are smaller than the parameter in original director
-// offsets is 2, so we need add it back. i.e. w += 2, h += 2. And we have w + 2 at the same time, thus, we only need to do h += 2
 Common::Rect TextCastMember::getTextOnlyDimensions(const Common::Rect &targetDims) {
 	int w = targetDims.right - targetDims.left - 2 * _borderSize - 2 * _gutterSize - _boxShadow;
 	int h = targetDims.bottom - targetDims.top - 2 * _borderSize - _gutterSize - _boxShadow;
-	h += 2;
+	w -= 2;
 	return Common::Rect(w, h);
 }
 
@@ -706,7 +704,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	switch (_type) {
 	case kCastText:
 		// since mactext will add some offsets itself, then we calculate it first, to make sure the result size is the same as bbox
-		// use the initialRect for the dims just like CastButton
+		// use the initialRect for the dims, (seems like initialRect is same as bbox since we once called setCast)
 		dims = getTextOnlyDimensions(_initialRect);
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), dims.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
