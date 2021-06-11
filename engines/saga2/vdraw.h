@@ -43,26 +43,10 @@ public:
 		clip = Rect16(0, 0, dPage->size.x, dPage->size.y);
 	}
 
-	void setPixel(int16 x, int16 y, gPen color) {
-		if (x >= clip.x && x < clip.x + clip.width
-		        && y >= clip.y && y < clip.y + clip.height) {
-			displayPage->setPixel(x + origin.x, y + origin.y, color);
-		}
-	}
-
-	gPen getPixel(int16 x, int16 y) {
-		return displayPage->getPixel(x + origin.x, y + origin.y);
-	}
-	gPen getPixel(Point16 p) {
-		return displayPage->getPixel(p.x + origin.x, p.y + origin.y);
-	}
-
 	//  Lowest-level drawing functions, (virtually) retargeted to
 	//  call SVGA drawing routines
 
 	void fillRect(const Rect16 r);
-	void hLine(int16 x, int16 y, int16 width);
-	void vLine(int16 x, int16 y, int16 height);
 
 	void clear(void) {
 		displayPage->fillRect(clip, fgPen);

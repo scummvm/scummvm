@@ -41,17 +41,10 @@ public:
 	virtual void setReadBank(uint16) {}
 #endif
 
-	//  Function to set and get pixel
-	virtual void setPixel(int x, int y, uint8 color);
-	virtual uint8 getPixel(int x, int y);
-
 	//  Basic rectangle drawing function
 	virtual void fillRect(Rect16 r, uint8 color);
 	//  Complement mode drawing function
 	virtual void invertRect(Rect16 r, uint8 color);
-
-	virtual void hLine(int16 x, int16 y, int16 width, uint8 color);
-	virtual void vLine(int16 x, int16 y, int16 height, uint8 color);
 
 	//  REM: General rectangular display blitting function
 	//  REM: Special-case blitting functions

@@ -52,33 +52,6 @@ void gDisplayPort::fillRect(const Rect16 r) {
 	}
 }
 
-void gDisplayPort::hLine(int16 x, int16 y, int16 width) {
-	Rect16          sect;
-
-	//  Temporarily convert the coords into a rectangle, for
-	//  easy clipping
-
-	sect = intersect(clip, Rect16(x, y, width, 1));
-	sect.x += origin.x;                     // apply origin translate
-	sect.y += origin.y;
-
-	if (!sect.empty())                          // if result is non-empty
-		displayPage->hLine(sect.x, sect.y, sect.width, fgPen);
-}
-
-void gDisplayPort::vLine(int16 x, int16 y, int16 height) {
-	Rect16          sect;
-
-	//  Temporarily convert the coords into a rectangle, for
-	//  easy clipping
-
-	sect = intersect(clip, Rect16(x, y, 1, height));
-	sect.x += origin.x;                     // apply origin translate
-	sect.y += origin.y;
-
-	if (!sect.empty())                          // if result is non-empty
-		displayPage->vLine(sect.x, sect.y, sect.height, fgPen);
-}
 //  movePixels
 
 void gDisplayPort::bltPixels(
