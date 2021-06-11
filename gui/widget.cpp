@@ -1050,42 +1050,53 @@ void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 	_activeEntry = &entry;
 }
 
-void GridItemWidget::update() {
-	if ((!_activeEntry) && (!_attachedEntries.empty())) {
-		_activeEntry = _attachedEntries.begin(); 
-	}
-	
-	if (isVisible()) {
-		// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
-		Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
+void GridItemWidget::updateThumb() {
+	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 
 		if (gfx) {
 			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
 			_thumb->setGfx(scGfx);
+			delete scGfx;
 		}
 		else
 			_thumb->setGfx(gfx);
+}
 
-		_lang->setLabel(_activeEntry->language);
-		_title->setLabel(_activeEntry->title);
-		
-		if (_activeEntry->platform == "pc")
-			gfx = _grid->platformToSurface(kPlatformDOS);
-		else if (_activeEntry->platform == "amiga")
-			gfx = _grid->platformToSurface(kPlatformAmiga);
-		else if (_activeEntry->platform == "apple2")
-			gfx = _grid->platformToSurface(kPlatformApple2);
-		else
-			gfx = _grid->platformToSurface(kPlatformUnknown);
-		
-		if (gfx) {
-			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
-			_plat->setGfx(scGfx);
-		}
-		else
-			_plat->setGfx(gfx);
-
+void GridItemWidget::update() {
+	if ((!_activeEntry) && (!_attachedEntries.empty())) {
+		_activeEntry = _attachedEntries.begin(); 
 	}
+
+	// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
+	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
+
+	if (gfx) {
+		const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
+		_thumb->setGfx(scGfx);
+	}
+	else
+		_thumb->setGfx(gfx);
+
+	_lang->setLabel(_activeEntry->language);
+	_title->setLabel(_activeEntry->title);
+	
+	if (_activeEntry->platform == "pc")
+		gfx = _grid->platformToSurface(kPlatformDOS);
+	else if (_activeEntry->platform == "amiga")
+		gfx = _grid->platformToSurface(kPlatformAmiga);
+	else if (_activeEntry->platform == "apple2")
+		gfx = _grid->platformToSurface(kPlatformApple2);
+	else
+		gfx = _grid->platformToSurface(kPlatformUnknown);
+	
+	if (gfx) {
+		const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
+		_plat->setGfx(scGfx);
+		delete scGfx;
+	}
+	else
+		_plat->setGfx(gfx);
+
 	markAsDirty();
 }
 
@@ -1334,8 +1345,10 @@ void GridWidget::reflowLayout() {
 }
 
 void GridWidget::updateGrid() {
-	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
-		(*i)->update();
+	for (auto i = _gridItems.begin() + _firstVisibleItem; 
+		i != _gridItems.end() && i != _gridItems.begin() + _firstVisibleItem + _itemsOnScreen; 
+		++i) {
+		(*i)->updateThumb();
 	}
 }
 
