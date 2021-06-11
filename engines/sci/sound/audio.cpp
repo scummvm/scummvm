@@ -453,15 +453,6 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 			memoryStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(memoryStream, DisposeAfterUse::YES);
-		} else if (audioRes->size() > 4 && audioRes->getUint32BEAt(0) == MKTAG('F','O','R','M')) {
-			// AIFF detected
-			Audio::RewindableAudioStream *rewindStream = Audio::makeAIFFStream(memoryStream, DisposeAfterUse::YES);
-			audioSeekStream = dynamic_cast<Audio::SeekableAudioStream *>(rewindStream);
-
-			if (!audioSeekStream) {
-				warning("AIFF file is not seekable");
-				delete rewindStream;
-			}
 		} else if (audioRes->size() > 14 &&
 				   audioRes->getUint16BEAt(0) == 1 &&
 				   audioRes->getUint16BEAt(2) == 1 &&

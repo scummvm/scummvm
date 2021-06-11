@@ -114,7 +114,7 @@ public:
 	/**
 	 * Called when the application starts
 	 */
-	void applicationStarting();
+	bool applicationStarting();
 
 	/**
 	 * Sets the view to be shown
