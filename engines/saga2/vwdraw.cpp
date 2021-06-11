@@ -93,6 +93,7 @@ void gDisplayPort::bltPixels(
 	                sect;
 	uint8           *src_line;
 
+	clip = Rect16(0, 0, map->size.x, map->size.y);
 	sect = intersect(clip, r);
 
 	if (!sect.empty()) {                        // if result is non-empty

@@ -78,7 +78,7 @@ public:
 
 #ifndef KLUDGE
 static bool displayEnabled(void) {
-	return (ddWindow != NULL);
+	return true;
 }
 #endif
 
@@ -480,14 +480,7 @@ void vWDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 	wRect.right     = r.x + r.width;
 	wRect.bottom    = r.y + r.height;
 
-	// FIXME: Debug purposes-code for displaying things on the screen
-	// updateScreen should not be called here
-	warning("FIXME: writePixels");
-	Graphics::Surface sur;
-	sur.create(r.width, r.height, Graphics::PixelFormat::createFormatCLUT8());
-	sur.setPixels(pixPtr);
-	//sur.debugPrint();
-	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, r.x, r.y, sur.w, sur.h);
+	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
 	g_system->updateScreen();
 
 	//_BltPixels(pixPtr, pixMod, dstPtr, ddWindow->lPitch, r.width, r.height);
@@ -514,11 +507,15 @@ void vWDisplayPage::readPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 //  Function to quickly transfer pixels from an off-screen
 //  buffer to a rectangle on the SVGA display;
 void vWDisplayPage::writeColorPixels(Rect16 r, uint8 *pixPtr, uint16 pixMod, uint8 color) {
+	warning("STUB: writeColorPixels");
+	writePixels(r, pixPtr, pixMod);
 }
 
 //  Function to quickly transfer pixels from an off-screen
 //  buffer to a rectangle on the SVGA display;
 void vWDisplayPage::writeComplementPixels(Rect16 r, uint8 *pixPtr, uint16 pixMod, uint8 color) {
+	warning("STUB: writeComplementPixels");
+	writePixels(r, pixPtr, pixMod);
 }
 
 } // end of namespace Saga2
