@@ -60,11 +60,15 @@ void _BltPixelsT(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uin
 }
 
 void _FillRect(uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height, uint32 color) {
-	warning("STUB: _FillRect()");
+	for (uint y = 0; y < height; y++) {
+		memset(dstPtr, color, width);
+
+		dstPtr += dstMod;
+	}
 }
 
 void _HLine(uint8 *dstPtr, uint32 width, uint32 color) {
-	warning("STUB: _HLine()");
+	memset(dstPtr, color, width);
 }
 
 void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData) {

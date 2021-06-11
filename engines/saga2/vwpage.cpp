@@ -402,25 +402,11 @@ uint8 vWDisplayPage::getPixel(int x, int y) {
 //  Fill a rectangle on the SVGA display. Note the rect must
 //  be correct -- there is no clipping or error checking...
 void vWDisplayPage::fillRect(Rect16 r, uint8 color) {
-#if 0
-	uint8               *dstPtr;
+	Graphics::Surface *surf = g_system->lockScreen();
 
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return;
+	_FillRect((byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height, color);
 
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return ;
-	}
-
-
-	_FillRect(dstPtr + (r.y * ddWindow->lPitch) + r.x, ddWindow->lPitch,
-	          r.width, r.height, color);
-
-	ddWindow->UnlockBackBuffer(dstPtr);
-#endif
-	warning("STUBL: fillRect");
+	g_system->unlockScreen();
 }
 
 //  Fill a rectangle on the SVGA display. Note the rect must
@@ -429,42 +415,17 @@ void vWDisplayPage::invertRect(Rect16 r, uint8 color) {
 }
 
 void vWDisplayPage::hLine(int16 x, int16 y, int16 width, uint8 color) {
-#if 0
-	uint8           *dstPtr;
+	Graphics::Surface *surf = g_system->lockScreen();
 
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return;
+	_HLine((byte *)surf->getBasePtr(x, y), width, color);
 
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return;
-	}
-
-
-	_HLine(dstPtr + (y * ddWindow->lPitch) + x, width, color);
-	ddWindow->UnlockBackBuffer(dstPtr);
-#endif
-	warning("STUB: hLine");
+	g_system->unlockScreen();
 }
 
 void vWDisplayPage::vLine(int16 x, int16 y, int16 height, uint8 color) {
-#if 0
-	uint8       *dstPtr;
+	Graphics::Surface *surf = g_system->lockScreen();
 
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return;
-
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return;
-	}
-
-	_FillRect(dstPtr + (y * ddWindow->lPitch) + x, ddWindow->lPitch, 1, height, color);
-	ddWindow->UnlockBackBuffer(dstPtr);
-#endif
-	warning("STUB: vLine");
+	_FillRect((byte *)surf->getBasePtr(x, y), surf->pitch, 1, height, color);
 }
 
 
