@@ -1812,10 +1812,11 @@ void Item::animateItem() {
 
 
 // Called when an item has entered the fast area
-void Item::enterFastArea() {
+uint32 Item::enterFastArea() {
+	uint16 retval = 0;
 	//!! HACK to get rid of endless SFX loops
 	if (_shape == 0x2c8 && GAME_IS_U8)
-		return;
+		return 0;
 
 	const ShapeInfo *si = getShapeInfo();
 
@@ -1841,13 +1842,12 @@ void Item::enterFastArea() {
 			// certain global is set.  For now just skip that.
 
 			//
-			// TODO: Check this. The original games only call usecode for actors or
-			// NOISY types.  Calling for all types like this shouldn't cause any issues
-			// as long as all the types which implement event F are NPC or NOISY.
-			// Should confirm if that is the case.
+			// NOTE: Original games only call usecode for actors or NOISY
+			// types.  We call for all types to fix an usecode bug in
+			// Crusader: No Remorse.  See note about it below.
 			//
 			// if (actor || si->_flags & ShapeInfo::SI_NOISY)
-			callUsecodeEvent_enterFastArea();
+			retval = callUsecodeEvent_enterFastArea();
 		}
 	}
 
@@ -1864,6 +1864,25 @@ void Item::enterFastArea() {
 
 	// We're fast!
 	_flags |= FLG_FASTAREA;
+
+	//
+	// WORKAROUND: Crusader: No Remorse usecode has one place (REB_EGG, after
+	// randomly creating 0x34D REB_COUP (rebel couple) at the bar) where this
+	// is called with an "implies" but the enterFastArea event code never
+	// returns.  Every other instance this is "spawn"ed.
+	//
+	// In the original this bug is never triggered as enterFastArea intrinsic
+	// does not call usecode event unless the shape is SI_NOISY (REB_COUP is
+	// not). The result is the rebel couple do not start moving until you move
+	// near them and trigger their event, then enterFastArea function is
+	// spawned directly.
+	//
+	// Work around both problems by always calling event above and return 0.
+	//
+	if (_shape == 0x34D && GAME_IS_REMORSE)
+		return 0;
+
+	return retval;
 }
 
 // Called when an item is leaving the fast area
@@ -3029,7 +3048,7 @@ uint32 Item::I_enterFastArea(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	return item->callUsecodeEvent_enterFastArea();
+	return item->enterFastArea();
 }
 
 uint32 Item::I_cast(const uint8 *args, unsigned int /*argsize*/) {

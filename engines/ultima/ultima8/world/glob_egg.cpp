@@ -40,7 +40,7 @@ GlobEgg::~GlobEgg() {
 
 
 // Called when an item has entered the fast area
-void GlobEgg::enterFastArea() {
+uint32 GlobEgg::enterFastArea() {
 	uint32 coordmask = ~0x1FFU;
 	unsigned int coordshift = 1;
 	unsigned int offset = 1;
@@ -53,7 +53,7 @@ void GlobEgg::enterFastArea() {
 	// Expand it
 	if (!hasFlags(FLG_FASTAREA)) {
 		const MapGlob *glob = GameData::get_instance()->getGlob(_quality);
-		if (!glob) return;
+		if (!glob) return 0;
 
 		Std::vector<GlobItem>::const_iterator iter;
 		for (iter = glob->_contents.begin(); iter != glob->_contents.end(); ++iter) {
@@ -73,7 +73,7 @@ void GlobEgg::enterFastArea() {
 		}
 	}
 
-	Item::enterFastArea();
+	return Item::enterFastArea();
 }
 
 void GlobEgg::saveData(Common::WriteStream *ws) {

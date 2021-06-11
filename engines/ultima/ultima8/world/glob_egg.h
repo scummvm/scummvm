@@ -39,7 +39,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	//! The item has entered the fast area
-	void enterFastArea() override;
+	uint32 enterFastArea() override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;

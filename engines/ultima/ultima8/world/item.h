@@ -492,7 +492,7 @@ public:
 	void setupLerp(int32 gametick);
 
 	//! The item has entered the fast area
-	virtual void enterFastArea();
+	virtual uint32 enterFastArea();
 
 	//! The item has left the fast area
 	//! \note This can destroy the object
