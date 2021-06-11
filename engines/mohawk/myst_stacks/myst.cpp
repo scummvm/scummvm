@@ -2293,21 +2293,15 @@ uint16 Myst::rocketSliderGetSound(uint16 pos) {
 	return (uint16)(9530 + (pos - 216) * 35.0 / 61.0);
 }
 
-
 uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
-
 	debugN("rocketCheckIfSoundMatches: %i %i (diff:% 3i) ", sound1, sound2, sound1 - sound2);
-
 	if (!ConfMan.getBool("fuzzy_logic")) {
-
 		debugN("strict\n");
 		return sound1 == sound2;
-
+	} else {
+		debugN("fuzzy\n");
+		return abs(sound1 - sound2) < 5;
 	}
-
-	debugN("fuzzy\n");
-	return abs(sound1 - sound2) < 5;
-
 }
 
 void Myst::rocketCheckSolution() {
