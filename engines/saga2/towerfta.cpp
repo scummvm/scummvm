@@ -273,6 +273,12 @@ TERMINATOR(termDisplayPort) {
 
 INITIALIZER(initPanelSystem) {
 	initPanels(mainPort);
+	if (mainPort.map == nullptr) {
+		gPixelMap *tmap = new gPixelMap;
+		tmap->size = Point16(screenWidth, screenHeight);
+		tmap->data = new uint8[tmap->bytes()];
+		mainPort.setMap(tmap);
+	}
 	return TRUE;
 }
 
