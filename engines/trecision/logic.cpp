@@ -780,7 +780,7 @@ void LogicManager::useInventoryWithInventory() {
 		break;
 	}
 
-	if (itemUsed)
+	if (!itemUsed)
 		_vm->_textMgr->characterSay(_vm->_inventoryObj[_vm->_useWith[USED]]._action);
 	else
 		_vm->setInventoryStart(_vm->_iconBase, INVENTORY_SHOW);
