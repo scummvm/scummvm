@@ -33,6 +33,7 @@
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_script.h"
 #include "ags/shared/util/compress.h"
+#include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
@@ -81,7 +82,7 @@ void WriteRoomObject(const RoomObjectInfo &obj, Stream *out) {
 
 
 // Main room data
-HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	int bpp;
 	if (data_ver >= kRoomVersion_208)
 		bpp = in->ReadInt32();
@@ -321,30 +322,30 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 	update_polled_stuff_if_runtime();
 	loadcompressed_allegro(in, &mask, room->Palette);
 	room->HotspotMask.reset(mask);
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Room script sources (original text)
-HRoomFileError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver) {
+HError ReadScriptBlock(char *&buf, Stream *in, RoomFileVersion data_ver) {
 	size_t len = in->ReadInt32();
 	buf = new char[len + 1];
 	in->Read(buf, len);
 	buf[len] = 0;
 	for (size_t i = 0; i < len; ++i)
 		buf[i] += _G(passwencstring)[i % 11];
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Compiled room script
-HRoomFileError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->CompiledScript.reset(ccScript::CreateFromStream(in));
 	if (room->CompiledScript == nullptr)
 		return new RoomFileError(kRoomFileErr_ScriptLoadFailed, _G(ccErrorString));
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Room object names
-HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	size_t name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
@@ -356,11 +357,11 @@ HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion d
 		else
 			room->Objects[i].Name.ReadCount(in, LEGACY_MAXOBJNAMELEN);
 	}
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Room object script names
-HRoomFileError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	size_t name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
@@ -372,11 +373,11 @@ HRoomFileError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion
 		else
 			room->Objects[i].ScriptName.ReadCount(in, MAX_SCRIPT_NAME_LEN);
 	}
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Secondary backgrounds
-HRoomFileError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->BgFrameCount = in->ReadByte();
 	if (room->BgFrameCount > MAX_ROOM_BGFRAMES)
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, String::FromFormat("Too many room backgrounds (in room: %d, max: %d).", room->BgFrameCount, MAX_ROOM_BGFRAMES));
@@ -393,11 +394,11 @@ HRoomFileError ReadAnimBgBlock(RoomStruct *room, Stream *in, RoomFileVersion dat
 		load_lzw(in, &frame, room->BackgroundBPP, room->BgFrames[i].Palette);
 		room->BgFrames[i].Graphic.reset(frame);
 	}
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 // Read custom properties
-HRoomFileError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
+HError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	int prop_ver = in->ReadInt32();
 	if (prop_ver != 1)
 		return new RoomFileError(kRoomFileErr_PropertiesBlockFormat, String::FromFormat("Expected version %d, got %d", 1, prop_ver));
@@ -411,10 +412,10 @@ HRoomFileError ReadPropertiesBlock(RoomStruct *room, Stream *in, RoomFileVersion
 
 	if (errors > 0)
 		return new RoomFileError(kRoomFileErr_InvalidPropertyValues);
-	return HRoomFileError::None();
+	return HError::None();
 }
 
-HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, const String &ext_id,
+HError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, const String &ext_id,
 	soff_t block_len, RoomFileVersion data_ver) {
 	//
 	// First check classic block types, identified with a numeric id
@@ -424,7 +425,7 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 		return ReadMainBlock(room, in, data_ver);
 	case kRoomFblk_Script:
 		in->Seek(block_len); // no longer read source script text into RoomStruct
-		return HRoomFileError::None();
+		return HError::None();
 	case kRoomFblk_CompScript3:
 		return ReadCompSc3Block(room, in, data_ver);
 	case kRoomFblk_ObjectNames:
@@ -458,17 +459,22 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 // This reader will process all blocks inside ReadRoomBlock() function,
 // and read compatible data into the given RoomStruct
 static RoomStruct *reader_room;
+static RoomFileVersion reader_data_ver;
 
-static HRoomFileError ReadRoomDataReader(Stream *in,
-		RoomFileBlock block_id, const String &ext_id,
-		soff_t block_len, RoomFileVersion data_ver, bool &read_next) {
-	return ReadRoomBlock(reader_room, in, block_id, ext_id, block_len, data_ver);
+static HError ReadRoomDataReader(Stream *in, int block_id,
+	const String &ext_id, soff_t block_len, bool &read_next) {
+	return (HError)ReadRoomBlock(reader_room, in, (RoomFileBlock)block_id, ext_id, block_len, reader_data_ver);
 }
 
 HRoomFileError ReadRoomData(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	room->DataVersion = data_ver;
+	reader_data_ver = data_ver;
 	reader_room = room;
-	return ReadRoomData(ReadRoomDataReader, in, data_ver);
+
+	HError err = ReadExtData(ReadRoomDataReader,
+		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
+	return err ? HRoomFileError::None() :
+		new RoomFileError(kRoomFileErr_BlockListFailed, err);
 }
 
 HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool game_is_hires, const std::vector<SpriteInfo> &sprinfos) {
@@ -602,14 +608,14 @@ HRoomFileError UpdateRoomData(RoomStruct *room, RoomFileVersion data_ver, bool g
 
 // Reader for ExtractScripText
 static String *reader_script;
+RoomFileVersion reader_ver;
 
-HRoomFileError ExtractScriptTextReader(Stream *in,
-		RoomFileBlock block_id, const String &ext_id, soff_t block_len,
-		RoomFileVersion data_ver, bool &read_next) {
+HError ExtractScriptTextReader(Stream *in, int block_id,
+		const String &ext_id, soff_t block_len, bool &read_next) {
 	if (block_id == kRoomFblk_Script) {
 		read_next = false;
 		char *buf = nullptr;
-		HRoomFileError err = ReadScriptBlock(buf, in, data_ver);
+		HError err = ReadScriptBlock(buf, in, reader_ver);
 		if (err) {
 			*reader_script = buf;
 			delete buf;
@@ -617,16 +623,19 @@ HRoomFileError ExtractScriptTextReader(Stream *in,
 		return err;
 	}
 	in->Seek(block_len); // skip block
-	return HRoomFileError::None();
+	return HError::None();
 }
 
 HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion data_ver) {
 	// This reader would only process kRoomFblk_Script and exit as soon as one is found
 	reader_script = &script;
-	HRoomFileError err = ReadRoomData(ExtractScriptTextReader, in, data_ver);
+	reader_ver = data_ver;
+
+	HError err = ReadExtData(ExtractScriptTextReader,
+		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
 	if (err && script.IsEmpty())
 		new RoomFileError(kRoomFileErr_BlockNotFound);
-	return err;
+	return err ? HRoomFileError::None() : new RoomFileError(kRoomFileErr_BlockListFailed, err);
 }
 
 void WriteInteractionScripts(const InteractionScripts *interactions, Stream *out) {

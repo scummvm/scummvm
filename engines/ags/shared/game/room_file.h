@@ -51,7 +51,7 @@ enum RoomFileErrorType {
 	kRoomFileErr_NoError,
 	kRoomFileErr_FileOpenFailed,
 	kRoomFileErr_FormatNotSupported,
-	kRoomFileErr_UnexpectedEOF,
+	kRoomFileErr_BlockListFailed,
 	kRoomFileErr_UnknownBlockType,
 	kRoomFileErr_OldBlockNotSupported,
 	kRoomFileErr_BlockDataOverlapping,
@@ -131,7 +131,7 @@ HRoomFileError ReadRoomHeader(RoomDataSource &src);
 // Opens next room block from the stream, fills in its identifier and length on success
 HRoomFileError OpenNextRoomBlock(Stream *in, RoomFileVersion data_ver, RoomFileBlock &block_id, String &ext_id, soff_t &block_len);
 // Type of function that reads single room block and tells whether to continue reading
-typedef HRoomFileError(*PfnReadRoomBlock)(Stream * in, RoomFileBlock block_id, const String & ext_id,
+typedef HError(*PfnReadRoomBlock)(Stream * in, RoomFileBlock block_id, const String & ext_id,
 	soff_t block_len, RoomFileVersion data_ver, bool &read_next);
 // Parses room file, passing each found block into callback; does not read any actual data itself
 HRoomFileError ReadRoomData(PfnReadRoomBlock reader, Stream *in, RoomFileVersion data_ver);

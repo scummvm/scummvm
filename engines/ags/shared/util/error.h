@@ -148,6 +148,8 @@ typedef ErrorHandle<Error> HError;
 // TypedCodeError is the Error's subclass, which only purpose is to override
 // error code type in constructor and Code() getter, that may be useful if
 // you'd like to restrict code values to particular enumerator.
+// TODO: a type identifier as a part of template (string, or perhaps a int16
+// to be placed at high-bytes in Code) to be able to distinguish error group.
 template <typename CodeType, String(*GetErrorText)(CodeType)>
 class TypedCodeError : public Error {
 public:

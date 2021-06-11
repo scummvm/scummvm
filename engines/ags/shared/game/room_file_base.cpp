@@ -21,6 +21,7 @@
  */
 
 #include "ags/shared/game/room_file.h"
+#include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/globals.h"
@@ -41,14 +42,12 @@ String GetRoomFileErrorText(RoomFileErrorType err) {
 		return "Room file was not found or could not be opened.";
 	case kRoomFileErr_FormatNotSupported:
 		return "Format version not supported.";
-	case kRoomFileErr_UnexpectedEOF:
-		return "Unexpected end of file.";
+	case kRoomFileErr_BlockListFailed:
+		return "There was an error reading room data..";
 	case kRoomFileErr_UnknownBlockType:
 		return "Unknown block type.";
 	case kRoomFileErr_OldBlockNotSupported:
 		return "Block type is too old and not supported by this version of the engine.";
-	case kRoomFileErr_BlockDataOverlapping:
-		return "Block data overlapping.";
 	case kRoomFileErr_IncompatibleEngine:
 		return "This engine cannot handle requested room content.";
 	case kRoomFileErr_ScriptLoadFailed:
@@ -100,98 +99,42 @@ String GetRoomBlockName(RoomFileBlock id) {
 	return "unknown";
 }
 
-HRoomFileError OpenNextRoomBlock(Stream *in, RoomFileVersion data_ver, RoomFileBlock &block_id, String &ext_id, soff_t &block_len) {
-	// The block meta format is shared with the main game file extensions
-	//    - 1 byte - an old-style unsigned numeric ID:
-	//               where 0 would indicate following string ID,
-	//               and 0xFF indicates end of extension list.
-	//    - 16 bytes - string ID of an extension (if numeric ID is 0).
-	//    - 4 or 8 bytes - length of extension data, in bytes (size depends on format version).
-	int b = in->ReadByte();
-	if (b < 0)
-		return new RoomFileError(kRoomFileErr_UnexpectedEOF);
-
-	block_id = (RoomFileBlock)b;
-	if (block_id == kRoomFile_EOF)
-		return HRoomFileError::None(); // end of list
-
-	if (block_id > 0) { // old-style block identified by a numeric id
-		ext_id = GetRoomBlockName(block_id);
-		block_len = data_ver < kRoomVersion_350 ? in->ReadInt32() : in->ReadInt64();
-	} else { // new style block identified by a string id
-		ext_id = String::FromStreamCount(in, 16);
-		block_len = in->ReadInt64();
-	}
-	return HRoomFileError::None();
+// This reader will delegate block reading to the provided user function
+static PfnReadRoomBlock reader_reader;
+static RoomFileVersion reader_ver;
+static HError ReadRoomDataReader(Stream *in, int block_id, const String &ext_id,
+		soff_t block_len, bool &read_next) {
+	return reader_reader(in, (RoomFileBlock)block_id, ext_id, block_len, reader_ver, read_next);
 }
 
 HRoomFileError ReadRoomData(PfnReadRoomBlock reader, Stream *in, RoomFileVersion data_ver) {
-	// Read list of data blocks. The block meta format is shared with the main game file extensions now.
-	//    - 1 byte - old format block ID, 0xFF indicates end of list.
-	//    - 16 bytes - new string ID of an extension. \0 at the first byte indicates end of list.
-	//    - 4 or 8 bytes - length of extension data, in bytes (depends on format version).
-	while (true) {
-		RoomFileBlock block_id;
-		String ext_id;
-		soff_t block_len;
-		HRoomFileError err = OpenNextRoomBlock(in, data_ver, block_id, ext_id, block_len);
-		if (!err)
-			return err;
-		if (ext_id.IsEmpty())
-			break; // end of list
-
-		soff_t block_end = in->GetPosition() + block_len;
-		bool read_next = true;
-		err = reader(in, block_id, ext_id, block_len, data_ver, read_next);
-		if (!err)
-			return err;
-
-		soff_t cur_pos = in->GetPosition();
-		if (cur_pos > block_end) {
-			return new RoomFileError(kRoomFileErr_BlockDataOverlapping,
-				String::FromFormat("Block: %s, expected to end at offset: %u, finished reading at %u.",
-					ext_id.GetCStr(), block_end, cur_pos));
-		} else if (cur_pos < block_end) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %s expected to end at %u, finished reading at %u",
-				ext_id.GetCStr(), block_end, cur_pos);
-			in->Seek(block_end, Shared::kSeekBegin);
-		}
-
-		if (!read_next)
-			break;
-	}
-	return HRoomFileError::None();
+	reader_reader = reader;
+	reader_ver = data_ver;
+	HError err = ReadExtData(ReadRoomDataReader,
+		kDataExt_NumID8 | ((data_ver < kRoomVersion_350) ? kDataExt_File32 : kDataExt_File64), in);
+	return err ? HRoomFileError::None() : new RoomFileError(kRoomFileErr_BlockListFailed, err);
 }
 
-// Generic function that saves a block and automatically adds its size into header
-static void WriteRoomBlock(const RoomStruct *room, RoomFileBlock block, const String &ext_id, PfnWriteRoomBlock writer, Stream *out) {
-	// Write block's header
-	out->WriteByte(block);
-	if (block == kRoomFblk_None) // new-style string id
-		ext_id.WriteCount(out, 16);
-	soff_t sz_at = out->GetPosition();
-	out->WriteInt64(0); // block size placeholder
-						// Call writer to save actual block contents
-	writer(room, out);
-
-	// Now calculate the block's size...
-	soff_t end_at = out->GetPosition();
-	soff_t block_size = (end_at - sz_at) - sizeof(int64_t);
-	// ...return back and write block's size in the placeholder
-	out->Seek(sz_at, Shared::kSeekBegin);
-	out->WriteInt64(block_size);
-	// ...and get back to the end of the file
-	out->Seek(0, Shared::kSeekEnd);
+static PfnWriteRoomBlock writer_writer;
+static const RoomStruct *writer_room;
+static void WriteRoomBlockWriter(Stream *out) {
+	writer_writer(writer_room, out);
 }
 
 // Helper for new-style blocks with string id
 void WriteRoomBlock(const RoomStruct *room, const String &ext_id, PfnWriteRoomBlock writer, Stream *out) {
-	WriteRoomBlock(room, kRoomFblk_None, ext_id, writer, out);
+	writer_writer = writer;
+	writer_room = room;
+	WriteExtBlock(ext_id, WriteRoomBlockWriter,
+		kDataExt_NumID8 | kDataExt_File64, out);
 }
 
 // Helper for old-style blocks with only numeric id
 void WriteRoomBlock(const RoomStruct *room, RoomFileBlock block, PfnWriteRoomBlock writer, Stream *out) {
-	WriteRoomBlock(room, block, String(), writer, out);
+	writer_writer = writer;
+	writer_room = room;
+	WriteExtBlock(block, WriteRoomBlockWriter,
+		kDataExt_NumID8 | kDataExt_File64, out);
 }
 
 } // namespace Shared
