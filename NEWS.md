@@ -20,7 +20,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Spanish Blue Force.
    - Added support for Spanish Ringworld.
    - Added support for Spanish Amazon: Guardians of Eden.
-   - Added support for AGS Games versions 2.5+
+   - Added support for AGS Games versions 2.5+.
+   - Added support for Nightlong: Union City Conspiracy.
 
  New ports:
    - The Nintendo DS port got a major rewrite.
