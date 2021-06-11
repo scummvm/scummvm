@@ -43,38 +43,6 @@ void WriteToLogFile(char *, ...);
  * ===================================================================== */
 
 #define vWDisplayPage   vDisplayPage
-/*
-class vWDisplayPage : public vDisplayPage {
-public:
-
-        //  Function to set and get pixel
-    void setPixel( int x, int y, uint8 color );
-    uint8 getPixel( int x, int y );
-
-        //  Basic rectangle drawing function
-    void fillRect( Rect16 r, uint8 color );
-        //  Complement mode drawing function
-    void invertRect( Rect16 r, uint8 color );
-
-    void hLine( int16 x, int16 y, int16 width, uint8 color );
-    void vLine( int16 x, int16 y, int16 height, uint8 color );
-
-        //  REM: General rectangular display blitting function
-        //  REM: Special-case blitting functions
-
-        //  General-purpose blitting functions to transfer data
-        //  from svga to offscreen buffer and vice versa
-        //  (dispRect is the rectangle on the SVGA page, pixPtr
-        //  is the buffer to transfer the pixels to/from, and
-        //  pixMod is the line modulus of the buffer.)
-
-    void readPixels(  Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod );
-    void writePixels( Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod );
-    void writeTransPixels( Rect16 &dispRect, uint8 *pixPtr, uint16 pixMod );
-    void writeColorPixels( Rect16 dispRect, uint8 *pixPtr, uint16 pixMod, uint8 color );
-    void writeComplementPixels( Rect16 dispRect, uint8 *pixPtr, uint16 pixMod, uint8 color );
-};
-*/
 
 #ifndef KLUDGE
 static bool displayEnabled(void) {
@@ -354,51 +322,6 @@ void BltDDRect(Rect16 &r, uint8 *srcPtr, bool bTransparent, uint16 pixMod, bool 
                     Member functions for display page
  * ===================================================================== */
 
-void vWDisplayPage::setPixel(int x, int y, uint8 color) {
-#if 0
-	uint8   *dstptr;
-
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return;
-
-	dstptr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-	if (dstptr == NULL) {
-		gError::warn("Failed buffer lock");
-		return;
-	}
-
-
-	dstptr [(y * ddWindow->lPitch) + x] = color;
-
-	ddWindow->UnlockBackBuffer(dstptr);
-#endif
-	warning("STUB: setPixel");
-}
-
-uint8 vWDisplayPage::getPixel(int x, int y) {
-#if 0
-	uint8           *dstPtr;
-	uint8           retValue;
-
-	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
-		return 0;
-
-	dstPtr = (uint8 *)ddWindow->LockBackBuffer(NULL);
-
-	if (!dstPtr) {
-		gError::warn("Failed buffer lock");
-		return 0;
-	}
-
-	retValue = dstPtr[(y * ddWindow->lPitch) + x];
-	ddWindow->UnlockBackBuffer(dstPtr);
-
-	return retValue;
-#endif
-	warning("STUB: vWDisplayPage::GetPixel");
-	return 0;
-}
-
 //  Fill a rectangle on the SVGA display. Note the rect must
 //  be correct -- there is no clipping or error checking...
 void vWDisplayPage::fillRect(Rect16 r, uint8 color) {
@@ -413,21 +336,6 @@ void vWDisplayPage::fillRect(Rect16 r, uint8 color) {
 //  be correct -- there is no clipping or error checking...
 void vWDisplayPage::invertRect(Rect16 r, uint8 color) {
 }
-
-void vWDisplayPage::hLine(int16 x, int16 y, int16 width, uint8 color) {
-	Graphics::Surface *surf = g_system->lockScreen();
-
-	_HLine((byte *)surf->getBasePtr(x, y), width, color);
-
-	g_system->unlockScreen();
-}
-
-void vWDisplayPage::vLine(int16 x, int16 y, int16 height, uint8 color) {
-	Graphics::Surface *surf = g_system->lockScreen();
-
-	_FillRect((byte *)surf->getBasePtr(x, y), surf->pitch, 1, height, color);
-}
-
 
 #define USE_BLTDDRECT
 // -- we'll want to use this when we figure out why bltDDRect doesnt work here
