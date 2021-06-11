@@ -709,6 +709,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		// use the initialRect for the dims just like CastButton
 		dims = getTextOnlyDimensions(_initialRect);
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), dims.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow);
+		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->draw();
 		((Graphics::MacText *)widget)->_focusable = _editable;
 		((Graphics::MacText *)widget)->setEditable(_editable);
