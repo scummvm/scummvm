@@ -121,7 +121,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 	}
 
 	if (!isDemo) {
-		/** 
+		/**
 		 * I18N:
 		 * This Option is for hard-of-hearing.
 		 * It makes it easier to solve the spaceship puzzle.
