@@ -33,7 +33,8 @@ namespace Trecision {
 
 Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("dumpanim",		WRAP_METHOD(Console, Cmd_DumpAnim));
+	registerCmd("dumpfile",		WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
 	registerCmd("item",			WRAP_METHOD(Console, Cmd_Item));
 	registerCmd("say",			WRAP_METHOD(Console, Cmd_Say));
@@ -55,6 +56,47 @@ bool Console::Cmd_Room(int argc, const char **argv) {
 	return false;
 }
 
+bool Console::Cmd_DumpAnim(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	FastFile animFile;
+
+	Common::String fileName = argv[1];
+
+	bool found = false;
+	for (int i = 1; i <= 3; i++) {
+		Common::String animFileName = Common::String::format("nlanim.cd%d", i);
+		animFile.open(_vm, animFileName);
+
+		if (animFile.hasFile(fileName)) {
+			found = true;
+			break;
+		}
+	}
+
+	if (!found) {
+		debugPrintf("File not found\n");
+		animFile.close();
+		return true;
+	}
+
+	Common::SeekableReadStream *dataFile = animFile.createReadStreamForMember(fileName);
+
+	Common::DumpFile *outFile = new Common::DumpFile();
+	Common::String outName = fileName + ".dump";
+	outFile->open(outName);
+	outFile->writeStream(dataFile, dataFile->size());
+	outFile->finalize();
+	outFile->close();
+
+	animFile.close();
+
+	return true;
+}
+
 bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("Usage: %s <file name>\n", argv[0]);
@@ -63,7 +105,12 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 	Common::String fileName = argv[1];
 
-	Common::SeekableReadStream *dataFile = _vm->_dataFile.createReadStreamForCompressedMember(fileName);
+	if (!_vm->_dataFile.hasFile(fileName)) {
+		debugPrintf("File not found\n");
+		return true;
+	}
+
+	Common::SeekableReadStream *dataFile = fileName.hasSuffix(".cr") ? _vm->_dataFile.createReadStreamForCompressedMember(fileName) : _vm->_dataFile.createReadStreamForMember(fileName);
 
 	Common::DumpFile *outFile = new Common::DumpFile();
 	Common::String outName = fileName + ".dump";
