@@ -2047,7 +2047,7 @@ bool Scene::speak(Common::KeyCode code) {
 #undef GET_INDEX
 }
 
-bool Scene::pointIntersectsRect(const Common::Point &point, const Common::Rect &rect) const {
+bool Scene::pointBelowLine(const Common::Point &point, const Common::Rect &rect) const {
 	if (rect.top || rect.left || rect.bottom || rect.right) {
 		Common::Rational res(rect.height() * (point.x - rect.left), rect.width());
 
@@ -2519,7 +2519,7 @@ void Scene::processUpdateList() {
 				// Check if it intersects with either the object rect or the related polygon
 				bool isMasked = false;
 				if (object->flags & kObjectFlag2) {
-					isMasked = !pointIntersectsRect(sum, *object->getRect());
+					isMasked = !pointBelowLine(sum, *object->getRect());
 				} else if (object->flags & kObjectFlag40) {
 					Polygon poly = _polygons->get(object->getPolygonIndex());
 					isMasked = poly.contains(sum);

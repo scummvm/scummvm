@@ -436,14 +436,14 @@ private:
 	bool speak(Common::KeyCode code);
 
 	/**
-	 * Check if point intersects the rectangle.
+	 * Check if a point lies below the rectangle's top-left to bottom-right diagonal.
 	 *
 	 * @param point The point.
 	 * @param rect  The rectangle.
 	 *
-	 * @return true if it succeeds, false if it fails.
+	 * @return true if below, false if above.
 	 */
-	bool pointIntersectsRect(const Common::Point &point, const Common::Rect &rect) const;
+	bool pointBelowLine(const Common::Point &point, const Common::Rect &rect) const;
 
 	/**
 	 * Adjust coordinates.
