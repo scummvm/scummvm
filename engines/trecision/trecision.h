@@ -147,6 +147,8 @@ class TrecisionEngine : public Engine {
 	bool _gamePaused;
 	uint8 _curStack;
 
+	Common::List<SSortTable> _sortTableReplay;
+
 public:
 	TrecisionEngine(OSystem *syst, const ADGameDescription *desc);
 	~TrecisionEngine() override;
@@ -235,7 +237,6 @@ public:
 	SRoom _room[MAXROOMS];
 
 	Common::List<SSortTable> _sortTable;
-	Common::List<SSortTable> _sortTableReplay;
 
 	uint16 _curObj;
 	SObject _obj[MAXOBJ];
