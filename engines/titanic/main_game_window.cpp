@@ -54,7 +54,7 @@ CMainGameWindow::~CMainGameWindow() {
 	delete _project;
 }
 
-void CMainGameWindow::applicationStarting() {
+bool CMainGameWindow::applicationStarting() {
 	// Set the video mode
 	CScreenManager *screenManager = CScreenManager::setCurrent();
 	screenManager->setMode(640, 480, 16, 0, true);
@@ -79,8 +79,8 @@ void CMainGameWindow::applicationStarting() {
 
 	// Set up the game project, and get game slot
 	int saveSlot = getSavegameSlot();
-	if (saveSlot == -2)
-		return;
+	if (saveSlot == EXIT_GAME)
+		return false;
 
 	// Create game view and manager
 	_gameView = new CSTGameView(this);
@@ -107,6 +107,7 @@ void CMainGameWindow::applicationStarting() {
 	enterRoomMsg.execute(room, nullptr, MSGFLAG_SCAN);
 
 	_gameManager->markAllDirty();
+	return true;
 }
 
 int CMainGameWindow::getSavegameSlot() {

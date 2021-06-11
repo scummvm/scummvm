@@ -115,8 +115,7 @@ bool TitanicEngine::initialize() {
 
 	syncSoundSettings();
 
-	_window->applicationStarting();
-	return true;
+	return _window->applicationStarting();
 }
 
 void TitanicEngine::deinitialize() {
