@@ -72,12 +72,9 @@ TrecisionEngine::TrecisionEngine(OSystem *syst, const ADGameDescription *desc) :
 
 	_iconBase = 0;
 	_inventoryRefreshStartIcon = 0;
-	_inventoryRefreshStartIconOld = 0xFF;
 	_curObj = 1;
 	_inventoryRefreshStartLine = INVENTORY_HIDE;
-	_inventoryRefreshStartLineOld = 0xFF;
 	_lightIcon = 0xFF;
-	_lightIconOld = 0xFF;
 	_inventoryStatus = INV_OFF;
 	_inventoryCounter = INVENTORY_HIDE;	
 	_flagInventoryLocked = false;

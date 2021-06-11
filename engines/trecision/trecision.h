@@ -251,9 +251,9 @@ public:
 	Common::Array<byte> _cyberInventory;
 	uint8 _iconBase;
 	uint8 _inventoryStatus;
-	uint8 _lightIcon, _lightIconOld;
-	uint8 _inventoryRefreshStartIcon, _inventoryRefreshStartIconOld;
-	uint8 _inventoryRefreshStartLine, _inventoryRefreshStartLineOld;
+	uint8 _lightIcon;
+	uint8 _inventoryRefreshStartIcon;
+	uint8 _inventoryRefreshStartLine;
 	int16 _inventoryCounter;
 	bool  _flagInventoryLocked;
 	int16 _inventorySpeed[8];

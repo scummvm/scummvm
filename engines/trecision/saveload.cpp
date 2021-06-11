@@ -49,7 +49,6 @@ void TrecisionEngine::loadSaveSlots(Common::StringArray &saveNames) {
 		}
 	}
 
-	_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 	refreshInventory(0, 0);
 }
 

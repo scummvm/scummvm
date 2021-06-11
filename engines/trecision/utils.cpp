@@ -195,14 +195,8 @@ void TrecisionEngine::processTime() {
 		if (_inventoryStatus == INV_PAINT || _inventoryStatus == INV_DEPAINT)
 			rollInventory(_inventoryStatus);
 
-		if (_inventoryStatus != INV_OFF && (
-			_inventoryRefreshStartIconOld != _inventoryRefreshStartIcon ||
-			_inventoryRefreshStartLineOld != _inventoryRefreshStartLine ||
-			_lightIconOld != _lightIcon)) {
+		if (_inventoryStatus != INV_OFF) {
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
-			_inventoryRefreshStartIconOld = _inventoryRefreshStartIcon;
-			_inventoryRefreshStartLineOld = _inventoryRefreshStartLine;
-			_lightIconOld = _lightIcon;
 		}
 
 		_textMgr->drawTexts();

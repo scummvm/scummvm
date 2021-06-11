@@ -440,7 +440,6 @@ void TrecisionEngine::doIdle() {
 			dataSave();
 			showInventoryName(NO_OBJECTS, false);
 			showIconName();
-			_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 			refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 		}
 		break;
@@ -452,7 +451,6 @@ void TrecisionEngine::doIdle() {
 			if (!dataLoad()) {
 				showInventoryName(NO_OBJECTS, false);
 				showIconName();
-				_inventoryRefreshStartIconOld = _inventoryRefreshStartLineOld = _lightIconOld = 0xFF;
 				refreshInventory(_inventoryRefreshStartIcon, _inventoryRefreshStartLine);
 			}
 		}
