@@ -162,7 +162,7 @@ public:
 		return getWintermuteKeymaps(target, gameId, gameDescr);
 	}
 
-	ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const override {
+	ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extraInfo) const override {
 		// Set some defaults
 		s_fallbackDesc.extra = "";
 		s_fallbackDesc.language = Common::UNK_LANG;
