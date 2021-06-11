@@ -34,6 +34,7 @@
 #include "ags/shared/gui/gui_main.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/data_ext.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/util/string_utils.h"
@@ -89,12 +90,12 @@ String GetMainGameFileErrorText(MainGameFileErrorType err) {
 		return "Format version of plugin data is not supported.";
 	case kMGFErr_PluginDataSizeTooLarge:
 		return "Plugin data size is too large.";
-	case kMGFErr_ExtUnexpectedEOF:
-		return "Unexpected end of file.";
+	case kMGFErr_ExtListFailed:
+		return "There was error reading game data extensions.";
 	case kMGFErr_ExtUnknown:
 		return "Unknown extension.";
-	case kMGFErr_ExtBlockDataOverlapping:
-		return "Block data overlapping.";
+	default:
+		break;
 	}
 	return "Unknown error.";
 }
@@ -692,8 +693,17 @@ static HGameFileError ReadExtBlock(LoadedGameEntities &ents, Stream *in, const S
 	return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));
 }
 
+static LoadedGameEntities *reader_ents;
+static GameDataVersion reader_ver;
+HError ReadGameDataReader(Stream *in, int block_id, const String &ext_id,
+		soff_t block_len, bool &read_next) {
+	return (HError)ReadExtBlock(*reader_ents, in, ext_id, block_len, reader_ver);
+}
+
 HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
 	GameSetupStruct &game = ents.Game;
+	reader_ents = &ents;
+	reader_ver = data_ver;
 
 	//-------------------------------------------------------------------------
 	// The classic data section.
@@ -771,41 +781,15 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	//-------------------------------------------------------------------------
 	// All the extended data, for AGS > 3.5.0.
 	//-------------------------------------------------------------------------
-	// Read list of extension blocks. The block meta format is shared with the room files.
-	//    - 1 byte - an old-style unsigned numeric ID, for compatibility with room file format:
-	//               where 0 would indicate following string ID,
-	//               and 0xFF indicates end of extension list.
-	//    - 16 bytes - string ID of an extension.
-	//    - 8 bytes - length of extension data, in bytes.
-	while (true) {
-		int b = in->ReadByte();
-		if (b < 0)
-			return new MainGameFileError(kMGFErr_ExtUnexpectedEOF);
-		if (b == 0xFF)
-			break; // end of list
-		if (b != 0) // we don't support numeric ids here
-			return new MainGameFileError(kMGFErr_ExtUnknown);
-		// Extension meta data
-		String ext_id = String::FromStreamCount(in, 16);
-		soff_t block_len = in->ReadInt64();
-		soff_t block_end = in->GetPosition() + block_len;
-		// Read game data itself
-		err = ReadExtBlock(ents, in, ext_id, block_len, data_ver);
-		if (!err)
-			return err;
-		// After each block test if the stream position is where expected
-		soff_t cur_pos = in->GetPosition();
-		if (cur_pos > block_end) {
-			return new MainGameFileError(kMGFErr_ExtBlockDataOverlapping,
-				String::FromFormat("Extension: %s, expected to end at offset: %lld, finished reading at %lld.", ext_id.GetCStr(), block_end, cur_pos));
-		} else if (cur_pos < block_end) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: game data blocks nonsequential, ext %s expected to end at %lld, finished reading at %lld",
-			              ext_id.GetCStr(), block_end, cur_pos);
-			in->Seek(block_end, Shared::kSeekBegin);
-		}
-	};
 
-	return HGameFileError::None();
+	// This reader will process all blocks inside ReadExtBlock() function,
+	// and read compatible data into the given LoadedGameEntities object.
+	auto reader = [&ents, data_ver](Stream *in, int /*block_id*/, const String &ext_id,
+		soff_t block_len, bool &read_next) {};
+
+	HError ext_err = ReadExtData(ReadGameDataReader,
+		kDataExt_NumID8 | kDataExt_File64, in);
+	return ext_err ? HGameFileError::None() : new MainGameFileError(kMGFErr_ExtListFailed, ext_err);
 }
 
 HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver) {
