@@ -25,6 +25,7 @@
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/screen_overlay.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -74,7 +75,8 @@ void ScriptOverlay::Unserialize(int index, const char *serializedData, int dataS
 void ScriptOverlay::Remove() {
 	int overlayIndex = find_overlay_of_type(overlayId);
 	if (overlayIndex < 0) {
-		quit("ScriptOverlay::Remove: overlay is not there!");
+		debug_script_warn("Overlay.Remove: overlay is invalid, could have been removed earlier.");
+		return;
 	}
 	remove_screen_overlay_index(overlayIndex);
 	overlayId = -1;
