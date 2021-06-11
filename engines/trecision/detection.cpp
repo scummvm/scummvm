@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 436228),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -63,7 +63,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 436598),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 457299),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -81,7 +81,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 436697),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -90,7 +90,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 456209),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -99,7 +99,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 446634),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 432900),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_NO_FLAGS,
+		ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -117,7 +117,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_DEMO_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 392950),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO0()
 	},
 	{
@@ -126,7 +126,7 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_NL_DEMO_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 413651),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_DEMO,
+		ADGF_DEMO | ADGF_TESTING,
 		GUIO0()
 	},
 	{
