@@ -461,21 +461,28 @@ protected:
 	ThemeEngine::WidgetBackground _backgroundType;
 };
 
-struct LauncherEntry {
-	Common::String key;
-	Common::String description;
-	const Common::ConfigManager::Domain *domain;
+enum Platform {
+	kPlatformDOS,
+	kPlatformAmiga,
+	kPlatformApple2,
+	kPlatformUnknown = -1
+};
 
-	LauncherEntry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
-		key = k; description = d, domain = v;
+struct GridItemInfo
+{
+	Common::String engineid;
+	Common::String gameid;
+	Common::String language;
+	Common::String title;
+	Common::String platform;
+	Common::String thumbPath;
+
+	GridItemInfo(Common::String &eid, Common::String &gid, Common::String &t, Common::String &l, Common::String &p) : 
+		gameid(gid), engineid(eid), title(t), language(l), platform(p) {
+		thumbPath = Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 };
 
-struct LauncherEntryComparator {
-	bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
-			return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
-	}
-};
 
 class GridItemWidget;
 
@@ -486,8 +493,8 @@ private:
 	// _gridItems should be reserved to hold few more than visible items
 	// Fixing it to 30 for now, 6 items * (4 rows + 1 extra row);
 	Common::Array<GridItemWidget *> _gridItems;
-	Common::Array<LauncherEntry> _allEntries;
-	Common::Array<LauncherEntry> _visibleEntries;
+	Common::Array<GridItemInfo> _allEntries;
+	Common::Array<GridItemInfo> _visibleEntries;
 	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
 	// Common::HashMap<Common::String, EntryContainerWidget *> _entryById;
 
@@ -510,13 +517,6 @@ private:
 
 public:
 
-	enum Platform {
-		kPlatformDOS,
-		kPlatformAmiga,
-		kPlatformApple2,
-		kPlatformUnknown = -1
-	};
-
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const Common::String &name);
 
@@ -525,7 +525,7 @@ public:
 
 
 	bool calcVisibleEntries(void);
-	void setEntryList(Common::Array<LauncherEntry> *list);
+	void setEntryList(Common::Array<GridItemInfo> *list);
 	void destroyItems();
 	void loadPlatformIcons();
 	void updateGrid(void);
@@ -540,6 +540,8 @@ public:
 };
 
 enum {
+	kGridItemHPadding = 50,
+	kGridItemVPadding = 50,
 	kThumbnailWidth = 192,
 	kThumbnailHeight = 192
 };
@@ -553,19 +555,19 @@ public:
 	StaticTextWidget *_title;
 	GridWidget *_grid;
 
-	Common::Array<LauncherEntry> _attachedEntries;
-	LauncherEntry *_activeEntry;
+	Common::Array<GridItemInfo> _attachedEntries;
+	GridItemInfo *_activeEntry;
 
 	bool isHighlighted;
-	void setActiveEntry(LauncherEntry &entry);
+	void setActiveEntry(GridItemInfo &entry);
 
 public:
 	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
 	GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t);
 	
 	void attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
-	void attachEntry(LauncherEntry &entry);
-	void attachEntries(Common::Array<LauncherEntry> entry);
+	void attachEntry(GridItemInfo &entry);
+	void attachEntries(Common::Array<GridItemInfo> entry);
 	void setActiveEntry(int i) {setActiveEntry(_attachedEntries[i]);};
 	void update();
 	void drawWidget() override;
