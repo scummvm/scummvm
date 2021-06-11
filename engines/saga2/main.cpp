@@ -28,6 +28,7 @@
 
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/memstream.h"
 
 #include "saga2/std.h"
 #include "saga2/setup.h"
@@ -546,6 +547,28 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 	con->rest();
 
 	return buffer;
+}
+
+Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]) {
+	uint32          idString[2];
+	int32           size;
+	uint8           *buffer;                // allocated buffer
+
+	idString[0] = id;
+	idString[1] = 0;
+	debugC(3, kDebugResources, "Loading resource %d (%s, %s)", id, tag2str(id), desc);
+
+	size = con->size(id);
+	if (size <= 0 || !con->seek(id)) {
+		error("Error reading resource ID '%s'.", &idString);
+	}
+
+	//  Allocate the buffer
+	buffer = (uint8 *)malloc(size);
+	con->read(buffer, size);
+	con->rest();
+
+	return new Common::MemoryReadStream(buffer, size, DisposeAfterUse::YES);
 }
 
 //-----------------------------------------------------------------------

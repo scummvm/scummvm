@@ -59,8 +59,9 @@ public:
 	int16		u,v,z;
 
 		// constructors
-	TilePoint(){}
-	TilePoint( int16 nu, int16 nv, int16 nz ) { u = nu; v = nv; z = nz; }
+	TilePoint() { u = v = z = 0; }
+	TilePoint(int16 nu, int16 nv, int16 nz) { u = nu; v = nv; z = nz; }
+	TilePoint(Common::SeekableReadStream *stream);
 
 		// TilePoint operators
 	friend TilePoint operator+ (TilePoint a, TilePoint b)
@@ -93,18 +94,19 @@ public:
 	void operator+= (TilePoint a) { u += a.u; v += a.v; z += a.z; }
 	void operator-= (TilePoint a) { u -= a.u; v -= a.v; z -= a.z; }
 
-	int16 quickHDistance( void )
-	{
-		int16		au = (int16) abs( u ),
-					av = (int16) abs( v );
+	int16 quickHDistance(void) {
+		int16		au = (int16)abs(u),
+					av = (int16)abs(v);
 
-		if (au > av) return (int16)(au + (av >> 1));
-		else return (int16)(av + (au >> 1));
+		if (au > av)
+			return (int16)(au + (av >> 1));
+		else
+			return (int16)(av + (au >> 1));
 	}
 
-	int16 quickDir( void );
+	int16 quickDir(void);
 
-	int16 magnitude( void );
+	int16 magnitude(void);
 };
 
 /* ============================================================================ *

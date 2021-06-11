@@ -31,7 +31,7 @@ namespace Saga2 {
 
 class TilePoint;
 class  PatrolRouteList;
-extern PatrolRouteList  *patrolRouteList;   // Global patrol route array
+extern PatrolRouteList **patrolRouteList;   // Global patrol route array
 
 /* ===================================================================== *
    PatrolRoute class
@@ -44,8 +44,12 @@ extern PatrolRouteList  *patrolRouteList;   // Global patrol route array
 
 class PatrolRoute {
 	int16 _wayPoints;	// The number of way points in this patrol route
+	TilePoint **_route;
 
 public:
+	PatrolRoute(Common::SeekableReadStream *stream);
+	~PatrolRoute();
+
 	// Return the number of way points
 	int16 vertices(void) const {
 		return _wayPoints;
@@ -53,18 +57,6 @@ public:
 
 	// Returns a const reference to a specified way point
 	const TilePoint &operator[](int16 index) const;
-};
-
-/* ===================================================================== *
-   PatrolRouteData struct
- * ===================================================================== */
-
-//	This class represents the patrol route data as it is read in from the
-//	resource file.  The patrol route data consists of an integer representing
-//	the number of patrol routes, followed by the actual patrol route data.
-
-struct PatrolRouteData {
-	int16 routes;	// The number of routes in this data
 };
 
 /* ===================================================================== *
@@ -81,27 +73,21 @@ class PatrolRouteList {
 	friend void initPatrolRoutes(void);
 	friend void cleanupPatrolRoutes(void);
 
-	PatrolRouteData *_routeData;     // A pointer to the raw patrol route
-	// data.
-	int32 *_offsetArray;   // A pointer to a dynaically
-	// allocated array of 32-bit offsets.
+	int16 _numRoutes;
+	PatrolRoute **_routes;
 
 public:
-	// Remove current patrol route data
-	void clearRouteData(void);
-	// Set up an initialize new patrol route data
-	void setRouteData(PatrolRouteData *data);
+	PatrolRouteList(Common::SeekableReadStream *stream);
+	~PatrolRouteList();
 
 	// Returns the number of patrol routes in the list
 	int16 routes(void) {
-		return _routeData ? _routeData->routes : 0;
+		return _numRoutes;
 	}
 
 	// Returns a reference to the specified patrol route
-	PatrolRoute &operator [](int16 index) {
-		// FIXME: This is evil
-		warning("PartolRoute[]: dangerous pointer arithmetic, this will not work");
-		return *((PatrolRoute *)(_routeData + _offsetArray[index]));
+	PatrolRoute &getRoute(int16 index) {
+		return *_routes[index];
 	}
 };
 

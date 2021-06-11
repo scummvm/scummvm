@@ -166,6 +166,7 @@ RHANDLE LoadFileToHandle(char *filename);    // load file into relocatable buf
 
 void *LoadResource(hResContext *con, uint32 id, const char desc[]);
 RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]);
+Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]);
 
 //  Asynchronous resource loading
 
