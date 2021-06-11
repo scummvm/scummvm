@@ -121,14 +121,14 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 	}
 
 	if (!isDemo) {
-		/* 
-		I18N: 
-		This Option is for hard-of-hearing.
-		It makes it easier to solve the spaceship puzzle.
-		Normally game uses strict binary logic here.
-		We change it to use fuzzy logic.
-		By default the option is off.
-		*/
+		/** 
+		 * I18N:
+		 * This Option is for hard-of-hearing.
+		 * It makes it easier to solve the spaceship puzzle.
+		 * Normally game uses strict binary logic here.
+		 * We change it to use fuzzy logic.
+		 * By default the option is off.
+		 */
 		_spaceshipFuzzyLogicCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.FuzzyMode", _("~F~uzzy Logic in SpaceShip Active"));
 	}
 
