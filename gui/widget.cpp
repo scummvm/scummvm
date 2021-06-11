@@ -549,7 +549,7 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
-const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, int w, int h) {
+Graphics::ManagedSurface *scaleGfx(Graphics::ManagedSurface *gfx, int w, int h) {
 	int nw = w, nh = h;
 
 	// Maintain aspect ratio
@@ -569,7 +569,7 @@ const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, in
 
 	Graphics::ManagedSurface tmp(*gfx);
 
-	const Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, false));
+	Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, false));
 	tmp.free();
 
 	return tmp2;
@@ -1054,9 +1054,8 @@ void GridItemWidget::updateThumb() {
 	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 
 		if (gfx) {
-			const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
-			_thumb->setGfx(scGfx);
-			delete scGfx;
+			// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
+			_thumb->setGfx(gfx);
 		}
 		else
 			_thumb->setGfx(gfx);
@@ -1071,8 +1070,8 @@ void GridItemWidget::update() {
 	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
 
 	if (gfx) {
-		const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
-		_thumb->setGfx(scGfx);
+		// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
+		_thumb->setGfx(gfx);
 	}
 	else
 		_thumb->setGfx(gfx);
@@ -1090,9 +1089,8 @@ void GridItemWidget::update() {
 		gfx = _grid->platformToSurface(kPlatformUnknown);
 	
 	if (gfx) {
-		const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
-		_plat->setGfx(scGfx);
-		delete scGfx;
+		// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
+		_plat->setGfx(gfx);
 	}
 	else
 		_plat->setGfx(gfx);
@@ -1125,6 +1123,10 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 			}
 			if (srcSurface && srcSurface->format.bytesPerPixel != 1) {
 				surf = new Graphics::ManagedSurface(srcSurface->convertTo(g_system->getOverlayFormat()));
+				Graphics::ManagedSurface *scSurf(scaleGfx(surf, kThumbnailWidth, 512));
+				surf->free();
+				delete surf;
+				return scSurf;
 			}
 				
 		} else {
@@ -1185,7 +1187,11 @@ void GridWidget::loadPlatformIcons() {
 
 	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
 		Common::String fullPath = pathPrefix + (*i);
-		_platformIcons.push_back(loadSurfaceFromFile(fullPath));
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+		Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+		_platformIcons.push_back(scGfx);
+		gfx->free();
+		delete gfx;
 	}
 }
 
