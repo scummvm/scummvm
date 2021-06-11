@@ -1020,7 +1020,6 @@ ContainerWidget(boss, x, y, w, h) {
 	_thumb = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
 	_activeEntry = nullptr;
 	_grid = boss;
-	// setBackgroundType(ThemeEngine::kThumbnailBackground);
 }
 GridItemWidget::GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
 			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {
@@ -1052,13 +1051,7 @@ void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 
 void GridItemWidget::updateThumb() {
 	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
-
-		if (gfx) {
-			// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
-			_thumb->setGfx(gfx);
-		}
-		else
-			_thumb->setGfx(gfx);
+	_thumb->setGfx(gfx);
 }
 
 void GridItemWidget::update() {
@@ -1066,19 +1059,13 @@ void GridItemWidget::update() {
 		_activeEntry = _attachedEntries.begin(); 
 	}
 
-	// warning("%s, %s - Entry", _activeEntry->key.c_str(), _activeEntry->description.c_str());
-	Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
-
-	if (gfx) {
-		// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _thumb->getWidth(), 512);
-		_thumb->setGfx(gfx);
-	}
-	else
-		_thumb->setGfx(gfx);
+	updateThumb();
 
 	_lang->setLabel(_activeEntry->language);
 	_title->setLabel(_activeEntry->title);
 	
+	Graphics::ManagedSurface *gfx;
+
 	if (_activeEntry->platform == "pc")
 		gfx = _grid->platformToSurface(kPlatformDOS);
 	else if (_activeEntry->platform == "amiga")
@@ -1087,13 +1074,8 @@ void GridItemWidget::update() {
 		gfx = _grid->platformToSurface(kPlatformApple2);
 	else
 		gfx = _grid->platformToSurface(kPlatformUnknown);
-	
-	if (gfx) {
-		// const Graphics::ManagedSurface * scGfx = scaleGfx(gfx, _plat->getWidth(), _plat->getHeight());
-		_plat->setGfx(gfx);
-	}
-	else
-		_plat->setGfx(gfx);
+
+	_plat->setGfx(gfx);
 
 	markAsDirty();
 }
@@ -1196,7 +1178,6 @@ void GridWidget::loadPlatformIcons() {
 }
 
 bool GridWidget::calcVisibleEntries() {
-	// warning("calcingVisible entries");
 	bool needsReload = false;
 
 	int nFirstVisibleItem = 0;
@@ -1211,7 +1192,7 @@ bool GridWidget::calcVisibleEntries() {
 		_itemsOnScreen = nItemsOnScreen;
 
 		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size()-1);
-		// warning("%d %d %d", _firstVisibleItem, _firstVisibleItem + _itemsOnScreen, (int)_gridItems.size());
+
 		_visibleEntries.clear();
 		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
 			GridItemInfo *iter = _allEntries.begin() + ind;
@@ -1219,7 +1200,6 @@ bool GridWidget::calcVisibleEntries() {
 		}
 	}
 
-	// warning("Visible entries : %d to %d", _firstVisibleItem, _itemsOnScreen);
 	return needsReload;
 }
 
@@ -1231,7 +1211,7 @@ void GridWidget::reloadThumbnails() {
 	for (Common::Array<GridItemInfo>::iterator iter = _visibleEntries.begin(); iter != _visibleEntries.end(); ++iter) {
 		path = Common::String("./icons/")+iter->thumbPath;
 		if (_loadedSurfaces.contains(path)) {
-			// warning("Thumbnail already loaded, skipping...");
+			warning("Thumbnail already loaded, skipping...");
 		}
 		else {
 			surf = loadSurfaceFromFile(path);
@@ -1242,55 +1222,82 @@ void GridWidget::reloadThumbnails() {
 
 Graphics::ManagedSurface *GridWidget::filenameToSurface(Common::String &name) {
 	Common::String path = Common::String("./icons/")+name;
+	
 	for (auto l = _visibleEntries.begin(); l!=_visibleEntries.end(); ++l) {
 		if (l->thumbPath == name) {
 			return _loadedSurfaces[path];
 		}
 	}
-	// warning("This image is not visible");
+
 	return nullptr;
 }
 
 Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformCode) {
 	if ((platformCode == kPlatformUnknown) || (platformCode < 0 || platformCode >= _platformIcons.size())) {
-		// warning("Unknown Platform");
+		warning("Unknown Platform");
 		return nullptr;
 	}
 	return _platformIcons[platformCode];
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
-	// warning("Wheel : %d %d %d", x, y, direction);
-	_scrollPos -= direction*40;
-	if (_scrollPos > 0)
+	int scrollSpeed = -direction*40;
+	_scrollPos += scrollSpeed;
+	if (_scrollPos > 0) {
 		_scrollPos = 0;
-	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
+		scrollSpeed = 0;
+	}
+	if (_scrollPos < -(_innerHeight - _scrollWindowHeight)) {
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
-	int row = 0, col = 0;
-	int k = 0;
+		scrollSpeed = 0;
+	}
 
-	for (Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin(); iter != _gridItems.end(); ++iter) {
-		k = row * _itemsPerRow + col;
-		(*iter)->setPos(50 + col * (kThumbnailWidth + 50), _scrollPos + 50 + row * (kThumbnailHeight + 80));
+	bool needsReload = calcVisibleEntries();
+	
+	if (needsReload) {
+		reloadThumbnails();
+	}
 
-		if (((*iter)->getRelY() <= -_gridItemHeight) || ((*iter)->getRelY() >= _h)) {
+	warning("%d %d", _visibleEntries.size(), _gridItems.size());
+	Common::Array<GridItemInfo>::iterator eIter = _visibleEntries.begin();
+	Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin() + (_firstVisibleItem % _gridItems.size());
+
+	for (int k = 0; k < _gridItems.size(); ++k) {
+		(*iter)->setPos((*iter)->getRelX(), scrollSpeed + (*iter)->getRelY());
+
+		if ((*iter)->getRelY() <= -_gridItemHeight) {
 			(*iter)->setVisible(false);
+			if ((*iter)->getRelY() <= -((_gridItemHeight) * 2)) {
+				(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY() + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+			}
+		}
+		else if ((*iter)->getRelY() >= _h) {
+			(*iter)->setVisible(false);
+			if ((*iter)->getRelY() >= -_gridItemHeight + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80))) {
+				(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY() - ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+			}
 		}
 		else {
 			(*iter)->setVisible(true);
 		}
-		if (++col >= _itemsPerRow) {
-			++row;
-			col = 0;
+
+		if (eIter != _visibleEntries.end()) {
+			(*iter)->setActiveEntry(*eIter);
+			eIter++;
 		}
-		++k;
+		else {
+			(*iter)->setActiveEntry(*_visibleEntries.begin());
+			(*iter)->setVisible(false);
+		}
+		iter++;
+		if (iter == _gridItems.end())
+			iter = _gridItems.begin();
 	}
 
-	if (calcVisibleEntries()) {
-		reloadThumbnails();
+	if (needsReload) {
 		updateGrid();
 	}
-	
+
 	markAsDirty();
 }
 
@@ -1316,10 +1323,8 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 	}
 
-	// Common::HashMap<Common::String, GridItemWidget *> entryById;
+	for (Common::Array<GridItemInfo>::iterator i = _visibleEntries.begin(); i != _visibleEntries.end(); ++i) {
 
-	for (Common::Array<GridItemInfo>::iterator i = _allEntries.begin(); i != _allEntries.end(); ++i) {
-		// GridItemWidget *newEntry = entryById[i->gameid];
 		GridItemWidget *newEntry = nullptr;
 		if (!newEntry) {
 			newEntry = new GridItemWidget(this, 
@@ -1327,8 +1332,6 @@ void GridWidget::reflowLayout() {
 											_scrollPos + 50 + row * (kThumbnailHeight + 80), 
 											kThumbnailWidth, 
 											kThumbnailHeight+kLineHeight*2);
-			// newEntry = new GridItemWidget(this, 50 + col * (kThumbnailWidth + 50), 50 + row * (kThumbnailHeight + 80), kThumbnailWidth, kThumbnailHeight+kLineHeight*2);
-
 			_gridItems.push_back(newEntry);
 			
 			if ((newEntry->getRelY() <= -_gridItemHeight) || (newEntry->getRelY() >= _h)) {
@@ -1345,16 +1348,13 @@ void GridWidget::reflowLayout() {
 		}
 		newEntry->attachEntry(*i);
 		newEntry->update();
-		// entryById[i->domain->getVal("gameid")] = newEntry;
 	}
 	markAsDirty();
 }
 
 void GridWidget::updateGrid() {
-	for (auto i = _gridItems.begin() + _firstVisibleItem; 
-		i != _gridItems.end() && i != _gridItems.begin() + _firstVisibleItem + _itemsOnScreen; 
-		++i) {
-		(*i)->updateThumb();
+	for (auto i = _gridItems.begin(); i != _gridItems.end(); ++i) {
+		(*i)->update();
 	}
 }
 
