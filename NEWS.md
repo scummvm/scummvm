@@ -101,6 +101,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added optional trimming to 200 pixels for some FM-TOWNS games, so aspect-ratio correction is possible.
    - Fixed audio distortion in Loom for PC-Engine.
    - Added support for the high resolution font and cursor in the Macintosh version of Loom.
+   - Added support for Japanese Mac version of The Dig.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
