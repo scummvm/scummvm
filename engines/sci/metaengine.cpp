@@ -281,7 +281,7 @@ public:
 
 	// A fallback detection method. This is not ideal as all detection lives in MetaEngine, but
 	// here fb detection has many engine dependencies.
-	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const override;
+	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 };
 
 Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -640,7 +640,7 @@ void constructFallbackDetectionEntry(Common::String &gameId, Common::Platform pl
 	}
 }
 
-ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
+ADDetectedGame SciMetaEngine::fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
 	// If necessary SCI files aren't found, it can't be SCI
 	if (!necessarySciResourceFilesFound(allFiles))
 		return ADDetectedGame();
