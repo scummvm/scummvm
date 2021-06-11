@@ -23,6 +23,7 @@
 #include "common/macresman.h"
 
 #include "scumm/charset.h"
+#include "scumm/file.h"
 #include "scumm/scumm.h"
 #include "scumm/nut_renderer.h"
 #include "scumm/util.h"
@@ -64,7 +65,7 @@ void ScummEngine::loadCJKFont() {
 		return;
 	}
 
-	Common::File fp;
+	ScummFile fp;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #if defined(DISABLE_TOWNS_DUAL_LAYER_MODE) || !defined(USE_RGB_COLOR)
@@ -130,7 +131,7 @@ void ScummEngine::loadCJKFont() {
 		default:
 			break;
 		}
-		if (fontFile && fp.open(fontFile)) {
+		if (fontFile && openFile(fp, fontFile)) {
 			debug(2, "Loading CJK Font");
 			_useCJKMode = true;
 			_textSurfaceMultiplier = 1; // No multiplication here
