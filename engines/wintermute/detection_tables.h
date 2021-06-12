@@ -31,7 +31,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"8squares",        "Eight Squares in The Garden"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",         "Boredom of Agustin Cordes"},
-	{"alavi",           "Informer Alavi - Murder of Miss Rojan"},
+	{"alavi",           "Alavi Detective - Murder of Miss Rojan"},
 	{"alimardan1",      "Alimardan's Mischief"},
 	{"alimardan2",      "Alimardan Meets Merlin"},
 	{"alphapolaris",    "Alpha Polaris"},
@@ -254,13 +254,21 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("actualdest", "",
 		WME_ENTRY1s("data.dcp", "6926f44b26f21ceb1d840eaab9aeb510", 9081740), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
 
-	// Informer Alavi - Murder of Miss Rojan (Persian) (Beta version -old version-, between 1387/12 to 1392/6)
+	// Alavi Detective - Murder of Miss Rojan (Persian) (Beta version -old version-, between 1387/12 to 1392/6)
 	WME_WINENTRY("alavi", "Beta version",
 		WME_ENTRY1s("data.dcp", "587b46baa3f82dfe09bdb51f01231fa2", 37191939), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_ANDISHE_VARAN),
 
-	// Informer Alavi - Murder of Miss Rojan (Persian) (Try version, between 1388/8)
+	// Alavi Detective - Murder of Miss Rojan (Persian) (Try version, between 1388/8)
 	WME_WINENTRY("alavi", "Try version",
 		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_ANDISHE_VARAN),
+
+	// Alavi Detective - Murder of Miss Rojan (Persian)
+	WME_WINENTRY("alavi", "",
+		WME_ENTRY1s("data.dcp", "bffb07282d27b6c5351ed4fce92db4da", 516186290), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_ANDISHE_VARAN),
+
+	// Alimardan's Mischief (Persian)
+	WME_WINENTRY("alimardan1", "",
+		WME_ENTRY1s("data.dcp", "ab1aa5f3d6d5f10d3f131a78be80bf34", 1747086434), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Alimardan's Mischief (English)
 	WME_WINENTRY("alimardan1", "",
@@ -941,6 +949,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// NOTE: this game distribution contained unpacked game files instead of usual game.dcp package
 	WME_WINENTRY("findinghope", "",
 		WME_ENTRY1s("default.game", "57db79e9de62b9d1c7a335822f6242ff", 742), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
+
+	// Forgotten Sound 1 - Revelation (Persian)
+	WME_WINENTRY("forgottensound1", "",
+		WME_ENTRY1s("data.dcp", "1c5871ad711430663b1848f0f2362b44", 2030321701), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Forgotten Sound 1 - Revelation (Steam, January 2018) (English)
 	WME_WINENTRY("forgottensound1", "",
@@ -1740,6 +1752,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Project Lonely Robot (Beta)
 	WME_WINENTRY("lonelyrobot", "Beta",
 		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
+
+	// Qajary Cat (Persian)
+	WME_WINENTRY("qajarycat", "",
+		WME_ENTRY1s("data.dcp", "f2b6bf3daf6324e58042f214cdc075ca", 1782529732), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Qajary Cat (Steam, November 2017) (English)
 	WME_WINENTRY("qajarycat", "",
@@ -4485,6 +4501,11 @@ static const WMEGameDescription gameDescriptions[] = {
 					"data_hd.dcp", "05ce36b4c7b947c503496a1d895671e5", 197431006,
 					"i18n_ru_strings.dcp", "ebf28ca1475b3be9754a323966807683", 45546), Common::RU_RUS, ADGF_UNSTABLE | GF_IGNORE_SD_FILES | GF_3D, WME_1_9_3),
 
+	// Shadows on the Vatican - Act I: Greed (Legacy Version) (NewTech) (Persian)
+	// NOTE: this game distribution contained unpacked game files instead of usual game.dcp package
+	WME_WINENTRY("sotv1", "Legacy Version",
+		WME_ENTRY1s("default.game", "2631e8ba12cdd7ef08c5ee72391ad703", 968), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
 	// Shadows on the Vatican - Act II: Wrath (Legacy Version) (Steam, Oct 26th 2015) (English)
 	WME_WINENTRY("sotv2", "Legacy Version",
 		WME_ENTRY3s("data.dcp", "cfea0d6c7e4a96627d16887c3480266a", 273132663,
@@ -5175,6 +5196,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Tanya Grotter and the Disappearing Floor
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
+
+	// Murder In Tehran's Alleys 1933 (Persian)
+	WME_WINENTRY("tehran1933", "",
+		WME_ENTRY1s("data.dcp", "0ab314e014b5e9d45411fee436d98dfd", 1921736252), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
 	// Murder In Tehran's Alleys 1933 (Steam, June 2017) (English)
 	WME_WINENTRY("tehran1933", "",
