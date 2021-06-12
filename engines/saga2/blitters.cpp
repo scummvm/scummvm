@@ -107,7 +107,24 @@ void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 }
 
 void unpackSprite(gPixelMap *map, uint8 *sprData) {
-	warning("STUB: unpackSprite()");
+	byte *dst = map->data;
+	int bytes = map->size.x * map->size.y;
+
+	while (true) {
+		byte trans = *sprData++;
+		memset(dst, 0, trans);
+		dst += trans;
+		bytes -= trans;
+
+		if (bytes < 0)
+			break;
+
+		byte fill = *sprData++;
+		memcpy(dst, sprData, fill);
+		dst += fill;
+		bytes -= fill;
+		sprData += fill;
+	}
 }
 
 //void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
