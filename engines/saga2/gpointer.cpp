@@ -64,46 +64,7 @@ bool gMousePointer::init(Point16 pointerLimits) {
 
 //  Private routine to draw the mouse pointer image
 void gMousePointer::draw(void) {
-#if     defined( USEWINDOWS )
-	if (useWinCursor)
-		return;
-#endif
-
-	if (pointerImage && hideCount < 1 && saveMap.data) {
-		//  Compute the area actually drawn
-
-		saveExtent =
-		    intersect(videoPort->clip,
-		              Rect16(currentPosition.x,  currentPosition.y,
-		                     pointerImage->size.x, pointerImage->size.y));
-
-		//  Added this to fix a shortcoming of intersect().
-		if (saveExtent.width <= 0 || saveExtent.height <= 0) {
-			shown = 0;
-			return;
-		}
-
-		//  blit from the screen to the backsave buffer
-		videoPort->displayPage->readPixels(saveExtent,
-		                                   saveMap.data,
-		                                   saveMap.size.x);
-
-		//  Draw the actual pointer (the color-remapped one)
-		enum draw_modes saveMode = videoPort->drawMode;// current drawing mode
-
-		videoPort->setMode(drawModeMatte);
-		videoPort->bltPixels(
-		    *pointerImage,
-		    0, 0,
-		    currentPosition.x, currentPosition.y,
-		    pointerImage->size.x, pointerImage->size.y);
-
-		//  undo any changes we did to the port
-		videoPort->setMode(saveMode);
-		shown = 1;
-	} else {
-		shown = 0;
-	}
+	CursorMan.showMouse(true);
 }
 
 //  Private routine to restore the mouse pointer image
