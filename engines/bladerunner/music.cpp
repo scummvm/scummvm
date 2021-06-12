@@ -358,10 +358,11 @@ void Music::next() {
 		if (_isPaused) {
 			// postpone loading the next track (re-arm the BladeRunnerMusicNextTimer timer)
 			_vm->_audioMixer->startAppTimerProc(kAudioMixerAppTimerMusicNext, 2000u);
+			_current.loop = 0;
 		} else {
+			_current.loop = 0;
 			play(_next.name.c_str(), _next.volume, _next.pan, _next.timeFadeInSeconds, _next.timePlaySeconds, _next.loop, _next.timeFadeOutSeconds);
 		}
-		_current.loop = 0;
 	} else if (_current.loop) {
 		play(_current.name.c_str(), _current.volume, _current.pan, _current.timeFadeInSeconds, _current.timePlaySeconds, _current.loop, _current.timeFadeOutSeconds);
 	}
