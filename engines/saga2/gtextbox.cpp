@@ -181,7 +181,7 @@ gTextBox::gTextBox(
 	flags                   = flg;
 	currentLen[index]     = buffer ? strlen(buffer) : 0;
 	cursorPos               = anchorPos = scrollPixels = 0;
-	undoBuffer              = (char *)malloc(sizeof(char) * (maxLen + 1));
+	undoBuffer              = new char[maxLen + 1]();
 	textFont                = font;
 	fontHeight              = height;
 	fontOffset              = fontHeight + 2;
@@ -233,7 +233,7 @@ gTextBox::~gTextBox() {
 	deSelect();
 	selected = 0;
 	if (undoBuffer) {
-		delete undoBuffer;
+		delete[] undoBuffer;
 	}
 }
 

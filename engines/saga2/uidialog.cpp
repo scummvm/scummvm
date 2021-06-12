@@ -593,11 +593,12 @@ void destroyFileFields(char **strings) {
 	uint16  i;
 
 	for (i = 0; i < numEditLines; i++) {
-		if (strings[i]) delete strings[i];
-		strings[i] = NULL;
+		if (strings[i])
+			delete[] strings[i];
+		strings[i] = nullptr;
 	}
 
-	delete strings;
+	delete[] strings;
 }
 
 bool getSaveName(int8 saveNo, SaveFileHeader &header) {
