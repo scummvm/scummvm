@@ -668,20 +668,20 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	vertices[3].v = texBottom;
 
 	// position coords
-	vertices[0].x = pos.x - 0.5f;
-	vertices[0].y = correctedYPos - 0.5f;
+	vertices[0].x = pos.x;
+	vertices[0].y = correctedYPos;
 	vertices[0].z = -0.9f;
 
-	vertices[1].x = pos.x - 0.5f;
-	vertices[1].y = correctedYPos - height - 0.5f;
+	vertices[1].x = pos.x;
+	vertices[1].y = correctedYPos - height;
 	vertices[1].z = -0.9f;
 
-	vertices[2].x = pos.x + width - 0.5f;
-	vertices[2].y = correctedYPos - 0.5f;
+	vertices[2].x = pos.x + width;
+	vertices[2].y = correctedYPos;
 	vertices[2].z = -0.9f;
 
-	vertices[3].x = pos.x + width - 0.5f;
-	vertices[3].y = correctedYPos - height - 0.5;
+	vertices[3].x = pos.x + width;
+	vertices[3].y = correctedYPos - height;
 	vertices[3].z = -0.9f;
 
 	// not exactly sure about the color format, but this seems to work
