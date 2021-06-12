@@ -210,6 +210,22 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 			}
 		}
 	}
+
+	// Compute dirty rect
+	int rectX = MAX<int>(drawPoint.x, 0);
+	int rectY = MAX<int>(drawPoint.y, 0);
+	int rectX2 = MIN<int>(drawPoint.x + SAGA_ISOTILE_WIDTH, map->size.x);
+	int rectY2 = lowBound;
+	debugC(3, kDebugTiles, "Rect = (%d,%d,%d,%d)", rectX, rectY, rectX2, rectY2);
+
+#if 0
+	Graphics::Surface sur;
+	sur.create(map->size.x, map->size.y, Graphics::PixelFormat::createFormatCLUT8());
+	sur.setPixels(map->data);
+	//sur.debugPrint();
+	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
+	g_system->updateScreen();
+#endif
 }
 
 
