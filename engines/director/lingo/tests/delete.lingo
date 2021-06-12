@@ -41,3 +41,4 @@ scummvmAssertEqual(test, "lorem" & RETURN & "ipsum" & RETURN & "sit" & RETURN & 
 put "lorem" & RETURN & "ipsum" & RETURN & "dolor" & RETURN & "sit" & RETURN & "amet" into test
 delete line 2 to 5 of test
 scummvmAssertEqual(test, "lorem")
+scummvmAssertEqual(test, "check errors-test")
