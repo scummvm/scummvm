@@ -115,7 +115,6 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 //}
 
 void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
-	warning("STUB: drawTile()");
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;
@@ -124,24 +123,14 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	int row, col, count, lowBound;
 	int bgRunCount;
 	int fgRunCount;
-	const int32 SAGA_ISOTILE_WIDTH = 32;
+	const int32 SAGA_ISOTILE_WIDTH = 64;
 	Point16 point(x, y);
-
-
-//	if (tileIndex >= _tilesTable.size()) {
-//		error("IsoMap::drawTile wrong tileIndex");
-//	}
-
 
 	if (point.x + SAGA_ISOTILE_WIDTH < 0) {
 		return;
 	}
 
 	if (point.x - SAGA_ISOTILE_WIDTH >= map->size.x) {
-		return;
-	}
-
-	if ((height <= 8) || (height > 64)) {
 		return;
 	}
 
@@ -154,99 +143,6 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	if (drawPoint.y >= map->size.y) {
 		return;
 	}
-
-#if 0
-	if (location != NULL) {
-		if (location->z <= -16) {
-			if (location->z <= -48) {
-				if (location->u() < -THRESH8 || location->v() < -THRESH8) {
-					return;
-				}
-			} else {
-				if (location->u() < THRESH0 || location->v() < THRESH0) {
-					return;
-				}
-			}
-		} else {
-			if (location->z >= 16) {
-				return;
-			} else {
-				switch (_tilesTable[tileIndex].getMaskRule()) {
-				case kMaskRuleNever:
-					return;
-				case kMaskRuleAlways:
-				default:
-					break;
-				case kMaskRuleUMIN:
-					if (location->u() < THRESH0) {
-						return;
-					}
-					break;
-				case kMaskRuleUMID:
-					if (location->u() < THRESH8) {
-						return;
-					}
-					break;
-				case kMaskRuleUMAX:
-					if (location->u() < THRESH16) {
-						return;
-					}
-					break;
-				case kMaskRuleVMIN:
-					if (location->v() < THRESH0) {
-						return;
-					}
-					break;
-				case kMaskRuleVMID:
-					if (location->v() < THRESH8) {
-						return;
-					}
-					break;
-				case kMaskRuleVMAX:
-					if (location->v() < THRESH16) {
-						return;
-					}
-					break;
-				case kMaskRuleYMIN:
-					if (location->uv() < THRESH0 * 2) {
-						return;
-					}
-					break;
-				case kMaskRuleYMID:
-					if (location->uv() < THRESH8 * 2) {
-						return;
-					}
-					break;
-				case kMaskRuleYMAX:
-					if (location->uv() < THRESH16 * 2) {
-						return;
-					}
-					break;
-				case kMaskRuleUVMAX:
-					if (location->u() < THRESH16 && location->v() < THRESH16) {
-						return;
-					}
-					break;
-				case kMaskRuleUVMIN:
-					if (location->u() < THRESH0 || location->v() < THRESH0) {
-						return;
-					}
-					break;
-				case kMaskRuleUorV:
-					if (location->u() < THRESH8 && location->v() < THRESH8) {
-						return;
-					}
-					break;
-				case kMaskRuleUandV:
-					if (location->u() < THRESH8 || location->v() < THRESH8) {
-						return;
-					}
-					break;
-				}
-			}
-		}
-	}
-#endif
 
 	readPointer = tilePointer;
 	lowBound = MIN((int)(drawPoint.y + height), (int)map->size.y);
@@ -308,24 +204,6 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 			}
 		}
 	}
-
-	// Compute dirty rect
-	int rectX = MAX<int>(drawPoint.x, 0);
-	int rectY = MAX<int>(drawPoint.y, 0);
-	int rectX2 = MIN<int>(drawPoint.x + SAGA_ISOTILE_WIDTH, map->size.x);
-	int rectY2 = lowBound;
-	debugC(3, kDebugTiles, "Rect = (%d,%d,%d,%d)", rectX, rectY, rectX2, rectY2);
-
-	// FIXME: Debug purposes-code for displaying things on the screen
-	// updateScreen should not be called here
-	warning("FIXME: drawTile");
-	Graphics::Surface sur;
-	sur.create(map->size.x, map->size.y, Graphics::PixelFormat::createFormatCLUT8());
-	sur.setPixels(map->data);
-	//sur.debugPrint();
-	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
-	g_system->updateScreen();
-	//g_vm->_render->addDirtyRect(Common::Rect(rectX, rectY, rectX2, rectY2));
 }
 
 
