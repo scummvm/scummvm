@@ -50,6 +50,7 @@
 #include "gui/widgets/list.h"
 #include "gui/widgets/tab.h"
 #include "gui/widgets/popup.h"
+#include "gui/widgets/grid.h"
 #include "gui/ThemeEval.h"
 #include "engines/advancedDetector.h"
 
