@@ -545,8 +545,8 @@ gOwnerSelCompButton *autoAggressBtn,
 
 
 static int deferredLoadID = 0;
-static bool deferredLoadFlag = FALSE;
-static bool deferredSaveFlag = FALSE;
+static bool deferredLoadFlag = false;
+static bool deferredSaveFlag = false;
 static char deferredSaveName[64];
 
 inline bool isUserAction(gEvent ev) {
@@ -609,19 +609,19 @@ bool getSaveName(int8 saveNo, SaveFileHeader &header) {
 	getSaveFileName(saveNo, fileName);
 
 	//  Open the file or throw an exception
-	if ((fileHandle = fopen(fileName, "rb")) == NULL) {
-		return FALSE;
+	if ((fileHandle = fopen(fileName, "rb")) == nullptr) {
+		return false;
 	}
 
 	//  Read the save file header
 	if (fread(&header, sizeof(header), 1, fileHandle) != 1) {
-		return FALSE;
+		return false;
 	}
 
 	// close the used file handle
-	if (fileHandle != NULL) fclose(fileHandle);
+	if (fileHandle != nullptr) fclose(fileHandle);
 
-	return TRUE;
+	return true;
 }
 
 
@@ -634,7 +634,7 @@ int16 FileDialog(int16 fileProcess) {
 	char    **fieldStrings;
 	uint16  stringIndex;
 	bool    displayOnly;
-	void    **arrowUpIm = NULL, **arrowDnIm = NULL, **pushBtnIm = NULL;
+	void    **arrowUpIm = nullptr, **arrowDnIm = nullptr, **pushBtnIm = nullptr;
 
 	AppFunc *fileCommands[2]  = { cmdFileSave, cmdFileLoad };
 
@@ -654,10 +654,10 @@ int16 FileDialog(int16 fileProcess) {
 
 	if (fileProcess == typeSave) {
 		stringIndex = 0;
-		displayOnly = FALSE;
+		displayOnly = false;
 	} else {
 		stringIndex = 1;
-		displayOnly = TRUE;
+		displayOnly = true;
 	}
 
 	// resource info
@@ -669,7 +669,7 @@ int16 FileDialog(int16 fileProcess) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	// point to the modal window
 	ModalWindow     *win;
@@ -684,8 +684,8 @@ int16 FileDialog(int16 fileProcess) {
 #ifndef ALLOW_BAD_LOADS
 	if (displayOnly && numValid(fieldStrings) == 0) {
 		destroyFileFields(fieldStrings);
-		if (userDialog("Error", "No saved games to load!\n Would you like to start over?", "_Yes", "_No", NULL) != 1) {
-			deferredLoadFlag = TRUE;
+		if (userDialog("Error", "No saved games to load!\n Would you like to start over?", "_Yes", "_No", nullptr) != 1) {
+			deferredLoadFlag = true;
 			deferredLoadID = 999;
 			return typeLoad;
 		}
@@ -705,7 +705,7 @@ int16 FileDialog(int16 fileProcess) {
 	// create the window
 	checkAlloc(win = new ModalWindow(saveLoadWindowRect,
 	                                 0,
-	                                 NULL));
+	                                 nullptr));
 
 	gCompButton *t;
 	// make the quit button
@@ -727,14 +727,14 @@ int16 FileDialog(int16 fileProcess) {
 	//t->accelKey=34+0x80;
 	// attach the title
 	checkAlloc(new CPlaqText(*win, saveLoadTextRects[0],
-	                         textStrings[stringIndex][0], &Plate18Font, NULL, pal, 0, NULL));
+	                         textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr));
 
 
 
 	// attach the text box editing field object
 	checkAlloc(textBox          = new gTextBox(*win, editBaseRect, &Onyx10Font,
 	        textHeight, textPen, textBackground, textHilite, textBackHilite, cursorColor,
-	        NULL, "Error out", fieldStrings, editLen, 0, (uint16) - 1, displayOnly, NULL,
+	        nullptr, "Error out", fieldStrings, editLen, 0, (uint16) - 1, displayOnly, nullptr,
 	        fileCommands[fileProcess], cmdDialogQuit));
 
 
@@ -752,12 +752,12 @@ int16 FileDialog(int16 fileProcess) {
 	//win->draw();
 	//G_BASE.setActive(textBox);
 
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 
 	// remove the window all attatched controls
 	if (win) delete win;
-	win = NULL;
+	win = nullptr;
 
 	// unload all image arrays
 	unloadImageRes(arrowUpIm, numBtnImages);
@@ -767,7 +767,7 @@ int16 FileDialog(int16 fileProcess) {
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 	// destroy the file fields
 	destroyFileFields(fieldStrings);
@@ -824,10 +824,10 @@ int16 OptionsDialog(bool disableSaveResume) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 	deferredLoadID = 0;
-	deferredLoadFlag = FALSE;
-	deferredSaveFlag = FALSE;
+	deferredLoadFlag = false;
+	deferredSaveFlag = false;
 	deferredSaveName[0] = '\0';
 
 	// point to the modal window
@@ -860,7 +860,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	// create the window
 	checkAlloc(win = new ModalWindow(optionsWindowRect,
 	                                 0,
-	                                 NULL));
+	                                 nullptr));
 	gCompButton *t;
 
 	// buttons
@@ -919,11 +919,11 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                       0, cmdSetMIDIVolume));
 
 	checkAlloc(new CPlaqText(*win, optionsTextRects[0],
-	                         textStrings[0], &Plate18Font, 0, pal, 0, NULL));
+	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr));
 
 	for (int i = 1; i < numOptionsTexts; i++) {
 		checkAlloc(new CPlaqText(*win, optionsTextRects[i],
-		                         textStrings[i], &SmallFont, textPosLeft, pal, 0, NULL));
+		                         textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr));
 	}
 
 	win->setDecorations(optionsDecorations,
@@ -934,13 +934,13 @@ int16 OptionsDialog(bool disableSaveResume) {
 	win->userData = &rInfo;
 	win->open();
 
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 	writeConfig();
 
 	// remove the window all attatched controls
 	if (win) delete win;
-	win = NULL;
+	win = nullptr;
 
 	// unload all image arrays
 	unloadImageRes(slideFaceImag,   numSlideFace);
@@ -949,7 +949,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 	// replace the damaged area
 
@@ -998,10 +998,10 @@ char stripAccel(char *t, const char *s) {
 	char accel = '\0';
 	char    *underscore;
 
-	if (t == NULL || s == NULL) return accel;
+	if (t == nullptr || s == nullptr) return accel;
 	strcpy(t, s);
 
-	if ((underscore = strchr(t, '_')) != NULL) {
+	if ((underscore = strchr(t, '_')) != nullptr) {
 		accel = toupper(underscore[1]);
 		strcpy(underscore, s + (underscore - t) + 1);
 	}
@@ -1024,7 +1024,7 @@ hResContext     *udDecRes;
 // compressed image array
 void    **udDialogPushImag;
 
-bool    udInit = FALSE;
+bool    udInit = false;
 
 bool initUserDialog(void) {
 
@@ -1039,7 +1039,7 @@ bool initUserDialog(void) {
 	// create the window
 	checkAlloc(udWin = new ModalWindow(messageWindowRect,
 	                                   0,
-	                                   NULL));
+	                                   nullptr));
 
 	udWin->setDecorations(messageDecorations,
 	                      elementsof(messageDecorations),
@@ -1048,11 +1048,11 @@ bool initUserDialog(void) {
 	udWin->userData = &udrInfo;
 
 	if (udDecRes) resFile->disposeContext(udDecRes);
-	udDecRes = NULL;
+	udDecRes = nullptr;
 
-	udInit = TRUE;
+	udInit = true;
 
-	return TRUE;
+	return true;
 }
 
 bool userDialogAvailable(void) {
@@ -1060,10 +1060,10 @@ bool userDialogAvailable(void) {
 }
 
 void cleanupUserDialog(void) {
-	udInit = FALSE;
+	udInit = false;
 	// remove the window all attatched controls
 	if (udWin) delete   udWin;
-	udWin = NULL;
+	udWin = nullptr;
 
 	// unload all image arrays
 	unloadImageRes(udDialogPushImag, numBtnImages);
@@ -1094,10 +1094,10 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	// make the text coloring object
 	textPallete     pal(33 + 9, 36 + 9, 41 + 9, 34 + 9, 40 + 9, 43 + 9);
 
-	if (udWin == NULL) return -1;
+	if (udWin == nullptr) return -1;
 
 	udrInfo.result  = -1;
-	udrInfo.running = TRUE;
+	udrInfo.running = true;
 
 	gCompButton *t;
 
@@ -1124,16 +1124,16 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// title for the box
 	checkAlloc(new CPlaqText(*udWin, messageTextRects[0],
-	                         title, &Plate18Font, NULL, pal, 0, NULL));
+	                         title, &Plate18Font, nullptr, pal, 0, nullptr));
 
 	// message for box
 	checkAlloc(new CPlacardPanel(*udWin, messageTextRects[1],
-	                             msg, &Onyx10Font, NULL, pal, 0, NULL));
+	                             msg, &Onyx10Font, nullptr, pal, 0, nullptr));
 
 
 	udWin->open();
 
-	EventLoop(udrInfo.running, TRUE);
+	EventLoop(udrInfo.running, true);
 
 	udWin->close();
 
@@ -1153,10 +1153,10 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
  * ===================================================================== */
 
 bool initUserDialog(void) {
-	return TRUE;
+	return true;
 }
 bool userDialogAvailable(void) {
-	return TRUE;
+	return true;
 }
 void cleanupUserDialog(void) {}
 
@@ -1201,7 +1201,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	void    **dialogPushImag;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	if (!fullInitialized)
 		return -1;
@@ -1216,7 +1216,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	// create the window
 	checkAlloc(win = new ModalWindow(messageWindowRect,
 	                                 0,
-	                                 NULL));
+	                                 nullptr));
 
 	gCompButton *t;
 
@@ -1243,11 +1243,11 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// title for the box
 	checkAlloc(new CPlaqText(*win, messageTextRects[0],
-	                         title, &Plate18Font, NULL, pal, 0, NULL));
+	                         title, &Plate18Font, 0, pal, 0, nullptr));
 
 	// message for box
 	checkAlloc(new CPlacardPanel(*win, messageTextRects[1],
-	                             msg, &Onyx10Font, NULL, pal, 0, NULL));
+	                             msg, &Onyx10Font, 0, pal, 0, nullptr));
 
 	win->setDecorations(messageDecorations,
 	                    elementsof(messageDecorations),
@@ -1258,7 +1258,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	win->open();
 
 
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 
 	// remove the window all attatched controls
@@ -1269,7 +1269,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
-	decRes = NULL;
+	decRes = nullptr;
 
 	// replace the damaged area
 	mainWindow->invalidate(messageWindowRect);
@@ -1342,7 +1342,7 @@ int16 CPlacardWindow:: SplitString(
 
 	for (count = 0; count < maxStrings;) {
 		textStart[count++] = text;
-		if ((text = strchr(text, delimiter)) == NULL) break;
+		if ((text = strchr(text, delimiter)) == nullptr) break;
 		*text++ = '\0';
 	}
 	return count;
@@ -1355,7 +1355,7 @@ bool CPlacardWindow::pointerHit(gPanelMessage &) {
 	requestInfo     *ri;
 
 	win = getWindow();      // get the window pointer
-	ri = win ? (requestInfo *)win->userData : NULL;
+	ri = win ? (requestInfo *)win->userData : nullptr;
 
 	if (ri) {
 		ri->running = 0;
@@ -1363,7 +1363,7 @@ bool CPlacardWindow::pointerHit(gPanelMessage &) {
 	}
 
 	//activate( gEventMouseDown );
-	return TRUE;
+	return true;
 }
 
 void CPlacardWindow::drawClipped(
@@ -1397,7 +1397,7 @@ void CPlacardWindow::drawClipped(
 		                 textFont,
 		                 0,
 		                 textPal,
-		                 FALSE,
+		                 false,
 		                 titleStrings[i]);
 	}
 }
@@ -1453,7 +1453,7 @@ int16 CPlacardPanel:: SplitString(
 
 	for (count = 0; count < maxStrings;) {
 		textStart[count++] = text;
-		if ((text = strchr(text, delimiter)) == NULL) break;
+		if ((text = strchr(text, delimiter)) == nullptr) break;
 		*text++ = '\0';
 	}
 	return count;
@@ -1488,7 +1488,7 @@ void CPlacardPanel::drawClipped(
 		                 buttonFont,
 		                 0,
 		                 textFacePal,
-		                 FALSE,
+		                 false,
 		                 titleStrings[i]);
 	}
 }
@@ -1528,7 +1528,7 @@ void placardWindow(int8 type, char *text) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	// point to the modal window
 	CPlacardWindow      *win;
@@ -1548,7 +1548,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(62, 64, 67, 11, 23, 17);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectWood, 0, NULL, text, pal, &Plate18Font));
+		checkAlloc(win = new CPlacardWindow(plaqRectWood, 0, nullptr, text, pal, &Plate18Font));
 
 		// setup the background imagery
 		win->setDecorations(plaqDecWood,
@@ -1563,7 +1563,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(16, 12, 18, 11, 23, 0x78);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectStone, 0, NULL, text, pal, &Plate18Font));
+		checkAlloc(win = new CPlacardWindow(plaqRectStone, 0, nullptr, text, pal, &Plate18Font));
 
 		// setup the background imagery
 		win->setDecorations(plaqDecStone,
@@ -1578,7 +1578,7 @@ void placardWindow(int8 type, char *text) {
 		pal.set(89, 93, 95, 11, 23, 0x76);
 
 		// create the window
-		checkAlloc(win = new CPlacardWindow(plaqRectBrass, 0, NULL, text, pal, &Plate18Font));
+		checkAlloc(win = new CPlacardWindow(plaqRectBrass, 0, nullptr, text, pal, &Plate18Font));
 
 		// setup the background imagery
 		win->setDecorations(plaqDecBrass,
@@ -1597,7 +1597,7 @@ void placardWindow(int8 type, char *text) {
 	win->open();
 
 
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 
 	// remove the window all attatched controls
@@ -1615,18 +1615,18 @@ void placardWindow(int8 type, char *text) {
 
 
 void updateAutoAggressionButton(bool setting) {
-	if (autoAggressBtn != NULL)
+	if (autoAggressBtn != nullptr)
 		autoAggressBtn->select(setting);
 }
 
 void updateAutoWeaponButton(bool setting) {
-	if (autoWeaponBtn != NULL)
+	if (autoWeaponBtn != nullptr)
 		autoWeaponBtn->select(setting);
 }
 
 //void updateShowNightButton( bool setting )
 //{
-//	if ( nightBtn != NULL )
+//	if ( nightBtn != nullptr )
 //		nightBtn->select( setting );
 //}
 
@@ -1637,7 +1637,7 @@ APPFUNC(cmdDialogQuit) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -1653,7 +1653,7 @@ APPFUNC(cmdFileSave) {
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		// now close the window
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -1670,7 +1670,7 @@ APPFUNC(cmdFileSave) {
 		saveGameState(saveIndex, textBox->getLine(saveIndex));
 #else
 		deferredLoadID = saveIndex;
-		deferredSaveFlag = TRUE;
+		deferredSaveFlag = true;
 		strcpy(deferredSaveName, textBox->getLine(saveIndex));
 #endif
 	}
@@ -1690,7 +1690,7 @@ APPFUNC(cmdFileLoad) {
 
 			// close window
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : NULL;
+			ri = win ? (requestInfo *)win->userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
@@ -1698,7 +1698,7 @@ APPFUNC(cmdFileLoad) {
 			}
 
 			deferredLoadID = saveNo;
-			deferredLoadFlag = TRUE;
+			deferredLoadFlag = true;
 		}
 	}
 }
@@ -1733,13 +1733,13 @@ APPFUNC(cmdOptionsNewGame) {
 		gWindow         *win;
 		requestInfo     *ri;
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : NULL;
+		ri = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
 			ri->result = ev.panel->id;
 			deferredLoadID = 999;
-			deferredLoadFlag = TRUE;
+			deferredLoadFlag = true;
 		}
 	}
 }
@@ -1753,7 +1753,7 @@ APPFUNC(cmdOptionsLoadGame) {
 		// if the fileDialog actually did loading
 		if (FileDialog(typeLoad) == typeLoad) {
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : NULL;
+			ri = win ? (requestInfo *)win->userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
@@ -1769,17 +1769,17 @@ APPFUNC(cmdQuitGame) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri  = win ? (requestInfo *)win->userData : NULL;
+		ri  = win ? (requestInfo *)win->userData : nullptr;
 
 		if (ri
 		        &&  userDialog(
 		            VFYX_DIALOG_NAME,
 		            VFYX_DIALOG_CAPTION,
 		            VFYX_DIALOG_BUTTON1,
-		            VFYX_DIALOG_BUTTON2, NULL) == 0) {
+		            VFYX_DIALOG_BUTTON2, nullptr) == 0) {
 			endGame();
 
-			ri->running = FALSE;
+			ri->running = false;
 			ri->result = ev.panel->id;
 		}
 	}
