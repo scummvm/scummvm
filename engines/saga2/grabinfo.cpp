@@ -57,7 +57,7 @@ GrabInfo::GrabInfo() {
 
 GrabInfo::~GrabInfo() {
 	if (pointerMap.data != NULL)
-		RDisposePtr(pointerMap.data);
+		delete[] pointerMap.data;
 }
 
 // set the move count based on val and whether the object is
@@ -193,7 +193,7 @@ void GrabInfo::setIcon(void) {
 	mapBytes = spr->size.x * spr->size.y;
 
 	if ((mapData
-	        = (uint8 *)RNewPtr(mapBytes, NULL, "Mouse icon data"))
+	        = new uint8[mapBytes]())
 	        !=  NULL) {
 		//  Clear out the image data
 		memset(mapData, 0, mapBytes);
@@ -217,7 +217,7 @@ void GrabInfo::clearIcon(void) {
 	assert(grabObj == NULL);
 
 	if (pointerMap.data != NULL) {
-		RDisposePtr(pointerMap.data);
+		delete[] pointerMap.data;
 		pointerMap.size.x = 0;
 		pointerMap.size.y = 0;
 		pointerMap.data = NULL;
