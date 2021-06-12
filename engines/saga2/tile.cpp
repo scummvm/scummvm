@@ -106,7 +106,6 @@ void setAreaSound(const TilePoint &baseCoords);
 TileBankPtr tileBanks[maxBanks];
 extern HandleArray tileImageBanks;
 
-void tileFault(int bank, int num);
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
 void updateFrameCount(void);
 

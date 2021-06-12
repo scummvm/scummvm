@@ -36,45 +36,13 @@ namespace Saga2 {
 
 const uint16 tileBankCount = 25;
 
-const uint32            tileImageID     = MKTAG('T', 'I', 'L',  0);
+const uint32 tileImageID = MKTAG('T', 'I', 'L',  0);
 
-/* ===================================================================== *
-   Prototypes
- * ===================================================================== */
-
-//  Assembly-language function to copy pixel to SVGA
-
-#if DEBUG
-void TPLine(const TilePoint &start, const TilePoint &stop);
-#endif
-
-
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
 
 extern gPixelMap            tileDrawMap;
-
 extern int16                currentMapNum;
-
 extern hResource           *objResFile;
-
-/* ===================================================================== *
-   Tile structure management
- * ===================================================================== */
-
 extern hResContext          *tileRes;       // tile resource handle
-
-/* ===================================================================== *
-   Debugging displays
- * ===================================================================== */
-
-void sprintBA(char buf[], BitArray *x);
-
-/* ===================================================================== *
-   Debugging displays
- * ===================================================================== */
-
 
 static byte *tileResLoad(hResID i, bool asynch = FALSE) {
 	if (tileRes)
@@ -83,41 +51,12 @@ static byte *tileResLoad(hResID i, bool asynch = FALSE) {
 		return nullptr;
 }
 
-
-//LoadOnCall<UByteHandle> tileImageBanks(64, tileResLoad, tileImageID);
 HandleArray tileImageBanks(64, tileResLoad, tileImageID);
-
-/* ===================================================================== *
-   Debugging displays
- * ===================================================================== */
-
-
-void showBanks() {
-}
-
-void showBank(BankBits bb) {
-	WriteStatusF(4, "%8.8X:%8.8X  ", bb.b[1], bb.b[0]);
-}
-
-void sprintBA(char buf[], BitArray *x) {
-	uint32 v;
-	if (x->currentSize())
-		for (int16 i = (uint16) x->currentSize() / 32 ; i >= 0; i--) {
-			v = x->getChunk(i);
-			sprintf(buf, "%8.8X", v);
-			if (i) sprintf(buf, ",");
-		}
-}
-
-/* ===================================================================== *
-   load tile resources as needed
- * ===================================================================== */
 
 void initTileBank(int16 bankNum) {
 	byte *th;
 	th = tileImageBanks[bankNum];
 }
-
 
 void RHeapsAMess(void);
 
@@ -138,15 +77,6 @@ void updateHandleRefs(const TilePoint &) { //, StandingTileInfo *stiResult )
 	tileImageBanks.flush();
 }
 
-#if DEBUG
-void tileFault(int bank, int num) {
-	WriteStatusF(0, "Bad Tile: %d/%d", bank, num);
-}
-#else
-void tileFault(int, int) {
-}
-#endif
-
 void initTileBanks(void) {
 	for (int16 i = 0; i < tileBankCount; i++)
 		initTileBank(i);
@@ -157,7 +87,6 @@ void drawPlatform(
     Point16         screenPos,              // screen position
     int16           uOrg,                   // for TAG search
     int16           vOrg) {                 // for TAG search
-	int16           u, v;
 
 	int16           right = tileDrawMap.size.x,
 	                bottom = tileDrawMap.size.y;
@@ -171,21 +100,21 @@ void drawPlatform(
 
 	tilePos.y = screenPos.y - (platformWidth - 1) * tileHeight;
 
-	u = platformWidth - 1;
-	v = platformWidth - 1;
+	int16 u = platformWidth - 1;
+	int16 v = platformWidth - 1;
 
 	debugC(3, kDebugTiles, "drawPlatform: right = %d, bottom = %d, x = %d, x2 = %d, origin = %d,%d, tilePos.y=%d, u,v = %d,%d", right, bottom, x, x2, origin.u, origin.v,
 	       tilePos.y, u, v);
 
 	for (int row = 0; row < 15; row++) {
 		if (tilePos.y > 0) {
-			int16   col = 0;
+			int16 col = 0;
 			TilePoint pCoords(u, v, 0);
 
 			tilePos.x = x;
 
 			if (length > x2) {
-				int16   offset = (length - x2) >> 1;
+				int16 offset = (length - x2) >> 1;
 
 				pCoords.u += offset;
 				pCoords.v -= offset;
@@ -199,36 +128,25 @@ void drawPlatform(
 			        col += 2,
 			        pCoords.u++,
 			        pCoords.v--,
-			        tilePos.x += tileWidth
-			    ) {
-				Platform    **pGet;
+			        tilePos.x += tileWidth) {
 
-				if (tilePos.x < 0) continue;
+				if (tilePos.x < 0)
+					continue;
 
-				for (pGet = pList; *pGet; pGet++) {
-					Platform    &p = **pGet;
-					int16       h,
-					            y;
-					TileInfo    *ti;
-					uint8       *imageData;
-					int16       trFlags;
+				for (Platform **pGet = pList; *pGet; pGet++) {
+					Platform &p = **pGet;
+					int16 h;
+					uint8 *imageData;
+					int16 trFlags;
 
-					ti =    p.fetchTile(
-					            currentMapNum,
-					            pCoords,
-					            origin,
-					            &imageData,
-					            h,
-					            trFlags);
-					if (ti == NULL) continue;
+					TileInfo *ti = p.fetchTile(currentMapNum, pCoords, origin, &imageData, h, trFlags);
+					if (ti == NULL)
+						continue;
 
-					y = tilePos.y - h;
+					int16 y = tilePos.y - h;
 
-					if (ti->attrs.height > 0
-					        && y < bottom + ti->attrs.height - 1) {
-						drawTile(&tileDrawMap,
-						         tilePos.x, y, ti->attrs.height,
-						         imageData);
+					if (ti->attrs.height > 0 && y < bottom + ti->attrs.height - 1) {
+						drawTile(&tileDrawMap, tilePos.x, y, ti->attrs.height, imageData);
 					}
 				}
 			}
