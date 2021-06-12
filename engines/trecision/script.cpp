@@ -391,8 +391,18 @@ void TrecisionEngine::changeRoom(uint16 room, uint16 action, byte position) {
 
 	_logicMgr->endChangeRoom();
 
+	// WORKAROUND: Set position *again*. Fixes entering some rooms
+	// (e.g. kRoom23A, kRoom2D, kRoom28).
+	// The first two checks have been duplicated from endChangeRoom()
+	if (_curRoom == kRoom31 && !_room[kRoom31].isDone())
+		_pathFind->setPosition(14);
+	else if (_oldRoom == kRoom41D && _inventoryObj[kItemPositioner].isFlagExtra())
+		_pathFind->setPosition(30);
+	else
+		_pathFind->setPosition(position);
+
 	_room[_curRoom].setDone(true);            // Visited
-	_renderer->drawCharacter(CALCPOINTS);    // for right _actorPos entrance
+	_renderer->drawCharacter(CALCPOINTS);     // for right _actorPos entrance
 }
 
 void TrecisionEngine::doIdle() {
