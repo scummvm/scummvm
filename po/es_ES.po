@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-12 11:15+0000\n"
+"POT-Creation-Date: 2021-06-12 15:07+0000\n"
 "PO-Revision-Date: 2021-06-07 16:41+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -2025,7 +2025,7 @@ msgstr "Error al ejecutar el juego:"
 msgid "Could not find any engine capable of running the selected game"
 msgstr "No se ha encontrado ningún motor capaz de ejecutar este juego"
 
-#: common/achievements.cpp:227
+#: common/achievements.cpp:229
 msgid "Achievement unlocked!"
 msgstr "¡Logro desbloqueado!"
 
