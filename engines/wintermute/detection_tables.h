@@ -262,15 +262,15 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alavi", "Try version",
 		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_ANDISHE_VARAN),
 
-	// Alimardan's Mischief
+	// Alimardan's Mischief (English)
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "55c28b8d4f49120f980d237951a6c73f", 1834957694), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Alimardan's Mischief (Steam, August 2017)
+	// Alimardan's Mischief (Steam, August 2017) (English)
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "ef27d8483d6f19d5398fc81ea05e5320", 1258766332), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Alimardan's Mischief (Steam, October 2017)
+	// Alimardan's Mischief (Steam, October 2017) (English)
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -942,11 +942,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("findinghope", "",
 		WME_ENTRY1s("default.game", "57db79e9de62b9d1c7a335822f6242ff", 742), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Forgotten Sound 1 - Revelation (Steam, January 2018)
+	// Forgotten Sound 1 - Revelation (Steam, January 2018) (English)
 	WME_WINENTRY("forgottensound1", "",
 		WME_ENTRY1s("data.dcp", "01b8b2b4c55c2d83071f5730269cb313", 937507449), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
-	// Forgotten Sound 2 - Destiny (Steam, January 2018)
+	// Forgotten Sound 2 - Destiny (Steam, January 2018) (English)
 	WME_WINENTRY("forgottensound2", "",
 		WME_ENTRY1s("data.dcp", "d743f4ffee2a7cc939e314f29a1a0cd6", 1244439717), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
@@ -1255,12 +1255,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("framed", "Beta",
 		WME_ENTRY1s("data.dcp", "e7259fb36f2c6f9f28242291e0c3de98", 34690568), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_11),
 
-	// Ghost in the Sheet (Engligh, v1.00)
+	// Ghost in the Sheet (English, v1.00)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "f53acdc5510aa184f6f968e38d8c9ad7", 12008908,
 					"data.dcp", "5e7f7d98680825bb81fca11e5493c1ad", 168658), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
 
-	// Ghost in the Sheet (Engligh, BigFish)
+	// Ghost in the Sheet (BigFish) (English)
 	WME_WINENTRY("ghostsheet", "",
 		WME_ENTRY2s("english.dcp", "e6d0aad2c89996bcabe416105a3d6d3a", 12221017,
 					"data.dcp", "b2f8b05328e4881e15e98e845b63f451", 168003), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_0),
@@ -5176,11 +5176,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
-	// Murder In Tehran's Alleys 1933 (Steam, June 2017)
+	// Murder In Tehran's Alleys 1933 (Steam, June 2017) (English)
 	WME_WINENTRY("tehran1933", "",
 		WME_ENTRY1s("data.dcp", "7d74999f8a926bce367b2f851a06bc1c", 890506879), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
-	// Murder In Tehran's Alleys 2016 (Steam, June 2017)
+	// Murder In Tehran's Alleys 2016 (Steam, June 2017) (English)
 	WME_WINENTRY("tehran2016", "",
 		WME_ENTRY1s("data.dcp", "952346c4d7a08986688b3cc583215d33", 1163612836), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
 
@@ -5293,7 +5293,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("war", "",
 		WME_ENTRY1s("data.dcp", "003e317cda6d0137bbd5e5d7f089ee4d", 32591890), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
-	// The Way Of Love: Sub Zero (Engligh)
+	// The Way Of Love: Sub Zero (English)
 	WME_WINENTRY("wayoflove", "",
 		WME_ENTRY2s("data.dcp", "201d74cce6b89ce6d5b61a24b5e88809", 1224687223,
 					"language.dcp", "97ae6c028be982ca419416fab77efc76", 663912), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
