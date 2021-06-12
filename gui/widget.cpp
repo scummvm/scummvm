@@ -1264,31 +1264,32 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	Common::Array<GridItemWidget *>::iterator iter = _gridItems.begin() + (_firstVisibleItem % _gridItems.size());
 
 	for (int k = 0; k < _gridItems.size(); ++k) {
-		(*iter)->setPos((*iter)->getRelX(), scrollSpeed + (*iter)->getRelY());
+		GridItemWidget *it = *iter;
+		it->setPos(it->getRelX(), scrollSpeed + it->getRelY());
 
-		if ((*iter)->getRelY() <= -_gridItemHeight) {
-			(*iter)->setVisible(false);
-			if ((*iter)->getRelY() <= -((_gridItemHeight) * 2)) {
-				(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY() + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+		if (it->getRelY() <= -_gridItemHeight) {
+			it->setVisible(false);
+			if (it->getRelY() <= -((_gridItemHeight) * 2)) {
+				it->setPos(it->getRelX(), it->getRelY() + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
 			}
 		}
-		else if ((*iter)->getRelY() >= _h) {
-			(*iter)->setVisible(false);
-			if ((*iter)->getRelY() >= -_gridItemHeight + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80))) {
-				(*iter)->setPos((*iter)->getRelX(), (*iter)->getRelY() - ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+		else if (it->getRelY() >= _h) {
+			it->setVisible(false);
+			if (it->getRelY() >= -_gridItemHeight + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80))) {
+				it->setPos(it->getRelX(), it->getRelY() - ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
 			}
 		}
 		else {
-			(*iter)->setVisible(true);
+			it->setVisible(true);
 		}
 
 		if (eIter != _visibleEntries.end()) {
-			(*iter)->setActiveEntry(*eIter);
+			it->setActiveEntry(*eIter);
 			eIter++;
 		}
 		else {
-			(*iter)->setActiveEntry(*_visibleEntries.begin());
-			(*iter)->setVisible(false);
+			it->setActiveEntry(*_visibleEntries.begin());
+			it->setVisible(false);
 		}
 		iter++;
 		if (iter == _gridItems.end())
