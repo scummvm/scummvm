@@ -225,7 +225,7 @@ void gMousePointer::setImage(
 		pointerImage = &img;
 		currentPosition = pos + offsetPosition;
 
-		CursorMan.replaceCursor(img.data, img.size.x, img.size.y, x + img.size.x, y, 0);
+		CursorMan.replaceCursor(img.data, img.size.x, img.size.y, -x, -y, 0);
 		CursorMan.showMouse(true);
 		show();
 	}
