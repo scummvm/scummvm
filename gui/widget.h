@@ -489,13 +489,13 @@ class GridItemWidget;
 /* GridWidget */
 class GridWidget : public ContainerWidget {
 private:
-	Common::Array<Graphics::ManagedSurface *> _platformIcons;
+	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
 	// _gridItems should be reserved to hold few more than visible items
 	// Fixing it to 30 for now, 6 items * (4 rows + 1 extra row);
 	Common::Array<GridItemWidget *> _gridItems;
 	Common::Array<GridItemInfo> _allEntries;
 	Common::Array<GridItemInfo> _visibleEntries;
-	Common::HashMap<Common::String, Graphics::ManagedSurface *> _loadedSurfaces;
+	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
 	Common::Array<Common::Array<GridItemWidget *>> _grid;
 
@@ -519,8 +519,8 @@ public:
 	GridWidget(GuiObject *boss, int x, int y, int w, int h);
 	GridWidget(GuiObject *boss, const Common::String &name);
 
-	Graphics::ManagedSurface * filenameToSurface(Common::String &name);
-	Graphics::ManagedSurface * platformToSurface(Platform platformCode);
+	const Graphics::ManagedSurface * filenameToSurface(Common::String &name);
+	const Graphics::ManagedSurface * platformToSurface(Platform platformCode);
 
 
 	bool calcVisibleEntries(void);
