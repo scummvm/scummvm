@@ -25,6 +25,7 @@
 
 #include "trecision/console.h"
 #include "trecision/dialog.h"
+#include "trecision/pathfinding3d.h"
 #include "trecision/scheduler.h"
 #include "trecision/text.h"
 #include "trecision/trecision.h"
@@ -38,6 +39,7 @@ Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
 	registerCmd("item",			WRAP_METHOD(Console, Cmd_Item));
 	registerCmd("say",			WRAP_METHOD(Console, Cmd_Say));
+	registerCmd("position",		WRAP_METHOD(Console, Cmd_Position));
 }
 
 Console::~Console() {
@@ -159,6 +161,18 @@ bool Console::Cmd_Say(int argc, const char **argv) {
 
 	const uint16 sentenceId = (uint16)atoi(argv[1]);
 	_vm->_textMgr->characterSay(sentenceId);
+
+	return false;
+}
+
+bool Console::Cmd_Position(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Use %s <positionId> to set Joshua's position\n", argv[0]);
+		return true;
+	}
+
+	const uint16 positionId = (uint16)atoi(argv[1]);
+	_vm->_pathFind->setPosition(positionId);
 
 	return false;
 }
