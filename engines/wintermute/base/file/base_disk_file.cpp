@@ -61,8 +61,10 @@ static Common::FSNode getNodeForRelativePath(const Common::String &filename) {
 	}
 
 	// Relative path:
-	if (filename.contains('/')) {
-		Common::StringTokenizer path(filename, "/");
+	Common::String fixedFilename = filename;
+	correctSlashes(fixedFilename);
+	if (fixedFilename.contains('/')) {
+		Common::StringTokenizer path(fixedFilename, "/");
 
 		// Start traversing relative to the game-data-dir
 		const Common::FSNode gameDataDir(ConfMan.get("path"));
