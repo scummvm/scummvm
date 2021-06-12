@@ -1422,11 +1422,24 @@ static void readMetaTile(hResContext *con, MetaTile &til) {
 	til.properties = con->readU32LE();
 }
 
+static void readActiveItem(hResContext *con, ActiveItem &itm) {
+	// FIXME: 32-bit pointer to 64-bit pointer conversion.
+	// Is this dangerous?
+	itm.nextHash = (ActiveItemPtr)con->readU32LE();
+	itm.scriptClassID = con->readU16LE();
+	itm.associationOffset = con->readU16LE();
+	itm.numAssociations = con->readByte();
+	itm.itemType = con->readByte();
+	itm.group.grDataOffset = con->readU16LE();
+	itm.instance.groupID = con->readU16LE();
+}
+
 void initMaps(void) {
 	int16       i;
 	const int metaTileSize = 30;
 	const int tileRefSize = 4;
 	const int assocSize = 2;
+	const int activeItemSize = 14;
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
@@ -1500,10 +1513,11 @@ void initMaps(void) {
 
 		//  If there is an active item list, load it
 		if (tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			mapData->activeItemList =
-			    (ActiveItemPtr)LoadResource(tileRes,
-			        tagID + MKTAG(0, 0, 0, (uint8)i),
-			        "active item list");
+			int activeItemCount = tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) / activeItemSize;
+			mapData->activeItemList = new ActiveItem[activeItemCount];
+			for (int k = 0; k < activeItemCount; ++k)
+				readActiveItem(tileRes, mapData->activeItemList[k]);
+
 			if (mapData->activeItemList == nullptr)
 				error("Unable to load active item list");
 		} else
