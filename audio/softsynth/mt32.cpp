@@ -77,7 +77,14 @@ public:
 		error("MT32emu: Init Error - Missing PCM ROM image");
 	}
 	void showLCDMessage(const char *message) {
-		Common::OSDMessageQueue::instance().addMessage(Common::U32String(message));
+		// Don't show messages that are only spaces, e.g. the first
+		// message in Operation Stealth.
+		for (const char *ptr = message; *ptr; ptr++) {
+			if (*ptr != ' ') {
+				Common::OSDMessageQueue::instance().addMessage(Common::U32String(message));
+				break;
+			}
+		}
 	}
 
 	// Unused callbacks
