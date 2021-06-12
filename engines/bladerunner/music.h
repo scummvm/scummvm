@@ -81,6 +81,7 @@ public:
 
 
 private:
+	void reset();
 	void adjustVolume(int volume, uint32 delaySeconds);
 	void adjustPan(int pan, uint32 delaySeconds);
 

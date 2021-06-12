@@ -34,14 +34,9 @@ namespace BladeRunner {
 
 Music::Music(BladeRunnerEngine *vm) {
 	_vm = vm;
-	_channel = -1;
 	_musicVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
-	_isPlaying = false;
-	_isPaused = false;
-	_current.loop = false;
-	_isNextPresent = false;
-	_data = nullptr;
-	_stream = nullptr;
+	reset();
+
 }
 
 Music::~Music() {
@@ -55,9 +50,22 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(timerCallbackNext);
 #else
 	// probably not really needed, but tidy up anyway
+	reset();
 	_vm->_audioMixer->stopAppTimerProc(kAudioMixerAppTimerMusicFadeOut);
 	_vm->_audioMixer->stopAppTimerProc(kAudioMixerAppTimerMusicNext);
 #endif
+}
+
+void Music::reset() {
+	_current.name = "";
+	_next.name = "";
+	_channel = -1;
+	_isPlaying = false;
+	_isPaused = false;
+	_current.loop = 0;
+	_isNextPresent = false;
+	_data = nullptr;
+	_stream = nullptr;
 }
 
 bool Music::play(const Common::String &trackName, int volume, int pan, int32 timeFadeInSeconds, int32 timePlaySeconds, int loop, int32 timeFadeOutSeconds) {
