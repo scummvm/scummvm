@@ -194,7 +194,7 @@ const int32 neg = (FLIP_CONDITIONAL)?-1:0;
 	assert(_pixels00 && _pixels && srcpixels && srcmask);
 
 	for (int i = 0; i < height_; i++)  {
-		int line = y + i;
+		const int line = y + i;
 
 		if (NOT_CLIPPED_Y) {
 			const uint8	*srcline = srcpixels + i * width_;
