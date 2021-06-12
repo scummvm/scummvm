@@ -53,15 +53,6 @@ bool VQAPlayer::open() {
 		// This has still frames in the end that so it looked as if the smoke was "frozen"
 		_decoder._loopInfo.loops[0].end  = 58; // 59 up to 74 are still frames
 	}
-//	else if (_name.equals("MA05_3.VQA")) {
-//		// loops[1] 60 up to 90 (it will be followed by loops[2] which will play from 30 to 90
-//		// this is to address the issue of non-aligned headlight rotation in the
-//		// InShot transition in Act 5. However, this is still glitchy
-//		// and results in bad z-buffer for the duration of the truncated loop 1
-//		// TODO is there a way to get and use the z-buffering info from start frame without displaying it?
-//		_decoder._loopInfo.loops[1].begin = 60;
-//		_decoder._loopInfo.loops[2].begin = 30;
-//	}
 #endif
 
 	_hasAudio = _decoder.hasAudio();
@@ -79,7 +70,9 @@ bool VQAPlayer::open() {
 	_repeatsCountQueued = -1;
 
 	if (_loopInitial >= 0) {
-		// TODO? When does this happen? _loopInitial seems to be unused
+		// loopInitial is set to the loop Id value that should play,
+		// when the SeekableReadStream (_s) is nullptr
+		// see setLoop()
 		setLoop(_loopInitial, _repeatsCountInitial, kLoopSetModeImmediate, nullptr, nullptr);
 	} else {
 		_frameNext = 0;
@@ -109,6 +102,22 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 		if (_frameEndQueued != -1) {
 			_frameEnd = _frameEndQueued;
 			_frameEndQueued = -1;
+#if !BLADERUNNER_ORIGINAL_BUGS
+			// Fix glitch in transition from inShot to mainloop
+			// in Act 5 at McCoy's apartment (moving from bedroom to balcony).
+			// This emulates a fast-forward, which is required
+			// in order to have proper z-buffer info,
+			// and display the new first frame of the loop (60) without artifacts.
+			// The code is similar to Scene::advanceFrame()
+			// This will be done once, since this first loop (loopId 1)
+			// is only executed once before moving on to loopId 2
+			if (_name.equals("MA05_3.VQA") && _loop == 1) {
+				while (update(false, true, false) != 59) {
+					updateZBuffer(_vm->_zbuffer);
+				}
+				_frameBegin = 60;
+			}
+#endif
 		}
 		if (_frameNext != _frameBegin) {
 			_frameNext = _frameBegin;
