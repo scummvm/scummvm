@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-11 20:20+0000\n"
+"POT-Creation-Date: 2021-06-12 11:15+0000\n"
 "PO-Revision-Date: 2021-06-06 23:54+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -2604,11 +2604,11 @@ msgstr "Аудіо PC-98"
 msgid "SegaCD Audio"
 msgstr "Аудіо SegaCD"
 
-#: audio/softsynth/mt32.cpp:163
+#: audio/softsynth/mt32.cpp:170
 msgid "Initializing MT-32 Emulator"
 msgstr "Налаштовую емулятор MT-32"
 
-#: audio/softsynth/mt32.cpp:430
+#: audio/softsynth/mt32.cpp:437
 msgid "MT-32 emulator"
 msgstr "Емулятор MT-32"
 
