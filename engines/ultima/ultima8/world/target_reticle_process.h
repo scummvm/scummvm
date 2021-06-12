@@ -38,6 +38,7 @@ class Item;
 class TargetReticleProcess : public Process {
 public:
 	TargetReticleProcess();
+	~TargetReticleProcess();
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

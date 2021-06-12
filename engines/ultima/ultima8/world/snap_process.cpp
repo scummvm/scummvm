@@ -35,6 +35,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(SnapProcess)
 
 SnapProcess::SnapProcess() : Process(), _currentSnapEgg() {
 	_instance = this;
+	_type = 1; // persistent
+}
+
+SnapProcess::~SnapProcess() {
+	if (_instance == this)
+		_instance = nullptr;
 }
 
 void SnapProcess::run() {

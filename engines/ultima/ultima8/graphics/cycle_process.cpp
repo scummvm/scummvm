@@ -57,6 +57,7 @@ static inline void copyColor(uint8 *dst, const uint8 *src) {
 CycleProcess::CycleProcess() : Process(), _running(1) {
 	_instance = this;
 	_ticksPerRun = 2;
+	_type = 1; // persistent
 	for (int i = 0; i < 7; i++) {
 		copyColor(_cycleColData[i], CYCLE_INIT_COLS[i]);
 	}

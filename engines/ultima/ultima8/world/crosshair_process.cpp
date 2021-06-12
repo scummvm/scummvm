@@ -44,6 +44,12 @@ CrosshairProcess *CrosshairProcess::_instance = nullptr;
 
 CrosshairProcess::CrosshairProcess() : Process() {
 	_instance = this;
+	_type = 1; // persistent
+}
+
+CrosshairProcess::~CrosshairProcess() {
+	if (_instance == this)
+		_instance = nullptr;
 }
 
 void CrosshairProcess::run() {

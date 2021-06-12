@@ -46,6 +46,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(ItemSelectionProcess)
 ItemSelectionProcess::ItemSelectionProcess() : Process(), _selectedItem(0),
 _ax(0), _ay(0), _az(0) {
 	_instance = this;
+	_type = 1; // persistent
+}
+
+ItemSelectionProcess::~ItemSelectionProcess() {
+	if (_instance == this)
+		_instance = nullptr;
 }
 
 void ItemSelectionProcess::run() {

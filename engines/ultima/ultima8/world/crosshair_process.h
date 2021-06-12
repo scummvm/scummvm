@@ -37,6 +37,7 @@ namespace Ultima8 {
 class CrosshairProcess : public Process {
 public:
 	CrosshairProcess();
+	~CrosshairProcess();
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

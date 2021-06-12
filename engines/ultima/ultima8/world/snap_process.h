@@ -34,6 +34,7 @@ class Item;
 class SnapProcess : public Process {
 public:
 	SnapProcess();
+	~SnapProcess();
 
 	ENABLE_RUNTIME_CLASSTYPE()
 

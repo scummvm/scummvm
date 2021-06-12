@@ -40,7 +40,7 @@ public:
 	// p_dynamic_class stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 	CycleProcess();
-	~CycleProcess(void) override;
+	~CycleProcess() override;
 
 	void run() override;
 

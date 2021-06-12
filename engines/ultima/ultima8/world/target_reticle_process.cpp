@@ -41,6 +41,12 @@ DEFINE_RUNTIME_CLASSTYPE_CODE(TargetReticleProcess)
 TargetReticleProcess::TargetReticleProcess() : Process(), _reticleEnabled(true),
 		_lastUpdate(0), _reticleSpriteProcess(0), _lastTargetDir(dir_current), _lastTargetItem(0) {
 	_instance = this;
+	_type = 1; // persistent
+}
+
+TargetReticleProcess::~TargetReticleProcess() {
+	if (_instance == this)
+		_instance = nullptr;
 }
 
 void TargetReticleProcess::run() {

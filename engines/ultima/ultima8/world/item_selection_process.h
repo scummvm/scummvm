@@ -37,6 +37,7 @@ class Item;
 class ItemSelectionProcess : public Process {
 public:
 	ItemSelectionProcess();
+	~ItemSelectionProcess();
 
 	ENABLE_RUNTIME_CLASSTYPE()
 
