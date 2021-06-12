@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-12 15:07+0000\n"
+"POT-Creation-Date: 2021-06-12 18:07+0000\n"
 "PO-Revision-Date: 2021-06-06 23:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -233,8 +233,8 @@ msgctxt "lowres"
 msgid "Name:"
 msgstr "Назв.:"
 
-#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:140
-#: engines/mohawk/dialogs.cpp:341
+#: gui/editgamedialog.cpp:162 engines/mohawk/dialogs.cpp:153
+#: engines/mohawk/dialogs.cpp:363
 msgid "Language:"
 msgstr "Язык:"
 
@@ -1044,7 +1044,7 @@ msgstr "3D отрисовщик игры:"
 msgid "3D Anti-aliasing:"
 msgstr "Сглаживание 3D:"
 
-#: gui/options.cpp:1381 engines/mohawk/dialogs.cpp:328
+#: gui/options.cpp:1381 engines/mohawk/dialogs.cpp:350
 msgid "Disabled"
 msgstr "Выключены"
 
@@ -5183,56 +5183,67 @@ msgid "Naughty game mode"
 msgstr "Откровенный режим игры"
 
 #. I18N: Option for fast scene switching
-#: engines/mohawk/dialogs.cpp:112 engines/mohawk/dialogs.cpp:321
+#: engines/mohawk/dialogs.cpp:113 engines/mohawk/dialogs.cpp:343
 msgid "~Z~ip Mode Activated"
 msgstr "~Р~ежим быстрого перехода активирован"
 
-#: engines/mohawk/dialogs.cpp:115
+#: engines/mohawk/dialogs.cpp:116
 msgid "~T~ransitions Enabled"
 msgstr "~П~ереходы активированы"
 
-#: engines/mohawk/dialogs.cpp:118
+#: engines/mohawk/dialogs.cpp:119
 msgid "Play the Myst fly by movie"
 msgstr "Проигрывать ролик пролёта над Myst"
 
-#: engines/mohawk/dialogs.cpp:119
+#: engines/mohawk/dialogs.cpp:120
 msgid "The Myst fly by movie was not played by the original engine."
 msgstr "Ролик пролёта над Myst не проигрывался оригинальным движком."
 
+#. I18N:
+#. This Option is for hard-of-hearing.
+#. It makes it easier to solve the spaceship puzzle.
+#. Normally game uses strict binary logic here.
+#. We change it to use fuzzy logic.
+#. By default the option is off.
+#.
+#: engines/mohawk/dialogs.cpp:132
+msgid "~F~uzzy Logic in SpaceShip Active"
+msgstr ""
+
 #. I18N: Drop book page
-#: engines/mohawk/dialogs.cpp:127
+#: engines/mohawk/dialogs.cpp:140
 msgid "~D~rop Page"
 msgstr "~В~ыбросить страницу"
 
-#: engines/mohawk/dialogs.cpp:131
+#: engines/mohawk/dialogs.cpp:144
 msgid "Show ~M~ap"
 msgstr "Показать ~к~арту"
 
-#: engines/mohawk/dialogs.cpp:136
+#: engines/mohawk/dialogs.cpp:149
 msgid "Main Men~u~"
 msgstr "Главное мен~ю~"
 
-#: engines/mohawk/dialogs.cpp:250
+#: engines/mohawk/dialogs.cpp:272
 msgid "The new language will be applied after restarting the game."
 msgstr "Новый язык будет применён после перезапуска игры."
 
-#: engines/mohawk/dialogs.cpp:322
+#: engines/mohawk/dialogs.cpp:344
 msgid "~W~ater Effect Enabled"
 msgstr "~Э~ффекты воды включены"
 
-#: engines/mohawk/dialogs.cpp:324
+#: engines/mohawk/dialogs.cpp:346
 msgid "Transitions:"
 msgstr "Переходы:"
 
-#: engines/mohawk/dialogs.cpp:329
+#: engines/mohawk/dialogs.cpp:351
 msgid "Fastest"
 msgstr "Быстрые"
 
-#: engines/mohawk/dialogs.cpp:330
+#: engines/mohawk/dialogs.cpp:352
 msgid "Normal"
 msgstr "Обычные"
 
-#: engines/mohawk/dialogs.cpp:331
+#: engines/mohawk/dialogs.cpp:353
 msgid "Best"
 msgstr "Лучшие"
 
