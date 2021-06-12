@@ -298,7 +298,7 @@ void TrecisionEngine::checkSystem() {
 	eventLoop();
 }
 
-void TrecisionEngine::startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 sent) {
+void TrecisionEngine::startCharacterAction(uint16 action, uint16 newRoom, uint8 newPos, uint16 textId) {
 	_scheduler->initCharacterQueue();
 
 	_flagInventoryLocked = false;
@@ -316,8 +316,8 @@ void TrecisionEngine::startCharacterAction(uint16 action, uint16 newRoom, uint8 
 		_pathFind->nextStep();
 	}
 
-	if (sent)
-		_textMgr->characterSayInAction(sent);
+	if (textId)
+		_textMgr->characterSayInAction(textId);
 	else
 		_textMgr->clearLastText();
 }
