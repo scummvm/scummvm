@@ -342,24 +342,9 @@ void vWDisplayPage::invertRect(Rect16 r, uint8 color) {
 #define USE_RECT
 
 void vWDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-	Common::Rect          wRect;
-
-	wRect.left      = r.x;
-	wRect.top       = r.y;
-	wRect.right     = r.x + r.width;
-	wRect.bottom    = r.y + r.height;
-
 	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
-	g_system->updateScreen();
-
-	//_BltPixels(pixPtr, pixMod, dstPtr, ddWindow->lPitch, r.width, r.height);
 }
 
-#ifndef USE_RECT
-void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-	BltDDRect(r, pixPtr, TRUE, pixMod, TRUE);
-}
-#else
 void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
 		return;
@@ -370,7 +355,6 @@ void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 
 	g_system->unlockScreen();
 }
-#endif
 
 void vWDisplayPage::readPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 	BltDDRect(r, pixPtr, FALSE, pixMod, FALSE);

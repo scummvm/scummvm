@@ -561,10 +561,6 @@ void updateWindowSection(const Rect16 &r) {
 
 	tempPort.setMap(&tempMap);
 	tempPort.setMode(drawModeReplace);
-	//  Compute the offset of the local blits (used by drawClipped)
-
-	offset = Point16(clip.x, clip.y);
-	tempPort.setOrigin(offset);
 
 	//  Compute the intersection of the animated area with the clip
 	//  rectangle. If they overlap, then copy part of the animated
@@ -597,6 +593,10 @@ void updateWindowSection(const Rect16 &r) {
 		                   animClip.x, animClip.y,
 		                   animClip.width, animClip.height);
 	}
+
+	//  Compute the offset of the local blits (used by drawClipped)
+
+	offset = Point16(clip.x, clip.y);
 
 	//  For each window, both background and float, that overlaps
 	//  the clip, draw the window's imagery
