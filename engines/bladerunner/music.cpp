@@ -36,7 +36,6 @@ Music::Music(BladeRunnerEngine *vm) {
 	_vm = vm;
 	_musicVolume = BLADERUNNER_ORIGINAL_SETTINGS ? 65 : 100;
 	reset();
-
 }
 
 Music::~Music() {
@@ -112,7 +111,7 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 				timeFadeInSeconds = 0;
 			}
 			adjustVolume(volumeAdjusted, timeFadeInSeconds);
-			adjustPan(volumeAdjusted, timeFadeInSeconds);
+			adjustPan(pan, timeFadeInSeconds);
 		}
 		return true;
 	}
@@ -281,14 +280,17 @@ void Music::load(SaveFileReadStream &f) {
 }
 
 void Music::adjustVolume(int volume, uint32 delaySeconds) {
+	// adjustVolume takes an "adjusted volume" value as an argument
+	// We don't store that as target _current.volume - play() stores the proper value
 	if (_channel >= 0) {
-		_vm->_audioMixer->adjustVolume(_channel, volume, delaySeconds);
+		_vm->_audioMixer->adjustVolume(_channel, volume, 60u * delaySeconds);
 	}
 }
 
 void Music::adjustPan(int pan, uint32 delaySeconds) {
+	_current.pan = pan;
 	if (_channel >= 0) {
-		_vm->_audioMixer->adjustPan(_channel, pan, delaySeconds);
+		_vm->_audioMixer->adjustPan(_channel, pan, 60u * delaySeconds);
 	}
 }
 
