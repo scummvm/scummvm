@@ -23,6 +23,7 @@
 #include "bladerunner/audio_mixer.h"
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/music.h"
 #include "bladerunner/time.h"
 
 #include "audio/audiostream.h"
@@ -37,12 +38,19 @@ AudioMixer::AudioMixer(BladeRunnerEngine *vm) {
 	for (int i = 0; i < kChannels; ++i) {
 		_channels[i].isPresent = false;
 	}
+#if !BLADERUNNER_ORIGINAL_BUGS
+	for (int i = 0; i < kAudioMixerAppTimersNum; ++i) {
+		_audioMixerAppTimers[i].started        = false;
+		_audioMixerAppTimers[i].lastFired      = 0u;
+		_audioMixerAppTimers[i].intervalMillis = 0u;
+	}
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	_vm->getTimerManager()->installTimerProc(timerCallback, (1000 / kUpdatesPerSecond) * 1000, this, "BladeRunnerAudioMixerTimer");
 }
 
 AudioMixer::~AudioMixer() {
 	for (int i = 0; i < kChannels; ++i) {
-		stop(i, 0);
+		stop(i, 0u);
 	}
 	_vm->getTimerManager()->removeTimerProc(timerCallback);
 }
@@ -69,7 +77,7 @@ int AudioMixer::play(Audio::Mixer::SoundType type, Audio::RewindableAudioStream 
 			return -1;
 		}
 		//debug("Stopping lowest priority channel %d with lower prio %d!", lowestPriorityChannel, lowestPriority);
-		stop(lowestPriorityChannel, 0);
+		stop(lowestPriorityChannel, 0u);
 		channel = lowestPriorityChannel;
 	}
 
@@ -82,6 +90,7 @@ int AudioMixer::playMusic(Audio::RewindableAudioStream *stream, int volume, void
 	return playInChannel(kMusicChannel, Audio::Mixer::kMusicSoundType, stream, 100, false, volume, 0, endCallback, callbackData, trackDurationMs);
 }
 
+// Note: time tends to be the requested time in seconds multiplied by 60u
 void AudioMixer::stop(int channel, uint32 time) {
 	Common::StackLock lock(_mutex);
 
@@ -93,6 +102,7 @@ void AudioMixer::stop(int channel, uint32 time) {
 			if (_channels[channel].sentToMixer) {
 				_vm->_mixer->stopHandle(_channels[channel].handle);
 			}
+
 			if (_channels[channel].endCallback != nullptr) {
 				_channels[channel].endCallback(channel, _channels[channel].callbackData);
 			}
@@ -151,6 +161,7 @@ void AudioMixer::timerCallback(void *self) {
 	((AudioMixer *)self)->tick();
 }
 
+// Note: time tends to be the requested time in seconds multiplied by 60u
 void AudioMixer::adjustVolume(int channel, int newVolume, uint32 time) {
 	Common::StackLock lock(_mutex);
 
@@ -160,6 +171,7 @@ void AudioMixer::adjustVolume(int channel, int newVolume, uint32 time) {
 	}
 }
 
+// Note: time tends to be the requested time in seconds multiplied by 60u
 void AudioMixer::adjustPan(int channel, int newPan, uint32 time) {
 	Common::StackLock lock(_mutex);
 
@@ -180,9 +192,11 @@ void AudioMixer::tick() {
 		}
 
 		if (channel->volumeDelta != 0.0f) {
+			// apply volumeDelta to volume (common use for adjustVolume or stop playing - ie mainly for fadeIn, fadeOut)
 			channel->volume = CLIP(channel->volume + channel->volumeDelta, 0.0f, 100.0f);
 
-			if ((channel->volumeDelta < 0 && channel->volume <= channel->volumeTarget) || (channel->volumeDelta > 0 && channel->volume >= channel->volumeTarget)) {
+			if ((channel->volumeDelta < 0 && channel->volume <= channel->volumeTarget)
+			    || (channel->volumeDelta > 0 && channel->volume >= channel->volumeTarget)) {
 				channel->volumeDelta = 0.0f;
 			}
 
@@ -191,11 +205,12 @@ void AudioMixer::tick() {
 			}
 
 			if (channel->volume <= 0.0f) {
-				stop(i, 0);
+				stop(i, 0u);
 			}
 		}
 
 		if (channel->panDelta != 0.0) {
+			// apply panDelta to pan (common use for adjusting pan)
 			channel->pan = CLIP(channel->pan + channel->panDelta, -100.0f, 100.0f);
 
 			if ((channel->panDelta < 0 && channel->pan <= channel->panTarget) || (channel->panDelta > 0 && channel->pan >= channel->panTarget)) {
@@ -211,9 +226,57 @@ void AudioMixer::tick() {
 			|| channel->stream->endOfStream()
 			|| (!channel->sentToMixer && !channel->loop && _vm->_time->currentSystem() - channel->timeStarted >= channel->trackDurationMs)
 		) {
-			stop(i, 0);
+			stop(i, 0u);
 		}
 	}
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// piggyback the realtime triggered tick() actions, with a check for the virtual timers (app timers)
+	for (int i = 0; i < kAudioMixerAppTimersNum; ++i) {
+		if (_audioMixerAppTimers[i].started
+		    && _vm->_time->currentSystem() - _audioMixerAppTimers[i].lastFired > _audioMixerAppTimers[i].intervalMillis) {
+			// We actually need to have the _vm->_time->currentSystem() check in the if clause
+			// and not use a var that stores the current time before we enter the loop
+			// because the functions for these timers may affect the lastFired, by setting it to the a current system time
+			// and then lastFired would have been greater than our stored system time here.
+			_audioMixerAppTimers[i].lastFired = _vm->_time->currentSystem();
+			switch (i) {
+			case kAudioMixerAppTimerMusicNext:
+				_vm->_music->next();
+				break;
+			case kAudioMixerAppTimerMusicFadeOut:
+				_vm->_music->fadeOut();
+				break;
+			default:
+				// error - but probably won't happen
+				error("Unknown Audio Mixer App Timer Id");
+				break;
+			}
+		}
+	}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 }
+
+#if !BLADERUNNER_ORIGINAL_BUGS
+void AudioMixer::startAppTimerProc(int audioMixAppTimerId, uint32 intervalMillis) {
+	// Attempt to lock the mutex, since we reach here from another thread (main thread)
+	Common::StackLock lock(_mutex);
+	if (audioMixAppTimerId  < 0 || audioMixAppTimerId >= kAudioMixerAppTimersNum) {
+		return;
+	}
+	_audioMixerAppTimers[audioMixAppTimerId].started        = true;
+	_audioMixerAppTimers[audioMixAppTimerId].intervalMillis = intervalMillis;
+	_audioMixerAppTimers[audioMixAppTimerId].lastFired      = _vm->_time->currentSystem();
+}
+
+void AudioMixer::stopAppTimerProc(int audioMixAppTimerId) {
+	// Attempt to lock the mutex, since we reach here from another thread (main thread)
+	Common::StackLock lock(_mutex);
+	if (audioMixAppTimerId  < 0 || audioMixAppTimerId >= kAudioMixerAppTimersNum) {
+		return;
+	}
+	_audioMixerAppTimers[audioMixAppTimerId].started = false;
+}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 
 } // End of namespace BladeRunner

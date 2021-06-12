@@ -36,12 +36,12 @@ class SaveFileWriteStream;
 class Music {
 	struct Track {
 		Common::String name;
-		int            volume;
-		int            pan;
-		int32          timeFadeIn;
-		int32          timePlay;
-		int            loop;
-		int32          timeFadeOut;
+		int            volume;             // A value between 0 and 100 - It is the set volume for the track regardless of fadeIn and fadeOut transitions
+		int            pan;                // A value between -100  and 100 (right?) (0 is center) - It is the set pan/balance for the track regardless of any ongoing adjustments
+		int32          timeFadeInSeconds;  // how long will it take for the track to reach target volume (in seconds)
+		int32          timePlaySeconds;    // how long the track will play before starting fading out (in seconds) - uses timeFadeOutSeconds for fadeout
+		int            loop;               // 0: do not loop, 1: loop track
+		int32          timeFadeOutSeconds; // how long the fade out will be for the track at its end (in seconds)
 	};
 
 	BladeRunnerEngine *_vm;
@@ -61,9 +61,9 @@ public:
 	Music(BladeRunnerEngine *vm);
 	~Music();
 
-	bool play(const Common::String &trackName, int volume, int pan, int32 timeFadeIn, int32 timePlay, int loop, int32 timeFadeOut);
-	void stop(uint32 delay);
-	void adjust(int volume, int pan, uint32 delay);
+	bool play(const Common::String &trackName, int volume, int pan, int32 timeFadeInSeconds, int32 timePlaySeconds, int loop, int32 timeFadeOutSeconds);
+	void stop(uint32 delaySeconds);
+	void adjust(int volume, int pan, uint32 delaySeconds);
 	bool isPlaying();
 
 	void setVolume(int volume);
@@ -73,17 +73,26 @@ public:
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);
 
-private:
-	void adjustVolume(int volume, uint32 delay);
-	void adjustPan(int pan, uint32 delay);
-
-	void ended();
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// moved to public access
 	void fadeOut();
 	void next();
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 
-	static void mixerChannelEnded(int channel, void *data);
+
+private:
+	void adjustVolume(int volume, uint32 delaySeconds);
+	void adjustPan(int pan, uint32 delaySeconds);
+
+	void ended();
+#if BLADERUNNER_ORIGINAL_BUGS
+	void fadeOut();
+	void next();
 	static void timerCallbackFadeOut(void *refCon);
 	static void timerCallbackNext(void *refCon);
+#endif // BLADERUNNER_ORIGINAL_BUGS
+
+	static void mixerChannelEnded(int channel, void *data);
 
 	byte *getData(const Common::String &name);
 };
