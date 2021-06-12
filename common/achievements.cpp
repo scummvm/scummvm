@@ -153,7 +153,8 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 			if (id.empty()) {
 				break;
 			} else {
-				_achievements[lang].push_back({id, title, comment, !hidden.empty()});
+				AchievementDescription desc = { id, title, comment, !hidden.empty() };
+				_achievements[lang].push_back(desc);
 			}
 		}
 	} 
@@ -170,7 +171,8 @@ bool AchievementsManager::loadAchievementsData(const char *platform, const char 
 		if (id.empty()) {
 			break;
 		} else {
-			_stats.push_back({id, comment, start});
+			StatDescription desc = {id, comment, start};
+			_stats.push_back(desc);
 		}
 	}
 
