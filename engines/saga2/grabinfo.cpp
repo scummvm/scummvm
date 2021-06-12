@@ -43,20 +43,20 @@ GrabInfo mouseInfo;
 GrabInfo::GrabInfo() {
 	pointerMap.size.x = 0;
 	pointerMap.size.y = 0;
-	pointerMap.data = NULL;
+	pointerMap.data = nullptr;
 
 	// null out the "held" object
 	grabId      = Nothing;
-	grabObj     = NULL;
-	intentDoable = TRUE;
+	grabObj     = nullptr;
+	intentDoable = true;
 	intention   = WalkTo;
 
 	textBuf[0] = '\0';
-	displayGauge = FALSE;
+	displayGauge = false;
 }
 
 GrabInfo::~GrabInfo() {
-	if (pointerMap.data != NULL)
+	if (pointerMap.data != nullptr)
 		delete[] pointerMap.data;
 }
 
@@ -175,9 +175,9 @@ void GrabInfo::setIcon(void) {
 	assert(
 	    pointerMap.size.x == 0
 	    &&  pointerMap.size.y == 0
-	    &&  pointerMap.data == NULL);
+	    &&  pointerMap.data == nullptr);
 
-	assert(grabObj != NULL && isObject(grabObj));
+	assert(grabObj != nullptr && isObject(grabObj));
 
 	Sprite          *spr;
 	ProtoObj        *proto;
@@ -194,7 +194,7 @@ void GrabInfo::setIcon(void) {
 
 	if ((mapData
 	        = new uint8[mapBytes]())
-	        !=  NULL) {
+	        !=  nullptr) {
 		//  Clear out the image data
 		memset(mapData, 0, mapBytes);
 
@@ -214,13 +214,13 @@ void GrabInfo::setIcon(void) {
 }
 
 void GrabInfo::clearIcon(void) {
-	assert(grabObj == NULL);
+	assert(grabObj == nullptr);
 
-	if (pointerMap.data != NULL) {
+	if (pointerMap.data != nullptr) {
 		delete[] pointerMap.data;
 		pointerMap.size.x = 0;
 		pointerMap.size.y = 0;
-		pointerMap.data = NULL;
+		pointerMap.data = nullptr;
 	}
 }
 
@@ -265,14 +265,14 @@ void GrabInfo::placeObject(const Location &loc) {
 	grabObj->move(loc);
 
 	//  Turn off state variables
-	grabObj    = NULL;
+	grabObj    = nullptr;
 	grabId     = Nothing;
-	intentDoable = TRUE;
+	intentDoable = true;
 	setIntent(WalkTo);
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[0] != '\0' ? textBuf : NULL);
+	setMouseText(textBuf[0] != '\0' ? textBuf : nullptr);
 
 	//  Display the saved gauge data
 	if (displayGauge)
@@ -284,7 +284,7 @@ void GrabInfo::placeObject(const Location &loc) {
 // this should be use to return the object to the container
 // and/or remove the object from the cursor.
 void GrabInfo::replaceObject(void) {
-	if (grabObj == NULL)
+	if (grabObj == nullptr)
 		return;
 
 	// if actually attached to cursor, replace
@@ -295,19 +295,19 @@ void GrabInfo::replaceObject(void) {
 
 		//  Update the ContainerView from which the object came
 //		updateView = ContainerView::findPane( grabObj->parent() );
-//		if ( updateView != NULL )
+//		if ( updateView != nullptr )
 //			( updateView->getWindow() )->update( updateView->getExtent() );
 	}
 
 	//  Turn off state variables
-	grabObj    = NULL;
+	grabObj    = nullptr;
 	grabId     = Nothing;
-	intentDoable = TRUE;
+	intentDoable = true;
 	setIntent(WalkTo);
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[0] != '\0' ? textBuf : NULL);
+	setMouseText(textBuf[0] != '\0' ? textBuf : nullptr);
 
 	//  Display the saved gauge data
 	if (displayGauge)
@@ -321,31 +321,31 @@ void GrabInfo::replaceObject(void) {
 //  is currently no grabbed object the text will be displayed, else the
 //  text pointer will simply be saved.
 void GrabInfo::setText(const char *txt) {
-	if ((txt != NULL) && strlen(txt)) {
+	if ((txt != nullptr) && strlen(txt)) {
 		strncpy(textBuf, txt, bufSize);
 		textBuf[bufSize - 1] = '\0';
-		if (grabObj == NULL)
+		if (grabObj == nullptr)
 			setMouseText(textBuf);
 	} else {
 		textBuf[0] = '\0';
-		if (grabObj == NULL)
-			setMouseText(NULL);
+		if (grabObj == nullptr)
+			setMouseText(nullptr);
 	}
 }
 
 //	request a change to the mouse gauge
 void GrabInfo::setGauge(int16 numerator, int16 denominator) {
-	displayGauge = TRUE;
+	displayGauge = true;
 	gaugeNumerator = numerator;
 	gaugeDenominator = denominator;
-	if (grabObj == NULL)
+	if (grabObj == nullptr)
 		setMouseGauge(gaugeNumerator, gaugeDenominator);
 }
 
 //	clear the mouse gauge
 void GrabInfo::clearGauge(void) {
-	displayGauge = FALSE;
-	if (grabObj == NULL) clearMouseGauge();
+	displayGauge = false;
+	if (grabObj == nullptr) clearMouseGauge();
 }
 
 #if CURSOR_CYCLING
@@ -365,9 +365,9 @@ void cycleCursor() {
 	else {
 		if (!walkEnabled && curIntent == GrabInfo::WalkTo)
 			++curIntent;
-		if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != NULL)
+		if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != nullptr)
 			++curIntent;
-		if (curIntent == GrabInfo::Drop && mouseInfo.getObject() == NULL)
+		if (curIntent == GrabInfo::Drop && mouseInfo.getObject() == nullptr)
 			++curIntent;
 		if (!eyeEnabled && curIntent == GrabInfo::LookAt)
 			++curIntent;
@@ -376,7 +376,7 @@ void cycleCursor() {
 				curIntent = 1; //Set Cursor First State Skip None
 			else {
 				curIntent = 2;
-				if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != NULL)
+				if (curIntent == GrabInfo::PickUp && mouseInfo.getObject() != nullptr)
 					++curIntent;
 			}
 		}
