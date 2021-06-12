@@ -920,7 +920,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		world->setVargasShield(static_cast<uint32>(newval));
 		return;
 	} else if (GAME_IS_REGRET && shape == 0x5b1) {
-		/* TODO: Finish special case for No Regret */
+		warning("TODO: Finish Shape 0x5b1 special case for No Regret.");
 		/*
 		_bossHealth = _bossHealth - damage;
 		if (_bossHealth < 1) {
@@ -982,7 +982,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		damage = receiveShieldHit(damage, damage_type);
 	}
 
-	if (hasActorFlags(ACT_IMMORTAL))
+	if (hasActorFlags(ACT_IMMORTAL | ACT_INVINCIBLE))
 		damage = 0;
 
 	if (damage > _hitPoints)
