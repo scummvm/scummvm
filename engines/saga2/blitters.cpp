@@ -33,10 +33,9 @@
 namespace Saga2 {
 
 void _BltPixels(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height) {
-	uint8 *src, *dst;
 	for (uint y = 0; y < height; y++) {
-		src = srcPtr + srcMod * y;
-		dst = dstPtr + dstMod * y;
+		uint8 *src = srcPtr + srcMod * y;
+		uint8 *dst = dstPtr + dstMod * y;
 		for (uint x = 0; x < width; x++) {
 			*dst++ = *src++;
 		}
@@ -44,10 +43,9 @@ void _BltPixels(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint
 }
 
 void _BltPixelsT(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height) {
-	uint8 *src, *dst;
 	for (uint y = 0; y < height; y++) {
-		src = srcPtr + srcMod * y;
-		dst = dstPtr + dstMod * y;
+		uint8 *src = srcPtr + srcMod * y;
+		uint8 *dst = dstPtr + dstMod * y;
 		for (uint x = 0; x < width; x++) {
 			byte c = *src++;
 
@@ -72,9 +70,9 @@ void _HLine(uint8 *dstPtr, uint32 width, uint32 color) {
 }
 
 void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData) {
-	int8  *dest     = (int8 *)map.data;
+	int8  *dest = (int8 *)map.data;
 	int16 bytecount = (width + 1) & ~1;
-	int16 rowMod    = map.size.x - bytecount;
+	int16 rowMod = map.size.x - bytecount;
 
 	while (rowCount--) {
 		for (int16 k = 0; k < bytecount;) {
@@ -127,10 +125,6 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 	}
 }
 
-//void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
-//	warning("STUB: drawTile()");
-//}
-
 void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	const byte *tilePointer;
 	const byte *readPointer;
@@ -143,13 +137,11 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 	const int32 SAGA_ISOTILE_WIDTH = 64;
 	Point16 point(x, y);
 
-	if (point.x + SAGA_ISOTILE_WIDTH < 0) {
+	if (point.x + SAGA_ISOTILE_WIDTH < 0)
 		return;
-	}
 
-	if (point.x - SAGA_ISOTILE_WIDTH >= map->size.x) {
+	if (point.x - SAGA_ISOTILE_WIDTH >= map->size.x)
 		return;
-	}
 
 	tilePointer = srcData;
 
@@ -157,9 +149,8 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 
 	drawPoint.y -= height;
 
-	if (drawPoint.y >= map->size.y) {
+	if (drawPoint.y >= map->size.y)
 		return;
-	}
 
 	readPointer = tilePointer;
 	lowBound = MIN((int)(drawPoint.y + height), (int)map->size.y);
@@ -171,9 +162,8 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 			for (;;) {
 				bgRunCount = *readPointer++;
 				widthCount += bgRunCount;
-				if (widthCount >= SAGA_ISOTILE_WIDTH) {
+				if (widthCount >= SAGA_ISOTILE_WIDTH)
 					break;
-				}
 
 				drawPointer += bgRunCount;
 				col += bgRunCount;
@@ -183,9 +173,9 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 				count = 0;
 				int colDiff = - col;
 				if (colDiff > 0) {
-					if (colDiff > fgRunCount) {
+					if (colDiff > fgRunCount)
 						colDiff = fgRunCount;
-					}
+
 					count = colDiff;
 					col += colDiff;
 				}
@@ -193,9 +183,9 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 				colDiff = map->size.x - col;
 				if (colDiff > 0) {
 					int countDiff = fgRunCount - count;
-					if (colDiff > countDiff) {
+					if (colDiff > countDiff)
 						colDiff = countDiff;
-					}
+
 					if (colDiff > 0) {
 						byte *dst = (byte *)(drawPointer + count);
 						memcpy(dst, (readPointer + count), colDiff);
@@ -210,9 +200,8 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 			for (;;) {
 				bgRunCount = *readPointer++;
 				widthCount += bgRunCount;
-				if (widthCount >= SAGA_ISOTILE_WIDTH) {
+				if (widthCount >= SAGA_ISOTILE_WIDTH)
 					break;
-				}
 
 				fgRunCount = *readPointer++;
 				widthCount += fgRunCount;
@@ -229,15 +218,9 @@ void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 }
 
 void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int xpos, int ypos) {
-	byte			*srcPtr,
-					*dstPtr;
-	int16			srcMod,
-					dstMod;
-	int16			x, y, w, h;
-	int32			offset = 0;
-
-	w = srcMap->size.x;
-	h = srcMap->size.y;
+	int16 w = srcMap->size.x;
+	int16 h = srcMap->size.y;
+	int32 offset = 0;
 
 	if (ypos < 0) {
 		h += ypos;
@@ -258,14 +241,14 @@ void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int xpos, int ypos) {
 	if (w < 0 || h < 0)
 		return;
 
-	dstMod = dstMap->size.x - w;
-	srcMod = srcMap->size.x - w;
+	int16 dstMod = dstMap->size.x - w;
+	int16 srcMod = srcMap->size.x - w;
 
-	srcPtr = srcMap->data + offset;
-	dstPtr = dstMap->data + xpos + ypos * dstMap->size.x;
+	byte *srcPtr = srcMap->data + offset;
+	byte *dstPtr = dstMap->data + xpos + ypos * dstMap->size.x;
 
-	for (y = 0; y < h; y++) {
-		for (x = 0; x < w; x++) {
+	for (int16 y = 0; y < h; y++) {
+		for (int16 x = 0; x < w; x++) {
 			byte c = *srcPtr++;
 
 			if (c == 0)
@@ -283,19 +266,12 @@ void TBlit4(gPixelMap *d, gPixelMap *s, int32 x, int32 y) {
 }
 
 void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
-	byte			*srcPtr,
-					*dstPtr;
-	int16			rowMod;
-	int16			x, y;
+	byte *srcPtr = sprMap->data;
+	byte *dstPtr = compMap->data + xpos + ypos * compMap->size.x;
+	int16 rowMod = compMap->size.x - sprMap->size.x;
 
-		//	Blit the temp map onto the composite map
-
-	srcPtr	= sprMap->data;
-	dstPtr	= compMap->data + xpos + ypos * compMap->size.x;
-	rowMod = compMap->size.x - sprMap->size.x;
-
-	for (y = 0; y < sprMap->size.y; y++) {
-		for (x = 0; x < sprMap->size.x; x++) {
+	for (int16 y = 0; y < sprMap->size.y; y++) {
+		for (int16 x = 0; x < sprMap->size.x; x++) {
 			byte c = *srcPtr++;
 
 			if (c == 0)
@@ -308,28 +284,21 @@ void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, 
 }
 
 void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int xpos, int ypos, byte *lookup) {
-	byte			*srcPtr,
-					*dstPtr;
-	int16			rowMod;
-	int16			x, y;
+	byte *srcPtr = sprMap->data + sprMap->bytes();
+	byte *dstPtr = compMap->data + xpos + (ypos + sprMap->size.y) * compMap->size.x;
 
-		//	Blit the temp map onto the composite map
+	int16 rowMod = compMap->size.x + sprMap->size.x;
 
-	srcPtr	= sprMap->data + sprMap->bytes();
-	dstPtr	= compMap->data	+ xpos + (ypos + sprMap->size.y) * compMap->size.x;
-
-	rowMod = compMap->size.x + sprMap->size.x;
-
-	for (y = 0; y < sprMap->size.y; y++) {
+	for (int16 y = 0; y < sprMap->size.y; y++) {
 		dstPtr -= rowMod;
 
-		for (x = 0; x < sprMap->size.x; x++) {
+		for (int16 x = 0; x < sprMap->size.x; x++) {
 			byte c = *--srcPtr;
 
 			if (c == 0)
 				dstPtr++;
 			else
-				*dstPtr++ = lookup[ c ];
+				*dstPtr++ = lookup[c];
 		}
 	}
 }
