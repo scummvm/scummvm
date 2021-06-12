@@ -155,7 +155,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_abort = false;
 	_indef = kStateNone;
 	_indef = kStateNone;
-	_immediateMode = false;
 	_expectError = false;
 	_caughtError = false;
 

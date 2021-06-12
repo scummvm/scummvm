@@ -202,17 +202,6 @@ void Lingo::clearArgStack() {
 	_argstack.clear();
 }
 
-int Lingo::codeSetImmediate(bool state) {
-	g_lingo->_immediateMode = state;
-
-	int res = g_lingo->code1(LC::c_setImmediate);
-	inst i = 0;
-	WRITE_UINT32(&i, state);
-	g_lingo->code1(i);
-
-	return res;
-}
-
 int Lingo::codeCmd(Common::String *s, int numpar) {
 	// Insert current line number to our asserts
 	if (s->equalsIgnoreCase("scummvmAssert") || s->equalsIgnoreCase("scummvmAssertEqual")) {
