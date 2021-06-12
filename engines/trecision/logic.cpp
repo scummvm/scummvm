@@ -311,7 +311,7 @@ void LogicManager::startCharacterAnimations() {
 	else if (_vm->_curRoom == kRoom2B && (_vm->_oldRoom == kRoom2A))
 		_vm->startCharacterAction(a2B2ESCEPOZZO, 0, 2, 0);
 	else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && _vm->_room[kRoom23A].isDone())
-		_vm->startCharacterAction(aWALKIN, 0, 0, 0);
+		_vm->startCharacterAction(aWALKIN, 0, 0, _vm->_room[kRoom23A].isDone() ? 0 : 361);
 	else if (_vm->_curRoom == kRoom33 && _vm->_oldRoom == kRoom32) {
 		const uint16 roofAction = _vm->isObjectVisible(oBRUCIATURA33) ? a3311SALESCALE : a3313CHIUDEBOTOLA;
 		_vm->startCharacterAction(roofAction, 0, 0, 0);
@@ -437,11 +437,9 @@ void LogicManager::endChangeRoom() {
 		_vm->_flagInventoryLocked = true;
 	} else if (_vm->_curRoom == kRoom31P || _vm->_curRoom == kRoom35P) { // Screens with inventory
 		_vm->_flagShowCharacter = false;
-	} else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone())
-		_vm->_flagShowCharacter = false;
-	else if (_vm->_curRoom == kRoom31 && !_vm->_room[kRoom31].isDone())
+	} else if (_vm->_curRoom == kRoom31 && !_vm->_room[kRoom31].isDone())
 		_vm->_pathFind->setPosition(14);
-	else if ((_vm->_oldRoom == kRoom41D) && _vm->_inventoryObj[kItemPositioner].isFlagExtra()) {
+	else if (_vm->_oldRoom == kRoom41D && _vm->_inventoryObj[kItemPositioner].isFlagExtra()) {
 		_vm->_pathFind->setPosition(30);
 		_vm->_renderer->drawCharacter(CALCPOINTS);
 	}
@@ -471,9 +469,6 @@ void LogicManager::endChangeRoom() {
 	} else if (_vm->_curRoom == kRoom13CU) {
 		const uint16 closeupObjectId = _vm->isObjectVisible(oLETTERA13) ? oLETTERA13 : oPENPADA13;
 		_vm->_textMgr->characterSay(_vm->_obj[closeupObjectId]._examine);
-	}  else if (_vm->_curRoom == kRoom23A && (_vm->_oldRoom == kRoom21) && !_vm->_room[kRoom23A].isDone()) {
-		_vm->_flagShowCharacter = true;
-		_vm->startCharacterAction(aWALKIN, 0, 0, 361);
 	} else if (_vm->_curRoom == kRoom24 && !_vm->_room[kRoom24].isDone())
 		_vm->_textMgr->characterSay(381);
 	else if (_vm->_curRoom == kRoom2G && !_vm->_room[kRoom2G].isDone())
