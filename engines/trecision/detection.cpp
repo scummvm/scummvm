@@ -111,6 +111,26 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_TESTING,
 		GUIO0()
 	},
+	// bug #12619
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 429370),
+		Common::HU_HUN,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
+	// bug #12619
+	{
+		"nl",
+		0,
+		AD_NL_ENTRY("7665db13ad2a1ceb576531be3e1efb30", 429731),
+		Common::HU_HUN,
+		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
 	{
 		"nl",
 		"Demo",
