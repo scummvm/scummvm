@@ -312,6 +312,7 @@ protected:
 
 	void rocketSliderMove();
 	uint16 rocketSliderGetSound(uint16 pos);
+	uint16 rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2);
 	void rocketCheckSolution();
 
 	void libraryBookPageTurnLeft();

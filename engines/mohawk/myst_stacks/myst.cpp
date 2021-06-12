@@ -30,6 +30,7 @@
 #include "mohawk/video.h"
 #include "mohawk/myst_stacks/myst.h"
 
+#include "common/config-manager.h"
 #include "common/events.h"
 #include "common/math.h"
 #include "common/system.h"
@@ -2292,6 +2293,17 @@ uint16 Myst::rocketSliderGetSound(uint16 pos) {
 	return (uint16)(9530 + (pos - 216) * 35.0 / 61.0);
 }
 
+uint16 Myst::rocketCheckIfSoundMatches(uint16 sound1, uint16 sound2) {
+	debugN("rocketCheckIfSoundMatches: %i %i (diff:% 3i) ", sound1, sound2, sound1 - sound2);
+	if (!ConfMan.getBool("fuzzy_logic")) {
+		debugN("strict\n");
+		return sound1 == sound2;
+	} else {
+		debugN("fuzzy\n");
+		return abs(sound1 - sound2) < 5;
+	}
+}
+
 void Myst::rocketCheckSolution() {
 	_vm->_cursor->hideCursor();
 
@@ -2302,35 +2314,35 @@ void Myst::rocketCheckSolution() {
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider1->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9558)
+	if (!rocketCheckIfSoundMatches(soundId, 9558))
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider2->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider2->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9546)
+	if (!rocketCheckIfSoundMatches(soundId, 9546))
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider3->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider3->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9543)
+	if (!rocketCheckIfSoundMatches(soundId, 9543))
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider4->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider4->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9553)
+	if (!rocketCheckIfSoundMatches(soundId, 9553))
 		solved = false;
 
 	soundId = rocketSliderGetSound(_rocketSlider5->_pos.y);
 	_vm->_sound->playEffect(soundId);
 	_rocketSlider5->drawConditionalDataToScreen(2);
 	_vm->wait(250);
-	if (soundId != 9560)
+	if (!rocketCheckIfSoundMatches(soundId, 9560))
 		solved = false;
 
 	_vm->_sound->stopEffect();
