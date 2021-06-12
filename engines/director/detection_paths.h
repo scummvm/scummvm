@@ -25,7 +25,7 @@
 
 namespace Director {
 
-static const char *directoryGlobs[] = {
+const char *directoryGlobs[] = {
 	"install",
 	"l_zone",
 	"win_data",						// L-ZONE
