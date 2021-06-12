@@ -76,17 +76,6 @@ static void count() {
 	}
 }
 
-static int checkImmediate(int token) {
-	if (g_lingo->_immediateMode || g_lingo->_indef == kStateInArgs ||
-			g_lingo->_methodVars->contains(yytext)) {
-		yylval.s = new Common::String(yytext);
-
-		return VARID;
-	}
-
-	return token;
-}
-
 static Common::String *cleanupString(const char *s) {
 	Common::String *res = new Common::String;
 
@@ -101,16 +90,6 @@ static Common::String *cleanupString(const char *s) {
 	}
 
 	return res;
-}
-
-static int varCheck(int token, const char *name) {
-	if (g_lingo->_indef == kStateInArgs || g_lingo->_methodVars->contains(name)) {
-		yylval.s = new Common::String(name);
-
-		return VARID;
-	}
-
-	return token;
 }
 
 %}
@@ -129,13 +108,13 @@ spc [ \t\xC2]
 
 [#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
 
-after		{ count(); return varCheck(tAFTER, "after"); }		// D3
-and			{ count(); return varCheck(tAND, "and"); }
-before		{ count(); return varCheck(tBEFORE, "before"); }	// D3
+after		{ count(); return tAFTER; }		// D3
+and			{ count(); return tAND; }
+before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
-char		{ count(); return varCheck(tCHAR, "char"); }		// D3
-contains	{ count(); return varCheck(tCONTAINS, "contains"); }
-down		{ count(); return varCheck(tDOWN, "down"); }
+char		{ count(); return tCHAR; }		// D3
+contains	{ count(); return tCONTAINS; }
+down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
 else{spc}+if { count(); return tELSIF; }
 else		{ count(); return tELSE; }
@@ -153,59 +132,44 @@ end({spc}+{identifier})?	{
 		else if (!scumm_stricmp(ptr, "tell"))
 			return tENDTELL;
 
-		if (!*ptr) {	// If it is stale "end", check it
-			if (varCheck(ENDCLAUSE, "end") == VARID)
-				return VARID;
-		}
-
 		yylval.s = new Common::String(ptr);
 
 		return ENDCLAUSE;
 	}
 ^{spc}*factory { count(); return tFACTORY; }
-exit		{ count(); return varCheck(tEXIT, "exit"); }
+exit		{ count(); return tEXIT; }
 field		{ count(); return tFIELD; }
-global		{ count(); return varCheck(tGLOBAL, "global"); }
+global		{ count(); return tGLOBAL; }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
 go{spc}+loop	{ count(); return tGOLOOP; }
-instance	{ count(); return varCheck(tINSTANCE, "instance"); }
-intersects	{ count(); return varCheck(tINTERSECTS, "intersects"); }
-into		{ count(); return varCheck(tINTO, "into"); }
-in			{ count(); return varCheck(tIN, "in"); }
-item		{ count(); return varCheck(tITEM, "item"); }
-line		{ count(); return varCheck(tLINE, "line"); }
-macro		{ count(); return varCheck(tMACRO, "macro"); }
-method{spc}+{identifier}		{
-		count();
-
-		const char *ptr = &yytext[6]; // Skip 'method '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		yylval.s = new Common::String(ptr);
-
-		return tMETHOD;
-	}
-mod			{ count(); return varCheck(tMOD, "mod"); }
-movie		{ count(); return varCheck(tMOVIE, "movie"); }
-next		{ count(); return varCheck(tNEXT, "next"); }
-not			{ count(); return varCheck(tNOT, "not"); }
-of			{ count(); return varCheck(tOF, "of"); }
-on			{ count(); return varCheck(tON, "on"); }		// D3
-open		{ count(); return varCheck(tOPEN, "open"); }
-or			{ count(); return varCheck(tOR, "or"); }
+instance	{ count(); return tINSTANCE; }
+intersects	{ count(); return tINTERSECTS;}
+into		{ count(); return tINTO; }
+in			{ count(); return tIN; }
+item		{ count(); return tITEM; }
+line		{ count(); return tLINE; }
+macro		{ count(); return tMACRO;; }
+method		{ count(); return tMETHOD; }
+mod			{ count(); return tMOD;}
+movie		{ count(); return tMOVIE; }
+next		{ count(); return tNEXT; }
+not			{ count(); return tNOT; }
+of			{ count(); return tOF; }
+on			{ count(); return tON }		// D3
+open		{ count(); return tOPEN; }
+or			{ count(); return tOR; }
 play{spc}+frame	{ count(); return tPLAY; }
-play		{ count(); return varCheck(tPLAY, "play"); }
-playAccel	{ count(); yylval.s = new Common::String(yytext); return tPLAYACCEL; }
-previous	{ count(); return varCheck(tPREVIOUS, "previous"); }
-property	{ count(); return varCheck(tPROPERTY, "property"); }	// D4
-put			{ count(); return varCheck(tPUT, "put"); }
-repeat		{ count(); return checkImmediate(tREPEAT); }
+play		{ count(); return tPLAY; }
+playAccel	{ count(); return tPLAYACCEL; }
+previous	{ count(); return tPREVIOUS; }
+property	{ count(); return tPROPERTY; }	// D4
+put			{ count(); return tPUT; }
+repeat		{ count(); return tREPEAT; }
 script		{ count(); return tSCRIPT; }
-set			{ count(); return varCheck(tSET, "set"); }
-starts		{ count(); return varCheck(tSTARTS, "starts"); }
-tell		{ count(); return varCheck(tTELL, "tell"); }
+set			{ count(); return tSET; }
+starts		{ count(); return tSTARTS; }
+tell		{ count(); return tTELL; }
 the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 		count();
 
@@ -397,15 +361,15 @@ the{spc}+[[:alpha:]]+		{
 		warning("LEXER: Unhandled the entity '%s'", ptr);
 	}
 then			{ count(); return tTHEN; }
-to				{ count(); return varCheck(tTO, "to"); }
-scummvmAssertError	{ count(); return varCheck(tASSERTERROR, "scummvmAssertError"); }
-sprite			{ count(); return varCheck(tSPRITE, "sprite"); }
-with			{ count(); return varCheck(tWITH, "with"); }
-within			{ count(); return varCheck(tWITHIN, "within"); }
-when			{ count(); return varCheck(tWHEN, "when"); }
-while			{ count(); return varCheck(tWHILE, "while"); }
+to				{ count(); return tTO; }
+scummvmAssertError	{ count(); return tASSERTERROR; }
+sprite			{ count(); return tSPRITE; }
+with			{ count(); return tWITH; }
+within			{ count(); return tWITHIN; }
+when			{ count(); return tWHEN; }
+while			{ count(); return tWHILE; }
 window			{ count(); return tWINDOW; }
-word			{ count(); return varCheck(tWORD, "word"); }
+word			{ count(); return tWORD; }
 
 [<][>]			{ count(); return tNEQ; }
 [>][=]			{ count(); return tGE; }

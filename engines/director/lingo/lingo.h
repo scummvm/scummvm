@@ -315,9 +315,6 @@ public:
 		return (l + instLen - 1) / instLen;
 	}
 
-	int codeSetImmediate(bool state);
-	// int codeMe(Common::String *method, int numpar);
-
 	inst readInst() { return getInst(_pc++); }
 	inst getInst(uint pc) { return (*_currentScript)[pc]; }
 	int readInt() { return getInt(_pc++); }
@@ -423,7 +420,6 @@ public:
 	Datum _currentMe;
 
 	bool _abort;
-	bool _immediateMode;
 	bool _expectError;
 	bool _caughtError;
 

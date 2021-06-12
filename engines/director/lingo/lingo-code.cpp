@@ -118,7 +118,6 @@ static struct FuncDescr {
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
-	{ LC::c_setImmediate,	"c_setImmediate",	"i" },
 	{ LC::c_starts,			"c_starts",			"" },
 	{ LC::c_stringpush,		"c_stringpush",		"s" },
 	{ LC::c_sub,			"c_sub",			"" },
@@ -447,14 +446,6 @@ void LC::c_varpush() {
 	Common::String name(g_lingo->readString());
 	Datum d;
 
-	// In immediate mode we will push variables as strings
-	// This is used for playAccel
-	if (g_lingo->_immediateMode) {
-		g_lingo->push(Datum(Common::String(name)));
-
-		return;
-	}
-
 	// Looking for the cast member constants
 	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
 		int val = castNumToNum(name.c_str());
@@ -482,10 +473,6 @@ void LC::c_stackdrop() {
 	for (int i = 0; i < dropCount; i++) {
 		g_lingo->pop();
 	}
-}
-
-void LC::c_setImmediate() {
-	g_lingo->_immediateMode = g_lingo->readInt();
 }
 
 void LC::c_assign() {
