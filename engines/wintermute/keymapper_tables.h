@@ -483,7 +483,7 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 
 		act = new Action("SCRS", _("Save screenshot"));
 		act->setKeyEvent(KeyState(KEYCODE_F5, 0, KBD_CTRL));
-		act->addDefaultInputMapping("C+F5"); // original keyboard
+		// act->addDefaultInputMapping("C+F5"); // original keyboard (disabled due to conflict with GMM)
 		gameKeyMap->addAction(act);
 
 		act = new Action("VOLMAX", _("Volume max"));
