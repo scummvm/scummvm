@@ -117,7 +117,6 @@ void CleanupMouse(void);
 void ReadMouse(gMouseState &st);
 uint16 ReadQualifiers(void);
 bool ReadKeyboard(int &key, int &qual);
-gTimeStamp ReadTimer(void);
 bool DoubleClick(gTimeStamp oldTime);
 
 } // end of namespace Saga2
