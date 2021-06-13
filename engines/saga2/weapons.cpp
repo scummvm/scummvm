@@ -143,15 +143,15 @@ GameObject *getShieldItem(GameObject *defender) {
    WeaponProtoEffect member functions
  * ===================================================================== */
 WeaponProtoEffect::~WeaponProtoEffect(void) {
-	if (effect != NULL)
-		delete effect;
+	if (_effect != NULL)
+		delete _effect;
 }
 
 void WeaponProtoEffect::implement(Actor *enactor, GameObject *target, GameObject *, uint8) {
 	SpellTarget targ(target);
 
-	if (effect != NULL)
-		effect->implement(enactor, &targ);
+	if (_effect != NULL)
+		_effect->implement(enactor, &targ);
 }
 
 /* ===================================================================== *
@@ -164,44 +164,44 @@ void WeaponStrikeEffect::implement(Actor *enactor, GameObject *target, GameObjec
 
 	int8 totalDice, totalBase;
 
-	totalDice = dice + strength * skillDice;
-	totalBase = base + strength * skillBase;
+	totalDice = _dice + strength * _skillDice;
+	totalBase = _base + strength * _skillBase;
 
-	target->acceptDamage(enactor->thisID(), totalBase, type, totalDice, sides);
+	target->acceptDamage(enactor->thisID(), totalBase, _type, totalDice, _sides);
 }
 
 WeaponStuff::WeaponStuff() {
-	effects = NULL;
-	master = nullWeapon;
+	_effects = NULL;
+	_master = nullWeapon;
 }
 
 WeaponStuff::~WeaponStuff() {
-	while (effects != NULL) {
-		WeaponEffect *curEffect = effects;
+	while (_effects != NULL) {
+		WeaponEffect *curEffect = _effects;
 
-		effects = effects->next;
+		_effects = _effects->_next;
 		delete curEffect;
 	}
-	master = nullWeapon;
+	_master = nullWeapon;
 }
 
 void WeaponStuff::killEffects(void) {
-	while (effects != NULL) {
-		WeaponEffect *curEffect = effects;
+	while (_effects != NULL) {
+		WeaponEffect *curEffect = _effects;
 
-		effects = effects->next;
+		_effects = _effects->_next;
 		delete curEffect;
 	}
 }
 
 void WeaponStuff::addEffect(WeaponEffect *we) {
-	WeaponEffect *e = effects;
-	if (effects) {
-		while (e->next)
-			e = e->next;
-		e->next = we;
+	WeaponEffect *e = _effects;
+	if (_effects) {
+		while (e->_next)
+			e = e->_next;
+		e->_next = we;
 	} else {
-		effects = we;
+		_effects = we;
 	}
 }
 
@@ -234,18 +234,18 @@ void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 	if (we == NULL)
 		error("failed to alloc weapon effect");
 
-	if (effects == NULL)
-		effects = we;
+	if (_effects == NULL)
+		_effects = we;
 	else {
 		WeaponEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next)
+		for (tail = _effects; tail->_next; tail = tail->_next)
 			;
-		tail->next = we;
+		tail->_next = we;
 	}
 }
 
 void WeaponStuff::implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8 strength) {
-	for (WeaponEffect *we = effects; we != NULL; we = we->next)
+	for (WeaponEffect *we = _effects; we != NULL; we = we->_next)
 		we->implement(enactor, target, strikingObj, strength);
 }
 
