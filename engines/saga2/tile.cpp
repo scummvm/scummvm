@@ -2318,7 +2318,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 	assert(plIndex >= 0);
 	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
-	debug(3, "plIndex: %d", plIndex);
+	debugC(3, kDebugLoading, "plIndex: %d", plIndex);
 
 	// Now, load the actual metatile data...
 	if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
@@ -4372,6 +4372,8 @@ void initTileCyclingStates(void) {
 	tileRes->seek(cycleID);
 	for (int i = 0; i < cycleCount; ++i)
 		readCycle(tileRes, cycleList[i]);
+
+	debugC(2, kDebugLoading, "Loaded Cycles: cycleCount = %d", cycleCount);
 
 	if (cycleList == nullptr)
 		error("Unable to load tile cycling data");
