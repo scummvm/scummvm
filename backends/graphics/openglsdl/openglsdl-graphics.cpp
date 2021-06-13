@@ -356,15 +356,15 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	_lastRequestedWidth  = requestedWidth;
 	_lastRequestedHeight = requestedHeight;
 
+	// Fetch current desktop resolution and determining max. width and height
+	Common::Rect desktopRes = _window->getDesktopResolution();
+
 	if (_windowIsMaximized == true) {
 		// Set the window size to the values stored when the window was maximized
 		// for the last time. We also need to reset any scaling here.
 		requestedWidth  = ConfMan.getInt("window_maximized_width", Common::ConfigManager::kApplicationDomain);
 		requestedHeight = ConfMan.getInt("window_maximized_height", Common::ConfigManager::kApplicationDomain);
-		if ((requestedWidth > 0) && (requestedHeight > 0)) {
-			requestedWidth  = requestedWidth / requestedHeight;
-			requestedHeight = requestedWidth / requestedHeight;
-		}
+
 	} else if (ConfMan.hasKey("last_window_width", Common::ConfigManager::kApplicationDomain) && ConfMan.hasKey("last_window_height", Common::ConfigManager::kApplicationDomain)) {
 		// Restore previously stored window dimensions.
 		requestedWidth  = ConfMan.getInt("last_window_width", Common::ConfigManager::kApplicationDomain);
@@ -373,7 +373,6 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 	} else {
 		// Set the basic window size based on the desktop resolution
 		// since we have no values stored, e.g. on first launch.
-		Common::Rect desktopRes = _window->getDesktopResolution();
 		requestedWidth  = desktopRes.width()  * 0.3f;
 		requestedHeight = desktopRes.height() * 0.4f;
 
@@ -382,7 +381,25 @@ bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requested
 		requestedHeight *= _graphicsScale;
 	}
 
-	// Set up the mode.
+	// Determine current aspect ratio
+	uint maxAllowedWidth   = desktopRes.width();
+	uint maxAllowedHeight  = desktopRes.height();
+	float ratio = (float)requestedWidth / requestedHeight;
+
+	// Check if we request a larger window than physically possible,
+	// e.g. by starting with additional launcher parameters forcing
+	// specific (openGL) scaler modes that could exceed the desktop/screen size
+	if (requestedWidth  > maxAllowedWidth) {
+		requestedWidth  = maxAllowedWidth;
+		requestedHeight = requestedWidth / ratio;
+	}
+
+	if (requestedHeight > maxAllowedHeight) {
+		requestedHeight = maxAllowedHeight;
+		requestedWidth  = requestedHeight * ratio;
+	}
+
+	// Set up the mode
 	return setupMode(requestedWidth, requestedHeight);
 }
 
