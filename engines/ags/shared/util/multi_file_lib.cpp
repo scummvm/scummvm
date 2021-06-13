@@ -30,8 +30,8 @@ namespace AGS {
 namespace Shared {
 
 namespace MFLUtil {
-const String HeadSig = "CLIB\x1a";
-const String TailSig = "CLIB\x1\x2\x3\x4SIGE";
+const char *HeadSig = "CLIB\x1a";
+const char *TailSig = "CLIB\x1\x2\x3\x4SIGE";
 
 static const size_t SingleFilePswLen = 13;
 
@@ -41,7 +41,7 @@ static const size_t V10LibFileLen = 20;
 static const size_t V10AssetFileLen = 25;
 
 static const int EncryptionRandSeed = 9338638;
-static const String EncryptionString = "My\x1\xde\x4Jibzle";
+static const char *EncryptionString = "My\x1\xde\x4Jibzle";
 
 MFLError ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_version, soff_t *p_abs_offset);
 MFLError ReadSingleFileLib(AssetLibInfo &lib, Stream *in, MFLVersion lib_version);
@@ -106,39 +106,39 @@ MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_vers
 	soff_t abs_offset = 0; // library offset in this file
 	String sig;
 	// check multifile lib signature at the beginning of file
-	sig.ReadCount(in, HeadSig.GetLength());
-	if (HeadSig.Compare(sig) != 0) {
+	sig.ReadCount(in, strlen(HeadSig));
+	if (sig.Compare(HeadSig) != 0) {
 		// signature not found, check signature at the end of file
-		in->Seek(-(soff_t)TailSig.GetLength(), kSeekEnd);
+		in->Seek(-(soff_t)strlen(TailSig), kSeekEnd);
 		// by definition, tail marks the max absolute offset value
 		auto tail_abs_offset = in->GetPosition();
-		sig.ReadCount(in, TailSig.GetLength());
+		sig.ReadCount(in, strlen(TailSig));
 		// signature not found, return error code
-		if (TailSig.Compare(sig) != 0)
+		if (sig.Compare(TailSig) != 0)
 			return kMFLErrNoLibSig;
 
 		// it's an appended-to-end-of-exe thing;
 		// now we need to read multifile lib offset value, but we do not know
 		// if its 32-bit or 64-bit yet, so we'll have to test both
-		in->Seek(-(soff_t)TailSig.GetLength() - sizeof(int64_t), kSeekEnd);
+		in->Seek(-(soff_t)strlen(TailSig) - sizeof(int64_t), kSeekEnd);
 		abs_offset = in->ReadInt64();
 		in->Seek(-(soff_t)sizeof(int32_t), kSeekCurrent);
 		soff_t abs_offset_32 = in->ReadInt32();
 
 		// test for header signature again, with 64-bit and 32-bit offsets if necessary
-		if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - HeadSig.GetLength())) {
+		if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - strlen(HeadSig))) {
 			in->Seek(abs_offset, kSeekBegin);
-			sig.ReadCount(in, HeadSig.GetLength());
+			sig.ReadCount(in, strlen(HeadSig));
 		}
 
 		// try again with 32-bit offset
-		if (HeadSig.Compare(sig) != 0) {
+		if (sig.Compare(HeadSig) != 0) {
 			abs_offset = abs_offset_32;
-			if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - HeadSig.GetLength())) {
+			if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - strlen(HeadSig))) {
 				in->Seek(abs_offset, kSeekBegin);
-				sig.ReadCount(in, HeadSig.GetLength());
+				sig.ReadCount(in, strlen(HeadSig));
 			}
-			if (HeadSig.Compare(sig) != 0) {
+			if (sig.Compare(HeadSig) != 0) {
 				// nope, no luck, bad / unknown format
 				return kMFLErrNoLibSig;
 			}
@@ -328,7 +328,7 @@ MFLUtil::MFLError MFLUtil::ReadV30(AssetLibInfo &lib, Stream *in, MFLVersion /* 
 }
 
 void MFLUtil::WriteHeader(const AssetLibInfo &lib, MFLVersion lib_version, int lib_index, Stream *out) {
-	out->Write(MFLUtil::HeadSig.GetCStr(), MFLUtil::HeadSig.GetLength());
+	out->Write(HeadSig, strlen(HeadSig));
 	out->WriteByte(lib_version);
 	out->WriteByte(lib_index);   // file number
 
@@ -361,7 +361,7 @@ void MFLUtil::WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out) {
 		out->WriteInt32((int32_t)lib_offset);
 	else
 		out->WriteInt64(lib_offset);
-	out->Write(TailSig.GetCStr(), TailSig.GetLength());
+	out->Write(TailSig, strlen(TailSig));
 }
 
 void MFLUtil::DecryptText(char *text) {
