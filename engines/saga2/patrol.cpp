@@ -211,12 +211,15 @@ void initPatrolRoutes(void) {
 	if (patrolRouteRes == nullptr || !patrolRouteRes->_valid)
 		error("Error accessing patrol route resource group.");
 
+	debugC(1, kDebugLoading, "Loading Patrol Routes for %d worlds", worldCount);
+
 	// Allocate the patrol route list array
 	patrolRouteList = (PatrolRouteList **)malloc(sizeof(PatrolRouteList *) * worldCount);
 
 	if (patrolRouteList == nullptr)
 		error("Unable to allocate the patrol route list");
 
+	int count = 0;
 	for (int16 i = 0; i < worldCount; i++) {
 		patrolRouteList[i] = nullptr;
 
@@ -225,10 +228,13 @@ void initPatrolRoutes(void) {
 			Common::SeekableReadStream *stream = loadResourceToStream(patrolRouteRes, MKTAG('R', 'T', 'E', i), "patrol route data");
 
 			patrolRouteList[i] = new PatrolRouteList(stream);
+			count++;
 
 			delete stream;
 		}
 	}
+
+	debugC(1, kDebugLoading, "Loading Patrol Routes, loaded %d entries", count);
 
 	// Dispose of the patrol route resource context
 	auxResFile->disposeContext(patrolRouteRes);

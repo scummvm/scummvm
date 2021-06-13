@@ -158,7 +158,7 @@ WeaponStuff::WeaponStuff() {
 
 WeaponStuff::~WeaponStuff() {
 	while (effects != NULL) {
-		WeaponEffect    *curEffect = effects;
+		WeaponEffect *curEffect = effects;
 
 		effects = effects->next;
 		delete curEffect;
@@ -168,7 +168,7 @@ WeaponStuff::~WeaponStuff() {
 
 void WeaponStuff::killEffects(void) {
 	while (effects != NULL) {
-		WeaponEffect    *curEffect = effects;
+		WeaponEffect *curEffect = effects;
 
 		effects = effects->next;
 		delete curEffect;
@@ -178,7 +178,8 @@ void WeaponStuff::killEffects(void) {
 void WeaponStuff::addEffect(WeaponEffect *we) {
 	WeaponEffect *e = effects;
 	if (effects) {
-		while (e->next) e = e->next;
+		while (e->next)
+			e = e->next;
 		e->next = we;
 	} else {
 		effects = we;
@@ -199,7 +200,7 @@ void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 					rie->baseDamage,
 					rie->skillDamage);
 	} else
-		we = new   WeaponProtoEffect(rie);
+		we = new WeaponProtoEffect(rie);
 
 	if (we == NULL)
 		error("failed to alloc weapon effect");
@@ -226,6 +227,8 @@ static void loadWeaponData(void) {
 	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing weapon resource group.");
 
+	debugC(1, kDebugLoading, "Loading Weapon Data");
+
 	// get spell effects
 	int16 i = 0;
 	while (spellRes->size(MKTAG('E', 'F', 'F', i)) > 0) {
@@ -244,6 +247,8 @@ static void loadWeaponData(void) {
 	}
 	g_vm->_loadedWeapons = i;
 	assert(i > 1);
+
+	debugC(1, kDebugLoading, "Loading Weapon Data, loaded %d entries", i);
 
 	auxResFile->disposeContext(spellRes);
 }
