@@ -172,6 +172,8 @@ public:
 	int _selStart;
 	int _selEnd;
 
+	int _checkBoxType;
+
 private:
 	Window *_window;
 	DirectorEngine *_vm;
