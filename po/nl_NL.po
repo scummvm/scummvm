@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2021-06-13 05:51+0000\n"
+"POT-Creation-Date: 2021-06-13 12:15+0000\n"
 "PO-Revision-Date: 2021-05-27 09:25+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2162,7 +2162,7 @@ msgid ""
 "obscure adventures and truly hidden gems to explore."
 msgstr ""
 
-#: engines/advancedDetector.cpp:215
+#: engines/advancedDetector.cpp:227
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr ""
 "Illegale spelkopie gedetecteerd. Wij leveren geen support in dit soort "
