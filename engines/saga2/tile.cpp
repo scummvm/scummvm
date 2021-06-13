@@ -2922,10 +2922,12 @@ inline void drawMetaTiles(void) {
 
 	viewPos.x = (tileScroll.x >> tileDXShift)
 	            - (platformWidth * mapList[currentMapNum].mapSize),
-	            viewPos.y = (platformWidth
-	                         *   mapList[currentMapNum].mapSize
-	                         *   tileDX)
-	                        -   tileScroll.y;
+	viewPos.y = (platformWidth
+	             *   mapList[currentMapNum].mapSize
+	             *   tileDX)
+	             -   tileScroll.y;
+
+	debugC(2, kDebugTiles, "viewPos = (%d,%d)", viewPos.x, viewPos.y);
 
 	//  coordinates of the view window upper left corner in U,V
 
@@ -2935,16 +2937,20 @@ inline void drawMetaTiles(void) {
 	               / (platformWidth * 2);
 	baseCoords.z = 0;
 
+	debugC(2, kDebugTiles, "baseCoords = (%d,%d,%d)", baseCoords.u, baseCoords.v, baseCoords.z);
+
 	setAreaSound(baseCoords); //+TilePoint(tileRectWidth, tileRectHeight,0));
 
 	updateHandleRefs(baseCoords);  // viewPoint, &sti );
 	//  coordinates of current metatile (in X,Y), relative to screen
 
 	metaPos.x   = (baseCoords.u - baseCoords.v) * metaDX
-	              - viewPos.x * tileDX;
+	            	- viewPos.x * tileDX;
 
 	metaPos.y   = viewPos.y
 	              - (baseCoords.u + baseCoords.v) * metaDY;
+
+	debugC(2, kDebugTiles, "metaPos = (%d,%d)", metaPos.x, metaPos.y);
 
 	//  Loop through each horizontal row of metatiles
 	//  REM: also account for highest possible platform
@@ -4613,6 +4619,7 @@ void updateMainDisplay(void) {
 
 	//  Get the coordinates of the object which the camera is tracking
 	getViewTrackPos(trackPos);
+	debugC(1, kDebugTiles, "trackPos = (%d,%d,%d)", trackPos.u, trackPos.v, trackPos.z);
 
 	viewDiff = trackPos - lastViewLoc;
 	lastViewLoc = trackPos;
@@ -4631,6 +4638,7 @@ void updateMainDisplay(void) {
 	targetScroll.y =
 	    curMap->mapHeight - (trackPos.u + trackPos.v)
 	    -   trackPos.z - tileRect.height / 2 - 32;
+	debugC(1, kDebugTiles, "targetScroll = (%d,%d)", targetScroll.x, targetScroll.y);
 
 	//  Compute the delta vector between the current scroll position
 	//  and the desired scroll position, and also compute the
