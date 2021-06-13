@@ -96,6 +96,7 @@ void *newTimerList(void) {
 void deleteTimerList(void *p) {
 	TimerListHolder     *listHolderToDelete;
 
+	warning("FIXME: deleteTimerList(): unsafe pointer arithmetics");
 	listHolderToDelete =
 	    (TimerListHolder *)((uint8 *)p
 	                        -   offsetof(
@@ -146,6 +147,7 @@ void *newTimer(void) {
 void deleteTimer(void *p) {
 	TimerHolder     *timerHolderToDelete;
 
+	warning("FIXME: deleteTimer(): unsafe pointer arithmetics");
 	timerHolderToDelete =
 	    (TimerHolder *)((uint8 *)p - offsetof(TimerHolder, timerBuffer));
 

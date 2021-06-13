@@ -85,7 +85,7 @@ public:
 	BandID getBandID(Band *b) {
 		BandPlaceHolder     *bp;
 
-		warning("BandPlaceHolder: unsafe pointer arithmetics");
+		warning("FIXME: BandPlaceHolder::getBandID(): unsafe pointer arithmetics");
 		bp = ((BandPlaceHolder *)((uint8 *)b - offsetof(BandPlaceHolder, buf)));
 		return bp - array;
 	}
@@ -242,7 +242,7 @@ void *BandList::newBand(BandID id) {
 void BandList::deleteBand(void *p) {
 	BandPlaceHolder     *bp;
 
-	warning("BandList: unsafe pointer arithmetics");
+	warning("FIXME: BandList::deleteBand(): unsafe pointer arithmetics");
 
 	//  Convert the pointer to the Band to a pointer to the
 	//  BandPlaceHolder

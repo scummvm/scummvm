@@ -88,6 +88,7 @@ public:
 
 	//  Deallocate an object of type T given its address
 	void free(void *p) {
+		warning("FIXME: Pool::free(): unsafe pointer arithmetics");
 		_free((uint8 *)p - offsetof(PoolNode, buf));
 	}
 };
