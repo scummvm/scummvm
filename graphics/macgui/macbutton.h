@@ -46,6 +46,9 @@ public:
 
 	void invertOuter();
 	void invertInner();
+
+	void setHilite(bool hilite);
+
 	virtual bool draw(ManagedSurface *g, bool forceRedraw = false) override;
 	virtual bool draw(bool forceRedraw = false) override;
 	virtual bool processEvent(Common::Event &event) override;

@@ -899,6 +899,7 @@ bool TextCastMember::setField(int field, const Datum &d) {
 		// TODO: Understand how texts can be selected programmatically as well.
 		if (_type == kCastButton) {
 			_hilite = (bool)d.asInt();
+			_modified = true;
 			return true;
 		}
 		break;
