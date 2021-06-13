@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-13 12:15+0000\n"
-"PO-Revision-Date: 2021-06-06 22:25+0000\n"
+"PO-Revision-Date: 2021-06-14 03:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5251,7 +5251,7 @@ msgstr "La vidéo du survol de Myst n'était pas jouée par le moteur originel."
 #.
 #: engines/mohawk/dialogs.cpp:132
 msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr ""
+msgstr "Logique ~F~loue dans la fusée activée"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:140
