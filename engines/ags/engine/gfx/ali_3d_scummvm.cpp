@@ -410,8 +410,14 @@ void ScummVMRendererGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch
 }
 
 void ScummVMRendererGraphicsDriver::BlitToTexture() {
-	::AGS::g_vm->_screen->getSurface().blitFrom(
-		virtualScreen->GetAllegroBitmap()->getSurface());
+	const Graphics::Surface &src =
+		virtualScreen->GetAllegroBitmap()->getSurface();
+
+	// Blit the entire surface to the screen, ignoring the alphas
+	Graphics::Surface srcCopy = src;
+	srcCopy.format.aLoss = 8;
+
+	::AGS::g_vm->_screen->getSurface().blitFrom(srcCopy);
 }
 
 void ScummVMRendererGraphicsDriver::Present() {
