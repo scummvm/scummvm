@@ -208,18 +208,18 @@ void WeaponStuff::addEffect(WeaponEffect *we) {
 void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 	WeaponEffect *we;
 
-	int16 item = stream->readSint16LE();		// spell ID
+	/*int16 item = */stream->readSint16LE();		// spell ID
 	int16 effectGroup = stream->readSint16LE();	// effect group
 
 	if (effectGroup == effectStrike) {
 		effectDamageTypes effectType = (effectDamageTypes)stream->readSint16LE();	// effect ID
-		int16 targeting = stream->readSint16LE();	// targeting
+		/*int16 targeting = */stream->readSint16LE();	// targeting
 		int16 baseDice = stream->readSint16LE();	// base dice
 		int16 skillDice = stream->readSint16LE();	// skill dice
 		int16 baseDamage = stream->readSint16LE();	// attrib change
 		int16 skillDamage = stream->readSint16LE();	// attrib change
-		int16 reserved0 = stream->readSint16LE();	// min enchant
-		int16 reserved1 = stream->readSint16LE();	// min enchant
+		/*int16 reserved0 = */stream->readSint16LE();	// min enchant
+		/* int16 reserved1 = */stream->readSint16LE();	// min enchant
 		int16 diceSides = stream->readSint16LE();
 
 		if (diceSides == 0)
