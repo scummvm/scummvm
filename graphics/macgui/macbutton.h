@@ -54,6 +54,8 @@ public:
 private:
 	MacButtonType _buttonType;
 	MacPlotData _pd;
+	bool _invertInner;
+	bool _invertOuter;
 };
 
 } // End of namespace Graphics
