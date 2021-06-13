@@ -52,7 +52,7 @@ enum ScriptType {
 	kMovieScript = 2,
 	kEventScript = 3,
 	kTestScript = 4,
-	kMaxScriptType = 4	// Sync with score-loading.cpp:45, array scriptTypes[]
+	kMaxScriptType = 4	// Sync with cast.cpp:46, array scriptTypes[]
 };
 
 enum ScriptFlag {
