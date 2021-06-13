@@ -105,32 +105,22 @@ struct ActorAttributes {
 		vitalityLimit               = 256,
 	};
 
-	union {
-		struct {
+	//  Automatic skills
+	uint8       archery,        //  Accuracy of missile weapons
+				swordcraft,     //  Accuracy of bladed melee weapons
+				shieldcraft,    //  Actor's ability to use a shield
+				bludgeon,       //  Accuracy of non-bladed melee weapons
+				throwing,       //  Ability to throw objects accurately
+				spellcraft,     //  Accuracy of spell combat
+				stealth,        //  Ability to remain unnoticed
+				agility,        //  Ability to dodge
+				brawn,          //  Ability to lift, and damage of weapons
+				lockpick;       //  Ability to pick locks
 
-			//  Automatic skills
-			uint8       archery,        //  Accuracy of missile weapons
-			            swordcraft,     //  Accuracy of bladed melee weapons
-			            shieldcraft,    //  Actor's ability to use a shield
-			            bludgeon,       //  Accuracy of non-bladed melee weapons
-			            throwing,       //  Ability to throw objects accurately
-			            spellcraft,     //  Accuracy of spell combat
-			            stealth,        //  Ability to remain unnoticed
-			            agility,        //  Ability to dodge
-			            brawn,          //  Ability to lift, and damage of weapons
-			            lockpick;       //  Ability to pick locks
-
-			//  Manual skills
-			uint8       pilfer,         //  Ability to "lift" an item
-			            firstAid,       //  Ability to heal recent injuries
-			            spotHidden;     //  Ability to spot hidden objects
-
-
-		};
-
-		uint8   allSkills[numSkills]; // number of skills
-	};
-
+	//  Manual skills
+	uint8       pilfer,         //  Ability to "lift" an item
+				firstAid,       //  Ability to heal recent injuries
+				spotHidden;     //  Ability to spot hidden objects
 
 	//  Pad byte for alignment
 	int8 pad;
@@ -139,24 +129,41 @@ struct ActorAttributes {
 	int16 vitality;
 
 	//  Magic energy
-	union {
-		struct {
-			int16       redMana,
-			            orangeMana,
-			            yellowMana,
-			            greenMana,
-			            blueMana,
-			            violetMana;
-		};
-
-		int16 allManas[numManas];
-	};
+	int16       redMana,
+				orangeMana,
+				yellowMana,
+				greenMana,
+				blueMana,
+				violetMana;
 
 	uint8 &skill(int16 id) {
-		return allSkills[id];
+		switch (id) {
+		case skillIDArchery: return archery;
+		case skillIDSwordcraft: return swordcraft;
+		case skillIDShieldcraft: return shieldcraft;
+		case skillIDBludgeon: return bludgeon;
+		case skillIDThrowing: return throwing;
+		case skillIDSpellcraft: return spellcraft;
+		case skillIDStealth: return stealth;
+		case skillIDAgility: return agility;
+		case skillIDBrawn: return brawn;
+		case skillIDLockpick: return lockpick;
+		case skillIDPilfer: return pilfer;
+		case skillIDFirstAid: return firstAid;
+		case skillIDSpotHidden: return spotHidden;
+		}
+		error("Incorrect skill id: %d", id);
 	}
 	int16 &mana(int16 id) {
-		return allManas[id];
+		switch (id) {
+		case manaIDRed: return redMana;
+		case manaIDOrange: return orangeMana;
+		case manaIDYellow: return yellowMana;
+		case manaIDGreen: return greenMana;
+		case manaIDBlue: return blueMana;
+		case manaIDViolet: return violetMana;
+		}
+		error("Incorrect mana id: %d", id);
 	}
 
 	uint8 getSkillLevel(int16 id) {

@@ -149,8 +149,8 @@ void PlayerActor::AttribUpdate(void) {
 
 	for (int16 i = 0; i < numSkills; i++) {
 		// go through each skill and update as needed
-		stdAttribUpdate(effStats->allSkills[i],
-		                baseStats.allSkills[i],
+		stdAttribUpdate(effStats->skill(i),
+		                baseStats.skill(i),
 		                i);
 	}
 }
