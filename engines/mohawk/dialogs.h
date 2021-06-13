@@ -101,6 +101,7 @@ private:
 	GUI::CheckboxWidget *_transitionsCheckbox;
 	GUI::CheckboxWidget *_mystFlyByCheckbox;
 	GUI::CheckboxWidget *_spaceshipFuzzyLogicCheckbox;
+	GUI::CheckboxWidget *_addCdromDelayCheckbox;
 
 	GUI::PopUpWidget *_languagePopUp;
 

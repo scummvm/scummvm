@@ -100,6 +100,7 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		_transitionsCheckbox(nullptr),
 		_mystFlyByCheckbox(nullptr),
 		_spaceshipFuzzyLogicCheckbox(nullptr),
+		_addCdromDelayCheckbox(nullptr),
 		_languagePopUp(nullptr),
 		_dropPageButton(nullptr),
 		_showMapButton(nullptr),
@@ -133,6 +134,8 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		 */
 		_spaceshipFuzzyLogicCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.FuzzyMode", _("~F~uzzy Logic in SpaceShip Active"));
 	}
+
+	_addCdromDelayCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.CdromDelay", _("Simulate loading times of old CD drives"));
 
 	if (isInGame()) {
 		MohawkEngine_Myst *vm = static_cast<MohawkEngine_Myst *>(g_engine);
@@ -177,6 +180,7 @@ void MystOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::Stri
 	                .addWidget("Transistions", "Checkbox")
 	                .addWidget("PlayMystFlyBy", "Checkbox")
 	                .addWidget("FuzzyMode", "Checkbox")
+					.addWidget("CdromDelay", "Checkbox")
 	                .addLayout(GUI::ThemeLayout::kLayoutHorizontal)
 	                    .addPadding(0, 0, 0, 0)
 	                    .addWidget("LanguageDesc", "OptionsLabel")
@@ -211,6 +215,10 @@ void MystOptionsWidget::load() {
 
 	if (_spaceshipFuzzyLogicCheckbox) {
 		_spaceshipFuzzyLogicCheckbox->setState(ConfMan.getBool("fuzzy_logic", _domain));
+	}
+
+	if (_addCdromDelayCheckbox) {
+		_addCdromDelayCheckbox->setState(ConfMan.getBool("cdromdelay", _domain));
 	}
 
 	if (_languagePopUp) {
@@ -251,6 +259,10 @@ bool MystOptionsWidget::save() {
 
 	if (_spaceshipFuzzyLogicCheckbox) {
 		ConfMan.setBool("fuzzy_logic", _spaceshipFuzzyLogicCheckbox->getState(), _domain);
+	}
+
+	if (_addCdromDelayCheckbox) {
+		ConfMan.setBool("cdromdelay", _addCdromDelayCheckbox->getState(), _domain);
 	}
 
 	if (_languagePopUp) {
