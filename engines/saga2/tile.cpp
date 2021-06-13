@@ -1615,7 +1615,13 @@ void cleanupMaps(void) {
 		WorldMapData    *mapData = &mapList[i];
 
 		//  Dump the map
-		free(mapData->map);
+		if (mapData->map != nullptr) {
+			if (mapData->map->mapData != nullptr)
+				delete[] mapData->map->mapData;
+
+			delete mapData->map;
+			mapData->map = nullptr;
+		}
 
 		//  Dump the meta tile list
 		delete[] mapData->metaList;
@@ -1630,7 +1636,7 @@ void cleanupMaps(void) {
 
 		//  If there is an active item list, dump it
 		if (mapData->activeItemList != nullptr)
-			free(mapData->activeItemList);
+			delete[] mapData->activeItemList;
 
 		//  Dump the object ripping table ID list
 		delete[] mapData->ripTableIDList;
@@ -1641,8 +1647,13 @@ void cleanupMaps(void) {
 
 	//  Dump all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		if (tileBanks[i] != nullptr)
-			free(tileBanks[i]);
+		if (tileBanks[i] != nullptr) {
+			if (tileBanks[i]->tileArray != nullptr)
+				delete[] tileBanks[i]->tileArray;
+
+			delete tileBanks[i];
+			tileBanks[i] = nullptr;
+		}
 	}
 }
 
