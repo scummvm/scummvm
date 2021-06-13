@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-13 12:15+0000\n"
-"PO-Revision-Date: 2021-06-06 22:25+0000\n"
+"PO-Revision-Date: 2021-06-13 19:25+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -5194,7 +5194,7 @@ msgstr "Alkuperäinen pelimoottori ei toistanut Myst fly by-videota."
 #.
 #: engines/mohawk/dialogs.cpp:132
 msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr ""
+msgstr "~S~umea logiikka avaruusaluksen aktivointi-pulmassa"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:140
