@@ -125,7 +125,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 	}
 }
 
-void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
+void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bool mask) {
 	const byte *tilePointer;
 	const byte *readPointer;
 	byte *drawPointer;
@@ -188,7 +188,10 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 
 					if (colDiff > 0) {
 						byte *dst = (byte *)(drawPointer + count);
-						memcpy(dst, (readPointer + count), colDiff);
+						if (mask)
+							memset(dst, 0, colDiff);
+						else
+							memcpy(dst, (readPointer + count), colDiff);
 						col += colDiff;
 					}
 				}
@@ -230,7 +233,7 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 
 
 void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
-	warning("STUB: maskTile()");
+	drawTile(map, x, y, height, srcData, true);
 }
 
 void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int xpos, int ypos) {

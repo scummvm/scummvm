@@ -31,6 +31,7 @@
 #include "saga2/tile.h"
 #include "saga2/hresmgr.h"
 #include "saga2/oncall.h"
+#include "saga2/blitters.h"
 
 namespace Saga2 {
 

@@ -326,36 +326,20 @@ public:
  * ===================================================================== */
 
 struct TileRef {
-	TileID          tile;                   // which tile
-	uint8           flags;                  // tile flags
-	uint8           tileHeight;             // height of tile above platform
+	TileID tile;		// which tile
+	uint8 flags;		// tile flags
+	uint8 tileHeight;	// height of tile above platform
 };
 
 enum tileRefFlags {
-	trTileTAG = (1 << 0),                   // this tile part of a TAG
-	trTileHidden = (1 << 1),                // tile hidden when covered
-	trTileFlipped = (1 << 2),               // draw tile flipped horizontal
-	trTileSensitive = (1 << 3),             // tile is triggerable (TAG only)
+	trTileTAG = (1 << 0),		// this tile part of a TAG
+	trTileHidden = (1 << 1),	// tile hidden when covered
+	trTileFlipped = (1 << 2),	// draw tile flipped horizontal
+	trTileSensitive = (1 << 3)	// tile is triggerable (TAG only)
 };
 
-typedef TileRef     *TileRefPtr,
-        * *TileRefHandle;
+typedef TileRef *TileRefPtr, **TileRefHandle;
 
-/* ===================================================================== *
-   Assembly-language tile-drawing functions
- * ===================================================================== */
-
-// moved to FTAASM.H
-
-#ifndef FTAASM_H
-extern void drawTile(gPixelMap *map,
-                               int32 x, int32 y, int32 height,
-                               uint8 *srcData);
-
-extern void maskTile(gPixelMap *map,
-                               int32 x, int32 y, int32 height,
-                               uint8 *srcData);
-#endif
 void drawMainDisplay(void);
 
 /* ===================================================================== *
