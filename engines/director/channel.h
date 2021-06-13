@@ -65,6 +65,8 @@ public:
 	void replaceWidget();
 	bool updateWidget();
 
+	void updateGlobalAttr();
+
 	void addDelta(Common::Point pos);
 
 public:

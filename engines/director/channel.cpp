@@ -30,6 +30,7 @@
 #include "director/castmember.h"
 
 #include "graphics/macgui/mactext.h"
+#include "graphics/macgui/macbutton.h"
 
 namespace Director {
 
@@ -308,6 +309,7 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 	}
 
 	setEditable(_sprite->_editable);
+	updateGlobalAttr();
 
 	_dirty = false;
 }
@@ -315,8 +317,6 @@ void Channel::setClean(Sprite *nextSprite, int spriteId, bool partial) {
 void Channel::setEditable(bool editable) {
 	if (_sprite->_cast && _sprite->_cast->_type == kCastText) {
 		// if the sprite is editable, then we refresh the selEnd and setStart
-		if (editable && _widget)
-			((Graphics::MacText *)_widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		if (_sprite->_cast->isEditable() == editable)
 			return;
 		_sprite->_cast->setEditable(editable);
@@ -335,6 +335,19 @@ void Channel::setEditable(bool editable) {
 			}
 		}
 	}
+}
+
+// we may optimize this by only update those attributes when we are changing them
+// but not to pass them to widgets everytime
+void Channel::updateGlobalAttr() {
+	if (!_sprite->_cast)
+		return;
+	// update text info, including selEnd and selStart
+	if (_sprite->_cast->_type == kCastText && _sprite->_editable && _widget)
+		((Graphics::MacText *)_widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
+	// update button info, including checkBoxType
+	if (_sprite->_cast->_type == kCastButton && _widget)
+		((Graphics::MacButton *)_widget)->setCheckBoxType(g_director->getCurrentMovie()->_checkBoxType);
 }
 
 void Channel::replaceSprite(Sprite *nextSprite) {

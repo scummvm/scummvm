@@ -728,6 +728,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		widget->_focusable = true;
 
 		((Graphics::MacButton *)widget)->setHilite(_hilite);
+		((Graphics::MacButton *)widget)->setCheckBoxType(g_director->getCurrentMovie()->_checkBoxType);
 		((Graphics::MacButton *)widget)->draw();
 		break;
 
