@@ -39,6 +39,7 @@
 #include "saga2/weapons.h"
 #include "saga2/loadsave.h"
 #include "saga2/display.h"
+#include "saga2/tile.h"
 
 namespace Saga2 {
 

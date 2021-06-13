@@ -37,6 +37,7 @@
 #include "saga2/weapons.h"
 #include "saga2/spellbuk.h"
 #include "saga2/combat.h"
+#include "saga2/tile.h"
 
 #include "saga2/methods.r"
 #include "saga2/pclass.r"

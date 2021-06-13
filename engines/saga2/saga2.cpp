@@ -63,7 +63,7 @@ Saga2Engine::Saga2Engine(OSystem *syst)
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "res");
 
-	debug("Saga2Engine::Saga2Engine");
+	_loadedWeapons = 0;
 }
 
 Saga2Engine::~Saga2Engine() {

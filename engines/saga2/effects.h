@@ -72,59 +72,9 @@ enum effectTypes {
 	effectTAG,               // mana drain, money drain
 	effectLocation,          // mana drain, money drain
 	effectSpecial,
-	effectStrike,           // weapon strike effect
+	effectStrike            // weapon strike effect
 };
 
-
-//
-// Attribute effects - look familiar ?
-//
-/*  all the skill* are now in the spellid enum
-enum effectAttribTypes {
-    skillArchery        =  0,
-    skillSwordcraft     =  1,
-    skillShieldcraft    =  2,
-    skillBludgeon       =  3,
-    skillThrowing       =  4,
-    skillSpellcraft     =  5,
-    skillStealth        =  6,
-    skillAgility        =  7,
-    skillBrawn          =  8,
-    skillLockpick       =  9,
-    skillPilfer         = 10,
-    skillFirstAid       = 11,
-    skillSpotHidden     = 12,
-};
-*/
-//
-// Damage effects - these are the types of damage in the world
-//    Damage being defined as a change in effective vitality
-//    Note that healing is negative damage.
-//
-
-enum effectDamageTypes {
-	// Generic
-	damageOther         = 0,    // Healing, cause wounds
-	// Combat damage
-	damageImpact        = 1,    // hammers, maces
-	damageSlash         = 2,    // swords
-	damageProjectile    = 3,            // arrows, poin-ted sticks
-	// Magic damage
-	damageFire          = 4,     // Yellow
-	damageAcid          = 5,     // Violet
-	damageHeat          = 6,     // Red
-	damageCold          = 7,     // Blue
-	damageLightning     = 8,     // Orange
-	damagePoison        = 9,     // Green
-	// Other magic damage
-	damageMental        = 10,     // dain bramage
-	damageToUndead      = 11,    // undead take this damage
-	damageDirMagic      = 12,    // the plusses on swords etc.
-	// Physiological Damage
-	damageStarve        = 13,    // You must eat!
-	// other
-	damageEnergy        = 14,    // Generally hard to resist - god damage
-};
 
 //
 // Resistance Effects - these correspond exactly to the Damage types
