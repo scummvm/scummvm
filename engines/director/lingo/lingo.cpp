@@ -1211,11 +1211,11 @@ void Lingo::runTests() {
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
 			_hadError = false;
-			mainArchive->addCode(script, kMovieScript, counter);
+			mainArchive->addCode(script, kTestScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
 				if (!_hadError)
-					executeScript(kMovieScript, counter);
+					executeScript(kTestScript, counter);
 				else
 					debug(">> Skipping execution");
 			}
