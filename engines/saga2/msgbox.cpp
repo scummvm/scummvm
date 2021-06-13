@@ -147,7 +147,7 @@ ErrorWindow::ErrorWindow(char *msg,   char *btnMsg1,   char *btnMsg2)
 	// requester info struct
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	strcpy(mbChs1Text, "\x13");
 	strcpy(mbChs2Text, "\x1B");
@@ -179,7 +179,7 @@ ErrorWindow::ErrorWindow(char *msg,   char *btnMsg1,   char *btnMsg2)
 int16 ErrorWindow::getResult(void) {
 	open();
 	draw();
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 	return rInfo.result;
 }
 
@@ -193,25 +193,25 @@ void ErrorWindow::ErrorModeHandleKey(short key, short) {
 	if (strchr(mbChs2Text, tolower(key)) ||
 	        strchr(mbChs2Text, toupper(key))) {
 		rInfo.result    = 2;
-		rInfo.running   = FALSE;
+		rInfo.running   = false;
 		return;
 	}
 	if (strchr(mbChs1Text, tolower(key)) ||
 	        strchr(mbChs1Text, toupper(key))) {
 		rInfo.result    = 1;
-		rInfo.running   = FALSE;
+		rInfo.running   = false;
 		return;
 	}
 	if (numBtns < 2) {
 		rInfo.result    = 1;
-		rInfo.running   = FALSE;
+		rInfo.running   = false;
 		return;
 	}
 }
 
 GameMode        SimpleMode = {
 	NULL,                                   // no previous mode
-	FALSE,                                  // mode is not nestable
+	false,                                  // mode is not nestable
 	ErrorWindow::ErrorModeSetup,
 	ErrorWindow::ErrorModeCleanup,
 	ErrorWindow::ErrorModeHandleTask,
@@ -240,7 +240,7 @@ SimpleWindow::~SimpleWindow(void) {
 }
 
 bool SimpleWindow::isModal(void) {
-	return TRUE;
+	return true;
 }
 
 void SimpleWindow::update(const Rect16 &) {
@@ -261,7 +261,7 @@ void SimpleWindow::drawClipped(
 	int16           textPos = textPosHigh;
 	//textPallete       pal( 33+9, 36+9, 41+9, 34+9, 40+9, 43+9 );
 	textPallete     pal(33 + 9, 33 + 9, 41 + 9, 33 + 9, 33 + 9, 41 + 9);
-	bool            selected = FALSE;
+	bool            selected = false;
 
 	box.x += 10;
 	box.y += 10;
@@ -380,14 +380,14 @@ bool SimpleButton::activate(gEventType why) {
 		deactivate();
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	}
-	return FALSE;
+	return false;
 }
 
 bool SimpleButton::pointerHit(gPanelMessage &) {
-	//if (ghosted) return FALSE;
+	//if (ghosted) return false;
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void SimpleButton::pointerRelease(gPanelMessage &) {

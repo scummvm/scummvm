@@ -59,21 +59,21 @@ bool bufCheckResID(hResContext *hrc, uint32 s) {
 bool hResCheckResID(hResContext *hrc, uint32 s) {
 	if (hrc != NULL)
 		return hrc->seek(s);
-	return FALSE;
+	return false;
 }
 
 bool hResCheckResID(hResContext *hrc, uint32 s[]) {
 	int i = 0;
 	if (s != NULL) {
 		if (s[0] == 0)
-			return FALSE;
+			return false;
 		while (s[i]) {
 			if (!hResCheckResID(hrc, s[i]))
-				return FALSE;
+				return false;
 			i++;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 /* ===================================================================== *
@@ -87,7 +87,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]) {
 //	open / seek
 
 int16 hResSeek(Buffer &sb, soundSample &ss, hResContext *hrc, bool Cheksize) {
-	if (hrc->seek(ss.curSeg) == FALSE) {
+	if (hrc->seek(ss.curSeg) == false) {
 		warning("Audio: %d is an invalid res ID", ss.curSeg);
 		return 1;
 	}
@@ -113,11 +113,11 @@ int16 hResRead(Buffer &sb, soundSample &ss, hResContext *hrc) {
 	int16 rVal = 0;
 
 #if ASYNCH_AUDIO
-	bool partial = FALSE;
+	bool partial = false;
 	count = min(count, ASYNCH_READ_SIZE);
 	if (count > ASYNCH_READ_SIZE) {
 		count = ASYNCH_READ_SIZE;
-		partial = TRUE;
+		partial = true;
 	}
 #endif
 

@@ -633,17 +633,17 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 			continue;
 
 		info.sensedObject = protag;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
 //	Evaluate an event to determine if the object is waiting for it
 
 bool ProtaganistSensor::evaluateEvent(const GameEvent &) {
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *
@@ -696,17 +696,17 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 			continue;
 
 		info.sensedObject = objToTest;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
 //	Evaluate an event to determine if the object is waiting for it
 
 bool ObjectSensor::evaluateEvent(const GameEvent &) {
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *
@@ -765,7 +765,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	bool            objIsActor = isActor(getObject());
 
 	if (senseFlags & (1 << actorBlind))
-		return FALSE;
+		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
 	//  will be able to sense a protaganist even if the protaganist
@@ -776,20 +776,20 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	            ||  !isPlayerActor((Actor *)soughtObject))) {
 		Actor *a = (Actor *) soughtObject;
 		if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
-			return FALSE;
+			return false;
 	}
 
 	if (getRange() != 0
 	        &&  !getObject()->inRange(soughtObject->getLocation(),  getRange()))
-		return FALSE;
+		return false;
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), soughtObject)
 	            ||  !lineOfSight(getObject(), soughtObject, terrainTransparent)))
-		return FALSE;
+		return false;
 
 	info.sensedObject = soughtObject;
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -925,7 +925,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	bool        objIsActor = isActor(getObject());
 
 	if (senseFlags & (1 << actorBlind))
-		return FALSE;
+		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
 	//  will be able to sense a protaganist even if the protaganist
@@ -934,20 +934,20 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	        ||  getObject() != getCenterActor()
 	        ||  !isPlayerActor(soughtActor)) {
 		if (!(senseFlags & actorSeeInvis) && soughtActor->hasEffect(actorInvisible))
-			return FALSE;
+			return false;
 	}
 
 	if (getRange() != 0
 	        &&  !getObject()->inRange(soughtActor->getLocation(), getRange()))
-		return FALSE;
+		return false;
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), soughtActor)
 	            ||  !lineOfSight(getObject(), soughtActor, terrainTransparent)))
-		return FALSE;
+		return false;
 
 	info.sensedObject = soughtActor;
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -1068,7 +1068,7 @@ int16 EventSensor::getType(void) {
 //	Determine if the object can sense what it's looking for
 
 bool EventSensor::check(SenseInfo &, uint32) {
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -1081,7 +1081,7 @@ bool EventSensor::evaluateEvent(const GameEvent &event) {
 	                ?   getObject()->inRange(
 	                    event.directObject->getLocation(),
 	                    getRange())
-	                :   TRUE)
+	                :   true)
 	            && (!isActor(getObject())
 	                || (underSameRoof(getObject(), event.directObject)
 	                    &&  lineOfSight(

@@ -348,7 +348,7 @@ public:
 		pieBulk->invalidate();
 	}
 
-	CMassWeightIndicator(gPanelList *, const Point16 &, uint16 type = 1, bool death = FALSE);
+	CMassWeightIndicator(gPanelList *, const Point16 &, uint16 type = 1, bool death = false);
 	~CMassWeightIndicator(void);
 
 	uint16 getMassPieDiv(void) {

@@ -184,11 +184,11 @@ TaskStackList::TaskStackList(void) {
 	int i;
 
 	for (i = 0; i < elementsof(array); i++) {
-		array[i].deleted = FALSE;
+		array[i].deleted = false;
 		free.addTail(array[i]);
 	}
 
-	lazyDelete = FALSE;
+	lazyDelete = false;
 	deletionList = NULL;
 }
 
@@ -339,7 +339,7 @@ void TaskStackList::deleteTaskStack(void *p) {
 	          -   offsetof(TaskStackPlaceHolder, buf));
 
 	if (lazyDelete) {
-		tsp->deleted = TRUE;
+		tsp->deleted = true;
 		tsp->nextDeletion = deletionList;
 		deletionList = tsp;
 	} else {
@@ -359,7 +359,7 @@ void TaskStackList::updateTaskStacks(void) {
 	TaskStackPlaceHolder    *tsp;
 
 	//  Make sure all deletions during task processing are lazy
-	lazyDelete = TRUE;
+	lazyDelete = true;
 
 	for (tsp = (TaskStackPlaceHolder *)list.first();
 	        tsp != NULL;
@@ -381,7 +381,7 @@ void TaskStackList::updateTaskStacks(void) {
 	}
 
 	//  Process all lazy deletions
-	lazyDelete = FALSE;
+	lazyDelete = false;
 	while (deletionList != NULL) {
 		TaskStackPlaceHolder    *nextDeletion = deletionList->nextDeletion;
 
@@ -393,7 +393,7 @@ void TaskStackList::updateTaskStacks(void) {
 
 		//  Now that the real deletion has taken place reset the deleted
 		//  flag
-		deletionList->deleted = FALSE;
+		deletionList->deleted = false;
 
 		deletionList = nextDeletion;
 	}
@@ -431,10 +431,10 @@ void updateActorTasks(void) {
 }
 
 void pauseActorTasks(void) {
-	actorTasksPaused = TRUE;
+	actorTasksPaused = true;
 }
 void resumeActorTasks(void) {
-	actorTasksPaused = FALSE;
+	actorTasksPaused = false;
 }
 
 //----------------------------------------------------------------------
@@ -626,7 +626,7 @@ public:
 		tp = ((TaskPlaceHolder *)(
 		          (uint8 *)t
 		          -   offsetof(TaskPlaceHolder, buf)));
-		tp->marked = TRUE;
+		tp->marked = true;
 	}
 
 	//  Verify that all allocated tasks are marked
@@ -765,7 +765,7 @@ void *TaskList::newTask(void)
 #if DEBUG
 		tp->fileName = file;
 		tp->lineNo = line;
-		tp->marked = FALSE;
+		tp->marked = false;
 #endif
 		//  Place the place holder into the active list
 		list.addTail(*tp);
@@ -796,7 +796,7 @@ void *TaskList::newTask(TaskID id)
 #if DEBUG
 	tp->fileName = file;
 	tp->lineNo = line;
-	tp->marked = FALSE;
+	tp->marked = false;
 #endif
 	//  Place the place holder into the active list
 	list.addTail(*tp);
@@ -851,7 +851,7 @@ void TaskList::clearMarks(void) {
 	for (tp = (TaskPlaceHolder *)list.first();
 	        tp != NULL;
 	        tp = (TaskPlaceHolder *)tp->next())
-		tp->marked = FALSE;
+		tp->marked = false;
 }
 #endif
 
@@ -1321,7 +1321,7 @@ void WanderTask::pause(void) {
 	//  Call abort to stop the wandering motion
 	abortTask();
 
-	paused = TRUE;
+	paused = true;
 	counter = (g_vm->_rnd->getRandomNumber(63) + g_vm->_rnd->getRandomNumber(63)) / 2;
 }
 
@@ -1329,7 +1329,7 @@ void WanderTask::pause(void) {
 //	Set this task into the wander state
 
 void WanderTask::wander(void) {
-	paused = FALSE;
+	paused = false;
 	counter = (g_vm->_rnd->getRandomNumber(255) + g_vm->_rnd->getRandomNumber(255)) / 2;
 }
 
@@ -1445,7 +1445,7 @@ void TetheredWanderTask::abortTask(void) {
 //	Determine if the specified task is equivalent to this task
 
 bool TetheredWanderTask::operator == (const Task &t) const {
-	if (t.getType() != tetheredWanderTask) return FALSE;
+	if (t.getType() != tetheredWanderTask) return false;
 
 	TetheredWanderTask  *taskPtr = (TetheredWanderTask *)&t;
 
@@ -1475,7 +1475,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 			gotoTether = NULL;
 		}
 
-		bool            startWander = FALSE;
+		bool            startWander = false;
 		TileRegion      motionTether;
 
 		MotionTask  *actorMotion = a->moveTask;
@@ -1489,7 +1489,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 			                   ||  motionTether.max.v != maxV);
 
 		} else
-			startWander = TRUE;
+			startWander = true;
 
 		//  If the actor is not already wandering, start a wander motion
 		//  task
@@ -1759,7 +1759,7 @@ int16 GotoLocationTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GotoLocationTask::operator == (const Task &t) const {
-	if (t.getType() != gotoLocationTask) return FALSE;
+	if (t.getType() != gotoLocationTask) return false;
 
 	GotoLocationTask    *taskPtr = (GotoLocationTask *)&t;
 
@@ -1786,7 +1786,7 @@ TilePoint GotoLocationTask::intermediateDest(void) {
 bool GotoLocationTask::lineOfSight(void) {
 	//  Let's pretend that there is always a line of sight to the
 	//  target location
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -1797,7 +1797,7 @@ bool GotoLocationTask::run(void) {
 	return  runThreshold != maxuint8
 	        ? (targetLoc - actorLoc).quickHDistance() > runThreshold
 	        ||  abs(targetLoc.z - actorLoc.z) > runThreshold
-	        :   FALSE;
+	        :   false;
 }
 
 /* ===================================================================== *
@@ -1860,7 +1860,7 @@ int16 GotoRegionTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GotoRegionTask::operator == (const Task &t) const {
-	if (t.getType() != gotoRegionTask) return FALSE;
+	if (t.getType() != gotoRegionTask) return false;
 
 	GotoRegionTask      *taskPtr = (GotoRegionTask *)&t;
 
@@ -1888,13 +1888,13 @@ TilePoint GotoRegionTask::intermediateDest(void) {
 //----------------------------------------------------------------------
 
 bool GotoRegionTask::lineOfSight(void) {
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
 
 bool GotoRegionTask::run(void) {
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *
@@ -2099,7 +2099,7 @@ int16 GotoObjectTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GotoObjectTask::operator == (const Task &t) const {
-	if (t.getType() != gotoObjectTask) return FALSE;
+	if (t.getType() != gotoObjectTask) return false;
 
 	GotoObjectTask      *taskPtr = (GotoObjectTask *)&t;
 
@@ -2118,7 +2118,7 @@ GameObject *GotoObjectTask::getObject(void) {
 
 bool GotoObjectTask::run(void) {
 	//  Running after objects has not been implemented yet
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *
@@ -2173,7 +2173,7 @@ int16 GotoActorTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GotoActorTask::operator == (const Task &t) const {
-	if (t.getType() != gotoActorTask) return FALSE;
+	if (t.getType() != gotoActorTask) return false;
 
 	GotoActorTask       *taskPtr = (GotoActorTask *)&t;
 
@@ -2400,7 +2400,7 @@ int16 GoAwayFromObjectTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GoAwayFromObjectTask::operator == (const Task &t) const {
-	if (t.getType() != goAwayFromObjectTask) return FALSE;
+	if (t.getType() != goAwayFromObjectTask) return false;
 
 	GoAwayFromObjectTask    *taskPtr = (GoAwayFromObjectTask *)&t;
 
@@ -2480,7 +2480,7 @@ int16 GoAwayFromActorTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool GoAwayFromActorTask::operator == (const Task &t) const {
-	if (t.getType() != goAwayFromActorTask) return FALSE;
+	if (t.getType() != goAwayFromActorTask) return false;
 
 	GoAwayFromActorTask     *taskPtr = (GoAwayFromActorTask *)&t;
 
@@ -2833,7 +2833,7 @@ int16 HuntToBeNearLocationTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearLocationTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearLocationTask) return FALSE;
+	if (t.getType() != huntToBeNearLocationTask) return false;
 
 	HuntToBeNearLocationTask    *taskPtr = (HuntToBeNearLocationTask *)&t;
 
@@ -3038,7 +3038,7 @@ int16 HuntToBeNearObjectTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearObjectTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearObjectTask) return FALSE;
+	if (t.getType() != huntToBeNearObjectTask) return false;
 
 	HuntToBeNearObjectTask  *taskPtr = (HuntToBeNearObjectTask *)&t;
 
@@ -3178,7 +3178,7 @@ int16 HuntToPossessTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToPossessTask::operator == (const Task &t) const {
-	if (t.getType() != huntToPossessTask) return FALSE;
+	if (t.getType() != huntToPossessTask) return false;
 
 	HuntToPossessTask   *taskPtr = (HuntToPossessTask *)&t;
 
@@ -3475,7 +3475,7 @@ int16 HuntToBeNearActorTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearActorTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearActorTask) return FALSE;
+	if (t.getType() != huntToBeNearActorTask) return false;
 
 	HuntToBeNearActorTask   *taskPtr = (HuntToBeNearActorTask *)&t;
 
@@ -3539,7 +3539,7 @@ bool HuntToBeNearActorTask::atTarget(void) {
 	//  target actor
 	if (targetLoc != Nowhere
 	        &&  stack->getActor()->inRange(targetLoc, range))
-		return TRUE;
+		return true;
 	else {
 		if (goAway != NULL) {
 			goAway->abortTask();
@@ -3547,7 +3547,7 @@ bool HuntToBeNearActorTask::atTarget(void) {
 			goAway = NULL;
 		}
 
-		return FALSE;
+		return false;
 	}
 }
 
@@ -3627,7 +3627,7 @@ HuntToKillTask::HuntToKillTask(
 	if (isActor(a->currentTarget))
 		currentTarget = (Actor *)a->currentTarget;
 
-	a->setFightStance(TRUE);
+	a->setFightStance(true);
 }
 
 //----------------------------------------------------------------------
@@ -3682,7 +3682,7 @@ int16 HuntToKillTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToKillTask::operator == (const Task &t) const {
-	if (t.getType() != huntToKillTask) return FALSE;
+	if (t.getType() != huntToKillTask) return false;
 
 	HuntToKillTask      *taskPtr = (HuntToKillTask *)&t;
 
@@ -3699,7 +3699,7 @@ void HuntToKillTask::abortTask(void) {
 
 	a->flags &= ~Actor::specialAttack;
 
-	a->setFightStance(FALSE);
+	a->setFightStance(false);
 }
 
 //----------------------------------------------------------------------
@@ -4052,7 +4052,7 @@ int16 HuntToGiveTask::getType(void) const {
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToGiveTask::operator == (const Task &t) const {
-	if (t.getType() != huntToGiveTask) return FALSE;
+	if (t.getType() != huntToGiveTask) return false;
 
 	HuntToGiveTask      *taskPtr = (HuntToGiveTask *)&t;
 
@@ -4068,7 +4068,7 @@ void HuntToGiveTask::evaluateTarget(void) {}
 //----------------------------------------------------------------------
 
 bool HuntToGiveTask::atTarget(void) {
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4108,13 +4108,13 @@ bool BandTask::BandingRepulsorIterator::first(
 			repulsorVector = bandMember->getLocation() - a->getLocation();
 			repulsorStrength = 1;
 
-			return TRUE;
+			return true;
 		}
 
 		bandIndex++;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4134,13 +4134,13 @@ bool BandTask::BandingRepulsorIterator::next(
 			repulsorVector = bandMember->getLocation() - a->getLocation();
 			repulsorStrength = 1;
 
-			return TRUE;
+			return true;
 		}
 
 		bandIndex++;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4335,7 +4335,7 @@ bool BandTask::targetHasChanged(GotoTask *gotoTarget) {
 	        >   slop)
 		gotoLocation->changeTarget(currentTarget);
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4363,10 +4363,10 @@ bool BandTask::atTarget(void) {
 			attend = NULL;
 		}
 
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -4440,10 +4440,10 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 		    actorArray[actorIndex]->getLocation() - a->getLocation();
 		repulsorStrength = 6;
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4461,10 +4461,10 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::nextEnemyRepulsor(
 		    actorArray[actorIndex]->getLocation() - a->getLocation();
 		repulsorStrength = 6;
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //----------------------------------------------------------------------
@@ -4473,12 +4473,12 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::nextEnemyRepulsor(
 bool BandTask::BandAndAvoidEnemiesRepulsorIterator::first(
     TilePoint   &repulsorVector,
     int16       &repulsorStrength) {
-	iteratingThruEnemies = FALSE;
+	iteratingThruEnemies = false;
 
 	if (BandingRepulsorIterator::first(repulsorVector, repulsorStrength))
-		return TRUE;
+		return true;
 
-	iteratingThruEnemies = TRUE;
+	iteratingThruEnemies = true;
 	return firstEnemyRepulsor(repulsorVector, repulsorStrength);
 }
 
@@ -4490,9 +4490,9 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::next(
     int16       &repulsorStrength) {
 	if (!iteratingThruEnemies) {
 		if (BandingRepulsorIterator::next(repulsorVector, repulsorStrength))
-			return TRUE;
+			return true;
 
-		iteratingThruEnemies = TRUE;
+		iteratingThruEnemies = true;
 		return firstEnemyRepulsor(repulsorVector, repulsorStrength);
 	}
 
@@ -4671,7 +4671,7 @@ TaskResult FollowPatrolRouteTask::update(void) {
 //	Determine if the specified task is equivalent to this task
 
 bool FollowPatrolRouteTask::operator == (const Task &t) const {
-	if (t.getType() != followPatrolRouteTask) return FALSE;
+	if (t.getType() != followPatrolRouteTask) return false;
 
 	FollowPatrolRouteTask   *taskPtr = (FollowPatrolRouteTask *)&t;
 
@@ -4752,7 +4752,7 @@ TaskResult FollowPatrolRouteTask::handlePaused(void) {
 //	Set this task into the paused state
 
 void FollowPatrolRouteTask::pause(void) {
-	paused = TRUE;
+	paused = true;
 	counter = (g_vm->_rnd->getRandomNumber(63) + g_vm->_rnd->getRandomNumber(63)) / 2;
 }
 
@@ -4846,7 +4846,7 @@ TaskResult AttendTask::update(void) {
 //	Determine if the specified task is equivalent to this task
 
 bool AttendTask::operator == (const Task &t) const {
-	if (t.getType() != attendTask) return FALSE;
+	if (t.getType() != attendTask) return false;
 
 	AttendTask      *taskPtr = (AttendTask *)&t;
 
@@ -5014,7 +5014,7 @@ TaskResult DefendTask::update(void) {
 //	Determine if the specified task is equivalent to this task
 
 bool DefendTask::operator == (const Task &t) const {
-	if (t.getType() != defendTask) return FALSE;
+	if (t.getType() != defendTask) return false;
 
 	DefendTask          *taskPtr = (DefendTask *)&t;
 
@@ -5173,7 +5173,7 @@ TaskResult ParryTask::update(void) {
 //	Determine if the specified task is equivalent to this task
 
 bool ParryTask::operator == (const Task &t) const {
-	if (t.getType() != parryTask) return FALSE;
+	if (t.getType() != parryTask) return false;
 
 	ParryTask           *taskPtr = (ParryTask *)&t;
 

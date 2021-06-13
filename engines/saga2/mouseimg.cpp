@@ -114,7 +114,7 @@ gStaticImage *mouseCursors[kMouseMax];
 static uint8        gaugeImageBuffer[gaugeImageWidth * gaugeImageHeight];
 static gStaticImage gaugeImage(gaugeImageWidth, gaugeImageHeight, gaugeImageBuffer);
 
-static bool         showGauge = FALSE;
+static bool         showGauge = false;
 
 /* ===================================================================== *
    Functions
@@ -358,7 +358,7 @@ void setMouseTextF(char *format, ...) {
 
 	if (format == nullptr) {
 		setMouseText(nullptr);
-		G_BASE.mouseHintSet = TRUE;
+		G_BASE.mouseHintSet = true;
 	} else {
 		char        lineBuf[128];
 		va_list     argptr;
@@ -368,7 +368,7 @@ void setMouseTextF(char *format, ...) {
 		va_end(argptr);
 
 		setMouseText(lineBuf);
-		G_BASE.mouseHintSet = TRUE;
+		G_BASE.mouseHintSet = true;
 	}
 }
 
@@ -415,7 +415,7 @@ void setMouseGauge(int numerator, int denominator) {
 		}
 	}
 
-	showGauge = TRUE;
+	showGauge = true;
 
 	setupMousePointer();
 }
@@ -424,7 +424,7 @@ void setMouseGauge(int numerator, int denominator) {
 //	Turn off the gauge on the mouse pointer
 
 void clearMouseGauge(void) {
-	showGauge = FALSE;
+	showGauge = false;
 
 	setupMousePointer();
 }

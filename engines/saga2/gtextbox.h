@@ -125,7 +125,7 @@ protected:
 	void scroll(int8);
 
 	void enSelect(int which);
-	void deSelect(bool commit = FALSE);
+	void deSelect(bool commit = false);
 	void reSelect(int which);
 
 	bool activate(gEventType why);       // activate the control

@@ -142,7 +142,7 @@ const ActorProperty *actorPropArray[actorPropIDCount] = {
 
 //  Determine if this tile has water
 static bool tileHasWater(TileInfo *ti) {
-	return ti->combinedTerrainMask() & terrainWater ? TRUE : FALSE;
+	return ti->combinedTerrainMask() & terrainWater ? true : false;
 }
 
 const SimpleTileProperty tilePropHasWater(tileHasWater);
@@ -203,11 +203,11 @@ bool MetaTilePropertyAnd::operator()(
 	uint16  i;
 
 	//  Iterate through each element in the array and if any evaluate to
-	//  FALSE, return FALSE immediately.
+	//  false, return false immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(mt, mapNum, tp) == FALSE) return FALSE;
+		if ((*propertyArray[i])(mt, mapNum, tp) == false) return false;
 
-	return TRUE;
+	return true;
 }
 
 /* ===================================================================== *
@@ -221,11 +221,11 @@ bool MetaTilePropertyOr::operator()(
 	uint16  i;
 
 	//  Iterate through each element in the array and if any evaluate to
-	//  TRUE, return TRUE immediately.
+	//  true, return true immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(mt, mapNum, tp)) return TRUE;
+		if ((*propertyArray[i])(mt, mapNum, tp)) return true;
 
-	return FALSE;
+	return false;
 }
 
 
@@ -255,13 +255,13 @@ static bool metaTileHasWater(
 					            height,
 					            trFlags);
 					if (ti->combinedTerrainMask() & terrainWater)
-						return TRUE;
+						return true;
 				}
 			}
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 const SimpleMetaTileProperty metaTilePropHasWater(metaTileHasWater);

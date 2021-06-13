@@ -94,22 +94,22 @@ ActiveMission *ActiveMission::missionAddress(int index) {
 bool ActiveMission::addObjectID(ObjectID objID) {
 	if (numObjectIDs < elementsof(missionObjectList)) {
 		missionObjectList[numObjectIDs++] = objID;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
 //	Add record of object creation to mission
 
 bool ActiveMission::removeObjectID(ObjectID objID) {
-	bool            found = FALSE;
+	bool            found = false;
 
 	for (int i = 0; i < numObjectIDs; i++) {
 		if (found) {
 			missionObjectList[i - 1] = missionObjectList[i];
 		} else {
-			if (missionObjectList[i] == objID) found = TRUE;
+			if (missionObjectList[i] == objID) found = true;
 		}
 	}
 
@@ -122,25 +122,25 @@ bool ActiveMission::removeObjectID(ObjectID objID) {
 //	Add record of knowledge creation to mission
 
 bool ActiveMission::addKnowledgeID(ObjectID actor, uint16 knowledgeID) {
-	if (!isActor(actor)) return FALSE;
+	if (!isActor(actor)) return false;
 
 	if (numKnowledgeIDs < elementsof(missionKnowledgeList)) {
 		Actor       *a = (Actor *)GameObject::objectAddress(actor);
 
-		if (!a->addKnowledge(knowledgeID)) return FALSE;
+		if (!a->addKnowledge(knowledgeID)) return false;
 
 		missionKnowledgeList[numKnowledgeIDs].id = actor;
 		missionKnowledgeList[numKnowledgeIDs++].kID = knowledgeID;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
 //	Add record of knowledge creation to mission
 
 bool ActiveMission::removeKnowledgeID(ObjectID actor, uint16 knowledgeID) {
-	bool            found = FALSE;
+	bool            found = false;
 
 	for (int i = 0; i < numKnowledgeIDs; i++) {
 		if (found) {
@@ -148,7 +148,7 @@ bool ActiveMission::removeKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 		} else {
 			if (missionKnowledgeList[i].id  == actor
 			        &&  missionKnowledgeList[i].kID == knowledgeID) {
-				found = TRUE;
+				found = true;
 			}
 		}
 	}

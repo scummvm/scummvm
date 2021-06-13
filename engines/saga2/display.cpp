@@ -44,7 +44,7 @@ extern CFTWindow        *pWindow;
    Globals
  * ===================================================================== */
 
-bool                        paletteMayHaveChanged = FALSE;
+bool                        paletteMayHaveChanged = false;
 
 
 /* ===================================================================== *
@@ -52,10 +52,10 @@ bool                        paletteMayHaveChanged = FALSE;
  * ===================================================================== */
 
 static uint32 displayStatus = GraphicsInit;
-static bool gameSuspendFlag = FALSE;
-static bool paletteSuspendFlag = FALSE;
+static bool gameSuspendFlag = false;
+static bool paletteSuspendFlag = false;
 #ifndef _WIN32
-static bool VideoSaved = FALSE;
+static bool VideoSaved = false;
 static uint8 VideoSaveMode;
 #endif
 
@@ -100,7 +100,7 @@ void suspendGame(void) {
 #ifdef _WIN32
 		suspendProcessResources();
 #endif
-		gameSuspendFlag = TRUE;
+		gameSuspendFlag = true;
 	}
 }
 
@@ -116,7 +116,7 @@ bool gameSuspended(void) {
 
 void resumeGame(void) {
 	if (gameSuspendFlag) {
-		gameSuspendFlag = FALSE;
+		gameSuspendFlag = false;
 #ifdef _WIN32
 		resumeProcessResources();
 #endif
@@ -137,7 +137,7 @@ void resumeGame(void) {
 void endGame(void) {
 	blackOut();
 	displayDisable(GameEnded);
-	gameRunning = FALSE;
+	gameRunning = false;
 }
 
 
@@ -253,12 +253,12 @@ static void switchOff(void) {
  * ===================================================================== */
 
 void enablePaletteChanges(void) {
-	paletteSuspendFlag = FALSE;
-	paletteMayHaveChanged = TRUE;
+	paletteSuspendFlag = false;
+	paletteMayHaveChanged = true;
 }
 
 void disablePaletteChanges(void) {
-	paletteSuspendFlag = TRUE;
+	paletteSuspendFlag = true;
 }
 
 bool paletteChangesEnabled(void) {
@@ -274,14 +274,14 @@ bool paletteChangesEnabled(void) {
 // notice that screen may be dirty
 
 void delayedDisplayEnable(void) {
-	delayReDraw = FALSE;
+	delayReDraw = false;
 }
 
 // ------------------------------------------------------------------------
 // notice that palette may be dirty
 
 void externalPaletteIntrusion(void) {
-	paletteMayHaveChanged = TRUE;
+	paletteMayHaveChanged = true;
 }
 
 // ------------------------------------------------------------------------
@@ -294,14 +294,14 @@ void reDrawScreen(void) {
 		//updateAllUserControls();
 		drawMainDisplay();
 		mainWindow->invalidate(r);
-		delayReDraw = FALSE;
+		delayReDraw = false;
 		if (paletteMayHaveChanged) {
-			paletteMayHaveChanged = FALSE;
+			paletteMayHaveChanged = false;
 			assertCurrentPalette();
-			paletteMayHaveChanged = FALSE;
+			paletteMayHaveChanged = false;
 		}
 	} else
-		delayReDraw = TRUE;
+		delayReDraw = true;
 	//mainWindow->invalidate(r);
 }
 

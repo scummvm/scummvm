@@ -179,7 +179,7 @@ struct SpriteComponent {
 	Sprite          *sp;                    // the sprite to draw
 	Point16         offset;                 // offset from given origin
 	uint8           *colorTable;            // color lookup table
-	uint8           flipped;                // TRUE if horizontally flipped.
+	uint8           flipped;                // true if horizontally flipped.
 };
 
 enum spriteEffectFlags {
@@ -321,7 +321,7 @@ void ExpandColorMappedSprite(
 //  Return a specific pixel from a sprite for mouse hit test
 uint8 GetSpritePixel(
     Sprite          *sp,                    // sprite pointer
-    int16           flipped,                // TRUE if sprite was flipped
+    int16           flipped,                // true if sprite was flipped
     const Point16   &testPoint);            // where to render to
 
 //  Return the number of visible pixels in a sprite after terrain masking

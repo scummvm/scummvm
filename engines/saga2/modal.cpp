@@ -47,7 +47,7 @@ void ModalModeHandleKey(short, short);
 
 GameMode        ModalMode = {
 	NULL,                                   // no previous mode
-	FALSE,                                  // mode is not nestable
+	false,                                  // mode is not nestable
 	ModalModeSetup,
 	ModalModeCleanup,
 	ModalModeHandleTask,

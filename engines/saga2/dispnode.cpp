@@ -97,7 +97,7 @@ uint8 identityColors[256] = {
 //	build the list of stuff to draw (like guns)
 
 void buildDisplayList(void) {
-	mainDisplayList.buildObjects(TRUE);
+	mainDisplayList.buildObjects(true);
 	activeSpells.buildList();
 }
 
@@ -215,7 +215,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 		if ((dist >= loadDist
 		        ||  obj->IDParent() != currentWorld->thisID())) {
 			//  Mark this object as being off-screen
-			obj->setOnScreen(FALSE);
+			obj->setOnScreen(false);
 
 			//  If it's an actor
 			if (isActor(obj)) {
@@ -366,7 +366,7 @@ void DisplayNode::drawObject(void) {
 	                leftIndex,              // drawing order of left
 	                rightIndex,             // drawing order of right
 	                partCount;              // number of sprite parts
-	bool            ghostIt = FALSE;
+	bool            ghostIt = false;
 	GameObject  *obj = object;
 	ProtoObj    *proto = obj->proto();
 	Point16     drawPos;
@@ -395,8 +395,8 @@ void DisplayNode::drawObject(void) {
 				hitBox.width = -1;
 				hitBox.height = -1;
 
-				obj->setOnScreen(FALSE);
-				obj->setObscured(FALSE);
+				obj->setOnScreen(false);
+				obj->setObscured(false);
 				return;
 			}
 		}
@@ -422,21 +422,21 @@ void DisplayNode::drawObject(void) {
 			hitBox.height = -1;
 
 			//  Mark as being off screen
-			obj->setOnScreen(FALSE);
-			obj->setObscured(FALSE);
+			obj->setOnScreen(false);
+			obj->setObscured(false);
 			return;
 		}
 
 		if (!obj->isOnScreen()) {
 			SenseInfo   info;
 
-			obj->setOnScreen(TRUE);
+			obj->setOnScreen(true);
 
 			if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
-				obj->setSightedByCenter(TRUE);
+				obj->setSightedByCenter(true);
 			else {
-				obj->setSightedByCenter(FALSE);
-				obj->setObscured(FALSE);
+				obj->setSightedByCenter(false);
+				obj->setObscured(false);
 			}
 
 			obj->sightCtr = 5;
@@ -445,10 +445,10 @@ void DisplayNode::drawObject(void) {
 				SenseInfo   info;
 
 				if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
-					obj->setSightedByCenter(TRUE);
+					obj->setSightedByCenter(true);
 				else {
-					obj->setSightedByCenter(FALSE);
-					obj->setObscured(FALSE);
+					obj->setSightedByCenter(false);
+					obj->setObscured(false);
 				}
 
 				obj->sightCtr = 5;
@@ -493,8 +493,8 @@ void DisplayNode::drawObject(void) {
 			        || drawPos.y < -maxSpriteBaseLine
 			        || drawPos.y > tileRect.y + tileRect.height + maxSpriteHeight) {
 				//  Mark as being off screen
-				a->setOnScreen(FALSE);
-				a->setObscured(FALSE);
+				a->setOnScreen(false);
+				a->setObscured(false);
 				return;
 			}
 
@@ -511,7 +511,7 @@ void DisplayNode::drawObject(void) {
 			             baseBubbleSpriteIndex + a->kludgeCount);
 			sc->offset.x = scList->offset.y = 0;
 			sc->colorTable = mainColors;
-			sc->flipped = FALSE;
+			sc->flipped = false;
 
 			partCount = 1;
 			bodyIndex = 0;
@@ -526,8 +526,8 @@ void DisplayNode::drawObject(void) {
 				hitBox.height = -1;
 
 				//  Mark as being off screen
-				a->setOnScreen(FALSE);
-				a->setObscured(FALSE);
+				a->setOnScreen(false);
+				a->setObscured(false);
 				return;
 			}
 
@@ -538,19 +538,19 @@ void DisplayNode::drawObject(void) {
 					hitBox.height = -1;
 					return;
 				}
-				ghostIt = TRUE;
+				ghostIt = true;
 			}
 
 			if (!a->isOnScreen()) {
 				SenseInfo   info;
 
-				a->setOnScreen(TRUE);
+				a->setOnScreen(true);
 
 				if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
-					a->setSightedByCenter(TRUE);
+					a->setSightedByCenter(true);
 				else {
-					a->setSightedByCenter(FALSE);
-					a->setObscured(FALSE);
+					a->setSightedByCenter(false);
+					a->setObscured(false);
 				}
 
 				a->sightCtr = 5;
@@ -559,10 +559,10 @@ void DisplayNode::drawObject(void) {
 					SenseInfo   info;
 
 					if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
-						a->setSightedByCenter(TRUE);
+						a->setSightedByCenter(true);
 					else {
-						a->setSightedByCenter(FALSE);
-						a->setObscured(FALSE);
+						a->setSightedByCenter(false);
+						a->setObscured(false);
 					}
 
 					a->sightCtr = 5;
@@ -770,7 +770,7 @@ void DisplayNode::drawObject(void) {
 	}
 
 	if (!ghostIt && obj->isGhosted())
-		ghostIt = TRUE;
+		ghostIt = true;
 
 	int16       effectFlags = 0;
 	bool        obscured;
@@ -950,10 +950,10 @@ bool DisplayNodeList::dissipated(void) {
 	if (count) {
 		for (int i = 0; i < count; i++) {
 			if (displayList[i].efx && !displayList[i].efx->isDead())
-				return FALSE;
+				return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -970,7 +970,7 @@ void Effectron::drawEffect(void) {
 	const int16 partCount = 1;
 	const int16 bodyIndex = 0;
 	ColorTable      eColors;                // colors for object
-	bool obscured = FALSE;
+	bool obscured = false;
 	Point16         drawPos;
 	TilePoint       objCoords = SpellPos();
 	SpriteComponent scList[3],
@@ -1004,7 +1004,7 @@ void Effectron::drawEffect(void) {
 	getColorTranslation(eColors, this);
 
 	sc->colorTable = eColors;
-	sc->flipped = FALSE;
+	sc->flipped = false;
 
 	obscured = (visiblePixelsInSprite(sc->sp,
 	                                  sc->flipped,

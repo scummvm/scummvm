@@ -431,7 +431,7 @@ void gPort::vLine(int16 x, int16 y, int16 height) {
 **********************************************************************
 */
 void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
-	bool            clipNeeded = FALSE;
+	bool            clipNeeded = false;
 
 	int16           xAbs, yAbs,
 	                xMove, yMove,
@@ -447,13 +447,13 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	if (x1 > x2) {                      // drawing left
 		if (x1 < clip.x || x2 >= clipRight) return;
-		if (x2 < clip.x || x1 >= clipRight) clipNeeded = TRUE;
+		if (x2 < clip.x || x1 >= clipRight) clipNeeded = true;
 
 		xDir = xMove = -1;              // amount to adjust address
 		xAbs = x1 - x2;                 // length of line
 	} else {                            // drawing right
 		if (x2 < clip.x || x1 >= clipRight) return;
-		if (x1 < clip.x || x2 >= clipRight) clipNeeded = TRUE;
+		if (x1 < clip.x || x2 >= clipRight) clipNeeded = true;
 
 		xDir = xMove = 1;               // amount to adjust address
 		xAbs = x2 - x1;                 // length of line
@@ -461,14 +461,14 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	if (y1 > y2) {                      // drawing up
 		if (y1 < clip.y || y2 >= clipBottom) return;
-		if (y2 < clip.y || y1 >= clipBottom) clipNeeded = TRUE;
+		if (y2 < clip.y || y1 >= clipBottom) clipNeeded = true;
 
 		yDir = -1;
 		yAbs = y1 - y2;
 		yMove = -rowMod;
 	} else {                                    // drawing down
 		if (y2 < clip.y || y1 >= clipBottom) return;
-		if (y1 < clip.y || y2 >= clipBottom) clipNeeded = TRUE;
+		if (y1 < clip.y || y2 >= clipBottom) clipNeeded = true;
 
 		yDir = 1;
 		yAbs = y2 - y1;

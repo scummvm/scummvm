@@ -276,7 +276,7 @@ void PlayerActor::skillAdvance(SkillProto *proto,
                                uint8 points,
                                uint8 useMult) { // useMult defaulted to 1
 	// get the skill level for the skill passed ( i.e. 1-100 )
-	uint8 skillLevel = getSkillLevel(proto, TRUE);   // true, use base stats
+	uint8 skillLevel = getSkillLevel(proto, true);   // true, use base stats
 
 	// get the stat index in question
 	uint8 stat = getStatIndex(proto);
@@ -369,7 +369,7 @@ void PlayerActor::vitalityAdvance(uint8 points) {
 
 // this function will return a value of 0 - 4 to indicate
 // relative proficiency in requested skill
-int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats defaulted to FALSE
+int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats defaulted to false
 	// get the id for this skill
 	SpellID skillID = skill->getSpellID();
 
@@ -502,7 +502,7 @@ ActorAttributes *PlayerActor::getEffStats(void) {
 void PlayerActor::handleAttacked(void) {
 	if (!notifiedOfAttack) {
 		StatusMsg(ATTACK_STATUS, getActor()->objName());
-		notifiedOfAttack = TRUE;
+		notifiedOfAttack = true;
 	}
 }
 
@@ -563,7 +563,7 @@ void setCenterActor(PlayerActorID newCenter) {
 	if (a->isDead()) return;
 
 	//  Take previous center actor out of fight stance
-	getCenterActor()->setFightStance(FALSE);
+	getCenterActor()->setFightStance(false);
 
 	// get rid of any following assignments the center actor might have
 	if (a->leader) {
@@ -663,7 +663,7 @@ void autoAdjustAggression(void) {
 	//  Iterate through all player actors
 	for (i = 0; i < playerActors; i++) {
 		if (i == centerActor || isBanded(i)) {
-			bool            enemiesPresent = FALSE;
+			bool            enemiesPresent = false;
 			Actor           *actor = playerList[i].getActor();
 
 			if (actor->getStats()->vitality >= minAutoAggressionVitality) {
@@ -685,7 +685,7 @@ void autoAdjustAggression(void) {
 					a = (Actor *)obj;
 
 					if (a->disposition == dispositionEnemy) {
-						enemiesPresent = TRUE;
+						enemiesPresent = true;
 						break;
 					}
 				}
@@ -769,23 +769,23 @@ int16 getPortraitType(PlayerActorID id) {
 bool actorToPlayerID(Actor *a, PlayerActorID &result) {
 	if (a->disposition >= dispositionPlayer) {
 		result = a->disposition - dispositionPlayer;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool actorIDToPlayerID(ObjectID id, PlayerActorID &result) {
-	if (!isActor(id)) return FALSE;
+	if (!isActor(id)) return false;
 
 	Actor       *a = (Actor *)GameObject::objectAddress(id);
 
 	if (a->disposition >= dispositionPlayer) {
 		result = a->disposition - dispositionPlayer;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void handlePlayerActorDeath(PlayerActorID id) {
@@ -798,15 +798,15 @@ void handlePlayerActorDeath(PlayerActorID id) {
 		if ((newCenter = iter.first()) != NULL)
 			setCenterActor(getPlayerActorID(newCenter));
 		else
-			allPlayerActorsDead = TRUE;
+			allPlayerActorsDead = true;
 	}
 
 	PlayerActor     *player = &playerList[id];
 
 	player->clearAggression();
 	player->clearBanded();
-	updateBrotherAggressionButton(id, FALSE);
-	updateBrotherBandingButton(id, FALSE);
+	updateBrotherAggressionButton(id, false);
+	updateBrotherBandingButton(id, false);
 
 	StatusMsg(DEATH_STATUS, player->getActor()->objName());
 }
@@ -849,7 +849,7 @@ void transportCenterBand(const Location &loc) {
 			            loc,
 			            1,
 			            3,
-			            FALSE);
+			            false);
 
 			if (dest != Nowhere) {
 				a->move(Location(dest, loc.context));
@@ -929,14 +929,14 @@ void initPlayerActors(void) {
 		p->vitalityMemory = 0;
 
 		//  Clear the attack notification flag
-		p->notifiedOfAttack = FALSE;
+		p->notifiedOfAttack = false;
 
 		//  Set the actor's disposition field to reflect that that
 		//  actor is a player actor
 		a->disposition = dispositionPlayer + i;
 
 		//  Turn on banding for player actors
-		setBanded(i, TRUE);
+		setBanded(i, true);
 	}
 
 	readyContainerSetup();

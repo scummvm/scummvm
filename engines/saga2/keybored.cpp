@@ -140,7 +140,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 
 	case 'q':
 	case 0x1b:
-		gameRunning = FALSE;
+		gameRunning = false;
 		break;
 
 	case 'j':
@@ -230,8 +230,8 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 #endif
 #ifdef FRANKC
 	case '~':
-		buttonList[tradeButton]->enable(TRUE);
-		buttonList[tradeBackButton]->enable(TRUE);
+		buttonList[tradeButton]->enable(true);
+		buttonList[tradeBackButton]->enable(true);
 		buttonList[tradeButton]->invalidate();
 		buttonList[tradeBackButton]->invalidate();
 		tradeNathanCV = new ReadyContainerView(*playControls,
@@ -272,7 +272,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 		    case 'y':
 		        tilePickPos.u += 100;
 		        tilePickPos.v += 100;
-		        MotionTask::walkToDirect((Actor &)*GameObject::objectAddress( 32817 ) , tilePickPos, FALSE );
+		        MotionTask::walkToDirect((Actor &)*GameObject::objectAddress( 32817 ) , tilePickPos, false );
 		        break;
 		    case 'z':
 
@@ -280,7 +280,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 		        subTarget.setTargetObject( a->thisID() );
 		        ((Actor *)GameObject::objectAddress( 32791 ))->setupTarget( subTarget ,
 		                                      Actor::huntToBeNear,
-		                                      FALSE,
+		                                      false,
 		                                      Actor::priorityMedium );
 		        break;
 		*/
@@ -342,7 +342,7 @@ void TileModeHandleKey(int16 key, int16 /* qual */) {
 
 	case 'f':
 		if (pickedActor != Nothing)
-			new ((Actor *)GameObject::objectAddress(pickedActor)) HuntToBeNearActorAssignment(SpecificActorTarget(getCenterActor()), 16, TRUE);
+			new ((Actor *)GameObject::objectAddress(pickedActor)) HuntToBeNearActorAssignment(SpecificActorTarget(getCenterActor()), 16, true);
 		break;
 
 	case '[':

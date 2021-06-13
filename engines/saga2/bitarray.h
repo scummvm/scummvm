@@ -104,8 +104,8 @@ public:
 	}
 
 	friend bool operator!= (BitArray c, BitArray d) {
-		for (uint16 i = 0; i < c.currentSize(); i++)    if (c.b[i] != d.b[i]) return TRUE;
-		return FALSE;
+		for (uint16 i = 0; i < c.currentSize(); i++)    if (c.b[i] != d.b[i]) return true;
+		return false;
 	}
 
 	friend BitArray operator^ (BitArray c, BitArray d) {

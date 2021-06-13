@@ -240,7 +240,7 @@ bool unstickObject(GameObject *obj) {
 	outside = objRoofID(obj, mapNum, obj->getLocation()) == 0;
 
 	if (checkBlocked(obj, obj->getLocation()) == blockageNone)
-		return FALSE;
+		return false;
 
 #if 1
 #if DEBUG
@@ -303,7 +303,7 @@ bool unstickObject(GameObject *obj) {
 		WriteStatusF(9, "Unstick Dist: %d", radius);
 #endif
 		obj->move(bestPos);
-		return TRUE;
+		return true;
 	}
 
 #else
@@ -328,7 +328,7 @@ bool unstickObject(GameObject *obj) {
 					        &&  tHeight >= pos.z - maxStepHeight * 4) {
 						pos.z = tHeight;
 						obj->move(pos);
-						return TRUE;
+						return true;
 					}
 				}
 			}
@@ -338,7 +338,7 @@ bool unstickObject(GameObject *obj) {
 #if DEBUG
 	WriteStatusF(9, "Unstick Failed!");
 #endif
-	return TRUE;
+	return true;
 }
 
 //  Calculates the direction of a missile based upon the velocity vector
@@ -1223,7 +1223,7 @@ void MotionTask::remove(int16 returnVal) {
 		//  Make sure the actor is not left in a permanently
 		//  uninterruptable state with no motion task to reset it
 		if (a->isPermanentlyUninterruptable())
-			a->setInterruptablity(TRUE);
+			a->setInterruptablity(true);
 	}
 
 	DNode::remove();
@@ -2184,7 +2184,7 @@ void MotionTask::ballisticAction(void) {
 	if (isActor(obj)) {
 		//  Before anything else make sure the actor is in an
 		//  uninterruptable state.
-		((Actor *)obj)->setInterruptablity(FALSE);
+		((Actor *)obj)->setInterruptablity(false);
 	}
 
 
@@ -2276,7 +2276,7 @@ void MotionTask::ballisticAction(void) {
 				return;
 		}
 
-		if (checkContact(obj, newPos, &collisionObject) == FALSE) {
+		if (checkContact(obj, newPos, &collisionObject) == false) {
 			location = newPos;
 		} else {
 			TilePoint       oldVelocity = velocity;
@@ -2380,7 +2380,7 @@ void MotionTask::ballisticAction(void) {
 			if (isActor(obj) && probe & (1 << 2)) {
 				StandingTileInfo    sti;
 
-				if (freeFall(location, sti) == FALSE) {
+				if (freeFall(location, sti) == false) {
 					int16       velocityMagnitude = oldVelocity.magnitude();
 
 					fallingDamage(obj, velocityMagnitude);
@@ -2412,7 +2412,7 @@ void MotionTask::ballisticAction(void) {
 				//  very small, then we'll assume that the object
 				//  has come to rest.
 
-				if (freeFall(location, sti) == FALSE) {
+				if (freeFall(location, sti) == false) {
 					obj->move(location);
 					remove();           // delete motion task
 					setObjectSurface(obj, sti);
@@ -2438,7 +2438,7 @@ void MotionTask::ballisticAction(void) {
 bool MotionTask::nextWayPoint(void) {
 	//  If the pathfinder hasn't managed to determine waypoints
 	//  yet, then return failure.
-//	if ( ( flags & pathFind ) && pathCount < 0 ) return FALSE;
+//	if ( ( flags & pathFind ) && pathCount < 0 ) return false;
 
 	//  If there are still waypoints in the path list, then
 	//  retrieve the next waypoint.
@@ -2452,7 +2452,7 @@ bool MotionTask::nextWayPoint(void) {
 			//  Next vertex in path polyline
 			immediateLocation = pathList[pathIndex++];
 		else
-			return FALSE;
+			return false;
 	} else {
 		if (flags & wandering) {
 			immediateLocation = Nowhere;
@@ -2477,11 +2477,11 @@ bool MotionTask::nextWayPoint(void) {
 				immediateLocation = finalTarget;
 			}
 			//  else we're close enough to call it quits.
-			else return FALSE;
+			else return false;
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 
@@ -2501,11 +2501,11 @@ bool MotionTask::checkWalk(
 	newPos      = object->location + (dirTable[direction] * speed) / 2;
 	newPos.z    = object->location.z + stepUp;
 
-	if (checkWalkable(object, newPos)) return FALSE;
+	if (checkWalkable(object, newPos)) return false;
 
 //	movementDirection = direction;
 	pos = newPos;
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -2534,8 +2534,8 @@ void MotionTask::walkAction(void) {
 	ProtoObj        *proto;
 
 	int16           impact = 0;
-	bool            moveTaskWaiting = FALSE,
-	                moveTaskDone = FALSE;
+	bool            moveTaskWaiting = false,
+	                moveTaskDone = false;
 	WalkType        walkType = walkNormal;
 
 	assert(isActor(object));
@@ -2550,7 +2550,7 @@ void MotionTask::walkAction(void) {
 	proto = a->proto();
 
 	//  Make sure that the actor is interruptable
-	a->setInterruptablity(TRUE);
+	a->setInterruptablity(true);
 
 	//  Set the speed of movement based on whether we are walking
 	//  or running. Running only occurs after we have accelerated.
@@ -2625,12 +2625,12 @@ void MotionTask::walkAction(void) {
 				break;
 		}
 
-		if (nextWayPoint() == FALSE) {
+		if (nextWayPoint() == false) {
 			//  If no waypoint could be found and this motion task has
 			//  a path find request, then go into "wait" mode.
 			if (pathFindTask)
-				moveTaskWaiting = TRUE;
-			else moveTaskDone = TRUE;
+				moveTaskWaiting = true;
+			else moveTaskDone = true;
 			break;
 		} else {
 			flags &= ~reset;
@@ -2677,16 +2677,16 @@ void MotionTask::walkAction(void) {
 	}
 #endif
 
-	moveBlocked = FALSE;
+	moveBlocked = false;
 
 	if (moveTaskDone || moveTaskWaiting) {
 		movementDirection = a->currentFacing;
 	} else if (targetDist == 0 && abs(targetVector.z) > maxStepHeight) {
 		if (pathFindTask)
-			moveTaskWaiting = TRUE;
+			moveTaskWaiting = true;
 		else {
 			movementDirection = a->currentFacing;
-			moveBlocked = TRUE;
+			moveBlocked = true;
 		}
 	} else if (targetDist <= speed) {
 		int16       blockageType;
@@ -2710,21 +2710,21 @@ void MotionTask::walkAction(void) {
 		//  octant this frame, then they cannot move so a terrain test is unneeded.
 		if (directionAngle <= 1 && directionAngle >= -1) {
 			//  Test the terrain to see if we can go there.
-			if ((blockageType = checkWalkable(object, newPos)) != FALSE) {
+			if ((blockageType = checkWalkable(object, newPos)) != false) {
 				//  Try stepping up to a higher terrain too.
 				newPos.z = object->location.z + maxStepHeight;
 				if (checkWalkable(object, newPos) != blockageNone) {
 					//  If there is a path find task pending, put the walk action
 					//  on hold until it finishes, else, abort the walk action.
 					if (pathFindTask)
-						moveTaskWaiting = TRUE;
+						moveTaskWaiting = true;
 					else {
 						movementDirection = a->currentFacing;
-						moveBlocked = TRUE;
+						moveBlocked = true;
 					}
-					/*                  if (!(flags & pathFind) || nextWayPoint() == FALSE)
+					/*                  if (!(flags & pathFind) || nextWayPoint() == false)
 					                    {
-					                        moveBlocked = TRUE;
+					                        moveBlocked = true;
 					                        flags |= blocked;
 					                        newPos.z = object->location.z;
 
@@ -2734,7 +2734,7 @@ void MotionTask::walkAction(void) {
 		}
 	} else {
 		int16       height;
-		bool        foundPath = FALSE;
+		bool        foundPath = false;
 
 		movementDirection = targetVector.quickDir();
 
@@ -2758,7 +2758,7 @@ void MotionTask::walkAction(void) {
 
 			if (!checkWalkable(object, pos)) {
 				newPos = pos;
-				foundPath = TRUE;
+				foundPath = true;
 				break;
 			}
 		}
@@ -2767,20 +2767,20 @@ void MotionTask::walkAction(void) {
 		//  Check left and right facings if a path was not found in
 		//  the forward direction.
 
-		if (foundPath == FALSE) {
+		if (foundPath == false) {
 			int16   leftDir = spinLeft(movementDirection),
 			        rightDir = spinRight(movementDirection);
 
 			for (height = 0; height <= maxStepHeight; height += 8) {
 				if (checkWalk(rightDir, speedScale, height, newPos)) {
 					movementDirection = rightDir;
-					foundPath = TRUE;
+					foundPath = true;
 					break;
 				}
 
 				if (checkWalk(leftDir, speedScale, height, newPos)) {
 					movementDirection = leftDir;
-					foundPath = TRUE;
+					foundPath = true;
 					break;
 				}
 			}
@@ -2789,38 +2789,38 @@ void MotionTask::walkAction(void) {
 		//  Let's try moving at a right angle to the current path to
 		//  get around this annoying obstacle...
 
-		if (foundPath == FALSE) {
+		if (foundPath == false) {
 			if (targetVector.u > speed / 2
 			        &&  checkWalk(dirUpRight, speedScale, 0, newPos)) {
 				movementDirection = dirUpRight;
-				foundPath = TRUE;
+				foundPath = true;
 			} else if (-targetVector.u > speed / 2
 			           &&  checkWalk(dirDownLeft, speedScale, 0, newPos)) {
 				movementDirection = dirDownLeft;
-				foundPath = TRUE;
+				foundPath = true;
 			} else if (targetVector.v > speed / 2
 			           &&  checkWalk(dirUpLeft, speedScale, 0, newPos)) {
 				movementDirection = dirUpLeft;
-				foundPath = TRUE;
+				foundPath = true;
 			} else if (-targetVector.v > speed / 2
 			           &&  checkWalk(dirDownRight, speedScale, 0, newPos)) {
 				movementDirection = dirDownRight;
-				foundPath = TRUE;
+				foundPath = true;
 			}
 		}
 
 		//  If we just couldn't find a valid path no matter how hard
 		//  we tried, then just give up and say that we were blocked.
 
-		if (foundPath == FALSE) {
+		if (foundPath == false) {
 
 			//  If there is a path find task pending, put the walk action
 			//  on hold until it finishes, else, abort the walk action.
 			if (pathFindTask)
-				moveTaskWaiting = TRUE;
+				moveTaskWaiting = true;
 			else {
 				movementDirection = a->currentFacing;
-				moveBlocked = TRUE;
+				moveBlocked = true;
 			}
 		}
 	}
@@ -2895,7 +2895,7 @@ void MotionTask::walkAction(void) {
 		        &&  tHeight <  newPos.z)
 			newPos.z = tHeight;
 
-		if (freeFall(newPos, sti) == FALSE) {
+		if (freeFall(newPos, sti) == false) {
 			int16   newAction;
 
 			if (sti.surfaceTile != NULL
@@ -3870,7 +3870,7 @@ void MotionTask::dodgeAction(void) {
 		//  If the attacker is not attacking, we're done
 		if (attackerMotion == NULL
 		        ||  !attackerMotion->isMeleeAttack()) {
-			a->setInterruptablity(TRUE);
+			a->setInterruptablity(true);
 			remove();
 			return;
 		}
@@ -4146,7 +4146,7 @@ void MotionTask::defensiveMeleeAction(void) {
 		//  If the attacker is not attacking, we're done
 		if (attackerMotion == NULL
 		        ||  !attackerMotion->isMeleeAttack()) {
-			a->setInterruptablity(TRUE);
+			a->setInterruptablity(true);
 			remove();
 			return;
 		}
@@ -4169,7 +4169,7 @@ void MotionTask::defensiveMeleeAction(void) {
 			//  Wait for the attacker's attack
 			if (attackerMotion == NULL
 			        ||  !attackerMotion->isMeleeAttack()) {
-				a->setInterruptablity(TRUE);
+				a->setInterruptablity(true);
 				remove();
 			}
 		}
@@ -4193,8 +4193,8 @@ void MotionTask::updatePositions(void) {
 		ProtoObj    *proto = obj->proto();
 		Actor       *a = (Actor *)obj;
 		int16       impact = 0;
-		bool        moveTaskWaiting = FALSE,
-		            moveTaskDone = FALSE;
+		bool        moveTaskWaiting = false,
+		            moveTaskDone = false;
 
 		nextMT = (MotionTask *)mt->next();
 
@@ -4277,7 +4277,7 @@ void MotionTask::updatePositions(void) {
 					}
 				} else {
 					a->setAction(newAction, 0);
-					a->setInterruptablity(FALSE);
+					a->setInterruptablity(false);
 					mt->flags &= ~reset;
 				}
 			} else if (a->nextAnimationFrame() || (mt->flags & inWater)) {
@@ -4293,8 +4293,8 @@ void MotionTask::updatePositions(void) {
 						    (mt->flags & requestRun) != 0);
 					}
 					nextMT = mt;
-				} else if (mt->freeFall(obj->location, sti) == FALSE)
-					moveTaskDone = TRUE;
+				} else if (mt->freeFall(obj->location, sti) == false)
+					moveTaskDone = true;
 			} else {
 				//  If actor was running, go through an abreviated
 				//  landing sequence by aborting the landing animation
@@ -4322,7 +4322,7 @@ void MotionTask::updatePositions(void) {
 
 			if (mt->flags & reset) {
 				a->setAction(actionJumpUp, 0);
-				a->setInterruptablity(FALSE);
+				a->setInterruptablity(false);
 				mt->flags &= ~reset;
 			} else if (a->nextAnimationFrame()) {
 				mt->motionType = motionTypeThrown;
@@ -4356,7 +4356,7 @@ void MotionTask::updatePositions(void) {
 					mt->flags |= reset;
 					nextMT = mt;
 				} else
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 			}
 			break;
 
@@ -4366,7 +4366,7 @@ void MotionTask::updatePositions(void) {
 				mt->actionCounter = 5;
 				mt->flags &= ~reset;
 			} else if (--mt->actionCounter == 0)
-				moveTaskDone = TRUE;
+				moveTaskDone = true;
 			break;
 
 		case motionTypeUseObject:
@@ -4375,7 +4375,7 @@ void MotionTask::updatePositions(void) {
 			a->setActionPoints(2);
 			mt->directObject->use(a->thisID());
 			//nextMT=mt;
-			moveTaskDone = TRUE;
+			moveTaskDone = true;
 			break;
 
 		case motionTypeUseObjectOnObject:
@@ -4400,7 +4400,7 @@ void MotionTask::updatePositions(void) {
 						    a->thisID(),
 						    mt->indirectObject->thisID());
 						if (mt && mt->motionType == motionTypeUseObjectOnObject)
-							moveTaskDone = TRUE;
+							moveTaskDone = true;
 						else
 							nextMT = mt;
 					}
@@ -4412,7 +4412,7 @@ void MotionTask::updatePositions(void) {
 				    a->thisID(),
 				    mt->indirectObject->thisID());
 				if (mt && mt->motionType == motionTypeUseObjectOnObject)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
@@ -4453,7 +4453,7 @@ void MotionTask::updatePositions(void) {
 				a->setActionPoints(2);
 				mt->directObject->useOn(a->thisID(), mt->TAI);
 				if (mt && mt->motionType == motionTypeUseObjectOnTAI)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
@@ -4473,7 +4473,7 @@ void MotionTask::updatePositions(void) {
 				a->setActionPoints(2);
 				mt->directObject->useOn(a->thisID(), mt->targetLoc);
 				if (mt && mt->motionType == motionTypeUseObjectOnLocation)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
@@ -4512,7 +4512,7 @@ void MotionTask::updatePositions(void) {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
 				mt->TAI->use(a->thisID());
-				moveTaskDone = TRUE;
+				moveTaskDone = true;
 			}
 			break;
 
@@ -4533,7 +4533,7 @@ void MotionTask::updatePositions(void) {
 					                       mt->targetLoc,
 					                       mt->moveCount);
 					if (mt && mt->motionType == motionTypeDropObject)
-						moveTaskDone = TRUE;
+						moveTaskDone = true;
 					else
 						nextMT = mt;
 				}
@@ -4544,12 +4544,12 @@ void MotionTask::updatePositions(void) {
 				                       mt->targetLoc,
 				                       mt->moveCount);
 				if (mt && mt->motionType == motionTypeDropObject)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
 
-			CMassWeightIndicator::bRedraw = TRUE;   // tell the mass/weight indicators to refresh
+			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
 
 			break;
 
@@ -4568,7 +4568,7 @@ void MotionTask::updatePositions(void) {
 					    mt->indirectObject->thisID(),
 					    mt->moveCount);
 					if (mt && mt->motionType == motionTypeDropObjectOnObject)
-						moveTaskDone = TRUE;
+						moveTaskDone = true;
 					else
 						nextMT = mt;
 				}
@@ -4580,12 +4580,12 @@ void MotionTask::updatePositions(void) {
 				    mt->indirectObject->thisID(),
 				    mt->moveCount);
 				if (mt && mt->motionType == motionTypeDropObjectOnObject)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
 
-			CMassWeightIndicator::bRedraw = TRUE;   // tell the mass/weight indicators to refresh
+			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
 
 			break;
 
@@ -4606,7 +4606,7 @@ void MotionTask::updatePositions(void) {
 				    mt->TAI,
 				    mt->targetLoc);
 				if (mt && mt->motionType == motionTypeDropObjectOnTAI)
-					moveTaskDone = TRUE;
+					moveTaskDone = true;
 				else
 					nextMT = mt;
 			}
@@ -4660,11 +4660,11 @@ void MotionTask::updatePositions(void) {
 			if (mt->flags & reset) {
 				if (a->isActionAvailable(actionDie)) {
 					a->setAction(actionDie, 0);
-					a->setInterruptablity(FALSE);
+					a->setInterruptablity(false);
 					mt->flags &= ~reset;
 				} else {
-					moveTaskDone = TRUE;
-					a->setInterruptablity(TRUE);
+					moveTaskDone = true;
+					a->setInterruptablity(true);
 					if (!a->hasEffect(actorDisappearOnDeath)) {
 						a->setAction(actionDead, 0);
 						a->die();
@@ -4675,8 +4675,8 @@ void MotionTask::updatePositions(void) {
 					}
 				}
 			} else if (a->nextAnimationFrame()) {
-				moveTaskDone = TRUE;
-				a->setInterruptablity(TRUE);
+				moveTaskDone = true;
+				a->setInterruptablity(true);
 				if (!a->hasEffect(actorDisappearOnDeath)) {
 					a->setAction(actionDead, 0);
 					a->die();
@@ -4695,7 +4695,7 @@ void MotionTask::updatePositions(void) {
 
 //-----------------------------------------------------------------------
 //	Manages any object which has no supporting surface.
-//	Returns TRUE if object is still falling.
+//	Returns true if object is still falling.
 
 bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 	int16           tHeight;
@@ -4704,7 +4704,7 @@ bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 
 	tHeight = tileSlopeHeight(newPos, object, &sti);
 
-	if (object->objectFlags & objectFloating) return FALSE;
+	if (object->objectFlags & objectFloating) return false;
 
 	velocity.u = (newPos.u - object->location.u) * 2 / 3;
 	velocity.v = (newPos.v - object->location.v) * 2 / 3;
@@ -4725,12 +4725,12 @@ supported:
 			}
 			newPos.z = tHeight;
 //			setObjectSurface( object, sti );
-			return FALSE;
+			return false;
 		} else {
 			motionType = motionTypeRise;
 			immediateLocation.z = tHeight;
 			object->move(newPos);
-			return TRUE;
+			return true;
 		}
 
 	}
@@ -4752,10 +4752,10 @@ falling:
 
 //				newPos = tPos;
 				object->move(tPos);
-				return TRUE;
+				return true;
 			} else {
 				newPos = tPos;
-				return FALSE;
+				return false;
 			}
 		}
 
@@ -4828,7 +4828,7 @@ falling:
 		object->move(newPos);
 		unstickObject(object);
 		newPos = object->getLocation();
-		return TRUE;
+		return true;
 	}
 }
 
@@ -4946,20 +4946,20 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 			else
 				MotionTask::downLadder(*a);
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void pauseInterruptableMotions(void) {
-	interruptableMotionsPaused = TRUE;
+	interruptableMotionsPaused = true;
 }
 
 void resumeInterruptableMotions(void) {
-	interruptableMotionsPaused = FALSE;
+	interruptableMotionsPaused = false;
 }
 
 /* ===================================================================== *

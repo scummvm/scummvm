@@ -122,7 +122,7 @@ public:
 	}
 
 	// gets level of skill
-	int8 getSkillLevel(SkillProto *, bool base = FALSE);
+	int8 getSkillLevel(SkillProto *, bool base = false);
 
 	// get the actorAttributes allskills index from proto
 	uint8 getStatIndex(SkillProto *);
@@ -215,7 +215,7 @@ public:
 
 	//  Simply reset the attack notification flag
 	void resetAttackNotification(void) {
-		notifiedOfAttack = FALSE;
+		notifiedOfAttack = false;
 	}
 };
 

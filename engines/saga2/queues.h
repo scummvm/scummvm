@@ -120,13 +120,13 @@ public:
 
 	bool insert(const BASETYPE b) {
 		SimpleQueueElement *newElt = new SimpleQueueElement(b);
-		if (newElt == NULL)  return FALSE;
+		if (newElt == NULL)  return false;
 		if (tail)
 			tail->next = newElt;
 		else
 			head = newElt;
 		tail = newElt;
-		return TRUE;
+		return true;
 	}
 };
 
@@ -196,13 +196,13 @@ public:
 
 	bool insert(const BASETYPE b) {
 		PublicQueueElement *newElt = new PublicQueueElement(b);
-		if (newElt == NULL)  return FALSE;
+		if (newElt == NULL)  return false;
 		if (tail)
 			tail->next = newElt;
 		else
 			head = newElt;
 		tail = newElt;
-		return TRUE;
+		return true;
 	}
 };
 
@@ -279,13 +279,13 @@ public:
 
 	bool insert(BASETYPE *b) {
 		SimplePtrQueueElement *newElt = new SimplePtrQueueElement(b);
-		if (newElt == NULL)  return FALSE;
+		if (newElt == NULL)  return false;
 		if (tail)
 			tail->next = newElt;
 		else
 			head = newElt;
 		tail = newElt;
-		return TRUE;
+		return true;
 	}
 };
 
@@ -358,13 +358,13 @@ public:
 
 	bool insert(BASETYPE *b) {
 		PublicPtrQueueElement *newElt = new PublicPtrQueueElement(b);
-		if (newElt == NULL)  return FALSE;
+		if (newElt == NULL)  return false;
 		if (tail)
 			tail->next = newElt;
 		else
 			head = newElt;
 		tail = newElt;
-		return TRUE;
+		return true;
 	}
 };
 

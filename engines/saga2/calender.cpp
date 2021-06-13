@@ -176,14 +176,14 @@ uint16 FrameAlarm::elapsed(void) {
 //	Pause the global calender
 
 void pauseCalender(void) {
-	calenderPaused = TRUE;
+	calenderPaused = true;
 }
 
 //-----------------------------------------------------------------------
 //	Restart the paused global calender
 
 void resumeCalender(void) {
-	calenderPaused = FALSE;
+	calenderPaused = false;
 }
 
 //-----------------------------------------------------------------------
@@ -214,7 +214,7 @@ uint32 operator - (const CalenderTime &time1, const CalenderTime &time2) {
 //	Initialize the game calender
 
 void initCalender(void) {
-	calenderPaused          = FALSE;
+	calenderPaused          = false;
 	calender.years          = 0;
 	calender.weeks          = 0;
 	calender.days           = 0;

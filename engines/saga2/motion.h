@@ -347,27 +347,27 @@ public:
 	static void walkTo(
 	    Actor           &obj,
 	    const TilePoint &target,
-	    bool            run = FALSE,
-	    bool            canAgitate = TRUE);
+	    bool            run = false,
+	    bool            canAgitate = true);
 	static void walkTo(
 	    ThreadID        th,
 	    Actor           &obj,
 	    const TilePoint &target,
-	    bool            run = FALSE,
-	    bool            canAgitate = TRUE);
+	    bool            run = false,
+	    bool            canAgitate = true);
 	static void walkToDirect(
 	    Actor           &obj,
 	    const TilePoint &target,
-	    bool            run = FALSE,
-	    bool            canAgitate = TRUE);
+	    bool            run = false,
+	    bool            canAgitate = true);
 	static void walkToDirect(
 	    ThreadID        th,
 	    Actor           &obj,
 	    const TilePoint &target,
-	    bool            run = FALSE,
-	    bool            canAgitate = TRUE);
-	static void wander(Actor &obj, bool run = FALSE);
-	static void tetheredWander(Actor &obj, const TileRegion &tether, bool run = FALSE);
+	    bool            run = false,
+	    bool            canAgitate = true);
+	static void wander(Actor &obj, bool run = false);
+	static void tetheredWander(Actor &obj, const TileRegion &tether, bool run = false);
 //	static void runTo( GameObject &obj, const TilePoint &target );
 	static void staggerTo(Actor &obj, const TilePoint &target);
 	static void upLadder(Actor &obj);
@@ -485,8 +485,8 @@ public:
 	}
 
 	//  Update to a new final target
-	void changeTarget(const TilePoint &newPos, bool run = FALSE);
-	void changeDirectTarget(const TilePoint &newPos, bool run = FALSE);
+	void changeTarget(const TilePoint &newPos, bool run = false);
+	void changeDirectTarget(const TilePoint &newPos, bool run = false);
 	void finishWalk(void);                   // stop walking
 	void finishTurn(void) {
 		if (isTurn()) remove();

@@ -328,13 +328,13 @@ public:
 
 void ModalDisplayWindow::pointerRelease(gPanelMessage &) {
 	requestInfo     *ri = (requestInfo *)userData;
-	if (ri) ri->running = FALSE;
+	if (ri) ri->running = false;
 }
 
 bool ModalDisplayWindow::keyStroke(gPanelMessage &) {
 	requestInfo     *ri = (requestInfo *)userData;
-	if (ri) ri->running = FALSE;
-	return TRUE;
+	if (ri) ri->running = false;
+	return true;
 }
 
 /* ===================================================================== *
@@ -351,7 +351,7 @@ int16 GameDialogA(
 	ModalRequestWindow *win;
 
 	rInfo.result = -1;
-	rInfo.running = TRUE;
+	rInfo.running = true;
 
 	win = new ModalRequestWindow(
 	          Rect16((drawPage->size.x - 200) / 2,
@@ -372,7 +372,7 @@ int16 GameDialogA(
 	win->userData = &rInfo;
 	win->open();
 
-	EventLoop(rInfo.running, FALSE);
+	EventLoop(rInfo.running, false);
 
 	delete win;
 	return rInfo.result;
@@ -404,7 +404,7 @@ int16 GameDisplayA(
 	ModalDisplayWindow *win;
 
 	rInfo.result = -1;
-	rInfo.running = TRUE;
+	rInfo.running = true;
 
 	win = new ModalDisplayWindow(
 	          Rect16((drawPage->size.x - 200) / 2,
@@ -424,7 +424,7 @@ int16 GameDisplayA(
 	win->userData = &rInfo;
 	win->open();
 
-	EventLoop(rInfo.running, FALSE);
+	EventLoop(rInfo.running, false);
 
 	delete win;
 	return rInfo.result;

@@ -257,7 +257,7 @@ public:
 	void updateImage(ObjectID);              // move to new location in world,
 	// (assumes setLocation has been called)
 
-	//  Remove an object from a stack of objects. Returns TRUE if it was in a stack.
+	//  Remove an object from a stack of objects. Returns true if it was in a stack.
 	bool unstack(void);
 
 	// this correctly moves merged or stacked objects
@@ -317,7 +317,7 @@ public:
 	bool getAvailableSlot(
 	    GameObject  *obj,
 	    TilePoint   *slot,
-	    bool        canMerge = FALSE,
+	    bool        canMerge = false,
 	    GameObject  **mergeObj = NULL);
 
 	//  Find a slot to place the specified object within this object and
@@ -326,7 +326,7 @@ public:
 	bool placeObject(
 	    ObjectID    enactor,
 	    ObjectID    objID,
-	    bool        canMerge = FALSE,
+	    bool        canMerge = false,
 	    int16       num = 1);
 
 	//  Drop the specified object on the ground in a semi-random location

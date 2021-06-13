@@ -105,15 +105,15 @@ void gPanel::draw(void) {}
 void gPanel::drawClipped(gPort &, const Point16 &, const Rect16 &) {}
 void gPanel::pointerMove(gPanelMessage &) {}
 bool gPanel::pointerHit(gPanelMessage &) {
-	return FALSE;
+	return false;
 }
 bool gPanel::pointerRHit(gPanelMessage &) {
-	return FALSE;
+	return false;
 }
 void gPanel::pointerDrag(gPanelMessage &) {}
 void gPanel::pointerRelease(gPanelMessage &) {}
 bool gPanel::keyStroke(gPanelMessage &) {
-	return FALSE;
+	return false;
 }
 void gPanel::timerTick(gPanelMessage &) {}
 void gPanel::onMouseHintDelay(void) {}
@@ -149,7 +149,7 @@ void gPanel::notify(enum gEventType type, int32 value) {
 }
 
 bool gPanel::activate(gEventType) {
-	return FALSE;
+	return false;
 }
 
 void gPanel::deactivate(void) {
@@ -370,7 +370,7 @@ gWindow::gWindow(const Rect16 &box, uint16 ident, const char saveName[], AppFunc
 	: gPanelList(*this, box, NULL, ident, cmd)
 	  //, saver(WIIFF_POS|WIIFS_NORMAL|WIIFE_ONEXIT,iniFile,saveName,box,this)
 {
-	openFlag = FALSE;
+	openFlag = false;
 //	pointerImage = &arrowPtr;
 //	pointerOffset = Point16( 0, 0 );
 
@@ -410,7 +410,7 @@ gWindow::~gWindow() {
 }
 
 bool gWindow::open(void) {
-	if (isOpen()) return TRUE;
+	if (isOpen()) return true;
 
 	//  Send a "pointer-leave" message to mouse panel.
 
@@ -424,10 +424,10 @@ bool gWindow::open(void) {
 //	pointer.setImage( *pointerImage, pointerOffset.x, pointerOffset.y );
 //	pointer.show();
 
-	openFlag = TRUE;
+	openFlag = true;
 
 	draw();
-	return TRUE;
+	return true;
 }
 
 void gWindow::close(void) {
@@ -442,7 +442,7 @@ void gWindow::close(void) {
 	//  but just in case).
 	if (DragBar::dragWindow == (FloatingWindow *)this) return;
 
-	openFlag = FALSE;
+	openFlag = false;
 
 	//  remove this window from the window list.
 
@@ -487,7 +487,7 @@ void gWindow::toFront(void) {            // re-order the windows
 }
 
 bool gWindow::isModal(void) {
-	return FALSE;
+	return false;
 }
 
 void gWindow::setPos(Point16 pos) {
@@ -539,9 +539,9 @@ bool gWindow::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void gWindow::pointerMove(gPanelMessage &) {
@@ -550,7 +550,7 @@ void gWindow::pointerMove(gPanelMessage &) {
 
 bool gWindow::pointerHit(gPanelMessage &) {
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void gWindow::pointerDrag(gPanelMessage &) {
@@ -674,12 +674,12 @@ void gControl::draw(void) {
 gGenericControl::gGenericControl(gPanelList &list, const Rect16 &box,
                                  uint16 ident, AppFunc *cmd)
 	: gControl(list, box, NULL, ident, cmd) {
-	dblClickFlag = FALSE;
+	dblClickFlag = false;
 }
 
 bool gGenericControl::activate(gEventType) {
 	selected = 1;
-	return TRUE;
+	return true;
 }
 
 void gGenericControl::deactivate(void) {
@@ -695,14 +695,14 @@ bool gGenericControl::pointerHit(gPanelMessage &msg) {
 	if (msg.rightButton)
 		notify(gEventRMouseDown, 0);
 	else if (msg.doubleClick && !dblClickFlag) {
-		dblClickFlag = TRUE;
+		dblClickFlag = true;
 		notify(gEventDoubleClick, 0);
 	} else {
-		dblClickFlag = FALSE;
+		dblClickFlag = false;
 		notify(gEventMouseDown, 0);
 	}
 
-	return TRUE;
+	return true;
 }
 
 void gGenericControl::pointerDrag(gPanelMessage &) {
@@ -813,7 +813,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 		//  is occuring outside the panel, then it should be
 		//  deselected.
 
-		if (activePanel->extent.ptInside(pickPos) == FALSE)
+		if (activePanel->extent.ptInside(pickPos) == false)
 			activePanel->deactivate();
 	}
 
@@ -959,18 +959,18 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 				if (mousePanel->pointerHit(msg)) {
 					activePanel = mousePanel;
 					if (_curMouseState.left)
-						leftDrag = TRUE;
+						leftDrag = true;
 					else
-						rightDrag = TRUE;
+						rightDrag = true;
 				}
 			}
-		} else if ((leftDrag && _curMouseState.left == FALSE)  // check for release
-		           || (rightDrag && _curMouseState.right == FALSE)) {
+		} else if ((leftDrag && _curMouseState.left == false)  // check for release
+		           || (rightDrag && _curMouseState.right == false)) {
 			if (activePanel && mousePanel) {            // if a control is active
 				setMsg(msg, mousePanel);    // send it a release message
 				mousePanel->pointerRelease(msg);
 			}
-			leftDrag = rightDrag = FALSE;
+			leftDrag = rightDrag = false;
 		}
 	}
 
@@ -1106,10 +1106,10 @@ int16 rightButtonState(void) {
 }
 
 void LockUI(bool state) {
-	if (state == TRUE) {
+	if (state == true) {
 		if (lockUINest <= 0) {
 			pointer.hide();
-			enableUIKeys(FALSE);
+			enableUIKeys(false);
 			G_BASE.setActive(NULL);
 		}
 		lockUINest++;
@@ -1117,7 +1117,7 @@ void LockUI(bool state) {
 		lockUINest--;
 		assert(lockUINest >= 0);
 		if (lockUINest <= 0) {
-			enableUIKeys(TRUE);
+			enableUIKeys(true);
 			pointer.show();
 		}
 	}

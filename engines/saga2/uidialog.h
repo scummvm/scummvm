@@ -53,7 +53,7 @@ enum placardTypes {
  * ===================================================================== */
 
 // dialog funcs
-int16 OptionsDialog(bool disableSaveResume = FALSE);
+int16 OptionsDialog(bool disableSaveResume = false);
 
 // helper funcs
 void initFileFields(char **fieldStrings);

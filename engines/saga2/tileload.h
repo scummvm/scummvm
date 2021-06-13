@@ -139,7 +139,7 @@ public:
 
 	bool operator[](uint16 i) {
 		if (i < size) return (bool)(b[i / 32] & (1 << (i % 32)));
-		else return FALSE;
+		else return false;
 	}
 	void resize(uint16 newSize);
 
@@ -218,8 +218,8 @@ public:
 
 	friend bool operator!= (FixedBitArray c, FixedBitArray d) {
 		for (uint16 i = 0; i < lWords; i++)
-			if (c.b[i] != d.b[i]) return TRUE;
-		return FALSE;
+			if (c.b[i] != d.b[i]) return true;
+		return false;
 	}
 
 	friend FixedBitArray operator^ (FixedBitArray c, FixedBitArray d) {

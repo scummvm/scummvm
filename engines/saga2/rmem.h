@@ -138,10 +138,10 @@ void _RCacheHandle(RHANDLE handle);
 void _RHandleStartLoading(RHANDLE handle);
 void _RHandleDoneLoading(RHANDLE handle);
 
-//  Return TRUE if loaded data is valid
+//  Return true if loaded data is valid
 bool _RHandleLoaded(RHANDLE handle);
 
-//  Return TRUE if loaded data will be valid soon.
+//  Return true if loaded data will be valid soon.
 bool _RHandleLoading(RHANDLE handle);
 
 void RShowMem(void);

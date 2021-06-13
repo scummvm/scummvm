@@ -68,10 +68,10 @@ protected:
 
 public:
 	Messager() {
-		enabled = TRUE;
+		enabled = true;
 	}
 	Messager(char *entry) {
-		enabled = TRUE;
+		enabled = true;
 	}
 	virtual ~Messager() {}
 
@@ -79,10 +79,10 @@ public:
 	size_t va(const char *format, va_list argptr);
 
 	void enable() {
-		enabled = TRUE;
+		enabled = true;
 	}
 	void disable() {
-		enabled = FALSE;
+		enabled = false;
 	}
 	bool active() {
 		return enabled;

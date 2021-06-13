@@ -75,8 +75,8 @@ void setWalls(uint8 *begin, uint32 length);
 #else
 #  define WARN_LEAKS 0
 
-#  define WIPE_ALLOC FALSE
-#  define WIPE_FREE FALSE
+#  define WIPE_ALLOC false
+#  define WIPE_FREE false
 
 #  define wallSize  0                       // compile wall size as zero
 #  define mungEnable    0                       // disable munging
@@ -156,7 +156,7 @@ static void *rmemAlloc(size_t s, const char desc[]) {
 
 //quick dealloc
 
-static bool complicatedFree = TRUE;
+static bool complicatedFree = true;
 
 static void rmemFree(void *mem) {
 	if (whichHeap(mem) != NULL) {
@@ -168,7 +168,7 @@ static void rmemFree(void *mem) {
 
 void RMemFastCleanup(void) {
 #if !DEBUG
-	complicatedFree = FALSE;
+	complicatedFree = false;
 #endif
 }
 
@@ -765,9 +765,9 @@ static bool PurgeBlocks(RHeapPtr heap, uint32 needed) {
 		rh->data = NULL;                    // NULL the handle.
 		RDelinkHandle(rh);               // delink from chain.
 
-		if (freedUp > needed) return TRUE;
+		if (freedUp > needed) return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //  This function attempts to get free up enough space for a new
@@ -823,7 +823,7 @@ static void GetSpace(RHeapPtr heap, uint32 needed) {
 
 static void *NewPtr(int32 size, RHeapPtr heap, bool high, const char desc[]) {
 	uint8               *mem;
-	bool                triedCompact = FALSE;
+	bool                triedCompact = false;
 	int                 tries;
 
 	if (heap == NULL) heap = heapList;
@@ -838,25 +838,25 @@ static void *NewPtr(int32 size, RHeapPtr heap, bool high, const char desc[]) {
 		if (triedCompact) return NULL;
 
 		GetSpace(heap, size);
-		triedCompact = TRUE;
+		triedCompact = true;
 	}
 	return NULL;
 }
 
 void *_RNewPtr(int32 size, RHeapPtr heap, const char desc[]) {
 #if RMEM_VISIBLE
-	void    *ptr = NewPtr(size, heap, TRUE, desc);
+	void    *ptr = NewPtr(size, heap, true, desc);
 	SHOWMEM;
 	return ptr;
 #else
-	return NewPtr(size, heap, TRUE, desc);
+	return NewPtr(size, heap, true, desc);
 #endif
 }
 
 void *_RNewClearPtr(int32 size, RHeapPtr heap, const char desc[]) {
 	uint8               *mem;
 
-	if ((mem = (uint8 *) NewPtr(size, heap, TRUE, desc)) != NULL)
+	if ((mem = (uint8 *) NewPtr(size, heap, true, desc)) != NULL)
 		memset(mem, 0, size);
 
 	SHOWMEM;
@@ -932,7 +932,7 @@ static RHandleBlock *NewHandleBlock(RHeapPtr heap, const char desc[]) {
 	RHandleBlock        *hBlock, *prevBlock;
 	int                 i;
 	// allocate space for handle block
-	if ((hBlock = (RHandleBlock *) NewPtr(sizeof * hBlock, heap, TRUE, desc)) != NULL) {
+	if ((hBlock = (RHandleBlock *) NewPtr(sizeof * hBlock, heap, true, desc)) != NULL) {
 		SHOWMEM;
 		memset(hBlock, 0, sizeof * hBlock);
 
@@ -1054,7 +1054,7 @@ RHANDLE _RNewHandle(int32 size, RHeapPtr heap, const char desc[]) {
 	if (heap == NULL) heap = heapList;
 
 	if ((handle = FindFreeHandle(heap)) != NULL) {
-		if ((mem = NewPtr(size, heap, FALSE, desc)) != NULL) {
+		if ((mem = NewPtr(size, heap, false, desc)) != NULL) {
 			pr = PrefixBaseAddr(mem);        // get memory prefix
 			pr->handle = handle;            // point prefix back to handle
 			handle->data = mem;             // point handle to prefix
@@ -1135,7 +1135,7 @@ void *_RAllocHandleData(RHANDLE handle, int32 size, const char desc[]) {
 
 	if (hb->data != NULL) RDisposeHandleData(handle);
 
-	if ((mem = NewPtr(size, heap, FALSE, desc)) != NULL) {
+	if ((mem = NewPtr(size, heap, false, desc)) != NULL) {
 		pr = PrefixBaseAddr(mem);        // get memory prefix
 		pr->handle = hb;                // point prefix back to handle
 		hb->data = mem;                 // point handle to prefix
@@ -1284,7 +1284,7 @@ bool _RHandleLoaded(RHANDLE handle) {
 	RMemPrefix      *pr;
 	RHandle         *hb = HandleBaseAddr(handle);
 
-	if (handle == NULL || hb->data == NULL) return FALSE;
+	if (handle == NULL || hb->data == NULL) return false;
 	pr = PrefixBaseAddr(hb->data);
 	return (pr->flags & rMemLoading) ? 0 : 1;
 }
@@ -1293,7 +1293,7 @@ bool _RHandleLoading(RHANDLE handle) {
 	RMemPrefix      *pr;
 	RHandle         *hb = HandleBaseAddr(handle);
 
-	if (handle == NULL || hb->data == NULL) return FALSE;
+	if (handle == NULL || hb->data == NULL) return false;
 	pr = PrefixBaseAddr(hb->data);
 	return (pr->flags & rMemLoading) ? 1 : 0;
 }
@@ -1406,7 +1406,7 @@ bool _RMemIntegrity(void) {
 					            ""
 #endif
 					           );
-					return FALSE;
+					return false;
 				}
 
 				//  Check memory wall integrity
@@ -1421,7 +1421,7 @@ bool _RMemIntegrity(void) {
 			blk = blk->next;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 
@@ -1466,7 +1466,7 @@ static bool _RMemCleanHeap(RHeapPtr heap) {
 				else if (leakWarnings == maxLeakWarnings)
 					memoryWarning("Warning: too many memory leak warnings. Remaining warnings ignored\n");
 				else
-					return TRUE;
+					return true;
 
 			}
 			//  Go to the next block
@@ -1478,7 +1478,7 @@ static bool _RMemCleanHeap(RHeapPtr heap) {
 		last_free = (uint8 *)blk + blk->size;
 
 	}
-	return TRUE;
+	return true;
 }
 #endif
 

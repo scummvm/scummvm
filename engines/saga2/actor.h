@@ -239,7 +239,7 @@ public:
 	// returns the containment type flags for this object
 	virtual uint16 containmentSet(void);
 
-	//  returns TRUE if this object can contain another object
+	//  returns true if this object can contain another object
 	virtual bool canContain(ObjectID dObj, ObjectID item);
 
 	//  Determine if this object can contain another object at a
@@ -871,9 +871,9 @@ public:
 	//  are no poses in the sequence.
 	int16 setAction(int16 newState, int16 flags);
 
-	//  returns TRUE if the action is available in the current
+	//  returns true if the action is available in the current
 	//  direction.
-	bool isActionAvailable(int16 newState, bool anyDir = FALSE);
+	bool isActionAvailable(int16 newState, bool anyDir = false);
 
 	//  Return the number of animation frames in the specified action
 	//  for the specified direction
@@ -882,7 +882,7 @@ public:
 	//  Update the current animation sequence to the next frame
 	bool nextAnimationFrame(void);
 
-	//  calculate which sprite frames to show. Return FALSE if
+	//  calculate which sprite frames to show. Return false if
 	//  sprite frames are not loaded.
 	bool calcSpriteFrames(void);
 

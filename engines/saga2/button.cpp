@@ -46,7 +46,7 @@ void gCompImage::init(void) {
 	compImages      = NULL;
 	max             = 0;
 	min             = 0;
-	internalAlloc   = FALSE;
+	internalAlloc   = false;
 	currentImage    = 0;
 	numPtrAlloc     = 0;
 //	imageText[0]   = NULL;
@@ -61,7 +61,7 @@ gCompImage::gCompImage(gPanelList &list, const Rect16 &box, void *image, uint16 
 	if (image) {
 		compImages = (void **)malloc(sizeof(pVOID) * 1); // allocate room for one pointer
 		compImages[0] = image;
-		internalAlloc   = FALSE;
+		internalAlloc   = false;
 		numPtrAlloc     = 1;
 	}
 }
@@ -90,7 +90,7 @@ gCompImage::gCompImage(gPanelList &list,
 	}
 
 	max             = numImages - 1;
-	internalAlloc   = TRUE;
+	internalAlloc   = true;
 	numPtrAlloc     = numImages;
 
 	// get rid of this context
@@ -365,8 +365,8 @@ void gCompButton::loadImages(hResContext *con, hResID res1, hResID res2) {
 		dimImage    = NULL;
 	}
 
-	internalAlloc   = TRUE;
-	dimmed          = FALSE;
+	internalAlloc   = true;
+	dimmed          = false;
 }
 
 void gCompButton::loadImages(hResID contextID, hResID res1, hResID res2) {
@@ -415,8 +415,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 		dimImage    = NULL;
 	}
 
-	internalAlloc   = FALSE;
-	dimmed          = FALSE;
+	internalAlloc   = false;
+	dimmed          = false;
 	extent          = box;
 }
 
@@ -432,8 +432,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 		dimImage    = NULL;
 	}
 
-	internalAlloc   = FALSE;
-	dimmed          = FALSE;
+	internalAlloc   = false;
+	dimmed          = false;
 	extent          = box;
 }
 
@@ -453,7 +453,7 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void **images, int
 		dimImage = NULL;
 	}
 
-	internalAlloc   = FALSE;
+	internalAlloc   = false;
 	dimmed          = dimNess;
 	extent          = box;
 }
@@ -473,8 +473,8 @@ gCompButton::gCompButton(gPanelList &list, const Rect16 &box, void *image, uint1
 		dimImage    = NULL;
 	}
 
-	internalAlloc   = FALSE;
-	dimmed          = FALSE;
+	internalAlloc   = false;
+	dimmed          = false;
 	extent          = box;
 }
 
@@ -500,9 +500,9 @@ gCompButton::~gCompButton(void) {
 
 void gCompButton::dim(bool enable) {
 	if (enable) {
-		if (!dimmed) dimmed = TRUE;
+		if (!dimmed) dimmed = true;
 	} else {
-		if (dimmed) dimmed = FALSE;
+		if (dimmed) dimmed = false;
 	}
 
 	window.update(extent);
@@ -527,7 +527,7 @@ bool gCompButton::activate(gEventType why) {
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	}
 	playMemSound(2);
-	return FALSE;
+	return false;
 }
 
 void gCompButton::pointerMove(gPanelMessage &msg) {
@@ -538,10 +538,10 @@ void gCompButton::pointerMove(gPanelMessage &msg) {
 }
 
 bool gCompButton::pointerHit(gPanelMessage &) {
-	if (dimmed) return FALSE;
+	if (dimmed) return false;
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void gCompButton::pointerRelease(gPanelMessage &) {
@@ -624,7 +624,7 @@ bool gToggleCompButton::activate(gEventType why) {
 		notify(gEventNewValue, selected);    // notify App of successful hit
 		playMemSound(1);
 	}
-	return FALSE;
+	return false;
 }
 
 bool gToggleCompButton::pointerHit(gPanelMessage &) {
@@ -660,7 +660,7 @@ bool gOwnerSelCompButton::activate(gEventType why) {
 		notify(gEventNewValue, selected);    // notify App of successful hit
 		playMemSound(2);
 	}
-	return FALSE;
+	return false;
 }
 
 bool gOwnerSelCompButton::pointerHit(gPanelMessage &) {
@@ -694,8 +694,8 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, hResContex
 		checkAlloc(images[i]);
 	}
 
-	response = TRUE;
-	internalAlloc = TRUE;
+	response = true;
+	internalAlloc = true;
 	max     = numRes - 1;
 	min     = 0;
 	current = clamp(min, initial, max);
@@ -715,8 +715,8 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 
 	images = newImages;
 
-	response = TRUE;
-	internalAlloc = FALSE;
+	response = true;
+	internalAlloc = false;
 	max     = numRes - 1;
 	min     = 0;
 	current = initial;
@@ -738,7 +738,7 @@ gMultCompButton::gMultCompButton(gPanelList &list, const Rect16 &box, void **new
 	images = newImages;
 
 	response = hitResponse;
-	internalAlloc = FALSE;
+	internalAlloc = false;
 	max     = numRes - 1;
 	min     = 0;
 	current = initial;
@@ -775,7 +775,7 @@ bool gMultCompButton::activate(gEventType why) {
 		playMemSound(1);
 //		playSound( MKTAG('C','B','T',5) );
 	}
-	return FALSE;
+	return false;
 }
 
 bool gMultCompButton::pointerHit(gPanelMessage &) {
@@ -883,7 +883,7 @@ bool gSlider::activate(gEventType why) {
 		gPanel::deactivate();
 		notify(gEventNewValue, slCurrent);   // notify App of successful hit
 	}
-	return FALSE;
+	return false;
 }
 
 void gSlider::deactivate(void) {
@@ -900,7 +900,7 @@ bool gSlider::pointerHit(gPanelMessage &msg) {
 	window.update(extent);
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void gSlider::pointerMove(gPanelMessage &msg) {

@@ -48,7 +48,7 @@ namespace Saga2 {
 #define LOSE_VID    "END_4" VIDEO_EXTENSION
 
 
-#define ERASE_BETWEEN TRUE
+#define ERASE_BETWEEN true
 #define VIDEO_X 0
 #define VIDEO_Y 0
 
@@ -62,7 +62,7 @@ extern bool allPlayerActorsDead;
 extern int16        queueIn,
        queueOut;
 
-int16 OptionsDialog(bool disableSaveResume = FALSE);
+int16 OptionsDialog(bool disableSaveResume = false);
 void SystemEventLoop(void);
 void freeAllTileBanks(void);
 void resetInputDevices(void);
@@ -85,7 +85,7 @@ void waitForInput(void);
 static void TroModeSetup(void);
 static void TroModeCleanup(void);
 
-static bool abortFlag = FALSE;
+static bool abortFlag = false;
 #ifndef NO_LOAD_AFTER_WIN
 //DO_OUTRO_IN_CLEANUP
 static int whichOutro = -1;
@@ -127,7 +127,7 @@ void setWintroMode(int16 whichOne) {
 	endGame();
 #else
 	whichOutro = whichOne;
-	allPlayerActorsDead = TRUE;
+	allPlayerActorsDead = true;
 #endif
 }
 
@@ -139,7 +139,7 @@ void fadeUp();
 void dumpGBASE(char *msg);
 
 void setLostroMode(void) {
-	allPlayerActorsDead = FALSE;
+	allPlayerActorsDead = false;
 	if (GameMode::newmodeFlag)
 		GameMode::update();
 
@@ -153,7 +153,7 @@ void setLostroMode(void) {
 		whichOutro = -1;
 		TroModeCleanup();
 	}
-	OptionsDialog(TRUE);
+	OptionsDialog(true);
 	reDrawScreen();
 }
 
@@ -162,7 +162,7 @@ void setLostroMode(void) {
  * ===================================================================== */
 
 void TroModeExternEvent(void) {
-	abortFlag = TRUE;
+	abortFlag = true;
 }
 
 // ------------------------------------------------------------------------
@@ -172,14 +172,14 @@ static void TroModeSetup(void) {
 	suspendAudio();
 	pointer.hide();
 #ifdef _WIN32
-	cursorFullHide(TRUE);
+	cursorFullHide(true);
 #endif
 	quickSavePalette();
 	blackOut();
 	displayDisable(PlayingVideo);
 	pushVidState();
 	resetInputDevices();
-	abortFlag = FALSE;
+	abortFlag = false;
 }
 
 // ------------------------------------------------------------------------
@@ -193,7 +193,7 @@ static void TroModeCleanup(void) {
 	quickRestorePalette();
 	resumeAudio();
 #ifdef _WIN32
-	cursorFullHide(FALSE);
+	cursorFullHide(false);
 #endif
 	pointer.show();
 //	pointer.manditoryShow();                     //  hide mouse pointer
@@ -221,7 +221,7 @@ static void waitForVideo(void) {
 // Wait till the user hits a key or clicks or screams or whatever
 
 void waitForInput(void) {
-	abortFlag = FALSE;
+	abortFlag = false;
 	while (!abortFlag) {
 		SystemEventLoop();
 		if (abortFlag)
@@ -240,7 +240,7 @@ static void playAVideo(const char *fileName, int x, int y) { //, int16 from, int
 	g_vm->startVideo(fileName, x, y);
 	if (!g_vm->checkVideo()) {
 		g_vm->endVideo();
-		abortFlag = TRUE;
+		abortFlag = true;
 		return;
 	}
 	waitForVideo();
@@ -256,7 +256,7 @@ static void playAVideo(const char *fileName, int x, int y) { //, int16 from, int
 
 static void doIntro(void) {
 	playAVideo(INTRO_VID1, 0, 0);
-	abortFlag = FALSE;
+	abortFlag = false;
 	playAVideo(INTRO_VID2, 0, 0);
 }
 

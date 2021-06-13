@@ -448,7 +448,7 @@ void ExpandColorMappedSprite(
 
 uint8 GetSpritePixel(
     Sprite          *sp,                    // sprite pointer
-    int16           flipped,                // TRUE if sprite was flipped
+    int16           flipped,                // true if sprite was flipped
     const Point16   &testPoint) {           // where to render to
 	gPixelMap       sprMap;                 // sprite map
 	uint8           result;

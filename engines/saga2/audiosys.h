@@ -287,7 +287,7 @@ public:
 	bool enabled(volumeTarget i);
 	void enable(volumeTarget i, bool onOff);
 	void disable(volumeTarget i) {
-		enable(i, FALSE);
+		enable(i, false);
 	}
 	void setVolume(volumeTarget targ, volumeMode op, Volume val);
 	Volume getVolume(volumeTarget src);
@@ -337,7 +337,7 @@ private:
 #endif
 		   )
 			return e;
-		return TRUE;
+		return true;
 	}
 
 

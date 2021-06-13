@@ -106,7 +106,7 @@ public:
 	    void screenPos( Point16 &screenCoords );
 	    int16 screenDepth( void );
 
-	        //  returns TRUE if it is within the view area of the current
+	        //  returns true if it is within the view area of the current
 	        //  map.
 	    bool visible( void );
 	*/
@@ -308,7 +308,7 @@ public:
 	// returns the containment type flags for this object
 	virtual uint16 containmentSet(void);
 
-	//  returns TRUE if this object can contain another object
+	//  returns true if this object can contain another object
 	virtual bool canContain(ObjectID dObj, ObjectID item);
 
 	//  Determine if this object can contain another object at a specified
@@ -580,10 +580,10 @@ public:
 	}
 
 	virtual bool makeSavingThrow(void) {
-		return FALSE;
+		return false;
 	}
 
-	//  Returns TRUE if object in continuous use.
+	//  Returns true if object in continuous use.
 	virtual bool isObjectBeingUsed(GameObject *obj);
 
 	//  Determine if the specified object's 'use' slot is available within
@@ -852,7 +852,7 @@ public:
 	virtual Sprite *getOrientedSprite(GameObject *obj, int16 offset);
 	weaponID getWeaponID(void);
 
-	//  Returns TRUE if object in continuous use.
+	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
 
 	//  Rate this weapon's goodness for a specified attack situation
@@ -1056,7 +1056,7 @@ public:
 	//  return the address of the sprite when held in hand
 	virtual Sprite *getOrientedSprite(GameObject *obj, int16 offset);
 
-	//  Returns TRUE if object in continuous use.
+	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
 
 	//  Projectiles are missiles
@@ -1115,7 +1115,7 @@ public:
 	//  Compute how much damage this defensive object will absorb
 	virtual uint8 adjustDamage(uint8 damage);
 
-	//  Returns TRUE if object in continuous use.
+	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
 
 	//  Determine if the specified object's 'use' slot is available within
@@ -1160,7 +1160,7 @@ public:
 	//  wielders facing in which this object can defend
 	virtual uint8 defenseDirMask(void);
 
-	//  Returns TRUE if object in continuous use.
+	//  Returns true if object in continuous use.
 	bool isObjectBeingUsed(GameObject *obj);
 
 	//  Determine if the specified object's 'use' slot is available within

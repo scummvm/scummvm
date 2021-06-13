@@ -103,9 +103,9 @@ static bool alreadyDone;
 // static mouse info variables
 ObjectID    ContainerView::lastPickedObjectID = Nothing;
 int32       ContainerView::lastPickedObjectQuantity = - 1;
-bool        ContainerView::objTextAlarm = FALSE;
+bool        ContainerView::objTextAlarm = false;
 char        ContainerView::mouseText[ContainerView::bufSize] = { "" };
-bool        ContainerView::mouseInView = FALSE;
+bool        ContainerView::mouseInView = false;
 uint16      ContainerView::numPicked = 1;
 GameObject  *ContainerView::objToGet;
 int32       ContainerView::amountAccumulator = 0;
@@ -275,7 +275,7 @@ ContainerView::ContainerView(
 	containerObject = GameObject::objectAddress(nd.object);
 	scrollPosition  = 0;
 	totalRows       = app.totRows;
-	setMousePoll(TRUE);
+	setMousePoll(true);
 }
 
 //  Destructor
@@ -307,19 +307,19 @@ ContainerView::~ContainerView() {
 ********************************************************************
 */
 
-//  returns TRUE if the object is visible for this type of
+//  returns true if the object is visible for this type of
 //  container.
 bool ContainerView::isVisible(GameObject *item) {
 	ProtoObj *proto = item->proto();
 
 	if (proto->containmentSet() & ProtoObj::isEnchantment)
-		return FALSE;
+		return false;
 
 	//  If Intangible Container then don't show it.
 	if ((proto->containmentSet() & (ProtoObj::isContainer | ProtoObj::isIntangible)) == (ProtoObj::isContainer | ProtoObj::isIntangible))
-		return TRUE;
+		return true;
 
-	return TRUE;
+	return true;
 }
 
 //  total the mass, bulk, and number of all objects in container.
@@ -606,7 +606,7 @@ GameObject *ContainerView::pickObject(const Point16 &pickPos) {
 bool ContainerView::activate(gEventType why) {
 	gPanel::activate(why);
 
-	return TRUE;
+	return true;
 }
 
 void ContainerView::deactivate(void) {
@@ -621,22 +621,22 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 
 		// static bool that tells if the mouse cursor
 		// is in a panel
-		mouseInView = FALSE;
-		mouseInfo.setDoable(TRUE);
+		mouseInView = false;
+		mouseInfo.setDoable(true);
 	} else {
 //		if( msg.pointerEnter )
 		{
 			// static bool that tells if the mouse cursor
 			// is in a panel
-			mouseInView = TRUE;
+			mouseInView = true;
 
 			GameObject *mouseObject;
 			mouseObject = mouseInfo.getObject();
 
 			if (!node.isAccessable(getCenterActorID())) {
-				mouseInfo.setDoable(FALSE);
+				mouseInfo.setDoable(false);
 			} else if (mouseObject == NULL) {
-				mouseInfo.setDoable(TRUE);
+				mouseInfo.setDoable(true);
 			} else {
 				mouseInfo.setDoable(containerObject->canContain(mouseObject->thisID()));
 			}
@@ -656,13 +656,13 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	mouseObject = mouseInfo.getObject();
 	mouseSet    = mouseObject ? mouseObject->containmentSet() : 0;
 
-	if (!mouseInfo.getDoable()) return FALSE;
+	if (!mouseInfo.getDoable()) return false;
 
 	if (msg.doubleClick && !alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
 		if (mouseObject != NULL) {
-			alreadyDone = TRUE;    // if object then no doubleClick
+			alreadyDone = true;    // if object then no doubleClick
 
 			if (mouseInfo.getIntent() == GrabInfo::Drop) {
 				if (mouseSet & ProtoObj::isTangible) {
@@ -694,7 +694,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 			}
 		} else {
 			// default to doubleClick active
-			alreadyDone = FALSE;
+			alreadyDone = false;
 			clickOn(msg, mouseObject, slotObject);
 		}
 	}
@@ -744,7 +744,7 @@ void ContainerView::timerTick(gPanelMessage &msg) {
 }
 
 void ContainerView::dblClick(GameObject *mouseObject, GameObject *slotObject, gPanelMessage &msg) {
-	alreadyDone = TRUE;
+	alreadyDone = true;
 
 	// double click stuff
 	dblClickOn(msg, mouseObject, slotObject);
@@ -792,7 +792,7 @@ void ContainerView::dblClickOn(
 		PlayerActorID   pID;
 
 		//  Only player actors can be possessors as far as the UI is concerned
-		if (actorIDToPlayerID(possessor, pID) == FALSE) possessor = Nothing;
+		if (actorIDToPlayerID(possessor, pID) == false) possessor = Nothing;
 
 		mouseInfo.replaceObject(); //Put Object Back
 		if (!(proto->setUseCursor(mObj->thisID()))) {
@@ -831,7 +831,7 @@ void ContainerView::dropPhysical(
 			MotionTask::dropObjectOnObject(*centerActor, *mObj, *cObj, num);
 		}
 
-		alreadyDone = TRUE;
+		alreadyDone = true;
 	}
 }
 
@@ -878,7 +878,7 @@ void ContainerView::useConcept(
 			//  If there is an object here drop the mouse object onto it
 			mObj->dropOn(centerActorID, cObj->thisID());
 
-		alreadyDone = TRUE;
+		alreadyDone = true;
 	}
 }
 
@@ -905,8 +905,8 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		lastPickedObjectID          = Nothing;
 		lastPickedObjectQuantity    = -1;
 
-		// set the display alarm to FALSE
-		objTextAlarm = FALSE;
+		// set the display alarm to false
+		objTextAlarm = false;
 
 		return;
 	}
@@ -926,7 +926,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		mouseText[0] = NULL;
 
 		// reset the alarm flag
-		objTextAlarm = FALSE;
+		objTextAlarm = false;
 
 		// set the hint alarm
 		containerObjTextAlarm.set(ticksPerSecond / 2);
@@ -957,7 +957,7 @@ void ContainerView::setDelayedCursorText(GameObject *obj) {
 	mouseText[0] = NULL;
 
 	// reset the alarm flag
-	objTextAlarm = FALSE;
+	objTextAlarm = false;
 
 	// set the hint alarm
 	containerObjTextAlarm.set(ticksPerSecond / 2);
@@ -981,7 +981,7 @@ EnchantmentContainerView::EnchantmentContainerView(
 
 //  Check If Sprite Should Be Shown
 bool EnchantmentContainerView::pointerHit(gPanelMessage &) {
-	return TRUE;
+	return true;
 }
 
 void EnchantmentContainerView::pointerMove(gPanelMessage &) {}
@@ -1345,7 +1345,7 @@ IntangibleContainerWindow::IntangibleContainerWindow(
 
 	assert(mindSelectorCompButton != NULL);
 
-	mindSelectorCompButton->setResponse(FALSE);
+	mindSelectorCompButton->setResponse(false);
 
 	// set the decorations for this window
 	setDecorations(mentalDecorations,
@@ -1389,12 +1389,12 @@ ContainerNode::ContainerNode(ContainerList &cl, ObjectID id, int typ) {
 	//  Convert the possessor() of the object to a player actor ID,
 	//  if it is indeed a player actor; Else set to "nobody".
 	if (isActor(id)) {
-		if (actorIDToPlayerID(id, ownerID) == FALSE)
+		if (actorIDToPlayerID(id, ownerID) == false)
 			ownerID = ContainerNode::nobody;
 	} else {
 		ObjectID        possessor = obj->possessor();
 
-		if (possessor == Nothing || actorIDToPlayerID(possessor, ownerID) == FALSE)
+		if (possessor == Nothing || actorIDToPlayerID(possessor, ownerID) == false)
 			ownerID = ContainerNode::nobody;
 	}
 
@@ -1572,7 +1572,7 @@ ContainerNode *ContainerList::find(ObjectID id, int16 type) {
 	return NULL;
 }
 
-//  returns TRUE if the object represented by the container can be
+//  returns true if the object represented by the container can be
 //  accessed by the player.
 bool ContainerNode::isAccessable(ObjectID enactor) {
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
@@ -1590,10 +1590,10 @@ bool ContainerNode::isAccessable(ObjectID enactor) {
 	holder = obj->possessor();
 	if (holder != Nothing || isActor(object)) {
 		//  "Reach" for other players is further than for other objects
-		if (holder != a->thisID() && dist > 96) return FALSE;
-	} else if (dist > maxOpenDistance) return FALSE;
+		if (holder != a->thisID() && dist > 96) return false;
+	} else if (dist > maxOpenDistance) return false;
 
-	return TRUE;
+	return true;
 }
 
 //  Change the owner of a ready container (for indiv mode)
@@ -1693,7 +1693,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 	PlayerActorID   owner;
 
 	if (isActor(id)) {
-		if (actorIDToPlayerID(id, owner) == FALSE)
+		if (actorIDToPlayerID(id, owner) == false)
 			owner = ContainerNode::nobody;
 
 		if (((Actor *)obj)->isDead()) {
@@ -1710,7 +1710,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 		else fatal("Attempt to open non-dead actor as a container.\n");
 #endif
 	} else {
-		if (actorIDToPlayerID(obj->possessor(), owner) == FALSE)
+		if (actorIDToPlayerID(obj->possessor(), owner) == false)
 			owner = ContainerNode::nobody;
 
 		if (!(cn = globalContainerList.find(id, ContainerNode::physicalType)))
@@ -1786,13 +1786,13 @@ void initContainerNodes(void) {
 	//  Verify the globalContainerList only has ready ContainerNodes
 
 	ContainerNode   *node;
-	bool            onlyReady = TRUE;
+	bool            onlyReady = true;
 
 	for (node = (ContainerNode *)globalContainerList.first();
 	        node != NULL;
 	        node = (ContainerNode *)node->next()) {
 		if (node->getType() != ContainerNode::readyType) {
-			onlyReady = FALSE;
+			onlyReady = false;
 			break;
 		}
 	}
@@ -2007,7 +2007,7 @@ APPFUNC(cmdMindContainerFunc) {
 				break;
 
 			default:
-				assert(FALSE);   // should never get here
+				assert(false);   // should never get here
 				break;
 			}
 

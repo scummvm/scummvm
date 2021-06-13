@@ -187,7 +187,7 @@ void BltDDRect(Rect16 &r, uint8 *srcPtr, bool bTransparent, uint16 pixMod, bool 
 	uint32  pagex, pagey;
 	uint32  i;
 	uint32  offy = r.y;
-	bool show = FALSE;
+	bool show = false;
 
 	if (!displayEnabled()) //ddWindow || !ddWindow->bIsActive )
 		return;
@@ -198,7 +198,7 @@ void BltDDRect(Rect16 &r, uint8 *srcPtr, bool bTransparent, uint16 pixMod, bool 
 		ourBlitter = _BltPixelsT;
 	else {
 		ourBlitter = _BltPixels;
-		show = TRUE;
+		show = true;
 	}
 
 	start = r.x + (r.y * ddWindow->lPitch); // starting rect offset
@@ -357,7 +357,7 @@ void vWDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
 }
 
 void vWDisplayPage::readPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
-	BltDDRect(r, pixPtr, FALSE, pixMod, FALSE);
+	BltDDRect(r, pixPtr, false, pixMod, false);
 }
 
 //  Function to quickly transfer pixels from an off-screen

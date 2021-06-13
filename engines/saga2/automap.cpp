@@ -49,7 +49,7 @@ extern GameWorld            *currentWorld;
 requestInfo     rInfo;
 
 #if DEBUG
-bool autoMapCheat = FALSE;
+bool autoMapCheat = false;
 #endif
 
 static CAutoMap     *pAutoMap = NULL;
@@ -240,9 +240,9 @@ bool CAutoMap::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 #define SpecialKey(k) ((k>>8)+0x80)
@@ -252,21 +252,21 @@ bool CAutoMap::keyStroke(gPanelMessage &msg) {
 	switch (msg.key) {
 	case 0x1B:
 		cmdAutoMapEsc(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(homeKey):
 		cmdAutoMapHome(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(endKey):
 		cmdAutoMapEnd(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(pageUpKey):
 		cmdAutoMapPgUp(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(pageDownKey):
 		cmdAutoMapPgDn(ev);
-		return TRUE;
+		return true;
 	default:
-		return FALSE;
+		return false;
 	}
 }
 
@@ -336,7 +336,7 @@ bool CAutoMap::pointerHit(gPanelMessage &msg) {
 	}
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 // ------------------------------------------------------------------------
@@ -518,7 +518,7 @@ void CAutoMap::createSmallMap(void) {
 
 int16 openAutoMap() {
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	hResContext     *decRes;
 	gCompButton     *closeAutoMap;
@@ -565,7 +565,7 @@ int16 openAutoMap() {
 	pAutoMap->locateRegion();
 	pAutoMap->open();
 
-	EventLoop(rInfo.running, FALSE);
+	EventLoop(rInfo.running, false);
 
 	// delete stuff
 	delete pAutoMap;

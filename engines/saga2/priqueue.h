@@ -69,7 +69,7 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 	ITEM            *qi,
 	                *parentItem;
 
-	if (tail >= size + 1) return FALSE;
+	if (tail >= size + 1) return false;
 
 	for (index = tail, qi = &queue[index];
 	        index > 1;
@@ -83,7 +83,7 @@ bool PriorityQueue<ITEM, size>::insert(ITEM &newItem) {
 	*qi = newItem;
 	tail++;
 
-	return TRUE;
+	return true;
 }
 
 //  Function to remove the lowest element from the queue
@@ -96,7 +96,7 @@ bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
 	                childNum,
 	                tailVal;
 
-	if (tail <= 1) return FALSE;
+	if (tail <= 1) return false;
 
 	result = *item;
 	tail--;
@@ -124,7 +124,7 @@ bool PriorityQueue<ITEM, size>::remove(ITEM &result) {
 	if (itemNum != tail) {
 		*item = queue[tail];
 	}
-	return TRUE;
+	return true;
 }
 
 } // end of namepsace Saga2

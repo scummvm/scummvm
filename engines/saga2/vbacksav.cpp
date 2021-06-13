@@ -48,7 +48,7 @@ gBackSave::gBackSave(const Rect16 &extent) {
 	setMap(&savedPixels);
 	setMode(drawModeReplace);
 
-	saved = FALSE;
+	saved = false;
 }
 
 /********* vbacksav.cpp/gBackSave::~gBackSave ************************
@@ -88,7 +88,7 @@ void gBackSave::save(gDisplayPort &port) {
 		port.displayPage->readPixels(savedRegion,
 		                             savedPixels.data,
 		                             savedPixels.size.x);
-		saved = TRUE;
+		saved = true;
 	}
 }
 
@@ -111,7 +111,7 @@ void gBackSave::restore(gDisplayPort &port) {
 		port.displayPage->writePixels(savedRegion,
 		                              savedPixels.data,
 		                              savedPixels.size.x);
-		saved = FALSE;
+		saved = false;
 	}
 }
 

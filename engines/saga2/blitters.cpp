@@ -325,7 +325,7 @@ bool initGraphics(void) {
 }
 
 bool initProcessResources(void) {
-        return TRUE;
+        return true;
 }
 
 void termProcessResources(void) {

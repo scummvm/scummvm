@@ -123,7 +123,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 
 	case builtinAbstract:
 		assert(index > 0);
-		if (lookupExport(index, segNum, segOff) == FALSE)
+		if (lookupExport(index, segNum, segOff) == false)
 			error("SAGA: Cannot take address of abtract class");
 
 		return segmentAddress(segNum, segOff);
@@ -680,7 +680,7 @@ bool Thread::interpret(void) {
 				programCounter.offset = (pc - (codeSeg));
 				stackPtr = (uint8 *)stack;
 				flags |= finished;
-				return TRUE;
+				return true;
 			} else {
 				programCounter.segment = *stack++;
 				programCounter.offset = *stack++;
@@ -1103,7 +1103,7 @@ bool Thread::interpret(void) {
 	programCounter.offset = (pc - (codeSeg));
 	stackPtr = (uint8 *)stack;
 
-	return FALSE;
+	return false;
 }
 
 /* ============================================================================ *
@@ -1605,9 +1605,9 @@ void Thread::dispatch(void) {
 				break;
 
 			case waitTagSemaphore:
-				if (((ActiveItem *)th->waitParam)->isExclusive() == FALSE) {
+				if (((ActiveItem *)th->waitParam)->isExclusive() == false) {
 					th->flags &= ~waiting;
-					((ActiveItem *)th->waitParam)->setExclusive(TRUE);
+					((ActiveItem *)th->waitParam)->setExclusive(true);
 				}
 				break;
 			}
@@ -1765,7 +1765,7 @@ static bool lookupExport(
 	if (segNum > 1000)
 		error("SAGA failure: Bad data in export table entry #%d (see scripts.r)", entry);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -1987,7 +1987,7 @@ void abortObjectThreads(Thread *keep, uint16 objID) {
 }
 
 bool abortAllThreads(void) {
-	bool                result = TRUE;
+	bool                result = true;
 	Thread              *th;
 
 	for (th = threadList.first(); th; th = th->next) {

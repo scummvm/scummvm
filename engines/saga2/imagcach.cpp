@@ -65,34 +65,34 @@ bool CImageNode::isSameImage(hResContext *con, uint32 resID) {
 	if (con) {
 		if (con->getResID() == contextID &&
 		        resourceID == resID) {
-			return TRUE;    // match
+			return true;    // match
 		}
 	}
 
-	return FALSE;   // no match
+	return false;   // no match
 }
 
 bool CImageNode::isSameImage(void *imagePtr) {
 	// if the image passed has the same address as the image in the node...
 	if (imagePtr == image) {
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-// return TRUE if this node needs to be deleted
+// return true if this node needs to be deleted
 bool CImageNode::releaseRequest(void) {
 	// the number of requests on this resource goes down by one
 	requested--;
 
 	// if that was the last request, release this node
 	if (requested <= 0) {
-		return TRUE;
+		return true;
 	}
 
 	// not the last request, keep image
-	return FALSE;
+	return false;
 }
 
 void *CImageNode::getImagePtr(void) {
