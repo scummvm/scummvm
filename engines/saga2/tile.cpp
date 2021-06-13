@@ -2273,8 +2273,6 @@ static void readPlatform(hResContext *con, Platform &plt) {
 }
 
 Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
-	const int           cacheFlag = 0x8000;
-
 	uint16              plIndex = stack[layer];
 	PlatformCacheEntry  *pce;
 
@@ -2286,73 +2284,41 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	if (plIndex == nullID) {
 		return nullptr;
 	}
-	//  if platform in cache
-	else if (plIndex & cacheFlag) {
-		plIndex &= ~cacheFlag;
 
-		assert(plIndex < platformCacheSize);
+	int         cacheIndex;
 
-		//  Get the address of the pce from the cache
-		pce = &platformCache[plIndex];
+	//  Since the platform is not in the cache, we need to
+	//  dump something from the cache. Dump the one that
+	//  was least recently used.
+	//  Get head of LRU chain.
+	pce = (PlatformCacheEntry *)platformLRU.remHead();
+	platformLRU.addTail(*pce);
 
-		assert(pce->platformNum >= 0);
-		assert(pce->metaID != NoMetaTile);
-		assert(pce->metaID == thisID(mapNum));
+	//  Compute the layer of this entry in the cache
+	cacheIndex = pce - platformCache;
+	assert(cacheIndex < platformCacheSize);
+	assert(cacheIndex >= 0);
 
-		//  Move to the end of the LRU
-		pce->remove();
-		platformLRU.addTail(*pce);
+	//  Initialize the cache entry to the new platform data.
+	pce->platformNum = plIndex;
+	pce->layerNum = layer;
+	pce->metaID = thisID(mapNum);
+	stack[layer] = (cacheIndex);
 
-		//  return the address of the platform
-		return &pce->pl;
-	}
-	//  if platform not in memory
-	else {
-		int         cacheIndex;
+	assert(plIndex >= 0);
+	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
+	debug(3, "plIndex: %d", plIndex);
 
-		//  Since the platform is not in the cache, we need to
-		//  dump something from the cache. Dump the one that
-		//  was least recently used.
-		//  Get head of LRU chain.
-		pce = (PlatformCacheEntry *)platformLRU.remHead();
-		platformLRU.addTail(*pce);
-
-		//  Compute the layer of this entry in the cache
-		cacheIndex = pce - platformCache;
-		assert(cacheIndex < platformCacheSize);
-		assert(cacheIndex >= 0);
-
-		//  Now, flush the old mt from the cache.
-		//  This assumes that all metatiles from all worlds are loaded.
-
-		if (pce->metaID != NoMetaTile) {
-			MetaTile    *oldMeta = metaTileAddress(pce->metaID);
-
-			assert(pce->layerNum < maxPlatforms);
-			assert(oldMeta->stack[pce->layerNum] == (cacheFlag | cacheIndex));
-			oldMeta->stack[pce->layerNum] = pce->platformNum;
+	// Now, load the actual metatile data...
+	if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
+		if (tileRes->skip(plIndex * sizeof(Platform))) {
+			readPlatform(tileRes, pce->pl);
+			return &pce->pl;
 		}
-
-		//  Initialize the cache entry to the new platform data.
-		pce->platformNum = plIndex;
-		pce->layerNum = layer;
-		pce->metaID = thisID(mapNum);
-		stack[layer] = (cacheFlag | cacheIndex);
-
-		assert(plIndex >= 0);
-		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
-
-		// Now, load the actual metatile data...
-		if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
-			if (tileRes->skip(plIndex * sizeof(Platform))) {
-				readPlatform(tileRes, pce->pl);
-				return &pce->pl;
-			}
-		}
-
-		error("Unable to read Platform %d of map %d", plIndex, mapNum);
-		return nullptr;
 	}
+
+	error("Unable to read Platform %d of map %d", plIndex, mapNum);
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -4376,12 +4342,29 @@ struct TileCycleArchive {
 //-----------------------------------------------------------------------
 //	Initialize the tile cycling state array
 
+static void readCycle(hResContext *con, TileCycleData &cyc) {
+	cyc.counter = con->readS32LE();
+	cyc.pad = con->readByte();
+	cyc.numStates = con->readByte();
+	cyc.currentState = con->readByte();
+	cyc.cycleSpeed = con->readByte();
+
+	for (int i = 0; i < 16; ++i)
+		cyc.cycleList[i] = con->readU16LE();
+}
+
 void initTileCyclingStates(void) {
-	cycleList = (CyclePtr)LoadResource(tileRes, cycleID, "tile cycle data");
+	const int tileCycleDataSize = 40;
+
+	cycleCount = tileRes->size(cycleID) / tileCycleDataSize;
+	cycleList = new TileCycleData[cycleCount];
+	tileRes->seek(cycleID);
+	for (int i = 0; i < cycleCount; ++i)
+		readCycle(tileRes, cycleList[i]);
+
 	if (cycleList == nullptr)
 		error("Unable to load tile cycling data");
 
-	cycleCount = tileRes->size(cycleID) / sizeof(TileCycleData);
 }
 
 //-----------------------------------------------------------------------
