@@ -40,10 +40,10 @@ namespace AGS3 {
 using AGS::Shared::String;
 
 // Filepath tokens, which are replaced by platform-specific directory names
-extern const String UserSavedgamesRootToken;
-extern const String GameSavedgamesDirToken;
-extern const String GameDataDirToken;
-extern const String DefaultConfigFileName;
+extern const char *UserSavedgamesRootToken;
+extern const char *GameSavedgamesDirToken;
+extern const char *GameDataDirToken;
+extern const char *DefaultConfigFileName;
 
 // Subsitutes illegal characters with '_'. This function uses illegal chars array
 // specific to current platform.

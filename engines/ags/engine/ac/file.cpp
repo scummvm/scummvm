@@ -202,11 +202,11 @@ int File_GetPosition(sc_File *fil) {
 //=============================================================================
 
 
-const String GameInstallRootToken = "$INSTALLDIR$";
-const String UserSavedgamesRootToken = "$MYDOCS$";
-const String GameSavedgamesDirToken = "$SAVEGAMEDIR$";
-const String GameDataDirToken = "$APPDATADIR$";
-const String UserConfigFileToken = "$CONFIGFILE$";
+const char *GameInstallRootToken = "$INSTALLDIR$";
+const char *UserSavedgamesRootToken = "$MYDOCS$";
+const char *GameSavedgamesDirToken = "$SAVEGAMEDIR$";
+const char *GameDataDirToken = "$APPDATADIR$";
+const char *UserConfigFileToken = "$CONFIGFILE$";
 
 void FixupFilename(char *filename) {
 	const char *illegal = _G(platform)->GetIllegalFileChars();
@@ -306,10 +306,10 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 			return false;
 		}
 		parent_dir = FSLocation(_GP(ResPaths).DataDir);
-		child_path = sc_path.Mid(GameInstallRootToken.GetLength());
+		child_path = sc_path.Mid(strlen(GameInstallRootToken));
 	} else if (sc_path.CompareLeft(GameSavedgamesDirToken) == 0) {
 		parent_dir = get_save_game_directory();
-		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken.GetCStr()));
+		child_path = sc_path.Mid(strlen(GameSavedgamesDirToken));
 #if AGS_PLATFORM_SCUMMVM
 		// Remap "agsgame.*"
 		const char *agsSavePrefix = "/agssave.";
@@ -328,7 +328,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 #endif
 	} else if (sc_path.CompareLeft(GameDataDirToken) == 0) {
 		parent_dir = GetGameAppDataDir();
-		child_path = sc_path.Mid(GameDataDirToken.GetLength());
+		child_path = sc_path.Mid(strlen(GameDataDirToken));
 	} else {
 		child_path = sc_path;
 

@@ -107,9 +107,9 @@ typedef std::unique_ptr<Stream> UStream;
 // SavegameSource defines a successfully opened savegame stream
 struct SavegameSource {
 	// Signature of the current savegame format
-	static const String Signature;
+	static const char *Signature;
 	// Signature of the legacy savegame format
-	static const String LegacySignature;
+	static const char *LegacySignature;
 
 	// Name of the savefile
 	String              Filename;

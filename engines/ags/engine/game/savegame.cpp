@@ -77,8 +77,8 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 namespace AGS {
 namespace Engine {
 
-const String SavegameSource::LegacySignature = "Adventure Game Studio saved game";
-const String SavegameSource::Signature = "Adventure Game Studio saved game v2";
+const char *SavegameSource::LegacySignature = "Adventure Game Studio saved game";
+const char *SavegameSource::Signature = "Adventure Game Studio saved game v2";
 
 SavegameSource::SavegameSource()
 	: Version(kSvgVersion_Undefined) {
@@ -271,12 +271,12 @@ HSaveError OpenSavegameBase(const String &filename, SavegameSource *src, Savegam
 	// Check saved game signature
 	bool is_new_save = false;
 	size_t pre_sig_pos = in->GetPosition();
-	String svg_sig = String::FromStreamCount(in.get(), SavegameSource::Signature.GetLength());
+	String svg_sig = String::FromStreamCount(in.get(), strlen(SavegameSource::Signature));
 	if (svg_sig.Compare(SavegameSource::Signature) == 0) {
 		is_new_save = true;
 	} else {
 		in->Seek(pre_sig_pos, kSeekBegin);
-		svg_sig = String::FromStreamCount(in.get(), SavegameSource::LegacySignature.GetLength());
+		svg_sig = String::FromStreamCount(in.get(), strlen(SavegameSource::LegacySignature));
 		if (svg_sig.Compare(SavegameSource::LegacySignature) != 0)
 			return new SavegameError(kSvgErr_SignatureFailed);
 	}
@@ -722,7 +722,7 @@ Stream *StartSavegame(const String &filename, const String &user_text, const Bit
 	vistaHeader.WriteToFile(out);
 
 	// Savegame signature
-	out->Write(SavegameSource::Signature.GetCStr(), SavegameSource::Signature.GetLength());
+	out->Write(SavegameSource::Signature, strlen(SavegameSource::Signature));
 
 	// CHECKME: what is this plugin hook suppose to mean, and if it is called here correctly
 	pl_run_plugin_hooks(AGSE_PRESAVEGAME, 0);

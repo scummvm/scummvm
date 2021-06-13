@@ -50,7 +50,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 // Filename of the default config file, the one found in the game installation
-const String DefaultConfigFileName = "acsetup.cfg";
+const char *DefaultConfigFileName = "acsetup.cfg";
 
 bool INIreaditem(const ConfigTree &cfg, const String &sectn, const String &item, String &value) {
 	ConfigNode sec_it = cfg.find(sectn);
