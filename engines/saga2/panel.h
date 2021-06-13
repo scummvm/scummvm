@@ -237,7 +237,7 @@ public:
 	uint16          key,                    // keystroke from keyboard
 	                qualifier;              // qualifier from keyboard
 
-	int32           timeStamp;              // time of message
+	uint32          timeStamp;              // time of message
 };
 
 /* ===================================================================== *

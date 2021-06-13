@@ -922,8 +922,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 			//  1/3 of a second, and that the mouse ptr hasn't moved
 			//  very much.
 
-			if (((uint32)(msg.timeStamp - lastClickTime)
-			        < (ticksPerSecond * 2 / 3))
+			if (((uint32)(msg.timeStamp - lastClickTime) < 333)
 			        ||  _curMouseState.left > 1
 			        ||  _curMouseState.right > 1) {
 				Point16 diff = lastClickPos - _curMouseState.pos;
@@ -978,7 +977,7 @@ void gToolBase::handleMouse(Common::Event &event, uint32 time) {
 }
 
 void gToolBase::leavePanel(void) {
-	msg.timeStamp = ReadTimer();
+	msg.timeStamp = g_system->getMillis();
 
 	if (mousePanel) {
 		msg.inPanel     = 0;
@@ -1013,7 +1012,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 	msg.pointerLeave = 0;
 	msg.key = ((key & 0xFF) != 0) ? key & 0xff : (key >> 8) + 0x80;
 	msg.qualifier = qualifier;
-	msg.timeStamp = ReadTimer();
+	msg.timeStamp = g_system->getMillis();
 
 	if (activePanel) {                      // send keystroke to active panel
 		setMsg(msg, activePanel);            // set up gPanelMessage
@@ -1067,7 +1066,7 @@ void gToolBase::handleTimerTick(int32 tick) {
 			setMsg(msg, mousePanel);         // set up gPanelMessage
 			mousePanel->pointerMove(msg);
 		} else if (!mouseHintSet
-		           && ((uint32)(tick - lastMouseMoveTime) > ticksPerSecond / 2)) {
+		           && ((uint32)(tick - lastMouseMoveTime) > 500)) {
 			mousePanel->onMouseHintDelay();
 		}
 	}
