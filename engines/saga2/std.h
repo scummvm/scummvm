@@ -28,6 +28,8 @@
 #define SAGA2_STD_H
 
 #include "common/system.h"
+#include "common/debug.h"
+
 
 typedef uint32      ChunkID;
 #define MakeID(a,b,c,d) ((d<<24L)|(c<<16L)|(b<<8L)|a)
