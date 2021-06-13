@@ -19707,6 +19707,32 @@ static const uint16 sq1vgaPatchOratSounds[] = {
 	PATCH_END
 };
 
+// In room 64 on the Sarien ship with the star generator, most objects don't
+//  display their Look messages. Their doVerb methods have a structure that
+//  fails to call super:doVerb when the verb isn't inventory.
+//
+// We fix this by patching out the inventory tests in the broken doVerb methods.
+//  Note that this technique only works because these doVerb methods don't have
+//  handlers for item zero: the data cartridge.
+//
+// Applies to: All versions
+// Responsible methods: rm64:doVerb, upperLanding:doVerb, emitter:doVerb, tubes:doVerb,
+//                      space:doVerb, leftShieldEmitter:doVerb, rightShieldEmitter:doVerb
+static const uint16 sq1vgaSignatureRoom64Verbs[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x01,                         // lsp 01 [ verb ]
+	0x35, 0x04,                         // ldi 04 [ inventory ]
+	0x1a,                               // eq?
+	0x30, SIG_ADDTOOFFSET(+2),          // bnt    [ end of method ]
+	0x8f, 0x02,                         // lsp 02 [ item number ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRoom64Verbs[] = {
+	0x33, 0x06,                         // jmp 06 [ skip inventory verb check ]
+	PATCH_END
+};
+
 // The Russian version of SQ1VGA has mangled class names in its scripts. This
 //  isn't a problem in Sierra's interpreter since this is just metadata, but our
 //  feature detection code looks up several classes by name and requires them to
@@ -19756,6 +19782,7 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
+	{  true,    64, "room 64 verbs",                               7, sq1vgaSignatureRoom64Verbs,                 sq1vgaPatchRoom64Verbs },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
