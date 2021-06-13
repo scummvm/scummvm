@@ -49,100 +49,61 @@ namespace Saga2 {
 static void loadWeaponData(void);
 
 ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
-	ProtoEffect     *pe = NULL;
+	ProtoEffect *pe = NULL;
 
 	switch (rie->effectGroup) {
-	case effectNone     :
+	case effectNone:
 		return NULL;
 
-	case effectAttrib   :
-		pe = new   ProtoEnchantment(
-		         makeEnchantmentID(
-		             rie->effectGroup,
-		             rie->effectType,
-		             rie->baseDamage),
-		         rie->reserved0,
-		         rie->reserved1);
+	case effectAttrib:
+		pe = new ProtoEnchantment(makeEnchantmentID(rie->effectGroup, rie->effectType, rie->baseDamage),
+					rie->reserved0, rie->reserved1);
 		break;
-	case effectResist   :
-	case effectImmune   :
-	case effectOthers   :
-	case effectNonActor :
-		pe = new   ProtoEnchantment(
-		         makeEnchantmentID(
-		             rie->effectGroup,
-		             rie->effectType,
-		             rie->skillDamage),
-		         rie->reserved0,
-		         rie->reserved1);
+	case effectResist:
+	case effectImmune:
+	case effectOthers:
+	case effectNonActor:
+		pe = new ProtoEnchantment(makeEnchantmentID(rie->effectGroup, rie->effectType, rie->skillDamage),
+					rie->reserved0, rie->reserved1);
 		break;
-	case effectDamage   :
-		pe = new   ProtoDamage(
-		         rie->baseDice,
-		         rie->diceSides ? rie->diceSides : 6,
-		         rie->skillDice,
-		         rie->baseDamage,
-		         (effectDamageTypes) rie->effectType,
-		         0,
-		         rie->targeting & spellTargCaster,
-		         rie->skillDamage);
+	case effectDamage:
+		pe = new ProtoDamage(rie->baseDice, rie->diceSides ? rie->diceSides : 6, rie->skillDice, rie->baseDamage,
+					(effectDamageTypes) rie->effectType, 0, rie->targeting & spellTargCaster, rie->skillDamage);
 		break;
-	case effectDrains   :
-		pe = new   ProtoDrainage(
-		         rie->baseDice,
-		         rie->diceSides ? rie->diceSides : 6,
-		         rie->skillDice,
-		         rie->baseDamage,
-		         (effectDrainsTypes) rie->effectType,
-		         0,
-		         rie->targeting & spellTargCaster);
+	case effectDrains:
+		pe = new ProtoDrainage(rie->baseDice, rie->diceSides ? rie->diceSides : 6, rie->skillDice, rie->baseDamage,
+					(effectDrainsTypes) rie->effectType, 0, rie->targeting & spellTargCaster);
 		break;
 
-	case effectPoison   :
-		pe = new   ProtoEnchantment(
-		         makeEnchantmentID(rie->baseDamage),      // poison
-		         rie->reserved0,
-		         rie->reserved1);
+	case effectPoison:
+		pe = new ProtoEnchantment(makeEnchantmentID(rie->baseDamage),      // poison
+					rie->reserved0, rie->reserved1);
 
-	case effectTAG      :
-		pe = new   ProtoTAGEffect(
-		         (effectTAGTypes) rie->effectType,
-		         rie->skillDamage,
-		         rie->baseDamage);
+	case effectTAG:
+		pe = new ProtoTAGEffect((effectTAGTypes)rie->effectType, rie->skillDamage, rie->baseDamage);
 		break;
-	case effectLocation :
-		pe = new   ProtoLocationEffect(
-		         (effectLocationTypes) rie->effectType,
-		         rie->baseDamage);
+	case effectLocation:
+		pe = new ProtoLocationEffect((effectLocationTypes)rie->effectType, rie->baseDamage);
 		break;
-	case effectSpecial  :
-		pe = new   ProtoSpecialEffect(
-		         SagaSpellCall,
-		         rie->baseDamage);
+	case effectSpecial:
+		pe = new ProtoSpecialEffect(SagaSpellCall, rie->baseDamage);
 		break;
 	}
 
-	if (pe == NULL)
+	if (pe == nullptr)
 		error("failed to alloc protoEffect");
 
 	return pe;
 }
 
-//-----------------------------------------------------------------------
-// InitMagic called from main startup code
-
 void initWeapons(void) {
 	loadWeaponData();
 }
-
-//-----------------------------------------------------------------------
 
 void cleanupWeapons(void) {
 	for (int i = 0; i < kMaxWeapons; i++)
 		g_vm->_weaponRack[i].killEffects();
 }
-
-//-----------------------------------------------------------------------
 
 WeaponStuff &getWeapon(weaponID i) {
 	if (i < g_vm->_loadedWeapons)
@@ -150,12 +111,10 @@ WeaponStuff &getWeapon(weaponID i) {
 	return g_vm->_weaponRack[nullWeapon];
 }
 
-//-----------------------------------------------------------------------
-
 GameObject *getShieldItem(GameObject *defender) {
 	assert(isActor(defender));
-	Actor       *a = (Actor *) defender;
-	GameObject  *obj;
+	Actor *a = (Actor *) defender;
+	GameObject *obj;
 
 	a->defensiveObject(&obj);
 	return obj;
@@ -164,18 +123,13 @@ GameObject *getShieldItem(GameObject *defender) {
 /* ===================================================================== *
    WeaponProtoEffect member functions
  * ===================================================================== */
-
 WeaponProtoEffect::~WeaponProtoEffect(void) {
 	if (effect != NULL)
 		delete effect;
 }
 
-void WeaponProtoEffect::implement(
-    Actor       *enactor,
-    GameObject  *target,
-    GameObject *,
-    uint8) {
-	SpellTarget     targ(target);
+void WeaponProtoEffect::implement(Actor *enactor, GameObject *target, GameObject *, uint8) {
+	SpellTarget targ(target);
 
 	if (effect != NULL)
 		effect->implement(enactor, &targ);
@@ -184,40 +138,23 @@ void WeaponProtoEffect::implement(
 /* ===================================================================== *
    WeaponStrikeEffect member functions
  * ===================================================================== */
-
-//-----------------------------------------------------------------------
-
-void WeaponStrikeEffect::implement(
-    Actor       *enactor,
-    GameObject  *target,
-    GameObject  *strikingObj,
-    uint8       strength) {
+void WeaponStrikeEffect::implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8 strength) {
 	assert(isActor(enactor));
 	assert(isObject(target) || isActor(target));
 	assert(isObject(strikingObj) || isActor(strikingObj));
 
-	int8        totalDice,
-	            totalBase;
+	int8 totalDice, totalBase;
 
 	totalDice = dice + strength * skillDice;
 	totalBase = base + strength * skillBase;
 
-	target->acceptDamage(
-	    enactor->thisID(),
-	    totalBase,
-	    type,
-	    totalDice,
-	    sides);
+	target->acceptDamage(enactor->thisID(), totalBase, type, totalDice, sides);
 }
-
-//-----------------------------------------------------------------------
 
 WeaponStuff::WeaponStuff() {
 	effects = NULL;
 	master = nullWeapon;
 }
-
-//-----------------------------------------------------------------------
 
 WeaponStuff::~WeaponStuff() {
 	while (effects != NULL) {
@@ -229,8 +166,6 @@ WeaponStuff::~WeaponStuff() {
 	master = nullWeapon;
 }
 
-//-----------------------------------------------------------------------
-
 void WeaponStuff::killEffects(void) {
 	while (effects != NULL) {
 		WeaponEffect    *curEffect = effects;
@@ -239,8 +174,6 @@ void WeaponStuff::killEffects(void) {
 		delete curEffect;
 	}
 }
-
-//-----------------------------------------------------------------------
 
 void WeaponStuff::addEffect(WeaponEffect *we) {
 	WeaponEffect *e = effects;
@@ -252,21 +185,19 @@ void WeaponStuff::addEffect(WeaponEffect *we) {
 	}
 }
 
-//-----------------------------------------------------------------------
-
 void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 	WeaponEffect *we;
 	assert(rie);
 	assert(rie && rie->item == master);
 
 	if (rie->effectGroup == effectStrike) {
-		we = new   WeaponStrikeEffect(
-		         (effectDamageTypes)rie->effectType,
-		         rie->baseDice,
-		         rie->diceSides != 0 ? rie->diceSides : 6,
-		         rie->skillDice,
-		         rie->baseDamage,
-		         rie->skillDamage);
+		we = new WeaponStrikeEffect(
+					(effectDamageTypes)rie->effectType,
+					rie->baseDice,
+					rie->diceSides != 0 ? rie->diceSides : 6,
+					rie->skillDice,
+					rie->baseDamage,
+					rie->skillDamage);
 	} else
 		we = new   WeaponProtoEffect(rie);
 
@@ -277,46 +208,28 @@ void WeaponStuff::addEffect(ResourceItemEffect *rie) {
 		effects = we;
 	else {
 		WeaponEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next) ;
+		for (tail = effects; tail->next; tail = tail->next)
+			;
 		tail->next = we;
 	}
 }
 
-//-----------------------------------------------------------------------
-
-void WeaponStuff::implement(
-    Actor       *enactor,
-    GameObject  *target,
-    GameObject  *strikingObj,
-    uint8       strength) {
-	WeaponEffect        *we;
-
-	for (we = effects; we != NULL; we = we->next)
+void WeaponStuff::implement(Actor *enactor, GameObject *target, GameObject *strikingObj, uint8 strength) {
+	for (WeaponEffect *we = effects; we != NULL; we = we->next)
 		we->implement(enactor, target, strikingObj, strength);
 }
 
 //-----------------------------------------------------------------------
 
 static void loadWeaponData(void) {
-	int16           i;
-	hResContext     *spellRes;
-
-	//  Get spell definitions
-	spellRes =  auxResFile->newContext(
-	                MKTAG('I', 'T', 'E', 'M'),
-	                "weapon resources");
+	hResContext *spellRes = auxResFile->newContext(MKTAG('I', 'T', 'E', 'M'), "weapon resources");
 	if (spellRes == NULL || !spellRes->_valid)
 		error("Error accessing weapon resource group.");
 
 	// get spell effects
-	i = 0;
-	while (spellRes->size(
-	            MKTAG('E', 'F', 'F', i)) > 0) {
-		ResourceItemEffect *rie =
-		    (ResourceItemEffect *)LoadResource(
-		        spellRes,
-		        MKTAG('E', 'F', 'F', i),
-		        "weapon effect");
+	int16 i = 0;
+	while (spellRes->size(MKTAG('E', 'F', 'F', i)) > 0) {
+		ResourceItemEffect *rie = (ResourceItemEffect *)LoadResource(spellRes, MKTAG('E', 'F', 'F', i), "weapon effect");
 
 		if (rie == NULL)
 			error("Unable to load weapon effect %d", i);
