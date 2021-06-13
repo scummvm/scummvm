@@ -107,6 +107,13 @@ void MacButton::invertInner() {
 	}
 }
 
+void MacButton::setHilite(bool hilite) {
+	if (hilite == _invertInner)
+		return;
+	_invertInner = hilite;
+	_contentIsDirty = true;
+}
+
 bool MacButton::draw(bool forceRedraw) {
 	if (!_contentIsDirty && !forceRedraw)
 		return false;

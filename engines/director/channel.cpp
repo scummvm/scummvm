@@ -379,6 +379,8 @@ void Channel::setBbox(int l, int t, int r, int b) {
 	}
 }
 
+// currently, when we are setting hilite, we delete the widget and the re-create it
+// so we may optimize this if this operation takes much time
 void Channel::replaceWidget() {
 	if (_widget) {
 		delete _widget;

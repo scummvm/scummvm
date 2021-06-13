@@ -725,9 +725,9 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
 		widget = new Graphics::MacButton(Graphics::MacButtonType(_buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
-		((Graphics::MacButton *)widget)->draw();
 		widget->_focusable = true;
 
+		((Graphics::MacButton *)widget)->setHilite(_hilite);
 		((Graphics::MacButton *)widget)->draw();
 		break;
 
