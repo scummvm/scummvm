@@ -145,7 +145,7 @@ TaskStack *ActorAssignment::createTask(void) {
 
 Actor *ActorAssignment::getActor(void) const {
 	// FIXME: This is utterly evil
-	warning("getActor(): dangerous pointer arithmetic, this will not work");
+	warning("FIXME: ActorAssignment::getActor(): unsafe pointer arithmetics");
 	return (Actor *)(this - offsetof(Actor, assignmentBuf));
 }
 

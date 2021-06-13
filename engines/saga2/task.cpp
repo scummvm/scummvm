@@ -159,6 +159,7 @@ public:
 	TaskStackID getTaskStackID(TaskStack *ts) {
 		TaskStackPlaceHolder    *tsp;
 
+		warning("FIXME: TaskStackList::getTaskStackID(): unsafe pointer arithmetics");
 		tsp = ((TaskStackPlaceHolder *)(
 		           (uint8 *)ts
 		           -   offsetof(TaskStackPlaceHolder, buf)));
@@ -331,6 +332,8 @@ void *TaskStackList::newTaskStack(TaskStackID id) {
 
 void TaskStackList::deleteTaskStack(void *p) {
 	TaskStackPlaceHolder    *tsp;
+
+	warning("FIXME: TaskStackList::deleteTaskStack(): unsafe pointer arithmetics");
 
 	//  Convert the pointer to the TaskStack to a pointer to the
 	//  TaskStackPlaceHolder
@@ -606,6 +609,7 @@ public:
 	TaskID getTaskID(Task *t) {
 		TaskPlaceHolder     *tp;
 
+		warning("FIXME: TaskList::getTaskID(): unsafe pointer arithmetics");
 		tp = ((TaskPlaceHolder *)(
 		          (uint8 *)t
 		          -   offsetof(TaskPlaceHolder, buf)));
@@ -623,6 +627,7 @@ public:
 	void markTask(Task *t) {
 		TaskPlaceHolder     *tp;
 
+		warning("FIXME: TaskList::markTask(): unsafe pointer arithmetics");
 		tp = ((TaskPlaceHolder *)(
 		          (uint8 *)t
 		          -   offsetof(TaskPlaceHolder, buf)));
@@ -811,6 +816,7 @@ void *TaskList::newTask(TaskID id)
 void TaskList::deleteTask(void *p) {
 	TaskPlaceHolder     *tp;
 
+	warning("FIXME: TaskList::deleteTask(): unsafe pointer arithmetics");
 	//  Convert the pointer to the Task to a pointer to the
 	//  TaskPlaceHolder
 	tp = (TaskPlaceHolder *)(

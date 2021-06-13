@@ -99,6 +99,7 @@ void *newSensorList(void) {
 void deleteSensorList(void *p) {
 	SensorListHolder    *listHolderToDelete;
 
+	warning("FIXME: deleteSensorList(): unsafe pointer arithmetics");
 	listHolderToDelete =
 	    (SensorListHolder *)((uint8 *)p
 	                         -   offsetof(
@@ -149,6 +150,7 @@ void *newSensor(int16 ctr) {
 void deleteSensor(void *p) {
 	SensorHolder    *sensorHolderToDelete;
 
+	warning("FIXME: deleteSensor(): unsafe pointer arithmetics");
 	sensorHolderToDelete =
 	    (SensorHolder *)((uint8 *)p - offsetof(SensorHolder, sensorBuffer));
 
