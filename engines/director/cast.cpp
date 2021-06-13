@@ -47,7 +47,8 @@ const char *scriptTypes[] = {
 	"ScoreScript",
 	"CastScript",
 	"MovieScript",
-	"EventScript"
+	"EventScript",
+	"TestScript"
 };
 
 const char *scriptType2str(ScriptType scr) {
