@@ -110,14 +110,16 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 
 	if (!isDemo) {
 		// I18N: Option for fast scene switching
-		_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.ZipMode", _("~Z~ip Mode Activated"));
+		_zipModeCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.ZipMode", _("~Z~ip Mode Activated"),
+																_("When activated, clicking on an item or area with the lightning bolt cursor takes you directly there, skipping intermediate screens. You can only 'Zip' to a precise area you’ve already been."));
 	}
 
-	_transitionsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.Transistions", _("~T~ransitions Enabled"));
+	_transitionsCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.Transistions", _("~T~ransitions Enabled"),
+																_("Toggle screen transitions on or off. Turning off screen transitions will enable you to navigate more quickly through the game."));
 
 	if (isME) {
 		_mystFlyByCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MystGameOptionsDialog.PlayMystFlyBy", _("Play the Myst fly by movie"),
-		                                             _("The Myst fly by movie was not played by the original engine."));
+																  _("The Myst fly by movie was not played by the original engine."));
 	}
 
 	if (!isDemo) {
