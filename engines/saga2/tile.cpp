@@ -1410,6 +1410,24 @@ void cleanupTileTasks(void) {
 //-----------------------------------------------------------------------
 //	Initialize map data
 
+static void readTileBank(hResContext *con, TileBank *tb) {
+	tb->numTiles = con->readU32LE();
+	tb->tileArray->offset = con->readU32LE();
+	TileAttrs *att = &tb->tileArray->attrs;
+	att->terrainHeight = con->readByte();
+	att->height = con->readByte();
+	att->terrainMask = con->readU16LE();
+	att->fgdTerrain = con->readByte();
+	att->bgdTerrain = con->readByte();
+	con->read(att->reserved0, 8);
+	att->maskRule = con->readByte();
+	att->altMask = con->readByte();
+	con->read(att->cornerHeight, 4);
+	att->cycleRange = con->readByte();
+	att->tileFlags = con->readByte();
+	att->reserved1 = con->readU16LE();
+}
+
 static void readMetaTile(hResContext *con, MetaTile &til) {
 	til.highestPixel = con->readU16LE();
 	til.banksNeeded.b[0] = con->readU32LE();
@@ -1421,16 +1439,34 @@ static void readMetaTile(hResContext *con, MetaTile &til) {
 	til.properties = con->readU32LE();
 }
 
+static void readMap(hResContext *con, MapHeader *map) {
+	map->size = con->readS16LE();
+	map->edgeType = con->readS16LE();
+	map->mapData = new uint16[map->size * map->size];
+
+	for (int i = 0; i < map->size * map->size; ++i)
+		map->mapData[i] = con->readU16LE();
+}
+
 static void readActiveItem(hResContext *con, ActiveItem &itm) {
 	// FIXME: 32-bit pointer to 64-bit pointer conversion.
 	// Is this dangerous?
-	itm.nextHash = (ActiveItemPtr)con->readU32LE();
+	itm.nextHash = nullptr;
+	con->readU32LE();
 	itm.scriptClassID = con->readU16LE();
 	itm.associationOffset = con->readU16LE();
 	itm.numAssociations = con->readByte();
 	itm.itemType = con->readByte();
-	itm.group.grDataOffset = con->readU16LE();
 	itm.instance.groupID = con->readU16LE();
+	itm.instance.u = con->readS16LE();
+	itm.instance.v = con->readS16LE();
+	itm.instance.h = con->readS16LE();
+	itm.instance.stateIndex = con->readU16LE();
+	itm.instance.scriptFlags = con->readU16LE();
+	itm.instance.targetU = con->readU16LE();
+	itm.instance.targetV = con->readU16LE();
+	itm.instance.targetZ = con->readByte();
+	itm.instance.worldNum = con->readByte();
 }
 
 void initMaps(void) {
@@ -1438,14 +1474,13 @@ void initMaps(void) {
 	const int metaTileSize = 30;
 	const int tileRefSize = 4;
 	const int assocSize = 2;
-	const int activeItemSize = 14;
+	const int activeItemSize = 28;
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
 		if (tileRes->seek(tileTerrainID + MKTAG(0, 0, 0, (uint8)i))) {
-			tileBanks[i] = (TileBankPtr)LoadResource(tileRes,
-			                tileTerrainID + MKTAG(0, 0, 0, (uint8)i),
-			                "tile terrain bank");
+			tileBanks[i] = new TileBank;
+			readTileBank(tileRes, tileBanks[i]);
 		} else
 			tileBanks[i] = nullptr;
 	}
@@ -1464,19 +1499,26 @@ void initMaps(void) {
 	for (i = 0; i < worldCount; i++) {
 		WorldMapData    *mapData = &mapList[i];
 		int16           j;
+		int iMapID = mapID + MKTAG(0, 0, 0, (uint8)i);
+		int iMetaID = metaID + MKTAG(0, 0, 0, (uint8)i);
+		int iTagRefID = tagDataID + MKTAG(0, 0, 0, (uint8)i);
+		int iAssocID = assocID + MKTAG(0, 0, 0, (uint8)i);
+		int iActiveItemID = tagID + MKTAG(0, 0, 0, (uint8)i);
 
 		//  Initialize the world ID
 		mapData->worldID = WorldBaseID + i;
 
 		//  Load the map
-		mapData->map = (MapPtr)LoadResource(tileRes,
-		                mapID + MKTAG(0, 0, 0, (uint8)i), "world map");
+		mapData->map = new MapHeader;
+		tileRes->seek(iMapID);
+		readMap(tileRes, mapData->map);
 		if (mapData->map == nullptr)
 			error("Unable to load map");
-		debugC(3, kDebugTiles, "map: size = %d, mapData = %p", mapData->map->size, (void*)mapData->map->mapData);
+		debugC(2, kDebugTiles, "map: size = %d, mapData = %p", mapData->map->size, (void*)mapData->map->mapData);
 
-		int metaTileCount = tileRes->size(metaID + MKTAG(0, 0, 0, (uint8)i)) / metaTileSize;
+		int metaTileCount = tileRes->size(iMetaID) / metaTileSize;
 		mapData->metaList = new MetaTile[metaTileCount]();
+		tileRes->seek(iMetaID);
 		for (int k = 0; k < metaTileCount; ++k)
 			readMetaTile(tileRes, mapData->metaList[k]);
 
@@ -1484,12 +1526,13 @@ void initMaps(void) {
 			error("Unable to load meta tile list");
 
 		//  If there is tag data, load it
-		if (tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			int tileRefCount = tileRes->size(tagDataID + MKTAG(0, 0, 0, (uint8)i)) / tileRefSize;
+		if (tileRes->size(iTagRefID) > 0) {
+			int tileRefCount = tileRes->size(iTagRefID) / tileRefSize;
 			mapData->activeItemData = new TileRef[tileRefCount]();
 			if (mapData->activeItemData == nullptr)
 				error("Unable to load active item data");
 
+			tileRes->seek(iTagRefID);
 			for (int k = 0; k < tileRefCount; ++k) {
 				mapData->activeItemData[k].tile = tileRes->readU16LE();
 				mapData->activeItemData[k].flags = tileRes->readByte();
@@ -1499,21 +1542,23 @@ void initMaps(void) {
 			mapData->activeItemData = nullptr;
 
 		//  If there is an association list, load it
-		if (tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			int assocCount = tileRes->size(assocID + MKTAG(0, 0, 0, (uint8)i)) / assocSize;
+		if (tileRes->size(iAssocID) > 0) {
+			int assocCount = tileRes->size(iAssocID) / assocSize;
 			mapData->assocList = new uint16[assocCount]();
 			if (mapData->assocList == nullptr)
 				error("Unable to load association list");
 
+			tileRes->seek(iAssocID);
 			for (int k = 0; k < assocCount; ++k)
 				mapData->assocList[k] = tileRes->readU16LE();
 		} else
 			mapData->assocList = nullptr;
 
 		//  If there is an active item list, load it
-		if (tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) > 0) {
-			int activeItemCount = tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i)) / activeItemSize;
+		if (tileRes->size(iActiveItemID) > 0) {
+			int activeItemCount = tileRes->size(iActiveItemID) / activeItemSize;
 			mapData->activeItemList = new ActiveItem[activeItemCount];
+			tileRes->seek(iActiveItemID);
 			for (int k = 0; k < activeItemCount; ++k)
 				readActiveItem(tileRes, mapData->activeItemList[k]);
 
@@ -2207,6 +2252,20 @@ metaTileNoise MetaTile::HeavyMetaMusic(void) {
 //-----------------------------------------------------------------------
 //	Return a pointer to the specified platform
 
+static void readPlatform(hResContext *con, Platform &plt) {
+	plt.height = con->readU16LE();
+	plt.highestPixel = con->readU16LE();
+	plt.flags = con->readU16LE();
+
+	for (int j = 0; j < platformWidth; ++j) {
+		for (int i = 0; i < platformWidth; ++i) {
+			plt.tiles[j][i].tile = con->readU16LE();
+			plt.tiles[j][i].flags = con->readByte();
+			plt.tiles[j][i].tileHeight = con->readByte();
+		}
+	}
+}
+
 Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	const int           cacheFlag = 0x8000;
 
@@ -2280,10 +2339,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		// Now, load the actual metatile data...
 		if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
 			if (tileRes->skip(plIndex * sizeof(Platform))) {
-				if (tileRes->read(&pce->pl, sizeof(Platform)));
-				{
-					return &pce->pl;
-				}
+				readPlatform(tileRes, pce->pl);
+				return &pce->pl;
 			}
 		}
 
