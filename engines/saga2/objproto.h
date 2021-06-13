@@ -490,10 +490,7 @@ public:
 	    ObjectID dObj,
 	    ObjectID enactor,
 	    uint8 keyCode);
-	virtual bool acceptLockToggleAction(
-	    ObjectID dObj,
-	    ObjectID enactor,
-	    uint8 keyCode);
+	virtual bool acceptLockToggleAction(ObjectID dObj, ObjectID enactor, uint8 keyCode);
 
 	//  Mix this object with another.
 	bool acceptMix(ObjectID dObj, ObjectID enactor, ObjectID mixObj);
@@ -717,7 +714,7 @@ public:
 	    ObjectID dObj,
 	    ObjectID enactor,
 	    uint8 keyCode);
-	virtual bool acceptLockToggleAction(ObjectID dObj, ObjectID enactor);
+	virtual bool acceptLockToggleAction(ObjectID dObj, ObjectID enactor, uint8 keyCode);
 
 	//  Insert another object into this object
 	bool acceptInsertionAction(

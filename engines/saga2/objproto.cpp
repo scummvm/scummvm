@@ -1295,7 +1295,7 @@ bool PhysicalContainerProto::canToggleLock(
 //  Unlock or lock the physical container
 bool PhysicalContainerProto::acceptLockToggleAction(
     ObjectID    dObj,
-    ObjectID    enactor) {
+    ObjectID    enactor, uint8) {
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Toggle locked bit
