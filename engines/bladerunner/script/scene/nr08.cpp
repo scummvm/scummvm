@@ -150,7 +150,15 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 	) {
 		Set_Fade_Density((frame - 76) / 14.0f);
 		Music_Stop(3);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
+#else
+		// Play the ambient audience clapping once.
+		// Otherwise it sounds robotic and it's unnecessary to play at every frame
+		if (frame == 76) {
+			Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
+		}
+#endif
 	} else if (frame >= 91
 	        && frame < 120
 	) {
