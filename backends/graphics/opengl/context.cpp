@@ -20,6 +20,8 @@
  *
  */
 
+#define GLAD_GL_IMPLEMENTATION
+
 #include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/shader.h"
@@ -44,9 +46,7 @@ void Context::reset() {
 	packedPixelsSupported = false;
 	textureEdgeClampSupported = false;
 
-#define GL_FUNC_DEF(ret, name, param) name = nullptr;
-#include "backends/graphics/opengl/opengl-func.h"
-#undef GL_FUNC_DEF
+	isInitialized = false;
 
 	activePipeline = nullptr;
 }
@@ -79,45 +79,43 @@ void OpenGLGraphicsManager::setContextType(ContextType type) {
 	g_context.type = type;
 }
 
+#ifdef USE_GLAD
+static GLADapiproc loadFunc(void *userptr, const char *name) {
+	OpenGLGraphicsManager *openglGraphicsManager = (OpenGLGraphicsManager *)userptr;
+	return (GLADapiproc)openglGraphicsManager->getProcAddress(name);
+}
+#endif
+
 void OpenGLGraphicsManager::initializeGLContext() {
 	// Initialize default state.
 	g_context.reset();
 
-	// Load all functions.
-	// We use horrible trickery to silence C++ compilers.
-	// See backends/plugins/sdl/sdl-provider.cpp for more information.
-	assert(sizeof(void (*)()) == sizeof(void *));
+#ifdef USE_GLAD
+	switch (g_context.type) {
+	case kContextGL:
+		gladLoadGLUserPtr(loadFunc, this);
+		break;
 
-#define LOAD_FUNC(name, loadName) { \
-	void *fn = getProcAddress(#loadName); \
-	memcpy(&g_context.name, &fn, sizeof(fn)); \
-}
+	case kContextGLES:
+		gladLoadGLES1UserPtr(loadFunc, this);
+		break;
 
-#define GL_EXT_FUNC_DEF(ret, name, param) LOAD_FUNC(name, name)
+	case kContextGLES2:
+		gladLoadGLES2UserPtr(loadFunc, this);
+		break;
 
-#ifdef USE_BUILTIN_OPENGL
-#define GL_FUNC_DEF(ret, name, param) g_context.name = &name
-// GL_FUNC2_DEF will be defined in opengl-func.h
-#else
-#define GL_FUNC_DEF GL_EXT_FUNC_DEF
-#define GL_FUNC_2_DEF(ret, name, extName, param) \
-	if (g_context.type == kContextGL) { \
-		LOAD_FUNC(name, extName); \
-	} else { \
-		LOAD_FUNC(name, name); \
+	default:
+		break;
 	}
 #endif
-#include "backends/graphics/opengl/opengl-func.h"
-#undef GL_FUNC_2_DEF
-#undef GL_FUNC_DEF
-#undef GL_EXT_FUNC_DEF
-#undef LOAD_FUNC
+
+	g_context.isInitialized = true;
 
 	// Obtain maximum texture size.
 	GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &g_context.maxTextureSize));
 	debug(5, "OpenGL maximum texture size: %d", g_context.maxTextureSize);
 
-	const char *verString = (const char *)g_context.glGetString(GL_VERSION);
+	const char *verString = (const char *)glGetString(GL_VERSION);
 	debug(5, "OpenGL version: %s", verString);
 
 	const char *glVersionFormat;
@@ -132,7 +130,7 @@ void OpenGLGraphicsManager::initializeGLContext() {
 		warning("Could not parse GL version '%s'", verString);
 	}
 
-	const char *extString = (const char *)g_context.glGetString(GL_EXTENSIONS);
+	const char *extString = (const char *)glGetString(GL_EXTENSIONS);
 	debug(5, "OpenGL extensions: %s", extString);
 
 	bool ARBShaderObjects = false;
@@ -208,9 +206,9 @@ void OpenGLGraphicsManager::initializeGLContext() {
 
 	// Log features supported by GL context.
 	if (g_context.shadersSupported)
-		debug(5, "GLSL version: %s", g_context.glGetString(GL_SHADING_LANGUAGE_VERSION));
-	debug(5, "OpenGL vendor: %s", g_context.glGetString(GL_VENDOR));
-	debug(5, "OpenGL renderer: %s", g_context.glGetString(GL_RENDERER));
+	debug(5, "GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
+	debug(5, "OpenGL vendor: %s", glGetString(GL_VENDOR));
+	debug(5, "OpenGL renderer: %s", glGetString(GL_RENDERER));
 	debug(5, "OpenGL: NPOT texture support: %d", g_context.NPOTSupported);
 	debug(5, "OpenGL: Shader support: %d", g_context.shadersSupported);
 	debug(5, "OpenGL: Multitexture support: %d", g_context.multitextureSupported);
