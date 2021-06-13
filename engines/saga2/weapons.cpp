@@ -48,45 +48,64 @@ namespace Saga2 {
 
 static void loadWeaponData(void);
 
-ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
+ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 	ProtoEffect *pe = NULL;
 
-	switch (rie->effectGroup) {
+	/* int16 item = */stream->readSint16LE();	// spell ID
+	int16 effectGroup = stream->readSint16LE();	// effect group
+
+	int16 effectType = stream->readSint16LE();	// effect ID
+	int16 targeting = stream->readSint16LE();	// targeting
+	int16 baseDice = stream->readSint16LE();	// base dice
+	int16 skillDice = stream->readSint16LE();	// skill dice
+	int16 baseDamage = stream->readSint16LE();	// attrib change
+	int16 skillDamage = stream->readSint16LE();	// attrib change
+	int16 reserved0 = stream->readSint16LE();	// min enchant
+	int16 reserved1 = stream->readSint16LE();	// min enchant
+	int16 diceSides = stream->readSint16LE();
+
+	if (diceSides == 0)
+		diceSides = 6;
+
+	switch (effectGroup) {
 	case effectNone:
 		return NULL;
 
 	case effectAttrib:
-		pe = new ProtoEnchantment(makeEnchantmentID(rie->effectGroup, rie->effectType, rie->baseDamage),
-					rie->reserved0, rie->reserved1);
+		pe = new ProtoEnchantment(makeEnchantmentID(effectGroup, effectType, baseDamage), reserved0, reserved1);
 		break;
+
 	case effectResist:
 	case effectImmune:
 	case effectOthers:
 	case effectNonActor:
-		pe = new ProtoEnchantment(makeEnchantmentID(rie->effectGroup, rie->effectType, rie->skillDamage),
-					rie->reserved0, rie->reserved1);
+		pe = new ProtoEnchantment(makeEnchantmentID(effectGroup, effectType, skillDamage), reserved0, reserved1);
 		break;
+
 	case effectDamage:
-		pe = new ProtoDamage(rie->baseDice, rie->diceSides ? rie->diceSides : 6, rie->skillDice, rie->baseDamage,
-					(effectDamageTypes) rie->effectType, 0, rie->targeting & spellTargCaster, rie->skillDamage);
+		pe = new ProtoDamage(baseDice, diceSides, skillDice, baseDamage,
+					(effectDamageTypes)effectType, 0, targeting & spellTargCaster, skillDamage);
 		break;
+
 	case effectDrains:
-		pe = new ProtoDrainage(rie->baseDice, rie->diceSides ? rie->diceSides : 6, rie->skillDice, rie->baseDamage,
-					(effectDrainsTypes) rie->effectType, 0, rie->targeting & spellTargCaster);
+		pe = new ProtoDrainage(baseDice, diceSides, skillDice, baseDamage,
+					(effectDrainsTypes)effectType, 0, targeting & spellTargCaster);
 		break;
 
 	case effectPoison:
-		pe = new ProtoEnchantment(makeEnchantmentID(rie->baseDamage),      // poison
-					rie->reserved0, rie->reserved1);
+		pe = new ProtoEnchantment(makeEnchantmentID(baseDamage),      // poison
+					reserved0, reserved1);
 
 	case effectTAG:
-		pe = new ProtoTAGEffect((effectTAGTypes)rie->effectType, rie->skillDamage, rie->baseDamage);
+		pe = new ProtoTAGEffect((effectTAGTypes)effectType, skillDamage, baseDamage);
 		break;
+
 	case effectLocation:
-		pe = new ProtoLocationEffect((effectLocationTypes)rie->effectType, rie->baseDamage);
+		pe = new ProtoLocationEffect((effectLocationTypes)effectType, baseDamage);
 		break;
+
 	case effectSpecial:
-		pe = new ProtoSpecialEffect(SagaSpellCall, rie->baseDamage);
+		pe = new ProtoSpecialEffect(SagaSpellCall, baseDamage);
 		break;
 	}
 
@@ -186,21 +205,31 @@ void WeaponStuff::addEffect(WeaponEffect *we) {
 	}
 }
 
-void WeaponStuff::addEffect(ResourceItemEffect *rie) {
+void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 	WeaponEffect *we;
-	assert(rie);
-	assert(rie && rie->item == master);
 
-	if (rie->effectGroup == effectStrike) {
-		we = new WeaponStrikeEffect(
-					(effectDamageTypes)rie->effectType,
-					rie->baseDice,
-					rie->diceSides != 0 ? rie->diceSides : 6,
-					rie->skillDice,
-					rie->baseDamage,
-					rie->skillDamage);
-	} else
-		we = new WeaponProtoEffect(rie);
+	int16 item = stream->readSint16LE();		// spell ID
+	int16 effectGroup = stream->readSint16LE();	// effect group
+
+	if (effectGroup == effectStrike) {
+		effectDamageTypes effectType = (effectDamageTypes)stream->readSint16LE();	// effect ID
+		int16 targeting = stream->readSint16LE();	// targeting
+		int16 baseDice = stream->readSint16LE();	// base dice
+		int16 skillDice = stream->readSint16LE();	// skill dice
+		int16 baseDamage = stream->readSint16LE();	// attrib change
+		int16 skillDamage = stream->readSint16LE();	// attrib change
+		int16 reserved0 = stream->readSint16LE();	// min enchant
+		int16 reserved1 = stream->readSint16LE();	// min enchant
+		int16 diceSides = stream->readSint16LE();
+
+		if (diceSides == 0)
+			diceSides = 6;
+
+		we = new WeaponStrikeEffect(effectType, baseDice, diceSides, skillDice, baseDamage, skillDamage);
+	} else {
+		stream->seek(0);
+		we = new WeaponProtoEffect(stream);
+	}
 
 	if (we == NULL)
 		error("failed to alloc weapon effect");
@@ -232,17 +261,21 @@ static void loadWeaponData(void) {
 	// get spell effects
 	int16 i = 0;
 	while (spellRes->size(MKTAG('E', 'F', 'F', i)) > 0) {
-		ResourceItemEffect *rie = (ResourceItemEffect *)LoadResource(spellRes, MKTAG('E', 'F', 'F', i), "weapon effect");
+		Common::SeekableReadStream *stream = loadResourceToStream(spellRes, MKTAG('E', 'F', 'F', i), "weapon effect");
 
-		if (rie == NULL)
+		if (stream == nullptr)
 			error("Unable to load weapon effect %d", i);
 
-		if (rie->item) {
-			g_vm->_weaponRack[rie->item].setID(rie->item);
-			g_vm->_weaponRack[rie->item].addEffect(rie);
+		int16 id = stream->readSint16LE();
+		stream->seek(0);
+
+		if (id) {
+			g_vm->_weaponRack[id].setID(id);
+			g_vm->_weaponRack[id].addEffect(stream);
 		}
 
-		RDisposePtr(rie);
+		delete stream;
+
 		i++;
 	}
 	g_vm->_loadedWeapons = i;
