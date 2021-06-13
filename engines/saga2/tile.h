@@ -312,7 +312,7 @@ struct TileInfo {
 class TileBank {
 public:
 	uint32          numTiles;               // number of tiles in list
-	TileInfo        tileArray[1];         // variable-sized array
+	TileInfo        *tileArray;         // variable-sized array
 
 	TileInfo *tile(uint16 index) {
 		return &tileArray[index];
