@@ -1410,22 +1410,25 @@ void cleanupTileTasks(void) {
 //-----------------------------------------------------------------------
 //	Initialize map data
 
-static void readTileBank(hResContext *con, TileBank *tb) {
+static void readTileBank(hResContext *con, int count, TileBank *tb) {
 	tb->numTiles = con->readU32LE();
-	tb->tileArray->offset = con->readU32LE();
-	TileAttrs *att = &tb->tileArray->attrs;
-	att->terrainHeight = con->readByte();
-	att->height = con->readByte();
-	att->terrainMask = con->readU16LE();
-	att->fgdTerrain = con->readByte();
-	att->bgdTerrain = con->readByte();
-	con->read(att->reserved0, 8);
-	att->maskRule = con->readByte();
-	att->altMask = con->readByte();
-	con->read(att->cornerHeight, 4);
-	att->cycleRange = con->readByte();
-	att->tileFlags = con->readByte();
-	att->reserved1 = con->readU16LE();
+	tb->tileArray = new TileInfo[count];
+	for (int i = 0; i < count; ++i) {
+		tb->tileArray[i].offset = con->readU32LE();
+		TileAttrs *att = &tb->tileArray[i].attrs;
+		att->terrainHeight = con->readByte();
+		att->height = con->readByte();
+		att->terrainMask = con->readU16LE();
+		att->fgdTerrain = con->readByte();
+		att->bgdTerrain = con->readByte();
+		con->read(att->reserved0, 8);
+		att->maskRule = con->readByte();
+		att->altMask = con->readByte();
+		con->read(att->cornerHeight, 4);
+		att->cycleRange = con->readByte();
+		att->tileFlags = con->readByte();
+		att->reserved1 = con->readU16LE();
+	}
 }
 
 static void readMetaTile(hResContext *con, MetaTile &til) {
@@ -1471,6 +1474,7 @@ static void readActiveItem(hResContext *con, ActiveItem &itm) {
 
 void initMaps(void) {
 	int16       i;
+	const int tileInfoSize = 28;
 	const int metaTileSize = 30;
 	const int tileRefSize = 4;
 	const int assocSize = 2;
@@ -1480,7 +1484,9 @@ void initMaps(void) {
 	for (i = 0; i < maxBanks; i++) {
 		if (tileRes->seek(tileTerrainID + MKTAG(0, 0, 0, (uint8)i))) {
 			tileBanks[i] = new TileBank;
-			readTileBank(tileRes, tileBanks[i]);
+			int tileBankSize = tileRes->size(tileTerrainID + MKTAG(0, 0, 0, (uint8)i));
+			int tiCount = (tileBankSize - 4) / tileInfoSize;
+			readTileBank(tileRes, tiCount, tileBanks[i]);
 		} else
 			tileBanks[i] = nullptr;
 	}
