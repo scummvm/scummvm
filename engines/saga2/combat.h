@@ -39,7 +39,6 @@ enum weaponHitType {
 
 //-----------------------------------------------------------------------
 
-typedef uint16 weaponID;
 #define nullWeapon 0
 
 enum combatSound {

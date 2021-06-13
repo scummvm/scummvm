@@ -230,6 +230,38 @@ typedef uint8       ColorTable[256];
 // number of containers
 const int   kNumViews    = 3;
 
+enum {
+	kMaxWeapons = 256
+};
+
+//
+// Damage effects - these are the types of damage in the world
+//    Damage being defined as a change in effective vitality
+//    Note that healing is negative damage.
+//
+enum effectDamageTypes {
+	// Generic
+	damageOther         = 0,    // Healing, cause wounds
+	// Combat damage
+	damageImpact        = 1,    // hammers, maces
+	damageSlash         = 2,    // swords
+	damageProjectile    = 3,            // arrows, poin-ted sticks
+	// Magic damage
+	damageFire          = 4,     // Yellow
+	damageAcid          = 5,     // Violet
+	damageHeat          = 6,     // Red
+	damageCold          = 7,     // Blue
+	damageLightning     = 8,     // Orange
+	damagePoison        = 9,     // Green
+	// Other magic damage
+	damageMental        = 10,     // dain bramage
+	damageToUndead      = 11,    // undead take this damage
+	damageDirMagic      = 12,    // the plusses on swords etc.
+	// Physiological Damage
+	damageStarve        = 13,    // You must eat!
+	// other
+	damageEnergy        = 14     // Generally hard to resist - god damage
+};
 
 } // end of namespace Saga2
 

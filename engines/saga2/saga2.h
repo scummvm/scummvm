@@ -28,6 +28,9 @@
 #include "common/system.h"
 #include "engines/engine.h"
 
+#include "saga2/idtypes.h"
+#include "saga2/weapons.h"
+
 namespace Video {
 class SmackerDecoder;
 };
@@ -73,6 +76,9 @@ public:
 public:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+
+	WeaponStuff _weaponRack[kMaxWeapons];
+	weaponID _loadedWeapons = 0;
 
 private:
 	Video::SmackerDecoder *_smkDecoder;

@@ -26,6 +26,7 @@
 
 #include "saga2/std.h"
 #include "saga2/weapons.h"
+#include "saga2/spelshow.h"
 #include "saga2/spellbuk.h"
 #include "saga2/actor.h"
 #include "saga2/spellio.h"
@@ -45,27 +46,7 @@ namespace Saga2 {
 //    which relate to spell casting
 //
 
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-const int32 maxWeapons = 256;
-const int32 maxWeaponPrototypes = 256;
-
-/* ===================================================================== *
-   Global data
- * ===================================================================== */
-
-WeaponStuff                     weaponRack[maxWeapons];
-weaponID                        loadedWeapons = 0;
-
-
-//-----------------------------------------------------------------------
-// prototypes
-
 static void loadWeaponData(void);
-
-//-----------------------------------------------------------------------
 
 ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie) {
 	ProtoEffect     *pe = NULL;
@@ -157,16 +138,16 @@ void initWeapons(void) {
 //-----------------------------------------------------------------------
 
 void cleanupWeapons(void) {
-	for (int i = 0; i < maxWeapons; i++)
-		weaponRack[i].killEffects();
+	for (int i = 0; i < kMaxWeapons; i++)
+		g_vm->_weaponRack[i].killEffects();
 }
 
 //-----------------------------------------------------------------------
 
 WeaponStuff &getWeapon(weaponID i) {
-	if (i < loadedWeapons)
-		return weaponRack[i];
-	return weaponRack[nullWeapon];
+	if (i < g_vm->_loadedWeapons)
+		return g_vm->_weaponRack[i];
+	return g_vm->_weaponRack[nullWeapon];
 }
 
 //-----------------------------------------------------------------------
@@ -184,7 +165,10 @@ GameObject *getShieldItem(GameObject *defender) {
    WeaponProtoEffect member functions
  * ===================================================================== */
 
-//-----------------------------------------------------------------------
+WeaponProtoEffect::~WeaponProtoEffect(void) {
+	if (effect != NULL)
+		delete effect;
+}
 
 void WeaponProtoEffect::implement(
     Actor       *enactor,
@@ -338,14 +322,14 @@ static void loadWeaponData(void) {
 			error("Unable to load weapon effect %d", i);
 
 		if (rie->item) {
-			weaponRack[rie->item].setID(rie->item);
-			weaponRack[rie->item].addEffect(rie);
+			g_vm->_weaponRack[rie->item].setID(rie->item);
+			g_vm->_weaponRack[rie->item].addEffect(rie);
 		}
 
 		RDisposePtr(rie);
 		i++;
 	}
-	loadedWeapons = i;
+	g_vm->_loadedWeapons = i;
 	assert(i > 1);
 
 	auxResFile->disposeContext(spellRes);

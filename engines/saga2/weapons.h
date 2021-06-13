@@ -27,11 +27,13 @@
 #ifndef SAGA2_WEAPONS_H
 #define SAGA2_WEAPONS_H
 
-#include "saga2/spelshow.h"
-
 namespace Saga2 {
 
 struct ResourceItemEffect;
+
+class Actor;
+class GameObject;
+class ProtoEffect;
 
 ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie);
 
@@ -59,9 +61,7 @@ public:
 	WeaponProtoEffect(ResourceItemEffect *rie) :
 		effect(createNewProtoEffect(rie)) {
 	}
-	~WeaponProtoEffect(void) {
-		if (effect != NULL) delete effect;
-	}
+	~WeaponProtoEffect(void);
 
 	void implement(
 	    Actor       *enactor,
