@@ -37,6 +37,8 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
+	_invertOuter = false;
+	_invertInner = false;
 
 	switch (buttonType) {
 	case kCheckBox:
@@ -64,8 +66,10 @@ void MacButton::setActive(bool active) {
 		return;
 
 	MacWidget::setActive(active);
-	if (_composeSurface)
-		invertOuter();
+	if (_composeSurface) {
+		_invertOuter = !_invertOuter;
+		_contentIsDirty = true;
+	}
 }
 
 void MacButton::invertOuter() {
@@ -74,18 +78,16 @@ void MacButton::invertOuter() {
 	switch (_buttonType) {
 	case kCheckBox: {
 		Common::Rect c = Common::Rect(r.left + 1, r.top + 3, r.left + 9, r.top + 11);
-		Graphics::drawRect(c, 0, _wm->getDrawPixel(), &_pd);
+		Graphics::drawRect(c, 0, _wm->getDrawInvertPixel(), &_pd);
 	}
 		break;
 	case kRound:
-		Graphics::drawRoundRect(r, 4, 0, true, _wm->getDrawPixel(), &_pd);
+		Graphics::drawRoundRect(r, 4, 0, true, _wm->getDrawInvertPixel(), &_pd);
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, _wm->getDrawPixel(), &_pd);
+		Graphics::drawEllipse(r.left + 1, r.top + 3, r.left + 10, r.top + 12, 0, false, _wm->getDrawInvertPixel(), &_pd);
 		break;
 	}
-
-	_contentIsDirty = true;
 }
 
 void MacButton::invertInner() {
@@ -93,22 +95,20 @@ void MacButton::invertInner() {
 
 	switch (_buttonType) {
 	case kCheckBox:
-		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, _wm->getDrawPixel(), &_pd);
-		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, _wm->getDrawPixel(), &_pd);
-		(_wm->getDrawPixel())(5, 7, 0, &_pd);
+		Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, _wm->getDrawInvertPixel(), &_pd);
+		Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, _wm->getDrawInvertPixel(), &_pd);
+		(_wm->getDrawInvertPixel())(5, 7, 0, &_pd);
 		break;
 	case kRound:
 		break;
 	case kRadio:
-		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, _wm->getDrawPixel(), &_pd);
+		Graphics::drawEllipse(r.left + 3, r.top + 5, r.left + 8, r.top + 10, 0, true, _wm->getDrawInvertPixel(), &_pd);
 		break;
 	}
-
-	_contentIsDirty = true;
 }
 
 bool MacButton::draw(bool forceRedraw) {
-	if ((!_contentIsDirty && !forceRedraw) || _active)
+	if (!_contentIsDirty && !forceRedraw)
 		return false;
 
 	MacText::draw();
@@ -129,6 +129,11 @@ bool MacButton::draw(bool forceRedraw) {
 		Graphics::drawEllipse(r.left, r.top + 2, r.left + 11, r.top + 13, 0, false, _wm->getDrawPixel(), &pd);
 		break;
 	}
+
+	if (_invertOuter)
+		invertOuter();
+	if (_invertInner)
+		invertInner();
 
 	return true;
 }
@@ -159,7 +164,7 @@ bool MacButton::processEvent(Common::Event &event) {
 		break;
 	case Common::EVENT_LBUTTONUP:
 		setActive(false);
-		invertInner();
+		_invertInner = !_invertInner;
 		break;
 	default:
 		warning("MacButton:: processEvent: Event not handled");
