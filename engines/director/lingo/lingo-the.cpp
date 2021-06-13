@@ -389,7 +389,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		getTheEntitySTUB(kTheCheckBoxAccess);
 		break;
 	case kTheCheckBoxType:
-		getTheEntitySTUB(kTheCheckBoxType);
+		d.type = INT;
+		d.u.i = g_director->getCurrentMovie()->_checkBoxType;
 		break;
 	case kTheClickLoc:
 		d.u.farr = new DatumArray;
@@ -885,7 +886,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheCheckBoxAccess);
 		break;
 	case kTheCheckBoxType:
-		setTheEntitySTUB(kTheCheckBoxType);
+		g_director->getCurrentMovie()->_checkBoxType = d.asInt();
 		break;
 	case kTheColorDepth:
 		_vm->_colorDepth = d.asInt();
