@@ -924,7 +924,7 @@ void MohawkEngine_Myst::changeToStack(MystStack stackId, uint16 card, uint16 lin
 			// TODO: Since the disc layout of the original CD-ROMs is known,
 			//       it should be possible to adapt the delay depending on the
 			//       target stack in order to replicate the original loading times.
-			g_system->delayMillis(_rnd->getRandomNumberRng(500,750));
+			g_system->delayMillis(_rnd->getRandomNumberRng(200,500));
 		}
 	}
 
