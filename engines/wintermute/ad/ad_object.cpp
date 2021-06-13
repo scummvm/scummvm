@@ -860,7 +860,7 @@ bool AdObject::setFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdObject::getHeight() {
-	if (!_currentSprite) {
+	if (!_currentSprite || _currentSprite->_frames.size() <= _currentSprite->_currentFrame) {
 		return 0;
 	} else {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
