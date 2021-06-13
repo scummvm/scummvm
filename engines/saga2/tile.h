@@ -845,7 +845,7 @@ typedef MetaTile    *MetaTilePtr,
 struct MapHeader {
 	int16           size;                   // size of map
 	int16           edgeType;               // edge type of map
-	uint16          mapData[1];           // start of map array
+	uint16          *mapData;           // start of map array
 };
 
 enum mapEdgeTypes {
