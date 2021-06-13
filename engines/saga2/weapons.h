@@ -35,7 +35,7 @@ class Actor;
 class GameObject;
 class ProtoEffect;
 
-ProtoEffect *createNewProtoEffect(ResourceItemEffect *rie);
+ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream);
 
 //-----------------------------------------------------------------------
 
@@ -58,8 +58,8 @@ class WeaponProtoEffect : public WeaponEffect {
 	ProtoEffect     *effect;
 
 public:
-	WeaponProtoEffect(ResourceItemEffect *rie) :
-		effect(createNewProtoEffect(rie)) {
+	WeaponProtoEffect(Common::SeekableReadStream *stream) :
+		effect(createNewProtoEffect(stream)) {
 	}
 	~WeaponProtoEffect(void);
 
@@ -116,7 +116,7 @@ public:
 		master = id;
 	}
 	void addEffect(WeaponEffect *we);
-	void addEffect(ResourceItemEffect *rse);
+	void addEffect(Common::SeekableReadStream *stream);
 	void killEffects(void);
 	void implement(
 	    Actor       *enactor,
