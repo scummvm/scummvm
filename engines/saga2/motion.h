@@ -131,7 +131,7 @@ class MotionTask : private DNode {
 		agitated        = (1 << 12),        // Walking around blockage
 		agitatable      = (1 << 13),        // Will agitate when blocked
 		onStairs        = (1 << 14),        // actor is climbing stairs
-		privledged      = (1 << 15),        // don't let AI interrupt this
+		privledged      = (1 << 15)         // don't let AI interrupt this
 	};
 
 	Direction       direction;              // direction of movement
@@ -161,7 +161,7 @@ class MotionTask : private DNode {
 	};
 
 	enum defenseMotionFlags {
-		blocking    = (1 << 0),             // actor is blocking an attack
+		blocking    = (1 << 0)             // actor is blocking an attack
 	};
 
 	union {
@@ -173,14 +173,14 @@ class MotionTask : private DNode {
 			// upon.
 			Actor           *enactor;
 			ActiveItem      *TAI;           // TAI involved in interation
-		};
+		} o;
 
 		//  Defensive motion stuff
 		struct {
 			Actor           *attacker;      // attacking actor
 			GameObject      *defensiveObj;  // shield or parrying weapon
 			uint8           defenseFlags;   // various combat flags
-		};
+		} d;
 	};
 
 public:
@@ -191,18 +191,18 @@ public:
 		twoHandedSwingLeftHigh,
 		twoHandedSwingLeftLow,
 		twoHandedSwingRightHigh,
-		twoHandedSwingRightLow,
+		twoHandedSwingRightLow
 	};
 
 	enum OneHandedSwingTypes {
 		oneHandedSwingHigh,
 		oneHandedSwingLow,
-		oneHandedThrust,
+		oneHandedThrust
 	};
 
 	enum OneHandedParryTypes {
 		oneHandedParryHigh,
-		oneHandedParryLow,
+		oneHandedParryLow
 	};
 
 private:
@@ -253,7 +253,7 @@ private:
 		//  Other combat actions
 		motionTypeAcceptHit,                // show effect of hit
 		motionTypeFallDown,                 // be knocked off feet
-		motionTypeDie,                      // self-explanatory
+		motionTypeDie                       // self-explanatory
 
 	};
 
@@ -525,7 +525,7 @@ public:
 
 	//  Determine if this motion is a dodge motion
 	bool isDodging(Actor *thisAttacker) {
-		return motionType == motionTypeDodge && thisAttacker == attacker;
+		return motionType == motionTypeDodge && thisAttacker == d.attacker;
 	}
 
 	static void initMotionTasks(void);

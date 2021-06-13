@@ -620,7 +620,7 @@ void *MotionTask::restore(void *buf) {
 			enactorID = *((ObjectID *)buf);
 			buf = (ObjectID *)buf + 1;
 
-			enactor =   enactorID != Nothing
+			o.enactor = enactorID != Nothing
 			            ? (Actor *)GameObject::objectAddress(enactorID)
 			            :   NULL;
 		}
@@ -649,7 +649,7 @@ void *MotionTask::restore(void *buf) {
 	           ||  motionType == motionTypeDropObject
 	           ||  motionType == motionTypeDropObjectOnObject
 	           ||  motionType == motionTypeDropObjectOnTAI) {
-		directObject =  *((ObjectID *)buf) != Nothing
+		o.directObject = *((ObjectID *)buf) != Nothing
 		                ?   GameObject::objectAddress(*((ObjectID *)buf))
 		                :   NULL;
 		buf = (ObjectID *)buf + 1;
@@ -659,7 +659,7 @@ void *MotionTask::restore(void *buf) {
 
 		if (motionType == motionTypeUseObjectOnObject
 		        ||  motionType == motionTypeDropObjectOnObject) {
-			indirectObject =    *((ObjectID *)buf) != Nothing
+			o.indirectObject =  *((ObjectID *)buf) != Nothing
 			                    ?   GameObject::objectAddress(
 			                        *((ObjectID *)buf))
 			                    :   NULL;
@@ -667,7 +667,7 @@ void *MotionTask::restore(void *buf) {
 		} else {
 			if (motionType == motionTypeUseObjectOnTAI
 			        ||  motionType == motionTypeDropObjectOnTAI) {
-				TAI =   *((ActiveItemID *)buf) != NoActiveItem
+				o.TAI = *((ActiveItemID *)buf) != NoActiveItem
 				        ?   ActiveItem::activeItemAddress(
 				            *((ActiveItemID *)buf))
 				        :   NULL;
@@ -682,7 +682,7 @@ void *MotionTask::restore(void *buf) {
 			}
 		}
 	} else if (motionType == motionTypeUseTAI) {
-		TAI =   *((ActiveItemID *)buf) != NoActiveItem
+		o.TAI = *((ActiveItemID *)buf) != NoActiveItem
 		        ?   ActiveItem::activeItemAddress(*((ActiveItemID *)buf))
 		        :   NULL;
 		buf = (ActiveItemID *)buf + 1;
@@ -763,16 +763,16 @@ void *MotionTask::restore(void *buf) {
 		buf = (ObjectID *)buf + 2;
 
 		//  Convert IDs to pointers
-		attacker =  attackerID != Nothing
+		d.attacker = attackerID != Nothing
 		            ? (Actor *)GameObject::objectAddress(attackerID)
 		            :   NULL;
 
-		defensiveObj =  defensiveObjID != Nothing
+		d.defensiveObj = defensiveObjID != Nothing
 		                ?   GameObject::objectAddress(defensiveObjID)
 		                :   NULL;
 
 		//  Restore the defense flags
-		defenseFlags = *((uint8 *)buf);
+		d.defenseFlags = *((uint8 *)buf);
 		buf = (uint8 *)buf + 1;
 
 		//  Restore the action counter
@@ -794,7 +794,7 @@ void *MotionTask::restore(void *buf) {
 		buf = (ObjectID *)buf + 1;
 
 		//  Convert ID to pointer
-		attacker =  attackerID != Nothing
+		d.attacker = attackerID != Nothing
 		            ? (Actor *)GameObject::objectAddress(attackerID)
 		            :   NULL;
 
@@ -915,7 +915,7 @@ int32 MotionTask::archiveSize(void) {
 		size +=     sizeof(direction)
 		            +   sizeof(ObjectID)             //  attacker ID
 		            +   sizeof(ObjectID)             //  defensiveObj ID
-		            +   sizeof(defenseFlags)
+		            +   sizeof(d.defenseFlags)
 		            +   sizeof(actionCounter);
 
 		if (motionType = motionTypeOneHandedParry)
@@ -1025,8 +1025,8 @@ void *MotionTask::archive(void *buf) {
 			*((ObjectID *)buf) = targetObjID;
 			buf = (ObjectID *)buf + 1;
 
-			enactorID = enactor != NULL
-			            ?   enactor->thisID()
+			enactorID = o.enactor != NULL
+			            ?   o.enactor->thisID()
 			            :   Nothing;
 
 			*((ObjectID *)buf) = enactorID;
@@ -1054,8 +1054,8 @@ void *MotionTask::archive(void *buf) {
 	           ||  motionType == motionTypeDropObject
 	           ||  motionType == motionTypeDropObjectOnObject
 	           ||  motionType == motionTypeDropObjectOnTAI) {
-		*((ObjectID *)buf) =   directObject != NULL
-		                       ?   directObject->thisID()
+		*((ObjectID *)buf) =   o.directObject != NULL
+		                       ?   o.directObject->thisID()
 		                       :   Nothing;
 		buf = (ObjectID *)buf + 1;
 
@@ -1064,15 +1064,15 @@ void *MotionTask::archive(void *buf) {
 
 		if (motionType == motionTypeUseObjectOnObject
 		        ||  motionType == motionTypeDropObjectOnObject) {
-			*((ObjectID *)buf) =   indirectObject != NULL
-			                       ?   indirectObject->thisID()
+			*((ObjectID *)buf) =   o.indirectObject != NULL
+			                       ?   o.indirectObject->thisID()
 			                       :   Nothing;
 			buf = (ObjectID *)buf + 1;
 		} else {
 			if (motionType == motionTypeUseObjectOnTAI
 			        ||  motionType == motionTypeDropObjectOnTAI) {
-				*((ActiveItemID *)buf) =   TAI != NULL
-				                           ?   TAI->thisID()
+				*((ActiveItemID *)buf) =   o.TAI != NULL
+				                           ?   o.TAI->thisID()
 				                           :   NoActiveItem;
 				buf = (ActiveItemID *)buf + 1;
 			}
@@ -1085,8 +1085,8 @@ void *MotionTask::archive(void *buf) {
 			}
 		}
 	} else if (motionType == motionTypeUseTAI) {
-		*((ActiveItemID *)buf) =   TAI != NULL
-		                           ?   TAI->thisID()
+		*((ActiveItemID *)buf) =   o.TAI != NULL
+		                           ?   o.TAI->thisID()
 		                           :   NoActiveItem;
 		buf = (ActiveItemID *)buf + 1;
 
@@ -1161,8 +1161,8 @@ void *MotionTask::archive(void *buf) {
 		*((Direction *)buf) = direction;
 		buf = (Direction *)buf + 1;
 
-		attackerID = attacker != NULL ? attacker->thisID() : Nothing;
-		defensiveObjID = defensiveObj != NULL ? defensiveObj->thisID() : Nothing;
+		attackerID = d.attacker != NULL ? d.attacker->thisID() : Nothing;
+		defensiveObjID = d.defensiveObj != NULL ? d.defensiveObj->thisID() : Nothing;
 
 		//  Store the attacker's and defensive object's IDs
 		*((ObjectID *)buf)     = attackerID;
@@ -1170,7 +1170,7 @@ void *MotionTask::archive(void *buf) {
 		buf = (ObjectID *)buf + 2;
 
 		//  Store the defense flags
-		*((uint8 *)buf) = defenseFlags;
+		*((uint8 *)buf) = d.defenseFlags;
 		buf = (uint8 *)buf + 1;
 
 		//  Store the action counter
@@ -1187,7 +1187,7 @@ void *MotionTask::archive(void *buf) {
 	           ||  motionType == motionTypeFallDown) {
 		ObjectID        attackerID;
 
-		attackerID = attacker != NULL ? attacker->thisID() : Nothing;
+		attackerID = d.attacker != NULL ? d.attacker->thisID() : Nothing;
 
 		//  Store the attacker's ID
 		*((ObjectID *)buf) = attackerID;
@@ -1396,7 +1396,7 @@ void MotionTask::shootObject(
 			obj.missileFacing = missileDir(mt->velocity);
 
 		mt->motionType = motionTypeShot;
-		mt->enactor = &doer;
+		mt->o.enactor = &doer;
 		mt->targetObj = &target;
 	}
 }
@@ -1606,7 +1606,7 @@ void MotionTask::useObject(Actor &a, GameObject &dObj) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeUseObject) {
 			mt->motionType = motionTypeUseObject;
-			mt->directObject = &dObj;
+			mt->o.directObject = &dObj;
 			mt->flags = reset;
 			if (isPlayerActor(&a)) mt->flags |= privledged;
 		}
@@ -1625,8 +1625,8 @@ void MotionTask::useObjectOnObject(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeUseObjectOnObject) {
 			mt->motionType = motionTypeUseObjectOnObject;
-			mt->directObject = &dObj;
-			mt->indirectObject = &target;
+			mt->o.directObject = &dObj;
+			mt->o.indirectObject = &target;
 			mt->flags = reset;
 			if (isPlayerActor(&a)) mt->flags |= privledged;
 		}
@@ -1645,8 +1645,8 @@ void MotionTask::useObjectOnTAI(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeUseObjectOnTAI) {
 			mt->motionType = motionTypeUseObjectOnTAI;
-			mt->directObject = &dObj;
-			mt->TAI = &target;
+			mt->o.directObject = &dObj;
+			mt->o.TAI = &target;
 			mt->flags = reset;
 		}
 	}
@@ -1664,7 +1664,7 @@ void MotionTask::useObjectOnLocation(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeUseObjectOnLocation) {
 			mt->motionType = motionTypeUseObjectOnLocation;
-			mt->directObject = &dObj;
+			mt->o.directObject = &dObj;
 			mt->targetLoc = target;
 			mt->flags = reset;
 		}
@@ -1680,7 +1680,7 @@ void MotionTask::useTAI(Actor &a, ActiveItem &dTAI) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeUseTAI) {
 			mt->motionType = motionTypeUseTAI;
-			mt->TAI = &dTAI;
+			mt->o.TAI = &dTAI;
 			mt->flags = reset;
 		}
 	}
@@ -1698,7 +1698,7 @@ void MotionTask::dropObject(Actor       &a,
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeDropObject) {
 			mt->motionType = motionTypeDropObject;
-			mt->directObject = &dObj;
+			mt->o.directObject = &dObj;
 			mt->targetLoc = loc;
 			mt->flags = reset;
 			mt->moveCount = num;
@@ -1733,8 +1733,8 @@ void MotionTask::dropObjectOnObject(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeDropObjectOnObject) {
 			mt->motionType = motionTypeDropObjectOnObject;
-			mt->directObject = &dObj;
-			mt->indirectObject = &target;
+			mt->o.directObject = &dObj;
+			mt->o.indirectObject = &target;
 			mt->flags = reset;
 			mt->moveCount = num;
 		}
@@ -1754,8 +1754,8 @@ void MotionTask::dropObjectOnTAI(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeDropObjectOnTAI) {
 			mt->motionType = motionTypeDropObjectOnTAI;
-			mt->directObject = &dObj;
-			mt->TAI = &target;
+			mt->o.directObject = &dObj;
+			mt->o.TAI = &target;
 			mt->targetLoc = loc;
 			mt->flags = reset;
 		}
@@ -1920,11 +1920,11 @@ void MotionTask::twoHandedParry(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeTwoHandedParry) {
 			mt->motionType = motionTypeTwoHandedParry;
-			mt->attacker = &opponent;
-			mt->defensiveObj = &weapon;
+			mt->d.attacker = &opponent;
+			mt->d.defensiveObj = &weapon;
 		}
 		mt->flags = reset;
-		mt->defenseFlags = 0;
+		mt->d.defenseFlags = 0;
 	}
 }
 
@@ -1940,11 +1940,11 @@ void MotionTask::oneHandedParry(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeOneHandedParry) {
 			mt->motionType = motionTypeOneHandedParry;
-			mt->attacker = &opponent;
-			mt->defensiveObj = &weapon;
+			mt->d.attacker = &opponent;
+			mt->d.defensiveObj = &weapon;
 		}
 		mt->flags = reset;
-		mt->defenseFlags = 0;
+		mt->d.defenseFlags = 0;
 	}
 }
 
@@ -1960,11 +1960,11 @@ void MotionTask::shieldParry(
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeShieldParry) {
 			mt->motionType = motionTypeShieldParry;
-			mt->attacker = &opponent;
-			mt->defensiveObj = &shield;
+			mt->d.attacker = &opponent;
+			mt->d.defensiveObj = &shield;
 		}
 		mt->flags = reset;
-		mt->defenseFlags = 0;
+		mt->d.defenseFlags = 0;
 	}
 }
 
@@ -1977,10 +1977,10 @@ void MotionTask::dodge(Actor &a, Actor &opponent) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeDodge) {
 			mt->motionType = motionTypeDodge;
-			mt->attacker = &opponent;
+			mt->d.attacker = &opponent;
 		}
 		mt->flags = reset;
-		mt->defenseFlags = 0;
+		mt->d.defenseFlags = 0;
 	}
 }
 
@@ -1995,7 +1995,7 @@ void MotionTask::acceptHit(Actor &a, Actor &opponent) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeAcceptHit) {
 			mt->motionType = motionTypeAcceptHit;
-			mt->attacker = &opponent;
+			mt->d.attacker = &opponent;
 			mt->flags = reset;
 		}
 	}
@@ -2010,7 +2010,7 @@ void MotionTask::fallDown(Actor &a, Actor &opponent) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != motionTypeFallDown) {
 			mt->motionType = motionTypeFallDown;
-			mt->attacker = &opponent;
+			mt->d.attacker = &opponent;
 			mt->flags = reset;
 		}
 	}
@@ -2287,7 +2287,7 @@ void MotionTask::ballisticAction(void) {
 				//  motion as if there was no collision.
 				if (collisionObject == targetObj) {
 					if (object->strike(
-					            enactor->thisID(),
+					            o.enactor->thisID(),
 					            targetObj->thisID())) {
 						//  The arrow struck, so delete the arrow and
 						//  end this motion
@@ -3541,9 +3541,9 @@ uint16 MotionTask::framesUntilStrike(void) {
 
 GameObject *MotionTask::blockingObject(Actor *thisAttacker) {
 	return      isDefense()
-	            && (defenseFlags & blocking)
-	            &&  thisAttacker == attacker
-	            ?   defensiveObj
+	            && (d.defenseFlags & blocking)
+	            &&  thisAttacker == d.attacker
+	            ?   d.defensiveObj
 	            :   NULL;
 }
 
@@ -3761,7 +3761,7 @@ void MotionTask::twoHandedParryAction(void) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
 
-		direction = (attacker->getLocation() - a->getLocation()).quickDir();
+		direction = (d.attacker->getLocation() - a->getLocation()).quickDir();
 
 		if (a->appearance != NULL
 		        &&  a->isActionAvailable(actionTwoHandParry)) {
@@ -3796,7 +3796,7 @@ void MotionTask::oneHandedParryAction(void) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
 
-		direction = (attacker->getLocation() - a->getLocation()).quickDir();
+		direction = (d.attacker->getLocation() - a->getLocation()).quickDir();
 
 		combatMotionType = oneHandedParryHigh;
 		if (a->appearance != NULL
@@ -3832,7 +3832,7 @@ void MotionTask::shieldParryAction(void) {
 		Actor       *a = (Actor *)object;
 		int16       animationFrames;
 
-		direction = (attacker->getLocation() - a->getLocation()).quickDir();
+		direction = (d.attacker->getLocation() - a->getLocation()).quickDir();
 
 		if (a->appearance != NULL
 		        &&  a->isActionAvailable(actionShieldParry)) {
@@ -3864,7 +3864,7 @@ void MotionTask::shieldParryAction(void) {
 
 void MotionTask::dodgeAction(void) {
 	Actor           *a = (Actor *)object;
-	MotionTask      *attackerMotion = attacker->moveTask;
+	MotionTask      *attackerMotion = d.attacker->moveTask;
 
 	if (flags & reset) {
 		//  If the attacker is not attacking, we're done
@@ -3933,7 +3933,7 @@ void MotionTask::acceptHitAction(void) {
 		int16               animationFrames;
 
 		a->currentFacing =
-		    (attacker->getWorldLocation() - a->getLocation()).quickDir();
+		    (d.attacker->getWorldLocation() - a->getLocation()).quickDir();
 
 		if (a->appearance != NULL
 		        &&  a->isActionAvailable(actionHit, a->currentFacing)) {
@@ -3991,7 +3991,7 @@ void MotionTask::fallDownAction(void) {
 		int16               animationFrames;
 
 		a->currentFacing =
-		    (attacker->getWorldLocation() - a->getLocation()).quickDir();
+		    (d.attacker->getWorldLocation() - a->getLocation()).quickDir();
 
 		if (a->appearance != NULL
 		        &&  a->isActionAvailable(actionKnockedDown, a->currentFacing)) {
@@ -4139,10 +4139,10 @@ void MotionTask::useMagicWeaponAction(void) {
 
 void MotionTask::defensiveMeleeAction(void) {
 	Actor           *a = (Actor *)object;
-	MotionTask      *attackerMotion = attacker->moveTask;
+	MotionTask      *attackerMotion = d.attacker->moveTask;
 
 	//  Determine if the blocking action has been initiated
-	if (!(defenseFlags & blocking)) {
+	if (!(d.defenseFlags & blocking)) {
 		//  If the attacker is not attacking, we're done
 		if (attackerMotion == NULL
 		        ||  !attackerMotion->isMeleeAttack()) {
@@ -4157,7 +4157,7 @@ void MotionTask::defensiveMeleeAction(void) {
 
 		//  If the strike is about to land start the blocking motion
 		if (attackerMotion->framesUntilStrike() <= 1)
-			defenseFlags |= blocking;
+			d.defenseFlags |= blocking;
 	} else {
 		//  If the actors appearance becomes NULL, make sure this action
 		//  no longer depends upon the animation
@@ -4373,32 +4373,32 @@ void MotionTask::updatePositions(void) {
 
 			//  This will be uninterrutable for 2 frames
 			a->setActionPoints(2);
-			mt->directObject->use(a->thisID());
+			mt->o.directObject->use(a->thisID());
 			//nextMT=mt;
 			moveTaskDone = true;
 			break;
 
 		case motionTypeUseObjectOnObject:
 
-			if (isWorld(mt->indirectObject->IDParent())) {
+			if (isWorld(mt->o.indirectObject->IDParent())) {
 				if (
 				    1
 #ifdef THIS_SHOULD_BE_IN_TILEMODE
 				    a->inUseRange(
-				        mt->indirectObject->getLocation(),
-				        mt->directObject)
+				        mt->o.indirectObject->getLocation(),
+				        mt->o.directObject)
 #endif
 				) {
-					mt->direction = (mt->indirectObject->getLocation()
+					mt->direction = (mt->o.indirectObject->getLocation()
 					                 -   a->getLocation()).quickDir();
 					if (a->currentFacing != mt->direction)
 						a->turn(mt->direction);
 					else {
 						//  The actor will now be uniterruptable
 						a->setActionPoints(2);
-						mt->directObject->useOn(
+						mt->o.directObject->useOn(
 						    a->thisID(),
-						    mt->indirectObject->thisID());
+						    mt->o.indirectObject->thisID());
 						if (mt && mt->motionType == motionTypeUseObjectOnObject)
 							moveTaskDone = true;
 						else
@@ -4408,9 +4408,9 @@ void MotionTask::updatePositions(void) {
 			} else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->useOn(
+				mt->o.directObject->useOn(
 				    a->thisID(),
-				    mt->indirectObject->thisID());
+				    mt->o.indirectObject->thisID());
 				if (mt && mt->motionType == motionTypeUseObjectOnObject)
 					moveTaskDone = true;
 				else
@@ -4425,11 +4425,11 @@ void MotionTask::updatePositions(void) {
 				TilePoint       actorLoc = a->getLocation(),
 				                TAILoc;
 				TileRegion      TAIReg;
-				ActiveItem      *TAG = mt->TAI->getGroup();
+				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->TAI->instance.u << tileUVShift;
-				TAIReg.min.v = mt->TAI->instance.v << tileUVShift;
+				TAIReg.min.u = mt->o.TAI->instance.u << tileUVShift;
+				TAIReg.min.v = mt->o.TAI->instance.v << tileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
 				                    + (TAG->group.uSize << tileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
@@ -4451,7 +4451,7 @@ void MotionTask::updatePositions(void) {
 			else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->useOn(a->thisID(), mt->TAI);
+				mt->o.directObject->useOn(a->thisID(), mt->o.TAI);
 				if (mt && mt->motionType == motionTypeUseObjectOnTAI)
 					moveTaskDone = true;
 				else
@@ -4471,7 +4471,7 @@ void MotionTask::updatePositions(void) {
 			else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->useOn(a->thisID(), mt->targetLoc);
+				mt->o.directObject->useOn(a->thisID(), mt->targetLoc);
 				if (mt && mt->motionType == motionTypeUseObjectOnLocation)
 					moveTaskDone = true;
 				else
@@ -4485,11 +4485,11 @@ void MotionTask::updatePositions(void) {
 				TilePoint       actorLoc = a->getLocation(),
 				                TAILoc;
 				TileRegion      TAIReg;
-				ActiveItem      *TAG = mt->TAI->getGroup();
+				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->TAI->instance.u << tileUVShift;
-				TAIReg.min.v = mt->TAI->instance.v << tileUVShift;
+				TAIReg.min.u = mt->o.TAI->instance.u << tileUVShift;
+				TAIReg.min.v = mt->o.TAI->instance.v << tileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
 				                    + (TAG->group.uSize << tileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
@@ -4511,7 +4511,7 @@ void MotionTask::updatePositions(void) {
 			else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->TAI->use(a->thisID());
+				mt->o.TAI->use(a->thisID());
 				moveTaskDone = true;
 			}
 			break;
@@ -4529,7 +4529,7 @@ void MotionTask::updatePositions(void) {
 				else {
 					//  The actor will now be uniterruptable
 					a->setActionPoints(2);
-					mt->directObject->drop(a->thisID(),
+					mt->o.directObject->drop(a->thisID(),
 					                       mt->targetLoc,
 					                       mt->moveCount);
 					if (mt && mt->motionType == motionTypeDropObject)
@@ -4540,7 +4540,7 @@ void MotionTask::updatePositions(void) {
 			} else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->drop(a->thisID(),
+				mt->o.directObject->drop(a->thisID(),
 				                       mt->targetLoc,
 				                       mt->moveCount);
 				if (mt && mt->motionType == motionTypeDropObject)
@@ -4555,17 +4555,17 @@ void MotionTask::updatePositions(void) {
 
 		case motionTypeDropObjectOnObject:
 
-			if (isWorld(mt->indirectObject->IDParent())) {
-				mt->direction = (mt->indirectObject->getLocation()
+			if (isWorld(mt->o.indirectObject->IDParent())) {
+				mt->direction = (mt->o.indirectObject->getLocation()
 				                 -   a->getLocation()).quickDir();
 				if (a->currentFacing != mt->direction)
 					a->turn(mt->direction);
 				else {
 					//  The actor will now be uniterruptable
 					a->setActionPoints(2);
-					mt->directObject->dropOn(
+					mt->o.directObject->dropOn(
 					    a->thisID(),
-					    mt->indirectObject->thisID(),
+					    mt->o.indirectObject->thisID(),
 					    mt->moveCount);
 					if (mt && mt->motionType == motionTypeDropObjectOnObject)
 						moveTaskDone = true;
@@ -4575,9 +4575,9 @@ void MotionTask::updatePositions(void) {
 			} else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->dropOn(
+				mt->o.directObject->dropOn(
 				    a->thisID(),
-				    mt->indirectObject->thisID(),
+				    mt->o.indirectObject->thisID(),
 				    mt->moveCount);
 				if (mt && mt->motionType == motionTypeDropObjectOnObject)
 					moveTaskDone = true;
@@ -4601,9 +4601,9 @@ void MotionTask::updatePositions(void) {
 			else {
 				//  The actor will now be uniterruptable
 				a->setActionPoints(2);
-				mt->directObject->dropOn(
+				mt->o.directObject->dropOn(
 				    a->thisID(),
-				    mt->TAI,
+				    mt->o.TAI,
 				    mt->targetLoc);
 				if (mt && mt->motionType == motionTypeDropObjectOnTAI)
 					moveTaskDone = true;
