@@ -147,6 +147,9 @@ public:
 	uint16 getMainCursor() { return _mainCursor; }
 	void refreshCursor();
 	bool wait(uint32 duration, bool skippable = false);
+	bool addCdRomDelay;
+	uint minCdRomDelay;
+	uint maxCdRomDelay;
 
 	/** Update the game state according to events and update the screen */
 	void doFrame();

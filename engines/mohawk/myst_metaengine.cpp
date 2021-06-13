@@ -27,6 +27,7 @@ void Mohawk::MohawkMetaEngine_Myst::registerDefaultSettings() {
 	ConfMan.registerDefault("zip_mode", false);
 	ConfMan.registerDefault("transition_mode", false);
 	ConfMan.registerDefault("fuzzy_logic", false);
+	ConfMan.registerDefault("cdromdelay", false);
 }
 
 const Mohawk::MystLanguage *Mohawk::MohawkMetaEngine_Myst::listLanguages() {
