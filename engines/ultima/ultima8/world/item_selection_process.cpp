@@ -130,10 +130,10 @@ bool ItemSelectionProcess::selectNextItem(bool grab) {
 	if (_selectedItem) {
 		// Pick the next item
 		int offset = 0;
-		for (Std::vector<Item *>::iterator iter = candidates.begin();
+		for (Std::vector<Item *>::const_iterator iter = candidates.begin();
 			 iter != candidates.end();
 			 offset++, iter++) {
-			ObjId num = item->getObjId();
+			ObjId num = (*iter)->getObjId();
 			if (_selectedItem == num) {
 				offset++;
 				break;
