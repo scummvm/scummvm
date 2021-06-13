@@ -31,86 +31,27 @@ namespace Saga2 {
 
 class gPixelMap;
 
-// VWPAGE.CPP , GDRAW.CPP
+void _BltPixels(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height);
 
-//  Assembly-language function to copy pixel to SVGA (opaque)
+void _BltPixelsT(uint8 *srcPtr, uint32 srcMod, uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height);
 
-void _BltPixels(uint8 *srcPtr, uint32 srcMod,
-                                 uint8 *dstPtr, uint32 dstMod,
-                                 uint32 width, uint32 height);
-
-//  Assembly-language function to copy pixel to SVGA (transparent)
-
-void _BltPixelsT(uint8 *srcPtr, uint32 srcMod,
-                                  uint8 *dstPtr, uint32 dstMod,
-                                  uint32 width, uint32 height);
-
-//  Assembly-language function to do rectangle fill (opaque)
-
-void _FillRect(uint8 *dstPtr, uint32 dstMod,
-                                uint32 width, uint32 height, uint32 color);
-
-//  Assembly-language function to draw horizontal line (opaque)
-
+void _FillRect(uint8 *dstPtr, uint32 dstMod, uint32 width, uint32 height, uint32 color);
 void _HLine(uint8 *dstPtr, uint32 width, uint32 color);
 
 
-/* ===================================================================== *
-                    RUNLEN.ASM
- * ===================================================================== */
-
-// INTRFACE.CPP, PLAYMODE.CPP
-
-void unpackImage(gPixelMap *map,
-                                  int32 width,
-                                  int32 rowCount,
-                                  int8 *srcData);
-
-void unpackImage(gPixelMap &map,
-                                  int16 width,
-                                  int16 rowCount,
-                                  int8 *srcData);
-/* ===================================================================== *
-                    SPRDRAW.ASM
- * ===================================================================== */
-
-// SPRITE.CPP
+void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData);
+void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData);
 
 void unpackSprite(gPixelMap *map, uint8 *sprData);
-void compositePixels(
-    gPixelMap       *compMap,
-    gPixelMap       *sprMap,
-    int32           xpos,
-    int32           ypos,
-    uint8           *lookup);
-void compositePixelsRvs(
-    gPixelMap       *compMap,
-    gPixelMap       *sprMap,
-    int32           xpos,
-    int32           ypos,
-    uint8           *lookup);
-
-// FTA.H, AUTOMAP.CPP, DISPNODE.CPP, INTRFACE.CPP, MOUSEIMG.CPP, SPRITE.CPP
-// TILE.CPP, ITEVIDEO.CPP
+void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup);
+void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup);
 
 //  Fast transparent blitting routine in assembly
-
 void TBlit(gPixelMap *d, gPixelMap *s, int32 x, int32 y);
 void TBlit4(gPixelMap *d, gPixelMap *s, int32 x, int32 y);
 
-/* ===================================================================== *
-                    TILEDRAW.ASM
- * ===================================================================== */
-
-// TILE.H, TILELOAD.CPP
-
-void drawTile(gPixelMap *map,
-                               int32 x, int32 y, int32 height,
-                               uint8 *srcData);
-
-void maskTile(gPixelMap *map,
-                               int32 x, int32 y, int32 height,
-                               uint8 *srcData);
+void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bool mask = false);
+void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData);
 
 } // end of namespace Saga2
 
