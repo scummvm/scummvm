@@ -1088,12 +1088,10 @@ void HandleTimerTick(long tick) {
 void initPanels(gDisplayPort &port) {
 	port.setDisplayPage(&protoPage);
 	globalPort = &port;
-	InitMouse(gDisplaySize.x, gDisplaySize.y);
 	mainFont = &Helv11Font;
 }
 
 void cleanupPanels(void) {
-	CleanupMouse();
 }
 
 int16 leftButtonState(void) {

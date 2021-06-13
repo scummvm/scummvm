@@ -110,15 +110,6 @@ struct gMouseState {
 	                left;
 };
 
-typedef uint32      gTimeStamp;
-
-void InitMouse(int16 width, int16 height);
-void CleanupMouse(void);
-void ReadMouse(gMouseState &st);
-uint16 ReadQualifiers(void);
-bool ReadKeyboard(int &key, int &qual);
-bool DoubleClick(gTimeStamp oldTime);
-
 } // end of namespace Saga2
 
 #endif

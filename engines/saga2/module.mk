@@ -32,7 +32,6 @@ MODULE_OBJS := \
 	gtextbox.o \
 	hresmgr.o \
 	imagcach.o \
-	input.o \
 	interp.o \
 	intrface.o \
 	keybored.o \
