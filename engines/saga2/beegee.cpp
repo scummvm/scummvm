@@ -46,7 +46,7 @@ struct auxAudioTheme {
 	soundSegment loopID;
 
 	auxAudioTheme() {
-		active = FALSE;
+		active = false;
 		loopID = 0;
 		l = Nowhere;
 	}
@@ -93,7 +93,7 @@ static Point32 themeAt;
 static int32 lastGameTime = 0;
 static int32 elapsedGameTime = 0;
 
-static bool playingExternalLoop = FALSE;
+static bool playingExternalLoop = false;
 
 int activeFactions[maxFactions];
 
@@ -140,7 +140,7 @@ void addAuxTheme(Location loc, soundSegment lid) {
 		if (!aats[i].active) {
 			aats[i].l = loc;
 			aats[i].loopID = lid;
-			aats[i].active = TRUE;
+			aats[i].active = true;
 			return;
 		}
 	}
@@ -149,14 +149,14 @@ void addAuxTheme(Location loc, soundSegment lid) {
 void killAuxTheme(soundSegment lid) {
 	for (int i = 0; i < AUXTHEMES; i++) {
 		if (aats[i].active &&   aats[i].loopID == lid) {
-			aats[i].active = FALSE;
+			aats[i].active = false;
 		}
 	}
 }
 
 void killAllAuxThemes(void) {
 	for (int i = 0; i < AUXTHEMES; i++) {
-		aats[i].active = FALSE;
+		aats[i].active = false;
 	}
 }
 
@@ -169,7 +169,7 @@ void disableBGLoop(int32 s) {
 
 void enableBGLoop(void) {
 	uint32 cr = currentTheme;
-	playingExternalLoop = FALSE;
+	playingExternalLoop = false;
 	currentTheme = 0;
 	audioEnvironmentUseSet(cr, auxTheme, themeAt);
 }

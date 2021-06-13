@@ -459,7 +459,7 @@ SPECIALSPELL(Resurrect) {
 SPECIALSPELL(DispellPoison) {
 	if (isActor(trg->getObject())) {
 		Actor *a = (Actor *) trg->getObject();
-		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(actorPoisoned, TRUE));
+		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(actorPoisoned, true));
 
 	}
 }

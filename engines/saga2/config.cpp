@@ -62,12 +62,12 @@ static void defaultConfig(configuration &config) {
 	config.musicVolume = 127;
 	config.soundVolume = 127;
 	config.voiceVolume = 127;
-	config.autoAggression = TRUE;
-	config.autoWeapon = TRUE;
-	config.speechText = TRUE;
-	config.showNight = TRUE;
+	config.autoAggression = true;
+	config.autoWeapon = true;
+	config.speechText = true;
+	config.showNight = true;
 #ifdef _WIN32
-	config.windowed = FALSE;
+	config.windowed = false;
 #endif
 	strcpy(config.soundResfilePath, ".\\");
 	strcpy(config.voiceResfilePath, ".\\");

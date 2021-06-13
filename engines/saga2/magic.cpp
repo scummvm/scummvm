@@ -141,20 +141,20 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		            enactor->getLocation() -
 		            target->getLocation())
 		        .magnitude()) {
-			return FALSE;
+			return false;
 		}
 #endif
 		if (target->IDParent() != enactor->IDParent()) {
-			return FALSE;
+			return false;
 		}
 		if (!lineOfSight(enactor, target, terrainTransparent))
-			return FALSE;
+			return false;
 
 		if (isActor(target)) {
 			Actor *a = (Actor *) target;
 			Actor *e = (Actor *) enactor;
 			if (a->hasEffect(actorInvisible) && !e->hasEffect(actorSeeInvis))
-				return FALSE;
+				return false;
 		}
 		if (target->thisID() == enactor->thisID())
 			return sp.canTarget(spellTargCaster);
@@ -166,7 +166,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		            enactor->getWorldLocation() -
 		            TAGPos(tag))
 		        .magnitude()) {
-			return FALSE;
+			return false;
 		}
 		return sp.canTarget(spellTargTAG);
 	}
@@ -176,7 +176,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 	            enactor->getLocation() -
 	        )
 	        .magnitude()) {
-		return FALSE;
+		return false;
 	}
 #endif
 	return sp.canTarget(spellTargLocation);
@@ -191,16 +191,16 @@ bool canCast(GameObject *enactor, SkillProto *spell) {
 	int amt = sProto.getManaAmt();
 
 	if (ami == sManaIDSkill)
-		return TRUE;
+		return true;
 #if NPC_MANA_CHECK
 	if (isActor(enactor)) {
 		Actor *a = (Actor *) enactor;
 		assert(ami >= manaIDRed && ami <= manaIDViolet);
 		if ((&a->effectiveStats.redMana)[ami] < amt)
-			return FALSE;
-		return TRUE;
+			return false;
+		return true;
 	} else {
-		return TRUE;
+		return true;
 	}
 #endif
 	return enactor->hasCharge(ami, amt);
@@ -225,7 +225,7 @@ bool canCast(GameObject *enactor, SkillProto *spell) {
 // cast untargeted spell
 bool castUntargetedSpell(GameObject *enactor, SkillProto *spell) {
 	castSpell(enactor, enactor, spell);
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -238,7 +238,7 @@ bool castSpell(GameObject *enactor, Location   &target, SkillProto *spell) {
 		} else
 			implementSpell(enactor, target, spell);
 	}
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -251,7 +251,7 @@ bool castSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) {
 		} else
 			implementSpell(enactor, target, spell);
 	}
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -269,7 +269,7 @@ bool castSpell(GameObject *enactor, GameObject *target, SkillProto *spell) {
 		} else
 			implementSpell(enactor, target, spell);
 	}
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -288,7 +288,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
 			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
-			return FALSE;
+			return false;
 		}
 		PlayerActorID       playerID;
 
@@ -299,13 +299,13 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
-			return FALSE;
+			return false;
 		}
 	}
 
 	activeSpells.add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
 	sProto.playSound(enactor);
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -328,7 +328,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
 			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
-			return FALSE;
+			return false;
 		}
 		PlayerActorID       playerID;
 
@@ -339,13 +339,13 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
-			return FALSE;
+			return false;
 		}
 	}
 
 	activeSpells.add(new SpellInstance(GetOwner(enactor), l, sProto.getDisplayID()));
 	sProto.playSound(enactor);
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -366,7 +366,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 		if (!r) {
 			Location cal = Location(a->getLocation(), a->IDParent());
 			Saga2::playSoundAt(MKTAG('S', 'P', 'L', spellFailSound), cal);
-			return FALSE;
+			return false;
 		}
 		PlayerActorID       playerID;
 
@@ -377,13 +377,13 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
-			return FALSE;
+			return false;
 		}
 	}
 
 	activeSpells.add(new SpellInstance(GetOwner(enactor), target, sProto.getDisplayID()));
 	sProto.playSound(enactor);
-	return TRUE;
+	return true;
 }
 
 } // end of namespace Saga2

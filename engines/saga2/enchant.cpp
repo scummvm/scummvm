@@ -102,10 +102,10 @@ bool DispelObjectEnchantment(
 		//  Remove the enchantment and it's effects
 		ench->deleteObject();
 		obj->evalEnchantments();
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-------------------------------------------------------------------
@@ -234,11 +234,11 @@ void evalObjectEnchantments(GameObject *obj) {
 	//  If more enchantment types are added, then we'll
 	//  have to do this a bit differently...
 
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectInvisible, TRUE)))
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectInvisible, true)))
 		obj->setFlags((uint8) - 1, objectInvisible);
 	else
 		obj->setFlags(0, objectInvisible);
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectLocked, FALSE)))
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectLocked, false)))
 		obj->setFlags((uint8) - 1, objectLocked);
 }
 

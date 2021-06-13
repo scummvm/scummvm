@@ -68,13 +68,13 @@ void initBackPanel(void);
 // ------------------------------------------------------------------------
 // Display disable flags
 
-void displayEnable(DisplayDisabledBecause reason, bool onOff = TRUE);
+void displayEnable(DisplayDisabledBecause reason, bool onOff = true);
 bool displayEnabled(uint32 mask = 0xFFFFFFFF);
 bool displayOkay(void);
 void mainEnable(void);
 void mainDisable(void);
 
-inline void displayDisable(DisplayDisabledBecause reason, bool onOff = FALSE) {
+inline void displayDisable(DisplayDisabledBecause reason, bool onOff = false) {
 	displayEnable(reason, onOff);
 }
 

@@ -145,7 +145,7 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 //	Specific DECODER routines
 
 BUFFERLOD(seekMusic)   {
-	return hResSeek(sb, ss, musicRes, TRUE);
+	return hResSeek(sb, ss, musicRes, true);
 }
 BUFFERLOD(readMusic)   {
 	return hResRead(sb, ss, musicRes);
@@ -154,7 +154,7 @@ BUFFERLOD(flushMusic)  {
 	return hResFlush(sb, ss, musicRes);
 }
 BUFFERLOD(seekLongSound)   {
-	return hResSeek(sb, ss, longRes, FALSE);
+	return hResSeek(sb, ss, longRes, false);
 }
 BUFFERLOD(readLongSound)   {
 	return hResRead(sb, ss, longRes);
@@ -163,7 +163,7 @@ BUFFERLOD(flushLongSound)  {
 	return hResFlush(sb, ss, longRes);
 }
 BUFFERLOD(seekSound)   {
-	return hResSeek(sb, ss, soundRes, TRUE);
+	return hResSeek(sb, ss, soundRes, true);
 }
 BUFFERLOD(readSound)   {
 	return hResRead(sb, ss, soundRes);
@@ -172,7 +172,7 @@ BUFFERLOD(flushSound)  {
 	return hResFlush(sb, ss, soundRes);
 }
 BUFFERLOD(seekLoop)   {
-	return hResSeek(sb, ss, loopRes, TRUE);
+	return hResSeek(sb, ss, loopRes, true);
 }
 BUFFERLOD(readLoop)   {
 	return hResRead(sb, ss, loopRes);
@@ -181,7 +181,7 @@ BUFFERLOD(flushLoop)  {
 	return hResFlush(sb, ss, loopRes);
 }
 BUFFERLOD(seekVoice)   {
-	return hResSeek(sb, ss, voiceRes, FALSE);
+	return hResSeek(sb, ss, voiceRes, false);
 }
 BUFFERLOD(readVoice)   {
 	return hResRead(sb, ss, voiceRes);
@@ -391,7 +391,7 @@ bool haveKillerSoundCard(void) {
 #ifndef _WIN32
 	if (audio && audio->mid != NULL)
 		return audio->goodMIDICard();
-	return FALSE;
+	return false;
 #else
 	return GetPrivateProfileInt("Sound", "WavetableMIDI", 1, iniFile);
 #endif
@@ -430,13 +430,13 @@ void resumeLoops(void) {
 }
 
 void suspendMusic(void) {
-	audioEnvironmentSuspend(TRUE);
+	audioEnvironmentSuspend(true);
 }
 
 void resumeMusic(void) {
 	//if (audio->enabled(volMusic))
 	if (musicRes)
-		audioEnvironmentSuspend(FALSE);
+		audioEnvironmentSuspend(false);
 }
 
 void suspendAudio(void) {
@@ -552,12 +552,12 @@ void playVoice(uint32 s) {
 // supplemental interface for speech
 
 bool sayVoice(uint32 s[]) {
-	bool worked = FALSE;
+	bool worked = false;
 #ifndef AUDIO_DISABLED
 	if (hResCheckResID(voiceRes, s)) {
 		audio->queueVoice(s, voiceDec, Here);
 		if (audio->talking())
-			worked = TRUE;
+			worked = true;
 	}
 #endif
 	return worked;
@@ -615,12 +615,12 @@ void playSoundAt(uint32 s, Location playAt) {
 // voice playback w/ attenuation
 
 bool sayVoiceAt(uint32 s[], Point32 p) {
-	bool worked = FALSE;
+	bool worked = false;
 #ifndef AUDIO_DISABLED
 	if (hResCheckResID(voiceRes, s)) {
 		audio->queueVoice(s, voiceDec, p);
 		if (audio->talking())
-			worked = TRUE;
+			worked = true;
 	}
 #endif
 	return worked;
@@ -630,7 +630,7 @@ bool sayVoiceAt(uint32 s[], Location playAt) {
 	Point32 p = translateLocation(playAt);
 	if (p != VeryFarAway)
 		return sayVoiceAt(s, p);
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------

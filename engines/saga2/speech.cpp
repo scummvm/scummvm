@@ -275,7 +275,7 @@ bool Speech::append(char *text, int32 sampID) {
 
 	//  Check to see if there's enough room in the character buffer
 	if (charCount + len >= sizeof(speechBuffer)
-	        ||  sampleCount >= MAX_SAMPLES) return FALSE;
+	        ||  sampleCount >= MAX_SAMPLES) return false;
 
 	//  Copy text to end of text in buffer, including '\0'
 	memcpy(&speechBuffer[charCount], text, len + 1);
@@ -287,7 +287,7 @@ bool Speech::append(char *text, int32 sampID) {
 	if (sampID)
 		sampleID[sampleCount++] = extendID(sampID);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -304,7 +304,7 @@ bool Speech::activate(void) {
 	speechFlags |= spQueued;
 
 	//  This routine can't fail
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -335,7 +335,7 @@ bool Speech::setupActive(void) {
 	setWidth();
 
 	//  If speech position is off-screen, then skip
-	if (!calcPosition(initialSpeechPosition)) return FALSE;
+	if (!calcPosition(initialSpeechPosition)) return false;
 
 	if (sampleCount) {
 		GameObject *go = GameObject::objectAddress(objID);
@@ -431,9 +431,9 @@ bool Speech::setupActive(void) {
 		//  REM: Also set pointer to arrow shape.
 		mouseInfo.setIntent(GrabInfo::WalkTo);
 //		mouseInfo.setDoable( tileRect.ptInside( ev.mouse ) );
-		speakButtonControls->enable(TRUE);
+		speakButtonControls->enable(true);
 
-		speechList.SetLock(FALSE);
+		speechList.SetLock(false);
 	} else {
 		//  If there is a lock flag on this speech, then LockUI()
 		speechList.SetLock(speechFlags & spLock);
@@ -446,7 +446,7 @@ bool Speech::setupActive(void) {
 	}
 
 //	speechFinished.set( ticksPerSecond*2 );
-	return (TRUE);
+	return (true);
 }
 
 //This Function Sets Up Width And Height For A Speech
@@ -495,7 +495,7 @@ bool Speech::calcPosition(Point16 &p) {
 	GameObject      *obj = GameObject::objectAddress(objID);
 	TilePoint       tp = obj->getWorldLocation();
 
-	if (!isVisible(obj)) return FALSE;
+	if (!isVisible(obj)) return false;
 
 	TileToScreenCoords(tp, p);
 
@@ -507,7 +507,7 @@ bool Speech::calcPosition(Point16 &p) {
 	            p.y - (bounds.height + actorHeight),
 	            tileRect.height - 50 - bounds.height);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -520,7 +520,7 @@ bool Speech::displayText(void) {
 	//  speech along with the display. Otherwise, calculate the
 	//  position from the actor.
 	if (speechButtonCount > 0) p = initialSpeechPosition;
-	else if (!calcPosition(p)) return FALSE;
+	else if (!calcPosition(p)) return false;
 
 	//  Blit to the port
 	backPort.setMode(drawModeMatte);
@@ -530,7 +530,7 @@ bool Speech::displayText(void) {
 	                   p.y + fineScroll.y,
 	                   bounds.width, bounds.height);
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -555,7 +555,7 @@ void Speech::dispose(void) {
 
 		//  Clear the number of active buttons
 		speechLineCount = speechButtonCount = 0;
-		speakButtonControls->enable(FALSE);
+		speakButtonControls->enable(false);
 
 		if (!(speechFlags & spNoAnimate) && isActor(objID)) {
 			Actor   *a = (Actor *)GameObject::objectAddress(objID);
@@ -595,7 +595,7 @@ void updateSpeech(void) {
 		if (sp->longEnough() &&
 		        (speechButtonCount == 0 || sp->selectedButton != 0))
 			sp->dispose();
-	} else speechList.SetLock(FALSE);
+	} else speechList.SetLock(false);
 }
 
 bool Speech::longEnough(void) {
@@ -675,7 +675,7 @@ void abortAllSpeeches(void) {
 //	}
 //	if (abortEnabled)
 //	{
-//		skipSpeeches = TRUE;
+//		skipSpeeches = true;
 //		wakeUpThreads( TWAIT_SPEECH );
 //	}
 
@@ -1005,9 +1005,9 @@ bool isVisible(GameObject *obj) {
 
 	if ((distanceY >= loadDistY) ||
 	        (distanceX >= loadDistX))
-		return (FALSE);
+		return (false);
 
-	return (TRUE);
+	return (true);
 }
 
 /* ===================================================================== *
@@ -1018,7 +1018,7 @@ bool isVisible(GameObject *obj) {
 //	Initialize the SpeechTaskList
 
 SpeechTaskList::SpeechTaskList(void) {
-	lockFlag = FALSE;
+	lockFlag = false;
 
 	for (int i = 0; i < elementsof(array); i++) {
 		free.addTail(array[i]);
@@ -1034,7 +1034,7 @@ SpeechTaskList::SpeechTaskList(void **buf) {
 	int16       i,
 	            count;
 
-	lockFlag = FALSE;
+	lockFlag = false;
 
 	//  Initialize the free list
 	for (i = 0; i < elementsof(array); i++) {
@@ -1205,15 +1205,15 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 }
 
 void SpeechTaskList::SetLock(int newState) {
-	if (newState && lockFlag == FALSE) {
+	if (newState && lockFlag == false) {
 		extern void noStickyMap(void);
 
 		noStickyMap();
-		LockUI(TRUE);
-		lockFlag = TRUE;
-	} else if (lockFlag && newState == FALSE) {
-		LockUI(FALSE);
-		lockFlag = FALSE;
+		LockUI(true);
+		lockFlag = true;
+	} else if (lockFlag && newState == false) {
+		LockUI(false);
+		lockFlag = false;
 	}
 }
 

@@ -100,9 +100,9 @@ public:
 	bool add(Actor *newMember) {
 		if (memberCount < elementsof(members)) {
 			members[memberCount++] = newMember;
-			return TRUE;
+			return true;
 		} else
-			return FALSE;
+			return false;
 	}
 
 	void remove(Actor *member) {

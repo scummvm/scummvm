@@ -179,7 +179,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	currentPage     = 0;
 	totalLines      = 0;
 	totalPages      = 0;
-	pageBreakSet    = TRUE;
+	pageBreakSet    = true;
 
 	// null out the image pointer array
 	for (int16 i = 0; i < maxPages; i++) {
@@ -235,9 +235,9 @@ bool CDocument::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 #define SpecialKey(k) ((k>>8)+0x80)
@@ -248,21 +248,21 @@ bool CDocument::keyStroke(gPanelMessage &msg) {
 	switch (msg.key) {
 	case 0x1B:
 		cmdDocumentEsc(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(leftArrowKey):
 		cmdDocumentLt(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(rightArrowKey):
 		cmdDocumentRt(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(upArrowKey):
 		cmdDocumentUp(ev);
-		return TRUE;
+		return true;
 	case SpecialKey(downArrowKey):
 		cmdDocumentDn(ev);
-		return TRUE;
+		return true;
 	default:
-		return FALSE;
+		return false;
 	}
 }
 
@@ -339,7 +339,7 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 	}
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void CDocument::gotoPage(int8 page) {
@@ -530,10 +530,10 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 		offset = index;
 
 		// and set the new page flag
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool CDocument::checkForImage(char      *string,
@@ -609,10 +609,10 @@ bool CDocument::checkForImage(char      *string,
 		    textPictureOffset;
 
 		// set the new page flag
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -628,7 +628,7 @@ void CDocument::makePages(void) {
 	uint16  linesPerPage    = pageHeight / (textHeight + 1);
 	uint16  dummy;
 	uint16  i;
-	bool    newPage         = FALSE;
+	bool    newPage         = false;
 
 
 	while (offset >= 0 && pageIndex <= maxPages) {
@@ -645,12 +645,12 @@ void CDocument::makePages(void) {
 					if (checkForPageBreak(str, i, offset)) {
 						// if a break did not just occur
 						if (!pageBreakSet) {
-							newPage         = TRUE;
-							pageBreakSet    = TRUE;
+							newPage         = true;
+							pageBreakSet    = true;
 						} else {
 							// eat the newPage and
 							// reset the flag for a just set break
-							pageBreakSet = FALSE;
+							pageBreakSet = false;
 						}
 					}
 
@@ -658,12 +658,12 @@ void CDocument::makePages(void) {
 					if (checkForImage(str, i, pageIndex, offset)) {
 						// if a break did not just occur
 						if (!pageBreakSet) {
-							newPage         = TRUE;
-							pageBreakSet    = TRUE;
+							newPage         = true;
+							pageBreakSet    = true;
 						} else {
 							// eat the newPage and
 							// reset the flag for a just set break
-							pageBreakSet = FALSE;
+							pageBreakSet = false;
 						}
 
 						lineIndex   = lineOffset[pageIndex];
@@ -671,7 +671,7 @@ void CDocument::makePages(void) {
 				}
 
 				// we got token that was not a page break so reset the flag
-				pageBreakSet = FALSE;
+				pageBreakSet = false;
 			}
 
 			// set the length of this line
@@ -691,7 +691,7 @@ void CDocument::makePages(void) {
 
 		numLines[pageIndex] = lineIndex;
 		pageIndex++;
-		newPage     = FALSE;
+		newPage     = false;
 
 		/* debug
 		WriteStatusF( 5, "page#:%d", pageIndex );
@@ -901,7 +901,7 @@ int16 openScroll(uint16 textScript) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 
 	// point to book
@@ -938,7 +938,7 @@ int16 openScroll(uint16 textScript) {
 	win->open();
 
 	// do stuff
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 	// remove the window all attatched controls
 	delete  win;
@@ -965,7 +965,7 @@ int16 openBook(uint16 textScript) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	warning("STUB: openBook()");
 #if 0
@@ -990,7 +990,7 @@ int16 openBook(uint16 textScript) {
 	win->open();
 
 	// do stuff
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 	// remove the window all attatched controls
 	delete  win;
@@ -1010,7 +1010,7 @@ int16 openParchment(uint16 textScript) {
 	requestInfo     rInfo;
 
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	warning("STUB: openParchment()");
 #if 0
@@ -1034,7 +1034,7 @@ int16 openParchment(uint16 textScript) {
 	win->open();
 
 	// do stuff
-	EventLoop(rInfo.running, TRUE);
+	EventLoop(rInfo.running, true);
 
 	// remove the window all attatched controls
 	delete  win;

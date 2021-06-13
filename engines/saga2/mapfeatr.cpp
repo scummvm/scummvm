@@ -311,7 +311,7 @@ void termMapFeatures(void) {
 
 
 CMapFeature::CMapFeature(TilePoint where, int16 inWorld, const char *desc) {
-	visible = FALSE;
+	visible = false;
 	featureCoords = where;
 	world = inWorld;
 	strncpy(name, desc, MAX_MAP_FEATURE_NAME_LENGTH);
@@ -367,7 +367,7 @@ bool CMapFeature::hitCheck(TileRegion viewRegion,
                            TilePoint comparePoint) {
 	int32           x, y;
 
-	if (world != inWorld) return FALSE;
+	if (world != inWorld) return false;
 	TilePoint fCoords = featureCoords >> (tileUVShift + platShift);
 	if (visible                               &&
 	        fCoords.u >= viewRegion.min.u   &&
@@ -386,7 +386,7 @@ bool CMapFeature::hitCheck(TileRegion viewRegion,
 		TilePoint DisplayPoint = TilePoint(x, y, 0);
 		return isHit(DisplayPoint, comparePoint);
 	}
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *

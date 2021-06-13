@@ -44,7 +44,7 @@ extern int16                currentMapNum;
 extern hResource           *objResFile;
 extern hResContext          *tileRes;       // tile resource handle
 
-static byte *tileResLoad(hResID i, bool asynch = FALSE) {
+static byte *tileResLoad(hResID i, bool asynch = false) {
 	if (tileRes)
 		return tileRes->loadResource(i, "tile image bank");
 	else

@@ -71,7 +71,7 @@ ObjectID ProtoObj::placeObject(void) {
 
 //  Check if item can be contained by this object
 bool ProtoObj::canContain(ObjectID dObj, ObjectID item) {
-	return FALSE;
+	return false;
 }
 
 //  Determine if the object can contain another object at the specified
@@ -80,17 +80,17 @@ bool ProtoObj::canContainAt(
     ObjectID        dObj,
     ObjectID        item,
     const TilePoint &where) {
-	return FALSE;
+	return false;
 }
 
 //  Determine if this type of object is two handed
 bool ProtoObj::isTwoHanded(ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Determine if this type of object is a missile
 bool ProtoObj::isMissile(void) {
-	return FALSE;
+	return false;
 }
 
 //Create Container Window
@@ -106,7 +106,7 @@ bool ProtoObj::use(ObjectID dObj, ObjectID enactor) {
 	int16   scriptResult;
 
 	//  Setup use cursor, if necessary
-	if (setUseCursor(dObj)) return TRUE;
+	if (setUseCursor(dObj)) return true;
 
 	//  Handle object script in a standard fashion
 	if ((scriptResult = stdActionScript(
@@ -120,12 +120,12 @@ bool ProtoObj::use(ObjectID dObj, ObjectID enactor) {
 
 //  The default action is not to set up a use cursor
 bool ProtoObj::setUseCursor(ObjectID dObj) {
-	return FALSE;
+	return false;
 }
 
 //  The virtual use action command
 bool ProtoObj::useAction(ObjectID dObj, ObjectID enactor) {
-	return FALSE;
+	return false;
 }
 
 //  UseOn object command
@@ -149,7 +149,7 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ObjectID item) {
 
 //  Perform the use on action
 bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID item) {
-	return FALSE;
+	return false;
 }
 
 //  UseOn active item command
@@ -186,7 +186,7 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
 
 //  Perform the use on action
 bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
-	return FALSE;
+	return false;
 }
 
 //  UseOn location command
@@ -234,14 +234,14 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, const Location &loc) {
 
 //  Perform the use on action
 bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, const Location &loc) {
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
-//	Returns TRUE if object in continuous use.
+//	Returns true if object in continuous use.
 
 bool ProtoObj::isObjectBeingUsed(GameObject *) {
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -249,7 +249,7 @@ bool ProtoObj::isObjectBeingUsed(GameObject *) {
 //	specified actor
 
 bool ProtoObj::useSlotAvailable(GameObject *, Actor *) {
-	return FALSE;
+	return false;
 }
 
 //  Open this object
@@ -258,7 +258,7 @@ bool ProtoObj::open(ObjectID dObj, ObjectID enactor) {
 
 	int16   scriptResult;
 
-	if (!canOpen(dObj, enactor)) return FALSE;
+	if (!canOpen(dObj, enactor)) return false;
 
 	//  Handle object script in a standard fashion
 	if ((scriptResult = stdActionScript(
@@ -272,12 +272,12 @@ bool ProtoObj::open(ObjectID dObj, ObjectID enactor) {
 
 //  Virtual function to determine if this object can be opened
 bool ProtoObj::canOpen(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Virtual function to actually open the object
 bool ProtoObj::openAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Close this object
@@ -287,7 +287,7 @@ bool ProtoObj::close(ObjectID dObj, ObjectID enactor) {
 	int16           scriptResult;
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (!dObjPtr->isOpen()) return FALSE;
+	if (!dObjPtr->isOpen()) return false;
 
 	//  Handle object script in a standard fashion
 	if ((scriptResult = stdActionScript(
@@ -301,7 +301,7 @@ bool ProtoObj::close(ObjectID dObj, ObjectID enactor) {
 
 //  Virtual function to actually close the object
 bool ProtoObj::closeAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Take this object
@@ -310,7 +310,7 @@ bool ProtoObj::take(ObjectID dObj, ObjectID enactor, int16 num) {
 	assert(mouseInfo.getObjectId() == Nothing);
 
 	// >>> this needs to be dynamic!
-	if (mass > 200 || bulk > 200) return FALSE;
+	if (mass > 200 || bulk > 200) return false;
 
 	int16           scriptResult;
 
@@ -326,12 +326,12 @@ bool ProtoObj::take(ObjectID dObj, ObjectID enactor, int16 num) {
 
 //  Virtual function to take the object
 bool ProtoObj::takeAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Virtual function to take the object
 bool ProtoObj::takeAction(ObjectID, ObjectID, int16 num) {
-	return FALSE;
+	return false;
 }
 
 
@@ -339,7 +339,7 @@ bool ProtoObj::takeAction(ObjectID, ObjectID, int16 num) {
 bool ProtoObj::drop(ObjectID dObj, ObjectID enactor, const Location &loc, int16 num) {
 	assert(dObj != Nothing);
 
-	if (!canDropAt(dObj, enactor, loc)) return FALSE;
+	if (!canDropAt(dObj, enactor, loc)) return false;
 
 	//  Handle object script in a non-standard fashion
 	scriptCallFrame scf;
@@ -367,12 +367,12 @@ bool ProtoObj::drop(ObjectID dObj, ObjectID enactor, const Location &loc, int16 
 //  Virtual function to determine if this object can be dropped at the
 //  specified location
 bool ProtoObj::canDropAt(ObjectID, ObjectID, const Location &) {
-	return FALSE;
+	return false;
 }
 
 //  Virtual function to drop the object
 bool ProtoObj::dropAction(ObjectID, ObjectID, const Location &, int16) {
-	return FALSE;
+	return false;
 }
 
 //  drop an object onto another object and handle the result.
@@ -380,7 +380,7 @@ bool ProtoObj::dropOn(ObjectID dObj, ObjectID enactor, ObjectID target, int16 co
 	assert(dObj != Nothing);
 
 	// this prevents objects from being dropped on themselves
-	if (target == dObj) return TRUE;
+	if (target == dObj) return true;
 
 	int16       scriptResult;
 
@@ -437,7 +437,7 @@ bool ProtoObj::dropOnAction(
     ActiveItem *,
     const Location &,
     int16) {
-	return FALSE;
+	return false;
 }
 
 //  Strike another object with this object
@@ -459,7 +459,7 @@ bool ProtoObj::strike(ObjectID dObj, ObjectID enactor, ObjectID item) {
 
 //  Virtual function to strike another object with this object
 bool ProtoObj::strikeAction(ObjectID, ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Damage another object with this object
@@ -480,7 +480,7 @@ bool ProtoObj::damage(ObjectID dObj, ObjectID enactor, ObjectID target) {
 
 //  Virtual function to damage another object with this object
 bool ProtoObj::damageAction(ObjectID, ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Eat this object
@@ -501,7 +501,7 @@ bool ProtoObj::eat(ObjectID dObj, ObjectID enactor) {
 
 //  Virtual function to eat this object
 bool ProtoObj::eatAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Insert this object into another object
@@ -523,7 +523,7 @@ bool ProtoObj::insert(ObjectID dObj, ObjectID enactor, ObjectID item) {
 
 //  Virtual function to insert this object into another object
 bool ProtoObj::insertAction(ObjectID, ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Remove this object from the object it is in
@@ -544,7 +544,7 @@ bool ProtoObj::remove(ObjectID dObj, ObjectID enactor) {
 
 //  Virtual function to remove this object from the object it is in
 bool ProtoObj::removeAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Handle the effects of an object being dropped on this object
@@ -611,7 +611,7 @@ bool ProtoObj::acceptDamageAction(
     int8,
     uint8,
     int8) {
-	return TRUE;
+	return true;
 }
 
 bool ProtoObj::acceptHealing(
@@ -642,7 +642,7 @@ bool ProtoObj::acceptHealing(
 
 //  Virtual function to damage this object directly
 bool ProtoObj::acceptHealingAction(ObjectID, ObjectID, int8) {
-	return FALSE;
+	return false;
 }
 
 //  Accept strike from another object (allows this object to cause
@@ -677,7 +677,7 @@ bool ProtoObj::acceptStrikeAction(
     ObjectID,
     ObjectID,
     uint8) {
-	return TRUE;
+	return true;
 }
 
 //  Unlock or lock this object with a key.
@@ -689,7 +689,7 @@ bool ProtoObj::acceptLockToggle(
 
 	int16       scriptResult;
 
-	if (!canToggleLock(dObj, enactor, keyCode)) return FALSE;
+	if (!canToggleLock(dObj, enactor, keyCode)) return false;
 
 	//  Handle object script in a standard fashion
 	if ((scriptResult = stdActionScript(
@@ -703,12 +703,12 @@ bool ProtoObj::acceptLockToggle(
 
 //  Virtual function to determine if the lock can be toggled
 bool ProtoObj::canToggleLock(ObjectID, ObjectID, uint8) {
-	return FALSE;
+	return false;
 }
 
 //  Virtual function to actually toggle the lock
 bool ProtoObj::acceptLockToggleAction(ObjectID, ObjectID, uint8) {
-	return FALSE;
+	return false;
 }
 
 //  Mix this object with another.
@@ -730,7 +730,7 @@ bool ProtoObj::acceptMix(ObjectID dObj, ObjectID enactor, ObjectID mixObj) {
 
 //  Virtual function to mix this object with another
 bool ProtoObj::acceptMixAction(ObjectID, ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 //  Insert another object into this object.
@@ -742,7 +742,7 @@ bool ProtoObj::acceptInsertion(
 	assert(dObj != Nothing);
 	assert(item != Nothing);
 
-	if (!canContain(dObj, item)) return FALSE;
+	if (!canContain(dObj, item)) return false;
 
 	int16           scriptResult;
 
@@ -758,7 +758,7 @@ bool ProtoObj::acceptInsertion(
 
 //  Virtual function to insert an object into this object
 bool ProtoObj::acceptInsertionAction(ObjectID, ObjectID, ObjectID, int16) {
-	return FALSE;
+	return false;
 }
 
 //  Insert another object into this object at a specified slot
@@ -771,7 +771,7 @@ bool ProtoObj::acceptInsertionAt(
 	assert(dObj != Nothing);
 	assert(item != Nothing);
 
-	if (!canContainAt(dObj, item, where)) return FALSE;
+	if (!canContainAt(dObj, item, where)) return false;
 
 	int16           scriptResult;
 
@@ -789,7 +789,7 @@ bool ProtoObj::acceptInsertionAt(
 //  specified slot
 bool ProtoObj::acceptInsertionAtAction(
     ObjectID, ObjectID, ObjectID, const TilePoint &, int16) {
-	return FALSE;
+	return false;
 }
 
 
@@ -822,7 +822,7 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 				sprIndex = obj->missileFacing;
 			else {
 				sprIndex = 16 - obj->missileFacing;
-				sprInfo.flipped = TRUE;
+				sprInfo.flipped = true;
 			}
 
 			sprInfo.sp = missileSprites->sprite(sprIndex);
@@ -919,7 +919,7 @@ GameObject *ProtoObj::getSpell(ObjectID) {
 
 //  Determine if this type of object can block an attack
 bool ProtoObj::canBlock(void) {
-	return FALSE;
+	return false;
 }
 
 //  Return a mask of bits indicating the directions relative to the
@@ -980,13 +980,13 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 // ------------------------------------------------------------------------
 
 bool ProtoObj::canFitBulkwise(GameObject *, GameObject *) {
-	return FALSE;
+	return false;
 }
 
 // ------------------------------------------------------------------------
 
 bool ProtoObj::canFitMasswise(GameObject *, GameObject *) {
-	return FALSE;
+	return false;
 }
 
 // ------------------------------------------------------------------------
@@ -1013,7 +1013,7 @@ uint16 InventoryProto::containmentSet(void) {
 
 bool InventoryProto::takeAction(ObjectID dObj, ObjectID enactor, int16 num) {
 	mouseInfo.copyObject(dObj, GrabInfo::Drop, num);
-	return TRUE;
+	return true;
 }
 
 bool InventoryProto::canDropAt(
@@ -1023,7 +1023,7 @@ bool InventoryProto::canDropAt(
 	assert(enactor != Nothing);
 
 	//  If we're not dropping it onto a world, we're okay
-	if (!isWorld(loc.context)) return TRUE;
+	if (!isWorld(loc.context)) return true;
 
 	GameObject      *enactorPtr = GameObject::objectAddress(enactor);
 
@@ -1033,9 +1033,9 @@ bool InventoryProto::canDropAt(
 	if (enactorPtr->IDParent() != loc.context
 	        || (loc - enactorPtr->getLocation()).quickHDistance()
 	        >   tileUVSize * platformWidth * 4)
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 bool InventoryProto::dropAction(
@@ -1076,11 +1076,11 @@ bool InventoryProto::dropAction(
 		//  Split the merged object if needed.
 		if (dObjPtr->isMergeable()           //  If mergeable
 		        &&  num < dObjPtr->getExtra()) {    //  And not dropping whole pile
-			if (num == 0) return FALSE;         //  If mergeing zero, then do nothing
+			if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 			extractedObj = dObjPtr->extractMerged(dObjPtr->getExtra() - num);
 			if (extractedObj == NULL)
-				return FALSE;
+				return false;
 
 			extractedObj->move(
 			    Location(dObjPtr->getLocation(), dObjPtr->IDParent()));
@@ -1092,7 +1092,7 @@ bool InventoryProto::dropAction(
 			//  Make sure the game engine knows that it may scavenge this
 			//  object if necessary
 			if (!dObjPtr->isImportant())
-				dObjPtr->setScavengable(TRUE);
+				dObjPtr->setScavengable(true);
 		} else {
 			int16       offsetDist = enactorProto->crossSection + crossSection;
 			Direction   vectorDir = vector.quickDir();
@@ -1118,7 +1118,7 @@ bool InventoryProto::dropAction(
 			if (startPt == Nowhere) {
 				if (extractedObj != NULL)
 					GameObject::mergeWith(extractedObj, dObjPtr, extractedObj->getExtra());
-				return FALSE;
+				return false;
 			}
 
 			dObjPtr->move(Location(startPt, loc.context));
@@ -1126,7 +1126,7 @@ bool InventoryProto::dropAction(
 			//  Make sure the game engine knows that it may scavenge this
 			//  object if necessary
 			if (!dObjPtr->isImportant())
-				dObjPtr->setScavengable(TRUE);
+				dObjPtr->setScavengable(true);
 
 			MotionTask::throwObjectTo(*dObjPtr, loc);
 		}
@@ -1136,7 +1136,7 @@ bool InventoryProto::dropAction(
 		return targetObj->acceptInsertionAt(enactor, dObj, loc, num);
 	}
 
-	return TRUE;
+	return true;
 }
 
 bool InventoryProto::dropOnAction(
@@ -1156,10 +1156,10 @@ bool InventoryProto::dropOnAction(
 		if (!dObjPtr->isMoving() && target->trigger(enactor, dObj))
 			dObjPtr->currentTAG = target->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //  Virtual function to handle the effects of an object being dropped
@@ -1217,7 +1217,7 @@ bool PhysicalContainerProto::canContain(ObjectID dObj, ObjectID item) {
 	//  inside of "item". Do this by looking at all of the ancestors of
 	//  dObj and make sure that none of them equal "item".
 	for (pPtr = GameObject::objectAddress(dObj); pPtr; pPtr = pPtr->parent()) {
-		if (pPtr == itemPtr) return FALSE;
+		if (pPtr == itemPtr) return false;
 	}
 
 	return      dObj != item
@@ -1228,8 +1228,8 @@ bool PhysicalContainerProto::canContainAt(
     ObjectID dObj,
     ObjectID item,
     const TilePoint &where) {
-	if (canContain(dObj, item) == FALSE) return FALSE;
-	return TRUE;
+	if (canContain(dObj, item) == false) return false;
+	return true;
 }
 
 bool PhysicalContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -1259,11 +1259,11 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	assert(!dObjPtr->isOpen() && !dObjPtr->isLocked());
 
-	cn = CreateContainerNode(dObj, FALSE);
+	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
 	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
-	return TRUE;
+	return true;
 }
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
@@ -1279,7 +1279,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	//  Clear open bit
 	dObjPtr->objectFlags &= ~objectOpen;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
-	return TRUE;
+	return true;
 }
 
 //  Determine if this object's lock can be toggled
@@ -1301,7 +1301,7 @@ bool PhysicalContainerProto::acceptLockToggleAction(
 	//  Toggle locked bit
 	dObjPtr->objectFlags ^= objectLocked;
 
-	return TRUE;
+	return true;
 }
 
 //  Insert another object into this object
@@ -1318,12 +1318,12 @@ bool PhysicalContainerProto::acceptInsertionAction(
 
 	//  Place the object in the container (if possible)
 	if ((dObjPtr->objectFlags & objectLocked)
-	        ||  !dObjPtr->placeObject(enactor, item, TRUE, num)) {
+	        ||  !dObjPtr->placeObject(enactor, item, true, num)) {
 		if (isWorld(dObjPtr->IDParent()))
 			dObjPtr->dropInventoryObject(itemPtr, num);
 		else {
 			if (!itemPtr->dropOn(enactor, dObjPtr->IDParent(), num))
-				return FALSE;
+				return false;
 		}
 	}
 
@@ -1334,7 +1334,7 @@ bool PhysicalContainerProto::acceptInsertionAction(
 	//  not be redrawn in this case.
 //	if (prevItemPtr) globalContainerList.setUpdate( prevItemPtr->IDParent() );
 
-	return TRUE;
+	return true;
 }
 
 //  Insert another object into this object at the specified slot
@@ -1355,11 +1355,11 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
 	//  Split the merged object if needed.
 	if (itemPtr->isMergeable()           //  If mergeable
 	        &&  num < itemPtr->getExtra()) {    //  And not dropping whole pile
-		if (num == 0) return FALSE;         //  If mergeing zero, then do nothing
+		if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 		extractedObj = itemPtr->extractMerged(itemPtr->getExtra() - num);
 		if (extractedObj == NULL)
-			return FALSE;
+			return false;
 
 		extractedObj->move(oldLoc);
 	}
@@ -1368,13 +1368,13 @@ bool PhysicalContainerProto::acceptInsertionAtAction(
 	if (dObjPtr->canFitBulkwise(itemPtr)
 	        &&  dObjPtr->canFitMasswise(itemPtr)) {
 		itemPtr->move(Location(where, dObj));
-		return TRUE;
+		return true;
 	}
 	itemPtr->move(oldLoc);
 	if (extractedObj != NULL)
 		GameObject::mergeWith(extractedObj, itemPtr, extractedObj->getExtra());
 
-	return FALSE;
+	return false;
 }
 
 // ------------------------------------------------------------------------
@@ -1393,7 +1393,7 @@ bool PhysicalContainerProto::canFitBulkwise(GameObject *container, GameObject *o
 	}
 
 #if DEBUG
-	return TRUE;
+	return true;
 #endif
 }
 
@@ -1409,11 +1409,11 @@ bool PhysicalContainerProto::canFitMasswise(GameObject *container, GameObject *o
 		if (!isWorld(container->IDParent()))
 			return container->parent()->canFitMasswise(obj);
 
-		return TRUE;
+		return true;
 	}
 
 #if DEBUG
-	return TRUE;
+	return true;
 #endif
 }
 
@@ -1442,7 +1442,7 @@ uint16 PhysicalContainerProto::bulkCapacity(GameObject *) {
 bool KeyProto::setUseCursor(ObjectID dObj) {
 	assert(mouseInfo.getObjectId() == Nothing);
 	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
-	return TRUE;
+	return true;
 }
 
 //  Send acceptLockToggle message to container
@@ -1454,10 +1454,10 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID withObj) {
 
 	if (!container->acceptLockToggle(enactor, lockType)) {
 //		WriteStatusF( 3, "%s doesn't work", thisKey->objName() );
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 //  Send acceptLockToggle message to active terrain
@@ -1468,10 +1468,10 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *withTAI)
 
 	if (!withTAI->acceptLockToggle(enactor, keyID)) {
 //		WriteStatusF( 3, "%s doesn't work", thisKey->objName() );
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -1485,7 +1485,7 @@ uint16 BottleProto::containmentSet(void) {
 bool BottleProto::useAction(ObjectID dObj, ObjectID enactor) {
 	//Set Up Empty Bottle Sprite
 
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -1497,7 +1497,7 @@ uint16 FoodProto::containmentSet(void) {
 }
 
 bool FoodProto::useAction(ObjectID dObj, ObjectID enactor) {
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -1526,7 +1526,7 @@ Sprite *WeaponProto::getOrientedSprite(GameObject *obj, int16 offset) {
 }
 
 //-----------------------------------------------------------------------
-//	Returns TRUE if object in continuous use.
+//	Returns true if object in continuous use.
 
 bool WeaponProto::isObjectBeingUsed(GameObject *obj) {
 	ObjectID        wielder = obj->possessor();
@@ -1536,9 +1536,9 @@ bool WeaponProto::isObjectBeingUsed(GameObject *obj) {
 
 		if (a->rightHandObject == obj->thisID()
 		        ||  a->leftHandObject == obj->thisID())
-			return TRUE;
+			return true;
 	}
-	return FALSE;
+	return false;
 }
 
 /* ==================================================================== *
@@ -1553,7 +1553,7 @@ bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 
-	if (enactor != dObjPtr->IDParent()) return FALSE;
+	if (enactor != dObjPtr->IDParent()) return false;
 
 	if (dObj == a->rightHandObject)
 		a->holdInRightHand(Nothing);
@@ -1573,7 +1573,7 @@ bool MeleeWeaponProto::useAction(ObjectID dObj, ObjectID enactor) {
 		a->holdInRightHand(dObj);
 	}
 
-	return TRUE;
+	return true;
 }
 
 bool MeleeWeaponProto::useOnAction(
@@ -1581,7 +1581,7 @@ bool MeleeWeaponProto::useOnAction(
     ObjectID enactor,
     ObjectID item) {
 	if (item == enactor)   //If Trying To Hurt Oneself Stop It!!!
-		return FALSE;
+		return false;
 
 
 	return strike(dObj, enactor, item);
@@ -1601,12 +1601,12 @@ bool MeleeWeaponProto::strikeAction(
 	Location        ol = Location(a->getWorldLocation(), a->IDParent());
 
 	if (itemPtr->acceptStrike(enactor, dObj, getSkillValue(enactor)))
-		return TRUE;
+		return true;
 
 	soundFXs = &objectSoundFXTable[soundFXClass];
 
 	makeCombatSound(soundFXs->soundFXMissed, ol);
-	return FALSE;
+	return false;
 }
 
 bool MeleeWeaponProto::damageAction(
@@ -1636,7 +1636,7 @@ bool MeleeWeaponProto::damageAction(
 	    GameObject::objectAddress(dObj),
 	    effStats->getSkillLevel(skillIDBrawn));
 
-	return TRUE;
+	return true;
 }
 
 bool MeleeWeaponProto::acceptDamageAction(
@@ -1647,7 +1647,7 @@ bool MeleeWeaponProto::acceptDamageAction(
     int8,
     uint8,
     int8) {
-	return TRUE;
+	return true;
 }
 
 //  Determine if this type of weapon must be wielded with two hands
@@ -1701,7 +1701,7 @@ void MeleeWeaponProto::initiateDefense(
 
 //  Melee weapons can block an attack
 bool MeleeWeaponProto::canBlock(void) {
-	return TRUE;
+	return true;
 }
 
 //  Return a mask of bits indicating the directions relative to the
@@ -1772,11 +1772,11 @@ bool MeleeWeaponProto::useSlotAvailable(GameObject *obj, Actor *a) {
 			return      !isTwoHanded(a->thisID())
 			            &&  !leftHandObjectPtr->proto()->isTwoHanded(a->thisID());
 		}
-		return TRUE;
+		return true;
 	}
 	assert(isObject(a->rightHandObject));
 
-	return FALSE;
+	return false;
 }
 
 /* ==================================================================== *
@@ -1864,7 +1864,7 @@ bool BowProto::useAction(ObjectID dObj, ObjectID enactor) {
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 
-	if (enactor != dObjPtr->IDParent()) return FALSE;
+	if (enactor != dObjPtr->IDParent()) return false;
 
 	//  If this object is in the enactor's left hand remove it else
 	//  place it into his left hand
@@ -1875,12 +1875,12 @@ bool BowProto::useAction(ObjectID dObj, ObjectID enactor) {
 		a->holdInLeftHand(dObj);
 	}
 
-	return TRUE;
+	return true;
 }
 
 //  Bows are two handed
 bool BowProto::isTwoHanded(ObjectID) {
-	return TRUE;
+	return true;
 }
 
 //  Initiate the bow firing motion
@@ -1982,7 +1982,7 @@ bool WeaponWandProto::useAction(ObjectID dObj, ObjectID enactor) {
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 
-	if (enactor != dObjPtr->IDParent()) return FALSE;
+	if (enactor != dObjPtr->IDParent()) return false;
 
 	//  If this object is in the enactor's left hand remove it else
 	//  place it into his left hand
@@ -1993,12 +1993,12 @@ bool WeaponWandProto::useAction(ObjectID dObj, ObjectID enactor) {
 		a->holdInLeftHand(dObj);
 	}
 
-	return TRUE;
+	return true;
 }
 
 //  Wands are two handed
 bool WeaponWandProto::isTwoHanded(ObjectID) {
-	return TRUE;
+	return true;
 }
 
 //  Initiate the use wand motion
@@ -2083,10 +2083,10 @@ Sprite *ProjectileProto::getOrientedSprite(GameObject *, int16) {
 }
 
 //-----------------------------------------------------------------------
-//	Returns TRUE if object in continuous use.
+//	Returns true if object in continuous use.
 
 bool ProjectileProto::isObjectBeingUsed(GameObject *) {
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2102,7 +2102,7 @@ uint8 ProjectileProto::weaponRating(
 
 //  Projectiles are missiles
 bool ProjectileProto::isMissile(void) {
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -2159,7 +2159,7 @@ bool ArrowProto::damageAction(
 	    GameObject::objectAddress(dObj),
 	    effStats->getSkillLevel(skillIDBrawn));
 
-	return TRUE;
+	return true;
 }
 
 // ------------------------------------------------------------------------
@@ -2203,7 +2203,7 @@ uint8 ArmorProto::adjustDamage(uint8 damage) {
 }
 
 //-----------------------------------------------------------------------
-//	Returns TRUE if object in continuous use.
+//	Returns true if object in continuous use.
 
 bool ArmorProto::isObjectBeingUsed(GameObject *obj) {
 	ObjectID    aID = obj->possessor();
@@ -2213,10 +2213,10 @@ bool ArmorProto::isObjectBeingUsed(GameObject *obj) {
 		ObjectID    id = obj->thisID();
 
 		for (int i = 0; i < ARMOR_COUNT; i++) {
-			if (a->armorObjects[i] == id) return TRUE;
+			if (a->armorObjects[i] == id) return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2243,7 +2243,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	assert(obj->proto() == this);
 
-	if (enactor != obj->IDParent()) return FALSE;
+	if (enactor != obj->IDParent()) return false;
 
 	int16       slot = whereWearable;
 
@@ -2254,7 +2254,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	globalContainerList.setUpdate(obj->IDParent());
 
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -2273,7 +2273,7 @@ bool ShieldProto::useAction(ObjectID dObj, ObjectID enactor) {
 	GameObject  *dObjPtr = GameObject::objectAddress(dObj);
 	Actor       *a = (Actor *)GameObject::objectAddress(enactor);
 
-	if (enactor != dObjPtr->IDParent()) return FALSE;
+	if (enactor != dObjPtr->IDParent()) return false;
 
 	if (a->rightHandObject != Nothing) {
 		assert(isObject(a->rightHandObject));
@@ -2281,12 +2281,12 @@ bool ShieldProto::useAction(ObjectID dObj, ObjectID enactor) {
 		    GameObject::objectAddress(a->rightHandObject);
 
 		if (rightHandObjectPtr->proto()->isTwoHanded(enactor))
-			return FALSE;
+			return false;
 	}
 
 	a->holdInLeftHand(dObj != a->leftHandObject ? dObj : Nothing);
 
-	return TRUE;
+	return true;
 }
 
 bool ShieldProto::acceptDamageAction(
@@ -2297,7 +2297,7 @@ bool ShieldProto::acceptDamageAction(
     int8,
     uint8,
     int8) {
-	return TRUE;
+	return true;
 }
 
 Sprite *ShieldProto::getOrientedSprite(GameObject *obj, int16 offset) {
@@ -2323,7 +2323,7 @@ void ShieldProto::initiateDefense(
 
 //  Shields can block an attack
 bool ShieldProto::canBlock(void) {
-	return TRUE;
+	return true;
 }
 
 //  Return a mask of bits indicating the directions relative to the
@@ -2333,7 +2333,7 @@ uint8 ShieldProto::defenseDirMask(void) {
 }
 
 //-----------------------------------------------------------------------
-//	Returns TRUE if object in continuous use.
+//	Returns true if object in continuous use.
 
 bool ShieldProto::isObjectBeingUsed(GameObject *obj) {
 	ObjectID        wielder = obj->possessor();
@@ -2343,9 +2343,9 @@ bool ShieldProto::isObjectBeingUsed(GameObject *obj) {
 
 		if (a->rightHandObject == obj->thisID()
 		        ||  a->leftHandObject == obj->thisID())
-			return TRUE;
+			return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2366,10 +2366,10 @@ bool ShieldProto::useSlotAvailable(GameObject *obj, Actor *a) {
 			return !rightHandObjectPtr->proto()->isTwoHanded(a->thisID());
 		}
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2421,11 +2421,11 @@ uint8 ShieldProto::getDamageSound(const ObjectSoundFXs &soundFXs) {
 bool ToolProto::setUseCursor(ObjectID dObj) {
 	assert(mouseInfo.getObjectId() == Nothing);
 	mouseInfo.copyObject(GameObject::objectAddress(dObj), GrabInfo::Use);
-	return TRUE;
+	return true;
 }
 
 bool ToolProto::useOnAction(ObjectID, ObjectID, ObjectID) {
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -2456,7 +2456,7 @@ bool BookProto::useAction(ObjectID dObj, ObjectID enactor) {
 		break;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -2468,7 +2468,7 @@ bool ScrollProto::useAction(ObjectID dObj, ObjectID enactor) {
 
 	openScroll(bookObj->getExtra());     // open the modal book with text filled in with
 	// the previously run script
-	return TRUE;
+	return true;
 }
 
 /* ==================================================================== *
@@ -2476,7 +2476,7 @@ bool ScrollProto::useAction(ObjectID dObj, ObjectID enactor) {
  * ==================================================================== */
 
 bool AutoMapProto::openAction(ObjectID, ObjectID) {
-	return FALSE;
+	return false;
 }
 
 /* ==================================================================== *
@@ -2495,7 +2495,7 @@ bool IntangibleObjProto::useAction(ObjectID dObj, ObjectID enactor) {
 	    if(obj->isAlias()) //This Tells Whether Its A Copy Or Not
 	        grabTangible(dObj);//Set To Use If Its The Copy
 	*/
-	return FALSE;
+	return false;
 }
 
 bool IntangibleObjProto::takeAction(ObjectID dObj, ObjectID enactor, int16) {
@@ -2505,11 +2505,11 @@ bool IntangibleObjProto::takeAction(ObjectID dObj, ObjectID enactor, int16) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
 
 	if (dObjPtr->isTrueSkill())
-		return FALSE;
+		return false;
 
 	mouseInfo.copyObject(dObj);
 
-	return TRUE;
+	return true;
 }
 
 bool IntangibleObjProto::canDropAt(
@@ -2537,13 +2537,13 @@ bool IntangibleObjProto::dropAction(
 
 		if ((newObj = dObjPtr->makeAlias(Location(dObjPtr->getLocation(), dObjPtr->IDParent()))) != Nothing) {
 			if (container->acceptInsertionAt(enactor, newObj, loc))
-				return TRUE;
+				return true;
 			else
 				GameObject::objectAddress(newObj)->deleteObject();
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool IntangibleObjProto::acceptDropAction(
@@ -2564,7 +2564,7 @@ bool IntangibleObjProto::acceptDropAction(
 		return droppedObjPtr->drop(enactor, loc);
 	}
 
-	return FALSE;
+	return false;
 }
 
 ObjectID IntangibleObjProto::placeObject(void) {
@@ -2589,7 +2589,7 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
     GameObject *obj,
     enum spriteTypes spr,
     int16) {
-	ObjectSpriteInfo    sprInfo = { NULL, FALSE };
+	ObjectSpriteInfo    sprInfo = { NULL, false };
 
 	switch (spr) {
 	case objOnGround:
@@ -2646,14 +2646,14 @@ bool SkillProto::useAction(ObjectID dObj, ObjectID enactor) {
 	SpellStuff &sp = spellBook[getSpellID()];
 
 	if (nonUsable(this))
-		return FALSE;
+		return false;
 
 	if (nonTargeted(this)) {
 		Actor   *attackerPtr = (Actor *) GameObject::objectAddress(enactor);
 		return castUntargetedSpell(attackerPtr, this);
 	}
 	mouseInfo.copyObject(dObj, GrabInfo::Use);
-	return TRUE;
+	return true;
 }
 
 // cast a skill at various things
@@ -2679,7 +2679,7 @@ bool SkillProto::useOnAction(ObjectID dObj, ObjectID enactor, const Location &lo
 }
 
 bool SkillProto::canDropAt(ObjectID, ObjectID, const Location &) {
-	return TRUE;
+	return true;
 }
 
 bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &loc, int16 num) {
@@ -2691,7 +2691,7 @@ bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &lo
 		if (validTarget(enactorPtr, NULL, NULL, this))
 			return useOn(dObj, enactor, loc);
 
-		return FALSE;
+		return false;
 	}
 
 	return IntangibleObjProto::dropAction(dObj, enactor, loc, num);
@@ -3006,11 +3006,11 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 	GameObject          *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Perform appropriate opening tasks
-	cn = CreateContainerNode(enactor, FALSE);
+	cn = CreateContainerNode(enactor, false);
 	cn->markForShow();
 //	dObjPtr->objectFlags |= GameObject::objectOpen;          //  Set open bit;
 
-	return TRUE;
+	return true;
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
@@ -3025,7 +3025,7 @@ bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	//  Clear open bit
 //	dObjPtr->objectFlags &= ~GameObject::objectOpen;
 
-	return TRUE;
+	return true;
 }
 
 uint16 IntangibleContainerProto::containmentSet(void) {

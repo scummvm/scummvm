@@ -80,7 +80,7 @@ struct gMouseState;
 class GameMode {
 public:
 	GameMode        *prev;                  // previous nested mode
-	int16           nestable;               // TRUE if mode nests
+	int16           nestable;               // true if mode nests
 
 	static  GameMode    *modeStackPtr[Max_Modes]; // Array Of Current Mode Stack Pointers to Game Objects
 	static  int         modeStackCtr;       // Counter For Array Of Mode Stack Pointers to Game Objects

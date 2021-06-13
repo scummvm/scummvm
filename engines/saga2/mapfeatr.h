@@ -55,7 +55,7 @@ public:
 	CMapFeature(TilePoint where, int16 inWorld, const char *desc);
 	virtual ~CMapFeature() {}
 
-	void expose(bool canSee = TRUE) {
+	void expose(bool canSee = true) {
 		visible = canSee;
 	}
 	void draw(TileRegion tr, int16 inWorld, TilePoint bc, gPort &tport);
@@ -107,7 +107,7 @@ public:
 	virtual void blit(gPort &tp, int32 x, int32 y);
 	virtual void update(void) {}
 	virtual bool isHit(TilePoint disp, TilePoint mouse) {
-		return FALSE;
+		return false;
 	}
 };
 

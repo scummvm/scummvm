@@ -152,7 +152,7 @@ public:
 		return (targetableTypes == spellTargNone);
 	}
 	bool untargeted(void)      {
-		return FALSE;    //(targetableTypes == spellTargWorld ) ||
+		return false;    //(targetableTypes == spellTargWorld ) ||
 	}
 	//(targetableTypes == spellTargCaster ) ||
 	//(targetableTypes == targetableTypes &

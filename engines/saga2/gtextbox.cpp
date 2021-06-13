@@ -67,7 +67,7 @@ extern gMousePointer pointer;           // the actual pointer
 *
 *       It does not currently support the concept of cut & paste.
 *
-*       This class returns TRUE to the "tabSelect" query indicating
+*       This class returns true to the "tabSelect" query indicating
 *       that it is tab-selectable.
 *
 *   /h2/NOTIFICATIONS
@@ -173,8 +173,8 @@ gTextBox::gTextBox(
 	int16   i;
 
 
-	hilit                   = FALSE;
-	noUndo                  = FALSE;
+	hilit                   = false;
+	noUndo                  = false;
 
 	index                   = 0;    // index into string array ( which string )
 	maxLen                  = length;
@@ -196,13 +196,13 @@ gTextBox::gTextBox(
 	oldMark                 = -1;
 
 	displayOnly             = noEditing;
-	editing                 = FALSE;
+	editing                 = false;
 	editRect                = box;
 	editRect.height         = fontHeight;
-	inDrag                  = FALSE;
+	inDrag                  = false;
 	onEnter                 = cmdEnter;
 	onEscape                = cmdEscape;
-	isActiveCtl             = FALSE;
+	isActiveCtl             = false;
 	selected                = 0;
 	parent                  = &list;
 
@@ -216,15 +216,15 @@ gTextBox::gTextBox(
 		currentLen[i] = MIN<int>(editLen, strlen(stringBufs[i]));
 	}
 
-	internalBuffer = FALSE;
-	fullRedraw = TRUE;
+	internalBuffer = false;
+	fullRedraw = true;
 	index = 0;
 	enSelect(0);
 	if (!displayOnly) {
 		cursorPos = 0;
 		anchorPos = currentLen[index];
 	}
-	fullRedraw = TRUE;
+	fullRedraw = true;
 }
 
 //-----------------------------------------------------------------------
@@ -259,7 +259,7 @@ gTextBox::~gTextBox() {
 *       length      How many characters to insert.
 *
 *   RESULT
-*       TRUE if there was enough room in the buffer to insert the text.
+*       true if there was enough room in the buffer to insert the text.
 *
 **********************************************************************
 */
@@ -273,7 +273,7 @@ bool gTextBox::insertText(char *newText, int length) {
 	//  If inserting the text would make the string too long,
 	//  then don't insert it.
 
-	if (currentLen[index] - selWidth + length >= maxLen) return FALSE;
+	if (currentLen[index] - selWidth + length >= maxLen) return false;
 
 	//  Move the text after the selection to where it will be
 	//  after the insertion.
@@ -298,7 +298,7 @@ bool gTextBox::insertText(char *newText, int length) {
 
 	RMemIntegrity();
 
-	return TRUE;
+	return true;
 }
 
 /****** gtextbox.cpp/gTextBox::setText *******************************
@@ -354,17 +354,17 @@ bool gTextBox::activate(gEventType why) {
 	if (why == gEventAltValue) {            // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
-		return TRUE;
+		return true;
 	}
-	isActiveCtl = TRUE;
+	isActiveCtl = true;
 	if (!selected) {
 		enSelect(index);
 	}
 	selected = 1;
-	fullRedraw = TRUE;
+	fullRedraw = true;
 	draw();
 	if (why == gEventNone)
-		return TRUE;
+		return true;
 	return gPanel::activate(why);
 }
 
@@ -372,9 +372,9 @@ bool gTextBox::activate(gEventType why) {
 
 void gTextBox::deactivate(void) {
 	selected = 0;
-	isActiveCtl = FALSE;
+	isActiveCtl = false;
 	draw();
-	fullRedraw = TRUE;
+	fullRedraw = true;
 	gPanel::deactivate();
 }
 
@@ -393,7 +393,7 @@ bool gTextBox::changed(void) {
 	if (undoBuffer && editing) {
 		return memcmp(undoBuffer, fieldStrings[index], currentLen[index] + 1);
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -453,7 +453,7 @@ void gTextBox::scroll(int8 req) {
 	}
 
 	if (endLine != visBase) {
-		fullRedraw = TRUE;
+		fullRedraw = true;
 	}
 	endLine = visBase;
 
@@ -464,7 +464,7 @@ void gTextBox::scroll(int8 req) {
 		textBoxExtent.y = (fontOffset * visIndex)  + extent.y;
 
 		setEditExtent(textBoxExtent);
-		fullRedraw = TRUE;
+		fullRedraw = true;
 	}
 }
 
@@ -476,8 +476,8 @@ void gTextBox::deSelect(bool commit) {
 			commitEdit();
 		else
 			revertEdit();
-		editing = FALSE;
-		fullRedraw = TRUE;
+		editing = false;
+		fullRedraw = true;
 	}
 }
 
@@ -488,11 +488,11 @@ void gTextBox::enSelect(int which) {
 	index = which;
 	if (!displayOnly) {
 		prepareEdit(which);
-		editing   = TRUE;
+		editing   = true;
 		cursorPos = 0;
 		anchorPos = currentLen[index];
 	} else {
-		hilit = TRUE;
+		hilit = true;
 	}
 }
 
@@ -500,10 +500,10 @@ void gTextBox::enSelect(int which) {
 
 void gTextBox::reSelect(int which) {
 	if (which != index) {
-		deSelect(FALSE);
+		deSelect(false);
 		draw();
 		enSelect(which);
-		fullRedraw = TRUE;
+		fullRedraw = true;
 	}
 }
 
@@ -598,7 +598,7 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 			makeActive();
 		}
 	}
-	return TRUE; //gControl::activate( gEventMouseDown );
+	return true; //gControl::activate( gEventMouseDown );
 }
 
 
@@ -616,7 +616,7 @@ void gTextBox::pointerDrag(gPanelMessage &msg) {
 		} else {
 			newPos = WhichIChar(mainFont, (uint8 *)fieldStrings[index], msg.pickPos.x - 3, currentLen[index]);
 		}
-		inDrag = TRUE;
+		inDrag = true;
 		if (cursorPos != newPos) {
 			//if (newPos<cursorPos)
 			cursorPos = newPos;
@@ -634,7 +634,7 @@ void gTextBox::pointerDrag(gPanelMessage &msg) {
 
 void gTextBox::pointerRelease(gPanelMessage &msg) {
 	if (!msg.leftButton) {
-		inDrag = FALSE;
+		inDrag = false;
 		draw();
 	}
 }
@@ -659,19 +659,19 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		switch (key) {
 		case SpecialKey(upArrowKey):
 			selectionUp(1);
-			return TRUE;
+			return true;
 
 		case SpecialKey(downArrowKey):
 			selectionDown(1);
-			return TRUE;
+			return true;
 
 		case SpecialKey(pageUpKey):
 			selectionUp(linesPerPage);
-			return TRUE;
+			return true;
 
 		case SpecialKey(pageDownKey):
 			selectionDown(linesPerPage);
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -705,7 +705,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 			if (selWidth == 0) {            // if insertion point
 				// don't delete if at end
-				if (selStart >= currentLen[index]) return FALSE;
+				if (selStart >= currentLen[index]) return false;
 				selWidth = 1;               // delete 1 char
 			}
 
@@ -729,7 +729,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			break;
 
 		default:
-			if (flags & textBoxNoFilter) return FALSE;
+			if (flags & textBoxNoFilter) return false;
 			break;
 		}
 	} else if (key == '\r' || key == '\n') { // return key
@@ -748,7 +748,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			(*onEnter)(ev);
 		}
 
-		return TRUE;
+		return true;
 	} else if (key == 0x1B) {               // escape key
 		revertEdit();
 		deactivate();                       // deactivate the text box
@@ -761,11 +761,11 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			(*onEscape)(ev);
 		}
 
-		if (flags & textBoxNoFilter) return FALSE;
-		return TRUE;
+		if (flags & textBoxNoFilter) return false;
+		return true;
 	} else if (key == '\b' && editing) {                // BACKSPACE
 		if (selWidth == 0) {                // if insertion point
-			if (selStart < 1) return FALSE; // if at start, do nothing
+			if (selStart < 1) return false; // if at start, do nothing
 			selStart--;                     // if I-bar, backup 1 char
 			selWidth = 1;                   // delete 1 char
 		}
@@ -781,7 +781,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	} else if (key == SpecialKey(deleteKey) && editing) { // DELETE character
 		if (selWidth == 0) {                // if insertion point
 			// don't delete if at end
-			if (selStart >= currentLen[index]) return FALSE;
+			if (selStart >= currentLen[index]) return false;
 			selWidth = 1;                   // delete 1 char
 		}
 
@@ -793,7 +793,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		cursorPos = anchorPos = selStart;   // adjust cursor pos
 		currentLen[index] -= selWidth;    // adjust str len
 		notify(gEventAltValue, 0);       // tell app about new value
-	} else if (key == '\t' && editing) return FALSE;    // reprocess keystroke
+	} else if (key == '\t' && editing) return false;    // reprocess keystroke
 	else if (key == 26 && editing) {                    // control-z
 		if (undoBuffer) {
 			cursorPos = anchorPos = currentLen[index] = undoLen;
@@ -803,7 +803,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	} else if (editing) {
 		//  Insert text, if it will fit
 
-		if (insertText((char *)&key, 1) == FALSE) return FALSE;
+		if (insertText((char *)&key, 1) == false) return false;
 		notify(gEventAltValue, 0);       // tell app about new value
 	}
 
@@ -819,9 +819,9 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 		pointer.show(port, extent);              // show mouse pointer
 
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 
 }
 
@@ -832,7 +832,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 //-----------------------------------------------------------------------
 
 bool gTextBox::tabSelect(void) {
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -1021,7 +1021,7 @@ void gTextBox::drawClipped(void) {
 
 	if (fullRedraw) {
 		drawAll(port, Point16(0, 0), Rect16(0, 0, rect.width, rect.height));
-		fullRedraw = FALSE;
+		fullRedraw = false;
 	}
 
 	if (editing) {

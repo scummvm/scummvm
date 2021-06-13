@@ -45,9 +45,9 @@ void initCleanup() {
 }
 bool initializeGame() {
 	if (setupGame())
-		return TRUE;
+		return true;
 
-	return FALSE;
+	return false;
 }
 void shutdownGame() {
 	warning("STUB: shutdownGame");

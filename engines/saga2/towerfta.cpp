@@ -125,7 +125,7 @@ extern gPanelList       *indivControls;
 // ------------------------------------------------------------------------
 
 INITIALIZER(initSystemConfig) {
-	return TRUE;
+	return true;
 }
 
 // uses null cleanup
@@ -143,7 +143,7 @@ TERMINATOR(termMemPool) {
 
 INITIALIZER(initPlayIntro) {
 	setIntroMode();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termPlayOutro) {
@@ -175,7 +175,7 @@ TERMINATOR(termResourceFiles) {
 
 INITIALIZER(initResourceServers) {
 	initServers();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termResourceServers) {
@@ -187,7 +187,7 @@ TERMINATOR(termResourceServers) {
 
 INITIALIZER(initPathFinders) {
 	initPathFinder();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termPathFinders) {
@@ -199,7 +199,7 @@ TERMINATOR(termPathFinders) {
 
 INITIALIZER(initSAGAInterpreter) {
 	initScripts();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termSAGAInterpreter) {
@@ -211,7 +211,7 @@ TERMINATOR(termSAGAInterpreter) {
 
 INITIALIZER(initAudioChannels) {
 	startAudio();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termAudioChannels) {
@@ -249,7 +249,7 @@ TERMINATOR(termResourceHandles) {
 
 INITIALIZER(initPalettes) {
 	loadPalettes();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termPalettes) {
@@ -261,7 +261,7 @@ TERMINATOR(termPalettes) {
 
 INITIALIZER(initDisplayPort) {
 	initBackPanel();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termDisplayPort) {
@@ -280,7 +280,7 @@ INITIALIZER(initPanelSystem) {
 		tmap->data = new uint8[tmap->bytes()];
 		mainPort.setMap(tmap);
 	}
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termPanelSystem) {
@@ -292,7 +292,7 @@ TERMINATOR(termPanelSystem) {
 
 INITIALIZER(initMainWindow) {
 	mainWindow->open();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termMainWindow) {
@@ -363,7 +363,7 @@ TERMINATOR(termDisplay) {
 
 INITIALIZER(initGameMaps) {
 	initMaps();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termGameMaps) {
@@ -375,7 +375,7 @@ TERMINATOR(termGameMaps) {
 
 INITIALIZER(initRouteData) {
 	initPatrolRoutes();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termRouteData) {
@@ -387,7 +387,7 @@ TERMINATOR(termRouteData) {
 
 INITIALIZER(initActorSprites) {
 	initSprites();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termActorSprites) {
@@ -399,7 +399,7 @@ TERMINATOR(termActorSprites) {
 
 INITIALIZER(initWeaponData) {
 	initWeapons();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termWeaponData) {
@@ -411,7 +411,7 @@ TERMINATOR(termWeaponData) {
 
 INITIALIZER(initSpellData) {
 	initMagic();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termSpellData) {
@@ -423,7 +423,7 @@ TERMINATOR(termSpellData) {
 
 INITIALIZER(initObjectSoundFX) {
 	initObjectSoundFXTable();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termObjectSoundFX) {
@@ -434,7 +434,7 @@ TERMINATOR(termObjectSoundFX) {
 
 INITIALIZER(initObjectPrototypes) {
 	initPrototypes();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termObjectPrototypes) {
@@ -446,7 +446,7 @@ TERMINATOR(termObjectPrototypes) {
 
 INITIALIZER(initDynamicGameData) {
 	initGameState();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termDynamicGameData) {
@@ -461,7 +461,7 @@ INITIALIZER(initGameMode) {
 	GameMode::SetStack(gameModes, 2);
 	if (GameMode::newmodeFlag)
 		GameMode::update();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termGameMode) {
@@ -475,7 +475,7 @@ void RMemFastCleanup(void);
 
 INITIALIZER(initTop) {
 	niceScreenStartup();
-	return TRUE;
+	return true;
 }
 
 TERMINATOR(termTop) {

@@ -54,10 +54,10 @@ private:
 public:
 	Deejay() {
 		enemy = -1;
-		aggr = FALSE;
-		day = TRUE;
-		susp = FALSE;
-		ugd = FALSE;
+		aggr = false;
+		day = true;
+		susp = false;
+		ugd = false;
 	}
 	~Deejay() {}
 

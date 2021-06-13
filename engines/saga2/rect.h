@@ -347,7 +347,7 @@ public:
 		return width <= 0 || height <= 0;
 	}
 
-	bool ptInside(int16 px, int16 py) const {         // TRUE if point inside
+	bool ptInside(int16 px, int16 py) const {         // true if point inside
 		return px >= x && px < (x + width) && py >= y && py < (y + height);
 	}
 	bool ptInside(const Point16 p) const {
@@ -508,7 +508,7 @@ public:
 		return width <= 0 || height <= 0;
 	}
 
-	bool ptInside(int32 px, int32 py) const {         // TRUE if point inside
+	bool ptInside(int32 px, int32 py) const {         // true if point inside
 		return px >= x && px < (x + width) && py >= y && py < (y + height);
 	}
 	bool ptInside(const Point16 p) const {

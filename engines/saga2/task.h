@@ -330,7 +330,7 @@ public:
 	GotoTask(TaskStack *ts) :
 		Task(ts),
 		wander(NULL),
-		prevRunState(FALSE) {
+		prevRunState(false) {
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -535,7 +535,7 @@ public:
 	GotoObjectTask(
 	    TaskStack   *ts,
 	    GameObject  *obj,
-	    bool        trackFlag = FALSE) :
+	    bool        trackFlag = false) :
 		GotoObjectTargetTask(ts, trackFlag),
 		targetObj(obj) {
 	}
@@ -574,7 +574,7 @@ class GotoActorTask : public GotoObjectTargetTask {
 
 public:
 	//  Constructor -- initial construction
-	GotoActorTask(TaskStack *ts, Actor *a, bool trackFlag = FALSE) :
+	GotoActorTask(TaskStack *ts, Actor *a, bool trackFlag = false) :
 		GotoObjectTargetTask(ts, trackFlag),
 		targetActor(a) {
 	}
@@ -703,11 +703,11 @@ public:
 	GoAwayFromActorTask(
 	    TaskStack   *ts,
 	    Actor       *a,
-	    bool        runFlag = FALSE);
+	    bool        runFlag = false);
 	GoAwayFromActorTask(
 	    TaskStack           *ts,
 	    const ActorTarget   &at,
-	    bool                runFlag = FALSE);
+	    bool                runFlag = false);
 
 	//  Constructor -- reconstruct from archive buffer
 	GoAwayFromActorTask(void **buf);
@@ -993,7 +993,7 @@ public:
 	HuntToPossessTask(TaskStack *ts, const ObjectTarget &ot) :
 		HuntObjectTask(ts, ot),
 		targetEvaluateCtr(0),
-		grabFlag(FALSE) {
+		grabFlag(false) {
 	}
 
 	//  Constructor -- reconstruct from archive buffer
@@ -1095,7 +1095,7 @@ public:
 	    TaskStack           *ts,
 	    const ActorTarget   &at,
 	    uint16              r,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		HuntActorTask(ts, at, trackFlag),
 		goAway(NULL),
 		range(MAX<uint16>(r, 16)),
@@ -1171,7 +1171,7 @@ public:
 	HuntToKillTask(
 	    TaskStack           *ts,
 	    const ActorTarget   &at,
-	    bool                trackFlag = FALSE);
+	    bool                trackFlag = false);
 
 	//  Constructor -- reconstruct from archive buffer
 	HuntToKillTask(void **buf);
@@ -1224,7 +1224,7 @@ public:
 	    TaskStack           *ts,
 	    const ActorTarget   &at,
 	    GameObject          *obj,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		HuntActorTask(ts, at, trackFlag),
 		objToGive(obj) {
 	}
@@ -1517,7 +1517,7 @@ public:
 
 	//  Set this task into the unpaused state
 	void followPatrolRoute(void) {
-		paused = FALSE;
+		paused = false;
 	}
 };
 

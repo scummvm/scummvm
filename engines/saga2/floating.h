@@ -89,7 +89,7 @@ class DragBar : public gControl {
 public:
 	static Point16  dragOffset,             // mouse offset
 	       dragPos;                // new position of window
-	static bool     update;                 // TRUE = update window pos
+	static bool     update;                 // true = update window pos
 	static FloatingWindow *dragWindow;      // which window to update
 
 	DragBar(gPanelList &, const Rect16 &);

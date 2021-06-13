@@ -71,9 +71,9 @@ bool CVideoBox::activate(gEventType why) {
 	if (why == gEventMouseDown) {        // momentarily depress
 		selected = 1;
 		notify(why, 0);                      // notify App of successful hit
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 void CVideoBox::pointerMove(gPanelMessage &) {
@@ -94,7 +94,7 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 	}
 
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void CVideoBox::pointerDrag(gPanelMessage &) {
@@ -128,7 +128,7 @@ void CVideoBox::init(void) {
 
 	// set the result info to nominal startup values
 	rInfo.result    = -1;
-	rInfo.running   = TRUE;
+	rInfo.running   = true;
 
 	// init the resource context handle
 	decRes = resFile->newContext(MKTAG('V', 'I', 'D', 'O'),
@@ -156,7 +156,7 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	g_vm->startVideo(fileName, x + borderWidth, y + borderWidth);
 
 	// run this modal event loop
-	//EventLoop( rInfo.running, TRUE );
+	//EventLoop( rInfo.running, true );
 	rInfo.running = g_vm->checkVideo();
 	while (rInfo.running)
 		rInfo.running = g_vm->checkVideo();

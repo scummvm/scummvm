@@ -157,7 +157,7 @@ public:
 	//  Draw the quantity indicator below the object if quantity > 1
 	void drawQuantity(gPort &port, GameObject *item, ProtoObj *objProto, int16 x, int16 y);
 
-	//  returns TRUE if the object is visible for this type of
+	//  returns true if the object is visible for this type of
 	//  container.
 	virtual bool isVisible(GameObject *obj);
 
@@ -523,7 +523,7 @@ public:
 		object = id;
 	}
 
-	//  returns TRUE if the object represented by the container can be
+	//  returns true if the object represented by the container can be
 	//  accessed by the player.
 	bool isAccessable(ObjectID enactor);
 
@@ -558,7 +558,7 @@ public:
 
 extern ContainerList    globalContainerList;
 
-ContainerNode *CreateContainerNode(ObjectID id, bool open = TRUE, int16 mindType = 0);
+ContainerNode *CreateContainerNode(ObjectID id, bool open = true, int16 mindType = 0);
 ContainerNode *CreateReadyContainerNode(PlayerActorID player);
 ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type);
 

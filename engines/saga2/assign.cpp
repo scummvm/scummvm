@@ -173,7 +173,7 @@ void ActorAssignment::startTask(void) {
 //	Determine if this assignment needs to create a task at this time
 
 bool ActorAssignment::taskNeeded(void) {
-	return TRUE;
+	return true;
 }
 
 /* ===================================================================== *
@@ -280,7 +280,7 @@ void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
 bool PatrolRouteAssignment::isValid(void) {
 	//  If the route has already been completed, then the assignment is
 	//  no longer valid
-	if (flags & routeCompleted) return FALSE;
+	if (flags & routeCompleted) return false;
 
 	return ActorAssignment::isValid();
 }
@@ -551,7 +551,7 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 	           ts,
 	           *getTarget(),
 	           range,
-	           (flags & track) != FALSE);
+	           (flags & track) != false);
 }
 
 /* ===================================================================== *
@@ -562,7 +562,7 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 HuntToKillAssignment::HuntToKillAssignment(Actor *a, bool trackFlag) :
 	ActorAssignment(indefinitely) {
 	assert(isActor(a) && a != getActor());
-	initialize(SpecificActorTarget(a), trackFlag, TRUE);
+	initialize(SpecificActorTarget(a), trackFlag, true);
 }
 
 //  Construct with no time limit and abstract actor target
@@ -570,7 +570,7 @@ HuntToKillAssignment::HuntToKillAssignment(
 	const ActorTarget   &at,
 	bool                trackFlag) :
 	ActorAssignment(indefinitely) {
-	initialize(at, trackFlag, FALSE);
+	initialize(at, trackFlag, false);
 }
 
 
@@ -645,7 +645,7 @@ bool HuntToKillAssignment::isValid(void) {
 	if (flags & specificActor) {
 		SpecificActorTarget     *sat = (SpecificActorTarget *)getTarget();
 
-		if (sat->getTargetActor()->isDead()) return FALSE;
+		if (sat->getTargetActor()->isDead()) return false;
 	}
 
 	//  Otherwise, determine if the base class thinks this is a valid
@@ -674,7 +674,7 @@ bool HuntToKillAssignment::taskNeeded(void) {
 	}
 
 	//  Otherwise, we'll always want to create a task
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -684,7 +684,7 @@ Task *HuntToKillAssignment::getTask(TaskStack *ts) {
 	return new HuntToKillTask(
 	           ts,
 	           *getTarget(),
-	           (flags & track) != FALSE);
+	           (flags & track) != false);
 }
 
 /* ===================================================================== *

@@ -688,7 +688,7 @@ void gPort::drawStringChars(
 
 	x = xpos;
 	s = (uint8 *)str;
-	underscore = textStyles & textStyleUnderScore ? TRUE : FALSE;
+	underscore = textStyles & textStyleUnderScore ? true : false;
 
 	for (i = 0; i < len; i++) {
 		int16       last_x = x;
@@ -698,7 +698,7 @@ void gPort::drawStringChars(
 		if (drawchar == '_' && underbar) {
 			len--;
 			drawchar = *s++;
-			if (textStyles & textStyleUnderBar) underscore = TRUE;
+			if (textStyles & textStyleUnderBar) underscore = true;
 			if (textStyles & textStyleHiLiteBar) color = bgPen;
 		}
 		x += font->charKern[drawchar];
@@ -710,7 +710,7 @@ void gPort::drawStringChars(
 			int16   width = x - last_x;
 
 			while (width-- > 0) *put++ = color;
-			if (!(textStyles & textStyleUnderScore)) underscore = FALSE;
+			if (!(textStyles & textStyleUnderScore)) underscore = false;
 		}
 	}
 }
@@ -1369,8 +1369,8 @@ void XS_DrawTextWrapped(
 	if (box->Height >= line_count * row_height)
 		ypos += (box->Height - line_count * row_height) / 2;
 
-	X_Masking(TRUE);
-	X_Clipping(FALSE);
+	X_Masking(true);
+	X_Clipping(false);
 
 	for (i = 0; i < line_count; i++) {
 		DrawFixedString(dest,

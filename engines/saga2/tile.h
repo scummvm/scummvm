@@ -1011,7 +1011,7 @@ inline bool platformRipped(Platform *pl) {
 	if (rippedRoofID != 0)
 		return pl->roofRipID() == rippedRoofID;
 
-	return FALSE;
+	return false;
 }
 
 //  Compute visible area in U/V coords
@@ -1061,7 +1061,7 @@ TilePoint selectNearbySite(
     const TilePoint &startingCoords,
     int32           minDist,
     int32           maxDist,
-    bool            offScreenOnly = FALSE);     // TRUE if we want it off-screen
+    bool            offScreenOnly = false);     // true if we want it off-screen
 
 
 #ifdef _WIN32   //  Set structure alignment packing value to 1 byte

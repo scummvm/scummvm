@@ -248,14 +248,14 @@ public:
 	HuntToBeNearActorAssignment(
 	    Actor               *a,
 	    uint16              r,
-	    bool                trackFlag = FALSE);
+	    bool                trackFlag = false);
 
 	//  Construct with time limit and specific actor
 	HuntToBeNearActorAssignment(
 	    uint16              until,
 	    Actor               *a,
 	    uint16              r,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		ActorAssignment(until) {
 		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), r, trackFlag);
@@ -265,14 +265,14 @@ public:
 	HuntToBeNearActorAssignment(
 	    const ActorTarget   &at,
 	    uint16              r,
-	    bool                trackFlag = FALSE);
+	    bool                trackFlag = false);
 
 	//  Construct with time limit and abstract actor target
 	HuntToBeNearActorAssignment(
 	    uint16              until,
 	    const ActorTarget   &at,
 	    uint16              r,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		ActorAssignment(until) {
 		initialize(at, r, trackFlag);
 	}
@@ -324,30 +324,30 @@ public:
 	//  Constructors -- initial assignment construction
 
 	//  Construct with no time limit and specific actor
-	HuntToKillAssignment(Actor *a, bool trackFlag = FALSE);
+	HuntToKillAssignment(Actor *a, bool trackFlag = false);
 
 	//  Construct with time limit and specific actor
 	HuntToKillAssignment(
 	    uint16              until,
 	    Actor               *a,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		ActorAssignment(until) {
 		assert(isActor(a) && a != getActor());
-		initialize(SpecificActorTarget(a), trackFlag, TRUE);
+		initialize(SpecificActorTarget(a), trackFlag, true);
 	}
 
 	//  Construct with no time limit and abstract actor target
 	HuntToKillAssignment(
 	    const ActorTarget   &at,
-	    bool                trackFlag = FALSE);
+	    bool                trackFlag = false);
 
 	//  Construct with time limit and abstract actor target
 	HuntToKillAssignment(
 	    uint16              until,
 	    const ActorTarget   &at,
-	    bool                trackFlag = FALSE) :
+	    bool                trackFlag = false) :
 		ActorAssignment(until) {
-		initialize(at, trackFlag, FALSE);
+		initialize(at, trackFlag, false);
 	}
 
 	//  Constructor -- reconstructs from archive buffer

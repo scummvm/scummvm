@@ -162,7 +162,7 @@ bool ActorProto::useAction(ObjectID dObj, ObjectID enactor) {
 	if (a->isDead())
 		return ((PhysicalContainerProto *)this)->PhysicalContainerProto::useAction(dObj, enactor);
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -189,10 +189,10 @@ bool ActorProto::openAction(ObjectID dObj, ObjectID) {
 
 	assert(!dObjPtr->isOpen() && !dObjPtr->isLocked());
 
-	cn = CreateContainerNode(dObj, FALSE, openMindType);
+	cn = CreateContainerNode(dObj, false, openMindType);
 	cn->markForShow();                                      //  Deferred open
 	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -212,7 +212,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 
 	//  Clear open bit
 	dObjPtr->objectFlags &= ~objectOpen;
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -232,12 +232,12 @@ bool ActorProto::strikeAction(
 	Location        al = Location(a->getLocation(), a->IDParent());
 
 	if (itemPtr->acceptStrike(enactor, dObj, effStats->getSkillLevel(skillIDBludgeon)))
-		return TRUE;
+		return true;
 
 	soundFXs = &objectSoundFXTable[soundFXClass];
 
 	makeCombatSound(soundFXs->soundFXMissed, al);
-	return FALSE;
+	return false;
 }
 
 bool ActorProto::damageAction(
@@ -268,7 +268,7 @@ bool ActorProto::damageAction(
 	    GameObject::objectAddress(dObj),
 	    effStats->getSkillLevel(skillIDBrawn));
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -287,7 +287,7 @@ bool ActorProto::acceptDropAction(
 
 	if (a->isDead()) {
 		a->dropInventoryObject(droppedObj, count);
-		return TRUE;
+		return true;
 	}
 
 	Location        newLoc;
@@ -305,7 +305,7 @@ bool ActorProto::acceptDropAction(
 
 	//  NOTE: Added check so that dropping an object on an actor who
 	//  already has the object will do nothing.
-	if (droppedObj->IDParent() == dObj) return TRUE;
+	if (droppedObj->IDParent() == dObj) return true;
 
 	dropType = droppedObj->containmentSet();
 
@@ -352,11 +352,11 @@ bool ActorProto::acceptDropAction(
 			return scf.returnVal == actionResultSuccess;
 
 		//  Place the object in the actor's inventory (if possible)
-		if (!a->placeObject(enactor, droppedID, TRUE, count))
+		if (!a->placeObject(enactor, droppedID, true, count))
 			a->dropInventoryObject(droppedObj, count);
 	}
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -429,7 +429,7 @@ bool ActorProto::acceptDamageAction(
 		damage = MAX(damage - armorAttribs.damageAbsorbtion, 0);
 	}
 
-	if (damage == 0) return FALSE;
+	if (damage == 0) return false;
 
 	if (isActor(enactor))
 		enactorPtr = (Actor *)GameObject::objectAddress(enactor);
@@ -490,7 +490,7 @@ bool ActorProto::acceptDamageAction(
 		WriteStatusF(5, "Damage: %d", damage);
 	}
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -520,9 +520,9 @@ bool ActorProto::acceptHealingAction(
 
 		WriteStatusF(5, "Healing: %d", healing);
 	} else
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -586,7 +586,7 @@ bool ActorProto::acceptStrikeAction(
 		//  Hit has succeeded
 
 		GameObject      *blockingObj = a->blockingObject(enactorPtr);
-		bool            blocked = FALSE;
+		bool            blocked = false;
 
 		//  Test for block success
 		if (blockingObj != NULL) {
@@ -601,7 +601,7 @@ bool ActorProto::acceptStrikeAction(
 				    enactor,
 				    strikingObj,
 				    skillIndex);
-				blocked = TRUE;
+				blocked = true;
 
 				//  Cause skill growth
 				blockingObj->proto()->applySkillGrowth(dObj, 5);
@@ -628,7 +628,7 @@ bool ActorProto::acceptStrikeAction(
 			}
 		}
 
-		return TRUE;
+		return true;
 	} else {
 		//  This actor has dodged the blow, apply agility growth
 
@@ -641,7 +641,7 @@ bool ActorProto::acceptStrikeAction(
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -675,11 +675,11 @@ bool ActorProto::acceptInsertionAtAction(
 	//  Split the merged object if needed.
 	if (itemPtr->isMergeable()           //  If mergeable
 	        &&  num < itemPtr->getExtra()) {    //  And not dropping whole pile
-		if (num == 0) return FALSE;         //  If mergeing zero, then do nothing
+		if (num == 0) return false;         //  If mergeing zero, then do nothing
 
 		extractedObj = itemPtr->extractMerged(itemPtr->getExtra() - num);
 		if (extractedObj == NULL)
-			return FALSE;
+			return false;
 
 		extractedObj->move(oldLoc);
 	}
@@ -712,12 +712,12 @@ bool ActorProto::acceptInsertionAtAction(
 	if (dObjPtr->canFitBulkwise(itemPtr)
 	        &&  dObjPtr->canFitMasswise(itemPtr)) {
 		itemPtr->move(Location(where, dObj));
-		result = TRUE;
+		result = true;
 	} else {
 		itemPtr->move(oldLoc);
 		if (extractedObj != NULL)
 			GameObject::mergeWith(extractedObj, itemPtr, extractedObj->getExtra());
-		result = FALSE;
+		result = false;
 	}
 
 	//  Re-equip the item if necessary
@@ -868,7 +868,7 @@ bool ActorProto::canFitBulkwise(GameObject *container, GameObject *obj) {
 	}
 
 #if DEBUG
-	return TRUE;
+	return true;
 #endif
 }
 
@@ -894,7 +894,7 @@ bool ActorProto::canFitMasswise(GameObject *container, GameObject *obj) {
 	}
 
 #if DEBUG
-	return TRUE;
+	return true;
 #endif
 }
 
@@ -1817,23 +1817,23 @@ void Actor::stopAttack(GameObject *target) {
 //	Determine if this actor can block an attack
 
 bool Actor::canDefend(void) {
-	if (isDead()) return FALSE;
+	if (isDead()) return false;
 
 	//  Look at left hand object, generally the defensive object
 	if (leftHandObject != Nothing) {
 		GameObject  *obj = GameObject::objectAddress(leftHandObject);
 
-		if (obj->proto()->canBlock()) return TRUE;
+		if (obj->proto()->canBlock()) return true;
 	}
 
 	//  Look at right hand object, generally the offensive object
 	if (rightHandObject != Nothing) {
 		GameObject  *obj = GameObject::objectAddress(rightHandObject);
 
-		if (obj->proto()->canBlock()) return TRUE;
+		if (obj->proto()->canBlock()) return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1926,7 +1926,7 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 
 	if (appearance == NULL) return 0;
 
-	//  If this animation has no frames, then return FALSE
+	//  If this animation has no frames, then return false
 	anim = appearance->poseList->animation(newState);
 	numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) return 0;
@@ -1947,7 +1947,7 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 }
 
 //-----------------------------------------------------------------------
-//  returns TRUE if the action is available in the current direction.
+//  returns true if the action is available in the current direction.
 //
 
 bool Actor::isActionAvailable(int16 newState, bool anyDir) {
@@ -1957,20 +1957,20 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (appearance == NULL) return FALSE;
+	if (appearance == NULL) return false;
 
-	//  If this animation has no frames, then return FALSE
+	//  If this animation has no frames, then return false
 	anim = appearance->poseList->animation(newState);
 
 	if (anyDir) {
 		for (int i = 0; i < numPoseFacings; i++) {
-			if (anim->count[i] > 0) return TRUE;
+			if (anim->count[i] > 0) return true;
 		}
 	} else {
-		if (anim->count[currentFacing] > 0) return TRUE;
+		if (anim->count[currentFacing] > 0) return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1989,7 +1989,7 @@ int16 Actor::animationFrames(int16 actionType, Direction dir) {
 
 //-----------------------------------------------------------------------
 //  Update the current animation sequence to the next frame.
-//  Returns TRUE if the animation sequence has finished.
+//  Returns true if the animation sequence has finished.
 
 bool Actor::nextAnimationFrame(void) {
 	ActorAnimation      *anim;
@@ -2001,13 +2001,13 @@ bool Actor::nextAnimationFrame(void) {
 
 	if (appearance == NULL) {
 		if (animationFlags & animateOnHold) {
-			return FALSE;
+			return false;
 		} else if (animationFlags & animateRepeat) {
 			animationFlags |= animateOnHold;
-			return FALSE;
+			return false;
 		} else {
 			animationFlags |= animateFinished;
-			return TRUE;
+			return true;
 		}
 	} else animationFlags &= ~animateOnHold;
 
@@ -2016,17 +2016,17 @@ bool Actor::nextAnimationFrame(void) {
 	numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) {
 		animationFlags |= animateFinished;
-		return TRUE;                    // no poses, return DONE
+		return true;                    // no poses, return DONE
 	}
 
 	//  If the sprite could not be displayed because it has not
 	//  been loaded, then don't update the animation state --
 	//  wait until the sprite gets loaded, and then continue
 	//  with the action.
-	if (animationFlags & animateNotLoaded) return FALSE;
+	if (animationFlags & animateNotLoaded) return false;
 
 	//  If the animation has reached the last frame, then exit.
-	if (animationFlags & animateFinished) return TRUE;
+	if (animationFlags & animateFinished) return true;
 
 	if (animationFlags & animateRandom) {
 		//  Select a random frame from the series.
@@ -2077,7 +2077,7 @@ bool Actor::nextAnimationFrame(void) {
 		} else //If Last Frame And Not Animate Repeat or Alternate
 			animationFlags |= animateFinished;
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2241,7 +2241,7 @@ void Actor::updateAppearance(int32) {
 }
 
 bool Actor::SetAvailableAction(int16 flags, ...) {
-	bool            result = FALSE;
+	bool            result = false;
 	va_list Actions;
 	va_start(Actions, flags); //Initialize To First Argument Even Though We Dont Use It In The Loop
 
@@ -2249,7 +2249,7 @@ bool Actor::SetAvailableAction(int16 flags, ...) {
 		int thisAction = va_arg(Actions, int);  //Increment To Second Argument Ignoring Flags
 		if (thisAction < 0) break;              //Check If Last Parameter Since Last Always Should Be -1
 		if (setAction(thisAction, flags)) {     //Try To Set This Action
-			result = TRUE;  //If Successful
+			result = true;  //If Successful
 			break;
 		}
 	}
@@ -2324,7 +2324,7 @@ void Actor::evaluateNeeds(void) {
 
 					if ((proto->containmentSet() & ProtoObj::isWeapon)
 					        &&  isActionAvailable(proto->fightStanceAction(thisID()))) {
-						foundWeapon = TRUE;
+						foundWeapon = true;
 						break;
 					}
 				}
@@ -2332,7 +2332,7 @@ void Actor::evaluateNeeds(void) {
 				if (!foundWeapon
 				        && (isActionAvailable(actionSwingHigh)
 				            ||  isActionAvailable(actionTwoHandSwingHigh)))
-					foundWeapon = TRUE;
+					foundWeapon = true;
 
 				if (!foundWeapon)
 					flags |= afraid;
@@ -2492,7 +2492,7 @@ void Actor::updateState(void) {
 					                        disposition == dispositionEnemy
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy),
-					                    TRUE);
+					                    true);
 
 					if (task != NULL)
 						curTask->setTask(task);
@@ -2897,7 +2897,7 @@ bool Actor::addFollower(Actor *newBandMember) {
 
 	//  Allocate a new band, if needed
 	if (followers == NULL && (followers = new Band(this)) == NULL)
-		return FALSE;
+		return false;
 
 	return followers->add(newBandMember);
 }
@@ -3022,10 +3022,10 @@ bool Actor::addKnowledge(uint16 kID) {
 	for (int i = 0; i < elementsof(knowledge); i++) {
 		if (knowledge[i] == 0) {
 			knowledge[i] = kID;
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3035,10 +3035,10 @@ bool Actor::removeKnowledge(uint16 kID) {
 	for (int i = 0; i < elementsof(knowledge); i++) {
 		if (knowledge[i] == kID) {
 			knowledge[i] = 0;
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3125,11 +3125,11 @@ bool Actor::canSenseProtaganistIndirectly(SenseInfo &info, int16 range) {
 
 		for (i = 0; i < followers->size(); i++) {
 			if ((*followers)[i]->canSenseProtaganist(info, range))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3145,11 +3145,11 @@ bool Actor::canSenseSpecificActorIndirectly(
 
 		for (i = 0; i < followers->size(); i++) {
 			if ((*followers)[i]->canSenseSpecificActor(info, range, a))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3165,11 +3165,11 @@ bool Actor::canSenseSpecificObjectIndirectly(
 
 		for (i = 0; i < followers->size(); i++) {
 			if ((*followers)[i]->canSenseSpecificObject(info, range, obj))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3185,11 +3185,11 @@ bool Actor::canSenseActorPropertyIndirectly(
 
 		for (i = 0; i < followers->size(); i++) {
 			if ((*followers)[i]->canSenseActorProperty(info, range, prop))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -3205,11 +3205,11 @@ bool Actor::canSenseObjectPropertyIndirectly(
 
 		for (i = 0; i < followers->size(); i++) {
 			if ((*followers)[i]->canSenseObjectProperty(info, range, prop))
-				return TRUE;
+				return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -3223,32 +3223,32 @@ bool Actor::canSenseObjectPropertyIndirectly(
 bool Actor::takeMana(ActorManaID i, int8 dMana) {
 #if NO_MONSTER_MANA
 	if (!isPlayerActor(this))
-		return TRUE;
+		return true;
 #endif
 	assert(i >= manaIDRed && i <= manaIDViolet);
 	if ((&effectiveStats.redMana)[i] < dMana)
-		return FALSE;
+		return false;
 	(&effectiveStats.redMana)[i] -= dMana;
 	updateIndicators();
-	return TRUE;
+	return true;
 }
 
 bool Actor::hasMana(ActorManaID i, int8 dMana) {
 #if NO_MONSTER_MANA
 	if (!isPlayerActor(this))
-		return TRUE;
+		return true;
 #endif
 	assert(i >= manaIDRed && i <= manaIDViolet);
 	if ((&effectiveStats.redMana)[i] < dMana)
-		return FALSE;
-	return TRUE;
+		return false;
+	return true;
 }
 
 //-----------------------------------------------------------------------
 // Saving throw funcion
 
 bool Actor::makeSavingThrow(void) {
-	return FALSE;
+	return false;
 }
 
 //-------------------------------------------------------------------
@@ -3306,13 +3306,13 @@ void updateActorStates(void) {
 //-------------------------------------------------------------------
 
 void pauseActorStates(void) {
-	actorStatesPaused = TRUE;
+	actorStatesPaused = true;
 }
 
 //-------------------------------------------------------------------
 
 void resumeActorStates(void) {
-	actorStatesPaused = FALSE;
+	actorStatesPaused = false;
 }
 
 //-------------------------------------------------------------------

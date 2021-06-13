@@ -131,12 +131,12 @@ public:
 		defaultChannels = channelMono;
 		defaultSpeed = soundRate22K;
 		defaultDataSize = granularity16Bit;
-		initialized = TRUE;
+		initialized = true;
 		return 0;
 	}
 
 	void setDefaultProfile(soundSampleChannels  c, soundSampleRate r, soundSampleGranularity  g) {
-		if (initialized != TRUE) init();
+		if (initialized != true) init();
 		defaultChannels = c;
 		defaultSpeed = r;
 		defaultDataSize = g;

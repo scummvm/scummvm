@@ -186,10 +186,10 @@ void DecoratedWindow::draw(void) {               // redraw the window
 	pointer.show();
 }
 
-//  Return TRUE if window floats above animated are
+//  Return true if window floats above animated are
 
 bool DecoratedWindow::isBackdrop(void) {
-	return FALSE;
+	return false;
 }
 
 //  Update a region of a window, and all floaters which
@@ -218,10 +218,10 @@ void BackWindow::invalidate(Rect16 &area) {
 		window.update(area);
 }
 
-//  Return TRUE if window floats above animated are
+//  Return true if window floats above animated are
 
 bool BackWindow::isBackdrop(void) {
-	return TRUE;
+	return true;
 }
 
 //  A backdrop window can never go to front.
@@ -242,7 +242,7 @@ DragBar::DragBar(gPanelList &list, const Rect16 &r)
 }
 
 bool DragBar::activate(gEventType) {
-	return TRUE;
+	return true;
 }
 
 void DragBar::deactivate(void) {
@@ -256,7 +256,7 @@ bool DragBar::pointerHit(gPanelMessage &msg) {
 	dragPos.y = wExtent.y;
 	dragOffset = msg.pickAbsPos;
 
-	return TRUE;
+	return true;
 }
 
 //  Inform the main drawing loop that a floating window needs to
@@ -275,14 +275,14 @@ void DragBar::pointerDrag(gPanelMessage &msg) {
 
 	if (pos != dragPos) {
 		dragPos = pos;
-		update = TRUE;
+		update = true;
 		dragWindow = (FloatingWindow *)&window;
 	}
 }
 
 void DragBar::pointerRelease(gPanelMessage &) {
 	deactivate();
-	update = FALSE;             // just in case
+	update = false;             // just in case
 	dragWindow = NULL;
 }
 
@@ -308,12 +308,12 @@ bool gButton::activate(gEventType why) {
 		deactivate();
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	}
-	return FALSE;
+	return false;
 }
 
 bool gButton::pointerHit(gPanelMessage &) {
 	activate(gEventMouseDown);
-	return TRUE;
+	return true;
 }
 
 void gButton::pointerRelease(gPanelMessage &) {
@@ -372,7 +372,7 @@ bool gToggleButton::activate(gEventType why) {
 		gPanel::deactivate();
 		notify(gEventNewValue, selected);    // notify App of successful hit
 	}
-	return FALSE;
+	return false;
 }
 
 bool gToggleButton::pointerHit(gPanelMessage &) {
@@ -639,7 +639,7 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 		//  Move the window to the new position
 
 		DragBar::dragWindow->setExtent(newExtent);
-		DragBar::update = FALSE;
+		DragBar::update = false;
 
 		if (newExtent.overlap(oldExtent)) {
 			//  If the positions overlap, update them as a single

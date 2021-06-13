@@ -97,7 +97,7 @@ public:
 
 	RESTYPE operator[](uint32 ind) {
 //		assert (ind<handles);
-		if (!locked[ind]) handle[ind] = rLoad(ind, FALSE);
+		if (!locked[ind]) handle[ind] = rLoad(ind, false);
 		return handle[ind];
 	}
 
@@ -124,17 +124,17 @@ template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asy
 	RESTYPE t;
 	if (isValidPtr(handle[ind]) && locked[ind]) {
 		RLockHandle((RHANDLE) handle[ind]);
-		locked.Bit(ind, TRUE);
-		wanted.Bit(ind, FALSE);
-		recent.Bit(ind, TRUE);
+		locked.Bit(ind, true);
+		wanted.Bit(ind, false);
+		recent.Bit(ind, true);
 		return handle[ind];
 	}
 	if (isValidPtr(handle[ind]) && wanted[ind]) {
 		// wait for handle
 		RLockHandle((RHANDLE) handle[ind]);
-		locked.Bit(ind, TRUE);
-		wanted.Bit(ind, FALSE);
-		recent.Bit(ind, TRUE);
+		locked.Bit(ind, true);
+		wanted.Bit(ind, false);
+		recent.Bit(ind, true);
 		return NULL;
 	}
 
@@ -143,7 +143,7 @@ template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asy
 
 	locked.Bit(ind, !asynch);
 	wanted.Bit(ind, asynch);
-	recent.Bit(ind, TRUE);
+	recent.Bit(ind, true);
 
 	if (asynch) {
 		handle[ind] = (RESTYPE) NULL;
@@ -159,8 +159,8 @@ template <class RESTYPE> RESTYPE LoadOnCall<RESTYPE>::rLoad(uint16 ind, bool asy
 template <class RESTYPE> void LoadOnCall<RESTYPE>::rFree(uint16 ind) {
 	if (isValidPtr(handle[ind])) {
 		RUnlockHandle((RHANDLE) handle[ind]);
-		locked.Bit(ind, FALSE);
-		//recent.Bit(ind,FALSE);
+		locked.Bit(ind, false);
+		//recent.Bit(ind,false);
 //		washHandle(handle[ind]);
 	}
 }
@@ -168,12 +168,12 @@ template <class RESTYPE> void LoadOnCall<RESTYPE>::rFree(uint16 ind) {
 template <class RESTYPE> void LoadOnCall<RESTYPE>::rInit(uint16 ind) {
 	RESTYPE t;
 	if (!isValidPtr(handle[ind])) {
-		t = (RESTYPE) loader(tileID + MKTAG(0, 0, 0, ind), FALSE);
+		t = (RESTYPE) loader(tileID + MKTAG(0, 0, 0, ind), false);
 		handle[ind] = t;
-		locked.Bit(ind, TRUE);
+		locked.Bit(ind, true);
 		RUnlockHandle((RHANDLE) handle[ind]);
-		locked.Bit(ind, FALSE);
-		recent.Bit(ind, FALSE);
+		locked.Bit(ind, false);
+		recent.Bit(ind, false);
 	}
 }
 

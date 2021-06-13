@@ -54,7 +54,7 @@ public:
 	RHANDLE         handle;                 // where to put the data
 	uint32          offset,                 // offset in file of data
 	                length;                 // desired length of data
-	bool            done;                   // TRUE if load is finished
+	bool            done;                   // true if load is finished
 	void            *userData;              // for app use
 
 	//  Function to notify when request is done.
@@ -115,7 +115,7 @@ void ResourceServer::service(void) {
 		WriteStatusF(1, "Loaded: %8.8d", actual);
 #endif
 	} else {
-		currentRequest->done = TRUE;
+		currentRequest->done = true;
 		resourceRequestPool.addTail(*currentRequest);
 		currentRequest = NULL;
 
@@ -158,7 +158,7 @@ void RequestResource(
 
 	RHandleStartLoading(handle);
 
-	rr->done   = FALSE;
+	rr->done   = false;
 	rr->handle = handle;
 	rr->offset = offset;
 	rr->length = length;

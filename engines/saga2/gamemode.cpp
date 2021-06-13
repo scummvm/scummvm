@@ -44,7 +44,7 @@ GameMode       *GameMode::modeStackPtr[Max_Modes] = { NULL };
 GameMode       *GameMode::newmodeStackPtr[Max_Modes] = { NULL };
 int         GameMode::modeStackCtr = 0;
 int         GameMode::newmodeStackCtr = 0;
-int         GameMode::newmodeFlag = FALSE;
+int         GameMode::newmodeFlag = false;
 
 void GameMode::modeUnStack(void) {
 	modeStackPtr[modeStackCtr] = NULL;                        //Always Start Cleanup At modeStackCtr
@@ -65,11 +65,11 @@ void GameMode::modeUnStack(int StopHere) {
 }
 
 bool GameMode::update(void) {
-	bool            result = FALSE;
+	bool            result = false;
 	int             ModeCtr = 0;
 
 
-	newmodeFlag = FALSE;
+	newmodeFlag = false;
 
 	for (int i = 0; i < newmodeStackCtr; i++, ModeCtr++)
 		if (newmodeStackPtr[i] != modeStackPtr[i])
@@ -111,7 +111,7 @@ void GameMode::SetStack(GameMode *modeFirst, ...) {
 #endif
 	va_end(Modes); //Clean Up
 
-	newmodeFlag = TRUE;
+	newmodeFlag = true;
 	return;
 
 }
@@ -119,7 +119,7 @@ void GameMode::SetStack(GameMode *modeFirst, ...) {
 void GameMode::SetStack(GameMode **newStack, int newStackSize) {
 	newmodeStackCtr = newStackSize;
 	memcpy(newmodeStackPtr, newStack, sizeof(GameMode *) * newStackSize);
-	newmodeFlag = TRUE;
+	newmodeFlag = true;
 }
 
 void GameMode::modeStack(GameMode *AddThisMode) {

@@ -59,7 +59,7 @@ gMousePointer::~gMousePointer(void) {
 
 //  Init & status check
 bool gMousePointer::init(Point16 pointerLimits) {
-	return TRUE;
+	return true;
 }
 
 //  Private routine to draw the mouse pointer image

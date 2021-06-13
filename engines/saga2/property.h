@@ -35,8 +35,8 @@ namespace Saga2 {
 //	This is an abstract property function object class.  A property function
 //	object can be used to determine if an object of type T has a certain
 //	property.  In order to do this, a pointer to an object of type T is
-//	passed to the operator () member function, which returns TRUE if the
-//	object has the property and FALSE if it does not.
+//	passed to the operator () member function, which returns true if the
+//	object has the property and false if it does not.
 
 //	These function objects can be used to process only subset of object of
 //	type T which meet certain criteria, without having to know what those
@@ -135,8 +135,8 @@ CompoundProperty< T >::~CompoundProperty(void) {
  * ===================================================================== */
 
 //	This class defines an 'and' compound property.  Each of the sub
-//	properties in the compound property list must evaluate to TRUE for this
-//	function object to evaluate to TRUE.
+//	properties in the compound property list must evaluate to true for this
+//	function object to evaluate to true.
 
 template < class T >
 class PropertyAnd : public CompoundProperty< T > {
@@ -155,13 +155,13 @@ bool PropertyAnd< T >::operator()(T *obj) const {
 	uint16  i;
 
 	//  Iterate through each element in the array and if any evaluate to
-	//  FALSE, return FALSE immediately.
+	//  false, return false immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(obj) == FALSE) return FALSE;
+		if ((*propertyArray[i])(obj) == false) return false;
 #endif
 	warning("STUB: PropertyAnd");
 
-	return TRUE;
+	return true;
 }
 
 /* ===================================================================== *
@@ -169,8 +169,8 @@ bool PropertyAnd< T >::operator()(T *obj) const {
  * ===================================================================== */
 
 //	This class defines an 'or' compound property.  If any of the sub
-//	properties in the compound property list evaluate to TRUE this function
-//	object will evaluate to TRUE.
+//	properties in the compound property list evaluate to true this function
+//	object will evaluate to true.
 
 template < class T >
 class PropertyOr : public CompoundProperty< T > {
@@ -189,13 +189,13 @@ bool PropertyOr< T >::operator()(T *obj) const {
 	uint16  i;
 
 	//  Iterate through each element in the array and if any evaluate to
-	//  TRUE, return TRUE immediately.
+	//  true, return true immediately.
 	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(obj)) return TRUE;
+		if ((*propertyArray[i])(obj)) return true;
 #endif
 	warning("STUB: PropertyOr");
 
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *

@@ -147,10 +147,10 @@ void insertLocation(
  * ===================================================================== */
 
 bool Target::isObjectTarget(void) const {
-	return FALSE;
+	return false;
 }
 bool Target::isActorTarget(void) const {
-	return FALSE;
+	return false;
 }
 
 /* ===================================================================== *
@@ -212,7 +212,7 @@ void LocationTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool LocationTarget::operator == (const Target &t) const {
-	if (t.getType() != locationTarget) return FALSE;
+	if (t.getType() != locationTarget) return false;
 
 	LocationTarget      *targetPtr = (LocationTarget *)&t;
 
@@ -406,7 +406,7 @@ void SpecificTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificTileTarget) return FALSE;
+	if (t.getType() != specificTileTarget) return false;
 
 	SpecificTileTarget  *targetPtr = (SpecificTileTarget *)&t;
 
@@ -475,7 +475,7 @@ void TilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool TilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != tilePropertyTarget) return FALSE;
+	if (t.getType() != tilePropertyTarget) return false;
 
 	TilePropertyTarget  *targetPtr = (TilePropertyTarget *)&t;
 
@@ -658,7 +658,7 @@ void SpecificMetaTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificMetaTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificMetaTileTarget) return FALSE;
+	if (t.getType() != specificMetaTileTarget) return false;
 
 	SpecificMetaTileTarget  *targetPtr = (SpecificMetaTileTarget *)&t;
 
@@ -731,7 +731,7 @@ void MetaTilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool MetaTilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != metaTilePropertyTarget) return FALSE;
+	if (t.getType() != metaTilePropertyTarget) return false;
 
 	MetaTilePropertyTarget  *targetPtr = (MetaTilePropertyTarget *)&t;
 
@@ -823,7 +823,7 @@ void ObjectTarget::searchObject(
 }
 
 bool ObjectTarget::isObjectTarget(void) const {
-	return TRUE;
+	return true;
 }
 
 TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
@@ -1016,7 +1016,7 @@ void SpecificObjectTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificObjectTarget::operator == (const Target &t) const {
-	if (t.getType() != specificObjectTarget) return FALSE;
+	if (t.getType() != specificObjectTarget) return false;
 
 	SpecificObjectTarget    *targetPtr = (SpecificObjectTarget *)&t;
 
@@ -1177,7 +1177,7 @@ void ObjectPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ObjectPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != objectPropertyTarget) return FALSE;
+	if (t.getType() != objectPropertyTarget) return false;
 
 	ObjectPropertyTarget    *targetPtr = (ObjectPropertyTarget *)&t;
 
@@ -1197,7 +1197,7 @@ bool ActorTarget::isTarget(GameObject *obj) const {
 }
 
 bool ActorTarget::isActorTarget(void) const {
-	return TRUE;
+	return true;
 }
 
 Actor *ActorTarget::actor(GameWorld *world, const TilePoint &tp) const {
@@ -1288,7 +1288,7 @@ void SpecificActorTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificActorTarget::operator == (const Target &t) const {
-	if (t.getType() != specificActorTarget) return FALSE;
+	if (t.getType() != specificActorTarget) return false;
 
 	SpecificActorTarget     *targetPtr = (SpecificActorTarget *)&t;
 
@@ -1479,7 +1479,7 @@ void ActorPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ActorPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != actorPropertyTarget) return FALSE;
+	if (t.getType() != actorPropertyTarget) return false;
 
 	ActorPropertyTarget     *targetPtr = (ActorPropertyTarget *)&t;
 

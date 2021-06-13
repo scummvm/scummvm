@@ -90,7 +90,7 @@ SaveFileConstructor::~SaveFileConstructor(void) {
 
 bool SaveFileConstructor::newChunk(ChunkID id, int32 size) {
 	//  Determine if file position is at end of previous chunk
-	if (posInChunk < chunkSize) return FALSE;
+	if (posInChunk < chunkSize) return false;
 
 	assert(posInChunk == chunkSize);
 
@@ -108,7 +108,7 @@ bool SaveFileConstructor::newChunk(ChunkID id, int32 size) {
 	chunkSize = size;
 	posInChunk = 0;
 
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -135,7 +135,7 @@ int32 SaveFileConstructor::write(void *buf, int32 size) {
 
 bool SaveFileConstructor::writeChunk(ChunkID id, void *buf, int32 size) {
 	//  Determine if file position is at end of previous chunk
-	if (posInChunk < chunkSize) return FALSE;
+	if (posInChunk < chunkSize) return false;
 
 	assert(posInChunk == chunkSize);
 
@@ -158,7 +158,7 @@ bool SaveFileConstructor::writeChunk(ChunkID id, void *buf, int32 size) {
 	chunkSize = posInChunk = size;
 
 	//  Return success
-	return TRUE;
+	return true;
 }
 
 /* ===================================================================== *
@@ -206,7 +206,7 @@ bool SaveFileReader::firstChunk(ChunkID &chunk, int32 &size) {
 
 	//  Read the chunk header
 	if (fread(&chunkHeader, sizeof(chunkHeader), 1, fileHandle) != 1)
-		return FALSE;
+		return false;
 
 	//  Initialize the chunk variables
 	chunkSize = chunkHeader.size;
@@ -217,7 +217,7 @@ bool SaveFileReader::firstChunk(ChunkID &chunk, int32 &size) {
 	size = chunkHeader.size;
 
 	//  Return success
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------
@@ -237,7 +237,7 @@ bool SaveFileReader::nextChunk(ChunkID &chunk, int32 &size) {
 
 	//  Read the chunk header
 	if (fread(&chunkHeader, sizeof(chunkHeader), 1, fileHandle) != 1)
-		return FALSE;
+		return false;
 
 	//  Initialize the chunk variables
 	chunkSize = chunkHeader.size;
@@ -248,7 +248,7 @@ bool SaveFileReader::nextChunk(ChunkID &chunk, int32 &size) {
 	size = chunkHeader.size;
 
 	//  Return success
-	return TRUE;
+	return true;
 }
 
 //----------------------------------------------------------------------

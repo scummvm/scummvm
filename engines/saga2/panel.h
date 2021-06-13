@@ -71,7 +71,7 @@ class gWindow;
 void HandleMouse(gMouseState &mouse);
 void HandleKeyStroke(int key, int qual);
 void HandleTimerTick(long newTick);
-void EventLoop(bool &running, bool modal = FALSE);
+void EventLoop(bool &running, bool modal = false);
 
 /* ===================================================================== *
                                 Constants
@@ -172,7 +172,7 @@ protected:
 
 
 public:
-	bool isActive(void);                     // TRUE if we are active panel
+	bool isActive(void);                     // true if we are active panel
 	virtual bool activate(gEventType why);  // activate the control
 	virtual void deactivate(void);       // deactivate the control
 	virtual void draw(void);                 // redraw the panel.
@@ -208,7 +208,7 @@ public:
 	bool    getEnabled(void) const {
 		return (bool) enabled;
 	}
-	void    show(bool shown = TRUE, bool inval = TRUE) {
+	void    show(bool shown = true, bool inval = true) {
 		enable(shown);
 		if (inval) invalidate();
 	}
@@ -324,7 +324,7 @@ public:
 	}
 
 protected:
-	bool            openFlag;               // TRUE if window open.
+	bool            openFlag;               // true if window open.
 
 	//gWindowWinInfoInINIFile saver;
 
@@ -425,7 +425,7 @@ public:
 
 	//  Disable double click for next mouse click
 	void disableDblClick(void) {
-		dblClickFlag = TRUE;
+		dblClickFlag = true;
 	}
 
 	enum    controlValue {

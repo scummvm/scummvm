@@ -246,9 +246,9 @@ APPFUNC(cmdManaInd);
 /* ===================================================================== *
    Globals
  * ===================================================================== */
-static bool indivControlsFlag = FALSE;
+static bool indivControlsFlag = false;
 
-bool userControlsSetup = FALSE;
+bool userControlsSetup = false;
 
 
 /* ===================================================================== *
@@ -710,7 +710,7 @@ CStatusLine::CStatusLine(gPanelList         &list,
 {
 	int         i;
 
-	lineDisplayed = FALSE;
+	lineDisplayed = false;
 	queueHead = queueTail = 0;
 
 	for (i = 0; i < elementsof(lineQueue); i++)
@@ -744,15 +744,15 @@ void CStatusLine::experationCheck(void) {
 	if (lineDisplayed
 	        && (waitAlarm.check()
 	            || (queueTail != queueHead && minWaitAlarm.check()))) {
-		enable(FALSE);
+		enable(false);
 		window.update(extent);
 
-		lineDisplayed = FALSE;
+		lineDisplayed = false;
 	}
 
 	if (!lineDisplayed && queueTail != queueHead) {
 		// enable the control
-		enable(TRUE);
+		enable(true);
 
 		// set up the time for this message
 		waitAlarm.set(lineQueue[queueTail].frameTime);
@@ -772,14 +772,14 @@ void CStatusLine::experationCheck(void) {
 		// draw the new textline
 		window.update(extent);
 
-		lineDisplayed = TRUE;
+		lineDisplayed = true;
 	}
 }
 
 void CStatusLine::clear(void) {
-	enable(FALSE);
+	enable(false);
 	window.update(extent);
-	lineDisplayed = FALSE;
+	lineDisplayed = false;
 
 	queueHead = queueTail = 0;
 }
@@ -807,7 +807,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	bulkPiePos.x    += bulkPieXOffset;
 	bulkPiePos.y    += bulkPieYOffset;
 
-	bRedraw         = TRUE; // this MUST be true or the indicators will not draw the first time
+	bRedraw         = true; // this MUST be true or the indicators will not draw the first time
 
 	// attach the resource context
 	containerRes = resFile->newContext(containerGroupID, "container context");
@@ -890,11 +890,11 @@ void CMassWeightIndicator::recalculate(void) {
 
 
 	if (containerObject) {
-		setMassPie(retMass = getWeightRatio(containerObject, mass, FALSE));
-		setBulkPie(retBulk = getBulkRatio(containerObject, bulk, FALSE));
+		setMassPie(retMass = getWeightRatio(containerObject, mass, false));
+		setBulkPie(retBulk = getBulkRatio(containerObject, bulk, false));
 	} else {
-		setMassPie(retMass = getWeightRatio(playerList[getCenterActorPlayerID()].getActor(), mass, FALSE));
-		setBulkPie(retBulk = getBulkRatio(playerList[getCenterActorPlayerID()].getActor(), bulk, FALSE));
+		setMassPie(retMass = getWeightRatio(playerList[getCenterActorPlayerID()].getActor(), mass, false));
+		setBulkPie(retBulk = getBulkRatio(playerList[getCenterActorPlayerID()].getActor(), bulk, false));
 	}
 }
 
@@ -906,7 +906,7 @@ void CMassWeightIndicator::recalculate(void) {
 void CMassWeightIndicator::update(void) {
 	CMassWeightIndicator *indNode = nullptr;
 
-	if (bRedraw == TRUE) {
+	if (bRedraw == true) {
 		for (indNode = (CMassWeightIndicator *)indList.first();
 		        indNode;
 		        indNode = (CMassWeightIndicator *)indNode->next()) {
@@ -914,7 +914,7 @@ void CMassWeightIndicator::update(void) {
 			indNode->invalidate();
 		}
 
-		bRedraw = FALSE;
+		bRedraw = false;
 	}
 }
 
@@ -1224,7 +1224,7 @@ bool CManaIndicator::needUpdate(PlayerActor *player) {
 	int16           manaAmount;
 	int16           baseManaAmount;
 	uint16          i;
-	bool            newData = FALSE;
+	bool            newData = false;
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
@@ -1234,11 +1234,11 @@ bool CManaIndicator::needUpdate(PlayerActor *player) {
 
 		// check for new data
 		if (manaAmount != currentMana[i] || baseManaAmount != currentBaseMana[i]) {
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
@@ -1251,7 +1251,7 @@ bool CManaIndicator::update(PlayerActor *player) {
 	int16           manaAmount;
 	int16           baseManaAmount;
 	uint16          i;
-	bool            newData = FALSE;
+	bool            newData = false;
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
@@ -1261,7 +1261,7 @@ bool CManaIndicator::update(PlayerActor *player) {
 
 		// check for new data
 		if (manaAmount != currentMana[i] || baseManaAmount != currentBaseMana[i]) {
-			newData = TRUE;
+			newData = true;
 
 			currentMana[i]        = manaAmount;
 			currentBaseMana[i]    = baseManaAmount;
@@ -1270,16 +1270,16 @@ bool CManaIndicator::update(PlayerActor *player) {
 		// get manaLine info ( which star/ring image, and position on screen )
 		// from getStarInfo which takes the mana type index ( i ),
 		// current mana total, and the player base mana
-		if (newData == TRUE) {
+		if (newData == true) {
 			getManaLineInfo(i, manaAmount, baseManaAmount, &manaLines[i]);
 		}
 	}
 
 	// return the state of data change
-	if (newData  == FALSE) {
-		return FALSE;
+	if (newData  == false) {
+		return false;
 	} else {
-		return TRUE;
+		return true;
 	}
 }
 
@@ -1708,9 +1708,9 @@ void SetupUserControls(void) {
 	for (n = 0; n < kNumViews; n++) {
 		// portrait button
 		checkAlloc(portBtns[n]        = new gMultCompButton(*trioControls, views[n][index++],
-		                                  portImag[n], numPortImages, 0, FALSE, brotherIDs[n], cmdPortrait));
+		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait));
 
-		portBtns[n]->setMousePoll(TRUE);
+		portBtns[n]->setMousePoll(true);
 
 		// aggressive button
 		checkAlloc(aggressBtns[n]     = new gOwnerSelCompButton(*trioControls, views[n][index++],
@@ -1747,8 +1747,8 @@ void SetupUserControls(void) {
 
 	// portrait button
 	checkAlloc(indivPortBtn = new gMultCompButton(*indivControls, views[0][index++],
-	                          portImag[0], numPortImages, 0, FALSE, uiIndiv, cmdPortrait));
-	indivPortBtn->setMousePoll(TRUE);
+	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait));
+	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
 	checkAlloc(indivAggressBtn  = new gOwnerSelCompButton(*indivControls, views[0][index++],
@@ -1803,7 +1803,7 @@ void SetupUserControls(void) {
 
 	// make the mana indicator
 	checkAlloc(ManaIndicator = new CManaIndicator(*indivControls));
-	ManaIndicator->setMousePoll(TRUE);
+	ManaIndicator->setMousePoll(true);
 
 	// get rid of the resource contexts
 	if (imageRes) {
@@ -1813,21 +1813,21 @@ void SetupUserControls(void) {
 
 	//The controls need to be enabled but undrawn at startup
 	//if ( displayEnabled() )
-	//  userControlsSetup = TRUE;
+	//  userControlsSetup = true;
 	updateAllUserControls();
 }
 
 void enableUserControls(void) {
-	userControlsSetup = TRUE;
+	userControlsSetup = true;
 }
 
 void disableUserControls(void) {
-	userControlsSetup = FALSE;
+	userControlsSetup = false;
 }
 
 // defines the cleanup for ALL user interface controls
 void CleanupUserControls(void) {
-	userControlsSetup = FALSE;
+	userControlsSetup = false;
 	CleanupButtonImages();
 }
 
@@ -1906,7 +1906,7 @@ inline T GetRatio(T curUnits, T maxUnits, T ratio) {
 	return clamp(0, curUnits, ratio);
 }
 
-uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = TRUE) {
+uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = true) {
 	assert(isObject(obj) || isActor(obj));
 
 	uint16 weight;
@@ -1930,7 +1930,7 @@ uint16 getWeightRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = 
 }
 
 
-uint16 getBulkRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = TRUE) {
+uint16 getBulkRatio(GameObject *obj, uint16 &maxRatio, bool bReturnMaxRatio = true) {
 	assert(isObject(obj) || isActor(obj));
 
 	uint16 maxBulk;
@@ -1972,7 +1972,7 @@ void setEnchantmentDisplay(void) {
 
 // sets the individual brother control state buttons
 void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
-	indivControlsFlag = TRUE;
+	indivControlsFlag = true;
 
 	// set the indiv bro
 	indivBrother = brotherID;
@@ -2005,13 +2005,13 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	uint16 pieBulkRatio     = MassWeightIndicator->getBulkPieDiv();
 	PlayerActor *brother    = &playerList[brotherID];
 
-	MassWeightIndicator->setMassPie(getWeightRatio(brother->getActor(), pieWeightRatio, FALSE));
-	MassWeightIndicator->setBulkPie(getBulkRatio(brother->getActor(), pieBulkRatio, FALSE));
+	MassWeightIndicator->setMassPie(getWeightRatio(brother->getActor(), pieWeightRatio, false));
+	MassWeightIndicator->setBulkPie(getBulkRatio(brother->getActor(), pieBulkRatio, false));
 }
 
 // sets the trio brothers control state buttons
 void setTrioBtns(void) {
-	indivControlsFlag = FALSE;
+	indivControlsFlag = false;
 
 	// reset any value that might have changed in idividual mode
 	centerBtns[indivBrother]->select(indivCenterBtn->isSelected());
@@ -2028,16 +2028,16 @@ void setControlPanelsToIndividualMode(uint16 brotherID) {
 	setIndivBtns(brotherID);
 
 	// set the mode controls
-	trioControls->show(FALSE, FALSE);
-	indivControls->show(TRUE, TRUE);
-	trioControls->show(FALSE, TRUE);
+	trioControls->show(false, false);
+	indivControls->show(true, true);
+	trioControls->show(false, true);
 }
 
 void setControlPanelsToTrioMode(void) {
 	setTrioBtns();
-	indivControls->show(FALSE, FALSE);
-	trioControls->show(TRUE, TRUE);
-	indivControls->show(FALSE, TRUE);
+	indivControls->show(false, false);
+	trioControls->show(true, true);
+	indivControls->show(false, true);
 }
 
 void toggleIndivMode(void) {
@@ -2123,7 +2123,7 @@ void updateBrotherRadioButtons(uint16 brotherID) {
 		centerBtns[uiKevin]->ghost(isBrotherDead(uiKevin));
 
 		if (brotherID == indivBrother) {
-			indivCenterBtn->select(TRUE);
+			indivCenterBtn->select(true);
 			indivCenterBtn->ghost(isBrotherDead(brotherID));
 		}
 
@@ -2246,10 +2246,10 @@ APPFUNC(cmdPortrait) {
 				}
 
 //				( ( gGenericControl * )ev.panel )->disableDblClick();
-				//  clickActionDone = TRUE;
+				//  clickActionDone = true;
 			} else if (mouseInfo.getIntent() == GrabInfo::Use) {
 				mouseInfo.replaceObject();
-//				clickActionDone = TRUE;
+//				clickActionDone = true;
 			}
 		} else if (panID != uiIndiv) {
 			if (!isBrotherDead(panID)) {
@@ -2265,7 +2265,7 @@ APPFUNC(cmdPortrait) {
 
 		if (ev.value == gCompImage::leave) {
 			mouseInfo.setText(nullptr);
-			mouseInfo.setDoable(TRUE);
+			mouseInfo.setDoable(true);
 			break;
 		}
 
@@ -2279,9 +2279,9 @@ APPFUNC(cmdPortrait) {
 				mouseInfo.setText(nullptr);
 
 				if ((enactor->getLocation() - targetActor->getLocation()).quickHDistance() > 96) {
-					mouseInfo.setDoable(FALSE);
+					mouseInfo.setDoable(false);
 				} else {
-					mouseInfo.setDoable(TRUE);
+					mouseInfo.setDoable(true);
 				}
 			} else {
 
@@ -2511,7 +2511,7 @@ APPFUNC(cmdHealthStar) {
 		}
 
 		if (ev.value == gCompImage::enter) {
-			ev.panel->setMousePoll(TRUE);
+			ev.panel->setMousePoll(true);
 		}
 
 		// get the stats for the selected brother
@@ -2679,7 +2679,7 @@ APPFUNC(cmdManaInd) {
 				break;
 
 			default:
-				assert(FALSE);   // should never get here
+				assert(false);   // should never get here
 				break;
 			}
 
@@ -2700,7 +2700,7 @@ bool isIndivMode(void) {
 }
 
 void initUIState(void) {
-	indivControlsFlag = FALSE;
+	indivControlsFlag = false;
 	indivBrother = 0;
 
 	//updateAllUserControls();
@@ -2816,7 +2816,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 	} else {
 		int16       x = extent.width - 10;
 
-		setMousePoll(TRUE);
+		setMousePoll(true);
 		setValue(getCenterActorPlayerID());
 
 		for (int i = 0; i < iconCount; i++) {

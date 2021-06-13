@@ -49,14 +49,14 @@ static gPalette     newPalette;
 
 bool isModalMode(void) {
 	uint16  i;
-	bool    modalFlag = FALSE;
+	bool    modalFlag = false;
 
 	for (i = 0; i < GameMode::modeStackCtr; i++) {
 		// go through each stacked mode
 		// and if modal mode is one of them,
 		// then set the modal flag
 		if (GameMode::modeStackPtr[i] == &ModalMode) {
-			modalFlag = TRUE;
+			modalFlag = true;
 		}
 	}
 

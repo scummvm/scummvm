@@ -49,16 +49,8 @@ typedef uint32      ChunkID;
 #define offsetof(type,field) (uint32)&(((type *)0)->field)
 #endif
 
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        1
-#endif
-#define OK                      0
-#define EMPTY           -1
-
-typedef bool BOOL;
+#define OK      0
+#define EMPTY   -1
 
 #define maxuint8 0xff
 #define minuint8 0

@@ -87,7 +87,7 @@ private:
  * ===================================================================== */
 
 //void startVideo( char *fileName,int x, int y );
-//int16 OptionsDialog( bool disableSaveResume=FALSE );
+//int16 OptionsDialog( bool disableSaveResume=false );
 
 extern int16        speechButtonCount;      // count of speech buttons
 extern void         abortSpeech(void);
@@ -155,7 +155,7 @@ ObjectID            pickedActor;
 #endif
 #if CHEATMOVE
 ObjectID            selectedObject = Nothing;
-bool                nudge = FALSE;
+bool                nudge = false;
 #endif
 
 extern ObjectID     viewCenterObject;
@@ -169,7 +169,7 @@ static struct _delayedNavigation {
 	_delayedNavigation(void) {;}
 
 } delayedNavigation;
-static bool navigationDelayed = FALSE;
+static bool navigationDelayed = false;
 
 extern Rect16       tileRect;
 
@@ -177,7 +177,7 @@ extern Rect16       tileRect;
 
 GameMode            TileMode = {
 	NULL,                                   // no previous mode
-	FALSE,                                  // mode is not nestable
+	false,                                  // mode is not nestable
 	TileModeSetup,
 	TileModeCleanup,
 	TileModeHandleTask,
@@ -194,17 +194,17 @@ extern gToolBase    G_BASE;
 extern Alarm        frameAlarm;             // 10 fps frame rate
 Alarm               updateAlarm,            // max coord update rate
                     pathFindAlarm;          // mouse click rate for path find
-bool                tileLockFlag;           // TRUE if tile mode is locked
+bool                tileLockFlag;           // true if tile mode is locked
 
 GameObject          *mouseObject = NULL;    // object being dragged
 Point32             lastMousePos;           // Last mouse position over map
 static bool         mousePressed,           // State of mouse button
-       clickActionDone = TRUE; // Flag indication wether current
+       clickActionDone = true; // Flag indication wether current
 // mouse click action is done
-static bool         runFlag = FALSE;        // Reflexs wether the mouse is
+static bool         runFlag = false;        // Reflexs wether the mouse is
 // the run zone
 
-static bool         uiKeysEnabled = TRUE;
+static bool         uiKeysEnabled = true;
 
 static char         lastUnusedKey = '\0';
 
@@ -222,7 +222,7 @@ extern uint32 frames;
 extern hResContext          *imageRes;              // image resource handle
 
 //  Combat related data
-static bool         aggressiveActFlag = FALSE;  //  Indicates wether or not
+static bool         aggressiveActFlag = false;  //  Indicates wether or not
 //  there has been an
 //  aggressive act
 static CalenderTime timeOfLastAggressiveAct;    //  Used to determine the
@@ -280,14 +280,14 @@ static void pauseCombat(void) {
 	pauseActorStates();
 	pauseActorTasks();
 
-	setCenterActorIndicator(TRUE);
+	setCenterActorIndicator(true);
 }
 
 //-----------------------------------------------------------------------
 //	This function performs all combat un-pausing tasks
 
 static void resumeCombat(void) {
-	setCenterActorIndicator(FALSE);
+	setCenterActorIndicator(false);
 
 	resumeActorTasks();
 	resumeActorStates();
@@ -302,8 +302,8 @@ static void resumeCombat(void) {
 
 static void startCombat(void) {
 	if (globalConfig.autoAggression) autoAdjustAggression();
-	setCombatBehavior(TRUE);
-	combatPaused = FALSE;
+	setCombatBehavior(true);
+	combatPaused = false;
 }
 
 //-----------------------------------------------------------------------
@@ -311,10 +311,10 @@ static void startCombat(void) {
 
 static void endCombat(void) {
 	if (combatPaused) {
-		combatPaused = FALSE;
+		combatPaused = false;
 		resumeCombat();
 	}
-	setCombatBehavior(FALSE);
+	setCombatBehavior(false);
 
 	handleEndOfCombat();
 }
@@ -355,7 +355,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 		if (actorIDToPlayerID(attackeeID, playerID))
 			handlePlayerActorAttacked(playerID);
 
-		aggressiveActFlag = TRUE;
+		aggressiveActFlag = true;
 		timeOfLastAggressiveAct = calender;
 	}
 }
@@ -379,10 +379,10 @@ bool areThereActiveEnemies(void) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
 		        && ((Actor *)obj)->disposition == dispositionEnemy)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void CheckCombatMood(void) {
@@ -390,7 +390,7 @@ void CheckCombatMood(void) {
 	TilePoint           centerLoc;
 	ActiveRegion        *ar;
 	GameWorld           *world;
-	static bool         wasHostile = FALSE;
+	static bool         wasHostile = false;
 
 	ar = getActiveRegion(getCenterActorPlayerID());
 	if (ar == NULL) return;
@@ -409,7 +409,7 @@ void CheckCombatMood(void) {
 
 	bool                agress = isCenterActorAggressive();
 
-	wasHostile = FALSE;
+	wasHostile = false;
 	clearActiveFactions();
 	for (iter8.first(&obj); obj != NULL; iter8.next(&obj)) {
 		if (isActor(obj)
@@ -417,7 +417,7 @@ void CheckCombatMood(void) {
 		        && ((Actor *)obj)->disposition == dispositionEnemy) {
 			if (agress || !(((Actor *)obj)->flags & Actor::afraid)) {
 				incrementActiveFaction((Actor *) obj);
-				wasHostile = TRUE;
+				wasHostile = true;
 			}
 		}
 	}
@@ -531,7 +531,7 @@ static void evalMouseState(void) {
 					        && (a->inRange(obj->getLocation(), 8)
 					            ||  lineOfSight(a, obj, terrainTransparent))) {
 						mouseInfo.setIntent(GrabInfo::Attack);
-						mouseInfo.setDoable(TRUE);
+						mouseInfo.setDoable(true);
 					} else {
 						mouseInfo.setIntent(GrabInfo::WalkTo);
 						walkToPos = obj->getLocation();
@@ -609,9 +609,9 @@ static void evalMouseState(void) {
 void initTileModeState(void) {
 	assert(uiKeysEnabled);
 
-	aggressiveActFlag = FALSE;
-	inCombat = FALSE;
-	combatPaused = FALSE;
+	aggressiveActFlag = false;
+	inCombat = false;
+	combatPaused = false;
 }
 
 //-----------------------------------------------------------------------
@@ -656,7 +656,7 @@ void loadTileModeState(SaveFileReader &saveGame) {
 		    &timeOfLastAggressiveAct,
 		    sizeof(timeOfLastAggressiveAct));
 	}
-	tileLockFlag = FALSE;
+	tileLockFlag = false;
 }
 
 /* ===================================================================== *
@@ -678,7 +678,7 @@ void TileModeSetup(void) {
 	tileMapControl = new gStickyDragControl(*playControls, tileRect, 0, cmdClickTileMap);
 
 	//Enable Tile Mode Specific Controls
-	tileControls->enable(TRUE);
+	tileControls->enable(true);
 
 	initTileBanks();
 
@@ -703,7 +703,7 @@ void TileModeSetup(void) {
 
 void TileModeCleanup(void) {
 	//Disable Tile Mode Specific Controls
-	tileControls->enable(FALSE);
+	tileControls->enable(false);
 
 	freeAllTileBanks();
 
@@ -729,7 +729,7 @@ static int postDisplayFrame = 3;
 extern int          lockUINest;
 
 void TileModeHandleTask(void) {
-	bool taskChek = FALSE;
+	bool taskChek = false;
 	//  Run any SAGA scripts which are waiting to run.
 	dispatchScripts();
 
@@ -757,12 +757,12 @@ void TileModeHandleTask(void) {
 		else if (timeSinceLastAggressiveAct() < 60
 		         &&  areThereActiveEnemies()) {
 			if (!inCombat) {
-				inCombat = TRUE;
+				inCombat = true;
 				startCombat();
 			}
 		} else {
 			if (inCombat) {
-				inCombat = FALSE;
+				inCombat = false;
 				endCombat();
 			}
 		}
@@ -770,12 +770,12 @@ void TileModeHandleTask(void) {
 		if (inCombat) {
 			if (!a->isMoving() && a->isInterruptable() && lockUINest == 0) {
 				if (!combatPaused) {
-					combatPaused = TRUE;
+					combatPaused = true;
 					pauseCombat();
 				}
 			} else {
 				if (combatPaused) {
-					combatPaused = FALSE;
+					combatPaused = false;
 					resumeCombat();
 				}
 			}
@@ -790,10 +790,10 @@ void TileModeHandleTask(void) {
 
 		// do an alarm check for container views
 		if (containerObjTextAlarm.check()) {
-			ContainerView::objTextAlarm = TRUE;
+			ContainerView::objTextAlarm = true;
 		}
 
-		if (ContainerView::objTextAlarm == TRUE) {
+		if (ContainerView::objTextAlarm == true) {
 			// if the mouse is in a container...
 			if (ContainerView::mouseInView) {
 				mouseInfo.setText(ContainerView::mouseText);
@@ -885,8 +885,8 @@ void TileModeHandleTask(void) {
 			if (delayedNavigation.pathFindFlag)
 				navigatePath(delayedNavigation.walkToPos);
 			else
-				navigateDirect(delayedNavigation.walkToPos, FALSE);
-			navigationDelayed = FALSE;
+				navigateDirect(delayedNavigation.walkToPos, false);
+			navigationDelayed = false;
 		}
 
 		updateContainerWindows();
@@ -912,9 +912,9 @@ void TileModeHandleTask(void) {
 		updateMainDisplay();
 
 		if (inCombat || postDisplayFrame++ > 2)
-			taskChek = TRUE;
+			taskChek = true;
 	} else if (postDisplayFrame) {
-		taskChek = TRUE;
+		taskChek = true;
 	}
 	if (taskChek) {
 		postDisplayFrame = 0;
@@ -959,8 +959,8 @@ void TileModeHandleKey(int16 key, int16 qual) {
 		abortSpeech();
 		if (uiKeysEnabled) {
 			if (tileMapControl->isSticky()) {
-				tileMapControl->setSticky(FALSE);
-				mousePressed = FALSE;
+				tileMapControl->setSticky(false);
+				mousePressed = false;
 				setMouseImage(kMouseArrowImage, 0, 0);
 				evalMouseState();
 			}
@@ -1000,15 +1000,15 @@ void TileModeHandleKey(int16 key, int16 qual) {
 	//  Keyboard equivalents for mental containers
 	case 'i':
 		if (uiKeysEnabled)
-			OpenMindContainer(getCenterActorPlayerID(), TRUE, 0);
+			OpenMindContainer(getCenterActorPlayerID(), true, 0);
 		break;
 	case 's':
 		if (uiKeysEnabled)
-			OpenMindContainer(getCenterActorPlayerID(), TRUE, 1);
+			OpenMindContainer(getCenterActorPlayerID(), true, 1);
 		break;
 	case 'k':
 		if (uiKeysEnabled)
-			OpenMindContainer(getCenterActorPlayerID(), TRUE, 2);
+			OpenMindContainer(getCenterActorPlayerID(), true, 2);
 		break;
 
 	case 'm':
@@ -1090,7 +1090,7 @@ void showMouseEvent(char eventType) {
 
 static APPFUNC(cmdClickTileMap) {
 
-	static bool dblClick = FALSE;
+	static bool dblClick = false;
 
 	//  REM: This code needs to be moved elsewhere. We put it
 	//  here for testing purposes only. It should actually go on
@@ -1116,11 +1116,11 @@ static APPFUNC(cmdClickTileMap) {
 	case gEventMouseMove:
 	case gEventMouseDrag:
 		if (ev.value & gGenericControl::leave) {
-			mousePressed = FALSE;
+			mousePressed = false;
 
 			if (mouseInfo.getObject() == NULL)
 				mouseInfo.setIntent(GrabInfo::WalkTo);
-			mouseInfo.setDoable(TRUE);
+			mouseInfo.setDoable(true);
 
 			//  Remove any mouse text
 			lastPickedObject = Nothing;
@@ -1132,9 +1132,9 @@ static APPFUNC(cmdClickTileMap) {
 
 	case gEventMouseDown:
 
-		mousePressed = TRUE;
+		mousePressed = true;
 
-		clickActionDone = FALSE;
+		clickActionDone = false;
 
 		{
 			//  Get the center actor's ID and a pointer to the center
@@ -1176,10 +1176,10 @@ static APPFUNC(cmdClickTileMap) {
 						}
 
 						((gGenericControl *)ev.panel)->disableDblClick();
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
 						mouseInfo.replaceObject();
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					}
 				} else if (pickedTAI != NULL) {
 					//  we dropped the object onto active terrain
@@ -1214,11 +1214,11 @@ static APPFUNC(cmdClickTileMap) {
 							}
 
 							((gGenericControl *)ev.panel)->disableDblClick();
-							clickActionDone = TRUE;
+							clickActionDone = true;
 						}
 					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
 						mouseInfo.replaceObject();
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					}
 				} else if (pickedObject == Nothing) {
 					//  we dropped the object on the ground
@@ -1232,7 +1232,7 @@ static APPFUNC(cmdClickTileMap) {
 						    Location(tilePickPos, currentWorld->thisID()),
 						    mouseInfo.getMoveCount());
 						((gGenericControl *)ev.panel)->disableDblClick();
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					} else if (mouseInfo.getIntent() == GrabInfo::Use
 					           &&  mouseInfo.getDoable()) {
 						// New for spells - this enables objects to be used on a
@@ -1242,10 +1242,10 @@ static APPFUNC(cmdClickTileMap) {
 						    *centerActorPtr,
 						    *mouseObject,
 						    Location(tilePickPos, currentWorld->thisID()));
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					} else if (mouseInfo.getIntent() == GrabInfo::Use) {
 						mouseInfo.replaceObject();
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					}
 				}
 			} else if (pickedObject != Nothing) {
@@ -1256,7 +1256,7 @@ static APPFUNC(cmdClickTileMap) {
 
 					if (actorIDToPlayerID(pickedObject, pID) && !isBrotherDead(pID)) {
 						setCenterBrother(pID);
-						clickActionDone = TRUE;
+						clickActionDone = true;
 					} else if (mouseInfo.getIntent() == GrabInfo::PickUp
 					           ||  mouseInfo.getIntent() == GrabInfo::Open) {
 						GameObject  *pickedObjPtr =
@@ -1271,7 +1271,7 @@ static APPFUNC(cmdClickTileMap) {
 							quantity = pickedObjPtr->getExtra();
 
 						if (pickedObjPtr->take(centerActorID, quantity))
-							clickActionDone = TRUE;
+							clickActionDone = true;
 					} else if (mouseInfo.getIntent() == GrabInfo::Attack) {
 						centerActorPtr->attack(
 						    GameObject::objectAddress(pickedObject));
@@ -1291,12 +1291,12 @@ static APPFUNC(cmdClickTileMap) {
 				if (mouseInfo.getIntent() == GrabInfo::WalkTo
 				        &&  mouseInfo.getDoable()) {
 					if (pickedTAI == NULL) {
-						navigateDirect(walkToPos, FALSE);
+						navigateDirect(walkToPos, false);
 						//      ( ( gGenericControl * )ev.panel )->disableDblClick();
 					} else {
-						navigationDelayed = TRUE;
+						navigationDelayed = true;
 						delayedNavigation.walkToPos = walkToPos;
-						delayedNavigation.pathFindFlag = FALSE;
+						delayedNavigation.pathFindFlag = false;
 						delayedNavigation.delay.set(ticksPerSecond / 2);
 					}
 					pathFindAlarm.set(ticksPerSecond / 2);
@@ -1307,10 +1307,10 @@ static APPFUNC(cmdClickTileMap) {
 
 	case gEventMouseUp:
 
-		mousePressed = FALSE;
+		mousePressed = false;
 
 		if (dblClick)
-			dblClick = FALSE;
+			dblClick = false;
 		else {
 			if (pathFindAlarm.check()) { // mouse click was too long for path find
 				if (mouseInfo.getIntent() == GrabInfo::WalkTo) {
@@ -1319,11 +1319,11 @@ static APPFUNC(cmdClickTileMap) {
 					if (a->moveTask && a->moveTask->isWalk())
 						a->moveTask->finishWalk();
 				}
-				navigationDelayed = FALSE;
+				navigationDelayed = false;
 			} else {
 				if (navigationDelayed) {
 					delayedNavigation.walkToPos = walkToPos;
-					delayedNavigation.pathFindFlag = TRUE;
+					delayedNavigation.pathFindFlag = true;
 					delayedNavigation.delay.set(ticksPerSecond / 2);
 				} else {
 					Actor   *a = getCenterActor();
@@ -1331,7 +1331,7 @@ static APPFUNC(cmdClickTileMap) {
 					if ((walkToPos - a->getLocation()).quickHDistance() > 24)
 						navigatePath(walkToPos);
 					else
-						navigateDirect(walkToPos, FALSE);
+						navigateDirect(walkToPos, false);
 				}
 			}
 		}
@@ -1339,9 +1339,9 @@ static APPFUNC(cmdClickTileMap) {
 
 	case gEventDoubleClick:
 
-		dblClick = TRUE;
+		dblClick = true;
 
-		navigationDelayed = FALSE;
+		navigationDelayed = false;
 
 		if ((mouseObject = mouseInfo.getObject()) != NULL) {
 			mouseInfo.replaceObject();
@@ -1364,7 +1364,7 @@ static APPFUNC(cmdClickTileMap) {
 					    GameObject::objectAddress(pickedObject);
 
 					MotionTask::useObject(*getCenterActor(), *pickedObjPtr);
-					clickActionDone = TRUE;
+					clickActionDone = true;
 				}
 			}
 		} else if (pickedTAI != NULL) {
@@ -1378,9 +1378,9 @@ static APPFUNC(cmdClickTileMap) {
 			            ||  lineOfSight(a, TAILoc, terrainTransparent)))
 				MotionTask::useTAI(*a, *pickedTAI);
 		} else {
-			tileMapControl->setSticky(TRUE);
+			tileMapControl->setSticky(true);
 			setMouseImage(kMouseAutoWalkImage, -8, -8);
-			mousePressed = TRUE;
+			mousePressed = true;
 		}
 		break;
 
@@ -1400,7 +1400,7 @@ void navigateDirect(TilePoint pick, bool runFlag_) {
 
 		//  REM: Do running here...
 
-		MotionTask::walkToDirect(*a, pick, runFlag_, FALSE);
+		MotionTask::walkToDirect(*a, pick, runFlag_, false);
 	}
 }
 
@@ -1416,7 +1416,7 @@ void navigatePath(TilePoint pick) {
 			a->moveTask->changeTarget(pick);
 		else
 			//  else create a new motion task
-			MotionTask::walkTo(*a, pick, FALSE, FALSE);
+			MotionTask::walkTo(*a, pick, false, false);
 	}
 }
 
@@ -1498,12 +1498,12 @@ void cheatMove(int16 key) {
 gStickyDragControl::gStickyDragControl(gPanelList &list, const Rect16 &box,
                                        uint16 ident, AppFunc *cmd)
 	: gGenericControl(list, box, ident, cmd) {
-	sticky = FALSE;
+	sticky = false;
 }
 
 void gStickyDragControl::deactivate(void) {
 	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = FALSE;
+	sticky = false;
 	gGenericControl::deactivate();
 }
 
@@ -1514,18 +1514,18 @@ void gStickyDragControl::deactivate(void) {
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {
 	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = FALSE;
+	sticky = false;
 	return gGenericControl::pointerHit(msg);
 }
 
 void gStickyDragControl::pointerRelease(gPanelMessage &msg) {
-	if (sticky == FALSE)
+	if (sticky == false)
 		gGenericControl::pointerRelease(msg);
 }
 
 void noStickyMap(void) {
 	((gPanel *)tileMapControl)->deactivate();
-	mousePressed = FALSE;
+	mousePressed = false;
 }
 
 } // end of namespace Saga2

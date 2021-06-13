@@ -37,7 +37,7 @@ namespace Saga2 {
 class gBackSave : private gPort {
 	Rect16          savedRegion;        // extent of saved region
 	gPixelMap       savedPixels;        // buffer of saved pixels
-	bool            saved;              // TRUE = saved.
+	bool            saved;              // true = saved.
 
 public:
 	gBackSave(const Rect16 &extent);

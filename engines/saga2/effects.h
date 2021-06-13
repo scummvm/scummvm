@@ -324,7 +324,7 @@ inline bool isHarmful(uint16 enchID) {
 	if (typ == effectAttrib)  return amt < 0;
 	if (typ == effectOthers)
 		return (sub >= actorSlowAttack && sub <= actorBlind);
-	return FALSE;
+	return false;
 }
 
 // ------------------------------------------------------------------
@@ -370,7 +370,7 @@ public:
 	}
 	//int implementation( void ) { return imp; }
 	virtual bool applicable(SpellTarget &) {
-		return FALSE;
+		return false;
 	}
 	virtual void implement(GameObject *, SpellTarget *, int8 = 0) {}
 };
@@ -391,7 +391,7 @@ class ProtoDamage: public ProtoEffect {
 
 public:
 
-	ProtoDamage(int8 d, int8 s, int8 sd, int8 b, effectDamageTypes t, int, bool afSelf = FALSE, int8 sb = 0) {
+	ProtoDamage(int8 d, int8 s, int8 sd, int8 b, effectDamageTypes t, int, bool afSelf = false, int8 sb = 0) {
 		type = t;
 		dice = d;
 		sides = s;
@@ -423,7 +423,7 @@ class ProtoDrainage: public ProtoEffect {
 
 public:
 
-	ProtoDrainage(int8 d, int8 s, int8 sd, int8 b, effectDrainsTypes t, int, bool afSelf = FALSE) {
+	ProtoDrainage(int8 d, int8 s, int8 sd, int8 b, effectDrainsTypes t, int, bool afSelf = false) {
 		type = t;
 		dice = d;
 		sides = s;
@@ -525,7 +525,7 @@ public:
 	}
 
 	bool applicable(SpellTarget &)  {
-		return (TRUE);
+		return (true);
 	}
 
 	void implement(GameObject *, SpellTarget *trg, int8 deltaDamage = 0);
@@ -553,7 +553,7 @@ public:
 	}
 
 	bool applicable(SpellTarget &) {
-		return TRUE;
+		return true;
 		//return (trg.getType()==SpellTarget::spellTargetObject ||
 		//       trg.getType()==SpellTarget::spellTargetObjectPoint) &&
 		//     isActor(trg.getObject());

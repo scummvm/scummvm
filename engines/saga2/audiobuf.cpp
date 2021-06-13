@@ -70,7 +70,7 @@ extern audioInterface *audio;
 Buffer::Buffer(size_t newSize) {
 	assert(newSize > 0);
 
-	internallyAllocated = TRUE;
+	internallyAllocated = true;
 	size = newSize;
 	data[0] = malloc(newSize);
 	data[1] = NULL;
@@ -95,7 +95,7 @@ workBuffer::workBuffer(size_t newSize, int16 newID)
 	: Buffer(newSize) {
 	bufID = newID;
 	fillBuffer = 0;
-	targetSated = FALSE;
+	targetSated = false;
 }
 
 workBuffer::~workBuffer(void) {
@@ -124,7 +124,7 @@ doubleBuffer::doubleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 		bufID = newID;
 		fillBuffer = 0;
 		targetPos = 0;
-		targetSated = FALSE;
+		targetSated = false;
 		ailSampleHandle = AIL_allocate_sample_handle(sd->dig);
 		if (ailSampleHandle == NULL)
 			error("Unable to allocate audio handle");
@@ -160,7 +160,7 @@ singleBuffer::singleBuffer(size_t newSize, audioInterface *sd, int16 newID)
 
 		bufID = newID;
 		fillBuffer = 0;
-		targetSated = FALSE;
+		targetSated = false;
 		ailSampleHandle = AIL_allocate_sample_handle(sd->dig);
 		if (ailSampleHandle == NULL)
 			audioFatal("Unable to allocate audio handle");
@@ -191,7 +191,7 @@ musicBuffer::musicBuffer(size_t newSize, audioInterface *sd, int16 newID)
 
 		bufID = newID;
 		fillBuffer = 0;
-		targetSated = FALSE;
+		targetSated = false;
 		ailSampleHandle = AIL_allocate_sequence_handle(sd->mid);
 		if (ailSampleHandle == NULL)
 			audioFatal("Unable to allocate music handle");
@@ -290,18 +290,18 @@ void musicBuffer::format(soundSample *) {
 /* laden() determine whether a buffer can be written to.    */
 
 bool Buffer::laden(void) {
-	if (-1 == washed()) return TRUE;
+	if (-1 == washed()) return true;
 	activate(0);
-	return FALSE;
+	return false;
 }
 
 // fairly trivial for work buffers
 
 bool workBuffer::laden(void) {
 	if (-1 == washed())
-		return TRUE;
+		return true;
 	activate(0);
-	return FALSE;
+	return false;
 }
 
 // sound buffers need to find out from AIL whether a buffer is free
@@ -309,30 +309,30 @@ bool workBuffer::laden(void) {
 bool doubleBuffer::laden(void) {
 	assert(ailSampleHandle);
 	if (-1 == washed())
-		return TRUE;
+		return true;
 	else if (targetSated)
 		activate(fillBuffer);
-	return (FALSE);
+	return (false);
 }
 
 bool singleBuffer::laden(void) {
 	assert(ailSampleHandle);
 	if (targetSated)
 		activate(0);
-	return (FALSE);
+	return (false);
 }
 
 bool musicBuffer::laden(void) {
 	if (targetSated)
 		activate(0);
-	return (FALSE);
+	return (false);
 }
 
 bool cacheBuffer::laden(void) {
 	if (-1 == washed())
-		return TRUE;
+		return true;
 	activate(0);
-	return FALSE;
+	return false;
 }
 
 
@@ -767,7 +767,7 @@ void doubleBuffer::activate(int16 bufNo) {
 	assert(ailSampleHandle);
 	n = bufNo;
 	if (washed() > -1) {
-		targetSated = FALSE;
+		targetSated = false;
 		fillBuffer = AILLOCated;
 		wSize = size;
 		wData = data[fillBuffer];
@@ -779,7 +779,7 @@ void doubleBuffer::activate(int16 bufNo) {
 		wData = data[0];
 		rSize = 0;
 		rData = data[0];
-		targetSated = TRUE;
+		targetSated = true;
 	}
 }
 
@@ -787,7 +787,7 @@ void singleBuffer::activate(int16 bufNo) {
 	int32 n;
 	assert(ailSampleHandle);
 	n = bufNo;
-	targetSated = FALSE;
+	targetSated = false;
 	fillBuffer = 0;
 	wSize = size;
 	wData = data[fillBuffer];
@@ -801,7 +801,7 @@ void musicBuffer::activate(int16 bufNo) {
 	n = bufNo;
 	audioSet = 0;
 	if (washed() > -1) {
-		targetSated = FALSE;
+		targetSated = false;
 		fillBuffer = 0;
 		wSize = size;
 		wData = data[fillBuffer];
@@ -813,7 +813,7 @@ void musicBuffer::activate(int16 bufNo) {
 		wData = data[0];
 		rSize = 0;
 		rData = data[0];
-		targetSated = TRUE;
+		targetSated = true;
 	}
 }
 

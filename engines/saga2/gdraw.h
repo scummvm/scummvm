@@ -204,7 +204,7 @@ public:
 
 	//  Set attributes
 
-	virtual void setMap(gPixelMap *newmap, bool inverted = FALSE);
+	virtual void setMap(gPixelMap *newmap, bool inverted = false);
 
 	//  Direct colors
 

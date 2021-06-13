@@ -70,7 +70,7 @@ static bool initTowerLayer(int is) {
 	return r;
 }
 
-static bool cleanupErr = FALSE;
+static bool cleanupErr = false;
 
 static void termTowerLayer(int is) {
 	tower[is].term();
@@ -84,7 +84,7 @@ static void termTowerLayer(int is) {
 INITIALIZER(programInit) {
 	for (initializationState = 0; initializationState < maxInitState;) {
 		int32 tLevel = getTowerLayer(initializationState);
-		bool r = FALSE;
+		bool r = false;
 		SystemEventLoop();
 		r = initTowerLayer(tLevel);
 
@@ -92,10 +92,10 @@ INITIALIZER(programInit) {
 			setInitState(initializationState + 1);
 		} else {
 			error("Tower Initialization Step %d Failed (record %d)", initializationState, tLevel);
-			return FALSE;
+			return false;
 		}
 	}
-	return TRUE;
+	return true;
 }
 
 // ------------------------------------------------------------------------
@@ -114,7 +114,7 @@ TERMINATOR(programTerm) {
 // Null Builder
 
 INITIALIZER(initTowerBase) {
-	return TRUE;
+	return true;
 }
 
 // ------------------------------------------------------------------------

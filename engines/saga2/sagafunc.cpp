@@ -837,10 +837,10 @@ int16 scriptGameObjectCanSenseProtaganist(int16 *args) {
 		scf.enactor = obj->thisID();
 		scf.directObject = info.sensedObject->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -864,10 +864,10 @@ int16 scriptGameObjectCanSenseSpecificActor(int16 *args) {
 		scf.enactor = obj->thisID();
 		scf.directObject = info.sensedObject->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -888,10 +888,10 @@ int16 scriptGameObjectCanSenseSpecificObject(int16 *args) {
 		scf.enactor = obj->thisID();
 		scf.directObject = info.sensedObject->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -910,10 +910,10 @@ int16 scriptGameObjectCanSenseActorProperty(int16 *args) {
 		scf.enactor = obj->thisID();
 		scf.directObject = info.sensedObject->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -932,10 +932,10 @@ int16 scriptGameObjectCanSenseObjectProperty(int16 *args) {
 		scf.enactor = obj->thisID();
 		scf.directObject = info.sensedObject->thisID();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -992,8 +992,8 @@ int16 scriptGameObjectSetMass(int16 *args) {
 		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 			globalContainerList.setUpdate(obj->IDParent());
 		}
-		return TRUE;
-	} else return FALSE;
+		return true;
+	} else return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1517,7 +1517,7 @@ int16 scriptActorAnimationFrames(int16 *args) {
 
 //-----------------------------------------------------------------------
 //	Update the current animation sequence to the next frame.
-//	Returns TRUE if there are more animation frames in the current
+//	Returns true if there are more animation frames in the current
 //	sequence.
 //		int "c" nextAnimationFrame( void );
 
@@ -1683,10 +1683,10 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 		            ?   args[3]
 		            :   -1)
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1714,10 +1714,10 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 		            args[3],
 		            args[4])
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1744,10 +1744,10 @@ int16 scriptActorAssignBeNearLocation(int16 *args) {
 		            targetLoc,
 		            args[4])
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1778,10 +1778,10 @@ int16 scriptActorAssignBeNearActor(int16 *args) {
 		            args[2],
 		            args[3])
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1806,10 +1806,10 @@ int16 scriptActorAssignKillActor(int16 *args) {
 		            targetActor,
 		            args[2])
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1855,10 +1855,10 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 		            *   CalenderTime::framesPerHour,
 		            tetherReg)
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -1879,10 +1879,10 @@ int16 scriptActorAssignAttend(int16 *args) {
 		            %   CalenderTime::framesPerDay,
 		            GameObject::objectAddress(args[1]))
 		        !=  NULL)
-			return TRUE;
+			return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -2087,8 +2087,8 @@ int16 scriptActorDeductPayment(int16 *args) {
 		}
 	}
 
-	//  If he doesn't have enough, return FALSE.
-	if (paymentFound < paymentAmount) return FALSE;
+	//  If he doesn't have enough, return false.
+	if (paymentFound < paymentAmount) return false;
 
 	//  Now, deduct the actual currency
 	for (id = iter.first(&obj); id != Nothing; id = iter.next(&obj)) {
@@ -2133,7 +2133,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	}
 
 	//  Payment succeeded!
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -2462,7 +2462,7 @@ int16 scriptTagIsLocked(int16 *) {
 	MONOLOG(TAG::IsLocked);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->isLocked() ? TRUE : FALSE;
+	return ai->isLocked() ? true : false;
 }
 
 //-----------------------------------------------------------------------
@@ -2573,8 +2573,8 @@ static int16 lockCount;
 int16 scriptTagObtainLock(int16 *) {
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	if (ai->isExclusive() == FALSE) {
-		ai->setExclusive(TRUE);
+	if (ai->isExclusive() == false) {
+		ai->setExclusive(true);
 #if DEBUG*0
 		lockCount += 1;
 		WriteStatusF(15, "Locked: %d\n", lockCount);
@@ -2592,7 +2592,7 @@ int16 scriptTagObtainLock(int16 *) {
 int16 scriptTagReleaseLock(int16 *) {
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	ai->setExclusive(FALSE);
+	ai->setExclusive(false);
 #if DEBUG*0
 	lockCount -= 1;
 	WriteStatusF(15, "Locked: %d\n", lockCount);
@@ -2895,7 +2895,7 @@ int16 scriptSetGameMode(int16 *args) {
 	//  Mode zero is "game not running".
 	if (args[0] == 0)
 		endGame();
-	//gameRunning = FALSE;
+	//gameRunning = false;
 
 	//  REM: Add other modes
 
@@ -3420,7 +3420,7 @@ int16 scriptSelectNearbySite(int16 *args) {
 	scriptCallFrame     &scf = thisThread->threadArgs;
 
 	scf.coords = tp;
-	return TRUE;
+	return true;
 }
 
 //-----------------------------------------------------------------------
@@ -3706,8 +3706,8 @@ extern bool tileLockFlag;
 
 int16 scriptLockTiles(int16 *args) {
 	MONOLOG(LockTiles);
-	if (args[0] == FALSE) tileLockFlag = FALSE;
-	else tileLockFlag = TRUE;
+	if (args[0] == false) tileLockFlag = false;
+	else tileLockFlag = true;
 
 	return 0;
 }

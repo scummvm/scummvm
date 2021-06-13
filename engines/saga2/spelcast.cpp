@@ -97,14 +97,14 @@ bool SpellStuff::safe(void) {
 	case eAreaBall:
 	case eAreaWall:
 	case eAreaStorm:
-		return FALSE;
+		return false;
 	case eAreaBolt:
 	case eAreaBeam:
 	case eAreaCone:
 	case eAreaWave:
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 //-----------------------------------------------------------------------
@@ -702,14 +702,14 @@ bool SpellInstance::buildList(void) {
 	if (eList.dissipated()) {
 		termEffect();
 		if (effect->next == NULL)
-			return FALSE;
+			return false;
 		effect = effect->next;
 		effSeq++;
 		//
 		initEffect(target->getPoint());
 	}
-	eList.buildEffects(FALSE);
-	return TRUE;
+	eList.buildEffects(false);
+	return true;
 }
 
 // ------------------------------------------------------------------
@@ -724,7 +724,7 @@ bool SpellInstance::updateStates(int32 deltaTime) {
 	if (maxAge > 0 && age > maxAge)
 		termEffect();
 	eList.updateEStates(deltaTime);
-	return TRUE;
+	return true;
 }
 
 
