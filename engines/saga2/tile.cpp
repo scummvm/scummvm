@@ -1416,16 +1416,16 @@ TileBank::TileBank(hResContext *con, hResID id) {
 	int count = (size - 4) / tileInfoSize; // Skip 4 bytes (numTiles)
 
 	if (!con->seek(id)) {
-		numTiles = 0;
-		tileArray = nullptr;
+		_numTiles = 0;
+		_tileArray = nullptr;
 		return;
 	}
 
-	numTiles = con->readU32LE();
-	tileArray = new TileInfo[count];
+	_numTiles = con->readU32LE();
+	_tileArray = new TileInfo[count];
 	for (int i = 0; i < count; ++i) {
-		tileArray[i].offset = con->readU32LE();
-		TileAttrs *att = &tileArray[i].attrs;
+		_tileArray[i].offset = con->readU32LE();
+		TileAttrs *att = &_tileArray[i].attrs;
 		att->terrainHeight = con->readByte();
 		att->height = con->readByte();
 		att->terrainMask = con->readU16LE();
