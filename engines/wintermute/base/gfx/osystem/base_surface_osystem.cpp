@@ -367,7 +367,15 @@ bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
+bool BaseSurfaceOSystem::displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+	Common::Point newHotspot;
+	Common::Rect oldRect(rect.left, rect.top, rect.right, rect.bottom);
+	Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, angle, hotspotX, hotspotY, blendMode, alpha, mirrorX, mirrorY, 0, 0);
+	Rect32 newRect = Graphics::TransformTools::newRect(oldRect, transform, &newHotspot);
+
+	x -= newHotspot.x;
+	y -= newHotspot.y;
+
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
 		warning("Negative rotation: %d %d", transform._angle, _rotation);
