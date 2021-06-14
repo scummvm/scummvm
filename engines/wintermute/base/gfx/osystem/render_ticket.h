@@ -29,7 +29,6 @@
 #ifndef WINTERMUTE_RENDER_TICKET_H
 #define WINTERMUTE_RENDER_TICKET_H
 
-#include "graphics/transparent_surface.h"
 #include "graphics/surface.h"
 #include "common/rect.h"
 

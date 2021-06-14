@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/gfx/osystem/render_ticket.h"
 #include "engines/wintermute/base/gfx/osystem/base_surface_osystem.h"
 #include "graphics/transform_tools.h"
+#include "graphics/transparent_surface.h"
 #include "common/textconsole.h"
 
 namespace Wintermute {
