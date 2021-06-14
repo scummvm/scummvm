@@ -65,6 +65,9 @@ void SoundManager::play(int soundId) {
 		if (curRoom->_sounds[soundSlot] == soundId) {
 			const SoundType soundType = (_gSample[soundId]._flag & kSoundFlagBgMusic) ? kSoundTypeMusic : kSoundTypeSfx;
 			Common::SeekableReadStream *soundFileStream = _vm->_dataFile.createReadStreamForMember(_gSample[soundId]._name);
+			if (!soundFileStream)
+				continue;
+
 			// We need to copy this WAV to memory since it will be streamed
 			Common::SeekableReadStream *memStream = soundFileStream->readStream(soundFileStream->size());
 			delete soundFileStream;
