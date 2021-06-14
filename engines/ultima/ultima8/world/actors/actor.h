@@ -288,14 +288,6 @@ public:
 		return damage;
 	}
 
-	uint8 getShieldType() const {
-		return _shieldType;
-	}
-
-	void setShieldType(uint8 type) {
-		_shieldType = type;
-	}
-
 	uint16 getActiveWeapon() const {
 		return _activeWeapon;
 	}
@@ -461,9 +453,6 @@ protected:
 
 	//! Kernel timer last time NPC was hit (only used in Crusader)
 	int32 _lastTimeWasHit;
-
-	//! Type of shield (only used in Crusader)
-	uint8 _shieldType;
 
 	//! The frame certain animations last happened (for Crusader).
 	//! Used in calcualting how hard controlled actor is to hit.

@@ -123,6 +123,14 @@ public:
 		setMana(getMaxEnergy());
 	}
 
+	void setShieldType(uint16 shieldtype) {
+		_shieldType = shieldtype;
+	}
+
+	uint16 getShieldType() {
+		return _shieldType;
+	}
+
 	bool hasKeycard(int num) const;
 	void addKeycard(int bitno);
 
@@ -184,7 +192,9 @@ protected:
 
 	Std::string _name;
 
+	//! Process for a shield zap animation sprite
 	uint16 _shieldSpriteProc;
+	//! Type of shield (only used in Crusader)
 	uint16 _shieldType;
 
 	static ShapeInfo *_kneelingShapeInfo;

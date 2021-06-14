@@ -73,7 +73,7 @@ Actor::Actor() : _strength(0), _dexterity(0), _intelligence(0),
 		_fallStart(0), _unkByte(0), _actorFlags(0), _combatTactic(0),
 		_homeX(0), _homeY(0), _homeZ(0), _currentActivityNo(0),
 		_lastActivityNo(0), _activeWeapon(0), _lastTimeWasHit(0),
-		_shieldType(0), _attackMoveStartTime(0), _attackMoveTimeout(0),
+		_attackMoveStartTime(0), _attackMoveTimeout(0),
 		_attackMoveDodgeFactor(1), _attackAimFlag(false) {
 	_defaultActivity[0] = 0;
 	_defaultActivity[1] = 0;
@@ -1929,7 +1929,7 @@ void Actor::saveData(Common::WriteStream *ws) {
 		ws->writeUint16LE(_lastActivityNo);
 		ws->writeUint16LE(_activeWeapon);
 		ws->writeSint32LE(_lastTimeWasHit);
-		ws->writeByte(_shieldType);
+		ws->writeByte(0); // unused, keep for backward compatibility
 		ws->writeUint32LE(_attackMoveStartTime);
 		ws->writeUint32LE(_attackMoveTimeout);
 		ws->writeUint16LE(_attackMoveDodgeFactor);
@@ -1966,7 +1966,7 @@ bool Actor::loadData(Common::ReadStream *rs, uint32 version) {
 		_lastActivityNo = rs->readUint16LE();
 		_activeWeapon = rs->readUint16LE();
 		_lastTimeWasHit = rs->readSint32LE();
-		_shieldType = rs->readByte();
+		rs->readByte();  // unused, keep for backward compatibility
 		_attackMoveStartTime = rs->readUint32LE();
 		_attackMoveTimeout = rs->readUint32LE();
 		_attackMoveDodgeFactor = rs->readUint16LE();
