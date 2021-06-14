@@ -116,18 +116,18 @@ void resumeTimer(void) {
  * ====================================================================== */
 
 void Alarm::set(uint32 dur) {
-	basetime = gameTime;
+	basetime = g_system->getMillis();
 	duration = dur;
 }
 
 bool Alarm::check(void) {
-	return ((uint32)(gameTime - basetime) > duration);
+	return ((uint32)(g_system->getMillis() - basetime) > duration * 1000);
 }
 
 // time elapsed since alarm set
 
 uint32 Alarm::elapsed(void) {
-	return (uint32)(gameTime - basetime);
+	return (uint32)(g_system->getMillis() - basetime);
 }
 
 } // end of namespace Saga2
