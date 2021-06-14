@@ -150,15 +150,17 @@ void ADPCMWestwoodDecoder::decode(uint8 *in, size_t size, int16 *out, bool force
 
 			predictor = CLIP<int32>(predictor, -32768, 32767);
 
-			if (forceLittleEndianOut) {
-				// Bugfix:
-				// enforce "little-endian" type of output for VQA audio stream
-				// This is needed for Big Endian platforms to behave correctly in raw audio streams in VQA videos
-				// because in VQADecoder::VQAAudioTrack::decodeAudioFrame() a raw stream is created for the audio
-				// with the explicit flag: FLAG_LITTLE_ENDIAN
-				WRITE_LE_INT16(out++, (int16)predictor);
-			} else {
-				*out++ = (int16)predictor;
+			if (out) {
+				if (forceLittleEndianOut) {
+					// Bugfix:
+					// enforce "little-endian" type of output for VQA audio stream
+					// This is needed for Big Endian platforms to behave correctly in raw audio streams in VQA videos
+					// because in VQADecoder::VQAAudioTrack::decodeAudioFrame() a raw stream is created for the audio
+					// with the explicit flag: FLAG_LITTLE_ENDIAN
+					WRITE_LE_INT16(out++, (int16)predictor);
+				} else {
+					*out++ = (int16)predictor;
+				}
 			}
 			stepIndex = imaIndexTable[code] + stepIndex;
 			stepIndex = CLIP<int16>(stepIndex, 0, 88);

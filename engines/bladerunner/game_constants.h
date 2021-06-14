@@ -4170,6 +4170,14 @@ enum GameDifficultyLevel {
 	kGameDifficultyMedium = 1,
 	kGameDifficultyHard   = 2
 };
+
+enum MusicTrackLoop {
+	kMusicLoopPlayOnce              =  0, // do not loop
+	kMusicLoopRepeat                =  1, // loop track
+	kMusicLoopRepeatRandomStart     =  2, // (Restored Content) start from random point - do not loop track
+	kMusicLoopPlayOnceRandomStart   =  3  // (Restored Content) start from random point - loop track
+};
+
 } // End of namespace BladeRunner
 
 #endif

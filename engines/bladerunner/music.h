@@ -40,7 +40,8 @@ class Music {
 		int            pan;                // A value between -100  and 100 (right?) (0 is center) - It is the set pan/balance for the track regardless of any ongoing adjustments
 		int32          timeFadeInSeconds;  // how long will it take for the track to reach target volume (in seconds)
 		int32          timePlaySeconds;    // how long the track will play before starting fading out (in seconds) - uses timeFadeOutSeconds for fadeout
-		int            loop;               // 0: do not loop, 1: loop track
+		                                   // -1: Special value for playing the whole track
+		int            loop;               // values from enum MusicTrackLoop (see game_constants.h)
 		int32          timeFadeOutSeconds; // how long the fade out will be for the track at its end (in seconds)
 	};
 

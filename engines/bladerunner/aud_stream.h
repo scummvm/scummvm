@@ -62,6 +62,8 @@ public:
 	bool endOfData() const override { return _p == _end; }
 	bool rewind() override;
 	uint32 getLength() const;
+	bool startAtSecond(uint32 startSecond);
+	int getBytesPerSecond() const;
 };
 
 } // End of namespace BladeRunner

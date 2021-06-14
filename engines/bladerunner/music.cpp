@@ -125,7 +125,23 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 	_stream = new AudStream(_data);
 
 	_isNextPresent = false;
-	_channel = _vm->_audioMixer->playMusic(_stream, volumeStart, mixerChannelEnded, this, _stream->getLength());
+	uint32 trackLengthInMillis = _stream->getLength();
+
+	uint32 secondToStart = 0;
+	// loop > 1 can only happen in restored content, so no need to check for _vm->_cutContent explicitly here
+	if (loop > 1 && trackLengthInMillis > 0) {
+		// start at some point within the first half of the track
+		if (timePlaySeconds > 0 && trackLengthInMillis/1000 > (uint32)timePlaySeconds) {
+			secondToStart = _vm->_rnd.getRandomNumberRng(0, MIN(trackLengthInMillis/2000, (trackLengthInMillis/1000 - (uint32)timePlaySeconds)));
+		} else if (timeFadeOutSeconds >= 0 && trackLengthInMillis/1000 > (uint32)timeFadeOutSeconds) {
+			secondToStart = _vm->_rnd.getRandomNumberRng(0, MIN(trackLengthInMillis/2000, (trackLengthInMillis/1000 - (uint32)timeFadeOutSeconds)));
+		}
+	}
+	if (secondToStart > 0) {
+		 _stream->startAtSecond(secondToStart);
+	}
+
+	_channel = _vm->_audioMixer->playMusic(_stream, volumeStart, mixerChannelEnded, this, trackLengthInMillis);
 	if (_channel < 0) {
 		delete _stream;
 		_stream = nullptr;
@@ -138,6 +154,7 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 		adjustVolume(volumeAdjusted, timeFadeInSeconds);
 	}
 	_current.name = trackName;
+
 	if (timePlaySeconds > 0) {
 		// Removes any previous fadeout timer and installs a new one.
 		// Uses the timeFadeOutSeconds value (see Music::fadeOut())
@@ -151,10 +168,10 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 	} else if (timeFadeOutSeconds > 0) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		_vm->getTimerManager()->removeTimerProc(timerCallbackFadeOut);
-		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, (_stream->getLength() - timeFadeOutSeconds * 1000) * 1000, this, "BladeRunnerMusicFadeoutTimer");
+		_vm->getTimerManager()->installTimerProc(timerCallbackFadeOut, (trackLengthInMillis - timeFadeOutSeconds * 1000) * 1000, this, "BladeRunnerMusicFadeoutTimer");
 #else
 		_vm->_audioMixer->stopAppTimerProc(kAudioMixerAppTimerMusicFadeOut);
-		_vm->_audioMixer->startAppTimerProc(kAudioMixerAppTimerMusicFadeOut, (_stream->getLength() - timeFadeOutSeconds * 1000u));
+		_vm->_audioMixer->startAppTimerProc(kAudioMixerAppTimerMusicFadeOut, (trackLengthInMillis - timeFadeOutSeconds * 1000u));
 #endif //BLADERUNNER_ORIGINAL_BUGS
 	}
 	_isPlaying = true;
@@ -163,6 +180,11 @@ bool Music::play(const Common::String &trackName, int volume, int pan, int32 tim
 	_current.timeFadeInSeconds = timeFadeInSeconds;
 	_current.timePlaySeconds = timePlaySeconds;
 	_current.loop = loop;
+	// loop == kMusicLoopPlayOnceRandomStart can only happen in restored content, so no need to check for _vm->_cutContent explicitly here
+	if (_current.loop == kMusicLoopRepeatRandomStart) {
+		// loop value to store (and use in next loop) should be kMusicLoopRepeat
+		_current.loop = kMusicLoopRepeat;
+	}
 	_current.timeFadeOutSeconds = timeFadeOutSeconds;
 	return true;
 }
@@ -213,7 +235,7 @@ int Music::getVolume() {
 
 void Music::playSample() {
 	if (!isPlaying()) {
-		play(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 100, 0, 2, -1, 0, 3);
+		play(_vm->_gameInfo->getSfxTrack(kSfxMUSVOL8), 100, 0, 2, -1, kMusicLoopPlayOnce, 3);
 	}
 }
 
