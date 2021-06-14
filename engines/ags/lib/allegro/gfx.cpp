@@ -371,8 +371,4 @@ void clear_bitmap(BITMAP *bmp) {
 	bmp->clear();
 }
 
-void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a) {
-	// TODO
-}
-
 } // namespace AGS3

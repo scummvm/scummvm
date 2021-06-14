@@ -236,9 +236,6 @@ extern void rectfill(BITMAP *bmp, int x1, int y_1, int x2, int y2, int color);
 extern void triangle(BITMAP *bmp, int x1, int y_1, int x2, int y2, int x3, int y3, int color);
 extern void circlefill(BITMAP *bmp, int x, int y, int radius, int color);
 
-typedef unsigned long(*BLENDER_FUNC)(unsigned long x, unsigned long y, unsigned long n);
-extern void set_blender_mode(BLENDER_FUNC b15, BLENDER_FUNC b16, BLENDER_FUNC b24, int r, int g, int b, int a);
-
 } // namespace AGS3
 
 #endif
