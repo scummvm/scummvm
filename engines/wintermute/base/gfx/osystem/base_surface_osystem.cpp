@@ -373,19 +373,6 @@ bool BaseSurfaceOSystem::displayTransZoom(int x, int y, Rect32 rect, float zoomX
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSurfaceOSystem::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	_rotation = 0;
-	Graphics::TransformStruct transform;
-	if (transparent) {
-		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, Graphics::kDefaultAngle, Graphics::kDefaultHotspotX, Graphics::kDefaultHotspotY, blendMode, alpha,  mirrorX, mirrorY);
-	} else {
-		transform = Graphics::TransformStruct((int32)zoomX, (int32)zoomY, mirrorX, mirrorY);
-	}
-	return drawSprite(x, y, &rect, nullptr, transform);
-}
-
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
 	_rotation = (uint32)transform._angle;
 	if (transform._angle < 0.0f) {
