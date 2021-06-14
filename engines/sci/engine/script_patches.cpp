@@ -117,7 +117,6 @@ static const char *const selectorNameTable[] = {
 	"solvePuzzle",  // Quest For Glory 3
 	"curIcon",      // Quest For Glory 3, QFG4
 	"curInvIcon",   // Quest For Glory 3, QFG4
-	"timesShownID", // Space Quest 1 VGA
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
@@ -242,7 +241,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_solvePuzzle,
 	SELECTOR_curIcon,
 	SELECTOR_curInvIcon,
-	SELECTOR_timesShownID,
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
@@ -19538,12 +19536,21 @@ static const uint16 sq1vgaPatchUlenceFlatsGeneratorGlitch[] = {
 	PATCH_END
 };
 
-// No documentation for this patch (TODO)
+// Showing the Sarien droid the ID card three times is supposed to kill you,
+//  but the script is missing a line and compares the number three against the
+//  DeltaurRegion class instead of its timesShownID property. In SSCI this
+//  comparison happened to pass and you would never be killed. In ScummVM,
+//  comparing this object to an integer fails and you're killed the first time.
+//
+// We fix this by re-ordering the instructions so that timesShownID is tested
+//  correctly. Sierra fixed this in later versions.
+//
+// Applies to at least: English PC VGA
+// Responsible method: egoShowsCard:changeState(2)
 static const uint16 sq1vgaSignatureEgoShowsCard[] = {
-	SIG_MAGICDWORD,
-	0x38, SIG_SELECTOR16(timesShownID), // pushi timesShownID
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi timesShownID
 	0x78,                               // push1
-	0x38, SIG_SELECTOR16(timesShownID), // pushi timesShownID
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi timesShownID
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -19552,17 +19559,15 @@ static const uint16 sq1vgaSignatureEgoShowsCard[] = {
 	0x02,                               // add
 	0x36,                               // push
 	0x51, 0x7c,                         // class DeltaurRegion
-	0x4a, 0x06,                         // send 0x06 (set timesShownID)
+	0x4a, SIG_MAGICDWORD, 0x06,         // send 0x06 (set timesShownID)
 	0x36,                               // push      (wrong, acc clobbered by class, above)
 	0x35, 0x03,                         // ldi 0x03
 	0x22,                               // lt?
 	SIG_END
 };
 
-// Note that this script patch is merely a reordering of the
-// instructions in the original script.
 static const uint16 sq1vgaPatchEgoShowsCard[] = {
-	0x38, PATCH_SELECTOR16(timesShownID), // pushi timesShownID
+	0x38, PATCH_GETORIGINALUINT16(+1),  // pushi timesShownID
 	0x76,                               // push0
 	0x51, 0x7c,                         // class DeltaurRegion
 	0x4a, 0x04,                         // send 0x04 (get timesShownID)
@@ -19570,7 +19575,7 @@ static const uint16 sq1vgaPatchEgoShowsCard[] = {
 	0x35, 0x01,                         // ldi 1
 	0x02,                               // add
 	0x36,                               // push (this push corresponds to the wrong one above)
-	0x38, PATCH_SELECTOR16(timesShownID), // pushi timesShownID
+	0x38, PATCH_GETORIGINALUINT16(+1),  // pushi timesShownID
 	0x78,                               // push1
 	0x36,                               // push
 	0x51, 0x7c,                         // class DeltaurRegion
