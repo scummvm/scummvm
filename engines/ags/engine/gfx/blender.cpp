@@ -233,21 +233,22 @@ unsigned long _argb2rgb_blender(unsigned long src_col, unsigned long dst_col, un
 	return res | g;
 }
 
-void set_additive_alpha_blender() {
-	set_blender_mode(nullptr, nullptr, _additive_alpha_copysrc_blender, 0, 0, 0, 0);
-}
-
-void set_argb2argb_blender(int alpha) {
-	set_blender_mode(nullptr, nullptr, _argb2argb_blender, 0, 0, 0, alpha);
-}
-
 // sets the alpha channel to opaque. used when drawing a non-alpha sprite onto an alpha-sprite
 unsigned long _opaque_alpha_blender(unsigned long x, unsigned long y, unsigned long n) {
 	return x | 0xff000000;
 }
 
+
+void set_additive_alpha_blender() {
+	set_blender_mode(kAdditiveBlenderMode, 0, 0, 0, 0);
+}
+
+void set_argb2argb_blender(int alpha) {
+	set_blender_mode(kArgbToArgbBlender, 0, 0, 0, alpha);
+}
+
 void set_opaque_alpha_blender() {
-	set_blender_mode(nullptr, nullptr, _opaque_alpha_blender, 0, 0, 0, 0);
+	set_blender_mode(kOpaqueBlenderMode, 0, 0, 0, 0);
 }
 
 } // namespace AGS3
