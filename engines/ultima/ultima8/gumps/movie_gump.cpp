@@ -104,7 +104,7 @@ MovieGump::MovieGump() : ModalGump(), _player(nullptr), _subtitleWidget(0) {
 MovieGump::MovieGump(int width, int height, Common::SeekableReadStream *rs,
 					 bool introMusicHack, bool noScale, const byte *overridePal,
 					 uint32 flags, int32 layer)
-		: ModalGump(50, 50, width, height, 0, flags, layer), _subtitleWidget(0) {
+		: ModalGump(50, 50, width, height, 0, flags, layer), _subtitleWidget(0), _lastFrameNo(-1) {
 	uint32 stream_id = rs->readUint32BE();
 	rs->seek(-4, SEEK_CUR);
 	if (stream_id == 0x52494646) {// 'RIFF' - crusader AVIs
@@ -152,19 +152,24 @@ void MovieGump::run() {
 
 	AVIPlayer *aviplayer = dynamic_cast<AVIPlayer *>(_player);
 	if (aviplayer) {
+		// The AVI player can skip frame numbers, so search back from the
+		// last frame to make sure we don't miss subtitles
 		const int frameno = aviplayer->getFrameNo();
-		if (_subtitles.contains(frameno)) {
-			TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
-			if (subtitle)
-				subtitle->Close();
-			// Create a new TextWidget
-			TextWidget *widget = new TextWidget(0, 0, _subtitles[frameno], true, 4, 640, 10);
-			widget->InitGump(this);
-			widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
-			// Subtitles should be white.
-			widget->setBlendColour(0xffffffff);
-			_subtitleWidget = widget->getObjId();
+		for (int f = _lastFrameNo + 1; f <= frameno; f++) {
+			if (_subtitles.contains(f)) {
+				TextWidget *subtitle = dynamic_cast<TextWidget *>(getGump(_subtitleWidget));
+				if (subtitle)
+					subtitle->Close();
+				// Create a new TextWidget
+				TextWidget *widget = new TextWidget(0, 0, _subtitles[f], true, 4, 640, 10);
+				widget->InitGump(this);
+				widget->setRelativePosition(BOTTOM_CENTER, 0, -10);
+				// Subtitles should be white.
+				widget->setBlendColour(0xffffffff);
+				_subtitleWidget = widget->getObjId();
+			}
 		}
+		_lastFrameNo = frameno;
 	}
 
 	if (!_player->isPlaying()) {
@@ -308,13 +313,18 @@ uint32 MovieGump::I_playMovieCutsceneAlt(const uint8 *args, unsigned int /*argsi
 
 	if (!x)
 		x = 640;
+	else
+		x *= 3;
+
 	if (!y)
 		y = 480;
+	else
+		y *= 3;
 
 	warning("MovieGump::I_playMovieCutsceneAlt: TODO: This intrinsic should pause and fade the background to grey (%s, %d)",
 			name.c_str(), item ? item->getObjId() : 0);
 
-	CruMovieViewer(name, x * 3, y * 3, nullptr, nullptr);
+	CruMovieViewer(name, x, y, nullptr, nullptr);
 
 	return 0;
 }

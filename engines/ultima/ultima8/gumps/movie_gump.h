@@ -80,6 +80,7 @@ protected:
 
 	Common::HashMap<int, Common::String> _subtitles;
 	uint16 _subtitleWidget;
+	int _lastFrameNo;
 
 };
 
