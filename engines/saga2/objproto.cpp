@@ -970,6 +970,12 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 	TilePoint   location = obj->getLocation();
 	GameWorld   *w = obj->world();
 
+	// XXX: Temporary crash prevention
+	// We should properly solve the problem
+	warning("XXX: doBackgroundUpdate");
+	if (location.u == -1 && location.v == -1)
+		return;
+
 	if (w == NULL
 	        ||  !w->getSector(
 	            location.u >> sectorShift,
