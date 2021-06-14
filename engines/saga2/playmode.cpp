@@ -153,8 +153,8 @@ extern bool gameRunning;
 bool checkTileAreaPort(void) {
 	if (gameRunning && tileDrawMap.data == nullptr) {
 		//  Allocate back buffer for tile rendering
-		tileDrawMap.size.x = (tileRect.width + tileWidth - 1) & ~tileDXMask;
-		tileDrawMap.size.y = (tileRect.height + tileWidth - 1) & ~tileDXMask;
+		tileDrawMap.size.x = (tileRect.width + kTileWidth - 1) & ~kTileDXMask;
+		tileDrawMap.size.y = (tileRect.height + kTileWidth - 1) & ~kTileDXMask;
 		tileDrawMap.data = new uint8[tileDrawMap.bytes()]();
 	}
 

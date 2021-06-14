@@ -1492,7 +1492,7 @@ void initMaps(void) {
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
 		tileBanks[i] = new TileBank(tileRes, tileTerrainID + MKTAG(0, 0, 0, (uint8)i));
-		if (tileBanks[i]->tileArray == nullptr) {
+		if (tileBanks[i]->_tileArray == nullptr) {
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
 		}
@@ -1655,8 +1655,8 @@ void cleanupMaps(void) {
 	//  Dump all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
 		if (tileBanks[i] != nullptr) {
-			if (tileBanks[i]->tileArray != nullptr)
-				delete[] tileBanks[i]->tileArray;
+			if (tileBanks[i]->_tileArray != nullptr)
+				delete[] tileBanks[i]->_tileArray;
 
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
@@ -2724,7 +2724,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = tileHeight * (platformWidth - 1) + maxTileHeight * 2 + 64;
+				p->highestPixel = kTileHeight * (platformWidth - 1) + maxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= tileDrawMap.size.y)
@@ -2929,20 +2929,20 @@ inline void drawMetaTiles(void) {
 	//updateHandleRefs(baseCoords);  // viewPoint, &sti );
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
-	viewPos.x = (tileScroll.x >> tileDXShift)
+	viewPos.x = (tileScroll.x >> kTileDXShift)
 	            - (platformWidth * mapList[currentMapNum].mapSize),
 	viewPos.y = (platformWidth
 	             *   mapList[currentMapNum].mapSize
-	             *   tileDX)
+	             *   kTileDX)
 	             -   tileScroll.y;
 
 	debugC(2, kDebugTiles, "viewPos = (%d,%d)", viewPos.x, viewPos.y);
 
 	//  coordinates of the view window upper left corner in U,V
 
-	baseCoords.u = ((2 * (viewPos.y >> tileDXShift) + metaDY / 16) + viewPos.x)
+	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
 	               / (platformWidth * 2);
-	baseCoords.v = ((2 * (viewPos.y >> tileDXShift) + metaDY / 16) - viewPos.x)
+	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
 	               / (platformWidth * 2);
 	baseCoords.z = 0;
 
@@ -2954,7 +2954,7 @@ inline void drawMetaTiles(void) {
 	//  coordinates of current metatile (in X,Y), relative to screen
 
 	metaPos.x   = (baseCoords.u - baseCoords.v) * metaDX
-	            	- viewPos.x * tileDX;
+	            	- viewPos.x * kTileDX;
 
 	metaPos.y   = viewPos.y
 	              - (baseCoords.u + baseCoords.v) * metaDY;
@@ -3171,13 +3171,13 @@ void maskPlatform(
 	Point16         tilePos;
 
 	int16           x = screenPos.x,
-	                x2 = x / tileDX;
+	                x2 = x / kTileDX;
 	int16           length = 1;
 
 	TilePoint       rLoc;
 	TilePoint       origin(uOrg, vOrg, 0);
 
-	tilePos.y = screenPos.y - (platformWidth - 1) * tileHeight;
+	tilePos.y = screenPos.y - (platformWidth - 1) * kTileHeight;
 
 	u = platformWidth - 1;
 	v = platformWidth - 1;
@@ -3202,7 +3202,7 @@ void maskPlatform(
 				rLoc.v += offset * tileUVSize;
 				offset <<= 1;
 				col += offset;
-				tilePos.x += tileDX * offset;
+				tilePos.x += kTileDX * offset;
 			}
 
 			for (;
@@ -3212,7 +3212,7 @@ void maskPlatform(
 			        pCoords.v--,
 			        rLoc.u -= tileUVSize,
 			        rLoc.v += tileUVSize,
-			        tilePos.x += tileWidth
+			        tilePos.x += kTileWidth
 			    ) {
 				Platform    **pGet;
 
@@ -3258,20 +3258,20 @@ void maskPlatform(
 		}
 
 		if (row < 7) {
-			x -= tileDX;
+			x -= kTileDX;
 			x2++;
 			length += 2;
 			u--;
 			relLoc.u += tileUVSize;
 		} else {
-			x += tileDX;
+			x += kTileDX;
 			x2--;
 			length -= 2;
 			v--;
 			relLoc.v += tileUVSize;
 		}
 
-		tilePos.y += tileDY;
+		tilePos.y += kTileDY;
 	}
 }
 
@@ -3362,7 +3362,7 @@ void maskMetaRow(
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = tileHeight * (platformWidth - 1) + maxTileHeight + 192;
+				p->highestPixel = kTileHeight * (platformWidth - 1) + maxTileHeight + 192;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= sMap.size.y)
@@ -3397,24 +3397,24 @@ void drawTileMask(
 
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
-	viewPos.x = (aPos.x >> tileDXShift)
+	viewPos.x = (aPos.x >> kTileDXShift)
 	            - (platformWidth * mapList[currentMapNum].mapSize),
 	            viewPos.y = (platformWidth
-	                         *   mapList[currentMapNum].mapSize << tileDXShift)
+	                         *   mapList[currentMapNum].mapSize << kTileDXShift)
 	                        -   aPos.y;
 
 	//  coordinates of the view window upper left corner in U,V
 
-	baseCoords.u = ((2 * (viewPos.y >> tileDXShift) + metaDY / 16) + viewPos.x)
+	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
 	               / (platformWidth * 2);
-	baseCoords.v = ((2 * (viewPos.y >> tileDXShift) + metaDY / 16) - viewPos.x)
+	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
 	               / (platformWidth * 2);
 	baseCoords.z = 0;
 
 	//  coordinates of current metatile (in X,Y), relative to screen
 
 	metaPos.x   = (baseCoords.u - baseCoords.v) * metaDX
-	              - viewPos.x * tileDX;
+	              - viewPos.x * kTileDX;
 
 	metaPos.y   = viewPos.y
 	              - (baseCoords.u + baseCoords.v) * metaDY;
@@ -3566,7 +3566,7 @@ TilePoint pickTilePos(Point32 pos, const TilePoint &protagPos) {
 //  Inspect packed tile bitmap to determine if a pixel is opaque.
 bool isTilePixelOpaque(int16 baseX, int16 baseY, int16 mapHeight, uint8 *td) {
 	bool    opaque;
-	int16   x = baseX + tileDX,
+	int16   x = baseX + kTileDX,
 	        y = mapHeight - baseY,
 	        accum = 0;
 
@@ -3576,7 +3576,7 @@ bool isTilePixelOpaque(int16 baseX, int16 baseY, int16 mapHeight, uint8 *td) {
 		//  skip initial transparency
 		accum = *td;
 		td++;
-		while (accum < tileWidth) {
+		while (accum < kTileWidth) {
 			//  skip opaque run
 			accum += *td;
 			td += *td + 1;
@@ -3634,7 +3634,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 
 	//  Adjust the relative X coordinate to ensure it is actually within
 	//  the tile's boundaries.
-	relPos.x = clamp(-tileDX + 2, relPos.x, tileDX - 1);
+	relPos.x = clamp(-kTileDX + 2, relPos.x, kTileDX - 1);
 
 	//  If the tile has no raised terrain
 	if (!(combinedMask & terrainRaised)) {
@@ -4149,8 +4149,8 @@ TilePoint pickTile(Point32 pos,
 
 	//  Compute the X and Y offset of the exact mouse click point
 	//  relative to the base of the tile.
-	relPos.x = pos.x - curMap->mapHeight - (tileCoords.u - tileCoords.v) * tileDX;
-	relPos.y = curMap->mapHeight - pos.y - (tileCoords.u + tileCoords.v) * tileDY;
+	relPos.x = pos.x - curMap->mapHeight - (tileCoords.u - tileCoords.v) * kTileDX;
+	relPos.y = curMap->mapHeight - pos.y - (tileCoords.u + tileCoords.v) * kTileDY;
 
 	//  Compute which metatile the click occured on, and the tile
 	//  within that metatile, and the origin coords of the metatile
@@ -4164,7 +4164,7 @@ TilePoint pickTile(Point32 pos,
 	mt = curMap->lookupMeta(mCoords);
 
 	//  While we are less than the pick altitude
-	while (relPos.y < zMax + tileDX + maxStepHeight - abs(relPos.x >> 1)) {
+	while (relPos.y < zMax + kTileDX + maxStepHeight - abs(relPos.x >> 1)) {
 		//  If there is a metatile on this spot
 		if (mt != nullptr) {
 			//  Iterate through all platforms
@@ -4263,7 +4263,7 @@ TilePoint pickTile(Point32 pos,
 				origin = mCoords << platShift;
 				mt = curMap->lookupMeta(mCoords);
 			}
-			relPos.x += tileDX;
+			relPos.x += kTileDX;
 		} else {
 			tCoords.v--;
 			coords.v -= tileUVSize;
@@ -4273,9 +4273,9 @@ TilePoint pickTile(Point32 pos,
 				origin = mCoords << platShift;
 				mt = curMap->lookupMeta(mCoords);
 			}
-			relPos.x -= tileDX;
+			relPos.x -= kTileDX;
 		}
-		relPos.y += tileDY;
+		relPos.y += kTileDY;
 
 		//  Compute new altitude range based upon the tile position
 		//  relative to the protaganist's position.
@@ -4678,7 +4678,7 @@ void updateMainDisplay(void) {
 	else tileScroll += (scrollDelta * scrollSpeed) / scrollDistance;
 
 	//  Compute the fine scrolling offsets
-	fineScroll.x = tileScroll.x & tileDXMask;
+	fineScroll.x = tileScroll.x & kTileDXMask;
 	fineScroll.y = 0;
 
 	//  Compute the center of the screen in (u,v) coords.
