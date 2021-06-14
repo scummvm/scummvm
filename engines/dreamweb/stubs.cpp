@@ -930,7 +930,6 @@ void DreamWebEngine::processTrigger() {
 	}
 }
 
-const char *lastText = "";
 void DreamWebEngine::useTimedText() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (_previousTimedTemp._string) {
@@ -1293,8 +1292,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	if (getLanguage() != Common::RU_RUS) {
 		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
     	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-			const char *temp = (const char*)string;
-			theText += temp;
+			theText += (const char*)string;
 		}
 
 		copyName(type, index, commandLine);
@@ -1304,8 +1302,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 			x += 5;
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
 		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-			const char *temp = (const char*)commandLine;
-			theText += temp;
+			theText += (const char*)commandLine;
 			ttsMan->say(theText);
 		}
 

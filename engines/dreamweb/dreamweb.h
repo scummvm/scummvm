@@ -161,6 +161,7 @@ private:
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
 	Common::String _speechDirName;
+	Common::String lastText;
 
 	uint _speed;
 	bool _turbo;
