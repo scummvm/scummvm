@@ -135,6 +135,9 @@ bool Sprite::shouldHilite() {
 		CastMemberInfo *castInfo = _cast->getInfo();
 		if (castInfo)
 			return castInfo->autoHilite;
+		else if (_cast->_type == kCastBitmap && _ink == kInkTypeMatte)
+			return true;
+		// fallback check for the irregular button in apartment
 	}
 
 	return false;
