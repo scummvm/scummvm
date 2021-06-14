@@ -189,6 +189,8 @@ private:
 	Common::String _script;
 	Common::String _directory;
 
+	uint16 _currentHiliteChannelId;
+	uint16 _currentHandlingChannelId;
 	Channel *_currentDraggedChannel;
 	Common::Point _draggingSpritePos;
 };

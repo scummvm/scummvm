@@ -129,6 +129,9 @@ bool Sprite::shouldHilite() {
 		return true;
 
 	if (_cast) {
+		// we have our own check for button, thus we don't need it here
+		if (_cast->_type == kCastButton)
+			return false;
 		CastMemberInfo *castInfo = _cast->getInfo();
 		if (castInfo)
 			return castInfo->autoHilite;
