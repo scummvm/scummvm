@@ -1723,9 +1723,7 @@ void ResourceManager::readResourcePatchesBase36() {
 	// whereas sync36 start with a '#'. Mac versions begin with 'A' (probably meaning AIFF). Torin
 	// has several that begin with 'B'.
 
-	Common::String name, inputName;
 	Common::ArchiveMemberList files;
-	ResourceSource *psrcPatch;
 
 	for (int i = kResourceTypeAudio36; i <= kResourceTypeSync36; ++i) {
 		files.clear();
@@ -1745,7 +1743,7 @@ void ResourceManager::readResourcePatchesBase36() {
 		}
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
-			name = (*x)->getName();
+			Common::String name = (*x)->getName();
 			name.toUppercase();
 
 			// The S/T prefixes often conflict with non-patch files and generate
@@ -1786,7 +1784,7 @@ void ResourceManager::readResourcePatchesBase36() {
 				delete stream;
 			}
 
-			psrcPatch = new PatchResourceSource(name);
+			ResourceSource *psrcPatch = new PatchResourceSource(name);
 			processPatch(psrcPatch, (ResourceType)i, resource36.getNumber(), resource36.getTuple());
 		}
 	}
