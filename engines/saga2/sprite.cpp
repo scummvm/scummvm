@@ -112,7 +112,7 @@ hResContext         *spriteRes,         // sprite resource handle
 static ActorAppearance appearanceTable[32];
 
 //  A least-recently-used list of actor appearances
-static DList        appearanceLRU;
+static Common::List<ActorAppearance *> appearanceLRU;
 
 /* ===================================================================== *
    Quick memory routines
@@ -590,7 +590,7 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 
 	//  Make this one the most recently used entry
 	remove();
-	appearanceLRU.addTail(*this);
+	appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
 	for (bank = 0; bank < (long)elementsof(spriteBanks); bank++) {
@@ -616,7 +616,6 @@ static void readColorScheme(hResContext *con, ColorScheme &col) {
 }
 
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
-	ActorAppearance *aa;
 	int16           bank;
 	const int actorAnimSetSize = 8;
 	const int colorSchemeSize = 44;
@@ -625,33 +624,30 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
-	for (aa = (ActorAppearance *)appearanceLRU.first();
-	        aa != nullptr;
-	        aa = (ActorAppearance *)aa->next()) {
-		if (aa->id == id                    // If has same ID
-		        && aa->poseList != nullptr) {      // and frames not dumped
+	for (Common::List<ActorAppearance *>::iterator it = appearanceLRU.begin(); it != appearanceLRU.end(); ++it) {
+		if ((*it)->id == id                    // If has same ID
+		        && (*it)->poseList != nullptr) {      // and frames not dumped
 			// then use this one!
-			aa->useCount++;
-			aa->loadSpriteBanks(banksNeeded);
-			return aa;
+			(*it)->useCount++;
+			(*it)->loadSpriteBanks(banksNeeded);
+			return *it;
 		}
 	}
 
 	//  If we couldn't find an extact match, search for an
 	//  empty one.
-	if (aa == nullptr) {
-		//  Search from LRU end of list.
-		for (aa = (ActorAppearance *)appearanceLRU.first();
-		        aa != nullptr;
-		        aa = (ActorAppearance *)aa->next()) {
-			if (aa->useCount == 0)              // If not in use
-				break;                          // then use this one!
+	ActorAppearance *aa = nullptr;
+	//  Search from LRU end of list.
+	for (Common::List<ActorAppearance *>::iterator it = appearanceLRU.begin(); it != appearanceLRU.end(); ++it) {
+		if ((*it)->useCount == 0)  {	// If not in use
+			aa = *it;					// then use this one!
+			break;
 		}
+	}
 
-		//  If none available, that's fatal...
-		if (aa == nullptr) {
-			error("All ActorAppearance records are in use!");
-		}
+	//  If none available, that's fatal...
+	if (aa == nullptr) {
+		error("All ActorAppearance records are in use!");
 	}
 
 	//  Dump the sprites being stored
@@ -767,7 +763,7 @@ void initSprites(void) {
 		ActorAppearance *aa = &appearanceTable[i];
 
 		aa->useCount = 0;
-		appearanceLRU.addHead(*aa);
+		appearanceLRU.push_front(aa);
 	}
 }
 
