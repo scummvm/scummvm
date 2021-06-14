@@ -101,10 +101,10 @@ void DreamWebEngine::gettingShot() {
 }
 
 void DreamWebEngine::bibleQuote() {
-	const char *enStory = "And I heard a great voice out of the temple saying to the seven angels. "
+	const char *enStory = "And I heard a great voice out of the temple saying to the seven angels, "
 						"Go your ways and pour out the vails of the wrath of god upon the earth. "
 						"Book of revelation Chapter 16 verse 1.";
-	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges"
+	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges: "
 						" «Allez verser sur la terre les sept coupes de la colère de Dieu.»"
 						"L'Apocalypse, chapitre 16, verset 1";
 	const char *esStory = "Oí una gran voz que decía desde el templo a los siete ángeles: "

@@ -967,7 +967,7 @@ void DreamWebEngine::useTimedText() {
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
 	const char *theText = (const char*)string;
 	if (lastText != theText) {
-		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
 			ttsMan->say(theText, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
 		}
 	}
@@ -1292,7 +1292,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	if (getLanguage() != Common::RU_RUS) {
 		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
     	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-			theText += (const char*)string;
+			theText += (const char *)string;
 		}
 
 		copyName(type, index, commandLine);
@@ -1302,7 +1302,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 			x += 5;
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
 		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-			theText += (const char*)commandLine;
+			theText += (const char *)commandLine;
 			ttsMan->say(theText);
 		}
 
