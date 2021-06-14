@@ -1494,7 +1494,8 @@ Thread::~Thread() {
 	//  Deallocate the thread stack
 	free(stackBase);
 
-	deleteThread(this);
+	// XXX: Deleting like this causes a crash
+	//deleteThread(this);
 }
 
 //-----------------------------------------------------------------------
