@@ -45,73 +45,73 @@ const int           maxBanks = 64;          // 64 banks maximum
 
 class BankBits {
 public:
-	uint32 b[maxBanks / 32];
+	uint32 _b[maxBanks / 32];
 
 	// constructors
 	BankBits() {}
 	BankBits(uint32 c, uint32 d) {
-		b[0] = c;
-		b[1] = d;
+		_b[0] = c;
+		_b[1] = d;
 	}
 
 	// BankBits operators
 	friend BankBits operator+ (BankBits c, BankBits d) {
-		return BankBits(c.b[0] + d.b[0], c.b[1] + d.b[1]);
+		return BankBits(c._b[0] + d._b[0], c._b[1] + d._b[1]);
 	}
 
 	friend BankBits operator- (BankBits c, BankBits d) {
-		return BankBits(c.b[0] - d.b[0], c.b[1] - d.b[1]);
+		return BankBits(c._b[0] - d._b[0], c._b[1] - d._b[1]);
 	}
 
 	void operator>>=(int a) {
-		bool c = (bool)(b[0] & 1);
-		b[0] >>= (uint32)a;
-		b[1] >>= (uint32)a;
-		b[1] |= ((1 << 31) & (uint32)c);
+		bool c = (bool)(_b[0] & 1);
+		_b[0] >>= (uint32)a;
+		_b[1] >>= (uint32)a;
+		_b[1] |= ((1 << 31) & (uint32)c);
 	}
 	void operator<<=(int a) {
-		bool c = (bool)(b[1] & (1 << 31));
-		b[0] >>= (uint32)a;
-		b[0] |= (1 & (uint32)c);
-		b[1] >>= (uint32)a;
+		bool c = (bool)(_b[1] & (1 << 31));
+		_b[0] >>= (uint32)a;
+		_b[0] |= (1 & (uint32)c);
+		_b[1] >>= (uint32)a;
 	}
 
 	friend BankBits operator& (BankBits c, BankBits d) {
-		return BankBits(c.b[0] & d.b[0], c.b[1] & d.b[1]);
+		return BankBits(c._b[0] & d._b[0], c._b[1] & d._b[1]);
 	}
 
 	friend BankBits operator| (BankBits c, BankBits d) {
-		return BankBits(c.b[0] | d.b[0], c.b[1] | d.b[1]);
+		return BankBits(c._b[0] | d._b[0], c._b[1] | d._b[1]);
 	}
 
 	friend BankBits operator|= (BankBits c, BankBits d) {
-		return BankBits(c.b[0] |= d.b[0], c.b[1] |= d.b[1]);
+		return BankBits(c._b[0] |= d._b[0], c._b[1] |= d._b[1]);
 	}
 
 	friend bool operator!= (BankBits c, BankBits d) {
-		return (c.b[0] != d.b[0] && c.b[1] != d.b[1]);
+		return (c._b[0] != d._b[0] && c._b[1] != d._b[1]);
 	}
 
 	friend BankBits operator^ (BankBits c, BankBits d) {
-		return BankBits(c.b[0] ^ d.b[0], c.b[1] ^ d.b[1]);
+		return BankBits(c._b[0] ^ d._b[0], c._b[1] ^ d._b[1]);
 	}
 
 	bool isSet(uint16 i) {
-		return (bool)(b[i >> 5] & ((uint32) 1 << (i & 31)));
+		return (bool)(_b[i >> 5] & ((uint32) 1 << (i & 31)));
 	}
 
 	void SetBit(int16 i) {
-		b[i / 32] |= ((uint32) 1 << (i % 32))  ;
+		_b[i / 32] |= ((uint32) 1 << (i % 32))  ;
 	}
 	void NotBit(int16 i) {
-		b[i / 32] &= ~((uint32) 1 << (i % 32));
+		_b[i / 32] &= ~((uint32) 1 << (i % 32));
 	}
 	void Reset(uint32 c, uint32 d) {
-		b[0] = c;
-		b[1] = d;
+		_b[0] = c;
+		_b[1] = d;
 	}
 	bool Test() {
-		return (b[0] || b[1]);
+		return (_b[0] || _b[1]);
 	}
 
 	// Point16 functions
@@ -120,14 +120,14 @@ public:
 
 class bitArray {
 private:
-	uint32  *b;
-	uint16  size;
+	uint32  *_b;
+	uint16  _size;
 public:
 	bitArray(uint16 newSize);
 	~bitArray();
 
 	bool operator[](uint16 i) {
-		if (i < size) return (bool)(b[i / 32] & (1 << (i % 32)));
+		if (i < _size) return (bool)(_b[i / 32] & (1 << (i % 32)));
 		else return false;
 	}
 	void resize(uint16 newSize);
@@ -150,10 +150,10 @@ private:
 		return (1 << (n & 31));
 	}
 
-	uint32  b[lWords];
+	uint32  _b[lWords];
 
 	void clear(void) {
-		memset(&b, 0, sizeof b);
+		memset(&_b, 0, sizeof _b);
 	}
 
 public:
@@ -163,17 +163,17 @@ public:
 	}
 
 	uint32 getChunk(uint16 i) {
-		return b[i];
+		return _b[i];
 	}
 
 	bool operator[](uint32 ind) {
-		return (ind < size && (b[WORDNUM(ind)] & BITMASK(ind)));
+		return (ind < size && (_b[WORDNUM(ind)] & BITMASK(ind)));
 	}
 
 	void Bit(uint32 ind, bool val) {
 		if (ind < size) {
-			if (val) b[WORDNUM(ind)] |=  BITMASK(ind);
-			else     b[WORDNUM(ind)] &= ~BITMASK(ind);
+			if (val) _b[WORDNUM(ind)] |=  BITMASK(ind);
+			else     _b[WORDNUM(ind)] &= ~BITMASK(ind);
 		}
 	}
 
@@ -187,7 +187,7 @@ public:
 		FixedBitArray   t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[i] = c.b[i] & d.b[i];
+			t._b[i] = c._b[i] & d._b[i];
 		return t;
 	}
 
@@ -195,19 +195,19 @@ public:
 		FixedBitArray t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[i] = c.b[i] | d.b[i];
+			t._b[i] = c._b[i] | d._b[i];
 		return t;
 	}
 
 	friend FixedBitArray &operator|= (FixedBitArray c, FixedBitArray d) {
 		for (uint16 i = 0; i < lWords; i++)
-			c.b[i] |= d.b[i];
+			c._b[i] |= d._b[i];
 		return c;
 	}
 
 	friend bool operator!= (FixedBitArray c, FixedBitArray d) {
 		for (uint16 i = 0; i < lWords; i++)
-			if (c.b[i] != d.b[i]) return true;
+			if (c._b[i] != d._b[i]) return true;
 		return false;
 	}
 
@@ -215,7 +215,7 @@ public:
 		FixedBitArray t;
 
 		for (uint16 i = 0; i < lWords; i++)
-			t.b[i] = c.b[i] ^ d.b[i];
+			t._b[i] = c._b[i] ^ d._b[i];
 		return t;
 	}
 };
