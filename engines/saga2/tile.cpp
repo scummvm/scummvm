@@ -202,7 +202,7 @@ CyclePtr                cycleList;          // list of tile cycling info
 //  Platform caching management
 const int           platformCacheSize = 256;
 
-DList               platformLRU;                // least recently used
+Common::List<int> platformLRU;  // least recently used
 PlatformCacheEntry  platformCache[platformCacheSize];
 
 /* ===================================================================== *
@@ -1831,7 +1831,7 @@ void initPlatformCache(void) {
 
 		//  Fill up the LRU with empty platforms
 		pce->metaID = NoMetaTile;
-		platformLRU.addTail(*pce);
+		platformLRU.push_back(i);
 	}
 }
 
@@ -2305,17 +2305,17 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 	debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
 
-	int         cacheIndex;
-
 	//  Since the platform is not in the cache, we need to
 	//  dump something from the cache. Dump the one that
 	//  was least recently used.
 	//  Get head of LRU chain.
-	pce = (PlatformCacheEntry *)platformLRU.remHead();
-	platformLRU.addTail(*pce);
+	int cacheIndex = platformLRU.front();
+	platformLRU.pop_front();
+	platformLRU.push_back(cacheIndex);
+
+	pce = &platformCache[cacheIndex];
 
 	//  Compute the layer of this entry in the cache
-	cacheIndex = pce - platformCache;
 	assert(cacheIndex < platformCacheSize);
 	assert(cacheIndex >= 0);
 
