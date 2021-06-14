@@ -92,14 +92,7 @@ bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoom
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	prepareToDraw();
-
-	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
-	return true;
-}
-
-bool BaseSurfaceOpenGL3D::displayTransOffset(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	prepareToDraw();
 
 	_renderer->drawSprite(*this, rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
