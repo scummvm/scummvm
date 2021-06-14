@@ -311,18 +311,18 @@ struct TileInfo {
 
 class TileBank {
 public:
-	uint32          numTiles;               // number of tiles in list
-	TileInfo        *tileArray;         // variable-sized array
+	uint32          _numTiles;               // number of tiles in list
+	TileInfo        *_tileArray;         // variable-sized array
 
 	TileBank() {
-		numTiles = 0;
-		tileArray = nullptr;
+		_numTiles = 0;
+		_tileArray = nullptr;
 	}
 
 	TileBank(hResContext *con, hResID id);
 
 	TileInfo *tile(uint16 index) {
-		return &tileArray[index];
+		return &_tileArray[index];
 	}
 };
 
