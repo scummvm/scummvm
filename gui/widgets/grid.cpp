@@ -146,8 +146,14 @@ GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) :
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
 		ContainerWidget(boss, name) {
 	loadPlatformIcons();
-	_gridItemHeight = kThumbnailHeight + (2*kLineHeight);
-	_gridItemWidth = kThumbnailWidth;
+	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
+	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
+	_gridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
+	
+	_gridItemHeight = _thumbnailHeight + (2*kLineHeight);
+	_gridItemWidth = _thumbnailWidth;
+	
 	_scrollPos = 0;
 }
 
@@ -195,8 +201,8 @@ bool GridWidget::calcVisibleEntries() {
 	int nFirstVisibleItem = 0;
 	int nItemsOnScreen = 0;
 
-	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + kGridItemVPadding));
-	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + kGridItemVPadding))) * (_itemsPerRow);
+	nFirstVisibleItem = _itemsPerRow * (-_scrollPos / (_gridItemHeight + _gridYSpacing));
+	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
 
 	if ((nFirstVisibleItem != _firstVisibleItem) || (nItemsOnScreen != _itemsOnScreen)) {
 		needsReload = true;
@@ -257,7 +263,9 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformC
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
 	int scrollSpeed = -direction*40;
+	
 	_scrollPos += scrollSpeed;
+	
 	if (_scrollPos > 0) {
 		_scrollPos = 0;
 		scrollSpeed = 0;
@@ -281,16 +289,16 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		GridItemWidget *it = *iter;
 		it->setPos(it->getRelX(), scrollSpeed + it->getRelY());
 
-		if (it->getRelY() <= -_gridItemHeight) {
+		if (it->getRelY() <= -_gridItemHeight + 50) {
 			it->setVisible(false);
 			if (it->getRelY() <= -((_gridItemHeight) * 2)) {
-				it->setPos(it->getRelX(), it->getRelY() + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+				it->setPos(it->getRelX(), it->getRelY() + ((_itemsOnScreen / _itemsPerRow) * (_gridItemHeight + _gridYSpacing)));
 			}
 		}
 		else if (it->getRelY() >= _h) {
 			it->setVisible(false);
-			if (it->getRelY() >= -_gridItemHeight + ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80))) {
-				it->setPos(it->getRelX(), it->getRelY() - ((_itemsOnScreen / _itemsPerRow) * (kThumbnailHeight + 80)));
+			if (it->getRelY() >= -_gridItemHeight + ((_itemsOnScreen / _itemsPerRow) * (_gridItemHeight + _gridYSpacing))) {
+				it->setPos(it->getRelX(), it->getRelY() - ((_itemsOnScreen / _itemsPerRow) * (_gridItemHeight + _gridYSpacing)));
 			}
 		}
 		else {
@@ -322,12 +330,11 @@ void GridWidget::reflowLayout() {
 	destroyItems();
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
-	_itemsPerRow = MAX((((int)_scrollWindowWidth - 100) / kThumbnailWidth) - 1, 1);
-	
+	_itemsPerRow = MAX(((_scrollWindowWidth - 50) / (_gridItemWidth + _gridXSpacing)), 1);
 	int rows = _allEntries.size() / _itemsPerRow; // change this to be calced using eindow sizes
 	
-	_innerHeight = 100 + ((rows + 1) * (kThumbnailHeight + 80));
-	_innerWidth = 100 + (_itemsPerRow * (kThumbnailWidth + 50));
+	_innerHeight = 100 + ((rows) * (_gridItemHeight + _gridYSpacing));
+	_innerWidth = 100 + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
 		_scrollPos = -(_innerHeight - _scrollWindowHeight);
@@ -339,32 +346,44 @@ void GridWidget::reflowLayout() {
 		reloadThumbnails();
 	}
 
-	for (Common::Array<GridItemInfo>::iterator i = _visibleEntries.begin(); i != _visibleEntries.end(); ++i) {
+	Common::Array<GridItemInfo>::iterator eIter = _visibleEntries.begin();
 
-		GridItemWidget *newEntry = nullptr;
-		if (!newEntry) {
-			newEntry = new GridItemWidget(this, 
-											50 + col * (kThumbnailWidth + 50), 
-											_scrollPos + 50 + row * (kThumbnailHeight + 80), 
-											kThumbnailWidth, 
-											kThumbnailHeight+kLineHeight*2);
-			_gridItems.push_back(newEntry);
-			
-			if ((newEntry->getRelY() <= -_gridItemHeight) || (newEntry->getRelY() >= _h)) {
-				newEntry->setVisible(false);
-			}
-			else {
-				newEntry->setVisible(true);
-			}
-
-			if (++col >= _itemsPerRow) {
-				++row;
-				col = 0;
-			}
+	for (int k = 0; k < _itemsOnScreen; ++k) {
+		GridItemWidget *it = new GridItemWidget(this, 
+												50 + col * (_gridItemWidth + _gridXSpacing), 
+												(_scrollPos % _scrollWindowHeight) + 50 + row * (_gridItemHeight + _gridYSpacing), 
+												_gridItemWidth, 
+												_gridItemHeight);
+		_gridItems.push_back(it);
+		
+		if (it->getRelY() <= -_gridItemHeight + 50) {
+			warning("upside");
+			it->setVisible(false);
 		}
-		newEntry->attachEntry(*i);
-		newEntry->update();
+		else if (it->getRelY() >= _h) {
+			warning("downside");
+			it->setVisible(false);
+		}
+		else {
+			it->setVisible(true);
+		}
+
+		if (eIter != _visibleEntries.end()) {
+			it->setActiveEntry(*eIter);
+			eIter++;
+		}
+		else {
+			it->setActiveEntry(*_visibleEntries.begin());
+			it->setVisible(false);
+		}
+		
+		if (++col >= _itemsPerRow) {
+			++row;
+			col = 0;
+		}
+		it->update();
 	}
+
 	markAsDirty();
 }
 

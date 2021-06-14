@@ -76,6 +76,7 @@ private:
 	uint16 _innerHeight, _innerWidth;
 	uint16 _thumbnailHeight, _thumbnailWidth;
 	uint16 _gridItemHeight, _gridItemWidth;
+	uint16 _gridXSpacing, _gridYSpacing;
 	
 	int _scrollPos;
 	int _itemsPerRow;
@@ -110,8 +111,6 @@ public:
 };
 
 enum {
-	kGridItemHPadding = 50,
-	kGridItemVPadding = 50,
 	kThumbnailWidth = 192,
 	kThumbnailHeight = 192
 };
