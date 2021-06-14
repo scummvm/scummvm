@@ -454,8 +454,14 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			for (int i = 0; i < 16; ++i)
 				pSnd->_usedChannels[i] = 0xFF;
 			for (int i = 0; i < track->channelCount; ++i) {
+				// skip digital channel
+				if (i == track->digitalChannelNr) {
+					continue;
+				}
+
 				SoundResource::Channel &chan = track->channels[i];
 
+				assert(chan.number < ARRAYSIZE(pSnd->_chan));
 				pSnd->_usedChannels[i] = chan.number;
 				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
 				pSnd->_chan[chan.number]._prio = chan.prio;
