@@ -30,12 +30,11 @@
 #define WINTERMUTE_BASE_SURFACESDL_H
 
 #include "graphics/surface.h"
-#include "graphics/transparent_surface.h"
+#include "graphics/transparent_surface.h" // for Graphics::AlphaType
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "common/list.h"
 
 namespace Wintermute {
-struct TransparentSurface;
 class BaseImage;
 class BaseSurfaceOSystem : public BaseSurface {
 public:
