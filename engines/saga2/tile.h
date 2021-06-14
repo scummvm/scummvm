@@ -314,6 +314,13 @@ public:
 	uint32          numTiles;               // number of tiles in list
 	TileInfo        *tileArray;         // variable-sized array
 
+	TileBank() {
+		numTiles = 0;
+		tileArray = nullptr;
+	}
+
+	TileBank(hResContext *con, hResID id);
+
 	TileInfo *tile(uint16 index) {
 		return &tileArray[index];
 	}
