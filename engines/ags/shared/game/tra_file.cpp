@@ -59,6 +59,7 @@ String GetTraBlockName(TraFileBlock id) {
 	case kTraFblk_Dict: return "Dictionary";
 	case kTraFblk_GameID: return "GameID";
 	case kTraFblk_TextOpts: return "TextOpts";
+	default: break;
 	}
 	return "unknown";
 }
@@ -117,7 +118,7 @@ HError TestTraGameIDReader(Stream *in, int block_id, const String &ext_id,
 	}
 	in->Seek(block_len); // skip block
 	return HError::None();
-};
+}
 
 HError TestTraGameID(int game_uid, const String &game_name, Stream *in) {
 	HError err = OpenTraFile(in);
@@ -133,7 +134,7 @@ HError TestTraGameID(int game_uid, const String &game_name, Stream *in) {
 		return err;
 	// Test the identifiers, if they are not present then skip the test
 	if ((tra.GameUid != 0 && (game_uid != tra.GameUid)) ||
-		!tra.GameName.IsEmpty() && (game_name != tra.GameName))
+		(!tra.GameName.IsEmpty() && (game_name != tra.GameName)))
 		return new TraFileError(kTraFileErr_GameIDMismatch,
 			String::FromFormat("The translation is designed for '%s'", tra.GameName.GetCStr()));
 	return HError::None();

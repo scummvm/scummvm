@@ -693,6 +693,8 @@ static HGameFileError ReadExtBlock(LoadedGameEntities &ents, Stream *in, const S
 	return new MainGameFileError(kMGFErr_ExtUnknown, String::FromFormat("Type: %s", ext_id.GetCStr()));
 }
 
+// This reader will process all blocks inside ReadExtBlock() function,
+// and read compatible data into the given LoadedGameEntities object.
 static LoadedGameEntities *reader_ents;
 static GameDataVersion reader_ver;
 HError ReadGameDataReader(Stream *in, int block_id, const String &ext_id,
@@ -781,11 +783,6 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	//-------------------------------------------------------------------------
 	// All the extended data, for AGS > 3.5.0.
 	//-------------------------------------------------------------------------
-
-	// This reader will process all blocks inside ReadExtBlock() function,
-	// and read compatible data into the given LoadedGameEntities object.
-	auto reader = [&ents, data_ver](Stream *in, int /*block_id*/, const String &ext_id,
-		soff_t block_len, bool &read_next) {};
 
 	HError ext_err = ReadExtData(ReadGameDataReader,
 		kDataExt_NumID8 | kDataExt_File64, in);

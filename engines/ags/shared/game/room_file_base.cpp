@@ -60,6 +60,8 @@ String GetRoomFileErrorText(RoomFileErrorType err) {
 		return "Errors encountered when reading custom properties.";
 	case kRoomFileErr_BlockNotFound:
 		return "Required block was not found.";
+	default:
+		break;
 	}
 	return "Unknown error.";
 }

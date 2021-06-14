@@ -72,7 +72,7 @@ bool MemoryStream::IsValid() const {
 }
 
 bool MemoryStream::EOS() const {
-	return _pos >= _len;
+	return _pos >= (soff_t)_len;
 }
 
 soff_t MemoryStream::GetLength() const {
