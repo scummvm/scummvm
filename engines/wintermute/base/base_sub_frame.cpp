@@ -37,8 +37,6 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
-#include "graphics/transform_tools.h"
-#include "graphics/transform_struct.h"
 
 namespace Wintermute {
 
@@ -267,16 +265,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 	}
 
 	if (rotate != Graphics::kDefaultAngle) {
-		Point32 boxOffset, rotatedHotspot, hotspotOffset;
-		Common::Point origin(x, y);
-		Common::Point newOrigin;
-		Rect32 oldRect1 = getRect();
-		Common::Rect oldRect(oldRect1.left, oldRect1.top, oldRect1.right, oldRect1.bottom);
-		Common::Point newHotspot;
-		Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, (uint32)rotate, _hotspotX, _hotspotY, blendMode, alpha, _mirrorX, _mirrorY, 0, 0);
-		Rect32 newRect = Graphics::TransformTools::newRect(oldRect, transform, &newHotspot);
-		newOrigin = origin - newHotspot;
-		res = _surface->displayTransform(newOrigin.x, newOrigin.y, oldRect, newRect, transform);
+		res = _surface->displayTransRotate(x, y, (uint32)rotate, _hotspotX, _hotspotY, getRect(), zoomX, zoomY, alpha, blendMode, _mirrorX, _mirrorY);
 	} else {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
 			res = _surface->displayTrans(x - _hotspotX, y - _hotspotY, getRect(), alpha, blendMode, _mirrorX, _mirrorY);

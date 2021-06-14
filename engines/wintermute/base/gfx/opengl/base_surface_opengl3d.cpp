@@ -21,6 +21,7 @@
  */
 
 #include "common/algorithm.h"
+#include "graphics/transform_tools.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
@@ -106,8 +107,16 @@ bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBl
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTransform(int x, int y, Rect32 rect, Rect32 newRect, const Graphics::TransformStruct &transform) {
+bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, uint32 angle, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
+
+	Common::Point newHotspot;
+	Common::Rect oldRect(rect.left, rect.top, rect.right, rect.bottom);
+	Graphics::TransformStruct transform = Graphics::TransformStruct(zoomX, zoomY, angle, hotspotX, hotspotY, blendMode, alpha, mirrorX, mirrorY, 0, 0);
+	Graphics::TransformTools::newRect(oldRect, transform, &newHotspot);
+
+	x -= newHotspot.x;
+	y -= newHotspot.y;
 
 	Vector2 position(x, y);
 	Vector2 rotation;
