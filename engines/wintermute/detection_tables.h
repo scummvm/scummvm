@@ -101,6 +101,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"machumayu",       "Machu Mayu"},
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
+	{"miskatonic1",     "Miskatonic. Part One"},
 	{"msos",            "Monday Starts on Saturday"},
 	{"mythguff",        "Myth: A Guff's Tale"},
 	{"nighttrain",      "Night Train"},
@@ -1632,6 +1633,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Mirage
 	WME_WINENTRY("mirage", "",
 		WME_ENTRY1s("data.dcp", "d230b0b99c0aa77b9ecd094d8ee5573b", 17844056), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_11),
+
+	// Miskatonic. Part One
+	WME_WINENTRY("miskatonic1", "",
+		WME_ENTRY1s("Miskatonic.exe", "21d1ed0375f64c13688e2d082ed1aaa1", 340306712), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Monday Starts on Saturday
 	WME_WINENTRY("msos", "",
