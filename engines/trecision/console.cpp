@@ -33,13 +33,14 @@
 namespace Trecision {
 
 Console::Console(TrecisionEngine *vm) : GUI::Debugger(), _vm(vm) {
-	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
-	registerCmd("dumpanim",		WRAP_METHOD(Console, Cmd_DumpAnim));
-	registerCmd("dumpfile",		WRAP_METHOD(Console, Cmd_DumpFile));
-	registerCmd("dialog",		WRAP_METHOD(Console, Cmd_Dialog));
-	registerCmd("item",			WRAP_METHOD(Console, Cmd_Item));
-	registerCmd("say",			WRAP_METHOD(Console, Cmd_Say));
-	registerCmd("position",		WRAP_METHOD(Console, Cmd_Position));
+	registerCmd("room",			 WRAP_METHOD(Console, Cmd_Room));
+	registerCmd("dumpanim",		 WRAP_METHOD(Console, Cmd_DumpAnim));
+	registerCmd("dumpfile",		 WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("dialog",		 WRAP_METHOD(Console, Cmd_Dialog));
+	registerCmd("item",			 WRAP_METHOD(Console, Cmd_Item));
+	registerCmd("say",			 WRAP_METHOD(Console, Cmd_Say));
+	registerCmd("position",		 WRAP_METHOD(Console, Cmd_Position));
+	registerCmd("toggle_object", WRAP_METHOD(Console, Cmd_ToggleObject));
 }
 
 Console::~Console() {
@@ -173,6 +174,20 @@ bool Console::Cmd_Position(int argc, const char **argv) {
 
 	const uint16 positionId = (uint16)atoi(argv[1]);
 	_vm->_pathFind->setPosition(positionId);
+
+	return false;
+}
+
+bool Console::Cmd_ToggleObject(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("Use %s <objectId> <status> to show or hide an object\n", argv[0]);
+		debugPrintf("Status can be true (or 1) to show an object, or false (or 0) to hide it\n");
+		return true;
+	}
+
+	const uint16 objectId = (uint16)atoi(argv[1]);
+	const bool visible = !strcmp(argv[2], "1") || !scumm_stricmp(argv[2], "true");
+	_vm->setObjectVisible(objectId, visible);
 
 	return false;
 }

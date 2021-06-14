@@ -44,6 +44,7 @@ private:
 	bool Cmd_Item(int argc, const char **argv);
 	bool Cmd_Say(int argc, const char **argv);
 	bool Cmd_Position(int argc, const char **argv);
+	bool Cmd_ToggleObject(int argc, const char **argv);
 };
 
 } // End of namespace Trecision
