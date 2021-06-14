@@ -33,7 +33,7 @@ void SceneScriptTB02::InitializeScene() {
 		Setup_Scene_Information(-32.0f, 0.0f, 1578.0f, 639);
 	} else {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeTyrellBuildingFly, false, -1); // TB_FLY_#.VQA Note: this is the only fly-through scene that is localized!
 		Setup_Scene_Information(-304.0f, -81.46f, 1434.0f, 250);
 	}
@@ -169,7 +169,7 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagTB02toTB03);
 			Game_Flag_Reset(kFlagTB02ElevatorToTB05);
 			Set_Enter(kSetTB02_TB03, kSceneTB03);
@@ -181,7 +181,7 @@ bool SceneScriptTB02::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -32.0f, 0.0f, 1578.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			if (Global_Variable_Query(kVariableChapter) < 4) {
 				Game_Flag_Set(kFlagTB05Entered);
 				Game_Flag_Set(kFlagTB02toTB05);
@@ -304,7 +304,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 		if (Actor_Query_Goal_Number(kActorTyrellGuard) == kGoalTyrellGuardSleeping) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWakeUp);
 		}
-		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, kMusicLoopPlayOnce, 0);
 	} else {
 		Loop_Actor_Travel_Stairs(kActorMcCoy, 9, true, kAnimationModeIdle);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -140.0f, 0.79f, 1470.0f, 0, false, false, false);
@@ -385,7 +385,7 @@ void SceneScriptTB02::PlayerWalkedIn() {
 
 void SceneScriptTB02::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	if (Global_Variable_Query(kVariableChapter) < 4

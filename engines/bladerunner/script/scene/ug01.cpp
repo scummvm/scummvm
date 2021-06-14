@@ -126,7 +126,7 @@ bool SceneScriptUG01::ClickedOn3DObject(const char *objectName, bool a2) {
 			Scene_Loop_Set_Default(kUG01LoopMainLoopNoSteam);
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, kUG01LoopSteamDissapating, false);
 			Sound_Play(kSfxSTEAM6A,  40, 0, 0, 50);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxSTMLOOP7, 2);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSTMLOOP7, 2u);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Flag_Set(kFlagUG01SteamOff);
 		} else {
@@ -216,7 +216,7 @@ void SceneScriptUG01::PlayerWalkedIn() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorLucy) == kGoalLucyUG01Wait) {
-		Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
+		Music_Play(kMusicLoveSong, 35, 0, 3, -1, kMusicLoopPlayOnce, 0);
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyUG01VoightKampff);
 	}
 	//return false;
@@ -224,7 +224,7 @@ void SceneScriptUG01::PlayerWalkedIn() {
 
 void SceneScriptUG01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	Screen_Effect_Restore_All(false);

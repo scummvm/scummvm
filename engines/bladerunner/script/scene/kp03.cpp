@@ -156,8 +156,8 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 		if (exitId == 0) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Music_Stop(2);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
+				Music_Stop(2u);
 				Game_Flag_Reset(kFlagKP01toKP03);
 				Game_Flag_Reset(kFlagKP05toKP03);
 				Game_Flag_Set(kFlagKP03toKP05);
@@ -169,8 +169,8 @@ bool SceneScriptKP03::ClickedOnExit(int exitId) {
 		if (exitId == 1) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -321.0f, -36.55f, 26.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
-				Music_Stop(2);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
+				Music_Stop(2u);
 				Game_Flag_Reset(kFlagKP01toKP03);
 				Game_Flag_Reset(kFlagKP05toKP03);
 				Game_Flag_Set(kFlagKP03toKP01);
@@ -242,7 +242,7 @@ void SceneScriptKP03::SceneFrameAdvanced(int frame) {
 
 			if (bombTriggeredByActor == kActorSteele) {
 				Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP03Exploded);
-				Music_Play(kMusicCrysDie1, 25, 0, 1, -1, 0, 0);
+				Music_Play(kMusicCrysDie1, 25, 0, 1, -1, kMusicLoopPlayOnce, 0);
 				if (Actor_Query_Inch_Distance_From_Actor(kActorMcCoy, kActorSteele) <= 120) {
 					bombTriggeredByActor = kActorMcCoy;
 				}
@@ -318,7 +318,7 @@ void SceneScriptKP03::saveSteele() {
 	Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1.0f, -36.55f, 111.0f, 0, false, false, false);
 	Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP05Enter);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	Game_Flag_Reset(kFlagKP01toKP03);
 	Game_Flag_Reset(kFlagKP05toKP03);
 	Game_Flag_Set(kFlagKP03toKP05);

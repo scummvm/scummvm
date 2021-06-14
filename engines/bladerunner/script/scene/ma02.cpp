@@ -139,7 +139,7 @@ bool SceneScriptMA02::ClickedOnItem(int itemId, bool a2) {
 bool SceneScriptMA02::ClickedOnExit(int exitId) {
 	if (exitId == kMA02ExitMA06) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.19f, -144.12f, 378.27f, 0, true, false, false)) {
-			Music_Stop(10);
+			Music_Stop(10u);
 			Game_Flag_Set(kFlagMA02toMA06);
 			Set_Enter(kSetMA06, kSceneMA06);
 		}
@@ -193,7 +193,11 @@ void SceneScriptMA02::PlayerWalkedIn() {
 	) {
 		if (Game_Flag_Query(kFlagMcCoyIsHelpingReplicants)) {
 			Actor_Says(kActorMcCoy, 2390, kAnimationModeIdle);
-			Music_Play(kMusicBRBlues, 25, 0, 3, -1, 0, 0);
+			if (_vm->_cutContent) {
+				Music_Play(kMusicBRBlues, 25, 0, 3, -1, kMusicLoopPlayOnceRandomStart, 0);
+			} else {
+				Music_Play(kMusicBRBlues, 25, 0, 3, -1, kMusicLoopPlayOnce, 0);
+			}
 		} else {
 			Actor_Says(kActorMcCoy, 2385,  kAnimationModeTalk);
 		}
@@ -230,7 +234,7 @@ void SceneScriptMA02::PlayerWalkedIn() {
 
 void SceneScriptMA02::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptMA02::DialogueQueueFlushed(int a1) {

@@ -91,7 +91,7 @@ bool SceneScriptBB11::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 43.39f, -10.27f, -68.52f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagBB11toBB10);
 			Set_Enter(kSetBB10, kSceneBB10);
 		}
@@ -138,14 +138,14 @@ void SceneScriptBB11::PlayerWalkedIn() {
 	) {
 		Actor_Set_Invisible(kActorMcCoy, true);
 		Actor_Set_Goal_Number(kActorSadik, kGoalSadikBB11ThrowMcCoy);
-		Music_Play(kMusicBeating1, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicBeating1, 61, 0, 1, -1, kMusicLoopPlayOnce, 0);
 		Player_Loses_Control();
 	}
 }
 
 void SceneScriptBB11::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptBB11::DialogueQueueFlushed(int a1) {

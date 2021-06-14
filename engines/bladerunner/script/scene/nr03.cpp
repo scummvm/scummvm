@@ -144,7 +144,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 410.0f, -70.19f, -715.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagNR03toNR01);
 			Set_Enter(kSetNR01, kSceneNR01);
 		}
@@ -184,7 +184,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 #endif
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagNR03toNR04);
 				Set_Enter(kSetNR04, kSceneNR04);
 			}
@@ -236,7 +236,7 @@ bool SceneScriptNR03::ClickedOnExit(int exitId) {
 				Actor_Face_Heading(kActorMcCoy, 656, false);
 				Actor_Change_Animation_Mode(kActorMcCoy, 53);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagNR03toNR05);
 				Set_Enter(kSetNR05_NR08, kSceneNR05);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, kNR03LoopTableSwivel, false);
@@ -349,7 +349,7 @@ void SceneScriptNR03::PlayerWalkedIn() {
 
 void SceneScriptNR03::PlayerWalkedOut() {
 	if (!Game_Flag_Query(kFlagNR03toNR04)) {
-		Music_Stop(2);
+		Music_Stop(2u);
 	}
 	if (Game_Flag_Query(kFlagNR03toNR05)) {
 		Player_Gains_Control();
@@ -403,15 +403,19 @@ void SceneScriptNR03::rotateActorOnTable(int frame) {
 
 void SceneScriptNR03::playNextMusic() {
 	if (Music_Is_Playing()) {
-		Music_Adjust(51, 0, 2);
+		Music_Adjust(51, 0, 2u);
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQFrontMusic);
+		int loop = kMusicLoopPlayOnce;
+		if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+			loop = kMusicLoopPlayOnceRandomStart;
+		}
 		if (track == 0) {
-			Music_Play(kMusicGothic2, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic2, 51, 0, 2, -1, loop, 0);
 		} else if (track == 1) {
-			Music_Play(kMusicGothic1, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic1, 51, 0, 2, -1, loop, 0);
 		} else if (track == 2) {
-			Music_Play(kMusicGothic3, 51, 0, 2, -1, 0, 0);
+			Music_Play(kMusicGothic3, 51, 0, 2, -1, loop, 0);
 		}
 		++track;
 		if (track > 2) {

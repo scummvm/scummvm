@@ -38,7 +38,7 @@ void SceneScriptNR08::InitializeScene() {
 		Scene_Loop_Set_Default(kNR08LoopMainLoop);
 		Setup_Scene_Information(-1102.88f, 0.0f, 107.43f, 0);
 		if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
-			Music_Stop(1);
+			Music_Stop(1u);
 		}
 	} else if (Game_Flag_Query(kFlagNR06toNR08)) {
 		Setup_Scene_Information(  -724.7f,  0.0f, 384.24f, 1000);
@@ -149,7 +149,7 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 	 && frame < 91
 	) {
 		Set_Fade_Density((frame - 76) / 14.0f);
-		Music_Stop(3);
+		Music_Stop(3u);
 #if BLADERUNNER_ORIGINAL_BUGS
 		Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
 #else
@@ -168,7 +168,7 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 	        && frame < 135
 	) {
 		Set_Fade_Density((134 - frame) / 14.0f);
-		Music_Play(kMusicArkDnce1, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicArkDnce1, 61, 0, 1, -1, kMusicLoopPlayOnce, 0);
 	} else {
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Set_Fade_Density(0.0f);
@@ -207,10 +207,10 @@ void SceneScriptNR08::PlayerWalkedIn() {
 	) {
 		Game_Flag_Set(kFlagNR08DektoraShow);
 		Ambient_Sounds_Play_Sound(kSfxDEKCLAP1, 27, 0, 99, 0);
-		Music_Play(kMusicArkdFly1, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicArkdFly1, 61, 0, 1, -1, kMusicLoopPlayOnce, 0);
 		Outtake_Play(kOuttakeDektora, true, -1);
 	} else {
-		Music_Adjust(51, 0, 2);
+		Music_Adjust(51, 0, 2u);
 	}
 
 	if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08ReadyToRun) {
@@ -248,9 +248,9 @@ void SceneScriptNR08::PlayerWalkedIn() {
 
 void SceneScriptNR08::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	if (!Game_Flag_Query(kFlagNR08toNR05)) {
-		Music_Stop(2);
+		Music_Stop(2u);
 	}
 }
 
@@ -259,17 +259,21 @@ void SceneScriptNR08::DialogueQueueFlushed(int a1) {
 
 void SceneScriptNR08::playNextMusic() {
 	if (Music_Is_Playing()) {
-		Music_Adjust(51, 0, 2);
+		Music_Adjust(51, 0, 2u);
 	} else if (Actor_Query_Goal_Number(kActorDektora) == kGoalDektoraNR08Dance) {
-		Music_Play(kMusicArkdFly1, 61, 0, 1, -1, 0, 0);
+		Music_Play(kMusicArkdFly1, 61, 0, 1, -1, kMusicLoopPlayOnce, 0);
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQBackMusic);
+		int loop = kMusicLoopPlayOnce;
+		if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+			loop = kMusicLoopPlayOnceRandomStart;
+		}
 		if (track == 0) {
-			Music_Play(kMusicDkoDnce1, 61, -80, 2, -1, 0, 0);
+			Music_Play(kMusicDkoDnce1, 61, -80, 2, -1, loop, 0);
 		} else if (track == 1) {
-			Music_Play(kMusicStrip1, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicStrip1, 41, -80, 2, -1, loop, 0);
 		} else if (track == 2) {
-			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, loop, 0);
 		}
 		++track;
 		if (track > 2) {

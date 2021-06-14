@@ -42,7 +42,11 @@ enum kCT01Exits {
 };
 
 void SceneScriptCT01::InitializeScene() {
-	Music_Play(kMusicKyoto, 28, 0, 2, -1, 1, 0);
+	int loop = kMusicLoopRepeat;
+	if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+		loop = kMusicLoopRepeatRandomStart;
+	}
+	Music_Play(kMusicKyoto, 28, 0, 2, -1, loop, 0);
 	Game_Flag_Reset(kFlagArrivedFromSpinner1);
 	if (Game_Flag_Query(kFlagCT02toCT01)) {
 		Game_Flag_Reset(kFlagCT02toCT01);
@@ -113,10 +117,10 @@ void SceneScriptCT01::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxDISH2,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH3,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH4,   10, 30, 16, 20,    0, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 40, 33, 50,    0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 20, 40, 33, 50, -100, 100, -101, -101, 0, 0);
@@ -534,23 +538,23 @@ void SceneScriptCT01::PlayerWalkedIn() {
 void SceneScriptCT01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 	if (Game_Flag_Query(kFlagCT01toCT12)) {
-		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBL1, 1);
-		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBR1, 1);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBL1, 1u);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxCTAMBR1, 1u);
 	} else {
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	}
-	Music_Stop(5);
+	Music_Stop(5u);
 #if BLADERUNNER_ORIGINAL_BUGS
 	if (!Game_Flag_Query(kFlagMcCoyInChinaTown) && Global_Variable_Query(kVariableChapter) == 1) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeTowards3, true, -1);
 	}
 #else
 	// Acts 2, 3 - should still use a spinner fly-through transition
 	// also removed the redundant Ambient_Sounds_Remove_All_Non_Looping_Sounds
 	if (!Game_Flag_Query(kFlagMcCoyInChinaTown)) {
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		if (!Game_Flag_Query(kFlagMcCoyInTyrellBuilding)) {
 			// don't play this outtake when going to Tyrell Building
 			Outtake_Play(kOuttakeTowards3, true, -1);   // available in Acts 1, 2, 3

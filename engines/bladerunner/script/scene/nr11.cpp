@@ -37,7 +37,7 @@ void SceneScriptNR11::InitializeScene() {
 	Scene_Exit_Add_2D_Exit(0, 450, 305, 565, 345, 2);
 
 	if (!Game_Flag_Query(kFlagNR10CameraDestroyed)) {
-		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 22, 0, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 22, 0, 1u);
 	}
 
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 22, 0, 1);
@@ -181,7 +181,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					if (Actor_Query_Friendliness_To_Other(kActorDektora, kActorMcCoy) > 59
 					 && Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsNone
 					) {
-						Music_Play(kMusicLoveSong, 35, 0, 3, -1, 0, 0);
+						Music_Play(kMusicLoveSong, 35, 0, 3, -1, kMusicLoopPlayOnce, 0);
 					}
 					Loop_Actor_Walk_To_XYZ(kActorDektora, -135.0f, 0.33f, -267.0f, 0, false, false, false);
 					Actor_Face_Actor(kActorDektora, kActorMcCoy, true);
@@ -218,7 +218,7 @@ bool SceneScriptNR11::ClickedOn3DObject(const char *objectName, bool combatMode)
 					Actor_Says(kActorDektora, 1080, 13);
 					Actor_Says(kActorMcCoy, 3875, 14);
 					Actor_Says(kActorDektora, 1090, 17);
-					Music_Stop(4);
+					Music_Stop(4u);
 					Actor_Set_Goal_Number(kActorDektora, kGoalDektoraNR11WalkAway);
 					if (Global_Variable_Query(kVariableHollowayArrest) == 1) {
 						Actor_Set_Goal_Number(kActorSteele, kGoalSteeleNR10Wait);

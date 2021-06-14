@@ -71,10 +71,10 @@ void SceneScriptCT02::InitializeScene() {
 	Ambient_Sounds_Add_Sound(kSfxDISH2, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH3, 10, 30, 8, 8, 100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxDISH4, 10, 30, 7, 7, 100, 100, -101, -101, 0, 0);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10u, 260u, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10u, 260u, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10u, 260u, 17, 19, 100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10u, 260u, 17, 19, 100, 100, -101, -101, 1, 1);
 	if (Game_Flag_Query(kFlagCT02PotTipped)) {
 		Scene_Loop_Set_Default(kCT02LoopMainPotTipped);
 	} else {
@@ -287,7 +287,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 	if (exitId == kCT02ExitCT01) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -111.2f, -145.11f, 243.28f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagCT02toCT01walk);
 			Game_Flag_Set(kFlagCT02toCT01);
 			Set_Enter(kSetCT01_CT12, kSceneCT01);
@@ -303,7 +303,7 @@ bool SceneScriptCT02::ClickedOnExit(int exitId) {
 		}
 		if (!v1) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagCT02toCT03);
 			Set_Enter(kSetCT03_CT04, kSceneCT03);
 		}
@@ -341,7 +341,7 @@ void SceneScriptCT02::SceneFrameAdvanced(int frame) {
 		Sound_Play(kSfxPOTSPL5, 60, -20, 40, 50);
 	}
 	if (frame == 61) {
-		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, kMusicLoopPlayOnce, 0);
 	}
 	if (frame == 81) {
 		Scene_Exit_Add_2D_Exit(kCT02ExitCT03, 332, 163, 404, 297, 0);

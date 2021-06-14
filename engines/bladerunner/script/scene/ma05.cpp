@@ -48,10 +48,10 @@ void SceneScriptMA05::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxROOFRAN1, 90,    0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxROOFAIR1, 40, -100, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRAINAWN1, 50,   60, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10u, 260u, 27, 47, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPIN3A,  10, 100, 25,  50,    0, 0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDER2, 10,  70, 50, 100,    0, 0, -101, -101, 0, 0);
@@ -94,7 +94,7 @@ bool SceneScriptMA05::ClickedOnExit(int exitId) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 956.17f, 1579.0f, 0, false, false, false);
 			Game_Flag_Set(kFlagMA05toMA04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -7199.0f, 953.97f, 1685.0f, 0, false);
 			Set_Enter(kSetMA04, kSceneMA04);
 		}
@@ -118,7 +118,11 @@ void SceneScriptMA05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 }
 
 void SceneScriptMA05::PlayerWalkedIn() {
-	Music_Play(kMusicBRBlues, 52, 0, 2, -1, 0, 0);
+	int loop = kMusicLoopPlayOnce;
+	if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+		loop = kMusicLoopPlayOnceRandomStart;
+	}
+	Music_Play(kMusicBRBlues, 52, 0, 2, -1, loop, 0);
 	if ((Random_Query(0, 4) == 1 || (Game_Flag_Query(kFlagChapter1Ending) && !Game_Flag_Query(kFlagChapter1Ended))) && Global_Variable_Query(kVariableChapter) == 1) {
 		Scene_Loop_Set_Default(kMA05LoopMainLoop);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, kMA05LoopSpinner, true);

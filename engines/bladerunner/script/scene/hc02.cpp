@@ -25,7 +25,11 @@
 namespace BladeRunner {
 
 void SceneScriptHC02::InitializeScene() {
-	Music_Play(kMusicOneTime, 45, -60, 1, -1, 1, 3);
+	int loop = kMusicLoopRepeat;
+	if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+		loop = kMusicLoopRepeatRandomStart;
+	}
+	Music_Play(kMusicOneTime, 45, -60, 1, -1, loop, 3);
 	if (Game_Flag_Query(kFlagHC04toHC02)) {
 		Setup_Scene_Information(-88.0f, 0.14f, -463.0f, 540);
 	} else {
@@ -179,7 +183,7 @@ bool SceneScriptHC02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 7.0f, 0.14f, 79.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagHC02toHC01);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC01);
 		}
@@ -189,7 +193,7 @@ bool SceneScriptHC02::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -76.0f, 0.14f, -339.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagHC02toHC04);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -88.0f, 0.14f, -463.0f, 0, false);
 			Set_Enter(kSetHC01_HC02_HC03_HC04, kSceneHC04);

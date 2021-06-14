@@ -142,10 +142,10 @@ bool SceneScriptNR02::ClickedOnExit(int exitId) {
 			if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR01WaitAndAttack
 			 || Actor_Query_Goal_Number(kActorGordo) > kGoalGordoNR01WaitAndTakeHostage
 			) {
-				Music_Stop(2);
+				Music_Stop(2u);
 			}
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagNR02toNR01);
 			Set_Enter(kSetNR01, kSceneNR01);
 		}
@@ -191,7 +191,7 @@ void SceneScriptNR02::PlayerWalkedIn() {
 }
 
 void SceneScriptNR02::PlayerWalkedOut() {
-	Music_Stop(2);
+	Music_Stop(2u);
 
 	// Gordo on the podium
 	if (Actor_Query_Goal_Number(kActorGordo) < kGoalGordoNR02TalkAboutMcCoy
@@ -244,12 +244,16 @@ void SceneScriptNR02::DialogueQueueFlushed(int a1) {
 
 void SceneScriptNR02::playNextMusic() {
 	int track = Global_Variable_Query(kVariableTaffyLewisMusic);
+	int loop = kMusicLoopPlayOnce;
+	if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+		loop = kMusicLoopPlayOnceRandomStart;
+	}
 	if (track == 0) {
-		Music_Play(kMusicTaffy2, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy2, 41, 0, 2, -1, loop, 0);
 	} else if (track == 1) {
-		Music_Play(kMusicTaffy3, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy3, 41, 0, 2, -1, loop, 0);
 	} else if (track == 2) {
-		Music_Play(kMusicTaffy4, 41, 0, 2, -1, 0, 0);
+		Music_Play(kMusicTaffy4, 41, 0, 2, -1, loop, 0);
 	}
 	++track;
 	if (track > 2) {

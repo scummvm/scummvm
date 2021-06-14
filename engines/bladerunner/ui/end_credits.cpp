@@ -50,10 +50,10 @@ void EndCredits::show() {
 	_vm->_mouse->disable();
 	_vm->_mixer->stopAll();
 	_vm->_ambientSounds->removeAllNonLoopingSounds(true);
-	_vm->_ambientSounds->removeAllLoopingSounds(4);
+	_vm->_ambientSounds->removeAllLoopingSounds(4u);
 	_vm->_audioSpeech->stopSpeech();
 
-	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, 0, 3);
+	_vm->_music->play(_vm->_gameInfo->getMusicTrack(kMusicCredits), 100, 0, 2, -1, kMusicLoopPlayOnce, 3);
 
 	Font *fontBig = Font::load(_vm, "TAHOMA24.FON", 1, true);
 	Font *fontSmall = Font::load(_vm, "TAHOMA18.FON", 1, true);
@@ -157,7 +157,7 @@ void EndCredits::show() {
 	delete fontSmall;
 	delete fontBig;
 
-	_vm->_music->stop(0);
+	_vm->_music->stop(0u);
 	_vm->_mouse->enable();
 }
 

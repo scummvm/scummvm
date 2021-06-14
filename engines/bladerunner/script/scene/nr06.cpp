@@ -97,7 +97,7 @@ bool SceneScriptNR06::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 8, true, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -36.0f, 0.37f, -373.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagNR06toNR08);
 			Set_Enter(kSetNR05_NR08, kSceneNR08);
 		}
@@ -135,7 +135,7 @@ void SceneScriptNR06::PlayerWalkedIn() {
 
 void SceneScriptNR06::PlayerWalkedOut() {
 	if (Game_Flag_Query(kFlagNR06toNR07)) {
-		Music_Stop(2);
+		Music_Stop(2u);
 	}
 }
 
@@ -144,15 +144,19 @@ void SceneScriptNR06::DialogueQueueFlushed(int a1) {
 
 void SceneScriptNR06::playNextMusic() {
 	if (Music_Is_Playing()) {
-		Music_Adjust(31, 80, 2);
+		Music_Adjust(31, 80, 2u);
 	} else {
 		int track = Global_Variable_Query(kVariableEarlyQBackMusic);
+		int loop = kMusicLoopPlayOnce;
+		if (_vm->_cutContent && Random_Query(0, 2) == 1) {
+			loop = kMusicLoopPlayOnceRandomStart;
+		}
 		if (track == 0) {
-			Music_Play(kMusicDkoDnce1, 61, -80, 2, -1, 0, 0);
+			Music_Play(kMusicDkoDnce1, 61, -80, 2, -1, loop, 0);
 		} else if (track == 1) {
-			Music_Play(kMusicStrip1, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicStrip1, 41, -80, 2, -1, loop, 0);
 		} else if (track == 2) {
-			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, 0, 0);
+			Music_Play(kMusicArkDnce1, 41, -80, 2, -1, loop, 0);
 		}
 		++track;
 		if (track > 2) {

@@ -640,7 +640,7 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 		}
 		return true;
 	} else if (trackArgStr == "stop") {
-		_vm->_music->stop(0);
+		_vm->_music->stop(0u);
 		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
 	} else {
 		int musicId = atoi(argv[1]);
@@ -651,8 +651,8 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 			debugPrintf("Invalid music track id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
 			return true;
 		} else {
-			_vm->_music->stop(0);
-			_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, 0, 0);
+			_vm->_music->stop(0u);
+			_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, kMusicLoopPlayOnce, 0);
 			//debugPrintf("Now playing track %2d - \"%s\" (%s)\n", musicId, kMusicTracksArr[musicId], _vm->_gameInfo->getMusicTrack(musicId).c_str());
 			debugPrintf("Now playing track %2d - \"%s\"\n", musicId, kMusicTracksArr[musicId]);
 		}

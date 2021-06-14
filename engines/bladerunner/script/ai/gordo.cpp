@@ -218,7 +218,7 @@ void AIScriptGordo::CompletedMovementTrack() {
 	}
 
 	if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR01RunAway) {
-		Music_Stop(2);
+		Music_Stop(2u);
 		Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01RanAway);
 	}
 	// return false;
@@ -323,7 +323,7 @@ void AIScriptGordo::Retired(int byActorId) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagKP07toKP06);
 			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);
@@ -572,7 +572,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
 		Actor_Says(kActorGordo, 720, 16);
 		Actor_Says(kActorGordo, 730, 18);
-		Music_Stop(1);
+		Music_Stop(1u);
 		Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 		Actor_Says(kActorGordo, 740, 17);
 		Sound_Play(kSfxRIMSHOT1, 50, 0, 0, 50);
@@ -626,7 +626,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorGordo);
 		AI_Movement_Track_Append_Run(kActorGordo, 366, 0);
 		AI_Movement_Track_Repeat(kActorGordo);
-		Music_Play(kMusicBatl226M, 50, 0, 2, -1, 0, 0);
+		Music_Play(kMusicBatl226M, 50, 0, 2, -1, kMusicLoopPlayOnce, 0);
 		break;
 
 	case kGoalGordoNR02RunAway2:
@@ -719,7 +719,7 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalGordoNR01Die:
-		Music_Stop(2);
+		Music_Stop(2u);
 		AI_Countdown_Timer_Reset(kActorGordo, kActorTimerAIScriptCustomTask0);
 		ADQ_Flush();
 		AI_Movement_Track_Flush(kActorGordo);
@@ -1786,7 +1786,7 @@ void AIScriptGordo::talkToMcCoyAtNR02() {
 }
 
 void AIScriptGordo::dialogue2() {
-	Music_Stop(5);
+	Music_Stop(5u);
 	Dialogue_Menu_Clear_List();
 	DM_Add_To_List_Never_Repeat_Once_Selected(820, -1, 5,  7); // ARREST
 	DM_Add_To_List_Never_Repeat_Once_Selected(830,  7, 5, -1); // LET GO
