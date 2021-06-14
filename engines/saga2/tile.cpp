@@ -1433,8 +1433,8 @@ static void readTileBank(hResContext *con, int count, TileBank *tb) {
 
 static void readMetaTile(hResContext *con, MetaTile &til) {
 	til.highestPixel = con->readU16LE();
-	til.banksNeeded.b[0] = con->readU32LE();
-	til.banksNeeded.b[1] = con->readU32LE();
+	til.banksNeeded._b[0] = con->readU32LE();
+	til.banksNeeded._b[1] = con->readU32LE();
 
 	for (int i = 0; i < maxPlatforms; ++i)
 		til.stack[i] = con->readU16LE();
