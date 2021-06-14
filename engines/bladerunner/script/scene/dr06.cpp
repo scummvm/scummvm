@@ -85,7 +85,7 @@ bool SceneScriptDR06::ClickedOn3DObject(const char *objectName, bool a2) {
 			Game_Flag_Set(kFlagDR06JesterActive);
 		} else {
 			Overlay_Play("DR06over", 0, true, true, 0);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxJESTMOV1, 0);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxJESTMOV1, 0u);
 			Game_Flag_Reset(kFlagDR06JesterActive);
 		}
 		return true;
@@ -262,7 +262,7 @@ void SceneScriptDR06::PlayerWalkedIn() {
 void SceneScriptDR06::PlayerWalkedOut() {
 	Overlay_Remove("DR06over");
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(false);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptDR06::DialogueQueueFlushed(int a1) {

@@ -128,7 +128,7 @@ bool SceneScriptCT10::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -93.0f, 0.0f, -38.0f, 0, true, false, false)) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -121.0f, 0.0f, -78.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagCT10toCT09);
 			Set_Enter(kSetCT09, kSceneCT09);
 		}

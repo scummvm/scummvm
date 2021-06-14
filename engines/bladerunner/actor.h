@@ -144,7 +144,7 @@ public:
 	void setFPS(int fps);
 	void increaseFPS();
 
-	void   timerStart(int timerId, int32 interval);
+	void   timerStart(int timerId, int32 intervalMillis);
 	void   timerReset(int timerId);
 	int32 timerLeft(int timerId);
 	void   timersUpdate();

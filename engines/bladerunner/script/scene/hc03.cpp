@@ -166,7 +166,7 @@ bool SceneScriptHC03::ClickedOnExit(int exitId) {
 				Game_Flag_Reset(kFlagMcCoyInHawkersCircle);
 				Game_Flag_Set(kFlagMcCoyInUnderground);
 				Game_Flag_Set(kFlagHC03TrapDoorOpen);
-				Music_Stop(2);
+				Music_Stop(2u);
 				Set_Enter(kSetUG02, kSceneUG02);
 			}
 		}
@@ -215,7 +215,7 @@ void SceneScriptHC03::PlayerWalkedIn() {
 
 void SceneScriptHC03::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptHC03::DialogueQueueFlushed(int a1) {

@@ -104,7 +104,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -868.0f, 8.26f, -68.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagKP06toKP05);
 			Set_Enter(kSetKP05_KP06, kSceneKP05);
 		}
@@ -126,7 +126,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 					Actor_Set_Goal_Number(kActorGaff, kGoalGaffGone);
 				}
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagKP06toKP07);
 				Set_Enter(kSetKP07, kSceneKP07);
 			}
@@ -137,7 +137,7 @@ bool SceneScriptKP06::ClickedOnExit(int exitId) {
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, true, false);
 			Player_Set_Combat_Mode(false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagKP06toKP07);
 			Set_Enter(kSetKP07, kSceneKP07);
 		} else {
@@ -186,7 +186,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			Actor_Says(kActorMcCoy, 6220, -1);
 			Delay(3000);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Outtake_Play(kOuttakeEnd6, false, -1);
 			Game_Over();
 		} else { // Ending - talk with Gaff and leaving alone
@@ -223,7 +223,7 @@ void SceneScriptKP06::PlayerWalkedIn() {
 			// but do it after the cutscene,
 			// since this particular cutscene has no sound
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Game_Over();
 		}

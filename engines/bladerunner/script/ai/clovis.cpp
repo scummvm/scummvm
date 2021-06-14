@@ -172,7 +172,7 @@ bool AIScriptClovis::ShotAtAndHit() {
 			shotAnim();
 			Actor_Set_Targetable(kActorClovis, false);
 			ADQ_Add(kActorMcCoy, 2340, -1);
-			Music_Stop(3);
+			Music_Stop(3u);
 		} else if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07Wait
 		        || Actor_Query_Goal_Number(kActorClovis) == kGoalClovisKP07LayDown
 		) {
@@ -180,7 +180,7 @@ bool AIScriptClovis::ShotAtAndHit() {
 			Actor_Set_Goal_Number(kActorClovis, kGoalClovisGone);
 			shotAnim();
 			Actor_Set_Targetable(kActorClovis, false);
-			Music_Stop(3);
+			Music_Stop(3u);
 		}
 }
 	return false;
@@ -198,7 +198,7 @@ void AIScriptClovis::Retired(int byActorId) {
 				Player_Set_Combat_Mode(false);
 				Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagKP07toKP06);
 				Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 				Set_Enter(kSetKP05_KP06, kSceneKP06);
@@ -485,7 +485,7 @@ bool AIScriptClovis::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorClovis, 1310, kAnimationModeTalk);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeEnd4A, false, -1);
 		if (Global_Variable_Query(kVariableAffectionTowards) == kAffectionTowardsLucy
 		 && Game_Flag_Query(kFlagLucyIsReplicant)

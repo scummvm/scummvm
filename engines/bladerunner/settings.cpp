@@ -93,8 +93,8 @@ bool Settings::openNewScene() {
 
 	if (_startingGame) {
 		_vm->_ambientSounds->removeAllNonLoopingSounds(true);
-		_vm->_ambientSounds->removeAllLoopingSounds(1);
-		_vm->_music->stop(2);
+		_vm->_ambientSounds->removeAllLoopingSounds(1u);
+		_vm->_music->stop(2u);
 	}
 
 	int currentSet = _vm->_scene->getSetId();

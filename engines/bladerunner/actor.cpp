@@ -263,10 +263,10 @@ void Actor::increaseFPS() {
 #endif // BLADERUNNER_ORIGINAL_BUGS
 }
 
-void Actor::timerStart(int timerId, int32 interval) {
+void Actor::timerStart(int timerId, int32 intervalMillis) {
 	assert(timerId >= 0 && timerId < kActorTimers);
 
-	_timersLeft[timerId] = interval;
+	_timersLeft[timerId] = intervalMillis;
 	_timersLast[timerId] = _vm->_time->current();
 }
 
@@ -376,14 +376,14 @@ void Actor::movementTrackNext(bool omitAiScript) {
 	bool hasNextMovement;
 	bool running;
 	int angle;
-	int32 delay;
+	int32 delayMillis;
 	int waypointId;
 	Vector3 waypointPosition;
 	bool arrived;
 
-	hasNextMovement = _movementTrack->next(&waypointId, &delay, &angle, &running);
+	hasNextMovement = _movementTrack->next(&waypointId, &delayMillis, &angle, &running);
 	_movementTrackNextWaypointId = waypointId;
-	_movementTrackNextDelay = delay;
+	_movementTrackNextDelay = delayMillis;
 	_movementTrackNextAngle = angle;
 	_movementTrackNextRunning = running;
 	if (hasNextMovement) {
@@ -397,7 +397,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 			_walkInfo->setup(_id, running, _position, waypointPosition, false, &arrived);
 
 			_movementTrackWalkingToWaypointId = waypointId;
-			_movementTrackDelayOnNextWaypoint = delay;
+			_movementTrackDelayOnNextWaypoint = delayMillis;
 			if (arrived) {
 				movementTrackWaypointReached();
 			}
@@ -406,13 +406,13 @@ void Actor::movementTrackNext(bool omitAiScript) {
 
 			setAtXYZ(waypointPosition, angle, true, false, false);
 
-			if (!delay) {
-				delay = 1;
+			if (!delayMillis) {
+				delayMillis = 1;
 			}
-			if (delay > 1) {
+			if (delayMillis > 1) {
 				changeAnimationMode(kAnimationModeIdle, false);
 			}
-			timerStart(kActorTimerMovementTrack, delay);
+			timerStart(kActorTimerMovementTrack, delayMillis);
 		}
 		//return true;
 	} else {

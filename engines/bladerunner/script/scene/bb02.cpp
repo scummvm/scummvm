@@ -100,7 +100,7 @@ bool SceneScriptBB02::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 98.0f, -415.06f, -593.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagBB02toBB01);
 			Set_Enter(kSetBB01, kSceneBB01);
 		}
@@ -171,7 +171,7 @@ void SceneScriptBB02::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptBB02::DialogueQueueFlushed(int a1) {

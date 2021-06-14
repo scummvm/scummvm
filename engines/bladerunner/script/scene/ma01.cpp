@@ -113,7 +113,7 @@ bool SceneScriptMA01::ClickedOnExit(int exitId) {
 			}
 		} else if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1446.0f, 0.0f, -725.0f, 12, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagMA01toMA06);
 			Set_Enter(kSetMA06, kSceneMA06);
 		}
@@ -298,7 +298,7 @@ void SceneScriptMA01::PlayerWalkedIn() {
 void SceneScriptMA01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 
 	if (_vm->_cutContent) {
 		ADQ_Flush(); // for dispatcher queue cleanup

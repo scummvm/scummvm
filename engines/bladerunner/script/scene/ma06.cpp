@@ -37,7 +37,7 @@ void SceneScriptMA06::InitializeScene() {
 
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
@@ -123,8 +123,8 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Game_Flag_Reset(kFlagMA06toMA01);
 			Game_Flag_Reset(kFlagMA06ToMA02);
 			Game_Flag_Reset(kFlagMA06toMA07);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 10, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  10, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1u);
 
 			Actor_Says(kActorAnsweringMachine, 80, 3);     // your floor number please
 			Actor_Says(kActorMcCoy, 2940, 18);             // McCoy: McCoy 88F
@@ -140,12 +140,12 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Game_Flag_Reset(kFlagMA01toMA06);
 			Game_Flag_Reset(kFlagMA02toMA06);
 			Game_Flag_Reset(kFlagMA07toMA06);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1);         // stop elev moving sound
-			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1);         // stop other ambient
-			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1);         // stop other ambient
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1u);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1u);         // stop elev moving sound
+			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1u);         // stop other ambient
+			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1u);         // stop other ambient
 			Actor_Says_With_Pause(kActorRachael, 300, 1.0f, 14);  // GoodbyeMcCoy
 			Actor_Says(kActorRachael, 310, 14);                   // Isnt ThisYourFloor --
 			Actor_Says(kActorMcCoy, 2860, 14);                    // YouTakeCareOfYoursel
@@ -165,8 +165,8 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Game_Flag_Reset(kFlagMA06toMA01);
 			Game_Flag_Reset(kFlagMA06ToMA02);
 			Game_Flag_Reset(kFlagMA06toMA07);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3, 10, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  10, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 10, 0, 1u);
 
 			Actor_Says(kActorAnsweringMachine, 80, 3);      // your floor number please
 			Actor_Set_Goal_Number(kActorRachael, kGoalRachaelIsInsideElevatorStartTalkAct4);
@@ -175,12 +175,12 @@ void SceneScriptMA06::PlayerWalkedIn() {
 			Game_Flag_Reset(kFlagMA01toMA06);
 			Game_Flag_Reset(kFlagMA02toMA06);
 			Game_Flag_Reset(kFlagMA07toMA06);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1);
-			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1);
-			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1);         // stop elev moving sound
-			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1);         // stop other ambient
-			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1);         // stop other ambient
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxSPINUP1,  0, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxAPRTFAN1, 0, 0, 1u);
+			Ambient_Sounds_Adjust_Looping_Sound(kSfxELEAMB3,  0, 0, 1u);
+			Ambient_Sounds_Remove_Looping_Sound(kSfxSPINUP1,  1u);         // stop elev moving sound
+			Ambient_Sounds_Remove_Looping_Sound(kSfxAPRTFAN1, 1u);         // stop other ambient
+			Ambient_Sounds_Remove_Looping_Sound(kSfxELEAMB3,  1u);         // stop other ambient
 
 //			Player_Gains_Control();
 			Set_Enter(kSetMA07, kSceneMA07);
@@ -219,7 +219,7 @@ void SceneScriptMA06::PlayerWalkedIn() {
 
 void SceneScriptMA06::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	Player_Gains_Control();
 	if (_vm->_cutContent) {
 		if (Actor_Query_Goal_Number(kActorRachael) == kGoalRachaelIsInsideElevatorStartTalkAct3) {

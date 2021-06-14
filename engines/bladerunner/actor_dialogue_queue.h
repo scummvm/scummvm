@@ -40,7 +40,7 @@ class ActorDialogueQueue {
 		int    actorId;
 		int    sentenceId;
 		int    animationMode;
-		int32  delay;
+		int32  delayMillis; // in milliseconds, TODO: Info on special values 0 and -1?
 
 		Entry();
 	};
@@ -54,15 +54,15 @@ class ActorDialogueQueue {
 	int                  _animationMode;
 	int                  _animationModePrevious;
 	bool                 _isPause;
-	int32                _delay;
-	uint32               _timeLast;
+	int32                _delayMillis; // in milliseconds, TODO: Info on special values 0 and -1?
+	uint32               _timeLast;    // in milliseconds
 
 public:
 	ActorDialogueQueue(BladeRunnerEngine *vm);
 	~ActorDialogueQueue();
 
 	void add(int actorId, int sentenceId, int animationMode);
-	void addPause(int32 delay);
+	void addPause(int32 delayMillis);
 	void flush(int a1, bool callScript);
 	bool isEmpty();
 	void tick();

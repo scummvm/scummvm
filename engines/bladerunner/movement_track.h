@@ -51,15 +51,15 @@ class MovementTrack {
 public:
 	MovementTrack();
 	~MovementTrack();
-	int append(int waypointId, int32 delay, bool run);
-	int append(int waypointId, int32 delay, int angle, bool run);
+	int append(int waypointId, int32 delayMillis, bool run);
+	int append(int waypointId, int32 delayMillis, int angle, bool run);
 	void flush();
 	void repeat();
 	void pause();
 	void unpause();
 	bool isPaused() const;
 	bool hasNext() const;
-	bool next(int *waypointId, int32 *delay, int *angle, bool *run);
+	bool next(int *waypointId, int32 *delayMillis, int *angle, bool *run);
 
 	void save(SaveFileWriteStream &f);
 	void load(SaveFileReadStream &f);

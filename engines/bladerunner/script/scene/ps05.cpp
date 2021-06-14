@@ -112,7 +112,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_Waypoint(kActorMcCoy, 2, 24, true, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS15, kScenePS15);
 		}
 		return true;
@@ -120,7 +120,7 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 635.0f, 0.0f, -598.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS02, kScenePS02);
 		}
 		return true;
@@ -130,14 +130,14 @@ bool SceneScriptPS05::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 742.52f, 0.37f, -457.69f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS05toPS06);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS06, kScenePS06);
 		}
 #else
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 715.52f, 0.37f, -457.69f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS05toPS06);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS06, kScenePS06);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS

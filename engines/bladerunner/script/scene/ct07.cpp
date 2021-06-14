@@ -32,10 +32,10 @@ void SceneScriptCT07::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1,  30,  90, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTDRONE1, 20,   1, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTAMBR1,  40, 100, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSPIN2A,  80, 180, 16,  25,   0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPIN2B,  50, 180, 16,  25,   0,   0, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR2,  10,  60, 50, 100,   0,   0, -101, -101, 0, 0);
@@ -96,7 +96,7 @@ void SceneScriptCT07::PlayerWalkedIn() {
 }
 
 void SceneScriptCT07::PlayerWalkedOut() {
-	Music_Stop(2);
+	Music_Stop(2u);
 }
 
 void SceneScriptCT07::DialogueQueueFlushed(int a1) {

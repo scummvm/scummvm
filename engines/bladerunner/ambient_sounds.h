@@ -42,10 +42,10 @@ class AmbientSounds {
 		Common::String name;
 		int32          hash;
 		int            audioPlayerTrack;
-		uint32         timeMin;
-		uint32         timeMax;
-		uint32         nextPlayTimeStart;
-		uint32         nextPlayTimeDiff;
+		uint32         delayMin;          // milliseconds
+		uint32         delayMax;          // milliseconds
+		uint32         nextPlayTimeStart; // milliseconds
+		uint32         nextPlayTimeDiff;  // milliseconds
 		int            volumeMin;
 		int            volumeMax;
 		int            volume;
@@ -77,7 +77,7 @@ public:
 
 	void addSound(
 		int sfxId,
-		uint32 timeMin, uint32 timeMax,
+		uint32 delayMinSeconds, uint32 delayMaxSeconds,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
@@ -88,7 +88,7 @@ public:
 
 	void addSpeech(
 		int actorId, int sentenceId,
-		uint32 timeMin, uint32 timeMax,
+		uint32 delayMinSeconds, uint32 delayMaxSeconds,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
@@ -96,12 +96,12 @@ public:
 	void playSound(int sfxId, int volume, int panStart, int panEnd, int priority);
 	void playSpeech(int actorId, int sentenceId, int volume, int panStart, int panEnd, int priority);
 
-	void addLoopingSound(int sfxId, int volume, int pan, uint32 delay);
-	void adjustLoopingSound(int sfxId, int volume, int pan, uint32 delay);
+	void addLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds);
+	void adjustLoopingSound(int sfxId, int volume, int pan, uint32 delaySeconds);
 	// it seems there is little confusion in original code about delay parameter,
 	// sometimes it is used as boolean in same way as stopPlaying from non looping
-	void removeLoopingSound(int sfxId, uint32 delay);
-	void removeAllLoopingSounds(uint32 delay);
+	void removeLoopingSound(int sfxId, uint32 delaySeconds);
+	void removeAllLoopingSounds(uint32 delaySeconds);
 
 	void tick();
 
@@ -121,14 +121,14 @@ private:
 
 	void addSoundByName(
 		const Common::String &name,
-		uint32 timeMin, uint32 timeMax,
+		uint32 delayMinSeconds, uint32 delayMaxSeconds,
 		int volumeMin, int volumeMax,
 		int panStartMin, int panStartMax,
 		int panEndMin, int panEndMax,
 		int priority, int unk);
 
 	void removeNonLoopingSoundByIndex(int index, bool stopPlaying);
-	void removeLoopingSoundByIndex(int index, uint32 delay);
+	void removeLoopingSoundByIndex(int index, uint32 delaySeconds);
 };
 
 } // End of namespace BladeRunner

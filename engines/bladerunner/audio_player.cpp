@@ -66,7 +66,7 @@ void AudioPlayer::stopAll() {
 	}
 }
 
-void AudioPlayer::adjustVolume(int track, int volume, uint32 delay, bool overrideVolume) {
+void AudioPlayer::adjustVolume(int track, int volume, uint32 delaySeconds, bool overrideVolume) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
 	}
@@ -77,16 +77,16 @@ void AudioPlayer::adjustVolume(int track, int volume, uint32 delay, bool overrid
 	}
 
 	_tracks[track].volume = actualVolume;
-	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60u * delay);
+	_vm->_audioMixer->adjustVolume(_tracks[track].channel, actualVolume, 60u * delaySeconds);
 }
 
-void AudioPlayer::adjustPan(int track, int pan, uint32 delay) {
+void AudioPlayer::adjustPan(int track, int pan, uint32 delaySeconds) {
 	if (track < 0 || track >= kTracks || !_tracks[track].isActive || _tracks[track].channel == -1) {
 		return;
 	}
 
 	_tracks[track].pan = pan;
-	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60u * delay);
+	_vm->_audioMixer->adjustPan(_tracks[track].channel, pan, 60u * delaySeconds);
 }
 
 void AudioPlayer::setVolume(int volume) {
@@ -213,7 +213,7 @@ int AudioPlayer::playAud(const Common::String &name, int volume, int panStart, i
 	}
 
 	if (panStart != panEnd) {
-		_vm->_audioMixer->adjustPan(channel, panEnd, (60 * audioStream->getLength()) / 1000);
+		_vm->_audioMixer->adjustPan(channel, panEnd, (60u * audioStream->getLength()) / 1000u);
 	}
 
 	_tracks[track].isActive = true;
@@ -248,7 +248,9 @@ uint32 AudioPlayer::getLength(int track) const {
 
 void AudioPlayer::stop(int track, bool immediately) {
 	if (isActive(track)) {
-		_vm->_audioMixer->stop(_tracks[track].channel, immediately ? 0 : 60);
+		// If parameter "immediately" is not set,
+		// the delay for audio stop is 1 second (multiplied by 60u as expected by AudioMixer::stop())
+		_vm->_audioMixer->stop(_tracks[track].channel, immediately ? 0u : 60u);
 	}
 }
 

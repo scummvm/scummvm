@@ -575,7 +575,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Global_Variable_Set(kVariableChapter, 5);
 		Outtake_Play(kOuttakeMovieD, false, -1);
 
@@ -588,7 +588,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalMcCoyArrested:
-		Music_Stop(3);
+		Music_Stop(3u);
 		Player_Set_Combat_Mode(false);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 		_animationState = 0;

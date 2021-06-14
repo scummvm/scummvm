@@ -64,10 +64,10 @@ void SceneScriptDR01::InitializeScene() {
 	Ambient_Sounds_Add_Looping_Sound(kSfxCTRAIN1, 50,  0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxHUMMER3, 12, 85, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBIGFAN2, 14, 85, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
-	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10, 260, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy,  0, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 20, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 40, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
+	Ambient_Sounds_Add_Speech_Sound(kActorBlimpGuy, 50, 10u, 260u, 17, 24, -100, 100, -101, -101, 1, 1);
 	Ambient_Sounds_Add_Sound(kSfxSPIN2A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxSPIN1A, 5, 80, 16,  25, -100, 100, -101, -101, 0, 0);
 	Ambient_Sounds_Add_Sound(kSfxTHNDR1, 5, 80, 50, 100, -100, 100, -101, -101, 0, 0);
@@ -154,14 +154,14 @@ bool SceneScriptDR01::ClickedOnExit(int exitId) {
 				} else {
 					Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
 				}
-				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1u);
 				Game_Flag_Set(kFlagDR01toDR02);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
 			}
 		} else {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -835.0f, -0.04f, -118.0f, 0, true, false, false)) {
 				Async_Actor_Walk_To_XYZ(kActorMcCoy, -911.0f, -0.04f, -118.0f, 0, false);
-				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1);
+				Ambient_Sounds_Adjust_Looping_Sound(kSfxFACTAMB2, 10, -100, 1u);
 				Game_Flag_Set(kFlagDR01toDR02);
 				Set_Enter(kSetDR01_DR02_DR04, kSceneDR02);
 			}
@@ -349,7 +349,7 @@ void SceneScriptDR01::PlayerWalkedOut() {
 	 && !Game_Flag_Query(kFlagDR01toCT11)
 	) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeInside2, true, -1);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else

@@ -55,7 +55,7 @@ void SceneScriptNR10::InitializeScene() {
 	if (Game_Flag_Query(kFlagNR10CameraDestroyed)) {
 		Scene_Loop_Set_Default(0);
 	} else {
-		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 31, 0, 1);
+		Ambient_Sounds_Adjust_Looping_Sound(kSfx35MM, 31, 0, 1u);
 		Scene_Loop_Set_Default(2);
 	}
 }
@@ -81,7 +81,7 @@ bool SceneScriptNR10::ClickedOn3DObject(const char *objectName, bool combatMode)
 		Game_Flag_Reset(kFlagNR10McCoyBlinded);
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Actor_Set_Invisible(kActorDektora, false);
-		Ambient_Sounds_Remove_Looping_Sound(kSfx35MM, 1);
+		Ambient_Sounds_Remove_Looping_Sound(kSfx35MM, 1u);
 		Sound_Play(kSfx35MMBRK1, 52, 0, 0, 50);
 		Scene_Loop_Set_Default(0);
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 0, true);

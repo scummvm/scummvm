@@ -265,7 +265,7 @@ void SceneScriptHF03::PlayerWalkedIn() {
 
 void SceneScriptHF03::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptHF03::DialogueQueueFlushed(int a1) {

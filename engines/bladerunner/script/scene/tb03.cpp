@@ -110,7 +110,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -260.0f, 0.15f, 2014.0f, 0, true, false, false)) {
 			Actor_Set_Goal_Number(kActorTyrellGuard, kGoalTyrellGuardWait);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagTB03toUG17);
 			Set_Enter(kSetUG17, kSceneUG17);
 		}
@@ -120,7 +120,7 @@ bool SceneScriptTB03::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1774.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagTB03toTB02);
 			Set_Enter(kSetTB02_TB03, kSceneTB02);
 			Async_Actor_Walk_To_XYZ(kActorMcCoy, -152.0f, 0.0f, 1702.0f, 0, false);
@@ -151,7 +151,7 @@ void SceneScriptTB03::PlayerWalkedIn() {
 }
 
 void SceneScriptTB03::PlayerWalkedOut() {
-	Music_Stop(2);
+	Music_Stop(2u);
 }
 
 void SceneScriptTB03::DialogueQueueFlushed(int a1) {

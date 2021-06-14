@@ -113,7 +113,7 @@ bool SceneScriptBB10::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Ladder(kActorMcCoy, 3, true, kAnimationModeIdle);
 			Footstep_Sound_Override_Off();
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagBB10toBB11);
 			Set_Enter(kSetBB11, kSceneBB11);
 		}
@@ -125,7 +125,7 @@ bool SceneScriptBB10::ClickedOnExit(int exitId) {
 		 && !Loop_Actor_Walk_To_XYZ(kActorMcCoy, 151.67f, 66.84f, -313.06f, 0, true, false, false)
 		) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Reset(kFlagBB09toBB10a);
 			Game_Flag_Set(kFlagBB10toBB09);
 			Set_Enter(kSetBB09, kSceneBB09);

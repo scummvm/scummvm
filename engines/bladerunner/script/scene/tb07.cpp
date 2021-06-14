@@ -96,7 +96,7 @@ bool SceneScriptTB07::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 68.0f, 12.0f, 288.0f, 0, true, false, false)) {
 #if BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			if (Global_Variable_Query(kVariableChapter) == 4) {
 				Game_Flag_Set(kFlagTB07toTB02);
@@ -208,7 +208,7 @@ void SceneScriptTB07::PlayerWalkedOut() {
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	if (Global_Variable_Query(kVariableChapter) < 4
 	    && !Game_Flag_Query(kFlagMcCoyInTyrellBuilding)
 	) {

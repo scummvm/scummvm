@@ -49,7 +49,7 @@ enum kRC01Regions {
 void SceneScriptRC01::InitializeScene() {
 	if (!Game_Flag_Query(kFlagIntroPlayed)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeWestwood, true, -1);
 		Outtake_Play(kOuttakeBladeRunner, true, -1);
 		Outtake_Play(kOuttakeIntro, false, -1);
@@ -632,7 +632,7 @@ bool SceneScriptRC01::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -471.98f, -0.3f, 258.15f, 4, true, false, false)) {
 			Game_Flag_Set(kFlagRC01toRC03);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetRC03, kSceneRC03);
 		}
 		return true;
@@ -740,7 +740,7 @@ void SceneScriptRC01::PlayerWalkedIn() {
 
 void SceneScriptRC01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	if (!Game_Flag_Query(kFlagRC01toRC02)
 	 && !Game_Flag_Query(kFlagRC01toRC03)
 	) {

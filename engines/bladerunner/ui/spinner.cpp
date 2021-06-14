@@ -160,7 +160,7 @@ int Spinner::chooseDestination(int loopId, bool immediately) {
 			this
 		);
 		_vm->_actors[kActorAnsweringMachine]->speechPlay(480, false);
-		_vm->_ambientSounds->addSound(kSfxSPINAMB2,  5, 30, 30,  45,    0,   0, -101, -101, 0, 0);
+		_vm->_ambientSounds->addSound(kSfxSPINAMB2,  5u, 30u, 30,  45,    0,   0, -101, -101, 0, 0);
 	} else {
 		_imagePicker->activate(
 			nullptr,

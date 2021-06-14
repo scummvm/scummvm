@@ -65,35 +65,35 @@ bool SceneScriptPS02::ClickedOn3DObject(const char *objectName, bool a2) {
 		if (Game_Flag_Query(kFlagPS02toPS01)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Set_Enter(kSetPS01, kScenePS01);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS05)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Set_Enter(kSetPS05, kScenePS05);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS07)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Set_Enter(kSetPS07, kScenePS07);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS03)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Set_Enter(kSetPS03, kScenePS03);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
 		} else if (Game_Flag_Query(kFlagPS02toPS09)) {
 			if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -5.0f, -40.0f, -15.0f, 0, true, false, false)) {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Set_Enter(kSetPS09, kScenePS09);
 				Scene_Loop_Start_Special(kSceneLoopModeChangeSet, 3, true);
 			}
@@ -160,7 +160,7 @@ void SceneScriptPS02::PlayerWalkedIn() {
 
 void SceneScriptPS02::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	Player_Gains_Control();
 }
 

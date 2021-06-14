@@ -115,7 +115,7 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 void AudioSpeech::stopSpeech() {
 	//Common::StackLock lock(_mutex);
 	if (_channel != -1) {
-		_vm->_audioMixer->stop(_channel, 0);
+		_vm->_audioMixer->stop(_channel, 0u);
 	}
 }
 

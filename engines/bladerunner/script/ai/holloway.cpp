@@ -171,7 +171,7 @@ bool AIScriptHolloway::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 	case kGoalHollowayCaptureMcCoy:
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Player_Gains_Control();
 
 		Outtake_Play(kOuttakeInterrogation, false, 1);

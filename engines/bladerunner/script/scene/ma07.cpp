@@ -86,7 +86,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 				Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyStartChapter5);
 			} else {
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagMA07toMA06);
 				Set_Enter(kSetMA06, kSceneMA06);
 			}
@@ -97,7 +97,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -400.0f, -162.8f, 185.08f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagMA07toPS14);
 			Game_Flag_Reset(kFlagMcCoyInMcCoyApartment);
 			Game_Flag_Set(kFlagMcCoyInPoliceStation);
@@ -109,7 +109,7 @@ bool SceneScriptMA07::ClickedOnExit(int exitId) {
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 8.0f, -172.43f, 356.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagMA07toUG19);
 			Set_Enter(kSetUG19, kSceneUG19);
 		}

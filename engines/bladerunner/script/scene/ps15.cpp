@@ -177,7 +177,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -360.0f, -113.43f, 50.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagPS15toPS05);
 			Set_Enter(kSetPS05, kScenePS05);
 		}
@@ -195,7 +195,7 @@ bool SceneScriptPS15::ClickedOnExit(int exitId) {
 			Sound_Play(kSfxLABBUZZ1, 90, 0, 0, 50);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS10_PS11_PS12_PS13, kScenePS10);
 		}
 		return true;

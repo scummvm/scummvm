@@ -329,7 +329,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Player_Set_Combat_Mode(true);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, false);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Game_Flag_Set(kFlagKP06toKP07);
 		Set_Enter(kSetKP07, kSceneKP07);
 		break;
@@ -1248,7 +1248,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Modify_Friendliness_To_Other(kActorSteele, kActorMcCoy, -5);
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 2);
 		Player_Set_Combat_Mode(false);
-		Music_Stop(2);
+		Music_Stop(2u);
 		Player_Gains_Control();
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleTalkAboutMissingSpinner);
 		return true;

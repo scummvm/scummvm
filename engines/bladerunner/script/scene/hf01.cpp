@@ -404,7 +404,7 @@ void SceneScriptHF01::PlayerWalkedIn() {
 
 void SceneScriptHF01::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 
 	if (!Game_Flag_Query(kFlagHF01toHF05)
 	 && !Game_Flag_Query(kFlagHF01toHF02)

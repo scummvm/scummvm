@@ -116,7 +116,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -615.0f, 252.59f, -1018.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(kFlagBB07toBB05);
 			Set_Enter(kSetBB05, kSceneBB05);
@@ -127,7 +127,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -619.0f, 252.59f, -1136.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(kFlagBB07toBB12);
 			Set_Enter(kSetBB12, kSceneBB12);
@@ -138,7 +138,7 @@ bool SceneScriptBB07::ClickedOnExit(int exitId) {
 	if (exitId == 2) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -551.0f, 252.59f, -1004.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Overlay_Remove("BB07OVER");
 			Game_Flag_Set(kFlagBB07toBB06);
 			Set_Enter(kSetBB06_BB07, kSceneBB06);

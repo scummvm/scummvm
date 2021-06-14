@@ -27,7 +27,7 @@ namespace BladeRunner {
 void SceneScriptUG06::InitializeScene() {
 	if (Game_Flag_Query(kFlagChapter4Intro)) {
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Outtake_Play(kOuttakeMovieC1, false, -1);
 		if (Game_Flag_Query(kFlagLutherLanceIsReplicant)) {
 			Outtake_Play(kOuttakeMovieC3, false, -1);
@@ -95,7 +95,7 @@ bool SceneScriptUG06::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 23.0f, 0.0f, 321.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagUG06toUG04);
 			Set_Enter(kSetUG04, kSceneUG04);
 		}
@@ -108,7 +108,7 @@ bool SceneScriptUG06::ClickedOnExit(int exitId) {
 			Loop_Actor_Travel_Stairs(kActorMcCoy, 17, true, kAnimationModeIdle);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, 66.0f, 153.0f, -446.0f, 0, false, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagUG06toNR01);
 			Set_Enter(kSetNR01, kSceneNR01);
 		}

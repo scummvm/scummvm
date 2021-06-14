@@ -315,7 +315,7 @@ void SceneScriptPS01::PlayerWalkedIn() {
 void SceneScriptPS01::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 
 	if (_vm->_cutContent) {
 		ADQ_Flush(); // for dispatcher queue cleanup

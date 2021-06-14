@@ -236,7 +236,7 @@ void SceneScriptTB05::PlayerWalkedIn() {
 
 void SceneScriptTB05::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptTB05::DialogueQueueFlushed(int a1) {

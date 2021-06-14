@@ -79,7 +79,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 550.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS04, kScenePS04);
 		}
 #else
@@ -87,7 +87,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -674.0f, -354.0f, 690.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS04);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS04, kScenePS04);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -96,7 +96,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 	if (exitId == 1) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -569.54f, -354.62f, -1076.15f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS02, kScenePS02);
 			Game_Flag_Reset(kFlagMcCoyAtPS03);
 			if (Global_Variable_Query(kVariableChapter) < 4) {
@@ -110,7 +110,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1241.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS14);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS14, kScenePS14);
 		}
 #else
@@ -118,7 +118,7 @@ bool SceneScriptPS03::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -875.0f, -354.0f, -1231.0f, 0, true, false, false)) {
 			Game_Flag_Set(kFlagPS03toPS14);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetPS14, kScenePS14);
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS

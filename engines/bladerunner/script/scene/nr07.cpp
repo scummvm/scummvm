@@ -138,7 +138,7 @@ bool SceneScriptNR07::ClickedOnExit(int exitId) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -102.0f, -73.5f, -233.0f, 0, true, false, false)) {
 			Actor_Set_Goal_Number(kActorHanoi, kGoalHanoiResetTimer);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagNR07toNR06);
 			Set_Enter(kSetNR06, kSceneNR06);
 		}

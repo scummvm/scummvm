@@ -129,14 +129,14 @@ void AIScriptZuben::TimerExpired(int timer) {
 		// return true;
 	} else if (timer == kActorTimerAIScriptCustomTask1) {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT02RunToFreeSlotG) { // Zuben fleeing, after 10s
-			Music_Stop(10);
+			Music_Stop(10u);
 			Actor_Set_Goal_Number(kActorZuben, kGoalZubenCT06HideAtFreeSlotA);
 			AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask1);
 			// return true;
 		}
 	} else if (timer == kActorTimerAIScriptCustomTask0) { // Zuben fleeing, after 70s
 		if (Player_Query_Current_Set() != kSetCT01_CT12) {
-			Music_Stop(2);
+			Music_Stop(2u);
 		}
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled); // Let Zuben flee completly, he will catch McCoy on MA01
 		AI_Countdown_Timer_Reset(kActorZuben, kActorTimerAIScriptCustomTask0);
@@ -162,7 +162,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 		Game_Flag_Reset(kFlagCT02McCoyFell);
 		Game_Flag_Set(kFlagCT02McCoyCombatReady);
 		Game_Flag_Set(kFlagCT02McCoyShouldCommentOnDumpedSoup);
-		Music_Stop(2);
+		Music_Stop(2u);
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenFled);
 		Set_Enter(kSetCT02, kSceneCT02);
 		//return true;
@@ -171,7 +171,7 @@ void AIScriptZuben::CompletedMovementTrack() {
 		//return true;
 	} else {
 		if (Actor_Query_Goal_Number(kActorZuben) == kGoalZubenCT07RunToFreeSlotA) {
-			Music_Stop(2);
+			Music_Stop(2u);
 			Sound_Play(kSfxDOORLOCK, 40, 100, 100, 50);
 			Delay(2000);
 			Game_Flag_Set(kFlagCT07toCT06);
@@ -281,7 +281,7 @@ bool AIScriptZuben::ShotAtAndHit() {
 		Actor_Start_Speech_Sample(kActorMcCoy, 490);
 	}
 	if (Player_Query_Current_Scene() == kSceneCT07) {
-		Music_Stop(2);
+		Music_Stop(2u);
 	}
 	return false;
 }
@@ -303,7 +303,7 @@ void AIScriptZuben::Retired(int byActorId) {
 		Player_Set_Combat_Mode(false);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-		Ambient_Sounds_Remove_All_Looping_Sounds(1);
+		Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 		Game_Flag_Set(kFlagKP07toKP06);
 		Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 		Set_Enter(kSetKP05_KP06, kSceneKP06);
@@ -342,7 +342,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalZubenCT07Spared:
 		AI_Movement_Track_Flush(kActorZuben);
 		Actor_Face_Actor(kActorZuben, kActorMcCoy, true);
-		Music_Stop(3);
+		Music_Stop(3u);
 		Actor_Says(kActorZuben, 100, 19);
 		Actor_Says(kActorMcCoy, 470, 12);
 		Actor_Says(kActorZuben, 110, 18);
@@ -456,7 +456,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		AI_Movement_Track_Flush(kActorZuben);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		Scene_Exits_Enable();
-		Music_Stop(2);
+		Music_Stop(2u);
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 		Actor_Set_Goal_Number(kActorZuben, kGoalZubenDie);

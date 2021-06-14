@@ -42,7 +42,7 @@ void SceneScriptDR03::InitializeScene() {
 		Actor_Set_At_XYZ(kActorChew, 360.77f, 4.4f, -806.67f, 126);
 	}
 
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	Ambient_Sounds_Add_Looping_Sound(kSfxRESPRTR1,  7,  0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBRBED3,   50,  0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxBOILPOT2, 20, 70, 1);

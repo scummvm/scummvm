@@ -69,7 +69,7 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 	if (exitId == 0) {
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, 1000.0f, 67.96f, -1539.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagUG17toUG15);
 			Set_Enter(kSetUG15, kSceneUG15);
 		}
@@ -84,7 +84,7 @@ bool SceneScriptUG17::ClickedOnExit(int exitId) {
 			} else {
 				Loop_Actor_Travel_Ladder(kActorMcCoy, 10, true, kAnimationModeIdle);
 				Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-				Ambient_Sounds_Remove_All_Looping_Sounds(1);
+				Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 				Game_Flag_Set(kFlagUG17toTB03);
 				Set_Enter(kSetTB02_TB03, kSceneTB03);
 			}

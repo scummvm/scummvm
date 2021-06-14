@@ -86,7 +86,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 				Footstep_Sound_Override_Off();
 			}
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Set_Enter(kSetHF05, kSceneHF05);
 		}
 		return true;
@@ -101,7 +101,7 @@ bool SceneScriptHF07::ClickedOnExit(int exitId) {
 
 		if (!Loop_Actor_Walk_To_XYZ(kActorMcCoy, -84.0f, 58.43f, -105.0f, 0, true, false, false)) {
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagHF07toUG06);
 			Set_Enter(kSetUG05, kSceneUG05);
 		}

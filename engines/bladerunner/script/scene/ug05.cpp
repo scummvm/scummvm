@@ -188,7 +188,7 @@ void SceneScriptUG05::ActorChangedGoal(int actorId, int newGoal, int oldGoal, bo
 void SceneScriptUG05::PlayerWalkedIn() {
 	if (Game_Flag_Query(kFlagHF05PoliceArrived)) {
 		if (Game_Flag_Query(kFlagHF07Hole)) {
-			Music_Stop(2);
+			Music_Stop(2u);
 
 			Actor_Put_In_Set(kActorOfficerGrayford, kSetUG05);
 			Actor_Set_At_XYZ(kActorOfficerGrayford, 4.22f, -1.37f, -925.0f, 750);
@@ -238,7 +238,7 @@ void SceneScriptUG05::PlayerWalkedIn() {
 
 void SceneScriptUG05::PlayerWalkedOut() {
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 }
 
 void SceneScriptUG05::DialogueQueueFlushed(int a1) {
@@ -272,7 +272,7 @@ void SceneScriptUG05::endGame() {
 	}
 
 	Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 
 	if (affectionTowardsActor == kActorLucy) {
 		if (!Game_Flag_Query(kFlagLucyIsReplicant)) {

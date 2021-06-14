@@ -2117,8 +2117,8 @@ void BladeRunnerEngine::playerDied() {
 	_gameFlags->reset(kFlagKIAPrivacyAddon);
 
 	_ambientSounds->removeAllNonLoopingSounds(true);
-	_ambientSounds->removeAllLoopingSounds(4);
-	_music->stop(4);
+	_ambientSounds->removeAllLoopingSounds(4u);
+	_music->stop(4u);
 	_audioSpeech->stopSpeech();
 #endif // BLADERUNNER_ORIGINAL_BUGS
 
@@ -2223,9 +2223,9 @@ bool BladeRunnerEngine::loadGame(Common::SeekableReadStream &stream, int version
 	_music->stop(2);
 #else
 	// loading into another game that also has music would
-	// two music tracks to overlap and none was stopped
-	_ambientSounds->removeAllLoopingSounds(0);
-	_music->stop(0);
+	// cause two music tracks to overlap and none was stopped
+	_ambientSounds->removeAllLoopingSounds(0u);
+	_music->stop(0u);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	_audioSpeech->stopSpeech();
 	_actorDialogueQueue->flush(true, false);

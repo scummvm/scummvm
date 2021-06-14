@@ -91,7 +91,7 @@ bool AIScriptLuther::Update() {
 		Scene_Loop_Set_Default(5); // UG16MainLoopNoComputerLight
 		Scene_Loop_Start_Special(kSceneLoopModeOnce, 4, true); // UG16SparkLoop
 		Ambient_Sounds_Play_Sound(kSfxCOMPDWN4, 50, 0, 0, 99);
-		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, 1);
+		Ambient_Sounds_Remove_Looping_Sound(kSfxELECLAB1, 1u);
 		return false;
 	}
 
@@ -176,7 +176,7 @@ bool AIScriptLuther::ShotAtAndHit() {
 	}
 
 	Global_Variable_Increment(kVariableLutherLanceShot, 1);
-	Music_Stop(2);
+	Music_Stop(2u);
 
 	if (Global_Variable_Query(kVariableLutherLanceShot) > 0) {
 		if (!Game_Flag_Query(kFlagLutherLanceIsReplicant)) {
@@ -203,7 +203,7 @@ void AIScriptLuther::Retired(int byActorId) {
 			Player_Set_Combat_Mode(false);
 			Loop_Actor_Walk_To_XYZ(kActorMcCoy, -12.0f, -41.58f, 72.0f, 0, true, false, false);
 			Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
-			Ambient_Sounds_Remove_All_Looping_Sounds(1);
+			Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 			Game_Flag_Set(kFlagKP07toKP06);
 			Game_Flag_Reset(kFlagMcCoyIsHelpingReplicants);
 			Set_Enter(kSetKP05_KP06, kSceneKP06);

@@ -345,7 +345,7 @@ void SceneScriptUG13::PlayerWalkedIn() {
 
 void SceneScriptUG13::PlayerWalkedOut() {
 	Actor_Set_Invisible(kActorMcCoy, false);
-	Ambient_Sounds_Remove_All_Looping_Sounds(1);
+	Ambient_Sounds_Remove_All_Looping_Sounds(1u);
 	if (Game_Flag_Query(kFlagUG13toUG08)) {
 		Ambient_Sounds_Remove_Sound(kSfxYELL1M2,  false);
 		Ambient_Sounds_Remove_Sound(kSfxYELL1M3,  false);

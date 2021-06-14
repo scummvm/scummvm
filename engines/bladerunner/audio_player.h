@@ -73,8 +73,8 @@ public:
 	uint32 getLength(int track) const;
 	void stop(int track, bool immediately);
 	void stopAll();
-	void adjustVolume(int track, int volume, uint32 delay, bool overrideVolume);
-	void adjustPan(int track, int pan, uint32 delay);
+	void adjustVolume(int track, int volume, uint32 delaySeconds, bool overrideVolume);
+	void adjustPan(int track, int pan, uint32 delaySeconds);
 
 	void setVolume(int volume);
 	int getVolume() const;
