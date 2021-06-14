@@ -24,6 +24,7 @@
 #define AGS_ENGINE_AC_GLOBAL_GAME_H
 
 #include "ags/shared/util/string.h"
+#include "ags/lib/system/datetime.h"
 
 namespace AGS3 {
 
