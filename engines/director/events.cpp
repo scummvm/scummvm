@@ -114,6 +114,18 @@ bool Movie::processEvent(Common::Event &event) {
 
 		sc->renderCursor(pos);
 
+		// hiliteChannelId is specified for BitMap castmember, so we deal with them separately with other castmember
+		// if we are moving out of bounds, then we don't hilite it anymore
+		if (_currentHiliteChannelId && !sc->_channels[_currentHiliteChannelId]->isMouseIn(pos)) {
+			g_director->getCurrentWindow()->invertChannel(sc->_channels[_currentHiliteChannelId]);
+			g_director->getCurrentWindow()->setDirty(true);
+			_currentHiliteChannelId = 0;
+			_currentHandlingChannelId = 0;
+		}
+
+		if (_currentHandlingChannelId && !sc->_channels[_currentHandlingChannelId]->getBbox().contains(pos))
+			_currentHandlingChannelId = 0;
+
 		if (_currentDraggedChannel) {
 			if (_currentDraggedChannel->_sprite->_moveable) {
 				pos = _window->getMousePos();
@@ -141,9 +153,12 @@ bool Movie::processEvent(Common::Event &event) {
 			else
 				spriteId = sc->getMouseSpriteIDFromPos(pos);
 			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
+			_currentHandlingChannelId = spriteId;
 
-			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
+			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
+				_currentHiliteChannelId = spriteId;
 				g_director->getCurrentWindow()->invertChannel(sc->_channels[spriteId]);
+			}
 
 			_lastEventTime = g_director->getMacTicks();
 			_lastClickTime = _lastEventTime;
@@ -163,27 +178,26 @@ bool Movie::processEvent(Common::Event &event) {
 	case Common::EVENT_LBUTTONUP:
 		pos = _window->getMousePos();
 
-		if (g_director->getVersion() < kFileVer400)
-			spriteId = sc->getActiveSpriteIDFromPos(pos);
-		else
-			spriteId = sc->getMouseSpriteIDFromPos(pos);
 		_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
 
-		if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite())
-			g_director->getCurrentWindow()->invertChannel(sc->_channels[spriteId]);
+		if (_currentHiliteChannelId && sc->_channels[_currentHiliteChannelId])
+			g_director->getCurrentWindow()->invertChannel(sc->_channels[_currentHiliteChannelId]);
 
-		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), spriteId);
+		debugC(3, kDebugEvents, "event: Button Up @(%d, %d), movie '%s', sprite id: %d", pos.x, pos.y, _macName.c_str(), _currentHiliteChannelId);
 
 		_currentDraggedChannel = nullptr;
 
-		{
-			CastMember *cast = getCastMember(sc->getSpriteById(spriteId)->_castId);
+		if (_currentHandlingChannelId) {
+			CastMember *cast = getCastMember(sc->_channels[_currentHandlingChannelId]->_sprite->_castId);
 			if (cast && cast->_type == kCastButton)
 				cast->_hilite = !cast->_hilite;
 		}
 
-		registerEvent(kEventMouseUp, spriteId);
+		registerEvent(kEventMouseUp, _currentHandlingChannelId);
 		sc->renderCursor(pos);
+
+		_currentHiliteChannelId = 0;
+		_currentHandlingChannelId = 0;
 		return true;
 
 	case Common::EVENT_KEYDOWN:

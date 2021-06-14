@@ -62,6 +62,8 @@ Movie::Movie(Window *window) {
 	_keyFlags = 0;
 
 	_currentDraggedChannel = nullptr;
+	_currentHiliteChannelId = 0;
+	_currentHandlingChannelId = 0;
 
 	_allowOutdatedLingo = false;
 
