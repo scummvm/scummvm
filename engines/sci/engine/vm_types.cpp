@@ -247,7 +247,7 @@ int reg_t::sci32Comparison(const reg_t right) const {
 	// engine compares these as a tiebreaker for graphics objects that are at
 	// the same priority, and it is necessary to at least minimally handle
 	// this situation.
-	// This is obviously a bogus comparision, but then, this entire thing is
+	// This is obviously a bogus comparison, but then, this entire thing is
 	// bogus. For the moment, it just needs to be deterministic.
 	if (isNumber() && !right.isNumber()) {
 		return 1;
