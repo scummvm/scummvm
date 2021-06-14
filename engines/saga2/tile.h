@@ -63,23 +63,26 @@ inline void TileID2Bank(TileID t, int16 &bank, int16 &num) {
  * ===================================================================== */
 
 //  Tile metrics
-const int           tileWidth = 64,         // width of tile
-                    tileHeight = 32,        // minimum height of tile
-                    tileMaxHeight = 160,    // max height of tile
-                    tileDX = (tileWidth / 2), // tile X delta
-                    tileDY = (tileHeight / 2), // tile Y delta
-                    tileDXShift = 5,        // log2( tileDX )
-                    tileDYShift = 4,        // log2( tileDY )
-                    tileDXMask = (tileDX - 1), // bitmask for Tile DX
-                    tileDYMask = (tileDY - 1); // bitmask for Tile DY
+
+enum {
+	kTileWidth = 64,
+	kTileHeight = 32,
+	kTileMaxHeight = 160,
+	kTileDX = (kTileWidth / 2),
+	kTileDY = (kTileHeight / 2),
+	kTileDXShift = 5,
+	kTileDYShift = 4,
+	kTileDXMask = (kTileDX - 1),
+	kTileDYMask = (kTileDY - 1)
+};
 
 const int           maxTileHeight = 160;    // tallest possible tile
 
 const int           platUVSize = tileUVSize * platformWidth;
 
 //  Metatile metrics
-const int           metaTileWidth = tileWidth * platformWidth,
-                    metaTileHeight = tileHeight * platformWidth,
+const int           metaTileWidth = kTileWidth * platformWidth,
+                    metaTileHeight = kTileHeight * platformWidth,
                     metaDX = metaTileWidth / 2,
                     metaDY = metaTileHeight / 2;
 
@@ -92,10 +95,10 @@ const int           subTileSize = 4,
 
 //  Constants to convert an X,Y into subtile coordinates
 
-const int           subTileDX = (tileDX / 4),
-                    subTileDY = (tileDY / 4),
-                    subTileDXShift = (tileDXShift - 2),
-                    subTileDYShift = (tileDYShift - 2);
+const int           subTileDX = (kTileDX / 4),
+                    subTileDY = (kTileDY / 4),
+                    subTileDXShift = (kTileDXShift - 2),
+                    subTileDYShift = (kTileDYShift - 2);
 
 const int           subTileMaskUShift = 4,
                     subTileMaskVShift = 1;

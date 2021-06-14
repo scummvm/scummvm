@@ -95,11 +95,11 @@ void drawPlatform(
 	Point16         tilePos;
 
 	int16           x = screenPos.x,
-	                x2 = x / tileDX;
+	                x2 = x / kTileDX;
 	int16           length = 1;
 	TilePoint       origin(uOrg, vOrg, 0);
 
-	tilePos.y = screenPos.y - (platformWidth - 1) * tileHeight;
+	tilePos.y = screenPos.y - (platformWidth - 1) * kTileHeight;
 
 	int16 u = platformWidth - 1;
 	int16 v = platformWidth - 1;
@@ -121,7 +121,7 @@ void drawPlatform(
 				pCoords.v -= offset;
 				offset <<= 1;
 				col += offset;
-				tilePos.x += tileDX * offset;
+				tilePos.x += kTileDX * offset;
 			}
 
 			for (;
@@ -129,7 +129,7 @@ void drawPlatform(
 			        col += 2,
 			        pCoords.u++,
 			        pCoords.v--,
-			        tilePos.x += tileWidth) {
+			        tilePos.x += kTileWidth) {
 
 				if (tilePos.x < 0)
 					continue;
@@ -154,18 +154,18 @@ void drawPlatform(
 		}
 
 		if (row < 7) {
-			x -= tileDX;
+			x -= kTileDX;
 			x2++;
 			length += 2;
 			u--;
 		} else {
-			x += tileDX;
+			x += kTileDX;
 			x2--;
 			length -= 2;
 			v--;
 		}
 
-		tilePos.y += tileDY;
+		tilePos.y += kTileDY;
 	}
 }
 
