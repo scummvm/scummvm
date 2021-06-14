@@ -1410,12 +1410,22 @@ void cleanupTileTasks(void) {
 //-----------------------------------------------------------------------
 //	Initialize map data
 
-static void readTileBank(hResContext *con, int count, TileBank *tb) {
-	tb->numTiles = con->readU32LE();
-	tb->tileArray = new TileInfo[count];
+TileBank::TileBank(hResContext *con, hResID id) {
+	const int tileInfoSize = 28;
+	int size = con->size(id);
+	int count = (size - 4) / tileInfoSize; // Skip 4 bytes (numTiles)
+
+	if (!con->seek(id)) {
+		numTiles = 0;
+		tileArray = nullptr;
+		return;
+	}
+
+	numTiles = con->readU32LE();
+	tileArray = new TileInfo[count];
 	for (int i = 0; i < count; ++i) {
-		tb->tileArray[i].offset = con->readU32LE();
-		TileAttrs *att = &tb->tileArray[i].attrs;
+		tileArray[i].offset = con->readU32LE();
+		TileAttrs *att = &tileArray[i].attrs;
 		att->terrainHeight = con->readByte();
 		att->height = con->readByte();
 		att->terrainMask = con->readU16LE();
@@ -1474,7 +1484,6 @@ static void readActiveItem(hResContext *con, ActiveItem &itm) {
 
 void initMaps(void) {
 	int16       i;
-	const int tileInfoSize = 28;
 	const int metaTileSize = 30;
 	const int tileRefSize = 4;
 	const int assocSize = 2;
@@ -1482,13 +1491,11 @@ void initMaps(void) {
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		if (tileRes->seek(tileTerrainID + MKTAG(0, 0, 0, (uint8)i))) {
-			tileBanks[i] = new TileBank;
-			int tileBankSize = tileRes->size(tileTerrainID + MKTAG(0, 0, 0, (uint8)i));
-			int tiCount = (tileBankSize - 4) / tileInfoSize;
-			readTileBank(tileRes, tiCount, tileBanks[i]);
-		} else
+		tileBanks[i] = new TileBank(tileRes, tileTerrainID + MKTAG(0, 0, 0, (uint8)i));
+		if (tileBanks[i]->tileArray == nullptr) {
+			delete tileBanks[i];
 			tileBanks[i] = nullptr;
+		}
 	}
 
 	//  Count the worlds by seeking the map data
