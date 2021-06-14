@@ -2296,6 +2296,8 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		return nullptr;
 	}
 
+	debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
+
 	int         cacheIndex;
 
 	//  Since the platform is not in the cache, we need to
@@ -2318,7 +2320,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 	assert(plIndex >= 0);
 	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
-	debugC(3, kDebugLoading, "plIndex: %d", plIndex);
+	debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
 	// Now, load the actual metatile data...
 	if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
@@ -4463,6 +4465,10 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 	int             objRoofPlatNum = -1;
 	int16           metaU, metaV;
 
+	debugC(3, kDebugTiles, "objRoofID:");
+	debugC(3, kDebugTiles, "- obj = %p; objMapNum = %d; objCoords = (%d,%d,%d)",
+	       (void *)obj, objMapNum, objCoords.u, objCoords.v, objCoords.z);
+
 	objHeight = objCoords.z;
 
 	objTileReg.min.u = (objCoords.u - subTileSize) >> tileUVShift;
@@ -4470,10 +4476,14 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 	objTileReg.max.u = (objCoords.u + subTileSize + tileUVMask) >> tileUVShift;
 	objTileReg.max.v = (objCoords.v + subTileSize + tileUVMask) >> tileUVShift;
 
+	debugC(3, kDebugTiles, "objTileReg = ((%d,%d), (%d,%d))", objTileReg.min.u, objTileReg.min.v, objTileReg.max.u, objTileReg.max.v);
+
 	objMetaReg.min.u = objTileReg.min.u >> platShift;
 	objMetaReg.min.v = objTileReg.min.v >> platShift;
 	objMetaReg.max.u = (objTileReg.max.u + platMask) >> platShift;
 	objMetaReg.max.v = (objTileReg.max.v + platMask) >> platShift;
+
+	debugC(3, kDebugTiles, "objMetaReg = ((%d,%d), (%d,%d))", objMetaReg.min.u, objMetaReg.min.v, objMetaReg.max.u, objMetaReg.max.v);
 
 	for (metaU = objMetaReg.min.u;
 	        metaU < objMetaReg.max.u;
