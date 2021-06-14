@@ -126,11 +126,6 @@ bool BaseSurfaceOpenGL3D::displayTransform(int x, int y, Rect32 rect, Rect32 new
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, bool transparent, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
-	warning("BaseSurfaceOpenGL3D::displayZoom not yet implemented");
-	return true;
-}
-
 bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
 	prepareToDraw();
 
