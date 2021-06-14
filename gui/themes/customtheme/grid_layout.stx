@@ -65,6 +65,10 @@
 		<def var = 'Predictive.ShowDeletePic' value = '1'/>
 
 		<def var = 'DropdownButton.Width' value = '13' scalable = 'yes'/>
+		<def var = 'GridItemThumbnail.Width' value = '192' scalable = 'no'/>
+		<def var = 'GridItemThumbnail.Height' value = '192' scalable = 'no'/>
+		<def var = 'Grid.XSpacing' value = '40' scalable = 'no'/>
+		<def var = 'Grid.YSpacing' value = '30' scalable = 'no'/>
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
