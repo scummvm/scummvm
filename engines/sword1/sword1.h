@@ -77,6 +77,7 @@ struct SystemVars {
 	bool    isSpanishDemo;
 	Common::Platform platform;
 	Common::Language realLanguage;
+	bool isLangRtl;
 };
 
 class SwordEngine : public Engine {
