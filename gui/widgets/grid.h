@@ -47,11 +47,20 @@ struct GridItemInfo
 	Common::String gameid;
 	Common::String language;
 	Common::String title;
-	Common::String platform;
+	Platform platform;
 	Common::String thumbPath;
 
 	GridItemInfo(Common::String &eid, Common::String &gid, Common::String &t, Common::String &l, Common::String &p) : 
-		gameid(gid), engineid(eid), title(t), language(l), platform(p) {
+		gameid(gid), engineid(eid), title(t), language(l) {
+		if (p == "pc")
+			platform = kPlatformDOS;
+		else if (p == "amiga")
+			platform = kPlatformAmiga;
+		else if (p == "apple2")
+			platform = kPlatformApple2;
+		else
+			platform = kPlatformUnknown;
+
 		thumbPath = Common::String::format("%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 };
@@ -119,10 +128,6 @@ enum {
 /* EntryContainerWidget */
 class GridItemWidget : public ContainerWidget {
 public:
-	GraphicsWidget *_thumb;
-	GraphicsWidget *_plat;
-	StaticTextWidget *_lang;
-	StaticTextWidget *_title;
 	GridWidget *_grid;
 
 	Common::Array<GridItemInfo> _attachedEntries;
@@ -132,8 +137,10 @@ public:
 	void setActiveEntry(GridItemInfo &entry);
 
 public:
+	Graphics::ManagedSurface _thumbGfx;
+
 	GridItemWidget(GridWidget *boss, int x, int y, int w, int h);
-	GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t);
+	GridItemWidget(GridWidget *boss);
 	
 	void attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain);
 	void attachEntry(GridItemInfo &entry);

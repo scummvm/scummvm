@@ -30,18 +30,14 @@ namespace GUI {
 
 GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h) :
 ContainerWidget(boss, x, y, w, h) {
-	_plat = new GraphicsWidget(this, kThumbnailWidth - 32, kThumbnailHeight - 32, 32, 32);
-	_lang = new StaticTextWidget(this, kThumbnailWidth - 32, 0, 32, 32, Common::U32String("XX"), Graphics::TextAlign::kTextAlignRight);
-	_title = new StaticTextWidget(this, 0, kThumbnailHeight, w , kLineHeight*2, Common::U32String("Title"), Graphics::TextAlign::kTextAlignLeft);
-	_thumb = new GraphicsWidget(this, 0, 0 , kThumbnailWidth, kThumbnailHeight);
 	_activeEntry = nullptr;
 	_grid = boss;
 }
-GridItemWidget::GridItemWidget(GridWidget *boss, GraphicsWidget *th, GraphicsWidget *p, StaticTextWidget *l, StaticTextWidget *t) :
-			ContainerWidget(boss, 0, 0, 0, 0), _thumb(th), _plat(p), _lang(l), _title(t) {
+GridItemWidget::GridItemWidget(GridWidget *boss) :
+			ContainerWidget(boss, 0, 0, 0, 0) {
 	_activeEntry = nullptr;
 	_grid = boss;
-			}
+}
 
 void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
 	Common::String gameid = domain->getVal("gameid");
@@ -67,7 +63,9 @@ void GridItemWidget::setActiveEntry(GridItemInfo &entry) {
 
 void GridItemWidget::updateThumb() {
 	const Graphics::ManagedSurface *gfx = _grid->filenameToSurface(_activeEntry->thumbPath);
-	_thumb->setGfx(gfx);
+	_thumbGfx.free();
+	if (gfx)
+		_thumbGfx.copyFrom(*gfx);
 }
 
 void GridItemWidget::update() {
@@ -76,28 +74,26 @@ void GridItemWidget::update() {
 	}
 
 	updateThumb();
-
-	_lang->setLabel(_activeEntry->language);
-	_title->setLabel(_activeEntry->title);
-	
-	const Graphics::ManagedSurface *gfx;
-
-	if (_activeEntry->platform == "pc")
-		gfx = _grid->platformToSurface(kPlatformDOS);
-	else if (_activeEntry->platform == "amiga")
-		gfx = _grid->platformToSurface(kPlatformAmiga);
-	else if (_activeEntry->platform == "apple2")
-		gfx = _grid->platformToSurface(kPlatformApple2);
-	else
-		gfx = _grid->platformToSurface(kPlatformUnknown);
-
-	_plat->setGfx(gfx);
-
 	markAsDirty();
 }
 
 void GridItemWidget::drawWidget() {
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x,_y,_x+kThumbnailWidth,_y+kThumbnailHeight), ThemeEngine::WidgetBackground::kThumbnailBackground);
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + kThumbnailWidth, _y + kThumbnailHeight), 
+										ThemeEngine::WidgetBackground::kThumbnailBackground);
+	g_gui.theme()->drawSurface(Common::Point(_x, _y), 
+								_thumbGfx, true);
+
+	if (_activeEntry->platform != kPlatformUnknown) {
+		const Graphics::ManagedSurface *platGfx = _grid->platformToSurface(_activeEntry->platform);
+		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - 32, _y + kThumbnailHeight - 32), 
+									*platGfx, true);
+	}
+
+	g_gui.theme()->drawText(Common::Rect(_x + kThumbnailWidth - 32, _y, _x + kThumbnailWidth, _y + 32),
+							_activeEntry->language, GUI::ThemeEngine::kStateEnabled);
+
+	g_gui.theme()->drawText(Common::Rect(_x, _y + kThumbnailHeight, _x + kThumbnailWidth, _y + kThumbnailHeight + 32),
+							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 }
 
 #pragma mark -
