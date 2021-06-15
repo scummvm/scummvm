@@ -372,6 +372,8 @@ private:
 
 	bool _fullRefresh;
 
+	bool _inEditableArea;
+
 	MacPatterns _patterns;
 	byte *_palette;
 	uint _paletteSize;
