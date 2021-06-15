@@ -375,7 +375,6 @@ public:
 	int codeString(const char *s);
 	void processIf(int toplabel, int endlabel);
 	void registerMethodVar(const Common::String &name, VarType type);
-	void varCreate(const Common::String &name, bool global, DatumHash *localvars = nullptr);
 
 	LingoArchive *_assemblyArchive;
 	ScriptContext *_assemblyContext;

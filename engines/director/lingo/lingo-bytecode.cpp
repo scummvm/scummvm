@@ -535,7 +535,9 @@ void LC::cb_globalassign() {
 	// Lingo lets you declare globals inside a method.
 	// This doesn't define them in the script list, but you can still
 	// read and write to them???
-	g_lingo->varCreate(name, true);
+	if (!g_lingo->_globalvars.contains(name)) {
+		g_lingo->_globalvars[name] = Datum();
+	}
 	g_lingo->varAssign(target, source, true);
 }
 
@@ -979,8 +981,8 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 		if (0 <= index && index < (int16)archive->names.size()) {
 			const char *name = archive->names[index].c_str();
 			debugC(5, kDebugLoading, "%d: %s", i, name);
-			if (!_globalvars.contains(name)) {
-				_globalvars[name] = Datum();
+			if (!g_lingo->_globalvars.contains(name)) {
+				g_lingo->_globalvars[name] = Datum();
 			} else {
 				warning("Global %d (%s) already defined", i, name);
 			}
