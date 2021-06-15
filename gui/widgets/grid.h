@@ -76,6 +76,7 @@ private:
 	uint16 _innerHeight, _innerWidth;
 	uint16 _thumbnailHeight, _thumbnailWidth;
 	uint16 _gridItemHeight, _gridItemWidth;
+	uint16 _minGridXSpacing, _minGridYSpacing;
 	uint16 _gridXSpacing, _gridYSpacing;
 	
 	int _scrollPos;
