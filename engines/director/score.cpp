@@ -529,9 +529,11 @@ void Score::renderCursor(Common::Point pos) {
 	if (_channels.empty())
 		return;
 
-	for (int i = _channels.size() - 1; i >=0; i--)
-		if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty())
+	for (int i = _channels.size() - 1; i >= 0; i--)
+		if (_channels[i]->isMouseIn(pos) && !_channels[i]->_cursor.isEmpty()) {
 			spriteId = i;
+			break;
+		}
 
 	if (_channels[spriteId]->_cursor.isEmpty()) {
 		if (_currentCursor) {
