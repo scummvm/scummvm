@@ -153,27 +153,8 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-const Common::AchievementsInfo AGSMetaEngine::getAchievementsInfo(const Common::String &target) const {
-	Common::String gameId = ConfMan.get("gameid", target);
-
-	Common::AchievementsPlatform platform = Common::UNK_ACHIEVEMENTS;
-	Common::String extra = ConfMan.get("extra", target);
-	if (extra.contains("GOG")) {
-		platform = Common::GALAXY_ACHIEVEMENTS;
-	} else if (extra.contains("Steam")) {
-		platform = Common::STEAM_ACHIEVEMENTS;
-	}
-
-	// "(gameId, platform) -> result" search
-	Common::AchievementsInfo result;
-	for (const AGS::AchievementDescriptionList *i = AGS::achievementDescriptionList; i->gameId; i++) {
-		if (i->gameId == gameId && i->platform == platform) {
-			result.platform = i->platform;
-			result.appId = i->appId;
-			break;
-		}
-	}
-	return result;
+const Common::AchievementDescriptionList* AGSMetaEngine::getAchievementDescriptionList() const {
+	return AGS::achievementDescriptionList;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(AGS)

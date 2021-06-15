@@ -128,6 +128,34 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 	return Keymap::arrayOf(engineKeyMap);
 }
 
+const Common::AchievementsInfo MetaEngine::getAchievementsInfo(const Common::String &target) const {
+	const Common::AchievementDescriptionList* achievementDescriptionList = getAchievementDescriptionList();
+	if (achievementDescriptionList == nullptr) {
+		return Common::AchievementsInfo();
+	}
+
+	Common::String gameId = ConfMan.get("gameid", target);
+
+	Common::AchievementsPlatform platform = Common::UNK_ACHIEVEMENTS;
+	Common::String extra = ConfMan.get("extra", target);
+	if (extra.contains("GOG")) {
+		platform = Common::GALAXY_ACHIEVEMENTS;
+	} else if (extra.contains("Steam")) {
+		platform = Common::STEAM_ACHIEVEMENTS;
+	}
+
+	// "(gameId, platform) -> result" search
+	Common::AchievementsInfo result;
+	for (const Common::AchievementDescriptionList *i = achievementDescriptionList; i->gameId; i++) {
+		if (i->gameId == gameId && i->platform == platform) {
+			result.platform = i->platform;
+			result.appId = i->appId;
+			break;
+		}
+	}
+	return result;
+}
+
 bool MetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
 		(f == kSupportsListSaves) ||

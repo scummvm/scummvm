@@ -495,14 +495,21 @@ public:
 	/**
 	 * Return a list of achievement descriptions for the specified target.
 	 *
-	 * The default implementation returns an empty list.
-	 *
 	 * @param target  Name of a config manager target.
 	 *
 	 * @return A list of achievement descriptions for an engine plugin and target.
 	 */
-	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const {
-		return Common::AchievementsInfo();
+	virtual const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const;
+
+	/**
+	 * Return the achievement descriptions.
+	 *
+	 * @note The default implementation returns @c nullptr
+	 *
+	 * @return a list of achievement descriptions for an engine.
+	 */
+	virtual const Common::AchievementDescriptionList* getAchievementDescriptionList() const {
+		return nullptr;
 	}
 
 	/**

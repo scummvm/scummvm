@@ -80,6 +80,21 @@ struct AchievementsInfo {
 };
 
 /**
+ * The meta engine returns an array of achievement descriptions
+ *
+ * @note This array (if not @c nullptr) must end on a terminating entry
+ * @sa ACHIEVEMENT_DESC_TABLE_END_MARKER
+ */
+struct AchievementDescriptionList {
+	const char *gameId;
+	Common::AchievementsPlatform platform;
+	const char *appId;
+};
+
+#define ACHIEVEMENT_DESC_TABLE_END_MARKER \
+	{ nullptr, Common::AchievementsPlatform::UNK_ACHIEVEMENTS, nullptr }
+
+/**
  * Class for manipulating the achievements.
  *
  * Use the Achievements Manager class to edit the in-game achievements.
@@ -177,7 +192,7 @@ public:
 	float getAverageRateStatFloat(const String &id) const;
 
 	/**
-	 * Update an average rate statistic (float). 
+	 * Update an average rate statistic (float).
 	 *
 	 * @param[in] id	Internal ID of the achievement.
 	 * @param[in] count Value to which the statistic count is increased.

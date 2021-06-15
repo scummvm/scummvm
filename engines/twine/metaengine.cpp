@@ -62,7 +62,9 @@ public:
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
-	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override;
+	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override {
+		return TwinE::achievementDescriptionList;
+	}
 
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 };
@@ -180,27 +182,6 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 	options.push_back(OptTextToSpeech);
 #endif
 	return options;
-}
-
-const Common::AchievementsInfo TwinEMetaEngine::getAchievementsInfo(const Common::String &target) const {
-	Common::String gameId = ConfMan.get("gameid", target);
-
-	Common::AchievementsPlatform platform = Common::UNK_ACHIEVEMENTS;
-	Common::String extra = ConfMan.get("extra", target);
-	if (extra.contains("Steam")) {
-		platform = Common::STEAM_ACHIEVEMENTS;
-	}
-
-	// "(gameId, platform) -> result" search
-	Common::AchievementsInfo result;
-	for (const TwinE::AchievementDescriptionList *i = TwinE::achievementDescriptionList; i->gameId; ++i) {
-		if (i->gameId == gameId && i->platform == platform) {
-			result.platform = i->platform;
-			result.appId = i->appId;
-			break;
-		}
-	}
-	return result;
 }
 
 void TwinEMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
