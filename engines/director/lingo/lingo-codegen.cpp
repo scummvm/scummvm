@@ -270,36 +270,8 @@ void Lingo::registerMethodVar(const Common::String &name, VarType type) {
 		if (type == kVarProperty || type == kVarInstance) {
 			g_lingo->_assemblyContext->_properties[name] = Datum();
 		} else if (type == kVarGlobal) {
-			g_lingo->varCreate(name, true);
+			g_lingo->_globalvars[name] = Datum();
 		}
-	}
-}
-
-void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localvars) {
-	if (localvars == nullptr) {
-		localvars = _localvars;
-	}
-
-	if (localvars && localvars->contains(name)) {
-		if (global)
-			warning("varCreate: variable %s is local, not global", name.c_str());
-		return;
-	} else if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-		if (global)
-			warning("varCreate: variable %s is instance or property, not global", name.c_str());
-		return;
-	} else if (_globalvars.contains(name)) {
-		if (!global)
-			warning("varCreate: variable %s is global, not local", name.c_str());
-		return;
-	}
-
-	if (global) {
-		_globalvars[name] = Datum();
-		_globalvars[name].type = INT;
-		_globalvars[name].u.i = 0;
-	} else {
-		(*localvars)[name] = Datum();
 	}
 }
 

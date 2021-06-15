@@ -263,7 +263,7 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		for (int i = symNArgs - 1; i >= 0; i--) {
 			Common::String name = (*funcSym.argNames)[i];
 			if (!localvars->contains(name)) {
-				g_lingo->varCreate(name, false, localvars);
+				(*localvars)[name] = Datum();
 				Datum arg(name);
 				arg.type = VAR;
 				Datum value = g_lingo->pop();
