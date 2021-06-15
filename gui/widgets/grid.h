@@ -149,6 +149,7 @@ public:
 	void update();
 	void updateThumb();
 	void drawWidget() override;
+	void handleMouseWheel(int x, int y, int direction) override;
 
 };
 

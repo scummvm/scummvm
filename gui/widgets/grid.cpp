@@ -96,6 +96,10 @@ void GridItemWidget::drawWidget() {
 							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
 }
 
+void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
+	_grid->handleMouseWheel(x, y, direction);
+}
+
 #pragma mark -
 
 Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
