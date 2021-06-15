@@ -210,7 +210,7 @@ void TrecisionEngine::readExtraObj2C() {
 	delete ff;
 }
 
-void TrecisionEngine::readExtraObj41D() {
+void TrecisionEngine::readPositionerSnapshots() {
 	if (!_room[_curRoom]._object[32])
 		return;
 

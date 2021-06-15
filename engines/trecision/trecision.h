@@ -223,7 +223,7 @@ public:
 	void readLoc();
 	void tendIn();
 	void readExtraObj2C();
-	void readExtraObj41D();
+	void readPositionerSnapshots();
 
 	// Data files
 	byte *readData(const Common::String &fileName);

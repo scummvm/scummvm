@@ -349,8 +349,6 @@ bool LogicManager::startPlayDialog() {
 	} else if (_vm->_curRoom == kRoom4A && (_vm->_oldRoom == kRoom49) && !_vm->_inventoryObj[kItemPositioner].isFlagExtra()) {
 		_vm->_dialogMgr->playDialog(dF491);
 	} else if (_vm->_curRoom == kRoom4A && (_vm->_oldRoom == kRoom41D) && _vm->_inventoryObj[kItemPositioner].isFlagExtra() && _vm->isObjectVisible(ocHELLEN4A)) {
-		if (_vm->_curRoom == kRoom41D)
-			_vm->readExtraObj41D();
 		_vm->_dialogMgr->playDialog(dC4A1);
 	} else if (_vm->_curRoom == kRoom4P && (_vm->_oldRoom == kRoom4O) && !_vm->_room[kRoom4P].isDone()) {
 		_vm->_dialogMgr->playDialog(dF4PI);
@@ -488,6 +486,10 @@ void LogicManager::endChangeRoom() {
 		_vm->_textMgr->characterSay(1408);
 	else if (_vm->_curRoom == kRoomControlPanel && (_vm->_oldRoom == kRoomControlPanel))
 		_vm->_logicMgr->handleClickControlPanel(o00LOAD);
+
+	if (_vm->_curRoom == kRoom41D)
+		_vm->readPositionerSnapshots();
+
 	_vm->_inventoryObj[kItemPositioner].setFlagExtra(false);
 }
 
