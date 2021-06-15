@@ -495,7 +495,7 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 			_playerSounds2 = kBeavisSounds2;
 			_playerSounds2Count = 13;
 			playSound(15);
-			while (isSoundPlaying(15)) { }
+			while (isSoundPlaying(15)) { _vm->_system->delayMillis(10); }
 		} else {
 			// Butt-head
 			_playerKind = 1;
@@ -505,7 +505,7 @@ bool MinigameBbLoogie::updateStatus0(int mouseX, int mouseY, uint mouseButtons) 
 			_playerSounds2 = kButtheadSounds2;
 			_playerSounds2Count = 10;
 			playSound(23);
-			while (isSoundPlaying(23)) { }
+			while (isSoundPlaying(23)) { _vm->_system->delayMillis(10); }
 		}
 		_gameState = _fromMainGame ? kGSMainGame : kGSStandaloneGame;
 		initObjects1();
