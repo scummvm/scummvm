@@ -47,8 +47,8 @@ struct MouseCursor {
 	char  flags;
 
 	MouseCursor();
-	void clear();
 
+	void clear();
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);
 	void ReadFromSavegame(Shared::Stream *in);
