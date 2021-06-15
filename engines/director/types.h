@@ -351,6 +351,14 @@ enum DatumType {
 	RECT
 };
 
+enum VarType {
+	kVarArgument,
+	kVarProperty,
+	kVarInstance,
+	kVarGlobal,
+	kVarLocal
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;
