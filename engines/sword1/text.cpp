@@ -22,6 +22,8 @@
 
 
 #include "common/textconsole.h"
+#include "common/str.h"
+#include "common/unicode-bidi.h"
 
 #include "sword1/text.h"
 #include "sword1/resman.h"
@@ -99,9 +101,18 @@ void Text::makeTextSprite(uint8 slot, const uint8 *text, uint16 maxWidth, uint8 
 	memset(linePtr, NO_COL, sprSize);
 	for (lineCnt = 0; lineCnt < numLines; lineCnt++) {
 		uint8 *sprPtr = linePtr + (sprWidth - lines[lineCnt].width) / 2; // center the text
+		Common::String textString;
+		const uint8 *curTextLine = text;
+		if (SwordEngine::_systemVars.isLangRtl) {
+			Common::String textLogical = Common::String((const char *)text, (uint32)lines[lineCnt].length);
+			textString = Common::convertBiDiString(textLogical, Common::kWindows1255);
+			curTextLine = (const uint8 *)textString.c_str();
+		}
 		for (uint16 pos = 0; pos < lines[lineCnt].length; pos++)
-			sprPtr += copyChar(*text++, sprPtr, sprWidth, pen) - OVERLAP;
-		text++; // skip space at the end of the line
+			sprPtr += copyChar(*curTextLine++, sprPtr, sprWidth, pen) - OVERLAP;
+		curTextLine++; // skip space at the end of the line
+		text += lines[lineCnt].length + 1;
+
 		if (SwordEngine::isPsx()) //Chars are half height in psx version
 			linePtr += (_charHeight / 2) * sprWidth;
 		else

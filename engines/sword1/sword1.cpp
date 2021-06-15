@@ -126,6 +126,7 @@ Common::Error SwordEngine::init() {
 	_systemVars.forceRestart = false;
 	_systemVars.wantFade = true;
 	_systemVars.realLanguage = Common::parseLanguage(ConfMan.get("language"));
+	_systemVars.isLangRtl = false;
 
 	switch (_systemVars.realLanguage) {
 	case Common::DE_DEU:
@@ -145,6 +146,11 @@ Common::Error SwordEngine::init() {
 		break;
 	case Common::CZ_CZE:
 		_systemVars.language = BS1_CZECH;
+		break;
+	case Common::HE_ISR:
+		// Hebrew is using "faked" English
+		_systemVars.language = BS1_ENGLISH;
+		_systemVars.isLangRtl = true;
 		break;
 	default:
 		_systemVars.language = BS1_ENGLISH;
