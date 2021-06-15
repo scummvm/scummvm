@@ -589,7 +589,6 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	WriteStatusF(2, "Loading Banks: %x", banksNeeded);
 
 	//  Make this one the most recently used entry
-	remove();
 	appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
