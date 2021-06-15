@@ -49,6 +49,10 @@ class gPixelMap;
 struct Sprite {
 	Extent16        size;                   // size of sprite
 	Point16         offset;                 // sprite origin point
+	byte            *_data;
+
+	Sprite(Common::SeekableReadStream *stream);
+	~Sprite();
 
 	// sprite data follows.
 };
@@ -57,13 +61,16 @@ struct Sprite {
 
 struct SpriteSet {
 	uint32           count;                  // number of images in the range
-	uint32           offsets[1];           // offsets into sprite list
+	Sprite           **_sprites;
 	// (variable-length array)
 	// sprite structures follow table
 
+	SpriteSet(Common::SeekableReadStream *stream);
+	~SpriteSet();
+
 	//  Member function to return a sprite from the set
 	Sprite *sprite(int16 index) {
-		return (Sprite *)((uint8 *)this + offsets[index]);
+		return _sprites[index];
 	}
 
 //  Sprite &operator[]( int32 index )

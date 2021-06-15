@@ -250,7 +250,7 @@ void DrawCompositeMaskedSprite(
 
 		//  Unpack the sprite into the temp map
 
-		unpackSprite(&sprMap, (uint8 *)(sp + 1));
+		unpackSprite(&sprMap, sp->_data);
 
 		//  Blit the temp map onto the composite map
 
@@ -361,7 +361,7 @@ void DrawSprite(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, (uint8 *)(sp + 1));
+	unpackSprite(&sprMap, sp->_data);
 
 	//  Blit to the port
 	port.setMode(drawModeMatte);
@@ -391,7 +391,7 @@ void DrawColorMappedSprite(
 	sprReMap.data = (uint8 *)getQuickMem(sprReMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, (uint8 *)(sp + 1));
+	unpackSprite(&sprMap, sp->_data);
 
 	memset(sprReMap.data, 0, sprReMap.bytes());
 
@@ -429,7 +429,7 @@ void ExpandColorMappedSprite(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, (uint8 *)(sp + 1));
+	unpackSprite(&sprMap, sp->_data);
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -458,7 +458,7 @@ uint8 GetSpritePixel(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, (uint8 *)(sp + 1));
+	unpackSprite(&sprMap, sp->_data);
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
@@ -513,7 +513,7 @@ uint16 visiblePixelsInSprite(
 	sprMap.size = sp->size;
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
-	unpackSprite(&sprMap, (uint8 *)(sp + 1));
+	unpackSprite(&sprMap, sp->_data);
 
 	org.x = drawPos.x - xMin;
 	org.y = drawPos.y - yMin;
@@ -594,8 +594,11 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	//  Load in additional sprite banks if requested...
 	for (bank = 0; bank < (long)elementsof(spriteBanks); bank++) {
 		//  Load the sprite handle...
-		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank)))
-			spriteBanks[bank] = (SpriteSet *)spriteRes->loadResource(id + MKTAG(0, 0, 0, bank), "sprite bank");
+		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
+			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, id + MKTAG(0, 0, 0, bank), "sprite bank");
+			spriteBanks[bank] = new SpriteSet(stream);
+			delete stream;
+		}
 	}
 }
 
@@ -705,13 +708,45 @@ void ReleaseActorAppearance(ActorAppearance *aa) {
    Sprite initialization routines
  * ===================================================================== */
 
-static void readSpriteResource(hResContext *con, SpriteSet &spr) {
-	spr.count = con->readU32LE();
-	spr.offsets[0] = con->readU32LE();
+Sprite::Sprite(Common::SeekableReadStream *stream) {
+	size.x = stream->readSint16LE();
+	size.y = stream->readSint16LE();
+	offset.x = stream->readSint16LE();
+	offset.y = stream->readSint16LE();
+
+	int data_size = size.x * size.y;
+	_data = (byte *)malloc(data_size * sizeof(byte));
+	stream->read(_data, data_size);
+}
+
+Sprite::~Sprite() {
+	free(_data);
+}
+
+SpriteSet::SpriteSet(Common::SeekableReadStream *stream) {
+	count = stream->readUint32LE();
+	_sprites = (Sprite **)malloc(count * sizeof(Sprite *));
+
+	for (uint i = 0; i < count; ++i) {
+		stream->seek(4 + i * 4);
+		uint32 offset = stream->readUint32LE();
+		stream->seek(offset);
+		_sprites[i] = new Sprite(stream);
+	}
+}
+
+SpriteSet::~SpriteSet() {
+	for (int i = 0; i < count; ++i) {
+		if (_sprites[i])
+			delete _sprites[i];
+	}
+
+	free(_sprites);
 }
 
 void initSprites(void) {
 	int     i;
+	Common::SeekableReadStream *stream = nullptr;
 
 	spriteRes = resFile->newContext(spriteGroupID, "sprite resources");
 	if (!spriteRes->_valid)
@@ -727,15 +762,15 @@ void initSprites(void) {
 	assert(schemeRes && schemeRes->_valid);
 
 	// object sprites
-	objectSprites = (SpriteSet *)spriteRes->loadResource(objectSpriteID, "object sprites");
-	//if (spriteRes->seek(objectSpriteID) == 0)
-	//	error("Unable to load object sprites");
-
-	//readSpriteResource(spriteRes, *objectSprites)
+	stream = loadResourceToStream(spriteRes, objectSpriteID, "object sprites");
+	objectSprites = new SpriteSet(stream);
+	delete stream;
 	assert(objectSprites);
 
 	// intagible object sprites
-	mentalSprites = (SpriteSet *)spriteRes->loadResource(mentalSpriteID, "mental sprites");
+	stream = loadResourceToStream(spriteRes, mentalSpriteID, "mental sprites");
+	mentalSprites = new SpriteSet(stream);
+	delete stream;
 	assert(mentalSprites);
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
@@ -748,12 +783,14 @@ void initSprites(void) {
 			continue;
 		}
 
-		weaponSprites[i] = (SpriteSet *)spriteRes->loadResource(
-		                         weaponSpriteID,
-		                         "weapon sprite set");
+		stream = loadResourceToStream(spriteRes, weaponSpriteID, "weapon sprite set");
+		weaponSprites[i] = new SpriteSet(stream);
+		delete stream;
 	}
 
-	missileSprites = (SpriteSet *)spriteRes->loadResource(missileSpriteID, "missle sprites");
+	stream = loadResourceToStream(spriteRes, missileSpriteID, "missle sprites");
+	missileSprites = new SpriteSet(stream);
+	delete stream;
 
 	initQuickMem(0x10000);
 
