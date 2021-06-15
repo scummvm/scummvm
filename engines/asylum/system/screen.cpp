@@ -946,7 +946,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	byte *mirroredBuffer = NULL;
 	int16 frameRight = frame->surface.pitch;
 	uint16 maskHeight = (uint16)sourceMask->height(); // for debugging only
-	byte nSkippedBits = sourceMask->left % 8;
+	byte nSkippedBits = ABS(sourceMask->left) % 8;
 
 	// Prepare temporary source buffer if needed
 	if (flags & kDrawFlagMirrorLeftRight) {
@@ -996,7 +996,7 @@ void Screen::blitMasked(GraphicFrame *frame, Common::Rect *source, byte *maskDat
 	}
 
 	if (destination->left > destMask->left) {
-		nSkippedBits += (destination->left - destMask->left) % 8;
+		nSkippedBits += ABS(destination->left - destMask->left) % 8;
 		maskBufferPtr += (destination->left - destMask->left) / 8 + nSkippedBits / 8;
 		nSkippedBits %= 8;
 		sourceMask->setWidth(sourceMask->width() + destMask->left - destination->left);
