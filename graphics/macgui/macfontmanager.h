@@ -139,6 +139,7 @@ public:
 	void clearFontMapping();
 
 	void forceBuiltinFonts() { _builtInFonts = true; }
+	int parseSlantFromName(const Common::String &name);
 
 private:
 	void loadFontsBDF();
