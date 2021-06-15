@@ -29,6 +29,11 @@
 
 namespace Saga2 {
 
+void Point16::load(Common::SeekableReadStream *stream) {
+	x = stream->readSint16LE();
+	y = stream->readSint16LE();
+}
+
 Rect16 bound(const Rect16 a, const Rect16 b) {
 	int16               x1, x2, y1, y2;
 

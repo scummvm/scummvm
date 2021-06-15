@@ -709,10 +709,8 @@ void ReleaseActorAppearance(ActorAppearance *aa) {
  * ===================================================================== */
 
 Sprite::Sprite(Common::SeekableReadStream *stream) {
-	size.x = stream->readSint16LE();
-	size.y = stream->readSint16LE();
-	offset.x = stream->readSint16LE();
-	offset.y = stream->readSint16LE();
+	size.load(stream);
+	offset.load(stream);
 
 	int data_size = size.x * size.y;
 	_data = (byte *)malloc(data_size * sizeof(byte));

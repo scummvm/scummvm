@@ -57,6 +57,9 @@ public:
 		y = HIWORD(lparam);
 	}
 #endif
+
+	void load(Common::SeekableReadStream *stream);
+
 	// Point16 operators
 	friend Point16 operator+ (Point16 a, Point16 b) {
 		return Point16(a.x + b.x, a.y + b.y);
