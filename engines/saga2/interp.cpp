@@ -206,24 +206,27 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 	uint8           *pc = *pcPtr,
 	                 *addr;
 	uint16          seg,
-	                offset,
+	                offset, offset2,
 	                index,
 	                *arg;
 
 	switch (*pc++) {
 	case addr_data:
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: data[%d] = %d", offset, dataSegment[offset]);
 		*pcPtr = pc;
 		return &dataSegment[offset];
 
 	case addr_near:
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: near[%d] = %d", offset, th->codeSeg[offset]);
 		*pcPtr = pc;
 		return th->codeSeg + offset;
 
 	case addr_far:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: far[%d:%d] = %d", seg, offset, *segmentAddress(seg, offset));
 		*pcPtr = pc;
 		return segmentAddress(seg, offset);
 
@@ -231,17 +234,20 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, offset);
-		IMMED_WORD(offset);
+		IMMED_WORD(offset2);
+		debugC(3, kDebugScripts, "byteAddress: array[%d:%d:%d] = %d", seg, offset, offset2, addr[offset2]);
 		*pcPtr = pc;
-		return addr + offset;
+		return addr + offset2;
 
 	case addr_stack:
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: stack[%d] = %d", offset, *(th->stackBase + th->framePtr + (int16)offset));
 		*pcPtr = pc;
 		return th->stackBase + th->framePtr + (int16)offset;
 
 	case addr_thread:
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: thread[%d] = %d", offset, *((uint8 *)&th->threadArgs + offset));
 		*pcPtr = pc;
 		return (uint8 *)&th->threadArgs + offset;
 
@@ -249,10 +255,10 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		*pcPtr = pc;
+		debugC(3, kDebugScripts, "byteAddress: this[%d]", offset);
 		if (arg[0] == dataSegIndex)
 			return &dataSegment[arg[1] + offset];
-		return segmentArrayAddress(arg[0],
-		                           arg[1]) + offset;
+		return segmentArrayAddress(arg[0], arg[1]) + offset;
 
 	case addr_deref:
 
@@ -268,6 +274,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		//  within the object.
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
+		debugC(3, kDebugScripts, "byteAddress: deref[%d:%d:%d] = %d", seg, index, offset, *(segmentAddress(seg, index) + offset));
 		*pcPtr = pc;
 
 		//  Compute address of object
@@ -499,17 +506,19 @@ char *objectName(int16 segNum, uint16 segOff) {
 	return "???";
 }
 
+#define STACK_PRINT_DEPTH 30
+
 static void print_stack(int16 *stackBase, int16 *stack) {
 	int16 *end = (int16 *)((byte *)stackBase + kStackSize - initialStackFrameSize);
 	int size = end - stack;
 
-	if (size > 10)
-		end = stack + 10;
+	if (size > STACK_PRINT_DEPTH)
+		end = stack + STACK_PRINT_DEPTH;
 
 	debugCN(2, kDebugScripts, "stack size: %d: [", size);
 	for (int16 *i = stack; i <= end; i++)
 		debugCN(2, kDebugScripts, "%d ", *i);
-	if (size > 10)
+	if (size > STACK_PRINT_DEPTH)
 		debugCN(2, kDebugScripts, "... ");
 
 	debugC(2, kDebugScripts, "]");
