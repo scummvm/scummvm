@@ -23,6 +23,7 @@
 #ifndef AGS_METAENGINE_H
 #define AGS_METAENGINE_H
 
+#include "common/achievements.h"
 #include "engines/advancedDetector.h"
 
 class AGSMetaEngine : public AdvancedMetaEngine {
@@ -71,16 +72,7 @@ public:
 	 */
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	/**
-	 * Return a list of achievement descriptions for the specified target.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target  Name of a config manager target.
-	 *
-	 * @return A list of achievement descriptions for an engine plugin and target.
-	 */
-	const Common::AchievementsInfo getAchievementsInfo(const Common::String &target) const override;
+	const Common::AchievementDescriptionList* getAchievementDescriptionList() const override;
 };
 
 #endif

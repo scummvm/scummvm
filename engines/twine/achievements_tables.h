@@ -27,16 +27,10 @@
 
 namespace TwinE {
 
-struct AchievementDescriptionList {
-	const char *gameId;
-	Common::AchievementsPlatform platform;
-	const char *appId;
-};
-
-static const AchievementDescriptionList achievementDescriptionList[] = {
+static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 	{"lba", Common::STEAM_ACHIEVEMENTS, "397330"},
 
-	{0, Common::UNK_ACHIEVEMENTS, 0}
+	ACHIEVEMENT_DESC_TABLE_END_MARKER
 };
 
 } // namespace TwinE

@@ -20,15 +20,14 @@
  *
  */
 
+#ifndef WINTERMUTE_ACHIEVEMENTS_H
+#define WINTERMUTE_ACHIEVEMENTS_H
+
+#include "common/achievements.h"
+
 namespace Wintermute {
 
-struct AchievementDescriptionList {
-	const char *gameId;
-	Common::AchievementsPlatform platform;
-	const char *appId;
-};
-
-static const AchievementDescriptionList achievementDescriptionList[] = {
+static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 	{"alphapolaris", Common::STEAM_ACHIEVEMENTS, "405780"},
 	{"carolreed10", Common::STEAM_ACHIEVEMENTS, "337130"},
 	{"carolreed11", Common::STEAM_ACHIEVEMENTS, "340370"},
@@ -47,7 +46,9 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{"sotv2", Common::STEAM_ACHIEVEMENTS, "378630"},
 	{"thelostcrowngha", Common::STEAM_ACHIEVEMENTS, "291710"},
 
-	{0, Common::UNK_ACHIEVEMENTS, 0}
+	ACHIEVEMENT_DESC_TABLE_END_MARKER
 };
 
 } // End of namespace Wintermute
+
+#endif

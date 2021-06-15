@@ -23,15 +23,11 @@
 #ifndef AGS_ACHIEVEMENTS_H
 #define AGS_ACHIEVEMENTS_H
 
+#include "common/achievements.h"
+
 namespace AGS {
 
-struct AchievementDescriptionList {
-	const char *gameId;
-	Common::AchievementsPlatform platform;
-	const char *appId;
-};
-
-static const AchievementDescriptionList achievementDescriptionList[] = {
+static const Common::AchievementDescriptionList achievementDescriptionList[] = {
 	{"adateinthepark", Common::STEAM_ACHIEVEMENTS, "468530"},
 	{"alemmo", Common::STEAM_ACHIEVEMENTS, "296850"},
 	{"alum", Common::STEAM_ACHIEVEMENTS, "338420"},
@@ -94,7 +90,7 @@ static const AchievementDescriptionList achievementDescriptionList[] = {
 	{"whispersofamachine", Common::STEAM_ACHIEVEMENTS, "631570"},
 	{"zniwadventure", Common::STEAM_ACHIEVEMENTS, "904750"},
 
-	{0, Common::UNK_ACHIEVEMENTS, 0}
+	ACHIEVEMENT_DESC_TABLE_END_MARKER
 };
 
 } // End of namespace AGS
