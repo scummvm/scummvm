@@ -52,6 +52,11 @@ public:
 	 */
 	virtual int resumeAudio();
 
+	/**
+	 * Updates the audio system
+	 */
+	void updateAudio();
+
 protected:
 	mm_stream _stream;
 	int _freq, _bufSize;

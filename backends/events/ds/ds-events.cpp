@@ -26,6 +26,9 @@
 #include "backends/platform/ds/osystem_ds.h"
 
 bool DSEventSource::pollEvent(Common::Event &event) {
+	// Ensure the mixer and timers are updated frequently
+	g_system->delayMillis(0);
+
 	if (_eventQueue.empty()) {
 		if (!_firstPoll) {
 			_firstPoll = true;

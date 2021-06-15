@@ -85,7 +85,7 @@ void OSystem_DS::initBackend() {
 	_timerManager = new DefaultTimerManager();
 	timerStart(0, ClockDivider_1, (u16)TIMER_FREQ(1000), timerTickHandler);
 
-	_mixerManager = new MaxModMixerManager(11025, 4096);
+	_mixerManager = new MaxModMixerManager(11025, 32768);
 	_mixerManager->init();
 
 	BaseBackend::initBackend();
@@ -102,9 +102,11 @@ uint32 OSystem_DS::getMillis(bool skipRecord) {
 void OSystem_DS::delayMillis(uint msecs) {
 	int st = getMillis();
 
-	while (st + msecs >= getMillis());
-
 	doTimerCallback();
+	if (_mixerManager)
+		((MaxModMixerManager *)_mixerManager)->updateAudio();
+
+	while (st + msecs >= getMillis());
 }
 
 void OSystem_DS::doTimerCallback(int interval) {
