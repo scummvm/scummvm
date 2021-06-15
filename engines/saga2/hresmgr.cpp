@@ -182,9 +182,11 @@ bool hResContext::seek(hResID id) {
 
 	_bytecount = 0;
 	_bytepos = 0;
-	if (!_valid) return false;
+	if (!_valid)
+		return false;
 
-	if ((entry = findEntry(id)) == nullptr) return false;
+	if ((entry = findEntry(id)) == nullptr)
+		return false;
 
 	_bytecount = entry->size;
 	_bytepos = entry->resOffset();

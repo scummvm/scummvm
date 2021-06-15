@@ -816,7 +816,7 @@ void initActiveItemStates(void) {
 		error("Unable to allocate the active item state array array");
 
 	for (i = 0; i < worldCount; i++) {
-		stateArray[i] = (byte *)LoadResource(tileRes, tagStateID + MKTAG(0, 0, 0, uint8(i)),
+		stateArray[i] = (byte *)LoadResource(tileRes, tagStateID + i,
 		                             "active item state array");
 
 		if (stateArray[i] == nullptr)
@@ -835,7 +835,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 	void    *bufferPtr;
 
 	for (i = 0; i < worldCount; i++) {
-		int32 size = tileRes->size(tagStateID + MKTAG(0, 0, 0, uint8(i)));
+		int32 size = tileRes->size(tagStateID + i);
 		archiveBufSize += sizeof(int16);
 		if (stateArray[i] != nullptr)
 			archiveBufSize += size;
@@ -853,7 +853,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 			ActiveItemPtr       activeItemList = mapData->activeItemList;
 			int16               activeItemCount = mapData->activeCount,
 			                    j;
-			int32               arraySize = tileRes->size(tagStateID + MKTAG(0, 0, 0, uint8(i)));
+			int32               arraySize = tileRes->size(tagStateID + i);
 			uint8               *bufferedStateArray;
 
 			//  Save the size of the state array
@@ -1491,7 +1491,7 @@ void initMaps(void) {
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		tileBanks[i] = new TileBank(tileRes, tileTerrainID + MKTAG(0, 0, 0, (uint8)i));
+		tileBanks[i] = new TileBank(tileRes, tileTerrainID + i);
 		if (tileBanks[i]->_tileArray == nullptr) {
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
@@ -1500,8 +1500,10 @@ void initMaps(void) {
 
 	//  Count the worlds by seeking the map data
 	for (worldCount = 0;
-	        tileRes->seek(mapID + MKTAG(0, 0, 0, (uint8)worldCount));
-	        worldCount++) ;
+	        tileRes->seek(mapID + worldCount);
+	        worldCount++) {
+				warning("MapID: %s %08x res: %s % 08x", tag2str(mapID), mapID, tag2str(mapID + worldCount), mapID + worldCount);
+			}
 
 	//  Allocate the map data array
 	mapList = new WorldMapData[worldCount]();
@@ -1512,11 +1514,11 @@ void initMaps(void) {
 	for (i = 0; i < worldCount; i++) {
 		WorldMapData    *mapData = &mapList[i];
 		int16           j;
-		int iMapID = mapID + MKTAG(0, 0, 0, (uint8)i);
-		int iMetaID = metaID + MKTAG(0, 0, 0, (uint8)i);
-		int iTagRefID = tagDataID + MKTAG(0, 0, 0, (uint8)i);
-		int iAssocID = assocID + MKTAG(0, 0, 0, (uint8)i);
-		int iActiveItemID = tagID + MKTAG(0, 0, 0, (uint8)i);
+		int iMapID = mapID + i;
+		int iMetaID = metaID + i;
+		int iTagRefID = tagDataID + i;
+		int iAssocID = assocID + i;
+		int iActiveItemID = tagID + i;
 
 		//  Initialize the world ID
 		mapData->worldID = WorldBaseID + i;
@@ -1584,7 +1586,7 @@ void initMaps(void) {
 		mapData->metaCount     = metaTileCount;
 
 		//  Compute the number of active items in list
-		mapData->activeCount   =        tileRes->size(tagID + MKTAG(0, 0, 0, (uint8)i))
+		mapData->activeCount   =        tileRes->size(tagID + i)
 		                                /   sizeof(ActiveItem); // Not portable?
 
 		//  Allocate an object ripping table ID list
@@ -2326,11 +2328,11 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	stack[layer] = (cacheIndex);
 
 	assert(plIndex >= 0);
-	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + MKTAG(0, 0, 0, mapNum)));
+	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
 	debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
 
 	// Now, load the actual metatile data...
-	if (tileRes->seek(platformID + MKTAG(0, 0, 0, mapNum))) {
+	if (tileRes->seek(platformID + mapNum)) {
 		if (tileRes->skip(plIndex * sizeof(Platform))) {
 			readPlatform(tileRes, pce->pl);
 			return &pce->pl;

@@ -39,10 +39,6 @@
 
 namespace Saga2 {
 
-/* ============================================================================ *
-                                   Constants
- * ============================================================================ */
-
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8))
 #define BRANCH(w)       pc = codeSeg + (w)
 
@@ -52,25 +48,10 @@ const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
 
 const int           initialStackFrameSize = 10;
 
-/* ============================================================================ *
-   Protos
- * ============================================================================ */
-
 static bool lookupExport(uint16 entry, uint16 &segNum, uint16 &segOff);
-
 uint8 *segmentAddress(uint16 segment, uint16 offset);
 
-/* ============================================================================ *
-                                    Globals
- * ============================================================================ */
-
 Thread                  *thisThread;
-
-//  xRefTable points to a list of segment / offset pairs which
-//  indicate where to find every external symbol that lies within
-//  a script.
-
-//struct SegmentRef     *xRefTable;
 
 struct ModuleEntry      *moduleList;            // loaded from resource
 int16                    moduleBaseResource,
@@ -89,18 +70,8 @@ int16                   extendedThreadLevel;
 
 int16                   lastExport;
 
-/* ============================================================================ *
-                                   Externals
- * ============================================================================ */
-
-//extern struct SpeechObject activeSpeech;
-
 extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
-
-/* ============================================================================ *
-                                   Functions
- * ============================================================================ */
 
 void script_error(char *msg) {
 	thisThread->flags |= Thread::aborted;
@@ -110,7 +81,6 @@ void script_error(char *msg) {
 //-----------------------------------------------------------------------
 //	Return the address of a builtin object, such as an Actor or a TAG,
 //	given a segment number and an index
-
 uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 	uint16          segNum, segOff;
 
@@ -145,7 +115,6 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 //	function table for the class associated with this object. Also
 //	return the address of the C function call table for this builtin
 //	class.
-
 uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 	GameObject      *obj;
 	ActiveItem      *aItem;
@@ -196,13 +165,11 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 		error("SAGA Failure: Attempt to call member function of invalid builtin type.\n");
 	}
 
-//	assert( script > 0 );
-
 	//  Look up the vtable in the export table.
 	if (script != 0 && lookupExport(script, vtSeg, vtOffset)) {
-//		gError::warn( "vtable was %d %d %d\n", script, vtSeg, vtOffset );
 		return (uint16 *)segmentAddress(vtSeg, vtOffset);
-	} else return NULL;
+	} else
+		return NULL;
 }
 
 uint8 *segmentAddress(uint16 segment, uint16 offset) {
@@ -210,7 +177,8 @@ uint8 *segmentAddress(uint16 segment, uint16 offset) {
 
 	//  A segment number of less than zero means that this is
 	//  a "builtin" object, in other words the game engine itself
-	if ((int16)segment < 0) return builtinObjectAddress(segment, offset);
+	if ((int16)segment < 0)
+		return builtinObjectAddress(segment, offset);
 
 	segHandle = scriptRes->loadIndexResource(segment, "object segment");
 	if (segHandle == nullptr)
@@ -222,14 +190,14 @@ uint8 *segmentAddress(uint16 segment, uint16 offset) {
 uint8 *segmentArrayAddress(uint16 segment, uint16 index) {
 	byte  *segHandle = nullptr;
 
-	if ((int16)segment < 0) return builtinObjectAddress(segment, index);
+	if ((int16)segment < 0)
+		return builtinObjectAddress(segment, index);
 
 	segHandle = scriptRes->loadIndexResource(segment, "object array segment");
 	if (segHandle == nullptr)
 		return nullptr;
 
-	return segHandle + sizeof(uint16)
-	       + (index * READ_LE_INT16(segHandle));
+	return segHandle + sizeof(uint16) + (index * READ_LE_INT16(segHandle));
 }
 
 //  Returns the address of a byte given an addressing mode
@@ -305,11 +273,8 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		//  Compute address of object
 		return segmentAddress(seg, index) + offset;
 	}
+
 	error("byteAddress: Invalid addressing mode: %d.\n", *pcPtr);
-//	return NULL;
-#if _WIN32
-	return NULL;
-#endif
 }
 
 //  Returns the address of an object given an addressing mode
@@ -386,10 +351,9 @@ uint8 *objectAddress(
 }
 
 //  Returns the address and access mask of a bit, given addressing mode
-
 uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 	uint8           *pc = *pcPtr,
-	                 *addr;
+	                *addr;
 	uint16          seg,
 	                offset;
 
@@ -437,16 +401,8 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 	case addr_this:
 		error("Addressing relative to 'this' not supported just yet.\n");
 
-//	addr_indirect,                           // use SEG:offset on stack
-//	addr_indirect_index,                 // use SEG:index:offset on stack
-
 	}
 	error("bitAddress: Invalid addressing mode: %d.\n", *pcPtr);
-//	fatal( "Invalid addressing mode.\n" );
-//	return NULL;
-#if _WIN32
-	return NULL;
-#endif
 }
 
 //  Returns the address of a string
@@ -466,7 +422,6 @@ uint8 *Thread::strAddress(int strNum) {
 //-----------------------------------------------------------------------
 //	RandomGenerator class - a random number generator class for function
 //	objects which each maintain a local seed.
-
 class RandomGenerator {
 	uint32  a;                      //  seed
 	static const uint32 b;          //  arbitrary constant
@@ -493,7 +448,6 @@ const uint32 RandomGenerator::b = 31415821;
 
 //-----------------------------------------------------------------------
 //	A restricted random function
-
 int16 RRandom(int16 c, int16 s, int16 id) {
 	//  Create a local random number generator with a seed calculated
 	//  with a non-deterministic portion generated by the standard
@@ -506,7 +460,6 @@ int16 RRandom(int16 c, int16 s, int16 id) {
 /* ============================================================================ *
                                 Main interpreter
  * ============================================================================ */
-
 void print_script_name(uint8 *codePtr, char *descr = NULL) {
 	char    scriptName[32];
 	uint8   *sym = codePtr - 1;
@@ -560,16 +513,8 @@ bool Thread::interpret(void) {
 
 	thisThread = this;                          // set current thread address
 
-	for (instruction_count = 0;
-	        instruction_count < maxTimeSlice;
-	        instruction_count++) {
+	for (instruction_count = 0; instruction_count < maxTimeSlice; instruction_count++) {
 		switch (op = *pc++) {
-
-//		case op_nextblock:
-//			n = (pc-1-(codeSeg)) / 1024;      // calculate address of this block
-//			BRANCH((n + 1) * 1024);                // jump to next block
-//			break;
-
 		case op_dup:
 			*--stack = stack[0];              // duplicate value on stack
 			break;
@@ -607,10 +552,6 @@ bool Thread::interpret(void) {
 			*--stack = *addr;                   // get byte from address
 			break;
 
-#if 0
-			op_getstr,                                  // read from string field (mode)
-#endif
-
 		//  Note that in the current implementation, "put" ops leave
 		//  the value that was stored on the stack. We mat also do a
 		//  'vput' which consumes the variable.
@@ -647,15 +588,9 @@ bool Thread::interpret(void) {
 			*addr = *stack++;               // put integer to address
 			break;
 
-#if 0
-			op_putstr,                              // put to string field (mode)
-#endif
-
 		case op_enter:
 
-//#if DEBUG
-//			print_script_name( pc - 1 );
-//#endif
+			print_script_name(pc - 1);
 			*--stack = framePtr;            // save old frame ptr on stack
 			framePtr = (uint8 *)stack - stackBase;  // new frame pointer
 			IMMED_WORD(w);                  // pick up word after address
@@ -668,9 +603,7 @@ bool Thread::interpret(void) {
 			returnVal = *stack++;
 		case op_return_v:                   // return with void
 
-		debugC(1, kDebugScripts, "Scripts: op_return");
-
-// REM: When we implement dynamic strings we'll want to clean up first.
+			debugC(1, kDebugScripts, "Scripts: op_return_v");
 
 			stack = (int16 *)(stackBase + framePtr);    // pop autos
 			framePtr = *stack++;        // restore frame pointer
@@ -686,8 +619,7 @@ bool Thread::interpret(void) {
 				programCounter.offset = *stack++;
 
 				//RUnlockHandle((RHANDLE)codeSeg);
-				codeSeg = scriptRes->loadIndexResource(programCounter.segment,
-				                                       "saga code segment");
+				codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
 				pc = (codeSeg) + programCounter.offset;
 
 				n = *stack++;               // get argument count from call
@@ -741,7 +673,6 @@ bool Thread::interpret(void) {
 
 		case op_ccall:                      // call C function
 		case op_ccall_v:                    // call C function
-
 			n = *pc++;                      // get argument count
 			IMMED_WORD(w);                  // get function number
 			if (w < 0 || w >= globalCFuncs.numEntries)
@@ -759,7 +690,6 @@ bool Thread::interpret(void) {
 			} else flags &= ~expectResult;  // script not expecting result
 
 			//  if the thread is asleep, then no more instructions
-
 			if (flags & asleep)
 				instruction_count = maxTimeSlice;   // break out of loop!
 
@@ -825,6 +755,7 @@ bool Thread::interpret(void) {
 					// calculate PC address
 					pc = (codeSeg) + programCounter.offset;
 					print_script_name(pc, objectName(seg, offset));
+
 					break;
 				} else if (vtableEntry[1] != 0xffff) { // It's a C func
 					//  Save the ID of the invoked object
@@ -924,8 +855,6 @@ bool Thread::interpret(void) {
 			}
 			break;
 
-//		case op_jmp_sswitch:                // string-based case/switch
-
 		case op_jmp_seedrandom:             // seeded random jump
 		case op_jmp_random:                 // random jump
 
@@ -998,95 +927,82 @@ bool Thread::interpret(void) {
 		//  dropped variable.
 
 		case op_add:
-			w = (stack[1] +  stack [0]);
+			w = (stack[1] +  stack[0]);
 			*++stack = w;
 			break;
 		case op_sub:
-			w = (stack[1] -  stack [0]);
+			w = (stack[1] -  stack[0]);
 			*++stack = w;
 			break;
 		case op_mul:
-			w = (stack[1] *  stack [0]);
+			w = (stack[1] *  stack[0]);
 			*++stack = w;
 			break;
 		case op_div:
-			w = (stack[1] /  stack [0]);
+			w = (stack[1] /  stack[0]);
 			*++stack = w;
 			break;
 		case op_mod:
-			w = (stack[1] %  stack [0]);
+			w = (stack[1] %  stack[0]);
 			*++stack = w;
 			break;
 		case op_eq:
-			w = (stack[1] == stack [0]);
+			w = (stack[1] == stack[0]);
 			*++stack = w;
 			break;
 		case op_ne:
-			w = (stack[1] != stack [0]);
+			w = (stack[1] != stack[0]);
 			*++stack = w;
 			break;
 		case op_gt:
-			w = (stack[1] >  stack [0]);
+			w = (stack[1] >  stack[0]);
 			*++stack = w;
 			break;
 		case op_lt:
-			w = (stack[1] <  stack [0]);
+			w = (stack[1] <  stack[0]);
 			*++stack = w;
 			break;
 		case op_ge:
-			w = (stack[1] >= stack [0]);
+			w = (stack[1] >= stack[0]);
 			*++stack = w;
 			break;
 		case op_le:
-			w = (stack[1] <= stack [0]);
+			w = (stack[1] <= stack[0]);
 			*++stack = w;
 			break;
 		case op_rsh:
-			w = (stack[1] >> stack [0]);
+			w = (stack[1] >> stack[0]);
 			*++stack = w;
 			break;
 		case op_lsh:
-			w = (stack[1] << stack [0]);
+			w = (stack[1] << stack[0]);
 			*++stack = w;
 			break;
 		case op_and:
-			w = (stack[1] &  stack [0]);
+			w = (stack[1] &  stack[0]);
 			*++stack = w;
 			break;
 		case op_or:
-			w = (stack[1] |  stack [0]);
+			w = (stack[1] |  stack[0]);
 			*++stack = w;
 			break;
 		case op_xor:
-			w = (stack[1] ^  stack [0]);
+			w = (stack[1] ^  stack[0]);
 			*++stack = w;
 			break;
 		case op_land:
-			w = (stack[1] && stack [0]);
+			w = (stack[1] && stack[0]);
 			*++stack = w;
 			break;
 		case op_lor:
-			w = (stack[1] || stack [0]);
+			w = (stack[1] || stack[0]);
 			*++stack = w;
 			break;
 		case op_lxor:
-			w = (stack[1] && !stack [0]) || (!stack[1] && stack[0 ]);
+			w = (stack[1] && !stack[0]) || (!stack[1] && stack[0]);
 			*++stack = w;
 			break;
 
-#if 0
-			//  String functions. First figure out how strings are going to be
-			//  stored!!
-
-			op_str_eq,
-			op_str_ne,
-			op_str_gt,
-			op_str_lt,
-			op_str_ge,
-			op_str_le,
-			op_strcat,                  // string concatenation
-			op_strformat,               // string formatting
-#endif
 		case op_speak:
 		case op_dialog_begin:
 		case op_dialog_end:
@@ -1441,12 +1357,10 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 	}
 
 	newThread(this);
-//	assert ((codeSeg)[programCounter.offset] == op_enter);
 }
 
 //-----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
-
 Thread::Thread(void **buf) {
 	void    *bufferPtr = *buf;
 
@@ -1467,8 +1381,7 @@ Thread::Thread(void **buf) {
 	stackOffset = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
-	codeSeg = scriptRes->loadIndexResource(programCounter.segment,
-	                                       "saga code segment");
+	codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
 
 	stackBase = (UBytePtr)malloc(stackSize);
 	stackPtr = stackBase + stackSize - stackOffset;
@@ -1652,9 +1565,6 @@ scriptResult Thread::run(void) {
 		interpret();
 	}
 	error("Thread timed out!\n");
-#ifdef _WIN32
-	return scriptResultFinished;
-#endif
 }
 
 //-----------------------------------------------------------------------
@@ -1680,7 +1590,6 @@ void Thread::clearExtended(void) {
 /* ============================================================================ *
                         Script Management functions
  * ============================================================================ */
-
 void initScripts(void) {
 	//  Open the script resource group
 	scriptRes = scriptResFile->newContext(sagaID,  "script resources");
@@ -1829,7 +1738,8 @@ scriptResult runMethod(
 
 	//  For abstract classes, the object index is also the class
 	//  index.
-	if (bType == builtinAbstract) index = scriptClassID;
+	if (bType == builtinAbstract)
+		index = scriptClassID;
 
 	//  Lookup class function table in export table
 	if (scriptClassID < 0)
@@ -1958,59 +1868,5 @@ void wakeUpThread(ThreadID id, int16 returnVal) {
 		thread->flags &= ~(Thread::waiting | Thread::expectResult);
 	}
 }
-
-//-----------------------------------------------------------------------
-//	Old routines
-
-#if 0
-void wakeUpThreadsDelayed(enum WaitTypes wakeupType, int newdelay) {
-	Thread              *th;
-
-	for (th = threadList.first(); th; th = th->next) {
-		if ((th->flags & THREADF_WAITING) && th->waitType == wakeupType) {
-			//  Set thread to delayed mode.
-
-			SetAlarm(&th->waitAlarm, newdelay);      // set the alarm
-			th->waitType = TWAIT_DELAY;
-		}
-	}
-}
-
-void abortObjectThreads(Thread *keep, uint16 objID) {
-	Thread              *th;
-
-	for (th = threadList.first(); th; th = th->next) {
-		if (th != keep && objID == th->threadArgs.theActor) {
-			th->flags &= ~THREADF_WAITING;
-			th->flags |= THREADF_ABORTED;
-		}
-	}
-}
-
-bool abortAllThreads(void) {
-	bool                result = true;
-	Thread              *th;
-
-	for (th = threadList.first(); th; th = th->next) {
-#if 0
-		if (th->flags & THREADF_WAITING) {
-			switch (th->waitType) {
-
-			case TWAIT_DELAY:
-			case TWAIT_SPEECH:
-				break;
-
-			case TWAIT_DIALOG_BEGIN:
-			case TWAIT_DIALOG_END:
-				break;
-			}
-		}
-#endif
-		th->flags |= THREADF_ABORTED;
-	}
-	dispatchThreads();
-	return result;
-}
-#endif
 
 } // end of namespace Saga2
