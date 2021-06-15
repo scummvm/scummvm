@@ -393,7 +393,7 @@ int TrecisionEngine::floatComp(float f1, float f2) const {
 	static const float epsilon = 1.0e-05f;
 
 	const float diff = f1 - f2;
-	if (abs(diff) < epsilon)
+	if (ABS(diff) < epsilon)
 		// equality
 		return 0;
 
