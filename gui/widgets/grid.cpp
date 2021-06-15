@@ -148,7 +148,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	loadPlatformIcons();
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
-	_gridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
+	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
 	_gridYSpacing = g_gui.xmlEval()->getVar("Globals.Grid.YSpacing");
 	
 	_gridItemHeight = _thumbnailHeight + (2*kLineHeight);
@@ -330,7 +330,12 @@ void GridWidget::reflowLayout() {
 	destroyItems();
 	_scrollWindowHeight = _h;
 	_scrollWindowWidth = _w;
-	_itemsPerRow = MAX(((_scrollWindowWidth - 50) / (_gridItemWidth + _gridXSpacing)), 1);
+	_itemsPerRow = MAX(((_scrollWindowWidth - 100) / (_gridItemWidth + _minGridXSpacing)), 1);
+	
+	_gridXSpacing = MAX((_scrollWindowWidth - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, (int)_minGridXSpacing);
+	
+	warning("%d %d %d %d %d", _scrollWindowWidth, _itemsPerRow, _gridItemWidth, _gridXSpacing, _minGridXSpacing);
+
 	int rows = _allEntries.size() / _itemsPerRow; // change this to be calced using eindow sizes
 	
 	_innerHeight = 100 + ((rows) * (_gridItemHeight + _gridYSpacing));
@@ -357,11 +362,9 @@ void GridWidget::reflowLayout() {
 		_gridItems.push_back(it);
 		
 		if (it->getRelY() <= -_gridItemHeight + 50) {
-			warning("upside");
 			it->setVisible(false);
 		}
 		else if (it->getRelY() >= _h) {
-			warning("downside");
 			it->setVisible(false);
 		}
 		else {
