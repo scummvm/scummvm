@@ -809,16 +809,16 @@ void cleanupSprites(void) {
 	cleanupQuickMem();
 
 	if (objectSprites)
-		free(objectSprites);
+		delete objectSprites;
 	objectSprites = nullptr;
 
 	if (mentalSprites)
-		free(mentalSprites);
+		delete mentalSprites;
 	mentalSprites = nullptr;
 
 	for (i = 0; i < maxWeaponSpriteSets; i++) {
 		if (weaponSprites[i]) {
-			free(weaponSprites[i]);
+			delete weaponSprites[i];
 			weaponSprites[i] = nullptr;
 		}
 	}
