@@ -1120,6 +1120,8 @@ void MacWindowManager::popCursor() {
 	} else {
 		CursorMan.popCursor();
 		CursorMan.popCursorPalette();
+		// since we may only have one cursor available when we using macCursor, so we restore the cursorType when we pop the cursor
+		_cursorType = kMacCursorArrow;
 	}
 }
 
