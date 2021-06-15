@@ -499,6 +499,8 @@ char *objectName(int16 segNum, uint16 segOff) {
 	return "???";
 }
 
+#define D_OP(x) debugC(1, kDebugScripts, "[%04ld]: %s", (pc - codeSeg), #x)
+
 bool Thread::interpret(void) {
 	uint8               *pc,
 	                    *addr;
@@ -516,38 +518,46 @@ bool Thread::interpret(void) {
 	for (instruction_count = 0; instruction_count < maxTimeSlice; instruction_count++) {
 		switch (op = *pc++) {
 		case op_dup:
+			D_OP(op_dup);
 			*--stack = stack[0];              // duplicate value on stack
 			break;
 
 		case op_drop:                           // drop word on stack
+			D_OP(op_drop);
 			stack++;
 			break;
 
 		case op_zero:                           // constant integer of zero
+			D_OP(op_zero);
 			*--stack = 0;                       // push integer on stack
 			break;
 
 		case op_one:                            // constant integer of one
+			D_OP(op_one);
 			*--stack = 1;                       // push integer on stack
 			break;
 
 		case op_strlit:                         // string literal (also pushes word)
 		case op_constint:                       // constant integer
+			D_OP(op_strlit);
 			IMMED_WORD(w);                      // pick up word after opcode
 			*--stack = w;                       // push integer on stack
 			break;
 
 		case op_getflag:                        // get a flag
+			D_OP(op_getflag);
 			addr = bitAddress(this, &pc, &w);    // get address of bit
 			*--stack = (*addr) & w ? 1 : 0;     // true or false if bit set
 			break;
 
 		case op_getint:                         // read from integer field (mode)
+			D_OP(op_getint);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;         // get integer from address
 			break;
 
 		case op_getbyte:                        // read from integer field (mode)
+			D_OP(op_getbyte);
 			addr = byteAddress(this, &pc);       // get address of integer
 			*--stack = *addr;                   // get byte from address
 			break;
@@ -557,39 +567,45 @@ bool Thread::interpret(void) {
 		//  'vput' which consumes the variable.
 
 		case op_putflag:                    // put to flag bit (mode)
+			D_OP(op_putflag);
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack) *addr |= w;         // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
 			break;
 
 		case op_putflag_v:                  // put to flag bit (mode)
+			D_OP(op_putflag_v);
 			addr = bitAddress(this, &pc, &w);  // get address of bit
 			if (*stack++) *addr |= w;       // set bit if stack non-zero
 			else *addr &= ~w;               // else clear it
 			break;
 
 		case op_putint:                     // put to integer field (mode)
+			D_OP(op_putint);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack;       // put integer to address
 			break;
 
 		case op_putint_v:                   // put to integer field (mode)
+			D_OP(op_putint_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr = *stack++;     // put integer to address
 			break;
 
 		case op_putbyte:                    // put to byte field (mode)
+			D_OP(op_putbyte);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack;                 // put integer to address
 			break;
 
 		case op_putbyte_v:                  // put to byte field (mode)
+			D_OP(op_putbyte_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*addr = *stack++;               // put integer to address
 			break;
 
 		case op_enter:
-
+			D_OP(op_enter);
 			print_script_name(pc - 1);
 			*--stack = framePtr;            // save old frame ptr on stack
 			framePtr = (uint8 *)stack - stackBase;  // new frame pointer
@@ -600,11 +616,10 @@ bool Thread::interpret(void) {
 		//  function calls
 
 		case op_return:                     // return with value
+			D_OP(op_return);
 			returnVal = *stack++;
 		case op_return_v:                   // return with void
-
-			debugC(1, kDebugScripts, "Scripts: op_return_v");
-
+			D_OP(op_return_v);
 			stack = (int16 *)(stackBase + framePtr);    // pop autos
 			framePtr = *stack++;        // restore frame pointer
 
@@ -631,6 +646,7 @@ bool Thread::interpret(void) {
 			break;
 
 		case op_call_near:                  // call function in same seg
+			D_OP(op_call_near);
 
 			n = *pc++;                      // get argument count
 
@@ -650,6 +666,7 @@ bool Thread::interpret(void) {
 			break;
 
 		case op_call_far:                   // call function in other seg
+			D_OP(op_call_far);
 
 			n = *pc++;                      // get argument count
 
@@ -673,6 +690,11 @@ bool Thread::interpret(void) {
 
 		case op_ccall:                      // call C function
 		case op_ccall_v:                    // call C function
+			if (op == op_ccall)
+				D_OP(op_ccall);
+			else
+				D_OP(op_call_v);
+
 			n = *pc++;                      // get argument count
 			IMMED_WORD(w);                  // get function number
 			if (w < 0 || w >= globalCFuncs.numEntries)
@@ -697,6 +719,11 @@ bool Thread::interpret(void) {
 
 		case op_call_member:                // call member function
 		case op_call_member_v:              // call member function (void)
+			if (op == op_call_member)
+				D_OP(op_call_member);
+			else
+				D_OP(op_call_member_v);
+
 			n = *pc++;                      // get argument count
 			w = *pc++;                      // index of member function
 
@@ -803,36 +830,37 @@ bool Thread::interpret(void) {
 			break;
 
 		case op_jmp_true_v:
-
+			D_OP(op_jmp_true_v);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack++ != 0) BRANCH(w);    // if stack is non-zero, jump
 			break;
 
 		case op_jmp_false_v:
-
+			D_OP(op_jmp_false_v);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack++ == 0) BRANCH(w);    // if stack is zero, jump
 			break;
 
 		case op_jmp_true:
-
+			D_OP(op_true);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack != 0) BRANCH(w);      // if stack is non-zero. jump
 			break;
 
 		case op_jmp_false:
-
+			D_OP(op_false);
 			IMMED_WORD(w);               // pick up word after address
 			if (*stack == 0) BRANCH(w);      // if stack is zero, jump
 			break;
 
 		case op_jmp:
-
+			D_OP(op_jmp);
 			IMMED_WORD(w);               // pick up word after address
 			BRANCH(w);                   // jump relative to module
 			break;
 
 		case op_jmp_switch:
+			D_OP(op_jmp_switch);
 			IMMED_WORD(n);                  // n = number of cases
 			w = *stack++;                   // w = value on stack
 			{
@@ -857,6 +885,10 @@ bool Thread::interpret(void) {
 
 		case op_jmp_seedrandom:             // seeded random jump
 		case op_jmp_random:                 // random jump
+			if (op == op_jmp_seedrandom)
+				D_OP(op_jmp_seedrandom);
+			else
+				D_OP(op_random);
 
 			if (op == op_jmp_random) {
 				IMMED_WORD(n);              // n = number of cases
@@ -890,32 +922,39 @@ bool Thread::interpret(void) {
 			break;
 
 		case op_negate:
+			D_OP(op_negate);
 			*stack = - *stack;
 			break;   // negate TOS
 		case op_not:
+			D_OP(op_not);
 			*stack = ! *stack;
 			break;   // not TOS
 		case op_compl:
+			D_OP(op_compl);
 			*stack = ~ *stack;
 			break;   // complement TOS
 
 		case op_inc_v:
+			D_OP(op_inc_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr += 1;           // bump value by one
 			break;
 
 		case op_dec_v:
+			D_OP(op_dec_v);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*(uint16 *)addr -= 1;           // bump value by one
 			break;
 
 		case op_postinc:
+			D_OP(op_postinc);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;     // get integer from address
 			*(uint16 *)addr += 1;           // bump value by one
 			break;
 
 		case op_postdec:
+			D_OP(op_postdec);
 			addr = byteAddress(this, &pc);   // get address of integer
 			*--stack = *(uint16 *)addr;     // get integer from address
 			*(uint16 *)addr -= 1;           // bump value by one
@@ -927,78 +966,97 @@ bool Thread::interpret(void) {
 		//  dropped variable.
 
 		case op_add:
+			D_OP(op_add);
 			w = (stack[1] +  stack[0]);
 			*++stack = w;
 			break;
 		case op_sub:
+			D_OP(op_sub);
 			w = (stack[1] -  stack[0]);
 			*++stack = w;
 			break;
 		case op_mul:
+			D_OP(op_mul);
 			w = (stack[1] *  stack[0]);
 			*++stack = w;
 			break;
 		case op_div:
+			D_OP(op_div);
 			w = (stack[1] /  stack[0]);
 			*++stack = w;
 			break;
 		case op_mod:
+			D_OP(op_mod);
 			w = (stack[1] %  stack[0]);
 			*++stack = w;
 			break;
 		case op_eq:
+			D_OP(op_eq);
 			w = (stack[1] == stack[0]);
 			*++stack = w;
 			break;
 		case op_ne:
+			D_OP(op_ne);
 			w = (stack[1] != stack[0]);
 			*++stack = w;
 			break;
 		case op_gt:
+			D_OP(op_gt);
 			w = (stack[1] >  stack[0]);
 			*++stack = w;
 			break;
 		case op_lt:
+			D_OP(op_lt);
 			w = (stack[1] <  stack[0]);
 			*++stack = w;
 			break;
 		case op_ge:
+			D_OP(op_ge);
 			w = (stack[1] >= stack[0]);
 			*++stack = w;
 			break;
 		case op_le:
+			D_OP(op_le);
 			w = (stack[1] <= stack[0]);
 			*++stack = w;
 			break;
 		case op_rsh:
+			D_OP(op_rsh);
 			w = (stack[1] >> stack[0]);
 			*++stack = w;
 			break;
 		case op_lsh:
+			D_OP(op_lsh);
 			w = (stack[1] << stack[0]);
 			*++stack = w;
 			break;
 		case op_and:
+			D_OP(op_and);
 			w = (stack[1] &  stack[0]);
 			*++stack = w;
 			break;
 		case op_or:
+			D_OP(op_or);
 			w = (stack[1] |  stack[0]);
 			*++stack = w;
 			break;
 		case op_xor:
+			D_OP(op_xor);
 			w = (stack[1] ^  stack[0]);
 			*++stack = w;
 			break;
 		case op_land:
+			D_OP(op_land);
 			w = (stack[1] && stack[0]);
 			*++stack = w;
 			break;
 		case op_lor:
+			D_OP(op_lor);
 			w = (stack[1] || stack[0]);
 			*++stack = w;
 			break;
 		case op_lxor:
+			D_OP(op_lxor);
 			w = (stack[1] && !stack[0]) || (!stack[1] && stack[0]);
 			*++stack = w;
 			break;
