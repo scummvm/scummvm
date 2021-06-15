@@ -288,6 +288,7 @@ MODULE_OBJS = \
 	plugins/plugin_object_reader.o \
 	plugins/ags_agi/ags_agi.o \
 	plugins/ags_blend/ags_blend.o \
+	plugins/ags_clipboard/ags_clipboard.o \
 	plugins/ags_controller/ags_controller.o \
 	plugins/ags_creditz/ags_creditz.o \
 	plugins/ags_creditz/ags_creditz1.o \

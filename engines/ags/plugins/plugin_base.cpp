@@ -24,6 +24,7 @@
 #include "ags/plugins/plugin_base.h"
 #include "ags/plugins/ags_agi/ags_agi.h"
 #include "ags/plugins/ags_blend/ags_blend.h"
+#include "ags/plugins/ags_clipboard/ags_clipboard.h"
 #include "ags/plugins/ags_controller/ags_controller.h"
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
@@ -68,6 +69,9 @@ void *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSBlend"))
 		return new AGSBlend::AGSBlend();
+
+	if (fname.equalsIgnoreCase("AGSClipboard"))
+		return new AGSClipboard::AGSClipboard();
 
 	if (fname.equalsIgnoreCase("AGSController"))
 		return new AGSController::AGSController();
