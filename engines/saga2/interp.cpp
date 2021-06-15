@@ -499,6 +499,22 @@ char *objectName(int16 segNum, uint16 segOff) {
 	return "???";
 }
 
+static void print_stack(int16 *stackBase, int16 *stack) {
+	int16 *end = (int16 *)((byte *)stackBase + kStackSize - initialStackFrameSize);
+	int size = end - stack;
+
+	if (size > 10)
+		end = stack + 10;
+
+	debugCN(2, kDebugScripts, "stack size: %d: [", size);
+	for (int16 *i = stack; i <= end; i++)
+		debugCN(2, kDebugScripts, "%d ", *i);
+	if (size > 10)
+		debugCN(2, kDebugScripts, "... ");
+
+	debugC(2, kDebugScripts, "]");
+}
+
 #define D_OP(x) debugC(1, kDebugScripts, "[%04ld]: %s", (pc - codeSeg), #x)
 
 bool Thread::interpret(void) {
@@ -516,6 +532,8 @@ bool Thread::interpret(void) {
 	thisThread = this;                          // set current thread address
 
 	for (instruction_count = 0; instruction_count < maxTimeSlice; instruction_count++) {
+		print_stack((int16 *)stackBase, stack);
+
 		switch (op = *pc++) {
 		case op_dup:
 			D_OP(op_dup);
