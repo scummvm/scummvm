@@ -305,6 +305,7 @@ MODULE_OBJS = \
 	plugins/ags_parallax/ags_parallax.o \
 	plugins/ags_snow_rain/ags_snow_rain.o \
 	plugins/ags_snow_rain/weather.o \
+	plugins/ags_sock/ags_sock.o \
 	plugins/ags_sprite_font/ags_sprite_font.o \
 	plugins/ags_sprite_font/ags_sprite_font_clifftop.o \
 	plugins/ags_sprite_font/character_entry.o \

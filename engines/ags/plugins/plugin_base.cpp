@@ -37,6 +37,7 @@
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_shell/ags_shell.h"
 #include "ags/plugins/ags_snow_rain/ags_snow_rain.h"
+#include "ags/plugins/ags_sock/ags_sock.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font.h"
 #include "ags/plugins/ags_sprite_font/ags_sprite_font_clifftop.h"
 #include "ags/plugins/ags_tcp_ip/ags_tcp_ip.h"
@@ -99,6 +100,9 @@ void *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSSnowRain") || fname.equalsIgnoreCase("ags_snowrain"))
 		return new AGSSnowRain::AGSSnowRain();
+
+	if (fname.equalsIgnoreCase("AGSSock"))
+		return new AGSSock::AGSSock();
 
 	if ((fname.equalsIgnoreCase("AGSSpriteFont") && version == ::AGS::kClifftopGames))
 		return new AGSSpriteFont::AGSSpriteFontClifftopGames();
