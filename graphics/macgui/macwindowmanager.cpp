@@ -266,6 +266,15 @@ void MacWindowManager::setScreen(int w, int h) {
 	drawDesktop();
 }
 
+void MacWindowManager::resizeScreen(int w, int h) {
+	_screenDims = Common::Rect(w, h);
+	if (_screen)
+		_screen->free();
+	else
+		_screen = new ManagedSurface();
+	_screen->create(w, h, _pixelformat);
+}
+
 void MacWindowManager::setMode(uint32 mode) {
 	_mode = mode;
 
