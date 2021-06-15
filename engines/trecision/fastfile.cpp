@@ -99,7 +99,7 @@ Common::SeekableReadStream *FastFile::createReadStreamForMember(const Common::St
 	const FileEntry *entry = getEntry(name);
 	if (entry) {
 		uint32 size = (entry + 1)->offset - entry->offset;
-		if ((int32)(entry->offset + size) < _stream->size()) {
+		if ((int32)(entry->offset + size) <= _stream->size()) {
 			// Load data from fast file
 			stream = new Common::SeekableSubReadStream(_stream, entry->offset, entry->offset + size);
 		}
