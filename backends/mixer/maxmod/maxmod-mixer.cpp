@@ -70,7 +70,7 @@ void MaxModMixerManager::init() {
 	_stream.callback = on_stream_request;
 	_stream.format = MM_STREAM_16BIT_STEREO;
 	_stream.timer = MM_TIMER2;
-	_stream.manual = 0;
+	_stream.manual = 1;
 
 	mmStreamOpen( &_stream );
 
@@ -89,6 +89,11 @@ int MaxModMixerManager::resumeAudio() {
 	mmStreamOpen( &_stream );
 	_audioSuspended = false;
 	return 0;
+}
+
+void MaxModMixerManager::updateAudio() {
+	if (!_audioSuspended)
+		mmStreamUpdate();
 }
 
 #endif
