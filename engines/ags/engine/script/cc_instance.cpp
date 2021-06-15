@@ -239,15 +239,14 @@ ccInstance *ccInstance::Fork() {
 }
 
 void ccInstance::Abort() {
-	if ((this != nullptr) && (pc != 0))
+	if (pc != 0) {
 		flags |= INSTF_ABORTED;
+	}
 }
 
 void ccInstance::AbortAndDestroy() {
-	if (this != nullptr) {
-		Abort();
-		flags |= INSTF_FREE;
-	}
+	Abort();
+	flags |= INSTF_FREE;
 }
 
 #define ASSERT_STACK_SPACE_AVAILABLE(N) \
@@ -1066,7 +1065,7 @@ int ccInstance::Run(int32_t curpc) {
 					    reg1.StcArr->GetDynamicManager());
 					break;
 				}
-			// fall-through intended
+			// fall through
 			default:
 				cc_error("internal error: SCMD_CALLOBJ argument is not an object of built-in or user-defined type");
 				return -1;

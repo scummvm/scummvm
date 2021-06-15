@@ -45,7 +45,9 @@ struct MouseCursor {
 	short view;
 	char  name[10];
 	char  flags;
+
 	MouseCursor();
+	void clear();
 
 	void ReadFromFile(Shared::Stream *in);
 	void WriteToFile(Shared::Stream *out);

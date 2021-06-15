@@ -656,6 +656,7 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			if (timesrun[0] > 0)
 				break;
 			timesrun[0] ++;
+			// fall through
 		case 3:  // Add score
 			GiveScore(IPARAM1);
 			break;

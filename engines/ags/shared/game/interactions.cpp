@@ -25,6 +25,7 @@
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/math.h"
+#include "common/util.h"
 
 namespace AGS3 {
 
@@ -35,6 +36,12 @@ namespace Shared {
 
 InteractionValue::InteractionValue() {
 	Type = kInterValLiteralInt;
+	Value = 0;
+	Extra = 0;
+}
+
+void InteractionValue::clear() {
+	Type = kInterValInvalid;
 	Value = 0;
 	Extra = 0;
 }
@@ -71,7 +78,7 @@ void InteractionCommand::Assign(const InteractionCommand &ic, InteractionCommand
 
 void InteractionCommand::Reset() {
 	Type = 0;
-	memset(Data, 0, sizeof(Data));
+	for (uint8 i = 0; i < ARRAYSIZE(Data); i++) Data[i].clear();
 	Children.reset();
 	Parent = nullptr;
 }

@@ -22,18 +22,25 @@
 
 #include "ags/shared/ac/mouse_cursor.h"
 #include "ags/shared/util/stream.h"
+#include "common/util.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Stream;
 
 MouseCursor::MouseCursor() {
+	clear();
+}
+
+void MouseCursor::clear() {
 	pic = 2054;
 	hotx = 0;
 	hoty = 0;
-	name[0] = 0;
-	flags = 0;
 	view = -1;
+	for (uint8 i = 0; i < ARRAYSIZE(name); i++) {
+		name[i] = 0;
+	}
+	flags = 0;
 }
 
 void MouseCursor::ReadFromFile(Stream *in) {

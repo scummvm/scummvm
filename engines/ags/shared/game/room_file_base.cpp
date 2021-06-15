@@ -48,6 +48,8 @@ String GetRoomFileErrorText(RoomFileErrorType err) {
 		return "Unknown block type.";
 	case kRoomFileErr_OldBlockNotSupported:
 		return "Block type is too old and not supported by this version of the engine.";
+	case kRoomFileErr_BlockDataOverlapping:
+		return "Block data overlapping.";
 	case kRoomFileErr_IncompatibleEngine:
 		return "This engine cannot handle requested room content.";
 	case kRoomFileErr_ScriptLoadFailed:
@@ -88,6 +90,7 @@ HRoomFileError ReadRoomHeader(RoomDataSource &src) {
 
 String GetRoomBlockName(RoomFileBlock id) {
 	switch (id) {
+	case kRoomFblk_None: return "None";
 	case kRoomFblk_Main: return "Main";
 	case kRoomFblk_Script: return "TextScript";
 	case kRoomFblk_CompScript: return "CompScript";
@@ -97,6 +100,9 @@ String GetRoomBlockName(RoomFileBlock id) {
 	case kRoomFblk_CompScript3: return "CompScript3";
 	case kRoomFblk_Properties: return "Properties";
 	case kRoomFblk_ObjectScNames: return "ObjScNames";
+	case kRoomFile_EOF: return "EOF";
+	default:
+		break;
 	}
 	return "unknown";
 }
