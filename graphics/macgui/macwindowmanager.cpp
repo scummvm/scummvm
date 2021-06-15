@@ -397,12 +397,13 @@ void MacWindowManager::disableScreenCopy() {
 		_screenCopyPauseToken = nullptr;
 	}
 
-	if (_screen)
-		*_screen = *_screenCopy; // restore screen
-
 	// add a check, we may not get the _screenCopy because we may not activate the menu
 	if (!_screenCopy)
 		return;
+
+	if (_screen)
+		*_screen = *_screenCopy; // restore screen
+
 	g_system->copyRectToScreen(_screenCopy->getBasePtr(0, 0), _screenCopy->pitch, 0, 0, _screenCopy->w, _screenCopy->h);
 }
 
