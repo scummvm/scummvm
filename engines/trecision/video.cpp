@@ -565,7 +565,7 @@ void AnimManager::drawSmkActionFrame() {
 	if (_animRect.width() > 0 && _animRect.height() > 0) {
 		Graphics::Surface anim = frame->getSubArea(_animRect);
 		_vm->_graphicsMgr->blitToScreenBuffer(&anim, _animRect.left, _animRect.top + TOP, palette, false);
-		_vm->_graphicsMgr->addDirtyRect(_animRect, true, true);
+		_vm->_graphicsMgr->addDirtyRect(_animRect, true);
 	}
 }
 

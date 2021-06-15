@@ -52,7 +52,6 @@ class GraphicsManager {
 	uint8 *_font;
 
 	Common::List<Common::Rect> _dirtyRects;
-	Common::Rect *_actorRect;
 	Common::Rect _drawRect;
 	Common::Rect _drawObjRect;
 	int _drawObjIndex;
@@ -98,7 +97,7 @@ public:
 	void pixelAliasing(uint16 x, uint16 y);
 	void dissolve();
 
-	void addDirtyRect(Common::Rect rect, bool translateRect, bool updateActorRect = false);
+	void addDirtyRect(Common::Rect rect, bool translateRect);
 
 	uint16 getCharWidth(byte character);
 	void drawChar(byte curChar, uint16 textColor, uint16 line, Common::Rect rect, Common::Rect subtitleRect, uint16 inc, Graphics::Surface *externalSurface);

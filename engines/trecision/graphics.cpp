@@ -45,7 +45,6 @@ GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr)
 	_drawObjRect = Common::Rect(0, 0, 0, 0);
 	_drawObjIndex = -1;
 	_drawMask = false;
-	_actorRect = nullptr;
 	for (int i = 0; i < 3; ++i)
 		_bitMask[i] = 0;
 }
@@ -103,14 +102,11 @@ bool GraphicsManager::init() {
 	return true;
 }
 
-void GraphicsManager::addDirtyRect(Common::Rect rect, bool translateRect, bool updateActorRect) {
+void GraphicsManager::addDirtyRect(Common::Rect rect, bool translateRect) {
 	if (translateRect)
 		rect.translate(0, TOP);
 
 	_dirtyRects.push_back(rect);
-
-	if (updateActorRect)
-		_actorRect = &_dirtyRects.back();
 }
 
 void GraphicsManager::drawObj() {
@@ -498,7 +494,6 @@ void GraphicsManager::dissolve() {
 void GraphicsManager::paintScreen(bool flag) {
 	_vm->_animTypeMgr->next();
 
-	_actorRect = nullptr;
 	_dirtyRects.clear();
 	_vm->_flagPaintCharacter = true; // always redraws the character
 
@@ -515,7 +510,7 @@ void GraphicsManager::paintScreen(bool flag) {
 		_drawMask = false;
 		drawObj();
 
-		addDirtyRect(_drawObjRect, true, true);
+		addDirtyRect(_drawObjRect, true);
 	} else if (_vm->_animMgr->_animRect.left != MAXX) {
 		_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
 		_drawObjRect = _vm->_animMgr->_animRect;
@@ -523,7 +518,7 @@ void GraphicsManager::paintScreen(bool flag) {
 		_drawMask = false;
 		drawObj();
 
-		addDirtyRect(_drawObjRect, true, true);
+		addDirtyRect(_drawObjRect, true);
 	}
 
 	// If there's text to remove
@@ -668,10 +663,10 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 		int y2 = _vm->_actor->_lim[3];
 
 		if (x2 > x1 && y2 > y1) {
-			// enlarge the rectangle of the character
+			// enlarge the last dirty rectangle with the actor's rectangle
 			Common::Rect l(x1, y1, x2, y2);
-			if (_actorRect)
-				_actorRect->extend(l);
+			if (!_dirtyRects.empty())
+				_dirtyRects.back().extend(l);
 
 			_vm->_renderer->resetZBuffer(x1, y1, x2, y2);
 		}
