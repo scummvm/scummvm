@@ -1415,8 +1415,8 @@ IMPLEMENT_OPCODE(PlaySpeechScene2)
 		cmd->param5 = 2;
 
 		if (cmd->param7) {
-			getSharedData()->setFlag(kFlag1, false);
-			getSharedData()->setFlag(kFlag2, false);
+			getSharedData()->setFlag(kFlag1, true);
+			getSharedData()->setFlag(kFlag2, true);
 		}
 
 		_processNextEntry = true;
