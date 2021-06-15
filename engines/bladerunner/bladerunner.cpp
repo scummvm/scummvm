@@ -1365,14 +1365,23 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	if (_vqaIsPlaying && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
+	if (_vqaIsPlaying && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+		// Note: Do not use Return key to skip a VQA cutscene - Original also only uses the Esc key here
+		//       While no glitches were attirubuted to using Return for skipping cutscenes
+		//       it's ultimately better to have the original behavior here
+		//       and not have a key skipping multiple stuff at the same time.
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
 
 		return;
 	}
 
-	if (_actorIsSpeaking && (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN)) {
+	if (_actorIsSpeaking && event.kbd.keycode == Common::KEYCODE_RETURN) {
+		// Note: Do not use Esc key to skip dialogue - Original also only uses the Return key here
+		//       Using Esc to skip dialogue causes a few bad glitches such as:
+		//        - Kia dialogue will blink fast after last line spoken is skipped
+		//        - In certain sequences (eg. Zuben dumping soup on McCoy) the frames won't play correctly
+		//          and that may lead to dead end situation (for the Zuben example, the scene is locked with no exits enabled).
 		_actorSpeakStopIsRequested = true;
 		_actorIsSpeaking = false;
 
