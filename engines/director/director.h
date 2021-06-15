@@ -270,6 +270,8 @@ private:
 	Graphics::MacPatterns _director3QuickDrawPatterns;
 
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
+
+	Graphics::ManagedSurface *_surface;
 };
 
 extern DirectorEngine *g_director;

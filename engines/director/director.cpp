@@ -96,6 +96,8 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_playbackPaused = false;
 	_skipFrameAdvance = false;
 	_centerStage = true;
+
+	_surface = nullptr;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -103,6 +105,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _soundManager;
 	delete _lingo;
 	delete _wm;
+	delete _surface;
 
 	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
 		delete it->_value;
@@ -161,7 +164,8 @@ Common::Error DirectorEngine::run() {
 	if (!debugChannelSet(-1, kDebugDesktop))
 		_stage->disableBorder();
 
-	_wm->setScreen(1, 1);
+	_surface = new Graphics::ManagedSurface(1, 1);
+	_wm->setScreen(_surface);
 	_wm->addWindowInitialized(_stage);
 	_wm->setActiveWindow(_stage->getId());
 	setPalette(-1);
