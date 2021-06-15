@@ -23,9 +23,8 @@
 #ifndef DIRECTOR_LINGO_OBJECT_H
 #define DIRECTOR_LINGO_OBJECT_H
 
-// FIXME: Basic Lingo types like Datum should probably be in a separate, smaller header
+#include "director/director.h"
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

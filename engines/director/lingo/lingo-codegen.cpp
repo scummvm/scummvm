@@ -49,7 +49,6 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-object.h"
-#include "director/lingo/lingo-gr.h"
 
 namespace Director {
 

@@ -38,7 +38,6 @@
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
-#include "director/lingo/lingo-gr.h"
 
 
 namespace Director {

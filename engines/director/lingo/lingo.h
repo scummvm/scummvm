@@ -25,6 +25,7 @@
 
 #include "common/hash-ptr.h"
 #include "common/hash-str.h"
+#include "common/str-array.h"
 
 #include "director/types.h"
 
@@ -44,6 +45,7 @@ struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
 class AbstractObject;
+class Cast;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
@@ -109,7 +111,7 @@ struct Symbol {	/* symbol table entry */
 };
 
 struct Datum {	/* interpreter stack type */
-	int type;
+	DatumType type;
 
 	union {
 		int	i;				/* INT, ARGC, ARGCNORET */

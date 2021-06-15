@@ -332,6 +332,25 @@ enum FileVersion {
 	kFileVer1201 = 0x79F
 };
 
+enum DatumType {
+	ARRAY,
+	ARGC,
+	ARGCNORET,
+	CASTREF,
+	CHUNKREF,
+	FIELDREF,
+	FLOAT,
+	INT,
+	OBJECT,
+	PARRAY,
+	POINT,
+	STRING,
+	SYMBOL,
+	VAR,
+	VOID,
+	RECT
+};
+
 struct Datum;
 struct PCell;
 typedef Common::Array<Datum> DatumArray;
