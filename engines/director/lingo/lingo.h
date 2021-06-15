@@ -44,17 +44,12 @@ struct TheEntityField;
 struct LingoArchive;
 struct LingoV4Bytecode;
 struct LingoV4TheEntity;
+struct Node;
 class AbstractObject;
 class Cast;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
-
-enum LexerDefineState {
-	kStateNone,
-	kStateInDef,
-	kStateInArgs
-};
 
 enum VarType {
 	kVarArgument,
@@ -238,11 +233,6 @@ struct LingoArchive {
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };
 
-struct RepeatBlock {
-	Common::Array<uint32> exits;
-	Common::Array<uint32> nexts;
-};
-
 class Lingo {
 
 public:
@@ -280,10 +270,6 @@ public:
 
 	// lingo-patcher.cpp
 	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenumber);
-
-	// lingo.cpp
-private:
-	const char *findNextDefinition(const char *s);
 
 	// lingo-events.cpp
 private:
@@ -396,19 +382,19 @@ public:
 	void codeLabel(int label);
 	int codeString(const char *s);
 	void processIf(int toplabel, int endlabel);
+	void registerMethodVar(const Common::String &name, VarType type);
 	void varCreate(const Common::String &name, bool global, DatumHash *localvars = nullptr);
 
 	LingoArchive *_assemblyArchive;
 	ScriptContext *_assemblyContext;
+	Node *_assemblyAST;
 	ScriptData *_currentAssembly;
-	LexerDefineState _indef;
-	LexerDefineState _indefStore;
+	bool _indef;
 	uint _linenumber;
 	uint _colnumber;
 	uint _bytenumber;
 	const char *_lines[3];
 	bool _inFactory;
-	Common::Array<RepeatBlock *> _repeatStack;
 
 	Common::Array<Common::String *> _argstack;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
@@ -442,8 +428,6 @@ public:
 	Common::String _floatPrecisionFormat;
 
 	bool _hadError;
-
-	bool _inCond;
 
 private:
 	int parse(const char *code);

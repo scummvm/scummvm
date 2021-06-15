@@ -23,6 +23,7 @@ MODULE_OBJS = \
 	util.o \
 	window.o \
 	lingo/lingo.o \
+	lingo/lingo-ast.o \
 	lingo/lingo-builtins.o \
 	lingo/lingo-bytecode.o \
 	lingo/lingo-code.o \

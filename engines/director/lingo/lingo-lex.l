@@ -36,6 +36,7 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
 
@@ -134,7 +135,7 @@ end({spc}+{identifier})?	{
 
 		yylval.s = new Common::String(ptr);
 
-		return ENDCLAUSE;
+		return tENDCLAUSE;
 	}
 ^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
@@ -156,7 +157,7 @@ movie		{ count(); return tMOVIE; }
 next		{ count(); return tNEXT; }
 not			{ count(); return tNOT; }
 of			{ count(); return tOF; }
-on			{ count(); return tON }		// D3
+on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
 or			{ count(); return tOR; }
 play{spc}+frame	{ count(); return tPLAY; }
@@ -193,16 +194,16 @@ the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
 			yylval.e[0] = kTheMenuItems;
 			yylval.e[1] = g_lingo->_theEntityFields[key]->field;
 
-			return THEMENUITEMSENTITY;
+			return tTHEMENUITEMSENTITY;
 		}
 
 		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
 
 		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
-			return THEFUNCINOF;
+			return tTHEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
-			return LEXERROR;
+			return tLEXERROR;
 		}
 	}
 the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
@@ -221,10 +222,10 @@ the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
 		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
 
 		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
-			return THEFUNCINOF;
+			return tTHEFUNCINOF;
 		} else {
 			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
-			return LEXERROR;
+			return tLEXERROR;
 		}
 	}
 the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
@@ -251,12 +252,12 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 
 			if (!g_lingo->_theEntityFields.contains(field)) {
 				warning("LEXER: Unhandled the field %s of %s", field.c_str(), ptr);
-				return LEXERROR;
+				return tLEXERROR;
 			}
 
 			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
 				warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
-				return LEXERROR;
+				return tLEXERROR;
 			}
 
 			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
@@ -264,12 +265,12 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 
 			// the <field> of menuItem <expr>" of menu <expr>
 			if (g_lingo->_theEntityFields[field]->entity == kTheMenuItem)
-				return THEMENUITEMENTITY;
+				return tTHEMENUITEMENTITY;
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return THEENTITYWITHID;
+				return tTHEENTITYWITHID;
 			else
-				return THEENTITY;
+				return tTHEENTITY;
 		} else {
 			if (g_director->getVersion() >= 400) {
 				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
@@ -277,7 +278,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 				yylval.objectprop.obj = new Common::String(ptr);
 				yylval.objectprop.prop = new Common::String(field);
 
-				return THEOBJECTPROP;
+				return tTHEOBJECTPROP;
 			} else if (g_lingo->_builtinFuncs.contains(field)) { // Let's hope they don't do it in D4+
 				if (g_lingo->_builtinFuncs[field].nargs == 1 && g_lingo->_builtinFuncs[field].maxArgs == 1) {
 					yylval.s = new Common::String(field);
@@ -293,7 +294,7 @@ the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
 
 					unput(' '); unput('f'); unput('o');
 
-					return THEFUNC;
+					return tTHEFUNC;
 				}
 			}
 		}
@@ -318,21 +319,21 @@ the{spc}+[[:alpha:]]+{spc}+(date|time)		{
 
 		if (!g_lingo->_theEntityFields.contains(field)) {
 			warning("LEXER: Unhandled the field %s", ptr);
-			return LEXERROR;
+			return tLEXERROR;
 		}
 
 		if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
 			warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
-			return LEXERROR;
+			return tLEXERROR;
 		}
 
 		yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
 		yylval.e[1] = g_lingo->_theEntityFields[field]->field;
 
 		if (g_lingo->_theEntities[ptr]->hasId)
-			return THEENTITYWITHID;
+			return tTHEENTITYWITHID;
 		else
-			return THEENTITY;
+			return tTHEENTITY;
 	}
 the{spc}+[[:alpha:]]+		{
 		count();
@@ -346,15 +347,15 @@ the{spc}+[[:alpha:]]+		{
 			yylval.e[1] = 0;	// No field
 
 			if (g_lingo->_theEntities[ptr]->hasId)
-				return THEENTITYWITHID;
+				return tTHEENTITYWITHID;
 			else
-				return THEENTITY;
+				return tTHEENTITY;
 		}
 
 		if (g_lingo->_builtinFuncs.contains(ptr)) {
 			if (g_lingo->_builtinFuncs[ptr].nargs == 1 && g_lingo->_builtinFuncs[ptr].maxArgs == 1) {
 				yylval.s = new Common::String(ptr);
-				return THEFUNC;
+				return tTHEFUNC;
 			}
 		}
 
@@ -381,13 +382,13 @@ word			{ count(); return tWORD; }
 		count();
 		yylval.s = new Common::String(yytext);
 
-		return VARID;
+		return tVARID;
 	}
-{constfloat}	{ count(); yylval.f = atof(yytext); return FLOAT; }
-{constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return INT; }
+{constfloat}	{ count(); yylval.f = atof(yytext); return tFLOAT; }
+{constinteger}	{ count(); yylval.i = strtol(yytext, NULL, 10); return tINT; }
 {operator}		{ count(); return *yytext; }
 {newline}		{ count(); return '\n'; }
-{conststring}	{ count(); yylval.s = cleanupString(&yytext[1]); yylval.s->deleteLastChar(); return STRING; }
+{conststring}	{ count(); yylval.s = cleanupString(&yytext[1]); yylval.s->deleteLastChar(); return tSTRING; }
 .				{ count(); }
 
 %%
