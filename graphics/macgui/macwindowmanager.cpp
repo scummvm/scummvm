@@ -188,6 +188,7 @@ MacWindowManager::MacWindowManager(uint32 mode, MacPatterns *patterns) {
 	_colorGreen2 = kColorGreen2;
 
 	_fullRefresh = true;
+	_inEditableArea = false;
 
 	if (mode & kWMMode32bpp)
 		_pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -839,11 +840,16 @@ bool MacWindowManager::processEvent(Common::Event &event) {
 				 _activeWidget->getDimensions().contains(event.mouse.x, event.mouse.y))) {
 			if (_cursorType != kMacCursorBeam) {
 				_tempType = _cursorType;
+				_inEditableArea = true;
 				replaceCursor(kMacCursorBeam);
 			}
 		} else {
-			if (_cursorType == kMacCursorBeam)
+			// here, we use _inEditableArea is distinguish whether the current Beam cursor is set by director or ourself
+			// if we are not in the editable area but we are drawing the Beam cursor, then the cursor is set by director, thus we don't replace it
+			if (_cursorType == kMacCursorBeam && _inEditableArea) {
 				replaceCursor(_tempType, _cursor);
+				_inEditableArea = false;
+			}
 		}
 	}
 
