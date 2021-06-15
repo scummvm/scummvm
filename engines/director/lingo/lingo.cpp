@@ -36,6 +36,7 @@
 #include "director/util.h"
 
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-object.h"
@@ -145,6 +146,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
 
+	_assemblyAST = nullptr;
 	_assemblyArchive = nullptr;
 	_currentAssembly = nullptr;
 	_assemblyContext = nullptr;
@@ -153,8 +155,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_globalCounter = 0;
 	_pc = 0;
 	_abort = false;
-	_indef = kStateNone;
-	_indef = kStateNone;
+	_indef = false;
 	_expectError = false;
 	_caughtError = false;
 
@@ -164,7 +165,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_hadError = false;
 
 	_inFactory = false;
-	_inCond = false;
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
@@ -249,43 +249,6 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	return Symbol();
 }
 
-const char *Lingo::findNextDefinition(const char *s) {
-	const char *res = s;
-
-	while (*res) {
-		while (*res && (*res == ' ' || *res == '\t' || *res == '\n'))
-			res++;
-
-		if (!*res)
-			return NULL;
-
-		if (!scumm_strnicmp(res, "macro ", 6)) {
-			debugC(1, kDebugCompile, "findNextDefinition(): See 'macros ' construct");
-			return res;
-		}
-
-		if (!scumm_strnicmp(res, "on ", 3)) {
-			debugC(1, kDebugCompile, "findNextDefinition(): See 'on ' construct");
-			return res;
-		}
-
-		if (!scumm_strnicmp(res, "factory ", 8)) {
-			debugC(1, kDebugCompile, "findNextDefinition(): See 'factory ' construct");
-			return res;
-		}
-
-		if (!scumm_strnicmp(res, "method ", 7)) {
-			debugC(1, kDebugCompile, "findNextDefinition(): See 'method ' construct");
-			return res;
-		}
-
-		while (*res && *res != '\n')
-			res++;
-	}
-
-	return NULL;
-}
-
 void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const char *scriptName) {
 	debugC(1, kDebugCompile, "Add code for type %s(%d) with id %d in '%s%s'\n"
 			"***********\n%s\n\n***********", scriptType2str(type), type, id, g_director->getCurrentPath().c_str(), cast->getMacName().c_str(), code);
@@ -319,14 +282,13 @@ ScriptContext *Lingo::compileAnonymous(const char *code) {
 
 ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
 	_assemblyArchive = archive;
+	_assemblyAST = nullptr;
 	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
 	_currentAssembly = new ScriptData;
 
 	_methodVars = new VarTypeHash;
 	_linenumber = _colnumber = 1;
 	_hadError = false;
-
-	const char *begin, *end;
 
 	if (!strncmp(code, "menu:", 5) || scumm_strcasestr(code, "\nmenu:")) {
 		debugC(1, kDebugCompile, "Parsing menu");
@@ -338,52 +300,14 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	// Preprocess the code for ease of the parser
 	Common::String codeNorm = codePreprocessor(code, archive, type, id);
 	code = codeNorm.c_str();
-	begin = code;
 
-	// macros and factories have conflicting grammar. Thus we ease life for the parser.
-	if ((end = findNextDefinition(code))) {
-		do {
-			Common::String chunk(begin, end);
+	// Parse the Lingo and build an AST
+	parse(code);
 
-			if (chunk.hasPrefixIgnoreCase("factory")) {
-				_inFactory = true;
-				_assemblyContext = new ScriptContext(scriptName, archive, type, id);
-			} else if (chunk.hasPrefixIgnoreCase("method")) {
-				_inFactory = true;
-				// remain in factory context
-			} else if (chunk.hasPrefixIgnoreCase("macro") || chunk.hasPrefixIgnoreCase("on")) {
-				_inFactory = false;
-				_assemblyContext = mainContext;
-			} else {
-				_inFactory = false;
-				_assemblyContext = mainContext;
-			}
-
-			debugC(1, kDebugCompile, "Code chunk:\n#####\n%s#####", chunk.c_str());
-
-			parse(chunk.c_str());
-
-			if (debugChannelSet(3, kDebugCompile)) {
-				debugC(2, kDebugCompile, "<current code>");
-				uint pc = 0;
-				while (pc < _currentAssembly->size()) {
-					uint spc = pc;
-					Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
-					debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-				}
-				debugC(2, kDebugCompile, "<end code>");
-			}
-
-			begin = end;
-		} while ((end = findNextDefinition(begin + 1)));
-
-		_inFactory = false;
-		_assemblyContext = mainContext;
-
-		debugC(1, kDebugCompile, "Last code chunk:\n#####\n%s\n#####", begin);
+	// Generate bytecode
+	if (_assemblyAST) {
+		_assemblyAST->compile();
 	}
-
-	parse(begin);
 
 	// for D4 and above, there usually won't be any code left.
 	// all scoped methods will be defined and stored by the code parser
@@ -451,6 +375,8 @@ ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, Scri
 	delete _methodVars;
 	_methodVars = nullptr;
 	_currentAssembly = nullptr;
+	delete _assemblyAST;
+	_assemblyAST = nullptr;
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
 	return mainContext;

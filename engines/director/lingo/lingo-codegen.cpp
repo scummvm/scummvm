@@ -264,6 +264,17 @@ void Lingo::processIf(int toplabel, int endlabel) {
 	}
 }
 
+void Lingo::registerMethodVar(const Common::String &name, VarType type) {
+	if (!g_lingo->_methodVars->contains(name)) {
+		(*g_lingo->_methodVars)[name] = type;
+		if (type == kVarProperty || type == kVarInstance) {
+			g_lingo->_assemblyContext->_properties[name] = Datum();
+		} else if (type == kVarGlobal) {
+			g_lingo->varCreate(name, true);
+		}
+	}
+}
+
 void Lingo::varCreate(const Common::String &name, bool global, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
