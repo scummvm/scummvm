@@ -146,7 +146,7 @@ void PathFinding3D::findPath() {
 					}
 				} else if (_curPanel >= 0 && (b == _panel[_curPanel]._nearPanel1 || b == _panel[_curPanel]._nearPanel2)) {
 					// otherwise if it is near the finish panel
-					if (fabs(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
+					if (ABS(_pathNode[_numPathNodes - 1]._dist - dist) < EPSILON && b != _oldPanel && b != _curPanel) {
 						// and the distance is very small to the intersection
 						--inters;
 						--_numPathNodes;
