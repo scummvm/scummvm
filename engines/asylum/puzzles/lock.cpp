@@ -43,6 +43,7 @@ const int16 puzzleLockPolygons[16][2] = {
 
 PuzzleLock::PuzzleLock(AsylumEngine *engine) : Puzzle(engine) {
 	memset(&_frameIndexes, 0, sizeof(_frameIndexes));
+	_frameIndexes[0] = _frameIndexes[1] = _frameIndexes[2] = 4;
 	_incrementLock = false;
 	_counter = 0;
 	memset(&_ticks, 0, sizeof(_ticks));
