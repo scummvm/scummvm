@@ -1410,35 +1410,35 @@ void cleanupTileTasks(void) {
 //-----------------------------------------------------------------------
 //	Initialize map data
 
-TileBank::TileBank(hResContext *con, hResID id) {
-	const int tileInfoSize = 28;
-	int size = con->size(id);
-	int count = (size - 4) / tileInfoSize; // Skip 4 bytes (numTiles)
+TileBank::TileBank(Common::SeekableReadStream *stream) {
+	_numTiles = stream->readUint32LE();
+	_tileArray = new TileInfo[_numTiles];
 
-	if (!con->seek(id)) {
-		_numTiles = 0;
-		_tileArray = nullptr;
-		return;
-	}
-
-	_numTiles = con->readU32LE();
-	_tileArray = new TileInfo[count];
-	for (int i = 0; i < count; ++i) {
-		_tileArray[i].offset = con->readU32LE();
+	for (uint i = 0; i < _numTiles; ++i) {
+		_tileArray[i].offset = stream->readUint32LE();
 		TileAttrs *att = &_tileArray[i].attrs;
-		att->terrainHeight = con->readByte();
-		att->height = con->readByte();
-		att->terrainMask = con->readU16LE();
-		att->fgdTerrain = con->readByte();
-		att->bgdTerrain = con->readByte();
-		con->read(att->reserved0, 8);
-		att->maskRule = con->readByte();
-		att->altMask = con->readByte();
-		con->read(att->cornerHeight, 4);
-		att->cycleRange = con->readByte();
-		att->tileFlags = con->readByte();
-		att->reserved1 = con->readU16LE();
+		att->terrainHeight = stream->readByte();
+		att->height = stream->readByte();
+		att->terrainMask = stream->readUint16LE();
+		att->fgdTerrain = stream->readByte();
+		att->bgdTerrain = stream->readByte();
+		stream->read(att->reserved0, 8);
+		att->maskRule = stream->readByte();
+		att->altMask = stream->readByte();
+		stream->read(att->cornerHeight, 4);
+		att->cycleRange = stream->readByte();
+		att->tileFlags = stream->readByte();
+		att->reserved1 = stream->readUint16LE();
 	}
+}
+
+MapHeader::MapHeader(Common::SeekableReadStream *stream) {
+	size = stream->readSint16LE();
+	edgeType = stream->readSint16LE();
+	mapData = new uint16[size * size];
+
+	for (int i = 0; i < size * size; ++i)
+		mapData[i] = stream->readUint16LE();
 }
 
 static void readMetaTile(hResContext *con, MetaTile &til) {
@@ -1450,15 +1450,6 @@ static void readMetaTile(hResContext *con, MetaTile &til) {
 		til.stack[i] = con->readU16LE();
 
 	til.properties = con->readU32LE();
-}
-
-static void readMap(hResContext *con, MapHeader *map) {
-	map->size = con->readS16LE();
-	map->edgeType = con->readS16LE();
-	map->mapData = new uint16[map->size * map->size];
-
-	for (int i = 0; i < map->size * map->size; ++i)
-		map->mapData[i] = con->readU16LE();
 }
 
 static void readActiveItem(hResContext *con, ActiveItem &itm) {
@@ -1484,6 +1475,7 @@ static void readActiveItem(hResContext *con, ActiveItem &itm) {
 
 void initMaps(void) {
 	int16       i;
+	Common::SeekableReadStream *stream;
 	const int metaTileSize = 30;
 	const int tileRefSize = 4;
 	const int assocSize = 2;
@@ -1491,7 +1483,9 @@ void initMaps(void) {
 
 	//  Load all of the tile terrain banks
 	for (i = 0; i < maxBanks; i++) {
-		tileBanks[i] = new TileBank(tileRes, tileTerrainID + i);
+		stream = loadResourceToStream(tileRes, tileTerrainID + i, "tile terrain bank");
+		tileBanks[i] = new TileBank(stream);
+		delete stream;
 		if (tileBanks[i]->_tileArray == nullptr) {
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
@@ -1524,9 +1518,9 @@ void initMaps(void) {
 		mapData->worldID = WorldBaseID + i;
 
 		//  Load the map
-		mapData->map = new MapHeader;
-		tileRes->seek(iMapID);
-		readMap(tileRes, mapData->map);
+		stream = loadResourceToStream(tileRes, iMapID, "world map");
+		mapData->map = new MapHeader(stream);
+		delete stream;
 		if (mapData->map == nullptr)
 			error("Unable to load map");
 		debugC(2, kDebugTiles, "map: size = %d, mapData = %p", mapData->map->size, (void*)mapData->map->mapData);
