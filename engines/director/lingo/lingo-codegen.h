@@ -43,7 +43,6 @@ public:
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
 	int codeCmd(Common::String *s, int numpar);
-	Symbol codeDefine(const Common::String &s, const Common::Array<Common::String *> &args, int start, int end = -1, bool removeCode = true);
 	void codeFactory(Common::String &s);
 	int codeFloat(double f);
 	int codeFunc(Common::String *s, int numpar);

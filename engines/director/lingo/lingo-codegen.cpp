@@ -163,6 +163,8 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 		currentFunc.argNames = argNames;
 		currentFunc.varNames = varNames;
 		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
+	} else {
+		delete _currentAssembly;
 	}
 
 	delete _methodVars;
@@ -173,50 +175,6 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 	_assemblyContext = nullptr;
 	_assemblyArchive = nullptr;
 	return mainContext;
-}
-
-Symbol LingoCompiler::codeDefine(const Common::String &name, const Common::Array<Common::String *> &args, int start, int end, bool removeCode) {
-	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
-		debug("codeDefine(\"%s\"(len: %d), %d, %d, %d)",
-			name.c_str(), _currentAssembly->size() - 1, args.size(), start, end);
-
-	if (end == -1)
-		end = _currentAssembly->size();
-
-	ScriptData *code = new ScriptData(&(*_currentAssembly)[start], end - start);
-	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-	for (uint i = 0; i < args.size(); i++) {
-		argNames->push_back(Common::String(*args[i]));
-	}
-	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-		if (it->_value == kVarLocal)
-			varNames->push_back(Common::String(it->_key));
-	}
-
-	Symbol sym = _assemblyContext->define(name, code, argNames, varNames);
-
-	if (debugChannelSet(1, kDebugCompile)) {
-		debug("Function vars");
-		debugN("  Args: ");
-		for (uint i = 0; i < argNames->size(); i++) {
-			debugN("%s, ", (*argNames)[i].c_str());
-		}
-		debugN("\n");
-		debugN("  Local vars: ");
-		for (uint i = 0; i < varNames->size(); i++) {
-			debugN("%s, ", (*varNames)[i].c_str());
-		}
-		debugN("\n");
-	}
-
-	// Now remove all defined code from the _currentAssembly
-	if (removeCode)
-		for (int i = end - 1; i >= start; i--) {
-			_currentAssembly->remove_at(i);
-		}
-
-	return sym;
 }
 
 int LingoCompiler::codeString(const char *str) {
@@ -379,6 +337,8 @@ void LingoCompiler::visitFactoryNode(FactoryNode *node) {
 
 void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	_indef = true;
+	ScriptData *mainAssembly = _currentAssembly;
+	_currentAssembly = new ScriptData;
 	VarTypeHash *mainMethodVars = _methodVars;
 	_methodVars = new VarTypeHash;
 
@@ -392,15 +352,42 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		}
 	}
 
-	uint start = _currentAssembly->size(); // TODO: should always be zero
 	for (uint i = 0; i < node->stmts->size(); i++) {
 		(*node->stmts)[i]->accept(this);
 	}
-
 	code1(LC::c_procret);
-	codeDefine(*node->name, *node->args, start);
+
+	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
+		debug("define handler \"%s\" (len: %d)", node->name->c_str(), _currentAssembly->size() - 1);
+
+	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+	for (uint i = 0; i < node->args->size(); i++) {
+		argNames->push_back(Common::String((*node->args)[i]->c_str()));
+	}
+	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
+		if (it->_value == kVarLocal)
+			varNames->push_back(Common::String(it->_key));
+	}
+
+	if (debugChannelSet(1, kDebugCompile)) {
+		debug("Function vars");
+		debugN("  Args: ");
+		for (uint i = 0; i < argNames->size(); i++) {
+			debugN("%s, ", (*argNames)[i].c_str());
+		}
+		debugN("\n");
+		debugN("  Local vars: ");
+		for (uint i = 0; i < varNames->size(); i++) {
+			debugN("%s, ", (*varNames)[i].c_str());
+		}
+		debugN("\n");
+	}
+
+	_assemblyContext->define(*node->name, _currentAssembly, argNames, varNames);
 
 	_indef = false;
+	_currentAssembly = mainAssembly;
 	delete _methodVars;
 	_methodVars = mainMethodVars;
 }
