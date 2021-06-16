@@ -22,6 +22,7 @@
 
 #include "common/array.h"
 #include "common/str.h"
+#include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 #include "ags/plugins/ags_sock/ags_sock.h"
 
 namespace AGS3 {
@@ -30,17 +31,61 @@ namespace AGSSock {
 
 IAGSEngine *AGSSock::_engine;
 
-typedef Common::Array<byte> SockData;
+struct SockData : public IAGSScriptManagedObject, public Common::Array<byte> {
+public:
+	int Dispose(const char *address, bool force) override {
+		delete (SockData *)address;
+		return true;
+	}
+	const char *GetType() override {
+		return "SockData";
+	};
+	int Serialize(const char *address, char *buffer, int bufsize) override {
+		return 0;
+	}
+};
 
-class SockAddr {
+struct SockAddr : public IAGSScriptManagedObject {
 public:
 	int _port = 0;
 	Common::String _address;
 	Common::String _ip;
+
+	int Dispose(const char *address, bool force) override {
+		delete (SockAddr *)address;
+		return true;
+	}
+	const char *GetType() override {
+		return "SockAddr";
+	};
+	int Serialize(const char *address, char *buffer, int bufsize) override {
+		return 0;
+	}
 };
 
-class Socket {
+struct Socket : public IAGSScriptManagedObject {
 public:
+	int _id = 0;
+	int _domain = 0;
+	int _type = 0;
+	int _protocol = 0;
+	int _lastError = 0;
+	Common::String _tag;
+	SockAddr *_local = nullptr;
+	SockAddr *_remote = nullptr;
+	bool _valid = false;
+	Common::String _errorString;
+
+	int Dispose(const char *address, bool force) override {
+		delete (Socket *)address;
+		return true;
+	}
+	const char *GetType() override {
+		return "Socket";
+	};
+	int Serialize(const char *address, char *buffer, int bufsize) override {
+		return 0;
+	}
 };
 
 AGSSock::AGSSock() : PluginBase() {
@@ -55,6 +100,8 @@ const char *AGSSock::AGS_GetPluginName() {
 }
 
 void AGSSock::AGS_EngineStartup(IAGSEngine *engine) {
+	_engine = engine;
+
 	SCRIPT_METHOD_EXT(SockData::Create^2, SockData_Create);
 	SCRIPT_METHOD_EXT(SockData::CreateEmpty^0, SockData_CreateEmpty);
 	SCRIPT_METHOD_EXT(SockData::CreateFromString^1, SockData_CreateFromString);
@@ -109,6 +156,7 @@ void AGSSock::SockData_Create(ScriptMethodParams &params) {
 	PARAMS2(int, size, char, defchar);
 
 	SockData *data = new SockData();
+	_engine->RegisterManagedObject(data, data);
 	data->resize(size);
 	Common::fill(&(*data)[0], &(*data)[0] + size, defchar);
 
@@ -124,6 +172,7 @@ void AGSSock::SockData_CreateFromString(ScriptMethodParams &params) {
 	size_t len = strlen(str);
 
 	SockData *data = new SockData();
+	_engine->RegisterManagedObject(data, data);
 	data->resize(len + 1);
 	Common::copy(str, str + len + 1, &(*data)[0]);
 
@@ -162,42 +211,52 @@ void AGSSock::SockData_Clear(ScriptMethodParams &params) {
 
 void AGSSock::SockAddr_Create(ScriptMethodParams &params) {
 //	PARAMS1(int, type);
-	params._result = new SockAddr();
+	SockAddr *sockAddr = new SockAddr();
+	_engine->RegisterManagedObject(sockAddr, sockAddr);
+
+	params._result = sockAddr;
 }
 
 void AGSSock::SockAddr_CreateFromString(ScriptMethodParams &params) {
 //	PARAMS2(const char *, address, int, type);
 	PARAMS1(const char *, address);
 
-	SockAddr *sock = new SockAddr();
-	sock->_address = address;
+	SockAddr *sockAddr = new SockAddr();
+	_engine->RegisterManagedObject(sockAddr, sockAddr);
 
-	params._result = sock;
+	sockAddr->_address = address;
+	params._result = sockAddr;
 }
 
 void AGSSock::SockAddr_CreateFromData(ScriptMethodParams &params) {
 //	PARAMS1(const SockData *, data);
-	params._result = new SockAddr();
+	SockAddr *sockAddr = new SockAddr();
+	_engine->RegisterManagedObject(sockAddr, sockAddr);
+
+	params._result = sockAddr;
 }
 
 void AGSSock::SockAddr_CreateIP(ScriptMethodParams &params) {
 	PARAMS2(const char *, address, int, port);
 
-	SockAddr *sock = new SockAddr();
-	sock->_address = address;
-	sock->_port = port;
+	SockAddr *sockAddr = new SockAddr();
+	_engine->RegisterManagedObject(sockAddr, sockAddr);
 
-	params._result = sock;
+	sockAddr->_address = address;
+	sockAddr->_port = port;
+
+	params._result = sockAddr;
 }
 
 void AGSSock::SockAddr_CreateIPv6(ScriptMethodParams &params) {
 	//PARAMS2(const char *, address, int, port);
 	PARAMS1(const char *, address);
 
-	SockAddr *sock = new SockAddr();
-	sock->_address = address;
+	SockAddr *sockAddr = new SockAddr();
+	_engine->RegisterManagedObject(sockAddr, sockAddr);
 
-	params._result = sock;
+	sockAddr->_address = address;
+	params._result = sockAddr;
 }
 
 void AGSSock::SockAddr_get_Port(ScriptMethodParams &params) {
@@ -238,37 +297,69 @@ void AGSSock::SockAddr_GetData(ScriptMethodParams &params) {
 
 void AGSSock::Socket_Create(ScriptMethodParams &params) {
 	//PARAMS3(int, domain, int, type, int, protocol);
-	params._result = new Socket();
+
+	Socket *socket = new Socket();
+	_engine->RegisterManagedObject(socket, socket);
+
+	params._result = socket;
 }
 
 void AGSSock::Socket_CreateUDP(ScriptMethodParams &params) {
+	Socket *socket = new Socket();
+	_engine->RegisterManagedObject(socket, socket);
+
+	params._result = socket;
 }
 
 void AGSSock::Socket_CreateTCP(ScriptMethodParams &params) {
+	Socket *socket = new Socket();
+	_engine->RegisterManagedObject(socket, socket);
+
+	params._result = socket;
 }
 
 void AGSSock::Socket_CreateUDPv6(ScriptMethodParams &params) {
+	Socket *socket = new Socket();
+	_engine->RegisterManagedObject(socket, socket);
+
+	params._result = socket;
 }
 
 void AGSSock::Socket_CreateTCPv6(ScriptMethodParams &params) {
+	Socket *socket = new Socket();
+	_engine->RegisterManagedObject(socket, socket);
+
+	params._result = socket;
 }
 
 void AGSSock::Socket_get_Tag(ScriptMethodParams &params) {
+	PARAMS1(const Socket *, socket);
+	params._result = socket->_tag.c_str();
 }
 
 void AGSSock::Socket_set_Tag(ScriptMethodParams &params) {
+	PARAMS2(Socket *, socket, const char *, tag);
+	socket->_tag = tag;
 }
 
 void AGSSock::Socket_get_Local(ScriptMethodParams &params) {
+	PARAMS1(const Socket *, socket);
+	params._result = socket->_local;
 }
 
 void AGSSock::Socket_get_Remote(ScriptMethodParams &params) {
+	PARAMS1(const Socket *, socket);
+	params._result = socket->_remote;
 }
 
 void AGSSock::Socket_get_Valid(ScriptMethodParams &params) {
+	PARAMS1(const Socket *, socket);
+	params._result = socket->_valid;
 }
 
 void AGSSock::Socket_ErrorString(ScriptMethodParams &params) {
+	PARAMS1(const Socket *, socket);
+	params._result = socket->_errorString.c_str();
 }
 
 void AGSSock::Socket_Bind(ScriptMethodParams &params) {
@@ -278,6 +369,8 @@ void AGSSock::Socket_Listen(ScriptMethodParams &params) {
 }
 
 void AGSSock::Socket_Connect(ScriptMethodParams &params) {
+	// Fail the connection
+	params._result = 0;
 }
 
 void AGSSock::Socket_Accept(ScriptMethodParams &params) {
