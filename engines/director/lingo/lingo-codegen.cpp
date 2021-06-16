@@ -103,7 +103,7 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 
 	// Generate bytecode
 	if (_assemblyAST) {
-		_assemblyAST->accept(this);
+		compile(_assemblyAST);
 	}
 
 	// for D4 and above, there usually won't be any code left.
@@ -309,12 +309,20 @@ void LingoCompiler::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }
 
+void LingoCompiler::compile(Node *node) {
+	node->accept(this);
+}
+
+void LingoCompiler::compileList(NodeList *nodes) {
+	for (uint i = 0; i < nodes->size(); i++) {
+		compile((*nodes)[i]);
+	}
+}
+
 /* ScriptNode */
 
 void LingoCompiler::visitScriptNode(ScriptNode *node) {
-	for (uint i = 0; i < node->children->size(); i++) {
-		(*node->children)[i]->accept(this);
-	}
+	compileList(node->children);
 }
 
 /* FactoryNode */
@@ -324,9 +332,7 @@ void LingoCompiler::visitFactoryNode(FactoryNode *node) {
 	ScriptContext *mainContext = _assemblyContext;
 	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
 
-	for (uint i = 0; i < node->methods->size(); i++) {
-		(*node->methods)[i]->accept(this);
-	}
+	compileList(node->methods);
 	registerFactory(*node->name);
 
 	_inFactory = false;
@@ -352,9 +358,7 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		}
 	}
 
-	for (uint i = 0; i < node->stmts->size(); i++) {
-		(*node->stmts)[i]->accept(this);
-	}
+	compileList(node->stmts);
 	code1(LC::c_procret);
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
@@ -395,9 +399,7 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 /* CmdNode */
 
 void LingoCompiler::visitCmdNode(CmdNode *node) {
-	for (uint i = 0; i < node->args->size(); i++) {
-		(*node->args)[i]->accept(this);
-	}
+	compileList(node->args);
 	codeCmd(node->name, node->args->size());
 }
 
@@ -428,12 +430,10 @@ void LingoCompiler::visitInstanceNode(InstanceNode *node) {
 /* IfStmtNode */
 
 void LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
-	node->cond->accept(this);
+	compile(node->cond);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
-	for (uint i = 0; i < node->stmts->size(); i++) {
-		(*node->stmts)[i]->accept(this);
-	}
+	compileList(node->stmts);
 	uint endPos = _currentAssembly->size();
 
 	inst jzOffset = 0;
@@ -444,19 +444,15 @@ void LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
 /* IfElseStmtNode */
 
 void LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
-	node->cond->accept(this);
+	compile(node->cond);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
-	for (uint i = 0; i < node->stmts1->size(); i++) {
-		(*node->stmts1)[i]->accept(this);
-	}
+	compileList(node->stmts1);
 
 	uint jmpPos = _currentAssembly->size();
 	code2(LC::c_jump, 0);
 	uint block2StartPos = _currentAssembly->size();
-	for (uint i = 0; i < node->stmts2->size(); i++) {
-		(*node->stmts2)[i]->accept(this);
-	}
+	compileList(node->stmts2);
 	uint endPos = _currentAssembly->size();
 
 	inst jzOffset = 0;
@@ -499,9 +495,7 @@ void LingoCompiler::visitStringNode(StringNode *node) {
 /* FuncNode */
 
 void LingoCompiler::visitFuncNode(FuncNode *node) {
-	for (uint i = 0; i < node->args->size(); i++) {
-		(*node->args)[i]->accept(this);
-	}
+	compileList(node->args);
 	codeFunc(node->name, node->args->size());
 }
 
@@ -519,21 +513,21 @@ void LingoCompiler::visitVarNode(VarNode *node) {
 /* ParensNode */
 
 void LingoCompiler::visitParensNode(ParensNode *node) {
-	node->expr->accept(this);
+	compile(node->expr);
 }
 
 /* UnaryOpNode */
 
 void LingoCompiler::visitUnaryOpNode(UnaryOpNode *node) {
-	node->arg->accept(this);
+	compile(node->arg);
 	code1(node->op);
 }
 
 /* BinaryOpNode */
 
 void LingoCompiler::visitBinaryOpNode(BinaryOpNode *node) {
-	node->a->accept(this);
-	node->b->accept(this);
+	compile(node->a);
+	compile(node->b);
 	code1(node->op);
 }
 

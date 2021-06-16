@@ -71,6 +71,9 @@ public:
 	bool _hadError;
 
 public:
+	void compile(Node *node);
+	void compileList(NodeList *nodes);
+
 	virtual void visitScriptNode(ScriptNode *node);
 	virtual void visitFactoryNode(FactoryNode *node);
 	virtual void visitHandlerNode(HandlerNode *node);
