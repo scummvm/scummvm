@@ -62,6 +62,35 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	_composeSurface->clear(_bgcolor);
 }
 
+MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, Common::CodePage encodeType) :
+	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment, 0, 0, 0, 0, 0, encodeType), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
+
+	_buttonType = buttonType;
+	_invertOuter = false;
+	_invertInner = false;
+	_checkBoxType = 0;
+
+	switch (buttonType) {
+	case kCheckBox:
+		_alignOffset.x += 16;
+		_dims.right += 16;
+		break;
+	case kRound:
+		_alignOffset.x += 2;
+		_alignOffset.y += 2;
+		_dims.right += 2;
+		_dims.bottom += 4;
+		break;
+	case kRadio:
+		_alignOffset.x += 16;
+		_dims.right += 16;
+		break;
+	}
+
+	_composeSurface->create(_dims.width(), _dims.height(), _wm->_pixelformat);
+	_composeSurface->clear(_bgcolor);
+}
+
 void MacButton::setActive(bool active) {
 	if (active == _active)
 		return;
