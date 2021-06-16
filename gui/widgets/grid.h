@@ -150,6 +150,7 @@ public:
 	void updateThumb();
 	void drawWidget() override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	void move(int x, int y);
 
 };
 
