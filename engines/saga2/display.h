@@ -50,13 +50,6 @@ enum DisplayDisabledBecause {
 /* ===================================================================== *
    Prototypes
  * ===================================================================== */
-
-// ------------------------------------------------------------------------
-// Game suspend / resume / terminate
-
-void suspendGame(void);
-bool gameSuspended(void);
-void resumeGame(void);
 void endGame(void);
 
 // ------------------------------------------------------------------------
@@ -104,12 +97,6 @@ void popVidState(void);
 
 void suspendAudio(void);
 void resumeAudio(void);
-
-// ------------------------------------------------------------------------
-// Calls to suspend the game timer
-
-void pauseTimer(void);
-void resumeTimer(void);
 
 // ------------------------------------------------------------------------
 // The display may be disabled for several reasons these track them

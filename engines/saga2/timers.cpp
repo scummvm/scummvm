@@ -26,13 +26,73 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
+#include "common/timer.h"
+
 #include "saga2/std.h"
+#include "saga2/fta.h"
 #include "saga2/timers.h"
 #include "saga2/pool.h"
 #include "saga2/objects.h"
 #include "saga2/savefile.h"
 
 namespace Saga2 {
+
+volatile int32 gameTime;
+bool timerPaused = false;
+
+void timerCallback(void *refCon) {
+	if (!timerPaused)
+		gameTime++;
+}
+
+void initTimer(void) {
+	gameTime = 0;
+
+	g_vm->getTimerManager()->installTimerProc(&timerCallback, 1000 / 72, nullptr, "saga2");
+}
+
+void pauseTimer() {
+	timerPaused = true;
+}
+
+void resumeTimer() {
+	timerPaused = false;
+}
+
+void saveTimer(SaveFileConstructor &saveGame) {
+	int32   time = gameTime;
+
+	saveGame.writeChunk(
+	    MakeID('T', 'I', 'M', 'E'),
+	    &time,
+	    sizeof(time));
+}
+
+void loadTimer(SaveFileReader &saveGame) {
+	int32   time;
+
+	saveGame.read(&time, sizeof(time));
+	gameTime = time;
+}
+
+/* ====================================================================== *
+   Alarms
+ * ====================================================================== */
+
+void Alarm::set(uint32 dur) {
+	basetime = gameTime;
+	duration = dur;
+}
+
+bool Alarm::check(void) {
+	return ((uint32)(gameTime - basetime) > duration);
+}
+
+// time elapsed since alarm set
+
+uint32 Alarm::elapsed(void) {
+	return (uint32)(gameTime - basetime);
+}
 
 struct TimerListHolder : public DNode {
 	uint8       timerListBuffer[sizeof(TimerList)];
