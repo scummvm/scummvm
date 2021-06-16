@@ -445,14 +445,14 @@ void scaleBlitBilinearLogic(byte *dst, const byte *src,
 	}
 }
 
-template <typename Size, bool filtering, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
+template<typename Size, bool filtering, bool flipx, bool flipy> // TODO: See mirroring comment in RenderTicket ctor
 void rotoscaleBlitLogic(byte *dst, const byte *src,
-                       const uint dstPitch, const uint srcPitch,
-                       const uint dstW, const uint dstH,
-                       const uint srcW, const uint srcH,
-                       const Graphics::PixelFormat &fmt,
-                       const TransformStruct &transform,
-                       const Common::Point &newHotspot) {
+						const uint dstPitch, const uint srcPitch,
+						const uint dstW, const uint dstH,
+						const uint srcW, const uint srcH,
+						const Graphics::PixelFormat &fmt,
+						const TransformStruct &transform,
+						const Common::Point &newHotspot) {
 
 	assert(transform._angle != kDefaultAngle); // This would not be ideal; rotoscale() should never be called in conditional branches where angle = 0 anyway.
 
@@ -607,12 +607,12 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 }
 
 bool rotoscaleBlit(byte *dst, const byte *src,
-                   const uint dstPitch, const uint srcPitch,
-                   const uint dstW, const uint dstH,
-                   const uint srcW, const uint srcH,
-                   const Graphics::PixelFormat &fmt,
-                   const TransformStruct &transform,
-                   const Common::Point &newHotspot) {
+				   const uint dstPitch, const uint srcPitch,
+				   const uint dstW, const uint dstH,
+				   const uint srcW, const uint srcH,
+				   const Graphics::PixelFormat &fmt,
+				   const TransformStruct &transform,
+				   const Common::Point &newHotspot) {
 	if (fmt.bytesPerPixel == 4) {
 		rotoscaleBlitLogic<uint32, false, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt.bytesPerPixel == 2) {
@@ -627,12 +627,12 @@ bool rotoscaleBlit(byte *dst, const byte *src,
 }
 
 bool rotoscaleBlitBilinear(byte *dst, const byte *src,
-                           const uint dstPitch, const uint srcPitch,
-                           const uint dstW, const uint dstH,
-                           const uint srcW, const uint srcH,
-                           const Graphics::PixelFormat &fmt,
-                           const TransformStruct &transform,
-                           const Common::Point &newHotspot) {
+						   const uint dstPitch, const uint srcPitch,
+						   const uint dstW, const uint dstH,
+						   const uint srcW, const uint srcH,
+						   const Graphics::PixelFormat &fmt,
+						   const TransformStruct &transform,
+						   const Common::Point &newHotspot) {
 	if (fmt.bytesPerPixel == 4) {
 		rotoscaleBlitLogic<uint32, true, false, false>(dst, src, dstPitch, srcPitch, dstW, dstH, srcW, srcH, fmt, transform, newHotspot);
 	} else if (fmt.bytesPerPixel == 2) {
