@@ -806,6 +806,20 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 		}
 	}
 
+	// WORKAROUND for bug #12635 ("KYRA: Missing subtitle(also in original game)")
+	// This is a script bug that seems to be present in early English talkie versions, but
+	// not in later versions (e. g. German talkie). Unfortunately it seems to have made its
+	// way into several fan translations (e.g. Hebrew, Spanish), since these were based on
+	// the bugged English version. The opcodes have to be rearranged a bit...
+	if (_flags.isTalkie && !scumm_strnicmp("POTION.EMC", _scriptClick.dataPtr->filename, 12)) {
+		assert(_scriptClick.dataPtr->dataSize >= 0x99E);
+		uint16 *loc = &_scriptClick.dataPtr->data[0x4CA];
+		if (*loc == 0x4e35) {
+			for (int i = 0; i < 4; ++i)
+				SWAP(loc[i], loc[i + 1]);
+		}
+	}
+
 	if (!_emc->start(&_scriptClick, 2))
 		error("Could not start script function 2 of scene script");
 
