@@ -550,16 +550,7 @@ void AnimManager::drawSmkActionFrame() {
 	const byte *palette = smkDecoder->getPalette();
 
 	if (smkDecoder->getCurFrame() == 0) {
-		for (uint16 curY = 0; curY < AREA; curY++) {
-			for (uint16 curX = 0; curX < MAXX; curX++) {
-				if (frame->getPixel(curX, curY)) {
-					_animRect.left = MIN<uint16>(curX, _animRect.left);
-					_animRect.top = MIN<uint16>(curY, _animRect.top);
-					_animRect.right = MAX<uint16>(curX, _animRect.right);
-					_animRect.bottom = MAX<uint16>(curY, _animRect.bottom);
-				}
-			}
-		}
+		_animRect = *smkDecoder->getNextDirtyRect();
 	}
 
 	if (_animRect.width() > 0 && _animRect.height() > 0) {
