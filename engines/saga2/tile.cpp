@@ -857,7 +857,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 			uint8               *bufferedStateArray;
 
 			//  Save the size of the state array
-			*((int16 *)bufferPtr) = arraySize / sizeof(uint8);
+			WRITE_LE_INT16(bufferPtr, arraySize / sizeof(uint8));
 			bufferPtr = (int16 *)bufferPtr + 1;
 
 			//  Copy the state data to the archive buffer
@@ -886,7 +886,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 					*statePtr &= ~(1 << 7);
 			}
 		} else {
-			*((int16 *)bufferPtr) = 0;
+			WRITE_LE_INT16(bufferPtr, 0);
 			bufferPtr = (int16 *)bufferPtr + 1;
 		}
 	}
@@ -925,7 +925,7 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 	for (i = 0; i < worldCount; i++) {
 		int32   arraySize;
 
-		arraySize = *((int16 *)bufferPtr) * sizeof(uint8);
+		arraySize = READ_LE_INT16(bufferPtr) * sizeof(uint8);
 		bufferPtr = (int16 *)bufferPtr + 1;
 
 		if (arraySize > 0) {
@@ -1016,7 +1016,7 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 	}
 
 	//  Retreive the task count
-	taskCount = *((int16 *)bufferPtr);
+	taskCount = READ_LE_INT16(bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	for (int i = 0; i < taskCount; i++) {
@@ -1071,7 +1071,7 @@ void *TileActivityTaskList::archive(void *buf) {
 		taskCount++;
 
 	//  Store the task count
-	*((int16 *)buf) = taskCount;
+	WRITE_LE_INT16(buf, taskCount);
 	buf = (int16 *)buf + 1;
 
 	for (tat = (TileActivityTask *)list.first();
