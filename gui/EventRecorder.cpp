@@ -143,20 +143,19 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		_timerManager->handler();
 		break;
 	case kRecorderPlayback:
-		updateSubsystems();
-		if (_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) {
-			_fakeTimer = _nextEvent.time;
-			_nextEvent = _playbackFile->getNextEvent();
-			_timerManager->handler();
-		} else {
-			if (_nextEvent.type == Common::EVENT_RETURN_TO_LAUNCHER) {
-				error("playback:action=stopplayback");
-			} else {
-				uint32 seconds = _fakeTimer / 1000;
-				Common::String screenTime = Common::String::format("%.2d:%.2d:%.2d", seconds / 3600 % 24, seconds / 60 % 60, seconds % 60);
-				error("playback:action=error reason=\"synchronization error\" time = %s", screenTime.c_str());
-			}
+		if (_nextEvent.recordedtype != Common::kRecorderEventTypeTimer) {
+			// just re-use any previous millis value
+			// this might happen if you have EventSource instances registered, that
+			// are querying the millis by themselves, too. If the EventRecorder::poll
+			// is registered and thus dispatched after those EventSource instances, it
+			// might look like it ran out-of-sync.
+			return;
 		}
+		updateSubsystems();
+		_fakeTimer = _nextEvent.time;
+		debug("millis");
+		_nextEvent = _playbackFile->getNextEvent();
+		_timerManager->handler();
 		millis = _fakeTimer;
 		_controlPanel->setReplayedTime(_fakeTimer);
 		break;
@@ -182,7 +181,7 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	if ((_recordMode != kRecorderPlayback) || !_initialized)
 		return false;
 
-	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type ==  Common::EVENT_INVALID)) {
+	if ((_nextEvent.recordedtype == Common::kRecorderEventTypeTimer) || (_nextEvent.type == Common::EVENT_INVALID)) {
 		return false;
 	}
 
