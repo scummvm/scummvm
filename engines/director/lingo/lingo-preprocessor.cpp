@@ -64,40 +64,6 @@ static Common::String nexttok(const char *s, const char **newP = nullptr) {
 	return res;
 }
 
-static Common::String prevtok(const char *s, const char *lineStart, const char **newP = nullptr) {
-	Common::String res;
-
-	// Scan first non-whitespace
-	while (s >= lineStart && (*s == ' ' || *s == '\t' || *s == '\xC2')) // If we see a whitespace
-		if (s > lineStart) {
-			s--;
-		} else {
-			break;
-		}
-
-	if (*s == '"') { // If it is a string then scan till end quote
-		res += *s--;
-
-		while (s >= lineStart && *s != '"')
-			res = *s-- + res;
-
-		if (*s == '"')
-			res = *s-- + res;
-	} else if (Common::isAlnum(*s)) { 	// Now copy everything till whitespace
-		// Now copy everything till whitespace
-		while (s >= lineStart && (Common::isAlnum(*s) || *s == '.' || *s == '#' || *s == '_'))
-			res = *s-- + res;
-	} else {
-		while (s >= lineStart && isspec(*s))
-			res = *s-- + res;
-	}
-
-	if (newP)
-		*newP = s;
-
-	return res;
-}
-
 static const char *findtokstart(const char *start, const char *token) {
 	// First, determine, if we sit inside of a string
 	//
@@ -209,8 +175,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	// Here we add ' end if' at end of each statement, which lets us
 	// make the grammar very straightforward
 	Common::String line, tok, res1;
-	const char *lineStart, *prevEnd;
-	int iflevel = 0;
 	int linenumber = 1;
 	bool defFound = false;
 
@@ -226,7 +190,7 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 			if (*s == '\xc2')
 				linenumber++;
 		}
-		debugC(2, kDebugParse | kDebugPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
+		debugC(2, kDebugParse | kDebugPreprocess, "line: '%s'", line.c_str());
 
 		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
@@ -255,165 +219,8 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 
 		linenumber++;	// We do it here because of 'continue' statements
 
-		if (line.size() < 4 || changed) { // If line is too small, then skip it
-			if (*s)	// copy newline symbol
-				res += *s++;
-
-			debugC(2, kDebugParse | kDebugPreprocess, "too small");
-
-			continue;
-		}
-
-		tok = nexttok(line.c_str(), &lineStart);
-		if (tok.equals("if")) {
-			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-			debugC(2, kDebugParse | kDebugPreprocess, "start-if <%s>", tok.c_str());
-
-			if (tok.equals("if")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "end-if");
-				tok = prevtok(prevEnd, lineStart);
-
-				if (tok.equals("end")) {
-					// do nothing, we open and close same line
-					debugC(2, kDebugParse | kDebugPreprocess, "end-end");
-				} else {
-					iflevel++;
-				}
-			} else if (tok.equals("then")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "last-then");
-				iflevel++;
-			} else if (tok.equals("else")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "last-else");
-				iflevel++;
-			} else { // other token
-				// Now check if we have tNLELSE
-				if (!*s) {
-					iflevel++;	// end, we have to add 'end if'
-					break;
-				}
-				const char *s1 = s + 1;
-
-				while (*s1 && *s1 == '\n')
-					s1++;
-				tok = nexttok(s1);
-
-				if (tok.equalsIgnoreCase("else")) { // ignore case because it is look-ahead
-					debugC(2, kDebugParse | kDebugPreprocess, "tNLELSE");
-					iflevel++;
-				} else {
-					debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no nlelse after single liner)");
-					res += " end if";
-				}
-			}
-		} else if (tok.equals("else")) {
-			debugC(2, kDebugParse | kDebugPreprocess, "start-else");
-			bool elseif = false;
-
-			tok = nexttok(lineStart);
-			if (tok.equals("if")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "second-if");
-				elseif = true;
-			} else if (tok.empty()) {
-				debugC(2, kDebugParse | kDebugPreprocess, "lonely-else");
-
-				if (*s)	// copy newline symbol
-					res += *s++;
-
-				continue;
-			}
-
-			tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-			debugC(2, kDebugParse | kDebugPreprocess, "last: '%s'", tok.c_str());
-
-			if (tok.equals("if")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "end-if");
-				tok = prevtok(prevEnd, lineStart);
-
-				if (tok.equals("end")) {
-					debugC(2, kDebugParse | kDebugPreprocess, "end-end");
-					iflevel--;
-				}
-			} else if (tok.equals("then")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "last-then");
-
-				if (elseif == false) {
-					warning("Badly nested then");
-				}
-			} else if (tok.equals("else")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "last-else");
-				if (elseif == false) {
-					warning("Badly nested else");
-				}
-			} else { // check if we have tNLELSE or \nEND
-				if (!*s) {
-					break;
-				}
-				const char *s1 = s + 1;
-
-				while (*s1 && *s1 == '\n')
-					s1++;
-				tok = nexttok(s1, &s1);
-
-				if (tok.equalsIgnoreCase("else") && elseif) {
-					// Nothing to do here, same level
-					debugC(2, kDebugParse | kDebugPreprocess, "tNLELSE");
-				} else if (tok.equalsIgnoreCase("end") && elseif) {
-					tok = nexttok(s1);
-
-					if (tok.equalsIgnoreCase("if")) {
-						// Nothing to do here
-						debugC(2, kDebugParse | kDebugPreprocess, "see-end-if");
-					} else {
-						debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no tNLELSE 2)");
-						res += " end if";
-						iflevel--;
-					}
-				} else {
-					debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (no tNLELSE)");
-					res += " end if";
-					iflevel--;
-				}
-			}
-		} else if (tok.equals("end")) {
-			debugC(2, kDebugParse | kDebugPreprocess, "start-end");
-
-			tok = nexttok(lineStart);
-			if (tok.equals("if")) {
-				debugC(2, kDebugParse | kDebugPreprocess, "second-if");
-				iflevel--;
-			}
-		} else if (tok.equals("when")) {
-			debugC(2, kDebugParse | kDebugPreprocess, "start-when");
-
-			if (strstr(lineStart, "if") && strstr(lineStart, "then")) {
-				tok = prevtok(&line.c_str()[line.size() - 1], lineStart, &prevEnd);
-				debugC(2, kDebugParse | kDebugPreprocess, "when-start-if <%s>", tok.c_str());
-
-				if (tok.equals("if")) {
-					debugC(2, kDebugParse | kDebugPreprocess, "when-end-if");
-					tok = prevtok(prevEnd, lineStart);
-
-					if (tok.equals("end")) {
-						// do nothing, we open and close same line
-						debugC(2, kDebugParse | kDebugPreprocess, "when-end-end");
-					} else {
-						res += " end if";
-					}
-				} else {
-					res += " end if";
-				}
-			}
-		} else {
-			debugC(2, kDebugParse | kDebugPreprocess, "nothing");
-		}
-
 		if (*s)	// copy newline symbol
 			res += *s++;
-	}
-
-	for (int i = 0; i < iflevel; i++) {
-		debugC(2, kDebugParse | kDebugPreprocess, "++++ end if (unclosed)");
-		res += "\nend if";
 	}
 
 	// Make the parser happier when there is no newline at the end
