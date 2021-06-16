@@ -133,11 +133,11 @@ struct StmtNode : Node {
 /* ScriptNode */
 
 struct ScriptNode : Node {
-	NodeList *nodes;
+	NodeList *children;
 
-	ScriptNode(NodeList *nodesIn): Node(kScriptNode), nodes(nodesIn) {}
+	ScriptNode(NodeList *childrenIn): Node(kScriptNode), children(childrenIn) {}
 	virtual ~ScriptNode() {
-		deleteList(nodes);
+		deleteList(children);
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitScriptNode(this);
