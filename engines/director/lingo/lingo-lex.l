@@ -37,6 +37,7 @@
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-the.h"
 
@@ -48,32 +49,36 @@ static uint inputlen;
 
 // Push lines in stack
 static void pushLine(uint num) {
+	LingoCompiler *compiler = g_lingo->_compiler;
+
 	if (num > inputlen)
 		return;
 
-	g_lingo->_lines[2] = g_lingo->_lines[1];
-	g_lingo->_lines[1] = g_lingo->_lines[0];
-	g_lingo->_lines[0] = &inputbuffer[num];
+	compiler->_lines[2] = compiler->_lines[1];
+	compiler->_lines[1] = compiler->_lines[0];
+	compiler->_lines[0] = &inputbuffer[num];
 }
 
 static void count() {
+	LingoCompiler *compiler = g_lingo->_compiler;
+
 	if (debugChannelSet(-1, kDebugParse))
-		debug("LEXER: Read '%s' at %d:%d", yytext, g_lingo->_linenumber, g_lingo->_colnumber);
+		debug("LEXER: Read '%s' at %d:%d", yytext, compiler->_linenumber, compiler->_colnumber);
 
 	char *p = yytext;
 
 	while (*p) {
 		if (*p == '\n' || *p == '\xC2') {
-			g_lingo->_linenumber++;
-			g_lingo->_colnumber = 0;
+			compiler->_linenumber++;
+			compiler->_colnumber = 0;
 
 			if (*p == '\n')
-				pushLine(g_lingo->_bytenumber + 1);
+				pushLine(compiler->_bytenumber + 1);
 		} else {
-			g_lingo->_colnumber++;
+			compiler->_colnumber++;
 		}
 		p++;
-		g_lingo->_bytenumber++;
+		compiler->_bytenumber++;
 	}
 }
 
@@ -397,9 +402,9 @@ extern int yydebug;
 
 namespace Director {
 
-int Lingo::parse(const char *code) {
+int LingoCompiler::parse(const char *code) {
 	inputbuffer = code;
-	g_lingo->_bytenumber = 0;
+	_bytenumber = 0;
 	inputlen = strlen(code);
 
 	_lines[0] = _lines[1] = _lines[2] = code;

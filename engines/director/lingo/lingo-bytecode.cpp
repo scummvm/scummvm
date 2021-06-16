@@ -31,6 +31,7 @@
 #include "director/util.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-bytecode.h"
 #include "director/lingo/lingo-object.h"
@@ -828,7 +829,7 @@ void LC::cb_zeropush() {
 	g_lingo->push(d);
 }
 
-ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version) {
+ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version) {
 	if (stream.size() < 0x5c) {
 		warning("Lscr header too small");
 		return nullptr;
@@ -1277,13 +1278,13 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 				Datum constant = _assemblyContext->_constants[arg];
 				switch (constant.type) {
 				case INT:
-					g_lingo->code1(LC::c_intpush);
+					code1(LC::c_intpush);
 					break;
 				case FLOAT:
-					g_lingo->code1(LC::c_floatpush);
+					code1(LC::c_floatpush);
 					break;
 				case STRING:
-					g_lingo->code1(LC::c_stringpush);
+					code1(LC::c_stringpush);
 					break;
 				default:
 					error("Unknown constant type %d", constant.type);
@@ -1297,27 +1298,27 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 				}
 				switch (constant.type) {
 				case INT:
-					g_lingo->codeInt(constant.u.i);
+					codeInt(constant.u.i);
 					break;
 				case FLOAT:
-					g_lingo->codeFloat(constant.u.f);
+					codeFloat(constant.u.f);
 					break;
 				case STRING:
-					g_lingo->codeString(constant.u.s->c_str());
+					codeString(constant.u.s->c_str());
 					break;
 				default:
 					error("Unknown constant type %d", constant.type);
 					break;
 				}
-			} else if (_lingoV4.contains(opcode)) {
+			} else if (g_lingo->_lingoV4.contains(opcode)) {
 				offsetList.push_back(_currentAssembly->size());
-				g_lingo->code1(_lingoV4[opcode]->func);
+				code1(g_lingo->_lingoV4[opcode]->func);
 
-				size_t argc = strlen(_lingoV4[opcode]->proto);
+				size_t argc = strlen(g_lingo->_lingoV4[opcode]->proto);
 				if (argc) {
 					int arg = 0;
 					for (uint c = 0; c < argc; c++) {
-						switch (_lingoV4[opcode]->proto[c]) {
+						switch (g_lingo->_lingoV4[opcode]->proto[c]) {
 						case 'b':
 							// read one uint8 as an argument
 							offsetList.push_back(_currentAssembly->size());
@@ -1368,39 +1369,39 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 							break;
 						}
 					}
-					g_lingo->codeInt(arg);
+					codeInt(arg);
 				}
 			} else {
 				// unimplemented instruction
 				if (opcode < 0x40) { // 1 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x", opcode);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->code1(LC::cb_unk);
-					g_lingo->codeInt(opcode);
+					code1(LC::cb_unk);
+					codeInt(opcode);
 				} else if (opcode < 0x80) { // 2 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d)", opcode, (uint)codeStore[pointer]);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->code1(LC::cb_unk1);
-					g_lingo->codeInt(opcode);
+					code1(LC::cb_unk1);
+					codeInt(opcode);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->codeInt((uint)codeStore[pointer]);
+					codeInt((uint)codeStore[pointer]);
 					pointer += 1;
 				} else { // 3 byte instruction
 					debugC(5, kDebugCompile, "Unimplemented opcode: 0x%02x (%d, %d)", opcode, (uint)codeStore[pointer], (uint)codeStore[pointer+1]);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->code1(LC::cb_unk2);
-					g_lingo->codeInt(opcode);
+					code1(LC::cb_unk2);
+					codeInt(opcode);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->codeInt((uint)codeStore[pointer]);
+					codeInt((uint)codeStore[pointer]);
 					offsetList.push_back(_currentAssembly->size());
-					g_lingo->codeInt((uint)codeStore[pointer+1]);
+					codeInt((uint)codeStore[pointer+1]);
 					pointer += 2;
 				}
 			}
 		}
 
 		// Add backstop
-		g_lingo->code1(STOP);
+		code1(STOP);
 
 		// Rewrite every offset flagged as a jump based on the new code alignment.
 		for (uint j = 0; j < jumpList.size(); j++) {
@@ -1424,7 +1425,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 			functionName = archive->names[nameIndex];
 		} else if (i == 0 && (scriptFlags & kScriptFlagEventScript)) {
 			// event script (lingo not contained within a handler)
-			functionName = _eventHandlerTypes[kEventGeneric];
+			functionName = g_lingo->_eventHandlerTypes[kEventGeneric];
 		}
 
 		Symbol sym;
@@ -1460,7 +1461,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 			uint pc = 0;
 			while (pc < _currentAssembly->size()) {
 				uint spc = pc;
-				Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
 				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
 			}
 			out.writeString(Common::String::format("<end code>\n\n"));
@@ -1482,7 +1483,7 @@ ScriptContext *Lingo::compileLingoV4(Common::SeekableReadStreamEndian &stream, L
 }
 
 void LingoArchive::addCodeV4(Common::SeekableReadStreamEndian &stream, uint16 lctxIndex, const Common::String &archName, uint16 version) {
-	ScriptContext *ctx = g_lingo->compileLingoV4(stream, this, archName, version);
+	ScriptContext *ctx = g_lingo->_compiler->compileLingoV4(stream, this, archName, version);
 	if (ctx) {
 		lctxContexts[lctxIndex] = ctx;
 		*ctx->_refCount += 1;

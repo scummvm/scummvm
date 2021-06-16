@@ -22,7 +22,7 @@
 
 #include "director/director.h"
 #include "director/movie.h"
-#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-codegen.h"
 
 namespace Director {
 
@@ -126,7 +126,7 @@ static const char *findtokstart(const char *start, const char *token) {
 	return ptr;
 }
 
-Common::String Lingo::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple) {
+Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple) {
 	Common::String res;
 
 	// We start from processing the continuation synbols
@@ -228,7 +228,7 @@ Common::String Lingo::codePreprocessor(const char *s, LingoArchive *archive, Scr
 		}
 		debugC(2, kDebugParse | kDebugPreprocess, "line: %d                         '%s'", iflevel, line.c_str());
 
-		if (!defFound && (type == kMovieScript || type == kCastScript) && (_vm->getVersion() < 400 || _vm->getCurrentMovie()->_allowOutdatedLingo)) {
+		if (!defFound && (type == kMovieScript || type == kCastScript) && (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 			tok = nexttok(line.c_str());
 			if (tok.equals("macro") || tok.equals("factory") || tok.equals("on")) {
 				defFound = true;

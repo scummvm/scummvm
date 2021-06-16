@@ -201,6 +201,40 @@ Common::String ScriptContext::asString() {
 	return Common::String::format("script: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
 }
 
+Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
+	Symbol sym;
+	sym.name = new Common::String(name);
+	sym.type = HANDLER;
+	sym.u.defn = code;
+	sym.nargs = nargs;
+	sym.maxArgs = nargs;
+	sym.argNames = argNames;
+	sym.varNames = varNames;
+	sym.ctx = this;
+	sym.archive = _archive;
+
+	if (debugChannelSet(1, kDebugCompile)) {
+		uint pc = 0;
+		while (pc < sym.u.defn->size()) {
+			uint spc = pc;
+			Common::String instr = g_lingo->decodeInstruction(_archive, sym.u.defn, pc, &pc);
+			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+		}
+		debugC(1, kDebugCompile, "<end define code>");
+	}
+
+	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
+		_functionHandlers[name] = sym;
+		if (_scriptType == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
+			_archive->functionHandlers[name] = sym;
+		}
+	} else {
+		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
+	}
+
+	return sym;
+}
+
 Symbol ScriptContext::getMethod(const Common::String &methodName) {
 	Symbol sym;
 

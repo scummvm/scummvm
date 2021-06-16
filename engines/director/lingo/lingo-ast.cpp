@@ -23,6 +23,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
@@ -38,52 +39,52 @@ void ScriptNode::compile() {
 /* FactoryNode */
 
 void FactoryNode::compile() {
-	g_lingo->_inFactory = true;
-	ScriptContext *mainContext = g_lingo->_assemblyContext;
-	g_lingo->_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
+	g_lingo->_compiler->_inFactory = true;
+	ScriptContext *mainContext = g_lingo->_compiler->_assemblyContext;
+	g_lingo->_compiler->_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
 
-	g_lingo->codeFactory(*name);
+	g_lingo->_compiler->codeFactory(*name);
 	for (uint i = 0; i < methods->size(); i++) {
 		(*methods)[i]->compile();
 	}
 
-	g_lingo->_inFactory = false;
-	g_lingo->_assemblyContext = mainContext;
+	g_lingo->_compiler->_inFactory = false;
+	g_lingo->_compiler->_assemblyContext = mainContext;
 }
 
 /* HandlerNode */
 
 void HandlerNode::compile() {
-	g_lingo->_indef = true;
-	VarTypeHash *mainMethodVars = g_lingo->_methodVars;
-	g_lingo->_methodVars = new VarTypeHash;
+	g_lingo->_compiler->_indef = true;
+	VarTypeHash *mainMethodVars = g_lingo->_compiler->_methodVars;
+	g_lingo->_compiler->_methodVars = new VarTypeHash;
 
 	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
 		if (i->_value == kVarGlobal || i->_value == kVarProperty)
-			(*g_lingo->_methodVars)[i->_key] = i->_value;
+			(*g_lingo->_compiler->_methodVars)[i->_key] = i->_value;
 	}
-	if (g_lingo->_inFactory) {
-		for (DatumHash::iterator i = g_lingo->_assemblyContext->_properties.begin(); i != g_lingo->_assemblyContext->_properties.end(); ++i) {
-			(*g_lingo->_methodVars)[i->_key] = kVarInstance;
+	if (g_lingo->_compiler->_inFactory) {
+		for (DatumHash::iterator i = g_lingo->_compiler->_assemblyContext->_properties.begin(); i != g_lingo->_compiler->_assemblyContext->_properties.end(); ++i) {
+			(*g_lingo->_compiler->_methodVars)[i->_key] = kVarInstance;
 		}
 	}
 
 	for (uint i = 0; i < args->size(); i++) { // TODO: eliminate argstack
-		g_lingo->codeArg((*args)[i]);
+		g_lingo->_compiler->codeArg((*args)[i]);
 	}
 
-	uint start = g_lingo->_currentAssembly->size(); // TODO: should always be zero
+	uint start = g_lingo->_compiler->_currentAssembly->size(); // TODO: should always be zero
 	for (uint i = 0; i < stmts->size(); i++) {
 		(*stmts)[i]->compile();
 	}
 
-	g_lingo->code1(LC::c_procret);
-	g_lingo->codeDefine(*name, start, args->size());
+	g_lingo->_compiler->code1(LC::c_procret);
+	g_lingo->_compiler->codeDefine(*name, start, args->size());
 
-	g_lingo->clearArgStack();
-	g_lingo->_indef = false;
-	delete g_lingo->_methodVars;
-	g_lingo->_methodVars = mainMethodVars;
+	g_lingo->_compiler->clearArgStack();
+	g_lingo->_compiler->_indef = false;
+	delete g_lingo->_compiler->_methodVars;
+	g_lingo->_compiler->_methodVars = mainMethodVars;
 }
 
 /* CmdNode */
@@ -92,14 +93,14 @@ void CmdNode::compile() {
 	for (uint i = 0; i < args->size(); i++) {
 		(*args)[i]->compile();
 	}
-	g_lingo->codeCmd(name, args->size());
+	g_lingo->_compiler->codeCmd(name, args->size());
 }
 
 /* GlobalNode */
 
 void GlobalNode::compile() {
 	for (uint i = 0; i < names->size(); i++) {
-		g_lingo->registerMethodVar(*(*names)[i], kVarGlobal);
+		g_lingo->_compiler->registerMethodVar(*(*names)[i], kVarGlobal);
 	}
 }
 
@@ -107,7 +108,7 @@ void GlobalNode::compile() {
 
 void PropertyNode::compile() {
 	for (uint i = 0; i < names->size(); i++) {
-		g_lingo->registerMethodVar(*(*names)[i], kVarProperty);
+		g_lingo->_compiler->registerMethodVar(*(*names)[i], kVarProperty);
 	}
 }
 
@@ -115,36 +116,36 @@ void PropertyNode::compile() {
 
 void InstanceNode::compile() {
 	for (uint i = 0; i < names->size(); i++) {
-		g_lingo->registerMethodVar(*(*names)[i], kVarInstance);
+		g_lingo->_compiler->registerMethodVar(*(*names)[i], kVarInstance);
 	}
 }
 
 /* IntNode */
 
 void IntNode::compile() {
-	g_lingo->code1(LC::c_intpush);
-	g_lingo->codeInt(val);
+	g_lingo->_compiler->code1(LC::c_intpush);
+	g_lingo->_compiler->codeInt(val);
 }
 
 /* FloatNode */
 
 void FloatNode::compile() {
-	g_lingo->code1(LC::c_floatpush);
-	g_lingo->codeFloat(val);
+	g_lingo->_compiler->code1(LC::c_floatpush);
+	g_lingo->_compiler->codeFloat(val);
 }
 
 /* SymbolNode */
 
 void SymbolNode::compile() {
-	g_lingo->code1(LC::c_symbolpush);
-	g_lingo->codeString(val->c_str());
+	g_lingo->_compiler->code1(LC::c_symbolpush);
+	g_lingo->_compiler->codeString(val->c_str());
 }
 
 /* StringNode */
 
 void StringNode::compile() {
-	g_lingo->code1(LC::c_stringpush);
-	g_lingo->codeString(val->c_str());
+	g_lingo->_compiler->code1(LC::c_stringpush);
+	g_lingo->_compiler->codeString(val->c_str());
 }
 
 /* FuncNode */
@@ -153,18 +154,18 @@ void FuncNode::compile() {
 	for (uint i = 0; i < args->size(); i++) {
 		(*args)[i]->compile();
 	}
-	g_lingo->codeFunc(name, args->size());
+	g_lingo->_compiler->codeFunc(name, args->size());
 }
 
 /* VarNode */
 
 void VarNode::compile() {
 	if (g_lingo->_builtinConsts.contains(*name)) {
-		g_lingo->code1(LC::c_constpush);
+		g_lingo->_compiler->code1(LC::c_constpush);
 	} else {
-		g_lingo->code1(LC::c_eval);
+		g_lingo->_compiler->code1(LC::c_eval);
 	}
-	g_lingo->codeString(name->c_str());
+	g_lingo->_compiler->codeString(name->c_str());
 }
 
 /* ParensNode */
@@ -177,7 +178,7 @@ void ParensNode::compile() {
 
 void UnaryOpNode::compile() {
 	arg->compile();
-	g_lingo->code1(op);
+	g_lingo->_compiler->code1(op);
 }
 
 /* BinaryOpNode */
@@ -185,7 +186,7 @@ void UnaryOpNode::compile() {
 void BinaryOpNode::compile() {
 	a->compile();
 	b->compile();
-	g_lingo->code1(op);
+	g_lingo->_compiler->code1(op);
 }
 
 } // End of namespace Director
