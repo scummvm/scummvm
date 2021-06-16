@@ -168,8 +168,13 @@ void SceneScriptNR08::SceneFrameAdvanced(int frame) {
 	        && frame < 135
 	) {
 		Set_Fade_Density((134 - frame) / 14.0f);
+#if !BLADERUNNER_ORIGINAL_BUGS
+		// McCoy should not blink in at the end of the fadein of this loop
+		Actor_Set_Invisible(kActorMcCoy, false);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 		Music_Play(kMusicArkDnce1, 61, 0, 1, -1, kMusicLoopPlayOnce, 0);
 	} else {
+		// Could be redundant now (after bug fix for fadein)
 		Actor_Set_Invisible(kActorMcCoy, false);
 		Set_Fade_Density(0.0f);
 	}
