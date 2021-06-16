@@ -380,16 +380,16 @@ void OSystem_iOS7::clearOverlay() {
 	dirtyFullOverlayScreen();
 }
 
-void OSystem_iOS7::grabOverlay(void *buf, int pitch) {
+void OSystem_iOS7::grabOverlay(Graphics::Surface &surface) {
 	//printf("grabOverlay()\n");
 	int h = _videoContext->overlayHeight;
 
-	byte *dst = (byte *)buf;
+	byte *dst = (byte *)surface.getPixels();
 	const byte *src = (const byte *)_videoContext->overlayTexture.getPixels();
 	do {
 		memcpy(dst, src, _videoContext->overlayWidth * sizeof(uint16));
 		src += _videoContext->overlayTexture.pitch;
-		dst += pitch;
+		dst += surface.pitch;
 	} while (--h);
 }
 

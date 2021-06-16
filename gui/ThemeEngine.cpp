@@ -373,7 +373,7 @@ bool ThemeEngine::init() {
 void ThemeEngine::clearAll() {
 	if (_initOk) {
 		_system->clearOverlay();
-		_system->grabOverlay(_backBuffer.getPixels(), _backBuffer.pitch);
+		_system->grabOverlay(*_backBuffer.surfacePtr());
 	}
 }
 

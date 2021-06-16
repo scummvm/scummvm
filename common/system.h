@@ -1175,7 +1175,7 @@ public:
 	 *
 	 * This is only used to implement fake alpha blending.
 	 */
-	virtual void grabOverlay(void *buf, int pitch) = 0;
+	virtual void grabOverlay(Graphics::Surface &surface) = 0;
 
 	/**
 	 * Blit a graphics buffer to the overlay.

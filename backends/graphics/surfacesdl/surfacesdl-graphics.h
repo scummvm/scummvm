@@ -110,7 +110,7 @@ public:
 
 	virtual Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 	virtual void clearOverlay() override;
-	virtual void grabOverlay(void *buf, int pitch) const override;
+	virtual void grabOverlay(Graphics::Surface &surface) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual int16 getOverlayHeight() const override { return _videoMode.overlayHeight; }
 	virtual int16 getOverlayWidth() const override { return _videoMode.overlayWidth; }

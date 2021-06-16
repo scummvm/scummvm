@@ -655,15 +655,15 @@ void OSystem_Dreamcast::clearOverlay()
   _overlay_dirty = true;
 }
 
-void OSystem_Dreamcast::grabOverlay(void *buf, int pitch)
+void OSystem_Dreamcast::grabOverlay(Graphics::Surface &surface)
 {
   int h = OVL_H;
   unsigned short *src = overlay;
-  unsigned char *dst = (unsigned char *)buf;
+  unsigned char *dst = (unsigned char *)surface.getPixels();
   do {
 	memcpy(dst, src, OVL_W*sizeof(int16));
 	src += OVL_W;
-	dst += pitch;
+	dst += surface.pitch;
   } while (--h);
 }
 

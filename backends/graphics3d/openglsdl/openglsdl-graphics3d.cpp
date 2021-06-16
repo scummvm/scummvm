@@ -643,15 +643,15 @@ void OpenGLSdlGraphics3dManager::clearOverlay() {
 	_overlayScreen->fill(0);
 }
 
-void OpenGLSdlGraphics3dManager::grabOverlay(void *buf, int pitch) const {
+void OpenGLSdlGraphics3dManager::grabOverlay(Graphics::Surface &surface) const {
 	const Graphics::Surface *overlayData = _overlayScreen->getBackingSurface();
 
 	const byte *src = (const byte *)overlayData->getPixels();
-	byte *dst = (byte *)buf;
+	byte *dst = (byte *)surface.getPixels();
 
 	for (uint h = overlayData->h; h > 0; --h) {
 		memcpy(dst, src, overlayData->w * overlayData->format.bytesPerPixel);
-		dst += pitch;
+		dst += surface.pitch;
 		src += overlayData->pitch;
 	}
 }

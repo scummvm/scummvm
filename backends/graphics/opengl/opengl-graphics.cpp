@@ -638,15 +638,15 @@ void OpenGLGraphicsManager::clearOverlay() {
 	_overlay->fill(0);
 }
 
-void OpenGLGraphicsManager::grabOverlay(void *buf, int pitch) const {
+void OpenGLGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	const Graphics::Surface *overlayData = _overlay->getSurface();
 
 	const byte *src = (const byte *)overlayData->getPixels();
-	byte *dst = (byte *)buf;
+	byte *dst = (byte *)surface.getPixels();
 
 	for (uint h = overlayData->h; h > 0; --h) {
 		memcpy(dst, src, overlayData->w * overlayData->format.bytesPerPixel);
-		dst += pitch;
+		dst += surface.pitch;
 		src += overlayData->pitch;
 	}
 }

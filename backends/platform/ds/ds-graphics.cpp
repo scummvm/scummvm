@@ -410,8 +410,8 @@ void OSystem_DS::clearOverlay() {
 	_overlay.clear();
 }
 
-void OSystem_DS::grabOverlay(void *buf, int pitch) {
-	_overlay.grab((byte *)buf, pitch);
+void OSystem_DS::grabOverlay(Graphics::Surface &surface) {
+	_overlay.grab((byte *)surface.getPixels(), surface.pitch);
 }
 
 void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {

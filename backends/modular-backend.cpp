@@ -211,8 +211,8 @@ void ModularGraphicsBackend::clearOverlay() {
 	_graphicsManager->clearOverlay();
 }
 
-void ModularGraphicsBackend::grabOverlay(void *buf, int pitch) {
-	_graphicsManager->grabOverlay(buf, pitch);
+void ModularGraphicsBackend::grabOverlay(Graphics::Surface &surface) {
+	_graphicsManager->grabOverlay(surface);
 }
 
 void ModularGraphicsBackend::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {

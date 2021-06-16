@@ -57,7 +57,7 @@ public:
 	virtual void showOverlay() override;
 	virtual void hideOverlay() override;
 	virtual void clearOverlay() override;
-	virtual void grabOverlay(void *buf, int pitch) const override;
+	virtual void grabOverlay(Graphics::Surface &surface) const override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h) override;
 	virtual int16 getOverlayHeight() const override;

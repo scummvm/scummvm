@@ -1737,7 +1737,7 @@ void SurfaceSdlGraphicsManager::clearOverlay() {
 	_forceRedraw = true;
 }
 
-void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
+void SurfaceSdlGraphicsManager::grabOverlay(Graphics::Surface &surface) const {
 	assert(_transactionMode == kTransactionNone);
 
 	if (_overlayscreen == NULL)
@@ -1747,12 +1747,13 @@ void SurfaceSdlGraphicsManager::grabOverlay(void *buf, int pitch) const {
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
 	byte *src = (byte *)_overlayscreen->pixels;
-	byte *dst = (byte *)buf;
-	int h = _videoMode.overlayHeight;
+	byte *dst = (byte *)surface.getPixels();
+	int h = MIN<int>(surface.h, _videoMode.overlayHeight);
+	int pitch = MIN<int>(surface.w, _videoMode.overlayWidth * 2);
 	do {
-		memcpy(dst, src, _videoMode.overlayWidth * 2);
+		memcpy(dst, src, pitch);
 		src += _overlayscreen->pitch;
-		dst += pitch;
+		dst += surface.pitch;
 	} while (--h);
 
 	SDL_UnlockSurface(_overlayscreen);

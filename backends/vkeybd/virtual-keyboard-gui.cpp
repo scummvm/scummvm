@@ -178,7 +178,7 @@ void VirtualKeyboardGUI::run() {
 		_system->clearOverlay();
 	}
 	_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-	_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
+	_system->grabOverlay(_overlayBackup);
 
 	setupCursor();
 
@@ -279,7 +279,7 @@ void VirtualKeyboardGUI::screenChanged() {
 		_screenH = newScreenH;
 
 		_overlayBackup.create(_screenW, _screenH, _system->getOverlayFormat());
-		_system->grabOverlay(_overlayBackup.getPixels(), _overlayBackup.pitch);
+		_system->grabOverlay(_overlayBackup);
 
 		if (!_kbd->checkModeResolutions()) {
 			_displaying = false;

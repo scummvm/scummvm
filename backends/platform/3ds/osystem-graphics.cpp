@@ -626,12 +626,12 @@ void OSystem_3DS::clearOverlay() {
 	_overlay.clear();
 }
 
-void OSystem_3DS::grabOverlay(void *buf, int pitch) {
-	byte *dst = (byte *)buf;
+void OSystem_3DS::grabOverlay(Graphics::Surface &surface) {
+	byte *dst = (byte *)surface.getPixels();
 
 	for (int y = 0; y < getOverlayHeight(); ++y) {
 		memcpy(dst, _overlay.getBasePtr(0, y), getOverlayWidth() * _overlay.format.bytesPerPixel);
-		dst += pitch;
+		dst += surface.pitch;
 	}
 }
 
