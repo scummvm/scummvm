@@ -46,9 +46,7 @@ public:
 	int codeFloat(double f);
 	int codeFunc(Common::String *s, int numpar);
 	int codeInt(int val);
-	void codeLabel(int label);
 	int codeString(const char *s);
-	void processIf(int toplabel, int endlabel);
 	void registerFactory(Common::String &s);
 	void registerMethodVar(const Common::String &name, VarType type);
 
@@ -65,8 +63,6 @@ public:
 
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
-
-	Common::Array<int> _labelstack;
 
 	bool _hadError;
 

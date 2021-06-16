@@ -251,37 +251,6 @@ int LingoCompiler::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
-void LingoCompiler::codeLabel(int label) {
-	_labelstack.push_back(label);
-	debugC(4, kDebugCompile, "codeLabel: Added label %d", label);
-}
-
-void LingoCompiler::processIf(int toplabel, int endlabel) {
-	inst iend;
-
-	debugC(4, kDebugCompile, "processIf(%d, %d)", toplabel, endlabel);
-
-	while (true) {
-		if (_labelstack.empty()) {
-			warning("Lingo::processIf(): Label stack underflow");
-			break;
-		}
-
-		int label = _labelstack.back();
-		_labelstack.pop_back();
-
-		// This is beginning of our if()
-		if (!label)
-			break;
-
-		debugC(4, kDebugCompile, "processIf: label at %d", label);
-
-		WRITE_UINT32(&iend, endlabel - label + 1);
-
-		(*_currentAssembly)[label] = iend;	/* end, if cond fails */
-	}
-}
-
 void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) {
 	if (!_methodVars->contains(name)) {
 		(*_methodVars)[name] = type;
