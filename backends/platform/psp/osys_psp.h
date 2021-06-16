@@ -106,7 +106,7 @@ public:
 	void hideOverlay();
 	bool isOverlayVisible() const;
 	void clearOverlay();
-	void grabOverlay(void *buf, int pitch);
+	void grabOverlay(Graphics::Surface &surface);
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();

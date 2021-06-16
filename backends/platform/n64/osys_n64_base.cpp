@@ -665,15 +665,15 @@ void OSystem_N64::clearOverlay() {
 	_dirtyOffscreen = true;
 }
 
-void OSystem_N64::grabOverlay(void *buf, int pitch) {
+void OSystem_N64::grabOverlay(Graphics::Surface &surface) {
 	int h = _overlayHeight;
 	uint16 *src = _overlayBuffer;
-	byte *dst = (byte *)buf;
+	byte *dst = (byte *)surface.getPixels();
 
 	do {
 		memcpy(dst, src, _overlayWidth * sizeof(uint16));
 		src += _overlayWidth;
-		dst += pitch;
+		dst += surface.pitch;
 	} while (--h);
 }
 

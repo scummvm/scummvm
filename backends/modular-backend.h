@@ -104,7 +104,7 @@ public:
 	virtual bool isOverlayVisible() const override final;
 	virtual Graphics::PixelFormat getOverlayFormat() const override final;
 	virtual void clearOverlay() override final;
-	virtual void grabOverlay(void *buf, int pitch) override final;
+	virtual void grabOverlay(Graphics::Surface &surface) override final;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override final;
 	virtual int16 getOverlayHeight() override final;
 	virtual int16 getOverlayWidth() override final;

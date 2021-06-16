@@ -93,7 +93,7 @@ public:
 	virtual bool isOverlayVisible() const = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
 	virtual void clearOverlay() = 0;
-	virtual void grabOverlay(void *buf, int pitch) const = 0;
+	virtual void grabOverlay(Graphics::Surface &surface) const = 0;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight() const = 0;
 	virtual int16 getOverlayWidth() const = 0;

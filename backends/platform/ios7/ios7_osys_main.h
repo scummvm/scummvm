@@ -163,7 +163,7 @@ public:
 	virtual void hideOverlay() override;
 	virtual bool isOverlayVisible() const override { return _videoContext->overlayVisible; }
 	virtual void clearOverlay() override;
-	virtual void grabOverlay(void *buf, int pitch) override;
+	virtual void grabOverlay(Graphics::Surface &surface) override;
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual int16 getOverlayHeight() override;
 	virtual int16 getOverlayWidth() override;

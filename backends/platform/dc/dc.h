@@ -158,7 +158,7 @@ public:
   void showOverlay();
   void hideOverlay();
   void clearOverlay();
-  void grabOverlay(void *buf, int pitch);
+  void grabOverlay(Graphics::Surface &surface);
   void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h);
   virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12); }
 

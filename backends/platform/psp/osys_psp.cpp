@@ -258,9 +258,9 @@ void OSystem_PSP::clearOverlay() {
 	_overlay.clearBuffer();
 }
 
-void OSystem_PSP::grabOverlay(void *buf, int pitch) {
+void OSystem_PSP::grabOverlay(Graphics::Surface &surface) {
 	DEBUG_ENTER_FUNC();
-	_overlay.copyToArray(buf, pitch);
+	_overlay.copyToArray(surface.getPixels(), surface.pitch);
 }
 
 void OSystem_PSP::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {

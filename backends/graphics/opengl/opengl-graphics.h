@@ -107,7 +107,7 @@ public:
 
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override;
 	virtual void clearOverlay() override;
-	virtual void grabOverlay(void *buf, int pitch) const override;
+	virtual void grabOverlay(Graphics::Surface &surface) const override;
 
 	virtual void setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, bool dontScale, const Graphics::PixelFormat *format) override;
 	virtual void setCursorPalette(const byte *colors, uint start, uint num) override;

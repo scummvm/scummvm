@@ -576,15 +576,15 @@ void OSystem_Wii::clearOverlay() {
 	_overlayDirty = true;
 }
 
-void OSystem_Wii::grabOverlay(void *buf, int pitch) {
+void OSystem_Wii::grabOverlay(Graphics::Surface &surface) {
 	int h = _overlayHeight;
 	uint16 *src = _overlayPixels;
-	byte *dst = (byte *)buf;
+	byte *dst = (byte *)surface.getPixels();
 
 	do {
 		memcpy(dst, src, _overlayWidth * sizeof(uint16));
 		src += _overlayWidth;
-		dst += pitch;
+		dst += surface.pitch;
 	} while (--h);
 }
 

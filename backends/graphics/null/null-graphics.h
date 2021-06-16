@@ -77,7 +77,7 @@ public:
 	bool isOverlayVisible() const override { return _overlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
 	void clearOverlay() override {}
-	void grabOverlay(void *buf, int pitch) const override {}
+	void grabOverlay(Graphics::Surface &surface) const override {}
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override {}
 	int16 getOverlayHeight() const override { return _height; }
 	int16 getOverlayWidth() const override { return _width; }
