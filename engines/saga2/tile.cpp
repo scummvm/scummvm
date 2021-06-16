@@ -1441,15 +1441,24 @@ MapHeader::MapHeader(Common::SeekableReadStream *stream) {
 		mapData[i] = stream->readUint16LE();
 }
 
-static void readMetaTile(hResContext *con, MetaTile &til) {
-	til.highestPixel = con->readU16LE();
-	til.banksNeeded._b[0] = con->readU32LE();
-	til.banksNeeded._b[1] = con->readU32LE();
+MetaTile::MetaTile(int ind, Common::SeekableReadStream *stream) {
+	index = ind;
+	highestPixel = stream->readUint16LE();
+	banksNeeded._b[0] = stream->readUint32LE();
+	banksNeeded._b[1] = stream->readUint32LE();
 
 	for (int i = 0; i < maxPlatforms; ++i)
-		til.stack[i] = con->readU16LE();
+		stack[i] = stream->readUint16LE();
 
-	til.properties = con->readU32LE();
+	properties = stream->readUint32LE();
+}
+
+MetaTileList::MetaTileList(int count, Common::SeekableReadStream *stream) {
+	_count = count;
+	_tiles = (MetaTile **)malloc(_count * sizeof(MetaTile *));
+	for (int i = 0; i < _count; ++i) {
+		_tiles[i] = new MetaTile(i, stream);
+	}
 }
 
 static void readActiveItem(hResContext *con, ActiveItem &itm) {
@@ -1526,12 +1535,11 @@ void initMaps(void) {
 		debugC(2, kDebugTiles, "map: size = %d, mapData = %p", mapData->map->size, (void*)mapData->map->mapData);
 
 		int metaTileCount = tileRes->size(iMetaID) / metaTileSize;
-		mapData->metaList = new MetaTile[metaTileCount]();
-		tileRes->seek(iMetaID);
-		for (int k = 0; k < metaTileCount; ++k)
-			readMetaTile(tileRes, mapData->metaList[k]);
+		stream = loadResourceToStream(tileRes, iMetaID, "meta tile list");
+		mapData->metaList = new MetaTileList(metaTileCount, stream);
+		delete stream;
 
-		if (mapData->metaList == nullptr)
+		if (mapData->metaList == nullptr || mapData->metaList->_tiles == nullptr)
 			error("Unable to load meta tile list");
 
 		//  If there is tag data, load it
@@ -1627,7 +1635,14 @@ void cleanupMaps(void) {
 		}
 
 		//  Dump the meta tile list
-		delete[] mapData->metaList;
+		if (mapData->metaList) {
+			for (int k = 0; k < mapData->metaList->_count; ++i)
+			if (mapData->metaList->_tiles[i])
+				delete mapData->metaList->_tiles[i];
+
+			free(mapData->metaList->_tiles);
+		}
+		delete mapData->metaList;
 
 		//  If there is active item data, dump it
 		if (mapData->activeItemData != nullptr)
@@ -2251,7 +2266,7 @@ RipTableID RipTable::thisID(void) {
 
 MetaTile *MetaTile::metaTileAddress(MetaTileID id) {
 	return  id.map != nullID && id.index != nullID
-	        ?   &(mapList[id.map].metaList)[id.index]
+	        ?   mapList[id.map].metaList->_tiles[id.index]
 	        :   nullptr;
 }
 
@@ -2259,7 +2274,7 @@ MetaTile *MetaTile::metaTileAddress(MetaTileID id) {
 //	Return this meta tile's ID
 
 MetaTileID MetaTile::thisID(int16 mapNum) {
-	return MetaTileID(mapNum, this - mapList[mapNum].metaList);
+	return MetaTileID(mapNum, index);
 }
 
 //-----------------------------------------------------------------------
@@ -2291,9 +2306,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	PlatformCacheEntry  *pce;
 
 	assert(layer >= 0);
-	assert(this >= mapList[mapNum].metaList
-	       &&  this <  & (mapList[mapNum].metaList)[
-	           mapList[mapNum].metaCount]);
+	assert(index != -1);
 
 	if (plIndex == nullID) {
 		return nullptr;
@@ -2344,9 +2357,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 RipTable *MetaTile::ripTable(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[mapNum];
 
-	return RipTable::ripTableAddress((mapData->ripTableIDList)[
-	                                  this
-	                                  -   mapData->metaList]);
+	return RipTable::ripTableAddress((mapData->ripTableIDList)[index]);
 }
 
 //-----------------------------------------------------------------------
@@ -2355,7 +2366,7 @@ RipTable *MetaTile::ripTable(int16 mapNum) {
 RipTableID &MetaTile::ripTableID(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[mapNum];
 
-	return (mapData->ripTableIDList)[this - mapData->metaList];
+	return (mapData->ripTableIDList)[index];
 }
 
 /* ====================================================================== *
@@ -2425,7 +2436,7 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 	assert(mtile < metaCount);
 	assert(mtile >= 0);
 
-	return &metaList[mtile];
+	return metaList->_tiles[mtile];
 
 }
 
@@ -2646,7 +2657,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	                mapEdgeType = curMap->map->edgeType;
 	uint16          *mapData = curMap->map->mapData;
 
-	MetaTilePtr     metaArray = curMap->metaList;
+	MetaTilePtr     *metaArray = curMap->metaList->_tiles;
 
 	int16           layerLimit;
 
@@ -2696,7 +2707,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 
 		if (mtile >= curMap->metaCount) mtile = curMap->metaCount - 1;
 
-		metaPtr = &metaArray[mtile];
+		metaPtr = metaArray[mtile];
 		put = drawList;
 
 		if (metaPtr == nullptr) return;
@@ -3289,7 +3300,7 @@ void maskMetaRow(
 	                mapEdgeType = curMap->map->edgeType;
 	uint16          *mapData = curMap->map->mapData;
 
-	MetaTilePtr     metaArray = curMap->metaList;
+	MetaTilePtr     *metaArray = curMap->metaList->_tiles;
 
 	int16           layerLimit;
 
@@ -3336,7 +3347,7 @@ void maskMetaRow(
 
 		if (mtile >= curMap->metaCount) mtile = curMap->metaCount - 1;
 
-		metaPtr = &metaArray[mtile];
+		metaPtr = metaArray[mtile];
 		put = drawList;
 
 		if (metaPtr == nullptr) return;

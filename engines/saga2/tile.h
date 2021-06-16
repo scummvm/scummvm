@@ -802,6 +802,9 @@ struct MetaTile {
 	BankBits        banksNeeded;            // which banks are needed
 	uint16          stack[maxPlatforms];    // pointer to platforms
 	uint32          properties;             // more drawing optimization
+	int index = -1;
+
+	MetaTile(int ind, Common::SeekableReadStream *stream);
 
 	//  Return a pointer to a meta tile given its ID
 	static MetaTile *metaTileAddress(MetaTileID id);
@@ -831,6 +834,14 @@ struct MetaTile {
 
 typedef MetaTile    *MetaTilePtr,
         * *MetaTileHandle;
+
+class MetaTileList {
+public:
+	int _count;
+	MetaTile **_tiles;
+
+	MetaTileList(int count, Common::SeekableReadStream *stream);
+};
 
 /* ===================================================================== *
    MapHeader struct
@@ -865,7 +876,7 @@ struct WorldMapData {
 	ObjectID            worldID;            //  The number of this map
 
 	MapPtr              map;                //  Map data
-	MetaTilePtr         metaList;           //  MetaTile list
+	MetaTileList        *metaList;          //  MetaTile list
 	TileRefPtr          activeItemData;     //  ActiveItem tileRefs
 	ActiveItemPtr       activeItemList;     //  ActiveItem list
 	UWordPtr            assocList;          //  Associations
