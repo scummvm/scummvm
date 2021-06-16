@@ -537,7 +537,6 @@ Common::SeekableReadStream *EventRecorder::processSaveStream(const Common::Strin
 		return saveFile;
 	default:
 		return nullptr;
-		break;
 	}
 }
 
