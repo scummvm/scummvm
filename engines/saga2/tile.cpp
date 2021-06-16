@@ -1442,15 +1442,15 @@ MapHeader::MapHeader(Common::SeekableReadStream *stream) {
 }
 
 MetaTile::MetaTile(int ind, Common::SeekableReadStream *stream) {
-	index = ind;
-	highestPixel = stream->readUint16LE();
-	banksNeeded._b[0] = stream->readUint32LE();
-	banksNeeded._b[1] = stream->readUint32LE();
+	_index = ind;
+	_highestPixel = stream->readUint16LE();
+	_banksNeeded._b[0] = stream->readUint32LE();
+	_banksNeeded._b[1] = stream->readUint32LE();
 
 	for (int i = 0; i < maxPlatforms; ++i)
-		stack[i] = stream->readUint16LE();
+		_stack[i] = stream->readUint16LE();
 
-	properties = stream->readUint32LE();
+	_properties = stream->readUint32LE();
 }
 
 MetaTileList::MetaTileList(int count, Common::SeekableReadStream *stream) {
@@ -2274,14 +2274,14 @@ MetaTile *MetaTile::metaTileAddress(MetaTileID id) {
 //	Return this meta tile's ID
 
 MetaTileID MetaTile::thisID(int16 mapNum) {
-	return MetaTileID(mapNum, index);
+	return MetaTileID(mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
 //	Return the audio theme associated with this metatile
 
 metaTileNoise MetaTile::HeavyMetaMusic(void) {
-	return properties & 0xFF;
+	return _properties & 0xFF;
 }
 
 //-----------------------------------------------------------------------
@@ -2302,11 +2302,11 @@ static void readPlatform(hResContext *con, Platform &plt) {
 }
 
 Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
-	uint16              plIndex = stack[layer];
+	uint16              plIndex = _stack[layer];
 	PlatformCacheEntry  *pce;
 
 	assert(layer >= 0);
-	assert(index != -1);
+	assert(_index != -1);
 
 	if (plIndex == nullID) {
 		return nullptr;
@@ -2332,7 +2332,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	pce->platformNum = plIndex;
 	pce->layerNum = layer;
 	pce->metaID = thisID(mapNum);
-	stack[layer] = (cacheIndex);
+	_stack[layer] = (cacheIndex);
 
 	assert(plIndex >= 0);
 	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
@@ -2357,7 +2357,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 RipTable *MetaTile::ripTable(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[mapNum];
 
-	return RipTable::ripTableAddress((mapData->ripTableIDList)[index]);
+	return RipTable::ripTableAddress((mapData->ripTableIDList)[_index]);
 }
 
 //-----------------------------------------------------------------------
@@ -2366,7 +2366,7 @@ RipTable *MetaTile::ripTable(int16 mapNum) {
 RipTableID &MetaTile::ripTableID(int16 mapNum) {
 	WorldMapData    *mapData = &mapList[mapNum];
 
-	return (mapData->ripTableIDList)[index];
+	return (mapData->ripTableIDList)[_index];
 }
 
 /* ====================================================================== *
