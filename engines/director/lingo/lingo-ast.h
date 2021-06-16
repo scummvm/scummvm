@@ -26,6 +26,22 @@
 namespace Director {
 
 struct Node;
+struct ScriptNode;
+struct FactoryNode;
+struct HandlerNode;
+struct CmdNode;
+struct GlobalNode;
+struct PropertyNode;
+struct InstanceNode;
+struct IntNode;
+struct FloatNode;
+struct SymbolNode;
+struct StringNode;
+struct FuncNode;
+struct VarNode;
+struct ParensNode;
+struct UnaryOpNode;
+struct BinaryOpNode;
 
 typedef Common::Array<Node *> NodeList;
 typedef Common::Array<Common::String *> IDList;
@@ -59,6 +75,31 @@ enum NodeType {
 	kBinaryOpNode
 };
 
+/* NodeVisitor */
+
+class NodeVisitor {
+public:
+	NodeVisitor() {}
+	virtual ~NodeVisitor() {}
+
+	virtual void visitScriptNode(ScriptNode *node) = 0;
+	virtual void visitFactoryNode(FactoryNode *node) = 0;
+	virtual void visitHandlerNode(HandlerNode *node) = 0;
+	virtual void visitCmdNode(CmdNode *node) = 0;
+	virtual void visitGlobalNode(GlobalNode *node) = 0;
+	virtual void visitPropertyNode(PropertyNode *node) = 0;
+	virtual void visitInstanceNode(InstanceNode *node) = 0;
+	virtual void visitIntNode(IntNode *node) = 0;
+	virtual void visitFloatNode(FloatNode *node) = 0;
+	virtual void visitSymbolNode(SymbolNode *node) = 0;
+	virtual void visitStringNode(StringNode *node) = 0;
+	virtual void visitFuncNode(FuncNode *node) = 0;
+	virtual void visitVarNode(VarNode *node) = 0;
+	virtual void visitParensNode(ParensNode *node) = 0;
+	virtual void visitUnaryOpNode(UnaryOpNode *node) = 0;
+	virtual void visitBinaryOpNode(BinaryOpNode *node) = 0;
+};
+
 /* Node */
 
 struct Node {
@@ -67,8 +108,8 @@ struct Node {
 	bool isStatement;
 
 	Node(NodeType t) : type(t), isExpression(false), isStatement(false) {}
-	virtual ~Node() = default;
-	virtual void compile() {}
+	virtual ~Node() {}
+	virtual void accept(NodeVisitor *visitor) = 0;
 };
 
 /* ExprNode */
@@ -77,7 +118,7 @@ struct ExprNode : Node {
 	ExprNode(NodeType t) : Node(t) {
 		isExpression = true;
 	}
-	virtual ~ExprNode() = default;
+	virtual ~ExprNode() {}
 };
 
 /* StmtNode */
@@ -86,7 +127,7 @@ struct StmtNode : Node {
 	StmtNode(NodeType t) : Node(t) {
 		isStatement = true;
 	}
-	virtual ~StmtNode() = default;
+	virtual ~StmtNode() {}
 };
 
 /* ScriptNode */
@@ -98,7 +139,9 @@ struct ScriptNode : Node {
 	virtual ~ScriptNode() {
 		deleteList(nodes);
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitScriptNode(this);
+	}
 };
 
 /* FactoryNode */
@@ -113,7 +156,9 @@ struct FactoryNode : Node {
 		delete name;
 		deleteList(methods);
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitFactoryNode(this);
+	}
 };
 
 /* HandlerNode */
@@ -130,7 +175,9 @@ struct HandlerNode : Node {
 		deleteList(args);
 		deleteList(stmts);
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitHandlerNode(this);
+	}
 };
 
 /* CmdNode */
@@ -145,7 +192,9 @@ struct CmdNode : StmtNode {
 		delete name;
 		deleteList(args);
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitCmdNode(this);
+	}
 };
 
 /* GlobalNode */
@@ -157,7 +206,9 @@ struct GlobalNode : StmtNode {
 	virtual ~GlobalNode() {
 		delete names;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitGlobalNode(this);
+	}
 };
 
 /* PropertyNode */
@@ -169,7 +220,9 @@ struct PropertyNode : StmtNode {
 	virtual ~PropertyNode() {
 		delete names;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPropertyNode(this);
+	}
 };
 
 /* InstanceNode */
@@ -181,7 +234,9 @@ struct InstanceNode : StmtNode {
 	virtual ~InstanceNode() {
 		delete names;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitInstanceNode(this);
+	}
 };
 
 /* IntNode */
@@ -191,7 +246,9 @@ struct IntNode : ExprNode {
 
 	IntNode(int valIn) : ExprNode(kIntNode), val(valIn) {}
 	virtual ~IntNode() = default;
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitIntNode(this);
+	}
 };
 
 /* FloatNode */
@@ -201,7 +258,9 @@ struct FloatNode : ExprNode {
 
 	FloatNode(double valIn) : ExprNode(kFloatNode), val(valIn) {}
 	virtual ~FloatNode() = default;
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitFloatNode(this);
+	}
 };
 
 /* SymbolNode */
@@ -213,7 +272,9 @@ struct SymbolNode : ExprNode {
 	virtual ~SymbolNode() {
 		delete val;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitSymbolNode(this);
+	}
 };
 
 /* StringNode */
@@ -225,7 +286,9 @@ struct StringNode : ExprNode {
 	virtual ~StringNode() {
 		delete val;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitStringNode(this);
+	}
 };
 
 /* FuncNode */
@@ -240,7 +303,9 @@ struct FuncNode : StmtNode {
 		delete name;
 		deleteList(args);
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitFuncNode(this);
+	}
 };
 
 /* VarNode */
@@ -252,7 +317,9 @@ struct VarNode : ExprNode {
 	virtual ~VarNode() {
 		delete name;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitVarNode(this);
+	}
 };
 
 /* ParensNode */
@@ -264,7 +331,9 @@ struct ParensNode : ExprNode {
 	virtual ~ParensNode() {
 		delete expr;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitParensNode(this);
+	}
 };
 
 /* UnaryOpNode */
@@ -277,7 +346,9 @@ struct UnaryOpNode : ExprNode {
 	virtual ~UnaryOpNode() {
 		delete arg;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitUnaryOpNode(this);
+	}
 };
 
 /* BinaryOpNode */
@@ -292,7 +363,9 @@ struct BinaryOpNode : ExprNode {
 		delete a;
 		delete b;
 	}
-	virtual void compile();
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitBinaryOpNode(this);
+	}
 };
 
 } // End of namespace Director

@@ -103,7 +103,7 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 
 	// Generate bytecode
 	if (_assemblyAST) {
-		_assemblyAST->compile();
+		_assemblyAST->accept(this);
 	}
 
 	// for D4 and above, there usually won't be any code left.
@@ -372,6 +372,167 @@ void LingoCompiler::codeFactory(Common::String &name) {
 
 void LingoCompiler::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
+}
+
+/* ScriptNode */
+
+void LingoCompiler::visitScriptNode(ScriptNode *node) {
+	for (uint i = 0; i < node->nodes->size(); i++) {
+		(*node->nodes)[i]->accept(this);
+	}
+}
+
+/* FactoryNode */
+
+void LingoCompiler::visitFactoryNode(FactoryNode *node) {
+	_inFactory = true;
+	ScriptContext *mainContext = _assemblyContext;
+	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
+
+	codeFactory(*node->name);
+	for (uint i = 0; i < node->methods->size(); i++) {
+		(*node->methods)[i]->accept(this);
+	}
+
+	_inFactory = false;
+	_assemblyContext = mainContext;
+}
+
+/* HandlerNode */
+
+void LingoCompiler::visitHandlerNode(HandlerNode *node) {
+	_indef = true;
+	VarTypeHash *mainMethodVars = _methodVars;
+	_methodVars = new VarTypeHash;
+
+	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
+		if (i->_value == kVarGlobal || i->_value == kVarProperty)
+			(*_methodVars)[i->_key] = i->_value;
+	}
+	if (_inFactory) {
+		for (DatumHash::iterator i = _assemblyContext->_properties.begin(); i != _assemblyContext->_properties.end(); ++i) {
+			(*_methodVars)[i->_key] = kVarInstance;
+		}
+	}
+
+	for (uint i = 0; i < node->args->size(); i++) { // TODO: eliminate argstack
+		codeArg((*node->args)[i]);
+	}
+
+	uint start = _currentAssembly->size(); // TODO: should always be zero
+	for (uint i = 0; i < node->stmts->size(); i++) {
+		(*node->stmts)[i]->accept(this);
+	}
+
+	code1(LC::c_procret);
+	codeDefine(*node->name, start, node->args->size());
+
+	clearArgStack();
+	_indef = false;
+	delete _methodVars;
+	_methodVars = mainMethodVars;
+}
+
+/* CmdNode */
+
+void LingoCompiler::visitCmdNode(CmdNode *node) {
+	for (uint i = 0; i < node->args->size(); i++) {
+		(*node->args)[i]->accept(this);
+	}
+	codeCmd(node->name, node->args->size());
+}
+
+/* GlobalNode */
+
+void LingoCompiler::visitGlobalNode(GlobalNode *node) {
+	for (uint i = 0; i < node->names->size(); i++) {
+		registerMethodVar(*(*node->names)[i], kVarGlobal);
+	}
+}
+
+/* PropertyNode */
+
+void LingoCompiler::visitPropertyNode(PropertyNode *node) {
+	for (uint i = 0; i < node->names->size(); i++) {
+		registerMethodVar(*(*node->names)[i], kVarProperty);
+	}
+}
+
+/* InstanceNode */
+
+void LingoCompiler::visitInstanceNode(InstanceNode *node) {
+	for (uint i = 0; i < node->names->size(); i++) {
+		registerMethodVar(*(*node->names)[i], kVarInstance);
+	}
+}
+
+/* IntNode */
+
+void LingoCompiler::visitIntNode(IntNode *node) {
+	code1(LC::c_intpush);
+	codeInt(node->val);
+}
+
+/* FloatNode */
+
+void LingoCompiler::visitFloatNode(FloatNode *node) {
+	code1(LC::c_floatpush);
+	codeFloat(node->val);
+}
+
+/* SymbolNode */
+
+void LingoCompiler::visitSymbolNode(SymbolNode *node) {
+	code1(LC::c_symbolpush);
+	codeString(node->val->c_str());
+}
+
+/* StringNode */
+
+void LingoCompiler::visitStringNode(StringNode *node) {
+	code1(LC::c_stringpush);
+	codeString(node->val->c_str());
+}
+
+/* FuncNode */
+
+void LingoCompiler::visitFuncNode(FuncNode *node) {
+	for (uint i = 0; i < node->args->size(); i++) {
+		(*node->args)[i]->accept(this);
+	}
+	codeFunc(node->name, node->args->size());
+}
+
+/* VarNode */
+
+void LingoCompiler::visitVarNode(VarNode *node) {
+	if (g_lingo->_builtinConsts.contains(*node->name)) {
+		code1(LC::c_constpush);
+	} else {
+		code1(LC::c_eval);
+	}
+	codeString(node->name->c_str());
+}
+
+/* ParensNode */
+
+void LingoCompiler::visitParensNode(ParensNode *node) {
+	node->expr->accept(this);
+}
+
+/* UnaryOpNode */
+
+void LingoCompiler::visitUnaryOpNode(UnaryOpNode *node) {
+	node->arg->accept(this);
+	code1(node->op);
+}
+
+/* BinaryOpNode */
+
+void LingoCompiler::visitBinaryOpNode(BinaryOpNode *node) {
+	node->a->accept(this);
+	node->b->accept(this);
+	code1(node->op);
 }
 
 } // End of namespace Director

@@ -25,12 +25,14 @@
 
 #include "director/types.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-ast.h"
 
 namespace Director {
 
-class LingoCompiler {
+class LingoCompiler : NodeVisitor {
 public:
 	LingoCompiler();
+	virtual ~LingoCompiler() {}
 
 	ScriptContext *compileAnonymous(const char *code);
 	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
@@ -73,6 +75,24 @@ public:
 	Common::Array<int> _labelstack;
 
 	bool _hadError;
+
+public:
+	virtual void visitScriptNode(ScriptNode *node);
+	virtual void visitFactoryNode(FactoryNode *node);
+	virtual void visitHandlerNode(HandlerNode *node);
+	virtual void visitCmdNode(CmdNode *node);
+	virtual void visitGlobalNode(GlobalNode *node);
+	virtual void visitPropertyNode(PropertyNode *node);
+	virtual void visitInstanceNode(InstanceNode *node);
+	virtual void visitIntNode(IntNode *node);
+	virtual void visitFloatNode(FloatNode *node);
+	virtual void visitSymbolNode(SymbolNode *node);
+	virtual void visitStringNode(StringNode *node);
+	virtual void visitFuncNode(FuncNode *node);
+	virtual void visitVarNode(VarNode *node);
+	virtual void visitParensNode(ParensNode *node);
+	virtual void visitUnaryOpNode(UnaryOpNode *node);
+	virtual void visitBinaryOpNode(BinaryOpNode *node);
 
 private:
 	int parse(const char *code);
