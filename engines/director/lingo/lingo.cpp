@@ -38,12 +38,22 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
 
 Lingo *g_lingo;
+
+int calcStringAlignment(const char *s) {
+	return calcCodeAlignment(strlen(s) + 1);
+}
+
+int calcCodeAlignment(int l) {
+	int instLen = sizeof(inst);
+	return (l + instLen - 1) / instLen;
+}
 
 Symbol::Symbol() {
 	name = nullptr;
@@ -146,25 +156,12 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_currentScript = 0;
 	_currentScriptContext = nullptr;
 
-	_assemblyAST = nullptr;
-	_assemblyArchive = nullptr;
-	_currentAssembly = nullptr;
-	_assemblyContext = nullptr;
-
 	_currentChannelId = -1;
 	_globalCounter = 0;
 	_pc = 0;
 	_abort = false;
-	_indef = false;
 	_expectError = false;
 	_caughtError = false;
-
-	_linenumber = _colnumber = _bytenumber = 0;
-	_lines[0] = _lines[1] = _lines[2] = nullptr;
-
-	_hadError = false;
-
-	_inFactory = false;
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
@@ -180,6 +177,8 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_windowList.type = ARRAY;
 	_windowList.u.farr = new DatumArray;
+
+	_compiler = new LingoCompiler;
 
 	initEventHandlerTypes();
 
@@ -266,120 +265,11 @@ void LingoArchive::addCode(const char *code, ScriptType type, uint16 id, const c
 	else
 		contextName = Common::String::format("%d", id);
 
-	ScriptContext *sc = g_lingo->compileLingo(code, this, type, id, contextName);
+	ScriptContext *sc = g_lingo->_compiler->compileLingo(code, this, type, id, contextName);
 	if (sc) {
 		scriptContexts[type][id] = sc;
 		*sc->_refCount += 1;
 	}
-}
-
-ScriptContext *Lingo::compileAnonymous(const char *code) {
-	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
-			"***********\n%s\n\n***********", code);
-
-	return compileLingo(code, nullptr, kNoneScript, 0, "[anonymous]", true);
-}
-
-ScriptContext *Lingo::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
-	_assemblyArchive = archive;
-	_assemblyAST = nullptr;
-	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
-	_currentAssembly = new ScriptData;
-
-	_methodVars = new VarTypeHash;
-	_linenumber = _colnumber = 1;
-	_hadError = false;
-
-	if (!strncmp(code, "menu:", 5) || scumm_strcasestr(code, "\nmenu:")) {
-		debugC(1, kDebugCompile, "Parsing menu");
-		parseMenu(code);
-
-		return nullptr;
-	}
-
-	// Preprocess the code for ease of the parser
-	Common::String codeNorm = codePreprocessor(code, archive, type, id);
-	code = codeNorm.c_str();
-
-	// Parse the Lingo and build an AST
-	parse(code);
-
-	// Generate bytecode
-	if (_assemblyAST) {
-		_assemblyAST->compile();
-	}
-
-	// for D4 and above, there usually won't be any code left.
-	// all scoped methods will be defined and stored by the code parser
-	// however D3 and below allow scopeless functions!
-	// and these can show up in D4 when imported from other movies
-
-	if (!_currentAssembly->empty()) {
-		// end of script, add a c_procret so stack frames work as expected
-		code1(LC::c_procret);
-		code1(STOP);
-
-		if (debugChannelSet(3, kDebugCompile)) {
-			if (_currentAssembly->size() && !_hadError)
-				Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
-
-			debugC(2, kDebugCompile, "<resulting code>");
-			uint pc = 0;
-			while (pc < _currentAssembly->size()) {
-				uint spc = pc;
-				Common::String instr = decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
-				debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-			}
-			debugC(2, kDebugCompile, "<end code>");
-		}
-
-		Symbol currentFunc;
-
-		currentFunc.type = HANDLER;
-		currentFunc.u.defn = _currentAssembly;
-		Common::String typeStr = Common::String(scriptType2str(type));
-		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
-		currentFunc.ctx = _assemblyContext;
-		currentFunc.archive = archive;
-		currentFunc.anonymous = anonymous;
-		// arg names should be empty, but just in case
-		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-		for (uint i = 0; i < _argstack.size(); i++) {
-			argNames->push_back(Common::String(_argstack[i]->c_str()));
-		}
-		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
-		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
-			if (it->_value == kVarLocal)
-				varNames->push_back(Common::String(it->_key));
-		}
-
-		if (debugChannelSet(1, kDebugCompile)) {
-			debug("Function vars");
-			debugN("  Args: ");
-			for (uint i = 0; i < argNames->size(); i++) {
-				debugN("%s, ", (*argNames)[i].c_str());
-			}
-			debugN("\n");
-			debugN("  Local vars: ");
-			for (uint i = 0; i < varNames->size(); i++) {
-				debugN("%s, ", (*varNames)[i].c_str());
-			}
-			debugN("\n");
-		}
-
-		currentFunc.argNames = argNames;
-		currentFunc.varNames = varNames;
-		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
-	}
-
-	delete _methodVars;
-	_methodVars = nullptr;
-	_currentAssembly = nullptr;
-	delete _assemblyAST;
-	_assemblyAST = nullptr;
-	_assemblyContext = nullptr;
-	_assemblyArchive = nullptr;
-	return mainContext;
 }
 
 void Lingo::printStack(const char *s, uint pc) {
@@ -1101,10 +991,6 @@ int Datum::compareTo(Datum &d, bool ignoreCase) const {
 	}
 }
 
-void Lingo::parseMenu(const char *code) {
-	warning("STUB: parseMenu");
-}
-
 void Lingo::runTests() {
 	Common::File inFile;
 	Common::ArchiveMemberList fsList;
@@ -1136,11 +1022,10 @@ void Lingo::runTests() {
 
 			debug(">> Compiling file %s of size %d, id: %d", fileList[i].c_str(), size, counter);
 
-			_hadError = false;
 			mainArchive->addCode(script, kTestScript, counter);
 
 			if (!debugChannelSet(-1, kDebugCompileOnly)) {
-				if (!_hadError)
+				if (!_compiler->_hadError)
 					executeScript(kTestScript, counter);
 				else
 					debug(">> Skipping execution");
@@ -1180,6 +1065,16 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 			execute(_pc);
 		}
 	}
+}
+
+void Lingo::cleanLocalVars() {
+	// Clean up current scope local variables and clean up memory
+	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _localvars->size());
+
+	g_lingo->_localvars->clear();
+	delete g_lingo->_localvars;
+
+	g_lingo->_localvars = nullptr;
 }
 
 void Lingo::printAllVars() {

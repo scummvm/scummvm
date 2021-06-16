@@ -50,10 +50,14 @@ class Cast;
 class ScriptContext;
 class DirectorEngine;
 class Frame;
+class LingoCompiler;
 
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
+
+int calcStringAlignment(const char *s);
+int calcCodeAlignment(int l);
 
 typedef Common::Array<inst> ScriptData;
 
@@ -233,9 +237,6 @@ public:
 
 	void resetLingo();
 
-	ScriptContext *compileAnonymous(const char *code);
-	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
-	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version);
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, uint16 id);
 	void printStack(const char *s, uint pc);
@@ -255,13 +256,6 @@ public:
 	void openXLib(Common::String name, ObjectType type);
 
 	void runTests();
-
-	// lingo-preprocessor.cpp
-public:
-	Common::String codePreprocessor(const char *s, LingoArchive *archive, ScriptType type, uint16 id, bool simple = false);
-
-	// lingo-patcher.cpp
-	Common::String patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenumber);
 
 	// lingo-events.cpp
 private:
@@ -286,14 +280,6 @@ public:
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
 	void printAllVars();
-
-	int calcStringAlignment(const char *s) {
-		return calcCodeAlignment(strlen(s) + 1);
-	}
-	int calcCodeAlignment(int l) {
-		int instLen = sizeof(inst);
-		return (l + instLen - 1) / instLen;
-	}
 
 	inst readInst() { return getInst(_pc++); }
 	inst getInst(uint pc) { return (*_currentScript)[pc]; }
@@ -355,43 +341,9 @@ private:
 	Common::StringArray _entityNames;
 	Common::StringArray _fieldNames;
 
-// compiler resources
 public:
-	bool isInArgStack(Common::String *s);
-	void clearArgStack();
+	LingoCompiler *_compiler;
 
-	int code1(inst code) { _currentAssembly->push_back(code); return _currentAssembly->size() - 1; }
-	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
-	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
-	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
-	void codeArg(Common::String *s);
-	int codeCmd(Common::String *s, int numpar);
-	Symbol codeDefine(Common::String &s, int start, int nargs, int end = -1, bool removeCode = true);
-	void codeFactory(Common::String &s);
-	int codeFloat(double f);
-	int codeFunc(Common::String *s, int numpar);
-	int codeInt(int val);
-	void codeLabel(int label);
-	int codeString(const char *s);
-	void processIf(int toplabel, int endlabel);
-	void registerMethodVar(const Common::String &name, VarType type);
-
-	LingoArchive *_assemblyArchive;
-	ScriptContext *_assemblyContext;
-	Node *_assemblyAST;
-	ScriptData *_currentAssembly;
-	bool _indef;
-	uint _linenumber;
-	uint _colnumber;
-	uint _bytenumber;
-	const char *_lines[3];
-	bool _inFactory;
-
-	Common::Array<Common::String *> _argstack;
-	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
-	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
-
-public:
 	int _currentChannelId;
 	LingoArchive *_currentArchive;
 	ScriptContext *_currentScriptContext;
@@ -408,8 +360,6 @@ public:
 
 	int _objectEntityId;
 
-	Common::Array<int> _labelstack;
-
 	SymbolHash _builtinCmds;
 	SymbolHash _builtinFuncs;
 	SymbolHash _builtinConsts;
@@ -417,12 +367,6 @@ public:
 	SymbolHash _xlibInitializers;
 
 	Common::String _floatPrecisionFormat;
-
-	bool _hadError;
-
-private:
-	int parse(const char *code);
-	void parseMenu(const char *code);
 
 public:
 	void push(Datum d);

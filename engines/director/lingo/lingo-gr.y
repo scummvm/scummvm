@@ -62,6 +62,7 @@
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-object.h"
 
@@ -71,25 +72,26 @@ extern int yyparse();
 using namespace Director;
 
 static void yyerror(const char *s) {
-	g_lingo->_hadError = true;
+	LingoCompiler *compiler = g_lingo->_compiler;
+	compiler->_hadError = true;
 	warning("######################  LINGO: %s at line %d col %d in %s id: %d",
-		s, g_lingo->_linenumber, g_lingo->_colnumber, scriptType2str(g_lingo->_assemblyContext->_scriptType),
-		g_lingo->_assemblyContext->_id);
-	if (g_lingo->_lines[2] != g_lingo->_lines[1])
-		warning("# %3d: %s", g_lingo->_linenumber - 2, Common::String(g_lingo->_lines[2], g_lingo->_lines[1] - 1).c_str());
+		s, compiler->_linenumber, compiler->_colnumber, scriptType2str(compiler->_assemblyContext->_scriptType),
+		compiler->_assemblyContext->_id);
+	if (compiler->_lines[2] != compiler->_lines[1])
+		warning("# %3d: %s", compiler->_linenumber - 2, Common::String(compiler->_lines[2], compiler->_lines[1] - 1).c_str());
 
-	if (g_lingo->_lines[1] != g_lingo->_lines[0])
-		warning("# %3d: %s", g_lingo->_linenumber - 1, Common::String(g_lingo->_lines[1], g_lingo->_lines[0] - 1).c_str());
+	if (compiler->_lines[1] != compiler->_lines[0])
+		warning("# %3d: %s", compiler->_linenumber - 1, Common::String(compiler->_lines[1], compiler->_lines[0] - 1).c_str());
 
-	const char *ptr = g_lingo->_lines[0];
+	const char *ptr = compiler->_lines[0];
 
 	while (*ptr && *ptr != '\n')
 		ptr++;
 
-	warning("# %3d: %s", g_lingo->_linenumber, Common::String(g_lingo->_lines[0], ptr).c_str());
+	warning("# %3d: %s", compiler->_linenumber, Common::String(compiler->_lines[0], ptr).c_str());
 
 	Common::String arrow;
-	for (uint i = 0; i < g_lingo->_colnumber; i++)
+	for (uint i = 0; i < compiler->_colnumber; i++)
 		arrow += ' ';
 
 	warning("#      %s^ about here", arrow.c_str());
@@ -185,7 +187,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 
 // TOP-LEVEL STUFF
 
-script: scriptpartlist					{ g_lingo->_assemblyAST = new ScriptNode($scriptpartlist); } ;
+script: scriptpartlist					{ g_lingo->_compiler->_assemblyAST = new ScriptNode($scriptpartlist); } ;
 
 scriptpartlist: scriptpart[item]				{
 		NodeList *list = new NodeList;

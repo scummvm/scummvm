@@ -23,7 +23,7 @@
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
-#include "director/lingo/lingo.h"
+#include "director/lingo/lingo-codegen.h"
 
 
 namespace Director {
@@ -165,25 +165,25 @@ struct ScriptPatch {
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr, nullptr}
 };
 
-Common::String Lingo::patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenum) {
+Common::String LingoCompiler::patchLingoCode(Common::String &line, LingoArchive *archive, ScriptType type, uint16 id, int linenum) {
 	if (!archive)
 		return line;
 
 	const ScriptPatch *patch = scriptPatches;
-	Common::String movie = _vm->getCurrentPath() + archive->cast->getMacName();
+	Common::String movie = g_director->getCurrentPath() + archive->cast->getMacName();
 
 	// So far, we have not many patches, so do linear lookup
 	while (patch->gameId) {
 		// First, we do cheap comparisons
 		if (patch->type != type || patch->id != id || patch->linenum != linenum ||
-				(patch->platform != kPlatformUnknown && patch->platform != _vm->getPlatform())) {
+				(patch->platform != kPlatformUnknown && patch->platform != g_director->getPlatform())) {
 			patch++;
 			continue;
 		}
 
 		// Now expensive ones
-		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, _vm->getGameId())
-				|| (patch->extra && strcmp(patch->extra, _vm->getExtra()))) {
+		if (movie.compareToIgnoreCase(patch->movie) || strcmp(patch->gameId, g_director->getGameId())
+				|| (patch->extra && strcmp(patch->extra, g_director->getExtra()))) {
 			patch++;
 			continue;
 		}

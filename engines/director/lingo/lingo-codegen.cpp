@@ -47,56 +47,139 @@
 
 #include "director/director.h"
 #include "director/lingo/lingo.h"
+#include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
+#include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
 
 namespace Director {
 
-void Lingo::cleanLocalVars() {
-	// Clean up current scope local variables and clean up memory
-	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _localvars->size());
+LingoCompiler::LingoCompiler() {
+	_assemblyAST = nullptr;
+	_assemblyArchive = nullptr;
+	_currentAssembly = nullptr;
+	_assemblyContext = nullptr;
 
-	g_lingo->_localvars->clear();
-	delete g_lingo->_localvars;
+	_indef = false;
 
-	g_lingo->_localvars = nullptr;
+	_linenumber = _colnumber = _bytenumber = 0;
+	_lines[0] = _lines[1] = _lines[2] = nullptr;
+
+	_inFactory = false;
+
+	_hadError = false;
 }
 
-Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
-	Symbol sym;
-	sym.name = new Common::String(name);
-	sym.type = HANDLER;
-	sym.u.defn = code;
-	sym.nargs = nargs;
-	sym.maxArgs = nargs;
-	sym.argNames = argNames;
-	sym.varNames = varNames;
-	sym.ctx = this;
-	sym.archive = _archive;
+ScriptContext *LingoCompiler::compileAnonymous(const char *code) {
+	debugC(1, kDebugCompile, "Compiling anonymous lingo\n"
+			"***********\n%s\n\n***********", code);
 
-	if (debugChannelSet(1, kDebugCompile)) {
-		uint pc = 0;
-		while (pc < sym.u.defn->size()) {
-			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(_archive, sym.u.defn, pc, &pc);
-			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-		}
-		debugC(1, kDebugCompile, "<end define code>");
-	}
-
-	if (!g_lingo->_eventHandlerTypeIds.contains(name)) {
-		_functionHandlers[name] = sym;
-		if (_scriptType == kMovieScript && _archive && !_archive->functionHandlers.contains(name)) {
-			_archive->functionHandlers[name] = sym;
-		}
-	} else {
-		_eventHandlers[g_lingo->_eventHandlerTypeIds[name]] = sym;
-	}
-
-	return sym;
+	return compileLingo(code, nullptr, kNoneScript, 0, "[anonymous]", true);
 }
 
-Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, int end, bool removeCode) {
+ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonymous) {
+	_assemblyArchive = archive;
+	_assemblyAST = nullptr;
+	ScriptContext *mainContext = _assemblyContext = new ScriptContext(scriptName, archive, type, id);
+	_currentAssembly = new ScriptData;
+
+	_methodVars = new VarTypeHash;
+	_linenumber = _colnumber = 1;
+	_hadError = false;
+
+	if (!strncmp(code, "menu:", 5) || scumm_strcasestr(code, "\nmenu:")) {
+		debugC(1, kDebugCompile, "Parsing menu");
+		parseMenu(code);
+
+		return nullptr;
+	}
+
+	// Preprocess the code for ease of the parser
+	Common::String codeNorm = codePreprocessor(code, archive, type, id);
+	code = codeNorm.c_str();
+
+	// Parse the Lingo and build an AST
+	parse(code);
+
+	// Generate bytecode
+	if (_assemblyAST) {
+		_assemblyAST->compile();
+	}
+
+	// for D4 and above, there usually won't be any code left.
+	// all scoped methods will be defined and stored by the code parser
+	// however D3 and below allow scopeless functions!
+	// and these can show up in D4 when imported from other movies
+
+	if (!_currentAssembly->empty()) {
+		// end of script, add a c_procret so stack frames work as expected
+		code1(LC::c_procret);
+		code1(STOP);
+
+		if (debugChannelSet(3, kDebugCompile)) {
+			if (_currentAssembly->size() && !_hadError)
+				Common::hexdump((byte *)&_currentAssembly->front(), _currentAssembly->size() * sizeof(inst));
+
+			debugC(2, kDebugCompile, "<resulting code>");
+			uint pc = 0;
+			while (pc < _currentAssembly->size()) {
+				uint spc = pc;
+				Common::String instr = g_lingo->decodeInstruction(_assemblyArchive, _currentAssembly, pc, &pc);
+				debugC(2, kDebugCompile, "[%5d] %s", spc, instr.c_str());
+			}
+			debugC(2, kDebugCompile, "<end code>");
+		}
+
+		Symbol currentFunc;
+
+		currentFunc.type = HANDLER;
+		currentFunc.u.defn = _currentAssembly;
+		Common::String typeStr = Common::String(scriptType2str(type));
+		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
+		currentFunc.ctx = _assemblyContext;
+		currentFunc.archive = archive;
+		currentFunc.anonymous = anonymous;
+		// arg names should be empty, but just in case
+		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
+		for (uint i = 0; i < _argstack.size(); i++) {
+			argNames->push_back(Common::String(_argstack[i]->c_str()));
+		}
+		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
+		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
+			if (it->_value == kVarLocal)
+				varNames->push_back(Common::String(it->_key));
+		}
+
+		if (debugChannelSet(1, kDebugCompile)) {
+			debug("Function vars");
+			debugN("  Args: ");
+			for (uint i = 0; i < argNames->size(); i++) {
+				debugN("%s, ", (*argNames)[i].c_str());
+			}
+			debugN("\n");
+			debugN("  Local vars: ");
+			for (uint i = 0; i < varNames->size(); i++) {
+				debugN("%s, ", (*varNames)[i].c_str());
+			}
+			debugN("\n");
+		}
+
+		currentFunc.argNames = argNames;
+		currentFunc.varNames = varNames;
+		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
+	}
+
+	delete _methodVars;
+	_methodVars = nullptr;
+	_currentAssembly = nullptr;
+	delete _assemblyAST;
+	_assemblyAST = nullptr;
+	_assemblyContext = nullptr;
+	_assemblyArchive = nullptr;
+	return mainContext;
+}
+
+Symbol LingoCompiler::codeDefine(Common::String &name, int start, int nargs, int end, bool removeCode) {
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
 		debug("codeDefine(\"%s\"(len: %d), %d, %d, %d)",
 			name.c_str(), _currentAssembly->size() - 1, start, nargs, end);
@@ -140,7 +223,7 @@ Symbol Lingo::codeDefine(Common::String &name, int start, int nargs, int end, bo
 	return sym;
 }
 
-int Lingo::codeString(const char *str) {
+int LingoCompiler::codeString(const char *str) {
 	int numInsts = calcStringAlignment(str);
 
 	// Where we copy the string over
@@ -157,7 +240,7 @@ int Lingo::codeString(const char *str) {
 	return _currentAssembly->size();
 }
 
-int Lingo::codeFloat(double f) {
+int LingoCompiler::codeFloat(double f) {
 	int numInsts = calcCodeAlignment(sizeof(double));
 
 	// Where we copy the string over
@@ -174,15 +257,15 @@ int Lingo::codeFloat(double f) {
 	return _currentAssembly->size();
 }
 
-int Lingo::codeInt(int val) {
+int LingoCompiler::codeInt(int val) {
 	inst i = 0;
 	WRITE_UINT32(&i, val);
-	g_lingo->code1(i);
+	code1(i);
 
 	return _currentAssembly->size();
 }
 
-bool Lingo::isInArgStack(Common::String *s) {
+bool LingoCompiler::isInArgStack(Common::String *s) {
 	for (uint i = 0; i < _argstack.size(); i++)
 		if (_argstack[i]->equalsIgnoreCase(*s))
 			return true;
@@ -190,55 +273,55 @@ bool Lingo::isInArgStack(Common::String *s) {
 	return false;
 }
 
-void Lingo::codeArg(Common::String *s) {
+void LingoCompiler::codeArg(Common::String *s) {
 	_argstack.push_back(new Common::String(*s));
 }
 
-void Lingo::clearArgStack() {
+void LingoCompiler::clearArgStack() {
 	for (uint i = 0; i < _argstack.size(); i++)
 		delete _argstack[i];
 
 	_argstack.clear();
 }
 
-int Lingo::codeCmd(Common::String *s, int numpar) {
+int LingoCompiler::codeCmd(Common::String *s, int numpar) {
 	// Insert current line number to our asserts
 	if (s->equalsIgnoreCase("scummvmAssert") || s->equalsIgnoreCase("scummvmAssertEqual")) {
-		g_lingo->code1(LC::c_intpush);
-		g_lingo->codeInt(g_lingo->_linenumber);
+		code1(LC::c_intpush);
+		codeInt(_linenumber);
 
 		numpar++;
 	}
 
-	int ret = g_lingo->code1(LC::c_callcmd);
+	int ret = code1(LC::c_callcmd);
 
-	g_lingo->codeString(s->c_str());
+	codeString(s->c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
-	g_lingo->code1(num);
+	code1(num);
 
 	return ret;
 }
 
-int Lingo::codeFunc(Common::String *s, int numpar) {
-	int ret = g_lingo->code1(LC::c_callfunc);
+int LingoCompiler::codeFunc(Common::String *s, int numpar) {
+	int ret = code1(LC::c_callfunc);
 
-	g_lingo->codeString(s->c_str());
+	codeString(s->c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
-	g_lingo->code1(num);
+	code1(num);
 
 	return ret;
 }
 
-void Lingo::codeLabel(int label) {
+void LingoCompiler::codeLabel(int label) {
 	_labelstack.push_back(label);
 	debugC(4, kDebugCompile, "codeLabel: Added label %d", label);
 }
 
-void Lingo::processIf(int toplabel, int endlabel) {
+void LingoCompiler::processIf(int toplabel, int endlabel) {
 	inst iend;
 
 	debugC(4, kDebugCompile, "processIf(%d, %d)", toplabel, endlabel);
@@ -264,27 +347,31 @@ void Lingo::processIf(int toplabel, int endlabel) {
 	}
 }
 
-void Lingo::registerMethodVar(const Common::String &name, VarType type) {
-	if (!g_lingo->_methodVars->contains(name)) {
-		(*g_lingo->_methodVars)[name] = type;
+void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) {
+	if (!_methodVars->contains(name)) {
+		(*_methodVars)[name] = type;
 		if (type == kVarProperty || type == kVarInstance) {
-			g_lingo->_assemblyContext->_properties[name] = Datum();
+			_assemblyContext->_properties[name] = Datum();
 		} else if (type == kVarGlobal) {
 			g_lingo->_globalvars[name] = Datum();
 		}
 	}
 }
 
-void Lingo::codeFactory(Common::String &name) {
+void LingoCompiler::codeFactory(Common::String &name) {
 	// FIXME: The factory's context should not be tied to the LingoArchive
 	// but bytecode needs it to resolve names
 	_assemblyContext->setName(name);
 	_assemblyContext->setFactory(true);
-	if (!_globalvars.contains(name)) {
-		_globalvars[name] = _assemblyContext;
+	if (!g_lingo->_globalvars.contains(name)) {
+		g_lingo->_globalvars[name] = _assemblyContext;
 	} else {
 		warning("Factory '%s' already defined", name.c_str());
 	}
+}
+
+void LingoCompiler::parseMenu(const char *code) {
+	warning("STUB: parseMenu");
 }
 
 } // End of namespace Director
