@@ -1047,7 +1047,6 @@ void BladeRunnerEngine::gameLoop() {
 }
 
 void BladeRunnerEngine::gameTick() {
-
 	handleEvents();
 
 	if (!_gameIsRunning || !_windowIsActive) {
@@ -1281,7 +1280,6 @@ void BladeRunnerEngine::handleEvents() {
 		return;
 	}
 
-	uint32 timeNow = _time->currentSystem();
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
 	while (eventMan->pollEvent(event)) {
@@ -1297,7 +1295,7 @@ void BladeRunnerEngine::handleEvents() {
 				// First hit (fire) has a bigger delay (kKeyRepeatInitialDelay) before repeated events are fired from the same key
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE || event.kbd.keycode == Common::KEYCODE_RETURN) {
 					_currentKeyDown = event.kbd.keycode;
-					_keyRepeatTimeLast = timeNow;
+					_keyRepeatTimeLast =  _time->currentSystem();
 					_keyRepeatTimeDelay = kKeyRepeatInitialDelay;
 				}
 				handleKeyDown(event);
@@ -1337,7 +1335,12 @@ void BladeRunnerEngine::handleEvents() {
 		}
 	}
 
-	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN) && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
+	// The switch clause above handles multiple events.
+	// Some of those may lead to their own internal gameTick() loops (which will call handleEvents()).
+	// Thus, we need to get a new timeNow value here to ensure we're not comparing with a stale version.
+	uint32 timeNow = _time->currentSystem();
+	if ((_currentKeyDown == Common::KEYCODE_ESCAPE || _currentKeyDown == Common::KEYCODE_RETURN)
+	    && (timeNow - _keyRepeatTimeLast >= _keyRepeatTimeDelay)) {
 		// create a "new" keydown event
 		event.type = Common::EVENT_KEYDOWN;
 		// kbdRepeat field will be unused here since we emulate the kbd repeat behavior anyway, but it's good to set it for consistency
@@ -1366,27 +1369,32 @@ void BladeRunnerEngine::handleKeyUp(Common::Event &event) {
 }
 
 void BladeRunnerEngine::handleKeyDown(Common::Event &event) {
-	if (_vqaIsPlaying && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-		// Note: Do not use Return key to skip a VQA cutscene - Original also only uses the Esc key here
-		//       While no glitches were attirubuted to using Return for skipping cutscenes
-		//       it's ultimately better to have the original behavior here
-		//       and not have a key skipping multiple stuff at the same time.
+	if (_vqaIsPlaying
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		// Note: Original only uses the Esc key here
 		_vqaStopIsRequested = true;
 		_vqaIsPlaying = false;
 
 		return;
 	}
 
-	if (_actorIsSpeaking && event.kbd.keycode == Common::KEYCODE_RETURN) {
-		// Note: Do not use Esc key to skip dialogue - Original also only uses the Return key here
-		//       Using Esc to skip dialogue causes a few bad glitches such as:
-		//        - Kia dialogue will blink fast after last line spoken is skipped
-		//        - In certain sequences (eg. Zuben dumping soup on McCoy) the frames won't play correctly
-		//          and that may lead to dead end situation (for the Zuben example, the scene is locked with no exits enabled).
+	if (_vqaStopIsRequested
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		 return;
+	}
+
+	if (_actorIsSpeaking
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		// Note: Original only uses the Return key here
 		_actorSpeakStopIsRequested = true;
 		_actorIsSpeaking = false;
 
 		return;
+	}
+
+	if (_actorSpeakStopIsRequested
+	    && (event.kbd.keycode == Common::KEYCODE_RETURN || event.kbd.keycode == Common::KEYCODE_ESCAPE)) {
+		 return;
 	}
 
 	if (!playerHasControl() || _isWalkingInterruptible || _actorIsSpeaking || _vqaIsPlaying) {

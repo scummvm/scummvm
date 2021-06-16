@@ -350,6 +350,7 @@ void ScriptBase::Actor_Says_With_Pause(int actorId, int sentenceId, float pause,
 	if (pause > 0.0f && !_vm->_actorSpeakStopIsRequested) {
 		Delay(pause * 1000u);
 	}
+	_vm->_actorSpeakStopIsRequested = false;
 	Player_Gains_Control();
 }
 
@@ -375,6 +376,7 @@ void ScriptBase::Actor_Voice_Over(int sentenceId, int actorId) {
 			break;
 		}
 	}
+	_vm->_actorSpeakStopIsRequested = false;
 	Player_Gains_Control();
 }
 
