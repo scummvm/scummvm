@@ -84,7 +84,6 @@ MODULE_OBJS := \
 	tileline.o \
 	tileload.o \
 	tilemode.o \
-	timer.o \
 	timers.o \
 	tower.o \
 	towerfta.o \

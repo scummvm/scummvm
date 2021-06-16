@@ -52,7 +52,6 @@ bool                        paletteMayHaveChanged = false;
  * ===================================================================== */
 
 static uint32 displayStatus = GraphicsInit;
-static bool gameSuspendFlag = false;
 static bool paletteSuspendFlag = false;
 #ifndef _WIN32
 static bool VideoSaved = false;
@@ -80,56 +79,6 @@ void resumeProcessResources(void);
 #endif
 static void switchOn(void);
 static void switchOff(void);
-
-
-/* ===================================================================== *
-   Game suspend / resume / terminate
- * ===================================================================== */
-
-// ------------------------------------------------------------------------
-// Suspend all game activity
-
-void suspendGame(void) {
-	//dispMM("Suspending game");
-	if (!gameSuspendFlag) {
-		//localCursorOff();
-		//quickSavePalette();
-		displayDisable(GameSuspended);
-		suspendAudio();
-		pauseTimer();
-#ifdef _WIN32
-		suspendProcessResources();
-#endif
-		gameSuspendFlag = true;
-	}
-}
-
-// ------------------------------------------------------------------------
-// check for suspended game
-
-bool gameSuspended(void) {
-	return gameSuspendFlag;
-}
-
-// ------------------------------------------------------------------------
-// resume suspended game
-
-void resumeGame(void) {
-	if (gameSuspendFlag) {
-		gameSuspendFlag = false;
-#ifdef _WIN32
-		resumeProcessResources();
-#endif
-		resumeTimer();
-		resumeAudio();
-		displayEnable(GameSuspended);
-#if _WIN32
-		if (pWindow)
-			pWindow->RestoreMinimizedDisplay();
-#endif
-	}
-}
-
 
 // ------------------------------------------------------------------------
 // end game (normally)

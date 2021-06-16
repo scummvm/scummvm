@@ -315,10 +315,6 @@ void processEventLoop(bool updateScreen) {
 		return;
 	}
 
-	debugC(1, kDebugEventLoop, "EventLoop: check for game suspend");
-	if (gameSuspended())
-		return;
-
 	debugC(1, kDebugEventLoop, "EventLoop: audio event loop");
 	//FIXME: Disabled for debug purposes. Enable and implement later.
 	//audioEventLoop();
