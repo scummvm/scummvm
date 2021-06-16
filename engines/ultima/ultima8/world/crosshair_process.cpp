@@ -90,13 +90,15 @@ void CrosshairProcess::run() {
 										   0, 0, Item::EXT_SPRITE, true);
 			setItemNum(item->getObjId());
 		}
-		assert(item);
-		item->move(ax, ay, az);
+		if (item)
+			item->move(ax, ay, az);
+		else
+			_itemNum = 0; // sprite gone? can happen during teleport.
 	} else {
 		if (_itemNum) {
 			Item *item = getItem(_itemNum);
-			assert(item);
-			item->destroy();
+			if (item)
+				item->destroy();
 			_itemNum = 0;
 		}
 	}
