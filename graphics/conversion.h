@@ -131,20 +131,20 @@ bool scaleBlitBilinear(byte *dst, const byte *src,
 					   const Graphics::PixelFormat &fmt);
 
 bool rotoscaleBlit(byte *dst, const byte *src,
-                   const uint dstPitch, const uint srcPitch,
-                   const uint dstW, const uint dstH,
-                   const uint srcW, const uint srcH,
-                   const Graphics::PixelFormat &fmt,
-                   const TransformStruct &transform,
-                   const Common::Point &newHotspot);
+				   const uint dstPitch, const uint srcPitch,
+				   const uint dstW, const uint dstH,
+				   const uint srcW, const uint srcH,
+				   const Graphics::PixelFormat &fmt,
+				   const TransformStruct &transform,
+				   const Common::Point &newHotspot);
 
 bool rotoscaleBlitBilinear(byte *dst, const byte *src,
-                           const uint dstPitch, const uint srcPitch,
-                           const uint dstW, const uint dstH,
-                           const uint srcW, const uint srcH,
-                           const Graphics::PixelFormat &fmt,
-                           const TransformStruct &transform,
-                           const Common::Point &newHotspot);
+						   const uint dstPitch, const uint srcPitch,
+						   const uint dstW, const uint dstH,
+						   const uint srcW, const uint srcH,
+						   const Graphics::PixelFormat &fmt,
+						   const TransformStruct &transform,
+						   const Common::Point &newHotspot);
 /** @} */
 } // End of namespace Graphics
 
