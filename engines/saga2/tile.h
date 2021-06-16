@@ -797,12 +797,13 @@ typedef uint16 metaTileNoise;
 
 //  A "Metatile" is a larger tile made up of smaller tiles.
 
-struct MetaTile {
-	uint16          highestPixel;           // more drawing optimization
-	BankBits        banksNeeded;            // which banks are needed
-	uint16          stack[maxPlatforms];    // pointer to platforms
-	uint32          properties;             // more drawing optimization
-	int index = -1;
+class MetaTile {
+public:
+	uint16          _highestPixel;           // more drawing optimization
+	BankBits        _banksNeeded;            // which banks are needed
+	uint16          _stack[maxPlatforms];    // pointer to platforms
+	uint32          _properties;             // more drawing optimization
+	int             _index = -1;
 
 	MetaTile(int ind, Common::SeekableReadStream *stream);
 
