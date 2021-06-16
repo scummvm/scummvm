@@ -943,7 +943,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", scriptId, factoryName.c_str());
 
 		sc = _assemblyContext = new ScriptContext(factoryName, _assemblyArchive, scriptType, castId);
-		codeFactory(factoryName);
+		registerFactory(factoryName);
 	} else {
 		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), castId);
 
