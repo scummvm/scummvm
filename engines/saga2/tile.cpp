@@ -998,7 +998,7 @@ static TileActivityTaskList &aTaskList =
 //	Constructor
 
 TileActivityTaskList::TileActivityTaskList(void) {
-	for (int i = 0; i < elementsof(array); i++) {
+	for (uint i = 0; i < elementsof(array); i++) {
 		free.addTail(array[i]);
 	}
 }
@@ -1009,10 +1009,9 @@ TileActivityTaskList::TileActivityTaskList(void) {
 TileActivityTaskList::TileActivityTaskList(void **buf) {
 	void        *bufferPtr = *buf;
 
-	int16       i,
-	            taskCount;
+	int16       taskCount;
 
-	for (i = 0; i < elementsof(array); i++) {
+	for (uint i = 0; i < elementsof(array); i++) {
 		free.addTail(array[i]);
 	}
 
@@ -1020,7 +1019,7 @@ TileActivityTaskList::TileActivityTaskList(void **buf) {
 	taskCount = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
-	for (i = 0; i < taskCount; i++) {
+	for (int i = 0; i < taskCount; i++) {
 		ActiveItem  *tai;
 		uint8       activityType;
 
@@ -1505,7 +1504,7 @@ void initMaps(void) {
 	for (worldCount = 0;
 	        tileRes->seek(mapID + worldCount);
 	        worldCount++) {
-				warning("MapID: %s %08x res: %s % 08x", tag2str(mapID), mapID, tag2str(mapID + worldCount), mapID + worldCount);
+				warning("MapID: %s %08x res: %s %08x", tag2str(mapID), mapID, tag2str(mapID + worldCount), mapID + worldCount);
 			}
 
 	//  Allocate the map data array
@@ -2760,14 +2759,12 @@ void buildRipTable(
 	const int32 initVal = ((int32)maxint16 << 16) | maxint16;
 	int32   *initPtr = (int32 *)ripTable->zTable;
 
-	int     i;
-
 	//  Initialize table
 	mt->ripTableID(currentMapNum) = ripTable->thisID();
 	ripTable->metaID = mt->thisID(currentMapNum);
 	ripTable->ripID = ripID;
 
-	for (i = 0;
+	for (uint i = 0;
 	        i < sizeof(ripTable->zTable) / sizeof(initVal);
 	        i++)
 		*initPtr++ = initVal;
@@ -2779,7 +2776,7 @@ void buildRipTable(
 	//  calculate object ripping altitude
 	int16   tilesToGo = platformWidth * platformWidth;
 
-	for (i = 0; i < maxPlatforms; i++) {
+	for (uint i = 0; i < maxPlatforms; i++) {
 		Platform    *p;
 
 		if ((p = mt->fetchPlatform(currentMapNum, i)) == nullptr) continue;
@@ -2850,8 +2847,6 @@ void buildRipTables(void) {
 		mt = mIter.next();
 	}
 
-	int16       i, j;
-
 	int16       tableIndex;
 
 	//  bit array of available rip tables
@@ -2859,7 +2854,7 @@ void buildRipTables(void) {
 
 	memset(tableAvail, 0xFF, sizeof(tableAvail));
 
-	for (i = 0; i < mtTableSize; i++) {
+	for (int i = 0; i < mtTableSize; i++) {
 		mt = mtTable[i];
 
 		RipTable    *mtRipTable = mt->ripTable(currentMapNum);
@@ -2877,16 +2872,17 @@ void buildRipTables(void) {
 
 	//  Remove empty entries from meta tile pointer array
 	int16       oldMtTableSize = mtTableSize;
-	for (i = 0, j = 0; i < oldMtTableSize; i++) {
+	for (int i = 0, j = 0; i < oldMtTableSize; i++) {
 		if (mtTable[i] != nullptr)
 			mtTable[j++] = mtTable[i];
 		else
 			mtTableSize--;
 	}
 
-	for (i = 0; i < mtTableSize; i++) {
+	for (int i = 0; i < mtTableSize; i++) {
 		mt = mtTable[i];
 
+		uint j;
 		//  Find available table
 		for (j = 0; j < elementsof(ripTableList); j++) {
 			if (tableAvail[j >> 3] & (1 << (j & 0x7)))
