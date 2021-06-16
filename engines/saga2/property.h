@@ -289,7 +289,7 @@ inline const TileProperty *getTileProp(TilePropertyID id) {
    MetaTile properties
  * ===================================================================== */
 
-struct MetaTile;
+class MetaTile;
 
 /* ===================================================================== *
    MetaTileProperty class
