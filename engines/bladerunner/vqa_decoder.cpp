@@ -567,6 +567,17 @@ bool VQADecoder::getLoopBeginAndEndFrame(int loop, int *begin, int *end) {
 	return true;
 }
 
+int VQADecoder::getLoopIdFromFrame(int frame) {
+	if (frame >= 0) {
+		for (int loopId = 0; loopId < _loopInfo.loopCount; ++loopId) {
+			if (frame >= _loopInfo.loops[loopId].begin && frame <= _loopInfo.loops[loopId].end) {
+				return loopId;
+			}
+		}
+	}
+	return -1;
+}
+
 bool VQADecoder::readCLIP(Common::SeekableReadStream *s, uint32 size) {
 	s->skip(roundup(size));
 	return true;

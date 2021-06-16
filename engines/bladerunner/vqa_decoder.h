@@ -81,6 +81,7 @@ public:
 	uint16 frequency() const { return _header.freq; }
 
 	bool getLoopBeginAndEndFrame(int loop, int *begin, int *end);
+	int  getLoopIdFromFrame(int frame);
 
 	struct Header {
 		uint16 version;     // 0x00

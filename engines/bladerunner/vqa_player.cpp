@@ -62,9 +62,9 @@ bool VQAPlayer::open() {
 	}
 
 	_repeatsCount = 0;
-	_loop = -1;
+	_loopNext = -1;
 	_frame = -1;
-	_frameBegin = -1;
+	_frameBeginNext = -1;
 	_frameEnd = getFrameCount() - 1;
 	_frameEndQueued = -1;
 	_repeatsCountQueued = -1;
@@ -94,7 +94,7 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 	int result = -1;
 
 	if (_frameNext < 0) {
-		_frameNext = _frameBegin;
+		_frameNext = _frameBeginNext;
 	}
 
 	if ((_repeatsCount > 0 || _repeatsCount == -1) && (_frameNext > _frameEnd)) {
@@ -111,16 +111,20 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 			// The code is similar to Scene::advanceFrame()
 			// This will be done once, since this first loop (loopId 1)
 			// is only executed once before moving on to loopId 2
-			if (_name.equals("MA05_3.VQA") && _loop == 1) {
+			if (_name.equals("MA05_3.VQA") && _loopNext == 1) {
 				while (update(false, true, false) != 59) {
 					updateZBuffer(_vm->_zbuffer);
 				}
-				_frameBegin = 60;
+				// This works because the loopId 1 executes once before moving to _loop 2
+				// See Scene::advanceFrame()
+				//     Scene::loopEnded()
+				//
+				_frameBeginNext = 60;
 			}
 #endif
 		}
-		if (_frameNext != _frameBegin) {
-			_frameNext = _frameBegin;
+		if (_frameNext != _frameBeginNext) {
+			_frameNext = _frameBeginNext;
 		}
 
 		if (loopEndQueued == -1) {
@@ -133,10 +137,9 @@ int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics:
 			_repeatsCountQueued = -1;
 
 			if (_callbackLoopEnded != nullptr) {
-				_callbackLoopEnded(_callbackData, 0, _loop);
+				_callbackLoopEnded(_callbackData, 0, _loopNext);
 			}
 		}
-
 		result = -1;
 	} else if (_frameNext > _frameEnd) {
 		result = -3;
@@ -254,7 +257,7 @@ bool VQAPlayer::setLoop(int loop, int repeatsCount, int loopSetMode, void (*call
 		return false;
 	}
 	if (setBeginAndEndFrame(begin, end, repeatsCount, loopSetMode, callback, callbackData)) {
-		_loop = loop;
+		_loopNext = loop;
 		return true;
 	}
 	return false;
@@ -276,12 +279,12 @@ bool VQAPlayer::setBeginAndEndFrame(int begin, int end, int repeatsCount, int lo
 	}
 
 	if (_repeatsCount == 0 && loopSetMode == kLoopSetModeEnqueue) {
-		// if the member var _repeatsCount is 0 (which means "don't repeat existing loop")
-		// then execute set the enqueued loop for immediate execution
+		// if the member var _repeatsCount is 0 (which means "current playing loop will not be repeated")
+		// then do not enqueue and, instead, treat the request as kLoopSetModeImmediate
 		loopSetMode = kLoopSetModeImmediate;
 	}
 
-	_frameBegin = begin;
+	_frameBeginNext = begin;
 
 	if (loopSetMode == kLoopSetModeJustStart) {
 		_repeatsCount = repeatsCount;
@@ -305,6 +308,14 @@ bool VQAPlayer::seekToFrame(int frame) {
 	_frameNext = frame;
 	_frameNextTime = 60 * _vm->_time->currentSystem();
 	return true;
+}
+
+bool VQAPlayer::getCurrentBeginAndEndFrame(int frame, int *begin, int *end) {
+	int playingLoop = _decoder.getLoopIdFromFrame(frame);
+	if (playingLoop != -1) {
+		return _decoder.getLoopBeginAndEndFrame(playingLoop, begin, end);
+	}
+	return false;
 }
 
 int VQAPlayer::getLoopBeginFrame(int loop) {

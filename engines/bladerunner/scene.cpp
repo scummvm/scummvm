@@ -299,7 +299,6 @@ void Scene::resume(bool isLoadingGame) {
 			loopStartSpecial(_specialLoopMode, _specialLoop, true);
 			if (_specialLoopMode == kSceneLoopModeLoseControl || _specialLoopMode == kSceneLoopModeChangeSet) {
 				_vm->playerGainsControl();
-
 			}
 		}
 		if (_specialLoopMode == kSceneLoopModeChangeSet) {
@@ -307,9 +306,19 @@ void Scene::resume(bool isLoadingGame) {
 		}
 	}
 
-	int frame;
+	int frame, frameStart, frameEnd;
 	do {
+		// fast forward to targetFrame but do, at the very least, one advanceFrame() (with time=false)
 		frame = advanceFrame(false);
+		// check if active loop has changed, and we need to adjust targetFrame
+		if (_vqaPlayer->getCurrentBeginAndEndFrame(frame, &frameStart, &frameEnd)
+		    && targetFrame >= 0
+		    && (targetFrame < frameStart || targetFrame > frameEnd)
+		) {
+			// active loop has changed, and targetFrame has a remnant frame value from the previous loop's frameset,
+			// so set it to the current loop's start
+			targetFrame = frameStart;
+		}
 	} while (frame >= 0 && frame != targetFrame);
 
 	if (!isLoadingGame) {

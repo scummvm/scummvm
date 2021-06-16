@@ -1126,6 +1126,7 @@ void BladeRunnerEngine::gameTick() {
 	bool backgroundChanged = false;
 	int frame = _scene->advanceFrame();
 	if (frame >= 0) {
+//		debug("_sceneScript->sceneFrameAdvanced(%d)", frame);
 		_sceneScript->sceneFrameAdvanced(frame);
 		backgroundChanged = true;
 	}
