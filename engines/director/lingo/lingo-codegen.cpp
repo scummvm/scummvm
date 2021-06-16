@@ -377,8 +377,8 @@ void LingoCompiler::parseMenu(const char *code) {
 /* ScriptNode */
 
 void LingoCompiler::visitScriptNode(ScriptNode *node) {
-	for (uint i = 0; i < node->nodes->size(); i++) {
-		(*node->nodes)[i]->accept(this);
+	for (uint i = 0; i < node->children->size(); i++) {
+		(*node->children)[i]->accept(this);
 	}
 }
 
