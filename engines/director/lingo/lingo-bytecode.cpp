@@ -1431,7 +1431,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		Symbol sym;
 		if (!functionName.empty()) {
 			debugC(5, kDebugLoading, "Function %d binding: %s()", i, functionName.c_str());
-			sym = _assemblyContext->define(functionName, argCount, _currentAssembly, argNames, varNames);
+			sym = _assemblyContext->define(functionName, _currentAssembly, argNames, varNames);
 		} else {
 			warning("Function has unknown name id %d, skipping define", nameIndex);
 			sym.name = new Common::String();

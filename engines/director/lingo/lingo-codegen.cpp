@@ -139,11 +139,7 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 		currentFunc.ctx = _assemblyContext;
 		currentFunc.archive = archive;
 		currentFunc.anonymous = anonymous;
-		// arg names should be empty, but just in case
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-		for (uint i = 0; i < _argstack.size(); i++) {
-			argNames->push_back(Common::String(_argstack[i]->c_str()));
-		}
 		Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
 		for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
 			if (it->_value == kVarLocal)
@@ -179,18 +175,18 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 	return mainContext;
 }
 
-Symbol LingoCompiler::codeDefine(Common::String &name, int start, int nargs, int end, bool removeCode) {
+Symbol LingoCompiler::codeDefine(const Common::String &name, const Common::Array<Common::String *> &args, int start, int end, bool removeCode) {
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
 		debug("codeDefine(\"%s\"(len: %d), %d, %d, %d)",
-			name.c_str(), _currentAssembly->size() - 1, start, nargs, end);
+			name.c_str(), _currentAssembly->size() - 1, args.size(), start, end);
 
 	if (end == -1)
 		end = _currentAssembly->size();
 
 	ScriptData *code = new ScriptData(&(*_currentAssembly)[start], end - start);
 	Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
-	for (uint i = 0; i < _argstack.size(); i++) {
-		argNames->push_back(Common::String(_argstack[i]->c_str()));
+	for (uint i = 0; i < args.size(); i++) {
+		argNames->push_back(Common::String(*args[i]));
 	}
 	Common::Array<Common::String> *varNames = new Common::Array<Common::String>;
 	for (Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _methodVars->begin(); it != _methodVars->end(); ++it) {
@@ -198,7 +194,7 @@ Symbol LingoCompiler::codeDefine(Common::String &name, int start, int nargs, int
 			varNames->push_back(Common::String(it->_key));
 	}
 
-	Symbol sym = _assemblyContext->define(name, nargs, code, argNames, varNames);
+	Symbol sym = _assemblyContext->define(name, code, argNames, varNames);
 
 	if (debugChannelSet(1, kDebugCompile)) {
 		debug("Function vars");
@@ -263,25 +259,6 @@ int LingoCompiler::codeInt(int val) {
 	code1(i);
 
 	return _currentAssembly->size();
-}
-
-bool LingoCompiler::isInArgStack(Common::String *s) {
-	for (uint i = 0; i < _argstack.size(); i++)
-		if (_argstack[i]->equalsIgnoreCase(*s))
-			return true;
-
-	return false;
-}
-
-void LingoCompiler::codeArg(Common::String *s) {
-	_argstack.push_back(new Common::String(*s));
-}
-
-void LingoCompiler::clearArgStack() {
-	for (uint i = 0; i < _argstack.size(); i++)
-		delete _argstack[i];
-
-	_argstack.clear();
 }
 
 int LingoCompiler::codeCmd(Common::String *s, int numpar) {
@@ -415,19 +392,14 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		}
 	}
 
-	for (uint i = 0; i < node->args->size(); i++) { // TODO: eliminate argstack
-		codeArg((*node->args)[i]);
-	}
-
 	uint start = _currentAssembly->size(); // TODO: should always be zero
 	for (uint i = 0; i < node->stmts->size(); i++) {
 		(*node->stmts)[i]->accept(this);
 	}
 
 	code1(LC::c_procret);
-	codeDefine(*node->name, start, node->args->size());
+	codeDefine(*node->name, *node->args, start);
 
-	clearArgStack();
 	_indef = false;
 	delete _methodVars;
 	_methodVars = mainMethodVars;

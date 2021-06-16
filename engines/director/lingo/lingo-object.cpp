@@ -201,13 +201,13 @@ Common::String ScriptContext::asString() {
 	return Common::String::format("script: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
 }
 
-Symbol ScriptContext::define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
+Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
 	Symbol sym;
 	sym.name = new Common::String(name);
 	sym.type = HANDLER;
 	sym.u.defn = code;
-	sym.nargs = nargs;
-	sym.maxArgs = nargs;
+	sym.nargs = argNames->size();
+	sym.maxArgs = argNames->size();
 	sym.argNames = argNames;
 	sym.varNames = varNames;
 	sym.ctx = this;

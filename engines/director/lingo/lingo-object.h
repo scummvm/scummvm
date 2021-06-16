@@ -211,7 +211,7 @@ public:
 	Datum getProp(const Common::String &propName) override;
 	bool setProp(const Common::String &propName, const Datum &value) override;
 
-	Symbol define(Common::String &name, int nargs, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
+	Symbol define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames);
 };
 
 namespace LM {
