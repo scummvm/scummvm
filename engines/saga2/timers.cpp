@@ -94,144 +94,28 @@ uint32 Alarm::elapsed(void) {
 	return (uint32)(gameTime - basetime);
 }
 
-struct TimerListHolder : public DNode {
-	uint8       timerListBuffer[sizeof(TimerList)];
-
-	TimerList *getTimerList(void) {
-		return (TimerList *)&timerListBuffer;
-	}
-};
-
-/* ===================================================================== *
-   TimerHolder class
- * ===================================================================== */
-
-struct TimerHolder : public DNode {
-	uint8       timerBuffer[sizeof(Timer)];
-
-	Timer *getTimer(void) {
-		return (Timer *)&timerBuffer;
-	}
-};
-
-/* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-//  A pool of TimerListHolders
-static RPool< TimerListHolder, 64 > timerListPool;
-
-//  The list of active TimerLists
-static DList timerListList;
-
-//  A pool of TimerHolders
-static RPool< TimerHolder, 128 > timerPool;
-
-//  The list of active Timers
-static DList timerList;
-
 /* ===================================================================== *
    TimerList management functions
  * ===================================================================== */
 
 //----------------------------------------------------------------------
-//	Allocate a new TimerList
-
-void *newTimerList(void) {
-	TimerListHolder     *newTimerListHolder;
-
-	if ((newTimerListHolder
-	        = (TimerListHolder *)timerListPool.alloc())
-	        ==  NULL)
-		return NULL;
-
-	timerListList.addTail(*newTimerListHolder);
-
-	return &newTimerListHolder->timerListBuffer;
-}
-
-//----------------------------------------------------------------------
-//	Deallocate an TimerList
-
-void deleteTimerList(void *p) {
-	TimerListHolder     *listHolderToDelete;
-
-	warning("FIXME: deleteTimerList(): unsafe pointer arithmetics");
-	listHolderToDelete =
-	    (TimerListHolder *)((uint8 *)p
-	                        -   offsetof(
-	                            TimerListHolder,
-	                            timerListBuffer));
-
-	listHolderToDelete->remove();
-	timerListPool.free(listHolderToDelete);
-}
-
-//----------------------------------------------------------------------
 //	Fetch a specified object's TimerList
 
 TimerList *fetchTimerList(GameObject *obj) {
-	TimerListHolder     *listHolder;
+	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); ++it)
+		if ((*it)->getObject() == obj)
+			return *it;
 
-	for (listHolder = (TimerListHolder *)timerListList.first();
-	        listHolder != NULL;
-	        listHolder = (TimerListHolder *)listHolder->next()) {
-		if (listHolder->getTimerList()->getObject() == obj)
-			return listHolder->getTimerList();
-	}
-
-	return NULL;
-}
-
-/* ===================================================================== *
-   Timer management functions
- * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Allocate an new Timer
-
-void *newTimer(void) {
-	TimerHolder     *newTimerHolder;
-
-	if ((newTimerHolder = (TimerHolder *)timerPool.alloc()) == NULL)
-		return NULL;
-
-	timerList.addTail(*newTimerHolder);
-
-	return &newTimerHolder->timerBuffer;
-}
-
-//----------------------------------------------------------------------
-//	Deallocated an Timer
-
-void deleteTimer(void *p) {
-	TimerHolder     *timerHolderToDelete;
-
-	warning("FIXME: deleteTimer(): unsafe pointer arithmetics");
-	timerHolderToDelete =
-	    (TimerHolder *)((uint8 *)p - offsetof(TimerHolder, timerBuffer));
-
-	timerHolderToDelete->remove();
-	timerPool.free(timerHolderToDelete);
+	return nullptr;
 }
 
 //----------------------------------------------------------------------
 //	Check all active Timers
-
 void checkTimers(void) {
-	TimerHolder     *timerHolder,
-	                *nextTimerHolder;
-
-	for (timerHolder = (TimerHolder *)timerList.first();
-	        timerHolder != NULL;
-	        timerHolder = nextTimerHolder) {
-		nextTimerHolder = (TimerHolder *)timerHolder->next();
-
-		Timer       *timer = timerHolder->getTimer();
-
-		if (timer->check()) {
-			timer->reset();
-			timer->getObject()->timerTick(timer->thisID());
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); ++it) {
+		if ((*it)->check()) {
+			(*it)->reset();
+			(*it)->getObject()->timerTick((*it)->thisID());
 		}
 	}
 }
@@ -247,6 +131,9 @@ void initTimers(void) {
 //	Save the active Timers in a save file
 
 void saveTimers(SaveFileConstructor &saveGame) {
+	warning("STUB: saveTimers");
+
+#if 0
 	int16                   timerListCount = 0,
 	                        timerCount = 0;
 
@@ -261,18 +148,14 @@ void saveTimers(SaveFileConstructor &saveGame) {
 	archiveBufSize += sizeof(timerListCount) + sizeof(timerCount);
 
 	//  Tally the timer lists
-	for (listHolder = (TimerListHolder *)timerListList.first();
-	        listHolder != NULL;
-	        listHolder = (TimerListHolder *)listHolder->next())
+	for (listHolder = (TimerListHolder *)timerListList.first(); listHolder != NULL; listHolder = (TimerListHolder *)listHolder->next())
 		timerListCount++;
 
 	//  Add the total archive size of all of the timer lists
 	archiveBufSize += timerListCount * TimerList::archiveSize();
 
 	//  Tally the timers
-	for (timerHolder = (TimerHolder *)timerList.first();
-	        timerHolder != NULL;
-	        timerHolder = (TimerHolder *)timerHolder->next())
+	for (timerHolder = (TimerHolder *)timerList.first(); timerHolder != NULL; timerHolder = (TimerHolder *)timerHolder->next())
 		timerCount++;
 
 	//  Add the total archive size of all of the timers
@@ -311,12 +194,16 @@ void saveTimers(SaveFileConstructor &saveGame) {
 	    archiveBufSize);
 
 	RDisposePtr(archiveBuffer);
+#endif
 }
 
 //----------------------------------------------------------------------
 //	Load the Timers from a save file
 
 void loadTimers(SaveFileReader &saveGame) {
+	warning("STUB: loadTimers");
+
+#if 0
 	int16       i,
 	            timerListCount,
 	            timerCount;
@@ -364,52 +251,45 @@ void loadTimers(SaveFileReader &saveGame) {
 	assert(bufferPtr == &((uint8 *)archiveBuffer)[saveGame.getChunkSize()]);
 
 	RDisposePtr(archiveBuffer);
+#endif
 }
 
 //----------------------------------------------------------------------
 //	Cleanup the active Timers
 
 void cleanupTimers(void) {
-	TimerListHolder     *listHolder,
-	                    *nextListHolder;
-	TimerHolder         *timerHolder,
-	                    *nextTimerHolder;
+	for (Common::List<TimerList *>::iterator it = g_vm->_timerLists.begin(); it != g_vm->_timerLists.end(); ++it)
+		delete *it;
 
-	//  Delete all timer lists
-	for (listHolder = (TimerListHolder *)timerListList.first();
-	        listHolder != NULL;
-	        listHolder = nextListHolder) {
-		nextListHolder = (TimerListHolder *)listHolder->next();
-
-		delete listHolder->getTimerList();
-	}
-
-	//  Delete all timers
-	for (timerHolder = (TimerHolder *)timerList.first();
-	        timerHolder != NULL;
-	        timerHolder = nextTimerHolder) {
-		nextTimerHolder = (TimerHolder *)timerHolder->next();
-
-		delete timerHolder->getTimer();
-	}
+	for (Common::List<Timer *>::iterator it = g_vm->_timers.begin(); it != g_vm->_timers.end(); ++it)
+		delete *it;
 }
 
 /* ===================================================================== *
    TimerList member functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from an archive buffer
+TimerList::TimerList(GameObject *o) : _obj(o) {
+	g_vm->_timerLists.push_back(this);
+}
 
 TimerList::TimerList(void **buf) {
 	ObjectID        *bufferPtr = (ObjectID *)*buf;
 
+	warning("STUB: TimerList::TimerList(buf)");
+
 	assert(isObject(*bufferPtr) || isActor(*bufferPtr));
 
 	//  Restore the object pointer
-	obj = GameObject::objectAddress(*bufferPtr++);
+	_obj = GameObject::objectAddress(*bufferPtr++);
 
 	*buf = bufferPtr;
+
+	g_vm->_timerLists.push_back(this);
+}
+
+TimerList::~TimerList() {
+	g_vm->_timerLists.remove(this);
 }
 
 //----------------------------------------------------------------------
@@ -417,7 +297,7 @@ TimerList::TimerList(void **buf) {
 
 void *TimerList::archive(void *buf) {
 	//  Store the object's ID
-	*((ObjectID *)buf) = obj->thisID();
+	*((ObjectID *)buf) = _obj->thisID();
 	buf = (ObjectID *)buf + 1;
 
 	return buf;
@@ -431,28 +311,35 @@ void *TimerList::archive(void *buf) {
 //	Constructor -- reconstruct from an archive buffer
 
 Timer::Timer(void **buf) {
-	void        *bufferPtr = *buf;
+	void  *bufferPtr = *buf;
 
-	assert(isObject(*((ObjectID *)bufferPtr))
-	       ||  isActor(*((ObjectID *)bufferPtr)));
+	warning("STUB: Timer::Timer(buf)");
+
+	assert(isObject(*((ObjectID *)bufferPtr)) || isActor(*((ObjectID *)bufferPtr)));
 
 	//  Restore the object pointer
-	obj = GameObject::objectAddress(*((ObjectID *)bufferPtr));
+	_obj = GameObject::objectAddress(*((ObjectID *)bufferPtr));
 	bufferPtr = (ObjectID *)bufferPtr + 1;
 
 	//  Restore the timer's ID
-	id = *((TimerID *)bufferPtr);
+	_id = *((TimerID *)bufferPtr);
 	bufferPtr = (TimerID *)bufferPtr + 1;
 
 	//  Restore the frame interval
-	interval = *((int16 *)bufferPtr);
+	_interval = *((int16 *)bufferPtr);
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	//  Restore the alarm
-	memcpy(&alarm, bufferPtr, sizeof(alarm));
+	memcpy(&_alarm, bufferPtr, sizeof(Alarm));
 	bufferPtr = (FrameAlarm *)bufferPtr + 1;
 
 	*buf = bufferPtr;
+
+	g_vm->_timers.push_back(this);
+}
+
+Timer::~Timer() {
+	g_vm->_timers.remove(this);
 }
 
 //----------------------------------------------------------------------
@@ -470,19 +357,19 @@ int32 Timer::archiveSize(void) {
 
 void *Timer::archive(void *buf) {
 	//  Store the obj's ID
-	*((ObjectID *)buf) = obj->thisID();
+	*((ObjectID *)buf) = _obj->thisID();
 	buf = (ObjectID *)buf + 1;
 
 	//  Store the timer's ID
-	*((TimerID *)buf) = id;
+	*((TimerID *)buf) = _id;
 	buf = (TimerID *)buf + 1;
 
 	//  Store the frame interval
-	*((int16 *)buf) = interval;
+	*((int16 *)buf) = _interval;
 	buf = (int16 *)buf + 1;
 
 	//  Store the alarm
-	memcpy(buf, &alarm, sizeof(alarm));
+	memcpy(buf, &_alarm, sizeof(Alarm));
 	buf = (FrameAlarm *)buf + 1;
 
 	return buf;
