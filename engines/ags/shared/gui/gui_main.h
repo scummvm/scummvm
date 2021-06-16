@@ -120,7 +120,7 @@ public:
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
-	void    AddControl(GUIControlType type, int id, GUIObject *control);
+	void    AddControl(GUIControlType type, int32_t id, GUIObject *control);
 	void    RemoveAllControls();
 
 	// Operations
@@ -250,7 +250,7 @@ extern AGS_INLINE int get_fixed_pixel_size(int pixels);
 // Those function have distinct implementations in Engine and Editor
 extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
 extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
-extern void check_font(int *fontnum);
+extern void check_font(int32_t *fontnum);
 
 extern void set_our_eip(int eip);
 #define SET_EIP(x) set_our_eip(x);

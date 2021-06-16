@@ -129,7 +129,7 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 		for (int i = 0; i < numfonts; ++i) {
 			fonts[i].YOffset = in->ReadInt32();
 			if (data_ver >= kGameVersion_341_2)
-				fonts[i].LineSpacing = Math::Max(0, in->ReadInt32());
+				fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
 		}
 	} else {
 		for (int i = 0; i < numfonts; ++i) {
@@ -137,7 +137,7 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 			fonts[i].SizePt = in->ReadInt32();
 			fonts[i].Outline = in->ReadInt32();
 			fonts[i].YOffset = in->ReadInt32();
-			fonts[i].LineSpacing = Math::Max(0, in->ReadInt32());
+			fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
 			AdjustFontInfoUsingFlags(fonts[i], flags);
 		}
 	}

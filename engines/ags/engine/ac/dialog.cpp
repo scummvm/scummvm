@@ -1016,7 +1016,7 @@ int show_dialog_options(int _dlgnum, int sayChosenOption, bool _runGameLoopsInBa
 	if (dialog_choice >= 0) { // NOTE: this condition also excludes CHOSE_TEXTPARSER
 		assert(dialog_choice >= 0 && dialog_choice < MAXTOPICOPTIONS);
 		DialogTopic *dialog_topic = DlgOpt.dtop;
-		int &option_flags = dialog_topic->optionflags[dialog_choice];
+		int32_t &option_flags = dialog_topic->optionflags[dialog_choice];
 		const char *option_name = DlgOpt.dtop->optionnames[dialog_choice];
 
 		option_flags |= DFLG_HASBEENCHOSEN;

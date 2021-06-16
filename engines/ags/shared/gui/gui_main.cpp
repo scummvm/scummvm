@@ -88,7 +88,7 @@ void GUIMain::InitDefaults() {
 	_ctrlDrawOrder.clear();
 }
 
-int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
+int32_t GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 	if (_G(loaded_game_file_version) <= kGameVersion_262) {
 		// Ignore draw order On 2.6.2 and lower
 		for (size_t i = 0; i < _controls.size(); ++i) {
@@ -113,15 +113,15 @@ int GUIMain::FindControlUnderMouse(int leeway, bool must_be_clickable) const {
 	return -1;
 }
 
-int GUIMain::FindControlUnderMouse() const {
+int32_t GUIMain::FindControlUnderMouse() const {
 	return FindControlUnderMouse(0, true);
 }
 
-int GUIMain::FindControlUnderMouse(int leeway) const {
+int32_t GUIMain::FindControlUnderMouse(int leeway) const {
 	return FindControlUnderMouse(leeway, true);
 }
 
-int GUIMain::GetControlCount() const {
+int32_t GUIMain::GetControlCount() const {
 	return (int32_t)_controls.size();
 }
 
@@ -185,7 +185,7 @@ void GUIMain::ClearChanged() {
 	_hasChanged = false;
 }
 
-void GUIMain::AddControl(GUIControlType type, int id, GUIObject *control) {
+void GUIMain::AddControl(GUIControlType type, int32_t id, GUIObject *control) {
 	_ctrlRefs.push_back(std::make_pair(type, id));
 	_controls.push_back(control);
 }

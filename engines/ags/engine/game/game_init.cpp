@@ -342,7 +342,7 @@ HGameInitError InitGameState(const LoadedGameEntities &ents, GameDataVersion dat
 		// labels are not clickable by default
 		_GP(guilabels)[i].SetClickable(false);
 	}
-	_GP(play).gui_draw_order = (int *)calloc(_GP(game).numgui * sizeof(int), 1);
+	_GP(play).gui_draw_order = (int32_t *)calloc(_GP(game).numgui * sizeof(int), 1);
 	update_gui_zorder();
 	calculate_reserved_channel_count();
 
