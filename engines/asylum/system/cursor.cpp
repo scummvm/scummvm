@@ -52,6 +52,8 @@ void Cursor::show() const {
 }
 
 void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 frames) {
+	bool wasHidden = isHidden();
+
 	hide();
 
 	delete _cursorRes;
@@ -83,7 +85,8 @@ void Cursor::set(ResourceId resourceId, int32 cnt, CursorAnimation anim, int32 f
 
 	update();
 
-	show();
+	if (!wasHidden)
+		show();
 }
 
 void Cursor::update() {
