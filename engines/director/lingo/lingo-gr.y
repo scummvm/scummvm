@@ -164,7 +164,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<idlist> idlist nonemptyidlist
 
 // STATEMENT
-%type<node> stmt stmtoneliner proc definevars
+%type<node> stmt stmtoneliner proc definevars ifstmt ifelsestmt
 %type<nodelist> stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
@@ -206,7 +206,7 @@ scriptpart:	'\n'						{ $$ = nullptr; }
 	| macro
 	| factory
 	| handler
-	| stmt '\n'
+	| stmt
 	;
 
 // MACRO
@@ -347,20 +347,52 @@ nonemptyidlist: ID[item]					{
 	;
 
 // STATEMENT
+// N.B. A statement must always be terminated by a '\n' symbol.
+// Sometimes this '\n' is in a nested statement (e.g. tIF expr tTHEN stmt).
+// It may not look like there's a '\n', but it's there.
 
-stmt: stmtoneliner ;
+stmt: stmtoneliner
+	| ifstmt
+	| ifelsestmt
+	;
 
 stmtoneliner: proc
 	| definevars
 	;
 
-proc: ID '(' exprlist[args] ')'		{ $$ = new CmdNode($ID, $args); }
-	| ID exprlist[args]				{ $$ = new CmdNode($ID, $args); }
+proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
+	| ID exprlist[args] '\n'			{ $$ = new CmdNode($ID, $args); }
 	;
 
-definevars: tGLOBAL idlist			{ $$ = new GlobalNode($idlist); }
-	| tPROPERTY idlist				{ $$ = new PropertyNode($idlist); }
-	| tINSTANCE idlist				{ $$ = new InstanceNode($idlist); }
+definevars: tGLOBAL idlist '\n'			{ $$ = new GlobalNode($idlist); }
+	| tPROPERTY idlist '\n'				{ $$ = new PropertyNode($idlist); }
+	| tINSTANCE idlist '\n'				{ $$ = new InstanceNode($idlist); }
+	;
+
+ifstmt: tIF expr tTHEN stmt {
+		NodeList *stmtlist = new NodeList;
+		stmtlist->push_back($stmt);
+		$$ = new IfStmtNode($expr, stmtlist); }
+	| tIF expr tTHEN '\n' stmtlist tENDIF '\n' {
+		$$ = new IfStmtNode($expr, $stmtlist); }
+	;
+
+ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
+		NodeList *stmtlist1 = new NodeList;
+		stmtlist1->push_back($stmt1);
+		NodeList *stmtlist2 = new NodeList;
+		stmtlist2->push_back($stmt2);
+		$$ = new IfElseStmtNode($expr, stmtlist1, stmtlist2); }
+	| tIF expr tTHEN stmt[stmt1] tELSE '\n' stmtlist[stmtlist2] tENDIF '\n' {
+		NodeList *stmtlist1 = new NodeList;
+		stmtlist1->push_back($stmt1);
+		$$ = new IfElseStmtNode($expr, stmtlist1, $stmtlist2); }
+	| tIF expr tTHEN '\n' stmtlist[stmtlist1] tELSE stmt[stmt2] {
+		NodeList *stmtlist2 = new NodeList;
+		stmtlist2->push_back($stmt2);
+		$$ = new IfElseStmtNode($expr, $stmtlist1, stmtlist2); }
+	| tIF expr tTHEN '\n' stmtlist[stmtlist1] tELSE '\n' stmtlist[stmtlist2] tENDIF '\n' {
+		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
 	;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
@@ -382,7 +414,7 @@ nonemptystmtlist:
 	;
 
 stmtlistline: '\n'					{ $$ = nullptr; }
-	| stmt '\n'
+	| stmt
 	;
 
 // EXPRESSION

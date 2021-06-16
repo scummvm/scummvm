@@ -78,6 +78,8 @@ public:
 	virtual void visitGlobalNode(GlobalNode *node);
 	virtual void visitPropertyNode(PropertyNode *node);
 	virtual void visitInstanceNode(InstanceNode *node);
+	virtual void visitIfStmtNode(IfStmtNode *node);
+	virtual void visitIfElseStmtNode(IfElseStmtNode *node);
 	virtual void visitIntNode(IntNode *node);
 	virtual void visitFloatNode(FloatNode *node);
 	virtual void visitSymbolNode(SymbolNode *node);

@@ -33,6 +33,8 @@ struct CmdNode;
 struct GlobalNode;
 struct PropertyNode;
 struct InstanceNode;
+struct IfStmtNode;
+struct IfElseStmtNode;
 struct IntNode;
 struct FloatNode;
 struct SymbolNode;
@@ -64,6 +66,8 @@ enum NodeType {
 	kGlobalNode,
 	kPropertyNode,
 	kInstanceNode,
+	kIfStmtNode,
+	kIfElseStmtNode,
 	kIntNode,
 	kFloatNode,
 	kSymbolNode,
@@ -89,6 +93,8 @@ public:
 	virtual void visitGlobalNode(GlobalNode *node) = 0;
 	virtual void visitPropertyNode(PropertyNode *node) = 0;
 	virtual void visitInstanceNode(InstanceNode *node) = 0;
+	virtual void visitIfStmtNode(IfStmtNode *node) = 0;
+	virtual void visitIfElseStmtNode(IfElseStmtNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
 	virtual void visitSymbolNode(SymbolNode *node) = 0;
@@ -236,6 +242,42 @@ struct InstanceNode : StmtNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitInstanceNode(this);
+	}
+};
+
+/* IfStmtNode */
+
+struct IfStmtNode : StmtNode {
+	Node *cond;
+	NodeList *stmts;
+
+	IfStmtNode(Node *condIn, NodeList *stmtsIn)
+		: StmtNode(kIfStmtNode), cond(condIn), stmts(stmtsIn) {}
+	virtual ~IfStmtNode() {
+		delete cond;
+		deleteList(stmts);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitIfStmtNode(this);
+	}
+};
+
+/* IfElseStmtNode */
+
+struct IfElseStmtNode : StmtNode {
+	Node *cond;
+	NodeList *stmts1;
+	NodeList *stmts2;
+
+	IfElseStmtNode(Node *condIn, NodeList *stmts1In, NodeList *stmts2In)
+		: StmtNode(kIfElseStmtNode), cond(condIn), stmts1(stmts1In), stmts2(stmts2In) {}
+	virtual ~IfElseStmtNode() {
+		delete cond;
+		deleteList(stmts1);
+		deleteList(stmts2);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitIfElseStmtNode(this);
 	}
 };
 

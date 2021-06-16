@@ -425,6 +425,49 @@ void LingoCompiler::visitInstanceNode(InstanceNode *node) {
 	}
 }
 
+/* IfStmtNode */
+
+void LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
+	node->cond->accept(this);
+	uint jzPos = _currentAssembly->size();
+	code2(LC::c_jumpifz, 0);
+	for (uint i = 0; i < node->stmts->size(); i++) {
+		(*node->stmts)[i]->accept(this);
+	}
+	uint endPos = _currentAssembly->size();
+
+	inst jzOffset = 0;
+	WRITE_UINT32(&jzOffset, endPos - jzPos);
+	(*_currentAssembly)[jzPos + 1] = jzOffset;
+}
+
+/* IfElseStmtNode */
+
+void LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
+	node->cond->accept(this);
+	uint jzPos = _currentAssembly->size();
+	code2(LC::c_jumpifz, 0);
+	for (uint i = 0; i < node->stmts1->size(); i++) {
+		(*node->stmts1)[i]->accept(this);
+	}
+
+	uint jmpPos = _currentAssembly->size();
+	code2(LC::c_jump, 0);
+	uint block2StartPos = _currentAssembly->size();
+	for (uint i = 0; i < node->stmts2->size(); i++) {
+		(*node->stmts2)[i]->accept(this);
+	}
+	uint endPos = _currentAssembly->size();
+
+	inst jzOffset = 0;
+	WRITE_UINT32(&jzOffset, block2StartPos - jzPos);
+	(*_currentAssembly)[jzPos + 1] = jzOffset;
+
+	inst jmpOffset = 0;
+	WRITE_UINT32(&jmpOffset, endPos - jmpPos);
+	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+}
+
 /* IntNode */
 
 void LingoCompiler::visitIntNode(IntNode *node) {
