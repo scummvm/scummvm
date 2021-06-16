@@ -293,7 +293,7 @@ void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) 
 	}
 }
 
-void LingoCompiler::codeFactory(Common::String &name) {
+void LingoCompiler::registerFactory(Common::String &name) {
 	// FIXME: The factory's context should not be tied to the LingoArchive
 	// but bytecode needs it to resolve names
 	_assemblyContext->setName(name);
@@ -324,10 +324,10 @@ void LingoCompiler::visitFactoryNode(FactoryNode *node) {
 	ScriptContext *mainContext = _assemblyContext;
 	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
 
-	codeFactory(*node->name);
 	for (uint i = 0; i < node->methods->size(); i++) {
 		(*node->methods)[i]->accept(this);
 	}
+	registerFactory(*node->name);
 
 	_inFactory = false;
 	_assemblyContext = mainContext;
