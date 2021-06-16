@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_DIALOG_TOPIC_H
 #define AGS_SHARED_AC_DIALOG_TOPIC_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 namespace AGS {
@@ -63,7 +65,7 @@ using namespace AGS; // FIXME later
 
 struct DialogTopic {
 	char          optionnames[MAXTOPICOPTIONS][150];
-	int           optionflags[MAXTOPICOPTIONS];
+	int32_t       optionflags[MAXTOPICOPTIONS];
 	unsigned char *optionscripts;
 	short         entrypoints[MAXTOPICOPTIONS];
 	short         startupentrypoint;

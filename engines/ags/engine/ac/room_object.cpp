@@ -159,7 +159,10 @@ void RoomObject::update_cycle_view_backwards() {
 }
 
 void RoomObject::ReadFromFile(Stream *in) {
-	in->ReadArrayOfInt32(&x, 3);
+	x = in->ReadInt32();
+	y = in->ReadInt32();
+	transparent = in->ReadInt32();
+
 	in->ReadArrayOfInt16(&tint_r, 15);
 	cycling = in->ReadByte();
 	overall_speed = in->ReadByte();
@@ -169,7 +172,11 @@ void RoomObject::ReadFromFile(Stream *in) {
 }
 
 void RoomObject::WriteToFile(Stream *out) const {
-	out->WriteArrayOfInt32(&x, 3);
+	out->WriteInt32(x);
+	out->WriteInt32(y);
+	out->WriteInt32(transparent);
+
+	// TODO: Split up array write to properly write fields separately
 	out->WriteArrayOfInt16(&tint_r, 15);
 	out->WriteByte(cycling);
 	out->WriteByte(overall_speed);

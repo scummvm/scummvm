@@ -74,7 +74,7 @@ struct GameState {
 	int  disabled_user_interface = 0;  // >0 while in cutscene/etc
 	int  gscript_timer = 0;    // obsolete
 	int  debug_mode = 0;       // whether we're in debug mode
-	int  globalvars[MAXGLOBALVARS];  // obsolete
+	int32_t globalvars[MAXGLOBALVARS];  // obsolete
 	int  messagetime = 0;      // time left for auto-remove messages
 	int  usedinv = 0;          // inventory item last used
 	int  inv_top = 0, inv_numdisp = 0, obsolete_inv_numorder = 0, inv_numinline = 0;
@@ -148,7 +148,7 @@ struct GameState {
 	int  speech_display_post_time_ms = 0; // keep speech text/portrait on screen after text/voice has finished playing = 0;
 	// no speech animation is supposed to be played at this time
 	int  dialog_options_highlight_color = 0; // The colour used for highlighted (hovered over) text in dialog options
-	int  reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
+	int32_t reserved[GAME_STATE_RESERVED_INTS];  // make sure if a future version adds a var, it doesn't mess anything up
 	// ** up to here is referenced in the script "game." object
 	long  randseed = 0;    // random seed
 	int   player_on_region = 0;    // player's current region
@@ -160,7 +160,7 @@ struct GameState {
 	short mboundx1 = 0, mboundx2 = 0, mboundy1 = 0, mboundy2 = 0;
 	int   fade_effect = 0;
 	int   bg_frame_locked = 0;
-	int   globalscriptvars[MAXGSVALUES];
+	int32_t globalscriptvars[MAXGSVALUES];
 	int   cur_music_number = 0, music_repeat = 0;
 	int   music_master_volume = 0;
 	int   digital_master_volume = 0;
@@ -169,7 +169,7 @@ struct GameState {
 	int   entered_at_x = 0, entered_at_y = 0, entered_edge = 0;
 	int   want_speech = 0;
 	int   cant_skip_speech = 0;
-	int   script_timers[MAX_TIMERS];
+	int32_t   script_timers[MAX_TIMERS];
 	int   sound_volume = 0, speech_volume = 0;
 	int   normal_font = 0, speech_font = 0;
 	char  key_skip_wait = 0;
@@ -182,7 +182,7 @@ struct GameState {
 	short parsed_words[MAX_PARSED_WORDS];
 	char  bad_parsed_word[100];
 	int   raw_color = 0;
-	int   raw_modified[MAX_ROOM_BGFRAMES];
+	int32_t raw_modified[MAX_ROOM_BGFRAMES];
 	Shared::PBitmap raw_drawing_surface = 0;
 	short filenumbers[MAXSAVEGAMES];
 	int   room_changes = 0;
@@ -222,11 +222,11 @@ struct GameState {
 	int   gamma_adjustment = 0;
 	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility = 0;
-	int *gui_draw_order = 0;
+	int32_t *gui_draw_order = 0;
 	std::vector<AGS::Shared::String> do_once_tokens = 0;
 	int   text_min_display_time_ms = 0;
 	int   ignore_user_input_after_text_timeout_ms = 0;
-	int   default_audio_type_volumes[MAX_AUDIO_TYPES];
+	int32_t default_audio_type_volumes[MAX_AUDIO_TYPES];
 
 	// Dynamic custom property values for characters and items
 	std::vector<AGS::Shared::StringIMap> charProps;
