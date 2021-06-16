@@ -219,7 +219,7 @@ void CSCIDeleteControl(int haa) {
 	_G(vobjs)[haa] = nullptr;
 }
 
-int CSCISendControlMessage(int haa, int mess, int wPar, long lPar) {
+int CSCISendControlMessage(int haa, int mess, int wPar, NumberPtr lPar) {
 	if (_G(vobjs)[haa] == nullptr)
 		return -1;
 	return _G(vobjs)[haa]->processmessage(mess, wPar, lPar);

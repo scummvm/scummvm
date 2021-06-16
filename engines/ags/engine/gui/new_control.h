@@ -35,7 +35,7 @@ struct NewControl {
 	char needredraw;
 	virtual void draw(Shared::Bitmap *ds) = 0;
 	virtual int pressedon(int mousex, int mousey) = 0;
-	virtual int processmessage(int, int, long) = 0;
+	virtual int processmessage(int, int, NumberPtr) = 0;
 
 	NewControl(int xx, int yy, int wi, int hi);
 	NewControl();

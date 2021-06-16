@@ -169,11 +169,11 @@ int savegamedialog() {
 
 	_G(lpTemp) = nullptr;
 	if (_G(numsaves) > 0)
-		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0, (long)&_G(buffer2)[0]);
+		CSCISendControlMessage(ctrllist, CLB_GETTEXT, 0, &_G(buffer2)[0]);
 	else
 		_G(buffer2)[0] = 0;
 
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&_G(buffer2)[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 
 	int toret = -1;
 	while (1) {
@@ -181,10 +181,10 @@ int savegamedialog() {
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				int cursell = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 
 				if (_G(numsaves) > 0)
-					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, (long)&_G(bufTemp)[0]);
+					CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursell, &_G(bufTemp)[0]);
 				else
 					strcpy(_G(bufTemp), "_NOSAVEGAMENAME");
 
@@ -208,7 +208,7 @@ int savegamedialog() {
 						CSCIWaitMessage(&cmes);
 					} while (cmes.code != CM_COMMAND);
 
-					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, (long)&_G(buffer2)[0]);
+					CSCISendControlMessage(txt1, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 					CSCIDeleteControl(btnCancel);
 					CSCIDeleteControl(btnOk);
 					CSCIDeleteControl(txt1);
@@ -256,8 +256,8 @@ int savegamedialog() {
 		} else if (mes.code == CM_SELCHANGE) {
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
-				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, (long)&_G(buffer2)[0]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&_G(buffer2)[0]);
+				CSCISendControlMessage(ctrllist, CLB_GETTEXT, cursel, &_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 			}
 		}
 	}
@@ -287,7 +287,7 @@ void preparesavegamelist(int ctrllist) {
 	// fill in the list box and global savegameindex[] array for backward compatibilty
 	for (_G(numsaves) = 0; _G(numsaves) < (int)saveList.size(); ++_G(numsaves)) {
 		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0,
-		                       (long)saveList[_G(numsaves)].getDescription().c_str());
+		                       saveList[_G(numsaves)].getDescription().c_str());
 		_G(filenumbers)[_G(numsaves)] = saveList[_G(numsaves)].getSaveSlot();
 		_G(filedates)[_G(numsaves)] = 0;
 		//(long int)saveList[_G(numsaves)].FileTime;
@@ -322,7 +322,7 @@ void enterstringwindow(const char *prompttext, char *stouse) {
 			if (mes.id == ctrlcancel)
 				_G(buffer2)[0] = 0;
 			else
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 			break;
 		}
 	}
@@ -361,7 +361,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	for (int aa = 0; aa < numRooms; aa++) {
 		sprintf(_G(buff), "%3d %s", roomNumbers[aa], roomNames[aa]);
-		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, (long)&_G(buff)[0]);
+		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, &_G(buff)[0]);
 		if (roomNumbers[aa] == currentRoom) {
 			CSCISendControlMessage(ctrllist, CLB_SETCURSEL, aa, 0);
 		}
@@ -375,14 +375,14 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	_G(buffer2)[0] = 0;
 
 	int ctrltbox = CSCICreateControl(CNT_TEXTBOX, 10, 29, 120, 0, nullptr);
-	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&_G(buffer2)[0]);
+	CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 
 	int toret = -1;
 	while (1) {
 		CSCIWaitMessage(&mes);      //printf("mess: %d, id %d ",mes.code,mes.id);
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
-				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, &_G(buffer2)[0]);
 				if (Common::isDigit(_G(buffer2)[0])) {
 					toret = atoi(_G(buffer2));
 				}
@@ -393,7 +393,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 			int cursel = CSCISendControlMessage(ctrllist, CLB_GETCURSEL, 0, 0);
 			if (cursel >= 0) {
 				sprintf(_G(buffer2), "%d", roomNumbers[cursel]);
-				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, (long)&_G(buffer2)[0]);
+				CSCISendControlMessage(ctrltbox, CTB_SETTEXT, 0, &_G(buffer2)[0]);
 			}
 		}
 	}

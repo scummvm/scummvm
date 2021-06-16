@@ -32,7 +32,7 @@ struct MyPushButton : public NewControl {
 	MyPushButton(int xx, int yy, int wi, int hi, const char *tex);
 	void draw(Shared::Bitmap *ds) override;
 	int pressedon(int mousex, int mousey) override;
-	int processmessage(int mcode, int wParam, long lParam) override;
+	int processmessage(int mcode, int wParam, NumberPtr lParam) override;
 };
 
 } // namespace AGS3

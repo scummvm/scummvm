@@ -40,7 +40,7 @@ struct MyListBox : public NewControl {
 	void draw(Shared::Bitmap *ds) override;
 	int pressedon(int mousex, int mousey) override;
 	void additem(char *texx);
-	int processmessage(int mcode, int wParam, long lParam) override;
+	int processmessage(int mcode, int wParam, NumberPtr lParam) override;
 };
 
 } // namespace AGS3

@@ -59,12 +59,12 @@ int MyTextBox::pressedon(int mousex, int mousey) {
 	return 0;
 }
 
-int MyTextBox::processmessage(int mcode, int wParam, long lParam) {
+int MyTextBox::processmessage(int mcode, int wParam, NumberPtr lParam) {
 	if (mcode == CTB_SETTEXT) {
-		strcpy(text, (char *)lParam);
+		strcpy(text, (char *)lParam._ptr);
 		needredraw = 1;
 	} else if (mcode == CTB_GETTEXT)
-		strcpy((char *)lParam, text);
+		strcpy((char *)lParam._ptr, text);
 	else if (mcode == CTB_KEYPRESS) {
 		if (wParam == eAGSKeyCodeBackspace) {
 			if (text[0] != 0)

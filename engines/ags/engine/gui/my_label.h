@@ -35,7 +35,7 @@ struct MyLabel : public NewControl {
 
 	int pressedon(int mousex, int mousey) override;
 
-	int processmessage(int mcode, int wParam, long lParam) override;
+	int processmessage(int mcode, int wParam, NumberPtr lParam) override;
 };
 
 } // namespace AGS3
