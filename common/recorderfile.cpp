@@ -594,18 +594,16 @@ int PlaybackFile::getScreensCount() {
 }
 
 bool PlaybackFile::skipToNextScreenshot() {
-	while (true) {
+	while (!_readStream->eos() && !_readStream->err()) {
 		FileTag id = (FileTag)_readStream->readUint32LE();
-		if (_readStream->eos()) {
+		if (_readStream->eos() || _readStream->err()) {
 			break;
 		}
 		if (id == kScreenShotTag) {
 			return true;
 		}
-		else {
-			uint32 size = _readStream->readUint32LE();
-			_readStream->skip(size);
-		}
+		uint32 size = _readStream->readUint32LE();
+		_readStream->skip(size);
 	}
 	return false;
 }

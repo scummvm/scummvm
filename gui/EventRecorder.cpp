@@ -244,7 +244,7 @@ uint32 EventRecorder::getRandomSeed(const Common::String &name) {
 }
 
 Common::String EventRecorder::generateRecordFileName(const Common::String &target) {
-	Common::String pattern(target+".r??");
+	Common::String pattern(target + ".r??");
 	Common::StringArray files = g_system->getSavefileManager()->listSavefiles(pattern);
 	for (int i = 0; i < kMaxRecordsNames; ++i) {
 		Common::String recordName = Common::String::format("%s.r%02d", target.c_str(), i);
