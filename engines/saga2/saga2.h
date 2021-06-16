@@ -37,7 +37,8 @@ class SmackerDecoder;
 
 namespace Saga2 {
 
-class Console;
+class Timer;
+class TimerList;
 
 enum {
 	kDebugResources = 1 << 0,
@@ -80,6 +81,8 @@ public:
 
 	WeaponStuff _weaponRack[kMaxWeapons];
 	weaponID _loadedWeapons = 0;
+	Common::List<TimerList *> _timerLists;
+	Common::List<Timer *> _timers;
 
 private:
 	Video::SmackerDecoder *_smkDecoder;

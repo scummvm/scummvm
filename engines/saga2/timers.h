@@ -36,18 +36,8 @@ namespace Saga2 {
 class GameObject;
 class TimerList;
 
-//  Allocate an new TimerList
-void *newTimerList(void);
-//  Deallocate an TimerList
-void deleteTimerList(void *p);
-
 //  Fetch a specified actor's TimerList
 TimerList *fetchTimerList(GameObject *obj);
-
-//  Allocate a new Timer
-void *newTimer(void);
-//  Deallocate an Timer
-void deleteTimer(void *p);
 
 //  Check all active Timers
 void checkTimers(void);
@@ -65,14 +55,17 @@ void cleanupTimers(void);
    TimerList class
  * ===================================================================== */
 
-class TimerList : public DList {
-	GameObject          *obj;
+class TimerList {
+	GameObject *_obj;
+
 public:
 	//  Constructor -- initial construction
-	TimerList(GameObject *o) : obj(o) {}
+	TimerList(GameObject *o);
 
 	//  Constructor -- reconstruct from archive buffer
 	TimerList(void **buf);
+
+	~TimerList();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -83,39 +76,34 @@ public:
 	//  Archive this object in a buffer
 	void *archive(void *buf);
 
-	void *operator new (size_t) {
-		return newTimerList();
-	}
-	void operator delete (void *p) {
-		deleteTimerList(p);
+	GameObject *getObject(void) {
+		return _obj;
 	}
 
-	GameObject *getObject(void) {
-		return obj;
-	}
+	Common::List<Timer *> _timers;
 };
 
 /* ===================================================================== *
    Timer class
  * ===================================================================== */
 
-class Timer : public DNode {
-	GameObject      *obj;
-	TimerID         id;
-	int16           interval;
-	FrameAlarm      alarm;
+class Timer {
+	GameObject *_obj;
+	TimerID _id;
+	int16 _interval;
+	FrameAlarm _alarm;
 
 public:
 	//  Constructor -- initial construction
-	Timer(GameObject *o, TimerID timerID, int16 frameInterval) :
-		obj(o),
-		id(timerID),
-		interval(frameInterval) {
-		alarm.set(interval);
+	Timer(GameObject *o, TimerID timerID, int16 frameInterval) : _obj(o), _id(timerID), _interval(frameInterval) {
+		_alarm.set(_interval);
+
+		g_vm->_timers.push_back(this);
 	}
 
 	//  Constructor -- reconstruct from archive buffer
 	Timer(void **buf);
+	~Timer();
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -124,28 +112,21 @@ public:
 	//  Archive this object in a buffer
 	void *archive(void *buf);
 
-	void *operator new (size_t) {
-		return newTimer();
-	}
-	void operator delete (void *p) {
-		deleteTimer(p);
-	}
-
 	GameObject *getObject(void) {
-		return obj;
+		return _obj;
 	}
 	TimerID thisID(void) {
-		return id;
+		return _id;
 	}
 	int16 getInterval(void) {
-		return interval;
+		return _interval;
 	}
 
 	bool check(void) {
-		return alarm.check();
+		return _alarm.check();
 	}
 	void reset(void) {
-		alarm.set(interval);
+		_alarm.set(_interval);
 	}
 };
 

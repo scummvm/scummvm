@@ -1671,7 +1671,6 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 }
 
 void GameObject::protoAddressToOffset() {
-
 	ProtoObj    *objectBase = &objectProtos[0];
 	ProtoObj    *actorBase = &actorProtos[0];
 	int32 newProto, size = sizeof(ResourceObjectPrototype) + 4;//Add 4 for jump Table
@@ -1793,8 +1792,7 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 
 	//  Fetch the existing timer list for this object or create a
 	//  new one
-	if ((timerList = fetchTimerList(this)) == nullptr
-	        && (timerList = new TimerList(this)) == nullptr) {
+	if ((timerList = fetchTimerList(this)) == nullptr && (timerList = new TimerList(this)) == nullptr) {
 		delete newTimer;
 		return false;
 	}
@@ -1803,21 +1801,19 @@ bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 
 	//  Search the list to see if there is already a timer with same
 	//  ID as the new timer.  If so, remove it and delete it.
-	for (timerInList = (Timer *)timerList->first();
-	        timerInList != nullptr;
-	        timerInList = (Timer *)timerInList->next()) {
-		assert(timerInList->getObject() == this);
+	for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
+		assert((*it)->getObject() == this);
 
-		if (newTimer->thisID() == timerInList->thisID()) {
-			timerInList->remove();
-			delete timerInList;
+		if (newTimer->thisID() == (*it)->thisID()) {
+			timerList->_timers.remove(*it);
+			delete *it;
 
 			break;
 		}
 	}
 
 	//  Put the new timer into the list
-	timerList->addTail(*newTimer);
+	timerList->_timers.push_back(newTimer);
 
 	return true;
 }
@@ -1830,19 +1826,13 @@ void GameObject::removeTimer(TimerID id) {
 
 	//  Get this object's timer list
 	if ((timerList = fetchTimerList(this)) != nullptr) {
-		Timer       *timer;
+		for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
+			if ((*it)->thisID() == id) {
+				timerList->_timers.remove(*it);
+				delete *it;
 
-		//  Search the timer list for a timer with the specified ID
-		for (timer = (Timer *)timerList->first();
-		        timer != nullptr;
-		        timer = (Timer *)timer->next()) {
-			if (timer->thisID() == id) {
-				//  Remove the timer, then delete it
-				timer->remove();
-				delete timer;
-
-				//  If the list is now empty, delete it
-				if (timerList->empty()) delete timerList;
+				if (timerList->_timers.empty())
+					delete timerList;
 
 				break;
 			}
@@ -1858,22 +1848,11 @@ void GameObject::removeAllTimers(void) {
 
 	//  Get this object's timer list
 	if ((timerList = fetchTimerList(this)) != nullptr) {
-		Timer       *timer,
-		            *nextTimer;
-
-		//  Iterate through the timers
-		for (timer = (Timer *)timerList->first();
-		        timer != nullptr;
-		        timer = nextTimer) {
-			//  Save the pointer to the next timer
-			nextTimer = (Timer *)timer->next();
-
-			//  Remove the timer, then delete it
-			timer->remove();
-			delete timer;
+		for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
+			timerList->_timers.remove(*it);
+			delete *it;
 		}
 
-		//  Delete this object's timer list
 		delete timerList;
 	}
 }
