@@ -38,16 +38,12 @@ public:
 	ScriptContext *compileLingo(const char *code, LingoArchive *archive, ScriptType type, uint16 id, const Common::String &scriptName, bool anonyomous = false);
 	ScriptContext *compileLingoV4(Common::SeekableReadStreamEndian &stream, LingoArchive *archive, const Common::String &archName, uint16 version);
 
-	bool isInArgStack(Common::String *s);
-	void clearArgStack();
-
 	int code1(inst code) { _currentAssembly->push_back(code); return _currentAssembly->size() - 1; }
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
-	void codeArg(Common::String *s);
 	int codeCmd(Common::String *s, int numpar);
-	Symbol codeDefine(Common::String &s, int start, int nargs, int end = -1, bool removeCode = true);
+	Symbol codeDefine(const Common::String &s, const Common::Array<Common::String *> &args, int start, int end = -1, bool removeCode = true);
 	void codeFactory(Common::String &s);
 	int codeFloat(double f);
 	int codeFunc(Common::String *s, int numpar);
@@ -68,7 +64,6 @@ public:
 	const char *_lines[3];
 	bool _inFactory;
 
-	Common::Array<Common::String *> _argstack;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
 
