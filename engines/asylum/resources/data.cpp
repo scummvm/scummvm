@@ -22,6 +22,8 @@
 
 #include "common/textconsole.h"
 
+#include "engines/asylum/console.h"
+
 #include "engines/asylum/resources/data.h"
 
 namespace Asylum {
@@ -303,6 +305,8 @@ void SharedData::saveLoadAmbientSoundData(Common::Serializer &s) {
 }
 
 void SharedData::saveLoadWithSerializer(Common::Serializer &s) {
+	debugC(kDebugLevelSavegame, "[SharedData::saveLoadWithSerializer] Saving Chapter 2 actor data is not implemented");
+
 	// Global coordinates (original uses int32 for coordinates)
 	s.syncAsSint32LE(_globalPoint.x);
 	s.syncAsSint32LE(_globalPoint.y);

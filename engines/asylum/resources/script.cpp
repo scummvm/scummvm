@@ -1812,7 +1812,7 @@ IMPLEMENT_OPCODE(UpdateTransparency)
 		if (cmd->param1) {
 			Object *object = getWorld()->getObjectById((ObjectId)cmd->param1);
 			if (!object) {
-				warning("No object with id %d", cmd->param1);
+				debugC(kDebugLevelObjects, "Object with id %d doesn't exist", cmd->param1);
 				return;
 			}
 

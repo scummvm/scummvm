@@ -69,8 +69,9 @@ PuzzleHiveControl::~PuzzleHiveControl() {
 }
 
 void PuzzleHiveControl::saveLoadWithSerializer(Common::Serializer &s) {
+	// TODO
 	s.skip(6 * 4 * 2);
-	warning("[PuzzleHiveControl::saveLoadWithSerializer] Not implemented");
+	debugC(kDebugLevelSavegame, "[PuzzleHiveControl::saveLoadWithSerializer] Not implemented");
 
 	s.syncAsSint32LE(_soundVolume);
 }
