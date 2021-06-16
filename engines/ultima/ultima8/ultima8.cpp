@@ -1340,6 +1340,20 @@ Common::Error Ultima8Engine::loadGameStream(Common::SeekableReadStream *stream) 
 	_mouse->popAllCursors();
 	_mouse->pushMouseCursor();
 
+	/*
+	// In case of bugs, ensure persistent processes are around?
+	if (!TargetReticleProcess::get_instance())
+		_kernel->addProcess(new TargetReticleProcess());
+	if (!ItemSelectionProcess::get_instance())
+		_kernel->addProcess(new ItemSelectionProcess());
+	if (!CrosshairProcess::get_instance())
+		_kernel->addProcess(new CrosshairProcess());
+	if (!CycleProcess::get_instance())
+		_kernel->addProcess(new CycleProcess());
+	if (!SnapProcess::get_instance())
+		_kernel->addProcess(new SnapProcess());
+	 */
+
 	if (!totalok) {
 		Error(message, "Error Loading savegame");
 		delete sg;
@@ -1435,6 +1449,7 @@ bool Ultima8Engine::load(Common::ReadStream *rs, uint32 version) {
 
 	if (GAME_IS_CRUSADER) {
 		_unkCrusaderFlag  = (rs->readByte() != 0);
+		_cruStasis = false;
 	}
 
 	// no gump should be moused over after load
