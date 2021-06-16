@@ -41,10 +41,6 @@ namespace Trecision {
 
 GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr), kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0) {	
 	// RGB555
-	_drawRect = Common::Rect(0, 0, 0, 0);
-	_drawObjRect = Common::Rect(0, 0, 0, 0);
-	_drawObjIndex = -1;
-	_drawMask = false;
 	for (int i = 0; i < 3; ++i)
 		_bitMask[i] = 0;
 }
@@ -109,20 +105,20 @@ void GraphicsManager::addDirtyRect(Common::Rect rect, bool translateRect) {
 	_dirtyRects.push_back(rect);
 }
 
-void GraphicsManager::drawObj() {
-	if (_drawObjRect.left > MAXX || _drawObjRect.top > MAXX || _drawObjRect.right > MAXX || _drawObjRect.bottom > MAXX)
+void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Common::Rect drawObjRect, bool includeDirtyRect) {
+	if (drawObjRect.left > MAXX || drawObjRect.top > MAXX || drawObjRect.right > MAXX || drawObjRect.bottom > MAXX)
 		return;
 
 	// If we have a valid object, draw it, otherwise erase it
 	// by using the background buffer
-	const uint16 *buf = _drawObjIndex >= 0 ? _vm->_objPointers[_drawObjIndex] : (uint16 *)_smkBackground.getPixels();
-	if (_drawMask && _drawObjIndex >= 0) {
-		uint8 *mask = _vm->_maskPointers[_drawObjIndex];
+	const uint16 *buf = index >= 0 ? _vm->_objPointers[index] : (uint16 *)_smkBackground.getPixels();
+	if (mask && index >= 0) {
+		uint8 *mask = _vm->_maskPointers[index];
 
-		for (uint16 y = _drawRect.top; y < _drawRect.bottom; ++y) {
+		for (uint16 y = drawRect.top; y < drawRect.bottom; ++y) {
 			uint16 sco = 0;
 			uint16 c = 0;
-			while (sco < _drawRect.width()) {
+			while (sco < drawRect.width()) {
 				if (c == 0) { // jump
 					sco += *mask;
 					++mask;
@@ -131,18 +127,18 @@ void GraphicsManager::drawObj() {
 				} else { // copy
 					const uint16 maskOffset = *mask;
 
-					if (maskOffset != 0 && y >= _drawRect.top + _drawObjRect.top && y < _drawRect.top + _drawObjRect.bottom) {
-						if (sco >= _drawObjRect.left && sco + maskOffset < _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, y), buf, maskOffset * 2);
+					if (maskOffset != 0 && y >= drawRect.top + drawObjRect.top && y < drawRect.top + drawObjRect.bottom) {
+						if (sco >= drawObjRect.left && sco + maskOffset < drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(sco + drawRect.left, y), buf, maskOffset * 2);
 
-						else if (sco < _drawObjRect.left && sco + maskOffset < _drawObjRect.right && sco + maskOffset >= _drawObjRect.left)
-							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, y), buf + _drawObjRect.left - sco, (maskOffset + sco - _drawObjRect.left) * 2);
+						else if (sco < drawObjRect.left && sco + maskOffset < drawObjRect.right && sco + maskOffset >= drawObjRect.left)
+							memcpy(_screenBuffer.getBasePtr(drawObjRect.left + drawRect.left, y), buf + drawObjRect.left - sco, (maskOffset + sco - drawObjRect.left) * 2);
 
-						else if (sco >= _drawObjRect.left && sco + maskOffset >= _drawObjRect.right && sco < _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(sco + _drawRect.left, y), buf, (_drawObjRect.right - sco) * 2);
+						else if (sco >= drawObjRect.left && sco + maskOffset >= drawObjRect.right && sco < drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(sco + drawRect.left, y), buf, (drawObjRect.right - sco) * 2);
 
-						else if (sco < _drawObjRect.left && sco + maskOffset >= _drawObjRect.right)
-							memcpy(_screenBuffer.getBasePtr(_drawObjRect.left + _drawRect.left, y), buf + _drawObjRect.left - sco, (_drawObjRect.right - _drawObjRect.left) * 2);
+						else if (sco < drawObjRect.left && sco + maskOffset >= drawObjRect.right)
+							memcpy(_screenBuffer.getBasePtr(drawObjRect.left + drawRect.left, y), buf + drawObjRect.left - sco, (drawObjRect.right - drawObjRect.left) * 2);
 					}
 					sco += *mask;
 					buf += *mask++;
@@ -151,22 +147,25 @@ void GraphicsManager::drawObj() {
 			}
 		}
 	} else {
-		const uint16 x = _drawRect.left + _drawObjRect.left;
+		const uint16 x = drawRect.left + drawObjRect.left;
 
-		if (x + _drawObjRect.width() > MAXX || _drawObjRect.top + _drawObjRect.height() > MAXY) {
+		if (x + drawObjRect.width() > MAXX || drawObjRect.top + drawObjRect.height() > MAXY) {
 			warning("drawObj: Invalid surface, skipping");
 			return;
 		}
 		
-		for (uint16 y = _drawObjRect.top; y < _drawObjRect.bottom; ++y) {
-			memcpy(_screenBuffer.getBasePtr(x, _drawRect.top + y),
-				   buf + (y * _drawRect.width()) + _drawObjRect.left, _drawObjRect.width() * 2);
+		for (uint16 y = drawObjRect.top; y < drawObjRect.bottom; ++y) {
+			memcpy(_screenBuffer.getBasePtr(x, drawRect.top + y),
+				   buf + (y * drawRect.width()) + drawObjRect.left, drawObjRect.width() * 2);
 		}
 	}
+
+	if (includeDirtyRect)
+		addDirtyRect(drawObjRect, true);
 }
 
-void GraphicsManager::eraseObj() {
-	Common::Rect eraseRect = _drawObjRect;
+void GraphicsManager::eraseObj(Common::Rect drawObjRect) {
+	Common::Rect eraseRect = drawObjRect;
 	eraseRect.translate(0, TOP);
 	if (eraseRect.isValidRect())
 		_screenBuffer.fillRect(eraseRect, 0);
@@ -504,39 +503,23 @@ void GraphicsManager::paintScreen(bool flag) {
 
 	// erase character
 	if (_vm->_flagShowCharacter && x2 > x1 && y2 > y1) { // if a description exists
-		_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-		_drawObjRect = Common::Rect(x1, y1, x2, y2);
-		_drawObjIndex = -1;
-		_drawMask = false;
-		drawObj();
-
-		addDirtyRect(_drawObjRect, true);
+		drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), Common::Rect(x1, y1, x2, y2));
 	} else if (_vm->_animMgr->_animRect.left != MAXX) {
-		_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-		_drawObjRect = _vm->_animMgr->_animRect;
-		_drawObjIndex = -1;
-		_drawMask = false;
-		drawObj();
-
-		addDirtyRect(_drawObjRect, true);
+		drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), _vm->_animMgr->_animRect);
 	}
 
 	// If there's text to remove
 	if (_vm->_textStatus & TEXT_DEL) {
 		// remove text
-		_drawRect = Common::Rect(0, TOP, MAXX, MAXY + TOP);
-		_drawObjRect = _vm->_textMgr->getOldTextRect();
-		_drawObjRect.translate(0, -TOP);
-		_drawObjIndex = -1;
-		_drawMask = false;
-
-		if (_drawObjRect.top >= 0 && _drawObjRect.bottom < AREA) {
-			drawObj();
+		Common::Rect drawObjRect = _vm->_textMgr->getOldTextRect();
+		drawObjRect.translate(0, -TOP);
+		
+		if (drawObjRect.top >= 0 && drawObjRect.bottom < AREA) {
+			drawObj(-1, false, Common::Rect(0, TOP, MAXX, MAXY + TOP), drawObjRect);
 		} else {
-			eraseObj();
+			eraseObj(drawObjRect);
 		}
 		_vm->_textMgr->clearOldText();
-		addDirtyRect(_drawObjRect, true);
 
 		if (!(_vm->_textStatus & TEXT_DRAW)) // if there's no new text
 			_vm->_textStatus = TEXT_OFF;     // stop updating text
@@ -545,12 +528,7 @@ void GraphicsManager::paintScreen(bool flag) {
 	// Suppress all the objects you removed
 	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
 		if (i->_remove) {
-			_drawRect = Common::Rect(0, TOP, MAXX, AREA + TOP);
-			_drawObjRect = _vm->_obj[i->_objectId]._rect;
-			_drawObjIndex = -1;
-			_drawMask = false;
-			drawObj();
-			addDirtyRect(_drawObjRect, true);
+			drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), _vm->_obj[i->_objectId]._rect);
 		}
 	}
 
@@ -604,13 +582,10 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 		if (!i->_remove && _vm->_obj[i->_objectId]._nbox == curBox) {
 			// the bitmap object at the desired level
 			SObject obj = _vm->_obj[i->_objectId];
-			_drawRect = obj._rect;
-			_drawRect.translate(0, TOP);
-			_drawObjRect = Common::Rect(_drawRect.width(), _drawRect.height());
-			_drawObjIndex = _vm->getRoomObjectIndex(i->_objectId);
-			_drawMask = obj.isModeMask();
-			drawObj();
-			_dirtyRects.push_back(_drawRect);
+			Common::Rect drawRect = obj._rect;
+			drawRect.translate(0, TOP);
+			drawObj(_vm->getRoomObjectIndex(i->_objectId), obj.isModeMask(), drawRect, Common::Rect(drawRect.width(), drawRect.height()), false);
+			_dirtyRects.push_back(drawRect);
 		}
 	}
 
@@ -633,8 +608,8 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 				++r2.right;
 
 				if (r.intersects(r2)) {
-					_drawRect = obj._rect;
-					_drawRect.translate(0, TOP);
+					Common::Rect drawRect = obj._rect;
+					drawRect.translate(0, TOP);
 
 					// Restore the bottom right of the rect
 					--r2.bottom;
@@ -645,10 +620,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
 					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
-					_drawObjRect = Common::Rect(xr1, yr1, xr2, yr2);
-					_drawObjIndex = b;
-					_drawMask = obj.isModeMask();
-					drawObj();
+					drawObj(b, obj.isModeMask(), drawRect, Common::Rect(xr1, yr1, xr2, yr2), false);
 				}
 			}
 		}
