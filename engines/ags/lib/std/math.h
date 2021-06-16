@@ -29,6 +29,11 @@
 namespace AGS3 {
 namespace std {
 
+// Not all platforms define INFINITY
+#ifndef INFINITY
+#define INFINITY   ((float)(1e+300 * 1e+300)) // This must overflow
+#endif
+
 #define FLOAT_UNASSIGNED (float)999999.0
 
 template<class T>
