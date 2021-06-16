@@ -390,11 +390,11 @@ void Renderer3D::init3DRoom() {
 		_zBuffer[c] = 0x7FFF;
 }
 
-void Renderer3D::resetZBuffer(int x1, int y1, int x2, int y2) {
-	if (x1 > x2 || y1 > y2)
+void Renderer3D::resetZBuffer(Common::Rect area) {
+	if (!area.isValidRect())
 		return;
 
-	int size = (x2 - x1) * (y2 - y1);
+	int size = area.width() * area.height();
 	if (size * 2 > ZBUFFERSIZE)
 		warning("Warning: _zBuffer size %d!\n", size * 2);
 

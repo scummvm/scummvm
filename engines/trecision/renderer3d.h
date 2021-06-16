@@ -86,7 +86,7 @@ public:
 	~Renderer3D();
 
 	void init3DRoom();
-	void resetZBuffer(int x1, int y1, int x2, int y2);
+	void resetZBuffer(Common::Rect area);
 	void setClipping(int16 x1, int16 y1, int16 x2, int16 y2);
 	void drawCharacter(uint8 flag);
 };

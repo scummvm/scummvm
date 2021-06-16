@@ -471,4 +471,12 @@ float Actor::frameCenter(SVertex *v) {
 	return (-v[86]._z - v[164]._z) / 2.0;
 }
 
+bool Actor::actorRectIsValid() const {
+	return _lim[0] < _lim[1] && _lim[2] < _lim[3];
+}
+
+Common::Rect Actor::getActorRect() const {
+	return Common::Rect(_lim[0], _lim[2], _lim[1], _lim[3]);
+}
+
 } // End of namespace Trecision

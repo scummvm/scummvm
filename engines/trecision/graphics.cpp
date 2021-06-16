@@ -496,14 +496,11 @@ void GraphicsManager::paintScreen(bool flag) {
 	_dirtyRects.clear();
 	_vm->_flagPaintCharacter = true; // always redraws the character
 
-	int x1 = _vm->_actor->_lim[0];
-	int y1 = _vm->_actor->_lim[2] - TOP;
-	int x2 = _vm->_actor->_lim[1];
-	int y2 = _vm->_actor->_lim[3] - TOP;
-
 	// erase character
-	if (_vm->_flagShowCharacter && x2 > x1 && y2 > y1) { // if a description exists
-		drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), Common::Rect(x1, y1, x2, y2));
+	if (_vm->_flagShowCharacter && _vm->_actor->actorRectIsValid()) { // if a description exists
+		Common::Rect actorRect = _vm->_actor->getActorRect();
+		actorRect.translate(0, -TOP);
+		drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), actorRect);
 	} else if (_vm->_animMgr->_animRect.left != MAXX) {
 		drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), _vm->_animMgr->_animRect);
 	}
@@ -629,18 +626,13 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 	if (_vm->_pathFind->getActorPos() == curBox && _vm->_flagShowCharacter) {
 		_vm->_renderer->drawCharacter(CALCPOINTS);
 
-		int x1 = _vm->_actor->_lim[0];
-		int y1 = _vm->_actor->_lim[2];
-		int x2 = _vm->_actor->_lim[1];
-		int y2 = _vm->_actor->_lim[3];
-
-		if (x2 > x1 && y2 > y1) {
+		if (_vm->_actor->actorRectIsValid()) {
+			const Common::Rect actorRect = _vm->_actor->getActorRect();
 			// enlarge the last dirty rectangle with the actor's rectangle
-			Common::Rect l(x1, y1, x2, y2);
 			if (!_dirtyRects.empty())
-				_dirtyRects.back().extend(l);
+				_dirtyRects.back().extend(actorRect);
 
-			_vm->_renderer->resetZBuffer(x1, y1, x2, y2);
+			_vm->_renderer->resetZBuffer(actorRect);
 		}
 
 		_vm->_renderer->drawCharacter(DRAWFACES);
