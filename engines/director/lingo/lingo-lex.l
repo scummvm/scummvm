@@ -122,7 +122,6 @@ char		{ count(); return tCHAR; }		// D3
 contains	{ count(); return tCONTAINS; }
 down		{ count(); return tDOWN; }
 if			{ count(); return tIF; }
-else{spc}+if { count(); return tELSIF; }
 else		{ count(); return tELSE; }
 end({spc}+{identifier})?	{
 		count();
