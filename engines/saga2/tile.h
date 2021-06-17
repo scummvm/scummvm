@@ -63,8 +63,6 @@ inline void TileID2Bank(TileID t, int16 &bank, int16 &num) {
    Tile Size constants
  * ===================================================================== */
 
-const int           platUVSize = tileUVSize * platformWidth;
-
 //  Metatile metrics
 const int           metaTileWidth = kTileWidth * platformWidth,
                     metaTileHeight = kTileHeight * platformWidth,

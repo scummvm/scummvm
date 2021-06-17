@@ -296,6 +296,14 @@ enum {
 	sectorMask = (sectorSize - 1)
 };
 
+//  Plaftorm metrics
+const int platformWidth = 8;      // width and height of platform
+enum {
+	platMask = platformWidth - 1,
+	platShift = 3,
+	platUVSize = tileUVSize * platformWidth
+};
+
 } // end of namespace Saga2
 
 #endif
