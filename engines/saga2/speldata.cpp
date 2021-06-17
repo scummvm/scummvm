@@ -102,11 +102,11 @@ extern SpellDisplayList         activeSpells;
 
 EffectDisplayPrototypeList      EffectDisplayPrototypeList::edpList(maxEffectPrototypes);
 SpellDisplayPrototypeList       SpellDisplayPrototypeList::sdpList(maxSpellPrototypes);
-SpriteSet                       **spellSprites;         // longsword test sprites
+SpriteSet                       *spellSprites;         // longsword test sprites
 SpellStuff                      spellBook[maxSpells];
 
 ColorTable                      spellColorMaps[maxSpellColorMaps];
-ColorScheme                     **spellSchemes;
+ColorSchemeList                 *spellSchemes;
 
 int32                           loadedColorMaps;
 
@@ -128,11 +128,20 @@ void initMagic(void) {
 	defineEffects();
 	loadMagicData();
 
-	spellSprites = (SpriteSet **) spriteRes->load(spellSpriteID, "spell sprites");
+	const int colorSchemeSize = 44;
+	Common::SeekableReadStream *stream;
+
+	stream = loadResourceToStream(spriteRes, spellSpriteID, "spell sprites");
+	spellSprites = new SpriteSet(stream);
 	assert(spellSprites);
-	spellSchemes = (ColorScheme **)schemeRes->load(spellSpriteID, "scheme list");
+	delete stream;
+
+	loadedColorMaps = schemeRes->size(spellSpriteID) / colorSchemeSize;
+
+	stream = loadResourceToStream(schemeRes, spellSpriteID, "scheme list");
+	spellSchemes = new ColorSchemeList(loadedColorMaps, stream);
 	assert(spellSchemes);
-	loadedColorMaps = schemeRes->size(spellSpriteID) / sizeof(ColorScheme);
+	delete stream;
 }
 
 
