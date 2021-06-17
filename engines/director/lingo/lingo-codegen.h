@@ -48,7 +48,9 @@ public:
 	int codeInt(int val);
 	int codeString(const char *s);
 	void registerFactory(Common::String &s);
+	VarType globalCheck();
 	void registerMethodVar(const Common::String &name, VarType type);
+	void updateLoopJumps(uint nextTargetPos, uint exitTargetPos);
 
 	LingoArchive *_assemblyArchive;
 	ScriptContext *_assemblyContext;
@@ -60,6 +62,7 @@ public:
 	uint _bytenumber;
 	const char *_lines[3];
 	bool _inFactory;
+	LoopNode *_currentLoop;
 
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
@@ -79,6 +82,10 @@ public:
 	virtual void visitInstanceNode(InstanceNode *node);
 	virtual void visitIfStmtNode(IfStmtNode *node);
 	virtual void visitIfElseStmtNode(IfElseStmtNode *node);
+	virtual void visitRepeatWhileNode(RepeatWhileNode *node);
+	virtual void visitRepeatWithToNode(RepeatWithToNode *node);
+	virtual void visitNextRepeatNode(NextRepeatNode *node);
+	virtual void visitExitRepeatNode(ExitRepeatNode *node);
 	virtual void visitIntNode(IntNode *node);
 	virtual void visitFloatNode(FloatNode *node);
 	virtual void visitSymbolNode(SymbolNode *node);

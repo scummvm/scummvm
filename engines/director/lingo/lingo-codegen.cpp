@@ -66,6 +66,7 @@ LingoCompiler::LingoCompiler() {
 	_lines[0] = _lines[1] = _lines[2] = nullptr;
 
 	_inFactory = false;
+	_currentLoop = nullptr;
 
 	_hadError = false;
 }
@@ -251,6 +252,15 @@ int LingoCompiler::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
+VarType LingoCompiler::globalCheck() {
+	// If in a definition, assume variables are local unless
+	// they were declared global with `global varname`
+	if (_indef) {
+		return kVarLocal;
+	}
+	return kVarGlobal;
+}
+
 void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) {
 	if (!_methodVars->contains(name)) {
 		(*_methodVars)[name] = type;
@@ -271,6 +281,24 @@ void LingoCompiler::registerFactory(Common::String &name) {
 		g_lingo->_globalvars[name] = _assemblyContext;
 	} else {
 		warning("Factory '%s' already defined", name.c_str());
+	}
+}
+
+void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
+	if (!_currentLoop)
+		return;
+	
+	for (uint i = 0; i < _currentLoop->nextRepeats.size(); i++) {
+		uint nextRepeatPos = _currentLoop->nextRepeats[i];
+		inst jmpOffset = 0;
+		WRITE_UINT32(&jmpOffset, nextTargetPos - nextRepeatPos);
+		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset; 
+	}
+	for (uint i = 0; i < _currentLoop->exitRepeats.size(); i++) {
+		uint exitRepeatPos = _currentLoop->exitRepeats[i];
+		inst jmpOffset = 0;
+		WRITE_UINT32(&jmpOffset, exitTargetPos - exitRepeatPos);
+		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset; 
 	}
 }
 
@@ -431,6 +459,112 @@ void LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
 	inst jmpOffset = 0;
 	WRITE_UINT32(&jmpOffset, endPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+}
+
+/* RepeatWhileNode */
+
+void LingoCompiler::visitRepeatWhileNode(RepeatWhileNode *node) {
+	LoopNode *prevLoop = _currentLoop;
+	_currentLoop = node;
+
+	uint startPos = _currentAssembly->size();
+	compile(node->cond);
+	uint jzPos = _currentAssembly->size();
+	code2(LC::c_jumpifz, 0);
+	compileList(node->stmts);
+	uint jmpPos = _currentAssembly->size();
+	code2(LC::c_jump, 0);
+	uint endPos = _currentAssembly->size();
+
+	inst jzOffset = 0;
+	WRITE_UINT32(&jzOffset, endPos - jzPos);
+	(*_currentAssembly)[jzPos + 1] = jzOffset;
+
+	inst jmpOffset = 0;
+	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
+	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+
+	updateLoopJumps(jmpPos, endPos);
+	_currentLoop = prevLoop;
+}
+
+/* RepeatWithToNode */
+
+void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
+	LoopNode *prevLoop = _currentLoop;
+	_currentLoop = node;
+
+	registerMethodVar(*node->var, globalCheck());
+
+	compile(node->start);
+	code1(LC::c_varpush);
+	codeString(node->var->c_str());
+	code1(LC::c_assign);
+
+	uint startPos = _currentAssembly->size();
+	code1(LC::c_eval);
+	codeString(node->var->c_str());
+	compile(node->end);
+	if (node->down) {
+		code1(LC::c_ge);
+	} else {
+		code1(LC::c_le);
+	}
+	uint jzPos = _currentAssembly->size();
+	code2(LC::c_jumpifz, 0);
+
+	compileList(node->stmts);
+
+	uint incrementPos = _currentAssembly->size();
+	code1(LC::c_eval);
+	codeString(node->var->c_str());
+	code1(LC::c_intpush);
+	codeInt(1);
+	if (node->down) {
+		code1(LC::c_sub);
+	} else {
+		code1(LC::c_add);
+	}
+	code1(LC::c_varpush);
+	codeString(node->var->c_str());
+	code1(LC::c_assign);
+
+	uint jmpPos = _currentAssembly->size();
+	code2(LC::c_jump, 0);
+	uint endPos = _currentAssembly->size();
+
+	inst jzOffset = 0;
+	WRITE_UINT32(&jzOffset, endPos - jzPos);
+	(*_currentAssembly)[jzPos + 1] = jzOffset;
+
+	inst jmpOffset = 0;
+	WRITE_UINT32(&jmpOffset, startPos - jmpPos);
+	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+
+	updateLoopJumps(incrementPos, endPos);
+	_currentLoop = prevLoop;
+}
+
+/* NextRepeatNode */
+
+void LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
+	if (_currentLoop) {
+		_currentLoop->nextRepeats.push_back(_currentAssembly->size());
+		code2(LC::c_jump, 0);
+	} else {
+		warning("# LINGO: next repeat not inside repeat loop");
+	}
+}
+
+/* ExitRepeatNode */
+
+void LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
+	if (_currentLoop) {
+		_currentLoop->exitRepeats.push_back(_currentAssembly->size());
+		code2(LC::c_jump, 0);
+	} else {
+		warning("# LINGO: exit repeat not inside repeat loop");
+	}
 }
 
 /* IntNode */
