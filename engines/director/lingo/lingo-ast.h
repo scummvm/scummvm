@@ -30,6 +30,10 @@ struct ScriptNode;
 struct FactoryNode;
 struct HandlerNode;
 struct CmdNode;
+struct PutIntoNode;
+struct PutAfterNode;
+struct PutBeforeNode;
+struct SetNode;
 struct GlobalNode;
 struct PropertyNode;
 struct InstanceNode;
@@ -67,6 +71,10 @@ enum NodeType {
 	kFactoryNode,
 	kHandlerNode,
 	kCmdNode,
+	kPutIntoNode,
+	kPutAfterNode,
+	kPutBeforeNode,
+	kSetNode,
 	kGlobalNode,
 	kPropertyNode,
 	kInstanceNode,
@@ -98,6 +106,10 @@ public:
 	virtual void visitFactoryNode(FactoryNode *node) = 0;
 	virtual void visitHandlerNode(HandlerNode *node) = 0;
 	virtual void visitCmdNode(CmdNode *node) = 0;
+	virtual void visitPutIntoNode(PutIntoNode *node) = 0;
+	virtual void visitPutAfterNode(PutAfterNode *node) = 0;
+	virtual void visitPutBeforeNode(PutBeforeNode *node) = 0;
+	virtual void visitSetNode(SetNode *node) = 0;
 	virtual void visitGlobalNode(GlobalNode *node) = 0;
 	virtual void visitPropertyNode(PropertyNode *node) = 0;
 	virtual void visitInstanceNode(InstanceNode *node) = 0;
@@ -225,6 +237,74 @@ struct CmdNode : StmtNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitCmdNode(this);
+	}
+};
+
+/* PutIntoNode */
+
+struct PutIntoNode : StmtNode {
+	Node *val;
+	Node *var;
+
+	PutIntoNode(Node *valIn, Node *varIn)
+		: StmtNode(kPutIntoNode), val(valIn), var(varIn) {}
+	virtual ~PutIntoNode() {
+		delete val;
+		delete var;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPutIntoNode(this);
+	}
+};
+
+/* PutAfterNode */
+
+struct PutAfterNode : StmtNode {
+	Node *val;
+	Node *var;
+
+	PutAfterNode(Node *valIn, Node *varIn)
+		: StmtNode(kPutAfterNode), val(valIn), var(varIn) {}
+	virtual ~PutAfterNode() {
+		delete val;
+		delete var;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPutAfterNode(this);
+	}
+};
+
+/* PutBeforeNode */
+
+struct PutBeforeNode : StmtNode {
+	Node *val;
+	Node *var;
+
+	PutBeforeNode(Node *valIn, Node *varIn)
+		: StmtNode(kPutBeforeNode), val(valIn), var(varIn) {}
+	virtual ~PutBeforeNode() {
+		delete val;
+		delete var;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPutBeforeNode(this);
+	}
+};
+
+/* SetNode */
+
+struct SetNode : StmtNode {
+	Node *var;
+	Node *val;
+
+	SetNode(Node *varIn, Node *valIn)
+		: StmtNode(kSetNode), var(varIn), val(valIn) {}
+	virtual ~SetNode() {
+		delete var;
+		delete val;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitSetNode(this);
 	}
 };
 

@@ -164,12 +164,15 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<idlist> idlist nonemptyidlist
 
 // STATEMENT
-%type<node> stmt stmtoneliner proc definevars ifstmt ifelsestmt loop
+%type<node> stmt stmtoneliner
+%type<node> proc asgn definevars
+%type<node> ifstmt ifelsestmt loop
 %type<nodelist> stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
 // EXPRESSION
 %type<node> simpleexprnoparens simpleexpr expr
+%type<node> var varorchunk varorthe
 %type<nodelist> exprlist nonemptyexprlist
 
 %left tAND tOR
@@ -315,7 +318,7 @@ ID: tVARID
 	| tPLAYACCEL	{ $$ = new Common::String("playAccel"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
 	// | tPROPERTY		{ $$ = new Common::String("property"); }
-	| tPUT			{ $$ = new Common::String("put"); }
+	// | tPUT			{ $$ = new Common::String("put"); }
 	| tREPEAT		{ $$ = new Common::String("repeat"); }
 	| tSCRIPT		{ $$ = new Common::String("script"); }
 	| tSET			{ $$ = new Common::String("set"); }
@@ -358,14 +361,25 @@ stmt: stmtoneliner
 	;
 
 stmtoneliner: proc
+	| asgn
 	| definevars
 	;
 
 proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
 	| ID exprlist[args] '\n'			{ $$ = new CmdNode($ID, $args); }
+	| tPUT '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode(new Common::String("put"), $args); }
+	| tPUT exprlist[args] '\n'			{ $$ = new CmdNode(new Common::String("put"), $args); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	;
+
+asgn: tPUT expr tINTO varorchunk '\n'	{ $$ = new PutIntoNode($expr, $varorchunk); }
+	| tPUT expr tAFTER varorchunk '\n'	{ $$ = new PutAfterNode($expr, $varorchunk); }
+	| tPUT expr tBEFORE varorchunk '\n'	{ $$ = new PutBeforeNode($expr, $varorchunk); }
+	| tSET varorthe to expr '\n'		{ $$ = new SetNode($varorthe, $expr); }
+	;
+
+to: tTO | tEQ ;
 
 definevars: tGLOBAL idlist '\n'			{ $$ = new GlobalNode($idlist); }
 	| tPROPERTY idlist '\n'				{ $$ = new PropertyNode($idlist); }
@@ -438,7 +452,17 @@ simpleexprnoparens: tINT			{ $$ = new IntNode($tINT); }
 	| '-' simpleexpr[arg]  %prec tUNARY		{ $$ = new UnaryOpNode(LC::c_negate, $arg); }
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
-	| ID							{ $$ = new VarNode($ID); }
+	| var
+	;
+
+var: ID							{ $$ = new VarNode($ID); } ;
+
+varorchunk: var
+	// TODO: chunk ref
+	;
+
+varorthe: var
+	// TODO: the
 	;
 
 simpleexpr: simpleexprnoparens

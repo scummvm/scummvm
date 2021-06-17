@@ -84,6 +84,8 @@ static struct FuncDescr {
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
+	{ LC::c_globalpush,		"c_globalpush",		"s" },
+	{ LC::c_globalrefpush,	"c_globalrefpush",	"s" },
 	{ LC::c_ge,				"c_ge",				"" },
 	{ LC::c_goto,			"c_goto",			"" },
 	{ LC::c_gotoloop,		"c_gotoloop",		"" },
@@ -100,6 +102,8 @@ static struct FuncDescr {
 	{ LC::c_le,				"c_le",				"" },
 	{ LC::c_lineOf,			"c_lineOf",			"" },	// D3
 	{ LC::c_lineToOf,		"c_lineToOf",		"" },	// D3
+	{ LC::c_localpush,		"c_localpush",		"s" },
+	{ LC::c_localrefpush,	"c_localrefpush",	"s" },
 	{ LC::c_lt,				"c_lt",				"" },
 	{ LC::c_mod,			"c_mod",			"" },
 	{ LC::c_mul,			"c_mul",			"" },
@@ -114,6 +118,8 @@ static struct FuncDescr {
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
+	{ LC::c_proppush,		"c_proppush",		"s" },
+	{ LC::c_proprefpush,	"c_proprefpush",	"s" },
 	{ LC::c_putafter,		"c_putafter",		"" },	// D3
 	{ LC::c_putbefore,		"c_putbefore",		"" },	// D3
 	{ LC::c_starts,			"c_starts",			"" },
@@ -128,6 +134,7 @@ static struct FuncDescr {
 	{ LC::c_themenuentitypush,"c_themenuentitypush","EF" },
 	{ LC::c_themenuitementityassign,"c_themenuitementityassign","EF" },
 	{ LC::c_varpush,		"c_varpush",		"s" },
+	{ LC::c_varrefpush,		"c_varrefpush",		"s" },
 	{ LC::c_voidpush,		"c_voidpush",		""  },
 	{ LC::c_whencode,		"c_whencode",		"s" },
 	{ LC::c_within,			"c_within",			"" },
@@ -437,25 +444,56 @@ void LC::c_proparraypush() {
 	g_lingo->push(d);
 }
 
-void LC::c_varpush() {
+void LC::c_varrefpush() {
 	Common::String name(g_lingo->readString());
-	Datum d;
-
-	// Looking for the cast member constants
-	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
-		int val = castNumToNum(name.c_str());
-
-		if (val != -1) {
-			d.type = INT;
-			d.u.i = val;
-			g_lingo->push(d);
-			return;
-		}
-	}
-
-	d = Datum(Common::String(name));
+	Datum d(name);
 	d.type = VARREF;
 	g_lingo->push(d);
+}
+
+void LC::c_globalrefpush() {
+	Common::String name(g_lingo->readString());
+	Datum d(name);
+	d.type = GLOBALREF;
+	g_lingo->push(d);
+}
+
+void LC::c_localrefpush() {
+	Common::String name(g_lingo->readString());
+	Datum d(name);
+	d.type = LOCALREF;
+	g_lingo->push(d);
+}
+
+void LC::c_proprefpush() {
+	Common::String name(g_lingo->readString());
+	Datum d(name);
+	d.type = PROPREF;
+	g_lingo->push(d);
+}
+
+void LC::c_varpush() {
+	LC::c_varrefpush();
+	Datum d = g_lingo->pop(false);
+	g_lingo->push(g_lingo->varFetch(d));
+}
+
+void LC::c_globalpush() {
+	LC::c_globalrefpush();
+	Datum d = g_lingo->pop(false);
+	g_lingo->push(g_lingo->varFetch(d));
+}
+
+void LC::c_localpush() {
+	LC::c_localrefpush();
+	Datum d = g_lingo->pop(false);
+	g_lingo->push(g_lingo->varFetch(d));
+}
+
+void LC::c_proppush() {
+	LC::c_proprefpush();
+	Datum d = g_lingo->pop(false);
+	g_lingo->push(g_lingo->varFetch(d));
 }
 
 void LC::c_stackpeek() {
@@ -476,28 +514,6 @@ void LC::c_assign() {
 	d2 = g_lingo->pop();
 
 	g_lingo->varAssign(d1, d2);
-}
-
-void LC::c_eval() {
-	LC::c_varpush();
-
-	// HACK: The grammar currently doesn't differentiate between cases
-	// when it should push a reference (e.g. delete char 2 of "abc")
-	// and cases when it should push the value (e.g. put char 2 of "abc")
-	// Until that's fixed, just push the reference, and it will be evaluated by pop.
-#if 0
-	Datum d;
-	d = g_lingo->pop(false);
-
-	if (d.type.isVarRef()) { // It could be cast ref
-		g_lingo->push(d);
-		return;
-	}
-
-	d = g_lingo->varFetch(d);
-
-	g_lingo->push(d);
-#endif
 }
 
 void LC::c_theentitypush() {
