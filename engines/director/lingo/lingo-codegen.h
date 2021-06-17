@@ -47,6 +47,9 @@ public:
 	int codeFunc(Common::String *s, int numpar);
 	int codeInt(int val);
 	int codeString(const char *s);
+	void codeVarSet(const Common::String &name);
+	void codeVarRef(const Common::String &name);
+	void codeVarGet(const Common::String &name);
 	void registerFactory(Common::String &s);
 	void registerMethodVar(const Common::String &name, VarType type = kVarGeneric);
 	void updateLoopJumps(uint nextTargetPos, uint exitTargetPos);
@@ -62,6 +65,7 @@ public:
 	const char *_lines[3];
 	bool _inFactory;
 	LoopNode *_currentLoop;
+	bool _refMode;
 
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVars;
 	Common::HashMap<Common::String, VarType, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> *_methodVarsStash;
@@ -70,12 +74,17 @@ public:
 
 public:
 	void compile(Node *node);
+	void compileRef(Node *node);
 	void compileList(NodeList *nodes);
 
 	virtual void visitScriptNode(ScriptNode *node);
 	virtual void visitFactoryNode(FactoryNode *node);
 	virtual void visitHandlerNode(HandlerNode *node);
 	virtual void visitCmdNode(CmdNode *node);
+	virtual void visitPutIntoNode(PutIntoNode *node);
+	virtual void visitPutAfterNode(PutAfterNode *node);
+	virtual void visitPutBeforeNode(PutBeforeNode *node);
+	virtual void visitSetNode(SetNode *node);
 	virtual void visitGlobalNode(GlobalNode *node);
 	virtual void visitPropertyNode(PropertyNode *node);
 	virtual void visitInstanceNode(InstanceNode *node);

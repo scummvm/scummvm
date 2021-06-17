@@ -76,7 +76,14 @@ void c_floatpush();
 void c_stringpush();
 void c_symbolpush();
 void c_namepush();
+void c_varrefpush();
+void c_globalrefpush();
+void c_localrefpush();
+void c_proprefpush();
 void c_varpush();
+void c_globalpush();
+void c_localpush();
+void c_proppush();
 void c_argcpush();
 void c_argcnoretpush();
 void c_arraypush();
@@ -85,7 +92,6 @@ void c_stackpeek();
 void c_stackdrop();
 void c_assign();
 bool verify(const Symbol &s);
-void c_eval();
 
 void c_swap();
 

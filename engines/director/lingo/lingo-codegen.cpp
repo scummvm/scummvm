@@ -46,6 +46,7 @@
 #include "common/endian.h"
 
 #include "director/director.h"
+#include "director/movie.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-ast.h"
 #include "director/lingo/lingo-code.h"
@@ -67,6 +68,7 @@ LingoCompiler::LingoCompiler() {
 
 	_inFactory = false;
 	_currentLoop = nullptr;
+	_refMode = false;
 
 	_hadError = false;
 }
@@ -252,6 +254,66 @@ int LingoCompiler::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
+void LingoCompiler::codeVarSet(const Common::String &name) {
+	registerMethodVar(name);
+	codeVarRef(name);
+	code1(LC::c_assign);
+}
+
+void LingoCompiler::codeVarRef(const Common::String &name) {
+	VarType type;
+	if (_methodVars->contains(name)) {
+		type = (*_methodVars)[name];
+	} else {
+		warning("LingoCompiler::codeVarRef: var %s referenced before definition", name.c_str());
+		type = kVarGeneric;
+	}
+	switch (type) {
+	case kVarGeneric:
+		code1(LC::c_varrefpush);
+		break;
+	case kVarGlobal:
+		code1(LC::c_globalrefpush);
+		break;
+	case kVarLocal:
+	case kVarArgument:
+		code1(LC::c_localrefpush);
+		break;
+	case kVarProperty:
+	case kVarInstance:
+		code1(LC::c_proprefpush);
+		break;
+	}
+	codeString(name.c_str());
+}
+
+void LingoCompiler::codeVarGet(const Common::String &name) {
+	VarType type;
+	if (_methodVars->contains(name)) {
+		type = (*_methodVars)[name];
+	} else {
+		warning("LingoCompiler::codeVarGet: var %s referenced before definition", name.c_str());
+		type = kVarGeneric;
+	}
+	switch (type) {
+	case kVarGeneric:
+		code1(LC::c_varpush);
+		break;
+	case kVarGlobal:
+		code1(LC::c_globalpush);
+		break;
+	case kVarLocal:
+	case kVarArgument:
+		code1(LC::c_localpush);
+		break;
+	case kVarProperty:
+	case kVarInstance:
+		code1(LC::c_proppush);
+		break;
+	}
+	codeString(name.c_str());
+}
+
 void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) {
 	if (!_methodVars->contains(name)) {
 		if (_indef && type == kVarGeneric) {
@@ -302,6 +364,12 @@ void LingoCompiler::parseMenu(const char *code) {
 
 void LingoCompiler::compile(Node *node) {
 	node->accept(this);
+}
+
+void LingoCompiler::compileRef(Node *node) {
+	_refMode = true;
+	node->accept(this);
+	_refMode = false;
 }
 
 void LingoCompiler::compileList(NodeList *nodes) {
@@ -392,6 +460,50 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 void LingoCompiler::visitCmdNode(CmdNode *node) {
 	compileList(node->args);
 	codeCmd(node->name, node->args->size());
+}
+
+/* PutIntoNode */
+
+void LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
+	if (node->var->type == kVarNode) {
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+	}
+	compile(node->val);
+	compileRef(node->var);
+	code1(LC::c_assign);
+}
+
+/* PutAfterNode */
+
+void LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
+	if (node->var->type == kVarNode) {
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+	}
+	compile(node->val);
+	compileRef(node->var);
+	code1(LC::c_putafter);
+}
+
+/* PutBeforeNode */
+
+void LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
+	if (node->var->type == kVarNode) {
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+	}
+	compile(node->val);
+	compileRef(node->var);
+	code1(LC::c_putbefore);
+}
+
+/* SetNode */
+
+void LingoCompiler::visitSetNode(SetNode *node) {
+	if (node->var->type == kVarNode) {
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+	}
+	compile(node->val);
+	compileRef(node->var);
+	code1(LC::c_assign);
 }
 
 /* GlobalNode */
@@ -488,16 +600,11 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	LoopNode *prevLoop = _currentLoop;
 	_currentLoop = node;
 
-	registerMethodVar(*node->var);
-
 	compile(node->start);
-	code1(LC::c_varpush);
-	codeString(node->var->c_str());
-	code1(LC::c_assign);
+	codeVarSet(*node->var);
 
 	uint startPos = _currentAssembly->size();
-	code1(LC::c_eval);
-	codeString(node->var->c_str());
+	codeVarGet(*node->var);
 	compile(node->end);
 	if (node->down) {
 		code1(LC::c_ge);
@@ -510,8 +617,7 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	compileList(node->stmts);
 
 	uint incrementPos = _currentAssembly->size();
-	code1(LC::c_eval);
-	codeString(node->var->c_str());
+	codeVarGet(*node->var);
 	code1(LC::c_intpush);
 	codeInt(1);
 	if (node->down) {
@@ -519,9 +625,7 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	} else {
 		code1(LC::c_add);
 	}
-	code1(LC::c_varpush);
-	codeString(node->var->c_str());
-	code1(LC::c_assign);
+	codeVarSet(*node->var);
 
 	uint jmpPos = _currentAssembly->size();
 	code2(LC::c_jump, 0);
@@ -599,12 +703,24 @@ void LingoCompiler::visitFuncNode(FuncNode *node) {
 /* VarNode */
 
 void LingoCompiler::visitVarNode(VarNode *node) {
+	if (_refMode) {
+		codeVarRef(*node->name);
+		return;
+	}
 	if (g_lingo->_builtinConsts.contains(*node->name)) {
 		code1(LC::c_constpush);
-	} else {
-		code1(LC::c_eval);
+		codeString(node->name->c_str());
+		return;
 	}
-	codeString(node->name->c_str());
+	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
+		int val = castNumToNum(node->name->c_str());
+		if (val != -1) {
+			code1(LC::c_intpush);
+			codeInt(val);
+			return;
+		}
+	}
+	codeVarGet(*node->name);
 }
 
 /* ParensNode */
