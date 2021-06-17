@@ -24,19 +24,16 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
+#include "graphics/surface.h"
+
 #include "saga2/std.h"
 #include "saga2/vdraw.h"
+#include "saga2/blitters.h"
 
 namespace Saga2 {
 
-Extent16            gDisplaySize;
-vDisplayPage        *drawPage;
-
-/* ===================================================================== *
-                    Member functions for gDisplayPort
- * ===================================================================== */
-
-//  Your basic rectfill operation -- but this time in SVGA
+vDisplayPage *drawPage;
+vDisplayPage protoPage;
 
 void gDisplayPort::fillRect(const Rect16 r) {
 	Rect16          sect;
@@ -48,7 +45,8 @@ void gDisplayPort::fillRect(const Rect16 r) {
 	if (!sect.empty()) {                    // if result is non-empty
 		if (drawMode == drawModeComplement) // Complement drawing mode
 			displayPage->invertRect(sect, fgPen);
-		else displayPage->fillRect(sect, fgPen);     // regular drawing mode
+		else
+			displayPage->fillRect(sect, fgPen);     // regular drawing mode
 	}
 }
 
@@ -92,31 +90,20 @@ void gDisplayPort::bltPixels(
 		case drawModeComplement:                // blit in complement mode
 			displayPage->writeComplementPixels(sect, src_line, src.size.x, fgPen);
 			break;
+		default:
+			error("bltPixels: Unknown drawMode: %d", drawMode);
 		}
 	}
 }
 
-/********* vdraw.cpp/gDisplayPort::scrollPixels **********************
-*
-*       NAME gDisplayPort::scrollPixels
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gDisplayPort::scrollPixels(
     const Rect16    r,                      // area to scroll
     int             dx,                     // amount to scroll by
     int             dy) {
 	Rect16          sect;
 
-	if (dx == 0 && dy == 0) return;         // quit of nothing to do
+	if (dx == 0 && dy == 0)        // quit of nothing to do
+		return;
 
 	sect = intersect(clip, r);           // apply cliping rect
 
@@ -147,7 +134,8 @@ void gDisplayPort::scrollPixels(
 
 		//  Quit if all data is completely scrolled off
 
-		if (srcRect.width <= 0 || srcRect.height <= 0) return;
+		if (srcRect.width <= 0 || srcRect.height <= 0)
+			return;
 
 		//  Allocate temp map to hold scrolled pixels
 
@@ -172,6 +160,7 @@ void gDisplayPort::scrollPixels(
 //  Bresenham line-drawing functions
 
 void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
+	warning("STUB: gDisplayPort::line()");
 #if 0
 	bool            clipNeeded = false;
 
@@ -407,19 +396,45 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 #endif
 }
 
-/*  These are the breakpoint values
+void vDisplayPage::fillRect(Rect16 r, uint8 color) {
+	Graphics::Surface *surf = g_system->lockScreen();
 
-    0x10000 / 640   = 102
-    0x10000 % 640   = 256
+	_FillRect((byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height, color);
 
-    0x20000 / 640   = 204
-    0x20000 % 640   = 512
+	g_system->unlockScreen();
+}
 
-    0x30000 / 640   = 307
-    0x30000 % 640   = 128
+void vDisplayPage::invertRect(Rect16 r, uint8 color) {
+}
 
-    0x40000 / 640   = 409
-    0x40000 % 640   = 384
-*/
+void vDisplayPage::writePixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
+	g_system->copyRectToScreen(pixPtr, pixMod, r.x, r.y, r.width, r.height);
+}
+
+void vDisplayPage::writeTransPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
+	Graphics::Surface *surf = g_system->lockScreen();
+
+	_BltPixelsT(pixPtr, pixMod, (byte *)surf->getBasePtr(r.x, r.y), surf->pitch, r.width, r.height );
+
+	g_system->unlockScreen();
+}
+
+void vDisplayPage::readPixels(Rect16 &r, uint8 *pixPtr, uint16 pixMod) {
+	warning("STUB: vWDisplayPage::readPixels()");
+}
+
+//  Function to quickly transfer pixels from an off-screen
+//  buffer to a rectangle on the SVGA display;
+void vDisplayPage::writeColorPixels(Rect16 r, uint8 *pixPtr, uint16 pixMod, uint8 color) {
+	warning("STUB: writeColorPixels");
+	writePixels(r, pixPtr, pixMod);
+}
+
+//  Function to quickly transfer pixels from an off-screen
+//  buffer to a rectangle on the SVGA display;
+void vDisplayPage::writeComplementPixels(Rect16 r, uint8 *pixPtr, uint16 pixMod, uint8 color) {
+	warning("STUB: writeComplementPixels");
+	writePixels(r, pixPtr, pixMod);
+}
 
 } // end of namespace Saga2
