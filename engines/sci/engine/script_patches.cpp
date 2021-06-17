@@ -19718,9 +19718,11 @@ static const uint16 sq1vgaPatchOratSounds[] = {
 //
 // We fix this by patching out the inventory tests in the broken doVerb methods.
 //  Note that this technique only works because these doVerb methods don't have
-//  handlers for item zero: the data cartridge.
+//  handlers for item zero: the data cartridge. This patch must not be applied
+//  to the Spanish version as it doesn't use the lookStr properties and instead
+//  displays messages with extra code.
 //
-// Applies to: All versions
+// Applies to: All versions except Spanish
 // Responsible methods: rm64:doVerb, upperLanding:doVerb, emitter:doVerb, tubes:doVerb,
 //                      space:doVerb, leftShieldEmitter:doVerb, rightShieldEmitter:doVerb
 static const uint16 sq1vgaSignatureRoom64Verbs[] = {
@@ -19735,6 +19737,198 @@ static const uint16 sq1vgaSignatureRoom64Verbs[] = {
 
 static const uint16 sq1vgaPatchRoom64Verbs[] = {
 	0x33, 0x06,                         // jmp 06 [ skip inventory verb check ]
+	PATCH_END
+};
+
+// Room 46 at the back of Droids B Us doesn't display the Look messages for its
+//  building or or signs. All three of these objects omit passing the verb to
+//  super:doVerb. store:doVerb has an extra bug and does this even after
+//  responding to other verbs, causing the red X cursor after their message.
+//
+// We fix this by patching the &rest instructions to include all the parameters
+//  and patching store:doVerb to only call super:doVerb if it hasn't already
+//  printed a message.
+//
+// Applies to: All versions, although the store and giraffe were later fixed.
+// Responsible methods: store:doVerb, giraffe:doVerb, pickupSign:doVerb
+static const uint16 sq1vgaSignatureRoom46Verbs1[] = {
+	SIG_MAGICDWORD,
+	0x32, SIG_UINT16(0x0009),           // jmp 0009
+	0x38, SIG_SELECTOR16(doVerb),       // pushi doVerb
+	0x76,                               // push0
+	0x59, 0x02,                         // &rest 02 [ bug: skips first parameter ]
+	0x57, SIG_ADDTOOFFSET(+1), 0x04,    // super Feature 04
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRoom46Verbs1[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x59, 0x01,                         // &rest 01 [ include all parameters ]
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureRoom46Verbs2[] = {
+	0x30, SIG_UINT16(0x0009),           // bnt 0009
+	SIG_ADDTOOFFSET(+9),
+	SIG_MAGICDWORD,
+	0x3a,                               // toss
+	0x38, SIG_SELECTOR16(doVerb),       // pushi doVerb [ bug: always called ]
+	0x76,                               // push0
+	0x59, 0x02,                         // &rest 02 [ bug: skips first parameter ]
+	0x57, SIG_ADDTOOFFSET(+1), 0x04,    // super Feature 04
+	0x48,                               // ret
+	SIG_ADDTOOFFSET(+0xb4),
+	0x38, SIG_SELECTOR16(doVerb),       // pushi doVerb
+	0x76,                               // push0
+	0x59, 0x01,                         // &rest 01 [ patched ]
+	0x57, SIG_ADDTOOFFSET(+1), 0x04,    // super Feature 04
+	0x3a,                               // toss
+	0x48,                               // ret
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRoom46Verbs2[] = {
+	0x30, PATCH_UINT16(0x00c8),         // bnt 00c8 [ super doVerb: &rest, toss, ret ]
+	PATCH_ADDTOOFFSET(+10),
+	0x48,                               // ret
+	PATCH_END
+};
+
+// Clicking Do on the smallest of the three boxes of robot parts outside of
+//  Droids B Us will sometimes send ego walking off into the forcefield instead
+//  of opening the box. The script sets box1:approachVerbs on the second click
+//  for no reason. We fix this as Sierra did by removing the approachVerbs.
+//
+// Applies to: English PC VGA
+// Responsible method: box1:doVerb
+static const uint16 sq1vgaSignatureRobotBoxApproachVerbs[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(approachVerbs),// pushi approachVerbs
+	0x7a,                               // push2
+	0x39, 0x03,                         // pushi 03 [ Do ]
+	0x39, 0x04,                         // pushi 04 [ Inventory ]
+	0x54, 0x08,                         // self 08  [ self approachVerbs: 3 4 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchRobotBoxApproachVerbs[] = {
+	0x32, PATCH_UINT16(0x0007),         // jmp 0007 [ skip setting approachVerbs ]
+	PATCH_END
+};
+
+// The message for tasting the pink ship in room 40 doesn't display because the
+//  function name was forgotten in the script. This was fixed in later versions.
+//
+// Applies to: English PC VGA
+// Responsible method: pinkShip:doVerb
+static const uint16 sq1vgaSignatureTastePinkShip[] = {
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ Print ]
+	SIG_ADDTOOFFSET(+10),
+	SIG_MAGICDWORD,
+	0x39, 0x28,                         // pushi 28
+	0x35, 0x10,                         // ldi 10
+	0x32, SIG_UINT16(0x000b),           // jmp 000b
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchTastePinkShip[] = {
+	PATCH_ADDTOOFFSET(+14),
+	0x7a,                               // push2
+	0x39, 0x28,                         // pushi 28
+	0x39, 0x10,                         // pushi 10
+	0x33, 0xeb,                         // jmp eb [ Print ]
+	PATCH_END
+};
+
+// Looking at Tiny's sign causes the animated part of the sign to teleport to
+//  the cursor position. The Features in this game that are defined by control
+//  areas tend to update their coordinates to the click position so that ego
+//  will always turn to face the exact spot that was clicked. tinysign is a Prop
+//  with a view and shouldn't have this code in its doVerb method.
+//
+// We fix this as Sierra did by removing the coordinate code from tinysign.
+//
+// Applies to: English PC VGA
+// Responsible method: tinysign:doVerb
+static const uint16 sq1vgaSignatureTinysSign[] = {
+	0x39, SIG_SELECTOR8(x),             // pushi x
+	0x76,                               // push0
+	0x38, SIG_SELECTOR16(curEvent),     // pushi curEvent
+	SIG_ADDTOOFFSET(+20),
+	0x4a, 0x04,                         // send 04 [ Event y? ]
+	0x65, 0x0a,                         // aTop y
+	SIG_ADDTOOFFSET(+10),
+	SIG_MAGICDWORD,
+	0x39, 0x28,                         // pushi 28
+	0x76,                               // push0
+	0x47, 0xff, 0x00, 0x04,             // calle proc0_255 04 [ Print 28 0 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchTinysSign[] = {
+	0x33, 0x1c,                         // jmp 1c [ skip changing coordinates ]
+	PATCH_END
+};
+
+// The two bar patrons on the right are supposed to animate when the detail
+//  slider is set to highest, but the detail test is wrong. Instead they do
+//  the opposite and animate at every detail setting except highest.
+//
+// We fix the test to match the detailLevel of triGirl and slugGuy (three).
+//
+// Applies to: All versions
+// Responsible method: rm43:init
+static const uint16 sq1vgaSignatureBarPatronAnimation[] = {
+	0x38, SIG_ADDTOOFFSET(+2),          // pushi detailLevel
+	0x76,                               // push0
+	0x81, 0x01,                         // lag 01
+	0x4a, 0x04,                         // send 04 [ sq1 detailLevel? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x02,                         // ldi 02
+	0x24,                               // le? [ sq1:detailLevel <= 2 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchBarPatronAnimation[] = {
+	PATCH_ADDTOOFFSET(+11),
+	0x1e,                               // gt? [ sq1:detailLevel > 2 ]
+	PATCH_END
+};
+
+// On the Deltaur, clicking Look or Do or Taste on various things cycles through
+//  a different message each time, but repeated off-by-one errors prevent the
+//  last message from displaying. We fix the off-by-one errors.
+//
+// Applies to: All versions
+// Responsible method: RegionFeature:doVerb
+static const uint16 sq1vgaSignatureDeltaurMessages1[] = {
+	SIG_MAGICDWORD,
+	0xc3, 0xc3,                         // +al c3
+	0x36,                               // push
+	0x35, 0x06,                         // ldi 06 [ should be 7 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaSignatureDeltaurMessages2[] = {
+	SIG_MAGICDWORD,
+	0xc3, 0xc6,                         // +al c6
+	0x36,                               // push
+	0x35, 0x04,                         // ldi 04 [ should be 5 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaSignatureDeltaurMessages3[] = {
+	SIG_MAGICDWORD,
+	0xc3, 0xc2,                         // +al c2
+	0x36,                               // push
+	0x35, 0x05,                         // ldi 05 [ should be 6 ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchDeltaurMessages[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x35, PATCH_GETORIGINALBYTEADJUST(+4, +1), // ldi XX + 1
 	PATCH_END
 };
 
@@ -19784,10 +19978,19 @@ static const uint16 sq1vgaPatchRussianSoundName[] = {
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    28, "orat sounds",                                 1, sq1vgaSignatureOratSounds,                  sq1vgaPatchOratSounds },
+	{  true,    40, "taste pink ship",                             1, sq1vgaSignatureTastePinkShip,               sq1vgaPatchTastePinkShip },
+	{  true,    40, "tiny's sign",                                 1, sq1vgaSignatureTinysSign,                   sq1vgaPatchTinysSign },
+	{  true,    43, "bar patron animation",                        1, sq1vgaSignatureBarPatronAnimation,          sq1vgaPatchBarPatronAnimation },
 	{  true,    45, "Ulence Flats: timepod graphic glitch",        1, sq1vgaSignatureUlenceFlatsTimepodGfxGlitch, sq1vgaPatchUlenceFlatsTimepodGfxGlitch },
 	{  true,    45, "Ulence Flats: force field generator glitch",  1, sq1vgaSignatureUlenceFlatsGeneratorGlitch,  sq1vgaPatchUlenceFlatsGeneratorGlitch },
+	{  true,    46, "room 46 verbs",                               2, sq1vgaSignatureRoom46Verbs1,                sq1vgaPatchRoom46Verbs1 },
+	{  true,    46, "room 46 verbs",                               1, sq1vgaSignatureRoom46Verbs2,                sq1vgaPatchRoom46Verbs2 },
+	{  true,    46, "robot box approach verbs",                    1, sq1vgaSignatureRobotBoxApproachVerbs,       sq1vgaPatchRobotBoxApproachVerbs },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
-	{  true,    64, "room 64 verbs",                               7, sq1vgaSignatureRoom64Verbs,                 sq1vgaPatchRoom64Verbs },
+	{ false,    64, "room 64 verbs",                               7, sq1vgaSignatureRoom64Verbs,                 sq1vgaPatchRoom64Verbs },
+	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages1,            sq1vgaPatchDeltaurMessages },
+	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages2,            sq1vgaPatchDeltaurMessages },
+	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages3,            sq1vgaPatchDeltaurMessages },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
@@ -21692,6 +21895,11 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "Floppy: fix guild tunnel access (3/3)");
 					enablePatch(signatureTable, "Floppy: fix crest bookshelf");
 					enablePatch(signatureTable, "Floppy: fix peer bats, upper door (2/2)");
+				}
+				break;
+			case GID_SQ1:
+				if (g_sci->getLanguage() != Common::ES_ESP) {
+					enablePatch(signatureTable, "room 64 verbs");
 				}
 				break;
 			case GID_SQ3:
