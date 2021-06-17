@@ -1062,7 +1062,7 @@ bool try_restore_save(const Shared::String &path, int slot) {
 	bool data_overwritten;
 	HSaveError err = load_game(path, slot, data_overwritten);
 	if (!err) {
-		String error = String::FromFormat("Unable to restore the saved _GP(game).\n%s",
+		String error = String::FromFormat("Unable to restore the saved game.\n%s",
 		                                  err->FullMessage().GetCStr());
 		Debug::Printf(kDbgMsg_Error, "%s", error.GetCStr());
 		// currently AGS cannot properly revert to stable state if some of the
