@@ -66,7 +66,7 @@ const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
    Locals
  * ===================================================================== */
 
-uint16               *nameList;             // handle to list of names
+char                **nameList;                // handle to list of names
 uint32              nameListCount;
 
 ProtoObj            *objectProtos = nullptr;   // object prototypes
@@ -1461,11 +1461,9 @@ void GameObject::updateState(void) {
  * ======================================================================= */
 
 char *GameObject::nameText(uint16 index) {
-	uint16           offset = nameList[index];
-
 	if (index < 0 || index >= nameListCount) return "Bad Name Index";
 
-	return (char *)nameList + offset;
+	return nameList[index];
 }
 
 #define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
@@ -2513,12 +2511,30 @@ static void readActorPrototype(hResContext *con, ResourceActorPrototype &act) {
 }
 
 void initPrototypes(void) {
-	int             i;
 	const int resourceObjProtoSize = 52;
 	const int resourceActProtoSize = 86;
+	Common::SeekableReadStream *stream;
 
-	nameList = (uint16 *)listRes->loadResource(nameListID, "name list");
-	nameListCount = listRes->size(nameListID) / sizeof nameList[0];
+	debugC(1, kDebugLoading, "Initializing Prototypes");
+
+	nameListCount = listRes->size(nameListID) / sizeof(uint16);
+	nameList = (char **)malloc(nameListCount * sizeof(char *));
+	stream = loadResourceToStream(listRes, nameListID, "name list");
+	for (uint i = 0; i < nameListCount; ++i) {
+		stream->seek(2 * i);
+		uint16 offset = stream->readUint16LE();
+
+		if (offset > stream->size())
+			break;
+
+		stream->seek(offset);
+		Common::String s = stream->readString();
+		debugC(5, kDebugLoading, "Read string (size %d): %s", s.size(), s.c_str());
+
+		nameList[i] = new char[s.size() + 1];
+		Common::strlcpy(nameList[i], s.c_str(), s.size());
+		nameList[i][s.size()] = '\0';
+	}
 
 	//  Load the Object prototype table
 
@@ -2536,7 +2552,7 @@ void initPrototypes(void) {
 	//  Load each individual prototype. Read in everything except
 	//  the virtual function pointer.
 
-	for (i = 0; i < objectProtoCount; i++) {
+	for (int i = 0; i < objectProtoCount; i++) {
 		ResourceObjectPrototype ro;
 		ProtoObj    *pr = &objectProtos[i];
 
@@ -2680,7 +2696,7 @@ void initPrototypes(void) {
 	if (listRes->seek(actorProtoID) == 0)
 		error("Unable to load Actor Prototypes");
 
-	for (i = 0; i < actorProtoCount; i++) {
+	for (int i = 0; i < actorProtoCount; i++) {
 		ResourceActorPrototype  ra;
 		ActorProto              *pr = &actorProtos[i];
 
@@ -2696,6 +2712,16 @@ void initPrototypes(void) {
 //	Cleanup the prototype lists
 
 void cleanupPrototypes(void) {
+	if (nameList) {
+		for (uint i = 0; i < nameListCount; ++i) {
+			if (nameList[i])
+				delete nameList[i];
+
+			free(nameList);
+			nameList = nullptr;
+		}
+	}
+
 	if (actorProtos != nullptr) {
 		free(actorProtos);
 		actorProtos = nullptr;
