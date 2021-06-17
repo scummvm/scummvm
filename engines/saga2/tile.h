@@ -370,6 +370,8 @@ enum ActiveItemTypes {
 //  A pointer to the array of active item state arrays
 extern byte **stateArray;
 
+class ActiveItemList;
+
 class ActiveItem {
 public:
 	ActiveItem      *nextHash;              // next item in hash chain
@@ -382,6 +384,8 @@ public:
 	uint16          associationOffset;      // offset into association table
 	uint8           numAssociations;        // number of associated items
 	uint8           itemType;               // item type code.
+	int             _index;
+	ActiveItemList *_parent;
 
 	union {
 		struct {
@@ -413,6 +417,8 @@ public:
 		activeItemOpen      = (1 << 9),     // The door is open (not used)
 		activeItemExclusive = (1 << 10),    // Script semaphore
 	};
+
+	ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream);
 
 	//  Return the map number of this active item
 	int16 getMapNum(void);
@@ -506,6 +512,18 @@ public:
 
 typedef ActiveItem  *ActiveItemPtr,
         *ActiveItemHandle;
+
+struct WorldMapData;
+
+class ActiveItemList {
+public:
+	int _count;
+	ActiveItem **_items;
+	WorldMapData *_parent;
+
+	ActiveItemList(WorldMapData *parent, int count, Common::SeekableReadStream *stream);
+	~ActiveItemList();
+};
 
 #if 0
 
@@ -864,7 +882,7 @@ struct WorldMapData {
 	MapPtr              map;                //  Map data
 	MetaTileList        *metaList;          //  MetaTile list
 	TileRefPtr          activeItemData;     //  ActiveItem tileRefs
-	ActiveItemPtr       activeItemList;     //  ActiveItem list
+	ActiveItemList      *activeItemList;    //  ActiveItem list
 	UWordPtr            assocList;          //  Associations
 	RipTableIDPtr       ripTableIDList;     //  MetaTile object ripping
 

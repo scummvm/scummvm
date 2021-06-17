@@ -351,8 +351,7 @@ int16 ActiveItem::getMapNum(void) {
 		WorldMapData    *mapData = &mapList[mapNum];
 
 		//  Determine if the active item in on this map's list
-		if (this >= mapData->activeItemList
-		        &&  this < &mapData->activeItemList[mapData->activeCount])
+		if (_parent == mapData->activeItemList)
 			break;
 	}
 
@@ -387,7 +386,7 @@ Location ActiveItem::getInstanceLocation(void) {
 
 ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
 	return  id.getIndexNum() != activeItemIndexNullID
-	        ?   &mapList[id.getMapNum()].activeItemList[id.getIndexNum()]
+	        ?   mapList[id.getMapNum()].activeItemList->_items[id.getIndexNum()]
 	        :   nullptr;
 }
 
@@ -397,16 +396,14 @@ ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
 ActiveItemID ActiveItem::thisID(void) {
 	int16   mapNum = getMapNum();
 
-	return  ActiveItemID(
-	            mapNum,
-	            this - mapList[mapNum].activeItemList);
+	return  ActiveItemID(mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
 //	Return this active item's ID
 
 ActiveItemID ActiveItem::thisID(int16 mapNum) {
-	return ActiveItemID(mapNum, this - mapList[mapNum].activeItemList);
+	return ActiveItemID(mapNum, _index);
 }
 
 //-----------------------------------------------------------------------
@@ -850,7 +847,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 	for (i = 0; i < worldCount; i++) {
 		if (stateArray[i] != nullptr) {
 			WorldMapData        *mapData = &mapList[i];
-			ActiveItemPtr       activeItemList = mapData->activeItemList;
+			ActiveItemList      *activeItemList = mapData->activeItemList;
 			int16               activeItemCount = mapData->activeCount,
 			                    j;
 			int32               arraySize = tileRes->size(tagStateID + i);
@@ -867,7 +864,7 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 			bufferPtr = (uint8 *)bufferPtr + arraySize;
 
 			for (j = 0; j < activeItemCount; j++) {
-				ActiveItem      *activeItem = &activeItemList[j];
+				ActiveItem      *activeItem = activeItemList->_items[j];
 				uint8           *statePtr;
 
 				if (activeItem->itemType != activeTypeInstance)
@@ -930,13 +927,13 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 
 		if (arraySize > 0) {
 			WorldMapData        *mapData = &mapList[i];
-			ActiveItemPtr       activeItemList = mapData->activeItemList;
+			ActiveItemList      *activeItemList = mapData->activeItemList;
 			int16               activeItemCount = mapData->activeCount,
 			                    j;
 			uint8               *bufferedStateArray = (uint8 *)bufferPtr;
 
 			for (j = 0; j < activeItemCount; j++) {
-				ActiveItem      *activeItem = &activeItemList[j];
+				ActiveItem      *activeItem = activeItemList->_items[j];
 				uint8           *statePtr;
 
 				if (activeItem->itemType != activeTypeInstance)
@@ -1478,25 +1475,46 @@ MetaTileList::~MetaTileList() {
 	}
 }
 
-static void readActiveItem(hResContext *con, ActiveItem &itm) {
-	// FIXME: 32-bit pointer to 64-bit pointer conversion.
-	// Is this dangerous?
-	itm.nextHash = nullptr;
-	con->readU32LE();
-	itm.scriptClassID = con->readU16LE();
-	itm.associationOffset = con->readU16LE();
-	itm.numAssociations = con->readByte();
-	itm.itemType = con->readByte();
-	itm.instance.groupID = con->readU16LE();
-	itm.instance.u = con->readS16LE();
-	itm.instance.v = con->readS16LE();
-	itm.instance.h = con->readS16LE();
-	itm.instance.stateIndex = con->readU16LE();
-	itm.instance.scriptFlags = con->readU16LE();
-	itm.instance.targetU = con->readU16LE();
-	itm.instance.targetV = con->readU16LE();
-	itm.instance.targetZ = con->readByte();
-	itm.instance.worldNum = con->readByte();
+ActiveItem::ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream) {
+	_parent = parent;
+	_index = ind;
+	nextHash = nullptr;
+	stream->readUint32LE();
+	scriptClassID = stream->readUint16LE();
+	associationOffset = stream->readUint16LE();
+	numAssociations = stream->readByte();
+	itemType = stream->readByte();
+	instance.groupID = stream->readUint16LE();
+	instance.u = stream->readSint16LE();
+	instance.v = stream->readSint16LE();
+	instance.v = stream->readSint16LE();
+	instance.stateIndex = stream->readUint16LE();
+	instance.scriptFlags = stream->readUint16LE();
+	instance.targetU = stream->readUint16LE();
+	instance.targetV = stream->readUint16LE();
+	instance.targetZ = stream->readByte();
+	instance.worldNum = stream->readByte();
+}
+
+ActiveItemList::ActiveItemList(WorldMapData *parent, int count, Common::SeekableReadStream *stream) {
+	_parent = parent;
+	_count = count;
+	_items = (ActiveItem **)malloc(_count * sizeof(ActiveItem *));
+
+	for (int i = 0; i < _count; ++i) {
+		_items[i] = new ActiveItem(this, i, stream);
+	}
+}
+
+ActiveItemList::~ActiveItemList() {
+	if (_items) {
+		for (int i = 0; i < _count; ++i) {
+			if (_items[i])
+				delete _items[i];
+		}
+
+		free(_items);
+	}
 }
 
 void initMaps(void) {
@@ -1591,22 +1609,21 @@ void initMaps(void) {
 		//  If there is an active item list, load it
 		if (tileRes->size(iActiveItemID) > 0) {
 			int activeItemCount = tileRes->size(iActiveItemID) / activeItemSize;
-			mapData->activeItemList = new ActiveItem[activeItemCount];
-			tileRes->seek(iActiveItemID);
-			for (int k = 0; k < activeItemCount; ++k)
-				readActiveItem(tileRes, mapData->activeItemList[k]);
+			stream = loadResourceToStream(tileRes, iActiveItemID, "active item list");
+			mapData->activeItemList = new ActiveItemList(mapData, activeItemCount, stream);
+			delete stream;
 
-			if (mapData->activeItemList == nullptr)
+			if (mapData->activeItemList == nullptr ||
+			    mapData->activeItemList->_items == nullptr)
 				error("Unable to load active item list");
+
+			mapData->activeCount = activeItemCount;
+
 		} else
 			mapData->activeItemList = nullptr;
 
 		//  Compute the number of meta tiles in list
 		mapData->metaCount     = metaTileCount;
-
-		//  Compute the number of active items in list
-		mapData->activeCount   =        tileRes->size(tagID + i)
-		                                /   sizeof(ActiveItem); // Not portable?
 
 		//  Allocate an object ripping table ID list
 		mapData->ripTableIDList = new RipTableID[mapData->metaCount];
@@ -1660,7 +1677,7 @@ void cleanupMaps(void) {
 
 		//  If there is an active item list, dump it
 		if (mapData->activeItemList != nullptr)
-			delete[] mapData->activeItemList;
+			delete mapData->activeItemList;
 
 		//  Dump the object ripping table ID list
 		delete[] mapData->ripTableIDList;
@@ -2452,11 +2469,12 @@ MetaTilePtr WorldMapData::lookupMeta(TilePoint coords) {
 void WorldMapData::buildInstanceHash(void) {
 	int32           i;
 	int16           hashVal;
-	ActiveItem      *ai;
+	ActiveItem      **ail;
 
 	memset(instHash, 0, sizeof(instHash));
 
-	for (i = 0, ai = activeItemList; i < activeCount; i++, ai++) {
+	for (i = 0, ail = activeItemList->_items; i < activeCount; i++, ail++) {
+		ActiveItem *ai = *ail;
 		if (ai->itemType == activeTypeInstance) {
 			hashVal = (((ai->instance.u + ai->instance.h) << 4)
 			           + ai->instance.v + (ai->instance.groupID << 2))
@@ -2476,6 +2494,7 @@ ActiveItem *WorldMapData::findHashedInstance(
     int16 group) {
 	int16           hashVal = (((tp.u + tp.z) << 4) + tp.v + (group << 2))
 	                          % elementsof(instHash);
+
 	if (itemHash.contains(hashVal))
 		return itemHash.getVal(hashVal);
 
