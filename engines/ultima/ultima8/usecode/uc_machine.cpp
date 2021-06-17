@@ -1427,6 +1427,10 @@ void UCMachine::execProcess(UCProcess *p) {
 			int this_size = cs->readByte();
 			int unknown = cs->readByte(); // ??
 
+			// This only gets used in U8.  If it were used in Crusader it would
+			// need the offset translation done in 0x57.
+			assert(GAME_IS_U8);
+
 			debug(MM_INFO, "spawn inline\t%04X:%04X+%04X=%04X %02X %02X\n",
 				classid, offset, delta, offset + delta, this_size, unknown);
 
@@ -2217,7 +2221,7 @@ bool UCMachine::assignPointer(uint32 ptr, const uint8 *data, uint32 size) {
 		if (size == 1) {
 			_globals->setEntries(offset, 1, data[0]);
 		} else if (size == 2) {
-			uint16 val = ((data[0] << 8) | data[1]);
+			uint16 val = ((data[1] << 8) | data[0]);
 			_globals->setEntries(offset, 2, val);
 		} else {
 			CANT_HAPPEN_MSG("Global pointers must be size 1 or 2");
