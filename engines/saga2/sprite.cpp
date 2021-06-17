@@ -641,6 +641,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	const int colorSchemeSize = 44;
 	int poseListSize;
 	int schemeListSize;
+	Common::SeekableReadStream *stream;
 
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
@@ -682,7 +683,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	aa->poseList = nullptr;
 
 	if (aa->schemeList)
-		delete[] aa->schemeList;
+		delete aa->schemeList;
 	aa->schemeList = nullptr;
 
 	//  Set ID and use count
@@ -704,9 +705,9 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		error("Could not load scheme list");
 
 	schemeListSize = schemeRes->size(id) / colorSchemeSize;
-	aa->schemeList = new ColorScheme[schemeListSize];
-	for (int i = 0; i < schemeListSize; ++i)
-		readColorScheme(schemeRes, aa->schemeList[i]);
+	stream = loadResourceToStream(schemeRes, id, "scheme list");
+	aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+	delete stream;
 
 	return aa;
 }

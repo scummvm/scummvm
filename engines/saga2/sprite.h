@@ -275,7 +275,7 @@ public:
 	uint32           id;
 
 	ActorAnimSet    *poseList;             // list of action sequences
-	ColorScheme     *schemeList;           // color remapping info
+	ColorSchemeList *schemeList;           // color remapping info
 
 	//  Table of sprite sets. Each entry in the table
 	//  represents a different "bank" of sprites

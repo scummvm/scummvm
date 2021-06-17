@@ -1194,7 +1194,7 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 		else if (a->appearance
 		         &&  a->appearance->schemeList) {
 			sp->penColor =
-			    a->appearance->schemeList[a->colorScheme].speechColor + 9;
+			    a->appearance->schemeList->_schemes[a->colorScheme]->speechColor + 9;
 		} else sp->penColor = 4 + 9;
 	} else {
 		sp->penColor = 4 + 9;
