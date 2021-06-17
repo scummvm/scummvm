@@ -113,19 +113,19 @@ void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Commo
 	// by using the background buffer
 	const uint16 *buf = index >= 0 ? _vm->_objPointers[index] : (uint16 *)_smkBackground.getPixels();
 	if (mask && index >= 0) {
-		uint8 *mask = _vm->_maskPointers[index];
+		uint8 *maskPtr = _vm->_maskPointers[index];
 
 		for (uint16 y = drawRect.top; y < drawRect.bottom; ++y) {
 			uint16 sco = 0;
 			uint16 c = 0;
 			while (sco < drawRect.width()) {
 				if (c == 0) { // jump
-					sco += *mask;
-					++mask;
+					sco += *maskPtr;
+					++maskPtr;
 
 					c = 1;
 				} else { // copy
-					const uint16 maskOffset = *mask;
+					const uint16 maskOffset = *maskPtr;
 
 					if (maskOffset != 0 && y >= drawRect.top + drawObjRect.top && y < drawRect.top + drawObjRect.bottom) {
 						if (sco >= drawObjRect.left && sco + maskOffset < drawObjRect.right)
@@ -140,8 +140,8 @@ void GraphicsManager::drawObj(int index, bool mask, Common::Rect drawRect, Commo
 						else if (sco < drawObjRect.left && sco + maskOffset >= drawObjRect.right)
 							memcpy(_screenBuffer.getBasePtr(drawObjRect.left + drawRect.left, y), buf + drawObjRect.left - sco, (drawObjRect.right - drawObjRect.left) * 2);
 					}
-					sco += *mask;
-					buf += *mask++;
+					sco += *maskPtr;
+					buf += *maskPtr++;
 					c = 0;
 				}
 			}
