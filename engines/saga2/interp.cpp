@@ -1493,6 +1493,7 @@ Thread::~Thread() {
 	free(stackBase);
 
 	// XXX: Deleting like this causes a crash
+	warning("STUB: Thread::~Thread()");
 	//deleteThread(this);
 }
 
