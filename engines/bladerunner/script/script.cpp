@@ -91,7 +91,7 @@ void ScriptBase::Actor_Set_At_XYZ(int actorId, float x, float y, float z, int di
 
 void ScriptBase::Actor_Set_At_Waypoint(int actorId, int waypointId, int angle) {
 	debugC(kDebugScript, "Actor_Set_At_Waypoint(%d, %d, %d)", actorId, waypointId, angle);
-	_vm->_actors[actorId]->setAtWaypoint(waypointId, angle, 0, false);
+	_vm->_actors[actorId]->setAtWaypoint(waypointId, angle, false, false);
 }
 
 bool ScriptBase::Region_Check(int left, int top, int right, int down) {

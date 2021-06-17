@@ -393,6 +393,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 		int waypointSetId = _vm->_waypoints->getSetId(waypointId);
 		_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 		if (_setId == waypointSetId && waypointSetId == _vm->_actors[0]->_setId) {
+			// if target waypointSetId is in same set as both the actor and McCoy then call movementTrackWaypointReached
 			stopWalking(false);
 			_walkInfo->setup(_id, running, _position, waypointPosition, false, &arrived);
 
@@ -402,6 +403,8 @@ void Actor::movementTrackNext(bool omitAiScript) {
 				movementTrackWaypointReached();
 			}
 		} else {
+			// teleport to target waypoint's set and position anyway
+			// and schedule next movementTrackNext() using the kActorTimerMovementTrack
 			setSetId(waypointSetId);
 
 			setAtXYZ(waypointPosition, angle, true, false, false);
@@ -412,6 +415,7 @@ void Actor::movementTrackNext(bool omitAiScript) {
 			if (delayMillis > 1) {
 				changeAnimationMode(kAnimationModeIdle, false);
 			}
+
 			timerStart(kActorTimerMovementTrack, delayMillis);
 		}
 		//return true;
@@ -448,16 +452,31 @@ void Actor::movementTrackUnpause() {
 void Actor::movementTrackWaypointReached() {
 	if (!_movementTrack->isPaused() && _id != kActorMcCoy) {
 		if (_movementTrackWalkingToWaypointId >= 0 && _movementTrackDelayOnNextWaypoint >= 0) {
+#if !BLADERUNNER_ORIGINAL_BUGS
+			Vector3 waypointPosition;
+			int waypointSetId = _vm->_waypoints->getSetId(_movementTrackWalkingToWaypointId);
+			_vm->_waypoints->getXYZ(_movementTrackWalkingToWaypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
+			if (_setId != waypointSetId || waypointSetId != _vm->_actors[0]->_setId) {
+				// teleport to target waypoint's set and position anyway
+				// Code similar to movementTrackNext()
+				setSetId(waypointSetId);
+				if (_movementTrackNextAngle == -1) {
+					_movementTrackNextAngle = 0;
+				}
+				setAtXYZ(waypointPosition, _movementTrackNextAngle, true, false, false);
+			} else {
+				// Honor the heading defined by the AI_Movement_Track_Append_With_Facing method
+				if (_movementTrackNextAngle >= 0) {
+					faceHeading(_movementTrackNextAngle, true);
+				}
+			}
+#endif
 			if (!_movementTrackDelayOnNextWaypoint) {
 				_movementTrackDelayOnNextWaypoint = 1;
 			}
-#if !BLADERUNNER_ORIGINAL_BUGS
-			// Honor the heading defined by the AI_Movement_Track_Append_With_Facing method
-			if (_movementTrackNextAngle >= 0) {
-				faceHeading(_movementTrackNextAngle, true);
-			}
-#endif
+
 			if (_vm->_aiScripts->reachedMovementTrackWaypoint(_id, _movementTrackWalkingToWaypointId)) {
+				// schedule next movementTrackNext() using the kActorTimerMovementTrack
 				int32 delay = _movementTrackDelayOnNextWaypoint;
 				if (delay > 1) {
 					changeAnimationMode(kAnimationModeIdle, false);
@@ -490,7 +509,7 @@ void Actor::setAtXYZ(const Vector3 &position, int facing, bool snapFacing, bool 
 	}
 }
 
-void Actor::setAtWaypoint(int waypointId, int angle, int moving, bool retired) {
+void Actor::setAtWaypoint(int waypointId, int angle, bool moving, bool retired) {
 	Vector3 waypointPosition;
 	_vm->_waypoints->getXYZ(waypointId, &waypointPosition.x, &waypointPosition.y, &waypointPosition.z);
 	setAtXYZ(waypointPosition, angle, true, moving, retired);
