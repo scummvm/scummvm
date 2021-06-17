@@ -617,6 +617,24 @@ static void readColorScheme(hResContext *con, ColorScheme &col) {
 		col.name[i] = con->readSByte();
 }
 
+ColorScheme::ColorScheme(Common::SeekableReadStream *stream) {
+	for (int i = 0; i < 11; ++i)
+		bank[i] = stream->readByte();
+
+	speechColor = stream->readByte();
+
+	for (int i = 0; i < 32; ++i)
+		name[i] = stream->readSByte();
+}
+
+ColorSchemeList::ColorSchemeList(int count, Common::SeekableReadStream *stream) {
+	_count = count;
+
+	_schemes = (ColorScheme **)malloc(_count * sizeof(ColorScheme *));
+	for (int i = 0; i < _count; ++i)
+		_schemes[i] = new ColorScheme(stream);
+}
+
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	int16           bank;
 	const int actorAnimSetSize = 8;

@@ -60,7 +60,7 @@ extern Point16      fineScroll;
 extern gPort        backPort;
 
 extern SpriteSet    *objectSprites,        // object sprites
-       * *spellSprites;        // spell effect sprites
+                    *spellSprites;        // spell effect sprites
 
 ActorAppearance     *tempAppearance;        // test structure
 
@@ -171,7 +171,7 @@ void DisplayNodeList::draw(void) {
 	objectSet = objectSprites;
 	if (objectSet == NULL)
 		error("Object sprites have been dumped!\n");
-	spellSet = *spellSprites;
+	spellSet = spellSprites;
 	if (spellSet == NULL)
 		error("Spell sprites have been dumped!\n");
 
@@ -507,7 +507,7 @@ void DisplayNode::drawObject(void) {
 				a->kludgeCount = 0;
 
 			sc = &scList[0];
-			sc->sp = (*spellSprites)->sprite(
+			sc->sp = spellSprites->sprite(
 			             baseBubbleSpriteIndex + a->kludgeCount);
 			sc->offset.x = scList->offset.y = 0;
 			sc->colorTable = mainColors;
@@ -997,7 +997,7 @@ void Effectron::drawEffect(void) {
 
 	sc = &scList[0];
 	//sc->sp = (*spellSprites)->sprite( spriteID() );
-	sc->sp = (*spellSprites)->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
+	sc->sp = spellSprites->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
 	sc->offset.x = scList->offset.y = 0;
 
 	SpellDisplayPrototypeList::sdpList[parent->spell]->

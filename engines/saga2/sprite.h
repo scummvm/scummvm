@@ -176,6 +176,17 @@ struct ColorScheme {
 	uint8           bank[11];
 	uint8           speechColor;
 	char            name[32];
+
+	ColorScheme() {}
+	ColorScheme(Common::SeekableReadStream *stream);
+};
+
+class ColorSchemeList {
+public:
+	int _count;
+	ColorScheme **_schemes;
+
+	ColorSchemeList(int count, Common::SeekableReadStream *stream);
 };
 
 /* ===================================================================== *
