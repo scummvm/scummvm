@@ -47,6 +47,9 @@ struct IntNode;
 struct FloatNode;
 struct SymbolNode;
 struct StringNode;
+struct ListNode;
+struct PropListNode;
+struct PropPairNode;
 struct FuncNode;
 struct VarNode;
 struct ParensNode;
@@ -88,6 +91,9 @@ enum NodeType {
 	kFloatNode,
 	kSymbolNode,
 	kStringNode,
+	kListNode,
+	kPropListNode,
+	kPropPairNode,
 	kFuncNode,
 	kVarNode,
 	kParensNode,
@@ -123,6 +129,9 @@ public:
 	virtual void visitFloatNode(FloatNode *node) = 0;
 	virtual void visitSymbolNode(SymbolNode *node) = 0;
 	virtual void visitStringNode(StringNode *node) = 0;
+	virtual void visitListNode(ListNode *node) = 0;
+	virtual void visitPropListNode(PropListNode *node) = 0;
+	virtual void visitPropPairNode(PropPairNode *node) = 0;
 	virtual void visitFuncNode(FuncNode *node) = 0;
 	virtual void visitVarNode(VarNode *node) = 0;
 	virtual void visitParensNode(ParensNode *node) = 0;
@@ -494,6 +503,51 @@ struct StringNode : ExprNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitStringNode(this);
+	}
+};
+
+/* ListNode */
+
+struct ListNode : ExprNode {
+	NodeList *items;
+
+	ListNode(NodeList *itemsIn) : ExprNode(kListNode), items(itemsIn) {}
+	virtual ~ListNode() {
+		deleteList(items);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitListNode(this);
+	}
+};
+
+/* PropListNode */
+
+struct PropListNode : ExprNode {
+	NodeList *items;
+
+	PropListNode(NodeList *itemsIn) : ExprNode(kListNode), items(itemsIn) {}
+	virtual ~PropListNode() {
+		deleteList(items);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPropListNode(this);
+	}
+};
+
+/* PropPairNode */
+
+struct PropPairNode : ExprNode {
+	Node *key;
+	Node *val;
+
+	PropPairNode(Node *keyIn, Node *valIn)
+		: ExprNode(kPropPairNode), key(keyIn), val(valIn) {}
+	virtual ~PropPairNode() {
+		delete key;
+		delete val;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitPropPairNode(this);
 	}
 };
 

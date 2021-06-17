@@ -693,6 +693,29 @@ void LingoCompiler::visitStringNode(StringNode *node) {
 	codeString(node->val->c_str());
 }
 
+/* ListNode */
+
+void LingoCompiler::visitListNode(ListNode *node) {
+	compileList(node->items);
+	code1(LC::c_arraypush);
+	codeInt(node->items->size());
+}
+
+/* PropListNode */
+
+void LingoCompiler::visitPropListNode(PropListNode *node) {
+	compileList(node->items);
+	code1(LC::c_proparraypush);
+	codeInt(node->items->size());
+}
+
+/* PropPairNode */
+
+void LingoCompiler::visitPropPairNode(PropPairNode *node) {
+	compile(node->key);
+	compile(node->val);
+}
+
 /* FuncNode */
 
 void LingoCompiler::visitFuncNode(FuncNode *node) {
