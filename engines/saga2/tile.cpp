@@ -1442,6 +1442,11 @@ MapHeader::MapHeader(Common::SeekableReadStream *stream) {
 		mapData[i] = stream->readUint16LE();
 }
 
+MapHeader::~MapHeader() {
+	if (mapData)
+		delete[] mapData;
+}
+
 MetaTile::MetaTile(int ind, Common::SeekableReadStream *stream) {
 	_index = ind;
 	_highestPixel = stream->readUint16LE();
@@ -1459,6 +1464,17 @@ MetaTileList::MetaTileList(int count, Common::SeekableReadStream *stream) {
 	_tiles = (MetaTile **)malloc(_count * sizeof(MetaTile *));
 	for (int i = 0; i < _count; ++i) {
 		_tiles[i] = new MetaTile(i, stream);
+	}
+}
+
+MetaTileList::~MetaTileList() {
+	if (_tiles) {
+		for (int i = 0; i < _count; ++i) {
+			if (_tiles[i])
+				delete _tiles[i];
+		}
+
+		free(_tiles);
 	}
 }
 
@@ -1627,23 +1643,12 @@ void cleanupMaps(void) {
 		WorldMapData    *mapData = &mapList[i];
 
 		//  Dump the map
-		if (mapData->map != nullptr) {
-			if (mapData->map->mapData != nullptr)
-				delete[] mapData->map->mapData;
-
+		if (mapData->map != nullptr)
 			delete mapData->map;
-			mapData->map = nullptr;
-		}
 
 		//  Dump the meta tile list
-		if (mapData->metaList) {
-			for (int k = 0; k < mapData->metaList->_count; ++i)
-			if (mapData->metaList->_tiles[i])
-				delete mapData->metaList->_tiles[i];
-
-			free(mapData->metaList->_tiles);
-		}
-		delete mapData->metaList;
+		if (mapData->metaList)
+			delete mapData->metaList;
 
 		//  If there is active item data, dump it
 		if (mapData->activeItemData != nullptr)

@@ -825,6 +825,7 @@ public:
 	MetaTile **_tiles;
 
 	MetaTileList(int count, Common::SeekableReadStream *stream);
+	~MetaTileList();
 };
 
 /* ===================================================================== *
@@ -837,6 +838,7 @@ struct MapHeader {
 	uint16          *mapData;           // start of map array
 
 	MapHeader(Common::SeekableReadStream *stream);
+	~MapHeader();
 };
 
 enum mapEdgeTypes {
