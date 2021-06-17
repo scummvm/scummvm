@@ -89,8 +89,10 @@ void GridItemWidget::drawWidget() {
 									*platGfx, true);
 	}
 
-	g_gui.theme()->drawText(Common::Rect(_x + kThumbnailWidth - 32, _y, _x + kThumbnailWidth, _y + 32),
-							_activeEntry->language, GUI::ThemeEngine::kStateEnabled);
+	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
+	if (flagGfx)
+		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - flagGfx->w, _y), 
+									*flagGfx, true);
 
 	g_gui.theme()->drawText(Common::Rect(_x, _y + kThumbnailHeight, _x + kThumbnailWidth, _y + kThumbnailHeight + 32),
 							_activeEntry->title, GUI::ThemeEngine::kStateEnabled ,Graphics::kTextAlignLeft);
@@ -113,7 +115,7 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 #ifdef USE_PNG
 		Image::PNGDecoder decoder;
 		Common::FSNode fileNode(name);
-		Common::SeekableReadStream * stream = fileNode.createReadStream();
+		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (stream) {
 			if (!decoder.loadStream(*stream))
 				warning("Error decoding PNG");
@@ -134,8 +136,16 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 		error("No PNG support compiled");
 #endif
 	} 
-	else {
-
+	else if (name.hasSuffix(".svg")) {
+		Graphics::SVGBitmap *image = nullptr;
+		Common::FSNode fileNode(name);
+		Common::SeekableReadStream *stream = fileNode.createReadStream();
+		if (stream) {
+			image = new Graphics::SVGBitmap(stream);
+			surf = new Graphics::ManagedSurface(60, 30, *image->getPixelFormat());
+			image->render(*surf, 60, 30);
+			delete image;
+		}
 	}
 	return surf;
 }
@@ -145,11 +155,13 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) : 
 		ContainerWidget(boss, x, y, w, h) {
 	loadPlatformIcons();
+	loadFlagIcons();
 }
 
 GridWidget::GridWidget(GuiObject *boss, const Common::String &name) : 
 		ContainerWidget(boss, name) {
 	loadPlatformIcons();
+	loadFlagIcons();
 	_thumbnailHeight = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Height");
 	_thumbnailWidth = g_gui.xmlEval()->getVar("Globals.GridItemThumbnail.Width");
 	_minGridXSpacing = g_gui.xmlEval()->getVar("Globals.Grid.XSpacing");
@@ -193,6 +205,33 @@ void GridWidget::loadPlatformIcons() {
 		if (gfx) {
 			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
 			_platformIcons.push_back(scGfx);
+			_loadedSurfaces[fullPath] = scGfx;
+			gfx->free();
+			delete gfx;
+		}
+	}
+}
+
+void GridWidget::loadFlagIcons() {
+	for (auto iter = _flagIcons.begin(); iter != _flagIcons.end(); ++iter) {
+		delete *iter;
+	}
+	_flagIcons.clear();
+	Common::String pathPrefix("./icons/");
+	Common::Array<Common::String> iconFilenames;
+	iconFilenames.push_back(Common::String("en.svg"));
+	iconFilenames.push_back(Common::String("en-gb.svg"));
+	iconFilenames.push_back(Common::String("en-us.svg"));
+	iconFilenames.push_back(Common::String("it.svg"));
+	iconFilenames.push_back(Common::String("fr.svg"));
+
+	for (auto i = iconFilenames.begin(); i != iconFilenames.end(); ++i) {
+		Common::String fullPath = pathPrefix + (*i);
+		Graphics::ManagedSurface *gfx = loadSurfaceFromFile(fullPath);
+		if (gfx) {
+			const Graphics::ManagedSurface *scGfx = scaleGfx(gfx, 32, 32);
+			_flagIcons.push_back(scGfx);
+			_loadedSurfaces[fullPath] = scGfx;
 			gfx->free();
 			delete gfx;
 		}
@@ -264,6 +303,11 @@ const Graphics::ManagedSurface *GridWidget::platformToSurface(Platform platformC
 		return nullptr;
 	}
 	return _platformIcons[platformCode];
+}
+
+const Graphics::ManagedSurface *GridWidget::languageToSurface(Common::String &lang) {
+	Common::String path = Common::String::format("./icons/%s.svg", lang.c_str());
+	return _loadedSurfaces[path];
 }
 
 void GridWidget::handleMouseWheel(int x, int y, int direction) {
