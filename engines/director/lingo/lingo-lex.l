@@ -112,7 +112,7 @@ spc [ \t\xC2]
 
 {spc}+		{ count(); }
 
-[#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
+[#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return tSYMBOL; }	// D3, skip '#'
 
 after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
