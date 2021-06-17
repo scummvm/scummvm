@@ -91,7 +91,6 @@ public:
 	void copyBackBufferToScreen();
 	void setFlag(int16 val) { _flag = (val < -1) ? -1 : val; }
 	int16 getFlag() { return _flag; }
-	void takeScreenshot();
 
 	// Palette
 	void setPalette(ResourceId id);

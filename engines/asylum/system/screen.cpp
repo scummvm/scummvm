@@ -246,10 +246,6 @@ void Screen::clip(Common::Rect *source, Common::Rect *destination, int32 flags) 
 	}
 }
 
-void Screen::takeScreenshot() {
-	warning("[Screen::takeScreenshot] Screenshot function not implemented!");
-}
-
 //////////////////////////////////////////////////////////////////////////
 // Palette
 //////////////////////////////////////////////////////////////////////////

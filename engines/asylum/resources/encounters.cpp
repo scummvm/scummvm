@@ -483,21 +483,12 @@ bool Encounter::update() {
 }
 
 bool Encounter::key(const AsylumEvent &evt) {
-	switch (evt.kbd.keycode) {
-	default:
-		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
-
-	case Common::KEYCODE_ESCAPE:
+	if (evt.kbd.keycode == Common::KEYCODE_ESCAPE) {
 		if (!isSpeaking()
 		 && _isDialogOpen
 		 && !getSpeech()->getTextData()
 		 && !getSpeech()->getTextDataPos())
 			_shouldCloseDialog = true;
-		break;
 	}
 
 	return true;

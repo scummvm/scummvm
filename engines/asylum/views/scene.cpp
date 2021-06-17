@@ -489,10 +489,6 @@ bool Scene::key(const AsylumEvent &evt) {
 			getActor()->setLastScreenUpdate(_vm->screenUpdateCount);
 		}
 		break;
-
-	case Common::KEYCODE_TAB:
-		getScreen()->takeScreenshot();
-		break;
 	}
 
 	return true;
