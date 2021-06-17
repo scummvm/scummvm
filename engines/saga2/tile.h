@@ -867,6 +867,7 @@ struct WorldMapData {
 	RipTableIDPtr       ripTableIDList;     //  MetaTile object ripping
 
 	ActiveItem          *instHash[513];   //  ActiveItem hash table
+	Common::HashMap<int16, ActiveItem*> itemHash;
 
 	int16               metaCount,          //  Number of MetaTiles
 	                    activeCount;        //  Number of ActiveItems

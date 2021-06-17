@@ -2457,8 +2457,7 @@ void WorldMapData::buildInstanceHash(void) {
 			           + ai->instance.v + (ai->instance.groupID << 2))
 			          % elementsof(instHash);
 
-			ai->nextHash = instHash[hashVal];
-			instHash[hashVal] = ai;
+			itemHash.setVal(hashVal, ai);
 		}
 	}
 }
@@ -2472,17 +2471,9 @@ ActiveItem *WorldMapData::findHashedInstance(
     int16 group) {
 	int16           hashVal = (((tp.u + tp.z) << 4) + tp.v + (group << 2))
 	                          % elementsof(instHash);
-	ActiveItem      *ai;
+	if (itemHash.contains(hashVal))
+		return itemHash.getVal(hashVal);
 
-	for (ai = instHash[hashVal];
-	        ai;
-	        ai = ai->nextHash) {
-		if (ai->instance.u == tp.u
-		        &&  ai->instance.v == tp.v
-		        &&  ai->instance.h == tp.z
-		        &&  ai->instance.groupID == group)
-			return ai;
-	}
 	return nullptr;
 }
 
