@@ -705,7 +705,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	case kCastText:
 		// since mactext will add some offsets itself, then we calculate it first, to make sure the result size is the same as bbox
 		// use the initialRect for the dims, (seems like initialRect is same as bbox since we once called setCast)
-		dims = getTextOnlyDimensions(_initialRect);
+		dims = getTextOnlyDimensions(bbox);
 		widget = new Graphics::MacText(g_director->getCurrentWindow(), bbox.left, bbox.top, dims.width(), dims.height(), g_director->_wm, _ftext, macFont, getForeColor(), getBackColor(), dims.width(), getAlignment(), 0, _borderSize, _gutterSize, _boxShadow, _textShadow, Common::kMacCentralEurope);
 		((Graphics::MacText *)widget)->setSelRange(g_director->getCurrentMovie()->_selStart, g_director->getCurrentMovie()->_selEnd);
 		((Graphics::MacText *)widget)->draw();

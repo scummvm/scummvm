@@ -200,8 +200,19 @@ void Sprite::setCast(uint16 castId) {
 		// them properly.
 		if (_cast->_type != kCastShape) {
 			Common::Rect dims = _cast->getInitialRect();
-			_width = dims.width();
-			_height = dims.height();
+			//for the text cast members, we use the max number of size of the first sprite we saw and the initialRect, and we reset that cast too
+			// quite strange logic, but it's useful for now, but still we need to figure out the correct solution
+			if (_cast->_type == kCastButton || _cast->_type == kCastText) {
+				if (_cast->_boundingRect.isEmpty()) {
+					_cast->_boundingRect = Common::Rect(MAX<int>(_width, dims.width()), MAX<int>(_height, dims.height()));
+					_cast->_initialRect = _cast->_boundingRect;
+				}
+				_width = _cast->_initialRect.width();
+				_height = _cast->_initialRect.height();
+			} else {
+				_width = dims.width();
+				_height = dims.height();
+			}
 		}
 	} else {
 		warning("Sprite::setCast(): CastMember id %d(%s) has null member", castId, numToCastNum(castId));
