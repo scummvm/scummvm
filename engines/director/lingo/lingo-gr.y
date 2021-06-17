@@ -363,8 +363,8 @@ stmtoneliner: proc
 
 proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
 	| ID exprlist[args] '\n'			{ $$ = new CmdNode($ID, $args); }
-	| tNEXT tREPEAT						{ $$ = new NextRepeatNode(); }
-	| tEXIT tREPEAT						{ $$ = new ExitRepeatNode(); }
+	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
+	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	;
 
 definevars: tGLOBAL idlist '\n'			{ $$ = new GlobalNode($idlist); }
