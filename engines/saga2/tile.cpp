@@ -27,6 +27,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "common/debug.h"
+#include "common/memstream.h"
 #include "graphics/surface.h"
 
 #include "saga2/std.h"
@@ -1061,7 +1062,7 @@ int32 TileActivityTaskList::archiveSize(void) {
 //	Create an archive of this TileActivityTaskList in the specified
 //	archive buffer
 
-void *TileActivityTaskList::archive(void *buf) {
+Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::MemorySeekableReadWriteStream *stream) {
 	int16               taskCount;
 	TileActivityTask    *tat;
 
@@ -1071,8 +1072,7 @@ void *TileActivityTaskList::archive(void *buf) {
 		taskCount++;
 
 	//  Store the task count
-	WRITE_LE_INT16(buf, taskCount);
-	buf = (int16 *)buf + 1;
+	taskCount = stream->readSint16LE();
 
 	for (tat = (TileActivityTask *)list.first();
 	        tat != nullptr;
@@ -1080,15 +1080,13 @@ void *TileActivityTaskList::archive(void *buf) {
 		ActiveItem  *ai = tat->tai;
 
 		//  Store the activeItemID
-		*((ActiveItemID *)buf) = ai->thisID();
-		buf = (ActiveItemID *)buf + 1;
+		stream->writeSint16LE(ai->thisID());
 
 		//  Store the task type
-		*((uint8 *)buf) = tat->activityType;
-		buf = (uint8 *)buf + 1;
+		stream->writeByte(tat->activityType);
 	}
 
-	return buf;
+	return stream;
 }
 
 //-----------------------------------------------------------------------
@@ -1347,22 +1345,27 @@ void initTileTasks(void) {
 
 void saveTileTasks(SaveFileConstructor &saveGame) {
 	int32   archiveBufSize;
-	void    *archiveBuffer;
+	byte *archiveBuffer;
+	Common::MemorySeekableReadWriteStream *stream;
 
 	archiveBufSize = aTaskList.archiveSize();
 
-	archiveBuffer = malloc(archiveBufSize);
+	archiveBuffer = (byte *)malloc(archiveBufSize);
 	if (archiveBuffer == nullptr)
 		error("Unable to allocate tile activity task archive buffer");
 
-	aTaskList.archive(archiveBuffer);
+	stream = new Common::MemorySeekableReadWriteStream(archiveBuffer,
+	                                                   archiveBufSize,
+												       DisposeAfterUse::YES);
+
+	aTaskList.archive(stream);
 
 	saveGame.writeChunk(
 	    MakeID('T', 'A', 'C', 'T'),
 	    archiveBuffer,
 	    archiveBufSize);
 
-	free(archiveBuffer);
+	delete stream;
 }
 
 //-----------------------------------------------------------------------

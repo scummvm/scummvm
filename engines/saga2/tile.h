@@ -27,6 +27,7 @@
 #ifndef SAGA2_TILE_H
 #define SAGA2_TILE_H
 
+#include "common/memstream.h"
 #include "saga2/fta.h"
 #include "saga2/tileload.h"
 #include "saga2/annoy.h"
@@ -639,7 +640,7 @@ public:
 
 	//  Create an archive of this TileActivityTaskList in the specified
 	//  archive buffer
-	void *archive(void *buf);
+	Common::MemorySeekableReadWriteStream *archive(Common::MemorySeekableReadWriteStream *stream);
 
 	//  Cleanup this list
 	void cleanup(void);
