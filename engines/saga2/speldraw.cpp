@@ -41,7 +41,7 @@ namespace Saga2 {
    Imports
  * ===================================================================== */
 
-extern ColorScheme  **spellSchemes;
+extern ColorSchemeList  *spellSchemes;
 
 extern ColorTable   spellColorMaps[];
 extern int32        loadedColorMaps;
@@ -152,7 +152,7 @@ void SpellDisplayPrototype::getColorTranslation(ColorTable map, Effectron *e) {
 	int32 i = colorMap[whichColorMap(effect, e)];
 	i = MAX(0, MIN(loadedColorMaps, i));
 	buildColorTable(map,
-	                (*spellSchemes)[i].bank,
+	                spellSchemes->_schemes[i]->bank,
 	                11);
 }
 
