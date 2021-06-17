@@ -35,6 +35,10 @@ struct PropertyNode;
 struct InstanceNode;
 struct IfStmtNode;
 struct IfElseStmtNode;
+struct RepeatWhileNode;
+struct RepeatWithToNode;
+struct NextRepeatNode;
+struct ExitRepeatNode;
 struct IntNode;
 struct FloatNode;
 struct SymbolNode;
@@ -68,6 +72,10 @@ enum NodeType {
 	kInstanceNode,
 	kIfStmtNode,
 	kIfElseStmtNode,
+	kRepeatWhileNode,
+	kRepeatWithToNode,
+	kNextRepeatNode,
+	kExitRepeatNode,
 	kIntNode,
 	kFloatNode,
 	kSymbolNode,
@@ -95,6 +103,10 @@ public:
 	virtual void visitInstanceNode(InstanceNode *node) = 0;
 	virtual void visitIfStmtNode(IfStmtNode *node) = 0;
 	virtual void visitIfElseStmtNode(IfElseStmtNode *node) = 0;
+	virtual void visitRepeatWhileNode(RepeatWhileNode *node) = 0;
+	virtual void visitRepeatWithToNode(RepeatWithToNode *node) = 0;
+	virtual void visitNextRepeatNode(NextRepeatNode *node) = 0;
+	virtual void visitExitRepeatNode(ExitRepeatNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
 	virtual void visitSymbolNode(SymbolNode *node) = 0;
@@ -112,8 +124,9 @@ struct Node {
 	NodeType type;
 	bool isExpression;
 	bool isStatement;
+	bool isLoop;
 
-	Node(NodeType t) : type(t), isExpression(false), isStatement(false) {}
+	Node(NodeType t) : type(t), isExpression(false), isStatement(false), isLoop(false) {}
 	virtual ~Node() {}
 	virtual void accept(NodeVisitor *visitor) = 0;
 };
@@ -134,6 +147,18 @@ struct StmtNode : Node {
 		isStatement = true;
 	}
 	virtual ~StmtNode() {}
+};
+
+/* LoopNode */
+
+struct LoopNode : StmtNode {
+	Common::Array<uint> nextRepeats;
+	Common::Array<uint> exitRepeats;
+
+	LoopNode(NodeType t) : StmtNode(t) {
+		isLoop = true;
+	}
+	virtual ~LoopNode() {}
 };
 
 /* ScriptNode */
@@ -278,6 +303,65 @@ struct IfElseStmtNode : StmtNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitIfElseStmtNode(this);
+	}
+};
+
+/* RepeatWhileNode */
+
+struct RepeatWhileNode : LoopNode {
+	Node *cond;
+	NodeList *stmts;
+
+	RepeatWhileNode(Node *condIn, NodeList *stmtsIn)
+		: LoopNode(kRepeatWhileNode), cond(condIn), stmts(stmtsIn) {}
+	virtual ~RepeatWhileNode() {
+		delete cond;
+		deleteList(stmts);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitRepeatWhileNode(this);
+	}
+};
+
+/* RepeatWithToNode */
+
+struct RepeatWithToNode : LoopNode {
+	Common::String *var;
+	Node *start;
+	bool down;
+	Node *end;
+	NodeList *stmts;
+
+	RepeatWithToNode(Common::String *varIn, Node *startIn, bool downIn, Node *endIn, NodeList *stmtsIn)
+		: LoopNode(kRepeatWithToNode), var(varIn), start(startIn), down(downIn), end(endIn), stmts(stmtsIn) {}
+	virtual ~RepeatWithToNode() {
+		delete var;
+		delete start;
+		delete end;
+		deleteList(stmts);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitRepeatWithToNode(this);
+	}
+};
+
+/* NextRepeatNode */
+
+struct NextRepeatNode : StmtNode {
+	NextRepeatNode() : StmtNode(kNextRepeatNode) {}
+	virtual ~NextRepeatNode() {}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitNextRepeatNode(this);
+	}
+};
+
+/* ExitRepeatNode */
+
+struct ExitRepeatNode : StmtNode {
+	ExitRepeatNode() : StmtNode(kExitRepeatNode) {}
+	virtual ~ExitRepeatNode() {}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitExitRepeatNode(this);
 	}
 };
 

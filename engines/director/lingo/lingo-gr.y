@@ -164,7 +164,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<idlist> idlist nonemptyidlist
 
 // STATEMENT
-%type<node> stmt stmtoneliner proc definevars ifstmt ifelsestmt
+%type<node> stmt stmtoneliner proc definevars ifstmt ifelsestmt loop
 %type<nodelist> stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
@@ -354,6 +354,7 @@ nonemptyidlist: ID[item]					{
 stmt: stmtoneliner
 	| ifstmt
 	| ifelsestmt
+	| loop
 	;
 
 stmtoneliner: proc
@@ -362,6 +363,8 @@ stmtoneliner: proc
 
 proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
 	| ID exprlist[args] '\n'			{ $$ = new CmdNode($ID, $args); }
+	| tNEXT tREPEAT						{ $$ = new NextRepeatNode(); }
+	| tEXIT tREPEAT						{ $$ = new ExitRepeatNode(); }
 	;
 
 definevars: tGLOBAL idlist '\n'			{ $$ = new GlobalNode($idlist); }
@@ -393,6 +396,14 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, stmtlist2); }
 	| tIF expr tTHEN '\n' stmtlist[stmtlist1] tELSE '\n' stmtlist[stmtlist2] tENDIF '\n' {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
+	;
+
+loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
+		$$ = new RepeatWhileNode($expr, $stmtlist); }
+	| tREPEAT tWITH ID tEQ expr[start] tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
+		$$ = new RepeatWithToNode($ID, $start, false, $end, $stmtlist); }
+	| tREPEAT tWITH ID tEQ expr[start] tDOWN tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
+		$$ = new RepeatWithToNode($ID, $start, true, $end, $stmtlist); }
 	;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
