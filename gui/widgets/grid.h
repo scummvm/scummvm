@@ -29,6 +29,7 @@
 #include "common/array.h"
 #include "image/bmp.h"
 #include "image/png.h"
+#include "graphics/svg.h"
 
 namespace GUI {
 
@@ -71,6 +72,7 @@ class GridItemWidget;
 class GridWidget : public ContainerWidget {
 private:
 	Common::Array<const Graphics::ManagedSurface *> _platformIcons;
+	Common::Array<const Graphics::ManagedSurface *> _flagIcons;
 	// _gridItems should be reserved to hold few more than visible items
 	Common::Array<GridItemWidget *> _gridItems;
 	Common::Array<GridItemInfo> _allEntries;
@@ -103,12 +105,13 @@ public:
 
 	const Graphics::ManagedSurface * filenameToSurface(Common::String &name);
 	const Graphics::ManagedSurface * platformToSurface(Platform platformCode);
-
+	const Graphics::ManagedSurface * languageToSurface(Common::String &lang);
 
 	bool calcVisibleEntries(void);
 	void setEntryList(Common::Array<GridItemInfo> *list);
 	void destroyItems();
 	void loadPlatformIcons();
+	void loadFlagIcons();
 	void updateGrid(void);
 	void gridFromGameList();
 	int getLoadedNumber(void) {return _loadedSurfaces.size();}

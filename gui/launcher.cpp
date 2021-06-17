@@ -374,7 +374,6 @@ void LauncherDialog::updateListing() {
 		Common::String platform = "UNK";
 		iter->domain->tryGetVal("language",language);
 		iter->domain->tryGetVal("platform", platform);
-		language.toUppercase();
 		gridList.push_back(GridItemInfo(engineid, gameid, title, language, platform));
 	}
 
