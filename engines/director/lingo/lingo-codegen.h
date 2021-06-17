@@ -98,6 +98,9 @@ public:
 	virtual void visitFloatNode(FloatNode *node);
 	virtual void visitSymbolNode(SymbolNode *node);
 	virtual void visitStringNode(StringNode *node);
+	virtual void visitListNode(ListNode *node);
+	virtual void visitPropListNode(PropListNode *node);
+	virtual void visitPropPairNode(PropPairNode *node);
 	virtual void visitFuncNode(FuncNode *node);
 	virtual void visitVarNode(VarNode *node);
 	virtual void visitParensNode(ParensNode *node);

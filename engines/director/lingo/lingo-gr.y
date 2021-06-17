@@ -173,7 +173,8 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // EXPRESSION
 %type<node> simpleexprnoparens simpleexpr expr
 %type<node> var varorchunk varorthe
-%type<nodelist> exprlist nonemptyexprlist
+%type<node> list proppair
+%type<nodelist> proplist exprlist nonemptyexprlist
 
 %left tAND tOR
 %left '<' tLE '>' tGE tEQ tNEQ tCONTAINS tSTARTS
@@ -453,6 +454,7 @@ simpleexprnoparens: tINT			{ $$ = new IntNode($tINT); }
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
 	| var
+	| list
 	;
 
 var: ID							{ $$ = new VarNode($ID); } ;
@@ -467,6 +469,25 @@ varorthe: var
 
 simpleexpr: simpleexprnoparens
 	| '(' expr ')'				{ $$ = $expr; }
+	;
+
+list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
+	| '[' ':' ']'				{ $$ = new PropListNode(new NodeList); }
+	| '[' proplist ']'			{ $$ = new PropListNode($proplist); }
+	;
+
+proplist: proppair[item]				{
+		NodeList *list = new NodeList; 
+		list->push_back($item);
+		$$ = list; }
+	| proplist[prev] ',' proppair[item]	{
+		$prev->push_back($item);
+		$$ = $prev; }
+	;
+
+proppair: tSYMBOL ':' expr		{ $$ = new PropPairNode(new SymbolNode($tSYMBOL), $expr); }
+	| ID ':' expr				{ $$ = new PropPairNode(new SymbolNode($ID), $expr); }
+	| tSTRING ':' expr 			{ $$ = new PropPairNode(new StringNode($tSTRING), $expr); }
 	;
 
 expr: simpleexpr				{ $$ = $simpleexpr; }
