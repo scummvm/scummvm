@@ -965,13 +965,13 @@ void DreamWebEngine::useTimedText() {
 
 	const uint8 *string = (const uint8 *)_timedTemp._string;
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
-	const char *theText = (const char*)string;
-	if (lastText != theText) {
+	const char *theText = (const char *)string;
+	if (_lastText != theText) {
 		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
-			ttsMan->say(theText, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+			ttsMan->say(theText);
 		}
 	}
-	lastText = theText;
+	_lastText = theText;
 
 	_needToDumpTimed = 1;
 }
@@ -1187,7 +1187,7 @@ void DreamWebEngine::commandOnly(uint8 command) {
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
 	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say((const char*)string);
+		ttsMan->say((const char *)string);
 	}
 
 	_newTextLine = 1;

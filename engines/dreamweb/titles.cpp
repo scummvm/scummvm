@@ -105,7 +105,7 @@ void DreamWebEngine::bibleQuote() {
 						"Go your ways and pour out the vails of the wrath of god upon the earth. "
 						"Book of revelation Chapter 16 verse 1.";
 	const char *frStory = "Puis j'entendis une voix forte qui venait du temple et disait aux sept anges: "
-						" «Allez verser sur la terre les sept coupes de la colère de Dieu.»"
+						" Allez verser sur la terre les sept coupes de la colère de Dieu."
 						"L'Apocalypse, chapitre 16, verset 1";
 	const char *esStory = "Oí una gran voz que decía desde el templo a los siete ángeles: "
 						"Id y derramad sobre la tierra las siete copas de la ira de Dios. "
@@ -116,6 +116,12 @@ void DreamWebEngine::bibleQuote() {
 	const char *itStory = "Udii poi una gran voce dal tempio che diceva ai sette angeli: "
 						"Andate e versate sulla terra le sette coppe dell'ira di Dio. "
 						"Dal libro dell'Apocalisse, capitolo uno, primo versetto";
+	const char *ruStory = "И услышал я из храма громкий голос, говорящий семи Ангелам: "
+						"идите и вылейте семь чаш гнева Божия на землю. "
+						"Откровение 16 стих 1";
+	const char *czStory = "Tu jsem uslyšel mocný hlas ze svatyně, který těm sedmi andělům říkal: "
+						"Jděte a vylejte těch sedm misek Božího hněvu na zem."
+						"Zjevení 16 verš 1";
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	const char *theStory;
@@ -131,6 +137,12 @@ void DreamWebEngine::bibleQuote() {
 		break;
 	case Common::DE_DEU:
 		theStory = deStory;
+		break;
+	case Common::RU_RUS:
+		theStory = ruStory;
+		break;
+	case Common::CZ_CZE:
+		theStory = czStory;
 		break;
 	default:
 		theStory = enStory;

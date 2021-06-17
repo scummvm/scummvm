@@ -96,7 +96,7 @@ void DreamWebEngine::startTalk() {
 	_charShift = 91+91;
 
 	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
-        ttsMan->say((const char*)str);
+        ttsMan->say((const char *)str);
     }
 
 	if (getLanguage() == Common::RU_RUS)
@@ -122,12 +122,11 @@ void DreamWebEngine::startTalk() {
 }
 
 const uint8 *DreamWebEngine::getPersonText(uint8 index, uint8 talkPos) {
+	const uint8 *text = (const uint8 *)_personText.getString(index*64 + talkPos);
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
-        ttsMan->say((const char*)_personText.getString(index*64 + talkPos),
-		Common::TextToSpeechManager::INTERRUPT);
-    }
-	return (const uint8 *)_personText.getString(index*64 + talkPos);
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech())
+		ttsMan->say((const char *)text,	Common::TextToSpeechManager::INTERRUPT);
+	return text;
 }
 
 void DreamWebEngine::moreTalk() {

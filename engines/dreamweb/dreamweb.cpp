@@ -395,23 +395,7 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 Common::Error DreamWebEngine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
-		switch(getLanguage()) {
-		case Common::ES_ESP:
-			ttsMan->setLanguage("es");
-			break;
-		case Common::FR_FRA:
-			ttsMan->setLanguage("fr");
-			break;
-		case Common::IT_ITA:
-			ttsMan->setLanguage("it");
-			break;
-		case Common::DE_DEU:
-			ttsMan->setLanguage("de");
-			break;
-		default:
-			ttsMan->setLanguage("en");
-			break;
-		}
+		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	}
 
 	syncSoundSettings();
