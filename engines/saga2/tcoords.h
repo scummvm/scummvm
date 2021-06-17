@@ -113,20 +113,6 @@ public:
    Constants
  * ============================================================================ */
 
-	//	Size of a tile in ( U, V ) coords
-
-const int			tileUVSize = 16,
-					tileUVShift = 4,
-					tileZSize = 8,
-					tileZShift = 3,
-					tileUVMask = (tileUVSize - 1);
-
-	//	Size of a map sector (4 metatiles x 4 metatiles)
-
-const int			sectorSize = tileUVSize * 8 * 4,
-					sectorShift = tileUVShift + 3 + 2,
-					sectorMask = sectorSize - 1;
-
 	//	A TilePoint defining a NULL location
 const extern TilePoint	Nowhere;
 
