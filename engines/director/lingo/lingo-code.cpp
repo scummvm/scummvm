@@ -434,8 +434,8 @@ void LC::c_proparraypush() {
 	d.u.parr = new PropertyArray;
 
 	for (int i = 0; i < arraySize; i++) {
-		Datum p = g_lingo->pop();
 		Datum v = g_lingo->pop();
+		Datum p = g_lingo->pop();
 
 		PCell cell = PCell(p, v);
 		d.u.parr->insert_at(0, cell);
