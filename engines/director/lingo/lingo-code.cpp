@@ -68,14 +68,12 @@ static struct FuncDescr {
 	{ LC::c_asserterror,	"c_asserterror",	"" },
 	{ LC::c_asserterrordone,"c_asserterrordone","" },
 	{ LC::c_add,			"c_add",			"" },
-	{ LC::c_putafter,		"c_putafter",		"" },	// D3
 	{ LC::c_ampersand,		"c_ampersand",		"" },
 	{ LC::c_and,			"c_and",			"" },
 	{ LC::c_argcnoretpush,	"c_argcnoretpush",	"i" },
 	{ LC::c_argcpush,		"c_argcpush",		"i" },
 	{ LC::c_arraypush,		"c_arraypush",		"i" },
 	{ LC::c_assign,			"c_assign",			""  },
-	{ LC::c_putbefore,		"c_putbefore",		"" },	// D3
 	{ LC::c_callcmd,		"c_callcmd",		"si" },
 	{ LC::c_callfunc,		"c_callfunc",		"si" },
 	{ LC::c_charOf,			"c_charOf",			"" },	// D3
@@ -85,7 +83,6 @@ static struct FuncDescr {
 	{ LC::c_contains,		"c_contains",		"" },
 	{ LC::c_div,			"c_div",			"" },
 	{ LC::c_eq,				"c_eq",				"" },
-	{ LC::c_eval,			"c_eval",			"s" },
 	{ LC::c_floatpush,		"c_floatpush",		"f" },
 	{ LC::c_ge,				"c_ge",				"" },
 	{ LC::c_goto,			"c_goto",			"" },
@@ -117,6 +114,8 @@ static struct FuncDescr {
 	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
+	{ LC::c_putafter,		"c_putafter",		"" },	// D3
+	{ LC::c_putbefore,		"c_putbefore",		"" },	// D3
 	{ LC::c_starts,			"c_starts",			"" },
 	{ LC::c_stringpush,		"c_stringpush",		"s" },
 	{ LC::c_sub,			"c_sub",			"" },
