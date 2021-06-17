@@ -358,7 +358,7 @@ void GridWidget::reflowLayout() {
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this, 
 									50 + col * (_gridItemWidth + _gridXSpacing), 
-									50 + (row - 1) * (_gridItemHeight + _gridYSpacing), 
+									(_scrollPos % (_gridItemHeight + _gridYSpacing)) + 50 + (row - 1) * (_gridItemHeight + _gridYSpacing), 
 									_gridItemWidth, 
 									_gridItemHeight);
 		
