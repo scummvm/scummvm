@@ -312,10 +312,11 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 	case 1: // global
 	case 2: // global
 	case 3: // property/instance
-		if (id.type == VAR) {
+		if (id.type == SYMBOL) {
 			res = id;
+			res.type = (varType == 3) ? PROPREF : GLOBALREF;
 		} else {
-			warning("BUILDBOT: findVarV4: expected ID for var type %d to be VAR, got %s", varType, id.type2str());
+			warning("BUILDBOT: findVarV4: expected ID for var type %d to be SYMBOL, got %s", varType, id.type2str());
 		}
 		break;
 	case 4: // arg
@@ -336,7 +337,7 @@ Datum Lingo::findVarV4(int varType, const Datum &id) {
 
 			if (varIndex < (int)varNames->size()) {
 				res = (*varNames)[varIndex];
-				res.type = VAR;
+				res.type = LOCALREF;
 			} else {
 				warning("BUILDBOT: findVarV4: invalid var ID %d for var type %d (too high)", id.asInt(), varType);
 			}
@@ -409,7 +410,7 @@ void LC::cb_objectcall() {
 	Datum nargs = g_lingo->pop();
 
 	Datum var = g_lingo->findVarV4(varType, varId);
-	if (var.type != VAR) {
+	if (var.isVarRef()) {
 		warning("cb_objectcall: first arg did not resolve to variable");
 		return;
 	}
@@ -423,7 +424,7 @@ void LC::cb_objectcall() {
 		Datum &firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs.u.i];
 		// The first arg could be either a method name or a variable name
 		if (firstArg.type == SYMBOL) {
-			firstArg.type = VAR;
+			firstArg.type = VARREF;
 		}
 	}
 
@@ -519,9 +520,9 @@ void LC::cb_globalpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
-	target.type = VAR;
+	target.type = GLOBALREF;
 	debugC(3, kDebugLingoExec, "cb_globalpush: pushing %s to stack", name.c_str());
-	Datum result = g_lingo->varFetch(target, true);
+	Datum result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -530,16 +531,10 @@ void LC::cb_globalassign() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
-	target.type = VAR;
+	target.type = GLOBALREF;
 	debugC(3, kDebugLingoExec, "cb_globalassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
-	// Lingo lets you declare globals inside a method.
-	// This doesn't define them in the script list, but you can still
-	// read and write to them???
-	if (!g_lingo->_globalvars.contains(name)) {
-		g_lingo->_globalvars[name] = Datum();
-	}
-	g_lingo->varAssign(target, source, true);
+	g_lingo->varAssign(target, source);
 }
 
 void LC::cb_objectfieldassign() {
@@ -561,7 +556,7 @@ void LC::cb_varrefpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum result(name);
-	result.type = VAR;
+	result.type = SYMBOL;
 	g_lingo->push(result);
 }
 
@@ -626,9 +621,9 @@ void LC::cb_varpush() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
-	target.type = VAR;
+	target.type = LOCALREF;
 	debugC(3, kDebugLingoExec, "cb_varpush: pushing %s to stack", name.c_str());
-	Datum result = g_lingo->varFetch(target, false);
+	Datum result = g_lingo->varFetch(target);
 	g_lingo->push(result);
 }
 
@@ -637,11 +632,11 @@ void LC::cb_varassign() {
 	int nameId = g_lingo->readInt();
 	Common::String name = g_lingo->_currentArchive->getName(nameId);
 	Datum target(name);
-	target.type = VAR;
+	target.type = LOCALREF;
 	debugC(3, kDebugLingoExec, "cb_varassign: assigning to %s", name.c_str());
 	Datum source = g_lingo->pop();
 	// Local variables should be initialised by the script, no varCreate here
-	g_lingo->varAssign(target, source, false);
+	g_lingo->varAssign(target, source);
 }
 
 

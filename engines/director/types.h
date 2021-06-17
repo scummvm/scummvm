@@ -346,12 +346,16 @@ enum DatumType {
 	POINT,
 	STRING,
 	SYMBOL,
-	VAR,
+	VARREF,
+	GLOBALREF,
+	LOCALREF,
+	PROPREF,
 	VOID,
 	RECT
 };
 
 enum VarType {
+	kVarGeneric,
 	kVarArgument,
 	kVarProperty,
 	kVarInstance,

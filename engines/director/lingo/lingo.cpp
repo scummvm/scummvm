@@ -636,7 +636,10 @@ void Datum::reset() {
 #ifndef __COVERITY__
 	if (*refCount <= 0) {
 		switch (type) {
-		case VAR:
+		case VARREF:
+		case GLOBALREF:
+		case LOCALREF:
+		case PROPREF:
 		case STRING:
 		case SYMBOL:
 			delete u.s;
@@ -671,7 +674,7 @@ void Datum::reset() {
 }
 
 Datum Datum::eval() const {
-	if (type == VAR || type == FIELDREF || type == CHUNKREF) {
+	if (isRef()) {
 		return g_lingo->varFetch(*this);
 	}
 
@@ -786,8 +789,17 @@ Common::String Datum::asString(bool printonly) const {
 	case VOID:
 		s = "#void";
 		break;
-	case VAR:
+	case VARREF:
 		s = Common::String::format("var: #%s", u.s->c_str());
+		break;
+	case GLOBALREF:
+		s = Common::String::format("global: #%s", u.s->c_str());
+		break;
+	case LOCALREF:
+		s = Common::String::format("local: #%s", u.s->c_str());
+		break;
+	case PROPREF:
+		s = Common::String::format("property: #%s", u.s->c_str());
 		break;
 	case CASTREF:
 		s = Common::String::format("cast %d", u.i);
@@ -899,6 +911,18 @@ int Datum::asCastId() const {
 	return castId;
 }
 
+bool Datum::isRef() const {
+	return (isVarRef() || isCastRef() || type == CHUNKREF);
+}
+
+bool Datum::isVarRef() const {
+	return (type == VARREF || type == GLOBALREF || type == LOCALREF || type == PROPREF);
+}
+
+bool Datum::isCastRef() const {
+	return (type == CASTREF || type == FIELDREF);
+}
+
 const char *Datum::type2str(bool isk) const {
 	static char res[20];
 
@@ -923,8 +947,14 @@ const char *Datum::type2str(bool isk) const {
 		return "FIELDREF";
 	case CHUNKREF:
 		return "CHUNKREF";
-	case VAR:
-		return isk ? "#var" : "VAR";
+	case VARREF:
+		return "VARREF";
+	case GLOBALREF:
+		return "GLOBALREF";
+	case LOCALREF:
+		return "LOCALREF";
+	case PROPREF:
+		return "PROPREF";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
@@ -1108,120 +1138,180 @@ int Lingo::getInt(uint pc) {
 	return (int)READ_UINT32(&((*_currentScript)[pc]));
 }
 
-void Lingo::varAssign(const Datum &var, Datum &value, bool global, DatumHash *localvars) {
+void Lingo::varAssign(const Datum &var, Datum &value, DatumHash *localvars) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
 
-	if (var.type == VAR) {
-		Common::String name = *var.u.s;
-
-		if (localvars && localvars->contains(name)) {
-			(*localvars)[name] = value;
-			if (global)
-				warning("varAssign: variable %s is local, not global", name.c_str());
-			return;
-		}
-		if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-			_currentMe.u.obj->setProp(name, value);
-			if (global)
-				warning("varAssign: variable %s is instance or property, not global", name.c_str());
-			return;
-		}
-		if (_globalvars.contains(name)) {
+	switch (var.type) {
+	case VARREF:
+		{
+			Common::String name = *var.u.s;
+			if (localvars && localvars->contains(name)) {
+				(*localvars)[name] = value;
+				return;
+			}
+			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+				_currentMe.u.obj->setProp(name, value);
+				return;
+			}
 			_globalvars[name] = value;
-			if (!global)
-				warning("varAssign: variable %s is global, not local", name.c_str());
-			return;
 		}
-
-		warning("varAssign: variable %s not defined", name.c_str());
-	} else if (var.type == FIELDREF || var.type == CASTREF) {
-		Movie *movie = g_director->getCurrentMovie();
-		if (!movie) {
-			warning("varAssign: Assigning to a reference to an empty movie");
-			return;
+		break;
+	case GLOBALREF:
+		// Global variables declared by `global varname` within a handler are not listed anywhere
+		// in Lscr, unlike globals declared outside of a handler and every other variable type.
+		// So while we require other variable types to be initialized before assigning to them,
+		// let's not enforce that for globals.
+		_globalvars[*var.u.s] = value;
+		break;
+	case LOCALREF:
+		{
+			Common::String name = *var.u.s;
+			if (localvars && localvars->contains(name)) {
+				(*localvars)[name] = value;
+			} else {
+				warning("varAssign: local variable %s not defined", name.c_str());
+			}
 		}
-		int castId = var.u.i;
-		CastMember *member = movie->getCastMember(castId);
-		if (!member) {
-			warning("varAssign: Unknown cast id %d", castId);
-			return;
+		break;
+	case PROPREF:
+		{
+			Common::String name = *var.u.s;
+			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+				_currentMe.u.obj->setProp(name, value);
+			} else {
+				warning("varAssign: property %s not defined", name.c_str());
+			}
 		}
-		switch (member->_type) {
-		case kCastText:
-			((TextCastMember *)member)->setText(value.asString().c_str());
-			break;
-		default:
-			warning("varAssign: Unhandled cast type %d", member->_type);
-			break;
+		break;
+	case FIELDREF:
+	case CASTREF:
+		{
+			Movie *movie = g_director->getCurrentMovie();
+			if (!movie) {
+				warning("varAssign: Assigning to a reference to an empty movie");
+				return;
+			}
+			int castId = var.u.i;
+			CastMember *member = movie->getCastMember(castId);
+			if (!member) {
+				warning("varAssign: Unknown cast id %d", castId);
+				return;
+			}
+			switch (member->_type) {
+			case kCastText:
+				((TextCastMember *)member)->setText(value.asString().c_str());
+				break;
+			default:
+				warning("varAssign: Unhandled cast type %d", member->_type);
+				break;
+			}
 		}
-	} else {
+		break;
+	default:
 		warning("varAssign: assignment to non-variable");
+		break;
 	}
 }
 
-Datum Lingo::varFetch(const Datum &var, bool global, DatumHash *localvars, bool silent) {
+Datum Lingo::varFetch(const Datum &var, DatumHash *localvars, bool silent) {
 	if (localvars == nullptr) {
 		localvars = _localvars;
 	}
 
 	Datum result;
 
-	if (var.type == VAR) {
-		Datum d;
-		Common::String name = *var.u.s;
+	switch (var.type) {
+	case VARREF:
+		{
+			Datum d;
+			Common::String name = *var.u.s;
 
-		if (localvars && localvars->contains(name)) {
-			if (global)
-				warning("varFetch: variable %s is local, not global", name.c_str());
-			return (*localvars)[name];
-		}
-		if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-			if (global)
-				warning("varFetch: variable %s is instance or property, not global", name.c_str());
-			return _currentMe.u.obj->getProp(name);
-		}
-		if (_globalvars.contains(name)) {
-			if (!global)
-				warning("varFetch: variable %s is global, not local", name.c_str());
-			return _globalvars[name];
-		}
+			if (localvars && localvars->contains(name)) {
+				return (*localvars)[name];
+			}
+			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+				return _currentMe.u.obj->getProp(name);
+			}
+			if (_globalvars.contains(name)) {
+				return _globalvars[name];
+			}
 
-		if (!silent)
-			warning("varFetch: variable %s not found", name.c_str());
-		return result;
-	} else if (var.type == FIELDREF || var.type == CASTREF) {
-		Movie *movie = g_director->getCurrentMovie();
-		if (!movie) {
-			warning("varFetch: Assigning to a reference to an empty movie");
+			if (!silent)
+				warning("varFetch: variable %s not found", name.c_str());
 			return result;
 		}
-		int castId = var.u.i;
-		CastMember *member = movie->getCastMember(castId);
-		if (!member) {
-			warning("varFetch: Unknown cast id %d", castId);
+		break;
+	case GLOBALREF:
+		{
+			Common::String name = *var.u.s;
+			if (_globalvars.contains(name)) {
+				return _globalvars[name];
+			}
+			warning("varAssign: global variable %s not defined", name.c_str());
 			return result;
 		}
-		switch (member->_type) {
-		case kCastText:
+		break;
+	case LOCALREF:
+		{
+			Common::String name = *var.u.s;
+			if (localvars && localvars->contains(name)) {
+				return (*localvars)[name];
+			}
+			warning("varAssign: local variable %s not defined", name.c_str());
+			return result;
+		}
+		break;
+	case PROPREF:
+		{
+			Common::String name = *var.u.s;
+			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
+				return _currentMe.u.obj->getProp(name);
+			}
+			warning("varAssign: property %s not defined", name.c_str());
+			return result;
+		}
+		break;
+	case FIELDREF:
+	case CASTREF:
+		{
+			Movie *movie = g_director->getCurrentMovie();
+			if (!movie) {
+				warning("varFetch: Assigning to a reference to an empty movie");
+				return result;
+			}
+			int castId = var.u.i;
+			CastMember *member = movie->getCastMember(castId);
+			if (!member) {
+				warning("varFetch: Unknown cast id %d", castId);
+				return result;
+			}
+			switch (member->_type) {
+			case kCastText:
+				result.type = STRING;
+				result.u.s = new Common::String(((TextCastMember *)member)->getText());
+				break;
+			default:
+				warning("varFetch: Unhandled cast type %d", member->_type);
+				break;
+			}
+		}
+		break;
+	case CHUNKREF:
+		{
+			Common::String src = var.u.cref->source.eval().asString();
 			result.type = STRING;
-			result.u.s = new Common::String(((TextCastMember *)member)->getText());
-			break;
-		default:
-			warning("varFetch: Unhandled cast type %d", member->_type);
-			break;
+			if (var.u.cref->start == -1) {
+				result.u.s = new Common::String("");
+			} else {
+				result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
+			}
 		}
-	} else if (var.type == CHUNKREF) {
-		Common::String src = var.u.cref->source.eval().asString();
-		result.type = STRING;
-		if (var.u.cref->start == -1) {
-			result.u.s = new Common::String("");
-		} else {
-			result.u.s = new Common::String(src.substr(var.u.cref->start, var.u.cref->end - var.u.cref->start));
-		}
-	} else {
+		break;
+	default:
 		warning("varFetch: fetch from non-variable");
+		break;
 	}
 
 	return result;
