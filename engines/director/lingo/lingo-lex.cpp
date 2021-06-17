@@ -1100,7 +1100,7 @@ YY_RULE_SETUP
 case 2:
 YY_RULE_SETUP
 #line 115 "engines/director/lingo/lingo-lex.l"
-{ count(); yylval.s = new Common::String(yytext + 1); return SYMBOL; }	// D3, skip '#'
+{ count(); yylval.s = new Common::String(yytext + 1); return tSYMBOL; }	// D3, skip '#'
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
