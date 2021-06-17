@@ -63,22 +63,6 @@ inline void TileID2Bank(TileID t, int16 &bank, int16 &num) {
    Tile Size constants
  * ===================================================================== */
 
-//  Tile metrics
-
-enum {
-	kTileWidth = 64,
-	kTileHeight = 32,
-	kTileMaxHeight = 160,
-	kTileDX = (kTileWidth / 2),
-	kTileDY = (kTileHeight / 2),
-	kTileDXShift = 5,
-	kTileDYShift = 4,
-	kTileDXMask = (kTileDX - 1),
-	kTileDYMask = (kTileDY - 1)
-};
-
-const int           maxTileHeight = 160;    // tallest possible tile
-
 const int           platUVSize = tileUVSize * platformWidth;
 
 //  Metatile metrics

@@ -263,6 +263,21 @@ enum effectDamageTypes {
 	damageEnergy        = 14     // Generally hard to resist - god damage
 };
 
+//  Tile metrics
+
+enum {
+	kTileWidth = 64,
+	kTileHeight = 32,
+	kTileMaxHeight = 160,
+	kTileDX = (kTileWidth / 2),
+	kTileDY = (kTileHeight / 2),
+	kTileDXShift = 5,
+	kTileDYShift = 4,
+	kTileDXMask = (kTileDX - 1),
+	kTileDYMask = (kTileDY - 1),
+	kMaxTileHeight = 160
+};
+
 } // end of namespace Saga2
 
 #endif

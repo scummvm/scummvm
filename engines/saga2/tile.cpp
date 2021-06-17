@@ -1997,7 +1997,7 @@ TileInfo *Platform::fetchTile(
 
 #if DEBUG
 	if (ti->offset > maxOffset
-	        || ti->attrs.height > maxTileHeight
+	        || ti->attrs.height > kMaxTileHeight
 	        || ti->attrs.height < 0) {
 		int16       tileNo, tileBank;
 
@@ -2154,7 +2154,7 @@ TileInfo *Platform::fetchTile(
 
 #if DEBUG
 	if (ti->offset > maxOffset
-	        || ti->attrs.height > maxTileHeight
+	        || ti->attrs.height > kMaxTileHeight
 	        || ti->attrs.height < 0) {
 		int16       tileNo, tileBank;
 
@@ -2732,7 +2732,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = kTileHeight * (platformWidth - 1) + maxTileHeight * 2 + 64;
+				p->highestPixel = kTileHeight * (platformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= tileDrawMap.size.y)
@@ -3367,7 +3367,7 @@ void maskMetaRow(
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = kTileHeight * (platformWidth - 1) + maxTileHeight + 192;
+				p->highestPixel = kTileHeight * (platformWidth - 1) + kMaxTileHeight + 192;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= sMap.size.y)
