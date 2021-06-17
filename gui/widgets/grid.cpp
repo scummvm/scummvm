@@ -339,7 +339,7 @@ void GridWidget::reflowLayout() {
 	
 	_gridXSpacing = MAX((_scrollWindowWidth - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, (int)_minGridXSpacing);
 	
-	int rows = _allEntries.size() / _itemsPerRow; // change this to be calced using eindow sizes
+	int rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
 	_innerHeight = 100 + (rows * (_gridItemHeight + _gridYSpacing));
 	_innerWidth = 100 + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
