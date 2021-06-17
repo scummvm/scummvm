@@ -27,7 +27,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
 
 #include "common/debug.h"
-#include "common/memstream.h"
 #include "graphics/surface.h"
 
 #include "saga2/std.h"
@@ -1356,7 +1355,7 @@ void saveTileTasks(SaveFileConstructor &saveGame) {
 
 	stream = new Common::MemorySeekableReadWriteStream(archiveBuffer,
 	                                                   archiveBufSize,
-												       DisposeAfterUse::YES);
+	                                                   DisposeAfterUse::YES);
 
 	aTaskList.archive(stream);
 
