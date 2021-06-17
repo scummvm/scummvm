@@ -48,6 +48,7 @@ public class ScummVMEventsBase implements
 	public static final int JE_FMB_DOWN = 20;
 	public static final int JE_FMB_UP = 21;
 	public static final int JE_QUIT = 0x1000;
+	public static final int JE_MENU = 0x1001;
 
 	final protected Context _context;
 	final protected ScummVM _scummvm;

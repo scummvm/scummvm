@@ -77,7 +77,8 @@ enum {
 	JE_BMB_UP = 19,
 	JE_FMB_DOWN = 20,
 	JE_FMB_UP = 21,
-	JE_QUIT = 0x1000
+	JE_QUIT = 0x1000,
+	JE_MENU = 0x1001
 };
 
 // meta modifier
@@ -1216,6 +1217,13 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	case JE_QUIT:
 		e.type = Common::EVENT_QUIT;
+
+		pushEvent(e);
+
+		return;
+
+	case JE_MENU:
+		e.type = Common::EVENT_MAINMENU;
 
 		pushEvent(e);
 
