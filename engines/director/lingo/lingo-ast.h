@@ -499,12 +499,12 @@ struct StringNode : ExprNode {
 
 /* FuncNode */
 
-struct FuncNode : StmtNode {
+struct FuncNode : ExprNode {
 	Common::String *name;
 	NodeList *args;
 
 	FuncNode(Common::String *nameIn, NodeList *argsIn)
-		: StmtNode(kFuncNode), name(nameIn), args(argsIn) {}
+		: ExprNode(kFuncNode), name(nameIn), args(argsIn) {}
 	virtual ~FuncNode() {
 		delete name;
 		deleteList(args);
