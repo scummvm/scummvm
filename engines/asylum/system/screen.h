@@ -175,8 +175,7 @@ private:
 	void stopPaletteFadeTimer();
 
 	// Graphic queue
-	void graphicsSelectionSort();
-	void swapGraphicItem(int32 item1, int32 item2);
+	static bool graphicQueueItemComparator(const GraphicQueueItem &item1, const GraphicQueueItem &item2);
 
 	// Misc
 	void clip(Common::Rect *source, Common::Rect *destination, int32 flags) const;

@@ -696,9 +696,13 @@ void Screen::addGraphicToQueue(GraphicQueueItem const &item) {
 	_queueItems.push_back(item);
 }
 
+bool Screen::graphicQueueItemComparator(const GraphicQueueItem &item1, const GraphicQueueItem &item2) {
+	return item1.priority > item2.priority;
+}
+
 void Screen::drawGraphicsInQueue() {
 	// Sort by priority first
-	graphicsSelectionSort();
+	Common::sort(_queueItems.begin(), _queueItems.end(), &Screen::graphicQueueItemComparator);
 
 	for (Common::Array<GraphicQueueItem>::const_iterator i = _queueItems.begin(); i != _queueItems.end(); i++) {
 		const GraphicQueueItem *item = i;
@@ -716,31 +720,6 @@ void Screen::drawGraphicsInQueue() {
 
 void Screen::clearGraphicsInQueue() {
 	_queueItems.clear();
-}
-
-void Screen::graphicsSelectionSort() {
-	uint32 maxIdx;
-
-	if (!_queueItems.size())
-		return;
-
-	for (uint32 i = 0; i < _queueItems.size() - 1; i++) {
-		maxIdx = i;
-
-		for (uint32 j = i + 1; j < _queueItems.size(); j++)
-			if (_queueItems[j].priority > _queueItems[maxIdx].priority)
-				maxIdx = j;
-
-		if (i != maxIdx)
-			swapGraphicItem(i, maxIdx);
-	}
-}
-
-void Screen::swapGraphicItem(int32 item1, int32 item2) {
-	GraphicQueueItem temp;
-	temp = _queueItems[item1];
-	_queueItems[item1] = _queueItems[item2];
-	_queueItems[item2] = temp;
 }
 
 void Screen::deleteGraphicFromQueue(ResourceId resourceId) {
