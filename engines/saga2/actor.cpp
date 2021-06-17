@@ -1905,7 +1905,7 @@ void Actor::getColorTranslation(ColorTable map) {
 	if (appearance
 	        &&  appearance->schemeList) {
 		buildColorTable(map,
-		                (appearance->schemeList)[colorScheme].bank,
+		                appearance->schemeList->_schemes[colorScheme]->bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }
