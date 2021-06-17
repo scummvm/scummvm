@@ -252,17 +252,11 @@ int LingoCompiler::codeFunc(Common::String *s, int numpar) {
 	return ret;
 }
 
-VarType LingoCompiler::globalCheck() {
-	// If in a definition, assume variables are local unless
-	// they were declared global with `global varname`
-	if (_indef) {
-		return kVarLocal;
-	}
-	return kVarGlobal;
-}
-
 void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) {
 	if (!_methodVars->contains(name)) {
+		if (_indef && type == kVarGeneric) {
+			type = kVarLocal;
+		}
 		(*_methodVars)[name] = type;
 		if (type == kVarProperty || type == kVarInstance) {
 			_assemblyContext->_properties[name] = Datum();
@@ -494,7 +488,7 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	LoopNode *prevLoop = _currentLoop;
 	_currentLoop = node;
 
-	registerMethodVar(*node->var, globalCheck());
+	registerMethodVar(*node->var);
 
 	compile(node->start);
 	code1(LC::c_varpush);

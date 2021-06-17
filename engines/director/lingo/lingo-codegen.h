@@ -48,8 +48,7 @@ public:
 	int codeInt(int val);
 	int codeString(const char *s);
 	void registerFactory(Common::String &s);
-	VarType globalCheck();
-	void registerMethodVar(const Common::String &name, VarType type);
+	void registerMethodVar(const Common::String &name, VarType type = kVarGeneric);
 	void updateLoopJumps(uint nextTargetPos, uint exitTargetPos);
 
 	LingoArchive *_assemblyArchive;

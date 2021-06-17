@@ -107,7 +107,7 @@ struct Datum {	/* interpreter stack type */
 	union {
 		int	i;				/* INT, ARGC, ARGCNORET */
 		double f;			/* FLOAT */
-		Common::String *s;	/* STRING, VAR, OBJECT */
+		Common::String *s;	/* STRING, VARREF, OBJECT */
 		DatumArray *farr;	/* ARRAY, POINT, RECT */
 		PropertyArray *parr; /* PARRAY */
 		AbstractObject *obj; /* OBJECT */
@@ -134,6 +134,10 @@ struct Datum {	/* interpreter stack type */
 	int asInt() const;
 	Common::String asString(bool printonly = false) const;
 	int asCastId() const;
+
+	bool isRef() const;
+	bool isVarRef() const;
+	bool isCastRef() const;
 
 	const char *type2str(bool isk = false) const;
 
@@ -273,8 +277,8 @@ public:
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext();
 	void cleanLocalVars();
-	void varAssign(const Datum &var, Datum &value, bool global = false, DatumHash *localvars = nullptr);
-	Datum varFetch(const Datum &var, bool global = false, DatumHash *localvars = nullptr, bool silent = false);
+	void varAssign(const Datum &var, Datum &value, DatumHash *localvars = nullptr);
+	Datum varFetch(const Datum &var, DatumHash *localvars = nullptr, bool silent = false);
 	Datum findVarV4(int varType, const Datum &id);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);

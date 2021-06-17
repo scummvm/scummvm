@@ -506,15 +506,19 @@ void LB::b_delete(int nargs) {
 
 	Datum field;
 	int start, end;
-	if (d.type == FIELDREF || d.type == VAR) {
+	if (d.type == CHUNKREF) {
+		if (d.u.cref->source.isVarRef()) {
+			field = d.u.cref->source;
+			start = d.u.cref->start;
+			end = d.u.cref->end;
+		} else {
+			warning("b_delete: bad chunk ref field type: %s", d.type2str());
+			return;
+		}
+	} else if (d.isRef()) {
 		field = d;
 		start = 0;
 		end = -1;
-	} else if (d.type == CHUNKREF) {
-		TYPECHECK2(d.u.cref->source, FIELDREF, VAR);
-		field = d.u.cref->source;
-		start = d.u.cref->start;
-		end = d.u.cref->end;
 	} else {
 		warning("b_delete: bad field type: %s", d.type2str());
 		return;
@@ -1511,8 +1515,8 @@ void LB::b_startTimer(int nargs) {
 ///////////////////
 void LB::b_factory(int nargs) {
 	Datum factoryName = g_lingo->pop();
-	factoryName.type = VAR;
-	Datum o = g_lingo->varFetch(factoryName, true);
+	factoryName.type = GLOBALREF;
+	Datum o = g_lingo->varFetch(factoryName);
 	if (o.type == OBJECT && (o.u.obj->getObjType() & (kFactoryObj | kXObj))
 			&& o.u.obj->getName().equalsIgnoreCase(*factoryName.u.s) && o.u.obj->getInheritanceLevel() == 1) {
 		g_lingo->push(o);
