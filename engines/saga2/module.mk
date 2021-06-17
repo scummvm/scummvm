@@ -95,7 +95,6 @@ MODULE_OBJS := \
 	videobox.o \
 	vpal.o \
 	vwdraw.o \
-	vwpage.o \
 	weapons.o
 
 MODULE_DIRS += \
