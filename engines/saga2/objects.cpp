@@ -66,7 +66,7 @@ const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
    Locals
  * ===================================================================== */
 
-char                **nameList;                // handle to list of names
+Common::Array<char *> nameList;                // handle to list of names
 uint32              nameListCount;
 
 ProtoObj            *objectProtos = nullptr;   // object prototypes
@@ -2513,28 +2513,27 @@ static void readActorPrototype(hResContext *con, ResourceActorPrototype &act) {
 void initPrototypes(void) {
 	const int resourceObjProtoSize = 52;
 	const int resourceActProtoSize = 86;
+	uint count = 0;
 	Common::SeekableReadStream *stream;
+	Common::String s;
 
 	debugC(1, kDebugLoading, "Initializing Prototypes");
 
-	nameListCount = listRes->size(nameListID) / sizeof(uint16);
-	nameList = (char **)malloc(nameListCount * sizeof(char *));
 	stream = loadResourceToStream(listRes, nameListID, "name list");
-	for (uint i = 0; i < nameListCount; ++i) {
-		stream->seek(2 * i);
-		uint16 offset = stream->readUint16LE();
-
-		if (offset > stream->size())
-			break;
+	for (uint16 offset = 0; offset < stream->size(); ++count) {
+		stream->seek(2 * count);
+		offset = stream->readUint16LE();
 
 		stream->seek(offset);
-		Common::String s = stream->readString();
+		s = stream->readString();
 		debugC(5, kDebugLoading, "Read string (size %d): %s", s.size(), s.c_str());
 
-		nameList[i] = new char[s.size() + 1];
-		Common::strlcpy(nameList[i], s.c_str(), s.size());
-		nameList[i][s.size()] = '\0';
+		char *name = new char[s.size() + 1];
+		Common::strlcpy(name, s.c_str(), s.size());
+		name[s.size()] = '\0';
+		nameList.push_back(name);
 	}
+	nameListCount = count;
 
 	//  Load the Object prototype table
 
@@ -2712,14 +2711,11 @@ void initPrototypes(void) {
 //	Cleanup the prototype lists
 
 void cleanupPrototypes(void) {
-	if (nameList) {
-		for (uint i = 0; i < nameListCount; ++i) {
-			if (nameList[i])
-				delete nameList[i];
+	for (uint i = 0; i < nameListCount; ++i) {
+		if (nameList[i])
+			delete[] nameList[i];
 
-			free(nameList);
-			nameList = nullptr;
-		}
+		nameList.clear();
 	}
 
 	if (actorProtos != nullptr) {
