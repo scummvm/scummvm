@@ -60,39 +60,6 @@ inline void TileID2Bank(TileID t, int16 &bank, int16 &num) {
 }
 
 /* ===================================================================== *
-   Tile Size constants
- * ===================================================================== */
-
-//  Metatile metrics
-const int           metaTileWidth = kTileWidth * platformWidth,
-                    metaTileHeight = kTileHeight * platformWidth,
-                    metaDX = metaTileWidth / 2,
-                    metaDY = metaTileHeight / 2;
-
-const int           subTileSize = 4,
-                    subTileMask = subTileSize - 1,
-                    subTileShift = 2,
-                    tileSubSize = 4,
-                    tileSubMask = tileSubSize - 1,
-                    tileSubShift = 2;
-
-//  Constants to convert an X,Y into subtile coordinates
-
-const int           subTileDX = (kTileDX / 4),
-                    subTileDY = (kTileDY / 4),
-                    subTileDXShift = (kTileDXShift - 2),
-                    subTileDYShift = (kTileDYShift - 2);
-
-const int           subTileMaskUShift = 4,
-                    subTileMaskVShift = 1;
-
-//  Maximum height that a character can climb w/o steps or ladders
-const int           maxStepHeight   = 16,   // highest climbable step
-                    maxPickHeight   = 64,   // highest pickable step
-                    maxSmoothStep   = 8,    // highest smoothly climbable
-                    maxJumpStep     = 64;   // highest jump character likes
-
-/* ===================================================================== *
    Inline functions
  * ===================================================================== */
 
