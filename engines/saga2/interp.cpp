@@ -255,9 +255,11 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		*pcPtr = pc;
-		debugC(3, kDebugScripts, "byteAddress: this[%d]", offset);
-		if (arg[0] == dataSegIndex)
+		if (arg[0] == dataSegIndex) {
+			debugC(3, kDebugScripts, "byteAddress: thisD[%d] = %d", offset, dataSegment[arg[1] + offset]);
 			return &dataSegment[arg[1] + offset];
+		}
+		debugC(3, kDebugScripts, "byteAddress: thisS[%d] = %d", offset, *segmentArrayAddress(arg[0], arg[1]) + offset);
 		return segmentArrayAddress(arg[0], arg[1]) + offset;
 
 	case addr_deref:
