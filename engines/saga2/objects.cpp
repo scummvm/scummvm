@@ -1415,8 +1415,8 @@ void GameObject::updateState(void) {
 	if (!(location.z >= 0 || prototype->height > 8 - location.z))
 		drown(this);
 
-	TilePoint subTile((location.u >> subTileShift) & subTileMask,
-	                  (location.v >> subTileShift) & subTileMask,
+	TilePoint subTile((location.u >> kSubTileShift) & kSubTileMask,
+	                  (location.v >> kSubTileShift) & kSubTileMask,
 	                  0);
 
 
