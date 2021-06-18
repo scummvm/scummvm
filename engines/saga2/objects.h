@@ -120,7 +120,7 @@ struct ObjectData {
 	uint8           reserved[2];
 
 	GameObject *obj;
-};
+} PACKED_STRUCT;
 
 #include "common/pack-end.h"
 

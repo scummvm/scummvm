@@ -86,7 +86,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 
 	switch (segment) {
 	case builtinTypeObject:
-		return (uint8 *)GameObject::objectAddress(index);
+		return (uint8 *)(&GameObject::objectAddress(index)->_data);
 
 	case builtinTypeTAG:
 		return (uint8 *)(&ActiveItem::activeItemAddress(index)->_data);
