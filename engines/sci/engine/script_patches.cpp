@@ -19975,6 +19975,147 @@ static const uint16 sq1vgaPatchRussianSoundName[] = {
 	PATCH_END
 };
 
+// The Spanish version of SQ1VGA introduces the same script bug forty times.
+//  Clicking Look on things throughout the game displays their message followed
+//  by the wrong message or a red X cursor.
+//
+// Originally, SQ1VGA stored most Look messages in the lookStr property of each
+//  Feature. These messages are automatically shown by Feature:doVerb and don't
+//  require explicit handling in individual doVerb methods, unlike other verbs.
+//  In the Spanish version almost every Look message was removed from lookStr.
+//  Explicit checks were added to the doVerbs to test for Look and print the
+//  message. Forty of these were done incorrectly. Instead of integrating a Look
+//  handler into the existing code, "if Look then Print" was added to the start
+//  of the doVerb method without returning, allowing the rest of the existing
+//  code to run as if nothing had happened. This results in default handlers
+//  being called after the Look message and displaying a second message that
+//  doesn't apply, or some other unexpected behavior.
+//
+// We fix this by adding the missing return statement to every broken doVerb.
+//  This is a messy problem because some of these were written with switch
+//  statements, others with if, and different instruction sizes necessitate
+//  different versions of each signature and patch. Still, we can narrow this
+//  down to five patches: three for switch statements and two for if statements.
+//  Out of caution, we only enable these patches on the Spanish version since
+//  the signatures are somewhat generic and touch a lot of scripts.
+//
+// Applies to: Spanish PC only
+// Responsible methods: Far too many doVerb methods to list
+static const uint16 sq1vgaSignatureSpanishMessages1[] = {
+	0x8f, 0x01,                         // lsp 01
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0008),           // bnt 0008
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+3),
+	0x47, SIG_MAGICDWORD, 0xff, 0x00, 0x04, // calle proc255_0 04 [ Print ]
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchSpanishMessages1[] = {
+	0x8e, PATCH_UINT16(0x0001),         // lsp 0001
+	PATCH_ADDTOOFFSET(+3),
+	0x30, PATCH_UINT16(0x0009),         // bnt 0009
+	PATCH_ADDTOOFFSET(+8),
+	0x48,                               // ret [ return after Print ]
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureSpanishMessages2[] = {
+	0x8f, 0x01,                         // lsp 01
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0009),           // bnt 0009
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+4),
+	0x47, SIG_MAGICDWORD, 0xff, 0x00, 0x04, // calle proc255_0 04 [ Print ]
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchSpanishMessages2[] = {
+	0x8e, PATCH_UINT16(0x0001),         // lsp 0001
+	PATCH_ADDTOOFFSET(+3),
+	0x30, PATCH_UINT16(0x000a),         // bnt 000a
+	PATCH_ADDTOOFFSET(+9),
+	0x48,                               // ret [ return after Print ]
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureSpanishMessages3[] = {
+	0x8f, 0x01,                         // lsp 01
+	0x3c,                               // dup
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x000a),           // bnt 000a
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+5),
+	0x47, SIG_MAGICDWORD, 0xff, 0x00, 0x04, // calle proc255_0 04 [ Print ]
+	0x3a,                               // toss
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchSpanishMessages3[] = {
+	0x8e, PATCH_UINT16(0x0001),         // lsp 0001
+	PATCH_ADDTOOFFSET(+3),
+	0x30, PATCH_UINT16(0x000b),         // bnt 000b
+	PATCH_ADDTOOFFSET(+10),
+	0x48,                               // ret [ return after Print ]
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureSpanishMessages4[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x01,                         // lsp 01
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0008),           // bnt 0008
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+3),
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ Print ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchSpanishMessages4[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x31, 0x09,                         // bnt 09
+	0x7a,                               // push2
+	PATCH_GETORIGINALBYTE(+9),
+	PATCH_GETORIGINALBYTE(+10),
+	PATCH_GETORIGINALBYTE(+11),
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ Print ]
+	0x48,                               // ret [ return after Print ]
+	PATCH_END
+};
+
+static const uint16 sq1vgaSignatureSpanishMessages5[] = {
+	SIG_MAGICDWORD,
+	0x8f, 0x01,                         // lsp 01
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0009),           // bnt 0009
+	0x7a,                               // push2
+	SIG_ADDTOOFFSET(+4),
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ Print ]
+	SIG_END
+};
+
+static const uint16 sq1vgaPatchSpanishMessages5[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x31, 0x0a,                         // bnt 0a
+	0x7a,                               // push2
+	PATCH_GETORIGINALBYTE(+9),
+	PATCH_GETORIGINALBYTE(+10),
+	PATCH_GETORIGINALBYTE(+11),
+	PATCH_GETORIGINALBYTE(+12),
+	0x47, 0xff, 0x00, 0x04,             // calle proc255_0 04 [ Print ]
+	0x48,                               // ret [ return after Print ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    28, "orat sounds",                                 1, sq1vgaSignatureOratSounds,                  sq1vgaPatchOratSounds },
@@ -19987,7 +20128,7 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,    46, "room 46 verbs",                               1, sq1vgaSignatureRoom46Verbs2,                sq1vgaPatchRoom46Verbs2 },
 	{  true,    46, "robot box approach verbs",                    1, sq1vgaSignatureRobotBoxApproachVerbs,       sq1vgaPatchRobotBoxApproachVerbs },
 	{  true,    58, "Sarien armory droid zapping ego first time",  1, sq1vgaSignatureEgoShowsCard,                sq1vgaPatchEgoShowsCard },
-	{ false,    64, "room 64 verbs",                               7, sq1vgaSignatureRoom64Verbs,                 sq1vgaPatchRoom64Verbs },
+	{  true,    64, "room 64 verbs",                               7, sq1vgaSignatureRoom64Verbs,                 sq1vgaPatchRoom64Verbs },
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages1,            sq1vgaPatchDeltaurMessages },
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages2,            sq1vgaPatchDeltaurMessages },
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages3,            sq1vgaPatchDeltaurMessages },
@@ -19995,6 +20136,20 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
 	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
+	{ false,     3, "spanish messages",                            7, sq1vgaSignatureSpanishMessages2,            sq1vgaPatchSpanishMessages2 },
+	{ false,    13, "spanish messages",                            1, sq1vgaSignatureSpanishMessages1,            sq1vgaPatchSpanishMessages1 },
+	{ false,    13, "spanish messages",                            5, sq1vgaSignatureSpanishMessages2,            sq1vgaPatchSpanishMessages2 },
+	{ false,    37, "spanish messages",                            2, sq1vgaSignatureSpanishMessages2,            sq1vgaPatchSpanishMessages2 },
+	{ false,    40, "spanish messages",                            1, sq1vgaSignatureSpanishMessages5,            sq1vgaPatchSpanishMessages5 },
+	{ false,    41, "spanish messages",                            1, sq1vgaSignatureSpanishMessages2,            sq1vgaPatchSpanishMessages2 },
+	{ false,    46, "spanish messages",                            1, sq1vgaSignatureSpanishMessages5,            sq1vgaPatchSpanishMessages5 },
+	{ false,    58, "spanish messages",                            1, sq1vgaSignatureSpanishMessages4,            sq1vgaPatchSpanishMessages4 },
+	{ false,    60, "spanish messages",                            3, sq1vgaSignatureSpanishMessages5,            sq1vgaPatchSpanishMessages5 },
+	{ false,    64, "spanish messages",                            2, sq1vgaSignatureSpanishMessages4,            sq1vgaPatchSpanishMessages4 },
+	{ false,    64, "spanish messages",                            6, sq1vgaSignatureSpanishMessages5,            sq1vgaPatchSpanishMessages5 },
+	{ false,   702, "spanish messages",                            3, sq1vgaSignatureSpanishMessages3,            sq1vgaPatchSpanishMessages3 },
+	{ false,   704, "spanish messages",                            1, sq1vgaSignatureSpanishMessages2,            sq1vgaPatchSpanishMessages2 },
+	{ false,   704, "spanish messages",                            6, sq1vgaSignatureSpanishMessages3,            sq1vgaPatchSpanishMessages3 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -21898,8 +22053,8 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				}
 				break;
 			case GID_SQ1:
-				if (g_sci->getLanguage() != Common::ES_ESP) {
-					enablePatch(signatureTable, "room 64 verbs");
+				if (g_sci->getLanguage() == Common::ES_ESP) {
+					enablePatch(signatureTable, "spanish messages");
 				}
 				break;
 			case GID_SQ3:
