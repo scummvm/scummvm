@@ -167,11 +167,13 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> stmt stmtoneliner
 %type<node> proc asgn definevars
 %type<node> ifstmt ifelsestmt loop
-%type<nodelist> stmtlist nonemptystmtlist
+%type<nodelist> cmdargs stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
 // EXPRESSION
-%type<node> simpleexprnoparens simpleexpr expr
+%type<node> simpleexpr_noparens_nounarymath simpleexpr simpleexpr_noparens simpleexpr_nounarymath
+%type<node> parens unarymath
+%type<node> expr expr_nounarymath
 %type<node> var varorchunk varorthe
 %type<node> list proppair
 %type<nodelist> proplist exprlist nonemptyexprlist
@@ -366,13 +368,43 @@ stmtoneliner: proc
 	| definevars
 	;
 
-proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
-	| ID exprlist[args] '\n'			{ $$ = new CmdNode($ID, $args); }
-	| tPUT '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode(new Common::String("put"), $args); }
-	| tPUT exprlist[args] '\n'			{ $$ = new CmdNode(new Common::String("put"), $args); }
+proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
+	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
+	;
+
+cmdargs: /* empty */					{
+		// This matches `cmd`
+		$$ = new NodeList; }
+	| expr								{
+		// This matches `cmd arg` and `cmd(arg)`
+		NodeList *args = new NodeList;
+		args->push_back($expr);
+		$$ = args; }
+	| expr ',' nonemptyexprlist[args]	{
+		// This matches `cmd args, ...)
+		$args->insert_at(0, $expr);
+		$$ = $args; }
+	| expr expr_nounarymath				{
+		// This matches `cmd arg arg`
+		NodeList *args = new NodeList;
+		args->push_back($expr);
+		args->push_back($expr_nounarymath);
+		$$ = args; }
+	| expr expr_nounarymath ',' nonemptyexprlist[args] {
+		// This matches `cmd arg arg, ...`
+		$args->insert_at(0, $expr_nounarymath);
+		$args->insert_at(0, $expr);
+		$$ = $args; }
+	| '(' ')'							{
+		// This matches `cmd()`
+		$$ = new NodeList; }
+	| '(' expr ',' nonemptyexprlist[args] ')' {
+		// This matches `cmd(args, ...)`
+		$args->insert_at(0, $expr);
+		$$ = $args; }
 	;
 
 asgn: tPUT expr tINTO varorchunk '\n'	{ $$ = new PutIntoNode($expr, $varorchunk); }
@@ -446,12 +478,11 @@ stmtlistline: '\n'					{ $$ = nullptr; }
 
 // EXPRESSION
 
-simpleexprnoparens: tINT			{ $$ = new IntNode($tINT); }
+simpleexpr_noparens_nounarymath:
+	  tINT							{ $$ = new IntNode($tINT); }
 	| tFLOAT						{ $$ = new FloatNode($tFLOAT); }
 	| tSYMBOL						{ $$ = new SymbolNode($tSYMBOL); }	// D3
 	| tSTRING						{ $$ = new StringNode($tSTRING); }
-	| '+' simpleexpr[arg]  %prec tUNARY		{ $$ = $arg; }
-	| '-' simpleexpr[arg]  %prec tUNARY		{ $$ = new UnaryOpNode(LC::c_negate, $arg); }
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
 	| var
@@ -466,10 +497,6 @@ varorchunk: var
 
 varorthe: var
 	// TODO: the
-	;
-
-simpleexpr: simpleexprnoparens
-	| '(' expr ')'				{ $$ = $expr; }
 	;
 
 list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
@@ -491,7 +518,27 @@ proppair: tSYMBOL ':' expr		{ $$ = new PropPairNode(new SymbolNode($tSYMBOL), $e
 	| tSTRING ':' expr 			{ $$ = new PropPairNode(new StringNode($tSTRING), $expr); }
 	;
 
-expr: simpleexpr				{ $$ = $simpleexpr; }
+parens:	'(' expr ')'				{ $$ = $expr; } ;
+
+unarymath: '+' simpleexpr[arg]  %prec tUNARY	{ $$ = $arg; }
+	| '-' simpleexpr[arg]  %prec tUNARY			{ $$ = new UnaryOpNode(LC::c_negate, $arg); }
+	;
+
+simpleexpr: simpleexpr_noparens_nounarymath
+	| parens
+	| unarymath
+	;
+
+simpleexpr_noparens: simpleexpr_noparens_nounarymath
+	| unarymath
+	;
+
+simpleexpr_nounarymath: simpleexpr_noparens_nounarymath
+	| parens
+	;
+
+// REMEMBER TO SYNC THIS WITH expr_nounarymath!
+expr: simpleexpr
 	| expr[a] '+' expr[b]		{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
 	| expr[a] '-' expr[b]		{ $$ = new BinaryOpNode(LC::c_sub, $a, $b); }
 	| expr[a] '*' expr[b]		{ $$ = new BinaryOpNode(LC::c_mul, $a, $b); }
@@ -509,6 +556,30 @@ expr: simpleexpr				{ $$ = $simpleexpr; }
 	| expr[a] tCONCAT expr[b]	{ $$ = new BinaryOpNode(LC::c_concat, $a, $b); }
 	| expr[a] tCONTAINS expr[b]	{ $$ = new BinaryOpNode(LC::c_contains, $a, $b); }
 	| expr[a] tSTARTS expr[b]	{ $$ = new BinaryOpNode(LC::c_starts, $a, $b); }
+	;
+
+// This is the same as expr except it can't start with a unary math operator.
+// It's ugly but unfortunately necessary to allow two expressions in a row with no delimeter.
+// Without this, `cmd 1 + 1` could be interpreted as either `cmd(1 + 1)` or `cmd(1, +1)`.
+// We only want to allow the first interpretation, so we must exclude unary math from the second expression.
+expr_nounarymath: simpleexpr_nounarymath
+	| expr_nounarymath[a] '+' expr[b]		{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
+	| expr_nounarymath[a] '-' expr[b]		{ $$ = new BinaryOpNode(LC::c_sub, $a, $b); }
+	| expr_nounarymath[a] '*' expr[b]		{ $$ = new BinaryOpNode(LC::c_mul, $a, $b); }
+	| expr_nounarymath[a] '/' expr[b]		{ $$ = new BinaryOpNode(LC::c_div, $a, $b); }
+	| expr_nounarymath[a] tMOD expr[b]		{ $$ = new BinaryOpNode(LC::c_mod, $a, $b); }
+	| expr_nounarymath[a] '>' expr[b]		{ $$ = new BinaryOpNode(LC::c_gt, $a, $b); }
+	| expr_nounarymath[a] '<' expr[b]		{ $$ = new BinaryOpNode(LC::c_lt, $a, $b); }
+	| expr_nounarymath[a] tEQ expr[b]		{ $$ = new BinaryOpNode(LC::c_eq, $a, $b); }
+	| expr_nounarymath[a] tNEQ expr[b]		{ $$ = new BinaryOpNode(LC::c_neq, $a, $b); }
+	| expr_nounarymath[a] tGE expr[b]		{ $$ = new BinaryOpNode(LC::c_ge, $a, $b); }
+	| expr_nounarymath[a] tLE expr[b]		{ $$ = new BinaryOpNode(LC::c_le, $a, $b); }
+	| expr_nounarymath[a] tAND expr[b]		{ $$ = new BinaryOpNode(LC::c_and, $a, $b); }
+	| expr_nounarymath[a] tOR expr[b]		{ $$ = new BinaryOpNode(LC::c_or, $a, $b); }
+	| expr_nounarymath[a] '&' expr[b]		{ $$ = new BinaryOpNode(LC::c_ampersand, $a, $b); }
+	| expr_nounarymath[a] tCONCAT expr[b]	{ $$ = new BinaryOpNode(LC::c_concat, $a, $b); }
+	| expr_nounarymath[a] tCONTAINS expr[b]	{ $$ = new BinaryOpNode(LC::c_contains, $a, $b); }
+	| expr_nounarymath[a] tSTARTS expr[b]	{ $$ = new BinaryOpNode(LC::c_starts, $a, $b); }
 	;
 
 exprlist: /* empty */						{ $$ = new NodeList; }
