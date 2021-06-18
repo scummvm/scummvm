@@ -339,20 +339,13 @@ extern byte **stateArray;
 
 class ActiveItemList;
 
-class ActiveItem {
-public:
-	ActiveItem      *nextHash;              // next item in hash chain
-
-//	char         name[32];             // name of this group
-//	uint16           flags;                  // various flags
-//	TileGroupID      itemID;                 // unique # of this item
-
-	uint16          scriptClassID;          // associated script object
-	uint16          associationOffset;      // offset into association table
-	uint8           numAssociations;        // number of associated items
-	uint8           itemType;               // item type code.
-	int             _index;
-	ActiveItemList *_parent;
+#include "common/pack-start.h"
+struct ActiveItemData {
+	uint32 nextHashDummy;	// next item in hash chain
+	uint16 scriptClassID;          // associated script object
+	uint16 associationOffset;      // offset into association table
+	uint8 numAssociations;        // number of associated items
+	uint8 itemType;               // item type code.
 
 	union {
 		struct {
@@ -378,6 +371,15 @@ public:
 			        worldNum;               // Add 0xf000 to get world Object ID
 		} instance;
 	};
+};
+
+#include "common/pack-end.h"
+class ActiveItem {
+public:
+	ActiveItem *_nextHash;		// next item in hash chain
+	int _index;
+	ActiveItemList *_parent;
+	ActiveItemData _data;
 
 	enum {
 		activeItemLocked    = (1 << 8),     // The door is locked
@@ -401,9 +403,8 @@ public:
 
 	//  Return a pointer to this TAI's group
 	ActiveItem *getGroup(void) {
-		assert(itemType == activeTypeInstance);
-		return  activeItemAddress(
-		            ActiveItemID(getMapNum(), instance.groupID));
+		assert(_data.itemType == activeTypeInstance);
+		return  activeItemAddress(ActiveItemID(getMapNum(), _data.instance.groupID));
 	}
 
 	enum BuiltInBehaviorType {
@@ -415,38 +416,42 @@ public:
 
 	//  Return the state number of this active item instance
 	uint8 getInstanceState(int16 mapNum) {
-		return stateArray[mapNum][instance.stateIndex];
+		return stateArray[mapNum][_data.instance.stateIndex];
 	}
 
 	//  Set the state number of this active item instance
 	void setInstanceState(int16 mapNum, uint8 state) {
-		stateArray[mapNum][instance.stateIndex] = state;
+		stateArray[mapNum][_data.instance.stateIndex] = state;
 	}
 
 	uint8 builtInBehavior(void) {
-		return (uint8)(instance.scriptFlags >> 13);
+		return (uint8)(_data.instance.scriptFlags >> 13);
 	}
 
 	//  Access to the locked bit
 	bool isLocked(void) {
-		return (bool)(instance.scriptFlags & activeItemLocked);
+		return (bool)(_data.instance.scriptFlags & activeItemLocked);
 	}
 	void setLocked(bool val) {
-		if (val)   instance.scriptFlags |= activeItemLocked;
-		else        instance.scriptFlags &= ~activeItemLocked;
+		if (val)
+			_data.instance.scriptFlags |= activeItemLocked;
+		else
+			_data.instance.scriptFlags &= ~activeItemLocked;
 	}
 
 	//  Access to the exclusion semaphore
 	bool isExclusive(void) {
-		return (bool)(instance.scriptFlags & activeItemExclusive);
+		return (bool)(_data.instance.scriptFlags & activeItemExclusive);
 	}
 	void setExclusive(bool val) {
-		if (val)   instance.scriptFlags |= activeItemExclusive;
-		else        instance.scriptFlags &= ~activeItemExclusive;
+		if (val)
+			_data.instance.scriptFlags |= activeItemExclusive;
+		else
+			_data.instance.scriptFlags &= ~activeItemExclusive;
 	}
 
 	uint8 lockType(void) {
-		return (uint8)instance.scriptFlags;
+		return (uint8)_data.instance.scriptFlags;
 	}
 
 	//  ActiveItem instance methods
@@ -464,10 +469,10 @@ public:
 	bool acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCode);
 
 	bool inRange(ActiveItem *ins, const TilePoint &loc, int16 range) {
-		return      loc.u >= ins->instance.u - range
-		            &&  loc.v >= ins->instance.v - range
-		            &&  loc.u <  ins->instance.u + group.uSize + range
-		            &&  loc.v <  ins->instance.v + group.vSize + range;
+		return      loc.u >= ins->_data.instance.u - range
+		            &&  loc.v >= ins->_data.instance.v - range
+		            &&  loc.u <  ins->_data.instance.u + _data.group.uSize + range
+		            &&  loc.v <  ins->_data.instance.v + _data.group.vSize + range;
 	}
 
 	ObjectID getInstanceContext(void);

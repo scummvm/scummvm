@@ -89,7 +89,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 		return (uint8 *)GameObject::objectAddress(index);
 
 	case builtinTypeTAG:
-		return (uint8 *)ActiveItem::activeItemAddress(index);
+		return (uint8 *)(&ActiveItem::activeItemAddress(index)->_data);
 
 	case builtinAbstract:
 		assert(index > 0);
@@ -138,7 +138,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 	case builtinTypeTAG:
 		aItem = (ActiveItem *)addr;
-		script = aItem->scriptClassID;
+		script = aItem->_data.scriptClassID;
 		*callTab = &tagCFuncs;
 
 		if (script <= 0)
@@ -486,15 +486,12 @@ void print_script_name(uint8 *codePtr, char *descr = NULL) {
 char *objectName(int16 segNum, uint16 segOff) {
 	//static        nameBuf[64];
 
-	uint8       *objAddr;
 	if (segNum >= 0)
 		return "SagaObject";
 
-	objAddr = builtinObjectAddress(segNum, segOff);
-
 	switch (segNum) {
 	case builtinTypeObject:
-		return ((GameObject *)objAddr)->objName();
+		return GameObject::objectAddress(segOff)->objName();
 
 	case builtinTypeTAG:
 		return "Tag";
@@ -526,7 +523,7 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 	debugC(2, kDebugScripts, "]");
 }
 
-#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04x]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
+#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
 
 bool Thread::interpret(void) {
 	uint8               *pc,
@@ -1922,10 +1919,10 @@ scriptResult runTagMethod(
 	ActiveItemPtr   aItem;
 
 	assert(aItem = ActiveItem::activeItemAddress(index));
-	if (!aItem->scriptClassID)
+	if (!aItem->_data.scriptClassID)
 		return scriptResultNoScript;
 
-	return runMethod(aItem->scriptClassID,
+	return runMethod(aItem->_data.scriptClassID,
 	                 builtinTypeTAG,
 	                 index,
 	                 methodNum,

@@ -374,9 +374,9 @@ ObjectID ActiveItem::getInstanceContext(void) {
 //	Return the Location for a TAG
 
 Location ActiveItem::getInstanceLocation(void) {
-	return Location(instance.u  << kTileUVShift,
-	                instance.v  << kTileUVShift,
-	                instance.h  << kTileZShift,
+	return Location(_data.instance.u  << kTileUVShift,
+	                _data.instance.v  << kTileUVShift,
+	                _data.instance.h  << kTileZShift,
 	                getInstanceContext());
 }
 
@@ -414,7 +414,7 @@ bool ActiveItem::use(ObjectID enactor) {
 	ActiveItem  *groupPtr = activeItemAddress(
 	                            ActiveItemID(
 	                                getMapNum(),
-	                                instance.groupID));
+	                                _data.instance.groupID));
 
 	return groupPtr->use(this, enactor);
 }
@@ -427,7 +427,7 @@ bool ActiveItem::trigger(ObjectID enactor, ObjectID objID) {
 	ActiveItem  *groupPtr = activeItemAddress(
 	                            ActiveItemID(
 	                                getMapNum(),
-	                                instance.groupID));
+	                                _data.instance.groupID));
 
 	return groupPtr->trigger(this, enactor, objID);
 }
@@ -440,7 +440,7 @@ bool ActiveItem::release(ObjectID enactor, ObjectID objID) {
 	ActiveItem  *groupPtr = activeItemAddress(
 	                            ActiveItemID(
 	                                getMapNum(),
-	                                instance.groupID));
+	                                _data.instance.groupID));
 
 	return groupPtr->release(this, enactor, objID);
 }
@@ -453,7 +453,7 @@ bool ActiveItem::acceptLockToggle(ObjectID enactor, uint8 keyCode) {
 	ActiveItem  *groupPtr = activeItemAddress(
 	                            ActiveItemID(
 	                                getMapNum(),
-	                                instance.groupID));
+	                                _data.instance.groupID));
 
 	return groupPtr->acceptLockToggle(this, enactor, keyCode);
 }
@@ -466,12 +466,12 @@ bool ActiveItem::inRange(const TilePoint &loc, int16 range) {
 	ActiveItem  *groupPtr = activeItemAddress(
 	                            ActiveItemID(
 	                                getMapNum(),
-	                                instance.groupID));
+	                                _data.instance.groupID));
 
-	return      loc.u >= instance.u - range
-	            &&  loc.v >= instance.v - range
-	            &&  loc.u <  instance.u + groupPtr->group.uSize + range
-	            &&  loc.v <  instance.v + groupPtr->group.vSize + range;
+	return      loc.u >= _data.instance.u - range
+	            &&  loc.v >= _data.instance.v - range
+	            &&  loc.u <  _data.instance.u + groupPtr->_data.group.uSize + range
+	            &&  loc.v <  _data.instance.v + groupPtr->_data.group.vSize + range;
 }
 
 //-----------------------------------------------------------------------
@@ -491,7 +491,7 @@ bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 	uint16      state = ins->getInstanceState(mapNum);
 	scriptCallFrame scf;
 
-	if (ins->scriptClassID != 0) {
+	if (ins->_data.scriptClassID != 0) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.invokedTAI      = ins->thisID();
@@ -500,10 +500,10 @@ bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 		scf.indirectObject  = Nothing;
 
 		//  Fill in other params with data from TAG struct
-		scf.value           = ins->instance.worldNum;
-		scf.coords.u        = ins->instance.targetU;
-		scf.coords.v        = ins->instance.targetV;
-		scf.coords.z        = ins->instance.targetZ;
+		scf.value           = ins->_data.instance.worldNum;
+		scf.coords.u        = ins->_data.instance.targetU;
+		scf.coords.v        = ins->_data.instance.targetV;
+		scf.coords.z        = ins->_data.instance.targetZ;
 
 		if (runTagMethod(
 		            scf.invokedTAI,
@@ -560,7 +560,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	        && (!isActor(obj) || (Actor *)obj != getCenterActor()))
 		return true;
 
-	if (ins->scriptClassID != 0) {
+	if (ins->_data.scriptClassID != 0) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.invokedTAI      = ins->thisID();
@@ -580,12 +580,12 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	//  Mark the object as triggering this TAG
 	obj->setTriggeringTAG(true);
 
-	instanceRegion.min.u = ins->instance.u << kTileUVShift;
-	instanceRegion.min.v = ins->instance.v << kTileUVShift;
+	instanceRegion.min.u = ins->_data.instance.u << kTileUVShift;
+	instanceRegion.min.v = ins->_data.instance.v << kTileUVShift;
 	instanceRegion.max.u =      instanceRegion.min.u
-	                            + (group.uSize << kTileUVShift);
+	                            + (_data.group.uSize << kTileUVShift);
 	instanceRegion.max.v =      instanceRegion.min.v
-	                            + (group.vSize << kTileUVShift);
+	                            + (_data.group.vSize << kTileUVShift);
 
 	RegionalObjectIterator  iter(
 	    world,
@@ -604,7 +604,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 
 //	if ( proto->mass < group.triggerWeight ) return false;
 
-	if (ins->scriptClassID != 0) {
+	if (ins->_data.scriptClassID != 0) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.invokedTAI      = ins->thisID();
@@ -613,10 +613,10 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		scf.indirectObject  = objID;
 
 		//  Fill in other params with data from TAG struct
-		scf.value           = ins->instance.worldNum;
-		scf.coords.u        = ins->instance.targetU;
-		scf.coords.v        = ins->instance.targetV;
-		scf.coords.z        = ins->instance.targetZ;
+		scf.value           = ins->_data.instance.worldNum;
+		scf.coords.u        = ins->_data.instance.targetU;
+		scf.coords.v        = ins->_data.instance.targetV;
+		scf.coords.z        = ins->_data.instance.targetZ;
 
 		if (runTagMethod(
 		            scf.invokedTAI,
@@ -638,12 +638,12 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		if (isActor(obj) && (a = (Actor *)obj) == getCenterActor()) {
 			transportCenterBand(
 			    Location(
-			        (ins->instance.targetU << kTileUVShift)
+			        (ins->_data.instance.targetU << kTileUVShift)
 			        +   kTileUVSize / 2,
-			        (ins->instance.targetV << kTileUVShift)
+			        (ins->_data.instance.targetV << kTileUVShift)
 			        +   kTileUVSize / 2,
-			        (int16)ins->instance.targetZ << 3,
-			        ins->instance.worldNum + WorldBaseID));
+			        (int16)ins->_data.instance.targetZ << 3,
+			        ins->_data.instance.worldNum + WorldBaseID));
 		}
 	}
 	break;
@@ -668,12 +668,12 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 
 	if (obj->isTriggeringTAG()) obj->setTriggeringTAG(false);
 
-	instanceRegion.min.u = ins->instance.u << kTileUVShift;
-	instanceRegion.min.v = ins->instance.v << kTileUVShift;
+	instanceRegion.min.u = ins->_data.instance.u << kTileUVShift;
+	instanceRegion.min.v = ins->_data.instance.v << kTileUVShift;
 	instanceRegion.max.u =      instanceRegion.min.u
-	                            + (group.uSize << kTileUVShift);
+	                            + (_data.group.uSize << kTileUVShift);
 	instanceRegion.max.v =      instanceRegion.min.v
-	                            + (group.vSize << kTileUVShift);
+	                            + (_data.group.vSize << kTileUVShift);
 
 	RegionalObjectIterator  iter(
 	    world,
@@ -690,7 +690,7 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 			return true;
 	}
 
-	if (ins->scriptClassID != 0) {
+	if (ins->_data.scriptClassID != 0) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.invokedTAI      = ins->thisID();
@@ -699,10 +699,10 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		scf.indirectObject  = objID;
 
 		//  Fill in other params with data from TAG struct
-		scf.value           = ins->instance.worldNum;
-		scf.coords.u        = ins->instance.targetU;
-		scf.coords.v        = ins->instance.targetV;
-		scf.coords.z        = ins->instance.targetZ;
+		scf.value           = ins->_data.instance.worldNum;
+		scf.coords.u        = ins->_data.instance.targetU;
+		scf.coords.v        = ins->_data.instance.targetV;
+		scf.coords.z        = ins->_data.instance.targetZ;
 
 		if (runTagMethod(
 		            scf.invokedTAI,
@@ -726,7 +726,7 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 	    kTileUVShift;
 	scriptCallFrame scf;
 
-	if (ins->scriptClassID != 0) {
+	if (ins->_data.scriptClassID != 0) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.invokedTAI      = ins->thisID();
@@ -773,7 +773,7 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 //-----------------------------------------------------------------------
 
 TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
-	assert(TAI->itemType == activeTypeInstance);
+	assert(TAI->_data.itemType == activeTypeInstance);
 
 	TilePoint       objLoc = obj->getLocation(),
 	                TAILoc;
@@ -781,18 +781,18 @@ TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
 	ActiveItem      *TAG = TAI->getGroup();
 
 	//  Compute in points the region of the TAI
-	TAIReg.min.u = TAI->instance.u << kTileUVShift;
-	TAIReg.min.v = TAI->instance.v << kTileUVShift;
+	TAIReg.min.u = TAI->_data.instance.u << kTileUVShift;
+	TAIReg.min.v = TAI->_data.instance.v << kTileUVShift;
 	TAIReg.max.u =      TAIReg.min.u
-	                    + (TAG->group.uSize << kTileUVShift);
+	                    + (TAG->_data.group.uSize << kTileUVShift);
 	TAIReg.max.v =      TAIReg.min.v
-	                    + (TAG->group.vSize << kTileUVShift);
+	                    + (TAG->_data.group.vSize << kTileUVShift);
 	TAIReg.min.z = TAIReg.max.z = 0;
 
 	//  Find the point on the TAI closest to the object
 	TAILoc.u = clamp(TAIReg.min.u - 1, objLoc.u, TAIReg.max.u);
 	TAILoc.v = clamp(TAIReg.min.v - 1, objLoc.v, TAIReg.max.v);
-	TAILoc.z = TAI->instance.h + obj->proto()->height / 2;
+	TAILoc.z = TAI->_data.instance.h + obj->proto()->height / 2;
 
 	return TAILoc;
 }
@@ -867,13 +867,13 @@ void saveActiveItemStates(SaveFileConstructor &saveGame) {
 				ActiveItem      *activeItem = activeItemList->_items[j];
 				uint8           *statePtr;
 
-				if (activeItem->itemType != activeTypeInstance)
+				if (activeItem->_data.itemType != activeTypeInstance)
 					continue;
 
 				//  Get a pointer to the current active item's state
 				//  data in the archive buffer
 				statePtr =
-				    &bufferedStateArray[activeItem->instance.stateIndex];
+				    &bufferedStateArray[activeItem->_data.instance.stateIndex];
 
 				//  Set the high bit of the state value based upon the
 				//  active item's locked state
@@ -936,13 +936,13 @@ void loadActiveItemStates(SaveFileReader &saveGame) {
 				ActiveItem      *activeItem = activeItemList->_items[j];
 				uint8           *statePtr;
 
-				if (activeItem->itemType != activeTypeInstance)
+				if (activeItem->_data.itemType != activeTypeInstance)
 					continue;
 
 				//  Get a pointer to the current active item's state
 				//  data in the archive buffer
 				statePtr =
-				    &bufferedStateArray[activeItem->instance.stateIndex];
+				    &bufferedStateArray[activeItem->_data.instance.stateIndex];
 
 				//  Reset the locked state of the active item based
 				//  upon the high bit of the buffered state value
@@ -1478,22 +1478,23 @@ MetaTileList::~MetaTileList() {
 ActiveItem::ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream) {
 	_parent = parent;
 	_index = ind;
-	nextHash = nullptr;
+	_nextHash = nullptr;
 	stream->readUint32LE();
-	scriptClassID = stream->readUint16LE();
-	associationOffset = stream->readUint16LE();
-	numAssociations = stream->readByte();
-	itemType = stream->readByte();
-	instance.groupID = stream->readUint16LE();
-	instance.u = stream->readSint16LE();
-	instance.v = stream->readSint16LE();
-	instance.v = stream->readSint16LE();
-	instance.stateIndex = stream->readUint16LE();
-	instance.scriptFlags = stream->readUint16LE();
-	instance.targetU = stream->readUint16LE();
-	instance.targetV = stream->readUint16LE();
-	instance.targetZ = stream->readByte();
-	instance.worldNum = stream->readByte();
+	_data.nextHashDummy = 0;
+	_data.scriptClassID = stream->readUint16LE();
+	_data.associationOffset = stream->readUint16LE();
+	_data.numAssociations = stream->readByte();
+	_data.itemType = stream->readByte();
+	_data.instance.groupID = stream->readUint16LE();
+	_data.instance.u = stream->readSint16LE();
+	_data.instance.v = stream->readSint16LE();
+	_data.instance.v = stream->readSint16LE();
+	_data.instance.stateIndex = stream->readUint16LE();
+	_data.instance.scriptFlags = stream->readUint16LE();
+	_data.instance.targetU = stream->readUint16LE();
+	_data.instance.targetV = stream->readUint16LE();
+	_data.instance.targetZ = stream->readByte();
+	_data.instance.worldNum = stream->readByte();
 }
 
 ActiveItemList::ActiveItemList(WorldMapData *parent, int count, Common::SeekableReadStream *stream) {
@@ -1996,9 +1997,9 @@ TileInfo *Platform::fetchTile(
 
 			//  Get the tile to be drawn from the tile group
 			tr = &(mapList[mapNum].activeItemData)[
-			         groupItem->group.grDataOffset
-			         +   state * groupItem->group.animArea
-			         +   relPos.u * groupItem->group.vSize
+			         groupItem->_data.group.grDataOffset
+			         +   state * groupItem->_data.group.animArea
+			         +   relPos.u * groupItem->_data.group.vSize
 			         +   relPos.v];
 
 			h += tr->tileHeight * 8;
@@ -2078,9 +2079,9 @@ TileInfo *Platform::fetchTAGInstance(
 
 			//  Get the tile to be drawn from the tile group
 			tr = &(mapList[mapNum].activeItemData)[
-			         groupItem->group.grDataOffset
-			         +   state * groupItem->group.animArea
-			         +   relPos.u * groupItem->group.vSize
+			         groupItem->_data.group.grDataOffset
+			         +   state * groupItem->_data.group.animArea
+			         +   relPos.u * groupItem->_data.group.vSize
 			         +   relPos.v];
 
 			h += tr->tileHeight * 8;
@@ -2153,9 +2154,9 @@ TileInfo *Platform::fetchTile(
 
 			//  Get the tile to be drawn from the tile group
 			tr = &(mapList[mapNum].activeItemData)[
-			         groupItem->group.grDataOffset
-			         +   state * groupItem->group.animArea
-			         +   relPos.u * groupItem->group.vSize
+			         groupItem->_data.group.grDataOffset
+			         +   state * groupItem->_data.group.animArea
+			         +   relPos.u * groupItem->_data.group.vSize
 			         +   relPos.v];
 
 			h += tr->tileHeight * 8;
@@ -2236,9 +2237,9 @@ TileInfo *Platform::fetchTAGInstance(
 
 			//  Get the tile to be drawn from the tile group
 			tr = &(mapList[mapNum].activeItemData)[
-			         groupItem->group.grDataOffset
-			         +   state * groupItem->group.animArea
-			         +   relPos.u * groupItem->group.vSize
+			         groupItem->_data.group.grDataOffset
+			         +   state * groupItem->_data.group.animArea
+			         +   relPos.u * groupItem->_data.group.vSize
 			         +   relPos.v];
 
 			h += tr->tileHeight * 8;
@@ -2475,9 +2476,9 @@ void WorldMapData::buildInstanceHash(void) {
 
 	for (i = 0, ail = activeItemList->_items; i < activeCount; i++, ail++) {
 		ActiveItem *ai = *ail;
-		if (ai->itemType == activeTypeInstance) {
-			hashVal = (((ai->instance.u + ai->instance.h) << 4)
-			           + ai->instance.v + (ai->instance.groupID << 2))
+		if (ai->_data.itemType == activeTypeInstance) {
+			hashVal = (((ai->_data.instance.u + ai->_data.instance.h) << 4)
+			           + ai->_data.instance.v + (ai->_data.instance.groupID << 2))
 			          % elementsof(instHash);
 
 			itemHash.setVal(hashVal, ai);
