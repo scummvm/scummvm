@@ -246,7 +246,7 @@ class BackWindow : public DecoratedWindow {
 
 public:
 	BackWindow(const Rect16 &, uint16, AppFunc *cmd = NULL);
-	void invalidate(Rect16 &area);
+	void invalidate(Rect16 *area);
 
 	virtual bool isBackdrop(void);
 };

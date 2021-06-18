@@ -184,7 +184,7 @@ int16 openVidBox(char *fileName) {
 
 	quickRestorePalette();
 	// replace the damaged area
-	mainWindow->invalidate(area);
+	mainWindow->invalidate(&area);
 
 	// return the result code
 	return result;

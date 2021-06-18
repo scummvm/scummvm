@@ -160,7 +160,7 @@ void gPanel::makeActive(void) {
 	G_BASE.setActive(this);
 }
 
-void gPanel::invalidate(void) {
+void gPanel::invalidate(Rect16 *) {
 	assert(displayEnabled());
 	window.update(extent);
 }
@@ -273,7 +273,7 @@ void gPanelList::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void gPanelList::invalidate(void) {
+void gPanelList::invalidate(Rect16 *) {
 	gControl        *ctl;
 	Rect16          invArea;
 

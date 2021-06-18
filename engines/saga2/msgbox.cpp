@@ -184,7 +184,7 @@ int16 ErrorWindow::getResult(void) {
 }
 
 ErrorWindow::~ErrorWindow() {
-	mainWindow->invalidate(mbWindowRect);
+	mainWindow->invalidate(&mbWindowRect);
 }
 
 

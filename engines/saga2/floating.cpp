@@ -213,9 +213,9 @@ BackWindow::BackWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 	: DecoratedWindow(r, ident, "", cmd) {
 }
 
-void BackWindow::invalidate(Rect16 &area) {
+void BackWindow::invalidate(Rect16 *area) {
 	if (displayEnabled())
-		window.update(area);
+		window.update(*area);
 }
 
 //  Return true if window floats above animated are

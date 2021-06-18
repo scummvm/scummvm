@@ -242,7 +242,7 @@ void reDrawScreen(void) {
 	if (mainWindow && displayEnabled()) {
 		//updateAllUserControls();
 		drawMainDisplay();
-		mainWindow->invalidate(r);
+		mainWindow->invalidate(&r);
 		delayReDraw = false;
 		if (paletteMayHaveChanged) {
 			paletteMayHaveChanged = false;

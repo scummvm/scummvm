@@ -577,7 +577,7 @@ int16 openAutoMap() {
 	decRes = NULL;
 
 	// clean up the backwindow
-	mainWindow->invalidate(autoMapRect);
+	mainWindow->invalidate(&autoMapRect);
 
 	return rInfo.result;
 }
