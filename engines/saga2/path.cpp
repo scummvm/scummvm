@@ -382,9 +382,9 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							tagV = v - ((tr->flags >> 4) & 0x07);
 
 							subMetaTag.min.u = tagU;
-							subMetaTag.max.u = tagU + groupItem->group.uSize;
+							subMetaTag.max.u = tagU + groupItem->_data.group.uSize;
 							subMetaTag.min.v = tagV;
-							subMetaTag.max.v = tagV + groupItem->group.vSize;
+							subMetaTag.max.v = tagV + groupItem->_data.group.vSize;
 
 							if (subMetaTag.min.u < tileReg.min.u)
 								subMetaTag.min.u = tileReg.min.u;
@@ -407,11 +407,11 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							if (instanceItem) state = instanceItem->getInstanceState(mapNum);
 
 							stateData = &(map->activeItemData)[
-							                groupItem->group.grDataOffset
-							                +   state * groupItem->group.animArea];
+							                groupItem->_data.group.grDataOffset
+							                +   state * groupItem->_data.group.animArea];
 
 							for (tempU = subMetaTag.min.u; tempU < subMetaTag.max.u; tempU++) {
-								TileRef         *rowData = &stateData[(tempU - tagU) * groupItem->group.vSize];
+								TileRef         *rowData = &stateData[(tempU - tagU) * groupItem->_data.group.vSize];
 								PathTilePosInfo *tempArrRow = &array[(tempU + offset.u) * area.v];
 
 								for (tempV = subMetaTag.min.v; tempV < subMetaTag.max.v; tempV++) {

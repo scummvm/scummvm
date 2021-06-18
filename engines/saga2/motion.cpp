@@ -1874,14 +1874,14 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, ActiveItem &target) {
 	if ((mt = mTaskList.newTask(&a)) != NULL) {
 		if (mt->motionType != type) {
 			Location loc;
-			assert(target.itemType == activeTypeInstance);
+			assert(target._data.itemType == activeTypeInstance);
 			mt->motionType = type;
 			mt->spellObj = &spell;
 			mt->targetTAG = &target;
 			loc = Location(
-			          target.instance.u << kTileUVShift,
-			          target.instance.v << kTileUVShift,
-			          target.instance.h,
+			          target._data.instance.u << kTileUVShift,
+			          target._data.instance.v << kTileUVShift,
+			          target._data.instance.h,
 			          a.world()->thisID());
 			mt->targetLoc = loc; //target;
 			mt->flags = reset | TAGTarg;
@@ -3690,7 +3690,7 @@ void MotionTask::castSpellAction(void) {
 		if (actionCounter == 0) {
 			if (spellObj) {
 				if (flags & TAGTarg) {
-					assert(targetTAG->itemType == activeTypeInstance);
+					assert(targetTAG->_data.itemType == activeTypeInstance);
 					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetTAG->thisID());
 				} else if (flags & LocTarg) {
 					spellObj->implementAction(spellObj->getSpellID(), a->thisID(), targetLoc);
@@ -4428,12 +4428,12 @@ void MotionTask::updatePositions(void) {
 				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->o.TAI->instance.u << kTileUVShift;
-				TAIReg.min.v = mt->o.TAI->instance.v << kTileUVShift;
+				TAIReg.min.u = mt->o.TAI->_data.instance.u << kTileUVShift;
+				TAIReg.min.v = mt->o.TAI->_data.instance.v << kTileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
-				                    + (TAG->group.uSize << kTileUVShift);
+				                    + (TAG->_data.group.uSize << kTileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
-				                    + (TAG->group.vSize << kTileUVShift);
+				                    + (TAG->_data.group.vSize << kTileUVShift);
 				TAIReg.min.z = TAIReg.max.z = 0;
 
 				//  Find the point on the TAI closest to the actor
@@ -4488,12 +4488,12 @@ void MotionTask::updatePositions(void) {
 				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->o.TAI->instance.u << kTileUVShift;
-				TAIReg.min.v = mt->o.TAI->instance.v << kTileUVShift;
+				TAIReg.min.u = mt->o.TAI->_data.instance.u << kTileUVShift;
+				TAIReg.min.v = mt->o.TAI->_data.instance.v << kTileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
-				                    + (TAG->group.uSize << kTileUVShift);
+				                    + (TAG->_data.group.uSize << kTileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
-				                    + (TAG->group.vSize << kTileUVShift);
+				                    + (TAG->_data.group.vSize << kTileUVShift);
 				TAIReg.min.z = TAIReg.max.z = 0;
 
 				//  Find the point on the TAI closest to the actor

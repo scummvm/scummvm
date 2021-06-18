@@ -2390,7 +2390,7 @@ int16 scriptTagNumAssoc(int16 *args) {
 	MONOLOG(TAG::NumAssoc);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->numAssociations;
+	return ai->_data.numAssociations;
 }
 
 //-----------------------------------------------------------------------
@@ -2403,11 +2403,11 @@ int16 scriptTagAssoc(int16 *args) {
 	int mapNum       = ai->getMapNum();
 
 	assert(args[0] >= 0);
-	assert(args[0] <  ai->numAssociations);
+	assert(args[0] <  ai->_data.numAssociations);
 	assert(mapNum >= 0);
 	assert(mapNum < 8);
 
-	return (mapList[mapNum].assocList)[ai->associationOffset + args[0]];
+	return (mapList[mapNum].assocList)[ai->_data.associationOffset + args[0]];
 }
 
 //-----------------------------------------------------------------------
@@ -2418,7 +2418,7 @@ int16 scriptTagGetTargetU(int16 *args) {
 	MONOLOG(TAG::GetTargetU);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->instance.targetU;
+	return ai->_data.instance.targetU;
 }
 
 //-----------------------------------------------------------------------
@@ -2429,7 +2429,7 @@ int16 scriptTagGetTargetV(int16 *) {
 	MONOLOG(TAG::GetTargetV);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->instance.targetV;
+	return ai->_data.instance.targetV;
 }
 
 //-----------------------------------------------------------------------
@@ -2440,7 +2440,7 @@ int16 scriptTagGetTargetZ(int16 *) {
 	MONOLOG(TAG::GetTargetZ);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->instance.targetZ;
+	return ai->_data.instance.targetZ;
 }
 
 //-----------------------------------------------------------------------
@@ -2451,7 +2451,7 @@ int16 scriptTagGetTargetW(int16 *) {
 	MONOLOG(TAG::GetTargetW);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
 
-	return ai->instance.worldNum;
+	return ai->_data.instance.worldNum;
 }
 
 //-----------------------------------------------------------------------
@@ -2524,7 +2524,7 @@ int16 scriptTagSetAnimation(int16 *args) {
 #endif
 	//  Assert that the state is valid
 	assert(args[1] >= 0);
-	assert(args[1] < ai->getGroup()->group.numStates);
+	assert(args[1] < ai->getGroup()->_data.group.numStates);
 
 	//  If soundID is not NULL, then play the sound
 	if (soundID) playSoundAt(soundID, ail);

@@ -318,7 +318,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		return implementSpell(enactor, l, spell);
 	}
 	assert(sProto.shouldTarget(spellApplyTAG));
-	assert(target->itemType == activeTypeInstance);
+	assert(target->_data.itemType == activeTypeInstance);
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 
