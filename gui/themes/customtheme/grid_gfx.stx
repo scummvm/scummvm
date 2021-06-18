@@ -31,6 +31,10 @@
 				rgb = '42, 38, 35'
 		/>
 
+		<color name = 'griditem_highlight_color'
+				rgb = '180, 83, 0'
+		/>
+
 		<!-- Buttons/Sliders -->
 		<color name = 'button_idle'
 				rgb = '130, 29, 6'
@@ -1015,6 +1019,25 @@
 					fill = 'background'
 					bg_color = 'thumb_color'
 					/>
+	</drawdata>
+
+	<drawdata id = 'griditem_bg' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					fill = 'background'
+					bg_color = 'dialog_background'
+		/>
+	</drawdata>
+
+	<drawdata id = 'griditem_hover_bg' cache = 'false'>
+		<drawstep	func = 'roundedsq'
+					radius = '5'
+					stroke = '2'
+					fg_color = 'lightgray2'
+					fill = 'background'
+					bg_color = 'dialog_background'
+					shadow = '5'
+		/>
 	</drawdata>
 
 	<!-- Cursor in the text edit widget -->

@@ -120,7 +120,7 @@ public:
 	void reflowLayout() override;
 
 
-	int selectedEntry;
+	GridItemInfo *selectedEntry;
 };
 
 enum {
@@ -153,6 +153,8 @@ public:
 	void updateThumb();
 	void drawWidget() override;
 	void handleMouseWheel(int x, int y, int direction) override;
+	void handleMouseEntered(int button) override;
+	void handleMouseLeft(int button) override;
 	void move(int x, int y);
 
 };

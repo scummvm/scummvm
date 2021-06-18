@@ -30,13 +30,17 @@ namespace GUI {
 
 GridItemWidget::GridItemWidget(GridWidget *boss, int x, int y, int w, int h) :
 ContainerWidget(boss, x, y, w, h) {
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
+	isHighlighted = false;
 }
 GridItemWidget::GridItemWidget(GridWidget *boss) :
 			ContainerWidget(boss, 0, 0, 0, 0) {
+	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_activeEntry = nullptr;
 	_grid = boss;
+	isHighlighted = false;
 }
 
 void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
@@ -78,6 +82,12 @@ void GridItemWidget::update() {
 }
 
 void GridItemWidget::drawWidget() {
+	if (isHighlighted)
+		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 10, _y - 10, _x + _w + 10, _y + _h), 
+										ThemeEngine::WidgetBackground::kGridItemHighlight);
+	else
+		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 20, _y - 10, _x + _w + 20, _y + _h + 10), 
+										ThemeEngine::WidgetBackground::kGridItemBackground);
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + kThumbnailWidth, _y + kThumbnailHeight), 
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
 	g_gui.theme()->drawSurface(Common::Point(_x, _y), 
@@ -100,6 +110,22 @@ void GridItemWidget::drawWidget() {
 
 void GridItemWidget::handleMouseWheel(int x, int y, int direction) {
 	_grid->handleMouseWheel(x, y, direction);
+}
+
+void GridItemWidget::handleMouseEntered(int button) {
+	if (!isHighlighted) {
+		_grid->selectedEntry = _activeEntry;
+		isHighlighted = true;
+		markAsDirty();
+	}
+}
+
+void GridItemWidget::handleMouseLeft(int button) {
+	if (isHighlighted) {
+		_grid->selectedEntry = nullptr;
+		isHighlighted = false;
+		markAsDirty();
+	}
 }
 
 void GridItemWidget::move(int x, int y) {
