@@ -99,10 +99,10 @@ void drawPlatform(
 	int16           length = 1;
 	TilePoint       origin(uOrg, vOrg, 0);
 
-	tilePos.y = screenPos.y - (platformWidth - 1) * kTileHeight;
+	tilePos.y = screenPos.y - (kPlatformWidth - 1) * kTileHeight;
 
-	int16 u = platformWidth - 1;
-	int16 v = platformWidth - 1;
+	int16 u = kPlatformWidth - 1;
+	int16 v = kPlatformWidth - 1;
 
 	debugC(3, kDebugTiles, "drawPlatform: right = %d, bottom = %d, x = %d, x2 = %d, origin = %d,%d, tilePos.y=%d, u,v = %d,%d", right, bottom, x, x2, origin.u, origin.v,
 	       tilePos.y, u, v);

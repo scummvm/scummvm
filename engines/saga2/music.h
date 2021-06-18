@@ -105,7 +105,7 @@ inline TilePoint metaTileOffset(themeFrame tf) {
 }
 
 inline TilePoint coordsInMetaTile(TilePoint tp) {
-	return TilePoint(tp.u % platShift, tp.v % platShift, 0);
+	return TilePoint(tp.u % kPlatShift, tp.v % kPlatShift, 0);
 }
 
 
