@@ -294,7 +294,7 @@ ID: tVARID
 	| tDOWN			{ $$ = new Common::String("down"); }
 	// tENDCLAUSE
 	// tELSE
-	| tEXIT			{ $$ = new Common::String("exit"); }
+	// | tEXIT			{ $$ = new Common::String("exit"); }
 	// tFACTORY
 	| tFIELD		{ $$ = new Common::String("field"); }
 	// | tGLOBAL		{ $$ = new Common::String("global"); }
@@ -372,6 +372,7 @@ proc: ID '(' exprlist[args] ')' '\n'	{ $$ = new CmdNode($ID, $args); }
 	| tPUT exprlist[args] '\n'			{ $$ = new CmdNode(new Common::String("put"), $args); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
+	| tEXIT '\n'						{ $$ = new ExitNode(); }
 	;
 
 asgn: tPUT expr tINTO varorchunk '\n'	{ $$ = new PutIntoNode($expr, $varorchunk); }
