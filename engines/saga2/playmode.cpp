@@ -217,7 +217,7 @@ void PlayModeSetup(void) {
 	// activate the status line
 	// this will get deleted by parent panel
 	StatusLine = new CStatusLine(*playControls,
-	                        statusLineArea,
+	                        Rect16(49, 445, 407, 15),
 	                        "",
 	                        &Script10Font,
 	                        0,

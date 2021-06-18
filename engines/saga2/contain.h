@@ -320,8 +320,6 @@ private:
 	CMassWeightIndicator *massWeightIndicator;
 
 	Rect16          objRect;
-	void            **pieImag;
-	uint16          pieImagNum;
 	bool            deathFlag;
 
 private:
@@ -344,7 +342,6 @@ protected:
 	friend  void setMindContainer(int index, IntangibleContainerWindow &cw);
 private:
 	gMultCompButton *mindSelectorCompButton;
-	void **mindImage;
 
 public:
 
