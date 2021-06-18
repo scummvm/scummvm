@@ -53,7 +53,8 @@ namespace GUI {
 enum {
 	kDoubleClickDelay = 500, // milliseconds
 	kCursorAnimateDelay = 250,
-	kTooltipDelay = 1250
+	kTooltipDelay = 1250,
+	kTooltipSameWidgetDelay = 7000
 };
 
 // Constructor
@@ -440,13 +441,38 @@ void GuiManager::runLoop() {
 				++it;
 		}
 
-		if (_lastMousePosition.time + kTooltipDelay < _system->getMillis(true)) {
+		// Handle tooltip for the widget under the mouse cursor.
+		// 1. Only try to show a tooltip if the mouse cursor was actually moved
+		//    and sufficient time (kTooltipDelay) passed since mouse cursor rested in-place.
+		//    Note, Dialog objects acquiring or losing focus lead to a _lastMousePosition update,
+		//    which may lead to a change of its time and x,y coordinate values.
+		//    See: GuiManager::giveFocusToDialog()
+		//    We avoid updating _lastMousePosition when giving focus to the Tooltip object
+		//    by having the Tooltip objects set a false value for their (inherited) member
+		//    var _mouseUpdatedOnFocus (in Tooltip::setup()).
+		//    However, when the tooltip loses focus, _lastMousePosition will be updated.
+		//    If the mouse had stayed in the same position in the meantime,
+		//    then at the time of the tooltip losing focus
+		//    the _lastMousePosition.time will be new, but the x,y cordinates
+		//    will be the same as the stored ones in _lastTooltipShown.
+		// 2. If the mouse was moved but ended on the same (tooltip enabled) widget,
+		//    then delay showing the tooltip based on the value of kTooltipSameWidgetDelay.
+		uint32 systemMillisNowForTooltipCheck = _system->getMillis(true);
+		if ((_lastTooltipShown.x != _lastMousePosition.x || _lastTooltipShown.y != _lastMousePosition.y)
+		    && _lastMousePosition.time + kTooltipDelay < systemMillisNowForTooltipCheck) {
 			Widget *wdg = activeDialog->findWidget(_lastMousePosition.x, _lastMousePosition.y);
-			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)) {
-				Tooltip *tooltip = new Tooltip();
-				tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
-				tooltip->runModal();
-				delete tooltip;
+			if (wdg && wdg->hasTooltip() && !(wdg->getFlags() & WIDGET_PRESSED)
+			    && (_lastTooltipShown.wdg != wdg || _lastTooltipShown.time + kTooltipSameWidgetDelay < systemMillisNowForTooltipCheck)) {
+				_lastTooltipShown.time = systemMillisNowForTooltipCheck;
+				_lastTooltipShown.wdg  = wdg;
+				_lastTooltipShown.x = _lastMousePosition.x;
+				_lastTooltipShown.y = _lastMousePosition.y;
+				if (wdg->getType() != kEditTextWidget || activeDialog->getFocusWidget() != wdg) {
+					Tooltip *tooltip = new Tooltip();
+					tooltip->setup(activeDialog, wdg, _lastMousePosition.x, _lastMousePosition.y);
+					tooltip->runModal();
+					delete tooltip;
+				}
 			}
 		}
 
@@ -690,7 +716,9 @@ void GuiManager::giveFocusToDialog(Dialog *dialog) {
 	int16 dialogX = _globalMousePosition.x - dialog->_x;
 	int16 dialogY = _globalMousePosition.y - dialog->_y;
 	dialog->receivedFocus(dialogX, dialogY);
-	setLastMousePos(dialogX, dialogY);
+	if (dialog->isMouseUpdatedOnFocus()) {
+		setLastMousePos(dialogX, dialogY);
+	}
 }
 
 void GuiManager::setLastMousePos(int16 x, int16 y) {

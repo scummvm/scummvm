@@ -57,6 +57,11 @@ protected:
 	Widget  *_dragWidget;
 	Widget 	*_tickleWidget;
 	bool	_visible;
+	// _mouseUpdatedOnFocus instructs gui-manager whether
+	// its lastMousePosition (time and x,y coordinates)
+	// should be updated, when this Dialog acquires focus.
+	// Default value is true.
+	bool    _mouseUpdatedOnFocus;
 
 	ThemeEngine::DialogBackground _backgroundType;
 
@@ -70,6 +75,8 @@ public:
 	virtual int runModal();
 
 	bool	isVisible() const override	{ return _visible; }
+
+	bool    isMouseUpdatedOnFocus() const { return _mouseUpdatedOnFocus; }
 
 	void	releaseFocus() override;
 	void	setFocusWidget(Widget *widget);
@@ -111,6 +118,7 @@ protected:
 	Widget *findWidget(const char *name);
 	void removeWidget(Widget *widget) override;
 
+	void setMouseUpdatedOnFocus(bool mouseUpdatedOnFocus) { _mouseUpdatedOnFocus = mouseUpdatedOnFocus; }
 	void setDefaultFocusedWidget();
 
 	void setResult(int result) { _result = result; }
