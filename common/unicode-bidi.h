@@ -29,6 +29,15 @@
 
 namespace Common {
 
+/**
+ * List of paragraph directions
+ */
+enum BiDiParagraph {
+	BIDI_PAR_ON = 0,
+	BIDI_PAR_RTL = 1,
+	BIDI_PAR_LTR = 2
+};
+
 class UnicodeBiDiText {
 private:
 	uint32 *_log_to_vis_index; // from fribidi conversion
@@ -40,7 +49,7 @@ public:
 	Common::U32String visual; // from fribidi conversion, ordered visually
 	uint32 _pbase_dir;
 
-	UnicodeBiDiText(const Common::U32String &str);
+	UnicodeBiDiText(const Common::U32String &str, BiDiParagraph dir = BIDI_PAR_ON);
 	/* This constructor shouldn't be used outside of unicode-bidi.cpp file */
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir);
 	~UnicodeBiDiText();
@@ -56,12 +65,12 @@ public:
 };
 
 /* just call the constructor for convenience */
-UnicodeBiDiText convertBiDiU32String(const U32String &input);
-String convertBiDiString(const String &input, const Common::Language lang);
-String convertBiDiString(const String &input, const Common::CodePage page);
+UnicodeBiDiText convertBiDiU32String(const U32String &input, BiDiParagraph dir = BIDI_PAR_ON);
+String convertBiDiString(const String &input, const Common::Language lang, BiDiParagraph dir = BIDI_PAR_ON);
+String convertBiDiString(const String &input, const Common::CodePage page, BiDiParagraph dir = BIDI_PAR_ON);
 
 // calls convertBiDiString for each line in isolation
-String convertBiDiStringByLines(const String &input, const Common::CodePage page);
+String convertBiDiStringByLines(const String &input, const Common::CodePage page, BiDiParagraph dir = BIDI_PAR_ON);
 
 } // End of namespace Common
 
