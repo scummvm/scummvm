@@ -20,6 +20,13 @@
  *
  */
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-input.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
+
+#include "common/keyboard.h"
+
 #include "asylum/views/menu.h"
 
 #include "asylum/resources/actor.h"
@@ -1438,45 +1445,15 @@ void Menu::updateKeyboardConfig() {
 	getText()->loadFont(kFontYellow);
 	getText()->drawCentered(Common::Point(10, 100), 620, MAKE_RESOURCE(kResourcePackText, 1438));
 
-	char keyCode = 0;
 	int16 keyIndex = 0;
+	Common::Keymap *keymap = g_system->getEventManager()->getKeymapper()->getKeymap("asylum");
 
 	do {
+		Common::Array<Common::HardwareInput> mappings = keymap->getActionMapping(keymap->getActions()[keyIndex]);
+		Common::String keyCode = mappings.size() ? mappings[0].description.encode() : "<Not mapped>";
+
 		getText()->loadFont(kFontYellow);
-		if ((getScene() && getWorld()->chapter == 9) || keyIndex < 3) {
-			getText()->draw(Common::Point(320, (int16)(29 * keyIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
-		} else {
-			getText()->draw(Common::Point(320, (int16)(29 * keyIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1445));
-		}
-
-		switch (keyIndex) {
-		default:
-			break;
-
-		case 0:
-			keyCode = Config.keyShowVersion;
-			break;
-
-		case 1:
-			keyCode = Config.keyQuickLoad;
-			break;
-
-		case 2:
-			keyCode = Config.keyQuickSave;
-			break;
-
-		case 3:
-			keyCode = Config.keySwitchToSara;
-			break;
-
-		case 4:
-			keyCode = Config.keySwitchToGrimwall;
-			break;
-
-		case 5:
-			keyCode = Config.keySwitchToOlmec;
-			break;
-		}
+		getText()->draw(Common::Point(320, (int16)(29 * keyIndex + 150)), MAKE_RESOURCE(kResourcePackText, 1439 + keyIndex));
 
 		getText()->setPosition(Common::Point(350, (int16)(29 * keyIndex + 150)));
 
@@ -1488,15 +1465,15 @@ void Menu::updateKeyboardConfig() {
 
 			_caretBlink = (_caretBlink + 1) % 12;
 		} else {
-			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(keyCode)) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
-			getText()->drawChar(keyCode);
+			switchFont(getCursor()->isHidden() || cursor.x < 350 || cursor.x > (350 + getText()->getWidth(keyCode.c_str())) || cursor.y < (29 * keyIndex + 150) || cursor.y > (29 * (keyIndex + 6)));
+			getText()->draw(keyCode.c_str());
 		}
 
 		++keyIndex;
 	} while (keyIndex < 6);
 
 	switchFont(getCursor()->isHidden() || cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24));
-	getText()->setPosition(Common::Point(340, 340));
+	getText()->setPosition(Common::Point(300, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1446));
 }
 
@@ -2229,39 +2206,13 @@ void Menu::clickKeyboardConfig() {
 
 	if (cursor.x < 300 || cursor.x > (300 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1446))) || cursor.y < 340 || cursor.y > (340 + 24)) {
 		int32 keyIndex = 0;
-		char keyCode = 0;
+		Common::Keymap *keymap = g_system->getEventManager()->getKeymapper()->getKeymap("asylum");
 
 		do {
-			switch (keyIndex) {
-			default:
-				break;
+			Common::Array<Common::HardwareInput> mappings = keymap->getActionMapping(keymap->getActions()[keyIndex]);
+			Common::String keyCode = mappings.size() ? mappings[0].description.encode() : "<Not mapped>";
 
-			case 0:
-				keyCode = Config.keyShowVersion;
-				break;
-
-			case 1:
-				keyCode = Config.keyQuickLoad;
-				break;
-
-			case 2:
-				keyCode = Config.keyQuickSave;
-				break;
-
-			case 3:
-				keyCode = Config.keySwitchToSara;
-				break;
-
-			case 4:
-				keyCode = Config.keySwitchToGrimwall;
-				break;
-
-			case 5:
-				keyCode = Config.keySwitchToOlmec;
-				break;
-			}
-
-			if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(keyCode)) && cursor.y >= (29 * keyIndex + 150) && cursor.y <= (29 * (keyIndex + 6))) {
+			if (cursor.x >= 350 && cursor.x <= (350 + getText()->getWidth(keyCode.c_str())) && cursor.y >= (29 * keyIndex + 150) && cursor.y <= (29 * (keyIndex + 6))) {
 				_selectedShortcutIndex = keyIndex;
 				getCursor()->hide();
 			}
@@ -2358,45 +2309,20 @@ void Menu::keyKeyboardConfig(const AsylumEvent &evt) {
 		return;
 	}
 
-	char *keyCode = NULL;
-	switch(_selectedShortcutIndex) {
-	default:
-		error("[Menu::keyKeyboardConfig] Invalid shortcut index (%d)", _selectedShortcutIndex);
-
-	case 0:
-		keyCode = &Config.keyShowVersion;
-		break;
-
-	case 1:
-		keyCode = &Config.keyQuickLoad;
-		break;
-
-	case 2:
-		keyCode = &Config.keyQuickSave;
-		break;
-
-	case 3:
-		keyCode = &Config.keySwitchToSara;
-		break;
-
-	case 4:
-		keyCode = &Config.keySwitchToGrimwall;
-		break;
-
-	case 5:
-		keyCode = &Config.keySwitchToOlmec;
-		break;
-	}
-
 	// Check for alphanumeric character
 	if (evt.kbd.ascii > 255 || !Common::isAlnum(evt.kbd.ascii))
 		return;
 
-	if (!Config.isKeyAssigned((char)evt.kbd.ascii) || *keyCode == (char)evt.kbd.ascii) {
-		*keyCode = (char)evt.kbd.ascii;
-		_selectedShortcutIndex = -1;
-		getCursor()->show();
-	}
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	Common::Keymap    *keymap    = keymapper->getKeymap("asylum");
+	Common::Action    *action    = keymap->getActions()[_selectedShortcutIndex];
+
+	keymap->unregisterMapping(action);
+	keymap->registerMapping(action, keymapper->findHardwareInput(evt));
+	keymap->saveMappings();
+
+	_selectedShortcutIndex = -1;
+	getCursor()->show();
 }
 
 void Menu::keyShowCredits() {
