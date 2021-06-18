@@ -200,7 +200,7 @@ void CAutoMap::locateRegion(void) {
 	assert(trRes != NULL);
 	regionCount = *trRes;
 
-	centerCoords = trackPos >> (tileUVShift + kPlatShift);
+	centerCoords = trackPos >> (kTileUVShift + kPlatShift);
 
 	localAreaRegion.min.u = localAreaRegion.min.v = 0;
 	localAreaRegion.max.u = localAreaRegion.max.v = wMap->mapSize;
@@ -498,10 +498,10 @@ void CAutoMap::createSmallMap(void) {
 	        &&  centerCoords.v <= viewRegion.max.v) {
 		//  Calculate the position of the cross-hairs showing the position of
 		//  the center actor.
-		centerPt = trackPos - (baseCoords << (tileUVShift + kPlatShift));
+		centerPt = trackPos - (baseCoords << (kTileUVShift + kPlatShift));
 
-		x = ((centerPt.u - centerPt.v) >> (tileUVShift + kPlatShift - 2)) + 261 + 4;
-		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (tileUVShift + kPlatShift - 1));
+		x = ((centerPt.u - centerPt.v) >> (kTileUVShift + kPlatShift - 2)) + 261 + 4;
+		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (kTileUVShift + kPlatShift - 1));
 
 		tPort.setColor(9 + 15);      //  black
 		tPort.fillRect(x - 3, y - 1, 7, 3);

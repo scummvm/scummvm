@@ -3073,8 +3073,8 @@ int16 scriptPlaySoundAt(int16 *args) {
 	MONOLOG(PlaySoundAt);
 	char        *sID = STRING(args[0]);
 	args++;
-	int16       u    = *args++; // << tileUVShift;
-	int16       v    = *args++; // << tileUVShift;
+	int16       u    = *args++; // << kTileUVShift;
+	int16       v    = *args++; // << kTileUVShift;
 	int16       h    = *args++;
 	Location l = Location(TilePoint(u, v, h), Nothing);
 	int32       soundID;
@@ -3117,8 +3117,8 @@ void PlayLoopAt(char IDstr[], Location l);
 int16 scriptPlayLoopAt(int16 *args) {
 	MONOLOG(PlayLoop);
 	char        *sID = STRING(args[0]);
-	int16       u    = *args++; // << tileUVShift;
-	int16       v    = *args++; // << tileUVShift;
+	int16       u    = *args++; // << kTileUVShift;
+	int16       v    = *args++; // << kTileUVShift;
 	int16       h    = *args++;
 	Location l = Location(TilePoint(u, v, h), Nothing);
 	PlayLoopAt(sID, l);
@@ -3383,8 +3383,8 @@ int16 scriptCastSpellAtTile(int16 *args) {
 	MONOLOG(CastSpellAtTile);
 	GameObject  *caster = GameObject::objectAddress(*args++);
 	SkillProto  *spell  = skillProtoFromID(*args++);
-	int16       u    = *args++; // << tileUVShift;
-	int16       v    = *args++; // << tileUVShift;
+	int16       u    = *args++; // << kTileUVShift;
+	int16       v    = *args++; // << kTileUVShift;
 	int16       h    = *args++;
 	Location l = Location(TilePoint(u, v, h), Nothing);
 	assert(caster);

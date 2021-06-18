@@ -604,7 +604,7 @@ int16 tileSlopeHeight(
     StandingTileInfo    *stiResult,
     uint8               *platformResult) {
 	//  Calculate coordinates of tile, metatile, and subtile
-	TilePoint       tileCoords = pt >> tileUVShift,
+	TilePoint       tileCoords = pt >> kTileUVShift,
 	                metaCoords = tileCoords >> kPlatShift,
 	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
@@ -672,8 +672,8 @@ int16 tileSlopeHeight(
 					} else
 						// calculate height of unraised surface
 						supportHeight = sti.surfaceHeight +
-						                ptHeight(TilePoint(pt.u & tileUVMask,
-						                                   pt.v & tileUVMask,
+						                ptHeight(TilePoint(pt.u & kTileUVMask,
+						                                   pt.v & kTileUVMask,
 						                                   0),
 						                         ti->attrs.cornerHeight);
 
@@ -866,8 +866,8 @@ int16 checkWalkable(
 		                    subTileV,
 		                    mask;
 
-		subTileU = (loc.u & tileUVMask) >> subTileShift;
-		subTileV = (loc.v & tileUVMask) >> subTileShift;
+		subTileU = (loc.u & kTileUVMask) >> subTileShift;
+		subTileV = (loc.v & kTileUVMask) >> subTileShift;
 		mask = 1 << ((subTileU << subTileShift) + subTileV);
 
 		//  If the suporting subtile is funiture consider this blocked

@@ -1038,7 +1038,7 @@ bool InventoryProto::canDropAt(
 	//  enactor, fail
 	if (enactorPtr->IDParent() != loc.context
 	        || (loc - enactorPtr->getLocation()).quickHDistance()
-	        >   tileUVSize * kPlatformWidth * 4)
+	        >   kTileUVSize * kPlatformWidth * 4)
 		return false;
 
 	return true;
@@ -2917,7 +2917,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 		if (actorLoc.context == generatorLoc.context) {
 			int32   dist,
 			        mtRadius = obj->getHitPoints(),// Radius in metatiles
-			        ptRadius = mtRadius * tileUVSize * kPlatformWidth,
+			        ptRadius = mtRadius * kTileUVSize * kPlatformWidth,
 			        prob = obj->getExtra() * (256 * 256) / 100;
 
 			TilePoint   diff = (TilePoint)actorLoc - (TilePoint)generatorLoc;
@@ -2956,7 +2956,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 				scf.enactor         = a->thisID();
 				scf.directObject    = scf.invokedObject;
 				scf.indirectObject  = Nothing;
-				scf.value           = dist / tileUVSize;
+				scf.value           = dist / kTileUVSize;
 
 				//  Call the SAGA script, if there is one.
 				runObjectMethod(obj->thisID(), Method_GameObject_onTrigger, scf);

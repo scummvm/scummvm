@@ -33,7 +33,7 @@
 
 namespace Saga2 {
 
-const int   metaTileUVSize = tileUVSize * kPlatformWidth;
+const int   metaTileUVSize = kTileUVSize * kPlatformWidth;
 
 /* ===================================================================== *
    Target management functions
@@ -248,12 +248,12 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> tileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + tileUVMask)
-	                >>  tileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> tileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + tileUVMask)
-	                >>  tileUVShift;
+	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	                >>  kTileUVShift;
+	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	                >>  kTileUVShift;
 
 	TileIterator        tIter(world->mapNum, tileReg);
 
@@ -264,18 +264,18 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 		if (isTarget(sti)) {
 			uint16  dist;
 
-			tileCoords.u <<= tileUVShift;
-			tileCoords.v <<= tileUVShift;
+			tileCoords.u <<= kTileUVShift;
+			tileCoords.v <<= kTileUVShift;
 
 			//  Compute point on tile closest to center location
 			tileCoords.u =  clamp(
 			                    tileCoords.u,
 			                    tp.u,
-			                    tileCoords.u + tileUVSize - 1);
+			                    tileCoords.u + kTileUVSize - 1);
 			tileCoords.v =  clamp(
 			                    tileCoords.v,
 			                    tp.v,
-			                    tileCoords.v + tileUVSize - 1);
+			                    tileCoords.v + kTileUVSize - 1);
 			tileCoords.z = sti.surfaceHeight;
 
 			dist = (tileCoords - tp).quickHDistance();
@@ -303,12 +303,12 @@ int16 TileTarget::where(
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> tileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + tileUVMask)
-	                >>  tileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> tileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + tileUVMask)
-	                >>  tileUVShift;
+	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	                >>  kTileUVShift;
+	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	                >>  kTileUVShift;
 
 	TileIterator        tIter(world->mapNum, tileReg);
 
@@ -320,18 +320,18 @@ int16 TileTarget::where(
 		if (isTarget(sti)) {
 			uint16  dist;
 
-			tileCoords.u <<= tileUVShift;
-			tileCoords.v <<= tileUVShift;
+			tileCoords.u <<= kTileUVShift;
+			tileCoords.v <<= kTileUVShift;
 
 			//  Compute point on tile closest to center location
 			tileCoords.u =  clamp(
 			                    tileCoords.u,
 			                    tp.u,
-			                    tileCoords.u + tileUVSize - 1);
+			                    tileCoords.u + kTileUVSize - 1);
 			tileCoords.v =  clamp(
 			                    tileCoords.v,
 			                    tp.v,
-			                    tileCoords.v + tileUVSize - 1);
+			                    tileCoords.v + kTileUVSize - 1);
 			tileCoords.z = sti.surfaceHeight;
 
 			dist = (tileCoords - tp).quickHDistance();
@@ -500,12 +500,12 @@ TilePoint MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Determine the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> tileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + tileUVMask)
-	                >>  tileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> tileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + tileUVMask)
-	                >>  tileUVShift;
+	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	                >>  kTileUVShift;
+	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	                >>  kTileUVShift;
 
 	MetaTileIterator    mIter(world->mapNum, tileReg);
 
@@ -515,8 +515,8 @@ TilePoint MetaTileTarget::where(
 		if (isTarget(mt, world->mapNum, metaCoords)) {
 			uint16  dist;
 
-			metaCoords.u <<= tileUVShift;
-			metaCoords.v <<= tileUVShift;
+			metaCoords.u <<= kTileUVShift;
+			metaCoords.v <<= kTileUVShift;
 
 			//  Determine point on metatile closest to center point
 			metaCoords.u =  clamp(
@@ -554,12 +554,12 @@ int16 MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> tileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + tileUVMask)
-	                >>  tileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> tileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + tileUVMask)
-	                >>  tileUVShift;
+	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	                >>  kTileUVShift;
+	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	                >>  kTileUVShift;
 
 	MetaTileIterator    mIter(world->mapNum, tileReg);
 
@@ -569,8 +569,8 @@ int16 MetaTileTarget::where(
 		if (isTarget(mt, world->mapNum, metaCoords)) {
 			uint16  dist;
 
-			metaCoords.u <<= tileUVShift;
-			metaCoords.v <<= tileUVShift;
+			metaCoords.u <<= kTileUVShift;
+			metaCoords.v <<= kTileUVShift;
 
 			metaCoords.z = tp.z;
 

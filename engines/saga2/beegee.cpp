@@ -182,15 +182,15 @@ void setAreaSound(const TilePoint &) {
 	pct = (pct + 1) % 8;
 	if (pct == 0) {
 		if (!playingExternalLoop) {
-			TilePoint baseCoords = centerActorCoords() >> tileUVShift;
+			TilePoint baseCoords = centerActorCoords() >> kTileUVShift;
 			TilePoint       mtPos;
 			metaTileNoise   loopID = 0;
 			soundSegment ss = 0;
 			Point32 themePos;
 			for (int r = 1; r < 5 && loopID == 0 ; r++) {
 				TileRegion  regn;
-				regn.max = baseCoords + ((AudibilityVector * r) << kPlatShift) ; ///tileUVSize;
-				regn.min = baseCoords - ((AudibilityVector * r) << kPlatShift); ///tileUVSize;
+				regn.max = baseCoords + ((AudibilityVector * r) << kPlatShift) ; ///kTileUVSize;
+				regn.min = baseCoords - ((AudibilityVector * r) << kPlatShift); ///kTileUVSize;
 				MetaTileIterator    mIter(currentMapNum, regn);
 				int i = 0;
 				int j = 0;
@@ -223,7 +223,7 @@ void setAreaSound(const TilePoint &) {
 					if (aats[i].active) {
 						Location loc = getCenterActor()->notGetWorldLocation();
 						if (aats[i].l.context == Nothing || loc.context == aats[i].l.context) {
-							TilePoint tp = (aats[i].l >> tileUVShift) - baseCoords;
+							TilePoint tp = (aats[i].l >> kTileUVShift) - baseCoords;
 							if (tp.magnitude() < dist.magnitude()) {
 								dist = tp;
 								loopID = USEAUXTHEME;

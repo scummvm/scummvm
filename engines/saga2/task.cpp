@@ -1657,20 +1657,20 @@ TaskResult GotoTask::update(void) {
 			bool        runState = run();
 			TilePoint   motionTarget = actorMotion->getTarget();
 
-			if ((actorLoc.u >> tileUVShift)
-			        == (immediateDest.u >> tileUVShift)
-			        && (actorLoc.v >> tileUVShift)
-			        == (immediateDest.v >> tileUVShift)) {
+			if ((actorLoc.u >> kTileUVShift)
+			        == (immediateDest.u >> kTileUVShift)
+			        && (actorLoc.v >> kTileUVShift)
+			        == (immediateDest.v >> kTileUVShift)) {
 				if (motionTarget != immediateDest
 				        ||  runState != prevRunState)
 					actorMotion->changeDirectTarget(
 					    immediateDest,
 					    prevRunState = runState);
 			} else {
-				if ((motionTarget.u >> tileUVShift)
-				        != (immediateDest.u >> tileUVShift)
-				        || (motionTarget.v >> tileUVShift)
-				        != (immediateDest.v >> tileUVShift)
+				if ((motionTarget.u >> kTileUVShift)
+				        != (immediateDest.u >> kTileUVShift)
+				        || (motionTarget.v >> kTileUVShift)
+				        != (immediateDest.v >> kTileUVShift)
 				        ||  abs(motionTarget.z - immediateDest.z) > 16
 				        ||  runState != prevRunState)
 					actorMotion->changeTarget(
@@ -1678,10 +1678,10 @@ TaskResult GotoTask::update(void) {
 					    prevRunState = runState);
 			}
 		} else {
-			if ((actorLoc.u >> tileUVShift)
-			        == (immediateDest.u >> tileUVShift)
-			        && (actorLoc.v >> tileUVShift)
-			        == (immediateDest.v >> tileUVShift)) {
+			if ((actorLoc.u >> kTileUVShift)
+			        == (immediateDest.u >> kTileUVShift)
+			        && (actorLoc.v >> kTileUVShift)
+			        == (immediateDest.v >> kTileUVShift)) {
 				MotionTask::walkToDirect(
 				    *a,
 				    immediateDest,
@@ -2201,7 +2201,7 @@ bool GotoActorTask::run(void) {
 		TilePoint       actorLoc = stack->getActor()->getLocation(),
 		                targetLoc = getTarget()->getLocation();
 
-		return (actorLoc - targetLoc).quickHDistance() >= tileUVSize * 4;
+		return (actorLoc - targetLoc).quickHDistance() >= kTileUVSize * 4;
 	} else
 		return lastKnownLoc != Nowhere;
 }
@@ -4410,7 +4410,7 @@ TaskResult BandTask::atTargetUpdate(void) {
 //----------------------------------------------------------------------
 
 int16 BandTask::getRunThreshold(void) {
-	return tileUVSize * 3;
+	return kTileUVSize * 3;
 }
 
 //----------------------------------------------------------------------
@@ -4695,10 +4695,10 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 	if (currentWayPoint == Nowhere) return taskSucceeded;
 
 	//  Determine if the actor has reached the waypoint tile position
-	if ((actorLoc.u >> tileUVShift)
-	        == (currentWayPoint.u >> tileUVShift)
-	        && (actorLoc.v >> tileUVShift)
-	        == (currentWayPoint.v >> tileUVShift)
+	if ((actorLoc.u >> kTileUVShift)
+	        == (currentWayPoint.u >> kTileUVShift)
+	        && (actorLoc.v >> kTileUVShift)
+	        == (currentWayPoint.v >> kTileUVShift)
 	        &&  abs(actorLoc.z - currentWayPoint.z) <= maxStepHeight) {
 		//  Delete the gotoWayPoint task
 		if (gotoWayPoint != NULL) {

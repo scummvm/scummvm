@@ -251,8 +251,8 @@ void updateMapFeatures(int16 cWorld) {
 	for (int i = 0; i < mapFeatureCount; i++) {
 		if (mapFeatures[i]->getWorld() == cWorld) {
 			uint16   *mapRow;
-			mapRow = &mapData[(mapFeatures[i]->getU() >> (tileUVShift + kPlatShift)) * wMap->mapSize];
-			uint16   mtile = mapRow[(mapFeatures[i]->getV() >> (tileUVShift + kPlatShift))];
+			mapRow = &mapData[(mapFeatures[i]->getU() >> (kTileUVShift + kPlatShift)) * wMap->mapSize];
+			uint16   mtile = mapRow[(mapFeatures[i]->getV() >> (kTileUVShift + kPlatShift))];
 			mapFeatures[i]->expose(mtile & metaTileVisited);
 		}
 	}
@@ -327,8 +327,8 @@ void CMapFeature::draw(TileRegion viewRegion,
 	if (world != inWorld) return;
 	update();
 
-	//TilePoint centerCoords = featureCoords >> (tileUVShift + kPlatShift);
-	TilePoint fCoords = featureCoords >> (tileUVShift + kPlatShift);
+	//TilePoint centerCoords = featureCoords >> (kTileUVShift + kPlatShift);
+	TilePoint fCoords = featureCoords >> (kTileUVShift + kPlatShift);
 	if (visible                               &&
 	        fCoords.u >= viewRegion.min.u   &&
 	        fCoords.u <= viewRegion.max.u   &&
@@ -338,10 +338,10 @@ void CMapFeature::draw(TileRegion viewRegion,
 
 		//  Calculate the position of the cross-hairs showing the position of
 		//  the center actor.
-		centerPt = featureCoords - (baseCoords << (tileUVShift + kPlatShift));
+		centerPt = featureCoords - (baseCoords << (kTileUVShift + kPlatShift));
 
-		x = ((centerPt.u - centerPt.v) >> (tileUVShift + kPlatShift - 2)) + 261 + 4;
-		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (tileUVShift + kPlatShift - 1));
+		x = ((centerPt.u - centerPt.v) >> (kTileUVShift + kPlatShift - 2)) + 261 + 4;
+		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (kTileUVShift + kPlatShift - 1));
 #ifdef DEBUG_FEATUREPOS
 		WriteStatusF(12, "draw at (%d,%d)", x, y);
 #endif
@@ -368,7 +368,7 @@ bool CMapFeature::hitCheck(TileRegion viewRegion,
 	int32           x, y;
 
 	if (world != inWorld) return false;
-	TilePoint fCoords = featureCoords >> (tileUVShift + kPlatShift);
+	TilePoint fCoords = featureCoords >> (kTileUVShift + kPlatShift);
 	if (visible                               &&
 	        fCoords.u >= viewRegion.min.u   &&
 	        fCoords.u <= viewRegion.max.u   &&
@@ -378,10 +378,10 @@ bool CMapFeature::hitCheck(TileRegion viewRegion,
 
 		//  Calculate the position of the cross-hairs showing the position of
 		//  the center actor.
-		centerPt = featureCoords - (baseCoords << (tileUVShift + kPlatShift));
+		centerPt = featureCoords - (baseCoords << (kTileUVShift + kPlatShift));
 
-		x = ((centerPt.u - centerPt.v) >> (tileUVShift + kPlatShift - 2)) + 261 + 4;
-		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (tileUVShift + kPlatShift - 1));
+		x = ((centerPt.u - centerPt.v) >> (kTileUVShift + kPlatShift - 2)) + 261 + 4;
+		y = 255 + 4 - ((centerPt.u + centerPt.v) >> (kTileUVShift + kPlatShift - 1));
 
 		TilePoint DisplayPoint = TilePoint(x, y, 0);
 		return isHit(DisplayPoint, comparePoint);
