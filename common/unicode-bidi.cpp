@@ -26,17 +26,25 @@
 
 #ifdef USE_FRIBIDI
 #include <fribidi/fribidi.h>
-#else
-/* This constant is used below in common code
- * fake it here to lighten code
- */
-#define FRIBIDI_PAR_ON 0
 #endif
 
 namespace Common {
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str) :
-	logical(str), _pbase_dir(FRIBIDI_PAR_ON),
+uint32 GetFriBiDiParType(BiDiParagraph dir) {
+#ifdef USE_FRIBIDI
+	if (dir == BIDI_PAR_ON) {
+		return FRIBIDI_PAR_ON;
+	} else if (dir == BIDI_PAR_RTL) {
+		return FRIBIDI_PAR_RTL;
+	} else if (dir == BIDI_PAR_LTR) {
+		return FRIBIDI_PAR_LTR;
+	}
+#endif
+	return 0;
+}
+
+UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str, BiDiParagraph dir) :
+	logical(str), _pbase_dir(GetFriBiDiParType(dir)),
 	_log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	initWithU32String(str);
 }
@@ -118,24 +126,24 @@ Common::String bidiByLineHelper(Common::String line, va_list args) {
 	return UnicodeBiDiText(line, page, pbase_dir).visual.encode(page);
 }
 
-String convertBiDiStringByLines(const String &input, const Common::CodePage page) {
-	uint32 pbase_dir = FRIBIDI_PAR_ON;
+String convertBiDiStringByLines(const String &input, const Common::CodePage page, BiDiParagraph dir) {
+	uint32 pbase_dir = GetFriBiDiParType(dir);
 	return input.forEachLine(bidiByLineHelper, page, &pbase_dir);
 }
 
-String convertBiDiString(const String &input, const Common::Language lang) {
+String convertBiDiString(const String &input, const Common::Language lang, BiDiParagraph dir) {
 	if (lang != Common::HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
 
-	return Common::convertBiDiString(input, kWindows1255);
+	return Common::convertBiDiString(input, kWindows1255, dir);
 }
 
-String convertBiDiString(const String &input, const Common::CodePage page) {
-	return convertBiDiU32String(input.decode(page)).visual.encode(page);
+String convertBiDiString(const String &input, const Common::CodePage page, BiDiParagraph dir) {
+	return convertBiDiU32String(input.decode(page), dir).visual.encode(page);
 }
 
-UnicodeBiDiText convertBiDiU32String(const U32String &input) {
-	return UnicodeBiDiText(input);
+UnicodeBiDiText convertBiDiU32String(const U32String &input, BiDiParagraph dir) {
+	return UnicodeBiDiText(input, dir);
 }
 
 } // End of namespace Common
