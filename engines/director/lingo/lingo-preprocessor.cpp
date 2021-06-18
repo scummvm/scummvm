@@ -27,7 +27,6 @@
 namespace Director {
 
 Common::String preprocessWhen(Common::String in, bool *changed);
-Common::String preprocessPlay(Common::String in);
 Common::String preprocessSound(Common::String in);
 
 bool isspec(char c) {
@@ -211,7 +210,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 		res1 = preprocessWhen(res1, &changed);
 
 		if (!changed) {
-			res1 = preprocessPlay(res1);
 			res1 = preprocessSound(res1);
 		}
 
@@ -297,53 +295,6 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugParse | kDebugPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
-
-	return res;
-}
-
-// play done -> play #done
-Common::String preprocessPlay(Common::String in) {
-	Common::String res, next;
-	const char *ptr = in.c_str();
-	const char *beg = ptr;
-	const char *nextPtr;
-
-	while ((ptr = scumm_strcasestr(beg, "play")) != NULL) {
-		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
-			res += *beg++;
-			continue;
-		}
-
-		ptr += 4; // end of 'play'
-		res += Common::String(beg, ptr);
-
-		if (!*ptr)	// If it is end of the line
-			break;
-
-		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
-			beg = ptr;
-			continue;
-		}
-
-		next = nexttok(ptr, &nextPtr);
-
-		debugC(2, kDebugParse | kDebugPreprocess, "PLAY: nexttok: %s", next.c_str());
-
-		if (next.equalsIgnoreCase("done")) {
-			res += " #"; // Turn it into SYMBOL
-		} else {
-			res += ' ';
-		}
-
-		res += next;
-		ptr = nextPtr;
-		beg = ptr;
-	}
-
-	res += Common::String(beg);
-
-	if (in.size() != res.size())
-		debugC(2, kDebugParse | kDebugPreprocess, "PLAY: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
