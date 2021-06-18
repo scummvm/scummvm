@@ -787,7 +787,7 @@ void CStatusLine::clear(void) {
 /* ===================================================================== *
     CMassWeightInterface: Static list of indicators
  * ===================================================================== */
-DList CMassWeightIndicator::indList;
+Common::List<CMassWeightIndicator *> CMassWeightIndicator::indList;
 
 /* ===================================================================== *
     CMassWeightInterface: mass and weight allowence indicators
@@ -865,11 +865,11 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 		containerObject = nullptr;
 	}
 
-	indList.addHead(*this);
+	indList.push_back(this);
 }
 
 CMassWeightIndicator::~CMassWeightIndicator(void) {
-	remove();
+	indList.remove(this);
 
 	unloadImageRes(pieIndImag, numPieIndImages);
 	ImageCache.releaseImage(massBulkImag);
@@ -907,11 +907,9 @@ void CMassWeightIndicator::update(void) {
 	CMassWeightIndicator *indNode = nullptr;
 
 	if (bRedraw == true) {
-		for (indNode = (CMassWeightIndicator *)indList.first();
-		        indNode;
-		        indNode = (CMassWeightIndicator *)indNode->next()) {
-			indNode->recalculate();
-			indNode->invalidate();
+		for (Common::List<CMassWeightIndicator *>::iterator it = indList.begin(); it != indList.end(); ++it) {
+			(*it)->recalculate();
+			(*it)->invalidate();
 		}
 
 		bRedraw = false;
