@@ -1033,7 +1033,7 @@ void Actor::init(
 	curTask             = NULL;
 	currentGoal         = actorGoalFollowAssignment;
 	deactivationCounter = 0;
-	memset(assignmentBuf, 0, sizeof(assignmentBuf));
+	_assignment = nullptr;
 
 	memcpy(
 	    &effectiveStats,
@@ -1100,7 +1100,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	curTask             = NULL;
 	currentGoal         = actorGoalFollowAssignment;
 	deactivationCounter = 0;
-	memset(assignmentBuf, 0, sizeof(assignmentBuf));
+	_assignment = nullptr;
 
 	memcpy(
 	    &effectiveStats,
@@ -1187,7 +1187,7 @@ Actor::Actor(void **buf) : GameObject(buf) {
 	bufferPtr = &a[1];
 
 	if (flags & hasAssignment) {
-		freeAssignment();
+		delete _assignment;
 		bufferPtr = constructAssignment(this, bufferPtr);
 	}
 
@@ -1205,11 +1205,7 @@ Actor::Actor(void **buf) : GameObject(buf) {
 Actor::~Actor(void) {
 	if (appearance != NULL) ReleaseActorAppearance(appearance);
 
-	ActorAssignment *assign = getAssignment();
-	//  I don't know why I have to specify the ActorAssignment delete
-	//  operator, but "delete assign" will crash the program
-	if (assign != NULL) ActorAssignment::operator delete (assign);
-
+	delete _assignment;
 }
 
 //-----------------------------------------------------------------------

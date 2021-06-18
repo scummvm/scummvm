@@ -610,7 +610,7 @@ public:
 	uint8           deactivationCounter;
 
 	//  Assignment
-	uint8           assignmentBuf[24];    // memory reserved for actor
+	ActorAssignment *_assignment;
 	// assignments
 
 	//  Current effective stats
@@ -721,25 +721,10 @@ public:
 	//  Lobotomize this actor
 	void lobotomize(void);
 
-	//  Allocate the assignment buffer for a new assignment
-	void *allocAssignment(size_t sz) {
-		assert(sz <= sizeof(assignmentBuf));
-		if (!(flags & hasAssignment)) {
-			flags |= hasAssignment;
-			return &assignmentBuf;
-		} else
-			return NULL;
-	}
-
-	//  Free the emmbedded assignment buffer
-	void freeAssignment(void) {
-		flags &= ~hasAssignment;
-	}
-
 	//  Return a pointer to the actor's current assignment
 	ActorAssignment *getAssignment(void) {
 		return  flags & hasAssignment
-		        ? (ActorAssignment *)&assignmentBuf
+		        ? _assignment
 		        :   NULL;
 	}
 
