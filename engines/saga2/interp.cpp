@@ -305,12 +305,14 @@ uint8 *objectAddress(
 		IMMED_WORD(index);
 		seg = dataSegIndex;
 		addr = &dataSegment[index];
+		debugC(3, kDebugScripts, "data [%d] (%p)", index, addr);
 		break;
 
 	case addr_far:
 		IMMED_WORD(seg);
 		IMMED_WORD(index);
 		addr = segmentAddress(seg, index);
+		debugC(3, kDebugScripts, "far [%d, %d] (%p)", seg, index, addr);
 		break;
 
 	case addr_array:
@@ -318,6 +320,7 @@ uint8 *objectAddress(
 		IMMED_WORD(index);
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, index) + offset;
+		debugC(3, kDebugScripts, "array [%d, %d, %d] (%p)", seg, index, offset, addr);
 		break;
 
 	case addr_this:
@@ -325,9 +328,12 @@ uint8 *objectAddress(
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		seg = arg[0];
 		index = arg[1];
-		if (seg == dataSegIndex)
+		if (seg == dataSegIndex) {
+			debugC(3, kDebugScripts, "this (D) [%d, %d] (%p)", index, offset, &dataSegment[index + offset]);
 			return &dataSegment[index + offset];
+		}
 		addr = segmentArrayAddress(seg, index) + offset;
+		debugC(3, kDebugScripts, "this (S) [%d, %d, %d] (%p)", seg, index, offset, addr);
 		break;
 
 	case addr_deref:
@@ -347,6 +353,7 @@ uint8 *objectAddress(
 
 		//  Compute address of object
 		addr = segmentAddress(seg, index) + offset;
+		debugC(3, kDebugScripts, "deref [%d, %d, %d] (%p)", seg, index, offset, addr);
 		break;
 
 	default:
@@ -820,7 +827,7 @@ bool Thread::interpret(void) {
 						error("Invalid member function number");
 
 					//  Set up thread-specific vars
-					thisObject = addr;
+					thisObject = ((ObjectData *)addr)->obj;
 					argCount = n;
 					threadArgs.invokedObject = offset;
 
