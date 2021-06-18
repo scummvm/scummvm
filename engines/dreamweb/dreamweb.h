@@ -162,6 +162,7 @@ private:
 	Common::String _datafilePrefix;
 	Common::String _speechDirName;
 	Common::String _lastText;
+	Common::TextToSpeechManager *_ttsMan;
 
 	uint _speed;
 	bool _turbo;

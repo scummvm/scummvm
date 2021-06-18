@@ -931,7 +931,6 @@ void DreamWebEngine::processTrigger() {
 }
 
 void DreamWebEngine::useTimedText() {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (_previousTimedTemp._string) {
 		// TODO: It might be nice to make subtitles wait for the speech
 		// to finish (_sound->isChannel1Playing()) when we're in speech+subtitles mode,
@@ -967,8 +966,8 @@ void DreamWebEngine::useTimedText() {
 	printDirect(string, _timedTemp._x, _timedTemp._y, 237, true);
 	const char *theText = (const char *)string;
 	if (_lastText != theText) {
-		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
-			ttsMan->say(theText);
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled") && !hasSpeech()) {
+			_ttsMan->say(theText);
 		}
 	}
 	_lastText = theText;
@@ -1182,12 +1181,11 @@ void DreamWebEngine::commandOnlyCond(uint8 command, uint8 commandType) {
 }
 
 void DreamWebEngine::commandOnly(uint8 command) {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	delTextLine();
 	const uint8 *string = (const uint8 *)_commandText.getString(command);
 	printDirect(string, _textAddressX, _textAddressY, _textLen, (bool)(_textLen & 1));
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say((const char *)string);
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		_ttsMan->say((const char *)string);
 	}
 
 	_newTextLine = 1;
@@ -1276,7 +1274,6 @@ void DreamWebEngine::copyName(uint8 type, uint8 index, uint8 *dst) {
 }
 
 void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	Common::String theText;
 
 	uint8 commandLine[64] = "OBJECT NAME ONE                         ";
@@ -1291,7 +1288,7 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 
 	if (getLanguage() != Common::RU_RUS) {
 		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
-    	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+    	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
 			theText += (const char *)string;
 		}
 
@@ -1301,9 +1298,9 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 		if (command != 0)
 			x += 5;
 		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
-		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
 			theText += (const char *)commandLine;
-			ttsMan->say(theText);
+			_ttsMan->say(theText);
 		}
 
 	} else {

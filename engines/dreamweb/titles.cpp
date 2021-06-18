@@ -123,7 +123,6 @@ void DreamWebEngine::bibleQuote() {
 						"Jděte a vylejte těch sedm misek Božího hněvu na zem."
 						"Zjevení 16 verš 1";
 
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	const char *theStory;
 	switch(getLanguage()) {
 	case Common::ES_ESP:
@@ -160,11 +159,11 @@ void DreamWebEngine::bibleQuote() {
 		return; // "biblequotearly"
 	}
 
-	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
-		ttsMan->say(theStory);
-		while (ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
+	if (_ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		_ttsMan->say(theStory);
+		while (_ttsMan->isSpeaking() && _lastHardKey != Common::KEYCODE_ESCAPE)
 			hangOne(1);
-		ttsMan->stop();
+		_ttsMan->stop();
 
 	} else
 		hangOne(560);

@@ -54,6 +54,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 	_turbo = false;
 	_oldMouseState = 0;
 
+	_ttsMan = g_system->getTextToSpeechManager();
+
 	_datafilePrefix = "DREAMWEB.";
 	_speechDirName = "SPEECH";
 	// ES and FR CD release use a different data file prefix
@@ -393,9 +395,8 @@ void DreamWebEngine::processEvents(bool processSoundEvents) {
 }
 
 Common::Error DreamWebEngine::run() {
-	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr) {
-		ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+	if (_ttsMan != nullptr) {
+		_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
 	}
 
 	syncSoundSettings();
