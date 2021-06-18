@@ -1638,7 +1638,7 @@ void initMaps(void) {
 		mapData->mapSize = mapData->map->size;
 
 		//  Compute the height of the map in pixels
-		mapData->mapHeight = mapData->mapSize * metaTileHeight;
+		mapData->mapHeight = mapData->mapSize * kMetaTileHeight;
 
 		//  Build an active item instance hash table
 		mapData->buildInstanceHash();
@@ -2683,12 +2683,12 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 
 
 	for (;
-	        pos.x < tileDrawMap.size.x + metaDX;
+	        pos.x < tileDrawMap.size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        uOrg += kPlatformWidth,
 	        vOrg -= kPlatformWidth,
-	        pos.x += metaTileWidth
+	        pos.x += kMetaTileWidth
 	    ) {
 		TilePoint       clipCoords;
 		int16           mtile;
@@ -2960,9 +2960,9 @@ inline void drawMetaTiles(void) {
 
 	//  coordinates of the view window upper left corner in U,V
 
-	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
+	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + kMetaDY / 16) + viewPos.x)
 	               / (kPlatformWidth * 2);
-	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
+	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + kMetaDY / 16) - viewPos.x)
 	               / (kPlatformWidth * 2);
 	baseCoords.z = 0;
 
@@ -2973,11 +2973,11 @@ inline void drawMetaTiles(void) {
 	updateHandleRefs(baseCoords);  // viewPoint, &sti );
 	//  coordinates of current metatile (in X,Y), relative to screen
 
-	metaPos.x   = (baseCoords.u - baseCoords.v) * metaDX
+	metaPos.x   = (baseCoords.u - baseCoords.v) * kMetaDX
 	            	- viewPos.x * kTileDX;
 
 	metaPos.y   = viewPos.y
-	              - (baseCoords.u + baseCoords.v) * metaDY;
+	              - (baseCoords.u + baseCoords.v) * kMetaDY;
 
 	debugC(2, kDebugTiles, "metaPos = (%d,%d)", metaPos.x, metaPos.y);
 
@@ -2986,19 +2986,19 @@ inline void drawMetaTiles(void) {
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < tileDrawMap.size.y + metaTileHeight * 4 ;
+	        metaPos.y < tileDrawMap.size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
 		drawMetaRow(baseCoords, metaPos);
 
-		metaPos.y += metaDY;
-		metaPos.x -= metaDX;
+		metaPos.y += kMetaDY;
+		metaPos.x -= kMetaDX;
 
 		drawMetaRow(TilePoint(baseCoords.u - 1, baseCoords.v, 0), metaPos);
 
-		metaPos.y += metaDY;
-		metaPos.x += metaDX;
+		metaPos.y += kMetaDY;
+		metaPos.x += kMetaDX;
 	}
 }
 
@@ -3318,14 +3318,14 @@ void maskMetaRow(
 	int16           layerLimit;
 
 	for (;
-	        pos.x < sMap.size.x + metaDX;
+	        pos.x < sMap.size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        relLoc.u += kPlatUVSize,
 	        relLoc.v -= kPlatUVSize,
 	        uOrg += kPlatformWidth,
 	        vOrg -= kPlatformWidth,
-	        pos.x += metaTileWidth
+	        pos.x += kMetaTileWidth
 	    ) {
 		TilePoint       clipCoords;
 		int16           mtile;
@@ -3425,19 +3425,19 @@ void drawTileMask(
 
 	//  coordinates of the view window upper left corner in U,V
 
-	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
+	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + kMetaDY / 16) + viewPos.x)
 	               / (kPlatformWidth * 2);
-	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
+	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + kMetaDY / 16) - viewPos.x)
 	               / (kPlatformWidth * 2);
 	baseCoords.z = 0;
 
 	//  coordinates of current metatile (in X,Y), relative to screen
 
-	metaPos.x   = (baseCoords.u - baseCoords.v) * metaDX
+	metaPos.x   = (baseCoords.u - baseCoords.v) * kMetaDX
 	              - viewPos.x * kTileDX;
 
 	metaPos.y   = viewPos.y
-	              - (baseCoords.u + baseCoords.v) * metaDY;
+	              - (baseCoords.u + baseCoords.v) * kMetaDY;
 
 	//  Compute where the object is relative to the metatile coords
 
@@ -3450,22 +3450,22 @@ void drawTileMask(
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < sMap.size.y + metaTileHeight * 4 ;
+	        metaPos.y < sMap.size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
 		maskMetaRow(sMap, baseCoords, relLoc, metaPos, roofID);
 
-		metaPos.y += metaDY;
-		metaPos.x -= metaDX;
+		metaPos.y += kMetaDY;
+		metaPos.x -= kMetaDX;
 
 		relLoc.u -= kPlatUVSize;
 
 		maskMetaRow(sMap, TilePoint(baseCoords.u - 1, baseCoords.v, 0),
 		            relLoc, metaPos, roofID);
 
-		metaPos.y += metaDY;
-		metaPos.x += metaDX;
+		metaPos.y += kMetaDY;
+		metaPos.x += kMetaDX;
 
 		relLoc.v -= kPlatUVSize;
 	}
@@ -3675,7 +3675,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 		while (subUVPointRel >= 0 &&
 		        subUVPoint.u < 16 &&
 		        subUVPoint.v < 16) {
-			if (subUVPointRel < pointH + (subTileDY * 2) / subTileSize) {
+			if (subUVPointRel < pointH + (kSubTileDY * 2) / kSubTileSize) {
 				pickCoords = (tCoords << kTileUVShift);
 				pickCoords.u += subUVPoint.u;
 				pickCoords.v += subUVPoint.v;
@@ -3688,7 +3688,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 			subUVPoint.u++;
 			subUVPoint.v++;
 			if (subUVPoint.u < 16 && subUVPoint.v < 16) {
-				subUVPointRel -= (subTileDY * 2) / subTileSize;
+				subUVPointRel -= (kSubTileDY * 2) / kSubTileSize;
 
 				//  Compute the terrain height of point
 				pointH = ptHeight(subUVPoint, ti->attrs.cornerHeight);
@@ -3698,7 +3698,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				//  last point checked.
 				subUVPoint.u--;
 				subUVPoint.v--;
-				subUVPointRel = pointH + ((subTileDY * 2) / subTileSize) - 1;
+				subUVPointRel = pointH + ((kSubTileDY * 2) / kSubTileSize) - 1;
 			}
 		}
 
@@ -3716,15 +3716,15 @@ SurfaceType pointOnTile(TileInfo            *ti,
 		//  relative to that subtile.
 
 		if (relPos.x > 0) {
-			subTile.u = relPos.x >> subTileDXShift;
+			subTile.u = relPos.x >> kSubTileDXShift;
 			subTile.v = 0;
-			subTileRel.x = relPos.x - (subTile.u << subTileDXShift);
-			subTileRel.y = relPos.y - (subTile.u << subTileDYShift) - h;
+			subTileRel.x = relPos.x - (subTile.u << kSubTileDXShift);
+			subTileRel.y = relPos.y - (subTile.u << kSubTileDYShift) - h;
 		} else {
 			subTile.u = 0;
-			subTile.v = (-relPos.x + 1) >> subTileDXShift;
-			subTileRel.x = relPos.x + (subTile.v << subTileDXShift);
-			subTileRel.y = relPos.y - (subTile.v << subTileDYShift) - h;
+			subTile.v = (-relPos.x + 1) >> kSubTileDXShift;
+			subTileRel.x = relPos.x + (subTile.v << kSubTileDXShift);
+			subTileRel.y = relPos.y - (subTile.v << kSubTileDYShift) - h;
 		}
 
 		//  Compute the mask which represents the subtile
@@ -3741,8 +3741,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				if (subTileRel.y <
 				        ti->attrs.terrainHeight + yBound) {
 					pickCoords = (tCoords << kTileUVShift);
-					pickCoords.u += (subTile.u << subTileShift);
-					pickCoords.v += (subTile.v << subTileShift);
+					pickCoords.u += (subTile.u << kSubTileShift);
+					pickCoords.v += (subTile.v << kSubTileShift);
 					if (subTileRel.x > 1) {
 						pickCoords.u += yBound;
 						type = surfaceVertU;
@@ -3801,12 +3801,12 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				}
 				//  mouse is on top of raised section
 				if (subTileRel.y <
-				        ti->attrs.terrainHeight + subTileDY * 2 - yBound) {
+				        ti->attrs.terrainHeight + kSubTileDY * 2 - yBound) {
 					pickCoords = (tCoords << kTileUVShift);
 					y = subTileRel.y - ti->attrs.terrainHeight;
-					pickCoords.u += (subTile.u << subTileShift) +
+					pickCoords.u += (subTile.u << kSubTileShift) +
 					                (((subTileRel.x >> 1) + y) >> 1);
-					pickCoords.v += (subTile.v << subTileShift) +
+					pickCoords.v += (subTile.v << kSubTileShift) +
 					                ((y - (subTileRel.x >> 1)) >> 1);
 					pickCoords.z = h + ti->attrs.terrainHeight;
 					floorCoords = pickCoords;
@@ -3835,10 +3835,10 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				while (subUVPointRel >= 0 &&
 				        subUVPoint.u < 4 &&
 				        subUVPoint.v < 4) {
-					if (subUVPointRel < pointH + (subTileDY * 2) / subTileSize) {
+					if (subUVPointRel < pointH + (kSubTileDY * 2) / kSubTileSize) {
 						pickCoords = (tCoords << kTileUVShift);
-						pickCoords.u += (subTile.u << subTileShift) + subUVPoint.u;
-						pickCoords.v += (subTile.v << subTileShift) + subUVPoint.v;
+						pickCoords.u += (subTile.u << kSubTileShift) + subUVPoint.u;
+						pickCoords.v += (subTile.v << kSubTileShift) + subUVPoint.v;
 						pickCoords.z = h + pointH;
 						floorCoords = pickCoords;
 						foundPoint = true;
@@ -3848,8 +3848,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					//  Test next point on subtile
 					subUVPoint.u++;
 					subUVPoint.v++;
-					subUVPointRel -= (subTileDY * 2) / subTileSize;
-					pointH = ptHeight((subTile << subTileShift) + subUVPoint,
+					subUVPointRel -= (kSubTileDY * 2) / kSubTileSize;
+					pointH = ptHeight((subTile << kSubTileShift) + subUVPoint,
 					                  ti->attrs.cornerHeight);
 				}
 				if (foundPoint) break;
@@ -3859,21 +3859,21 @@ SurfaceType pointOnTile(TileInfo            *ti,
 			if (subTileRel.x & 0xFFFE) {  //  if subTileRel.x != 0 or 1
 				//  crabwalk up the subtiles
 				if (subTileRel.x > 0) {
-					subTileRel.x -= subTileDX;
+					subTileRel.x -= kSubTileDX;
 					subTile.u++;
-					sMask <<= subTileMaskUShift;
+					sMask <<= kSubTileMaskUShift;
 				} else {
-					subTileRel.x += subTileDX;
+					subTileRel.x += kSubTileDX;
 					subTile.v++;
-					sMask <<= subTileMaskVShift;
+					sMask <<= kSubTileMaskVShift;
 				}
-				subTileRel.y -= subTileDY;
+				subTileRel.y -= kSubTileDY;
 			} else { //  subTileRel.x == 0 or 1
 				//  move up to the next vertical subtile
 				subTile.u++;
 				subTile.v++;
-				sMask <<= subTileMaskUShift + subTileMaskVShift;
-				subTileRel.y -= subTileDY * 2;
+				sMask <<= kSubTileMaskUShift + kSubTileMaskVShift;
+				subTileRel.y -= kSubTileDY * 2;
 			}
 			yBound = abs(subTileRel.x >> 1);
 
@@ -3887,8 +3887,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					subTile = lastRaisedSubTile;
 
 					subTileRel.x = relPos.x -
-					               ((subTile.u - subTile.v) << subTileDXShift);
-					subTileRel.y = ti->attrs.terrainHeight + subTileDY * 2 -
+					               ((subTile.u - subTile.v) << kSubTileDXShift);
+					subTileRel.y = ti->attrs.terrainHeight + kSubTileDY * 2 -
 					               abs(subTileRel.x >> 1) - 1;
 
 					sMask = calcSubTileMask(subTile.u, subTile.v);
@@ -3904,20 +3904,20 @@ SurfaceType pointOnTile(TileInfo            *ti,
 					        raisedCol = -4;
 
 
-					if (relPos.x & (subTileDX - 1) & 0xFFFE) {
+					if (relPos.x & (kSubTileDX - 1) & 0xFFFE) {
 						if (relPos.x > 0) {
-							curSubTileCol = relPos.x >> subTileDXShift;
+							curSubTileCol = relPos.x >> kSubTileDXShift;
 							rightSubTileCol = curSubTileCol + 2;
 							leftSubTileCol = curSubTileCol - 1;
 							goto testLeft;
 						} else {
 							curSubTileCol =
-							    (relPos.x + subTileDX - 1) >> subTileDXShift;
+							    (relPos.x + kSubTileDX - 1) >> kSubTileDXShift;
 							leftSubTileCol = curSubTileCol - 2;
 							rightSubTileCol = curSubTileCol + 1;
 						}
 					} else {
-						curSubTileCol = relPos.x >> subTileDXShift;
+						curSubTileCol = relPos.x >> kSubTileDXShift;
 						rightSubTileCol = curSubTileCol + 1;
 						leftSubTileCol = curSubTileCol - 1;
 					}
@@ -3934,7 +3934,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 
 							if (ti->attrs.testTerrain(colMask) & terrainRaised) {
 								raisedCol = rightSubTileCol;
-								subTileRel.x = -subTileDX + 2;
+								subTileRel.x = -kSubTileDX + 2;
 								break;
 							}
 
@@ -3950,7 +3950,7 @@ testLeft:
 
 							if (ti->attrs.testTerrain(colMask) & terrainRaised) {
 								raisedCol = leftSubTileCol;
-								subTileRel.x = subTileDX - 1;
+								subTileRel.x = kSubTileDX - 1;
 								break;
 							}
 
@@ -3963,7 +3963,7 @@ testLeft:
 
 					//  compute the number of subtiles in column
 					int8 subsInCol = 4 - abs(raisedCol);
-					relPos.x = (raisedCol << subTileDXShift) + subTileRel.x;
+					relPos.x = (raisedCol << kSubTileDXShift) + subTileRel.x;
 
 					if (raisedCol > 0) {
 						colMask = 0x0001 << (raisedCol << 2);
@@ -3986,7 +3986,7 @@ testLeft:
 
 					//  subTile is now the first raised subtile in
 					//  column
-					subTileRel.y = relPos.y - ((subTile.u + subTile.v) * subTileDY) - h;
+					subTileRel.y = relPos.y - ((subTile.u + subTile.v) * kSubTileDY) - h;
 					sMask = calcSubTileMask(subTile.u, subTile.v);
 					yBound = abs(subTileRel.x >> 1);
 				}
@@ -4034,11 +4034,11 @@ bool pointOnHiddenSurface(
 	if (surfaceType == surfaceVertV) {
 		assert(testCoords.u == 0);
 		adjTCoords.u--;
-		adjSubMask = 0x1000 << (testCoords.v >> subTileShift);
+		adjSubMask = 0x1000 << (testCoords.v >> kSubTileShift);
 	} else {
 		assert(testCoords.v == 0);
 		adjTCoords.v--;
-		adjSubMask = 0x0008 << (testCoords.u & ~subTileMask);
+		adjSubMask = 0x0008 << (testCoords.u & ~kSubTileMask);
 	}
 
 	mCoords = adjTCoords >> kPlatShift;
@@ -4498,10 +4498,10 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 
 	objHeight = objCoords.z;
 
-	objTileReg.min.u = (objCoords.u - subTileSize) >> kTileUVShift;
-	objTileReg.min.v = (objCoords.v - subTileSize) >> kTileUVShift;
-	objTileReg.max.u = (objCoords.u + subTileSize + kTileUVMask) >> kTileUVShift;
-	objTileReg.max.v = (objCoords.v + subTileSize + kTileUVMask) >> kTileUVShift;
+	objTileReg.min.u = (objCoords.u - kSubTileSize) >> kTileUVShift;
+	objTileReg.min.v = (objCoords.v - kSubTileSize) >> kTileUVShift;
+	objTileReg.max.u = (objCoords.u + kSubTileSize + kTileUVMask) >> kTileUVShift;
+	objTileReg.max.v = (objCoords.v + kSubTileSize + kTileUVMask) >> kTileUVShift;
 
 	debugC(3, kDebugTiles, "objTileReg = ((%d,%d), (%d,%d))", objTileReg.min.u, objTileReg.min.v, objTileReg.max.u, objTileReg.max.v);
 

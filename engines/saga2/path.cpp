@@ -746,8 +746,8 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 	//  Calculate the area in subtiles the object occupies.  Since U and
 	//  V coordinates will alway equal each other, there is no need to
 	//  calculate both.
-	area.min = ((kTileUVSize / 2) - objSection) >> subTileShift;
-	area.max = ((kTileUVSize / 2) + objSection + subTileMask) >> subTileShift;
+	area.min = ((kTileUVSize / 2) - objSection) >> kSubTileShift;
+	area.max = ((kTileUVSize / 2) + objSection + kSubTileMask) >> kSubTileShift;
 
 	//  Determine if the cross section is wide enough that the diaginal
 	//  masks need to be expanded outward one subtile
@@ -793,16 +793,16 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 			ptMaskArea.min = baseMaskArea.min + tDirTable2[dir] * (ptNum + 1);
 			ptMaskArea.max = baseMaskArea.max + tDirTable2[dir] * (ptNum + 1);
 
-			ptMask->offset.u = ptMaskArea.min.u >> tileSubShift;
-			ptMask->offset.v = ptMaskArea.min.v >> tileSubShift;
+			ptMask->offset.u = ptMaskArea.min.u >> kTileSubShift;
+			ptMask->offset.v = ptMaskArea.min.v >> kTileSubShift;
 
-			ptMaskArea.max.u -= ptMaskArea.min.u & ~subTileMask;
-			ptMaskArea.min.u &= subTileMask;
-			ptMaskArea.max.v -= ptMaskArea.min.v & ~subTileMask;
-			ptMaskArea.min.v &= subTileMask;
+			ptMaskArea.max.u -= ptMaskArea.min.u & ~kSubTileMask;
+			ptMaskArea.min.u &= kSubTileMask;
+			ptMaskArea.max.v -= ptMaskArea.min.v & ~kSubTileMask;
+			ptMaskArea.min.v &= kSubTileMask;
 
-			ptMask->size.u = (ptMaskArea.max.u + tileSubMask) >> tileSubShift;
-			ptMask->size.v = (ptMaskArea.max.v + tileSubMask) >> tileSubShift;
+			ptMask->size.u = (ptMaskArea.max.u + kTileSubMask) >> kTileSubShift;
+			ptMask->size.v = (ptMaskArea.max.v + kTileSubMask) >> kTileSubShift;
 
 			memset(tempMask, 0, sizeof(tempMask));
 
@@ -957,8 +957,8 @@ int16 tileSlopeHeight(
 	//  Calculate coordinates of tile and subtile
 	TilePoint       tileCoords = pt >> kTileUVShift,
 	                subTile(
-	                    (pt.u >> subTileShift) & subTileMask,
-	                    (pt.v >> subTileShift) & subTileMask,
+	                    (pt.u >> kSubTileShift) & kSubTileMask,
+	                    (pt.v >> kSubTileShift) & kSubTileMask,
 	                    0);
 
 	PathTileInfo    highestTile,
@@ -2667,7 +2667,7 @@ TilePoint selectNearbySite(
 			//  If it's too high to step, then don't continue
 //			if (testPt.z - qi.z > maxStepHeight) continue;
 			fromSubPt = centerPt;
-			for (i = 0; i < tileSubSize; i++) {
+			for (i = 0; i < kTileSubSize; i++) {
 				int16       deltaZ;
 
 				//  Next sub tile
@@ -2961,7 +2961,7 @@ bool checkPath(
 			testPt.z =  tileSlopeHeight(testPt, mapNum, height, &sti);
 
 			fromSubPt = centerPt;
-			for (i = 0; i < tileSubSize; i++) {
+			for (i = 0; i < kTileSubSize; i++) {
 				int16       deltaZ;
 
 				//  Next sub tile

@@ -904,8 +904,8 @@ int16 tileNopeHeight(
 	                metaCoords = tileCoords >> kPlatShift,
 	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
-	                subTile((pt.u >> subTileShift) & subTileMask,
-	                        (pt.v >> subTileShift) & subTileMask,
+	                subTile((pt.u >> kSubTileShift) & kSubTileMask,
+	                        (pt.v >> kSubTileShift) & kSubTileMask,
 	                        0);
 
 	MetaTilePtr     metaPtr;

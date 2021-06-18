@@ -3028,17 +3028,17 @@ void MotionTask::upLadderAction(void) {
 			uint16      footPrintMask = 0xFFFF,
 			            ladderMask;
 			TilePoint   subTileLoc(
-			    tileLoc.u << tileSubShift,
-			    tileLoc.v << tileSubShift,
+			    tileLoc.u << kTileSubShift,
+			    tileLoc.v << kTileSubShift,
 			    0);
 			TileRegion  actorSubTileReg;
 
-			actorSubTileReg.min.u = (loc.u - crossSection) >> subTileShift;
-			actorSubTileReg.min.v = (loc.v - crossSection) >> subTileShift;
+			actorSubTileReg.min.u = (loc.u - crossSection) >> kSubTileShift;
+			actorSubTileReg.min.v = (loc.v - crossSection) >> kSubTileShift;
 			actorSubTileReg.max.u =
-			    (loc.u + crossSection + subTileMask) >> subTileShift;
+			    (loc.u + crossSection + kSubTileMask) >> kSubTileShift;
 			actorSubTileReg.max.v =
-			    (loc.v + crossSection + subTileMask) >> subTileShift;
+			    (loc.v + crossSection + kSubTileMask) >> kSubTileShift;
 
 			if (actorSubTileReg.min.u >= subTileLoc.u)
 				footPrintMask &=
@@ -3048,11 +3048,11 @@ void MotionTask::upLadderAction(void) {
 				footPrintMask &=
 				    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
-			if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
+			if (actorSubTileReg.max.u < subTileLoc.u + kTileSubSize)
 				footPrintMask &=
 				    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
-			if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
+			if (actorSubTileReg.max.v < subTileLoc.v + kTileSubSize)
 				footPrintMask &=
 				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
@@ -3150,17 +3150,17 @@ void MotionTask::downLadderAction(void) {
 			uint16      footPrintMask = 0xFFFF,
 			            ladderMask;
 			TilePoint   subTileLoc(
-			    tileLoc.u << tileSubShift,
-			    tileLoc.v << tileSubShift,
+			    tileLoc.u << kTileSubShift,
+			    tileLoc.v << kTileSubShift,
 			    0);
 			TileRegion  actorSubTileReg;
 
-			actorSubTileReg.min.u = (loc.u - crossSection) >> subTileShift;
-			actorSubTileReg.min.v = (loc.v - crossSection) >> subTileShift;
+			actorSubTileReg.min.u = (loc.u - crossSection) >> kSubTileShift;
+			actorSubTileReg.min.v = (loc.v - crossSection) >> kSubTileShift;
 			actorSubTileReg.max.u =
-			    (loc.u + crossSection + subTileMask) >> subTileShift;
+			    (loc.u + crossSection + kSubTileMask) >> kSubTileShift;
 			actorSubTileReg.max.v =
-			    (loc.v + crossSection + subTileMask) >> subTileShift;
+			    (loc.v + crossSection + kSubTileMask) >> kSubTileShift;
 
 			if (actorSubTileReg.min.u >= subTileLoc.u)
 				footPrintMask &=
@@ -3170,11 +3170,11 @@ void MotionTask::downLadderAction(void) {
 				footPrintMask &=
 				    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
-			if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
+			if (actorSubTileReg.max.u < subTileLoc.u + kTileSubSize)
 				footPrintMask &=
 				    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
-			if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
+			if (actorSubTileReg.max.v < subTileLoc.v + kTileSubSize)
 				footPrintMask &=
 				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
@@ -4873,17 +4873,17 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 		uint16      footPrintMask = 0xFFFF,
 		            ladderMask;
 		TilePoint   subTileLoc(
-		    tileLoc.u << tileSubShift,
-		    tileLoc.v << tileSubShift,
+		    tileLoc.u << kTileSubShift,
+		    tileLoc.v << kTileSubShift,
 		    0);
 		TileRegion  actorSubTileReg;
 
-		actorSubTileReg.min.u = (loc.u - crossSection) >> subTileShift;
-		actorSubTileReg.min.v = (loc.v - crossSection) >> subTileShift;
+		actorSubTileReg.min.u = (loc.u - crossSection) >> kSubTileShift;
+		actorSubTileReg.min.v = (loc.v - crossSection) >> kSubTileShift;
 		actorSubTileReg.max.u =
-		    (loc.u + crossSection + subTileMask) >> subTileShift;
+		    (loc.u + crossSection + kSubTileMask) >> kSubTileShift;
 		actorSubTileReg.max.v =
-		    (loc.v + crossSection + subTileMask) >> subTileShift;
+		    (loc.v + crossSection + kSubTileMask) >> kSubTileShift;
 
 		if (actorSubTileReg.min.u >= subTileLoc.u)
 			footPrintMask &=
@@ -4893,11 +4893,11 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 			footPrintMask &=
 			    vMinMasks[actorSubTileReg.min.v - subTileLoc.v];
 
-		if (actorSubTileReg.max.u < subTileLoc.u + tileSubSize)
+		if (actorSubTileReg.max.u < subTileLoc.u + kTileSubSize)
 			footPrintMask &=
 			    uMaxMasks[actorSubTileReg.max.u - subTileLoc.u];
 
-		if (actorSubTileReg.max.v < subTileLoc.v + tileSubSize)
+		if (actorSubTileReg.max.v < subTileLoc.v + kTileSubSize)
 			footPrintMask &=
 			    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 

@@ -306,32 +306,32 @@ enum {
 
 //  Metatile metrics
 enum {
-    metaTileWidth = kTileWidth * kPlatformWidth,
-    metaTileHeight = kTileHeight * kPlatformWidth,
-    metaDX = metaTileWidth / 2,
-    metaDY = metaTileHeight / 2
+    kMetaTileWidth = kTileWidth * kPlatformWidth,
+    kMetaTileHeight = kTileHeight * kPlatformWidth,
+    kMetaDX = kMetaTileWidth / 2,
+    kMetaDY = kMetaTileHeight / 2
 };
 
 enum {
-    subTileSize = 4,
-    subTileMask = subTileSize - 1,
-    subTileShift = 2,
-    tileSubSize = 4,
-    tileSubMask = tileSubSize - 1,
-    tileSubShift = 2
+    kSubTileSize = 4,
+    kSubTileMask = kSubTileSize - 1,
+    kSubTileShift = 2,
+    kTileSubSize = 4,
+    kTileSubMask = kTileSubSize - 1,
+    kTileSubShift = 2
 };
 
 //  Constants to convert an X,Y into subtile coordinates
 enum {
-    subTileDX = (kTileDX / 4),
-    subTileDY = (kTileDY / 4),
-    subTileDXShift = (kTileDXShift - 2),
-    subTileDYShift = (kTileDYShift - 2)
+    kSubTileDX = (kTileDX / 4),
+    kSubTileDY = (kTileDY / 4),
+    kSubTileDXShift = (kTileDXShift - 2),
+    kSubTileDYShift = (kTileDYShift - 2)
 };
 
 enum {
-    subTileMaskUShift = 4,
-    subTileMaskVShift = 1
+    kSubTileMaskUShift = 4,
+    kSubTileMaskVShift = 1
 };
 
 //  Maximum height that a character can climb w/o steps or ladders

@@ -224,24 +224,24 @@ uint32 volumeTerrain(int16 mapNum, const TileRegion &vol) {
 	            volume;
 
 	//  Convert to subtile coords
-	volume.min.u = vol.min.u >> subTileShift;
-	volume.min.v = vol.min.v >> subTileShift;
-	volume.max.u = (vol.max.u + subTileMask) >> subTileShift;
-	volume.max.v = (vol.max.v + subTileMask) >> subTileShift;
+	volume.min.u = vol.min.u >> kSubTileShift;
+	volume.min.v = vol.min.v >> kSubTileShift;
+	volume.max.u = (vol.max.u + kSubTileMask) >> kSubTileShift;
+	volume.max.v = (vol.max.v + kSubTileMask) >> kSubTileShift;
 	volume.min.z = vol.min.z;
 	volume.max.z = vol.max.z;
 
 	//  Calculate the footprint of the object (in subtile coords)
-	footprint.min.u = volume.min.u >> tileSubShift;
-	footprint.min.v = volume.min.v >> tileSubShift;
-	footprint.max.u = volume.max.u >> tileSubShift;
-	footprint.max.v = volume.max.v >> tileSubShift;
+	footprint.min.u = volume.min.u >> kTileSubShift;
+	footprint.min.v = volume.min.v >> kTileSubShift;
+	footprint.max.u = volume.max.u >> kTileSubShift;
+	footprint.max.v = volume.max.v >> kTileSubShift;
 
 	//  Calculate which subtiles the region falls upon.
-	subPos.min.u = volume.min.u & subTileMask;
-	subPos.min.v = volume.min.v & subTileMask;
-	subPos.max.u = volume.max.u & subTileMask;
-	subPos.max.v = volume.max.v & subTileMask;
+	subPos.min.u = volume.min.u & kSubTileMask;
+	subPos.min.v = volume.min.v & kSubTileMask;
+	subPos.max.u = volume.max.u & kSubTileMask;
+	subPos.max.v = volume.max.v & kSubTileMask;
 
 	tilePt.z = 0;
 
@@ -389,17 +389,17 @@ uint32 lineTerrain(
 #endif
 
 	//  Calculate starting subtile coordinates
-	curSubTile.u = from.u >> subTileShift;
-	curSubTile.v = from.v >> subTileShift;
+	curSubTile.u = from.u >> kSubTileShift;
+	curSubTile.v = from.v >> kSubTileShift;
 	curSubTile.z = tileStartZ = from.z;
 
 	//  Calculate destination subtil coordinates
-	destSubTile.u = to.u >> subTileShift;
-	destSubTile.v = to.v >> subTileShift;
+	destSubTile.u = to.u >> kSubTileShift;
+	destSubTile.v = to.v >> kSubTileShift;
 	destSubTile.z = to.z;
 
-	tilePt.u = curSubTile.u >> tileSubShift;
-	tilePt.v = curSubTile.v >> tileSubShift;
+	tilePt.u = curSubTile.u >> kTileSubShift;
+	tilePt.v = curSubTile.v >> kTileSubShift;
 	tilePt.z = 0;
 
 	if (destSubTile.u > curSubTile.u) {
@@ -440,7 +440,7 @@ uint32 lineTerrain(
 		        curSubTile.u += uStep) {
 			curZ += zStep;
 
-			if ((curSubTile.u >> tileSubShift) != tilePt.u) {
+			if ((curSubTile.u >> kTileSubShift) != tilePt.u) {
 				curSubTile.z = curZ >> 16;
 
 				terrain |=  tileTerrain(
@@ -451,16 +451,16 @@ uint32 lineTerrain(
 				                *maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
-				tilePt.u = curSubTile.u >> tileSubShift;
+				tilePt.u = curSubTile.u >> kTileSubShift;
 				tileStartZ = curSubTile.z;
 				subTileMask_ = 0;
 			}
 
-			subTileMask_ |= (uMask[curSubTile.u & subTileMask] &
-			                vMask[curSubTile.v & subTileMask]);
+			subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
+			                vMask[curSubTile.v & kSubTileMask]);
 #if DEBUG && VISUAL2
-			tempPoint.u = curSubTile.u << tileSubShift;
-			tempPoint.v = curSubTile.v << tileSubShift;
+			tempPoint.u = curSubTile.u << kTileSubShift;
+			tempPoint.v = curSubTile.v << kTileSubShift;
 			tempPoint.z = curSubTile.z;
 			TPLine(prevPoint, tempPoint);
 			prevPoint = tempPoint;
@@ -471,7 +471,7 @@ uint32 lineTerrain(
 				errorTerm -= uDiff;
 				curSubTile.v += vStep;
 
-				if ((curSubTile.v >> tileSubShift) != tilePt.z) {
+				if ((curSubTile.v >> kTileSubShift) != tilePt.z) {
 					curSubTile.z = curZ >> 16;
 
 					terrain |=  tileTerrain(
@@ -482,16 +482,16 @@ uint32 lineTerrain(
 					                *maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
-					tilePt.v = curSubTile.v >> tileSubShift;
+					tilePt.v = curSubTile.v >> kTileSubShift;
 					tileStartZ = curSubTile.z;
 					subTileMask_ = 0;
 				}
 
-				subTileMask_ |= (uMask[curSubTile.u & subTileMask] &
-				                vMask[curSubTile.v & subTileMask]);
+				subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
+				                vMask[curSubTile.v & kSubTileMask]);
 #if DEBUG && VISUAL2
-				tempPoint.u = curSubTile.u << tileSubShift;
-				tempPoint.v = curSubTile.v << tileSubShift;
+				tempPoint.u = curSubTile.u << kTileSubShift;
+				tempPoint.v = curSubTile.v << kTileSubShift;
 				tempPoint.z = curSubTile.z;
 				TPLine(prevPoint, tempPoint);
 				prevPoint = tempPoint;
@@ -509,7 +509,7 @@ uint32 lineTerrain(
 		        curSubTile.v += vStep) {
 			curZ += zStep;
 
-			if ((curSubTile.v >> tileSubShift) != tilePt.v) {
+			if ((curSubTile.v >> kTileSubShift) != tilePt.v) {
 				curSubTile.z = curZ >> 16;
 
 				terrain |=  tileTerrain(
@@ -520,17 +520,17 @@ uint32 lineTerrain(
 				                *maxZ + 1);
 				if (terrain & opaqueTerrain) return terrain;
 
-				tilePt.v = curSubTile.v >> tileSubShift;
+				tilePt.v = curSubTile.v >> kTileSubShift;
 				tileStartZ = curSubTile.z;
 				subTileMask_ = 0;
 			}
 
-			subTileMask_ |= (uMask[curSubTile.u & subTileMask] &
-			                vMask[curSubTile.v & subTileMask]);
+			subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
+			                vMask[curSubTile.v & kSubTileMask]);
 
 #if DEBUG && VISUAL2
-			tempPoint.u = curSubTile.u << tileSubShift;
-			tempPoint.v = curSubTile.v << tileSubShift;
+			tempPoint.u = curSubTile.u << kTileSubShift;
+			tempPoint.v = curSubTile.v << kTileSubShift;
 			tempPoint.z = curSubTile.z;
 			TPLine(prevPoint, tempPoint);
 			prevPoint = tempPoint;
@@ -541,7 +541,7 @@ uint32 lineTerrain(
 				errorTerm -= vDiff;
 				curSubTile.u += uStep;
 
-				if ((curSubTile.u >> tileSubShift) != tilePt.u) {
+				if ((curSubTile.u >> kTileSubShift) != tilePt.u) {
 					curSubTile.z = curZ >> 16;
 
 					terrain |=  tileTerrain(
@@ -552,16 +552,16 @@ uint32 lineTerrain(
 					                *maxZ + 1);
 					if (terrain & opaqueTerrain) return terrain;
 
-					tilePt.u = curSubTile.u >> tileSubShift;
+					tilePt.u = curSubTile.u >> kTileSubShift;
 					tileStartZ = curSubTile.z;
 					subTileMask_ = 0;
 				}
 
-				subTileMask_ |= (uMask[curSubTile.u & subTileMask] &
-				                vMask[curSubTile.v & subTileMask]);
+				subTileMask_ |= (uMask[curSubTile.u & kSubTileMask] &
+				                vMask[curSubTile.v & kSubTileMask]);
 #if DEBUG && VISUAL2
-				tempPoint.u = curSubTile.u << tileSubShift;
-				tempPoint.v = curSubTile.v << tileSubShift;
+				tempPoint.u = curSubTile.u << kTileSubShift;
+				tempPoint.v = curSubTile.v << kTileSubShift;
 				tempPoint.z = curSubTile.z;
 				TPLine(prevPoint, tempPoint);
 				prevPoint = tempPoint;
@@ -608,8 +608,8 @@ int16 tileSlopeHeight(
 	                metaCoords = tileCoords >> kPlatShift,
 	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
-	                subTile((pt.u >> subTileShift) & subTileMask,
-	                        (pt.v >> subTileShift) & subTileMask,
+	                subTile((pt.u >> kSubTileShift) & kSubTileMask,
+	                        (pt.v >> kSubTileShift) & kSubTileMask,
 	                        0);
 
 	MetaTilePtr     metaPtr;
@@ -866,9 +866,9 @@ int16 checkWalkable(
 		                    subTileV,
 		                    mask;
 
-		subTileU = (loc.u & kTileUVMask) >> subTileShift;
-		subTileV = (loc.v & kTileUVMask) >> subTileShift;
-		mask = 1 << ((subTileU << subTileShift) + subTileV);
+		subTileU = (loc.u & kTileUVMask) >> kSubTileShift;
+		subTileV = (loc.v & kTileUVMask) >> kSubTileShift;
+		mask = 1 << ((subTileU << kSubTileShift) + subTileV);
 
 		//  If the suporting subtile is funiture consider this blocked
 		if (sti.surfaceTile->attrs.testTerrain(mask) & terrainFurniture)
