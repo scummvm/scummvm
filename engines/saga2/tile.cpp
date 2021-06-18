@@ -4647,7 +4647,7 @@ void updateMainDisplay(void) {
 	                scrollDistance;
 
 	int16           viewSize = tileRect.height;
-	int16           mapSectors = curMap->mapSize * 8 * 16 / sectorSize;
+	int16           mapSectors = curMap->mapSize * 8 * 16 / kSectorSize;
 	TilePoint       trackPos,
 	                mCoords;
 
@@ -4708,10 +4708,10 @@ void updateMainDisplay(void) {
 
 	//  Compute the largest U/V rectangle which completely
 	//  encloses the view area, and convert to sector coords.
-	minSector.u = clamp(0, (viewCenter.u - viewSize) / sectorSize, mapSectors - 1);
-	minSector.v = clamp(0, (viewCenter.v - viewSize) / sectorSize, mapSectors - 1);
-	maxSector.u = clamp(0, (viewCenter.u + viewSize) / sectorSize, mapSectors - 1);
-	maxSector.v = clamp(0, (viewCenter.v + viewSize) / sectorSize, mapSectors - 1);
+	minSector.u = clamp(0, (viewCenter.u - viewSize) / kSectorSize, mapSectors - 1);
+	minSector.v = clamp(0, (viewCenter.v - viewSize) / kSectorSize, mapSectors - 1);
+	maxSector.u = clamp(0, (viewCenter.u + viewSize) / kSectorSize, mapSectors - 1);
+	maxSector.v = clamp(0, (viewCenter.v + viewSize) / kSectorSize, mapSectors - 1);
 
 	buildRoofTable();
 

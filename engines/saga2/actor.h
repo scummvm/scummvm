@@ -36,7 +36,7 @@ class Band;
 class MotionTask;
 class TaskStack;
 
-const int   bandingDist = sectorSize * 2;
+const int   bandingDist = kSectorSize * 2;
 const int   actorScriptVars = 4;
 
 /* ===================================================================== *

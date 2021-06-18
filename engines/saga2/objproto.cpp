@@ -978,8 +978,8 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 
 	if (w == NULL
 	        ||  !w->getSector(
-	            location.u >> sectorShift,
-	            location.v >> sectorShift)->isActivated())
+	            location.u >> kSectorShift,
+	            location.v >> kSectorShift)->isActivated())
 		obj->deactivate();
 }
 
