@@ -1518,6 +1518,11 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 
 	_pad = false;
 
+	// Indy 3 provides an "Indy" font in two sizes, 9 and 12, which are
+	// used for the text boxes. The smaller font can be used for a
+	// headline. The rest of the Mac GUI seems to use a system font, but
+	// that is not implemented.
+
 	// As far as I can tell, Loom uses only font size 13 for in-game text.
 	// The font is also provided in sizes 9 and 12, and it's possible that
 	// 12 is used for system messages, e.g. the original pause dialog. We
@@ -1536,42 +1541,61 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// 60 is an upside-down note, i.e. the one used for c'.
 	// 95 is a used for the rest of the notes.
 
-	if (_vm->_game.id == GID_LOOM) {
+	if (_vm->_game.id == GID_INDY3 || _vm->_game.id == GID_LOOM) {
 		Common::MacResManager resource;
 		resource.open(fontFile);
 
-		uint16 fontId = 0;
+		Common::String fontFamilyName = (_vm->_game.id == GID_LOOM) ? "Loom" : "Indy";
 
-		Common::SeekableReadStream *fond = resource.getResource(MKTAG('F', 'O', 'N', 'D'), "Loom");
+		Common::SeekableReadStream *fond = resource.getResource(MKTAG('F', 'O', 'N', 'D'), fontFamilyName);
 		Graphics::MacFontFamily fontFamily;
 
 		if (fond) {
 			if (fontFamily.load(*fond)) {
 				Common::Array<Graphics::MacFontFamily::AsscEntry> *assoc = fontFamily.getAssocTable();
 				for (uint i = 0; i < assoc->size(); i++) {
-					if ((*assoc)[i]._fontSize == 13) {
-						fontId = (*assoc)[i]._fontID;
-						break;
+					int fontId = -1;
+					int fontSize = (*assoc)[i]._fontSize;
+
+					if (_vm->_game.id == GID_INDY3) {
+						if (fontSize == 9)
+							fontId = 1;
+						else if (fontSize == 12)
+							fontId = 0;
+					} else {
+						if (fontSize == 13)
+							fontId = 0;
+					}
+					if (fontId != -1) {
+						Common::SeekableReadStream *font = resource.getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
+						_macFonts[fontId].loadFont(*font, &fontFamily, fontSize, 0);
+						delete font;
 					}
 				}
 			}
 			delete fond;
 		}
-
-		assert(fontId);
-
-		Common::SeekableReadStream *font = resource.getResource(MKTAG('F', 'O', 'N', 'T'), fontId);
-		_macFont.loadFont(*font, &fontFamily, 13, 0);
-		delete font;
 	}
 }
 
+void CharsetRendererMac::setCurID(int32 id) {
+	if  (id == -1)
+		return;
+
+	if (_vm->_game.id == GID_LOOM && id != 0) {
+		warning("CharsetRednererMac::setCurID(%d), changing to 0", id);
+		id = 0;
+	}
+
+	_curId = id;
+}
+
 int CharsetRendererMac::getFontHeight() {
-	return _macFont.getFontHeight() / 2;
+	return _macFonts[_curId].getFontHeight() / 2;
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) {
-	return _macFont.getCharWidth(chr) / 2;
+	return _macFonts[_curId].getCharWidth(chr) / 2;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
@@ -1663,14 +1687,14 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 	if (enableShadow) {
 		left = macLeft / 2;
-		right = (macLeft + _macFont.getCharWidth(chr) + 3) / 2;
+		right = (macLeft + _macFonts[_curId].getCharWidth(chr) + 3) / 2;
 		top = macTop / 2;
-		bottom = (macTop + _macFont.getFontHeight() + 3) / 2;
+		bottom = (macTop + _macFonts[_curId].getFontHeight() + 3) / 2;
 	} else {
 		left = (macLeft + 1) / 2;
-		right = (macLeft + _macFont.getCharWidth(chr) + 1) / 2;
+		right = (macLeft + _macFonts[_curId].getCharWidth(chr) + 1) / 2;
 		top = (macTop + 1) / 2;
-		bottom = (macTop + _macFont.getFontHeight() + 1) / 2;
+		bottom = (macTop + _macFonts[_curId].getFontHeight() + 1) / 2;
 	}
 
 	if (_firstChar) {
@@ -1698,7 +1722,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// The next character may have to be adjusted to compensate for
 	// rounding errors.
 
-	macLeft += _macFont.getCharWidth(chr);
+	macLeft += _macFonts[_curId].getCharWidth(chr);
 	if (macLeft & 1)
 		_pad = true;
 
@@ -1708,25 +1732,25 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 
 void CharsetRendererMac::printCharInternal(int chr, int color, bool shadow, int x, int y) {
 	if (shadow) {
-		_macFont.drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
-		_macFont.drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
-		_macFont.drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
+		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 2, y, 0);
+		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x, y + 2, 0);
+		_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 3, y + 3, 0);
 
 		if (color != -1) {
-			_macFont.drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
-			_macFont.drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
-			_macFont.drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 2, y, _shadowColor);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x, y + 2, _shadowColor);
+			_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 3, y + 3, _shadowColor);
 		}
 	}
 
-	_macFont.drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
+	_macFonts[_curId].drawChar(&_vm->_textSurface, chr, x + 1, y + 1, 0);
 
 	if (color != -1)
-		_macFont.drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
+		_macFonts[_curId].drawChar(_vm->_macScreen, chr, x + 1, y + 1, color);
 }
 
 void CharsetRendererMac::drawChar(int chr, Graphics::Surface &s, int x, int y) {
-	_macFont.drawChar(&s, chr, x, y, _color);
+	_macFonts[_curId].drawChar(&s, chr, x, y, _color);
 }
 
 void CharsetRendererMac::setColor(byte color) {
