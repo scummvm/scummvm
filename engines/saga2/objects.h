@@ -842,10 +842,10 @@ public:
 	TileRegion getRegion(void) {
 		TileRegion      tReg;
 
-		tReg.min.u = region.min.u << sectorShift;
-		tReg.min.v = region.min.v << sectorShift;
-		tReg.max.u = region.max.u << sectorShift;
-		tReg.max.v = region.max.v << sectorShift;
+		tReg.min.u = region.min.u << kSectorShift;
+		tReg.min.v = region.min.v << kSectorShift;
+		tReg.max.u = region.max.u << kSectorShift;
+		tReg.max.v = region.max.v << kSectorShift;
 		tReg.min.z = tReg.max.z = 0;
 
 		return tReg;

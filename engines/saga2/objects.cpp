@@ -377,8 +377,8 @@ ObjectID *GameObject::getHeadPtr(ObjectID parentID, TilePoint &l) {
 		GameWorld   *world = (GameWorld *)parentObj;
 		TilePoint   sectors = world->sectorSize();
 
-		int16       u = clamp(0, l.u / sectorSize, sectors.u - 1),
-		            v = clamp(0, l.v / sectorSize, sectors.v - 1);
+		int16       u = clamp(0, l.u / kSectorSize, sectors.u - 1),
+		            v = clamp(0, l.v / kSectorSize, sectors.v - 1);
 
 		return  &(world->sectorArray)[
 		     v * world->sectorArraySize + u].childID;
@@ -756,10 +756,10 @@ void GameObject::setLocation(const Location &l) {
 		GameWorld   *world = (GameWorld *)objectAddress(l.context);
 		TilePoint   sectors = world->sectorSize();
 
-		int16       u0 = clamp(0, location.u / sectorSize, sectors.u - 1),
-		            v0 = clamp(0, location.v / sectorSize, sectors.v - 1),
-		            u1 = clamp(0, l.u / sectorSize, sectors.u - 1),
-		            v1 = clamp(0, l.v / sectorSize, sectors.v - 1);
+		int16       u0 = clamp(0, location.u / kSectorSize, sectors.u - 1),
+		            v0 = clamp(0, location.v / kSectorSize, sectors.v - 1),
+		            u1 = clamp(0, l.u / kSectorSize, sectors.u - 1),
+		            v1 = clamp(0, l.v / kSectorSize, sectors.v - 1);
 
 		if (u0 != u1 || v0 != v1) {         // If sector changed
 			remove();                       //  Remove from old list
@@ -780,10 +780,10 @@ void GameObject::setLocation(const TilePoint &tp) {
 		GameWorld   *world = (GameWorld *)objectAddress(parentID);
 		TilePoint   sectors = world->sectorSize();
 
-		int16       u0 = clamp(0, location.u / sectorSize, sectors.u - 1),
-		            v0 = clamp(0, location.v / sectorSize, sectors.v - 1),
-		            u1 = clamp(0, tp.u / sectorSize, sectors.u - 1),
-		            v1 = clamp(0, tp.v / sectorSize, sectors.v - 1);
+		int16       u0 = clamp(0, location.u / kSectorSize, sectors.u - 1),
+		            v0 = clamp(0, location.v / kSectorSize, sectors.v - 1),
+		            u1 = clamp(0, tp.u / kSectorSize, sectors.u - 1),
+		            v1 = clamp(0, tp.v / kSectorSize, sectors.v - 1);
 
 		if (u0 != u1 || v0 != v1) {          // If sector changed
 			ObjectID saveParent = parentID;
@@ -966,8 +966,8 @@ void GameObject::updateImage(ObjectID oldParentID) {
 			}
 		}
 
-		if (w->getSector(location.u >> sectorShift,
-		                 location.v >> sectorShift)->isActivated()) {
+		if (w->getSector(location.u >> kSectorShift,
+		                 location.v >> kSectorShift)->isActivated()) {
 			activate();
 		}
 	} else {
@@ -2344,7 +2344,7 @@ GameWorld::GameWorld(int16 map) {
 		size.u = (mapSize << kPlatShift) << kTileUVShift;
 		size.v = size.u;
 
-		sectorArraySize = size.u / Saga2::sectorSize;
+		sectorArraySize = size.u / kSectorSize;
 		sectorArray = new Sector[sectorArraySize * sectorArraySize]();
 
 		if (sectorArray == nullptr)
@@ -2372,7 +2372,7 @@ GameWorld::GameWorld(void **buf) {
 	if (size.u != 0) {
 		int32   sectorArrayBytes;
 
-		sectorArraySize = size.u / Saga2::sectorSize;
+		sectorArraySize = size.u / kSectorSize;
 		sectorArrayBytes =
 		    sectorArraySize * sectorArraySize * sizeof(Sector),
 		    sectorArray = new Sector[sectorArrayBytes]();
@@ -3263,16 +3263,16 @@ void ActiveRegion::update(void) {
 		anchorLoc = loc;
 
 		//  Determine the active region in points
-		ptRegion.min.u = loc.u - sectorSize / 2;
-		ptRegion.min.v = loc.v - sectorSize / 2;
-		ptRegion.max.u = ptRegion.min.u + sectorSize;
-		ptRegion.max.v = ptRegion.min.v + sectorSize;
+		ptRegion.min.u = loc.u - kSectorSize / 2;
+		ptRegion.min.v = loc.v - kSectorSize / 2;
+		ptRegion.max.u = ptRegion.min.u + kSectorSize;
+		ptRegion.max.v = ptRegion.min.v + kSectorSize;
 
 		//  Convert to sector coordinates
-		newRegion.min.u = ptRegion.min.u >> sectorShift;
-		newRegion.min.v = ptRegion.min.v >> sectorShift;
-		newRegion.max.u = (ptRegion.max.u + sectorMask) >> sectorShift;
-		newRegion.max.v = (ptRegion.max.v + sectorMask) >> sectorShift;
+		newRegion.min.u = ptRegion.min.u >> kSectorShift;
+		newRegion.min.v = ptRegion.min.v >> kSectorShift;
+		newRegion.max.u = (ptRegion.max.u + kSectorMask) >> kSectorShift;
+		newRegion.max.v = (ptRegion.max.v + kSectorMask) >> kSectorShift;
 
 		if (region.min.u != newRegion.min.u
 		        ||  region.min.v != newRegion.min.v
@@ -3483,19 +3483,19 @@ TileRegion RadialObjectIterator::computeSectorRegion(
 
 	sectorRegion.min.u =    clamp(
 	                            0,
-	                            (center.u - radius) >> sectorShift,
+	                            (center.u - radius) >> kSectorShift,
 	                            sectors.u);
 	sectorRegion.min.v =    clamp(
 	                            0,
-	                            (center.v - radius) >> sectorShift,
+	                            (center.v - radius) >> kSectorShift,
 	                            sectors.v);
 	sectorRegion.max.u =    clamp(
 	                            0,
-	                            (center.u + radius + sectorMask) >> sectorShift,
+	                            (center.u + radius + kSectorMask) >> kSectorShift,
 	                            sectors.u);
 	sectorRegion.max.v =    clamp(
 	                            0,
-	                            (center.v + radius + sectorMask) >> sectorShift,
+	                            (center.v + radius + kSectorMask) >> kSectorShift,
 	                            sectors.v);
 	sectorRegion.min.z = sectorRegion.max.z = 0;
 
@@ -3617,19 +3617,19 @@ TileRegion RegionalObjectIterator::computeSectorRegion(
 
 	sectorRegion.min.u =    clamp(
 	                            0,
-	                            min.u >> sectorShift,
+	                            min.u >> kSectorShift,
 	                            sectors.u);
 	sectorRegion.min.v =    clamp(
 	                            0,
-	                            min.v >> sectorShift,
+	                            min.v >> kSectorShift,
 	                            sectors.v);
 	sectorRegion.max.u =    clamp(
 	                            0,
-	                            (max.u + sectorMask) >> sectorShift,
+	                            (max.u + kSectorMask) >> kSectorShift,
 	                            sectors.u);
 	sectorRegion.max.v =    clamp(
 	                            0,
-	                            (max.v + sectorMask) >> sectorShift,
+	                            (max.v + kSectorMask) >> kSectorShift,
 	                            sectors.v);
 	sectorRegion.min.z = sectorRegion.max.z = 0;
 

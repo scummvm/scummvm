@@ -291,9 +291,9 @@ enum {
 //	Size of a map sector (4 metatiles x 4 metatiles)
 
 enum {
-	sectorSize = kTileUVSize * 8 * 4,
-	sectorShift = kTileUVShift + 3 + 2,
-	sectorMask = (sectorSize - 1)
+	kSectorSize = kTileUVSize * 8 * 4,
+	kSectorShift = kTileUVShift + 3 + 2,
+	kSectorMask = (kSectorSize - 1)
 };
 
 //  Plaftorm metrics
