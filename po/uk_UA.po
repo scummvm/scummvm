@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2021-06-13 12:15+0000\n"
-"PO-Revision-Date: 2021-06-06 23:54+0000\n"
+"PO-Revision-Date: 2021-06-18 05:18+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -5208,7 +5208,7 @@ msgstr "Ролік польоту над Myst не показувався ори
 #.
 #: engines/mohawk/dialogs.cpp:132
 msgid "~F~uzzy Logic in SpaceShip Active"
-msgstr ""
+msgstr "Нечітка логіка у SpaceShip Active"
 
 #. I18N: Drop book page
 #: engines/mohawk/dialogs.cpp:140
