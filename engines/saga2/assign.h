@@ -53,12 +53,14 @@ class ActorAssignment {
 	uint16  startFrame,     //  Time in day when this was constructed
 	        endFrame;       //  End time of the assignment
 
+	Actor *_actor;
+
 public:
 	//  Constructor
-	ActorAssignment(uint16 until);
+	ActorAssignment(Actor *a, uint16 until);
 
 	//  Constructor -- reconstruct from archive buffer
-	ActorAssignment(void **buf);
+	ActorAssignment(Actor *a, void **buf);
 
 	//  Destructor
 	virtual ~ActorAssignment(void);
@@ -70,12 +72,6 @@ public:
 	//  Write the data from this assignment object to a buffer in order
 	//  to save it on disk
 	virtual void *archive(void *buf) const;
-
-	//  Allocate memory embedded in the Actor structure
-	void *operator new (size_t, Actor *a);
-
-	//  Deallocate memory from the Actor structure
-	void operator delete (void *p);
 
 	//  Construct a TaskStack for this assignment
 	TaskStack *createTask(void);
@@ -123,6 +119,7 @@ class PatrolRouteAssignment : public ActorAssignment {
 public:
 	//  Constructor -- initial object construction
 	PatrolRouteAssignment(
+		Actor *a,
 	    uint16 until,
 	    int16 rteNo,
 	    uint8 patrolFlags,
@@ -130,7 +127,7 @@ public:
 	    int16 end = -1);
 
 	//  Constructor -- constructs from archive buffer
-	PatrolRouteAssignment(void **buf);
+	PatrolRouteAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -174,32 +171,34 @@ public:
 	//  Constructors -- initial assignment construction
 
 	//  Construct with no time limit and a specific TilePoint
-	HuntToBeNearLocationAssignment(const TilePoint &tp, uint16 r);
+	HuntToBeNearLocationAssignment(Actor *a, const TilePoint &tp, uint16 r);
 
 	//  Construct with time limit and a specific TilePoint
 	HuntToBeNearLocationAssignment(
+		Actor *a,
 	    uint16          until,
 	    const TilePoint &tp,
 	    uint16          r) :
-		ActorAssignment(until) {
+		ActorAssignment(a, until) {
 		initialize(LocationTarget(tp), r);
 	}
 
 	//  Construct with no time limit and an abstract target
-	HuntToBeNearLocationAssignment(const Target &targ, uint16 r);
+	HuntToBeNearLocationAssignment(Actor *a, const Target &targ, uint16 r);
 
 	//  Construct with time limit and an abstract target
 	HuntToBeNearLocationAssignment(
+		Actor *a,
 	    uint16          until,
 	    const Target    &targ,
 	    uint16          r) :
-		ActorAssignment(until) {
+		ActorAssignment(a, until) {
 		initialize(targ, r);
 	}
 
 
 	//  Constructor -- constructs from archive buffer
-	HuntToBeNearLocationAssignment(void **buf);
+	HuntToBeNearLocationAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -252,33 +251,36 @@ public:
 
 	//  Construct with time limit and specific actor
 	HuntToBeNearActorAssignment(
+		Actor *ac,
 	    uint16              until,
 	    Actor               *a,
 	    uint16              r,
 	    bool                trackFlag = false) :
-		ActorAssignment(until) {
+		ActorAssignment(ac, until) {
 		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), r, trackFlag);
 	}
 
 	//  Construct with no time limit and abstract actor target
 	HuntToBeNearActorAssignment(
+		Actor *a,
 	    const ActorTarget   &at,
 	    uint16              r,
 	    bool                trackFlag = false);
 
 	//  Construct with time limit and abstract actor target
 	HuntToBeNearActorAssignment(
+		Actor *a,
 	    uint16              until,
 	    const ActorTarget   &at,
 	    uint16              r,
 	    bool                trackFlag = false) :
-		ActorAssignment(until) {
+		ActorAssignment(a, until) {
 		initialize(at, r, trackFlag);
 	}
 
 	//  Constructor -- reconstructs from archive buffer
-	HuntToBeNearActorAssignment(void **buf);
+	HuntToBeNearActorAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -328,30 +330,33 @@ public:
 
 	//  Construct with time limit and specific actor
 	HuntToKillAssignment(
+		Actor *ac,
 	    uint16              until,
 	    Actor               *a,
 	    bool                trackFlag = false) :
-		ActorAssignment(until) {
+		ActorAssignment(ac, until) {
 		assert(isActor(a) && a != getActor());
 		initialize(SpecificActorTarget(a), trackFlag, true);
 	}
 
 	//  Construct with no time limit and abstract actor target
 	HuntToKillAssignment(
+		Actor *a,
 	    const ActorTarget   &at,
 	    bool                trackFlag = false);
 
 	//  Construct with time limit and abstract actor target
 	HuntToKillAssignment(
+		Actor *a,
 	    uint16              until,
 	    const ActorTarget   &at,
 	    bool                trackFlag = false) :
-		ActorAssignment(until) {
+		ActorAssignment(a, until) {
 		initialize(at, trackFlag, false);
 	}
 
 	//  Constructor -- reconstructs from archive buffer
-	HuntToKillAssignment(void **buf);
+	HuntToKillAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -391,15 +396,15 @@ protected:
 
 public:
 	//  Constructor -- initial assignment construction
-	TetheredAssignment(uint16 until, const TileRegion &reg) :
-		ActorAssignment(until),
+	TetheredAssignment(Actor *a, uint16 until, const TileRegion &reg) :
+		ActorAssignment(a, until),
 		minU(reg.min.u),
 		minV(reg.min.v),
 		maxU(reg.max.u),
 		maxV(reg.max.v) {
 	}
 
-	TetheredAssignment(void **buf);
+	TetheredAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment
@@ -417,10 +422,10 @@ public:
 class TetheredWanderAssignment : public TetheredAssignment {
 public:
 	//  Constructor -- initial assignment construction
-	TetheredWanderAssignment(uint16 until, const TileRegion &reg);
+	TetheredWanderAssignment(Actor *a, uint16 until, const TileRegion &reg);
 
 	//  Constructor -- constructs from archive buffer
-	TetheredWanderAssignment(void **buf) : TetheredAssignment(buf) {}
+	TetheredWanderAssignment(Actor *a, void **buf) : TetheredAssignment(a, buf) {}
 
 	//  Return an integer representing the type of this assignment
 	int16 type(void) const;
@@ -439,10 +444,10 @@ class AttendAssignment : public ActorAssignment {
 
 public:
 	//  Constructor -- initial assignment construction
-	AttendAssignment(uint16 until, GameObject *o);
+	AttendAssignment(Actor *a, uint16 until, GameObject *o);
 
 	//  Constructor -- constructs from archive buffer
-	AttendAssignment(void **buf);
+	AttendAssignment(Actor *a, void **buf);
 
 	//  Return the number of bytes need to archive the data in this
 	//  assignment

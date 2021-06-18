@@ -40,21 +40,26 @@ const uint16 indefinitely = CalenderTime::framesPerDay;
  * ===================================================================== */
 
 //  Constructor
-ActorAssignment::ActorAssignment(uint16 until) :
+ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
 	startFrame(calender.frameInDay()),
 	endFrame(until) {
+	_actor = a;
+	a->_assignment = this;
 }
 
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-ActorAssignment::ActorAssignment(void **buf) {
+ActorAssignment::ActorAssignment(Actor *ac, void **buf) {
 	uint16  *a = (uint16 *)*buf;
 
 	startFrame = *a++;
 	endFrame = *a++;
 
 	*buf = a;
+
+	_actor = ac;
+	ac->_assignment = this;
 }
 
 //----------------------------------------------------------------------
@@ -94,23 +99,6 @@ void *ActorAssignment::archive(void *buf) const {
 }
 
 //----------------------------------------------------------------------
-//	Return a pointer to the specified actor's reserved memory for
-//	assignments if it is not already being used.
-
-void *ActorAssignment::operator new (
-    size_t bytes,
-    Actor *a) {
-	return a->allocAssignment(bytes);
-}
-
-//----------------------------------------------------------------------
-//	Simply mark the actor's assignment as not being used.
-
-void ActorAssignment::operator delete (void *p) {
-	((ActorAssignment *)p)->getActor()->freeAssignment();
-}
-
-//----------------------------------------------------------------------
 //	Determine if the time limit for this assignment has been exceeded
 
 bool ActorAssignment::isValid(void) {
@@ -144,9 +132,7 @@ TaskStack *ActorAssignment::createTask(void) {
 }
 
 Actor *ActorAssignment::getActor(void) const {
-	// FIXME: This is utterly evil
-	warning("FIXME: ActorAssignment::getActor(): unsafe pointer arithmetics");
-	return (Actor *)(this - offsetof(Actor, assignmentBuf));
+	return _actor;
 }
 
 
@@ -184,12 +170,13 @@ bool ActorAssignment::taskNeeded(void) {
 //	Constructor -- initial object construction
 
 PatrolRouteAssignment::PatrolRouteAssignment(
+	Actor *a,
     uint16  until,
     int16   rteNo,
     uint8   patrolFlags,
     int16   start,
     int16   end) :
-	ActorAssignment(until),
+	ActorAssignment(a, until),
 	routeNo(rteNo),
 	startingWayPoint(start),
 	endingWayPoint(end),
@@ -200,8 +187,8 @@ PatrolRouteAssignment::PatrolRouteAssignment(
 //----------------------------------------------------------------------
 //	Restore the data for this object from a buffer
 
-PatrolRouteAssignment::PatrolRouteAssignment(void **buf) :
-	ActorAssignment(buf) {
+PatrolRouteAssignment::PatrolRouteAssignment(Actor *a, void **buf) :
+	ActorAssignment(a, buf) {
 	void        *bufferPtr = *buf;
 
 	//  Restore route number
@@ -336,14 +323,14 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
    HuntToBeNearLocationAssignment member functions
  * ===================================================================== */
 
-HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(const TilePoint &tp, uint16 r) :
-	ActorAssignment(indefinitely) {
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const TilePoint &tp, uint16 r) :
+	ActorAssignment(a, indefinitely) {
 	initialize(LocationTarget(tp), r);
 }
 
 //  Construct with no time limit and an abstract target
-HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(const Target &targ, uint16 r) :
-	ActorAssignment(indefinitely) {
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, const Target &targ, uint16 r) :
+	ActorAssignment(a, indefinitely) {
 	initialize(targ, r);
 }
 
@@ -364,8 +351,8 @@ void HuntToBeNearLocationAssignment::initialize(
 //----------------------------------------------------------------------
 //	Constructor -- constructs from archive buffer
 
-HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(void **buf) :
-	ActorAssignment(buf) {
+HuntToBeNearLocationAssignment::HuntToBeNearLocationAssignment(Actor *a, void **buf) :
+	ActorAssignment(a, buf) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the target
@@ -438,17 +425,18 @@ HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
 	Actor               *a,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(indefinitely) {
+	ActorAssignment(a, indefinitely) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), r, trackFlag);
 }
 
 //  Construct with no time limit and abstract actor target
 HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(
+	Actor *a,
 	const ActorTarget   &at,
 	uint16              r,
 	bool                trackFlag) :
-	ActorAssignment(indefinitely) {
+	ActorAssignment(a, indefinitely) {
 	initialize(at, r, trackFlag);
 }
 
@@ -472,8 +460,8 @@ void HuntToBeNearActorAssignment::initialize(
 //----------------------------------------------------------------------
 //	Constructor -- constructs from archive buffer
 
-HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(void **buf) :
-	ActorAssignment(buf) {
+HuntToBeNearActorAssignment::HuntToBeNearActorAssignment(Actor *a, void **buf) :
+	ActorAssignment(a, buf) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the target
@@ -560,16 +548,17 @@ Task *HuntToBeNearActorAssignment::getTask(TaskStack *ts) {
 
 //  Construct with no time limit and specific actor
 HuntToKillAssignment::HuntToKillAssignment(Actor *a, bool trackFlag) :
-	ActorAssignment(indefinitely) {
+	ActorAssignment(a, indefinitely) {
 	assert(isActor(a) && a != getActor());
 	initialize(SpecificActorTarget(a), trackFlag, true);
 }
 
 //  Construct with no time limit and abstract actor target
 HuntToKillAssignment::HuntToKillAssignment(
+	Actor *a,
 	const ActorTarget   &at,
 	bool                trackFlag) :
-	ActorAssignment(indefinitely) {
+	ActorAssignment(a, indefinitely) {
 	initialize(at, trackFlag, false);
 }
 
@@ -594,8 +583,8 @@ void HuntToKillAssignment::initialize(
 //----------------------------------------------------------------------
 //	Constructor -- constructs from archive buffer
 
-HuntToKillAssignment::HuntToKillAssignment(void **buf) :
-	ActorAssignment(buf) {
+HuntToKillAssignment::HuntToKillAssignment(Actor *a, void **buf) :
+	ActorAssignment(a, buf) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the target
@@ -694,7 +683,7 @@ Task *HuntToKillAssignment::getTask(TaskStack *ts) {
 //----------------------------------------------------------------------
 //	Constructor -- constructs from archive buffer
 
-TetheredAssignment::TetheredAssignment(void **buf) : ActorAssignment(buf) {
+TetheredAssignment::TetheredAssignment(Actor *ac, void **buf) : ActorAssignment(ac, buf) {
 	int16   *a = (int16 *)*buf;
 
 	//  Read data from buffer
@@ -745,9 +734,10 @@ void *TetheredAssignment::archive(void *buf) const {
 //	Constructor -- initial assignment construction
 
 TetheredWanderAssignment::TetheredWanderAssignment(
+	Actor *a,
     uint16 until,
     const TileRegion &reg) :
-	TetheredAssignment(until, reg) {
+	TetheredAssignment(a, until, reg) {
 }
 
 //----------------------------------------------------------------------
@@ -772,15 +762,15 @@ Task *TetheredWanderAssignment::getTask(TaskStack *ts) {
 //----------------------------------------------------------------------
 //	Constructor -- initial assignment construction
 
-AttendAssignment::AttendAssignment(uint16 until, GameObject *o) :
-	ActorAssignment(until),
+AttendAssignment::AttendAssignment(Actor *a, uint16 until, GameObject *o) :
+	ActorAssignment(a, until),
 	obj(o) {
 }
 
 //----------------------------------------------------------------------
 //	Constructor -- constructs from archive buffer
 
-AttendAssignment::AttendAssignment(void **buf) : ActorAssignment(buf) {
+AttendAssignment::AttendAssignment(Actor *a, void **buf) : ActorAssignment(a, buf) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 	ObjectID    objID;
 
@@ -852,23 +842,23 @@ void *constructAssignment(Actor *a, void *buf) {
 	//  Based upon the type, call the correct constructor
 	switch (type) {
 	case patrolRouteAssignment:
-		new (a) PatrolRouteAssignment(&buf);
+		new PatrolRouteAssignment(a, &buf);
 		break;
 
 	case huntToBeNearActorAssignment:
-		new (a) HuntToBeNearActorAssignment(&buf);
+		new HuntToBeNearActorAssignment(a, &buf);
 		break;
 
 	case huntToBeNearLocationAssignment:
-		new (a) HuntToBeNearLocationAssignment(&buf);
+		new HuntToBeNearLocationAssignment(a, &buf);
 		break;
 
 	case tetheredWanderAssignment:
-		new (a) TetheredWanderAssignment(&buf);
+		new TetheredWanderAssignment(a, &buf);
 		break;
 
 	case attendAssignment:
-		new (a) AttendAssignment(&buf);
+		new AttendAssignment(a, &buf);
 		break;
 	}
 

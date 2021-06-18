@@ -1674,7 +1674,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    PatrolRouteAssignment(
+		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
 		            *   CalenderTime::framesPerHour,
 		            args[1],
@@ -1706,7 +1706,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    PatrolRouteAssignment(
+		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
 		            *   CalenderTime::framesPerHour,
 		            args[1],
@@ -1739,7 +1739,7 @@ int16 scriptActorAssignBeNearLocation(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    HuntToBeNearLocationAssignment(
+		if (new HuntToBeNearLocationAssignment(a,
 		            args[0],
 		            targetLoc,
 		            args[4])
@@ -1772,7 +1772,7 @@ int16 scriptActorAssignBeNearActor(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    HuntToBeNearActorAssignment(
+		if (new HuntToBeNearActorAssignment(a,
 		            args[0],
 		            targetActor,
 		            args[2],
@@ -1801,7 +1801,7 @@ int16 scriptActorAssignKillActor(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    HuntToKillAssignment(
+		if (new HuntToKillAssignment(a,
 		            args[0],
 		            targetActor,
 		            args[2])
@@ -1850,7 +1850,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 		tetherReg.min = TilePoint(minU, minV, 0);
 		tetherReg.max = TilePoint(maxU, maxV, 0);
 
-		if (new (a)    TetheredWanderAssignment(
+		if (new TetheredWanderAssignment(a,
 		            (uint16)args[0]
 		            *   CalenderTime::framesPerHour,
 		            tetherReg)
@@ -1873,7 +1873,7 @@ int16 scriptActorAssignAttend(int16 *args) {
 		//  Delete the actor's current assignment
 		if (a->getAssignment() != NULL) delete a->getAssignment();
 
-		if (new (a)    AttendAssignment(
+		if (new AttendAssignment(a,
 		            (calender.frameInDay()
 		             + (uint16)args[0])
 		            %   CalenderTime::framesPerDay,
