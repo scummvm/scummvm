@@ -191,7 +191,7 @@ bool ActorProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false, openMindType);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
 	return true;
 }
 
@@ -211,7 +211,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~objectOpen;
 	return true;
 }
 
@@ -994,11 +994,11 @@ void Actor::init(
 //	nameIndex = 0;
 	setNameIndex(nameIndex);
 	setScript(scriptIndex);
-	parentID = siblingID = childID = Nothing;
-	objectFlags = 0;
-	massCount = 0;
-	currentTAG = NoActiveItem;
-	hitPoints = 0;
+	_data.parentID = _data.siblingID = _data.childID = Nothing;
+	_data.objectFlags = 0;
+	_data.massCount = 0;
+	_data.currentTAG = NoActiveItem;
+	_data.hitPoints = 0;
 
 	//  Initialize actor field
 	faction             = factionNum;
@@ -1389,7 +1389,7 @@ void Actor::deleteActor(void) {
 	}
 
 	//  Place in limbo
-	if (!(objectFlags & objectNoRecycle)) {
+	if (!(_data.objectFlags & objectNoRecycle)) {
 		append(ActorLimbo);
 		actorLimboCount++;
 	}
@@ -2087,8 +2087,8 @@ void Actor::dropInventory(void) {
 	GameObject          *obj,
 	                    *nextObj;
 
-	for (obj =  childID != Nothing
-	            ?   GameObject::objectAddress(childID)
+	for (obj =  _data.childID != Nothing
+	            ?   GameObject::objectAddress(_data.childID)
 	            :   NULL;
 	        obj != NULL;
 	        obj = nextObj) {
@@ -2766,7 +2766,7 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 
 		//  Compute the attacker's direction relative to this actor's
 		//  facing
-		relativeDir = ((attacker->location - location).quickDir()
+		relativeDir = ((attacker->_data.location - _data.location).quickDir()
 		               -   currentFacing) & 0x7;
 
 		//  Get pointers to this actors primary and secondary defensive

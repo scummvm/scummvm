@@ -196,22 +196,22 @@ void setObjectSurface(GameObject *obj, StandingTileInfo &sti) {
 	if (!(sti.surfaceRef.flags & trTileSensitive))
 		tagID = NoActiveItem;
 
-	if (obj->currentTAG != tagID) {
+	if (obj->_data.currentTAG != tagID) {
 		ObjectID    objID = obj->thisID(),
 		            enactorID = isActor(objID) ? objID : Nothing;
 
-		if (obj->currentTAG != NoActiveItem) {
+		if (obj->_data.currentTAG != NoActiveItem) {
 			ActiveItem  *oldTAG =
-			    ActiveItem::activeItemAddress(obj->currentTAG);
+			    ActiveItem::activeItemAddress(obj->_data.currentTAG);
 
 			oldTAG->release(enactorID, objID);
 
-			obj->currentTAG = NoActiveItem;
+			obj->_data.currentTAG = NoActiveItem;
 		}
 
 		if (tagID != NoActiveItem) {
 			if (sti.surfaceTAG->trigger(enactorID, objID))
-				obj->currentTAG = tagID;
+				obj->_data.currentTAG = tagID;
 		}
 	}
 }
@@ -260,7 +260,7 @@ bool unstickObject(GameObject *obj) {
 		int32       dist;
 		int16       tHeight;
 
-		//  Compute the actual location of the new point
+		//  Compute the actual _data.location of the new point
 		pos = obj->getLocation() + TilePoint(dx, dy, dz);
 
 		//  Get the surface height at that point
@@ -505,7 +505,7 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 			if (isActor(obj))((Actor *)obj)->moveTask = mt;
 		}
 	}
-	obj->objectFlags |= objectMoving;
+	obj->_data.objectFlags |= objectMoving;
 	return mt;
 }
 
@@ -546,7 +546,7 @@ void *MotionTask::restore(void *buf) {
 
 	if (motionType == motionTypeWalk
 	        ||  prevMotionType == motionTypeWalk) {
-		//  Restore the target locations
+		//  Restore the target _data.locations
 		immediateLocation = *((TilePoint *)buf);
 		finalTarget = *((TilePoint *)buf + 1);
 		buf = (TilePoint *)buf + 2;
@@ -739,7 +739,7 @@ void *MotionTask::restore(void *buf) {
 			            ?  ActiveItem::activeItemAddress(ttaid)
 			            :  NULL;
 
-			//  restore location target
+			//  restore _data.location target
 			targetLoc = *((Location *)buf);
 			buf = (Location *)buf + 1;
 		}
@@ -958,7 +958,7 @@ void *MotionTask::archive(void *buf) {
 
 	if (motionType == motionTypeWalk
 	        ||  prevMotionType == motionTypeWalk) {
-		//  Store the target locations
+		//  Store the target _data.locations
 		*((TilePoint *)buf) = immediateLocation;
 		*((TilePoint *)buf + 1) = finalTarget;
 		buf = (TilePoint *)buf + 2;
@@ -1141,7 +1141,7 @@ void *MotionTask::archive(void *buf) {
 			*((ActiveItemID *)buf) = ttaid;
 			buf = (ActiveItemID *)buf + 1;
 
-			//  Store location target
+			//  Store _data.location target
 			*((Location *)buf) = targetLoc;
 			buf = (Location *)buf + 1;
 
@@ -1208,11 +1208,11 @@ void MotionTask::remove(int16 returnVal) {
 	if (nextMT == this)
 		nextMT = (MotionTask *)next();
 
-	object->objectFlags &= ~objectMoving;
+	object->_data.objectFlags &= ~objectMoving;
 	if (objObscured(object))
-		object->objectFlags |= objectObscured;
+		object->_data.objectFlags |= objectObscured;
 	else
-		object->objectFlags &= ~objectObscured;
+		object->_data.objectFlags &= ~objectObscured;
 
 	if (isActor(object)) {
 		Actor   *a = (Actor *)object;
@@ -1236,7 +1236,7 @@ void MotionTask::remove(int16 returnVal) {
 }
 
 //-----------------------------------------------------------------------
-//	Determine the immediate target location
+//	Determine the immediate target _data.location
 
 TilePoint MotionTask::getImmediateTarget(void) {
 	if (immediateLocation != Nowhere)
@@ -1252,7 +1252,7 @@ TilePoint MotionTask::getImmediateTarget(void) {
 	else
 		dir = ((Actor *)object)->currentFacing;
 
-	return  object->location
+	return  object->_data.location
 	        +   incDirTable[dir] * kTileUVSize;
 }
 
@@ -1336,7 +1336,7 @@ void MotionTask::throwObject(GameObject &obj, const TilePoint &velocity) {
 	MotionTask      *mt;
 
 	if ((mt = mTaskList.newTask(&obj)) != NULL) {
-		if (obj.isMissile()) obj.missileFacing = missileNoFacing;
+		if (obj.isMissile()) obj._data.missileFacing = missileNoFacing;
 		mt->velocity = velocity;
 		mt->motionType = motionTypeThrown;
 	}
@@ -1354,7 +1354,7 @@ void MotionTask::throwObjectTo(GameObject &obj, const TilePoint &where) {
 	const int16     turns = 15;
 
 	if ((mt = mTaskList.newTask(&obj)) != NULL) {
-		if (obj.isMissile()) obj.missileFacing = missileNoFacing;
+		if (obj.isMissile()) obj._data.missileFacing = missileNoFacing;
 		mt->calcVelocity(where - obj.getLocation(), turns);
 		mt->motionType = motionTypeThrown;
 	}
@@ -1362,7 +1362,7 @@ void MotionTask::throwObjectTo(GameObject &obj, const TilePoint &where) {
 
 //-----------------------------------------------------------------------
 //	This function initiates a ballistic motion towards a specified target
-//	location at a specified horizontal speed.
+//	_data.location at a specified horizontal speed.
 
 void MotionTask::shootObject(
     GameObject &obj,
@@ -1393,7 +1393,7 @@ void MotionTask::shootObject(
 		mt->calcVelocity(vector, turns);
 
 		if (obj.isMissile())
-			obj.missileFacing = missileDir(mt->velocity);
+			obj._data.missileFacing = missileDir(mt->velocity);
 
 		mt->motionType = motionTypeShot;
 		mt->o.enactor = &doer;
@@ -2145,7 +2145,7 @@ void MotionTask::finishWalk(void) {
 		//  If there is currently a path finding request, abort it.
 		/*      abortPathFind( this );
 
-		            //  Simply set actor's target location to "here".
+		            //  Simply set actor's target _data.location to "here".
 		        finalTarget = immediateLocation = object->getLocation();
 		        pathList[0] = finalTarget;
 		        flags = reset;
@@ -2198,7 +2198,7 @@ void MotionTask::ballisticAction(void) {
 	}
 	location = obj->getLocation();
 
-//	WriteStatusF( 6, "%d %d %d", location.u, location.v, location.z );
+//	WriteStatusF( 6, "%d %d %d", _data.location.u, _data.location.v, _data.location.z );
 
 	//  Because we live in a point-sampled universe, we need to make
 	//  sure that objects which are moving extremely fast don't
@@ -2318,21 +2318,21 @@ void MotionTask::ballisticAction(void) {
 
 			if (checkBlocked(obj,
 			                 TilePoint(newPos.u,
-			                           obj->location.v,
-			                           obj->location.z))) {
+			                           obj->_data.location.v,
+			                           obj->_data.location.z))) {
 				probe |= (1 << 0);
 			}
 
 			if (checkBlocked(obj,
-			                 TilePoint(obj->location.u,
+			                 TilePoint(obj->_data.location.u,
 			                           newPos.v,
-			                           obj->location.z))) {
+			                           obj->_data.location.z))) {
 				probe |= (1 << 1);
 			}
 
 			if (checkContact(obj,
-			                 TilePoint(obj->location.u,
-			                           obj->location.v,
+			                 TilePoint(obj->_data.location.u,
+			                           obj->_data.location.v,
 			                           newPos.z))) {
 				probe |= (1 << 2);
 			}
@@ -2371,7 +2371,7 @@ void MotionTask::ballisticAction(void) {
 			}
 			uFrac = vFrac = 0;
 			if (motionType == motionTypeShot && obj->isMissile())
-				obj->missileFacing = missileDir(velocity);
+				obj->_data.missileFacing = missileDir(velocity);
 
 			//  If the ballistic object is an actor hitting the
 			//  ground, then instead of bouncing, we'll just have
@@ -2400,7 +2400,7 @@ void MotionTask::ballisticAction(void) {
 					setObjectSurface(obj, sti);
 					//  If the object is falling, then
 					//  freeFall will have already modified the
-					//  object's location
+					//  object's _data.location
 					return;
 				}
 			} else if (velocity.u < 2 && velocity.u > -2
@@ -2446,7 +2446,7 @@ bool MotionTask::nextWayPoint(void) {
 		TilePoint   wayPointVector(0, 0, 0);
 
 		if (pathIndex > 0)
-			wayPointVector = immediateLocation - object->location;
+			wayPointVector = immediateLocation - object->_data.location;
 
 		if (wayPointVector.quickHDistance() == 0)
 			//  Next vertex in path polyline
@@ -2465,8 +2465,8 @@ bool MotionTask::nextWayPoint(void) {
 			//  and we're not at the target yet, request more waypoints then
 			//  use dumb pathfinding until the pathfinder finishes it's task.
 
-			if ((finalTarget - object->location).quickHDistance() > 0
-			        ||  abs(finalTarget.z - object->location.z) > kMaxStepHeight) {
+			if ((finalTarget - object->_data.location).quickHDistance() > 0
+			        ||  abs(finalTarget.z - object->_data.location.z) > kMaxStepHeight) {
 				//  If no pathfind in progress
 				if ((flags & pathFind)
 				        &&  !(flags & finalPath)
@@ -2498,8 +2498,8 @@ bool MotionTask::checkWalk(
 	//  Check the terrain in various directions.
 	//  Check in the forward direction first, at various heights
 
-	newPos      = object->location + (dirTable[direction] * speed) / 2;
-	newPos.z    = object->location.z + stepUp;
+	newPos      = object->_data.location + (dirTable[direction] * speed) / 2;
+	newPos.z    = object->_data.location.z + stepUp;
 
 	if (checkWalkable(object, newPos)) return false;
 
@@ -2616,7 +2616,7 @@ void MotionTask::walkAction(void) {
 		if (!(flags & reset)) {
 			//  Compute the vector and distance of the current
 			//  position to the next "immediate" target.
-			targetVector = immediateTarget - object->location;
+			targetVector = immediateTarget - object->_data.location;
 			targetDist = targetVector.quickHDistance();
 
 			//  If we're not already there, then proceed towards
@@ -2696,10 +2696,10 @@ void MotionTask::walkAction(void) {
 		movementDirection = targetVector.quickDir();
 //		movementDirection = a->currentFacing;
 
-		//  Set the new location to the character's location.
+		//  Set the new _data.location to the character's _data.location.
 		newPos.u = immediateTarget.u;
 		newPos.v = immediateTarget.v;
-		newPos.z = object->location.z;
+		newPos.z = object->_data.location.z;
 
 		//  Determine the direction the character must spin
 		//  to be at the correct movement angle.
@@ -2712,7 +2712,7 @@ void MotionTask::walkAction(void) {
 			//  Test the terrain to see if we can go there.
 			if ((blockageType = checkWalkable(object, newPos)) != false) {
 				//  Try stepping up to a higher terrain too.
-				newPos.z = object->location.z + kMaxStepHeight;
+				newPos.z = object->_data.location.z + kMaxStepHeight;
 				if (checkWalkable(object, newPos) != blockageNone) {
 					//  If there is a path find task pending, put the walk action
 					//  on hold until it finishes, else, abort the walk action.
@@ -2726,7 +2726,7 @@ void MotionTask::walkAction(void) {
 					                    {
 					                        moveBlocked = true;
 					                        flags |= blocked;
-					                        newPos.z = object->location.z;
+					                        newPos.z = object->_data.location.z;
 
 					                    }*/
 				}
@@ -2739,11 +2739,11 @@ void MotionTask::walkAction(void) {
 		movementDirection = targetVector.quickDir();
 
 		//  Calculate new object position along direction vector.
-		TilePoint   pos = object->location
+		TilePoint   pos = object->_data.location
 		                  + targetVector * speed / targetDist;
 
 #if DEBUG*0
-		TPLine(object->location, pos);
+		TPLine(object->_data.location, pos);
 #endif
 
 		//  Check the terrain in various directions.
@@ -2754,7 +2754,7 @@ void MotionTask::walkAction(void) {
 			//  vector, even if it's not aligned with one of the
 			//  cardinal directions.
 
-			pos.z   = object->location.z + height;
+			pos.z   = object->_data.location.z + height;
 
 			if (!checkWalkable(object, pos)) {
 				newPos = pos;
@@ -2848,7 +2848,7 @@ void MotionTask::walkAction(void) {
 	} else if (moveBlocked) {
 		a->setAction(actionStand, 0);
 		if (flags & agitatable) {
-			if (freeFall(object->location, sti)) return;
+			if (freeFall(object->_data.location, sti)) return;
 
 			//  When he starts running again, then have him walk only.
 			runCount = MAX<int16>(runCount, 8);
@@ -2873,7 +2873,7 @@ void MotionTask::walkAction(void) {
 		runCount = MAX<int16>(runCount, 8);
 
 		a->setAction(actionStand, 0);
-		freeFall(object->location, sti);
+		freeFall(object->_data.location, sti);
 	} else {
 		if (a == getCenterActor() && checkLadder(a, newPos)) return;
 
@@ -2887,7 +2887,7 @@ void MotionTask::walkAction(void) {
 		//  This is a kludge to keep the character from
 		//  "jumping" as he climbs up a small step.
 
-		if (tHeight >= object->location.z - kMaxSmoothStep
+		if (tHeight >= object->_data.location.z - kMaxSmoothStep
 		        * ((sti.surfaceTile != NULL
 		            && (sti.surfaceTile->combinedTerrainMask() & terrainStair))
 		           ?   4
@@ -4209,7 +4209,7 @@ void MotionTask::updatePositions(void) {
 		        &&  a->isInterruptable())
 			continue;
 
-		if (obj->location.z < -(proto->height >> 2))
+		if (obj->_data.location.z < -(proto->height >> 2))
 			mt->flags |= inWater;
 		else
 			mt->flags &= ~inWater;
@@ -4293,7 +4293,7 @@ void MotionTask::updatePositions(void) {
 						    (mt->flags & requestRun) != 0);
 					}
 					nextMT = mt;
-				} else if (mt->freeFall(obj->location, sti) == false)
+				} else if (mt->freeFall(obj->_data.location, sti) == false)
 					moveTaskDone = true;
 			} else {
 				//  If actor was running, go through an abreviated
@@ -4342,13 +4342,13 @@ void MotionTask::updatePositions(void) {
 
 		case motionTypeRise:
 
-			if (a->location.z < mt->immediateLocation.z) {
-				a->location.z++;
+			if (a->_data.location.z < mt->immediateLocation.z) {
+				a->_data.location.z++;
 				if (mt->flags & nextAnim)
 					a->nextAnimationFrame();
 				mt->flags ^= nextAnim;
 			} else {
-				targetVector = mt->finalTarget - obj->location;
+				targetVector = mt->finalTarget - obj->_data.location;
 				targetDist = targetVector.quickHDistance();
 
 				if (targetDist > kTileUVSize) {
@@ -4704,11 +4704,11 @@ bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 
 	tHeight = tileSlopeHeight(newPos, object, &sti);
 
-	if (object->objectFlags & objectFloating) return false;
+	if (object->_data.objectFlags & objectFloating) return false;
 
-	velocity.u = (newPos.u - object->location.u) * 2 / 3;
-	velocity.v = (newPos.v - object->location.v) * 2 / 3;
-	velocity.z = (newPos.z - object->location.z) * 2 / 3;
+	velocity.u = (newPos.u - object->_data.location.u) * 2 / 3;
+	velocity.v = (newPos.v - object->_data.location.v) * 2 / 3;
+	velocity.z = (newPos.z - object->_data.location.z) * 2 / 3;
 //	velocity.z = 0;
 
 	//  If terrain is HIGHER (or even sligtly lower) than we are

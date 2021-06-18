@@ -439,9 +439,9 @@ void DisplayNode::drawObject(void) {
 				obj->setObscured(false);
 			}
 
-			obj->sightCtr = 5;
+			obj->_data.sightCtr = 5;
 		} else {
-			if (--obj->sightCtr == 0) {
+			if (--obj->_data.sightCtr == 0) {
 				SenseInfo   info;
 
 				if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
@@ -451,7 +451,7 @@ void DisplayNode::drawObject(void) {
 					obj->setObscured(false);
 				}
 
-				obj->sightCtr = 5;
+				obj->_data.sightCtr = 5;
 			}
 		}
 
@@ -553,9 +553,9 @@ void DisplayNode::drawObject(void) {
 					a->setObscured(false);
 				}
 
-				a->sightCtr = 5;
+				a->_data.sightCtr = 5;
 			} else {
-				if (--a->sightCtr == 0) {
+				if (--a->_data.sightCtr == 0) {
 					SenseInfo   info;
 
 					if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
@@ -565,7 +565,7 @@ void DisplayNode::drawObject(void) {
 						a->setObscured(false);
 					}
 
-					a->sightCtr = 5;
+					a->_data.sightCtr = 5;
 				}
 			}
 

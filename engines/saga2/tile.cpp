@@ -597,7 +597,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	        testObject != nullptr;
 	        iter.next(&testObject)) {
 		if (testObject != obj
-		        &&  testObject->currentTAG == instanceID
+		        &&  testObject->_data.currentTAG == instanceID
 		        &&  testObject->isTriggeringTAG())
 			return true;
 	}
@@ -685,7 +685,7 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	        testObject != nullptr;
 	        iter.next(&testObject)) {
 		if (testObject != obj
-		        &&  testObject->currentTAG == instanceID
+		        &&  testObject->_data.currentTAG == instanceID
 		        &&  testObject->isTriggeringTAG())
 			return true;
 	}
