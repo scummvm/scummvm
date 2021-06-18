@@ -277,7 +277,7 @@ public:
 
 class CharsetRendererMac : public CharsetRendererCommon {
 protected:
-	Graphics::MacFONTFont _macFont;
+	Graphics::MacFONTFont _macFonts[2];
 	bool _pad;
 	int _lastTop;
 
@@ -286,7 +286,7 @@ protected:
 public:
 	CharsetRendererMac(ScummEngine *vm, const Common::String &fontFile);
 
-	void setCurID(int32 id) override {}
+	void setCurID(int32 id) override;
 	int getFontHeight() override;
 	int getCharWidth(uint16 chr) override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
