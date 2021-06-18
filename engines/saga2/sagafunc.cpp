@@ -58,7 +58,7 @@ void drawMainDisplay(void);
 #endif
 
 #define MONOLOG(s) {debugC(2, kDebugScripts, "cfunc: " #s );}
-#define OBJLOG(s) {debugC(2, kDebugScripts, "cfunc: [%s]." #s , ((GameObject *)thisThread->thisObject)->objName() );}
+#define OBJLOG(s) {debugC(2, kDebugScripts, "cfunc: [%s]." #s , ((ObjectData *)thisThread->thisObject)->obj->objName() );}
 
 namespace Saga2 {
 
