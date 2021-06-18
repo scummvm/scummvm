@@ -1526,6 +1526,14 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		}
 	}
 
+	// use lingo-the as fallback
+	if (funcSym.type == VOIDSYM && g_lingo->_theEntities.contains(name)) {
+		Datum id;
+		Datum res = g_lingo->getTheEntity(g_lingo->_theEntities[name]->entity, id, kTheNOField);
+		g_lingo->push(res);
+		return;
+	}
+
 	call(funcSym, nargs, allowRetVal);
 }
 
