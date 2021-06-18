@@ -271,7 +271,6 @@ void TaskStackList::newTaskStack(TaskStack *p) {
 void TaskStackList::deleteTaskStack(TaskStack *p) {
 	for (int i = 0; i < numTaskStacks; i++)
 		if (_list[i] == p) {
-			delete _list[i];
 			_list[i] = nullptr;
 		}
 }
