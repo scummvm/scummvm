@@ -3020,10 +3020,7 @@ void initObjects(void) {
 		GameObject  *obj = &objectList[i];
 
 		//  Use the default constructor for the extra actors
-		if (i == 4970)
-			new (obj) GameObject;
-		else
-			new (obj) GameObject;
+		new (obj) GameObject;
 	}
 
 	delete[] resourceObjectList;
