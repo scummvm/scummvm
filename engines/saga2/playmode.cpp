@@ -165,7 +165,7 @@ void clearTileAreaPort(void) {
 	}
 
 	Rect16 rect(0, 0, 640, 480);
-	mainWindow->invalidate(rect);
+	mainWindow->invalidate(&rect);
 }
 
 

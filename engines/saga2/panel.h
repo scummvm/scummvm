@@ -179,7 +179,7 @@ public:
 	virtual void enable(bool abled);
 	virtual void select(bool selected);
 	virtual void ghost(bool ghosted);
-	virtual void invalidate(void);
+	virtual void invalidate(Rect16 *area = nullptr);
 	virtual void setMousePoll(bool abled) {
 		wantMousePoll = abled ? 1 : 0;
 	}
@@ -210,7 +210,8 @@ public:
 	}
 	void    show(bool shown = true, bool inval = true) {
 		enable(shown);
-		if (inval) invalidate();
+		if (inval)
+			invalidate();
 	}
 
 	void moveToFront(gPanelList &l);
@@ -268,7 +269,7 @@ public:
 	void removeControls(void);
 
 public:
-	void invalidate(void);
+	void invalidate(Rect16 *area = nullptr);
 	void draw(void);                         // redraw the controls
 	void drawClipped(
 	    gPort         &port,

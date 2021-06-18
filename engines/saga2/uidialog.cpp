@@ -773,7 +773,7 @@ int16 FileDialog(int16 fileProcess) {
 	destroyFileFields(fieldStrings);
 
 	// replace the damaged area
-	mainWindow->invalidate(saveLoadWindowRect);
+	mainWindow->invalidate(&saveLoadWindowRect);
 
 	// return the result code
 	return rInfo.result;
@@ -983,7 +983,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 			saveGameState(deferredLoadID, deferredSaveName);
 #endif
 		}
-		mainWindow->invalidate(optionsWindowRect);
+		mainWindow->invalidate(&optionsWindowRect);
 	}
 
 	// return the result code
@@ -1272,7 +1272,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	decRes = nullptr;
 
 	// replace the damaged area
-	mainWindow->invalidate(messageWindowRect);
+	mainWindow->invalidate(&messageWindowRect);
 
 	// return the result code
 	return rInfo.result % 10;
@@ -1607,7 +1607,7 @@ void placardWindow(int8 type, char *text) {
 	if (resContext) resFile->disposeContext(resContext);
 
 	// replace the damaged area
-	mainWindow->invalidate(plaqRectBrass);   // brass just happens to be the largest rect....
+	mainWindow->invalidate(&plaqRectBrass);   // brass just happens to be the largest rect....
 
 	// return the result code
 	//return rInfo.result;
