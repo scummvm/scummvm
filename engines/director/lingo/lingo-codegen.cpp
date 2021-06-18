@@ -458,6 +458,15 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 /* CmdNode */
 
 void LingoCompiler::visitCmdNode(CmdNode *node) {
+	// `play done` compiles to `play()`
+	if (node->name->equalsIgnoreCase("play") && node->args->size() == 1 && (*node->args)[0]->type == kVarNode) {
+		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
+		if (var->name->equalsIgnoreCase("done")) {
+			codeCmd(node->name, 0);
+			return;
+		}
+	}
+
 	compileList(node->args);
 	codeCmd(node->name, node->args->size());
 }

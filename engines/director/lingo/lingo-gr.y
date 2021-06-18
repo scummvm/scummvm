@@ -135,7 +135,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token<s> tENDCLAUSE tPLAYACCEL
 %token<objectprop> tTHEOBJECTPROP
 %token tCAST tFIELD tSCRIPT tWINDOW
-%token tDOWN tELSE tELSIF tEXIT tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
+%token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -167,7 +167,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> stmt stmtoneliner
 %type<node> proc asgn definevars
 %type<node> ifstmt ifelsestmt loop
-%type<nodelist> cmdargs stmtlist nonemptystmtlist
+%type<nodelist> cmdargs playargs stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
 // EXPRESSION
@@ -299,6 +299,7 @@ ID: tVARID
 	// | tEXIT			{ $$ = new Common::String("exit"); }
 	// tFACTORY
 	| tFIELD		{ $$ = new Common::String("field"); }
+	| tFRAME		{ $$ = new Common::String("frame"); }
 	// | tGLOBAL		{ $$ = new Common::String("global"); }
 	// tIF
 	| tIN			{ $$ = new Common::String("in"); }
@@ -317,7 +318,7 @@ ID: tVARID
 	// | tON			{ $$ = new Common::String("on"); }
 	| tOPEN			{ $$ = new Common::String("open"); }
 	| tOR			{ $$ = new Common::String("or"); }
-	| tPLAY			{ $$ = new Common::String("play"); }		// FIXME: lexer includes "play frame"
+	// | tPLAY			{ $$ = new Common::String("play"); }
 	| tPLAYACCEL	{ $$ = new Common::String("playAccel"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
 	// | tPROPERTY		{ $$ = new Common::String("property"); }
@@ -370,6 +371,8 @@ stmtoneliner: proc
 
 proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
 	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
+	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs); }
+	| tPLAY playargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $playargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
@@ -405,6 +408,37 @@ cmdargs: /* empty */					{
 		// This matches `cmd(args, ...)`
 		$args->insert_at(0, $expr);
 		$$ = $args; }
+	;
+
+playargs: tFRAME expr[frame]						{
+		// This matches `play frame arg`
+		NodeList *args = new NodeList;
+		args->push_back($frame);
+		$$ = args; }
+	| tMOVIE expr[movie]							{
+		// This matches `play movie arg`
+		NodeList *args = new NodeList;
+		args->push_back(new IntNode(1));
+		args->push_back($movie);
+		$$ = args; }
+	| tFRAME expr[frame] tOF tMOVIE expr[movie]		{
+		// This matches `play frame arg of movie arg`
+		NodeList *args = new NodeList;
+		args->push_back($frame);
+		args->push_back($movie);
+		$$ = args; }
+	| expr[frame] tOF tMOVIE expr[movie]			{
+		// This matches `play arg of movie arg` (weird but valid)
+		NodeList *args = new NodeList;
+		args->push_back($frame);
+		args->push_back($movie);
+		$$ = args; }
+	| tFRAME expr[frame] expr_nounarymath[movie]	{
+		// This matches `play frame arg arg` (also weird but valid)
+		NodeList *args = new NodeList;
+		args->push_back($frame);
+		args->push_back($movie);
+		$$ = args; }
 	;
 
 asgn: tPUT expr tINTO varorchunk '\n'	{ $$ = new PutIntoNode($expr, $varorchunk); }
