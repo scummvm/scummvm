@@ -710,9 +710,8 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		schemeListSize = schemeRes->size(id) / colorSchemeSize;
 		stream = loadResourceToStream(schemeRes, id, "scheme list");
 		aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+		delete stream;
 	}
-
-	delete stream;
 
 	return aa;
 }
