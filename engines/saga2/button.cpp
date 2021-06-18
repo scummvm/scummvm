@@ -210,7 +210,7 @@ void gCompImage::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void gCompImage::invalidate(void) {
+void gCompImage::invalidate(Rect16 *) {
 	window.update(extent);
 }
 
@@ -564,7 +564,7 @@ void gCompButton::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void gCompButton::invalidate(void) {
+void gCompButton::invalidate(Rect16 *) {
 	window.update(extent);
 }
 

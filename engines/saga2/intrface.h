@@ -205,7 +205,7 @@ public:
 	          int16, textPallete &, int16, AppFunc *cmd = NULL);
 
 	void enable(bool);
-	void invalidate(void);
+	void invalidate(Rect16 *unused = nullptr);
 
 	void draw(void);
 	virtual void drawClipped(gPort &,
@@ -343,7 +343,7 @@ private:
 
 
 public:
-	void invalidate(void) {
+	void invalidate(Rect16 *unused = nullptr) {
 		pieMass->invalidate();
 		pieBulk->invalidate();
 	}

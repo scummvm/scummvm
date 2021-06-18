@@ -460,7 +460,7 @@ void CPlaqText::enable(bool abled) {
 	gPanel::enable(abled);
 }
 
-void CPlaqText::invalidate(void) {
+void CPlaqText::invalidate(Rect16 *) {
 	window.update(extent);
 }
 
