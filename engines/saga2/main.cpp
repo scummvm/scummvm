@@ -530,11 +530,11 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 
 	idString[0] = id;
 	idString[1] = 0;
-	debugC(3, kDebugResources, "Loading resource %d (%s, %s)", id, tag2str(id), desc);
+	debugC(3, kDebugResources, "LoadResource(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("Error reading resource ID '%s'.", &idString);
+		error("LoadResource(): Error reading resource ID '%s'.", &idString);
 	}
 
 	//  Allocate the buffer
@@ -552,11 +552,11 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 
 	idString[0] = id;
 	idString[1] = 0;
-	debugC(3, kDebugResources, "Loading resource %d (%s, %s)", id, tag2str(id), desc);
+	debugC(3, kDebugResources, "loadResourceToStream(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("Error reading resource ID '%s'.", &idString);
+		error("loadResourceToStream(): Error reading resource ID '%s'.", &idString);
 	}
 
 	//  Allocate the buffer
@@ -577,10 +577,11 @@ RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]) {
 
 	idString[0] = id;
 	idString[1] = 0;
+	debugC(3, kDebugResources, "LoadResourceToHandle(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("Error reading resource ID '%s'.", &idString);
+		error("LoadResourceToHandle(): Error reading resource ID '%s'.", &idString);
 	}
 
 	//  Allocate the buffer
@@ -977,6 +978,9 @@ APPFUNC(cmdWindowFunc) {
 		qual = ev.value >> 16;
 
 		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleKey(key, qual);
+		break;
+
+	default:
 		break;
 	}
 }
