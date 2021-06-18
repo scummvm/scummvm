@@ -106,29 +106,7 @@ const int       numTaskStacks = 32;
 //  Manages the memory used for the TaskStack's.  There will
 //  only be one global instantiation of this class
 class TaskStackList {
-#if DEBUG
-	friend void checkTaskListIntegrity(void);
-#endif
-
-	struct TaskStackPlaceHolder : public DNode {
-		uint8                   buf[sizeof(TaskStack)];
-
-		TaskStackPlaceHolder    *nextDeletion;  //  Pointer to next in lazy deletion list
-		bool                    deleted;        //  Deletion indicator
-
-		TaskStack *getTaskStack(void) {
-			return (TaskStack *)&buf;
-		}
-	};
-
-	DList                   list,       //  active TaskStacks
-	                        free;       //  inactive TaskStacks
-
-	TaskStackPlaceHolder    array[numTaskStacks];
-
-	bool                    lazyDelete;     //  Flag indicating lazy deletion mode
-	TaskStackPlaceHolder    *deletionList;  //  Singly linked list of all task stack
-	//  placed holders marked for deletion
+	TaskStack *_list[numTaskStacks];
 
 public:
 	//  Constructor -- initial construction
@@ -149,27 +127,24 @@ public:
 
 	//  Place a TaskStack from the inactive list into the active
 	//  list.
-	void *newTaskStack(void);
-	void *newTaskStack(TaskStackID id);
+	void newTaskStack(TaskStack *p);
 
 	//  Place a TaskStack back into the inactive list.
-	void deleteTaskStack(void *p);
+	void deleteTaskStack(TaskStack *p);
 
 	//  Return the specified TaskStack's ID
 	TaskStackID getTaskStackID(TaskStack *ts) {
-		TaskStackPlaceHolder    *tsp;
+		for (int i = 0; i < numTaskStacks; i++)
+			if (_list[i] == ts)
+				return i;
 
-		warning("FIXME: TaskStackList::getTaskStackID(): unsafe pointer arithmetics");
-		tsp = ((TaskStackPlaceHolder *)(
-		           (uint8 *)ts
-		           -   offsetof(TaskStackPlaceHolder, buf)));
-		return tsp - array;
+		error("getTaskStackID(): Unknown stack %p", (void *)ts);
 	}
 
 	//  Return a pointer to a TaskStack given a TaskStackID
 	TaskStack *getTaskStackAddress(TaskStackID id) {
 		assert(id >= 0 && id < numTaskStacks);
-		return array[id].getTaskStack();
+		return _list[id];
 	}
 
 	//  Run through the TaskStacks in the active list and update
@@ -182,40 +157,24 @@ public:
 //	the inactive list
 
 TaskStackList::TaskStackList(void) {
-	int i;
-
-	for (i = 0; i < elementsof(array); i++) {
-		array[i].deleted = false;
-		free.addTail(array[i]);
-	}
-
-	lazyDelete = false;
-	deletionList = NULL;
+	for (int i = 0; i < numTaskStacks; i++)
+		_list[i] = nullptr;
 }
 
 //----------------------------------------------------------------------
 //	TaskStackList destructor
 
 TaskStackList::~TaskStackList(void) {
-	assert(!lazyDelete);
-
-	TaskStackPlaceHolder    *tsp;
-	TaskStackPlaceHolder    *nextTsp;
-
-	for (tsp = (TaskStackPlaceHolder *)list.first();
-	        tsp != NULL;
-	        tsp = nextTsp) {
-		//  Save the address of the next in the list
-		nextTsp = (TaskStackPlaceHolder *)tsp->next();
-
-		delete tsp->getTaskStack();
-	}
+	for (int i = 0; i < numTaskStacks; i++)
+		delete _list[i];
 }
 
 //----------------------------------------------------------------------
 //	Reconstruct the TaskStackList from an archive buffer
 
 void *TaskStackList::restore(void *buf) {
+	warning("STUB: TaskStackList::restore()");
+#if 0
 	int16   i,
 	        taskStackCount;
 
@@ -237,7 +196,7 @@ void *TaskStackList::restore(void *buf) {
 		//  Plug this TaskStack into the Actor
 		ts->getActor()->curTask = ts;
 	}
-
+#endif
 	return buf;
 }
 
@@ -245,13 +204,14 @@ void *TaskStackList::restore(void *buf) {
 //	Return the number of bytes necessary to archive this TaskStackList
 
 int32 TaskStackList::archiveSize(void) {
-	int32                   size = sizeof(int16);
-	TaskStackPlaceHolder    *tsp;
+	int32 size = sizeof(int16);
 
-	for (tsp = (TaskStackPlaceHolder *)list.first();
-	        tsp != NULL;
-	        tsp = (TaskStackPlaceHolder *)tsp->next())
-		size += sizeof(TaskStackID) + tsp->getTaskStack()->archiveSize();
+	for (int i = 0; i < numTaskStacks; i++) {
+		size += sizeof(TaskStackID);
+
+		if (_list[i])
+			size +=  _list[i]->archiveSize();
+	}
 
 	return size;
 }
@@ -260,6 +220,9 @@ int32 TaskStackList::archiveSize(void) {
 //	Make an archive of the TaskStackList in an archive buffer
 
 void *TaskStackList::archive(void *buf) {
+	warning("STUB: TaskStackList::archive()");
+
+#if 0
 	int16                   taskStackCount = 0;
 	TaskStackPlaceHolder    *tsp;
 
@@ -285,73 +248,32 @@ void *TaskStackList::archive(void *buf) {
 
 		buf = ts->archive(buf);
 	}
-
+#endif
 	return buf;
 }
 
 //----------------------------------------------------------------------
 //	Place a TaskStack into the active list and return its address
 
-void *TaskStackList::newTaskStack(void) {
-	TaskStackPlaceHolder    *tsp;
+void TaskStackList::newTaskStack(TaskStack *p) {
+	for (int i = 0; i < numTaskStacks; i++)
+		if (!_list[i]) {
+			_list[i] = p;
 
-	//  Grab a stack place holder from the inactive list
-	tsp = (TaskStackPlaceHolder *)free.remHead();
-
-	if (tsp != NULL) {
-		//  Link the stack place holder into the active list
-		list.addTail(*tsp);
-
-		return tsp->buf;
-	}
-
-	return NULL;
-}
-
-//----------------------------------------------------------------------
-//	Place a specific TaskStack into the active list and return its address
-
-void *TaskStackList::newTaskStack(TaskStackID id) {
-	assert(id >= 0 && id < elementsof(array));
-
-	TaskStackPlaceHolder    *tsp;
-
-	//  Grab the stack place holder from the inactive list
-	tsp = (TaskStackPlaceHolder *)&array[id];
-	tsp->remove();
-
-	//  Place the stack place holder into the active list
-	list.addTail(*tsp);
-
-	return tsp->buf;
+			return;
+		}
 }
 
 //----------------------------------------------------------------------
 //	Remove the specified TaskStack from the active list and place it
 //	back into the inactive list
 
-void TaskStackList::deleteTaskStack(void *p) {
-	TaskStackPlaceHolder    *tsp;
-
-	warning("FIXME: TaskStackList::deleteTaskStack(): unsafe pointer arithmetics");
-
-	//  Convert the pointer to the TaskStack to a pointer to the
-	//  TaskStackPlaceHolder
-	tsp = (TaskStackPlaceHolder *)(
-	          (uint8 *)p
-	          -   offsetof(TaskStackPlaceHolder, buf));
-
-	if (lazyDelete) {
-		tsp->deleted = true;
-		tsp->nextDeletion = deletionList;
-		deletionList = tsp;
-	} else {
-		//  Remove the stack place holder from the active list
-		tsp->remove();
-
-		//  Place it into the inactive list
-		free.addTail(*tsp);
-	}
+void TaskStackList::deleteTaskStack(TaskStack *p) {
+	for (int i = 0; i < numTaskStacks; i++)
+		if (_list[i] == p) {
+			delete _list[i];
+			_list[i] = nullptr;
+		}
 }
 
 //----------------------------------------------------------------------
@@ -359,46 +281,19 @@ void TaskStackList::deleteTaskStack(void *p) {
 //	their update function
 
 void TaskStackList::updateTaskStacks(void) {
-	TaskStackPlaceHolder    *tsp;
+	for (int i = 0; i < numTaskStacks; i++) {
+		if (_list[i]) {
+			TaskStack *ts = _list[i];
+			TaskResult  result;
 
-	//  Make sure all deletions during task processing are lazy
-	lazyDelete = true;
+			//  Update the task stack and delete it if it is done
+			if ((result = ts->update()) != taskNotDone) {
+				Actor *a = ts->getActor();
+				assert(a != NULL);
 
-	for (tsp = (TaskStackPlaceHolder *)list.first();
-	        tsp != NULL;
-	        tsp = (TaskStackPlaceHolder *)tsp->next()) {
-		//  Skip all task stacks which have been marked as deleted
-		if (tsp->deleted)
-			continue;
-
-		TaskStack   *ts = tsp->getTaskStack();
-		TaskResult  result;
-
-		//  Update the task stack and delete it if it is done
-		if ((result = ts->update()) != taskNotDone) {
-			Actor *a = ts->getActor();
-			assert(a != NULL);
-
-			a->handleTaskCompletion(result);
+				a->handleTaskCompletion(result);
+			}
 		}
-	}
-
-	//  Process all lazy deletions
-	lazyDelete = false;
-	while (deletionList != NULL) {
-		TaskStackPlaceHolder    *nextDeletion = deletionList->nextDeletion;
-
-		//  Remove the stack place holder from the active list
-		deletionList->remove();
-
-		//  Place it into the inactive list
-		free.addTail(*deletionList);
-
-		//  Now that the real deletion has taken place reset the deleted
-		//  flag
-		deletionList->deleted = false;
-
-		deletionList = nextDeletion;
 	}
 }
 
@@ -414,9 +309,7 @@ void TaskStackList::updateTaskStacks(void) {
 //	call will simply return a pointer to the stackListBuffer in order
 //	to construct the TaskStackList in place.
 
-static uint8 stackListBuffer[sizeof(TaskStackList)];
-
-static TaskStackList &stackList = *((TaskStackList *)stackListBuffer);
+static TaskStackList stackList;
 
 /* ===================================================================== *
    Misc. task stack management functions
@@ -427,10 +320,8 @@ static TaskStackList &stackList = *((TaskStackList *)stackListBuffer);
 //	updateTaskStacks().
 
 void updateActorTasks(void) {
-	if (!actorTasksPaused) stackList.updateTaskStacks();
-#if DEBUG
-	checkTaskListIntegrity();
-#endif
+	if (!actorTasksPaused)
+		stackList.updateTaskStacks();
 }
 
 void pauseActorTasks(void) {
@@ -444,18 +335,15 @@ void resumeActorTasks(void) {
 //	Call the stackList member function newTaskStack() to get a pointer
 //	to a new TaskStack
 
-void *newTaskStack(void) {
-	return stackList.newTaskStack();
-}
-void *newTaskStack(TaskStackID id) {
-	return stackList.newTaskStack(id);
+void newTaskStack(TaskStack *p) {
+	return stackList.newTaskStack(p);
 }
 
 //----------------------------------------------------------------------
 //	Call the stackList member function deleteTaskStack() to dispose of
 //	a previously allocated TaskStack
 
-void deleteTaskStack(void *p) {
+void deleteTaskStack(TaskStack *p) {
 	stackList.deleteTaskStack(p);
 }
 
@@ -477,8 +365,6 @@ TaskStack *getTaskStackAddress(TaskStackID id) {
 //	Initialize the stackList
 
 void initTaskStacks(void) {
-	//  Simply call the TaskStackList default constructor
-	new (&stackList) TaskStackList;
 }
 
 //----------------------------------------------------------------------
@@ -555,23 +441,7 @@ const int       numTasks = 64;
 //  global instantiation of this class
 class TaskList {
 
-	struct TaskPlaceHolder : public DNode {
-#if DEBUG
-		char        *fileName;
-		int         lineNo;
-		bool        marked;
-#endif
-		uint8       buf[maxTaskSize];
-
-		Task *getTask(void) {
-			return (Task *)&buf;
-		}
-	};
-
-	DList                       list,       //  active Tasks
-	                            free;       //  inactive Tasks
-
-	TaskPlaceHolder             array[numTasks];
+	Task *_list[numTasks];
 
 public:
 	//  Constructor -- initial construction
@@ -590,56 +460,28 @@ public:
 	//  Create an archive of the task list in an archive buffer
 	void *archive(void *buf);
 
-#if DEBUG
 	//  Place a Task from the inactive list into the active
 	//  list.
-	void *newTask(char *file, int line);
-	void *newTask(char *file, int line, TaskID id);
-#else
-	//  Place a Task from the inactive list into the active
-	//  list.
-	void *newTask(void);
-	void *newTask(TaskID id);
-#endif
+	void newTask(Task *t);
+	void newTask(Task *t, TaskID id);
 
 	//  Place a Task back into the inactive list.
-	void deleteTask(void *t);
+	void deleteTask(Task *t);
 
 	//  Return the specified Task's ID
 	TaskID getTaskID(Task *t) {
-		TaskPlaceHolder     *tp;
+		for (int i = 0; i < numTasks; i++)
+			if (_list[i] == t)
+				return i;
 
-		warning("FIXME: TaskList::getTaskID(): unsafe pointer arithmetics");
-		tp = ((TaskPlaceHolder *)(
-		          (uint8 *)t
-		          -   offsetof(TaskPlaceHolder, buf)));
-		return tp - array;
+		error("getTaskID: unknown task %p", (void *)t);
 	}
 
 	//  Return a pointer to a Task given a TaskID
 	Task *getTaskAddress(TaskID id) {
 		assert(id >= 0 && id < numTasks);
-		return array[id].getTask();
+		return _list[id];
 	}
-
-#if DEBUG
-	//  Mark the specified task
-	void markTask(Task *t) {
-		TaskPlaceHolder     *tp;
-
-		warning("FIXME: TaskList::markTask(): unsafe pointer arithmetics");
-		tp = ((TaskPlaceHolder *)(
-		          (uint8 *)t
-		          -   offsetof(TaskPlaceHolder, buf)));
-		tp->marked = true;
-	}
-
-	//  Verify that all allocated tasks are marked
-	void checkMarks(void);
-
-	//  Clear all debugging marks
-	void clearMarks(void);
-#endif
 };
 
 //----------------------------------------------------------------------
@@ -647,33 +489,24 @@ public:
 //	the inactive list
 
 TaskList::TaskList(void) {
-	int i;
-
-	for (i = 0; i < elementsof(array); i++)
-		free.addTail(array[i]);
+	for (int i = 0; i < numTasks; i++)
+		_list[i] = nullptr;
 }
 
 //----------------------------------------------------------------------
 //	TaskList destructor
 
 TaskList::~TaskList(void) {
-	TaskPlaceHolder     *tp;
-	TaskPlaceHolder     *nextTP;
-
-	for (tp = (TaskPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = nextTP) {
-		//  Save the address of the next in the list
-		nextTP = (TaskPlaceHolder *)tp->next();
-
-		delete tp->getTask();
-	}
+	for (int i = 0; i < numTasks; i++)
+		delete _list[i];
 }
 
 //----------------------------------------------------------------------
 //	Reconstruct from an archive buffer
 
 void *TaskList::restore(void *buf) {
+	warning("STUB: TaskList::restore");
+#if 0
 	assert(list.first() == NULL);
 
 	int16               i,
@@ -700,7 +533,7 @@ void *TaskList::restore(void *buf) {
 	        tp != NULL;
 	        tp = (TaskPlaceHolder *)tp->next())
 		tp->getTask()->fixup();
-
+#endif
 	return buf;
 }
 
@@ -708,13 +541,14 @@ void *TaskList::restore(void *buf) {
 //	Return the number of bytes necessary to archive this TaskList
 
 int32 TaskList::archiveSize(void) {
-	int32               size = sizeof(int16);
-	TaskPlaceHolder     *tp;
+	int32 size = sizeof(int16);
 
-	for (tp = (TaskPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = (TaskPlaceHolder *)tp->next())
-		size += sizeof(TaskID) + taskArchiveSize(tp->getTask());
+	for (int i = 0; i < numTasks; i++) {
+		size += sizeof(TaskID);
+
+		if (_list[i])
+			size += taskArchiveSize(_list[i]);
+	}
 
 	return size;
 }
@@ -723,6 +557,8 @@ int32 TaskList::archiveSize(void) {
 //	Make an archive of the TaskList in an archive buffer
 
 void *TaskList::archive(void *buf) {
+	warning("STUB: TaskList::archive()");
+#if 0
 	int16               taskCount = 0;
 	TaskPlaceHolder     *tp;
 
@@ -748,168 +584,56 @@ void *TaskList::archive(void *buf) {
 
 		buf = archiveTask(t, buf);
 	}
-
+#endif
 	return buf;
 }
 
-//----------------------------------------------------------------------
-//	Place a Task into the active list and return its address
+void TaskList::newTask(Task *t) {
+	for (int i = 0; i < numTasks; i++)
+		if (!_list[i]) {
+			_list[i] = t;
 
-#if DEBUG
-void *TaskList::newTask(char *file, int line)
-#else
-void *TaskList::newTask(void)
-#endif
-{
-	TaskPlaceHolder     *tp;
-
-	//  Grab a task holder from the inactive list
-	tp = (TaskPlaceHolder *)free.remHead();
-
-	if (tp != NULL) {
-#if DEBUG
-		tp->fileName = file;
-		tp->lineNo = line;
-		tp->marked = false;
-#endif
-		//  Place the place holder into the active list
-		list.addTail(*tp);
-
-		return tp->buf;
-	}
-
-	return NULL;
+			return;
+		}
 }
 
-//----------------------------------------------------------------------
-//	Place a specific Task into the active list and return its address
-
-#if DEBUG
-void *TaskList::newTask(char *file, int line, TaskID id)
-#else
-void *TaskList::newTask(TaskID id)
-#endif
-{
-	assert(id >= 0 && id < elementsof(array));
-
-	TaskPlaceHolder     *tp;
-
-	//  Grab the task place holder from the inactive list
-	tp = (TaskPlaceHolder *)&array[id];
-	tp->remove();
-
-#if DEBUG
-	tp->fileName = file;
-	tp->lineNo = line;
-	tp->marked = false;
-#endif
-	//  Place the place holder into the active list
-	list.addTail(*tp);
-
-	return tp->buf;
+void TaskList::newTask(Task *t, TaskID id) {
+	_list[id] = t;
 }
 
 //----------------------------------------------------------------------
 //	Remove the specified Task from the active list and place it back
 //	into the inactive list
 
-void TaskList::deleteTask(void *p) {
-	TaskPlaceHolder     *tp;
-
-	warning("FIXME: TaskList::deleteTask(): unsafe pointer arithmetics");
-	//  Convert the pointer to the Task to a pointer to the
-	//  TaskPlaceHolder
-	tp = (TaskPlaceHolder *)(
-	         (uint8 *)p
-	         -   offsetof(TaskPlaceHolder, buf));
-
-	//  Remove the task place holder from the active list
-	tp->remove();
-
-	//  Place it into the inactive list
-	free.addTail(*tp);
+void TaskList::deleteTask(Task *p) {
+	for (int i = 0; i < numTasks; i++)
+		if (_list[i] == p)
+			_list[i] = nullptr;
 }
-
-#if DEBUG
-//----------------------------------------------------------------------
-//	Verify that all allocated tasks are marked
-
-void TaskList::checkMarks(void) {
-	TaskPlaceHolder     *tp;
-
-	for (tp = (TaskPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = (TaskPlaceHolder *)tp->next()) {
-		if (!tp->marked)
-			throw   gError(
-			    "Task leak detected: %05.5d \"%s\"\n",
-			    tp->lineNo,
-			    tp->fileName);
-	}
-}
-
-//----------------------------------------------------------------------
-//	Clear all debugging marks
-
-void TaskList::clearMarks(void) {
-	TaskPlaceHolder     *tp;
-
-	for (tp = (TaskPlaceHolder *)list.first();
-	        tp != NULL;
-	        tp = (TaskPlaceHolder *)tp->next())
-		tp->marked = false;
-}
-#endif
 
 /* ===================================================================== *
    Global TaskList instantiation
  * ===================================================================== */
 
-//	This is a statically allocated buffer large enough to hold a TaskList.
-//	The taskList is a TaskList reference to this area of memory.  The
-//	reason that I did this in this manner is to prevent the TaskList
-//	constructor from being called until it is expicitly called using an
-//	overloaded new call.  The overloaded new call will simply return a
-//	pointer to the taskListBuffer in order to construct the TaskList in
-//	place.
-
-static uint8 taskListBuffer[sizeof(TaskList)];
-
-static TaskList &taskList = *((TaskList *)taskListBuffer);
+static TaskList taskList;
 
 /* ===================================================================== *
    Misc. task management functions
  * ===================================================================== */
 
-//----------------------------------------------------------------------
-//	Call the taskList member function newTask() to get a pointer to a
-//	new TaskStack
+void newTask(Task *t) {
+	return taskList.newTask(t);
+}
 
-#if DEBUG
-void *newTask(char *file, int line) {
-	return taskList.newTask(file, line);
+void newTask(Task *t, TaskID id) {
+	return taskList.newTask(t, id);
 }
-#else
-void *newTask(void) {
-	return taskList.newTask();
-}
-#endif
-
-#if DEBUG
-void *newTask(char *file, int line, TaskID id) {
-	return taskList.newTask(file, line, id);
-}
-#else
-void *newTask(TaskID id) {
-	return taskList.newTask(id);
-}
-#endif
 
 //----------------------------------------------------------------------
 //	Call the taskList member function deleteTask() to dispose of a
 //	previously allocated TaskStack
 
-void deleteTask(void *p) {
+void deleteTask(Task *p) {
 	taskList.deleteTask(p);
 }
 
@@ -1017,86 +741,76 @@ void *constructTask(TaskID id, void *buf) {
 	//  Reconstruct the Task based upon the type
 	switch (type) {
 	case wanderTask:
-		new(id) WanderTask(&buf);
+		new WanderTask(&buf, id);
 		break;
 
 	case tetheredWanderTask:
-		new(id) TetheredWanderTask(&buf);
+		new TetheredWanderTask(&buf, id);
 		break;
 
 	case gotoLocationTask:
-		new(id) GotoLocationTask(&buf);
+		new GotoLocationTask(&buf, id);
 		break;
 
 	case gotoRegionTask:
-		new(id) GotoRegionTask(&buf);
+		new GotoRegionTask(&buf, id);
 		break;
 
 	case gotoObjectTask:
-		new(id) GotoObjectTask(&buf);
+		new GotoObjectTask(&buf, id);
 		break;
 
 	case gotoActorTask:
-		new(id) GotoActorTask(&buf);
+		new GotoActorTask(&buf, id);
 		break;
 
 	case goAwayFromObjectTask:
-		new(id) GoAwayFromObjectTask(&buf);
+		new GoAwayFromObjectTask(&buf, id);
 		break;
 
 	case goAwayFromActorTask:
-		new(id) GoAwayFromActorTask(&buf);
+		new GoAwayFromActorTask(&buf, id);
 		break;
 
 	case huntToBeNearLocationTask:
-		new(id) HuntToBeNearLocationTask(&buf);
+		new HuntToBeNearLocationTask(&buf, id);
 		break;
 
 	case huntToBeNearObjectTask:
-		new(id) HuntToBeNearObjectTask(&buf);
+		new HuntToBeNearObjectTask(&buf, id);
 		break;
 
 	case huntToPossessTask:
-		new(id) HuntToPossessTask(&buf);
+		new HuntToPossessTask(&buf, id);
 		break;
 
 	case huntToBeNearActorTask:
-		new(id) HuntToBeNearActorTask(&buf);
+		new HuntToBeNearActorTask(&buf, id);
 		break;
 
 	case huntToKillTask:
-		new(id) HuntToKillTask(&buf);
+		new HuntToKillTask(&buf, id);
 		break;
 
 	case huntToGiveTask:
-		new(id) HuntToGiveTask(&buf);
+		new HuntToGiveTask(&buf, id);
 		break;
 
 	case bandTask:
-		new(id) BandTask(&buf);
+		new BandTask(&buf, id);
 		break;
 
 	case bandAndAvoidEnemiesTask:
-		new(id) BandAndAvoidEnemiesTask(&buf);
+		new BandAndAvoidEnemiesTask(&buf, id);
 		break;
 
 	case followPatrolRouteTask:
-		new(id) FollowPatrolRouteTask(&buf);
+		new FollowPatrolRouteTask(&buf, id);
 		break;
 
 	case attendTask:
-		new(id) AttendTask(&buf);
+		new AttendTask(&buf, id);
 		break;
-
-#if 0
-	case defendTask:
-		new(id) DefendTask(&buf);
-		break;
-
-	case parryTask:
-		new(id) ParryTask(&buf);
-		break;
-#endif
 	}
 
 	return buf;
@@ -1125,29 +839,6 @@ void *archiveTask(Task *t, void *buf) {
 	return buf;
 }
 
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to check the integrity of the global task
-//	list
-
-void checkTaskListIntegrity(void) {
-	TaskStackList::TaskStackPlaceHolder     *tsp;
-
-	//  Clear all task marks
-	taskList.clearMarks();
-
-	//  Iterate through all active task stacks and mark their associated
-	//  tasks
-	for (tsp = (TaskStackList::TaskStackPlaceHolder *)stackList.list.first();
-	        tsp != NULL;
-	        tsp = (TaskStackList::TaskStackPlaceHolder *)tsp->next())
-		tsp->getTaskStack()->mark();
-
-	//  Check the task marks
-	taskList.checkMarks();
-}
-#endif
-
 /* ===================================================================== *
    Task member functions
  * ===================================================================== */
@@ -1155,7 +846,7 @@ void checkTaskListIntegrity(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-Task::Task(void **buf) {
+Task::Task(void **buf, TaskID id) {
 	void *bufferPtr = *buf;
 
 	//  Place the stack ID into the stack pointer field
@@ -1189,29 +880,6 @@ void *Task::archive(void *buf) const {
 	return (TaskStackID *)buf + 1;
 }
 
-
-#if DEBUG
-void *Task::operator new (size_t sz, char *file, int line) {
-	assert(sz <= maxTaskSize);
-	return newTask(file, line);
-}
-
-void *Task::operator new (size_t sz, char *file, int line, TaskID id) {
-	assert(sz <= maxTaskSize);
-	return newTask(file, line, id);
-}
-#endif
-
-#if DEBUG
-//----------------------------------------------------------------------
-//	Debugging function used to mark this task and any sub tasks as being
-//	used.  This is used to find task leaks.
-
-void Task::mark(void) {
-	taskList.markTask(this);
-}
-#endif
-
 /* ===================================================================== *
    WanderTask member functions
  * ===================================================================== */
@@ -1219,7 +887,7 @@ void Task::mark(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-WanderTask::WanderTask(void **buf) : Task(buf) {
+WanderTask::WanderTask(void **buf, TaskID id) : Task(buf, id) {
 	void        *bufferPtr = *buf;
 
 	//  Restore the paused flag
@@ -1346,7 +1014,7 @@ void WanderTask::wander(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-TetheredWanderTask::TetheredWanderTask(void **buf) : WanderTask(buf) {
+TetheredWanderTask::TetheredWanderTask(void **buf, TaskID id) : WanderTask(buf, id) {
 	int16   *bufferPtr = (int16 *)*buf;
 
 	//  Restore the tether coordinates
@@ -1528,7 +1196,7 @@ TaskResult TetheredWanderTask::handleWander(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoTask::GotoTask(void **buf) : Task(buf) {
+GotoTask::GotoTask(void **buf, TaskID id) : Task(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Get the wander TaskID
@@ -1712,7 +1380,7 @@ TaskResult GotoTask::update(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoLocationTask::GotoLocationTask(void **buf) : GotoTask(buf) {
+GotoLocationTask::GotoLocationTask(void **buf, TaskID id) : GotoTask(buf, id) {
 	void        *bufferPtr = *buf;
 
 	//  Restore the target location
@@ -1813,7 +1481,7 @@ bool GotoLocationTask::run(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoRegionTask::GotoRegionTask(void **buf) : GotoTask(buf) {
+GotoRegionTask::GotoRegionTask(void **buf, TaskID id) : GotoTask(buf, id) {
 	int16   *bufferPtr = (int16 *)*buf;
 
 	//  Restore the region coordinates
@@ -1910,7 +1578,7 @@ bool GotoRegionTask::run(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoObjectTargetTask::GotoObjectTargetTask(void **buf) : GotoTask(buf) {
+GotoObjectTargetTask::GotoObjectTargetTask(void **buf, TaskID id) : GotoTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore lastTestedLoc and increment pointer
@@ -2060,8 +1728,8 @@ bool GotoObjectTargetTask::lineOfSight(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoObjectTask::GotoObjectTask(void **buf) :
-	GotoObjectTargetTask(buf) {
+GotoObjectTask::GotoObjectTask(void **buf, TaskID id) :
+	GotoObjectTargetTask(buf, id) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 
 	//  Restore the targetObj pointer
@@ -2134,8 +1802,8 @@ bool GotoObjectTask::run(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GotoActorTask::GotoActorTask(void **buf) :
-	GotoObjectTargetTask(buf) {
+GotoActorTask::GotoActorTask(void **buf, TaskID id) :
+	GotoObjectTargetTask(buf, id) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 
 	//  Restore the targetObj pointer
@@ -2210,7 +1878,7 @@ bool GotoActorTask::run(void) {
    GoAwayFromTask member functions
  * ===================================================================== */
 
-GoAwayFromTask::GoAwayFromTask(void **buf) : Task(buf) {
+GoAwayFromTask::GoAwayFromTask(void **buf, TaskID id) : Task(buf, id) {
 	void        *bufferPtr = *buf;
 
 	//  Get the subtask ID
@@ -2352,8 +2020,8 @@ TaskResult GoAwayFromTask::update(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GoAwayFromObjectTask::GoAwayFromObjectTask(void **buf) :
-	GoAwayFromTask(buf) {
+GoAwayFromObjectTask::GoAwayFromObjectTask(void **buf, TaskID id) :
+	GoAwayFromTask(buf, id) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 
 	ObjectID    objectID;
@@ -2449,7 +2117,7 @@ GoAwayFromActorTask::GoAwayFromActorTask(
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-GoAwayFromActorTask::GoAwayFromActorTask(void **buf) : GoAwayFromTask(buf) {
+GoAwayFromActorTask::GoAwayFromActorTask(void **buf, TaskID id) : GoAwayFromTask(buf, id) {
 	//  Restore the target
 	*buf = constructTarget(targetMem, *buf);
 }
@@ -2530,7 +2198,7 @@ TilePoint GoAwayFromActorTask::getRepulsionVector(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntTask::HuntTask(void **buf) : Task(buf) {
+HuntTask::HuntTask(void **buf, TaskID id) : Task(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the flags
@@ -2720,7 +2388,7 @@ HuntLocationTask::HuntLocationTask(TaskStack *ts, const Target &t) :
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntLocationTask::HuntLocationTask(void **buf) : HuntTask(buf) {
+HuntLocationTask::HuntLocationTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the currentTarget location
@@ -2787,8 +2455,8 @@ TilePoint HuntLocationTask::currentTargetLoc(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToBeNearLocationTask::HuntToBeNearLocationTask(void **buf) :
-	HuntLocationTask(buf) {
+HuntToBeNearLocationTask::HuntToBeNearLocationTask(void **buf, TaskID id) :
+	HuntLocationTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the range
@@ -2909,7 +2577,7 @@ HuntObjectTask::HuntObjectTask(TaskStack *ts, const ObjectTarget &ot) :
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntObjectTask::HuntObjectTask(void **buf) : HuntTask(buf) {
+HuntObjectTask::HuntObjectTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	void        *bufferPtr = *buf;
 	ObjectID    currentTargetID;
 
@@ -2992,8 +2660,8 @@ TilePoint HuntObjectTask::currentTargetLoc(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToBeNearObjectTask::HuntToBeNearObjectTask(void **buf) :
-	HuntObjectTask(buf) {
+HuntToBeNearObjectTask::HuntToBeNearObjectTask(void **buf, TaskID id) :
+	HuntObjectTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore the range
@@ -3133,7 +2801,7 @@ TaskResult HuntToBeNearObjectTask::atTargetUpdate(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToPossessTask::HuntToPossessTask(void **buf) : HuntObjectTask(buf) {
+HuntToPossessTask::HuntToPossessTask(void **buf, TaskID id) : HuntObjectTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Restore evaluation counter
@@ -3287,7 +2955,7 @@ HuntActorTask::HuntActorTask(
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntActorTask::HuntActorTask(void **buf) : HuntTask(buf) {
+HuntActorTask::HuntActorTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	void        *bufferPtr = *buf;
 	ObjectID    currentTargetID;
 
@@ -3388,8 +3056,8 @@ TilePoint HuntActorTask::currentTargetLoc(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToBeNearActorTask::HuntToBeNearActorTask(void **buf) :
-	HuntActorTask(buf) {
+HuntToBeNearActorTask::HuntToBeNearActorTask(void **buf, TaskID id) :
+	HuntActorTask(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Get the goAway task ID
@@ -3639,7 +3307,7 @@ HuntToKillTask::HuntToKillTask(
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToKillTask::HuntToKillTask(void **buf) : HuntActorTask(buf) {
+HuntToKillTask::HuntToKillTask(void **buf, TaskID id) : HuntActorTask(buf, id) {
 	uint8   *bufferPtr = (uint8 *)*buf;
 
 	//  Restore the evaluation counter
@@ -4005,7 +3673,7 @@ void HuntToKillTask::evaluateWeapon(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-HuntToGiveTask::HuntToGiveTask(void **buf) : HuntActorTask(buf) {
+HuntToGiveTask::HuntToGiveTask(void **buf, TaskID id) : HuntActorTask(buf, id) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 	ObjectID    objToGiveID;
 
@@ -4152,7 +3820,7 @@ bool BandTask::BandingRepulsorIterator::next(
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-BandTask::BandTask(void **buf) : HuntTask(buf) {
+BandTask::BandTask(void **buf, TaskID id) : HuntTask(buf, id) {
 	void        *bufferPtr = *buf;
 
 	*((TaskID *)&attend) = *((TaskID *)bufferPtr);
@@ -4538,7 +4206,7 @@ BandTask::RepulsorIterator *BandAndAvoidEnemiesTask::getNewRepulsorIterator(void
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-FollowPatrolRouteTask::FollowPatrolRouteTask(void **buf) : Task(buf) {
+FollowPatrolRouteTask::FollowPatrolRouteTask(void **buf, TaskID id) : Task(buf, id) {
 	void    *bufferPtr = *buf;
 
 	//  Get the gotoWayPoint TaskID
@@ -4769,7 +4437,7 @@ void FollowPatrolRouteTask::pause(void) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-AttendTask::AttendTask(void **buf) : Task(buf) {
+AttendTask::AttendTask(void **buf, TaskID id) : Task(buf, id) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 	ObjectID    objID;
 
@@ -4870,7 +4538,7 @@ bool AttendTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-DefendTask::DefendTask(void **buf) : Task(buf) {
+DefendTask::DefendTask(void **buf, TaskID id) : Task(buf, id) {
 	void        *bufferPtr = *buf;
 
 	ObjectID    attackerID;
@@ -5034,7 +4702,7 @@ bool DefendTask::operator == (const Task &t) const {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from archive buffer
 
-ParryTask::ParryTask(void **buf) : Task(buf) {
+ParryTask::ParryTask(void **buf, TaskID id) : Task(buf, id) {
 	void        *bufferPtr = *buf;
 
 	ObjectID    attackerID,

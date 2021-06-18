@@ -76,11 +76,10 @@ void pauseActorTasks(void);
 void resumeActorTasks(void);
 
 //  Allocate a new task stack
-void *newTaskStack(void);
-void *newTaskStack(TaskStackID id);
+void newTaskStack(TaskStack *p);
 
 //  Dispose of a previously allocated task stack
-void deleteTaskStack(void *p);
+void deleteTaskStack(TaskStack *p);
 
 //  Return the ID number of a specified task stack
 TaskStackID getTaskStackID(TaskStack *ts);
@@ -101,17 +100,11 @@ void loadTaskStacks(SaveFileReader &saveGame);
 void cleanupTaskStacks(void);
 
 
-//  Allocate a new task
-#if DEBUG
-void *newTask(char *file, int line);
-void *newTask(char *file, int line, TaskID id);
-#else
-void *newTask(void);
-void *newTask(TaskID id);
-#endif
+void newTask(Task *t);
+void newTask(Task *t, TaskID id);
 
 //  Dispose of a previously allocated task
-void deleteTask(void *p);
+void deleteTask(Task *p);
 
 //  Return a task's ID number
 TaskID getTaskID(Task *t);
@@ -145,10 +138,16 @@ protected:
 
 public:
 	//  Constructor -- initial construction
-	Task(TaskStack *ts) : stack(ts) {}
+	Task(TaskStack *ts) : stack(ts) {
+		newTask(this);
+	}
+
+	Task(TaskStack *ts, TaskID id) : stack(ts) {
+		newTask(this, id);
+	}
 
 	//  Constructor -- reconstruct from archive buffer
-	Task(void **buf);
+	Task(void **buf, TaskID id);
 
 	//  Virtual destructor -- do nothing
 	virtual ~Task(void) {}
@@ -162,29 +161,6 @@ public:
 
 	//  Create an archive of this task in a buffer
 	virtual void *archive(void *buf) const;
-
-	//  Overloaded memory management functions
-#if DEBUG
-	void *operator new (size_t sz, char *file, int line);
-	void *operator new (size_t sz, char *file, int line, TaskID id);
-#else
-	void *operator new (size_t) {
-		return newTask();
-	}
-	void *operator new (size_t, TaskID id) {
-		return newTask(id);
-	}
-#endif
-
-	void operator delete (void *p) {
-		deleteTask(p);
-	}
-
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	virtual void mark(void);
-#endif
 
 	//  Return an integer representing the type of this task
 	virtual int16 getType(void) const = 0;
@@ -217,7 +193,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	WanderTask(void **buf);
+	WanderTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -287,7 +263,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	TetheredWanderTask(void **buf);
+	TetheredWanderTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointers
 	void fixup(void);
@@ -334,7 +310,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GotoTask(void **buf);
+	GotoTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -383,7 +359,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GotoLocationTask(void **buf);
+	GotoLocationTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -439,7 +415,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GotoRegionTask(void **buf);
+	GotoRegionTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -496,7 +472,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GotoObjectTargetTask(void **buf);
+	GotoObjectTargetTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -541,7 +517,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GotoObjectTask(void **buf);
+	GotoObjectTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -579,7 +555,7 @@ public:
 		targetActor(a) {
 	}
 	//  Constructor -- reconstruct from archive buffer
-	GotoActorTask(void **buf);
+	GotoActorTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -631,7 +607,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromTask(void **buf);
+	GoAwayFromTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -672,7 +648,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromObjectTask(void **buf);
+	GoAwayFromObjectTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -710,7 +686,7 @@ public:
 	    bool                runFlag = false);
 
 	//  Constructor -- reconstruct from archive buffer
-	GoAwayFromActorTask(void **buf);
+	GoAwayFromActorTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -755,7 +731,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntTask(void **buf);
+	HuntTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -809,7 +785,7 @@ public:
 	HuntLocationTask(TaskStack *ts, const Target &t);
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntLocationTask(void **buf);
+	HuntLocationTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -852,7 +828,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearLocationTask(void **buf);
+	HuntToBeNearLocationTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -898,7 +874,7 @@ public:
 	HuntObjectTask(TaskStack *ts, const ObjectTarget &ot);
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntObjectTask(void **buf);
+	HuntObjectTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -943,7 +919,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearObjectTask(void **buf);
+	HuntToBeNearObjectTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -997,7 +973,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToPossessTask(void **buf);
+	HuntToPossessTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1046,7 +1022,7 @@ public:
 	    bool                trackFlag);
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntActorTask(void **buf);
+	HuntActorTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1103,7 +1079,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToBeNearActorTask(void **buf);
+	HuntToBeNearActorTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -1174,7 +1150,7 @@ public:
 	    bool                trackFlag = false);
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToKillTask(void **buf);
+	HuntToKillTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1230,7 +1206,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	HuntToGiveTask(void **buf);
+	HuntToGiveTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1351,7 +1327,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	BandTask(void **buf);
+	BandTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -1436,7 +1412,7 @@ public:
 	BandAndAvoidEnemiesTask(TaskStack *ts) : BandTask(ts) {}
 
 	//  Constructor -- reconstruct from archive buffer
-	BandAndAvoidEnemiesTask(void **buf) : BandTask(buf) {}
+	BandAndAvoidEnemiesTask(void **buf, TaskID id) : BandTask(buf, id) {}
 
 	//  Return an integer representing the type of this task
 	int16 getType(void) const;
@@ -1478,7 +1454,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	FollowPatrolRouteTask(void **buf);
+	FollowPatrolRouteTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -1533,7 +1509,7 @@ public:
 	AttendTask(TaskStack *ts, GameObject *o) : Task(ts), obj(o) {}
 
 	//  Constructor -- reconstruct from archive buffer
-	AttendTask(void **buf);
+	AttendTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1575,7 +1551,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	DefendTask(void **buf);
+	DefendTask(void **buf, TaskID id);
 
 	//  Fixup the subtask pointer
 	void fixup(void);
@@ -1623,7 +1599,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from archive buffer
-	ParryTask(void **buf);
+	ParryTask(void **buf, TaskID id);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -1665,13 +1641,17 @@ public:
 		actor(a),
 		evalCount(defaultEvalRate),
 		evalRate(defaultEvalRate) {
+
+		newTaskStack(this);
 	}
 
 	//  Constructor -- reconstruct from archive buffer
 	TaskStack(void **buf);
 
 	//  Destructor
-	~TaskStack(void) {}
+	~TaskStack(void) {
+		deleteTaskStack(this);
+	}
 
 	//  Return the number of bytes necessary to archive this TaskStack
 	//  in a buffer
@@ -1684,23 +1664,6 @@ public:
 
 	//  Create an archive of this TaskStack in a buffer
 	void *archive(void *buf);
-
-	void *operator new (size_t) {
-		return newTaskStack();
-	}
-	void *operator new (size_t, TaskStackID id) {
-		return newTaskStack(id);
-	}
-
-	void operator delete (void *p) {
-		deleteTaskStack(p);
-	}
-
-#if DEBUG
-	//  Debugging function used to mark this task and any sub tasks as
-	//  being used.  This is used to find task leaks.
-	void mark(void);
-#endif
 
 	//  Set the bottom task of this task stack
 	void setTask(Task *t);
