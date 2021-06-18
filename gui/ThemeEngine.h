@@ -70,6 +70,8 @@ enum DrawData {
 	kDDTextSelectionBackground,
 	kDDTextSelectionFocusBackground,
 	kDDThumbnailBackground,
+	kDDGridItemIdle,
+	kDDGridItemHover,
 	kDDWidgetBackgroundDefault,
 	kDDWidgetBackgroundSmall,
 	kDDWidgetBackgroundEditText,
@@ -222,7 +224,9 @@ public:
 		kWidgetBackgroundBorderSmall,   ///< Same as kWidgetBackgroundPlain just with a small border
 		kWidgetBackgroundEditText,      ///< Background used for edit text fields
 		kWidgetBackgroundSlider,        ///< Background used for sliders
-		kThumbnailBackground			///< Background used for thumbnails
+		kThumbnailBackground,			///< Background used for thumbnails
+		kGridItemBackground,			///< Default Background used for grid items
+		kGridItemHighlight				///< Highlight Background used for grid items
 	};
 
 	/// Dialog background type
