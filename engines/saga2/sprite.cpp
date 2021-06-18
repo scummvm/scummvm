@@ -596,8 +596,10 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 		//  Load the sprite handle...
 		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
 			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, id + MKTAG(0, 0, 0, bank), "sprite bank");
-			spriteBanks[bank] = new SpriteSet(stream);
-			delete stream;
+			if (stream) {
+				spriteBanks[bank] = new SpriteSet(stream);
+				delete stream;
+			}
 		}
 	}
 }
@@ -693,20 +695,23 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
 
-	if(poseRes->seek(id) == 0)
-		error("Could not load pose list");
+	if (poseRes->seek(id) == 0) {
+		warning("LoadActorAppearance: Could not load pose list");
+	} else {
+		poseListSize = poseRes->size(id) / actorAnimSetSize;
+		aa->poseList = new ActorAnimSet[poseListSize];
+		for (int i = 0; i < poseListSize; ++i)
+			readActorAnimSet(poseRes, aa->poseList[i]);
+	}
 
-	poseListSize = poseRes->size(id) / actorAnimSetSize;
-	aa->poseList = new ActorAnimSet[poseListSize];
-	for (int i = 0; i < poseListSize; ++i)
-		readActorAnimSet(poseRes, aa->poseList[i]);
+	if (schemeRes->seek(id) == 0) {
+		warning("LoadActorAppearance: Could not load scheme list");
+	} else {
+		schemeListSize = schemeRes->size(id) / colorSchemeSize;
+		stream = loadResourceToStream(schemeRes, id, "scheme list");
+		aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+	}
 
-	if(schemeRes->seek(id) == 0)
-		error("Could not load scheme list");
-
-	schemeListSize = schemeRes->size(id) / colorSchemeSize;
-	stream = loadResourceToStream(schemeRes, id, "scheme list");
-	aa->schemeList = new ColorSchemeList(schemeListSize, stream);
 	delete stream;
 
 	return aa;

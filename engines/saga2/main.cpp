@@ -556,7 +556,8 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("loadResourceToStream(): Error reading resource ID '%s'.", &idString);
+		warning("loadResourceToStream(): Error reading resource ID '%s'.", &idString);
+		return nullptr;
 	}
 
 	//  Allocate the buffer
