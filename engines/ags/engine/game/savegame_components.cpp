@@ -1167,10 +1167,22 @@ HSaveError ReadComponent(Stream *in, SvgCmpReadHelper &hlp, ComponentInfo &info)
 	info.DataSize = hlp.Version >= kSvgVersion_Cmp_64bit ? in->ReadInt64() : in->ReadInt32();
 	info.DataOffset = in->GetPosition();
 
+	// WORKAROUND: For some period, the component "Dynamic Surfaces"
+	// was mis-named as "Drawing Surfaces"
+	String componentName = info.Name;
+	if (componentName == "Drawing Surfaces")
+		componentName = "Dynamic Surfaces";
+
 	const ComponentHandler *handler = nullptr;
-	std::map<String, ComponentHandler>::const_iterator it_hdr = hlp.Handlers.find(info.Name);
+	std::map<String, ComponentHandler>::const_iterator it_hdr = hlp.Handlers.find(componentName);
 	if (it_hdr != hlp.Handlers.end())
 		handler = &it_hdr->_value;
+
+	// WORKAROUND: Managed Pool was incorrectly set as version 1
+	// in the codebase originally imported to ScummVM
+	if (componentName == "Managed Pool" && info.Version == 1
+		&& handler && handler->Version == 0)
+		info.Version = 0;
 
 	if (!handler || !handler->Unserialize)
 		return new SavegameError(kSvgErr_UnsupportedComponent);
