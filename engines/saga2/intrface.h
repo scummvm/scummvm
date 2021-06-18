@@ -164,9 +164,6 @@ const   int16   optBtnResNum        = 20;
 
 
 
-// portrait resource indexes
-extern int16    portResNum[];
-
 // standard number of images for push-buttons
 const   int16   numBtnImages    = 2;
 
