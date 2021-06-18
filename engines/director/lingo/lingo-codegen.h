@@ -94,6 +94,7 @@ public:
 	virtual void visitRepeatWithToNode(RepeatWithToNode *node);
 	virtual void visitNextRepeatNode(NextRepeatNode *node);
 	virtual void visitExitRepeatNode(ExitRepeatNode *node);
+	virtual void visitExitNode(ExitNode *node);
 	virtual void visitIntNode(IntNode *node);
 	virtual void visitFloatNode(FloatNode *node);
 	virtual void visitSymbolNode(SymbolNode *node);

@@ -665,6 +665,12 @@ void LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
 	}
 }
 
+/* ExitNode */
+
+void LingoCompiler::visitExitNode(ExitNode *node) {
+	code1(LC::c_procret);
+}
+
 /* IntNode */
 
 void LingoCompiler::visitIntNode(IntNode *node) {

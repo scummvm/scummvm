@@ -43,6 +43,7 @@ struct RepeatWhileNode;
 struct RepeatWithToNode;
 struct NextRepeatNode;
 struct ExitRepeatNode;
+struct ExitNode;
 struct IntNode;
 struct FloatNode;
 struct SymbolNode;
@@ -87,6 +88,7 @@ enum NodeType {
 	kRepeatWithToNode,
 	kNextRepeatNode,
 	kExitRepeatNode,
+	kExitNode,
 	kIntNode,
 	kFloatNode,
 	kSymbolNode,
@@ -125,6 +127,7 @@ public:
 	virtual void visitRepeatWithToNode(RepeatWithToNode *node) = 0;
 	virtual void visitNextRepeatNode(NextRepeatNode *node) = 0;
 	virtual void visitExitRepeatNode(ExitRepeatNode *node) = 0;
+	virtual void visitExitNode(ExitNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
 	virtual void visitSymbolNode(SymbolNode *node) = 0;
@@ -451,6 +454,16 @@ struct ExitRepeatNode : StmtNode {
 	virtual ~ExitRepeatNode() {}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitExitRepeatNode(this);
+	}
+};
+
+/* ExitNode */
+
+struct ExitNode : StmtNode {
+	ExitNode() : StmtNode(kExitNode) {}
+	virtual ~ExitNode() {}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitExitNode(this);
 	}
 };
 
