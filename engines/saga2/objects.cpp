@@ -195,6 +195,7 @@ struct GameObjectArchive {
 
 GameObject::GameObject(void) {
 	prototype   = nullptr;
+	_data.projectDummy = 0;
 	_data.location    = Nowhere;
 	_data.nameIndex   = 0;
 	_data.parentID    = Nothing;
@@ -218,6 +219,7 @@ GameObject::GameObject(void) {
 
 GameObject::GameObject(const ResourceGameObject &res) {
 	prototype           = &objectProtos[res.protoIndex];
+	_data.projectDummy = 0;
 	_data.location            = res.location;
 	_data.nameIndex           = res.nameIndex;
 	_data.parentID            = res.parentID;
@@ -247,6 +249,7 @@ GameObject::GameObject(void **buf) {
 	                    ?   &objectProtos[a->protoIndex]
 	                    :   nullptr;
 
+	_data.projectDummy = 0;
 	_data.location        = a->location;
 	_data.nameIndex       = a->nameIndex;
 	_data.parentID        = a->parentID;
@@ -3017,7 +3020,10 @@ void initObjects(void) {
 		GameObject  *obj = &objectList[i];
 
 		//  Use the default constructor for the extra actors
-		new (obj) GameObject;
+		if (i == 4970)
+			new (obj) GameObject;
+		else
+			new (obj) GameObject;
 	}
 
 	delete[] resourceObjectList;
