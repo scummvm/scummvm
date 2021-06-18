@@ -43,7 +43,7 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 	ActiveMission   *ms = NULL;
 
 	for (i = 0; i < elementsof(activeMissions); i++) {
-		if (!(activeMissions[i].missionFlags & inUse)) {
+		if (!(activeMissions[i]._data.missionFlags & inUse)) {
 			ms = &activeMissions[i];
 			break;
 		}
@@ -53,14 +53,14 @@ ActiveMission *ActiveMission::newMission(ObjectID genID, uint16 script) {
 
 	GameObject      *generator = GameObject::objectAddress(genID);
 
-	ms->missionID   = i;
-	ms->generatorID = genID;
-	ms->missionScript = script;
-	ms->missionFlags |= inUse;
+	ms->_data.missionID   = i;
+	ms->_data.generatorID = genID;
+	ms->_data.missionScript = script;
+	ms->_data.missionFlags |= inUse;
 
-	ms->numKnowledgeIDs = ms->numObjectIDs = 0;
+	ms->_data.numKnowledgeIDs = ms->_data.numObjectIDs = 0;
 
-	memset(ms->missionVars, 0, elementsof(ms->missionVars));
+	memset(ms->_data.missionVars, 0, elementsof(ms->_data.missionVars));
 
 	return ms;
 }
@@ -72,8 +72,8 @@ int ActiveMission::findMission(ObjectID genID) {
 	int             i;
 
 	for (i = 0; i < elementsof(activeMissions); i++) {
-		if (activeMissions[i].missionFlags & inUse
-		        &&  activeMissions[i].generatorID == genID) {
+		if (activeMissions[i]._data.missionFlags & inUse
+		        &&  activeMissions[i]._data.generatorID == genID) {
 			return i;
 		}
 	}
@@ -92,8 +92,8 @@ ActiveMission *ActiveMission::missionAddress(int index) {
 //	Add record of object creation to mission
 
 bool ActiveMission::addObjectID(ObjectID objID) {
-	if (numObjectIDs < elementsof(missionObjectList)) {
-		missionObjectList[numObjectIDs++] = objID;
+	if (_data.numObjectIDs < elementsof(_data.missionObjectList)) {
+		_data.missionObjectList[_data.numObjectIDs++] = objID;
 		return true;
 	}
 	return false;
@@ -105,15 +105,17 @@ bool ActiveMission::addObjectID(ObjectID objID) {
 bool ActiveMission::removeObjectID(ObjectID objID) {
 	bool            found = false;
 
-	for (int i = 0; i < numObjectIDs; i++) {
+	for (int i = 0; i < _data.numObjectIDs; i++) {
 		if (found) {
-			missionObjectList[i - 1] = missionObjectList[i];
+			_data.missionObjectList[i - 1] = _data.missionObjectList[i];
 		} else {
-			if (missionObjectList[i] == objID) found = true;
+			if (_data.missionObjectList[i] == objID)
+				found = true;
 		}
 	}
 
-	if (found) numObjectIDs--;
+	if (found)
+		_data.numObjectIDs--;
 
 	return found;
 }
@@ -124,13 +126,13 @@ bool ActiveMission::removeObjectID(ObjectID objID) {
 bool ActiveMission::addKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 	if (!isActor(actor)) return false;
 
-	if (numKnowledgeIDs < elementsof(missionKnowledgeList)) {
+	if (_data.numKnowledgeIDs < elementsof(_data.missionKnowledgeList)) {
 		Actor       *a = (Actor *)GameObject::objectAddress(actor);
 
 		if (!a->addKnowledge(knowledgeID)) return false;
 
-		missionKnowledgeList[numKnowledgeIDs].id = actor;
-		missionKnowledgeList[numKnowledgeIDs++].kID = knowledgeID;
+		_data.missionKnowledgeList[_data.numKnowledgeIDs].id = actor;
+		_data.missionKnowledgeList[_data.numKnowledgeIDs++].kID = knowledgeID;
 		return true;
 	}
 	return false;
@@ -142,18 +144,19 @@ bool ActiveMission::addKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 bool ActiveMission::removeKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 	bool            found = false;
 
-	for (int i = 0; i < numKnowledgeIDs; i++) {
+	for (int i = 0; i < _data.numKnowledgeIDs; i++) {
 		if (found) {
-			missionKnowledgeList[i - 1] = missionKnowledgeList[i];
+			_data.missionKnowledgeList[i - 1] = _data.missionKnowledgeList[i];
 		} else {
-			if (missionKnowledgeList[i].id  == actor
-			        &&  missionKnowledgeList[i].kID == knowledgeID) {
+			if (_data.missionKnowledgeList[i].id  == actor
+			        &&  _data.missionKnowledgeList[i].kID == knowledgeID) {
 				found = true;
 			}
 		}
 	}
 
-	if (found) numKnowledgeIDs--;
+	if (found)
+		_data.numKnowledgeIDs--;
 
 	return found;
 }
@@ -164,24 +167,24 @@ bool ActiveMission::removeKnowledgeID(ObjectID actor, uint16 knowledgeID) {
 void ActiveMission::cleanup(void) {
 	int             i;
 
-	for (i = 0; i < numKnowledgeIDs; i++) {
+	for (i = 0; i < _data.numKnowledgeIDs; i++) {
 		Actor       *a;
 
-		a = (Actor *)GameObject::objectAddress(missionKnowledgeList[i].id);
+		a = (Actor *)GameObject::objectAddress(_data.missionKnowledgeList[i].id);
 
-		a->removeKnowledge(missionKnowledgeList[i].kID);
+		a->removeKnowledge(_data.missionKnowledgeList[i].kID);
 	}
 
-	for (i = 0; i < numObjectIDs; i++) {
+	for (i = 0; i < _data.numObjectIDs; i++) {
 		GameObject      *obj;
 
-		obj = GameObject::objectAddress(missionObjectList[i]);
+		obj = GameObject::objectAddress(_data.missionObjectList[i]);
 
 		obj->deleteObjectRecursive();
 	}
 
-	numKnowledgeIDs = numObjectIDs = 0;
-	missionFlags &= ~inUse;
+	_data.numKnowledgeIDs = _data.numObjectIDs = 0;
+	_data.missionFlags &= ~inUse;
 }
 
 //-----------------------------------------------------------------------
@@ -191,7 +194,7 @@ void initMissions(void) {
 	int     i;
 
 	for (i = 0; i < elementsof(activeMissions); i++)
-		activeMissions[i].missionFlags &= ~ActiveMission::inUse;
+		activeMissions[i]._data.missionFlags &= ~inUse;
 }
 
 //-----------------------------------------------------------------------

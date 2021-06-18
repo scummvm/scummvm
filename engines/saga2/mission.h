@@ -31,34 +31,28 @@
 
 namespace Saga2 {
 
-class ActiveMission {
+//  Used to store a record of mission knowledge that
+//  has been added to an actor, and will be deleted after
+//  the mission is destructed.
+struct KnowledgeID {
+	ObjectID    id;
+	uint16      kID;
+};
 
-	friend void initMissions(void);
-	friend void saveMissions(SaveFileConstructor &saveGame);
-	friend void loadMissions(SaveFileReader &saveGame);
-	friend void cleanupMissions(void);
+#include "common/pack-start.h"
 
-private:
+//  Mission flags
+enum missionFlags {
+	inUse = (1 << 0)               // this mission struct in use
+};
 
-	//  Used to store a record of mission knowledge that
-	//  has been added to an actor, and will be deleted after
-	//  the mission is destructed.
-	struct KnowledgeID {
-		ObjectID    id;
-		uint16      kID;
-	};
-
+struct ActiveMissionData {
 	//  Store the unique ID of this active mission, and the
 	//  object ID of the generator.
 	uint16          missionID;          // ID of this instance
 	ObjectID        generatorID;        // ObjectID of generator instance
 	uint16          missionScript;      // script for this mission
 	uint16          missionFlags;       // various mission flags
-
-	//  Mission flags
-	enum missionFlags {
-		inUse = (1 << 0),               // this mission struct in use
-	};
 
 	//  Specific variables relating to the mission which can
 	//  be defined by the script writer.
@@ -69,6 +63,20 @@ private:
 	KnowledgeID     missionKnowledgeList[32];
 	uint16          numObjectIDs,
 	                numKnowledgeIDs;
+};
+
+#include "common/pack-end.h"
+
+class ActiveMission {
+
+	friend void initMissions(void);
+	friend void saveMissions(SaveFileConstructor &saveGame);
+	friend void loadMissions(SaveFileReader &saveGame);
+	friend void cleanupMissions(void);
+
+public:
+
+	ActiveMissionData _data;
 
 public:
 	static ActiveMission *newMission(ObjectID genID, uint16 script);
@@ -78,7 +86,7 @@ public:
 	void cleanup(void);
 
 	bool spaceForObject(void) {
-		return numObjectIDs < elementsof(missionObjectList);
+		return _data.numObjectIDs < elementsof(_data.missionObjectList);
 	}
 
 	//  Add record of object creation to mission
@@ -94,11 +102,11 @@ public:
 	bool removeKnowledgeID(ObjectID actor, uint16 knowledgeID);
 
 	int16 getMissionID(void) {
-		return missionID;
+		return _data.missionID;
 	}
 
 	uint16 getScript(void) {
-		return missionScript;
+		return _data.missionScript;
 	}
 };
 
