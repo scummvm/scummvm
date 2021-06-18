@@ -1068,7 +1068,7 @@ Common::MemorySeekableReadWriteStream *TileActivityTaskList::archive(Common::Mem
 		taskCount++;
 
 	//  Store the task count
-	taskCount = stream->readSint16LE();
+	stream->writeSint16LE(taskCount);
 
 	for (tat = (TileActivityTask *)list.first();
 	        tat != nullptr;
