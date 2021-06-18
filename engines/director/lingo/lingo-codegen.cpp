@@ -467,6 +467,20 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 		}
 	}
 
+	if (node->name->equalsIgnoreCase("playAccel")) {
+		for (uint i = 0; i < node->args->size(); i++) {
+			Node *arg = (*node->args)[i];
+			if (arg->type == kVarNode) {
+				code1(LC::c_symbolpush);
+				codeString(static_cast<VarNode *>(arg)->name->c_str());
+			} else {
+				compile(arg);
+			}
+		}
+		codeCmd(node->name, node->args->size());
+		return;
+	}
+
 	compileList(node->args);
 	codeCmd(node->name, node->args->size());
 }

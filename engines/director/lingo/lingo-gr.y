@@ -319,7 +319,6 @@ ID: tVARID
 	| tOPEN			{ $$ = new Common::String("open"); }
 	| tOR			{ $$ = new Common::String("or"); }
 	// | tPLAY			{ $$ = new Common::String("play"); }
-	| tPLAYACCEL	{ $$ = new Common::String("playAccel"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
 	// | tPROPERTY		{ $$ = new Common::String("property"); }
 	// | tPUT			{ $$ = new Common::String("put"); }

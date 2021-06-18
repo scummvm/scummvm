@@ -166,7 +166,6 @@ on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
 or			{ count(); return tOR; }
 play		{ count(); return tPLAY; }
-playAccel	{ count(); return tPLAYACCEL; }
 previous	{ count(); return tPREVIOUS; }
 property	{ count(); return tPROPERTY; }	// D4
 put			{ count(); return tPUT; }
