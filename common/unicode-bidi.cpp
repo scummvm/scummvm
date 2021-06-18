@@ -132,10 +132,13 @@ String convertBiDiStringByLines(const String &input, const Common::CodePage page
 }
 
 String convertBiDiString(const String &input, const Common::Language lang, BiDiParagraph dir) {
-	if (lang != Common::HE_ISR)		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
+	if (lang == Common::HE_ISR) {
+		return Common::convertBiDiString(input, kWindows1255, dir);
+	} else if (lang == Common::FA_IRN) {
+		return Common::convertBiDiString(input, kWindows1256, dir);
+	} else {
 		return input;
-
-	return Common::convertBiDiString(input, kWindows1255, dir);
+	}
 }
 
 String convertBiDiString(const String &input, const Common::CodePage page, BiDiParagraph dir) {
