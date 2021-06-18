@@ -259,7 +259,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 			debugC(3, kDebugScripts, "byteAddress: thisD[%d] = %d", offset, dataSegment[arg[1] + offset]);
 			return &dataSegment[arg[1] + offset];
 		}
-		debugC(3, kDebugScripts, "byteAddress: thisS[%d] = %d", offset, *segmentArrayAddress(arg[0], arg[1]) + offset);
+		debugC(3, kDebugScripts, "byteAddress: thisS[%d] = %d", offset, *(segmentArrayAddress(arg[0], arg[1]) + offset));
 		return segmentArrayAddress(arg[0], arg[1]) + offset;
 
 	case addr_deref:
