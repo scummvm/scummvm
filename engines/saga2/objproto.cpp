@@ -1038,7 +1038,7 @@ bool InventoryProto::canDropAt(
 	//  enactor, fail
 	if (enactorPtr->IDParent() != loc.context
 	        || (loc - enactorPtr->getLocation()).quickHDistance()
-	        >   tileUVSize * platformWidth * 4)
+	        >   tileUVSize * kPlatformWidth * 4)
 		return false;
 
 	return true;
@@ -2917,7 +2917,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 		if (actorLoc.context == generatorLoc.context) {
 			int32   dist,
 			        mtRadius = obj->getHitPoints(),// Radius in metatiles
-			        ptRadius = mtRadius * tileUVSize * platformWidth,
+			        ptRadius = mtRadius * tileUVSize * kPlatformWidth,
 			        prob = obj->getExtra() * (256 * 256) / 100;
 
 			TilePoint   diff = (TilePoint)actorLoc - (TilePoint)generatorLoc;

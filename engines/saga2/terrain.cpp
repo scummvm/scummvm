@@ -115,8 +115,8 @@ uint32 tileTerrain(
     int16 maxZ) {
 	WorldMapData    *map = &mapList[mapNum];
 
-	TilePoint       metaCoords = pt >> platShift,
-	                origin = metaCoords << platShift,
+	TilePoint       metaCoords = pt >> kPlatShift,
+	                origin = metaCoords << kPlatShift,
 	                coords = pt - origin;
 	MetaTilePtr     metaPtr;
 	uint32          terrain = 0;
@@ -605,8 +605,8 @@ int16 tileSlopeHeight(
     uint8               *platformResult) {
 	//  Calculate coordinates of tile, metatile, and subtile
 	TilePoint       tileCoords = pt >> tileUVShift,
-	                metaCoords = tileCoords >> platShift,
-	                origin = metaCoords << platShift,
+	                metaCoords = tileCoords >> kPlatShift,
+	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
 	                subTile((pt.u >> subTileShift) & subTileMask,
 	                        (pt.v >> subTileShift) & subTileMask,

@@ -322,17 +322,17 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 		}
 
 		//  Compute tile region relative to metatile
-		tileReg.min.u = (tileReg.min.u + origin.u) & platMask;
+		tileReg.min.u = (tileReg.min.u + origin.u) & kPlatMask;
 		tileReg.max.u = tileReg.min.u + offset.u;
-		tileReg.min.v = (tileReg.min.v + origin.v) & platMask;
+		tileReg.min.v = (tileReg.min.v + origin.v) & kPlatMask;
 		tileReg.max.v = tileReg.min.v + offset.v;
 
-		assert(tileReg.max.u <= platformWidth);
-		assert(tileReg.max.v <= platformWidth);
+		assert(tileReg.max.u <= kPlatformWidth);
+		assert(tileReg.max.v <= kPlatformWidth);
 
 		//  Compute the offset of base tile in metatile to origin
-		offset.u = ((subMeta.u >> 1) << platShift) - origin.u;
-		offset.v = ((subMeta.v >> 1) << platShift) - origin.v;
+		offset.u = ((subMeta.u >> 1) << kPlatShift) - origin.u;
+		offset.v = ((subMeta.v >> 1) << kPlatShift) - origin.v;
 
 		for (int i = 0; i < maxPlatforms; i++) {
 			uint16      tpFlags = 0;
@@ -350,13 +350,13 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 				PathTilePosInfo *arrRow = &array[(u + offset.u) * area.v];
 
 				assert(u >= 0);
-				assert(u < platformWidth);
+				assert(u < kPlatformWidth);
 
 				for (v = tileReg.min.v; v < tileReg.max.v; v++) {
 					int16   flagIndex = ((u & subMetaMask) << subMetaShift) | (v & subMetaMask);
 
 					assert(v >= 0);
-					assert(v < platformWidth);
+					assert(v < kPlatformWidth);
 
 					if (!(tpFlags & (1 << flagIndex))) {
 						tpFlags |= (1 << flagIndex);
@@ -398,8 +398,8 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							//  Abspos is the absolute position of the
 							//  group on the tile map.
 
-							absPos.u = (mCoords.u << platShift) | tagU;
-							absPos.v = (mCoords.v << platShift) | tagV;
+							absPos.u = (mCoords.u << kPlatShift) | tagU;
+							absPos.v = (mCoords.v << kPlatShift) | tagV;
 							absPos.z = height;
 
 							//  Look up the group instance in the hash.
@@ -2751,7 +2751,7 @@ TilePoint selectDistantSite(
     int             metaProperties) {
 	GameWorld       *world = (GameWorld *)GameObject::objectAddress(worldID);
 	int32           u, v;
-	int32           mapSize = mapList[world->mapNum].mapSize * platformWidth;
+	int32           mapSize = mapList[world->mapNum].mapSize * kPlatformWidth;
 	int             matchCount = 0;
 
 	//  Make sure the location spec'd is within the bounds of the map
@@ -2767,8 +2767,8 @@ TilePoint selectDistantSite(
 	//  convert to metatile coords
 	minCoords.u = minCoords.u >> platformShift;
 	minCoords.v = minCoords.v >> platformShift;
-	maxCoords.u = (maxCoords.u + platformWidth - 1) >> platformShift;
-	maxCoords.v = (maxCoords.v + platformWidth - 1) >> platformShift;
+	maxCoords.u = (maxCoords.u + kPlatformWidth - 1) >> platformShift;
+	maxCoords.v = (maxCoords.v + kPlatformWidth - 1) >> platformShift;
 
 	//  Now, scan that area for metatiles...
 	for (u = minCoords.u; u < maxCoords.u; u++) {

@@ -639,7 +639,7 @@ struct Platform {
 	uint16          height,                 // height above ground
 	                highestPixel;           // tallest tile upper extent
 	uint16          flags;                  // platform flags
-	TileRef         tiles[platformWidth][platformWidth];
+	TileRef         tiles[kPlatformWidth][kPlatformWidth];
 
 	TileRef &getTileRef(const TilePoint p) {
 		return tiles[p.u][p.v];
@@ -741,7 +741,7 @@ typedef int16       RipTableID;
 struct RipTable {
 	MetaTileID  metaID;
 	uint16      ripID;
-	int16       zTable[platformWidth][platformWidth];
+	int16       zTable[kPlatformWidth][kPlatformWidth];
 
 	//  Constructor
 	RipTable(void) : metaID(NoMetaTile) {}
@@ -887,10 +887,10 @@ class MetaTileIterator {
 
 public:
 	MetaTileIterator(int16 map, const TileRegion &reg) : mapNum(map) {
-		region.min.u = reg.min.u >> platShift;
-		region.max.u = (reg.max.u + platMask) >> platShift;
-		region.min.v = reg.min.v >> platShift;
-		region.max.v = (reg.max.v + platMask) >> platShift;
+		region.min.u = reg.min.u >> kPlatShift;
+		region.max.u = (reg.max.u + kPlatMask) >> kPlatShift;
+		region.min.v = reg.min.v >> kPlatShift;
+		region.max.v = (reg.max.v + kPlatMask) >> kPlatShift;
 		region.min.z = region.max.z = 0;
 	}
 

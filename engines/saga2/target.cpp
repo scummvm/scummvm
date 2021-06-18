@@ -33,7 +33,7 @@
 
 namespace Saga2 {
 
-const int   metaTileUVSize = tileUVSize * platformWidth;
+const int   metaTileUVSize = tileUVSize * kPlatformWidth;
 
 /* ===================================================================== *
    Target management functions

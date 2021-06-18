@@ -2315,8 +2315,8 @@ static void readPlatform(hResContext *con, Platform &plt) {
 	plt.highestPixel = con->readU16LE();
 	plt.flags = con->readU16LE();
 
-	for (int j = 0; j < platformWidth; ++j) {
-		for (int i = 0; i < platformWidth; ++i) {
+	for (int j = 0; j < kPlatformWidth; ++j) {
+		for (int i = 0; i < kPlatformWidth; ++i) {
 			plt.tiles[j][i].tile = con->readU16LE();
 			plt.tiles[j][i].flags = con->readByte();
 			plt.tiles[j][i].tileHeight = con->readByte();
@@ -2527,7 +2527,7 @@ MetaTile *MetaTileIterator::first(TilePoint *loc) {
 		mtRes = mapList[mapNum].lookupMeta(mCoords);
 	}
 
-	if (loc) *loc = mCoords << platShift;
+	if (loc) *loc = mCoords << kPlatShift;
 	return mtRes;
 }
 
@@ -2539,7 +2539,7 @@ MetaTile *MetaTileIterator::next(TilePoint *loc) {
 		mtRes = mapList[mapNum].lookupMeta(mCoords);
 	} while (mtRes == nullptr);
 
-	if (loc) *loc = mCoords << platShift;
+	if (loc) *loc = mCoords << kPlatShift;
 	return mtRes;
 }
 
@@ -2555,16 +2555,16 @@ bool TileIterator::iterate(void) {
 				if (platIndex >= maxPlatforms) {
 					if ((mt = metaIter.next(&origin)) != nullptr) {
 						tCoordsReg.min.u = tCoordsReg.min.v = 0;
-						tCoordsReg.max.u = tCoordsReg.max.v = platformWidth;
+						tCoordsReg.max.u = tCoordsReg.max.v = kPlatformWidth;
 
 						if (origin.u < region.min.u)
-							tCoordsReg.min.u = region.min.u & platMask;
-						if (origin.u + platformWidth > region.max.u)
-							tCoordsReg.max.u = region.max.u & platMask;
+							tCoordsReg.min.u = region.min.u & kPlatMask;
+						if (origin.u + kPlatformWidth > region.max.u)
+							tCoordsReg.max.u = region.max.u & kPlatMask;
 						if (origin.v < region.min.v)
-							tCoordsReg.min.v = region.min.v & platMask;
-						if (origin.v + platformWidth > region.max.v)
-							tCoordsReg.max.v = region.max.v & platMask;
+							tCoordsReg.min.v = region.min.v & kPlatMask;
+						if (origin.v + kPlatformWidth > region.max.v)
+							tCoordsReg.max.v = region.max.v & kPlatMask;
 					} else
 						return false;
 
@@ -2603,16 +2603,16 @@ TileInfo *TileIterator::first(TilePoint *loc, StandingTileInfo *stiResult) {
 	}
 
 	tCoordsReg.min.u = tCoordsReg.min.v = 0;
-	tCoordsReg.max.u = tCoordsReg.max.v = platformWidth;
+	tCoordsReg.max.u = tCoordsReg.max.v = kPlatformWidth;
 
 	if (origin.u < region.min.u)
-		tCoordsReg.min.u = region.min.u & platMask;
-	if (origin.u + platformWidth > region.max.u)
-		tCoordsReg.max.u = region.max.u & platMask;
+		tCoordsReg.min.u = region.min.u & kPlatMask;
+	if (origin.u + kPlatformWidth > region.max.u)
+		tCoordsReg.max.u = region.max.u & kPlatMask;
 	if (origin.v < region.min.v)
-		tCoordsReg.min.v = region.min.v & platMask;
-	if (origin.v + platformWidth > region.max.v)
-		tCoordsReg.max.v = region.max.v & platMask;
+		tCoordsReg.min.v = region.min.v & kPlatMask;
+	if (origin.v + kPlatformWidth > region.max.v)
+		tCoordsReg.max.v = region.max.v & kPlatMask;
 
 	tCoords = tCoordsReg.min;
 	tiRes = platform->fetchTAGInstance(
@@ -2663,8 +2663,8 @@ TileInfo *TileIterator::next(TilePoint *loc, StandingTileInfo *stiResult) {
 inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	WorldMapData    *curMap = &mapList[currentMapNum];
 
-	int16           uOrg = coords.u * platformWidth,
-	                vOrg = coords.v * platformWidth;
+	int16           uOrg = coords.u * kPlatformWidth,
+	                vOrg = coords.v * kPlatformWidth;
 
 	Platform        *drawList[maxPlatforms + 1],
 	                **put = drawList;
@@ -2686,8 +2686,8 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 	        pos.x < tileDrawMap.size.x + metaDX;
 	        coords.u++,
 	        coords.v--,
-	        uOrg += platformWidth,
-	        vOrg -= platformWidth,
+	        uOrg += kPlatformWidth,
+	        vOrg -= kPlatformWidth,
 	        pos.x += metaTileWidth
 	    ) {
 		TilePoint       clipCoords;
@@ -2747,7 +2747,7 @@ inline void drawMetaRow(TilePoint coords, Point16 pos) {
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = kTileHeight * (platformWidth - 1) + kMaxTileHeight * 2 + 64;
+				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= tileDrawMap.size.y)
@@ -2791,7 +2791,7 @@ void buildRipTable(
 
 	//  Determine number of tile positions in meta tile for which to
 	//  calculate object ripping altitude
-	int16   tilesToGo = platformWidth * platformWidth;
+	int16   tilesToGo = kPlatformWidth * kPlatformWidth;
 
 	for (uint i = 0; i < maxPlatforms; i++) {
 		Platform    *p;
@@ -2807,8 +2807,8 @@ void buildRipTable(
 			uint16      platHeight = p->height << 3;
 			int16       u, v;
 
-			for (u = 0; u < platformWidth; u++)
-				for (v = 0; v < platformWidth; v++)
+			for (u = 0; u < kPlatformWidth; u++)
+				for (v = 0; v < kPlatformWidth; v++)
 					if (ripTable->zTable[u][v] == maxint16) {
 						TileRef &tr = p->getTileRef(u, v);
 
@@ -2831,7 +2831,7 @@ void buildRipTable(
 //	the center view object
 
 void buildRipTables(void) {
-	const int16         regionRadius = tileUVSize * platformWidth * 2;
+	const int16         regionRadius = tileUVSize * kPlatformWidth * 2;
 
 	TilePoint           actorCoords;
 	MetaTile            *mt;
@@ -2841,8 +2841,8 @@ void buildRipTables(void) {
 	int16               mtTableSize = 0;
 
 	getViewTrackPos(actorCoords);
-	ripTableCoords.u = actorCoords.u >> (tileUVShift + platShift);
-	ripTableCoords.v = actorCoords.v >> (tileUVShift + platShift);
+	ripTableCoords.u = actorCoords.u >> (tileUVShift + kPlatShift);
+	ripTableCoords.v = actorCoords.v >> (tileUVShift + kPlatShift);
 	ripTableCoords.z = 0;
 
 	//  Calculate the region of meta tile for which to build object
@@ -2950,8 +2950,8 @@ inline void drawMetaTiles(void) {
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
 	viewPos.x = (tileScroll.x >> kTileDXShift)
-	            - (platformWidth * mapList[currentMapNum].mapSize),
-	viewPos.y = (platformWidth
+	            - (kPlatformWidth * mapList[currentMapNum].mapSize),
+	viewPos.y = (kPlatformWidth
 	             *   mapList[currentMapNum].mapSize
 	             *   kTileDX)
 	             -   tileScroll.y;
@@ -2961,9 +2961,9 @@ inline void drawMetaTiles(void) {
 	//  coordinates of the view window upper left corner in U,V
 
 	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
-	               / (platformWidth * 2);
+	               / (kPlatformWidth * 2);
 	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
-	               / (platformWidth * 2);
+	               / (kPlatformWidth * 2);
 	baseCoords.z = 0;
 
 	debugC(2, kDebugTiles, "baseCoords = (%d,%d,%d)", baseCoords.u, baseCoords.v, baseCoords.z);
@@ -3197,13 +3197,13 @@ void maskPlatform(
 	TilePoint       rLoc;
 	TilePoint       origin(uOrg, vOrg, 0);
 
-	tilePos.y = screenPos.y - (platformWidth - 1) * kTileHeight;
+	tilePos.y = screenPos.y - (kPlatformWidth - 1) * kTileHeight;
 
-	u = platformWidth - 1;
-	v = platformWidth - 1;
+	u = kPlatformWidth - 1;
+	v = kPlatformWidth - 1;
 
-	relLoc.u = - relLoc.u - (platformWidth - 1) * tileUVSize;
-	relLoc.v = - relLoc.v - (platformWidth - 1) * tileUVSize;
+	relLoc.u = - relLoc.u - (kPlatformWidth - 1) * tileUVSize;
+	relLoc.v = - relLoc.v - (kPlatformWidth - 1) * tileUVSize;
 
 	for (int row = 0; row < 15; row++) {
 		if (tilePos.y > 0) {
@@ -3303,8 +3303,8 @@ void maskMetaRow(
     uint16          roofID) {
 	WorldMapData    *curMap = &mapList[currentMapNum];
 
-	int16           uOrg = coords.u * platformWidth,
-	                vOrg = coords.v * platformWidth;
+	int16           uOrg = coords.u * kPlatformWidth,
+	                vOrg = coords.v * kPlatformWidth;
 
 	Platform        *drawList[maxPlatforms + 1],
 	                **put = drawList;
@@ -3321,10 +3321,10 @@ void maskMetaRow(
 	        pos.x < sMap.size.x + metaDX;
 	        coords.u++,
 	        coords.v--,
-	        relLoc.u += platUVSize,
-	        relLoc.v -= platUVSize,
-	        uOrg += platformWidth,
-	        vOrg -= platformWidth,
+	        relLoc.u += kPlatUVSize,
+	        relLoc.v -= kPlatUVSize,
+	        uOrg += kPlatformWidth,
+	        vOrg -= kPlatformWidth,
 	        pos.x += metaTileWidth
 	    ) {
 		TilePoint       clipCoords;
@@ -3382,7 +3382,7 @@ void maskMetaRow(
 				//  REM: precompute this later, by scanning the platform
 				//  for individual altitudes
 
-				p->highestPixel = kTileHeight * (platformWidth - 1) + kMaxTileHeight + 192;
+				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight + 192;
 
 				if (pos.y <= 0
 				        || pos.y - p->highestPixel >= sMap.size.y)
@@ -3418,17 +3418,17 @@ void drawTileMask(
 	//  coordinates of the view window on the map in X,Y (in 16 pixel units)
 
 	viewPos.x = (aPos.x >> kTileDXShift)
-	            - (platformWidth * mapList[currentMapNum].mapSize),
-	            viewPos.y = (platformWidth
+	            - (kPlatformWidth * mapList[currentMapNum].mapSize),
+	            viewPos.y = (kPlatformWidth
 	                         *   mapList[currentMapNum].mapSize << kTileDXShift)
 	                        -   aPos.y;
 
 	//  coordinates of the view window upper left corner in U,V
 
 	baseCoords.u = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) + viewPos.x)
-	               / (platformWidth * 2);
+	               / (kPlatformWidth * 2);
 	baseCoords.v = ((2 * (viewPos.y >> kTileDXShift) + metaDY / 16) - viewPos.x)
-	               / (platformWidth * 2);
+	               / (kPlatformWidth * 2);
 	baseCoords.z = 0;
 
 	//  coordinates of current metatile (in X,Y), relative to screen
@@ -3441,8 +3441,8 @@ void drawTileMask(
 
 	//  Compute where the object is relative to the metatile coords
 
-	relLoc.u = (baseCoords.u * platUVSize) - loc.u;
-	relLoc.v = (baseCoords.v * platUVSize) - loc.v;
+	relLoc.u = (baseCoords.u * kPlatUVSize) - loc.u;
+	relLoc.v = (baseCoords.v * kPlatUVSize) - loc.v;
 	relLoc.z = loc.z;
 
 	//  Loop through each horizontal row of metatiles
@@ -3459,7 +3459,7 @@ void drawTileMask(
 		metaPos.y += metaDY;
 		metaPos.x -= metaDX;
 
-		relLoc.u -= platUVSize;
+		relLoc.u -= kPlatUVSize;
 
 		maskMetaRow(sMap, TilePoint(baseCoords.u - 1, baseCoords.v, 0),
 		            relLoc, metaPos, roofID);
@@ -3467,7 +3467,7 @@ void drawTileMask(
 		metaPos.y += metaDY;
 		metaPos.x += metaDX;
 
-		relLoc.v -= platUVSize;
+		relLoc.v -= kPlatUVSize;
 	}
 }
 
@@ -4041,16 +4041,16 @@ bool pointOnHiddenSurface(
 		adjSubMask = 0x0008 << (testCoords.u & ~subTileMask);
 	}
 
-	mCoords = adjTCoords >> platShift;
+	mCoords = adjTCoords >> kPlatShift;
 
 	//  If metatile of adjacent tile does not exist, the pick point
 	//  is valid.
 	if ((mt = curMap->lookupMeta(mCoords)) == nullptr) return false;
 
-	tCoords.u = adjTCoords.u & platMask;
-	tCoords.v = adjTCoords.v & platMask;
+	tCoords.u = adjTCoords.u & kPlatMask;
+	tCoords.v = adjTCoords.v & kPlatMask;
 	tCoords.z = 0;
-	origin  = mCoords << platShift;
+	origin  = mCoords << kPlatShift;
 
 	int             i;
 
@@ -4174,11 +4174,11 @@ TilePoint pickTile(Point32 pos,
 
 	//  Compute which metatile the click occured on, and the tile
 	//  within that metatile, and the origin coords of the metatile
-	mCoords = tileCoords >> platShift;
-	tCoords.u = tileCoords.u & platMask;
-	tCoords.v = tileCoords.v & platMask;
+	mCoords = tileCoords >> kPlatShift;
+	tCoords.u = tileCoords.u & kPlatMask;
+	tCoords.v = tileCoords.v & kPlatMask;
 	tCoords.z = 0;
-	origin  = mCoords << platShift;
+	origin  = mCoords << kPlatShift;
 
 	//  Lookup the metatile
 	mt = curMap->lookupMeta(mCoords);
@@ -4278,9 +4278,9 @@ TilePoint pickTile(Point32 pos,
 			tCoords.u--;
 			coords.u -= tileUVSize;
 			if (tCoords.u < 0) {
-				tCoords.u = platformWidth - 1;
+				tCoords.u = kPlatformWidth - 1;
 				mCoords.u--;
-				origin = mCoords << platShift;
+				origin = mCoords << kPlatShift;
 				mt = curMap->lookupMeta(mCoords);
 			}
 			relPos.x += kTileDX;
@@ -4288,9 +4288,9 @@ TilePoint pickTile(Point32 pos,
 			tCoords.v--;
 			coords.v -= tileUVSize;
 			if (tCoords.v < 0) {
-				tCoords.v = platformWidth - 1;
+				tCoords.v = kPlatformWidth - 1;
 				mCoords.v--;
-				origin = mCoords << platShift;
+				origin = mCoords << kPlatShift;
 				mt = curMap->lookupMeta(mCoords);
 			}
 			relPos.x -= kTileDX;
@@ -4505,10 +4505,10 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 
 	debugC(3, kDebugTiles, "objTileReg = ((%d,%d), (%d,%d))", objTileReg.min.u, objTileReg.min.v, objTileReg.max.u, objTileReg.max.v);
 
-	objMetaReg.min.u = objTileReg.min.u >> platShift;
-	objMetaReg.min.v = objTileReg.min.v >> platShift;
-	objMetaReg.max.u = (objTileReg.max.u + platMask) >> platShift;
-	objMetaReg.max.v = (objTileReg.max.v + platMask) >> platShift;
+	objMetaReg.min.u = objTileReg.min.u >> kPlatShift;
+	objMetaReg.min.v = objTileReg.min.v >> kPlatShift;
+	objMetaReg.max.u = (objTileReg.max.u + kPlatMask) >> kPlatShift;
+	objMetaReg.max.v = (objTileReg.max.v + kPlatMask) >> kPlatShift;
 
 	debugC(3, kDebugTiles, "objMetaReg = ((%d,%d), (%d,%d))", objMetaReg.min.u, objMetaReg.min.v, objMetaReg.max.u, objMetaReg.max.v);
 
@@ -4528,15 +4528,15 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 			TileRegion      relTileReg;
 			int16           tileU, tileV;
 
-			origin.u = metaU << platShift;
-			origin.v = metaV << platShift;
+			origin.u = metaU << kPlatShift;
+			origin.v = metaV << kPlatShift;
 
 			//  Compute the tile region relative to the origin of this
 			//  meta tile clipped to this meta tile region
 			relTileReg.min.u = MAX(objTileReg.min.u - origin.u, 0);
 			relTileReg.min.v = MAX(objTileReg.min.v - origin.v, 0);
-			relTileReg.max.u = MIN(objTileReg.max.u - origin.u, platformWidth);
-			relTileReg.max.v = MIN(objTileReg.max.v - origin.v, platformWidth);
+			relTileReg.max.u = MIN(objTileReg.max.u - origin.u, (int)kPlatformWidth);
+			relTileReg.max.v = MIN(objTileReg.max.v - origin.v, (int)kPlatformWidth);
 
 			for (tileU = relTileReg.min.u;
 			        tileU < relTileReg.max.u;
@@ -4661,8 +4661,8 @@ void updateMainDisplay(void) {
 	viewDiff = trackPos - lastViewLoc;
 	lastViewLoc = trackPos;
 
-	if (abs(viewDiff.u) > 8 * platformWidth * tileUVSize
-	        ||  abs(viewDiff.v) > 8 * platformWidth * tileUVSize)
+	if (abs(viewDiff.u) > 8 * kPlatformWidth * tileUVSize
+	        ||  abs(viewDiff.v) > 8 * kPlatformWidth * tileUVSize)
 		freeAllTileBanks();
 
 	//  Add current coordinates to map if they have mapping
@@ -4715,8 +4715,8 @@ void updateMainDisplay(void) {
 
 	buildRoofTable();
 
-	mCoords.u = trackPos.u >> (tileUVShift + platShift);
-	mCoords.v = trackPos.v >> (tileUVShift + platShift);
+	mCoords.u = trackPos.u >> (tileUVShift + kPlatShift);
+	mCoords.v = trackPos.v >> (tileUVShift + kPlatShift);
 	mCoords.z = 0;
 
 	//  If trackPos has crossed a metatile boundry, rebuild object
@@ -4908,7 +4908,7 @@ void markMetaAsVisited(const TilePoint &pt) {
 		WorldMapData    *curMap = &mapList[currentMapNum];
 		uint16          *mapData = curMap->map->mapData;
 
-		TilePoint       metaCoords = pt >> (tileUVShift + platShift);
+		TilePoint       metaCoords = pt >> (tileUVShift + kPlatShift);
 		int32           minU = MAX(metaCoords.u - mappingRadius, 0),
 		                maxU = MIN(metaCoords.u + mappingRadius, curMap->mapSize - 1),
 		                minV = MAX(metaCoords.v - mappingRadius, 0),

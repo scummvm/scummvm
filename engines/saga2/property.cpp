@@ -234,7 +234,7 @@ static bool metaTileHasWater(
     MetaTile *mt,
     int16 mapNum,
     const TilePoint &mCoords) {
-	TilePoint   origin = mCoords << platShift,
+	TilePoint   origin = mCoords << kPlatShift,
 	            tCoords;
 
 	tCoords.z = 0;
@@ -242,8 +242,8 @@ static bool metaTileHasWater(
 		Platform *p = mt->fetchPlatform(mapNum, i);
 
 		if (p) {
-			for (tCoords.u = 0; tCoords.u < platformWidth; tCoords.u++) {
-				for (tCoords.v = 0; tCoords.v < platformWidth; tCoords.v++) {
+			for (tCoords.u = 0; tCoords.u < kPlatformWidth; tCoords.u++) {
+				for (tCoords.v = 0; tCoords.v < kPlatformWidth; tCoords.v++) {
 					TileInfo        *ti;
 					int16           height;
 					int16           trFlags;

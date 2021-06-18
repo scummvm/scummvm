@@ -297,17 +297,17 @@ enum {
 };
 
 //  Plaftorm metrics
-const int platformWidth = 8;      // width and height of platform
 enum {
-	platMask = platformWidth - 1,
-	platShift = 3,
-	platUVSize = tileUVSize * platformWidth
+	kPlatformWidth = 8,
+	kPlatMask = kPlatformWidth - 1,
+	kPlatShift = 3,
+	kPlatUVSize = tileUVSize * kPlatformWidth
 };
 
 //  Metatile metrics
 enum {
-    metaTileWidth = kTileWidth * platformWidth,
-    metaTileHeight = kTileHeight * platformWidth,
+    metaTileWidth = kTileWidth * kPlatformWidth,
+    metaTileHeight = kTileHeight * kPlatformWidth,
     metaDX = metaTileWidth / 2,
     metaDY = metaTileHeight / 2
 };

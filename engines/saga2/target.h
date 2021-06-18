@@ -31,9 +31,9 @@ namespace Saga2 {
 
 struct StandingTileInfo;
 
-const   int     maxObjDist = platformWidth * tileUVSize * 8;
-const   int     maxTileDist = platformWidth * tileUVSize * 2;
-const   int     maxMetaDist = platformWidth * tileUVSize * 8;
+const   int     maxObjDist = kPlatformWidth * tileUVSize * 8;
+const   int     maxTileDist = kPlatformWidth * tileUVSize * 2;
+const   int     maxMetaDist = kPlatformWidth * tileUVSize * 8;
 
 enum TargetType {
 	locationTarget,

@@ -901,8 +901,8 @@ int16 tileNopeHeight(
 
 	//  Calculate coordinates of tile, metatile, and subtile
 	TilePoint       tileCoords = pt >> tileUVShift,
-	                metaCoords = tileCoords >> platShift,
-	                origin = metaCoords << platShift,
+	                metaCoords = tileCoords >> kPlatShift,
+	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
 	                subTile((pt.u >> subTileShift) & subTileMask,
 	                        (pt.v >> subTileShift) & subTileMask,

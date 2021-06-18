@@ -189,13 +189,13 @@ void setAreaSound(const TilePoint &) {
 			Point32 themePos;
 			for (int r = 1; r < 5 && loopID == 0 ; r++) {
 				TileRegion  regn;
-				regn.max = baseCoords + ((AudibilityVector * r) << platShift) ; ///tileUVSize;
-				regn.min = baseCoords - ((AudibilityVector * r) << platShift); ///tileUVSize;
+				regn.max = baseCoords + ((AudibilityVector * r) << kPlatShift) ; ///tileUVSize;
+				regn.min = baseCoords - ((AudibilityVector * r) << kPlatShift); ///tileUVSize;
 				MetaTileIterator    mIter(currentMapNum, regn);
 				int i = 0;
 				int j = 0;
 
-				TilePoint       dist = AudibilityVector * r << (platShift + 1);
+				TilePoint       dist = AudibilityVector * r << (kPlatShift + 1);
 				dist = dist << 4;
 				themePos.x = dist.u;
 				themePos.y = dist.v;
@@ -238,9 +238,9 @@ void setAreaSound(const TilePoint &) {
 			if (rippedRoofID) {
 				loopID = 0;
 			}
-			audioEnvironmentUseSet(loopID, ss, themePos << platShift);
+			audioEnvironmentUseSet(loopID, ss, themePos << kPlatShift);
 		} else if (playingExternalLoop != -1) {
-			audioEnvironmentUseSet(playingExternalLoop, 0, Point16(0, 0)); //themePos << platShift);
+			audioEnvironmentUseSet(playingExternalLoop, 0, Point16(0, 0)); //themePos << kPlatShift);
 		}
 	}
 }
