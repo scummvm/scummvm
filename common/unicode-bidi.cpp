@@ -41,12 +41,6 @@ UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str) :
 	initWithU32String(str);
 }
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page) :
-	logical(str), _pbase_dir(FRIBIDI_PAR_ON),
-	_log_to_vis_index(NULL), _vis_to_log_index(NULL) {
-	initWithU32String(str.decode(page));
-}
-
 UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page,
 		uint32 *pbase_dir) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	_pbase_dir = *pbase_dir;

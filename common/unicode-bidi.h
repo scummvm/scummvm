@@ -41,7 +41,6 @@ public:
 	uint32 _pbase_dir;
 
 	UnicodeBiDiText(const Common::U32String &str);
-	UnicodeBiDiText(const Common::String &str, const Common::CodePage page);
 	/* This constructor shouldn't be used outside of unicode-bidi.cpp file */
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page, uint32 *pbase_dir);
 	~UnicodeBiDiText();
