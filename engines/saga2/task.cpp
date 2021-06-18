@@ -4362,7 +4362,7 @@ bool BandTask::atTarget(void) {
 	TilePoint       actorLoc = stack->getActor()->getLocation();
 
 	if ((actorLoc - currentTarget).quickHDistance() > 6
-	        ||  abs(actorLoc.z - currentTarget.z) > maxStepHeight) {
+	        ||  abs(actorLoc.z - currentTarget.z) > kMaxStepHeight) {
 		if (attend != NULL) {
 			attend->abortTask();
 			delete attend;
@@ -4699,7 +4699,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute(void) {
 	        == (currentWayPoint.u >> kTileUVShift)
 	        && (actorLoc.v >> kTileUVShift)
 	        == (currentWayPoint.v >> kTileUVShift)
-	        &&  abs(actorLoc.z - currentWayPoint.z) <= maxStepHeight) {
+	        &&  abs(actorLoc.z - currentWayPoint.z) <= kMaxStepHeight) {
 		//  Delete the gotoWayPoint task
 		if (gotoWayPoint != NULL) {
 			gotoWayPoint->abortTask();

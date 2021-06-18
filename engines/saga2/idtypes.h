@@ -241,26 +241,26 @@ enum {
 //
 enum effectDamageTypes {
 	// Generic
-	damageOther         = 0,    // Healing, cause wounds
+	kDamageOther         = 0,    // Healing, cause wounds
 	// Combat damage
-	damageImpact        = 1,    // hammers, maces
-	damageSlash         = 2,    // swords
-	damageProjectile    = 3,            // arrows, poin-ted sticks
+	kDamageImpact        = 1,    // hammers, maces
+	kDamageSlash         = 2,    // swords
+	kDamageProjectile    = 3,            // arrows, poin-ted sticks
 	// Magic damage
-	damageFire          = 4,     // Yellow
-	damageAcid          = 5,     // Violet
-	damageHeat          = 6,     // Red
-	damageCold          = 7,     // Blue
-	damageLightning     = 8,     // Orange
-	damagePoison        = 9,     // Green
+	kDamageFire          = 4,     // Yellow
+	kDamageAcid          = 5,     // Violet
+	kDamageHeat          = 6,     // Red
+	kDamageCold          = 7,     // Blue
+	kDamageLightning     = 8,     // Orange
+	kDamagePoison        = 9,     // Green
 	// Other magic damage
-	damageMental        = 10,     // dain bramage
-	damageToUndead      = 11,    // undead take this damage
-	damageDirMagic      = 12,    // the plusses on swords etc.
+	kDamageMental        = 10,     // dain bramage
+	kDamageToUndead      = 11,    // undead take this damage
+	kDamageDirMagic      = 12,    // the plusses on swords etc.
 	// Physiological Damage
-	damageStarve        = 13,    // You must eat!
+	kDamageStarve        = 13,    // You must eat!
 	// other
-	damageEnergy        = 14     // Generally hard to resist - god damage
+	kDamageEnergy        = 14     // Generally hard to resist - god damage
 };
 
 //  Tile metrics
@@ -336,10 +336,10 @@ enum {
 
 //  Maximum height that a character can climb w/o steps or ladders
 enum {
-    maxStepHeight   = 16,   // highest climbable step
-    maxPickHeight   = 64,   // highest pickable step
-    maxSmoothStep   = 8,    // highest smoothly climbable
-    maxJumpStep     = 64    // highest jump character likes
+    kMaxStepHeight   = 16,   // highest climbable step
+    kMaxPickHeight   = 64,   // highest pickable step
+    kMaxSmoothStep   = 8,    // highest smoothly climbable
+    kMaxJumpStep     = 64    // highest jump character likes
 };
 
 } // end of namespace Saga2

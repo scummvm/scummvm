@@ -2787,7 +2787,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 			int16 damage = getEnchantmentAmount(flags);
 
 			// apply the damage
-			parentObj->acceptDamage(obj->thisID(), damage, damagePoison);
+			parentObj->acceptDamage(obj->thisID(), damage, kDamagePoison);
 		}
 	}
 

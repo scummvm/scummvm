@@ -393,7 +393,7 @@ public:
 	bool acceptDamage(
 	    ObjectID            enactor,
 	    int8                absDamage,
-	    effectDamageTypes   dType = damageOther,
+	    effectDamageTypes   dType = kDamageOther,
 	    int8                dice = 0,
 	    uint8               sides = 1,
 	    int8                perDieMod = 0) {

@@ -64,7 +64,7 @@ void lavaDamage(GameObject *obj) {
 			return;
 	}
 	if (g_vm->_rnd->getRandomNumber(heatDamageOddsYes + heatDamageOddsNo - 1) > heatDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), heatDamagePerFrame, damageHeat, heatDamageDicePerFrame, 6);
+		obj->acceptDamage(obj->thisID(), heatDamagePerFrame, kDamageHeat, heatDamageDicePerFrame, 6);
 	}
 }
 
@@ -75,19 +75,19 @@ void coldDamage(GameObject *obj) {
 			return;
 	}
 	if (g_vm->_rnd->getRandomNumber(coldDamageOddsYes + coldDamageOddsNo - 1) > coldDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), coldDamagePerFrame, damageCold, coldDamageDicePerFrame, 6);
+		obj->acceptDamage(obj->thisID(), coldDamagePerFrame, kDamageCold, coldDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageSlash(GameObject *obj) {
 	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, damageSlash, terrainDamageDicePerFrame, 6);
+		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, kDamageSlash, terrainDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageBash(GameObject *obj) {
 	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, damageImpact, terrainDamageDicePerFrame, 6);
+		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, kDamageImpact, terrainDamageDicePerFrame, 6);
 	}
 }
 
@@ -195,7 +195,7 @@ uint32 tileTerrain(
 					//  catwalks and other surfaces which have no bottom.
 
 					if ((terrainResult & terrainSolidSurface)
-					        &&  height > minZ + maxStepHeight) {
+					        &&  height > minZ + kMaxStepHeight) {
 						terrainResult |= terrainStone;
 					}
 
@@ -858,7 +858,7 @@ int16 checkWalkable(
 
 	supportHeight = tileSlopeHeight(loc, obj, &sti);
 
-	if (supportHeight < loc.z - maxStepHeight * 4)
+	if (supportHeight < loc.z - kMaxStepHeight * 4)
 		return blockageTerrain;
 
 	if (sti.surfaceTile != NULL) {
