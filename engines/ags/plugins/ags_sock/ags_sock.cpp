@@ -34,7 +34,7 @@ IAGSEngine *AGSSock::_engine;
 struct SockData : public IAGSScriptManagedObject, public Common::Array<byte> {
 public:
 	int Dispose(const char *address, bool force) override {
-		delete (SockData *)address;
+		delete this;
 		return true;
 	}
 	const char *GetType() override {
@@ -52,7 +52,7 @@ public:
 	Common::String _ip;
 
 	int Dispose(const char *address, bool force) override {
-		delete (SockAddr *)address;
+		delete this;
 		return true;
 	}
 	const char *GetType() override {
@@ -77,7 +77,7 @@ public:
 	Common::String _errorString;
 
 	int Dispose(const char *address, bool force) override {
-		delete (Socket *)address;
+		delete this;
 		return true;
 	}
 	const char *GetType() override {
