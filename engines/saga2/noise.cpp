@@ -567,6 +567,8 @@ bool sayVoice(uint32 s[]) {
 // main loop playback
 
 void _playLoop(uint32 s) {
+	warning("STUB: _playLoop(%d)", s);
+	return;
 #ifndef AUDIO_DISABLED
 	currentLoop = s;
 	if (currentLoop == audio->currentLoop())
