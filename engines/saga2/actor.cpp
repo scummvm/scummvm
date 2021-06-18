@@ -1980,6 +1980,9 @@ int16 Actor::animationFrames(int16 actionType, Direction dir) {
 
 	anim = appearance->poseList->animation(actionType);
 
+	if (!anim)
+		return 0;
+
 	return anim->count[dir];
 }
 
