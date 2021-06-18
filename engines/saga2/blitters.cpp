@@ -110,6 +110,11 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 
 	while (true) {
 		byte trans = *sprData++;
+		if (bytes < trans) {
+			warning("unpackSprite: too many trans %d < %d", bytes, trans);
+			trans = bytes;
+			break;
+		}
 		memset(dst, 0, trans);
 		dst += trans;
 		bytes -= trans;
@@ -118,6 +123,10 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 			break;
 
 		byte fill = *sprData++;
+		if (bytes < fill) {
+			warning("unpackSprite: too many bytes %d < %d", bytes, fill);
+			fill = bytes;
+		}
 		memcpy(dst, sprData, fill);
 		dst += fill;
 		bytes -= fill;
