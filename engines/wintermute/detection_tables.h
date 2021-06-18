@@ -263,11 +263,11 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alavi", "Try version",
 		WME_ENTRY1s("data.dcp", "07b847ebafbf8e58daa341d60598c84b", 36628230), Common::FA_IRN, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_ANDISHE_VARAN),
 
-	// Alavi Detective - Murder of Miss Rojan (Persian)
+	// Alavi Detective - Murder of Miss Rojan (Hayoola) (Persian)
 	WME_WINENTRY("alavi", "",
 		WME_ENTRY1s("data.dcp", "bffb07282d27b6c5351ed4fce92db4da", 516186290), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_ANDISHE_VARAN),
 
-	// Alimardan's Mischief (Persian)
+	// Alimardan's Mischief (Retail) (Persian)
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "ab1aa5f3d6d5f10d3f131a78be80bf34", 1747086434), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_1),
 
@@ -283,7 +283,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alimardan1", "",
 		WME_ENTRY1s("data.dcp", "d74f56d9ce3b7442b921393af7fb6167", 1258761838), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
-	// Alimardan Meets Merlin
+	// Alimardan Meets Merlin (Steam) (English)
 	WME_WINENTRY("alimardan2", "",
 		WME_ENTRY1s("data.dcp", "e3ffb5d177737a57bb391995d9361055", 413397623), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
 
@@ -951,7 +951,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("findinghope", "",
 		WME_ENTRY1s("default.game", "57db79e9de62b9d1c7a335822f6242ff", 742), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Forgotten Sound 1 - Revelation (Persian)
+	// Forgotten Sound 1 - Revelation (Retail/Hayoola) (Persian)
 	WME_WINENTRY("forgottensound1", "",
 		WME_ENTRY1s("data.dcp", "1c5871ad711430663b1848f0f2362b44", 2030321701), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
@@ -1758,7 +1758,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("lonelyrobot", "Beta",
 		WME_ENTRY1s("data.dcp", "a0cf7ad5bab957416dcda454e9f28ef0", 3420120), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_0),
 
-	// Qajary Cat (Persian)
+	// Qajary Cat (Retail) (Persian)
 	WME_WINENTRY("qajarycat", "",
 		WME_ENTRY1s("data.dcp", "f2b6bf3daf6324e58042f214cdc075ca", 1782529732), Common::FA_IRN, ADGF_UNSTABLE, WME_1_9_1),
 
@@ -5202,7 +5202,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("tanya2", "",
 		WME_ENTRY1s("data.dcp", "9c15f14990f630177e063da885d03e6d", 936959767), Common::RU_RUS, ADGF_UNSTABLE, WME_1_8_3),
 
-	// Murder In Tehran's Alleys 1933 (Persian)
+	// Murder In Tehran's Alleys 1933 (Retail) (Persian)
 	WME_WINENTRY("tehran1933", "",
 		WME_ENTRY1s("data.dcp", "0ab314e014b5e9d45411fee436d98dfd", 1921736252), Common::FA_IRN, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
