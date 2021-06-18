@@ -1849,7 +1849,7 @@ int16 Actor::offenseScore(void) {
 	if (weapon != NULL) {
 		ProtoObj    *proto = weapon->proto();
 
-		score += proto->weaponDamage + (proto->maximumRange / tileUVSize);
+		score += proto->weaponDamage + (proto->maximumRange / kTileUVSize);
 	}
 
 	//  Add average mana

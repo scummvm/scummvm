@@ -227,18 +227,18 @@ void PathTileRegion::fetchTileSection(const TilePoint &org,
 
 #if VISUAL4
 	TilePoint   pt1, pt2;
-	pt1 = pt2 = org << tileUVShift;
+	pt1 = pt2 = org << kTileUVShift;
 	pt1.z = pt2.z = 0;
-	pt2.u += (a.u << tileUVShift);
+	pt2.u += (a.u << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt1.u = pt2.u;
-	pt1.v += (a.v << tileUVShift);
+	pt1.v += (a.v << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt2.v = pt1.v;
-	pt2.u -= (a.u << tileUVShift);
+	pt2.u -= (a.u << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt1.u = pt2.u;
-	pt1.v -= (a.v << tileUVShift);
+	pt1.v -= (a.v << kTileUVShift);
 	TPLine(pt1, pt2);
 #endif
 
@@ -284,18 +284,18 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 
 #if VISUAL5
 	TilePoint   pt1, pt2;
-	pt1 = pt2 = subMeta << (subMetaShift + tileUVShift);
+	pt1 = pt2 = subMeta << (subMetaShift + kTileUVShift);
 	pt1.z = pt2.z = 0;
-	pt2.u += (subMetaSize << tileUVShift);
+	pt2.u += (subMetaSize << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt1.u = pt2.u;
-	pt1.v += (subMetaSize << tileUVShift);
+	pt1.v += (subMetaSize << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt2.v = pt1.v;
-	pt2.u -= (subMetaSize << tileUVShift);
+	pt2.u -= (subMetaSize << kTileUVShift);
 	TPLine(pt1, pt2);
 	pt1.u = pt2.u;
-	pt1.v -= (subMetaSize << tileUVShift);
+	pt1.v -= (subMetaSize << kTileUVShift);
 	TPLine(pt1, pt2);
 #endif
 
@@ -746,8 +746,8 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 	//  Calculate the area in subtiles the object occupies.  Since U and
 	//  V coordinates will alway equal each other, there is no need to
 	//  calculate both.
-	area.min = ((tileUVSize / 2) - objSection) >> subTileShift;
-	area.max = ((tileUVSize / 2) + objSection + subTileMask) >> subTileShift;
+	area.min = ((kTileUVSize / 2) - objSection) >> subTileShift;
+	area.max = ((kTileUVSize / 2) + objSection + subTileMask) >> subTileShift;
 
 	//  Determine if the cross section is wide enough that the diaginal
 	//  masks need to be expanded outward one subtile
@@ -955,7 +955,7 @@ int16 tileSlopeHeight(
     PathTileInfo    *ptiResult,
     uint8           *platformResult) {
 	//  Calculate coordinates of tile and subtile
-	TilePoint       tileCoords = pt >> tileUVShift,
+	TilePoint       tileCoords = pt >> kTileUVShift,
 	                subTile(
 	                    (pt.u >> subTileShift) & subTileMask,
 	                    (pt.v >> subTileShift) & subTileMask,
@@ -1009,8 +1009,8 @@ int16 tileSlopeHeight(
 			} else
 				// calculate height of unraised surface
 				supportHeight = height +
-				                ptHeight(TilePoint(pt.u & tileUVMask,
-				                                   pt.v & tileUVMask,
+				                ptHeight(TilePoint(pt.u & kTileUVMask,
+				                                   pt.v & kTileUVMask,
 				                                   0),
 				                         attrs.cornerHeight);
 
@@ -1120,10 +1120,10 @@ protected:
 	static void calcCenterPt(
 	    const TilePoint &baseTileCoords,
 	    const QueueItem &qi) {
-		centerPt.u = ((baseTileCoords.u + qi.u) << tileUVShift)
-		             +   tileUVSize / 2;
-		centerPt.v = ((baseTileCoords.v + qi.v) << tileUVShift)
-		             +   tileUVSize / 2;
+		centerPt.u = ((baseTileCoords.u + qi.u) << kTileUVShift)
+		             +   kTileUVSize / 2;
+		centerPt.v = ((baseTileCoords.v + qi.v) << kTileUVShift)
+		             +   kTileUVSize / 2;
 		centerPt.z = qi.z;
 
 		centerPlatform = qi.platform;
@@ -1444,7 +1444,7 @@ void PathRequest::initialize(void) {
 	timeLimit = /*flags & run ? ticksPerSecond / 4 :*/ ticksPerSecond;
 
 	fetchRadius =
-	    ((tileUVSize / 2 + pCross) >> tileUVShift) + 1;
+	    ((kTileUVSize / 2 + pCross) >> kTileUVShift) + 1;
 
 	dirMasks = maskComp->computeMask(pCross);
 
@@ -1452,12 +1452,12 @@ void PathRequest::initialize(void) {
 	bestLoc = Nowhere;
 
 	//  Calculate where search cells will be projected onto map
-	baseTileCoords.u = (startingCoords.u >> tileUVShift) - searchCenter;
-	baseTileCoords.v = (startingCoords.v >> tileUVShift) - searchCenter;
+	baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
+	baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
 	baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << tileUVShift;
-	baseCoords.v = baseTileCoords.v << tileUVShift;
+	baseCoords.u = baseTileCoords.u << kTileUVShift;
+	baseCoords.v = baseTileCoords.v << kTileUVShift;
 	baseCoords.z = 0;
 
 	//  Clear the priority queue
@@ -1487,9 +1487,9 @@ void PathRequest::initialize(void) {
 	    baseCoords,
 	    TilePoint(
 	        baseCoords.u
-	        + (searchCenter << tileUVShift) * 2,
+	        + (searchCenter << kTileUVShift) * 2,
 	        baseCoords.v
-	        + (searchCenter << tileUVShift) * 2,
+	        + (searchCenter << kTileUVShift) * 2,
 	        0));
 	GameObject              *obj;
 
@@ -1520,13 +1520,13 @@ void PathRequest::initialize(void) {
 		objRegion->max.z = objLoc.z + objProto->height;
 
 		//  Compute the tile region which this object overlays
-		minTileRegU =   MAX(objRegion->min.u >> tileUVShift, 0);
+		minTileRegU =   MAX(objRegion->min.u >> kTileUVShift, 0);
 		maxTileRegU =   MIN(
-		                    (objRegion->max.u + tileUVMask) >> tileUVShift,
+		                    (objRegion->max.u + kTileUVMask) >> kTileUVShift,
 		                    searchDiameter);
-		minTileRegV =   MAX(objRegion->min.v >> tileUVShift, 0);
+		minTileRegV =   MAX(objRegion->min.v >> kTileUVShift, 0);
 		maxTileRegV =   MIN(
-		                    (objRegion->max.v + tileUVMask) >> tileUVShift,
+		                    (objRegion->max.v + kTileUVMask) >> kTileUVShift,
 		                    searchDiameter);
 
 		for (curTileRegU = minTileRegU;
@@ -1562,12 +1562,12 @@ void PathRequest::initialize(void) {
 big_break:
 
 	//  Compute the actor's tile region
-	minTileRegU = (startingCoords.u - pCross) >> tileUVShift;
-	minTileRegV = (startingCoords.v - pCross) >> tileUVShift;
-	maxTileRegU = (startingCoords.u + pCross + tileUVMask)
-	              >>  tileUVShift;
-	maxTileRegV = (startingCoords.v + pCross + tileUVMask)
-	              >>  tileUVShift;
+	minTileRegU = (startingCoords.u - pCross) >> kTileUVShift;
+	minTileRegV = (startingCoords.v - pCross) >> kTileUVShift;
+	maxTileRegU = (startingCoords.u + pCross + kTileUVMask)
+	              >>  kTileUVShift;
+	maxTileRegV = (startingCoords.v + pCross + kTileUVMask)
+	              >>  kTileUVShift;
 
 	for (curTileRegU = minTileRegU;
 	        curTileRegU < maxTileRegU;
@@ -1583,8 +1583,8 @@ big_break:
 			                cost;
 
 			//  Quantize this tile position to the tile center
-			quantizedCoords.u = (curTileRegU << tileUVShift) + tileUVSize / 2;
-			quantizedCoords.v = (curTileRegV << tileUVShift) + tileUVSize / 2;
+			quantizedCoords.u = (curTileRegU << kTileUVShift) + kTileUVSize / 2;
+			quantizedCoords.v = (curTileRegV << kTileUVShift) + kTileUVSize / 2;
 			quantizedCoords.z = startingCoords.z;
 			quantizedCoords.z = tileSlopeHeight(
 			                        quantizedCoords,
@@ -1650,13 +1650,13 @@ void PathRequest::finish(void) {
 						if (res <= tempResult) break;
 
 						coords.u =
-						    (bestLoc.u << tileUVShift)
+						    (bestLoc.u << kTileUVShift)
 						    +   baseCoords.u
-						    +   tileUVSize / 2;
+						    +   kTileUVSize / 2;
 						coords.v =
-						    (bestLoc.v << tileUVShift)
+						    (bestLoc.v << kTileUVShift)
 						    +   baseCoords.v
-						    +   tileUVSize / 2;
+						    +   kTileUVSize / 2;
 						coords.z = cell->height;
 						*--res = coords;
 
@@ -2080,8 +2080,8 @@ bool PathRequest::timeLimitExceeded(void) {
 DestinationPathRequest::DestinationPathRequest(Actor *a, int16 howSmart) :
 	PathRequest(a, howSmart) {
 	//  Quantize the target destination to the nearest tile center.
-	mTask->finalTarget.u = (mTask->finalTarget.u & ~tileUVMask) + tileUVSize / 2;
-	mTask->finalTarget.v = (mTask->finalTarget.v & ~tileUVMask) + tileUVSize / 2;
+	mTask->finalTarget.u = (mTask->finalTarget.u & ~kTileUVMask) + kTileUVSize / 2;
+	mTask->finalTarget.v = (mTask->finalTarget.v & ~kTileUVMask) + kTileUVSize / 2;
 	mTask->finalTarget.z =  tileSlopeHeight(
 	                            mTask->finalTarget,
 	                            a,
@@ -2099,8 +2099,8 @@ void DestinationPathRequest::initialize(void) {
 	bestDist = maxint16;
 
 	//  Quantize the target coordinates to the nearest tile center.
-	targetCoords.u = (destination.u & ~tileUVMask) + tileUVSize / 2;
-	targetCoords.v = (destination.v & ~tileUVMask) + tileUVSize / 2;
+	targetCoords.u = (destination.u & ~kTileUVMask) + kTileUVSize / 2;
+	targetCoords.v = (destination.v & ~kTileUVMask) + kTileUVSize / 2;
 	targetCoords.z = destination.z;
 	targetPlatform = destPlatform;
 }
@@ -2507,12 +2507,12 @@ TilePoint selectNearbySite(
 	bestLoc = Nowhere;
 
 	//  Calculate where search cells will be projected onto map
-	baseTileCoords.u = (startingCoords.u >> tileUVShift) - searchCenter;
-	baseTileCoords.v = (startingCoords.v >> tileUVShift) - searchCenter;
+	baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
+	baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
 	baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << tileUVShift;
-	baseCoords.v = baseTileCoords.v << tileUVShift;
+	baseCoords.u = baseTileCoords.u << kTileUVShift;
+	baseCoords.v = baseTileCoords.v << kTileUVShift;
 	baseCoords.z = 0;
 
 	//  Clear the search array and the queue
@@ -2526,9 +2526,9 @@ TilePoint selectNearbySite(
 	    baseCoords,
 	    TilePoint(
 	        baseCoords.u
-	        + (searchCenter << tileUVShift) * 2,
+	        + (searchCenter << kTileUVShift) * 2,
 	        baseCoords.v
-	        + (searchCenter << tileUVShift) * 2,
+	        + (searchCenter << kTileUVShift) * 2,
 	        0));
 	GameObject              *obj;
 
@@ -2546,7 +2546,7 @@ TilePoint selectNearbySite(
 		}
 
 		//  Calculate which tile actor is standing on.
-		objLoc = (objLoc - baseCoords) >> tileUVShift;
+		objLoc = (objLoc - baseCoords) >> kTileUVShift;
 
 		//  If that tile is in the search area, then mark it.
 		if (objLoc.u >= 0 && objLoc.u < searchDiameter
@@ -2585,8 +2585,8 @@ TilePoint selectNearbySite(
 		centerTileCoords.v = qi.v + baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		centerPt.u = (centerTileCoords.u << tileUVShift) + tileUVSize / 2;
-		centerPt.v = (centerTileCoords.v << tileUVShift) + tileUVSize / 2;
+		centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
+		centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
 		centerPt.z = qi.z;
 
 		//  If this is the best cell found so far, and it is not
@@ -2719,8 +2719,8 @@ TilePoint selectNearbySite(
 
 	return  bestLoc != Nowhere
 	        ?   TilePoint(
-	            ((bestLoc.u + baseTileCoords.u) << tileUVShift) + tileUVSize / 2,
-	            ((bestLoc.v + baseTileCoords.v) << tileUVShift) + tileUVSize / 2,
+	            ((bestLoc.u + baseTileCoords.u) << kTileUVShift) + kTileUVSize / 2,
+	            ((bestLoc.v + baseTileCoords.v) << kTileUVShift) + kTileUVSize / 2,
 	            bestLoc.z)
 	        :   Nowhere;
 }
@@ -2811,17 +2811,17 @@ bool checkPath(
 
 	StandingTileInfo sti;
 
-	startingTileCoords.u = startingCoords.u >> tileUVShift;
-	startingTileCoords.v = startingCoords.v >> tileUVShift;
+	startingTileCoords.u = startingCoords.u >> kTileUVShift;
+	startingTileCoords.v = startingCoords.v >> kTileUVShift;
 	startingTileCoords.z = 0;
 
-	destTileCoords.u = destCoords.u >> tileUVShift;
-	destTileCoords.v = destCoords.v >> tileUVShift;
+	destTileCoords.u = destCoords.u >> kTileUVShift;
+	destTileCoords.v = destCoords.v >> kTileUVShift;
 	destTileCoords.z = 0;
 
 	//  Quantize destination coords to nearest tile center
-	destCoords.u = (destTileCoords.u << tileUVShift) + tileUVSize / 2;
-	destCoords.v = (destTileCoords.v << tileUVShift) + tileUVSize / 2;
+	destCoords.u = (destTileCoords.u << kTileUVShift) + kTileUVSize / 2;
+	destCoords.v = (destTileCoords.v << kTileUVShift) + kTileUVSize / 2;
 	destCoords.z = tileSlopeHeight(destCoords, mapNum, height);
 
 	//  Determine if destination is outside the search region
@@ -2841,8 +2841,8 @@ bool checkPath(
 	baseTileCoords.v = startingTileCoords.v - searchCenter;
 	baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << tileUVShift;
-	baseCoords.v = baseTileCoords.v << tileUVShift;
+	baseCoords.u = baseTileCoords.u << kTileUVShift;
+	baseCoords.v = baseTileCoords.v << kTileUVShift;
 	baseCoords.z = 0;
 
 	//  Clear the search array and the queue
@@ -2850,12 +2850,12 @@ bool checkPath(
 	squeue.clear();
 
 	//  Push the starting location in the center of the array.
-	minTileRegU = (startingCoords.u - tileUVSize / 2) >> tileUVShift;
-	minTileRegV = (startingCoords.v - tileUVSize / 2) >> tileUVShift;
-	maxTileRegU = (startingCoords.u + tileUVSize / 2 + tileUVMask)
-	              >>  tileUVShift;
-	maxTileRegV = (startingCoords.v + tileUVSize / 2 + tileUVMask)
-	              >>  tileUVShift;
+	minTileRegU = (startingCoords.u - kTileUVSize / 2) >> kTileUVShift;
+	minTileRegV = (startingCoords.v - kTileUVSize / 2) >> kTileUVShift;
+	maxTileRegU = (startingCoords.u + kTileUVSize / 2 + kTileUVMask)
+	              >>  kTileUVShift;
+	maxTileRegV = (startingCoords.v + kTileUVSize / 2 + kTileUVMask)
+	              >>  kTileUVShift;
 
 	for (curTileRegU = minTileRegU;
 	        curTileRegU < maxTileRegU;
@@ -2870,8 +2870,8 @@ bool checkPath(
 			                cost;
 
 			//  Quantize this tile position to the tile center
-			quantizedCoords.u = (curTileRegU << tileUVShift) + tileUVSize / 2;
-			quantizedCoords.v = (curTileRegV << tileUVShift) + tileUVSize / 2;
+			quantizedCoords.u = (curTileRegU << kTileUVShift) + kTileUVSize / 2;
+			quantizedCoords.v = (curTileRegV << kTileUVShift) + kTileUVSize / 2;
 			quantizedCoords.z = startingCoords.z;
 			quantizedCoords.z = tileSlopeHeight(quantizedCoords, mapNum, height);
 
@@ -2909,8 +2909,8 @@ bool checkPath(
 		centerTileCoords.v = qi.v + baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		centerPt.u = (centerTileCoords.u << tileUVShift) + tileUVSize / 2;
-		centerPt.v = (centerTileCoords.v << tileUVShift) + tileUVSize / 2;
+		centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
+		centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
 		centerPt.z = qi.z;
 
 		centerDistFromDest = (centerPt - destCoords).quickHDistance();
@@ -3012,7 +3012,7 @@ bool checkPath(
 			spush(TilePoint(qi.u + tDir->u,
 			                qi.v + tDir->v,
 			                testPt.z),
-			      qi.cost + (deltaDistFromDest + tileUVSize) / 4,
+			      qi.cost + (deltaDistFromDest + kTileUVSize) / 4,
 			      dir);
 		}
 	}

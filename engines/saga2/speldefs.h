@@ -117,8 +117,8 @@ inline TilePoint TAGPos(ActiveItem *ai) {
 	if (ai == NULL) return Nowhere;
 	assert(ai->itemType == activeTypeInstance);
 	return TilePoint(
-	           ai->instance.u << tileUVShift,
-	           ai->instance.v << tileUVShift,
+	           ai->instance.u << kTileUVShift,
+	           ai->instance.v << kTileUVShift,
 	           ai->instance.h);
 }
 

@@ -662,7 +662,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	CircularObjectIterator  iter(
 	    getObject()->world(),
 	    getObject()->getLocation(),
-	    getRange() != 0 ? getRange() : tileUVSize * kPlatformWidth * 8);
+	    getRange() != 0 ? getRange() : kTileUVSize * kPlatformWidth * 8);
 
 	for (iter.first(&objToTest);
 	        objToTest != NULL;

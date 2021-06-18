@@ -2341,7 +2341,7 @@ GameWorld::GameWorld(int16 map) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
 		mapSize = tileRes->readU16LE();
-		size.u = (mapSize << kPlatShift) << tileUVShift;
+		size.u = (mapSize << kPlatShift) << kTileUVShift;
 		size.v = size.u;
 
 		sectorArraySize = size.u / Saga2::sectorSize;

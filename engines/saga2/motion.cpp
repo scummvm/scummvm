@@ -1253,7 +1253,7 @@ TilePoint MotionTask::getImmediateTarget(void) {
 		dir = ((Actor *)object)->currentFacing;
 
 	return  object->location
-	        +   incDirTable[dir] * tileUVSize;
+	        +   incDirTable[dir] * kTileUVSize;
 }
 
 //-----------------------------------------------------------------------
@@ -1879,8 +1879,8 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, ActiveItem &target) {
 			mt->spellObj = &spell;
 			mt->targetTAG = &target;
 			loc = Location(
-			          target.instance.u << tileUVShift,
-			          target.instance.v << tileUVShift,
+			          target.instance.u << kTileUVShift,
+			          target.instance.v << kTileUVShift,
 			          target.instance.h,
 			          a.world()->thisID());
 			mt->targetLoc = loc; //target;
@@ -3002,12 +3002,12 @@ void MotionTask::upLadderAction(void) {
 		loc.z += 6;
 
 		//  Determine the tile region which the actor overlays
-		actorTileReg.min.u = (loc.u - crossSection) >> tileUVShift;
-		actorTileReg.min.v = (loc.v - crossSection) >> tileUVShift;
+		actorTileReg.min.u = (loc.u - crossSection) >> kTileUVShift;
+		actorTileReg.min.v = (loc.v - crossSection) >> kTileUVShift;
 		actorTileReg.max.u =
-		    (loc.u + crossSection + tileUVMask) >> tileUVShift;
+		    (loc.u + crossSection + kTileUVMask) >> kTileUVShift;
 		actorTileReg.max.v =
-		    (loc.v + crossSection + tileUVMask) >> tileUVShift;
+		    (loc.v + crossSection + kTileUVMask) >> kTileUVShift;
 		actorTileReg.min.z = actorTileReg.max.z = 0;
 
 		TileIterator    iter(mapNum, actorTileReg);
@@ -3128,12 +3128,12 @@ void MotionTask::downLadderAction(void) {
 
 		loc.z -= 6;
 
-		actorTileReg.min.u = (loc.u - crossSection) >> tileUVShift;
-		actorTileReg.min.v = (loc.v - crossSection) >> tileUVShift;
+		actorTileReg.min.u = (loc.u - crossSection) >> kTileUVShift;
+		actorTileReg.min.v = (loc.v - crossSection) >> kTileUVShift;
 		actorTileReg.max.u =
-		    (loc.u + crossSection + tileUVMask) >> tileUVShift;
+		    (loc.u + crossSection + kTileUVMask) >> kTileUVShift;
 		actorTileReg.max.v =
-		    (loc.v + crossSection + tileUVMask) >> tileUVShift;
+		    (loc.v + crossSection + kTileUVMask) >> kTileUVShift;
 		actorTileReg.min.z = actorTileReg.max.z = 0;
 
 		TileIterator    iter(mapNum, actorTileReg);
@@ -3191,7 +3191,7 @@ void MotionTask::downLadderAction(void) {
 
 		TilePoint   newLoc;
 
-		newLoc = loc - incDirTable[a->currentFacing] * tileUVSize;
+		newLoc = loc - incDirTable[a->currentFacing] * kTileUVSize;
 		newLoc.z = tileSlopeHeight(newLoc, a);
 
 		if (!checkBlocked(a, newLoc))
@@ -3199,7 +3199,7 @@ void MotionTask::downLadderAction(void) {
 		else {
 			newLoc =    loc
 			            -       incDirTable[(a->currentFacing - 2) & 7]
-			            *   tileUVSize;
+			            *   kTileUVSize;
 			newLoc.z = tileSlopeHeight(newLoc, a);
 
 			if (!checkBlocked(a, newLoc))
@@ -3207,7 +3207,7 @@ void MotionTask::downLadderAction(void) {
 			else {
 				newLoc =    loc
 				            -       incDirTable[(a->currentFacing + 2) & 7]
-				            *   tileUVSize;
+				            *   kTileUVSize;
 				newLoc.z = tileSlopeHeight(newLoc, a);
 
 				if (!checkBlocked(a, newLoc))
@@ -3215,7 +3215,7 @@ void MotionTask::downLadderAction(void) {
 				else {
 					newLoc =    loc
 					            -       incDirTable[a->currentFacing]
-					            *   tileUVSize;
+					            *   kTileUVSize;
 					newLoc.z = tileSlopeHeight(newLoc, a);
 					a->move(newLoc);
 					unstickObject(a);
@@ -4351,7 +4351,7 @@ void MotionTask::updatePositions(void) {
 				targetVector = mt->finalTarget - obj->location;
 				targetDist = targetVector.quickHDistance();
 
-				if (targetDist > tileUVSize) {
+				if (targetDist > kTileUVSize) {
 					mt->motionType = mt->prevMotionType;
 					mt->flags |= reset;
 					nextMT = mt;
@@ -4428,12 +4428,12 @@ void MotionTask::updatePositions(void) {
 				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->o.TAI->instance.u << tileUVShift;
-				TAIReg.min.v = mt->o.TAI->instance.v << tileUVShift;
+				TAIReg.min.u = mt->o.TAI->instance.u << kTileUVShift;
+				TAIReg.min.v = mt->o.TAI->instance.v << kTileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
-				                    + (TAG->group.uSize << tileUVShift);
+				                    + (TAG->group.uSize << kTileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
-				                    + (TAG->group.vSize << tileUVShift);
+				                    + (TAG->group.vSize << kTileUVShift);
 				TAIReg.min.z = TAIReg.max.z = 0;
 
 				//  Find the point on the TAI closest to the actor
@@ -4488,12 +4488,12 @@ void MotionTask::updatePositions(void) {
 				ActiveItem      *TAG = mt->o.TAI->getGroup();
 
 				//  Compute in points the region of the TAI
-				TAIReg.min.u = mt->o.TAI->instance.u << tileUVShift;
-				TAIReg.min.v = mt->o.TAI->instance.v << tileUVShift;
+				TAIReg.min.u = mt->o.TAI->instance.u << kTileUVShift;
+				TAIReg.min.v = mt->o.TAI->instance.v << kTileUVShift;
 				TAIReg.max.u =      TAIReg.min.u
-				                    + (TAG->group.uSize << tileUVShift);
+				                    + (TAG->group.uSize << kTileUVShift);
 				TAIReg.max.v =      TAIReg.min.v
-				                    + (TAG->group.vSize << tileUVShift);
+				                    + (TAG->group.vSize << kTileUVShift);
 				TAIReg.min.z = TAIReg.max.z = 0;
 
 				//  Find the point on the TAI closest to the actor
@@ -4853,10 +4853,10 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 	TilePoint           tileLoc;
 	StandingTileInfo    sti;
 
-	actorTileReg.min.u = (loc.u - crossSection) >> tileUVShift;
-	actorTileReg.min.v = (loc.v - crossSection) >> tileUVShift;
-	actorTileReg.max.u = (loc.u + crossSection + tileUVMask) >> tileUVShift;
-	actorTileReg.max.v = (loc.v + crossSection + tileUVMask) >> tileUVShift;
+	actorTileReg.min.u = (loc.u - crossSection) >> kTileUVShift;
+	actorTileReg.min.v = (loc.v - crossSection) >> kTileUVShift;
+	actorTileReg.max.u = (loc.u + crossSection + kTileUVMask) >> kTileUVShift;
+	actorTileReg.max.v = (loc.v + crossSection + kTileUVMask) >> kTileUVShift;
 	actorTileReg.min.z = actorTileReg.max.z = 0;
 
 	TileIterator    iter(mapNum, actorTileReg);
@@ -4910,33 +4910,33 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 				a->currentFacing = 7;
 				a->move(
 				    TilePoint(
-				        (tileLoc.u << tileUVShift)
-				        +   tileUVSize
+				        (tileLoc.u << kTileUVShift)
+				        +   kTileUVSize
 				        -   crossSection,
-				        (tileLoc.v << tileUVShift) + tileUVSize / 2,
+				        (tileLoc.v << kTileUVShift) + kTileUVSize / 2,
 				        loc.z));
 			} else if (!(~ladderMask & 0x000F)) {
 				a->currentFacing = 3;
 				a->move(
 				    TilePoint(
-				        (tileLoc.u << tileUVShift) + crossSection,
-				        (tileLoc.v << tileUVShift) + tileUVSize / 2,
+				        (tileLoc.u << kTileUVShift) + crossSection,
+				        (tileLoc.v << kTileUVShift) + kTileUVSize / 2,
 				        loc.z));
 			} else if (!(~ladderMask & 0x8888)) {
 				a->currentFacing = 1;
 				a->move(
 				    TilePoint(
-				        (tileLoc.u << tileUVShift) + tileUVSize / 2,
-				        (tileLoc.v << tileUVShift)
-				        +   tileUVSize
+				        (tileLoc.u << kTileUVShift) + kTileUVSize / 2,
+				        (tileLoc.v << kTileUVShift)
+				        +   kTileUVSize
 				        -   crossSection,
 				        loc.z));
 			} else {
 				a->currentFacing = 3;
 				a->move(
 				    TilePoint(
-				        (tileLoc.u << tileUVShift) + tileUVSize / 2,
-				        (tileLoc.v << tileUVShift) + crossSection,
+				        (tileLoc.u << kTileUVShift) + kTileUVSize / 2,
+				        (tileLoc.v << kTileUVShift) + crossSection,
 				        loc.z));
 			}
 

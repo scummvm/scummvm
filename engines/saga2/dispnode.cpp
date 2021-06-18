@@ -381,10 +381,10 @@ void DisplayNode::drawObject(void) {
 	MetaTile    *mt;
 	RipTable    *rt;
 
-	tCoords.u = (objCoords.u >> tileUVShift) & kPlatMask;
-	tCoords.v = (objCoords.v >> tileUVShift) & kPlatMask;
-	mCoords.u = objCoords.u >> (tileUVShift + kPlatShift);
-	mCoords.v = objCoords.v >> (tileUVShift + kPlatShift);
+	tCoords.u = (objCoords.u >> kTileUVShift) & kPlatMask;
+	tCoords.v = (objCoords.v >> kTileUVShift) & kPlatMask;
+	mCoords.u = objCoords.u >> (kTileUVShift + kPlatShift);
+	mCoords.v = objCoords.v >> (kTileUVShift + kPlatShift);
 	mCoords.z = 0;
 
 	//  Do not display objects that are on a ripped roof

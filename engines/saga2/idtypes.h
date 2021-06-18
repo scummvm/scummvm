@@ -281,18 +281,18 @@ enum {
 //	Size of a tile in ( U, V ) coords
 
 enum {
-	tileUVSize = 16,
-	tileUVShift = 4,
-	tileZSize = 8,
-	tileZShift = 3,
-	tileUVMask = (tileUVSize - 1)
+	kTileUVSize = 16,
+	kTileUVShift = 4,
+	kTileZSize = 8,
+	kTileZShift = 3,
+	kTileUVMask = (kTileUVSize - 1)
 };
 
 //	Size of a map sector (4 metatiles x 4 metatiles)
 
 enum {
-	sectorSize = tileUVSize * 8 * 4,
-	sectorShift = tileUVShift + 3 + 2,
+	sectorSize = kTileUVSize * 8 * 4,
+	sectorShift = kTileUVShift + 3 + 2,
 	sectorMask = (sectorSize - 1)
 };
 
@@ -301,7 +301,7 @@ enum {
 	kPlatformWidth = 8,
 	kPlatMask = kPlatformWidth - 1,
 	kPlatShift = 3,
-	kPlatUVSize = tileUVSize * kPlatformWidth
+	kPlatUVSize = kTileUVSize * kPlatformWidth
 };
 
 //  Metatile metrics

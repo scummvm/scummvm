@@ -900,7 +900,7 @@ int16 tileNopeHeight(
 	int16           mapNum = obj->getMapNum();
 
 	//  Calculate coordinates of tile, metatile, and subtile
-	TilePoint       tileCoords = pt >> tileUVShift,
+	TilePoint       tileCoords = pt >> kTileUVShift,
 	                metaCoords = tileCoords >> kPlatShift,
 	                origin = metaCoords << kPlatShift,
 	                coords = tileCoords - origin,
@@ -966,8 +966,8 @@ int16 tileNopeHeight(
 				else
 					// calculate height of unraised surface
 					supportHeight = sti.surfaceHeight +
-					                ptHeight(TilePoint(pt.u & tileUVMask,
-					                                   pt.v & tileUVMask,
+					                ptHeight(TilePoint(pt.u & kTileUVMask,
+					                                   pt.v & kTileUVMask,
 					                                   0),
 					                         ti->attrs.cornerHeight);
 

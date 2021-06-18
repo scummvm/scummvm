@@ -374,9 +374,9 @@ ObjectID ActiveItem::getInstanceContext(void) {
 //	Return the Location for a TAG
 
 Location ActiveItem::getInstanceLocation(void) {
-	return Location(instance.u  << tileUVShift,
-	                instance.v  << tileUVShift,
-	                instance.h  << tileZShift,
+	return Location(instance.u  << kTileUVShift,
+	                instance.v  << kTileUVShift,
+	                instance.h  << kTileZShift,
 	                getInstanceContext());
 }
 
@@ -486,7 +486,7 @@ void ActiveItem::playTAGNoise(ActiveItem *ai, int16 tagNoiseID) {
 
 bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 	Actor       *actor = (Actor *)GameObject::objectAddress(enactor);
-	TilePoint   actorLoc = actor->getLocation() >> tileUVShift;
+	TilePoint   actorLoc = actor->getLocation() >> kTileUVShift;
 	int16       mapNum = getMapNum();
 	uint16      state = ins->getInstanceState(mapNum);
 	scriptCallFrame scf;
@@ -580,12 +580,12 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	//  Mark the object as triggering this TAG
 	obj->setTriggeringTAG(true);
 
-	instanceRegion.min.u = ins->instance.u << tileUVShift;
-	instanceRegion.min.v = ins->instance.v << tileUVShift;
+	instanceRegion.min.u = ins->instance.u << kTileUVShift;
+	instanceRegion.min.v = ins->instance.v << kTileUVShift;
 	instanceRegion.max.u =      instanceRegion.min.u
-	                            + (group.uSize << tileUVShift);
+	                            + (group.uSize << kTileUVShift);
 	instanceRegion.max.v =      instanceRegion.min.v
-	                            + (group.vSize << tileUVShift);
+	                            + (group.vSize << kTileUVShift);
 
 	RegionalObjectIterator  iter(
 	    world,
@@ -638,10 +638,10 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		if (isActor(obj) && (a = (Actor *)obj) == getCenterActor()) {
 			transportCenterBand(
 			    Location(
-			        (ins->instance.targetU << tileUVShift)
-			        +   tileUVSize / 2,
-			        (ins->instance.targetV << tileUVShift)
-			        +   tileUVSize / 2,
+			        (ins->instance.targetU << kTileUVShift)
+			        +   kTileUVSize / 2,
+			        (ins->instance.targetV << kTileUVShift)
+			        +   kTileUVSize / 2,
 			        (int16)ins->instance.targetZ << 3,
 			        ins->instance.worldNum + WorldBaseID));
 		}
@@ -668,12 +668,12 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 
 	if (obj->isTriggeringTAG()) obj->setTriggeringTAG(false);
 
-	instanceRegion.min.u = ins->instance.u << tileUVShift;
-	instanceRegion.min.v = ins->instance.v << tileUVShift;
+	instanceRegion.min.u = ins->instance.u << kTileUVShift;
+	instanceRegion.min.v = ins->instance.v << kTileUVShift;
 	instanceRegion.max.u =      instanceRegion.min.u
-	                            + (group.uSize << tileUVShift);
+	                            + (group.uSize << kTileUVShift);
 	instanceRegion.max.v =      instanceRegion.min.v
-	                            + (group.vSize << tileUVShift);
+	                            + (group.vSize << kTileUVShift);
 
 	RegionalObjectIterator  iter(
 	    world,
@@ -723,7 +723,7 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCode) {
 	TilePoint   actorLoc =
 	    GameObject::objectAddress(enactor)->getLocation() >>
-	    tileUVShift;
+	    kTileUVShift;
 	scriptCallFrame scf;
 
 	if (ins->scriptClassID != 0) {
@@ -781,12 +781,12 @@ TilePoint getClosestPointOnTAI(ActiveItem *TAI, GameObject *obj) {
 	ActiveItem      *TAG = TAI->getGroup();
 
 	//  Compute in points the region of the TAI
-	TAIReg.min.u = TAI->instance.u << tileUVShift;
-	TAIReg.min.v = TAI->instance.v << tileUVShift;
+	TAIReg.min.u = TAI->instance.u << kTileUVShift;
+	TAIReg.min.v = TAI->instance.v << kTileUVShift;
 	TAIReg.max.u =      TAIReg.min.u
-	                    + (TAG->group.uSize << tileUVShift);
+	                    + (TAG->group.uSize << kTileUVShift);
 	TAIReg.max.v =      TAIReg.min.v
-	                    + (TAG->group.vSize << tileUVShift);
+	                    + (TAG->group.vSize << kTileUVShift);
 	TAIReg.min.z = TAIReg.max.z = 0;
 
 	//  Find the point on the TAI closest to the object
@@ -1934,14 +1934,14 @@ int16 ptHeight(const TilePoint &tp, uint8 *cornerHeight) {
 		return slopeHeight;
 
 	slopeHeight
-	    = (cornerHeight[0] * (tileUVSize - tp.u)
+	    = (cornerHeight[0] * (kTileUVSize - tp.u)
 	       + cornerHeight[1] * tp.u)
-	      * (tileUVSize - tp.v)
-	      + (cornerHeight[3] * (tileUVSize - tp.u)
+	      * (kTileUVSize - tp.v)
+	      + (cornerHeight[3] * (kTileUVSize - tp.u)
 	         + cornerHeight[2] * tp.u)
 	      * tp.v;
 
-	return slopeHeight >> (tileUVShift + tileUVShift);
+	return slopeHeight >> (kTileUVShift + kTileUVShift);
 }
 
 /* ====================================================================== *
@@ -2831,7 +2831,7 @@ void buildRipTable(
 //	the center view object
 
 void buildRipTables(void) {
-	const int16         regionRadius = tileUVSize * kPlatformWidth * 2;
+	const int16         regionRadius = kTileUVSize * kPlatformWidth * 2;
 
 	TilePoint           actorCoords;
 	MetaTile            *mt;
@@ -2841,18 +2841,18 @@ void buildRipTables(void) {
 	int16               mtTableSize = 0;
 
 	getViewTrackPos(actorCoords);
-	ripTableCoords.u = actorCoords.u >> (tileUVShift + kPlatShift);
-	ripTableCoords.v = actorCoords.v >> (tileUVShift + kPlatShift);
+	ripTableCoords.u = actorCoords.u >> (kTileUVShift + kPlatShift);
+	ripTableCoords.v = actorCoords.v >> (kTileUVShift + kPlatShift);
 	ripTableCoords.z = 0;
 
 	//  Calculate the region of meta tile for which to build object
 	//  ripping table
-	ripTableReg.min.u = (actorCoords.u - regionRadius) >> tileUVShift;
-	ripTableReg.min.v = (actorCoords.v - regionRadius) >> tileUVShift;
+	ripTableReg.min.u = (actorCoords.u - regionRadius) >> kTileUVShift;
+	ripTableReg.min.v = (actorCoords.v - regionRadius) >> kTileUVShift;
 	ripTableReg.max.u =
-	    (actorCoords.u + regionRadius + tileUVMask) >> tileUVShift;
+	    (actorCoords.u + regionRadius + kTileUVMask) >> kTileUVShift;
 	ripTableReg.max.v =
-	    (actorCoords.v + regionRadius + tileUVMask) >> tileUVShift;
+	    (actorCoords.v + regionRadius + kTileUVMask) >> kTileUVShift;
 
 	MetaTileIterator    mIter(currentMapNum, ripTableReg);
 
@@ -3093,8 +3093,8 @@ enum maskRules {
 };
 
 const int           thresh1 = 0,
-                    thresh2 = tileUVSize / 4,
-                    thresh3 = tileUVSize - 1;
+                    thresh2 = kTileUVSize / 4,
+                    thresh3 = kTileUVSize - 1;
 
 //  l is the relative position of the character with repect
 //  to the tile in U,V coords.
@@ -3202,8 +3202,8 @@ void maskPlatform(
 	u = kPlatformWidth - 1;
 	v = kPlatformWidth - 1;
 
-	relLoc.u = - relLoc.u - (kPlatformWidth - 1) * tileUVSize;
-	relLoc.v = - relLoc.v - (kPlatformWidth - 1) * tileUVSize;
+	relLoc.u = - relLoc.u - (kPlatformWidth - 1) * kTileUVSize;
+	relLoc.v = - relLoc.v - (kPlatformWidth - 1) * kTileUVSize;
 
 	for (int row = 0; row < 15; row++) {
 		if (tilePos.y > 0) {
@@ -3218,8 +3218,8 @@ void maskPlatform(
 
 				pCoords.u += offset;
 				pCoords.v -= offset;
-				rLoc.u -= offset * tileUVSize;
-				rLoc.v += offset * tileUVSize;
+				rLoc.u -= offset * kTileUVSize;
+				rLoc.v += offset * kTileUVSize;
 				offset <<= 1;
 				col += offset;
 				tilePos.x += kTileDX * offset;
@@ -3230,14 +3230,14 @@ void maskPlatform(
 			        col += 2,
 			        pCoords.u++,
 			        pCoords.v--,
-			        rLoc.u -= tileUVSize,
-			        rLoc.v += tileUVSize,
+			        rLoc.u -= kTileUVSize,
+			        rLoc.v += kTileUVSize,
 			        tilePos.x += kTileWidth
 			    ) {
 				Platform    **pGet;
 
 				if (tilePos.x < 0) continue;
-				if (rLoc.u <= -tileUVSize || rLoc.v <= -tileUVSize)
+				if (rLoc.u <= -kTileUVSize || rLoc.v <= -kTileUVSize)
 					continue;
 
 				for (pGet = pList; *pGet; pGet++) {
@@ -3282,13 +3282,13 @@ void maskPlatform(
 			x2++;
 			length += 2;
 			u--;
-			relLoc.u += tileUVSize;
+			relLoc.u += kTileUVSize;
 		} else {
 			x += kTileDX;
 			x2--;
 			length -= 2;
 			v--;
-			relLoc.v += tileUVSize;
+			relLoc.v += kTileUVSize;
 		}
 
 		tilePos.y += kTileDY;
@@ -3676,7 +3676,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 		        subUVPoint.u < 16 &&
 		        subUVPoint.v < 16) {
 			if (subUVPointRel < pointH + (subTileDY * 2) / subTileSize) {
-				pickCoords = (tCoords << tileUVShift);
+				pickCoords = (tCoords << kTileUVShift);
 				pickCoords.u += subUVPoint.u;
 				pickCoords.v += subUVPoint.v;
 				pickCoords.z = h + pointH;
@@ -3740,7 +3740,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				//  mouse is on side of raised section
 				if (subTileRel.y <
 				        ti->attrs.terrainHeight + yBound) {
-					pickCoords = (tCoords << tileUVShift);
+					pickCoords = (tCoords << kTileUVShift);
 					pickCoords.u += (subTile.u << subTileShift);
 					pickCoords.v += (subTile.v << subTileShift);
 					if (subTileRel.x > 1) {
@@ -3793,8 +3793,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 						floorCoords.z = h;
 					else
 						floorCoords.z = h +
-						                ptHeight(TilePoint(floorCoords.u & tileUVMask,
-						                                   floorCoords.v & tileUVMask,
+						                ptHeight(TilePoint(floorCoords.u & kTileUVMask,
+						                                   floorCoords.v & kTileUVMask,
 						                                   0),
 						                         ti->attrs.cornerHeight);
 					break;
@@ -3802,7 +3802,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				//  mouse is on top of raised section
 				if (subTileRel.y <
 				        ti->attrs.terrainHeight + subTileDY * 2 - yBound) {
-					pickCoords = (tCoords << tileUVShift);
+					pickCoords = (tCoords << kTileUVShift);
 					y = subTileRel.y - ti->attrs.terrainHeight;
 					pickCoords.u += (subTile.u << subTileShift) +
 					                (((subTileRel.x >> 1) + y) >> 1);
@@ -3836,7 +3836,7 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				        subUVPoint.u < 4 &&
 				        subUVPoint.v < 4) {
 					if (subUVPointRel < pointH + (subTileDY * 2) / subTileSize) {
-						pickCoords = (tCoords << tileUVShift);
+						pickCoords = (tCoords << kTileUVShift);
 						pickCoords.u += (subTile.u << subTileShift) + subUVPoint.u;
 						pickCoords.v += (subTile.v << subTileShift) + subUVPoint.v;
 						pickCoords.z = h + pointH;
@@ -4017,8 +4017,8 @@ bool pointOnHiddenSurface(
 
 	//  Determine pick point relative to base of tile
 	testCoords = pickCoords;
-	testCoords.u &= tileUVMask;
-	testCoords.v &= tileUVMask;
+	testCoords.u &= kTileUVMask;
+	testCoords.v &= kTileUVMask;
 
 	//  If picked point is not along edge of tile, then its not hidden
 	if ((surfaceType == surfaceVertV && testCoords.u != 0)
@@ -4154,8 +4154,8 @@ TilePoint pickTile(Point32 pos,
 	coords.z = 0;
 
 	//  Compute the coords of the middle of the current tile.
-	coords.u = (coords.u & ~tileUVMask) + tileUVSize / 2;
-	coords.v = (coords.v & ~tileUVMask) + tileUVSize / 2;
+	coords.u = (coords.u & ~kTileUVMask) + kTileUVSize / 2;
+	coords.v = (coords.v & ~kTileUVMask) + kTileUVSize / 2;
 
 	//  Since the protagonist has a limited ability to "step" up or
 	//  down levels, only search for surfaces which could be stepped
@@ -4165,7 +4165,7 @@ TilePoint pickTile(Point32 pos,
 	zMax = protagPos.z + maxPickHeight + mag;
 
 	//  Compute the coords of the actual tile that they clicked on.
-	tileCoords = coords >> tileUVShift;
+	tileCoords = coords >> kTileUVShift;
 
 	//  Compute the X and Y offset of the exact mouse click point
 	//  relative to the base of the tile.
@@ -4276,7 +4276,7 @@ TilePoint pickTile(Point32 pos,
 		//  Crabwalk down through the tile positions
 		if (relPos.x < 0) {
 			tCoords.u--;
-			coords.u -= tileUVSize;
+			coords.u -= kTileUVSize;
 			if (tCoords.u < 0) {
 				tCoords.u = kPlatformWidth - 1;
 				mCoords.u--;
@@ -4286,7 +4286,7 @@ TilePoint pickTile(Point32 pos,
 			relPos.x += kTileDX;
 		} else {
 			tCoords.v--;
-			coords.v -= tileUVSize;
+			coords.v -= kTileUVSize;
 			if (tCoords.v < 0) {
 				tCoords.v = kPlatformWidth - 1;
 				mCoords.v--;
@@ -4313,8 +4313,8 @@ TilePoint pickTile(Point32 pos,
 #ifdef DAVIDR
 	if (showTile) {
 		if (bestTile) {
-			bestTP.u <<= tileUVShift;
-			bestTP.v <<= tileUVShift;
+			bestTP.u <<= kTileUVShift;
+			bestTP.v <<= kTileUVShift;
 			showAbstractTile(bestTP, bestTile);
 
 			TilePoint   pt1, pt2;
@@ -4498,10 +4498,10 @@ uint16 objRoofID(GameObject *obj, int16 objMapNum, const TilePoint &objCoords) {
 
 	objHeight = objCoords.z;
 
-	objTileReg.min.u = (objCoords.u - subTileSize) >> tileUVShift;
-	objTileReg.min.v = (objCoords.v - subTileSize) >> tileUVShift;
-	objTileReg.max.u = (objCoords.u + subTileSize + tileUVMask) >> tileUVShift;
-	objTileReg.max.v = (objCoords.v + subTileSize + tileUVMask) >> tileUVShift;
+	objTileReg.min.u = (objCoords.u - subTileSize) >> kTileUVShift;
+	objTileReg.min.v = (objCoords.v - subTileSize) >> kTileUVShift;
+	objTileReg.max.u = (objCoords.u + subTileSize + kTileUVMask) >> kTileUVShift;
+	objTileReg.max.v = (objCoords.v + subTileSize + kTileUVMask) >> kTileUVShift;
 
 	debugC(3, kDebugTiles, "objTileReg = ((%d,%d), (%d,%d))", objTileReg.min.u, objTileReg.min.v, objTileReg.max.u, objTileReg.max.v);
 
@@ -4661,8 +4661,8 @@ void updateMainDisplay(void) {
 	viewDiff = trackPos - lastViewLoc;
 	lastViewLoc = trackPos;
 
-	if (abs(viewDiff.u) > 8 * kPlatformWidth * tileUVSize
-	        ||  abs(viewDiff.v) > 8 * kPlatformWidth * tileUVSize)
+	if (abs(viewDiff.u) > 8 * kPlatformWidth * kTileUVSize
+	        ||  abs(viewDiff.v) > 8 * kPlatformWidth * kTileUVSize)
 		freeAllTileBanks();
 
 	//  Add current coordinates to map if they have mapping
@@ -4715,8 +4715,8 @@ void updateMainDisplay(void) {
 
 	buildRoofTable();
 
-	mCoords.u = trackPos.u >> (tileUVShift + kPlatShift);
-	mCoords.v = trackPos.v >> (tileUVShift + kPlatShift);
+	mCoords.u = trackPos.u >> (kTileUVShift + kPlatShift);
+	mCoords.v = trackPos.v >> (kTileUVShift + kPlatShift);
 	mCoords.z = 0;
 
 	//  If trackPos has crossed a metatile boundry, rebuild object
@@ -4908,7 +4908,7 @@ void markMetaAsVisited(const TilePoint &pt) {
 		WorldMapData    *curMap = &mapList[currentMapNum];
 		uint16          *mapData = curMap->map->mapData;
 
-		TilePoint       metaCoords = pt >> (tileUVShift + kPlatShift);
+		TilePoint       metaCoords = pt >> (kTileUVShift + kPlatShift);
 		int32           minU = MAX(metaCoords.u - mappingRadius, 0),
 		                maxU = MIN(metaCoords.u + mappingRadius, curMap->mapSize - 1),
 		                minV = MAX(metaCoords.v - mappingRadius, 0),
@@ -4959,7 +4959,7 @@ uint16 lineDist(
     const TilePoint &p1,
     const TilePoint &p2,
     const TilePoint &m) {
-	const int16     lineDistSlop = tileUVSize * 4;
+	const int16     lineDistSlop = kTileUVSize * 4;
 	const int16     lineFar = maxint16;
 
 	int16       u = m.u,
