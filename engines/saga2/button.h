@@ -129,7 +129,7 @@ public:
 
 	void    pointerMove(gPanelMessage &msg);
 	void    enable(bool);
-	void    invalidate(void);                    // invalidates the drawing
+	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
 	int16   getCurrent(void)       {
 		return currentImage;
 	}
@@ -229,7 +229,7 @@ public:
 	void            deactivate(void);
 
 	void    enable(bool);
-	void    invalidate(void);                    // invalidates the drawing
+	void    invalidate(Rect16 *unused = nullptr);                    // invalidates the drawing
 	// area for this button
 	void    draw(void);                          // redraw the panel.
 	void    dim(bool);
