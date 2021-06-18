@@ -340,6 +340,7 @@ extern byte **stateArray;
 class ActiveItemList;
 
 #include "common/pack-start.h"
+
 struct ActiveItemData {
 	uint32 nextHashDummy;	// next item in hash chain
 	uint16 scriptClassID;          // associated script object
@@ -374,6 +375,7 @@ struct ActiveItemData {
 };
 
 #include "common/pack-end.h"
+
 class ActiveItem {
 public:
 	ActiveItem *_nextHash;		// next item in hash chain

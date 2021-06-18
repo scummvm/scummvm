@@ -99,7 +99,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 		return segmentAddress(segNum, segOff);
 
 	case builtinTypeMission:
-		return (uint8 *)ActiveMission::missionAddress(index);
+		return (uint8 *)(&ActiveMission::missionAddress(index)->_data);
 
 	default:
 		error("Invalid builtin object segment number: %d\n", segment);
