@@ -76,6 +76,14 @@ struct ResourceGameObject {
 	uint16          objectFlags;
 	uint8           hitPoints;
 	uint16          misc;
+	union {
+		uint16      massCount;              // for mergeables, object count
+		uint16      textStringID;           // inscription for documents
+		uint16      enchantmentType;        // for enchantments
+		uint16      generatorFrequency;     // for encounter and mission generators
+	};
+
+	uint8           missileFacing;
 };
 
 //  Base class of all objects
@@ -83,6 +91,38 @@ struct ResourceGameObject {
 //  Unlike the object prototypes, the only subclass of GameObject is
 //  the actor subclass, which is kept in an entirely seperate table.
 //  This allows all objects to be kept in an array (indexed by ID number)
+
+#include "common/pack-start.h"
+
+struct ObjectData {
+	uint32 projectDummy;
+	TilePoint       location;               // where object is located.
+	uint16          nameIndex;              // object's proper name, if any
+	ObjectID        parentID,               // ID of parent object
+	                siblingID,              // ID of next in chain
+	                childID;                // ID of 1st child
+	uint16          script;                 // script attached to this object
+	uint16          objectFlags;            // various flags
+	uint8           hitPoints;              // object hit points
+	uint8           bParam;                 // number of spell charges an object has
+	// (also generator radius in metatiles)
+	union {
+		uint16      massCount;              // for mergeables, object count
+		uint16      textStringID;           // inscription for documents
+		uint16      enchantmentType;        // for enchantments
+		uint16      generatorFrequency;     // for encounter and mission generators
+	};
+
+	uint8           missileFacing;
+	ActiveItemID    currentTAG;             // ActiveItem object is on
+	uint8           sightCtr;               // Line of sight counter
+
+	uint8           reserved[2];
+
+	GameObject *obj;
+};
+
+#include "common/pack-end.h"
 
 void     initActors(void);
 void     saveActors(SaveFileConstructor &);
@@ -146,31 +186,8 @@ protected:
 	void protoAddressToOffset(void);         // converts proto address to offset in resource file
 
 	ProtoObj        *prototype;             // object that defines our behavior
-	TilePoint       location;               // where object is located.
-	uint16          nameIndex;              // object's proper name, if any
-	ObjectID        parentID,               // ID of parent object
-	                siblingID,              // ID of next in chain
-	                childID;                // ID of 1st child
-	uint16          script;                 // script attached to this object
-	uint16          objectFlags;            // various flags
-	uint8           hitPoints;              // object hit points
-	uint8           bParam;                 // number of spell charges an object has
-	// (also generator radius in metatiles)
-	union {
-		uint16      massCount;              // for mergeables, object count
-		uint16      textStringID;           // inscription for documents
-		uint16      enchantmentType;        // for enchantments
-		uint16      generatorFrequency;     // for encounter and mission generators
-	};
-
-	uint8           missileFacing;
-
 public:
-	ActiveItemID    currentTAG;             // ActiveItem object is on
-	uint8           sightCtr;               // Line of sight counter
-
-	uint8           reserved[2];
-
+	ObjectData _data;
 	//  Default constructor
 	GameObject(void);
 
@@ -202,24 +219,24 @@ public:
 
 	//  Return pointer to parent/child/next sibling object, if any
 	GameObject *parent(void) {
-		return parentID == Nothing ? NULL : objectAddress(parentID);
+		return _data.parentID == Nothing ? NULL : objectAddress(_data.parentID);
 	}
 	GameObject *next(void) {
-		return siblingID == Nothing ? NULL : objectAddress(siblingID);
+		return _data.siblingID == Nothing ? NULL : objectAddress(_data.siblingID);
 	}
 	GameObject *child(void) {
-		return childID == Nothing ? NULL : objectAddress(childID);
+		return _data.childID == Nothing ? NULL : objectAddress(_data.childID);
 	}
 
 	//  Return ID of parent/child/next sibling object, if any
 	ObjectID IDParent(void) {
-		return parentID ;
+		return _data.parentID ;
 	}
 	ObjectID IDNext(void) {
-		return siblingID;
+		return _data.siblingID;
 	}
 	ObjectID IDChild(void) {
-		return childID  ;
+		return _data.childID  ;
 	}
 
 	//  Return a pointer to the world on which this object resides
@@ -289,7 +306,7 @@ public:
 
 	//  Determine if this object is an alias for another object
 	bool isAlias() {
-		return (objectFlags & objectAlias) != 0;
+		return (_data.objectFlags & objectAlias) != 0;
 	}
 
 	//  check to see if item can be contained by this object
@@ -440,7 +457,7 @@ public:
 		return prototype;
 	}
 	TilePoint getLocation(void) {
-		return location;
+		return _data.location;
 	}
 	TilePoint getWorldLocation(void);
 	bool getWorldLocation(Location &loc);
@@ -450,7 +467,7 @@ public:
 	//  Return the name of this object (proper noun if it has one)
 	char *objName(void) {
 		return nameText((int16)(
-		                    nameIndex > 0 ? nameIndex : prototype->nameIndex));
+		                    _data.nameIndex > 0 ? _data.nameIndex : prototype->nameIndex));
 	}
 
 	// return name of object, and it's quantity if merged
@@ -461,10 +478,10 @@ public:
 
 	//  Access functions for name index
 	uint16 getNameIndex(void) {
-		return nameIndex;
+		return _data.nameIndex;
 	}
 	void setNameIndex(uint16 n) {
-		nameIndex = n;
+		_data.nameIndex = n;
 	}
 
 	//  Return the name of this type of object
@@ -478,77 +495,77 @@ public:
 
 	//  Flag test functions
 	bool isOpen(void) {
-		return (int16)(objectFlags & objectOpen);
+		return (int16)(_data.objectFlags & objectOpen);
 	}
 	bool isLocked(void) {
-		return (int16)(objectFlags & objectLocked);
+		return (int16)(_data.objectFlags & objectLocked);
 	}
 	bool isImportant(void) {
-		return (int16)(objectFlags & objectImportant);
+		return (int16)(_data.objectFlags & objectImportant);
 	}
 	bool isGhosted(void) {
-		return (objectFlags & objectGhosted)
+		return (_data.objectFlags & objectGhosted)
 		       || (prototype->flags & ResourceObjectPrototype::objPropGhosted);
 	}
 	bool isInvisible(void) {
-		return (objectFlags & objectInvisible)
+		return (_data.objectFlags & objectInvisible)
 		       || (prototype->flags & ResourceObjectPrototype::objPropHidden);
 	}
 	bool isMoving(void) {
-		return (int16)(objectFlags & objectMoving);
+		return (int16)(_data.objectFlags & objectMoving);
 	}
 	bool isActivated(void) {
-		return (int16)(objectFlags & objectActivated);
+		return (int16)(_data.objectFlags & objectActivated);
 	}
 
 	void setScavengable(bool val) {
 		if (val)
-			objectFlags |= objectScavengable;
+			_data.objectFlags |= objectScavengable;
 		else
-			objectFlags &= ~objectScavengable;
+			_data.objectFlags &= ~objectScavengable;
 	}
 	bool isScavengable(void) {
-		return (objectFlags & objectScavengable) != 0;
+		return (_data.objectFlags & objectScavengable) != 0;
 	}
 
 	void setObscured(bool val) {
 		if (val)
-			objectFlags |= objectObscured;
+			_data.objectFlags |= objectObscured;
 		else
-			objectFlags &= ~objectObscured;
+			_data.objectFlags &= ~objectObscured;
 	}
 	bool isObscured(void) {
-		return (objectFlags & objectObscured) != 0;
+		return (_data.objectFlags & objectObscured) != 0;
 	}
 
 	void setTriggeringTAG(bool val) {
 		if (val)
-			objectFlags |= objectTriggeringTAG;
+			_data.objectFlags |= objectTriggeringTAG;
 		else
-			objectFlags &= ~objectTriggeringTAG;
+			_data.objectFlags &= ~objectTriggeringTAG;
 	}
 	bool isTriggeringTAG(void) {
-		return (objectFlags & objectTriggeringTAG) != 0;
+		return (_data.objectFlags & objectTriggeringTAG) != 0;
 	}
 
 	void setOnScreen(bool val) {
 		if (val)
-			objectFlags |= objectOnScreen;
+			_data.objectFlags |= objectOnScreen;
 		else
-			objectFlags &= ~objectOnScreen;
+			_data.objectFlags &= ~objectOnScreen;
 	}
 	bool isOnScreen(void) {
-		return (objectFlags & objectOnScreen) != 0;
+		return (_data.objectFlags & objectOnScreen) != 0;
 	}
 
 	void setSightedByCenter(bool val) {
 		if (val)
-			objectFlags |= objectSightedByCenter;
+			_data.objectFlags |= objectSightedByCenter;
 		else
-			objectFlags &= ~objectSightedByCenter;
+			_data.objectFlags &= ~objectSightedByCenter;
 	}
 	bool isSightedByCenter(void) {
-		return (objectFlags & objectSightedByCenter) != 0;
+		return (_data.objectFlags & objectSightedByCenter) != 0;
 	}
 
 	bool isMissile(void) {
@@ -563,8 +580,8 @@ public:
 	uint16 containmentSet(void);
 
 	uint16 scriptClass(void) {
-		if (script)
-			return script;
+		if (_data.script)
+			return _data.script;
 		if (prototype)
 			return prototype->script;
 		return 0;
@@ -574,25 +591,25 @@ public:
 
 	//  Script access functions
 	uint16 getScript(void) {
-		return script;
+		return _data.script;
 	}
 	void setScript(uint16 scr) {
-		script = scr;
+		_data.script = scr;
 	}
 
 	//  access function to set object flags
 	void setFlags(uint8 newval, uint8 changeMask) {
 		//  Only change the flags spec'd by changeFlags
-		objectFlags = (newval & changeMask)
-		              | (objectFlags & ~changeMask);
+		_data.objectFlags = (newval & changeMask)
+		              | (_data.objectFlags & ~changeMask);
 	}
 
 	//  Access functions for hit points
 	uint8 getHitPoints(void) {
-		return hitPoints;
+		return _data.hitPoints;
 	}
 	void setHitPoints(uint8 hp) {
-		hitPoints = hp;
+		_data.hitPoints = hp;
 	}
 
 	//  Builds the color remapping for this object based on the
@@ -607,10 +624,10 @@ public:
 
 	//  Acess functions for extra data
 	uint16 getExtra(void) {
-		return massCount;
+		return _data.massCount;
 	}
 	void setExtra(uint16 x) {
-		massCount = x;
+		_data.massCount = x;
 	}
 
 	//  Function to evaluate the effects of all enchantments

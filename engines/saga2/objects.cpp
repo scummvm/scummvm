@@ -195,20 +195,22 @@ struct GameObjectArchive {
 
 GameObject::GameObject(void) {
 	prototype   = nullptr;
-	location    = Nowhere;
-	nameIndex   = 0;
-	parentID    = Nothing;
-	siblingID   = Nothing;
-	childID     = Nothing;
-	script      = 0;
-	objectFlags = 0;
-	hitPoints   = 0;
-	bParam      = 0;
-	massCount   = 0;
-	missileFacing = missileRt;
-	currentTAG  = NoActiveItem;
-	sightCtr    = 0;
-	memset(&reserved, 0, sizeof(reserved));
+	_data.location    = Nowhere;
+	_data.nameIndex   = 0;
+	_data.parentID    = Nothing;
+	_data.siblingID   = Nothing;
+	_data.childID     = Nothing;
+	_data.script      = 0;
+	_data.objectFlags = 0;
+	_data.hitPoints   = 0;
+	_data.bParam      = 0;
+	_data.massCount   = 0;
+	_data.missileFacing = missileRt;
+	_data.currentTAG  = NoActiveItem;
+	_data.sightCtr    = 0;
+	memset(&_data.reserved, 0, sizeof(_data.reserved));
+
+	_data.obj = this;
 }
 
 //-----------------------------------------------------------------------
@@ -216,20 +218,22 @@ GameObject::GameObject(void) {
 
 GameObject::GameObject(const ResourceGameObject &res) {
 	prototype           = &objectProtos[res.protoIndex];
-	location            = res.location;
-	nameIndex           = res.nameIndex;
-	parentID            = res.parentID;
-	siblingID           = Nothing;
-	childID             = Nothing;
-	script              = res.script;
-	objectFlags         = res.objectFlags;
-	hitPoints           = res.hitPoints;
-	bParam              = prototype->getChargeType() ? prototype->maxCharges : 0;
-	massCount           = res.misc; //prototype->getInitialItemCount();
-	missileFacing       = missileRt;
-	currentTAG          = NoActiveItem;
-	sightCtr            = 0;
-	memset(&reserved, 0, sizeof(reserved));
+	_data.location            = res.location;
+	_data.nameIndex           = res.nameIndex;
+	_data.parentID            = res.parentID;
+	_data.siblingID           = Nothing;
+	_data.childID             = Nothing;
+	_data.script              = res.script;
+	_data.objectFlags         = res.objectFlags;
+	_data.hitPoints           = res.hitPoints;
+	_data.bParam              = prototype->getChargeType() ? prototype->maxCharges : 0;
+	_data.massCount           = res.misc; //prototype->getInitialItemCount();
+	_data.missileFacing       = missileRt;
+	_data.currentTAG          = NoActiveItem;
+	_data.sightCtr            = 0;
+	memset(&_data.reserved, 0, sizeof(_data.reserved));
+
+	_data.obj = this;
 }
 
 //-----------------------------------------------------------------------
@@ -243,20 +247,22 @@ GameObject::GameObject(void **buf) {
 	                    ?   &objectProtos[a->protoIndex]
 	                    :   nullptr;
 
-	location        = a->location;
-	nameIndex       = a->nameIndex;
-	parentID        = a->parentID;
-	siblingID       = a->siblingID;
-	childID         = a->childID;
-	script          = a->script;
-	objectFlags     = a->objectFlags;
-	hitPoints       = a->hitPoints;
-	bParam          = a->bParam;
-	massCount       = a->misc;
-	missileFacing   = a->missileFacing;
-	currentTAG      = a->currentTAG;
-	sightCtr        = a->sightCtr;
-	memset(&reserved, 0, sizeof(reserved));
+	_data.location        = a->location;
+	_data.nameIndex       = a->nameIndex;
+	_data.parentID        = a->parentID;
+	_data.siblingID       = a->siblingID;
+	_data.childID         = a->childID;
+	_data.script          = a->script;
+	_data.objectFlags     = a->objectFlags;
+	_data.hitPoints       = a->hitPoints;
+	_data.bParam          = a->bParam;
+	_data.massCount       = a->misc;
+	_data.missileFacing   = a->missileFacing;
+	_data.currentTAG      = a->currentTAG;
+	_data.sightCtr        = a->sightCtr;
+	memset(&_data.reserved, 0, sizeof(_data.reserved));
+
+	_data.obj = this;
 
 	*buf = &a[1];
 }
@@ -278,19 +284,19 @@ void *GameObject::archive(void *buf) {
 	//  Convert the prototype pointer to a prototype index
 	a->protoIndex   = prototype != nullptr ? prototype - objectProtos : -1;
 
-	a->location     = location;
-	a->nameIndex    = nameIndex;
-	a->parentID     = parentID;
-	a->siblingID    = siblingID;
-	a->childID      = childID;
-	a->script       = script;
-	a->objectFlags  = objectFlags;
-	a->hitPoints    = hitPoints;
-	a->bParam       = bParam;
-	a->misc         = massCount;
-	a->missileFacing = missileFacing;
-	a->currentTAG   = currentTAG;
-	a->sightCtr     = sightCtr;
+	a->location     = _data.location;
+	a->nameIndex    = _data.nameIndex;
+	a->parentID     = _data.parentID;
+	a->siblingID    = _data.siblingID;
+	a->childID      = _data.childID;
+	a->script       = _data.script;
+	a->objectFlags  = _data.objectFlags;
+	a->hitPoints    = _data.hitPoints;
+	a->bParam       = _data.bParam;
+	a->misc         = _data.massCount;
+	a->missileFacing = _data.missileFacing;
+	a->currentTAG   = _data.currentTAG;
+	a->sightCtr     = _data.sightCtr;
 
 	return &a[1];
 }
@@ -365,8 +371,8 @@ ObjectID GameObject::thisID(void) {         // calculate our own id
 }
 
 //  Since Worlds have more than one object chain, we need a function
-//  to calculate which object chain to use, based on a location.
-//  This function returns the address of the appropriate "childID"
+//  to calculate which object chain to use, based on a _data.location.
+//  This function returns the address of the appropriate "_data.childID"
 //  pointer (i.e. the ObjectID of the first object in the chain
 //  of child objects) for any type of object.
 
@@ -382,7 +388,7 @@ ObjectID *GameObject::getHeadPtr(ObjectID parentID, TilePoint &l) {
 
 		return  &(world->sectorArray)[
 		     v * world->sectorArraySize + u].childID;
-	} else return &parentObj->childID;
+	} else return &parentObj->_data.childID;
 }
 
 //  Removes an object from it's chain.
@@ -392,12 +398,12 @@ void GameObject::remove(void) {             // removes from old list
 	                *headPtr;
 
 	//  If object has not parent, then it's not on a list
-	if (parentID == Nothing) return;
+	if (_data.parentID == Nothing) return;
 	if (id >= Nothing && id <= ImportantLimbo) return;
 
 	//  Get the head of the object chain. Worlds have more than
 	//  one, so we need to get the right one.
-	headPtr = getHeadPtr(parentID, location);
+	headPtr = getHeadPtr(_data.parentID, _data.location);
 
 	//  Search the chain until we find ourself.
 	while (*headPtr != id) {
@@ -405,15 +411,15 @@ void GameObject::remove(void) {             // removes from old list
 
 		if (*headPtr == Nothing)
 			error("Inconsistant Object Chain! ('%s#%d' not on parent %s#%d chain)",
-			             objName(), id, objectAddress(parentID)->objName(), parentID);
+			             objName(), id, objectAddress(_data.parentID)->objName(), _data.parentID);
 
 		obj = objectAddress(*headPtr);
-		headPtr = &obj->siblingID;
+		headPtr = &obj->_data.siblingID;
 	}
 
 	//  Remove us from the chain
-	*headPtr = siblingID;
-	parentID = Nothing;
+	*headPtr = _data.siblingID;
+	_data.parentID = Nothing;
 }
 
 //  Add an object to a new chain.
@@ -426,14 +432,14 @@ void GameObject::append(ObjectID newParent) {
 
 	//  Get the head of the object chain. Worlds have more than
 	//  one, so we need to get the right one.
-	headPtr = getHeadPtr(newParent, location);
+	headPtr = getHeadPtr(newParent, _data.location);
 
 	GameObject  *parent = GameObject::objectAddress(newParent);
 
 	//  Link us in to the parent's chain
 
-	parentID = newParent;
-	siblingID = *headPtr;
+	_data.parentID = newParent;
+	_data.siblingID = *headPtr;
 	*headPtr = thisID();
 
 }
@@ -450,26 +456,26 @@ void GameObject::insert(ObjectID newPrev) {
 	if (newPrev == Nothing) return;
 
 	//  Link us in to the parent's chain
-	siblingID = obj->siblingID;
-	obj->siblingID = thisID();
-	parentID = obj->parentID;
+	_data.siblingID = obj->_data.siblingID;
+	obj->_data.siblingID = thisID();
+	_data.parentID = obj->_data.parentID;
 }
 
 //  Returns the identity of the actor possessing the object
 
 ObjectID GameObject::possessor(void) {
 	GameObject      *obj;
-	ObjectID        id = parentID;
+	ObjectID        id = _data.parentID;
 
 	while (id != Nothing && isObject(id)) {
 		obj = objectAddress(id);
-		id = obj->parentID;
+		id = obj->_data.parentID;
 	}
 
 	return isActor(id) ? id : Nothing ;
 }
 
-//  A different version of getWorldLocation that fills in a location
+//  A different version of getWorldLocation that fills in a _data.location
 //  structure.
 
 bool GameObject::getWorldLocation(Location &loc) {
@@ -478,9 +484,9 @@ bool GameObject::getWorldLocation(Location &loc) {
 	uint8           objHeight = prototype->height;
 
 	for (;;) {
-		id = obj->parentID;
+		id = obj->_data.parentID;
 		if (isWorld(id)) {
-			loc = obj->location;
+			loc = obj->_data.location;
 			loc.z += (obj->prototype->height - objHeight) / 2;
 			loc.context = id;
 			return true;
@@ -504,12 +510,12 @@ Location GameObject::notGetWorldLocation(void) {
 	uint8           objHeight = prototype->height;
 
 	for (;;) {
-		id = obj->parentID;
+		id = obj->_data.parentID;
 		if (isWorld(id)) {
-			TilePoint       loc = obj->location;
+			TilePoint       loc = obj->_data.location;
 
 			loc.z += (obj->prototype->height - objHeight) / 2;
-			return Location(loc, obj->parentID);
+			return Location(loc, obj->_data.parentID);
 		} else if (id == Nothing) return Location(Nowhere, Nothing);
 
 		obj = objectAddress(id);
@@ -533,8 +539,8 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 		// display charges if item is a chargeable item
 		if (prototype->chargeType != 0
 		        &&  prototype->maxCharges != Permanent
-		        &&  bParam != Permanent) {
-			uint16 charges = bParam;
+		        &&  _data.bParam != Permanent) {
+			uint16 charges = _data.bParam;
 
 			if (charges == 1) {
 				sprintf(nameBuf, SINGLE_CHARGE, objName(), charges);
@@ -547,13 +553,13 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			// make a buffer that contains the name of
 			// the object and it's count
 			// add only if a mergable item
-			if (massCount != 1) {
+			if (_data.massCount != 1) {
 				if (count != -1) {
 					if (count != 1) {
 						sprintf(nameBuf, PLURAL_DESC, count, objName());     // get the count
 					}
 				} else {
-					sprintf(nameBuf, PLURAL_DESC, massCount, objName());     // get the count
+					sprintf(nameBuf, PLURAL_DESC, _data.massCount, objName());     // get the count
 				}
 			}
 		}
@@ -626,16 +632,16 @@ bool GameObject::isTrueSkill(void) {
 	return false;
 }
 
-//  Returns the location of an object within the world
+//  Returns the _data.location of an object within the world
 TilePoint GameObject::getWorldLocation(void) {
 	GameObject      *obj = this;
 	ObjectID        id;
 	uint8           objHeight = prototype->height;
 
 	for (;;) {
-		id = obj->parentID;
+		id = obj->_data.parentID;
 		if (isWorld(id)) {
-			TilePoint       loc = obj->location;
+			TilePoint       loc = obj->_data.location;
 
 			loc.z += (obj->prototype->height - objHeight) / 2;
 			return loc;
@@ -653,7 +659,7 @@ GameWorld *GameObject::world(void) {
 	ObjectID        id;
 
 	for (;;) {
-		id = obj->parentID;
+		id = obj->_data.parentID;
 		if (isWorld(id)) return &worldList[id - WorldBaseID];
 		else if (id == Nothing) return nullptr;
 
@@ -677,7 +683,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	if (num != -1) {
 		units = (int32)num;
 	} else {
-		units = (int32)massCount;
+		units = (int32)_data.massCount;
 	}
 
 	// if this is a mergeable object
@@ -711,7 +717,7 @@ bool GameObject::unstack(void) {
 	if (isWorld(this)
 	        ||  isWorld(parent())
 	        ||  IDParent() == Nothing
-	        ||  location.z == 1
+	        ||  _data.location.z == 1
 	        ||  prototype == nullptr
 	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return false;
 
@@ -721,11 +727,11 @@ bool GameObject::unstack(void) {
 	//  Count how many objects are in this stack
 	//  Also, check to find the base item, and any non-base item
 	while (iter.next(&item) != Nothing) {
-		if (item->location.u == location.u
-		        &&  item->location.v == location.v
+		if (item->_data.location.u == _data.location.u
+		        &&  item->_data.location.v == _data.location.v
 		        &&  item->prototype  == prototype) {
 			count++;
-			if (item->location.z != 0) base = item;
+			if (item->_data.location.z != 0) base = item;
 			else zero = item;
 		}
 	}
@@ -737,72 +743,72 @@ bool GameObject::unstack(void) {
 	//  Else if this item is not the base item, then decrement the base
 	//  item's count by setting it to all but one of the count of items.
 	if (this == base && zero != nullptr)
-		zero->location.z = count - 1;
-	else if (base != nullptr) base->location.z = count - 1;
+		zero->_data.location.z = count - 1;
+	else if (base != nullptr) base->_data.location.z = count - 1;
 
 	//  Set this item's count to 1
-	location.z = 1;
+	_data.location.z = 1;
 	return true;
 }
 
-//  Move the object to a new location, and change context if needed.
+//  Move the object to a new _data.location, and change context if needed.
 void GameObject::setLocation(const Location &l) {
-	if (l.context != parentID) {
+	if (l.context != _data.parentID) {
 		unstack();                          // if it's in a stack, unstack it.
 		remove();                           // remove from old list
-		location = (TilePoint)l;            // change location
+		_data.location = (TilePoint)l;            // change _data.location
 		append(l.context);                  // append to new list
 	} else if (isWorld(l.context)) {
 		GameWorld   *world = (GameWorld *)objectAddress(l.context);
 		TilePoint   sectors = world->sectorSize();
 
-		int16       u0 = clamp(0, location.u / kSectorSize, sectors.u - 1),
-		            v0 = clamp(0, location.v / kSectorSize, sectors.v - 1),
+		int16       u0 = clamp(0, _data.location.u / kSectorSize, sectors.u - 1),
+		            v0 = clamp(0, _data.location.v / kSectorSize, sectors.v - 1),
 		            u1 = clamp(0, l.u / kSectorSize, sectors.u - 1),
 		            v1 = clamp(0, l.v / kSectorSize, sectors.v - 1);
 
 		if (u0 != u1 || v0 != v1) {         // If sector changed
 			remove();                       //  Remove from old list
-			location = (TilePoint)l;        //  Set object coords
+			_data.location = (TilePoint)l;        //  Set object coords
 			append(l.context);              //  append to appropriate list
 		} else {
-			location = (TilePoint)l;        //  Set object coords
+			_data.location = (TilePoint)l;        //  Set object coords
 		}
 	} else {
 		unstack();                          // if it's in a stack, unstack it.
-		location = (TilePoint)l;            //  Set object coords
+		_data.location = (TilePoint)l;            //  Set object coords
 	}
 }
 
 //  Move the object without changing worlds...
 void GameObject::setLocation(const TilePoint &tp) {
-	if (isWorld(parentID)) {
-		GameWorld   *world = (GameWorld *)objectAddress(parentID);
+	if (isWorld(_data.parentID)) {
+		GameWorld   *world = (GameWorld *)objectAddress(_data.parentID);
 		TilePoint   sectors = world->sectorSize();
 
-		int16       u0 = clamp(0, location.u / kSectorSize, sectors.u - 1),
-		            v0 = clamp(0, location.v / kSectorSize, sectors.v - 1),
+		int16       u0 = clamp(0, _data.location.u / kSectorSize, sectors.u - 1),
+		            v0 = clamp(0, _data.location.v / kSectorSize, sectors.v - 1),
 		            u1 = clamp(0, tp.u / kSectorSize, sectors.u - 1),
 		            v1 = clamp(0, tp.v / kSectorSize, sectors.v - 1);
 
 		if (u0 != u1 || v0 != v1) {          // If sector changed
-			ObjectID saveParent = parentID;
+			ObjectID saveParent = _data.parentID;
 
 			remove();                       //  Remove from old list
-			location = tp;                  //  Set object coords
-			parentID = saveParent;          //  restore parent (cleared by remove())
-			append(parentID);               //  append to appropriate list
+			_data.location = tp;                  //  Set object coords
+			_data.parentID = saveParent;          //  restore parent (cleared by remove())
+			append(_data.parentID);               //  append to appropriate list
 		} else {
-			location = tp;                  //  Set object coords
+			_data.location = tp;                  //  Set object coords
 		}
 	} else {
-		location = tp;                      //  Set object coords
+		_data.location = tp;                      //  Set object coords
 	}
 }
 
 void GameObject::move(const Location &location) {
 	// move as usual
-	ObjectID    oldParentID = parentID;
+	ObjectID    oldParentID = _data.parentID;
 
 	setLocation(location);
 
@@ -817,7 +823,7 @@ void GameObject::move(const Location &location, int16 num) {
 		// do a normal move
 		move(location);
 	} else {
-		ObjectID    oldParentID = parentID;
+		ObjectID    oldParentID = _data.parentID;
 
 		// update panel after move
 		updateImage(oldParentID);
@@ -844,7 +850,7 @@ void GameObject::recharge(void) {
 	if (getChargeType()) {
 		ProtoObj *po = GameObject::protoAddress(thisID());
 		assert(po);
-		bParam = po->maxCharges;
+		_data.bParam = po->maxCharges;
 	}
 }
 
@@ -858,7 +864,7 @@ bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 		return false;
 	}
 
-	if (po->maxCharges == Permanent || bParam == Permanent) {
+	if (po->maxCharges == Permanent || _data.bParam == Permanent) {
 		return true;
 	}
 
@@ -870,13 +876,13 @@ bool GameObject::deductCharge(ActorManaID manaID, uint16 manaCost) {
 		}
 	}
 
-	if (bParam == 0) {
+	if (_data.bParam == 0) {
 		// not enough mana to use item
 		return false;
 	}
 
-	if (bParam > 0 && bParam < Permanent) {
-		bParam--;
+	if (_data.bParam > 0 && _data.bParam < Permanent) {
+		_data.bParam--;
 	}
 
 	return true;
@@ -891,7 +897,7 @@ bool GameObject::hasCharge(ActorManaID manaID, uint16 manaCost) {
 		return false;
 	}
 
-	if (bParam == Permanent) {
+	if (_data.bParam == Permanent) {
 		return true;
 	}
 
@@ -903,7 +909,7 @@ bool GameObject::hasCharge(ActorManaID manaID, uint16 manaCost) {
 		}
 	}
 
-	if (bParam == 0) {
+	if (_data.bParam == 0) {
 		// not enough mana to use item
 		return false;
 	}
@@ -916,7 +922,7 @@ void GameObject::move(const TilePoint &tilePoint) {
 	// I'm making the assumption that only objects in containers
 	// can be merged or stacked
 	// move as usual
-	ObjectID    oldParentID = parentID;
+	ObjectID    oldParentID = _data.parentID;
 
 	setLocation(tilePoint);
 
@@ -927,7 +933,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 	GameObject  *parent,
 	            *oldParent;
 
-	parent = objectAddress(parentID);
+	parent = objectAddress(_data.parentID);
 	oldParent = objectAddress(oldParentID);
 
 	if ((isActor(oldParentID)
@@ -937,7 +943,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		globalContainerList.setUpdate(oldParentID);
 	}
 
-	if (parentID != oldParentID && isActor(oldParentID)) {
+	if (_data.parentID != oldParentID && isActor(oldParentID)) {
 		ObjectID        id = thisID();
 		Actor           *a = (Actor *)oldParent;
 		int             i;
@@ -955,36 +961,36 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		}
 	}
 
-	if (isWorld(parentID)) {
+	if (isWorld(_data.parentID)) {
 		GameWorld   *w = world();
 
 		if (!isMoving()) {
 			if (objObscured(this)) {
-				objectFlags |= objectObscured;
+				_data.objectFlags |= objectObscured;
 			} else {
-				objectFlags &= ~objectObscured;
+				_data.objectFlags &= ~objectObscured;
 			}
 		}
 
-		if (w->getSector(location.u >> kSectorShift,
-		                 location.v >> kSectorShift)->isActivated()) {
+		if (w->getSector(_data.location.u >> kSectorShift,
+		                 _data.location.v >> kSectorShift)->isActivated()) {
 			activate();
 		}
 	} else {
-		objectFlags &= ~objectObscured;
+		_data.objectFlags &= ~objectObscured;
 
-		if ((isActor(parentID)
+		if ((isActor(_data.parentID)
 		        &&  isPlayerActor((Actor *)parent))
-		        || (isObject(parentID) && parent->isOpen())
+		        || (isObject(_data.parentID) && parent->isOpen())
 		   ) {
-			globalContainerList.setUpdate(parentID);
+			globalContainerList.setUpdate(_data.parentID);
 		}
 	}
 }
 
 bool GameObject::moveMerged(const Location &loc, int16 num) {
-	if (num < massCount
-	        &&  !extractMerged(Location(location, parentID), massCount - num))
+	if (num < _data.massCount
+	        &&  !extractMerged(Location(_data.location, _data.parentID), _data.massCount - num))
 		return false;
 	move(loc);
 	return true;
@@ -1000,20 +1006,20 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 	// with duplicates of it's kind
 	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		// get the number requested or all that's there...
-		int16 moveCount = MIN<uint16>(num, massCount);
+		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
 		// make a new pile with that many items in it.
 		if ((extractedID = copy(loc, moveCount)) != Nothing) {
 			// and subtract that amount from the currect pile
-			massCount -= moveCount;
+			_data.massCount -= moveCount;
 
 			// delete object if count goes to zero
-			if (massCount == 0) {
+			if (_data.massCount == 0) {
 				this->deleteObject();
 			}
 
-			// massCount should never go negitive
-			assert(massCount >= 0);
+			// _data.massCount should never go negitive
+			assert(_data.massCount >= 0);
 		} else
 			return Nothing;
 	} else {
@@ -1033,20 +1039,20 @@ GameObject *GameObject::extractMerged(int16 num) {
 		Location    loc(0, 0, 0, 0);
 
 		// get the number requested or all that's there...
-		int16 moveCount = MIN<uint16>(num, massCount);
+		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
 		// make a new pile with that many items in it.
 		if ((extractedID = copy(loc, moveCount)) != Nothing) {
 			// and subtract that amount from the currect pile
-			massCount -= moveCount;
+			_data.massCount -= moveCount;
 
 			// delete object if count goes to zero
-			if (massCount == 0) {
+			if (_data.massCount == 0) {
 				this->deleteObject();
 			}
 
-			// massCount should never go negitive
-			assert(massCount >= 0);
+			// _data.massCount should never go negitive
+			assert(_data.massCount >= 0);
 		} else
 			return nullptr;
 	} else {
@@ -1057,7 +1063,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 	return GameObject::objectAddress(extractedID);
 }
 
-//  Move the object to a new random location
+//  Move the object to a new random _data.location
 void GameObject::moveRandom(const TilePoint &minLoc, const TilePoint &maxLoc) {
 	//We Should Also Send Flags For Conditional Movements
 	//One Consideration Is Whether We Should Get One Random Location
@@ -1070,7 +1076,7 @@ void GameObject::moveRandom(const TilePoint &minLoc, const TilePoint &maxLoc) {
 	for (int i = 0; i < maxMoveAttempts; i++) {
 		newLoc.u = GetRandomBetween(minLoc.u, maxLoc.u);
 		newLoc.v = GetRandomBetween(minLoc.v, maxLoc.v);
-		newLoc.z = location.z; //For Now Keep Z Coord Same
+		newLoc.z = _data.location.z; //For Now Keep Z Coord Same
 		//If Flags == Collision Check
 		if (objectCollision(this, world(), newLoc) == nullptr) { //If No Collision
 			move(newLoc);//Move It Else Try Again
@@ -1080,7 +1086,7 @@ void GameObject::moveRandom(const TilePoint &minLoc, const TilePoint &maxLoc) {
 }
 // this will need another method to let it know about multiple
 // object moves.
-//  Copy the object to a new location.
+//  Copy the object to a new _data.location.
 ObjectID GameObject::copy(const Location &l) {
 	GameObject      *newObj;
 //	ObjectID        id = thisID();
@@ -1098,14 +1104,14 @@ ObjectID GameObject::copy(const Location &l) {
 		if ((newObj = newObject()) == nullptr) return Nothing;
 
 		newObj->prototype   = prototype;
-		newObj->nameIndex   = nameIndex;
-		newObj->script      = script;
-		newObj->objectFlags = objectFlags;
-		newObj->hitPoints   = hitPoints;
-		newObj->massCount   = massCount;
-		newObj->bParam      = bParam;
-		newObj->missileFacing = missileFacing;
-		newObj->currentTAG  = currentTAG;
+		newObj->_data.nameIndex   = _data.nameIndex;
+		newObj->_data.script      = _data.script;
+		newObj->_data.objectFlags = _data.objectFlags;
+		newObj->_data.hitPoints   = _data.hitPoints;
+		newObj->_data.massCount   = _data.massCount;
+		newObj->_data.bParam      = _data.bParam;
+		newObj->_data.missileFacing = _data.missileFacing;
+		newObj->_data.currentTAG  = _data.currentTAG;
 
 		newObj->move(l);     //>>> could this cause the same problem as below?
 	}
@@ -1131,12 +1137,12 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 
 
 		newObj->prototype   = prototype;
-		newObj->nameIndex   = nameIndex;
-		newObj->script      = script;
-		newObj->objectFlags = objectFlags;
-		newObj->hitPoints   = hitPoints;
-		newObj->massCount   = massCount;
-		newObj->massCount   = num;
+		newObj->_data.nameIndex   = _data.nameIndex;
+		newObj->_data.script      = _data.script;
+		newObj->_data.objectFlags = _data.objectFlags;
+		newObj->_data.hitPoints   = _data.hitPoints;
+		newObj->_data.massCount   = _data.massCount;
+		newObj->_data.massCount   = num;
 
 		// this did occur before any of the assignments
 		// but that caused a crash when the it tried to update
@@ -1155,7 +1161,7 @@ ObjectID GameObject::makeAlias(const Location &l) {
 	if (newObjID != Nothing) {
 		GameObject  *newObject = objectAddress(newObjID);
 
-		newObject->objectFlags |= objectAlias;
+		newObject->_data.objectFlags |= objectAlias;
 	}
 
 	return newObjID;
@@ -1167,7 +1173,7 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 	GameObject      *limbo = objectAddress(ObjectLimbo),
 	                 *obj;
 
-	if (limbo->childID == Nothing) {
+	if (limbo->_data.childID == Nothing) {
 		int16       i;
 
 		//  Search object list for the first scavengable object we can find
@@ -1191,14 +1197,14 @@ GameObject *GameObject::newObject(void) {   // get a newly created object
 
 	obj->remove();
 	obj->prototype      = nullptr;
-	obj->nameIndex      = 0;
-	obj->script         = 0;
-	obj->objectFlags    = 0;
-	obj->hitPoints      = 0;
-	obj->massCount      = 0;
-	obj->bParam         = 0;
-	obj->missileFacing  = 0;
-	obj->currentTAG     = NoActiveItem;
+	obj->_data.nameIndex      = 0;
+	obj->_data.script         = 0;
+	obj->_data.objectFlags    = 0;
+	obj->_data.hitPoints      = 0;
+	obj->_data.massCount      = 0;
+	obj->_data.bParam         = 0;
+	obj->_data.missileFacing  = 0;
+	obj->_data.currentTAG     = NoActiveItem;
 
 	return obj;
 }
@@ -1232,9 +1238,9 @@ void GameObject::deleteObject(void) {
 	while ((cn = globalContainerList.find(dObj)) != nullptr)
 		delete cn;
 
-	if (isActor(parentID)) {
+	if (isActor(_data.parentID)) {
 		ObjectID    id = thisID();
-		Actor       *a = (Actor *)objectAddress(parentID);
+		Actor       *a = (Actor *)objectAddress(_data.parentID);
 		int         i;
 
 		if (a->leftHandObject == id) a->leftHandObject = Nothing;
@@ -1256,16 +1262,16 @@ void GameObject::deleteObject(void) {
 
 	if (isActor(this))
 		((Actor *)this)->deleteActor();
-	else if (objectFlags & objectImportant) {
+	else if (_data.objectFlags & objectImportant) {
 		append(ImportantLimbo);
-		parentID = ImportantLimbo;
+		_data.parentID = ImportantLimbo;
 		importantLimboCount++;
-	} else if (!(objectFlags & objectNoRecycle)) {
+	} else if (!(_data.objectFlags & objectNoRecycle)) {
 		append(ObjectLimbo);
-		parentID = ObjectLimbo;
+		_data.parentID = ObjectLimbo;
 		objectLimboCount++;
 	} else
-		parentID = Nothing;
+		_data.parentID = Nothing;
 }
 
 //  Delete this object and every object it contains
@@ -1277,10 +1283,10 @@ void GameObject::deleteObjectRecursive(void) {
 		assert((prototype->containmentSet() & ProtoObj::isTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
-		if (isWorld(parentID))
+		if (isWorld(_data.parentID))
 			return;
 		else {
-			ObjectID        ancestorID = parentID;
+			ObjectID        ancestorID = _data.parentID;
 
 			//  Search up the parent chain
 			while (ancestorID > ImportantLimbo) {
@@ -1288,31 +1294,31 @@ void GameObject::deleteObjectRecursive(void) {
 
 				//  If this ancestor is in a world, drop the object and
 				//  we're done.
-				if (isWorld(ancestor->parentID)) {
+				if (isWorld(ancestor->_data.parentID)) {
 					ancestor->dropInventoryObject(
 					    this,
 					    isMergeable()
-					    ?   massCount
+					    ?   _data.massCount
 					    :   1);
 					return;
 				}
 
-				ancestorID = ancestor->parentID;
+				ancestorID = ancestor->_data.parentID;
 			}
 		}
 	}
 	//  The object is not important so recursively call this function
 	//  for all of its children.
 	else {
-		if (childID != Nothing) {
+		if (_data.childID != Nothing) {
 			GameObject          *childObj,
 			                    *nextChildObj;
 
-			for (childObj = objectAddress(childID);
+			for (childObj = objectAddress(_data.childID);
 			        childObj != nullptr;
 			        childObj = nextChildObj) {
-				nextChildObj =  childObj->siblingID != Nothing
-				                ?   objectAddress(childObj->siblingID)
+				nextChildObj =  childObj->_data.siblingID != Nothing
+				                ?   objectAddress(childObj->_data.siblingID)
 				                :   nullptr;
 				childObj->deleteObjectRecursive();
 			}
@@ -1327,12 +1333,12 @@ void GameObject::deleteObjectRecursive(void) {
 //	Activate this object
 
 void GameObject::activate(void) {
-	if (objectFlags & objectActivated) return;
+	if (_data.objectFlags & objectActivated) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
-	objectFlags |= objectActivated;
+	_data.objectFlags |= objectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1349,13 +1355,13 @@ void GameObject::activate(void) {
 //	Deactivate this object
 
 void GameObject::deactivate(void) {
-	if (!(objectFlags & objectActivated)) return;
+	if (!(_data.objectFlags & objectActivated)) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
 	//  Clear activated flag
-	objectFlags &= ~objectActivated;
+	_data.objectFlags &= ~objectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1380,7 +1386,7 @@ bool GameObject::isContaining(GameObject *item) {
 	while (iter.next(&containedObj) != Nothing) {
 		if (containedObj == item) return true;
 
-		if (containedObj->childID != Nothing)
+		if (containedObj->_data.childID != Nothing)
 			if (containedObj->isContaining(item)) return true;
 	}
 
@@ -1396,7 +1402,7 @@ bool GameObject::isContaining(ObjectTarget *objTarget) {
 	while (iter.next(&containedObj) != Nothing) {
 		if (objTarget->isTarget(containedObj)) return true;
 
-		if (containedObj->childID != Nothing)
+		if (containedObj->_data.childID != Nothing)
 			if (containedObj->isContaining(objTarget)) return true;
 	}
 
@@ -1410,13 +1416,13 @@ void GameObject::updateState(void) {
 	static TilePoint nullVelocity(0, 0, 0);
 	StandingTileInfo sti;
 
-	tHeight = tileSlopeHeight(location, this, &sti);
+	tHeight = tileSlopeHeight(_data.location, this, &sti);
 
-	if (!(location.z >= 0 || prototype->height > 8 - location.z))
+	if (!(_data.location.z >= 0 || prototype->height > 8 - _data.location.z))
 		drown(this);
 
-	TilePoint subTile((location.u >> kSubTileShift) & kSubTileMask,
-	                  (location.v >> kSubTileShift) & kSubTileMask,
+	TilePoint subTile((_data.location.u >> kSubTileShift) & kSubTileMask,
+	                  (_data.location.v >> kSubTileShift) & kSubTileMask,
 	                  0);
 
 
@@ -1440,15 +1446,15 @@ void GameObject::updateState(void) {
 	//  currently at, then raise us up a bit.
 	if (isMoving()) return;
 
-	if (objectFlags & objectFloating) return;
+	if (_data.objectFlags & objectFloating) return;
 
-	if (tHeight > location.z + kMaxStepHeight) {
+	if (tHeight > _data.location.z + kMaxStepHeight) {
 		unstickObject(this);
-		tHeight = tileSlopeHeight(location, this, &sti);
+		tHeight = tileSlopeHeight(_data.location, this, &sti);
 	}
-	if (tHeight >= location.z - gravity * 4) {
+	if (tHeight >= _data.location.z - gravity * 4) {
 		setObjectSurface(this, sti);
-		location.z = tHeight;
+		_data.location.z = tHeight;
 		return;
 	}
 
@@ -1526,7 +1532,7 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 }
 
 //-----------------------------------------------------------------------
-//	Return the location of the first available slot within this object
+//	Return the _data.location of the first available slot within this object
 //	in which to place the specified object
 
 bool GameObject::getAvailableSlot(
@@ -1550,7 +1556,7 @@ bool GameObject::getAvailableSlot(
 	        == (ProtoObj::isContainer | ProtoObj::isIntangible)) {
 //		assert( isActor( obj ) );
 
-		//  Set intangible container locations to -1, -1.
+		//  Set intangible container _data.locations to -1, -1.
 		tp->u = -1;
 		tp->v = -1;
 		return true;
@@ -1614,10 +1620,10 @@ bool GameObject::placeObject(
 }
 
 //-----------------------------------------------------------------------
-//	Drop the specified object on the ground in a semi-random location
+//	Drop the specified object on the ground in a semi-random _data.location
 
 void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
-	assert(isWorld(parentID));
+	assert(isWorld(_data.parentID));
 
 	int16           dist;
 	int16           mapNum = getMapNum();
@@ -1635,26 +1641,26 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			TilePoint           probeLoc;
 			StandingTileInfo    sti;
 
-			//  Compute a location to place the object
-			probeLoc = location + incDirTable[dir] * dist;
+			//  Compute a _data.location to place the object
+			probeLoc = _data.location + incDirTable[dir] * dist;
 			probeLoc.u += (rand() & 0x3) - 2;
 			probeLoc.v += (rand() & 0x3) - 2;
 			probeLoc.z = tileSlopeHeight(probeLoc, mapNum, obj, &sti);
 
-			//  If location is not blocked, drop the object
+			//  If _data.location is not blocked, drop the object
 			if (checkBlocked(obj, mapNum, probeLoc) == blockageNone) {
 				//  If we're dropping the object on a TAI, make sure
 				//  we call the correct drop function
 				if (sti.surfaceTAG == nullptr) {
 					obj->drop(
 					    thisID(),
-					    Location(probeLoc, parentID),
+					    Location(probeLoc, _data.parentID),
 					    count);
 				} else {
 					obj->dropOn(
 					    thisID(),
 					    sti.surfaceTAG,
-					    Location(probeLoc, parentID),
+					    Location(probeLoc, _data.parentID),
 					    count);
 				}
 
@@ -2155,7 +2161,7 @@ void GameObject::setProtoNum(int32 nProto) {
 	if (isActor(this))
 		prototype = &actorProtos[nProto];
 	else {
-		ObjectID    oldParentID = parentID;
+		ObjectID    oldParentID = _data.parentID;
 		bool        wasStacked = unstack(); //  Unstack if it was in a stack
 
 		prototype = &objectProtos[nProto];
@@ -2206,7 +2212,7 @@ int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 		if (dropObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 			//  If the flags are the same, and neither object has children,
 			//  then we can merge
-			if (((dropObj->objectFlags & noMergeFlags) == (target->objectFlags & noMergeFlags))
+			if (((dropObj->_data.objectFlags & noMergeFlags) == (target->_data.objectFlags & noMergeFlags))
 			        &&  dropObj->IDChild() == Nothing
 			        &&  target->IDChild() == Nothing) {
 				return canMerge;
@@ -2270,7 +2276,7 @@ bool GameObject::stack(ObjectID enactor, ObjectID objToStackID) {
 	if (objToStack->drop(enactor, loc)) {
 		if (!objToStack->isMoving()) {
 			//  Increase the stack count
-			location.z++;
+			_data.location.z++;
 			globalContainerList.setUpdate(IDParent());
 		}
 
@@ -2299,7 +2305,7 @@ uint16 GameObject::totalContainedMass(void) {
 			objMass *= childObj->getExtra();
 		total += objMass;
 
-		if (childObj->childID != Nothing)
+		if (childObj->_data.childID != Nothing)
 			total += childObj->totalContainedMass();
 	}
 
@@ -3031,27 +3037,27 @@ void initObjects(void) {
 
 		//  Objects which are inside other objects need to have their
 		//  Z-coords initially forced to be 1 so that stacking works OK.
-		if (!isWorld(obj->parentID)) obj->location.z = 1;
+		if (!isWorld(obj->_data.parentID)) obj->_data.location.z = 1;
 
-		parent = GameObject::objectAddress(obj->parentID);
+		parent = GameObject::objectAddress(obj->_data.parentID);
 		if (parent->getAvailableSlot(obj, &slot))
-			obj->move(Location(slot, obj->parentID));
+			obj->move(Location(slot, obj->_data.parentID));
 
 		//  Add object to world.
-		if (obj->parentID == Nothing) {
+		if (obj->_data.parentID == Nothing) {
 			obj->append(ObjectLimbo);
-			obj->parentID = ObjectLimbo;
+			obj->_data.parentID = ObjectLimbo;
 			objectLimboCount++;
 		} else
-			obj->append(obj->parentID);
+			obj->append(obj->_data.parentID);
 	}
 
 	for (; i < objectCount; i++) {
 		GameObject  *obj = &objectList[i];
 
-		obj->siblingID = obj->childID = Nothing;
+		obj->_data.siblingID = obj->_data.childID = Nothing;
 		obj->append(ObjectLimbo);
-		obj->parentID = ObjectLimbo;
+		obj->_data.parentID = ObjectLimbo;
 		objectLimboCount++;
 	}
 
@@ -3060,11 +3066,11 @@ void initObjects(void) {
 	for (i = 0; i < actorCount; i++) {
 		Actor       *a = &actorList[i];
 
-		if (a->parentID == Nothing) {
+		if (a->_data.parentID == Nothing) {
 			a->append(ActorLimbo);
 			actorLimboCount++;
 		} else
-			a->append(a->parentID);
+			a->append(a->_data.parentID);
 	}
 
 #if DEBUG
@@ -3259,7 +3265,7 @@ void ActiveRegion::update(void) {
 		TileRegion  ptRegion,
 		            newRegion;
 
-		//  Update the anchor location
+		//  Update the anchor _data.location
 		anchorLoc = loc;
 
 		//  Determine the active region in points
@@ -4066,7 +4072,7 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 
 ContainerIterator::ContainerIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
-	nextID = &container->childID;
+	nextID = &container->_data.childID;
 	object = nullptr;
 }
 
@@ -4076,7 +4082,7 @@ ObjectID ContainerIterator::next(GameObject **obj) {
 	if (id == Nothing) return Nothing;
 
 	object = GameObject::objectAddress(id);
-	nextID = &object->siblingID;
+	nextID = &object->_data.siblingID;
 
 	if (obj) *obj = object;
 	return id;
@@ -4296,7 +4302,7 @@ bool lineOfSight(GameObject *obj1, GameObject *obj2, uint32 terrainMask) {
 }
 
 /* ======================================================================= *
-   Test for line of sight between object and location
+   Test for line of sight between object and _data.location
  * ======================================================================= */
 
 bool lineOfSight(GameObject *obj, const TilePoint &loc, uint32 terrainMask) {
@@ -4318,7 +4324,7 @@ bool lineOfSight(GameObject *obj, const TilePoint &loc, uint32 terrainMask) {
 
 
 /* ======================================================================= *
-   Test for line of sight between two locations
+   Test for line of sight between two _data.locations
  * ======================================================================= */
 
 bool lineOfSight(
@@ -4583,26 +4589,26 @@ void doBackgroundSimulation(void) {
 	//  Debug code to verify the validity of the limbo counts
 #if DEBUG
 	int16       count;
-	ObjectID    childID;
+	ObjectID    _data.childID;
 
 	count = 0;
-	for (childID = GameObject::objectAddress(ObjectLimbo)->IDChild();
-	        childID != Nothing;
-	        childID = GameObject::objectAddress(childID)->IDNext())
+	for (_data.childID = GameObject::objectAddress(ObjectLimbo)->IDChild();
+	        _data.childID != Nothing;
+	        _data.childID = GameObject::objectAddress(_data.childID)->IDNext())
 		count++;
 	assert(objectLimboCount == count);
 
 	count = 0;
-	for (childID = GameObject::objectAddress(ActorLimbo)->IDChild();
-	        childID != Nothing;
-	        childID = GameObject::objectAddress(childID)->IDNext())
+	for (_data.childID = GameObject::objectAddress(ActorLimbo)->IDChild();
+	        _data.childID != Nothing;
+	        _data.childID = GameObject::objectAddress(_data.childID)->IDNext())
 		count++;
 	assert(actorLimboCount == count);
 
 	count = 0;
-	for (childID = GameObject::objectAddress(ImportantLimbo)->IDChild();
-	        childID != Nothing;
-	        childID = GameObject::objectAddress(childID)->IDNext())
+	for (_data.childID = GameObject::objectAddress(ImportantLimbo)->IDChild();
+	        _data.childID != Nothing;
+	        _data.childID = GameObject::objectAddress(_data.childID)->IDNext())
 		count++;
 	assert(importantLimboCount == count);
 #endif

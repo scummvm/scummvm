@@ -815,13 +815,13 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 		//  sprite
 		if (obj->isMoving()
 		        &&  obj->isMissile()
-		        &&  obj->missileFacing < 16) {
+		        &&  obj->_data.missileFacing < 16) {
 			int16   sprIndex;
 
-			if (obj->missileFacing < 8)
-				sprIndex = obj->missileFacing;
+			if (obj->_data.missileFacing < 8)
+				sprIndex = obj->_data.missileFacing;
 			else {
-				sprIndex = 16 - obj->missileFacing;
+				sprIndex = 16 - obj->_data.missileFacing;
 				sprInfo.flipped = true;
 			}
 
@@ -1066,10 +1066,10 @@ bool InventoryProto::dropAction(
 	    }
 	*/
 	//  If this object is on a TAG release it
-	if (dObjPtr->currentTAG != NoActiveItem) {
-		ActiveItem::activeItemAddress(dObjPtr->currentTAG)->release(
+	if (dObjPtr->_data.currentTAG != NoActiveItem) {
+		ActiveItem::activeItemAddress(dObjPtr->_data.currentTAG)->release(
 		    enactor, dObj);
-		dObjPtr->currentTAG = NoActiveItem;
+		dObjPtr->_data.currentTAG = NoActiveItem;
 	}
 
 	if (isWorld(loc.context)) {
@@ -1160,7 +1160,7 @@ bool InventoryProto::dropOnAction(
 
 		//  If we weren't thrown, try triggering the TAG
 		if (!dObjPtr->isMoving() && target->trigger(enactor, dObj))
-			dObjPtr->currentTAG = target->thisID();
+			dObjPtr->_data.currentTAG = target->thisID();
 
 		return true;
 	}
@@ -1242,7 +1242,7 @@ bool PhysicalContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & objectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -1267,7 +1267,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
 	return true;
 }
@@ -1283,7 +1283,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~objectOpen;
 	globalContainerList.setUpdate(dObjPtr->IDParent());
 	return true;
 }
@@ -1305,7 +1305,7 @@ bool PhysicalContainerProto::acceptLockToggleAction(
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Toggle locked bit
-	dObjPtr->objectFlags ^= objectLocked;
+	dObjPtr->_data.objectFlags ^= objectLocked;
 
 	return true;
 }
@@ -1323,7 +1323,7 @@ bool PhysicalContainerProto::acceptInsertionAction(
 	GameObject  *itemPtr = GameObject::objectAddress(item);
 
 	//  Place the object in the container (if possible)
-	if ((dObjPtr->objectFlags & objectLocked)
+	if ((dObjPtr->_data.objectFlags & objectLocked)
 	        ||  !dObjPtr->placeObject(enactor, item, true, num)) {
 		if (isWorld(dObjPtr->IDParent()))
 			dObjPtr->dropInventoryObject(itemPtr, num);
@@ -1456,7 +1456,7 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID withObj) {
 	GameObject *container = GameObject::objectAddress(withObj),
 	            *thisKey   = GameObject::objectAddress(dObj);
 
-	int16 keyID = thisKey->massCount > 0 ? thisKey->massCount : lockType;
+	int16 keyID = thisKey->_data.massCount > 0 ? thisKey->_data.massCount : lockType;
 
 	if (!container->acceptLockToggle(enactor, lockType)) {
 //		WriteStatusF( 3, "%s doesn't work", thisKey->objName() );
@@ -1470,7 +1470,7 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ObjectID withObj) {
 bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *withTAI) {
 	GameObject *thisKey   = GameObject::objectAddress(dObj);
 
-	int16 keyID = thisKey->massCount > 0 ? thisKey->massCount : lockType;
+	int16 keyID = thisKey->_data.massCount > 0 ? thisKey->_data.massCount : lockType;
 
 	if (!withTAI->acceptLockToggle(enactor, keyID)) {
 //		WriteStatusF( 3, "%s doesn't work", thisKey->objName() );
@@ -2990,7 +2990,7 @@ bool IntangibleContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & objectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -3014,7 +3014,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 	//  Perform appropriate opening tasks
 	cn = CreateContainerNode(enactor, false);
 	cn->markForShow();
-//	dObjPtr->objectFlags |= GameObject::objectOpen;          //  Set open bit;
+//	dObjPtr->_data.objectFlags |= GameObject::objectOpen;          //  Set open bit;
 
 	return true;
 }
@@ -3029,7 +3029,7 @@ bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-//	dObjPtr->objectFlags &= ~GameObject::objectOpen;
+//	dObjPtr->_data.objectFlags &= ~GameObject::objectOpen;
 
 	return true;
 }
