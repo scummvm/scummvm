@@ -292,9 +292,9 @@ public:
     CInterface: Class that handles indicators for the interface
  * ===================================================================== */
 
-class CMassWeightIndicator : public DNode {
+class CMassWeightIndicator {
 private:
-	static DList indList;
+	static Common::List<CMassWeightIndicator *> indList;
 	GameObject *containerObject;
 
 public:
