@@ -127,7 +127,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 	case builtinTypeObject:
 
 		//  Get the address of a game object using the ID
-		obj = (GameObject *)addr;
+		obj = ((ObjectData *)addr)->obj;
 		script = obj->scriptClass();
 		*callTab = &actorCFuncs;
 
