@@ -20116,8 +20116,30 @@ static const uint16 sq1vgaPatchSpanishMessages5[] = {
 	PATCH_END
 };
 
+// The PC EGA and Amiga versions contain an active debugging hotkey, ALT+N,
+//  which either crashes the game by trying to load the missing sysLogger script
+//  or brings up a series of unskippable bug-reporting dialogs and crashes in
+//  other ways. As in GK2, we just patch this out.
+//
+// Applies to: English PC EGA, Amiga
+// Responsible method: sq1:handleEvent
+static const uint16 sq1vgaSysLoggerHotKeySignature[] = {
+	SIG_MAGICDWORD,
+	0x34, SIG_UINT16(0x3100),       // ldi 3100 [ ALT+N ]
+	0x1a,                           // eq?
+	0x30,                           // bnt
+	SIG_END
+};
+
+static const uint16 sq1vgaSysLoggerHotKeyPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x32,                           // jmp
+	PATCH_END
+};
+
 //          script, description,                                      signature                                   patch
 static const SciScriptPatcherEntry sq1vgaSignatures[] = {
+	{  true,     0, "remove alt+n syslogger hotkey",               1, sq1vgaSysLoggerHotKeySignature,             sq1vgaSysLoggerHotKeyPatch },
 	{  true,    28, "orat sounds",                                 1, sq1vgaSignatureOratSounds,                  sq1vgaPatchOratSounds },
 	{  true,    40, "taste pink ship",                             1, sq1vgaSignatureTastePinkShip,               sq1vgaPatchTastePinkShip },
 	{  true,    40, "tiny's sign",                                 1, sq1vgaSignatureTinysSign,                   sq1vgaPatchTinysSign },
