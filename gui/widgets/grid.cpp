@@ -171,6 +171,7 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	_gridItemWidth = _thumbnailWidth;
 	
 	_scrollPos = 0 * (_gridItemHeight + _gridYSpacing);
+	_firstVisibleItem = 0;
 }
 
 void GridWidget::setEntryList(Common::Array<GridItemInfo> *list) {
@@ -244,22 +245,17 @@ bool GridWidget::calcVisibleEntries() {
 	int nFirstVisibleItem = 0;
 	int nItemsOnScreen = 0;
 
-	nFirstVisibleItem = _itemsPerRow * ((int)ceil(-_scrollPos / (float)(_gridItemHeight + _gridYSpacing)) - 1);
-	nFirstVisibleItem = (nFirstVisibleItem < 0) ? 0 : nFirstVisibleItem;
 	nItemsOnScreen = (3 + (_scrollWindowHeight / (_gridItemHeight + _gridYSpacing))) * (_itemsPerRow);
 
-	if ((nFirstVisibleItem != _firstVisibleItem) || (nItemsOnScreen != _itemsOnScreen)) {
-		needsReload = true;
-		_firstVisibleItem = nFirstVisibleItem;
-		_itemsOnScreen = nItemsOnScreen;
+	needsReload = true;
+	_itemsOnScreen = nItemsOnScreen;
 
-		int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size()-1);
+	int toRender = MIN(_firstVisibleItem + _itemsOnScreen, (int)_allEntries.size()-1);
 
-		_visibleEntries.clear();
-		for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
-			GridItemInfo *iter = _allEntries.begin() + ind;
-			_visibleEntries.push_back(*iter);
-		}
+	_visibleEntries.clear();
+	for (int ind = _firstVisibleItem; ind < toRender; ++ind) {
+		GridItemInfo *iter = _allEntries.begin() + ind;
+		_visibleEntries.push_back(*iter);
 	}
 
 	return needsReload;
@@ -332,6 +328,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 	if (_gridItems.front()->getRelY() < -2 * (_gridItemHeight + _gridYSpacing)) {
 		needsReload = true;
+		_firstVisibleItem += _itemsPerRow;
 		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
 			GridItemWidget *item = *it;
 			item->move(0, _gridItemHeight + _gridYSpacing);
@@ -340,6 +337,7 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 
 	else if (_gridItems.front()->getRelY() > 50 - (_gridItemHeight + _gridYSpacing)) {
 		needsReload = true;
+		_firstVisibleItem -= _itemsPerRow;
 		for (auto it = _gridItems.begin(); it != _gridItems.end(); ++it) {
 			GridItemWidget *item = *it;
 			item->move(0, -(_gridItemHeight + _gridYSpacing));
@@ -393,6 +391,9 @@ void GridWidget::reflowLayout() {
 
 	int row = 0;
 	int col = 0;
+
+	_firstVisibleItem = _itemsPerRow * ((int)ceil(-_scrollPos / (float)(_gridItemHeight + _gridYSpacing)) - 1);
+	_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
