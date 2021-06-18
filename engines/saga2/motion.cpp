@@ -268,8 +268,8 @@ bool unstickObject(GameObject *obj) {
 
 		//  If the surface height is too far away from the sample
 		//  height, then ignore it.
-		if (tHeight > pos.z + maxStepHeight
-		        ||  tHeight < pos.z - maxStepHeight * 4) continue;
+		if (tHeight > pos.z + kMaxStepHeight
+		        ||  tHeight < pos.z - kMaxStepHeight * 4) continue;
 
 		//  Recompute the coordinate
 		dz = tHeight - objZ;
@@ -324,8 +324,8 @@ bool unstickObject(GameObject *obj) {
 					int16       tHeight;
 
 					tHeight = tileSlopeHeight(pos, obj);
-					if (tHeight <= pos.z + maxStepHeight
-					        &&  tHeight >= pos.z - maxStepHeight * 4) {
+					if (tHeight <= pos.z + kMaxStepHeight
+					        &&  tHeight >= pos.z - kMaxStepHeight * 4) {
 						pos.z = tHeight;
 						obj->move(pos);
 						return true;
@@ -2466,7 +2466,7 @@ bool MotionTask::nextWayPoint(void) {
 			//  use dumb pathfinding until the pathfinder finishes it's task.
 
 			if ((finalTarget - object->location).quickHDistance() > 0
-			        ||  abs(finalTarget.z - object->location.z) > maxStepHeight) {
+			        ||  abs(finalTarget.z - object->location.z) > kMaxStepHeight) {
 				//  If no pathfind in progress
 				if ((flags & pathFind)
 				        &&  !(flags & finalPath)
@@ -2621,7 +2621,7 @@ void MotionTask::walkAction(void) {
 
 			//  If we're not already there, then proceed towards
 			//  the target.
-			if (targetDist > 0 || abs(targetVector.z) > maxStepHeight)
+			if (targetDist > 0 || abs(targetVector.z) > kMaxStepHeight)
 				break;
 		}
 
@@ -2681,7 +2681,7 @@ void MotionTask::walkAction(void) {
 
 	if (moveTaskDone || moveTaskWaiting) {
 		movementDirection = a->currentFacing;
-	} else if (targetDist == 0 && abs(targetVector.z) > maxStepHeight) {
+	} else if (targetDist == 0 && abs(targetVector.z) > kMaxStepHeight) {
 		if (pathFindTask)
 			moveTaskWaiting = true;
 		else {
@@ -2712,7 +2712,7 @@ void MotionTask::walkAction(void) {
 			//  Test the terrain to see if we can go there.
 			if ((blockageType = checkWalkable(object, newPos)) != false) {
 				//  Try stepping up to a higher terrain too.
-				newPos.z = object->location.z + maxStepHeight;
+				newPos.z = object->location.z + kMaxStepHeight;
 				if (checkWalkable(object, newPos) != blockageNone) {
 					//  If there is a path find task pending, put the walk action
 					//  on hold until it finishes, else, abort the walk action.
@@ -2749,7 +2749,7 @@ void MotionTask::walkAction(void) {
 		//  Check the terrain in various directions.
 		//  Check in the forward direction first, at various heights
 
-		for (height = 0; height <= maxStepHeight; height += maxSmoothStep) {
+		for (height = 0; height <= kMaxStepHeight; height += kMaxSmoothStep) {
 			//  This code has him move along the exact direction
 			//  vector, even if it's not aligned with one of the
 			//  cardinal directions.
@@ -2771,7 +2771,7 @@ void MotionTask::walkAction(void) {
 			int16   leftDir = spinLeft(movementDirection),
 			        rightDir = spinRight(movementDirection);
 
-			for (height = 0; height <= maxStepHeight; height += 8) {
+			for (height = 0; height <= kMaxStepHeight; height += 8) {
 				if (checkWalk(rightDir, speedScale, height, newPos)) {
 					movementDirection = rightDir;
 					foundPath = true;
@@ -2887,7 +2887,7 @@ void MotionTask::walkAction(void) {
 		//  This is a kludge to keep the character from
 		//  "jumping" as he climbs up a small step.
 
-		if (tHeight >= object->location.z - maxSmoothStep
+		if (tHeight >= object->location.z - kMaxSmoothStep
 		        * ((sti.surfaceTile != NULL
 		            && (sti.surfaceTile->combinedTerrainMask() & terrainStair))
 		           ?   4
@@ -4719,7 +4719,7 @@ supported:
 		if (motionType != motionTypeWalk
 		        ||  tHeight <= newPos.z
 		        ||  !(flags & inWater)) {
-			if (tHeight > newPos.z + maxStepHeight) {
+			if (tHeight > newPos.z + kMaxStepHeight) {
 				unstickObject(object);
 				tHeight = tileSlopeHeight(newPos, object, &sti);
 			}
@@ -4791,7 +4791,7 @@ falling:
 
 		tPos.u += objCrossSection;
 		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + maxStepHeight
+		if (tHeight <= tPos.z + kMaxStepHeight
 		        &&  tHeight >= tPos.z - gravity * 4) {
 			newPos = tPos;
 			goto supported;
@@ -4799,7 +4799,7 @@ falling:
 
 		tPos.u -= objCrossSection * 2;
 		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + maxStepHeight
+		if (tHeight <= tPos.z + kMaxStepHeight
 		        &&  tHeight >= tPos.z - gravity * 4) {
 			newPos = tPos;
 			goto supported;
@@ -4808,7 +4808,7 @@ falling:
 		tPos.u += objCrossSection;
 		tPos.v += objCrossSection;
 		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + maxStepHeight
+		if (tHeight <= tPos.z + kMaxStepHeight
 		        &&  tHeight >= tPos.z - gravity * 4) {
 			newPos = tPos;
 			goto supported;
@@ -4816,7 +4816,7 @@ falling:
 
 		tPos.v -= objCrossSection * 2;
 		tHeight = tileSlopeHeight(tPos, object, &sti);
-		if (tHeight <= tPos.z + maxStepHeight
+		if (tHeight <= tPos.z + kMaxStepHeight
 		        &&  tHeight >= tPos.z - gravity * 4) {
 			newPos = tPos;
 			goto supported;
@@ -4941,7 +4941,7 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 			}
 
 			if (loc.z
-			        <   tileSlopeHeight(a->getLocation(), a) + maxStepHeight)
+			        <   tileSlopeHeight(a->getLocation(), a) + kMaxStepHeight)
 				MotionTask::upLadder(*a);
 			else
 				MotionTask::downLadder(*a);

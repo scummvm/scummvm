@@ -917,7 +917,7 @@ uint32 tileTerrain(
 
 				//  If only checking the top of raised terrain treat it
 				//  as if it were normal terrain.
-				if (minZ + maxStepHeight >= tileMaxZ) {
+				if (minZ + kMaxStepHeight >= tileMaxZ) {
 					if (tileFgdTerrain & terrainSupportingRaised)
 						tileFgdTerrain = terrainNormal;
 					if (tileBgdTerrain & terrainSupportingRaised)
@@ -934,7 +934,7 @@ uint32 tileTerrain(
 				//  catwalks and other surfaces which have no bottom.
 
 				if ((terrainResult & terrainSolidSurface)
-				        &&  height > minZ + maxStepHeight) {
+				        &&  height > minZ + kMaxStepHeight) {
 					terrainResult |= terrainStone;
 				}
 
@@ -1594,7 +1594,7 @@ big_break:
 
 			//  If the height difference is too great skip this tile
 			//  position
-			if (abs(quantizedCoords.z - startingCoords.z) > maxStepHeight)
+			if (abs(quantizedCoords.z - startingCoords.z) > kMaxStepHeight)
 				continue;
 
 			//  Compute initial cost based upon the distance from the
@@ -1646,7 +1646,7 @@ void PathRequest::finish(void) {
 
 				if (cell->direction != dirInvalid) {
 					if (cell->direction != prevDir
-					        ||  abs(cell->height - prevHeight) > maxStepHeight) {
+					        ||  abs(cell->height - prevHeight) > kMaxStepHeight) {
 						if (res <= tempResult) break;
 
 						coords.u =
@@ -1871,7 +1871,7 @@ PathResult PathRequest::findPath(void) {
 				                &testPlatform);
 
 				//  Determine if elevation change is too great
-				if (abs(testPt.z - prevZ) <= maxStepHeight)
+				if (abs(testPt.z - prevZ) <= kMaxStepHeight)
 					prevZ = testPt.z;
 				else
 					goto big_continue;
@@ -1917,7 +1917,7 @@ PathResult PathRequest::findPath(void) {
 							        &&  trv->min.v < actorVolume.max.v
 							        &&  actorVolume.min.v < trv->max.v
 							        &&  trv->min.z < actorVolume.max.z
-							        &&      actorVolume.min.z + maxStepHeight
+							        &&      actorVolume.min.z + kMaxStepHeight
 							        <   trv->max.z)
 								goto big_continue;
 						}
@@ -2002,8 +2002,8 @@ PathResult PathRequest::findPath(void) {
 			//  (i.e. don't jmup off of cliffs). Also we can
 			//  only climb steps below a certain height.
 
-//			if (   testPt.z < centerPt.z - maxJumpStep
-//				||    testPt.z > centerPt.z + maxStepHeight)
+//			if (   testPt.z < centerPt.z - kMaxJumpStep
+//				||    testPt.z > centerPt.z + kMaxStepHeight)
 //					continue;
 
 			//  Turns are expensive, the sharper turns are more so.
@@ -2136,7 +2136,7 @@ bool DestinationPathRequest::setCenter(
 		bestDist = centerCost;
 
 		//  If we're at target square, then we're done!
-		if (dist == 0 && zDist <= maxStepHeight) {
+		if (dist == 0 && zDist <= kMaxStepHeight) {
 			flags |= PathRequest::completed;
 
 			//  Return true to indicate that the path finding is done.
@@ -2541,7 +2541,7 @@ TilePoint selectNearbySite(
 		//  If the object is higher than the actor's head, or
 		//  low enough to step over, then ignore it.
 		if (objLoc.z >= startingCoords.z + 80
-		        ||  objLoc.z + objProto->height <= startingCoords.z + maxStepHeight / 2) {
+		        ||  objLoc.z + objProto->height <= startingCoords.z + kMaxStepHeight / 2) {
 			continue;
 		}
 
@@ -2665,7 +2665,7 @@ TilePoint selectNearbySite(
 			testPt.z =  tileSlopeHeight(testPt, mapNum, 68, &sti);
 
 			//  If it's too high to step, then don't continue
-//			if (testPt.z - qi.z > maxStepHeight) continue;
+//			if (testPt.z - qi.z > kMaxStepHeight) continue;
 			fromSubPt = centerPt;
 			for (i = 0; i < kTileSubSize; i++) {
 				int16       deltaZ;
@@ -2677,7 +2677,7 @@ TilePoint selectNearbySite(
 				deltaZ = toSubPt.z - fromSubPt.z;
 
 				//  If it's too high to step, then don't continue
-				if (deltaZ > maxStepHeight || deltaZ < -(maxStepHeight * 2)) {
+				if (deltaZ > kMaxStepHeight || deltaZ < -(kMaxStepHeight * 2)) {
 					traversable = false;
 					break;
 				}
@@ -2877,7 +2877,7 @@ bool checkPath(
 
 			//  If the height difference is too great skip this tile
 			//  position
-			if (abs(quantizedCoords.z - startingCoords.z) > maxStepHeight)
+			if (abs(quantizedCoords.z - startingCoords.z) > kMaxStepHeight)
 				continue;
 
 			//  Compute initial cost based upon the distance from the
@@ -2971,7 +2971,7 @@ bool checkPath(
 				deltaZ = toSubPt.z - fromSubPt.z;
 
 				//  If it's too high to step, then don't continue
-				if (deltaZ > maxStepHeight || deltaZ < -(maxStepHeight * 2)) {
+				if (deltaZ > kMaxStepHeight || deltaZ < -(kMaxStepHeight * 2)) {
 					traversable = false;
 					break;
 				}
@@ -3004,7 +3004,7 @@ bool checkPath(
 				//  If the resulting height is significantly different
 				//  from the destination height, assume we're on a
 				//  different level and return false.
-				return abs(testPt.z - destCoords.z) <= maxStepHeight;
+				return abs(testPt.z - destCoords.z) <= kMaxStepHeight;
 			}
 
 

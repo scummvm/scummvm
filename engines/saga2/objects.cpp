@@ -1442,7 +1442,7 @@ void GameObject::updateState(void) {
 
 	if (objectFlags & objectFloating) return;
 
-	if (tHeight > location.z + maxStepHeight) {
+	if (tHeight > location.z + kMaxStepHeight) {
 		unstickObject(this);
 		tHeight = tileSlopeHeight(location, this, &sti);
 	}
@@ -4200,7 +4200,7 @@ GameObject *objectCollision(GameObject *obj, GameWorld *world, const TilePoint &
 	volume.max.z = loc.z + proto->height;
 
 	//  Adjust MIN Z for the fact that they can step over obstacles.
-	if (isActor(obj)) volume.min.z += maxStepHeight / 2;
+	if (isActor(obj)) volume.min.z += kMaxStepHeight / 2;
 
 	//  Constructor
 	CircularObjectIterator  iter(world, loc, proto->crossSection + 32);

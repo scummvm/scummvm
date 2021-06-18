@@ -419,9 +419,9 @@ bool ActorProto::acceptDamageAction(
 		return acceptHealing(dObj, enactor, -damage);
 
 	//  Apply applicable armor adjustments
-	if (dType == damageImpact
-	        ||  dType == damageSlash
-	        ||  dType == damageProjectile) {
+	if (dType == kDamageImpact
+	        ||  dType == kDamageSlash
+	        ||  dType == kDamageProjectile) {
 		ArmorAttributes     armorAttribs;
 
 		a->totalArmorAttributes(armorAttribs);

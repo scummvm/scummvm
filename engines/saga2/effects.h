@@ -83,26 +83,26 @@ enum effectTypes {
 //
 
 enum effectResistTypes {
-	resistOther     = damageOther,
+	resistOther     = kDamageOther,
 	// Combat resist
-	resistImpact    = damageImpact,
-	resistSlash     = damageSlash,
-	resistProjectile = damageProjectile,
+	resistImpact    = kDamageImpact,
+	resistSlash     = kDamageSlash,
+	resistProjectile = kDamageProjectile,
 	// Magic resist
-	resistFire      = damageFire,
-	resistAcid      = damageAcid,
-	resistHeat      = damageHeat,
-	resistCold      = damageCold,
-	resistLightning = damageLightning,
-	resistPoison    = damagePoison,
+	resistFire      = kDamageFire,
+	resistAcid      = kDamageAcid,
+	resistHeat      = kDamageHeat,
+	resistCold      = kDamageCold,
+	resistLightning = kDamageLightning,
+	resistPoison    = kDamagePoison,
 	// Other magic resist
-	resistMental    = damageMental,
-	resistToUndead  = damageToUndead,
-	resistDirMagic  = damageDirMagic,
+	resistMental    = kDamageMental,
+	resistToUndead  = kDamageToUndead,
+	resistDirMagic  = kDamageDirMagic,
 	// Physiological Damage
-	resistStarve    = damageStarve,
+	resistStarve    = kDamageStarve,
 	// other
-	resistEnergy    = damageEnergy,
+	resistEnergy    = kDamageEnergy,
 };
 
 //
@@ -339,7 +339,7 @@ inline bool isSaveable(uint16 enchID) {
 //  Determine whether a damage type is magical
 
 inline bool isMagicDamage(effectDamageTypes t) {
-	return t >= damageFire && t <= damageDirMagic;
+	return t >= kDamageFire && t <= kDamageDirMagic;
 }
 
 #define Forever (255)

@@ -1018,7 +1018,7 @@ GameObject *objectNollision(Effectron *obj, const TilePoint &loc) {
 	volume.max.z = loc.z + obj->hgtCall();
 
 	//  Adjust MIN Z for the fact that they can step over obstacles.
-	//if ( isActor( obj )) volume.min.z += maxStepHeight / 2;
+	//if ( isActor( obj )) volume.min.z += kMaxStepHeight / 2;
 
 	//  Constructor
 	CircularObjectIterator  iter(obj->world(), loc, obj->brdCall() + 32);

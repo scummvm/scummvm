@@ -2893,37 +2893,37 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		case effectResist:
 
 			switch (eSubType) {
-			case damageImpact:
+			case kDamageImpact:
 				newIconFlags[iconResistImpact] = duration;
 				break;
-			case damageSlash:
+			case kDamageSlash:
 				newIconFlags[iconResistSlash] = duration;
 				break;
-			case damageProjectile:
+			case kDamageProjectile:
 				newIconFlags[iconResistProjectile] = duration;
 				break;
-			case damageFire:
+			case kDamageFire:
 				newIconFlags[iconResistFire] = duration;
 				break;
-			case damageAcid:
+			case kDamageAcid:
 				newIconFlags[iconResistAcid] = duration;
 				break;
-			case damageHeat:
+			case kDamageHeat:
 				newIconFlags[iconResistHeat] = duration;
 				break;
-			case damageCold:
+			case kDamageCold:
 				newIconFlags[iconResistCold] = duration;
 				break;
-			case damageLightning:
+			case kDamageLightning:
 				newIconFlags[iconResistLightning] = duration;
 				break;
-			case damagePoison:
+			case kDamagePoison:
 				newIconFlags[iconResistPoison] = duration;
 				break;
-			case damageMental:
+			case kDamageMental:
 				newIconFlags[iconResistPsionic] = duration;
 				break;
-			case damageDirMagic:
+			case kDamageDirMagic:
 				newIconFlags[iconResistDirectMagic] = duration;
 				break;
 			}
@@ -2931,31 +2931,31 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 
 		case effectImmune:
 			switch (eSubType) {
-			case damageImpact:
+			case kDamageImpact:
 				newIconFlags[iconIronskin] = duration;
 				break;
-			case damageSlash:
+			case kDamageSlash:
 				newIconFlags[iconIronskin] = duration;
 				break;
-			case damageFire:
+			case kDamageFire:
 				newIconFlags[iconImmuneFire] = duration;
 				break;
-			case damageAcid:
+			case kDamageAcid:
 				newIconFlags[iconImmuneAcid] = duration;
 				break;
-			case damageHeat:
+			case kDamageHeat:
 				newIconFlags[iconImmuneHeat] = duration;
 				break;
-			case damageCold:
+			case kDamageCold:
 				newIconFlags[iconImmuneCold] = duration;
 				break;
-			case damageLightning:
+			case kDamageLightning:
 				newIconFlags[iconImmuneLightning] = duration;
 				break;
-			case damagePoison:
+			case kDamagePoison:
 				newIconFlags[iconImmunePoison] = duration;
 				break;
-			case damageMental:
+			case kDamageMental:
 				newIconFlags[iconImmunePsionic] = duration;
 				break;
 			}

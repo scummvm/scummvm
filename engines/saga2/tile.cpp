@@ -4161,8 +4161,8 @@ TilePoint pickTile(Point32 pos,
 	//  down levels, only search for surfaces which could be stepped
 	//  on by the protagonist.
 	mag = (coords - protagPos).quickHDistance();
-	zMin = protagPos.z - maxPickHeight - mag;
-	zMax = protagPos.z + maxPickHeight + mag;
+	zMin = protagPos.z - kMaxPickHeight - mag;
+	zMax = protagPos.z + kMaxPickHeight + mag;
 
 	//  Compute the coords of the actual tile that they clicked on.
 	tileCoords = coords >> kTileUVShift;
@@ -4184,7 +4184,7 @@ TilePoint pickTile(Point32 pos,
 	mt = curMap->lookupMeta(mCoords);
 
 	//  While we are less than the pick altitude
-	while (relPos.y < zMax + kTileDX + maxStepHeight - abs(relPos.x >> 1)) {
+	while (relPos.y < zMax + kTileDX + kMaxStepHeight - abs(relPos.x >> 1)) {
 		//  If there is a metatile on this spot
 		if (mt != nullptr) {
 			//  Iterate through all platforms
@@ -4213,7 +4213,7 @@ TilePoint pickTile(Point32 pos,
 					continue;
 
 				//  Reject the tile if it's too high.
-				if (sti.surfaceHeight > zMax + maxStepHeight) continue;
+				if (sti.surfaceHeight > zMax + kMaxStepHeight) continue;
 
 				//  Reject the tile if mouse position is below lower tile
 				//  boundary
@@ -4299,8 +4299,8 @@ TilePoint pickTile(Point32 pos,
 
 		//  Compute new altitude range based upon the tile position
 		//  relative to the protaganist's position.
-		zMin = protagPos.z - maxPickHeight - (coords - protagPos).quickHDistance();
-		zMax = protagPos.z + maxPickHeight + (coords - protagPos).quickHDistance();
+		zMin = protagPos.z - kMaxPickHeight - (coords - protagPos).quickHDistance();
+		zMax = protagPos.z + kMaxPickHeight + (coords - protagPos).quickHDistance();
 	}
 
 	//  If no tile was found, return the default.

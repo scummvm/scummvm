@@ -50,23 +50,23 @@ extern void updateIndicators(void);      //  Kludge, put in intrface.h later (go
 int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 	switch (dt) {
 
-	case damageImpact     :
-	case damageSlash      :
-	case damageProjectile :
+	case kDamageImpact     :
+	case kDamageSlash      :
+	case kDamageProjectile :
 		return a->getStats()->getSkillLevel(skillIDBrawn);
-	case damageFire       :
-	case damageAcid       :
-	case damageHeat       :
-	case damageCold       :
-	case damageLightning  :
-	case damagePoison     :
-	case damageMental     :
-	case damageToUndead   :
+	case kDamageFire       :
+	case kDamageAcid       :
+	case kDamageHeat       :
+	case kDamageCold       :
+	case kDamageLightning  :
+	case kDamagePoison     :
+	case kDamageMental     :
+	case kDamageToUndead   :
 		return a->getStats()->getSkillLevel(skillIDSpellcraft);
-	case damageDirMagic   :
-	case damageOther      :
-	case damageStarve     :
-	case damageEnergy     :
+	case kDamageDirMagic   :
+	case kDamageOther      :
+	case kDamageStarve     :
+	case kDamageEnergy     :
 		return 0;
 	}
 	return 0;
@@ -148,11 +148,11 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 		{
 			int16 &maxVit = (a->getBaseStats())->vitality;
 			maxVit = clamp(0, maxVit - amt, absoluteMaximumVitality);
-			a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, damageOther);
+			a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, kDamageOther);
 		}
 		break;
 	case drainsVitality:
-		a->acceptDamage(cst->thisID(), amt, damageOther);
+		a->acceptDamage(cst->thisID(), amt, kDamageOther);
 		break;
 	default:
 		break;
@@ -437,7 +437,7 @@ SPECIALSPELL(DeathSpell) {
 		if (!a->makeSavingThrow()) {
 			a->acceptDamage(cst->thisID(),
 			                a->effectiveStats.vitality,
-			                damageEnergy, 1, 2, 0);
+			                kDamageEnergy, 1, 2, 0);
 			a->die();
 		}
 	}
