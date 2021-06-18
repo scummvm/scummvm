@@ -1262,7 +1262,6 @@ void ThreadList::cleanup(void) {
 void ThreadList::deleteThread(Thread *p) {
 	for (uint i = 0; i < kNumThreads; i++) {
 		if (_list[i] == p) {
-			delete _list[i];
 			_list[i] = nullptr;
 		}
 	}
@@ -1498,9 +1497,7 @@ Thread::~Thread() {
 	//  Deallocate the thread stack
 	free(stackBase);
 
-	// XXX: Deleting like this causes a crash
-	warning("STUB: Thread::~Thread()");
-	//deleteThread(this);
+	deleteThread(this);
 }
 
 //-----------------------------------------------------------------------
