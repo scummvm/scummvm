@@ -144,6 +144,7 @@ end({spc}+{identifier})?	{
 ^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
 field		{ count(); return tFIELD; }
+frame		{ count(); return tFRAME; }
 global		{ count(); return tGLOBAL; }
 go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
@@ -164,7 +165,6 @@ of			{ count(); return tOF; }
 on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
 or			{ count(); return tOR; }
-play{spc}+frame	{ count(); return tPLAY; }
 play		{ count(); return tPLAY; }
 playAccel	{ count(); return tPLAYACCEL; }
 previous	{ count(); return tPREVIOUS; }
