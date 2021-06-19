@@ -381,7 +381,9 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act->addDefaultInputMapping("HOME"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 		gameKeyMap->addAction(act);
-	} else if (gameId == "tehran2016") {
+	} else if (gameId == "darksummer" || 
+		gameId == "tehran2016"
+	) {
 		act = new Action("HINT", _("Show hints"));
 		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
 		act->addDefaultInputMapping("SPACE"); // original keyboard
@@ -769,6 +771,33 @@ inline Common::KeymapArray getWintermuteKeymaps(const char *target, const Common
 		act = new Action(kStandardActionEE, _("???"));
 		act->setKeyEvent(KeyState(KEYCODE_n, 'n'));
 		act->addDefaultInputMapping("n"); // original keyboard
+		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
+		gameKeyMap->addAction(act);
+	} else if (gameId == "awakening") {
+		act = new Action("HINT", _("Show hints"));
+		act->setKeyEvent(KeyState(KEYCODE_SPACE, ASCII_SPACE));
+		act->addDefaultInputMapping("SPACE"); // original keyboard
+		act->addDefaultInputMapping("MOUSE_MIDDLE"); // extra mouse
+		act->addDefaultInputMapping("JOY_Y"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("ACTNXT", _("Next action"));
+		act->setMouseWheelDownEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN"); // original mouse
+		act->addDefaultInputMapping("PAGEDOWN"); // extra keyboard
+		act->addDefaultInputMapping("JOY_LEFT"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action("ACTPRV", _("Previous action"));
+		act->setMouseWheelUpEvent();
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP"); // original mouse
+		act->addDefaultInputMapping("PAGEUP"); // extra keyboard
+		act->addDefaultInputMapping("JOY_DOWN"); // extra joy
+		gameKeyMap->addAction(act);
+
+		act = new Action(kStandardActionEE, _("???"));
+		act->setKeyEvent(KEYCODE_END);
+		act->addDefaultInputMapping("END"); // original keyboard
 		//TODO: extra joy control, e.g. "JOY_R+JOY_B"
 		gameKeyMap->addAction(act);
 	} else if (gameId == "carolreed4") {
