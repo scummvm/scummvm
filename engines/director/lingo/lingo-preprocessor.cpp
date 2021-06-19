@@ -169,9 +169,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 	s = tmp.c_str();
 	res.clear();
 
-	// Preprocess if statements
-	// Here we add ' end if' at end of each statement, which lets us
-	// make the grammar very straightforward
 	Common::String line, tok, res1;
 	int linenumber = 1;
 	bool defFound = false;
