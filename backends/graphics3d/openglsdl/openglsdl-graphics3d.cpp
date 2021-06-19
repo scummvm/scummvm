@@ -233,9 +233,6 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 	debug("INFO: OpenGL Double Buffer: %d", glflag);
 	SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
 	debug("INFO: OpenGL Stencil buffer bits: %d", glflag);
-#ifdef USE_GLEW
-	debug("INFO: GLEW Version: %s", glewGetString(GLEW_VERSION));
-#endif
 #ifdef USE_OPENGL_SHADERS
 	debug("INFO: GLSL version: %s", glGetString(GL_SHADING_LANGUAGE_VERSION));
 #endif
@@ -267,19 +264,6 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 		warning("SDL Error: %s", SDL_GetError());
 		g_system->quit();
 	}
-
-#ifdef USE_GLEW
-	GLenum err = glewInit();
-#ifdef GLEW_ERROR_NO_GLX_DISPLAY
-	if (err == GLEW_ERROR_NO_GLX_DISPLAY) {
-		// Wayland: https://github.com/nigels-com/glew/issues/172
-	} else
-#endif
-	if (err != GLEW_OK) {
-		warning("Error: %s", glewGetErrorString(err));
-		g_system->quit();
-	}
-#endif
 
 #if SDL_VERSION_ATLEAST(2, 0, 1)
 	int obtainedWidth = 0, obtainedHeight = 0;

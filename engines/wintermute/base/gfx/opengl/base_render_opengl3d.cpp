@@ -37,7 +37,7 @@
 #include "engines/wintermute/base/gfx/opengl/meshx_opengl.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl.h"
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLAD)
 // We need SDL.h for SDL_GL_GetProcAddress.
 #include "backends/platform/sdl/sdl-sys.h"
 PFNGLACTIVETEXTUREPROC glActiveTexturePtr;
@@ -56,7 +56,7 @@ BaseRenderOpenGL3D::BaseRenderOpenGL3D(BaseGame *inGame)
 	_lightDirections.resize(maximumLightsCount());
 	(void)_spriteBatchMode; // silence warning
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLAD)
 	union {
 		void *obj_ptr;
 		void (APIENTRY *func_ptr)();
@@ -476,7 +476,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glPolygonMode(GL_FRONT, GL_FILL);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLAD)
 		glActiveTexturePtr(GL_TEXTURE0);
 #elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE0);
@@ -491,7 +491,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 		glTexEnvf(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_TEXTURE);
 		glTexEnvf(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR);
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLAD)
 		glActiveTexturePtr(GL_TEXTURE1);
 #elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE1);
@@ -500,7 +500,7 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 #endif
 		glDisable(GL_TEXTURE_2D);
 
-#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLEW)
+#if defined(__MINGW32__) && defined (SDL_BACKEND) && !defined(USE_GLAD)
 		glActiveTexturePtr(GL_TEXTURE0);
 #elif defined(__MORPHOS__)
 		glActiveTextureARB(GL_TEXTURE0);

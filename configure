@@ -159,7 +159,6 @@ _theoradec=auto
 _faad=auto
 _fluidsynth=auto
 _fluidlite=auto
-_glew=auto
 _opengl_mode=auto
 _opengl_game=auto
 _opengl_game_classic=auto
@@ -952,9 +951,6 @@ Optional Libraries:
   --disable-opengl-game-shaders disable use of modern OpenGL with shaders
   --force-opengl-game-es2       only detect OpenGL ES2
 
-  --with-glew-prefix=DIR   prefix where GLEW is installed (optional)
-  --disable-glew           disable GLEW support [autodetect]
-
   --with-jpeg-prefix=DIR   Prefix where libjpeg is installed (optional)
   --disable-jpeg           disable JPEG decoder [autodetect]
 
@@ -1167,8 +1163,6 @@ for ac_option in $@; do
 	--disable-tts)                _tts=no                ;;
 	--enable-gtk)                 _gtk=yes               ;;
 	--disable-gtk)                _gtk=no                ;;
-	--enable-glew)                _glew=yes              ;;
-	--disable-glew)               _glew=no               ;;
 	--disable-opengl-game)        _opengl_game=no        ;;
 	--disable-opengl-game-classic) _opengl_game_classic=no ;;
 	--disable-opengl-game-shaders) _opengl_game_shaders=no ;;
@@ -1322,11 +1316,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OPENGL_CFLAGS="-I$arg/include"
 		OPENGL_LIBS="-L$arg/lib"
-		;;
-	--with-glew-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		GLEW_CFLAGS="-I$arg/include"
-		GLEW_LIBS="-L$arg/lib"
 		;;
 	--with-discord-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -5427,52 +5416,6 @@ esac
 
 
 #
-# Check for GLEW
-#
-echocheck "GL Extension Wrangler (GLEW)"
-if test "$_glew" != "no" && test "$_opengl" = "no"; then
-	_glew=no
-	echo "cannot use GLEW without OpenGL"
-elif test "$_glew" != "no" && test "$_opengl_game_es2" = "yes"; then
-	_glew=no
-	echo "not needed with OpenGL ES v2"
-else
-
-	case $_host_os in
-	mingw*)
-		_GLEW_CFLAGS="-DGLEW_STATIC"
-		_GLEW_LIBS="-lglew32 -lopengl32"
-		;;
-	*)
-		_GLEW_LIBS="-lGLEW"
-		;;
-	esac
-
-	if test "$_glew" = auto; then
-		_glew=no
-		cat > $TMPC << EOF
-#include <GL/glew.h>
-int main(void) {
-	glewInit();
-	return 0;
-}
-EOF
-		cc_check $DEFINES $GLEW_CFLAGS $_GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS && _glew=yes
-	fi
-
-	if test "$_glew" = yes ; then
-		append_var LIBS "$GLEW_LIBS $_GLEW_LIBS"
-		append_var INCLUDES "$GLEW_CFLAGS $_GLEW_CFLAGS"
-		append_var LIBS_3D "$GLEW_LIBS $_GLEW_LIBS"
-	fi
-
-	echo "$_glew"
-fi
-
-define_in_config_if_yes "$_glew" "USE_GLEW"
-
-
-#
 # Check for OpenGL (ES) for game
 #
 echocheck "OpenGL for game"
@@ -5551,11 +5494,7 @@ EOF
 			_opengl_game_classic=yes
 		fi
 		if test "$_opengl_game_shaders" = auto; then
-			_opengl_game_shaders=$_glew
-		fi
-		if test "$_opengl_game_shaders" = yes && test "$_opengl_game_es2" = no && test "$_glew" = no; then
-			echo "WARNING: OpenGL Shader support requires GLEW!"
-			_opengl_game_shaders=no
+			_opengl_game_shaders=yes
 		fi
 	elif test "$_opengl_game_es2" = "yes" ; then
 		append_var INCLUDES "$OPENGL_CFLAGS"

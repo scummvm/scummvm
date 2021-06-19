@@ -461,9 +461,6 @@ endif
 OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 endif
-ifdef USE_GLEW
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libGLEW.a
-endif
 
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every

@@ -25,7 +25,7 @@
 
 #if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
-#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
+#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
 #define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
 #include "graphics/opengl/framebuffer.h"
 #ifndef GL_ARB_framebuffer_object
@@ -54,7 +54,7 @@
 
 namespace OpenGL {
 
-#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
+#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
 static bool framebuffer_object_functions = false;
 static PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
 static PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
@@ -109,7 +109,7 @@ static void grabFramebufferObjectPointers() {
 	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorageMultisample");
 	glRenderbufferStorageMultisample = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)u.func_ptr;
 }
-#endif // defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
+#endif // defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
 
 
 
@@ -126,7 +126,7 @@ FrameBuffer::FrameBuffer(uint width, uint height) :
 		error("FrameBuffer Objects are not supported by the current OpenGL context");
 	}
 
-#if defined(SDL_BACKEND) && !defined(USE_GLEW) && !defined(USE_GLES2)
+#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
 	grabFramebufferObjectPointers();
 #endif
 

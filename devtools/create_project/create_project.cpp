@@ -337,7 +337,6 @@ int main(int argc, char *argv[]) {
 		setFeatureBuildState("opengl_game", setup.features, false);
 		setFeatureBuildState("opengl_shaders", setup.features, false);
 		setFeatureBuildState("opengles2", setup.features, false);
-		setFeatureBuildState("glew", setup.features, false);
 	}
 
 	// Disable engines for which we are missing dependencies
@@ -1084,7 +1083,6 @@ const Feature s_features[] = {
 	{   "libcurl",     "USE_LIBCURL", true, true,  "libcurl support" },
 	{    "sdlnet",     "USE_SDL_NET", true, true,  "SDL_net support" },
 	{   "discord",     "USE_DISCORD", true, false, "Discord support" },
-	{      "glew",        "USE_GLEW", true, true,  "GLEW support" },
 
 	// Feature flags
 	{             "bink",                      "USE_BINK", false, true,  "Bink video support" },
