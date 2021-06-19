@@ -1112,14 +1112,18 @@ PlayerActor *LivingPlayerActorIterator::first(void) {
 }
 
 PlayerActor *LivingPlayerActorIterator::next(void) {
+	if (index >= playerActors)
+		return nullptr;
+
 	Actor       *a = playerList[index].getActor();
 
-	while (a == NULL || a->isDead()) {
-		if (++index >= playerActors) break;
+	while (a == nullptr || a->isDead()) {
+		if (++index >= playerActors)
+			break;
 		a = playerList[index].getActor();
 	}
 
-	return (index < playerActors) ? &playerList[index++] : NULL;
+	return (index < playerActors) ? &playerList[index++] : nullptr;
 }
 
 } // end of namespace Saga2
