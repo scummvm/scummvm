@@ -44,6 +44,7 @@ struct RepeatWithToNode;
 struct NextRepeatNode;
 struct ExitRepeatNode;
 struct ExitNode;
+struct TellNode;
 struct AssertErrorNode;
 struct IntNode;
 struct FloatNode;
@@ -92,6 +93,7 @@ enum NodeType {
 	kNextRepeatNode,
 	kExitRepeatNode,
 	kExitNode,
+	kTellNode,
 	kAssertErrorNode,
 	kIntNode,
 	kFloatNode,
@@ -134,6 +136,7 @@ public:
 	virtual void visitNextRepeatNode(NextRepeatNode *node) = 0;
 	virtual void visitExitRepeatNode(ExitRepeatNode *node) = 0;
 	virtual void visitExitNode(ExitNode *node) = 0;
+	virtual void visitTellNode(TellNode *node) = 0;
 	virtual void visitAssertErrorNode(AssertErrorNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
@@ -473,6 +476,23 @@ struct ExitNode : StmtNode {
 	virtual ~ExitNode() {}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitExitNode(this);
+	}
+};
+
+/* TellNode */
+
+struct TellNode : StmtNode {
+	Node *target;
+	NodeList *stmts;
+
+	TellNode(Node *targetIn, NodeList *stmtsIn)
+		: StmtNode(kTellNode), target(targetIn), stmts(stmtsIn) {}
+	virtual ~TellNode() {
+		delete target;
+		deleteList(stmts);
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitTellNode(this);
 	}
 };
 

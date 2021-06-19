@@ -95,6 +95,7 @@ public:
 	virtual void visitNextRepeatNode(NextRepeatNode *node);
 	virtual void visitExitRepeatNode(ExitRepeatNode *node);
 	virtual void visitExitNode(ExitNode *node);
+	virtual void visitTellNode(TellNode *node);
 	virtual void visitAssertErrorNode(AssertErrorNode *node);
 	virtual void visitIntNode(IntNode *node);
 	virtual void visitFloatNode(FloatNode *node);

@@ -723,6 +723,15 @@ void LingoCompiler::visitExitNode(ExitNode *node) {
 	code1(LC::c_procret);
 }
 
+/* TellNode */
+
+void LingoCompiler::visitTellNode(TellNode *node) {
+	compile(node->target);
+	code1(LC::c_tell);
+	compileList(node->stmts);
+	code1(LC::c_telldone);
+}
+
 /* AssertErrorNode */
 
 void LingoCompiler::visitAssertErrorNode(AssertErrorNode *node) {
