@@ -33,7 +33,7 @@
 
 namespace Video {
 class SmackerDecoder;
-};
+}
 
 namespace Saga2 {
 
