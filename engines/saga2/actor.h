@@ -654,7 +654,7 @@ private:
 
 public:
 	//  Default constructor
-	Actor(void) {}
+	Actor(void);
 
 	//  Constructor - initial actor construction
 	Actor(const ResourceActor &res);
