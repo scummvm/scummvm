@@ -33,6 +33,10 @@
 
 namespace GUI {
 
+bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, Common::U32String token) {
+	return item.contains(token);
+}
+
 ListWidget::ListWidget(Dialog *boss, const String &name, const U32String &tooltip, uint32 cmd)
 	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
@@ -61,6 +65,9 @@ ListWidget::ListWidget(Dialog *boss, const String &name, const U32String &toolti
 	_quickSelect = true;
 	_editColor = ThemeEngine::kFontColorNormal;
 	_dictionarySelect = false;
+
+	_filterMatcher = ListWidgetDefaultMatcher;
+	_filterMatcherArg = nullptr;
 
 	_lastRead = -1;
 
@@ -97,6 +104,9 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const U32String
 	_quickSelect = true;
 	_editColor = ThemeEngine::kFontColorNormal;
 	_dictionarySelect = false;
+
+	_filterMatcher = ListWidgetDefaultMatcher;
+	_filterMatcherArg = nullptr;
 
 	_lastRead = -1;
 
@@ -757,8 +767,7 @@ void ListWidget::setFilter(const U32String &filter, bool redraw) {
 		_list = _dataList;
 		_listIndex.clear();
 	} else {
-		// Restrict the list to everything which contains all words in _filter
-		// as substrings, ignoring case.
+		// Restrict the list to everything which matches all tokens in _filter, ignoring case.
 
 		Common::U32StringTokenizer tok(_filter);
 		U32String tmp;
@@ -773,7 +782,7 @@ void ListWidget::setFilter(const U32String &filter, bool redraw) {
 			bool matches = true;
 			tok.reset();
 			while (!tok.empty()) {
-				if (!tmp.contains(tok.nextToken())) {
+				if (!_filterMatcher(_filterMatcherArg, n, tmp, tok.nextToken())) {
 					matches = false;
 					break;
 				}
