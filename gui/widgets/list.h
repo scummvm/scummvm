@@ -56,6 +56,8 @@ public:
 	typedef Common::Array<Common::U32String> U32StringArray;
 
 	typedef Common::Array<ThemeEngine::FontColor> ColorList;
+	
+	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, Common::U32String token);
 protected:
 	U32StringArray	_list;
 	U32StringArray		_dataList;
@@ -91,6 +93,9 @@ protected:
 
 	int				_lastRead;
 
+	FilterMatcher	_filterMatcher;
+	void			*_filterMatcherArg;
+
 public:
 	ListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
@@ -123,6 +128,7 @@ public:
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
+	void setFilterMatcher(FilterMatcher matcher, void *arg) { _filterMatcher = matcher; _filterMatcherArg = arg; }
 
 	// Made startEditMode/endEditMode for SaveLoadChooser
 	void startEditMode() override;
