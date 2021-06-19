@@ -148,7 +148,7 @@ bool Movie::processEvent(Common::Event &event) {
 			// D3 doesn't have both mouse up and down.
 			// But we still want to know if the mouse is down for press effects.
 			// Since we don't have mouse up and down before D3, then we use ActiveSprite
-			if (g_director->getVersion() < kFileVer400)
+			if (g_director->getVersion() < 400)
 				spriteId = sc->getActiveSpriteIDFromPos(pos);
 			else
 				spriteId = sc->getMouseSpriteIDFromPos(pos);

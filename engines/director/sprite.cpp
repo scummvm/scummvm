@@ -125,7 +125,7 @@ bool Sprite::shouldHilite() {
 	if (_moveable)
 		return false;
 
-	if (_ink == kInkTypeMatte)
+	if (g_director->getVersion() < 400 && _ink == kInkTypeMatte)
 		return true;
 
 	if (_cast) {
@@ -204,6 +204,7 @@ void Sprite::setCast(uint16 castId) {
 			// quite strange logic, but it's useful for now, but still we need to figure out the correct solution
 			if (_cast->_type == kCastButton || _cast->_type == kCastText) {
 				if (_cast->_boundingRect.isEmpty()) {
+					warning("Sprite::setCast(): trying to modify initialRect of cast with the first sprite size");
 					_cast->_boundingRect = Common::Rect(MAX<int>(_width, dims.width()), MAX<int>(_height, dims.height()));
 					_cast->_initialRect = _cast->_boundingRect;
 				}
