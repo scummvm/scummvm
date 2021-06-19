@@ -50,7 +50,7 @@ void GridItemWidget::attachEntry(Common::String key, Common::String description,
 	Common::String platform = "UNK";
 	domain->tryGetVal("language",language);
 	domain->tryGetVal("platform", platform);
-	_attachedEntries.push_back(GridItemInfo(gameid, engineid, description, language, platform));
+	_attachedEntries.push_back(GridItemInfo(key, gameid, engineid, description, language, platform));
 }
 
 void GridItemWidget::attachEntry(GridItemInfo &entry) {
@@ -88,8 +88,10 @@ void GridItemWidget::drawWidget() {
 	else
 		g_gui.theme()->drawWidgetBackground(Common::Rect(_x - 20, _y - 10, _x + _w + 20, _y + _h + 10), 
 										ThemeEngine::WidgetBackground::kGridItemBackground);
+	
 	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + kThumbnailWidth, _y + kThumbnailHeight), 
 										ThemeEngine::WidgetBackground::kThumbnailBackground);
+	
 	g_gui.theme()->drawSurface(Common::Point(_x, _y), 
 								_thumbGfx, true);
 
@@ -101,7 +103,7 @@ void GridItemWidget::drawWidget() {
 
 	const Graphics::ManagedSurface *flagGfx = _grid->languageToSurface(_activeEntry->language);
 	if (flagGfx)
-		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - flagGfx->w, _y), 
+		g_gui.theme()->drawSurface(Common::Point(_x + kThumbnailWidth - flagGfx -> w - 5, _y + 5), 
 									*flagGfx, true);
 
 	g_gui.theme()->drawText(Common::Rect(_x, _y + kThumbnailHeight, _x + kThumbnailWidth, _y + kThumbnailHeight + 32),
@@ -127,6 +129,34 @@ void GridItemWidget::handleMouseLeft(int button) {
 		markAsDirty();
 	}
 }
+
+void GridItemWidget::handleMouseDown(int x, int y, int button, int clickCount) {
+	if (isHighlighted) {
+		Dialog *tray = new GridItemTray(getAbsX() - 10, getAbsY() + _h, _w + 20, 60, _activeEntry->entryID, _grid);
+		
+		int buttonWidth = tray->getWidth() / 4;
+		int buttonHeight = tray->getHeight() / 2;
+		
+		ButtonWidget *playButton = new ButtonWidget(tray, (buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Play"), Common::U32String(), kStartCmd);
+		ButtonWidget *loadButton = new ButtonWidget(tray, buttonWidth + 2*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Saves"), Common::U32String(), kLoadGameCmd);
+		ButtonWidget *editButton = new ButtonWidget(tray, 2*buttonWidth + 3*(buttonWidth / 4), buttonHeight / 2, buttonWidth, buttonHeight, Common::U32String("Edit"), Common::U32String(), kEditGameCmd);
+		// playButton->markAsDirty();
+		tray->runModal();
+	}
+}
+
+void GridItemTray::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd)
+	{
+	case kStartCmd:
+		ConfMan.setActiveDomain(entryID);
+		close();
+		break;
+	default:
+		break;
+	}
+}
+
 
 void GridItemWidget::move(int x, int y) {
 	Widget::setPos(getRelX() + x, getRelY() + y);
