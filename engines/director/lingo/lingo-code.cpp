@@ -87,10 +87,6 @@ static struct FuncDescr {
 	{ LC::c_globalpush,		"c_globalpush",		"s" },
 	{ LC::c_globalrefpush,	"c_globalrefpush",	"s" },
 	{ LC::c_ge,				"c_ge",				"" },
-	{ LC::c_goto,			"c_goto",			"" },
-	{ LC::c_gotoloop,		"c_gotoloop",		"" },
-	{ LC::c_gotonext,		"c_gotonext",		"" },
-	{ LC::c_gotoprevious,	"c_gotoprevious",	"" },
 	{ LC::c_gt,				"c_gt",				"" },
 	{ LC::c_hilite,			"c_hilite",			"" },
 	{ LC::c_intersects,		"c_intersects",		"" },
@@ -115,7 +111,6 @@ static struct FuncDescr {
 	{ LC::c_objectproppush,	"c_objectproppush","ss" }, // object, prop
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_or,				"c_or",				"" },
-	{ LC::c_play,			"c_play",			"" },
 	{ LC::c_procret,		"c_procret",		"" },
 	{ LC::c_proparraypush,	"c_proparraypush",	"i" },
 	{ LC::c_proppush,		"c_proppush",		"s" },
@@ -1404,43 +1399,6 @@ void LC::c_telldone() {
 //************************
 // Built-in functions
 //************************
-void LC::c_goto() {
-	Datum mode = g_lingo->pop();
-	Datum frame, movie;
-
-	if (mode.u.i == 2 || mode.u.i == 3)
-		movie = g_lingo->pop();
-
-	if (mode.u.i == 1 || mode.u.i == 3)
-		frame = g_lingo->pop();
-
-	g_lingo->func_goto(frame, movie);
-}
-
-void LC::c_gotoloop() {
-	g_lingo->func_gotoloop();
-}
-
-void LC::c_gotonext() {
-	g_lingo->func_gotonext();
-}
-
-void LC::c_gotoprevious() {
-	g_lingo->func_gotoprevious();
-}
-
-void LC::c_play() {
-	Datum mode = g_lingo->pop();
-	Datum frame, movie;
-
-	if (mode.u.i == 2 || mode.u.i == 3)
-		movie = g_lingo->pop();
-
-	if (mode.u.i == 1 || mode.u.i == 3)
-		frame = g_lingo->pop();
-
-	g_lingo->func_play(frame, movie);
-}
 
 void LC::c_callcmd() {
 	Common::String name(g_lingo->readString());
