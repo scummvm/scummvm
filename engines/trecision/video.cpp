@@ -159,8 +159,8 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 
 	smkDecoder->start();
 
-	// If the video has a single choice, and it starts from the beginning,
-	// ignore the calculated end frame and play all of it
+	// WORKAROUND: If the video has a single choice, and it starts from
+	// the beginning, ignore the calculated end frame and play all of it
 	if (singleChoice && startFrame < 10 && endFrame < (int)smkDecoder->getFrameCount() - 1)
 		endFrame = smkDecoder->getFrameCount() - 1;
 
