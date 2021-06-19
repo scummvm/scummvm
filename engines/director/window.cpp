@@ -256,7 +256,7 @@ void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const G
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 			for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
-				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				if (!mask || (msk && !(*msk++))) {
 					(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
 											preprocessColor(pd, *((byte *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 				}
@@ -266,7 +266,7 @@ void Window::inkBlitSurface(DirectorPlotData *pd, Common::Rect &srcRect, const G
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 			for (int j = 0; j < pd->destRect.width(); j++, pd->srcPoint.x++) {
-				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				if (!mask || (msk && !(*msk++))) {
 					(g_director->getInkDrawPixel())(pd->destRect.left + j, pd->destRect.top + i,
 											preprocessColor(pd, *((int *)pd->srf->getBasePtr(pd->srcPoint.x, pd->srcPoint.y))), pd);
 				}
@@ -294,7 +294,7 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 			const byte *msk = mask ? (const byte *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 			for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
-				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				if (!mask || !(*msk++)) {
 				(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
 										preprocessColor(pd, *((byte *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
 				}
@@ -304,7 +304,7 @@ void Window::inkBlitStretchSurface(DirectorPlotData *pd, Common::Rect &srcRect, 
 			const uint32 *msk = mask ? (const uint32 *)mask->getBasePtr(pd->srcPoint.x, pd->srcPoint.y) : nullptr;
 
 			for (int xCtr = 0, scaleXCtr = 0; xCtr < pd->destRect.width(); xCtr++, scaleXCtr += scaleX, pd->srcPoint.x++) {
-				if (!mask || (msk && (pd->ink == kInkTypeMask ? *msk++ : !(*msk++)))) {
+				if (!mask || !(*msk++)) {
 				(g_director->getInkDrawPixel())(pd->destRect.left + xCtr, pd->destRect.top + i,
 										preprocessColor(pd, *((int *)pd->srf->getBasePtr(scaleXCtr / SCALE_THRESHOLD, scaleYCtr / SCALE_THRESHOLD))), pd);
 				}
@@ -320,7 +320,7 @@ int Window::preprocessColor(DirectorPlotData *p, uint32 src) {
 	if (p->sprite == kTextSprite) {
 		switch(p->ink) {
 		case kInkTypeMask:
-			src = (src == p->backColor ? 0xff : p->foreColor);
+			src = (src == p->backColor ? p->foreColor : 0xff);
 			break;
 		case kInkTypeReverse:
 			src = (src == p->foreColor ? 0 : p->colorWhite);
