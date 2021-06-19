@@ -130,23 +130,23 @@ void MacButton::setCheckBoxType(int type) {
 
 void MacButton::invertInner() {
 	Common::Rect r(_dims.width() - 1, _dims.height() - 1);
-	Common::Rect c;
+	Common::Rect checkbox;
 
 	switch (_buttonType) {
 	case kCheckBox:
-		switch(_checkBoxType) {
-		case kNormal:
+		switch (_checkBoxType) {
+		case kCBNormal:
 			Graphics::drawLine(r.left + 1, r.top + 3, r.left + 9, r.top + 11, 0, _wm->getDrawPixel(), &_pd);
 			Graphics::drawLine(r.left + 1, r.top + 11, r.left + 9, r.top + 3, 0, _wm->getDrawPixel(), &_pd);
 			(_wm->getDrawInvertPixel())(5, 7, 0, &_pd);
 			break;
-		case kInsetBlack:
-			c = Common::Rect(r.left + 2, r.top + 4, r.left + 2 + 6, r.top + 4 + 6);
-			Graphics::drawFilledRect(c, 0, _wm->getDrawPixel(), &_pd);
+		case kCBInsetBlack:
+			checkbox = Common::Rect(r.left + 2, r.top + 4, r.left + 2 + 6, r.top + 4 + 6);
+			Graphics::drawFilledRect(checkbox, 0, _wm->getDrawPixel(), &_pd);
 			break;
-		case kFilledBlack:
-			c = Common::Rect(r.left + 1, r.top + 3, r.left + 1 + 8, r.top + 3 + 8);
-			Graphics::drawFilledRect(c, 0, _wm->getDrawPixel(), &_pd);
+		case kCBFilledBlack:
+			checkbox = Common::Rect(r.left + 1, r.top + 3, r.left + 1 + 8, r.top + 3 + 8);
+			Graphics::drawFilledRect(checkbox, 0, _wm->getDrawPixel(), &_pd);
 			break;
 		}
 		break;

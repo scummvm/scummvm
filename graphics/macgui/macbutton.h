@@ -40,9 +40,9 @@ enum MacButtonType {
 
 // those name comes from Apartment
 enum CheckBoxType {
-	kNormal,
-	kInsetBlack,
-	kFilledBlack
+	kCBNormal,
+	kCBInsetBlack,
+	kCBFilledBlack
 };
 
 class MacButton : public MacText {
