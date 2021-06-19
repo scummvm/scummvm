@@ -1850,10 +1850,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCList *itemlist = getList(itemlistID);
 			uint16 index = p->_stack.access2(sp + 2);
 			si16a = static_cast<int16>(p->_stack.access2(sp + 4));
-#if 0
-			uint16 scriptsize = p->_stack.access2(sp + 6);
-			const uint8 *loopscript = p->_stack.access(sp + 8);
-#endif
 
 			if (!itemlist) {
 				perr << "Invalid item list in loopnext!" << Std::endl;
@@ -1872,11 +1868,7 @@ void UCMachine::execProcess(UCProcess *p) {
 				uint16 objid = p->_stack.access2(p->_bp + si16a);
 				Item *item = getItem(objid);
 				if (item) {
-#if 0
-					valid = item->checkLoopScript(loopscript, scriptsize);
-#else
 					valid = true;
-#endif
 				}
 
 				if (!valid) index++;
@@ -1908,42 +1900,21 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x75:
 		case 0x76:
-			// 75 xx yy zz zz
-			// 76 xx yy zz zz
-			// xx appears to be the location to store 'current' value from the
-			//   list (BP+xx)
+			// 75 xx yy zz zz  (foreach list)
+			// 76 xx yy zz zz  (foreach string list)
+			// xx is the stack offset to store 'current' value from the list
+			//   (BP+xx)
 			// yy is the 'datasize' of the list, identical to the second parameter
 			//   of the create list/slist opcodes
-			// zzzz appears to be the offset to jump to after it's finished the
-			//   iteration, the opcode before is a 'jmp' to the original position
-			//   of the opcode.
-			// (all guesses from Remorse1.21 usecode, _may_ be different in u8,
-			//   unlikely though)
-			// the way it appears to operate is it pops a 'word' off the stack
-			//   (maximum number of items to iterate through? No idea, I've only
-			//   seen 0xFFFF pushed before it (in Remorse1.21)), then pops
-			//   the 'list' off to iterate through
-
-			// it seems as if there's no way provided to store index
-			// and list. Assuming there are no nested loops, this isn't
-			// a problem. If there -are- nested loops, we could use a stack
-			// for these.
-			// There may be problems with jumps from inside the loop to outside
-			// Either these are forbidden, or we have to detect when jumping
-			// to outside a loop? (yuck)
-			// (this will be _very_ messy when combined with nested loops,
-			//  let's hope it won't be necessary)
-
-			// random idea: maybe the 0xFFFF on the stack is used to
-			// indicate the start of a loop? Would be mildly ugly, but could
-			// be useful for nested loops or loop-escaping jumps
-
-			// other random idea: 0xFFFF could also be the loop index
-			// to start with minus 1. (This would clean up the 'loop_index=0'
-			// or 'loop_index++' distinction a bit)
+			// zzzz is the offset to jump to after it's finished iteration
+			//	 (the opcode before is always a 'jmp' to the start of the loop)
+			// 2 16 bit values are on the stack and left there during each
+			//   iteration:
+			//   - loop index (always starts at 0xffff), updated each iteration
+			//   - list id
 
 			// 75 is for lists, 76 for slists
-			// Only difference should be in the freeing afterwards.
+			// The only difference should be in the freeing afterwards.
 			// Strings are _not_ duplicated when putting them in the loopvar
 			// Lists _are_ freed afterwards
 
