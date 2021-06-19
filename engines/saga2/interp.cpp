@@ -78,6 +78,25 @@ void script_error(char *msg) {
 	WriteStatusF(0, msg);
 }
 
+static Common::String seg2str(int16 segment) {
+	switch (segment) {
+	case builtinTypeObject:
+		return "GameObject";
+
+	case builtinTypeTAG:
+		return "TAG";
+
+	case builtinAbstract:
+		return Common::String::format("Abstract%d", segment);
+
+	case builtinTypeMission:
+		return "Mission";
+
+	default:
+		return Common::String::format("%d", segment);
+	}
+}
+
 //-----------------------------------------------------------------------
 //	Return the address of a builtin object, such as an Actor or a TAG,
 //	given a segment number and an index
@@ -226,7 +245,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 	case addr_far:
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: far[%d:%d] = %d", seg, offset, *segmentAddress(seg, offset));
+		debugC(3, kDebugScripts, "byteAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, *segmentAddress(seg, offset));
 		*pcPtr = pc;
 		return segmentAddress(seg, offset);
 
@@ -235,7 +254,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, offset);
 		IMMED_WORD(offset2);
-		debugC(3, kDebugScripts, "byteAddress: array[%d:%d:%d] = %d", seg, offset, offset2, addr[offset2]);
+		debugC(3, kDebugScripts, "byteAddress: array[%s:%d:%d] = %d", seg2str(seg).c_str(), offset, offset2, addr[offset2]);
 		*pcPtr = pc;
 		return addr + offset2;
 
@@ -256,10 +275,10 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
 		*pcPtr = pc;
 		if (arg[0] == dataSegIndex) {
-			debugC(3, kDebugScripts, "byteAddress: thisD[%d] = %d", offset, dataSegment[arg[1] + offset]);
+			debugC(3, kDebugScripts, "byteAddress: thisD[%d:%d] = %d", arg[1], offset, dataSegment[arg[1] + offset]);
 			return &dataSegment[arg[1] + offset];
 		}
-		debugC(3, kDebugScripts, "byteAddress: thisS[%d] = %d", offset, *(segmentArrayAddress(arg[0], arg[1]) + offset));
+		debugC(3, kDebugScripts, "byteAddress: thisS[%s:%d:%d] = %d", seg2str(arg[0]).c_str(), arg[1], offset, *(segmentArrayAddress(arg[0], arg[1]) + offset));
 		return segmentArrayAddress(arg[0], arg[1]) + offset;
 
 	case addr_deref:
@@ -276,7 +295,7 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 		//  within the object.
 		IMMED_WORD(seg);
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: deref[%d:%d:%d] = %d", seg, index, offset, *(segmentAddress(seg, index) + offset));
+		debugC(3, kDebugScripts, "byteAddress: deref[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *(segmentAddress(seg, index) + offset));
 		*pcPtr = pc;
 
 		//  Compute address of object
@@ -305,14 +324,14 @@ uint8 *objectAddress(
 		IMMED_WORD(index);
 		seg = dataSegIndex;
 		addr = &dataSegment[index];
-		debugC(3, kDebugScripts, "data [%d] (%p)", index, addr);
+		debugC(3, kDebugScripts, "objectAddress: data[%s:%d] = %d", seg2str(seg).c_str(), index, *addr);
 		break;
 
 	case addr_far:
 		IMMED_WORD(seg);
 		IMMED_WORD(index);
 		addr = segmentAddress(seg, index);
-		debugC(3, kDebugScripts, "far [%d, %d] (%p)", seg, index, addr);
+		debugC(3, kDebugScripts, "objectAddress: far[%s:%d] = %d", seg2str(seg).c_str(), index, *addr);
 		break;
 
 	case addr_array:
@@ -320,7 +339,7 @@ uint8 *objectAddress(
 		IMMED_WORD(index);
 		IMMED_WORD(offset);
 		addr = segmentArrayAddress(seg, index) + offset;
-		debugC(3, kDebugScripts, "array [%d, %d, %d] (%p)", seg, index, offset, addr);
+		debugC(3, kDebugScripts, "objectAddress: array[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *addr);
 		break;
 
 	case addr_this:
@@ -329,11 +348,11 @@ uint8 *objectAddress(
 		seg = arg[0];
 		index = arg[1];
 		if (seg == dataSegIndex) {
-			debugC(3, kDebugScripts, "this (D) [%d, %d] (%p)", index, offset, &dataSegment[index + offset]);
+			debugC(3, kDebugScripts, "objectAddress: thisD[%d:%d] = %d", index, offset, dataSegment[index + offset]);
 			return &dataSegment[index + offset];
 		}
 		addr = segmentArrayAddress(seg, index) + offset;
-		debugC(3, kDebugScripts, "this (S) [%d, %d, %d] (%p)", seg, index, offset, addr);
+			debugC(3, kDebugScripts, "objectAddress: thisS[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *addr);
 		break;
 
 	case addr_deref:
@@ -353,7 +372,7 @@ uint8 *objectAddress(
 
 		//  Compute address of object
 		addr = segmentAddress(seg, index) + offset;
-		debugC(3, kDebugScripts, "deref [%d, %d, %d] (%p)", seg, index, offset, addr);
+		debugC(3, kDebugScripts, "objectAddress: deref[%s:%d:%d] = %d", seg2str(seg).c_str(), index, offset, *addr);
 		break;
 
 	default:
@@ -378,12 +397,14 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: data[%d] = %d", offset, (dataSegment[offset >> 3] & *mask) != 0);
 		return &dataSegment[(offset >> 3)];
 
 	case addr_near:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: near[%d] = %d", offset, (*(th->codeSeg + (offset >> 3)) & *mask) != 0);
 		return th->codeSeg + (offset >> 3);
 
 	case addr_far:
@@ -391,6 +412,7 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: far[%s:%d] = %d", seg2str(seg).c_str(), offset, (*segmentAddress(seg, offset >> 3) & *mask) != 0);
 		return segmentAddress(seg, (offset >> 3));
 
 	case addr_array:
@@ -400,18 +422,21 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: array[%s:%d:%d] = %d", seg2str(seg).c_str(), offset, offset, (addr[offset >> 3] & *mask) != 0);
 		return addr + (offset >> 3);
 
 	case addr_stack:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: stack[%d] = %d", offset, (*(th->stackBase + th->framePtr + (offset >>3)) & *mask) != 0);
 		return th->stackBase + th->framePtr + (offset >> 3);
 
 	case addr_thread:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
+		debugC(3, kDebugScripts, "bitAddress: thread[%d] = %d", offset, (*((uint8 *)&th->threadArgs + (offset >> 3)) & *mask) != 0);
 		return (uint8 *)&th->threadArgs + (offset >> 3);
 
 	case addr_this:
