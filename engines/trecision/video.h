@@ -103,7 +103,7 @@ public:
 	void smkStop(uint16 slot);
 	void refreshActionAnimation() { refreshSmkAnim(_playingAnims[kSmackerAction]); }
 	bool isActionActive() const { return _playingAnims[kSmackerAction] != 0; }
-	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1);
+	void playMovie(const Common::String &filename, int startFrame = 0, int endFrame = -1, bool singleChoice = false);
 	void startFullMotion();
 	void stopFullMotion();
 

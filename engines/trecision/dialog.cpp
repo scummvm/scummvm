@@ -153,7 +153,7 @@ void DialogManager::selectChoice(int16 dmx, int16 dmy) {
 
 	if (_curPos != -1) {
 		_vm->_flagDialogMenuActive = false;
-		playChoice(_dispChoice[_curPos]);
+		playChoice(_dispChoice[_curPos], false);
 	}
 }
 
@@ -584,7 +584,8 @@ void DialogManager::afterChoice() {
 	// Immediately starts the fraud choice
 	for (int c = dialog->_firstChoice; c < dialog->_firstChoice + dialog->_choiceNumb; ++c) {
 		if ((_choice[c]._flag & DLGCHOICE_FRAUD) && isChoiceVisible(c)) {
-			playChoice(c);
+			const bool singleChoice = dialog->_choiceNumb == 1;
+			playChoice(c, singleChoice);
 			return;
 		}
 	}
@@ -607,7 +608,8 @@ void DialogManager::afterChoice() {
 		}
 	}
 	if (res != 0) {
-		playChoice(res);
+		const bool singleChoice = dialog->_choiceNumb == 1;
+		playChoice(res, singleChoice);
 		return;
 	}
 
@@ -642,7 +644,7 @@ void DialogManager::dialogHandler(int numFrame) {
 	}
 }
 
-void DialogManager::playChoice(uint16 i) {
+void DialogManager::playChoice(uint16 i, bool singleChoice) {
 	assert(i < MAXCHOICE);
 
 	DialogChoice *choice = &_choice[i];
@@ -673,7 +675,7 @@ void DialogManager::playChoice(uint16 i) {
 		totalLength += _subTitles[c]._length - 1;
 
 	_vm->_graphicsMgr->hideCursor();
-	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1);
+	_vm->_animMgr->playMovie(_dialog[_curDialog]._startAnim, startFrame, startFrame + totalLength - 1, singleChoice);
 }
 
 void DialogManager::doDialog() {

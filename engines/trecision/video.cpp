@@ -141,7 +141,7 @@ AnimManager::~AnimManager() {
 	}
 }
 
-void AnimManager::playMovie(const Common::String &filename, int startFrame, int endFrame) {
+void AnimManager::playMovie(const Common::String &filename, int startFrame, int endFrame, bool singleChoice) {
 	NightlongSmackerDecoder *smkDecoder = new NightlongSmackerDecoder;
 
 	if (!smkDecoder->loadFile(filename)) {
@@ -158,6 +158,11 @@ void AnimManager::playMovie(const Common::String &filename, int startFrame, int 
 	_vm->_drawText._text.clear();
 
 	smkDecoder->start();
+
+	// If the video has a single choice, and it starts from the beginning,
+	// ignore the calculated end frame and play all of it
+	if (singleChoice && startFrame < 10 && endFrame < smkDecoder->getFrameCount() - 1)
+		endFrame = smkDecoder->getFrameCount() - 1;
 
 	setVideoRange(smkDecoder, startFrame, endFrame);
 

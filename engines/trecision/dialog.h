@@ -71,7 +71,7 @@ class DialogManager {
 	TrecisionEngine *_vm;
 
 	void showChoices(uint16 i);
-	void playChoice(uint16 i);
+	void playChoice(uint16 i, bool singleChoice);
 
 	Dialog _dialog[MAXDIALOG];
 	DialogChoice _choice[MAXCHOICE];
