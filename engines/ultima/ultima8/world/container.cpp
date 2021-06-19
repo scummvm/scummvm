@@ -275,10 +275,7 @@ void Container::containerSearch(UCList *itemlist, const uint8 *loopscript,
 		if ((*iter)->checkLoopScript(loopscript, scriptsize)) {
 			assert(itemlist->getElementSize() == 2);
 			uint16 oId = (*iter)->getObjId();
-			uint8 buf[2];
-			buf[0] = static_cast<uint8>(oId);
-			buf[1] = static_cast<uint8>(oId >> 8);
-			itemlist->append(buf);
+			itemlist->appenduint16(oId);
 		}
 
 		if (recurse) {

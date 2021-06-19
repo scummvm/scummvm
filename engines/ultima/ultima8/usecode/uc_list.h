@@ -77,6 +77,14 @@ public:
 		_size++;
 	}
 
+	void appenduint16(uint16 val) {
+		assert(_elementSize == 2);
+		uint8 buf[2];
+		buf[0] = static_cast<uint8>(val);
+		buf[1] = static_cast<uint8>(val >> 8);
+		append(buf);
+	}
+
 	void remove(const uint8 *e) {
 		// do we need to erase all occurences of e or just the first one?
 		// (deleting all, currently)
@@ -105,20 +113,23 @@ public:
 	}
 
 	void appendList(const UCList &l) {
-		// need to check if elementsizes match...
+		// elementsizes should match...
+		assert(_elementSize == l.getElementSize());
 		_elements.reserve(_elementSize * (_size + l._size));
-		unsigned int lsize = l._size;
-		for (unsigned int i = 0; i < lsize; i++)
+		for (unsigned int i = 0; i < l._size; i++)
 			append(l[i]);
 	}
 	void unionList(const UCList &l) { // like append, but remove duplicates
-		// need to check if elementsizes match...
+		// elementsizes should match...
+		assert(_elementSize == l.getElementSize());
 		_elements.reserve(_elementSize * (_size + l._size));
 		for (unsigned int i = 0; i < l._size; i++)
 			if (!inList(l[i]))
 				append(l[i]);
 	}
 	void subtractList(const UCList &l) {
+		// elementsizes should match...
+		assert(_elementSize == l.getElementSize());
 		for (unsigned int i = 0; i < l._size; i++)
 			remove(l[i]);
 	}
