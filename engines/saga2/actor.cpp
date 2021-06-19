@@ -1968,7 +1968,7 @@ void Actor::getColorTranslation(ColorTable map) {
 
 int16 Actor::setAction(int16 newState, int16 flags) {
 	ActorAnimation      *anim;
-	int16                numPoses;
+	int16                numPoses = 0;
 
 	//  Refresh the handles
 //  RLockHandle( appearance->animations );
@@ -1977,8 +1977,9 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 	if (appearance == NULL) return 0;
 
 	//  If this animation has no frames, then return false
-	anim = appearance->poseList->animation(newState);
-	numPoses = anim->count[currentFacing];
+	anim = appearance->animation(newState);
+	if (anim)
+		numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) return 0;
 
 	//  Set up the animation
@@ -2007,10 +2008,13 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 //  RLockHandle( appearance->animations );
 //  RUnlockHandle( appearance->animations );
 
-	if (appearance == NULL) return false;
+	if (appearance == nullptr)
+		return false;
 
 	//  If this animation has no frames, then return false
-	anim = appearance->poseList->animation(newState);
+	anim = appearance->animation(newState);
+	if (anim == nullptr)
+		return false;
 
 	if (anyDir) {
 		for (int i = 0; i < numPoseFacings; i++) {
@@ -2028,11 +2032,12 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 //	specified direction
 
 int16 Actor::animationFrames(int16 actionType, Direction dir) {
-	if (appearance == NULL) return 0;
+	if (appearance == nullptr)
+		return 0;
 
 	ActorAnimation  *anim;
 
-	anim = appearance->poseList->animation(actionType);
+	anim = appearance->animation(actionType);
 
 	if (!anim)
 		return 0;
@@ -2065,7 +2070,7 @@ bool Actor::nextAnimationFrame(void) {
 	} else animationFlags &= ~animateOnHold;
 
 	//  Get the number of frames in the animation
-	anim = appearance->poseList->animation(currentAnimation);
+	anim = appearance->animation(currentAnimation);
 	numPoses = anim->count[currentFacing];
 	if (numPoses <= 0) {
 		animationFlags |= animateFinished;

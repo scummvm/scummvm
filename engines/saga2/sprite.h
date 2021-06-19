@@ -152,17 +152,6 @@ struct ActorAnimation {
 struct ActorAnimSet {
 	uint32          numAnimations,          // number of animations
 	                poseOffset;             // offset to poses table
-
-	// FIXME: Pointer Arithmetic
-	ActorAnimation *animation(int num) {
-		return (ActorAnimation *)(this + 1) + num;
-	}
-
-	ActorPose *pose(ActorAnimation *anim, int dir, int num) {
-		if (num < 0 || num >= anim->count[dir]) num = 0;
-		num += anim->start[dir];
-		return (ActorPose *)((uint8 *)this + poseOffset) + num;
-	}
 };
 
 /* ===================================================================== *
@@ -299,6 +288,24 @@ public:
 			loadSpriteBanks((int16)(1 << bank));
 	}
 
+	// FIXME: Pointer Arithmetic
+	ActorAnimation *animation(int num) {
+		warning("STUB: ActorAppearance::animation: Pointer Arithmetics");
+		if (poseList)
+			return (ActorAnimation *)(poseList + 1) + num;
+
+		return nullptr;
+	}
+
+	ActorPose *pose(ActorAnimation *anim, int dir, int num) {
+		warning("STUB: ActorAppearance::pose: Pointer Arithmetics");
+		if (poseList == nullptr)
+			return nullptr;
+
+		if (num < 0 || num >= anim->count[dir]) num = 0;
+		num += anim->start[dir];
+		return (ActorPose *)((uint8 *)poseList + poseList->poseOffset) + num;
+	}
 };
 
 /* ===================================================================== *

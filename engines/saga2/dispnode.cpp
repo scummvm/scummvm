@@ -571,14 +571,16 @@ void DisplayNode::drawObject(void) {
 
 			aa = a->appearance;
 
-			if (aa == NULL) return;
+			if (aa == nullptr)
+				return;
 
 			//  Fetch the animation series, and determine which
 			//  pose in the series is the current one.
-			anim = aa->poseList->animation(a->currentAnimation);
-			pose = aa->poseList->pose(anim,
-			                             a->currentFacing,
-			                             a->currentPose);
+			anim = aa->animation(a->currentAnimation);
+			pose = aa->pose(anim, a->currentFacing, a->currentPose);
+
+			if (anim == nullptr)
+				return
 
 			assert(anim->start[0] >= 0);
 			assert(anim->start[0] <  10000);
