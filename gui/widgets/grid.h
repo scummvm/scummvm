@@ -42,6 +42,12 @@ enum Platform {
 	kPlatformUnknown = -1
 };
 
+enum {
+	kStartCmd = 'STRT',
+	kEditGameCmd = 'EDTG',
+	kLoadGameCmd = 'LOAD',
+};
+
 struct GridItemInfo
 {
 	Common::String engineid;
@@ -50,9 +56,10 @@ struct GridItemInfo
 	Common::String title;
 	Platform platform;
 	Common::String thumbPath;
+	Common::String entryID;
 
-	GridItemInfo(Common::String &eid, Common::String &gid, Common::String &t, Common::String &l, Common::String &p) : 
-		gameid(gid), engineid(eid), title(t), language(l) {
+	GridItemInfo(Common::String &id, Common::String &eid, Common::String &gid, Common::String &t, Common::String &l, Common::String &p) : 
+		entryID(id), gameid(gid), engineid(eid), title(t), language(l) {
 		if (p == "pc")
 			platform = kPlatformDOS;
 		else if (p == "amiga")
@@ -67,6 +74,16 @@ struct GridItemInfo
 };
 
 class GridItemWidget;
+class GridWidget;
+
+class GridItemTray: public Dialog {
+	Common::String entryID;
+	GridWidget *grid;
+public:
+	GridItemTray(int x, int y, int w, int h, Common::String &ID, GridWidget *gr) : Dialog(x, y, w, h) { entryID = ID; grid = gr;};
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
+};
+
 
 /* GridWidget */
 class GridWidget : public ContainerWidget {
@@ -155,6 +172,7 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleMouseEntered(int button) override;
 	void handleMouseLeft(int button) override;
+	void handleMouseDown(int x, int y, int button, int clickCount) override;
 	void move(int x, int y);
 
 };
