@@ -493,6 +493,23 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 		return;
 	}
 
+	if (node->name->equalsIgnoreCase("sound") && node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
+		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
+		if (var->name->equalsIgnoreCase("close") ||
+				var->name->equalsIgnoreCase("fadeIn") ||
+				var->name->equalsIgnoreCase("fadeOut") ||
+				var->name->equalsIgnoreCase("playFile") ||
+				var->name->equalsIgnoreCase("stop")) {
+			code1(LC::c_symbolpush);
+			codeString(var->name->c_str());
+			for (uint i = 1; i < node->args->size(); i++) {
+				compile((*node->args)[i]);
+			}
+			codeCmd(node->name, node->args->size());
+			return;
+		}
+	}
+
 	compileList(node->args);
 	codeCmd(node->name, node->args->size());
 }

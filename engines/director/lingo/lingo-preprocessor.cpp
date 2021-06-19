@@ -27,7 +27,6 @@
 namespace Director {
 
 Common::String preprocessWhen(Common::String in, bool *changed);
-Common::String preprocessSound(Common::String in);
 
 bool isspec(char c) {
 	return strchr("-+*/%%^:,()><&[]=", c) != NULL;
@@ -209,10 +208,6 @@ Common::String LingoCompiler::codePreprocessor(const char *s, LingoArchive *arch
 		bool changed = false;
 		res1 = preprocessWhen(res1, &changed);
 
-		if (!changed) {
-			res1 = preprocessSound(res1);
-		}
-
 		res += res1;
 
 		linenumber++;	// We do it here because of 'continue' statements
@@ -295,62 +290,6 @@ Common::String preprocessWhen(Common::String in, bool *changed) {
 
 	if (in.size() != res.size())
 		debugC(2, kDebugParse | kDebugPreprocess, "WHEN: in: %s\nout: %s", in.c_str(), res.c_str());
-
-	return res;
-}
-
-// sound fadeIn 5, 10 -> sound #fadeIn, 5, 10
-Common::String preprocessSound(Common::String in) {
-	Common::String res, next;
-	const char *ptr = in.c_str();
-	const char *beg = ptr;
-	const char *nextPtr;
-
-	while ((ptr = scumm_strcasestr(beg, "sound")) != NULL) {
-		if (ptr != findtokstart(in.c_str(), ptr)) { // If we're in the middle of a word
-			res += *beg++;
-			continue;
-		}
-
-		ptr += 5; // end of 'sound'
-		res += Common::String(beg, ptr);
-
-		if (!*ptr)	// If it is end of the line
-			break;
-
-		if (Common::isAlnum(*ptr)) { // If it is in the middle of the word
-			beg = ptr;
-			continue;
-		}
-
-		next = nexttok(ptr, &nextPtr);
-
-		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: nexttok: %s", next.c_str());
-
-		bool modified = false;
-
-		if (next.equalsIgnoreCase("close") ||
-				next.equalsIgnoreCase("fadeIn") ||
-				next.equalsIgnoreCase("fadeOut") ||
-				next.equalsIgnoreCase("playFile") ||
-				next.equalsIgnoreCase("stop")) {
-			res += '#'; // Turn it into SYMBOL
-			modified = true;
-		} else {
-			res += ' ';
-		}
-
-		res += next;
-		if (modified)
-			res += ',';
-		ptr = nextPtr;
-		beg = ptr;
-	}
-
-	res += Common::String(beg);
-
-	if (in.size() != res.size())
-		debugC(2, kDebugParse | kDebugPreprocess, "SOUND: in: %s\nout: %s", in.c_str(), res.c_str());
 
 	return res;
 }
