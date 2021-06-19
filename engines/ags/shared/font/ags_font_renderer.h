@@ -27,7 +27,6 @@ namespace AGS3 {
 
 class BITMAP;
 
-// WARNING: this interface is exposed for plugins and declared for the second time in ags_plugin.h
 class IAGSFontRenderer {
 public:
 	virtual bool LoadFromDisk(int fontNumber, int fontSize) = 0;
