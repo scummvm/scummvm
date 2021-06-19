@@ -55,6 +55,24 @@
 
 namespace Director {
 
+#define COMPILE(node) \
+	if (!(node)->accept(this)) \
+		return false; \
+
+#define COMPILE_REF(node) \
+	_refMode = true; \
+	if (!(node)->accept(this)) { \
+		_refMode = false; \
+		return false; \
+	} \
+	_refMode = false;
+
+#define COMPILE_LIST(list) \
+	for (uint i = 0; i < (list)->size(); i++) { \
+		if (!(*(list))[i]->accept(this)) \
+			return false; \
+	}
+
 LingoCompiler::LingoCompiler() {
 	_assemblyAST = nullptr;
 	_assemblyArchive = nullptr;
@@ -103,10 +121,21 @@ ScriptContext *LingoCompiler::compileLingo(const char *code, LingoArchive *archi
 
 	// Parse the Lingo and build an AST
 	parse(code);
+	if (!_assemblyAST) {
+		delete _assemblyContext;
+		delete _currentAssembly;
+		delete _methodVars;
+		return nullptr;
+	}
 
 	// Generate bytecode
-	if (_assemblyAST) {
-		compile(_assemblyAST);
+	if (!_assemblyAST->accept(this)) {
+		_hadError = true;
+		delete _assemblyContext;
+		delete _currentAssembly;
+		delete _methodVars;
+		delete _assemblyAST;
+		return nullptr;
 	}
 
 	// for D4 and above, there usually won't be any code left.
@@ -362,45 +391,31 @@ void LingoCompiler::parseMenu(const char *code) {
 	warning("STUB: parseMenu");
 }
 
-void LingoCompiler::compile(Node *node) {
-	node->accept(this);
-}
-
-void LingoCompiler::compileRef(Node *node) {
-	_refMode = true;
-	node->accept(this);
-	_refMode = false;
-}
-
-void LingoCompiler::compileList(NodeList *nodes) {
-	for (uint i = 0; i < nodes->size(); i++) {
-		compile((*nodes)[i]);
-	}
-}
-
 /* ScriptNode */
 
-void LingoCompiler::visitScriptNode(ScriptNode *node) {
-	compileList(node->children);
+bool LingoCompiler::visitScriptNode(ScriptNode *node) {
+	COMPILE_LIST(node->children);
+	return true;
 }
 
 /* FactoryNode */
 
-void LingoCompiler::visitFactoryNode(FactoryNode *node) {
+bool LingoCompiler::visitFactoryNode(FactoryNode *node) {
 	_inFactory = true;
 	ScriptContext *mainContext = _assemblyContext;
 	_assemblyContext = new ScriptContext(mainContext->getName(), mainContext->_archive, mainContext->_scriptType, mainContext->_id);
 
-	compileList(node->methods);
+	COMPILE_LIST(node->methods);
 	registerFactory(*node->name);
 
 	_inFactory = false;
 	_assemblyContext = mainContext;
+	return true;
 }
 
 /* HandlerNode */
 
-void LingoCompiler::visitHandlerNode(HandlerNode *node) {
+bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	_indef = true;
 	ScriptData *mainAssembly = _currentAssembly;
 	_currentAssembly = new ScriptData;
@@ -417,7 +432,7 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 		}
 	}
 
-	compileList(node->stmts);
+	COMPILE_LIST(node->stmts);
 	code1(LC::c_procret);
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly) || debugChannelSet(1, kDebugCompile))
@@ -453,11 +468,12 @@ void LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	_currentAssembly = mainAssembly;
 	delete _methodVars;
 	_methodVars = mainMethodVars;
+	return true;
 }
 
 /* CmdNode */
 
-void LingoCompiler::visitCmdNode(CmdNode *node) {
+bool LingoCompiler::visitCmdNode(CmdNode *node) {
 	if (node->name->equalsIgnoreCase("go") && node->args->size() == 1 && (*node->args)[0]->type == kVarNode){
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("loop") ||
@@ -466,7 +482,7 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 			code1(LC::c_symbolpush);
 			codeString(var->name->c_str());
 			codeCmd(node->name, 1);
-			return;
+			return true;
 		}
 	}
 
@@ -475,7 +491,7 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("done")) {
 			codeCmd(node->name, 0);
-			return;
+			return true;
 		}
 	}
 
@@ -486,11 +502,11 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 				code1(LC::c_symbolpush);
 				codeString(static_cast<VarNode *>(arg)->name->c_str());
 			} else {
-				compile(arg);
+				COMPILE(arg);
 			}
 		}
 		codeCmd(node->name, node->args->size());
-		return;
+		return true;
 	}
 
 	if (node->name->equalsIgnoreCase("sound") && node->args->size() >= 1 && (*node->args)[0]->type == kVarNode) {
@@ -503,111 +519,121 @@ void LingoCompiler::visitCmdNode(CmdNode *node) {
 			code1(LC::c_symbolpush);
 			codeString(var->name->c_str());
 			for (uint i = 1; i < node->args->size(); i++) {
-				compile((*node->args)[i]);
+				COMPILE((*node->args)[i]);
 			}
 			codeCmd(node->name, node->args->size());
-			return;
+			return true;
 		}
 	}
 
-	compileList(node->args);
+	COMPILE_LIST(node->args);
 	codeCmd(node->name, node->args->size());
+	return true;
 }
 
 /* PutIntoNode */
 
-void LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
+bool LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
 	if (node->var->type == kVarNode) {
 		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
 	}
-	compile(node->val);
-	compileRef(node->var);
+	COMPILE(node->val);
+	COMPILE_REF(node->var);
 	code1(LC::c_assign);
+	return true;
 }
 
 /* PutAfterNode */
 
-void LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
+bool LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
 	if (node->var->type == kVarNode) {
 		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
 	}
-	compile(node->val);
-	compileRef(node->var);
+	COMPILE(node->val);
+	COMPILE_REF(node->var);
 	code1(LC::c_putafter);
+	return true;
 }
 
 /* PutBeforeNode */
 
-void LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
+bool LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
 	if (node->var->type == kVarNode) {
 		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
 	}
-	compile(node->val);
-	compileRef(node->var);
+	COMPILE(node->val);
+	COMPILE_REF(node->var);
 	code1(LC::c_putbefore);
+	return true;
 }
 
 /* SetNode */
 
-void LingoCompiler::visitSetNode(SetNode *node) {
+bool LingoCompiler::visitSetNode(SetNode *node) {
 	if (node->var->type == kVarNode) {
 		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
 	}
-	compile(node->val);
-	compileRef(node->var);
+	COMPILE(node->val);
+	COMPILE_REF(node->var);
 	code1(LC::c_assign);
+	return true;
 }
 
 /* GlobalNode */
 
-void LingoCompiler::visitGlobalNode(GlobalNode *node) {
+bool LingoCompiler::visitGlobalNode(GlobalNode *node) {
 	for (uint i = 0; i < node->names->size(); i++) {
 		registerMethodVar(*(*node->names)[i], kVarGlobal);
 	}
+	return true;
 }
 
 /* PropertyNode */
 
-void LingoCompiler::visitPropertyNode(PropertyNode *node) {
+bool LingoCompiler::visitPropertyNode(PropertyNode *node) {
 	for (uint i = 0; i < node->names->size(); i++) {
 		registerMethodVar(*(*node->names)[i], kVarProperty);
 	}
+	return true;
 }
 
 /* InstanceNode */
 
-void LingoCompiler::visitInstanceNode(InstanceNode *node) {
+bool LingoCompiler::visitInstanceNode(InstanceNode *node) {
 	for (uint i = 0; i < node->names->size(); i++) {
 		registerMethodVar(*(*node->names)[i], kVarInstance);
 	}
+	return true;
 }
 
 /* IfStmtNode */
 
-void LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
-	compile(node->cond);
+bool LingoCompiler::visitIfStmtNode(IfStmtNode *node) {
+	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
-	compileList(node->stmts);
+	COMPILE_LIST(node->stmts);
 	uint endPos = _currentAssembly->size();
 
 	inst jzOffset = 0;
 	WRITE_UINT32(&jzOffset, endPos - jzPos);
 	(*_currentAssembly)[jzPos + 1] = jzOffset;
+
+	return true;
 }
 
 /* IfElseStmtNode */
 
-void LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
-	compile(node->cond);
+bool LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
+	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
-	compileList(node->stmts1);
+	COMPILE_LIST(node->stmts1);
 
 	uint jmpPos = _currentAssembly->size();
 	code2(LC::c_jump, 0);
 	uint block2StartPos = _currentAssembly->size();
-	compileList(node->stmts2);
+	COMPILE_LIST(node->stmts2);
 	uint endPos = _currentAssembly->size();
 
 	inst jzOffset = 0;
@@ -617,19 +643,21 @@ void LingoCompiler::visitIfElseStmtNode(IfElseStmtNode *node) {
 	inst jmpOffset = 0;
 	WRITE_UINT32(&jmpOffset, endPos - jmpPos);
 	(*_currentAssembly)[jmpPos + 1] = jmpOffset;
+
+	return true;
 }
 
 /* RepeatWhileNode */
 
-void LingoCompiler::visitRepeatWhileNode(RepeatWhileNode *node) {
+bool LingoCompiler::visitRepeatWhileNode(RepeatWhileNode *node) {
 	LoopNode *prevLoop = _currentLoop;
 	_currentLoop = node;
 
 	uint startPos = _currentAssembly->size();
-	compile(node->cond);
+	COMPILE(node->cond);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
-	compileList(node->stmts);
+	COMPILE_LIST(node->stmts);
 	uint jmpPos = _currentAssembly->size();
 	code2(LC::c_jump, 0);
 	uint endPos = _currentAssembly->size();
@@ -644,20 +672,22 @@ void LingoCompiler::visitRepeatWhileNode(RepeatWhileNode *node) {
 
 	updateLoopJumps(jmpPos, endPos);
 	_currentLoop = prevLoop;
+
+	return true;
 }
 
 /* RepeatWithToNode */
 
-void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
+bool LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	LoopNode *prevLoop = _currentLoop;
 	_currentLoop = node;
 
-	compile(node->start);
+	COMPILE(node->start);
 	codeVarSet(*node->var);
 
 	uint startPos = _currentAssembly->size();
 	codeVarGet(*node->var);
-	compile(node->end);
+	COMPILE(node->end);
 	if (node->down) {
 		code1(LC::c_ge);
 	} else {
@@ -666,7 +696,7 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, 0);
 
-	compileList(node->stmts);
+	COMPILE_LIST(node->stmts);
 
 	uint incrementPos = _currentAssembly->size();
 	codeVarGet(*node->var);
@@ -693,189 +723,213 @@ void LingoCompiler::visitRepeatWithToNode(RepeatWithToNode *node) {
 
 	updateLoopJumps(incrementPos, endPos);
 	_currentLoop = prevLoop;
+
+	return true;
 }
 
 /* NextRepeatNode */
 
-void LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
-	if (_currentLoop) {
-		_currentLoop->nextRepeats.push_back(_currentAssembly->size());
-		code2(LC::c_jump, 0);
-	} else {
-		warning("# LINGO: next repeat not inside repeat loop");
+bool LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
+	if (!_currentLoop) {
+		warning("LingoCompiler::visitNextRepeatNode: next repeat not inside repeat loop");
+		return false;
 	}
+	_currentLoop->nextRepeats.push_back(_currentAssembly->size());
+	code2(LC::c_jump, 0);
+	return true;
 }
 
 /* ExitRepeatNode */
 
-void LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
-	if (_currentLoop) {
-		_currentLoop->exitRepeats.push_back(_currentAssembly->size());
-		code2(LC::c_jump, 0);
-	} else {
-		warning("# LINGO: exit repeat not inside repeat loop");
+bool LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
+	if (!_currentLoop) {
+		warning("LingoCompiler::visitExitRepeatLoop: exit repeat not inside repeat loop");
+		return false;
 	}
+	_currentLoop->exitRepeats.push_back(_currentAssembly->size());
+	code2(LC::c_jump, 0);
+	return true;
 }
 
 /* ExitNode */
 
-void LingoCompiler::visitExitNode(ExitNode *node) {
+bool LingoCompiler::visitExitNode(ExitNode *node) {
 	code1(LC::c_procret);
+	return true;
 }
 
 /* TellNode */
 
-void LingoCompiler::visitTellNode(TellNode *node) {
-	compile(node->target);
+bool LingoCompiler::visitTellNode(TellNode *node) {
+	COMPILE(node->target);
 	code1(LC::c_tell);
-	compileList(node->stmts);
+	COMPILE_LIST(node->stmts);
 	code1(LC::c_telldone);
+	return true;
 }
 
 /* WhenNode */
 
-void LingoCompiler::visitWhenNode(WhenNode *node) {
-	compile(node->code);
+bool LingoCompiler::visitWhenNode(WhenNode *node) {
+	COMPILE(node->code);
 	code1(LC::c_whencode);
 	codeString(node->event->c_str());
+	return true;
 }
 
 /* AssertErrorNode */
 
-void LingoCompiler::visitAssertErrorNode(AssertErrorNode *node) {
+bool LingoCompiler::visitAssertErrorNode(AssertErrorNode *node) {
 	code1(LC::c_asserterror);
-	compile(node->stmt);
+	COMPILE(node->stmt);
 	code1(LC::c_asserterrordone);
+	return true;
 }
 
 /* IntNode */
 
-void LingoCompiler::visitIntNode(IntNode *node) {
+bool LingoCompiler::visitIntNode(IntNode *node) {
 	code1(LC::c_intpush);
 	codeInt(node->val);
+	return true;
 }
 
 /* FloatNode */
 
-void LingoCompiler::visitFloatNode(FloatNode *node) {
+bool LingoCompiler::visitFloatNode(FloatNode *node) {
 	code1(LC::c_floatpush);
 	codeFloat(node->val);
+	return true;
 }
 
 /* SymbolNode */
 
-void LingoCompiler::visitSymbolNode(SymbolNode *node) {
+bool LingoCompiler::visitSymbolNode(SymbolNode *node) {
 	code1(LC::c_symbolpush);
 	codeString(node->val->c_str());
+	return true;
 }
 
 /* StringNode */
 
-void LingoCompiler::visitStringNode(StringNode *node) {
+bool LingoCompiler::visitStringNode(StringNode *node) {
 	code1(LC::c_stringpush);
 	codeString(node->val->c_str());
+	return true;
 }
 
 /* ListNode */
 
-void LingoCompiler::visitListNode(ListNode *node) {
-	compileList(node->items);
+bool LingoCompiler::visitListNode(ListNode *node) {
+	COMPILE_LIST(node->items);
 	code1(LC::c_arraypush);
 	codeInt(node->items->size());
+	return true;
 }
 
 /* PropListNode */
 
-void LingoCompiler::visitPropListNode(PropListNode *node) {
-	compileList(node->items);
+bool LingoCompiler::visitPropListNode(PropListNode *node) {
+	COMPILE_LIST(node->items);
 	code1(LC::c_proparraypush);
 	codeInt(node->items->size());
+	return true;
 }
 
 /* PropPairNode */
 
-void LingoCompiler::visitPropPairNode(PropPairNode *node) {
-	compile(node->key);
-	compile(node->val);
+bool LingoCompiler::visitPropPairNode(PropPairNode *node) {
+	COMPILE(node->key);
+	COMPILE(node->val);
+	return true;
 }
 
 /* FuncNode */
 
-void LingoCompiler::visitFuncNode(FuncNode *node) {
-	compileList(node->args);
+bool LingoCompiler::visitFuncNode(FuncNode *node) {
+	COMPILE_LIST(node->args);
 	codeFunc(node->name, node->args->size());
+	return true;
 }
 
 /* VarNode */
 
-void LingoCompiler::visitVarNode(VarNode *node) {
+bool LingoCompiler::visitVarNode(VarNode *node) {
 	if (_refMode) {
 		codeVarRef(*node->name);
-		return;
+		return true;
 	}
 	if (g_lingo->_builtinConsts.contains(*node->name)) {
 		code1(LC::c_constpush);
 		codeString(node->name->c_str());
-		return;
+		return true;
 	}
 	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
 		int val = castNumToNum(node->name->c_str());
 		if (val != -1) {
 			code1(LC::c_intpush);
 			codeInt(val);
-			return;
+			return true;
 		}
 	}
 	codeVarGet(*node->name);
+	return true;
 }
 
 /* ParensNode */
 
-void LingoCompiler::visitParensNode(ParensNode *node) {
-	compile(node->expr);
+bool LingoCompiler::visitParensNode(ParensNode *node) {
+	COMPILE(node->expr);
+	return true;
 }
 
 /* UnaryOpNode */
 
-void LingoCompiler::visitUnaryOpNode(UnaryOpNode *node) {
-	compile(node->arg);
+bool LingoCompiler::visitUnaryOpNode(UnaryOpNode *node) {
+	COMPILE(node->arg);
 	code1(node->op);
+	return true;
 }
 
 /* BinaryOpNode */
 
-void LingoCompiler::visitBinaryOpNode(BinaryOpNode *node) {
-	compile(node->a);
-	compile(node->b);
+bool LingoCompiler::visitBinaryOpNode(BinaryOpNode *node) {
+	COMPILE(node->a);
+	COMPILE(node->b);
 	code1(node->op);
+	return true;
 }
 
 /* FrameNode */
 
-void LingoCompiler::visitFrameNode(FrameNode *node) {
-	compile(node->arg);
+bool LingoCompiler::visitFrameNode(FrameNode *node) {
+	COMPILE(node->arg);
+	return true;
 }
 
 /* MovieNode */
 
-void LingoCompiler::visitMovieNode(MovieNode *node) {
-	compile(node->arg);
+bool LingoCompiler::visitMovieNode(MovieNode *node) {
+	COMPILE(node->arg);
+	return true;
 }
 
 /* IntersectsNode */
 
-void LingoCompiler::visitIntersectsNode(IntersectsNode *node) {
-	compile(node->sprite1);
-	compile(node->sprite2);
+bool LingoCompiler::visitIntersectsNode(IntersectsNode *node) {
+	COMPILE(node->sprite1);
+	COMPILE(node->sprite2);
 	code1(LC::c_intersects);
+	return true;
 };
 
 /* WithinNode */
 
-void LingoCompiler::visitWithinNode(WithinNode *node) {
-	compile(node->sprite1);
-	compile(node->sprite2);
+bool LingoCompiler::visitWithinNode(WithinNode *node) {
+	COMPILE(node->sprite1);
+	COMPILE(node->sprite2);
 	code1(LC::c_within);
+	return true;
 };
 
 } // End of namespace Director
