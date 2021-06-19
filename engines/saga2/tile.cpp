@@ -1488,7 +1488,7 @@ ActiveItem::ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStre
 	_data.instance.groupID = stream->readUint16LE();
 	_data.instance.u = stream->readSint16LE();
 	_data.instance.v = stream->readSint16LE();
-	_data.instance.v = stream->readSint16LE();
+	_data.instance.h = stream->readSint16LE();
 	_data.instance.stateIndex = stream->readUint16LE();
 	_data.instance.scriptFlags = stream->readUint16LE();
 	_data.instance.targetU = stream->readUint16LE();
