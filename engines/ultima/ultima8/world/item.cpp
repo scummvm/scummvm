@@ -3904,7 +3904,7 @@ uint32 Item::I_getRangeIfVisible(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 
 	// Somewhat arbitrary maths in here to replicate Crusader behavior.
-	int range = item->getRangeIfVisible(*other) / 16;
+	int range = item->getRangeIfVisible(*other) / 32;
 	if ((range & 0xf) != 0)
 		range++;
 
