@@ -130,12 +130,6 @@ void c_procret();
 
 void c_mci();
 void c_mciwait();
-void c_goto();
-void c_gotoloop();
-void c_gotonext();
-void c_gotoprevious();
-
-void c_play();
 
 void c_open();
 void c_hilite();
