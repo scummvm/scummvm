@@ -115,6 +115,13 @@ Immersive Sticky fullscreen mode
 
 ScummVM for Android uses the Immersive Sticky fullscreen mode, which means that the Android system bar is hidden until the user swipes from an edge with a system bar. Swipe from the edge to reveal the system bars.  They remain semi-transparent and disappear after a few seconds unless you interact with them. Your swipe also registers in the game, so if you need to swipe from an edge with system bars, your game play is not interrupted.
 
+Global Main Menu
+^^^^^^^^^^^^^^^^^^
+
+To open the Global Main Menu, tap on the small menu icon at the top right of the screen.
+
+To display or hide the small menu icon, from the Launcher select **Options** and then the **Backend** tab. Tick the **Show on-screen control** box to enable the menu icon.
+
 Virtual keyboard
 ^^^^^^^^^^^^^^^^^^^^^
 
