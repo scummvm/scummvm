@@ -541,6 +541,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 	_textSlant = 0;
 	_bgpalinfo1 = _bgpalinfo2 = _bgpalinfo3 = 0;
 	_fgpalinfo1 = _fgpalinfo2 = _fgpalinfo3 = 0xff;
+	_widget = nullptr;
 
 	if (version < kFileVer400) {
 		_flags1 = flags1; // region: 0 - auto, 1 - matte, 2 - disabled
@@ -719,6 +720,8 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			if (activeWidget == nullptr || !activeWidget->isEditable())
 				g_director->_wm->setActiveWidget(widget);
 		}
+		// just a link to the widget which we created. we may use it later
+		_widget = widget;
 		break;
 
 	case kCastButton:
@@ -758,7 +761,15 @@ void TextCastMember::setText(const char *text) {
 	_ptext = text;
 	_ftext = formatting + text;
 
-	_modified = true;
+	// if we have the link to widget, then we modify it directly.
+	// thus we can reach the immediate changing effect
+	if (_widget) {
+		((Graphics::MacText *)_widget)->setText(_ftext);
+		((Graphics::MacText *)_widget)->draw();
+		g_director->getCurrentWindow()->addDirtyRect(_widget->_dims);
+	} else {
+		_modified = true;
+	}
 }
 
 Common::String TextCastMember::getText() {

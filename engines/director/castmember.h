@@ -250,7 +250,7 @@ public:
 	Common::String _ftext;
 	Common::String _ptext;
 	void importStxt(const Stxt *stxt);
-	void importRTE(byte* text);
+	void importRTE(byte *text);
 
 	Common::String getText();
 
@@ -259,6 +259,7 @@ private:
 
 	uint32 _bgcolor;
 	uint32 _fgcolor;
+	Graphics::MacWidget *_widget;
 };
 
 class ScriptCastMember : public CastMember {
