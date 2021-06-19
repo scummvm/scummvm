@@ -166,7 +166,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // STATEMENT
 %type<node> stmt stmtoneliner
 %type<node> proc asgn definevars
-%type<node> ifstmt ifelsestmt loop tell
+%type<node> ifstmt ifelsestmt loop tell when
 %type<nodelist> cmdargs frameargs stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
@@ -331,7 +331,7 @@ ID: tVARID
 	| tTO			{ $$ = new Common::String("to"); }
 	| tASSERTERROR	{ $$ = new Common::String("scummvmAssertError"); }
 	| tSPRITE		{ $$ = new Common::String("sprite"); }
-	| tWHEN			{ $$ = new Common::String("when"); }
+	// | tWHEN			{ $$ = new Common::String("when"); }
 	| tWHILE		{ $$ = new Common::String("while"); }
 	| tWINDOW		{ $$ = new Common::String("window"); }
 	| tWITH			{ $$ = new Common::String("with"); }
@@ -362,6 +362,7 @@ stmt: stmtoneliner
 	| ifelsestmt
 	| loop
 	| tell
+	| when
 	;
 
 stmtoneliner: proc
@@ -502,6 +503,8 @@ tell: tTELL expr tTO stmtoneliner				{
 	| tTELL expr '\n' stmtlist tENDTELL '\n'	{
 		$$ = new TellNode($expr, $stmtlist); }
 	;
+
+when: tWHEN ID tTHEN expr			{ $$ = new WhenNode($ID, $expr); } ;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
 	| nonemptystmtlist

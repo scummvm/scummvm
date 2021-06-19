@@ -45,6 +45,7 @@ struct NextRepeatNode;
 struct ExitRepeatNode;
 struct ExitNode;
 struct TellNode;
+struct WhenNode;
 struct AssertErrorNode;
 struct IntNode;
 struct FloatNode;
@@ -94,6 +95,7 @@ enum NodeType {
 	kExitRepeatNode,
 	kExitNode,
 	kTellNode,
+	kWhenNode,
 	kAssertErrorNode,
 	kIntNode,
 	kFloatNode,
@@ -137,6 +139,7 @@ public:
 	virtual void visitExitRepeatNode(ExitRepeatNode *node) = 0;
 	virtual void visitExitNode(ExitNode *node) = 0;
 	virtual void visitTellNode(TellNode *node) = 0;
+	virtual void visitWhenNode(WhenNode *node) = 0;
 	virtual void visitAssertErrorNode(AssertErrorNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
@@ -493,6 +496,23 @@ struct TellNode : StmtNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitTellNode(this);
+	}
+};
+
+/* WhenNode */
+
+struct WhenNode : StmtNode {
+	Common::String *event;
+	Node *code;
+
+	WhenNode(Common::String *eventIn, Node *codeIn)
+		: StmtNode(kWhenNode), event(eventIn), code(codeIn) {}
+	virtual ~WhenNode() {
+		delete event;
+		delete code;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitWhenNode(this);
 	}
 };
 
