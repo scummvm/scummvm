@@ -1639,18 +1639,12 @@ void LB::b_constrainH(int nargs) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 	int res = 0;
 	if (score) {
-		Sprite *sp = score->getSpriteById(sprite.asInt());
-		if (sp) {
-			CastMember *cast = sp->_cast;
-			// use startPoint as fallback, if we don't have castmembers
-			if (cast)
-				res = CLIP<int> (num.asInt(), cast->getInitialRect().left, cast->getInitialRect().right);
-			else
-				res = CLIP<int> (num.asInt(), sp->_startPoint.x, sp->_startPoint.x + sp->_width);
+		Channel *ch = score->getChannelById(sprite.asInt());
+		if (ch) {
+			res = CLIP<int> (num.asInt(), ch->getBbox().left, ch->getBbox().right);
 		} else {
-			warning("b_constrainH: cannot find sprite %d", sprite.asInt());
+			warning("b_constrainH: cannot find channel %d", sprite.asInt());
 		}
-
 	} else {
 		warning("b_constrainH: no score");
 	}
@@ -1665,18 +1659,12 @@ void LB::b_constrainV(int nargs) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 	int res = 0;
 	if (score) {
-		Sprite *sp = score->getSpriteById(sprite.asInt());
-		if (sp) {
-			CastMember *cast = sp->_cast;
-			// use startPoint as fallback, if we don't have castmembers
-			if (cast)
-				res = CLIP<int> (num.asInt(), cast->getInitialRect().top, cast->getInitialRect().bottom);
-			else
-				res = CLIP<int> (num.asInt(), sp->_startPoint.y, sp->_startPoint.y + sp->_height);
+		Channel *ch = score->getChannelById(sprite.asInt());
+		if (ch) {
+			res = CLIP<int> (num.asInt(), ch->getBbox().top, ch->getBbox().bottom);
 		} else {
-			warning("b_constrainV cannot find sprite %d", sprite.asInt());
+			warning("b_constrainH: cannot find channel %d", sprite.asInt());
 		}
-
 	} else {
 		warning("b_constrainV: no score");
 	}
