@@ -102,7 +102,7 @@ Common::Error CineEngine::run() {
 
 	if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 		if (!existExtractedCDAudioFiles()
-		    && !areDataAndCDAudioReadFromSameCDDrive()) {
+		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
 		}
 	}

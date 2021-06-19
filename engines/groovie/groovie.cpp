@@ -247,7 +247,7 @@ Common::Error GroovieEngine::run() {
 	// the same cd
 	if (getPlatform() != Common::kPlatformIOS) {
 		if (!existExtractedCDAudioFiles()
-		    && !areDataAndCDAudioReadFromSameCDDrive()) {
+		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
 		}
 		_system->getAudioCDManager()->open();

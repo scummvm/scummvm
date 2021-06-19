@@ -487,7 +487,7 @@ bool Engine::existExtractedCDAudioFiles() {
  * are read from the same CD drive which should also play game CD audio.
  * @return			true, if this case is applicable and the warning is displayed
  */
-bool Engine::areDataAndCDAudioReadFromSameCDDrive() {
+bool Engine::isDataAndCDAudioReadFromSameCD() {
 #if defined(WIN32) && !defined(__SYMBIAN32__)
 	// It is a known bug under Windows that games that play CD audio cause
 	// ScummVM to crash if the data files are read from the same CD. Check
