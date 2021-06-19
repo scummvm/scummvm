@@ -27,6 +27,7 @@ win32-data: all
 	cp $(srcdir)/LICENSES/COPYING.LUA $(WIN32PATH)/COPYING.LUA.txt
 	cp $(srcdir)/LICENSES/COPYING.MIT $(WIN32PATH)/COPYING.MIT.txt
 	cp $(srcdir)/LICENSES/COPYING.TINYGL $(WIN32PATH)/COPYING.TINYGL.txt
+	cp $(srcdir)/LICENSES/COPYING.GLAD $(WIN32PATH)/COPYING.GLAD.txt
 	cp $(srcdir)/COPYRIGHT $(WIN32PATH)/COPYRIGHT.txt
 	cp $(srcdir)/doc/cz/PrectiMe $(WIN32PATH)/doc/cz/PrectiMe.txt
 	cp $(srcdir)/doc/QuickStart $(WIN32PATH)/doc/QuickStart.txt

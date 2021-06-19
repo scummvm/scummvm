@@ -67,6 +67,7 @@ pkg_licenses_install = """
 "..\\..\\..\\..\\COPYING.MIT"   - "!:\\data\\scummvm\\COPYING.MIT"
 "..\\..\\..\\..\\COPYING.OFL"   - "!:\\data\\scummvm\\COPYING.OFL"
 "..\\..\\..\\..\\COPYING.TINYGL"   - "!:\\data\\scummvm\\COPYING.TINYGL"
+"..\\..\\..\\..\\COPYING.GLAD"   - "!:\\data\\scummvm\\COPYING.GLAD"
 "..\\..\\..\\..\\COPYING"   - "!:\\data\\scummvm\\COPYING"
 "..\\..\\..\\..\\AUTHORS"   - "!:\\data\\scummvm\\AUTHORS", FT, TC
 "..\\..\\..\\..\\README.md" - "!:\\data\\scummvm\\README.md"

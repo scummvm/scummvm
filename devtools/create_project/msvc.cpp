@@ -75,7 +75,6 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{    "sdlnet", "SDL_net.lib",               nullptr,         "iphlpapi.lib",                                    nullptr },
 		{   "sdl2net", "SDL2_net.lib",              nullptr,         "iphlpapi.lib",                                    "SDL_net.lib" },
 		{   "discord", "discord-rpc.lib",           nullptr,         nullptr,                                           nullptr },
-		{      "glew", "glew32.lib",                "glew32d.lib",   nullptr,                                           nullptr },
 		// Feature flags with library dependencies
 		{   "updates", "winsparkle.lib",            nullptr,         nullptr,                                           nullptr },
 		{       "tts", nullptr,                     nullptr,         "sapi.lib",                                        nullptr },

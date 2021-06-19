@@ -30,6 +30,20 @@
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
+#ifdef USE_GLAD
+
+#ifdef SDL_BACKEND
+#include "backends/platform/sdl/sdl-sys.h"
+
+static GLADapiproc loadFunc(void *userptr, const char *name) {
+	return (GLADapiproc)SDL_GL_GetProcAddress(name);
+}
+#else
+#error Not implemented
+#endif
+
+#endif
+
 namespace Common {
 DECLARE_SINGLETON(OpenGL::ContextGL);
 }
@@ -58,6 +72,21 @@ void ContextGL::initialize(ContextOGLType contextType) {
 	reset();
 
 	type = contextType;
+
+#ifdef USE_GLAD
+	switch (type) {
+	case kOGLContextGL:
+		gladLoadGLUserPtr(loadFunc, this);
+		break;
+
+	case kOGLContextGLES2:
+		gladLoadGLES2UserPtr(loadFunc, this);
+		break;
+
+	default:
+		break;
+	}
+#endif
 
 	// Obtain maximum texture size.
 	glGetIntegerv(GL_MAX_TEXTURE_SIZE, (GLint *)&maxTextureSize);

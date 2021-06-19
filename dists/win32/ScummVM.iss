@@ -220,6 +220,7 @@ Name: {group}\Copying.ISC; Filename: {app}\LICENSES\COPYING.ISC.txt; WorkingDir:
 Name: {group}\Copying.LUA; Filename: {app}\LICENSES\COPYING.LUA.txt; WorkingDir: {app}; Comment: COPYING.LUA; Flags: createonlyiffileexists
 Name: {group}\Copying.MIT; Filename: {app}\LICENSES\COPYING.MIT.txt; WorkingDir: {app}; Comment: COPYING.MIT; Flags: createonlyiffileexists
 Name: {group}\Copying.TINYGL; Filename: {app}\LICENSES\COPYING.TINYGL.txt; WorkingDir: {app}; Comment: COPYING.TINYGL; Flags: createonlyiffileexists
+Name: {group}\Copying.GLAD; Filename: {app}\LICENSES\COPYING.GLAD.txt; WorkingDir: {app}; Comment: COPYING.GLAD; Flags: createonlyiffileexists
 Name: {group}\Copyright; Filename: {app}\COPYRIGHT.txt; WorkingDir: {app}; Comment: COPYRIGHT; Flags: createonlyiffileexists
 
 ; NEWS

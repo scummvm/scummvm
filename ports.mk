@@ -461,9 +461,6 @@ endif
 OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 endif
-ifdef USE_GLEW
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libGLEW.a
-endif
 
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
@@ -496,6 +493,7 @@ osxsnap: bundle
 	mv ./ScummVM-snapshot/COPYING.LUA ./ScummVM-snapshot/License\ \(Lua\)
 	mv ./ScummVM-snapshot/COPYING.MIT ./ScummVM-snapshot/License\ \(MIT\)
 	mv ./ScummVM-snapshot/COPYING.TINYGL ./ScummVM-snapshot/License\ \(TinyGL\)
+	mv ./ScummVM-snapshot/COPYING.GLAD ./ScummVM-snapshot/License\ \(Glad\)
 	$(XCODETOOLSPATH)/SetFile -t ttro -c ttxt ./ScummVM-snapshot/*
 	mkdir ScummVM-snapshot/doc
 	cp $(srcdir)/doc/QuickStart ./ScummVM-snapshot/doc/QuickStart

@@ -45,7 +45,7 @@
 #include "engines/grim/registry.h"
 
 
-#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program) && !defined(USE_GLEW)
+#if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program) && !defined(USE_GLAD)
 
 // We need SDL.h for SDL_GL_GetProcAddress.
 #include "backends/platform/sdl/sdl-sys.h"
@@ -164,7 +164,7 @@ void GfxOpenGL::initExtensions() {
 	}
 
 #if defined (SDL_BACKEND) && defined(GL_ARB_fragment_program)
-#ifndef USE_GLEW
+#ifndef USE_GLAD
 	union {
 		void *obj_ptr;
 		void (APIENTRY *func_ptr)();

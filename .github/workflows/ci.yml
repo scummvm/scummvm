@@ -14,13 +14,13 @@ jobs:
             triplet: x86-windows
             arch: x86
             configFlags: --enable-faad --enable-mpeg2 --enable-discord
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
             useNasm: 'true'
           - platform: x64
             arch: x64
             triplet: x64-windows
             configFlags: --enable-faad --enable-mpeg2 --enable-discord
-            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype glew libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
           - platform: arm64
             arch: arm64
             triplet: arm64-windows
@@ -102,7 +102,7 @@ jobs:
           - platform: macosx
             buildFlags: -scheme ScummVM-macOS
             configFlags: --disable-nasm --enable-faad --enable-mpeg2
-            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi glew mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
+            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
           - platform: ios7
             buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
             configFlags: --disable-nasm --disable-opengl --disable-theora --disable-taskbar --disable-tts --disable-fribidi
@@ -149,10 +149,10 @@ jobs:
         include:
           - platform: ubuntu-latest
             sdlConfig: sdl2-config
-            aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libglew-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+            aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
           - platform: ubuntu-18.04
             sdlConfig: sdl-config
-            aptPackages: 'libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libglew-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+            aptPackages: 'libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
     env:
       SDL_CONFIG: ${{ matrix.sdlConfig }}
     steps:

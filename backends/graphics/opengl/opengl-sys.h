@@ -25,9 +25,6 @@
 #include "common/scummsys.h"
 
 #include "backends/graphics/opengl/debug.h"
-#ifdef SDL_BACKEND
-#include "backends/platform/sdl/sdl-sys.h"
-#endif
 
 // On OS X we only support GL contexts. The reason is that Apple's GL interface
 // uses "void *" for GLhandleARB which is not type compatible with GLint. This
@@ -60,25 +57,16 @@
 #ifdef __ANDROID__
 	#include <GLES/gl.h>
 	#include <GLES2/gl2.h>
-	// These types are ScummVM specific
-	typedef GLuint GLprogram;
-	typedef GLuint GLshader;
-	#define USE_BUILTIN_OPENGL
 #else
-	#include "backends/graphics/opengl/opengl-defs.h"
+	#include "graphics/opengl/glad.h"
+	#define USE_GLAD
 #endif
 
-#ifdef SDL_BACKEND
-	// Win32 needs OpenGL functions declared with APIENTRY.
-	// However, SDL does not define APIENTRY in it's SDL.h file on non-Windows
-	// targets, thus if it is not available, we just dummy define it.
-	#ifndef APIENTRY
-		#define APIENTRY
-	#endif
-	#define GL_CALL_CONV APIENTRY
-#else
-	#define GL_CALL_CONV
-#endif
+// This is an addition from us to alias ARB shader object extensions to
+// OpenGL (ES) 2.0 style functions. It only works when GLhandleARB and GLuint
+// are type compatible.
+typedef GLuint GLprogram;
+typedef GLuint GLshader;
 
 namespace OpenGL {
 
@@ -97,6 +85,9 @@ class Framebuffer;
 struct Context {
 	/** The type of the active context. */
 	ContextType type;
+
+	/** Whether the context is initialized or not. */
+	bool isInitialized;
 
 	/**
 	 * Reset context.
@@ -135,10 +126,6 @@ struct Context {
 	/** Whether texture coordinate edge clamping is available or not. */
 	bool textureEdgeClampSupported;
 
-#define GL_FUNC_DEF(ret, name, param) ret (GL_CALL_CONV *name)param
-#include "backends/graphics/opengl/opengl-func.h"
-#undef GL_FUNC_DEF
-
 	//
 	// Wrapper functionality to handle fixed-function pipelines and
 	// programmable pipelines in the same fashion.
@@ -172,13 +159,13 @@ extern Context g_context;
 
 } // End of namespace OpenGL
 
-#define GL_CALL(x)                 GL_WRAP_DEBUG(g_context.x, x)
+#define GL_CALL(x)                 GL_WRAP_DEBUG(x, x)
 #define GL_CALL_SAFE(func, params) \
 	do { \
-		if (g_context.func) { \
+		if (g_context.isInitialized) { \
 			GL_CALL(func params); \
 		} \
 	} while (0)
-#define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = g_context.x, x)
+#define GL_ASSIGN(var, x)          GL_WRAP_DEBUG(var = x, x)
 
 #endif
