@@ -377,6 +377,7 @@ proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
+	| tASSERTERROR stmtoneliner			{ $$ = new AssertErrorNode($stmtoneliner); }
 	;
 
 cmdargs: /* empty */					{
