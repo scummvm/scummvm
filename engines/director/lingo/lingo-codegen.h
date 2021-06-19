@@ -107,6 +107,8 @@ public:
 	virtual void visitParensNode(ParensNode *node);
 	virtual void visitUnaryOpNode(UnaryOpNode *node);
 	virtual void visitBinaryOpNode(BinaryOpNode *node);
+	virtual void visitFrameNode(FrameNode *node);
+	virtual void visitMovieNode(MovieNode *node);
 
 private:
 	int parse(const char *code);
