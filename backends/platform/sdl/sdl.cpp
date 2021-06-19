@@ -288,7 +288,7 @@ void OSystem_SDL::initBackend() {
 		// subclass does not want any switching of graphics managers anyway.
 		setupGraphicsModes();
 
-		if (ConfMan.hasKey("gfx_mode")) {
+		if (ConfMan.hasKey("gfx_mode") || ConfMan.get("gfx_mode") == "opengl") {
 			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
 			for (uint i = _firstGLMode; i < _graphicsModeIds.size(); ++i) {

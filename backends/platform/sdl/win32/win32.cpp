@@ -125,6 +125,10 @@ void OSystem_Win32::initBackend() {
 	_textToSpeechManager = new WindowsTextToSpeechManager();
 #endif
 
+#ifdef USE_OPENGL
+	ConfMan.registerDefault("gfx_mode", "opengl");
+#endif
+
 	// Invoke parent implementation of this method
 	OSystem_SDL::initBackend();
 }
