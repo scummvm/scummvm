@@ -1747,8 +1747,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			case 2:
 			case 3: {
 				// area search (3 = recursive)
-				stacksize = 0x34;
-				if (GAME_IS_CRUSADER) stacksize = 0x3A;
+				stacksize = GAME_IS_U8 ? 0x34 : 0x3A;
 				if (searchtype == 3) recurse = true;
 
 				// ui16a = item, ui16b = range
@@ -1768,9 +1767,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			case 4:
 			case 5: {
-				// container search (4 = recursive)
-				stacksize = 0x28;
-				if (GAME_IS_CRUSADER) stacksize = 0x2A;
+				// container search (5 = recursive)
+				stacksize = GAME_IS_U8 ? 0x28 : 0x2A;
 				if (searchtype == 5) {
 					stacksize += 2;
 					recurse = true;
@@ -1796,8 +1794,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			case 6: {
 				// Surface search
-				stacksize = 0x3D;
-				if (GAME_IS_CRUSADER) stacksize = 0x43;
+				stacksize = GAME_IS_U8 ? 0x3D : 0x43;
 
 				bool above = ui16a != 0xFFFF;
 				bool below = ui16b != 0xFFFF;
