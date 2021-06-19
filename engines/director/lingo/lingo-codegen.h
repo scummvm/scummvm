@@ -112,6 +112,8 @@ public:
 	virtual void visitBinaryOpNode(BinaryOpNode *node);
 	virtual void visitFrameNode(FrameNode *node);
 	virtual void visitMovieNode(MovieNode *node);
+	virtual void visitIntersectsNode(IntersectsNode *node);
+	virtual void visitWithinNode(WithinNode *node);
 
 private:
 	int parse(const char *code);

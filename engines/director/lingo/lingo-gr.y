@@ -173,7 +173,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // EXPRESSION
 %type<node> simpleexpr_noparens_nounarymath simpleexpr simpleexpr_noparens simpleexpr_nounarymath
 %type<node> parens unarymath
-%type<node> expr expr_nounarymath
+%type<node> expr expr_nounarymath sprite
 %type<node> var varorchunk varorthe
 %type<node> list proppair
 %type<nodelist> proplist exprlist nonemptyexprlist
@@ -591,6 +591,7 @@ simpleexpr_nounarymath: simpleexpr_noparens_nounarymath
 
 // REMEMBER TO SYNC THIS WITH expr_nounarymath!
 expr: simpleexpr
+	| sprite
 	| expr[a] '+' expr[b]		{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
 	| expr[a] '-' expr[b]		{ $$ = new BinaryOpNode(LC::c_sub, $a, $b); }
 	| expr[a] '*' expr[b]		{ $$ = new BinaryOpNode(LC::c_mul, $a, $b); }
@@ -615,6 +616,7 @@ expr: simpleexpr
 // Without this, `cmd 1 + 1` could be interpreted as either `cmd(1 + 1)` or `cmd(1, +1)`.
 // We only want to allow the first interpretation, so we must exclude unary math from the second expression.
 expr_nounarymath: simpleexpr_nounarymath
+	| sprite
 	| expr_nounarymath[a] '+' expr[b]		{ $$ = new BinaryOpNode(LC::c_add, $a, $b); }
 	| expr_nounarymath[a] '-' expr[b]		{ $$ = new BinaryOpNode(LC::c_sub, $a, $b); }
 	| expr_nounarymath[a] '*' expr[b]		{ $$ = new BinaryOpNode(LC::c_mul, $a, $b); }
@@ -632,6 +634,10 @@ expr_nounarymath: simpleexpr_nounarymath
 	| expr_nounarymath[a] tCONCAT expr[b]	{ $$ = new BinaryOpNode(LC::c_concat, $a, $b); }
 	| expr_nounarymath[a] tCONTAINS expr[b]	{ $$ = new BinaryOpNode(LC::c_contains, $a, $b); }
 	| expr_nounarymath[a] tSTARTS expr[b]	{ $$ = new BinaryOpNode(LC::c_starts, $a, $b); }
+	;
+
+sprite: tSPRITE expr tINTERSECTS simpleexpr	{ $$ = new IntersectsNode($expr, $simpleexpr); }
+	| tSPRITE expr tWITHIN simpleexpr		{ $$ = new WithinNode($expr, $simpleexpr); }
 	;
 
 exprlist: /* empty */						{ $$ = new NodeList; }

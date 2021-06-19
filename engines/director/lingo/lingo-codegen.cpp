@@ -862,4 +862,20 @@ void LingoCompiler::visitMovieNode(MovieNode *node) {
 	compile(node->arg);
 }
 
+/* IntersectsNode */
+
+void LingoCompiler::visitIntersectsNode(IntersectsNode *node) {
+	compile(node->sprite1);
+	compile(node->sprite2);
+	code1(LC::c_intersects);
+};
+
+/* WithinNode */
+
+void LingoCompiler::visitWithinNode(WithinNode *node) {
+	compile(node->sprite1);
+	compile(node->sprite2);
+	code1(LC::c_within);
+};
+
 } // End of namespace Director

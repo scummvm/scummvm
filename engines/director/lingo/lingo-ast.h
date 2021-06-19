@@ -61,6 +61,8 @@ struct UnaryOpNode;
 struct BinaryOpNode;
 struct FrameNode;
 struct MovieNode;
+struct IntersectsNode;
+struct WithinNode;
 
 typedef Common::Array<Node *> NodeList;
 typedef Common::Array<Common::String *> IDList;
@@ -110,7 +112,9 @@ enum NodeType {
 	kUnaryOpNode,
 	kBinaryOpNode,
 	kFrameNode,
-	kMovieNode
+	kMovieNode,
+	kIntersectsNode,
+	kWithinNode
 };
 
 /* NodeVisitor */
@@ -155,6 +159,8 @@ public:
 	virtual void visitBinaryOpNode(BinaryOpNode *node) = 0;
 	virtual void visitFrameNode(FrameNode *node) = 0;
 	virtual void visitMovieNode(MovieNode *node) = 0;
+	virtual void visitIntersectsNode(IntersectsNode *node) = 0;
+	virtual void visitWithinNode(WithinNode *node) = 0;
 };
 
 /* Node */
@@ -729,6 +735,40 @@ struct MovieNode : ExprNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitMovieNode(this);
+	}
+};
+
+/* IntersectsNode */
+
+struct IntersectsNode : ExprNode {
+	Node *sprite1;
+	Node *sprite2;
+
+	IntersectsNode(Node *sprite1In, Node *sprite2In)
+		: ExprNode(kIntersectsNode), sprite1(sprite1In), sprite2(sprite2In) {}
+	virtual ~IntersectsNode() {
+		delete sprite1;
+		delete sprite2;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitIntersectsNode(this);
+	}
+};
+
+/* WithinNode */
+
+struct WithinNode : ExprNode {
+	Node *sprite1;
+	Node *sprite2;
+
+	WithinNode(Node *sprite1In, Node *sprite2In)
+		: ExprNode(kWithinNode), sprite1(sprite1In), sprite2(sprite2In) {}
+	virtual ~WithinNode() {
+		delete sprite1;
+		delete sprite2;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitWithinNode(this);
 	}
 };
 
