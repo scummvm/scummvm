@@ -732,6 +732,14 @@ void LingoCompiler::visitTellNode(TellNode *node) {
 	code1(LC::c_telldone);
 }
 
+/* WhenNode */
+
+void LingoCompiler::visitWhenNode(WhenNode *node) {
+	compile(node->code);
+	code1(LC::c_whencode);
+	codeString(node->event->c_str());
+}
+
 /* AssertErrorNode */
 
 void LingoCompiler::visitAssertErrorNode(AssertErrorNode *node) {
