@@ -166,7 +166,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 // STATEMENT
 %type<node> stmt stmtoneliner
 %type<node> proc asgn definevars
-%type<node> ifstmt ifelsestmt loop
+%type<node> ifstmt ifelsestmt loop tell
 %type<nodelist> cmdargs frameargs stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
@@ -361,6 +361,7 @@ stmt: stmtoneliner
 	| ifstmt
 	| ifelsestmt
 	| loop
+	| tell
 	;
 
 stmtoneliner: proc
@@ -492,6 +493,14 @@ loop: tREPEAT tWHILE expr '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, false, $end, $stmtlist); }
 	| tREPEAT tWITH ID tEQ expr[start] tDOWN tTO expr[end] '\n' stmtlist tENDREPEAT '\n' {
 		$$ = new RepeatWithToNode($ID, $start, true, $end, $stmtlist); }
+	;
+
+tell: tTELL expr tTO stmtoneliner				{
+		NodeList *stmtlist = new NodeList;
+		stmtlist->push_back($stmtoneliner);
+		$$ = new TellNode($expr, stmtlist); }
+	| tTELL expr '\n' stmtlist tENDTELL '\n'	{
+		$$ = new TellNode($expr, $stmtlist); }
 	;
 
 stmtlist: /* empty */				{ $$ = new NodeList; }
