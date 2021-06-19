@@ -75,7 +75,7 @@ struct GameSetup {
 	String translation;
 	bool  mouse_auto_lock;
 	int   override_script_os;
-	uint8_t override_multitasking;
+	int8_t override_multitasking;
 	bool  override_upscale;
 	float mouse_speed;
 	MouseControlWhen mouse_ctrl_when;
