@@ -94,6 +94,54 @@ enum {
 
 #pragma mark -
 
+bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, Common::U32String token) {
+	bool invert = false;
+	while (token.size() && token[0] == '!') {
+		token = token.substr(1);
+		invert = !invert;
+	}
+	
+	bool result = false;
+	Common::String token8 = token;
+	size_t pos = token8.findFirstOf(":=~");
+	if (pos != token8.npos) {
+		Common::String key = token8.substr(0, token8.findFirstOf(token8[pos]));
+		Common::String filter = token8.substr(token8.findFirstOf(token8[pos]) + 1);
+	
+		if (key.size()) {
+			if (Common::String("description").hasPrefix(key)) {
+				key = "description";
+			} else if (Common::String("engineid").hasPrefix(key)) {
+				key = "engineid";
+			} else if (Common::String("gameid").hasPrefix(key)) {
+				key = "gameid";
+			} else if (Common::String("language").hasPrefix(key)) {
+				key = "language";
+			} else if (Common::String("path").hasPrefix(key)) {
+				key = "path";
+			} else if (Common::String("platform").hasPrefix(key)) {
+				key = "platform";
+			}
+		}
+	
+		LauncherDialog *launcher = (LauncherDialog *)(boss);
+		Common::String data = launcher->getGameConfig(idx, key);
+		data.toLowercase();
+
+		if (token8[pos] == ':') {
+			result = data.contains(filter);
+		} else if (token8[pos] == '=') {
+			result = data == filter;
+		} else if (token8[pos] == '~') {
+			result = data.matchString(filter, false, false);
+		}
+	} else {
+		result = item.contains(token);
+	}
+	
+	return invert ? !result : result;
+}
+
 LauncherDialog::LauncherDialog()
 	: Dialog("Launcher") {
 
@@ -193,6 +241,7 @@ void LauncherDialog::build() {
 	_list->setEditable(false);
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
+	_list->setFilterMatcher(LauncherFilterMatcher, this);
 
 	// Populate the list
 	updateListing();
@@ -411,6 +460,13 @@ void LauncherDialog::massAddGame() {
 
 		g_gui.scheduleTopDialogRedraw();
 	}
+}
+
+Common::String LauncherDialog::getGameConfig(int item, Common::String key) {
+	if (ConfMan.hasKey(key, _domains[item])) {
+		return ConfMan.get(key, _domains[item]);
+	}
+	return "";
 }
 
 void LauncherDialog::removeGame(int item) {
