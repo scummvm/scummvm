@@ -458,10 +458,10 @@ void GUIErrorMessageFormat(Common::U32String fmt, ...) {
  * Checks if supported (extracted) audio files are found.
  *
  * @return			true if audio files of the expected naming scheme are found, as long as ScummVM
- *					is also build with support to the respective audio format (eg. ogg, flac, mad/mp3)
+ *					is also built with support to the respective audio format (eg. ogg, flac, mad/mp3)
  */
 bool Engine::existExtractedCDAudioFiles() {
-	#ifdef USE_VORBIS
+#ifdef USE_VORBIS
 	if (Common::File::exists("track1.ogg") ||
 	    Common::File::exists("track01.ogg"))
 		return true;
