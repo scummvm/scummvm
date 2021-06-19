@@ -56,6 +56,7 @@ public:
 	void handleKeyUp(Common::KeyState state) override;
 	void handleOtherEvent(const Common::Event &evt) override;
 	bool doGameDetection(const Common::String &path);
+	Common::String getGameConfig(int item, Common::String key);
 protected:
 	EditTextWidget  *_searchWidget;
 	ListWidget		*_list;
