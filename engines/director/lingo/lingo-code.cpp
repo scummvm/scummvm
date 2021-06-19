@@ -1526,8 +1526,8 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		}
 	}
 
-	// use lingo-the as fallback
-	if (funcSym.type == VOIDSYM && g_lingo->_theEntities.contains(name)) {
+	// use lingo-the as fallback. we can only use functions as fallback, not properties
+	if (funcSym.type == VOIDSYM && g_lingo->_theEntities.contains(name) && g_lingo->_theEntities[name]->isFunction) {
 		Datum id;
 		Datum res = g_lingo->getTheEntity(g_lingo->_theEntities[name]->entity, id, kTheNOField);
 		g_lingo->push(res);
