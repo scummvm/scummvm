@@ -1061,6 +1061,60 @@ void Actor::init(
 //  Actor constructor -- copies the resource fields and simply NULL's most
 //	of the rest of the data members
 
+Actor::Actor(void) {
+	prototype = nullptr;
+	faction             = 0;
+	colorScheme         = 0;
+	appearanceID        = 0;
+	attitude            = 0;
+	mood                = 0;
+	disposition         = 0;
+	currentFacing       = 0;
+	tetherLocU          = 0;
+	tetherLocV          = 0;
+	tetherDist          = 0;
+	leftHandObject      = 0;
+	rightHandObject     = 0;
+	schedule            = 0;
+	for (int i = 0; i < 16; ++i)
+		knowledge[i] = 0;
+
+	//  Initialize the rest of the data members
+	for (int i = 0; i < 4; ++i)
+		conversationMemory[i] = 0;
+
+	currentAnimation    = actionStand;
+	currentPose         = 0;
+	animationFlags      = 0;
+	flags               = 0;
+	memset(&poseInfo, 0, sizeof(poseInfo));
+	appearance          = nullptr;
+	cycleCount          = 0;
+	kludgeCount         = 0;
+	moveTask            = nullptr;
+	enchantmentFlags    = 0L;
+	curTask             = nullptr;
+	currentGoal         = actorGoalFollowAssignment;
+	deactivationCounter = 0;
+	_assignment = nullptr;
+
+	memset(&effectiveStats, 0, sizeof(effectiveStats));
+	effectiveStats.vitality = MAX<uint16>(effectiveStats.vitality, 1);
+
+	actionCounter       = 0;
+	effectiveResistance = 0;
+	effectiveImmunity   = 0;
+	recPointsPerUpdate      = BASE_REC_RATE;
+	currentRecoveryPoints   = 0;
+	leader              = nullptr;
+	followers           = nullptr;
+	for (int i = 0; i < ARMOR_COUNT; i++)
+		armorObjects[i] = Nothing;
+	currentTarget       = nullptr;
+	for (int i = 0; i < actorScriptVars; i++)
+		scriptVar[i] = 0;
+}
+
 Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	int         i;
 
