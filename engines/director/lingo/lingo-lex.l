@@ -146,9 +146,7 @@ exit		{ count(); return tEXIT; }
 field		{ count(); return tFIELD; }
 frame		{ count(); return tFRAME; }
 global		{ count(); return tGLOBAL; }
-go{spc}+(to{spc}+)?frame	{ count(); return tGO; }
 go{spc}+(to)?	{ count(); return tGO; }
-go{spc}+loop	{ count(); return tGOLOOP; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS;}
 into		{ count(); return tINTO; }

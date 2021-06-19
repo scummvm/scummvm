@@ -135,7 +135,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %token<s> tENDCLAUSE tPLAYACCEL
 %token<objectprop> tTHEOBJECTPROP
 %token tCAST tFIELD tSCRIPT tWINDOW
-%token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tGOLOOP tIF tIN tINTO tMACRO
+%token tDOWN tELSE tELSIF tEXIT tFRAME tGLOBAL tGO tIF tIN tINTO tMACRO
 %token tMOVIE tNEXT tOF tPREVIOUS tPUT tREPEAT tSET tTHEN tTO tWHEN
 %token tWITH tWHILE tFACTORY tOPEN tPLAY tINSTANCE
 %token tGE tLE tEQ tNEQ tAND tOR tNOT tMOD
@@ -370,6 +370,8 @@ stmtoneliner: proc
 
 proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
 	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
+	| tGO cmdargs '\n'					{ $$ = new CmdNode(new Common::String("go"), $cmdargs); }
+	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs); }
 	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs); }
 	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
