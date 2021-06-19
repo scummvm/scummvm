@@ -92,7 +92,7 @@ struct AchievementDescriptionList {
 };
 
 #define ACHIEVEMENT_DESC_TABLE_END_MARKER \
-	{ nullptr, Common::AchievementsPlatform::UNK_ACHIEVEMENTS, nullptr }
+	{ nullptr, Common::UNK_ACHIEVEMENTS, nullptr }
 
 /**
  * Class for manipulating the achievements.
