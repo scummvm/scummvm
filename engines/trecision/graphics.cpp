@@ -39,8 +39,7 @@
 
 namespace Trecision {
 
-GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr), kImageFormat(2, 5, 5, 5, 0, 10, 5, 0, 0) {	
-	// RGB555
+GraphicsManager::GraphicsManager(TrecisionEngine *vm) : _vm(vm),  _font(nullptr) {	
 	for (int i = 0; i < 3; ++i)
 		_bitMask[i] = 0;
 }
@@ -59,23 +58,23 @@ GraphicsManager::~GraphicsManager() {
 }
 
 bool GraphicsManager::init() {
-	const Graphics::PixelFormat *bestFormat = &kImageFormat;
-
-	// Find a 16-bit format, currently we don't support other color depths
+	// Find a suitable 16-bit format
+	const Graphics::PixelFormat rgb555(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
-	bool found = false;
-	for (Common::List<Graphics::PixelFormat>::const_iterator i = formats.begin(); i != formats.end(); ++i) {
-		if (i->bytesPerPixel == 2) {
-			bestFormat = &*i;
-			found = true;
+	for (Common::List<Graphics::PixelFormat>::iterator i = formats.begin(); i != formats.end(); ++i) {
+		if (i->bytesPerPixel != 2 || i->aBits()) {
+			i = formats.reverse_erase(i);
+		} else if (*i == rgb555) {
+			formats.clear();
+			formats.push_back(rgb555);
 			break;
 		}
 	}
 
-	if (!found)
+	if (formats.empty())
 		return false;
 
-	initGraphics(MAXX, MAXY, bestFormat);
+	initGraphics(MAXX, MAXY, formats);
 
 	_screenFormat = g_system->getScreenFormat();
 	if (_screenFormat.bytesPerPixel != 2)
@@ -235,12 +234,13 @@ void GraphicsManager::copyToScreen(int x, int y, int w, int h) {
 }
 
 void GraphicsManager::readSurface(Common::SeekableReadStream *stream, Graphics::Surface *surface, uint16 width, uint16 height, uint16 count) {
-	surface->create(width * count, height, kImageFormat);
+	Graphics::PixelFormat pixelFormat = g_system->getScreenFormat();
+	surface->create(width * count, height, pixelFormat);
 
 	for (uint16 i = 0; i < count; ++i) {
 		for (uint16 y = 0; y < height; ++y) {
 			void *p = surface->getBasePtr(width * i, y);
-			stream->read(p, width * kImageFormat.bytesPerPixel);
+			stream->read(p, width * pixelFormat.bytesPerPixel);
 		}
 	}
 
@@ -344,7 +344,7 @@ void GraphicsManager::clearScreenBufferSaveSlotDescriptions() {
 
 uint16 GraphicsManager::convertToScreenFormat(uint16 color) const {
 	uint8 r, g, b;
-	kImageFormat.colorToRGB(color, r, g, b);
+	g_system->getScreenFormat().colorToRGB(color, r, g, b);
 	return (uint16)_screenFormat.RGBToColor(r, g, b);
 }
 
