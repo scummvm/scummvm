@@ -665,14 +665,14 @@ void MacText::reallocSurface() {
 	//int requiredH = (_text.size() + (_text.size() * 10 + 9) / 10) * lineH
 
 	if (!_surface) {
-		_surface = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
+		_surface = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 
 		return;
 	}
 
 	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
-		ManagedSurface *n = new ManagedSurface(_textMaxWidth, _textMaxHeight, _wm->_pixelformat);
+		ManagedSurface *n = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 		n->clear(_bgcolor);
 		n->blitFrom(*_surface, Common::Point(0, 0));
 
@@ -707,9 +707,9 @@ void MacText::render(int from, int to) {
 	for (int i = from; i <= to; i++) {
 		int xOffset = 0;
 		if (_textAlignment == kTextAlignRight)
-			xOffset = _textMaxWidth - getLineWidth(i);
+			xOffset = _maxWidth - getLineWidth(i);
 		else if (_textAlignment == kTextAlignCenter)
-			xOffset = (_textMaxWidth / 2) - (getLineWidth(i) / 2);
+			xOffset = (_maxWidth / 2) - (getLineWidth(i) / 2);
 
 		int maxAscentForRow = 0;
 		for (uint j = 0; j < _textLines[i].chunks.size(); j++) {
@@ -884,7 +884,7 @@ void MacText::setAlignOffset(TextAlign align) {
 }
 
 Common::Point MacText::calculateOffset() {
-	return Common::Point(_alignOffset.x + _border + _gutter + 2, _alignOffset.y + _border + _gutter/2);
+	return Common::Point(_border + _gutter + 2, _border + _gutter / 2);
 }
 
 void MacText::setActive(bool active) {
@@ -1224,9 +1224,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 		// deal with the first line, which is not a complete line
 		if (numLines) {
 			if (_textAlignment == kTextAlignRight)
-				alignOffset = _textMaxWidth - getLineWidth(start_row);
+				alignOffset = _maxWidth - getLineWidth(start_row);
 			else if (_textAlignment == kTextAlignCenter)
-				alignOffset = (_textMaxWidth / 2) - (getLineWidth(start_row) / 2);
+				alignOffset = (_maxWidth / 2) - (getLineWidth(start_row) / 2);
 
 			if (swaped && start_row == s.startRow && s.startCol != 0) {
 				x1 = MIN<int>(x1 + xoff + alignOffset, getDimensions().width() - 1);
@@ -1246,9 +1246,9 @@ void MacText::drawSelection(int xoff, int yoff) {
 			x2 = getDimensions().width() - 1;
 
 			if (_textAlignment == kTextAlignRight)
-				alignOffset = _textMaxWidth - getLineWidth(row);
+				alignOffset = _maxWidth - getLineWidth(row);
 			else if (_textAlignment == kTextAlignCenter)
-				alignOffset = (_textMaxWidth / 2) - (getLineWidth(row) / 2);
+				alignOffset = (_maxWidth / 2) - (getLineWidth(row) / 2);
 
 			numLines = getLineHeight(row);
 			if (y + _scrollPos == s.startY && s.startX > 0)
@@ -1693,9 +1693,9 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 
 	int alignOffset = 0;
 	if (_textAlignment == kTextAlignRight)
-		alignOffset = _textMaxWidth - getLineWidth(nrow);
+		alignOffset = _maxWidth - getLineWidth(nrow);
 	else if (_textAlignment == kTextAlignCenter)
-		alignOffset = (_textMaxWidth / 2) - (getLineWidth(nrow) / 2);
+		alignOffset = (_maxWidth / 2) - (getLineWidth(nrow) / 2);
 
 	int width = 0, pwidth = 0;
 	int mcol = 0, pmcol = 0;
@@ -2168,9 +2168,9 @@ void MacText::updateCursorPos() {
 
 		int alignOffset = 0;
 		if (_textAlignment == kTextAlignRight)
-			alignOffset = _textMaxWidth - getLineWidth(_cursorRow);
+			alignOffset = _maxWidth - getLineWidth(_cursorRow);
 		else if (_textAlignment == kTextAlignCenter)
-			alignOffset = (_textMaxWidth / 2) - (getLineWidth(_cursorRow) / 2);
+			alignOffset = (_maxWidth / 2) - (getLineWidth(_cursorRow) / 2);
 
 		_cursorY = _textLines[_cursorRow].y - _scrollPos;
 		_cursorX = getLineWidth(_cursorRow, false, _cursorCol) + alignOffset;
