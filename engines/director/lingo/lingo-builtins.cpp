@@ -1636,19 +1636,52 @@ void LB::b_showLocals(int nargs) {
 void LB::b_constrainH(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
+	Score *score = g_director->getCurrentMovie()->getScore();
+	int res = 0;
+	if (score) {
+		Sprite *sp = score->getSpriteById(sprite.asInt());
+		if (sp) {
+			CastMember *cast = sp->_cast;
+			// use startPoint as fallback, if we don't have castmembers
+			if (cast)
+				res = CLIP<int> (num.asInt(), cast->getInitialRect().left, cast->getInitialRect().right);
+			else
+				res = CLIP<int> (num.asInt(), sp->_startPoint.x, sp->_startPoint.x + sp->_width);
+		} else {
+			warning("b_constrainH: cannot find sprite %d", sprite.asInt());
+		}
 
-	warning("STUB: b_constrainH(%d, %d)", sprite.asInt(), num.asInt());
+	} else {
+		warning("b_constrainH: no score");
+	}
 
-	g_lingo->push(Datum(0));
+	g_lingo->push(Datum(res));
 }
 
 void LB::b_constrainV(int nargs) {
 	Datum num = g_lingo->pop();
 	Datum sprite = g_lingo->pop();
 
-	warning("STUB: b_constrainV(%d, %d)", sprite.asInt(), num.asInt());
+	Score *score = g_director->getCurrentMovie()->getScore();
+	int res = 0;
+	if (score) {
+		Sprite *sp = score->getSpriteById(sprite.asInt());
+		if (sp) {
+			CastMember *cast = sp->_cast;
+			// use startPoint as fallback, if we don't have castmembers
+			if (cast)
+				res = CLIP<int> (num.asInt(), cast->getInitialRect().top, cast->getInitialRect().bottom);
+			else
+				res = CLIP<int> (num.asInt(), sp->_startPoint.y, sp->_startPoint.y + sp->_height);
+		} else {
+			warning("b_constrainV cannot find sprite %d", sprite.asInt());
+		}
 
-	g_lingo->push(Datum(0));
+	} else {
+		warning("b_constrainV: no score");
+	}
+
+	g_lingo->push(Datum(res));
 }
 
 void LB::b_copyToClipBoard(int nargs) {
