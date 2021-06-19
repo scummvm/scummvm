@@ -378,21 +378,21 @@ int MacFontManager::parseFontSlant(Common::String slant) {
 int MacFontManager::parseSlantFromName(const Common::String &name) {
 	int slantVal = 0;
 
-	if (strstr(name.c_str(), "Bold"))
+	if (name.contains(" Bold"))
 		slantVal |= kMacFontBold;
-	if (strstr(name.c_str(), "Italic"))
+	if (name.contains(" Italic"))
 		slantVal |= kMacFontItalic;
-	if (strstr(name.c_str(), "Regular"))
+	if (name.contains(" Regular"))
 		slantVal |= kMacFontRegular;
-	if (strstr(name.c_str(), "Underline"))
+	if (name.contains(" Underline"))
 		slantVal |= kMacFontUnderline;
-	if (strstr(name.c_str(), "Shadow"))
+	if (name.contains(" Shadow"))
 		slantVal |= kMacFontShadow;
-	if (strstr(name.c_str(), "Outline"))
+	if (name.contains(" Outline"))
 		slantVal |= kMacFontOutline;
-	if (strstr(name.c_str(), "Condense"))
+	if (name.contains(" Condense"))
 		slantVal |= kMacFontCondense;
-	if (strstr(name.c_str(), "Extend"))
+	if (name.contains(" Extend"))
 		slantVal |= kMacFontExtend;
 
 	return slantVal;

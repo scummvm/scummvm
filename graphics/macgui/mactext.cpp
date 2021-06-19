@@ -279,6 +279,8 @@ MacText::~MacText() {
 	delete _cursorSurface2;
 }
 
+// we are doing this because we may need to dealing with the plain byte. See ctor of mactext which contains String str instead of U32String str
+// thus, if we are passing the str, meaning we are using plainByteMode. And when we calculating the string width. we need to convert it to it's orignal state first;
 int MacText::getStringWidth(const Font *font, const Common::U32String &str) {
 	if (_plainByteMode)
 		return font->getStringWidth(Common::convertFromU32String(str, _encodeType));

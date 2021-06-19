@@ -269,7 +269,7 @@ void MacWindowManager::setScreen(int w, int h) {
 
 void MacWindowManager::resizeScreen(int w, int h) {
 	if (!_screen)
-		error("Trying to creating surface on non-existing screen");
+		error("MacWindowManager::resizeScreen(): Trying to creating surface on non-existing screen");
 	_screenDims = Common::Rect(w, h);
 	_screen->free();
 	_screen->create(w, h, _pixelformat);
