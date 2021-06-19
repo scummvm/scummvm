@@ -207,6 +207,9 @@ public:
 	int getLineHeight(int line);
 	int getTextMaxWidth() { return _textMaxWidth; }
 
+	void setText(const Common::U32String &str);
+	void setText(const Common::String &str);
+
 	void deleteSelection();
 	void deletePreviousChar(int *row, int *col);
 	void addNewLine(int *row, int *col);

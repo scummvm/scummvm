@@ -1887,8 +1887,36 @@ void MacText::insertTextFromClipboard() {
 	_cursorCol = ppos;
 	recalcDims();
 	updateCursorPos();
-	render();
 	_fullRefresh = true;
+	render();
+}
+
+void MacText::setText(const Common::U32String &str) {
+	_str = str;
+	_textLines.clear();
+	splitString(_str);
+
+	_cursorRow = _cursorCol = 0;
+	recalcDims();
+	updateCursorPos();
+	_fullRefresh = true;
+	render();
+
+	_contentIsDirty = true;
+}
+
+void MacText::setText(const Common::String &str) {
+	_str = Common::U32String(str, _encodeType);
+	_textLines.clear();
+	splitString(_str);
+
+	_cursorRow = _cursorCol = 0;
+	recalcDims();
+	updateCursorPos();
+	_fullRefresh = true;
+	render();
+
+	_contentIsDirty = true;
 }
 
 //////////////////
