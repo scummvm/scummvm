@@ -44,6 +44,7 @@ struct RepeatWithToNode;
 struct NextRepeatNode;
 struct ExitRepeatNode;
 struct ExitNode;
+struct AssertErrorNode;
 struct IntNode;
 struct FloatNode;
 struct SymbolNode;
@@ -91,6 +92,7 @@ enum NodeType {
 	kNextRepeatNode,
 	kExitRepeatNode,
 	kExitNode,
+	kAssertErrorNode,
 	kIntNode,
 	kFloatNode,
 	kSymbolNode,
@@ -132,6 +134,7 @@ public:
 	virtual void visitNextRepeatNode(NextRepeatNode *node) = 0;
 	virtual void visitExitRepeatNode(ExitRepeatNode *node) = 0;
 	virtual void visitExitNode(ExitNode *node) = 0;
+	virtual void visitAssertErrorNode(AssertErrorNode *node) = 0;
 	virtual void visitIntNode(IntNode *node) = 0;
 	virtual void visitFloatNode(FloatNode *node) = 0;
 	virtual void visitSymbolNode(SymbolNode *node) = 0;
@@ -470,6 +473,20 @@ struct ExitNode : StmtNode {
 	virtual ~ExitNode() {}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitExitNode(this);
+	}
+};
+
+/* AssertErrorNode */
+
+struct AssertErrorNode : StmtNode {
+	Node *stmt;
+
+	AssertErrorNode(Node *stmtIn) : StmtNode(kAssertErrorNode), stmt(stmtIn) {}
+	virtual ~AssertErrorNode() {
+		delete stmt;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitAssertErrorNode(this);
 	}
 };
 
