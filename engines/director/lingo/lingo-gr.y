@@ -167,7 +167,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> stmt stmtoneliner
 %type<node> proc asgn definevars
 %type<node> ifstmt ifelsestmt loop
-%type<nodelist> cmdargs playargs stmtlist nonemptystmtlist
+%type<nodelist> cmdargs frameargs stmtlist nonemptystmtlist
 %type<node> stmtlistline
 
 // EXPRESSION
@@ -371,7 +371,7 @@ stmtoneliner: proc
 proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
 	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
 	| tPLAY cmdargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $cmdargs); }
-	| tPLAY playargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $playargs); }
+	| tPLAY frameargs '\n'				{ $$ = new CmdNode(new Common::String("play"), $frameargs); }
 	| tNEXT tREPEAT '\n'				{ $$ = new NextRepeatNode(); }
 	| tEXIT tREPEAT '\n'				{ $$ = new ExitRepeatNode(); }
 	| tEXIT '\n'						{ $$ = new ExitNode(); }
@@ -409,33 +409,37 @@ cmdargs: /* empty */					{
 		$$ = $args; }
 	;
 
-playargs: tFRAME expr[frame]						{
+frameargs:
+	// On the off chance that we encounter something like `play frame done`
+	// we will wrap the frame arg in a FrameNode. This has no purpose other than
+	// to avoid detecting this case as `play done`.
+	tFRAME expr[frame]						{
 		// This matches `play frame arg`
 		NodeList *args = new NodeList;
-		args->push_back($frame);
+		args->push_back(new FrameNode($frame));
 		$$ = args; }
 	| tMOVIE expr[movie]							{
 		// This matches `play movie arg`
 		NodeList *args = new NodeList;
 		args->push_back(new IntNode(1));
-		args->push_back($movie);
+		args->push_back(new MovieNode($movie));
 		$$ = args; }
 	| tFRAME expr[frame] tOF tMOVIE expr[movie]		{
 		// This matches `play frame arg of movie arg`
 		NodeList *args = new NodeList;
-		args->push_back($frame);
-		args->push_back($movie);
+		args->push_back(new FrameNode($frame));
+		args->push_back(new MovieNode($movie));
 		$$ = args; }
 	| expr[frame] tOF tMOVIE expr[movie]			{
 		// This matches `play arg of movie arg` (weird but valid)
 		NodeList *args = new NodeList;
 		args->push_back($frame);
-		args->push_back($movie);
+		args->push_back(new MovieNode($movie));
 		$$ = args; }
 	| tFRAME expr[frame] expr_nounarymath[movie]	{
 		// This matches `play frame arg arg` (also weird but valid)
 		NodeList *args = new NodeList;
-		args->push_back($frame);
+		args->push_back(new FrameNode($frame));
 		args->push_back($movie);
 		$$ = args; }
 	;

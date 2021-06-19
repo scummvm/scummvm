@@ -796,4 +796,16 @@ void LingoCompiler::visitBinaryOpNode(BinaryOpNode *node) {
 	code1(node->op);
 }
 
+/* FrameNode */
+
+void LingoCompiler::visitFrameNode(FrameNode *node) {
+	compile(node->arg);
+}
+
+/* MovieNode */
+
+void LingoCompiler::visitMovieNode(MovieNode *node) {
+	compile(node->arg);
+}
+
 } // End of namespace Director

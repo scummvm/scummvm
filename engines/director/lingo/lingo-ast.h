@@ -56,6 +56,8 @@ struct VarNode;
 struct ParensNode;
 struct UnaryOpNode;
 struct BinaryOpNode;
+struct FrameNode;
+struct MovieNode;
 
 typedef Common::Array<Node *> NodeList;
 typedef Common::Array<Common::String *> IDList;
@@ -100,7 +102,9 @@ enum NodeType {
 	kVarNode,
 	kParensNode,
 	kUnaryOpNode,
-	kBinaryOpNode
+	kBinaryOpNode,
+	kFrameNode,
+	kMovieNode
 };
 
 /* NodeVisitor */
@@ -140,6 +144,8 @@ public:
 	virtual void visitParensNode(ParensNode *node) = 0;
 	virtual void visitUnaryOpNode(UnaryOpNode *node) = 0;
 	virtual void visitBinaryOpNode(BinaryOpNode *node) = 0;
+	virtual void visitFrameNode(FrameNode *node) = 0;
+	virtual void visitMovieNode(MovieNode *node) = 0;
 };
 
 /* Node */
@@ -638,6 +644,34 @@ struct BinaryOpNode : ExprNode {
 	}
 	virtual void accept(NodeVisitor *visitor) {
 		visitor->visitBinaryOpNode(this);
+	}
+};
+
+/* FrameNode */
+
+struct FrameNode : ExprNode {
+	Node *arg;
+
+	FrameNode(Node *argIn) : ExprNode(kFrameNode), arg(argIn) {}
+	virtual ~FrameNode() {
+		delete arg;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitFrameNode(this);
+	}
+};
+
+/* MovieNode */
+
+struct MovieNode : ExprNode {
+	Node *arg;
+
+	MovieNode(Node *argIn) : ExprNode(kMovieNode), arg(argIn) {}
+	virtual ~MovieNode() {
+		delete arg;
+	}
+	virtual void accept(NodeVisitor *visitor) {
+		visitor->visitMovieNode(this);
 	}
 };
 
