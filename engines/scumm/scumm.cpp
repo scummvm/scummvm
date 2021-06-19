@@ -1474,7 +1474,7 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 	// On some systems it's not safe to run CD audio games from the CD.
 	if (_game.features & GF_AUDIOTRACKS && !Common::File::exists("CDDA.SOU")) {
 		if (!existExtractedCDAudioFiles()
-		    && !areDataAndCDAudioReadFromSameCDDrive()) {
+		    && !isDataAndCDAudioReadFromSameCD()) {
 			warnMissingExtractedCDAudio();
 		}
 		_system->getAudioCDManager()->open();

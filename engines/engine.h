@@ -595,7 +595,7 @@ public:
 	 * On some systems, check whether the game appears to be run
 	 * from the same CD drive, which also should play CD audio.
 	 */
-	bool areDataAndCDAudioReadFromSameCDDrive();
+	bool isDataAndCDAudioReadFromSameCD();
 	/**
 	 *Display a warning for no extracted CD Audio files found.
 	 */
