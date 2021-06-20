@@ -422,6 +422,7 @@ TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
 			if (sizeMatch == otherString.size())
 				return true;
 		} else {
+			itr2 -= sizeMatch;
 			sizeMatch = 0;
 			itr = otherString.begin();
 		}
