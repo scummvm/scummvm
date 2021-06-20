@@ -194,9 +194,6 @@ int16 OptionsDialog(bool disableSaveResume = false);
 
 static void mainLoop(bool &cleanExit, int argc, char *argv[]);
 void displayUpdate(void);
-//EO//#if DEBUG
-void updatePerfStats(void);
-//EO//#endif
 
 void testTiles();
 
@@ -392,11 +389,6 @@ void displayUpdate(void) {
 		//  Call the asynchronous path finder
 		debugC(1, kDebugEventLoop, "EventLoop: pathfinder update");
 		runPathFinder();
-
-		//  Hows the game running?
-		debugC(1, kDebugEventLoop, "EventLoop: updating stats");
-		updatePerfStats();
-
 	}
 }
 
@@ -907,49 +899,12 @@ int32 currentGamePerformance(void) {
 }
 
 
-void updatePerfStats(void) {
-	warning("STUB: updatePerfStats");
-#if 0
-	char bigmess[512];
-
-	frate.whatDoYouKnow(bigmess);
-	(*ratemess[0])("Display: %s", bigmess);
-	lrate.whatDoYouKnow(bigmess);
-	(*ratemess[1])("Enginge: %s", bigmess);
-	irate.whatDoYouKnow(bigmess);
-	(*ratemess[2])("Message: %s", bigmess);
-#endif
-}
-
 void updateFrameCount(void) {
 	frate.updateFrameCount();
 }
 
 int32 eloopsPerSecond = 0;
 int32 framesPerSecond = 0;
-
-void updatePerfStats(void);
-void oldUpdatePerfStats(void) {
-	static uint32   prevMem = 0;
-	static float f, lastF = 0.0;
-	static float l, lastL = 0.0;
-	if (elapsed > 0) {
-		f = ((float)frames * (float)TICKSPERSECOND) / (float)elapsed;
-		f = f + lastF / 2;
-		l = ((float)loops * (float)TICKSPERSECOND) / (float)elapsed;
-		l = l + lastL / 2;
-		if (elapsed > 10 * TICKSPERSECOND) {
-			elapsed = 0;
-			frames = 0;
-			loops = 0;
-			lastF = f;
-			lastL = l;
-		}
-	}
-	eloopsPerSecond = int(l);
-	framesPerSecond = int(f);
-}
-
 
 int32 gamePerformance(void) {
 	if (framesPerSecond < frameRate) {
