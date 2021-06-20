@@ -148,6 +148,16 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
+	{
+		"private-eye", // MacOS release (US)
+		0,
+		AD_ENTRY1s("Private Eye Demo Installer", "e7665ddc5e6d932c4a65598ecc4ec7d2", 1626393),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	AD_TABLE_END_MARKER
 };
 } // End of namespace Private

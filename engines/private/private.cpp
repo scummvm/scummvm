@@ -130,6 +130,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 		file = test;
 	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
 		file = test;
+	} else if (test->open("SUPPORT/GAME.MAC")) {
+		file = test;
 	} else {
 		delete test;
 		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
@@ -162,6 +164,9 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 Common::Error PrivateEngine::run() {
 
+	_language = Common::parseLanguage(ConfMan.get("language"));
+	_platform = Common::parsePlatform(ConfMan.get("platform"));
+
 	Common::SeekableReadStream *file = loadAssets();
 	// Read assets file
 	const uint32 fileSize = file->size();
@@ -169,7 +174,7 @@ Common::Error PrivateEngine::run() {
 	file->read(buf, fileSize);
 	buf[fileSize] = '\0';
 
-	Decompiler decomp(buf, fileSize, false);
+	Decompiler decomp(buf, fileSize, _platform == Common::kPlatformMacintosh);
 	free(buf);
 
 	buf = (char *)decomp.getResult().c_str();
@@ -206,7 +211,6 @@ Common::Error PrivateEngine::run() {
 	Common::Event event;
 	Common::Point mousePos;
 	_videoDecoder = nullptr;
-	_language = Common::parseLanguage(ConfMan.get("language"));
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
@@ -495,28 +499,28 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 }
 
 Common::String PrivateEngine::getPauseMovieSetting() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kPauseMovie";
 
 	return "k3";
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kGoIntro";
 
 	return "k1";
 }
 
 Common::String PrivateEngine::getAlternateGameVariable() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kAlternateGame";
 
 	return "k2";
 }
 
 Common::String PrivateEngine::getMainDesktopSetting() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kMainDesktop";
 
 	if (isDemo())
@@ -526,35 +530,35 @@ Common::String PrivateEngine::getMainDesktopSetting() {
 }
 
 Common::String PrivateEngine::getPoliceIndexVariable() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kPoliceIndex";
 
 	return "k0";
 }
 
 Common::String PrivateEngine::getPOGoBustMovieSetting() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kPOGoBustMovie";
 
 	return "k7";
 }
 
 Common::String PrivateEngine::getPoliceBustFromMOSetting() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kPoliceBustFromMO";
 
 	return "k6";
 }
 
 Common::String PrivateEngine::getExitCursor() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kExit";
 
 	return "k5";
 }
 
 Common::String PrivateEngine::getInventoryCursor() {
-	if (_language == Common::EN_USA)
+	if (_language == Common::EN_USA && _platform != Common::kPlatformMacintosh)
 		return "kInventory";
 
 	return "k7";
