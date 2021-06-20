@@ -173,7 +173,7 @@ Common::Error PrivateEngine::run() {
 	free(buf);
 
 	buf = (char *)decomp.getResult().c_str();
-	//debug("%s", buf);
+	debugC(1, kPrivateDebugCode, "code:\n%s", buf);
 
 	// Initialize stuff
 	Gen::g_vm = new Gen::VM();
