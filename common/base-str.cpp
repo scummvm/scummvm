@@ -412,19 +412,18 @@ TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
 		return false;
 	}
 
-	uint32 sizeMatch = 0;
-	typename BASESTRING::const_iterator itr = otherString.begin();
-
-	for (typename BASESTRING::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
-		if (*itr == *itr2) {
-			itr++;
-			sizeMatch++;
-			if (sizeMatch == otherString.size())
+	for (const_iterator cur = begin(); cur != end(); ++cur) {
+		uint i = 0;
+		while (true) {
+			if (i == otherString.size()) {
 				return true;
-		} else {
-			itr2 -= sizeMatch;
-			sizeMatch = 0;
-			itr = otherString.begin();
+			}
+
+			if (cur[i] != otherString[i]) {
+				break;
+			}
+
+			++i;
 		}
 	}
 
