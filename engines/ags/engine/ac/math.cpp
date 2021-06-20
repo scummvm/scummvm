@@ -139,8 +139,7 @@ float Math_Sqrt(float value) {
 }
 
 int __Rand(int upto) {
-	upto++;
-	if (upto < 1)
+	if (upto < 0)
 		quit("!Random: invalid parameter passed -- must be at least 0.");
 	return ::AGS::g_vm->getRandomNumber(upto);
 }
