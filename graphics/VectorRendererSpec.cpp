@@ -2198,9 +2198,9 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 
 		for (int x = x1 + 1; x < x2; x++) {
 #if FIXED_POINT
-			if (intery + gradient > ipart(intery) + 0x100) {
+			if (intery + gradient >= ipart(intery) + 0x100) {
 #else
-			if (intery + gradient > ipart(intery) + 1) {
+			if (intery + gradient >= ipart(intery) + 1) {
 #endif
 				ptr_right++;
 				ptr_left--;
@@ -2253,9 +2253,9 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 
 		for (int y = y1 + 1; y < y2; y++) {
 #if FIXED_POINT
-			if (interx + gradient > ipart(interx) + 0x100) {
+			if (interx + gradient >= ipart(interx) + 0x100) {
 #else
-			if (interx + gradient > ipart(interx) + 1) {
+			if (interx + gradient >= ipart(interx) + 1) {
 #endif
 				ptr_right++;
 				ptr_left--;
@@ -2393,9 +2393,9 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 
 		for (int x = x1 + 1; x < x2; x++) {
 #if FIXED_POINT
-			if (intery + gradient > ipart(intery) + 0x100) {
+			if (intery + gradient >= ipart(intery) + 0x100) {
 #else
-			if (intery + gradient > ipart(intery) + 1) {
+			if (intery + gradient >= ipart(intery) + 1) {
 #endif
 				ptr_right++;
 				ptr_left--;
@@ -2454,9 +2454,9 @@ drawTriangleVertAlgClip(int x1, int y1, int w, int h, bool inverted, PixelType c
 
 		for (int y = y1 + 1; y < y2; y++) {
 #if FIXED_POINT
-			if (interx + gradient > ipart(interx) + 0x100) {
+			if (interx + gradient >= ipart(interx) + 0x100) {
 #else
-			if (interx + gradient > ipart(interx) + 1) {
+			if (interx + gradient >= ipart(interx) + 1) {
 #endif
 				ptr_right++;
 				ptr_left--;
