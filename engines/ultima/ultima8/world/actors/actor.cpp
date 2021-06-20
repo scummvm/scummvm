@@ -1008,13 +1008,13 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 		}
 		if (damage_type == 0xf || damage_type == 7) {
 			if (shape == 1) {
-				kernel->killProcesses(_objId, 0x204, true);
+				kernel->killProcesses(_objId, PathfinderProcess::PATHFINDER_PROC_TYPE, true);
 				doAnim(static_cast<Animation::Sequence>(0x37), dir_current);
 			} else if (shape == 0x4e6 || shape == 0x338 || shape == 0x385 || shape == 899) {
 				if (!(getRandom() % 3)) {
 					// Randomly stun the NPC for these damage types.
 					// CHECK ME: is this time accurate?
-					Process *attack = kernel->findProcess(_objId, 0x259);
+					Process *attack = kernel->findProcess(_objId, AttackProcess::ATTACK_PROCESS_TYPE);
 					uint stun = ((getRandom() % 10) + 8) * 60;
 					if (attack && stun) {
 						Process *delay = new DelayProcess(stun);
@@ -1697,7 +1697,7 @@ CombatProcess *Actor::getCombatProcess() {
 }
 
 AttackProcess *Actor::getAttackProcess() {
-	Process *p = Kernel::get_instance()->findProcess(_objId, 0x259); // CONSTANT!
+	Process *p = Kernel::get_instance()->findProcess(_objId, AttackProcess::ATTACK_PROCESS_TYPE);
 	if (!p)
 		return nullptr;
 	AttackProcess *ap = dynamic_cast<AttackProcess *>(p);
