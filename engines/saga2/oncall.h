@@ -47,7 +47,7 @@ public:
 	}
 
 	void flush() {
-		for (int i = 0; i < _handles.size(); ++i) {
+		for (unsigned int i = 0; i < _handles.size(); ++i) {
 			if (_handles[i]) {
 				free(_handles[i]);
 				_handles[i] = nullptr;
