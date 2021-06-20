@@ -29,49 +29,14 @@
 #include "saga2/std.h"
 #include "saga2/objects.h"
 #include "saga2/sensor.h"
-#include "saga2/pool.h"
 #include "saga2/player.h"
 #include "saga2/tile.h"
 #include "saga2/savefile.h"
 
 namespace Saga2 {
 
-struct SensorListHolder : public DNode {
-	uint8       sensorListBuffer[sizeof(SensorList)];
-
-	SensorList *getSensorList(void) {
-		return (SensorList *)&sensorListBuffer;
-	}
-};
-
-/* ===================================================================== *
-   SensorHolder class
- * ===================================================================== */
-
-struct SensorHolder : public DNode {
-	int16       checkCtr;
-	uint8       sensorBuffer[maxSensorSize];
-
-	Sensor *getSensor(void) {
-		return (Sensor *)&sensorBuffer;
-	}
-};
-
-/* ===================================================================== *
-   Globals
- * ===================================================================== */
-
-//  A pool of ActorSensorListHolders
-static RPool< SensorListHolder, 64 > sensorListPool;
-
-//  The list of active ActorSensorLists
-static DList sensorListList;
-
-//  A pool of SensorHolders
-static RPool< SensorHolder, 128 > sensorPool;
-
-//  The list of all active Sensors
-static DList sensorList;
+Common::List<SensorList *> sensorListList;
+Common::List<Sensor *> sensorList;
 
 /* ===================================================================== *
    SensorList management functions
@@ -80,34 +45,15 @@ static DList sensorList;
 //----------------------------------------------------------------------
 //	Allocate a new SensorList
 
-void *newSensorList(void) {
-	SensorListHolder    *newSensorListHolder;
-
-	if ((newSensorListHolder
-	        = (SensorListHolder *)sensorListPool.alloc())
-	        ==  NULL)
-		return NULL;
-
-	sensorListList.addTail(*newSensorListHolder);
-
-	return &newSensorListHolder->sensorListBuffer;
+void newSensorList(SensorList *s) {
+	sensorListList.push_back(s);
 }
 
 //----------------------------------------------------------------------
 //	Deallocate an SensorList
 
-void deleteSensorList(void *p) {
-	SensorListHolder    *listHolderToDelete;
-
-	warning("FIXME: deleteSensorList(): unsafe pointer arithmetics");
-	listHolderToDelete =
-	    (SensorListHolder *)((uint8 *)p
-	                         -   offsetof(
-	                             SensorListHolder,
-	                             sensorListBuffer));
-
-	listHolderToDelete->remove();
-	sensorListPool.free(listHolderToDelete);
+void deleteSensorList(SensorList *s) {
+	sensorListList.remove(s);
 }
 
 /* ===================================================================== *
@@ -117,45 +63,26 @@ void deleteSensorList(void *p) {
 //----------------------------------------------------------------------
 //	Allocate a new Sensor
 
-void *newSensor(void) {
-	SensorHolder    *newSensorHolder;
+void newSensor(Sensor *s) {
+	sensorList.push_back(s);
 
-	if ((newSensorHolder = (SensorHolder *)sensorPool.alloc()) == NULL)
-		return NULL;
-
-	sensorList.addTail(*newSensorHolder);
-	newSensorHolder->checkCtr = sensorCheckRate;
-
-	return &newSensorHolder->sensorBuffer;
+	s->checkCtr = sensorCheckRate;
 }
 
 //----------------------------------------------------------------------
 //	Allocate a new Sensor with a specified starting check counter
 
-void *newSensor(int16 ctr) {
-	SensorHolder    *newSensorHolder;
+void newSensor(Sensor *s, int16 ctr) {
+	newSensor(s);
 
-	if ((newSensorHolder = (SensorHolder *)sensorPool.alloc()) == NULL)
-		return NULL;
-
-	sensorList.addTail(*newSensorHolder);
-	newSensorHolder->checkCtr = ctr;
-
-	return &newSensorHolder->sensorBuffer;
+	s->checkCtr = ctr;
 }
 
 //----------------------------------------------------------------------
 //	Deallocate a Sensor
 
-void deleteSensor(void *p) {
-	SensorHolder    *sensorHolderToDelete;
-
-	warning("FIXME: deleteSensor(): unsafe pointer arithmetics");
-	sensorHolderToDelete =
-	    (SensorHolder *)((uint8 *)p - offsetof(SensorHolder, sensorBuffer));
-
-	sensorHolderToDelete->remove();
-	sensorPool.free(sensorHolderToDelete);
+void deleteSensor(Sensor *p) {
+	sensorList.remove(p);
 }
 
 //----------------------------------------------------------------------
@@ -164,7 +91,7 @@ void deleteSensor(void *p) {
 void *constructSensor(int16 ctr, void *buf) {
 	int16           type;
 	Sensor          *sensor;
-	SensorList      *sensorList;
+	SensorList      *sl;
 
 	//  Get the sensor type
 	type = *((int16 *)buf);
@@ -172,39 +99,39 @@ void *constructSensor(int16 ctr, void *buf) {
 
 	switch (type) {
 	case protaganistSensor:
-		sensor = new (ctr) ProtaganistSensor(&buf);
+		sensor = new ProtaganistSensor(&buf, ctr);
 		break;
 
 	case specificObjectSensor:
-		sensor = new (ctr) SpecificObjectSensor(&buf);
+		sensor = new SpecificObjectSensor(&buf, ctr);
 		break;
 
 	case objectPropertySensor:
-		sensor = new (ctr) ObjectPropertySensor(&buf);
+		sensor = new ObjectPropertySensor(&buf, ctr);
 		break;
 
 	case specificActorSensor:
-		sensor = new (ctr) SpecificActorSensor(&buf);
+		sensor = new SpecificActorSensor(&buf, ctr);
 		break;
 
 	case actorPropertySensor:
-		sensor = new (ctr) ActorPropertySensor(&buf);
+		sensor = new ActorPropertySensor(&buf, ctr);
 		break;
 
 	case eventSensor:
-		sensor = new (ctr) EventSensor(&buf);
+		sensor = new EventSensor(&buf, ctr);
 		break;
 	}
 
 	assert(sensor != NULL);
 
 	//  Get the sensor list
-	sensorList = fetchSensorList(sensor->getObject());
+	sl = fetchSensorList(sensor->getObject());
 
-	assert(sensorList != NULL);
+	assert(sl != NULL);
 
 	//  Append this Sensor to the sensor list
-	sensorList->addTail(*sensor);
+	sl->_list.push_back(sensor);
 
 	return buf;
 }
@@ -239,38 +166,28 @@ void *archiveSensor(Sensor *sensor, void *buf) {
 //----------------------------------------------------------------------
 
 void checkSensors(void) {
-	SensorHolder    *sensorHolder,
-	                *nextSensorHolder;
+	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+		Sensor *sensor = *it;
 
-	for (sensorHolder = (SensorHolder *)sensorList.first();
-	        sensorHolder != NULL;
-	        sensorHolder = nextSensorHolder) {
-		nextSensorHolder = (SensorHolder *)sensorHolder->next();
+		if (--sensor->checkCtr <= 0) {
+			assert(sensor->checkCtr == 0);
 
-		if (--sensorHolder->checkCtr <= 0) {
-			assert(sensorHolder->checkCtr == 0);
-
-			Sensor      *sensor = sensorHolder->getSensor();
 			SenseInfo   info;
 			GameObject  *senseobj = sensor->getObject();
 			uint32      sFlags = nonActorSenseFlags;
 			if (isActor(senseobj)) {
-				Actor *a = (Actor *) senseobj;
+				Actor *a = (Actor *)senseobj;
 				sFlags = a->enchantmentFlags;
 			}
 
-
 			if (sensor->check(info, sFlags)) {
 				assert(info.sensedObject != NULL);
-				assert(isObject(info.sensedObject)
-				       ||  isActor(info.sensedObject));
+				assert(isObject(info.sensedObject) || isActor(info.sensedObject));
 
-				sensor->getObject()->senseObject(
-				    sensor->thisID(),
-				    info.sensedObject->thisID());
+				sensor->getObject()->senseObject(sensor->thisID(), info.sensedObject->thisID());
 			}
 
-			sensorHolder->checkCtr = sensorCheckRate;
+			sensor->checkCtr = sensorCheckRate;
 		}
 	}
 }
@@ -281,15 +198,8 @@ void assertEvent(const GameEvent &ev) {
 	assert(ev.directObject != NULL);
 	assert(isObject(ev.directObject) || isActor(ev.directObject));
 
-	SensorHolder    *sensorHolder,
-	                *nextSensorHolder;
-
-	for (sensorHolder = (SensorHolder *)sensorList.first();
-	        sensorHolder != NULL;
-	        sensorHolder = nextSensorHolder) {
-		nextSensorHolder = (SensorHolder *)sensorHolder->next();
-
-		Sensor      *sensor = sensorHolder->getSensor();
+	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+		Sensor *sensor = *it;
 
 		if (sensor->evaluateEvent(ev)) {
 			sensor->getObject()->senseEvent(
@@ -320,6 +230,8 @@ void initSensors(void) {
 //	Save all active sensors in a save file
 
 void saveSensors(SaveFileConstructor &saveGame) {
+	warning("STUB: saveSensort()");
+#if 0
 	int16                   sensorListCount = 0,
 	                        sensorCount = 0;
 
@@ -343,12 +255,9 @@ void saveSensors(SaveFileConstructor &saveGame) {
 	archiveBufSize += sensorListCount * SensorList::archiveSize();
 
 	//  Tally the sensors and add the archive size of each
-	for (sensorHolder = (SensorHolder *)sensorList.first();
-	        sensorHolder != NULL;
-	        sensorHolder = (SensorHolder *)sensorHolder->next()) {
+	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
 		sensorCount++;
-		archiveBufSize +=   sizeof(sensorHolder->checkCtr)
-		                    +   sensorArchiveSize(sensorHolder->getSensor());
+		archiveBufSize += sizeof((*it)->checkCtr) + sensorArchiveSize(*it);
 	}
 
 	//  Allocate an archive buffer
@@ -364,19 +273,15 @@ void saveSensors(SaveFileConstructor &saveGame) {
 	bufferPtr = (int16 *)bufferPtr + 2;
 
 	//  Archive all sensor lists
-	for (listHolder = (SensorListHolder *)sensorListList.first();
-	        listHolder != NULL;
-	        listHolder = (SensorListHolder *)listHolder->next())
-		bufferPtr = listHolder->getSensorList()->archive(bufferPtr);
+	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it) {
+		bufferPtr = (*it)->archive(bufferPtr);
 
 	//  Archive all sensors
-	for (sensorHolder = (SensorHolder *)sensorList.first();
-	        sensorHolder != NULL;
-	        sensorHolder = (SensorHolder *)sensorHolder->next()) {
-		*((int16 *)bufferPtr) = sensorHolder->checkCtr;
+	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it) {
+		*((int16 *)bufferPtr) = (*it)->checkCtr;
 		bufferPtr = (int16 *)bufferPtr + 1;
 
-		bufferPtr = archiveSensor(sensorHolder->getSensor(), bufferPtr);
+		bufferPtr = archiveSensor(*it, bufferPtr);
 	}
 
 	assert(bufferPtr == &((uint8 *)archiveBuffer)[archiveBufSize]);
@@ -388,12 +293,15 @@ void saveSensors(SaveFileConstructor &saveGame) {
 	    archiveBufSize);
 
 	RDisposePtr(archiveBuffer);
+#endif
 }
 
 //----------------------------------------------------------------------
 //	Load sensors from a save file
 
 void loadSensors(SaveFileReader &saveGame) {
+	warning("STUB: loadSensort()");
+#if 0
 	int16       i,
 	            sensorListCount,
 	            sensorCount;
@@ -433,47 +341,31 @@ void loadSensors(SaveFileReader &saveGame) {
 	assert(bufferPtr == &((uint8 *)archiveBuffer)[saveGame.getChunkSize()]);
 
 	RDisposePtr(archiveBuffer);
+#endif
 }
 
 //----------------------------------------------------------------------
 //	Cleanup the active sensors
 
 void cleanupSensors(void) {
-	SensorListHolder        *listHolder,
-	                        *nextListHolder;
-	SensorHolder            *sensorHolder,
-	                        *nextSensorHolder;
+	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it)
+		delete *it;
 
-	//  Delete all sensor lists
-	for (listHolder = (SensorListHolder *)sensorListList.first();
-	        listHolder != NULL;
-	        listHolder = nextListHolder) {
-		nextListHolder = (SensorListHolder *)listHolder->next();
+	sensorListList.clear();
 
-		delete listHolder->getSensorList();
-	}
+	for (Common::List<Sensor *>::iterator it = sensorList.begin(); it != sensorList.end(); ++it)
+		delete *it;
 
-	//  Delete all sensors
-	for (sensorHolder = (SensorHolder *)sensorList.first();
-	        sensorHolder != NULL;
-	        sensorHolder = nextSensorHolder) {
-		nextSensorHolder = (SensorHolder *)sensorHolder->next();
-
-		delete sensorHolder->getSensor();
-	}
+	sensorList.clear();
 }
 
 //----------------------------------------------------------------------
 //	Fetch a specified object's SensorList
 
 SensorList *fetchSensorList(GameObject *obj) {
-	SensorListHolder    *listHolder;
-
-	for (listHolder = (SensorListHolder *)sensorListList.first();
-	        listHolder != NULL;
-	        listHolder = (SensorListHolder *)listHolder->next()) {
-		if (listHolder->getSensorList()->getObject() == obj)
-			return listHolder->getSensorList();
+	for (Common::List<SensorList *>::iterator it = sensorListList.begin(); it != sensorListList.end(); ++it) {
+		if ((*it)->getObject() == obj)
+			return *it;
 	}
 
 	return NULL;
@@ -494,6 +386,8 @@ SensorList::SensorList(void **buf) {
 	obj = GameObject::objectAddress(*bufferPtr);
 
 	*buf = bufferPtr + 1;
+
+	newSensorList(this);
 }
 
 //----------------------------------------------------------------------
@@ -513,7 +407,7 @@ void *SensorList::archive(void *buf) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-Sensor::Sensor(void **buf) {
+Sensor::Sensor(void **buf, int16 ctr) {
 	void        *bufferPtr = *buf;
 
 	assert(isObject(*((ObjectID *)bufferPtr))
@@ -532,6 +426,8 @@ Sensor::Sensor(void **buf) {
 	bufferPtr = (int16 *)bufferPtr + 1;
 
 	*buf = bufferPtr;
+
+	newSensor(this, ctr);
 }
 
 //----------------------------------------------------------------------
@@ -561,20 +457,6 @@ void *Sensor::archive(void *buf) {
 
 	return buf;
 }
-
-#if DEBUG
-void *Sensor::operator new (size_t sz) {
-	assert(sz <= maxSensorSize);
-
-	return newSensor();
-}
-
-void *Sensor::operator new (size_t sz, int16 ctr) {
-	assert(sz <= maxSensorSize);
-
-	return newSensor(ctr);
-}
-#endif
 
 /* ===================================================================== *
    ProtaganistSensor member functions
@@ -718,8 +600,8 @@ bool ObjectSensor::evaluateEvent(const GameEvent &) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-SpecificObjectSensor::SpecificObjectSensor(void **buf) :
-	ObjectSensor(buf) {
+SpecificObjectSensor::SpecificObjectSensor(void **buf, int16 ctr) :
+	ObjectSensor(buf, ctr) {
 	ObjectID    *bufferPtr = (ObjectID *)*buf;
 
 	//  Restore the sought object's ID
@@ -812,8 +694,8 @@ bool SpecificObjectSensor::isObjectSought(GameObject *obj) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-ObjectPropertySensor::ObjectPropertySensor(void **buf) :
-	ObjectSensor(buf) {
+ObjectPropertySensor::ObjectPropertySensor(void **buf, int16 ctr) :
+	ObjectSensor(buf, ctr) {
 	ObjectPropertyID    *bufferPtr = (ObjectPropertyID *)*buf;
 
 	//  Restore the object property ID
@@ -880,7 +762,7 @@ bool ActorSensor::isObjectSought(GameObject *obj) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-SpecificActorSensor::SpecificActorSensor(void **buf) : ActorSensor(buf) {
+SpecificActorSensor::SpecificActorSensor(void **buf, int16 ctr) : ActorSensor(buf, ctr) {
 	ObjectID        *bufferPtr = (ObjectID *)*buf;
 
 	assert(isActor(*bufferPtr));
@@ -966,7 +848,7 @@ bool SpecificActorSensor::isActorSought(Actor *a) {
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-ActorPropertySensor::ActorPropertySensor(void **buf) : ActorSensor(buf) {
+ActorPropertySensor::ActorPropertySensor(void **buf, int16 ctr) : ActorSensor(buf, ctr) {
 	ActorPropertyID     *bufferPtr = (ActorPropertyID *)*buf;
 
 	//  Restore the actor property's ID
@@ -1029,7 +911,7 @@ EventSensor::EventSensor(
 //----------------------------------------------------------------------
 //	Constructor -- reconstruct from an archive buffer
 
-EventSensor::EventSensor(void **buf) : Sensor(buf) {
+EventSensor::EventSensor(void **buf, int16 ctr) : Sensor(buf, ctr) {
 	int16       *bufferPtr = (int16 *)*buf;
 
 	//  Restore the event type

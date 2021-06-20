@@ -1882,21 +1882,19 @@ bool GameObject::addSensor(Sensor *newSensor) {
 
 	//  Search the list to see if there is already a sensor with same
 	//  ID as the new sensor.  If so, remove it and delete it.
-	for (sensorInList = (Sensor *)sensorList->first();
-	        sensorInList != nullptr;
-	        sensorInList = (Sensor *)sensorInList->next()) {
-		assert(sensorInList->getObject() == this);
+	for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it) {
+		assert((*it)->getObject() == this);
 
-		if (newSensor->thisID() == sensorInList->thisID()) {
-			sensorInList->remove();
-			delete sensorInList;
+		if (newSensor->thisID() == (*it)->thisID()) {
+			sensorList->_list.remove(*it);
+			delete *it;
 
 			break;
 		}
 	}
 
 	//  Put the new sensor into the list
-	sensorList->addTail(*newSensor);
+	sensorList->_list.push_back(newSensor);
 
 	return true;
 }
@@ -2017,19 +2015,19 @@ void GameObject::removeSensor(SensorID id) {
 
 	//  Get this object's sensor list
 	if ((sensorList = fetchSensorList(this)) != nullptr) {
-		Sensor          *sensor;
-
 		//  Search the sensor list for a sensor with the specified ID
-		for (sensor = (Sensor *)sensorList->first();
-		        sensor != nullptr;
-		        sensor = (Sensor *)sensor->next()) {
-			if (sensor->thisID() == id) {
+		for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it) {
+			if ((*it)->thisID() == id) {
 				//  Remove the sensor, then delete it
-				sensor->remove();
-				delete sensor;
+				sensorList->_list.remove(*it);
+				deleteSensor(*it);
+				delete *it;
 
 				//  If the list is now empty, delete it
-				if (sensorList->empty()) delete sensorList;
+				if (sensorList->_list.empty()) {
+					deleteSensorList(sensorList);
+					delete sensorList;
+				}
 
 				break;
 			}
@@ -2045,22 +2043,13 @@ void GameObject::removeAllSensors(void) {
 
 	//  Get this object's sensor list
 	if ((sensorList = fetchSensorList(this)) != nullptr) {
-		Sensor          *sensor,
-		                *nextSensor;
-
 		//  Iterate through the sensors
-		for (sensor = (Sensor *)sensorList->first();
-		        sensor != nullptr;
-		        sensor = nextSensor) {
-			//  Save the pointer to the next sensor
-			nextSensor = (Sensor *)sensor->next();
-
-			//  Remove the sensor, then delete it
-			sensor->remove();
-			delete sensor;
+		for (Common::List<Sensor *>::iterator it = sensorList->_list.begin(); it != sensorList->_list.end(); ++it) {
+			deleteSensor(*it);
+			delete *it;
 		}
 
-		//  Delete this actor's sensor list
+		deleteSensorList(sensorList);
 		delete sensorList;
 	}
 }
