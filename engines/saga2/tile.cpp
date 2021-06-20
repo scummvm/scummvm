@@ -2314,6 +2314,7 @@ static void readPlatform(hResContext *con, Platform &plt) {
 }
 
 Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
+	const int			cacheFlag = 0x8000;
 	uint16              plIndex = _stack[layer];
 	PlatformCacheEntry  *pce;
 
@@ -2322,44 +2323,63 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 	if (plIndex == nullID) {
 		return nullptr;
-	}
+	} else if (plIndex & cacheFlag) {
+		plIndex &= ~cacheFlag;
 
-	debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
+		assert(plIndex < platformCacheSize);
 
-	//  Since the platform is not in the cache, we need to
-	//  dump something from the cache. Dump the one that
-	//  was least recently used.
-	//  Get head of LRU chain.
-	int cacheIndex = platformLRU.front();
-	platformLRU.pop_front();
-	platformLRU.push_back(cacheIndex);
+			//	Get the address of the pce from the cache
+		pce = &platformCache[plIndex];
 
-	pce = &platformCache[cacheIndex];
+		assert(pce->platformNum >= 0);
+		assert(pce->metaID != NoMetaTile);
+		assert(pce->metaID == thisID(mapNum));
 
-	//  Compute the layer of this entry in the cache
-	assert(cacheIndex < platformCacheSize);
-	assert(cacheIndex >= 0);
+			//	Move to the end of the LRU
+		platformLRU.push_back(plIndex);
 
-	//  Initialize the cache entry to the new platform data.
-	pce->platformNum = plIndex;
-	pce->layerNum = layer;
-	pce->metaID = thisID(mapNum);
-	_stack[layer] = (cacheIndex);
+			//	return the address of the platform
+		return &pce->pl;
+	} else {
+		debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
+		if (mapNum == 0 && layer == 6)
+			debug("");
 
-	assert(plIndex >= 0);
-	assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
-	debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
+		//  Since the platform is not in the cache, we need to
+		//  dump something from the cache. Dump the one that
+		//  was least recently used.
+		//  Get head of LRU chain.
+		int cacheIndex = platformLRU.front();
+		platformLRU.pop_front();
+		platformLRU.push_back(cacheIndex);
 
-	// Now, load the actual metatile data...
-	if (tileRes->seek(platformID + mapNum)) {
-		if (tileRes->skip(plIndex * sizeof(Platform))) {
-			readPlatform(tileRes, pce->pl);
-			return &pce->pl;
+		pce = &platformCache[cacheIndex];
+
+		//  Compute the layer of this entry in the cache
+		assert(cacheIndex < platformCacheSize);
+		assert(cacheIndex >= 0);
+
+		//  Initialize the cache entry to the new platform data.
+		pce->platformNum = plIndex;
+		pce->layerNum = layer;
+		pce->metaID = thisID(mapNum);
+		_stack[layer] = (cacheIndex | cacheFlag);
+
+		assert(plIndex >= 0);
+		assert(plIndex * sizeof(Platform) < tileRes->size(platformID + mapNum));
+		debugC(3, kDebugLoading, "- plIndex: %d", plIndex);
+
+		// Now, load the actual metatile data...
+		if (tileRes->seek(platformID + mapNum)) {
+			if (tileRes->skip(plIndex * sizeof(Platform))) {
+				readPlatform(tileRes, pce->pl);
+				return &pce->pl;
+			}
 		}
-	}
 
-	error("Unable to read Platform %d of map %d", plIndex, mapNum);
-	return nullptr;
+		error("Unable to read Platform %d of map %d", plIndex, mapNum);
+		return nullptr;
+	}
 }
 
 //-----------------------------------------------------------------------
