@@ -125,7 +125,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		}
 
 		if (bytes < trans) {
-			warning("unpackSprite: too many trans %d < %d", bytes, trans);
+			warning("unpackSprite: too many trans %d < %d for %dx%d (src %d bytes)", bytes, trans, map->size.x, map->size.y, dataSize);
 			trans = bytes;
 			break;
 		}
@@ -143,7 +143,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 			return;
 		}
 		if (bytes < fill) {
-			warning("unpackSprite: too many bytes %d < %d", bytes, fill);
+			warning("unpackSprite: too many fill %d < %d for %dx%d (src %d bytes)", bytes, fill, map->size.x, map->size.y, dataSize);
 			fill = bytes;
 		}
 		if (stream.read(dst, fill) != fill) {
