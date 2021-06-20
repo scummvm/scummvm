@@ -972,7 +972,7 @@ void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 
 	// XXX: Temporary crash prevention
 	// We should properly solve the problem
-	warning("XXX: doBackgroundUpdate");
+	debug(3, "XXX: doBackgroundUpdate");
 	if (location.u == -1 && location.v == -1)
 		return;
 
