@@ -28,8 +28,6 @@
 #define SAGA2_SPRITE_H
 
 #include "saga2/rect.h"
-#include "saga2/dlist.h"
-#include "saga2/rmem.h"
 
 namespace Saga2 {
 
