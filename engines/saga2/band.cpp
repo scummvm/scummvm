@@ -30,6 +30,8 @@
 #include "saga2/actor.h"
 #include "saga2/band.h"
 #include "saga2/savefile.h"
+#include "saga2/dlist.h"
+#include "saga2/rmem.h"
 
 namespace Saga2 {
 

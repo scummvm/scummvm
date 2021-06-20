@@ -27,6 +27,8 @@
 #ifndef SAGA2_SENSOR_H
 #define SAGA2_SENSOR_H
 
+#include "saga2/dlist.h"
+
 namespace Saga2 {
 
 const uint32 nonActorSenseFlags = actorSeeInvis;

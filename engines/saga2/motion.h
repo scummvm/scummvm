@@ -28,6 +28,7 @@
 #define SAGA2_MOTION_H
 
 #include "saga2/actor.h"
+#include "saga2/dlist.h"
 
 namespace Saga2 {
 
