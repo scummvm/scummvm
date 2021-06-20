@@ -25,6 +25,9 @@
 
 namespace Private {
 
+const char *kHeader = "Precompiled Game Matrix";
+const uint kHeaderSize = 23;
+
 Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 
 	Common::Array<byte> array;
@@ -34,7 +37,7 @@ Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 		i++;
 	}
 
-	Common::String firstBytes((const char *)array.begin(), (const char *)array.begin() + kHeader.size());
+	Common::String firstBytes((const char *)array.begin(), (const char *)array.begin() + kHeaderSize);
 
 	if (firstBytes != kHeader) {
 		debug("Not a precompiled game matrix");
@@ -50,7 +53,7 @@ void Decompiler::decompile(Common::Array<byte> &buffer, bool mac) {
 
 	Common::String ss;
 	bool inDefineRects = false;
-	for (it += kHeader.size(); it != buffer.end();) {
+	for (it += kHeaderSize; it != buffer.end();) {
 		byte b = *it++;
 		if (b == kCodeString) {
 			byte len = *it++;

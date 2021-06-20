@@ -30,8 +30,6 @@
 
 namespace Private {
 
-const Common::String kHeader = "Precompiled Game Matrix";
-
 const byte kCodeString = 0x01;
 const byte kCodeShortLiteral = 0x02;
 const byte kCodeBraceClose = 0x04;
