@@ -78,6 +78,8 @@ public:
 	void kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
+	void textToSpeech(const char *text);
+
 	reg_t kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv);
 
 	reg_t kernelPortraitLoad(const Common::String &resourceName);

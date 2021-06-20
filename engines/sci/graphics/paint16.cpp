@@ -41,6 +41,9 @@
 
 #include "sci/graphics/scifx.h"
 
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
+
 namespace Sci {
 
 GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster16 *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
@@ -482,7 +485,14 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_DONTSHOWBITS		121
 #define SCI_DISPLAY_SETSTROKE			122
 
+// void GfxPaint16::textToSpeech(const char *text) {
+// 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+// 	if (ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2)
+// 		ttsMan->say(text, Common::TextToSpeechManager::QUEUE);
+// }
+
 reg_t GfxPaint16::kernelDisplay(const char *text, uint16 languageSplitter, int argc, reg_t *argv) {
+	// textToSpeech(text);
 	reg_t displayArg;
 	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
