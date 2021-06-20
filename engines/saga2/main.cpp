@@ -908,6 +908,8 @@ int32 currentGamePerformance(void) {
 
 
 void updatePerfStats(void) {
+	warning("STUB: updatePerfStats");
+#if 0
 	char bigmess[512];
 
 	frate.whatDoYouKnow(bigmess);
@@ -916,6 +918,7 @@ void updatePerfStats(void) {
 	(*ratemess[1])("Enginge: %s", bigmess);
 	irate.whatDoYouKnow(bigmess);
 	(*ratemess[2])("Message: %s", bigmess);
+#endif
 }
 
 void updateFrameCount(void) {
