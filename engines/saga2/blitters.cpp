@@ -105,9 +105,12 @@ void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 	unpackImage(*map, (int16)width, (int16)rowCount, srcData);
 }
 
+#define DEBUGPACK 0
+
 void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 	byte *dst = map->data;
 	int bytes = map->size.x * map->size.y;
+	bool fail = false;
 
 	if (!sprData) {
 		warning("unpackSprite(): empty sprData");
@@ -121,12 +124,16 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 
 		if (stream.eos()) {
 			warning("unpackSprite: premature end of data");
-			return;
+			fail = true;
+			break;
 		}
 
 		if (bytes < trans) {
+#if DEBUGPACK
 			warning("unpackSprite: too many trans %d < %d for %dx%d (src %d bytes)", bytes, trans, map->size.x, map->size.y, dataSize);
+#endif
 			trans = bytes;
+			fail = true;
 			break;
 		}
 		memset(dst, 0, trans);
@@ -140,15 +147,20 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 
 		if (stream.eos()) {
 			warning("unpackSprite: premature end of data");
-			return;
+			fail = true;
+			break;
 		}
 		if (bytes < fill) {
+#if DEBUGPACK
 			warning("unpackSprite: too many fill %d < %d for %dx%d (src %d bytes)", bytes, fill, map->size.x, map->size.y, dataSize);
+#endif
 			fill = bytes;
+			fail = true;
 		}
 		if (stream.read(dst, fill) != fill) {
 			warning("unpackSprite: premature end of data");
-			return;
+			fail = true;
+			break;
 		}
 		dst += fill;
 		bytes -= fill;
@@ -156,6 +168,27 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		if (bytes <= 0)
 			break;
 	}
+
+	if (!stream.eos()) {
+#if DEBUGPACK
+		warning("unpackSprite: %d bytes left", stream.size() - stream.pos());
+#endif
+		fail = true;
+	}
+
+#if DEBUGPACK
+	if (fail) {
+		Graphics::Surface surf;
+		surf.w = map->size.x;
+		surf.h = map->size.y;
+		surf.pitch = map->size.x;
+		surf.format = Graphics::PixelFormat::createFormatCLUT8();
+
+		surf.setPixels(map->data);
+
+		surf.debugPrint();
+	}
+#endif
 }
 
 void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bool mask) {
