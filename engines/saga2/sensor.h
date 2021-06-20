@@ -27,8 +27,6 @@
 #ifndef SAGA2_SENSOR_H
 #define SAGA2_SENSOR_H
 
-#include "saga2/dlist.h"
-
 namespace Saga2 {
 
 const uint32 nonActorSenseFlags = actorSeeInvis;
@@ -60,19 +58,19 @@ const int16 sensorCheckRate = 5;
 struct GameEvent;
 
 //  Allocate a new SensorList
-void *newSensorList(void);
+void newSensorList(SensorList *s);
 //  Deallocate an SensorList
-void deleteSensorList(void *p);
+void deleteSensorList(SensorList *p);
 
 //  Fetch a specified object's SensorList
 SensorList *fetchSensorList(GameObject *obj);
 
 //  Allocate a new Sensor
-void *newSensor(void);
+void newSensor(Sensor *s);
 //  Allocate a new Sensor with a specified starting check counter
-void *newSensor(int16 ctr);
+void newSensor(Sensor *s, int16 ctr);
 //  Deallocate a Sensor
-void deleteSensor(void *p);
+void deleteSensor(Sensor *p);
 
 //  Check all active sensors
 void checkSensors(void);
@@ -110,11 +108,21 @@ struct SenseInfo {
    SensorList Class
  * ===================================================================== */
 
-class SensorList : public DList {
+class SensorList {
 	GameObject      *obj;
+
+public:
+	Common::List<Sensor *> _list;
+
 public:
 	//  Constructor -- initial construction
-	SensorList(GameObject *o) : obj(o) {}
+	SensorList(GameObject *o) : obj(o) {
+		newSensorList(this);
+	}
+
+	~SensorList() {
+		deleteSensorList(this);
+	}
 
 	//  Constructor -- reconstruct from archive buffer
 	SensorList(void **buf);
@@ -128,13 +136,6 @@ public:
 	//  Archive this object in a buffer
 	void *archive(void *buf);
 
-	void *operator new (size_t) {
-		return newSensorList();
-	}
-	void operator delete (void *p) {
-		deleteSensorList(p);
-	}
-
 	GameObject *getObject(void) {
 		return obj;
 	}
@@ -144,24 +145,27 @@ public:
    Sensor Class
  * ===================================================================== */
 
-class Sensor : public DNode {
+class Sensor {
+public:
 	GameObject      *obj;
 	SensorID        id;
 	int16           range;
 
+	int16       checkCtr;
+
 public:
 	//  Constructor -- initial construction
-	Sensor(GameObject *o, SensorID sensorID, int16 rng) :
-		obj(o),
-		id(sensorID),
-		range(rng) {
+	Sensor(GameObject *o, SensorID sensorID, int16 rng) : obj(o), id(sensorID), range(rng) {
+		newSensor(this);
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	Sensor(void **buf);
+	Sensor(void **buf, int16 ctr);
 
 	//  Virtural destructor
-	virtual ~Sensor(void) {}
+	virtual ~Sensor(void) {
+		deleteSensor(this);
+	}
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -172,21 +176,6 @@ public:
 
 	//  Return an integer representing the type of this sensor
 	virtual int16 getType(void) = 0;
-
-#if DEBUG
-	void *operator new (size_t sz);
-	void *operator new (size_t sz, int16 ctr);
-#else
-	void *operator new (size_t) {
-		return newSensor();
-	}
-	void *operator new (size_t, int16 ctr) {
-		return newSensor(ctr);
-	}
-#endif
-	void operator delete (void *p) {
-		deleteSensor(p);
-	}
 
 	GameObject *getObject(void) {
 		return obj;
@@ -217,7 +206,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	ProtaganistSensor(void **buf) : Sensor(buf) {}
+	ProtaganistSensor(void **buf, int16 ctr) : Sensor(buf, ctr) {}
 
 	//  Return an integer representing the type of this sensor
 	int16 getType(void);
@@ -241,7 +230,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	ObjectSensor(void **buf) : Sensor(buf) {}
+	ObjectSensor(void **buf, int16 ctr) : Sensor(buf, ctr) {}
 
 	//  Determine if the object can sense what it's looking for
 	bool check(SenseInfo &info, uint32 senseFlags);
@@ -273,7 +262,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	SpecificObjectSensor(void **buf);
+	SpecificObjectSensor(void **buf, int16 ctr);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -312,7 +301,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	ObjectPropertySensor(void **buf);
+	ObjectPropertySensor(void **buf, int16 ctr);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -341,7 +330,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	ActorSensor(void **buf) : ObjectSensor(buf) {}
+	ActorSensor(void **buf, int16 ctr) : ObjectSensor(buf, ctr) {}
 
 private:
 	//  Determine if an object meets the search criteria
@@ -370,7 +359,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	SpecificActorSensor(void **buf);
+	SpecificActorSensor(void **buf, int16 ctr);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -409,7 +398,7 @@ public:
 	}
 
 	//  Constructor -- reconstruct from an archive buffer
-	ActorPropertySensor(void **buf);
+	ActorPropertySensor(void **buf, int16 ctr);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
@@ -442,7 +431,7 @@ public:
 	    int16           type);
 
 	//  Constructor -- reconstruct from an archive buffer
-	EventSensor(void **buf);
+	EventSensor(void **buf, int16 ctr);
 
 	//  Return the number of bytes needed to archive this object in
 	//  a buffer
