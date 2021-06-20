@@ -56,7 +56,6 @@ MODULE_OBJS := \
 	patrol.o \
 	player.o \
 	playmode.o \
-	pool.o \
 	property.o \
 	pt2angle.o \
 	rect.o \

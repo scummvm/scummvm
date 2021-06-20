@@ -31,7 +31,6 @@
 #include "saga2/std.h"
 #include "saga2/fta.h"
 #include "saga2/timers.h"
-#include "saga2/pool.h"
 #include "saga2/objects.h"
 #include "saga2/savefile.h"
 
