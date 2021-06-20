@@ -151,7 +151,8 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"private-eye", // MacOS release (US)
 		0,
-		AD_ENTRY1s("Private Eye Demo Installer", "e7665ddc5e6d932c4a65598ecc4ec7d2", 1626393),
+		AD_ENTRY2s("Private Eye", "9fb532d8276b9b5bb7cabf9450c45ea7", 1558848,
+		    "game.mac", "33553cc04813d3f658bbe9d548377878", 81894),
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
