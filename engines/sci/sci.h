@@ -30,6 +30,7 @@
 #include "sci/engine/vm_types.h"	// for Selector
 #include "sci/debug.h"	// for DebugState
 #include "sci/detection.h" // Shared code between detection and engine
+#include "common/text-to-speech.h"
 
 struct ADGameDescription;
 
@@ -333,6 +334,7 @@ private:
 	Common::RandomSource _rng;
 	Common::MacResManager _macExecutable;
 	bool _forceHiresGraphics; // user-option for GK1, KQ6, PQ4
+	Common::TextToSpeechManager *_ttsMan;
 };
 
 
