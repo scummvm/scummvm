@@ -44,26 +44,6 @@ const uint32        spriteGroupID   = MKTAG('S', 'P', 'R', 'I'),
                     weaponSpriteBaseID  = MKTAG('W', 'P', 'N', 0),
                     missileSpriteID = MKTAG('M', 'I', 'S', 'S');
 
-/* ===================================================================== *
-   Prototypes
- * ===================================================================== */
-
-#ifndef FTAASM_H
-extern void unpackSprite(gPixelMap *map, uint8 *sprData);
-extern void compositePixels(
-    gPixelMap       *compMap,
-    gPixelMap       *sprMap,
-    int32           xpos,
-    int32           ypos,
-    uint8           *lookup);
-extern void compositePixelsRvs(
-    gPixelMap       *compMap,
-    gPixelMap       *sprMap,
-    int32           xpos,
-    int32           ypos,
-    uint8           *lookup);
-#endif
-
 extern uint16 rippedRoofID;
 extern void drawTileMask(
     const Point16 &sPos,
@@ -250,7 +230,7 @@ void DrawCompositeMaskedSprite(
 
 		//  Unpack the sprite into the temp map
 
-		unpackSprite(&sprMap, sp->_data);
+		unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 		//  Blit the temp map onto the composite map
 
@@ -361,7 +341,7 @@ void DrawSprite(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data);
+	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	//  Blit to the port
 	port.setMode(drawModeMatte);
@@ -391,7 +371,7 @@ void DrawColorMappedSprite(
 	sprReMap.data = (uint8 *)getQuickMem(sprReMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data);
+	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	memset(sprReMap.data, 0, sprReMap.bytes());
 
@@ -429,7 +409,7 @@ void ExpandColorMappedSprite(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data);
+	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -458,7 +438,7 @@ uint8 GetSpritePixel(
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data);
+	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
@@ -513,7 +493,7 @@ uint16 visiblePixelsInSprite(
 	sprMap.size = sp->size;
 	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
 
-	unpackSprite(&sprMap, sp->_data);
+	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	org.x = drawPos.x - xMin;
 	org.y = drawPos.y - yMin;
@@ -795,9 +775,9 @@ Sprite::Sprite(Common::SeekableReadStream *stream) {
 	size.load(stream);
 	offset.load(stream);
 
-	int data_size = size.x * size.y;
-	_data = (byte *)malloc(data_size * sizeof(byte));
-	stream->read(_data, data_size);
+	_dataSize = size.x * size.y;
+	_data = (byte *)malloc(_dataSize);
+	stream->read(_data, _dataSize);
 }
 
 Sprite::~Sprite() {

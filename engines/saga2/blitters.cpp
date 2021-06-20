@@ -25,6 +25,7 @@
  */
 
 #include "common/debug.h"
+#include "common/memstream.h"
 #include "graphics/surface.h"
 
 #include "saga2/std.h"
@@ -104,12 +105,25 @@ void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 	unpackImage(*map, (int16)width, (int16)rowCount, srcData);
 }
 
-void unpackSprite(gPixelMap *map, uint8 *sprData) {
+void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 	byte *dst = map->data;
 	int bytes = map->size.x * map->size.y;
 
+	if (!sprData) {
+		warning("unpackSprite(): empty sprData");
+		return;
+	}
+
+	Common::MemoryReadStream stream(sprData, dataSize);
+
 	while (true) {
-		byte trans = *sprData++;
+		byte trans = stream.readByte();
+
+		if (stream.eos()) {
+			warning("unpackSprite: premature end of data");
+			return;
+		}
+
 		if (bytes < trans) {
 			warning("unpackSprite: too many trans %d < %d", bytes, trans);
 			trans = bytes;
@@ -122,15 +136,25 @@ void unpackSprite(gPixelMap *map, uint8 *sprData) {
 		if (bytes < 0)
 			break;
 
-		byte fill = *sprData++;
+		byte fill = stream.readByte();
+
+		if (stream.eos()) {
+			warning("unpackSprite: premature end of data");
+			return;
+		}
 		if (bytes < fill) {
 			warning("unpackSprite: too many bytes %d < %d", bytes, fill);
 			fill = bytes;
 		}
-		memcpy(dst, sprData, fill);
+		if (stream.read(dst, fill) != fill) {
+			warning("unpackSprite: premature end of data");
+			return;
+		}
 		dst += fill;
 		bytes -= fill;
-		sprData += fill;
+
+		if (bytes <= 0)
+			break;
 	}
 }
 
