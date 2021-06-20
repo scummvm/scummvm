@@ -3171,6 +3171,12 @@ drawRoundedSquareShadow(int x1, int y1, int r, int w, int h, int offset) {
 		int f, ddF_x, ddF_y;
 		int x, y, px, py;
 
+		// No more room to draw: abort
+		if ((shadowRect.width() < 2*r) ||
+			(shadowRect.height() < 2*r)) {
+			break;
+		}
+
 		PixelType *ptr_tl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.top + r);
 		PixelType *ptr_tr = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.right - r, shadowRect.top + r);
 		PixelType *ptr_bl = (PixelType *)Base::_activeSurface->getBasePtr(shadowRect.left  + r, shadowRect.bottom - r);
