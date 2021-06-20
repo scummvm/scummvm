@@ -496,8 +496,6 @@ TaskList::TaskList(void) {
 //	TaskList destructor
 
 TaskList::~TaskList(void) {
-	for (int i = 0; i < numTasks; i++)
-		delete _list[i];
 }
 
 //----------------------------------------------------------------------
@@ -594,6 +592,7 @@ void TaskList::newTask(Task *t) {
 
 			return;
 		}
+	warning("Too many tasks in the list, > %d", numTasks);
 }
 
 void TaskList::newTask(Task *t, TaskID id) {
