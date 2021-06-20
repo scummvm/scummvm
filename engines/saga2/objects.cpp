@@ -58,7 +58,6 @@ APPFUNC(cmdControl);
 
 const uint32        nameListID  = MKTAG('N', 'A', 'M', 'E'),
                     objListID   = MKTAG('O', 'B', 'J', 'E'),
-                    worldListID = MKTAG('W', 'R', 'L', 'D'),
                     objProtoID  = MKTAG('P', 'R', 'O',  0),
                     actorProtoID = MKTAG('P', 'R', 'O',  1);
 
@@ -4218,16 +4217,16 @@ GameObject *objectCollision(GameObject *obj, GameWorld *world, const TilePoint &
 	        obstacle != nullptr;
 	        iter.next(&obstacle)) {
 		TilePoint   tp = obstacle->getLocation();
-		ProtoObj    *proto = obstacle->proto();
+		ProtoObj    *obstacleProto = obstacle->proto();
 
 		if (obstacle == obj) continue;
 
 		if (tp.z < volume.max.z
-		        &&  tp.z + proto->height > volume.min.z
-		        &&  tp.u - proto->crossSection < volume.max.u
-		        &&  tp.u + proto->crossSection > volume.min.u
-		        &&  tp.v - proto->crossSection < volume.max.v
-		        &&  tp.v + proto->crossSection > volume.min.v) {
+		        &&  tp.z + obstacleProto->height > volume.min.z
+		        &&  tp.u - obstacleProto->crossSection < volume.max.u
+		        &&  tp.u + obstacleProto->crossSection > volume.min.u
+		        &&  tp.v - obstacleProto->crossSection < volume.max.v
+		        &&  tp.v + obstacleProto->crossSection > volume.min.v) {
 			//  If the actor is dead, then it is not an obstacle.
 			if (isActor(obstacle) && ((Actor *)obstacle)->isDead()) continue;
 
