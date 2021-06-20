@@ -48,7 +48,7 @@ void timerCallback(void *refCon) {
 void initTimer(void) {
 	gameTime = 0;
 
-	g_vm->getTimerManager()->installTimerProc(&timerCallback, 1000 / 72, nullptr, "saga2");
+	g_vm->getTimerManager()->installTimerProc(&timerCallback, 1000000 / 72, nullptr, "saga2");
 }
 
 void pauseTimer() {
