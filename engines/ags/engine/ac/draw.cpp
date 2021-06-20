@@ -1525,8 +1525,9 @@ void prepare_characters_for_drawing() {
 
 		if ((chin->loop >= _G(views)[chin->view].numLoops) ||
 		        (_G(views)[chin->view].loops[chin->loop].numFrames < 1)) {
-			quitprintf("!The character '%s' could not be displayed because there were no frames in loop %d of view %d.",
+			warning("The character '%s' could not be displayed because there were no frames in loop %d of view %d.",
 			           chin->name, chin->loop, chin->view + 1);
+			continue;
 		}
 
 		sppic = _G(views)[chin->view].loops[chin->loop].frames[chin->frame].pic;
