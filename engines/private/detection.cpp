@@ -67,7 +67,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::kPlatformWindows,
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
-	},	
+	},
 	{
 		"private-eye", // Demo from the EU release
 		"Demo",
