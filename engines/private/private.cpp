@@ -20,26 +20,26 @@
  *
  */
 
-#include "audio/decoders/wave.h"
 #include "audio/audiostream.h"
+#include "audio/decoders/wave.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
 #include "common/debug-channels.h"
+#include "common/debug.h"
 #include "common/error.h"
 #include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
-#include "common/system.h"
 #include "common/str.h"
+#include "common/system.h"
 #include "common/timer.h"
 #include "engines/util.h"
 #include "image/bmp.h"
 
+#include "private/decompiler.h"
+#include "private/grammar.h"
 #include "private/private.h"
 #include "private/tokens.h"
-#include "private/grammar.h"
-#include "private/decompiler.h"
 
 namespace Private {
 
@@ -127,9 +127,9 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 	Common::SeekableReadStream *file = NULL;
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
-		file = (Common::SeekableReadStream *) test;
+		file = (Common::SeekableReadStream *)test;
 	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
-		file = (Common::SeekableReadStream *) test;
+		file = (Common::SeekableReadStream *)test;
 	} else {
 		delete test;
 		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
@@ -137,7 +137,7 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 		if (!isDemo()) {
 			if (_installerArchive.hasFile("GAME.DAT"))
 				file = _installerArchive.createReadStreamForMember("GAME.DAT");
-			else if (_installerArchive.hasFile("GAME.WIN")) 
+			else if (_installerArchive.hasFile("GAME.WIN"))
 				file = _installerArchive.createReadStreamForMember("GAME.WIN");
 			else
 				error("Unknown version");
@@ -148,17 +148,16 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 			// if the demo from the full retail CDROM is used
 			else if (_installerArchive.hasFile("DEMOGAME.DAT"))
-					file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
+				file = _installerArchive.createReadStreamForMember("DEMOGAME.DAT");
 			else if (_installerArchive.hasFile("DEMOGAME.WIN"))
-					file = _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
+				file = _installerArchive.createReadStreamForMember("DEMOGAME.WIN");
 			else {
 				error("Unknown version");
 			}
 		}
-	}	
+	}
 	assert(file != NULL);
 	return file;
-
 }
 
 Common::Error PrivateEngine::run() {
@@ -173,7 +172,7 @@ Common::Error PrivateEngine::run() {
 	Decompiler decomp(buf, fileSize, false);
 	free(buf);
 
-	buf = (char*) decomp.getResult().c_str();
+	buf = (char *)decomp.getResult().c_str();
 	//debug("%s", buf);
 
 	// Initialize stuff
@@ -260,9 +259,10 @@ Common::Error PrivateEngine::run() {
 				changeCursor("default");
 				// The following functions will return true
 				// if the cursor is changed
-				if	  (cursorPauseMovie(mousePos)) {}
-				else if (cursorMask(mousePos))	   {}
-				else	 cursorExit(mousePos);
+				if (cursorPauseMovie(mousePos)) {
+				} else if (cursorMask(mousePos)) {
+				} else
+					cursorExit(mousePos);
 				break;
 
 			default:
@@ -411,7 +411,7 @@ void PrivateEngine::checkPoliceBust() {
 		return;
 	}
 
-	if (_numberClicks == _maxNumberClicks+1) {
+	if (_numberClicks == _maxNumberClicks + 1) {
 		uint policeIndex = maps.variables.getVal(getPoliceIndexVariable())->u.val;
 		_policeBustSetting = _currentSetting;
 		if (policeIndex <= 13) {
@@ -435,7 +435,7 @@ bool PrivateEngine::cursorExit(Common::Point mousePos) {
 
 	for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
 		const ExitInfo &e = *it;
-		cs = e.rect.width()*e.rect.height();
+		cs = e.rect.width() * e.rect.height();
 
 		if (e.rect.contains(mousePos)) {
 			if (cs < rs && !e.cursor.empty()) {
@@ -466,7 +466,6 @@ bool PrivateEngine::inMask(Graphics::Surface *surf, Common::Point mousePos) {
 
 	return (surf->getPixel(mousePos.x, mousePos.y) != _transparentColor);
 }
-
 
 bool PrivateEngine::cursorMask(Common::Point mousePos) {
 	bool inside = false;
@@ -533,7 +532,6 @@ Common::String PrivateEngine::getPoliceIndexVariable() {
 	return "k0";
 }
 
-
 Common::String PrivateEngine::getPOGoBustMovieSetting() {
 	if (_language == "us")
 		return "kPOGoBustMovie";
@@ -555,7 +553,6 @@ Common::String PrivateEngine::getExitCursor() {
 	return "k5";
 }
 
-
 Common::String PrivateEngine::getInventoryCursor() {
 	if (_language == "us")
 		return "kInventory";
@@ -574,7 +571,7 @@ void PrivateEngine::selectPauseMovie(Common::Point mousePos) {
 				else
 					_pausedSetting = _currentSetting;
 
-				_nextSetting = getPauseMovieSetting(); 
+				_nextSetting = getPauseMovieSetting();
 				if (_videoDecoder) {
 					_videoDecoder->pauseVideo(true);
 				}
@@ -593,7 +590,7 @@ void PrivateEngine::selectExit(Common::Point mousePos) {
 	int cs = 0;
 	for (ExitList::const_iterator it = _exits.begin(); it != _exits.end(); ++it) {
 		const ExitInfo &e = *it;
-		cs = e.rect.width()*e.rect.height();
+		cs = e.rect.width() * e.rect.height();
 		//debug("Testing exit %s %d", e.nextSetting->c_str(), cs);
 		if (e.rect.contains(mousePos)) {
 			//debug("Inside! %d %d", cs, rs);
@@ -903,8 +900,8 @@ Common::Error PrivateEngine::loadGameStream(Common::SeekableReadStream *stream) 
 	PhoneInfo p;
 	for (uint32 j = 0; j < size; ++j) {
 		p.sound = stream->readString();
-		p.flag  = maps.variables.getVal(stream->readString());
-		p.val   = stream->readUint32LE();
+		p.flag = maps.variables.getVal(stream->readString());
+		p.val = stream->readUint32LE();
 		_phone.push_back(p);
 	}
 
@@ -1132,7 +1129,7 @@ Graphics::Surface *PrivateEngine::decodeImage(const Common::String &name) {
 void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d)", __FUNCTION__, name.c_str(), x, y);
 	Graphics::Surface *surf = decodeImage(name);
-	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x,y), _transparentColor);
+	_compositeSurface->transBlitFrom(*surf, _origin + Common::Point(x, y), _transparentColor);
 	surf->free();
 	delete surf;
 	_image->destroy();
@@ -1141,7 +1138,6 @@ void PrivateEngine::loadImage(const Common::String &name, int x, int y) {
 void PrivateEngine::drawScreenFrame() {
 	g_system->copyRectToScreen(_frame->getPixels(), _frame->pitch, 0, 0, _screenW, _screenH);
 }
-
 
 Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, int y, bool drawn) {
 	debugC(1, kPrivateDebugFunction, "%s(%s,%d,%d,%d)", __FUNCTION__, name.c_str(), x, y, drawn);
@@ -1153,10 +1149,10 @@ Graphics::Surface *PrivateEngine::loadMask(const Common::String &name, int x, in
 	uint32 hdiff = 0;
 	uint32 wdiff = 0;
 
-	if (x+csurf->h > _screenH)
-		hdiff = x+csurf->h - _screenH;
-	if (y+csurf->w > _screenW)
-		wdiff = y+csurf->w - _screenW;
+	if (x + csurf->h > _screenH)
+		hdiff = x + csurf->h - _screenH;
+	if (y + csurf->w > _screenW)
+		wdiff = y + csurf->w - _screenW;
 
 	Common::Rect crect(csurf->w - wdiff, csurf->h - hdiff);
 	surf->copyRectToSurface(*csurf, x, y, crect);
@@ -1181,7 +1177,7 @@ void PrivateEngine::drawScreen() {
 	if (_videoDecoder && !_videoDecoder->isPaused()) {
 		const Graphics::Surface *frame = _videoDecoder->decodeNextFrame();
 		Graphics::Surface *cframe = frame->convertTo(_pixelFormat, _videoDecoder->getPalette());
-		Common::Point center((_screenW - _videoDecoder->getWidth())/2, (_screenH - _videoDecoder->getHeight())/2);
+		Common::Point center((_screenW - _videoDecoder->getWidth()) / 2, (_screenH - _videoDecoder->getHeight()) / 2);
 		surface->blitFrom(*cframe, center);
 		cframe->free();
 		delete cframe;
@@ -1197,7 +1193,6 @@ void PrivateEngine::drawScreen() {
 	//if (_image->getPalette() != nullptr)
 	//	g_system->getPaletteManager()->setPalette(_image->getPalette(), _image->getPaletteStartIndex(), _image->getPaletteColorCount());
 	g_system->updateScreen();
-
 }
 
 bool PrivateEngine::getRandomBool(uint p) {
@@ -1265,7 +1260,7 @@ void PrivateEngine::loadLocations(const Common::Rect &rect) {
 		if (sym->u.val) {
 			offset = offset + 22;
 			Common::String s =
-			  Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
+				Common::String::format("%sdryloc%d.bmp", _diaryLocPrefix.c_str(), i);
 
 			loadMask(s, rect.left + 120, rect.top + offset, true);
 		}

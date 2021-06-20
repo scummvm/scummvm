@@ -21,18 +21,18 @@
  */
 
 #include "common/str.h"
-#include "common/timer.h"
 #include "common/system.h"
+#include "common/timer.h"
 
 #include "private/grammar.h"
-#include "private/tokens.h"
 #include "private/private.h"
+#include "private/tokens.h"
 
 namespace Private {
 
 static void fChgMode(ArgArray args) {
 	// assert types
-	assert (args.size() == 2 || args.size() == 3);
+	assert(args.size() == 2 || args.size() == 3);
 	assert(args[0].type == NUM);
 
 	if (args.size() == 2)
@@ -69,7 +69,6 @@ static void fVSPicture(ArgArray args) {
 	g_private->_nextVS = args[0].u.str;
 }
 
-
 static void fDiaryLocList(ArgArray args) {
 	int x1, y1, x2, y2;
 	assert(args[0].type == NUM);
@@ -87,7 +86,6 @@ static void fDiaryLocList(ArgArray args) {
 
 	Common::Rect rect(x1, y1, x2, y2);
 	g_private->loadLocations(rect);
-
 }
 
 static void fDiaryGoLoc(ArgArray args) {
@@ -109,7 +107,6 @@ static void fgoto(ArgArray args) {
 	g_private->_nextSetting = args[0].u.str;
 }
 
-
 static void fSyncSound(ArgArray args) {
 	assert(args[0].type == STRING);
 	assert(args[1].type == NAME);
@@ -123,9 +120,8 @@ static void fSyncSound(ArgArray args) {
 			g_private->ignoreEvents();
 
 		uint32 i = 100;
-		while(i--) // one second extra
+		while (i--) // one second extra
 			g_private->ignoreEvents();
-
 	}
 }
 
@@ -176,7 +172,7 @@ static void fRestartGame(ArgArray args) {
 
 static void fPoliceBust(ArgArray args) {
 	// assert types
-	assert (args.size() == 1 || args.size() == 2);
+	assert(args.size() == 1 || args.size() == 2);
 	g_private->_policeBustEnabled = args[0].u.val;
 	//debug("Number of clicks %d", g_private->computePoliceIndex());
 
@@ -199,16 +195,16 @@ static void fPoliceBust(ArgArray args) {
 
 static void fBustMovie(ArgArray args) {
 	// assert types
-	assert (args.size() == 1);
+	assert(args.size() == 1);
 	debugC(1, kPrivateDebugScript, "BustMovie(%s)", args[0].u.sym->name->c_str());
 	uint policeIndex = g_private->maps.variables.getVal(g_private->getPoliceIndexVariable())->u.val;
-	int videoIndex = policeIndex/2 - 1;
+	int videoIndex = policeIndex / 2 - 1;
 	if (videoIndex < 0)
 		videoIndex = 0;
 	assert(videoIndex <= 5);
 	Common::String pv =
-	  Common::String::format("po/animatio/spoc%02dxs.smk",
-		kPoliceBustVideos[videoIndex]);
+		Common::String::format("po/animatio/spoc%02dxs.smk",
+							   kPoliceBustVideos[videoIndex]);
 
 	if (kPoliceBustVideos[videoIndex] == 2) {
 		Common::String s("global/transiti/audio/spoc02VO.wav");
@@ -221,7 +217,7 @@ static void fBustMovie(ArgArray args) {
 
 static void fDossierAdd(ArgArray args) {
 
-	assert (args.size() == 2);
+	assert(args.size() == 2);
 	Common::String s1 = args[0].u.str;
 	Common::String s2 = args[1].u.str;
 	DossierInfo m;
@@ -237,7 +233,7 @@ static void fDossierAdd(ArgArray args) {
 }
 
 static void fDossierBitmap(ArgArray args) {
-	assert (args.size() == 2);
+	assert(args.size() == 2);
 	int x = args[0].u.val;
 	int y = args[1].u.val;
 	assert(x == 40 && y == 30);
@@ -270,7 +266,7 @@ static void fDossierChgSheet(ArgArray args) {
 }
 
 static void fDossierPrevSuspect(ArgArray args) {
-	assert (args.size() == 3);
+	assert(args.size() == 3);
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
@@ -287,7 +283,7 @@ static void fDossierPrevSuspect(ArgArray args) {
 }
 
 static void fDossierNextSuspect(ArgArray args) {
-	assert (args.size() == 3);
+	assert(args.size() == 3);
 	Common::String s(args[0].u.str);
 	MaskInfo m;
 
@@ -354,23 +350,20 @@ static void fInventory(ArgArray args) {
 		if (e.type == NUM) {
 			assert(e.u.val == 0);
 			m.nextSetting = "";
-		}
-		else
+		} else
 			m.nextSetting = e.u.sym->name->c_str();
 
 		m.cursor = g_private->getInventoryCursor();
-		m.point = Common::Point(0,0);
+		m.point = Common::Point(0, 0);
 
 		if (v1.type == NAME) {
 			m.flag1 = g_private->maps.lookupVariable(v1.u.sym->name);
-		}
-		else
+		} else
 			m.flag1 = NULL;
 
 		if (v2.type == NAME) {
 			m.flag2 = g_private->maps.lookupVariable(v2.u.sym->name);
-		}
-		else
+		} else
 			m.flag2 = NULL;
 
 		g_private->_masks.push_front(m);
@@ -387,7 +380,7 @@ static void fInventory(ArgArray args) {
 			g_private->inventory.push_back(bmp);
 	} else {
 		if (v1.type == NAME) {
-			v1.u.sym = g_private->maps.lookupVariable(v1.u.sym->name);	
+			v1.u.sym = g_private->maps.lookupVariable(v1.u.sym->name);
 			if (strcmp(c.u.str, "\"REMOVE\"") == 0) {
 				v1.u.sym->u.val = 0;
 				if (inInventory(bmp))
@@ -402,7 +395,7 @@ static void fInventory(ArgArray args) {
 				g_private->inventory.push_back(bmp);
 		}
 		if (v2.type == NAME) {
-			v2.u.sym = g_private->maps.lookupVariable(v2.u.sym->name);	
+			v2.u.sym = g_private->maps.lookupVariable(v2.u.sym->name);
 			v2.u.sym->u.val = 1;
 		}
 	}
@@ -603,9 +596,8 @@ static void _fMask(ArgArray args, bool drawn) {
 	m.cursor = *c;
 	m.flag1 = NULL;
 	m.flag2 = NULL;
-	m.point = Common::Point(x,y);
+	m.point = Common::Point(x, y);
 	g_private->_masks.push_front(m);
-
 }
 
 static void fMask(ArgArray args) {
@@ -677,8 +669,7 @@ static void fSoundArea(ArgArray args) {
 		n = Common::String(args[1].u.str);
 		Common::replace(n, "\"", "");
 		Common::replace(n, "\"", "");
-	}
-	else
+	} else
 		error("Invalid input for SoundArea");
 
 	debugC(1, kPrivateDebugScript, "SoundArea(%s, %s, ..)", args[0].u.str, n.c_str());
@@ -732,7 +723,7 @@ static void fAskSave(ArgArray args) {
 }
 
 static void fTimer(ArgArray args) {
-	assert (args.size() == 2 || args.size() == 3);
+	assert(args.size() == 2 || args.size() == 3);
 
 	if (args.size() == 3)
 		debugC(1, kPrivateDebugScript, "Timer(%d, %s, %s)", args[0].u.val, args[1].u.sym->name->c_str(), args[2].u.sym->name->c_str());
@@ -756,72 +747,71 @@ static void fTimer(ArgArray args) {
 const FuncTable funcTable[] = {
 
 	// Control flow
-	{ fChgMode,		 "ChgMode"},
-	{ fResume,		  "Resume"},
-	{ fgoto,			"goto"},
-	{ fTimer,		   "Timer"},
+	{fChgMode, "ChgMode"},
+	{fResume, "Resume"},
+	{fgoto, "goto"},
+	{fTimer, "Timer"},
 
 	// Variables
-	{ fSetFlag,		 "SetFlag"},
-	{ fSetModifiedFlag, "SetModifiedFlag"},
+	{fSetFlag, "SetFlag"},
+	{fSetModifiedFlag, "SetModifiedFlag"},
 
 	// Sounds
-	{ fSound,		   "Sound"},
-	{ fSoundEffect,	 "SoundEffect"},
-	{ fLoopedSound,	 "LoopedSound"},
-	{ fNoStopSounds,	"NoStopSounds"},
-	{ fSyncSound,	   "SyncSound"},
-	{ fAMRadioClip,	 "AMRadioClip"},
-	{ fPoliceClip,	  "PoliceClip"},
-	{ fPhoneClip,	   "PhoneClip"},
-	{ fSoundArea,	   "SoundArea"},
-	{ fPaperShuffleSound, "PaperShuffleSound"},
+	{fSound, "Sound"},
+	{fSoundEffect, "SoundEffect"},
+	{fLoopedSound, "LoopedSound"},
+	{fNoStopSounds, "NoStopSounds"},
+	{fSyncSound, "SyncSound"},
+	{fAMRadioClip, "AMRadioClip"},
+	{fPoliceClip, "PoliceClip"},
+	{fPhoneClip, "PhoneClip"},
+	{fSoundArea, "SoundArea"},
+	{fPaperShuffleSound, "PaperShuffleSound"},
 
 	// Images
-	{ fBitmap,		  "Bitmap"},
-	{ fMask,			"Mask"},
-	{ fMaskDrawn,	   "MaskDrawn"},
-	{ fVSPicture,	   "VSPicture"},
-	{ fViewScreen,	  "ViewScreen"},
-	{ fExit,			"Exit"},
+	{fBitmap, "Bitmap"},
+	{fMask, "Mask"},
+	{fMaskDrawn, "MaskDrawn"},
+	{fVSPicture, "VSPicture"},
+	{fViewScreen, "ViewScreen"},
+	{fExit, "Exit"},
 
 	// Video
-	{ fTransition,	  "Transition"},
-	{ fMovie,		   "Movie"},
+	{fTransition, "Transition"},
+	{fMovie, "Movie"},
 
 	// Diary
-	{ fDiaryLocList,	"DiaryLocList"},
-	{ fDiaryInvList,	"DiaryInvList"},
-	{ fDiaryGoLoc,	  "DiaryGoLoc"},
+	{fDiaryLocList, "DiaryLocList"},
+	{fDiaryInvList, "DiaryInvList"},
+	{fDiaryGoLoc, "DiaryGoLoc"},
 
 	// Main menu
-	{ fQuit,			"Quit"},
-	{ fLoadGame,		"LoadGame"},
-	{ fSaveGame,		"SaveGame"},
-	{ fAskSave,		 "AskSave"},
-	{ fRestartGame,	 "RestartGame"},
+	{fQuit, "Quit"},
+	{fLoadGame, "LoadGame"},
+	{fSaveGame, "SaveGame"},
+	{fAskSave, "AskSave"},
+	{fRestartGame, "RestartGame"},
 
 	// Dossiers
-	{ fDossierAdd,	  "DossierAdd"},
-	{ fDossierChgSheet, "DossierChgSheet"},
-	{ fDossierBitmap,   "DossierBitmap"},
-	{ fDossierPrevSuspect, "DossierPrevSuspect"},
-	{ fDossierNextSuspect, "DossierNextSuspect"},
+	{fDossierAdd, "DossierAdd"},
+	{fDossierChgSheet, "DossierChgSheet"},
+	{fDossierBitmap, "DossierBitmap"},
+	{fDossierPrevSuspect, "DossierPrevSuspect"},
+	{fDossierNextSuspect, "DossierNextSuspect"},
 
 	// Inventory
-	{ fLoseInventory,   "LoseInventory"},
-	{ fInventory,	   "Inventory"},
+	{fLoseInventory, "LoseInventory"},
+	{fInventory, "Inventory"},
 
 	// PoliceBust
-	{ fPoliceBust,	  "PoliceBust"},
-	{ fBustMovie,	   "BustMovie"},
+	{fPoliceBust, "PoliceBust"},
+	{fBustMovie, "BustMovie"},
 
 	// Others
-	{ fSafeDigit,	   "SafeDigit"},
-	{ fCRect,		   "CRect"},
+	{fSafeDigit, "SafeDigit"},
+	{fCRect, "CRect"},
 
-	{ 0, 0}
-};
+	{0, 0}};
 
 void call(const char *name, const ArgArray &args) {
 	Common::String n(name);
@@ -829,7 +819,7 @@ void call(const char *name, const ArgArray &args) {
 		error("I don't know how to execute %s", name);
 	}
 
-	void (*func)(ArgArray) = (void (*)(ArgArray)) g_private->_functions.getVal(n);
+	void (*func)(ArgArray) = (void (*)(ArgArray))g_private->_functions.getVal(n);
 	func(args);
 }
 
