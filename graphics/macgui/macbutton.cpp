@@ -37,7 +37,6 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
-	_invertOuter = false;
 	_invertInner = false;
 	_checkBoxType = 0;
 
@@ -66,7 +65,6 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment, 0, 0, 0, 0, 0, encodeType), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
-	_invertOuter = false;
 	_invertInner = false;
 	_checkBoxType = 0;
 
@@ -96,10 +94,8 @@ void MacButton::setActive(bool active) {
 		return;
 
 	MacWidget::setActive(active);
-	if (_composeSurface) {
-		_invertOuter = !_invertOuter;
+	if (_composeSurface)
 		_contentIsDirty = true;
-	}
 }
 
 // whether to use getDrawPixel or getDrawInvertPixel to draw invert pixel, maybe depends on the pattle we are using
@@ -188,7 +184,7 @@ bool MacButton::draw(bool forceRedraw) {
 		break;
 	}
 
-	if (_invertOuter)
+	if (_active)
 		invertOuter();
 	if (_invertInner)
 		invertInner();
