@@ -296,6 +296,14 @@ public:
 
 	// FIXME: Pointer Arithmetic
 	ActorAnimation *animation(int num) {
+		if (poseList == nullptr)
+			return nullptr;
+
+		if (num >= poseList->numAnimations) {
+			warning("ActorPose:animation(), animation number is too high, %d >= %d", num, poseList->numAnimations);
+			return nullptr;
+		}
+
 		if (poseList)
 			return poseList->animations[num];
 

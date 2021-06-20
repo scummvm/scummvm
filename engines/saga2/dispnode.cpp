@@ -580,7 +580,7 @@ void DisplayNode::drawObject(void) {
 			pose = aa->pose(anim, a->currentFacing, a->currentPose);
 
 			if (anim == nullptr)
-				return
+				return;
 
 			assert(anim->start[0] >= 0);
 			assert(anim->start[0] <  10000);
