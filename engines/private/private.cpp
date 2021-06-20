@@ -127,9 +127,9 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 	Common::SeekableReadStream *file = NULL;
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
-		file = (Common::SeekableReadStream *)test;
+		file = test;
 	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
-		file = (Common::SeekableReadStream *)test;
+		file = test;
 	} else {
 		delete test;
 		assert(_installerArchive.open("SUPPORT/ASSETS.Z"));
