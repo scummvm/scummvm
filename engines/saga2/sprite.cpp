@@ -664,8 +664,6 @@ ColorSchemeList::ColorSchemeList(int count, Common::SeekableReadStream *stream) 
 
 ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	int16           bank;
-	const int actorAnimSetSize = 8;
-	const int colorSchemeSize = 44;
 	int poseListSize;
 	int schemeListSize;
 	Common::SeekableReadStream *stream;
@@ -744,14 +742,15 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 		// compute number of ActorPoses
 		uint32 poseBytes = poseStream->size() - as->poseOffset;
+		const int poseSize = 14;
 
 		debugC(1, kDebugLoading, "Pose List: bytes: %d numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
-			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / 14);
+			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
 
-		if (poseBytes % 14 != 0)
-			warning("Incorrect number of poses, %d bytes more", poseBytes % 14);
+		if (poseBytes % poseSize != 0)
+			warning("Incorrect number of poses, %d bytes more", poseBytes % poseSize);
 
-		as->numPoses = poseBytes / 14;
+		as->numPoses = poseBytes / poseSize;
 
 		as->animations = (ActorAnimation **)malloc(as->numAnimations * sizeof(ActorAnimation));
 
@@ -762,14 +761,22 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 		for (uint i = 0; i < as->numPoses; i++)
 			as->poses[i] = new ActorPose(poseStream);
+
+		delete poseStream;
 	}
 
 	if (schemeRes->seek(id) == 0) {
 		warning("LoadActorAppearance: Could not load scheme list");
 	} else {
+		const int colorSchemeSize = 44;
+
+		if (schemeRes->size(id) % colorSchemeSize != 0)
+			warning("Incorrect number of colorschemes, %d bytes more", schemeRes->size(id) % colorSchemeSize);
+
 		schemeListSize = schemeRes->size(id) / colorSchemeSize;
 		stream = loadResourceToStream(schemeRes, id, "scheme list");
 		aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+
 		delete stream;
 	}
 
