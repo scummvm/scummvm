@@ -27,7 +27,7 @@ namespace Private {
 
 Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 
-	Common::Array<unsigned char> array;
+	Common::Array<byte> array;
 	uint32 i = 0;
 	while (i < fileSize) {
 		array.push_back(buf[i]);
@@ -45,36 +45,36 @@ Decompiler::Decompiler(char *buf, uint32 fileSize, bool mac) {
 	decompile(array, mac);
 }
 
-void Decompiler::decompile(Common::Array<unsigned char> &buffer, bool mac) {
-	Common::Array<unsigned char>::iterator it = buffer.begin();
+void Decompiler::decompile(Common::Array<byte> &buffer, bool mac) {
+	Common::Array<byte>::iterator it = buffer.begin();
 
 	Common::String ss;
 	bool inDefineRects = false;
 	for (it += kHeader.size(); it != buffer.end();) {
-		unsigned char byte = *it++;
-		if (byte == kCodeString) {
-			unsigned char len = *it++;
+		byte b = *it++;
+		if (b == kCodeString) {
+			byte len = *it++;
 			Common::String s((const char *)it, (const char *)it + len);
 			it += len;
 			ss += Common::String::format("\"%s\"", s.c_str());
-		} else if (byte == kCodeShortLiteral || byte == kCodeShortId) {
-			unsigned char b1 = *it++;
-			unsigned char b2 = *it++;
-			unsigned int number = mac ? b2 + (b1 << 8) : b1 + (b2 << 8);
-			if (byte == kCodeShortId)
+		} else if (b == kCodeShortLiteral || b == kCodeShortId) {
+			byte b1 = *it++;
+			byte b2 = *it++;
+			uint number = mac ? b2 + (b1 << 8) : b1 + (b2 << 8);
+			if (b == kCodeShortId)
 				ss += "k";
 			ss += Common::String::format("%d", number);
-		} else if (byte == kCodeRect && inDefineRects) {
+		} else if (b == kCodeRect && inDefineRects) {
 			ss += "RECT"; // override CRect
-		} else if (byte <= kCodeShortId && strlen(kCodeTable[byte]) > 0) {
-			ss += kCodeTable[byte];
+		} else if (b <= kCodeShortId && strlen(kCodeTable[b]) > 0) {
+			ss += kCodeTable[b];
 		} else {
-			error("decompile(): Unknown byte code (%d %c)", byte, byte);
+			error("decompile(): Unknown byte code (%d %c)", b, b);
 		}
 
-		if (byte == kCodeRects) {
+		if (b == kCodeRects) {
 			inDefineRects = true;
-		} else if (byte == kCodeBraceClose && inDefineRects) {
+		} else if (b == kCodeBraceClose && inDefineRects) {
 			inDefineRects = false;
 		}
 	}
