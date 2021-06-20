@@ -237,8 +237,8 @@ public:
 
 	// Dossiers
 	DossierArray _dossiers;
-	unsigned int _dossierSuspect;
-	unsigned int _dossierPage;
+	uint _dossierSuspect;
+	uint _dossierPage;
 	MaskInfo _dossierNextSuspectMask;
 	MaskInfo _dossierPrevSuspectMask;
 	MaskInfo _dossierNextSheetMask;

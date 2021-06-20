@@ -32,12 +32,12 @@ namespace Private {
 
 const Common::String kHeader = "Precompiled Game Matrix";
 
-const unsigned char kCodeString = 0x01;
-const unsigned char kCodeShortLiteral = 0x02;
-const unsigned char kCodeBraceClose = 0x04;
-const unsigned char kCodeRect = 0x2e;
-const unsigned char kCodeRects = 0x4f;
-const unsigned char kCodeShortId = 0x50;
+const byte kCodeString = 0x01;
+const byte kCodeShortLiteral = 0x02;
+const byte kCodeBraceClose = 0x04;
+const byte kCodeRect = 0x2e;
+const byte kCodeRects = 0x4f;
+const byte kCodeShortId = 0x50;
 
 const static char *kCodeTable[] = {"",                   //
 								   "",                   // 0x01  (string)
@@ -127,7 +127,7 @@ public:
 	Common::String getResult() const;
 
 private:
-	void decompile(Common::Array<unsigned char> &buffer, bool mac);
+	void decompile(Common::Array<byte> &buffer, bool mac);
 	Common::String _result;
 };
 
