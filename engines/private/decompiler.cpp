@@ -69,7 +69,7 @@ void Decompiler::decompile(Common::Array<unsigned char> &buffer, bool mac) {
 		} else if (byte <= kCodeShortId && strlen(kCodeTable[byte]) > 0) {
 			ss += kCodeTable[byte];
 		} else {
-			error("Unknown byte code");
+			error("decompile(): Unknown byte code (%d %c)", byte, byte);
 		}
 
 		if (byte == kCodeRects) {
