@@ -43,7 +43,7 @@ class hResource;
 
 //  For GameMode Stack
 const int           Max_Modes   =   8,  //Max Game Mode Objects
-                    End_List    =   NULL; //Variable To Indicate End Of Arg List
+                    End_List    =   0;  //Variable To Indicate End Of Arg List
 
 //  Width and height of full screen
 const int           screenWidth = 640,

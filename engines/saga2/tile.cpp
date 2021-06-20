@@ -61,7 +61,6 @@ void initBackPanel();
  * ===================================================================== */
 
 const uint32        tileTerrainID   = MKTAG('T', 'E', 'R',  0),
-                    tileImageID     = MKTAG('T', 'I', 'L',  0),
                     platformID      = MKTAG('P', 'L', 'T',  0),
                     metaID          = MKTAG('M', 'E', 'T',  0),
                     mapID           = MKTAG('M', 'A', 'P',  0),
@@ -74,15 +73,11 @@ const uint32        tileTerrainID   = MKTAG('T', 'E', 'R',  0),
 //  Scrolling Speed constants
 
 const int           slowScrollSpeed = 6,
-                    fastScrollSpeed = 16,
                     snapScrollSpeed = maxint32,
                     slowThreshhold  = 16,
 //					fastThreshhold   = 100,
                     fastThreshhold  = 16,
                     snapThreshhold  = 400;
-
-const int32         maxOffset       = 2048 * 1024;
-
 
 const TilePoint Nowhere((int16)minint16, (int16)minint16, (int16)minint16);
 
@@ -485,8 +480,6 @@ void ActiveItem::playTAGNoise(ActiveItem *ai, int16 tagNoiseID) {
 //	use() function for ActiveItem group
 
 bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
-	Actor       *actor = (Actor *)GameObject::objectAddress(enactor);
-	TilePoint   actorLoc = actor->getLocation() >> kTileUVShift;
 	int16       mapNum = getMapNum();
 	uint16      state = ins->getInstanceState(mapNum);
 	scriptCallFrame scf;
@@ -550,7 +543,6 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 	GameObject      *obj = GameObject::objectAddress(objID);
 	GameWorld       *world = (GameWorld *)GameObject::objectAddress(
 	                             mapList[getMapNum()].worldID);
-	ProtoObj        *proto = obj->proto();
 	TileRegion      instanceRegion;
 	ActiveItemID    instanceID = ins->thisID();
 	scriptCallFrame scf;
@@ -721,9 +713,6 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 //	acceptLockToggle() function for ActiveItem group
 
 bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCode) {
-	TilePoint   actorLoc =
-	    GameObject::objectAddress(enactor)->getLocation() >>
-	    kTileUVShift;
 	scriptCallFrame scf;
 
 	if (ins->_data.scriptClassID != 0) {
@@ -1809,8 +1798,7 @@ void saveAutoMap(SaveFileConstructor &saveGame) {
 //-----------------------------------------------------------------------
 
 void loadAutoMap(SaveFileReader &saveGame) {
-	int32       totalMapSize = 0,
-	            totalMapIndex = 0;
+	int32       totalMapIndex = 0;
 	int16       i;
 
 	uint8       *archiveBuffer;
@@ -2911,10 +2899,10 @@ void buildRipTables(void) {
 		//  If rip table has a valid metatile, remove that meta tile's
 		//  reference to its rip table
 		if (ripTableList[j].metaID != NoMetaTile) {
-			MetaTile    *mt =   MetaTile::metaTileAddress(
+			MetaTile    *rip_mt =   MetaTile::metaTileAddress(
 			                        ripTableList[j].metaID);
 
-			RipTableID  &rt = mt->ripTableID(currentMapNum);
+			RipTableID  &rt = rip_mt->ripTableID(currentMapNum);
 
 			//  Assign -1 to the meta tile's rip table ID
 			if (RipTable::ripTableAddress(rt) == &ripTableList[j])
@@ -3673,9 +3661,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 		//  Compute the terrain hieght of the first point
 		pointH = ptHeight(subUVPoint, ti->attrs.cornerHeight);
 
-		while (subUVPointRel >= 0 &&
-		        subUVPoint.u < 16 &&
-		        subUVPoint.v < 16) {
+		while (subUVPoint.u < 16 &&
+		       subUVPoint.v < 16) {
 			if (subUVPointRel < pointH + (kSubTileDY * 2) / kSubTileSize) {
 				pickCoords = (tCoords << kTileUVShift);
 				pickCoords.u += subUVPoint.u;
@@ -3833,9 +3820,8 @@ SurfaceType pointOnTile(TileInfo            *ti,
 				//  Compute the terrain hieght of the first point
 				pointH = ptHeight((subTile << 2) + subUVPoint, ti->attrs.cornerHeight);
 
-				while (subUVPointRel >= 0 &&
-				        subUVPoint.u < 4 &&
-				        subUVPoint.v < 4) {
+				while (subUVPoint.u < 4 &&
+				       subUVPoint.v < 4) {
 					if (subUVPointRel < pointH + (kSubTileDY * 2) / kSubTileSize) {
 						pickCoords = (tCoords << kTileUVShift);
 						pickCoords.u += (subTile.u << kSubTileShift) + subUVPoint.u;
@@ -4449,7 +4435,7 @@ void loadTileCyclingStates(SaveFileReader &saveGame) {
 
 	initTileCyclingStates();
 
-	assert(saveGame.getChunkSize() == sizeof(TileCycleArchive) * cycleCount);
+	assert(saveGame.getChunkSize() == (int)sizeof(TileCycleArchive) * cycleCount);
 
 	archiveBuffer = new TileCycleArchive[cycleCount]();
 	if (archiveBuffer == nullptr)
