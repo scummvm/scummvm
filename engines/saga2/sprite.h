@@ -50,6 +50,7 @@ struct Sprite {
 	Extent16        size;                   // size of sprite
 	Point16         offset;                 // sprite origin point
 	byte            *_data;
+	uint32			_dataSize;
 
 	Sprite(Common::SeekableReadStream *stream);
 	~Sprite();

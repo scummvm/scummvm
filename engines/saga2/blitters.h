@@ -42,7 +42,7 @@ void _HLine(uint8 *dstPtr, uint32 width, uint32 color);
 void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData);
 void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData);
 
-void unpackSprite(gPixelMap *map, uint8 *sprData);
+void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize);
 void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup);
 void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, uint8 *lookup);
 
