@@ -81,12 +81,9 @@ static Symbol *lookup(const Common::String &s, const SymbolMap &symlist) {
 
 /* install some symbol s in a symbol table */
 static Symbol *install(const Common::String &n, int t, int d, const char *s, Common::Rect *r, SymbolMap *symlist) {
-	Common::String *name = new Common::String(n);
-
 	Symbol *sp;
-
 	sp = (Symbol *)malloc(sizeof(Symbol));
-	sp->name = name;
+	sp->name = new Common::String(n);
 	sp->type = t;
 	if (t == NUM) {
 		sp->u.val = d;
