@@ -331,16 +331,16 @@ void AnimTypeManager::end(int type) {
 
 	uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
 
-	for (int32 a = 0; a < MAXATFRAME; ++a) {
+	for (int32 i = 0; i < MAXATFRAME; ++i) {
 		// if it's time to run this AtFrame
-		if (anim->_atFrame[a]._numFrame == 0 && anim->_atFrame[a]._type) {
-			const uint8 child = anim->_atFrame[a]._child;
+		if (anim->_atFrame[i]._numFrame == 0 && anim->_atFrame[i]._type) {
+			const uint8 child = anim->_atFrame[i]._child;
 			if ( child == 0 ||
 				(child == 1 && !(flag & SMKANIM_OFF1)) ||
 				(child == 2 && !(flag & SMKANIM_OFF2)) ||
 				(child == 3 && !(flag & SMKANIM_OFF3)) ||
 				(child == 4 && !(flag & SMKANIM_OFF4)))
-				processAtFrame(h, anim->_atFrame[a]._type, a);
+				processAtFrame(h, anim->_atFrame[i]._type, i);
 		}
 	}
 
@@ -361,18 +361,18 @@ void AnimTypeManager::handler(int type) {
 
 	const uint16 flag = _vm->_animMgr->_animTab[_vm->_room[_vm->_curRoom]._bkgAnim]._flag;
 
-	for (int32 a = 0; a < MAXATFRAME; ++a) {
+	for (int32 i = 0; i < MAXATFRAME; ++i) {
 		// if it's time to run this AtFrame
-		if (anim->_atFrame[a]._numFrame > h->_lastFrame &&
-			anim->_atFrame[a]._numFrame <= h->_curFrame &&
-			anim->_atFrame[a]._numFrame != 0) {
-			const uint8 child = anim->_atFrame[a]._child;
+		if (anim->_atFrame[i]._numFrame > h->_lastFrame &&
+			anim->_atFrame[i]._numFrame <= h->_curFrame &&
+			anim->_atFrame[i]._numFrame != 0) {
+			const uint8 child = anim->_atFrame[i]._child;
 			if ( child == 0 ||
 				(child == 1 && !(flag & SMKANIM_OFF1)) ||
 				(child == 2 && !(flag & SMKANIM_OFF2)) ||
 				(child == 3 && !(flag & SMKANIM_OFF3)) ||
 				(child == 4 && !(flag & SMKANIM_OFF4)))
-				processAtFrame(h, anim->_atFrame[a]._type, a);
+				processAtFrame(h, anim->_atFrame[i]._type, i);
 		}
 	}
 

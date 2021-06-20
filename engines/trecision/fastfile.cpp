@@ -81,8 +81,8 @@ bool FastFile::hasFile(const Common::String &name) const {
 
 int FastFile::listMembers(Common::ArchiveMemberList &list) const {
 	list.clear();
-	for (Common::Array<FileEntry>::const_iterator i = _fileEntries.begin(); i != _fileEntries.end(); ++i)
-		list.push_back(getMember(i->name));
+	for (Common::Array<FileEntry>::const_iterator it = _fileEntries.begin(); it != _fileEntries.end(); ++it)
+		list.push_back(getMember(it->name));
 
 	return list.size();
 }

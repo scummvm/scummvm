@@ -2334,8 +2334,8 @@ bool LogicManager::mouseExamine(uint16 curObj) {
 
 	case oEXIT58T:
 		_count58 = 0;
-		for (int a = 0; a < 6; ++a)
-			_vm->setObjectVisible(oLED158 + a, false);
+		for (int i = 0; i < 6; ++i)
+			_vm->setObjectVisible(oLED158 + i, false);
 		_vm->changeRoom(_vm->_obj[oEXIT58T]._goRoom);
 		break;
 
@@ -2602,8 +2602,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 
 	case oEXIT58T:
 		_count58 = 0;
-		for (uint8 a = 0; a < 6; ++a)
-			_vm->setObjectVisible(oLED158 + a, false);
+		for (uint8 i = 0; i < 6; ++i)
+			_vm->setObjectVisible(oLED158 + i, false);
 		_vm->changeRoom(_vm->_obj[oEXIT58T]._goRoom);
 		break;
 
@@ -2851,8 +2851,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oFORO549:
 	case oFORO649:
 	case oFORO749:
-		for (int a = oASTAC49; a <= oASTA749; ++a)
-			_vm->setObjectVisible(a, false);
+		for (int i = oASTAC49; i <= oASTA749; ++i)
+			_vm->setObjectVisible(i, false);
 		_vm->setObjectVisible(oASTAC49 + curObj - oFOROC49, true);
 		_comb49[3] = _comb49[2];
 		_comb49[2] = _comb49[1];
@@ -2888,8 +2888,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 	case oASTA549:
 	case oASTA649:
 	case oASTA749:
-		for (int a = oASTAC49; a <= oASTA749; ++a)
-			_vm->setObjectVisible(a, false);
+		for (int i = oASTAC49; i <= oASTA749; ++i)
+			_vm->setObjectVisible(i, false);
 		_vm->setObjectVisible(oASTAC49, true);
 		_vm->changeRoom(kRoom49, a496, 1);
 		retVal = false;
@@ -2970,20 +2970,20 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		break;
 
 	case oPULSANTECD:
-		for (int a = oPULSANTE1AD; a <= oPULSANTE33AD; ++a) {
-			if ((_vm->_obj[a]._goRoom == _vm->_obj[oEXIT41D]._goRoom) ||
-				((_vm->_obj[a]._goRoom == kRoom45) && (_vm->_obj[oEXIT41D]._goRoom == kRoom45S))) {
+		for (int i = oPULSANTE1AD; i <= oPULSANTE33AD; ++i) {
+			if ((_vm->_obj[i]._goRoom == _vm->_obj[oEXIT41D]._goRoom) ||
+				((_vm->_obj[i]._goRoom == kRoom45) && (_vm->_obj[oEXIT41D]._goRoom == kRoom45S))) {
 				_vm->_textMgr->characterSay(903);
 				break;
 			}
 
-			if (_vm->_obj[a]._goRoom == 0) {
+			if (_vm->_obj[i]._goRoom == 0) {
 				if (_vm->_obj[oEXIT41D]._goRoom == kRoom45S)
-					_vm->_obj[a]._goRoom = kRoom45;
+					_vm->_obj[i]._goRoom = kRoom45;
 				else
-					_vm->_obj[a]._goRoom = _vm->_obj[oEXIT41D]._goRoom;
-				_vm->setObjectVisible(a, true);
-				_vm->setObjectVisible(a - 40, false);
+					_vm->_obj[i]._goRoom = _vm->_obj[oEXIT41D]._goRoom;
+				_vm->setObjectVisible(i, true);
+				_vm->setObjectVisible(i - 40, false);
 				break;
 			}
 		}
@@ -3091,8 +3091,8 @@ bool LogicManager::mouseOperate(uint16 curObj) {
 		_vm->_graphicsMgr->paintScreen(false);
 		_vm->waitDelay(60);
 		_count58 = 0;
-		for (int a = 0; a < 6; ++a)
-			_vm->setObjectVisible(oLED158 + a, false);
+		for (int i = 0; i < 6; ++i)
+			_vm->setObjectVisible(oLED158 + i, false);
 
 		if ((_comb58[0] == oTASTO058) && (_comb58[1] == oTASTO258) && (_comb58[2] == oTASTO358) &&
 			(_comb58[3] == oTASTO858) && (_comb58[4] == oTASTO558) && (_comb58[5] == oTASTO958)) {
@@ -3531,8 +3531,8 @@ bool LogicManager::operateInventory() {
 		break;
 
 	case kItemPositioner:
-		for (int a = oROOM41; a <= oROOM45B; ++a)
-			_vm->setObjectVisible(a, false);
+		for (int i = oROOM41; i <= oROOM45B; ++i)
+			_vm->setObjectVisible(i, false);
 		_vm->_obj[oEXIT41D]._goRoom = _vm->_curRoom;
 		_vm->changeRoom(kRoom41D);
 		_vm->_inventoryObj[kItemPositioner].setFlagExtra(false);
@@ -3577,9 +3577,9 @@ void LogicManager::doMouseGame() {
 		const uint16 displacerRoom = oROOM41 + _vm->_obj[_vm->_curObj]._goRoom - kRoom41;
 		if ((_vm->_curObj >= oPULSANTE1AD) && (_vm->_curObj <= oPULSANTE33AD)) {
 			if (!_vm->isObjectVisible(displacerRoom)) {
-				for (int a = oROOM41; a <= oROOM4X; ++a) {
-					if (_vm->isObjectVisible(a))
-						_vm->setObjectVisible(a, false);
+				for (int i = oROOM41; i <= oROOM4X; ++i) {
+					if (_vm->isObjectVisible(i))
+						_vm->setObjectVisible(i, false);
 				}
 				_vm->setObjectVisible(oROOM45B, false);
 
@@ -3589,9 +3589,9 @@ void LogicManager::doMouseGame() {
 					_vm->setObjectVisible(displacerRoom, true);
 			}
 		} else {
-			for (int a = oROOM41; a <= oROOM4X; ++a) {
-				if (_vm->isObjectVisible(a))
-					_vm->setObjectVisible(a, false);
+			for (int i = oROOM41; i <= oROOM4X; ++i) {
+				if (_vm->isObjectVisible(i))
+					_vm->setObjectVisible(i, false);
 			}
 			_vm->setObjectVisible(oROOM45B, false);
 

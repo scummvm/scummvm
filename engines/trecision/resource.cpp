@@ -98,14 +98,14 @@ void TrecisionEngine::loadAll() {
 
 	_textPtr = _textArea;
 
-	for (int a = 0; a < MAXOBJNAME; a++)
-		_objName[a] = getNextSentence();
+	for (int i = 0; i < MAXOBJNAME; i++)
+		_objName[i] = getNextSentence();
 
-	for (int a = 0; a < MAXSENTENCE; a++)
-		_sentence[a] = getNextSentence();
+	for (int i = 0; i < MAXSENTENCE; i++)
+		_sentence[i] = getNextSentence();
 
-	for (int a = 0; a < MAXSYSTEXT; a++)
-		_sysText[a] = getNextSentence();
+	for (int i = 0; i < MAXSYSTEXT; i++)
+		_sysText[i] = getNextSentence();
 
 	delete data;
 	dataNl.close();

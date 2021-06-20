@@ -715,30 +715,30 @@ bool DialogManager::handleShopKeeperDialog(uint16 curObj) {
 }
 
 void DialogManager::syncGameStream(Common::Serializer &ser) {
-	for (int a = 0; a < MAXCHOICE; ++a) {
-		DialogChoice *choice = &_choice[a];
+	for (int i = 0; i < MAXCHOICE; ++i) {
+		DialogChoice *choice = &_choice[i];
 		ser.syncAsUint16LE(choice->_flag);
 		ser.syncAsUint16LE(choice->_sentenceIndex);
 		ser.syncAsUint16LE(choice->_firstSubTitle);
 		ser.syncAsUint16LE(choice->_subTitleNumb);
-		for (int i = 0; i < MAXDISPCHOICES; ++i)
-			ser.syncAsUint16LE(choice->_on[i]);
-		for (int i = 0; i < MAXDISPCHOICES; ++i)
-			ser.syncAsUint16LE(choice->_off[i]);
+		for (int j = 0; j < MAXDISPCHOICES; ++j)
+			ser.syncAsUint16LE(choice->_on[j]);
+		for (int j = 0; j < MAXDISPCHOICES; ++j)
+			ser.syncAsUint16LE(choice->_off[j]);
 		ser.syncAsUint16LE(choice->_startFrame);
 		ser.syncAsUint16LE(choice->_nextDialog);
 	}
 
-	for (int a = 0; a < MAXDIALOG; ++a) {
-		Dialog *dialog = &_dialog[a];
+	for (int i = 0; i < MAXDIALOG; ++i) {
+		Dialog *dialog = &_dialog[i];
 		ser.syncAsUint16LE(dialog->_flag);
 		ser.syncAsUint16LE(dialog->_interlocutor);
 		ser.syncBytes((byte *)dialog->_startAnim, 14);
 		ser.syncAsUint16LE(dialog->_startLen);
 		ser.syncAsUint16LE(dialog->_firstChoice);
 		ser.syncAsUint16LE(dialog->_choiceNumb);
-		for (int i = 0; i < MAXNEWSMKPAL; ++i)
-			ser.syncAsUint16LE(dialog->_newPal[i]);
+		for (int j = 0; j < MAXNEWSMKPAL; ++j)
+			ser.syncAsUint16LE(dialog->_newPal[j]);
 	}
 }
 

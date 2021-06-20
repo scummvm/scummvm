@@ -114,8 +114,8 @@ uint32 TrecisionEngine::readTime() {
 }
 
 bool TrecisionEngine::checkMask(Common::Point pos) {
-	for (int8 a = MAXOBJINROOM - 1; a >= 0; --a) {
-		uint16 checkedObj = _room[_curRoom]._object[a];
+	for (int8 i = MAXOBJINROOM - 1; i >= 0; --i) {
+		uint16 checkedObj = _room[_curRoom]._object[i];
 		Common::Rect lim = _obj[checkedObj]._lim;
 		lim.translate(0, TOP);
 		// Trecision includes the bottom and right coordinates
@@ -131,16 +131,16 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 				}
 
 				if (_obj[checkedObj].isModeMask()) {
-					uint8 *mask = _maskPointers[a];
+					uint8 *mask = _maskPointers[i];
 					int16 d = _obj[checkedObj]._rect.left;
 					uint16 max = _obj[checkedObj]._rect.bottom;
 
-					for (uint16 b = _obj[checkedObj]._rect.top; b < max; ++b) {
+					for (uint16 j = _obj[checkedObj]._rect.top; j < max; ++j) {
 						bool insideObj = false;
 						int16 e = 0;
 						while (e < _obj[checkedObj]._rect.width()) {
 							if (!insideObj) { // not inside an object
-								if (b + TOP == pos.y) {
+								if (j + TOP == pos.y) {
 									if ((pos.x >= d + e) && (pos.x < d + e + *mask)) {
 										_curObj = 0;
 									}
@@ -150,7 +150,7 @@ bool TrecisionEngine::checkMask(Common::Point pos) {
 								++mask;
 								insideObj = true;
 							} else { // inside an object
-								if (b + TOP == pos.y) {
+								if (j + TOP == pos.y) {
 									if ((pos.x >= d + e) && (pos.x < d + e + *mask)) {
 										_curObj = checkedObj;
 										return true;
@@ -313,16 +313,16 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 		return CARHEI;
 	}
 
-	uint16 a = 0;
+	uint16 index = 0;
 	uint16 tmpDy = 0;
 	uint16 lastSpace = 0;
 	uint16 curInit = 0;
 
-	while (a < _text.size()) {
-		++a;
-		if (a < _text.size() && _text[a] == ' ') {
-			if (vm->textLength(_text, curInit, a) <= _rect.width())
-				lastSpace = a;
+	while (index < _text.size()) {
+		++index;
+		if (index < _text.size() && _text[index] == ' ') {
+			if (vm->textLength(_text, curInit, index) <= _rect.width())
+				lastSpace = index;
 			else if (vm->textLength(_text, curInit, lastSpace) <= _rect.width()) {
 				_drawTextLines[curLine] = _text.substr(curInit, lastSpace - curInit);
 
@@ -330,12 +330,12 @@ uint16 SDText::calcHeight(TrecisionEngine *vm) {
 				curInit = lastSpace + 1;
 
 				tmpDy += CARHEI;
-				a = curInit;
+				index = curInit;
 			} else
 				return 0;
-		} else if (a == _text.size()) {
-			if (vm->textLength(_text, curInit, a) <= _rect.width()) {
-				_drawTextLines[curLine] = _text.substr(curInit, a - curInit);
+		} else if (index == _text.size()) {
+			if (vm->textLength(_text, curInit, index) <= _rect.width()) {
+				_drawTextLines[curLine] = _text.substr(curInit, index - curInit);
 
 				tmpDy += CARHEI;
 				return tmpDy;

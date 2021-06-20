@@ -517,7 +517,7 @@ void Renderer3D::calcCharacterPoints() {
 	float tz = 0.0f;
 	float pa0, pa1, pa2;
 
-	for (uint32 b = 0; b < actor->_lightNum; ++b) {
+	for (uint32 i = 0; i < actor->_lightNum; ++i) {
 		// if off                lint == 0
 		// if it has a shadow    lint & 0x80
 
@@ -584,14 +584,14 @@ void Renderer3D::calcCharacterPoints() {
 		if ((light->_inten & 0x80) && lint) { // if it's shadowed and still on
 
 			// casts shadow vertices
-			for (int a = 0; a < SHADOWVERTSNUM; ++a) {
-				pa0 = actor->_vertex[_shadowVerts[a]]._x;
-				pa1 = actor->_vertex[_shadowVerts[a]]._y;
-				pa2 = actor->_vertex[_shadowVerts[a]]._z;
+			for (int j = 0; j < SHADOWVERTSNUM; ++j) {
+				pa0 = actor->_vertex[_shadowVerts[j]]._x;
+				pa1 = actor->_vertex[_shadowVerts[j]]._y;
+				pa2 = actor->_vertex[_shadowVerts[j]]._z;
 
-				_shVertex[vertexNum + _totalShadowVerts + a]._x = pa0 - (pa1 * l0);
-				_shVertex[vertexNum + _totalShadowVerts + a]._z = pa2 - (pa1 * l2);
-				_shVertex[vertexNum + _totalShadowVerts + a]._y = 0;
+				_shVertex[vertexNum + _totalShadowVerts + j]._x = pa0 - (pa1 * l0);
+				_shVertex[vertexNum + _totalShadowVerts + j]._z = pa2 - (pa1 * l2);
+				_shVertex[vertexNum + _totalShadowVerts + j]._y = 0;
 			}
 
 			// per default all shadows are equally faint
@@ -609,7 +609,7 @@ void Renderer3D::calcCharacterPoints() {
 			l2 = l2 * t;
 
 			SVertex *curVertex = actor->_vertex;
-			for (int a = 0; a < vertexNum; ++a) {
+			for (int j = 0; j < vertexNum; ++j) {
 				pa0 = curVertex->_nx;
 				pa1 = curVertex->_ny;
 				pa2 = curVertex->_nz;
@@ -617,7 +617,7 @@ void Renderer3D::calcCharacterPoints() {
 				lint = (int)((acos(pa0 * l0 + pa1 * l1 + pa2 * l2) * 360.0) / PI);
 				lint = CLIP(lint, 0, 180);
 
-				_vVertex[a]._angle -= (180 - lint);
+				_vVertex[j]._angle -= (180 - lint);
 				++curVertex;
 			}
 		}
@@ -626,8 +626,8 @@ void Renderer3D::calcCharacterPoints() {
 	}
 
 	// rearranged light values so they can be viewed
-	for (int a = 0; a < vertexNum; ++a)
-		_vVertex[a]._angle = CLIP<int32>(_vVertex[a]._angle, 0, 180);
+	for (int i = 0; i < vertexNum; ++i)
+		_vVertex[i]._angle = CLIP<int32>(_vVertex[i]._angle, 0, 180);
 
 	// Calculate the distance of the character from the room
 	tx = camera->_ex - actor->_px;
@@ -638,15 +638,15 @@ void Renderer3D::calcCharacterPoints() {
 
 	SVertex *curVertex = actor->_vertex;
 
-	for (int a = 0; a < vertexNum + _totalShadowVerts; ++a) {
-		if (a < vertexNum) {
+	for (int i = 0; i < vertexNum + _totalShadowVerts; ++i) {
+		if (i < vertexNum) {
 			l0 = curVertex->_x;
 			l1 = curVertex->_z;
 			pa1 = ty - curVertex->_y;
 		} else {
-			l0 = _shVertex[a]._x;
-			l1 = _shVertex[a]._z;
-			pa1 = ty - _shVertex[a]._y;
+			l0 = _shVertex[i]._x;
+			l1 = _shVertex[i]._z;
+			pa1 = ty - _shVertex[i]._y;
 		}
 
 		pa0 = tx - (l0 * cost + l1 * sint); // rotate _curVertex
@@ -659,17 +659,17 @@ void Renderer3D::calcCharacterPoints() {
 		int x2d = _vm->_cx + (int)((l0 * camera->_fovX) / l2);
 		int y2d = _vm->_cy + (int)((l1 * camera->_fovY) / l2);
 
-		_vVertex[a]._x = x2d;
-		_vVertex[a]._y = y2d;
-		_vVertex[a]._z = (int32)((dist - l2) * 128.0);
+		_vVertex[i]._x = x2d;
+		_vVertex[i]._y = y2d;
+		_vVertex[i]._z = (int32)((dist - l2) * 128.0);
 
 		actor->_lim[0] = MIN(x2d, actor->_lim[0]);
 		actor->_lim[1] = MAX(x2d, actor->_lim[1]);
 		actor->_lim[2] = MIN(y2d, actor->_lim[2]);
 		actor->_lim[3] = MAX(y2d, actor->_lim[3]);
 
-		actor->_lim[4] = MIN<int32>(_vVertex[a]._z, actor->_lim[4]);
-		actor->_lim[5] = MAX<int32>(_vVertex[a]._z, actor->_lim[5]);
+		actor->_lim[4] = MIN<int32>(_vVertex[i]._z, actor->_lim[4]);
+		actor->_lim[5] = MAX<int32>(_vVertex[i]._z, actor->_lim[5]);
 
 		++curVertex;
 	}
@@ -717,11 +717,11 @@ void Renderer3D::drawCharacterFaces() {
 	if (actor->_curAction == hLAST)
 		setClipping(0, actor->_lim[2], MAXX, actor->_lim[3]);
 
-	for (int b = 0; b < _shadowLightNum; ++b) {
-		for (int a = 0; a < SHADOWFACESNUM; ++a) {
-			int p0 = _shadowFaces[a][0] + vertexNum + b * SHADOWVERTSNUM;
-			int p1 = _shadowFaces[a][1] + vertexNum + b * SHADOWVERTSNUM;
-			int p2 = _shadowFaces[a][2] + vertexNum + b * SHADOWVERTSNUM;
+	for (int i = 0; i < _shadowLightNum; ++i) {
+		for (int j = 0; j < SHADOWFACESNUM; ++j) {
+			int p0 = _shadowFaces[j][0] + vertexNum + i * SHADOWVERTSNUM;
+			int p1 = _shadowFaces[j][1] + vertexNum + i * SHADOWVERTSNUM;
+			int p2 = _shadowFaces[j][2] + vertexNum + i * SHADOWVERTSNUM;
 
 			int px0 = _vVertex[p0]._x;
 			int py0 = _vVertex[p0]._y;
@@ -730,11 +730,11 @@ void Renderer3D::drawCharacterFaces() {
 			int px2 = _vVertex[p2]._x;
 			int py2 = _vVertex[p2]._y;
 
-			shadowTriangle(px0, py0, px1, py1, px2, py2, 127 - _shadowIntens[b], (int16)(0x7FF0 + b));
+			shadowTriangle(px0, py0, px1, py1, px2, py2, 127 - _shadowIntens[i], (int16)(0x7FF0 + i));
 		}
 	}
 
-	for (uint a = 0; a < actor->_faceNum; ++a) {
+	for (uint i = 0; i < actor->_faceNum; ++i) {
 		int p0 = face->_a;
 		int p1 = face->_b;
 		int p2 = face->_c;
@@ -747,12 +747,12 @@ void Renderer3D::drawCharacterFaces() {
 		int py2 = _vVertex[p2]._y;
 
 		if (clockWise(px0, py0, px1, py1, px2, py2) > 0) {
-			uint16 b = face->_mat;
-			if (b < MAXMAT && textures[b].isActive()) {
-				textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[a][0][0], actor->_textureCoord[a][0][1],
-								px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[a][1][0], actor->_textureCoord[a][1][1],
-								px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[a][2][0], actor->_textureCoord[a][2][1],
-								&textures[b]);
+			uint16 textureId = face->_mat;
+			if (textureId < MAXMAT && textures[textureId].isActive()) {
+				textureTriangle(px0, py0, _vVertex[p0]._z, _vVertex[p0]._angle, actor->_textureCoord[i][0][0], actor->_textureCoord[i][0][1],
+								px1, py1, _vVertex[p1]._z, _vVertex[p1]._angle, actor->_textureCoord[i][1][0], actor->_textureCoord[i][1][1],
+								px2, py2, _vVertex[p2]._z, _vVertex[p2]._angle, actor->_textureCoord[i][2][0], actor->_textureCoord[i][2][1],
+								&textures[textureId]);
 			}
 		}
 
@@ -760,8 +760,8 @@ void Renderer3D::drawCharacterFaces() {
 	}
 
 	int p0 = 0;
-	for (int b = _zBufStartY; b < actor->_lim[3]; ++b) {
-		for (int a = 1; a < _zBufWid; ++a) {
+	for (int i = _zBufStartY; i < actor->_lim[3]; ++i) {
+		for (int j = 1; j < _zBufWid; ++j) {
 			int py1 = (_zBuffer[p0] >= 0x7FF0) * 0x8000;
 			int py2 = (_zBuffer[p0 + 1] >= 0x7FF0) * 0x8000;
 
@@ -769,7 +769,7 @@ void Renderer3D::drawCharacterFaces() {
 			int p2 = _zBuffer[p0 + 1] < 0x7FFF;
 
 			if (p1 != p2) {
-				_vm->_graphicsMgr->pixelAliasing(a + _zBufStartX, b);
+				_vm->_graphicsMgr->pixelAliasing(j + _zBufStartX, i);
 
 				// if the first is the character
 				if (p1)
@@ -777,9 +777,9 @@ void Renderer3D::drawCharacterFaces() {
 				else
 					_zBuffer[p0] = 0x003F | py2;
 
-				if (a + 1 < _zBufWid) {
+				if (j + 1 < _zBufWid) {
 					++p0;
-					++a;
+					++j;
 
 					// if the second is the character
 					if (p2)
@@ -798,7 +798,7 @@ void Renderer3D::drawCharacterFaces() {
 			++p0;
 
 			// if it's the last of the line
-			if (a == _zBufWid - 1) {
+			if (j == _zBufWid - 1) {
 				if (p2)
 					_zBuffer[p0] = 0x00FF | py2;
 				else

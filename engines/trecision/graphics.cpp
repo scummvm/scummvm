@@ -61,10 +61,10 @@ bool GraphicsManager::init() {
 	// Find a suitable 16-bit format
 	const Graphics::PixelFormat rgb555(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	Common::List<Graphics::PixelFormat> formats = g_system->getSupportedFormats();
-	for (Common::List<Graphics::PixelFormat>::iterator i = formats.begin(); i != formats.end(); ++i) {
-		if (i->bytesPerPixel != 2 || i->aBits()) {
-			i = formats.reverse_erase(i);
-		} else if (*i == rgb555) {
+	for (Common::List<Graphics::PixelFormat>::iterator it = formats.begin(); it != formats.end(); ++it) {
+		if (it->bytesPerPixel != 2 || it->aBits()) {
+			it = formats.reverse_erase(it);
+		} else if (*it == rgb555) {
 			formats.clear();
 			formats.push_back(rgb555);
 			break;
@@ -523,9 +523,9 @@ void GraphicsManager::paintScreen(bool flag) {
 	}
 
 	// Suppress all the objects you removed
-	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
-		if (i->_remove) {
-			drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), _vm->_obj[i->_objectId]._rect);
+	for (Common::List<SSortTable>::iterator it = _vm->_sortTable.begin(); it != _vm->_sortTable.end(); ++it) {
+		if (it->_remove) {
+			drawObj(-1, false, Common::Rect(0, TOP, MAXX, AREA + TOP), _vm->_obj[it->_objectId]._rect);
 		}
 	}
 
@@ -575,27 +575,27 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 	_vm->_animMgr->refreshAnim(curBox);
 
 	// draws new cards belonging to the current box
-	for (Common::List<SSortTable>::iterator i = _vm->_sortTable.begin(); i != _vm->_sortTable.end(); ++i) {
-		if (!i->_remove && _vm->_obj[i->_objectId]._nbox == curBox) {
+	for (Common::List<SSortTable>::iterator it = _vm->_sortTable.begin(); it != _vm->_sortTable.end(); ++it) {
+		if (!it->_remove && _vm->_obj[it->_objectId]._nbox == curBox) {
 			// the bitmap object at the desired level
-			SObject obj = _vm->_obj[i->_objectId];
+			SObject obj = _vm->_obj[it->_objectId];
 			Common::Rect drawRect = obj._rect;
 			drawRect.translate(0, TOP);
-			drawObj(_vm->getRoomObjectIndex(i->_objectId), obj.isModeMask(), drawRect, Common::Rect(drawRect.width(), drawRect.height()), false);
+			drawObj(_vm->getRoomObjectIndex(it->_objectId), obj.isModeMask(), drawRect, Common::Rect(drawRect.width(), drawRect.height()), false);
 			_dirtyRects.push_back(drawRect);
 		}
 	}
 
-	for (DirtyRectsIterator d = _dirtyRects.begin(); d != _dirtyRects.end(); ++d) {
-		for (int b = 0; b < MAXOBJINROOM; ++b) {
-			const uint16 curObject = _vm->_room[_vm->_curRoom]._object[b];
+	for (DirtyRectsIterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+		for (int i = 0; i < MAXOBJINROOM; ++i) {
+			const uint16 curObject = _vm->_room[_vm->_curRoom]._object[i];
 			if (!curObject)
 				break;
 
 			SObject obj = _vm->_obj[curObject];
 
 			if ((obj.isModeFull() || obj.isModeMask()) && _vm->isObjectVisible(curObject) && (obj._nbox == curBox)) {
-				Common::Rect r = *d;
+				Common::Rect r = *it;
 				Common::Rect r2 = obj._rect;
 
 				r2.translate(0, TOP);
@@ -617,7 +617,7 @@ void GraphicsManager::paintObjAnm(uint16 curBox) {
 					const int16 yr1 = (r2.top > r.top) ? 0 : r.top - r2.top;
 					const int16 xr2 = MIN<int16>(r.right, r2.right) - r2.left;
 					const int16 yr2 = MIN<int16>(r.bottom, r2.bottom) - r2.top;
-					drawObj(b, obj.isModeMask(), drawRect, Common::Rect(xr1, yr1, xr2, yr2), false);
+					drawObj(i, obj.isModeMask(), drawRect, Common::Rect(xr1, yr1, xr2, yr2), false);
 				}
 			}
 		}

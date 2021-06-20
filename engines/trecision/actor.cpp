@@ -213,8 +213,8 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 	m1[0][1] = v1[1];
 	m1[0][2] = v1[2];
 
-	for (uint b = 0; b < actionNum; ++b) {
-		SVertex *sv = &_vertex[b * _vertexNum];
+	for (uint i = 0; i < actionNum; ++i) {
+		SVertex *sv = &_vertex[i * _vertexNum];
 
 		v1[0] = sv[idx2]._x - sv[idx1]._x;
 		v1[1] = sv[idx2]._y - sv[idx1]._y;
@@ -260,18 +260,18 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 		v1[1] = _vertex[idx1]._y;
 		v1[2] = _vertex[idx1]._z;
 
-		for (int e = 279; e < 383; ++e) {
+		for (int j = 279; j < 383; ++j) {
 			int f;
 			for (f = 0; f < 84; ++f) {
-				if (_vertsCorrList[f] == e)
+				if (_vertsCorrList[f] == j)
 					break;
 			}
 			if (f == 84)
 				continue;
 
-			v[0] = _vertsCorr[e - 279][0];
-			v[1] = _vertsCorr[e - 279][2];
-			v[2] = _vertsCorr[e - 279][1];
+			v[0] = _vertsCorr[j - 279][0];
+			v[1] = _vertsCorr[j - 279][2];
+			v[2] = _vertsCorr[j - 279][1];
 
 			q[0] = 0.0;
 			q[1] = 0.0;
@@ -288,14 +288,14 @@ void Actor::microproseHeadFix(uint32 actionNum) {
 					v[c] += m2[d][c] * q[d];
 			}
 
-			if (b < 42) {
-				sv[e]._x += _vertsCorr[e - 279][0];
-				sv[e]._y += _vertsCorr[e - 279][2];
-				sv[e]._z += _vertsCorr[e - 279][1];
+			if (i < 42) {
+				sv[j]._x += _vertsCorr[j - 279][0];
+				sv[j]._y += _vertsCorr[j - 279][2];
+				sv[j]._z += _vertsCorr[j - 279][1];
 			} else {
-				sv[e]._x += v[0];
-				sv[e]._y += v[1];
-				sv[e]._z += v[2];
+				sv[j]._x += v[0];
+				sv[j]._y += v[1];
+				sv[j]._z += v[2];
 			}
 		}
 	}

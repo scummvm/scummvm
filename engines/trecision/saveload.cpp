@@ -408,14 +408,14 @@ bool TrecisionEngine::syncGameStream(Common::Serializer &ser) {
 	_actor->syncGameStream(ser);
 	_pathFind->syncGameStream(ser);
 
-	for (int a = 0; a < MAXROOMS; a++)
-		_room[a].syncGameStream(ser);
+	for (int i = 0; i < MAXROOMS; i++)
+		_room[i].syncGameStream(ser);
 
-	for (int a = 0; a < MAXOBJ; a++)
-		_obj[a].syncGameStream(ser);
+	for (int i = 0; i < MAXOBJ; i++)
+		_obj[i].syncGameStream(ser);
 
-	for (int a = 0; a < MAXINVENTORY; a++)
-		_inventoryObj[a].syncGameStream(ser);
+	for (int i = 0; i < MAXINVENTORY; i++)
+		_inventoryObj[i].syncGameStream(ser);
 
 	_animMgr->syncGameStream(ser);
 	ser.skip(NUMSAMPLES * 2, SAVE_VERSION_ORIGINAL_MIN, SAVE_VERSION_ORIGINAL_MAX); // SoundManager::syncGameStream()

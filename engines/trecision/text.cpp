@@ -442,11 +442,11 @@ void TextManager::clearText() {
 }
 
 void TextManager::drawTexts() {
-	for (Common::List<StackText>::iterator i = _textStack.begin(); i != _textStack.end(); ++i) {
-		if (i->_clear)
+	for (Common::List<StackText>::iterator it = _textStack.begin(); it != _textStack.end(); ++it) {
+		if (it->_clear)
 			clearText();
 		else
-			drawText(&*i);
+			drawText(&*it);
 	}
 }
 
