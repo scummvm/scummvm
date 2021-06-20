@@ -1755,9 +1755,11 @@ void UCMachine::execProcess(UCProcess *p) {
 				const uint16 range = GAME_IS_CRUSADER ? ui16b * 2 : ui16b;
 
 				if (item) {
+					int ix, iy, iz;
+					item->getLocationAbsolute(ix, iy, iz);
 					world->getCurrentMap()->areaSearch(itemlist, script,
-					                                   scriptsize, item,
-					                                   range, recurse);
+					                                   scriptsize, nullptr,
+					                                   range, recurse, ix, iy);
 				} else {
 					// return error or return empty list?
 					perr << "Warning: invalid item " << ui16a << " passed to area search"
