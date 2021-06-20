@@ -24,6 +24,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -197,6 +198,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	default:
 		break;
 	}
+
+	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 SciEngine::~SciEngine() {
@@ -254,6 +257,9 @@ SciEngine::~SciEngine() {
 extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 Common::Error SciEngine::run() {
+	if (_ttsMan != nullptr)
+		_ttsMan->setLanguage(Common::getLanguageCode(getLanguage()));
+	
 	_resMan = new ResourceManager();
 	_resMan->addAppropriateSources();
 	_resMan->init();

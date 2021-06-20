@@ -24,6 +24,8 @@
 #include "common/stack.h"
 #include "common/system.h"
 #include "common/unicode-bidi.h"
+#include "common/text-to-speech.h"
+#include "common/config-manager.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -45,6 +47,7 @@ GfxControls16::GfxControls16(SegManager *segMan, GfxPorts *ports, GfxPaint16 *pa
 	: _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen) {
 	_texteditBlinkTime = 0;
 	_texteditCursorVisible = false;
+	_ttsMan = g_system->getTextToSpeechManager();
 }
 
 GfxControls16::~GfxControls16() {
@@ -350,6 +353,8 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 }
 
 void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *text, uint16 languageSplitter, int16 fontId, TextAlignment alignment, int16 style, bool hilite) {
+	if (_ttsMan != nullptr && g_sci->getGameId() == GID_LAURABOW2)
+		_ttsMan->say(text, Common::TextToSpeechManager::INTERRUPT);
 	if (!hilite) {
 		rect.grow(1);
 		_paint16->eraseRect(rect);
