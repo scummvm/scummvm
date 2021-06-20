@@ -651,6 +651,9 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			if (_engineOptions) {
 				_engineOptions->setDomain(newDomain);
 			}
+			if (_backendOptions) {
+				_backendOptions->setDomain(newDomain);
+			}
 		}
 	}
 	// fall through
