@@ -130,16 +130,6 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"private-eye", // EU release (DE)
-		"It uses different file format for the assest",
-		AD_ENTRY2s("pvteye.ex_", "5ca171c4e8d804c7277887277d049f03", 600576,
-		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
-		Common::DE_DEU,
-		Common::kPlatformWindows,
-		ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NOMIDI)
-	},
-	{
-		"private-eye", // EU release (DE)
 		0,
 		AD_ENTRY2s("pvteye.ex_", "5ca171c4e8d804c7277887277d049f03", 600576,
 		   "bklynlgo.bmp", "1dfb703349a46f8ec183de107992b7f5", 33118),
@@ -158,19 +148,6 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
-
-
-	/*
-	{
-		"private-eye", // Demo from the EU release
-		"Demo",
-		AD_ENTRY1s("PVTEYE.Z", "", 0),
-		Common::EN_GRB,
-		Common::kPlatformWindows,
-		ADGF_DEMO | ADGF_UNSUPPORTED,
-		GUIO1(GUIO_NOMIDI)
-	},
-	*/
 	AD_TABLE_END_MARKER
 };
 } // End of namespace Private
