@@ -1835,7 +1835,6 @@ void GameObject::removeTimer(TimerID id) {
 		for (Common::List<Timer *>::iterator it = timerList->_timers.begin(); it != timerList->_timers.end(); ++it) {
 			if ((*it)->thisID() == id) {
 				timerList->_timers.remove(*it);
-				delete *it;
 
 				if (timerList->_timers.empty())
 					delete timerList;
@@ -2020,8 +2019,6 @@ void GameObject::removeSensor(SensorID id) {
 			if ((*it)->thisID() == id) {
 				//  Remove the sensor, then delete it
 				sensorList->_list.remove(*it);
-				deleteSensor(*it);
-				delete *it;
 
 				//  If the list is now empty, delete it
 				if (sensorList->_list.empty()) {

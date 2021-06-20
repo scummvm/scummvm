@@ -2365,7 +2365,6 @@ void HuntTask::removeWanderTask(void) {
 
 void HuntTask::removeGotoTask(void) {
 	subTask->abortTask();
-	delete subTask;
 	huntFlags &= ~huntGoto;
 }
 
@@ -4942,7 +4941,6 @@ void TaskStack::abortTask(void) {
 		Task    *stackBottom = getTaskAddress(stackBottomID);
 
 		stackBottom->abortTask();
-		delete stackBottom;
 	}
 }
 
