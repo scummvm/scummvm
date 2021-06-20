@@ -1581,8 +1581,19 @@ void CharsetRendererMac::setCurID(int32 id) {
 	if  (id == -1)
 		return;
 
-	if (_vm->_game.id == GID_LOOM && id != 0) {
-		warning("CharsetRednererMac::setCurID(%d), changing to 0", id);
+	// HACK: Indiana Jones and the Last Crusade uses font id 1 at the very
+	// least during the intro to print the "BARNETT COLLEGE" text. Based on
+	// the DOS version, it's tempting to think that it should use a bold
+	// version of the font, but that's apparently not the case. I'm not sure
+	// what's supposed to happen here, but using font 0 seems to match what
+	// the original does.
+	if (_vm->_game.id == GID_INDY3 && id == 1) {
+		warning("CharsetRenderMac::setCurId - Font 1 requested");
+		id = 0;
+	}
+
+	if (id > 0) {
+		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
 
