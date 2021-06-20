@@ -135,6 +135,9 @@ struct ActorPose {
 	                rightObjectOffset;      // offset of right-hand obj.
 
 	//  14 bytes
+
+	ActorPose();
+	ActorPose(Common::SeekableReadStream *stream);
 };
 
 //  A choreographed sequence of frames
@@ -145,13 +148,22 @@ struct ActorAnimation {
 	//  table of poses for that sequence, and the number of poses
 	//  in the sequence.
 
-	uint16          start[numPoseFacings],
-	                count[numPoseFacings];
+	uint16 start[numPoseFacings];
+	uint16 count[numPoseFacings];
+
+	ActorAnimation(Common::SeekableReadStream *stream);
+
+	// 32 bytes
 };
 
 struct ActorAnimSet {
-	uint32          numAnimations,          // number of animations
-	                poseOffset;             // offset to poses table
+	uint32 numAnimations;	// number of animations
+	uint32 poseOffset;		// offset to poses table
+
+	ActorAnimation **animations;
+	ActorPose **poses;
+
+	uint32 numPoses;
 };
 
 /* ===================================================================== *
@@ -258,7 +270,7 @@ enum spriteBankBits {
 //  There is an LRU cache of these structures maintained by
 //  the sprite coordinator.
 
-class ActorAppearance : public DNode {
+class ActorAppearance {
 public:
 	int16            useCount;               // how many actors using this
 	uint32           id;
@@ -266,14 +278,8 @@ public:
 	ActorAnimSet    *poseList;             // list of action sequences
 	ColorSchemeList *schemeList;           // color remapping info
 
-	//  Table of sprite sets. Each entry in the table
-	//  represents a different "bank" of sprites
-	//  REM: How do we determine what frames are NEEDED in the
-	//  near future?
-
 	SpriteSet       *spriteBanks[sprBankCount];
 
-//	Member functions:
 	void loadSpriteBanks(int16 banksNeeded);
 
 	//  Determine if this bank is loaded
@@ -290,21 +296,27 @@ public:
 
 	// FIXME: Pointer Arithmetic
 	ActorAnimation *animation(int num) {
-		warning("STUB: ActorAppearance::animation: Pointer Arithmetics");
 		if (poseList)
-			return (ActorAnimation *)(poseList + 1) + num;
+			return poseList->animations[num];
 
 		return nullptr;
 	}
 
 	ActorPose *pose(ActorAnimation *anim, int dir, int num) {
-		warning("STUB: ActorAppearance::pose: Pointer Arithmetics");
 		if (poseList == nullptr)
 			return nullptr;
 
-		if (num < 0 || num >= anim->count[dir]) num = 0;
+		if (num < 0 || num >= anim->count[dir])
+			num = 0;
+
 		num += anim->start[dir];
-		return (ActorPose *)((uint8 *)poseList + poseList->poseOffset) + num;
+
+		if (num >= poseList->numPoses) {
+			warning("ActorPose::pose(), pose number is too high, %d >= %d", num, poseList->numPoses);
+			return nullptr;
+		}
+
+		return poseList->poses[num];
 	}
 };
 

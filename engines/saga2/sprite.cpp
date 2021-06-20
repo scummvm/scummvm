@@ -604,9 +604,34 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	}
 }
 
-static void readActorAnimSet(hResContext *con, ActorAnimSet &ani) {
-	ani.numAnimations = con->readU32LE();
-	ani.poseOffset = con->readU32LE();
+ActorAnimation::ActorAnimation(Common::SeekableReadStream *stream) {
+	for (int i = 0; i < numPoseFacings; i++)
+		start[i] = stream->readUint16LE();
+
+	for (int i = 0; i < numPoseFacings; i++)
+		count[i] = stream->readUint16LE();
+
+	for (int i = 0; i < numPoseFacings; i++)
+		debugC(2, kDebugLoading, "anim%d: start: %d count: %d", i, start[i], count[i]);
+}
+
+ActorPose::ActorPose() {
+	flags = 0;
+
+	actorFrameIndex = actorFrameBank = leftObjectIndex = rightObjectIndex = 0;
+}
+
+
+ActorPose::ActorPose(Common::SeekableReadStream *stream) {
+	flags = stream->readUint16LE();
+
+	actorFrameIndex = stream->readByte();
+	actorFrameBank = stream->readByte();
+	leftObjectIndex = stream->readByte();
+	rightObjectIndex = stream->readByte();
+
+	leftObjectOffset.load(stream);
+	rightObjectOffset.load(stream);
 }
 
 static void readColorScheme(hResContext *con, ColorScheme &col) {
@@ -680,12 +705,24 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		aa->spriteBanks[bank] = nullptr;
 	}
 
-	if (aa->poseList)
-		delete[] aa->poseList;
+	if (aa->poseList) {
+		for (uint i = 0; i < aa->poseList->numPoses; i++)
+			delete aa->poseList->poses[i];
+
+		free(aa->poseList->poses);
+
+		for (uint i = 0; i < aa->poseList->numAnimations; i++)
+			delete aa->poseList->animations[i];
+
+		free(aa->poseList->animations);
+
+		delete aa->poseList;
+	}
 	aa->poseList = nullptr;
 
-	if (aa->schemeList)
+	if (aa->schemeList) {
 		delete aa->schemeList;
+	}
 	aa->schemeList = nullptr;
 
 	//  Set ID and use count
@@ -695,13 +732,36 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
 
-	if (poseRes->seek(id) == 0) {
+	Common::SeekableReadStream *poseStream = loadResourceToStream(poseRes, id, "pose list");
+
+	if (poseStream == nullptr) {
 		warning("LoadActorAppearance: Could not load pose list");
 	} else {
-		poseListSize = poseRes->size(id) / actorAnimSetSize;
-		aa->poseList = new ActorAnimSet[poseListSize];
-		for (int i = 0; i < poseListSize; ++i)
-			readActorAnimSet(poseRes, aa->poseList[i]);
+		ActorAnimSet *as = new ActorAnimSet;
+		aa->poseList = as;
+		as->numAnimations = poseStream->readUint32LE();
+		as->poseOffset = poseStream->readUint32LE();
+
+		// compute number of ActorPoses
+		uint32 poseBytes = poseStream->size() - as->poseOffset;
+
+		debugC(1, kDebugLoading, "Pose List: bytes: %d numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
+			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / 14);
+
+		if (poseBytes % 14 != 0)
+			warning("Incorrect number of poses, %d bytes more", poseBytes % 14);
+
+		as->numPoses = poseBytes / 14;
+
+		as->animations = (ActorAnimation **)malloc(as->numAnimations * sizeof(ActorAnimation));
+
+		for (uint i = 0; i < as->numAnimations; i++)
+			as->animations[i] = new ActorAnimation(poseStream);
+
+		as->poses = (ActorPose **)malloc(as->numPoses * sizeof(ActorPose));
+
+		for (uint i = 0; i < as->numPoses; i++)
+			as->poses[i] = new ActorPose(poseStream);
 	}
 
 	if (schemeRes->seek(id) == 0) {
@@ -717,14 +777,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 }
 
 void ReleaseActorAppearance(ActorAppearance *aa) {
-	if (--aa->useCount == 0) {
-	}
-
-#ifndef WINKLUDGE       // jeffkludge -- causes crash
-#if DEBUG
-	WriteStatusF(2, "Release");
-#endif
-#endif
+	aa->useCount--;
 }
 
 /* ===================================================================== *
