@@ -339,6 +339,15 @@ void TrecisionEngine::setObjectVisible(uint16 objectId, bool visible) {
 }
 
 void TrecisionEngine::refreshObject(uint16 objectId) {
+	for (int i = 0; i < MAXOBJINROOM; ++i) {
+		if (!_room[_curRoom]._object[i])
+			return;	// reached the end of the list, object not found
+
+		if (objectId == _room[_curRoom]._object[i]) {
+			break;	// object found in room objects, continue
+		}
+	}
+
 	if (_obj[objectId].isModeMask() || _obj[objectId].isModeFull()) {
 		SSortTable entry;
 		entry._objectId = objectId;
