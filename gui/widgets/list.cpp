@@ -610,7 +610,12 @@ void ListWidget::drawWidget() {
 
 Common::Rect ListWidget::getEditRect() const {
 	const int scrollbarW = (_scrollBar && _scrollBar->isVisible()) ? _scrollBarWidth : 0;
-	Common::Rect r(_hlLeftPadding, 0, _w - _hlRightPadding - scrollbarW, kLineHeight - 2);
+	int editWidth = _w - _hlLeftPadding - _hlRightPadding - scrollbarW;
+	// Ensure r will always be a valid rect
+	if (editWidth < 0) {
+		editWidth = 0;
+	}
+	Common::Rect r(_hlLeftPadding, 0, _hlLeftPadding + editWidth, kLineHeight - 2);
 	const int offset = (_selectedItem - _currentPos) * kLineHeight + _topPadding;
 	r.top += offset;
 	r.bottom += offset;
@@ -619,6 +624,10 @@ Common::Rect ListWidget::getEditRect() const {
 		// FIXME: Assumes that all digits have the same width.
 		Common::String temp = Common::String::format("%2d. ", (_list.size() - 1 + _numberingMode));
 		r.left += g_gui.getStringWidth(temp) + _leftPadding;
+		// Make sure we don't go farther than right
+		if (r.right < r.left) {
+			r.right = r.left;
+		}
 	}
 
 	return r;
