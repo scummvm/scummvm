@@ -67,7 +67,6 @@ private:
 	MacButtonType _buttonType;
 	MacPlotData _pd;
 	bool _invertInner;
-	bool _invertOuter;
 	int _checkBoxType;
 };
 
