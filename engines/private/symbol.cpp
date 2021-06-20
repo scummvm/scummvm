@@ -20,7 +20,6 @@
  *
  */
 
-
 // Heavily inspired by hoc
 // Copyright (C) AT&T 1995
 // All Rights Reserved
@@ -44,10 +43,10 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
+#include "common/str.h"
 #include "private/grammar.h"
 #include "private/private.h"
 #include "private/tokens.h"
-#include "common/str.h"
 
 namespace Private {
 
@@ -90,14 +89,12 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	sp->name = name;
 	sp->type = t;
 	if (t == NUM) {
-		sp->u.val = d; 
+		sp->u.val = d;
 		//debug("install NUM: %s %d", name->c_str(), d);
-	}
-	else if (t == NAME) {
+	} else if (t == NAME) {
 		sp->u.val = d;
 		//debug("installing NAME: %s %d", name->c_str(), d);
-	}
-	else if (t == STRING)
+	} else if (t == STRING)
 		sp->u.str = scumm_strdup(s); // FIXME: leaks a string here.
 	else if (t == RECT)
 		sp->u.rect = r;
@@ -108,7 +105,6 @@ static Symbol *install(const Common::String &n, int t, int d, const char *s, Com
 	assert(symlist->size() > 0);
 	return sp;
 }
-
 
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupRect(Common::String *n) {
@@ -124,7 +120,6 @@ Symbol *SymbolMaps::lookupVariable(Common::String *n) {
 	assert(variables.contains(*n));
 	return lookup(*n, variables);
 }
-
 
 /* lookup some name in some symbol table */
 Symbol *SymbolMaps::lookupName(const char *n) {

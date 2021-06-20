@@ -43,13 +43,13 @@
 // ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-#include "common/str.h"
 #include "common/debug.h"
 #include "common/hash-ptr.h"
+#include "common/str.h"
 
 #include "private/grammar.h"
-#include "private/tokens.h"
 #include "private/private.h"
+#include "private/tokens.h"
 
 namespace Private {
 
@@ -101,13 +101,13 @@ namespace Gen {
 
 /* pop and return top elem from stack */
 Datum pop() {
-	assert (!(g_vm->_stackp <= g_vm->_stack));
+	assert(!(g_vm->_stackp <= g_vm->_stack));
 	return *--g_vm->_stackp;
 }
 
 /* push d onto stack */
 int push(const Datum &d) {
-	assert (!(g_vm->_stackp >= &g_vm->_stack[NSTACK]));
+	assert(!(g_vm->_stackp >= &g_vm->_stack[NSTACK]));
 	*g_vm->_stackp++ = d;
 	return 0;
 }
@@ -152,7 +152,7 @@ int funcpush() {
 	debugC(1, kPrivateDebugCode, "executing %s with %d params", s.u.str, n.u.val);
 	for (int i = 0; i < n.u.val; i++) {
 		Datum arg = pop();
-		args.insert(args.begin(), arg) ;
+		args.insert(args.begin(), arg);
 	}
 
 	call(s.u.str, args);
@@ -165,11 +165,11 @@ int eval() {
 	if (d.u.sym->type == NUM) {
 		d.type = NUM;
 		d.u.val = d.u.sym->u.val;
-		debugC(1, kPrivateDebugCode, "eval NUM returned %d", d.u.val );
+		debugC(1, kPrivateDebugCode, "eval NUM returned %d", d.u.val);
 	} else if (d.u.sym->type == STRING) {
 		d.type = STRING;
 		d.u.str = d.u.sym->u.str;
-		debugC(1, kPrivateDebugCode, "eval STR returned %s", d.u.str );
+		debugC(1, kPrivateDebugCode, "eval STR returned %s", d.u.str);
 	} else if (d.u.sym->type == RECT) {
 		d.type = RECT;
 		d.u.rect = d.u.sym->u.rect;
@@ -371,16 +371,16 @@ int ne() {
 Inst *code(const Inst &f) {
 	//debugC(1, kPrivateDebugCode, "pushing code at %x", progp);
 	Inst *oprogp = g_vm->_progp;
-	assert (!(g_vm->_progp >= &g_vm->_prog[NPROG]));
+	assert(!(g_vm->_progp >= &g_vm->_prog[NPROG]));
 	*g_vm->_progp++ = f;
 	return oprogp;
 }
 
 int ifcode() {
-	Inst *savepc = g_vm->_pc;  /* then part */
+	Inst *savepc = g_vm->_pc; /* then part */
 	debugC(1, kPrivateDebugCode, "ifcode: evaluating condition");
 
-	execute(savepc+3);  /* condition */
+	execute(savepc + 3); /* condition */
 	Datum d = pop();
 
 	debugC(1, kPrivateDebugCode, "ifcode: selecting branch");
@@ -394,12 +394,12 @@ int ifcode() {
 	if (d.u.val) {
 		debugC(1, kPrivateDebugCode, "ifcode: true branch");
 		execute(*((Inst **)(savepc)));
-	} else if (*((Inst **)(savepc+1))) { /* else part? */
+	} else if (*((Inst **)(savepc + 1))) { /* else part? */
 		debugC(1, kPrivateDebugCode, "ifcode: false branch");
-		execute(*((Inst **)(savepc+1)));
+		execute(*((Inst **)(savepc + 1)));
 	}
 	debugC(1, kPrivateDebugCode, "ifcode finished");
-	g_vm->_pc = *((Inst **)(savepc+2)); /* next stmt */
+	g_vm->_pc = *((Inst **)(savepc + 2)); /* next stmt */
 	return 0;
 }
 
@@ -420,7 +420,7 @@ int fail() {
 
 /* run the machine */
 void execute(Inst *p) {
-	for (g_vm->_pc = p; *(g_vm->_pc) != STOP; ) {
+	for (g_vm->_pc = p; *(g_vm->_pc) != STOP;) {
 		(*(*(g_vm->_pc++)))();
 	}
 }
