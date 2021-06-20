@@ -206,7 +206,7 @@ Common::Error PrivateEngine::run() {
 	Common::Event event;
 	Common::Point mousePos;
 	_videoDecoder = nullptr;
-	_language = ConfMan.get("language");
+	_language = Common::parseLanguage(ConfMan.get("language"));
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
@@ -495,28 +495,28 @@ bool PrivateEngine::cursorPauseMovie(Common::Point mousePos) {
 }
 
 Common::String PrivateEngine::getPauseMovieSetting() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kPauseMovie";
 
 	return "k3";
 }
 
 Common::String PrivateEngine::getGoIntroSetting() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kGoIntro";
 
 	return "k1";
 }
 
 Common::String PrivateEngine::getAlternateGameVariable() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kAlternateGame";
 
 	return "k2";
 }
 
 Common::String PrivateEngine::getMainDesktopSetting() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kMainDesktop";
 
 	if (isDemo())
@@ -526,35 +526,35 @@ Common::String PrivateEngine::getMainDesktopSetting() {
 }
 
 Common::String PrivateEngine::getPoliceIndexVariable() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kPoliceIndex";
 
 	return "k0";
 }
 
 Common::String PrivateEngine::getPOGoBustMovieSetting() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kPOGoBustMovie";
 
 	return "k7";
 }
 
 Common::String PrivateEngine::getPoliceBustFromMOSetting() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kPoliceBustFromMO";
 
 	return "k6";
 }
 
 Common::String PrivateEngine::getExitCursor() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kExit";
 
 	return "k5";
 }
 
 Common::String PrivateEngine::getInventoryCursor() {
-	if (_language == "us")
+	if (_language == Common::EN_USA)
 		return "kInventory";
 
 	return "k7";

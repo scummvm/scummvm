@@ -145,7 +145,7 @@ public:
 
 	const ADGameDescription *_gameDescription;
 	bool isDemo() const;
-	Common::String _language;
+	Common::Language _language;
 
 	SymbolMaps maps;
 
