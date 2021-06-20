@@ -29,7 +29,6 @@
 #include "saga2/tile.h"
 #include "saga2/motion.h"
 #include "saga2/player.h"
-#include "saga2/pool.h"
 #include "saga2/cmisc.h"
 #include "saga2/priqueue.h"
 
@@ -1056,16 +1055,6 @@ int16 tileSlopeHeight(
 }
 
 /* ===================================================================== *
-   PathRequest management function prototypes
- * ===================================================================== */
-
-//  Allocate a new path request
-void *newPathRequest(void);
-
-//  Deallocate a path request
-void deletePathRequest(void *p);
-
-/* ===================================================================== *
    PathRequest Class
  * ===================================================================== */
 
@@ -1135,13 +1124,6 @@ protected:
 public:
 	void requestAbort(void) {
 		flags |= aborted;
-	}
-
-	void *operator new (size_t) {
-		return newPathRequest();
-	}
-	void operator delete (void *p) {
-		deletePathRequest(p);
 	}
 
 	virtual void initialize(void);
@@ -1281,10 +1263,7 @@ public:
 
 const int                   numPathRequests = 32;   // up to 32 messages allowed
 
-typedef uint8 PathRequestPlaceHolder[sizeof(WanderPathRequest)];
-typedef RPool< PathRequestPlaceHolder, numPathRequests > PathRequestPool;
-
-PathRequestPool             pathRequestPool;
+Common::List<WanderPathRequest *> pathRequestPool;
 
 DList                       pathQueue;
 PathRequest                 *currentRequest = nullptr;
@@ -2292,18 +2271,6 @@ int16 WanderPathRequest::evaluateMove(const TilePoint &testPt, uint8) {
 	zDist = abs(movementDelta.z) >> 1;
 
 	return (centerCost - (dist + zDist)) >> 1;
-}
-
-/* ===================================================================== *
-   Misc. functions
- * ===================================================================== */
-
-void *newPathRequest(void) {
-	return pathRequestPool.alloc();
-}
-
-void deletePathRequest(void *p) {
-	pathRequestPool.free(p);
 }
 
 void runPathFinder(void) {
