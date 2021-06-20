@@ -880,6 +880,9 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 		return;
 	}
 
+	if (!isVisible())
+		return;
+
 	float sf = g_gui.getScaleFactor();
 	if (scale && sf != 1.0) {
 		_w = gfx->w * sf;
