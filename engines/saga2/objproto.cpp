@@ -969,18 +969,27 @@ uint8 ProtoObj::getDamageSound(const ObjectSoundFXs &) {
 void ProtoObj::doBackgroundUpdate(GameObject *obj) {
 	TilePoint   location = obj->getLocation();
 	GameWorld   *w = obj->world();
+	int u = location.u >> kSectorShift;
+	int v = location.v >> kSectorShift;
 
 	// XXX: Temporary crash prevention
 	// We should properly solve the problem
 	debug(3, "XXX: doBackgroundUpdate");
-	if (location.u == -1 && location.v == -1)
+
+	if (w == nullptr) {
+		obj->deactivate();
+		return;
+	}
+
+	Sector *sect = w->getSector(u, v);
+
+	if (sect == nullptr)
 		return;
 
-	if (w == NULL
-	        ||  !w->getSector(
-	            location.u >> kSectorShift,
-	            location.v >> kSectorShift)->isActivated())
+	if (!sect->isActivated()) {
 		obj->deactivate();
+		return;
+	}
 }
 
 // ------------------------------------------------------------------------

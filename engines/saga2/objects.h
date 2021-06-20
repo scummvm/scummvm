@@ -794,6 +794,12 @@ public:
 	void cleanup(void);
 
 	Sector *getSector(int16 u, int16 v) {
+		if (v * sectorArraySize + u >= sectorArraySize * sectorArraySize ||
+		    v * sectorArraySize + u < 0) {
+			warning("Sector::getSector: Invalid sector: (%d, %d)", u, v);
+			return nullptr;
+		}
+
 		return &(sectorArray)[v * sectorArraySize + u];
 	}
 
