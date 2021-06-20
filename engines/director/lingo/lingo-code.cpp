@@ -866,7 +866,7 @@ void LC::c_within() {
 	if (sprite1->_sprite->_ink == kInkTypeMatte && sprite2->_sprite->_ink == kInkTypeMatte) {
 		g_lingo->push(Datum(sprite2->isMatteWithin(sprite1)));
 	} else {
-		g_lingo->push(Datum(sprite1->getBbox().contains(sprite2->getBbox())));
+		g_lingo->push(Datum(sprite2->getBbox().contains(sprite1->getBbox())));
 	}
 }
 
