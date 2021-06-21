@@ -772,15 +772,18 @@ typedef uint16 metaTileNoise;
 
 //  A "Metatile" is a larger tile made up of smaller tiles.
 
+class MetaTileList;
+
 class MetaTile {
 public:
 	uint16          _highestPixel;           // more drawing optimization
 	BankBits        _banksNeeded;            // which banks are needed
 	uint16          _stack[maxPlatforms];    // pointer to platforms
 	uint32          _properties;             // more drawing optimization
-	int             _index = -1;
+	int             _index;
+	MetaTileList   *_parent;
 
-	MetaTile(int ind, Common::SeekableReadStream *stream);
+	MetaTile(MetaTileList *parent, int ind, Common::SeekableReadStream *stream);
 
 	//  Return a pointer to a meta tile given its ID
 	static MetaTile *metaTileAddress(MetaTileID id);
