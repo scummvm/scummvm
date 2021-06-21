@@ -114,8 +114,8 @@ int stringf(char *buffer, long maxlen, int formatStr, int16 *args) {
 				GameObject  *obj = GameObject::objectAddress(*args++);
 
 				//  Obtain SAGA string, copy to buffer (if it fits)
-				for (dptr = obj->objName(); *dptr && buffer < bufEnd;) {
-					*buffer++ = *dptr++;
+				for (const char *dptr1 = obj->objName(); *dptr1 && buffer < bufEnd;) {
+					*buffer++ = *dptr1++;
 				}
 			} else {
 				//  Write the character after the '%' to the buffer

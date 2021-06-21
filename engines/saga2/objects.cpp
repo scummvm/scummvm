@@ -436,8 +436,6 @@ void GameObject::append(ObjectID newParent) {
 	//  one, so we need to get the right one.
 	headPtr = getHeadPtr(newParent, _data.location);
 
-	GameObject  *parent = GameObject::objectAddress(newParent);
-
 	//  Link us in to the parent's chain
 
 	_data.parentID = newParent;
@@ -1474,8 +1472,9 @@ void GameObject::updateState(void) {
    Object Names
  * ======================================================================= */
 
-char *GameObject::nameText(uint16 index) {
-	if (index < 0 || index >= nameListCount) return "Bad Name Index";
+const char *GameObject::nameText(uint16 index) {
+	if (index < 0 || index >= nameListCount)
+		return "Bad Name Index";
 
 	return nameList[index];
 }
@@ -1483,7 +1482,6 @@ char *GameObject::nameText(uint16 index) {
 #define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
 
 TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
-	int16           slotCount = 0;
 	ObjectID        objID;
 	GameObject      *item;
 	TilePoint       newLoc, temp;
@@ -1795,8 +1793,7 @@ bool GameObject::addTimer(TimerID id) {
 
 bool GameObject::addTimer(TimerID id, int16 frameInterval) {
 	TimerList   *timerList;
-	Timer       *newTimer,
-	            *timerInList;
+	Timer       *newTimer;
 
 	//  Create the new timer
 	if ((newTimer = new Timer(this, id, frameInterval)) == nullptr)
@@ -1874,7 +1871,6 @@ void GameObject::removeAllTimers(void) {
 
 bool GameObject::addSensor(Sensor *newSensor) {
 	SensorList          *sensorList;
-	Sensor              *sensorInList;
 
 	//  Fetch the existing sensor list for this object or allocate a
 	//  new one
@@ -2078,11 +2074,11 @@ bool GameObject::canSenseSpecificActor(
     SenseInfo   &info,
     int16       range,
     Actor       *a) {
-	SpecificActorSensor     sensor(this, 0, range, a);
+	SpecificActorSensor sensor(this, 0, range, a);
 
 	if (isActor(this)) {
-		Actor *a = (Actor *) this;
-		return sensor.check(info, a->enchantmentFlags);
+		Actor *ac = (Actor *)this;
+		return sensor.check(info, ac->enchantmentFlags);
 	}
 	return sensor.check(info, nonActorSenseFlags);
 }

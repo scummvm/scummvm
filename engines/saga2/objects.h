@@ -173,7 +173,7 @@ public:
 
 	ObjectID thisID(void);               // calculate our own ID value
 
-	static char *nameText(uint16 index);
+	static const char *nameText(uint16 index);
 
 protected:
 	//  get address of head-of-chain id.
@@ -465,7 +465,7 @@ public:
 	Location notGetWorldLocation(void);
 
 	//  Return the name of this object (proper noun if it has one)
-	char *objName(void) {
+	const char *objName(void) {
 		return nameText((int16)(
 		                    _data.nameIndex > 0 ? _data.nameIndex : prototype->nameIndex));
 	}
@@ -485,7 +485,7 @@ public:
 	}
 
 	//  Return the name of this type of object
-	char *protoName(void) {
+	const char *protoName(void) {
 		return nameText(prototype->nameIndex);
 	}
 
