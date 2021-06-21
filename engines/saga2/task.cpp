@@ -1123,7 +1123,7 @@ void TetheredWanderTask::abortTask(void) {
 bool TetheredWanderTask::operator == (const Task &t) const {
 	if (t.getType() != tetheredWanderTask) return false;
 
-	TetheredWanderTask  *taskPtr = (TetheredWanderTask *)&t;
+	const TetheredWanderTask *taskPtr = (const TetheredWanderTask *)&t;
 
 	return      minU == taskPtr->minU && minV == taskPtr->minV
 	            &&  maxU == taskPtr->maxU && maxV == taskPtr->maxV;
@@ -1157,12 +1157,12 @@ TaskResult TetheredWanderTask::handleWander(void) {
 		MotionTask  *actorMotion = a->moveTask;
 
 		if (actorMotion) {
-			TileRegion  motionTether = actorMotion->getTether();
+			TileRegion  motionTeth = actorMotion->getTether();
 			startWander     = ((!actorMotion->isWander())
-			                   ||  motionTether.min.u != minU
-			                   ||  motionTether.min.v != minV
-			                   ||  motionTether.max.u != maxU
-			                   ||  motionTether.max.v != maxV);
+			                   ||  motionTeth.min.u != minU
+			                   ||  motionTeth.min.v != minV
+			                   ||  motionTeth.max.u != maxU
+			                   ||  motionTeth.max.v != maxV);
 
 		} else
 			startWander = true;
@@ -1437,7 +1437,7 @@ int16 GotoLocationTask::getType(void) const {
 bool GotoLocationTask::operator == (const Task &t) const {
 	if (t.getType() != gotoLocationTask) return false;
 
-	GotoLocationTask    *taskPtr = (GotoLocationTask *)&t;
+	const GotoLocationTask *taskPtr = (const GotoLocationTask *)&t;
 
 	return      targetLoc == taskPtr->targetLoc
 	            &&  runThreshold == taskPtr->runThreshold;
@@ -1538,7 +1538,7 @@ int16 GotoRegionTask::getType(void) const {
 bool GotoRegionTask::operator == (const Task &t) const {
 	if (t.getType() != gotoRegionTask) return false;
 
-	GotoRegionTask      *taskPtr = (GotoRegionTask *)&t;
+	const GotoRegionTask *taskPtr = (const GotoRegionTask *)&t;
 
 	return      regionMinU == taskPtr->regionMinU
 	            &&  regionMinV == taskPtr->regionMinV
@@ -1777,7 +1777,7 @@ int16 GotoObjectTask::getType(void) const {
 bool GotoObjectTask::operator == (const Task &t) const {
 	if (t.getType() != gotoObjectTask) return false;
 
-	GotoObjectTask      *taskPtr = (GotoObjectTask *)&t;
+	const GotoObjectTask *taskPtr = (const GotoObjectTask *)&t;
 
 	return      tracking() == taskPtr->tracking()
 	            &&  targetObj == taskPtr->targetObj;
@@ -1851,7 +1851,7 @@ int16 GotoActorTask::getType(void) const {
 bool GotoActorTask::operator == (const Task &t) const {
 	if (t.getType() != gotoActorTask) return false;
 
-	GotoActorTask       *taskPtr = (GotoActorTask *)&t;
+	const GotoActorTask *taskPtr = (const GotoActorTask *)&t;
 
 	return      tracking() == taskPtr->tracking()
 	            &&  targetActor == taskPtr->targetActor;
@@ -1985,7 +1985,6 @@ TaskResult GoAwayFromTask::update(void) {
 	};
 
 	Actor           *a = stack->getActor();
-	MotionTask      *actorMotion = a->moveTask;
 	TilePoint       actorLoc = a->getLocation(),
 	                repulsionVector = getRepulsionVector(),
 	                dest;
@@ -2078,7 +2077,7 @@ int16 GoAwayFromObjectTask::getType(void) const {
 bool GoAwayFromObjectTask::operator == (const Task &t) const {
 	if (t.getType() != goAwayFromObjectTask) return false;
 
-	GoAwayFromObjectTask    *taskPtr = (GoAwayFromObjectTask *)&t;
+	const GoAwayFromObjectTask *taskPtr = (const GoAwayFromObjectTask *)&t;
 
 	return obj == taskPtr->obj;
 }
@@ -2158,7 +2157,7 @@ int16 GoAwayFromActorTask::getType(void) const {
 bool GoAwayFromActorTask::operator == (const Task &t) const {
 	if (t.getType() != goAwayFromActorTask) return false;
 
-	GoAwayFromActorTask     *taskPtr = (GoAwayFromActorTask *)&t;
+	const GoAwayFromActorTask *taskPtr = (const GoAwayFromActorTask *)&t;
 
 	return *getTarget() == *taskPtr->getTarget();
 }
@@ -2510,7 +2509,7 @@ int16 HuntToBeNearLocationTask::getType(void) const {
 bool HuntToBeNearLocationTask::operator == (const Task &t) const {
 	if (t.getType() != huntToBeNearLocationTask) return false;
 
-	HuntToBeNearLocationTask    *taskPtr = (HuntToBeNearLocationTask *)&t;
+	const HuntToBeNearLocationTask *taskPtr = (const HuntToBeNearLocationTask *)&t;
 
 	return      *getTarget() == *taskPtr->getTarget()
 	            &&  range == taskPtr->range;
@@ -2715,7 +2714,7 @@ int16 HuntToBeNearObjectTask::getType(void) const {
 bool HuntToBeNearObjectTask::operator == (const Task &t) const {
 	if (t.getType() != huntToBeNearObjectTask) return false;
 
-	HuntToBeNearObjectTask  *taskPtr = (HuntToBeNearObjectTask *)&t;
+	const HuntToBeNearObjectTask *taskPtr = (const HuntToBeNearObjectTask *)&t;
 
 	return      *getTarget() == *taskPtr->getTarget()
 	            &&  range == taskPtr->range;
@@ -2855,7 +2854,7 @@ int16 HuntToPossessTask::getType(void) const {
 bool HuntToPossessTask::operator == (const Task &t) const {
 	if (t.getType() != huntToPossessTask) return false;
 
-	HuntToPossessTask   *taskPtr = (HuntToPossessTask *)&t;
+	const HuntToPossessTask *taskPtr = (const HuntToPossessTask *)&t;
 
 	return *getTarget() == *taskPtr->getTarget();
 }
@@ -3152,7 +3151,7 @@ int16 HuntToBeNearActorTask::getType(void) const {
 bool HuntToBeNearActorTask::operator == (const Task &t) const {
 	if (t.getType() != huntToBeNearActorTask) return false;
 
-	HuntToBeNearActorTask   *taskPtr = (HuntToBeNearActorTask *)&t;
+	const HuntToBeNearActorTask *taskPtr = (const HuntToBeNearActorTask *)&t;
 
 	return      *getTarget() == *taskPtr->getTarget()
 	            &&  tracking() ? taskPtr->tracking() : !taskPtr->tracking()
@@ -3359,7 +3358,7 @@ int16 HuntToKillTask::getType(void) const {
 bool HuntToKillTask::operator == (const Task &t) const {
 	if (t.getType() != huntToKillTask) return false;
 
-	HuntToKillTask      *taskPtr = (HuntToKillTask *)&t;
+	const HuntToKillTask *taskPtr = (const HuntToKillTask *)&t;
 
 	return      *getTarget() == *taskPtr->getTarget()
 	            &&  tracking() ? taskPtr->tracking() : !taskPtr->tracking();
@@ -3729,7 +3728,7 @@ int16 HuntToGiveTask::getType(void) const {
 bool HuntToGiveTask::operator == (const Task &t) const {
 	if (t.getType() != huntToGiveTask) return false;
 
-	HuntToGiveTask      *taskPtr = (HuntToGiveTask *)&t;
+	const HuntToGiveTask *taskPtr = (const HuntToGiveTask *)&t;
 
 	return      *getTarget() == *taskPtr->getTarget()
 	            &&  tracking() ? taskPtr->tracking() : !taskPtr->tracking()
@@ -4348,7 +4347,7 @@ TaskResult FollowPatrolRouteTask::update(void) {
 bool FollowPatrolRouteTask::operator == (const Task &t) const {
 	if (t.getType() != followPatrolRouteTask) return false;
 
-	FollowPatrolRouteTask   *taskPtr = (FollowPatrolRouteTask *)&t;
+	const FollowPatrolRouteTask *taskPtr = (const FollowPatrolRouteTask *)&t;
 
 	return      patrolIter == taskPtr->patrolIter
 	            &&  lastWayPointNum == taskPtr->lastWayPointNum;
@@ -4523,340 +4522,10 @@ TaskResult AttendTask::update(void) {
 bool AttendTask::operator == (const Task &t) const {
 	if (t.getType() != attendTask) return false;
 
-	AttendTask      *taskPtr = (AttendTask *)&t;
+	const AttendTask *taskPtr = (const AttendTask *)&t;
 
 	return obj == taskPtr->obj;
 }
-
-#if 0
-
-//  This code should no longer be necessary
-
-/* ===================================================================== *
-   DefendTask member functions
- * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-DefendTask::DefendTask(void **buf, TaskID id) : Task(buf, id) {
-	void        *bufferPtr = *buf;
-
-	ObjectID    attackerID;
-
-	//  Get the attacker's ID
-	attackerID = *((ObjectID *)bufferPtr);
-	bufferPtr = (ObjectID *)bufferPtr + 1;
-
-	//  Convert the ID to a pointer
-	attacker =  attackerID != Nothing
-	            ? (Actor *)GameObject::objectAddress(attackerID)
-	            :   NULL;
-
-	//  Get the subTask id
-	*((TaskID *)&subTask) = *((TaskID *)bufferPtr);
-	bufferPtr = (TaskID *)bufferPtr + 1;
-
-	*buf = bufferPtr;
-}
-
-//----------------------------------------------------------------------
-//	Fixup the subtask pointer
-
-void DefendTask::fixup(void) {
-	//  Let the base class fixup its pointers
-	Task::fixup();
-
-	TaskID      subTaskID = *((TaskID *)&subTask);
-
-	//  Convert the subTaskID to a pointer
-	subTask = subTaskID != NoTask ? getTaskAddress(subTaskID) : NULL;
-}
-
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in
-//	a buffer
-
-inline int32 DefendTask::archiveSize(void) const {
-	return Task::archiveSize() + sizeof(ObjectID) + sizeof(TaskID);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in a buffer
-
-void *DefendTask::archive(void *buf) const {
-	//  Let the base class archive its data
-	buf = Task::archive(buf);
-
-	ObjectID        attackerID;
-	TaskID          subTaskID;
-
-	//  Convert the attacker pointer to an ID
-	attackerID = attacker != NULL ? attacker->thisID() : Nothing;
-
-	//  Store the attacker's ID
-	*((ObjectID *)buf) = attackerID;
-	buf = (ObjectID *)buf + 1;
-
-	//  Convert the subtask pointer to an ID
-	subTaskID = subTask != NULL ? getTaskID(subTask) : NoTask;
-
-	//  Store the subtask ID
-	*((TaskID *)buf) = subTaskID;
-	buf = (TaskID *)buf + 1;
-
-	return buf;
-}
-
-//----------------------------------------------------------------------
-//	Return an integer representing the type of this task
-
-int16 DefendTask::getType(void) const {
-	return defendTask;
-}
-
-//----------------------------------------------------------------------
-
-void DefendTask::abortTask(void) {
-	//  If we have a sub-task, kill it
-	if (subTask != NULL) {
-		subTask->abortTask();
-		delete subTask;
-		subTask = NULL;
-	}
-}
-
-//----------------------------------------------------------------------
-
-TaskResult DefendTask::evaluate(void) {
-	//  If there currently is no sub-task and the attacker is no longer
-	//  attacking, we're done
-	if (subTask == NULL
-	        && (attacker->moveTask == NULL
-	            ||  !attacker->moveTask->isAttack()))
-		return taskSucceeded;
-
-	return taskNotDone;
-}
-
-//----------------------------------------------------------------------
-
-TaskResult DefendTask::update(void) {
-	Actor       *a = stack->getActor();
-
-	//  If there is no sub-task, try to set up a new one
-	if (subTask == NULL) {
-		GameObject  *defensiveObj;
-
-		a->defensiveObject(&defensiveObj);
-
-		if (defensiveObj != NULL) {
-			Direction   relDir;
-
-			relDir = ((attacker->getLocation() - a->getLocation()).quickDir()
-			          -   a->currentFacing)
-			         &   0x7;
-
-			if (relDir == 7 || relDir <= 1)
-				subTask = new ParryTask(stack, attacker, defensiveObj);
-			else
-				return taskFailed;
-		}
-	}
-
-	if (subTask != NULL) {
-		TaskResult      result;
-
-		//  Run the sub-task until its done
-		if ((result = subTask->update()) != taskNotDone) {
-			delete subTask;
-			subTask = NULL;
-			return result;
-		}
-	}
-
-	//  If there currently is no sub-task and the attacker is no longer
-	//  attacking, we're done
-	if (subTask == NULL
-	        && (attacker->moveTask == NULL
-	            ||  !attacker->moveTask->isMeleeAttack()))
-		return taskSucceeded;
-
-	return taskNotDone;
-}
-
-//----------------------------------------------------------------------
-//	Determine if the specified task is equivalent to this task
-
-bool DefendTask::operator == (const Task &t) const {
-	if (t.getType() != defendTask) return false;
-
-	DefendTask          *taskPtr = (DefendTask *)&t;
-
-	return attacker == taskPtr->attacker;
-}
-
-/* ===================================================================== *
-   ParryTask Class
- * ===================================================================== */
-
-//----------------------------------------------------------------------
-//	Constructor -- reconstruct from archive buffer
-
-ParryTask::ParryTask(void **buf, TaskID id) : Task(buf, id) {
-	void        *bufferPtr = *buf;
-
-	ObjectID    attackerID,
-	            defenseObjID;
-
-	//  Get the attacker ID and the defense object ID
-	attackerID      = *((ObjectID *)bufferPtr);
-	defenseObjID    = *((ObjectID *)bufferPtr + 1);
-	bufferPtr = (ObjectID *)bufferPtr + 2;
-
-	//  Convert the attacker ID to a pointer
-	attacker =  attackerID != Nothing
-	            ? (Actor *)GameObject::objectAddress(attackerID)
-	            :   NULL;
-
-	//  Convert the defense object ID to a pointer
-	defenseObj =    defenseObjID != Nothing
-	                ?   GameObject::objectAddress(defenseObjID)
-	                :   NULL;
-
-	//  Restore the flags
-	flags = *((uint8 *)bufferPtr);
-	bufferPtr = (uint8 *)bufferPtr + 1;
-
-	*buf = bufferPtr;
-}
-
-//----------------------------------------------------------------------
-//	Return the number of bytes needed to archive this object in
-//	a buffer
-
-int32 ParryTask::archiveSize(void) const {
-	return      Task::archiveSize()
-	            +   sizeof(ObjectID)             //  attacker ID
-	            +   sizeof(ObjectID)             //  defenseObj ID
-	            +   sizeof(flags);
-}
-
-//----------------------------------------------------------------------
-//	Create an archive of this object in a buffer
-
-void *ParryTask::archive(void *buf) const {
-	//  Let the base class archive its data
-	buf = Task::archive(buf);
-
-	ObjectID        attackerID,
-	                defenseObjID;
-
-	//  Convert the attacker pointer to an ID
-	attackerID = attacker != NULL ? attacker->thisID() : Nothing;
-
-	//  Convert the defense object pointer to an ID
-	defenseObjID = defenseObj != NULL ? defenseObj->thisID() : Nothing;
-
-	//  Store the attacker ID and the defense object ID
-	*((ObjectID *)buf)     = attackerID;
-	*((ObjectID *)buf + 1) = defenseObjID;
-	buf = (ObjectID *)buf + 2;
-
-	//  Store the flags
-	*((uint8 *)buf) = flags;
-	buf = (uint8 *)buf + 1;
-
-	return buf;
-}
-
-//----------------------------------------------------------------------
-//	Return an integer representing the type of this task
-
-int16 ParryTask::getType(void) const {
-	return parryTask;
-}
-
-//----------------------------------------------------------------------
-
-void ParryTask::abortTask(void) {
-	MotionTask      *actorMotion = stack->getActor()->moveTask;
-
-	//  Kill the defense motion, if there is one
-	if ((flags & motionStarted)
-	        &&  actorMotion != NULL
-	        &&  actorMotion->isDefense())
-		actorMotion->finishDefense();
-}
-
-//----------------------------------------------------------------------
-
-TaskResult ParryTask::evaluate(void) {
-	Actor       *a = stack->getActor();
-	MotionTask  *defenderMotion = a->moveTask,
-	             *attackerMotion = attacker->moveTask;
-
-	//  If the attacker is no longer attacking and we are no longer
-	//  defending, we're done
-	if (attackerMotion == NULL || !attackerMotion->isMeleeAttack()
-	        && (!(flags & blockStarted)
-	            ||  defenderMotion == NULL || !defenderMotion->isDefense()))
-		return taskSucceeded;
-
-	return taskNotDone;
-}
-
-//----------------------------------------------------------------------
-
-TaskResult ParryTask::update(void) {
-	Actor       *a = stack->getActor();
-	MotionTask  *defenderMotion = a->moveTask,
-	             *attackerMotion = attacker->moveTask;
-
-	//  If the attacker is no longer attacking and we are no longer
-	//  defending, we're done
-	if (attackerMotion == NULL || !attackerMotion->isMeleeAttack()
-	        && (!(flags & blockStarted)
-	            ||  defenderMotion == NULL || !defenderMotion->isDefense()))
-		return taskSucceeded;
-
-	//  Try to start a parry motion with the specified defensive object
-	if (!(flags & motionStarted)) {
-		ProtoObj    *defenseObjProto = defenseObj->proto();
-
-		defenseObjProto->initiateDefense(a->thisID(), attacker->thisID());
-
-		if ((defenderMotion = a->moveTask) != NULL)
-			flags |= motionStarted;
-		else
-			return taskNotDone;
-	}
-
-	assert(defenderMotion != NULL);
-
-	//  If the blow is about to strike, start the actual block
-	if (!(flags & blockStarted)
-	        &&  attackerMotion->framesUntilStrike() < 1) {
-		defenderMotion->startBlock();
-		flags |= blockStarted;
-	}
-
-	return taskNotDone;
-}
-
-//----------------------------------------------------------------------
-//	Determine if the specified task is equivalent to this task
-
-bool ParryTask::operator == (const Task &t) const {
-	if (t.getType() != parryTask) return false;
-
-	ParryTask           *taskPtr = (ParryTask *)&t;
-
-	return      attacker == taskPtr->attacker
-	            &&  defenseObj == taskPtr->defenseObj;
-}
-
-#endif
 
 /* ===================================================================== *
    TaskStack member functions

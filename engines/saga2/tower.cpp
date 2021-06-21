@@ -70,8 +70,6 @@ static bool initTowerLayer(int is) {
 	return r;
 }
 
-static bool cleanupErr = false;
-
 static void termTowerLayer(int is) {
 	tower[is].term();
 }
