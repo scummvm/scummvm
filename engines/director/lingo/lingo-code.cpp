@@ -1037,7 +1037,7 @@ void LC::c_charOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && src.isRef())) {
+	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
 		g_lingo->lingoError("LC::c_charOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1052,7 +1052,7 @@ void LC::c_charToOf() {
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
-			|| (src.type != STRING && src.isRef())) {
+			|| (src.type != STRING && !src.isRef())) {
 		warning("LC::c_charToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1065,7 +1065,7 @@ void LC::c_itemOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && src.isRef())) {
+	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
 		warning("LC::c_itemOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1080,7 +1080,7 @@ void LC::c_itemToOf() {
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
-			|| (src.type != STRING && src.isRef())) {
+			|| (src.type != STRING && !src.isRef())) {
 		warning("LC::c_itemToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1093,7 +1093,7 @@ void LC::c_lineOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && src.isRef())) {
+	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
 		warning("LC::c_lineOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1108,7 +1108,7 @@ void LC::c_lineToOf() {
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
-			|| (src.type != STRING && src.isRef())) {
+			|| (src.type != STRING && !src.isRef())) {
 		warning("LC::c_lineToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1121,7 +1121,7 @@ void LC::c_wordOf() {
 	Datum src = g_lingo->pop(false);
 	Datum index = g_lingo->pop();
 
-	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && src.isRef())) {
+	if ((index.type != INT && index.type != FLOAT) || (src.type != STRING && !src.isRef())) {
 		warning("LC::c_wordOf(): Called with wrong data types: %s and %s", index.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
@@ -1136,7 +1136,7 @@ void LC::c_wordToOf() {
 	Datum indexFrom = g_lingo->pop();
 
 	if ((indexTo.type != INT && indexTo.type != FLOAT) || (indexFrom.type != INT && indexFrom.type != FLOAT)
-			|| (src.type != STRING && src.isRef())) {
+			|| (src.type != STRING && !src.isRef())) {
 		warning("LC::c_wordToOf(): Called with wrong data types: %s, %s and %s", indexTo.type2str(), indexFrom.type2str(), src.type2str());
 		g_lingo->push(Datum(""));
 		return;
