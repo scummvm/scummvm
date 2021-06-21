@@ -3614,7 +3614,7 @@ void HuntToKillTask::evaluateWeapon(void) {
 
 		if (currentWeapon == NULL
 		        ||      weaponProto->weaponRating(
-		            obj->thisID(),
+		            a->thisID(),
 		            actorID,
 		            currentTarget->thisID())
 		        !=  0)
