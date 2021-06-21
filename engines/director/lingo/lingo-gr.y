@@ -156,7 +156,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> handler
 
 // GENERIC VAR STUFF
-%type<s> ID
+%type<s> CMDID ID
 %type<idlist> idlist nonemptyidlist
 
 // STATEMENT
@@ -286,7 +286,9 @@ endargdef:	/* nothing */
 
 // GENERIC VAR STUFF
 
-ID: tVARID
+// This is only the identifiers that can appaear at the start of a line
+// and will not conflict with other statement types.
+CMDID: tVARID
 	| tABBREVIATED	{ $$ = new Common::String("abbreviated"); }
 	| tABBREV		{ $$ = new Common::String("abbrev"); }
 	| tABBR			{ $$ = new Common::String("abbr"); }
@@ -299,17 +301,9 @@ ID: tVARID
 	| tCONTAINS		{ $$ = new Common::String("contains"); }
 	| tDATE			{ $$ = new Common::String("date"); }
 	| tDOWN			{ $$ = new Common::String("down"); }
-	// tELSE
-	// tENDCLAUSE
-	// | tEXIT			{ $$ = new Common::String("exit"); }
-	// tFACTORY
 	| tFIELD		{ $$ = new Common::String("field"); }
 	| tFRAME		{ $$ = new Common::String("frame"); }
-	// | tGLOBAL		{ $$ = new Common::String("global"); }
-	// tGO
-	// tIF
 	| tIN			{ $$ = new Common::String("in"); }
-	// | tINSTANCE		{ $$ = new Common::String("instance"); }
 	| tINTERSECTS	{ $$ = new Common::String("intersects"); }
 	| tINTO			{ $$ = new Common::String("into"); }
 	| tITEM			{ $$ = new Common::String("item"); }
@@ -318,24 +312,17 @@ ID: tVARID
 	| tLINE			{ $$ = new Common::String("line"); }
 	| tLINES		{ $$ = new Common::String("lines"); }
 	| tLONG			{ $$ = new Common::String("long"); }
-	// | tMACRO		{ $$ = new Common::String("macro"); }
 	| tMENU			{ $$ = new Common::String("menu"); }
 	| tMENUITEM		{ $$ = new Common::String("menuItem"); }
 	| tMENUITEMS	{ $$ = new Common::String("menuItems"); }
-	// | tMETHOD		{ $$ = new Common::String("method"); }
 	| tMOD			{ $$ = new Common::String("mod"); }
 	| tMOVIE		{ $$ = new Common::String("movie"); }
 	| tNEXT			{ $$ = new Common::String("next"); }
 	| tNOT			{ $$ = new Common::String("not"); }
 	| tNUMBER		{ $$ = new Common::String("number"); }
 	| tOF			{ $$ = new Common::String("of"); }
-	// | tON			{ $$ = new Common::String("on"); }
-	// | tOPEN			{ $$ = new Common::String("open"); }
 	| tOR			{ $$ = new Common::String("or"); }
-	// | tPLAY			{ $$ = new Common::String("play"); }
 	| tPREVIOUS		{ $$ = new Common::String("previous"); }
-	// | tPROPERTY		{ $$ = new Common::String("property"); }
-	// | tPUT			{ $$ = new Common::String("put"); }
 	| tREPEAT		{ $$ = new Common::String("repeat"); }
 	| tSCRIPT		{ $$ = new Common::String("script"); }
 	| tASSERTERROR	{ $$ = new Common::String("scummvmAssertError"); }
@@ -345,17 +332,35 @@ ID: tVARID
 	| tSPRITE		{ $$ = new Common::String("sprite"); }
 	| tSTARTS		{ $$ = new Common::String("starts"); }
 	| tTELL			{ $$ = new Common::String("tell"); }
-	// tTHE
-	// tTHEN
+	| tTHE			{ $$ = new Common::String("the"); }
 	| tTIME			{ $$ = new Common::String("time"); }
 	| tTO			{ $$ = new Common::String("to"); }
-	// | tWHEN			{ $$ = new Common::String("when"); }
 	| tWHILE		{ $$ = new Common::String("while"); }
 	| tWINDOW		{ $$ = new Common::String("window"); }
 	| tWITH			{ $$ = new Common::String("with"); }
 	| tWITHIN		{ $$ = new Common::String("within"); }
 	| tWORD			{ $$ = new Common::String("word"); }
 	| tWORDS		{ $$ = new Common::String("words"); }
+	;
+
+ID: CMDID
+	| tELSE			{ $$ = new Common::String("else"); }
+	| tENDCLAUSE	{ $$ = new Common::String("end"); }
+	| tEXIT			{ $$ = new Common::String("exit"); }
+	| tFACTORY		{ $$ = new Common::String("factory"); }
+	| tGLOBAL		{ $$ = new Common::String("global"); }
+	| tGO			{ $$ = new Common::String("go"); }
+	| tIF			{ $$ = new Common::String("if"); }
+	| tINSTANCE		{ $$ = new Common::String("instance"); }
+	| tMACRO		{ $$ = new Common::String("macro"); }
+	| tMETHOD		{ $$ = new Common::String("method"); }
+	| tON			{ $$ = new Common::String("on"); }
+	| tOPEN			{ $$ = new Common::String("open"); }
+	| tPLAY			{ $$ = new Common::String("play"); }
+	| tPROPERTY		{ $$ = new Common::String("property"); }
+	| tPUT			{ $$ = new Common::String("put"); }
+	| tTHEN			{ $$ = new Common::String("then"); }
+	| tWHEN			{ $$ = new Common::String("when"); }
 	;
 
 idlist: /* empty */					{ $$ = new IDList; }
@@ -389,7 +394,7 @@ stmtoneliner: proc
 	| definevars
 	;
 
-proc: ID cmdargs '\n'					{ $$ = new CmdNode($ID, $cmdargs); }
+proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs); }
 	| tPUT cmdargs '\n'					{ $$ = new CmdNode(new Common::String("put"), $cmdargs); }
 	| tGO cmdargs '\n'					{ $$ = new CmdNode(new Common::String("go"), $cmdargs); }
 	| tGO frameargs '\n'				{ $$ = new CmdNode(new Common::String("go"), $frameargs); }
