@@ -107,8 +107,8 @@ static struct FuncDescr {
 	{ LC::c_negate,			"c_negate",			"" },
 	{ LC::c_neq,			"c_neq",			"" },
 	{ LC::c_not,			"c_not",			"" },
-	{ LC::c_objectpropassign,"c_objectpropassign","ss" }, // object, prop
-	{ LC::c_objectproppush,	"c_objectproppush","ss" }, // object, prop
+	{ LC::c_objectpropassign,"c_objectpropassign","s" }, // prop
+	{ LC::c_objectproppush,	"c_objectproppush","s" }, // prop
 	{ LC::c_of,				"c_of",				"" },
 	{ LC::c_or,				"c_or",				"" },
 	{ LC::c_procret,		"c_procret",		"" },
@@ -562,18 +562,14 @@ void LC::c_themenuitementityassign() {
 }
 
 void LC::c_objectproppush() {
-	Datum objName(g_lingo->readString());
-	objName.type = VARREF;
-	Datum obj = g_lingo->varFetch(objName);
+	Datum obj = g_lingo->pop();
 	Common::String propName = g_lingo->readString();
 
 	g_lingo->push(g_lingo->getObjectProp(obj, propName));
 }
 
 void LC::c_objectpropassign() {
-	Datum objName(g_lingo->readString());
-	objName.type = VARREF;
-	Datum obj = g_lingo->varFetch(objName);
+	Datum obj = g_lingo->pop();
 	Common::String propName = g_lingo->readString();
 
 	Datum d = g_lingo->pop();
