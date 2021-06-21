@@ -214,7 +214,7 @@ void LocationTarget::clone(void *mem) const {
 bool LocationTarget::operator == (const Target &t) const {
 	if (t.getType() != locationTarget) return false;
 
-	LocationTarget      *targetPtr = (LocationTarget *)&t;
+	const LocationTarget *targetPtr = (const LocationTarget *)&t;
 
 	return *this == *targetPtr;
 }
@@ -241,7 +241,7 @@ int16 LocationTarget::where(
 
 TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 	uint16              bestDist = maxuint16;
-	TileInfo            *ti;
+	TileInfo   *ti;
 	TilePoint           tileCoords,
 	                    bestTCoords = Nowhere;
 	TileRegion          tileReg;
@@ -297,7 +297,7 @@ int16 TileTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	TileInfo            *ti;
+	TileInfo   *ti;
 	TilePoint           tileCoords;
 	TileRegion          tileReg;
 	StandingTileInfo    sti;
@@ -408,7 +408,7 @@ void SpecificTileTarget::clone(void *mem) const {
 bool SpecificTileTarget::operator == (const Target &t) const {
 	if (t.getType() != specificTileTarget) return false;
 
-	SpecificTileTarget  *targetPtr = (SpecificTileTarget *)&t;
+	const SpecificTileTarget *targetPtr = (const SpecificTileTarget *)&t;
 
 	return tile == targetPtr->tile;
 }
@@ -477,7 +477,7 @@ void TilePropertyTarget::clone(void *mem) const {
 bool TilePropertyTarget::operator == (const Target &t) const {
 	if (t.getType() != tilePropertyTarget) return false;
 
-	TilePropertyTarget  *targetPtr = (TilePropertyTarget *)&t;
+	const TilePropertyTarget  *targetPtr = (const TilePropertyTarget *)&t;
 
 	return tileProp == targetPtr->tileProp;
 }
@@ -494,7 +494,7 @@ TilePoint MetaTileTarget::where(
     GameWorld *world,
     const TilePoint &tp) const {
 	uint16              bestDist = maxuint16;
-	MetaTile            *mt;
+	MetaTile   *mt;
 	TilePoint           metaCoords,
 	                    bestMCoords = Nowhere;
 	TileRegion          tileReg;
@@ -549,7 +549,7 @@ int16 MetaTileTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	MetaTile            *mt;
+	MetaTile   *mt;
 	TilePoint           metaCoords;
 	TileRegion          tileReg;
 
@@ -660,7 +660,7 @@ void SpecificMetaTileTarget::clone(void *mem) const {
 bool SpecificMetaTileTarget::operator == (const Target &t) const {
 	if (t.getType() != specificMetaTileTarget) return false;
 
-	SpecificMetaTileTarget  *targetPtr = (SpecificMetaTileTarget *)&t;
+	const SpecificMetaTileTarget  *targetPtr = (const SpecificMetaTileTarget *)&t;
 
 	return meta == targetPtr->meta;
 }
@@ -733,7 +733,7 @@ void MetaTilePropertyTarget::clone(void *mem) const {
 bool MetaTilePropertyTarget::operator == (const Target &t) const {
 	if (t.getType() != metaTilePropertyTarget) return false;
 
-	MetaTilePropertyTarget  *targetPtr = (MetaTilePropertyTarget *)&t;
+	const MetaTilePropertyTarget  *targetPtr = (const MetaTilePropertyTarget *)&t;
 
 	return metaProp == targetPtr->metaProp;
 }
@@ -795,7 +795,7 @@ void ObjectTarget::searchObject(
 	//  objects
 	if (objPtr->IDChild() != Nothing) {
 		ContainerIterator   iter(objPtr);
-		GameObject          *childPtr;
+		GameObject *childPtr;
 
 		while (iter.next(&childPtr) != Nothing)
 			searchObject(childPtr, dist, toa);
@@ -815,7 +815,7 @@ void ObjectTarget::searchObject(
 	//  objects
 	if (objPtr->IDChild() != Nothing) {
 		ContainerIterator   iter(objPtr);
-		GameObject          *childPtr;
+		GameObject *childPtr;
 
 		while (iter.next(&childPtr) != Nothing)
 			searchObject(childPtr, tp, dist, tla);
@@ -829,7 +829,7 @@ bool ObjectTarget::isObjectTarget(void) const {
 TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
 	int16                   dist,
 	                        bestDist = maxint16;
-	GameObject              *objPtr;
+	GameObject     *objPtr;
 	TilePoint               objCoords,
 	                        bestOCoords = Nowhere;
 	CircularObjectIterator  iter(world, tp, maxObjDist);
@@ -876,7 +876,7 @@ int16 ObjectTarget::where(
     TargetLocationArray &tla) const {
 	CircularObjectIterator  objIter(world, tp, maxObjDist);
 
-	GameObject              *objPtr;
+	GameObject     *objPtr;
 	ObjectID                id;
 	int16                   dist;
 
@@ -896,8 +896,8 @@ GameObject *ObjectTarget::object(
     const TilePoint &tp) const {
 	CircularObjectIterator  objIter(world, tp, maxObjDist);
 
-	GameObject              *objPtr,
-	                        *bestObj = NULL;
+	GameObject     *objPtr,
+	               *bestObj = NULL;
 	int16                   dist,
 	                        bestDist = maxint16;
 
@@ -942,7 +942,7 @@ int16 ObjectTarget::object(
     TargetObjectArray &toa) const {
 	CircularObjectIterator  objIter(world, tp, maxObjDist);
 
-	GameObject              *objPtr;
+	GameObject     *objPtr;
 	ObjectID                id;
 	int16                   dist;
 
@@ -1018,7 +1018,7 @@ void SpecificObjectTarget::clone(void *mem) const {
 bool SpecificObjectTarget::operator == (const Target &t) const {
 	if (t.getType() != specificObjectTarget) return false;
 
-	SpecificObjectTarget    *targetPtr = (SpecificObjectTarget *)&t;
+	const SpecificObjectTarget    *targetPtr = (const SpecificObjectTarget *)&t;
 
 	return obj == targetPtr->obj;
 }
@@ -1038,7 +1038,7 @@ bool SpecificObjectTarget::isTarget(GameObject *testObj) const {
 TilePoint SpecificObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp) const {
-	GameObject      *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(obj);
 
 	if (o->world() == world) {
 		TilePoint   objLoc = o->getLocation();
@@ -1058,7 +1058,7 @@ int16 SpecificObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	GameObject      *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(obj);
 
 	if (tla.size > 0 && o->world() == world) {
 		TilePoint   objLoc = o->getLocation();
@@ -1083,7 +1083,7 @@ int16 SpecificObjectTarget::where(
 GameObject *SpecificObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp) const {
-	GameObject      *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(obj);
 
 	if (o->world() == world) {
 		if ((tp - o->getLocation()).quickHDistance() < maxObjDist)
@@ -1101,7 +1101,7 @@ int16 SpecificObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp,
     TargetObjectArray &toa) const {
-	GameObject      *o = GameObject::objectAddress(obj);
+	GameObject *o = GameObject::objectAddress(obj);
 
 	if (toa.size > 0 && o->world() == world) {
 		int16       dist = (tp - o->getLocation()).quickHDistance();
@@ -1179,7 +1179,7 @@ void ObjectPropertyTarget::clone(void *mem) const {
 bool ObjectPropertyTarget::operator == (const Target &t) const {
 	if (t.getType() != objectPropertyTarget) return false;
 
-	ObjectPropertyTarget    *targetPtr = (ObjectPropertyTarget *)&t;
+	const ObjectPropertyTarget *targetPtr = (const ObjectPropertyTarget *)&t;
 
 	return objProp == targetPtr->objProp;
 }
@@ -1290,7 +1290,7 @@ void SpecificActorTarget::clone(void *mem) const {
 bool SpecificActorTarget::operator == (const Target &t) const {
 	if (t.getType() != specificActorTarget) return false;
 
-	SpecificActorTarget     *targetPtr = (SpecificActorTarget *)&t;
+	const SpecificActorTarget *targetPtr = (const SpecificActorTarget *)&t;
 
 	return a == targetPtr->a;
 }
@@ -1428,7 +1428,7 @@ int16 SpecificActorTarget::actor(
 //	Constructor -- reconstruct from archive buffer
 
 ActorPropertyTarget::ActorPropertyTarget(void **buf) {
-	ActorPropertyID     *bufferPtr = (ActorPropertyID *)*buf;
+	ActorPropertyID *bufferPtr = (ActorPropertyID *)*buf;
 
 	//  Restore the ActorPropertyID
 	actorProp = *bufferPtr;
@@ -1481,7 +1481,7 @@ void ActorPropertyTarget::clone(void *mem) const {
 bool ActorPropertyTarget::operator == (const Target &t) const {
 	if (t.getType() != actorPropertyTarget) return false;
 
-	ActorPropertyTarget     *targetPtr = (ActorPropertyTarget *)&t;
+	const ActorPropertyTarget *targetPtr = (const ActorPropertyTarget *)&t;
 
 	return actorProp == targetPtr->actorProp;
 }
