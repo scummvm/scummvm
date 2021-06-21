@@ -40,8 +40,6 @@
 namespace Saga2 {
 
 const ChunkID   spellInstCountID = MakeID('S', 'P', 'E', 'L');
-const ChunkID   spellInstID = MakeID('S', 'P', 'I', 'N');
-const ChunkID   spellEffectronID = MakeID('S', 'P', 'E', 'F');
 
 /* ===================================================================== *
    Imports
@@ -243,23 +241,27 @@ void cleanupSpellState(void) {
 // cleanup active spells
 
 StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
-	GameObject *go;
+	GameObject *go = NULL;
 	ActiveItem *ai;
 	type = st.getType();
 	loc = st.getPoint();
-	if (type == SpellTarget::spellTargetObject)
+	if (type == SpellTarget::spellTargetObject) {
 		if (type == SpellTarget::spellTargetObject)
 			go = st.getObject();
 		else
 			go = NULL;
+	}
+
 	if (go)
 		obj = go->thisID();
 	else
 		obj = Nothing;
+
 	if (type == SpellTarget::spellTargetTAG)
 		ai = st.getTAG();
 	else
 		ai = NULL;
+
 	if (ai)
 		tag = ai->thisID();
 	else
@@ -339,14 +341,12 @@ size_t SpellDisplayList::saveSize(void) {
 
 void SpellDisplayList::save(SaveFileConstructor &saveGame) {
 	size_t chunkSize = saveSize();
-	size_t offset = 0;
 
 	saveGame.newChunk(spellInstCountID, chunkSize);
 
 	saveGame.write(&count, sizeof(count));
 	if (count) {
 		for (int i = 0; i < count; i++) {
-			int j = 0;
 			StorageSpellInstance ssi = StorageSpellInstance(*spells[i]);
 			saveGame.write(&ssi, sizeof(ssi));
 			spells[i]->saveEffect(saveGame);
