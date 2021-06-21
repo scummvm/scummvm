@@ -86,6 +86,8 @@ public:
 
 	virtual bool isReady() const { Common::StackLock lock(_mutex); return _mixerReady; }
 
+	virtual Common::Mutex &mutex() { return _mutex; }
+
 	virtual void playStream(
 		SoundType type,
 		SoundHandle *handle,
