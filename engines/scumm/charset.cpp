@@ -1587,12 +1587,18 @@ void CharsetRendererMac::setCurID(int32 id) {
 	// version of the font, but that's apparently not the case. I'm not sure
 	// what's supposed to happen here, but using font 0 seems to match what
 	// the original does.
-	if (_vm->_game.id == GID_INDY3 && id == 1) {
-		warning("CharsetRenderMac::setCurId - Font 1 requested");
-		id = 0;
+	if (_vm->_game.id == GID_INDY3) {
+		if (id == 1) {
+			warning("CharsetRenderMac::setCurId - Font 1 requested");
+			id = 0;
+		} else if (id == 2) {
+			id = 1;
+		}
 	}
 
-	if (id > 0) {
+	int maxId = (_vm->_game.id == GID_LOOM) ? 0 : 1;
+
+	if (id > maxId) {
 		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
@@ -1600,12 +1606,22 @@ void CharsetRendererMac::setCurID(int32 id) {
 	_curId = id;
 }
 
+// HACK: Usually, we want the approximate width and height in the unscaled
+//       graphics resolution. But for font 1 in Indiana Jones and the Last
+//       crusade we want the actual dimensions for drawing the text boxes.
+
 int CharsetRendererMac::getFontHeight() {
-	return _macFonts[_curId].getFontHeight() / 2;
+	int height = _macFonts[_curId].getFontHeight();
+	if (_curId == 0)
+		height /= 2;
+	return height;
 }
 
 int CharsetRendererMac::getCharWidth(uint16 chr) {
-	return _macFonts[_curId].getCharWidth(chr) / 2;
+	int width = _macFonts[_curId].getCharWidth(chr);
+	if (_curId == 0)
+		width /= 2;
+	return width;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {

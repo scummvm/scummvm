@@ -21,6 +21,7 @@
  */
 
 #include "common/system.h"
+#include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/usage_bits.h"
 
@@ -114,6 +115,53 @@ void ScummEngine::mac_drawLoomPracticeMode() {
 			}
 		}
 	}
+
+	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
+}
+
+void ScummEngine::mac_drawIndy3SpeechBox(Actor *a) {
+	int x = 96;
+	int y = 31;
+	int width = 448;
+	int height = 46;
+
+	byte *ptr = (byte *)_macScreen->getBasePtr(x, y);
+	int pitch = _macScreen->pitch;
+
+	_macScreen->fillRect(Common::Rect(x, y, x + width, y + height), 0);
+
+	int nameWidth = 0;
+
+	if (a) {
+		int oldID = _charset->getCurID();
+		_charset->setCurID(2);
+
+		const char *name = (const char *)a->getActorName();
+		int len = strlen(name);
+
+		int charX = x + 25;
+		int charY = y - 1;
+
+		for (int i = 0; i < len; i++) {
+			_charset->drawChar(name[i], *_macScreen, charX, charY);
+			nameWidth += _charset->getCharWidth(name[i]);
+			charX += _charset->getCharWidth(name[i]);
+		}
+		_charset->drawChar(':', *_macScreen, charX, charY);
+		nameWidth += _charset->getCharWidth(':');
+
+		_charset->setCurID(oldID);
+	}
+
+	if (nameWidth) {
+		_macScreen->hLine(x + 2, y + 2, x + 20, 15);
+		_macScreen->hLine(x + 20 + nameWidth + 9, y + 2, x + width - 3, 15);
+	} else
+		_macScreen->hLine(x + 2, y + 2, x + width - 3, 15);
+
+	_macScreen->hLine(x + 2, y + height - 2, x + width - 3, 15);
+	_macScreen->vLine(x + 1, y + 3, y + height - 3, 15);
+	_macScreen->vLine(x + width - 2, y + 3, y + height - 3, 15);
 
 	_system->copyRectToScreen(ptr, pitch, x, y, width, height);
 }
