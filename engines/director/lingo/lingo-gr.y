@@ -176,6 +176,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> expr expr_nounarymath sprite
 %type<node> var varorchunk varorthe
 %type<node> list proppair
+%type<node> chunk object
 %type<nodelist> proplist exprlist nonemptyexprlist
 
 %left tAND tOR
@@ -538,17 +539,39 @@ simpleexpr_noparens_nounarymath:
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
 	| var
+	| chunk
+	| object
 	| list
 	;
 
 var: ID							{ $$ = new VarNode($ID); } ;
 
 varorchunk: var
-	// TODO: chunk ref
+	| chunk
 	;
 
 varorthe: var
 	// TODO: the
+	;
+
+chunk: tFIELD simpleexpr_noparens[arg]	{
+		NodeList *args = new NodeList;
+		args->push_back($arg);
+		$$ = new FuncNode(new Common::String("field"), args); }
+	| tCAST simpleexpr_noparens[arg]	{
+		NodeList *args = new NodeList;
+		args->push_back($arg);
+		$$ = new FuncNode(new Common::String("cast"), args); }
+	;
+
+object: tSCRIPT simpleexpr_noparens[arg]	{
+		NodeList *args = new NodeList;
+		args->push_back($arg);
+		$$ = new FuncNode(new Common::String("script"), args); }
+	| tWINDOW simpleexpr_noparens[arg]		{
+		NodeList *args = new NodeList;
+		args->push_back($arg);
+		$$ = new FuncNode(new Common::String("window"), args); }
 	;
 
 list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
