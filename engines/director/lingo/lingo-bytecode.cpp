@@ -410,7 +410,7 @@ void LC::cb_objectcall() {
 	Datum nargs = g_lingo->pop();
 
 	Datum var = g_lingo->findVarV4(varType, varId);
-	if (var.isVarRef()) {
+	if (!var.isVarRef()) {
 		warning("cb_objectcall: first arg did not resolve to variable");
 		return;
 	}
