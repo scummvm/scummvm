@@ -71,6 +71,7 @@ public:
 
 public:
 	Sprite *_sprite;
+	Sprite *_originalSprite;
 	Cursor _cursor;
 	Graphics::MacWidget *_widget;
 
