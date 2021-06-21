@@ -582,6 +582,22 @@ chunk: tFIELD simpleexpr[arg]	{
 		NodeList *args = new NodeList;
 		args->push_back($arg);
 		$$ = new FuncNode(new Common::String("cast"), args); }
+	| tCHAR simpleexpr[idx] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkChar, $idx, nullptr, $src); }
+	| tCHAR simpleexpr[start] tTO simpleexpr[end] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkChar, $start, $end, $src); }
+	| tWORD simpleexpr[idx] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkWord, $idx, nullptr, $src); }
+	| tWORD simpleexpr[start] tTO simpleexpr[end] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkWord, $start, $end, $src); }
+	| tITEM simpleexpr[idx] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkItem, $idx, nullptr, $src); }
+	| tITEM simpleexpr[start] tTO simpleexpr[end] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkItem, $start, $end, $src); }
+	| tLINE simpleexpr[idx] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkLine, $idx, nullptr, $src); }
+	| tLINE simpleexpr[start] tTO simpleexpr[end] tOF simpleexpr[src]	{
+		$$ = new ChunkExprNode(kChunkLine, $start, $end, $src); }
 	;
 
 object: tSCRIPT simpleexpr[arg]		{
