@@ -365,6 +365,7 @@ ID: CMDID
 
 idlist: /* empty */					{ $$ = new IDList; }
 	| nonemptyidlist
+	| nonemptyidlist ',' // allow trailing comma
 	;
 
 nonemptyidlist: ID[item]					{
@@ -416,25 +417,25 @@ proc: CMDID cmdargs '\n'				{ $$ = new CmdNode($CMDID, $cmdargs); }
 	| tASSERTERROR stmtoneliner			{ $$ = new AssertErrorNode($stmtoneliner); }
 	;
 
-cmdargs: /* empty */					{
+cmdargs: /* empty */									{
 		// This matches `cmd`
 		$$ = new NodeList; }
-	| expr								{
+	| expr trailingcomma								{
 		// This matches `cmd arg` and `cmd(arg)`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		$$ = args; }
-	| expr ',' nonemptyexprlist[args]	{
+	| expr ',' nonemptyexprlist[args] trailingcomma		{
 		// This matches `cmd args, ...)
 		$args->insert_at(0, $expr);
 		$$ = $args; }
-	| expr expr_nounarymath				{
+	| expr expr_nounarymath trailingcomma				{
 		// This matches `cmd arg arg`
 		NodeList *args = new NodeList;
 		args->push_back($expr);
 		args->push_back($expr_nounarymath);
 		$$ = args; }
-	| expr expr_nounarymath ',' nonemptyexprlist[args] {
+	| expr expr_nounarymath ',' nonemptyexprlist[args] trailingcomma	{
 		// This matches `cmd arg arg, ...`
 		$args->insert_at(0, $expr_nounarymath);
 		$args->insert_at(0, $expr);
@@ -447,6 +448,8 @@ cmdargs: /* empty */					{
 		$args->insert_at(0, $expr);
 		$$ = $args; }
 	;
+
+trailingcomma: /* empty */ | ',' ;
 
 frameargs:
 	// On the off chance that we encounter something like `play frame done`
