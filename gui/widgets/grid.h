@@ -25,6 +25,7 @@
 
 #include "gui/dialog.h"
 #include "gui/widget.h"
+#include "gui/widgets/scrollbar.h"
 #include "common/str.h"
 #include "common/array.h"
 #include "image/bmp.h"
@@ -111,6 +112,7 @@ private:
 	int _itemsPerRow;
 	int _firstVisibleItem;
 	int _itemsOnScreen;
+	int _rows;
 	
 	bool _titlesVisible;
 
@@ -134,8 +136,9 @@ public:
 	int getLoadedNumber(void) {return _loadedSurfaces.size();}
 	void reloadThumbnails();
 	void handleMouseWheel(int x, int y, int direction) override;
+	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 	void reflowLayout() override;
-
+	void scrollBarRecalc();
 
 	GridItemInfo *selectedEntry;
 };

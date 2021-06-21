@@ -36,12 +36,7 @@ ContainerWidget(boss, x, y, w, h) {
 	isHighlighted = false;
 }
 GridItemWidget::GridItemWidget(GridWidget *boss) :
-			ContainerWidget(boss, 0, 0, 0, 0) {
-	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
-	_activeEntry = nullptr;
-	_grid = boss;
-	isHighlighted = false;
-}
+			GridItemWidget(boss, 0, 0, 0, 0) {}
 
 void GridItemWidget::attachEntry(Common::String key, Common::String description, Common::ConfigManager::Domain *domain) {
 	Common::String gameid = domain->getVal("gameid");
@@ -208,6 +203,13 @@ Graphics::ManagedSurface *loadSurfaceFromFile(Common::String &name) {
 
 #pragma mark -
 
+void GridWidget::scrollBarRecalc() {
+	_scrollBar->_numEntries = _rows + 2;
+	_scrollBar->_entriesPerPage = _itemsOnScreen / _itemsPerRow;
+	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
+	_scrollBar->recalc();
+}
+
 GridWidget::GridWidget(GuiObject *boss, int x, int y, int w, int h) : 
 		ContainerWidget(boss, x, y, w, h) {
 	loadPlatformIcons();
@@ -226,6 +228,9 @@ GridWidget::GridWidget(GuiObject *boss, const Common::String &name) :
 	_gridItemHeight = _thumbnailHeight + (2*kLineHeight);
 	_gridItemWidth = _thumbnailWidth;
 	
+	_scrollBar = new ScrollBarWidget(this, 0, 0, 20, 200);
+	_scrollBar->setTarget(this);
+
 	_scrollPos = 0 * (_gridItemHeight + _gridYSpacing);
 	_firstVisibleItem = 0;
 }
@@ -425,7 +430,23 @@ void GridWidget::handleMouseWheel(int x, int y, int direction) {
 		}
 	}
 
+	_scrollBar->_currentPos = _firstVisibleItem / _itemsPerRow;
+	_scrollBar->recalc();
 	markAsDirty();
+}
+
+void GridWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kSetPositionCmd:
+		if ((_firstVisibleItem / _itemsPerRow) != (int)data) {
+			markAsDirty();
+
+			((GUI::Dialog *)_boss)->setFocusWidget(this);
+		}
+		break;
+	default:
+		break;
+	}
 }
 
 void GridWidget::reflowLayout() {
@@ -435,11 +456,11 @@ void GridWidget::reflowLayout() {
 	_scrollWindowWidth = _w;
 	_itemsPerRow = MAX(((_scrollWindowWidth - 100) / (_gridItemWidth + _minGridXSpacing)), 1);
 	
-	_gridXSpacing = MAX((_scrollWindowWidth - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, (int)_minGridXSpacing);
+	_gridXSpacing = MAX(((_scrollWindowWidth - 50) - (_itemsPerRow * _gridItemWidth)) / _itemsPerRow, (int)_minGridXSpacing);
 	
-	int rows = ceil(_allEntries.size() / (float)_itemsPerRow);
+	_rows = ceil(_allEntries.size() / (float)_itemsPerRow);
 	
-	_innerHeight = 100 + (rows * (_gridItemHeight + _gridYSpacing));
+	_innerHeight = 100 + (_rows * (_gridItemHeight + _gridYSpacing));
 	_innerWidth = 100 + (_itemsPerRow * (_gridItemWidth + _gridXSpacing));
 
 	if (_scrollPos < -(_innerHeight - _scrollWindowHeight))
@@ -451,10 +472,12 @@ void GridWidget::reflowLayout() {
 	_firstVisibleItem = _itemsPerRow * ((int)ceil(-_scrollPos / (float)(_gridItemHeight + _gridYSpacing)) - 1);
 	_firstVisibleItem = (_firstVisibleItem < 0) ? 0 : _firstVisibleItem;
 
+	_scrollBar->setSize(20, _h);
+	_scrollBar->setPos(_w - _scrollBar->getWidth(), 0);
+
 	if (calcVisibleEntries()) {
 		reloadThumbnails();
 	}
-
 
 	for (int k = 0; k < _itemsOnScreen; ++k) {
 		GridItemWidget *newItem = new GridItemWidget(this, 
@@ -489,6 +512,8 @@ void GridWidget::reflowLayout() {
 		if (++it == _gridItems.end())
 			it = _gridItems.begin();
 	}
+
+	scrollBarRecalc();
 
 	markAsDirty();
 }
