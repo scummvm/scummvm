@@ -2927,7 +2927,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("mmm24", "mmmgui.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 6112992),
 	GAME_ENTRY("mmm26", "TryDott.exe", "28f82e420b82d07651b68114f90223c8", 4683840),
 	GAME_ENTRY("mmm27", "Hamster.exe", "465f972675db2da6040518221af5b0ba", 7497001),
-	GAME_ENTRY("mmm28", "Time Machine 2b.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7273087),
+	GAME_ENTRY("mmm28", "Time Machine 2.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 7314610),
 	GAME_ENTRY("mmm29", "mmmgui.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8033934),
 	GAME_ENTRY("mmm30", "memorie.exe", "0710e2ec71042617f565c01824f0cf3c", 4300662),
 	GAME_ENTRY("mmm31", "MMM31.exe", "0710e2ec71042617f565c01824f0cf3c", 6777832),
