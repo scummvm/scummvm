@@ -295,7 +295,7 @@ void LingoCompiler::codeVarRef(const Common::String &name) {
 	if (_methodVars->contains(name)) {
 		type = (*_methodVars)[name];
 	} else {
-		warning("LingoCompiler::codeVarRef: var %s referenced before definition", name.c_str());
+		warning("BUILDBOT: LingoCompiler::codeVarRef: var %s referenced before definition", name.c_str());
 		type = kVarGeneric;
 	}
 	switch (type) {
@@ -322,7 +322,7 @@ void LingoCompiler::codeVarGet(const Common::String &name) {
 	if (_methodVars->contains(name)) {
 		type = (*_methodVars)[name];
 	} else {
-		warning("LingoCompiler::codeVarGet: var %s referenced before definition", name.c_str());
+		warning("BUILDBOT: LingoCompiler::codeVarGet: var %s referenced before definition", name.c_str());
 		type = kVarGeneric;
 	}
 	switch (type) {
@@ -366,7 +366,7 @@ void LingoCompiler::registerFactory(Common::String &name) {
 	if (!g_lingo->_globalvars.contains(name)) {
 		g_lingo->_globalvars[name] = _assemblyContext;
 	} else {
-		warning("Factory '%s' already defined", name.c_str());
+		warning("BUILDBOT: Factory '%s' already defined", name.c_str());
 	}
 }
 
@@ -573,7 +573,7 @@ bool LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
 bool LingoCompiler::codeTheFieldSet(int entity, Node *id, const Common::String &field) {
 	Common::String fieldId = Common::String::format("%d%s", entity, field.c_str());
 	if (!g_lingo->_theEntityFields.contains(fieldId)) {
-		warning("LingoCompiler::codeTheFieldSet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
+		warning("BUILDBOT: LingoCompiler::codeTheFieldSet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
 		return false;
 	}
 	COMPILE(id);
@@ -595,7 +595,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 			codeInt(0);	// No field
 			return true;
 		}
-		warning("LingoCompiler:visitSetNode: Unhandled the entity '%s'", the->prop->c_str());
+		warning("BUILDBOT: LingoCompiler:visitSetNode: Unhandled the entity '%s'", the->prop->c_str());
 		return false;
 	}
 
@@ -628,7 +628,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				MenuItemNode *menuItem = static_cast<MenuItemNode *>(the->obj);
 				Common::String fieldId = Common::String::format("%d%s", kTheMenuItem, the->prop->c_str());
 				if (!g_lingo->_theEntityFields.contains(fieldId)) {
-					warning("LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", the->prop->c_str());
+					warning("BUILDBOT: LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", the->prop->c_str());
 					return false;
 				}
 				COMPILE(menuItem->arg1)
@@ -675,7 +675,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 			return true;
 		}
 
-		warning("LingoCompiler::visitSetNode: Unhandled the field %s", the->prop->c_str());
+		warning("BUILDBOT: LingoCompiler::visitSetNode: Unhandled the field %s", the->prop->c_str());
 		return false;
 	}
 
@@ -895,7 +895,7 @@ bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
 
 bool LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
 	if (!_currentLoop) {
-		warning("LingoCompiler::visitNextRepeatNode: next repeat not inside repeat loop");
+		warning("BUILDBOT: LingoCompiler::visitNextRepeatNode: next repeat not inside repeat loop");
 		return false;
 	}
 	_currentLoop->nextRepeats.push_back(_currentAssembly->size());
@@ -907,7 +907,7 @@ bool LingoCompiler::visitNextRepeatNode(NextRepeatNode *node) {
 
 bool LingoCompiler::visitExitRepeatNode(ExitRepeatNode *node) {
 	if (!_currentLoop) {
-		warning("LingoCompiler::visitExitRepeatLoop: exit repeat not inside repeat loop");
+		warning("BUILDBOT: LingoCompiler::visitExitRepeatLoop: exit repeat not inside repeat loop");
 		return false;
 	}
 	_currentLoop->exitRepeats.push_back(_currentAssembly->size());
@@ -1108,7 +1108,7 @@ bool LingoCompiler::visitTheNode(TheNode *node) {
 		return true;
 	}
 
-	warning("LingoCompiler:visitTheNode: Unhandled the entity '%s'", node->prop->c_str());
+	warning("BUILDBOT: LingoCompiler:visitTheNode: Unhandled the entity '%s'", node->prop->c_str());
 	return false;
 }
 
@@ -1117,7 +1117,7 @@ bool LingoCompiler::visitTheNode(TheNode *node) {
 bool LingoCompiler::codeTheFieldGet(int entity, Node *id, const Common::String &field) {
 	Common::String fieldId = Common::String::format("%d%s", entity, field.c_str());
 	if (!g_lingo->_theEntityFields.contains(fieldId)) {
-		warning("LingoCompiler::codeTheFieldGet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
+		warning("BUILDBOT: LingoCompiler::codeTheFieldGet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
 		return false;
 	}
 	COMPILE(id);
@@ -1154,7 +1154,7 @@ bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
 			MenuItemNode *menuItem = static_cast<MenuItemNode *>(node->obj);
 			Common::String fieldId = Common::String::format("%d%s", kTheMenuItem, node->prop->c_str());
 			if (!g_lingo->_theEntityFields.contains(fieldId)) {
-				warning("LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", node->prop->c_str());
+				warning("BUILDBOT: LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", node->prop->c_str());
 				return false;
 			}
 			COMPILE(menuItem->arg1)
@@ -1207,7 +1207,7 @@ bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
 		return true;
 	}
 
-	warning("LingoCompiler::visitTheOfNode: Unhandled the field %s", node->prop->c_str());
+	warning("BUILDBOT: LingoCompiler::visitTheOfNode: Unhandled the field %s", node->prop->c_str());
 	return false;
 }
 
@@ -1234,7 +1234,7 @@ bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
 	case kNumberOfMenuItems:
 		{
 			if (node->arg->type != kMenuNode) {
-				warning("LingoCompiler::visitTheNumberOfNode: expected menu");
+				warning("BUILDBOT: LingoCompiler::visitTheNumberOfNode: expected menu");
 				return false;
 			}
 			MenuNode *menu = static_cast<MenuNode *>(node->arg);
