@@ -908,13 +908,16 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 
 	// Special case for Vargas, who has a shield.
 	if (GAME_IS_REMORSE && shape == 0x3ac && world->getVargasShield() > 0) {
+		uint16 currentanim = 0;
 		if (isBusy()) {
 			ActorAnimProcess *proc = dynamic_cast<ActorAnimProcess *>(Kernel::get_instance()->findProcess(_objId, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE));
-			if (proc->getAction() == Animation::teleportIn || proc->getAction() == Animation::teleportOut || proc->getAction() == Animation::teleportInReplacement || proc->getAction() == Animation::teleportOutReplacement)
+			Animation::Sequence action = proc->getAction();
+			if (action == Animation::teleportIn || action == Animation::teleportOut || action == Animation::teleportInReplacement || action == Animation::teleportOutReplacement)
 				return;
+			currentanim = proc->getPid();
 		}
 
-		ProcId teleout = doAnim(Animation::teleportOutReplacement, dir_current);
+		ProcId teleout = doAnimAfter(Animation::teleportOutReplacement, dir_current, currentanim);
 		doAnimAfter(Animation::teleportInReplacement, dir_current, teleout);
 		int newval = MAX(0, static_cast<int>(world->getVargasShield()) - damage);
 		world->setVargasShield(static_cast<uint32>(newval));
