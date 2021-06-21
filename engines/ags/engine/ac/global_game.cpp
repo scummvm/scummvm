@@ -111,8 +111,7 @@ void RestoreGameSlot(int slnum) {
 void DeleteSaveSlot(int slnum) {
 	String nametouse;
 	nametouse = get_save_game_path(slnum);
-
-	g_system->getSavefileManager()->removeSavefile(nametouse);
+	Shared::File::DeleteFile(nametouse);
 }
 
 void PauseGame() {
