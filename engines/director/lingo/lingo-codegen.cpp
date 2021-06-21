@@ -251,9 +251,9 @@ int LingoCompiler::codeInt(int val) {
 	return _currentAssembly->size();
 }
 
-int LingoCompiler::codeCmd(Common::String *s, int numpar) {
+int LingoCompiler::codeCmd(const Common::String &s, int numpar) {
 	// Insert current line number to our asserts
-	if (s->equalsIgnoreCase("scummvmAssert") || s->equalsIgnoreCase("scummvmAssertEqual")) {
+	if (s.equalsIgnoreCase("scummvmAssert") || s.equalsIgnoreCase("scummvmAssertEqual")) {
 		code1(LC::c_intpush);
 		codeInt(_linenumber);
 
@@ -262,7 +262,7 @@ int LingoCompiler::codeCmd(Common::String *s, int numpar) {
 
 	int ret = code1(LC::c_callcmd);
 
-	codeString(s->c_str());
+	codeString(s.c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
@@ -271,10 +271,10 @@ int LingoCompiler::codeCmd(Common::String *s, int numpar) {
 	return ret;
 }
 
-int LingoCompiler::codeFunc(Common::String *s, int numpar) {
+int LingoCompiler::codeFunc(const Common::String &s, int numpar) {
 	int ret = code1(LC::c_callfunc);
 
-	codeString(s->c_str());
+	codeString(s.c_str());
 
 	inst num = 0;
 	WRITE_UINT32(&num, numpar);
@@ -481,7 +481,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 				var->name->equalsIgnoreCase("previous")) {
 			code1(LC::c_symbolpush);
 			codeString(var->name->c_str());
-			codeCmd(node->name, 1);
+			codeCmd(*node->name, 1);
 			return true;
 		}
 	}
@@ -490,7 +490,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 	if (node->name->equalsIgnoreCase("play") && node->args->size() == 1 && (*node->args)[0]->type == kVarNode) {
 		VarNode *var = static_cast<VarNode *>((*node->args)[0]);
 		if (var->name->equalsIgnoreCase("done")) {
-			codeCmd(node->name, 0);
+			codeCmd(*node->name, 0);
 			return true;
 		}
 	}
@@ -505,7 +505,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 				COMPILE(arg);
 			}
 		}
-		codeCmd(node->name, node->args->size());
+		codeCmd(*node->name, node->args->size());
 		return true;
 	}
 
@@ -521,13 +521,13 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 			for (uint i = 1; i < node->args->size(); i++) {
 				COMPILE((*node->args)[i]);
 			}
-			codeCmd(node->name, node->args->size());
+			codeCmd(*node->name, node->args->size());
 			return true;
 		}
 	}
 
 	COMPILE_LIST(node->args);
-	codeCmd(node->name, node->args->size());
+	codeCmd(*node->name, node->args->size());
 	return true;
 }
 
@@ -848,7 +848,7 @@ bool LingoCompiler::visitPropPairNode(PropPairNode *node) {
 
 bool LingoCompiler::visitFuncNode(FuncNode *node) {
 	COMPILE_LIST(node->args);
-	codeFunc(node->name, node->args->size());
+	codeFunc(*node->name, node->args->size());
 	return true;
 }
 

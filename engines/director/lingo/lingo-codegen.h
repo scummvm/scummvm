@@ -42,9 +42,9 @@ public:
 	int code2(inst code_1, inst code_2) { int o = code1(code_1); code1(code_2); return o; }
 	int code3(inst code_1, inst code_2, inst code_3) { int o = code1(code_1); code1(code_2); code1(code_3); return o; }
 	int code4(inst code_1, inst code_2, inst code_3, inst code_4) { int o = code1(code_1); code1(code_2); code1(code_3); code1(code_4); return o; }
-	int codeCmd(Common::String *s, int numpar);
+	int codeCmd(const Common::String &s, int numpar);
 	int codeFloat(double f);
-	int codeFunc(Common::String *s, int numpar);
+	int codeFunc(const Common::String &s, int numpar);
 	int codeInt(int val);
 	int codeString(const char *s);
 	void codeVarSet(const Common::String &name);
