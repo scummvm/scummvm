@@ -61,10 +61,7 @@ extern configuration    globalConfig;
 
 const int           maxWidth = 420;
 const int           defaultWidth = 380;
-const int           maxPhraseLength = 1000;
 const int           actorHeight = 80;       // Assume 80
-
-const int           buttonColor = 1 + 9;    // color for button text.
 
 const int           lineLeading = 2;        // space between lines
 const int           outlineWidth = 2;       // width of character outline
@@ -452,27 +449,27 @@ bool Speech::setupActive(void) {
 //This Function Sets Up Width And Height For A Speech
 
 void Speech::setWidth() {
-	TextSpan        speechLineList[32],   // list of speech lines
-	                speechButtonList[32]; // list of speech buttons
-	int16           speechLineCount,        // count of speech lines
-	                speechButtonCount;      // count of speech buttons
+	TextSpan        speechLineList_[32],   // list of speech lines
+	                speechButtonList_[32]; // list of speech buttons
+	int16           speechLineCount_,        // count of speech lines
+	                speechButtonCount_;      // count of speech buttons
 
 	//  How many word-wrapped lines does the speech take up if we word-wrap
 	//  it to the default line width?
 
-	speechLineCount = buttonWrap(speechLineList,
-	                             speechButtonList,
-	                             speechButtonCount,
+	speechLineCount_ = buttonWrap(speechLineList_,
+	                             speechButtonList_,
+	                             speechButtonCount_,
 	                             speechBuffer,
 	                             defaultWidth,
 	                             !globalConfig.speechText && (speechFlags & spHasVoice));
 
 	//  If it's more than 3 lines, then use the max line width.
 
-	if (speechLineCount > 3) {
-		speechLineCount = buttonWrap(speechLineList,
-		                             speechButtonList,
-		                             speechButtonCount,
+	if (speechLineCount_ > 3) {
+		speechLineCount_ = buttonWrap(speechLineList_,
+		                             speechButtonList_,
+		                             speechButtonCount_,
 		                             speechBuffer,
 		                             maxWidth,
 		                             !globalConfig.speechText && (speechFlags & spHasVoice));
@@ -482,8 +479,8 @@ void Speech::setWidth() {
 	//  The actual width of the bounds is the widest of the lines.
 
 	bounds.width = 0;
-	for (int i = 0; i < speechLineCount; i++) {
-		bounds.width = MAX(bounds.width, speechLineList[i].pixelWidth);
+	for (int i = 0; i < speechLineCount_; i++) {
+		bounds.width = MAX(bounds.width, speechLineList_[i].pixelWidth);
 	}
 	bounds.width += outlineWidth * 2 + 4;       //  Some padding just in case.
 }
@@ -1259,6 +1256,9 @@ APPFUNC(cmdClickSpeech) {
 				sp->dispose();
 #endif
 		}
+		break;
+
+	default:
 		break;
 	}
 }
