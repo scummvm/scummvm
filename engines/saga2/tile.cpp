@@ -1947,7 +1947,7 @@ TileInfo *Platform::fetchTile(
     int16           mapNum,
     const TilePoint &pt,
     const TilePoint &origin,
-    int16           &height,
+    int16           &height_,
     int16           &trFlags) {
 	TileRef         *tr = &tiles[pt.u][pt.v];
 	TileInfo        *ti;
@@ -2005,7 +2005,7 @@ TileInfo *Platform::fetchTile(
 	if ((ti = TileInfo::tileAddress(tr->tile)) == nullptr) return nullptr;
 
 	trFlags = tr->flags;
-	height = h;
+	height_ = h;
 
 #if DEBUG
 	if (ti->offset > maxOffset
@@ -2104,7 +2104,7 @@ TileInfo *Platform::fetchTile(
     const TilePoint &pt,
     const TilePoint &origin,
     uint8           **imageData,
-    int16           &height,
+    int16           &height_,
     int16           &trFlags) {
 	TileRef         *tr = &tiles[pt.u][pt.v];
 	TileInfo        *ti;
@@ -2162,7 +2162,7 @@ TileInfo *Platform::fetchTile(
 	if ((ti = TileInfo::tileAddress(tr->tile, imageData)) == nullptr) return nullptr;
 
 	trFlags = tr->flags;
-	height = h;
+	height_ = h;
 
 #if DEBUG
 	if (ti->offset > maxOffset
@@ -2322,7 +2322,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 	assert(layer >= 0);
 	assert(_parent == mapList[mapNum].metaList);
 
-	if (plIndex == nullID) {
+	if (plIndex == (uint16)nullID) {
 		return nullptr;
 	} else if (plIndex & cacheFlag) {
 		plIndex &= ~cacheFlag;
