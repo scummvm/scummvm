@@ -984,9 +984,6 @@ int16 scriptGameObjectSetMass(int16 *args) {
 	OBJLOG(SetMass);
 	GameObject      *obj = (GameObject *)thisThread->thisObject;
 
-//	assert( args[0] > 0 );
-	assert(args[0] < maxuint16);
-
 	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
 		obj->setExtra(args[0]);
 		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
@@ -1041,7 +1038,7 @@ int16 deepCopy(GameObject *src, ObjectID parentID, TilePoint tp) {
 
 	//  Now, recursively copy all the children of this object.
 	ContainerIterator   iter(src);
-	while (childID = iter.next(&childObj))
+	while ((childID = iter.next(&childObj)))
 		deepCopy(childObj, newID, childObj->getLocation());
 
 	//  Return the ID of the object just copied.
@@ -2513,15 +2510,10 @@ int16 scriptTagSetAnimation(int16 *args) {
 	MONOLOG(TAG::SetAnimation);
 	extern uint32 parse_res_id(char IDstr[]);
 	ActiveItem  *ai = (ActiveItem *)thisThread->thisObject;
-	Actor       *a = getCenterActor();
 	//TilePoint tagLoc;
 	int32       soundID = parse_res_id(STRING(args[2]));
 	Location    ail = ai->getInstanceLocation();
-#if 0
-	tagLoc.u = ai->instance.u - a->getLocation().u;
-	tagLoc.v = ai->instance.v - a->getLocation().v;
-	tagLoc.z = ai->instance.h * 8 - a->getLocation().z;
-#endif
+
 	//  Assert that the state is valid
 	assert(args[1] >= 0);
 	assert(args[1] < ai->getGroup()->_data.group.numStates);
@@ -2787,11 +2779,11 @@ void writeObject(char *str) {
 
 int16 scriptWriteLog(int16 *args) {
 	MONOLOG(WriteLog);
-	char        buffer[256];
-#if DEBUG
+	char buffer[256];
+
 	stringf(buffer, sizeof buffer, args[0], &args[1]);
-	writeLog(buffer);
-#endif
+	debugC(2, kDebugScripts, "%s", buffer);
+
 	return 0;
 }
 
@@ -3106,8 +3098,6 @@ int16 scriptPlayMusic(int16 *args) {
 
 int16 scriptPlayLoop(int16 *args) {
 	MONOLOG(PlayLoop);
-	char        *sID = STRING(args[0]);
-	//PlayLoop(sID);
 	return 0;
 }
 
@@ -3408,7 +3398,6 @@ int16 scriptCastSpellAtTile(int16 *args) {
 int16 scriptSelectNearbySite(int16 *args) {
 	MONOLOG(SelectNearbySite);
 	TilePoint       tp;
-	Actor           *center = getCenterActor();
 
 	tp = selectNearbySite(args[3],
 	                      TilePoint(args[0], args[1], args[2]),
@@ -3612,8 +3601,6 @@ int16 scriptSwapRegions(int16 *args) {
 	                worldID2 = args[3];
 	GameWorld       *worldPtr1,
 	                *worldPtr2;
-	ObjectID        searchObj;
-	int             objNum;
 	ObjectID        *objArray1,
 	                *objArray2;
 	int             objCount1,
