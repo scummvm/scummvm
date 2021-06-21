@@ -153,7 +153,6 @@ void EventRecorder::processMillis(uint32 &millis, bool skipRecord) {
 		}
 		updateSubsystems();
 		_fakeTimer = _nextEvent.time;
-		debug("millis");
 		_nextEvent = _playbackFile->getNextEvent();
 		_timerManager->handler();
 		millis = _fakeTimer;
@@ -185,7 +184,9 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 		return false;
 	}
 
-	switch (_nextEvent.type) {
+	ev = _nextEvent;
+	_nextEvent = _playbackFile->getNextEvent();
+	switch (ev.type) {
 	case Common::EVENT_MOUSEMOVE:
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_LBUTTONUP:
@@ -193,13 +194,11 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 	case Common::EVENT_RBUTTONUP:
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
-		g_system->warpMouse(_nextEvent.mouse.x, _nextEvent.mouse.y);
+		g_system->warpMouse(ev.mouse.x, ev.mouse.y);
 		break;
 	default:
 		break;
 	}
-	ev = _nextEvent;
-	_nextEvent = _playbackFile->getNextEvent();
 	return true;
 }
 
