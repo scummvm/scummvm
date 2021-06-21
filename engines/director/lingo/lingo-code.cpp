@@ -1422,7 +1422,7 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		Datum firstArg = g_lingo->_stack[g_lingo->_stack.size() - nargs];
 
 		// Factory/XObject method call
-		if (firstArg.type == VARREF) { // first arg could be method name
+		if (firstArg.isVarRef()) { // first arg could be method name
 			Datum objName(name);
 			objName.type = VARREF;
 			Datum obj = g_lingo->varFetch(objName, nullptr, true);
