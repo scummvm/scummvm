@@ -128,6 +128,8 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 
 	if (isDemo() && test->open("SUPPORT/ASSETS/DEMOGAME.WIN"))
 		file = test;
+	else if (isDemo() && test->open("SUPPORT/DEMOGAME.MAC"))
+		file = test;
 	else if (test->open("SUPPORT/ASSETS/GAME.WIN")) {
 		file = test;
 	} else if (test->open("SUPPORT/GAME.MAC")) {
