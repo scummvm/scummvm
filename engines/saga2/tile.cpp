@@ -2334,10 +2334,7 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 
 		assert(pce->platformNum >= 0);
 		assert(pce->metaID != NoMetaTile);
-		if (pce->metaID != thisID(mapNum))
-			warning("fetchPlatform: pce->metaID (%d, %d) != thisID(mapNum) (%d, %d)",
-		            pce->metaID.index, pce->metaID.map,
-		            thisID(mapNum).index, thisID(mapNum).map);
+		assert(pce->metaID == thisID(mapNum));
 
 			//	Move to the end of the LRU
 		platformLRU.remove(plIndex);
@@ -2361,6 +2358,15 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		//  Compute the layer of this entry in the cache
 		assert(cacheIndex < platformCacheSize);
 		assert(cacheIndex >= 0);
+
+		if (pce->metaID != NoMetaTile)
+		{
+			MetaTile *oldMeta = metaTileAddress(pce->metaID);
+
+			assert(pce->layerNum < maxPlatforms);
+			assert(oldMeta->_stack[pce->layerNum] == (cacheFlag | cacheIndex));
+			oldMeta->_stack[pce->layerNum] = pce->platformNum;
+		}
 
 		//  Initialize the cache entry to the new platform data.
 		pce->platformNum = plIndex;
