@@ -58,6 +58,7 @@ namespace Image {
  *  - Mohawk
  *  - Petka
  *  - Wintermute
+ *  - Ultima8
  * @{
  */
 
