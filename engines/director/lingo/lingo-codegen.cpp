@@ -353,9 +353,11 @@ void LingoCompiler::registerMethodVar(const Common::String &name, VarType type) 
 		}
 		(*_methodVars)[name] = type;
 		if (type == kVarProperty || type == kVarInstance) {
-			_assemblyContext->_properties[name] = Datum();
+			if (!_assemblyContext->_properties.contains(name))
+				_assemblyContext->_properties[name] = Datum();
 		} else if (type == kVarGlobal) {
-			g_lingo->_globalvars[name] = Datum();
+			if (!g_lingo->_globalvars.contains(name))
+				g_lingo->_globalvars[name] = Datum();
 		}
 	}
 }
@@ -425,14 +427,15 @@ bool LingoCompiler::visitHandlerNode(HandlerNode *node) {
 	VarTypeHash *mainMethodVars = _methodVars;
 	_methodVars = new VarTypeHash;
 
-	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
-		if (i->_value == kVarGlobal || i->_value == kVarProperty)
-			(*_methodVars)[i->_key] = i->_value;
+	for (uint i = 0; i < node->args->size(); i++) {
+		registerMethodVar(*(*node->args)[i], kVarArgument);
 	}
-	if (_inFactory) {
-		for (DatumHash::iterator i = _assemblyContext->_properties.begin(); i != _assemblyContext->_properties.end(); ++i) {
-			(*_methodVars)[i->_key] = kVarInstance;
-		}
+	for (VarTypeHash::iterator i = mainMethodVars->begin(); i != mainMethodVars->end(); ++i) {
+		if (i->_value == kVarGlobal)
+			registerMethodVar(i->_key, kVarGlobal);
+	}
+	for (DatumHash::iterator i = _assemblyContext->_properties.begin(); i != _assemblyContext->_properties.end(); ++i) {
+		registerMethodVar(i->_key, _inFactory ? kVarInstance : kVarProperty);
 	}
 
 	COMPILE_LIST(node->stmts);
