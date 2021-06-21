@@ -113,20 +113,21 @@ void PlayerActor::recalcPortraitType(void) {
 	ActorAttributes &stats = getBaseStats();
 
 	if (a->isDead())
-		pType = dead;
+		pType = kPortraitDead;
 	else if (a->enchantmentFlags & (1 << actorAsleep))
-		pType = asleep;
+		pType = kPortraitAsleep;
 	else if (stats.vitality >= a->effectiveStats.vitality * 3)
-		pType = wounded;
+		pType = kPortraitWounded;
 	else if (a->enchantmentFlags & ((1 << actorDiseased) | (1 << actorPoisoned)))
-		pType = sick;
+		pType = kPortraitSick;
 	else if (stats.vitality * 2 > a->effectiveStats.vitality * 3)
-		pType = ouch;
+		pType = kPortraitOuch;
 	else if (a->enchantmentFlags & ((1 << actorParalyzed) | (1 << actorFear) | (1 << actorBlind)))
-		pType = confused;
+		pType = kPortraitConfused;
 	else if (isAggressive())
-		pType = angry;
-	else pType = normal;
+		pType = kPortraitAngry;
+	else
+		pType = kPortraitNormal;
 
 	if (pType != portraitType)
 		updateBrotherPortrait(getPlayerActorID(this), portraitType = pType);
@@ -913,7 +914,7 @@ void initPlayerActors(void) {
 		ActorProto      *proto = (ActorProto *)a->proto();
 
 		//  Set the portrait type
-		p->portraitType = normal;
+		p->portraitType = kPortraitNormal;
 
 		//  Clear all flags
 		p->flags = 0;

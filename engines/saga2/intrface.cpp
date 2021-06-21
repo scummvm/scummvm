@@ -515,7 +515,7 @@ CPortrait::CPortrait(gMultCompButton **portraits,
 
 	// start off in a normal facial state
 	for (uint16 i = 0; i < _numViews + 1; i++) {
-		currentState[i] = normal;
+		currentState[i] = kPortraitNormal;
 	}
 }
 
@@ -544,7 +544,7 @@ void CPortrait::ORset(uint16 brotherID, PortraitType type) { // brotherID = post
 	assert(brotherID < _numViews + 1);
 
 	if (type == currentState[brotherID]) {
-		currentState[brotherID] = normal;
+		currentState[brotherID] = kPortraitNormal;
 	} else {
 		currentState[brotherID] = type;
 	}

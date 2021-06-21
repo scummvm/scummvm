@@ -254,14 +254,14 @@ public:
  * ===================================================================== */
 
 enum PortraitType {
-	normal,
-	angry,
-	confused,
-	ouch,
-	sick,
-	wounded,
-	asleep,
-	dead
+	kPortraitNormal,
+	kPortraitAngry,
+	kPortraitConfused,
+	kPortraitOuch,
+	kPortraitSick,
+	kPortraitWounded,
+	kPortraitAsleep,
+	kPortraitDead
 };
 
 class CPortrait {
