@@ -169,12 +169,12 @@ void gPanel::invalidate(Rect16 *) {
 void gPanel::drawTitle(enum text_positions placement) {
 	gPort           &port = window.windowPort;
 	Rect16          r = extent;
-	gPixelMap       *img;
+	const gPixelMap       *img;
 
 	if (title == NULL) return;
 
 	if (imageLabel) {
-		img = (gPixelMap *)title;
+		img = (const gPixelMap *)title;
 		r.width = img->size.x;
 		r.height = img->size.y;
 	} else {
@@ -280,7 +280,7 @@ void gPanelList::invalidate(Rect16 *) {
 	assert(displayEnabled());
 
 	if (displayEnabled())
-		if (ctl = (gControl *)contents.last()) {
+		if ((ctl = (gControl *)contents.last())) {
 			invArea = ctl->getExtent();
 
 			for (ctl = (gControl *)ctl->prev();
@@ -440,7 +440,8 @@ void gWindow::close(void) {
 
 	//  Don't close a window that is being dragged (should never happen,
 	//  but just in case).
-	if (DragBar::dragWindow == (FloatingWindow *)this) return;
+	if (DragBar::dragWindow == (FloatingWindow *)this)
+		return;
 
 	openFlag = false;
 
@@ -448,27 +449,8 @@ void gWindow::close(void) {
 
 	remove();
 
-	/*  if (backSave)
-	    {
-	        pointer.hide( *globalPort, extent );
-	        backSave->restore( *globalPort );
-	        pointer.show( *globalPort, extent );
-	    }
-	*/
-	G_BASE.mouseWindow =
-	    G_BASE.activeWindow = (gWindow *)G_BASE.windowList.first();
+	G_BASE.mouseWindow = G_BASE.activeWindow = (gWindow *)G_BASE.windowList.first();
 	G_BASE.mousePanel = G_BASE.activePanel = NULL;
-
-	gWindow *w = G_BASE.activeWindow;
-	/*  if (w)
-	    {
-	        pointer.hide();
-	        pointer.setImage(   *w->pointerImage,
-	                            w->pointerOffset.x,
-	                            w->pointerOffset.y );
-	        pointer.show();
-	    }
-	*/
 }
 
 //  Move the window to the front...

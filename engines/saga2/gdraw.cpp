@@ -598,7 +598,7 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 **********************************************************************
 */
 void gPort::bltPixels(
-    gPixelMap       &src,
+    const gPixelMap       &src,
     int             src_x,
     int             src_y,
     int             dst_x,

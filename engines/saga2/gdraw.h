@@ -367,7 +367,7 @@ public:
 
 	//  Blitting functions
 
-	virtual void bltPixels(gPixelMap &src,
+	virtual void bltPixels(const gPixelMap &src,
 	                       int src_x, int src_y,
 	                       int dst_x, int dst_y,
 	                       int width, int height);

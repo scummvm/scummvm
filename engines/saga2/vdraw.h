@@ -54,7 +54,7 @@ public:
 
 	//  Blitting functions
 	//  NOTE: svga port cannot be used a source!!!
-	void bltPixels(gPixelMap &src,
+	void bltPixels(const gPixelMap &src,
 	               int src_x, int src_y,
 	               int dst_x, int dst_y,
 	               int width, int height);
