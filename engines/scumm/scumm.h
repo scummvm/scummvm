@@ -959,6 +959,7 @@ protected:
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
 	void mac_restoreCharsetBg();
 	void mac_drawLoomPracticeMode();
+	void mac_drawIndy3SpeechBox(Actor *a);
 
 	void ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const;
 
