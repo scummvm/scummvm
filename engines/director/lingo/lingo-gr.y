@@ -65,6 +65,7 @@
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-gr.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-the.h"
 
 extern int yylex();
 extern int yyparse();
@@ -112,12 +113,7 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 	Common::String *s;
 	int i;
 	double f;
-	int e[2];	// Entity + field
-
-	struct {
-		Common::String *obj;
-		Common::String *prop;
-	} objectprop;
+	Director::ChunkType chunktype;
 
 	Director::IDList *idlist;
 	Director::Node *node;
@@ -171,10 +167,12 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<node> stmtlistline
 
 // EXPRESSION
-%type<node> simpleexpr_noparens_nounarymath simpleexpr simpleexpr_noparens simpleexpr_nounarymath
-%type<node> parens unarymath
+%type<node> simpleexpr_nounarymath simpleexpr
+%type<node> unarymath
 %type<node> expr expr_nounarymath sprite
 %type<node> var varorchunk varorthe
+%type<chunktype> chunktype
+%type<node> the writablethe theobj menu thedatetime thenumberof
 %type<node> list proppair
 %type<node> chunk object
 %type<nodelist> proplist exprlist nonemptyexprlist
@@ -551,16 +549,18 @@ stmtlistline: '\n'					{ $$ = nullptr; }
 
 // EXPRESSION
 
-simpleexpr_noparens_nounarymath:
+simpleexpr_nounarymath:
 	  tINT							{ $$ = new IntNode($tINT); }
 	| tFLOAT						{ $$ = new FloatNode($tFLOAT); }
 	| tSYMBOL						{ $$ = new SymbolNode($tSYMBOL); }	// D3
 	| tSTRING						{ $$ = new StringNode($tSTRING); }
 	| tNOT simpleexpr[arg]  %prec tUNARY	{ $$ = new UnaryOpNode(LC::c_not, $arg); }
 	| ID '(' exprlist[args] ')'		{ $$ = new FuncNode($ID, $args); }
+	| '(' expr ')'					{ $$ = $expr; } ;
 	| var
 	| chunk
 	| object
+	| the
 	| list
 	;
 
@@ -571,28 +571,76 @@ varorchunk: var
 	;
 
 varorthe: var
-	// TODO: the
+	| writablethe
 	;
 
-chunk: tFIELD simpleexpr_noparens[arg]	{
+chunk: tFIELD simpleexpr[arg]	{
 		NodeList *args = new NodeList;
 		args->push_back($arg);
 		$$ = new FuncNode(new Common::String("field"), args); }
-	| tCAST simpleexpr_noparens[arg]	{
+	| tCAST simpleexpr[arg]		{
 		NodeList *args = new NodeList;
 		args->push_back($arg);
 		$$ = new FuncNode(new Common::String("cast"), args); }
 	;
 
-object: tSCRIPT simpleexpr_noparens[arg]	{
+object: tSCRIPT simpleexpr[arg]		{
 		NodeList *args = new NodeList;
 		args->push_back($arg);
 		$$ = new FuncNode(new Common::String("script"), args); }
-	| tWINDOW simpleexpr_noparens[arg]		{
+	| tWINDOW simpleexpr[arg]		{
 		NodeList *args = new NodeList;
 		args->push_back($arg);
 		$$ = new FuncNode(new Common::String("window"), args); }
 	;
+
+the: writablethe
+	| thedatetime
+	| thenumberof
+	| tTHE tLAST chunktype inof simpleexpr	{ $$ = new TheLastNode($chunktype, $simpleexpr); }
+	;
+
+theobj: simpleexpr
+	| menu
+	| tMENUITEM simpleexpr[item] tOF tMENU simpleexpr[menu] { $$ = new MenuItemNode($item, $menu); }
+	| tSOUND simpleexpr[arg]			{ $$ = new SoundNode($arg); }
+	| tSPRITE simpleexpr[arg]			{ $$ = new SpriteNode($arg); }
+	;
+
+menu: tMENU	simpleexpr[arg]				{ $$ = new MenuNode($arg); } ;
+
+writablethe: tTHE ID					{ $$ = new TheNode($ID); }
+	| tTHE ID tOF theobj				{ $$ = new TheOfNode($ID, $theobj); }
+	| tTHE tNUMBER tOF theobj			{ $$ = new TheOfNode(new Common::String("number"), $theobj); }
+	;
+
+thedatetime: tTHE tABBREVIATED tDATE	{ $$ = new TheDateTimeNode(kTheAbbr, kTheDate); }
+	| tTHE tABBREVIATED tTIME			{ $$ = new TheDateTimeNode(kTheAbbr, kTheTime); }
+	| tTHE tABBREV tDATE				{ $$ = new TheDateTimeNode(kTheAbbr, kTheDate); }
+	| tTHE tABBREV tTIME				{ $$ = new TheDateTimeNode(kTheAbbr, kTheTime); }
+	| tTHE tABBR tDATE					{ $$ = new TheDateTimeNode(kTheAbbr, kTheDate); }
+	| tTHE tABBR tTIME					{ $$ = new TheDateTimeNode(kTheAbbr, kTheTime); }
+	| tTHE tLONG tDATE					{ $$ = new TheDateTimeNode(kTheLong, kTheDate); }
+	| tTHE tLONG tTIME					{ $$ = new TheDateTimeNode(kTheLong, kTheTime); }
+	| tTHE tSHORT tDATE					{ $$ = new TheDateTimeNode(kTheShort, kTheDate); }
+	| tTHE tSHORT tTIME					{ $$ = new TheDateTimeNode(kTheShort, kTheTime); }
+	;
+
+thenumberof:
+	  tTHE tNUMBER tOF tCHARS inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfChars, $simpleexpr); }
+	| tTHE tNUMBER tOF tWORDS inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfWords, $simpleexpr); }
+	| tTHE tNUMBER tOF tITEMS inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfItems, $simpleexpr); }
+	| tTHE tNUMBER tOF tLINES inof simpleexpr	{ $$ = new TheNumberOfNode(kNumberOfLines, $simpleexpr); }
+	| tTHE tNUMBER tOF tMENUITEMS inof menu		{ $$ = new TheNumberOfNode(kNumberOfMenuItems, $menu); }
+	;
+
+chunktype: tCHAR				{ $$ = kChunkChar; }
+	| tWORD						{ $$ = kChunkWord; }
+	| tITEM						{ $$ = kChunkItem; }
+	| tLINE						{ $$ = kChunkLine; }
+	;
+
+inof: tIN | tOF ;
 
 list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
 	| '[' ':' ']'				{ $$ = new PropListNode(new NodeList); }
@@ -613,23 +661,12 @@ proppair: tSYMBOL ':' expr		{ $$ = new PropPairNode(new SymbolNode($tSYMBOL), $e
 	| tSTRING ':' expr 			{ $$ = new PropPairNode(new StringNode($tSTRING), $expr); }
 	;
 
-parens:	'(' expr ')'				{ $$ = $expr; } ;
-
 unarymath: '+' simpleexpr[arg]  %prec tUNARY	{ $$ = $arg; }
 	| '-' simpleexpr[arg]  %prec tUNARY			{ $$ = new UnaryOpNode(LC::c_negate, $arg); }
 	;
 
-simpleexpr: simpleexpr_noparens_nounarymath
-	| parens
+simpleexpr: simpleexpr_nounarymath
 	| unarymath
-	;
-
-simpleexpr_noparens: simpleexpr_noparens_nounarymath
-	| unarymath
-	;
-
-simpleexpr_nounarymath: simpleexpr_noparens_nounarymath
-	| parens
 	;
 
 // REMEMBER TO SYNC THIS WITH expr_nounarymath!

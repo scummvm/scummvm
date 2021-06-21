@@ -52,6 +52,7 @@
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
 #include "director/lingo/lingo-object.h"
+#include "director/lingo/lingo-the.h"
 
 namespace Director {
 
@@ -569,7 +570,115 @@ bool LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
 
 /* SetNode */
 
+bool LingoCompiler::codeTheFieldSet(int entity, Node *id, const Common::String &field) {
+	Common::String fieldId = Common::String::format("%d%s", entity, field.c_str());
+	if (!g_lingo->_theEntityFields.contains(fieldId)) {
+		warning("LingoCompiler::codeTheFieldSet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
+		return false;
+	}
+	COMPILE(id);
+	code1(LC::c_theentityassign);
+	codeInt(entity);
+	codeInt(g_lingo->_theEntityFields[fieldId]->field);
+	return true;
+}
+
 bool LingoCompiler::visitSetNode(SetNode *node) {
+	if (node->var->type == kTheNode) {
+		TheNode *the = static_cast<TheNode *>(node->var);
+		if (g_lingo->_theEntities.contains(*the->prop) && !g_lingo->_theEntities[*the->prop]->hasId) {
+			COMPILE(node->val);
+			code1(LC::c_intpush);
+			codeInt(0); // Put dummy id
+			code1(LC::c_theentityassign);
+			codeInt(g_lingo->_theEntities[*the->prop]->entity);
+			codeInt(0);	// No field
+			return true;
+		}
+		warning("LingoCompiler:visitSetNode: Unhandled the entity '%s'", the->prop->c_str());
+		return false;
+	}
+
+	if (node->var->type == kTheOfNode) {
+		COMPILE(node->val);
+		TheOfNode *the = static_cast<TheOfNode *>(node->var);
+		switch (the->obj->type) {
+		case kFuncNode:
+			{
+				FuncNode *func = static_cast<FuncNode *>(the->obj);
+				if (func->args->size() == 1) {
+					if (func->name->equalsIgnoreCase("cast")) {
+						return codeTheFieldGet(kTheCast, (*func->args)[0], *the->prop);
+					}
+					if (func->name->equalsIgnoreCase("field")) {
+						return codeTheFieldGet(kTheField, (*func->args)[0], *the->prop);
+					}
+					// window is an object and is handled by that case
+				}
+			}
+			break;
+		case kMenuNode:
+			{
+				MenuNode *menu = static_cast<MenuNode *>(the->obj);
+				return codeTheFieldGet(kTheMenu, menu->arg, *the->prop);
+			}
+			break;
+		case kMenuItemNode:
+			{
+				MenuItemNode *menuItem = static_cast<MenuItemNode *>(the->obj);
+				Common::String fieldId = Common::String::format("%d%s", kTheMenuItem, the->prop->c_str());
+				if (!g_lingo->_theEntityFields.contains(fieldId)) {
+					warning("LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", the->prop->c_str());
+					return false;
+				}
+				COMPILE(menuItem->arg1)
+				COMPILE(menuItem->arg2);
+				code1(LC::c_theentitypush);
+				codeInt(kTheMenuItem);
+				codeInt(g_lingo->_theEntityFields[fieldId]->field);
+				return true;
+			}
+			break;
+		case kSoundNode:
+			{
+				SoundNode *sound = static_cast<SoundNode *>(the->obj);
+				return codeTheFieldGet(kTheSoundEntity, sound->arg, *the->prop);
+			}
+			break;
+		case kSpriteNode:
+			{
+				SpriteNode *sprite = static_cast<SpriteNode *>(the->obj);
+				return codeTheFieldGet(kTheSprite, sprite->arg, *the->prop);
+			}
+			break;
+		case kVarNode:
+			{
+				VarNode *var = static_cast<VarNode *>(the->obj);
+				if (the->prop->equalsIgnoreCase("number") && var->name->equalsIgnoreCase("castMembers")) {
+					code1(LC::c_intpush);
+					codeInt(0); // Put dummy id
+					code1(LC::c_theentitypush);
+					codeInt(kTheCastMembers);
+					codeInt(kTheNumber);
+					return true;
+				}
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (g_director->getVersion() >= 400) {
+			COMPILE(the->obj);
+			code1(LC::c_objectproppush);
+			codeString(the->prop->c_str());
+			return true;
+		}
+
+		warning("LingoCompiler::visitSetNode: Unhandled the field %s", the->prop->c_str());
+		return false;
+	}
+
 	if (node->var->type == kVarNode) {
 		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
 	}
@@ -930,6 +1039,214 @@ bool LingoCompiler::visitWithinNode(WithinNode *node) {
 	COMPILE(node->sprite2);
 	code1(LC::c_within);
 	return true;
-};
+}
+
+/* TheNode */
+
+bool LingoCompiler::visitTheNode(TheNode *node) {
+	if (g_lingo->_theEntities.contains(*node->prop) && !g_lingo->_theEntities[*node->prop]->hasId) {
+		code1(LC::c_intpush);
+		codeInt(0); // Put dummy id
+		code1(LC::c_theentitypush);
+		codeInt(g_lingo->_theEntities[*node->prop]->entity);
+		codeInt(0);	// No field
+		return true;
+	}
+
+	warning("LingoCompiler:visitTheNode: Unhandled the entity '%s'", node->prop->c_str());
+	return false;
+}
+
+/* TheOfNode */
+
+bool LingoCompiler::codeTheFieldGet(int entity, Node *id, const Common::String &field) {
+	Common::String fieldId = Common::String::format("%d%s", entity, field.c_str());
+	if (!g_lingo->_theEntityFields.contains(fieldId)) {
+		warning("LingoCompiler::codeTheFieldGet: Unhandled the field %s of %s", field.c_str(), g_lingo->entity2str(entity));
+		return false;
+	}
+	COMPILE(id);
+	code1(LC::c_theentitypush);
+	codeInt(entity);
+	codeInt(g_lingo->_theEntityFields[fieldId]->field);
+	return true;
+}
+
+bool LingoCompiler::visitTheOfNode(TheOfNode *node) {
+	switch (node->obj->type) {
+	case kFuncNode:
+		{
+			FuncNode *func = static_cast<FuncNode *>(node->obj);
+			if (func->args->size() == 1) {
+				if (func->name->equalsIgnoreCase("cast")) {
+					return codeTheFieldGet(kTheCast, (*func->args)[0], *node->prop);
+				}
+				if (func->name->equalsIgnoreCase("field")) {
+					return codeTheFieldGet(kTheField, (*func->args)[0], *node->prop);
+				}
+				// window is an object and is handled by that case
+			}
+		}
+		break;
+	case kMenuNode:
+		{
+			MenuNode *menu = static_cast<MenuNode *>(node->obj);
+			return codeTheFieldGet(kTheMenu, menu->arg, *node->prop);
+		}
+		break;
+	case kMenuItemNode:
+		{
+			MenuItemNode *menuItem = static_cast<MenuItemNode *>(node->obj);
+			Common::String fieldId = Common::String::format("%d%s", kTheMenuItem, node->prop->c_str());
+			if (!g_lingo->_theEntityFields.contains(fieldId)) {
+				warning("LingoCompiler:visitTheNode: Unhandled the field %s of menuItem", node->prop->c_str());
+				return false;
+			}
+			COMPILE(menuItem->arg1)
+			COMPILE(menuItem->arg2);
+			code1(LC::c_theentitypush);
+			codeInt(kTheMenuItem);
+			codeInt(g_lingo->_theEntityFields[fieldId]->field);
+			return true;
+		}
+		break;
+	case kSoundNode:
+		{
+			SoundNode *sound = static_cast<SoundNode *>(node->obj);
+			return codeTheFieldGet(kTheSoundEntity, sound->arg, *node->prop);
+		}
+		break;
+	case kSpriteNode:
+		{
+			SpriteNode *sprite = static_cast<SpriteNode *>(node->obj);
+			return codeTheFieldGet(kTheSprite, sprite->arg, *node->prop);
+		}
+		break;
+	case kVarNode:
+		{
+			VarNode *var = static_cast<VarNode *>(node->obj);
+			if (node->prop->equalsIgnoreCase("number") && var->name->equalsIgnoreCase("castMembers")) {
+				code1(LC::c_intpush);
+				codeInt(0); // Put dummy id
+				code1(LC::c_theentitypush);
+				codeInt(kTheCastMembers);
+				codeInt(kTheNumber);
+				return true;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (g_director->getVersion() >= 400) {
+		COMPILE(node->obj);
+		code1(LC::c_objectproppush);
+		codeString(node->prop->c_str());
+		return true;
+	}
+
+	if (g_lingo->_builtinFuncs.contains(*node->prop)) {
+		COMPILE(node->obj);
+		codeFunc(*node->prop, 1);
+		return true;
+	}
+
+	warning("LingoCompiler::visitTheOfNode: Unhandled the field %s", node->prop->c_str());
+	return false;
+}
+
+/* TheNumberOfNode */
+
+bool LingoCompiler::visitTheNumberOfNode(TheNumberOfNode *node) {
+	switch (node->type) {
+	case kNumberOfChars:
+		COMPILE(node->arg);
+		codeFunc("numberOfChars", 1);
+		break;
+	case kNumberOfWords:
+		COMPILE(node->arg);
+		codeFunc("numberOfWords", 1);
+		break;
+	case kNumberOfItems:
+		COMPILE(node->arg);
+		codeFunc("numberOfItems", 1);
+		break;
+	case kNumberOfLines:
+		COMPILE(node->arg);
+		codeFunc("numberOfLines", 1);
+		break;
+	case kNumberOfMenuItems:
+		{
+			if (node->arg->type != kMenuNode) {
+				warning("LingoCompiler::visitTheNumberOfNode: expected menu");
+				return false;
+			}
+			MenuNode *menu = static_cast<MenuNode *>(node->arg);
+			COMPILE(menu->arg);
+			code1(LC::c_theentitypush);
+			codeInt(kTheMenuItems);
+			codeInt(kTheNumber);
+		}
+		break;
+	}
+	return true;
+}
+
+/* TheLastNode */
+
+bool LingoCompiler::visitTheLastNode(TheLastNode *node) {
+	COMPILE(node->arg);
+	switch (node->type) {
+	case kNumberOfChars:
+		codeFunc("lastCharOf", 1);
+		break;
+	case kNumberOfWords:
+		codeFunc("lastWordOf", 1);
+		break;
+	case kNumberOfItems:
+		codeFunc("lastItemOf", 1);
+		break;
+	case kNumberOfLines:
+		codeFunc("lastLineOf", 1);
+		break;
+	}
+	return true;
+}
+
+/* TheDateTimeNode */
+
+bool LingoCompiler::visitTheDateTimeNode(TheDateTimeNode *node) {
+	code1(LC::c_intpush);
+	codeInt(0); // Put dummy id
+	code1(LC::c_theentitypush);
+	codeInt(node->entity);
+	codeInt(node->field);
+	return true;
+}
+
+/* MenuNode */
+
+bool LingoCompiler::visitMenuNode(MenuNode *node) {
+	return true;
+}
+
+/* MenuItemNode */
+
+bool LingoCompiler::visitMenuItemNode(MenuItemNode *node) {
+	return true;
+}
+
+/* SoundItem */
+
+bool LingoCompiler::visitSoundNode(SoundNode *node) {
+	return true;
+}
+
+/* SpriteNode */
+
+bool LingoCompiler::visitSpriteNode(SpriteNode *node) {
+	return true;
+}
 
 } // End of namespace Director

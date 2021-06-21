@@ -148,23 +148,18 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 111 "engines/director/lingo/lingo-gr.y"
+#line 112 "engines/director/lingo/lingo-gr.y"
 
 	Common::String *s;
 	int i;
 	double f;
-	int e[2];	// Entity + field
-
-	struct {
-		Common::String *obj;
-		Common::String *prop;
-	} objectprop;
+	Director::ChunkType chunktype;
 
 	Director::IDList *idlist;
 	Director::Node *node;
 	Director::NodeList *nodelist;
 
-#line 168 "engines/director/lingo/lingo-gr.h"
+#line 163 "engines/director/lingo/lingo-gr.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
