@@ -161,6 +161,8 @@ void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 	case SpellTarget::spellTargetTAG:
 		implement(enactor, target->getTAG());
 		break;
+	default:
+		break;
 	}
 }
 
