@@ -1632,6 +1632,10 @@ Datum Lingo::getObjectProp(Datum &obj, Common::String &propName) {
 		} else {
 			warning("Lingo::getObjectProp(): CastMember %d has no property '%s'", id, propName.c_str());
 		}
+	} else if (_builtinFuncs.contains(propName) && _builtinFuncs[propName].nargs == 1) {
+		push(obj);
+		LC::call(_builtinFuncs[propName], 1, true);
+		d = pop();
 	} else {
 		warning("Lingo::getObjectProp: Invalid object: %s", obj.asString(true).c_str());
 	}
