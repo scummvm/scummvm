@@ -50,7 +50,6 @@ namespace Saga2 {
 #define RANGE_CHECKING 0
 #define NPC_MANA_CHECK 0
 
-const int32 maxSpells = 128;
 const int32 spellFailSound = 42;
 
 /* ===================================================================== *
@@ -105,7 +104,7 @@ SkillProto *skillProtoFromID(int16 spellOrObjectID) {
 //-----------------------------------------------------------------------
 // initialization call to connect skill prototypes with their spells
 void initializeSkill(SkillProto *oNo, SpellID sNo) {
-	if (sNo > 0 && sNo < MAX_SPELLS) {
+	if (sNo > 0 && sNo <= MAX_SPELLS - 1) {
 		if (spellBook[sNo].getProto() != NULL)
 			error("Duplicate prototype for spell %d", sNo);
 		spellBook[sNo].setProto(oNo);
@@ -190,7 +189,7 @@ bool canCast(GameObject *enactor, SkillProto *spell) {
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 	int amt = sProto.getManaAmt();
 
-	if (ami == sManaIDSkill)
+	if (ami == numManas)
 		return true;
 #if NPC_MANA_CHECK
 	if (isActor(enactor)) {

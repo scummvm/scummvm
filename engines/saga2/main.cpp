@@ -58,16 +58,6 @@ namespace Saga2 {
 // enable the following to display event loop processing
 #define DEBUG_LOOP 0
 
-/* ===================================================================== *
-   Constants
- * ===================================================================== */
-
-const   uint32  gameTimeID  = MKTAG('T', 'I', 'M', 'E');
-
-/* ===================================================================== *
-   Imports
- * ===================================================================== */
-
 extern WindowDecoration autoMapDecorations[];
 extern gToolBase        G_BASE;
 extern configuration    globalConfig;
@@ -238,7 +228,7 @@ void main_saga2() {
 // __try{} __except(){} blocks
 void updateActiveRegions(void);
 
-static void mainLoop(bool &cleanExit, int argc, char *argv[]) {
+static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 	const char *exeFile = getExeFromCommandLine(argc, argv);
 	if (displayEnabled())
 		displayUpdate();
@@ -300,8 +290,6 @@ void EventLoop(bool &running, bool) {
 void dumpGBASE(char *msg);
 
 void processEventLoop(bool updateScreen) {
-
-	int         key, qual;
 
 	debugC(1, kDebugEventLoop, "EventLoop: starting event loop");
 	irate.updateFrameCount();
@@ -397,8 +385,6 @@ void displayUpdate(void) {
  * ===================================================================== */
 
 void SystemEventLoop(void) {
-	int         key, qual;
-
 	if (
 #ifdef DO_OUTRO_IN_CLEANUP
 	    whichOutro == -1 &&
@@ -516,17 +502,14 @@ void *LoadFile(char *filename, const char desc[]) {
 //	Loads a resource into a buffer and returns a pointer
 
 void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
-	uint32          idString[2];
 	int32           size;
 	uint8           *buffer;                // allocated buffer
 
-	idString[0] = id;
-	idString[1] = 0;
 	debugC(3, kDebugResources, "LoadResource(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("LoadResource(): Error reading resource ID '%s'.", &idString);
+		error("LoadResource(): Error reading resource ID '%s'.", tag2str(id));
 	}
 
 	//  Allocate the buffer
@@ -538,17 +521,14 @@ void *LoadResource(hResContext *con, uint32 id, const char desc[]) {
 }
 
 Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, const char desc[]) {
-	uint32          idString[2];
 	int32           size;
 	uint8           *buffer;                // allocated buffer
 
-	idString[0] = id;
-	idString[1] = 0;
 	debugC(3, kDebugResources, "loadResourceToStream(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		warning("loadResourceToStream(): Error reading resource ID '%s'.", &idString);
+		warning("loadResourceToStream(): Error reading resource ID '%s'.", tag2str(id));
 		return nullptr;
 	}
 
@@ -564,17 +544,14 @@ Common::SeekableReadStream *loadResourceToStream(hResContext *con, uint32 id, co
 //	Loads a resource into a relocatable buffer and returns a handle
 
 RHANDLE LoadResourceToHandle(hResContext *con, uint32 id, const char desc[]) {
-	uint32          idString[2];
 	int32           size;
 	RHANDLE         buffer;             // allocated buffer
 
-	idString[0] = id;
-	idString[1] = 0;
 	debugC(3, kDebugResources, "LoadResourceToHandle(): Loading resource %d (%s, %s)", id, tag2str(id), desc);
 
 	size = con->size(id);
 	if (size <= 0 || !con->seek(id)) {
-		error("LoadResourceToHandle(): Error reading resource ID '%s'.", &idString);
+		error("LoadResourceToHandle(): Error reading resource ID '%s'.", tag2str(id));
 	}
 
 	//  Allocate the buffer
@@ -596,10 +573,10 @@ inline char drive(char *path) {
 
 static bool openResource(
     pHResource &hr,      // resource to initialize
-    char *basePath,      // path to data file
-    char *defaultPath,   // backup path
-    char *fileName,      // file name & extension
-    char *description) {
+    const char *basePath,      // path to data file
+    const char *defaultPath,   // backup path
+    const char *fileName,      // file name & extension
+    const char *description) {
 	if (hr) delete hr;
 	hr = NULL;
 

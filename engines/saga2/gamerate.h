@@ -49,7 +49,7 @@ public:
 		instantFrameCount = 0;
 	}
 
-	~frameCounter() {}
+	virtual ~frameCounter() {}
 
 	virtual void updateFrameCount(void) {
 		int32 frameTime = gameTime - lastTime;
@@ -154,7 +154,7 @@ public:
 	frameSmoother(int32 fps, uint32 perSec, uint32 now);
 
 
-	~frameSmoother() {
+	virtual ~frameSmoother() {
 		if (frameHistory) delete[] frameHistory;
 		frameHistory = nullptr;
 	}

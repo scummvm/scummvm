@@ -193,7 +193,7 @@ class hResource : public hResContext {
 	hResEntry      *_table;
 
 public:
-	hResource(char *resname, char *extname, const char []);
+	hResource(const char *resname, const char *extname, const char []);
 	~hResource();
 
 	hResContext *newContext(hResID id, const char []);

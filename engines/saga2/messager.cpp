@@ -48,7 +48,7 @@ size_t Messager::va(const char *format, va_list argptr) {
 	return 0;
 }
 
-size_t Messager::operator()(char *format, ...) {
+size_t Messager::operator()(const char *format, ...) {
 	if (enabled) {
 		size_t size;
 		va_list argptr;
@@ -85,7 +85,7 @@ int StatusLineMessager::dumpit(char *s, size_t size) {
 	return 0;
 }
 
-StatusLineMessager::StatusLineMessager(char *entry, int lineno, gDisplayPort *mp, int32 x, int32 y, int32 w, int16 color)
+StatusLineMessager::StatusLineMessager(const char *entry, int lineno, gDisplayPort *mp, int32 x, int32 y, int32 w, int16 color)
 	: Messager(entry) {
 	line = lineno;
 	textPort = mp;
