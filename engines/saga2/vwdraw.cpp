@@ -53,7 +53,7 @@ void gDisplayPort::fillRect(const Rect16 r) {
 //  movePixels
 
 void gDisplayPort::bltPixels(
-    gPixelMap       &src,
+    const gPixelMap       &src,
     int             src_x,
     int             src_y,
     int             dst_x,
