@@ -87,7 +87,7 @@ PlayerActor playerList[playerActors] = {
 
 void PlayerActor::resolveBanding(void) {
 	Actor *follower         = getActor();
-	Actor *centerActor      = getCenterActor();
+	Actor *centerActor_     = getCenterActor();
 
 	// if already following, tell the actor to cease and desist
 	if (follower->leader) {
@@ -97,10 +97,10 @@ void PlayerActor::resolveBanding(void) {
 	// do not allow actor to follow it's self
 	if (brotherBandingEnabled
 	        &&  isBanded()
-	        &&  follower != centerActor) {
+	        &&  follower != centerActor_) {
 		// create a new follow assignment
 
-		follower->bandWith(centerActor);
+		follower->bandWith(centerActor_);
 	}
 }
 
@@ -334,7 +334,7 @@ void PlayerActor::skillAdvance(uint8 stat,
 		                            ActorAttributes::skillMaxLevel);
 
 		if (baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel != oldValue) {
-			static char *skillNames[] = {
+			static const char *skillNames[] = {
 				ARCHERY_SKILL,
 				SWORD_SKILL,
 				SHIELD_SKILL,
@@ -353,8 +353,6 @@ void PlayerActor::skillAdvance(uint8 stat,
 }
 
 void PlayerActor::vitalityAdvance(uint8 points) {
-	char buffer[64];
-
 	while (points-- > 0) {
 		if (rand() % ActorAttributes::vitalityLimit > baseStats.vitality) {
 			if (++vitalityMemory >= vitalityLevelBump) {
@@ -410,9 +408,6 @@ uint8 PlayerActor::getStatIndex(SkillProto *proto) {
 	// get the id for this skill
 	SpellID skillID = proto->getSpellID();
 	uint16  stat;
-
-	// get the current stats for this player actor
-	ActorAttributes *effStats = getEffStats();
 
 	// now map the id gotten from spellid to the
 	// attributeskilll enum for the allSkills array
