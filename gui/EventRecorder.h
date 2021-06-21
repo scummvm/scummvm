@@ -82,7 +82,6 @@ public:
 	bool processDelayMillis();
 	uint32 getRandomSeed(const Common::String &name);
 	void processMillis(uint32 &millis, bool skipRecord);
-	bool processAudio(uint32 &samples, bool paused);
 	void processGameDescription(const ADGameDescription *desc);
 	Common::SeekableReadStream *processSaveStream(const Common::String & fileName);
 
