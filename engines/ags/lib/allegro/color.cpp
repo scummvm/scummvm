@@ -48,15 +48,34 @@ void color::writeToFile(AGS::Shared::Stream *file) const {
 	file->WriteByte(filler);
 }
 
+static void convertPalette(const PALETTE src, byte dest[PALETTE_SIZE]) {
+	const color *cSrc = (const color *)src;
+	for (int i = 0; i < PALETTE_COUNT; ++i, cSrc++, dest += 3) {
+		dest[0] = VGA_COLOR_TRANS(cSrc->r);
+		dest[1] = VGA_COLOR_TRANS(cSrc->g);
+		dest[2] = VGA_COLOR_TRANS(cSrc->b);
+	}
+}
+
+static void applyPalette() {
+	byte pal[PALETTE_SIZE];
+	convertPalette(_G(current_palette), pal);
+	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+}
+
 void set_palette(const PALETTE p) {
 	for (int idx = 0; idx < PAL_SIZE; ++idx)
 		_G(current_palette)[idx] = p[idx];
+
+	applyPalette();
 }
 
 void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 	for (int i = from; i <= to; ++i) {
 		_G(current_palette)[i] = p[i];
 	}
+
+	applyPalette();
 }
 
 int makecol15(int r, int g, int b) {
@@ -163,15 +182,15 @@ int makecol8(byte r, byte g, byte b) {
 }
 
 void get_color(int idx, RGB *p) {
-	warning("TODO: get_color");
+	*p = _G(current_palette)[idx];
 }
 
 void get_palette(PALETTE p) {
-	warning("TODO: get_palette");
+	*p = *_G(current_palette);
 }
 
 void get_palette_range(PALETTE p, int from, int to) {
-	warning("TODO: get_palette_range");
+	Common::copy(&_G(current_palette)[from], &_G(current_palette)[to + 1], &p[from]);
 }
 
 void fade_interpolate(AL_CONST PALETTE source, AL_CONST PALETTE dest, PALETTE output, int pos, int from, int to) {
@@ -186,7 +205,7 @@ void select_palette(AL_CONST PALETTE p) {
 		_G(current_palette)[c] = p[c];
 	}
 
-	// TODO: See if the remainder of Allegro's select_palette method is needed for AGS
+	applyPalette();
 }
 
 void unselect_palette(void) {
@@ -194,6 +213,8 @@ void unselect_palette(void) {
 
 	for (c = 0; c < PAL_SIZE; c++)
 		_G(current_palette)[c] = _G(prev_current_palette)[c];
+
+	applyPalette();
 }
 
 void set_blender_mode(BlenderMode m, int r, int g, int b, int a) {
