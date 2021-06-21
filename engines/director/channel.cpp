@@ -40,6 +40,7 @@ Channel::Channel(Sprite *sp, int priority) {
 	else
 		_sprite = new Sprite(*sp);
 
+	_originalSprite = sp;
 	_widget = nullptr;
 	_currentPoint = sp->_startPoint;
 	_delta = Common::Point(0, 0);
@@ -359,12 +360,13 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 
-	// update the _sprite we stored in channel
+	// update the _sprite we stored in channel, and point the originalSprite to the new one
 	// release the widget, because we may having the new one, we may optimize this by adding it to dtor?
 	if (_sprite->_cast)
 		_sprite->_cast->releaseWidget();
 	delete _sprite;
 	_sprite = new Sprite(*nextSprite);
+	_originalSprite = nextSprite;
 
 	// Sprites marked moveable are constrained to the same bounding box until
 	// the moveable is disabled
@@ -423,6 +425,11 @@ void Channel::replaceWidget() {
 			if (_sprite->_cast->_type == kCastText || _sprite->_cast->_type == kCastButton) {
 				_sprite->_width = _widget->_dims.width();
 				_sprite->_height = _widget->_dims.height();
+				// TODO: originalSprite should not be modified. We shall amend it when we get the correct way to deal with button size.
+				if (_originalSprite) {
+					_originalSprite->_width = _sprite->_width;
+					_originalSprite->_height = _sprite->_height;
+				}
 				_width = _sprite->_width;
 				_height = _sprite->_height;
 			}
