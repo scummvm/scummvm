@@ -358,8 +358,9 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		return;
 
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
-	if (_sprite)
-		delete _sprite;
+
+	// update the _sprite we stored in channel
+	delete _sprite;
 	_sprite = new Sprite(*nextSprite);
 
 	// Sprites marked moveable are constrained to the same bounding box until
