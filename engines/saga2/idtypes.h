@@ -50,7 +50,7 @@ const ObjectID      Nothing = 0,            // a reference to no object
 
 typedef uint16      TileID;
 
-const int           nullID = 0xffff;
+const int16           nullID = -1;
 
 /* ===================================================================== *
    PlayerActorID
