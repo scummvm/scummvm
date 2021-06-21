@@ -88,6 +88,9 @@ public:
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
 
+	// release the control to widget, this happens when we are changing sprites. Because we are having the new cast member and the old one shall leave
+	void releaseWidget() { _widget = nullptr; }
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -102,6 +105,8 @@ public:
 protected:
 	Cast *_cast;
 	uint16 _castId;
+	// a link to the widget we created, we may use it later
+	Graphics::MacWidget *_widget;
 };
 
 class BitmapCastMember : public CastMember {
@@ -259,7 +264,6 @@ private:
 
 	uint32 _bgcolor;
 	uint32 _fgcolor;
-	Graphics::MacWidget *_widget;
 };
 
 class ScriptCastMember : public CastMember {
