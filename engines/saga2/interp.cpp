@@ -501,7 +501,7 @@ int16 RRandom(int16 c, int16 s, int16 id) {
 /* ============================================================================ *
                                 Main interpreter
  * ============================================================================ */
-void print_script_name(uint8 *codePtr, char *descr = NULL) {
+void print_script_name(uint8 *codePtr, const char *descr = NULL) {
 	char    scriptName[32];
 	uint8   *sym = codePtr - 1;
 	uint8   length = MIN<uint>(*sym, sizeof scriptName - 1);
@@ -515,7 +515,7 @@ void print_script_name(uint8 *codePtr, char *descr = NULL) {
 		debugC(1, kDebugScripts, "Scripts: %d op_enter: ::%s ", lastExport, scriptName);
 }
 
-char *objectName(int16 segNum, uint16 segOff) {
+const char *objectName(int16 segNum, uint16 segOff) {
 	//static        nameBuf[64];
 
 	if (segNum >= 0)
