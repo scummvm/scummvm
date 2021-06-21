@@ -965,6 +965,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 
 	if (isWorld(_data.parentID)) {
 		GameWorld   *w = world();
+		Sector *sect;
 
 		if (!isMoving()) {
 			if (objObscured(this)) {
@@ -973,11 +974,16 @@ void GameObject::updateImage(ObjectID oldParentID) {
 				_data.objectFlags &= ~objectObscured;
 			}
 		}
+		int u = _data.location.u >> kSectorShift;
+		int v = _data.location.v >> kSectorShift;
 
-		if (w->getSector(_data.location.u >> kSectorShift,
-		                 _data.location.v >> kSectorShift)->isActivated()) {
-			activate();
+		sect = w->getSector(u, v);
+		if (sect) {
+			if (sect->isActivated())
+				sect->activate();
 		}
+		else
+			warning("GameObject::updateImage: Invalid Sector (%d, %d))", u, v);
 	} else {
 		_data.objectFlags &= ~objectObscured;
 
@@ -3299,8 +3305,13 @@ void ActiveRegion::update(void) {
 				for (v = newRegion.min.v; v < newRegion.max.v; v++) {
 					if (uOutOfRange
 					        ||  v < region.min.v
-					        ||  v >= region.max.v)
-						world->getSector(u, v)->activate();
+							||  v >= region.max.v) {
+
+						if(Sector *sect = world->getSector(u, v))
+							sect->activate();
+						else
+							warning("ActiveRegion::update: Invalid Sector (%d, %d)", u, v);
+					}
 				}
 			}
 
