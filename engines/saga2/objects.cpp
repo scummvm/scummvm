@@ -2524,8 +2524,7 @@ void initPrototypes(void) {
 		debugC(5, kDebugLoading, "Read string (size %d): %s", s.size(), s.c_str());
 
 		char *name = new char[s.size() + 1];
-		Common::strlcpy(name, s.c_str(), s.size());
-		name[s.size()] = '\0';
+		Common::strlcpy(name, s.c_str(), s.size() + 1);
 		nameList.push_back(name);
 	}
 	nameListCount = count;
