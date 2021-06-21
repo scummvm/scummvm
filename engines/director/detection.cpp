@@ -32,14 +32,18 @@
 #include "director/detection_tables.h"
 #include "director/detection_paths.h"
 
-static const char *customTargetList[] = {
-	"d2-mac",
-	"d3-mac",
-	"d4-mac",
-	"d3-win",
-	"d4-win",
-	"director-movie",
-	0
+static struct CustomTarget {
+	const char *name;
+	const char *platform;
+	const char *version;
+} customTargetList[] = {
+	{"d2-mac", "mac", "200" },
+	{"d3-mac", "mac", "300" },
+	{"d4-mac", "mac", "400" },
+	{"d3-win", "win", "300" },
+	{"d4-win", "win", "400" },
+	{"director-movie", "win", "400" },
+	{ NULL, 0, 0 }
 };
 
 static const DebugChannelDef debugFlagList[] = {
@@ -73,8 +77,8 @@ public:
 		_directoryGlobs = Director::directoryGlobs;
 
 		// initialize customTarget hashmap here
-		for (int i = 0; customTargetList[i] != NULL; i++)
-			_customTarget[customTargetList[i]] = true;
+		for (int i = 0; customTargetList[i].name != NULL; i++)
+			_customTarget[customTargetList[i].name] = true;
 	}
 
 	const char *getEngineId() const override {
@@ -141,10 +145,31 @@ ADDetectedGame DirectorMetaEngineDetection::fallbackDetect(const FileMap &allFil
 			Common::File f;
 			if (!f.open(*file))
 				continue;
-			Common::String targetID = f.readString('\n');
-			Common::String gameName = f.readString('\n');
-			Common::String platform = f.readString('\n');
-			Common::String version = f.readString('\n');
+
+			Common::String targetID, gameName, platform, version, tmp;
+
+			// First, fill the info based on the filename
+			for (int i = 0; customTargetList[i].name != NULL; i++) {
+				if (fileName.equalsIgnoreCase(customTargetList[i].name)) {
+					targetID = "director-fallback";
+					platform = customTargetList[i].platform;
+					version = customTargetList[i].version;
+					gameName = Common::String::format("Director Movie %s/v%s", platform.c_str(), version.c_str());
+				}
+			}
+
+			// Now try to read info from the file
+			if (!(tmp = f.readString('\n')).empty())
+				targetID = tmp;
+
+			if (!(tmp = f.readString('\n')).empty())
+				gameName = tmp;
+
+			if (!(tmp = f.readString('\n')).empty())
+				platform = tmp;
+
+			if (!(tmp = f.readString('\n')).empty())
+				version = tmp;
 
 			desc->version = atoi(version.c_str());
 			desc->desc.platform = Common::parsePlatform(platform);
