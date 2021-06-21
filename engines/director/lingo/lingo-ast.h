@@ -63,6 +63,15 @@ struct FrameNode;
 struct MovieNode;
 struct IntersectsNode;
 struct WithinNode;
+struct TheNode;
+struct TheOfNode;
+struct TheNumberOfNode;
+struct TheLastNode;
+struct TheDateTimeNode;
+struct MenuNode;
+struct MenuItemNode;
+struct SoundNode;
+struct SpriteNode;
 
 typedef Common::Array<Node *> NodeList;
 typedef Common::Array<Common::String *> IDList;
@@ -114,7 +123,24 @@ enum NodeType {
 	kFrameNode,
 	kMovieNode,
 	kIntersectsNode,
-	kWithinNode
+	kWithinNode,
+	kTheNode,
+	kTheOfNode,
+	kTheNumberOfNode,
+	kTheLastNode,
+	kTheDateTimeNode,
+	kMenuNode,
+	kMenuItemNode,
+	kSoundNode,
+	kSpriteNode
+};
+
+enum NumberOfType {
+	kNumberOfChars,
+	kNumberOfWords,
+	kNumberOfItems,
+	kNumberOfLines,
+	kNumberOfMenuItems
 };
 
 /* NodeVisitor */
@@ -161,6 +187,15 @@ public:
 	virtual bool visitMovieNode(MovieNode *node) = 0;
 	virtual bool visitIntersectsNode(IntersectsNode *node) = 0;
 	virtual bool visitWithinNode(WithinNode *node) = 0;
+	virtual bool visitTheNode(TheNode *node) = 0;
+	virtual bool visitTheOfNode(TheOfNode *node) = 0;
+	virtual bool visitTheNumberOfNode(TheNumberOfNode *node) = 0;
+	virtual bool visitTheLastNode(TheLastNode *node) = 0;
+	virtual bool visitTheDateTimeNode(TheDateTimeNode *node) = 0;
+	virtual bool visitMenuNode(MenuNode *node) = 0;
+	virtual bool visitMenuItemNode(MenuItemNode *node) = 0;
+	virtual bool visitSoundNode(SoundNode *node) = 0;
+	virtual bool visitSpriteNode(SpriteNode *node) = 0;
 };
 
 /* Node */
@@ -769,6 +804,142 @@ struct WithinNode : ExprNode {
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitWithinNode(this);
+	}
+};
+
+/* TheNode */
+
+struct TheNode : ExprNode {
+	Common::String *prop;
+
+	TheNode(Common::String *propIn) : ExprNode(kTheNode), prop(propIn) {}
+	virtual ~TheNode() {
+		delete prop;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitTheNode(this);
+	}
+};
+
+/* TheOfNode */
+
+struct TheOfNode : ExprNode {
+	Common::String *prop;
+	Node *obj;
+
+	TheOfNode(Common::String *propIn, Node *objIn)
+		: ExprNode(kTheOfNode), prop(propIn), obj(objIn) {}
+	virtual ~TheOfNode() {
+		delete prop;
+		delete obj;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitTheOfNode(this);
+	}
+};
+
+/* TheNumberOfNode */
+
+struct TheNumberOfNode : ExprNode {
+	NumberOfType type;
+	Node *arg;
+
+	TheNumberOfNode(NumberOfType typeIn, Node *argIn)
+		: ExprNode(kTheNumberOfNode), type(typeIn), arg(argIn) {}
+	virtual ~TheNumberOfNode() {
+		delete arg;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitTheNumberOfNode(this);
+	}
+};
+
+/* TheLastNode */
+
+struct TheLastNode : ExprNode {
+	ChunkType type;
+	Node *arg;
+
+	TheLastNode(ChunkType typeIn, Node *argIn)
+		: ExprNode(kTheLastNode), type(typeIn), arg(argIn) {}
+	virtual ~TheLastNode() {
+		delete arg;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitTheLastNode(this);
+	}
+};
+
+/* TheDateTimeNode */
+
+struct TheDateTimeNode : ExprNode {
+	int field;
+	int entity;
+
+	TheDateTimeNode(int fieldIn, int entityIn)
+		: ExprNode(kTheDateTimeNode), field(fieldIn), entity(entityIn) {}
+	virtual ~TheDateTimeNode() {}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitTheDateTimeNode(this);
+	}
+};
+
+/* MenuNode */
+
+struct MenuNode : ExprNode {
+	Node *arg;
+
+	MenuNode(Node *argIn) : ExprNode(kMenuNode), arg(argIn) {}
+	virtual ~MenuNode() {
+		delete arg;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitMenuNode(this);
+	}
+};
+
+/* MenuItemNode */
+
+struct MenuItemNode : ExprNode {
+	Node *arg1;
+	Node *arg2;
+
+	MenuItemNode(Node *arg1In, Node *arg2In)
+		: ExprNode(kMenuItemNode), arg1(arg1In), arg2(arg2In) {}
+	virtual ~MenuItemNode() {
+		delete arg1;
+		delete arg2;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitMenuItemNode(this);
+	}
+};
+
+/* SoundNode */
+
+struct SoundNode : ExprNode {
+	Node *arg;
+
+	SoundNode(Node *argIn) : ExprNode(kSoundNode), arg(argIn) {}
+	virtual ~SoundNode() {
+		delete arg;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitSoundNode(this);
+	}
+};
+
+/* SpriteNode */
+
+struct SpriteNode : ExprNode {
+	Node *arg;
+
+	SpriteNode(Node *argIn) : ExprNode(kSpriteNode), arg(argIn) {}
+	virtual ~SpriteNode() {
+		delete arg;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitSpriteNode(this);
 	}
 };
 

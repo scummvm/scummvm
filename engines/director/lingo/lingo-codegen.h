@@ -50,6 +50,8 @@ public:
 	void codeVarSet(const Common::String &name);
 	void codeVarRef(const Common::String &name);
 	void codeVarGet(const Common::String &name);
+	bool codeTheFieldSet(int entity, Node *id, const Common::String &field);
+	bool codeTheFieldGet(int entity, Node *id, const Common::String &field);
 	void registerFactory(Common::String &s);
 	void registerMethodVar(const Common::String &name, VarType type = kVarGeneric);
 	void updateLoopJumps(uint nextTargetPos, uint exitTargetPos);
@@ -110,6 +112,15 @@ public:
 	virtual bool visitMovieNode(MovieNode *node);
 	virtual bool visitIntersectsNode(IntersectsNode *node);
 	virtual bool visitWithinNode(WithinNode *node);
+	virtual bool visitTheNode(TheNode *node);
+	virtual bool visitTheOfNode(TheOfNode *node);
+	virtual bool visitTheNumberOfNode(TheNumberOfNode *node);
+	virtual bool visitTheLastNode(TheLastNode *node);
+	virtual bool visitTheDateTimeNode(TheDateTimeNode *node);
+	virtual bool visitMenuNode(MenuNode *node);
+	virtual bool visitMenuItemNode(MenuItemNode *node);
+	virtual bool visitSoundNode(SoundNode *node);
+	virtual bool visitSpriteNode(SpriteNode *node);
 
 private:
 	int parse(const char *code);
