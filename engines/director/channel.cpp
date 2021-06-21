@@ -360,6 +360,9 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 	bool newSprite = (_sprite->_spriteType == kInactiveSprite && nextSprite->_spriteType != kInactiveSprite);
 
 	// update the _sprite we stored in channel
+	// release the widget, because we may having the new one, we may optimize this by adding it to dtor?
+	if (_sprite->_cast)
+		_sprite->_cast->releaseWidget();
 	delete _sprite;
 	_sprite = new Sprite(*nextSprite);
 
