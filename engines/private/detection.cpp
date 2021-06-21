@@ -21,6 +21,7 @@
  */
 
 #include "base/plugins.h"
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
 #include "private/private.h"
 
@@ -166,6 +167,34 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_USA,
 		Common::kPlatformMacintosh,
 		ADGF_UNSTABLE,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"private-eye", // MacOS release (US) uninstalled
+		_s("Compressed game detected. Please uncompress it as specified in the game description on our Wiki"),
+		AD_ENTRY1s("Private Eye Installer", "02533427ebdf26d5dd12cee8e9f4de4d", 1647309),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_UNSUPPORTED,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"private-eye", // MacOS demo (US)
+		0,
+		AD_ENTRY2s("Private Eye Demo", "e98bac1e7570c70b0e9443913d10740c", 1556256,
+		    "demogame.mac", "cfbceaa8b91f0f53c745db61d1bc9749", 6103),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_DEMO,
+		GUIO1(GUIO_NOMIDI)
+	},
+	{
+		"private-eye", // MacOS demo (US) uninstalled
+		_s("Compressed game detected. Please uncompress it as specified in the game description on our Wiki"),
+		AD_ENTRY1s("Private Eye Demo Installer", "e7665ddc5e6d932c4a65598ecc4ec7d2", 1626393),
+		Common::EN_USA,
+		Common::kPlatformMacintosh,
+		ADGF_DEMO | ADGF_UNSUPPORTED,
 		GUIO1(GUIO_NOMIDI)
 	},
 	AD_TABLE_END_MARKER
