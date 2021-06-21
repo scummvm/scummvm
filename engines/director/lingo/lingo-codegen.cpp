@@ -295,8 +295,6 @@ void LingoCompiler::codeVarRef(const Common::String &name) {
 	if (_methodVars->contains(name)) {
 		type = (*_methodVars)[name];
 	} else {
-		if (_indef)
-			warning("BUILDBOT: LingoCompiler::codeVarRef: var %s referenced before definition", name.c_str());
 		type = kVarGeneric;
 	}
 	switch (type) {
@@ -324,7 +322,7 @@ void LingoCompiler::codeVarGet(const Common::String &name) {
 		type = (*_methodVars)[name];
 	} else {
 		if (_indef)
-			warning("BUILDBOT: LingoCompiler::codeVarGet: var %s referenced before definition", name.c_str());
+			warning("LingoCompiler::codeVarGet: var %s referenced before definition", name.c_str());
 		type = kVarGeneric;
 	}
 	switch (type) {
