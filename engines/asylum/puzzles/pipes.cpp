@@ -319,6 +319,8 @@ bool PuzzlePipes::init(const AsylumEvent &) {
 	startUpWater();
 	(void)checkFlags();
 
+	getCursor()->show();
+
 	return true;
 }
 

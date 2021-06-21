@@ -63,6 +63,8 @@ bool PuzzleHiveMachine::init(const AsylumEvent &)  {
 	getScreen()->setGammaLevel(getWorld()->graphicResourceIds[9]);
 	_rectIndex = -2;
 
+	getCursor()->show();
+
 	return true;
 }
 
