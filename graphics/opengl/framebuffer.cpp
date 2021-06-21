@@ -24,26 +24,7 @@
 
 #if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(AMIGAOS) && !defined(__MORPHOS__)
 
-#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
-#define GL_GLEXT_PROTOTYPES // For the GL_EXT_framebuffer_object extension
 #include "graphics/opengl/framebuffer.h"
-#ifndef GL_ARB_framebuffer_object
-#define GL_COLOR_ATTACHMENT0 GL_COLOR_ATTACHMENT0_EXT
-#define GL_DEPTH_ATTACHMENT GL_DEPTH_ATTACHMENT_EXT
-#define GL_FRAMEBUFFER GL_FRAMEBUFFER_EXT
-#define GL_FRAMEBUFFER_COMPLETE GL_FRAMEBUFFER_COMPLETE_EXT
-#define GL_RENDERBUFFER GL_RENDERBUFFER_EXT
-#define GL_STENCIL_ATTACHMENT GL_STENCIL_ATTACHMENT_EXT
-#define GL_STENCIL_INDEX8 GL_STENCIL_INDEX8_EXT
-#define GL_DEPTH24_STENCIL8 0x88F0
-#define GL_READ_FRAMEBUFFER 0x8CA8
-#define GL_DRAW_FRAMEBUFFER 0x8CA9
-#endif // defined(GL_ARB_framebuffer_object)
-#include "backends/platform/sdl/sdl-sys.h"
-#else
-#include "graphics/opengl/framebuffer.h"
-#endif
-
 #include "graphics/opengl/context.h"
 
 #ifdef USE_GLES2
@@ -53,68 +34,10 @@
 
 namespace OpenGL {
 
-#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
-static bool framebuffer_object_functions = false;
-static PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer;
-static PFNGLBINDRENDERBUFFEREXTPROC glBindRenderbuffer;
-static PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatus;
-static PFNGLDELETEFRAMEBUFFERSEXTPROC glDeleteFramebuffers;
-static PFNGLDELETERENDERBUFFERSEXTPROC glDeleteRenderbuffers;
-static PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbuffer;
-static PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
-static PFNGLGENFRAMEBUFFERSEXTPROC glGenFramebuffers;
-static PFNGLGENRENDERBUFFERSEXTPROC glGenRenderbuffers;
-static PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorage;
-typedef void (* PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height);
-static PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC glRenderbufferStorageMultisample;
-typedef void (* PFNGLBLITFRAMEBUFFEREXTPROC) (GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
-static PFNGLBLITFRAMEBUFFEREXTPROC glBlitFramebuffer;
-
-
-static void grabFramebufferObjectPointers() {
-	if (framebuffer_object_functions)
-		return;
-	framebuffer_object_functions = true;
-
-	union {
-		void *obj_ptr;
-		void (APIENTRY *func_ptr)();
-	} u;
-	// We're casting from an object pointer to a function pointer, the
-	// sizes need to be the same for this to work.
-	assert(sizeof(u.obj_ptr) == sizeof(u.func_ptr));
-	u.obj_ptr = SDL_GL_GetProcAddress("glBlitFramebuffer");
-	glBlitFramebuffer = (PFNGLBLITFRAMEBUFFEREXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glBindFramebuffer");
-	glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glBindRenderbuffer");
-	glBindRenderbuffer = (PFNGLBINDRENDERBUFFEREXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glCheckFramebufferStatus");
-	glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteFramebuffers");
-	glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glDeleteRenderbuffers");
-	glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glFramebufferRenderbuffer");
-	glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glFramebufferTexture2D");
-	glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glGenFramebuffers");
-	glGenFramebuffers = (PFNGLGENFRAMEBUFFERSEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glGenRenderbuffers");
-	glGenRenderbuffers = (PFNGLGENRENDERBUFFERSEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorage");
-	glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEEXTPROC)u.func_ptr;
-	u.obj_ptr = SDL_GL_GetProcAddress("glRenderbufferStorageMultisample");
-	glRenderbufferStorageMultisample = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC)u.func_ptr;
-}
-#endif // defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
-
-
-
 static bool usePackedBuffer() {
 	return OpenGLContext.packedDepthStencilSupported;
 }
+
 static bool useDepthComponent24() {
 	return OpenGLContext.OESDepth24;
 }
@@ -124,10 +47,6 @@ FrameBuffer::FrameBuffer(uint width, uint height) :
 	if (!OpenGLContext.framebufferObjectSupported) {
 		error("FrameBuffer Objects are not supported by the current OpenGL context");
 	}
-
-#if defined(SDL_BACKEND) && !defined(USE_GLAD) && !defined(USE_GLES2)
-	grabFramebufferObjectPointers();
-#endif
 
 	init();
 }
