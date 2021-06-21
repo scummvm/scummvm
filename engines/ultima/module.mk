@@ -480,6 +480,7 @@ MODULE_OBJS := \
 	ultima8/gumps/quit_gump.o \
 	ultima8/gumps/readable_gump.o \
 	ultima8/gumps/remorse_menu_gump.o \
+	ultima8/gumps/remorse_credits_gump.o \
 	ultima8/gumps/resizable_gump.o \
 	ultima8/gumps/scroll_gump.o \
 	ultima8/gumps/shape_viewer_gump.o \

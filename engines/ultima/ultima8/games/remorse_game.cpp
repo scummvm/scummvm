@@ -29,6 +29,8 @@
 #include "ultima/ultima8/graphics/palette_manager.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/main_menu_process.h"
+#include "ultima/ultima8/gumps/remorse_credits_gump.h"
 #include "ultima/ultima8/kernel/object_manager.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
@@ -70,10 +72,9 @@ bool RemorseGame::loadFiles() {
 
 	if (!loadPalette("static/gamepal.pal", PaletteManager::Pal_Game))
 		return false;
-	if (GAME_IS_REGRET) {
-		// This one is not used at the moment, so allowed to fail
-		loadPalette("static/cred.pal", PaletteManager::Pal_Cred);
-	}
+	// This one is not always present and only needed for the credits,
+	// let it fail if needed.
+	loadPalette("static/cred.pal", PaletteManager::Pal_Cred);
 	if (!loadPalette("static/diff.pal", PaletteManager::Pal_Diff))
 		return false;
 	if (!loadPalette("static/misc.pal", PaletteManager::Pal_Misc))
@@ -167,6 +168,32 @@ ProcId RemorseGame::playEndgameMovie(bool fade) {
 
 void RemorseGame::playCredits() {
 	warning("TODO: RemorseGame::playCredits: Implement Crusader credits");
+	Process *menuproc = new MainMenuProcess();
+	Kernel::get_instance()->addProcess(menuproc);
+
+	static const Std::string txt_filename = "static/credits.dat";
+	static const Std::string bmp_filename = "static/cred.dat";
+	Common::SeekableReadStream *txtrs = FileSystem::get_instance()->ReadFile(txt_filename);
+	Common::SeekableReadStream *bmprs = FileSystem::get_instance()->ReadFile(bmp_filename);
+
+	if (!txtrs) {
+		perr << "RemorseGame::playCredits: error opening credits text: "
+			 << txt_filename << Std::endl;
+		return;
+	}
+	if (!bmprs) {
+		perr << "RemorseGame::playCredits: error opening credits background: "
+			 << bmp_filename << Std::endl;
+		return;
+	}
+	Gump *creditsgump = new RemorseCreditsGump(txtrs, bmprs);
+	creditsgump->InitGump(nullptr);
+	creditsgump->CreateNotifier();
+	Process *notifyproc = creditsgump->GetNotifyProcess();
+
+	if (notifyproc) {
+		menuproc->waitFor(notifyproc);
+	}
 }
 
 void RemorseGame::writeSaveInfo(Common::WriteStream *ws) {
