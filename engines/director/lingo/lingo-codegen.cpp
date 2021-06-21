@@ -529,6 +529,12 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 		}
 	}
 
+	if ((node->name->equalsIgnoreCase("delete") || node->name->equalsIgnoreCase("hilite")) && node->args->size() == 1) {
+		COMPILE_REF((*node->args)[0]);
+		codeCmd(*node->name, 1);
+		return true;
+	}
+
 	COMPILE_LIST(node->args);
 	codeCmd(*node->name, node->args->size());
 	return true;
