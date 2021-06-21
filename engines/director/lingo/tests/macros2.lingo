@@ -14,4 +14,4 @@ test
 test()
 put test
 put test()
-if test then test end if
+if test then test

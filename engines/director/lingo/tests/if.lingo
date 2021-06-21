@@ -53,7 +53,8 @@ else
 end if
 
 if abs(y) = x and abs(x) = y then put 5
-if abs(y) = x and abs(x) = y then put 5 else put 6
+if abs(y) = x and abs(x) = y then put 5
+else put 6
 
 if the selection = the text of cast A31 then
     go to frame "sEnd"
@@ -73,7 +74,8 @@ else if whichTry = 2 then
 else if whichTry = 3 then go to frame "sDo"
 else put 6
 
-if the selection = the text of cast A31 then go to frame "sEnd" else put 7
+if the selection = the text of cast A31 then go to frame "sEnd"
+else put 7
 
 if the selection = the text of cast A31 then go to frame "sEnd"
 else if whichTry = 1 then
@@ -93,7 +95,8 @@ else if whichTry = 1 then
 else if whichTry = 2 then
 	put 5
 	go to frame "sShow"
-else if whichTry = 3 then go to frame "sDo" else put 7 end if
+else if whichTry = 3 then go to frame "sDo"
+else put 7
 
 if rollOver(2) then
   put "The cursor is INSIDE the square." into field "Cursor Status"
@@ -102,16 +105,23 @@ else
 end if
 
 if the selection = the text of cast A31 then
-    if whichTry = 3 then go to frame "sDo" end if
+    if whichTry = 3 then
+		go to frame "sDo"
+	end if
 else if whichTry = 1 then
-	if whichTry = 3 then go to frame "sDo" else
+	if whichTry = 3 then go to frame "sDo"
+	else
 		put 5
 	end      if
 else if whichTry = 2 then
-	if whichTry = 3 then go to frame "sDo" else
+	if whichTry = 3 then go to frame "sDo"
+	else
 		if the selection = the text of cast A21 then
-		    if whichTry = 3 then go to frame "Foo" end if
-		else if abra = 5 then put 6 else
+		    if whichTry = 3 then
+				go to frame "Foo"
+			end if
+		else if abra = 5 then put 6
+		else
 			put 7
 			if abra = 7 then put 5
 		end if
@@ -119,10 +129,10 @@ else if whichTry = 2 then
 else if whichTry = 3 then go to frame "sDo"
 else put 6
 
-if the selection = the text of cast A31 then go to frame "sEnd" else put 7 end if
+if the selection = the text of cast A31 then go to frame "sEnd"
 
 when keyDown then if the key = RETURN then checkField
-when keyDown then if the key = QUOTE then checkField else put "bar"
+when keyDown then if the key = QUOTE then checkField
 
   if the mouseH > ((the right of sprite 15) - 20) then HidePopUp
   else if ((the mouseH > ((the left of sprite 15) + 30)) and Â
