@@ -58,9 +58,11 @@ static void convertPalette(const PALETTE src, byte dest[PALETTE_SIZE]) {
 }
 
 static void applyPalette() {
-	byte pal[PALETTE_SIZE];
-	convertPalette(_G(current_palette), pal);
-	g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	if (g_system->getScreenFormat().bytesPerPixel == 1) {
+		byte pal[PALETTE_SIZE];
+		convertPalette(_G(current_palette), pal);
+		g_system->getPaletteManager()->setPalette(pal, 0, PALETTE_COUNT);
+	}
 }
 
 void set_palette(const PALETTE p) {
