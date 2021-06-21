@@ -772,7 +772,7 @@ void *MotionTask::restore(void *buf) {
 		actionCounter = *((int16 *)buf);
 		buf = (int16 *)buf + 1;
 
-		if (motionType = motionTypeOneHandedParry) {
+		if (motionType == motionTypeOneHandedParry) {
 			//  Restore the combat sub-motion type
 			combatMotionType = *((uint8 *)buf);
 			buf = (uint8 *)buf + 1;
@@ -911,7 +911,7 @@ int32 MotionTask::archiveSize(void) {
 		            +   sizeof(d.defenseFlags)
 		            +   sizeof(actionCounter);
 
-		if (motionType = motionTypeOneHandedParry)
+		if (motionType == motionTypeOneHandedParry)
 			size += sizeof(combatMotionType);
 	} else if (motionType == motionTypeDodge
 	           ||  motionType == motionTypeAcceptHit
@@ -1170,7 +1170,7 @@ void *MotionTask::archive(void *buf) {
 		*((int16 *)buf) = actionCounter;
 		buf = (int16 *)buf + 1;
 
-		if (motionType = motionTypeOneHandedParry) {
+		if (motionType == motionTypeOneHandedParry) {
 			//  Store the combat sub-motion type
 			*((uint8 *)buf) = combatMotionType;
 			buf = (uint8 *)buf + 1;
