@@ -121,6 +121,7 @@ public:
 	virtual bool visitMenuItemNode(MenuItemNode *node);
 	virtual bool visitSoundNode(SoundNode *node);
 	virtual bool visitSpriteNode(SpriteNode *node);
+	virtual bool visitChunkExprNode(ChunkExprNode *node);
 
 private:
 	int parse(const char *code);

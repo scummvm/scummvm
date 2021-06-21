@@ -72,6 +72,7 @@ struct MenuNode;
 struct MenuItemNode;
 struct SoundNode;
 struct SpriteNode;
+struct ChunkExprNode;
 
 typedef Common::Array<Node *> NodeList;
 typedef Common::Array<Common::String *> IDList;
@@ -132,7 +133,8 @@ enum NodeType {
 	kMenuNode,
 	kMenuItemNode,
 	kSoundNode,
-	kSpriteNode
+	kSpriteNode,
+	kChunkExprNode
 };
 
 enum NumberOfType {
@@ -196,6 +198,7 @@ public:
 	virtual bool visitMenuItemNode(MenuItemNode *node) = 0;
 	virtual bool visitSoundNode(SoundNode *node) = 0;
 	virtual bool visitSpriteNode(SpriteNode *node) = 0;
+	virtual bool visitChunkExprNode(ChunkExprNode *node) = 0;
 };
 
 /* Node */
@@ -940,6 +943,26 @@ struct SpriteNode : ExprNode {
 	}
 	virtual bool accept(NodeVisitor *visitor) {
 		return visitor->visitSpriteNode(this);
+	}
+};
+
+/* ChunkExprNode */
+
+struct ChunkExprNode : ExprNode {
+	ChunkType type;
+	Node *start;
+	Node *end;
+	Node *src;
+
+	ChunkExprNode(ChunkType typeIn, Node *startIn, Node *endIn, Node *srcIn)
+		: ExprNode(kChunkExprNode), type(typeIn), start(startIn), end(endIn), src(srcIn) {}
+	virtual ~ChunkExprNode() {
+		delete start;
+		delete end;
+		delete src;
+	}
+	virtual bool accept(NodeVisitor *visitor) {
+		return visitor->visitChunkExprNode(this);
 	}
 };
 

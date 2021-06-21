@@ -1249,4 +1249,45 @@ bool LingoCompiler::visitSpriteNode(SpriteNode *node) {
 	return true;
 }
 
+/* ChunkExprNode */
+
+bool LingoCompiler::visitChunkExprNode(ChunkExprNode *node) {
+	COMPILE(node->start);
+	if (node->end) {
+		COMPILE(node->end);
+	}
+	COMPILE(node->src);
+	switch (node->type) {
+	case kChunkChar:
+		if (node->end) {
+			code1(LC::c_charToOf);
+		} else {
+			code1(LC::c_charOf);
+		}
+		break;
+	case kChunkWord:
+		if (node->end) {
+			code1(LC::c_wordToOf);
+		} else {
+			code1(LC::c_wordOf);
+		}
+		break;
+	case kChunkItem:
+		if (node->end) {
+			code1(LC::c_itemToOf);
+		} else {
+			code1(LC::c_itemOf);
+		}
+		break;
+	case kChunkLine:
+		if (node->end) {
+			code1(LC::c_lineToOf);
+		} else {
+			code1(LC::c_lineOf);
+		}
+		break;
+	}
+	return true;
+}
+
 } // End of namespace Director
