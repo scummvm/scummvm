@@ -427,7 +427,7 @@ int GetTextDisplayTime(const char *text, int canberel) {
 }
 
 bool ShouldAntiAliasText() {
-	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0);
+	return (_GP(game).options[OPT_ANTIALIASFONTS] != 0 || ::AGS::g_vm->_forceTextAA);
 }
 
 void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx) {
