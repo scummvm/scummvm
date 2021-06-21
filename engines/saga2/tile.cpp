@@ -2347,8 +2347,6 @@ Platform *MetaTile::fetchPlatform(int16 mapNum, int16 layer) {
 		return &pce->pl;
 	} else {
 		debugC(2, kDebugLoading, "Fetching platform (%d,%d)", mapNum, layer);
-		if (mapNum == 0 && layer == 6)
-			debug("");
 
 		//  Since the platform is not in the cache, we need to
 		//  dump something from the cache. Dump the one that
