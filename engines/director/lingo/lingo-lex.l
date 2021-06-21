@@ -114,14 +114,18 @@ spc [ \t\xC2]
 
 [#]{identifier}	{ count(); yylval.s = new Common::String(yytext + 1); return tSYMBOL; }	// D3, skip '#'
 
+abbreviated	{ count(); return tABBREVIATED; }
+abbrev		{ count(); return tABBREV; }
+abbr		{ count(); return tABBR; }
 after		{ count(); return tAFTER; }		// D3
 and			{ count(); return tAND; }
 before		{ count(); return tBEFORE; }	// D3
 cast		{ count(); return tCAST; }
 char		{ count(); return tCHAR; }		// D3
+chars		{ count(); return tCHARS; }
 contains	{ count(); return tCONTAINS; }
+date		{ count(); return tDATE; }
 down		{ count(); return tDOWN; }
-if			{ count(); return tIF; }
 else		{ count(); return tELSE; }
 end({spc}+{identifier})?	{
 		count();
@@ -141,24 +145,33 @@ end({spc}+{identifier})?	{
 
 		return tENDCLAUSE;
 	}
-^{spc}*factory { count(); return tFACTORY; }
 exit		{ count(); return tEXIT; }
+^{spc}*factory { count(); return tFACTORY; }
 field		{ count(); return tFIELD; }
 frame		{ count(); return tFRAME; }
 global		{ count(); return tGLOBAL; }
 go{spc}+(to)?	{ count(); return tGO; }
+if			{ count(); return tIF; }
 instance	{ count(); return tINSTANCE; }
 intersects	{ count(); return tINTERSECTS;}
 into		{ count(); return tINTO; }
 in			{ count(); return tIN; }
 item		{ count(); return tITEM; }
+items		{ count(); return tITEMS; }
+last		{ count(); return tLAST; }
 line		{ count(); return tLINE; }
-macro		{ count(); return tMACRO;; }
+lines		{ count(); return tLINES; }
+long		{ count(); return tLONG; }
+macro		{ count(); return tMACRO; }
+menu		{ count(); return tMENU; }
+menuItem	{ count(); return tMENUITEM;}
+menuItems	{ count(); return tMENUITEMS; }
 method		{ count(); return tMETHOD; }
 mod			{ count(); return tMOD;}
 movie		{ count(); return tMOVIE; }
 next		{ count(); return tNEXT; }
 not			{ count(); return tNOT; }
+number		{ count(); return tNUMBER; }
 of			{ count(); return tOF; }
 on			{ count(); return tON; }		// D3
 open		{ count(); return tOPEN; }
@@ -169,209 +182,24 @@ property	{ count(); return tPROPERTY; }	// D4
 put			{ count(); return tPUT; }
 repeat		{ count(); return tREPEAT; }
 script		{ count(); return tSCRIPT; }
+scummvmAssertError	{ count(); return tASSERTERROR; }
 set			{ count(); return tSET; }
+short		{ count(); return tSHORT; }
+sound		{ count(); return tSOUND; }
+sprite			{ count(); return tSPRITE; }
 starts		{ count(); return tSTARTS; }
 tell		{ count(); return tTELL; }
-the{spc}+number{spc}+of{spc}+[[:alpha:]]+{spc}+(in|of){spc}+ {
-		count();
-
-		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
-
-		ptr += 6; // skip 'number '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
-
-		ptr += 3; // Skip 'of '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2') ptr++;
-
-		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			field += *ptr++;
-
-		// the number of menuItems of menu <xx>
-		if (!field.compareToIgnoreCase("menuItems")) {
-			Common::String key = Common::String::format("%dnumber", kTheMenuItems);
-
-			yylval.e[0] = kTheMenuItems;
-			yylval.e[1] = g_lingo->_theEntityFields[key]->field;
-
-			return tTHEMENUITEMSENTITY;
-		}
-
-		yylval.s = new Common::String(Common::String::format("numberOf%s", field.c_str()));
-
-		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
-			return tTHEFUNCINOF;
-		} else {
-			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
-			return tLEXERROR;
-		}
-	}
-the{spc}+last{spc}+[[:alpha:]]+{spc}+(in|of){spc}+	{
-		count();
-
-		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t') ptr++;
-
-		ptr += 5; // skip 'last '
-		while (*ptr == ' ' || *ptr == '\t') ptr++;
-
-		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t')
-			field += *ptr++;
-
-		yylval.s = new Common::String(Common::String::format("last%sOf", field.c_str()));
-
-		if (g_lingo->_builtinFuncs.contains(*yylval.s)) {
-			return tTHEFUNCINOF;
-		} else {
-			warning("LEXER: Unhandled chunk expression '%s'", yylval.s->c_str());
-			return tLEXERROR;
-		}
-	}
-the{spc}+[[:alpha:]]+{spc}+of{spc}+{identifier}	{
-		count();
-
-		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			field += *ptr++;
-
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		ptr += 3; // Skip 'of '
-
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		if (g_lingo->_theEntities.contains(ptr)) {
-			field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
-
-			if (!g_lingo->_theEntityFields.contains(field)) {
-				warning("LEXER: Unhandled the field %s of %s", field.c_str(), ptr);
-				return tLEXERROR;
-			}
-
-			if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
-				warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
-				return tLEXERROR;
-			}
-
-			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
-			yylval.e[1] = g_lingo->_theEntityFields[field]->field;
-
-			// the <field> of menuItem <expr>" of menu <expr>
-			if (g_lingo->_theEntityFields[field]->entity == kTheMenuItem)
-				return tTHEMENUITEMENTITY;
-
-			if (g_lingo->_theEntities[ptr]->hasId)
-				return tTHEENTITYWITHID;
-			else
-				return tTHEENTITY;
-		} else {
-			if (g_director->getVersion() >= 400) {
-				Common::String key = Common::String::format("%d%s", g_lingo->_objectEntityId, field.c_str());
-
-				yylval.objectprop.obj = new Common::String(ptr);
-				yylval.objectprop.prop = new Common::String(field);
-
-				return tTHEOBJECTPROP;
-			} else if (g_lingo->_builtinFuncs.contains(field)) { // Let's hope they don't do it in D4+
-				if (g_lingo->_builtinFuncs[field].nargs == 1 && g_lingo->_builtinFuncs[field].maxArgs == 1) {
-					yylval.s = new Common::String(field);
-					Common::String rest(ptr);
-
-					// It is the dreaded 'the <builtin> of <expr>'
-					// with 'expr' starting with VARID, which leads to clash
-					//
-					// put 'of VARID' back.
-
-					for (int i = rest.size() - 1; i >= 0; i--)
-						unput(rest[i]);
-
-					unput(' '); unput('f'); unput('o');
-
-					return tTHEFUNC;
-				}
-			}
-		}
-
-		warning("LEXER: Unhandled the entity '%s', field '%s'", ptr, field.c_str());
-	}
-the{spc}+[[:alpha:]]+{spc}+(date|time)		{
-		count();
-
-		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		Common::String field;
-		while (*ptr != ' ' && *ptr != '\t' && *ptr != '\xC2')
-			field += *ptr++;
-
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		field = Common::String::format("%d%s", g_lingo->_theEntities[ptr]->entity, field.c_str());
-
-		if (!g_lingo->_theEntityFields.contains(field)) {
-			warning("LEXER: Unhandled the field %s", ptr);
-			return tLEXERROR;
-		}
-
-		if (g_lingo->_theEntityFields[field]->entity != g_lingo->_theEntities[ptr]->entity) {
-			warning("LEXER: Unsupported field '%s' for entity '%s'", field.c_str(), ptr);
-			return tLEXERROR;
-		}
-
-		yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
-		yylval.e[1] = g_lingo->_theEntityFields[field]->field;
-
-		if (g_lingo->_theEntities[ptr]->hasId)
-			return tTHEENTITYWITHID;
-		else
-			return tTHEENTITY;
-	}
-the{spc}+[[:alpha:]]+		{
-		count();
-
-		const char *ptr = &yytext[4]; // Skip 'the '
-		while (*ptr == ' ' || *ptr == '\t' || *ptr == '\xC2')
-			ptr++;
-
-		if (g_lingo->_theEntities.contains(ptr)) {
-			yylval.e[0] = g_lingo->_theEntities[ptr]->entity;
-			yylval.e[1] = 0;	// No field
-
-			if (g_lingo->_theEntities[ptr]->hasId)
-				return tTHEENTITYWITHID;
-			else
-				return tTHEENTITY;
-		}
-
-		if (g_lingo->_builtinFuncs.contains(ptr)) {
-			if (g_lingo->_builtinFuncs[ptr].nargs == 1 && g_lingo->_builtinFuncs[ptr].maxArgs == 1) {
-				yylval.s = new Common::String(ptr);
-				return tTHEFUNC;
-			}
-		}
-
-		warning("LEXER: Unhandled the entity '%s'", ptr);
-	}
-then			{ count(); return tTHEN; }
-to				{ count(); return tTO; }
-scummvmAssertError	{ count(); return tASSERTERROR; }
-sprite			{ count(); return tSPRITE; }
-with			{ count(); return tWITH; }
-within			{ count(); return tWITHIN; }
-when			{ count(); return tWHEN; }
-while			{ count(); return tWHILE; }
-window			{ count(); return tWINDOW; }
-word			{ count(); return tWORD; }
+the			{ count(); return tTHE; }
+then		{ count(); return tTHEN; }
+time		{ count(); return tTIME; }
+to			{ count(); return tTO; }
+when		{ count(); return tWHEN; }
+while		{ count(); return tWHILE; }
+window		{ count(); return tWINDOW; }
+with		{ count(); return tWITH; }
+within		{ count(); return tWITHIN; }
+word		{ count(); return tWORD; }
+words		{ count(); return tWORDS; }
 
 [<][>]			{ count(); return tNEQ; }
 [>][=]			{ count(); return tGE; }
