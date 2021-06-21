@@ -288,8 +288,6 @@ public:
 	bool _fullRefresh;
 
 protected:
-	Common::Point _alignOffset;
-
 	Common::U32String _str;
 	const MacFont *_macFont;
 

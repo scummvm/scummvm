@@ -64,6 +64,9 @@ public:
 	virtual Common::Point calculateOffset() override;
 
 private:
+	void init();
+
+private:
 	MacButtonType _buttonType;
 	MacPlotData _pd;
 	bool _invertInner;

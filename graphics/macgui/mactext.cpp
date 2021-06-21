@@ -672,7 +672,7 @@ void MacText::reallocSurface() {
 		return;
 	}
 
-	if (_surface->w < _textMaxWidth || _surface->h < _textMaxHeight) {
+	if (_surface->w < _maxWidth || _surface->h < _textMaxHeight) {
 		// realloc surface and copy old content
 		ManagedSurface *n = new ManagedSurface(_maxWidth, _textMaxHeight, _wm->_pixelformat);
 		n->clear(_bgcolor);
@@ -863,26 +863,11 @@ void MacText::recalcDims() {
 }
 
 void MacText::setAlignOffset(TextAlign align) {
-	Common::Point offset;
-	switch(align) {
-	case kTextAlignLeft:
-	default:
-		offset = Common::Point(0, 0);
-		break;
-	case kTextAlignCenter:
-		offset = Common::Point((_maxWidth / 2) - (_surface->w / 2), 0);
-		break;
-	case kTextAlignRight:
-		offset = Common::Point(_maxWidth - (_surface->w + 1), 0);
-		break;
-	}
-
-	if (offset != _alignOffset) {
-		_contentIsDirty = true;
-		_fullRefresh = true;
-		_alignOffset = offset;
-		_textAlignment = align;
-	}
+	if (_textAlignment == align)
+		return;
+	_contentIsDirty = true;
+	_fullRefresh = true;
+	_textAlignment = align;
 }
 
 Common::Point MacText::calculateOffset() {
@@ -1082,15 +1067,9 @@ bool MacText::draw(bool forceRedraw) {
 		return false;
 	}
 
-	// if we are drawing the selection, then we better clear the surface
-	// let me explain here, sometimes, when we are render the text in _surface, we may not render the whole line
-	// such as, a line only contains \n, thus, we may only render part of this line
-	// when we are drawing the selection, it will reverse all the pixels in selected area. And when you only render part of a line in selected area
-	// drawSelection will reverse that not rendered part again and again, and which will lead to blinking
-
 	// we need to find out a way to judge whether we need to clear the surface
 	// currently, we just use the _contentIsDirty
-	if (_selectedText.endY != -1 || _contentIsDirty)
+	if (_contentIsDirty)
 		_composeSurface->clear(_bgcolor);
 
 	// TODO: Clear surface fully when background colour changes.
@@ -1361,8 +1340,12 @@ void MacText::setSelection(int pos, bool start) {
 		colX = col = row = 0;
 	} else {
 		row = _textLines.size() - 1;
-		colX = _surface->w;
 		col = getLineCharWidth(row);
+		// if we don't have any text, then we won't select the whole area.
+		if (_textMaxWidth == 0)
+			colX = 0;
+		else
+			colX = _surface->w;
 	}
 
 	int rowY = _textLines[row].y;

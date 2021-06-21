@@ -37,50 +37,28 @@ MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidge
 	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
-	_invertInner = false;
-	_checkBoxType = 0;
-
-	switch (buttonType) {
-	case kCheckBox:
-		_alignOffset.x += 16;
-		_dims.right += 16;
-		break;
-	case kRound:
-		_alignOffset.x += 2;
-		_alignOffset.y += 2;
-		_dims.right += 2;
-		_dims.bottom += 4;
-		break;
-	case kRadio:
-		_alignOffset.x += 16;
-		_dims.right += 16;
-		break;
-	}
-
-	_composeSurface->create(_dims.width(), _dims.height(), _wm->_pixelformat);
-	_composeSurface->clear(_bgcolor);
+	init();
 }
 
-MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, Common::CodePage encodeType) :
-	MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment, 0, 0, 0, 0, 0, encodeType), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
+MacButton::MacButton(MacButtonType buttonType, TextAlign textAlignment, MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, Common::CodePage encodeType) : MacText(parent, x, y, w, h, wm, s, macFont, fgcolor, bgcolor, w, textAlignment, 0, 0, 0, 0, 0, encodeType), _pd(Graphics::MacPlotData(_composeSurface, nullptr, &_wm->getPatterns(), 1, 0, 0, 1, 0, true)) {
 
 	_buttonType = buttonType;
+	init();
+}
+
+void MacButton::init() {
 	_invertInner = false;
 	_checkBoxType = 0;
 
-	switch (buttonType) {
+	switch (_buttonType) {
 	case kCheckBox:
-		_alignOffset.x += 16;
 		_dims.right += 16;
 		break;
 	case kRound:
-		_alignOffset.x += 2;
-		_alignOffset.y += 2;
 		_dims.right += 2;
 		_dims.bottom += 4;
 		break;
 	case kRadio:
-		_alignOffset.x += 16;
 		_dims.right += 16;
 		break;
 	}
@@ -226,8 +204,24 @@ bool MacButton::processEvent(Common::Event &event) {
 	return false;
 }
 
+// we won't have the text with _border and _gutter in macbutton now.
+// so for the override of calculateOffset, we are passing the border and gutter which depends on buttonType
+// maybe we can cache this for optimization
 Common::Point MacButton::calculateOffset() {
-	return Common::Point(_alignOffset.x + _border + _gutter, _alignOffset.y + _border + _gutter/2);
+	int x = 0, y = 0;
+	switch (_buttonType) {
+	case kCheckBox:
+		x = 16;
+		break;
+	case kRound:
+		x = 2;
+		y = 2;
+		break;
+	case kRadio:
+		x = 16;
+		break;
+	}
+	return Common::Point(x, y);
 }
 
 } // End of namespace Graphics
