@@ -376,7 +376,7 @@ public:
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	TilePoint getTarget(void) const {
+	const TilePoint getTarget(void) const {
 		return targetLoc;
 	}
 
@@ -534,7 +534,7 @@ public:
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	GameObject *getTarget(void) const {
+	const GameObject *getTarget(void) const {
 		return targetObj;
 	}
 
@@ -572,7 +572,7 @@ public:
 	//  Determine if the specified task is equivalent to this task
 	bool operator == (const Task &t) const;
 
-	Actor *getTarget(void) const {
+	const Actor *getTarget(void) const {
 		return targetActor;
 	}
 
@@ -706,8 +706,8 @@ public:
 private:
 	TilePoint getRepulsionVector(void);
 
-	ActorTarget *getTarget(void) const {
-		return (ActorTarget *)targetMem;
+	const ActorTarget *getTarget(void) const {
+		return (const ActorTarget *)targetMem;
 	}
 };
 
@@ -801,8 +801,8 @@ protected:
 	GotoTask *setupGoto(void);
 	TilePoint currentTargetLoc(void);
 
-	Target *getTarget(void) const {
-		return (Target *)targetMem;
+	const Target *getTarget(void) const {
+		return (const Target *)targetMem;
 	}
 };
 
@@ -890,8 +890,8 @@ protected:
 	GotoTask *setupGoto(void);
 	TilePoint currentTargetLoc(void);
 
-	ObjectTarget *getTarget(void) const {
-		return (ObjectTarget *)targetMem;
+	const ObjectTarget *getTarget(void) const {
+		return (const ObjectTarget *)targetMem;
 	}
 };
 
@@ -1038,8 +1038,8 @@ protected:
 	GotoTask *setupGoto(void);
 	TilePoint currentTargetLoc(void);
 
-	ActorTarget *getTarget(void) const {
-		return (ActorTarget *)targetMem;
+	const ActorTarget *getTarget(void) const {
+		return (const ActorTarget *)targetMem;
 	}
 
 	bool tracking(void) const {

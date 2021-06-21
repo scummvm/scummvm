@@ -456,7 +456,7 @@ public:
 	ProtoObj *proto(void) {
 		return prototype;
 	}
-	TilePoint getLocation(void) {
+	TilePoint getLocation(void) const {
 		return _data.location;
 	}
 	TilePoint getWorldLocation(void);
