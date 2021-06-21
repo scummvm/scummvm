@@ -160,11 +160,11 @@ static void checkEnd(Common::String *token, Common::String *expect, bool require
 %type<idlist> idlist nonemptyidlist
 
 // STATEMENT
-%type<node> stmt stmtoneliner
+%type<node> stmt stmt_insideif stmtoneliner
 %type<node> proc asgn definevars
 %type<node> ifstmt ifelsestmt loop tell when
-%type<nodelist> cmdargs frameargs stmtlist nonemptystmtlist
-%type<node> stmtlistline
+%type<nodelist> cmdargs frameargs stmtlist nonemptystmtlist stmtlist_insideif nonemptystmtlist_insideif
+%type<node> stmtlistline stmtlistline_insideif
 
 // EXPRESSION
 %type<node> simpleexpr_nounarymath simpleexpr
@@ -381,7 +381,11 @@ nonemptyidlist: ID[item]					{
 // Sometimes this '\n' is in a nested statement (e.g. tIF expr tTHEN stmt).
 // It may not look like there's a '\n', but it's there.
 
-stmt: stmtoneliner
+stmt: stmt_insideif
+	| tENDIF '\n'						{ $$ = nullptr; } // stray `end if`s are allowed for some reason
+	;
+
+stmt_insideif: stmtoneliner
 	| ifstmt
 	| ifelsestmt
 	| loop
@@ -496,8 +500,8 @@ ifstmt: tIF expr tTHEN stmt {
 		NodeList *stmtlist = new NodeList;
 		stmtlist->push_back($stmt);
 		$$ = new IfStmtNode($expr, stmtlist); }
-	| tIF expr tTHEN '\n' stmtlist tENDIF '\n' {
-		$$ = new IfStmtNode($expr, $stmtlist); }
+	| tIF expr tTHEN '\n' stmtlist_insideif tENDIF '\n' {
+		$$ = new IfStmtNode($expr, $stmtlist_insideif); }
 	;
 
 ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
@@ -506,15 +510,15 @@ ifelsestmt: tIF expr tTHEN stmt[stmt1] tELSE stmt[stmt2] {
 		NodeList *stmtlist2 = new NodeList;
 		stmtlist2->push_back($stmt2);
 		$$ = new IfElseStmtNode($expr, stmtlist1, stmtlist2); }
-	| tIF expr tTHEN stmt[stmt1] tELSE '\n' stmtlist[stmtlist2] tENDIF '\n' {
+	| tIF expr tTHEN stmt[stmt1] tELSE '\n' stmtlist_insideif[stmtlist2] tENDIF '\n' {
 		NodeList *stmtlist1 = new NodeList;
 		stmtlist1->push_back($stmt1);
 		$$ = new IfElseStmtNode($expr, stmtlist1, $stmtlist2); }
-	| tIF expr tTHEN '\n' stmtlist[stmtlist1] tELSE stmt[stmt2] {
+	| tIF expr tTHEN '\n' stmtlist_insideif[stmtlist1] tELSE stmt[stmt2] {
 		NodeList *stmtlist2 = new NodeList;
 		stmtlist2->push_back($stmt2);
 		$$ = new IfElseStmtNode($expr, $stmtlist1, stmtlist2); }
-	| tIF expr tTHEN '\n' stmtlist[stmtlist1] tELSE '\n' stmtlist[stmtlist2] tENDIF '\n' {
+	| tIF expr tTHEN '\n' stmtlist_insideif[stmtlist1] tELSE '\n' stmtlist_insideif[stmtlist2] tENDIF '\n' {
 		$$ = new IfElseStmtNode($expr, $stmtlist1, $stmtlist2); }
 	;
 
@@ -558,6 +562,28 @@ nonemptystmtlist:
 
 stmtlistline: '\n'					{ $$ = nullptr; }
 	| stmt
+	;
+
+stmtlist_insideif: /* empty */		{ $$ = new NodeList; }
+	| nonemptystmtlist_insideif
+	;
+
+nonemptystmtlist_insideif:
+	stmtlistline_insideif[item]		{
+		NodeList *list = new NodeList;
+		if ($item) {
+			list->push_back($item);
+		}
+		$$ = list; }
+	| nonemptystmtlist_insideif[prev] stmtlistline_insideif[item]	{
+		if ($item) {
+			$prev->push_back($item);
+		}
+		$$ = $prev; }
+	;
+
+stmtlistline_insideif: '\n'			{ $$ = nullptr; }
+	| stmt_insideif
 	;
 
 // EXPRESSION
