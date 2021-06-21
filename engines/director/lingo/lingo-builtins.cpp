@@ -507,12 +507,12 @@ void LB::b_delete(int nargs) {
 	Datum field;
 	int start, end;
 	if (d.type == CHUNKREF) {
-		if (d.u.cref->source.isVarRef()) {
+		if (d.u.cref->source.isVarRef() || d.u.cref->source.isCastRef()) {
 			field = d.u.cref->source;
 			start = d.u.cref->start;
 			end = d.u.cref->end;
 		} else {
-			warning("b_delete: bad chunk ref field type: %s", d.type2str());
+			warning("BUILDBOT: b_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
 			return;
 		}
 	} else if (d.isRef()) {
@@ -520,7 +520,7 @@ void LB::b_delete(int nargs) {
 		start = 0;
 		end = -1;
 	} else {
-		warning("b_delete: bad field type: %s", d.type2str());
+		warning("BUILDBOT: b_delete: bad field type: %s", d.type2str());
 		return;
 	}
 
@@ -556,17 +556,21 @@ void LB::b_hilite(int nargs) {
 	Datum d = g_lingo->pop(false);
 
 	int fieldId, start, end;
-	if (d.type == FIELDREF) {
+	if (d.isCastRef()) {
 		fieldId = d.u.i;
 		start = 0;
 		end = -1;
 	} else if (d.type == CHUNKREF) {
-		TYPECHECK(d.u.cref->source, FIELDREF);
-		fieldId = d.u.cref->source.u.i;
-		start = d.u.cref->start;
-		end = d.u.cref->end;
+		if (d.u.cref->source.isCastRef()) {
+			fieldId = d.u.cref->source.u.i;
+			start = d.u.cref->start;
+			end = d.u.cref->end;
+		} else {
+			warning("BUILDBOT: b_delete: bad chunk ref field type: %s", d.u.cref->source.type2str());
+			return;
+		}
 	} else {
-		warning("b_hilite: bad field type: %s", d.type2str());
+		warning("BUILDBOT: b_hilite: bad field type: %s", d.type2str());
 		return;
 	}
 
