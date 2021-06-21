@@ -598,6 +598,9 @@ void PicButtonWidget::setGfx(const Graphics::ManagedSurface *gfx, int statenum, 
 		return;
 	}
 
+	if (!isVisible() || !_boss->isVisible())
+		return;
+
 	float sf = g_gui.getScaleFactor();
 	if (scale && sf != 1.0) {
 		Graphics::Surface *tmp2 = gfx->rawSurface().scale(gfx->w * sf, gfx->h * sf, false);
@@ -624,6 +627,11 @@ void PicButtonWidget::setGfxFromTheme(const char *name, int statenum, bool scale
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
+	_gfx[statenum].free();
+
+	if (!isVisible() || !_boss->isVisible())
+	return;
+
 	if (w == -1)
 		w = _w;
 	if (h == -1)
@@ -631,7 +639,6 @@ void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx[statenum].free();
 	_gfx[statenum].create(w, h, requiredFormat);
 	_gfx[statenum].fillRect(Common::Rect(0, 0, w, h), _gfx[statenum].format.RGBToColor(r, g, b));
 }
@@ -880,7 +887,7 @@ void GraphicsWidget::setGfx(const Graphics::ManagedSurface *gfx, bool scale) {
 		return;
 	}
 
-	if (!isVisible())
+	if (!isVisible() || !_boss->isVisible())
 		return;
 
 	float sf = g_gui.getScaleFactor();
@@ -909,6 +916,11 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx, bool scale) {
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
+	_gfx.free();
+
+	if (!isVisible() || !_boss->isVisible())
+	return;
+
 	if (w == -1)
 		w = _w;
 	if (h == -1)
@@ -916,7 +928,6 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 
 	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
 
-	_gfx.free();
 	_gfx.create(w, h, requiredFormat);
 	_gfx.fillRect(Common::Rect(0, 0, w, h), _gfx.format.RGBToColor(r, g, b));
 }
