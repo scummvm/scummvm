@@ -44,11 +44,11 @@ int get_color_conversion() {
 	return color_conversion;
 }
 
-int set_gfx_mode(int card, int w, int h, int v_w, int v_h) {
+int set_gfx_mode(int card, int w, int h, int depth) {
 	// Graphics shutdown can be ignored
 	if (card != -1) {
 		assert(card == SCUMMVM_ID);
-		::AGS::g_vm->setGraphicsMode(w, h);
+		::AGS::g_vm->setGraphicsMode(w, h, depth);
 	}
 	return 0;
 }

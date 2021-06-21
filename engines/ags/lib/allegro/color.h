@@ -48,11 +48,11 @@ class Stream;
 #include "common/pack-start.h"  // START STRUCT PACKING
 
 struct color {
-byte r, g, b;
-byte filler;
+	byte r, g, b;
+	byte filler;
 
-void readFromFile(AGS::Shared::Stream *file);
-void writeToFile(AGS::Shared::Stream *file) const;
+	void readFromFile(AGS::Shared::Stream *file);
+	void writeToFile(AGS::Shared::Stream *file) const;
 } PACKED_STRUCT;
 
 typedef color RGB;
@@ -61,30 +61,29 @@ typedef RGB PALETTE[PAL_SIZE];
 #include "common/pack-end.h"    // END STRUCT PACKING
 
 struct RGB_MAP {
-byte data[32][32][32];
+	byte data[32][32][32];
 };
 
 struct COLOR_MAP {
-byte data[PAL_SIZE][PAL_SIZE];
+	byte data[PAL_SIZE][PAL_SIZE];
 };
 
 enum BlenderMode {
-kSourceAlphaBlender,
-kArgbToArgbBlender,
-kArgbToRgbBlender,
-kRgbToArgbBlender,
-kRgbToRgbBlender,
-kAlphaPreservedBlenderMode,
-kOpaqueBlenderMode,
-kAdditiveBlenderMode,
-kTintBlenderMode,
-kTintLightBlenderMode
+	kSourceAlphaBlender,
+	kArgbToArgbBlender,
+	kArgbToRgbBlender,
+	kRgbToArgbBlender,
+	kRgbToRgbBlender,
+	kAlphaPreservedBlenderMode,
+	kOpaqueBlenderMode,
+	kAdditiveBlenderMode,
+	kTintBlenderMode,
+	kTintLightBlenderMode
 };
 
 AL_ARRAY(const int, _rgb_scale_5);
 AL_ARRAY(const int, _rgb_scale_6);
 
-AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));
 AL_FUNC(void, set_palette_range, (AL_CONST PALETTE p, int from, int to, int retracesync));
 

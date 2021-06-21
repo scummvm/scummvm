@@ -58,15 +58,14 @@ ScummVMRendererGraphicsDriver::ScummVMRendererGraphicsDriver() {
 }
 
 bool ScummVMRendererGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
-	if (mode.Width <= 0 || mode.Height <= 0) {
-		warning("Invalid resolution parameters: %d x %d", mode.Width, mode.Height);
+	if (mode.Width <= 0 || mode.Height <= 0 || mode.ColorDepth <= 0) {
+		warning("Invalid resolution parameters: %d x %d x %d",
+			mode.Width, mode.Height, mode.ColorDepth);
 		return false;
 	}
-	if (mode.ColorDepth != 32) {
-		warning("Display colour depth not supported: %d", mode.ColorDepth);
-		return false;
-	}
-	return true;
+
+	Graphics::PixelFormat format;
+	return ::AGS::g_vm->getPixelFormat(mode.ColorDepth, format);
 }
 
 int ScummVMRendererGraphicsDriver::GetDisplayDepthForNativeDepth(int native_color_depth) const {
@@ -112,7 +111,7 @@ bool ScummVMRendererGraphicsDriver::SetDisplayMode(const DisplayMode &mode) {
 		return false;
 
 	const int driver = mode.Windowed ? GFX_SCUMMVM : GFX_SCUMMVM_FULLSCREEN;
-	if (set_gfx_mode(driver, mode.Width, mode.Height, 0, 0) != 0)
+	if (set_gfx_mode(driver, mode.Width, mode.Height, mode.ColorDepth) != 0)
 		return false;
 
 	OnInit();

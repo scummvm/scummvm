@@ -48,11 +48,6 @@ void color::writeToFile(AGS::Shared::Stream *file) const {
 	file->WriteByte(filler);
 }
 
-
-void set_color(int idx, const RGB *p) {
-	_G(current_palette)[idx] = *p;
-}
-
 void set_palette(const PALETTE p) {
 	for (int idx = 0; idx < PAL_SIZE; ++idx)
 		_G(current_palette)[idx] = p[idx];

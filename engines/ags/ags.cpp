@@ -181,13 +181,33 @@ SaveStateList AGSEngine::listSaves() const {
 	return getMetaEngine()->listSaves(_targetName.c_str());
 }
 
-void AGSEngine::setGraphicsMode(size_t w, size_t h) {
+bool AGSEngine::getPixelFormat(int depth, Graphics::PixelFormat &format) const {
+	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
+
+	if (depth == 8) {
+		format = Graphics::PixelFormat::createFormatCLUT8();
+		return true;
+	}
+
+	for (Common::List<Graphics::PixelFormat>::iterator it =
+			supportedFormatsList.begin(); it != supportedFormatsList.end(); ++it) {
+		if (it->bpp() == depth) {
+			format = *it;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+void AGSEngine::setGraphicsMode(size_t w, size_t h, int colorDepth) {
 	Common::List<Graphics::PixelFormat> supportedFormatsList = g_system->getSupportedFormats();
 	Graphics::PixelFormat format;
-	if (!supportedFormatsList.empty())
-		format = supportedFormatsList.front();
-	else
-		format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	if (!getPixelFormat(colorDepth, format))
+		error("Unsupported color depth %d", colorDepth);
+	//Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+
 	initGraphics(w, h, &format);
 
 	_rawScreen = new Graphics::Screen();
