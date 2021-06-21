@@ -527,9 +527,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 	const int addTextSize   = 10;
 
 	// put the object name into the buffer as a default value
-	strncpy(nameBuf, objName(), size - 1);
-	nameBuf[size - 1] = 0;
-
+	Common::strlcpy(nameBuf, objName(), size);
 
 	assert(strlen(objName()) < size - addTextSize);
 

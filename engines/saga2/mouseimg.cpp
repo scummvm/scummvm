@@ -296,8 +296,7 @@ void setNewText(char *text) {
 	//  Dispose of old text image
 	disposeText();
 
-	strncpy(mouseText, text, maxMouseTextLen - 1);
-	mouseText[maxMouseTextLen - 1] = '\0';
+	Common::strlcpy(mouseText, text, maxMouseTextLen);
 
 	//  Compute the size of the text bitmap
 	textImage.size.y = mainFont->height + 2;
